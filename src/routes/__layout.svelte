@@ -1,11 +1,13 @@
-
+<script lang="ts">
+	import "./bootstrap.css"
+</script>
 
 <main>
 	<nav class="navbar navbar-expand-lg navbar-dark" style="background: transparent; backdrop-filter: blur(6px)">
 		<div class="container">
 			<a class="navbar-brand" href="/">Mercury</a>
 			<div class="d-flex">
-				<a type="button" href="y" class="btn btn-secondary my-2 my-sm-0">Login</a>
+				<a type="button" href="login" class="btn btn-secondary my-2 my-sm-0">Login</a>
 			</div>
 		</div>
 	</nav>
