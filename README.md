@@ -1,38 +1,17 @@
-# create-svelte
+# Mercury website
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+To install, you will need:
 
-## Creating a project
+- Latest version of NodeJS
+- Latest version of npm
+- A terminal
 
-If you're seeing this, you've probably already done this step. Congrats!
+Instructions:
 
-```bash
-# create a new project in the current directory
-npm init svelte
+- Clone the repository to your local machine
+- Open a terminal and navigate to the directory of the repository
+- Run `npm i`
 
-# create a new project in my-app
-npm init svelte my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+To start a local dev server, run `npm run dev`
+To build for production, run `npm run build`, then `npm run preview` to preview the final site.
+  
