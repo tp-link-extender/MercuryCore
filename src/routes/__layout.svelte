@@ -11,19 +11,39 @@
 	</div>
 </nav>
 <main>
-
-	<slot />
+	<div>
+		<slot />
+	</div>
+	<footer class="position-relative text-center">
+		<strong>Copyringt &lbrace;C] Mercur 20222.</strong><br />
+		yeet<br />
+		yeet<br />
+		yeet<br />
+		yeet<br />
+		yeet<br />
+		yeet<br />
+	</footer>
 </main>
 
 <style lang="sass">
+	nav
+		z-index: 9
+		background: rgba(0, 0, 0, 0.1)
+		width: 100vw
+		backdrop-filter: blur(6px)
 
 	main
 		overflow-x: hidden
 		background: #f3f4f6
 		min-height: 100vh
-	nav
-		z-index: 1
-		background: rgba(0, 0, 0, 0.2)
+		div
+			min-height: 80vh
+
+	footer
+		border: 1px solid #999
+		background: #ddd
 		width: 100vw
-		backdrop-filter: blur(6px)
+		padding: 1vh
+		bottom: 0
+
 </style>
