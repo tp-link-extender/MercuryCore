@@ -20,13 +20,18 @@
 	export let error: any
 </script>
 
-<div id="info" class="container d-flex flex-column justify-content-center align-items-center translate-middle top-50 start-50 position-absolute">
-
-	<h1>Error {status}</h1>
-	{error["message"]}
+<div class="c">
+	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
+	
+		<h1>Error {status}</h1>
+		{error["message"]}
+	</div>
 </div>
 
 <style lang="sass">
+	.c
+		padding: 30vh 0
+
 	#info
 		background: #fff
 		width: fit-content
