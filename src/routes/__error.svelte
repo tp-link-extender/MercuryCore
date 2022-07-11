@@ -15,9 +15,22 @@
 </script>
 
 <script lang="ts">
+	// must be 2 separate scripts
 	export let status: number
 	export let error: any
 </script>
 
-<h1>Error {status}</h1>
-{error["message"]}
+<div id="info" class="container d-flex flex-column justify-content-center align-items-center translate-middle top-50 start-50 position-absolute">
+
+	<h1>Error {status}</h1>
+	{error["message"]}
+</div>
+
+<style lang="sass">
+	#info
+		background: #fff
+		width: fit-content
+		padding: 2rem 5rem
+		border-radius: 1rem
+		box-shadow: 0 0 20px
+</style>

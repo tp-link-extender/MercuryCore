@@ -4,23 +4,31 @@
 
 	let element: HTMLElement
 	let intersecting: boolean
-	export let test = false
+	export let right = false
+	export let middle = false
+
+	let id = middle ? "middle" : right ? "right" : "left"
 </script>
 
 <IntersectionObserver {element} bind:intersecting>
-	<div bind:this={element} class="container justify-content-center">
-		<div id="b">
-			{#if intersecting}
-				<div transition:fly={{ x: test ? -300 : 300, duration: 1000}} class="row align-items-center">
+	<div bind:this={element} class="container" {id}>
+		<div>
+			<!-- {#if intersecting} -->
+				<div id="b" transition:fly={{ x: 300, duration: 1}} class="d-flex flex-column justify-content-center align-items-center">
 					<slot />
 				</div>
-			{/if}
+			<!-- {/if} -->
 		</div>
 	</div>
 </IntersectionObserver>
 
 <style lang="sass">
 	#b
-		height: 30vh
+		height: 50vh
+		width: 33vh
 
+	#right
+		margin-left: 66vw
+	#middle
+		margin-left: 41vw
 </style>
