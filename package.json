@@ -25,6 +25,8 @@
   },
   "type": "module",
   "dependencies": {
+    "esbuild": "^0.14.49",
+    "svelte-inview": "^3.0.1",
     "svelte-parallax": "^0.5.2"
   }
 }

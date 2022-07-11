@@ -37,7 +37,8 @@
 		background: #f3f4f6
 		min-height: 100vh
 		div
-			min-height: 80vh
+			min-height: 72vh
+			margin-top: 8vh
 
 	footer
 		border: 1px solid #999
