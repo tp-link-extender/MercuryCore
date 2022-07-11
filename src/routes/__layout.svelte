@@ -15,13 +15,12 @@
 		<slot />
 	</div>
 	<footer class="position-relative text-center">
-		<strong>Copyringt &lbrace;C] Mercur 20222.</strong><br />
-		yeet<br />
-		yeet<br />
-		yeet<br />
-		yeet<br />
-		yeet<br />
-		yeet<br />
+		<h4>Mercury</h4>
+		Powering Divinity<br />
+		<br />
+		© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
+		<br />
+		Rules | About | Terms of Service | Privacy Policy | Statistics<br />
 	</footer>
 </main>
 
@@ -43,6 +42,7 @@
 	footer
 		border: 1px solid #999
 		background: #ddd
+		height: 20vh
 		width: 100vw
 		padding: 1vh
 		bottom: 0
