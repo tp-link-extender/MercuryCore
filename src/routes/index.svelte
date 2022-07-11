@@ -23,12 +23,18 @@
 		</ParallaxLayer>
 		<ParallaxLayer offset={0} rate={-2}>
 			<Pagepart right>
-				<h1 class="fw-bolder fw-light text-dark">Better than Tadah</h1>
+				<div class="text">
+					<h1 class="fw-bolder fw-light text-dark">Next-generation technologies</h1>
+					<h4>No revival even comes close as a rival.</h4>
+				</div>
 			</Pagepart>
 		</ParallaxLayer>
 		<ParallaxLayer offset={1} rate={0}>
 			<Pagepart>
-				<h1 class="fw-bolder fw-light text-dark">Lots of clients</h1>
+				<div class="text">
+					<h1 class="fw-bolder fw-light text-dark">Lots of clients</h1>
+					<h4>Ranging from 1887 to 2087.</h4>
+				</div>
 			</Pagepart>
 		</ParallaxLayer>
 		<ParallaxLayer offset={1} rate={-2}>
@@ -38,26 +44,39 @@
 		</ParallaxLayer>
 	</Parallax>
 
-	<Pagepart fullwidth>
-		<div transition:fly={{ x: -300, duration: 1000 }} class="d-flex flex-column">
-			<h1 class="fw-bolder fw-light text-dark text-center">The ultimate cross-platform private server.</h1>
-			<br /><br />
-			<div class="position-relative col-6">
-				<img src="/desktop.png" alt="Desktop" />
-				<h1 id="desktop" class="imagetext fw-bolder fw-light text-light text-center position-absolute">On desktop,</h1>
-			</div>
-			<br /><br />
-			<div class="position-relative col-6 align-self-end">
-				<img src="/laptop.png" alt="Laptop" />
-				<h1 class="imagetext fw-bolder fw-light text-light text-center position-absolute">On laptop,</h1>
-			</div>
-			<br /><br />
-			<div class="position-relative col-6">
-				<img src="/mobile.png" alt="Mobile" />
-				<h1 id="mobile" class="imagetext fw-bolder fw-light text-light text-center position-absolute">On mobile.</h1>
-			</div>
+	<div transition:fly={{ x: -300, duration: 1000 }} id="overlap">
+		<h1 class="fw-bolder fw-light text-dark text-center d-flex flex-column">The ultimate cross-platform private server.</h1>
+		<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
+			<ParallaxLayer offset={0} rate={0}>
+				<Pagepart fullwidth>
+					<div class="align-self-center d-flex flex-column align-items-center">
+						<img class="device" src="/laptop.png" alt="Laptop" />
+					</div>
+				</Pagepart>
+			</ParallaxLayer>
+			<ParallaxLayer offset={0} rate={-1}>
+				<Pagepart fullwidth>
+					<h1 class="imagetext fw-bolder fw-light text-center">On PC,</h1>
+				</Pagepart>
+			</ParallaxLayer>
+		</Parallax>
+		<div style="transform: translate(0px, -170vh)">
+			<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
+				<ParallaxLayer offset={1} rate={0}>
+					<Pagepart fullwidth>
+						<div class="align-self-center d-flex flex-column align-items-center">
+							<img class="device" src="/mobile.png" alt="Mobile" />
+						</div>
+					</Pagepart>
+				</ParallaxLayer>
+				<ParallaxLayer offset={0} rate={-1}>
+					<Pagepart fullwidth>
+						<h1 class="imagetext fw-bolder fw-light text-center">and on mobile.</h1>
+					</Pagepart>
+				</ParallaxLayer>
+			</Parallax>
 		</div>
-	</Pagepart>
+	</div>
 
 	<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 		<ParallaxLayer offset={0} rate={0}>
@@ -96,25 +115,26 @@
 </main>
 
 <style lang="sass">
-	h1
+	h1, h4
 		width: 100%
 		text-align: center
+
+	.text
+		width: 100%
+
+	#overlap
+		height: 200vh
+	.imagetext
+		color: #f3f4f6
+
+	.device
+		width: 50%
 
 	img
 		width: 100%
 
 	#info
 		height: 100vh
-
-	.imagetext
-		top: 37%
-		width: 50%
-		left: 25%
-		z-index: 3
-	#desktop
-		top: 25%
-	#mobile
-		top: 44%
 	
 	main
 		margin-top: -8vh

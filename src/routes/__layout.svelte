@@ -20,7 +20,7 @@
 		<br />
 		© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
 		<br />
-		Rules | About | Terms of Service | Privacy Policy | Statistics<br />
+		Rules About Terms of Service Privacy Policy Statistics<br />
 	</footer>
 </main>
 

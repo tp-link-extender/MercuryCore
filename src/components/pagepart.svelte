@@ -10,8 +10,7 @@
 </script>
 
 <div class={`container ${width}`} id={side} use:inview={{ unobserveOnEnter: true, rootMargin: "-20%" }} on:change={({ detail }) => (isInView = detail.inView)}>
-	<!-- {#if isInView} -->
-	{#if true}
+	{#if isInView}
 		<div id="b" class="d-flex flex-row align-items-center">
 			<slot />
 		</div>
