@@ -1,7 +1,41 @@
 <script lang="ts">
+	import { onMount } from "svelte/internal"
 	import { fly } from "svelte/transition"
 	import Pagepart from "../components/pagepart.svelte"
 	import { Parallax, ParallaxLayer } from "svelte-parallax"
+
+	let onPC: HTMLElement
+	let onMobile: HTMLElement
+
+	onMount(() => { // otherwise "window is not defined"
+		window.addEventListener("scroll", function () {
+			if (onPC) {
+				let distanceToTop = window.pageYOffset + onPC.getBoundingClientRect().top
+				let elementHeight = onPC.offsetHeight
+				let scrollTop = document.documentElement.scrollTop + window.innerHeight / 2
+	
+				let opacity = 1
+	
+				if (scrollTop > distanceToTop) {
+					opacity = 1 - (scrollTop - distanceToTop) / (elementHeight * 3)
+				}
+				onPC.style.opacity = opacity.toString()
+			}
+
+			if (onMobile) {
+				let distanceToTop = window.pageYOffset + onMobile.getBoundingClientRect().top
+				let elementHeight = onMobile.offsetHeight
+				let scrollTop = document.documentElement.scrollTop + window.innerHeight / 1.7
+	
+				let opacity = 0
+	
+				if (scrollTop > distanceToTop) {
+					opacity = (scrollTop - distanceToTop) / (elementHeight * 3)
+				}
+				onMobile.style.opacity = opacity.toString()
+			}
+		})
+	})
 </script>
 
 <svelte:head>
@@ -54,9 +88,9 @@
 					</div>
 				</Pagepart>
 			</ParallaxLayer>
-			<ParallaxLayer offset={0} rate={-1}>
+			<ParallaxLayer offset={0} rate={-0.5}>
 				<Pagepart fullwidth>
-					<h1 class="imagetext fw-bolder fw-light text-center">On PC,</h1>
+					<h1 bind:this={onPC} class="fw-bolder fw-light text-center text-light">On PC,</h1>
 				</Pagepart>
 			</ParallaxLayer>
 		</Parallax>
@@ -69,9 +103,9 @@
 						</div>
 					</Pagepart>
 				</ParallaxLayer>
-				<ParallaxLayer offset={0} rate={-1}>
+				<ParallaxLayer offset={1} rate={-0.5}>
 					<Pagepart fullwidth>
-						<h1 class="imagetext fw-bolder fw-light text-center">and on mobile.</h1>
+						<h1 bind:this={onMobile} class="imagetext fw-bolder fw-light text-center text-light">and on mobile.</h1>
 					</Pagepart>
 				</ParallaxLayer>
 			</Parallax>
