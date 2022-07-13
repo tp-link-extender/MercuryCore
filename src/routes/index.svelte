@@ -11,26 +11,24 @@
 		window.addEventListener("scroll", function () {
 			if (onPC) {
 				let distanceToTop = window.pageYOffset + onPC.getBoundingClientRect().top
-				let elementHeight = onPC.offsetHeight
 				let scrollTop = document.documentElement.scrollTop + window.innerHeight / 2
 	
 				let opacity = 1
 	
 				if (scrollTop > distanceToTop) {
-					opacity = 1 - (scrollTop - distanceToTop) / (elementHeight * 3)
+					opacity = 1 - (scrollTop - distanceToTop) / ( onPC.offsetHeight * 3)
 				}
 				onPC.style.opacity = opacity.toString()
 			}
 
 			if (onMobile) {
 				let distanceToTop = window.pageYOffset + onMobile.getBoundingClientRect().top
-				let elementHeight = onMobile.offsetHeight
 				let scrollTop = document.documentElement.scrollTop + window.innerHeight / 1.7
 	
 				let opacity = 0
 	
 				if (scrollTop > distanceToTop) {
-					opacity = (scrollTop - distanceToTop) / (elementHeight * 3)
+					opacity = (scrollTop - distanceToTop) / (onMobile.offsetHeight * 3)
 				}
 				onMobile.style.opacity = opacity.toString()
 			}
@@ -94,7 +92,7 @@
 				</Pagepart>
 			</ParallaxLayer>
 		</Parallax>
-		<div style="transform: translate(0px, -170vh)">
+		<div style="transform: translate(0px, -250vh)">
 			<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 				<ParallaxLayer offset={1} rate={0}>
 					<Pagepart fullwidth>
@@ -157,7 +155,7 @@
 		width: 100%
 
 	#overlap
-		height: 200vh
+		height: 120vh
 	.imagetext
 		color: #f3f4f6
 
