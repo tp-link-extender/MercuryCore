@@ -11,23 +11,29 @@
 	</div>
 </nav>
 <main>
-	<div>
+	<div id="content">
 		<slot />
 	</div>
+
 	<footer class="position-relative text-center">
-		<h4>Mercury</h4>
-		Powering Divinity<br />
-		<br />
-		© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
-		<br />
-		Rules About Terms of Service Privacy Policy Statistics<br />
+		<a class="text-dark h4" href="/">Mercury</a>
+		<p class="info text-muted">
+			Powering Divinity<br />
+			<br />
+			© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
+		</p>
+		<a class="text-dark h5" href="/rules">Rules</a>
+		<a class="text-dark h5" href="/about">About</a>
+		<a class="text-dark h5" href="/terms">Terms of Service</a>
+		<a class="text-dark h5" href="/privacy">Privacy Policy</a>
+		<a class="text-dark h5" href="/statistics">Statistics</a>
 	</footer>
 </main>
 
 <style lang="sass">
 	nav
 		z-index: 9
-		background: rgba(0, 0, 0, 0.1)
+		background: rgba(0, 0, 0, 0.15)
 		width: 100vw
 		backdrop-filter: blur(6px)
 
@@ -35,16 +41,22 @@
 		overflow-x: hidden
 		background: #f3f4f6
 		min-height: 100vh
-		div
+		#content
 			min-height: 72vh
 			margin-top: 8vh
 
 	footer
-		border: 1px solid #999
-		background: #ddd
+		background: rgba(0, 0, 0, 0.15)
 		height: 20vh
 		width: 100vw
 		padding: 1vh
-		bottom: 0
+		.info
+			margin-bottom: 1.75rem
+
+		a 
+			margin: 0 0.5rem
+			text-decoration: none
+			&:hover
+				text-decoration: underline
 
 </style>
