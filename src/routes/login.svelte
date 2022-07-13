@@ -6,4 +6,4 @@
 	<title>Login - Mercury</title>
 </svelte:head>
 
-<h1>Mercury</h1>
+<h1 class="text-center">Login</h1>
