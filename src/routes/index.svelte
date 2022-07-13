@@ -7,16 +7,17 @@
 	let onPC: HTMLElement
 	let onMobile: HTMLElement
 
-	onMount(() => { // otherwise "window is not defined"
+	onMount(() => {
+		// otherwise "window is not defined"
 		window.addEventListener("scroll", function () {
 			if (onPC) {
 				let distanceToTop = window.pageYOffset + onPC.getBoundingClientRect().top
 				let scrollTop = document.documentElement.scrollTop + window.innerHeight / 2
-	
+
 				let opacity = 1
-	
+
 				if (scrollTop > distanceToTop) {
-					opacity = 1 - (scrollTop - distanceToTop) / ( onPC.offsetHeight * 3)
+					opacity = 1 - (scrollTop - distanceToTop) / (onPC.offsetHeight * 3)
 				}
 				onPC.style.opacity = opacity.toString()
 			}
@@ -24,9 +25,9 @@
 			if (onMobile) {
 				let distanceToTop = window.pageYOffset + onMobile.getBoundingClientRect().top
 				let scrollTop = document.documentElement.scrollTop + window.innerHeight / 1.7
-	
+
 				let opacity = 0
-	
+
 				if (scrollTop > distanceToTop) {
 					opacity = (scrollTop - distanceToTop) / (onMobile.offsetHeight * 3)
 				}
@@ -77,7 +78,7 @@
 	</Parallax>
 
 	<div transition:fly={{ x: -300, duration: 1000 }} id="overlap">
-		<h1 class="fw-bolder fw-light text-dark text-center d-flex flex-column">The ultimate cross-platform private server.</h1>
+		<h1 id="ultimate" class="fw-bolder fw-light text-dark text-center d-flex flex-column">The ultimate cross-platform private server.</h1>
 		<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 			<ParallaxLayer offset={0} rate={0}>
 				<Pagepart fullwidth>
@@ -88,11 +89,11 @@
 			</ParallaxLayer>
 			<ParallaxLayer offset={0} rate={-0.5}>
 				<Pagepart fullwidth>
-					<h1 bind:this={onPC} class="fw-bolder fw-light text-center text-light">On PC,</h1>
+					<h1 bind:this={onPC} class="imagetext fw-bolder fw-light text-center text-light">On PC,</h1>
 				</Pagepart>
 			</ParallaxLayer>
 		</Parallax>
-		<div style="transform: translate(0px, -250vh)">
+		<div style="transform: translate(0px, -210vh)">
 			<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 				<ParallaxLayer offset={1} rate={0}>
 					<Pagepart fullwidth>
@@ -153,11 +154,14 @@
 
 	.text
 		width: 100%
-
-	#overlap
-		height: 120vh
 	.imagetext
-		color: #f3f4f6
+		font-size: 3vw
+
+	#ultimate
+		margin: 30vh 0 -15vh 0
+	#overlap
+		height: 150vh
+		margin-top: -40vh
 
 	.device
 		width: 50%
