@@ -25,9 +25,11 @@
   },
   "type": "module",
   "dependencies": {
+    "@sveltejs/adapter-static": "^1.0.0-next.35",
     "esbuild": "^0.14.49",
     "svelte-adapter-bun": "^0.3.0",
     "svelte-inview": "^3.0.1",
-    "svelte-parallax": "^0.5.2"
+    "svelte-parallax": "^0.5.2",
+    "sveltekit-adapter-html-like": "^0.2.1"
   }
 }
