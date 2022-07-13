@@ -10,6 +10,8 @@
 		</div>
 	</div>
 </nav>
+
+<div id="bg" class="position-absolute" />
 <main>
 	<div id="content">
 		<slot />
@@ -39,11 +41,18 @@
 
 	main
 		overflow-x: hidden
-		background: #f3f4f6
-		min-height: 100vh
+		min-height: auto
+		height: 100%
 		#content
 			min-height: 72vh
 			margin-top: 8vh
+
+	#bg
+		background-color: #f3f4f6
+		height: 100%
+		width: 100%
+		z-index: -5
+		
 
 	footer
 		background: rgba(0, 0, 0, 0.15)
