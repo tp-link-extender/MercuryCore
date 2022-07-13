@@ -30,7 +30,7 @@
 
 <style lang="sass">
 	.c
-		padding: 30vh 0
+		padding: 20vh 0
 
 	#info
 		background: #fff
