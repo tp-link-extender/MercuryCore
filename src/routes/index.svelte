@@ -1,14 +1,19 @@
 <script lang="ts">
 	import { onMount } from "svelte/internal"
 	import { fly } from "svelte/transition"
+	import Gradient from "./gradient"
 	import Pagepart from "../components/pagepart.svelte"
 	import { Parallax, ParallaxLayer } from "svelte-parallax"
 
+	
 	let onPC: HTMLElement
 	let onMobile: HTMLElement
-
+	
 	onMount(() => {
 		// otherwise "window is not defined"
+		const gradient = new Gradient()
+		gradient.initGradient("#gradient-canvas")
+
 		window.addEventListener("scroll", function () {
 			if (onPC) {
 				let distanceToTop = window.pageYOffset + onPC.getBoundingClientRect().top
@@ -42,6 +47,8 @@
 </svelte:head>
 
 <main>
+	<canvas id="gradient-canvas" class="position-relative" data-transition-in />
+	
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
 		<h1 class="fw-bolder fw-light text-dark" style="font-size: 4rem">Mercury</h1>
 		<p class="lead text-dark">Endless possibilities. New features. Same nostalgia.</p>
@@ -148,6 +155,13 @@
 </main>
 
 <style lang="sass">
+	#gradient-canvas
+		height: 100vh
+		--gradient-color-1: #0051ff
+		--gradient-color-2: #0099ff
+		--gradient-color-3: #00c3ff
+		--gradient-color-4: #af39e6
+	
 	h1, h4
 		width: 100%
 		text-align: center
@@ -170,12 +184,10 @@
 		width: 100%
 
 	#info
+		margin-top: -100vh
 		height: 100vh
+		position: relative
 	
 	main
 		margin-top: -8vh
-		background: hsl(305, 63%, 80%)
-
-		background-image: linear-gradient(180deg, rgba(243, 244, 246, 0), rgba(243, 244, 246, 1) 10%), radial-gradient(ellipse at top left, rgba(13, 110, 253, 0.5), #0000 50%), radial-gradient(ellipse at top right, rgba(255, 228, 132, 0.5), #0000 50%)
-		// do not look at the last half of this gradient worst mistake of my life
 </style>
