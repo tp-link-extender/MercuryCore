@@ -1,18 +1,19 @@
 <script lang="ts">
-	import "./bootstrap.sass"
+	import "/src/bootstrap.sass"
+	import "/src/colours.sass"
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark position-fixed">
 	<div class="container">
 		<a class="navbar-brand" href="/">Mercury</a>
 		<div class="d-flex">
-			<a type="button" href="login" class="btn btn-secondary my-2 my-sm-0">Login</a>
+			<a type="button" href="/login" class="btn btn-success my-2 my-sm-0">Login</a>
 		</div>
 	</div>
 </nav>
 
-<div id="bg" class="position-absolute" />
 <main>
+	<div id="bg" class="position-fixed" />
 	<div id="content">
 		<slot />
 	</div>
@@ -35,25 +36,24 @@
 <style lang="sass">
 	nav
 		z-index: 9
-		background: rgba(0, 0, 0, 0.15)
 		width: 100vw
+		max-height: 10vh
 		backdrop-filter: blur(6px)
 
 	main
 		overflow-x: hidden
-		min-height: auto
 		height: 100%
 		#content
-			min-height: 72vh
-			margin-top: 8vh
+			min-height: 70vh
+			margin-top: 10vh
 
 	#bg
-		background-color: #f3f4f6
+		background-color: var(--background)
+		min-height: 100vh
 		height: 100%
 		width: 100%
-		z-index: -5
+		z-index: -1
 		
-
 	footer
 		background: rgba(0, 0, 0, 0.15)
 		height: 20vh
