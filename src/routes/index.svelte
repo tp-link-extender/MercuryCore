@@ -5,10 +5,9 @@
 	import Pagepart from "../components/pagepart.svelte"
 	import { Parallax, ParallaxLayer } from "svelte-parallax"
 
-	
 	let onPC: HTMLElement
 	let onMobile: HTMLElement
-	
+
 	onMount(() => {
 		// otherwise "window is not defined"
 		const gradient = new Gradient()
@@ -48,11 +47,11 @@
 
 <main>
 	<canvas id="gradient-canvas" class="position-relative" data-transition-in />
-	
+
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
-		<h1 class="fw-bolder fw-light text-dark" style="font-size: 4rem">Mercury</h1>
-		<p class="lead text-dark">Endless possibilities. New features. Same nostalgia.</p>
-		<span class="badge bg-warning text-black">Closed Beta</span>
+		<h1 class="fw-bolder fw-light text-light" style="font-size: 4rem">Mercury</h1>
+		<p class="lead text-light">Endless possibilities. New features. Same nostalgia.</p>
+		<span class="badge bg-light text-black">Closed Beta</span>
 	</div>
 
 	<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
@@ -157,10 +156,11 @@
 <style lang="sass">
 	#gradient-canvas
 		height: 100vh
-		--gradient-color-1: #0051ff
-		--gradient-color-2: #0099ff
-		--gradient-color-3: #00c3ff
-		--gradient-color-4: #af39e6
+		--gradient-color-1: #161a92
+		--gradient-color-2: #2b0574
+		--gradient-color-3: #6c2fb9
+		--gradient-color-4: #060e25
+		width: 100vw
 	
 	h1, h4
 		width: 100%
@@ -187,7 +187,11 @@
 		margin-top: -100vh
 		height: 100vh
 		position: relative
+		*
+			opacity: 0.75
+			
 	
 	main
-		margin-top: -8vh
+		margin-top: -10vh
+		background: rgba(0, 0, 0, 0)
 </style>
