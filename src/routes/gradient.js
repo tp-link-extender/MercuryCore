@@ -587,13 +587,13 @@ export default class Gradient {
 				//Check if shorthand hex value was used and double the length so the conversion in normalizeColor will work.
 				if (4 === hex.length) {
 					const hexTemp = hex
-						.substr(1)
+						.substring(1)
 						.split("")
 						.map(hexTemp => hexTemp + hexTemp)
 						.join("")
 					hex = `#${hexTemp}`
 				}
-				return hex && `0x${hex.substr(1)}`
+				return hex && `0x${hex.substring(1)}`
 			})
 			.filter(Boolean)
 			.map(normalizeColor)
