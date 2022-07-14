@@ -30,12 +30,11 @@
 
 <style lang="sass">
 	.c
-		padding: 20vh 0
+		padding: 25vh 0
 
 	#info
 		background: #fff
 		width: fit-content
 		padding: 2rem 5rem
 		border-radius: 1rem
-		box-shadow: 0 0 20px
 </style>
