@@ -42,7 +42,7 @@
 		},
 	]
 
-	let games = [
+	let places = [
 		{
 			name: "Counter-Strike: Global Offensive",
 			img: "https://tr.rbxcdn.com/32f4b1e24aa4b914ad5f21539338a60b/150/150/Image/Jpeg",
@@ -133,14 +133,14 @@
 		</div>
 	</div>
 	<div class="row mt-5">
-		<h4 class="dark-text">Recent games</h4>
+		<h4 class="dark-text">Recently joined</h4>
 		<div class="section">
 			<div class="row">
-				{#each games as game}
-					<div class="game col col-6 col-sm-4 col-md-3 col-lg-2">
-						<a href="/game?name={game.name}&by={game.by}">
-							<img src={game.img} alt={game.name} />
-							<p class="text-center dark-text mt-1 mb-0">{game.name}</p>
+				{#each places as place}
+					<div class="place col col-6 col-sm-4 col-md-3 col-lg-2">
+						<a href="/place?name={place.name}&by={place.by}">
+							<img src={place.img} alt={place.name} />
+							<p class="text-center dark-text mt-1 mb-0">{place.name}</p>
 						</a>
 					</div>
 				{/each}
@@ -185,7 +185,7 @@
 			img
 				border-radius: 100%
 
-	.game
+	.place
 		border-radius: 0.5rem
 		padding: 0.5rem
 		margin-bottom: 1rem
@@ -194,6 +194,6 @@
 		img, p
 			width: 100%
 
-	.game img
+	.place img
 		border-radius: 0.5rem
 </style>
