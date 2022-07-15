@@ -1,6 +1,6 @@
 <script lang="ts">
 	import "/src/bootstrap.sass"
-	import "/src/colours.sass"
+	import "/src/global.sass"
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark position-fixed">
