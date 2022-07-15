@@ -21,10 +21,10 @@
 </script>
 
 <div class="c">
-	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
+	<div id="info" class="container d-flex flex-column justify-content-center align-items-center dark-text">
 	
-		<h1>Error {status}</h1>
-		{error["message"]}
+		<h1 class="dark-text">Error {status}</h1>
+			{error["message"]}
 	</div>
 </div>
 
@@ -33,7 +33,7 @@
 		padding: 25vh 0
 
 	#info
-		background: #fff
+		background: var(--accent2)
 		width: fit-content
 		padding: 2rem 5rem
 		border-radius: 1rem
