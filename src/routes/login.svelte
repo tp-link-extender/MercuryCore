@@ -25,5 +25,5 @@
 		background: white
 		max-width: 30rem
 		border-radius: 1rem
-		padding: 1rem
+		padding: 1.25rem
 </style>
