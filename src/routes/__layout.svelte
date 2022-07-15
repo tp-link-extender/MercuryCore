@@ -7,7 +7,7 @@
 	<div class="container">
 		<a class="navbar-brand" href="/">Mercury</a>
 		<div class="d-flex">
-			<a type="button" href="/login" class="btn btn-success my-2 my-sm-0">Login</a>
+			<a type="button" href="/login" class="btn btn-success my-2 my-sm-0" sveltekit:noscroll>Login</a>
 		</div>
 	</div>
 </nav>
