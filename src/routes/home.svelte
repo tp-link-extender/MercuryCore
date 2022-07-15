@@ -20,6 +20,26 @@
 			name: "Wagness",
 			img: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
 		},
+		{
+			name: "Multako",
+			img: "https://tr.rbxcdn.com/372efbed7319824170124853399ed562/150/150/AvatarHeadshot/Png",
+		},
+		{
+			name: "Lewin5",
+			img: "https://tr.rbxcdn.com/2daa018f45c826c666f21aefed82161f/150/150/AvatarHeadshot/Png",
+		},
+		{
+			name: "Taskmanager",
+			img: "https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png",
+		},
+		{
+			name: "Boxerpizza",
+			img: "https://tr.rbxcdn.com/4822f6355b367396437b7eed14048a7f/150/150/AvatarHeadshot/Png",
+		},
+		{
+			name: "Wagness",
+			img: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
+		},
 	]
 
 	let games = [
@@ -90,33 +110,30 @@
 	<title>Home - Mercury</title>
 </svelte:head>
 
-<div class="top container">
-	<div class="d-flex">
-		<div id="pfp">
-			<img src="https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png" alt="exelexeye" />
-		</div>
-		<h1 class="text-center dark-text">Hi, Mercury!</h1>
-	</div>
-</div>
-
 <main class="container">
-	<div class="row mt-3">
-		<h4 class="text-center dark-text">Friends</h4>
-		<div class="section">
-			<div class="row">
-				{#each friends as friend}
-					<div class="friend col col-6 col-sm-4 col-md-3 col-lg-2">
-						<a href="/user?name={friend.name}">
-							<img src={friend.img} alt={friend.name} />
-							<p class="text-center dark-text mt-1 mb-0">{friend.name}</p>
-						</a>
-					</div>
-				{/each}
+	<div class="top">
+		<div class="d-flex">
+			<div id="pfp">
+				<img src="https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png" alt="exelexeye" />
 			</div>
+			<h1 class="text-center dark-text">Hi, Mercury!</h1>
 		</div>
 	</div>
-	<div class="row mt-3">
-		<h4 class="text-center dark-text">Recent games</h4>
+	<div id="friends" class="row mt-5">
+		<h4 class="dark-text">Friends</h4>
+		<div class="d-flex">
+			{#each friends as friend}
+				<a class="friend" href="/user?name={friend.name}">
+					<div class="imagebackground">
+						<img src={friend.img} alt={friend.name} />
+					</div>
+					<p class="text-center dark-text mt-1 mb-0">{friend.name}</p>
+				</a>
+			{/each}
+		</div>
+	</div>
+	<div class="row mt-5">
+		<h4 class="dark-text">Recent games</h4>
 		<div class="section">
 			<div class="row">
 				{#each games as game}
@@ -136,17 +153,13 @@
 <style lang="sass">
 	main
 		max-width: 60rem
+		font-size: 0.9rem
 
-	.section
-		padding: 0.3rem
-		.row
-			background: var(--accent)
-			border-radius: 1rem
-			padding: 1rem
 	.top
+		margin-left: 1rem
 		width: fit-content
 		#pfp
-			background: var(--accent)
+			background: var(--accent2)
 			border-radius: 100%
 		img
 			height: 6rem
@@ -157,17 +170,30 @@
 	.row
 		margin: 0
 
-	.game, .friend
-		padding: 0 0.1rem
+	#friends div
+		overflow-x: auto
+		.friend 
+			text-decoration: none
+			margin-right: 1rem
+			height: 10rem
+			.imagebackground
+				background: var(--accent2)
+				border-radius: 100%
+				margin: auto
+				img
+					height: 7rem
+			img
+				border-radius: 100%
+
+	.game
 		border-radius: 0.5rem
-		padding: 0.4rem
-		img, p
-			width: 100%
+		padding: 0.5rem
+		margin-bottom: 1rem
 		a
 			text-decoration: none
+		img, p
+			width: 100%
 
 	.game img
 		border-radius: 0.5rem
-	.friend img
-		border-radius: 100%
 </style>
