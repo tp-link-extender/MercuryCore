@@ -65,7 +65,7 @@
 		<ParallaxLayer offset={0} rate={-2}>
 			<Pagepart right>
 				<div class="text">
-					<h1 class="fw-bolder fw-light text-dark">Next-generation technologies</h1>
+					<h1 class="fw-bolder fw-light dark-text">Next-generation technologies</h1>
 					<h4>No revival even comes close as a rival.</h4>
 				</div>
 			</Pagepart>
@@ -73,7 +73,7 @@
 		<ParallaxLayer offset={1} rate={0}>
 			<Pagepart>
 				<div class="text">
-					<h1 class="fw-bolder fw-light text-dark">Lots of clients</h1>
+					<h1 class="fw-bolder fw-light dark-text">Lots of clients</h1>
 					<h4>Ranging from 1887 to 2087.</h4>
 				</div>
 			</Pagepart>
@@ -86,7 +86,7 @@
 	</Parallax>
 
 	<div in:fly={{ x: -300, duration: 1000 }} id="overlap">
-		<h1 id="ultimate" class="fw-bolder fw-light text-dark text-center d-flex flex-column">The ultimate cross-platform private server.</h1>
+		<h1 id="ultimate" class="fw-bolder fw-light dark-text text-center d-flex flex-column">The ultimate cross-platform private server.</h1>
 		<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 			<ParallaxLayer offset={0} rate={0}>
 				<Pagepart fullwidth>
@@ -127,12 +127,12 @@
 		</ParallaxLayer>
 		<ParallaxLayer offset={0} rate={-2}>
 			<Pagepart right>
-				<h1 class="fw-bolder fw-light text-dark">Approximately 60,000 better than Polygon</h1>
+				<h1 class="fw-bolder fw-light dark-text">Approximately 60,000 better than Polygon</h1>
 			</Pagepart>
 		</ParallaxLayer>
 		<ParallaxLayer offset={1} rate={0}>
 			<Pagepart>
-				<h1 class="fw-bolder fw-light text-dark">Better website, too</h1>
+				<h1 class="fw-bolder fw-light dark-text">Better website, too</h1>
 			</Pagepart>
 		</ParallaxLayer>
 		<ParallaxLayer offset={1} rate={-2}>
@@ -145,12 +145,12 @@
 	<Pagepart fullwidth>
 		<div in:fly={{ x: -300, duration: 1000 }}>
 			<img src="/devices.png" alt="Devices playing Mercury" />
-			<h1 class="fw-bolder fw-light text-dark text-center">Includes Web3 Technology.</h1>
+			<h1 class="fw-bolder fw-light dark-text text-center">Includes Web3 Technology.</h1>
 		</div>
 		<div class="px-5" />
 		<div in:fly={{ x: 300, duration: 1000 }}>
 			<img src="/devices.png" alt="Devices playing Mercury" />
-			<h1 class="fw-bolder fw-light text-dark text-center">It's on the BalochChain.</h1>
+			<h1 class="fw-bolder fw-light dark-text text-center">It's on the BalochChain.</h1>
 		</div>
 	</Pagepart>
 </main>

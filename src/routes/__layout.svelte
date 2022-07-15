@@ -19,17 +19,17 @@
 	</div>
 
 	<footer class="position-relative text-center">
-		<a class="text-dark h4" href="/">Mercury</a>
+		<a class="dark-text h4" href="/">Mercury</a>
 		<p class="info text-muted">
 			Powering Divinity<br />
 			<br />
 			© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
 		</p>
-		<a class="text-dark h5" href="/rules">Rules</a>
-		<a class="text-dark h5" href="/about">About</a>
-		<a class="text-dark h5" href="/terms">Terms of Service</a>
-		<a class="text-dark h5" href="/privacy">Privacy Policy</a>
-		<a class="text-dark h5" href="/statistics">Statistics</a>
+		<a class="dark-text h5" href="/rules">Rules</a>
+		<a class="dark-text h5" href="/about">About</a>
+		<a class="dark-text h5" href="/terms">Terms of Service</a>
+		<a class="dark-text h5" href="/privacy">Privacy Policy</a>
+		<a class="dark-text h5" href="/statistics">Statistics</a>
 	</footer>
 </main>
 
