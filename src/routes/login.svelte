@@ -22,11 +22,12 @@
 
 <style lang="sass">
 	.tab-pane
-		background: var(--accent)
+		background: var(--accent2)
 		max-width: 30rem
 		border-radius: 1rem
 		padding: 1.25rem
 
 	input
 		background: var(--accent)
+		border: none
 </style>
