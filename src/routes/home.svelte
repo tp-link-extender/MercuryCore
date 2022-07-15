@@ -95,20 +95,20 @@
 		<div id="pfp">
 			<img src="https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png" alt="exelexeye" />
 		</div>
-		<h1 class="text-center">Hi, Mercury!</h1>
+		<h1 class="text-center dark-text">Hi, Mercury!</h1>
 	</div>
 </div>
 
 <main class="container">
 	<div class="row mt-3">
-		<h4 class="text-center">Friends</h4>
+		<h4 class="text-center dark-text">Friends</h4>
 		<div class="section">
 			<div class="row">
 				{#each friends as friend}
 					<div class="friend col col-6 col-sm-4 col-md-3 col-lg-2">
 						<a href="/user?name={friend.name}">
 							<img src={friend.img} alt={friend.name} />
-							<p class="text-center text-dark mt-1 mb-0">{friend.name}</p>
+							<p class="text-center dark-text mt-1 mb-0">{friend.name}</p>
 						</a>
 					</div>
 				{/each}
@@ -116,14 +116,14 @@
 		</div>
 	</div>
 	<div class="row mt-3">
-		<h4 class="text-center">Recent games</h4>
+		<h4 class="text-center dark-text">Recent games</h4>
 		<div class="section">
 			<div class="row">
 				{#each games as game}
 					<div class="game col col-6 col-sm-4 col-md-3 col-lg-2">
 						<a href="/game?name={game.name}&by={game.by}">
 							<img src={game.img} alt={game.name} />
-							<p class="text-center text-dark mt-1 mb-0">{game.name}</p>
+							<p class="text-center dark-text mt-1 mb-0">{game.name}</p>
 						</a>
 					</div>
 				{/each}
@@ -140,13 +140,13 @@
 	.section
 		padding: 0.3rem
 		.row
-			background: white
+			background: var(--accent)
 			border-radius: 1rem
 			padding: 1rem
 	.top
 		width: fit-content
 		#pfp
-			background: white
+			background: var(--accent)
 			border-radius: 100%
 		img
 			height: 6rem

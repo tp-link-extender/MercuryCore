@@ -2,7 +2,7 @@
 	<title>Login - Mercury</title>
 </svelte:head>
 
-<h1 class="text-center">Login</h1>
+<h1 class="text-center dark-text">Login</h1>
 
 <div class="container tab-pane mt-5">
 	<form class="m-auto">
@@ -22,7 +22,7 @@
 
 <style lang="sass">
 	.tab-pane
-		background: white
+		background: var(--accent)
 		max-width: 30rem
 		border-radius: 1rem
 		padding: 1.25rem
