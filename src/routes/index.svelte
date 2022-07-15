@@ -66,7 +66,7 @@
 			<Pagepart right>
 				<div class="text">
 					<h1 class="fw-bolder fw-light dark-text">Next-generation technologies</h1>
-					<h4>No revival even comes close as a rival.</h4>
+					<h4 class="dark-text">No revival even comes close as a rival.</h4>
 				</div>
 			</Pagepart>
 		</ParallaxLayer>
@@ -74,7 +74,7 @@
 			<Pagepart>
 				<div class="text">
 					<h1 class="fw-bolder fw-light dark-text">Lots of clients</h1>
-					<h4>Ranging from 1887 to 2087.</h4>
+					<h4 class="dark-text">Ranging from 1887 to 2087.</h4>
 				</div>
 			</Pagepart>
 		</ParallaxLayer>
