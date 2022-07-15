@@ -7,7 +7,8 @@
 	<div class="container">
 		<a class="navbar-brand" href="/">Mercury</a>
 		<div class="d-flex">
-			<a type="button" href="/login" class="btn btn-success my-2 my-sm-0" sveltekit:noscroll>Login</a>
+			<a type="button" href="/home" class="btn my-2 my-sm-0 dark-text">Home</a>
+			<a type="button" href="/login" class="btn btn-success my-2 my-sm-0">Login</a>
 		</div>
 	</div>
 </nav>
@@ -39,6 +40,8 @@
 		width: 100vw
 		max-height: 10vh
 		backdrop-filter: blur(6px)
+		a
+			margin-right: 0.5rem
 
 	main
 		overflow-x: hidden
