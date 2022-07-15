@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fly } from "svelte/transition"
 	import { inview } from "svelte-inview"
 
 	export let right = false
@@ -11,7 +12,7 @@
 
 <div class={`container ${width}`} id={side} use:inview={{ unobserveOnEnter: true, rootMargin: "-20%" }} on:change={({ detail }) => (isInView = detail.inView)}>
 	{#if isInView}
-		<div id="b" class="d-flex flex-row align-items-center">
+		<div in:fly={{ y: -100, duration: 500 }} id="b" class="d-flex flex-row align-items-center">
 			<slot />
 		</div>
 	{:else}

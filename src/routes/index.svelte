@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from "svelte/internal"
+	import { onMount } from "svelte"
 	import { fly } from "svelte/transition"
 	import Gradient from "./gradient"
 	import Pagepart from "../components/pagepart.svelte"
@@ -46,12 +46,14 @@
 </svelte:head>
 
 <main>
-	<canvas id="gradient-canvas" class="position-relative" data-transition-in />
+	<canvas id="gradient-canvas" class="position-relative" />
 
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
-		<h1 class="fw-bolder fw-light text-light" style="font-size: 4rem">Mercury</h1>
+		<svg viewBox="0 0 100 12" xmlns="http://www.w3.org/2000/svg">
+			<text x="50" y="9" id="title" text-anchor="middle" font-size="9" fill="none" stroke-width=".15" stroke="#fff">Mercury</text>
+		</svg>
 		<p class="lead text-light">Endless possibilities. New features. Same nostalgia.</p>
-		<span class="badge bg-light text-black">Closed Beta</span>
+		<span id="beta" class="badge text-white">Closed Beta</span>
 	</div>
 
 	<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
@@ -83,7 +85,7 @@
 		</ParallaxLayer>
 	</Parallax>
 
-	<div transition:fly={{ x: -300, duration: 1000 }} id="overlap">
+	<div in:fly={{ x: -300, duration: 1000 }} id="overlap">
 		<h1 id="ultimate" class="fw-bolder fw-light text-dark text-center d-flex flex-column">The ultimate cross-platform private server.</h1>
 		<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 			<ParallaxLayer offset={0} rate={0}>
@@ -141,12 +143,12 @@
 	</Parallax>
 
 	<Pagepart fullwidth>
-		<div transition:fly={{ x: -300, duration: 1000 }}>
+		<div in:fly={{ x: -300, duration: 1000 }}>
 			<img src="/devices.png" alt="Devices playing Mercury" />
 			<h1 class="fw-bolder fw-light text-dark text-center">Includes Web3 Technology.</h1>
 		</div>
 		<div class="px-5" />
-		<div transition:fly={{ x: 300, duration: 1000 }}>
+		<div in:fly={{ x: 300, duration: 1000 }}>
 			<img src="/devices.png" alt="Devices playing Mercury" />
 			<h1 class="fw-bolder fw-light text-dark text-center">It's on the BalochChain.</h1>
 		</div>
@@ -162,6 +164,16 @@
 		--gradient-color-4: #060e25
 		width: 100vw
 	
+	#info
+		margin-top: -100vh
+		height: 100vh
+		position: relative
+		#title
+			font-weight: bold
+		#beta
+			outline: 2px solid white
+			font-size: 0.8rem
+
 	h1, h4
 		width: 100%
 		text-align: center
@@ -183,12 +195,6 @@
 	img
 		width: 100%
 
-	#info
-		margin-top: -100vh
-		height: 100vh
-		position: relative
-		*
-			opacity: 0.75
 			
 	
 	main
