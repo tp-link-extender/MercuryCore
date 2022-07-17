@@ -59,7 +59,7 @@
 	<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 		<ParallaxLayer offset={0} rate={0}>
 			<Pagepart>
-				<img src="/devices.png" alt="Devices playing Mercury" />
+				<img src="/devices.webp" alt="Devices playing Mercury" />
 			</Pagepart>
 		</ParallaxLayer>
 		<ParallaxLayer offset={0} rate={-2}>
@@ -80,7 +80,7 @@
 		</ParallaxLayer>
 		<ParallaxLayer offset={1} rate={-2}>
 			<Pagepart right>
-				<img src="/devices.png" alt="Devices playing Mercury" />
+				<img src="/devices.webp" alt="Devices playing Mercury" />
 			</Pagepart>
 		</ParallaxLayer>
 	</Parallax>
@@ -91,7 +91,7 @@
 			<ParallaxLayer offset={0} rate={0}>
 				<Pagepart fullwidth>
 					<div class="align-self-center d-flex flex-column align-items-center">
-						<img class="device" src="/laptop.png" alt="Laptop" />
+						<img class="device" src="/laptop.webp" alt="Laptop" />
 					</div>
 				</Pagepart>
 			</ParallaxLayer>
@@ -106,7 +106,7 @@
 				<ParallaxLayer offset={1} rate={0}>
 					<Pagepart fullwidth>
 						<div class="align-self-center d-flex flex-column align-items-center">
-							<img class="device" src="/mobile.png" alt="Mobile" />
+							<img class="device" src="/mobile.webp" alt="Mobile" />
 						</div>
 					</Pagepart>
 				</ParallaxLayer>
@@ -122,7 +122,7 @@
 	<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 		<ParallaxLayer offset={0} rate={0}>
 			<Pagepart>
-				<img src="/devices.png" alt="Devices playing Mercury" />
+				<img src="/devices.webp" alt="Devices playing Mercury" />
 			</Pagepart>
 		</ParallaxLayer>
 		<ParallaxLayer offset={0} rate={-2}>
@@ -137,19 +137,19 @@
 		</ParallaxLayer>
 		<ParallaxLayer offset={1} rate={-2}>
 			<Pagepart right>
-				<img src="/devices.png" alt="Devices playing Mercury" />
+				<img src="/devices.webp" alt="Devices playing Mercury" />
 			</Pagepart>
 		</ParallaxLayer>
 	</Parallax>
 
 	<Pagepart fullwidth>
 		<div in:fly={{ x: -300, duration: 1000 }}>
-			<img src="/devices.png" alt="Devices playing Mercury" />
+			<img src="/devices.webp" alt="Devices playing Mercury" />
 			<h1 class="fw-bolder fw-light dark-text text-center">Includes Web3 Technology.</h1>
 		</div>
 		<div class="px-5" />
 		<div in:fly={{ x: 300, duration: 1000 }}>
-			<img src="/devices.png" alt="Devices playing Mercury" />
+			<img src="/devices.webp" alt="Devices playing Mercury" />
 			<h1 class="fw-bolder fw-light dark-text text-center">It's on the BalochChain.</h1>
 		</div>
 	</Pagepart>
