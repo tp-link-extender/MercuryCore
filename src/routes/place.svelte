@@ -1,9 +1,12 @@
 <script lang="ts">
-	let place = {
-		name: "[MEGA] Simulator simulator: SIMULATOR UPDATE! (New code)",
+	import { page } from "$app/stores"
+
+	const name = $page.url.searchParams.get("name")
+	const by = $page.url.searchParams.get("by")
+
+	const place = {
 		img: "https://tr.rbxcdn.com/32f4b1e24aa4b914ad5f21539338a60b/150/150/Image/Png",
 		desc: "In this game you can simulate simulators while facing extremely intense and interesting situations!",
-		by: "Goodimo",
 	}
 
 	let joining = false
@@ -17,21 +20,20 @@
 </script>
 
 <svelte:head>
-	<title>{place.name} - Renova</title>
+	<title>{name} - Mercury</title>
 </svelte:head>
 
 <main>
 	<div class="d-flex mt-12">
 		<div class="flex flex-col me-3" id="thumbnail">
-			<img src={place.img} alt={place.name} />
+			<img src={place.img} alt={name} />
 			<p class="dark-text mt-2">
-				<b>By:</b> <a href="user?name={place.by}">{place.by}</a>
+				<b>By:</b> <a href="/user?name={by}">{by}</a>
 			</p>
 		</div>
 		<div class="flex flex-col">
-			<h2 class="dark-text">{place.name}</h2>
+			<h2 class="dark-text">{name}</h2>
 			<button id="play" on:click={join}><img src="play.svg" alt="Play button icon" /></button>
-			
 		</div>
 	</div>
 	<h4 class="dark-text mt-4">Description</h4>
@@ -50,7 +52,7 @@
 	
 	#play
 		border: none
-		width: 40%
+		width: 18rem
 		background: #24b170
 		height: 4rem
 		border-radius: 0.75rem
