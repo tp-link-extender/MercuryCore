@@ -137,7 +137,7 @@
 		<div class="section">
 			<div class="row">
 				{#each places as place}
-					<div class="place col col-6 col-sm-4 col-md-3 col-lg-2">
+					<div class="place col col-4 col-sm-3 col-md-2">
 						<a href="/place?name={place.name}&by={place.by}">
 							<img src={place.img} alt={place.name} />
 							<p class="text-center dark-text mt-1 mb-0">{place.name}</p>
