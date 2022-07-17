@@ -406,6 +406,7 @@ export default class Gradient {
 				this.connect()
 				return this
 			})
+		this.initGradient = undefined // stop errors
 	}
 	async connect() {
 		;(this.shaderFiles = {
