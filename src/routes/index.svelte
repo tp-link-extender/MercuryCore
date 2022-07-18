@@ -15,8 +15,8 @@
 
 		window.addEventListener("scroll", function () {
 			if (onPC) {
-				let distanceToTop = window.pageYOffset + onPC.getBoundingClientRect().top
-				let scrollTop = document.documentElement.scrollTop + window.innerHeight / 2
+				const distanceToTop = window.pageYOffset + onPC.getBoundingClientRect().top
+				const scrollTop = document.documentElement.scrollTop + window.innerHeight / 2
 
 				let opacity = 1
 
@@ -27,8 +27,8 @@
 			}
 
 			if (onMobile) {
-				let distanceToTop = window.pageYOffset + onMobile.getBoundingClientRect().top
-				let scrollTop = document.documentElement.scrollTop + window.innerHeight / 1.7
+				const distanceToTop = window.pageYOffset + onMobile.getBoundingClientRect().top
+				const scrollTop = document.documentElement.scrollTop + window.innerHeight / 1.7
 
 				let opacity = 0
 

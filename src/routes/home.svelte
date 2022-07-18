@@ -1,5 +1,5 @@
 <script lang="ts">
-	let friends = [
+	const friends = [
 		{
 			name: "Multako",
 			img: "https://tr.rbxcdn.com/372efbed7319824170124853399ed562/150/150/AvatarHeadshot/Png",
@@ -42,7 +42,7 @@
 		},
 	]
 
-	let places = [
+	const places = [
 		{
 			name: "Counter-Strike: Global Offensive",
 			img: "https://tr.rbxcdn.com/32f4b1e24aa4b914ad5f21539338a60b/150/150/Image/Jpeg",

@@ -6,8 +6,8 @@
 	export let fullwidth = false
 	let isInView: boolean
 
-	let side = fullwidth ? "" : right ? "right" : "left"
-	let width = fullwidth ? "full" : "half"
+	const side = fullwidth ? "" : right ? "right" : "left"
+	const width = fullwidth ? "full" : "half"
 </script>
 
 <div class={`container ${width}`} id={side} use:inview={{ unobserveOnEnter: true, rootMargin: "-20%" }} on:change={({ detail }) => (isInView = detail.inView)}>
