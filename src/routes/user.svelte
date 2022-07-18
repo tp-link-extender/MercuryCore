@@ -20,7 +20,7 @@
 
 <main class="container">
 	<div class="d-flex px-4">
-		<div id="imagebackground" class="me-4">
+		<div id="image-background" class="me-4">
 			<img src={user.img} alt={name} />
 		</div>
 		<div class="container">
@@ -71,7 +71,7 @@
 							user.following = !user.following
 							user.followerCount += user.following ? 1 : -1
 						}}
-						class={`btn ${user.following ? "btn-danger" : "btn-success"}`}
+						class={`btn ${user.following ? "btn-danger" : "btn-primary"}`}
 					>
 						{#if user.following}
 							Unfollow
@@ -89,7 +89,7 @@
 	main 
 		width: 60rem
 
-	#imagebackground
+	#image-background
 		width: 10rem
 		height: 10rem
 		background: var(--accent2)

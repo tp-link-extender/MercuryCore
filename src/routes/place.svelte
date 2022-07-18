@@ -33,7 +33,7 @@
 		</div>
 		<div class="flex flex-col">
 			<h2 class="dark-text">{name}</h2>
-			<button id="play" on:click={join}><img src="play.svg" alt="Play button icon" /></button>
+			<button id="join" class="bg-success" on:click={join}><img src="join.svg" alt="Join button icon" /></button>
 		</div>
 	</div>
 	<h4 class="dark-text mt-4">Description</h4>
@@ -50,10 +50,9 @@
 		img
 			border-radius: 0.75rem
 	
-	#play
+	#join
 		border: none
 		width: 18rem
-		background: #24b170
 		height: 4rem
 		border-radius: 0.75rem
 		padding: 0.75rem
