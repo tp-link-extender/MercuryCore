@@ -23,7 +23,7 @@
 	<title>{name} - Mercury</title>
 </svelte:head>
 
-<main>
+<main class="container">
 	<div class="d-flex mt-12">
 		<div class="flex flex-col me-3" id="thumbnail">
 			<img src={place.img} alt={name} />
@@ -45,7 +45,7 @@
 <style lang="sass">
 	main
 		width: 60rem
-		margin: auto
+
 	#thumbnail
 		img
 			border-radius: 0.75rem

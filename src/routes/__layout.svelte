@@ -47,8 +47,9 @@
 		overflow-x: hidden
 		height: 100%
 		#content
-			min-height: 70vh
+			min-height: 65vh
 			margin-top: 10vh
+			margin-bottom: 5vh
 
 	#bg
 		background-color: var(--background)
