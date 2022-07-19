@@ -32,6 +32,11 @@
 		<a class="dark-text h5" href="/privacy">Privacy Policy</a>
 		<a class="dark-text h5" href="/statistics">Statistics</a>
 	</footer>
+	<noscript>
+		<div id="nojs" class="position-fixed bottom-0 d-block">
+			<p class="dark-text text-center">Javascript is disabled. You may have a diminished experience while using Mercury.</p>
+		</div>
+	</noscript>
 </main>
 
 <style lang="sass">
@@ -72,4 +77,8 @@
 			&:hover
 				text-decoration: underline
 
+	#nojs
+		width: 100vw
+		background: rgba(0, 0, 0, 0.5)
+		transform: translate(0px, 1rem)
 </style>
