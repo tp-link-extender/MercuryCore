@@ -3,10 +3,12 @@
 		{
 			name: "Multako",
 			img: "https://tr.rbxcdn.com/372efbed7319824170124853399ed562/150/150/AvatarHeadshot/Png",
+			status: "Online",
 		},
 		{
 			name: "Lewin5",
 			img: "https://tr.rbxcdn.com/2daa018f45c826c666f21aefed82161f/150/150/AvatarHeadshot/Png",
+			status: "Developing",
 		},
 		{
 			name: "Taskmanager",
@@ -15,18 +17,22 @@
 		{
 			name: "Boxerpizza",
 			img: "https://tr.rbxcdn.com/4822f6355b367396437b7eed14048a7f/150/150/AvatarHeadshot/Png",
+			status: "Online",
 		},
 		{
 			name: "Wagness",
 			img: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
+			status: "Joined",
 		},
 		{
 			name: "Multako",
 			img: "https://tr.rbxcdn.com/372efbed7319824170124853399ed562/150/150/AvatarHeadshot/Png",
+			status: "Online",
 		},
 		{
 			name: "Lewin5",
 			img: "https://tr.rbxcdn.com/2daa018f45c826c666f21aefed82161f/150/150/AvatarHeadshot/Png",
+			status: "Developing",
 		},
 		{
 			name: "Taskmanager",
@@ -35,10 +41,12 @@
 		{
 			name: "Boxerpizza",
 			img: "https://tr.rbxcdn.com/4822f6355b367396437b7eed14048a7f/150/150/AvatarHeadshot/Png",
+			status: "Online",
 		},
 		{
 			name: "Wagness",
 			img: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
+			status: "Joined",
 		},
 	]
 
@@ -104,6 +112,13 @@
 			by: "Heliodex",
 		},
 	]
+
+	// explicitly any to prevent warnings
+	const statusColours: any = {
+		Online: "bg-info",
+		Joined: "bg-success",
+		Developing: "bg-warning",
+	}
 </script>
 
 <svelte:head>
@@ -114,7 +129,7 @@
 	<div class="top">
 		<div class="d-flex">
 			<div id="pfp">
-				<img src="https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png" alt="exelexeye" />
+				<img src="https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png" alt="You" />
 			</div>
 			<h1 class="text-center dark-text">Hi, Mercury!</h1>
 		</div>
@@ -124,8 +139,15 @@
 		<div class="d-flex">
 			{#each friends as friend}
 				<a class="friend" href="/user?name={friend.name}">
-					<div class="imagebackground">
-						<img src={friend.img} alt={friend.name} />
+					<div class="position-relative overflow-hidden">
+						<div class="image-background">
+							<img src={friend.img} alt={friend.name} />
+						</div>
+						{#if friend.status}
+							<span class={`position-absolute bottom-0 end-0 badge rounded-circle ${statusColours[friend.status]}`}>
+								<span class="visually-hidden">{friend.status}</span>
+							</span>
+						{/if}
 					</div>
 					<p class="text-center dark-text mt-1 mb-0">{friend.name}</p>
 				</a>
@@ -176,15 +198,15 @@
 			text-decoration: none
 			margin-right: 1rem
 			height: 10rem
-			.imagebackground
+			.badge
+				padding: 0.75rem
+			.image-background
 				background: var(--accent2)
 				border-radius: 100%
 				margin: auto
 				img
 					height: 7rem
-			img
-				border-radius: 100%
-
+					border-radius: 100%
 	.place
 		border-radius: 0.5rem
 		padding: 0.5rem
