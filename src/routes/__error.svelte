@@ -20,7 +20,7 @@
 	export let error: any
 </script>
 
-<div class="c">
+<div id="all">
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center dark-text">
 	
 		<h1 class="dark-text">Error {status}</h1>
@@ -29,7 +29,7 @@
 </div>
 
 <style lang="sass">
-	.c
+	#all
 		padding: 25vh 0
 
 	#info

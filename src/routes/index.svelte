@@ -45,7 +45,7 @@
 	<title>Mercury - Mercury</title>
 </svelte:head>
 
-<main>
+<div id="all">
 	<canvas id="gradient-canvas" class="position-relative" />
 
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
@@ -153,7 +153,7 @@
 			<h1 class="fw-bolder fw-light dark-text text-center">It's on the BalochChain.</h1>
 		</div>
 	</Pagepart>
-</main>
+</div>
 
 <style lang="sass">
 	#gradient-canvas
@@ -195,9 +195,7 @@
 	img
 		width: 100%
 
-			
-	
-	main
+	#all
 		margin-top: -10vh
 		background: rgba(0, 0, 0, 0)
 </style>

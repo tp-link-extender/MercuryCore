@@ -125,7 +125,7 @@
 	<title>Home - Mercury</title>
 </svelte:head>
 
-<main class="container">
+<div class="container">
 	<div class="top">
 		<div class="d-flex">
 			<div id="pfp">
@@ -170,10 +170,10 @@
 		</div>
 	</div>
 	<br /><br />
-</main>
+</div>
 
 <style lang="sass">
-	main
+	.container
 		max-width: 60rem
 		font-size: 0.9rem
 
