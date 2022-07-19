@@ -23,7 +23,7 @@
 	<title>{name} - Mercury</title>
 </svelte:head>
 
-<main class="container">
+<div class="container">
 	<div class="d-flex mt-12">
 		<div class="flex flex-col me-3" id="thumbnail">
 			<img src={place.img} alt={name} />
@@ -40,10 +40,10 @@
 	<p class="dark-text">
 		{place.desc}
 	</p>
-</main>
+</div>
 
 <style lang="sass">
-	main
+	.container
 		width: 60rem
 
 	#thumbnail

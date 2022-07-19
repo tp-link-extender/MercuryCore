@@ -4,7 +4,7 @@
 
 <h1 class="text-center dark-text">Login</h1>
 
-<div class="container tab-pane mt-5">
+<div class="container mt-5">
 	<form class="m-auto">
 		<div class="mb-3">
 			<input type="text" class="form-control" placeholder="Username" />
@@ -21,7 +21,7 @@
 </div>
 
 <style lang="sass">
-	.tab-pane
+	.container
 		background: var(--accent2)
 		max-width: 30rem
 		border-radius: 1rem

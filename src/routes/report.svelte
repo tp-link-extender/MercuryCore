@@ -4,11 +4,11 @@
 
 <h1 class="text-center dark-text">Report</h1>
 
-<main class="container mt-5">
+<div class="container mt-5">
 	<p class="dark-text">Tell us how you think Ghazan is breaking the rules.</p>
-</main>
+</div>
 
 <style lang="sass">
-	main 
+	.container
 		width: 50rem
 </style>

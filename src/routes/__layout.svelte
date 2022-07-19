@@ -8,16 +8,20 @@
 		<a class="navbar-brand" href="/">Mercury</a>
 		<div class="d-flex">
 			<a type="button" href="/home" class="btn my-2 my-sm-0 dark-text">Home</a>
+			<a type="button" href="/discover" class="btn my-2 my-sm-0 dark-text">Discover</a>
+			<a type="button" href="/catalog" class="btn my-2 my-sm-0 dark-text">Catalog</a>
+		</div>
+		<div class="d-flex">
 			<a type="button" href="/login" class="btn btn-success my-2 my-sm-0">Login</a>
 		</div>
 	</div>
 </nav>
 
-<main>
+<div id="all">
 	<div id="bg" class="position-fixed" />
-	<div id="content">
+	<main>
 		<slot />
-	</div>
+	</main>
 
 	<footer class="position-relative text-center">
 		<a class="dark-text h4" href="/">Mercury</a>
@@ -37,7 +41,7 @@
 			<p class="dark-text text-center">Javascript is disabled. You may have a diminished experience while using Mercury.</p>
 		</div>
 	</noscript>
-</main>
+</div>
 
 <style lang="sass">
 	nav
@@ -48,10 +52,10 @@
 		a
 			margin-right: 0.5rem
 
-	main
+	#all
 		overflow-x: hidden
 		height: 100%
-		#content
+		main
 			min-height: 65vh
 			margin-top: 10vh
 			margin-bottom: 5vh

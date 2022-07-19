@@ -4,7 +4,7 @@
 
 <h1 class="text-center dark-text">About</h1>
 
-<main class="container mt-5">
+<div class="container mt-5">
 	<p class="dark-text">
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Laoreet non curabitur gravida arcu ac tortor. Tellus molestie nunc non blandit. Metus vulputate eu scelerisque felis imperdiet proin fermentum. Facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui. Posuere urna nec tincidunt praesent semper feugiat nibh. Fermentum leo vel orci porta non pulvinar neque laoreet. Massa vitae tortor condimentum lacinia. Sit amet nulla facilisi morbi tempus iaculis urna id volutpat. Nunc lobortis mattis aliquam faucibus. Ullamcorper eget nulla facilisi etiam. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec.<br />
 		<br />
@@ -16,9 +16,9 @@
 		<br />
 		Ut tortor pretium viverra suspendisse potenti. Ac ut consequat semper viverra. Enim sit amet venenatis urna cursus eget. Egestas maecenas pharetra convallis posuere morbi leo. Magna sit amet purus gravida. Nunc lobortis mattis aliquam faucibus purus in. Velit ut tortor pretium viverra. Auctor elit sed vulputate mi. Elementum facilisis leo vel fringilla est ullamcorper eget nulla. Eget gravida cum sociis natoque penatibus et.
 	</p>
-</main>
+</div>
 
 <style lang="sass">
-	main 
+	.container
 		width: 50rem
 </style>
