@@ -27,17 +27,17 @@
 	<div class="d-flex mt-12">
 		<div class="flex flex-col me-3" id="thumbnail">
 			<img src={place.img} alt={name} />
-			<p class="dark-text mt-2">
+			<p class="light-text mt-2">
 				<b>By:</b> <a href="/user?name={by}">{by}</a>
 			</p>
 		</div>
 		<div class="flex flex-col">
-			<h2 class="dark-text">{name}</h2>
+			<h2 class="light-text">{name}</h2>
 			<button id="join" class="bg-success" on:click={join}><img src="join.svg" alt="Join button icon" /></button>
 		</div>
 	</div>
-	<h4 class="dark-text mt-4">Description</h4>
-	<p class="dark-text">
+	<h4 class="light-text mt-4">Description</h4>
+	<p class="light-text">
 		{place.desc}
 	</p>
 </div>

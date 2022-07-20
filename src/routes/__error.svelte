@@ -1,7 +1,3 @@
-<svelte:head>
-	<title>Error {status} - Mercury</title>
-</svelte:head>
-
 <script lang="ts" context="module">
 	export function load({ error, status }: { error: object; status: number }) {
 		return {
@@ -20,11 +16,14 @@
 	export let error: any
 </script>
 
+<svelte:head>
+	<title>Error {status} - Mercury</title>
+</svelte:head>
+
 <div id="all">
-	<div id="info" class="container d-flex flex-column justify-content-center align-items-center dark-text">
-	
-		<h1 class="dark-text">Error {status}</h1>
-			{error["message"]}
+	<div id="info" class="container d-flex flex-column justify-content-center align-items-center light-text">
+		<h1 class="light-text">Error {status}</h1>
+		{error["message"]}
 	</div>
 </div>
 
