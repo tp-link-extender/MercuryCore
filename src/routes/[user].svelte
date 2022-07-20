@@ -1,31 +1,46 @@
-<script lang="ts">
-	import { page } from "$app/stores"
+<script context="module" lang="ts">
+	export async function load({ params }: { params: any }) {
 
-	const name = $page.url.searchParams.get("name")
+		if (false) { // ig do database query with fetch() to see if user exists
+			return {
+				props: {
+					user: {
+						name: params.user,
+						img: "https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png",
+						bio: "Cc bag look nice but the birkin bag look way more heavy",
+						followerCount: 420,
+						friendCount: 21,
+						friends: true,
+						following: true,
+						pendingRequest: false,
+					},
+				},
+			}
+		}
 
-	const user = {
-		img: "https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png",
-		bio: "Cc bag look nice but the birkin bag look way more heavy",
-		followerCount: 420,
-		friendCount: 21,
-		friends: true,
-		following: true,
-		pendingRequest: false,
+		return {
+			status: 404,
+			error: `Not found: /${params.user}`,
+		}
 	}
 </script>
 
+<script lang="ts">
+	export let user: any
+</script>
+
 <svelte:head>
-	<title>{name} - Mercury</title>
+	<title>{user.name} - Mercury</title>
 </svelte:head>
 
 <main class="container">
 	<div class="d-flex px-4">
 		<div id="image-background" class="me-4">
-			<img src={user.img} alt={name} />
+			<img src={user.img} alt={user.name} />
 		</div>
 		<div class="container">
 			<div>
-				<h1 class="light-text">{name}</h1>
+				<h1 class="light-text">{user.name}</h1>
 				<em class="light-text">"{user.bio}"</em>
 			</div>
 			<br />
