@@ -25,20 +25,20 @@
 		</div>
 		<div class="container">
 			<div>
-				<h1 class="dark-text">{name}</h1>
-				<em class="dark-text">"{user.bio}"</em>
+				<h1 class="light-text">{name}</h1>
+				<em class="light-text">"{user.bio}"</em>
 			</div>
 			<br />
 			<div class="d-flex">
-				<div class="dark-text text-center">
+				<div class="light-text text-center">
 					Followers
-					<h4 class="dark-text">
+					<h4 class="light-text">
 						{user.followerCount}
 					</h4>
 				</div>
-				<div class="dark-text text-center ms-4">
+				<div class="light-text text-center ms-4">
 					Friends
-					<h4 class="dark-text">
+					<h4 class="light-text">
 						{user.friendCount}
 					</h4>
 				</div>

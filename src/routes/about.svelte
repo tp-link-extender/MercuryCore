@@ -2,10 +2,10 @@
 	<title>About - Mercury</title>
 </svelte:head>
 
-<h1 class="text-center dark-text">About</h1>
+<h1 class="text-center light-text">About</h1>
 
 <div class="container mt-5">
-	<p class="dark-text">
+	<p class="light-text">
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Laoreet non curabitur gravida arcu ac tortor. Tellus molestie nunc non blandit. Metus vulputate eu scelerisque felis imperdiet proin fermentum. Facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui. Posuere urna nec tincidunt praesent semper feugiat nibh. Fermentum leo vel orci porta non pulvinar neque laoreet. Massa vitae tortor condimentum lacinia. Sit amet nulla facilisi morbi tempus iaculis urna id volutpat. Nunc lobortis mattis aliquam faucibus. Ullamcorper eget nulla facilisi etiam. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec.<br />
 		<br />
 		Et odio pellentesque diam volutpat. Adipiscing bibendum est ultricies integer quis auctor. Dui sapien eget mi proin sed libero. Integer vitae justo eget magna fermentum iaculis eu. Est velit egestas dui id ornare arcu. Sed vulputate odio ut enim blandit. Elit sed vulputate mi sit amet mauris commodo quis. Magnis dis parturient montes nascetur. Sed viverra ipsum nunc aliquet bibendum enim. Tristique et egestas quis ipsum. Eget aliquet nibh praesent tristique magna sit amet purus gravida. Cum sociis natoque penatibus et magnis dis parturient montes. Enim lobortis scelerisque fermentum dui faucibus in ornare. Vitae congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque. Vitae purus faucibus ornare suspendisse sed nisi. Amet justo donec enim diam vulputate ut pharetra. Adipiscing tristique risus nec feugiat in fermentum. Viverra maecenas accumsan lacus vel facilisis volutpat. Orci a scelerisque purus semper eget duis at.<br />

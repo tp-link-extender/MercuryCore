@@ -2,7 +2,7 @@
 	<title>Login - Mercury</title>
 </svelte:head>
 
-<h1 class="text-center dark-text">Login</h1>
+<h1 class="text-center light-text">Login</h1>
 
 <div class="container mt-5">
 	<form class="m-auto">
@@ -14,7 +14,7 @@
 		</div>
 		<div class="mb-3 form-check">
 			<input type="checkbox" class="form-check-input" id="rememberMe" />
-			<label class="form-check-label dark-text" for="rememberMe">Remember me</label>
+			<label class="form-check-label light-text" for="rememberMe">Remember me</label>
 		</div>
 		<button type="submit" class="container-fluid btn btn-primary">Log in</button>
 	</form>
