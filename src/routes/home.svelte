@@ -126,20 +126,18 @@
 </svelte:head>
 
 <div class="container">
-	<div class="top">
-		<div class="d-flex">
-			<div id="pfp">
-				<img src="https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png" alt="You" />
-			</div>
-			<h1 class="text-center dark-text">Hi, Mercury!</h1>
+	<div class="top d-flex px-2">
+		<div id="pfp">
+			<img src="https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png" alt="You" />
 		</div>
+		<h1 class="text-center light-text">Hi, Mercury!</h1>
 	</div>
-	<div id="friends" class="row mt-5">
-		<h4 class="dark-text">Friends</h4>
-		<div class="d-flex">
+	<div class="mt-5">
+		<h4 class="light-text">Friends</h4>
+		<div id="friends" class="d-flex">
 			{#each friends as friend}
-				<a class="friend" href="/user?name={friend.name}">
-					<div class="position-relative overflow-hidden">
+				<a class="friend px-2 mb-2 text-center light-text" href="/{friend.name}">
+					<div class="position-relative mb-2">
 						<div class="image-background">
 							<img src={friend.img} alt={friend.name} />
 						</div>
@@ -149,24 +147,20 @@
 							</span>
 						{/if}
 					</div>
-					<p class="text-center dark-text mt-1 mb-0">{friend.name}</p>
+					{friend.name}
 				</a>
 			{/each}
 		</div>
 	</div>
-	<div class="row mt-5">
-		<h4 class="dark-text">Recently joined</h4>
-		<div class="section">
-			<div class="row">
-				{#each places as place}
-					<div class="place col col-4 col-sm-3 col-md-2">
-						<a href="/place?name={place.name}&by={place.by}">
-							<img src={place.img} alt={place.name} />
-							<p class="text-center dark-text mt-1 mb-0">{place.name}</p>
-						</a>
-					</div>
-				{/each}
-			</div>
+	<div class="mt-5">
+		<h4 class="light-text">Recently joined</h4>
+		<div class="row p-0">
+			{#each places as place}
+				<a class="place col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/place?name={place.name}&by={place.by}">
+					<img src={place.img} class="mb-2" alt={place.name} />
+					{place.name}
+				</a>
+			{/each}
 		</div>
 	</div>
 	<br /><br />
@@ -178,7 +172,6 @@
 		font-size: 0.9rem
 
 	.top
-		margin-left: 1rem
 		width: fit-content
 		#pfp
 			background: var(--accent2)
@@ -192,28 +185,26 @@
 	.row
 		margin: 0
 
-	#friends div
+	#friends
 		overflow-x: auto
 		.friend 
 			text-decoration: none
-			margin-right: 1rem
-			height: 10rem
 			.badge
 				padding: 0.75rem
 			.image-background
 				background: var(--accent2)
-				border-radius: 100%
+				width: 7rem
+				height: 7rem
+				border-radius: 50%
 				margin: auto
 				img
-					height: 7rem
-					border-radius: 100%
+					height: 100%
+					border-radius: 50%
 	.place
 		border-radius: 0.5rem
-		padding: 0.5rem
 		margin-bottom: 1rem
-		a
-			text-decoration: none
-		img, p
+		text-decoration: none
+		img
 			width: 100%
 
 	.place img
