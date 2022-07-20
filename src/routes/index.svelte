@@ -50,10 +50,10 @@
 
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
 		<svg viewBox="0 0 100 12" xmlns="http://www.w3.org/2000/svg">
-			<text x="50" y="9" id="title" text-anchor="middle" font-size="9" fill="none" stroke-width=".15" stroke="#fff">Mercury</text>
+			<text x="50" y="9" id="title" text-anchor="middle" font-size="9" fill="none" stroke-width=".15" stroke="var(--light-text)">Mercury</text>
 		</svg>
-		<p class="lead text-light">Endless possibilities. New features. Same nostalgia.</p>
-		<span id="beta" class="badge text-white">Closed Beta</span>
+		<p class="lead light-text">Endless possibilities. New features. Same nostalgia.</p>
+		<span class="badge light-text">Closed Beta</span>
 	</div>
 
 	<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
@@ -65,16 +65,16 @@
 		<ParallaxLayer offset={0} rate={-2}>
 			<Pagepart right>
 				<div class="text">
-					<h1 class="fw-bolder fw-light dark-text">Next-generation technologies</h1>
-					<h4 class="dark-text">No revival even comes close as a rival.</h4>
+					<h1 class="fw-bolder fw-light light-text">Next-generation technologies</h1>
+					<h4 class="light-text">No revival even comes close as a rival.</h4>
 				</div>
 			</Pagepart>
 		</ParallaxLayer>
 		<ParallaxLayer offset={1} rate={0}>
 			<Pagepart>
 				<div class="text">
-					<h1 class="fw-bolder fw-light dark-text">Lots of clients</h1>
-					<h4 class="dark-text">Ranging from 1887 to 2087.</h4>
+					<h1 class="fw-bolder fw-light light-text">Lots of clients</h1>
+					<h4 class="light-text">Ranging from 1887 to 2087.</h4>
 				</div>
 			</Pagepart>
 		</ParallaxLayer>
@@ -86,7 +86,7 @@
 	</Parallax>
 
 	<div in:fly={{ x: -300, duration: 1000 }} id="overlap">
-		<h1 id="ultimate" class="fw-bolder fw-light dark-text text-center d-flex flex-column">The ultimate cross-platform private server.</h1>
+		<h1 id="ultimate" class="fw-bolder fw-light light-text text-center d-flex flex-column">The ultimate cross-platform private server.</h1>
 		<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 			<ParallaxLayer offset={0} rate={0}>
 				<Pagepart fullwidth>
@@ -127,12 +127,12 @@
 		</ParallaxLayer>
 		<ParallaxLayer offset={0} rate={-2}>
 			<Pagepart right>
-				<h1 class="fw-bolder fw-light dark-text">Approximately 60,000 better than Polygon</h1>
+				<h1 class="fw-bolder fw-light light-text">Approximately 60,000 better than Polygon</h1>
 			</Pagepart>
 		</ParallaxLayer>
 		<ParallaxLayer offset={1} rate={0}>
 			<Pagepart>
-				<h1 class="fw-bolder fw-light dark-text">Better website, too</h1>
+				<h1 class="fw-bolder fw-light light-text">Better website, too</h1>
 			</Pagepart>
 		</ParallaxLayer>
 		<ParallaxLayer offset={1} rate={-2}>
@@ -145,12 +145,12 @@
 	<Pagepart fullwidth>
 		<div in:fly={{ x: -300, duration: 1000 }}>
 			<img src="/devices.webp" alt="Devices playing Mercury" />
-			<h1 class="fw-bolder fw-light dark-text text-center">Includes Web3 Technology.</h1>
+			<h1 class="fw-bolder fw-light light-text text-center">Includes Web3 Technology.</h1>
 		</div>
 		<div class="px-5" />
 		<div in:fly={{ x: 300, duration: 1000 }}>
 			<img src="/devices.webp" alt="Devices playing Mercury" />
-			<h1 class="fw-bolder fw-light dark-text text-center">It's on the BalochChain.</h1>
+			<h1 class="fw-bolder fw-light light-text text-center">It's on the BalochChain.</h1>
 		</div>
 	</Pagepart>
 </div>
@@ -158,10 +158,6 @@
 <style lang="sass">
 	#gradient-canvas
 		height: 100vh
-		--gradient-color-1: #161a92
-		--gradient-color-2: #2b0574
-		--gradient-color-3: #6c2fb9
-		--gradient-color-4: #060e25
 		width: 100vw
 	
 	#info
@@ -170,8 +166,8 @@
 		position: relative
 		#title
 			font-weight: bold
-		#beta
-			outline: 2px solid white
+		.badge
+			outline: 2px solid var(--light-text)
 			font-size: 0.8rem
 
 	h1, h4
