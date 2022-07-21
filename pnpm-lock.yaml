@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@popperjs/core': ^2.11.5
+  '@prisma/client': ^4.1.0
   '@sveltejs/adapter-auto': next
   '@sveltejs/adapter-static': ^1.0.0-next.35
   '@sveltejs/kit': next
@@ -23,6 +24,7 @@ specifiers:
 
 dependencies:
   '@popperjs/core': 2.11.5
+  '@prisma/client': 4.1.0_prisma@4.1.0
   '@sveltejs/adapter-static': 1.0.0-next.37
   esbuild: 0.14.49
   svelte-adapter-bun: 0.3.0
@@ -32,7 +34,7 @@ dependencies:
 
 devDependencies:
   '@sveltejs/adapter-auto': 1.0.0-next.63
-  '@sveltejs/kit': 1.0.0-next.385_svelte@3.49.0+vite@3.0.0
+  '@sveltejs/kit': 1.0.0-next.389_svelte@3.49.0+vite@3.0.0
   bootstrap: 5.2.0-beta1_@popperjs+core@2.11.5
   prisma: 4.1.0
   sass: 1.53.0
@@ -150,10 +152,27 @@ packages:
   /@popperjs/core/2.11.5:
     resolution: {integrity: sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==}
 
+  /@prisma/client/4.1.0_prisma@4.1.0:
+    resolution: {integrity: sha512-MvfPGAd42vHTiCYxwS6N+2U3F+ukoJ48D2QRnX1zSPJHBkh1CBtshl75daKzvVfgQwSouzSQeugKDej5di+E/g==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.1.0-48.8d8414deb360336e4698a65aa45a1fbaf1ce13d8
+      prisma: 4.1.0
+    dev: false
+
+  /@prisma/engines-version/4.1.0-48.8d8414deb360336e4698a65aa45a1fbaf1ce13d8:
+    resolution: {integrity: sha512-cRRJwpHFGFJZvtHbY3GZjMffNBEjjZk68ztn+S2hDgPCGB4H66IK26roK94GJxBodSehwRJ0wGyebC2GoIH1JQ==}
+    dev: false
+
   /@prisma/engines/4.1.0:
     resolution: {integrity: sha512-quqHXD3P83NBLVtRlts4SgKHmqgA8GMiyDTJ7af03Wg0gl6F5t65mBYvIuwmD+52vHm42JtIsp/fAO9YIV0JBA==}
     requiresBuild: true
-    dev: true
 
   /@rollup/pluginutils/4.2.1:
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
@@ -207,8 +226,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.385_svelte@3.49.0+vite@3.0.0:
-    resolution: {integrity: sha512-KPzzagH0EG7kceDDQC7w+U9OZdQ5rV4ZOKsobGNh8Rex59dkOXGdqvthGni+4WMppR9XEsM7T1Rtese6R4Y+YA==}
+  /@sveltejs/kit/1.0.0-next.389_svelte@3.49.0+vite@3.0.0:
+    resolution: {integrity: sha512-s1FGIoOlUHF4HJ3mnMM5ZlWOYpdoh++HSKGkKZVrm3FhHNTC9NZzQG1N8kp6liypZS6lMMmbV9jo7X3MjDCFIg==}
     engines: {node: '>=16.9'}
     hasBin: true
     peerDependencies:
@@ -1430,7 +1449,6 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 4.1.0
-    dev: true
 
   /psl/1.9.0:
     resolution: {integrity: sha512-E/ZsdU4HLs/68gYzgGTkMicWTLPdAftJLfJFlLUAAKZGkStNU72sZjT66SnMDVOfOWY/YAoiD7Jxa9iHvngcag==}
