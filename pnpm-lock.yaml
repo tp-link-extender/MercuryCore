@@ -1,11 +1,13 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@popperjs/core': ^2.11.5
   '@sveltejs/adapter-auto': next
   '@sveltejs/adapter-static': ^1.0.0-next.35
   '@sveltejs/kit': next
   bootstrap: ^5.2.0-beta1
   esbuild: ^0.14.49
+  prisma: ^4.1.0
   sass: ^1.53.0
   svelte: ^3.44.0
   svelte-adapter-bun: ^0.3.0
@@ -20,6 +22,7 @@ specifiers:
   vite: ^3.0.0
 
 dependencies:
+  '@popperjs/core': 2.11.5
   '@sveltejs/adapter-static': 1.0.0-next.37
   esbuild: 0.14.49
   svelte-adapter-bun: 0.3.0
@@ -28,9 +31,10 @@ dependencies:
   sveltekit-adapter-html-like: 0.2.1
 
 devDependencies:
-  '@sveltejs/adapter-auto': 1.0.0-next.61
-  '@sveltejs/kit': 1.0.0-next.377_svelte@3.49.0+vite@3.0.0
-  bootstrap: 5.2.0-beta1
+  '@sveltejs/adapter-auto': 1.0.0-next.63
+  '@sveltejs/kit': 1.0.0-next.385_svelte@3.49.0+vite@3.0.0
+  bootstrap: 5.2.0-beta1_@popperjs+core@2.11.5
+  prisma: 4.1.0
   sass: 1.53.0
   svelte: 3.49.0
   svelte-check: 2.8.0_sass@1.53.0+svelte@3.49.0
@@ -143,6 +147,14 @@ packages:
       fastq: 1.13.0
     dev: true
 
+  /@popperjs/core/2.11.5:
+    resolution: {integrity: sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==}
+
+  /@prisma/engines/4.1.0:
+    resolution: {integrity: sha512-quqHXD3P83NBLVtRlts4SgKHmqgA8GMiyDTJ7af03Wg0gl6F5t65mBYvIuwmD+52vHm42JtIsp/fAO9YIV0JBA==}
+    requiresBuild: true
+    dev: true
+
   /@rollup/pluginutils/4.2.1:
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
     engines: {node: '>= 8.0.0'}
@@ -151,27 +163,27 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /@sveltejs/adapter-auto/1.0.0-next.61:
-    resolution: {integrity: sha512-0DwAx4BHhbY4irMx6GyT7cDhH22udUoWkeVHEIhmDtCAfjjzlqfWmyY9qt46Gjp8EApIBrXD2rJB6lJy4jYurQ==}
+  /@sveltejs/adapter-auto/1.0.0-next.63:
+    resolution: {integrity: sha512-9KguXwROEJMyyoKrsizAilVSmtfWxEDn2Hbxk44SP8Kj5cgN7tFCxzbL2kmmqyV1CO1tOh5iNC2oWbyTfikXmw==}
     dependencies:
-      '@sveltejs/adapter-cloudflare': 1.0.0-next.29
-      '@sveltejs/adapter-netlify': 1.0.0-next.69
-      '@sveltejs/adapter-vercel': 1.0.0-next.63
+      '@sveltejs/adapter-cloudflare': 1.0.0-next.30
+      '@sveltejs/adapter-netlify': 1.0.0-next.70
+      '@sveltejs/adapter-vercel': 1.0.0-next.65
     transitivePeerDependencies:
       - encoding
       - supports-color
     dev: true
 
-  /@sveltejs/adapter-cloudflare/1.0.0-next.29:
-    resolution: {integrity: sha512-bm95d2pDEExy1cSPqvWxvftHEJz57krLlW3DdGtxbXWLr8M+WZbCEe1AqsnGycaFXUsn0GZ77IWNrHqcGxwvRg==}
+  /@sveltejs/adapter-cloudflare/1.0.0-next.30:
+    resolution: {integrity: sha512-jIclgb58n3Uoo8TTudXSa7wmLP7Rn/ESLQS+zOUe0xsti5DG/eDhELTnSvkoSa2lJY21ym5rej/GSERRyeuBVw==}
     dependencies:
       '@cloudflare/workers-types': 3.14.1
       esbuild: 0.14.49
       worktop: 0.8.0-next.14
     dev: true
 
-  /@sveltejs/adapter-netlify/1.0.0-next.69:
-    resolution: {integrity: sha512-nIMtadrsnVemVDIuuqHSDxX/7xRypk+X2ewHY+JR/ONV853lUJ1r9AaXF9+XXPIqxGMKStsWm5GzgGNmM8ID2g==}
+  /@sveltejs/adapter-netlify/1.0.0-next.70:
+    resolution: {integrity: sha512-lIXY6KIgIFBz4+mdvilx9Ny8oFV7T2iVTKLirJayoI/SqPWGAcxklvWvjGfS4QT8rS9pWKDaKRUQM4M/gl8LlA==}
     dependencies:
       '@iarna/toml': 2.2.5
       esbuild: 0.14.49
@@ -185,8 +197,8 @@ packages:
       tiny-glob: 0.2.9
     dev: false
 
-  /@sveltejs/adapter-vercel/1.0.0-next.63:
-    resolution: {integrity: sha512-awb1zmT+hAAHv+x7gOY/8Ch64spxKX6H/DQb+S/VGYRQ6i1WvNgsBUF9vk88KR//7tUY8y/xiTLAb99hJ57WhA==}
+  /@sveltejs/adapter-vercel/1.0.0-next.65:
+    resolution: {integrity: sha512-RV3HL7Ic7pGgIoBSHPwN1pBX96Km1X683oHImPHAKX9h/WOvJZ3bY5+IWNRcR8tx9rPB5gfMRg+msvPSBr3RVw==}
     dependencies:
       '@vercel/nft': 0.20.1
       esbuild: 0.14.49
@@ -195,8 +207,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.377_svelte@3.49.0+vite@3.0.0:
-    resolution: {integrity: sha512-DH2v2yUBUuDZ7vzjPXUd/yt1AMR3BIkZN0ubLAvS2C+q5Wbvk7ZvAJhfPZ3OYc3ZpQXe4ZGEcptOjvEYvd1lLA==}
+  /@sveltejs/kit/1.0.0-next.385_svelte@3.49.0+vite@3.0.0:
+    resolution: {integrity: sha512-KPzzagH0EG7kceDDQC7w+U9OZdQ5rV4ZOKsobGNh8Rex59dkOXGdqvthGni+4WMppR9XEsM7T1Rtese6R4Y+YA==}
     engines: {node: '>=16.9'}
     hasBin: true
     peerDependencies:
@@ -368,10 +380,12 @@ packages:
       file-uri-to-path: 1.0.0
     dev: true
 
-  /bootstrap/5.2.0-beta1:
+  /bootstrap/5.2.0-beta1_@popperjs+core@2.11.5:
     resolution: {integrity: sha512-6qbgs177WZEFY4SLQUq3tEHayYG80nfDmyTpdKi0MJqRMdS+HAoq24+YKfx6wf+nHY0rx8zrh477J1lFu4WzOA==}
     peerDependencies:
       '@popperjs/core': ^2.11.5
+    dependencies:
+      '@popperjs/core': 2.11.5
     dev: true
 
   /brace-expansion/1.1.11:
@@ -1408,6 +1422,15 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: false
+
+  /prisma/4.1.0:
+    resolution: {integrity: sha512-iwqpAT6In1uvMSwQAM3PqmaBdhh2OaQ/2t+n3RjpW4vAKP3R7E1T34FZUU4zGOWtMWm5dt0sPThQkT/h87r6gw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 4.1.0
+    dev: true
 
   /psl/1.9.0:
     resolution: {integrity: sha512-E/ZsdU4HLs/68gYzgGTkMicWTLPdAftJLfJFlLUAAKZGkStNU72sZjT66SnMDVOfOWY/YAoiD7Jxa9iHvngcag==}
