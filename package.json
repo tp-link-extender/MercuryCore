@@ -14,6 +14,7 @@
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/kit": "next",
     "bootstrap": "^5.2.0-beta1",
+    "prisma": "^4.1.0",
     "sass": "^1.53.0",
     "svelte": "^3.44.0",
     "svelte-check": "^2.7.1",
@@ -25,6 +26,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@popperjs/core": "^2.11.5",
     "@sveltejs/adapter-static": "^1.0.0-next.35",
     "esbuild": "^0.14.49",
     "svelte-adapter-bun": "^0.3.0",
