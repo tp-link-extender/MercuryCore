@@ -15,36 +15,34 @@ datasource db {
 // Users & Groups
 
 model User {
-    username    String   @unique
-    displayname String
-    bio         String
-    image       String
-    password    String
-    created     DateTime @default(now())
-    lastOnline  DateTime @default(now())
-    currency    Int      @default(0)
-    // groupsOwned  Group[]
-    // groupsJoined UserInGroup[]
-    places      Place[]
+    username        String   @unique
+    displayname     String
+    bio             String
+    image           String
+    password        String
+    created         DateTime @default(now())
+    lastOnline      DateTime @default(now())
+    Status          String?
+    currency        Int      @default(0)
+    friends         User[]   @relation("friends")
+    friendsRelation User[]   @relation("friends")
+    // groupsOwned  Group[] @relation("owner")
+    // groupsJoined Group[] @relation("member")
+    places          Place[]
     // posts       Post[]
+
+    @@id([username])
 }
 
 // model Group {
 //     name          String        @unique
-//     owner         User          @relation(fields: [ownerUsername], references: [username])
+//     owner         User          @relation(name: "owner", fields: [ownerUsername], references: [username])
 //     ownerUsername String
-//     members       UserInGroup[]
+//     members       User[] @relation("member")
 //     places        GroupPlace[]
 // 	posts         GroupPost[]
-// }
 
-// model UserInGroup {
-//     user         User   @relation(fields: [userUsername], references: [username])
-//     group        Group  @relation(fields: [groupName], references: [name])
-//     userUsername String
-//     groupName    String
-
-//     @@id([userUsername, groupName])
+//     @@id([name])
 // }
 
 // Places
