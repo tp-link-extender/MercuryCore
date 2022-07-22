@@ -1,30 +1,3 @@
-<script context="module" lang="ts">
-	export async function load({ params }: { params: any }) {
-
-		if (false) { // ig do database query with fetch() to see if user exists
-			return {
-				props: {
-					user: {
-						name: params.user,
-						img: "https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png",
-						bio: "Cc bag look nice but the birkin bag look way more heavy",
-						followerCount: 420,
-						friendCount: 21,
-						friends: true,
-						following: true,
-						pendingRequest: false,
-					},
-				},
-			}
-		}
-
-		return {
-			status: 404,
-			error: `Not found: /${params.user}`,
-		}
-	}
-</script>
-
 <script lang="ts">
 	export let user: any
 </script>
