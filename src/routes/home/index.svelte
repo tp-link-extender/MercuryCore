@@ -50,68 +50,7 @@
 		},
 	]
 
-	const places = [
-		{
-			name: "Counter-Strike: Global Offensive",
-			img: "https://tr.rbxcdn.com/32f4b1e24aa4b914ad5f21539338a60b/150/150/Image/Jpeg",
-			owner: "Goodimo",
-		},
-		{
-			name: "CART RIDE INTO XLXI!",
-			img: "https://tr.rbxcdn.com/5e4943326d89e35ee7f3659acb79b95e/150/150/Image/Jpeg",
-			owner: "Wagness",
-		},
-		{
-			name: "[MEGA] The Underground War",
-			img: "https://tr.rbxcdn.com/64d1f6db8ef51761eac1580114833c60/512/512/Image/Jpeg",
-			owner: "Heliodex",
-		},
-		{
-			name: "Pinwind Bulders Coputer Coar",
-			img: "https://tr.rbxcdn.com/ae0736ae8dfe0e3a1cc80aead2f49836/150/150/Image/Jpeg",
-			owner: "Heliodex",
-		},
-		{
-			name: "Counter-Strike: Global Offensive",
-			img: "https://tr.rbxcdn.com/32f4b1e24aa4b914ad5f21539338a60b/150/150/Image/Jpeg",
-			owner: "Goodimo",
-		},
-		{
-			name: "CART RIDE INTO XLXI!",
-			img: "https://tr.rbxcdn.com/5e4943326d89e35ee7f3659acb79b95e/150/150/Image/Jpeg",
-			owner: "Wagness",
-		},
-		{
-			name: "[MEGA] The Underground War",
-			img: "https://tr.rbxcdn.com/64d1f6db8ef51761eac1580114833c60/512/512/Image/Jpeg",
-			owner: "Heliodex",
-		},
-		{
-			name: "Pinwind Bulders Coputer Coar",
-			img: "https://tr.rbxcdn.com/ae0736ae8dfe0e3a1cc80aead2f49836/150/150/Image/Jpeg",
-			owner: "Heliodex",
-		},
-		{
-			name: "Counter-Strike: Global Offensive",
-			img: "https://tr.rbxcdn.com/32f4b1e24aa4b914ad5f21539338a60b/150/150/Image/Jpeg",
-			owner: "Goodimo",
-		},
-		{
-			name: "CART RIDE INTO XLXI!",
-			img: "https://tr.rbxcdn.com/5e4943326d89e35ee7f3659acb79b95e/150/150/Image/Jpeg",
-			owner: "Wagness",
-		},
-		{
-			name: "[MEGA] The Underground War",
-			img: "https://tr.rbxcdn.com/64d1f6db8ef51761eac1580114833c60/512/512/Image/Jpeg",
-			owner: "Heliodex",
-		},
-		{
-			name: "Pinwind Bulders Coputer Coar",
-			img: "https://tr.rbxcdn.com/ae0736ae8dfe0e3a1cc80aead2f49836/150/150/Image/Jpeg",
-			owner: "Heliodex",
-		},
-	]
+	export let places: any
 
 	// explicitly any to prevent warnings
 	const statusColours: any = {
@@ -156,8 +95,8 @@
 		<h4 class="light-text">Recently joined</h4>
 		<div class="row p-0">
 			{#each places as place}
-				<a class="place col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/{place.owner}/{place.name}">
-					<img src={place.img} class="mb-2" alt={place.name} />
+				<a class="place col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/{place.ownerUsername}/{place.name}">
+					<img src={place.image} class="mb-2" alt={place.name} />
 					{place.name}
 				</a>
 			{/each}
