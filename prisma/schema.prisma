@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Sections are commented out, not yet implemented
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// Users & Groups
+
+model User {
+    username    String   @unique
+    displayname String
+    bio         String
+    password    String
+    created     DateTime @default(now())
+    lastOnline  DateTime @default(now())
+    currency    Int      @default(0)
+    // groupsOwned  Group[]
+    // groupsJoined UserInGroup[]
+    // places       Place[]
+    // posts       Post[]
+}
+
+// model Group {
+//     name          String        @unique
+//     owner         User          @relation(fields: [ownerUsername], references: [username])
+//     ownerUsername String
+//     members       UserInGroup[]
+//     places        GroupPlace[]
+// 	posts         GroupPost[]
+// }
+
+// model UserInGroup {
+//     user         User   @relation(fields: [userUsername], references: [username])
+//     group        Group  @relation(fields: [groupName], references: [name])
+//     userUsername String
+//     groupName    String
+
+//     @@id([userUsername, groupName])
+// }
+
+// Places
+
+// model Place {
+//     name          String
+//     owner         User   @relation(fields: [ownerUsername], references: [username])
+//     description   String
+//     ownerUsername String
+
+//     created DateTime @default(now())
+//     updated DateTime @default(now())
+
+//     @@id([name, ownerUsername])
+// }
+
+// model GroupPlace {
+//     name        String
+//     owner       Group  @relation(fields: [groupName], references: [name])
+//     description String
+//     groupName   String
+
+//     created DateTime @default(now())
+//     updated DateTime @default(now())
+
+//     @@id([name, groupName])
+// }
+
+// Posts
+
+// model Post {
+//     id           Int      @id @default(autoincrement())
+//     Poster       User     @relation(fields: [userUsername], references: [username])
+//     userUsername String
+//     posted       DateTime @default(now())
+// }
+// model GroupPost {
+//     id           Int      @id @default(autoincrement())
+//     Poster       Group     @relation(fields: [groupName], references: [name])
+//     groupName String
+//     posted       DateTime @default(now())
+// }
