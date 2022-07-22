@@ -18,13 +18,14 @@ model User {
     username    String   @unique
     displayname String
     bio         String
+    image       String
     password    String
     created     DateTime @default(now())
     lastOnline  DateTime @default(now())
     currency    Int      @default(0)
     // groupsOwned  Group[]
     // groupsJoined UserInGroup[]
-    // places       Place[]
+    places      Place[]
     // posts       Post[]
 }
 
@@ -48,17 +49,18 @@ model User {
 
 // Places
 
-// model Place {
-//     name          String
-//     owner         User   @relation(fields: [ownerUsername], references: [username])
-//     description   String
-//     ownerUsername String
+model Place {
+    name          String
+    owner         User   @relation(fields: [ownerUsername], references: [username])
+    ownerUsername String
+    description   String
+    image         String
 
-//     created DateTime @default(now())
-//     updated DateTime @default(now())
+    created DateTime @default(now())
+    updated DateTime @default(now())
 
-//     @@id([name, ownerUsername])
-// }
+    @@id([name, ownerUsername])
+}
 
 // model GroupPlace {
 //     name        String
