@@ -12,6 +12,7 @@
 			<a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
 		</div>
 		<div class="d-flex">
+			<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
 			<a type="button" href="/login" class="btn btn-success my-2 my-sm-0">Login</a>
 		</div>
 	</div>
