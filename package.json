@@ -30,6 +30,7 @@
     "@prisma/client": "^4.1.0",
     "@sveltejs/adapter-static": "^1.0.0-next.35",
     "esbuild": "^0.14.49",
+    "lucia-sveltekit": "^0.3.2",
     "svelte-adapter-bun": "^0.3.0",
     "svelte-inview": "^3.0.1",
     "svelte-parallax": "^0.5.2",
