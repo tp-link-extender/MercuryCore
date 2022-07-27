@@ -12,5 +12,8 @@ export default {
 		prerender: {
 			default: true,
 		},
+		files: {
+			lib: "./src/lib",
+		},
 	},
 }
