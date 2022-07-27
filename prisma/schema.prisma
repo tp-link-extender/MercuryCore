@@ -15,23 +15,29 @@ datasource db {
 // Users & Groups
 
 model User {
-    username        String   @unique
-    displayname     String
-    bio             String
-    image           String
-    password        String
-    created         DateTime @default(now())
-    lastOnline      DateTime @default(now())
+    username        String         @unique
+    displayname     String?
+    bio             String?
+    image           String?
+    password        String?
+    created         DateTime       @default(now())
+    lastOnline      DateTime       @default(now())
     Status          String?
-    currency        Int      @default(0)
-    friends         User[]   @relation("friends")
-    friendsRelation User[]   @relation("friends")
+    currency        Int            @default(0)
+    friends         User[]         @relation("friends")
+    friendsRelation User[]         @relation("friends")
     // groupsOwned  Group[] @relation("owner")
     // groupsJoined Group[] @relation("member")
     places          Place[]
     // posts       Post[]
+    idToken         String
 
     @@id([username])
+}
+
+model RefreshToken {
+    token        String @unique
+    userUsername String
 }
 
 // model Group {
