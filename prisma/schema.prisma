@@ -37,7 +37,7 @@ model User {
 
 model RefreshToken {
     token        String @unique
-    userUsername String
+    userUsername String?
 }
 
 // model Group {
