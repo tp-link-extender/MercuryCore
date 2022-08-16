@@ -22,13 +22,14 @@ export async function POST({ request }: { request: any }) {
 	]
 
 	for (const [condition, code] of easyChecks) {
-		if (condition) return err(code)
+		if (condition) throw new Error("@migration task: Migrate this return statement (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292701)");
+		return err(code)
 	}
 
-	return {
+	return new Response(undefined, {
 		status: 302,
 		headers: {
 			location: "/home",
-		},
-	}
+		}
+	})
 }

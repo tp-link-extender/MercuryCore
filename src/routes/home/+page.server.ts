@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
-/** @type {import("@sveltejs/kit").RequestHandler} */
-export async function GET() {
+/** @type {import("@sveltejs/kit").PageServerLoad} */
+export async function load() {
 	const getPlaces = await prisma.place.findMany({
 		select: {
 			name: true,
@@ -11,8 +11,6 @@ export async function GET() {
 		},
 	})
 	return {
-		body: {
-			places: getPlaces || [],
-		},
+		places: getPlaces || [],
 	}
 }
