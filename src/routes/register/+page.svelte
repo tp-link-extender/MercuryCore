@@ -5,7 +5,7 @@
 <h1 class="text-center light-text">Register</h1>
 
 <div class="container mt-5">
-	<form class="m-auto" action="/api/register" method="post">
+	<form class="m-auto" method="post">
 		<div class="mb-3">
 			<input name="username" type="text" class="form-control" placeholder="Username" />
 		</div>

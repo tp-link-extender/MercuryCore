@@ -1,3 +1,7 @@
+<script lang="ts">
+	export const prerender = true
+</script>
+
 <svelte:head>
 	<title>Login - Mercury</title>
 </svelte:head>
@@ -5,9 +9,9 @@
 <h1 class="text-center light-text">Login</h1>
 
 <div class="container mt-5">
-	<form class="m-auto" action="/api/login" method="post">
+	<form class="m-auto" method="post">
 		<!-- Didn't work when page and endpoint were under the same url, "cannot prerender pages that have endpoints with mutative methods" -->
-		
+
 		<div class="mb-3">
 			<input name="username" type="text" class="form-control" placeholder="Username" />
 		</div>

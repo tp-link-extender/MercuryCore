@@ -1,5 +1,4 @@
 <script lang="ts">
-	throw new Error("@migration task: Add data prop (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292707)");
 
 	const friends = [
 		{
@@ -52,7 +51,7 @@
 		},
 	]
 
-	export let places: any
+	export let data: any
 
 	// explicitly any to prevent warnings
 	const statusColours: any = {
@@ -96,7 +95,7 @@
 	<div class="mt-5">
 		<h4 class="light-text">Recently joined</h4>
 		<div class="row p-0">
-			{#each places as place}
+			{#each data.places as place}
 				<a class="place col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/{place.ownerUsername}/{place.name}">
 					<img src={place.image} class="mb-2" alt={place.name} />
 					{place.name}

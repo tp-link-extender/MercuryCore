@@ -1,53 +1,51 @@
 <script lang="ts">
-	throw new Error("@migration task: Add data prop (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292707)");
-
-	export let user: any
+	export let data: any
 </script>
 
 <svelte:head>
-	<title>{user.name} - Mercury</title>
+	<title>{data.name} - Mercury</title>
 </svelte:head>
 
 <main class="container">
 	<div class="d-flex px-4">
 		<div id="image-background" class="me-4">
-			<img src={user.img} alt={user.name} />
+			<img src={data.img} alt={data.name} />
 		</div>
 		<div class="container">
 			<div>
-				<h1 class="light-text">{user.name}</h1>
-				<em class="light-text">"{user.bio}"</em>
+				<h1 class="light-text">{data.name}</h1>
+				<em class="light-text">"{data.bio}"</em>
 			</div>
 			<br />
 			<div class="d-flex">
 				<div class="light-text text-center">
 					Followers
 					<h4 class="light-text">
-						{user.followerCount}
+						{data.followerCount}
 					</h4>
 				</div>
 				<div class="light-text text-center ms-4">
 					Friends
 					<h4 class="light-text">
-						{user.friendCount}
+						{data.friendCount}
 					</h4>
 				</div>
 				<div class="align-self-center ms-auto me-2">
 					<button
 						type="button"
 						on:click={() => {
-							if (user.friends) {
-								user.friends = false
-								user.friendCount -= 1
+							if (data.friends) {
+								data.friends = false
+								data.friendCount -= 1
 							} else {
-								user.pendingRequest = !user.pendingRequest
+								data.pendingRequest = !data.pendingRequest
 							}
 						}}
-						class={`btn ${user.friends || user.pendingRequest ? "btn-danger" : "btn-success"}`}
+						class={`btn ${data.friends || data.pendingRequest ? "btn-danger" : "btn-success"}`}
 					>
-						{#if user.friends}
+						{#if data.friends}
 							Unfriend
-						{:else if user.pendingRequest == true}
+						{:else if data.pendingRequest == true}
 							Cancel request
 						{:else}
 							Add friend
@@ -58,12 +56,12 @@
 					<button
 						type="button"
 						on:click={() => {
-							user.following = !user.following
-							user.followerCount += user.following ? 1 : -1
+							data.following = !data.following
+							data.followerCount += data.following ? 1 : -1
 						}}
-						class={`btn ${user.following ? "btn-danger" : "btn-primary"}`}
+						class={`btn ${data.following ? "btn-danger" : "btn-primary"}`}
 					>
-						{#if user.following}
+						{#if data.following}
 							Unfollow
 						{:else}
 							Follow

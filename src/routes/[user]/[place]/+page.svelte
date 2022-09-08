@@ -1,7 +1,5 @@
 <script lang="ts">
-	throw new Error("@migration task: Add data prop (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292707)");
-
-	export let place: any
+	export let data: any
 
 	let joining = false
 
@@ -14,25 +12,25 @@
 </script>
 
 <svelte:head>
-	<title>{place.name} - Mercury</title>
+	<title>{data.name} - Mercury</title>
 </svelte:head>
 
 <div class="container">
 	<div class="d-flex mt-12">
 		<div class="flex flex-col me-3" id="thumbnail">
-			<img src={place.img} alt={place.name} />
+			<img src={data.img} alt={data.name} />
 			<p class="light-text mt-2">
-				<b>By:</b> <a href="/{place.owner}">{place.owner}</a>
+				<b>By:</b> <a href="/{data.owner}">{data.owner}</a>
 			</p>
 		</div>
 		<div class="flex flex-col">
-			<h2 class="light-text">{place.name}</h2>
+			<h2 class="light-text">{data.name}</h2>
 			<button id="join" class="bg-success" on:click={join}><img src="/join.svg" alt="Join button icon" /></button>
 		</div>
 	</div>
 	<h4 class="light-text mt-4">Description</h4>
 	<p class="light-text">
-		{place.description}
+		{data.description}
 	</p>
 </div>
 

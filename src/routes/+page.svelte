@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte"
 	import { fly } from "svelte/transition"
-	import Gradient from "./gradient"
+	import Gradient from "$lib/gradient"
 	import Pagepart from "../components/pagepart.svelte"
 	import { Parallax, ParallaxLayer } from "svelte-parallax"
 

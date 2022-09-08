@@ -1,4 +1,4 @@
-import adapter from "@sveltejs/adapter-static"
+import adapter from "@sveltejs/adapter-auto"
 import preprocess from "svelte-preprocess"
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -9,9 +9,6 @@ export default {
 
 	kit: {
 		adapter: adapter(),
-		prerender: {
-			default: true,
-		},
 		files: {
 			lib: "./src/lib",
 		},
