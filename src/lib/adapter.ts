@@ -1,11 +1,11 @@
 import type { PrismaClient } from "@prisma/client"
 import pkg from "@prisma/client/runtime/index.js"
 import type { Adapter } from "lucia-sveltekit/types"
-import { Error } from "lucia-sveltekit"
+import { Error, adapterGetUpdateData } from "lucia-sveltekit"
 
 const adapter = (prisma: PrismaClient): Adapter => {
 	return {
-		getUserFromRefreshToken: async (refreshToken: string) => {
+		getUserByRefreshToken: async (refreshToken: string) => {
 			try {
 				const username = await prisma.refreshToken.findUnique({
 					where: {
@@ -17,11 +17,12 @@ const adapter = (prisma: PrismaClient): Adapter => {
 				})
 				return username || (null as any | null)
 			} catch (e) {
+				console.error(e)
 				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				throw new Error("DATABASE_FETCH_FAILED")
 			}
 		},
-		getUserFromIdentifierToken: async (identifierToken: string) => {
+		getUserByIdentifierToken: async (identifierToken: string) => {
 			try {
 				const data = await prisma.user.findMany({
 					where: {
@@ -30,12 +31,12 @@ const adapter = (prisma: PrismaClient): Adapter => {
 				})
 				return data[0] as any | null
 			} catch (e) {
-				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				console.error(e)
+				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				throw new Error("DATABASE_FETCH_FAILED")
 			}
 		},
-		createUser: async (
+		setUser: async (
 			username: string,
 			data: {
 				identifier_token: string
@@ -44,7 +45,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
 			}
 		) => {
 			try {
-				const user = await prisma.user.create({
+				await prisma.user.create({
 					data: {
 						username: username,
 						idToken: data.identifier_token,
@@ -53,8 +54,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
 				})
 				return
 			} catch (e) {
-				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				console.error(e)
+				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				if (e.code === "P2002" && e.message.includes("identifier_token")) {
 					throw new Error("AUTH_DUPLICATE_IDENTIFIER_TOKEN")
 				}
@@ -65,22 +66,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
 			}
 		},
 		deleteUser: async (username: string) => {
-			// no
-
-			// try {
-			// 	await prisma.user.deleteMany({
-			// 		where: {
-			// 			username: username,
-			// 		},
-			// 	})
-			// 	return
-			// } catch (e) {
-			// 	if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
-			// 	console.error(e)
-			throw new Error("DATABASE_UPDATE_FAILED")
-			// }
+			throw new Error("DATABASE_UPDATE_FAILED") // no
 		},
-		saveRefreshToken: async (refreshToken: string, username: string) => {
+		setRefreshToken: async (refreshToken: string, username: string) => {
 			console.log(refreshToken)
 			try {
 				await prisma.refreshToken.create({
@@ -91,8 +79,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
 				})
 				return
 			} catch (e) {
-				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				console.error(e)
+				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				throw new Error("DATABASE_UPDATE_FAILED")
 			}
 		},
@@ -105,8 +93,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
 				})
 				return
 			} catch (e) {
-				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				console.error(e)
+				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				throw new Error("DATABASE_UPDATE_FAILED")
 			}
 		},
@@ -119,9 +107,40 @@ const adapter = (prisma: PrismaClient): Adapter => {
 				})
 				return
 			} catch (e) {
-				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				console.error(e)
+				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
 				throw new Error("DATABASE_UPDATE_FAILED")
+			}
+		},
+		getUserById: async (username: string) => {
+			try {
+				const data = await prisma.user.findUnique({
+					where: {
+						id: username,
+					},
+				})
+				return data as any | null
+			} catch (e) {
+				console.error(e)
+				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
+				throw new Error("DATABASE_FETCH_FAILED")
+			}
+		},
+		updateUser: async (username, newData) => {
+			const partialData = adapterGetUpdateData(newData)
+			try {
+				const data = await prisma.user.update({
+					data: partialData,
+					where: {
+						username: username,
+					},
+				})
+				return data
+			} catch (e) {
+				console.error(e)
+				if (!(e instanceof pkg.PrismaClientKnownRequestError)) throw new Error("UNKNOWN_ERROR")
+				if (e.code === "P2025") throw new Error("AUTH_INVALID_USER_ID")
+				throw new Error("DATABASE_FETCH_FAILED")
 			}
 		},
 	}

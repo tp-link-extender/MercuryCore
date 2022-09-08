@@ -11,6 +11,6 @@ export async function load() {
 		},
 	})
 	return {
-		places: getPlaces || [],
+			places: getPlaces || [],
 	}
 }
