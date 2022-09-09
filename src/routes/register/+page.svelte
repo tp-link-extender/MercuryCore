@@ -1,3 +1,7 @@
+<script lang="ts">
+	export let form: any
+</script>
+
 <svelte:head>
 	<title>Register - Mercury</title>
 </svelte:head>
@@ -5,7 +9,7 @@
 <h1 class="text-center light-text">Register</h1>
 
 <div class="container mt-5">
-	<form class="m-auto" method="post">
+	<form class="m-auto" method="POST">
 		<div class="mb-3">
 			<input name="username" type="text" class="form-control" placeholder="Username" />
 		</div>
@@ -20,17 +24,9 @@
 			<label class="form-check-label light-text" for="rememberMe">Remember me</label>
 		</div>
 
-		<div id="errors" class="col-12 mb-3 text-danger">
-			<p id="error">An unexpected error occured</p>
-			<p id="regkey">Registration key is incorrect</p>
-			<p id="ushort">Username must be more than 3 characters</p>
-			<p id="ulong">Username must be less than 30 characters</p>
-			<p id="pshort">Password must be at least 16 characters</p>
-			<p id="plong">Password must be less than 6969 characters</p>
-			<p id="taken">Username already taken</p>
-		</div>
-		<!-- Because I couldn't get it working from the endpoint -->
-
+		{#if form?.msg}
+			<p class="col-12 mb-3 text-danger">{form.msg}</p>
+		{/if}
 		<button type="submit" class="container-fluid btn btn-primary">Register</button>
 	</form>
 </div>
@@ -45,9 +41,4 @@
 	input
 		background: var(--accent)
 		border: none
-
-	#errors p
-		display: none
-		&:target
-			display: block
 </style>
