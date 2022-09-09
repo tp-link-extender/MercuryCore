@@ -83,6 +83,6 @@
 		background: var(--accent2)
 		border-radius: 100%
 		img
-			border-radius: 100%
+			border-radius: 0 0 50% 50%
 			height: 10rem
 </style>

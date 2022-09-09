@@ -22,15 +22,21 @@ export const actions = {
 		]
 
 		for (const [condition, code] of easyChecks) {
-			if (condition) throw redirect(302, `/login#${code || "error"}`)
+			if (condition) throw redirect(302, `/register#${code || "error"}`)
 		}
 
 		try {
-			const authenticateUser = await auth.authenticateUser("username", username, password)
-			cookies.set(authenticateUser.cookies)
-		} catch (e) {
-			console.log(e)
-			throw redirect(302, `/login#error`)
+			const createUser = await auth.createUser("username", username, {
+				password,
+				user_data: {
+					username,
+					image: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
+				},
+			})
+			console.log("cookys", createUser.cookies)
+			cookies.set(createUser.cookies)
+		} catch {
+			throw redirect(302, `/register#error`)
 		}
 
 		throw redirect(302, "/home")

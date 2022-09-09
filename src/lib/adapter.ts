@@ -3,6 +3,8 @@ import pkg from "@prisma/client/runtime/index.js"
 import type { Adapter } from "lucia-sveltekit/types"
 import { Error, adapterGetUpdateData } from "lucia-sveltekit"
 
+// Do yourself a favour and don't try to understand this code.
+
 const adapter = (prisma: PrismaClient): Adapter => {
 	return {
 		getUserByRefreshToken: async (refreshToken: string) => {
@@ -47,9 +49,11 @@ const adapter = (prisma: PrismaClient): Adapter => {
 			try {
 				await prisma.user.create({
 					data: {
-						username: username,
+						username: data.user_data.username,
+						displayname: data.user_data.username,
 						idToken: data.identifier_token,
 						password: data.hashed_password,
+						image: data.user_data.image,
 					},
 				})
 				return
@@ -69,7 +73,6 @@ const adapter = (prisma: PrismaClient): Adapter => {
 			throw new Error("DATABASE_UPDATE_FAILED") // no
 		},
 		setRefreshToken: async (refreshToken: string, username: string) => {
-			console.log(refreshToken)
 			try {
 				await prisma.refreshToken.create({
 					data: {
@@ -116,7 +119,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
 			try {
 				const data = await prisma.user.findUnique({
 					where: {
-						id: username,
+						username: username,
 					},
 				})
 				return data as any | null
