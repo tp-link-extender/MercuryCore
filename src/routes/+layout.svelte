@@ -1,58 +1,41 @@
 <script lang="ts">
+	import { Lucia } from "lucia-sveltekit/client"
+	import Navbar from "../components/navbar.svelte"
 	import "/src/bootstrap.sass"
 	import "/src/global.sass"
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-dark position-fixed">
-	<div class="container">
-		<a class="navbar-brand light-text" href="/">Mercury</a>
-		<div class="d-flex">
-			<a type="button" href="/home" class="btn my-2 my-sm-0 light-text">Home</a>
-			<a type="button" href="/discover" class="btn my-2 my-sm-0 light-text">Discover</a>
-			<a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
-		</div>
-		<div class="d-flex">
-			<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
-			<a type="button" href="/login" class="btn btn-success my-2 my-sm-0">Login</a>
-		</div>
+<Lucia>
+	<Navbar />
+
+	<div id="all">
+		<div id="bg" class="position-fixed" />
+		<main>
+			<slot />
+		</main>
+
+		<footer class="position-relative text-center">
+			<a class="light-text h4" href="/">Mercury</a>
+			<p class="info text-muted">
+				Powering Divinity<br />
+				<br />
+				© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
+			</p>
+			<a class="light-text h5" href="/rules">Rules</a>
+			<a class="light-text h5" href="/about">About</a>
+			<a class="light-text h5" href="/terms">Terms of Service</a>
+			<a class="light-text h5" href="/privacy">Privacy Policy</a>
+			<a class="light-text h5" href="/statistics">Statistics</a>
+		</footer>
+		<noscript>
+			<div id="nojs" class="position-fixed bottom-0 d-block">
+				<p class="light-text text-center">Javascript is disabled. You may have a diminished experience while using Mercury.</p>
+			</div>
+		</noscript>
 	</div>
-</nav>
-
-<div id="all">
-	<div id="bg" class="position-fixed" />
-	<main>
-		<slot />
-	</main>
-
-	<footer class="position-relative text-center">
-		<a class="light-text h4" href="/">Mercury</a>
-		<p class="info text-muted">
-			Powering Divinity<br />
-			<br />
-			© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
-		</p>
-		<a class="light-text h5" href="/rules">Rules</a>
-		<a class="light-text h5" href="/about">About</a>
-		<a class="light-text h5" href="/terms">Terms of Service</a>
-		<a class="light-text h5" href="/privacy">Privacy Policy</a>
-		<a class="light-text h5" href="/statistics">Statistics</a>
-	</footer>
-	<noscript>
-		<div id="nojs" class="position-fixed bottom-0 d-block">
-			<p class="light-text text-center">Javascript is disabled. You may have a diminished experience while using Mercury.</p>
-		</div>
-	</noscript>
-</div>
+</Lucia>
 
 <style lang="sass">
-	nav
-		z-index: 9
-		width: 100vw
-		max-height: 10vh
-		backdrop-filter: blur(6px)
-		a
-			margin-right: 0.5rem
-
 	#all
 		overflow-x: hidden
 		height: 100%

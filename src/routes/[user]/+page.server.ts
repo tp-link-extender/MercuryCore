@@ -10,12 +10,13 @@ export async function load({ params }: { params: any }) {
 		},
 		select: {
 			bio: true,
+			image: true,
 		},
 	})
 	if (getUser) {
 		return {
 			name: params.user,
-			img: "https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png",
+			img: getUser.image,
 			bio: getUser.bio,
 			followerCount: 420,
 			friendCount: 21,

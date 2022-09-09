@@ -1,5 +1,6 @@
 <script lang="ts">
-
+	import { getSession } from "lucia-sveltekit/client"
+	
 	const friends = [
 		{
 			name: "Multako",
@@ -53,6 +54,8 @@
 
 	export let data: any
 
+	const session = getSession()
+
 	// explicitly any to prevent warnings
 	const statusColours: any = {
 		Online: "bg-info",
@@ -68,9 +71,9 @@
 <div class="container">
 	<div class="top d-flex px-2">
 		<div id="pfp">
-			<img src="https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png" alt="You" />
+			<img src={$session?.user.image} alt="You" />
 		</div>
-		<h1 class="text-center light-text">Hi, Mercury!</h1>
+		<h1 class="text-center light-text">Hi, {$session?.user.username}!</h1>
 	</div>
 	<div class="mt-5">
 		<h4 class="light-text">Friends</h4>
@@ -118,7 +121,7 @@
 			border-radius: 100%
 		img
 			height: 6rem
-			border-radius: 100%
+			border-radius: 0 0 50% 50%
 		h1
 			margin: auto 2rem
 
@@ -139,7 +142,7 @@
 				margin: auto
 				img
 					height: 100%
-					border-radius: 50%
+					border-radius: 0 0 50% 50%
 	.place
 		border-radius: 0.5rem
 		margin-bottom: 1rem

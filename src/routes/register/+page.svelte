@@ -22,6 +22,7 @@
 
 		<div id="errors" class="col-12 mb-3 text-danger">
 			<p id="error">An unexpected error occured</p>
+			<p id="regkey">Registration key is incorrect</p>
 			<p id="ushort">Username must be more than 3 characters</p>
 			<p id="ulong">Username must be less than 30 characters</p>
 			<p id="pshort">Password must be at least 16 characters</p>
