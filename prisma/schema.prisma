@@ -19,7 +19,7 @@ model User {
     displayname     String?
     bio             String?
     image           String?
-    password        String?
+    hashed_password        String?
     created         DateTime @default(now())
     lastOnline      DateTime @default(now())
     Status          String?

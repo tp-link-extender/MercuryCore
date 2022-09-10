@@ -52,7 +52,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
 						username: data.user_data.username,
 						displayname: data.user_data.username,
 						idToken: data.identifier_token,
-						password: data.hashed_password,
+						hashed_password: data.hashed_password,
 						image: data.user_data.image,
 					},
 				})

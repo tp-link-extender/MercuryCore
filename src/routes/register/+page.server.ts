@@ -34,7 +34,6 @@ export const actions = {
 					image: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
 				},
 			})
-			console.log("cookys", createUser.cookies)
 			cookies.set(createUser.cookies)
 		} catch {
 			throw redirect(302, "/register")
