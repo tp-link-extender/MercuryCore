@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance, applyAction } from "$app/forms"
+
 	export let form: any
 </script>
 
@@ -9,7 +11,22 @@
 <h1 class="text-center light-text">Login</h1>
 
 <div class="container mt-5">
-	<form class="m-auto" method="POST">
+	<form
+		class="m-auto"
+		method="POST"
+		use:enhance={() => {
+			// Allows form to work without reloading if javascript is available
+			return async ({ result }) => {
+				if (result.type == "redirect") {
+					window.location.href = result.location
+					// By default, use:enhance uses goto() to redirect to the homepage,
+					// this would be bad as the user's auth token would not be updated
+					// and we wouldn't be able to load their homepage info
+				}
+				await applyAction(result)
+			}
+		}}
+	>
 		<div class="mb-3">
 			<input name="username" type="text" class="form-control" placeholder="Username" />
 		</div>
