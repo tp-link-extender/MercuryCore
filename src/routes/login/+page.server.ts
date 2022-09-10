@@ -30,8 +30,12 @@ export const actions = {
 			const authenticateUser = await auth.authenticateUser("username", username, password)
 			cookies.set(authenticateUser.cookies)
 		} catch (e) {
-			console.log(e)
-			throw redirect(302, "/login")
+			const error = e as Error
+			if (error.message == "AUTH_INVALID_IDENTIFIER_TOKEN" || error.message == "AUTH_INVALID_PASSWORD") {
+				return invalid(400, { msg: "Incorrect username or password" })
+			}
+			console.log(error)
+			return invalid(400, { msg: "An unexpected error occurred" })
 		}
 
 		throw redirect(302, "/home")
