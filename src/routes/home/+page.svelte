@@ -4,7 +4,7 @@
 	const friends = [
 		{
 			name: "Multako",
-			img: "https://tr.rbxcdn.com/372efbed7319824170124853399ed562/150/150/AvatarHeadshot/Png",
+			img: "https://tr.rbxcdn.com/998702cf4a9969090aef5a0a4b62ab96/150/150/AvatarHeadshot/Png",
 			status: "Online",
 		},
 		{
@@ -14,7 +14,7 @@
 		},
 		{
 			name: "Taskmanager",
-			img: "https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png",
+			img: "https://tr.rbxcdn.com/f0af0f9d4a46b46f13ad9f373073873d/150/150/AvatarHeadshot/Png",
 		},
 		{
 			name: "Boxerpizza",
@@ -28,7 +28,7 @@
 		},
 		{
 			name: "Multako",
-			img: "https://tr.rbxcdn.com/372efbed7319824170124853399ed562/150/150/AvatarHeadshot/Png",
+			img: "https://tr.rbxcdn.com/998702cf4a9969090aef5a0a4b62ab96/150/150/AvatarHeadshot/Png",
 			status: "Online",
 		},
 		{
@@ -38,7 +38,7 @@
 		},
 		{
 			name: "Taskmanager",
-			img: "https://tr.rbxcdn.com/10a748f7422e0ef1ed49bdde580cf0ec/150/150/AvatarHeadshot/Png",
+			img: "https://tr.rbxcdn.com/f0af0f9d4a46b46f13ad9f373073873d/150/150/AvatarHeadshot/Png",
 		},
 		{
 			name: "Boxerpizza",
