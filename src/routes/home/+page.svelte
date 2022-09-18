@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getSession } from "lucia-sveltekit/client"
-	
+
 	const friends = [
 		{
 			name: "Multako",
@@ -85,7 +85,7 @@
 							<img src={friend.img} alt={friend.name} />
 						</div>
 						{#if friend.status}
-							<span class={`position-absolute bottom-0 end-0 badge rounded-circle ${statusColours[friend.status]}`}>
+							<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
 								<span class="visually-hidden">{friend.status}</span>
 							</span>
 						{/if}

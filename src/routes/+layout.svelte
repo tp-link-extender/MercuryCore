@@ -1,39 +1,39 @@
 <script lang="ts">
-	import { Lucia } from "lucia-sveltekit/client"
+	import { handleSilentRefresh } from "lucia-sveltekit/client"
 	import Navbar from "../components/navbar.svelte"
 	import "/src/bootstrap.sass"
 	import "/src/global.sass"
+
+	handleSilentRefresh()
 </script>
 
-<Lucia>
-	<Navbar />
+<Navbar />
 
-	<div id="all">
-		<div id="bg" class="position-fixed" />
-		<main>
-			<slot />
-		</main>
+<div id="all">
+	<div id="bg" class="position-fixed" />
+	<main>
+		<slot />
+	</main>
 
-		<footer class="position-relative text-center">
-			<a class="light-text h4" href="/">Mercury</a>
-			<p class="info text-muted">
-				Powering Divinity<br />
-				<br />
-				© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
-			</p>
-			<a class="light-text h5" href="/rules">Rules</a>
-			<a class="light-text h5" href="/about">About</a>
-			<a class="light-text h5" href="/terms">Terms of Service</a>
-			<a class="light-text h5" href="/privacy">Privacy Policy</a>
-			<a class="light-text h5" href="/statistics">Statistics</a>
-		</footer>
-		<noscript>
-			<div id="nojs" class="position-fixed bottom-0 d-block">
-				<p class="light-text text-center">Javascript is disabled. You may have a diminished experience while using Mercury.</p>
-			</div>
-		</noscript>
-	</div>
-</Lucia>
+	<footer class="position-relative text-center">
+		<a class="light-text h4" href="/">Mercury</a>
+		<p class="info text-muted">
+			Powering Divinity<br />
+			<br />
+			© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
+		</p>
+		<a class="light-text h5" href="/rules">Rules</a>
+		<a class="light-text h5" href="/about">About</a>
+		<a class="light-text h5" href="/terms">Terms of Service</a>
+		<a class="light-text h5" href="/privacy">Privacy Policy</a>
+		<a class="light-text h5" href="/statistics">Statistics</a>
+	</footer>
+	<noscript>
+		<div id="nojs" class="position-fixed bottom-0 d-block">
+			<p class="light-text text-center">Javascript is disabled. You may have a diminished experience while using Mercury.</p>
+		</div>
+	</noscript>
+</div>
 
 <style lang="sass">
 	#all

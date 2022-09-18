@@ -6,30 +6,32 @@
     "build": "vite build",
     "package": "svelte-kit package",
     "preview": "vite preview",
+    "buildview": "vite build && vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "next",
-    "@sveltejs/kit": "^1.0.0-next.476",
-    "bootstrap": "^5.2.0-beta1",
+    "@sveltejs/kit": "^1.0.0-next.484",
+    "bootstrap": "^5.2.1",
     "prisma": "4.3.1",
-    "sass": "^1.53.0",
-    "svelte": "^3.44.0",
-    "svelte-check": "^2.7.1",
+    "sass": "^1.54.9",
+    "svelte": "^3.50.1",
+    "svelte-check": "^2.9.0",
     "svelte-intersection-observer": "^0.10.0",
     "svelte-preprocess": "^4.10.7",
-    "tslib": "^2.3.1",
-    "typescript": "^4.7.4",
-    "vite": "^3.1"
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.3",
+    "vite": "^3.1.2"
   },
   "type": "module",
   "dependencies": {
-    "@popperjs/core": "^2.11.5",
+    "@popperjs/core": "^2.11.6",
     "@prisma/client": "^4.3.1",
-    "esbuild": "^0.14.49",
-    "lucia-sveltekit": "^0.8.2",
+    "esbuild": "^0.15.7",
+    "lucia-sveltekit": "^0.8.5",
     "svelte-inview": "^3.0.1",
-    "svelte-parallax": "^0.5.2"
+    "svelte-parallax": "^0.6.0",
+    "vite-plugin-mkcert": "^1.9.0"
   }
 }
