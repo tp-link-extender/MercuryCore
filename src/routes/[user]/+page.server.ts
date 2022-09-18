@@ -9,15 +9,19 @@ export async function load({ params }: { params: any }) {
 			username: params.user,
 		},
 		select: {
+			displayname: true,
 			bio: true,
 			image: true,
+			places: true,
 		},
 	})
 	if (getUser) {
 		return {
-			name: params.user,
+			username: params.user,
+			displayname: getUser.displayname,
 			img: getUser.image,
 			bio: getUser.bio,
+			places: getUser.places,
 			followerCount: 420,
 			friendCount: 21,
 			friends: true,

@@ -10,7 +10,7 @@
 	const width = fullwidth ? "full" : "half"
 </script>
 
-<div class={`container ${width}`} id={side} use:inview={{ unobserveOnEnter: true, rootMargin: "-20%" }} on:change={({ detail }) => (isInView = detail.inView)}>
+<div class="container {width}" id={side} use:inview={{ unobserveOnEnter: true, rootMargin: "-20%" }} on:change={({ detail }) => (isInView = detail.inView)}>
 	{#if isInView}
 		<div in:fly={{ y: -100, duration: 500 }} id="b" class="d-flex flex-row align-items-center">
 			<slot />

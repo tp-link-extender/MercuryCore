@@ -3,19 +3,23 @@
 </script>
 
 <svelte:head>
-	<title>{data.name} - Mercury</title>
+	<title>{data.displayname} - Mercury</title>
 </svelte:head>
 
 <main class="container">
 	<div class="d-flex px-4">
 		<div id="image-background" class="me-4">
-			<img src={data.img} alt={data.name} />
+			<img src={data.img} alt={data.displayname} />
 		</div>
 		<div class="container">
-			<div>
-				<h1 class="light-text">{data.name}</h1>
-				<em class="light-text">"{data.bio}"</em>
-			</div>
+			<h1 class="light-text d-inline">{data.displayname}</h1>
+			<h5 id="username" class="d-inline light-text m-2 ps-3 ">@{data.username}</h5>
+			{#if data.bio}
+				<em class="light-text d-block mt-4">"{data.bio}"</em>
+			{:else}
+				<br />
+				<br />
+			{/if}
 			<br />
 			<div class="d-flex">
 				<div class="light-text text-center">
@@ -41,7 +45,7 @@
 								data.pendingRequest = !data.pendingRequest
 							}
 						}}
-						class={`btn ${data.friends || data.pendingRequest ? "btn-danger" : "btn-success"}`}
+						class="btn {data.friends || data.pendingRequest ? "btn-danger" : "btn-success"}"
 					>
 						{#if data.friends}
 							Unfriend
@@ -59,7 +63,7 @@
 							data.following = !data.following
 							data.followerCount += data.following ? 1 : -1
 						}}
-						class={`btn ${data.following ? "btn-danger" : "btn-primary"}`}
+						class="btn {data.following ? "btn-danger" : "btn-primary"}"
 					>
 						{#if data.following}
 							Unfollow
@@ -71,6 +75,19 @@
 			</div>
 		</div>
 	</div>
+	{#if data.places.length > 0}
+		<div class="mt-5">
+			<h4 class="light-text">Creations</h4>
+			<div class="row p-0">
+				{#each data.places as place}
+					<a class="place col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/{place.ownerUsername}/{place.name}">
+						<img src={place.image} class="mb-2" alt={place.name} />
+						{place.name}
+					</a>
+				{/each}
+			</div>
+		</div>
+	{/if}
 </main>
 
 <style lang="sass">
@@ -85,4 +102,20 @@
 		img
 			border-radius: 0 0 50% 50%
 			height: 10rem
+
+	.row
+		margin: 0
+
+	.place
+		border-radius: 0.5rem
+		margin-bottom: 1rem
+		text-decoration: none
+		img
+			width: 100%
+
+	.place img
+		border-radius: 0.5rem
+
+	#username
+		opacity: 0.5
 </style>
