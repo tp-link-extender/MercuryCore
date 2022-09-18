@@ -1,10 +1,14 @@
 import { redirect, invalid } from "@sveltejs/kit"
 import { auth } from "$lib/lucia"
+import { setCookie } from "lucia-sveltekit"
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient()
 
-export async function load({ parent }: { parent: any }) {
-	const { lucia } = await parent()
-	if (lucia) throw redirect(302, "/home")
-}
+/** @type {import("@sveltejs/kit").PageServerLoad} */
+export const load = auth.handleServerLoad(async ({ getSession }) => {
+	const session = await getSession()
+	if (session) throw redirect(302, "/home")
+})
 
 /** @type {import("./$types").Actions} */
 export const actions = {
@@ -26,17 +30,43 @@ export const actions = {
 			}
 		}
 
+		// Since each user's page is a route, we need to make sure it doesn't clash with existing routes
+		const lowercaseUsername = username.toLowerCase()
+		for (let i in import.meta.glob("/src/routes/**")) {
+			let t = i.substring(12)
+			t = t.substring(0, t.indexOf("/"))
+
+			if (t.toLowerCase() == lowercaseUsername) return invalid(400, { msg: "Username is unavailable" })
+		}
+
 		try {
+			const caseInsensitiveCheck = await prisma.user.findMany({
+				where: {
+					username: {
+						equals: username,
+						mode: "insensitive",
+					},
+				},
+			})
+			if (caseInsensitiveCheck.length > 0) return invalid(400, { msg: "User already exists" })
+
 			const createUser = await auth.createUser("username", username, {
 				password,
 				user_data: {
 					username,
+					displayname: username,
 					image: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
 				},
 			})
-			cookies.set(createUser.cookies)
-		} catch {
-			throw redirect(302, "/register")
+			setCookie(cookies, ...createUser.cookies)
+			
+		} catch (e) {
+			const error = e as Error
+			if (error.message == "AUTH_DUPLICATE_IDENTIFIER_TOKEN" || error.message == "AUTH_DUPLICATE_USER_DATA") {
+				return invalid(400, { msg: "User already exists" })
+			}
+			console.log(error)
+			return invalid(400, { msg: "An unexpected error occurred" })
 		}
 
 		throw redirect(302, "/home")

@@ -2,6 +2,7 @@
 	import { getSession, signOut } from "lucia-sveltekit/client"
 
 	const session = getSession()
+	console.log($session?.user)
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark position-fixed">
@@ -25,7 +26,7 @@
 						<img src={$session?.user.image} alt="You" />
 					</div>
 					<p class="light-text my-auto fs-6 me-4">
-						{$session?.user.displayname}
+						{$session?.user.displayname || $session?.user.username}
 					</p>
 				</a>
 				<button

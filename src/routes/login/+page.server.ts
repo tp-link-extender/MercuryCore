@@ -1,10 +1,12 @@
 import { redirect, invalid } from "@sveltejs/kit"
 import { auth } from "$lib/lucia"
+import { setCookie } from "lucia-sveltekit"
 
-export async function load({ parent }: { parent: any }) {
-	const { lucia } = await parent()
-	if (lucia) throw redirect(302, "/home")
-}
+/** @type {import("@sveltejs/kit").PageServerLoad} */
+export const load = auth.handleServerLoad(async ({ getSession }) => {
+	const session = await getSession()
+	if (session) throw redirect(302, "/home")
+})
 
 /** @type {import("./$types").Actions} */
 export const actions = {
@@ -28,7 +30,7 @@ export const actions = {
 
 		try {
 			const authenticateUser = await auth.authenticateUser("username", username, password)
-			cookies.set(authenticateUser.cookies)
+			setCookie(cookies, ...authenticateUser.cookies)
 		} catch (e) {
 			const error = e as Error
 			if (error.message == "AUTH_INVALID_IDENTIFIER_TOKEN" || error.message == "AUTH_INVALID_PASSWORD") {
