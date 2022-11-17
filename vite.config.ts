@@ -10,4 +10,7 @@ export default {
 			usePolling: true,
 		},
 	},
+	ssr: {
+		noExternal: ["three", "troika-three-text"],
+	}
 }

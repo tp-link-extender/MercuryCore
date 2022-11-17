@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { handleSilentRefresh } from "lucia-sveltekit/client"
-	import Navbar from "../components/navbar.svelte"
+	import Navbar from "../../components/navbar.svelte"
 	import "/src/bootstrap.sass"
 	import "/src/global.sass"
 
@@ -37,7 +37,7 @@
 
 <style lang="sass">
 	#all
-		overflow-x: hidden
+		overflow-y: hidden
 		height: 100%
 		main
 			min-height: 65vh

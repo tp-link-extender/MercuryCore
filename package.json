@@ -11,7 +11,7 @@
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "next",
+    "@sveltejs/adapter-auto": "^1.0.0-next.88",
     "@sveltejs/kit": "1.0.0-next.484",
     "bootstrap": "5.2.1",
     "prisma": "4.3.1",
