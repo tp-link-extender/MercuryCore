@@ -343,7 +343,7 @@ export default class Gradient {
 			e(this, "last", 0),
 			e(this, "width", void 0),
 			e(this, "minWidth", 1100),
-			e(this, "height", 600),
+			e(this, "height", 600), // 1600
 			e(this, "xSegCount", void 0),
 			e(this, "ySegCount", void 0),
 			e(this, "mesh", void 0),
@@ -353,8 +353,8 @@ export default class Gradient {
 			e(this, "scrollObserver", void 0),
 			e(this, "amp", 500),
 			e(this, "seed", Math.random() * 1000),
-			e(this, "freqX", 14e-5),
-			e(this, "freqY", 29e-5),
+			e(this, "freqX", 14e-5), // 2.4e-4
+			e(this, "freqY", 29e-5), // 2.9e-4
 			e(this, "freqDelta", 1e-5),
 			e(this, "activeColors", [1, 1, 1, 1]),
 			e(this, "isMetaKey", !1),

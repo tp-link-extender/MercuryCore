@@ -2,7 +2,6 @@
 	import { getSession, signOut } from "lucia-sveltekit/client"
 
 	const session = getSession()
-	console.log($session?.user)
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark position-fixed">
@@ -12,14 +11,14 @@
 			{#if $session}
 				<a type="button" href="/home" class="btn my-2 my-sm-0 light-text">Home</a>
 			{/if}
-			<a type="button" href="/discover" class="btn my-2 my-sm-0 light-text">Discover</a>
+			<!-- <a type="button" href="/discover" class="btn my-2 my-sm-0 light-text">Discover</a>
 			<a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
-			<a type="button" href="/create" class="btn my-2 my-sm-0 light-text">Create</a>
+			<a type="button" href="/create" class="btn my-2 my-sm-0 light-text">Create</a> -->
 		</div>
 		<div class="d-flex">
 			{#if !$session}
 				<a type="button" href="/login" class="btn btn-success my-2 my-sm-0">Login</a>
-				<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
+				<!-- <a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a> -->
 			{:else}
 				<a id="username" href="/{$session?.user.username}" class="d-flex">
 					<div id="pfp" class="mx-2">
@@ -49,7 +48,7 @@
 		z-index: 9
 		width: 100vw
 		max-height: 10vh
-		backdrop-filter: blur(6px)
+		backdrop-filter: blur(8px)
 		a
 			margin-right: 0.5rem
 		img
