@@ -11,9 +11,9 @@ Instructions:
 
 - Clone the repository to your local machine
 - Open a terminal and navigate to the directory of the repository
-- Run `npm i -g pnpm` to install pnpm.
-- Run `pnpm i` to install all dependencies.
+- DON'T Run `npm i -g pnpm` to install pnpm. We have been experiencing technical difficulties with pnpm lately, so just use npm for the time being.
+- Run `npm i` to install all dependencies.
   
-To start a local dev server, run `pnpm run dev` and navigate to the link shown in the terminal. Upon saving a file, your changes will be shown in the web browser.
+To start a local dev server, run `npm run dev` and navigate to the link shown in the terminal. Upon saving a file, your changes will be shown in the web browser.
 
-To build for production, run `pnpm run build`, then `pnpm run preview` to preview the final site.
+To build for production, run `npm run build`, then `npm run preview` to preview the final site.
