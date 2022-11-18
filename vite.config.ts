@@ -11,6 +11,6 @@ export default {
 		},
 	},
 	ssr: {
-		noExternal: ["three", "troika-three-text"],
-	}
+		noExternal: ["three", "troika-three-text", "@lucia-auth/sveltekit"],
+	},
 }

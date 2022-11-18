@@ -1,14 +1,15 @@
 <script lang="ts">
-	import { getSession, signOut } from "lucia-sveltekit/client"
+	import { getUser } from "@lucia-auth/sveltekit/client"
+	import { signOut } from "@lucia-auth/sveltekit/client"
 
-	const session = getSession()
+	const user = getUser()
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark position-fixed">
 	<div class="container">
 		<a class="navbar-brand light-text" href="/">Mercury</a>
 		<div class="d-flex">
-			{#if $session}
+			{#if $user}
 				<a type="button" href="/home" class="btn my-2 my-sm-0 light-text">Home</a>
 			{/if}
 			<!-- <a type="button" href="/discover" class="btn my-2 my-sm-0 light-text">Discover</a>
@@ -16,16 +17,16 @@
 			<a type="button" href="/create" class="btn my-2 my-sm-0 light-text">Create</a> -->
 		</div>
 		<div class="d-flex">
-			{#if !$session}
+			{#if !$user}
 				<a type="button" href="/login" class="btn btn-success my-2 my-sm-0">Login</a>
-				<!-- <a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a> -->
+				<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
 			{:else}
-				<a id="username" href="/{$session?.user.username}" class="d-flex">
+				<a id="username" href="/{$user?.username}" class="d-flex">
 					<div id="pfp" class="mx-2">
-						<img src={$session?.user.image} alt="You" />
+						<img src={$user?.image} alt="You" />
 					</div>
 					<p class="light-text my-auto fs-6 me-4">
-						{$session?.user.displayname || $session?.user.username}
+						{$user?.displayname || $user?.username}
 					</p>
 				</a>
 				<button

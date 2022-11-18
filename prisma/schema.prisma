@@ -15,11 +15,15 @@ datasource db {
 // Users & Groups
 
 model User {
+    id              String    @id @unique @default(cuid())
+    provider_id     String    @unique
+    hashed_password String?
+    session         Session[]
+
     username        String   @unique
     displayname     String?
     bio             String?
     image           String?
-    hashed_password        String?
     created         DateTime @default(now())
     lastOnline      DateTime @default(now())
     Status          String?
@@ -30,14 +34,19 @@ model User {
     // groupsJoined Group[] @relation("member")
     places          Place[]
     // posts       Post[]
-    idToken         String
 
-    @@id([username])
+    @@map("user")
 }
 
-model RefreshToken {
-    token        String  @unique
-    userUsername String?
+model Session {
+    id           String @id @unique
+    user_id      String
+    expires      BigInt
+    idle_expires BigInt
+    user         User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("session")
 }
 
 // model Group {
