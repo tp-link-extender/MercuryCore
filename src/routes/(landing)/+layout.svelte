@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { handleSilentRefresh } from "lucia-sveltekit/client"
+	import { page } from "$app/stores"
+	import { handleSession } from "@lucia-auth/sveltekit/client"
 	import Navbar from "../../components/navbar.svelte"
 	import "/src/bootstrap.sass"
 	import "/src/global.sass"
 
-	handleSilentRefresh()
+	handleSession(page)
 </script>
 
 <Navbar />

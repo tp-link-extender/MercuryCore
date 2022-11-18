@@ -9,7 +9,7 @@
 <div id="all">
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center light-text">
 		<h1 class="light-text">Error {$page.status}</h1>
-		{$page.error.message}
+		{$page.error?.message}
 	</div>
 </div>
 

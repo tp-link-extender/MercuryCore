@@ -1,16 +1,16 @@
+import type { PageServerLoad } from "./$types"
 import { redirect, invalid } from "@sveltejs/kit"
-import { auth } from "$lib/lucia"
-import { setCookie } from "lucia-sveltekit"
+import { auth } from "$lib/server/lucia"
 
 /** @type {import("@sveltejs/kit").PageServerLoad} */
-export const load = auth.handleServerLoad(async ({ getSession }) => {
-	const session = await getSession()
+export const load: PageServerLoad = async ({ locals }) => {
+	const session = await locals.getSession()
 	if (session) throw redirect(302, "/home")
-})
+}
 
 /** @type {import("./$types").Actions} */
 export const actions = {
-	default: async ({ cookies, request }: { cookies: any; request: any }) => {
+	default: async ({ request, locals }: { request: any; locals: any }) => {
 		const data = await request.formData()
 		const username = data.get("username")
 		const password = data.get("password")
@@ -29,15 +29,16 @@ export const actions = {
 		}
 
 		try {
-			const authenticateUser = await auth.authenticateUser("username", username, password)
-			setCookie(cookies, ...authenticateUser.cookies)
+			const user = await auth.authenticateUser("username", username, password)
+			const session = await auth.createSession(user.userId)
+			locals.setSession(session)
 		} catch (e) {
 			const error = e as Error
-			if (error.message == "AUTH_INVALID_IDENTIFIER_TOKEN" || error.message == "AUTH_INVALID_PASSWORD") {
+			if (error.message === "AUTH_INVALID_PROVIDER_ID" || error.message === "AUTH_INVALID_PASSWORD") {
 				return invalid(400, { msg: "Incorrect username or password" })
 			}
-			console.log(error)
-			return invalid(400, { msg: "An unexpected error occurred" })
+			console.error(error)
+			return invalid(500, { msg: "An unexpected error occurred" })
 		}
 
 		throw redirect(302, "/home")

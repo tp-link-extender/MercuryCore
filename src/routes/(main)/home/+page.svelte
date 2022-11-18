@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getSession } from "lucia-sveltekit/client"
+	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	const friends = [
 		{
@@ -54,7 +54,7 @@
 
 	export let data: any
 
-	const session = getSession()
+	const user = getUser()
 
 	// explicitly any to prevent warnings
 	const statusColours: any = {
@@ -71,9 +71,9 @@
 <div class="container">
 	<div class="top d-flex px-2">
 		<div id="pfp">
-			<img src={$session?.user.image} alt="You" />
+			<img src={$user?.image} alt="You" />
 		</div>
-		<h1 class="text-center light-text">Hi, {$session?.user.username}!</h1>
+		<h1 class="text-center light-text">Hi, {$user?.username}!</h1>
 	</div>
 	<div class="mt-5">
 		<h4 class="light-text">Friends</h4>
@@ -148,6 +148,7 @@
 		margin-bottom: 1rem
 		text-decoration: none
 		img
+			background: black
 			width: 100%
 
 	.place img
