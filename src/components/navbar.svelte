@@ -5,9 +5,13 @@
 	const user = getUser()
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-dark position-fixed">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top position-fixed">
 	<div class="container">
 		<a class="navbar-brand light-text" href="/">Mercury</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarText">
 		<div class="d-flex">
 			{#if $user}
 				<a type="button" href="/home" class="btn my-2 my-sm-0 light-text">Home</a>
@@ -16,10 +20,14 @@
 			<a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
 			<a type="button" href="/create" class="btn my-2 my-sm-0 light-text">Create</a> -->
 		</div>
-		<div class="d-flex">
+		<div class="navbar-nav ms-auto">
 			{#if !$user}
-				<a type="button" href="/login" class="btn btn-success my-2 my-sm-0">Login</a>
+			  <li class="nav-item">
+				<a type="button" href="/login" class="btn light-text">Login</a>
+			  </li>
+			  <li class="nav-item">
 				<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
+			  </li>
 			{:else}
 				<a id="username" href="/{$user?.username}" class="d-flex">
 					<div id="pfp" class="mx-2">
@@ -40,6 +48,7 @@
 					class="btn btn-success my-2 my-sm-0">Logout</button
 				>
 			{/if}
+		</div>
 		</div>
 	</div>
 </nav>
