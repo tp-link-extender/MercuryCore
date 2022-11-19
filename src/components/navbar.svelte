@@ -52,7 +52,6 @@
 	nav
 		z-index: 9
 		width: 100vw
-		max-height: 10vh
 		backdrop-filter: blur(8px)
 		a
 			margin-right: 0.5rem

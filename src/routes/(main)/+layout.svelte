@@ -11,7 +11,6 @@
 <Navbar />
 
 <div id="all">
-	<div id="bg" class="position-fixed" />
 	<main>
 		<slot />
 	</main>
@@ -39,17 +38,11 @@
 	#all
 		overflow-y: hidden
 		height: 100%
+		background-color: var(--background)
 		main
 			min-height: 65vh
 			margin-top: 10vh
 			margin-bottom: 5vh
-
-	#bg
-		background-color: var(--background)
-		min-height: 100vh
-		height: 100%
-		width: 100%
-		z-index: -1
 		
 	footer
 		background: rgba(0, 0, 0, 0.15)
