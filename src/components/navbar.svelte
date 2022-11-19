@@ -61,6 +61,9 @@
 		width: 100vw
 		max-height: 10vh
 		backdrop-filter: blur(8px)
+	offcanvas-body
+		background: none
+		box-shadow: none
 	a
 		margin-right: 0.5rem
 	img
