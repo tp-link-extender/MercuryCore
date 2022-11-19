@@ -1,59 +1,6 @@
 <script lang="ts">
 	import { getUser } from "@lucia-auth/sveltekit/client"
-
-	const friends = [
-		{
-			name: "Multako",
-			img: "https://tr.rbxcdn.com/998702cf4a9969090aef5a0a4b62ab96/150/150/AvatarHeadshot/Png",
-			status: "Online",
-		},
-		{
-			name: "Lewin5",
-			img: "https://tr.rbxcdn.com/2daa018f45c826c666f21aefed82161f/150/150/AvatarHeadshot/Png",
-			status: "Developing",
-		},
-		{
-			name: "Taskmanager",
-			img: "https://tr.rbxcdn.com/f0af0f9d4a46b46f13ad9f373073873d/150/150/AvatarHeadshot/Png",
-		},
-		{
-			name: "Boxerpizza",
-			img: "https://tr.rbxcdn.com/4822f6355b367396437b7eed14048a7f/150/150/AvatarHeadshot/Png",
-			status: "Online",
-		},
-		{
-			name: "Wagness",
-			img: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
-			status: "Joined",
-		},
-		{
-			name: "Multako",
-			img: "https://tr.rbxcdn.com/998702cf4a9969090aef5a0a4b62ab96/150/150/AvatarHeadshot/Png",
-			status: "Online",
-		},
-		{
-			name: "Lewin5",
-			img: "https://tr.rbxcdn.com/2daa018f45c826c666f21aefed82161f/150/150/AvatarHeadshot/Png",
-			status: "Developing",
-		},
-		{
-			name: "Taskmanager",
-			img: "https://tr.rbxcdn.com/f0af0f9d4a46b46f13ad9f373073873d/150/150/AvatarHeadshot/Png",
-		},
-		{
-			name: "Boxerpizza",
-			img: "https://tr.rbxcdn.com/4822f6355b367396437b7eed14048a7f/150/150/AvatarHeadshot/Png",
-			status: "Online",
-		},
-		{
-			name: "Wagness",
-			img: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
-			status: "Joined",
-		},
-	]
-
 	export let data: any
-
 	const user = getUser()
 
 	// explicitly any to prevent warnings
@@ -78,11 +25,11 @@
 	<div class="mt-5">
 		<h4 class="light-text">Friends</h4>
 		<div id="friends" class="d-flex">
-			{#each friends as friend}
-				<a class="friend px-2 mb-2 text-center light-text" href="/{friend.name}">
+			{#each data.friends as friend}
+				<a class="friend px-2 mb-2 text-center light-text" href="/{friend.username}">
 					<div class="position-relative mb-2">
 						<div class="image-background">
-							<img src={friend.img} alt={friend.name} />
+							<img src={friend.image} alt={friend.displayname || friend.username} />
 						</div>
 						{#if friend.status}
 							<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
@@ -90,7 +37,7 @@
 							</span>
 						{/if}
 					</div>
-					{friend.name}
+					{friend.displayname || friend.username}
 				</a>
 			{/each}
 		</div>
@@ -143,6 +90,7 @@
 				img
 					height: 100%
 					border-radius: 0 0 50% 50%
+					
 	.place
 		border-radius: 0.5rem
 		margin-bottom: 1rem

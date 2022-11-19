@@ -1,19 +1,17 @@
-import type { PageServerLoad } from "./$types"
+import type { Actions, PageServerLoad } from "./$types"
 import { redirect, invalid } from "@sveltejs/kit"
 import { auth } from "$lib/server/lucia"
 
-/** @type {import("@sveltejs/kit").PageServerLoad} */
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.getSession()
 	if (session) throw redirect(302, "/home")
 }
 
-/** @type {import("./$types").Actions} */
-export const actions = {
-	default: async ({ request, locals }: { request: any; locals: any }) => {
+export const actions: Actions = {
+	default: async ({ request, locals }) => {
 		const data = await request.formData()
-		const username = data.get("username")
-		const password = data.get("password")
+		const username = data.get("username")?.toString() || ""
+		const password = data.get("password")?.toString() || ""
 
 		const easyChecks = [
 			[username.length <= 3, "Username must be more than 3 characters"],

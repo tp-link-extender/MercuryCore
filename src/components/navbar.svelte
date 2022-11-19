@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getUser } from "@lucia-auth/sveltekit/client"
-	import { signOut } from "@lucia-auth/sveltekit/client"
+	import { getUser, signOut } from "@lucia-auth/sveltekit/client"
+	import { invalidateAll } from "$app/navigation"
 
 	const user = getUser()
 </script>
@@ -40,10 +40,8 @@
 				<button
 					on:click={async () => {
 						await signOut()
+						invalidateAll()
 						window.location.reload()
-						// I have no clue if this is a good way to do this
-						// I tried it, and it worked
-						// TODO: make it not rely on js
 					}}
 					class="btn btn-success my-2 my-sm-0">Logout</button
 				>
