@@ -16,7 +16,7 @@
 				<h5 class="offcanvas-title" id="offcanvasLabel" style="color:white;">Mercury</h5>
 				<button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close" />
 			</div>
-			<div class="offcanvas-body bg-dark">
+			<div class="offcanvas-body">
 				{#if $user}
 					<div class="navbar-nav">
 						<li class="nav-item">
@@ -60,14 +60,16 @@
 </nav>
 
 <style lang="sass">
+	@media only screen and (max-width: 768px) 
+		.offcanvas-body
+			background: var(--accent)
 	nav
 		z-index: 9
 		width: 100vw
 		max-height: 10vh
 		backdrop-filter: blur(8px)
-	.offcanvas-body
-		background: none
-		box-shadow: none
+	.offcanvas
+		box-shadow: none !important	
 	a
 		margin-right: 0.5rem
 	img
