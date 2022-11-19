@@ -1,5 +1,10 @@
 <script lang="ts">
+	import { enhance } from "$app/forms"
+	import { getUser } from "@lucia-auth/sveltekit/client"
 	export let data: any
+	export let form: any
+	$: console.log(form)
+	const user = getUser()
 </script>
 
 <svelte:head>
@@ -34,44 +39,30 @@
 						{data.friendCount}
 					</h4>
 				</div>
-				<div class="align-self-center ms-auto me-2">
-					<button
-						type="button"
-						on:click={() => {
-							if (data.friends) {
-								data.friends = false
-								data.friendCount -= 1
-							} else {
-								data.pendingRequest = !data.pendingRequest
-							}
-						}}
-						class="btn {data.friends || data.pendingRequest ? "btn-danger" : "btn-success"}"
-					>
-						{#if data.friends}
-							Unfriend
-						{:else if data.pendingRequest == true}
-							Cancel request
-						{:else}
-							Add friend
-						{/if}
-					</button>
-				</div>
-				<div class="align-self-center">
-					<button
-						type="button"
-						on:click={() => {
-							data.following = !data.following
-							data.followerCount += data.following ? 1 : -1
-						}}
-						class="btn {data.following ? "btn-danger" : "btn-primary"}"
-					>
-						{#if data.following}
-							Unfollow
-						{:else}
-							Follow
-						{/if}
-					</button>
-				</div>
+				{#if $user && data.username != $user?.username}
+					<form class="align-self-center ms-auto me-2" method="POST" use:enhance>
+						<button name="action" value={data.friends ? "unfriend" : data.outgoingRequest ? "cancel" : data.incomingRequest ? "accept" : "friend"} class="btn {data.friends || data.outgoingRequest ? 'btn-danger' : data.incomingRequest ? 'btn-info' : 'btn-success'}">
+							{#if data.friends}
+								Unfriend
+							{:else if data.incomingRequest}
+								Accept request
+							{:else if data.outgoingRequest}
+								Cancel request
+							{:else}
+								Add friend
+							{/if}
+						</button>
+					</form>
+					<form class="align-self-center" method="POST" use:enhance>
+						<button name="action" value={data.following ? "unfollow" : "follow"} class="btn {data.following ? 'btn-danger' : 'btn-primary'}">
+							{#if data.following}
+								Unfollow
+							{:else}
+								Follow
+							{/if}
+						</button>
+					</form>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -111,6 +102,7 @@
 		margin-bottom: 1rem
 		text-decoration: none
 		img
+			background: black
 			width: 100%
 
 	.place img

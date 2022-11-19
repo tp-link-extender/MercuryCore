@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { getUser } from "@lucia-auth/sveltekit/client"
-	import { signOut } from "@lucia-auth/sveltekit/client"
-	
+	import { getUser, signOut } from "@lucia-auth/sveltekit/client"
+	import { invalidateAll } from "$app/navigation"
+
 	const user = getUser()
  </script>
  <nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top position-fixed">
@@ -31,25 +31,23 @@
 			 </li>
 			 <li class="nav-item">
 				<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
-			 </li>
-			 {:else}
-			 <a id="username" href="/{$user?.username}" class="d-flex">
-				<div id="pfp" class="mx-2">
-				   <img src={$user?.image} alt="You" />
-				</div>
-				<p class="light-text my-auto fs-6 me-4">
-				   {$user?.displayname || $user?.username}
-				</p>
-			 </a>
-			 <button
-			 on:click={async () => {
-			 await signOut()
-			 window.location.reload()
-			 // I have no clue if this is a good way to do this
-			 // I tried it, and it worked
-			 // TODO: make it not rely on js
-			 }}
-			 class="btn btn-success my-2 my-sm-0">Logout</button
+			  </li>
+			{:else}
+				<a id="username" href="/{$user?.username}" class="d-flex">
+					<div id="pfp" class="mx-2">
+						<img src={$user?.image} alt="You" />
+					</div>
+					<p class="light-text my-auto fs-6 me-4">
+						{$user?.displayname || $user?.username}
+					</p>
+				</a>
+				<button
+					on:click={async () => {
+						await signOut()
+						invalidateAll()
+						window.location.reload()
+					}}
+					class="btn btn-success my-2 my-sm-0">Logout</button
 				>
 			 {/if}
 		  </div>

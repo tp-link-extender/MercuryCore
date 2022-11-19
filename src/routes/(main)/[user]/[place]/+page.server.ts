@@ -2,7 +2,6 @@ import { error } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
-/** @type {import("@sveltejs/kit").PageServerLoad} */
 export async function load({ params }: { params: any }) {
 	const getPlace = await prisma.place.findUnique({
 		where: {
