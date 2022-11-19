@@ -44,7 +44,7 @@
 </svelte:head>
 
 <div id="all">
-	<canvas id="gradient-canvas" class="position-relative" />
+	<canvas id="gradient-canvas" />
 
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
 		<div id="moon" class="container d-flex flex-column justify-content-center align-items-center">
@@ -69,6 +69,9 @@
 	#gradient-canvas
 		height: 100vh
 		width: 100vw
+		position: absolute
+		top: 0
+		left: 0
 
 	#wavep // rpcs3 momnt
 		width: 100%

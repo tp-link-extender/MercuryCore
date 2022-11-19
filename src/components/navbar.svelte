@@ -4,7 +4,7 @@
 
 	const user = getUser()
  </script>
- <nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top position-fixed">
+ <nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top">
 	<div class="container">
 	   <a class="navbar-brand light-text" href="/">Mercury</a>
 	   <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarExample-expand-lg" aria-controls="offcanvasNavbarExample-expand-lg">
@@ -15,15 +15,17 @@
 			<h5 class="offcanvas-title" id="offcanvasLabel" style="color:white;">Mercury</h5>
 			<button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>  
-		<div class="offcanvas-body">
-		<div class="d-flex">
+		<div class="offcanvas-body bg-dark">
 			 {#if $user}
-			 <a type="button" href="/home" class="btn my-2 my-sm-0 light-text">Home</a>
+			 <div class="navbar-nav">
+				<li class="nav-item">
+					<a type="button" href="/home" class="btn my-2 my-sm-0 light-text">Home</a>
+				</li>
+			 </div>
 			 {/if}
 			 <!-- <a type="button" href="/discover" class="btn my-2 my-sm-0 light-text">Discover</a>
 				<a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
 				<a type="button" href="/create" class="btn my-2 my-sm-0 light-text">Create</a> -->
-		  </div>
 		  <div class="navbar-nav ms-auto">
 			 {#if !$user}
 			 <li class="nav-item">
@@ -51,7 +53,7 @@
 				>
 			 {/if}
 		  </div>
-		</div>
+	   </div>
 	   </div>
 	</div>
  </nav>
