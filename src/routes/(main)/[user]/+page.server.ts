@@ -41,7 +41,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, locals, params }) => { // More complex because idempotency
+	default: async ({ request, locals, params }) => {
+		// More complex because idempotency
 		const session = await locals.getSession()
 		if (!session) throw invalid(400)
 
@@ -87,19 +88,19 @@ export const actions: Actions = {
 				},
 			},
 		})
-		
+
 		if (user) {
 			let update1 = {}
 			let update2 = {}
 			const user1 = await prisma.user.findUnique({
 				where: {
-					id: session.userId
-				}
+					id: session.userId,
+				},
 			})
 			const user2 = await prisma.user.findUnique({
 				where: {
-					username: params.user
-				}
+					username: params.user,
+				},
 			})
 
 			switch (action) {
@@ -116,27 +117,27 @@ export const actions: Actions = {
 					if (user.incomingRequests[0]) {
 						update1 = {
 							friends: {
-								push: user2
+								push: user2,
 							},
 							incomingRequests: {
 								delete: {
 									where: {
-										username: user2?.username
-									}
-								}
-							}
+										username: user2?.username,
+									},
+								},
+							},
 						}
 						update2 = {
 							friends: {
-								push: user1
+								push: user1,
 							},
 							outgoingRequests: {
 								delete: {
 									where: {
-										username: user1?.username
-									}
-								}
-							}
+										username: user1?.username,
+									},
+								},
+							},
 						}
 						return "accept"
 					}
