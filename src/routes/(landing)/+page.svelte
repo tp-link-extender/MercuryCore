@@ -2,11 +2,10 @@
 	import { onMount } from "svelte"
 	import Gradient from "$lib/gradient"
 	import Moon from "../../components/moon.svelte"
- 	import { Three, useThrelte } from "@threlte/core";
+	import { Three, useThrelte } from "@threlte/core"
 
 	let onPC: HTMLElement
 	let onMobile: HTMLElement
-
 
 	onMount(() => {
 		// otherwise "window is not defined"
@@ -51,7 +50,7 @@
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
 		<div id="moon" class="container d-flex flex-column justify-content-center align-items-center">
 			<div class="object">
-				<Moon /> 
+				<Moon />
 			</div>
 		</div>
 		<br />
@@ -69,18 +68,21 @@
 	</div>
 </div>
 
-<div style="display:block;position:absolute;top:100px;padding:25px;top:50%;left:50%;transform: translate(-50%, -50%);background:rgba(50,50,50,0.7);max-width:386px;max-height:600px;color:white;border-radius:10px;z-index:2;" id="login">
+<div
+	style="display:block;position:absolute;top:100px;padding:25px;top:50%;left:50%;transform: translate(-50%, -50%);background:rgba(50,50,50,0.7);max-width:386px;max-height:600px;color:white;border-radius:10px;z-index:2;"
+	id="login"
+>
 	<div class="mb-3">
 		<label for="exampleInputEmail1" class="form-label">Email address</label>
-		<input style="background:transparent;" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+		<input style="background:transparent;" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
 		<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
 	</div>
 	<div class="mb-3">
 		<label for="exampleInputPassword1" class="form-label">Password</label>
-		<input style="background:transparent;" type="password" class="form-control" id="exampleInputPassword1">
+		<input style="background:transparent;" type="password" class="form-control" id="exampleInputPassword1" />
 	</div>
 	<div class="mb-3 form-check">
-		<input type="checkbox" class="form-check-input" id="exampleCheck1">
+		<input type="checkbox" class="form-check-input" id="exampleCheck1" />
 		<label class="form-check-label" for="exampleCheck1">Remember me</label>
 	</div>
 	<button type="submit" class="btn btn-primary">Sign on MSN Messenger</button>
@@ -143,12 +145,4 @@
 	#all
 		margin-top: -10vh
 		background: rgba(0, 0, 0, 0)
-	#mooning
-		transition: all 2s
-	.open
-		scale: 8
-		filter: blur(5px)
-	#hello 
-		scale: 5
-
 </style>

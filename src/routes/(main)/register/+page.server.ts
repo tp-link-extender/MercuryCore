@@ -14,7 +14,6 @@ export const actions: Actions = {
 		const data = await request.formData()
 		const username = data.get("username")?.toString() || ""
 		const password = data.get("password")?.toString() || ""
-		
 
 		const easyChecks = [
 			[username.length <= 3, "Username must be more than 3 characters"],
