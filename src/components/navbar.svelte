@@ -5,7 +5,7 @@
 	const user = getUser()
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark position-fixed">
 	<div class="container">
 		<a class="navbar-brand light-text" href="/">Mercury</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarExample-expand-lg" aria-controls="offcanvasNavbarExample-expand-lg">
