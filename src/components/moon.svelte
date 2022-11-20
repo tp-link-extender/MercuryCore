@@ -1,5 +1,5 @@
 <script>
-	import { Canvas, DirectionalLight, HemisphereLight, OrbitControls, PerspectiveCamera } from "@threlte/core"
+	import { Canvas, DirectionalLight, HemisphereLight, OrbitControls, PerspectiveCamera, Three, useThrelte } from "@threlte/core"
 	import { GLTF } from "@threlte/extras"
 
 	const items = [
@@ -16,8 +16,8 @@
 			camPos: { x: 100, y: 100, z: 100 },
 		},
 	]
+
 	const item = items[Math.floor(Math.random() * items.length)]
-	const str = "a"
 </script>
 
 <div>
@@ -38,4 +38,5 @@
 		position: relative
 		width: 100%
 		height: 100%
+		scale: 4
 </style>

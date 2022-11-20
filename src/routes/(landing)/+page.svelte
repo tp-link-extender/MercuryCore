@@ -2,9 +2,11 @@
 	import { onMount } from "svelte"
 	import Gradient from "$lib/gradient"
 	import Moon from "../../components/moon.svelte"
+ 	import { Three, useThrelte } from "@threlte/core";
 
 	let onPC: HTMLElement
 	let onMobile: HTMLElement
+
 
 	onMount(() => {
 		// otherwise "window is not defined"
@@ -48,7 +50,9 @@
 
 	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
 		<div id="moon" class="container d-flex flex-column justify-content-center align-items-center">
-			<Moon />
+			<div class="object">
+				<Moon /> 
+			</div>
 		</div>
 		<br />
 		<br />
@@ -144,7 +148,7 @@
 	.open
 		scale: 8
 		filter: blur(5px)
-	#moon.canvas // spinning logo, idk why this doesnt work
-		opacity: 0
-		display: none
+	#hello 
+		scale: 5
+
 </style>
