@@ -30,7 +30,7 @@
 				<div class="navbar-nav ms-auto">
 					{#if !$user}
 						<li class="nav-item">
-							<a type="button" href="/login" class="btn light-text">Login</a>
+							<a type="button" href="/login" class="btn mb-1 light-text">Login</a>
 						</li>
 						<li class="nav-item">
 							<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
