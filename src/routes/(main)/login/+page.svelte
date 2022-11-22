@@ -6,10 +6,10 @@
 <svelte:head>
 	<title>Login - Mercury</title>
 </svelte:head>
-<div class="container d-flex justify-content-center align-items-center mt-5">
+<div class="container d-flex justify-content-center align-items-center">
 	<div class="row">
-		<div class="col">
-        <button>sass</button>
+			<div class="col">
+			<button>sass</button>
 		</div>
 		<div class="col">
 			<form

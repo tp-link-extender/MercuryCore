@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte"
 	import Gradient from "$lib/gradient"
-	import Moon from "../../components/moon.svelte"
-	import { Three, useThrelte } from "@threlte/core"
+	import Moon from "$lib/components/Moon.svelte"
 
 	let onPC: HTMLElement
 	let onMobile: HTMLElement
