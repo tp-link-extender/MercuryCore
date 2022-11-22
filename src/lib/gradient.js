@@ -318,7 +318,7 @@ function e(object, propertyName, val) {
 
 // Gradient object
 export default class Gradient {
-	initGradient() {
+	initGradient(e) {
 		throw new Error("Method not implemented.")
 	}
 	constructor(...t) {
