@@ -21,7 +21,7 @@ export const actions: Actions = {
 			[password.length < 16, "Password must be at least 16 characters"],
 			[password.length > 6969, "Password must be less than 6969 characters"],
 		]
-
+		
 		for (const [condition, msg] of easyChecks) {
 			if (condition) {
 				return invalid(400, { msg })
@@ -46,6 +46,7 @@ export const actions: Actions = {
 					},
 				},
 			})
+
 			if (caseInsensitiveCheck.length > 0) return invalid(400, { msg: "User already exists" })
 
 			const user = await auth.createUser("username", username, {
