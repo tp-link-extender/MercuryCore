@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+    redis:
+        container_name: redisgraph
+        image: redislabs/redisgraph
+        ports:
+            - "6379:6379"
+        restart: unless-stopped
+        volumes:
+            - ./data/redis:/data
+
+    postgres:
+        container_name: postgres
+        image: postgres
+        ports:
+            - "5432:5432"
+        restart: unless-stopped
+        volumes:
+            - ./data/postgres:/var/lib/postgresql/data
+
+        environment:
+            POSTGRES_PASSWORD: password # todo: load from env
