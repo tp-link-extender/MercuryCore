@@ -19,7 +19,6 @@ export async function load({ params }: { params: any }) {
 		return {
 			name: params.place,
 			owner: params.user,
-			img: "https://tr.rbxcdn.com/5e4943326d89e35ee7f3659acb79b95e/150/150/Image/Jpeg",
 			description: getPlace.description,
 			image: getPlace.image,
 		}
