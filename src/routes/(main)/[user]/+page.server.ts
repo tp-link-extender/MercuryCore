@@ -1,10 +1,18 @@
 import type { Actions, PageServerLoad } from "./$types"
-import { error, fail } from "@sveltejs/kit"
+import { error, fail, redirect } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
+import { createClient, Graph } from "redis"
 const prisma = new PrismaClient()
 
+async function roQuery(graph: any, str: string, query: any) {
+	try {
+		return ((await graph.roQuery(str, query)).data || [])[0]
+	} catch {
+		return false
+	}
+}
+
 export const load: PageServerLoad = async ({ locals, params }) => {
-	const session = await locals.getSession()
 	const user = await prisma.user.findUnique({
 		where: {
 			username: params.user,
@@ -14,14 +22,35 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			bio: true,
 			image: true,
 			places: true,
-			friends: {
-				where: {
-					id: session?.userId,
-				},
-			},
 		},
 	})
 	if (user) {
+		const session = await locals.getSession()
+		const url = import.meta.env.REDIS_URL
+		const client = url ? createClient({ url: import.meta.env.REDIS_URL }) : createClient()
+		client.on("error", () => {
+			throw error(500, "Redis error")
+		})
+		await client.connect()
+
+		let user1
+		if (session)
+			user1 = await prisma.user.findUnique({
+				where: {
+					id: session.userId,
+				},
+				select: {
+					username: true,
+				},
+			})
+		const query = {
+			params: {
+				user1: user1?.username || "",
+				user2: params.user,
+			},
+		}
+		const graph = new Graph(client, "friends")
+
 		return {
 			username: params.user,
 			displayname: user.displayname,
@@ -30,10 +59,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			places: user.places,
 			followerCount: 420,
 			friendCount: 21,
-			friends: user.friends[0],
-			following: false,
-			incomingRequest: false,
-			outgoingRequest: false,
+			friends: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]-> (:User{ name: $user2 }) RETURN r", query) : false,
+			following: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:follows]-> (:User{ name: $user2 }) RETURN r", query) : false,
+			incomingRequest: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User{ name: $user2 }) RETURN r", query) : false,
+			outgoingRequest: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:request]-> (:User{ name: $user2 }) RETURN r", query) : false,
 		}
 	} else {
 		throw error(404, `Not found: /${params.user}`)
@@ -44,130 +73,85 @@ export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
 		// More complex because idempotency
 		const session = await locals.getSession()
-		if (!session) throw fail(400)
+		if (!session) throw redirect(302, "/login")
 
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
 
-		const user: any = await prisma.user.findUnique({
+		const client = createClient({ url: import.meta.env.REDIS_URL })
+		client.on("error", () => {
+			throw error(500, "Redis error")
+		})
+		await client.connect()
+
+		const user1 = await prisma.user.findUnique({
 			where: {
 				id: session.userId,
 			},
 			select: {
-				friends: {
-					select: {
-						username: true,
-					},
-					where: {
-						username: params.user,
-					},
-				},
-				incomingRequests: {
-					select: {
-						username: true,
-					},
-					where: {
-						username: params.user,
-					},
-				},
-				outgoingRequests: {
-					select: {
-						username: true,
-					},
-					where: {
-						username: params.user,
-					},
-				},
-				following: {
-					select: {
-						username: true,
-					},
-					where: {
-						username: params.user,
-					},
-				},
+				username: true,
 			},
 		})
+		const user2 = await prisma.user.findUnique({
+			where: {
+				username: params.user,
+			},
+		})
+		if (!user1 || !user2) return fail(400)
 
-		if (user) {
-			let update1 = {}
-			let update2 = {}
-			const user1 = await prisma.user.findUnique({
-				where: {
-					id: session.userId,
-				},
-			})
-			const user2 = await prisma.user.findUnique({
-				where: {
-					username: params.user,
-				},
-			})
+		const query = {
+			params: {
+				user1: user1.username,
+				user2: params.user,
+			},
+		}
+		const graph = new Graph(client, "friends")
 
-			switch (action) {
-				case "friend":
-					if (user.friends.length == 0) {
-						return "friend"
-					}
-				case "unfriend":
-					if (user.friends[0]) {
-						return "unfriend"
-					}
+		console.log(action)
 
-				case "accept":
-					if (user.incomingRequests[0]) {
-						update1 = {
-							friends: {
-								push: user2,
-							},
-							incomingRequests: {
-								delete: {
-									where: {
-										username: user2?.username,
-									},
-								},
-							},
-						}
-						update2 = {
-							friends: {
-								push: user1,
-							},
-							outgoingRequests: {
-								delete: {
-									where: {
-										username: user1?.username,
-									},
-								},
-							},
-						}
-						return "accept"
-					}
-				case "cancel":
-					if (user.incomingRequests[0]) {
-						return "cancel"
-					}
-
-				case "follow":
-					if (user.following.length == 0) {
-						return "follow"
-					}
-				case "unfollow":
-					if (user.following[0]) {
-						return "unfollow"
-					}
-			}
-
-			await prisma.user.update({
-				where: {
-					id: session.userId,
-				},
-				data: update1,
-			})
-			await prisma.user.update({
-				where: {
-					username: params.user,
-				},
-				data: update2,
-			})
+		switch (action) {
+			case "follow":
+				await graph.query(
+					`
+					MERGE (u1:User { name: $user1 })
+					MERGE (u2:User { name: $user2 })
+					MERGE (u1) -[:follows]-> (u2)
+					`,
+					query
+				)
+				break
+			case "unfollow":
+				await graph.query(
+					`
+					MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User{ name: $user2 })
+					DELETE r
+					`,
+					query
+				)
+				break
+			case "friend":
+				if (await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User{ name: $user2 }) RETURN r", query))
+					await graph.query(
+						`
+					MERGE (u1:User { name: $user1 })
+					MERGE (u2:User { name: $user2 })
+					MERGE (u1) -[:friends]-> (u2)
+					MERGE (u1) <-[:friends]- (u2)
+					`,
+						query
+					)
+				else return fail(400)
+				break
+			case "unfriend":
+				await graph.query(
+					`
+					MATCH (u1:User { name: $user1 }) -[r:friends]-> (u2:User{ name: $user2 })
+					MATCH (u1:User { name: $user1 }) <-[s:friends]- (u2:User{ name: $user2 })
+					DELETE r, s
+					`,
+					query
+				)
+				break
 		}
 	},
 }
