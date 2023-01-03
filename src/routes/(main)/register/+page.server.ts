@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types"
-import { redirect, invalid } from "@sveltejs/kit"
+import { redirect, fail } from "@sveltejs/kit"
 import { auth } from "$lib/server/lucia"
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
@@ -18,13 +18,13 @@ export const actions: Actions = {
 		const easyChecks = [
 			[username.length <= 3, "Username must be more than 3 characters"],
 			[username.length > 30, "Username must be less than 30 characters"],
-			[password.length < 16, "Password must be at least 16 characters"],
+			// [password.length < 16, "Password must be at least 16 characters"],
 			[password.length > 6969, "Password must be less than 6969 characters"],
 		]
 		
 		for (const [condition, msg] of easyChecks) {
 			if (condition) {
-				return invalid(400, { msg })
+				return fail(400, { msg })
 			}
 		}
 
@@ -34,7 +34,7 @@ export const actions: Actions = {
 			let t = i.substring(19)
 			t = t.substring(0, t.indexOf("/"))
 
-			if (t.toLowerCase() == lowercaseUsername) return invalid(400, { msg: "Username is unavailable" })
+			if (t.toLowerCase() == lowercaseUsername) return fail(400, { msg: "Username is unavailable" })
 		}
 
 		try {
@@ -47,14 +47,14 @@ export const actions: Actions = {
 				},
 			})
 
-			if (caseInsensitiveCheck.length > 0) return invalid(400, { msg: "User already exists" })
+			if (caseInsensitiveCheck.length > 0) return fail(400, { msg: "User already exists" })
 
 			const user = await auth.createUser("username", username, {
 				password,
 				attributes: {
 					username,
 					displayname: username,
-					image: "https://tr.rbxcdn.com/63fbca28e1fc28ed99915db948255b81/150/150/AvatarHeadshot/Png",
+					image: "https://tr.rbxcdn.com/54d17964492b5e0af66797942fcce26c/150/150/AvatarHeadshot/Png",
 				},
 			})
 			const session = await auth.createSession(user.userId)
@@ -62,10 +62,10 @@ export const actions: Actions = {
 		} catch (e) {
 			const error = e as Error
 			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
-				return invalid(400, { msg: "User already exists" })
+				return fail(400, { msg: "User already exists" })
 			}
 			console.error(error)
-			return invalid(500, { msg: "An unexpected error occurred" })
+			return fail(500, { msg: "An unexpected error occurred" })
 		}
 
 		throw redirect(302, "/home")

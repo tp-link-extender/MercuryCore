@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types"
-import { error, invalid } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
@@ -44,7 +44,7 @@ export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
 		// More complex because idempotency
 		const session = await locals.getSession()
-		if (!session) throw invalid(400)
+		if (!session) throw fail(400)
 
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
