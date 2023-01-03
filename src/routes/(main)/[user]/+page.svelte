@@ -2,8 +2,6 @@
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	export let data: any
-	export let form: any
-	$: console.log(form)
 	const user = getUser()
 </script>
 
@@ -41,7 +39,7 @@
 				</div>
 				{#if $user && data.username != $user?.username}
 					<form class="align-self-center ms-auto me-2" method="POST" use:enhance>
-						<button name="action" value={data.friends ? "unfriend" : data.outgoingRequest ? "cancel" : data.incomingRequest ? "accept" : "friend"} class="btn {data.friends || data.outgoingRequest ? 'btn-danger' : data.incomingRequest ? 'btn-info' : 'btn-success'}">
+						<button name="action" value={data.friends ? "unfriend" : data.outgoingRequest ? "cancel" : data.incomingRequest ? "accept" : "request"} class="btn {data.friends || data.outgoingRequest ? 'btn-danger' : data.incomingRequest ? 'btn-info' : 'btn-success'}">
 							{#if data.friends}
 								Unfriend
 							{:else if data.incomingRequest}
@@ -49,9 +47,14 @@
 							{:else if data.outgoingRequest}
 								Cancel request
 							{:else}
-								Add friend
+								Send friend request
 							{/if}
 						</button>
+						{#if data.incomingRequest}
+							<button name="action" value="decline" class="btn btn-danger ms-2">
+								Decline request
+							</button>
+						{/if}
 					</form>
 					<form class="align-self-center" method="POST" use:enhance>
 						<button name="action" value={data.following ? "unfollow" : "follow"} class="btn {data.following ? 'btn-danger' : 'btn-primary'}">

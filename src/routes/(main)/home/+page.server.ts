@@ -15,23 +15,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 			image: true,
 		},
 	})
-	const user = await prisma.user.findUnique({
-		where: {
-			id: session.userId,
-		},
-		select: {
-			friends: {
-				select: {
-					username: true,
-					displayname: true,
-					image: true,
-					Status: true,
-				},
-			},
-		},
-	})
 	return {
 		places: getPlaces || [],
-		friends: user?.friends || [],
+		friends: [],
 	}
 }
