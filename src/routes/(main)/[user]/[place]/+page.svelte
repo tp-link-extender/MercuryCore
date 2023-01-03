@@ -18,7 +18,7 @@
 <div class="container">
 	<div class="d-flex mt-12">
 		<div class="flex flex-col me-3" id="thumbnail">
-			<img src={data.img} alt={data.name} />
+			<img src={data.image} alt={data.name} />
 			<p class="light-text mt-2">
 				<b>By:</b> <a href="/{data.owner}">{data.owner}</a>
 			</p>
