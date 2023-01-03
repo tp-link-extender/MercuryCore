@@ -20,28 +20,17 @@ model User {
     hashed_password String?
     session         Session[]
 
-    username               String   @unique
-    displayname            String?
-    bio                    String?
-    image                  String?
-    created                DateTime @default(now())
-    lastOnline             DateTime @default(now())
-    Status                 String?
-    currency               Int      @default(0)
-    
-    friends                User[]   @relation("friends")
-    friendsRelation        User[]   @relation("friends")
-    incomingRequests         User[]   @relation("incomingRequests")
-    incomingRequestsRelation User[]   @relation("incomingRequests")
-    outgoingRequests         User[]   @relation("outgoingRequests")
-    outgoingRequestsRelation User[]   @relation("outgoingRequests")
-    followers                User[]   @relation("followers")
-    followersRelation        User[]   @relation("followers")
-    following                User[]   @relation("following")
-    followingRelation        User[]   @relation("following")
+    username    String   @unique
+    displayname String?
+    bio         String?
+    image       String?
+    created     DateTime @default(now())
+    lastOnline  DateTime @default(now())
+    Status      String?
+    currency    Int      @default(0)
     // groupsOwned  Group[] @relation("owner")
     // groupsJoined Group[] @relation("member")
-    places                 Place[]
+    places      Place[]
     // posts       Post[]
 
     @@map("user")
