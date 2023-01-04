@@ -1,7 +1,7 @@
 <footer class="position-relative text-center">
 	<br />
 	<a class="light-text h4" href="/">Mercury</a>
-	<p class="info text-muted">
+	<p class="info grey-text">
 		© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
 	</p>
 	<a class="light-text h5" href="/rules">Rules</a>
