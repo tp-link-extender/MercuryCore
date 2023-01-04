@@ -431,15 +431,6 @@ export default class Gradient {
 				  requestAnimationFrame(() => {
 						this.el && ((this.computedCanvasStyle = getComputedStyle(this.el)), this.waitForCssVars())
 				  }))
-
-		// ;(this.scrollObserver = await s.create(0.1, false)),
-		// 	this.scrollObserver.observe(this.el),
-		// 	this.scrollObserver.onSeparate(() => {
-		// 		window.removeEventListener("scroll", this.handleScroll), window.removeEventListener("mousedown", this.handleMouseDown), window.removeEventListener("mouseup", this.handleMouseUp), window.removeEventListener("keydown", this.handleKeyDown), (this.isIntersecting = false), this.conf.playing && this.pause()
-		// 	}),
-		// 	this.scrollObserver.onIntersect(() => {
-		// 		window.addEventListener("scroll", this.handleScroll), window.addEventListener("mousedown", this.handleMouseDown), window.addEventListener("mouseup", this.handleMouseUp), window.addEventListener("keydown", this.handleKeyDown), (this.isIntersecting = true), this.addIsLoadedClass(), this.play()
-		// 	})
 	}
 	disconnect() {
 		this.scrollObserver && (window.removeEventListener("scroll", this.handleScroll), window.removeEventListener("mousedown", this.handleMouseDown), window.removeEventListener("mouseup", this.handleMouseUp), window.removeEventListener("keydown", this.handleKeyDown), this.scrollObserver.disconnect()), window.removeEventListener("resize", this.resize)
