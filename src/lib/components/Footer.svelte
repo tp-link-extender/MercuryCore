@@ -18,9 +18,8 @@
 
 <style lang="sass">
 	footer
+		flex-shrink: 0
 		background: var(--footer)
-		height: 20vh
-		width: 100vw
 		padding: 1vh
 		.info
 			margin-bottom: 1.75rem

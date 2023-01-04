@@ -73,12 +73,15 @@
 	.dark-text
 		color: var(--dark-text)
 
-		overflow: overlay
-
 body
+	display: flex
+	flex-direction: column
 	background: var(--background)
 	font-family: "Open Sans"
-
+	height: 100vh
+	padding: 0
+	margin: 0
+	
 ::-webkit-scrollbar
 	width: 15px
 	&-track
