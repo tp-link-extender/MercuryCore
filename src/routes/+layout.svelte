@@ -4,6 +4,7 @@
 	import * as bootstrap from "bootstrap"
 	import Navbar from "$lib/components/Navbar.svelte"
 	import "/src/global.sass"
+	import "/src/bootstrap.scss"
 
 	handleSession(page)
 </script>
