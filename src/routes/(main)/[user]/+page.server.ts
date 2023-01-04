@@ -129,19 +129,6 @@ export const actions: Actions = {
 					query
 				)
 				break
-			case "friend":
-				if (await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User{ name: $user2 }) RETURN r", query))
-					await graph.query(
-						`
-					MERGE (u1:User { name: $user1 })
-					MERGE (u2:User { name: $user2 })
-					MERGE (u1) -[:friends]-> (u2)
-					MERGE (u1) <-[:friends]- (u2)
-					`,
-						query
-					)
-				else return fail(400)
-				break
 			case "unfriend":
 				await graph.query(
 					`
@@ -151,6 +138,67 @@ export const actions: Actions = {
 					`,
 					query
 				)
+				break
+			case "request":
+				if (!(await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]-> (:User{ name: $user2 }) RETURN r", query))) {
+					// Make sure users are not already friends
+					if (await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User{ name: $user2 }) RETURN r", query))
+						// If there is already an incoming request, accept it instead
+						await graph.query(
+							`
+							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User{ name: $user2 })
+							DELETE r
+							MERGE (u1)
+							MERGE (u2)
+							MERGE (u1) -[:friends]-> (u2)
+							MERGE (u1) <-[:friends]- (u2)
+							`,
+							query
+						)
+					else
+						await graph.query(
+							`
+						MERGE (u1:User { name: $user1 })
+						MERGE (u2:User { name: $user2 })
+						MERGE (u1) -[:request]-> (u2)
+						`,
+							query
+						)
+				} else return fail(400)
+				break
+			case "cancel":
+				await graph.query(
+					`
+					MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User{ name: $user2 })
+					DELETE r
+					`,
+					query
+				)
+				break
+			case "decline":
+				await graph.query(
+					`
+					MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User{ name: $user2 })
+					DELETE r
+					`,
+					query
+				)
+				break
+			case "accept":
+				if (await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User{ name: $user2 }) RETURN r", query))
+					// Make sure an incoming request exists before accepting
+					await graph.query(
+						`
+						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User{ name: $user2 })
+						DELETE r
+						MERGE (u1)
+						MERGE (u2)
+						MERGE (u1) -[:friends]-> (u2)
+						MERGE (u1) <-[:friends]- (u2)
+						`,
+						query
+					)
+				else return fail(400)
 				break
 		}
 	},
