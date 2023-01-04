@@ -10,12 +10,4 @@
 
 <Navbar />
 
-<main>
-	<slot />
-</main>
-
-<style lang="sass">
-	main
-		overflow: hidden
-		padding-top: 10vh
-</style>
+<slot />

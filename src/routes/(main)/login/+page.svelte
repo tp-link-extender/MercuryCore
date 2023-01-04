@@ -31,9 +31,13 @@
 		background: var(--accent2)
 		max-width: 30rem
 		border-radius: 1rem
-		padding: 1.25rem
+		padding: 1.25rem 
 
 	input
 		background: var(--accent)
 		border: none
+		color: white
+
+		&::placeholder
+			color: var(--grey-text)
 </style>
