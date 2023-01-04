@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { handleSession } from "@lucia-auth/sveltekit/client"
+	import * as bootstrap from "bootstrap"
 	import Navbar from "$lib/components/Navbar.svelte"
 	import "/src/global.sass"
 
@@ -16,6 +17,5 @@
 <style lang="sass">
 	main
 		overflow: hidden
-		background-color: var(--background)
 		padding-top: 10vh
 </style>
