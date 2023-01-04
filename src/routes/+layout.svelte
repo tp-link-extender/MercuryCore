@@ -2,7 +2,6 @@
 	import { page } from "$app/stores"
 	import { handleSession } from "@lucia-auth/sveltekit/client"
 	import Navbar from "$lib/components/Navbar.svelte"
-	import "/src/bootstrap.sass"
 	import "/src/global.sass"
 
 	handleSession(page)
