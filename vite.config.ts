@@ -1,12 +1,13 @@
 import { sveltekit } from "@sveltejs/kit/vite"
 import mkcert from "vite-plugin-mkcert"
+import path from "path"
 
 export default {
 	plugins: [sveltekit(), mkcert()],
 
-	server: {
-		watch: {
-			usePolling: true,
+	resolve: {
+		alias: {
+			"~bootstrap": path.resolve(__dirname, "node_modules/bootstrap"),
 		},
 	},
 	ssr: {
