@@ -60,10 +60,11 @@
 </nav>
 
 <style lang="sass">
-	@media only screen and (max-width: 992px) 
+	@media only screen and (max-width: 992px)
 		.offcanvas-body
 			background: var(--accent)
 			min-height: 100vh
+
 	nav
 		z-index: 9
 		width: 100vw
