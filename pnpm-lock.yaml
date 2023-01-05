@@ -1,8 +1,8 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@lucia-auth/adapter-prisma': ^0.1.4
-  '@lucia-auth/sveltekit': ^0.3.3
+  '@lucia-auth/adapter-prisma': ^0.2.2
+  '@lucia-auth/sveltekit': ^0.5.2
   '@popperjs/core': ^2.11.6
   '@prisma/client': ^4.8.0
   '@sveltejs/adapter-auto': ^1.0.0
@@ -12,7 +12,7 @@ specifiers:
   '@threlte/extras': ^4.9.3
   bootstrap: 5.3.0-alpha1
   esbuild: ^0.15.18
-  lucia-auth: ^0.2.2
+  lucia-auth: ^0.4.3
   prisma: ^4.8.0
   redis: ^4.5.1
   sass: ^1.57.1
@@ -26,14 +26,14 @@ specifiers:
   vite-plugin-mkcert: ^1.10.1
 
 dependencies:
-  '@lucia-auth/adapter-prisma': 0.1.4_lucia-auth@0.2.2
-  '@lucia-auth/sveltekit': 0.3.3_oxswcarabtnpkbcyyjuft7nn6e
+  '@lucia-auth/adapter-prisma': 0.2.2_lucia-auth@0.4.3
+  '@lucia-auth/sveltekit': 0.5.2_hqup45dw5uobdbkvg5vvfeiw44
   '@popperjs/core': 2.11.6
   '@prisma/client': 4.8.0_prisma@4.8.0
   '@threlte/core': 5.0.8
   '@threlte/extras': 4.9.3_three@0.146.0
   esbuild: 0.15.18
-  lucia-auth: 0.2.2
+  lucia-auth: 0.4.3
   redis: 4.5.1
   three: 0.146.0
   vite-plugin-mkcert: 1.10.1_vite@4.0.4
@@ -264,22 +264,22 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@lucia-auth/adapter-prisma/0.1.4_lucia-auth@0.2.2:
-    resolution: {integrity: sha512-hmb0ElN8kGChsUr7t2jQ9OeZJq9pcETgfWiE7Mp8jHuqWr3iyznb9cHZNH6DMDpPOA9Rp6/kU1Qw7V45gFN02A==}
+  /@lucia-auth/adapter-prisma/0.2.2_lucia-auth@0.4.3:
+    resolution: {integrity: sha512-wnpjHLbJTFMy9per83+MpImsWjVu9/WguYhfGcB0zM7a7tCtxQ+cMTCnqTZpjZQAfNtMapPlByidlDcOwFyV7A==}
     peerDependencies:
-      lucia-auth: 0.1.x - 0.3.x
+      lucia-auth: 0.4.x
     dependencies:
-      lucia-auth: 0.2.2
+      lucia-auth: 0.4.3
     dev: false
 
-  /@lucia-auth/sveltekit/0.3.3_oxswcarabtnpkbcyyjuft7nn6e:
-    resolution: {integrity: sha512-2iy9RYyTnkWeXTFv8ifSR+nAZft61qb8by9ZCDEpDzm5RFc+Pk7likfjLy1rzS72odP98W0YBdExiM6hUMWGaQ==}
+  /@lucia-auth/sveltekit/0.5.2_hqup45dw5uobdbkvg5vvfeiw44:
+    resolution: {integrity: sha512-bCbDsCW4hSxxyQuP6pD+MOci+JHPsz/rayuQZ3Kohr85EcT0/+4FdxXB/naiCtQVpXwn8QV3fEpiJcPGt6mfMQ==}
     peerDependencies:
-      lucia-auth: 0.2.x
+      lucia-auth: 0.3.x - 0.4.x
       svelte: 3.x
     dependencies:
       '@noble/hashes': 1.1.5
-      lucia-auth: 0.2.2
+      lucia-auth: 0.4.3
       svelte: 3.55.0
     dev: false
 
@@ -1112,8 +1112,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /lucia-auth/0.2.2:
-    resolution: {integrity: sha512-+Fna0lo892m2fiwMxWljuGxmqZbdqTlYiB77R7+wQF7VKN0Okr/5WVlZNufdSXKUA02d4dAcnNPNf9oqB+9RNg==}
+  /lucia-auth/0.4.3:
+    resolution: {integrity: sha512-8rMIWivQ0BLpMjxzLh4GU4Dk83pRes+46QOnUB2GaF6mEDHmQkzUO8uWqBge57ke79aZq5T2NywQjtJJujly4g==}
     dependencies:
       '@noble/hashes': 1.1.5
       nanoid: 4.0.0

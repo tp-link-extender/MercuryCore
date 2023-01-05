@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession()
+	const session = await locals.validate()
 	if (session) throw redirect(302, "/home")
 }
 
@@ -21,7 +21,7 @@ export const actions: Actions = {
 			// [password.length < 16, "Password must be at least 16 characters"],
 			[password.length > 6969, "Password must be less than 6969 characters"],
 		]
-		
+
 		for (const [condition, msg] of easyChecks) {
 			if (condition) {
 				return fail(400, { msg })

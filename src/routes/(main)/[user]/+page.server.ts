@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		},
 	})
 	if (user) {
-		const session = await locals.getSession()
+		const session = await locals.validate()
 		const url = import.meta.env.REDIS_URL
 		const client = url ? createClient({ url: import.meta.env.REDIS_URL }) : createClient()
 		client.on("error", () => {
@@ -72,7 +72,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
 		// More complex because idempotency
-		const session = await locals.getSession()
+		const session = await locals.validate()
 		if (!session) throw redirect(302, "/login")
 
 		const data = await request.formData()
