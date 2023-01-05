@@ -13,7 +13,7 @@
 		</button>
 		<div class="offcanvas offcanvas-start bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbarExample-expand-lg" aria-labelledby="offcanvasNavbarExample-expand-lg">
 			<div class="offcanvas-header">
-				<h5 class="offcanvas-title" id="offcanvasLabel" style="color:white;">Mercury</h5>
+				<h5 class="offcanvas-title" ><a href="/" class=" light-text">Mercury</a></h5>
 				<button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close" />
 			</div>
 			<div class="offcanvas-body">
@@ -27,7 +27,7 @@
 				<!-- <a type="button" href="/discover" class="btn my-2 my-sm-0 light-text">Discover</a>
 				<a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
 				<a type="button" href="/create" class="btn my-2 my-sm-0 light-text">Create</a> -->
-				<div class="navbar-nav ms-auto">
+				<div id="loggedin" class="navbar-nav">
 					{#if !$user}
 						<li class="nav-item">
 							<a type="button" href="/login" class="btn mb-1 light-text">Log in</a>
@@ -61,9 +61,31 @@
 
 <style lang="sass">
 	@media only screen and (max-width: 992px)
+		.offcanvas-header
+			background: var(--accent2)
 		.offcanvas-body
 			background: var(--accent)
 			min-height: 100vh
+			display: flex
+			flex-direction: column
+			
+			a, button
+				margin-bottom: 1rem
+				width: 100%
+			a
+				text-align: start
+
+		#loggedin
+			margin-top: auto
+			margin-bottom: 4rem
+
+
+	@media only screen and (min-width: 993px)
+		#loggedin
+			margin-left: auto
+
+	.offcanvas-title a
+		text-decoration: none
 
 	nav
 		z-index: 9
