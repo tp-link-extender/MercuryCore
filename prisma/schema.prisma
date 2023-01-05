@@ -26,7 +26,7 @@ model User {
     image       String?
     created     DateTime @default(now())
     lastOnline  DateTime @default(now())
-    Status      String?
+    status      String?
     currency    Int      @default(0)
     // groupsOwned  Group[] @relation("owner")
     // groupsJoined Group[] @relation("member")

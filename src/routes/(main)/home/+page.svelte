@@ -23,24 +23,26 @@
 		<h1 class="text-center light-text">Hi, {$user?.username}!</h1>
 	</div>
 	<div class="mt-5">
-		<h4 class="light-text">Friends</h4>
-		<div id="friends" class="d-flex">
-			{#each data.friends as friend}
-				<a class="friend px-2 mb-2 text-center light-text" href="/{friend.username}">
-					<div class="position-relative mb-2">
-						<div class="image-background">
-							<img src={friend.image} alt={friend.displayname || friend.username} />
+		{#if data.friends.length > 0}
+			<h4 class="light-text">Friends</h4>
+			<div id="friends" class="d-flex">
+				{#each data.friends as friend}
+					<a class="friend px-2 mb-2 text-center light-text" href="/{friend.username}">
+						<div class="position-relative mb-2">
+							<div class="image-background">
+								<img src={friend.image} alt={friend.displayname || friend.username} />
+							</div>
+							{#if friend.status}
+								<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
+									<span class="visually-hidden">{friend.status}</span>
+								</span>
+							{/if}
 						</div>
-						{#if friend.status}
-							<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
-								<span class="visually-hidden">{friend.status}</span>
-							</span>
-						{/if}
-					</div>
-					{friend.displayname || friend.username}
-				</a>
-			{/each}
-		</div>
+						{friend.displayname || friend.username}
+					</a>
+				{/each}
+			</div>
+		{/if}
 	</div>
 	<div class="mt-5">
 		<h4 class="light-text">Recently joined</h4>

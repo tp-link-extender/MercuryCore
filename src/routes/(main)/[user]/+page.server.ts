@@ -35,7 +35,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		const query = {
 			params: {
-				user1: session.user.username || "",
+				user1: session.user?.username || "",
 				user2: params.user,
 			},
 		}
@@ -61,26 +61,25 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		// More complex because idempotency
 		const session = await locals.validateUser()
-		if (!session) throw redirect(302, "/login")
-
+		if (!session.session) throw redirect(302, "/login")
+		
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
-
+		
 		const client = createClient({ url: import.meta.env.REDIS_URL })
 		client.on("error", () => {
 			throw error(500, "Redis error")
 		})
 		await client.connect()
-
+		
 		const user2 = await prisma.user.findUnique({
 			where: {
 				username: params.user,
 			},
 		})
-		if (!user2) return fail(400, "User not found")
-
+		if (!user2) return fail(400, { msg: "User not found" })
+		
 		const query = {
 			params: {
 				user1: session.user.username,
@@ -88,9 +87,9 @@ export const actions: Actions = {
 			},
 		}
 		const graph = new Graph(client, "friends")
-
+		
 		console.log(action)
-
+		
 		switch (action) {
 			case "follow":
 				await graph.query(
