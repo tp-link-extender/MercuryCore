@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		},
 	})
 	if (user) {
-		const session = await locals.validate()
+		const session = await locals.validateUser()
 		const url = import.meta.env.REDIS_URL
 		const client = url ? createClient({ url: import.meta.env.REDIS_URL }) : createClient()
 		client.on("error", () => {
@@ -33,19 +33,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		})
 		await client.connect()
 
-		let user1
-		if (session)
-			user1 = await prisma.user.findUnique({
-				where: {
-					id: session.userId,
-				},
-				select: {
-					username: true,
-				},
-			})
 		const query = {
 			params: {
-				user1: user1?.username || "",
+				user1: session.user.username || "",
 				user2: params.user,
 			},
 		}
@@ -72,7 +62,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
 		// More complex because idempotency
-		const session = await locals.validate()
+		const session = await locals.validateUser()
 		if (!session) throw redirect(302, "/login")
 
 		const data = await request.formData()
@@ -84,24 +74,16 @@ export const actions: Actions = {
 		})
 		await client.connect()
 
-		const user1 = await prisma.user.findUnique({
-			where: {
-				id: session.userId,
-			},
-			select: {
-				username: true,
-			},
-		})
 		const user2 = await prisma.user.findUnique({
 			where: {
 				username: params.user,
 			},
 		})
-		if (!user1 || !user2) return fail(400)
+		if (!user2) return fail(400, "User not found")
 
 		const query = {
 			params: {
-				user1: user1.username,
+				user1: session.user.username,
 				user2: params.user,
 			},
 		}
