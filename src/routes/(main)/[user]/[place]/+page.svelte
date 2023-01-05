@@ -25,7 +25,7 @@
 		</div>
 		<div class="flex flex-col">
 			<h2 class="light-text">{data.name}</h2>
-			<button id="join" class="bg-success" on:click={join}><img src="/join.svg" alt="Join button icon" /></button>
+			<button id="join" class="btn btn-lg btn-success" on:click={join}><img src="/join.svg" alt="Join button icon" /></button>
 		</div>
 	</div>
 	<h4 class="light-text mt-4">Description</h4>
@@ -42,12 +42,7 @@
 		img
 			border-radius: 0.75rem
 	
-	#join
-		border: none
-		width: 18rem
-		height: 4rem
-		border-radius: 0.75rem
-		padding: 0.75rem
-		img
-			height: 100%
+	#join img
+		height: 2.5rem
+		width: 16rem
 </style>

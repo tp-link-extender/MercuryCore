@@ -13,7 +13,7 @@
 		</button>
 		<div class="offcanvas offcanvas-start bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbarExample-expand-lg" aria-labelledby="offcanvasNavbarExample-expand-lg">
 			<div class="offcanvas-header">
-				<h5 class="offcanvas-title" ><a href="/" class=" light-text">Mercury</a></h5>
+				<h5 class="offcanvas-title"><a href="/" class=" light-text">Mercury</a></h5>
 				<button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close" />
 			</div>
 			<div class="offcanvas-body">
@@ -50,7 +50,7 @@
 								invalidateAll()
 								window.location.reload()
 							}}
-							class="btn btn-success my-2 my-sm-0">Logout</button
+							class="btn btn-danger my-2 my-sm-0">Log out</button
 						>
 					{/if}
 				</div>
@@ -62,9 +62,9 @@
 <style lang="sass">
 	@media only screen and (max-width: 992px)
 		.offcanvas-header
-			background: var(--accent2)
+			background: var(--accent3)
 		.offcanvas-body
-			background: var(--accent)
+			background: var(--accent2)
 			min-height: 100vh
 			display: flex
 			flex-direction: column
@@ -92,20 +92,26 @@
 		width: 100vw
 		max-height: 10vh
 		backdrop-filter: blur(8px)
+		
 	.offcanvas
 		box-shadow: none !important	
+
 	a
 		margin-right: 0.5rem
+
 	img
 		border-radius: 50%
+
 	#pfp
 		background: var(--accent2)
 		border-radius: 50%
 		width: 2.5rem
 		height: 2.5rem
+
 	img
 		width: 2.5rem
 		height: 2.5rem
+
 	#username
 		text-decoration: none
 </style>
