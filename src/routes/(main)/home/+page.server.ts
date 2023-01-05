@@ -30,19 +30,21 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	let friends: any[] = []
 
-	for (let i of friendsQuery.data || [] as any) {
+	for (let i of friendsQuery.data || ([] as any)) {
 		if (i.name)
-			friends.push(await prisma.user.findUnique({
-				where: {
-					username: i?.name,
-				},
-				select: {
-					username: true,
-					displayname: true,
-					image: true,
-					status: true
-				}
-			}))
+			friends.push(
+				await prisma.user.findUnique({
+					where: {
+						username: i?.name,
+					},
+					select: {
+						username: true,
+						displayname: true,
+						image: true,
+						status: true,
+					},
+				})
+			)
 	}
 
 	const getPlaces = await prisma.place.findMany({
