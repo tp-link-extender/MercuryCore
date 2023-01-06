@@ -16,15 +16,15 @@ export const actions: Actions = {
 		const password = data.get("password")?.toString() || ""
 
 		const easyChecks = [
-			[username.length <= 3, "Username must be more than 3 characters"],
-			[username.length > 30, "Username must be less than 30 characters"],
-			// [password.length < 16, "Password must be at least 16 characters"],
-			[password.length > 6969, "Password must be less than 6969 characters"],
+			[username.length <= 3, "Username must be more than 3 characters", "username"],
+			[username.length > 30, "Username must be less than 30 characters", "username"],
+			[password.length < 1, "Password must be at least 1 character", "password"],
+			[password.length > 6969, "Password must be less than 6969 characters", "password"],
 		]
 
-		for (const [condition, msg] of easyChecks) {
+		for (const [condition, msg, area] of easyChecks) {
 			if (condition) {
-				return fail(400, { msg })
+				return fail(400, { msg, area })
 			}
 		}
 
@@ -57,6 +57,7 @@ export const actions: Actions = {
 					image: "https://tr.rbxcdn.com/54d17964492b5e0af66797942fcce26c/150/150/AvatarHeadshot/Png",
 				},
 			})
+			
 			const session = await auth.createSession(user.userId)
 			locals.setSession(session)
 		} catch (e) {
