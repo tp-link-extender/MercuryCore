@@ -20,7 +20,7 @@
 	const item = items[Math.floor(Math.random() * items.length)]
 </script>
 
-<div>
+<div class="w-100 h-100">
 	<Canvas>
 		<PerspectiveCamera position={item.camPos}>
 			<OrbitControls autoRotate autoRotateSpeed="10" rotateSpeed="0.1" enableZoom={false}/>
@@ -36,6 +36,4 @@
 <style lang="sass">
 	div
 		position: relative
-		width: 100%
-		height: 100%
 </style>

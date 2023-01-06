@@ -75,7 +75,7 @@
 			<div class="row p-0">
 				{#each data.places as place}
 					<a class="place col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/{place.ownerUsername}/{place.name}">
-						<img src={place.image} class="mb-2" alt={place.name} />
+						<img src={place.image} class="mb-2 w-100" alt={place.name} />
 						{place.name}
 					</a>
 				{/each}
@@ -106,7 +106,6 @@
 		text-decoration: none
 		img
 			background: black
-			width: 100%
 
 	.place img
 		border-radius: 0.5rem

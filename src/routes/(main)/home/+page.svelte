@@ -30,7 +30,7 @@
 					<a class="friend px-2 mb-2 text-center light-text" href="/{friend.username}">
 						<div class="position-relative mb-2">
 							<div class="image-background">
-								<img src={friend.image} alt={friend.displayname || friend.username} />
+								<img src={friend.image} alt={friend.displayname || friend.username} class="h-100" />
 							</div>
 							{#if friend.status}
 								<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
@@ -49,7 +49,7 @@
 		<div class="row p-0">
 			{#each data.places as place}
 				<a class="place col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/{place.ownerUsername}/{place.name}">
-					<img src={place.image} class="mb-2" alt={place.name} />
+					<img src={place.image} class="mb-2 w-100" alt={place.name} />
 					{place.name}
 				</a>
 			{/each}
@@ -90,7 +90,6 @@
 				border-radius: 50%
 				margin: auto
 				img
-					height: 100%
 					border-radius: 0 0 50% 50%
 					
 	.place
@@ -99,7 +98,7 @@
 		text-decoration: none
 		img
 			background: black
-			width: 100%
+			
 
 	.place img
 		border-radius: 0.5rem
