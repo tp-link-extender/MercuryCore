@@ -66,27 +66,6 @@
 		</div>
 	</div>
 </div>
-
-<div
-	style="display:block;position:absolute;top:100px;padding:25px;top:50%;left:50%;transform: translate(-50%, -50%);background:rgba(50,50,50,0.7);max-width:386px;max-height:600px;color:white;border-radius:10px;z-index:2;"
-	id="login"
->
-	<div class="mb-3">
-		<label for="exampleInputEmail1" class="form-label">Email address</label>
-		<input style="background:transparent;" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
-		<div id="emailHelp" class="form-text text-white-50">We'll never share your email with anyone else.</div>
-	</div>
-	<div class="mb-3">
-		<label for="exampleInputPassword1" class="form-label">Password</label>
-		<input style="background:transparent;" type="password" class="form-control" id="exampleInputPassword1" />
-	</div>
-	<div class="mb-3 form-check">
-		<input type="checkbox" class="form-check-input" id="exampleCheck1" />
-		<label class="form-check-label" for="exampleCheck1">Remember me</label>
-	</div>
-	<button type="submit" class="btn btn-primary">Sign on MSN Messenger</button>
-</div>
-
 <style lang="sass">
 	#gradient-canvas
 		height: 100vh
