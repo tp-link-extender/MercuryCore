@@ -107,7 +107,7 @@
 		#title
 			font-size: 4rem
 			opacity: 0.8
-			z-index: 100
+			z-index: 5
 			
 		.badge
 			background: var(--light-text)
@@ -117,7 +117,7 @@
 	#moon
 		z-index: 2
 		position: absolute
-		margin-bottom: 25vh
+		margin-bottom: 20vh
 	#all
 		margin-top: -10vh
 		background: rgba(0, 0, 0, 0)

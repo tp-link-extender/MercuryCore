@@ -11,7 +11,7 @@
 		<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarExample-expand-lg" aria-controls="offcanvasNavbarExample-expand-lg">
 			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbarExample-expand-lg" />
 		</button>
-		<div class="offcanvas offcanvas-start bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbarExample-expand-lg" aria-labelledby="offcanvasNavbarExample-expand-lg">
+		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbarExample-expand-lg" aria-labelledby="offcanvasNavbarExample-expand-lg">
 			<div class="offcanvas-header">
 				<h5 class="offcanvas-title"><a href="/" class=" light-text">Mercury</a></h5>
 				<button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close" />
@@ -24,7 +24,6 @@
 						</li>
 					</div>
 				{/if}
-				<a type="button" href="/discover" class="btn my-2 my-sm-0 light-text">Discover</a>
 				<!-- <a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
 				<a type="button" href="/create" class="btn my-2 my-sm-0 light-text">Create</a> -->
 				<div id="loggedin" class="navbar-nav">
