@@ -101,12 +101,13 @@
 	
 		
 	#info
-		height: 100vh
+		height: 110vh
 		width: 100vw
 		position: relative
 		#title
 			font-size: 4rem
 			opacity: 0.8
+			z-index: 100
 			
 		.badge
 			background: var(--light-text)
@@ -115,8 +116,8 @@
 			font-size: 0.8rem
 	#moon
 		z-index: 2
-		padding-bottom: 10rem
 		position: absolute
+		margin-bottom: 25vh
 	#all
 		margin-top: -10vh
 		background: rgba(0, 0, 0, 0)
