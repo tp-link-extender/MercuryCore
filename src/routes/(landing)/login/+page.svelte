@@ -7,8 +7,6 @@
 	<title>Log in - Mercury</title>
 </svelte:head>
 
-<h1 class="text-center light-text">Log in</h1>
-
 <div class="container mt-5">
 	<form class="m-auto" method="POST" use:enhance>
 		<div class="mb-3">

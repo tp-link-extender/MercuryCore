@@ -10,5 +10,12 @@
 </script>
 
 <Navbar />
+<main>
+	<slot />	
+</main>
 
-<slot />
+
+<style lang="sass">
+	slot	
+		padding-top: 15vh
+</style>
