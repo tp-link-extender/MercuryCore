@@ -24,8 +24,8 @@
 						</li>
 					</div>
 				{/if}
-				<!-- <a type="button" href="/discover" class="btn my-2 my-sm-0 light-text">Discover</a>
-				<a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
+				<a type="button" href="/discover" class="btn my-2 my-sm-0 light-text">Discover</a>
+				<!-- <a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
 				<a type="button" href="/create" class="btn my-2 my-sm-0 light-text">Create</a> -->
 				<div id="loggedin" class="navbar-nav">
 					{#if !$user}
