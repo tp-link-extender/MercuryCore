@@ -33,7 +33,3 @@
 	</Canvas>
 </div>
 
-<style lang="sass">
-	div
-		position: relative
-</style>
