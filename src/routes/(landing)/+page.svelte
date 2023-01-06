@@ -59,8 +59,8 @@
 		<p class="lead light-text">Endless possibilities. New features. Same nostalgia.</p>
 		<span class="badge light-text">Closed Beta</span>
 	</div>
-	<div id="wavep">
-		<div>
+	<div id="wavep" class="w-100 h-100">
+		<div class="w-100">
 			<div />
 			<div />
 		</div>
@@ -96,13 +96,10 @@
 		left: 0
 
 	#wavep // rpcs3 momnt
-		width: 100%
-		height: 100%
 		position: absolute
 		top: 0
 		overflow: hidden
 		div
-			width: 100%
 			position: absolute
 			bottom: 0
 			transition: all 1s ease-in-out 0s
