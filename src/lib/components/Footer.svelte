@@ -9,6 +9,8 @@
 	<a class="light-text h5" href="/terms">Terms of Service</a>
 	<a class="light-text h5" href="/privacy">Privacy Policy</a>
 	<a class="light-text h5" href="/statistics">Statistics</a>
+	<br />
+	<br />
 </footer>
 <noscript>
 	<div id="nojs" class="position-fixed bottom-0 d-block">
