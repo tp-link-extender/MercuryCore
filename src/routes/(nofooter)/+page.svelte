@@ -102,6 +102,7 @@
 		
 	#info
 		height: 110vh
+		padding-top: 10vh
 		width: 100vw
 		position: relative
 		#title
