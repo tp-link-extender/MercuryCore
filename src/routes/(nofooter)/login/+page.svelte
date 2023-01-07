@@ -7,8 +7,8 @@
 	<title>Log in - Mercury</title>
 </svelte:head>
 
-<div class="row bg-dark">
-	<div class="col px-0">
+<div class="row">
+	<div class="col bg-dark px-0">
 		<div class="container px-0">
 			s
 			<!--
@@ -39,7 +39,7 @@
 		-->
 		</div>
 	</div>
-	<div class="col px-0">
+	<div class="col bg-dark px-0">
 		<div class="container px-0">
 			s
 			<!--
