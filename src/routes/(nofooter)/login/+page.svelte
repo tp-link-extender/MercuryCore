@@ -1,7 +1,7 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { enhance } from "$app/forms"
 	export let form: any
-</script>
+</script> -->
 
 <svelte:head>
 	<title>Log in - Mercury</title>
@@ -20,23 +20,12 @@
 						{:else}
 							<input name="username" type="text" class="form-control" placeholder="Username" />
 						{/if}
-					</div>
-					<div class="mb-3">
-						{#if form?.area == "password"}
-							<input name="password" type="password" class="form-control is-invalid" placeholder="Password" />
-						{:else}
-							<input name="password" type="password" class="form-control" placeholder="Password" />
-						{/if}
-					</div>
-		
-					{#if form?.msg}
-						<p class="col-12 mb-3 text-danger">{form.msg}</p>
-					{/if}
-		
-					<button type="submit" class="container-fluid btn btn-primary">Log in</button>
-				</fieldset>
-			</form>
-		-->
+			
+						<button type="submit" class="container-fluid btn btn-primary">Log in</button>
+					</fieldset>
+				</form>
+			-->
+			</div>
 		</div>
 	</div>
 	<div class="col bg-dark px-0">
@@ -51,31 +40,21 @@
 						{:else}
 							<input name="username" type="text" class="form-control" placeholder="Username" />
 						{/if}
-					</div>
-					<div class="mb-3">
-						{#if form?.area == "password"}
-							<input name="password" type="password" class="form-control is-invalid" placeholder="Password" />
-						{:else}
-							<input name="password" type="password" class="form-control" placeholder="Password" />
-						{/if}
-					</div>
-		
-					{#if form?.msg}
-						<p class="col-12 mb-3 text-danger">{form.msg}</p>
-					{/if}
-		
-					<button type="submit" class="container-fluid btn btn-primary">Log in</button>
-				</fieldset>
-			</form>
-		-->
+			
+						<button type="submit" class="container-fluid btn btn-primary">Log in</button>
+					</fieldset>
+				</form>
+			-->
+			</div>
 		</div>
 	</div>
 </div>
 
-
-
 <style lang="sass">
-	input
-		background: var(--accent)
-		border-color: var(--accent3)
+	#all
+		overflow: hidden
+		
+	// input
+	// 	background: var(--accent)
+	// 	border-color: var(--accent3)
 </style>
