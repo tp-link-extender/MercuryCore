@@ -7,31 +7,18 @@
 	<title>Log in - Mercury</title>
 </svelte:head>
 
-<div id="all">
-	<div class="row bg-dark">
-		<div class="col px-0">
-			<div class="container px-0">
-				s
-				<!--
-				<form class="form-group" method="POST" use:enhance>
-					<fieldset>
-						<div class="mb-3">
-							{#if form?.area == "username"}
-								<input name="username" type="text" class="form-control is-invalid" placeholder="Username" />
-							{:else}
-								<input name="username" type="text" class="form-control" placeholder="Username" />
-							{/if}
-						</div>
-						<div class="mb-3">
-							{#if form?.area == "password"}
-								<input name="password" type="password" class="form-control is-invalid" placeholder="Password" />
-							{:else}
-								<input name="password" type="password" class="form-control" placeholder="Password" />
-							{/if}
-						</div>
-			
-						{#if form?.msg}
-							<p class="col-12 mb-3 text-danger">{form.msg}</p>
+<div class="row">
+	<div class="col bg-dark px-0">
+		<div class="container px-0">
+			s
+			<!--
+			<form class="form-group" method="POST" use:enhance>
+				<fieldset>
+					<div class="mb-3">
+						{#if form?.area == "username"}
+							<input name="username" type="text" class="form-control is-invalid" placeholder="Username" />
+						{:else}
+							<input name="username" type="text" class="form-control" placeholder="Username" />
 						{/if}
 			
 						<button type="submit" class="container-fluid btn btn-primary">Log in</button>
@@ -40,29 +27,18 @@
 			-->
 			</div>
 		</div>
-		<div class="col px-0">
-			<div class="container px-0">
-				s
-				<!--
-				<form class="form-group" method="POST" use:enhance>
-					<fieldset>
-						<div class="mb-3">
-							{#if form?.area == "username"}
-								<input name="username" type="text" class="form-control is-invalid" placeholder="Username" />
-							{:else}
-								<input name="username" type="text" class="form-control" placeholder="Username" />
-							{/if}
-						</div>
-						<div class="mb-3">
-							{#if form?.area == "password"}
-								<input name="password" type="password" class="form-control is-invalid" placeholder="Password" />
-							{:else}
-								<input name="password" type="password" class="form-control" placeholder="Password" />
-							{/if}
-						</div>
-			
-						{#if form?.msg}
-							<p class="col-12 mb-3 text-danger">{form.msg}</p>
+	</div>
+	<div class="col bg-dark px-0">
+		<div class="container px-0">
+			s
+			<!--
+			<form class="form-group" method="POST" use:enhance>
+				<fieldset>
+					<div class="mb-3">
+						{#if form?.area == "username"}
+							<input name="username" type="text" class="form-control is-invalid" placeholder="Username" />
+						{:else}
+							<input name="username" type="text" class="form-control" placeholder="Username" />
 						{/if}
 			
 						<button type="submit" class="container-fluid btn btn-primary">Log in</button>
