@@ -119,6 +119,6 @@
 		position: absolute
 		margin-bottom: 20vh
 	#all
-		margin-top: -10vh
+		margin-top: -20vh
 		background: rgba(0, 0, 0, 0)
 </style>
