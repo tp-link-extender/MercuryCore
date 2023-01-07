@@ -12,13 +12,25 @@
 <div class="container mt-5">
 	<form class="m-auto" method="POST" use:enhance>
 		<div class="mb-3">
-			<input name="username" type="text" class="form-control" placeholder="Username" />
+			{#if form?.area == "username"}
+				<input name="username" type="text" class="form-control is-invalid" placeholder="Username" />
+			{:else}
+				<input name="username" type="text" class="form-control" placeholder="Username" />
+			{/if}
 		</div>
 		<div class="mb-3">
-			<input name="password" type="password" class="form-control" placeholder="Password" />
+			{#if form?.area == "password"}
+				<input name="password" type="password" class="form-control is-invalid" placeholder="Password" />
+			{:else}
+				<input name="password" type="password" class="form-control" placeholder="Password" />
+			{/if}
 		</div>
 		<div class="mb-3">
-			<input name="regkey" type="password" class="form-control" placeholder="Registration Key" />
+			{#if form?.area == "regkey"}
+				<input name="regkey" type="password" class="form-control is-invalid" placeholder="Registration Key" />
+			{:else}
+				<input name="regkey" type="password" class="form-control" placeholder="Registration Key" />
+			{/if}
 		</div>
 
 		{#if form?.msg}
@@ -37,5 +49,5 @@
 
 	input
 		background: var(--accent)
-		border: none
+		border-color: var(--accent3)
 </style>
