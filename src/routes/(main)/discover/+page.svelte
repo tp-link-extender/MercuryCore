@@ -17,10 +17,10 @@
 
 <div class="container">
 	<div class="mt-5">
-		<div class="row p-0">
+		<div class="row m-0 p-0">
 			{#each data.places as place}
-				<a class="place col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/{place.ownerUsername}/{place.name}">
-					<img src={place.image} class="mb-2 w-100" alt={place.name} />
+				<a class="place mb-3 rounded-3 col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/{place.ownerUsername}/{place.name}">
+					<img src={place.image} class="mb-2 w-100 rounded-3" alt={place.name} />
 					{place.name}
 				</a>
 			{/each}
@@ -33,13 +33,8 @@
 	.container
 		max-width: 60rem
 		font-size: 0.9rem
-
-	.row
-		margin: 0
 					
 	.place
-		border-radius: 0.5rem
-		margin-bottom: 1rem
 		text-decoration: none
 		img
 			background: black

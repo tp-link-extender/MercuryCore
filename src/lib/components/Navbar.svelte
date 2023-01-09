@@ -5,7 +5,7 @@
 	const user = getUser()
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-dark position-fixed">
+<nav class="navbar navbar-expand-lg navbar-dark position-fixed vw-100">
 	<div class="container">
 		<a class="navbar-brand light-text" href="/">Mercury</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarExample-expand-lg" aria-controls="offcanvasNavbarExample-expand-lg">
@@ -13,10 +13,10 @@
 		</button>
 		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbarExample-expand-lg" aria-labelledby="offcanvasNavbarExample-expand-lg">
 			<div class="offcanvas-header">
-				<h5 class="offcanvas-title"><a href="/" class=" light-text">Mercury</a></h5>
+				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 				<button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close" />
 			</div>
-			<div class="offcanvas-body">
+			<div class="offcanvas-body d-flex min-vh-100">
 				{#if $user}
 					<div class="navbar-nav">
 						<li class="nav-item">
@@ -36,8 +36,8 @@
 						</li>
 					{:else}
 						<a id="username" href="/{$user?.username}" class="d-flex">
-							<div id="pfp" class="mx-2">
-								<img src={$user?.image} alt="You" />
+							<div id="pfp" class="mx-2 rounded-circle">
+								<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0"/>
 							</div>
 							<p class="light-text my-auto fs-6 me-4">
 								{$user?.displayname || $user?.username}
@@ -64,8 +64,6 @@
 			background: var(--accent3)
 		.offcanvas-body
 			background: var(--accent2)
-			min-height: 100vh
-			display: flex
 			flex-direction: column
 			
 			a, button
@@ -83,12 +81,11 @@
 		#loggedin
 			margin-left: auto
 
-	.offcanvas-title a
+	.offcanvas-title
 		text-decoration: none
 
 	nav
 		z-index: 9
-		width: 100vw
 		max-height: 10vh
 		backdrop-filter: blur(8px)
 		
@@ -98,12 +95,8 @@
 	a
 		margin-right: 0.5rem
 
-	img
-		border-radius: 50%
-
 	#pfp
 		background: var(--accent2)
-		border-radius: 50%
 		width: 2.5rem
 		height: 2.5rem
 
