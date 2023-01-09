@@ -8,11 +8,9 @@
 </svelte:head>
 
 <main>
-	<div id="all">
-		<div class="container d-flex flex-column justify-content-center align-items-center light-text">
-			<h1 class="light-text">Error {$page.status}</h1>
-			{$page.error?.message}
-		</div>
+	<div class="container d-flex flex-column justify-content-center align-items-center light-text rounded-4">
+		<h1 class="light-text">Error {$page.status}</h1>
+		{$page.error?.message}
 	</div>
 </main>
 
@@ -20,15 +18,12 @@
 
 <style lang="sass">
 	main
-		padding-bottom: 5vh
-		padding-top: 10vh
+		padding-bottom: 30vh
+		padding-top: 35vh
 		flex: 1 0 auto
 
-	#all
-		padding: 25vh 0
 		div
 			background: var(--accent2)
 			width: fit-content
 			padding: 2rem 5rem
-			border-radius: 1rem
 </style>

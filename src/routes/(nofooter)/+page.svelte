@@ -44,10 +44,10 @@
 </svelte:head>
 
 <div id="all">
-	<canvas id="gradient-canvas" />
+	<canvas id="gradient-canvas" class="vh-100 vw-100 position-absolute top-0 left-0" />
 
-	<div id="info" class="container d-flex flex-column justify-content-center align-items-center">
-		<div id="moon" class="container d-flex flex-column justify-content-center align-items-center">
+	<div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
+		<div id="moon" class="container d-flex flex-column justify-content-center align-items-center z-2 position-absolute">
 			<div class="object">
 				<Moon />
 			</div>
@@ -55,36 +55,24 @@
 		<br />
 		<br />
 		<br />
-		<h1 id="title" class="fw-bolder light-text">Mercury 2</h1>
+		<h1 id="title" class="fw-bolder light-text z-3 opacity-75">Mercury 2</h1>
 		<p class="lead light-text">Endless possibilities. New features. Same nostalgia.</p>
-		<span class="badge light-text">Closed Beta</span>
+		<span class="badge light-text opacity-50">Closed Beta</span>
 	</div>
-	<div id="wavep" class="w-100 h-100">
-		<div class="w-100">
-			<div />
-			<div />
+	<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
+		<div class="w-100 position-absolute bottom-0">
+			<div class="position-absolute"/>
+			<div class="position-absolute"/>
 		</div>
 	</div>
 </div>
-<style lang="sass">
-	#gradient-canvas
-		height: 100vh
-		width: 100vw
-		position: absolute
-		top: 0
-		left: 0
 
+<style lang="sass">
 	#wavep // rpcs3 momnt
-		position: absolute
-		top: 0
-		overflow: hidden
 		div
-			position: absolute
-			bottom: 0
 			transition: all 1s ease-in-out 0s
 			div
 				background: url("/wave.svg") repeat-x
-				position: absolute
 				top: -198px
 				width: 6144px
 				height: 198px
@@ -103,22 +91,17 @@
 	#info
 		height: 110vh
 		padding-top: 10vh
-		width: 100vw
-		position: relative
 		#title
 			font-size: 4rem
-			opacity: 0.8
-			z-index: 5
 			
 		.badge
 			background: var(--light-text)
-			opacity: 0.5
 			color: var(--dark-text)
 			font-size: 0.8rem
+	
 	#moon
-		z-index: 2
-		position: absolute
 		margin-bottom: 20vh
+
 	#all
 		margin-top: -20vh
 		background: rgba(0, 0, 0, 0)

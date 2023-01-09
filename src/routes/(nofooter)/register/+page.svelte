@@ -9,7 +9,7 @@
 
 <h1 class="text-center light-text">Register</h1>
 
-<div class="container mt-5">
+<div class="container mt-5 rounded-4">
 	<form class="m-auto" method="POST" use:enhance>
 		<div class="mb-3">
 			{#if form?.area == "username"}
@@ -44,7 +44,6 @@
 	.container
 		background: var(--accent2)
 		max-width: 30rem
-		border-radius: 1rem
 		padding: 1.25rem
 
 	input
