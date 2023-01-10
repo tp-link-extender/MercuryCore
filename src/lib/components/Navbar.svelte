@@ -16,7 +16,7 @@
 				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 				<button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close" />
 			</div>
-			<div class="offcanvas-body d-flex min-vh-100">
+			<div class="offcanvas-body d-flex">
 				{#if $user}
 					<div class="navbar-nav">
 						<li class="nav-item">
@@ -64,6 +64,7 @@
 			background: var(--accent3)
 		.offcanvas-body
 			background: var(--accent2)
+			min-height: 100vh
 			flex-direction: column
 			
 			a, button
