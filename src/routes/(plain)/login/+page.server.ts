@@ -1,11 +1,6 @@
-import type { Actions, PageServerLoad } from "./$types"
+import type { Actions } from "./$types"
 import { redirect, fail } from "@sveltejs/kit"
 import { auth } from "$lib/server/lucia"
-
-export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validate()
-	if (session) throw redirect(302, "/home")
-}
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
