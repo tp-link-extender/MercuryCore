@@ -1,10 +1,9 @@
 FROM node:19.4.0-alpine AS builder
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN npm i -g pnpm
-RUN pnpm i -P
+COPY package.json ./
+RUN npm i
 COPY . .
-RUN npm run build && pnpm prune --prod
+RUN npm run build && npm prune --production
 
 FROM node:19.4.0-alpine
 USER node:node
