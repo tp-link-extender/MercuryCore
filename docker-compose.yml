@@ -5,7 +5,7 @@ services:
         container_name: redisgraph
         image: redislabs/redisgraph
         ports:
-            - "6379:6379"
+            - 6379:6379
         restart: unless-stopped
         volumes:
             - ./data/redis:/data
@@ -14,10 +14,21 @@ services:
         container_name: postgres
         image: postgres
         ports:
-            - "5432:5432"
+            - 5432:5432
         restart: unless-stopped
         volumes:
             - ./data/postgres:/var/lib/postgresql/data
 
         environment:
             POSTGRES_PASSWORD: password # todo: load from env
+
+    site:
+        container_name: site
+        build: .
+        restart: unless-stopped
+        ports:
+            - 5050:5050
+
+        environment:
+            PORT: 5050
+            ORIGIN: "http://localhost:5050"
