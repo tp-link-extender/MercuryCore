@@ -1,3 +1,11 @@
+<script lang="ts">
+	import PageTransition from "$lib/components/PageTransition.svelte"
+
+	export let data: any
+</script>
+
 <main>
-	<slot />
+	<PageTransition pathname={data.pathname}>
+		<slot />
+	</PageTransition>
 </main>

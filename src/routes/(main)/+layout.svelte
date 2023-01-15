@@ -1,12 +1,17 @@
 <script lang="ts">
+	import PageTransition from "$lib/components/PageTransition.svelte"
 	import Navbar from "$lib/components/Navbar.svelte"
 	import Footer from "$lib/components/Footer.svelte"
+
+	export let data: any
 </script>
 
 <Navbar />
 
 <main>
-	<slot />
+	<PageTransition pathname={data.pathname}>
+		<slot />
+	</PageTransition>
 </main>
 
 <Footer />
