@@ -12,6 +12,7 @@ specifiers:
   '@threlte/core': ^5.0.8
   '@threlte/extras': ^4.9.3
   bootstrap: 5.3.0-alpha1
+  dotenv: ^16.0.3
   esbuild: ^0.15.18
   lucia-auth: ^0.4.3
   prisma: ^4.8.1
@@ -35,6 +36,7 @@ dependencies:
   '@sveltejs/adapter-node': 1.1.3_@sveltejs+kit@1.0.1
   '@threlte/core': 5.0.8
   '@threlte/extras': 4.9.3_three@0.146.0
+  dotenv: 16.0.3
   esbuild: 0.15.18
   lucia-auth: 0.4.3
   redis: 4.5.1
@@ -825,6 +827,11 @@ packages:
 
   /devalue/4.2.2:
     resolution: {integrity: sha512-Pkwd8qrI9O20VJ14fBNHu+on99toTNZFbgWRpZbC0zbDXpnE2WHYcrC1fHhMsF/3Ee+2yaW7vEujAT7fCYgqrA==}
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /es6-promise/3.3.1:
     resolution: {integrity: sha512-SOp9Phqvqn7jtEUxPWdWfWoLmyt2VaJ6MpvP9Comy1MceMXqE6bxvaTu4iaxpYYPzhny28Lc+M87/c2cPK6lDg==}
