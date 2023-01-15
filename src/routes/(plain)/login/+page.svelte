@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import { ArrowLeft } from "svelte-bootstrap-icons"
+	import { ArrowLeft, CheckCircleFill } from "svelte-bootstrap-icons"
+
+	const things = [
+		["Endless possibilities", "Create or play your favourite games and customise your character with items on our catalog."],
+		["New features", "In addition to full client usability, additional features such as security fixes, QoL fixes and a easy to use website make your experience better."],
+		["Same nostalgia", "All of our clients will remain as vanilla as possible, to make sure it's exactly as you remember it."],
+	]
 
 	export let form: any
 </script>
@@ -14,13 +20,22 @@
 		<div class="col light-text" id="dark">
 			<a type="button" href="/" class="btn btn-lg border-0"><ArrowLeft class="me-2" /> Home</a>
 			<h1 class="fw-bolder light-text mb-4">Mercury 2 <span class="opacity-50">beta</span></h1>
+			{#each things as [thing, more]}
+			<div class="thing d-flex flex-row mt-3">
+				<CheckCircleFill height={24} width={24} color="#6832c6" />
+				<div class="ms-3">
+					<p class="h4 light-text">{thing}</p>
+					<p class="light-text opacity-75 more">{more}</p>
+				</div>
+			</div>
+			{/each}
 		</div>
 
 		<div class="col col-12 col-lg-6 light-text">
 			<div id="login" class="m-auto">
 				<h2 class="light-text">Log into your account</h2>
 				<p class="light-text">
-					Don't yet have an account?
+					Don't have an account?
 					<a href="/register" class="text-decoration-none">Register</a>
 				</p>
 
@@ -59,7 +74,7 @@
 		font-size: 3.5rem
 
 	a
-		color: #ea085c
+		color: #6832c6
 
 	.row
 		height: 100vh
@@ -78,7 +93,8 @@
 		max-width: 30rem
 		form 
 			button
-				background: #ea085c
+				background: #6832c6
+				border-color: #6832c6
 
 	input
 		background-color: var(--accent)
