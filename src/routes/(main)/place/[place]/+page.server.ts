@@ -5,20 +5,19 @@ const prisma = new PrismaClient()
 export async function load({ params }: { params: any }) {
 	const getPlace = await prisma.place.findUnique({
 		where: {
-			name_ownerUsername: {
-				name: params.place,
-				ownerUsername: params.user,
-			},
+			slug: params.place,
 		},
 		select: {
+			name: true,
 			description: true,
 			image: true,
+			ownerUsername: true
 		},
 	})
 	if (getPlace) {
 		return {
-			name: params.place,
-			owner: params.user,
+			name: getPlace.name,
+			owner: getPlace.ownerUsername,
 			description: getPlace.description,
 			image: getPlace.image,
 		}

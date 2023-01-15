@@ -48,7 +48,7 @@
 		<h4 class="light-text">Recently joined</h4>
 		<div class="row m-0 p-0">
 			{#each data.places as place}
-				<a class="place mb-3 rounded-3 col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/{place.ownerUsername}/{place.name}">
+				<a class="place mb-3 rounded-3 col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/place/{place.slug}">
 					<img src={place.image} class="mb-2 w-100 rounded-3" alt={place.name} />
 					{place.name}
 				</a>

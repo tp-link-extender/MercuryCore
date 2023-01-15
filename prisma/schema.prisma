@@ -48,20 +48,19 @@ model Session {
 }
 
 // model Group {
-//     name          String        @unique
-//     owner         User          @relation(name: "owner", fields: [ownerUsername], references: [username])
+//     name          String       @id @unique
+//     owner         User         @relation(name: "owner", fields: [ownerUsername], references: [username])
 //     ownerUsername String
-//     members       User[] @relation("member")
+//     members       User[]       @relation("member")
 //     places        GroupPlace[]
-// 	posts         GroupPost[]
-
-//     @@id([name])
+//     posts         GroupPost[]
 // }
 
 // Places
 
 model Place {
     name          String
+    slug          String @id @unique
     owner         User   @relation(fields: [ownerUsername], references: [username])
     ownerUsername String
     description   String
@@ -69,8 +68,6 @@ model Place {
 
     created DateTime @default(now())
     updated DateTime @default(now())
-
-    @@id([name, ownerUsername])
 }
 
 // model GroupPlace {
@@ -85,17 +82,3 @@ model Place {
 //     @@id([name, groupName])
 // }
 
-// Posts
-
-// model Post {
-//     id           Int      @id @default(autoincrement())
-//     Poster       User     @relation(fields: [userUsername], references: [username])
-//     userUsername String
-//     posted       DateTime @default(now())
-// }
-// model GroupPost {
-//     id           Int      @id @default(autoincrement())
-//     Poster       Group     @relation(fields: [groupName], references: [name])
-//     groupName String
-//     posted       DateTime @default(now())
-// }
