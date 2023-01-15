@@ -1,6 +1,8 @@
 @import "~bootstrap/scss/bootstrap"
 
 :root
+	overflow-x: hidden
+	
 	// light mode
 	@media (prefers-color-scheme: light)
 		--background: #e6e4e3
@@ -13,6 +15,7 @@
 		--dark-text: #f6f4f3
 
 	// dark mode
+	--mainaccent: #7531ff
 	--background: #161413
 	--footer: #100f0e
 	--accent: #363433
@@ -28,9 +31,11 @@
 		color: var(--grey-text) !important
 	.dark-text
 		color: var(--dark-text) !important
+	.accent-text
+		color: var(--mainaccent) !important
 
 ::selection
-	background: rgba(#ea085c, 0.65)
+	background: rgba(var(--mainaccent), 0.65)
 
 body
 	display: flex
