@@ -29,6 +29,9 @@
 	.dark-text
 		color: var(--dark-text) !important
 
+::selection
+	background: rgba(#ea085c, 0.65)
+
 body
 	display: flex
 	flex-direction: column
@@ -36,8 +39,9 @@ body
 	height: 100vh
 	
 ::-webkit-scrollbar
-	width: 15px
-	&-track
+	width: 1rem
+	height: 1rem
+	&-track, &-corner
 		background: none
 	&-thumb
 		border-radius: 9rem

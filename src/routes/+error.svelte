@@ -1,11 +1,14 @@
 <script lang="ts" context="module">
 	import { page } from "$app/stores"
+	import Navbar from "$lib/components/Navbar.svelte"
 	import Footer from "$lib/components/Footer.svelte"
 </script>
 
 <svelte:head>
 	<title>Error {$page.status} - Mercury</title>
 </svelte:head>
+
+<Navbar />
 
 <main>
 	<div class="container d-flex flex-column justify-content-center align-items-center light-text rounded-4">
