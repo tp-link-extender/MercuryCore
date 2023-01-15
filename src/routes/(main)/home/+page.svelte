@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getUser } from "@lucia-auth/sveltekit/client"
-	export let data: any
+	import Place from "$lib/components/Place.svelte"
 	const user = getUser()
 
 	// explicitly any to prevent warnings
@@ -9,6 +9,8 @@
 		Joined: "bg-success",
 		Developing: "bg-warning",
 	}
+
+	export let data: any
 </script>
 
 <svelte:head>
@@ -48,10 +50,9 @@
 		<h4 class="light-text">Recently joined</h4>
 		<div class="row m-0 p-0">
 			{#each data.places as place}
-				<a class="place mb-3 rounded-3 col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/place/{place.slug}">
-					<img src={place.image} class="mb-2 w-100 rounded-3" alt={place.name} />
-					{place.name}
-				</a>
+				<div class="col col-4 col-sm-3 col-md-2 text-center">
+					<Place {place} />
+				</div>
 			{/each}
 		</div>
 	</div>
@@ -83,9 +84,4 @@
 				width: 7rem
 				height: 7rem
 				margin: auto
-					
-	.place
-		text-decoration: none
-		img
-			background: black
 </style>
