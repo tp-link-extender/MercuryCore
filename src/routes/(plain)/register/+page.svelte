@@ -15,7 +15,12 @@
 	<title>Register - Mercury</title>
 </svelte:head>
 
-<div id="bg" class="position-absolute top-0 left-0 w-100 h-100 bg-black" />
+<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
+	<div class="w-100 position-absolute bottom-0 z-1">
+		<div class="position-absolute" />
+		<div class="position-absolute" />
+	</div>
+</div>
 
 <div class="row">
 	<div class="col light-text z-0" id="dark">
@@ -36,7 +41,6 @@
 		<div id="login" class="m-auto">
 			<h2 class="light-text">Create a free account</h2>
 			<p class="light-text">
-				
 				Already have an account?
 				<a href="/login" class="text-decoration-none">Log in</a>
 			</p>
@@ -106,10 +110,7 @@
 	#light
 		background: var(--background)
 	#dark
-		background: linear-gradient(-20deg, #0000 -99%, var(--footer) 50%)
-	#bg
-		background: url("/pattern.svg") fixed
-		background-size: 5rem
+		background: var(--footer)
 
 	#login
 		max-width: 30rem
@@ -122,4 +123,23 @@
 		background-color: var(--accent)
 	.valid
 		border-color: var(--accent3)
+
+	#wavep // rpcs3 momnt
+		div
+			transition: all 1s ease-in-out 0s
+			div
+				background: url("/wave.svg") repeat-x
+				top: -198px
+				width: 6144px
+				height: 198px
+				animation: 11s cubic-bezier(0.36, 0.45, 0.63, 0.53) 0s infinite normal none running waves
+				transform: translate3d(0px,0px,0px)
+				@keyframes waves
+					0%
+						margin-left: -1600px
+					100%
+						margin-left: 0
+			div:nth-of-type(2)
+				animation: 11s cubic-bezier(0.4, 0.2, 0.2, 0.2) -0.124s infinite normal none running waves, 11s ease -1.24s infinite normal none running swell
+				top: -174px
 </style>
