@@ -18,11 +18,11 @@
 <div id="all" class="overflow-x-hidden">
 	<div class="row">
 		<div class="col light-text" id="dark">
-			<a type="button" href="/" class="btn btn-lg border-0"><ArrowLeft class="me-2" /> Home</a>
-			<h1 class="fw-bolder light-text mb-4">Mercury 2 <span class="opacity-50">beta</span></h1>
+			<a href="/" class="text-decoration-none h3"><ArrowLeft class="me-2" /> Home</a>
+			<h1 class="fw-bolder light-text mb-4">Mercury 2 <span class="opacity-50 text-secondary">beta</span></h1>
 			{#each things as [thing, more]}
 				<div class="thing d-flex flex-row mt-3">
-					<CheckCircleFill height={24} width={24} color="#ea085c" />
+					<CheckCircleFill height={24} width={24} color="#6832c6" />
 					<div class="ms-3">
 						<p class="h4 light-text">{thing}</p>
 						<p class="light-text opacity-75 more">{more}</p>
@@ -73,9 +73,9 @@
 					</fieldset>
 				</form>
 				<p>By signing up, you agree to our
-					<a href="/terms" class="text-decoration-none">Terms of Service</a>
+					<a href="/terms">Terms of Service</a>
 					and
-					<a href="/privacy" class="text-decoration-none">Privacy policy</a>.
+					<a href="/privacy">Privacy policy</a>.
 				</p>
 			</div>
 		</div>
@@ -87,7 +87,7 @@
 		font-size: 3.5rem
 
 	a
-		color: #ea085c
+		color: #6832c6
 
 	.more
 		margin-top: -0.7rem
@@ -109,8 +109,8 @@
 		max-width: 30rem
 		form 
 			button
-				background: #ea085c
-
+				background: #6832c6
+				border-color: #6832c6
 	input
 		background-color: var(--accent)
 	.valid
