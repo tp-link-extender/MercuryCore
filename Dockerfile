@@ -1,7 +1,7 @@
 FROM node:19.4.0-alpine AS builder
 WORKDIR /app
 COPY package.json ./
-RUN npm i --production
+RUN npm i --omit=dev
 COPY . .
 RUN npm run build
 
