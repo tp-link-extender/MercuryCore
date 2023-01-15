@@ -50,7 +50,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const getPlaces = await prisma.place.findMany({
 		select: {
 			name: true,
-			ownerUsername: true,
+			slug: true,
 			image: true,
 		},
 	})
