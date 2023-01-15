@@ -46,23 +46,24 @@
 <div id="all">
 	<canvas id="gradient-canvas" class="vh-100 vw-100 position-absolute top-0 left-0" />
 
-	<div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
+	<div id="info" class="z-3 container d-flex flex-column justify-content-center align-items-center position-relative">
 		<div id="moon" class="container d-flex flex-column justify-content-center align-items-center z-2 position-absolute">
-			<div class="object">
-				<Moon />
-			</div>
+		<Moon />
 		</div>
 		<br />
 		<br />
 		<br />
-		<h1 id="title" class="fw-bolder light-text z-3 opacity-75">Mercury 2</h1>
-		<p class="lead light-text">Endless possibilities. New features. Same nostalgia.</p>
-		<span class="badge light-text opacity-50">Closed Beta</span>
+		<h1 id="title" class="fw-bolder text-white z-3 opacity-75">Mercury 2</h1>
+		<p class="lead text-white">Endless possibilities. New features. Same nostalgia.</p>
+		<h5>
+			<span class="badge dark-text opacity-50">Closed Beta</span>
+			<a type="button" href="/register" class="btn btn-sm btn-success light-text ms-3 rounded">Register</a>
+		</h5>
 	</div>
 	<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
 		<div class="w-100 position-absolute bottom-0">
-			<div class="position-absolute"/>
-			<div class="position-absolute"/>
+			<div class="position-absolute" />
+			<div class="position-absolute" />
 		</div>
 	</div>
 </div>
@@ -87,17 +88,17 @@
 				animation: 11s cubic-bezier(0.4, 0.2, 0.2, 0.2) -0.124s infinite normal none running waves, 11s ease -1.24s infinite normal none running swell
 				top: -174px
 	
-		
 	#info
-		height: 110vh
-		padding-top: 10vh
+		height: 100vh
+		padding-top: 35vh
+		a
+			margin: 0
+
 		#title
 			font-size: 4rem
-			
+
 		.badge
 			background: var(--light-text)
-			color: var(--dark-text)
-			font-size: 0.8rem
 	
 	#moon
 		margin-bottom: 20vh

@@ -15,5 +15,5 @@
 
 <style lang="sass">
 	.row
-		height: 90vh
+		height: 100vh
 </style>

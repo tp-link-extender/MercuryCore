@@ -9,6 +9,10 @@
 
 <h1 class="text-center light-text">Register</h1>
 
+<p class="text-center light-text">Already have an account? 
+	<a href="/login" class="text-decoration-none">Log in</a>
+</p>
+
 <div class="container mt-5 rounded-4">
 	<form class="m-auto" method="POST" use:enhance>
 		<div class="mb-3">
@@ -41,6 +45,9 @@
 </div>
 
 <style lang="sass">
+	h1
+		margin-top: 10vh
+
 	.container
 		background: var(--accent2)
 		max-width: 30rem
