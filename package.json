@@ -30,6 +30,7 @@
     "@lucia-auth/sveltekit": "^0.5.2",
     "@popperjs/core": "^2.11.6",
     "@prisma/client": "^4.8.1",
+    "@sveltejs/adapter-node": "^1.1.3",
     "@threlte/core": "^5.0.8",
     "@threlte/extras": "^4.9.3",
     "esbuild": "^0.15.18",
