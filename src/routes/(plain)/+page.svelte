@@ -55,7 +55,7 @@
 		<br />
 		<br />
 		<h1 id="title" class="fw-bolder text-white z-3 opacity-75">Mercury 2</h1>
-		<p class="lead text-white">Endless possibilities. New features. Sam nostalgia.</p>
+		<p class="lead text-white">Endless possibilities. New features. Same nostalgia.</p>
 		<h5>
 			<span class="badge dark-text opacity-50">Closed Beta</span>
 			<a type="button" href="/register" class="btn btn-sm btn-success ms-3 rounded">Register <ArrowRight class="ms-1"/></a>

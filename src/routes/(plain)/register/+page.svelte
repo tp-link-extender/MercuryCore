@@ -46,7 +46,7 @@
 							{#if form?.area == "username"}
 								<input id="username" name="username" type="text" class="light-text form-control is-invalid" placeholder="3-21 characters" />
 							{:else}
-								<input id="username" name="username" type="text" class="light-text form-control" placeholder="3-21 characters" />
+								<input id="username" name="username" type="text" class="light-text form-control valid" placeholder="3-21 characters" />
 							{/if}
 						</div>
 						<label for="password" class="form-label">Password</label>
@@ -54,7 +54,7 @@
 							{#if form?.area == "password"}
 								<input id="password" name="password" type="password" class="light-text form-control is-invalid" placeholder="Password" />
 							{:else}
-								<input id="password" name="password" type="password" class="light-text form-control" placeholder="Password" />
+								<input id="password" name="password" type="password" class="light-text form-control valid" placeholder="Password" />
 							{/if}
 						</div>
 						<label for="regkey" class="form-label">Registration key</label>
@@ -62,7 +62,7 @@
 							{#if form?.area == "regkey"}
 								<input id="regkey" name="regkey" type="password" class="light-text form-control is-invalid" placeholder="mercurkey-12311121123" />
 							{:else}
-								<input id="regkey" name="regkey" type="password" class="light-text form-control" placeholder="mercurkey-12311121123" />
+								<input id="regkey" name="regkey" type="password" class="light-text form-control valid" placeholder="mercurkey-12311121123" />
 							{/if}
 						</div>
 
@@ -112,6 +112,7 @@
 				background: #ea085c
 
 	input
-		background: var(--accent)
+		background-color: var(--accent)
+	.valid
 		border-color: var(--accent3)
 </style>
