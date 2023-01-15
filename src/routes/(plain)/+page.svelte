@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte"
+	import { ArrowRight } from "svelte-bootstrap-icons"
 	import Gradient from "$lib/gradient"
 	import Moon from "$lib/components/Moon.svelte"
 
@@ -54,10 +55,10 @@
 		<br />
 		<br />
 		<h1 id="title" class="fw-bolder text-white z-3 opacity-75">Mercury 2</h1>
-		<p class="lead text-white">Endless possibilities. New features. Same nostalgia.</p>
+		<p class="lead text-white">Endless possibilities. New features. Sam nostalgia.</p>
 		<h5>
 			<span class="badge dark-text opacity-50">Closed Beta</span>
-			<a type="button" href="/register" class="btn btn-sm btn-success light-text ms-3 rounded">Register</a>
+			<a type="button" href="/register" class="btn btn-sm btn-success ms-3 rounded">Register <ArrowRight class="ms-1"/></a>
 		</h5>
 	</div>
 	<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
