@@ -78,7 +78,7 @@
 	#light
 		background: var(--background)
 	#dark
-		background: var(--footer)
+		background: linear-gradient(-20deg, var(--footer) 50%, var(--mainaccent) 250%)
 
 	#login
 		max-width: 30rem
