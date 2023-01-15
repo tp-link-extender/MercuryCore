@@ -1,41 +1,29 @@
 <script lang="ts">
-	import { getUser } from "@lucia-auth/sveltekit/client"
+	import Place from "$lib/components/Place.svelte"
 	export let data: any
-	const user = getUser()
-
-	// explicitly any to prevent warnings
-	const statusColours: any = {
-		Online: "bg-info",
-		Joined: "bg-success",
-		Developing: "bg-warning",
-	}
 </script>
 
 <svelte:head>
 	<title>Home - Mercury</title>
 </svelte:head>
 
-<div class="container">
-	<div class="row m-0 p-0">
+<h1 class="text-center light-text">Discover</h1>
+
+<div class="container d-grid mt-5">
+	{#each Array(50) as _}
 		{#each data.places as place}
-			<a class="place mb-3 rounded-3 col col-4 col-sm-3 col-md-2 text-center light-text px-2" href="/place/{place.slug}">
-				<img src={place.image} class="mb-2 w-100 rounded-3" alt={place.name} />
-				{place.name}
-			</a>
+			<Place {place} />
 		{/each}
-	</div>
+	{/each}
 </div>
 
 <style lang="sass">
 	.container
-		max-width: 60rem
+		max-width: 100%
 		font-size: 0.9rem
-					
-	.place
-		text-decoration: none
-		img
-			background: black
 
-	.place img
-		border-radius: 0.5rem
+		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr))
+		column-gap: 1rem
+		row-gap: 1rem
+		place-items: center
 </style>
