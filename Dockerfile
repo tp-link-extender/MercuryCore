@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json ./
 RUN npm i
 COPY . .
-RUN npm run build && npm prune --production
+RUN npm run build
 
 FROM node:19.4.0-alpine
 USER node:node
