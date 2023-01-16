@@ -48,9 +48,12 @@
 
 							<ul class="dropdown-menu mb-2">
 								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
-								<li><a class="dropdown-item light-text" href="#">Action</a></li>
-								<li><a class="dropdown-item light-text" href="#">Another action</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}">Profile</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}">Inventory</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}">Avatar</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}">My Groups</a></li>
 								<li><hr class="dropdown-divider" /></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-user-gear"></i> Settings</a></li>
 								<li>
 									<a
 										on:click={async () => {
@@ -59,7 +62,7 @@
 											window.location.reload()
 										}}
 										class="dropdown-item text-danger"
-										href="#"><b>Log out <i class="fa-solid fa-arrow-right-from-bracket"></i></b></a
+										href="#"><b><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</b></a
 									>
 								</li>
 							</ul>
