@@ -5,7 +5,7 @@ services:
         container_name: redisgraph
         image: redislabs/redisgraph
         ports:
-            - "6379:6379"
+            - 6479:6379
         restart: unless-stopped
         volumes:
             - ./data/redis:/data
@@ -14,7 +14,7 @@ services:
         container_name: postgres
         image: postgres
         ports:
-            - "5432:5432"
+            - 5532:5432
         restart: unless-stopped
         volumes:
             - ./data/postgres:/var/lib/postgresql/data
