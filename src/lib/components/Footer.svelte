@@ -1,14 +1,20 @@
 <footer class="position-relative text-center">
 	<br />
-	<a class="light-text h4" href="/">Mercury</a>
-	<p class="grey-text mb-4">
-		© Mercury 2022 - All rights reserved, we are not affiliated with Roblox Corporation.<br />
+	<a class="d-inline light-text" href="/">Mercury</a>
+	<span class="text-primary">|</span>
+	<p class="d-inline grey-text mb-4">
+		© Mercury 2022 - Not affiliated with Roblox Corporation.<br />
 	</p>
-	<a class="light-text h5 my-0 mx-2" href="/rules">Rules</a>
-	<a class="light-text h5 my-0 mx-2" href="/about">About</a>
-	<a class="light-text h5 my-0 mx-2" href="/terms">Terms of Service</a>
-	<a class="light-text h5 my-0 mx-2" href="/privacy">Privacy Policy</a>
-	<a class="light-text h5 my-0 mx-2" href="/statistics">Statistics</a>
+	<hr class="my-2">
+	<a class="d-inline light-text h5 my-0 mx-2" href="/rules">Rules</a>
+	<span class="text-primary">|</span>
+	<a class="d-inline light-text h5 my-0 mx-2" href="/about">About</a>
+	<span class="text-primary">|</span>
+	<a class="d-inline light-text h5 my-0 mx-2" href="/terms">Terms of Service</a>
+	<span class="text-primary">|</span>
+	<a class="d-inline light-text h5 my-0 mx-2" href="/privacy">Privacy Policy</a>
+	<span class="text-primary">|</span>
+	<a class="d-inline light-text h5 my-0 mx-2" href="/statistics">Statistics</a>
 	<br />
 	<br />
 </footer>
@@ -21,7 +27,6 @@
 <style lang="sass">
 	footer
 		flex-shrink: 0
-		background: var(--footer)
 		padding: 1vh
 
 		a 
