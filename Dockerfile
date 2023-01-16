@@ -1,7 +1,9 @@
 FROM node:19.4.0-alpine AS builder
 WORKDIR /app
-COPY package.json ./
-RUN npm i --omit=dev
+COPY package.json .
+COPY vite.config.ts .
+RUN npm i -g pnpm
+RUN pnpm i
 COPY . .
 RUN npm run build
 
