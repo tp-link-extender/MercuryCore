@@ -1,20 +1,20 @@
 <footer class="position-relative text-center">
 	<br />
-	<a class="d-inline light-text" href="/">Mercury</a>
-	<span class="text-primary">|</span>
 	<p class="d-inline grey-text mb-4">
-		© Mercury 2022 - Not affiliated with Roblox Corporation.<br />
+		© <a href="/" class="text-decoration-none">Mercury</a> 2022 - Not affiliated with Roblox Corporation.<br />
 	</p>
 	<hr class="my-2">
-	<a class="d-inline light-text h5 my-0 mx-2" href="/rules">Rules</a>
 	<span class="text-primary">|</span>
-	<a class="d-inline light-text h5 my-0 mx-2" href="/about">About</a>
+	<a class="d-inline light-text my-0 mx-2" href="/rules">Rules</a>
 	<span class="text-primary">|</span>
-	<a class="d-inline light-text h5 my-0 mx-2" href="/terms">Terms of Service</a>
+	<a class="d-inline light-text my-0 mx-2" href="/about">About</a>
 	<span class="text-primary">|</span>
-	<a class="d-inline light-text h5 my-0 mx-2" href="/privacy">Privacy Policy</a>
+	<a class="d-inline light-text my-0 mx-2" href="/terms">Terms of Service</a>
 	<span class="text-primary">|</span>
-	<a class="d-inline light-text h5 my-0 mx-2" href="/statistics">Statistics</a>
+	<a class="d-inline light-text my-0 mx-2" href="/privacy">Privacy Policy</a>
+	<span class="text-primary">|</span>
+	<a class="d-inline light-text my-0 mx-2" href="/statistics">Statistics</a>
+	<span class="text-primary">|</span>
 	<br />
 	<br />
 </footer>
