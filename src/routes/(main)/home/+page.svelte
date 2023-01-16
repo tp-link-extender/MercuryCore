@@ -10,6 +10,11 @@
 		Developing: "bg-warning",
 	}
 
+	const greets = [
+		`Hi, ${$user?.displayname}!`,
+		`Hello, ${$user?.displayname}!`,
+	]
+
 	export let data: any
 </script>
 
@@ -22,7 +27,9 @@
 		<div id="pfp" class="rounded-circle">
 			<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 		</div>
-		<h1 class="text-center light-text">Hi, {$user?.username}!</h1>
+		<h1 class="text-center light-text">
+			{greets[Math.floor(Math.random() * greets.length)]}
+		</h1>
 	</div>
 	<div class="mt-5">
 		{#if data.friends.length > 0}
