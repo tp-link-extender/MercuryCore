@@ -46,16 +46,15 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		}
 		const graph = new Graph(client, "friends")
 
-		console.log()
-
 		return {
 			username: params.user,
 			displayname: user.displayname,
 			img: user.image,
 			bio: user.bio,
 			places: user.places,
-			followerCount: (await roQuery(graph, "RETURN SIZE(() -[:follows]-> (:User { name: $user })) as followers", query2)).followers,
-			friendCount: (await roQuery(graph, "RETURN SIZE(() -[:friends]-> (:User { name: $user })) as friends", query2)).friends,
+			friendCount: (await roQuery(graph, "RETURN SIZE(() -[:friends]-> (:User { name: $user })) as data", query2)).data,
+			followerCount: (await roQuery(graph, "RETURN SIZE(() -[:follows]-> (:User { name: $user })) as data", query2)).data,
+			followingCount: (await roQuery(graph, "RETURN SIZE(() <-[:follows]- (:User { name: $user })) as data", query2)).data,
 			friends: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query) : false,
 			following: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query) : false,
 			follower: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query) : false,
