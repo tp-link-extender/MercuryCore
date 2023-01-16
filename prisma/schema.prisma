@@ -21,18 +21,19 @@ model User {
     hashed_password String?
     session         Session[]
 
-    username    String   @unique
-    displayname String?
-    usedInvite  String 
-    bio         String?
-    image       String?
-    created     DateTime @default(now())
-    lastOnline  DateTime @default(now())
-    status      String?
-    currency    Int      @default(0)
+    username        String   @unique
+    displayname     String?
+    usedInvite      String
+    permissionLevel Int      @default(1) // 1: Regular user 2: Verified (email or Discord) 3: Moderator 4: Catalog Manager 5: Administrator
+    bio             String?
+    image           String?
+    created         DateTime @default(now())
+    lastOnline      DateTime @default(now())
+    status          String?
+    currency        Int      @default(0)
     // groupsOwned  Group[] @relation("owner")
     // groupsJoined Group[] @relation("member")
-    places      Place[]
+    places          Place[]
     // posts       Post[]
 
     @@map("user")
@@ -83,4 +84,3 @@ model Place {
 
 //     @@id([name, groupName])
 // }
-
