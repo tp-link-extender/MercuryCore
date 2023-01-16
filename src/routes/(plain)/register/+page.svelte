@@ -55,12 +55,28 @@
 							<input id="username" name="username" type="text" class="light-text form-control valid" placeholder="3-21 characters" />
 						{/if}
 					</div>
+					<label for="email" class="form-label">Email Address</label>
+					<div class="mb-4">
+						{#if form?.area == "email"}
+							<input id="email" name="email" type="email" class="light-text form-control is-invalid" placeholder="mercury@banland.xyz" />
+						{:else}
+							<input id="email" name="email" type="email" class="light-text form-control valid" placeholder="mercury@banland.xyz" />
+						{/if}
+					</div>
 					<label for="password" class="form-label">Password</label>
 					<div class="mb-4">
 						{#if form?.area == "password"}
 							<input id="password" name="password" type="password" class="light-text form-control is-invalid" placeholder="Password" />
 						{:else}
 							<input id="password" name="password" type="password" class="light-text form-control valid" placeholder="Password" />
+						{/if}
+					</div>
+					<label for="password" class="form-label">Confirm Password</label>
+					<div class="mb-4">
+						{#if form?.area == "cpassword"}
+							<input id="cpassword" name="cpassword" type="password" class="light-text form-control is-invalid" placeholder="Confirm Password" />
+						{:else}
+							<input id="cpassword" name="cpassword" type="password" class="light-text form-control valid" placeholder="Confirm Password" />
 						{/if}
 					</div>
 					<label for="regkey" class="form-label">Registration key</label>
@@ -105,7 +121,7 @@
 
 	@media only screen and (min-width: 993px)
 		.col
-			padding-top: 20vh
+			padding-top: 11vh
 
 	#light
 		background: var(--background)
