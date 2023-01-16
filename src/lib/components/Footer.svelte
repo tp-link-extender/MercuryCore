@@ -3,18 +3,16 @@
 	<p class="d-inline grey-text mb-4">
 		© <a href="/" class="text-decoration-none">Mercury</a> 2022 - Not affiliated with Roblox Corporation.<br />
 	</p>
-	<hr class="my-2">
-	<span class="text-primary">|</span>
+	<hr class="my-2 text-primary">
 	<a class="d-inline light-text my-0 mx-2" href="/rules">Rules</a>
-	<span class="text-primary">|</span>
+	<span class="text-muted">|</span>
 	<a class="d-inline light-text my-0 mx-2" href="/about">About</a>
-	<span class="text-primary">|</span>
+	<span class="text-muted">|</span>
 	<a class="d-inline light-text my-0 mx-2" href="/terms">Terms of Service</a>
-	<span class="text-primary">|</span>
+	<span class="text-muted">|</span>
 	<a class="d-inline light-text my-0 mx-2" href="/privacy">Privacy Policy</a>
-	<span class="text-primary">|</span>
+	<span class="text-muted">|</span>
 	<a class="d-inline light-text my-0 mx-2" href="/statistics">Statistics</a>
-	<span class="text-primary">|</span>
 	<br />
 	<br />
 </footer>
@@ -33,6 +31,11 @@
 			text-decoration: none
 			&:hover
 				text-decoration: underline
+		hr
+			align-content: center
+			width: 20%
+			margin-left: auto
+			margin-right: auto
 
 	#nojs
 		background: rgba(0, 0, 0, 0.5)
