@@ -35,22 +35,35 @@
 							<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
 						</li>
 					{:else}
-						<a id="username" href="/{$user?.username}" class="d-flex">
-							<div id="pfp" class="mx-2 rounded-circle">
-								<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0"/>
-							</div>
-							<p class="light-text my-auto fs-6 me-4">
-								{$user?.displayname || $user?.username}
-							</p>
-						</a>
-						<button
-							on:click={async () => {
-								await signOut()
-								invalidateAll()
-								window.location.reload()
-							}}
-							class="btn btn-danger my-2 my-sm-0">Log out</button
-						>
+						<div class="dropdown">
+							<a href="/{$user?.username}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
+								<div id="pfp" class="mx-2 rounded-circle">
+									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
+								</div>
+								<p class="light-text my-auto fs-6 me-4">
+									{$user?.displayname || $user?.username}
+									<i class="fa-solid fa-ellipsis-vertical"></i>
+								</p>
+							</a>
+
+							<ul class="dropdown-menu mb-2">
+								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
+								<li><a class="dropdown-item light-text" href="#">Action</a></li>
+								<li><a class="dropdown-item light-text" href="#">Another action</a></li>
+								<li><hr class="dropdown-divider" /></li>
+								<li>
+									<a
+										on:click={async () => {
+											await signOut()
+											invalidateAll()
+											window.location.reload()
+										}}
+										class="dropdown-item text-danger"
+										href="#"><b>Log out <i class="fa-solid fa-arrow-right-from-bracket"></i></b></a
+									>
+								</li>
+							</ul>
+						</div>
 					{/if}
 				</div>
 			</div>
@@ -107,4 +120,9 @@
 
 	#username
 		text-decoration: none
+
+	.dropdown-menu
+		background: var(--footer)
+		border: none
+
 </style>
