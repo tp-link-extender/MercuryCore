@@ -21,14 +21,3 @@ services:
 
         environment:
             POSTGRES_PASSWORD: password # todo: load from env
-
-    site:
-        container_name: site
-        build: .
-        restart: unless-stopped
-        ports:
-            - 5050:5050
-
-        environment:
-            PORT: 5050
-            ORIGIN: "http://localhost:5050"
