@@ -17,11 +17,13 @@ datasource db {
 model User {
     id              String    @id @unique @default(cuid())
     provider_id     String    @unique
+    email           String    @unique
     hashed_password String?
     session         Session[]
 
     username    String   @unique
     displayname String?
+    usedInvite  String 
     bio         String?
     image       String?
     created     DateTime @default(now())

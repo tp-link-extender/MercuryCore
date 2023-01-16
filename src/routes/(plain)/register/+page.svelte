@@ -3,7 +3,7 @@
 	import { ArrowLeft, CheckCircleFill } from "svelte-bootstrap-icons"
 
 	const things = [
-		["Original username", "Make sure it is appropriate and between 3-21 characters."],
+		["Original username", "Make sure it is appropriate and between 3-21 characters. Underscores are allowed."],
 		["Valid email", "Mercury requires a valid email so you can reset your password at any time."],
 		["Secure password", "Make sure your password has a mix of letters, numbers, and symbols to protect against hackers."],
 	]
@@ -51,6 +51,7 @@
 						<label for="username" class="form-label">Username</label>
 						{#if form?.area == "username"}
 							<input id="username" name="username" type="text" class="light-text form-control is-invalid" placeholder="3-21 characters" />
+							<small class="col-12 mb-3 text-danger">{form.msg}</small>
 						{:else}
 							<input id="username" name="username" type="text" class="light-text form-control valid" placeholder="3-21 characters" />
 						{/if}
@@ -59,6 +60,7 @@
 					<div class="mb-4">
 						{#if form?.area == "email"}
 							<input id="email" name="email" type="email" class="light-text form-control is-invalid" placeholder="mercury@banland.xyz" />
+							<small class="col-12 mb-3 text-danger">{form.msg}</small>
 						{:else}
 							<input id="email" name="email" type="email" class="light-text form-control valid" placeholder="mercury@banland.xyz" />
 						{/if}
@@ -67,6 +69,7 @@
 					<div class="mb-4">
 						{#if form?.area == "password"}
 							<input id="password" name="password" type="password" class="light-text form-control is-invalid" placeholder="Password" />
+							<small class="col-12 mb-3 text-danger">{form.msg}</small>
 						{:else}
 							<input id="password" name="password" type="password" class="light-text form-control valid" placeholder="Password" />
 						{/if}
@@ -75,6 +78,7 @@
 					<div class="mb-4">
 						{#if form?.area == "cpassword"}
 							<input id="cpassword" name="cpassword" type="password" class="light-text form-control is-invalid" placeholder="Confirm Password" />
+							<small class="col-12 mb-3 text-danger">{form.msg}</small>
 						{:else}
 							<input id="cpassword" name="cpassword" type="password" class="light-text form-control valid" placeholder="Confirm Password" />
 						{/if}
@@ -83,15 +87,15 @@
 					<div class="mb-5">
 						{#if form?.area == "regkey"}
 							<input id="regkey" name="regkey" type="password" class="light-text form-control is-invalid" placeholder="mercurkey-12311121123" />
+							<small class="col-12 mb-3 text-danger">{form.msg}</small>
 						{:else}
 							<input id="regkey" name="regkey" type="password" class="light-text form-control valid" placeholder="mercurkey-12311121123" />
 						{/if}
 					</div>
-
-					<button type="submit" class="container-fluid btn btn-primary mb-3">Register</button>
-					{#if form?.msg}
+					{#if form?.area == "unexp"}
 						<p class="col-12 mb-3 text-danger">{form.msg}</p>
 					{/if}
+					<button type="submit" class="container-fluid btn btn-primary mb-3">Register</button>
 				</fieldset>
 			</form>
 			<p>

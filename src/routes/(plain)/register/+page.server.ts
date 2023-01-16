@@ -11,10 +11,15 @@ export const actions: Actions = {
 		const email = data.get("email")?.toString() || ""
 		const password = data.get("password")?.toString() || ""
 		const cpassword = data.get("cpassword")?.toString() || ""
+		const regkey = data.get("regkey")?.toString() || ""
+		
+		
 
 		const easyChecks = [
 			[username.length <= 3, "Username must be more than 3 characters", "username"],
 			[username.length > 30, "Username must be less than 30 characters", "username"],
+			[!username.match(/^[A-Za-z0-9_]+$/), "Username must be alphanumeric (A-Z, 0-9, _)", "username"],
+			[regkey != "mercurkey-123", "Invalid registration key", "regkey"],
 			[password.length < 1, "Password must be at least 1 character", "password"],
 			[password.length > 6969, "Password must be less than 6969 characters", "password"],
 			[cpassword != password, "The specified password does not match", "cpassword"]
@@ -51,7 +56,9 @@ export const actions: Actions = {
 				password,
 				attributes: {
 					username,
+					email,
 					displayname: username,
+					usedInvite: regkey, 
 					image: "https://tr.rbxcdn.com/54d17964492b5e0af66797942fcce26c/150/150/AvatarHeadshot/Png",
 				},
 			})
@@ -64,7 +71,7 @@ export const actions: Actions = {
 				return fail(400, { msg: "User already exists" })
 			}
 			console.error(error)
-			return fail(500, { msg: "An unexpected error occurred" })
+			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })
 		}
 
 		throw redirect(302, "/home")

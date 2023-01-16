@@ -51,6 +51,7 @@
 						<label for="username" class="form-label">Username</label>
 						{#if form?.area == "username"}
 							<input id="username" name="username" type="text" class="light-text form-control is-invalid" placeholder="Username" />
+							<p class="col-12 mb-3 text-danger">{form.msg}</p>
 						{:else}
 							<input id="username" name="username" type="text" class="light-text form-control valid" placeholder="Username" />
 						{/if}
@@ -59,15 +60,13 @@
 					<div class="mb-5">
 						{#if form?.area == "password"}
 							<input id="password" name="password" type="password" class="light-text form-control is-invalid" placeholder="Password" />
+							<p class="col-12 mb-3 text-danger">{form.msg}</p>
 						{:else}
 							<input id="password" name="password" type="password" class="light-text form-control valid" placeholder="Password" />
 						{/if}
 					</div>
 
 					<button type="submit" class="container-fluid btn btn-primary mb-3">Log in</button>
-					{#if form?.msg}
-						<p class="col-12 mb-3 text-danger">{form.msg}</p>
-					{/if}
 				</fieldset>
 			</form>
 		</div>
