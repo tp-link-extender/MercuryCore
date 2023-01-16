@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import { ArrowLeft, CheckCircleFill } from "svelte-bootstrap-icons"
 
 	const things = [
 		["Original username", "Make sure it is appropriate and between 3-21 characters. Underscores are allowed."],
@@ -16,7 +15,7 @@
 </svelte:head>
 
 <div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-absolute bottom-0 z-1">
+	<div class="w-100 position-fixed bottom-0 z-1">
 		<div class="position-absolute" />
 		<div class="position-absolute" />
 	</div>
@@ -24,11 +23,10 @@
 
 <div class="row">
 	<div class="col light-text z-0" id="dark">
-		<a type="button" href="/" class="btn btn-lg border-0"><ArrowLeft class="me-2" /> Home</a>
+		<a type="button" href="/" class="btn btn-lg border-0 px-0"><i class="fa-solid fa-arrow-left me-2" /> Home</a>
 		<h1 class="fw-bolder light-text mb-4">Mercury 2 <span class="opacity-50">beta</span></h1>
 		{#each things as [thing, more]}
 			<div class="thing d-flex flex-row mt-3">
-				<CheckCircleFill height={24} width={24} color="var(--mainaccent)" />
 				<div class="ms-3 w-100">
 					<p class="h4 light-text">{thing}</p>
 					<p class="light-text opacity-75 more">{more}</p>
@@ -122,6 +120,7 @@
 	.col
 		padding: 8vw
 		padding-top: 5vh
+		padding-bottom: 0
 
 	@media only screen and (min-width: 993px)
 		.col
