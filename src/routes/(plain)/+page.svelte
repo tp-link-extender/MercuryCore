@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from "svelte"
-	import { ChevronRight } from "svelte-bootstrap-icons"
 	import Gradient from "$lib/gradient"
 	import Moon from "$lib/components/Moon.svelte"
 
@@ -57,8 +56,8 @@
 		<h1 id="title" class="fw-bolder text-white z-3 opacity-75">Mercury 2</h1>
 		<p class="lead text-white">Endless possibilities. New features. Same nostalgia.</p>
 		<div class="d-inline mb-3">
-				<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <ChevronRight class="ms-1"/></a></b>
-				<b><a type="button" href="/login" class="d-inline btn btn-sm btn-primary text-decoration-none">Login <ChevronRight class="ms-1"/></a></b>
+				<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa-solid fa-chevron-right"></i></a></b>
+				<b><a type="button" href="/login" class="d-inline btn btn-sm btn-primary text-decoration-none">Login <i class="fa-solid fa-chevron-right"></i></a></b>
 			</div>
 		<h5>
 			<span class="badge dark-text opacity-50">Closed Beta</span>
