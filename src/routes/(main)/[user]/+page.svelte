@@ -29,15 +29,21 @@
 			<br />
 			<div class="d-flex">
 				<div class="light-text text-center">
+					Friends
+					<h4 class="light-text">
+						{data.friendCount}
+					</h4>
+				</div>
+				<div class="light-text text-center ms-4">
 					Followers
 					<h4 class="light-text">
 						{data.followerCount}
 					</h4>
 				</div>
 				<div class="light-text text-center ms-4">
-					Friends
+					Following
 					<h4 class="light-text">
-						{data.friendCount}
+						{data.followingCount}
 					</h4>
 				</div>
 				{#if $user && data.username != $user?.username}
