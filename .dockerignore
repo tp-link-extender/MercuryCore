@@ -1,9 +1,11 @@
 /*
 !/src
 !/static
+!/prisma
 !pnpm-lock.yaml
 !package-lock.json
 !package.json
 !svelte.config.js
 !tsconfig.json
-!vite.config.js
+!vite.config.ts
+!.env

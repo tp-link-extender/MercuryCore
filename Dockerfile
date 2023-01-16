@@ -2,8 +2,11 @@ FROM node:19.4.0-alpine AS builder
 WORKDIR /app
 COPY package.json .
 COPY vite.config.ts .
+COPY /prisma .
+COPY .env .
 RUN npm i -g pnpm
 RUN pnpm i
+RUN npx prisma migrate deploy
 COPY . .
 RUN npm run build
 
