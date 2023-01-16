@@ -50,9 +50,9 @@
 					<div class="mb-4">
 						<label for="username" class="form-label">Username</label>
 						{#if form?.area == "username"}
-							<input id="username" name="username" type="text" class="light-text form-control is-invalid" placeholder="3-21 characters" />
+							<input id="username" name="username" type="text" class="light-text form-control is-invalid" placeholder="Username" />
 						{:else}
-							<input id="username" name="username" type="text" class="light-text form-control valid" placeholder="3-21 characters" />
+							<input id="username" name="username" type="text" class="light-text form-control valid" placeholder="Username" />
 						{/if}
 					</div>
 					<label for="password" class="form-label">Password</label>
