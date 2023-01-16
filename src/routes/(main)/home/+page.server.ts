@@ -9,8 +9,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.validateUser()
 	if (!session.session) throw redirect(302, "/login")
 
-	const client = createClient({ url: import.meta.env.REDIS_URL })
-	client.on("error", () => {
+	const client = createClient({ url: "redis://localhost:6479" })
+	client.on("error", e => {
+		console.log("Redis error", e)
 		throw error(500, "Redis error")
 	})
 	await client.connect()
