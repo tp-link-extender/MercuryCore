@@ -90,11 +90,16 @@
 		#loggedin
 			margin-top: auto
 			margin-bottom: 4rem
+	
+	@media only screen and (max-width: 768px)
+		#loggedin
+			margin-bottom: 10rem
 
 
 	@media only screen and (min-width: 993px)
 		#loggedin
 			margin-left: auto
+
 
 	.offcanvas-title
 		text-decoration: none
@@ -102,6 +107,7 @@
 	nav
 		z-index: 9
 		max-height: 10vh
+		-webkit-backdrop-filter: blur(10px)
 		backdrop-filter: blur(8px)
 		
 	.offcanvas
