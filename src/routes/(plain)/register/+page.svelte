@@ -149,7 +149,7 @@
 		div
 			transition: all 1s ease-in-out 0s
 			div
-				background: url("/wave.svg") repeat-x
+				background: url("/landing/wave.svg") repeat-x
 				top: -198px
 				width: 6144px
 				height: 198px

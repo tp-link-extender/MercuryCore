@@ -25,7 +25,7 @@
 		</div>
 		<div class="flex flex-col">
 			<h2 class="light-text">{data.name}</h2>
-			<button id="join" class="btn btn-lg btn-success" on:click={join}><img src="/join.svg" alt="Join button icon" /></button>
+			<button id="join" class="btn btn-lg btn-success" on:click={join}><img src="/place/join.svg" alt="Join button icon" /></button>
 		</div>
 	</div>
 	<h4 class="light-text mt-4">Description</h4>
