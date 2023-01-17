@@ -24,7 +24,7 @@
 	<br />
 	<br />
 	<h1 id="title" class="fw-bolder text-white z-3 opacity-75">Mercury 2</h1>
-	<p class="lead text-white">Endless possibilities. New features. Same nostalgia.</p>
+	<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
 	<div class="d-inline mb-3">
 		<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa-solid fa-chevron-right" /></a></b>
 		<b><a type="button" href="/login" class="d-inline btn btn-sm btn-primary text-decoration-none">Login <i class="fa-solid fa-chevron-right" /></a></b>
@@ -45,7 +45,7 @@
 		div
 			transition: all 1s ease-in-out 0s
 			div
-				background: url("/wave.svg") repeat-x
+				background: url("/landing/wave.svg") repeat-x
 				top: -198px
 				width: 6144px
 				height: 198px
