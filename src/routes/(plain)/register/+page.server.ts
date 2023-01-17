@@ -12,8 +12,6 @@ export const actions: Actions = {
 		const password = data.get("password")?.toString() || ""
 		const cpassword = data.get("cpassword")?.toString() || ""
 		const regkey = data.get("regkey")?.toString() || ""
-		
-		
 
 		const easyChecks = [
 			[username.length < 3, "Username must be more than 3 characters", "username"],
@@ -37,7 +35,7 @@ export const actions: Actions = {
 			let t = i.substring(19)
 			t = t.substring(0, t.indexOf("/"))
 
-			if (t.toLowerCase() == lowercaseUsername) return fail(400, { area:"username", msg: "Username is unavailable" })
+			if (t.toLowerCase() == lowercaseUsername) return fail(400, { area: "username", msg: "Username is unavailable" })
 		}
 
 		try {
@@ -50,7 +48,7 @@ export const actions: Actions = {
 				},
 			})
 
-			if (caseInsensitiveCheck.length > 0) return fail(400, { area:"username", msg: "User already exists" })
+			if (caseInsensitiveCheck.length > 0) return fail(400, { area: "username", msg: "User already exists" })
 
 			const caseInsensitiveCheckEmail = await prisma.user.findMany({
 				where: {
@@ -61,8 +59,7 @@ export const actions: Actions = {
 				},
 			})
 
-			if (caseInsensitiveCheckEmail.length > 0) return fail(400, { area:"email", msg: "Email is already being used" })
-
+			if (caseInsensitiveCheckEmail.length > 0) return fail(400, { area: "email", msg: "Email is already being used" })
 
 			const user = await auth.createUser("username", username, {
 				password,
@@ -70,17 +67,17 @@ export const actions: Actions = {
 					username,
 					email,
 					displayname: username,
-					usedInvite: regkey, 
+					usedInvite: regkey,
 					image: "https://tr.rbxcdn.com/54d17964492b5e0af66797942fcce26c/150/150/AvatarHeadshot/Png",
 				},
 			})
-			
+
 			const session = await auth.createSession(user.userId)
 			locals.setSession(session)
 		} catch (e) {
 			const error = e as Error
 			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
-				return fail(400, { area:"username", msg: "User already exists" })
+				return fail(400, { area: "username", msg: "User already exists" })
 			}
 			console.error(error)
 			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })

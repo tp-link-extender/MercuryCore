@@ -28,7 +28,7 @@ export const actions: Actions = {
 		} catch (e) {
 			const error = e as Error
 			if (error.message === "AUTH_INVALID_PROVIDER_ID" || error.message === "AUTH_INVALID_PASSWORD") {
-				return fail(400, { area: "username", msg: "Incorrect username or password" })
+				return fail(400, { area: "password", msg: "Incorrect username or password" })
 			}
 			console.error(error)
 			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })
