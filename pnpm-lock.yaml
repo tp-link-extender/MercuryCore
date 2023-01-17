@@ -4,7 +4,7 @@ specifiers:
   '@lucia-auth/adapter-prisma': ^0.2.2
   '@lucia-auth/sveltekit': ^0.5.2
   '@popperjs/core': ^2.11.6
-  '@prisma/client': ^4.8.1
+  '@prisma/client': ^4.9.0
   '@sveltejs/adapter-node': ^1.1.3
   '@sveltejs/kit': 1.0.1
   '@sveltejs/vite-plugin-svelte': 2.0.2
@@ -13,7 +13,7 @@ specifiers:
   dotenv: ^16.0.3
   esbuild: ^0.15.18
   lucia-auth: ^0.4.3
-  prisma: ^4.8.1
+  prisma: ^4.9.0
   redis: ^4.5.1
   sass: ^1.57.1
   svelte: ^3.55.1
@@ -22,14 +22,14 @@ specifiers:
   three: ^0.146.0
   tslib: ^2.4.1
   typescript: ^4.9.4
-  vite: ^4.1.0-beta.0
+  vite: 4.1.0-beta.0
   vite-plugin-mkcert: ^1.11.0
 
 dependencies:
   '@lucia-auth/adapter-prisma': 0.2.2_lucia-auth@0.4.3
   '@lucia-auth/sveltekit': 0.5.2_fec62evc6llxeegip47f74apjq
   '@popperjs/core': 2.11.6
-  '@prisma/client': 4.8.1_prisma@4.8.1
+  '@prisma/client': 4.9.0_prisma@4.9.0
   '@sveltejs/adapter-node': 1.1.3_@sveltejs+kit@1.0.1
   '@threlte/core': 5.0.8
   '@threlte/extras': 4.9.3_three@0.146.0
@@ -44,7 +44,7 @@ dependencies:
 devDependencies:
   '@sveltejs/kit': 1.0.1_lcf4lufpzwpludeu4aargkjh5m
   '@sveltejs/vite-plugin-svelte': 2.0.2_lcf4lufpzwpludeu4aargkjh5m
-  prisma: 4.8.1
+  prisma: 4.9.0
   sass: 1.57.1
   svelte: 3.55.1
   svelte-check: 3.0.2_sass@1.57.1+svelte@3.55.1
@@ -430,8 +430,8 @@ packages:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
     dev: false
 
-  /@prisma/client/4.8.1_prisma@4.8.1:
-    resolution: {integrity: sha512-d4xhZhETmeXK/yZ7K0KcVOzEfI5YKGGEr4F5SBV04/MU4ncN/HcE28sy3e4Yt8UFW0ZuImKFQJE+9rWt9WbGSQ==}
+  /@prisma/client/4.9.0_prisma@4.9.0:
+    resolution: {integrity: sha512-bz6QARw54sWcbyR1lLnF2QHvRW5R/Jxnbbmwh3u+969vUKXtBkXgSgjDA85nji31ZBlf7+FrHDy5x+5ydGyQDg==}
     engines: {node: '>=14.17'}
     requiresBuild: true
     peerDependencies:
@@ -440,16 +440,16 @@ packages:
       prisma:
         optional: true
     dependencies:
-      '@prisma/engines-version': 4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe
-      prisma: 4.8.1
+      '@prisma/engines-version': 4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5
+      prisma: 4.9.0
     dev: false
 
-  /@prisma/engines-version/4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe:
-    resolution: {integrity: sha512-MHSOSexomRMom8QN4t7bu87wPPD+pa+hW9+71JnVcF3DqyyO/ycCLhRL1we3EojRpZxKvuyGho2REQsMCvxcJw==}
+  /@prisma/engines-version/4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5:
+    resolution: {integrity: sha512-M16aibbxi/FhW7z1sJCX8u+0DriyQYY5AyeTH7plQm9MLnURoiyn3CZBqAyIoQ+Z1pS77usCIibYJWSgleBMBA==}
     dev: false
 
-  /@prisma/engines/4.8.1:
-    resolution: {integrity: sha512-93tctjNXcIS+i/e552IO6tqw17sX8liivv8WX9lDMCpEEe3ci+nT9F+1oHtAafqruXLepKF80i/D20Mm+ESlOw==}
+  /@prisma/engines/4.9.0:
+    resolution: {integrity: sha512-t1pt0Gsp+HcgPJrHFc+d/ZSAaKKWar2G/iakrE07yeKPNavDP3iVKPpfXP22OTCHZUWf7OelwKJxQgKAm5hkgw==}
     requiresBuild: true
 
   /@redis/bloom/1.1.0_@redis+client@1.4.2:
@@ -1147,7 +1147,7 @@ packages:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 5.1.4
+      minimatch: 5.1.5
       once: 1.4.0
     dev: false
 
@@ -1298,8 +1298,8 @@ packages:
       brace-expansion: 1.1.11
     dev: true
 
-  /minimatch/5.1.4:
-    resolution: {integrity: sha512-U0iNYXt9wALljzfnGkhFSy5sAC6/SCR3JrHrlsdJz4kF8MvhTRQNiC59iUi1iqsitV7abrNAJWElVL9pdnoUgw==}
+  /minimatch/5.1.5:
+    resolution: {integrity: sha512-CI8wwdrll4ehjPAqs8TL8lBPyNnpZlQI02Wn8C1weNz/QbUbjh3OMxgMKSnvqfKFdLlks3EzHB9tO0BqGc3phQ==}
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
@@ -1389,13 +1389,13 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
 
-  /prisma/4.8.1:
-    resolution: {integrity: sha512-ZMLnSjwulIeYfaU1O6/LF6PEJzxN5par5weykxMykS9Z6ara/j76JH3Yo2AH3bgJbPN4Z6NeCK9s5fDkzf33cg==}
+  /prisma/4.9.0:
+    resolution: {integrity: sha512-bS96oZ5oDFXYgoF2l7PJ3Mp1wWWfLOo8B/jAfbA2Pn0Wm5Z/owBHzaMQKS3i1CzVBDWWPVnOohmbJmjvkcHS5w==}
     engines: {node: '>=14.17'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 4.8.1
+      '@prisma/engines': 4.9.0
 
   /proxy-from-env/1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
