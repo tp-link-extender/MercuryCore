@@ -3,39 +3,10 @@
 	import Gradient from "$lib/gradient"
 	import Moon from "$lib/components/Moon.svelte"
 
-	let onPC: HTMLElement
-	let onMobile: HTMLElement
-
 	onMount(() => {
 		// otherwise "window is not defined"
 		const gradient = new Gradient()
 		gradient.initGradient("#gradient-canvas")
-
-		window.addEventListener("scroll", function () {
-			if (onPC) {
-				const distanceToTop = window.pageYOffset + onPC.getBoundingClientRect().top
-				const scrollTop = document.documentElement.scrollTop + window.innerHeight / 2
-
-				let opacity = 1
-
-				if (scrollTop > distanceToTop) {
-					opacity = 1 - (scrollTop - distanceToTop) / (onPC.offsetHeight * 3)
-				}
-				onPC.style.opacity = opacity.toString()
-			}
-
-			if (onMobile) {
-				const distanceToTop = window.pageYOffset + onMobile.getBoundingClientRect().top
-				const scrollTop = document.documentElement.scrollTop + window.innerHeight / 1.7
-
-				let opacity = 0
-
-				if (scrollTop > distanceToTop) {
-					opacity = (scrollTop - distanceToTop) / (onMobile.offsetHeight * 3)
-				}
-				onMobile.style.opacity = opacity.toString()
-			}
-		})
 	})
 </script>
 
@@ -43,31 +14,29 @@
 	<title>Mercury - Mercury</title>
 </svelte:head>
 
-<div id="all">
-	<canvas id="gradient-canvas" class="vh-100 vw-100 position-absolute top-0 left-0" />
+<canvas id="gradient-canvas" class="h-100 position-fixed" />
 
-	<div id="info" class="z-3 container d-flex flex-column justify-content-center align-items-center position-relative">
-		<div id="moon" class="container d-flex flex-column justify-content-center align-items-center z-2 position-absolute">
-			<Moon />
-		</div>
-		<br />
-		<br />
-		<br />
-		<h1 id="title" class="fw-bolder text-white z-3 opacity-75">Mercury 2</h1>
-		<p class="lead text-white">Endless possibilities. New features. Same nostalgia.</p>
-		<div class="d-inline mb-3">
-			<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa-solid fa-chevron-right" /></a></b>
-			<b><a type="button" href="/login" class="d-inline btn btn-sm btn-primary text-decoration-none">Login <i class="fa-solid fa-chevron-right" /></a></b>
-		</div>
-		<h5>
-			<span class="badge dark-text opacity-50">Closed Beta</span>
-		</h5>
+<div id="info" class="z-3 container d-flex flex-column justify-content-center align-items-center position-relative">
+	<div id="moon" class="container d-flex flex-column justify-content-center align-items-center position-absolute">
+		<Moon />
 	</div>
-	<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-		<div class="w-100 position-absolute bottom-0">
-			<div class="position-absolute" />
-			<div class="position-absolute" />
-		</div>
+	<br />
+	<br />
+	<br />
+	<h1 id="title" class="fw-bolder text-white z-3 opacity-75">Mercury 2</h1>
+	<p class="lead text-white">Endless possibilities. New features. Same nostalgia.</p>
+	<div class="d-inline mb-3">
+		<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa-solid fa-chevron-right" /></a></b>
+		<b><a type="button" href="/login" class="d-inline btn btn-sm btn-primary text-decoration-none">Login <i class="fa-solid fa-chevron-right" /></a></b>
+	</div>
+	<h5>
+		<span class="badge dark-text opacity-50">Closed Beta</span>
+	</h5>
+</div>
+<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
+	<div class="w-100 position-absolute bottom-0">
+		<div class="position-absolute" />
+		<div class="position-absolute" />
 	</div>
 </div>
 
@@ -106,9 +75,7 @@
 	#moon
 		margin-bottom: 20vh
 
-	#all
-		background: rgba(0, 0, 0, 0)
-
+	#gradient-canvas
 		@media (prefers-color-scheme: light)
 			--gradient-color-1: #5551ff
 			--gradient-color-2: #5599ff
