@@ -19,10 +19,10 @@ export const actions: Actions = {
 			[username.length <= 3, "Username must be more than 3 characters", "username"],
 			[username.length > 30, "Username must be less than 30 characters", "username"],
 			[!username.match(/^[A-Za-z0-9_]+$/), "Username must be alphanumeric (A-Z, 0-9, _)", "username"],
-			[regkey != "mercurkey-123", "Invalid registration key", "regkey"],
+			[regkey != "mercurkey-1919182836391Lebron8086", "Invalid registration key", "regkey"],
 			[password.length < 1, "Password must be at least 1 character", "password"],
 			[password.length > 6969, "Password must be less than 6969 characters", "password"],
-			[cpassword != password, "The specified password does not match", "cpassword"]
+			[cpassword != password, "The specified password does not match", "cpassword"],
 		]
 
 		for (const [condition, msg, area] of easyChecks) {
