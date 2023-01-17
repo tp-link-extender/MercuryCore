@@ -25,8 +25,27 @@ To build for production, run `npm run build`, then `npm run preview` (or `npm ru
 Instructions:
 
 - Run `docker-compose up -d` to start the Postgres and RedisGraph databases
-- Copy the `.env.example` file to `.env` and follow the instructions in the file to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
+- Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 - Run `npx prisma migrate dev` to apply the schema to the Postgres database and create the PrismaClient package
 - After starting a local web server, navigate to /register and make an account (leave registration key blank).
 
 You should now be able to access pages such as /home.
+
+## To host the website and databases, you will need
+
+- Everything above including pnpm
+- A TLS certificate, nginx reverse proxy with certbot works well
+
+Instructions:
+
+- Clone the repository to your server, and navigate to its directory
+- Run `docker-compose up -d` to start the Postgres and RedisGraph databases
+- Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
+- Run `npx prisma migrate deploy` to apply the schema to the Postgres database and create the PrismaClient package
+- Open a terminal and navigate to the directory of the repository
+- Run `pnpm i` and `pnpm build` to install dependencies and build the website
+- Run `npm i -g pm2` to install pm2, the node process manager
+- Run `pm2 start pm2.config.cjs` to run the website as a process named Mercury.
+
+You can run other commands to manage the process, see `pm2 --help` for more information.
+We've identified a current issue with the friends/followers network in RedisGraph. If you try to follow an account and their follower count doesn't immediately update, try removing the /data/redis folder (will only clear friends/followers network) or restarting its docker container before trying again.
