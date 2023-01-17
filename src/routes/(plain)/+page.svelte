@@ -92,7 +92,7 @@
 				top: -174px
 	
 	#info
-		height: 100vh
+		height: 60vh
 		padding-top: 35vh
 		a
 			margin: 0
@@ -107,7 +107,6 @@
 		margin-bottom: 20vh
 
 	#all
-		margin-top: -20vh
 		background: rgba(0, 0, 0, 0)
 
 		@media (prefers-color-scheme: light)
