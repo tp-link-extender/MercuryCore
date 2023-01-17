@@ -17,8 +17,8 @@
 
 <div class="container">
 	<div class="d-flex mt-12">
-		<div class="flex flex-col me-3" id="thumbnail">
-			<img src={data.image} alt={data.name} />
+		<div class="flex flex-col me-3">
+			<img  id="thumbnail" src={data.image} alt={data.name} class="rounded-4"/>
 			<p class="light-text mt-2">
 				<b>By:</b> <a href="/{data.owner}">{data.owner}</a>
 			</p>
@@ -37,10 +37,6 @@
 <style lang="sass">
 	.container
 		width: 60rem
-
-	#thumbnail
-		img
-			border-radius: 0.75rem
 	
 	#join img
 		height: 2.5rem
