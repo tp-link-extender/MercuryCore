@@ -91,9 +91,14 @@
 			margin-top: auto
 			margin-bottom: 4rem
 	
-	@media only screen and (max-width: 768px)
+	@media only screen and (max-width: 768px) and (orientation: portrait)
 		#loggedin
 			margin-bottom: 10rem
+	
+	@media only screen and (max-width: 768px) and (orientation: landscape)
+		#loggedin
+			margin-bottom: 6rem
+
 
 
 	@media only screen and (min-width: 993px)
