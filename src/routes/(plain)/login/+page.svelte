@@ -43,7 +43,8 @@
 				<a href="/register" class="text-decoration-none">Register</a>
 			</p>
 
-			<form class="m-auto form-group mt-4" method="POST" use:enhance>
+			<form class="m-auto form-group mt-4" method="POST" use:enhance={() => async () => window.location.reload()}>
+				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
 				<fieldset>
 					<div class="mb-4">
 						<label for="username" class="form-label">Username</label>
