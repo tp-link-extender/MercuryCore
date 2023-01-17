@@ -16,7 +16,7 @@ export const actions: Actions = {
 		
 
 		const easyChecks = [
-			[username.length <= 3, "Username must be more than 3 characters", "username"],
+			[username.length < 3, "Username must be more than 3 characters", "username"],
 			[username.length > 30, "Username must be less than 30 characters", "username"],
 			[!username.match(/^[A-Za-z0-9_]+$/), "Username must be alphanumeric (A-Z, 0-9, _)", "username"],
 			[regkey != "mercurkey-1919182836391Lebron8086", "Invalid registration key", "regkey"],
@@ -37,7 +37,7 @@ export const actions: Actions = {
 			let t = i.substring(19)
 			t = t.substring(0, t.indexOf("/"))
 
-			if (t.toLowerCase() == lowercaseUsername) return fail(400, { msg: "Username is unavailable" })
+			if (t.toLowerCase() == lowercaseUsername) return fail(400, { area:"username", msg: "Username is unavailable" })
 		}
 
 		try {
@@ -50,7 +50,19 @@ export const actions: Actions = {
 				},
 			})
 
-			if (caseInsensitiveCheck.length > 0) return fail(400, { msg: "User already exists" })
+			if (caseInsensitiveCheck.length > 0) return fail(400, { area:"username", msg: "User already exists" })
+
+			const caseInsensitiveCheckEmail = await prisma.user.findMany({
+				where: {
+					email: {
+						equals: email,
+						mode: "insensitive",
+					},
+				},
+			})
+
+			if (caseInsensitiveCheckEmail.length > 0) return fail(400, { area:"email", msg: "Email is already being used" })
+
 
 			const user = await auth.createUser("username", username, {
 				password,
@@ -68,7 +80,7 @@ export const actions: Actions = {
 		} catch (e) {
 			const error = e as Error
 			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
-				return fail(400, { msg: "User already exists" })
+				return fail(400, { area:"username", msg: "User already exists" })
 			}
 			console.error(error)
 			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })

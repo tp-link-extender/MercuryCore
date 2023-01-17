@@ -63,7 +63,9 @@
 							<input id="password" name="password" type="password" class="light-text form-control valid" placeholder="Password" />
 						{/if}
 					</div>
-
+					{#if form?.area == "unexp"}
+						<p class="col-12 mb-3 text-danger">{form.msg}</p>
+					{/if}
 					<button type="submit" class="container-fluid btn btn-primary mb-3">Log in</button>
 				</fieldset>
 			</form>
