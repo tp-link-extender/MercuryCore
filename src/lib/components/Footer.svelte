@@ -4,8 +4,6 @@
 		© <a href="/" class="text-decoration-none">Mercury</a> 2022 - Not affiliated with Roblox Corporation.<br />
 	</p>
 	<hr class="my-2 text-primary">
-	<a class="d-inline light-text my-0 mx-2" href="/rules">Rules</a>
-	<span class="text-muted">|</span>
 	<a class="d-inline light-text my-0 mx-2" href="/about">About</a>
 	<span class="text-muted">|</span>
 	<a class="d-inline light-text my-0 mx-2" href="/terms">Terms of Service</a>
