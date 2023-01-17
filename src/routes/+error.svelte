@@ -20,8 +20,9 @@
 <Footer />
 
 <style lang="sass">
+
 	main
-		padding-bottom: 30vh
+		padding-bottom: 35vh
 		padding-top: 35vh
 		flex: 1 0 auto
 
@@ -29,4 +30,8 @@
 			background: var(--accent2)
 			width: fit-content
 			padding: 2rem 5rem
+
+	@media only screen and (max-width: 768px) and (orientation: portrait)
+		main
+			padding-bottom: 25vh
 </style>
