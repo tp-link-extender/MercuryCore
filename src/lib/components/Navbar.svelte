@@ -14,7 +14,7 @@
 		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbarExample-expand-lg" aria-labelledby="offcanvasNavbarExample-expand-lg">
 			<div class="offcanvas-header">
 				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
-				<button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close" />
+				<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
 			</div>
 			<div class="offcanvas-body d-flex">
 				{#if $user}
@@ -42,27 +42,26 @@
 								</div>
 								<p class="light-text my-auto fs-6 me-4">
 									{$user?.displayname || $user?.username}
-									<i class="fa-solid fa-ellipsis-vertical"></i>
+									<i class="fa-solid fa-ellipsis-vertical ms-2" />
 								</p>
 							</a>
 
-							<ul class="dropdown-menu mb-2">
+							<ul class="dropdown-menu mt-2">
 								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
 								<li><a class="dropdown-item light-text" href="/{$user?.username}">Profile</a></li>
 								<li><a class="dropdown-item light-text" href="/{$user?.username}">Inventory</a></li>
 								<li><a class="dropdown-item light-text" href="/{$user?.username}">Avatar</a></li>
 								<li><a class="dropdown-item light-text" href="/{$user?.username}">My Groups</a></li>
 								<li><hr class="dropdown-divider" /></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-user-gear"></i> Settings</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-user-gear" /> Settings</a></li>
 								<li>
-									<a
+									<button
 										on:click={async () => {
 											await signOut()
 											invalidateAll()
 											window.location.reload()
 										}}
-										class="dropdown-item text-danger"
-										href="#"><b><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</b></a
+										class="dropdown-item text-danger"><b><i class="fa-solid fa-arrow-right-from-bracket" /> Log out</b></button
 									>
 								</li>
 							</ul>
@@ -83,10 +82,9 @@
 			min-height: 100vh
 			flex-direction: column
 			
-			a, button
+			a
 				margin-bottom: 1rem
 				width: 100%
-			a
 				text-align: start
 
 		#loggedin
@@ -120,9 +118,6 @@
 	img
 		width: 2.5rem
 		height: 2.5rem
-
-	#username
-		text-decoration: none
 
 	.dropdown-menu
 		background: var(--footer)
