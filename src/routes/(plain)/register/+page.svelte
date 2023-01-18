@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { applyAction, enhance } from "$app/forms"
+
+	let username, email, password, cpassword, regkey
 
 	const things = [
 		["Original username", "Make sure it is appropriate and between 3-21 characters. Underscores are allowed."],
@@ -43,54 +45,59 @@
 				<a href="/login" class="text-decoration-none">Log in</a>
 			</p>
 
-			<form class="m-auto form-group mt-4" method="POST" use:enhance={() => async () => window.location.reload}>
+			<form
+				class="m-auto form-group mt-4"
+				method="POST"
+				use:enhance={() => {
+					return async ({ result }) => {
+						console.log(result)
+						if (result.type != "failure") window.location.reload()
+						else await applyAction(result)
+					}
+				}}
+			>
 				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
 				<fieldset>
+					<label for="username" class="form-label">Username</label>
 					<div class="mb-4">
-						<label for="username" class="form-label">Username</label>
+						<input id="username" name="username" type="text" class="light-text form-control {form?.area == 'username' ? 'is-invalid' : 'valid'}" placeholder="3-21 characters" />
 						{#if form?.area == "username"}
-							<input id="username" name="username" type="text" class="light-text form-control is-invalid" placeholder="3-21 characters" />
 							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="username" name="username" type="text" class="light-text form-control valid" placeholder="3-21 characters" />
 						{/if}
 					</div>
+
 					<label for="email" class="form-label">Email Address</label>
 					<div class="mb-4">
+						<input id="email" name="email" type="email" class="light-text form-control {form?.area == 'email' ? 'is-invalid' : 'valid'}" placeholder="mercury@banland.xyz" />
 						{#if form?.area == "email"}
-							<input id="email" name="email" type="email" class="light-text form-control is-invalid" placeholder="mercury@banland.xyz" />
 							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="email" name="email" type="email" class="light-text form-control valid" placeholder="mercury@banland.xyz" />
 						{/if}
 					</div>
+
 					<label for="password" class="form-label">Password</label>
 					<div class="mb-4">
+						<input id="password" name="password" type="password" class="light-text form-control {form?.area == 'password' ? 'is-invalid' : 'valid'}" placeholder="Password" />
 						{#if form?.area == "password"}
-							<input id="password" name="password" type="password" class="light-text form-control is-invalid" placeholder="Password" />
 							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="password" name="password" type="password" class="light-text form-control valid" placeholder="Password" />
 						{/if}
 					</div>
+
 					<label for="password" class="form-label">Confirm Password</label>
 					<div class="mb-4">
+						<input id="cpassword" name="cpassword" type="password" class="light-text form-control {form?.area == 'cpassword' ? 'is-invalid' : 'valid'}" placeholder="Confirm Password" />
 						{#if form?.area == "cpassword"}
-							<input id="cpassword" name="cpassword" type="password" class="light-text form-control is-invalid" placeholder="Confirm Password" />
 							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="cpassword" name="cpassword" type="password" class="light-text form-control valid" placeholder="Confirm Password" />
 						{/if}
 					</div>
+
 					<label for="regkey" class="form-label">Registration key</label>
 					<div class="mb-5">
+						<input id="regkey" name="regkey" type="password" class="light-text form-control {form?.area == 'regkey' ? 'is-invalid' : 'valid'}" placeholder="mercurkey-12311121123" />
 						{#if form?.area == "regkey"}
-							<input id="regkey" name="regkey" type="password" class="light-text form-control is-invalid" placeholder="mercurkey-12311121123" />
 							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="regkey" name="regkey" type="password" class="light-text form-control valid" placeholder="mercurkey-12311121123" />
 						{/if}
 					</div>
+
 					{#if form?.area == "unexp"}
 						<p class="col-12 mb-3 text-danger">{form.msg}</p>
 					{/if}
