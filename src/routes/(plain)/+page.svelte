@@ -65,9 +65,6 @@
 
 		#title
 			font-size: 4rem
-
-		.badge
-			background: var(--light-text)
 	
 	#moon
 		margin-bottom: min(22rem, 60vh)
