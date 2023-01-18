@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { applyAction, enhance } from "$app/forms"
 
 	const things = [
 		["Endless possibilities", "Create or play your favourite games and customise your character with items on our catalog."],
@@ -43,27 +43,35 @@
 				<a href="/register" class="text-decoration-none">Register</a>
 			</p>
 
-			<form class="m-auto form-group mt-4" method="POST" use:enhance={() => async () => window.location.reload()}>
+			<form
+				class="m-auto form-group mt-4"
+				method="POST"
+				use:enhance={() => {
+					return async ({ result }) => {
+						console.log(result)
+						if (result.type == "redirect") window.location.reload()
+						else await applyAction(result)
+					}
+				}}
+			>
 				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
 				<fieldset>
+					<label for="username" class="form-label">Username</label>
 					<div class="mb-4">
-						<label for="username" class="form-label">Username</label>
+						<input id="username" name="username" type="text" class="light-text form-control {form?.area == 'username' ? 'is-invalid' : 'valid'}" placeholder="Username" />
 						{#if form?.area == "username"}
-							<input id="username" name="username" type="text" class="light-text form-control is-invalid" placeholder="Username" />
 							<p class="col-12 mb-3 text-danger">{form.msg}</p>
-						{:else}
-							<input id="username" name="username" type="text" class="light-text form-control valid" placeholder="Username" />
 						{/if}
 					</div>
+
 					<label for="password" class="form-label">Password</label>
 					<div class="mb-5">
+						<input id="password" name="password" type="password" class="light-text form-control {form?.area == 'password' ? 'is-invalid' : 'valid'}" placeholder="Password" />
 						{#if form?.area == "password"}
-							<input id="password" name="password" type="password" class="light-text form-control is-invalid" placeholder="Password" />
 							<p class="col-12 mb-3 text-danger">{form.msg}</p>
-						{:else}
-							<input id="password" name="password" type="password" class="light-text form-control valid" placeholder="Password" />
 						{/if}
 					</div>
+
 					{#if form?.area == "unexp"}
 						<p class="col-12 mb-3 text-danger">{form.msg}</p>
 					{/if}
