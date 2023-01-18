@@ -14,15 +14,12 @@
 	<title>Mercury - Mercury</title>
 </svelte:head>
 
-<canvas id="gradient-canvas" class="h-100 position-fixed" />
+<canvas id="gradient-canvas" class="w-100 h-100 position-fixed" />
 
 <div id="info" class="z-3 container d-flex flex-column justify-content-center align-items-center position-relative">
 	<div id="moon" class="container d-flex flex-column justify-content-center align-items-center position-absolute">
 		<Moon />
 	</div>
-	<br />
-	<br />
-	<br />
 	<h1 id="title" class="fw-bolder text-white z-3 opacity-75">Mercury 2</h1>
 	<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
 	<div class="d-inline mb-3">
@@ -73,7 +70,7 @@
 			background: var(--light-text)
 	
 	#moon
-		margin-bottom: 20vh
+		margin-bottom: min(17.5rem, 60vh)
 
 	#gradient-canvas
 		@media (prefers-color-scheme: light)
