@@ -25,6 +25,9 @@
 <div id="info" class="z-3 container d-flex flex-column justify-content-center align-items-center position-relative">
 	<h1 id="title" class="fw-bolder text-white z-3">Mercury 2</h1>
 	<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
+	<h5>
+		<span class="badge text-bg-secondary dark-text opacity-50 mb-3">Closed Beta</span>
+	</h5>
 </div>
 
 <button id="arrow" class="btn position-absolute start-50" on:click={downScroll} on:keypress={downScroll} style="opacity: {(500 - scrollY) / 300}">
@@ -50,17 +53,12 @@
 			<img class="w-100" src="/about/devices.webp" alt="Devices playing Mercury" />
 		</Pagepart>
 	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={0}>
-		<Pagepart>
+	<ParallaxLayer offset={1} rate={2}>
+		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="fw-bolder fw-light light-text w-100">New features</h1>
 				<h4 class="light-text w-100">Mercury 2 has an even better website experience - easy to use and even more feature-packed than the previous website.</h4>
 			</div>
-		</Pagepart>
-	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={-2}>
-		<Pagepart right>
-			<img class="w-100" src="/about/devices.webp" alt="Devices playing Mercury" />
 		</Pagepart>
 	</ParallaxLayer>
 </Parallax>
