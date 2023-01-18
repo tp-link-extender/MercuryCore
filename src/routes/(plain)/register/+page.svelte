@@ -1,11 +1,47 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { applyAction, enhance } from "$app/forms"
+
+	let data: any = {
+		username: { value: "", invalid: false, message: "" },
+		email: { value: "", invalid: false, message: "" },
+		password: { value: "", invalid: false, message: "" },
+		cpassword: { value: "", invalid: false, message: "" },
+		regkey: { value: "", invalid: false, message: "" },
+	}
 
 	const things = [
 		["Original username", "Make sure it is appropriate and between 3-21 characters. Underscores are allowed."],
 		["Valid email", "Mercury requires a valid email so you can reset your password at any time."],
 		["Secure password", "Make sure your password has a mix of letters, numbers, and symbols to protect against hackers."],
 	]
+
+	const fields = [
+		["username", "Username", "3-21 characters"],
+		["email", "Email Address", "mercury@banland.xyz"],
+		["password", "Password", "Password"],
+		["cpassword", "Confirm Password", "Confirm Password"],
+		["regkey", "Registration Key", "mercurkey-12311121123"],
+	]
+
+	function update(field: string, message: string) {
+		data[field].message = message
+		return true
+	}
+
+	// This system is extremely magicky
+	$: data.username.invalid =
+		(data.username.value.length < 3 && update("username", "Username must be more than 3 characters")) ||
+		(data.username.value.length > 21 && update("username", "Username must be less than 30 characters")) ||
+		(!data.username.value.match(/^[A-Za-z0-9_]+$/) && update("username", "Username must be alphanumeric (A-Z, 0-9, _)"))
+
+	// todo: EMAIL REGEX!
+
+	$: data.password.invalid =
+		// (data.password.value.length < 1 && update("password", "Password must be at least 1 character")) || // Doesn't appear anyway if form has no input
+		(data.password.value.length > 6969 && update("password", "Password must be less than 6969 characters"))
+	
+	$: data.cpassword.invalid =
+		(data.password.value != data.cpassword.value && update("cpassword", "The specified password does not match"))
 
 	export let form: any
 </script>
@@ -28,7 +64,7 @@
 		{#each things as [thing, more]}
 			<div class="thing d-flex flex-row mt-3">
 				<div class="ms-3 w-100">
-					<p class="h4 light-text">{thing}</p>
+					<h4 class="light-text">{thing}</h4>
 					<p class="light-text opacity-75 more">{more}</p>
 				</div>
 			</div>
@@ -43,54 +79,36 @@
 				<a href="/login" class="text-decoration-none">Log in</a>
 			</p>
 
-			<form class="m-auto form-group mt-4" method="POST" use:enhance={() => async () => window.location.reload}>
+			<form
+				class="m-auto form-group mt-4"
+				method="POST"
+				use:enhance={() => {
+					return async ({ result }) => {
+						console.log(result)
+						if (result.type != "failure") window.location.reload()
+						else await applyAction(result)
+					}
+				}}
+			>
 				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
 				<fieldset>
-					<div class="mb-4">
-						<label for="username" class="form-label">Username</label>
-						{#if form?.area == "username"}
-							<input id="username" name="username" type="text" class="light-text form-control is-invalid" placeholder="3-21 characters" />
-							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="username" name="username" type="text" class="light-text form-control valid" placeholder="3-21 characters" />
-						{/if}
-					</div>
-					<label for="email" class="form-label">Email Address</label>
-					<div class="mb-4">
-						{#if form?.area == "email"}
-							<input id="email" name="email" type="email" class="light-text form-control is-invalid" placeholder="mercury@banland.xyz" />
-							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="email" name="email" type="email" class="light-text form-control valid" placeholder="mercury@banland.xyz" />
-						{/if}
-					</div>
-					<label for="password" class="form-label">Password</label>
-					<div class="mb-4">
-						{#if form?.area == "password"}
-							<input id="password" name="password" type="password" class="light-text form-control is-invalid" placeholder="Password" />
-							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="password" name="password" type="password" class="light-text form-control valid" placeholder="Password" />
-						{/if}
-					</div>
-					<label for="password" class="form-label">Confirm Password</label>
-					<div class="mb-4">
-						{#if form?.area == "cpassword"}
-							<input id="cpassword" name="cpassword" type="password" class="light-text form-control is-invalid" placeholder="Confirm Password" />
-							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="cpassword" name="cpassword" type="password" class="light-text form-control valid" placeholder="Confirm Password" />
-						{/if}
-					</div>
-					<label for="regkey" class="form-label">Registration key</label>
-					<div class="mb-5">
-						{#if form?.area == "regkey"}
-							<input id="regkey" name="regkey" type="password" class="light-text form-control is-invalid" placeholder="mercurkey-12311121123" />
-							<small class="col-12 mb-3 text-danger">{form.msg}</small>
-						{:else}
-							<input id="regkey" name="regkey" type="password" class="light-text form-control valid" placeholder="mercurkey-12311121123" />
-						{/if}
-					</div>
+					{#each fields as [name, label, placeholder]}
+						<label for={name} class="form-label">{label}</label>
+						<div class="mb-4">
+							<input
+								bind:value={data[name].value}
+								id={name}
+								{name}
+								type="text"
+								class="light-text form-control {form?.area == name || (data[name].value && data[name].invalid) ? 'is-invalid' : 'valid'}"
+								{placeholder}
+							/>
+							{#if form?.area == name || (data[name].value && data[name].invalid)}
+								<small class="col-12 mb-3 text-danger">{form?.msg || data[name].message}</small>
+							{/if}
+						</div>
+					{/each}
+
 					{#if form?.area == "unexp"}
 						<p class="col-12 mb-3 text-danger">{form.msg}</p>
 					{/if}
