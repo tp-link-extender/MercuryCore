@@ -27,7 +27,7 @@
 	<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
 </div>
 
-<button id="arrow" class="btn position-absolute start-50" on:click={downScroll} on:keypress={downScroll}>
+<button id="arrow" class="btn position-absolute start-50" on:click={downScroll} on:keypress={downScroll} style="opacity: {(500 - scrollY) / 300}">
 	<i class="fa-solid light-text fa-chevron-down title" />
 </button>
 <button id="arrow2" class="btn position-fixed mb-3" on:click={upScroll} on:keypress={upScroll} style="opacity: {(scrollY - 500) / 300}">
@@ -39,22 +39,22 @@
 <Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart>
-			<img class="w-100" src="/about/devices.webp" alt="Devices playing Mercury" />
+			<div class="w-100">
+				<h1 class="fw-bolder fw-light light-text w-100">Endless possibilities</h1>
+				<h4 class="light-text w-100">On Mercury 2, you can create games for others to play, or shirts and pants for people to buy and wear. You can customise your character to your heart's content with a vast selection of items on the catalog.</h4>
+			</div>
 		</Pagepart>
 	</ParallaxLayer>
 	<ParallaxLayer offset={0} rate={-2}>
 		<Pagepart right>
-			<div class="w-100">
-				<h1 class="fw-bolder fw-light light-text w-100">Next-generation technologies</h1>
-				<h4 class="light-text w-100">No revival even comes close as a rival.</h4>
-			</div>
+			<img class="w-100" src="/about/devices.webp" alt="Devices playing Mercury" />
 		</Pagepart>
 	</ParallaxLayer>
 	<ParallaxLayer offset={1} rate={0}>
 		<Pagepart>
 			<div class="w-100">
-				<h1 class="fw-bolder fw-light light-text w-100">Lots of clients</h1>
-				<h4 class="light-text w-100">Ranging from 1887 to 2087.</h4>
+				<h1 class="fw-bolder fw-light light-text w-100">New features</h1>
+				<h4 class="light-text w-100">Mercury 2 has an even better website experience - easy to use and even more feature-packed than the previous website.</h4>
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
@@ -67,38 +67,42 @@
 
 <Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 	<ParallaxLayer offset={0} rate={0}>
-		<Pagepart>
-			<img class="w-100" src="/about/devices.webp" alt="Devices playing Mercury" />
-		</Pagepart>
-	</ParallaxLayer>
-	<ParallaxLayer offset={0} rate={-2}>
-		<Pagepart right>
-			<h1 class="fw-bolder fw-light light-text w-100">Approximately 60,000 better than Polygon</h1>
+		<Pagepart fullwidth>
+			<div class="w-100">
+				<h1 class="fw-bolder fw-light light-text w-100">Same nostalgia.</h1>
+				<h4 class="light-text w-100">We sure the clients are as vanilla as possible so that you remember the client as it was back then.</h4>
+			</div>
 		</Pagepart>
 	</ParallaxLayer>
 	<ParallaxLayer offset={1} rate={0}>
-		<Pagepart>
-			<h1 class="fw-bolder fw-light light-text w-100">Better website, too</h1>
-		</Pagepart>
-	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={-2}>
-		<Pagepart right>
-			<img class="w-100" src="/about/devices.webp" alt="Devices playing Mercury" />
+		<Pagepart fullwidth>
+			<div class="w-100">
+				<h1 class="fw-bolder fw-light light-text w-100">Professional developers and community outreach.</h1>
+				<h4 class="light-text w-100">Mercury 2 developers deliver consistent updates so your experience is always great.<br> In addition, we aim to fix bugs and glitches as soon as they are reported. <br> Community wise, Mercury 2 aims to be completely transparent and non-biased with decisions. <br> While other private servers proceed to initiate petty wars with others, we take an impartial view. </h4>
+			</div>
 		</Pagepart>
 	</ParallaxLayer>
 </Parallax>
 
-<Pagepart fullwidth>
-	<div in:fly={{ x: -300, duration: 1000 }}>
-		<img class="w-100" src="/about/devices.webp" alt="Devices playing Mercury" />
-		<h1 class="fw-bolder fw-light light-text w-100 text-center">Includes Web3 Technology.</h1>
-	</div>
-	<div class="px-5" />
-	<div in:fly={{ x: 300, duration: 1000 }}>
-		<img class="w-100" src="/about/devices.webp" alt="Devices playing Mercury" />
-		<h1 class="fw-bolder fw-light light-text w-100 text-center">It's on the BalochChain.</h1>
-	</div>
-</Pagepart>
+<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
+	<ParallaxLayer offset={0} rate={0}>
+		<Pagepart fullwidth>
+			<div class="w-100">
+				<h1 class="fw-bolder fw-light light-text w-100">Why Mercury 2?</h1>
+				<h4 class="light-text w-100">Mercury 2 provides a simple yet elegant website, with a unique client and a forum, so you can communicate with your friends<br> - or make new ones!</h4>
+			</div>
+		</Pagepart>
+	</ParallaxLayer>
+	<ParallaxLayer offset={1} rate={0}>
+		<Pagepart fullwidth>
+			<div id="info" class="z-3 container d-flex flex-column justify-content-center align-items-center position-relative">
+				<h1 id="title" class="fw-bolder text-white z-3">Mercury 2</h1>
+				<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
+				<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa-solid fa-chevron-right" /></a></b>
+			</div>
+		</Pagepart>
+	</ParallaxLayer>
+</Parallax>
 
 <style lang="sass">
 	#info

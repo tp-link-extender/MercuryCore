@@ -43,9 +43,8 @@ Instructions:
 - Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 - Run `npx prisma migrate deploy` to apply the schema to the Postgres database and create the PrismaClient package
 - Open a terminal and navigate to the directory of the repository
-- Run `pnpm i` and `pnpm build` to install dependencies and build the website
 - Run `npm i -g pm2` to install pm2, the node process manager
-- Run `pm2 start pm2.config.cjs` to run the website as a process named Mercury.
+- Run `./deploy.sh` to install dependencies, build, and start the website.
 
 You can run other commands to manage the process, see `pm2 --help` for more information.
 We've identified a current issue with the friends/followers network in RedisGraph. If you try to follow an account and their follower count doesn't immediately update, try removing the /data/redis folder (will only clear friends/followers network) or restarting its docker container before trying again.
