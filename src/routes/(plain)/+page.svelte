@@ -27,7 +27,7 @@
 		<b><a type="button" href="/login" class="d-inline btn btn-sm btn-primary text-decoration-none">Login <i class="fa-solid fa-chevron-right" /></a></b>
 	</div>
 	<h5>
-		<span class="badge dark-text opacity-50">Closed Beta</span>
+		<a href="/about" class="text-decoration-none pt-3">About us <i class="fa-solid fa-chevron-right" /></a>
 	</h5>
 </div>
 <div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
@@ -70,7 +70,7 @@
 			background: var(--light-text)
 	
 	#moon
-		margin-bottom: min(17.5rem, 60vh)
+		margin-bottom: min(22rem, 60vh)
 
 	#gradient-canvas
 		@media (prefers-color-scheme: light)
