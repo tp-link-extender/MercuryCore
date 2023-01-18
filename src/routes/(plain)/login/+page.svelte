@@ -1,11 +1,39 @@
 <script lang="ts">
 	import { applyAction, enhance } from "$app/forms"
 
+	let data: any = {
+		username: { value: "", invalid: false },
+		email: { value: "", invalid: false },
+		password: { value: "", invalid: false },
+		cpassword: { value: "", invalid: false },
+		regkey: { value: "", invalid: false },
+	}
+
 	const things = [
 		["Endless possibilities", "Create or play your favourite games and customise your character with items on our catalog."],
 		["New features", "In addition to full client usability, additional features such as security fixes, QoL fixes and an easy to use website make your experience better."],
 		["Same nostalgia", "All of our clients will remain as vanilla as possible, to make sure it's exactly as you remember it."],
 	]
+
+	const fields = [
+		["username", "Username"],
+		["password", "Password"],
+	]
+
+	function update(field: string, message: string) {
+		data[field].message = message
+		return true
+	}
+
+	// This system is extremely magicky
+	$: data.username.invalid =
+		(data.username.value.length < 3 && update("username", "Username must be more than 3 characters")) ||
+		(data.username.value.length > 21 && update("username", "Username must be less than 30 characters")) ||
+		(!data.username.value.match(/^[A-Za-z0-9_]+$/) && update("username", "Username must be alphanumeric (A-Z, 0-9, _)"))
+
+	$: data.password.invalid =
+		// (data.password.value.length < 1 && update("password", "Password must be at least 1 character")) || Doesn't appear anyway if form has no input
+		(data.password.value.length > 6969 && update("password", "Password must be less than 6969 characters"))
 
 	export let form: any
 </script>
@@ -28,7 +56,7 @@
 		{#each things as [thing, more]}
 			<div class="thing d-flex flex-row mt-3">
 				<div class="ms-3 w-100">
-					<p class="h4 light-text">{thing}</p>
+					<h4 class="light-text">{thing}</h4>
 					<p class="light-text opacity-75 more">{more}</p>
 				</div>
 			</div>
@@ -56,21 +84,22 @@
 			>
 				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
 				<fieldset>
-					<label for="username" class="form-label">Username</label>
-					<div class="mb-4">
-						<input id="username" name="username" type="text" class="light-text form-control {form?.area == 'username' ? 'is-invalid' : 'valid'}" placeholder="Username" />
-						{#if form?.area == "username"}
-							<p class="col-12 mb-3 text-danger">{form.msg}</p>
-						{/if}
-					</div>
-
-					<label for="password" class="form-label">Password</label>
-					<div class="mb-5">
-						<input id="password" name="password" type="password" class="light-text form-control {form?.area == 'password' ? 'is-invalid' : 'valid'}" placeholder="Password" />
-						{#if form?.area == "password"}
-							<p class="col-12 mb-3 text-danger">{form.msg}</p>
-						{/if}
-					</div>
+					{#each fields as [name, label]}
+						<label for={name} class="form-label">{label}</label>
+						<div class="mb-4">
+							<input
+								bind:value={data[name].value}
+								id={name}
+								{name}
+								type="text"
+								class="light-text form-control {form?.area == name || (data[name].value && data[name].invalid) ? 'is-invalid' : 'valid'}"
+								placeholder={label}
+							/>
+							{#if form?.area == name || (data[name].value && data[name].invalid)}
+								<small class="col-12 mb-3 text-danger">{form?.msg || data[name].message}</small>
+							{/if}
+						</div>
+					{/each}
 
 					{#if form?.area == "unexp"}
 						<p class="col-12 mb-3 text-danger">{form.msg}</p>
