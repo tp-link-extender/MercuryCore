@@ -38,10 +38,9 @@
 
 	$: data.password.invalid =
 		// (data.password.value.length < 1 && update("password", "Password must be at least 1 character")) || // Doesn't appear anyway if form has no input
-		(data.password.value.length > 6969 && update("password", "Password must be less than 6969 characters"))
-	
-	$: data.cpassword.invalid =
-		(data.password.value != data.cpassword.value && update("cpassword", "The specified password does not match"))
+		data.password.value.length > 6969 && update("password", "Password must be less than 6969 characters")
+
+	$: data.cpassword.invalid = data.password.value != data.cpassword.value && update("cpassword", "The specified password does not match")
 
 	export let form: any
 </script>
@@ -51,14 +50,14 @@
 </svelte:head>
 
 <div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-fixed bottom-0 z-1">
+	<div class="w-100 position-fixed bottom-0">
 		<div class="position-absolute" />
 		<div class="position-absolute" />
 	</div>
 </div>
 
 <div class="row">
-	<div class="col light-text z-0" id="dark">
+	<div class="col light-text" id="dark">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0"><i class="fa-solid fa-arrow-left me-2" /> Home</a>
 		<h1 class="fw-bolder light-text mb-4">Mercury 2 <span class="opacity-50">beta</span></h1>
 		{#each things as [thing, more]}
@@ -71,7 +70,7 @@
 		{/each}
 	</div>
 
-	<div id="light" class="col col-12 col-lg-6 light-text z-1">
+	<div id="light" class="col col-12 col-lg-6 light-text">
 		<div id="login" class="m-auto">
 			<h2 class="light-text">Create a free account</h2>
 			<p class="light-text">
@@ -146,10 +145,11 @@
 			padding-top: 11vh
 
 	#light
+		z-index: 1
 		background: var(--background)
 	#dark
+		z-index: 0
 		background: linear-gradient(-20deg, var(--footer) 50%, var(--mainaccent) 250%)
-
 
 	#login
 		max-width: 30rem
@@ -165,6 +165,7 @@
 
 	#wavep // rpcs3 momnt
 		div
+			z-index: 1
 			transition: all 1s ease-in-out 0s
 			div
 				background: url("/landing/wave.svg") repeat-x
