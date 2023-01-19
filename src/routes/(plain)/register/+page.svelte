@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { applyAction, enhance } from "$app/forms"
 
+	function input(name: string, e: any) {
+		data[name].value = e.target.value
+	}
+
 	let data: any = {
 		username: { value: "", invalid: false, message: "" },
 		email: { value: "", invalid: false, message: "" },
@@ -16,11 +20,11 @@
 	]
 
 	const fields = [
-		["username", "Username", "3-21 characters"],
-		["email", "Email Address", "mercury@banland.xyz"],
-		["password", "Password", "Password"],
-		["cpassword", "Confirm Password", "Confirm Password"],
-		["regkey", "Registration Key", "mercurkey-12311121123"],
+		["username", "Username", "3-21 characters", "text"],
+		["email", "Email Address", "mercury@banland.xyz", "text"],
+		["password", "Password", "Password", "password"],
+		["cpassword", "Confirm Password", "Confirm Password", "password"],
+		["regkey", "Registration Key", "mercurkey-12311121123", "password"],
 	]
 
 	function update(field: string, message: string) {
@@ -91,14 +95,17 @@
 			>
 				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
 				<fieldset>
-					{#each fields as [name, label, placeholder]}
+					{#each fields as [name, label, placeholder, type]}
 						<label for={name} class="form-label">{label}</label>
 						<div class="mb-4">
+							<!-- bind directive cannot be used here, as type is dynamic, and two-way bindings require the type to be determined at compile -->
 							<input
-								bind:value={data[name].value}
+								on:input={e => {
+									input(name, e)
+								}}
 								id={name}
 								{name}
-								type="text"
+								{type}
 								class="light-text form-control {form?.area == name || (data[name].value && data[name].invalid) ? 'is-invalid' : 'valid'}"
 								{placeholder}
 							/>
