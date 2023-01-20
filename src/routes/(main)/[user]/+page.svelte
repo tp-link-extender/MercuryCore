@@ -19,7 +19,7 @@
 		</div>
 		<div class="container">
 			<h1 class="light-text d-inline">{data.displayname}</h1>
-			<h5 class="d-inline light-text m-2 ps-3 opacity-50">@{data.username}</h5>
+			<h2 class="h5 d-inline light-text m-2 ps-3 opacity-50">@{data.username}</h2>
 			{#if data.bio}
 				<em class="light-text d-block mt-4">"{data.bio}"</em>
 			{:else}

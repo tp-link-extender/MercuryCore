@@ -45,7 +45,7 @@
 		<div class="col col-9 col-xl-7 col-md-6 col-sm-12">
 			<div class="mt-5">
 				{#if data.friends.length > 0}
-					<h4 class="light-text">Friends</h4>
+					<h2 class="h4 light-text">Friends</h2>
 					<div id="friends" class="d-flex">
 						{#each data.friends as friend}
 							<a class="friend px-2 mb-2 text-center light-text" href="/{friend.username}">
@@ -66,7 +66,7 @@
 				{/if}
 			</div>
 			<div class="mt-5">
-				<h4 class="light-text">Resume playing</h4>
+				<h2 class="h4 light-text">Resume playing</h2>
 				<div class="row m-0 p-0 rounded-0">
 					{#each data.places as place}
 						<div class="col col-5 col-sm-3 col-md-3 col-xl-3 text-center">
@@ -95,6 +95,7 @@
 
 	input
 		background: var(--accent)
+		border-color: var(--accent3)
 
 	#friends
 		overflow-x: auto
