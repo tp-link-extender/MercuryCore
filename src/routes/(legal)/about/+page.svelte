@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { fly } from "svelte/transition"
 	import Pagepart from "$lib/components/Pagepart.svelte"
 	import { Parallax, ParallaxLayer } from "svelte-parallax"
 
@@ -22,8 +21,8 @@
 
 <div bind:this={top} class="position-relative top-0" />
 
-<div id="info" class="z-3 container d-flex flex-column justify-content-center align-items-center position-relative">
-	<h1 id="title" class="fw-bolder text-white z-3">Mercury 2</h1>
+<div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
+	<h1 id="title" class="fw-bolder text-white">Mercury 2</h1>
 	<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
 	<h5>
 		<span class="badge text-bg-secondary dark-text opacity-50 mb-3">Closed Beta</span>
@@ -44,7 +43,10 @@
 		<Pagepart>
 			<div class="w-100">
 				<h1 class="fw-bolder fw-light light-text w-100">Endless possibilities</h1>
-				<h4 class="light-text w-100">On Mercury 2, you can create games for others to play, or shirts and pants for people to buy and wear. You can customise your character to your heart's content with a vast selection of items on the catalog.</h4>
+				<h4 class="light-text w-100">
+					On Mercury 2, you can create games for others to play, or shirts and pants for people to buy and wear. You can customise your character to your heart's content with a vast
+					selection of items on the catalog.
+				</h4>
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
@@ -76,7 +78,11 @@
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="fw-bolder fw-light light-text w-100">Professional developers and community outreach.</h1>
-				<h4 class="light-text w-100">Mercury 2 developers deliver consistent updates so your experience is always great.<br> In addition, we aim to fix bugs and glitches as soon as they are reported. <br> Community wise, Mercury 2 aims to be completely transparent and non-biased with decisions. <br> While other private servers proceed to initiate petty wars with others, we take an impartial view. </h4>
+				<h4 class="light-text w-100">
+					Mercury 2 developers deliver consistent updates so your experience is always great.<br /> In addition, we aim to fix bugs and glitches as soon as they are reported. <br />
+					Community wise, Mercury 2 aims to be completely transparent and non-biased with decisions. <br /> While other private servers proceed to initiate petty wars with others, we take an
+					impartial view.
+				</h4>
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
@@ -87,14 +93,14 @@
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="fw-bolder fw-light light-text w-100">Why Mercury 2?</h1>
-				<h4 class="light-text w-100">Mercury 2 provides a simple yet elegant website, with a unique client and a forum, so you can communicate with your friends<br> - or make new ones!</h4>
+				<h4 class="light-text w-100">Mercury 2 provides a simple yet elegant website, with a unique client and a forum, so you can communicate with your friends<br /> - or make new ones!</h4>
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
 	<ParallaxLayer offset={1} rate={0}>
 		<Pagepart fullwidth>
-			<div id="info" class="z-3 container d-flex flex-column justify-content-center align-items-center position-relative">
-				<h1 id="title" class="fw-bolder text-white z-3">Mercury 2</h1>
+			<div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
+				<h1 id="title" class="fw-bolder text-white">Mercury 2</h1>
 				<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
 				<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa-solid fa-chevron-right" /></a></b>
 			</div>
