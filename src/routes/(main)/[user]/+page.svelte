@@ -30,21 +30,21 @@
 			<div class="d-flex">
 				<div class="light-text text-center">
 					Friends
-					<h4 class="light-text">
+					<h3 class="light-text">
 						{data.friendCount}
-					</h4>
+					</h3>
 				</div>
 				<div class="light-text text-center ms-4">
 					Followers
-					<h4 class="light-text">
+					<h3 class="light-text">
 						{data.followerCount}
-					</h4>
+					</h3>
 				</div>
 				<div class="light-text text-center ms-4">
 					Following
-					<h4 class="light-text">
+					<h3 class="light-text">
 						{data.followingCount}
-					</h4>
+					</h3>
 				</div>
 				{#if $user && data.username != $user?.username}
 					<form class="align-self-center ms-auto me-2" method="POST" use:enhance>
@@ -82,7 +82,7 @@
 	</div>
 	{#if data.places.length > 0}
 		<div class="mt-5">
-			<h4 class="light-text">Creations</h4>
+			<h2 class="h4 light-text">Creations</h2>
 			<div class="row m-0 p-0">
 				{#each data.places as place}
 					<div class="col col-4 col-sm-3 col-md-2 text-center">
