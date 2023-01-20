@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { applyAction, enhance } from "$app/forms"
 
+	function input(name: string, e: any) {
+		data[name].value = e.target.value
+	}
+
 	let data: any = {
 		username: { value: "", invalid: false, message: "" },
 		email: { value: "", invalid: false, message: "" },
@@ -16,11 +20,11 @@
 	]
 
 	const fields = [
-		["username", "Username", "3-21 characters"],
-		["email", "Email Address", "mercury@banland.xyz"],
-		["password", "Password", "Password"],
-		["cpassword", "Confirm Password", "Confirm Password"],
-		["regkey", "Registration Key", "mercurkey-12311121123"],
+		["username", "Username", "3-21 characters", "text"],
+		["email", "Email Address", "mercury@banland.xyz", "text"],
+		["password", "Password", "Password", "password"],
+		["cpassword", "Confirm Password", "Confirm Password", "password"],
+		["regkey", "Registration Key", "mercurkey-12311121123", "password"],
 	]
 
 	function update(field: string, message: string) {
@@ -38,10 +42,9 @@
 
 	$: data.password.invalid =
 		// (data.password.value.length < 1 && update("password", "Password must be at least 1 character")) || // Doesn't appear anyway if form has no input
-		(data.password.value.length > 6969 && update("password", "Password must be less than 6969 characters"))
-	
-	$: data.cpassword.invalid =
-		(data.password.value != data.cpassword.value && update("cpassword", "The specified password does not match"))
+		data.password.value.length > 6969 && update("password", "Password must be less than 6969 characters")
+
+	$: data.cpassword.invalid = data.password.value != data.cpassword.value && update("cpassword", "The specified password does not match")
 
 	export let form: any
 </script>
@@ -51,14 +54,14 @@
 </svelte:head>
 
 <div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-fixed bottom-0 z-1">
+	<div class="w-100 position-fixed bottom-0">
 		<div class="position-absolute" />
 		<div class="position-absolute" />
 	</div>
 </div>
 
 <div class="row">
-	<div class="col light-text z-0" id="dark">
+	<div class="col light-text" id="dark">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0"><i class="fa-solid fa-arrow-left me-2" /> Home</a>
 		<h1 class="fw-bolder light-text mb-4">Mercury 2 <span class="opacity-50">beta</span></h1>
 		{#each things as [thing, more]}
@@ -71,7 +74,7 @@
 		{/each}
 	</div>
 
-	<div id="light" class="col col-12 col-lg-6 light-text z-1">
+	<div id="light" class="col col-12 col-lg-6 light-text">
 		<div id="login" class="m-auto">
 			<h2 class="light-text">Create a free account</h2>
 			<p class="light-text">
@@ -92,14 +95,17 @@
 			>
 				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
 				<fieldset>
-					{#each fields as [name, label, placeholder]}
+					{#each fields as [name, label, placeholder, type]}
 						<label for={name} class="form-label">{label}</label>
 						<div class="mb-4">
+							<!-- bind directive cannot be used here, as type is dynamic, and two-way bindings require the type to be determined at compile -->
 							<input
-								bind:value={data[name].value}
+								on:input={e => {
+									input(name, e)
+								}}
 								id={name}
 								{name}
-								type="text"
+								{type}
 								class="light-text form-control {form?.area == name || (data[name].value && data[name].invalid) ? 'is-invalid' : 'valid'}"
 								{placeholder}
 							/>
@@ -146,10 +152,11 @@
 			padding-top: 11vh
 
 	#light
+		z-index: 1
 		background: var(--background)
 	#dark
+		z-index: 0
 		background: linear-gradient(-20deg, var(--footer) 50%, var(--mainaccent) 250%)
-
 
 	#login
 		max-width: 30rem
@@ -165,6 +172,7 @@
 
 	#wavep // rpcs3 momnt
 		div
+			z-index: 1
 			transition: all 1s ease-in-out 0s
 			div
 				background: url("/landing/wave.svg") repeat-x
