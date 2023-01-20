@@ -11,7 +11,7 @@ export const actions: Actions = {
 		const email = data.get("email")?.toString().toLowerCase() || ""
 		const password = data.get("password")?.toString() || ""
 		const cpassword = data.get("cpassword")?.toString() || ""
-		const regkey = data.get("regkey")?.toString() || ""
+		const regkey = data.get("regkey")?.toString().split("-") || ""
 
 		const easyChecks = [
 			[username.length < 3, "Username must be more than 3 characters", "username"],
@@ -60,7 +60,7 @@ export const actions: Actions = {
 
 			const CheckRegkey = await prisma.regkey.findUnique({
 				where: {
-					key: regkey,
+					key: regkey[1],
 				},
 			})
 
@@ -75,7 +75,7 @@ export const actions: Actions = {
 					displayname: username,
 					usedRegkey: {
 						connect: {
-							key: regkey,
+							key: regkey[1],
 						}
 					},
 					image: "https://tr.rbxcdn.com/54d17964492b5e0af66797942fcce26c/150/150/AvatarHeadshot/Png",
@@ -86,7 +86,7 @@ export const actions: Actions = {
 			locals.setSession(session)
 
 			await prisma.regkey.update({
-				where: { key: regkey },
+				where: { key: regkey[1] },
 				data: { usesLeft: { decrement: 1 } },
 			})
 		} catch (e) {
