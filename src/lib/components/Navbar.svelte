@@ -8,7 +8,14 @@
 <nav class="navbar navbar-expand-lg navbar-dark position-fixed vw-100">
 	<div class="container">
 		<a class="navbar-brand light-text" href="/">Mercury</a>
-		<button class="navbar-toggler" type="button" title="Open sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarExample-expand-lg" aria-controls="offcanvasNavbarExample-expand-lg">		
+		<button
+			class="navbar-toggler"
+			type="button"
+			title="Open sidebar"
+			data-bs-toggle="offcanvas"
+			data-bs-target="#offcanvasNavbarExample-expand-lg"
+			aria-controls="offcanvasNavbarExample-expand-lg"
+		>
 			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbarExample-expand-lg" />
 		</button>
 		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbarExample-expand-lg" aria-labelledby="offcanvasNavbarExample-expand-lg">
@@ -131,7 +138,7 @@
 		height: 2.5rem
 
 	.dropdown-menu
-		background: var(--footer)
+		background: var(--darker)
 		border: none
 
 </style>

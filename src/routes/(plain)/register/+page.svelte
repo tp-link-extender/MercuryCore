@@ -157,7 +157,7 @@
 		background: var(--background)
 	#dark
 		z-index: 0
-		background: linear-gradient(-20deg, var(--footer) 50%, var(--mainaccent) 250%)
+		background: linear-gradient(-20deg, var(--darker) 50%, var(--mainaccent) 250%)
 
 	#login
 		max-width: 30rem
