@@ -11,6 +11,7 @@
 </script>
 
 <svelte:head>
+	<meta name="description" content="Mercury: Endless possibilities. New features. Same nostalgia." />
 	<title>Mercury - Mercury</title>
 </svelte:head>
 
