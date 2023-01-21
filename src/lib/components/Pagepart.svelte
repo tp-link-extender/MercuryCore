@@ -24,6 +24,10 @@
 	#b
 		padding: 15vh
 
+	@media only screen and (max-width: 768px)
+		#b
+			padding: 1vh	
+
 	.half
 		width: 50vw
 	.full

@@ -8,18 +8,10 @@ export const actions: Actions = {
 		const username = data.get("username")?.toString() || ""
 		const password = data.get("password")?.toString() || ""
 
-		const easyChecks = [
-			[username.length <= 3, "Username must be more than 3 characters", "username"],
-			[username.length > 30, "Username must be less than 30 characters", "username"],
-			[password.length < 1, "Password must be at least 1 character", "password"],
-			[password.length > 6969, "Password must be less than 6969 characters", "password"],
-		]
-
-		for (const [condition, msg, area] of easyChecks) {
-			if (condition) {
-				return fail(400, { msg, area })
-			}
-		}
+		if (username.length <= 3) return fail(400, { area: "username", msg: "Username must be more than 3 characters" })
+		if (username.length > 30) return fail(400, { area: "username", msg: "Username must be less than 30 characters" })
+		if (password.length < 1) return fail(400, { area: "password", msg: "Password must be at least 1 character" })
+		if (password.length > 6969) return fail(400, { area: "password", msg: "Password must be less than 6969 characters" })
 
 		try {
 			const user = await auth.authenticateUser("username", username, password)
@@ -30,7 +22,7 @@ export const actions: Actions = {
 			if (error.message === "AUTH_INVALID_PROVIDER_ID" || error.message === "AUTH_INVALID_PASSWORD") {
 				return fail(400, { area: "password", msg: "Incorrect username or password" })
 			}
-			console.error(error)
+			console.error("Login error:", error)
 			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })
 		}
 
