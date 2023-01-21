@@ -26,6 +26,7 @@
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^0.2.2",
     "@lucia-auth/sveltekit": "^0.5.2",
+    "@lucia-sveltekit/session-adapter-redis": "^0.10.0",
     "@popperjs/core": "^2.11.6",
     "@prisma/client": "^4.9.0",
     "@sveltejs/adapter-node": "^1.1.4",
