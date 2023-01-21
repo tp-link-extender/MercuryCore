@@ -19,7 +19,6 @@ model User {
     provider_id     String    @unique
     email           String    @unique
     hashed_password String?
-    session         Session[]
 
     username        String   @unique
     displayname     String?
@@ -38,17 +37,6 @@ model User {
     regkeyKey       String
 
     @@map("user")
-}
-
-model Session {
-    id           String @id @unique
-    user_id      String
-    expires      BigInt
-    idle_expires BigInt
-    user         User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
-
-    @@index([user_id])
-    @@map("session")
 }
 
 model Regkey {
