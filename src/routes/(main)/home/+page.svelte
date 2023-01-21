@@ -30,8 +30,8 @@
 	</div>
 	<div class="row">
 		<div class="col col-12 col-xl-5 col-md-6 col-sm-12">
-			<div class="card mt-5 bg-dark">
-				<div class="card-body bg-dark">
+			<div class="card mt-5">
+				<div class="card-body">
 					<div class="col">
 						<p class="text-light">Post your status - your friends and followers can view how you're doing!</p>
 						<div class="input-group mb-3">
@@ -96,6 +96,8 @@
 	input
 		background: var(--accent2)
 		border-color: var(--accent3)
+	.card
+		background: var(--accent)
 
 	#friends
 		overflow-x: auto
