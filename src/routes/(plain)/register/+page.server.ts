@@ -79,7 +79,7 @@ export const actions: Actions = {
 			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
 				return fail(400, { area: "username", msg: "User already exists" })
 			}
-			console.error(error)
+			console.error("Registration error:", error)
 			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })
 		}
 
