@@ -66,6 +66,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 }
 
+
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
 		const session = await locals.validateUser()
@@ -88,43 +89,87 @@ export const actions: Actions = {
 			},
 		}
 
-		console.log(action)
+		console.log("Action:", action)
 
-		switch (action) {
-			case "follow":
-				await graph.query(
-					`
-					MERGE (u1:User { name: $user1 })
-					MERGE (u2:User { name: $user2 })
-					MERGE (u1) -[:follows]-> (u2)
-					`,
-					query
-				)
-				break
-			case "unfollow":
-				await graph.query(
-					`
-					MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
-					DELETE r
-					`,
-					query
-				)
-				break
-			case "unfriend":
-				await graph.query(
-					`
-					MATCH (u1:User { name: $user1 }) -[r:friends]-> (u2:User { name: $user2 })
-					MATCH (u1:User { name: $user1 }) <-[s:friends]- (u2:User { name: $user2 })
-					DELETE r, s
-					`,
-					query
-				)
-				break
-			case "request":
-				if (!(await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]-> (:User { name: $user2 }) RETURN r", query))) {
-					// Make sure users are not already friends
+		try {
+			switch (action) {
+				case "follow":
+					await graph.query(
+						`
+						MERGE (u1:User { name: $user1 })
+						MERGE (u2:User { name: $user2 })
+						MERGE (u1) -[:follows]-> (u2)
+						`,
+						query
+					)
+					break
+				case "unfollow":
+					await graph.query(
+						`
+						MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
+						DELETE r
+						`,
+						query
+					)
+					break
+				case "unfriend":
+					await graph.query(
+						`
+						MATCH (u1:User { name: $user1 }) -[r:friends]-> (u2:User { name: $user2 })
+						MATCH (u1:User { name: $user1 }) <-[s:friends]- (u2:User { name: $user2 })
+						DELETE r, s
+						`,
+						query
+					)
+					break
+				case "request":
+					if (!(await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]-> (:User { name: $user2 }) RETURN r", query))) {
+						// Make sure users are not already friends
+						if (await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
+							// If there is already an incoming request, accept it instead
+							await graph.query(
+								`
+								MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+								DELETE r
+								MERGE (u1)
+								MERGE (u2)
+								MERGE (u1) -[:friends]-> (u2)
+								MERGE (u1) <-[:friends]- (u2)
+								`,
+								query
+							)
+						else
+							await graph.query(
+								`
+								MERGE (u1:User { name: $user1 })
+								MERGE (u2:User { name: $user2 })
+								MERGE (u1) -[:request]-> (u2)
+								`,
+								query
+							)
+					} else return fail(400)
+					break
+				case "cancel":
+					await graph.query(
+						`
+						MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
+						DELETE r
+						`,
+						query
+					)
+					break
+				case "decline":
+					await graph.query(
+						`
+						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+						DELETE r
+						`,
+						query
+					)
+					break
+				case "accept":
 					if (await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
-						// If there is already an incoming request, accept it instead
+						// Make sure an incoming request exists before accepting
 						await graph.query(
 							`
 							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
@@ -136,51 +181,12 @@ export const actions: Actions = {
 							`,
 							query
 						)
-					else
-						await graph.query(
-							`
-						MERGE (u1:User { name: $user1 })
-						MERGE (u2:User { name: $user2 })
-						MERGE (u1) -[:request]-> (u2)
-						`,
-							query
-						)
-				} else return fail(400)
-				break
-			case "cancel":
-				await graph.query(
-					`
-					MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
-					DELETE r
-					`,
-					query
-				)
-				break
-			case "decline":
-				await graph.query(
-					`
-					MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-					DELETE r
-					`,
-					query
-				)
-				break
-			case "accept":
-				if (await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
-					// Make sure an incoming request exists before accepting
-					await graph.query(
-						`
-						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-						DELETE r
-						MERGE (u1)
-						MERGE (u2)
-						MERGE (u1) -[:friends]-> (u2)
-						MERGE (u1) <-[:friends]- (u2)
-						`,
-						query
-					)
-				else return fail(400)
-				break
+					else return fail(400)
+					break
+			}
+		} catch (e) { 
+			console.error(e)
+			throw error(500, "Redis error 2")
 		}
 	},
 }

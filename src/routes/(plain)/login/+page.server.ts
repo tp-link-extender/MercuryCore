@@ -22,7 +22,7 @@ export const actions: Actions = {
 			if (error.message === "AUTH_INVALID_PROVIDER_ID" || error.message === "AUTH_INVALID_PASSWORD") {
 				return fail(400, { area: "password", msg: "Incorrect username or password" })
 			}
-			console.error(error)
+			console.error("Login error:", error)
 			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })
 		}
 
