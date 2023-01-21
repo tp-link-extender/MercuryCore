@@ -43,6 +43,7 @@
 </script>
 
 <svelte:head>
+	<meta name="description" content="Log into your Mercury account." />
 	<title>Log in - Mercury</title>
 </svelte:head>
 
@@ -60,7 +61,7 @@
 		{#each things as [thing, more]}
 			<div class="thing d-flex flex-row mt-3">
 				<div class="ms-3 w-100">
-					<h4 class="light-text">{thing}</h4>
+					<h2 class="h4 light-text">{thing}</h2>
 					<p class="light-text opacity-75 more">{more}</p>
 				</div>
 			</div>
@@ -80,7 +81,6 @@
 				method="POST"
 				use:enhance={() => {
 					return async ({ result }) => {
-						console.log(result)
 						if (result.type == "redirect") window.location.reload()
 						else await applyAction(result)
 					}
@@ -101,6 +101,7 @@
 								{type}
 								class="light-text form-control {form?.area == name || (data[name].value && data[name].invalid) ? 'is-invalid' : 'valid'}"
 								placeholder={label}
+								required
 							/>
 							{#if form?.area == name || (data[name].value && data[name].invalid)}
 								<small class="col-12 mb-3 text-danger">{form?.msg || data[name].message}</small>
@@ -140,7 +141,7 @@
 		background: var(--background)
 	#dark
 		z-index: 0
-		background: linear-gradient(-20deg, var(--footer) 50%, var(--mainaccent) 250%)
+		background: linear-gradient(-20deg, var(--darker) 50%, var(--mainaccent) 250%)
 
 	#login
 		max-width: 30rem

@@ -21,7 +21,7 @@
 
 	const fields = [
 		["username", "Username", "3-21 characters", "text"],
-		["email", "Email Address", "mercury@banland.xyz", "text"],
+		["email", "Email Address", "mercury@banland.xyz", "email"],
 		["password", "Password", "Password", "password"],
 		["cpassword", "Confirm Password", "Confirm Password", "password"],
 		["regkey", "Registration Key", "mercurkey-12311121123", "password"],
@@ -50,6 +50,7 @@
 </script>
 
 <svelte:head>
+	<meta name="description" content="Create a Mercury account." />
 	<title>Register - Mercury</title>
 </svelte:head>
 
@@ -61,13 +62,13 @@
 </div>
 
 <div class="row">
-	<div class="col light-text" id="dark">
+	<div id="dark" class="col light-text">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0"><i class="fa-solid fa-arrow-left me-2" /> Home</a>
 		<h1 class="fw-bolder light-text mb-4">Mercury 2 <span class="opacity-50">beta</span></h1>
 		{#each things as [thing, more]}
 			<div class="thing d-flex flex-row mt-3">
 				<div class="ms-3 w-100">
-					<h4 class="light-text">{thing}</h4>
+					<h2 class="h4 light-text">{thing}</h2>
 					<p class="light-text opacity-75 more">{more}</p>
 				</div>
 			</div>
@@ -87,7 +88,6 @@
 				method="POST"
 				use:enhance={() => {
 					return async ({ result }) => {
-						console.log(result)
 						if (result.type != "failure") window.location.reload()
 						else await applyAction(result)
 					}
@@ -108,6 +108,7 @@
 								{type}
 								class="light-text form-control {form?.area == name || (data[name].value && data[name].invalid) ? 'is-invalid' : 'valid'}"
 								{placeholder}
+								required
 							/>
 							{#if form?.area == name || (data[name].value && data[name].invalid)}
 								<small class="col-12 mb-3 text-danger">{form?.msg || data[name].message}</small>
@@ -156,7 +157,7 @@
 		background: var(--background)
 	#dark
 		z-index: 0
-		background: linear-gradient(-20deg, var(--footer) 50%, var(--mainaccent) 250%)
+		background: linear-gradient(-20deg, var(--darker) 50%, var(--mainaccent) 250%)
 
 	#login
 		max-width: 30rem

@@ -10,10 +10,7 @@
 		Developing: "bg-warning",
 	}
 
-	const greets = [
-		`Hi, ${$user?.displayname}!`,
-		`Hello, ${$user?.displayname}!`,
-	]
+	const greets = [`Hi, ${$user?.displayname}!`, `Hello, ${$user?.displayname}!`]
 
 	export let data: any
 </script>
@@ -25,42 +22,59 @@
 <div class="container">
 	<div class="top d-flex px-2">
 		<div id="pfp" class="rounded-circle">
-			<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
+			<img src={$user?.image} alt="You" class="rounded-circle img-fluid rounded-top-0" />
 		</div>
 		<h1 class="text-center light-text">
 			{greets[Math.floor(Math.random() * greets.length)]}
 		</h1>
 	</div>
-	<div class="mt-5">
-		{#if data.friends.length > 0}
-			<h4 class="light-text">Friends</h4>
-			<div id="friends" class="d-flex">
-				{#each data.friends as friend}
-					<a class="friend px-2 mb-2 text-center light-text" href="/{friend.username}">
-						<div class="position-relative mb-2">
-							<div class="image-background rounded-circle">
-								<img src={friend.image} alt={friend.displayname || friend.username} class="h-100 rounded-circle rounded-top-0" />
-							</div>
-							{#if friend.status}
-								<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
-									<span class="visually-hidden">{friend.status}</span>
-								</span>
-							{/if}
+	<div class="row">
+		<div class="col col-12 col-xl-5 col-md-6 col-sm-12">
+			<div class="card mt-5 bg-dark">
+				<div class="card-body bg-dark">
+					<div class="col">
+						<p class="text-light">Post your status - your friends and followers can view how you're doing!</p>
+						<div class="input-group mb-3">
+							<input type="text" class="form-control" placeholder="Post status" aria-label="Post Status" />
+							<button class="btn btn-success" type="button" id="button-addon2">Send</button>
 						</div>
-						{friend.displayname || friend.username}
-					</a>
-				{/each}
-			</div>
-		{/if}
-	</div>
-	<div class="mt-5">
-		<h4 class="light-text">Recently joined</h4>
-		<div class="row m-0 p-0">
-			{#each data.places as place}
-				<div class="col col-4 col-sm-3 col-md-2 text-center">
-					<Place {place} />
+					</div>
 				</div>
-			{/each}
+			</div>
+		</div>
+		<div class="col col-9 col-xl-7 col-md-6 col-sm-12">
+			<div class="mt-5">
+				{#if data.friends.length > 0}
+					<h2 class="h4 light-text">Friends</h2>
+					<div id="friends" class="d-flex">
+						{#each data.friends as friend}
+							<a class="friend px-2 mb-2 text-center light-text" href="/{friend.username}">
+								<div class="position-relative mb-2">
+									<div class="image-background rounded-circle">
+										<img src={friend.image} alt={friend.displayname || friend.username} class="h-100 rounded-circle img-fluid rounded-top-0" />
+									</div>
+									{#if friend.status}
+										<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
+											<span class="visually-hidden">{friend.status}</span>
+										</span>
+									{/if}
+								</div>
+								{friend.displayname || friend.username}
+							</a>
+						{/each}
+					</div>
+				{/if}
+			</div>
+			<div class="mt-5">
+				<h2 class="h4 light-text">Resume playing</h2>
+				<div class="row m-0 p-0 rounded-0">
+					{#each data.places || [] as place}
+						<div class="col col-5 col-sm-3 col-md-3 col-xl-3 text-center">
+							<Place {place} />
+						</div>
+					{/each}
+				</div>
+			</div>
 		</div>
 	</div>
 	<br /><br />
@@ -68,7 +82,6 @@
 
 <style lang="sass">
 	.container
-		max-width: 60rem
 		font-size: 0.9rem
 
 	.top
@@ -79,6 +92,10 @@
 			height: 6rem
 		h1
 			margin: auto 2rem
+
+	input
+		background: var(--accent)
+		border-color: var(--accent3)
 
 	#friends
 		overflow-x: auto

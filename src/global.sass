@@ -1,28 +1,29 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap")
-	
+
 :root
 	overflow-x: hidden
-	
+	background-color: var(--background)
+
 	// light mode
 	@media (prefers-color-scheme: light)
 		--background: #e6e4e3
-		--footer: #c6c4c3
+		--darker: #c6c4c3
 		--accent: white
 		--accent2: #c6c4c3
 		--accent3: #a6a4a3
 		--light-text: #212529
-		--grey-text: #4c555d
+		--grey-text: #3c3b3a
 		--dark-text: #f6f4f3
 
 	// dark mode
 	--mainaccent: #7531ff
-	--background: #161413
-	--footer: #100f0e
+	--background: #100f0e
+	--darker: #0a0908
 	--accent: #363433
 	--accent2: #262423
 	--accent3: #464443
 	--light-text: #f6f4f3
-	--grey-text: #6c757d
+	--grey-text: #8c8b8a
 	--dark-text: #212529
 
 	.light-text
@@ -36,9 +37,6 @@
 
 ::selection
 	background: var(--mainaccent)
-
-body
-	background-color: var(--background)
 
 ::-webkit-scrollbar
 	width: 0.75rem

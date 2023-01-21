@@ -4,14 +4,14 @@
 </script>
 
 <svelte:head>
-	<title>Home - Mercury</title>
+	<title>Discover - Mercury</title>
 </svelte:head>
 
 <h1 class="text-center light-text">Discover</h1>
 
 <div class="container d-grid mt-5">
 	{#each Array(50) as _}
-		{#each data.places as place}
+		{#each data.places || [] as place}
 			<Place {place} />
 		{/each}
 	{/each}
