@@ -20,7 +20,6 @@
 <Footer />
 
 <style lang="sass">
-
 	main
 		padding-bottom: 35vh
 		padding-top: 35vh
