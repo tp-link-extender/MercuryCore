@@ -13,6 +13,8 @@ async function roQuery(graph: any, str: string, query: any) {
 }
 
 export const load: PageServerLoad = async ({ locals, params }) => {
+	console.time("user")
+	params.user = params.user.toLowerCase()
 	const user = await prisma.user.findUnique({
 		where: {
 			username: params.user,
@@ -46,20 +48,21 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		}
 		const graph = new Graph(client, "friends")
 
+		console.timeEnd("user")
 		return {
 			username: params.user,
 			displayname: user.displayname,
-			img: user.image,
 			bio: user.bio,
+			img: user.image,
 			places: user.places,
 			friendCount: (await roQuery(graph, "RETURN SIZE(() -[:friends]-> (:User { name: $user })) as data", query2)).data,
 			followerCount: (await roQuery(graph, "RETURN SIZE(() -[:follows]-> (:User { name: $user })) as data", query2)).data,
 			followingCount: (await roQuery(graph, "RETURN SIZE(() <-[:follows]- (:User { name: $user })) as data", query2)).data,
-			friends: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query) : false,
-			following: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query) : false,
-			follower: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query) : false,
-			incomingRequest: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query) : false,
-			outgoingRequest: session ? await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query) : false,
+			friends: session ? roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query) : false,
+			following: session ? roQuery(graph, "MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query) : false,
+			follower: session ? roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query) : false,
+			incomingRequest: session ? roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query) : false,
+			outgoingRequest: session ? roQuery(graph, "MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query) : false,
 		}
 	} else {
 		throw error(404, `Not found: /${params.user}`)
