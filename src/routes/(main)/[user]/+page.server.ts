@@ -49,15 +49,20 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		const graph = new Graph(client, "friends")
 
 		console.timeEnd("user")
+
+		// this is a stupid bug. previously just returning the result of a roQuery as "data" or whatever, then using .data, would break randomly
+		const c = () => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.random() * 52)
+		const rand: any = Array(5).fill(0).map(c).join("")
+
 		return {
 			username: params.user,
 			displayname: user.displayname,
 			bio: user.bio,
 			img: user.image,
 			places: user.places,
-			friendCount: (await roQuery(graph, "RETURN SIZE(() -[:friends]-> (:User { name: $user })) as data", query2)).data,
-			followerCount: (await roQuery(graph, "RETURN SIZE(() -[:follows]-> (:User { name: $user })) as data", query2)).data,
-			followingCount: (await roQuery(graph, "RETURN SIZE(() <-[:follows]- (:User { name: $user })) as data", query2)).data,
+			friendCount: (await roQuery(graph, `RETURN SIZE(() -[:friends]-> (:User { name: $user })) as ${rand}`, query2))[rand],
+			followerCount: (await roQuery(graph, `RETURN SIZE(() -[:follows]-> (:User { name: $user })) as ${rand}`, query2))[rand],
+			followingCount: (await roQuery(graph, `RETURN SIZE(() <-[:follows]- (:User { name: $user })) as ${rand}`, query2))[rand],
 			friends: session ? roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query) : false,
 			following: session ? roQuery(graph, "MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query) : false,
 			follower: session ? roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query) : false,
