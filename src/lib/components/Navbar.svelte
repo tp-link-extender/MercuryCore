@@ -85,7 +85,7 @@
 		.offcanvas-header
 			background: var(--accent3)
 		.offcanvas-body
-			background: var(--accent2)
+			background: var(--accent)
 			min-height: 100vh
 			flex-direction: column
 			
@@ -127,7 +127,7 @@
 		margin-right: 0.5rem
 
 	#pfp
-		background: var(--accent2)
+		background: var(--accent)
 		width: 2.5rem
 		height: 2.5rem
 
