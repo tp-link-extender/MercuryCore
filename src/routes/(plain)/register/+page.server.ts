@@ -35,14 +35,14 @@ export const actions: Actions = {
 					username: lowercaseUsername,
 				},
 			})
-			if (!userCheck) return fail(400, { area: "username", msg: "User already exists" })
+			if (userCheck) return fail(400, { area: "username", msg: "Username is already being used" })
 
 			const emailCheck = await prisma.user.findUnique({
 				where: {
 					email: email.toLowerCase(),
 				},
 			})
-			if (!emailCheck) return fail(400, { area: "email", msg: "Email is already being used" })
+			if (emailCheck) return fail(400, { area: "email", msg: "Email is already being used" })
 
 			const regkeyCheck = await prisma.regkey.findUnique({
 				where: {
