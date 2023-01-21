@@ -68,7 +68,7 @@
 			<div class="mt-5">
 				<h2 class="h4 light-text">Resume playing</h2>
 				<div class="row m-0 p-0 rounded-0">
-					{#each data.places as place}
+					{#each data.places || [] as place}
 						<div class="col col-5 col-sm-3 col-md-3 col-xl-3 text-center">
 							<Place {place} />
 						</div>

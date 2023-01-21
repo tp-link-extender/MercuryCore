@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export async function load({ params }: { params: any }) {
+	console.time("place")
 	const getPlace = await prisma.place.findUnique({
 		where: {
 			slug: params.place,
@@ -11,9 +12,10 @@ export async function load({ params }: { params: any }) {
 			name: true,
 			description: true,
 			image: true,
-			ownerUsername: true
+			ownerUsername: true,
 		},
 	})
+	console.timeEnd("place")
 	if (getPlace) {
 		return {
 			name: getPlace.name,
@@ -21,7 +23,5 @@ export async function load({ params }: { params: any }) {
 			description: getPlace.description,
 			image: getPlace.image,
 		}
-	} else {
-		throw error(404, `Not found: /${params.place}`)
-	}
+	} else throw error(404, `Not found: /${params.place}`)
 }
