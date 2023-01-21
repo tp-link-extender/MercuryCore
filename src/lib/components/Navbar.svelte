@@ -106,8 +106,6 @@
 		#loggedin
 			margin-bottom: 6rem
 
-
-
 	@media only screen and (min-width: 993px)
 		#loggedin
 			margin-left: auto

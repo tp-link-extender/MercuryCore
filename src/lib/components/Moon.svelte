@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Canvas, DirectionalLight, HemisphereLight, OrbitControls, PerspectiveCamera, Three, useThrelte } from "@threlte/core"
 	import { GLTF } from "@threlte/extras"
 
