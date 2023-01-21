@@ -87,14 +87,14 @@
 	.top
 		width: fit-content
 		#pfp
-			background: var(--accent2)
+			background: var(--accent)
 		img
 			height: 6rem
 		h1
 			margin: auto 2rem
 
 	input
-		background: var(--accent)
+		background: var(--accent2)
 		border-color: var(--accent3)
 
 	#friends
@@ -104,7 +104,7 @@
 			.badge
 				padding: 0.75rem
 			.image-background
-				background: var(--accent2)
+				background: var(--accent)
 				width: 7rem
 				height: 7rem
 				margin: auto

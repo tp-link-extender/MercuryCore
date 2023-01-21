@@ -12,7 +12,7 @@
 	<title>{data.displayname} - Mercury</title>
 </svelte:head>
 
-<main class="container">
+<div id="all" class="container">
 	<div class="d-flex px-4">
 		<div id="image-background" class="me-4 rounded-circle">
 			<img src={data.img} alt={data.displayname} class="rounded-circle rounded-top-0" />
@@ -92,16 +92,16 @@
 			</div>
 		</div>
 	{/if}
-</main>
+</div>
 
 <style lang="sass">
-	main 
-		width: 60rem
+	#all
+		max-width: 60rem
 
 	#image-background
 		width: 10rem
 		height: 10rem
-		background: var(--accent2)
+		background: var(--accent)
 		img
 			height: 10rem
 </style>
