@@ -1,7 +1,7 @@
 import type { PageServerLoad } from "./$types"
-import { error, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
-import { createClient, Graph } from "redis"
+import graph from "$lib/server/redis"
 
 const prisma = new PrismaClient()
 
@@ -11,15 +11,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!session.session) throw redirect(302, "/login")
 
 	async function Friends() {
-		const client = createClient({ url: "redis://localhost:6479" })
-
-		client.on("error", e => {
-			console.log("Redis error", e)
-			throw error(500, "Redis error")
-		})
-		await client.connect()
-		const graph = new Graph(client, "friends")
-
 		const friendsQuery = await graph.roQuery(
 			`
 			MATCH (:User { name: $user1 }) -[r:friends]-> (u:User)

@@ -1,7 +1,7 @@
 import type { Actions, PageServerLoad } from "./$types"
 import { error, fail, redirect } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
-import { createClient, Graph } from "redis"
+import graph from "$lib/server/redis"
 const prisma = new PrismaClient()
 
 async function roQuery(graph: any, str: string, query: any) {
@@ -28,12 +28,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	})
 	if (user) {
 		const session = await locals.validateUser()
-		const client = createClient({ url: "redis://localhost:6479" })
-		client.on("error", e => {
-			console.log("Redis error", e)
-			throw error(500, "Redis error")
-		})
-		await client.connect()
 
 		const query = {
 			params: {
@@ -46,14 +40,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				user: params.user,
 			},
 		}
-		const graph = new Graph(client, "friends")
-
-		console.timeEnd("user")
 
 		// this is a stupid bug. previously just returning the result of a roQuery as "data" or whatever, then using .data, would break randomly
 		const c = () => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.random() * 52)
 		const rand: any = Array(5).fill(0).map(c).join("")
 
+		console.timeEnd("user")
 		return {
 			username: params.user,
 			displayname: user.displayname,
@@ -82,13 +74,6 @@ export const actions: Actions = {
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
 
-		const client = createClient({ url: "redis://localhost:6479" })
-		client.on("error", e => {
-			console.log("Redis error", e)
-			throw error(500, "Redis error")
-		})
-		await client.connect()
-
 		const user2 = await prisma.user.findUnique({
 			where: {
 				username: params.user,
@@ -102,7 +87,6 @@ export const actions: Actions = {
 				user2: params.user,
 			},
 		}
-		const graph = new Graph(client, "friends")
 
 		console.log(action)
 
