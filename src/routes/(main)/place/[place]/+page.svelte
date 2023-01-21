@@ -2,6 +2,15 @@
 	import { enhance } from "$app/forms"
 
 	export let data: any
+
+	const statistics = [
+		["Activity", "2 visits"],
+		["Creation", "19/01/2023"],
+		["Updated", "Three hours ago"],
+		["Genre", "Horror"],
+		["Server Limit", "100"],
+		["Currently Playing", "No one"],
+	]
 </script>
 
 <svelte:head>
@@ -83,6 +92,23 @@
 	<p class="light-text">
 		{data.description}
 	</p>
+	<h4 class="light-text mt-4">Statistics</h4>
+	<div class="card">
+		{#each statistics as [title]}
+			<div class="card-header light-text text-center">
+				{title}
+			</div>
+		{/each}
+		<div class="card-body light-text text-center">
+			<div class="row">
+				{#each statistics as stat}
+					<div class="col">
+						{stat}
+					</div>
+				{/each}
+			</div>
+		</div>
+	</div>
 </div>
 
 <style lang="sass">
@@ -93,6 +119,9 @@
 		margin-top: auto
 		display: flex
 		flex-direction: column
+
+	.card
+		background: var(--accent2)
 	
 	#thumbnail
 		aspect-ratio: 16 / 9
