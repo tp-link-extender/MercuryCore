@@ -25,7 +25,7 @@
 		<div class="flex flex-col">
 			<h2 class="light-text">{data.name}</h2>
 			<p class="light-text mt-2">
-				<b>By:</b> <a href="/{data.owner}" class="text-decoration-none">{data.owner}</a>
+				<b>By</b> <a href="/{data.owner.username}" class="text-decoration-none">{data.owner.displayname}</a>
 			</p>
 			<div id="buttons">
 				<button id="join" class="btn btn-lg btn-success"><img src="/place/join.svg" alt="Join button icon" /></button>
@@ -51,35 +51,35 @@
 								</button>
 							</div>
 						</div>
-						<div class="progress" style="height: 2px;">
+						<div class="progress rounded-pill" style="height: 3px">
 							<div
-								class="progress-bar progress-bar-striped bg-success"
+								class="progress-bar bg-success"
 								role="progressbar"
 								aria-label="Likes"
-								style="width: {(data.likeCount / (data.dislikeCount + data.likeCount)) * 100}%"
+								style="width: {(data.likeCount / (data.dislikeCount + data.likeCount || 1)) * 100}%"
 								aria-valuenow={data.likeCount}
-								aria-valuemin="0"
+								aria-valuemin={0}
 								aria-valuemax={data.dislikeCount + data.likeCount}
 							/>
 							<div
-								class="progress-bar progress-bar-striped bg-danger"
+								class="progress-bar bg-danger"
 								role="progressbar"
 								aria-label="Dislikes"
-								style="width: {(data.dislikeCount / (data.dislikeCount + data.likeCount)) * 100}%"
+								style="width: {(data.dislikeCount / (data.dislikeCount + data.likeCount || 1)) * 100}%"
 								aria-valuenow={data.dislikeCount}
-								aria-valuemin="0"
+								aria-valuemin={0}
 								aria-valuemax={data.dislikeCount + data.likeCount}
 							/>
 						</div>
 						<div class="row">
 							<div class="col d-flex justify-content-start">
 								<span class="light-text mx-2">
-									{data.likeCount} likes
+									{data.likeCount} like{data.likeCount == 1 ? "" : "s"}
 								</span>
 							</div>
 							<div class="col d-flex justify-content-end">
 								<span class="light-text mx-2">
-									{data.dislikeCount} dislikes
+									{data.dislikeCount} dislike{data.dislikeCount == 1 ? "" : "s"}
 								</span>
 							</div>
 						</div>
@@ -88,41 +88,64 @@
 			</div>
 		</div>
 	</div>
-	<h4 class="light-text mt-4">Description</h4>
-	<p class="light-text">
-		{data.description}
-	</p>
-	<h4 class="light-text mt-4">Statistics</h4>
-	<div class="card">
-		{#each statistics as [title]}
-			<div class="card-header light-text text-center">
-				{title}
-			</div>
-		{/each}
-		<div class="card-body light-text text-center">
-			<div class="row">
-				{#each statistics as stat}
-					<div class="col">
-						{stat}
-					</div>
-				{/each}
+	<nav class="mt-4">
+		<ul class="nav nav-pills nav-fill">
+			<a class="nav-link mx-1 light-text mb-2" href="#description" role="tab">Description</a>
+			<a class="nav-link mx-1 light-text mb-2" href="#statistics" role="tab">Statistics</a>
+			<a class="nav-link mx-1 light-text mb-2" href="#description" role="tab">Description</a>
+			<a class="nav-link mx-1 light-text mb-2" href="#statistics" role="tab">Statistics</a>
+			<a class="nav-link mx-1 light-text mb-2" href="#description" role="tab">Description</a>
+			<a class="nav-link mx-1 light-text mb-2" href="#statistics" role="tab">Statistics</a>
+		</ul>
+	</nav>
+	<div class="tab-content">
+		<div class="tab-pane content rounded-2 show active m-1 p-3" id="description">
+			<p class="light-text">
+				{data.description}
+			</p>
+		</div>
+		<div class="tab-pane show active" id="statistics">
+			<div id="stats" class="container">
+				<div class="row">
+					{#each statistics as [title, stat]}
+						<div class="p-1 col-6 col-sm-4 col-lg-3">
+							<div class="p-2 card h-100">
+								<div class="light-text row">
+									<span class="h6 text-start col">
+										{title}
+									</span>
+									<span class="text-end col">
+										{stat}
+									</span>
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
 <style lang="sass">
+	:target
+		display: block !important
+		
 	.container
-		width: 60rem
+		max-width: 60rem
 
 	#buttons
 		margin-top: auto
 		display: flex
 		flex-direction: column
 
-	.card
-		background: var(--accent2)
-	
+	.tab-pane
+		display: none
+	.content, .card
+		background: var(--accent)
+	.nav-link
+		background: var(--accent1)
+
 	#thumbnail
 		aspect-ratio: 16 / 9
 

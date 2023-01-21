@@ -23,7 +23,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			name: true,
 			description: true,
 			image: true,
-			ownerUsername: true,
+			owner: {
+				select: {
+					username: true,
+					displayname: true,
+				}
+			}
 		},
 	})
 	console.timeEnd("place")
@@ -43,7 +48,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		return {
 			name: getPlace.name,
-			owner: getPlace.ownerUsername,
+			owner: getPlace.owner,
 			description: getPlace.description,
 			image: getPlace.image,
 			likeCount: (await roQuery(graph, `RETURN SIZE(() -[:likes]-> (:Place { name: $place })) as ${rand}`, query))[rand],
