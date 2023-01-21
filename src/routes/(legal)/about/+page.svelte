@@ -22,14 +22,14 @@
 <div bind:this={top} class="position-relative top-0" />
 
 <div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
-	<h1 id="title" class="fw-bolder text-white">Mercury 2</h1>
-	<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
+	<h1 id="title" class="fw-bolder light-text">Mercury 2</h1>
+	<p class="lead light-text text-center">Endless possibilities. New features. Same nostalgia.</p>
 	<h5>
-		<span class="badge text-bg-secondary dark-text opacity-50 mb-3">Closed Beta</span>
+		<span class="badge text-bg-secondary text-dark opacity-50 mb-3">Closed Beta</span>
 	</h5>
 </div>
 
-<button id="arrow" class="btn position-absolute start-50" on:click={downScroll} on:keypress={downScroll} style="opacity: {(500 - scrollY) / 300}">
+<button id="arrow" class="btn position-absolute shadow-none start-50" on:click={downScroll} on:keypress={downScroll} style="opacity: {(500 - scrollY) / 300}">
 	<i class="fa-solid light-text fa-chevron-down title" />
 </button>
 <button id="arrow2" class="btn position-fixed mb-3" on:click={upScroll} on:keypress={upScroll} style="opacity: {(scrollY - 500) / 300}">
