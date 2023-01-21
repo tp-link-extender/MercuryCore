@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page, navigating } from "$app/stores"
+	import { fade } from "svelte/transition"
 	import { handleSession } from "@lucia-auth/sveltekit/client"
+	import Loading from "$lib/components/Loading.svelte"
 	import "/src/global.sass"
 	import "/src/bootstrap.scss"
 
@@ -8,3 +10,11 @@
 </script>
 
 <slot />
+
+{#if $navigating}
+	<div class="position-absolute bottom-0 end-0 m-4" in:fade={{ duration: 1500, delay: 100 }} out:fade={{ duration: 100 }}>
+		<h1 class="light-text overflow-hidden">
+			<Loading />
+		</h1>
+	</div>
+{/if}
