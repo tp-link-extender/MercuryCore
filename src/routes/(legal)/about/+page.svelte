@@ -100,8 +100,8 @@
 	<ParallaxLayer offset={1} rate={0}>
 		<Pagepart fullwidth>
 			<div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
-				<h1 id="title" class="fw-bolder text-white">Mercury 2</h1>
-				<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
+				<h1 id="title" class="fw-bolder light-text">Mercury 2</h1>
+				<p class="lead light-text text-center">Endless possibilities. New features. Same nostalgia.</p>
 				<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa-solid fa-chevron-right" /></a></b>
 			</div>
 		</Pagepart>
