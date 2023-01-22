@@ -20,14 +20,13 @@
 <Footer />
 
 <style lang="sass">
-
 	main
 		padding-bottom: 35vh
 		padding-top: 35vh
 		flex: 1 0 auto
 
 		div
-			background: var(--accent2)
+			background: var(--accent)
 			width: fit-content
 			padding: 2rem 5rem
 

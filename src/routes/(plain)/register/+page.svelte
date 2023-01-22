@@ -167,7 +167,7 @@
 				border-color: var(--mainaccent)
 
 	input
-		background-color: var(--accent)
+		background-color: var(--accent2)
 	.valid
 		border-color: var(--accent3)
 

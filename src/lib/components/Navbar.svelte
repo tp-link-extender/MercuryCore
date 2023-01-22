@@ -27,7 +27,10 @@
 				{#if $user}
 					<div class="navbar-nav">
 						<li class="nav-item">
-							<a type="button" href="/home" class="btn my-2 my-sm-0 light-text">Home</a>
+							<a type="button" href="/home" class="btn shadow-none mr-0 light-text">Home</a>
+						</li>
+						<li class="nav-item">
+							<a type="button" href="/games" class="btn shadow-none mr-0 light-text">Games</a>
 						</li>
 					</div>
 				{/if}
@@ -42,8 +45,16 @@
 							<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
 						</li>
 					{:else}
-						<div class="dropdown">
-							<a href="/{$user?.username}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
+						<li class="nav-item">
+							<a id="rocks" type="button" href="/transactions" class="fw-bold btn my-2 my-sm-0 text-success shadow-none">
+								<i class="fa-solid fa-gem me-1" />
+								<span class="h6 text-success">
+									{$user.currency}
+								</span>
+							</a>
+						</li>
+						<li class="dropdown">
+							<a href="/{$user.username}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
 								<div id="pfp" class="mx-2 rounded-circle">
 									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 								</div>
@@ -55,12 +66,12 @@
 
 							<ul class="dropdown-menu mt-2">
 								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}">Profile</a></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}">Inventory</a></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}">Avatar</a></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}">My Groups</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-address-card me-2" /> Profile</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-box-open me-2" /> Inventory</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-user-pen me-2" /> Avatar</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-users me-2" /> My Groups</a></li>
 								<li><hr class="dropdown-divider" /></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-user-gear" /> Settings</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
 								<li>
 									<button
 										on:click={async () => {
@@ -68,11 +79,11 @@
 											invalidateAll()
 											window.location.reload()
 										}}
-										class="dropdown-item text-danger"><b><i class="fa-solid fa-arrow-right-from-bracket" /> Log out</b></button
+										class="dropdown-item text-danger"><b><i class="fa-solid fa-arrow-right-from-bracket me-2" /> Log out</b></button
 									>
 								</li>
 							</ul>
-						</div>
+						</li>
 					{/if}
 				</div>
 			</div>
@@ -85,7 +96,7 @@
 		.offcanvas-header
 			background: var(--accent3)
 		.offcanvas-body
-			background: var(--accent2)
+			background: var(--accent)
 			min-height: 100vh
 			flex-direction: column
 			
@@ -105,8 +116,6 @@
 	@media only screen and (max-width: 768px) and (orientation: landscape)
 		#loggedin
 			margin-bottom: 6rem
-
-
 
 	@media only screen and (min-width: 993px)
 		#loggedin
@@ -129,7 +138,7 @@
 		margin-right: 0.5rem
 
 	#pfp
-		background: var(--accent2)
+		background: var(--accent)
 		width: 2.5rem
 		height: 2.5rem
 
