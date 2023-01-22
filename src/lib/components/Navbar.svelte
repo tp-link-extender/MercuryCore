@@ -42,8 +42,8 @@
 							<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
 						</li>
 					{:else}
-						<div class="dropdown">
-							<a href="/{$user?.username}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
+						<li class="dropdown">
+							<a href="/{$user.username}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
 								<div id="pfp" class="mx-2 rounded-circle">
 									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 								</div>
@@ -55,12 +55,12 @@
 
 							<ul class="dropdown-menu mt-2">
 								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}">Profile</a></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}">Inventory</a></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}">Avatar</a></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}">My Groups</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-address-card me-2" /> Profile</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-box-open me-2" /> Inventory</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-user-pen me-2" /> Avatar</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-users me-2" /> My Groups</a></li>
 								<li><hr class="dropdown-divider" /></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-user-gear" /> Settings</a></li>
+								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
 								<li>
 									<button
 										on:click={async () => {
@@ -68,11 +68,17 @@
 											invalidateAll()
 											window.location.reload()
 										}}
-										class="dropdown-item text-danger"><b><i class="fa-solid fa-arrow-right-from-bracket" /> Log out</b></button
+										class="dropdown-item text-danger"><b><i class="fa-solid fa-arrow-right-from-bracket me-2" /> Log out</b></button
 									>
 								</li>
 							</ul>
-						</div>
+						</li>
+						<li class="nav-item">
+							<a id="rocks" type="button" href="/transactions" class="btn my-2 my-sm-0 text-success">
+								<i class="fa-solid fa-gem me-1" />
+								{$user.currency}
+							</a>
+						</li>
 					{/if}
 				</div>
 			</div>

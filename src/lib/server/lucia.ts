@@ -12,6 +12,7 @@ export const auth = lucia({
 			username: userData.username,
 			displayname: userData.displayname,
 			image: userData.image,
+			currency: userData.currency,
 		}
 	},
 })
