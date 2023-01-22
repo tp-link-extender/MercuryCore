@@ -20,4 +20,4 @@ services:
             - ./data/postgres:/var/lib/postgresql/data
 
         environment:
-            POSTGRES_PASSWORD: password # todo: load from env
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
+	import SvelteMarkdown from "svelte-markdown"
 	import Place from "$lib/components/Place.svelte"
 	const user = getUser()
 
@@ -13,6 +15,7 @@
 	const greets = [`Hi, ${$user?.displayname}!`, `Hello, ${$user?.displayname}!`]
 
 	export let data: any
+	export let form: any
 </script>
 
 <svelte:head>
@@ -21,7 +24,7 @@
 
 <div class="container">
 	<div class="top d-flex px-2">
-		<div id="pfp" class="rounded-circle">
+		<div class="pfp rounded-circle">
 			<img src={$user?.image} alt="You" class="rounded-circle img-fluid rounded-top-0" />
 		</div>
 		<h1 class="text-center light-text">
@@ -30,18 +33,41 @@
 	</div>
 	<div class="row">
 		<div class="col col-12 col-xl-5 col-md-6 col-sm-12">
-			<div class="card mt-5 bg-dark">
-				<div class="card-body bg-dark">
-					<div class="col">
-						<p class="text-light">Post your status - your friends and followers can view how you're doing!</p>
-						<div class="input-group mb-3">
-							<input type="text" class="form-control" placeholder="Post status" aria-label="Post Status" />
-							<button class="btn btn-success" type="button" id="button-addon2">Send</button>
+			<div id="feed" class="card mt-5 overflow-auto">
+				<div class="card-body light-text col">
+					<p>Post your status - your friends and followers can view how you're doing!</p>
+					<form method="POST" use:enhance>
+						<div class="input-group">
+							<input type="text" class="form-control light-text {form?.msg ? 'is-invalid' : 'valid'}" placeholder="Post status" name="status" aria-label="Post Status" required />
+							<button class="btn btn-success" type="submit" id="button-addon2">Send</button>
 						</div>
-					</div>
+						{#if form?.msg}
+							<div class="text-danger">{form.msg}</div>
+						{/if}
+						<div class="mb-3" />
+					</form>
+					{#if data.feed.length > 0}
+						{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
+							<div class="card mb-2">
+								<div class="card-body pb-0">
+									<a id="user" class="d-flex mb-2 text-decoration-none" href="/{status.author.username}">
+										<span class="pfp rounded-circle">
+											<img src={status.author.image} alt={status.author.displayname} class="rounded-circle img-fluid rounded-top-0" />
+										</span>
+										<span class="fw-bold ms-3 light-text">{status.author.displayname}</span>
+										<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
+									</a>
+									<p class="text-start">
+										<SvelteMarkdown source={status.content} />
+									</p>
+								</div>
+							</div>
+						{/each}
+					{/if}
 				</div>
 			</div>
 		</div>
+
 		<div class="col col-9 col-xl-7 col-md-6 col-sm-12">
 			<div class="mt-5">
 				{#if data.friends.length > 0}
@@ -86,8 +112,8 @@
 
 	.top
 		width: fit-content
-		#pfp
-			background: var(--accent2)
+		.pfp
+			background: var(--accent)
 		img
 			height: 6rem
 		h1
@@ -95,7 +121,20 @@
 
 	input
 		background: var(--accent)
-		border-color: var(--accent3)
+	.valid
+		border-color: var(--accent2)
+	.card
+		background: var(--accent)
+
+	#feed
+		background: var(--darker)
+		max-height: 50vh
+		#user
+			align-items: center
+			.pfp
+				background: var(--accent2)
+				img
+					width: 2rem
 
 	#friends
 		overflow-x: auto
@@ -104,7 +143,7 @@
 			.badge
 				padding: 0.75rem
 			.image-background
-				background: var(--accent2)
+				background: var(--accent)
 				width: 7rem
 				height: 7rem
 				margin: auto
