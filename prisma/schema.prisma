@@ -34,7 +34,7 @@ model User {
     // groupsOwned  Group[] @relation("owner")
     // groupsJoined Group[] @relation("member")
     places          Place[]
-    // posts       Post[]
+    posts           Post[]
     regkeyKey       String
 
     @@map("user")
@@ -56,6 +56,14 @@ model Regkey {
     usesLeft Int       @default(1)
     expiry   DateTime?
     users    User[]
+}
+
+model Post {
+    id             String   @id @unique @default(cuid())
+    author         User     @relation(fields: [authorUsername], references: [username])
+    authorUsername String
+    posted         DateTime @default(now())
+    content        String
 }
 
 // model Group {
