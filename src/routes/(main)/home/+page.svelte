@@ -33,26 +33,26 @@
 			<div class="card mt-5">
 				<div class="card-body">
 					<div class="col">
-						<p>Post your status - your friends and followers can view how you're doing!</p>
-						{#if data.feed.length > 0}
-							{#each data.feed.sort((a, b) => b.date - a.date) as status}
-								<div class="card">
-									<div class="card-body">
-										<span class="fw-bold">{status.user}</span>
-										<span class="float-end fw-italic">{status.date.toLocaleString()}</span>
-										<p class="text-start">
-											{status.text}
-										</p>
-									</div>
-								</div>
-							{/each}
-						{/if}
+						<p class="light-text">Post your status - your friends and followers can view how you're doing!</p>
 						<form method="POST">
 							<div class="input-group mb-3">
 								<input type="text" class="form-control" placeholder="Post status" name="status" aria-label="Post Status" />
 								<button class="btn btn-success" type="submit" id="button-addon2">Send</button>
 							</div>
 						</form>
+						{#if data.feed.length > 0}
+							{#each data.feed.sort((a, b) => b.date - a.date) as status}
+								<div class="card mb-1">
+									<div class="card-body p-2">
+										<span class="fw-bold light-text">{status.user}</span>
+										<span class="float-end fw-italic light-text">{status.date.toLocaleString()}</span>
+										<p class="text-start light-text">
+											{status.text}
+										</p>
+									</div>
+								</div>
+							{/each}
+						{/if}
 					</div>
 				</div>
 			</div>
