@@ -1,8 +1,8 @@
-import type { PageServerLoad } from "./$types"
-import { redirect } from "@sveltejs/kit"
+import type { Actions, PageServerLoad } from "./$types"
+import { fail, redirect } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
+import { sanitize } from "isomorphic-dompurify"
 import graph from "$lib/server/redis"
-import type { Actions } from "./$types"
 
 const prisma = new PrismaClient()
 // TODO: replace this with a DB call, as this is global and will
@@ -10,7 +10,7 @@ const prisma = new PrismaClient()
 
 const feedArray = [
 	{
-		text: "Welcome To Mercury!",
+		text: "Welcome to Mercury!",
 		date: new Date(),
 		username: "builderman",
 		displayname: "Builderman",
@@ -24,12 +24,11 @@ export const actions: Actions = {
 		if (!session.session) throw redirect(302, "/login")
 
 		const data = await request.formData()
-		const status = data.get("status")?.toString() || ""
-		if (status.length <= 0) {
-			return
-		}
+		const status = sanitize(data.get("status")?.toString() || "")
+		if (status.length <= 0) return fail(400, { msg: "Invalid status" })
+
 		feedArray.push({
-			text: status,
+			text: status, // normally would not be required, but SvelteMarkdown uses the unsafe @html tag, which would allow xss
 			date: new Date(),
 			username: session.user.username,
 			displayname: session.user.displayname,

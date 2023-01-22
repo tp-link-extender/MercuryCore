@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
+	import SvelteMarkdown from "svelte-markdown"
 	import Place from "$lib/components/Place.svelte"
 	const user = getUser()
 
@@ -14,6 +15,7 @@
 	const greets = [`Hi, ${$user?.displayname}!`, `Hello, ${$user?.displayname}!`]
 
 	export let data: any
+	export let form: any
 </script>
 
 <svelte:head>
@@ -35,10 +37,14 @@
 				<div class="card-body light-text col">
 					<p>Post your status - your friends and followers can view how you're doing!</p>
 					<form method="POST" use:enhance>
-						<div class="input-group mb-3">
-							<input type="text" class="form-control light-text" placeholder="Post status" name="status" aria-label="Post Status" required />
+						<div class="input-group">
+							<input type="text" class="form-control light-text {form?.msg ? 'is-invalid' : 'valid'}" placeholder="Post status" name="status" aria-label="Post Status" required />
 							<button class="btn btn-success" type="submit" id="button-addon2">Send</button>
 						</div>
+						{#if form?.msg}
+							<div class="text-danger">{form.msg}</div>
+						{/if}
+						<div class="mb-3" />
 					</form>
 					{#if data.feed.length > 0}
 						{#each data.feed.sort((a, b) => b.date - a.date) as status}
@@ -52,7 +58,7 @@
 										<span class="ms-auto fw-italic light-text text-end">{status.date.toLocaleString()}</span>
 									</a>
 									<p class="text-start">
-										{status.text}
+										<SvelteMarkdown source={status.text} />
 									</p>
 								</div>
 							</div>
@@ -114,6 +120,7 @@
 
 	input
 		background: var(--accent)
+	.valid
 		border-color: var(--accent2)
 	.card
 		background: var(--accent)
