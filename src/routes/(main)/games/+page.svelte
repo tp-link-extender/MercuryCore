@@ -1,0 +1,70 @@
+<script lang="ts">
+	import Place from "$lib/components/Place.svelte"
+	export let data: any
+</script>
+
+<svelte:head>
+	<title>Discover - Mercury</title>
+</svelte:head>
+<div class="container">
+	<div class="row">
+		<div class="col-3">
+			<h1 class="light-text">Games</h1>
+			<div class="card rounded-none">
+				<div class="card-header light-text px-3 py-2"><i class="fa-solid fa-magnifying-glass" /> Filter</div>
+				<div class="card-body">
+					<form>
+						<div class="input-group mb-3">
+							<input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
+							<button class="btn btn-success" type="button" id="button-addon2">Search</button>
+						</div>
+						<p>
+							<a class="text-decoration-none" data-bs-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse">
+								<b>Advanced</b> <i class="fa-solid fa-circle-chevron-down" />
+							</a>
+						</p>
+						<div class="collapse" id="collapse">
+							<div class="mb-3">
+								<label for="genre" class="form-label light-text">Genre</label>
+								<select class="form-select form-select-sm" id="genre" placeholder="Genre" aria-label="genre">
+									<option value="Obby">Obby</option>
+									<option value="Horror">Horror</option>
+									<option value="Comedy">Comedy</option>
+								</select>
+							</div>
+							<div class="mb-3">
+								<div class="form-check light-text">
+									<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+									<label class="form-check-label" for="flexCheckDefault"> Gears Allowed </label>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="container d-grid mt-5">
+				{#each Array(50) as _}
+					{#each data.places || [] as place}
+						<Place {place} />
+					{/each}
+				{/each}
+			</div>
+		</div>
+	</div>
+</div>
+
+<style lang="sass">
+	.container
+		max-width: 100%
+		font-size: 0.9rem
+
+		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr))
+		column-gap: 1rem
+		row-gap: 1rem
+		place-items: center
+	
+	.card
+		background: var(--accent1)
+</style>
