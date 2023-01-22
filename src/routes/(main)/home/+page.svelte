@@ -47,18 +47,18 @@
 						<div class="mb-3" />
 					</form>
 					{#if data.feed.length > 0}
-						{#each data.feed.sort((a, b) => b.date - a.date) as status}
+						{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
 							<div class="card mb-2">
 								<div class="card-body pb-0">
-									<a id="user" class="d-flex mb-2 text-decoration-none" href="/{status.username}">
+									<a id="user" class="d-flex mb-2 text-decoration-none" href="/{status.author.username}">
 										<span class="pfp rounded-circle">
-											<img src={status.image} alt={status.displayname} class="rounded-circle img-fluid rounded-top-0" />
+											<img src={status.author.image} alt={status.author.displayname} class="rounded-circle img-fluid rounded-top-0" />
 										</span>
-										<span class="fw-bold ms-3 light-text">{status.displayname}</span>
-										<span class="ms-auto fw-italic light-text text-end">{status.date.toLocaleString()}</span>
+										<span class="fw-bold ms-3 light-text">{status.author.displayname}</span>
+										<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
 									</a>
 									<p class="text-start">
-										<SvelteMarkdown source={status.text} />
+										<SvelteMarkdown source={status.content} />
 									</p>
 								</div>
 							</div>
@@ -67,6 +67,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="col col-9 col-xl-7 col-md-6 col-sm-12">
 			<div class="mt-5">
 				{#if data.friends.length > 0}
