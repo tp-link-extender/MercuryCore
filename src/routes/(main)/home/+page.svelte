@@ -43,14 +43,14 @@
 					{#if data.feed.length > 0}
 						{#each data.feed.sort((a, b) => b.date - a.date) as status}
 							<div class="card mb-2">
-								<div class="card-body">
+								<div class="card-body pb-0">
 									<a id="user" class="d-flex mb-2 text-decoration-none" href="/{status.username}">
 										<span class="pfp rounded-circle">
 											<img src={status.image} alt={status.displayname} class="rounded-circle img-fluid rounded-top-0" />
 										</span>
 										<span class="fw-bold ms-3 light-text">{status.displayname}</span>
+										<span class="ms-auto fw-italic light-text text-end">{status.date.toLocaleString()}</span>
 									</a>
-									<span class="float-end fw-italic">{status.date.toLocaleString()}</span>
 									<p class="text-start">
 										{status.text}
 									</p>
