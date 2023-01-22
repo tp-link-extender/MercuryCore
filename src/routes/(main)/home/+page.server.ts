@@ -7,13 +7,17 @@ import type { Actions } from "./$types"
 const prisma = new PrismaClient()
 // TODO: replace this with a DB call, as this is global and will
 // need to be filter by users of the friends.
+
 const feedArray = [
 	{
 		text: "Welcome To Mercury!",
 		date: new Date(),
-		user: "Builderman",
+		username: "builderman",
+		displayname: "Builderman",
+		image: "https://tr.rbxcdn.com/a2d3f7d8d3d915ca4fa6cfcd6427958d/150/150/AvatarHeadshot/Png",
 	},
 ]
+
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const session = await locals.validateUser()
@@ -22,12 +26,14 @@ export const actions: Actions = {
 		const data = await request.formData()
 		const status = data.get("status")?.toString() || ""
 		if (status.length <= 0) {
-			return;
-		} 
+			return
+		}
 		feedArray.push({
 			text: status,
 			date: new Date(),
-			user: session.user.username,
+			username: session.user.username,
+			displayname: session.user.displayname,
+			image: session.user.image,
 		})
 	},
 }
@@ -35,6 +41,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	console.time("home")
 	const session = await locals.validateUser()
 	if (!session.session) throw redirect(302, "/login")
+
 	async function Friends() {
 		const friendsQuery = await graph.roQuery(
 			`
@@ -69,9 +76,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 		return friends
 	}
+
 	async function Feed() {
 		return feedArray
 	}
+
 	console.timeEnd("home")
 	return {
 		places: prisma.place.findMany({
@@ -82,6 +91,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 			},
 		}),
 		friends: Friends(),
-		feed: Feed(),
+		feed: feedArray,
 	}
 }
