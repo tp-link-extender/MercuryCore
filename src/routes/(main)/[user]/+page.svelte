@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
+	import SvelteMarkdown from "svelte-markdown"
 	import Place from "$lib/components/Place.svelte"
 
 	const user = getUser()
@@ -92,6 +93,31 @@
 			</div>
 		</div>
 	{/if}
+	{#if data.feed.length > 0}
+		<h2 class="h4 mt-5 light-text">Feed posts</h2>
+		<div id="feed" class="light-text p-3">
+			<div class="row">
+				{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
+					<div class="p-2 col-md-6 col-sm-12">
+						<div class="card">
+							<div class="card-body pb-0">
+								<a id="user" class="d-flex mb-2 text-decoration-none" href="/{data.username}">
+									<span class="pfp rounded-circle">
+										<img src={data.img} alt={data.displayname} class="rounded-circle img-fluid rounded-top-0" />
+									</span>
+									<span class="fw-bold ms-3 light-text">{data.displayname}</span>
+									<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
+								</a>
+								<p class="text-start">
+									<SvelteMarkdown source={status.content} />
+								</p>
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style lang="sass">
@@ -104,4 +130,16 @@
 		background: var(--accent)
 		img
 			height: 10rem
+
+	.card
+		background: var(--accent)
+
+	#feed
+		max-height: 50vh
+		#user
+			align-items: center
+			.pfp
+				background: var(--accent2)
+				img
+					width: 2rem
 </style>

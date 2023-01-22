@@ -24,6 +24,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			bio: true,
 			image: true,
 			places: true,
+			posts: true,
 		},
 	})
 	if (user) {
@@ -52,6 +53,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			bio: user.bio,
 			img: user.image,
 			places: user.places,
+			feed: user.posts,
 			friendCount: (await roQuery(graph, `RETURN SIZE(() -[:friends]-> (:User { name: $user })) as ${rand}`, query2))[rand],
 			followerCount: (await roQuery(graph, `RETURN SIZE(() -[:follows]-> (:User { name: $user })) as ${rand}`, query2))[rand],
 			followingCount: (await roQuery(graph, `RETURN SIZE(() <-[:follows]- (:User { name: $user })) as ${rand}`, query2))[rand],
@@ -65,7 +67,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		throw error(404, `Not found: /${params.user}`)
 	}
 }
-
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
@@ -184,7 +185,7 @@ export const actions: Actions = {
 					else return fail(400)
 					break
 			}
-		} catch (e) { 
+		} catch (e) {
 			console.error(e)
 			throw error(500, "Redis error 2")
 		}
