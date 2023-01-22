@@ -42,6 +42,14 @@
 							<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
 						</li>
 					{:else}
+						<li class="nav-item">
+							<a id="rocks" type="button" href="/transactions" class="fw-bold btn my-2 my-sm-0 text-success shadow-none">
+								<i class="fa-solid fa-gem me-1" />
+								<span class="h6 text-success">
+									{$user.currency}
+								</span>
+							</a>
+						</li>
 						<li class="dropdown">
 							<a href="/{$user.username}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
 								<div id="pfp" class="mx-2 rounded-circle">
@@ -72,12 +80,6 @@
 									>
 								</li>
 							</ul>
-						</li>
-						<li class="nav-item">
-							<a id="rocks" type="button" href="/transactions" class="btn my-2 my-sm-0 text-success">
-								<i class="fa-solid fa-gem me-1" />
-								{$user.currency}
-							</a>
 						</li>
 					{/if}
 				</div>
