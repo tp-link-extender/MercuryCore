@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	export let data: any
 
 	const statistics = [
-		["Activity", "2 visits"],
+		["Activity", "8 visits"],
 		["Creation", "19/01/2023"],
 		["Updated", "Three hours ago"],
 		["Genre", "Horror"],
 		["Server Limit", "100"],
-		["Currently Playing", "No one"],
+		["Now Playing", "6 players"],
 	]
+
+	const user = getUser()
 </script>
 
 <svelte:head>
@@ -20,7 +23,7 @@
 <div class="container">
 	<div class="d-flex mt-12">
 		<div class="flex flex-col me-3">
-			<img id="thumbnail" src={data.image} alt={data.name} class="rounded-4 img-fluid" />
+			<img id="thumbnail" src={data.image} alt={data.name} class="rounded-none img-fluid" />
 		</div>
 		<div class="flex flex-col">
 			<h2 class="light-text">{data.name}</h2>
@@ -88,43 +91,54 @@
 			</div>
 		</div>
 	</div>
-	<nav class="mt-4">
-		<ul class="nav nav-pills nav-fill">
-			<a class="nav-link mx-1 light-text mb-2" href="#description" role="tab">Description</a>
-			<a class="nav-link mx-1 light-text mb-2" href="#statistics" role="tab">Statistics</a>
-			<a class="nav-link mx-1 light-text mb-2" href="#description" role="tab">Description</a>
-			<a class="nav-link mx-1 light-text mb-2" href="#statistics" role="tab">Statistics</a>
-			<a class="nav-link mx-1 light-text mb-2" href="#description" role="tab">Description</a>
-			<a class="nav-link mx-1 light-text mb-2" href="#statistics" role="tab">Statistics</a>
-		</ul>
-	</nav>
-	<div class="tab-content">
-		<div class="tab-pane content rounded-2 show active m-1 p-3" id="description">
+	<ul class="nav nav-pills nav-justified my-3" id="pills-tab" role="tablist">
+		<li class="nav-item" role="presentation">
+			<button class="nav-link active" id="pills-desc-tab" data-bs-toggle="pill" data-bs-target="#pills-desc" type="button" role="tab" aria-controls="pills-desc" aria-selected="true"
+				>Description</button
+			>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="pills-game-tab" data-bs-toggle="pill" data-bs-target="#pills-game" type="button" role="tab" aria-controls="pills-game" aria-selected="false">Game</button>
+		</li>
+	</ul>
+	<div class="tab-content" id="pills-tabContent">
+		<div class="tab-pane fade show active" id="pills-desc" role="tabpanel" aria-labelledby="pills-desc-tab" tabindex="0">
 			<p class="light-text">
 				{data.description}
 			</p>
 		</div>
-		<div class="tab-pane show active" id="statistics">
-			<div id="stats" class="container">
-				<div class="row">
-					{#each statistics as [title, stat]}
-						<div class="p-1 col-6 col-sm-4 col-lg-3">
-							<div class="p-2 card h-100">
-								<div class="light-text row">
-									<span class="h6 text-start col">
-										{title}
-									</span>
-									<span class="text-end col">
-										{stat}
-									</span>
-								</div>
-							</div>
+		<div class="tab-pane fade" id="pills-game" role="tabpanel" aria-labelledby="pills-game-tab" tabindex="0">
+			<h4 class="light-text">Server List</h4>
+			<div class="card mb-2">
+				<div class="card-body">
+					<div class="row">
+						<div class="col col-2">
+							<p class="light-text mb-2">Currently Playing: 6/20</p>
+							<button id="join" class="btn btn-sm btn-success">Join Server</button>
 						</div>
-					{/each}
+						<div class="col">
+							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
+							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
+							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
+							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
+							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
+							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<hr>
+	<div class="row">
+		{#each statistics as [title, stat]}
+		<div class="col">
+			<p class="light-text text-center"><b>{title}</b></p>
+			<p class="light-text text-center">{stat}</p>
+		</div>
+		{/each}
+	</div>
+	<hr>
 </div>
 
 <style lang="sass">
@@ -135,17 +149,29 @@
 		max-width: 60rem
 
 	#buttons
-		margin-top: auto
+		margin: auto
 		display: flex
 		flex-direction: column
 
-	.tab-pane
-		display: none
 	.content, .card
 		background: var(--accent)
-	.nav-link
-		background: var(--accent1)
 
+	.nav-link
+		border-radius: 0
+		color: var(--light-text)
+
+	.nav-pills
+		background: var(--accent)
+
+	.nav-pills .active
+		background: transparent
+		border-style: solid
+		border-width: 0px 0px 2px 0px
+		border-color: var(--bs-blue)
+
+	#pfp
+		background: var(--accent2)
+	
 	#thumbnail
 		aspect-ratio: 16 / 9
 
