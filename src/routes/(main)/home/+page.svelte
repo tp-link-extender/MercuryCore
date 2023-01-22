@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import Place from "$lib/components/Place.svelte"
 	const user = getUser()
@@ -21,7 +22,7 @@
 
 <div class="container">
 	<div class="top d-flex px-2">
-		<div id="pfp" class="rounded-circle">
+		<div class="pfp rounded-circle">
 			<img src={$user?.image} alt="You" class="rounded-circle img-fluid rounded-top-0" />
 		</div>
 		<h1 class="text-center light-text">
@@ -30,30 +31,33 @@
 	</div>
 	<div class="row">
 		<div class="col col-12 col-xl-5 col-md-6 col-sm-12">
-			<div class="card mt-5">
-				<div class="card-body">
-					<div class="col">
-						<p class="light-text">Post your status - your friends and followers can view how you're doing!</p>
-						<form method="POST">
-							<div class="input-group mb-3">
-								<input type="text" class="form-control" placeholder="Post status" name="status" aria-label="Post Status" />
-								<button class="btn btn-success" type="submit" id="button-addon2">Send</button>
-							</div>
-						</form>
-						{#if data.feed.length > 0}
-							{#each data.feed.sort((a, b) => b.date - a.date) as status}
-								<div class="card mb-1">
-									<div class="card-body p-2">
-										<span class="fw-bold light-text">{status.user}</span>
-										<span class="float-end fw-italic light-text">{status.date.toLocaleString()}</span>
-										<p class="text-start light-text">
-											{status.text}
-										</p>
-									</div>
+			<div id="feed" class="card mt-5 overflow-auto">
+				<div class="card-body light-text col">
+					<p>Post your status - your friends and followers can view how you're doing!</p>
+					<form method="POST" use:enhance>
+						<div class="input-group mb-3">
+							<input type="text" class="form-control light-text" placeholder="Post status" name="status" aria-label="Post Status" required />
+							<button class="btn btn-success" type="submit" id="button-addon2">Send</button>
+						</div>
+					</form>
+					{#if data.feed.length > 0}
+						{#each data.feed.sort((a, b) => b.date - a.date) as status}
+							<div class="card mb-2">
+								<div class="card-body pb-0">
+									<a id="user" class="d-flex mb-2 text-decoration-none" href="/{status.username}">
+										<span class="pfp rounded-circle">
+											<img src={status.image} alt={status.displayname} class="rounded-circle img-fluid rounded-top-0" />
+										</span>
+										<span class="fw-bold ms-3 light-text">{status.displayname}</span>
+										<span class="ms-auto fw-italic light-text text-end">{status.date.toLocaleString()}</span>
+									</a>
+									<p class="text-start">
+										{status.text}
+									</p>
 								</div>
-							{/each}
-						{/if}
-					</div>
+							</div>
+						{/each}
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -101,7 +105,7 @@
 
 	.top
 		width: fit-content
-		#pfp
+		.pfp
 			background: var(--accent)
 		img
 			height: 6rem
@@ -109,10 +113,20 @@
 			margin: auto 2rem
 
 	input
-		background: var(--accent2)
-		border-color: var(--accent3)
+		background: var(--accent)
+		border-color: var(--accent2)
 	.card
 		background: var(--accent)
+
+	#feed
+		background: var(--darker)
+		max-height: 50vh
+		#user
+			align-items: center
+			.pfp
+				background: var(--accent2)
+				img
+					width: 2rem
 
 	#friends
 		overflow-x: auto
