@@ -27,7 +27,10 @@
 				{#if $user}
 					<div class="navbar-nav">
 						<li class="nav-item">
-							<a type="button" href="/home" class="btn my-2 my-sm-0 light-text">Home</a>
+							<a type="button" href="/home" class="btn shadow-none mr-0 light-text">Home</a>
+						</li>
+						<li class="nav-item">
+							<a type="button" href="/games" class="btn shadow-none mr-0 light-text">Games</a>
 						</li>
 					</div>
 				{/if}
