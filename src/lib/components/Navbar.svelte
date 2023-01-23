@@ -13,12 +13,12 @@
 			type="button"
 			title="Open sidebar"
 			data-bs-toggle="offcanvas"
-			data-bs-target="#offcanvasNavbarExample-expand-lg"
-			aria-controls="offcanvasNavbarExample-expand-lg"
+			data-bs-target="#offcanvasNavbar-expand-lg"
+			aria-controls="offcanvasNavbar-expand-lg"
 		>
-			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbarExample-expand-lg" />
+			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-lg" />
 		</button>
-		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbarExample-expand-lg" aria-labelledby="offcanvasNavbarExample-expand-lg">
+		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-lg" aria-labelledby="offcanvasNavbar-expand-lg">
 			<div class="offcanvas-header">
 				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 				<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
