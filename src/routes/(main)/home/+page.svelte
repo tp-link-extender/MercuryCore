@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
-	import SvelteMarkdown from "svelte-markdown"
 	import Place from "$lib/components/Place.svelte"
 	const user = getUser()
 
@@ -58,7 +57,7 @@
 										<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
 									</a>
 									<p class="text-start">
-										<SvelteMarkdown source={status.content} />
+										{status.content}
 									</p>
 								</div>
 							</div>
@@ -95,12 +94,6 @@
 				<h2 class="h4 light-text">Resume playing</h2>
 				<div class="row m-0 p-0 rounded-0">
 					{#each data.places || [] as place}
-						<div class="col col-6 col-sm-4 col-md-4 col-xl-3 text-center">
-							<Place {place} />
-						</div>
-						<div class="col col-6 col-sm-4 col-md-4 col-xl-3 text-center">
-							<Place {place} />
-						</div>
 						<div class="col col-6 col-sm-4 col-md-4 col-xl-3 text-center">
 							<Place {place} />
 						</div>
