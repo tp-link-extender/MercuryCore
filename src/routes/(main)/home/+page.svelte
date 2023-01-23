@@ -23,17 +23,17 @@
 </svelte:head>
 
 <div class="container">
-	<div class="top d-flex px-2">
-		<div class="pfp rounded-circle">
-			<img src={$user?.image} alt="You" class="rounded-circle img-fluid rounded-top-0" />
-		</div>
-		<h1 class="text-center light-text">
-			{greets[Math.floor(Math.random() * greets.length)]}
-		</h1>
-	</div>
 	<div class="row">
 		<div class="col col-12 col-xl-5 col-md-6 col-sm-12">
-			<div id="feed" class="card mt-5 overflow-auto">
+			<div class="top d-flex px-2">
+				<div class="pfp rounded-circle align-middle">
+					<img src={$user?.image} alt="You" class="rounded-circle img-fluid rounded-top-0" />
+				</div>
+				<h1 class="text-center light-text">
+					{greets[Math.floor(Math.random() * greets.length)]}
+				</h1>
+			</div>
+			<div id="feed" class="card mt-4 overflow-auto">
 				<div class="card-body light-text col">
 					<p>Post your status - your friends and followers can view how you're doing!</p>
 					<form method="POST" use:enhance>
@@ -69,7 +69,7 @@
 		</div>
 
 		<div class="col col-9 col-xl-7 col-md-6 col-sm-12">
-			<div class="mt-5">
+			<div class="mt-4">
 				{#if data.friends.length > 0}
 					<h2 class="h4 light-text">Friends</h2>
 					<div id="friends" class="d-flex">
@@ -95,7 +95,13 @@
 				<h2 class="h4 light-text">Resume playing</h2>
 				<div class="row m-0 p-0 rounded-0">
 					{#each data.places || [] as place}
-						<div class="col col-5 col-sm-3 col-md-3 col-xl-3 text-center">
+						<div class="col col-6 col-sm-4 col-md-4 col-xl-3 text-center">
+							<Place {place} />
+						</div>
+						<div class="col col-6 col-sm-4 col-md-4 col-xl-3 text-center">
+							<Place {place} />
+						</div>
+						<div class="col col-6 col-sm-4 col-md-4 col-xl-3 text-center">
 							<Place {place} />
 						</div>
 					{/each}
@@ -114,7 +120,7 @@
 		width: fit-content
 		.pfp
 			background: var(--accent)
-		img
+			width: 6rem
 			height: 6rem
 		h1
 			margin: auto 2rem
