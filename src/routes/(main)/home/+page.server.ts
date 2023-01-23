@@ -1,7 +1,6 @@
 import type { Actions, PageServerLoad } from "./$types"
 import { fail, redirect } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
-import { sanitize } from "isomorphic-dompurify"
 import {roQuery} from "$lib/server/redis"
 
 const prisma = new PrismaClient()
@@ -80,7 +79,7 @@ export const actions: Actions = {
 		if (!session.session) throw redirect(302, "/login")
 
 		const data = await request.formData()
-		const status = sanitize(data.get("status")?.toString() || "") // normally would not be required, but SvelteMarkdown uses the unsafe @html tag, which would allow xss
+		const status = data.get("status")?.toString() || ""
 		if (status.length <= 0) return fail(400, { msg: "Invalid status" })
 
 		await prisma.post.create({
