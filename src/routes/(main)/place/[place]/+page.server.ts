@@ -1,18 +1,10 @@
 import type { Actions, PageServerLoad } from "./$types"
 import { error, fail, redirect, type Page } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
-import graph from "$lib/server/redis"
-import { createClient, Graph } from "redis"
+import { graph, roQuery } from "$lib/server/redis"
 
 const prisma = new PrismaClient()
 
-async function roQuery(graph: any, str: string, query: any) {
-	try {
-		return ((await graph.roQuery(str, query)).data || [])[0]
-	} catch {
-		return false
-	}
-}
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("place")
 	const getPlace = await prisma.place.findUnique({
@@ -27,8 +19,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				select: {
 					username: true,
 					displayname: true,
-				}
-			}
+				},
+			},
 		},
 	})
 	console.timeEnd("place")
@@ -42,19 +34,15 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			},
 		}
 
-		// this is a stupid bug. previously just returning the result of a roQuery as "data" or whatever, then using .data, would break randomly
-		const c = () => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.random() * 52)
-		const rand: any = Array(5).fill(0).map(c).join("")
-
 		return {
 			name: getPlace.name,
 			owner: getPlace.owner,
 			description: getPlace.description,
 			image: getPlace.image,
-			likeCount: (await roQuery(graph, `RETURN SIZE(() -[:likes]-> (:Place { name: $place })) as ${rand}`, query))[rand],
-			dislikeCount: (await roQuery(graph, `RETURN SIZE(() -[:dislikes]-> (:Place { name: $place })) as ${rand}`, query))[rand],
-			likes: session ? roQuery(graph, "MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $place }) RETURN r", query) : false,
-			dislikes: session ? roQuery(graph, "MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $place }) RETURN r", query) : false,
+			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Place { name: $place }))", query, true),
+			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Place { name: $place }))", query, true),
+			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $place }) RETURN r", query) : false,
+			dislikes: session ? roQuery("MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $place }) RETURN r", query) : false,
 		}
 	} else throw error(404, `Not found: /${params.place}`)
 }
