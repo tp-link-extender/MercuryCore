@@ -1,16 +1,8 @@
 import type { Actions, PageServerLoad } from "./$types"
 import { error, fail, redirect } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
-import graph from "$lib/server/redis"
+import { graph, roQuery } from "$lib/server/redis"
 const prisma = new PrismaClient()
-
-async function roQuery(graph: any, str: string, query: any) {
-	try {
-		return ((await graph.roQuery(str, query)).data || [])[0]
-	} catch {
-		return false
-	}
-}
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("user")
@@ -42,10 +34,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			},
 		}
 
-		// this is a stupid bug. previously just returning the result of a roQuery as "data" or whatever, then using .data, would break randomly
-		const c = () => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.random() * 52)
-		const rand: any = Array(5).fill(0).map(c).join("")
-
 		console.timeEnd("user")
 		return {
 			username: params.user,
@@ -54,14 +42,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			img: user.image,
 			places: user.places,
 			feed: user.posts,
-			friendCount: (await roQuery(graph, `RETURN SIZE(() -[:friends]-> (:User { name: $user })) as ${rand}`, query2))[rand],
-			followerCount: (await roQuery(graph, `RETURN SIZE(() -[:follows]-> (:User { name: $user })) as ${rand}`, query2))[rand],
-			followingCount: (await roQuery(graph, `RETURN SIZE(() <-[:follows]- (:User { name: $user })) as ${rand}`, query2))[rand],
-			friends: session ? roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query) : false,
-			following: session ? roQuery(graph, "MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query) : false,
-			follower: session ? roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query) : false,
-			incomingRequest: session ? roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query) : false,
-			outgoingRequest: session ? roQuery(graph, "MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query) : false,
+			friendCount: roQuery("RETURN SIZE(() -[:friends]-> (:User { name: $user }))", query2, true),
+			followerCount: roQuery("RETURN SIZE(() -[:follows]-> (:User { name: $user }))", query2, true),
+			followingCount: roQuery("RETURN SIZE(() <-[:follows]- (:User { name: $user }))", query2, true),
+			friends: session ? roQuery("MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query) : false,
+			following: session ? roQuery("MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query) : false,
+			follower: session ? roQuery("MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query) : false,
+			incomingRequest: session ? roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query) : false,
+			outgoingRequest: session ? roQuery("MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query) : false,
 		}
 	} else {
 		throw error(404, `Not found: /${params.user}`)
@@ -124,9 +112,9 @@ export const actions: Actions = {
 					)
 					break
 				case "request":
-					if (!(await roQuery(graph, "MATCH (:User { name: $user1 }) -[r:friends]-> (:User { name: $user2 }) RETURN r", query))) {
+					if (!(await roQuery("MATCH (:User { name: $user1 }) -[r:friends]-> (:User { name: $user2 }) RETURN r", query))) {
 						// Make sure users are not already friends
-						if (await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
+						if (await roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
 							// If there is already an incoming request, accept it instead
 							await graph.query(
 								`
@@ -169,7 +157,7 @@ export const actions: Actions = {
 					)
 					break
 				case "accept":
-					if (await roQuery(graph, "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
+					if (await roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
 						// Make sure an incoming request exists before accepting
 						await graph.query(
 							`

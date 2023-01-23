@@ -2,7 +2,7 @@ import type { Actions, PageServerLoad } from "./$types"
 import { fail, redirect } from "@sveltejs/kit"
 import { PrismaClient } from "@prisma/client"
 import { sanitize } from "isomorphic-dompurify"
-import graph from "$lib/server/redis"
+import {roQuery} from "$lib/server/redis"
 
 const prisma = new PrismaClient()
 // TODO: replace this with a DB call, as this is global and will
@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!session.session) throw redirect(302, "/login")
 
 	async function Friends() {
-		const friendsQuery = await graph.roQuery(
+		const friendsQuery = await roQuery(
 			`
 			MATCH (:User { name: $user1 }) -[r:friends]-> (u:User)
 			RETURN u.name as name

@@ -10,4 +10,25 @@ client.on("error", e => {
 })
 await client.connect()
 
-export default new Graph(client, "friends")
+export const graph = new Graph(client, "friends")
+
+export async function query(str: any, query: any) {
+	await graph.query(str, { params: query })
+}
+
+export async function roQuery(str: string, query: any, res = false) {
+	// this is a stupid bug. previously just returning the result of a roQuery as "data" or whatever, then using .data, would break randomly
+	const c = () => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.random() * 52)
+	const rand: any = Array(5).fill(0).map(c).join("")
+	let result: any
+
+	try {
+		result = ((await graph.roQuery(res ? `${str} as ${rand}` : str, query)).data || [])[0]
+		if (res) result = result[rand]
+	} catch (e) {
+		console.error(e)
+		result = false
+	}
+	console.log(result)
+	return result
+}
