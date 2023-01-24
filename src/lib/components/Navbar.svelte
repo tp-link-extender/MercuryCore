@@ -5,7 +5,7 @@
 	const user = getUser()
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-dark position-fixed vw-100">
+<nav class="navbar navbar-expand-md navbar-dark position-fixed vw-100">
 	<div class="container">
 		<a class="navbar-brand light-text" href="/">Mercury</a>
 		<button
@@ -13,12 +13,12 @@
 			type="button"
 			title="Open sidebar"
 			data-bs-toggle="offcanvas"
-			data-bs-target="#offcanvasNavbar-expand-lg"
-			aria-controls="offcanvasNavbar-expand-lg"
+			data-bs-target="#offcanvasNavbar-expand-md"
+			aria-controls="offcanvasNavbar-expand-md"
 		>
-			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-lg" />
+			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-md" />
 		</button>
-		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-lg" aria-labelledby="offcanvasNavbar-expand-lg">
+		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-md" aria-labelledby="offcanvasNavbar-expand-md">
 			<div class="offcanvas-header">
 				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 				<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
@@ -92,7 +92,7 @@
 </nav>
 
 <style lang="sass">
-	@media only screen and (max-width: 992px)
+	@media only screen and (max-width: 767px)
 		.offcanvas-header
 			background: var(--accent3)
 		.offcanvas-body
@@ -117,7 +117,7 @@
 		#loggedin
 			margin-bottom: 6rem
 
-	@media only screen and (min-width: 993px)
+	@media only screen and (min-width: 768px)
 		#loggedin
 			margin-left: auto
 
