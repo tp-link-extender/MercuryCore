@@ -1,8 +1,7 @@
 import type { Actions, PageServerLoad } from "./$types"
+import { prisma } from "$lib/server/prisma"
+import { Query, roQuery } from "$lib/server/redis"
 import { error, fail, redirect } from "@sveltejs/kit"
-import { PrismaClient } from "@prisma/client"
-import { graph, roQuery } from "$lib/server/redis"
-const prisma = new PrismaClient()
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("user")
@@ -83,7 +82,7 @@ export const actions: Actions = {
 		try {
 			switch (action) {
 				case "follow":
-					await graph.query(
+					await Query(
 						`
 						MERGE (u1:User { name: $user1 })
 						MERGE (u2:User { name: $user2 })
@@ -93,7 +92,7 @@ export const actions: Actions = {
 					)
 					break
 				case "unfollow":
-					await graph.query(
+					await Query(
 						`
 						MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
 						DELETE r
@@ -102,7 +101,7 @@ export const actions: Actions = {
 					)
 					break
 				case "unfriend":
-					await graph.query(
+					await Query(
 						`
 						MATCH (u1:User { name: $user1 }) -[r:friends]-> (u2:User { name: $user2 })
 						MATCH (u1:User { name: $user1 }) <-[s:friends]- (u2:User { name: $user2 })
@@ -116,7 +115,7 @@ export const actions: Actions = {
 						// Make sure users are not already friends
 						if (await roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
 							// If there is already an incoming request, accept it instead
-							await graph.query(
+							await Query(
 								`
 								MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
 								DELETE r
@@ -128,7 +127,7 @@ export const actions: Actions = {
 								query
 							)
 						else
-							await graph.query(
+							await Query(
 								`
 								MERGE (u1:User { name: $user1 })
 								MERGE (u2:User { name: $user2 })
@@ -139,7 +138,7 @@ export const actions: Actions = {
 					} else return fail(400)
 					break
 				case "cancel":
-					await graph.query(
+					await Query(
 						`
 						MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
 						DELETE r
@@ -148,7 +147,7 @@ export const actions: Actions = {
 					)
 					break
 				case "decline":
-					await graph.query(
+					await Query(
 						`
 						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
 						DELETE r
@@ -159,7 +158,7 @@ export const actions: Actions = {
 				case "accept":
 					if (await roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
 						// Make sure an incoming request exists before accepting
-						await graph.query(
+						await Query(
 							`
 							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
 							DELETE r

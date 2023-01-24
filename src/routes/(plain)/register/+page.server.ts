@@ -1,8 +1,7 @@
 import type { Actions } from "./$types"
-import { redirect, fail } from "@sveltejs/kit"
 import { auth } from "$lib/server/lucia"
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
+import { prisma } from "$lib/server/prisma"
+import { redirect, fail } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
