@@ -12,8 +12,16 @@ await client.connect()
 
 export const graph = new Graph(client, "friends")
 
-export async function query(str: any, query: any) {
-	await graph.query(str, { params: query })
+export async function Query(str: any, query: any) {
+	let result: any
+
+	try {
+		result = ((await graph.roQuery(str, query)).data || [])[0]
+	} catch (e) {
+		console.error(e)
+		result = false
+	}
+	return result
 }
 
 export async function roQuery(str: string, query: any, res = false) {
@@ -29,6 +37,5 @@ export async function roQuery(str: string, query: any, res = false) {
 		console.error(e)
 		result = false
 	}
-	console.log(result)
 	return result
 }

@@ -1,9 +1,7 @@
 import type { Actions, PageServerLoad } from "./$types"
-import { error, fail, redirect, type Page } from "@sveltejs/kit"
-import { PrismaClient } from "@prisma/client"
-import { graph, roQuery } from "$lib/server/redis"
-
-const prisma = new PrismaClient()
+import { prisma } from "$lib/server/prisma"
+import { Query, roQuery } from "$lib/server/redis"
+import { error, fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("place")
@@ -82,14 +80,14 @@ export const actions: Actions = {
 		try {
 			switch (action) {
 				case "like":
-					await graph.query(
+					await Query(
 						`
 						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
 						DELETE r
 						`,
 						query
 					)
-					await graph.query(
+					await Query(
 						`
 						MERGE (u:User { name: $user })
 						MERGE (p:Place { name: $place })
@@ -99,7 +97,7 @@ export const actions: Actions = {
 					)
 					break
 				case "unlike":
-					await graph.query(
+					await Query(
 						`
 						MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
 						DELETE r
@@ -108,14 +106,14 @@ export const actions: Actions = {
 					)
 					break
 				case "dislike":
-					await graph.query(
+					await Query(
 						`
 						MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
 						DELETE r
 						`,
 						query
 					)
-					await graph.query(
+					await Query(
 						`
 						MERGE (u:User { name: $user })
 						MERGE (p:Place { name: $place })
@@ -125,7 +123,7 @@ export const actions: Actions = {
 					)
 					break
 				case "undislike":
-					await graph.query(
+					await Query(
 						`
 						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
 						DELETE r

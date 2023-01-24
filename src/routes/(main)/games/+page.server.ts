@@ -1,7 +1,5 @@
 import type { PageServerLoad } from "./$types"
-import { PrismaClient } from "@prisma/client"
-
-const prisma = new PrismaClient()
+import { prisma } from "$lib/server/prisma"
 
 export const load: PageServerLoad = async () => {
 	return {

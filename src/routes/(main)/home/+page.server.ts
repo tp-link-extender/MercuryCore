@@ -1,11 +1,7 @@
 import type { Actions, PageServerLoad } from "./$types"
+import { prisma } from "$lib/server/prisma"
+import { roQuery } from "$lib/server/redis"
 import { fail, redirect } from "@sveltejs/kit"
-import { PrismaClient } from "@prisma/client"
-import {roQuery} from "$lib/server/redis"
-
-const prisma = new PrismaClient()
-// TODO: replace this with a DB call, as this is global and will
-// need to be filter by users of the friends.
 
 export const load: PageServerLoad = async ({ locals }) => {
 	console.time("home")
