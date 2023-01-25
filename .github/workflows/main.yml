@@ -17,6 +17,7 @@ jobs:
           command: |
             cd /home/heliodex/mercuryv2
             git restore .
+            gh repo sync
             npx prisma migrate deploy
             pnpm i
             pnpm run build
