@@ -23,12 +23,9 @@
 				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 				<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
 			</div>
-			<div class="offcanvas-body d-flex">
+			<div class="offcanvas-body d-flex ms-5">
 				{#if $user}
 					<div class="navbar-nav">
-						<li class="nav-item">
-							<a type="button" href="/home" class="btn shadow-none mr-0 light-text">Home</a>
-						</li>
 						<li class="nav-item">
 							<a type="button" href="/games" class="btn shadow-none mr-0 light-text">Games</a>
 						</li>
@@ -128,8 +125,10 @@
 	nav
 		z-index: 9
 		max-height: 10vh
-		-webkit-backdrop-filter: blur(10px)
 		backdrop-filter: blur(8px)
+		-webkit-backdrop-filter: blur(8px)
+		border-bottom: 1px solid #fff1
+		background: #0003
 		
 	.offcanvas
 		box-shadow: none !important	

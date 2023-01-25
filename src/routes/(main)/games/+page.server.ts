@@ -1,9 +1,9 @@
 import type { PageServerLoad } from "./$types"
-import { prisma } from "$lib/server/prisma"
+import { findPlaces } from "$lib/server/prisma"
 
 export const load: PageServerLoad = async () => {
 	return {
-		places: prisma.place.findMany({
+		places: findPlaces({
 			select: {
 				name: true,
 				slug: true,
