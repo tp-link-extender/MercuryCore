@@ -165,15 +165,16 @@
 	:target
 		display: block !important
 		
-	.container
-		max-width: 60rem
+	@media only screen and (min-width: 576px)
+		.container
+			width: 60rem
 
 	#buttons
 		margin: auto
 		display: flex
 		flex-direction: column
 
-	.content, .card
+	.card
 		background: var(--accent)
 
 	.nav-link
@@ -191,9 +192,6 @@
 
 	#pfp
 		background: var(--accent2)
-	
-	#thumbnail
-		aspect-ratio: 16 / 9
 
 	#join img
 		height: 2.5rem

@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types"
-import { prisma } from "$lib/server/prisma"
+import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { fail, redirect } from "@sveltejs/kit"
 
@@ -45,7 +45,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	console.timeEnd("home")
 	return {
-		places: prisma.place.findMany({
+		places: findPlaces({
 			select: {
 				name: true,
 				slug: true,
