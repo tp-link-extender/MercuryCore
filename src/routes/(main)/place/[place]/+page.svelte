@@ -13,6 +13,8 @@
 		["Now Playing", "6 players"],
 	]
 
+	const images = ["/place/placeholderImage1.png", "/place/placeholderImage2.png"]
+
 	const user = getUser()
 </script>
 
@@ -21,19 +23,38 @@
 </svelte:head>
 
 <div class="container">
-	<div class="d-flex mt-12">
-		<div class="flex flex-col me-3">
-			<img id="thumbnail" src={data.image} alt={data.name} class="rounded-none img-fluid" />
+	<div class="row">
+		<div id="carousel" class="carousel slide col-md-8 mb-3">
+			<div class="carousel-indicators">
+				{#each images as _, i}
+					<button type="button" data-bs-target="#carousel" data-bs-slide-to={i} aria-label="Slide {i + 1}" class={!i ? "active" : ""} aria-current={!i} />
+				{/each}
+			</div>
+			<div class="carousel-inner rounded-4">
+				<div class="carousel-item active">
+					<img src="/place/placeholderImage1.png" class="d-block w-100" alt="..." />
+				</div>
+				<div class="carousel-item">
+					<img src="/place/placeholderImage2.png" class="d-block w-100" alt="..." />
+				</div>
+			</div>
+			<button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true" />
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true" />
+				<span class="visually-hidden">Next</span>
+			</button>
 		</div>
-		<div class="flex flex-col">
+		<div class="flex col-md-4">
 			<h2 class="light-text">{data.name}</h2>
 			<p class="light-text mt-2">
 				<b>By</b> <a href="/{data.owner.username}" class="text-decoration-none">{data.owner.displayname}</a>
 			</p>
-			<div id="buttons">
-				<button id="join" class="btn btn-lg btn-success"><img src="/place/join.svg" alt="Join button icon" /></button>
-				<div class="mt-2">
-					<form class="align-self-center" method="POST" use:enhance>
+			<div id="buttons" class="row">
+				<button id="join" class="btn btn-lg btn-success col"><img src="/place/join.svg" alt="Join button icon" /></button>
+					<form class="align-self-center col mt-3" method="POST" use:enhance>
 						<div class="row mb-2">
 							<div class="col d-flex justify-content-start">
 								<button name="action" value={data.likes ? "unlike" : "like"} class="btn btn-sm {data.likes ? 'btn-success' : 'btn-outline-success'}">
@@ -87,11 +108,10 @@
 							</div>
 						</div>
 					</form>
-				</div>
 			</div>
 		</div>
 	</div>
-	<ul class="nav nav-pills nav-justified my-3" id="pills-tab" role="tablist">
+	<ul class="nav nav-pills nav-justified mb-3" id="pills-tab" role="tablist">
 		<li class="nav-item" role="presentation">
 			<button class="nav-link active" id="pills-desc-tab" data-bs-toggle="pill" data-bs-target="#pills-desc" type="button" role="tab" aria-controls="pills-desc" aria-selected="true"
 				>Description</button
@@ -129,16 +149,16 @@
 			</div>
 		</div>
 	</div>
-	<hr>
+	<hr />
 	<div class="row">
 		{#each statistics as [title, stat]}
-		<div class="col">
-			<p class="light-text text-center"><b>{title}</b></p>
-			<p class="light-text text-center">{stat}</p>
-		</div>
+			<div class="col">
+				<p class="light-text text-center"><b>{title}</b></p>
+				<p class="light-text text-center">{stat}</p>
+			</div>
 		{/each}
 	</div>
-	<hr>
+	<hr />
 </div>
 
 <style lang="sass">
@@ -177,5 +197,5 @@
 
 	#join img
 		height: 2.5rem
-		width: 16rem
+		width: 50%
 </style>

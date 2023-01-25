@@ -7,9 +7,9 @@
 	<title>Discover - Mercury</title>
 </svelte:head>
 <div class="container">
+	<h1 class="light-text text-center">Games</h1>
 	<div class="row">
-		<div class="col-3">
-			<h1 class="light-text">Games</h1>
+		<div class="col-lg-4 col-xl-3 mb-4">
 			<div class="card rounded-none">
 				<div class="card-header light-text px-3 py-2"><i class="fa-solid fa-magnifying-glass" /> Filter</div>
 				<div class="card-body">
@@ -26,7 +26,7 @@
 						<div class="collapse" id="collapse">
 							<div class="mb-3">
 								<label for="genre" class="form-label light-text">Genre</label>
-								<select class="form-select form-select-sm" id="genre" placeholder="Genre" aria-label="genre">
+								<select class="form-select form-select-sm light-text" id="genre" placeholder="Genre" aria-label="genre">
 									<option value="Obby">Obby</option>
 									<option value="Horror">Horror</option>
 									<option value="Comedy">Comedy</option>
@@ -44,7 +44,7 @@
 			</div>
 		</div>
 		<div class="col">
-			<div class="container d-grid mt-5">
+			<div class="container d-grid">
 				{#each Array(50) as _}
 					{#each data.places || [] as place}
 						<Place {place} />
@@ -56,6 +56,10 @@
 </div>
 
 <style lang="sass">
+	input, select
+		background-color: var(--accent)
+		border-color: var(--accent2)
+
 	.container
 		max-width: 100%
 		font-size: 0.9rem
@@ -66,5 +70,5 @@
 		place-items: center
 	
 	.card
-		background: var(--accent1)
+		background: var(--darker)
 </style>
