@@ -33,7 +33,6 @@ export const load: PageServerLoad = async ({ params }) => {
 
 			let users: any[] = []
 
-			console.log(usersQuery)
 			for (let i of usersQuery || ([] as any)) {
 				if (i.name)
 					users.push(
