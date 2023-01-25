@@ -70,7 +70,7 @@
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="fw-bolder fw-light light-text w-100">Same nostalgia.</h1>
-				<h4 class="light-text w-100">We sure the clients are as vanilla as possible so that you remember the client as it was back then.</h4>
+				<h4 class="light-text w-100">We ensure the clients are as vanilla as possible so that you remember the client as it was back then.</h4>
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
@@ -93,7 +93,7 @@
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="fw-bolder fw-light light-text w-100">Why Mercury 2?</h1>
-				<h4 class="light-text w-100">Mercury 2 provides a simple yet elegant website, with a unique client and a forum, so you can communicate with your friends<br /> - or make new ones!</h4>
+				<h4 class="light-text w-100">Mercury 2 provides a simple yet elegant website, with an unique client and a forum, so you can communicate with your friends<br /> - or make new ones!</h4>
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
