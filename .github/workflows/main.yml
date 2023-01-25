@@ -17,7 +17,7 @@ jobs:
           node-version: 19
                 
       - name: Install pnpm
-        run: npm i -f pnpm
+        run: npm i -g pnpm
               
       - name: Install dependencies
         run: pnpm i
