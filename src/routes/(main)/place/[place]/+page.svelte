@@ -13,7 +13,7 @@
 		["Now Playing", "6 players"],
 	]
 
-	const images = ["/place/placeholderImage1.png", "/place/placeholderImage2.png"]
+	const images = ["/place/placeholderImage1.png", "/place/placeholderImage2.png", "/place/placeholderImage3.png"]
 
 	const user = getUser()
 </script>
@@ -27,16 +27,15 @@
 		<div id="carousel" class="carousel slide col-md-8 mb-3">
 			<div class="carousel-indicators">
 				{#each images as _, i}
-					<button type="button" data-bs-target="#carousel" data-bs-slide-to={i} aria-label="Slide {i + 1}" class={!i ? "active" : ""} aria-current={!i} />
+				<button type="button" data-bs-target="#carousel" data-bs-slide-to={i} aria-label="Slide {i + 1}" class={!i ? "active" : ""} aria-current={!i} />
 				{/each}
 			</div>
 			<div class="carousel-inner rounded-none">
-				<div class="carousel-item active">
-					<img src="/place/placeholderImage1.png" class="d-block w-100" alt="..." />
+				{#each images as src, i}
+				<div class="carousel-item {!i ? "active" : ""}">
+					<img {src} class="d-block w-100" alt="..." />
 				</div>
-				<div class="carousel-item">
-					<img src="/place/placeholderImage2.png" class="d-block w-100" alt="..." />
-				</div>
+				{/each}
 			</div>
 			<button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
 				<span class="carousel-control-prev-icon" aria-hidden="true" />
@@ -48,7 +47,7 @@
 			</button>
 		</div>
 		<div class="flex col-md-4">
-			<div class="card rounded-0 mb-4">
+			<div class="card rounded-nonem mb-4">
 				<div class="card-body">
 					<h2 class="light-text">{data.name}</h2>
 					<p class="light-text mt-2 mb-0">
@@ -189,6 +188,7 @@
 
 	.nav-pills
 		background: var(--accent)
+		// border-radius: 1rem 1rem 0 0
 
 	.nav-pills .active
 		background: transparent
