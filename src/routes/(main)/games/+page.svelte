@@ -6,8 +6,10 @@
 <svelte:head>
 	<title>Discover - Mercury</title>
 </svelte:head>
+
+<h1 class="light-text text-center">Games</h1>
+
 <div class="container">
-	<h1 class="light-text text-center">Games</h1>
 	<div class="row">
 		<div class="col-lg-4 col-xl-3 mb-4">
 			<div class="card rounded-none">
