@@ -128,7 +128,7 @@
 		backdrop-filter: blur(8px)
 		-webkit-backdrop-filter: blur(8px)
 		border-bottom: 1px solid #fff1
-		background: #0002
+		background: #0003
 		
 	.offcanvas
 		box-shadow: none !important	
