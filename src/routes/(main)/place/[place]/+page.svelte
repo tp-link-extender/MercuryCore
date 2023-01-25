@@ -30,7 +30,7 @@
 					<button type="button" data-bs-target="#carousel" data-bs-slide-to={i} aria-label="Slide {i + 1}" class={!i ? "active" : ""} aria-current={!i} />
 				{/each}
 			</div>
-			<div class="carousel-inner rounded-4">
+			<div class="carousel-inner rounded-none">
 				<div class="carousel-item active">
 					<img src="/place/placeholderImage1.png" class="d-block w-100" alt="..." />
 				</div>
@@ -48,74 +48,80 @@
 			</button>
 		</div>
 		<div class="flex col-md-4">
-			<h2 class="light-text">{data.name}</h2>
-			<p class="light-text mt-2">
-				<b>By</b> <a href="/{data.owner.username}" class="text-decoration-none">{data.owner.displayname}</a>
-			</p>
+			<div class="card rounded-0 mb-4">
+				<div class="card-body">
+					<h2 class="light-text">{data.name}</h2>
+					<p class="light-text mt-2 mb-0">
+						<b>By</b> <a href="/{data.owner.username}" class="text-decoration-none">@{data.owner.displayname}</a>
+					</p>
+					<p class="light-text mb-0">Gears: <i class="fa-regular fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tooltip on top" /></p>
+					<span class="badge text-bg-success mb-1">Online</span>
+				</div>
+			</div>
 			<div id="buttons" class="row">
-				<button id="join" class="btn btn-lg btn-success col"><img src="/place/join.svg" alt="Join button icon" /></button>
-					<form class="align-self-center col mt-3" method="POST" use:enhance>
-						<div class="row mb-2">
-							<div class="col d-flex justify-content-start">
-								<button name="action" value={data.likes ? "unlike" : "like"} class="btn btn-sm {data.likes ? 'btn-success' : 'btn-outline-success'}">
-									{#if data.likes}
-										<i class="fa-solid fa-thumbs-up" />
-									{:else}
-										<i class="fa-regular fa-thumbs-up" />
-									{/if}
-								</button>
-							</div>
-							<div class="col d-flex justify-content-end">
-								<button name="action" value={data.dislikes ? "undislike" : "dislike"} class="btn btn-sm {data.dislikes ? 'btn-danger' : 'btn-outline-danger'}">
-									{#if data.dislikes}
-										<i class="fa-solid fa-thumbs-down" />
-									{:else}
-										<i class="fa-regular fa-thumbs-down" />
-									{/if}
-								</button>
-							</div>
+				<button id="join" class="btn btn-lg btn-success mt-4">
+					<img src="/place/join.svg" alt="Join button icon" />
+				</button>
+				<form class="align-self-center col mt-3 px-0 mb-2" method="POST" use:enhance>
+					<div class="row mb-2">
+						<div class="col d-flex justify-content-start">
+							<button name="action" value={data.likes ? "unlike" : "like"} class="btn btn-sm {data.likes ? 'btn-success' : 'btn-outline-success'}">
+								{#if data.likes}
+									<i class="fa-solid fa-thumbs-up" />
+								{:else}
+									<i class="fa-regular fa-thumbs-up" />
+								{/if}
+							</button>
 						</div>
-						<div class="progress rounded-pill" style="height: 3px">
-							<div
-								class="progress-bar bg-success"
-								role="progressbar"
-								aria-label="Likes"
-								style="width: {(data.likeCount / (data.dislikeCount + data.likeCount || 1)) * 100}%"
-								aria-valuenow={data.likeCount}
-								aria-valuemin={0}
-								aria-valuemax={data.dislikeCount + data.likeCount}
-							/>
-							<div
-								class="progress-bar bg-danger"
-								role="progressbar"
-								aria-label="Dislikes"
-								style="width: {(data.dislikeCount / (data.dislikeCount + data.likeCount || 1)) * 100}%"
-								aria-valuenow={data.dislikeCount}
-								aria-valuemin={0}
-								aria-valuemax={data.dislikeCount + data.likeCount}
-							/>
+						<div class="col d-flex justify-content-end">
+							<button name="action" value={data.dislikes ? "undislike" : "dislike"} class="btn btn-sm {data.dislikes ? 'btn-danger' : 'btn-outline-danger'}">
+								{#if data.dislikes}
+									<i class="fa-solid fa-thumbs-down" />
+								{:else}
+									<i class="fa-regular fa-thumbs-down" />
+								{/if}
+							</button>
 						</div>
-						<div class="row">
-							<div class="col d-flex justify-content-start">
-								<span class="light-text mx-2">
-									{data.likeCount} like{data.likeCount == 1 ? "" : "s"}
-								</span>
-							</div>
-							<div class="col d-flex justify-content-end">
-								<span class="light-text mx-2">
-									{data.dislikeCount} dislike{data.dislikeCount == 1 ? "" : "s"}
-								</span>
-							</div>
+					</div>
+					<div class="progress rounded-pill" style="height: 3px">
+						<div
+							class="progress-bar bg-success"
+							role="progressbar"
+							aria-label="Likes"
+							style="width: {(data.likeCount / (data.dislikeCount + data.likeCount || 1)) * 100}%"
+							aria-valuenow={data.likeCount}
+							aria-valuemin={0}
+							aria-valuemax={data.dislikeCount + data.likeCount}
+						/>
+						<div
+							class="progress-bar bg-danger"
+							role="progressbar"
+							aria-label="Dislikes"
+							style="width: {(data.dislikeCount / (data.dislikeCount + data.likeCount || 1)) * 100}%"
+							aria-valuenow={data.dislikeCount}
+							aria-valuemin={0}
+							aria-valuemax={data.dislikeCount + data.likeCount}
+						/>
+					</div>
+					<div class="row">
+						<div class="col d-flex justify-content-start">
+							<span class="light-text mx-2">
+								{data.likeCount} like{data.likeCount == 1 ? "" : "s"}
+							</span>
 						</div>
-					</form>
+						<div class="col d-flex justify-content-end">
+							<span class="light-text mx-2">
+								{data.dislikeCount} dislike{data.dislikeCount == 1 ? "" : "s"}
+							</span>
+						</div>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
 	<ul class="nav nav-pills nav-justified mb-3" id="pills-tab" role="tablist">
 		<li class="nav-item" role="presentation">
-			<button class="nav-link active" id="pills-desc-tab" data-bs-toggle="pill" data-bs-target="#pills-desc" type="button" role="tab" aria-controls="pills-desc" aria-selected="true"
-				>Description</button
-			>
+			<button class="nav-link active" id="pills-desc-tab" data-bs-toggle="pill" data-bs-target="#pills-desc" type="button" role="tab" aria-controls="pills-desc" aria-selected="true">Description</button>
 		</li>
 		<li class="nav-item" role="presentation">
 			<button class="nav-link" id="pills-game-tab" data-bs-toggle="pill" data-bs-target="#pills-game" type="button" role="tab" aria-controls="pills-game" aria-selected="false">Game</button>
