@@ -173,7 +173,7 @@
 		display: flex
 		flex-direction: column
 
-	.content, .card
+	.card
 		background: var(--accent)
 
 	.nav-link
@@ -191,9 +191,6 @@
 
 	#pfp
 		background: var(--accent2)
-	
-	#thumbnail
-		aspect-ratio: 16 / 9
 
 	#join img
 		height: 2.5rem
