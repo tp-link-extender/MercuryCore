@@ -63,6 +63,7 @@ Instructions:
 -   Run `npx prisma migrate deploy` to apply the schema to the Postgres database and create the PrismaClient package
 -   Open a terminal and navigate to the directory of the repository
 -   Run `npm i -g pm2` to install pm2, the node process manager
--   Run `./deploy.sh` to install dependencies, build, and start the website.
+-   Run `pnpm i` and `pnpm run build` to install dependencies and build the website
+-   Run `pm2 start pm2.config.cjs` to start the website as a process named Mercury.
 
 You can run other commands to manage the process, see `pm2 --help` for more information.
