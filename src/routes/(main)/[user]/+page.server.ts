@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types"
-import { prisma } from "$lib/server/prisma"
+import { prisma, findPlaces } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail, redirect } from "@sveltejs/kit"
 
@@ -14,7 +14,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			displayname: true,
 			bio: true,
 			image: true,
-			places: true,
 			posts: true,
 		},
 	})
@@ -39,7 +38,13 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			displayname: user.displayname,
 			bio: user.bio,
 			img: user.image,
-			places: user.places,
+			places: findPlaces({
+				where: {
+					owner: {
+						username: params.user,
+					},
+				},
+			}),
 			feed: user.posts,
 			friendCount: roQuery("RETURN SIZE(() -[:friends]-> (:User { name: $user }))", query2, true),
 			followerCount: roQuery("RETURN SIZE(() -[:follows]-> (:User { name: $user }))", query2, true),
