@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+	push:
+		branches:
+			- main
+			
+jobs:
+	deploy:
+		runs-on: ubuntu-latest
+	
+		steps:
+    		- uses: actions/checkout@v3
+		    - name: Install node
+			  uses: actions/setup-node@v1
+			  with:
+				node-version: 19
+                
+			- name: Install pnpm
+			  run: npm i -f pnpm
+              
+			- name: Install dependencies
+			  run: pnpm i
+
+			- name: Run build
+		  	  run: pnpm run build
+
+			- name: Deploy to Server
+			  uses: easingthemes/ssh-deploy@main
+			  env:
+				  SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+				  ARGS: "-rlgoDzvc -i --delete"
+				  SOURCE: "dist/"
+				  REMOTE_HOST: ${{ secrets.HOST }}
+				  REMOTE_USER: ${{ secrets.USER }}
+                  REMOTE_PORT: ${{ secrets.PORT }}
+				  TARGET: ${{ secrets.TARGET }}
+				  EXCLUDE: "/dist/, /node_modules/"
+                  SCRIPT_AFTER: |
+                    pm2 start pm2.config.cjs
