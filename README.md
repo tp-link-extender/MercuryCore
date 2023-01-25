@@ -23,6 +23,8 @@ Instructions:
 -   Run `npm i -g pnpm` to install pnpm
 -   Run `pnpm i` to install all dependencies.
 
+    -   If you are using PowerShell on windows, you may encounter an execution policy error when running pnpm. Run the command `set-executionpolicy remotesigned` in an administrator PowerShell to fix this.
+
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
 -   Run `npx prisma migrate dev` to apply the schema to the Postgres database and create the PrismaClient package
@@ -31,6 +33,16 @@ Instructions:
 -   Navigate to the Regkey table and create a registration key, set key and usesLeft fields to whatever you want
 
 To start a local dev server, run `npm run dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
+
+-   If you are using WSL2, the server may not correctly reflect the changes you make. To fix this, add the following to the default export of vite.config.ts:
+
+```ts
+	server: {
+		watch: {
+			usePolling: true,
+		},
+	},
+```
 
 After starting a local web server, navigate to /register and make an account. Set the registration key to mercurkey-<your key\>.
 
