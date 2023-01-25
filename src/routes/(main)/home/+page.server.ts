@@ -18,12 +18,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 				params: {
 					user1: session.user.username,
 				},
-			}
+			}, false, true
 		)
 
 		let friends: any[] = []
 
-		for (let i of friendsQuery?.data || ([] as any)) {
+		for (let i of friendsQuery || ([] as any)) {
 			if (i.name)
 				friends.push(
 					await prisma.user.findUnique({
