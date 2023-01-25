@@ -26,3 +26,4 @@ jobs:
           port: ${{ secrets.PORT }} 
           user: ${{ secrets.USER }}
           key: ${{ secrets.PRIVATE_KEY }}
+          args: -tt
