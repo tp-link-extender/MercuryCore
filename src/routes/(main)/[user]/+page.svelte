@@ -134,7 +134,6 @@
 		background: var(--accent)
 
 	#feed
-		max-height: 50vh
 		#user
 			align-items: center
 			.pfp
