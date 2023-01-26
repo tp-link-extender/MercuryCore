@@ -31,7 +31,7 @@
 
 	// This system is extremely magicky
 	$: data.username.invalid =
-		(data.username.value.length < 3 && update("username", "Username must be more than 3 characters")) ||
+		(data.username.value.length < 3 && update("username", "Username must be at least 3 characters")) ||
 		(data.username.value.length > 21 && update("username", "Username must be less than 30 characters")) ||
 		(!data.username.value.match(/^[A-Za-z0-9_]+$/) && update("username", "Username must be alphanumeric (A-Z, 0-9, _)"))
 
