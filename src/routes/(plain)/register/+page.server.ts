@@ -12,7 +12,7 @@ export const actions: Actions = {
 		const cpassword = data.get("cpassword")?.toString() || ""
 		const regkey = data.get("regkey")?.toString().split("-") || ""
 
-		if (username.length < 3) return fail(400, { area: "username", msg: "Username must be more than 3 characters" })
+		if (username.length < 3) return fail(400, { area: "username", msg: "Username must be at least 3 characters" })
 		if (username.length > 30) return fail(400, { area: "username", msg: "Username must be less than 30 characters" })
 		if (!username.match(/^[A-Za-z0-9_]+$/)) return fail(400, { area: "username", msg: "Username must be alphanumeric (A-Z, 0-9, _)" })
 		if (password.length < 1) return fail(400, { area: "password", msg: "Password must be at least 1 character" })

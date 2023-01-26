@@ -8,7 +8,7 @@ export const actions: Actions = {
 		const username = data.get("username")?.toString() || ""
 		const password = data.get("password")?.toString() || ""
 
-		if (username.length <= 3) return fail(400, { area: "username", msg: "Username must be more than 3 characters" })
+		if (username.length < 3) return fail(400, { area: "username", msg: "Username must be at least 3 characters" })
 		if (username.length > 30) return fail(400, { area: "username", msg: "Username must be less than 30 characters" })
 		if (password.length < 1) return fail(400, { area: "password", msg: "Password must be at least 1 character" })
 		if (password.length > 6969) return fail(400, { area: "password", msg: "Password must be less than 6969 characters" })
