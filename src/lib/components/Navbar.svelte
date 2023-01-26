@@ -7,7 +7,7 @@
 
 <nav class="navbar navbar-expand-md navbar-dark position-fixed vw-100">
 	<div class="container">
-		<a class="navbar-brand light-text" href="/">Mercury</a>
+		<a class="navbar-brand light-text me-5" href="/">Mercury</a>
 		<button
 			class="navbar-toggler"
 			type="button"
@@ -23,7 +23,7 @@
 				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 				<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
 			</div>
-			<div class="offcanvas-body d-flex ms-5">
+			<div class="offcanvas-body d-flex">
 				{#if $user}
 					<div class="navbar-nav">
 						<li class="nav-item">
