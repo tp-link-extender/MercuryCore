@@ -18,7 +18,7 @@
 	{#each Array(50) as _}
 		{#each data.users as user}
 			<a class="card light-text w-100 d-flex flex-row" href="/{user.username}">
-				<div class="p-4 w-50">
+				<div class="p-4">
 					<div class="image-background rounded-circle">
 						<img src={user.image} alt={user.displayname || user.username} class="h-100 rounded-circle img-fluid rounded-top-0" />
 					</div>
@@ -28,7 +28,7 @@
 						</span>
 					{/if}
 				</div>
-				<p class="h4 p-4 text-left w-50">
+				<p class="h4 p-4">
 					{user.displayname || user.username}
 				</p>
 			</a>
@@ -41,7 +41,7 @@
 		max-width: 100%
 		font-size: 0.9rem
 
-		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr))
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
 		column-gap: 1rem
 		row-gap: 1rem
 		place-items: center
@@ -49,9 +49,14 @@
 	.card
 		text-decoration: none
 		background: var(--darker)
+		p
+			width: fit-content
 		
 		.badge
 			padding: 0.75rem
 		.image-background
 			background: var(--accent)
+			width: fit-content
+			img
+				max-height: 6rem
 </style>
