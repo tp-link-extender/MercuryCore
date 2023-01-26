@@ -28,24 +28,24 @@
 			{/if}
 			<br />
 			<div class="d-flex">
-				<div class="light-text text-center">
+				<a href="/{data.username}/friends" class="light-text text-center text-decoration-none">
 					Friends
 					<h3 class="light-text">
 						{data.friendCount}
 					</h3>
-				</div>
-				<div class="light-text text-center ms-4">
+				</a>
+				<a href="/{data.username}/followers" class="light-text text-center text-decoration-none ms-4">
 					Followers
 					<h3 class="light-text">
 						{data.followerCount}
 					</h3>
-				</div>
-				<div class="light-text text-center ms-4">
+				</a>
+				<a href="/{data.username}/following" class="light-text text-center text-decoration-none ms-4">
 					Following
 					<h3 class="light-text">
 						{data.followingCount}
 					</h3>
-				</div>
+				</a>
 				{#if $user && data.username != $user?.username}
 					<form class="align-self-center ms-auto me-2" method="POST" use:enhance>
 						<button

@@ -12,7 +12,7 @@
 <slot />
 
 {#if $navigating}
-	<div class="position-absolute bottom-0 end-0 m-4" in:fade={{ duration: 1500, delay: 100 }} out:fade={{ duration: 100 }}>
+	<div class="position-fixed bottom-0 end-0 m-4" in:fade={{ duration: 1500, delay: 100 }} out:fade={{ duration: 100 }}>
 		<h1 class="light-text overflow-hidden">
 			<Loading />
 		</h1>
