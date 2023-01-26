@@ -30,7 +30,7 @@
 				<button type="button" data-bs-target="#carousel" data-bs-slide-to={i} aria-label="Slide {i + 1}" class={!i ? "active" : ""} aria-current={!i} />
 				{/each}
 			</div>
-			<div class="carousel-inner rounded-none">
+			<div class="carousel-inner rounded-4">
 				{#each images as src, i}
 				<div class="carousel-item {!i ? "active" : ""}">
 					<img {src} class="d-block w-100" alt="..." />
@@ -47,7 +47,7 @@
 			</button>
 		</div>
 		<div class="flex col-md-4">
-			<div class="card rounded-nonem mb-4">
+			<div class="card rounded-none mb-4">
 				<div class="card-body">
 					<h2 class="light-text">{data.name}</h2>
 					<p class="light-text mt-2 mb-0">
