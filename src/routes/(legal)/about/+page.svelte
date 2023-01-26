@@ -19,7 +19,7 @@
 	<title>About - Mercury</title>
 </svelte:head>
 
-<div bind:this={top} class="position-relative top-0" />
+<div bind:this={top} id="top" class="position-relative top-0" />
 
 <div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
 	<h1 id="title" class="fw-bolder light-text">Mercury 2</h1>
@@ -36,7 +36,7 @@
 	<i class="fa-solid light-text fa-circle-chevron-up title" />
 </button>
 
-<div bind:this={first} />
+<div bind:this={first} id="first" />
 
 <Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 	<ParallaxLayer offset={0} rate={0}>
@@ -70,7 +70,7 @@
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="fw-bolder fw-light light-text w-100">Same nostalgia.</h1>
-				<h4 class="light-text w-100">We sure the clients are as vanilla as possible so that you remember the client as it was back then.</h4>
+				<h4 class="light-text w-100">We ensure the clients are as vanilla as possible so that you remember the client as it was back then.</h4>
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
@@ -93,7 +93,7 @@
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="fw-bolder fw-light light-text w-100">Why Mercury 2?</h1>
-				<h4 class="light-text w-100">Mercury 2 provides a simple yet elegant website, with a unique client and a forum, so you can communicate with your friends<br /> - or make new ones!</h4>
+				<h4 class="light-text w-100">Mercury 2 provides a simple yet elegant website, with an unique client and a forum, so you can communicate with your friends<br /> - or make new ones!</h4>
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
@@ -109,8 +109,16 @@
 </Parallax>
 
 <style lang="sass">
+	:global(:root)
+		scroll-snap-type: y proximity
+
 	#info
 		height: 70vh
+
+	#top
+		scroll-snap-align: end
+	#first
+		scroll-snap-align: start
 
 	#title
 		font-size: 4rem
