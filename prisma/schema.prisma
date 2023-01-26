@@ -52,7 +52,7 @@ model Session {
 }
 
 model Regkey {
-    key      String    @unique
+    key      String    @unique @default(uuid())
     usesLeft Int       @default(1)
     expiry   DateTime?
     users    User[]
