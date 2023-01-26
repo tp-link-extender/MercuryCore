@@ -19,7 +19,7 @@
 	<title>About - Mercury</title>
 </svelte:head>
 
-<div bind:this={top} class="position-relative top-0" />
+<div bind:this={top} id="top" class="position-relative top-0" />
 
 <div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
 	<h1 id="title" class="fw-bolder light-text">Mercury 2</h1>
@@ -36,7 +36,7 @@
 	<i class="fa-solid light-text fa-circle-chevron-up title" />
 </button>
 
-<div bind:this={first} />
+<div bind:this={first} id="first" />
 
 <Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 	<ParallaxLayer offset={0} rate={0}>
@@ -109,8 +109,16 @@
 </Parallax>
 
 <style lang="sass">
+	:global(:root)
+		scroll-snap-type: y proximity
+
 	#info
 		height: 70vh
+
+	#top
+		scroll-snap-align: end
+	#first
+		scroll-snap-align: start
 
 	#title
 		font-size: 4rem
