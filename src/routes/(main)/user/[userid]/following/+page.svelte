@@ -17,7 +17,7 @@
 <div class="container mt-5 d-grid">
 	{#each Array(50) as _}
 		{#each data.users as user}
-			<a class="card light-text w-100 d-flex flex-row" href="/{user.username}">
+			<a class="card light-text w-100 d-flex flex-row" href="/user/{user.id}">
 				<div class="p-4">
 					<div class="image-background rounded-circle">
 						<img src={user.image} alt={user.displayname || user.username} class="h-100 rounded-circle img-fluid rounded-top-0" />
