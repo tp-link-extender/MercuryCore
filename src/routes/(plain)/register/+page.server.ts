@@ -19,14 +19,7 @@ export const actions: Actions = {
 		if (password.length > 6969) return fail(400, { area: "password", msg: "Password must be less than 6969 characters" })
 		if (cpassword != password) return fail(400, { area: "cpassword", msg: "The specified password does not match" })
 
-		// Since each user's page is a route, we need to make sure it doesn't clash with existing routes
 		const lowercaseUsername = username.toLowerCase()
-		for (let i in import.meta.glob("/src/routes/**")) {
-			let t = i.substring(19)
-			t = t.substring(0, t.indexOf("/"))
-
-			if (t.toLowerCase() == lowercaseUsername) return fail(400, { area: "username", msg: "Username is unavailable" })
-		}
 
 		try {
 			const userCheck = await prisma.user.findUnique({

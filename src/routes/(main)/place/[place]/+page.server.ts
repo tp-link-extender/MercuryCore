@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			image: true,
 			owner: {
 				select: {
-					username: true,
+					id: true,
 					displayname: true,
 				},
 			},

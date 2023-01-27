@@ -28,19 +28,19 @@
 			{/if}
 			<br />
 			<div class="d-flex">
-				<a href="/{data.username}/friends" class="light-text text-center text-decoration-none">
+				<a href="/user/{data.id}/friends" class="light-text text-center text-decoration-none">
 					Friends
 					<h3 class="light-text">
 						{data.friendCount}
 					</h3>
 				</a>
-				<a href="/{data.username}/followers" class="light-text text-center text-decoration-none ms-4">
+				<a href="/user/{data.id}/followers" class="light-text text-center text-decoration-none ms-4">
 					Followers
 					<h3 class="light-text">
 						{data.followerCount}
 					</h3>
 				</a>
-				<a href="/{data.username}/following" class="light-text text-center text-decoration-none ms-4">
+				<a href="/user/{data.id}/following" class="light-text text-center text-decoration-none ms-4">
 					Following
 					<h3 class="light-text">
 						{data.followingCount}
@@ -100,13 +100,13 @@
 					<div class="p-2 col-md-6 col-sm-12">
 						<div class="card">
 							<div class="card-body pb-0">
-								<a id="user" class="d-flex mb-2 text-decoration-none" href="/{data.username}">
+								<div id="user" class="d-flex mb-2">
 									<span class="pfp rounded-circle">
 										<img src={data.img} alt={data.displayname} class="rounded-circle img-fluid rounded-top-0" />
 									</span>
 									<span class="fw-bold ms-3 light-text">{data.displayname}</span>
 									<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
-								</a>
+								</div>
 								<p class="text-start">
 									{status.content}
 								</p>
