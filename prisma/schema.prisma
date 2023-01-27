@@ -15,7 +15,7 @@ datasource db {
 // Users & Groups
 
 model User {
-    id              String    @id @unique @default(cuid())
+    id              Int       @id @unique @default(autoincrement())
     provider_id     String    @unique
     email           String    @unique
     hashed_password String?
@@ -42,7 +42,7 @@ model User {
 
 model Session {
     id           String @id @unique
-    user_id      String
+    user_id      Int
     expires      BigInt
     idle_expires BigInt
     user         User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
