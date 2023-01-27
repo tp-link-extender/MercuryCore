@@ -5,12 +5,13 @@ import { error, fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("user")
-	params.user = params.user.toLowerCase()
+	params.userid = params.userid.toLowerCase()
 	const user = await prisma.user.findUnique({
 		where: {
-			username: params.user,
+			id: params.userid,
 		},
 		select: {
+			username: true,
 			displayname: true,
 			bio: true,
 			image: true,
@@ -23,25 +24,25 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		const query = {
 			params: {
 				user1: session.user?.username || "",
-				user2: params.user,
+				user2: user.username,
 			},
 		}
 		const query2 = {
 			params: {
-				user: params.user,
+				user: user.username,
 			},
 		}
 
 		console.timeEnd("user")
 		return {
-			username: params.user,
+			username: user.username,
 			displayname: user.displayname,
 			bio: user.bio,
 			img: user.image,
 			places: findPlaces({
 				where: {
 					owner: {
-						username: params.user,
+						username: user.username,
 					},
 				},
 			}),
@@ -56,7 +57,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			outgoingRequest: session ? roQuery("MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query) : false,
 		}
 	} else {
-		throw error(404, `Not found: /${params.user}`)
+		throw error(404, `Not found: /user/${params.userid}`)
 	}
 }
 
@@ -65,12 +66,21 @@ export const actions: Actions = {
 		const session = await locals.validateUser()
 		if (!session.session) throw redirect(302, "/login")
 
+		const user = await prisma.user.findUnique({
+			where: {
+				id: params.userid,
+			},
+			select: {
+				username: true,
+			},
+		})
+
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
 
 		const user2 = await prisma.user.findUnique({
 			where: {
-				username: params.user,
+				username: user?.username,
 			},
 		})
 		if (!user2) return fail(400, { msg: "User not found" })
@@ -78,7 +88,7 @@ export const actions: Actions = {
 		const query = {
 			params: {
 				user1: session.user.username,
-				user2: params.user,
+				user2: user?.username,
 			},
 		}
 
