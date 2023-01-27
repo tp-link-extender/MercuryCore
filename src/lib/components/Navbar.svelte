@@ -61,7 +61,7 @@
 								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-user-pen me-2" /> Avatar</a></li>
 								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-users me-2" /> My Groups</a></li>
 								<li><hr class="dropdown-divider" /></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
+								<li><a class="dropdown-item light-text" href="/user/settings"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
 								<li>
 									<button
 										on:click={async () => {
