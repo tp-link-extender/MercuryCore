@@ -8,14 +8,7 @@
 <nav class="navbar navbar-expand-md navbar-dark position-fixed vw-100">
 	<div class="container">
 		<a class="navbar-brand light-text me-5" href="/">Mercury</a>
-		<button
-			class="navbar-toggler"
-			type="button"
-			title="Open sidebar"
-			data-bs-toggle="offcanvas"
-			data-bs-target="#offcanvasNavbar-expand-md"
-			aria-controls="offcanvasNavbar-expand-md"
-		>
+		<button class="navbar-toggler" type="button" title="Open sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar-expand-md" aria-controls="offcanvasNavbar-expand-md">
 			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-md" />
 		</button>
 		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-md" aria-labelledby="offcanvasNavbar-expand-md">
@@ -56,7 +49,7 @@
 									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 								</div>
 								<p class="light-text my-auto fs-6 me-4">
-									{$user?.displayname || $user?.username}
+									{$user?.displayname}
 									<i class="fa-solid fa-ellipsis-vertical ms-2" />
 								</p>
 							</a>
