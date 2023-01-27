@@ -76,7 +76,7 @@
 							<a class="friend px-2 mb-2 text-center light-text" href="/user/{friend.id}">
 								<div class="position-relative mb-2">
 									<div class="image-background rounded-circle">
-										<img src={friend.image} alt={friend.displayname || friend.username} class="h-100 rounded-circle img-fluid rounded-top-0" />
+										<img src={friend.image} alt={friend.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />
 									</div>
 									{#if friend.status}
 										<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
@@ -84,7 +84,7 @@
 										</span>
 									{/if}
 								</div>
-								{friend.displayname || friend.username}
+								{friend.displayname}
 							</a>
 						{/each}
 					</div>

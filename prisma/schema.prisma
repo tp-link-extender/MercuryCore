@@ -22,7 +22,7 @@ model User {
     session         Session[]
 
     username        String   @unique
-    displayname     String?
+    displayname     String
     usedRegkey      Regkey   @relation(fields: [regkeyKey], references: [key])
     permissionLevel Int      @default(1) // 1: Regular user 2: Verified (email or Discord) 3: Moderator 4: Catalog Manager 5: Administrator
     bio             String?
