@@ -9,18 +9,18 @@
 </script>
 
 <svelte:head>
-	<title>{data.displayname}'s friends - Mercury</title>
+	<title>{data.displayname}'s followers - Mercury</title>
 </svelte:head>
 
-<h1 class="light-text text-center">{data.displayname}'s friends ({data.number})</h1>
+<h1 class="light-text text-center">{data.displayname}'s followers ({data.number})</h1>
 
 <div class="container mt-5 d-grid">
 	{#each Array(50) as _}
 		{#each data.users as user}
-			<a class="card light-text w-100 d-flex flex-row" href="/{user.username}">
+			<a class="card light-text w-100 d-flex flex-row" href="/user/{user.id}">
 				<div class="p-4">
 					<div class="image-background rounded-circle">
-						<img src={user.image} alt={user.displayname || user.username} class="h-100 rounded-circle img-fluid rounded-top-0" />
+						<img src={user.image} alt={user.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />
 					</div>
 					{#if user.status}
 						<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[user.status]}">
@@ -29,7 +29,7 @@
 					{/if}
 				</div>
 				<p class="h4 p-4">
-					{user.displayname || user.username}
+					{user.displayname}
 				</p>
 			</a>
 		{/each}
