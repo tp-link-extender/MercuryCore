@@ -5,7 +5,11 @@ import { error, fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("user")
-	params.userid = params.userid.toLowerCase()
+	params.userid = params.userid
+	if (!/^\d+$/.test(params.userid)) throw error(400, `Invalid user id: ${params.userid}`)
+
+	params.userid = parseInt(params.userid)
+
 	const user = await prisma.user.findUnique({
 		where: {
 			id: params.userid,
