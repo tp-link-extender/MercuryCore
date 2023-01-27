@@ -51,7 +51,7 @@
 							</a>
 						</li>
 						<li class="dropdown">
-							<a href="/{$user.username}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
+							<a href="/user/{$user.userId}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
 								<div id="pfp" class="mx-2 rounded-circle">
 									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 								</div>
@@ -63,12 +63,12 @@
 
 							<ul class="dropdown-menu mt-2">
 								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-address-card me-2" /> Profile</a></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-box-open me-2" /> Inventory</a></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-user-pen me-2" /> Avatar</a></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-users me-2" /> My Groups</a></li>
+								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-address-card me-2" /> Profile</a></li>
+								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-box-open me-2" /> Inventory</a></li>
+								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-user-pen me-2" /> Avatar</a></li>
+								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-users me-2" /> My Groups</a></li>
 								<li><hr class="dropdown-divider" /></li>
-								<li><a class="dropdown-item light-text" href="/{$user?.username}"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
+								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
 								<li>
 									<button
 										on:click={async () => {

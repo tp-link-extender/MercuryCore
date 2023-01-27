@@ -7,7 +7,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("user")
 	params.userid = params.userid
 	if (!/^\d+$/.test(params.userid)) throw error(400, `Invalid user id: ${params.userid}`)
-
 	params.userid = parseInt(params.userid)
 
 	const user = await prisma.user.findUnique({
@@ -15,6 +14,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			id: params.userid,
 		},
 		select: {
+			id: true,
 			username: true,
 			displayname: true,
 			bio: true,
@@ -39,6 +39,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		console.timeEnd("user")
 		return {
+			id: user.id,
 			username: user.username,
 			displayname: user.displayname,
 			bio: user.bio,

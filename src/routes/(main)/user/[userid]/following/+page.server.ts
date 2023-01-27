@@ -5,28 +5,34 @@ import { error } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ params }) => {
 	console.time("user")
-	params.user = params.user.toLowerCase()
+	params.userid = params.userid
+	if (!/^\d+$/.test(params.userid)) throw error(400, `Invalid user id: ${params.userid}`)
+	params.userid = parseInt(params.userid)
+
 	const user = await prisma.user.findUnique({
 		where: {
-			username: params.user,
+			id: params.userid,
 		},
 		select: {
+			username: true,
 			displayname: true,
 			image: true,
 		},
 	})
 	if (user) {
+		const query = {
+			params: {
+				user: user?.username,
+			},
+		}
+
 		async function Users() {
 			const usersQuery = await roQuery(
 				`
-				MATCH (:User { name: $user1 }) -[r:follows]-> (u:User)
+				MATCH (:User { name: $user }) -[r:friends]-> (u:User)
 				RETURN u.name AS name
 				`,
-				{
-					params: {
-						user1: params.user,
-					},
-				},
+				query,
 				false,
 				true
 			)
@@ -41,6 +47,7 @@ export const load: PageServerLoad = async ({ params }) => {
 								username: i.name,
 							},
 							select: {
+								id: true,
 								username: true,
 								displayname: true,
 								image: true,
@@ -51,12 +58,6 @@ export const load: PageServerLoad = async ({ params }) => {
 			}
 
 			return users
-		}
-
-		const query = {
-			params: {
-				user: params.user,
-			},
 		}
 
 		console.timeEnd("user")
