@@ -19,7 +19,7 @@
 
 <div class="container mt-5 d-grid">
 	{#each data.users as user}
-		<div class="card light-text w-100 d-flex flex-col">
+		<div class="card light-text h-100 w-100 d-flex flex-col">
 			<div class="d-flex flex-row">
 				<a class="p-4 pe-2" href="/user/{user.id}">
 					<div class="image-background rounded-circle">
@@ -57,12 +57,16 @@
 		max-width: 25rem
 		text-decoration: none
 		background: var(--darker)
+
+		div
+			word-break: break-all
 		
 		.badge
 			padding: 0.75rem
 		.image-background
 			background: var(--accent)
-			width: fit-content
+			min-width: 6rem
 			img
+				width: 6rem
 				max-height: 6rem
 </style>
