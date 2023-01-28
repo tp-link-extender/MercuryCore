@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import Place from "$lib/components/Place.svelte"
@@ -28,7 +29,7 @@
 		{ time: new Date(), title: "Mercury is now love!", content: "Yes" },
 	]
 
-	export let data: any
+	export let data: PageData
 	export let form: any
 </script>
 

@@ -1,11 +1,13 @@
 <script lang="ts">
+	import type { PageData } from "./$types"
+
 	const statusColours: any = {
 		Online: "bg-info",
 		Joined: "bg-success",
 		Developing: "bg-warning",
 	}
 
-	export let data: any
+	export let data: PageData
 
 	const titles: any = {
 		friends: `${data.displayname}'s friends`,

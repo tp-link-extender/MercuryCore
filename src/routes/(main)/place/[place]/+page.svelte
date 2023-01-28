@@ -1,8 +1,9 @@
 <script lang="ts">
+	import type { PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
-	export let data: any
+	export let data: PageData
 
 	const statistics = [
 		["Activity", "8 visits"],
@@ -27,14 +28,14 @@
 		<div id="carousel" class="carousel slide col-md-8 mb-3">
 			<div class="carousel-indicators">
 				{#each images as _, i}
-				<button type="button" data-bs-target="#carousel" data-bs-slide-to={i} aria-label="Slide {i + 1}" class={!i ? "active" : ""} aria-current={!i} />
+					<button type="button" data-bs-target="#carousel" data-bs-slide-to={i} aria-label="Slide {i + 1}" class={!i ? "active" : ""} aria-current={!i} />
 				{/each}
 			</div>
 			<div class="carousel-inner rounded-4">
 				{#each images as src, i}
-				<div class="carousel-item {!i ? "active" : ""}">
-					<img {src} class="d-block w-100" alt="..." />
-				</div>
+					<div class="carousel-item {!i ? 'active' : ''}">
+						<img {src} class="d-block w-100" alt="..." />
+					</div>
 				{/each}
 			</div>
 			<button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
@@ -120,7 +121,9 @@
 	</div>
 	<ul class="nav nav-pills nav-justified mb-3" id="pills-tab" role="tablist">
 		<li class="nav-item" role="presentation">
-			<button class="nav-link active" id="pills-desc-tab" data-bs-toggle="pill" data-bs-target="#pills-desc" type="button" role="tab" aria-controls="pills-desc" aria-selected="true">Description</button>
+			<button class="nav-link active" id="pills-desc-tab" data-bs-toggle="pill" data-bs-target="#pills-desc" type="button" role="tab" aria-controls="pills-desc" aria-selected="true"
+				>Description</button
+			>
 		</li>
 		<li class="nav-item" role="presentation">
 			<button class="nav-link" id="pills-game-tab" data-bs-toggle="pill" data-bs-target="#pills-game" type="button" role="tab" aria-controls="pills-game" aria-selected="false">Game</button>
