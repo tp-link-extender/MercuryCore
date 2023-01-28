@@ -63,7 +63,7 @@
 			 <div class="form-group row">
 				<label for="name" class="col-md-3 col-form-label text-md-right">Username</label>
 				<div class="col-md-9">
-				   <input type="text" readonly="" id="name" name="name" disabled value="{$user?.username}" class="form-control" />
+				   <input type="text" readonly id="name" name="name" disabled value={$user?.username} class="form-control" />
 				</div>
 				<small class="text-muted pb-2">You cannot change your username.</small>
 			 </div>
@@ -71,7 +71,7 @@
 			 <div class="form-group row">
 				<label for="name" class="col-md-3 col-form-label text-md-right">Email Address</label>
 				<div class="col-md-9">
-				   <input type="text" readonly="" id="name" name="name" value="**********@gmail.com" required="required" autofocus="autofocus" class="form-control" />
+				   <input type="text" readonly id="name" name="name" value="**********@gmail.com" required class="form-control" />
 				</div>
 			 </div>
 		  </div>
@@ -121,14 +121,18 @@
  </div>
 
 <style lang="sass">
+	hr
+		color: var(--accent)
+	h4
+		border-color: var(--accent2) !important
+
 	.nav-link
 		border-radius: 0
 		color: var(--light-text)
 	
-	input
+	input, textarea
 		background: var(--accent)
-	textarea 
-		background: var(--accent)
+		border-color: var(--accent2)
 	.form-control
 		color: var(--light-text)
 
