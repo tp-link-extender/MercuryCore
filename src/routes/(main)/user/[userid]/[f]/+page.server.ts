@@ -49,12 +49,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		}
 
 		async function Users() {
-			const usersQuery = await roQuery(
-				usersQueries[type],
-				query,
-				false,
-				true
-			)
+			const usersQuery = await roQuery(usersQueries[type], query, false, true)
 
 			let users: any[] = []
 
