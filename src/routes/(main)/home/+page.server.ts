@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	async function Friends() {
 		const friendsQuery = await roQuery(
 			`
-			MATCH (:User { name: $user }) -[r:friends]-> (u:User)
+			MATCH (:User { name: $user }) -[r:friends]- (u:User)
 			RETURN u.name as name
 			`,
 			{
