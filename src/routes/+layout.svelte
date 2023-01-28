@@ -5,6 +5,10 @@
 	import Loading from "$lib/components/Loading.svelte"
 	import "/src/global.sass"
 	import "/src/bootstrap.scss"
+	
+	import "/src/fa/sass/fontawesome.sass"
+	import "/src/fa/sass/regular.sass"
+	import "/src/fa/sass/solid.sass"
 
 	handleSession(page)
 </script>
