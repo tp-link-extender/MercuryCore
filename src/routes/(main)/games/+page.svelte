@@ -46,7 +46,7 @@
 	</div>
 	<div class="col pe-0">
 		<div class="container d-grid p-0">
-			{#each Array(50) as _}
+			{#each Array(10) as _}
 				{#each data.places || [] as place}
 					<PlaceCard {place} />
 				{/each}
