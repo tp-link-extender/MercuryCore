@@ -1,6 +1,8 @@
 <script lang="ts">
+	import type { PageData } from "./$types"
 	import PlaceCard from "$lib/components/PlaceCard.svelte"
-	export let data: any
+
+	export let data: PageData
 </script>
 
 <svelte:head>
@@ -46,10 +48,8 @@
 	</div>
 	<div class="col pe-0">
 		<div class="container d-grid p-0">
-			{#each Array(10) as _}
-				{#each data.places || [] as place}
-					<PlaceCard {place} />
-				{/each}
+			{#each data.places || [] as place}
+				<PlaceCard {place} />
 			{/each}
 		</div>
 	</div>
