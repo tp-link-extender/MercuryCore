@@ -5,78 +5,75 @@
 	const user = getUser()
 </script>
 
-<nav class="navbar navbar-expand-md navbar-dark position-fixed vw-100">
-	<div class="container">
-		<a class="navbar-brand light-text me-5" href="/">Mercury</a>
-		<button class="navbar-toggler" type="button" title="Open sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar-expand-md" aria-controls="offcanvasNavbar-expand-md">
-			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-md" />
-		</button>
-		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-md" aria-labelledby="offcanvasNavbar-expand-md">
-			<div class="offcanvas-header">
-				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
-				<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
-			</div>
-			<div class="offcanvas-body d-flex">
-				{#if $user}
-					<div class="navbar-nav">
-						<li class="nav-item">
-							<a type="button" href="/games" class="btn shadow-none mr-0 light-text">Games</a>
-						</li>
-					</div>
-				{/if}
-				<!-- <a type="button" href="/catalog" class="btn my-2 my-sm-0 light-text">Catalog</a>
-				<a type="button" href="/create" class="btn my-2 my-sm-0 light-text">Create</a> -->
-				<div id="loggedin" class="navbar-nav">
-					{#if !$user}
-						<li class="nav-item">
-							<a type="button" href="/login" class="btn mb-1 light-text">Log in</a>
-						</li>
-						<li class="nav-item">
-							<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
-						</li>
-					{:else}
-						<li class="nav-item">
-							<a id="rocks" type="button" href="/transactions" class="fw-bold btn my-2 my-sm-0 text-success shadow-none">
-								<i class="fa-solid fa-gem me-1" />
-								<span class="h6 text-success">
-									{$user.currency}
-								</span>
-							</a>
-						</li>
-						<li class="dropdown">
-							<a href="/user/{$user.userId}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
-								<div id="pfp" class="mx-2 rounded-circle">
-									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
-								</div>
-								<p class="light-text my-auto fs-6 me-4">
-									{$user?.displayname}
-									<i class="fa-solid fa-ellipsis-vertical ms-2" />
-								</p>
-							</a>
+<nav class="navbar navbar-expand-md navbar-dark position-fixed w-100 px-4">
+	<a class="navbar-brand light-text me-5" href="/">Mercury</a>
+	<button class="navbar-toggler" type="button" title="Open sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar-expand-md" aria-controls="offcanvasNavbar-expand-md">
+		<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-md" />
+	</button>
+	<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-md" aria-labelledby="offcanvasNavbar-expand-md">
+		<div class="offcanvas-header">
+			<a href="/" class="offcanvas-title light-text h5">Mercury</a>
+			<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
+		</div>
+		<div class="offcanvas-body d-flex">
+			{#if $user}
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a type="button" href="/games" class="btn shadow-none mr-0 light-text">Games</a>
+					</li>
+				</ul>
+				<ul class="navbar-nav loggedin">
+					<li class="dropdown ms-2">
+						<a href="/user/{$user.userId}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
+							<div id="pfp" class="mx-2 rounded-circle">
+								<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
+							</div>
+							<p class="light-text my-auto fs-6 me-4">
+								{$user?.displayname}
+								<i class="fa-solid fa-ellipsis-vertical ms-2" />
+							</p>
+						</a>
 
-							<ul class="dropdown-menu mt-2">
-								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-address-card me-2" /> Profile</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-box-open me-2" /> Inventory</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-user-pen me-2" /> Avatar</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-users me-2" /> My Groups</a></li>
-								<li><hr class="dropdown-divider" /></li>
-								<li><a class="dropdown-item light-text" href="/user/settings"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
-								<li>
-									<button
-										on:click={async () => {
-											await signOut()
-											invalidateAll()
-											window.location.reload()
-										}}
-										class="dropdown-item text-danger"><b><i class="fa-solid fa-arrow-right-from-bracket me-2" /> Log out</b></button
-									>
-								</li>
-							</ul>
-						</li>
-					{/if}
-				</div>
-			</div>
+						<ul class="dropdown-menu mt-2">
+							<li><h6 class="dropdown-header">ACCOUNT</h6></li>
+							<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-address-card me-2" /> Profile</a></li>
+							<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-box-open me-2" /> Inventory</a></li>
+							<li><a class="dropdown-item light-text" href="/requests"><i class="fa-solid fa-user-plus me-2" /> Friend requests</a></li>
+							<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-user-pen me-2" /> Avatar</a></li>
+							<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-users me-2" /> My Groups</a></li>
+							<li><hr class="dropdown-divider" /></li>
+							<li><a class="dropdown-item light-text" href="/user/settings"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
+							<li>
+								<button
+									on:click={async () => {
+										await signOut()
+										invalidateAll()
+										window.location.reload()
+									}}
+									class="dropdown-item text-danger"><b><i class="fa-solid fa-arrow-right-from-bracket me-2" /> Log out</b></button
+								>
+							</li>
+						</ul>
+					</li>
+					<li class="nav-item">
+						<a id="rocks" type="button" href="/transactions" class="fw-bold btn my-2 my-sm-0 text-success shadow-none">
+							<i class="fa-solid fa-gem me-1" />
+							<span class="h6 text-success">
+								{$user.currency}
+							</span>
+						</a>
+					</li>
+				</ul>
+			{:else}
+				<ul class="navbar-nav loggedin">
+					<li class="nav-item">
+						<a type="button" href="/login" class="btn mb-1 light-text">Log in</a>
+					</li>
+					<li class="nav-item">
+						<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
+					</li>
+				</ul>
+			{/if}
 		</div>
 	</div>
 </nav>
@@ -84,32 +81,27 @@
 <style lang="sass">
 	@media only screen and (max-width: 767px)
 		.offcanvas-header
-			background: var(--accent3)
+			background: var(--accent2)
 		.offcanvas-body
 			background: var(--accent)
 			min-height: 100vh
-			flex-direction: column
+			flex-direction: column-reverse
+			justify-content: start
 			
 			a
 				margin-bottom: 1rem
 				width: 100%
 				text-align: start
 
-		#loggedin
-			margin-top: auto
-			margin-bottom: 4rem
-	
-	@media only screen and (max-width: 768px) and (orientation: portrait)
-		#loggedin
-			margin-bottom: 10rem
-	
-	@media only screen and (max-width: 768px) and (orientation: landscape)
-		#loggedin
-			margin-bottom: 6rem
+			.loggedin
+				margin-bottom: 2rem
 
 	@media only screen and (min-width: 768px)
-		#loggedin
+		.loggedin
 			margin-left: auto
+
+	.loggedin
+		padding: 0
 
 
 	.offcanvas-title

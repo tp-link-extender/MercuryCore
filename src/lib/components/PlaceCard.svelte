@@ -33,7 +33,6 @@
 <style lang="sass">
 	.card
 		border: none
-		width: 100%
 		background: var(--darker)
 	a
 		transition: all 0.2s
