@@ -88,22 +88,20 @@
 				{#if data.friends.length > 0}
 					<h2 class="h4 light-text">Friends</h2>
 					<div class="home-row d-flex">
-						{#each Array(10) as _}
-							{#each data.friends as friend}
-								<a class="px-2 mb-2 text-center light-text text-decoration-none" href="/user/{friend.id}">
-									<div class="position-relative mb-2">
-										<div class="image-background rounded-circle">
-											<img src={friend.image} alt={friend.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />
-										</div>
-										{#if friend.status}
-											<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
-												<span class="visually-hidden">{friend.status}</span>
-											</span>
-										{/if}
+						{#each data.friends as friend}
+							<a class="px-2 mb-2 text-center light-text text-decoration-none" href="/user/{friend.id}">
+								<div class="position-relative mb-2">
+									<div class="image-background rounded-circle">
+										<img src={friend.image} alt={friend.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />
 									</div>
-									{friend.displayname}
-								</a>
-							{/each}
+									{#if friend.status}
+										<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
+											<span class="visually-hidden">{friend.status}</span>
+										</span>
+									{/if}
+								</div>
+								{friend.displayname}
+							</a>
 						{/each}
 					</div>
 				{/if}
@@ -112,14 +110,12 @@
 				<h2 class="h4 light-text">Resume playing</h2>
 				<div class="home-row d-flex">
 					<div class="home-row d-flex">
-						{#each Array(20) as _}
-							{#each data.places || [] as place}
-								<div class="px-2 mb-2">
-									<div class="place">
-										<Place {place} />
-									</div>
+						{#each data.places || [] as place}
+							<div class="px-2 mb-2">
+								<div class="place">
+									<Place {place} />
 								</div>
-							{/each}
+							</div>
 						{/each}
 					</div>
 				</div>
