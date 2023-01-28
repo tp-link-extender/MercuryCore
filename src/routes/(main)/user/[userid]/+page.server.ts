@@ -56,7 +56,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				},
 			}),
 			feed: user.posts,
-			friendCount: roQuery("RETURN SIZE(() -[:friends]-> (:User { name: $user }))", query2, true),
+			friendCount: roQuery("RETURN SIZE(() -[:friends]- (:User { name: $user }))", query2, true),
 			followerCount: roQuery("RETURN SIZE(() -[:follows]-> (:User { name: $user }))", query2, true),
 			followingCount: roQuery("RETURN SIZE(() <-[:follows]- (:User { name: $user }))", query2, true),
 			friends: session ? roQuery("MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query) : false,
@@ -130,15 +130,14 @@ export const actions: Actions = {
 				case "unfriend":
 					await Query(
 						`
-						MATCH (u1:User { name: $user1 }) -[r:friends]-> (u2:User { name: $user2 })
-						MATCH (u1:User { name: $user1 }) <-[s:friends]- (u2:User { name: $user2 })
-						DELETE r, s
+						MATCH (u1:User { name: $user1 }) -[r:friends]- (u2:User { name: $user2 })
+						DELETE r
 						`,
 						query
 					)
 					break
 				case "request":
-					if (!(await roQuery("MATCH (:User { name: $user1 }) -[r:friends]-> (:User { name: $user2 }) RETURN r", query))) {
+					if (!(await roQuery("MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query))) {
 						// Make sure users are not already friends
 						if (await roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
 							// If there is already an incoming request, accept it instead
@@ -148,7 +147,6 @@ export const actions: Actions = {
 								DELETE r
 								MERGE (u1)
 								MERGE (u2)
-								MERGE (u1) -[:friends]-> (u2)
 								MERGE (u1) <-[:friends]- (u2)
 								`,
 								query
@@ -191,10 +189,10 @@ export const actions: Actions = {
 							DELETE r
 							MERGE (u1)
 							MERGE (u2)
-							MERGE (u1) -[:friends]-> (u2)
 							MERGE (u1) <-[:friends]- (u2)
 							`,
 							query
+							// The direction of the [:friends] relationship matches the direction of the previous [:request] relationship
 						)
 					else return fail(400)
 					break
