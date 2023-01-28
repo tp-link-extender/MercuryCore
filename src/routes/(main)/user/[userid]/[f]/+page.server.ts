@@ -7,7 +7,7 @@ const types = ["friends", "followers", "following"]
 
 const usersQueries: any = {
 	friends: `
-		MATCH (:User { name: $user }) -[r:friends]-> (u:User)
+		MATCH (:User { name: $user }) -[r:friends]- (u:User)
 		RETURN u.name AS name`,
 	followers: `
 		MATCH (:User { name: $user }) <-[r:follows]- (u:User)
@@ -18,9 +18,9 @@ const usersQueries: any = {
 }
 
 const numberQueries: any = {
-	friends: "RETURN SIZE((:User { name: $user }) -[:friends]-> ())",
-	followers: "RETURN SIZE((:User { name: $user }) <-[:follows]- ())",
-	following: "RETURN SIZE((:User { name: $user }) -[:follows]-> ())",
+	friends: "RETURN SIZE((:User { name: $user }) -[:friends]- (:User))",
+	followers: "RETURN SIZE((:User { name: $user }) <-[:follows]- (:User))",
+	following: "RETURN SIZE((:User { name: $user }) -[:follows]-> (:User))",
 }
 
 export const load: PageServerLoad = async ({ params }) => {
