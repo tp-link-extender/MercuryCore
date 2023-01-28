@@ -99,7 +99,7 @@
 			<div class="row">
 				{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
 					<div class="p-2 col-md-6 col-sm-12">
-						<div class="card">
+						<div class="card h-100">
 							<div class="card-body pb-0">
 								<div id="user" class="d-flex mb-2">
 									<span class="pfp rounded-circle">

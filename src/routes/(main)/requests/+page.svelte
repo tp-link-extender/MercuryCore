@@ -32,7 +32,7 @@
 					{/if}
 				</a>
 				<div class="h4 p-4">
-					<a href="/user/{user.id}" class="text-decoration-none text-light">{user.displayname}</a>
+					<a href="/user/{user.id}" class="text-decoration-none light-text">{user.displayname}</a>
 				</div>
 			</div>
 			<form class="align-self-center row w-100 p-2 pt-0" method="POST" use:enhance>
