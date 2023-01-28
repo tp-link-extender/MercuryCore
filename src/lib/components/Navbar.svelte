@@ -38,6 +38,7 @@
 							<li><h6 class="dropdown-header">ACCOUNT</h6></li>
 							<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-address-card me-2" /> Profile</a></li>
 							<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-box-open me-2" /> Inventory</a></li>
+							<li><a class="dropdown-item light-text" href="/requests"><i class="fa-solid fa-user-plus me-2" /> Friend requests</a></li>
 							<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-user-pen me-2" /> Avatar</a></li>
 							<li><a class="dropdown-item light-text" href="/user/{$user.userId}"><i class="fa-solid fa-users me-2" /> My Groups</a></li>
 							<li><hr class="dropdown-divider" /></li>
