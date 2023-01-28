@@ -1,6 +1,8 @@
 <script lang="ts">
+	import type { PageData } from "./$types"
 	import PlaceCard from "$lib/components/PlaceCard.svelte"
-	export let data: any
+	
+	export let data: PageData
 </script>
 
 <svelte:head>
