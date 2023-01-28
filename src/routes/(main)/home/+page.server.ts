@@ -18,7 +18,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 				params: {
 					user: session.user.username,
 				},
-			}, false, true
+			},
+			false,
+			true
 		)
 
 		let friends: any[] = []
@@ -66,6 +68,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 				posted: true,
 				content: true,
 			},
+			orderBy: {
+				posted: "desc",
+			},
+			take: 40,
 		}),
 	}
 }

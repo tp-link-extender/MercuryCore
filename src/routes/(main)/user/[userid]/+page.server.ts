@@ -18,7 +18,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			displayname: true,
 			bio: true,
 			image: true,
-			posts: true,
+			posts: {
+				orderBy: {
+					posted: "desc",
+				},
+				take: 40,
+			},
 		},
 	})
 	if (user) {
