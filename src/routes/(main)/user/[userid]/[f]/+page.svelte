@@ -6,13 +6,19 @@
 	}
 
 	export let data: any
+
+	const titles: any = {
+		friends: `${data.displayname}'s friends`,
+		followers: `${data.displayname}'s followers`,
+		following: `Followed by ${data.displayname}`,
+	}
 </script>
 
 <svelte:head>
-	<title>Followed by {data.displayname} - Mercury</title>
+	<title>{titles[data.type]} - Mercury</title>
 </svelte:head>
 
-<h1 class="light-text text-center">Followed by {data.displayname} ({data.number})</h1>
+<h1 class="light-text text-center">{titles[data.type]} ({data.number})</h1>
 
 <div class="container mt-5 d-grid">
 	{#each data.users as user}
