@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		const query = {
 			params: {
-				user1: session.user?.username || "",
+				user1: session.user.username || "",
 				user2: user.username,
 			},
 		}
@@ -59,11 +59,11 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			friendCount: roQuery("RETURN SIZE(() -[:friends]- (:User { name: $user }))", query2, true),
 			followerCount: roQuery("RETURN SIZE(() -[:follows]-> (:User { name: $user }))", query2, true),
 			followingCount: roQuery("RETURN SIZE(() <-[:follows]- (:User { name: $user }))", query2, true),
-			friends: session ? roQuery("MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query) : false,
-			following: session ? roQuery("MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query) : false,
-			follower: session ? roQuery("MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query) : false,
-			incomingRequest: session ? roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query) : false,
-			outgoingRequest: session ? roQuery("MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query) : false,
+			friends: roQuery("MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query),
+			following: roQuery("MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query),
+			follower: roQuery("MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query),
+			incomingRequest: roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query),
+			outgoingRequest: roQuery("MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query),
 		}
 	} else {
 		throw error(404, `Not found: /user/${params.userid}`)
