@@ -93,7 +93,7 @@
 		</div>
 	{/if}
 	{#if data.feed.length > 0}
-		<h2 class="h4 mt-5 light-text">Feed posts</h2>
+		<h2 class="h4 mt-5 light-text">Latest feed posts</h2>
 		<div id="feed" class="light-text p-3">
 			<div class="row">
 				{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
