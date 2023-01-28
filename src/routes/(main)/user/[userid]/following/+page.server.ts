@@ -5,13 +5,12 @@ import { error } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ params }) => {
 	console.time("user")
-	params.userid = params.userid
 	if (!/^\d+$/.test(params.userid)) throw error(400, `Invalid user id: ${params.userid}`)
-	params.userid = parseInt(params.userid)
+	const id = parseInt(params.userid)
 
 	const user = await prisma.user.findUnique({
 		where: {
-			id: params.userid,
+			id,
 		},
 		select: {
 			username: true,
@@ -62,13 +61,13 @@ export const load: PageServerLoad = async ({ params }) => {
 
 		console.timeEnd("user")
 		return {
-			username: params.user,
+			username: user.username,
 			displayname: user.displayname,
 			img: user.image,
 			users: Users(),
 			number: roQuery("RETURN SIZE((:User { name: $user }) -[:follows]-> ())", query, true),
 		}
 	} else {
-		throw error(404, `Not found: /${params.user}`)
+		throw error(404, `Not found`)
 	}
 }
