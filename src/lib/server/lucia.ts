@@ -9,6 +9,8 @@ export const auth = lucia({
 	transformUserData: (userData: any) => {
 		return {
 			userId: userData.id,
+			bio: userData.bio,
+			email: userData.email,
 			username: userData.username,
 			displayname: userData.displayname,
 			image: userData.image,
