@@ -21,12 +21,8 @@
 		<div class="container">
 			<h1 class="light-text d-inline">{data.displayname}</h1>
 			<h2 class="h5 d-inline light-text m-2 ps-3 opacity-50">@{data.username}</h2>
-			{#if data.bio}
-				<em class="light-text d-block mt-4">"{data.bio}"</em>
-			{:else}
-				<br />
-				<br />
-			{/if}
+			<br />
+			<br />
 			<br />
 			<div class="d-flex">
 				<a href="/user/{data.id}/friends" class="light-text text-center text-decoration-none">
@@ -81,8 +77,14 @@
 			</div>
 		</div>
 	</div>
+	{#if data.bio}
+		<div class="mt-4 light-text">
+			<h2 class="h4 light-text">Bio</h2>
+			<p class="light-text ms-2">{data.bio}</p>
+		</div>
+	{/if}
 	{#if data.places.length > 0}
-		<div class="mt-5">
+		<div class="mt-4">
 			<h2 class="h4 light-text">Creations</h2>
 			<div class="row m-0 p-0">
 				{#each data.places as place}
