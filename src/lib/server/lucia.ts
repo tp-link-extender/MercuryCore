@@ -17,6 +17,7 @@ export const auth = lucia({
 			currency: userData.currency,
 		}
 	},
+	generateCustomUserId: () => null,
 })
 
 export type Auth = typeof auth
