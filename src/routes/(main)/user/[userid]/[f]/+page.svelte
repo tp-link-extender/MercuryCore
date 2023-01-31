@@ -36,7 +36,7 @@
 				{/if}
 			</div>
 			<p class="h4 p-4">
-				aaaaaaaaaaaaaa{user.displayname}
+				{user.displayname}
 			</p>
 		</a>
 	{/each}
