@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getUser, signOut } from "@lucia-auth/sveltekit/client"
-	import { invalidateAll } from "$app/navigation"
+	import { enhance } from "$app/forms"
+	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	const user = getUser()
 </script>
@@ -53,14 +53,13 @@
 								<li><hr class="dropdown-divider" /></li>
 								<li><a class="dropdown-item light-text" href="/user/settings"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
 								<li>
-									<button
-										on:click={async () => {
-											await signOut()
-											invalidateAll()
-											window.location.reload()
-										}}
-										class="dropdown-item text-light text-bg-danger"><b><i class="fa-solid fa-arrow-right-from-bracket me-2" /> Log out</b></button
-									>
+									<form use:enhance method="POST" action="/logout">
+										<button
+											
+											type="submit"
+											class="dropdown-item text-light text-bg-danger"><b><i class="fa-solid fa-arrow-right-from-bracket me-2" /> Log out</b></button
+										>
+									</form>
 								</li>
 							</ul>
 						</li>
