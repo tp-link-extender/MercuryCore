@@ -15,15 +15,15 @@ datasource db {
 // Users & Groups
 
 model User {
-    id              Int       @id @unique @default(autoincrement())
-    provider_id     String    @unique
-    email           String    @unique
-    hashed_password String?
-    session         Session[]
+    id      Int       @id @unique @default(autoincrement())
+    session Session[]
+    Key     Key[]
 
     username        String   @unique
+    email           String   @unique
     displayname     String
     usedRegkey      Regkey   @relation(fields: [regkeyKey], references: [key])
+    regkeyKey       String
     permissionLevel Int      @default(1) // 1: Regular user 2: Verified (email or Discord) 3: Moderator 4: Catalog Manager 5: Administrator
     bio             String?
     image           String?
@@ -35,17 +35,27 @@ model User {
     // groupsJoined Group[] @relation("member")
     places          Place[]
     posts           Post[]
-    regkeyKey       String
 
     @@map("user")
 }
 
+model Key {
+    id              String  @id @unique
+    hashed_password String?
+    user_id         Int
+    primary         Boolean
+    user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("key")
+}
+
 model Session {
-    id           String @id @unique
-    user_id      Int
-    expires      BigInt
-    idle_expires BigInt
-    user         User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    id             String @id @unique
+    user_id        Int
+    active_expires BigInt
+    idle_expires   BigInt
+    user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
     @@index([user_id])
     @@map("session")

@@ -13,18 +13,15 @@ export const actions: Actions = {
 		if (password.length < 1) return fail(400, { area: "password", msg: "Password must be at least 1 character" })
 		if (password.length > 6969) return fail(400, { area: "password", msg: "Password must be less than 6969 characters" })
 
+		let session
 		try {
-			const user = await auth.authenticateUser("username", username, password)
-			const session = await auth.createSession(user.userId)
-			locals.setSession(session)
+			const user = await auth.validateKeyPassword("username", username.toLowerCase(), password)
+			session = await auth.createSession(user.userId)
 		} catch (e) {
-			const error = e as Error
-			if (error.message === "AUTH_INVALID_PROVIDER_ID" || error.message === "AUTH_INVALID_PASSWORD") {
-				return fail(400, { area: "password", msg: "Incorrect username or password" })
-			}
-			console.error("Login error:", error)
-			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })
+			console.error("Login error:", e as Error)
+			return fail(400, { area: "password", msg: "Incorrect username or password" })
 		}
+		locals.setSession(session)
 
 		throw redirect(302, "/home")
 	},
