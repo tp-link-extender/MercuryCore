@@ -44,8 +44,12 @@ export const actions: Actions = {
 			if (!regkeyCheck) return fail(400, { area: "regkey", msg: "Registration key is invalid" })
 			if (regkeyCheck.usesLeft < 1) return fail(400, { area: "regkey", msg: "This registration key has ran out of uses" })
 
-			const user = await auth.createUser("username", username, {
-				password,
+			const user = await auth.createUser({
+				key: {
+					providerId: "username",
+					providerUserId: lowercaseUsername,
+					password,
+				},
 				attributes: {
 					username: lowercaseUsername,
 					email,
