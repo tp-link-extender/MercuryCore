@@ -111,20 +111,20 @@
 					<div class="form-group row gx-0 mb-2">
 						<label for="password" class="col-sm-4 col-form-label pt-0">Current Password</label>
 						<div class="col-sm-10">
-							<input type="password" class="form-control mb-1 light-text" id="cpassword" />
+							<input type="password" class="form-control mb-1 light-text" id="cpassword" name="cpassword" required />
 						</div>
 					</div>
 					<div class="form-group row gx-0 mb-2">
 						<label for="npassword" class="col-sm-4 col-form-label pt-0">New Password</label>
 						<div class="col-sm-10">
-							<input type="password" class="form-control mb-1 light-text" id="npassword" />
+							<input type="password" class="form-control mb-1 light-text" id="npassword" name="npassword" required />
 						</div>
 						<small class="text-muted">Make sure your password is unique.</small>
 					</div>
 					<div class="form-group row gx-0 mb-2">
 						<label for="cnpassword" class="col-sm-4 col-form-label pt-0">Confirm New Password</label>
 						<div class="col-sm-10">
-							<input type="password" class="form-control mb-1 light-text" id="cnpassword" />
+							<input type="password" class="form-control mb-1 light-text" id="cnpassword" name="cnpassword" required />
 						</div>
 					</div>
 				</fieldset>

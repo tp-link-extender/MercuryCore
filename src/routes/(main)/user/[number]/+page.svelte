@@ -25,19 +25,19 @@
 			<br />
 			<br />
 			<div class="d-flex">
-				<a href="/user/{data.id}/friends" class="light-text text-center text-decoration-none">
+				<a href="/user/{data.number}/friends" class="light-text text-center text-decoration-none">
 					Friends
 					<h3 class="light-text">
 						{data.friendCount}
 					</h3>
 				</a>
-				<a href="/user/{data.id}/followers" class="light-text text-center text-decoration-none ms-4">
+				<a href="/user/{data.number}/followers" class="light-text text-center text-decoration-none ms-4">
 					Followers
 					<h3 class="light-text">
 						{data.followerCount}
 					</h3>
 				</a>
-				<a href="/user/{data.id}/following" class="light-text text-center text-decoration-none ms-4">
+				<a href="/user/{data.number}/following" class="light-text text-center text-decoration-none ms-4">
 					Following
 					<h3 class="light-text">
 						{data.followingCount}
