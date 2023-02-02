@@ -89,7 +89,7 @@
 					<h2 class="h4 light-text">Friends</h2>
 					<div class="home-row d-flex">
 						{#each data.friends as friend}
-							<a class="px-2 mb-2 text-center light-text text-decoration-none" href="/user/{friend.id}">
+							<a class="px-2 mb-2 text-center light-text text-decoration-none" href="/user/{friend.number}">
 								<div class="position-relative mb-2">
 									<div class="image-background rounded-circle">
 										<img src={friend.image} alt={friend.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />

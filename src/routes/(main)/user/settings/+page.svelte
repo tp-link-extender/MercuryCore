@@ -52,22 +52,28 @@
 								id="displayName"
 								required
 								name="displayName"
-								value={form?.prev.displayname || $user?.displayname}
+								value={form?.prev?.displayname || $user?.displayname}
 								class="form-control {form?.area == 'displayName' ? 'is-invalid' : 'valid'}"
 							/>
+							{#if form?.area == "displayName"}
+								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
+							{/if}
 						</div>
-						<small class="text-muted pb-2">You can only change your display name every 7 days.</small>
+						<small class="text-muted pb-2">You can only change your display name every 7 days. (not added yet lmao)</small>
 					</div>
 					<hr />
 					<div class="row">
 						<label for="bio" class="form-label light-text">Bio</label>
 						<div class="container">
-							<textarea class="form-control light-text mb-1 {form?.area == 'bio' ? 'is-invalid' : 'valid'}" id="bio" name="bio" rows={3} value={form?.prev.bio || $user?.bio} />
+							<textarea class="form-control light-text mb-1 {form?.area == 'bio' ? 'is-invalid' : 'valid'}" id="bio" name="bio" rows={3} value={form?.prev?.bio || $user?.bio} />
 							<small class="text-muted pb-2"> Maximum 1000 characters, your bio will appear on your profile and allow other users to know who you are. </small>
 						</div>
 					</div>
 				</fieldset>
 				<button type="submit" class="btn btn-success mt-4">Save Changes</button>
+				{#if form?.profilesuccess}
+					<p class="text-success mt-3">Profile changed successfully!</p>
+				{/if}
 			</form>
 		</div>
 		<div class="tab-pane fade" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex={0}>
@@ -76,7 +82,7 @@
 			<div class="form-group row">
 				<label for="name" class="col-md-3 col-form-label text-md-right">Username</label>
 				<div class="col-md-9">
-					<input type="text" readonly id="name" disabled value={$user?.username} class="form-control" />
+					<input type="text" readonly id="name" disabled value={$user?.username} class="form-control valid" />
 				</div>
 				<small class="text-muted pb-2">You cannot change your username.</small>
 			</div>
@@ -84,7 +90,7 @@
 			<div class="form-group row">
 				<label for="name" class="col-md-3 col-form-label text-md-right">Email Address</label>
 				<div class="col-md-9">
-					<input type="text" readonly id="email" value={`*******@${(form?.prev.email || $user?.email).split("@")[1]}`} required class="form-control" />
+					<input type="text" readonly id="email" value={`*******@${(form?.prev?.email || $user?.email).split("@")[1]}`} required class="form-control valid" />
 				</div>
 			</div>
 			<h4 class="mt-5 border-top pt-4 light-text">Discord Verification</h4>
@@ -111,24 +117,36 @@
 					<div class="form-group row gx-0 mb-2">
 						<label for="password" class="col-sm-4 col-form-label pt-0">Current Password</label>
 						<div class="col-sm-10">
-							<input type="password" class="form-control mb-1 light-text" id="cpassword" name="cpassword" required />
+							<input type="password" class="form-control mb-1 light-text {form?.area == 'cpassword' ? 'is-invalid' : 'valid'}" id="cpassword" name="cpassword" required />
+							{#if form?.area == "cpassword"}
+								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
+							{/if}
 						</div>
 					</div>
 					<div class="form-group row gx-0 mb-2">
 						<label for="npassword" class="col-sm-4 col-form-label pt-0">New Password</label>
 						<div class="col-sm-10">
-							<input type="password" class="form-control mb-1 light-text" id="npassword" name="npassword" required />
+							<input type="password" class="form-control mb-1 light-text {form?.area == 'npassword' ? 'is-invalid' : 'valid'}" id="npassword" name="npassword" required />
+							{#if form?.area == "npassword"}
+								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
+							{/if}
 						</div>
 						<small class="text-muted">Make sure your password is unique.</small>
 					</div>
 					<div class="form-group row gx-0 mb-2">
 						<label for="cnpassword" class="col-sm-4 col-form-label pt-0">Confirm New Password</label>
 						<div class="col-sm-10">
-							<input type="password" class="form-control mb-1 light-text" id="cnpassword" name="cnpassword" required />
+							<input type="password" class="form-control mb-1 light-text {form?.area == 'cnpassword' ? 'is-invalid' : 'valid'}" id="cnpassword" name="cnpassword" required />
+							{#if form?.area == "cnpassword"}
+								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
+							{/if}
 						</div>
 					</div>
 				</fieldset>
 				<button type="submit" class="btn btn-success mt-4">Save Changes</button>
+				{#if form?.passwordsuccess}
+					<p class="text-success mt-3">Password changed successfully!</p>
+				{/if}
 			</form>
 		</div>
 	</div>
@@ -146,7 +164,8 @@
 	
 	input, textarea
 		background: var(--accent)
-		border-color: var(--accent2)
+	.valid
+		border-color: var(--accent3)
 	.form-control
 		color: var(--light-text)
 
