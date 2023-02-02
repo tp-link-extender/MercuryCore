@@ -15,10 +15,11 @@ datasource db {
 // Users & Groups
 
 model User {
-    id      Int       @id @unique @default(autoincrement())
+    id      String    @id @unique @default(uuid())
     session Session[]
     Key     Key[]
 
+    number          Int      @unique @default(autoincrement())
     username        String   @unique
     email           String   @unique
     displayname     String
@@ -42,7 +43,7 @@ model User {
 model Key {
     id              String  @id @unique
     hashed_password String?
-    user_id         Int
+    user_id         String
     primary         Boolean
     user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
@@ -52,7 +53,7 @@ model Key {
 
 model Session {
     id             String @id @unique
-    user_id        Int
+    user_id        String
     active_expires BigInt
     idle_expires   BigInt
     user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)

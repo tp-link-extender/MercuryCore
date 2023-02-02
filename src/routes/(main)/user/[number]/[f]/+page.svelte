@@ -24,7 +24,7 @@
 
 <div class="container mt-5 d-grid">
 	{#each data.users as user}
-		<a class="card light-text h-100 w-100 d-flex flex-row" href="/user/{user.id}">
+		<a class="card light-text h-100 w-100 d-flex flex-row" href="/user/{user.number}">
 			<div class="p-4">
 				<div class="image-background rounded-circle">
 					<img src={user.image} alt={user.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />

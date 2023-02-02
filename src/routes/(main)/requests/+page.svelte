@@ -21,7 +21,7 @@
 	{#each data.users as user}
 		<div class="card light-text h-100 w-100 d-flex flex-col">
 			<div class="d-flex flex-row">
-				<a class="p-4 pe-2" href="/user/{user.id}">
+				<a class="p-4 pe-2" href="/user/{user.number}">
 					<div class="image-background rounded-circle">
 						<img src={user.image} alt={user.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />
 					</div>
@@ -32,7 +32,7 @@
 					{/if}
 				</a>
 				<div class="h4 p-4">
-					<a href="/user/{user.id}" class="text-decoration-none light-text">{user.displayname}</a>
+					<a href="/user/{user.number}" class="text-decoration-none light-text">{user.displayname}</a>
 				</div>
 			</div>
 			<form class="align-self-center row w-100 p-2 pt-0" method="POST" use:enhance>

@@ -5,15 +5,15 @@ import { error, fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("user")
-	if (!/^\d+$/.test(params.userid)) throw error(400, `Invalid user id: ${params.userid}`)
-	const id = parseInt(params.userid)
+	if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
+	const number = parseInt(params.number)
 
 	const user = await prisma.user.findUnique({
 		where: {
-			id,
+			number,
 		},
 		select: {
-			id: true,
+			number: true,
 			username: true,
 			displayname: true,
 			bio: true,
@@ -43,7 +43,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		console.timeEnd("user")
 		return {
-			id: user.id,
+			number: user.number,
 			username: user.username,
 			displayname: user.displayname,
 			bio: user.bio,
@@ -75,12 +75,12 @@ export const actions: Actions = {
 		const session = await locals.validateUser()
 		if (!session.session) throw redirect(302, "/login")
 
-		if (!/^\d+$/.test(params.userid)) throw error(400, `Invalid user id: ${params.userid}`)
-		const id = parseInt(params.userid)
+		if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
+		const number = parseInt(params.number)
 
 		const user = await prisma.user.findUnique({
 			where: {
-				id,
+				number,
 			},
 			select: {
 				username: true,
