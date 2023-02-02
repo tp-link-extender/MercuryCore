@@ -65,7 +65,7 @@
 						{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
 							<div class="card mb-2">
 								<div class="card-body pb-0">
-									<a id="user" class="d-flex mb-2 text-decoration-none" href="/user/{status.author.id}">
+									<a id="user" class="d-flex mb-2 text-decoration-none" href="/user/{status.author.number}">
 										<span class="pfp rounded-circle">
 											<img src={status.author.image} alt={status.author.displayname} class="rounded-circle img-fluid rounded-top-0" />
 										</span>

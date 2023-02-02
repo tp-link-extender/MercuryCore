@@ -9,6 +9,7 @@ export const auth = lucia({
 	transformUserData: (userData: any) => {
 		return {
 			userId: userData.id,
+			number: userData.number,
 			bio: userData.bio,
 			email: userData.email,
 			username: userData.username,
@@ -17,7 +18,7 @@ export const auth = lucia({
 			currency: userData.currency,
 		}
 	},
-	generateCustomUserId: () => null,
+	generateCustomUserId: () => crypto.randomUUID(),
 })
 
 export type Auth = typeof auth
