@@ -14,7 +14,6 @@ export const actions: Actions = {
 
 		if (!entries.displayName) return fail(400, { area: "displayName", msg: "Invalid displayname" })
 
-		console.log(entries)
 		await prisma.user.update({
 			where: {
 				number: session.user.number,
@@ -26,7 +25,7 @@ export const actions: Actions = {
 		})
 
 		return {
-			success: true,
+			profilesuccess: true,
 			prev: entries,
 		}
 	},
@@ -45,5 +44,9 @@ export const actions: Actions = {
 		}
 
 		await auth.updateKeyPassword("username", session.user.username, entries.npassword)
+
+		return {
+			passwordsuccess: true,
+		}
 	},
 }
