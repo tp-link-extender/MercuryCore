@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@lucia-auth/adapter-prisma': ^0.3.0
+  '@lucia-auth/adapter-prisma': 0.4.0
   '@lucia-auth/sveltekit': ^0.6.2
   '@popperjs/core': ^2.11.6
   '@prisma/client': ^4.9.0
@@ -28,7 +28,7 @@ specifiers:
   vite-plugin-mkcert: ^1.12.0
 
 dependencies:
-  '@lucia-auth/adapter-prisma': 0.3.0_lucia-auth@0.6.0
+  '@lucia-auth/adapter-prisma': 0.4.0_lucia-auth@0.6.0
   '@lucia-auth/sveltekit': 0.6.2_iyasqsbplmktfcni36hpxhd3zi
   '@popperjs/core': 2.11.6
   '@prisma/client': 4.9.0_prisma@4.9.0
@@ -267,10 +267,10 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@lucia-auth/adapter-prisma/0.3.0_lucia-auth@0.6.0:
-    resolution: {integrity: sha512-qAbZOEb31hB57RagluGn0pFjOpoRsPONjiYc/+5wSEwOEzm/ogs9BiIPgpXg/mtLOZFFX7+KUyIGzHaaVUmAyw==}
+  /@lucia-auth/adapter-prisma/0.4.0_lucia-auth@0.6.0:
+    resolution: {integrity: sha512-HMaGbVfB5KTZBs6KPqI5z6RFKVl4AKfm9u2KrrQglthpd/rWJoJRDI2oYkdcEX4Xu1FNdNJJrEtKKBtVAXYqrw==}
     peerDependencies:
-      lucia-auth: 0.4.x
+      lucia-auth: 0.6.x
     dependencies:
       lucia-auth: 0.6.0
     dev: false

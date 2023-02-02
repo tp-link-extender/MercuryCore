@@ -16,7 +16,7 @@ export const actions: Actions = {
 		console.log(entries)
 		await prisma.user.update({
 			where: {
-				id: session.user.userId,
+				id: session.user.number,
 			},
 			data: {
 				bio: entries.bio || "",
@@ -26,7 +26,7 @@ export const actions: Actions = {
 
 		return {
 			success: true,
-			prev: entries
+			prev: entries,
 		}
 	},
 

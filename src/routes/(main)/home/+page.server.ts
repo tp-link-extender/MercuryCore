@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 							username: i.name,
 						},
 						select: {
-							id: true,
+							number: true,
 							username: true,
 							displayname: true,
 							image: true,
@@ -61,7 +61,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			select: {
 				author: {
 					select: {
-						id: true,
+						number: true,
 						displayname: true,
 						image: true,
 					},

@@ -25,15 +25,15 @@ const numberQueries: any = {
 
 export const load: PageServerLoad = async ({ params }) => {
 	console.time("user")
-	if (!/^\d+$/.test(params.userid)) throw error(400, `Invalid user id: ${params.userid}`)
-	const id = parseInt(params.userid)
+	if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
+	const number = parseInt(params.number)
 
 	if (params.f && !types.includes(params.f)) throw error(400, `Not found: /user/${params.userid}/${params.f}`)
 	const type = params.f
 
 	const user = await prisma.user.findUnique({
 		where: {
-			id,
+			number,
 		},
 		select: {
 			username: true,
@@ -61,7 +61,7 @@ export const load: PageServerLoad = async ({ params }) => {
 								username: i.name,
 							},
 							select: {
-								id: true,
+								number: true,
 								username: true,
 								displayname: true,
 								image: true,
