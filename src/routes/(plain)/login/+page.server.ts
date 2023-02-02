@@ -1,6 +1,6 @@
 import type { Actions } from "./$types"
-import { redirect, fail } from "@sveltejs/kit"
 import { auth } from "$lib/server/lucia"
+import { redirect, fail } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
