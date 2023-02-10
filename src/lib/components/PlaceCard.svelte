@@ -47,7 +47,7 @@
 		position: relative
 		border-radius: 1rem 0 0 1rem
 		&::after
-			transition: all .3s
+			transition: all 0.3s
 			content: ""
 			position: absolute
 			top: 0
