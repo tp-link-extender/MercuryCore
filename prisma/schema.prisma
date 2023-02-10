@@ -36,6 +36,9 @@ model User {
     // groupsJoined Group[] @relation("member")
     places          Place[]
     posts           Post[]
+    itemsCreated    Item[]
+    itemsOwned      Item[]   @relation("owns")
+    itemsWorn       Item[]   @relation("wears")
 
     @@map("user")
 }
@@ -102,12 +105,41 @@ model Place {
 
 // model GroupPlace {
 //     name        String
+//     slug          String @id @unique
 //     owner       Group  @relation(fields: [groupName], references: [name])
-//     description String
 //     groupName   String
+//     description String
 
 //     created DateTime @default(now())
 //     updated DateTime @default(now())
-
-//     @@id([name, groupName])
 // }
+
+enum ItemCategory {
+    TShirt
+    Shirt
+    Pants
+    HeadShape
+    Hair
+    Face
+    Skirt
+    Dress
+    Hat
+    Headgear
+    Gear
+    Neck
+    Back
+    Shoulder
+}
+
+model Item {
+    name        String
+    id          String       @id @unique @default(cuid())
+    price       Int
+    category    ItemCategory
+    creator     User         @relation(fields: [creatorName], references: [username])
+    creatorName String
+    owners      User[]       @relation("owns")
+    wearers     User[]       @relation("wears")
+    mesh        String
+    texture     String
+}
