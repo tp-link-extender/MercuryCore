@@ -1,6 +1,13 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
+	import type { PageData, Snapshot } from "./$types"
 	import PlaceCard from "$lib/components/PlaceCard.svelte"
+
+	let value = ""
+
+	export const snapshot: Snapshot = {
+		capture: () => value,
+		restore: (v) => value = v,
+	}
 
 	export let data: PageData
 </script>
@@ -18,7 +25,7 @@
 			<div class="card-body">
 				<form>
 					<div class="input-group mb-3">
-						<input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
+						<input bind:value type="text" class="form-control light-text input" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
 						<button class="btn btn-success" type="button" id="button-addon2">Search</button>
 					</div>
 					<p>
@@ -56,7 +63,7 @@
 </div>
 
 <style lang="sass">
-	input, select
+	.input, select
 		background-color: var(--accent)
 		border-color: var(--accent2)
 
