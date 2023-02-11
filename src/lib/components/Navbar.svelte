@@ -23,7 +23,7 @@
 							<a href="/games" class="nav-link mt-1 shadow-none mr-0 light-text">Games</a>
 						</li>
 						<li class="nav-item">
-							<a href="/avatarshop" class="nav-link mt-1 shadow-none mr-0 light-text">Avatar shop</a>
+							<a href="/avatarshop" class="nav-link mt-1 shadow-none mr-0 light-text">Avatar Shop</a>
 						</li>
 					</ul>
 					<ul class="navbar-nav loggedin">
