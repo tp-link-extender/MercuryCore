@@ -31,11 +31,6 @@
 							<form use:enhance method="POST" action="/search" class="input-group my-1" role="search">
 								<input class="form-control valid" name="query" type="search" placeholder="Search" aria-label="Search" />
 								<button class="btn btn-success py-0" type="submit" title="Search"><i class="fa fa-search" /></button>
-								<select class="btn btn-info dropdown-toggle-split px-1" name="category">
-									<option value="users">Users</option>
-									<option value="places">Places</option>
-									<option value="items">Items</option>
-								</select>
 							</form>
 						</li>
 						<li class="nav-item">

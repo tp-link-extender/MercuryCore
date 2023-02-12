@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) throw error(400, "No query provided")
-	if (!["users", "places", "items"].includes(category)) throw error(400, "Invalid category")
+	if (category && !["users", "places", "items"].includes(category)) throw error(400, "Invalid category")
 
 	return {
 		query,

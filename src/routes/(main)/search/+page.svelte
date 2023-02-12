@@ -18,7 +18,15 @@
 	<title>Search for {data.query} - Mercury</title>
 </svelte:head>
 
-<h1 class="text-center light-text">Search for "{data.query}" in {data.category}</h1>
+{#if data.category}
+	<h1 class="text-center light-text">
+		Search for "{data.query}" in {data.category}
+	</h1>
+{:else}
+	<h1 class="text-center light-text h2">
+		Choose a category to search for "{data.query}"
+	</h1>
+{/if}
 
 <div class="container-fluid mt-5">
 	{#if data.category == "users"}
@@ -39,8 +47,7 @@
 				</a>
 			{/each}
 		</div>
-	{/if}
-	{#if data.category == "places"}
+	{:else if data.category == "places"}
 		<div class="grid d-grid">
 			{#each data.places as place}
 				<div class="px-2 mb-2">
@@ -50,8 +57,7 @@
 				</div>
 			{/each}
 		</div>
-	{/if}
-	{#if data.category == "items"}
+	{:else if data.category == "items"}
 		<div class="grid d-grid">
 			{#each data.items as item}
 				<div class="px-2 mb-2">
@@ -60,6 +66,12 @@
 					</div>
 				</div>
 			{/each}
+		</div>
+	{:else}
+		<div id="buttons" class="d-flex justify-content-center gap-3">
+			<a class="btn btn-primary" href="/search?q={data.query}&c=places">Places</a>
+			<a class="btn btn-primary" href="/search?q={data.query}&c=items">Items</a>
+			<a class="btn btn-primary" href="/search?q={data.query}&c=users">Users</a>
 		</div>
 	{/if}
 </div>
