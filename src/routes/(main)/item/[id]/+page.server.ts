@@ -5,16 +5,23 @@ import { error, fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("item")
+	const session = await locals.validateUser()
 	const getItem = await prisma.item.findUnique({
 		where: {
 			id: params.id,
 		},
 		select: {
 			name: true,
+			price: true,
 			creator: {
 				select: {
 					number: true,
 					displayname: true,
+				},
+			},
+			owners: {
+				where: {
+					id: session?.user?.userId,
 				},
 			},
 		},
@@ -22,8 +29,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	console.timeEnd("item")
 
 	if (getItem) {
-		const session = await locals.validateUser()
-
 		const query = {
 			params: {
 				user: session.user?.username || "",
@@ -32,7 +37,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		}
 		return {
 			name: getItem.name,
+			price: getItem.price,
 			creator: getItem.creator,
+			owned: getItem.owners.length > 0,
 			description: "item description", //getItem.description,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Item { name: $itemid }))", query, true),
 			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Item { name: $itemid }))", query, true),
@@ -57,12 +64,12 @@ export const actions: Actions = {
 				},
 			}))
 		)
-			return fail(404, { msg: `Not found: /place/${params.place}` })
+			return fail(404, { msg: `Not found: /item/${params.id}` })
 
 		const query = {
 			params: {
 				user: session.user.username,
-				itemid: params.id, // place slug (unique)
+				itemid: params.id, // item id (unique)
 			},
 		}
 
@@ -70,6 +77,38 @@ export const actions: Actions = {
 
 		try {
 			switch (action) {
+				case "buy":
+					const getItem = await prisma.item.findUnique({
+						where: {
+							id: params.id,
+						},
+						select: {
+							price: true,
+							owners: {
+								where: {
+									id: session?.user?.userId,
+								},
+							},
+						},
+					})
+					if ((getItem?.owners || []).length > 0) throw error(400, "You already own this item")
+
+					await prisma.user.update({
+						where: {
+							id: session.user.userId,
+						},
+						data: {
+							itemsOwned: {
+								connect: {
+									id: params.id,
+								},
+							},
+							currency: {
+								decrement: getItem?.price,
+							},
+						},
+					})
+
 				case "like":
 					await Query(
 						`
