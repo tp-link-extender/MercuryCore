@@ -100,7 +100,7 @@
 			>
 				A Discord account has not been linked.
 			</p>
-			<button type="submit" class="btn btn-primary"><i class="fa-solid fa-link" /> Link Discord</button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-link" /> Link Discord</button>
 			<h4 class="mb-2 mt-3 border-top pt-4 light-text">Email Verification</h4>
 			<p
 				class="mb-2
@@ -108,7 +108,7 @@
 			>
 				You have not verified your email address.
 			</p>
-			<button type="submit" class="btn btn-primary mb-3"><i class="fa-solid fa-envelope-circle-check" /> Verify Email</button>
+			<button type="submit" class="btn btn-primary mb-3"><i class="fa fa-envelope-circle-check" /> Verify Email</button>
 		</div>
 		<div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex={0}>
 			<h4 class="fw-normal light-text mb-3">Change Password</h4>

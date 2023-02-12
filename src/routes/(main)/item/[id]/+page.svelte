@@ -14,8 +14,7 @@
 
 <div class="container">
 	<div class="row">
-		<div class="carousel slide col-md-8 mb-3">
-		</div>
+		<div class="carousel slide col-md-8 mb-3" />
 		<div class="flex col-md-4">
 			<div class="card rounded-none mb-4">
 				<div class="card-body">
@@ -34,7 +33,7 @@
 						<div class="col d-flex justify-content-start">
 							<button name="action" value={data.likes ? "unlike" : "like"} class="btn btn-sm {data.likes ? 'btn-success' : 'btn-outline-success'}">
 								{#if data.likes}
-									<i class="fa-solid fa-thumbs-up" />
+									<i class="fa fa-thumbs-up" />
 								{:else}
 									<i class="fa-regular fa-thumbs-up" />
 								{/if}
@@ -43,7 +42,7 @@
 						<div class="col d-flex justify-content-end">
 							<button name="action" value={data.dislikes ? "undislike" : "dislike"} class="btn btn-sm {data.dislikes ? 'btn-danger' : 'btn-outline-danger'}">
 								{#if data.dislikes}
-									<i class="fa-solid fa-thumbs-down" />
+									<i class="fa fa-thumbs-down" />
 								{:else}
 									<i class="fa-regular fa-thumbs-down" />
 								{/if}

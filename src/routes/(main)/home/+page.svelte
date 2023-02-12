@@ -5,7 +5,6 @@
 	import Place from "$lib/components/Place.svelte"
 	const user = getUser()
 
-	// explicitly any to prevent warnings
 	const statusColours: any = {
 		Online: "bg-info",
 		Joined: "bg-success",

@@ -16,13 +16,13 @@
 			<div class="mt-auto mb-1">
 				<div class="float-start">
 					<span>
-						<i class="fa-solid fa-thumbs-up opacity-75" />
+						<i class="fa fa-thumbs-up opacity-75" />
 						{place.ratio}%
 					</span>
 				</div>
 				<div class="float-end">
 					<span>
-						<i class="fa-solid fa-user opacity-75" /> 12
+						<i class="fa fa-user opacity-75" /> 12
 					</span>
 				</div>
 			</div>
