@@ -65,7 +65,7 @@
 						{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
 							<div class="card mb-2">
 								<div class="card-body pb-0">
-									<a id="user" class="d-flex mb-2 text-decoration-none" href="/user/{status.author.number}">
+									<a class="d-flex mb-2 text-decoration-none user" href="/user/{status.author.number}">
 										<span class="pfp rounded-circle">
 											<img src={status.author.image} alt={status.author.displayname} class="rounded-circle img-fluid rounded-top-0" />
 										</span>
@@ -165,10 +165,6 @@
 	.col2
 		margin-top: 7rem
 
-	input
-		background: var(--accent)
-	.valid
-		border-color: var(--accent2)
 	.card
 		background: var(--accent)
 
@@ -189,7 +185,7 @@
 		max-height: 55vh
 
 	#feed
-		#user
+		.user
 			align-items: center
 			.pfp
 				background: var(--accent2)
