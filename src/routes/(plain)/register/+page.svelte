@@ -166,11 +166,6 @@
 				background: var(--mainaccent)
 				border-color: var(--mainaccent)
 
-	input
-		background-color: var(--accent2)
-	.valid
-		border-color: var(--accent3)
-
 	#wavep // rpcs3 momnt
 		div
 			z-index: 1
