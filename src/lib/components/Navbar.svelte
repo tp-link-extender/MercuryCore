@@ -28,8 +28,19 @@
 					</ul>
 					<ul class="navbar-nav loggedin">
 						<li class="nav-item">
+							<form use:enhance method="POST" action="/search" class="input-group my-1" role="search">
+								<input class="form-control valid" name="query" type="search" placeholder="Search" aria-label="Search" />
+								<button class="btn btn-success py-0" type="submit" title="Search"><i class="fa fa-search" /></button>
+								<select class="btn btn-info dropdown-toggle-split px-1" name="category">
+									<option value="users">Users</option>
+									<option value="places">Places</option>
+									<option value="items">Items</option>
+								</select>
+							</form>
+						</li>
+						<li class="nav-item">
 							<a id="rocks" href="/transactions" class="fw-bold nav-link mt-1 text-success shadow-none">
-								<i class="fa-solid fa-gem me-1" />
+								<i class="fa fa-gem me-1" />
 								<span class="h6 text-success">
 									{$user.currency}
 								</span>
@@ -42,22 +53,22 @@
 								</div>
 								<p class="light-text my-auto fs-6 me-4">
 									{$user?.displayname}
-									<i class="fa-solid fa-ellipsis-vertical ms-2" />
+									<i class="fa fa-ellipsis-vertical ms-2" />
 								</p>
 							</a>
 
 							<ul class="dropdown-menu mt-2">
 								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa-solid fa-address-card me-2" /> Profile</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa-solid fa-box-open me-2" /> Inventory</a></li>
-								<li><a class="dropdown-item light-text" href="/requests"><i class="fa-solid fa-user-plus me-2" /> Friend requests</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa-solid fa-user-pen me-2" /> Avatar</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa-solid fa-users me-2" /> My Groups</a></li>
+								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-address-card me-2" /> Profile</a></li>
+								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-box-open me-2" /> Inventory</a></li>
+								<li><a class="dropdown-item light-text" href="/requests"><i class="fa fa-user-plus me-2" /> Friend requests</a></li>
+								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-user-pen me-2" /> Avatar</a></li>
+								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-users me-2" /> My Groups</a></li>
 								<li><hr class="dropdown-divider" /></li>
-								<li><a class="dropdown-item light-text" href="/user/settings"><i class="fa-solid fa-gears me-2" /> Settings</a></li>
+								<li><a class="dropdown-item light-text" href="/user/settings"><i class="fa fa-gears me-2" /> Settings</a></li>
 								<li>
 									<form use:enhance method="POST" action="/logout">
-										<button type="submit" class="dropdown-item text-light text-bg-danger"><b><i class="fa-solid fa-arrow-right-from-bracket me-2" /> Log out</b></button>
+										<button type="submit" class="dropdown-item text-light text-bg-danger"><b><i class="fa fa-arrow-right-from-bracket me-2" /> Log out</b></button>
 									</form>
 								</li>
 							</ul>
@@ -134,4 +145,9 @@
 		background: var(--darker)
 		border: none
 
+	.input-group
+		min-width: 15rem
+		font-size: 0.8rem
+		button, input
+			height: 2.3rem
 </style>
