@@ -6,7 +6,7 @@
 
 	export const snapshot: Snapshot = {
 		capture: () => value,
-		restore: (v) => value = v,
+		restore: v => (value = v),
 	}
 
 	export let data: PageData
@@ -21,7 +21,7 @@
 <div class="container row">
 	<div class="col-lg-4 col-xl-3 mb-4 mb-auto pe-0 pb-3">
 		<div class="card rounded-none">
-			<div class="card-header light-text px-3 py-2"><i class="fa-solid fa-magnifying-glass" /> Filter</div>
+			<div class="card-header light-text px-3 py-2"><i class="fa fa-magnifying-glass" /> Filter</div>
 			<div class="card-body">
 				<form>
 					<div class="input-group mb-3">
@@ -30,7 +30,7 @@
 					</div>
 					<p>
 						<a class="text-decoration-none" data-bs-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse">
-							<b>Advanced</b> <i class="fa-solid fa-circle-chevron-down" />
+							<b>Advanced</b> <i class="fa fa-circle-chevron-down" />
 						</a>
 					</p>
 					<div class="collapse" id="collapse">

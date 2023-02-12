@@ -10,10 +10,10 @@
 		{item.name}
 	</p>
 	<span class="float-start ms-1">
-		<i class="fa-solid fa-thumbs-up opacity-75" /> 69%
+		<i class="fa fa-thumbs-up opacity-75" /> 69%
 	</span>
 	<span class="float-end me-1">
-		<i class="fa-solid fa-user opacity-75" /> 12
+		<i class="fa fa-gem opacity-75" /> 12
 	</span>
 </a>
 
