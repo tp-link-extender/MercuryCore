@@ -69,9 +69,9 @@
 		</div>
 	{:else}
 		<div id="buttons" class="d-flex justify-content-center gap-3">
+			<a class="btn btn-primary" href="/search?q={data.query}&c=users">Users</a>
 			<a class="btn btn-primary" href="/search?q={data.query}&c=places">Places</a>
 			<a class="btn btn-primary" href="/search?q={data.query}&c=items">Items</a>
-			<a class="btn btn-primary" href="/search?q={data.query}&c=users">Users</a>
 		</div>
 	{/if}
 </div>

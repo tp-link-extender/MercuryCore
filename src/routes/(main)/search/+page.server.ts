@@ -8,6 +8,18 @@ export const load: PageServerLoad = async ({ url }) => {
 	if (!query) throw error(400, "No query provided")
 	if (category && !["users", "places", "items"].includes(category)) throw error(400, "Invalid category")
 
+	if (category == "users") {
+		const user = await prisma.user.findUnique({
+			where: {
+				username: query,
+			},
+			select: {
+				number: true,
+			},
+		})
+		if (user) throw redirect(302, `/user/${user.number}`)
+	}
+
 	return {
 		query,
 		category,
@@ -44,16 +56,6 @@ export const actions: Actions = {
 		const query = data.get("query")?.toString() || ""
 		const category = data.get("category")?.toString() || ""
 		console.log(query)
-
-		const user = await prisma.user.findUnique({
-			where: {
-				username: query,
-			},
-			select: {
-				number: true,
-			},
-		})
-		if (user && category == "users") throw redirect(302, `/user/${user.number}`)
 
 		throw redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
 	},
