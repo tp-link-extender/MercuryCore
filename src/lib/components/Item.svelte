@@ -10,7 +10,8 @@
 		{item.name}
 	</p>
 	<span class="float-start ms-1">
-		<i class="fa fa-thumbs-up opacity-75" /> 69%
+		<i class="fa fa-thumbs-up opacity-75" />
+		{item.ratio}%
 	</span>
 	<span class="float-end me-1">
 		<i class="fa fa-gem opacity-75" /> 12
