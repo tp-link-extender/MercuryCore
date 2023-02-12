@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import { goto } from "$app/navigation"
 	import { getUser } from "@lucia-auth/sveltekit/client"
+
+	let search = ""
 
 	const user = getUser()
 </script>
@@ -28,9 +31,20 @@
 					</ul>
 					<ul class="navbar-nav loggedin">
 						<li class="nav-item">
-							<form use:enhance method="POST" action="/search" class="input-group my-1" role="search">
-								<input class="form-control valid" name="query" type="search" placeholder="Search" aria-label="Search" />
-								<button class="btn btn-success py-0" type="submit" title="Search"><i class="fa fa-search" /></button>
+							<form use:enhance method="POST" action="/search" class="my-1" role="search">
+								<div class="input-group">
+									<input bind:value={search} class="form-control valid" name="query" type="search" placeholder="Search" aria-label="Search" />
+									<button on:click|preventDefault={() => (search ? goto(`/search?q=${search}&c=users`) : null)} class="btn btn-success py-0" type="submit" title="Search"
+										><i class="fa fa-search" /></button
+									>
+								</div>
+								{#if search}
+									<div id="results" class="position-absolute card p-2 mt-2">
+										<a class="btn text-start light-text py-2" href="/search?q={search}&c=users" title="Search users">Search users for <b>{search}</b></a>
+										<a class="btn text-start light-text py-2" href="/search?q={search}&c=places" title="Search places">Search places for <b>{search}</b></a>
+										<a class="btn text-start light-text py-2" href="/search?q={search}&c=items" title="Search avatar shop">Search avatar shop for <b>{search}</b></a>
+									</div>
+								{/if}
 							</form>
 						</li>
 						<li class="nav-item">
@@ -93,7 +107,7 @@
 			min-height: 100vh
 			flex-direction: column-reverse
 			justify-content: start
-			
+
 			a
 				margin-bottom: 1rem
 				width: 100%
@@ -120,9 +134,9 @@
 		-webkit-backdrop-filter: blur(8px)
 		border-bottom: 1px solid #fff1
 		background: #0003
-		
+
 	.offcanvas
-		box-shadow: none !important	
+		box-shadow: none !important
 
 	a
 		margin-right: 0.5rem
@@ -139,6 +153,12 @@
 	.dropdown-menu
 		background: var(--darker)
 		border: none
+
+	#results
+		background: var(--darker)
+		min-width: 15rem
+		a:hover
+				background: var(--accent2)
 
 	.input-group
 		min-width: 15rem
