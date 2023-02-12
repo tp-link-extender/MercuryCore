@@ -1,7 +1,6 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@lucia-auth/adapter-prisma': ^0.4.0
   '@lucia-auth/sveltekit': ^0.6.3
   '@popperjs/core': ^2.11.6
   '@prisma/client': ^4.10.1
@@ -13,7 +12,6 @@ specifiers:
   dotenv: ^16.0.3
   esbuild: ^0.15.18
   lucia-auth: ^0.6.0
-  prisma: ^4.10.1
   redis: ^4.6.4
   sass: ^1.58.0
   svelte: ^3.55.1
@@ -28,10 +26,9 @@ specifiers:
   vite-plugin-mkcert: ^1.13.0
 
 dependencies:
-  '@lucia-auth/adapter-prisma': 0.4.0_lucia-auth@0.6.0
   '@lucia-auth/sveltekit': 0.6.3_iyasqsbplmktfcni36hpxhd3zi
   '@popperjs/core': 2.11.6
-  '@prisma/client': 4.10.1_prisma@4.10.1
+  '@prisma/client': 4.10.1
   '@sveltejs/adapter-node': 1.1.8_@sveltejs+kit@1.5.5
   '@threlte/core': 5.0.9
   '@threlte/extras': 4.9.3_three@0.146.0
@@ -48,7 +45,6 @@ dependencies:
 devDependencies:
   '@sveltejs/kit': 1.5.5_svelte@3.55.1+vite@4.1.1
   '@sveltejs/vite-plugin-svelte': 2.0.2_svelte@3.55.1+vite@4.1.1
-  prisma: 4.10.1
   sass: 1.58.0
   svelte: 3.55.1
   svelte-check: 3.0.3_sass@1.58.0+svelte@3.55.1
@@ -267,14 +263,6 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@lucia-auth/adapter-prisma/0.4.0_lucia-auth@0.6.0:
-    resolution: {integrity: sha512-HMaGbVfB5KTZBs6KPqI5z6RFKVl4AKfm9u2KrrQglthpd/rWJoJRDI2oYkdcEX4Xu1FNdNJJrEtKKBtVAXYqrw==}
-    peerDependencies:
-      lucia-auth: 0.6.x
-    dependencies:
-      lucia-auth: 0.6.0
-    dev: false
-
   /@lucia-auth/sveltekit/0.6.3_iyasqsbplmktfcni36hpxhd3zi:
     resolution: {integrity: sha512-Xs0dTcmr/XtHrORAHAqvRt7KbZLokIXw/YT9HuP8zJ+9a3ARhwffr/p4JJVAzzSNI9oM8qNs/O8FdKSzbI+3/w==}
     peerDependencies:
@@ -434,7 +422,7 @@ packages:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
     dev: false
 
-  /@prisma/client/4.10.1_prisma@4.10.1:
+  /@prisma/client/4.10.1:
     resolution: {integrity: sha512-VonXLJZybdt8e5XZH5vnIGCRNnIh6OMX1FS3H/yzMGLT3STj5TJ/OkMcednrvELgk8PK89Vo3aSh51MWNO0axA==}
     engines: {node: '>=14.17'}
     requiresBuild: true
@@ -445,16 +433,11 @@ packages:
         optional: true
     dependencies:
       '@prisma/engines-version': 4.10.1-2.aead147aa326ccb985dcfed5b065b4fdabd44b19
-      prisma: 4.10.1
     dev: false
 
   /@prisma/engines-version/4.10.1-2.aead147aa326ccb985dcfed5b065b4fdabd44b19:
     resolution: {integrity: sha512-tsjTho7laDhf9EJ9EnDxAPEf7yrigSMDhniXeU4YoWc7azHAs4GPxRi2P9LTFonmHkJLMOLjR77J1oIP8Ife1w==}
     dev: false
-
-  /@prisma/engines/4.10.1:
-    resolution: {integrity: sha512-B3tcTxjx196nuAu1GOTKO9cGPUgTFHYRdkPkTS4m5ptb2cejyBlH9X7GOfSt3xlI7p4zAJDshJP4JJivCg9ouA==}
-    requiresBuild: true
 
   /@redis/bloom/1.2.0_@redis+client@1.5.5:
     resolution: {integrity: sha512-HG2DFjYKbpNmVXsa0keLHp/3leGJz1mjh09f2RLGGLQZzSHpkmZWuwJbAvo3QcRY8p80m5+ZdXZdYOSBLlp7Cg==}
@@ -1396,14 +1379,6 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
-
-  /prisma/4.10.1:
-    resolution: {integrity: sha512-0jDxgg+DruB1kHVNlcspXQB9au62IFfVg9drkhzXudszHNUAQn0lVuu+T8np0uC2z1nKD5S3qPeCyR8u5YFLnA==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      '@prisma/engines': 4.10.1
 
   /proxy-from-env/1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}

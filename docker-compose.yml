@@ -1,23 +1,9 @@
 version: "3"
 
 services:
-    redis:
-        container_name: redisgraph
-        image: redislabs/redisgraph
+    surreal:
+        image: surrealdb/surrealdb:nightly
         ports:
-            - 6479:6379
-        restart: unless-stopped
-        volumes:
-            - ./data/redis:/data
-
-    postgres:
-        container_name: postgres
-        image: postgres
-        ports:
-            - 5532:5432
-        restart: unless-stopped
-        volumes:
-            - ./data/postgres:/var/lib/postgresql/data
-
-        environment:
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            - 8000:8000
+        restart: on-failure
+        command: start -p root

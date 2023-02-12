@@ -13,7 +13,6 @@
   "devDependencies": {
     "@sveltejs/kit": "^1.5.5",
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
-    "prisma": "^4.10.1",
     "sass": "^1.58.0",
     "svelte": "^3.55.1",
     "svelte-check": "^3.0.3",
@@ -24,7 +23,6 @@
   },
   "type": "module",
   "dependencies": {
-    "@lucia-auth/adapter-prisma": "^0.4.0",
     "@lucia-auth/sveltekit": "^0.6.3",
     "@popperjs/core": "^2.11.6",
     "@prisma/client": "^4.10.1",
