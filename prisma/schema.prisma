@@ -15,31 +15,39 @@ datasource db {
 
 // Users & Groups
 
+enum Permission {
+    User
+    Verified
+    Moderator
+    ItemManager
+    Administrator
+}
+
 model User {
     id      String    @id @unique @default(uuid())
     session Session[]
     Key     Key[]
 
-    number          Int      @unique @default(autoincrement())
-    username        String   @unique
-    email           String   @unique
-    displayname     String
-    usedRegkey      Regkey   @relation(fields: [regkeyKey], references: [key])
-    regkeyKey       String
-    permissionLevel Int      @default(1) // 1: Regular user 2: Verified (email or Discord) 3: Moderator 4: Catalog Manager 5: Administrator
-    bio             String?
-    image           String?
-    created         DateTime @default(now())
-    lastOnline      DateTime @default(now())
-    status          String?
-    currency        Int      @default(0)
+    number               Int           @unique @default(autoincrement())
+    username             String        @unique
+    email                String        @unique
+    displayname          String
+    usedRegkey           Regkey        @relation(fields: [regkeyKey], references: [key])
+    regkeyKey            String
+    permissionLevel      Permission    @default(User)
+    bio                  String?
+    image                String?
+    created              DateTime      @default(now())
+    lastOnline           DateTime      @default(now())
+    status               String?
+    currency             Int           @default(0)
     // groupsOwned  Group[] @relation("owner")
     // groupsJoined Group[] @relation("member")
-    places          Place[]
-    posts           Post[]
-    itemsCreated    Item[]
-    itemsOwned      Item[]   @relation("owns")
-    itemsWorn       Item[]   @relation("wears")
+    places               Place[]
+    posts                Post[]
+    itemsCreated         Item[]
+    itemsOwned           Item[]        @relation("owns")
+    itemsWorn            Item[]        @relation("wears")
 
     @@map("user")
 }
@@ -114,6 +122,8 @@ model Place {
 //     created DateTime @default(now())
 //     updated DateTime @default(now())
 // }
+
+// Items
 
 enum ItemCategory {
     TShirt
