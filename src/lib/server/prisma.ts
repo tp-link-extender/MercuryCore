@@ -50,3 +50,48 @@ export async function findItems(query: any) {
 	}
 	return items
 }
+
+export async function transaction(senderId: string, receiverId: string, amountSent: number) {
+	// balance of both parties should have been checked already by now
+	// the user accounts also had better exist or else
+	const taxRate = 0.3
+	const finalAmount = Math.round(amountSent * (1 - taxRate))
+
+	await prisma.user.update({
+		where: {
+			id: senderId,
+		},
+		data: {
+			currency: {
+				decrement: amountSent,
+			},
+		},
+	})
+	await prisma.user.update({
+		where: {
+			id: receiverId,
+		},
+		data: {
+			currency: {
+				increment: finalAmount,
+			},
+		},
+	})
+
+	await prisma.transaction.create({
+		data: {
+			sender: {
+				connect: {
+					id: senderId,
+				},
+			},
+			receiver: {
+				connect: {
+					id: receiverId,
+				},
+			},
+			amountSent,
+			taxRate,
+		},
+	})
+}

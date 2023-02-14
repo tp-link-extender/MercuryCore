@@ -163,6 +163,7 @@ model Transaction {
     senderName   String
     receiver     User     @relation("received", fields: [receiverName], references: [username])
     receiverName String
-    amount       Int
+    amountSent   Int
+    taxRate      Float
     time         DateTime @default(now())
 }

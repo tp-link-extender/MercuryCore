@@ -1,5 +1,5 @@
 import type { PageServerLoad } from "./$types"
-import { prisma } from "$lib/server/prisma"
+import { prisma, transaction } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail, redirect } from "@sveltejs/kit"
 
@@ -84,6 +84,7 @@ export const actions: Actions = {
 						},
 						select: {
 							price: true,
+							creator: true,
 							owners: {
 								where: {
 									id: session?.user?.userId,
@@ -91,7 +92,8 @@ export const actions: Actions = {
 							},
 						},
 					})
-					if ((getItem?.owners || []).length > 0) throw error(400, "You already own this item")
+					if (!getItem) throw error(404, `Not found: /item/${params.id}`)
+					if ((getItem.owners || []).length > 0) throw error(400, "You already own this item")
 
 					await prisma.user.update({
 						where: {
@@ -103,19 +105,20 @@ export const actions: Actions = {
 									id: params.id,
 								},
 							},
-							currency: {
-								decrement: getItem?.price,
-							},
 						},
 					})
+
+					await transaction(session.user.userId, getItem.creator.id, getItem.price)
 					break
-				case "unbuy":
-					const getItem2 = await prisma.item.findUnique({ // cAnnOt rEDeCLaRE bLoCK-SCOpeD varIabLE
+				case "delete":
+					const getItem2 = await prisma.item.findUnique({
+						// cAnnOt rEDeCLaRE bLoCK-SCOpeD varIabLE
 						where: {
 							id: params.id,
 						},
 						select: {
 							price: true,
+							creator: true,
 							owners: {
 								where: {
 									id: session?.user?.userId,
@@ -123,6 +126,7 @@ export const actions: Actions = {
 							},
 						},
 					})
+					if (!getItem2) throw error(404, `Not found: /item/${params.id}`)
 					if ((getItem2?.owners || []).length < 1) throw error(400, "You don't own this item")
 
 					await prisma.user.update({
@@ -135,11 +139,9 @@ export const actions: Actions = {
 									id: params.id,
 								},
 							},
-							currency: {
-								increment: getItem2?.price,
-							},
 						},
 					})
+
 					break
 				case "like":
 					await Query(
@@ -196,7 +198,7 @@ export const actions: Actions = {
 			}
 		} catch (e) {
 			console.error(e)
-			throw error(500, "Redis error 2")
+			throw error(500)
 		}
 	},
 }

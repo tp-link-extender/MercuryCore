@@ -37,8 +37,8 @@
 					{/if}
 				</button>
 				{#if data.owned}
-					<button name="action" value="unbuy" class="btn btn-sm w-100 float-right btn-danger">
-						[debug] unbuy
+					<button name="action" value="delete" class="btn btn-sm w-100 float-right btn-danger">
+						[debug] delete from inventory
 					</button>
 				{/if}
 				<p class="light-text" id="notify">Funds will be deducted from your account immediately upon pressing the buy button.</p>
