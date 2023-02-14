@@ -40,9 +40,9 @@
 								</div>
 								{#if search}
 									<div id="results" class="position-absolute card p-2 mt-2">
-										<a class="btn text-start light-text py-2" href="/search?q={search}&c=users" title="Search users">Search users for <b>{search}</b></a>
-										<a class="btn text-start light-text py-2" href="/search?q={search}&c=places" title="Search places">Search places for <b>{search}</b></a>
-										<a class="btn text-start light-text py-2" href="/search?q={search}&c=items" title="Search avatar shop">Search avatar shop for <b>{search}</b></a>
+										<a class="btn text-start light-text py-2" href="/search?q={search}&c=users" title="Search Users">Search <b>{search}</b> in Users</a>
+										<a class="btn text-start light-text py-2" href="/search?q={search}&c=places" title="Search Places">Search <b>{search}</b> in Places</a>
+										<a class="btn text-start light-text py-2" href="/search?q={search}&c=items" title="Search Avatar shop">Search <b>{search}</b> in Avatar shop</a>
 									</div>
 								{/if}
 							</form>
@@ -69,7 +69,7 @@
 							<ul class="dropdown-menu mt-2">
 								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
 								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-address-card me-2" /> Profile</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-box-open me-2" /> Inventory</a></li>
+								<li><a class="dropdown-item light-text" href="/inventory"><i class="fa fa-box-open me-2" /> Inventory</a></li>
 								<li><a class="dropdown-item light-text" href="/requests"><i class="fa fa-user-plus me-2" /> Friend requests</a></li>
 								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-user-pen me-2" /> Avatar</a></li>
 								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-users me-2" /> My Groups</a></li>

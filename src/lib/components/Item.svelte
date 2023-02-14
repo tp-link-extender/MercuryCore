@@ -6,15 +6,17 @@
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
 		<div class="w-100 h-100" />
 	</div>
-	<p class="mb-1">
+	<p class="{item.ratio ? "" : "float-start"} mb-1">
 		{item.name}
 	</p>
-	<span class="float-start ms-1">
-		<i class="fa fa-thumbs-up opacity-75" />
-		{item.ratio}%
-	</span>
+	{#if item.ratio}
+		<span class="float-start ms-1">
+			<i class="fa fa-thumbs-up opacity-75" />
+			{item.ratio}%
+		</span>
+	{/if}
 	<span class="float-end me-1">
-		<i class="fa fa-gem opacity-75" /> 12
+		<i class="fa fa-gem opacity-75" /> {item.price}
 	</span>
 </a>
 
