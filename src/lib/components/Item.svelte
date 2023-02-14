@@ -1,25 +1,28 @@
 <script lang="ts">
-	export let place: any
+	export let item: any
 </script>
 
-<a class="rounded-3 text-center light-text text-decoration-none h6" href="/place/{place.slug}">
+<a class="rounded-3 w-100 text-center light-text text-decoration-none h6" href="/item/{item.id}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
-		<img src={place.image} alt={place.name} class="w-100 h-100" />
+		<div class="w-100 h-100" />
 	</div>
-	<p class="mb-1">
-		{place.name}
+	<p class="{item.ratio ? "" : "float-start"} mb-1">
+		{item.name}
 	</p>
-	<span class="float-start ms-1">
-		<i class="fa fa-thumbs-up opacity-75" />
-		{place.ratio}%
-	</span>
+	{#if item.ratio}
+		<span class="float-start ms-1">
+			<i class="fa fa-thumbs-up opacity-75" />
+			{item.ratio}%
+		</span>
+	{/if}
 	<span class="float-end me-1">
-		<i class="fa fa-user opacity-75" /> 12
+		<i class="fa fa-gem opacity-75" /> {item.price}
 	</span>
 </a>
 
 <style lang="sass">
 	a
+		max-width: 10rem
 		transition: all 0.2s
 		&:hover
 			transition: all 0.2s

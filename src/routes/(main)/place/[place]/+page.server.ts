@@ -58,12 +58,6 @@ export const actions: Actions = {
 				where: {
 					slug: params.place,
 				},
-				select: {
-					name: true,
-					description: true,
-					image: true,
-					ownerUsername: true,
-				},
 			}))
 		)
 			return fail(404, { msg: `Not found: /place/${params.place}` })

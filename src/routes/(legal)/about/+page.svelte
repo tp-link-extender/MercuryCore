@@ -30,10 +30,10 @@
 </div>
 
 <button id="arrow" class="btn position-absolute shadow-none start-50" on:click={downScroll} on:keypress={downScroll} style="opacity: {(500 - scrollY) / 300}">
-	<i class="fa-solid light-text fa-chevron-down title" />
+	<i class="fa light-text fa-chevron-down title" />
 </button>
 <button id="arrow2" class="btn position-fixed mb-3" on:click={upScroll} on:keypress={upScroll} style="opacity: {(scrollY - 500) / 300}">
-	<i class="fa-solid light-text fa-circle-chevron-up title" />
+	<i class="fa light-text fa-circle-chevron-up title" />
 </button>
 
 <div bind:this={first} id="first" />
@@ -102,7 +102,7 @@
 			<div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
 				<h1 id="title" class="fw-bolder light-text">Mercury 2</h1>
 				<p class="lead light-text text-center">Endless possibilities. New features. Same nostalgia.</p>
-				<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa-solid fa-chevron-right" /></a></b>
+				<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa fa-chevron-right" /></a></b>
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
