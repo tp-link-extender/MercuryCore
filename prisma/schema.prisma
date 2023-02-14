@@ -48,6 +48,8 @@ model User {
     itemsCreated         Item[]
     itemsOwned           Item[]        @relation("owns")
     itemsWorn            Item[]        @relation("wears")
+    transactionsSent     Transaction[] @relation("sent")
+    transactionsReceived Transaction[] @relation("received")
 
     @@map("user")
 }
@@ -153,4 +155,14 @@ model Item {
     wearers     User[]       @relation("wears")
     mesh        String
     texture     String
+}
+
+model Transaction {
+    id           String   @id @unique @default(cuid())
+    sender       User     @relation("sent", fields: [senderName], references: [username])
+    senderName   String
+    receiver     User     @relation("received", fields: [receiverName], references: [username])
+    receiverName String
+    amount       Int
+    time         DateTime @default(now())
 }
