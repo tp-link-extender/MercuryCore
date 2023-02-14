@@ -48,7 +48,7 @@
 				</h1>
 			</div>
 			<div id="feed" class="card mt-4">
-				<div class="card-body light-text overflow-auto">
+				<div class="card-body light-text">
 					<p>Post your status - your friends and followers can view how you're doing!</p>
 					<form method="POST" use:enhance>
 						<div class="input-group">
@@ -60,29 +60,27 @@
 						{/if}
 						<div class="mb-3" />
 					</form>
-					{#if data.feed.length > 0}
-						{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
-							<div class="card mb-2">
-								<div class="card-body pb-0">
-									<a class="d-flex mb-2 text-decoration-none user" href="/user/{status.author.number}">
-										<span class="pfp rounded-circle">
-											<img src={status.author.image} alt={status.author.displayname} class="rounded-circle img-fluid rounded-top-0" />
-										</span>
-										<span class="fw-bold ms-3 light-text">{status.author.displayname}</span>
-										<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
-									</a>
-									<p class="text-start">
-										{status.content}
-									</p>
-								</div>
+					{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
+						<div class="card mb-2">
+							<div class="card-body pb-0">
+								<a class="d-flex mb-2 text-decoration-none user" href="/user/{status.author.number}">
+									<span class="pfp rounded-circle">
+										<img src={status.author.image} alt={status.author.displayname} class="rounded-circle img-fluid rounded-top-0" />
+									</span>
+									<span class="fw-bold ms-3 light-text">{status.author.displayname}</span>
+									<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
+								</a>
+								<p class="text-start">
+									{status.content}
+								</p>
 							</div>
-						{/each}
-					{/if}
+						</div>
+					{/each}
 				</div>
 			</div>
 		</div>
 
-		<div class="col col-12 col-xxl-4 col-xl-7 col-md-6">
+		<div class="col col-12 col-xxl-6 col-xl-7 col-md-6">
 			<div class="col2">
 				{#if data.friends.length > 0}
 					<h2 class="h4 light-text">Friends</h2>
@@ -120,21 +118,22 @@
 				</div>
 			</div>
 		</div>
-		<div class="col col-xxl-4">
+
+		<div class="col col-xxl-2">
 			<div class="col2">
 				<h2 class="h4 light-text">News</h2>
 				<div id="news" class="card">
-					<div class="card-body row overflow-auto">
+					<div class="card-body row">
 						{#each news as thing}
-							<div class="p-1 col-xxl-6 col-lg-4 col-sm-6">
+							<div class="p-1 col-xxl-12 col-lg-3 col-sm-4 col-6">
 								<div class="card light-text h-100">
 									<div class="card-body p-2">
 										<div class="mb-2 light-text">
 											<div class="fw-bold text-center text-truncate">{thing.title}</div>
-											<div id="date" class="ms-auto fw-italic text-center">{thing.time.toLocaleString()}</div>
+											<div class="date ms-auto fw-italic text-center">{thing.time.toLocaleString()}</div>
 										</div>
-										<div id="gradient" class="position-absolute bottom-0 rounded-2" />
-										<p id="content" class="mb-0 p-1">
+										<div class="gradient position-absolute bottom-0 rounded-2" />
+										<p class="content mb-0 p-1">
 											{thing.content}
 										</p>
 									</div>
@@ -167,21 +166,22 @@
 	.card
 		background: var(--accent)
 
-	#news
-		#date
-			min-width: 5rem
-		#content
-			max-height: 5rem
-			overflow: hidden
-		#gradient
-			left: 0
-			right: 0
-			height: 8rem
-			background: linear-gradient(0deg, var(--accent) 10%, rgba(0,0,0,0) 100%)
+	.date
+		min-width: 5rem
+	.gradient
+		left: 0
+		right: 0
+		height: 8rem
+		background: linear-gradient(0deg, var(--accent) 10%, rgba(0,0,0,0) 100%)
+	.content
+		max-height: 5rem
+		overflow: hidden
 
 	#feed, #news
 		background: var(--darker)
 		max-height: 55vh
+		overflow-y: auto
+		overflow-x: hidden
 
 	#feed
 		.user
