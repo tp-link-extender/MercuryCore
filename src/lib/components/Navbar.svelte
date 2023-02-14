@@ -71,6 +71,7 @@
 								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-address-card me-2" /> Profile</a></li>
 								<li><a class="dropdown-item light-text" href="/inventory"><i class="fa fa-box-open me-2" /> Inventory</a></li>
 								<li><a class="dropdown-item light-text" href="/requests"><i class="fa fa-user-plus me-2" /> Friend requests</a></li>
+								<li><a class="dropdown-item light-text" href="/transactions"><i class="fa fa-coins me-2" /> Transactions</a></li>
 								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-user-pen me-2" /> Avatar</a></li>
 								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-users me-2" /> My Groups</a></li>
 								<li><hr class="dropdown-divider" /></li>
