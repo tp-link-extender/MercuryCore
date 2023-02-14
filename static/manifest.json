@@ -1,0 +1,29 @@
+{
+	"name": "Mercury",
+	"description": "The Mercury platform",
+	"short_name": "Mercury",
+	"id": "/home",
+	"start_url": "/home",
+	"lang": "en-GB",
+	"background_color": "#100f0e",
+	"theme_color": "#1f1d1c",
+	"display": "minimal-ui",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml"
+		},
+		{
+			"src": "/splash512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		},
+		{
+			"src": "/icon192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	]
+}

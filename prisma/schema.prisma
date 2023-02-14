@@ -4,7 +4,8 @@
 // Sections are commented out, not yet implemented
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -14,28 +15,41 @@ datasource db {
 
 // Users & Groups
 
+enum Permission {
+    User
+    Verified
+    Moderator
+    ItemManager
+    Administrator
+}
+
 model User {
     id      String    @id @unique @default(uuid())
     session Session[]
     Key     Key[]
 
-    number          Int      @unique @default(autoincrement())
-    username        String   @unique
-    email           String   @unique
-    displayname     String
-    usedRegkey      Regkey   @relation(fields: [regkeyKey], references: [key])
-    regkeyKey       String
-    permissionLevel Int      @default(1) // 1: Regular user 2: Verified (email or Discord) 3: Moderator 4: Catalog Manager 5: Administrator
-    bio             String?
-    image           String?
-    created         DateTime @default(now())
-    lastOnline      DateTime @default(now())
-    status          String?
-    currency        Int      @default(0)
+    number               Int           @unique @default(autoincrement())
+    username             String        @unique
+    email                String        @unique
+    displayname          String
+    usedRegkey           Regkey        @relation(fields: [regkeyKey], references: [key])
+    regkeyKey            String
+    permissionLevel      Permission    @default(User)
+    bio                  String?
+    image                String?
+    created              DateTime      @default(now())
+    lastOnline           DateTime      @default(now())
+    status               String?
+    currency             Int           @default(0)
     // groupsOwned  Group[] @relation("owner")
     // groupsJoined Group[] @relation("member")
-    places          Place[]
-    posts           Post[]
+    places               Place[]
+    posts                Post[]
+    itemsCreated         Item[]
+    itemsOwned           Item[]        @relation("owns")
+    itemsWorn            Item[]        @relation("wears")
+    transactionsSent     Transaction[] @relation("sent")
+    transactionsReceived Transaction[] @relation("received")
 
     @@map("user")
 }
@@ -102,12 +116,54 @@ model Place {
 
 // model GroupPlace {
 //     name        String
+//     slug          String @id @unique
 //     owner       Group  @relation(fields: [groupName], references: [name])
-//     description String
 //     groupName   String
+//     description String
 
 //     created DateTime @default(now())
 //     updated DateTime @default(now())
-
-//     @@id([name, groupName])
 // }
+
+// Items
+
+enum ItemCategory {
+    TShirt
+    Shirt
+    Pants
+    HeadShape
+    Hair
+    Face
+    Skirt
+    Dress
+    Hat
+    Headgear
+    Gear
+    Neck
+    Back
+    Shoulder
+}
+
+model Item {
+    name        String
+    id          String       @id @unique @default(cuid())
+    price       Int
+    category    ItemCategory
+    creator     User         @relation(fields: [creatorName], references: [username])
+    creatorName String
+    owners      User[]       @relation("owns")
+    wearers     User[]       @relation("wears")
+    mesh        String
+    texture     String
+}
+
+model Transaction {
+    id           String   @id @unique @default(cuid())
+    sender       User     @relation("sent", fields: [senderName], references: [username])
+    senderName   String
+    receiver     User     @relation("received", fields: [receiverName], references: [username])
+    receiverName String
+    amountSent   Int
+    taxRate      Float
+    time         DateTime @default(now())
+}

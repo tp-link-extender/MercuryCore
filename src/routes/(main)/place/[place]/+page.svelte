@@ -62,12 +62,12 @@
 				<button id="join" class="btn btn-lg btn-success mt-4">
 					<img src="/place/join.svg" alt="Join button icon" />
 				</button>
-				<form class="align-self-center col mt-3 px-0 mb-2" method="POST" use:enhance>
+				<form use:enhance class="align-self-center col mt-3 px-0 mb-2" method="POST">
 					<div class="row mb-2">
 						<div class="col d-flex justify-content-start">
 							<button name="action" value={data.likes ? "unlike" : "like"} class="btn btn-sm {data.likes ? 'btn-success' : 'btn-outline-success'}">
 								{#if data.likes}
-									<i class="fa-solid fa-thumbs-up" />
+									<i class="fa fa-thumbs-up" />
 								{:else}
 									<i class="fa-regular fa-thumbs-up" />
 								{/if}
@@ -76,7 +76,7 @@
 						<div class="col d-flex justify-content-end">
 							<button name="action" value={data.dislikes ? "undislike" : "dislike"} class="btn btn-sm {data.dislikes ? 'btn-danger' : 'btn-outline-danger'}">
 								{#if data.dislikes}
-									<i class="fa-solid fa-thumbs-down" />
+									<i class="fa fa-thumbs-down" />
 								{:else}
 									<i class="fa-regular fa-thumbs-down" />
 								{/if}
@@ -193,11 +193,11 @@
 		background: var(--accent)
 		// border-radius: 1rem 1rem 0 0
 
-	.nav-pills .active
-		background: transparent
-		border-style: solid
-		border-width: 0px 0px 2px 0px
-		border-color: var(--bs-blue)
+		.active
+			background: transparent
+			border-style: solid
+			border-width: 0px 0px 2px 0px
+			border-color: var(--bs-blue)
 
 	#pfp
 		background: var(--accent2)
