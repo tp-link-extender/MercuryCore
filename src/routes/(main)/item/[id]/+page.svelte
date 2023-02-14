@@ -29,13 +29,18 @@
 				</div>
 			</div>
 			<form use:enhance class="align-self-center col px-0 mb-2" method="POST">
-				<button name="action" id="buy" value="buy" class="btn btn-lg w-100 {data.owned ? 'btn-secondary disabled' : $user?.currency < data.price ? 'btn-danger disabled' : 'btn-success'}">
+				<button name="action" id="buy" value="buy" class="btn btn-lg w-100 float-left {data.owned ? 'btn-secondary disabled' : $user?.currency < data.price ? 'btn-danger disabled' : 'btn-success'}">
 					{#if data.owned}
 						<i class="fa fa-gem" /> {data.price} <i class="fa fa-check" /> Owned
 					{:else}
 						Buy for <i class="fa fa-gem" /> {data.price}
 					{/if}
 				</button>
+				{#if data.owned}
+					<button name="action" value="unbuy" class="btn btn-sm w-100 float-right btn-danger">
+						[debug] unbuy
+					</button>
+				{/if}
 				<p class="light-text" id="notify">Funds will be deducted from your account immediately upon pressing the buy button.</p>
 				<div class="row mb-2 mt-3">
 					<div class="col d-flex justify-content-start">
@@ -145,11 +150,18 @@
 		font-size: 0.8rem
 		opacity: 0
 		height: 0
+		transform: translateY(-1.5rem)
 		transition: all 0.2s ease-out
 
-	#buy:hover ~ #notify
-		opacity: 1
-		height: 1.5rem
+	#buy
+		z-index: 5
+		&:hover ~ #notify
+			opacity: 1
+			height: 1.5rem
+			transform: none
+		
+	#notify
+		pointer-events: none
 
 	.nav-link
 		border-radius: 0

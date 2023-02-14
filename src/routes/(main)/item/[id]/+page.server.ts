@@ -108,7 +108,39 @@ export const actions: Actions = {
 							},
 						},
 					})
+					break
+				case "unbuy":
+					const getItem2 = await prisma.item.findUnique({ // cAnnOt rEDeCLaRE bLoCK-SCOpeD varIabLE
+						where: {
+							id: params.id,
+						},
+						select: {
+							price: true,
+							owners: {
+								where: {
+									id: session?.user?.userId,
+								},
+							},
+						},
+					})
+					if ((getItem2?.owners || []).length < 1) throw error(400, "You don't own this item")
 
+					await prisma.user.update({
+						where: {
+							id: session.user.userId,
+						},
+						data: {
+							itemsOwned: {
+								disconnect: {
+									id: params.id,
+								},
+							},
+							currency: {
+								increment: getItem2?.price,
+							},
+						},
+					})
+					break
 				case "like":
 					await Query(
 						`
