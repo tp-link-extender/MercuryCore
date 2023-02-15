@@ -31,23 +31,6 @@
 					</ul>
 					<ul class="navbar-nav loggedin">
 						<li class="nav-item">
-							<form use:enhance method="POST" action="/search" class="my-1" role="search">
-								<div class="input-group">
-									<input bind:value={search} class="form-control valid" name="query" type="search" placeholder="Search" aria-label="Search" />
-									<button on:click|preventDefault={() => (search ? goto(`/search?q=${search}&c=users`) : null)} class="btn btn-success py-0" type="submit" title="Search"
-										><i class="fa fa-search" /></button
-									>
-								</div>
-								{#if search}
-									<div id="results" class="position-absolute card p-2 mt-2">
-										<a class="btn text-start light-text py-2" href="/search?q={search}&c=users" title="Search Users">Search <b>{search}</b> in Users</a>
-										<a class="btn text-start light-text py-2" href="/search?q={search}&c=places" title="Search Places">Search <b>{search}</b> in Places</a>
-										<a class="btn text-start light-text py-2" href="/search?q={search}&c=items" title="Search Avatar shop">Search <b>{search}</b> in Avatar shop</a>
-									</div>
-								{/if}
-							</form>
-						</li>
-						<li class="nav-item">
 							<a id="rocks" href="/transactions" class="fw-bold nav-link mt-1 text-success shadow-none">
 								<i class="fa fa-gem me-1" />
 								<span class="h6 text-success">
@@ -83,6 +66,23 @@
 								</li>
 							</ul>
 						</li>
+						<li id="search" class="nav-item">
+							<form use:enhance method="POST" action="/search" class="my-1" role="search">
+								<div class="input-group">
+									<input bind:value={search} class="form-control valid" name="query" type="search" placeholder="Search" aria-label="Search" />
+									<button on:click|preventDefault={() => (search ? goto(`/search?q=${search}&c=users`) : null)} class="btn btn-success py-0" type="submit" title="Search"
+										><i class="fa fa-search" /></button
+									>
+								</div>
+								{#if search}
+									<div id="results" class="position-absolute card p-2 mt-2">
+										<a class="btn text-start light-text py-2" href="/search?q={search}&c=users" title="Search Users">Search <b>{search}</b> in Users</a>
+										<a class="btn text-start light-text py-2" href="/search?q={search}&c=places" title="Search Places">Search <b>{search}</b> in Places</a>
+										<a class="btn text-start light-text py-2" href="/search?q={search}&c=items" title="Search Avatar shop">Search <b>{search}</b> in Avatar shop</a>
+									</div>
+								{/if}
+							</form>
+						</li>
 					</ul>
 				{:else}
 					<ul class="navbar-nav loggedin">
@@ -115,7 +115,11 @@
 				text-align: start
 
 			.loggedin
-				margin-bottom: 2rem
+				margin-bottom: 1rem
+		
+		#search
+			margin-top: 1rem
+
 
 	@media only screen and (min-width: 768px)
 		.loggedin
@@ -156,6 +160,7 @@
 		border: none
 
 	#results
+		z-index: 1
 		background: var(--darker)
 		min-width: 15rem
 		a:hover
