@@ -59,7 +59,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		friends: Friends(),
 		feed: prisma.post.findMany({
 			select: {
-				author: {
+				authorUser: {
 					select: {
 						number: true,
 						displayname: true,

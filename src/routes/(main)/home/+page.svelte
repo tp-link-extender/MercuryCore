@@ -63,11 +63,11 @@
 					{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
 						<div class="card mb-2">
 							<div class="card-body pb-0">
-								<a class="d-flex mb-2 text-decoration-none user" href="/user/{status.author.number}">
+								<a class="d-flex mb-2 text-decoration-none user" href="/user/{status.authorUser.number}">
 									<span class="pfp rounded-circle">
-										<img src={status.author.image} alt={status.author.displayname} class="rounded-circle img-fluid rounded-top-0" />
+										<img src={status.authorUser.image} alt={status.authorUser.displayname} class="rounded-circle img-fluid rounded-top-0" />
 									</span>
-									<span class="fw-bold ms-3 light-text">{status.author.displayname}</span>
+									<span class="fw-bold ms-3 light-text">{status.authorUser.displayname}</span>
 									<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
 								</a>
 								<p class="text-start">

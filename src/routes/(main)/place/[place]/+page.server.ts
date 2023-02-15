@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			name: true,
 			description: true,
 			image: true,
-			owner: {
+			ownerUser: {
 				select: {
 					number: true,
 					displayname: true,
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		return {
 			name: getPlace.name,
-			owner: getPlace.owner,
+			owner: getPlace.ownerUser,
 			description: getPlace.description,
 			image: getPlace.image,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Place { name: $place }))", query, true),
