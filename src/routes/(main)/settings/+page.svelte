@@ -155,8 +155,6 @@
 <style lang="sass">
 	hr
 		color: var(--accent)
-	h4
-		border-color: var(--accent2) !important
 
 	.nav-link
 		border-radius: 0

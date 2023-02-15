@@ -51,6 +51,22 @@ export async function findItems(query: any) {
 	return items
 }
 
+export async function findGroups(query: any) {
+	const groups = await prisma.group.findMany(query)
+
+	// Add members and followers to each group
+	for (let group of groups as any) {
+		const query = {
+			params: {
+				group: group.name,
+			},
+		}
+		group["members"] = await roQuery("RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true)
+		group["followers"] = await roQuery("RETURN SIZE((:User) -[:follows]-> (:Group { name: $group }))", query, true)
+	}
+	return groups
+}
+
 export async function transaction(senderId: string, receiverId: string, amountSent: number) {
 	// balance of both parties should have been checked already by now
 	// the user accounts also had better exist or else
