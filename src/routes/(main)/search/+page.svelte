@@ -2,6 +2,7 @@
 	import type { PageData } from "./$types"
 	import Place from "$lib/components/Place.svelte"
 	import Item from "$lib/components/Item.svelte"
+	import Group from "$lib/components/Group.svelte"
 
 	const statusColours: any = {
 		Online: "bg-info",
@@ -27,7 +28,7 @@
 {/if}
 
 <div class="container-fluid mt-5">
-	{#if data.category == "users"}
+	{#if data.category == "users" && data.users}
 		<div class="grid d-grid">
 			{#each data.users as user}
 				<a class="px-2 mb-2 text-center light-text text-decoration-none" href="/user/{user.number}">
@@ -45,7 +46,7 @@
 				</a>
 			{/each}
 		</div>
-	{:else if data.category == "places"}
+	{:else if data.category == "places" && data.places}
 		<div class="grid d-grid">
 			{#each data.places as place}
 				<div class="px-2 mb-2">
@@ -55,12 +56,22 @@
 				</div>
 			{/each}
 		</div>
-	{:else if data.category == "items"}
+	{:else if data.category == "items" && data.items}
 		<div class="grid d-grid">
 			{#each data.items as item}
 				<div class="px-2 mb-2">
 					<div class="place">
 						<Item {item} />
+					</div>
+				</div>
+			{/each}
+		</div>
+	{:else if data.category == "groups" && data.groups}
+		<div class="grid d-grid">
+			{#each data.groups as group}
+				<div class="px-2 mb-2">
+					<div class="place">
+						<Group {group} />
 					</div>
 				</div>
 			{/each}
