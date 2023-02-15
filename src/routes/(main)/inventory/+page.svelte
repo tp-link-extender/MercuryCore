@@ -3,8 +3,6 @@
 	import Item from "$lib/components/Item.svelte"
 
 	export let data: PageData
-
-	$: console.log(data.items)
 </script>
 
 <svelte:head>

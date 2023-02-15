@@ -20,7 +20,7 @@
 						<img src={transaction.sender?.image} alt={transaction.sender.displayname} class="rounded-circle rounded-top-0" />
 					</div>
 					<p class="light-text my-auto fs-6 me-4 text-truncate">
-						{transaction.sender.displayname}WWWWWWWWWWW
+						{transaction.sender.displayname}
 					</p>
 				</a>
 			</span>
