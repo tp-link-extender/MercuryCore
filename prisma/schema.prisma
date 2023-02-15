@@ -41,8 +41,7 @@ model User {
     lastOnline           DateTime      @default(now())
     status               String?
     currency             Int           @default(0)
-    // groupsOwned  Group[] @relation("owner")
-    // groupsJoined Group[] @relation("member")
+    groupsOwned          Group[]
     places               Place[]
     posts                Post[]
     itemsCreated         Item[]
@@ -84,46 +83,39 @@ model Regkey {
 }
 
 model Post {
-    id             String   @id @unique @default(cuid())
-    author         User     @relation(fields: [authorUsername], references: [username])
-    authorUsername String
-    posted         DateTime @default(now())
-    content        String
+    id              String   @id @unique @default(cuid())
+    authorUser      User     @relation(fields: [authorUsername], references: [username])
+    authorUsername  String
+    authorGroup     Group?   @relation(fields: [authorGroupname], references: [name])
+    authorGroupname String?
+    posted          DateTime @default(now())
+    content         String
 }
 
-// model Group {
-//     name          String       @id @unique
-//     owner         User         @relation(name: "owner", fields: [ownerUsername], references: [username])
-//     ownerUsername String
-//     members       User[]       @relation("member")
-//     places        GroupPlace[]
-//     posts         GroupPost[]
-// }
+model Group {
+    name          String  @id @unique
+    owner         User    @relation(fields: [ownerUsername], references: [username])
+    ownerUsername String
+    places        Place[]
+    posts         Post[]
+}
 
 // Places
 
 model Place {
-    name          String
-    slug          String @id @unique
-    owner         User   @relation(fields: [ownerUsername], references: [username])
-    ownerUsername String
-    description   String
-    image         String
+    name           String
+    slug           String  @id @unique
+    ownerUser      User?   @relation(fields: [ownerUsername], references: [username])
+    ownerUsername  String?
+    ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
+    ownerGroupname String?
+
+    description String
+    image       String
 
     created DateTime @default(now())
     updated DateTime @default(now())
 }
-
-// model GroupPlace {
-//     name        String
-//     slug          String @id @unique
-//     owner       Group  @relation(fields: [groupName], references: [name])
-//     groupName   String
-//     description String
-
-//     created DateTime @default(now())
-//     updated DateTime @default(now())
-// }
 
 // Items
 
