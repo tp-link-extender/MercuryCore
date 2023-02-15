@@ -50,7 +50,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			img: user.image,
 			places: findPlaces({
 				where: {
-					owner: {
+					ownerUser: {
 						username: user.username,
 					},
 				},

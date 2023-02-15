@@ -3,48 +3,39 @@ import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
 
-const types = ["friends", "followers", "following"]
+const types = ["followers", "members"]
 
 const usersQueries: any = {
-	friends: `
-		MATCH (:User { name: $user }) -[r:friends]- (u:User)
-		RETURN u.name AS name`,
 	followers: `
-		MATCH (:User { name: $user }) <-[r:follows]- (u:User)
+		MATCH (:Group { name: $group }) <-[r:follows]- (u:User)
 		RETURN u.name AS name`,
-	following: `
-		MATCH (:User { name: $user }) -[r:follows]-> (u:User)
+	members: `
+		MATCH (:Group { name: $group }) <-[r:in]- (u:User)
 		RETURN u.name AS name`,
 }
 
 const numberQueries: any = {
-	friends: "RETURN SIZE((:User { name: $user }) -[:friends]- (:User))",
-	followers: "RETURN SIZE((:User { name: $user }) <-[:follows]- (:User))",
-	following: "RETURN SIZE((:User { name: $user }) -[:follows]-> (:User))",
+	followers: "RETURN SIZE((:Group { name: $group }) <-[:follows]- (:User))",
+	members: "RETURN SIZE((:Group { name: $group }) <-[:in]- (:User))",
 }
 
 export const load: PageServerLoad = async ({ params }) => {
-	if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
-	const number = parseInt(params.number)
-
-	if (params.f && !types.includes(params.f)) throw error(400, `Not found: /user/${params.userid}/${params.f}`)
+	if (params.f && !types.includes(params.f)) throw error(400, `Not found: /groups/${params.name}/${params.f}`)
 	const type = params.f
-	console.time("user " + type)
+	console.time("group " + type)
 
-	const user = await prisma.user.findUnique({
+	const group = await prisma.group.findUnique({
 		where: {
-			number,
+			name: params.name,
 		},
 		select: {
-			username: true,
-			displayname: true,
-			image: true,
+			name: true,
 		},
 	})
-	if (user) {
+	if (group) {
 		const query = {
 			params: {
-				user: user?.username,
+				group: params.name,
 			},
 		}
 
@@ -74,10 +65,10 @@ export const load: PageServerLoad = async ({ params }) => {
 			return users
 		}
 
-		console.timeEnd("user " + type)
+		console.timeEnd("group " + type)
 		return {
 			type,
-			displayname: user.displayname,
+			name: group.name,
 			users: Users(),
 			number: roQuery(numberQueries[type], query, true),
 		}
