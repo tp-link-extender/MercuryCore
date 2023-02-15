@@ -28,6 +28,9 @@
 						<li class="nav-item">
 							<a href="/avatarshop" class="nav-link mt-1 shadow-none mr-0 light-text">Avatar Shop</a>
 						</li>
+						<li class="nav-item">
+							<a href="/groups" class="nav-link mt-1 shadow-none mr-0 light-text">Groups</a>
+						</li>
 					</ul>
 					<ul class="navbar-nav loggedin">
 						<li class="nav-item">
