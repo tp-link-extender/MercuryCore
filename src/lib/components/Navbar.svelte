@@ -8,13 +8,13 @@
 	const user = getUser()
 </script>
 
-<nav class="navbar navbar-expand-md navbar-dark position-fixed w-100 px-4 py-1">
+<nav class="navbar navbar-expand-lg navbar-dark position-fixed w-100 px-4 py-1">
 	<div class="container">
 		<a class="navbar-brand light-text me-5" href="/">Mercury</a>
-		<button class="navbar-toggler" type="button" title="Open sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar-expand-md" aria-controls="offcanvasNavbar-expand-md">
-			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-md" />
+		<button class="navbar-toggler" type="button" title="Open sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar-expand-lg" aria-controls="offcanvasNavbar-expand-lg">
+			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-lg" />
 		</button>
-		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-md" aria-labelledby="offcanvasNavbar-expand-md">
+		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-lg" aria-labelledby="offcanvasNavbar-expand-lg">
 			<div class="offcanvas-header">
 				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 				<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
@@ -58,7 +58,7 @@
 								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-user-pen me-2" /> Avatar</a></li>
 								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-users me-2" /> My Groups</a></li>
 								<li><hr class="dropdown-divider" /></li>
-								<li><a class="dropdown-item light-text" href="/user/settings"><i class="fa fa-gears me-2" /> Settings</a></li>
+								<li><a class="dropdown-item light-text" href="/settings"><i class="fa fa-gears me-2" /> Settings</a></li>
 								<li>
 									<form use:enhance method="POST" action="/logout">
 										<button type="submit" class="dropdown-item text-light text-bg-danger"><b><i class="fa fa-arrow-right-from-bracket me-2" /> Log out</b></button>
@@ -100,11 +100,11 @@
 </nav>
 
 <style lang="sass">
-	@media only screen and (max-width: 767px)
+	@media only screen and (max-width: 991px)
 		.offcanvas-header
-			background: var(--accent2)
-		.offcanvas-body
 			background: var(--accent)
+		.offcanvas-body
+			background: var(--background)
 			min-height: 100vh
 			flex-direction: column-reverse
 			justify-content: start
@@ -121,7 +121,7 @@
 			margin-top: 1rem
 
 
-	@media only screen and (min-width: 768px)
+	@media only screen and (min-width: 992px)
 		.loggedin
 			margin-left: auto
 
