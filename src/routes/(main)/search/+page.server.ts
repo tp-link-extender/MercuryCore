@@ -1,12 +1,12 @@
 import type { Actions, PageServerLoad } from "./$types"
-import { prisma, findPlaces, findItems } from "$lib/server/prisma"
+import { prisma, findPlaces, findItems, findGroups } from "$lib/server/prisma"
 import { error, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ url }) => {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) throw error(400, "No query provided")
-	if (category && !["users", "places", "items"].includes(category)) throw error(400, "Invalid category")
+	if (category && !["users", "places", "items", "groups"].includes(category)) throw error(400, "Invalid category")
 
 	if (category == "users") {
 		const user = await prisma.user.findUnique({
@@ -23,30 +23,50 @@ export const load: PageServerLoad = async ({ url }) => {
 	return {
 		query,
 		category,
-		users: prisma.user.findMany({
-			where: {
-				displayname: {
-					contains: query,
-					mode: "insensitive",
-				},
-			},
-		}),
-		places: findPlaces({
-			where: {
-				name: {
-					contains: query,
-					mode: "insensitive",
-				},
-			},
-		}),
-		items: findItems({
-			where: {
-				name: {
-					contains: query,
-					mode: "insensitive",
-				},
-			},
-		}),
+		users:
+			category == "users"
+				? prisma.user.findMany({
+						where: {
+							displayname: {
+								contains: query,
+								mode: "insensitive",
+							},
+						},
+				  })
+				: null,
+		places:
+			category == "places"
+				? findPlaces({
+						where: {
+							name: {
+								contains: query,
+								mode: "insensitive",
+							},
+						},
+				  })
+				: null,
+		items:
+			category == "items"
+				? findItems({
+						where: {
+							name: {
+								contains: query,
+								mode: "insensitive",
+							},
+						},
+				  })
+				: null,
+		groups:
+			category == "groups"
+				? findGroups({
+						where: {
+							name: {
+								contains: query,
+								mode: "insensitive",
+							},
+						},
+				  })
+				: null,
 	}
 }
 

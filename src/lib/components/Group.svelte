@@ -1,7 +1,5 @@
 <script lang="ts">
 	export let group: any
-
-	console.log(group)
 </script>
 
 <a class="card text-center light-text text-decoration-none h6 rounded-4 m-0" href="/groups/{group.name}">

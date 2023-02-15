@@ -25,7 +25,7 @@
 					<a href="/avatarshop" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Avatar Shop</a>
 					<a href="/groups" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Groups</a>
 				</div>
-				<div id="search" class="navbar-nav mx-auto">
+				<div id="search" class="navbar-nav ms-4 me-auto">
 					<form use:enhance method="POST" action="/search" class="my-1 w-auto" role="search">
 						<div class="input-group">
 							<input bind:value={search} class="form-control valid" name="query" type="search" placeholder="Search" aria-label="Search" />
@@ -38,6 +38,7 @@
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=users" title="Search Users">Search <b>{search}</b> in Users</a>
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=places" title="Search Places">Search <b>{search}</b> in Places</a>
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=items" title="Search Avatar shop">Search <b>{search}</b> in Avatar shop</a>
+								<a class="btn text-start light-text py-2" href="/search?q={search}&c=groups" title="Search Groups">Search <b>{search}</b> in Groups</a>
 							</div>
 						{/if}
 					</form>
@@ -114,6 +115,7 @@
 		
 		#search
 			width: 100%
+			margin: 0  !important
 			form
 				margin: 1rem !important
 
