@@ -20,6 +20,7 @@ export const actions: Actions = {
 		} catch (e) {
 			return fail(400, { area: "password", msg: "Incorrect username or password" })
 		}
+		console.log(session)
 		locals.setSession(session)
 
 		throw redirect(302, "/home")

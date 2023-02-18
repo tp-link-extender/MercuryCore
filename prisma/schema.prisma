@@ -39,6 +39,7 @@ model User {
     image                String?
     created              DateTime      @default(now())
     lastOnline           DateTime      @default(now())
+    currencyCollected    DateTime      @default(now())
     status               String?
     theme                String?
     currency             Int           @default(0)
