@@ -17,6 +17,7 @@ export const auth = lucia({
 			displayname: data.displayname,
 			image: data.image,
 			currency: data.currency,
+			currencyCollected: data.currencyCollected,
 		}
 	},
 	generateCustomUserId: () => crypto.randomUUID(),

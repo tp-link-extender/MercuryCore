@@ -1,11 +1,43 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
+	import { onMount } from "svelte"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	let search = ""
 
 	const user = getUser()
+
+	$: timer = $user?.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * 12)
+	$: seconds = Math.floor((timer / 1000) % 60)
+		.toString()
+		.padStart(2, "0")
+	$: minutes = Math.floor((timer / 1000 / 60) % 60)
+		.toString()
+		.padStart(2, "0")
+	$: hours = Math.floor((timer / 1000 / 3600) % 24)
+		.toString()
+		.padStart(2, "0")
+
+	onMount(() => {
+		function animationInterval(ms: number, callback: (time: number) => void) {
+			const start: any = document.timeline.currentTime
+
+			function frame(time: number) {
+				callback(time)
+				scheduleFrame(time)
+			}
+			function scheduleFrame(time: number) {
+				const elapsed = time - start
+				const roundedElapsed = Math.round(elapsed / ms) * ms
+				const targetNext = start + roundedElapsed + ms
+				const delay = targetNext - performance.now()
+				setTimeout(() => requestAnimationFrame(frame), delay)
+			}
+			scheduleFrame(start)
+		}
+		animationInterval(1000, () => (timer -= 1000))
+	})
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark position-fixed w-100 px-4 py-1">
@@ -44,13 +76,30 @@
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
-					<li class="nav-item">
-						<a id="rocks" href="/transactions" class="fw-bold nav-link mt-1 text-success shadow-none">
+					<li class="dropdown">
+						<a id="rocks" href="/transactions" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-link mt-1 text-success shadow-none">
 							<i class="fa fa-gem me-1" />
 							<span class="h6 text-success">
 								{$user.currency}
 							</span>
 						</a>
+
+						<ul class="dropdown-menu mt-2">
+							<li><h6 class="dropdown-header grey-text">CURRENCY</h6></li>
+							<li>
+								<form use:enhance method="POST" action="/api?/stipend">
+									<button type="submit" class="dropdown-item text-light {timer > 0 ? 'disabled' : ''}"
+										><i class="fa fa-money-bills me-2" />
+										{#if timer > 0}
+											{hours}:{minutes}:{seconds}
+										{:else}
+											Get Stipend
+										{/if}
+									</button>
+								</form>
+							</li>
+							<li><a class="dropdown-item light-text" href="/transactions"><i class="fa fa-coins me-2" /> Transactions</a></li>
+						</ul>
 					</li>
 					<li class="dropdown ms-2">
 						<a href="/user/{$user.number}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
@@ -68,13 +117,12 @@
 							<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-address-card me-2" /> Profile</a></li>
 							<li><a class="dropdown-item light-text" href="/inventory"><i class="fa fa-box-open me-2" /> Inventory</a></li>
 							<li><a class="dropdown-item light-text" href="/requests"><i class="fa fa-user-plus me-2" /> Friend requests</a></li>
-							<li><a class="dropdown-item light-text" href="/transactions"><i class="fa fa-coins me-2" /> Transactions</a></li>
 							<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-user-pen me-2" /> Avatar</a></li>
 							<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-users me-2" /> My Groups</a></li>
 							<li><hr class="dropdown-divider" /></li>
 							<li><a class="dropdown-item light-text" href="/settings"><i class="fa fa-gears me-2" /> Settings</a></li>
 							<li>
-								<form use:enhance method="POST" action="/logout">
+								<form use:enhance method="POST" action="/api?/logout">
 									<button type="submit" class="dropdown-item text-light text-bg-danger"><b><i class="fa fa-arrow-right-from-bracket me-2" /> Log out</b></button>
 								</form>
 							</li>
