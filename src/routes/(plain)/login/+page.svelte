@@ -79,12 +79,9 @@
 			<form
 				class="m-auto form-group mt-4"
 				method="POST"
-				use:enhance={() => {
-					return async ({ result }) => {
-						if (result.type == "redirect") window.location.reload()
-						else await applyAction(result)
-					}
-				}}
+				use:enhance={() =>
+					async ({ result }) =>
+						result.type == "redirect" ? window.location.reload() : await applyAction(result)}
 			>
 				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
 				<fieldset>

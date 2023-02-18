@@ -1,14 +1,12 @@
 <script lang="ts">
-	const duration = "0.6s"
-	const size = 60
+	const size = 80
+	const duration = "0.7s"
 	const unit = "px"
-	const moonSize = size / 7
-	const top = size / 2 - moonSize / 2
 </script>
 
-<div id="wrapper" class="rounded-circle" style="--size: {size}{unit}; --moonSize: {top}px; --duration: {duration}; --rotation: {Math.random() * 360}deg;">
-	<div id="circle-one" class="rounded-circle"/>
-	<div id="circle-two" class="rounded-circle"/>
+<div id="wrapper" class="rounded-circle" style="--size: {size}{unit}; --duration: {duration}; --rotation: {Math.random() * 360}deg;">
+	<img src="/innerlogo.svg" alt="Mercury logo inner part (M)"/>
+	<img src="/outerlogo.svg" alt="Mercury logo outer part (circle around M)" id="outer"/>
 </div>
 
 <style lang="sass">
@@ -16,27 +14,19 @@
 	#wrapper
 		height: var(--size)
 		width: var(--size)
+		animation: fade calc(var(--duration) * 0.9) 0s infinite linear
+		position: relative
+	
+	#outer
 		transform: rotate(var(--rotation))
 		animation: moon var(--duration) 0s infinite linear
-		animation-fill-mode: forwards
-		position: relative
 
-	#circle-one
-		top: var(--moonSize)
-		background-color: var(--mainaccent)
-		width: calc(var(--size) / 6)
-		height: calc(var(--size) / 6)
-		animation-fill-mode: forwards
-		opacity: 0.8
-		position: absolute
-
-	#circle-two
-		opacity: 0.1
-		border: calc(var(--size) / 6) solid var(--mainaccent)
+	img
+		opacity: 0.5
 		height: var(--size)
 		width: var(--size)
-		animation: fade calc(var(--duration) * 1.8) 0s infinite linear
 		box-sizing: border-box
+		position: absolute
 
 	@keyframes moon
 		100%
@@ -44,9 +34,9 @@
 
 	@keyframes fade
 		0%
-			opacity: 0.05
+			opacity: 0.35
 		50%
-			opacity: 0.25
+			opacity: 0.75
 		100%
-			opacity: 0.05
+			opacity: 0.35
 </style>
