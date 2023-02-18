@@ -15,12 +15,11 @@ export const actions: Actions = {
 
 		let session
 		try {
-			const user = await auth.validateKeyPassword("username", username.toLowerCase(), password)
+			const user: any = await auth.validateKeyPassword("username", username.toLowerCase(), password)
 			session = await auth.createSession(user.userId)
 		} catch (e) {
 			return fail(400, { area: "password", msg: "Incorrect username or password" })
 		}
-		console.log(session)
 		locals.setSession(session)
 
 		throw redirect(302, "/home")
