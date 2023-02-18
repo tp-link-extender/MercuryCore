@@ -8,7 +8,7 @@
 
 	const user = getUser()
 
-	$: timer = ($user?.currencyCollected || new Date()).getTime() - (new Date().getTime() - 1000 * 3600 * 12)
+	$: timer = $user?.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * 12)
 	$: seconds = Math.floor((timer / 1000) % 60)
 		.toString()
 		.padStart(2, "0")
