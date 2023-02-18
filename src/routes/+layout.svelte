@@ -29,6 +29,14 @@
 	<style lang="sass">
 		@use "../themes/darken.sass"
 	</style>
+{:else if $user?.theme == "storm"}
+	<style lang="sass">
+		@use "../themes/storm.sass"
+	</style>
+{:else if $user?.theme == "solar"}
+	<style lang="sass">
+		@use "../themes/solar.sass"
+	</style>
 {:else}
 	<style lang="sass">
 		@use "../themes/standard.sass"
