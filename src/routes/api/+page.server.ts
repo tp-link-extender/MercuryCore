@@ -29,7 +29,7 @@ export const actions: Actions = {
 		})
 
 		if (user) {
-			if (user.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * 12) > 0) return fail(400)
+			if ((user.currencyCollected || new Date()).getTime() - (new Date().getTime() - 1000 * 3600 * 12) > 0) return fail(400)
 
 			await prisma.user.update({
 				where: {
