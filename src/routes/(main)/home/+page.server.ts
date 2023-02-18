@@ -88,7 +88,7 @@ export const actions: Actions = {
 
 		await prisma.post.create({
 			data: {
-				author: {
+				authorUser: {
 					connect: {
 						username: session.user.username,
 					},
