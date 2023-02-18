@@ -41,7 +41,7 @@
 	<div class="tab-content light-text mt-4" id="pills-tabContent">
 		<div class="tab-pane fade active show" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex={0}>
 			<h4 class="light-text fw-normal mb-1">User Profile</h4>
-			<p class="mb-0 text-muted mb-4">Change your bio, site theme and more.</p>
+			<p class="mb-0 grey-text mb-4">Change your bio, site theme and more.</p>
 			<form class="col-lg-8" method="POST" action="?/profile" use:enhance>
 				<fieldset>
 					<div class="row">
@@ -50,6 +50,8 @@
 							<select id="theme" required name="theme" value={$user?.theme || "standard"} class="form-select {form?.area == 'theme' ? 'is-invalid' : 'valid'}">
 								<option value="standard">Standard</option>
 								<option value="darken">Darken</option>
+								<option value="storm">Storm</option>
+								<option value="solar">Solar</option>
 							</select>
 							{#if form?.area == "theme"}
 								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
@@ -72,14 +74,14 @@
 								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
 							{/if}
 						</div>
-						<small class="text-muted pb-2">You can only change your display name every 7 days. (not added yet lmao)</small>
+						<small class="grey-text pb-2">You can only change your display name every 7 days. (not added yet lmao)</small>
 					</div>
 					<hr />
 					<div class="row">
 						<label for="bio" class="form-label light-text">Bio</label>
 						<div class="container">
 							<textarea class="form-control light-text mb-1 {form?.area == 'bio' ? 'is-invalid' : 'valid'}" id="bio" name="bio" rows={3} value={$user?.bio} />
-							<small class="text-muted pb-2"> Maximum 1000 characters, your bio will appear on your profile and allow other users to know who you are. </small>
+							<small class="grey-text pb-2"> Maximum 1000 characters, your bio will appear on your profile and allow other users to know who you are. </small>
 						</div>
 					</div>
 				</fieldset>
@@ -92,13 +94,13 @@
 		</div>
 		<div class="tab-pane fade" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex={0}>
 			<h4 class="light-text fw-normal mb-1">User Information</h4>
-			<p class="mb-0 text-muted mb-4">Information about your account, you can change certain aspects of it here.</p>
+			<p class="mb-0 grey-text mb-4">Information about your account, you can change certain aspects of it here.</p>
 			<div class="form-group row">
 				<label for="name" class="col-md-3 col-form-label text-md-right">Username</label>
 				<div class="col-md-9">
 					<input type="text" readonly id="name" disabled value={$user?.username} class="form-control valid" />
 				</div>
-				<small class="text-muted pb-2">You cannot change your username.</small>
+				<small class="grey-text pb-2">You cannot change your username.</small>
 			</div>
 			<hr />
 			<div class="form-group row">
@@ -145,7 +147,7 @@
 								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
 							{/if}
 						</div>
-						<small class="text-muted">Make sure your password is unique.</small>
+						<small class="grey-text">Make sure your password is unique.</small>
 					</div>
 					<div class="form-group row gx-0 mb-2">
 						<label for="cnpassword" class="col-sm-4 col-form-label pt-0">Confirm New Password</label>

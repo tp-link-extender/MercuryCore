@@ -18,7 +18,7 @@ export const actions: Actions = {
 		if (same) return fail(400)
 
 		if (!entries.displayName) return fail(400, { area: "displayName", msg: "Invalid displayname" })
-		if (!["standard", "darken"].includes(entries.theme)) return fail(400, { area: "theme", msg: "Invalid theme" })
+		if (!["standard", "darken", "storm", "solar"].includes(entries.theme)) return fail(400, { area: "theme", msg: "Invalid theme" })
 
 		await prisma.user.update({
 			where: {
