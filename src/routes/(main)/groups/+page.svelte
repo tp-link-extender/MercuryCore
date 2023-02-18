@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData, Snapshot } from "./$types"
+	import { enhance } from "$app/forms"
 	import Group from "$lib/components/Group.svelte"
 
 	let value = ""
@@ -23,10 +24,11 @@
 		<div class="card rounded-none">
 			<div class="card-header light-text px-3 py-2"><i class="fa fa-magnifying-glass" /> Filter</div>
 			<div class="card-body">
-				<form>
+				<form use:enhance method="POST" action="/search">
 					<div class="input-group mb-3">
-						<input bind:value type="text" class="form-control light-text input" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
-						<button class="btn btn-success" type="button" id="button-addon2">Search</button>
+						<input bind:value type="text" name="query" class="form-control light-text input" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
+						<input type="hidden" name="category" value="groups" />
+						<button class="btn btn-success" type="submit" id="button-addon2">Search</button>
 					</div>
 				</form>
 			</div>

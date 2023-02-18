@@ -9,10 +9,16 @@ export const actions: Actions = {
 		const session = await locals.validateUser()
 		const entries: any = Object.fromEntries(data.entries())
 
-		if (session.user.bio == data.get("bio") && session.user.displayname == data.get("displayname")) return fail(400)
-		// nothing changed
+		let same
+		for (let i in entries)
+			if (entries[i] != session.user[i]) {
+				same = false
+				break
+			}
+		if (same) return fail(400)
 
 		if (!entries.displayName) return fail(400, { area: "displayName", msg: "Invalid displayname" })
+		if (!["standard", "darken", "storm", "solar"].includes(entries.theme)) return fail(400, { area: "theme", msg: "Invalid theme" })
 
 		await prisma.user.update({
 			where: {
@@ -21,12 +27,12 @@ export const actions: Actions = {
 			data: {
 				bio: entries.bio || "",
 				displayname: entries.displayName,
+				theme: entries.theme,
 			},
 		})
-
+		
 		return {
 			profilesuccess: true,
-			prev: entries,
 		}
 	},
 

@@ -64,7 +64,7 @@
 						</a>
 
 						<ul class="dropdown-menu mt-2">
-							<li><h6 class="dropdown-header">ACCOUNT</h6></li>
+							<li><h6 class="dropdown-header grey-text">ACCOUNT</h6></li>
 							<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-address-card me-2" /> Profile</a></li>
 							<li><a class="dropdown-item light-text" href="/inventory"><i class="fa fa-box-open me-2" /> Inventory</a></li>
 							<li><a class="dropdown-item light-text" href="/requests"><i class="fa fa-user-plus me-2" /> Friend requests</a></li>
