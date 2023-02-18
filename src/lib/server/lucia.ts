@@ -6,16 +6,17 @@ import aPrisma from "@lucia-auth/adapter-prisma"
 export const auth = lucia({
 	adapter: aPrisma(prisma),
 	env: dev ? "DEV" : "PROD",
-	transformUserData: (userData: any) => {
+	transformUserData: (data: any) => {
 		return {
-			userId: userData.id,
-			number: userData.number,
-			bio: userData.bio,
-			email: userData.email,
-			username: userData.username,
-			displayname: userData.displayname,
-			image: userData.image,
-			currency: userData.currency,
+			userId: data.id,
+			number: data.number,
+			bio: data.bio,
+			theme: data.theme,
+			email: data.email,
+			username: data.username,
+			displayname: data.displayname,
+			image: data.image,
+			currency: data.currency,
 		}
 	},
 	generateCustomUserId: () => crypto.randomUUID(),

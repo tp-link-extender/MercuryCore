@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { page, navigating } from "$app/stores"
-	import { fade } from "svelte/transition"
-	import { handleSession } from "@lucia-auth/sveltekit/client"
 	import Loading from "$lib/components/Loading.svelte"
+	import { fade } from "svelte/transition"
+	import { handleSession, getUser } from "@lucia-auth/sveltekit/client"
+
 	import "/src/global.sass"
 	import "/src/bootstrap.scss"
-	
 	import "/src/fa/sass/fontawesome.sass"
 	import "/src/fa/sass/regular.sass"
 	import "/src/fa/sass/solid.sass"
 
 	handleSession(page)
+	const user = getUser()
+	console.log($user?.theme)
 </script>
 
 <slot />
@@ -21,4 +23,14 @@
 			<Loading />
 		</h1>
 	</div>
+{/if}
+
+{#if $user?.theme == "darken"}
+	<style lang="sass">
+		@use "../themes/darken.sass"
+	</style>
+{:else}
+	<style lang="sass">
+		@use "../themes/standard.sass"
+	</style>
 {/if}

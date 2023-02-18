@@ -40,6 +40,7 @@ model User {
     created              DateTime      @default(now())
     lastOnline           DateTime      @default(now())
     status               String?
+    theme                String?
     currency             Int           @default(0)
     groupsOwned          Group[]
     places               Place[]
@@ -84,8 +85,8 @@ model Regkey {
 
 model Post {
     id              String   @id @unique @default(cuid())
-    authorUser      User     @relation(fields: [authorUsername], references: [username])
-    authorUsername  String
+    authorUser      User?    @relation(fields: [authorUsername], references: [username])
+    authorUsername  String?
     authorGroup     Group?   @relation(fields: [authorGroupname], references: [name])
     authorGroupname String?
     posted          DateTime @default(now())
