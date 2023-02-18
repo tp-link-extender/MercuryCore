@@ -12,7 +12,6 @@
 
 	handleSession(page)
 	const user = getUser()
-	console.log($user?.theme)
 </script>
 
 <slot />
