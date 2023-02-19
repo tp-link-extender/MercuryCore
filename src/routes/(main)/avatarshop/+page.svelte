@@ -17,7 +17,10 @@
 	<title>Avatar Shop - Mercury</title>
 </svelte:head>
 
-<h1 class="light-text text-center">Avatar Shop</h1>
+<h1 class="light-text text-center">
+	Avatar Shop
+	<a href="/avatarshop/create" class="btn btn-primary ms-4">Create</a>
+</h1>
 
 <div class="container">
 	<div class="row">
