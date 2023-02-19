@@ -31,10 +31,10 @@
 						<i class="fa fa-gem" /> {transaction.amountSent}
 					</span>
 					<span class="mx-1">
-						<i class="fa fa-arrow-right mx-1" /> {transaction.taxRate * 100}% tax <i class="fa fa-arrow-right mx-1" />
+						<i class="fa fa-arrow-right mx-1" /> {transaction.taxRate}% tax <i class="fa fa-arrow-right mx-1" />
 					</span>
 					<span class="text-success">
-						<i class="fa fa-gem" /> {Math.floor((1 - transaction.taxRate) * transaction.amountSent)}
+						<i class="fa fa-gem" /> {Math.floor((1 - (transaction.taxRate / 100)) * transaction.amountSent)}
 					</span>
 					<br />
 					<span class="time">

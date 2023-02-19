@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import { roQuery } from "./redis"
+import { client, roQuery } from "./redis"
 
 export const prisma = new PrismaClient()
 
@@ -70,8 +70,8 @@ export async function findGroups(query: any) {
 export async function transaction(senderId: string, receiverId: string, amountSent: number) {
 	// balance of both parties should have been checked already by now
 	// the user accounts also had better exist or else
-	const taxRate = 0.3
-	const finalAmount = Math.round(amountSent * (1 - taxRate))
+	const taxRate = Number((await client.get("taxRate")) || 30)
+	const finalAmount = Math.round(amountSent * (1 - taxRate / 100))
 
 	await prisma.user.update({
 		where: {

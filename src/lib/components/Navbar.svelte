@@ -7,8 +7,9 @@
 	let search = ""
 
 	const user = getUser()
+	export let data: any
 
-	$: timer = $user?.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * 12)
+	$: timer = $user?.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * data.stipendTime)
 	$: seconds = Math.floor((timer / 1000) % 60)
 		.toString()
 		.padStart(2, "0")
