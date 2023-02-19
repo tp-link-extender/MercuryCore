@@ -34,7 +34,7 @@
 						<i class="fa fa-arrow-right mx-1" /> {transaction.taxRate}% tax <i class="fa fa-arrow-right mx-1" />
 					</span>
 					<span class="text-success">
-						<i class="fa fa-gem" /> {Math.floor((1 - (transaction.taxRate / 100)) * transaction.amountSent)}
+						<i class="fa fa-gem" /> {Math.round((1 - (transaction.taxRate / 100)) * transaction.amountSent)}
 					</span>
 					<br />
 					<span class="time">
