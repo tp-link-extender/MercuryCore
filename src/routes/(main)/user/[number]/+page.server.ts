@@ -66,7 +66,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			outgoingRequest: roQuery("MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query),
 		}
 	} else {
-		throw error(404, `Not found: /user/${params.number}`)
+		throw error(404, "Not found")
 	}
 }
 

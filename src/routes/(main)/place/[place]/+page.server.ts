@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $place }) RETURN r", query) : false,
 			dislikes: session ? roQuery("MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $place }) RETURN r", query) : false,
 		}
-	} else throw error(404, `Not found: /${params.place}`)
+	} else throw error(404, "Not found")
 }
 
 export const actions: Actions = {
@@ -60,7 +60,7 @@ export const actions: Actions = {
 				},
 			}))
 		)
-			return fail(404, { msg: `Not found: /place/${params.place}` })
+			return fail(404, { msg: "Not found" })
 
 		const query = {
 			params: {
