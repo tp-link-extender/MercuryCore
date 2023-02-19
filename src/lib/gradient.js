@@ -5,9 +5,8 @@
 // https://kevinhufnagl.com
 
 // Converting colors to proper format
-function normalizeColor(hexCode) {
-	return [((hexCode >> 16) & 255) / 255, ((hexCode >> 8) & 255) / 255, (255 & hexCode) / 255]
-}
+const normalizeColor = hexCode => [((hexCode >> 16) & 255) / 255, ((hexCode >> 8) & 255) / 255, (255 & hexCode) / 255]
+
 ;["SCREEN", "LINEAR_LIGHT"].reduce(
 	(hexCode, t, n) =>
 		Object.assign(hexCode, {
@@ -56,11 +55,11 @@ class MiniGl {
 									shader
 								)
 							}
-							function getUniformVariableDeclarations(uniforms, type) {
-								return Object.entries(uniforms)
+							const getUniformVariableDeclarations = (uniforms, type) =>
+								Object.entries(uniforms)
 									.map(([uniform, value]) => value.getDeclaration(uniform, type))
 									.join("\n")
-							}
+
 							;(material.uniforms = uniforms), (material.uniformInstances = [])
 
 							const prefix = "\n              precision highp float;\n            "
@@ -302,19 +301,17 @@ class MiniGl {
 }
 
 // Sets initial properties
-function e(object, propertyName, val) {
-	return (
-		propertyName in object
-			? Object.defineProperty(object, propertyName, {
-					value: val,
-					enumerable: true,
-					configurable: true,
-					writable: true,
-			  })
-			: (object[propertyName] = val),
-		object
-	)
-}
+const e = (object, propertyName, val) => (
+	propertyName in object
+		? Object.defineProperty(object, propertyName, {
+				value: val,
+				enumerable: true,
+				configurable: true,
+				writable: true,
+		  })
+		: (object[propertyName] = val),
+	object
+)
 
 // Gradient object
 export default class Gradient {
@@ -540,9 +537,8 @@ export default class Gradient {
 	initMesh() {
 		;(this.material = this.initMaterial()), (this.geometry = new this.minigl.PlaneGeometry()), (this.mesh = new this.minigl.Mesh(this.geometry, this.material))
 	}
-	shouldSkipFrame(e) {
-		return !!window.document.hidden || !this.conf.playing || parseInt(e, 10) % 2 == 0 || void 0
-	}
+	shouldSkipFrame = e => !!window.document.hidden || !this.conf.playing || parseInt(e, 10) % 2 == 0 || void 0
+
 	updateFrequency(e) {
 		;(this.freqX += e), (this.freqY += e)
 	}
@@ -563,9 +559,8 @@ export default class Gradient {
 	waitForCssVars() {
 		if (this.computedCanvasStyle && -1 !== this.computedCanvasStyle.getPropertyValue("--gradient-color-1").indexOf("#")) this.init(), this.addIsLoadedClass()
 		else {
-			if (((this.cssVarRetries += 1), this.cssVarRetries > this.maxCssVarRetries)) {
-				return (this.sectionColors = [16711680, 16711680, 16711935, 65280, 255]), void this.init()
-			}
+			if (((this.cssVarRetries += 1), this.cssVarRetries > this.maxCssVarRetries)) return (this.sectionColors = [16711680, 16711680, 16711935, 65280, 255]), void this.init()
+
 			requestAnimationFrame(() => this.waitForCssVars())
 		}
 	}

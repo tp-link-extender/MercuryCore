@@ -20,7 +20,7 @@ const numberQueries: any = {
 }
 
 export const load: PageServerLoad = async ({ params }) => {
-	if (params.f && !types.includes(params.f)) throw error(400, `Not found: /groups/${params.name}/${params.f}`)
+	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
 	const type = params.f
 	console.time("group " + type)
 

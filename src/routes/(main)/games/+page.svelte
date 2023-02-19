@@ -17,7 +17,10 @@
 	<title>Discover - Mercury</title>
 </svelte:head>
 
-<h1 class="light-text text-center">Games</h1>
+<h1 class="light-text text-center">
+	Games
+	<a href="/games/create" class="btn btn-primary ms-4">Create</a>
+</h1>
 
 <div class="container row">
 	<div class="col-lg-4 col-xl-3 mb-4 mb-auto pe-0 pb-3">

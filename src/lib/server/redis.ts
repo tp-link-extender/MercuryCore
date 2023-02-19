@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { createClient, Graph } from "redis"
 
-const client = createClient({ url: "redis://localhost:6479" })
+export const client = createClient({ url: "redis://localhost:6479" })
 
 console.log("loaded redis")
 client.on("error", e => {
@@ -23,7 +23,7 @@ export async function roQuery(str: string, query: any, res = false, arr = false)
 	let result: any
 
 	try {
-		result = ((await graph.roQuery(res ? `${str} as ${rand}` : str, query)).data || [])
+		result = (await graph.roQuery(res ? `${str} as ${rand}` : str, query)).data || []
 		if (!arr) result = result[0]
 		if (res) result = result[rand]
 	} catch (e) {
