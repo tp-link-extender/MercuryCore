@@ -46,7 +46,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Item { name: $itemid }) RETURN r", query) : false,
 			dislikes: session ? roQuery("MATCH (:User { name: $user }) -[r:dislikes]-> (:Item { name: $itemid }) RETURN r", query) : false,
 		}
-	} else throw error(404, `Not found: /item/${params.id}`)
+	} else throw error(404, "Not found")
 }
 
 export const actions: Actions = {
@@ -64,7 +64,7 @@ export const actions: Actions = {
 				},
 			}))
 		)
-			return fail(404, { msg: `Not found: /item/${params.id}` })
+			return fail(404, { msg: "Not found" })
 
 		const query = {
 			params: {
@@ -92,7 +92,7 @@ export const actions: Actions = {
 							},
 						},
 					})
-					if (!getItem) throw error(404, `Not found: /item/${params.id}`)
+					if (!getItem) throw error(404, "Not found")
 					if ((getItem.owners || []).length > 0) throw error(400, "You already own this item")
 
 					await prisma.user.update({
@@ -126,7 +126,7 @@ export const actions: Actions = {
 							},
 						},
 					})
-					if (!getItem2) throw error(404, `Not found: /item/${params.id}`)
+					if (!getItem2) throw error(404, "Not found")
 					if ((getItem2?.owners || []).length < 1) throw error(400, "You don't own this item")
 
 					await prisma.user.update({

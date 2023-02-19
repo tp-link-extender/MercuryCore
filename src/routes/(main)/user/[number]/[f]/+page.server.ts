@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
 
-	if (params.f && !types.includes(params.f)) throw error(400, `Not found: /user/${params.userid}/${params.f}`)
+	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
 	const type = params.f
 	console.time("user " + type)
 

@@ -53,7 +53,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			in: roQuery("MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r", query2),
 		}
 	} else {
-		throw error(404, `Not found: /group/${params.name}`)
+		throw error(404, "Not found")
 	}
 }
 
