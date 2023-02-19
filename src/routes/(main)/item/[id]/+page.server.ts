@@ -92,9 +92,15 @@ export const actions: Actions = {
 							},
 						},
 					})
-					if (!getItem) throw error(404, "Not found")
-					if ((getItem.owners || []).length > 0) throw error(400, "You already own this item")
+					if (!getItem) return fail(404, { msg: "Not found" })
+					if ((getItem.owners || []).length > 0) return fail(400, { msg: "You already own this item" })
 
+					try {
+						await transaction({ id: session.user.userId }, { id: getItem.creator.id }, getItem.price)
+					} catch (e: any) {
+						console.log(e.message)
+						return fail(400, { msg: e.message })
+					}
 					await prisma.user.update({
 						where: {
 							id: session.user.userId,
@@ -108,7 +114,6 @@ export const actions: Actions = {
 						},
 					})
 
-					await transaction(session.user.userId, getItem.creator.id, getItem.price)
 					break
 				case "delete":
 					const getItem2 = await prisma.item.findUnique({
