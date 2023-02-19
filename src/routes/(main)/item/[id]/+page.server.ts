@@ -1,4 +1,4 @@
-import type { PageServerLoad } from "./$types"
+import type { PageServerLoad, Actions } from "./$types"
 import { prisma, transaction } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail, redirect } from "@sveltejs/kit"
@@ -102,7 +102,7 @@ export const actions: Actions = {
 							console.log(e.message)
 							return fail(400, { msg: e.message })
 						}
-					
+
 					await prisma.user.update({
 						where: {
 							id: session.user.userId,
