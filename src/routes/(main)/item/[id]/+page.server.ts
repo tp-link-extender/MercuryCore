@@ -6,7 +6,7 @@ import { error, fail, redirect } from "@sveltejs/kit"
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("item")
 	const session = await locals.validateUser()
-	const getItem = await prisma.item.findUnique({
+	const item = await prisma.item.findUnique({
 		where: {
 			id: params.id,
 		},
@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	})
 	console.timeEnd("item")
 
-	if (getItem) {
+	if (item) {
 		const query = {
 			params: {
 				user: session.user?.username || "",
@@ -36,11 +36,11 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			},
 		}
 		return {
-			name: getItem.name,
-			price: getItem.price,
-			creator: getItem.creator,
-			owned: getItem.owners.length > 0,
-			description: "item description", //getItem.description,
+			name: item.name,
+			price: item.price,
+			creator: item.creator,
+			owned: item.owners.length > 0,
+			description: "item description", //item.description,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Item { name: $itemid }))", query, true),
 			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Item { name: $itemid }))", query, true),
 			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Item { name: $itemid }) RETURN r", query) : false,
@@ -78,7 +78,7 @@ export const actions: Actions = {
 		try {
 			switch (action) {
 				case "buy":
-					const getItem = await prisma.item.findUnique({
+					const item = await prisma.item.findUnique({
 						where: {
 							id: params.id,
 						},
@@ -92,15 +92,17 @@ export const actions: Actions = {
 							},
 						},
 					})
-					if (!getItem) return fail(404, { msg: "Not found" })
-					if ((getItem.owners || []).length > 0) return fail(400, { msg: "You already own this item" })
+					if (!item) return fail(404, { msg: "Not found" })
+					if ((item.owners || []).length > 0) return fail(400, { msg: "You already own this item" })
 
-					try {
-						await transaction({ id: session.user.userId }, { id: getItem.creator.id }, getItem.price)
-					} catch (e: any) {
-						console.log(e.message)
-						return fail(400, { msg: e.message })
-					}
+					if (item.price != 0)
+						try {
+							await transaction({ id: session.user.userId }, { id: item.creator.id }, item.price)
+						} catch (e: any) {
+							console.log(e.message)
+							return fail(400, { msg: e.message })
+						}
+					
 					await prisma.user.update({
 						where: {
 							id: session.user.userId,
@@ -116,7 +118,7 @@ export const actions: Actions = {
 
 					break
 				case "delete":
-					const getItem2 = await prisma.item.findUnique({
+					const item2 = await prisma.item.findUnique({
 						// cAnnOt rEDeCLaRE bLoCK-SCOpeD varIabLE
 						where: {
 							id: params.id,
@@ -131,8 +133,8 @@ export const actions: Actions = {
 							},
 						},
 					})
-					if (!getItem2) throw error(404, "Not found")
-					if ((getItem2?.owners || []).length < 1) throw error(400, "You don't own this item")
+					if (!item2) throw error(404, "Not found")
+					if ((item2?.owners || []).length < 1) throw error(400, "You don't own this item")
 
 					await prisma.user.update({
 						where: {
