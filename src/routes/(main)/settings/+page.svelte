@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { ActionData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	const user = getUser()
 
-	export let form: any
+	export let form: ActionData
 </script>
 
 <svelte:head>
@@ -176,10 +177,8 @@
 		border-radius: 0
 		color: var(--light-text)
 	
-	input, textarea
+	textarea
 		background: var(--accent)
-	.valid
-		border-color: var(--accent3)
 	.form-control
 		color: var(--light-text)
 

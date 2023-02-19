@@ -56,6 +56,9 @@
 					<a href="/games" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Games</a>
 					<a href="/avatarshop" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Avatar Shop</a>
 					<a href="/groups" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Groups</a>
+					{#if $user?.permissionLevel == "Administrator"}
+						<a href="/admin" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Admin</a>
+					{/if}
 				</div>
 				<div id="search" class="navbar-nav ms-4 me-auto">
 					<form use:enhance method="POST" action="/search" class="my-1 w-auto" role="search">
