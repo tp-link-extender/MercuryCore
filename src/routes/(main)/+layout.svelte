@@ -36,5 +36,5 @@
 
 	#banner
 		margin-top: 5.5vh
-		z-index: 10
+		z-index: 1
 </style>

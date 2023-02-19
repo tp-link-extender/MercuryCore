@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { LayoutData } from "./$types"
 	import { page, navigating } from "$app/stores"
 	import Loading from "$lib/components/Loading.svelte"
 	import { fade } from "svelte/transition"
