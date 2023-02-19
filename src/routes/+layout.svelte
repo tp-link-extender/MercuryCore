@@ -13,15 +13,7 @@
 
 	handleSession(page)
 	const user = getUser()
-
-	export let data: LayoutData
 </script>
-
-{#if data.bannerText}
-	<p id="banner" class="position-fixed top-0 start-0 px-3 py-2 text-{data.bannerTextLight ? "light" : "text-dark"}" style="background: {data.bannerColour}">
-		{data.bannerText}
-	</p>
-{/if}
 
 <slot />
 
@@ -50,11 +42,3 @@
 		@use "../themes/standard.sass"
 	</style>
 {/if}
-
-<style lang="sass">
-	#banner
-		margin-top: 5.5vh
-		border-radius: 0 9rem 9rem 0
-		pointer-events: none
-		z-index: 10
-</style>
