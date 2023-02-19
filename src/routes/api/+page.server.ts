@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from "./$types"
 import { auth } from "$lib/server/lucia"
+import { client } from "$lib/server/redis"
 import { prisma } from "$lib/server/prisma"
 import { error, fail, redirect } from "@sveltejs/kit"
 
@@ -29,7 +30,10 @@ export const actions: Actions = {
 		})
 
 		if (user) {
-			if (user.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * 12) > 0) return fail(400)
+			const stipendTime = Number((await client.get("stipendTime")) || 12)
+			if (user.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * stipendTime) > 0) return fail(400)
+
+			const increment = Number((await client.get("dailyStipend")) || 10)
 
 			await prisma.user.update({
 				where: {
@@ -38,7 +42,7 @@ export const actions: Actions = {
 				data: {
 					currencyCollected: new Date(),
 					currency: {
-						increment: 10,
+						increment,
 					},
 				},
 			})

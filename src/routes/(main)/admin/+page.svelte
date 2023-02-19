@@ -43,7 +43,50 @@
 	<br />
 	{#if form?.bannersuccess}
 		<p class="col-12 mb-3 text-success">{form?.msg}</p>
-		{:else if form?.error}
+	{/if}
+	<br />
+
+	<h2 class="light-text">Economy</h2>
+	<form use:enhance method="POST" action="?/economy">
+		<fieldset>
+			<div class="row">
+				<label for="taxRate" class="col-md-3 col-form-label text-md-right">Tax rate</label>
+				<div class="col-md-8">
+					<div class="input-group">
+						<input type="number" name="taxRate" id="taxRate" value={data.taxRate} required class="form-control valid" />
+						<span class="input-group-text light-text">%</span>
+					</div>
+				</div>
+			</div>
+			<br />
+			<div class="row">
+				<label for="dailyStipend" class="col-md-3 col-form-label text-md-right">Daily stipend</label>
+				<div class="col-md-8">
+					<div class="input-group">
+						<input type="number" name="dailyStipend" id="dailyStipend" value={data.dailyStipend} required class="form-control valid" />
+						<span class="input-group-text light-text"><i class="fa fa-gem text-success" /></span>
+					</div>
+				</div>
+			</div>
+			<br />
+			<div class="row">
+				<label for="stipendTime" class="col-md-3 col-form-label text-md-right">Time between stipend</label>
+				<div class="col-md-8">
+					<div class="input-group">
+						<input type="number" name="stipendTime" id="stipendTime" value={data.stipendTime} required class="form-control valid" />
+						<span class="input-group-text light-text">hours</span>
+					</div>
+				</div>
+			</div>
+			<br />
+			<button type="submit" class="btn btn-success">Submit</button>
+		</fieldset>
+	</form>
+	<br />
+	{#if form?.economysuccess}
+		<p class="col-12 mb-3 text-success">{form?.msg}</p>
+	{/if}
+	{#if form?.error}
 		<p class="col-12 mb-3 text-danger">{form?.msg}</p>
 	{/if}
 </div>
@@ -58,4 +101,8 @@
 	input[type="checkbox"]
 		height: 1.5rem
 		width: 1.5rem
+
+	.input-group-text
+		background: var(--accent1)
+		border-color: var(--accent3)
 </style>
