@@ -17,9 +17,10 @@ export const actions: Actions = {
 
 		if (!name) return fail(400, { msg: "Missing fields" })
 		if (name.length < 3 || name.length > 40) return fail(400, { msg: "Invalid fields" })
+		if (name == "create") return fail(400, { msg: Buffer.from("RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ", "base64").toString("ascii") })
 		if (name == "wisely")
 			return fail(400, {
-				msg: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"
+				msg: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
 			})
 
 		try {
