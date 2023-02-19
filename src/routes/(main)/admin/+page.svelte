@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Privacy Policy - Mercury</title>
+	<title>Admin - Mercury</title>
 </svelte:head>
 
 <h1 class="text-center light-text">Admin panel</h1>

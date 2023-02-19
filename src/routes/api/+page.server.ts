@@ -11,14 +11,14 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	logout: async ({ locals }) => {
 		const session = await locals.validate()
-		if (!session) return fail(401)
+		if (!session) throw error(401)
 		await auth.invalidateSession(session.sessionId) // invalidate session
 		locals.setSession(null) // remove cookie
 		throw redirect(302, "/login")
 	},
 	stipend: async ({ locals }) => {
 		const session = await locals.validateUser()
-		if (!session) return fail(401)
+		if (!session) throw error(401)
 
 		const user = await prisma.user.findUnique({
 			where: {
