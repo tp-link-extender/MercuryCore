@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import { roQuery } from "./redis"
+import { client, roQuery } from "./redis"
 
 export const prisma = new PrismaClient()
 
@@ -67,16 +67,33 @@ export async function findGroups(query: any) {
 	return groups
 }
 
-export async function transaction(senderId: string, receiverId: string, amountSent: number) {
+type User = {
+	id?: string
+	number?: number
+	username?: string
+}
+export async function transaction(sender: User, receiver: User, amountSent: number) {
 	// balance of both parties should have been checked already by now
 	// the user accounts also had better exist or else
-	const taxRate = 0.3
-	const finalAmount = Math.round(amountSent * (1 - taxRate))
+
+	const sender2 = await prisma.user.findUnique({
+		where: sender,
+		select: {
+			currency: true,
+		},
+	})
+	if (!sender2) throw new Error("Sender not found")
+	if (sender2.currency < amountSent) throw new Error(`Insufficient funds: You need ${amountSent - sender2.currency} more to buy this`)
+	// const receiver2 = await prisma.user.findUnique({
+	// 	where: receiver,
+	// })
+	// if (!receiver2) throw new Error("Receiver not found")
+
+	const taxRate = Number((await client.get("taxRate")) || 30)
+	const finalAmount = Math.round(amountSent * (1 - taxRate / 100))
 
 	await prisma.user.update({
-		where: {
-			id: senderId,
-		},
+		where: sender,
 		data: {
 			currency: {
 				decrement: amountSent,
@@ -84,9 +101,7 @@ export async function transaction(senderId: string, receiverId: string, amountSe
 		},
 	})
 	await prisma.user.update({
-		where: {
-			id: receiverId,
-		},
+		where: receiver,
 		data: {
 			currency: {
 				increment: finalAmount,
@@ -97,14 +112,10 @@ export async function transaction(senderId: string, receiverId: string, amountSe
 	await prisma.transaction.create({
 		data: {
 			sender: {
-				connect: {
-					id: senderId,
-				},
+				connect: sender,
 			},
 			receiver: {
-				connect: {
-					id: receiverId,
-				},
+				connect: receiver,
 			},
 			amountSent,
 			taxRate,
