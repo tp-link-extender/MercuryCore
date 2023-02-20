@@ -23,6 +23,15 @@ export const actions: Actions = {
 				msg: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
 			})
 
+		if (
+			await prisma.group.findUnique({
+				where: {
+					name,
+				},
+			})
+		)
+			return fail(400, { msg: "A group with this name already exists" })
+
 		try {
 			await transaction({ id: session.user.userId }, { number: 1 }, 10)
 		} catch (e: any) {
