@@ -7,13 +7,13 @@ const types = ["friends", "followers", "following"]
 
 const usersQueries: any = {
 	friends: `
-		MATCH (:User { name: $user }) -[r:friends]- (u:User)
+		MATCH (:User { name: $user }) -[:friends]- (u:User)
 		RETURN u.name AS name`,
 	followers: `
-		MATCH (:User { name: $user }) <-[r:follows]- (u:User)
+		MATCH (:User { name: $user }) <-[:follows]- (u:User)
 		RETURN u.name AS name`,
 	following: `
-		MATCH (:User { name: $user }) -[r:follows]-> (u:User)
+		MATCH (:User { name: $user }) -[:follows]-> (u:User)
 		RETURN u.name AS name`,
 }
 

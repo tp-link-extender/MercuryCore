@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from "./$types"
-import { prisma, findPlaces } from "$lib/server/prisma"
+import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail, redirect } from "@sveltejs/kit"
 
@@ -50,15 +50,31 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			img: user.image,
 			places: findPlaces({
 				where: {
-					ownerUser: {
-						username: user.username,
-					},
+					ownerUsername: user.username,
+				},
+			}),
+			groups: findGroups({
+				where: {
+					OR: await roQuery(
+						`
+							MATCH (:User { name: $user }) -[:in]-> (u:Group)
+							RETURN u.name AS name
+						`,
+						query2,
+						false,
+						true
+					),
+				},
+			}),
+			groupsOwned: findGroups({
+				where: {
+					ownerUsername: user.username,
 				},
 			}),
 			feed: user.posts,
-			friendCount: roQuery("RETURN SIZE(() -[:friends]- (:User { name: $user }))", query2, true),
-			followerCount: roQuery("RETURN SIZE(() -[:follows]-> (:User { name: $user }))", query2, true),
-			followingCount: roQuery("RETURN SIZE(() <-[:follows]- (:User { name: $user }))", query2, true),
+			friendCount: roQuery("RETURN SIZE((:User) -[:friends]- (:User { name: $user }))", query2, true),
+			followerCount: roQuery("RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))", query2, true),
+			followingCount: roQuery("RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))", query2, true),
 			friends: roQuery("MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query),
 			following: roQuery("MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query),
 			follower: roQuery("MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query),
