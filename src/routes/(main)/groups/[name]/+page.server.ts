@@ -12,6 +12,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		},
 		select: {
 			name: true,
+			owner: {
+				select: {
+					displayname: true,
+					number: true,
+				},
+			},
 			posts: {
 				orderBy: {
 					posted: "desc",
@@ -39,6 +45,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		console.timeEnd("group")
 		return {
 			name: group.name,
+			owner: group.owner,
 			places: findPlaces({
 				where: {
 					ownerGroup: {
