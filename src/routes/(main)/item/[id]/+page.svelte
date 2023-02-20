@@ -20,7 +20,7 @@
 				<div class="card-body">
 					<h2 class="light-text">{data.name}</h2>
 					<p class="light-text mt-2 mb-0">
-						<b>By</b> <a href="/user/{data.creator.number}" class="text-decoration-none">@{data.creator.displayname}</a>
+						<b>By</b> <a href="/user/{data.creator.number}" class="text-decoration-none">{data.creator.displayname}</a>
 					</p>
 					<br />
 					<p class="light-text mt-2 mb-0">
