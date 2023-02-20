@@ -27,6 +27,15 @@ export const actions: Actions = {
 				).toString("ascii"),
 			})
 
+		if (
+			await prisma.place.findUnique({
+				where: {
+					slug,
+				},
+			})
+		)
+			return fail(400, { msg: "A place with this slug already exists" })
+
 		try {
 			await transaction({ id: session.user.userId }, { number: 1 }, 10)
 		} catch (e: any) {
