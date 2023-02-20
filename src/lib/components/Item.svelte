@@ -6,10 +6,10 @@
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
 		<div class="w-100 h-100" />
 	</div>
-	<p class="{item.ratio ? "" : "float-start"} mb-1">
+	<p class="{(item.ratio != undefined) ? "" : "float-start"} mb-1">
 		{item.name}
 	</p>
-	{#if item.ratio}
+	{#if item.ratio != undefined}
 		<span class="float-start ms-1">
 			<i class="fa fa-thumbs-up opacity-75" />
 			{item.ratio}%
