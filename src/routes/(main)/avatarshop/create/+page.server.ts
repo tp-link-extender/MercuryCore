@@ -20,25 +20,28 @@ export const actions: Actions = {
 		if (!name || !category) return fail(400, { msg: "Missing fields" })
 		if (name.length < 3 || name.length > 50 || price < 0 || !["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)) return fail(400, { msg: "Invalid fields" })
 
-		try {
-			await transaction({ id: session.user.userId }, { number: 1 }, 10)
-		} catch (e: any) {
-			return fail(402, { msg: e.message })
-		}
-
-		const item = await prisma.item.create({
-			data: {
-				name,
-				price: price || 0,
-				category: category as ItemCategory,
-				creatorName: session.user.username,
-				mesh: "",
-				texture: "",
-			},
-			select: {
-				id: true,
-			},
+		const item = await prisma.$transaction(async tx => {
+			try {
+				await transaction({ id: session.user.userId }, { number: 1 }, 10, tx)
+			} catch (e) {
+				return "fail"
+			}
+			return await tx.item.create({
+				data: {
+					name,
+					price: price || 0,
+					category: category as ItemCategory,
+					creatorName: session.user.username,
+					mesh: "",
+					texture: "",
+				},
+				select: {
+					id: true,
+				},
+			})
 		})
+
+		if (item == "fail") return fail(400, { msg: "Insufficient funds" })
 
 		throw redirect(302, "/item/" + item.id)
 	},
