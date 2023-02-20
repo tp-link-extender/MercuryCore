@@ -1,4 +1,5 @@
 import type { PageServerLoad, Actions } from "./$types"
+import { auth } from "$lib/server/lucia"
 import { client } from "$lib/server/redis"
 import { error, fail } from "@sveltejs/kit"
 
@@ -47,6 +48,25 @@ export const actions: Actions = {
 		return {
 			economysuccess: true,
 			msg: "Economy updated successfully!",
+		}
+	},
+
+	user: async ({ request }) => {
+		const data = await request.formData()
+		const username = data.get("username")?.toString().toLowerCase()
+		const password = data.get("password")?.toString()
+
+		if (!username || !password) return fail(400, { error: true, msg: "Missing fields" })
+
+		try {
+			await auth.updateKeyPassword("username", username, password)
+		} catch (e) {
+			return fail(400, { error: true, msg: "Invalid credentials" })
+		}
+
+		return {
+			usersuccess: true,
+			msg: "Password changed successfully!",
 		}
 	},
 }

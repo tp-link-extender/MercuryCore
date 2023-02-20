@@ -44,8 +44,8 @@
 	{#if form?.bannersuccess}
 		<p class="col-12 mb-3 text-success">{form?.msg}</p>
 	{/if}
-	<br />
 
+	<br />
 	<h2 class="light-text">Economy</h2>
 	<form use:enhance method="POST" action="?/economy">
 		<fieldset>
@@ -86,6 +86,33 @@
 	{#if form?.economysuccess}
 		<p class="col-12 mb-3 text-success">{form?.msg}</p>
 	{/if}
+
+	<br />
+	<h2 class="light-text">User</h2>
+	<form use:enhance method="POST" action="?/user">
+		<fieldset>
+			<div class="row">
+				<label for="username" class="col-md-3 col-form-label text-md-right">Username</label>
+				<div class="col-md-8">
+					<input type="text" name="username" id="username" required class="form-control valid" />
+				</div>
+			</div>
+			<br />
+			<div class="row">
+				<label for="password" class="col-md-3 col-form-label text-md-right">New password</label>
+				<div class="col-md-8">
+					<input type="text" name="password" id="password" required class="form-control valid" />
+				</div>
+			</div>
+			<br />
+			<button type="submit" class="btn btn-success">Submit</button>
+		</fieldset>
+	</form>
+	<br />
+	{#if form?.usersuccess}
+		<p class="col-12 mb-3 text-success">{form?.msg}</p>
+	{/if}
+
 	{#if form?.error}
 		<p class="col-12 mb-3 text-danger">{form?.msg}</p>
 	{/if}
