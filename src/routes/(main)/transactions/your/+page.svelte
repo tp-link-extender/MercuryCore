@@ -5,12 +5,12 @@
 </script>
 
 <svelte:head>
-	<title>Transactions - Mercury</title>
+	<title>Your transactions - Mercury</title>
 </svelte:head>
 
 <h1 class="text-center light-text">
-	Transactions
-	<a href="/transactions/your" class="btn btn-primary ms-4">Your transactions</a>
+	Your transactions
+	<a href="/transactions" class="btn btn-primary ms-4">All transactions</a>
 </h1>
 
 <div class="container-fluid mt-5 mx-0 row">
