@@ -15,10 +15,11 @@
 
 <div id="all" class="container">
 	<div class="d-flex px-4">
-		<div class="container">
-			<h1 class="light-text d-inline">{data.name}</h1>
-			<br />
-			<br />
+		<div class="container light-text">
+			<h1 class="light-text">{data.name}</h1>
+			<p class="light-text">
+				<b>By</b> <a href="/user/{data.owner.number}">{data.owner.displayname}</a>
+			</p>
 			<br />
 			<div class="d-flex">
 				<a href="/groups/{data.name}/followers" class="light-text text-center text-decoration-none ms-4">
