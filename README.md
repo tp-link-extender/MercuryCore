@@ -37,14 +37,16 @@ To start a local dev server, run `npm run dev` and navigate to the link shown in
 -   If you are using WSL2, the server may not correctly reflect the changes you make. To fix this, add the following to the default export of vite.config.ts:
 
 ```ts
-	server: {
-		watch: {
-			usePolling: true,
-		},
+server: {
+	watch: {
+		usePolling: true,
 	},
+},
 ```
 
 After starting a local web server, navigate to /register and make an account. Set the registration key to mercurkey-<your key\>.
+
+-   While in the browser, you can press ctrl-i to open the inspector, allowing you to select any element and show it in your editor.
 
 To build for production, run `npm run build`, then `npm run preview` (or `npm run buildview`) to preview the final site.
 
