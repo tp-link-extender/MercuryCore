@@ -25,7 +25,6 @@ enum Permission {
 
 model User {
     id      String    @id @unique @default(uuid())
-    session Session[]
     Key     Key[]
 
     number               Int           @unique @default(autoincrement())
@@ -53,6 +52,17 @@ model User {
     transactionsReceived Transaction[] @relation("received")
 
     @@map("user")
+}
+
+model Key {
+    id              String  @id @unique
+    hashed_password String?
+    user_id         String
+    primary         Boolean
+    user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("key")
 }
 
 model Regkey {
