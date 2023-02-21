@@ -4,9 +4,18 @@
 
 <a class="rounded-3 text-center light-text text-decoration-none h6" href="/place/{place.slug}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
-		<img src={place.image} alt={place.name} class="w-100 h-100"/>
+		<img src={place.image} alt={place.name} class="w-100 h-100" />
 	</div>
-	{place.name}
+	<p class="mb-1">
+		{place.name}
+	</p>
+	<span class="float-start ms-1">
+		<i class="fa fa-thumbs-up opacity-75" />
+		{place.ratio}%
+	</span>
+	<span class="float-end me-1">
+		<i class="fa fa-user opacity-75" /> 12
+	</span>
 </a>
 
 <style lang="sass">
@@ -22,7 +31,7 @@
 		aspect-ratio: 1
 		position: relative
 		&::after
-			transition: all .3s
+			transition: all 0.3s
 			content: ""
 			position: absolute
 			top: 0

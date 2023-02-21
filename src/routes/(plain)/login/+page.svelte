@@ -31,7 +31,7 @@
 
 	// This system is extremely magicky
 	$: data.username.invalid =
-		(data.username.value.length < 3 && update("username", "Username must be more than 3 characters")) ||
+		(data.username.value.length < 3 && update("username", "Username must be at least 3 characters")) ||
 		(data.username.value.length > 21 && update("username", "Username must be less than 30 characters")) ||
 		(!data.username.value.match(/^[A-Za-z0-9_]+$/) && update("username", "Username must be alphanumeric (A-Z, 0-9, _)"))
 
@@ -56,7 +56,7 @@
 
 <div class="row">
 	<div id="dark" class="col light-text">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0"><i class="fa-solid fa-arrow-left me-2" /> Home</a>
+		<a type="button" href="/" class="btn btn-lg border-0 px-0"><i class="fa fa-arrow-left me-2" /> Home</a>
 		<h1 class="fw-bolder light-text mb-4">Mercury 2 <span class="opacity-50">beta</span></h1>
 		{#each things as [thing, more]}
 			<div class="thing d-flex flex-row mt-3">
@@ -79,12 +79,9 @@
 			<form
 				class="m-auto form-group mt-4"
 				method="POST"
-				use:enhance={() => {
-					return async ({ result }) => {
-						if (result.type == "redirect") window.location.reload()
-						else await applyAction(result)
-					}
-				}}
+				use:enhance={() =>
+					async ({ result }) =>
+						result.type == "redirect" ? window.location.reload() : await applyAction(result)}
 			>
 				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
 				<fieldset>
@@ -149,11 +146,6 @@
 			button
 				background: var(--mainaccent)
 				border-color: var(--mainaccent)
-
-	input
-		background-color: var(--accent2)
-	.valid
-		border-color: var(--accent3)
 
 	#wavep // rpcs3 momnt
 		div
