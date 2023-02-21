@@ -1,10 +1,23 @@
 import { dev } from "$app/environment"
 import { prisma } from "$lib/server/prisma"
 import lucia from "lucia-auth"
+import { createClient } from "redis"
+import aRedis from "@lucia-auth/adapter-session-redis"
 import aPrisma from "@lucia-auth/adapter-prisma"
 
+const session = createClient({ url: "redis://localhost:6479" })
+const userSession = createClient({ url: "redis://localhost:6479" })
+session.connect()
+userSession.connect()
+
 export const auth = lucia({
-	adapter: aPrisma(prisma),
+	adapter: {
+		user: aPrisma(prisma),
+		session: aRedis({
+			session,
+			userSession,
+		}),
+	},
 	env: dev ? "DEV" : "PROD",
 	transformUserData: (data: any) => ({
 		userId: data.id,
