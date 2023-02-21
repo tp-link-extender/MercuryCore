@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { PageData } from "./$types"
 	import { enhance } from "$app/forms"
-	import { getUser } from "@lucia-auth/sveltekit/client"
 	import Place from "$lib/components/Place.svelte"
+	import Group from "$lib/components/Group.svelte"
+	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	const user = getUser()
 
@@ -90,6 +91,30 @@
 				{#each data.places as place}
 					<div class="col col-4 col-sm-3 col-md-2 text-center">
 						<Place {place} />
+					</div>
+				{/each}
+			</div>
+		</div>
+	{/if}
+	{#if data.groupsOwned.length > 0}
+		<div class="mt-4">
+			<h2 class="h4 light-text">Groups owned</h2>
+			<div class="row m-0 p-0">
+				{#each data.groupsOwned as group}
+					<div class="col col-6 col-sm-4 col-md-3 text-center">
+						<Group {group} />
+					</div>
+				{/each}
+			</div>
+		</div>
+	{/if}
+	{#if data.groups.length > 0}
+		<div class="mt-4">
+			<h2 class="h4 light-text">Groups in</h2>
+			<div class="row m-0 p-0">
+				{#each data.groups as group}
+					<div class="col col-6 col-sm-4 col-md-3 text-center">
+						<Group {group} />
 					</div>
 				{/each}
 			</div>

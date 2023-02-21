@@ -12,4 +12,12 @@ export default {
 			lib: "./src/lib",
 		},
 	},
+
+	vitePlugin: {
+		experimental: {
+			inspector: {
+				toggleKeyCombo: "control-i"
+			}
+		}
+	}
 }

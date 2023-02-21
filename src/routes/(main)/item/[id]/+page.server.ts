@@ -20,12 +20,28 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				},
 			},
 			owners: {
+				select: {
+					image: true,
+					number: true,
+					displayname: true,
+				}
+			},
+		},
+	})
+
+	const itemOwned = await prisma.item.findUnique({
+		where: {
+			id: params.id,
+		},
+		select: {
+			owners: {
 				where: {
 					id: session?.user?.userId,
 				},
 			},
 		},
 	})
+
 	console.timeEnd("item")
 
 	if (item) {
@@ -39,7 +55,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			name: item.name,
 			price: item.price,
 			creator: item.creator,
-			owned: item.owners.length > 0,
+			owners: item.owners,
+			owned: (itemOwned?.owners || []).length > 0,
 			description: "item description", //item.description,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Item { name: $itemid }))", query, true),
 			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Item { name: $itemid }))", query, true),
