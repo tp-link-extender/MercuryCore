@@ -4,7 +4,8 @@
 // Sections are commented out, not yet implemented
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -14,69 +15,127 @@ datasource db {
 
 // Users & Groups
 
-model User {
-    id              String    @id @unique @default(cuid())
-    provider_id     String    @unique
-    email           String    @unique
-    hashed_password String?
+enum Permission {
+    User
+    Verified
+    Moderator
+    ItemManager
+    Administrator
+}
 
-    username        String   @unique
-    displayname     String?
-    usedRegkey      Regkey   @relation(fields: [regkeyKey], references: [key])
-    permissionLevel Int      @default(1) // 1: Regular user 2: Verified (email or Discord) 3: Moderator 4: Catalog Manager 5: Administrator
-    bio             String?
-    image           String?
-    created         DateTime @default(now())
-    lastOnline      DateTime @default(now())
-    status          String?
-    currency        Int      @default(0)
-    // groupsOwned  Group[] @relation("owner")
-    // groupsJoined Group[] @relation("member")
-    places          Place[]
-    // posts       Post[]
-    regkeyKey       String
+model User {
+    id      String    @id @unique @default(uuid())
+    session Session[]
+    Key     Key[]
+
+    number               Int           @unique @default(autoincrement())
+    username             String        @unique
+    email                String        @unique
+    displayname          String
+    usedRegkey           Regkey        @relation(fields: [regkeyKey], references: [key])
+    regkeyKey            String
+    permissionLevel      Permission    @default(User)
+    bio                  String?
+    image                String?
+    created              DateTime      @default(now())
+    lastOnline           DateTime      @default(now())
+    currencyCollected    DateTime      @default(now())
+    status               String?
+    theme                String?
+    currency             Int           @default(0)
+    groupsOwned          Group[]
+    places               Place[]
+    posts                Post[]
+    itemsCreated         Item[]
+    itemsOwned           Item[]        @relation("owns")
+    itemsWorn            Item[]        @relation("wears")
+    transactionsSent     Transaction[] @relation("sent")
+    transactionsReceived Transaction[] @relation("received")
 
     @@map("user")
 }
 
 model Regkey {
-    key      String    @unique
+    key      String    @unique @default(cuid())
     usesLeft Int       @default(1)
     expiry   DateTime?
     users    User[]
 }
 
-// model Group {
-//     name          String       @id @unique
-//     owner         User         @relation(name: "owner", fields: [ownerUsername], references: [username])
-//     ownerUsername String
-//     members       User[]       @relation("member")
-//     places        GroupPlace[]
-//     posts         GroupPost[]
-// }
+model Post {
+    id              String   @id @unique @default(cuid())
+    authorUser      User?    @relation(fields: [authorUsername], references: [username])
+    authorUsername  String?
+    authorGroup     Group?   @relation(fields: [authorGroupname], references: [name])
+    authorGroupname String?
+    posted          DateTime @default(now())
+    content         String
+}
+
+model Group {
+    name          String  @id @unique
+    owner         User    @relation(fields: [ownerUsername], references: [username])
+    ownerUsername String
+    places        Place[]
+    posts         Post[]
+}
 
 // Places
 
 model Place {
-    name          String
-    slug          String @id @unique
-    owner         User   @relation(fields: [ownerUsername], references: [username])
-    ownerUsername String
-    description   String
-    image         String
+    name           String
+    slug           String  @id @unique
+    ownerUser      User?   @relation(fields: [ownerUsername], references: [username])
+    ownerUsername  String?
+    ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
+    ownerGroupname String?
+
+    description String
+    image       String
 
     created DateTime @default(now())
     updated DateTime @default(now())
 }
 
-// model GroupPlace {
-//     name        String
-//     owner       Group  @relation(fields: [groupName], references: [name])
-//     description String
-//     groupName   String
+// Items
 
-//     created DateTime @default(now())
-//     updated DateTime @default(now())
+enum ItemCategory {
+    TShirt
+    Shirt
+    Pants
+    HeadShape
+    Hair
+    Face
+    Skirt
+    Dress
+    Hat
+    Headgear
+    Gear
+    Neck
+    Back
+    Shoulder
+}
 
-//     @@id([name, groupName])
-// }
+model Item {
+    name        String
+    id          String       @id @unique @default(cuid())
+    price       Int
+    category    ItemCategory
+    creator     User         @relation(fields: [creatorName], references: [username])
+    creatorName String
+    owners      User[]       @relation("owns")
+    wearers     User[]       @relation("wears")
+    mesh        String
+    texture     String
+}
+
+model Transaction {
+    id           String   @id @unique @default(cuid())
+    sender       User     @relation("sent", fields: [senderName], references: [username])
+    senderName   String
+    receiver     User     @relation("received", fields: [receiverName], references: [username])
+    receiverName String
+    amountSent   Int
+    taxRate      Float
+    time         DateTime @default(now())
+}

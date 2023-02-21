@@ -1,8 +1,7 @@
 import type { Actions } from "./$types"
-import { redirect, fail } from "@sveltejs/kit"
 import { auth } from "$lib/server/lucia"
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
+import { prisma } from "$lib/server/prisma"
+import { redirect, fail } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -13,21 +12,14 @@ export const actions: Actions = {
 		const cpassword = data.get("cpassword")?.toString() || ""
 		const regkey = data.get("regkey")?.toString().split("-") || ""
 
-		if (username.length < 3) return fail(400, { area: "username", msg: "Username must be more than 3 characters" })
+		if (username.length < 3) return fail(400, { area: "username", msg: "Username must be at least 3 characters" })
 		if (username.length > 30) return fail(400, { area: "username", msg: "Username must be less than 30 characters" })
 		if (!username.match(/^[A-Za-z0-9_]+$/)) return fail(400, { area: "username", msg: "Username must be alphanumeric (A-Z, 0-9, _)" })
 		if (password.length < 1) return fail(400, { area: "password", msg: "Password must be at least 1 character" })
 		if (password.length > 6969) return fail(400, { area: "password", msg: "Password must be less than 6969 characters" })
 		if (cpassword != password) return fail(400, { area: "cpassword", msg: "The specified password does not match" })
 
-		// Since each user's page is a route, we need to make sure it doesn't clash with existing routes
 		const lowercaseUsername = username.toLowerCase()
-		for (let i in import.meta.glob("/src/routes/**")) {
-			let t = i.substring(19)
-			t = t.substring(0, t.indexOf("/"))
-
-			if (t.toLowerCase() == lowercaseUsername) return fail(400, { area: "username", msg: "Username is unavailable" })
-		}
 
 		try {
 			const userCheck = await prisma.user.findUnique({
@@ -52,8 +44,12 @@ export const actions: Actions = {
 			if (!regkeyCheck) return fail(400, { area: "regkey", msg: "Registration key is invalid" })
 			if (regkeyCheck.usesLeft < 1) return fail(400, { area: "regkey", msg: "This registration key has ran out of uses" })
 
-			const user = await auth.createUser("username", username, {
-				password,
+			const user = await auth.createUser({
+				key: {
+					providerId: "username",
+					providerUserId: lowercaseUsername,
+					password,
+				},
 				attributes: {
 					username: lowercaseUsername,
 					email,
@@ -76,9 +72,8 @@ export const actions: Actions = {
 			})
 		} catch (e) {
 			const error = e as Error
-			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
-				return fail(400, { area: "username", msg: "User already exists" })
-			}
+			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID") return fail(400, { area: "username", msg: "User already exists" })
+
 			console.error("Registration error:", error)
 			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })
 		}

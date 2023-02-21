@@ -1,24 +1,135 @@
+<script lang="ts">
+	import type { ActionData, PageData } from "./$types"
+	import { enhance } from "$app/forms"
+
+	export let form: ActionData
+	export let data: PageData
+</script>
+
 <svelte:head>
-	<title>Privacy Policy - Mercury</title>
+	<title>Admin - Mercury</title>
 </svelte:head>
 
 <h1 class="text-center light-text">Admin panel</h1>
 
-<div class="container mt-5">
-	<p class="light-text">
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Laoreet non curabitur gravida arcu ac tortor. Tellus molestie nunc non blandit. Metus vulputate eu scelerisque felis imperdiet proin fermentum. Facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui. Posuere urna nec tincidunt praesent semper feugiat nibh. Fermentum leo vel orci porta non pulvinar neque laoreet. Massa vitae tortor condimentum lacinia. Sit amet nulla facilisi morbi tempus iaculis urna id volutpat. Nunc lobortis mattis aliquam faucibus. Ullamcorper eget nulla facilisi etiam. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec.<br />
-		<br />
-		Et odio pellentesque diam volutpat. Adipiscing bibendum est ultricies integer quis auctor. Dui sapien eget mi proin sed libero. Integer vitae justo eget magna fermentum iaculis eu. Est velit egestas dui id ornare arcu. Sed vulputate odio ut enim blandit. Elit sed vulputate mi sit amet mauris commodo quis. Magnis dis parturient montes nascetur. Sed viverra ipsum nunc aliquet bibendum enim. Tristique et egestas quis ipsum. Eget aliquet nibh praesent tristique magna sit amet purus gravida. Cum sociis natoque penatibus et magnis dis parturient montes. Enim lobortis scelerisque fermentum dui faucibus in ornare. Vitae congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque. Vitae purus faucibus ornare suspendisse sed nisi. Amet justo donec enim diam vulputate ut pharetra. Adipiscing tristique risus nec feugiat in fermentum. Viverra maecenas accumsan lacus vel facilisis volutpat. Orci a scelerisque purus semper eget duis at.<br />
-		<br />
-		Orci porta non pulvinar neque laoreet suspendisse interdum consectetur. Tristique magna sit amet purus gravida quis blandit. Mauris nunc congue nisi vitae suscipit tellus mauris. Maecenas accumsan lacus vel facilisis volutpat est velit. Leo integer malesuada nunc vel risus commodo viverra. Dignissim enim sit amet venenatis urna cursus eget. Amet justo donec enim diam vulputate ut pharetra sit amet. Ridiculus mus mauris vitae ultricies leo integer. Senectus et netus et malesuada fames ac turpis egestas. Eget mauris pharetra et ultrices neque ornare aenean euismod. Nulla at volutpat diam ut venenatis tellus. Ullamcorper velit sed ullamcorper morbi tincidunt ornare massa. Enim ut tellus elementum sagittis. Eget aliquet nibh praesent tristique magna sit.<br />
-		<br />
-		Vestibulum morbi blandit cursus risus at. Urna nunc id cursus metus aliquam eleifend mi in nulla. Nibh venenatis cras sed felis. Adipiscing enim eu turpis egestas pretium aenean pharetra magna ac. Sodales ut etiam sit amet nisl purus. Tortor posuere ac ut consequat semper viverra nam libero justo. Mauris sit amet massa vitae tortor condimentum. Faucibus turpis in eu mi bibendum neque. Dictum varius duis at consectetur lorem donec massa sapien faucibus. Iaculis urna id volutpat lacus laoreet. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique senectus.<br />
-		<br />
-		Ut tortor pretium viverra suspendisse potenti. Ac ut consequat semper viverra. Enim sit amet venenatis urna cursus eget. Egestas maecenas pharetra convallis posuere morbi leo. Magna sit amet purus gravida. Nunc lobortis mattis aliquam faucibus purus in. Velit ut tortor pretium viverra. Auctor elit sed vulputate mi. Elementum facilisis leo vel fringilla est ullamcorper eget nulla. Eget gravida cum sociis natoque penatibus et.
-	</p>
+<div class="container mt-5 light-text">
+	<h2 class="light-text">Banner</h2>
+	<form use:enhance method="POST" action="?/updateBanner">
+		<fieldset>
+			<div class="row">
+				<label for="bannerText" class="col-md-3 col-form-label text-md-right">Banner text</label>
+				<div class="col-md-8">
+					<input type="text" name="bannerText" id="bannerText" value={data.bannerText} class="form-control valid" />
+				</div>
+			</div>
+			<br />
+			<div class="row">
+				<label for="bannerColour" class="col-md-3 col-form-label text-md-right">Banner colour</label>
+				<div class="col-md-2">
+					<input type="color" name="bannerColour" id="bannerColour" value={data.bannerColour} required class="valid" />
+				</div>
+			</div>
+			<br />
+			<div class="row">
+				<label for="bannerTextLight" class="col-md-3 col-form-label text-md-right">Light text?</label>
+				<div class="col-md-2">
+					<input type="checkbox" name="bannerTextLight" id="bannerTextLight" value="true" checked={!!data.bannerTextLight} class="valid form-check-input" />
+				</div>
+			</div>
+			<br />
+			<button type="submit" class="btn btn-success">Submit</button>
+		</fieldset>
+	</form>
+	<br />
+	{#if form?.bannersuccess}
+		<p class="col-12 mb-3 text-success">{form?.msg}</p>
+	{/if}
+
+	<br />
+	<h2 class="light-text">Economy</h2>
+	<form use:enhance method="POST" action="?/economy">
+		<fieldset>
+			<div class="row">
+				<label for="taxRate" class="col-md-3 col-form-label text-md-right">Tax rate</label>
+				<div class="col-md-8">
+					<div class="input-group">
+						<input type="number" name="taxRate" id="taxRate" value={data.taxRate} required class="form-control valid" />
+						<span class="input-group-text light-text">%</span>
+					</div>
+				</div>
+			</div>
+			<br />
+			<div class="row">
+				<label for="dailyStipend" class="col-md-3 col-form-label text-md-right">Daily stipend</label>
+				<div class="col-md-8">
+					<div class="input-group">
+						<input type="number" name="dailyStipend" id="dailyStipend" value={data.dailyStipend} required class="form-control valid" />
+						<span class="input-group-text light-text"><i class="fa fa-gem text-success" /></span>
+					</div>
+				</div>
+			</div>
+			<br />
+			<div class="row">
+				<label for="stipendTime" class="col-md-3 col-form-label text-md-right">Time between stipend</label>
+				<div class="col-md-8">
+					<div class="input-group">
+						<input type="number" name="stipendTime" id="stipendTime" value={data.stipendTime} required class="form-control valid" />
+						<span class="input-group-text light-text">hours</span>
+					</div>
+				</div>
+			</div>
+			<br />
+			<button type="submit" class="btn btn-success">Submit</button>
+		</fieldset>
+	</form>
+	<br />
+	{#if form?.economysuccess}
+		<p class="col-12 mb-3 text-success">{form?.msg}</p>
+	{/if}
+
+	<br />
+	<h2 class="light-text">User</h2>
+	<form use:enhance method="POST" action="?/user">
+		<fieldset>
+			<div class="row">
+				<label for="username" class="col-md-3 col-form-label text-md-right">Username</label>
+				<div class="col-md-8">
+					<input type="text" name="username" id="username" required class="form-control valid" />
+				</div>
+			</div>
+			<br />
+			<div class="row">
+				<label for="password" class="col-md-3 col-form-label text-md-right">New password</label>
+				<div class="col-md-8">
+					<input type="text" name="password" id="password" required class="form-control valid" />
+				</div>
+			</div>
+			<br />
+			<button type="submit" class="btn btn-success">Submit</button>
+		</fieldset>
+	</form>
+	<br />
+	{#if form?.usersuccess}
+		<p class="col-12 mb-3 text-success">{form?.msg}</p>
+	{/if}
+
+	{#if form?.error}
+		<p class="col-12 mb-3 text-danger">{form?.msg}</p>
+	{/if}
 </div>
 
 <style lang="sass">
-	.container
-		width: 50rem
+	@media only screen and (min-width: 576px)
+		.container
+			width: 50rem
+
+	input[type="color"]
+		height: 2.5rem
+	input[type="checkbox"]
+		height: 1.5rem
+		width: 1.5rem
+
+	.input-group-text
+		background: var(--accent1)
+		border-color: var(--accent3)
 </style>

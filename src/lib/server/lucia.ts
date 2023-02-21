@@ -1,31 +1,25 @@
 import { dev } from "$app/environment"
+import { prisma } from "$lib/server/prisma"
 import lucia from "lucia-auth"
-import redis from "./redis-adapter"
-import prisma from "@lucia-auth/adapter-prisma"
-import { PrismaClient } from "@prisma/client"
-import { createClient } from "redis"
-
-export const sessionClient = createClient({ url: "redis://localhost:6479" })
-await sessionClient.connect()
+import aPrisma from "@lucia-auth/adapter-prisma"
 
 export const auth = lucia({
-	adapter: {
-		user: prisma(new PrismaClient()),
-		session: redis({
-			session: sessionClient,
-			userSessions: sessionClient,
-		}),
-	},
-
+	adapter: aPrisma(prisma),
 	env: dev ? "DEV" : "PROD",
-	transformUserData: (userData: any) => {
-		return {
-			userId: userData.id,
-			username: userData.username,
-			displayname: userData.displayname,
-			image: userData.image,
-		}
-	},
+	transformUserData: (data: any) => ({
+		userId: data.id,
+		number: data.number,
+		bio: data.bio,
+		theme: data.theme,
+		email: data.email,
+		username: data.username,
+		displayname: data.displayname,
+		image: data.image,
+		currency: data.currency,
+		currencyCollected: data.currencyCollected,
+		permissionLevel: data.permissionLevel,
+	}),
+	generateCustomUserId: () => crypto.randomUUID(),
 })
 
 export type Auth = typeof auth
