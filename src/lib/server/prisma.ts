@@ -72,11 +72,11 @@ type User = {
 	number?: number
 	username?: string
 }
-export async function transaction(sender: User, receiver: User, amountSent: number) {
+export async function transaction(sender: User, receiver: User, amountSent: number, tx = prisma) {
 	// balance of both parties should have been checked already by now
 	// the user accounts also had better exist or else
 
-	const sender2 = await prisma.user.findUnique({
+	const sender2 = await tx.user.findUnique({
 		where: sender,
 		select: {
 			currency: true,
@@ -92,7 +92,7 @@ export async function transaction(sender: User, receiver: User, amountSent: numb
 	const taxRate = Number((await client.get("taxRate")) || 30)
 	const finalAmount = Math.round(amountSent * (1 - taxRate / 100))
 
-	await prisma.user.update({
+	await tx.user.update({
 		where: sender,
 		data: {
 			currency: {
@@ -100,7 +100,7 @@ export async function transaction(sender: User, receiver: User, amountSent: numb
 			},
 		},
 	})
-	await prisma.user.update({
+	await tx.user.update({
 		where: receiver,
 		data: {
 			currency: {
@@ -109,7 +109,7 @@ export async function transaction(sender: User, receiver: User, amountSent: numb
 		},
 	})
 
-	await prisma.transaction.create({
+	await tx.transaction.create({
 		data: {
 			sender: {
 				connect: sender,
