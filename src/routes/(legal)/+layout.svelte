@@ -1,8 +1,10 @@
 <script lang="ts">
+	import type { LayoutData } from "./$types"
 	import Navbar from "$lib/components/Navbar.svelte"
 	import Footer from "$lib/components/Footer.svelte"
+	import PageTransitions from "$lib/components/PageTransitions.svelte"
 
-	export let data: any
+	export let data: LayoutData
 </script>
 
 <div id="bg" class="position-fixed w-100 h-100 z-n1" />
@@ -21,9 +23,11 @@
 		<br />
 	{/if}
 
-	<main>
-		<slot />
-	</main>
+	<PageTransitions path={data.currentPath}>
+		<main>
+			<slot />
+		</main>
+	</PageTransitions>
 
 	<Footer />
 </div>

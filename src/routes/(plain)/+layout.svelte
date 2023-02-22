@@ -1,17 +1,14 @@
-<<<<<<< HEAD
 <script lang="ts">
-	import PageTransition from "$lib/components/PageTransition.svelte"
+	import type { LayoutData } from "./$types"
+	import PageTransitions from "$lib/components/PageTransitions.svelte"
 
-	export let data: any
+	export let data: LayoutData
 </script>
-=======
-<!--
-	Plain pages (login and register) do not have a navbar or footer.
--->
->>>>>>> dev
 
-<main>
-	<PageTransition pathname={data.pathname}>
+<!-- Plain pages (login and register) do not have a navbar or footer. -->
+
+<PageTransitions path={data.currentPath}>
+	<main>
 		<slot />
-	</PageTransition>
-</main>
+	</main>
+</PageTransitions>

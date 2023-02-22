@@ -21,19 +21,6 @@
 <div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
 	<div id="moon" class="container d-flex flex-column justify-content-center align-items-center position-absolute">
 		<Moon />
-<<<<<<< HEAD
-		</div>
-		<br />
-		<br />
-		<br />
-		<h1 id="title" class="fw-bolder text-white z-3 opacity-75">Mercury 2</h1>
-		<p class="lead text-white">Endless possibilities. New features. Same nostalgia.</p>
-		<h5>
-			<span class="badge dark-text opacity-50">Closed Beta</span>
-			<a type="button" href="/register" class="btn btn-sm btn-success ms-3 rounded">Register <ArrowRight class="ms-1"/></a>
-		</h5>
-=======
->>>>>>> dev
 	</div>
 	<h1 id="title" class="fw-bolder text-white opacity-75">Mercury 2</h1>
 	<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
