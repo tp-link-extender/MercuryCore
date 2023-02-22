@@ -1,55 +1,27 @@
 <script lang="ts">
 	import { onMount } from "svelte"
-	import { ArrowRight } from "svelte-bootstrap-icons"
 	import Gradient from "$lib/gradient"
 	import Moon from "$lib/components/Moon.svelte"
 
-	let onPC: HTMLElement
-	let onMobile: HTMLElement
-
+	// Gradient must run upon page being loaded,
+	// and cannot be rendered on serverside.
 	onMount(() => {
-		// otherwise "window is not defined"
 		const gradient = new Gradient()
 		gradient.initGradient("#gradient-canvas")
-
-		window.addEventListener("scroll", function () {
-			if (onPC) {
-				const distanceToTop = window.pageYOffset + onPC.getBoundingClientRect().top
-				const scrollTop = document.documentElement.scrollTop + window.innerHeight / 2
-
-				let opacity = 1
-
-				if (scrollTop > distanceToTop) {
-					opacity = 1 - (scrollTop - distanceToTop) / (onPC.offsetHeight * 3)
-				}
-				onPC.style.opacity = opacity.toString()
-			}
-
-			if (onMobile) {
-				const distanceToTop = window.pageYOffset + onMobile.getBoundingClientRect().top
-				const scrollTop = document.documentElement.scrollTop + window.innerHeight / 1.7
-
-				let opacity = 0
-
-				if (scrollTop > distanceToTop) {
-					opacity = (scrollTop - distanceToTop) / (onMobile.offsetHeight * 3)
-				}
-				onMobile.style.opacity = opacity.toString()
-			}
-		})
 	})
 </script>
 
 <svelte:head>
+	<meta name="description" content="Mercury: Endless possibilities. New features. Same nostalgia." />
 	<title>Mercury - Mercury</title>
 </svelte:head>
 
-<div id="all">
-	<canvas id="gradient-canvas" class="vh-100 vw-100 position-absolute top-0 left-0" />
+<canvas id="gradient-canvas" class="w-100 h-100 position-fixed" />
 
-	<div id="info" class="z-3 container d-flex flex-column justify-content-center align-items-center position-relative">
-		<div id="moon" class="container d-flex flex-column justify-content-center align-items-center z-2 position-absolute">
+<div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
+	<div id="moon" class="container d-flex flex-column justify-content-center align-items-center position-absolute">
 		<Moon />
+<<<<<<< HEAD
 		</div>
 		<br />
 		<br />
@@ -60,12 +32,23 @@
 			<span class="badge dark-text opacity-50">Closed Beta</span>
 			<a type="button" href="/register" class="btn btn-sm btn-success ms-3 rounded">Register <ArrowRight class="ms-1"/></a>
 		</h5>
+=======
+>>>>>>> dev
 	</div>
-	<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-		<div class="w-100 position-absolute bottom-0">
-			<div class="position-absolute" />
-			<div class="position-absolute" />
-		</div>
+	<h1 id="title" class="fw-bolder text-white opacity-75">Mercury 2</h1>
+	<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
+	<div class="d-inline mb-3">
+		<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa fa-chevron-right" /></a></b>
+		<b><a type="button" href="/login" class="d-inline btn btn-sm btn-primary text-decoration-none">Login <i class="fa fa-chevron-right" /></a></b>
+	</div>
+	<h5>
+		<a href="/about" class="text-decoration-none pt-3">About us <i class="fa fa-chevron-right" /></a>
+	</h5>
+</div>
+<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
+	<div class="w-100 position-absolute bottom-0">
+		<div class="position-absolute" />
+		<div class="position-absolute" />
 	</div>
 </div>
 
@@ -74,7 +57,7 @@
 		div
 			transition: all 1s ease-in-out 0s
 			div
-				background: url("/wave.svg") repeat-x
+				background: url("/landing/wave.svg") repeat-x
 				top: -198px
 				width: 6144px
 				height: 198px
@@ -90,24 +73,19 @@
 				top: -174px
 	
 	#info
-		height: 100vh
+		z-index: 3
+		height: 60vh
 		padding-top: 35vh
 		a
 			margin: 0
 
 		#title
 			font-size: 4rem
-
-		.badge
-			background: var(--light-text)
 	
 	#moon
-		margin-bottom: 20vh
+		margin-bottom: min(22rem, 60vh)
 
-	#all
-		margin-top: -20vh
-		background: rgba(0, 0, 0, 0)
-
+	#gradient-canvas
 		@media (prefers-color-scheme: light)
 			--gradient-color-1: #5551ff
 			--gradient-color-2: #5599ff

@@ -1,4 +1,4 @@
-import adapter from "@sveltejs/adapter-auto"
+import adapter from "@sveltejs/adapter-node"
 import preprocess from "svelte-preprocess"
 
 export default {
@@ -12,4 +12,12 @@ export default {
 			lib: "./src/lib",
 		},
 	},
+
+	vitePlugin: {
+		experimental: {
+			inspector: {
+				toggleKeyCombo: "control-i"
+			}
+		}
+	}
 }

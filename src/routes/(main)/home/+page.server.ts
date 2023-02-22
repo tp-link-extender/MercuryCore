@@ -1,61 +1,101 @@
-import type { PageServerLoad } from "./$types"
-import { error, redirect } from "@sveltejs/kit"
-import { PrismaClient } from "@prisma/client"
-import { createClient, Graph } from "redis"
-
-const prisma = new PrismaClient()
+import type { PageServerLoad, Actions } from "./$types"
+import { prisma, findPlaces } from "$lib/server/prisma"
+import { roQuery } from "$lib/server/redis"
+import { fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals }) => {
+	console.time("home")
 	const session = await locals.validateUser()
 	if (!session.session) throw redirect(302, "/login")
+	// (main)/+layout.server.ts will handle most redirects for logged-out users,
+	// but sometimes errors for this page.
 
-	const client = createClient({ url: import.meta.env.REDIS_URL })
-	client.on("error", () => {
-		throw error(500, "Redis error")
-	})
-	await client.connect()
-	const graph = new Graph(client, "friends")
-
-	const friendsQuery = await graph.roQuery(
-		`
-		MATCH (:User { name: $user1 }) -[r:friends]-> (u:User)
-		RETURN u.name as name
-		`,
-		{
-			params: {
-				user1: session.user.username,
+	async function Friends() {
+		const friendsQuery = await roQuery(
+			`
+				MATCH (:User { name: $user }) -[r:friends]- (u:User)
+				RETURN u.name as name
+			`,
+			{
+				params: {
+					user: session.user?.username,
+				},
 			},
+			false,
+			true
+		)
+
+		let friends: any[] = []
+
+		for (let i of friendsQuery || ([] as any)) {
+			if (i.name)
+				friends.push(
+					await prisma.user.findUnique({
+						where: {
+							username: i.name,
+						},
+						select: {
+							number: true,
+							username: true,
+							displayname: true,
+							image: true,
+							status: true,
+						},
+					})
+				)
 		}
-	)
 
-	let friends: any[] = []
+		return friends
+	}
 
-	for (let i of friendsQuery.data || ([] as any)) {
-		if (i.name)
-			friends.push(
-				await prisma.user.findUnique({
-					where: {
-						username: i?.name,
-					},
+	console.timeEnd("home")
+	return {
+		places: findPlaces({
+			select: {
+				name: true,
+				slug: true,
+				image: true,
+			},
+		}),
+		friends: Friends(),
+		feed: prisma.post.findMany({
+			select: {
+				authorUser: {
 					select: {
-						username: true,
+						number: true,
 						displayname: true,
 						image: true,
-						status: true,
 					},
-				})
-			)
+				},
+				posted: true,
+				content: true,
+			},
+			orderBy: {
+				posted: "desc",
+			},
+			take: 40,
+		}),
 	}
+}
 
-	const getPlaces = await prisma.place.findMany({
-		select: {
-			name: true,
-			ownerUsername: true,
-			image: true,
-		},
-	})
-	return {
-		places: getPlaces || [],
-		friends: friends,
-	}
+export const actions: Actions = {
+	default: async ({ request, locals }) => {
+		const session = await locals.validateUser()
+		if (!session.session) throw redirect(302, "/login")
+
+		const data = await request.formData()
+		const status = data.get("status")?.toString() || ""
+		if (status.length <= 0) return fail(400, { msg: "Invalid status" })
+
+		await prisma.post.create({
+			data: {
+				authorUser: {
+					connect: {
+						username: session.user.username,
+					},
+				},
+				content: status,
+			},
+		})
+	},
 }

@@ -1,6 +1,6 @@
 import type { Actions } from "./$types"
-import { redirect, fail } from "@sveltejs/kit"
 import { auth } from "$lib/server/lucia"
+import { redirect, fail } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -8,31 +8,19 @@ export const actions: Actions = {
 		const username = data.get("username")?.toString() || ""
 		const password = data.get("password")?.toString() || ""
 
-		const easyChecks = [
-			[username.length <= 3, "Username must be more than 3 characters", "username"],
-			[username.length > 30, "Username must be less than 30 characters", "username"],
-			[password.length < 1, "Password must be at least 1 character", "password"],
-			[password.length > 6969, "Password must be less than 6969 characters", "password"],
-		]
+		if (username.length < 3) return fail(400, { area: "username", msg: "Username must be at least 3 characters" })
+		if (username.length > 30) return fail(400, { area: "username", msg: "Username must be less than 30 characters" })
+		if (password.length < 1) return fail(400, { area: "password", msg: "Password must be at least 1 character" })
+		if (password.length > 6969) return fail(400, { area: "password", msg: "Password must be less than 6969 characters" })
 
-		for (const [condition, msg, area] of easyChecks) {
-			if (condition) {
-				return fail(400, { msg, area })
-			}
-		}
-
+		let session
 		try {
-			const user = await auth.authenticateUser("username", username, password)
-			const session = await auth.createSession(user.userId)
-			locals.setSession(session)
+			const user: any = await auth.validateKeyPassword("username", username.toLowerCase(), password)
+			session = await auth.createSession(user.userId)
 		} catch (e) {
-			const error = e as Error
-			if (error.message === "AUTH_INVALID_PROVIDER_ID" || error.message === "AUTH_INVALID_PASSWORD") {
-				return fail(400, { msg: "Incorrect username or password" })
-			}
-			console.error(error)
-			return fail(500, { msg: "An unexpected error occurred" })
+			return fail(400, { area: "password", msg: "Incorrect username or password" })
 		}
+		locals.setSession(session)
 
 		throw redirect(302, "/home")
 	},
