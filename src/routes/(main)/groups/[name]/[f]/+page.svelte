@@ -1,4 +1,6 @@
 <script lang="ts">
+	// The friends, followers, and following pages for a user.
+
 	import type { PageData } from "./$types"
 
 	const statusColours: any = {

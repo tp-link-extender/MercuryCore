@@ -1,4 +1,6 @@
 <script lang="ts">
+	// The component that controls the 3D object on the landing page.
+
 	import { Canvas, DirectionalLight, HemisphereLight, OrbitControls, PerspectiveCamera } from "@threlte/core"
 	import { GLTF } from "@threlte/extras"
 

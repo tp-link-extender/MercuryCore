@@ -1,4 +1,6 @@
 <script lang="ts">
+	// Link to a place used on Games page.
+
 	export let place: any
 </script>
 

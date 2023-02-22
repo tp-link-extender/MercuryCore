@@ -6,7 +6,7 @@ export const actions: Actions = {
 	default: async ({ locals, request }) => {
 		const session = await locals.validateUser()
 		if (!session.session) throw error(401)
-		
+
 		const data = await request.formData()
 		const name = data.get("name")?.toString()
 		const slug = data.get("slug")?.toString().toLowerCase()

@@ -1,4 +1,7 @@
 <script lang="ts">
+	// Used on the About page to allow a part of the page to be displayed
+	// fullscreen or on either side, and to be animated in.
+
 	import { fly } from "svelte/transition"
 	import { inview } from "svelte-inview"
 

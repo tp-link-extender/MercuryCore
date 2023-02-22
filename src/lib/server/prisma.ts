@@ -1,8 +1,13 @@
+// A collection of functions useful for Prisma, as well
+// as only needing to initialise PrismaClient once.
+
 import { PrismaClient } from "@prisma/client"
 import { client, roQuery } from "./redis"
 
 export const prisma = new PrismaClient()
 
+// Required because likes and dislikes are stored in RedisGraph,
+// while the rest of the info for places is stored in Postgres.
 export async function findPlaces(query: any) {
 	const places = await prisma.place.findMany(query)
 
@@ -11,8 +16,8 @@ export async function findPlaces(query: any) {
 		let ratio = Math.floor(
 			(await roQuery(
 				`
-				RETURN (SIZE(() -[:likes]-> (:Place { name: $place })))
-				/ (SIZE(() -[:likes|dislikes]-> (:Place { name: $place })))
+					RETURN (SIZE(() -[:likes]-> (:Place { name: $place })))
+					/ (SIZE(() -[:likes|dislikes]-> (:Place { name: $place })))
 				`,
 				{
 					params: {
@@ -27,6 +32,8 @@ export async function findPlaces(query: any) {
 	return places
 }
 
+// Required because likes and dislikes are stored in RedisGraph,
+// while the rest of the info for items is stored in Postgres.
 export async function findItems(query: any) {
 	const items = await prisma.item.findMany(query)
 
@@ -35,8 +42,8 @@ export async function findItems(query: any) {
 		let ratio = Math.floor(
 			(await roQuery(
 				`
-				RETURN (SIZE(() -[:likes]-> (:Item { name: $itemid })))
-				/ (SIZE(() -[:likes|dislikes]-> (:Item { name: $itemid })))
+					RETURN (SIZE(() -[:likes]-> (:Item { name: $itemid })))
+					/ (SIZE(() -[:likes|dislikes]-> (:Item { name: $itemid })))
 				`,
 				{
 					params: {
@@ -51,6 +58,8 @@ export async function findItems(query: any) {
 	return items
 }
 
+// Required because members and followers are stored in RedisGraph,
+// while the rest of the info for groups is stored in Postgres.
 export async function findGroups(query: any) {
 	const groups = await prisma.group.findMany(query)
 
@@ -73,9 +82,6 @@ type User = {
 	username?: string
 }
 export async function transaction(sender: User, receiver: User, amountSent: number, tx: any /* awful */ = prisma) {
-	// balance of both parties should have been checked already by now
-	// the user accounts also had better exist or else
-
 	const sender2 = await tx.user.findUnique({
 		where: sender,
 		select: {

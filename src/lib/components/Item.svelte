@@ -1,4 +1,7 @@
 <script lang="ts">
+	// An avatar shop item component, used in the
+	// avatar shop and inventory pages.
+
 	export let item: any
 </script>
 

@@ -14,6 +14,7 @@
 	}
 </script>
 
+<!-- Keeps the scrollY variable updated with the scrollY property of the window. -->
 <svelte:window bind:scrollY />
 <svelte:head>
 	<title>About - Mercury</title>

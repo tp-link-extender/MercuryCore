@@ -1,4 +1,7 @@
 <script lang="ts">
+	// The loading spinner used when a page is loading,
+	// referenced in the root layout component.
+	
 	const size = 80
 	const duration = "0.7s"
 	const unit = "px"

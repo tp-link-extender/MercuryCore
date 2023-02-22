@@ -6,6 +6,7 @@ import { error, fail, redirect } from "@sveltejs/kit"
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("item")
 	const session = await locals.validateUser()
+
 	const item = await prisma.item.findUnique({
 		where: {
 			id: params.id,
@@ -47,7 +48,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	if (item) {
 		const query = {
 			params: {
-				user: session.user?.username || "",
+				user: session.user?.username,
 				itemid: params.id,
 			},
 		}
@@ -171,7 +172,7 @@ export const actions: Actions = {
 					`
 						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Item { name: $itemid })
 						DELETE r
-						`,
+					`,
 					query
 				)
 				await Query(
@@ -179,7 +180,7 @@ export const actions: Actions = {
 						MERGE (u:User { name: $user })
 						MERGE (p:Item { name: $itemid })
 						MERGE (u) -[:likes]-> (p)
-						`,
+					`,
 					query
 				)
 				break
@@ -188,7 +189,7 @@ export const actions: Actions = {
 					`
 						MATCH (u:User { name: $user }) -[r:likes]-> (p:Item { name: $itemid })
 						DELETE r
-						`,
+					`,
 					query
 				)
 				break
@@ -197,7 +198,7 @@ export const actions: Actions = {
 					`
 						MATCH (u:User { name: $user }) -[r:likes]-> (p:Item { name: $itemid })
 						DELETE r
-						`,
+					`,
 					query
 				)
 				await Query(
@@ -205,7 +206,7 @@ export const actions: Actions = {
 						MERGE (u:User { name: $user })
 						MERGE (p:Item { name: $itemid })
 						MERGE (u) -[:dislikes]-> (p)
-						`,
+					`,
 					query
 				)
 				break
@@ -214,7 +215,7 @@ export const actions: Actions = {
 					`
 						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Item { name: $itemid })
 						DELETE r
-						`,
+					`,
 					query
 				)
 				break

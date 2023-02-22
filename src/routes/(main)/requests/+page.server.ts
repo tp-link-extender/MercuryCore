@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	const user = await prisma.user.findUnique({
 		where: {
-			number: session.user.number,
+			number: session.user?.number,
 		},
 		select: {
 			username: true,
@@ -28,8 +28,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	async function Users() {
 		const usersQuery = await roQuery(
 			`
-			MATCH (:User { name: $user }) <-[r:request]- (u:User)
-			RETURN u.name AS name
+				MATCH (:User { name: $user }) <-[r:request]- (u:User)
+				RETURN u.name AS name
 			`,
 			query,
 			false,
@@ -95,8 +95,8 @@ export const actions: Actions = {
 				case "decline":
 					await Query(
 						`
-						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-						DELETE r
+							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+							DELETE r
 						`,
 						query
 					)
@@ -106,11 +106,11 @@ export const actions: Actions = {
 						// Make sure an incoming request exists before accepting
 						await Query(
 							`
-							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-							DELETE r
-							MERGE (u1)
-							MERGE (u2)
-							MERGE (u1) <-[:friends]- (u2)
+								MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+								DELETE r
+								MERGE (u1)
+								MERGE (u2)
+								MERGE (u1) <-[:friends]- (u2)
 							`,
 							query
 							// The direction of the [:friends] relationship matches the direction of the previous [:request] relationship

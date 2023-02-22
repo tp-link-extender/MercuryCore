@@ -1,5 +1,8 @@
 version: "3"
 
+# Config file for compose, a tool that allows for easily managing multiple docker containers.
+# https://docs.docker.com/compose/
+
 services:
     redis:
         container_name: redisgraph
@@ -20,4 +23,4 @@ services:
             - ./data/postgres:/var/lib/postgresql/data
 
         environment:
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Loaded from .env file
