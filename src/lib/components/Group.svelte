@@ -1,10 +1,15 @@
 <script lang="ts">
 	// Component for a group, used on the
 	// groups page and on a user's profile.
+	
+	import { fade } from "svelte/transition"
+
 	export let group: any
+	export let num: number
+	export let total: number
 </script>
 
-<a class="card text-center light-text text-decoration-none h6 rounded-4 m-0" href="/groups/{group.name}">
+<a in:fade={{ duration: 300, delay: (num * 150) / Math.min(total, 6) }} class="card text-center light-text text-decoration-none h6 rounded-4 m-0" href="/groups/{group.name}">
 	<div class="p-3 d-flex flex-column h-100">
 		{group.name}
 		<div class="mt-auto mb-1 float-end">

@@ -41,8 +41,8 @@
 	</div>
 	<div class="col pe-0">
 		<div class="container d-grid p-0">
-			{#each data.groups || [] as group}
-				<Group {group} />
+			{#each data.groups || [] as group, num}
+				<Group {group} {num} total={data.groups.length} />
 			{/each}
 		</div>
 	</div>
