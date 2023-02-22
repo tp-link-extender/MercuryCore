@@ -1,6 +1,17 @@
 <script lang="ts">
-	import type { ActionData, PageData } from "./$types"
+	import type { ActionData, Snapshot } from "./$types"
 	import { enhance } from "$app/forms"
+
+	let fields = {
+		name: "",
+		price: "",
+		category: "",
+	}
+
+	export const snapshot: Snapshot = {
+		capture: () => fields,
+		restore: v => (fields = v),
+	}
 
 	export let form: ActionData
 </script>
@@ -17,21 +28,21 @@
 			<div class="row">
 				<label for="name" class="col-md-3 col-form-label text-md-right">Item name</label>
 				<div class="col-md-8">
-					<input type="text" name="name" id="name" required class="form-control valid" minlength="3" maxlength="50" />
+					<input bind:value={fields.name} type="text" name="name" id="name" required class="form-control valid" minlength="3" maxlength="50" />
 				</div>
 			</div>
 			<br />
 			<div class="row">
 				<label for="price" class="col-md-3 col-form-label text-md-right">Item price</label>
 				<div class="col-md-8">
-					<input type="number" name="price" id="price" required class="form-control valid" min="0"/>
+					<input bind:value={fields.price} type="number" name="price" id="price" required class="form-control valid" min="0" />
 				</div>
 			</div>
 			<br />
 			<div class="row">
 				<label for="category" class="col-md-3 col-form-label text-md-right">Item category</label>
 				<div class="col-md-8">
-					<select name="category" id="category" class="form-select valid">
+					<select bind:value={fields.category} name="category" id="category" class="form-select valid">
 						<option value="TShirt">T-Shirt</option>
 						<option value="Shirt">Shirt</option>
 						<option value="Pants">Pants</option>

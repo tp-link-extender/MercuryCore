@@ -37,7 +37,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		const query2 = {
 			params: {
-				user: session.user.username || "",
+				user: session.user?.username,
 				group: group.name,
 			},
 		}
@@ -96,9 +96,9 @@ export const actions: Actions = {
 				case "join":
 					await Query(
 						`
-						MERGE (u:User { name: $user })
-						MERGE (g:Group { name: $group })
-						MERGE (u) -[:in]-> (g)
+							MERGE (u:User { name: $user })
+							MERGE (g:Group { name: $group })
+							MERGE (u) -[:in]-> (g)
 						`,
 						query
 					)
@@ -106,8 +106,8 @@ export const actions: Actions = {
 				case "leave":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:in]-> (g:Group { name: $group })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:in]-> (g:Group { name: $group })
+							DELETE r
 						`,
 						query
 					)
@@ -115,9 +115,9 @@ export const actions: Actions = {
 				case "follow":
 					await Query(
 						`
-						MERGE (u:User { name: $user })
-						MERGE (g:Group { name: $group })
-						MERGE (u) -[:follows]-> (g)
+							MERGE (u:User { name: $user })
+							MERGE (g:Group { name: $group })
+							MERGE (u) -[:follows]-> (g)
 						`,
 						query
 					)
@@ -125,8 +125,8 @@ export const actions: Actions = {
 				case "unfollow":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:follows]-> (g:Group { name: $group })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:follows]-> (g:Group { name: $group })
+							DELETE r
 						`,
 						query
 					)

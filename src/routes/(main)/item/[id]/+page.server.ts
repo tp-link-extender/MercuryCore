@@ -6,6 +6,7 @@ import { error, fail, redirect } from "@sveltejs/kit"
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("item")
 	const session = await locals.validateUser()
+
 	const item = await prisma.item.findUnique({
 		where: {
 			id: params.id,
@@ -24,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					image: true,
 					number: true,
 					displayname: true,
-				}
+				},
 			},
 		},
 	})
@@ -47,7 +48,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	if (item) {
 		const query = {
 			params: {
-				user: session.user?.username || "",
+				user: session.user?.username,
 				itemid: params.id,
 			},
 		}
@@ -92,137 +93,132 @@ export const actions: Actions = {
 
 		console.log("Action:", action)
 
-		try {
-			switch (action) {
-				case "buy":
-					const item = await prisma.item.findUnique({
-						where: {
-							id: params.id,
-						},
-						select: {
-							price: true,
-							creator: true,
-							owners: {
-								where: {
-									id: session?.user?.userId,
-								},
+		switch (action) {
+			case "buy":
+				const item = await prisma.item.findUnique({
+					where: {
+						id: params.id,
+					},
+					select: {
+						price: true,
+						creator: true,
+						owners: {
+							where: {
+								id: session?.user?.userId,
 							},
 						},
-					})
-					if (!item) return fail(404, { msg: "Not found" })
-					if ((item.owners || []).length > 0) return fail(400, { msg: "You already own this item" })
+					},
+				})
+				if (!item) return fail(404, { msg: "Not found" })
+				if ((item.owners || []).length > 0) return fail(400, { msg: "You already own this item" })
 
-					if (item.price != 0)
-						try {
-							await transaction({ id: session.user.userId }, { id: item.creator.id }, item.price)
-						} catch (e: any) {
-							console.log(e.message)
-							return fail(400, { msg: e.message })
-						}
+				if (item.price != 0)
+					try {
+						await transaction({ id: session.user.userId }, { id: item.creator.id }, item.price)
+					} catch (e: any) {
+						console.log(e.message)
+						return fail(400, { msg: e.message })
+					}
 
-					await prisma.user.update({
-						where: {
-							id: session.user.userId,
-						},
-						data: {
-							itemsOwned: {
-								connect: {
-									id: params.id,
-								},
+				await prisma.user.update({
+					where: {
+						id: session.user.userId,
+					},
+					data: {
+						itemsOwned: {
+							connect: {
+								id: params.id,
 							},
 						},
-					})
+					},
+				})
 
-					break
-				case "delete":
-					const item2 = await prisma.item.findUnique({
-						// cAnnOt rEDeCLaRE bLoCK-SCOpeD varIabLE
-						where: {
-							id: params.id,
-						},
-						select: {
-							price: true,
-							creator: true,
-							owners: {
-								where: {
-									id: session?.user?.userId,
-								},
+				break
+			case "delete":
+				const item2 = await prisma.item.findUnique({
+					// cAnnOt rEDeCLaRE bLoCK-SCOpeD varIabLE
+					where: {
+						id: params.id,
+					},
+					select: {
+						price: true,
+						creator: true,
+						owners: {
+							where: {
+								id: session?.user?.userId,
 							},
 						},
-					})
-					if (!item2) throw error(404, "Not found")
-					if ((item2?.owners || []).length < 1) throw error(400, "You don't own this item")
+					},
+				})
+				if (!item2) throw error(404, "Not found")
+				if ((item2?.owners || []).length < 1) return fail(400, { msg: "You don't own this item" })
 
-					await prisma.user.update({
-						where: {
-							id: session.user.userId,
-						},
-						data: {
-							itemsOwned: {
-								disconnect: {
-									id: params.id,
-								},
+				await prisma.user.update({
+					where: {
+						id: session.user.userId,
+					},
+					data: {
+						itemsOwned: {
+							disconnect: {
+								id: params.id,
 							},
 						},
-					})
+					},
+				})
 
-					break
-				case "like":
-					await Query(
-						`
+				break
+			case "like":
+				await Query(
+					`
 						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Item { name: $itemid })
 						DELETE r
-						`,
-						query
-					)
-					await Query(
-						`
+					`,
+					query
+				)
+				await Query(
+					`
 						MERGE (u:User { name: $user })
 						MERGE (p:Item { name: $itemid })
 						MERGE (u) -[:likes]-> (p)
-						`,
-						query
-					)
-					break
-				case "unlike":
-					await Query(
-						`
+					`,
+					query
+				)
+				break
+			case "unlike":
+				await Query(
+					`
 						MATCH (u:User { name: $user }) -[r:likes]-> (p:Item { name: $itemid })
 						DELETE r
-						`,
-						query
-					)
-					break
-				case "dislike":
-					await Query(
-						`
+					`,
+					query
+				)
+				break
+			case "dislike":
+				await Query(
+					`
 						MATCH (u:User { name: $user }) -[r:likes]-> (p:Item { name: $itemid })
 						DELETE r
-						`,
-						query
-					)
-					await Query(
-						`
+					`,
+					query
+				)
+				await Query(
+					`
 						MERGE (u:User { name: $user })
 						MERGE (p:Item { name: $itemid })
 						MERGE (u) -[:dislikes]-> (p)
-						`,
-						query
-					)
-					break
-				case "undislike":
-					await Query(
-						`
+					`,
+					query
+				)
+				break
+			case "undislike":
+				await Query(
+					`
 						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Item { name: $itemid })
 						DELETE r
-						`,
-						query
-					)
-					break
-			}
-		} catch (e) {
-			console.error(e)
-			throw error(500)
+					`,
+					query
+				)
+				break
 		}
 	},
 }

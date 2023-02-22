@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
+	import type { PageData, ActionData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
-	export let data: PageData
-
 	const user = getUser()
+	
+	export let data: PageData
+	export let form: ActionData
 </script>
 
 <svelte:head>
@@ -47,6 +48,9 @@
 					<button name="action" value="delete" class="btn btn-sm w-100 float-right btn-danger"> [debug] delete from inventory </button>
 				{:else if data.price != 0}
 					<p class="light-text" id="notify">Funds will be deducted from your account immediately upon pressing the buy button.</p>
+				{/if}
+				{#if form?.msg}
+					<p class="text-danger">{form.msg}</p>
 				{/if}
 				<div class="row mb-2 mt-3">
 					<div class="col d-flex justify-content-start">

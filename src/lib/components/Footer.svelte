@@ -3,7 +3,7 @@
 	<p class="d-inline grey-text mb-4">
 		© <a href="/" class="text-decoration-none">Mercury</a> 2022-{new Date().getFullYear()} - Not affiliated with Roblox Corporation.<br />
 	</p>
-	<hr class="my-2 text-primary">
+	<hr class="my-2 text-primary" />
 	<a class="d-inline light-text my-0 mx-2" href="/about">About</a>
 	<span class="text-muted">|</span>
 	<a class="d-inline light-text my-0 mx-2" href="/terms">Terms of Service</a>
@@ -14,6 +14,7 @@
 	<br />
 	<br />
 </footer>
+
 <noscript>
 	<div id="nojs" class="position-fixed bottom-0 d-block vw-100">
 		<p class="light-text text-center">Javascript is disabled. You may have a diminished experience while using Mercury.</p>

@@ -3,6 +3,7 @@ import { auth } from "$lib/server/lucia"
 import { client } from "$lib/server/redis"
 import { error, fail } from "@sveltejs/kit"
 
+// Make sure a user is an administrator before loading the page.
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.validateUser()
 	if (!session.session || session.user.permissionLevel != "Administrator") throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))

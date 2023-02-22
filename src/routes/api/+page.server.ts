@@ -1,3 +1,6 @@
+// Contains various api methods that cannot be accessed in a page context,
+// usually because they are requested from a component.
+
 import type { PageServerLoad, Actions } from "./$types"
 import { auth } from "$lib/server/lucia"
 import { client } from "$lib/server/redis"
@@ -12,17 +15,19 @@ export const actions: Actions = {
 	logout: async ({ locals }) => {
 		const session = await locals.validate()
 		if (!session) throw error(401)
+
 		await auth.invalidateSession(session.sessionId) // invalidate session
 		locals.setSession(null) // remove cookie
 		throw redirect(302, "/login")
 	},
+
 	stipend: async ({ locals }) => {
 		const session = await locals.validateUser()
 		if (!session) throw error(401)
 
 		const user = await prisma.user.findUnique({
 			where: {
-				id: session.user.userId,
+				id: session.user?.userId,
 			},
 			select: {
 				currencyCollected: true,
@@ -37,7 +42,7 @@ export const actions: Actions = {
 
 			await prisma.user.update({
 				where: {
-					id: session.user.userId,
+					id: session.user?.userId,
 				},
 				data: {
 					currencyCollected: new Date(),

@@ -1,10 +1,6 @@
-import type { PageServerLoad, Actions } from "./$types"
+import type { Actions } from "./$types"
 import { prisma, transaction } from "$lib/server/prisma"
 import { fail, error, redirect } from "@sveltejs/kit"
-
-export const load: PageServerLoad = async () => {
-	return {}
-}
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
@@ -37,20 +33,22 @@ export const actions: Actions = {
 			return fail(400, { msg: "A place with this slug already exists" })
 
 		try {
-			await transaction({ id: session.user.userId }, { number: 1 }, 10)
+			await prisma.$transaction(async tx => {
+				await transaction({ id: session.user.userId }, { number: 1 }, 10, tx)
+
+				await tx.place.create({
+					data: {
+						name,
+						slug,
+						description,
+						image: `/place/placeholderIcon${Math.floor(Math.random() * 3) + 1}.png`,
+						ownerUsername: session.user.username,
+					},
+				})
+			})
 		} catch (e: any) {
 			return fail(402, { msg: e.message })
 		}
-
-		await prisma.place.create({
-			data: {
-				name,
-				slug,
-				description,
-				image: `/place/placeholderIcon${Math.floor(Math.random() * 3) + 1}.png`,
-				ownerUsername: session.user.username,
-			},
-		})
 
 		throw redirect(302, "/place/" + slug)
 	},
