@@ -1,6 +1,17 @@
 <script lang="ts">
-	import type { ActionData, PageData } from "./$types"
+	import type { ActionData, Snapshot } from "./$types"
 	import { enhance } from "$app/forms"
+
+	let fields = {
+		name: "",
+		slug: "",
+		description: "",
+	}
+
+	export const snapshot: Snapshot = {
+		capture: () => fields,
+		restore: v => (fields = v),
+	}
 
 	export let form: ActionData
 </script>
@@ -17,14 +28,14 @@
 			<div class="row">
 				<label for="name" class="col-md-3 col-form-label text-md-right">Place name</label>
 				<div class="col-md-8">
-					<input type="text" name="name" id="name" required class="form-control valid" minlength="3" maxlength="50" />
+					<input bind:value={fields.name} type="text" name="name" id="name" required class="form-control valid" minlength="3" maxlength="50" />
 				</div>
 			</div>
 			<br />
 			<div class="row">
 				<label for="slug" class="col-md-3 col-form-label text-md-right">Place slug</label>
 				<div class="col-md-8">
-					<input type="text" name="slug" id="slug" required class="form-control valid" minlength="3" maxlength="30" />
+					<input bind:value={fields.slug} type="text" name="slug" id="slug" required class="form-control valid" minlength="3" maxlength="30" />
 				</div>
 			</div>
 			<small class="grey-text pb-2">Your place will be listed at /place/&lt;your slug&gt;. This cannot be changed. Choose wisely.</small>
@@ -33,7 +44,7 @@
 			<div class="row">
 				<label for="description" class="col-md-3 col-form-label text-md-right">Description</label>
 				<div class="col-md-8">
-					<textarea name="description" id="description" required class="form-control valid" maxlength="1000" />
+					<textarea bind:value={fields.description} name="description" id="description" required class="form-control valid" maxlength="1000" />
 				</div>
 			</div>
 			<br />

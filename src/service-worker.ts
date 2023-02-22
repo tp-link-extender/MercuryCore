@@ -1,3 +1,5 @@
+// The service worker script, adding some offline functionality to Mercury.
+
 import { build, files, prerendered, version } from "$service-worker"
 
 // Generate unique ID for new cache

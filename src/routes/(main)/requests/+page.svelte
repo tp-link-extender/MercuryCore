@@ -68,5 +68,5 @@
 			min-width: 6rem
 			img
 				width: 6rem
-				max-height: 6rem
+				height: 6rem !important
 </style>

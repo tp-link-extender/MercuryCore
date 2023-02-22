@@ -1,3 +1,5 @@
+// The friends, followers, and following pages for a user.
+
 import type { PageServerLoad } from "./$types"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"

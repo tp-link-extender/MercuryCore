@@ -1,6 +1,15 @@
 <script lang="ts">
-	import type { ActionData, PageData } from "./$types"
+	import type { ActionData, Snapshot } from "./$types"
 	import { enhance } from "$app/forms"
+
+	let fields = {
+		name: "",
+	}
+
+	export const snapshot: Snapshot = {
+		capture: () => fields,
+		restore: v => (fields = v),
+	}
 
 	export let form: ActionData
 </script>
@@ -17,7 +26,7 @@
 			<div class="row">
 				<label for="name" class="col-md-3 col-form-label text-md-right">Group name</label>
 				<div class="col-md-8">
-					<input type="text" name="name" id="name" required class="form-control valid" minlength="3" maxlength="40" />
+					<input bind:value={fields.name} type="text" name="name" id="name" required class="form-control valid" minlength="3" maxlength="40" />
 				</div>
 			</div>
 			<small class="grey-text pb-2">This cannot be changed. Choose wisely.</small>

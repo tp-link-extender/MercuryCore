@@ -88,9 +88,9 @@
 		<div class="mt-4">
 			<h2 class="h4 light-text">Creations</h2>
 			<div class="row m-0 p-0">
-				{#each data.places as place}
+				{#each data.places as place, num}
 					<div class="col col-4 col-sm-3 col-md-2 text-center">
-						<Place {place} />
+						<Place {place} {num} total={data.places.length} />
 					</div>
 				{/each}
 			</div>
@@ -100,9 +100,9 @@
 		<div class="mt-4">
 			<h2 class="h4 light-text">Groups owned</h2>
 			<div class="row m-0 p-0">
-				{#each data.groupsOwned as group}
+				{#each data.groupsOwned as group, num}
 					<div class="col col-6 col-sm-4 col-md-3 text-center">
-						<Group {group} />
+						<Group {group} {num} total={data.groups.length} />
 					</div>
 				{/each}
 			</div>
@@ -112,9 +112,9 @@
 		<div class="mt-4">
 			<h2 class="h4 light-text">Groups in</h2>
 			<div class="row m-0 p-0">
-				{#each data.groups as group}
+				{#each data.groups as group, num}
 					<div class="col col-6 col-sm-4 col-md-3 text-center">
-						<Group {group} />
+						<Group {group} {num} total={data.groups.length} />
 					</div>
 				{/each}
 			</div>
