@@ -8,10 +8,14 @@
 <div id="bg" class="position-fixed w-100 h-100 z-n1" />
 
 <div id="all">
+	<!--
+		Data from the root layout must be passed into the
+		Navbar component, as it cannot be accessed directly.
+	-->
 	<Navbar {data} />
 
 	{#if data.bannerText}
-		<p id="banner" class="position-fixed top-0 py-1 text-center w-100 text-{data.bannerTextLight ? 'light' : 'text-dark'}" style="background: {data.bannerColour}">
+		<p id="banner" class="position-fixed top-0 py-1 text-center w-100 text-{data.bannerTextLight ? 'light' : ''}" style="background: {data.bannerColour}">
 			{data.bannerText}
 		</p>
 		<br />

@@ -7,17 +7,18 @@ export const load: PageServerLoad = async ({ locals }) => {
 	console.time("home")
 	const session = await locals.validateUser()
 	if (!session.session) throw redirect(302, "/login")
-	// (main)/+layout.server.ts will handle most redirects for logged-out users except for this one
+	// (main)/+layout.server.ts will handle most redirects for logged-out users,
+	// but sometimes errors for this page.
 
 	async function Friends() {
 		const friendsQuery = await roQuery(
 			`
-			MATCH (:User { name: $user }) -[r:friends]- (u:User)
-			RETURN u.name as name
+				MATCH (:User { name: $user }) -[r:friends]- (u:User)
+				RETURN u.name as name
 			`,
 			{
 				params: {
-					user: session.user.username,
+					user: session.user?.username,
 				},
 			},
 			false,

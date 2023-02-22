@@ -76,16 +76,16 @@ export const actions: Actions = {
 				case "like":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
+							DELETE r
 						`,
 						query
 					)
 					await Query(
 						`
-						MERGE (u:User { name: $user })
-						MERGE (p:Place { name: $place })
-						MERGE (u) -[:likes]-> (p)
+							MERGE (u:User { name: $user })
+							MERGE (p:Place { name: $place })
+							MERGE (u) -[:likes]-> (p)
 						`,
 						query
 					)
@@ -93,8 +93,8 @@ export const actions: Actions = {
 				case "unlike":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
+							DELETE r
 						`,
 						query
 					)
@@ -102,16 +102,16 @@ export const actions: Actions = {
 				case "dislike":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
+							DELETE r
 						`,
 						query
 					)
 					await Query(
 						`
-						MERGE (u:User { name: $user })
-						MERGE (p:Place { name: $place })
-						MERGE (u) -[:dislikes]-> (p)
+							MERGE (u:User { name: $user })
+							MERGE (p:Place { name: $place })
+							MERGE (u) -[:dislikes]-> (p)
 						`,
 						query
 					)
@@ -119,8 +119,8 @@ export const actions: Actions = {
 				case "undislike":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
+							DELETE r
 						`,
 						query
 					)

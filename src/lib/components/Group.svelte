@@ -1,4 +1,6 @@
 <script lang="ts">
+	// Component for a group, used on the
+	// groups page and on a user's profile.
 	export let group: any
 </script>
 

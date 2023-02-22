@@ -7,11 +7,13 @@ export const actions: Actions = {
 	profile: async ({ request, locals }) => {
 		const data = await request.formData()
 		const session = await locals.validateUser()
+		if (!session.session) return fail(401)
+
 		const entries: any = Object.fromEntries(data.entries())
 
 		let same
 		for (let i in entries)
-			if (entries[i] != session.user[i]) {
+			if (entries[i] != (session.user as any)[i]) {
 				same = false
 				break
 			}
@@ -30,7 +32,7 @@ export const actions: Actions = {
 				theme: entries.theme,
 			},
 		})
-		
+
 		return {
 			profilesuccess: true,
 		}
@@ -39,6 +41,7 @@ export const actions: Actions = {
 	password: async ({ request, locals }) => {
 		const data = await request.formData()
 		const session = await locals.validateUser()
+		if (!session.session) return fail(401)
 		const entries: any = Object.fromEntries(data.entries())
 
 		if (entries.npassword != entries.cnpassword) return fail(400, { area: "cnpassword", msg: "Passwords do not match" })

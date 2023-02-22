@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		const query = {
 			params: {
-				user1: session.user.username || "",
+				user1: session.user?.username || "",
 				user2: user.username,
 			},
 		}
@@ -127,9 +127,9 @@ export const actions: Actions = {
 				case "follow":
 					await Query(
 						`
-						MERGE (u1:User { name: $user1 })
-						MERGE (u2:User { name: $user2 })
-						MERGE (u1) -[:follows]-> (u2)
+							MERGE (u1:User { name: $user1 })
+							MERGE (u2:User { name: $user2 })
+							MERGE (u1) -[:follows]-> (u2)
 						`,
 						query
 					)
@@ -137,8 +137,8 @@ export const actions: Actions = {
 				case "unfollow":
 					await Query(
 						`
-						MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
-						DELETE r
+							MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
+							DELETE r
 						`,
 						query
 					)
@@ -146,8 +146,8 @@ export const actions: Actions = {
 				case "unfriend":
 					await Query(
 						`
-						MATCH (u1:User { name: $user1 }) -[r:friends]- (u2:User { name: $user2 })
-						DELETE r
+							MATCH (u1:User { name: $user1 }) -[r:friends]- (u2:User { name: $user2 })
+							DELETE r
 						`,
 						query
 					)
@@ -159,20 +159,20 @@ export const actions: Actions = {
 							// If there is already an incoming request, accept it instead
 							await Query(
 								`
-								MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-								DELETE r
-								MERGE (u1)
-								MERGE (u2)
-								MERGE (u1) <-[:friends]- (u2)
+									MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+									DELETE r
+									MERGE (u1)
+									MERGE (u2)
+									MERGE (u1) <-[:friends]- (u2)
 								`,
 								query
 							)
 						else
 							await Query(
 								`
-								MERGE (u1:User { name: $user1 })
-								MERGE (u2:User { name: $user2 })
-								MERGE (u1) -[:request]-> (u2)
+									MERGE (u1:User { name: $user1 })
+									MERGE (u2:User { name: $user2 })
+									MERGE (u1) -[:request]-> (u2)
 								`,
 								query
 							)
@@ -181,8 +181,8 @@ export const actions: Actions = {
 				case "cancel":
 					await Query(
 						`
-						MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
-						DELETE r
+							MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
+							DELETE r
 						`,
 						query
 					)
@@ -190,8 +190,8 @@ export const actions: Actions = {
 				case "decline":
 					await Query(
 						`
-						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-						DELETE r
+							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+							DELETE r
 						`,
 						query
 					)
@@ -201,11 +201,11 @@ export const actions: Actions = {
 						// Make sure an incoming request exists before accepting
 						await Query(
 							`
-							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-							DELETE r
-							MERGE (u1)
-							MERGE (u2)
-							MERGE (u1) <-[:friends]- (u2)
+								MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+								DELETE r
+								MERGE (u1)
+								MERGE (u2)
+								MERGE (u1) <-[:friends]- (u2)
 							`,
 							query
 							// The direction of the [:friends] relationship matches the direction of the previous [:request] relationship

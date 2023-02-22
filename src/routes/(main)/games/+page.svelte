@@ -5,6 +5,8 @@
 
 	let value = ""
 
+	// Snapshots allow form values on a page to be restored
+	// if the user navigates away and then back again.
 	export const snapshot: Snapshot = {
 		capture: () => value,
 		restore: v => (value = v),

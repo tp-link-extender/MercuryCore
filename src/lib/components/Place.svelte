@@ -1,4 +1,6 @@
 <script lang="ts">
+	// Link to a place used on the homepage or on a user's profile.
+
 	export let place: any
 </script>
 

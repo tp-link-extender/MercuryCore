@@ -22,19 +22,23 @@ export const actions: Actions = {
 		const lowercaseUsername = username.toLowerCase()
 
 		try {
-			const userCheck = await prisma.user.findUnique({
-				where: {
-					username: lowercaseUsername,
-				},
-			})
-			if (userCheck) return fail(400, { area: "username", msg: "Username is already being used" })
+			if (
+				await prisma.user.findUnique({
+					where: {
+						username: lowercaseUsername,
+					},
+				})
+			)
+				return fail(400, { area: "username", msg: "Username is already being used" })
 
-			const emailCheck = await prisma.user.findUnique({
-				where: {
-					email: email.toLowerCase(),
-				},
-			})
-			if (emailCheck) return fail(400, { area: "email", msg: "Email is already being used" })
+			if (
+				await prisma.user.findUnique({
+					where: {
+						email: email.toLowerCase(),
+					},
+				})
+			)
+				return fail(400, { area: "email", msg: "Email is already being used" })
 
 			const regkeyCheck = await prisma.regkey.findUnique({
 				where: {
