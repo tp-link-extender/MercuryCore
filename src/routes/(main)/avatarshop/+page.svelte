@@ -57,8 +57,8 @@
 		</div>
 		<div class="col">
 			<div class="container d-grid">
-				{#each data.items || [] as item}
-					<Item {item} />
+				{#each data.items || [] as item, num}
+					<Item {item} {num} total={data.items.length}/>
 				{/each}
 			</div>
 		</div>

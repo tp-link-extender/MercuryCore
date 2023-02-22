@@ -62,8 +62,8 @@
 	</div>
 	<div class="col pe-0">
 		<div class="container d-grid p-0">
-			{#each data.places || [] as place}
-				<PlaceCard {place} />
+			{#each data.places || [] as place, num}
+				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
 		</div>
 	</div>
