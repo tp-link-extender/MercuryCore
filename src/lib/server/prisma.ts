@@ -72,7 +72,7 @@ type User = {
 	number?: number
 	username?: string
 }
-export async function transaction(sender: User, receiver: User, amountSent: number, tx = prisma) {
+export async function transaction(sender: User, receiver: User, amountSent: number, tx: any /* awful */ = prisma) {
 	// balance of both parties should have been checked already by now
 	// the user accounts also had better exist or else
 
