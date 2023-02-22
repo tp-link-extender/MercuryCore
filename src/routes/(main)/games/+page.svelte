@@ -3,13 +3,13 @@
 	import { enhance } from "$app/forms"
 	import PlaceCard from "$lib/components/PlaceCard.svelte"
 
-	let value = ""
+	let query = ""
 
 	// Snapshots allow form values on a page to be restored
 	// if the user navigates away and then back again.
 	export const snapshot: Snapshot = {
-		capture: () => value,
-		restore: v => (value = v),
+		capture: () => query,
+		restore: v => (query = v),
 	}
 
 	export let data: PageData
@@ -31,7 +31,7 @@
 			<div class="card-body">
 				<form use:enhance method="POST" action="/search">
 					<div class="input-group mb-3">
-						<input bind:value type="text" name="query" class="form-control light-text input" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
+						<input bind:value={query} type="text" name="query" class="form-control light-text input" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
 						<input type="hidden" name="category" value="places" />
 						<button class="btn btn-success" type="submit" id="button-addon2">Search</button>
 					</div>
