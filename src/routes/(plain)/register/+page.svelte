@@ -109,6 +109,7 @@
 								id={name}
 								{name}
 								{type}
+								class="light-text form-control {form?.area == name || (data[name].value && data[name].invalid) ? 'is-invalid' : 'valid'}"
 								{placeholder}
 								required
 							/>
