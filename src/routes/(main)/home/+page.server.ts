@@ -1,12 +1,12 @@
 import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
-import { fail, redirect } from "@sveltejs/kit"
+import { fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals }) => {
 	console.time("home")
-	const session = await locals.validateUser()
-	if (!session.session) throw redirect(302, "/login")
+	const session = await authoriseUser(locals.validateUser())
 	// (main)/+layout.server.ts will handle most redirects for logged-out users,
 	// but sometimes errors for this page.
 
@@ -80,8 +80,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+		const session = await authoriseUser(locals.validateUser())
 
 		const data = await request.formData()
 		const status = data.get("status")?.toString() || ""

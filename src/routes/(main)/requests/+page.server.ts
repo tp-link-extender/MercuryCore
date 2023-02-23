@@ -1,10 +1,11 @@
 import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
-import { error, fail, redirect } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-	const session = await locals.validateUser()
+		const session = await authoriseUser(locals.validateUser())
 
 	console.time("requests")
 
@@ -67,9 +68,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, locals, params }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+	default: async ({ request, locals }) => {
+		const session = await authoriseUser(locals.validateUser())
 
 		const data = await request.formData()
 		const action = (data.get("action")?.toString() || "").split(" ")

@@ -2,7 +2,9 @@
 
 import { dev } from "$app/environment"
 import { prisma } from "$lib/server/prisma"
+import { redirect, error } from "@sveltejs/kit"
 import lucia from "lucia-auth"
+import type { Session, User } from "lucia-auth"
 import prismaAdapter from "@lucia-auth/adapter-prisma"
 
 export const auth = lucia({
@@ -27,3 +29,32 @@ export const auth = lucia({
 })
 
 export type Auth = typeof auth
+
+export async function authorise(promise: Promise<Session | null>) {
+	const session = await promise
+	if (!session) throw redirect(302, "/login")
+	return session
+}
+
+export async function authoriseUser(
+	promise: Promise<
+		| {
+				session: Session
+				user: User
+		  }
+		| {
+				session: null
+				user: null
+		  }
+	>
+) {
+	const { session, user } = await promise
+	if (!session) throw redirect(302, "/login")
+	return { session, user }
+}
+
+export async function authoriseAdmin(locals: any) {
+	const { session, user } = await locals.validateUser()
+
+	if (!session || user.permissionLevel != "Administrator") throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
+}

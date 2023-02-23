@@ -1,13 +1,13 @@
 import type { Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { auth } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	profile: async ({ request, locals }) => {
+		const session = await authoriseUser(locals.validateUser())
 		const data = await request.formData()
-		const session = await locals.validateUser()
-		if (!session.session) return fail(401)
 
 		const entries: any = Object.fromEntries(data.entries())
 
@@ -39,9 +39,8 @@ export const actions: Actions = {
 	},
 
 	password: async ({ request, locals }) => {
+		const session = await authoriseUser(locals.validateUser())
 		const data = await request.formData()
-		const session = await locals.validateUser()
-		if (!session.session) return fail(401)
 		const entries: any = Object.fromEntries(data.entries())
 
 		if (entries.npassword != entries.cnpassword) return fail(400, { area: "cnpassword", msg: "Passwords do not match" })

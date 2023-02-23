@@ -1,9 +1,10 @@
 import type { PageServerLoad } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 
 export const load: PageServerLoad = async ({ locals }) => {
 	console.time("inventory")
-	const session = await locals.validateUser()
+	const session = await authoriseUser(locals.validateUser())
 
 	const user = await prisma.user.findUnique({
 		where: {
