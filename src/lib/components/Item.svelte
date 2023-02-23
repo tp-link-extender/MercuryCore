@@ -30,7 +30,7 @@
 
 <style lang="sass">
 	a
-		max-width: 10rem
+		max-width: 12rem
 		transition: all 0.2s
 		&:hover
 			transition: all 0.2s

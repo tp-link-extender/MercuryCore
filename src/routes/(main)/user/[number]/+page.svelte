@@ -102,7 +102,7 @@
 			<div class="row m-0 p-0">
 				{#each data.groupsOwned as group, num}
 					<div class="col col-6 col-sm-4 col-md-3 text-center">
-						<Group {group} {num} total={data.groups.length} />
+						<Group {group} {num} total={data.groupsOwned.length} />
 					</div>
 				{/each}
 			</div>
