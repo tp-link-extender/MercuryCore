@@ -1,11 +1,31 @@
 <script lang="ts">
 	import type { PageData, Snapshot } from "./$types"
-	import { enhance } from "$app/forms"
+	import { enhance, deserialize } from "$app/forms"
 	import Item from "$lib/components/Item.svelte"
+	import { onMount } from "svelte"
 
 	let query = ""
+	let rendered = false
+	onMount(() => (rendered = true))
 
-	// Snapshots allow form values on a page to be restored 
+	let searchedData: any = []
+
+	// Run function whenever query changes
+	$: (query || rendered) &&
+		(async () => {
+			const formdata = new FormData()
+			formdata.append("query", query)
+
+			const response = await fetch("/avatarshop", {
+				method: "POST",
+				body: formdata,
+			})
+
+			const result: any = deserialize(await response.text())
+			searchedData = result.data.places
+		})()
+
+	// Snapshots allow form values on a page to be restored
 	// if the user navigates away and then back again.
 	export const snapshot: Snapshot = {
 		capture: () => query,
@@ -57,9 +77,12 @@
 		</div>
 		<div class="col">
 			<div class="container d-grid">
-				{#each data.items || [] as item, num}
-					<Item {item} {num} total={data.items.length}/>
+				{#each query ? searchedData : data.items || [] as item, num}
+					<Item {item} {num} total={data.items.length} />
 				{/each}
+				{#if query && searchedData.length == 0}
+					<h2 class="h3 light-text mt-5">No items found with search term {query}</h2>
+				{/if}
 			</div>
 		</div>
 	</div>
