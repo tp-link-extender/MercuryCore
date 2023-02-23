@@ -1,5 +1,5 @@
 import type { PageServerLoad } from "./$types"
-import { prisma, findPlaces } from "$lib/server/prisma"
+import { prisma } from "$lib/server/prisma"
 
 export const load: PageServerLoad = async () => ({
 	transactions: prisma.transaction.findMany({

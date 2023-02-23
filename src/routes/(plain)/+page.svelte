@@ -3,8 +3,9 @@
 	import Gradient from "$lib/gradient"
 	import Moon from "$lib/components/Moon.svelte"
 
+	// Gradient must run upon page being loaded,
+	// and cannot be rendered on serverside.
 	onMount(() => {
-		// otherwise "window is not defined"
 		const gradient = new Gradient()
 		gradient.initGradient("#gradient-canvas")
 	})

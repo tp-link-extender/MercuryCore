@@ -1,6 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// This is the Prisma schema file, determining the structure of the Postgres database
+// and how it can be accessed by Prisma.
 
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
 // Sections are commented out, not yet implemented
 
 generator client {
@@ -41,7 +42,6 @@ model User {
     lastOnline           DateTime      @default(now())
     currencyCollected    DateTime      @default(now())
     status               String?
-    theme                String?
     currency             Int           @default(0)
     groupsOwned          Group[]
     places               Place[]
@@ -51,6 +51,9 @@ model User {
     itemsWorn            Item[]        @relation("wears")
     transactionsSent     Transaction[] @relation("sent")
     transactionsReceived Transaction[] @relation("received")
+
+    theme             String?
+    animationSettings String?
 
     @@map("user")
 }

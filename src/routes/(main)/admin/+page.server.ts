@@ -1,11 +1,11 @@
 import type { PageServerLoad, Actions } from "./$types"
-import { auth } from "$lib/server/lucia"
+import { auth, authoriseAdmin } from "$lib/server/lucia"
 import { client } from "$lib/server/redis"
-import { error, fail } from "@sveltejs/kit"
+import { fail } from "@sveltejs/kit"
 
+// Make sure a user is an administrator before loading the page.
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validateUser()
-	if (!session.session || session.user.permissionLevel != "Administrator") throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
+	await authoriseAdmin(locals)
 
 	return {
 		taxRate: client.get("taxRate"),
@@ -14,7 +14,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 }
 
 export const actions: Actions = {
-	updateBanner: async ({ request }) => {
+	updateBanner: async ({ request, locals }) => {
+		await authoriseAdmin(locals)
+
 		const data = await request.formData()
 		const bannerText = data.get("bannerText")?.toString() || ""
 		const bannerColour = data.get("bannerColour")?.toString()
@@ -32,7 +34,9 @@ export const actions: Actions = {
 		}
 	},
 
-	economy: async ({ request }) => {
+	economy: async ({ request, locals }) => {
+		await authoriseAdmin(locals)
+
 		const data = await request.formData()
 		const taxRate = Number(data.get("taxRate"))
 		const dailyStipend = Number(data.get("dailyStipend"))

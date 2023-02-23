@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
+	import type { PageData, ActionData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
-	export let data: PageData
-
 	const user = getUser()
+	
+	export let data: PageData
+	export let form: ActionData
 </script>
 
 <svelte:head>
@@ -47,6 +48,9 @@
 					<button name="action" value="delete" class="btn btn-sm w-100 float-right btn-danger"> [debug] delete from inventory </button>
 				{:else if data.price != 0}
 					<p class="light-text" id="notify">Funds will be deducted from your account immediately upon pressing the buy button.</p>
+				{/if}
+				{#if form?.msg}
+					<p class="text-danger">{form.msg}</p>
 				{/if}
 				<div class="row mb-2 mt-3">
 					<div class="col d-flex justify-content-start">
@@ -118,24 +122,17 @@
 			<p class="light-text">what go here</p>
 		</div>
 		<div class="tab-pane fade" id="pills-game" role="tabpanel" aria-labelledby="pills-game-tab" tabindex={0}>
-			<h4 class="light-text">Server List</h4>
-			<div class="card mb-2">
-				<div class="card-body">
-					<div class="row">
-						<div class="col col-2">
-							<p class="light-text mb-2">Currently Playing: 6/20</p>
-							<button id="join" class="btn btn-sm btn-success">Join Server</button>
+			<div class="row">
+				{#each data.owners as owner}
+					<a href="/user/{owner.number}" class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
+						<div class="me-3 rounded-circle pfp">
+							<img src={owner?.image} alt={owner.displayname} class="rounded-circle rounded-top-0" />
 						</div>
-						<div class="col">
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-						</div>
-					</div>
-				</div>
+						<p class="light-text my-auto h5 me-4 text-truncate">
+							{owner.displayname}
+						</p>
+					</a>
+				{/each}
 			</div>
 		</div>
 	</div>
@@ -183,6 +180,11 @@
 			border-width: 0px 0px 2px 0px
 			border-color: var(--bs-blue)
 
-	#pfp
-		background: var(--accent2)
+	.pfp
+		background: var(--accent)
+		width: 3.5rem
+		height: 3.5rem
+		img
+			width: 3.5rem
+			height: 3.5rem
 </style>

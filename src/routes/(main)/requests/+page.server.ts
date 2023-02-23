@@ -1,16 +1,17 @@
 import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
-import { error, fail, redirect } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-	const session = await locals.validateUser()
+	const user = (await authoriseUser(locals.validateUser())).user
 
 	console.time("requests")
 
-	const user = await prisma.user.findUnique({
+	const userExists = await prisma.user.findUnique({
 		where: {
-			number: session.user.number,
+			number: user?.number,
 		},
 		select: {
 			username: true,
@@ -21,15 +22,15 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	const query = {
 		params: {
-			user: user?.username,
+			user: userExists?.username,
 		},
 	}
 
 	async function Users() {
 		const usersQuery = await roQuery(
 			`
-			MATCH (:User { name: $user }) <-[r:request]- (u:User)
-			RETURN u.name AS name
+				MATCH (:User { name: $user }) <-[r:request]- (u:User)
+				RETURN u.name AS name
 			`,
 			query,
 			false,
@@ -67,9 +68,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, locals, params }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+	default: async ({ request, locals }) => {
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const action = (data.get("action")?.toString() || "").split(" ")
@@ -83,7 +83,7 @@ export const actions: Actions = {
 
 		const query = {
 			params: {
-				user1: session.user.username,
+				user1: user.username,
 				user2: action[1],
 			},
 		}
@@ -95,8 +95,8 @@ export const actions: Actions = {
 				case "decline":
 					await Query(
 						`
-						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-						DELETE r
+							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+							DELETE r
 						`,
 						query
 					)
@@ -106,11 +106,11 @@ export const actions: Actions = {
 						// Make sure an incoming request exists before accepting
 						await Query(
 							`
-							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-							DELETE r
-							MERGE (u1)
-							MERGE (u2)
-							MERGE (u1) <-[:friends]- (u2)
+								MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+								DELETE r
+								MERGE (u1)
+								MERGE (u2)
+								MERGE (u1) <-[:friends]- (u2)
 							`,
 							query
 							// The direction of the [:friends] relationship matches the direction of the previous [:request] relationship

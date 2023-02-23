@@ -61,9 +61,9 @@
 		<div class="mt-4">
 			<h2 class="h4 light-text">Creations</h2>
 			<div class="row m-0 p-0">
-				{#each data.places as place}
+				{#each data.places as place, num}
 					<div class="col col-4 col-sm-3 col-md-2 text-center">
-						<Place {place} />
+						<Place {place} {num} total={data.places.length} />
 					</div>
 				{/each}
 			</div>
