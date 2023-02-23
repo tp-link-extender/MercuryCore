@@ -1,15 +1,14 @@
 import type { PageServerLoad } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await authoriseUser(locals.validateUser())
+	const user = (await authoriseUser(locals.validateUser())).user
 
 	return {
 		transactions: prisma.transaction.findMany({
 			where: {
-				OR: [{ receiverName: session.user.username }, { senderName: session.user.username }],
+				OR: [{ receiverName: user.username }, { senderName: user.username }],
 			},
 			select: {
 				id: true,

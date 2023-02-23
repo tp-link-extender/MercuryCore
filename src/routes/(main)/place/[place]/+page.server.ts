@@ -24,11 +24,11 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	})
 	console.timeEnd("place")
 	if (getPlace) {
-		const session = await authoriseUser(locals.validateUser())
+		const { session, user } = await authoriseUser(locals.validateUser())
 
 		const query = {
 			params: {
-				user: session.user?.username || "",
+				user: user?.username || "",
 				place: params.place,
 			},
 		}
@@ -48,7 +48,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const session = await authoriseUser(locals.validateUser())
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
@@ -64,7 +64,7 @@ export const actions: Actions = {
 
 		const query = {
 			params: {
-				user: session.user.username,
+				user: user.username,
 				place: params.place, // place slug (unique)
 			},
 		}

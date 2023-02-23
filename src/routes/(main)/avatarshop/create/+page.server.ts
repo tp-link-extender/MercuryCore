@@ -6,7 +6,7 @@ import { fail, redirect } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
-		const session = await authoriseUser(locals.validateUser())
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const name = data.get("name")?.toString()
@@ -19,18 +19,18 @@ export const actions: Actions = {
 		let item
 		try {
 			item = await prisma.$transaction(async tx => {
-				await transaction({ id: session.user.userId }, { number: 1 }, 10, tx)
+				await transaction({ id: user.userId }, { number: 1 }, 10, tx)
 				return await tx.item.create({
 					data: {
 						name,
 						price: price || 0,
 						category: category as ItemCategory,
-						creatorName: session.user.username,
+						creatorName: user.username,
 						mesh: "",
 						texture: "",
 						owners: {
 							connect: {
-								id: session.user.userId,
+								id: user.userId,
 							},
 						},
 					},

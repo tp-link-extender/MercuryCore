@@ -5,13 +5,13 @@ import { Query, roQuery } from "$lib/server/redis"
 import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-		const session = await authoriseUser(locals.validateUser())
+	const user = (await authoriseUser(locals.validateUser())).user
 
 	console.time("requests")
 
-	const user = await prisma.user.findUnique({
+	const userExists = await prisma.user.findUnique({
 		where: {
-			number: session.user?.number,
+			number: user?.number,
 		},
 		select: {
 			username: true,
@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	const query = {
 		params: {
-			user: user?.username,
+			user: userExists?.username,
 		},
 	}
 
@@ -69,7 +69,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
-		const session = await authoriseUser(locals.validateUser())
+		const { session, user } = await authoriseUser(locals.validateUser())
 
 		const data = await request.formData()
 		const action = (data.get("action")?.toString() || "").split(" ")
@@ -83,7 +83,7 @@ export const actions: Actions = {
 
 		const query = {
 			params: {
-				user1: session.user.username,
+				user1: user.username,
 				user2: action[1],
 			},
 		}
