@@ -16,7 +16,6 @@ export const auth = lucia({
 		userId: data.id,
 		number: data.number,
 		bio: data.bio,
-		theme: data.theme,
 		email: data.email,
 		username: data.username,
 		displayname: data.displayname,
@@ -24,8 +23,11 @@ export const auth = lucia({
 		currency: data.currency,
 		currencyCollected: data.currencyCollected,
 		permissionLevel: data.permissionLevel,
+
+		theme: data.theme,
+		animationSettings: data.animationSettings,
 	}),
-	generateCustomUserId: () => crypto.randomUUID(),
+	generateCustomUserId: crypto.randomUUID,
 })
 
 export type Auth = typeof auth

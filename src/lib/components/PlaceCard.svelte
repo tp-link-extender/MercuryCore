@@ -1,14 +1,14 @@
 <script lang="ts">
 	// Link to a place used on Games page.
 
-	import { fade } from "svelte/transition"
+	import fade from "$lib/fade"
 
 	export let place: any
 	export let num: number
 	export let total: number
 </script>
 
-<a in:fade={{ duration: 300, delay: (num * 150) / Math.min(total, 12) }} class="card text-center light-text text-decoration-none h6 rounded-4 m-0" href="/place/{place.slug}">
+<a in:fade={{ num, total }} class="card text-center light-text text-decoration-none h6 rounded-4 m-0" href="/place/{place.slug}">
 	<div class="row">
 		<div class="col col-6">
 			<div id="shadow" class="overflow-hidden bg-black">
