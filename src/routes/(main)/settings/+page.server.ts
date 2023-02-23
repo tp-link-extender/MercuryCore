@@ -21,6 +21,7 @@ export const actions: Actions = {
 
 		if (!entries.displayName) return fail(400, { area: "displayName", msg: "Invalid displayname" })
 		if (!["standard", "darken", "storm", "solar"].includes(entries.theme)) return fail(400, { area: "theme", msg: "Invalid theme" })
+		if (!["on", "off"].includes(entries.animation)) return fail(400, { area: "theme", msg: "Invalid animation settings" })
 
 		await prisma.user.update({
 			where: {

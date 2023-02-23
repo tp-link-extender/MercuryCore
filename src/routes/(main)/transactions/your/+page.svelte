@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from "./$types"
+	import fade from "$lib/fade"
 
 	export let data: PageData
 </script>
@@ -14,8 +15,9 @@
 </h1>
 
 <div class="container-fluid mt-5 mx-0 row">
-	{#each data.transactions as transaction}
-		<div class="light-text col-xxl-3 col-lg-4 col-md-6">
+	{#each data.transactions as transaction, num}
+		<div 
+	in:fade={{ num, total: data.transactions.length, max: 18 }}class="light-text col-xxl-3 col-lg-4 col-md-6">
 			<div class="transaction rounded-2 p-2">
 				<span class="user">
 					<a href="/user/{transaction.sender.number}" class="d-flex text-decoration-none">

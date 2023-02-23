@@ -2,7 +2,8 @@
 	import type { PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
-
+	import fade from "$lib/fade"
+	
 	export let data: PageData
 
 	const statistics = [
@@ -13,7 +14,7 @@
 		["Server Limit", "100"],
 		["Now Playing", "6 players"],
 	]
-
+	
 	const images = ["/place/placeholderImage1.png", "/place/placeholderImage2.png", "/place/placeholderImage3.png"]
 
 	const user = getUser()
@@ -25,15 +26,15 @@
 
 <div class="container">
 	<div class="row">
-		<div id="carousel" class="carousel slide col-md-8 mb-3">
+		<div in:fade id="carousel" class="carousel slide col-md-8 mb-3">
 			<div class="carousel-indicators">
 				{#each images as _, i}
-					<button type="button" data-bs-target="#carousel" data-bs-slide-to={i} aria-label="Slide {i + 1}" class={!i ? "active" : ""} aria-current={!i} />
+					<button type="button" data-bs-target="#carousel" data-bs-slide-to={i} aria-label="Slide {i + 1}" class:active={!i} aria-current={!i} />
 				{/each}
 			</div>
 			<div class="carousel-inner rounded-4">
 				{#each images as src, i}
-					<div class="carousel-item {!i ? 'active' : ''}">
+					<div class="carousel-item" class:active={!i}>
 						<img {src} class="d-block w-100" alt="..." />
 					</div>
 				{/each}

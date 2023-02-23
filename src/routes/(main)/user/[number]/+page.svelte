@@ -4,6 +4,7 @@
 	import Place from "$lib/components/Place.svelte"
 	import Group from "$lib/components/Group.svelte"
 	import { getUser } from "@lucia-auth/sveltekit/client"
+	import fade from "$lib/fade"
 
 	const user = getUser()
 
@@ -44,8 +45,9 @@
 						{data.followingCount}
 					</h3>
 				</a>
-				{#if $user && data.username != $user?.username}
-					<form class="align-self-center ms-auto me-2" method="POST" use:enhance>
+
+				{#if data.username != $user?.username}
+					<form in:fade class="align-self-center ms-auto me-2" method="POST" use:enhance>
 						<button
 							name="action"
 							value={data.friends ? "unfriend" : data.outgoingRequest ? "cancel" : data.incomingRequest ? "accept" : "request"}
@@ -65,7 +67,7 @@
 							<button name="action" value="decline" class="btn btn-danger ms-2"> Decline request </button>
 						{/if}
 					</form>
-					<form class="align-self-center" method="POST" use:enhance>
+					<form in:fade class="align-self-center" method="POST" use:enhance>
 						<button name="action" value={data.following ? "unfollow" : "follow"} class="btn {data.following ? 'btn-danger' : 'btn-primary'}">
 							{#if data.following}
 								Unfollow
@@ -124,8 +126,8 @@
 		<h2 class="h4 mt-5 light-text">Latest feed posts</h2>
 		<div id="feed" class="light-text p-3">
 			<div class="row">
-				{#each data.feed.sort((a, b) => b.posted - a.posted) as status}
-					<div class="p-2 col-md-6 col-sm-12">
+				{#each data.feed.sort((a, b) => b.posted - a.posted) as status, num}
+					<div in:fade={{ num, total: data.feed.length, max: 9 }} class="p-2 col-md-6 col-sm-12">
 						<div class="card h-100">
 							<div class="card-body pb-0">
 								<div id="user" class="d-flex mb-2">
