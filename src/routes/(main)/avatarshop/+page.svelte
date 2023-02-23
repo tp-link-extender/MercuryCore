@@ -1,13 +1,35 @@
 <script lang="ts">
 	import type { PageData, Snapshot } from "./$types"
-	import { enhance } from "$app/forms"
+	import { enhance, deserialize } from "$app/forms"
 	import Item from "$lib/components/Item.svelte"
+	import { onMount } from "svelte"
 
-	let value = ""
+	let query = ""
+	let rendered = false
+	onMount(() => (rendered = true))
 
+	let searchedData: any = []
+
+	// Run function whenever query changes
+	$: (query || rendered) &&
+		(async () => {
+			const formdata = new FormData()
+			formdata.append("query", query)
+
+			const response = await fetch("/avatarshop", {
+				method: "POST",
+				body: formdata,
+			})
+
+			const result: any = deserialize(await response.text())
+			searchedData = result.data.places
+		})()
+
+	// Snapshots allow form values on a page to be restored
+	// if the user navigates away and then back again.
 	export const snapshot: Snapshot = {
-		capture: () => value,
-		restore: v => (value = v),
+		capture: () => query,
+		restore: v => (query = v),
 	}
 
 	export let data: PageData
@@ -30,7 +52,7 @@
 				<div class="card-body">
 					<form use:enhance method="POST" action="/search">
 						<div class="input-group mb-3">
-							<input bind:value type="text" name="query" class="form-control light-text input" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
+							<input bind:value={query} type="text" name="query" class="form-control light-text input" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
 							<input type="hidden" name="category" value="items" />
 							<button class="btn btn-success" type="submit" id="button-addon2">Search</button>
 						</div>
@@ -55,9 +77,12 @@
 		</div>
 		<div class="col">
 			<div class="container d-grid">
-				{#each data.items || [] as item}
-					<Item {item} />
+				{#each query ? searchedData : data.items || [] as item, num}
+					<Item {item} {num} total={data.items.length} />
 				{/each}
+				{#if query && searchedData.length == 0}
+					<h2 class="h3 light-text mt-5">No items found with search term {query}</h2>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -70,11 +95,14 @@
 
 	.container
 		max-width: 100%
+
+	.d-grid
+		width: fit-content
 		font-size: 0.9rem
 
-		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr))
-		column-gap: 0.7rem
-		row-gap: 0.7rem
+		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr))
+		column-gap: 1.3rem
+		row-gap: 1.3rem
 		place-items: center
 	
 	.card

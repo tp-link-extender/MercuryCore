@@ -1,15 +1,11 @@
-import type { PageServerLoad, Actions } from "./$types"
+import type { Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
-import { fail, error, redirect } from "@sveltejs/kit"
-
-export const load: PageServerLoad = async () => {
-	return {}
-}
+import { fail, redirect } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw error(401)
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const name = data.get("name")?.toString()
@@ -37,20 +33,22 @@ export const actions: Actions = {
 			return fail(400, { msg: "A place with this slug already exists" })
 
 		try {
-			await transaction({ id: session.user.userId }, { number: 1 }, 10)
+			await prisma.$transaction(async tx => {
+				await transaction({ id: user.userId }, { number: 1 }, 10, tx)
+
+				await tx.place.create({
+					data: {
+						name,
+						slug,
+						description,
+						image: `/place/placeholderIcon${Math.floor(Math.random() * 3) + 1}.png`,
+						ownerUsername: user.username,
+					},
+				})
+			})
 		} catch (e: any) {
 			return fail(402, { msg: e.message })
 		}
-
-		await prisma.place.create({
-			data: {
-				name,
-				slug,
-				description,
-				image: `/place/placeholderIcon${Math.floor(Math.random() * 3) + 1}.png`,
-				ownerUsername: session.user.username,
-			},
-		})
 
 		throw redirect(302, "/place/" + slug)
 	},

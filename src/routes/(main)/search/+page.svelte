@@ -48,30 +48,30 @@
 		</div>
 	{:else if data.category == "places" && data.places}
 		<div class="grid d-grid">
-			{#each data.places as place}
+			{#each data.places as place, num}
 				<div class="px-2 mb-2">
 					<div class="place">
-						<Place {place} />
+						<Place {place} {num} total={data.places.length} />
 					</div>
 				</div>
 			{/each}
 		</div>
 	{:else if data.category == "items" && data.items}
 		<div class="grid d-grid">
-			{#each data.items as item}
+			{#each data.items as item, num}
 				<div class="px-2 mb-2">
 					<div class="place">
-						<Item {item} />
+						<Item {item} {num} total={data.items.length} />
 					</div>
 				</div>
 			{/each}
 		</div>
 	{:else if data.category == "groups" && data.groups}
 		<div class="grid d-grid">
-			{#each data.groups as group}
+			{#each data.groups as group, num}
 				<div class="px-2 mb-2">
 					<div class="place">
-						<Group {group} />
+						<Group {group} {num} total={data.groups.length} />
 					</div>
 				</div>
 			{/each}

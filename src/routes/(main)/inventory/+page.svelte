@@ -12,8 +12,8 @@
 <h1 class="light-text text-center">Inventory</h1>
 
 <div class="container mt-5 d-grid">
-	{#each data.items as item}
-		<Item {item} />
+	{#each data.items || [] as item, num}
+		<Item {item} {num} total={(data.items || []).length}  />
 	{/each}
 </div>
 

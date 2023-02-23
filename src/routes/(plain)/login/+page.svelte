@@ -83,12 +83,18 @@
 					async ({ result }) =>
 						result.type == "redirect" ? window.location.reload() : await applyAction(result)}
 			>
-				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
+				<!-- 
+					The use:enhance function prevents lucia getUser() still being undefined after login,
+					while still allowing the form to update without reloading when an error occurs.
+				-->
 				<fieldset>
 					{#each fields as [name, label, type]}
 						<label for={name} class="form-label">{label}</label>
 						<div class="mb-4">
-							<!-- bind directive cannot be used here, as type is dynamic, and two-way bindings require the type to be determined at compile -->
+							<!--
+								Bind directive cannot be used here, as type is dynamic, and two-way
+								bindings require the type to be determined at compile time.
+							-->
 							<input
 								on:input={e => {
 									input(name, e)

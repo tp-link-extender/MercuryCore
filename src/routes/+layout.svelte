@@ -6,6 +6,8 @@
 
 	import "/src/global.sass"
 	import "/src/bootstrap.scss"
+
+	// Theme files contain CSS variables that are used throughout the app.
 	import "/src/fa/sass/fontawesome.sass"
 	import "/src/fa/sass/regular.sass"
 	import "/src/fa/sass/solid.sass"
@@ -16,6 +18,7 @@
 
 <slot />
 
+<!-- While a page is loading, a loading spinner can be shown -->
 {#if $navigating}
 	<div class="position-fixed bottom-0 end-0 m-4" in:fade={{ duration: 1500, delay: 100 }} out:fade={{ duration: 100 }}>
 		<h1 class="light-text overflow-hidden">

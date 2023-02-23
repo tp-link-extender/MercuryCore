@@ -1,16 +1,12 @@
-import type { PageServerLoad, Actions } from "./$types"
+import type { Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import type { ItemCategory } from "@prisma/client"
-import { fail, error, redirect } from "@sveltejs/kit"
-
-export const load: PageServerLoad = async () => {
-	return {}
-}
+import { fail, redirect } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw error(401)
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const name = data.get("name")?.toString()
@@ -20,25 +16,32 @@ export const actions: Actions = {
 		if (!name || !category) return fail(400, { msg: "Missing fields" })
 		if (name.length < 3 || name.length > 50 || price < 0 || !["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)) return fail(400, { msg: "Invalid fields" })
 
+		let item
 		try {
-			await transaction({ id: session.user.userId }, { number: 1 }, 10)
+			item = await prisma.$transaction(async tx => {
+				await transaction({ id: user.userId }, { number: 1 }, 10, tx)
+				return await tx.item.create({
+					data: {
+						name,
+						price: price || 0,
+						category: category as ItemCategory,
+						creatorName: user.username,
+						mesh: "",
+						texture: "",
+						owners: {
+							connect: {
+								id: user.userId,
+							},
+						},
+					},
+					select: {
+						id: true,
+					},
+				})
+			})
 		} catch (e: any) {
 			return fail(402, { msg: e.message })
 		}
-
-		const item = await prisma.item.create({
-			data: {
-				name,
-				price: price || 0,
-				category: category as ItemCategory,
-				creatorName: session.user.username,
-				mesh: "",
-				texture: "",
-			},
-			select: {
-				id: true,
-			},
-		})
 
 		throw redirect(302, "/item/" + item.id)
 	},

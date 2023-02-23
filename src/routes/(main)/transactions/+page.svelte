@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from "./$types"
+	import fade from "$lib/fade"
 
 	export let data: PageData
 </script>
@@ -8,53 +9,59 @@
 	<title>Transactions - Mercury</title>
 </svelte:head>
 
-<h1 class="text-center light-text">Transactions</h1>
+<h1 class="text-center light-text">
+	Transactions
+	<a href="/transactions/your" class="btn btn-primary ms-4">Your transactions</a>
+</h1>
 
 <div class="container-fluid mt-5 mx-0 row">
-	{#each data.transactions as transaction}
-	<div class="light-text col-xxl-3 col-lg-4 col-md-6">
-		<div class="transaction rounded-2 p-2">
-			<span class="user">
-				<a href="/user/{transaction.sender.number}" class="d-flex text-decoration-none">
-					<div class="me-2 rounded-circle pfp">
-						<img src={transaction.sender?.image} alt={transaction.sender.displayname} class="rounded-circle rounded-top-0" />
-					</div>
-					<p class="light-text my-auto fs-6 me-4 text-truncate">
-						{transaction.sender.displayname}
-					</p>
-				</a>
-			</span>
+	{#each data.transactions as transaction, num}
+		<div in:fade={{ num, total: data.transactions.length, max: 18 }} class="light-text col-xxl-3 col-lg-4 col-md-6">
+			<div class="transaction rounded-2 p-2">
+				<span class="user">
+					<a href="/user/{transaction.sender.number}" class="d-flex text-decoration-none">
+						<div class="me-2 rounded-circle pfp">
+							<img src={transaction.sender?.image} alt={transaction.sender.displayname} class="rounded-circle rounded-top-0" />
+						</div>
+						<p class="light-text my-auto fs-6 me-4 text-truncate">
+							{transaction.sender.displayname}
+						</p>
+					</a>
+				</span>
 
-			<span class="my-auto text-light d-flex justify-content-center">
-				<span>
-					<span class="text-success">
-						<i class="fa fa-gem" /> {transaction.amountSent}
-					</span>
-					<span class="mx-1">
-						<i class="fa fa-arrow-right mx-1" /> {transaction.taxRate}% tax <i class="fa fa-arrow-right mx-1" />
-					</span>
-					<span class="text-success">
-						<i class="fa fa-gem" /> {Math.round((1 - (transaction.taxRate / 100)) * transaction.amountSent)}
-					</span>
-					<br />
-					<span class="time">
-						{transaction.time.toLocaleString()}
+				<span class="my-auto text-light d-flex justify-content-center">
+					<span>
+						<span class="text-success">
+							<i class="fa fa-gem" />
+							{transaction.amountSent}
+						</span>
+						<span class="mx-1">
+							<i class="fa fa-arrow-right mx-1" />
+							{transaction.taxRate}% tax <i class="fa fa-arrow-right mx-1" />
+						</span>
+						<span class="text-success">
+							<i class="fa fa-gem" />
+							{Math.round((1 - transaction.taxRate / 100) * transaction.amountSent)}
+						</span>
+						<br />
+						<span class="time">
+							{transaction.time.toLocaleString()}
+						</span>
 					</span>
 				</span>
-			</span>
 
-			<span class="user2">
-				<a href="/user/{transaction.receiver.number}" class="d-flex text-decoration-none justify-content-end">
-					<p class="light-text my-auto fs-6 ms-4">
-						{transaction.receiver.displayname}
-					</p>
-					<div class="ms-2 rounded-circle pfp">
-						<img src={transaction.receiver?.image} alt={transaction.receiver.displayname} class="rounded-circle rounded-top-0" />
-					</div>
-				</a>
-			</span>
+				<span class="user2">
+					<a href="/user/{transaction.receiver.number}" class="d-flex text-decoration-none justify-content-end">
+						<p class="light-text my-auto fs-6 ms-4">
+							{transaction.receiver.displayname}
+						</p>
+						<div class="ms-2 rounded-circle pfp">
+							<img src={transaction.receiver?.image} alt={transaction.receiver.displayname} class="rounded-circle rounded-top-0" />
+						</div>
+					</a>
+				</span>
+			</div>
 		</div>
-	</div>
 	{/each}
 </div>
 

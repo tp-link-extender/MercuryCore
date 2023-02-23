@@ -1,7 +1,8 @@
 import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
-import { error, fail, redirect } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("place")
@@ -23,11 +24,11 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	})
 	console.timeEnd("place")
 	if (getPlace) {
-		const session = await locals.validateUser()
+		const { session, user } = await authoriseUser(locals.validateUser())
 
 		const query = {
 			params: {
-				user: session.user?.username || "",
+				user: user?.username || "",
 				place: params.place,
 			},
 		}
@@ -47,8 +48,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
@@ -64,7 +64,7 @@ export const actions: Actions = {
 
 		const query = {
 			params: {
-				user: session.user.username,
+				user: user.username,
 				place: params.place, // place slug (unique)
 			},
 		}
@@ -76,16 +76,16 @@ export const actions: Actions = {
 				case "like":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
+							DELETE r
 						`,
 						query
 					)
 					await Query(
 						`
-						MERGE (u:User { name: $user })
-						MERGE (p:Place { name: $place })
-						MERGE (u) -[:likes]-> (p)
+							MERGE (u:User { name: $user })
+							MERGE (p:Place { name: $place })
+							MERGE (u) -[:likes]-> (p)
 						`,
 						query
 					)
@@ -93,8 +93,8 @@ export const actions: Actions = {
 				case "unlike":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
+							DELETE r
 						`,
 						query
 					)
@@ -102,16 +102,16 @@ export const actions: Actions = {
 				case "dislike":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $place })
+							DELETE r
 						`,
 						query
 					)
 					await Query(
 						`
-						MERGE (u:User { name: $user })
-						MERGE (p:Place { name: $place })
-						MERGE (u) -[:dislikes]-> (p)
+							MERGE (u:User { name: $user })
+							MERGE (p:Place { name: $place })
+							MERGE (u) -[:dislikes]-> (p)
 						`,
 						query
 					)
@@ -119,8 +119,8 @@ export const actions: Actions = {
 				case "undislike":
 					await Query(
 						`
-						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $place })
+							DELETE r
 						`,
 						query
 					)

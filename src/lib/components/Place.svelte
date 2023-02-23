@@ -1,8 +1,14 @@
 <script lang="ts">
+	// Link to a place used on the homepage or on a user's profile.
+
+	import fade from "$lib/fade"
+
 	export let place: any
+	export let num: number
+	export let total: number
 </script>
 
-<a class="rounded-3 text-center light-text text-decoration-none h6" href="/place/{place.slug}">
+<a in:fade={{ num, total }} class="rounded-3 text-center light-text text-decoration-none h6" href="/place/{place.slug}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
 		<img src={place.image} alt={place.name} class="w-100 h-100" />
 	</div>
