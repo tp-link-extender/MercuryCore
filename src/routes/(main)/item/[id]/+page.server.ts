@@ -1,11 +1,12 @@
 import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("item")
-	const session = await locals.validateUser()
+	const session = await authoriseUser(locals.validateUser())
 
 	const item = await prisma.item.findUnique({
 		where: {
@@ -69,8 +70,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+		const session = await authoriseUser(locals.validateUser())
 
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""

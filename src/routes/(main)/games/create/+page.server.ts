@@ -1,11 +1,11 @@
 import type { Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import { fail, error, redirect } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw error(401)
+		const session = await authoriseUser(locals.validateUser())
 
 		const data = await request.formData()
 		const name = data.get("name")?.toString()

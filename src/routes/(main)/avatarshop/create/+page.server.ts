@@ -1,12 +1,12 @@
 import type { Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import type { ItemCategory } from "@prisma/client"
-import { fail, error, redirect } from "@sveltejs/kit"
+import { fail, redirect } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw error(401)
+		const session = await authoriseUser(locals.validateUser())
 
 		const data = await request.formData()
 		const name = data.get("name")?.toString()
@@ -14,13 +14,7 @@ export const actions: Actions = {
 		const category = data.get("category")?.toString()
 
 		if (!name || !category) return fail(400, { msg: "Missing fields" })
-		if (
-			name.length < 3 ||
-			name.length > 50 ||
-			price < 0 ||
-			!["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)
-		)
-			return fail(400, { msg: "Invalid fields" })
+		if (name.length < 3 || name.length > 50 || price < 0 || !["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)) return fail(400, { msg: "Invalid fields" })
 
 		let item
 		try {

@@ -1,10 +1,10 @@
 import type { PageServerLoad } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validateUser()
-	if (!session.session) throw redirect(302, "/login")
+	const session = await authoriseUser(locals.validateUser())
 
 	return {
 		transactions: prisma.transaction.findMany({
