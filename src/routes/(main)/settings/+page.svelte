@@ -61,6 +61,19 @@
 					</div>
 					<br />
 					<div class="row">
+						<label for="animation" class="col-md-3 col-form-label text-md-right">Animation settings</label>
+						<div class="col-md-8">
+							<select id="animation" required name="animation" value={$user?.animationSettings || "on"} class="form-select {form?.area == 'animation' ? 'is-invalid' : 'valid'}">
+								<option value="on">On</option>
+								<option value="off">Off</option>
+							</select>
+							{#if form?.area == "animation"}
+								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
+							{/if}
+						</div>
+					</div>
+					<br />
+					<div class="row">
 						<label for="displayName" class="col-md-3 col-form-label text-md-right">Display Name</label>
 						<div class="col-md-8">
 							<input

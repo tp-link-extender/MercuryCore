@@ -1,9 +1,29 @@
 <script lang="ts">
 	import type { PageData, Snapshot } from "./$types"
-	import { enhance } from "$app/forms"
+	import { enhance, deserialize } from "$app/forms"
 	import Group from "$lib/components/Group.svelte"
+	import { onMount } from "svelte"
 
 	let query = ""
+	let rendered = false
+	onMount(() => (rendered = true))
+
+	let searchedData: any = []
+
+	// Run function whenever query changes
+	$: (query || rendered) &&
+		(async () => {
+			const formdata = new FormData()
+			formdata.append("query", query)
+
+			const response = await fetch("/groups", {
+				method: "POST",
+				body: formdata,
+			})
+
+			const result: any = deserialize(await response.text())
+			searchedData = result.data.places
+		})()
 
 	// Snapshots allow form values on a page to be restored
 	// if the user navigates away and then back again.
@@ -41,9 +61,14 @@
 	</div>
 	<div class="col pe-0">
 		<div class="container d-grid p-0">
-			{#each data.groups || [] as group, num}
-				<Group {group} {num} total={data.groups.length} />
-			{/each}
+			<div class="container d-grid">
+				{#each query ? searchedData : data.groups || [] as group, num}
+					<Group {group} {num} total={data.groups.length} />
+				{/each}
+				{#if query && searchedData.length == 0}
+					<h2 class="h3 light-text mt-5">No groups found with search term {query}</h2>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>
@@ -55,10 +80,11 @@
 
 	.container
 		max-width: 100%
-		font-size: 0.9rem
 
 	.d-grid
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
+		font-size: 0.9rem
+
+		grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr))
 		column-gap: 0.7rem
 		row-gap: 0.7rem
 		place-items: center

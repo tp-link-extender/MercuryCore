@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fade } from "svelte/transition"
+	import fade from "$lib/fade"
 
 	const statusColours: any = {
 		Online: "bg-info",
@@ -12,7 +12,7 @@
 	export let total: number
 </script>
 
-<a in:fade={{ duration: 300, delay: (num * 150) / Math.min(total, 12) }} class="card light-text h-100 w-100 d-flex flex-row" href="/user/{user.number}">
+<a in:fade={{ num, total, max: 12 }} class="card light-text h-100 w-100 d-flex flex-row" href="/user/{user.number}">
 	<div class="p-4">
 		<div class="image-background rounded-circle">
 			<img src={user.image} alt={user.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />
