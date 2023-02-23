@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Component for a group, used on the
 	// groups page and on a user's profile.
-	
+
 	import { fade } from "svelte/transition"
 
 	export let group: any

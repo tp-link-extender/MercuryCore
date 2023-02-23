@@ -95,11 +95,14 @@
 
 	.container
 		max-width: 100%
+
+	.d-grid
+		width: fit-content
 		font-size: 0.9rem
 
-		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr))
-		column-gap: 0.7rem
-		row-gap: 0.7rem
+		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr))
+		column-gap: 1.3rem
+		row-gap: 1.3rem
 		place-items: center
 	
 	.card
