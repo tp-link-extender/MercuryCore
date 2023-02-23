@@ -1,9 +1,29 @@
 <script lang="ts">
 	import type { PageData, Snapshot } from "./$types"
-	import { enhance } from "$app/forms"
+	import { enhance, deserialize } from "$app/forms"
 	import PlaceCard from "$lib/components/PlaceCard.svelte"
+	import { onMount } from "svelte"
 
 	let query = ""
+	let rendered = false
+	onMount(() => (rendered = true))
+
+	let searchedData: any = []
+
+	// Run function whenever query changes
+	$: (query || rendered) &&
+		(async () => {
+			const formdata = new FormData()
+			formdata.append("query", query)
+
+			const response = await fetch("/games", {
+				method: "POST",
+				body: formdata,
+			})
+
+			const result: any = deserialize(await response.text())
+			searchedData = result.data.places
+		})()
 
 	// Snapshots allow form values on a page to be restored
 	// if the user navigates away and then back again.
@@ -62,9 +82,12 @@
 	</div>
 	<div class="col pe-0">
 		<div class="container d-grid p-0">
-			{#each data.places || [] as place, num}
+			{#each query ? searchedData : data.places || [] as place, num}
 				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
+			{#if query && searchedData.length == 0}
+				<h2 class="h3 light-text mt-5">No games found with search term {query}</h2>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -76,9 +99,11 @@
 
 	.container
 		max-width: 100%
-		font-size: 0.9rem
 
 	.d-grid
+		width: fit-content
+		font-size: 0.9rem
+
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
 		column-gap: 0.7rem
 		row-gap: 0.7rem

@@ -2,6 +2,7 @@
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
 	import { onMount } from "svelte"
+	import { fade } from "svelte/transition"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	let search = ""
@@ -70,7 +71,7 @@
 							>
 						</div>
 						{#if search}
-							<div id="results" class="position-absolute card p-2 mt-2">
+							<div transition:fade={{ duration: 150 }} id="results" class="position-absolute card p-2 mt-2">
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=users" title="Search Users">Search <b>{search}</b> in Users</a>
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=places" title="Search Places">Search <b>{search}</b> in Places</a>
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=items" title="Search Avatar shop">Search <b>{search}</b> in Avatar shop</a>

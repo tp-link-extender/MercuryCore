@@ -1,11 +1,12 @@
 import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
-import { error, fail, redirect } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("item")
-	const session = await locals.validateUser()
+		const { session, user } = await authoriseUser(locals.validateUser())
 
 	const item = await prisma.item.findUnique({
 		where: {
@@ -37,7 +38,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		select: {
 			owners: {
 				where: {
-					id: session?.user?.userId,
+					id: user?.userId,
 				},
 			},
 		},
@@ -48,7 +49,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	if (item) {
 		const query = {
 			params: {
-				user: session.user?.username,
+				user: user?.username,
 				itemid: params.id,
 			},
 		}
@@ -69,8 +70,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
@@ -86,7 +86,7 @@ export const actions: Actions = {
 
 		const query = {
 			params: {
-				user: session.user.username,
+				user: user.username,
 				itemid: params.id, // item id (unique)
 			},
 		}
@@ -104,7 +104,7 @@ export const actions: Actions = {
 						creator: true,
 						owners: {
 							where: {
-								id: session?.user?.userId,
+								id: user?.userId,
 							},
 						},
 					},
@@ -114,7 +114,7 @@ export const actions: Actions = {
 
 				if (item.price != 0)
 					try {
-						await transaction({ id: session.user.userId }, { id: item.creator.id }, item.price)
+						await transaction({ id: user.userId }, { id: item.creator.id }, item.price)
 					} catch (e: any) {
 						console.log(e.message)
 						return fail(400, { msg: e.message })
@@ -122,7 +122,7 @@ export const actions: Actions = {
 
 				await prisma.user.update({
 					where: {
-						id: session.user.userId,
+						id: user.userId,
 					},
 					data: {
 						itemsOwned: {
@@ -145,7 +145,7 @@ export const actions: Actions = {
 						creator: true,
 						owners: {
 							where: {
-								id: session?.user?.userId,
+								id: user?.userId,
 							},
 						},
 					},
@@ -155,7 +155,7 @@ export const actions: Actions = {
 
 				await prisma.user.update({
 					where: {
-						id: session.user.userId,
+						id: user.userId,
 					},
 					data: {
 						itemsOwned: {

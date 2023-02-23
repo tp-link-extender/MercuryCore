@@ -1,14 +1,15 @@
 import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
-import { error, fail, redirect } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("user")
 	if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
 
-	const user = await prisma.user.findUnique({
+	const userExists = await prisma.user.findUnique({
 		where: {
 			number,
 		},
@@ -26,31 +27,31 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			},
 		},
 	})
-	if (user) {
-		const session = await locals.validateUser()
+	if (userExists) {
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const query = {
 			params: {
-				user1: session.user?.username || "",
-				user2: user.username,
+				user1: user?.username || "",
+				user2: userExists.username,
 			},
 		}
 		const query2 = {
 			params: {
-				user: user.username,
+				user: userExists.username,
 			},
 		}
 
 		console.timeEnd("user")
 		return {
-			number: user.number,
-			username: user.username,
-			displayname: user.displayname,
-			bio: user.bio,
-			img: user.image,
+			number: userExists.number,
+			username: userExists.username,
+			displayname: userExists.displayname,
+			bio: userExists.bio,
+			img: userExists.image,
 			places: findPlaces({
 				where: {
-					ownerUsername: user.username,
+					ownerUsername: userExists.username,
 				},
 			}),
 			groups: findGroups({
@@ -71,7 +72,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					ownerUsername: user.username,
 				},
 			}),
-			feed: user.posts,
+			feed: userExists.posts,
 			friendCount: roQuery("RETURN SIZE((:User) -[:friends]- (:User { name: $user }))", query2, true),
 			followerCount: roQuery("RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))", query2, true),
 			followingCount: roQuery("RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))", query2, true),
@@ -88,13 +89,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
 		const number = parseInt(params.number)
 
-		const user = await prisma.user.findUnique({
+		const userExists = await prisma.user.findUnique({
 			where: {
 				number,
 			},
@@ -106,17 +106,17 @@ export const actions: Actions = {
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
 
-		const user2 = await prisma.user.findUnique({
+		const user2Exists = await prisma.user.findUnique({
 			where: {
-				username: user?.username,
+				username: userExists?.username,
 			},
 		})
-		if (!user2) return fail(400, { msg: "User not found" })
+		if (!user2Exists) return fail(400, { msg: "User not found" })
 
 		const query = {
 			params: {
-				user1: session.user.username,
-				user2: user?.username,
+				user1: user.username,
+				user2: userExists?.username,
 			},
 		}
 

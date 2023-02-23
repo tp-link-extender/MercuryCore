@@ -1,16 +1,17 @@
 import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
-import { error, fail, redirect } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-	const session = await locals.validateUser()
+	const user = (await authoriseUser(locals.validateUser())).user
 
 	console.time("requests")
 
-	const user = await prisma.user.findUnique({
+	const userExists = await prisma.user.findUnique({
 		where: {
-			number: session.user?.number,
+			number: user?.number,
 		},
 		select: {
 			username: true,
@@ -21,7 +22,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	const query = {
 		params: {
-			user: user?.username,
+			user: userExists?.username,
 		},
 	}
 
@@ -67,9 +68,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, locals, params }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+	default: async ({ request, locals }) => {
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const action = (data.get("action")?.toString() || "").split(" ")
@@ -83,7 +83,7 @@ export const actions: Actions = {
 
 		const query = {
 			params: {
-				user1: session.user.username,
+				user1: user.username,
 				user2: action[1],
 			},
 		}
