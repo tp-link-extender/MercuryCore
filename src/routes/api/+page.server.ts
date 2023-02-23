@@ -21,26 +21,26 @@ export const actions: Actions = {
 	},
 
 	stipend: async ({ locals }) => {
-		const session = await authoriseUser(locals.validateUser())
+		const user = (await authoriseUser(locals.validateUser())).user
 
-		const user = await prisma.user.findUnique({
+		const userExists = await prisma.user.findUnique({
 			where: {
-				id: session.user?.userId,
+				id: user?.userId,
 			},
 			select: {
 				currencyCollected: true,
 			},
 		})
 
-		if (user) {
+		if (userExists) {
 			const stipendTime = Number((await client.get("stipendTime")) || 12)
-			if (user.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * stipendTime) > 0) return fail(400)
+			if (userExists.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * stipendTime) > 0) return fail(400)
 
 			const increment = Number((await client.get("dailyStipend")) || 10)
 
 			await prisma.user.update({
 				where: {
-					id: session.user?.userId,
+					id: user?.userId,
 				},
 				data: {
 					currencyCollected: new Date(),

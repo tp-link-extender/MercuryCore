@@ -4,11 +4,11 @@ import { prisma } from "$lib/server/prisma"
 
 export const load: PageServerLoad = async ({ locals }) => {
 	console.time("inventory")
-	const session = await authoriseUser(locals.validateUser())
+	const user = (await authoriseUser(locals.validateUser())).user
 
-	const user = await prisma.user.findUnique({
+	const userExists = await prisma.user.findUnique({
 		where: {
-			number: session.user?.number,
+			number: user?.number,
 		},
 		select: {
 			itemsOwned: true,
@@ -18,6 +18,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 	console.timeEnd("inventory")
 
 	return {
-		items: user?.itemsOwned,
+		items: userExists?.itemsOwned,
 	}
 }

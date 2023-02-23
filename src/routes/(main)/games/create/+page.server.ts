@@ -1,11 +1,11 @@
 import type { Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
-import { fail, error, redirect } from "@sveltejs/kit"
+import { fail, redirect } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
-		const session = await authoriseUser(locals.validateUser())
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const name = data.get("name")?.toString()
@@ -34,7 +34,7 @@ export const actions: Actions = {
 
 		try {
 			await prisma.$transaction(async tx => {
-				await transaction({ id: session.user.userId }, { number: 1 }, 10, tx)
+				await transaction({ id: user.userId }, { number: 1 }, 10, tx)
 
 				await tx.place.create({
 					data: {
@@ -42,7 +42,7 @@ export const actions: Actions = {
 						slug,
 						description,
 						image: `/place/placeholderIcon${Math.floor(Math.random() * 3) + 1}.png`,
-						ownerUsername: session.user.username,
+						ownerUsername: user.username,
 					},
 				})
 			})
