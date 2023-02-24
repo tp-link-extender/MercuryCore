@@ -46,7 +46,7 @@
 					<div class="pfp rounded-circle">
 						<img src={$user?.image} alt="You" class="rounded-circle img-fluid rounded-top-0" />
 					</div>
-					<h1 class="text-center light-text inline">
+					<h1 class="light-text inline">
 						{greets[Math.floor(Math.random() * greets.length)]}
 					</h1>
 				</a>
@@ -72,7 +72,7 @@
 									<span class="pfp rounded-circle">
 										<img src={status.authorUser?.image} alt={status.authorUser?.displayname} class="rounded-circle img-fluid rounded-top-0" />
 									</span>
-									<span class="fw-bold ms-3 light-text">{status.authorUser?.displayname}</span>
+									<span class="displayname fw-bold ms-3 light-text">{status.authorUser?.displayname}</span>
 									<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
 								</a>
 								<p class="text-start">
@@ -103,7 +103,9 @@
 										</span>
 									{/if}
 								</div>
-								{friend.displayname}
+								<p class="friendname displayname" class:small={friend.displayname.length > 15}>
+									{friend.displayname}
+								</p>
 							</a>
 						{/each}
 					</div>
@@ -162,15 +164,30 @@
 		.pfp
 			background: var(--accent)
 			width: 6rem
+			min-width: 6rem
 			height: 6rem !important
-		h1
-			margin: auto 2rem
+
+	h1
+		margin: auto 2rem
 
 	.col2
 		margin-top: 7rem
 
 	.card
 		background: var(--accent)
+
+	.displayname
+		max-width: 50%
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+
+	.small
+		font-size: 0.9rem
+
+	.friendname
+		max-width: 7rem
+		max-height: 3rem
 
 	.date
 		min-width: 5rem
@@ -195,6 +212,7 @@
 			background: var(--accent2)
 			img
 				width: 2rem
+				min-width: 2rem
 
 	.home-row
 		overflow-x: auto

@@ -107,14 +107,14 @@
 						</ul>
 					</li>
 					<li class="dropdown ms-2">
-						<a href="/user/{$user.number}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
+						<a href="/user/{$user.number}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1 light-text">
 							<div id="pfp" class="mx-2 rounded-circle">
 								<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 							</div>
-							<p class="light-text my-auto fs-6 me-4">
+							<p id="displayname" class="light-text my-auto fs-6">
 								{$user?.displayname}
-								<i class="fa fa-ellipsis-vertical ms-2" />
 							</p>
+							<i class="fa fa-ellipsis-vertical ms-2 my-auto fs-6 me-4" />
 						</a>
 
 						<ul class="dropdown-menu mt-2">
@@ -178,6 +178,13 @@
 
 	.loggedin
 		padding: 0
+
+	#displayname
+		max-width: 10rem
+		min-width: 1rem
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
 
 	.offcanvas-title
 		text-decoration: none

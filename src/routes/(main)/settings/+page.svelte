@@ -83,6 +83,8 @@
 								name="displayName"
 								value={$user?.displayname}
 								class="form-control {form?.area == 'displayName' ? 'is-invalid' : 'valid'}"
+								minlength="3"
+								maxlength="30"
 							/>
 							{#if form?.area == "displayName"}
 								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
