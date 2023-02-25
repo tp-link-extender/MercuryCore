@@ -42,8 +42,8 @@
 	})
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-dark position-fixed w-100 px-4 py-1">
-	<a class="navbar-brand light-text me-5" href="/">Mercury</a>
+<nav class="navbar navbar-expand-lg navbar-dark w-100 px-4 py-1">
+	<a class="navbar-brand light-text me-4" href="/">Mercury</a>
 	<button class="navbar-toggler" type="button" title="Open sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar-expand-lg" aria-controls="offcanvasNavbar-expand-lg">
 		<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-lg" />
 	</button>
@@ -55,11 +55,11 @@
 		<div class="offcanvas-body d-flex">
 			{#if $user}
 				<div class="navbar-nav">
-					<a href="/games" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Games</a>
-					<a href="/avatarshop" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Avatar Shop</a>
-					<a href="/groups" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Groups</a>
+					<a class="btn mt-1 px-1 shadow-none light-text nav-item" href="/games">Games</a>
+					<a class="btn mt-1 px-1 shadow-none light-text nav-item" href="/avatarshop">Avatar Shop</a>
+					<a class="btn mt-1 px-1 shadow-none light-text nav-item" href="/groups">Groups</a>
 					{#if $user?.permissionLevel == "Administrator"}
-						<a href="/admin" class="nav-link mt-1 shadow-none mr-0 light-text nav-item">Admin</a>
+						<a class="btn mt-1 px-1 shadow-none light-text nav-item" href="/admin">Admin</a>
 					{/if}
 				</div>
 				<div id="search" class="navbar-nav ms-4 me-auto">
@@ -196,6 +196,12 @@
 		-webkit-backdrop-filter: blur(8px)
 		border-bottom: 1px solid #fff1
 		background: #0003
+
+	.navbar-nav
+		.btn
+			border: none
+			&:hover
+				color: var(--grey-text) !important
 
 	.offcanvas
 		box-shadow: none !important

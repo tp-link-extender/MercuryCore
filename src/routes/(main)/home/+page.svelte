@@ -40,7 +40,7 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col col-12 col-xxl-4 col-xl-5 col-md-6 col-sm-12">
+		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
 			<div class="top d-flex px-2">
 				<a href="/user/{$user?.number}" class="text-decoration-none d-flex">
 					<div class="pfp rounded-circle">
@@ -67,13 +67,13 @@
 					{#each data.feed.sort((a, b) => b.posted - a.posted) as status, num}
 						<!-- |global is not mentioned anywhere in the Svelte docs, yet it is exactly what is needed here. -->
 						<div in:fade|global={{ num, total: data.feed.length }} class="card mb-2">
-							<div class="card-body pb-0">
+							<div class="card-body pb-0 p-3">
 								<a class="d-flex mb-2 text-decoration-none user" href="/user/{status.authorUser?.number}">
 									<span class="pfp rounded-circle">
 										<img src={status.authorUser?.image} alt={status.authorUser?.displayname} class="rounded-circle img-fluid rounded-top-0" />
 									</span>
 									<span class="displayname fw-bold ms-3 light-text">{status.authorUser?.displayname}</span>
-									<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
+									<small class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</small>
 								</a>
 								<p class="text-start">
 									{status.content}
@@ -127,28 +127,26 @@
 			</div>
 		</div>
 
-		<div class="col col-xxl-2">
-			<div class="col2">
-				<h2 class="h4 light-text">News</h2>
-				<div id="news" class="card">
-					<div class="card-body row">
-						{#each news as thing, num}
-							<div in:fade={{ num, total: news.length }} class="p-1 col-xxl-12 col-lg-3 col-sm-4 col-6">
-								<div class="card light-text h-100">
-									<div class="card-body p-2">
-										<div class="mb-2 light-text">
-											<div class="fw-bold text-center text-truncate">{thing.title}</div>
-											<div class="date ms-auto fw-italic text-center">{thing.time.toLocaleString()}</div>
-										</div>
-										<div class="gradient position-absolute bottom-0 rounded-2" />
-										<p class="content mb-0 p-1">
-											{thing.content}
-										</p>
+		<div class="mt-5">
+			<h2 class="h4 light-text">News</h2>
+			<div id="news" class="card col-md-9 col-12">
+				<div class="card-body row">
+					{#each news as thing, num}
+						<div in:fade={{ num, total: news.length }} class="p-1 col-xl-3 col-lg-4 col-6">
+							<div class="card light-text h-100">
+								<div class="card-body p-2">
+									<div class="mb-2 light-text">
+										<div class="fw-bold text-center text-truncate">{thing.title}</div>
+										<div class="date ms-auto fw-italic text-center">{thing.time.toLocaleString()}</div>
 									</div>
+									<div class="gradient position-absolute bottom-0 rounded-2" />
+									<p class="content mb-0 p-1">
+										{thing.content}
+									</p>
 								</div>
 							</div>
-						{/each}
-					</div>
+						</div>
+					{/each}
 				</div>
 			</div>
 		</div>
@@ -156,9 +154,6 @@
 </div>
 
 <style lang="sass">
-	.container
-		max-width: 120rem
-
 	.top
 		width: 100vw
 		.pfp

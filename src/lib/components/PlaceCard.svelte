@@ -38,6 +38,7 @@
 
 <style lang="sass">
 	.card
+		max-width: 22rem
 		border: none
 		background: var(--darker)
 	a
