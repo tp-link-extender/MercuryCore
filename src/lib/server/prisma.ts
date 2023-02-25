@@ -1,7 +1,7 @@
 // A collection of functions useful for Prisma, as well
 // as only needing to initialise PrismaClient once.
 
-import { PrismaClient, type Group } from "@prisma/client"
+import { PrismaClient, type Group, type Item } from "@prisma/client"
 import { client, roQuery } from "./redis"
 
 export const prisma = new PrismaClient()
@@ -55,7 +55,7 @@ export async function findItems(query: any) {
 		)
 		item["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
-	return items
+	return items as (Item & { ratio: any })[]
 }
 
 // Required because members and followers are stored in RedisGraph,
