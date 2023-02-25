@@ -30,6 +30,12 @@
 		{ time: new Date(), title: "Mercury is now love!", content: "Yes" },
 	]
 
+	const facts = [
+		`You joined mercury on ${$user?.accountCreated.toLocaleString().substring(0, 10)}!`,
+		// Add "st", "nd", "rd", "th" to number
+		`You are the ${$user?.number}${["st", "nd", "rd"][($user?.number) % 10 - 1] || "th"} user to join Mercury!`,
+	]
+
 	export let data: PageData
 	export let form: any
 </script>
@@ -127,9 +133,9 @@
 			</div>
 		</div>
 
-		<div class="mt-5">
+		<div class="mt-5 col-md-9 col-12">
 			<h2 class="h4 light-text">News</h2>
-			<div id="news" class="card col-md-9 col-12">
+			<div id="news" class="card">
 				<div class="card-body row">
 					{#each news as thing, num}
 						<div in:fade={{ num, total: news.length }} class="p-1 col-xl-3 col-lg-4 col-6">
@@ -148,6 +154,13 @@
 						</div>
 					{/each}
 				</div>
+			</div>
+		</div>
+		<div class="mt-5 col-md-3 col-6">
+			<h2 class="h4 light-text">Random fact</h2>
+			<div id="fact" class="card card-body light-text h5">
+				{facts[Math.floor(Math.random() * facts.length)]}<br />
+				<br />
 			</div>
 		</div>
 	</div>
@@ -195,8 +208,9 @@
 		max-height: 5rem
 		overflow: hidden
 
-	#feed, #news
+	#feed, #news, #fact
 		background: var(--darker)
+	#feed, #news
 		max-height: 55vh
 		overflow-y: auto
 		overflow-x: hidden
