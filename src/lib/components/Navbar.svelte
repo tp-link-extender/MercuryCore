@@ -58,7 +58,7 @@
 			<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 			<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
 		</div>
-		<div id="nav1" class="offcanvas-body d-flex px-4 pt-1">
+		<div id="nav1" class="offcanvas-body px-4 pt-1 d-flex">
 			<a class="navbar-brand light-text me-4" href="/">Mercury</a>
 			{#if $user}
 				<div class="navbar-nav">
@@ -88,8 +88,8 @@
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
-					<li class="dropdown me-2 pt-1">
-						<a  href="/transactions" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-link text-success">
+					<li class="dropdown ms-3 me-2  pt-1">
+						<a href="/transactions" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
 							<span class="h6 text-success">
 								{$user.currency}
@@ -112,8 +112,8 @@
 							</li>
 						</ul>
 					</li>
-					<li class="row row-cols-lg-auto">
-						<a id="user"href="/user/{$user.number}" class="btn p-0 d-flex text-decoration-none mb-2 mx-3 light-text">
+					<li class="d-flex">
+						<a id="user" href="/user/{$user.number}" class="btn p-0 d-flex text-decoration-none mb-2 mx-3 light-text w-50">
 							<div id="pfp" class="mx-2 rounded-circle">
 								<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 							</div>
@@ -121,7 +121,7 @@
 								{$user?.displayname}
 							</p>
 						</a>
-						<form use:enhance method="POST" action="/api?/logout" class="d-inline">
+						<form use:enhance method="POST" action="/api?/logout" class="d-inline w-50">
 							<button id="logout" type="submit" class="btn btn-outline-danger my-auto"><b><i class="fa fa-arrow-right-from-bracket me-1" /> Log out</b></button>
 						</form>
 					</li>
@@ -138,15 +138,15 @@
 			{/if}
 		</div>
 		{#if $user}
-			<nav id="nav2" class="navbar navbar-expand-sm navbar-dark px-4 py-0 w-100">
-				<div class="navbar-nav w-100">
+			<nav id="nav2" class="navbar navbar-dark px-4 py-0 w-100">
+				<div id="nav2-1" class="navbar-nav w-50">
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">Profile</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/inventory">Inventory</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/requests">Friend requests</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">Avatar</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">My Groups</a>
 				</div>
-				<div class="navbar-nav">
+				<div id="nav2-2" class="navbar-nav w-50 d-flex justify-content-end">
 					<a class="light-text btn nav-item m-0 py-1" href="/transactions">Transactions</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/settings">Settings</a>
 				</div>
@@ -176,17 +176,27 @@
 				width: 100%
 				text-align: start
 
-			.loggedin
-				margin-bottom: 1rem
+		.loggedin
+			margin-bottom: 1rem
+			order: 1
 
 		.navbar-brand
 			display: none
+
+		#user
+			margin-left: 0.5rem !important
+			margin-bottom: 1.5rem !important
 		
 		#search
 			width: 100%
 			margin: 0 !important
 			form
 				margin: 1rem !important
+
+		#nav2-1
+			margin-top: auto
+		#nav2-2
+			display: none !important
 
 	@media only screen and (min-width: 992px)
 		.loggedin
@@ -196,10 +206,25 @@
 		background: #fff1
 		@media only screen and (max-width: 991px)
 			background: var(--background)
+			min-height: fit-content !important
+			overflow-x: hidden
 
 	#nav2
 		background: #0003
 		z-index: 1
+		@media only screen and (max-width: 991px)
+			background: var(--background)
+			min-height: 43vh !important
+			flex-direction: column
+			padding: 1.5rem !important
+
+			a
+				text-align: left
+			div
+				width: 100% !important
+
+	input
+		background: var(--background) !important
 
 	#logout, #user
 		margin-top: 0.1rem !important
@@ -248,7 +273,7 @@
 	#results
 		z-index: 5
 		background: var(--darker)
-		min-width: 15rem
+		min-width: 25vw
 		a:hover
 				background: var(--accent2)
 
