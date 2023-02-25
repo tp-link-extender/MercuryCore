@@ -39,56 +39,53 @@
 	<title>Groups - Mercury</title>
 </svelte:head>
 
-<h1 class="light-text text-center">
-	Groups
-	<a href="/groups/create" class="btn btn-primary ms-4">Create</a>
-</h1>
-
-<div class="container row">
-	<div class="col-lg-4 col-xl-3 mb-4 mb-auto pe-0 pb-3">
-		<div class="card rounded-none">
-			<div class="card-header light-text px-3 py-2"><i class="fa fa-magnifying-glass" /> Filter</div>
-			<div class="card-body">
-				<form use:enhance method="POST" action="/search">
-					<div class="input-group mb-3">
-						<input bind:value={query} type="text" name="query" class="form-control light-text input" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
-						<input type="hidden" name="category" value="groups" />
-						<button class="btn btn-success" type="submit" id="button-addon2">Search</button>
-					</div>
-				</form>
-			</div>
+<div class="container">
+	<div class="row mb-5">
+		<h1 class="col-6 light-text">
+			Groups
+			<a href="/groups/create" class="btn btn-primary ms-4">Create</a>
+		</h1>
+		<div class="col-4 ms-4">
+			<form use:enhance method="POST" action="/search" class="row">
+				<div class="input-group">
+					<input
+						bind:value={query}
+						type="text"
+						name="query"
+						class="form-control light-text valid"
+						placeholder="Search for a group"
+						aria-label="Search for a group"
+						aria-describedby="button-addon2"
+					/>
+					<input type="hidden" name="category" value="places" />
+					<button class="btn btn-success" type="submit" id="button-addon2"><i class="fa fa-magnifying-glass" /></button>
+				</div>
+			</form>
 		</div>
 	</div>
-	<div class="col pe-0">
-		<div class="container d-grid p-0">
-			<div class="container d-grid">
-				{#each query ? searchedData : data.groups || [] as group, num}
-					<Group {group} {num} total={data.groups.length} />
-				{/each}
-				{#if query && searchedData.length == 0}
-					<h2 class="h3 light-text mt-5">No groups found with search term {query}</h2>
-				{/if}
-			</div>
+	<div class="row">
+		<div class="container d-grid m-0">
+			{#each query ? searchedData : data.groups || [] as group, num}
+				<Group {group} {num} total={data.groups.length} />
+			{/each}
+			{#if query && searchedData.length == 0}
+				<h2 class="h5 light-text mt-5">No groups found with search term {query}</h2>
+			{/if}
 		</div>
 	</div>
 </div>
 
 <style lang="sass">
-	.input
+	input
 		background-color: var(--accent)
 		border-color: var(--accent2)
 
-	.container
-		max-width: 100%
-
 	.d-grid
+		width: fit-content
 		font-size: 0.9rem
 
 		grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr))
 		column-gap: 0.7rem
 		row-gap: 0.7rem
 		place-items: center
-	
-	.card
-		background: var(--darker)
 </style>
