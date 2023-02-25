@@ -42,36 +42,43 @@
 	})
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-dark w-100 px-4 py-1">
-	<a class="navbar-brand light-text me-4" href="/">Mercury</a>
-	<button class="navbar-toggler" type="button" title="Open sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar-expand-lg" aria-controls="offcanvasNavbar-expand-lg">
+<nav class="navbar navbar-expand-lg navbar-dark py-0">
+	<button
+		class="navbar-toggler ms-auto my-1 me-3"
+		type="button"
+		title="Open sidebar"
+		data-bs-toggle="offcanvas"
+		data-bs-target="#offcanvasNavbar-expand-lg"
+		aria-controls="offcanvasNavbar-expand-lg"
+	>
 		<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-lg" />
 	</button>
-	<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-lg" aria-labelledby="offcanvasNavbar-expand-lg">
+	<div class="offcanvas offcanvas-start border-0" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-lg" aria-labelledby="offcanvasNavbar-expand-lg">
 		<div class="offcanvas-header">
 			<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 			<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
 		</div>
-		<div class="offcanvas-body d-flex">
+		<div id="nav1" class="offcanvas-body d-flex px-4 pt-1">
+			<a class="navbar-brand light-text me-4" href="/">Mercury</a>
 			{#if $user}
 				<div class="navbar-nav">
-					<a class="btn mt-1 px-1 shadow-none light-text nav-item" href="/games">Games</a>
-					<a class="btn mt-1 px-1 shadow-none light-text nav-item" href="/avatarshop">Avatar Shop</a>
-					<a class="btn mt-1 px-1 shadow-none light-text nav-item" href="/groups">Groups</a>
+					<a class="btn mt-1 px-1 light-text nav-item" href="/games">Games</a>
+					<a class="btn mt-1 px-1 light-text nav-item" href="/avatarshop">Avatar Shop</a>
+					<a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a>
 					{#if $user?.permissionLevel == "Administrator"}
-						<a class="btn mt-1 px-1 shadow-none light-text nav-item" href="/admin">Admin</a>
+						<a class="btn mt-1 px-1 light-text nav-item" href="/admin">Admin</a>
 					{/if}
 				</div>
-				<div id="search" class="navbar-nav ms-4 me-auto">
-					<form use:enhance method="POST" action="/search" class="my-1 w-auto" role="search">
+				<div id="search" class="navbar-nav ms-4 me-auto mt-1">
+					<form use:enhance method="POST" action="/search" class="w-auto" role="search">
 						<div class="input-group">
 							<input bind:value={search} class="form-control valid" name="query" type="search" placeholder="Search" aria-label="Search" />
-							<button on:click|preventDefault={() => (search ? goto(`/search?q=${search}&c=users`) : null)} class="btn btn-success py-0" type="submit" title="Search"
-								><i class="fa fa-search" /></button
-							>
+							<button on:click|preventDefault={() => (search ? goto(`/search?q=${search}&c=users`) : null)} class="btn btn-success py-0" type="submit" title="Search">
+								<i class="fa fa-search" />
+							</button>
 						</div>
 						{#if search}
-							<div transition:fade={{ duration: 150 }} id="results" class="position-absolute card p-2 mt-2">
+							<div transition:fade={{ duration: 150 }} id="results" class="position-absolute card p-2 pe-0 mt-2">
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=users" title="Search Users">Search <b>{search}</b> in Users</a>
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=places" title="Search Places">Search <b>{search}</b> in Places</a>
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=items" title="Search Avatar shop">Search <b>{search}</b> in Avatar shop</a>
@@ -81,9 +88,9 @@
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
-					<li class="dropdown">
-						<a id="rocks" href="/transactions" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-link mt-1 text-success shadow-none">
-							<i class="fa fa-gem me-1" />
+					<li class="dropdown me-2 pt-1">
+						<a  href="/transactions" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-link text-success">
+							<i class="fa fa-gem me-1 text-success" />
 							<span class="h6 text-success">
 								{$user.currency}
 							</span>
@@ -103,35 +110,20 @@
 									</button>
 								</form>
 							</li>
-							<li><a class="dropdown-item light-text" href="/transactions"><i class="fa fa-coins me-2" /> Transactions</a></li>
 						</ul>
 					</li>
-					<li class="dropdown ms-2">
-						<a href="/user/{$user.number}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1 light-text">
+					<li class="row row-cols-lg-auto">
+						<a id="user"href="/user/{$user.number}" class="btn p-0 d-flex text-decoration-none mb-2 mx-3 light-text">
 							<div id="pfp" class="mx-2 rounded-circle">
 								<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 							</div>
-							<p id="displayname" class="light-text my-auto fs-6">
+							<p id="displayname" class="my-auto fs-6 me-2">
 								{$user?.displayname}
 							</p>
-							<i class="fa fa-ellipsis-vertical ms-2 my-auto fs-6 me-4" />
 						</a>
-
-						<ul class="dropdown-menu mt-2">
-							<li><h6 class="dropdown-header grey-text">ACCOUNT</h6></li>
-							<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-address-card me-2" /> Profile</a></li>
-							<li><a class="dropdown-item light-text" href="/inventory"><i class="fa fa-box-open me-2" /> Inventory</a></li>
-							<li><a class="dropdown-item light-text" href="/requests"><i class="fa fa-user-plus me-2" /> Friend requests</a></li>
-							<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-user-pen me-2" /> Avatar</a></li>
-							<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-users me-2" /> My Groups</a></li>
-							<li><hr class="dropdown-divider" /></li>
-							<li><a class="dropdown-item light-text" href="/settings"><i class="fa fa-gears me-2" /> Settings</a></li>
-							<li>
-								<form use:enhance method="POST" action="/api?/logout">
-									<button type="submit" class="dropdown-item text-light text-bg-danger"><b><i class="fa fa-arrow-right-from-bracket me-2" /> Log out</b></button>
-								</form>
-							</li>
-						</ul>
+						<form use:enhance method="POST" action="/api?/logout" class="d-inline">
+							<button id="logout" type="submit" class="btn btn-outline-danger my-auto"><b><i class="fa fa-arrow-right-from-bracket me-1" /> Log out</b></button>
+						</form>
 					</li>
 				</ul>
 			{:else}
@@ -145,8 +137,29 @@
 				</ul>
 			{/if}
 		</div>
+		{#if $user}
+			<nav id="nav2" class="navbar navbar-expand-sm navbar-dark px-4 py-0 w-100">
+				<div class="navbar-nav w-100">
+					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">Profile</a>
+					<a class="light-text btn nav-item m-0 py-1" href="/inventory">Inventory</a>
+					<a class="light-text btn nav-item m-0 py-1" href="/requests">Friend requests</a>
+					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">Avatar</a>
+					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">My Groups</a>
+				</div>
+				<div class="navbar-nav">
+					<a class="light-text btn nav-item m-0 py-1" href="/transactions">Transactions</a>
+					<a class="light-text btn nav-item m-0 py-1" href="/settings">Settings</a>
+				</div>
+			</nav>
+		{/if}
 	</div>
 </nav>
+
+{#if data.bannerText}
+	<p class="text-center text-{data.bannerTextLight ? 'light' : ''}" style="background: {data.bannerColour}">
+		{data.bannerText}
+	</p>
+{/if}
 
 <style lang="sass">
 	@media only screen and (max-width: 991px)
@@ -165,16 +178,31 @@
 
 			.loggedin
 				margin-bottom: 1rem
+
+		.navbar-brand
+			display: none
 		
 		#search
 			width: 100%
-			margin: 0  !important
+			margin: 0 !important
 			form
 				margin: 1rem !important
 
 	@media only screen and (min-width: 992px)
 		.loggedin
 			margin-left: auto
+
+	#nav1
+		background: #fff1
+		@media only screen and (max-width: 991px)
+			background: var(--background)
+
+	#nav2
+		background: #0003
+		z-index: 1
+
+	#logout, #user
+		margin-top: 0.1rem !important
 
 	.loggedin
 		padding: 0
@@ -192,13 +220,10 @@
 	nav
 		z-index: 9
 		max-height: 10vh
-		backdrop-filter: blur(8px)
-		-webkit-backdrop-filter: blur(8px)
-		border-bottom: 1px solid #fff1
-		background: #0003
+		
 
 	.navbar-nav
-		.btn
+		a
 			border: none
 			&:hover
 				color: var(--grey-text) !important
@@ -206,24 +231,22 @@
 	.offcanvas
 		box-shadow: none !important
 
-	a
-		margin-right: 0.5rem
-
 	#pfp
 		background: var(--accent)
-		width: 2.5rem
-		height: 2.5rem
+		width: 2.4rem
+		height: 2.4rem
 
 	img
-		width: 2.5rem
-		height: 2.5rem
+		width: 2.4rem
+		height: 2.4rem
 
 	.dropdown-menu
 		background: var(--darker)
 		border: none
+		z-index: 5
 
 	#results
-		z-index: 1
+		z-index: 5
 		background: var(--darker)
 		min-width: 15rem
 		a:hover

@@ -15,8 +15,6 @@
 	}
 
 	export let data: PageData
-
-	data.permissionLevel = "Administrator"
 </script>
 
 <svelte:head>

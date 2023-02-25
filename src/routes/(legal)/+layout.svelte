@@ -14,13 +14,6 @@
 	-->
 	<Navbar {data} />
 
-	{#if data.bannerText}
-		<p id="banner" class="position-fixed top-0 py-1 text-center w-100 text-{data.bannerTextLight ? 'light' : ''}" style="background: {data.bannerColour}">
-			{data.bannerText}
-		</p>
-		<br />
-	{/if}
-
 	<main>
 		<slot />
 	</main>
@@ -41,8 +34,4 @@
 
 	#bg
 		background: linear-gradient(-20deg, #0000 50%, var(--mainaccent) 250%)
-
-	#banner
-		margin-top: 5.5vh
-		z-index: 1
 </style>
