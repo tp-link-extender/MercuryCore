@@ -1,7 +1,7 @@
 // A collection of functions useful for Prisma, as well
 // as only needing to initialise PrismaClient once.
 
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, type Group } from "@prisma/client"
 import { client, roQuery } from "./redis"
 
 export const prisma = new PrismaClient()
@@ -73,7 +73,7 @@ export async function findGroups(query: any) {
 		group["members"] = await roQuery("RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true)
 		group["followers"] = await roQuery("RETURN SIZE((:User) -[:follows]-> (:Group { name: $group }))", query, true)
 	}
-	return groups
+	return groups as (Group & { members: any; followers: any })[]
 }
 
 type User = {
@@ -81,7 +81,7 @@ type User = {
 	number?: number
 	username?: string
 }
-export async function transaction(sender: User, receiver: User, amountSent: number, tx: any /* awful */ = prisma) {
+export async function transaction(sender: User, receiver: User, amountSent: number, { note, link }: { note: String | undefined; link: String | undefined }, tx: any /* awful */ = prisma) {
 	const sender2 = await tx.user.findUnique({
 		where: sender,
 		select: {
@@ -125,6 +125,8 @@ export async function transaction(sender: User, receiver: User, amountSent: numb
 			},
 			amountSent,
 			taxRate,
+			note,
+			link,
 		},
 	})
 }

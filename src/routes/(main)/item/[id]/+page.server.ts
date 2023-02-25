@@ -6,7 +6,7 @@ import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("item")
-		const { session, user } = await authoriseUser(locals.validateUser())
+	const { session, user } = await authoriseUser(locals.validateUser())
 
 	const item = await prisma.item.findUnique({
 		where: {
@@ -100,6 +100,7 @@ export const actions: Actions = {
 						id: params.id,
 					},
 					select: {
+						name: true,
 						price: true,
 						creator: true,
 						owners: {
@@ -114,7 +115,7 @@ export const actions: Actions = {
 
 				if (item.price != 0)
 					try {
-						await transaction({ id: user.userId }, { id: item.creator.id }, item.price)
+						await transaction({ id: user.userId }, { id: item.creator.id }, item.price, { note: `Purchased item ${item.name}`, link: `/item/${params.id}` })
 					} catch (e: any) {
 						console.log(e.message)
 						return fail(400, { msg: e.message })
