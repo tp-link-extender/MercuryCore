@@ -16,13 +16,6 @@
 
 <Navbar {data} />
 
-{#if data.bannerText}
-	<p id="banner" class="position-fixed top-0 py-1 text-center w-100 text-{data.bannerTextLight ? 'light' : 'text-dark'}" style="background: {data.bannerColour}">
-		{data.bannerText}
-	</p>
-	<br />
-{/if}
-
 <main>
 	<div class="container d-flex flex-column justify-content-center align-items-center light-text rounded-4">
 		<h1 class="light-text">Error {$page.status}</h1>
@@ -44,8 +37,4 @@
 			background: var(--accent)
 			width: fit-content
 			padding: 2rem 5rem
-
-	#banner
-		margin-top: 5.5vh
-		z-index: 1
 </style>
