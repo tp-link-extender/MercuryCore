@@ -153,7 +153,7 @@
 				<div id="nav2-1" class="navbar-nav w-50">
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">Profile</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/inventory">Inventory</a>
-					<a class="light-text btn nav-item m-0 py-1" href="/requests">Friend requests</a>
+					<a class="light-text btn nav-item m-0 py-1" href="/requests">Friends</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">Avatar</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">My Groups</a>
 				</div>
