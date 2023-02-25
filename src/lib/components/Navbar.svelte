@@ -58,10 +58,12 @@
 			<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 			<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
 		</div>
-		<div id="nav1" class="offcanvas-body px-4 pt-1 d-flex">
-			<a class="navbar-brand light-text me-4" href="/">Mercury</a>
+
+		<div id="nav1" class="offcanvas-body px-4 py-1 d-flex">
+			<a class="navbar-brand light-text me-4 mt-1" href="/">Mercury</a>
 			{#if $user}
 				<div class="navbar-nav">
+					<a class="btn mt-1 px-1 light-text nav-item" href="/">Home</a>
 					<a class="btn mt-1 px-1 light-text nav-item" href="/games">Games</a>
 					<a class="btn mt-1 px-1 light-text nav-item" href="/avatarshop">Avatar Shop</a>
 					<a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a>
@@ -89,14 +91,14 @@
 				</div>
 				<ul class="navbar-nav loggedin m-0">
 					<li class="dropdown ms-3 me-2  pt-1">
-						<a href="/transactions" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-link text-success">
+						<a href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
 							<span class="h6 text-success">
 								{$user.currency}
 							</span>
 						</a>
 
-						<ul class="dropdown-menu mt-2">
+						<ul class="dropdown-menu mt-2 mb-2">
 							<li><h6 class="dropdown-header grey-text">CURRENCY</h6></li>
 							<li>
 								<form use:enhance method="POST" action="/api?/stipend">
@@ -112,18 +114,26 @@
 							</li>
 						</ul>
 					</li>
-					<li class="d-flex">
-						<a id="user" href="/user/{$user.number}" class="btn p-0 d-flex text-decoration-none mb-2 mx-3 light-text w-50">
-							<div id="pfp" class="mx-2 rounded-circle">
-								<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
-							</div>
-							<p id="displayname" class="my-auto fs-6 me-2">
-								{$user?.displayname}
-							</p>
+					<li class="dropdown">
+						<a href="/user/{$user.number}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-item mx-0 text-decoration-none px-0 mb-2">
+							<a id="user" href="/user/{$user.number}" class="btn p-0 d-flex text-decoration-none light-text w-50">
+								<div id="pfp" class="mx-2 rounded-circle">
+									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
+								</div>
+								<p id="displayname" class="my-auto fs-6 me-2">
+									{$user?.displayname}
+								</p>
+							</a>
 						</a>
-						<form use:enhance method="POST" action="/api?/logout" class="d-inline w-50">
-							<button id="logout" type="submit" class="btn btn-outline-danger my-auto"><b><i class="fa fa-arrow-right-from-bracket me-1" /> Log out</b></button>
-						</form>
+
+						<ul class="dropdown-menu dropdown-menu-end mt-2 mb-2">
+							<li><a class="dropdown-item light-text" href="/settings">Settings</a></li>
+							<li>
+								<form use:enhance method="POST" action="/api?/logout">
+									<button type="submit" class="dropdown-item text-danger"><b><i class="fa fa-arrow-right-from-bracket me-2" /> Log out</b></button>
+								</form>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			{:else}
@@ -137,6 +147,7 @@
 				</ul>
 			{/if}
 		</div>
+		<hr class="pt-0 mb-2" />
 		{#if $user}
 			<nav id="nav2" class="navbar navbar-dark px-4 py-0 w-100">
 				<div id="nav2-1" class="navbar-nav w-50">
@@ -145,10 +156,6 @@
 					<a class="light-text btn nav-item m-0 py-1" href="/requests">Friend requests</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">Avatar</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">My Groups</a>
-				</div>
-				<div id="nav2-2" class="navbar-nav w-50 d-flex justify-content-end">
-					<a class="light-text btn nav-item m-0 py-1" href="/transactions">Transactions</a>
-					<a class="light-text btn nav-item m-0 py-1" href="/settings">Settings</a>
 				</div>
 			</nav>
 		{/if}
@@ -179,6 +186,11 @@
 				width: 100%
 				text-align: start
 
+		hr 
+			max-width: 25%
+			margin-left: 40% 
+			display: block !important
+
 		.loggedin
 			margin-bottom: 1rem
 			order: 1
@@ -198,8 +210,6 @@
 
 		#nav2-1
 			overflow-y: auto
-		#nav2-2
-			display: none !important
 
 	@media only screen and (min-width: 992px)
 		.loggedin
@@ -230,7 +240,10 @@
 	input
 		background: var(--background) !important
 
-	#logout, #user
+	hr
+		display: none
+
+	#user
 		margin-top: 0.1rem !important
 
 	.loggedin
@@ -239,8 +252,6 @@
 	#displayname
 		max-width: 10rem
 		min-width: 1rem
-		overflow: hidden
-		text-overflow: ellipsis
 		white-space: nowrap
 
 	.offcanvas-title
@@ -291,4 +302,7 @@
 			width: 100%
 		button, input
 			height: 2.3rem
+	
+	.btn
+		box-shadow: none !important
 </style>

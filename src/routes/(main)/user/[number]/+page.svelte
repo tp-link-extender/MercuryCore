@@ -106,8 +106,8 @@
 					<h2 class="h4 light-text">Creations</h2>
 					<div class="accordion" id="accordion">
 						{#each data.places as place, num}
-							<div in:fade={{ num, total: data.places.length }} class="accordion-item rounded-3 my-2">
-								<div class="accordion-header rounded-3" id="heading{num}">
+							<div in:fade={{ num, total: data.places.length }} class="accordion-item rounded-2 my-2">
+								<div class="accordion-header rounded-2" id="heading{num}">
 									<button
 										class="accordion-button p-2 light-text rounded-3"
 										type="button"
@@ -121,11 +121,11 @@
 								</div>
 								<div id="collapse{num}" class="accordion-collapse collapse rounded-3" aria-labelledby="heading{num}" data-bs-parent="#accordion">
 									<div class="accordion-body rounded-3">
-										<a in:fade={{ num, total: data.places.length }} class="card placecard text-center light-text text-decoration-none h6 m-0 w-100" href="/place/{place.slug}">
+										<a in:fade={{ num, total: data.places.length }} class="card shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100" href="/place/{place.slug}">
 											<div class="row">
 												<div class="col col-6">
-													<div class="overflow-hidden bg-black shadow rounded-4">
-														<img src={place.image} alt={place.name} class="w-100 h-100 rounded-4" />
+													<div class="overflow-hidden bg-black shadow rounded-0">
+														<img src={place.image} alt={place.name} class="w-100 h-100 rounded-0" />
 													</div>
 												</div>
 												<div class="col col-6 p-2 row">
