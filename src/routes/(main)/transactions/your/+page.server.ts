@@ -29,6 +29,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 						displayname: true,
 					},
 				},
+				note: true,
+				link: true,
 			},
 			orderBy: {
 				time: "desc",

@@ -19,8 +19,7 @@ export const actions: Actions = {
 		let item
 		try {
 			item = await prisma.$transaction(async tx => {
-				await transaction({ id: user.userId }, { number: 1 }, 10, tx)
-				return await tx.item.create({
+				const created = await tx.item.create({
 					data: {
 						name,
 						price: price || 0,
@@ -38,11 +37,13 @@ export const actions: Actions = {
 						id: true,
 					},
 				})
+				await transaction({ id: user.userId }, { number: 1 }, 10, { note: `Created item ${name}`, link: `/item/${created.id}` }, tx)
+				return created
 			})
 		} catch (e: any) {
 			return fail(402, { msg: e.message })
 		}
 
-		throw redirect(302, "/item/" + item.id)
+		throw redirect(302, `/item/${item.id}`)
 	},
 }
