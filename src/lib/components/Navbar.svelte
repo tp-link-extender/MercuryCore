@@ -165,11 +165,14 @@
 	@media only screen and (max-width: 991px)
 		.offcanvas-header
 			background: var(--accent)
+		.offcanvas
+			background: var(--background)
 		.offcanvas-body
 			background: var(--background)
 			min-height: 100vh
 			flex-direction: column-reverse
 			justify-content: start
+			padding-top: 1rem !important
 
 			a
 				margin-bottom: 1rem
@@ -194,7 +197,7 @@
 				margin: 1rem !important
 
 		#nav2-1
-			margin-top: auto
+			overflow-y: auto
 		#nav2-2
 			display: none !important
 
@@ -205,7 +208,7 @@
 	#nav1
 		background: #fff1
 		@media only screen and (max-width: 991px)
-			background: var(--background)
+			background: none
 			min-height: fit-content !important
 			overflow-x: hidden
 
@@ -213,13 +216,14 @@
 		background: #0003
 		z-index: 1
 		@media only screen and (max-width: 991px)
-			background: var(--background)
-			min-height: 43vh !important
+			background: none !important
+			min-height: 48vh !important
 			flex-direction: column
-			padding: 1.5rem !important
+			margin-left: auto
 
 			a
 				text-align: left
+				padding: 1.2rem 0.8rem !important
 			div
 				width: 100% !important
 
