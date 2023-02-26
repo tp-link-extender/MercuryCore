@@ -29,7 +29,7 @@ export const actions: Actions = {
 
 		try {
 			await prisma.$transaction(async tx => {
-				await transaction({ id: user.userId }, { number: 1 }, 10, tx)
+				await transaction({ id: user.userId }, { number: 1 }, 10, { note: `Created group ${name}`, link: `/groups/${name}` }, tx)
 
 				await tx.group.create({
 					data: {
@@ -42,6 +42,6 @@ export const actions: Actions = {
 			return fail(402, { msg: e.message })
 		}
 
-		throw redirect(302, "/groups/" + name)
+		throw redirect(302, `/groups/${name}`)
 	},
 }

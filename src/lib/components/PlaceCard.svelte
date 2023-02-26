@@ -38,7 +38,7 @@
 
 <style lang="sass">
 	.card
-		border: none
+		max-width: 22rem
 		background: var(--darker)
 	a
 		transition: all 0.2s

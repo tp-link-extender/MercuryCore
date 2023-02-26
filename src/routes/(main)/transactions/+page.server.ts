@@ -8,6 +8,8 @@ export const load: PageServerLoad = async () => ({
 			time: true,
 			amountSent: true,
 			taxRate: true,
+			note: true,
+			link: true,
 			sender: {
 				select: {
 					image: true,
