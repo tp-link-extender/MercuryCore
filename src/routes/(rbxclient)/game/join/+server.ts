@@ -32,7 +32,7 @@ if threadSleepTime==nil then
 threadSleepTime = 15
 end
 
-local test = ${true}
+local test = ${false}
 
 print("! Joining game '${1}' place ${1} at ${"heliodex.ddns.net"}")
 
