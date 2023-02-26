@@ -77,7 +77,7 @@ pcall(function() settings().Diagnostics:LegacyScriptMode() end)
 
 -----------------------------------START GAME SHARED SCRIPT------------------------------
 
-local url = ${"https://banland.xyz"}
+local url = "${"https://banland.xyz"}"
 local assetId = placeId -- might be able to remove this now
 
 local scriptContext = game:GetService('ScriptContext')
