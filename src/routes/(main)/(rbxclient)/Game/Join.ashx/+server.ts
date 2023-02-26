@@ -224,7 +224,7 @@ end
 
 player:SetSuperSafeChat(${false})
 pcall(function() player:SetUnder13(${false}) end)
-pcall(function() player:SetMembershipType(Enum.MembershipType.${1}) end)
+pcall(function() player:SetMembershipType(Enum.MembershipType.${"OutrageousBuildersClub"}) end)
 pcall(function() player:SetAccountAge(${1}) end)
 player.Idled:connect(onPlayerIdled)
 
