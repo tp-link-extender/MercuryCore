@@ -1,10 +1,10 @@
-import type { RequestHandler } from './$types';
-import { SignData } from '$lib/server/sign';
+import type { RequestHandler } from "./$types"
+import { SignData } from "$lib/server/sign"
 
 export const GET: RequestHandler = async () => {
-    return new Response(
-SignData(
-`-- Start Game Script Arguments
+	return new Response(
+		SignData(
+			`-- Start Game Script Arguments
 local placeId, port, sleeptime, access, url, killID, deathID, timeout, autosaveInterval, locationID, groupBuild, machineAddress, gsmInterval, gsmUrl, maxPlayers, maxSlotsUpperLimit, maxSlotsLowerLimit, gsmAccess, injectScriptAssetID, servicesUrl, permissionsServiceUrl, apiKey, libraryRegistrationScriptAssetID = ...
 
 
@@ -222,5 +222,6 @@ game.Players.PlayerAdded:connect(function(player)
   end)
 end)
 ------------------------------END START GAME SHARED SCRIPT--------------------------`
-    ));
-};
+		)
+	)
+}

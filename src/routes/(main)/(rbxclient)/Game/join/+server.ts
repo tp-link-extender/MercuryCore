@@ -1,10 +1,10 @@
-import type { RequestHandler } from './$types';
-import { SignData } from '$lib/server/sign';
+import type { RequestHandler } from "./$types"
+import { SignData } from "$lib/server/sign"
 
 export const GET: RequestHandler = async () => {
-    return new Response(
-SignData(
-`-- functions --------------------------
+	return new Response(
+		SignData(
+			`-- functions --------------------------
 function onPlayerAdded(player)
 -- override
 end
@@ -248,5 +248,6 @@ end
 pcall(function() game:SetScreenshotInfo("") end)
 pcall(function() game:SetVideoInfo('<?xml version="1.0"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007"><media:group><media:title type="plain"><![CDATA[ROBLOX Place]]></media:title><media:description type="plain"><![CDATA[ For more games visit http://www.roblox.com]]></media:description><media:category scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Games</media:category><media:keywords>ROBLOX, video, free game, online virtual world</media:keywords></media:group></entry>') end)
 -- use single quotes here because the video info string may have unescaped double quotes`
-    ));
-};
+		)
+	)
+}

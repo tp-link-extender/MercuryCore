@@ -1,11 +1,10 @@
-import type { RequestHandler } from './$types';
-import { SignData } from '$lib/server/sign';
+import type { RequestHandler } from "./$types"
+import { SignData } from "$lib/server/sign"
 
 export const GET: RequestHandler = async () => {
-
-    return new Response(
-SignData(
-`-- Setup studio cmd bar & load core scripts
+	return new Response(
+		SignData(
+			`-- Setup studio cmd bar & load core scripts
 pcall(function() game:GetService("InsertService"):SetFreeModelUrl("http://www.roblox.com/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d") end)
 pcall(function() game:GetService("InsertService"):SetFreeDecalUrl("http://www.roblox.com/Game/Tools/InsertAsset.ashx?type=fd&q=%s&pg=%d&rs=%d") end)
 
@@ -31,7 +30,6 @@ local result, err = pcall(function() game:GetService("ScriptContext"):AddStarter
 if not result then
 pcall(function() game:GetService("ScriptContext"):AddCoreScript(37801172,game:GetService("ScriptContext"),"StarterScript") end)
 end`
-)
-
-  );
-};
+		)
+	)
+}
