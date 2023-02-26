@@ -200,7 +200,7 @@ end
 -- Now start the connection
 ns:Start(${53640}, sleeptime) 
 
-game:GetService("Visit"):SetPing("${"https://banland.xyz"}, 30)
+game:GetService("Visit"):SetPing("${"https://banland.xyz"}", 30)
 
 if timeout then
 	scriptContext:SetTimeout(timeout)
