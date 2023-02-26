@@ -436,7 +436,7 @@ local BottomShiftFrame = Obj.Create"Frame"
 			Name = 'extendTab',
 			Active = true,
 			BackgroundTransparency = 1,
-			Image = 'http://www.roblox.com/asset/?id=94692731',
+			Image = 'http://www.banland.xyz/asset/?id=94692731',
 			Position = UDim2.new(.608, 0, .3, 0),
 			Size = UDim2.new(.3,0,.7,0),
 			Parent = BottomFrame,
