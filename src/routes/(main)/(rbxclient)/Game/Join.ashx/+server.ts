@@ -34,7 +34,7 @@ end
 
 local test = ${true}
 
-print("! Joining game '${1}' place ${1} at ${"127.0.0.1"}")
+print("! Joining game '${1}' place ${1} at ${"heliodex.ddns.net"}")
 
 game:GetService("ChangeHistoryService"):SetEnabled(false)
 game:GetService("ContentProvider"):SetThreadPool(16)
@@ -209,7 +209,7 @@ playerConnectSucces, player = pcall(function() return client:PlayerConnect(${1},
 if not playerConnectSucces then
 --Old player connection scheme
 player = game:GetService("Players"):CreateLocalPlayer(${1})
-client:Connect("${"127.0.0.1"}", ${53640}, 0, threadSleepTime)
+client:Connect("${"heliodex.ddns.net"}", ${53640}, 0, threadSleepTime)
 end
 
 -- negotiate an auth token
