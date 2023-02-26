@@ -13,27 +13,19 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 @font-face {
-	font-family: "SFui";
+	font-family: "SF UI Display Regular";
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
-	src: url(/Sf.woff2) format("woff2");
+	src: url(/SFregular.woff2) format("woff2"), url(/SFregular.woff) format("woff"), url(/SFregular.ttf) format("ttf");
 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-	font-family: "SFui";
-	font-style: normal;
-	font-weight: 500;
-	font-display: swap;
-	src: url(/Sf.woff2) format("woff2");
-	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-	font-family: "SFui";
+	font-family: "SF UI Display Regular";
 	font-style: normal;
 	font-weight: 700;
 	font-display: swap;
-	src: url(/Sf.woff2) format("woff2");
+	src: url(/SFbold.woff2) format("woff2"), url(/SFregular.woff) format("woff"), url(/SFregular.ttf) format("ttf");
 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 :root {
@@ -80,7 +72,7 @@
 	--bs-black-rgb: 0, 0, 0;
 	--bs-body-color-rgb: 73, 80, 87;
 	--bs-body-bg-rgb: 255, 255, 255;
-	--bs-font-sans-serif: SFui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	--bs-font-sans-serif: SF UI Display Regular, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	--bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 	--bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
 	--bs-body-font-family: var(--bs-font-sans-serif);
