@@ -2,7 +2,7 @@ import crypto from "crypto"
 import fs from 'fs'
 
 export function GetSig(data : string) {
-    const sign = crypto.createSign("SHA256")
+    const sign = crypto.createSign("SHA1")
     const key = fs.readFileSync("./keys/PrivateKey.pem")
 
     sign.write(data)
