@@ -12,7 +12,7 @@ export function GetSig(data : string) {
 
 }
 
-export function SignData(data : string, assetID : number) {
+export function SignData(data : string, assetID : number | boolean = false) {
     if(assetID) data = `--rbxassetid%${assetID}%\n${data}`
     else data = `\n${data}`
     return `--rbxsig%${GetSig(data)}%${data}`
