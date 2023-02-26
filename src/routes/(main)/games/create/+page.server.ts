@@ -34,7 +34,7 @@ export const actions: Actions = {
 
 		try {
 			await prisma.$transaction(async tx => {
-				await transaction({ id: user.userId }, { number: 1 }, 10, tx)
+				await transaction({ id: user.userId }, { number: 1 }, 10, { note: `Created place ${slug}`, link: `/place/${slug}` }, tx)
 
 				await tx.place.create({
 					data: {
@@ -50,6 +50,6 @@ export const actions: Actions = {
 			return fail(402, { msg: e.message })
 		}
 
-		throw redirect(302, "/place/" + slug)
+		throw redirect(302, `/place/${slug}`)
 	},
 }

@@ -13,13 +13,6 @@
 	-->
 	<Navbar {data} />
 
-	{#if data.bannerText}
-		<p id="banner" class="position-fixed top-0 py-1 text-center w-100 text-{data.bannerTextLight ? 'light' : ''}" style="background: {data.bannerColour}">
-			{data.bannerText}
-		</p>
-		<br />
-	{/if}
-
 	<main>
 		<slot />
 	</main>
@@ -30,15 +23,13 @@
 <style lang="sass">
 	main
 		padding-bottom: 5vh
-		padding-top: 10vh
+		padding-top: 5vh//10vh
 		flex: 1 0 auto
+		@media only screen and (max-width: 991px)
+			padding-top: 1vh
 		
 	#all
 		display: flex
 		flex-direction: column
 		height: 100vh
-
-	#banner
-		margin-top: 5.5vh
-		z-index: 1
 </style>

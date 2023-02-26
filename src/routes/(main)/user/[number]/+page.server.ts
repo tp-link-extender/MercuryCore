@@ -19,6 +19,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			displayname: true,
 			bio: true,
 			image: true,
+			permissionLevel: true,
 			posts: {
 				orderBy: {
 					posted: "desc",
@@ -49,6 +50,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			displayname: userExists.displayname,
 			bio: userExists.bio,
 			img: userExists.image,
+			permissionLevel: userExists.permissionLevel,
 			places: findPlaces({
 				where: {
 					ownerUsername: userExists.username,
@@ -69,7 +71,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			}),
 			groupsOwned: findGroups({
 				where: {
-					ownerUsername: user.username,
+					ownerUsername: userExists.username,
 				},
 			}),
 			feed: userExists.posts,

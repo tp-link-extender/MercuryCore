@@ -163,4 +163,6 @@ model Transaction {
     amountSent   Int
     taxRate      Float
     time         DateTime @default(now())
+    note         String?
+    link         String?
 }
