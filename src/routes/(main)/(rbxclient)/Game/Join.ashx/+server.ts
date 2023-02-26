@@ -52,10 +52,10 @@ pcall(function() game:GetService("SocialService"):SetGroupRoleUrl("http://banlan
 pcall(function() game:GetService("GamePassService"):SetPlayerHasPassUrl("http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d") end)
 pcall(function() game:GetService("MarketplaceService"):SetProductInfoUrl("https://banland.xyz/marketplace/productinfo?assetId=%d") end)
 pcall(function() game:GetService("MarketplaceService"):SetPlayerOwnsAssetUrl("https://banland.xyz/ownership/hasasset?userId=%d&assetId=%d") end)
-pcall(function() game:SetCreatorID(<?=$CreatorID?>, Enum.CreatorType.User) end)
+pcall(function() game:SetCreatorID(${1}, Enum.CreatorType.User) end)
 
 -- Bubble chat.  This is all-encapsulated to allow us to turn it off with a config setting
-pcall(function() game:GetService("Players"):SetChatStyle(Enum.ChatStyle.<?=$ChatStyle?>) end)
+pcall(function() game:GetService("Players"):SetChatStyle(Enum.ChatStyle.${"ClassicAndBubble"}) end)
 
 local waitingForCharacter = false
 pcall( function()
