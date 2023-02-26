@@ -199,7 +199,7 @@ humanoid.Died:connect(function() HealthChanged(0) end)</ProtectedString>
 					<Color3 name="BorderColor3">4279970357</Color3>
 					<int name="BorderSizePixel">1</int>
 					<bool name="Draggable">false</bool>
-					<Content name="Image"><url>http://www.banland.xyz/asset/?id=34854607</url></Content>
+					<Content name="Image"><url>http://www.roblox.com/asset/?id=34854607</url></Content>
 					<string name="Name">hurtOverlay</string>
 					<UDim2 name="Position">
 						<XS>2</XS>
