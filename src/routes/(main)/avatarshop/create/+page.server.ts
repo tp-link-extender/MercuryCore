@@ -14,7 +14,13 @@ export const actions: Actions = {
 		const category = data.get("category")?.toString()
 
 		if (!name || !category) return fail(400, { msg: "Missing fields" })
-		if (name.length < 3 || name.length > 50 || price < 0 || !["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)) return fail(400, { msg: "Invalid fields" })
+		if (
+			name.length < 3 ||
+			name.length > 50 ||
+			price < 0 ||
+			!["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)
+		)
+			return fail(400, { msg: "Invalid fields" })
 
 		let item
 		try {
