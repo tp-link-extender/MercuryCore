@@ -131,42 +131,45 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<div class="mt-5 col-md-9 col-12">
-			<h2 class="h4 light-text">News</h2>
-			<div id="news" class="card">
-				<div class="card-body row">
-					{#each news as thing, num}
-						<div in:fade={{ num, total: news.length }} class="p-1 col-xl-3 col-lg-4 col-6">
-							<div class="card light-text h-100">
-								<div class="card-body p-2">
-									<div class="mb-2 light-text">
-										<div class="fw-bold text-center text-truncate">{thing.title}</div>
-										<div class="date ms-auto fw-italic text-center">{thing.time.toLocaleString()}</div>
+			<div class="mt-5 col-12">
+				<h2 class="h4 light-text">News</h2>
+				<div id="news" class="card">
+					<div class="card-body row">
+						{#each news as thing, num}
+							<div in:fade={{ num, total: news.length }} class="p-1 col-xl-4 col-lg-6 col-12">
+								<div class="card light-text h-100">
+									<div class="card-body p-2">
+										<div class="mb-2 light-text">
+											<div class="fw-bold text-center text-truncate">{thing.title}</div>
+											<div class="date ms-auto fw-italic text-center">{thing.time.toLocaleString()}</div>
+										</div>
+										<div class="gradient position-absolute bottom-0 rounded-2" />
+										<p class="content mb-0 p-1">
+											{thing.content}
+										</p>
 									</div>
-									<div class="gradient position-absolute bottom-0 rounded-2" />
-									<p class="content mb-0 p-1">
-										{thing.content}
-									</p>
 								</div>
 							</div>
-						</div>
-					{/each}
+						{/each}
+					</div>
+				</div>
+			</div>
+			<div class="mt-5 col-6 col-md-8 col-lg-6 col-xl-4">
+				<h2 class="h4 light-text">Random fact</h2>
+				<div id="fact" class="card card-body light-text h5">
+					{facts[Math.floor(Math.random() * facts.length)]}<br />
+					<br />
 				</div>
 			</div>
 		</div>
-		<div class="mt-5 col-md-3 col-6">
-			<h2 class="h4 light-text">Random fact</h2>
-			<div id="fact" class="card card-body light-text h5">
-				{facts[Math.floor(Math.random() * facts.length)]}<br />
-				<br />
-			</div>
-		</div>
+
 	</div>
 </div>
 
 <style lang="sass">
+	@media only screen and (max-width: 768px)
+		#feed
+			max-height: 50vh
 	.top
 		width: 100vw
 		.pfp
@@ -211,8 +214,6 @@
 	#feed, #news, #fact
 		background: var(--darker)
 	#feed, #news
-		max-height: 55vh
-		overflow-y: auto
 		overflow-x: hidden
 
 	.user
