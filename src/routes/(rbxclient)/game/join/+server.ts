@@ -205,7 +205,7 @@ client.ConnectionRejected:connect(onConnectionRejected)
 connectionFailed = client.ConnectionFailed:connect(onConnectionFailed)
 client.Ticket = ""	
 
-playerConnectSucces, player = pcall(function() return client:PlayerConnect(${1}, "${"127.0.0.1"}", ${53640}, 0, threadSleepTime) end)
+playerConnectSucces, player = pcall(function() return client:PlayerConnect(${1}, "${"heliodex.ddns.net"}", ${53640}, 0, threadSleepTime) end)
 if not playerConnectSucces then
 --Old player connection scheme
 player = game:GetService("Players"):CreateLocalPlayer(${1})
