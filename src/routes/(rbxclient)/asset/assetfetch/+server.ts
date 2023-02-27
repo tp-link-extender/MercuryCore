@@ -24,5 +24,5 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
 		return new Response(file2)
 	}
 
-	throw redirect(302, `https://assetdelivery.roblox.com/v1/asset/?${ID}`)
+	throw redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${ID}`)
 }
