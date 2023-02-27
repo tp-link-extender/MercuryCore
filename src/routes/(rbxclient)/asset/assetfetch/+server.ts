@@ -18,6 +18,7 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
 
 		let file2 = file.toString().replaceAll("roblox.com/asset", "banland.xyz/asset")
 
+		// Health corescript
 		if (ID != "38037265") file2 = SignData(file2, parseInt(ID))
 
 		return new Response(file2)
