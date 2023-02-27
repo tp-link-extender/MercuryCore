@@ -18,12 +18,12 @@ export const actions: Actions = {
 					name: {
 						contains: filter,
 						mode: "insensitive",
-					}
+					},
 				},
 				select: {
 					name: true,
 				},
-			})
+			}),
 		}
 	},
 }
