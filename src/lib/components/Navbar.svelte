@@ -127,7 +127,7 @@
 						</a>
 
 						<ul class="dropdown-menu dropdown-menu-end mt-2 mb-2">
-							<li><a class="dropdown-item light-text" href="/settings">Settings</a></li>
+							<li><a class="dropdown-item light-text" href="/settings"><i class="fa fa-gears me-2" /> Settings</a></li>
 							<li>
 								<form use:enhance method="POST" action="/api?/logout">
 									<button type="submit" class="dropdown-item text-danger"><b><i class="fa fa-arrow-right-from-bracket me-2" /> Log out</b></button>
@@ -272,7 +272,7 @@
 		box-shadow: none !important
 
 	#pfp
-		background: var(--accent)
+		background: var(--background)
 		width: 2.4rem
 		height: 2.4rem
 
