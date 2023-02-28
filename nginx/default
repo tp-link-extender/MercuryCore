@@ -20,6 +20,8 @@ server {
 	rewrite (?i)^/Game/Host$ /game/host last;
 	rewrite (?i)^/Asset/GetScriptState.ashx$ /asset/getscriptstate last;
 
+	rewrite (?i)^/setup/version-(\w+)-(.*)$ /setup/version-$1/$2 last;
+
 	listen 80;
 	listen 443 ssl; # managed by Certbot
 	ssl_certificate /etc/letsencrypt/live/banland.xyz/fullchain.pem; # managed by Certbot
@@ -30,8 +32,7 @@ server {
 	location ~* / { #/ {
 		proxy_pass http://sveltekit;
 		proxy_redirect off;
-		# First attempt to serve request as file, then
-		# as directory, then fall back to displaying a 404.
+		# First attempt to serve request as file, then as directory
 		try_files $uri $uri/ @proxy;
 	}
 	location @proxy {
@@ -42,12 +43,17 @@ server {
 server {
 	server_name setup.banland.xyz;
 
-	rewrite /version-(\w+)-(.*)$ /version-$1/$2 last;
-
 	listen 80; 
-	listen 443 ssl; 
+	listen 443 ssl;
 
+	root /var/www/setup;
+	index index.html;
+
+	rewrite /version-(\w+)-(.*)$ /version-$1/$2 last;
+	
 	location / {
-		proxy_pass http://sveltekit/setup$request_uri;
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
 	}
 }
