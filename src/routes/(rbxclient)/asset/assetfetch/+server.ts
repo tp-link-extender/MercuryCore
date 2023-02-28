@@ -8,7 +8,7 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
 	const ID = url.searchParams.get("id")
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
-	if (fs.existsSync(`./corescripts/${ID}.lua`)) {
+	try {
 		let file = fs.readFileSync(`./corescripts/${ID}.lua`)
 
 		setHeaders({
@@ -22,7 +22,7 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
 		if (ID != "38037265") file2 = SignData(file2, parseInt(ID))
 
 		return new Response(file2)
+	} catch {
+		throw redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${ID}`)
 	}
-
-	throw redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${ID}`)
 }

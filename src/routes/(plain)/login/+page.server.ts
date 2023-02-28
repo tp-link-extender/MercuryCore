@@ -17,7 +17,7 @@ export const actions: Actions = {
 		try {
 			const user: any = await auth.validateKeyPassword("username", username.toLowerCase(), password)
 			session = await auth.createSession(user.userId)
-		} catch (e) {
+		} catch {
 			return fail(400, { area: "password", msg: "Incorrect username or password" })
 		}
 		locals.setSession(session)
