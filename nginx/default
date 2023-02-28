@@ -13,7 +13,7 @@ server {
 	# rewrite (?i)^/Game/PlaceLauncher.ashx$ /api/games/placelauncher last;	
 	rewrite (?i)^/Game/Studio.ashx$ /game/studio last;
 	# rewrite (?i)^/Game/Edit.ashx$ /game/edit last;
-	# rewrite (?i)^/Game/Visit.ashx$ /game/visit last;
+	rewrite (?i)^/Game/Visit.ashx$ /game/visit last;
 	rewrite (?i)^/Game/Join.ashx$ /game/join last;
 	# rewrite (?i)^/Game/GameServer.ashx$ /game/gameserver last;
 	# rewrite (?i)^/Game/ClientPresence.ashx$ /game/clientpresence last; 
