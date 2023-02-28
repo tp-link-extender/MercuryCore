@@ -1,7 +1,13 @@
 import type { RequestHandler } from "./$types"
+import { error, redirect } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async (url) => {
+	const debug = url.searchParams.get("debug")
+	if(!debug || !/^\d+$/.test(debug) || debug > 2 || debug < 1) throw error(400, "Invalid Request")
+
+	
+
 	return new Response(
 		SignData(
 			`-- functions --------------------------
@@ -205,11 +211,11 @@ client.ConnectionRejected:connect(onConnectionRejected)
 connectionFailed = client.ConnectionFailed:connect(onConnectionFailed)
 client.Ticket = ""	
 
-playerConnectSucces, player = pcall(function() return client:PlayerConnect(${1}, "${"heliodex.ddns.net"}", ${53640}, 0, threadSleepTime) end)
+playerConnectSucces, player = pcall(function() return client:PlayerConnect(${1}, "${debug == 1 ? "127.0.0.1" : "heliodex.ddns.net"}", ${53640}, 0, threadSleepTime) end)
 if not playerConnectSucces then
 --Old player connection scheme
 player = game:GetService("Players"):CreateLocalPlayer(${1})
-client:Connect("${"heliodex.ddns.net"}", ${53640}, 0, threadSleepTime)
+client:Connect("${debug == 1 ? "127.0.0.1" : "heliodex.ddns.net"}", ${53640}, 0, threadSleepTime)
 end
 
 -- negotiate an auth token
