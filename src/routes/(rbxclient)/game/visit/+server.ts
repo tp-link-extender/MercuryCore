@@ -68,7 +68,7 @@ export const GET: RequestHandler = async () => {
                 game:GetService("RunService"):Run()
             
                 message.Text = "Creating Player"
-                if <?=$IsWebsiteVisit?> then
+                if ${false} then
                     player = game:GetService("Players"):CreateLocalPlayer(${1})
                     player.Name = [====[${"Guest " + Math.floor(Math.random() * 10000)}]====]
                 else
@@ -88,9 +88,9 @@ export const GET: RequestHandler = async () => {
                 pcall(function() player:SetMembershipType(Enum.MembershipType.None) end)
                 pcall(function() player:SetAccountAge(0) end)
                 
-                if <?=$IsWebsiteVisit?> then
+                if ${false} then
                     message.Text = "Setting Ping"
-                    visit:SetPing("http://${"banland.xyz"}/Game/ClientPresence.ashx?version=old&PlaceID=<?=$PlaceID?>", 300)
+                    visit:SetPing("http://${"banland.xyz"}/Game/ClientPresence.ashx?version=old&PlaceID=${0}", 300)
             
                     message.Text = "Sending Stats"
                     game:HttpGet("${""}")
