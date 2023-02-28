@@ -1,0 +1,54 @@
+# This is Mercury's configuration file for nginx.
+# For Mercury, it is placed in /etc/nginx/sites-available/default.
+# You may replace banland.xyz with your own domain name.
+
+upstream sveltekit {
+	server 127.0.0.1:4443;
+	keepalive 8;
+}
+
+server {
+	server_name banland.xyz;
+
+	rewrite (?i)^/Asset$ /asset/assetfetch last;
+	rewrite (?i)^/Asset/$ /asset/assetfetch last;
+	rewrite (?i)^/Asset/Default.ashx$ /asset/assetfetch last;
+
+	# rewrite (?i)^/Game/PlaceLauncher.ashx$ /api/games/placelauncher last;	
+	rewrite (?i)^/Game/Studio.ashx$ /game/studio last;
+	# rewrite (?i)^/Game/Edit.ashx$ /game/edit last;
+	# rewrite (?i)^/Game/Visit.ashx$ /game/visit last;
+	rewrite (?i)^/Game/Join.ashx$ /game/join last;
+	# rewrite (?i)^/Game/GameServer.ashx$ /game/gameserver last;
+	# rewrite (?i)^/Game/ClientPresence.ashx$ /game/clientpresence last; 
+	rewrite (?i)^/Game/Host$ /game/host last;
+	rewrite (?i)^/Asset/GetScriptState.ashx$ /asset/getscriptstate last;
+
+	listen 80;
+	listen 443 ssl; # managed by Certbot
+	ssl_certificate /etc/letsencrypt/live/banland.xyz/fullchain.pem; # managed by Certbot
+	ssl_certificate_key /etc/letsencrypt/live/banland.xyz/privkey.pem; # managed by Certbot
+	include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+	location ~* / { #/ {
+		proxy_pass http://sveltekit;
+		proxy_redirect off;
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ @proxy;
+	}
+	location @proxy {
+		proxy_pass http://sveltekit;
+	}
+}
+
+server {
+	listen 80; 
+	listen 443 ssl; 
+	server_name setup.banland.xyz;
+
+	location / {
+		proxy_pass http://sveltekit/setup$request_uri;
+	}
+}
