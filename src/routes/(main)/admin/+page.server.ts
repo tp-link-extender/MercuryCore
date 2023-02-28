@@ -64,7 +64,7 @@ export const actions: Actions = {
 
 		try {
 			await auth.updateKeyPassword("username", username, password)
-		} catch (e) {
+		} catch {
 			return fail(400, { error: true, msg: "Invalid credentials" })
 		}
 
