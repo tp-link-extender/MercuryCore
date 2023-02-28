@@ -41,7 +41,7 @@ server {
 server {
 	server_name setup.banland.xyz;
 
-	listen 80; 
+	listen 80;
 	listen 443 ssl;
 
 	root /var/www/setup;
@@ -59,14 +59,19 @@ server {
 server {
 	server_name api.banland.xyz;
 
-	rewrite (?i)^/Setting/QuietGet/ClientSharedSettings$ /api/clientsharedsettings last;
-	rewrite (?i)^/Setting/QuietGet/ClientAppSettings$ /api/clientappsettings last;
-	rewrite (?i)^/Setting/QuietGet/StudioAppSettings$ /api/studioappsettings last;
-
-	listen 80; 
+	listen 80;
 	listen 443 ssl;
 
-	location / {
-		proxy_pass http://sveltekit$request_uri;
+	location ~* ^/Setting/QuietGet/ClientSharedSettings {
+		rewrite ^ /api/clientsharedsettings break;
+		proxy_pass http://sveltekit;
+	}
+	location ~* ^/Setting/QuietGet/ClientAppSettings {
+		rewrite ^ /api/clientappsettings break;
+		proxy_pass http://sveltekit;
+	}
+	location ~* ^/Setting/QuietGet/StudioAppSettings {
+		rewrite ^ /api/studioappsettings break;
+		proxy_pass http://sveltekit;
 	}
 }
