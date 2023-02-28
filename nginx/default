@@ -20,8 +20,6 @@ server {
 	rewrite (?i)^/Game/Host$ /game/host last;
 	rewrite (?i)^/Asset/GetScriptState.ashx$ /asset/getscriptstate last;
 
-	rewrite (?i)^/setup/version-(\w+)-(.*)$ /setup/version-$1/$2 last;
-
 	listen 80;
 	listen 443 ssl; # managed by Certbot
 	ssl_certificate /etc/letsencrypt/live/banland.xyz/fullchain.pem; # managed by Certbot
@@ -55,5 +53,20 @@ server {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.
 		try_files $uri $uri/ =404;
+	}
+}
+
+server {
+	server_name api.banland.xyz;
+
+	rewrite (?i)^/Setting/QuietGet/ClientSharedSettings$ /api/clientsharedsettings last;
+	rewrite (?i)^/Setting/QuietGet/ClientAppSettings$ /api/clientappsettings last;
+	rewrite (?i)^/Setting/QuietGet/StudioAppSettings$ /api/studioappsettings last;
+
+	listen 80; 
+	listen 443 ssl;
+
+	location / {
+		proxy_pass http://sveltekit$request_uri;
 	}
 }
