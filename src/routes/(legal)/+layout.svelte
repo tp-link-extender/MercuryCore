@@ -33,7 +33,9 @@
 		display: flex
 		flex-direction: column
 		height: 100vh
+		z-index: 1
 
 	#bg
 		background: linear-gradient(-20deg, #0000 50%, var(--mainaccent) 250%)
+		z-index: -1
 </style>
