@@ -150,13 +150,13 @@ export const actions: Actions = {
 		const data = await request.formData()
 
 		const requestType = data.get("request")
-		const serverID = data.get("serverID")?.toString()
+		const serverID = parseInt(data.get("serverID")?.toString() || "")
 
 		if (!requestType || !serverID) return fail(400, { message: "Invalid Request" })
 		if (requestType != "RequestGame") return fail(400, { message: "Invalid Request (request type invalid)" })
 
 		const place = await prisma.place.findUnique({
-			where: { id: serverID || "" },
+			where: { id: serverID },
 			select: { maxPlayers: true, slug: true },
 		})
 		if (!place) return fail(404, { message: "Place not found" })
