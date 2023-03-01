@@ -3,21 +3,45 @@
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import fade from "$lib/fade"
-	
+	import { onMount } from "svelte"
+	import { Modal } from "bootstrap"
+
 	export let data: PageData
 
 	const statistics = [
 		["Activity", "8 visits"],
-		["Creation", "19/01/2023"],
+		["Creation", data.created.toLocaleDateString()],
 		["Updated", "Three hours ago"],
 		["Genre", "Horror"],
-		["Server Limit", "100"],
-		["Now Playing", "6 players"],
+		["Server Limit", data.maxPlayers],
+		["Now Playing", "0 players"],
 	]
-	
+
 	const images = ["/place/placeholderImage1.png", "/place/placeholderImage2.png", "/place/placeholderImage3.png"]
 
 	const user = getUser()
+
+	// Place Launcher
+
+	let modal: any
+
+	let installed = true
+
+	function openModal() {
+		installed = true
+		modal.show()
+		setTimeout(() => 
+			installed = false
+		, 2000)
+	}
+
+	onMount(() => {
+		modal = new Modal("#placeLauncherModal", {
+			keyboard: false,
+		})
+
+		modal.hide()
+	})
 </script>
 
 <svelte:head>
@@ -60,8 +84,8 @@
 				</div>
 			</div>
 			<div id="buttons" class="row">
-				<button id="join" class="btn btn-lg btn-success mt-4">
-					<img src="/place/join.svg" alt="Join button icon" />
+				<button on:click={openModal} id="play" class="btn btn-lg btn-success mt-4">
+					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
 				<form use:enhance class="align-self-center col mt-3 px-0 mb-2" method="POST">
 					<div class="row mb-2">
@@ -142,8 +166,8 @@
 				<div class="card-body">
 					<div class="row">
 						<div class="col col-2">
-							<p class="light-text mb-2">Currently Playing: 6/20</p>
-							<button id="join" class="btn btn-sm btn-success">Join Server</button>
+							<p class="light-text mb-2">Currently Playing: 0/{data.maxPlayers}</p>
+							<button on:click={openModal} id="join" class="btn btn-sm btn-success">Join Server</button>
 						</div>
 						<div class="col">
 							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
@@ -168,6 +192,24 @@
 		{/each}
 	</div>
 	<hr />
+</div>
+<div class="modal fade" id="placeLauncherModal" tabindex="-1" aria-labelledby="placeLauncherModal" aria-modal="true" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			{#if installed}
+			<div class="modal-body d-flex flex-column" in:fade>
+				<img src="/favicon.svg" alt="Mercury" class="text-center align-self-center mt-5 mb-4" height="128" width="128" />
+				<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
+			</div>
+			{:else}
+			<div class="modal-body d-flex flex-column" in:fade>
+				<img src="/favicon.svg" alt="Mercury" class="text-center align-self-center mt-5 mb-4" height="128" width="128" />
+				<h1 class="text-center h5 light-text">Install the Mercury client and start playing now!</h1>
+				<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>
+			</div>
+			{/if}
+		</div>
+	</div>
 </div>
 
 <style lang="sass">
@@ -199,6 +241,11 @@
 			border-style: solid
 			border-width: 0px 0px 2px 0px
 			border-color: var(--bs-blue)
+
+	.modal-content
+		background: var(--background)
+		border-color: var(--accent)
+	
 
 	#pfp
 		background: var(--accent2)

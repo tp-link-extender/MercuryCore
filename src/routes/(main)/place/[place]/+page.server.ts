@@ -14,6 +14,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			name: true,
 			description: true,
 			image: true,
+			maxPlayers: true,
+			created: true,
+			updated: true,
 			ownerUser: {
 				select: {
 					number: true,
@@ -38,6 +41,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			owner: getPlace.ownerUser,
 			description: getPlace.description,
 			image: getPlace.image,
+			maxPlayers: getPlace.maxPlayers,
+			created: getPlace.created,
+			updated: getPlace.updated,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Place { name: $place }))", query, true),
 			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Place { name: $place }))", query, true),
 			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $place }) RETURN r", query) : false,
