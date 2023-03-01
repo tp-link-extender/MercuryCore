@@ -54,6 +54,7 @@ model User {
 
     theme             String?
     animationSettings String?
+    GameSessions      GameSessions[]
 
     @@map("user")
 }
@@ -79,6 +80,16 @@ model Session {
 
     @@index([user_id])
     @@map("session")
+}
+
+model GameSessions {
+    place   Place   @relation(references: [id], fields: [placeId])
+    placeId String
+    user    User    @relation(references: [id], fields: [userId])
+    userId  String
+    ticket  String  @id @unique @default(uuid())
+    ping    Int     @default(0)
+    valid   Boolean @default(true)
 }
 
 model Regkey {
@@ -127,8 +138,9 @@ model Place {
 
     maxPlayers Int
 
-    created DateTime @default(now())
-    updated DateTime @default(now())
+    created      DateTime       @default(now())
+    updated      DateTime       @default(now())
+    GameSessions GameSessions[]
 }
 
 // Items

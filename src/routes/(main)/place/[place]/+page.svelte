@@ -1,10 +1,13 @@
 <script lang="ts">
 	import type { PageData } from "./$types"
-	import { enhance } from "$app/forms"
+	import { enhance, deserialize } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import fade from "$lib/fade"
 	import { onMount } from "svelte"
 	import { Modal } from "bootstrap"
+	import customProtocolCheck from "custom-protocol-check"
+	import { json } from "@sveltejs/kit"
+	import { join } from "@prisma/client/runtime"
 
 	export let data: PageData
 
@@ -26,11 +29,39 @@
 	let modal: any
 
 	let installed = true
+	let success = false
 
-	function openModal() {
+	function launch(joinscripturl: string) {
+		customProtocolCheck(
+			joinscripturl,
+			() => {
+				console.log("URI not found.")
+				installed = false
+			},
+			() => {
+				console.log("URI found, launching")
+				success = true
+			},
+			5000
+		)
+	}
+
+	async function placeLauncher() {
 		installed = true
 		modal.show()
-		setTimeout(() => (installed = false), 15000)
+
+		const formdata = new FormData()
+
+		formdata.append("request", "RequestGame")
+		formdata.append("serverID", data.id)
+
+		const response = await fetch(`/place/${data.slug}?/join`, { method: "POST", body: formdata })
+		const joinScriptData = deserialize(await response.text())
+
+		if(joinScriptData.status == 200) {
+			console.log(joinScriptData)
+			launch(`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(joinScriptData.data.joinScriptUrl)}`)
+		}
 	}
 
 	onMount(() => {
@@ -39,7 +70,7 @@
 		})
 
 		modal.hide()
-	})
+	}) 
 </script>
 
 <svelte:head>
@@ -82,10 +113,10 @@
 				</div>
 			</div>
 			<div id="buttons" class="row">
-				<a on:click={openModal} href="mercury-player:1+launchmode:ide" id="play" class="btn btn-lg btn-success mt-4">
+				<a on:click={placeLauncher} href="mercury-player:1+launchmode:ide" id="play" class="btn btn-lg btn-success mt-4">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</a>
-				<form use:enhance class="align-self-center col mt-3 px-0 mb-2" method="POST">
+				<form use:enhance class="align-self-center col mt-3 px-0 mb-2" method="POST" action="?/like">
 					<div class="row mb-2">
 						<div class="col d-flex justify-content-start">
 							<button name="action" value={data.likes ? "unlike" : "like"} class="btn btn-sm {data.likes ? 'btn-success' : 'btn-outline-success'}">
@@ -165,7 +196,7 @@
 					<div class="row">
 						<div class="col col-2">
 							<p class="light-text mb-2">Currently Playing: 0/{data.maxPlayers}</p>
-							<a on:click={openModal} href="mercury-player:1+launchmode:ide" id="join" class="btn btn-sm btn-success">Join Server</a>
+							<a on:click={placeLauncher} href="mercury-player:1+launchmode:ide" id="join" class="btn btn-sm btn-success">Join Server</a>
 						</div>
 						<div class="col">
 							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
@@ -203,6 +234,8 @@
 				{/key}
 				{#if installed}
 					<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
+				{:else if installed && success}
+					<h1 class="text-center h5 light-text">"{data.name}" is ready to play! Have fun!</h1>
 				{:else}
 					<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
 					<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>

@@ -34,6 +34,9 @@ dependencies:
   crypto-js:
     specifier: ^4.1.1
     version: 4.1.1
+  custom-protocol-check:
+    specifier: ^1.4.0
+    version: 1.4.0
   dotenv:
     specifier: ^16.0.3
     version: 16.0.3
@@ -689,6 +692,10 @@ packages:
 
   /crypto-js@4.1.1:
     resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
+    dev: false
+
+  /custom-protocol-check@1.4.0:
+    resolution: {integrity: sha512-eMTyp8AKnE5eo+mKNqG3743eb5ZND5LhBgf9F8BN2tVdhSBnOCHH7me7iTcv0BUDhUW2dBQiHWLWMy776yZW1A==}
     dev: false
 
   /debug@4.3.4:
