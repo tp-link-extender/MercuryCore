@@ -70,8 +70,4 @@ server {
 		rewrite ^ /api/clientappsettings break;
 		proxy_pass http://sveltekit;
 	}
-	location ~* ^/Setting/QuietGet/StudioAppSettings {
-		rewrite ^ /api/studioappsettings break;
-		proxy_pass http://sveltekit;
-	}
 }
