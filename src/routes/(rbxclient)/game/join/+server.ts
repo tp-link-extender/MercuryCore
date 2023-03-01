@@ -2,11 +2,10 @@ import type { RequestHandler } from "./$types"
 import { error, redirect } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 
-export const GET: RequestHandler = async (url) => {
+export const GET: RequestHandler = async ({url}) => {
 	const debug = url.searchParams.get("debug")
-	if(!debug || !/^\d+$/.test(debug) || debug > 2 || debug < 1) throw error(400, "Invalid Request")
+	if(!debug || !/^\d+$/.test(debug) || parseInt(debug) > 2 || parseInt(debug) < 1) throw error(400, "Invalid Request")
 
-	
 
 	return new Response(
 		SignData(
