@@ -1,7 +1,15 @@
 import type { RequestHandler } from "./$types"
+import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
+import { prisma } from "$lib/server/prisma"
 
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async ({ url }) => {
+	const ticket = url.searchParams.get("ticket")
+
+	if (!ticket) throw error(400, "Invalid Request")
+
+	await prisma.place.findUnique({ where: { serverTicket: ticket } })
+
 	return new Response(
 		SignData(
 			`-- Start Game Script Arguments
