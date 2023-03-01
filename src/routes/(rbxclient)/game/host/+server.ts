@@ -8,7 +8,10 @@ export const GET: RequestHandler = async ({ url }) => {
 
 	if (!ticket) throw error(400, "Invalid Request")
 
-	await prisma.place.findUnique({ where: { serverTicket: ticket } })
+	const data = await prisma.place.findUnique({ where: { serverTicket: ticket } })
+	if(!data) throw error(404, "Server Not Found")
+
+	const port = 53640
 
 	return new Response(
 		SignData(
@@ -206,7 +209,7 @@ if ${false} then
 end
 
 -- Now start the connection
-ns:Start(${53640}, sleeptime) 
+ns:Start(${port}, sleeptime) 
 
 game:GetService("Visit"):SetPing("${"https://banland.xyz"}", 30)
 

@@ -1,11 +1,50 @@
 import type { RequestHandler } from "./$types"
-import { error, redirect } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
+import { prisma } from "$lib/server/prisma"
 
-export const GET: RequestHandler = async ({url}) => {
-	const debug = url.searchParams.get("debug")
-	if(!debug || !/^\d+$/.test(debug) || parseInt(debug) > 2 || parseInt(debug) < 1) throw error(400, "Invalid Request")
+export const GET: RequestHandler = async ({ url }) => {
+	const clientTicket = url.searchParams.get("ticket")
+	let isStudioJoin = false
+	let joinMethod = "Studio"
 
+	if (!clientTicket) {
+		joinMethod = "Studio"
+		isStudioJoin = true
+		throw error(400, "Invalid Request")
+	} else {
+		joinMethod = "Ticket"
+	}
+
+	let serverAddress = "localhost"
+	let serverPort = 53640
+	let userName = "Player"
+	let userId = 0
+	let placeId = -1
+	let creatorId = 0
+	let MembershipType = "None"
+
+	if ((joinMethod = "Ticket")) {
+		const gameSession = (
+			await prisma.gameSessions.findMany({
+				where: { ticket: clientTicket, valid: true },
+				select: { user: true, place: { select: { serverIP: true, serverPort: true, ownerUser: true, ownerGroup: true, id: true } } },
+			})
+		)[0]
+		if (!gameSession) throw error(400, "Invalid Game Session")
+
+		await prisma.gameSessions.update({ where: { ticket: clientTicket }, data: { valid: false } })
+
+		serverAddress = gameSession.place.serverIP
+		serverPort = gameSession.place.serverPort
+		userName = gameSession.user.username
+		userId = gameSession.user.number
+		placeId = gameSession.place.id
+		creatorId = gameSession.place.ownerUser?.number || 0
+
+		if (gameSession.user.permissionLevel = "Administrator") MembershipType = "OutrageousBuildersClub"
+
+	}
 
 	return new Response(
 		SignData(
@@ -18,7 +57,7 @@ end
 
 -- MultiplayerSharedScript.lua inserted here ------ Prepended to Join.lua --
 
-pcall(function() game:SetPlaceID(${1}, false) end)
+pcall(function() game:SetPlaceID(${placeId}, false) end)
 
 -- if we are on a touch device, no blocking http calls allowed! This can cause a crash on iOS
 -- In general we need a long term strategy to remove blocking http calls from all platforms
@@ -37,9 +76,9 @@ if threadSleepTime==nil then
 threadSleepTime = 15
 end
 
-local test = ${true}
+local test = ${isStudioJoin}
 
-print("! Joining game '${1}' place ${1} at ${"heliodex.ddns.net"}")
+print("! Joining game '${69}' place ${placeId} at ${serverAddress}")
 
 game:GetService("ChangeHistoryService"):SetEnabled(false)
 game:GetService("ContentProvider"):SetThreadPool(16)
@@ -57,7 +96,7 @@ pcall(function() game:GetService("SocialService"):SetGroupRoleUrl("http://banlan
 pcall(function() game:GetService("GamePassService"):SetPlayerHasPassUrl("http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d") end)
 pcall(function() game:GetService("MarketplaceService"):SetProductInfoUrl("https://banland.xyz/marketplace/productinfo?assetId=%d") end)
 pcall(function() game:GetService("MarketplaceService"):SetPlayerOwnsAssetUrl("https://banland.xyz/ownership/hasasset?userId=%d&assetId=%d") end)
-pcall(function() game:SetCreatorID(${1}, Enum.CreatorType.User) end)
+pcall(function() game:SetCreatorID(${creatorId}, Enum.CreatorType.User) end)
 
 -- Bubble chat.  This is all-encapsulated to allow us to turn it off with a config setting
 pcall(function() game:GetService("Players"):SetChatStyle(Enum.ChatStyle.${"ClassicAndBubble"}) end)
@@ -141,7 +180,7 @@ local waitingForMarker = true
 
 local success, err = pcall(function()	
 if not test then 
-visit:SetPing("${"https://banland.xyz"}", 30) 
+visit:SetPing("${"https://banland.xyz/IGNORETHISMESSAGEFORNOW"}", 30) 
 end
 
 if not ${false} then
@@ -210,11 +249,11 @@ client.ConnectionRejected:connect(onConnectionRejected)
 connectionFailed = client.ConnectionFailed:connect(onConnectionFailed)
 client.Ticket = ""	
 
-playerConnectSucces, player = pcall(function() return client:PlayerConnect(${1}, "${debug == 1 ? "127.0.0.1" : "heliodex.ddns.net"}", ${53640}, 0, threadSleepTime) end)
+playerConnectSucces, player = pcall(function() return client:PlayerConnect(${userId}, "${serverAddress}", ${serverPort}, 0, threadSleepTime) end)
 if not playerConnectSucces then
 --Old player connection scheme
-player = game:GetService("Players"):CreateLocalPlayer(${1})
-client:Connect("${debug == 1 ? "127.0.0.1" : "heliodex.ddns.net"}", ${53640}, 0, threadSleepTime)
+player = game:GetService("Players"):CreateLocalPlayer(${userId})
+client:Connect("${serverAddress}", ${serverPort}, 0, threadSleepTime)
 end
 
 -- negotiate an auth token
@@ -229,14 +268,14 @@ end
 
 player:SetSuperSafeChat(${false})
 pcall(function() player:SetUnder13(${false}) end)
-pcall(function() player:SetMembershipType(Enum.MembershipType.${"OutrageousBuildersClub"}) end)
+pcall(function() player:SetMembershipType(Enum.MembershipType.${MembershipType}) end)
 pcall(function() player:SetAccountAge(${1}) end)
 player.Idled:connect(onPlayerIdled)
 
 -- Overriden
 onPlayerAdded(player)
 
-pcall(function() player.Name = [========[${"Mercury 2"}]========] end)
+pcall(function() player.Name = [========[${userName}]========] end)
 player.CharacterAppearance = ""	
 if not test then visit:SetUploadUrl("") end		
 end)
