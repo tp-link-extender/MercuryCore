@@ -16,7 +16,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		joinMethod = "Ticket"
 	}
 
-	let serverAddress = "localhost"
+	let serverAddress = "localhost" 
 	let serverPort = 53640
 	let userName = "Player"
 	let userId = 0
