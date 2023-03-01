@@ -44,7 +44,6 @@
 		<h1 class="col light-text">
 			Games
 			<a href="/games/create" class="btn btn-primary ms-4 disabled">Create</a>
-			<a href="mercury-player:1+launchmode:ide" class="btn btn-danger ms-4">Join Testing Server (0/0 players)</a>
 		</h1>
 		<div class="col-8">
 			<form use:enhance method="POST" action="/search" class="row">
