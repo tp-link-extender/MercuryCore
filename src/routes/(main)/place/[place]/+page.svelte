@@ -53,7 +53,7 @@
 		const formdata = new FormData()
 
 		formdata.append("request", "RequestGame")
-		formdata.append("serverID", data.id)
+		formdata.append("serverID", data.id.toString())
 
 		const response = await fetch(`/place/${data.slug}?/join`, { method: "POST", body: formdata })
 		const joinScriptData = deserialize(await response.text())
