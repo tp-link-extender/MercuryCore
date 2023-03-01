@@ -6,8 +6,7 @@
 	import { onMount } from "svelte"
 	import { Modal } from "bootstrap"
 	import customProtocolCheck from "custom-protocol-check"
-	import { json } from "@sveltejs/kit"
-	import { join } from "@prisma/client/runtime"
+
 
 	export let data: PageData
 
@@ -32,15 +31,16 @@
 	let success = false
 
 	function launch(joinscripturl: string) {
+		success = false
 		customProtocolCheck(
 			joinscripturl,
 			() => {
-				console.log("URI not found.")
 				installed = false
+				console.log("URI not found.")
 			},
 			() => {
-				console.log("URI found, launching")
 				success = true
+				console.log("URI found, launching")
 			},
 			5000
 		)
@@ -59,7 +59,6 @@
 		const joinScriptData = deserialize(await response.text())
 
 		if(joinScriptData.status == 200) {
-			console.log(joinScriptData)
 			launch(`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(joinScriptData.data.joinScriptUrl)}`)
 		}
 	}
@@ -234,7 +233,7 @@
 				{/key}
 				{#if installed}
 					<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
-				{:else if installed && success}
+				{:else if success}
 					<h1 class="text-center h5 light-text">"{data.name}" is ready to play! Have fun!</h1>
 				{:else}
 					<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
