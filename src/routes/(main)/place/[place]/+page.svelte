@@ -112,9 +112,9 @@
 				</div>
 			</div>
 			<div id="buttons" class="row">
-				<a on:click={placeLauncher} href="mercury-player:1+launchmode:ide" id="play" class="btn btn-lg btn-success mt-4">
+				<button on:click={placeLauncher} id="play" class="btn btn-lg btn-success mt-4">
 					<img src="/place/join.svg" alt="Play button icon" />
-				</a>
+				</button>
 				<form use:enhance class="align-self-center col mt-3 px-0 mb-2" method="POST" action="?/like">
 					<div class="row mb-2">
 						<div class="col d-flex justify-content-start">
@@ -204,7 +204,7 @@
 					<div class="row">
 						<div class="col col-2">
 							<p class="light-text mb-2">Currently Playing: 0/{data.maxPlayers}</p>
-							<a on:click={placeLauncher} href="mercury-player:1+launchmode:ide" id="join" class="btn btn-sm btn-success">Join Server</a>
+							<button on:click={placeLauncher} id="join" class="btn btn-sm btn-success">Join Server</button>
 						</div>
 						<div class="col">
 							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
