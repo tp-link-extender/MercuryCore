@@ -118,7 +118,7 @@ model Place {
 
     serverIP       String
     serverPort     String
-    serverTicket   String
+    serverTicket   String  @default(cuid())
     serverPing     Int     @default(0)
 
     description    String
