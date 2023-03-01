@@ -5,14 +5,14 @@ dependencies:
     specifier: ^0.4.0
     version: 0.4.0(lucia-auth@0.6.2)
   '@lucia-auth/sveltekit':
-    specifier: ^0.6.3
-    version: 0.6.3(lucia-auth@0.6.2)(svelte@3.55.1)
+    specifier: ^0.6.5
+    version: 0.6.5(lucia-auth@0.6.2)(svelte@3.55.1)
   '@popperjs/core':
     specifier: ^2.11.6
     version: 2.11.6
   '@prisma/client':
-    specifier: ^4.10.1
-    version: 4.10.1(prisma@4.10.1)
+    specifier: ^4.11.0
+    version: 4.11.0(prisma@4.11.0)
   '@sveltejs/adapter-node':
     specifier: ^1.2.0
     version: 1.2.0(@sveltejs/kit@1.8.5)
@@ -55,14 +55,14 @@ dependencies:
 
 devDependencies:
   '@sveltejs/kit':
-    specifier: ^1.8.5
+    specifier: 1.8.5
     version: 1.8.5(svelte@3.55.1)(vite@4.1.4)
   '@sveltejs/vite-plugin-svelte':
     specifier: ^2.0.3
     version: 2.0.3(svelte@3.55.1)(vite@4.1.4)
   prisma:
-    specifier: ^4.10.1
-    version: 4.10.1
+    specifier: ^4.11.0
+    version: 4.11.0
   sass:
     specifier: ^1.58.3
     version: 1.58.3
@@ -79,7 +79,7 @@ devDependencies:
     specifier: ^2.5.0
     version: 2.5.0
   typescript:
-    specifier: ^5.0.0-dev.20230226
+    specifier: 5.0.0-dev.20230226
     version: 5.0.0-dev.20230226
 
 packages:
@@ -301,10 +301,10 @@ packages:
       lucia-auth: 0.6.2
     dev: false
 
-  /@lucia-auth/sveltekit@0.6.3(lucia-auth@0.6.2)(svelte@3.55.1):
-    resolution: {integrity: sha512-Xs0dTcmr/XtHrORAHAqvRt7KbZLokIXw/YT9HuP8zJ+9a3ARhwffr/p4JJVAzzSNI9oM8qNs/O8FdKSzbI+3/w==}
+  /@lucia-auth/sveltekit@0.6.5(lucia-auth@0.6.2)(svelte@3.55.1):
+    resolution: {integrity: sha512-E0Y1i3B+wvpljdi9sgZEDHu0lBKmqkHn/4jjLeFhJMz2Ap6l8S9eamyp9mTPswlVecg2sKToOaMOxszBtkm28w==}
     peerDependencies:
-      lucia-auth: 0.5.x - 0.6.x
+      lucia-auth: 0.5.x - 0.7.x
       svelte: 3.x
     dependencies:
       '@noble/hashes': 1.2.0
@@ -344,8 +344,8 @@ packages:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
     dev: false
 
-  /@prisma/client@4.10.1(prisma@4.10.1):
-    resolution: {integrity: sha512-VonXLJZybdt8e5XZH5vnIGCRNnIh6OMX1FS3H/yzMGLT3STj5TJ/OkMcednrvELgk8PK89Vo3aSh51MWNO0axA==}
+  /@prisma/client@4.11.0(prisma@4.11.0):
+    resolution: {integrity: sha512-0INHYkQIqgAjrt7NzhYpeDQi8x3Nvylc2uDngKyFDDj1tTRQ4uV1HnVmd1sQEraeVAN63SOK0dgCKQHlvjL0KA==}
     engines: {node: '>=14.17'}
     requiresBuild: true
     peerDependencies:
@@ -354,16 +354,16 @@ packages:
       prisma:
         optional: true
     dependencies:
-      '@prisma/engines-version': 4.10.1-2.aead147aa326ccb985dcfed5b065b4fdabd44b19
-      prisma: 4.10.1
+      '@prisma/engines-version': 4.11.0-57.8fde8fef4033376662cad983758335009d522acb
+      prisma: 4.11.0
     dev: false
 
-  /@prisma/engines-version@4.10.1-2.aead147aa326ccb985dcfed5b065b4fdabd44b19:
-    resolution: {integrity: sha512-tsjTho7laDhf9EJ9EnDxAPEf7yrigSMDhniXeU4YoWc7azHAs4GPxRi2P9LTFonmHkJLMOLjR77J1oIP8Ife1w==}
+  /@prisma/engines-version@4.11.0-57.8fde8fef4033376662cad983758335009d522acb:
+    resolution: {integrity: sha512-3Vd8Qq06d5xD8Ch5WauWcUUrsVPdMC6Ge8ILji8RFfyhUpqon6qSyGM0apvr1O8n8qH8cKkEFqRPsYjuz5r83g==}
     dev: false
 
-  /@prisma/engines@4.10.1:
-    resolution: {integrity: sha512-B3tcTxjx196nuAu1GOTKO9cGPUgTFHYRdkPkTS4m5ptb2cejyBlH9X7GOfSt3xlI7p4zAJDshJP4JJivCg9ouA==}
+  /@prisma/engines@4.11.0:
+    resolution: {integrity: sha512-0AEBi2HXGV02cf6ASsBPhfsVIbVSDC9nbQed4iiY5eHttW9ZtMxHThuKZE1pnESbr8HRdgmFSa/Kn4OSNYuibg==}
     requiresBuild: true
 
   /@redis/bloom@1.2.0(@redis/client@1.5.6):
@@ -1243,13 +1243,13 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
 
-  /prisma@4.10.1:
-    resolution: {integrity: sha512-0jDxgg+DruB1kHVNlcspXQB9au62IFfVg9drkhzXudszHNUAQn0lVuu+T8np0uC2z1nKD5S3qPeCyR8u5YFLnA==}
+  /prisma@4.11.0:
+    resolution: {integrity: sha512-4zZmBXssPUEiX+GeL0MUq/Yyie4ltiKmGu7jCJFnYMamNrrulTBc+D+QwAQSJ01tyzeGHlD13kOnqPwRipnlNw==}
     engines: {node: '>=14.17'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 4.10.1
+      '@prisma/engines': 4.11.0
 
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
