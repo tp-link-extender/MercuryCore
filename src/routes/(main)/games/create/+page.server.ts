@@ -5,6 +5,8 @@ import { fail, redirect } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
+		return fail(400, { msg: "Games have been momentarily disabled due to client testing" }) // Games disabled during testing
+
 		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()

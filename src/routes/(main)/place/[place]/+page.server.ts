@@ -2,7 +2,9 @@ import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
-import { error, fail } from "@sveltejs/kit"
+import { error, redirect, json, fail } from "@sveltejs/kit"
+import { authorise } from "$lib/server/lucia"
+import { Connect } from "vite"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("place")
@@ -11,9 +13,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			slug: params.place,
 		},
 		select: {
+			id: true,
 			name: true,
 			description: true,
 			image: true,
+			maxPlayers: true,
+			created: true,
+			updated: true,
+			serverTicket: true, 
 			ownerUser: {
 				select: {
 					number: true,
@@ -34,10 +41,16 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		}
 
 		return {
+			id: getPlace.id,
 			name: getPlace.name,
 			owner: getPlace.ownerUser,
 			description: getPlace.description,
 			image: getPlace.image,
+			maxPlayers: getPlace.maxPlayers,
+			created: getPlace.created,
+			updated: getPlace.updated,
+			slug: params.place,
+			serverTicket: getPlace.serverTicket,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Place { name: $place }))", query, true),
 			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Place { name: $place }))", query, true),
 			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $place }) RETURN r", query) : false,
@@ -47,7 +60,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, locals, params }) => {
+	like: async ({ request, locals, params }) => {
 		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
@@ -130,5 +143,38 @@ export const actions: Actions = {
 			console.error(e)
 			throw error(500, "Redis error 2")
 		}
+	},
+	join: async ({ request, locals }) => {
+		const user = (await authoriseUser(locals.validateUser())).user
+
+		const data = await request.formData()
+
+		const requestType = data.get("request")
+		const serverID = data.get("serverID")?.toString()
+
+		if (!requestType || !serverID) return fail(400, { message: "Invalid Request" })
+		if (requestType != "RequestGame") return fail(400, { message: "Invalid Request (request type invalid)" })
+
+		const place = await prisma.place.findUnique({
+			where: { id: serverID || "" },
+			select: { maxPlayers: true, slug: true },
+		})
+		if (!place) return fail(404, { message: "Place not found" })
+		if (place.maxPlayers <= (await roQuery("RETURN SIZE ((:User) -[:playing]-> (:Game {name: $slug}) )", { params: { slug: place.slug } }, true)))
+			return fail(400, { message: "Place is currently full. Join back later!" })
+
+		await prisma.gameSessions.updateMany({ // invalidate all game sessions
+			where: {userId: user.userId},
+			data: {valid: false}
+		})
+
+		const session = await prisma.gameSessions.create({ // create valid session
+			data: {place: {connect: {id: serverID}}, user: {connect: {id: user.userId}}},
+			select: {ticket: true}
+		})
+
+		const joinScriptUrl = `https://banland.xyz/Game/Join.ashx?ticket=${session.ticket}`
+
+		return {joinScriptUrl}
 	},
 }

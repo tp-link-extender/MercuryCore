@@ -54,6 +54,7 @@ model User {
 
     theme             String?
     animationSettings String?
+    GameSessions      GameSessions[]
 
     @@map("user")
 }
@@ -64,6 +65,7 @@ model Key {
     user_id         String
     primary         Boolean
     user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    expires         BigInt?
 
     @@index([user_id])
     @@map("key")
@@ -78,6 +80,16 @@ model Session {
 
     @@index([user_id])
     @@map("session")
+}
+
+model GameSessions {
+    place   Place   @relation(references: [id], fields: [placeId], onDelete: Cascade)
+    placeId Int
+    user    User    @relation(references: [id], fields: [userId], onDelete: Cascade)
+    userId  String
+    ticket  String  @id @unique @default(uuid())
+    ping    Int     @default(0)
+    valid   Boolean @default(true)
 }
 
 model Regkey {
@@ -108,18 +120,28 @@ model Group {
 // Places
 
 model Place {
+    id             Int     @id @unique @default(autoincrement())
+
     name           String
-    slug           String  @id @unique
+    slug           String  @unique
     ownerUser      User?   @relation(fields: [ownerUsername], references: [username])
     ownerUsername  String?
     ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
     ownerGroupname String?
 
+    serverIP     String
+    serverPort   Int
+    serverTicket String @unique @default(cuid())
+    serverPing   Int    @default(0)
+
     description String
     image       String
 
-    created DateTime @default(now())
-    updated DateTime @default(now())
+    maxPlayers Int
+
+    created      DateTime       @default(now())
+    updated      DateTime       @default(now())
+    GameSessions GameSessions[]
 }
 
 // Items
