@@ -64,6 +64,7 @@ model Key {
     user_id         String
     primary         Boolean
     user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    expires         BigInt?
 
     @@index([user_id])
     @@map("key")
@@ -116,18 +117,18 @@ model Place {
     ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
     ownerGroupname String?
 
-    serverIP       String
-    serverPort     String
-    serverTicket   String  @default(cuid())
-    serverPing     Int     @default(0)
+    serverIP     String
+    serverPort   String
+    serverTicket String @default(cuid())
+    serverPing   Int    @default(0)
 
-    description    String
-    image          String
+    description String
+    image       String
 
-    maxPlayers     Int 
+    maxPlayers Int
 
-    created        DateTime @default(now())
-    updated        DateTime @default(now())
+    created DateTime @default(now())
+    updated DateTime @default(now())
 }
 
 // Items
