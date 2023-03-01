@@ -189,6 +189,15 @@
 			</p>
 		</div>
 		<div class="tab-pane fade" id="pills-game" role="tabpanel" aria-labelledby="pills-game-tab" tabindex={0}>
+			{#if $user?.permissionLevel == "Administrator"}
+			<h4 class="light-text">Hosting</h4>
+			<div class="card mb-2">
+				<div class="card-body">
+					<p class="light-text">Hosting Script (for <a href="mercury-player:1+launchmode:ide">Studio</a>)</p>
+					<code>loadfile("http://banland.xyz/Game/Host?ticket={data.serverTicket}")()</code>
+				</div>
+			</div>
+			{/if}
 			<h4 class="light-text">Server List</h4>
 			<div class="card mb-2">
 				<div class="card-body">
@@ -231,10 +240,10 @@
 						<img src="/outerlogo.svg" alt="Mercury logo outer part (circle around M)" id="outer" width="128" height="128" style={installed ? "" : "animation: none; --rotation: 0deg"} />
 					</div>
 				{/key}
-				{#if installed}
-					<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
-				{:else if success}
+				{#if success}
 					<h1 class="text-center h5 light-text">"{data.name}" is ready to play! Have fun!</h1>
+				{:else if installed}
+					<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
 				{:else}
 					<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
 					<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>

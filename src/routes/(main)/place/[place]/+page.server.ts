@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			maxPlayers: true,
 			created: true,
 			updated: true,
+			serverTicket: true, 
 			ownerUser: {
 				select: {
 					number: true,
@@ -49,6 +50,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			created: getPlace.created,
 			updated: getPlace.updated,
 			slug: params.place,
+			serverTicket: getPlace.serverTicket,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Place { name: $place }))", query, true),
 			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Place { name: $place }))", query, true),
 			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $place }) RETURN r", query) : false,
@@ -161,7 +163,12 @@ export const actions: Actions = {
 		if (place.maxPlayers <= (await roQuery("RETURN SIZE ((:User) -[:playing]-> (:Game {name: $slug}) )", { params: { slug: place.slug } }, true)))
 			return fail(400, { message: "Place is currently full. Join back later!" })
 
-		const session = await prisma.gameSessions.create({
+		await prisma.gameSessions.updateMany({ // invalidate all game sessions
+			where: {userId: user.userId},
+			data: {valid: false}
+		})
+
+		const session = await prisma.gameSessions.create({ // create valid session
 			data: {place: {connect: {id: serverID}}, user: {connect: {id: user.userId}}},
 			select: {ticket: true}
 		})

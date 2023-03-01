@@ -130,7 +130,7 @@ model Place {
 
     serverIP     String
     serverPort   String
-    serverTicket String @default(cuid())
+    serverTicket String @unique @default(cuid())
     serverPing   Int    @default(0)
 
     description String
