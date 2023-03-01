@@ -108,18 +108,26 @@ model Group {
 // Places
 
 model Place {
+    id             String  @id @unique @default(cuid())
     name           String
-    slug           String  @id @unique
+    slug           String  @unique
     ownerUser      User?   @relation(fields: [ownerUsername], references: [username])
     ownerUsername  String?
     ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
     ownerGroupname String?
 
-    description String
-    image       String
+    serverIP       String
+    serverPort     String
+    serverTicket   String
+    serverPing     Int     @default(0)
 
-    created DateTime @default(now())
-    updated DateTime @default(now())
+    description    String
+    image          String
+
+    maxPlayers     Int 
+
+    created        DateTime @default(now())
+    updated        DateTime @default(now())
 }
 
 // Items
