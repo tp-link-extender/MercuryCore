@@ -59,7 +59,7 @@
 		const joinScriptData = deserialize(await response.text())
 
 		if(joinScriptData.status == 200) {
-			launch(`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(joinScriptData.data.joinScriptUrl)}`)
+			launch(`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(joinScriptData.data.joinScriptUrl)}+gameinfo:test`)
 		}
 	}
 
