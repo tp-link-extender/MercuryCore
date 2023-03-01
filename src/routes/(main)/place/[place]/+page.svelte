@@ -30,9 +30,7 @@
 	function openModal() {
 		installed = true
 		modal.show()
-		setTimeout(() => 
-			installed = false
-		, 2000)
+		setTimeout(() => (installed = false), 15000)
 	}
 
 	onMount(() => {
@@ -77,16 +75,16 @@
 				<div class="card-body">
 					<h2 class="light-text">{data.name}</h2>
 					<p class="light-text mt-2 mb-0">
-						<b>By</b> <a href="/user/{data.owner.number}" class="text-decoration-none">{data.owner.displayname}</a>
+						<b>By</b> <a href="/user/{data.owner?.number}" class="text-decoration-none">{data.owner?.displayname}</a>
 					</p>
 					<p class="light-text mb-0">Gears: <i class="fa-regular fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tooltip on top" /></p>
 					<span class="badge text-bg-success mb-1">Online</span>
 				</div>
 			</div>
 			<div id="buttons" class="row">
-				<button on:click={openModal} id="play" class="btn btn-lg btn-success mt-4">
+				<a on:click={openModal} href="mercury-player:1+launchmode:ide" id="play" class="btn btn-lg btn-success mt-4">
 					<img src="/place/join.svg" alt="Play button icon" />
-				</button>
+				</a>
 				<form use:enhance class="align-self-center col mt-3 px-0 mb-2" method="POST">
 					<div class="row mb-2">
 						<div class="col d-flex justify-content-start">
@@ -167,7 +165,7 @@
 					<div class="row">
 						<div class="col col-2">
 							<p class="light-text mb-2">Currently Playing: 0/{data.maxPlayers}</p>
-							<button on:click={openModal} id="join" class="btn btn-sm btn-success">Join Server</button>
+							<a on:click={openModal} href="mercury-player:1+launchmode:ide" id="join" class="btn btn-sm btn-success">Join Server</a>
 						</div>
 						<div class="col">
 							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
@@ -196,18 +194,20 @@
 <div class="modal fade" id="placeLauncherModal" tabindex="-1" aria-labelledby="placeLauncherModal" aria-modal="true" role="dialog">
 	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
-			{#if installed}
-			<div class="modal-body d-flex flex-column" in:fade>
-				<img src="/favicon.svg" alt="Mercury" class="text-center align-self-center mt-5 mb-4" height="128" width="128" />
-				<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
+			<div class="modal-body d-flex flex-column p-4" in:fade>
+				{#key installed}
+					<div in:fade={{ duration: 500 }} id="wrapper" class="text-center align-self-center mt-5 mb-4">
+						<img src="/innerlogo.svg" alt="Mercury logo inner part (M)" width="128" height="128" />
+						<img src="/outerlogo.svg" alt="Mercury logo outer part (circle around M)" id="outer" width="128" height="128" style={installed ? "" : "animation: none; --rotation: 0deg"} />
+					</div>
+				{/key}
+				{#if installed}
+					<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
+				{:else}
+					<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
+					<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>
+				{/if}
 			</div>
-			{:else}
-			<div class="modal-body d-flex flex-column" in:fade>
-				<img src="/favicon.svg" alt="Mercury" class="text-center align-self-center mt-5 mb-4" height="128" width="128" />
-				<h1 class="text-center h5 light-text">Install the Mercury client and start playing now!</h1>
-				<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>
-			</div>
-			{/if}
 		</div>
 	</div>
 </div>
@@ -228,6 +228,22 @@
 	.card
 		background: var(--accent)
 
+	#wrapper
+		width: 128px
+		height: 128px
+		transform: translateX(-64px)
+		img
+			box-sizing: border-box
+			position: absolute
+	
+	#outer
+		transform: rotate(0)
+		animation: moon 1.5s 0s infinite linear
+
+	@keyframes moon
+		100%
+			transform: rotate(360deg)
+
 	.nav-link
 		border-radius: 0
 		color: var(--light-text)
@@ -245,12 +261,7 @@
 	.modal-content
 		background: var(--background)
 		border-color: var(--accent)
-	
 
 	#pfp
-		background: var(--accent2)
-
-	#join img
-		height: 2.5rem
-		width: 50%
+		background: var(--background)
 </style>
