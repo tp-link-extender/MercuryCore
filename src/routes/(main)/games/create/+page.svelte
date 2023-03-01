@@ -48,7 +48,7 @@
 				</div>
 			</div>
 			<br />
-			<button type="submit" class="btn btn-success">Create (<i class="fa fa-gem" /> 10)</button>
+			<button type="submit" class="btn btn-success disabled">Create (<i class="fa fa-gem" /> 10)</button>
 		</fieldset>
 	</form>
 	<br />
