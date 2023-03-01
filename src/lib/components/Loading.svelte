@@ -13,7 +13,6 @@
 </div>
 
 <style lang="sass">
-
 	#wrapper
 		height: var(--size)
 		width: var(--size)
