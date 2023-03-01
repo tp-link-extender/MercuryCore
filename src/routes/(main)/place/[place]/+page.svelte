@@ -204,7 +204,7 @@
 			{:else}
 			<div class="modal-body d-flex flex-column" in:fade>
 				<img src="/favicon.svg" alt="Mercury" class="text-center align-self-center mt-5 mb-4" height="128" width="128" />
-				<h1 class="text-center h5 light-text">Install the Mercury client and start playing now!</h1>
+				<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
 				<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>
 			</div>
 			{/if}
