@@ -8,7 +8,6 @@
 		serverIP: "",
 		serverPort: "",
 		maxPlayers: "",
-		privateServer: "",
 	}
 
 	export const snapshot: Snapshot = {
@@ -61,14 +60,11 @@
 			<div class="row mb-3">
 				<label for="privateServer" class="col-md-3 col-form-label text-md-right">Private Server</label>
 				<div class="col-md-8">
-					<input class="form-check-input" type="checkbox" id="privateServer">
+					<input class="form-check-input" type="checkbox" value="privateServer" id="privateServer">
 				</div>
 			</div>
 			<br />
-			<button type="submit" class="btn btn-success disabled">Create 
-				{#if}
-				(<i class="fa fa-gem" /> 10)
-			</button>
+			<button type="submit" class="btn btn-success disabled">Create (<i class="fa fa-gem" /> 10)</button>
 		</fieldset>
 	</form>
 	<br />
