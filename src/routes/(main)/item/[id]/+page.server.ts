@@ -54,10 +54,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			},
 		}
 		return {
-			name: item.name,
-			price: item.price,
-			creator: item.creator,
-			owners: item.owners,
+			...item,
 			owned: (itemOwned?.owners || []).length > 0,
 			description: "item description", //item.description,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Item { name: $itemid }))", query, true),
