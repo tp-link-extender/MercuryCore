@@ -126,10 +126,12 @@ model Place {
     ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
     ownerGroupname String?
 
-    serverIP     String
-    serverPort   Int
-    serverTicket String @unique @default(cuid())
-    serverPing   Int    @default(0)
+    serverIP      String
+    serverPort    Int
+    serverTicket  String  @unique @default(cuid())
+    serverPing    Int     @default(0)
+    privateServer Boolean @default(false)
+    privateTicket String  @default(uuid())
 
     description String
     image       String
