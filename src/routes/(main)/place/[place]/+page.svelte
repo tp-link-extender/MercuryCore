@@ -1,12 +1,10 @@
 <script lang="ts">
 	import type { PageData } from "./$types"
 	import { enhance, deserialize } from "$app/forms"
-	import { getUser } from "@lucia-auth/sveltekit/client"
 	import fade from "$lib/fade"
-	import { onMount } from "svelte"
-	import { Modal } from "bootstrap"
+	import { fly } from "svelte/transition"
+	import { getUser } from "@lucia-auth/sveltekit/client"
 	import customProtocolCheck from "custom-protocol-check"
-
 
 	export let data: PageData
 
@@ -25,8 +23,7 @@
 
 	// Place Launcher
 
-	let modal: any
-
+	let modal = false
 	let installed = true
 	let success = false
 
@@ -48,7 +45,7 @@
 
 	async function placeLauncher() {
 		installed = true
-		modal.show()
+		modal = true
 
 		const formdata = new FormData()
 
@@ -58,18 +55,10 @@
 		const response = await fetch(`/place/${data.slug}?/join`, { method: "POST", body: formdata })
 		const joinScriptData = deserialize(await response.text())
 
-		if(joinScriptData.status == 200) {
+		if (joinScriptData.status == 200) {
 			launch(`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(joinScriptData.data.joinScriptUrl)}+gameinfo:test`)
 		}
 	}
-
-	onMount(() => {
-		modal = new Modal("#placeLauncherModal", {
-			keyboard: false,
-		})
-
-		modal.hide()
-	}) 
 </script>
 
 <svelte:head>
@@ -190,13 +179,13 @@
 		</div>
 		<div class="tab-pane fade" id="pills-game" role="tabpanel" aria-labelledby="pills-game-tab" tabindex={0}>
 			{#if $user?.permissionLevel == "Administrator"}
-			<h4 class="light-text">Hosting</h4>
-			<div class="card mb-2">
-				<div class="card-body">
-					<p class="light-text">Hosting Script (for <a href="mercury-player:1+launchmode:ide">Studio</a>)</p>
-					<code>loadfile("http://banland.xyz/Game/Host?ticket={data.serverTicket}")()</code>
+				<h4 class="light-text">Hosting</h4>
+				<div class="card mb-2">
+					<div class="card-body">
+						<p class="light-text">Hosting Script (for <a href="mercury-player:1+launchmode:ide">Studio</a>)</p>
+						<code>loadfile("http://banland.xyz/Game/Host?ticket={data.serverTicket}")()</code>
+					</div>
 				</div>
-			</div>
 			{/if}
 			<h4 class="light-text">Server List</h4>
 			<div class="card mb-2">
@@ -230,28 +219,39 @@
 	</div>
 	<hr />
 </div>
-<div class="modal fade" id="placeLauncherModal" tabindex="-1" aria-labelledby="placeLauncherModal" aria-modal="true" role="dialog">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-body d-flex flex-column p-4" in:fade>
-				{#key installed}
-					<div in:fade={{ duration: 500 }} id="wrapper" class="text-center align-self-center mt-5 mb-4">
-						<img src="/innerlogo.svg" alt="Mercury logo inner part (M)" width="128" height="128" />
-						<img src="/outerlogo.svg" alt="Mercury logo outer part (circle around M)" id="outer" width="128" height="128" style={installed ? "" : "animation: none; --rotation: 0deg"} />
-					</div>
-				{/key}
-				{#if success}
-					<h1 class="text-center h5 light-text">"{data.name}" is ready to play! Have fun!</h1>
-				{:else if installed}
-					<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
-				{:else}
-					<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
-					<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>
-				{/if}
+
+{#if modal}
+	<div id="fade" in:fade class="vh-100 vw-100 position-absolute top-0 bg-black" />
+	<div class="modal d-block" tabindex="-1" in:fly={{ y: -50 }}>
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body d-flex flex-column p-4">
+					{#key installed}
+						<div in:fade={{ duration: 500 }} id="wrapper" class="text-center align-self-center mt-5 mb-4">
+							<img src="/innerlogo.svg" alt="Mercury logo inner part (M)" width="128" height="128" />
+							<img
+								src="/outerlogo.svg"
+								alt="Mercury logo outer part (circle around M)"
+								id="outer"
+								width="128"
+								height="128"
+								style={installed ? "" : "animation: none; --rotation: 0deg"}
+							/>
+						</div>
+					{/key}
+					{#if success}
+						<h1 class="text-center h5 light-text">"{data.name}" is ready to play! Have fun!</h1>
+					{:else if installed}
+						<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
+					{:else}
+						<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
+						<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+{/if}
 
 <style lang="sass">
 	:target
@@ -302,6 +302,9 @@
 	.modal-content
 		background: var(--background)
 		border-color: var(--accent)
+
+	#fade
+		opacity: 0.5
 
 	#pfp
 		background: var(--background)
