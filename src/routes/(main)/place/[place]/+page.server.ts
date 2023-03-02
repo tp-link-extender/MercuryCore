@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			maxPlayers: true,
 			created: true,
 			updated: true,
-			serverTicket: true, 
+			serverTicket: true,
 			ownerUser: {
 				select: {
 					number: true,
