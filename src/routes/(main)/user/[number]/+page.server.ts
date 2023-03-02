@@ -44,11 +44,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		console.timeEnd("user")
 		return {
-			number: userExists.number,
-			username: userExists.username,
-			bio: userExists.bio,
-			img: userExists.image,
-			permissionLevel: userExists.permissionLevel,
+			...userExists,
 			places: findPlaces({
 				where: {
 					ownerUsername: userExists.username,
@@ -72,7 +68,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					ownerUsername: userExists.username,
 				},
 			}),
-			feed: userExists.posts,
 			friendCount: roQuery("RETURN SIZE((:User) -[:friends]- (:User { name: $user }))", query2, true),
 			followerCount: roQuery("RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))", query2, true),
 			followingCount: roQuery("RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))", query2, true),

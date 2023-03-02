@@ -2,9 +2,7 @@ import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
-import { error, redirect, json, fail } from "@sveltejs/kit"
-import { authorise } from "$lib/server/lucia"
-import { Connect } from "vite"
+import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("place")
@@ -20,6 +18,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			maxPlayers: true,
 			created: true,
 			updated: true,
+			slug: true,
 			serverTicket: true,
 			ownerUser: {
 				select: {
@@ -41,16 +40,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		}
 
 		return {
-			id: getPlace.id,
-			name: getPlace.name,
-			owner: getPlace.ownerUser,
-			description: getPlace.description,
-			image: getPlace.image,
-			maxPlayers: getPlace.maxPlayers,
-			created: getPlace.created,
-			updated: getPlace.updated,
-			slug: params.place,
-			serverTicket: getPlace.serverTicket,
+			...getPlace,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Place { name: $place }))", query, true),
 			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Place { name: $place }))", query, true),
 			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $place }) RETURN r", query) : false,

@@ -103,7 +103,7 @@
 						</div>
 					</div>
 					<p class="light-text mt-2 mb-0">
-						<b>By</b> <a href="/user/{data.owner?.number}" class="text-decoration-none">{data.owner?.username}</a>
+						<b>By</b> <a href="/user/{data.ownerUser?.number}" class="text-decoration-none">{data.ownerUser?.username}</a>
 					</p>
 					<p class="light-text mb-0">Gears: <i class="fa-regular fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tooltip on top" /></p>
 					<span class="badge text-bg-success mb-1">Online</span>
@@ -251,7 +251,7 @@
 					{#if success}
 						<h1 class="text-center h5 light-text">"{data.name}" is ready to play! Have fun!</h1>
 					{:else if installed}
-						<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.username}!</h1>
+						<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.ownerUser?.username}!</h1>
 					{:else}
 						<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
 						<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>

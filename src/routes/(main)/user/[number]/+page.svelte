@@ -6,13 +6,14 @@
 
 	const user = getUser()
 
-	const permissions: any = {
-		1: ["white", "user"],
-		2: ["aqua", "check"],
-		3: ["violet", "hammer"],
-		4: ["orange", "shield-alt"],
-		5: ["crimson", "scale-balanced"],
-	}
+	const permissions: any = [
+		[], // index from 1
+		["white", "user", "User"],
+		["aqua", "check", "Verified"],
+		["violet", "hammer", "Catalog Manager"],
+		["orange", "shield-alt", "Moderator"],
+		["crimson", "scale-balanced", "Administrator"],
+	]
 
 	export let data: PageData
 </script>
@@ -25,14 +26,14 @@
 	<div class="card py-4">
 		<div class="d-flex px-4">
 			<div id="image-background" class="me-4 rounded-circle">
-				<img src={data.img} alt={data.username} class="rounded-circle rounded-top-0" />
+				<img src={data.image} alt={data.username} class="rounded-circle rounded-top-0" />
 			</div>
 			<div class="container">
 				<div class="d-flex mb-2">
 					<h1 class="h2 light-text d-inline">{data.username}</h1>
 					<b class="ms-auto" style="color: {permissions[data.permissionLevel][0]}">
 						<i class="fa fa-{permissions[data.permissionLevel][1]} me-1" />
-						{data.permissionLevel}
+						{permissions[data.permissionLevel][2]}
 					</b>
 				</div>
 				<div class="d-flex">
@@ -199,17 +200,17 @@
 				</div>
 			{/if}
 		</div>
-		{#if data.feed.length > 0}
+		{#if data.posts.length > 0}
 			<h2 class="h4 mt-5 light-text">Latest feed posts</h2>
 			<div id="feed" class="light-text p-3">
 				<div class="row">
-					{#each data.feed.sort((a, b) => b.posted - a.posted) as status, num}
-						<div in:fade={{ num, total: data.feed.length, max: 9 }} class="p-2 col-md-6 col-sm-12">
+					{#each data.posts.sort((a, b) => b.posted - a.posted) as status, num}
+						<div in:fade={{ num, total: data.posts.length, max: 9 }} class="p-2 col-md-6 col-sm-12">
 							<div class="card h-100">
 								<div class="card-body pb-0">
 									<div id="user" class="d-flex mb-2">
 										<span class="pfp rounded-circle">
-											<img src={data.img} alt={data.username} class="rounded-circle img-fluid rounded-top-0" />
+											<img src={data.image} alt={data.username} class="rounded-circle img-fluid rounded-top-0" />
 										</span>
 										<span class="fw-bold ms-3 light-text">{data.username}</span>
 										<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
