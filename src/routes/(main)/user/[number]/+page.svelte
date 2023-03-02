@@ -6,12 +6,12 @@
 
 	const user = getUser()
 
-	const permissions = {
-		User: ["white", "user"],
-		Verified: ["aqua", "check"],
-		Moderator: ["orange", "shield-alt"],
-		ItemManager: ["violet", "hammer"],
-		Administrator: ["crimson", "scale-balanced"],
+	const permissions: any = {
+		1: ["white", "user"],
+		2: ["aqua", "check"],
+		3: ["violet", "hammer"],
+		4: ["orange", "shield-alt"],
+		5: ["crimson", "scale-balanced"],
 	}
 
 	export let data: PageData
