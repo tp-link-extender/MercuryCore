@@ -92,7 +92,16 @@
 		<div class="flex col-md-4">
 			<div class="card rounded-none mb-4">
 				<div class="card-body">
-					<h2 class="light-text">{data.name}</h2>
+					<div class="row">
+						<div class="col">
+							<h2 class="light-text">{data.name}</h2>
+						</div>
+						<div id="settings" class="col d-flex justify-content-end">
+							<a href="/place/{data.slug}/settings" class="btn btn-sm btn-outline-warning">
+								<i class="fa-solid fa-sliders"></i>
+							</a>
+						</div>
+					</div>
 					<p class="light-text mt-2 mb-0">
 						<b>By</b> <a href="/user/{data.owner?.number}" class="text-decoration-none">{data.owner?.username}</a>
 					</p>
@@ -265,6 +274,10 @@
 		margin: auto
 		display: flex
 		flex-direction: column
+
+	#settings
+		position: absolute
+		margin: 3px 0px 0px -10px
 
 	.card
 		background: var(--accent)
