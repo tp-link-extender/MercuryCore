@@ -13,7 +13,7 @@ export const actions: Actions = {
 		const serverIP = data.get("serverIP")?.toString()
 		const serverPort = parseInt(data.get("serverPort")?.toString() || "")
 		const maxPlayers = parseInt(data.get("maxPlayers")?.toString() || "")
-		const privateServer = Boolean(data.get("privateServer"))
+		const privateServer = !!data.get("privateServer")
 
 		const slug = name.toLowerCase()
 		
