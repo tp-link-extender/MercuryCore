@@ -88,6 +88,7 @@
 	{/if}
 
 	<br />
+
 	<h2 class="light-text">User</h2>
 	<form use:enhance method="POST" action="?/user">
 		<fieldset>

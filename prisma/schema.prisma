@@ -120,7 +120,7 @@ model Group {
 // Places
 
 model Place {
-    id             Int     @id @unique @default(autoincrement())
+    id Int @id @unique @default(autoincrement())
 
     name           String
     slug           String  @unique
@@ -141,6 +141,7 @@ model Place {
 
     created      DateTime       @default(now())
     updated      DateTime       @default(now())
+    deleted      Boolean        @default(false)
     GameSessions GameSessions[]
 }
 
