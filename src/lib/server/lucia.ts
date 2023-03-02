@@ -58,5 +58,5 @@ export async function authoriseUser(
 export async function authoriseAdmin(locals: any) {
 	const { session, user } = await locals.validateUser()
 
-	if (!session || user.permissionLevel != "Administrator") throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
+	if (!session || user.permissionLevel != 5) throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
 }

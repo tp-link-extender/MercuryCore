@@ -15,14 +15,12 @@ datasource db {
 }
 
 // Users & Groups
-
-enum Permission {
-    User
-    Verified
-    Moderator
-    ItemManager
-    Administrator
-}
+// ADMIN LEVELS:
+// 1: User
+// 2: Verified
+// 3: Catalog Manager
+// 4: Moderator
+// 5: Administrator
 
 model User {
     id      String    @id @unique @default(uuid())
@@ -34,7 +32,7 @@ model User {
     email                String        @unique
     usedRegkey           Regkey        @relation(fields: [regkeyKey], references: [key])
     regkeyKey            String
-    permissionLevel      Permission    @default(User)
+    permissionLevel      Int           @default(1)
     bio                  String?
     image                String?
     created              DateTime      @default(now())
@@ -121,7 +119,7 @@ model Group {
 model Place {
     id Int @id @unique @default(autoincrement())
 
-    name           String
+    name           String  @unique
     slug           String  @unique
     ownerUser      User?   @relation(fields: [ownerUsername], references: [username])
     ownerUsername  String?
