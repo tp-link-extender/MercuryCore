@@ -22,7 +22,6 @@
 		.toString()
 		.padStart(2, "0")
 
-
 	onMount(() => {
 		function animationInterval(ms: number, callback: (time: number) => void) {
 			const start: any = document.timeline.currentTime
@@ -122,8 +121,8 @@
 								<div id="pfp" class="mx-2 rounded-circle">
 									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 								</div>
-								<p id="displayname" class="my-auto fs-6 me-2">
-									{$user?.displayname}
+								<p id="username" class="my-auto fs-6 me-2">
+									{$user?.username}
 								</p>
 							</a>
 						</a>
@@ -251,7 +250,7 @@
 	.loggedin
 		padding: 0
 
-	#displayname
+	#username
 		max-width: 10rem
 		min-width: 1rem
 		white-space: nowrap

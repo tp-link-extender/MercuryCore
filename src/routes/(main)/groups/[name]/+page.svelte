@@ -18,7 +18,7 @@
 		<div class="container light-text">
 			<h1 class="light-text">{data.name}</h1>
 			<p class="light-text">
-				<b>By</b> <a href="/user/{data.owner.number}">{data.owner.displayname}</a>
+				<b>By</b> <a href="/user/{data.owner.number}">{data.owner.username}</a>
 			</p>
 			<br />
 			<div class="d-flex">

@@ -16,7 +16,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		select: {
 			number: true,
 			username: true,
-			displayname: true,
 			bio: true,
 			image: true,
 			permissionLevel: true,
@@ -47,7 +46,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		return {
 			number: userExists.number,
 			username: userExists.username,
-			displayname: userExists.displayname,
 			bio: userExists.bio,
 			img: userExists.image,
 			permissionLevel: userExists.permissionLevel,

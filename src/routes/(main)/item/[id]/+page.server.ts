@@ -18,14 +18,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			creator: {
 				select: {
 					number: true,
-					displayname: true,
+					username: true,
 				},
 			},
 			owners: {
 				select: {
 					image: true,
 					number: true,
-					displayname: true,
+					username: true,
 				},
 			},
 		},

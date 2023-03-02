@@ -18,7 +18,6 @@ export const auth = lucia({
 		bio: data.bio,
 		email: data.email,
 		username: data.username,
-		displayname: data.displayname,
 		image: data.image,
 		currency: data.currency,
 		currencyCollected: data.currencyCollected,

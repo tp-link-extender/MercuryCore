@@ -15,7 +15,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		},
 		select: {
 			username: true,
-			displayname: true,
 			image: true,
 		},
 	})
@@ -49,7 +48,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 						select: {
 							number: true,
 							username: true,
-							displayname: true,
 							image: true,
 							status: true,
 						},
