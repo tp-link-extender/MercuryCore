@@ -18,19 +18,18 @@
 </script>
 
 <svelte:head>
-	<title>{data.displayname} - Mercury</title>
+	<title>{data.username} - Mercury</title>
 </svelte:head>
 
 <div id="all" class="container">
 	<div class="card py-4">
 		<div class="d-flex px-4">
 			<div id="image-background" class="me-4 rounded-circle">
-				<img src={data.img} alt={data.displayname} class="rounded-circle rounded-top-0" />
+				<img src={data.img} alt={data.username} class="rounded-circle rounded-top-0" />
 			</div>
 			<div class="container">
 				<div class="d-flex mb-2">
-					<h1 class="h2 light-text d-inline">{data.displayname}</h1>
-					<h2 class="h5 d-inline light-text m-2 ps-3 opacity-50">@{data.username}</h2>
+					<h1 class="h2 light-text d-inline">{data.username}</h1>
 					<b class="ms-auto" style="color: {permissions[data.permissionLevel][0]}">
 						<i class="fa fa-{permissions[data.permissionLevel][1]} me-1" />
 						{data.permissionLevel}
@@ -121,7 +120,11 @@
 								</div>
 								<div id="collapse{num}" class="accordion-collapse collapse rounded-3" aria-labelledby="heading{num}" data-bs-parent="#accordion">
 									<div class="accordion-body rounded-3">
-										<a in:fade={{ num, total: data.places.length }} class="card shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100" href="/place/{place.slug}">
+										<a
+											in:fade={{ num, total: data.places.length }}
+											class="card shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
+											href="/place/{place.slug}"
+										>
 											<div class="row">
 												<div class="col col-6">
 													<div class="overflow-hidden bg-black shadow rounded-0">
@@ -206,9 +209,9 @@
 								<div class="card-body pb-0">
 									<div id="user" class="d-flex mb-2">
 										<span class="pfp rounded-circle">
-											<img src={data.img} alt={data.displayname} class="rounded-circle img-fluid rounded-top-0" />
+											<img src={data.img} alt={data.username} class="rounded-circle img-fluid rounded-top-0" />
 										</span>
-										<span class="fw-bold ms-3 light-text">{data.displayname}</span>
+										<span class="fw-bold ms-3 light-text">{data.username}</span>
 										<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
 									</div>
 									<p class="text-start">

@@ -242,7 +242,7 @@
 					{#if success}
 						<h1 class="text-center h5 light-text">"{data.name}" is ready to play! Have fun!</h1>
 					{:else if installed}
-						<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.displayname}!</h1>
+						<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.owner?.username}!</h1>
 					{:else}
 						<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
 						<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>

@@ -19,7 +19,7 @@ export const actions: Actions = {
 			}
 		if (same) return fail(400)
 
-		if (!entries.displayName || entries.displayname?.length < 3 || entries.displayname?.length > 30) return fail(400, { area: "displayName", msg: "Invalid displayname" })
+		if (!entries.username || entries.username?.length < 3 || entries.username?.length > 30) return fail(400, { area: "username", msg: "Invalid username" })
 		if (!["standard", "darken", "storm", "solar"].includes(entries.theme)) return fail(400, { area: "theme", msg: "Invalid theme" })
 		if (!["on", "off"].includes(entries.animation)) return fail(400, { area: "theme", msg: "Invalid animation settings" })
 
@@ -29,7 +29,6 @@ export const actions: Actions = {
 			},
 			data: {
 				bio: entries.bio || "",
-				displayname: entries.displayName,
 				theme: entries.theme,
 			},
 		})

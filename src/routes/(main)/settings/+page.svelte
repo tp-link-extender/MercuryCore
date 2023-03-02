@@ -72,27 +72,7 @@
 							{/if}
 						</div>
 					</div>
-					<br />
-					<div class="row">
-						<label for="displayName" class="col-md-3 col-form-label text-md-right">Display Name</label>
-						<div class="col-md-8">
-							<input
-								type="text"
-								id="displayName"
-								required
-								name="displayName"
-								value={$user?.displayname}
-								class="form-control {form?.area == 'displayName' ? 'is-invalid' : 'valid'}"
-								minlength="3"
-								maxlength="30"
-							/>
-							{#if form?.area == "displayName"}
-								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
-							{/if}
-						</div>
-						<small class="grey-text pb-2">You can only change your display name every 7 days. (not added yet lmao)</small>
-					</div>
-					<hr />
+					<hr class="grey-text" />
 					<div class="row">
 						<label for="bio" class="form-label light-text">Bio</label>
 						<div class="container">

@@ -14,14 +14,14 @@ export const load: PageServerLoad = async () => ({
 				select: {
 					image: true,
 					number: true,
-					displayname: true,
+					username: true,
 				},
 			},
 			receiver: {
 				select: {
 					image: true,
 					number: true,
-					displayname: true,
+					username: true,
 				},
 			},
 		},

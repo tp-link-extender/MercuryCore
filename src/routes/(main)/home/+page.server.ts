@@ -37,7 +37,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 						select: {
 							number: true,
 							username: true,
-							displayname: true,
 							image: true,
 							status: true,
 						},
@@ -63,7 +62,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 				authorUser: {
 					select: {
 						number: true,
-						displayname: true,
+						username: true,
 						image: true,
 					},
 				},

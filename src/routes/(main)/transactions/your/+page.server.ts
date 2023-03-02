@@ -19,14 +19,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 					select: {
 						image: true,
 						number: true,
-						displayname: true,
+						username: true,
 					},
 				},
 				receiver: {
 					select: {
 						image: true,
 						number: true,
-						displayname: true,
+						username: true,
 					},
 				},
 				note: true,

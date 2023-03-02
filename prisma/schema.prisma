@@ -32,7 +32,6 @@ model User {
     number               Int           @unique @default(autoincrement())
     username             String        @unique
     email                String        @unique
-    displayname          String
     usedRegkey           Regkey        @relation(fields: [regkeyKey], references: [key])
     regkeyKey            String
     permissionLevel      Permission    @default(User)
