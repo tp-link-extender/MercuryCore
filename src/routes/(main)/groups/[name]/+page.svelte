@@ -22,38 +22,21 @@
 			</p>
 			<br />
 			<div class="d-flex">
-				<a href="/groups/{data.name}/followers" class="light-text text-center text-decoration-none ms-4">
-					Followers
-					<h3 class="light-text">
-						{data.followerCount}
-					</h3>
-				</a>
 				<a href="/groups/{data.name}/members" class="light-text text-center text-decoration-none ms-4">
 					Members
 					<h3 class="light-text">
 						{data.memberCount}
 					</h3>
 				</a>
-				{#if $user}
-					<form class="align-self-center ms-auto" method="POST" use:enhance>
-						<button name="action" value={data.following ? "unfollow" : "follow"} class="btn {data.following ? 'btn-danger' : 'btn-primary'}">
-							{#if data.following}
-								Unfollow
-							{:else}
-								Follow
-							{/if}
-						</button>
-					</form>
-					<form class="align-self-center ms-3" method="POST" use:enhance>
-						<button name="action" value={data.in ? "leave" : "join"} class="btn {data.in ? 'btn-danger' : 'btn-success'}">
-							{#if data.in}
-								Leave
-							{:else}
-								Join
-							{/if}
-						</button>
-					</form>
-				{/if}
+				<form class="align-self-center ms-auto" method="POST" use:enhance>
+					<button name="action" value={data.in ? "leave" : "join"} class="btn {data.in ? 'btn-danger' : 'btn-success'}">
+						{#if data.in}
+							Leave
+						{:else}
+							Join
+						{/if}
+					</button>
+				</form>
 			</div>
 		</div>
 	</div>
