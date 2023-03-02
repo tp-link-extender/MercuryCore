@@ -6,6 +6,7 @@
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	let search = ""
+	let tooltip: any
 
 	const user = getUser()
 	export let data: any
@@ -20,6 +21,7 @@
 	$: hours = Math.floor((timer / 1000 / 3600) % 24)
 		.toString()
 		.padStart(2, "0")
+
 
 	onMount(() => {
 		function animationInterval(ms: number, callback: (time: number) => void) {
@@ -90,7 +92,7 @@
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
-					<li class="dropdown ms-3 me-2  pt-1">
+					<li class="dropdown ms-3 me-2 pt-1">
 						<a href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
 							<span class="h6 text-success">
