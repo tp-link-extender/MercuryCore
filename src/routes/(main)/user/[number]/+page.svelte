@@ -124,7 +124,7 @@
 										<a
 											in:fade={{ num, total: data.places.length }}
 											class="card shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
-											href="/place/{place.slug}"
+											href="/place/{place.id}/{place.name}"
 										>
 											<div class="row">
 												<div class="col col-6">

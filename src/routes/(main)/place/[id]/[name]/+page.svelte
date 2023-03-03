@@ -52,7 +52,7 @@
 		formdata.append("request", "RequestGame")
 		formdata.append("serverID", data.id.toString())
 
-		const response = await fetch(`/place/${data.slug}?/join`, { method: "POST", body: formdata })
+		const response = await fetch(`/place/${data.id}/${data.name}?/join`, { method: "POST", body: formdata })
 		const joinScriptData = deserialize(await response.text())
 
 		if (joinScriptData.status == 200) {
@@ -97,7 +97,7 @@
 							<h2 class="light-text">{data.name}</h2>
 						</div>
 						<div id="settings" class="col d-flex justify-content-end">
-							<a href="/place/{data.slug}/settings" class="btn btn-sm btn-outline-warning">
+							<a href="/place/{data.id}/{data.name}/settings" class="btn btn-sm btn-outline-warning">
 								<i class="fa-solid fa-sliders"></i>
 							</a>
 						</div>

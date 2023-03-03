@@ -52,7 +52,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		places: findPlaces({
 			select: {
 				name: true,
-				slug: true,
+				id: true,
 				image: true,
 			},
 		}),

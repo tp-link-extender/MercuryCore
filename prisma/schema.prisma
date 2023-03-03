@@ -119,8 +119,7 @@ model Group {
 model Place {
     id Int @id @unique @default(autoincrement())
 
-    name           String  @unique
-    slug           String  @unique
+    name           String
     ownerUser      User?   @relation(fields: [ownerUsername], references: [username])
     ownerUsername  String?
     ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
