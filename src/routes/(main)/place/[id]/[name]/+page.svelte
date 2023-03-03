@@ -96,11 +96,13 @@
 						<div class="col">
 							<h2 class="light-text">{data.name}</h2>
 						</div>
+						{#if data.id = $user?.userId}
 						<div id="settings" class="col d-flex justify-content-end">
 							<a href="/place/{data.id}/{data.name}/settings" class="btn btn-sm btn-outline-warning">
 								<i class="fa-solid fa-sliders"></i>
 							</a>
 						</div>
+						{/if}
 					</div>
 					<p class="light-text mt-2 mb-0">
 						<b>By</b> <a href="/user/{data.ownerUser?.number}" class="text-decoration-none">{data.ownerUser?.username}</a>
