@@ -2,7 +2,8 @@
 	import type { ActionData, PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
-
+	import fade from "$lib/fade"
+	import cuid from "cuid"
 	const user = getUser()
 
 	export let form: ActionData
@@ -17,6 +18,10 @@
 		navigator.clipboard.writeText(`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`)
 
 		copiedSuccess = true
+
+		setTimeout(() => {
+			copiedSuccess = false
+		}, 4000)
 	}
 </script>
 
@@ -112,7 +117,7 @@
 								{#if form?.area == "ticket"}
 									<small class="col-12 mb-3 text-danger">{form?.msg}</small>
 								{/if}
-								<button class="btn btn-primary" type="button" id="button-addon2"><i class="fa-solid fa-rotate"></i> Regen</button>
+								<button class="btn btn-primary" type="button" id="regenTicket"><i class="fa-solid fa-rotate"></i> Regen</button>
 							</div>
 							<small class="grey-text"> The server ticket is required to host servers on Mercury. You can regenerate the ticket at any time. </small>
 						</div>
@@ -133,7 +138,7 @@
 					<div class="row mb-2">
 						<label for="privacy" class="col-md-3 col-form-label text-md-right">Private Server</label>
 						<div class="col-md-9">
-							<input class="form-check-input" name="privacy" type="checkbox" value="" id="privacy">
+							<input class="form-check-input" name="privacy" type="checkbox" id="privacy" bind:checked={data.privateServer}>
 						</div>
 					</div>
 					<div class="row mb-2">
@@ -148,7 +153,7 @@
 								<button class="btn btn-primary" type="button" id="button-addon2"><i class="fa-solid fa-rotate"></i> Regen</button>
 							</div>
 							{#if copiedSuccess}
-								<small id="copiedSuccess" bind:this={copiedSuccessMsg} class="text-warning">Successfully copied link to clipboard</small><br/>
+								<small id="copiedSuccess" in:fade bind:this={copiedSuccessMsg} class="text-warning">Successfully copied link to clipboard</small><br/>
 							{/if}
 
 							<small class="grey-text"> This private server link will allow users to join your server. Your server (if private) cannot be accessed by other players without this link.</small>
