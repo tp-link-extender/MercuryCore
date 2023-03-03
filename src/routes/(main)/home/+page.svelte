@@ -13,7 +13,7 @@
 		Developing: "bg-warning",
 	}
 
-	const greets = [`Hi, ${$user?.username}!`, `Hello, ${$user?.username}!`]
+	const greets = [`Hi, ${$user?.displayname}!`, `Hello, ${$user?.displayname}!`]
 
 	const news = [
 		{ time: new Date(), title: "Mercury is now life!", content: "Mercury is now live! We have a lot of features in store for you, so stay tuned!" },
@@ -33,7 +33,7 @@
 	const facts = [
 		`You joined mercury on ${$user?.accountCreated.toLocaleString().substring(0, 10)}!`,
 		// Add "st", "nd", "rd", "th" to number
-		`You are the ${$user?.number}${["st", "nd", "rd"][($user?.number % 10) - 1] || "th"} user to join Mercury!`,
+		`You are the ${$user?.number}${["st", "nd", "rd"][($user?.number) % 10 - 1] || "th"} user to join Mercury!`,
 	]
 
 	export let data: PageData
@@ -76,9 +76,9 @@
 							<div class="card-body pb-0 p-3">
 								<a class="d-flex mb-2 text-decoration-none user" href="/user/{status.authorUser?.number}">
 									<span class="pfp rounded-circle">
-										<img src={status.authorUser?.image} alt={status.authorUser?.username} class="rounded-circle img-fluid rounded-top-0" />
+										<img src={status.authorUser?.image} alt={status.authorUser?.displayname} class="rounded-circle img-fluid rounded-top-0" />
 									</span>
-									<span class="username fw-bold ms-3 light-text">{status.authorUser?.username}</span>
+									<span class="displayname fw-bold ms-3 light-text">{status.authorUser?.displayname}</span>
 									<small class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</small>
 								</a>
 								<p class="text-start">
@@ -101,7 +101,7 @@
 							<a in:fade={{ num, total: data.friends.length }} class="px-2 mb-2 text-center light-text text-decoration-none" href="/user/{friend.number}">
 								<div class="position-relative mb-2">
 									<div class="image-background rounded-circle">
-										<img src={friend.image} alt={friend.username} class="h-100 rounded-circle img-fluid rounded-top-0" />
+										<img src={friend.image} alt={friend.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />
 									</div>
 									{#if friend.status}
 										<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[friend.status]}">
@@ -109,8 +109,8 @@
 										</span>
 									{/if}
 								</div>
-								<p class="friendname username" class:small={friend.username.length > 15}>
-									{friend.username}
+								<p class="friendname displayname" class:small={friend.displayname.length > 15}>
+									{friend.displayname}
 								</p>
 							</a>
 						{/each}
@@ -162,6 +162,7 @@
 				</div>
 			</div>
 		</div>
+
 	</div>
 </div>
 
@@ -186,7 +187,7 @@
 	.card
 		background: var(--accent)
 
-	.username
+	.displayname
 		max-width: 50%
 		overflow: hidden
 		text-overflow: ellipsis
