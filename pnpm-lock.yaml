@@ -25,9 +25,15 @@ dependencies:
   '@types/crypto-js':
     specifier: ^4.1.1
     version: 4.1.1
+  '@types/cuid':
+    specifier: ^2.0.1
+    version: 2.0.1
   crypto-js:
     specifier: ^4.1.1
     version: 4.1.1
+  cuid:
+    specifier: ^3.0.0
+    version: 3.0.0
   custom-protocol-check:
     specifier: ^1.4.0
     version: 1.4.0
@@ -561,6 +567,13 @@ packages:
     resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
     dev: false
 
+  /@types/cuid@2.0.1:
+    resolution: {integrity: sha512-xKfGHwpYmA49CTknWV5TMovp4oe+BUN/cb2VgVulgJEPnYXsF3fUAwmFiCHuPZAKDU+yXMBJhkW3E79xGhRGMg==}
+    deprecated: This is a stub types definition. cuid provides its own type definitions, so you do not need this installed.
+    dependencies:
+      cuid: 3.0.0
+    dev: false
+
   /@types/estree@1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
     dev: false
@@ -675,6 +688,11 @@ packages:
 
   /crypto-js@4.1.1:
     resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
+    dev: false
+
+  /cuid@3.0.0:
+    resolution: {integrity: sha512-WZYYkHdIDnaxdeP8Misq3Lah5vFjJwGuItJuV+tvMafosMzw0nF297T7mrm8IOWiPJkV6gc7sa8pzx27+w25Zg==}
+    deprecated: Cuid and other k-sortable and non-cryptographic ids (Ulid, ObjectId, KSUID, all UUIDs) are all insecure. Use @paralleldrive/cuid2 instead.
     dev: false
 
   /custom-protocol-check@1.4.0:
