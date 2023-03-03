@@ -6,7 +6,7 @@ import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("item")
-	const { session, user } = await authoriseUser(locals.validateUser)
+	const { session, user } = await authoriseUser(locals.validateUser())
 
 	const item = await prisma.item.findUnique({
 		where: {
@@ -18,14 +18,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			creator: {
 				select: {
 					number: true,
-					username: true,
+					displayname: true,
 				},
 			},
 			owners: {
 				select: {
 					image: true,
 					number: true,
-					username: true,
+					displayname: true,
 				},
 			},
 		},
@@ -54,7 +54,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			},
 		}
 		return {
-			...item,
+			name: item.name,
+			price: item.price,
+			creator: item.creator,
+			owners: item.owners,
 			owned: (itemOwned?.owners || []).length > 0,
 			description: "item description", //item.description,
 			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Item { name: $itemid }))", query, true),
@@ -67,7 +70,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""

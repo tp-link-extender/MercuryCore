@@ -15,12 +15,14 @@ datasource db {
 }
 
 // Users & Groups
-// ADMIN LEVELS:
-// 1: User
-// 2: Verified
-// 3: Catalog Manager
-// 4: Moderator
-// 5: Administrator
+
+enum Permission {
+    User
+    Verified
+    Moderator
+    ItemManager
+    Administrator
+}
 
 model User {
     id      String    @id @unique @default(uuid())
@@ -30,9 +32,10 @@ model User {
     number               Int           @unique @default(autoincrement())
     username             String        @unique
     email                String        @unique
+    displayname          String
     usedRegkey           Regkey        @relation(fields: [regkeyKey], references: [key])
     regkeyKey            String
-    permissionLevel      Int           @default(1)
+    permissionLevel      Permission    @default(User)
     bio                  String?
     image                String?
     created              DateTime      @default(now())
@@ -117,20 +120,19 @@ model Group {
 // Places
 
 model Place {
-    id Int @id @unique @default(autoincrement())
+    id             Int     @id @unique @default(autoincrement())
 
     name           String
+    slug           String  @unique
     ownerUser      User?   @relation(fields: [ownerUsername], references: [username])
     ownerUsername  String?
     ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
     ownerGroupname String?
 
-    serverIP      String
-    serverPort    Int
-    serverTicket  String  @unique @default(cuid())
-    serverPing    Int     @default(0)
-    privateServer Boolean @default(false)
-    privateTicket String  @default(uuid())
+    serverIP     String
+    serverPort   Int
+    serverTicket String @unique @default(cuid())
+    serverPing   Int    @default(0)
 
     description String
     image       String
@@ -139,7 +141,6 @@ model Place {
 
     created      DateTime       @default(now())
     updated      DateTime       @default(now())
-    deleted      Boolean        @default(false)
     GameSessions GameSessions[]
 }
 

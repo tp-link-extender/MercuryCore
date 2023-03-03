@@ -16,6 +16,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		select: {
 			number: true,
 			username: true,
+			displayname: true,
 			bio: true,
 			image: true,
 			permissionLevel: true,
@@ -28,7 +29,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		},
 	})
 	if (userExists) {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const query = {
 			params: {
@@ -44,7 +45,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 		console.timeEnd("user")
 		return {
-			...userExists,
+			number: userExists.number,
+			username: userExists.username,
+			displayname: userExists.displayname,
+			bio: userExists.bio,
+			img: userExists.image,
+			permissionLevel: userExists.permissionLevel,
 			places: findPlaces({
 				where: {
 					ownerUsername: userExists.username,
@@ -68,6 +74,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					ownerUsername: userExists.username,
 				},
 			}),
+			feed: userExists.posts,
 			friendCount: roQuery("RETURN SIZE((:User) -[:friends]- (:User { name: $user }))", query2, true),
 			followerCount: roQuery("RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))", query2, true),
 			followingCount: roQuery("RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))", query2, true),
@@ -84,7 +91,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
 		const number = parseInt(params.number)

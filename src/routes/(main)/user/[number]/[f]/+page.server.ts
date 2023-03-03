@@ -39,6 +39,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		},
 		select: {
 			username: true,
+			displayname: true,
 			image: true,
 		},
 	})
@@ -64,6 +65,7 @@ export const load: PageServerLoad = async ({ params }) => {
 							select: {
 								number: true,
 								username: true,
+								displayname: true,
 								image: true,
 								status: true,
 							},
@@ -77,7 +79,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		console.timeEnd("user " + type)
 		return {
 			type,
-			username: user.username,
+			displayname: user.displayname,
 			users: Users(),
 			number: roQuery(numberQueries[type], query, true),
 		}

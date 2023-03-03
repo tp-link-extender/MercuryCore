@@ -4,7 +4,7 @@ import { prisma } from "$lib/server/prisma"
 
 export const load: PageServerLoad = async ({ locals }) => {
 	console.time("inventory")
-	const user = (await authoriseUser(locals.validateUser)).user
+	const user = (await authoriseUser(locals.validateUser())).user
 
 	const userExists = await prisma.user.findUnique({
 		where: {

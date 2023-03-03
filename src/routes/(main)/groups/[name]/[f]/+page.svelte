@@ -1,15 +1,22 @@
 <script lang="ts">
+	// The friends, followers, and following pages for a user.
+
 	import type { PageData } from "./$types"
 	import UserCard from "$lib/components/UserCard.svelte"
 
 	export let data: PageData
+
+	const titles: any = {
+		followers: `${data.name}'s followers`,
+		members: `Members of ${data.name}`,
+	}
 </script>
 
 <svelte:head>
-	<title>Members of {data.name} - Mercury</title>
+	<title>{titles[data.type]} - Mercury</title>
 </svelte:head>
 
-<h1 class="light-text text-center">Members of {data.name} ({data.number})</h1>
+<h1 class="light-text text-center">{titles[data.type]} ({data.number})</h1>
 
 <div class="container mt-5 d-grid">
 	{#each data.users as user, num}
