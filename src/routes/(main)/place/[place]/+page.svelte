@@ -11,7 +11,7 @@
 	const statistics = [
 		["Activity", "8 visits"],
 		["Creation", data.created.toLocaleDateString()],
-		["Updated", "Three hours ago"],
+		["Updated", data.created.toLocaleDateString()],
 		["Genre", "Horror"],
 		["Server Limit", data.maxPlayers],
 		["Now Playing", "0 players"],
