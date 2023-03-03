@@ -4,10 +4,12 @@ import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export const load: PageServerLoad = async ({ url, locals, params }) => {
 	console.time("place")
 	if (!/^\d+$/.test(params.id)) throw error(400, `Invalid place id: ${params.id}`)
 	const id = parseInt(params.id)
+
+	const privateServerCode = url.searchParams.get("privateServer")
 
 	const getPlace = await prisma.place.findUnique({
 		where: { id },
@@ -20,6 +22,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			created: true,
 			updated: true,
 			serverTicket: true,
+			privateServer: true,
+			privateTicket: true,
 			ownerUser: {
 				select: {
 					number: true,
@@ -28,9 +32,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			},
 		},
 	})
+
 	console.timeEnd("place")
 	if (getPlace) {
 		const { session, user } = await authoriseUser(locals.validateUser)
+
+		if(privateServerCode) {
+			if(getPlace.privateServer && privateServerCode != getPlace.privateTicket) throw error (404, "Not Found")
+		}
 
 		const query = {
 			params: {
