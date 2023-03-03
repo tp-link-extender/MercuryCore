@@ -31,6 +31,9 @@ dependencies:
   custom-protocol-check:
     specifier: ^1.4.0
     version: 1.4.0
+  dayjs:
+    specifier: ^1.11.7
+    version: 1.11.7
   dotenv:
     specifier: ^16.0.3
     version: 16.0.3
@@ -676,6 +679,10 @@ packages:
 
   /custom-protocol-check@1.4.0:
     resolution: {integrity: sha512-eMTyp8AKnE5eo+mKNqG3743eb5ZND5LhBgf9F8BN2tVdhSBnOCHH7me7iTcv0BUDhUW2dBQiHWLWMy776yZW1A==}
+    dev: false
+
+  /dayjs@1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
     dev: false
 
   /debug@4.3.4:
