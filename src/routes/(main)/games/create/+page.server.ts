@@ -15,28 +15,15 @@ export const actions: Actions = {
 		const maxPlayers = parseInt(data.get("maxPlayers")?.toString() || "")
 		const privateServer = !!data.get("privateServer")
 
-		const slug = name.toLowerCase()
-
 		if (!name || !description || !serverIP || !serverPort || !maxPlayers) return fail(400, { msg: "Missing fields" })
 		if (name.length < 3 || name.length > 50 || description.length > 1000 || serverPort > 65535 || serverPort < 53640 || maxPlayers > 99 || maxPlayers < 1 || !/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(serverIP)) return fail(400, { msg: "Invalid fields" })
 
-		if (
-			await prisma.place.findUnique({
-				where: {
-					name,
-				},
-			})
-		)
-			return fail(400, { msg: "A place with this name already exists" })
-
+		let place: any
 		try {
 			await prisma.$transaction(async tx => {
-				await transaction({ id: user.userId }, { number: 1 }, 10, { note: `Created place ${name}`, link: `/place/${slug}` }, tx)
-
-				await tx.place.create({
+				place = await tx.place.create({
 					data: {
 						name,
-						slug,
 						description,
 						serverIP,
 						serverPort,
@@ -45,12 +32,18 @@ export const actions: Actions = {
 						image: `/place/placeholderIcon${Math.floor(Math.random() * 3) + 1}.png`,
 						ownerUsername: user.username,
 					},
+					select: {
+						id: true
+					}
 				})
+
+				await transaction({ id: user.userId }, { number: 1 }, 10, { note: `Created place ${name}`, link: `/place/${place.id}` }, tx)
+
 			})
 		} catch (e: any) {
 			return fail(402, { msg: e.message })
 		}
 
-		throw redirect(302, `/place/${slug}`)
+		throw redirect(302, `/place/${place.id}`)
 	},
 }

@@ -8,7 +8,7 @@ export const load: PageServerLoad = async () => ({
 		},
 		select: {
 			name: true,
-			slug: true,
+			id: true,
 			image: true,
 		},
 	}),
@@ -28,7 +28,7 @@ export const actions: Actions = {
 				},
 				select: {
 					name: true,
-					slug: true,
+					id: true,
 					image: true
 				},
 			}),

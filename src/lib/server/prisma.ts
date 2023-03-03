@@ -21,7 +21,7 @@ export async function findPlaces(query: any) {
 				`,
 				{
 					params: {
-						place: place.slug,
+						place: place.id,
 					},
 				},
 				true
