@@ -4,7 +4,7 @@
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	const user = getUser()
-
+	
 	export let data: PageData
 	export let form: ActionData
 </script>
@@ -21,7 +21,7 @@
 				<div class="card-body">
 					<h2 class="light-text">{data.name}</h2>
 					<p class="light-text mt-2 mb-0">
-						<b>By</b> <a href="/user/{data.creator.number}" class="text-decoration-none">{data.creator.username}</a>
+						<b>By</b> <a href="/user/{data.creator.number}" class="text-decoration-none">{data.creator.displayname}</a>
 					</p>
 					<br />
 					<p class="light-text mt-2 mb-0">
@@ -126,10 +126,10 @@
 				{#each data.owners as owner}
 					<a href="/user/{owner.number}" class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
 						<div class="me-3 rounded-circle pfp">
-							<img src={owner?.image} alt={owner.username} class="rounded-circle rounded-top-0" />
+							<img src={owner?.image} alt={owner.displayname} class="rounded-circle rounded-top-0" />
 						</div>
 						<p class="light-text my-auto h5 me-4 text-truncate">
-							{owner.username}
+							{owner.displayname}
 						</p>
 					</a>
 				{/each}
