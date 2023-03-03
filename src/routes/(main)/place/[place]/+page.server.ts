@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	})
 	console.timeEnd("place")
 	if (getPlace) {
-		const { session, user } = await authoriseUser(locals.validateUser())
+		const { session, user } = await authoriseUser(locals.validateUser)
 
 		const query = {
 			params: {
@@ -51,7 +51,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	like: async ({ request, locals, params }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""
@@ -135,7 +135,7 @@ export const actions: Actions = {
 		}
 	},
 	join: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
 
@@ -150,21 +150,22 @@ export const actions: Actions = {
 			select: { maxPlayers: true, slug: true },
 		})
 		if (!place) return fail(404, { message: "Place not found" })
-		if (place.maxPlayers <= (await roQuery("RETURN SIZE ((:User) -[:playing]-> (:Game {name: $slug}) )", { params: { slug: place.slug } }, true)))
-			return fail(400, { message: "Place is currently full. Join back later!" })
+		if (place.maxPlayers <= (await roQuery("RETURN SIZE ((:User) -[:playing]-> (:Game {name: $slug}) )", { params: { slug: place.slug } }, true))) return fail(400, { message: "Place is currently full. Join back later!" })
 
-		await prisma.gameSessions.updateMany({ // invalidate all game sessions
-			where: {userId: user.userId},
-			data: {valid: false}
+		await prisma.gameSessions.updateMany({
+			// invalidate all game sessions
+			where: { userId: user.userId },
+			data: { valid: false },
 		})
 
-		const session = await prisma.gameSessions.create({ // create valid session
-			data: {place: {connect: {id: serverID}}, user: {connect: {id: user.userId}}},
-			select: {ticket: true}
+		const session = await prisma.gameSessions.create({
+			// create valid session
+			data: { place: { connect: { id: serverID } }, user: { connect: { id: user.userId } } },
+			select: { ticket: true },
 		})
 
 		const joinScriptUrl = `https://banland.xyz/Game/Join.ashx?ticket=${session.ticket}`
 
-		return {joinScriptUrl}
+		return { joinScriptUrl }
 	},
 }

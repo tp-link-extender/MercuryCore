@@ -13,7 +13,7 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
 	logout: async ({ locals }) => {
-		const session = await authorise(locals.validate())
+		const session = await authorise(locals.validate)
 
 		await auth.invalidateSession(session.sessionId) // invalidate session
 		locals.setSession(null) // remove cookie
@@ -21,7 +21,7 @@ export const actions: Actions = {
 	},
 
 	stipend: async ({ locals }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const userExists = await prisma.user.findUnique({
 			where: {
