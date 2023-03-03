@@ -6,7 +6,7 @@ import { fail } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	profile: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 		const data = await request.formData()
 
 		const entries: any = Object.fromEntries(data.entries())
@@ -19,9 +19,9 @@ export const actions: Actions = {
 			}
 		if (same) return fail(400)
 
-		if (!entries.displayName || entries.displayname?.length < 3 || entries.displayname?.length > 30) return fail(400, { area: "displayName", msg: "Invalid displayname" })
+		if (!entries.username || entries.username?.length < 3 || entries.username?.length > 30) return fail(400, { area: "username", msg: "Invalid username" })
 		if (!["standard", "darken", "storm", "solar"].includes(entries.theme)) return fail(400, { area: "theme", msg: "Invalid theme" })
-		if (!["on", "off"].includes(entries.animation)) return fail(400, { area: "theme", msg: "Invalid animation settings" })
+		// if (!["on", "off"].includes(entries.animation)) return fail(400, { area: "theme", msg: "Invalid animation settings" })
 
 		await prisma.user.update({
 			where: {
@@ -29,7 +29,6 @@ export const actions: Actions = {
 			},
 			data: {
 				bio: entries.bio || "",
-				displayname: entries.displayName,
 				theme: entries.theme,
 			},
 		})
@@ -40,7 +39,7 @@ export const actions: Actions = {
 	},
 
 	password: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 		const data = await request.formData()
 		const entries: any = Object.fromEntries(data.entries())
 

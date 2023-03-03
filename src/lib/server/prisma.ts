@@ -21,7 +21,7 @@ export async function findPlaces(query: any) {
 				`,
 				{
 					params: {
-						place: place.slug,
+						place: place.id,
 					},
 				},
 				true
@@ -58,22 +58,24 @@ export async function findItems(query: any) {
 	return items as (Item & { ratio: any })[]
 }
 
-// Required because members and followers are stored in RedisGraph,
+// Required because group members are stored in RedisGraph,
 // while the rest of the info for groups is stored in Postgres.
 export async function findGroups(query: any) {
 	const groups = await prisma.group.findMany(query)
 
-	// Add members and followers to each group
-	for (let group of groups as any) {
-		const query = {
-			params: {
-				group: group.name,
+	// Add members to each group
+	for (let group of groups as any)
+		group["members"] = await roQuery(
+			"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
+			{
+				params: {
+					group: group.name,
+				},
 			},
-		}
-		group["members"] = await roQuery("RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true)
-		group["followers"] = await roQuery("RETURN SIZE((:User) -[:follows]-> (:Group { name: $group }))", query, true)
-	}
-	return groups as (Group & { members: any; followers: any })[]
+			true
+		)
+
+	return groups as (Group & { members: any })[]
 }
 
 type User = {

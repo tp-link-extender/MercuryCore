@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			name: true,
 			owner: {
 				select: {
-					displayname: true,
+					username: true,
 					number: true,
 				},
 			},
@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		},
 	})
 	if (group) {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const query = {
 			params: {
@@ -55,9 +55,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				},
 			}),
 			feed: group.posts,
-			followerCount: roQuery("RETURN SIZE((:User) -[:follows]-> (:Group { name: $group }))", query, true),
 			memberCount: roQuery("RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true),
-			following: roQuery("MATCH (:User { name: $user }) -[r:follows]-> (:Group { name: $group }) RETURN r", query2),
 			in: roQuery("MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r", query2),
 		}
 	} else {
@@ -67,7 +65,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const group = await prisma.group.findUnique({
 			where: {
@@ -107,25 +105,6 @@ export const actions: Actions = {
 					await Query(
 						`
 							MATCH (u:User { name: $user }) -[r:in]-> (g:Group { name: $group })
-							DELETE r
-						`,
-						query
-					)
-					break
-				case "follow":
-					await Query(
-						`
-							MERGE (u:User { name: $user })
-							MERGE (g:Group { name: $group })
-							MERGE (u) -[:follows]-> (g)
-						`,
-						query
-					)
-					break
-				case "unfollow":
-					await Query(
-						`
-							MATCH (u:User { name: $user }) -[r:follows]-> (g:Group { name: $group })
 							DELETE r
 						`,
 						query
