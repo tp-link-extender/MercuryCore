@@ -48,6 +48,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			places: findPlaces({
 				where: {
 					ownerUsername: userExists.username,
+					privateServer: false,
 				},
 			}),
 			groups: findGroups({
