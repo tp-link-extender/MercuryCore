@@ -21,10 +21,10 @@
 				<td class="p-0">
 					<a href="/user/{transaction.sender.number}" class="d-flex text-decoration-none">
 						<div class="me-2 rounded-circle pfp">
-							<img src={transaction.sender?.image} alt={transaction.sender.displayname} class="rounded-circle rounded-top-0" />
+							<img src={transaction.sender?.image} alt={transaction.sender.username} class="rounded-circle rounded-top-0" />
 						</div>
 						<p class="light-text my-auto fs-6 text-truncate">
-							{transaction.sender.displayname}
+							{transaction.sender.username}
 						</p>
 					</a>
 				</td>
@@ -56,10 +56,10 @@
 				<td class="p-0">
 					<a href="/user/{transaction.receiver.number}" class="d-flex justify-content-end text-decoration-none">
 						<p class="light-text my-auto fs-6">
-							{transaction.receiver.displayname}
+							{transaction.receiver.username}
 						</p>
 						<div class="ms-2 rounded-circle pfp">
-							<img src={transaction.receiver?.image} alt={transaction.receiver.displayname} class="rounded-circle rounded-top-0" />
+							<img src={transaction.receiver?.image} alt={transaction.receiver.username} class="rounded-circle rounded-top-0" />
 						</div>
 					</a>
 				</td>
