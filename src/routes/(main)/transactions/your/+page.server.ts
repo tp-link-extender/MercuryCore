@@ -3,7 +3,7 @@ import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const user = (await authoriseUser(locals.validateUser)).user
+	const user = (await authoriseUser(locals.validateUser())).user
 
 	return {
 		transactions: prisma.transaction.findMany({
@@ -19,14 +19,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 					select: {
 						image: true,
 						number: true,
-						username: true,
+						displayname: true,
 					},
 				},
 				receiver: {
 					select: {
 						image: true,
 						number: true,
-						username: true,
+						displayname: true,
 					},
 				},
 				note: true,

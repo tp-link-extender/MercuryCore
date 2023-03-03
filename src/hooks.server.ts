@@ -3,41 +3,7 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import { auth, authoriseUser } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
-import { client } from "$lib/server/redis"
-import type { Handle } from "@sveltejs/kit"
-import { sequence } from "@sveltejs/kit/hooks"
+import { auth } from "$lib/server/lucia"
 import { handleHooks } from "@lucia-auth/sveltekit"
-import { invalidateAll } from "$app/navigation"
 
-// Ran every time a request is made
-export const handle: Handle = sequence(handleHooks(auth), async ({ event, resolve }) => {
-	const { user } = await authoriseUser(event.locals.validateUser)
-	if (!user) return await resolve(event)
-
-	await prisma.user.update({
-		where: {
-			id: user.userId,
-		},
-		data: {
-			lastOnline: new Date(),
-		},
-	})
-
-	if (!(user.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * Number((await client.get("stipendTime")) || 12)) > 0)) {
-		await prisma.user.update({
-			where: {
-				id: user?.userId,
-			},
-			data: {
-				currencyCollected: new Date(),
-				currency: {
-					increment: Number((await client.get("dailyStipend")) || 10),
-				},
-			},
-		})
-	}
-
-	return await resolve(event)
-})
+export const handle = handleHooks(auth) // Ran every time a request is made
