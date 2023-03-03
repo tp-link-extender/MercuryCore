@@ -6,7 +6,7 @@ import { fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals }) => {
 	console.time("home")
-	const user = (await authoriseUser(locals.validateUser())).user
+	const user = (await authoriseUser(locals.validateUser)).user
 	// (main)/+layout.server.ts will handle most redirects for logged-out users,
 	// but sometimes errors for this page.
 
@@ -79,7 +79,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
 		const status = data.get("status")?.toString() || ""

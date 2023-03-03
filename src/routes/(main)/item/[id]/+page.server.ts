@@ -6,7 +6,7 @@ import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	console.time("item")
-	const { session, user } = await authoriseUser(locals.validateUser())
+	const { session, user } = await authoriseUser(locals.validateUser)
 
 	const item = await prisma.item.findUnique({
 		where: {
@@ -67,7 +67,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
 		const action = data.get("action")?.toString() || ""

@@ -6,7 +6,7 @@ import { fail } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	profile: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 		const data = await request.formData()
 
 		const entries: any = Object.fromEntries(data.entries())
@@ -39,7 +39,7 @@ export const actions: Actions = {
 	},
 
 	password: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 		const data = await request.formData()
 		const entries: any = Object.fromEntries(data.entries())
 

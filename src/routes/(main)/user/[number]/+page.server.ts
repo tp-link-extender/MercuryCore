@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		},
 	})
 	if (userExists) {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const query = {
 			params: {
@@ -84,7 +84,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
 		const number = parseInt(params.number)

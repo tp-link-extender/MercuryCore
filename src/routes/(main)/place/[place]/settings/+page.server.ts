@@ -1,11 +1,10 @@
-import type { PageServerLoad, Actions } from './$types';
+import type { PageServerLoad } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { Query, roQuery } from "$lib/server/redis"
-import { error, redirect, json, fail } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 
-export const load: PageServerLoad = (async ({ locals, params }) => {
-    console.time("place settings")
+export const load: PageServerLoad = async ({ locals, params }) => {
+	console.time("place settings")
 	const getPlace = await prisma.place.findUnique({
 		where: {
 			slug: params.place,
@@ -27,12 +26,11 @@ export const load: PageServerLoad = (async ({ locals, params }) => {
 			},
 		},
 	})
-    console.timeEnd("place settings")
-    if (getPlace) {
-		const { session, user } = await authoriseUser(locals.validateUser())
+	console.timeEnd("place settings")
+	if (getPlace) {
+		const { session, user } = await authoriseUser(locals.validateUser)
 
-        if(user.number != getPlace.ownerUser?.number && user.permissionLevel >= 4) 
-            throw error(401, "You do not have permission to view this page.")
+		if (user.number != getPlace.ownerUser?.number && user.permissionLevel >= 4) throw error(401, "You do not have permission to view this page.")
 
 		const query = {
 			params: {
@@ -54,5 +52,4 @@ export const load: PageServerLoad = (async ({ locals, params }) => {
 			serverTicket: getPlace.serverTicket,
 		}
 	} else throw error(404, "Not found")
-
-}) 
+}
