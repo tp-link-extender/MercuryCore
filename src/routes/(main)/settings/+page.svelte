@@ -59,6 +59,7 @@
 							{/if}
 						</div>
 					</div>
+					<!--
 					<br />
 					<div class="row">
 						<label for="animation" class="col-md-3 col-form-label text-md-right">Animation settings</label>
@@ -71,7 +72,7 @@
 								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
 							{/if}
 						</div>
-					</div>
+					</div>-->
 					<hr class="grey-text" />
 					<div class="row">
 						<label for="bio" class="form-label light-text">Bio</label>
