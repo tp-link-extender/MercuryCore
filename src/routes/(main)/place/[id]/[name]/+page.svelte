@@ -96,7 +96,7 @@
 						<div class="col">
 							<h2 class="light-text">{data.name}</h2>
 						</div>
-						{#if data.id = $user?.userId}
+						{#if data.id == $user?.number}
 						<div id="settings" class="col d-flex justify-content-end">
 							<a href="/place/{data.id}/{data.name}/settings" class="btn btn-sm btn-outline-warning">
 								<i class="fa-solid fa-sliders"></i>
