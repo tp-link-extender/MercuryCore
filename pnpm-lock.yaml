@@ -28,6 +28,9 @@ dependencies:
   '@types/crypto-js':
     specifier: ^4.1.1
     version: 4.1.1
+  '@types/node':
+    specifier: ^18.14.6
+    version: 18.14.6
   '@types/uuid':
     specifier: ^9.0.1
     version: 9.0.1
@@ -66,7 +69,7 @@ dependencies:
     version: 9.0.0
   vite:
     specifier: ^4.1.4
-    version: 4.1.4(sass@1.58.3)
+    version: 4.1.4(@types/node@18.14.6)(sass@1.58.3)
 
 devDependencies:
   '@sveltejs/kit':
@@ -535,7 +538,7 @@ packages:
       svelte: 3.55.1
       tiny-glob: 0.2.9
       undici: 5.20.0
-      vite: 4.1.4(sass@1.58.3)
+      vite: 4.1.4(@types/node@18.14.6)(sass@1.58.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -552,7 +555,7 @@ packages:
       magic-string: 0.29.0
       svelte: 3.55.1
       svelte-hmr: 0.15.1(svelte@3.55.1)
-      vite: 4.1.4(sass@1.58.3)
+      vite: 4.1.4(@types/node@18.14.6)(sass@1.58.3)
       vitefu: 0.2.4(vite@4.1.4)
     transitivePeerDependencies:
       - supports-color
@@ -579,6 +582,9 @@ packages:
   /@types/estree@1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
     dev: false
+
+  /@types/node@18.14.6:
+    resolution: {integrity: sha512-93+VvleD3mXwlLI/xASjw0FzKcwzl3OdTCzm1LaRfqgS21gfFtK3zDXM5Op9TeeMsJVOaJ2VRDpT9q4Y3d0AvA==}
 
   /@types/pug@2.0.6:
     resolution: {integrity: sha512-SnHmG9wN1UVmagJOnyo/qkk0Z7gejYxOYYmaAwr5u2yFYfsupN3sg10kyzN8Hep/2zbHxCnsumxOoRIRMBwKCg==}
@@ -1649,7 +1655,7 @@ packages:
     hasBin: true
     dev: false
 
-  /vite@4.1.4(sass@1.58.3):
+  /vite@4.1.4(@types/node@18.14.6)(sass@1.58.3):
     resolution: {integrity: sha512-3knk/HsbSTKEin43zHu7jTwYWv81f8kgAL99G5NWBcA1LKvtvcVAC4JjBH1arBunO9kQka+1oGbrMKOjk4ZrBg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -1674,6 +1680,7 @@ packages:
       terser:
         optional: true
     dependencies:
+      '@types/node': 18.14.6
       esbuild: 0.16.17
       postcss: 8.4.21
       resolve: 1.22.1
@@ -1690,7 +1697,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.1.4(sass@1.58.3)
+      vite: 4.1.4(@types/node@18.14.6)(sass@1.58.3)
 
   /webgl-sdf-generator@1.1.1:
     resolution: {integrity: sha512-9Z0JcMTFxeE+b2x1LJTdnaT8rT8aEp7MVxkNwoycNmJWwPdzoXzMh0BjJSh/AEFP+KPYZUli814h8bJZFIZ2jA==}
