@@ -43,7 +43,7 @@
 	<div class="row mb-5">
 		<h1 class="col light-text">
 			Games
-			<a href="/games/create" class="btn btn-primary ms-4"><i class="fa-solid fa-plus"></i> Create</a>
+			<a href="/games/create" class="btn btn-primary ms-4 disabled">Create</a>
 		</h1>
 		<div class="col-8">
 			<form use:enhance method="POST" action="/search" class="row">

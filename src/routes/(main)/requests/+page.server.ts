@@ -5,7 +5,7 @@ import { Query, roQuery } from "$lib/server/redis"
 import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-	const user = (await authoriseUser(locals.validateUser)).user
+	const user = (await authoriseUser(locals.validateUser())).user
 
 	console.time("requests")
 
@@ -15,6 +15,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		},
 		select: {
 			username: true,
+			displayname: true,
 			image: true,
 		},
 	})
@@ -48,6 +49,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 						select: {
 							number: true,
 							username: true,
+							displayname: true,
 							image: true,
 							status: true,
 						},
@@ -67,7 +69,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const user = (await authoriseUser(locals.validateUser())).user
 
 		const data = await request.formData()
 		const action = (data.get("action")?.toString() || "").split(" ")
