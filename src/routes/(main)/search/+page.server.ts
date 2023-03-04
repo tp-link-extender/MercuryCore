@@ -44,6 +44,7 @@ export const load: PageServerLoad = async ({ url }) => {
 								contains: query,
 								mode: "insensitive",
 							},
+							privateServer: false,
 						},
 				  })
 				: null,

@@ -8,6 +8,7 @@
 		serverIP: "",
 		serverPort: "",
 		maxPlayers: "",
+		privateServer: false,
 	}
 
 	export const snapshot: Snapshot = {
@@ -60,7 +61,7 @@
 			<div class="row mb-3">
 				<label for="privateServer" class="col-md-3 col-form-label text-md-right">Private Server</label>
 				<div class="col-md-8">
-					<input class="form-check-input" type="checkbox" value="privateServer" id="privateServer">
+					<input class="form-check-input" type="checkbox"  bind:checked={fields.privateServer} value="privateServer" id="privateServer">
 				</div>
 			</div>
 			<br />
