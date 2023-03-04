@@ -37,7 +37,7 @@ export const load: PageServerLoad = async ({ url, locals, params }) => {
 	if (getPlace) {
 		const { session, user } = await authoriseUser(locals.validateUser)
 
-		if (user?.number != getPlace.ownerUser?.number && privateServerCode && getPlace.privateServer && privateServerCode != getPlace.privateTicket) throw error(404, "Not Found")
+		if (user?.number != getPlace.ownerUser?.number && getPlace.privateServer && privateServerCode != getPlace.privateTicket) throw error(404, "Not Found")
 
 		const query = {
 			params: {
