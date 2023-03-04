@@ -5,13 +5,20 @@ import { prisma } from "$lib/server/prisma"
 
 export const GET: RequestHandler = async ({ url }) => {
 	const ticket = url.searchParams.get("ticket")
-
 	if (!ticket) throw error(400, "Invalid Request")
 
 	const data = await prisma.place.findUnique({ where: { serverTicket: ticket } })
-	if(!data) throw error(404, "Server Not Found")
+	let port = 53640
+	let baseUrl = "..."
+	let serverId = "..."
+	let serverPresenceUrl = "..."
 
-	const port = 53640
+	if(data) {
+		port = data.serverPort
+		baseUrl = "http://banland.xyz"
+		serverId = data.id.toString()
+		serverPresenceUrl = `${baseUrl}/Game/ServerPresence?ticket=${ticket}`
+	} 
 
 	return new Response(
 		SignData(
@@ -88,7 +95,7 @@ pcall(function() settings().Diagnostics:LegacyScriptMode() end)
 
 -----------------------------------START GAME SHARED SCRIPT------------------------------
 
-local url = "${"https://banland.xyz"}"
+local url = "${baseUrl}"
 local assetId = placeId -- might be able to remove this now
 
 local scriptContext = game:GetService('ScriptContext')
@@ -211,7 +218,7 @@ end
 -- Now start the connection
 ns:Start(${port}, sleeptime) 
 
-game:GetService("Visit"):SetPing("${"https://banland.xyz"}", 30)
+game:GetService("Visit"):SetPing("${serverPresenceUrl}", 30)
 
 if timeout then
 	scriptContext:SetTimeout(timeout)
