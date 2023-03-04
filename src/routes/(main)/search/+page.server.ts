@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ url }) => {
 			category == "users"
 				? prisma.user.findMany({
 						where: {
-							displayname: {
+							username: {
 								contains: query,
 								mode: "insensitive",
 							},
@@ -44,6 +44,7 @@ export const load: PageServerLoad = async ({ url }) => {
 								contains: query,
 								mode: "insensitive",
 							},
+							privateServer: false,
 						},
 				  })
 				: null,

@@ -1,45 +1,14 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
-	import { onMount } from "svelte"
 	import { fade } from "svelte/transition"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	let search = ""
 
 	const user = getUser()
+	
 	export let data: any
-
-	$: timer = $user?.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * data.stipendTime)
-	$: seconds = Math.floor((timer / 1000) % 60)
-		.toString()
-		.padStart(2, "0")
-	$: minutes = Math.floor((timer / 1000 / 60) % 60)
-		.toString()
-		.padStart(2, "0")
-	$: hours = Math.floor((timer / 1000 / 3600) % 24)
-		.toString()
-		.padStart(2, "0")
-
-	onMount(() => {
-		function animationInterval(ms: number, callback: (time: number) => void) {
-			const start: any = document.timeline.currentTime
-
-			function frame(time: number) {
-				callback(time)
-				scheduleFrame(time)
-			}
-			function scheduleFrame(time: number) {
-				const elapsed = time - start
-				const roundedElapsed = Math.round(elapsed / ms) * ms
-				const targetNext = start + roundedElapsed + ms
-				const delay = targetNext - performance.now()
-				setTimeout(() => requestAnimationFrame(frame), delay)
-			}
-			scheduleFrame(start)
-		}
-		animationInterval(1000, () => (timer -= 1000))
-	})
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark py-0">
@@ -67,7 +36,7 @@
 					<a class="btn mt-1 px-1 light-text nav-item" href="/games">Games</a>
 					<a class="btn mt-1 px-1 light-text nav-item" href="/avatarshop">Avatar Shop</a>
 					<a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a>
-					{#if $user?.permissionLevel == "Administrator"}
+					{#if $user?.permissionLevel >= 4}
 						<a class="btn mt-1 px-1 light-text nav-item" href="/admin">Admin</a>
 					{/if}
 				</div>
@@ -90,29 +59,13 @@
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
-					<li class="dropdown ms-3 me-2  pt-1">
-						<a href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-link text-success">
+					<li class="dropdown ms-3 me-2 pt-1">
+						<a href="/transactions" role="button" class="fw-bold nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
 							<span class="h6 text-success">
 								{$user.currency}
 							</span>
 						</a>
-
-						<ul class="dropdown-menu mt-2 mb-2">
-							<li><h6 class="dropdown-header grey-text">CURRENCY</h6></li>
-							<li>
-								<form use:enhance method="POST" action="/api?/stipend">
-									<button type="submit" class="dropdown-item text-light {timer > 0 ? 'disabled' : ''}"
-										><i class="fa fa-money-bills me-2" />
-										{#if timer > 0}
-											{hours}:{minutes}:{seconds}
-										{:else}
-											Get Stipend
-										{/if}
-									</button>
-								</form>
-							</li>
-						</ul>
 					</li>
 					<li class="dropdown">
 						<a href="/user/{$user.number}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="fw-bold nav-item mx-0 text-decoration-none px-0 mb-2">
@@ -120,8 +73,8 @@
 								<div id="pfp" class="mx-2 rounded-circle">
 									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
 								</div>
-								<p id="displayname" class="my-auto fs-6 me-2">
-									{$user?.displayname}
+								<p id="username" class="my-auto fs-6 me-2">
+									{$user?.username}
 								</p>
 							</a>
 						</a>
@@ -249,7 +202,7 @@
 	.loggedin
 		padding: 0
 
-	#displayname
+	#username
 		max-width: 10rem
 		min-width: 1rem
 		white-space: nowrap

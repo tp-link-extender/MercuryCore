@@ -5,6 +5,8 @@ import { prisma } from "$lib/server/prisma"
 
 export const GET: RequestHandler = async ({ url }) => {
 	const clientTicket = url.searchParams.get("ticket")
+	const privateServer = url.searchParams.get("ticket")?.toString() 
+
 	let isStudioJoin = false
 	let joinMethod = "Studio"
 
@@ -35,6 +37,15 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		await prisma.gameSessions.update({ where: { ticket: clientTicket }, data: { valid: false } })
 
+		
+	if(privateServer) {
+		const privateSession = await prisma.place.findUnique({
+			where: {privateTicket: privateServer, id: gameSession.place.id}
+		})
+		
+		if(!privateSession) throw error(400, "Invalid Private Server")
+	}
+
 		serverAddress = gameSession.place.serverIP
 		serverPort = gameSession.place.serverPort
 		userName = gameSession.user.username
@@ -42,7 +53,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		placeId = gameSession.place.id
 		creatorId = gameSession.place.ownerUser?.number || 0
 
-		if (gameSession.user.permissionLevel = "Administrator") MembershipType = "OutrageousBuildersClub"
+		if (gameSession.user.permissionLevel = 5) MembershipType = "OutrageousBuildersClub"
 
 	}
 

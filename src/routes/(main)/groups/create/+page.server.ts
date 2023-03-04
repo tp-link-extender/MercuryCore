@@ -5,7 +5,7 @@ import { fail, redirect } from "@sveltejs/kit"
 
 export const actions: Actions = {
 	default: async ({ locals, request }) => {
-		const user = (await authoriseUser(locals.validateUser())).user
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
 		const name = data.get("name")?.toString()

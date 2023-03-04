@@ -7,6 +7,9 @@ dependencies:
   '@lucia-auth/sveltekit':
     specifier: ^0.6.5
     version: 0.6.5(lucia-auth@0.6.2)(svelte@3.55.1)
+  '@paralleldrive/cuid2':
+    specifier: ^2.2.0
+    version: 2.2.0
   '@popperjs/core':
     specifier: ^2.11.6
     version: 2.11.6
@@ -14,29 +17,29 @@ dependencies:
     specifier: ^4.11.0
     version: 4.11.0(prisma@4.11.0)
   '@sveltejs/adapter-node':
-    specifier: ^1.2.0
-    version: 1.2.0(@sveltejs/kit@1.8.5)
+    specifier: ^1.2.1
+    version: 1.2.1(@sveltejs/kit@1.10.0)
   '@threlte/core':
     specifier: ^5.0.9
     version: 5.0.9
   '@threlte/extras':
     specifier: ^4.9.3
     version: 4.9.3(three@0.146.0)
-  '@types/bootstrap':
-    specifier: ^5.2.6
-    version: 5.2.6
   '@types/crypto-js':
     specifier: ^4.1.1
     version: 4.1.1
-  bootstrap:
-    specifier: ^5.2.3
-    version: 5.2.3(@popperjs/core@2.11.6)
+  '@types/uuid':
+    specifier: ^9.0.1
+    version: 9.0.1
   crypto-js:
     specifier: ^4.1.1
     version: 4.1.1
   custom-protocol-check:
     specifier: ^1.4.0
     version: 1.4.0
+  dayjs:
+    specifier: ^1.11.7
+    version: 1.11.7
   dotenv:
     specifier: ^16.0.3
     version: 16.0.3
@@ -58,14 +61,17 @@ dependencies:
   three:
     specifier: ^0.146.0
     version: 0.146.0
+  uuid:
+    specifier: ^9.0.0
+    version: 9.0.0
   vite:
     specifier: ^4.1.4
     version: 4.1.4(sass@1.58.3)
 
 devDependencies:
   '@sveltejs/kit':
-    specifier: 1.8.5
-    version: 1.8.5(svelte@3.55.1)(vite@4.1.4)
+    specifier: ^1.10.0
+    version: 1.10.0(svelte@3.55.1)(vite@4.1.4)
   '@sveltejs/vite-plugin-svelte':
     specifier: ^2.0.3
     version: 2.0.3(svelte@3.55.1)(vite@4.1.4)
@@ -346,6 +352,12 @@ packages:
       fastq: 1.15.0
     dev: true
 
+  /@paralleldrive/cuid2@2.2.0:
+    resolution: {integrity: sha512-CVQDpPIUHrUGGLdrMGz1NmqZvqmsB2j2rCIQEu1EvxWjlFh4fhvEGmgR409cY20/67/WlJsggenq0no3p3kYsw==}
+    dependencies:
+      '@noble/hashes': 1.2.0
+    dev: false
+
   /@polka/url@1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
 
@@ -424,7 +436,7 @@ packages:
       '@redis/client': 1.5.6
     dev: false
 
-  /@rollup/plugin-commonjs@24.0.1(rollup@3.17.3):
+  /@rollup/plugin-commonjs@24.0.1(rollup@3.18.0):
     resolution: {integrity: sha512-15LsiWRZk4eOGqvrJyu3z3DaBu5BhXIMeWnijSRvd8irrrg9SHpQ1pH+BUK4H6Z9wL9yOxZJMTLU+Au86XHxow==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -433,16 +445,16 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@3.17.3)
+      '@rollup/pluginutils': 5.0.2(rollup@3.18.0)
       commondir: 1.0.1
       estree-walker: 2.0.2
       glob: 8.1.0
       is-reference: 1.2.1
       magic-string: 0.27.0
-      rollup: 3.17.3
+      rollup: 3.18.0
     dev: false
 
-  /@rollup/plugin-json@6.0.0(rollup@3.17.3):
+  /@rollup/plugin-json@6.0.0(rollup@3.18.0):
     resolution: {integrity: sha512-i/4C5Jrdr1XUarRhVu27EEwjt4GObltD7c+MkCIpO2QIbojw8MUs+CCTqOphQi3Qtg1FLmYt+l+6YeoIf51J7w==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -451,11 +463,11 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@3.17.3)
-      rollup: 3.17.3
+      '@rollup/pluginutils': 5.0.2(rollup@3.18.0)
+      rollup: 3.18.0
     dev: false
 
-  /@rollup/plugin-node-resolve@15.0.1(rollup@3.17.3):
+  /@rollup/plugin-node-resolve@15.0.1(rollup@3.18.0):
     resolution: {integrity: sha512-ReY88T7JhJjeRVbfCyNj+NXAG3IIsVMsX9b5/9jC98dRP8/yxlZdz7mHZbHk5zHr24wZZICS5AcXsFZAXYUQEg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -464,16 +476,16 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@3.17.3)
+      '@rollup/pluginutils': 5.0.2(rollup@3.18.0)
       '@types/resolve': 1.20.2
       deepmerge: 4.3.0
       is-builtin-module: 3.2.1
       is-module: 1.0.0
       resolve: 1.22.1
-      rollup: 3.17.3
+      rollup: 3.18.0
     dev: false
 
-  /@rollup/pluginutils@5.0.2(rollup@3.17.3):
+  /@rollup/pluginutils@5.0.2(rollup@3.18.0):
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -485,23 +497,23 @@ packages:
       '@types/estree': 1.0.0
       estree-walker: 2.0.2
       picomatch: 2.3.1
-      rollup: 3.17.3
+      rollup: 3.18.0
     dev: false
 
-  /@sveltejs/adapter-node@1.2.0(@sveltejs/kit@1.8.5):
-    resolution: {integrity: sha512-j0nxkrNZ4zBkOIOtqHUET5l8qvcFo64xNL2xv8F1QICkz746o5DVCGaJEPC3B2X2fTklXExxe80yXZhf38p6zg==}
+  /@sveltejs/adapter-node@1.2.1(@sveltejs/kit@1.10.0):
+    resolution: {integrity: sha512-mEGDCaZVU3qvFdUI8CMKv+BSzpBYpTpcx85u8bfJ+vcv57pu4UXjZg7ivOoxWZdunUeqq4oEyE+kHmlgBRAalg==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0
     dependencies:
-      '@rollup/plugin-commonjs': 24.0.1(rollup@3.17.3)
-      '@rollup/plugin-json': 6.0.0(rollup@3.17.3)
-      '@rollup/plugin-node-resolve': 15.0.1(rollup@3.17.3)
-      '@sveltejs/kit': 1.8.5(svelte@3.55.1)(vite@4.1.4)
-      rollup: 3.17.3
+      '@rollup/plugin-commonjs': 24.0.1(rollup@3.18.0)
+      '@rollup/plugin-json': 6.0.0(rollup@3.18.0)
+      '@rollup/plugin-node-resolve': 15.0.1(rollup@3.18.0)
+      '@sveltejs/kit': 1.10.0(svelte@3.55.1)(vite@4.1.4)
+      rollup: 3.18.0
     dev: false
 
-  /@sveltejs/kit@1.8.5(svelte@3.55.1)(vite@4.1.4):
-    resolution: {integrity: sha512-b6kbjVAivoPd3oL9IVBaZBWiuHeI0qBKfszSDXcqsPfiSMyUK7ilHDFVSWNn+2EMPO48+87iuho71yTCOXZE3w==}
+  /@sveltejs/kit@1.10.0(svelte@3.55.1)(vite@4.1.4):
+    resolution: {integrity: sha512-0P35zHrByfbF3Ym3RdQL+RvzgsCDSyO3imSwuZ67XAD5HoCQFF3a8Mhh0V3sObz3rc5aJd4Qn82UpAihJqZ6gQ==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     requiresBuild: true
@@ -557,12 +569,6 @@ packages:
       - three
     dev: false
 
-  /@types/bootstrap@5.2.6:
-    resolution: {integrity: sha512-BlAc3YATdasbHoxMoBWODrSF6qwQO/E9X8wVxCCSa6rWjnaZfpkr2N6pUMCY6jj2+wf0muUtLySbvU9etX6YqA==}
-    dependencies:
-      '@popperjs/core': 2.11.6
-    dev: false
-
   /@types/cookie@0.5.1:
     resolution: {integrity: sha512-COUnqfB2+ckwXXSFInsFdOAWQzCCx+a5hq2ruyj+Vjund94RJQd4LG2u9hnvJrTgunKAaax7ancBYlDrNYxA0g==}
 
@@ -574,10 +580,6 @@ packages:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
     dev: false
 
-  /@types/node@18.14.2:
-    resolution: {integrity: sha512-1uEQxww3DaghA0RxqHx0O0ppVlo43pJhepY51OxuQIKHpjbnYLA7vcdwioNPzIqmC2u3I/dmylcqjlh0e7AyUA==}
-    dev: true
-
   /@types/pug@2.0.6:
     resolution: {integrity: sha512-SnHmG9wN1UVmagJOnyo/qkk0Z7gejYxOYYmaAwr5u2yFYfsupN3sg10kyzN8Hep/2zbHxCnsumxOoRIRMBwKCg==}
     dev: true
@@ -586,11 +588,16 @@ packages:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
     dev: false
 
-  /@types/sass@1.43.1:
-    resolution: {integrity: sha512-BPdoIt1lfJ6B7rw35ncdwBZrAssjcwzI5LByIrYs+tpXlj/CAkuVdRsgZDdP4lq5EjyWzwxZCqAoFyHKFwp32g==}
+  /@types/sass@1.45.0:
+    resolution: {integrity: sha512-jn7qwGFmJHwUSphV8zZneO3GmtlgLsmhs/LQyVvQbIIa+fzGMUiHI4HXJZL3FT8MJmgXWbLGiVVY7ElvHq6vDA==}
+    deprecated: This is a stub types definition. sass provides its own type definitions, so you do not need this installed.
     dependencies:
-      '@types/node': 18.14.2
+      sass: 1.58.3
     dev: true
+
+  /@types/uuid@9.0.1:
+    resolution: {integrity: sha512-rFT3ak0/2trgvp4yYZo5iKFEPsET7vKydKF+VRCxlQ9bpheehyAJH89dAkaLEq/j/RZXJIqcgsmPJKUP1Z28HA==}
+    dev: false
 
   /anymatch@3.1.3:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
@@ -611,14 +618,6 @@ packages:
   /binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
-
-  /bootstrap@5.2.3(@popperjs/core@2.11.6):
-    resolution: {integrity: sha512-cEKPM+fwb3cT8NzQZYEu4HilJ3anCrWqh3CHAok1p9jXqMPsPTBhU25fBckEJHJ/p+tTxTFTsFQGM+gaHpi3QQ==}
-    peerDependencies:
-      '@popperjs/core': ^2.11.6
-    dependencies:
-      '@popperjs/core': 2.11.6
-    dev: false
 
   /brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -696,6 +695,10 @@ packages:
 
   /custom-protocol-check@1.4.0:
     resolution: {integrity: sha512-eMTyp8AKnE5eo+mKNqG3743eb5ZND5LhBgf9F8BN2tVdhSBnOCHH7me7iTcv0BUDhUW2dBQiHWLWMy776yZW1A==}
+    dev: false
+
+  /dayjs@1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
     dev: false
 
   /debug@4.3.4:
@@ -1329,8 +1332,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rollup@3.17.3:
-    resolution: {integrity: sha512-p5LaCXiiOL/wrOkj8djsIDFmyU9ysUxcyW+EKRLHb6TKldJzXpImjcRSR+vgo09DBdofGcOoLOsRyxxG2n5/qQ==}
+  /rollup@3.18.0:
+    resolution: {integrity: sha512-J8C6VfEBjkvYPESMQYxKHxNOh4A5a3FlP+0BETGo34HEcE4eTlgCrO2+eWzlu2a/sHs2QUkZco+wscH7jhhgWg==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
@@ -1512,7 +1515,7 @@ packages:
         optional: true
     dependencies:
       '@types/pug': 2.0.6
-      '@types/sass': 1.43.1
+      '@types/sass': 1.45.0
       detect-indent: 6.1.0
       magic-string: 0.25.9
       sass: 1.58.3
@@ -1561,7 +1564,7 @@ packages:
         optional: true
     dependencies:
       '@types/pug': 2.0.6
-      '@types/sass': 1.43.1
+      '@types/sass': 1.45.0
       detect-indent: 6.1.0
       magic-string: 0.27.0
       sass: 1.58.3
@@ -1641,6 +1644,11 @@ packages:
     dependencies:
       busboy: 1.6.0
 
+  /uuid@9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
+    dev: false
+
   /vite@4.1.4(sass@1.58.3):
     resolution: {integrity: sha512-3knk/HsbSTKEin43zHu7jTwYWv81f8kgAL99G5NWBcA1LKvtvcVAC4JjBH1arBunO9kQka+1oGbrMKOjk4ZrBg==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -1669,7 +1677,7 @@ packages:
       esbuild: 0.16.17
       postcss: 8.4.21
       resolve: 1.22.1
-      rollup: 3.17.3
+      rollup: 3.18.0
       sass: 1.58.3
     optionalDependencies:
       fsevents: 2.3.2

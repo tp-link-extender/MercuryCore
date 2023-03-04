@@ -18,25 +18,32 @@ export const actions: Actions = {
 		if (password.length < 1) return fail(400, { area: "password", msg: "Password must be at least 1 character" })
 		if (password.length > 6969) return fail(400, { area: "password", msg: "Password must be less than 6969 characters" })
 		if (cpassword != password) return fail(400, { area: "cpassword", msg: "The specified password does not match" })
-
-		const lowercaseUsername = username.toLowerCase()
-
 		try {
 			if (
-				await prisma.user.findUnique({
-					where: {
-						username: lowercaseUsername,
-					},
-				})
+				(
+					await prisma.user.findMany({
+						where: {
+							username: {
+								equals: username,
+								mode: "insensitive", // Insensitive search cannot be used on findUnique for some reason
+							},
+						},
+					})
+				)[0]
 			)
 				return fail(400, { area: "username", msg: "Username is already being used" })
 
 			if (
-				await prisma.user.findUnique({
-					where: {
-						email: email.toLowerCase(),
-					},
-				})
+				(
+					await prisma.user.findMany({
+						where: {
+							email: {
+								equals: email,
+								mode: "insensitive",
+							},
+						},
+					})
+				)[0]
 			)
 				return fail(400, { area: "email", msg: "Email is already being used" })
 
@@ -51,13 +58,12 @@ export const actions: Actions = {
 			const user = await auth.createUser({
 				key: {
 					providerId: "username",
-					providerUserId: lowercaseUsername,
+					providerUserId: username,
 					password,
 				},
 				attributes: {
-					username: lowercaseUsername,
+					username,
 					email,
-					displayname: username,
 					usedRegkey: {
 						connect: {
 							key: regkey[1],

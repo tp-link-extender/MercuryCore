@@ -3,9 +3,12 @@ import { findPlaces } from "$lib/server/prisma"
 
 export const load: PageServerLoad = async () => ({
 	places: findPlaces({
+		where: {
+			privateServer: false	
+		},
 		select: {
 			name: true,
-			slug: true,
+			id: true,
 			image: true,
 		},
 	}),
@@ -21,11 +24,12 @@ export const actions: Actions = {
 						contains: filter,
 						mode: "insensitive",
 					},
+					privateServer: false,
 				},
 				select: {
 					name: true,
-					slug: true,
-					image: true,
+					id: true,
+					image: true
 				},
 			}),
 		}
