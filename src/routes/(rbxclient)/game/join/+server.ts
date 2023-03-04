@@ -53,7 +53,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		placeId = gameSession.place.id
 		creatorId = gameSession.place.ownerUser?.number || 0
 
-		if (gameSession.user.permissionLevel = "Administrator") MembershipType = "OutrageousBuildersClub"
+		if (gameSession.user.permissionLevel = 5) MembershipType = "OutrageousBuildersClub"
 
 	}
 

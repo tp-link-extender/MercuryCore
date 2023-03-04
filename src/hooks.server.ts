@@ -3,7 +3,11 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import { auth } from "$lib/server/lucia"
+import { auth, authoriseUser } from "$lib/server/lucia"
+import { prisma } from "$lib/server/prisma"
+import { client } from "$lib/server/redis"
+import type { Handle } from "@sveltejs/kit"
+import { sequence } from "@sveltejs/kit/hooks"
 import { handleHooks } from "@lucia-auth/sveltekit"
 
 // Ran every time a request is made

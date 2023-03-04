@@ -8,7 +8,7 @@
 	export let total: number
 </script>
 
-<a in:fade={{ num, total }} class="card text-center light-text text-decoration-none h6 rounded-4 m-0" href="/place/{place.slug}">
+<a in:fade={{ num, total }} class="card text-center light-text text-decoration-none h6 rounded-4 m-0" href="/place/{place.id}/{place.name}">
 	<div class="row">
 		<div class="col col-6">
 			<div id="shadow" class="overflow-hidden bg-black">
