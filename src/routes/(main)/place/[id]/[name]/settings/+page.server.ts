@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	const { user } = await authoriseUser(locals.validateUser)
 
-	if (user.number != getPlace.ownerUser?.number || user.permissionLevel < 4) throw error(401, "You do not have permission to view this page.")
+	if (user.number != getPlace.ownerUser?.number && user.permissionLevel < 4) throw error(401, "You do not have permission to view this page.")
 
 	return {
 		...getPlace,
@@ -72,7 +72,7 @@ export const actions: Actions = {
 			},
 		})
 
-		if (user.userId != getPlace?.ownerUser?.id || user.permissionLevel < 4) throw error(401, "You do not have permission to update this page.")
+		if (user.userId != getPlace?.ownerUser?.id && user.permissionLevel < 4) throw error(401, "You do not have permission to update this page.")
 
 		const data = await request.formData()
 		const action = data.get("action") as string
