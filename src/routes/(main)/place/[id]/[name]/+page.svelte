@@ -9,7 +9,7 @@
 	export let data: PageData
 
 	const statistics = [
-		["Activity", "8 visits"],
+		["Activity", "0 visits"],
 		["Creation", data.created.toLocaleDateString()],
 		["Updated", data.updated.toLocaleDateString()],
 		["Genre", "Horror"],
@@ -109,7 +109,7 @@
 						<b>By</b> <a href="/user/{data.ownerUser?.number}" class="text-decoration-none">{data.ownerUser?.username}</a>
 					</p>
 					<p class="light-text mb-0">Gears: <i class="fa-regular fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tooltip on top" /></p>
-					<span class="badge text-bg-success mb-1">Online</span>
+					<span class="badge text-bg-{data.serverPing < Date.now() - 45 * 1000 ? "danger" : "success"} mb-1">{data.serverPing < Date.now() - 45 * 1000 ? "Offline" : "Online"}</span>
 				</div>
 			</div>
 			<div id="buttons" class="row">
