@@ -40,7 +40,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		
 	if(privateServer) {
 		const privateSession = await prisma.place.findUnique({
-			where: {privateTicket: privateServer, id: gameSession.place.id}
+			where: {privateTicket: privateServer}
 		})
 		
 		if(!privateSession) throw error(400, "Invalid Private Server")
