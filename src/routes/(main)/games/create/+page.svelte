@@ -4,15 +4,11 @@
 
 	let fields = {
 		name: "",
-		slug: "",
 		description: "",
-<<<<<<< HEAD
 		serverIP: "",
 		serverPort: "",
 		maxPlayers: "",
 		privateServer: false,
-=======
->>>>>>> main
 	}
 
 	export const snapshot: Snapshot = {
@@ -32,10 +28,9 @@
 <div class="container mt-5 light-text">
 	<form use:enhance method="POST">
 		<fieldset>
-			<div class="row">
+			<div class="row mb-3">
 				<label for="name" class="col-md-3 col-form-label text-md-right">Place name</label>
 				<div class="col-md-8">
-<<<<<<< HEAD
 					<input bind:value={fields.name} type="text" name="name" id="name" placeholder="Make sure to make it accurate" required class="form-control valid" minlength="3" maxlength="50" />
 				</div>
 			</div>
@@ -67,29 +62,10 @@
 				<label for="privateServer" class="col-md-3 col-form-label text-md-right">Private Server</label>
 				<div class="col-md-8">
 					<input class="form-check-input" type="checkbox"  bind:checked={fields.privateServer} value="privateServer" id="privateServer">
-=======
-					<input bind:value={fields.name} type="text" name="name" id="name" required class="form-control valid" minlength="3" maxlength="50" />
->>>>>>> main
 				</div>
 			</div>
 			<br />
-			<div class="row">
-				<label for="slug" class="col-md-3 col-form-label text-md-right">Place slug</label>
-				<div class="col-md-8">
-					<input bind:value={fields.slug} type="text" name="slug" id="slug" required class="form-control valid" minlength="3" maxlength="30" />
-				</div>
-			</div>
-			<small class="grey-text pb-2">Your place will be listed at /place/&lt;your slug&gt;. This cannot be changed. Choose wisely.</small>
-			<br />
-			<br />
-			<div class="row">
-				<label for="description" class="col-md-3 col-form-label text-md-right">Description</label>
-				<div class="col-md-8">
-					<textarea bind:value={fields.description} name="description" id="description" required class="form-control valid" maxlength="1000" />
-				</div>
-			</div>
-			<br />
-			<button type="submit" class="btn btn-success disabled">Create (<i class="fa fa-gem" /> 10)</button>
+			<button type="submit" class="btn btn-success">Create (<i class="fa fa-gem" /> 10)</button>
 		</fieldset>
 	</form>
 	<br />
@@ -100,4 +76,8 @@
 	@media only screen and (min-width: 576px)
 		.container
 			width: 50rem
+	
+	input[type="checkbox"]
+		height: 1.5rem
+		width: 1.5rem
 </style>

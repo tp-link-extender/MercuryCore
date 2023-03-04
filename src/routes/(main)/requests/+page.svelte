@@ -24,7 +24,7 @@
 			<div class="d-flex flex-row">
 				<a class="p-4 pe-2" href="/user/{user.number}">
 					<div class="image-background rounded-circle">
-						<img src={user.image} alt={user.displayname} class="h-100 rounded-circle img-fluid rounded-top-0" />
+						<img src={user.image} alt={user.username} class="h-100 rounded-circle img-fluid rounded-top-0" />
 					</div>
 					{#if user.status}
 						<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[user.status]}">
@@ -33,7 +33,7 @@
 					{/if}
 				</a>
 				<div class="h4 p-4">
-					<a href="/user/{user.number}" class="text-decoration-none light-text">{user.displayname}</a>
+					<a href="/user/{user.number}" class="text-decoration-none light-text">{user.username}</a>
 				</div>
 			</div>
 			<form class="align-self-center row w-100 p-2 pt-0" method="POST" use:enhance>
