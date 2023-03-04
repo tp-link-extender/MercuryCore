@@ -27,8 +27,8 @@
 
 <style lang="sass">
 	main
-		padding-bottom: 35vh
-		padding-top: 35vh
+		padding-bottom: 32vh
+		padding-top: 31vh
 		flex: 1 0 auto
 		@media only screen and (max-width: 768px) and (orientation: portrait)
 			padding-bottom: 25vh
