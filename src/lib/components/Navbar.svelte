@@ -12,6 +12,7 @@
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark py-0">
+	<a class="navbar-brand light-text mx-4 mobile-brand" href="/">Mercury</a>
 	<button
 		class="navbar-toggler ms-auto my-1 me-3"
 		type="button"
@@ -123,6 +124,9 @@
 {/if}
 
 <style lang="sass">
+	.mobile-brand
+		display: none
+
 	@media only screen and (max-width: 991px)
 		.offcanvas-header
 			background: var(--accent)
@@ -149,8 +153,8 @@
 			margin-bottom: 1rem
 			order: 1
 
-		.navbar-brand
-			display: none
+		.mobile-brand
+			display: block
 
 		#user
 			margin-left: 0.5rem !important

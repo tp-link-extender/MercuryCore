@@ -11,7 +11,7 @@
 	const statistics = [
 		["Activity", "8 visits"],
 		["Creation", data.created.toLocaleDateString()],
-		["Updated", data.created.toLocaleDateString()],
+		["Updated", data.updated.toLocaleDateString()],
 		["Genre", "Horror"],
 		["Server Limit", data.maxPlayers],
 		["Now Playing", "0 players"],
@@ -97,7 +97,7 @@
 						<div class="col">
 							<h2 class="light-text">{data.name}</h2>
 						</div>
-						{#if data.ownerUser?.number == $user?.number}
+						{#if data.ownerUser?.number == $user?.number || $user?.permissionLevel >= 4}
 							<div id="settings" class="col d-flex justify-content-end">
 								<a href="/place/{data.id}/{data.name}/settings" class="btn btn-sm btn-outline-warning">
 									<i class="fa-solid fa-sliders" />
