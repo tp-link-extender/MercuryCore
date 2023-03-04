@@ -50,7 +50,8 @@
 		const formdata = new FormData()
 
 		formdata.append("request", "RequestGame")
-		formdata.append("serverID", data.id.toString())
+		formdata.append("serverId", data.id.toString())
+		formdata.append("privateTicket", data.privateTicket)
 
 		const response = await fetch(`/place/${data.id}/${data.name}?/join`, { method: "POST", body: formdata })
 		const joinScriptData = deserialize(await response.text())
@@ -96,12 +97,12 @@
 						<div class="col">
 							<h2 class="light-text">{data.name}</h2>
 						</div>
-						{#if data.id == $user?.number}
-						<div id="settings" class="col d-flex justify-content-end">
-							<a href="/place/{data.id}/{data.name}/settings" class="btn btn-sm btn-outline-warning">
-								<i class="fa-solid fa-sliders"></i>
-							</a>
-						</div>
+						{#if data.ownerUser?.number == $user?.number}
+							<div id="settings" class="col d-flex justify-content-end">
+								<a href="/place/{data.id}/{data.name}/settings" class="btn btn-sm btn-outline-warning">
+									<i class="fa-solid fa-sliders" />
+								</a>
+							</div>
 						{/if}
 					</div>
 					<p class="light-text mt-2 mb-0">
@@ -116,6 +117,7 @@
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
 				<form use:enhance class="align-self-center col mt-3 px-0 mb-2" method="POST" action="?/like">
+					<input type="hidden" name="privateTicket" value={data.privateTicket} />
 					<div class="row mb-2">
 						<div class="col d-flex justify-content-start">
 							<button name="action" value={data.likes ? "unlike" : "like"} class="btn btn-sm {data.likes ? 'btn-success' : 'btn-outline-success'}">

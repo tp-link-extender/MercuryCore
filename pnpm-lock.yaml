@@ -7,6 +7,9 @@ dependencies:
   '@lucia-auth/sveltekit':
     specifier: ^0.6.5
     version: 0.6.5(lucia-auth@0.6.2)(svelte@3.55.1)
+  '@paralleldrive/cuid2':
+    specifier: ^2.2.0
+    version: 2.2.0
   '@popperjs/core':
     specifier: ^2.11.6
     version: 2.11.6
@@ -15,7 +18,7 @@ dependencies:
     version: 4.11.0(prisma@4.11.0)
   '@sveltejs/adapter-node':
     specifier: ^1.2.1
-    version: 1.2.1(@sveltejs/kit@1.9.3)
+    version: 1.2.1(@sveltejs/kit@1.10.0)
   '@threlte/core':
     specifier: ^5.0.9
     version: 5.0.9
@@ -25,15 +28,12 @@ dependencies:
   '@types/crypto-js':
     specifier: ^4.1.1
     version: 4.1.1
-  '@types/cuid':
-    specifier: ^2.0.1
-    version: 2.0.1
+  '@types/uuid':
+    specifier: ^9.0.1
+    version: 9.0.1
   crypto-js:
     specifier: ^4.1.1
     version: 4.1.1
-  cuid:
-    specifier: ^3.0.0
-    version: 3.0.0
   custom-protocol-check:
     specifier: ^1.4.0
     version: 1.4.0
@@ -61,14 +61,17 @@ dependencies:
   three:
     specifier: ^0.146.0
     version: 0.146.0
+  uuid:
+    specifier: ^9.0.0
+    version: 9.0.0
   vite:
     specifier: ^4.1.4
     version: 4.1.4(sass@1.58.3)
 
 devDependencies:
   '@sveltejs/kit':
-    specifier: ^1.9.3
-    version: 1.9.3(svelte@3.55.1)(vite@4.1.4)
+    specifier: ^1.10.0
+    version: 1.10.0(svelte@3.55.1)(vite@4.1.4)
   '@sveltejs/vite-plugin-svelte':
     specifier: ^2.0.3
     version: 2.0.3(svelte@3.55.1)(vite@4.1.4)
@@ -349,6 +352,12 @@ packages:
       fastq: 1.15.0
     dev: true
 
+  /@paralleldrive/cuid2@2.2.0:
+    resolution: {integrity: sha512-CVQDpPIUHrUGGLdrMGz1NmqZvqmsB2j2rCIQEu1EvxWjlFh4fhvEGmgR409cY20/67/WlJsggenq0no3p3kYsw==}
+    dependencies:
+      '@noble/hashes': 1.2.0
+    dev: false
+
   /@polka/url@1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
 
@@ -491,7 +500,7 @@ packages:
       rollup: 3.18.0
     dev: false
 
-  /@sveltejs/adapter-node@1.2.1(@sveltejs/kit@1.9.3):
+  /@sveltejs/adapter-node@1.2.1(@sveltejs/kit@1.10.0):
     resolution: {integrity: sha512-mEGDCaZVU3qvFdUI8CMKv+BSzpBYpTpcx85u8bfJ+vcv57pu4UXjZg7ivOoxWZdunUeqq4oEyE+kHmlgBRAalg==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0
@@ -499,12 +508,12 @@ packages:
       '@rollup/plugin-commonjs': 24.0.1(rollup@3.18.0)
       '@rollup/plugin-json': 6.0.0(rollup@3.18.0)
       '@rollup/plugin-node-resolve': 15.0.1(rollup@3.18.0)
-      '@sveltejs/kit': 1.9.3(svelte@3.55.1)(vite@4.1.4)
+      '@sveltejs/kit': 1.10.0(svelte@3.55.1)(vite@4.1.4)
       rollup: 3.18.0
     dev: false
 
-  /@sveltejs/kit@1.9.3(svelte@3.55.1)(vite@4.1.4):
-    resolution: {integrity: sha512-rh9FbGfS8w328JZSZmG/ahabBbE50TisHvfz4sVNU3IM3AOhgUAv3EhAJ2dij9R8uARbDHRTY8jOQbIPjcKBZQ==}
+  /@sveltejs/kit@1.10.0(svelte@3.55.1)(vite@4.1.4):
+    resolution: {integrity: sha512-0P35zHrByfbF3Ym3RdQL+RvzgsCDSyO3imSwuZ67XAD5HoCQFF3a8Mhh0V3sObz3rc5aJd4Qn82UpAihJqZ6gQ==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     requiresBuild: true
@@ -567,20 +576,9 @@ packages:
     resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
     dev: false
 
-  /@types/cuid@2.0.1:
-    resolution: {integrity: sha512-xKfGHwpYmA49CTknWV5TMovp4oe+BUN/cb2VgVulgJEPnYXsF3fUAwmFiCHuPZAKDU+yXMBJhkW3E79xGhRGMg==}
-    deprecated: This is a stub types definition. cuid provides its own type definitions, so you do not need this installed.
-    dependencies:
-      cuid: 3.0.0
-    dev: false
-
   /@types/estree@1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
     dev: false
-
-  /@types/node@18.14.4:
-    resolution: {integrity: sha512-VhCw7I7qO2X49+jaKcAUwi3rR+hbxT5VcYF493+Z5kMLI0DL568b7JI4IDJaxWFH0D/xwmGJNoXisyX+w7GH/g==}
-    dev: true
 
   /@types/pug@2.0.6:
     resolution: {integrity: sha512-SnHmG9wN1UVmagJOnyo/qkk0Z7gejYxOYYmaAwr5u2yFYfsupN3sg10kyzN8Hep/2zbHxCnsumxOoRIRMBwKCg==}
@@ -590,11 +588,16 @@ packages:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
     dev: false
 
-  /@types/sass@1.43.1:
-    resolution: {integrity: sha512-BPdoIt1lfJ6B7rw35ncdwBZrAssjcwzI5LByIrYs+tpXlj/CAkuVdRsgZDdP4lq5EjyWzwxZCqAoFyHKFwp32g==}
+  /@types/sass@1.45.0:
+    resolution: {integrity: sha512-jn7qwGFmJHwUSphV8zZneO3GmtlgLsmhs/LQyVvQbIIa+fzGMUiHI4HXJZL3FT8MJmgXWbLGiVVY7ElvHq6vDA==}
+    deprecated: This is a stub types definition. sass provides its own type definitions, so you do not need this installed.
     dependencies:
-      '@types/node': 18.14.4
+      sass: 1.58.3
     dev: true
+
+  /@types/uuid@9.0.1:
+    resolution: {integrity: sha512-rFT3ak0/2trgvp4yYZo5iKFEPsET7vKydKF+VRCxlQ9bpheehyAJH89dAkaLEq/j/RZXJIqcgsmPJKUP1Z28HA==}
+    dev: false
 
   /anymatch@3.1.3:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
@@ -688,11 +691,6 @@ packages:
 
   /crypto-js@4.1.1:
     resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
-    dev: false
-
-  /cuid@3.0.0:
-    resolution: {integrity: sha512-WZYYkHdIDnaxdeP8Misq3Lah5vFjJwGuItJuV+tvMafosMzw0nF297T7mrm8IOWiPJkV6gc7sa8pzx27+w25Zg==}
-    deprecated: Cuid and other k-sortable and non-cryptographic ids (Ulid, ObjectId, KSUID, all UUIDs) are all insecure. Use @paralleldrive/cuid2 instead.
     dev: false
 
   /custom-protocol-check@1.4.0:
@@ -1517,7 +1515,7 @@ packages:
         optional: true
     dependencies:
       '@types/pug': 2.0.6
-      '@types/sass': 1.43.1
+      '@types/sass': 1.45.0
       detect-indent: 6.1.0
       magic-string: 0.25.9
       sass: 1.58.3
@@ -1566,7 +1564,7 @@ packages:
         optional: true
     dependencies:
       '@types/pug': 2.0.6
-      '@types/sass': 1.43.1
+      '@types/sass': 1.45.0
       detect-indent: 6.1.0
       magic-string: 0.27.0
       sass: 1.58.3
@@ -1645,6 +1643,11 @@ packages:
     engines: {node: '>=12.18'}
     dependencies:
       busboy: 1.6.0
+
+  /uuid@9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
+    dev: false
 
   /vite@4.1.4(sass@1.58.3):
     resolution: {integrity: sha512-3knk/HsbSTKEin43zHu7jTwYWv81f8kgAL99G5NWBcA1LKvtvcVAC4JjBH1arBunO9kQka+1oGbrMKOjk4ZrBg==}

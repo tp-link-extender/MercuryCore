@@ -55,6 +55,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 				id: true,
 				image: true,
 			},
+			where: {
+				privateServer: false,
+			}
 		}),
 		friends: Friends(),
 		feed: prisma.post.findMany({

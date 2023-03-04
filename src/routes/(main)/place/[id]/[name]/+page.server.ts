@@ -37,9 +37,7 @@ export const load: PageServerLoad = async ({ url, locals, params }) => {
 	if (getPlace) {
 		const { session, user } = await authoriseUser(locals.validateUser)
 
-		if(privateServerCode) {
-			if(getPlace.privateServer && privateServerCode != getPlace.privateTicket) throw error (404, "Not Found")
-		}
+		if (user?.number != getPlace.ownerUser?.number && privateServerCode && getPlace.privateServer && privateServerCode != getPlace.privateTicket) throw error(404, "Not Found")
 
 		const query = {
 			params: {
@@ -65,14 +63,17 @@ export const actions: Actions = {
 
 		const user = (await authoriseUser(locals.validateUser)).user
 		const data = await request.formData()
-		const action = data.get("action")?.toString() || ""
+		const action = data.get("action") as string
+		const privateTicket = data.get("privateTicket") as string
 
-		if (
-			!(await prisma.place.findUnique({
-				where: { id },
-			}))
-		)
-			return fail(404, { msg: "Not found" })
+		const place = await prisma.place.findUnique({
+			where: { id },
+			select: {
+				privateServer: true,
+				privateTicket: true,
+			},
+		})
+		if (!place || (place.privateServer && privateTicket != place.privateTicket)) return fail(404, { msg: "Not found" })
 
 		const query = {
 			params: {
@@ -149,7 +150,7 @@ export const actions: Actions = {
 		const data = await request.formData()
 
 		const requestType = data.get("request")
-		const serverId = parseInt(data.get("serverID")?.toString() || "")
+		const serverId = parseInt(data.get("serverId") as string)
 
 		if (!requestType || !serverId) return fail(400, { message: "Invalid Request" })
 		if (requestType != "RequestGame") return fail(400, { message: "Invalid Request (request type invalid)" })

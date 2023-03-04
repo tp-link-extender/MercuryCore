@@ -9,12 +9,11 @@ import { client } from "$lib/server/redis"
 import type { Handle } from "@sveltejs/kit"
 import { sequence } from "@sveltejs/kit/hooks"
 import { handleHooks } from "@lucia-auth/sveltekit"
-import { invalidateAll } from "$app/navigation"
 
 // Ran every time a request is made
 export const handle: Handle = sequence(handleHooks(auth), async ({ event, resolve }) => {
-	const { user } = await authoriseUser(event.locals.validateUser)
-	if (!user) return await resolve(event)
+	const { user, session } = await event.locals.validateUser()
+	if (!session) return await resolve(event)
 
 	await prisma.user.update({
 		where: {
