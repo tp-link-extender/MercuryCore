@@ -27,6 +27,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	async function Users() {
 		const usersQuery = await roQuery(
+			"friends",
 			`
 				MATCH (:User { name: $user }) <-[r:request]- (u:User)
 				RETURN u.name AS name
@@ -61,7 +62,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	console.timeEnd("requests")
 	return {
 		users: Users(),
-		number: roQuery("RETURN SIZE((:User { name: $user }) <-[:request]- (:User))", query, true),
+		number: roQuery("friends", "RETURN SIZE((:User { name: $user }) <-[:request]- (:User))", query, true),
 	}
 }
 
@@ -92,6 +93,7 @@ export const actions: Actions = {
 			switch (action[0]) {
 				case "decline":
 					await Query(
+						"friends",
 						`
 							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
 							DELETE r
@@ -100,9 +102,10 @@ export const actions: Actions = {
 					)
 					break
 				case "accept":
-					if (await roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
+					if (await roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
 						// Make sure an incoming request exists before accepting
 						await Query(
+							"friends",
 							`
 								MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
 								DELETE r

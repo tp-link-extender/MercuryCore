@@ -79,7 +79,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			type,
 			username: user.username,
 			users: Users(),
-			number: roQuery(numberQueries[type], query, true),
+			number: roQuery("friends", numberQueries[type], query, true),
 		}
 	} else {
 		throw error(404, `Not found`)

@@ -57,10 +57,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			...item,
 			owned: (itemOwned?.owners || []).length > 0,
 			description: "item description", //item.description,
-			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Item { name: $itemid }))", query, true),
-			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Item { name: $itemid }))", query, true),
-			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Item { name: $itemid }) RETURN r", query) : false,
-			dislikes: session ? roQuery("MATCH (:User { name: $user }) -[r:dislikes]-> (:Item { name: $itemid }) RETURN r", query) : false,
+			likeCount: roQuery("items", "RETURN SIZE((:User) -[:likes]-> (:Item { name: $itemid }))", query, true),
+			dislikeCount: roQuery("items", "RETURN SIZE((:User) -[:dislikes]-> (:Item { name: $itemid }))", query, true),
+			likes: session ? roQuery("items", "MATCH (:User { name: $user }) -[r:likes]-> (:Item { name: $itemid }) RETURN r", query) : false,
+			dislikes: session ? roQuery("items", "MATCH (:User { name: $user }) -[r:dislikes]-> (:Item { name: $itemid }) RETURN r", query) : false,
 		}
 	} else throw error(404, "Not found")
 }
@@ -167,6 +167,7 @@ export const actions: Actions = {
 				break
 			case "like":
 				await Query(
+					"items",
 					`
 						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Item { name: $itemid })
 						DELETE r
@@ -174,6 +175,7 @@ export const actions: Actions = {
 					query
 				)
 				await Query(
+					"items",
 					`
 						MERGE (u:User { name: $user })
 						MERGE (p:Item { name: $itemid })
@@ -184,6 +186,7 @@ export const actions: Actions = {
 				break
 			case "unlike":
 				await Query(
+					"items",
 					`
 						MATCH (u:User { name: $user }) -[r:likes]-> (p:Item { name: $itemid })
 						DELETE r
@@ -193,6 +196,7 @@ export const actions: Actions = {
 				break
 			case "dislike":
 				await Query(
+					"items",
 					`
 						MATCH (u:User { name: $user }) -[r:likes]-> (p:Item { name: $itemid })
 						DELETE r
@@ -200,6 +204,7 @@ export const actions: Actions = {
 					query
 				)
 				await Query(
+					"items",
 					`
 						MERGE (u:User { name: $user })
 						MERGE (p:Item { name: $itemid })
@@ -210,6 +215,7 @@ export const actions: Actions = {
 				break
 			case "undislike":
 				await Query(
+					"items",
 					`
 						MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Item { name: $itemid })
 						DELETE r
