@@ -48,10 +48,10 @@ export const load: PageServerLoad = async ({ url, locals, params }) => {
 
 		return {
 			...getPlace,
-			likeCount: roQuery("RETURN SIZE(() -[:likes]-> (:Place { name: $id }))", query, true),
-			dislikeCount: roQuery("RETURN SIZE(() -[:dislikes]-> (:Place { name: $id }))", query, true),
-			likes: session ? roQuery("MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r", query) : false,
-			dislikes: session ? roQuery("MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r", query) : false,
+			likeCount: roQuery("places", "RETURN SIZE((:User) -[:likes]-> (:Place { name: $id }))", query, true),
+			dislikeCount: roQuery("places", "RETURN SIZE((:User) -[:dislikes]-> (:Place { name: $id }))", query, true),
+			likes: session ? roQuery("places", "MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r", query) : false,
+			dislikes: session ? roQuery("places", "MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r", query) : false,
 		}
 	} else throw error(404, "Not found")
 }
@@ -88,6 +88,7 @@ export const actions: Actions = {
 			switch (action) {
 				case "like":
 					await Query(
+						"places",
 						`
 							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $id })
 							DELETE r
@@ -95,6 +96,7 @@ export const actions: Actions = {
 						query
 					)
 					await Query(
+						"places",
 						`
 							MERGE (u:User { name: $user })
 							MERGE (p:Place { name: $id })
@@ -105,6 +107,7 @@ export const actions: Actions = {
 					break
 				case "unlike":
 					await Query(
+						"places",
 						`
 							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $id })
 							DELETE r
@@ -114,6 +117,7 @@ export const actions: Actions = {
 					break
 				case "dislike":
 					await Query(
+						"places",
 						`
 							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $id })
 							DELETE r
@@ -121,6 +125,7 @@ export const actions: Actions = {
 						query
 					)
 					await Query(
+						"places",
 						`
 							MERGE (u:User { name: $user })
 							MERGE (p:Place { name: $id })
@@ -131,6 +136,7 @@ export const actions: Actions = {
 					break
 				case "undislike":
 					await Query(
+						"places",
 						`
 							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $id })
 							DELETE r
@@ -169,7 +175,7 @@ export const actions: Actions = {
 
 		// if (
 		// 	place.maxPlayers <=
-		// 	(await roQuery(
+		// 	(await roQuery("friends",
 		// 		"RETURN SIZE ((:User) -[:playing]-> (:Game { name: $id }))",
 		// 		{
 		// 			params: {

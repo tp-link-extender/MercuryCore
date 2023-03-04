@@ -25,8 +25,9 @@ export const load: PageServerLoad = async ({ params }) => {
 
 		async function Users() {
 			const usersQuery = await roQuery(
+				"groups",
 				`
-					MATCH (:Group { name: $group }) <-[r:in]- (u:User)
+					MATCH (u:User) -[r:in]-> (:Group { name: $group })
 					RETURN u.name AS name
 				`,
 				query,
@@ -60,7 +61,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		return {
 			name: group.name,
 			users: Users(),
-			number: roQuery("RETURN SIZE((:Group { name: $group }) <-[:in]- (:User))", query, true),
+			number: roQuery("groups", "RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true),
 		}
 	} else {
 		throw error(404, `Not found`)
