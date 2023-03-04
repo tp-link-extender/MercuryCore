@@ -111,7 +111,10 @@ export const actions: Actions = {
 						serverTicket: createId(),
 					},
 				})
-				return
+
+				return {
+					ticketregensuccess: true,
+				}
 
 			case "network":
 				const serverIP = data.get("address") as string
@@ -167,6 +170,10 @@ export const actions: Actions = {
 						privateTicket: uuid(),
 					},
 				})
+
+				return {
+					privateregensuccess: true
+				}
 		}
 	},
 }

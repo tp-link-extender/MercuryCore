@@ -101,6 +101,25 @@
 		<div class="tab-pane fade" id="pills-network" role="tabpanel" aria-labelledby="pills-network-tab" tabindex={0}>
 			<h4 class="light-text fw-normal mb-1">Network</h4>
 			<p class="mb-0 grey-text mb-4">Change the network configurations of your server.</p>
+			<form method="POST" class="col-lg-8" use:enhance>
+				<input type="hidden" name="action" value="ticket" />
+				<fieldset class="row mb-2">
+					<label for="ticket" class="col-md-3 col-form-label text-md-right">Server Ticket</label>
+					<div class="col-md-9">
+						<div class="input-group">
+							<input id="ticket" required value={form?.serverTicket || data.serverTicket} class="form-control valid" disabled />
+							{#if form?.area == "ticket"}
+								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
+							{/if}
+							<button class="btn btn-primary" type="submit"><i class="fa-solid fa-rotate" /> Regenerate</button>
+						</div>
+						{#if form?.ticketregensuccess}
+							<small in:fade class="text-success">Successfully regenerated server ticket</small><br />
+						{/if}
+						<small class="grey-text"> The server ticket is required to host servers on Mercury. You can regenerate the ticket at any time. </small>
+					</div>
+				</fieldset>
+			</form>
 			<form class="col-lg-8" method="POST" use:enhance>
 				<input type="hidden" name="action" value="network" />
 				<fieldset>
@@ -129,44 +148,11 @@
 					<p class="text-success mt-3">Network settings changed successfully!</p>
 				{/if}
 			</form>
-
-			<form method="POST" class="col-lg-8" use:enhance>
-				<input type="hidden" name="action" value="ticket" />
-				<fieldset class="row mb-2">
-					<label for="ticket" class="col-md-3 col-form-label text-md-right">Server Ticket</label>
-					<div class="col-md-9">
-						<div class="input-group">
-							<input id="ticket" required value={form?.serverTicket || data.serverTicket} class="form-control valid" disabled />
-							{#if form?.area == "ticket"}
-								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
-							{/if}
-							<button class="btn btn-primary" type="submit"><i class="fa-solid fa-rotate" /> Regenerate</button>
-						</div>
-						<small class="grey-text"> The server ticket is required to host servers on Mercury. You can regenerate the ticket at any time. </small>
-					</div>
-				</fieldset>
-			</form>
 		</div>
 
 		<div class="tab-pane fade" id="pills-privacy" role="tabpanel" aria-labelledby="pills-privacy-tab" tabindex={0}>
 			<h4 class="light-text fw-normal mb-1">Privacy</h4>
 			<p class="mb-0 grey-text mb-4">Enable private server to make your game only accessible to those with the link.</p>
-			<form class="col-lg-8" method="POST" use:enhance>
-				<input type="hidden" name="action" value="privacy" />
-				<fieldset>
-					<div class="row mb-2">
-						<label for="privacy" class="col-md-3 col-form-label text-md-right">Private Server</label>
-						<div class="col-md-9">
-							<input class="form-check-input" name="privacy" type="checkbox" id="privacy" checked={!!(form?.privateServer || data.privateServer)} />
-						</div>
-					</div>
-					<button type="submit" class="btn btn-success mt-4">Save Changes</button>
-					{#if form?.privatesuccess}
-						<p class="text-success mt-3">Game privacy changed successfully!</p>
-					{/if}
-				</fieldset>
-			</form>
-
 			<form class="col-lg-8" method="POST" use:enhance>
 				<input type="hidden" name="action" value="privatelink" />
 				<fieldset class="row mb-2">
@@ -180,12 +166,30 @@
 							<button on:click={copyPrivateLink} class="btn btn-info" type="button" id="button-addon2"><i class="fa-solid fa-paste" /></button>
 							<button class="btn btn-primary" type="submit" id="button-addon2"><i class="fa-solid fa-rotate" /> Regen</button>
 						</div>
+						{#if form?.privateregensuccess}
+							<small in:fade class="text-success">Successfully regenerated private link</small><br />
+						{/if}
 						{#if copiedSuccess}
 							<small id="copiedSuccess" in:fade bind:this={copiedSuccessMsg} class="text-warning">Successfully copied link to clipboard</small><br />
 						{/if}
 
 						<small class="grey-text"> This private server link will allow users to join your server. Your server (if private) cannot be accessed by other players without this link.</small>
 					</div>
+				</fieldset>
+			</form>
+			<form class="col-lg-8" method="POST" use:enhance>
+				<input type="hidden" name="action" value="privacy" />
+				<fieldset>
+					<div class="row mb-2">
+						<label for="privacy" class="col-md-3 col-form-label text-md-right">Private Server</label>
+						<div class="col-md-9">
+							<input class="form-check-input" name="privacy" type="checkbox" id="privacy" checked={!!(form?.privateServer || data.privateServer)} />
+						</div>
+					</div>
+					<button type="submit" class="btn btn-success mt-4">Save Changes</button>
+					{#if form?.privatesuccess}
+						<p class="text-success mt-3">Game privacy changed successfully!</p>
+					{/if}
 				</fieldset>
 			</form>
 		</div>
