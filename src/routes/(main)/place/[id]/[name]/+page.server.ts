@@ -24,6 +24,7 @@ export const load: PageServerLoad = async ({ url, locals, params }) => {
 			serverTicket: true,
 			privateServer: true,
 			privateTicket: true,
+			serverPing: true,
 			ownerUser: {
 				select: {
 					number: true,

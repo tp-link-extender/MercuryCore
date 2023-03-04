@@ -129,10 +129,10 @@ model Place {
 
     serverIP      String
     serverPort    Int
-    serverTicket  String  @unique @default(cuid())
-    serverPing    Int     @default(0)
-    privateServer Boolean @default(false)
-    privateTicket String  @unique @default(uuid())
+    serverTicket  String   @unique @default(cuid())
+    serverPing    Int      @default(0)
+    privateServer Boolean  @default(false)
+    privateTicket String   @unique @default(uuid())
 
     description String
     image       String
