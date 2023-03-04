@@ -68,6 +68,7 @@ export async function findGroups(query: any) {
 	// Add members to each group
 	for (let group of groups as any)
 		group["members"] = await roQuery(
+			"groups",
 			"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
 			{
 				params: {
