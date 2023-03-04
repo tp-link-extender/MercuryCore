@@ -36,6 +36,7 @@
 					<a class="btn mt-1 px-1 light-text nav-item" href="/games">Games</a>
 					<a class="btn mt-1 px-1 light-text nav-item" href="/avatarshop">Avatar Shop</a>
 					<a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a>
+					<a class="btn mt-1 px-1 light-text nav-item" href="/forum">Forum</a>
 					{#if $user?.permissionLevel >= 4}
 						<a class="btn mt-1 px-1 light-text nav-item" href="/admin">Admin</a>
 					{/if}

@@ -18,6 +18,7 @@ const graphs: any = {
 	groups: new Graph(client, "groups"), // Stores groups, members, etc
 	places: new Graph(client, "places"), // Stores likes and dislikes on places
 	items: new Graph(client, "items"), // Stores likes and dislikes on avatar shop items
+	forum: new Graph(client, "forum"), // Stores forum post and reply likes and dislikes
 }
 
 export async function Query(graph: string, query: any, params: any) {

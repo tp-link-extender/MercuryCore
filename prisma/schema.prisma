@@ -52,6 +52,8 @@ model User {
     theme             String?
     animationSettings String?
     GameSessions      GameSessions[]
+    forumPosts        ForumPost[]
+    forumReplies      ForumReply[]
 
     @@map("user")
 }
@@ -186,4 +188,39 @@ model Transaction {
     time         DateTime @default(now())
     note         String?
     link         String?
+}
+
+// Forum
+
+model ForumCategory {
+    name        String      @id @unique
+    posts       ForumPost[]
+    description String
+}
+
+model ForumPost {
+    id                String        @id @unique @default(cuid())
+    author            User          @relation(fields: [authorId], references: [id])
+    authorId          String
+    posted            DateTime      @default(now())
+    title             String
+    content           String
+    forumCategory     ForumCategory @relation(fields: [forumCategoryName], references: [name])
+    forumCategoryName String
+    replies           ForumReply[]
+}
+
+model ForumReply {
+    id       String   @id @unique @default(cuid())
+    author   User     @relation(fields: [authorId], references: [id])
+    authorId String
+    posted   DateTime @default(now())
+    content  String
+
+    // A reply can be to a post or another reply
+    parentPost    ForumPost?   @relation(fields: [parentPostId], references: [id])
+    parentPostId  String?
+    parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
+    parentReplyId String?
+    replies       ForumReply[] @relation("replies")
 }

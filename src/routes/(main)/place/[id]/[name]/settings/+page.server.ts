@@ -40,9 +40,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	if (user.number != getPlace.ownerUser?.number && user.permissionLevel < 4) throw error(401, "You do not have permission to view this page.")
 
-	return {
-		...getPlace,
-	}
+	return getPlace
 }
 
 export const actions: Actions = {
