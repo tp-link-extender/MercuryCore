@@ -54,6 +54,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			groups: findGroups({
 				where: {
 					OR: await roQuery(
+						"groups",
 						`
 							MATCH (:User { name: $user }) -[:in]-> (u:Group)
 							RETURN u.name AS name
@@ -69,14 +70,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 					ownerUsername: userExists.username,
 				},
 			}),
-			friendCount: roQuery("RETURN SIZE((:User) -[:friends]- (:User { name: $user }))", query2, true),
-			followerCount: roQuery("RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))", query2, true),
-			followingCount: roQuery("RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))", query2, true),
-			friends: roQuery("MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query),
-			following: roQuery("MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query),
-			follower: roQuery("MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query),
-			incomingRequest: roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query),
-			outgoingRequest: roQuery("MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query),
+			friendCount: roQuery("friends", "RETURN SIZE((:User) -[:friends]- (:User { name: $user }))", query2, true),
+			followerCount: roQuery("friends", "RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))", query2, true),
+			followingCount: roQuery("friends", "RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))", query2, true),
+			friends: roQuery("friends", "MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query),
+			following: roQuery("friends", "MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query),
+			follower: roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query),
+			incomingRequest: roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query),
+			outgoingRequest: roQuery("friends", "MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query),
 		}
 	} else {
 		throw error(404, "Not found")
@@ -122,6 +123,7 @@ export const actions: Actions = {
 			switch (action) {
 				case "follow":
 					await Query(
+						"friends",
 						`
 							MERGE (u1:User { name: $user1 })
 							MERGE (u2:User { name: $user2 })
@@ -132,6 +134,7 @@ export const actions: Actions = {
 					break
 				case "unfollow":
 					await Query(
+						"friends",
 						`
 							MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
 							DELETE r
@@ -141,6 +144,7 @@ export const actions: Actions = {
 					break
 				case "unfriend":
 					await Query(
+						"friends",
 						`
 							MATCH (u1:User { name: $user1 }) -[r:friends]- (u2:User { name: $user2 })
 							DELETE r
@@ -149,11 +153,12 @@ export const actions: Actions = {
 					)
 					break
 				case "request":
-					if (!(await roQuery("MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query))) {
+					if (!(await roQuery("friends", "MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query))) {
 						// Make sure users are not already friends
-						if (await roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
+						if (await roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
 							// If there is already an incoming request, accept it instead
 							await Query(
+								"friends",
 								`
 									MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
 									DELETE r
@@ -165,6 +170,7 @@ export const actions: Actions = {
 							)
 						else
 							await Query(
+								"friends",
 								`
 									MERGE (u1:User { name: $user1 })
 									MERGE (u2:User { name: $user2 })
@@ -176,6 +182,7 @@ export const actions: Actions = {
 					break
 				case "cancel":
 					await Query(
+						"friends",
 						`
 							MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
 							DELETE r
@@ -185,6 +192,7 @@ export const actions: Actions = {
 					break
 				case "decline":
 					await Query(
+						"friends",
 						`
 							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
 							DELETE r
@@ -193,9 +201,10 @@ export const actions: Actions = {
 					)
 					break
 				case "accept":
-					if (await roQuery("MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
+					if (await roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
 						// Make sure an incoming request exists before accepting
 						await Query(
+							"friends",
 							`
 								MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
 								DELETE r

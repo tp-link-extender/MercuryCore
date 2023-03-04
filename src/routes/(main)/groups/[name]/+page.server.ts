@@ -55,8 +55,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				},
 			}),
 			feed: group.posts,
-			memberCount: roQuery("RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true),
-			in: roQuery("MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r", query2),
+			memberCount: roQuery("groups", "RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true),
+			in: roQuery("groups", "MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r", query2),
 		}
 	} else {
 		throw error(404, "Not found")
@@ -93,6 +93,7 @@ export const actions: Actions = {
 			switch (action) {
 				case "join":
 					await Query(
+						"groups",
 						`
 							MERGE (u:User { name: $user })
 							MERGE (g:Group { name: $group })
@@ -103,6 +104,7 @@ export const actions: Actions = {
 					break
 				case "leave":
 					await Query(
+						"groups",
 						`
 							MATCH (u:User { name: $user }) -[r:in]-> (g:Group { name: $group })
 							DELETE r

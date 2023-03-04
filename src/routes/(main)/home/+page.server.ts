@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	// but sometimes errors for this page.
 
 	async function Friends() {
-		const friendsQuery = await roQuery(
+		const friendsQuery = await roQuery("friends",
 			`
 				MATCH (:User { name: $user }) -[r:friends]- (u:User)
 				RETURN u.name as name
