@@ -5,7 +5,7 @@ import { prisma } from "$lib/server/prisma"
 
 export const GET: RequestHandler = async ({ url }) => {
 	const clientTicket = url.searchParams.get("ticket")
-	const privateServer = url.searchParams.get("ticket")?.toString() 
+	const privateServer = url.searchParams.get("privateServer")?.toString() 
 
 	let isStudioJoin = false
 	let joinMethod = "Studio"
