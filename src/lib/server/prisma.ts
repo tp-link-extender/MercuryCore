@@ -1,7 +1,7 @@
 // A collection of functions useful for Prisma, as well
 // as only needing to initialise PrismaClient once.
 
-import { PrismaClient, type Group, type Item } from "@prisma/client"
+import { PrismaClient, type Place, type Item, type Group } from "@prisma/client"
 import { client, roQuery } from "./redis"
 
 export const prisma = new PrismaClient()
@@ -12,13 +12,13 @@ export async function findPlaces(query: any) {
 	const places = await prisma.place.findMany(query)
 
 	// Add like/dislike ratio to each place
-	for (let place of places as any) {
+	for (let place of places as (Place & { ratio: any })[]) {
 		let ratio = Math.floor(
 			(await roQuery(
 				"places",
 				`
-					RETURN (SIZE(() -[:likes]-> (:Place { name: $place })))
-					/ (SIZE(() -[:likes|dislikes]-> (:Place { name: $place })))
+					RETURN (SIZE((:User) -[:likes]-> (:Place { name: $place })))
+					/ (SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place })))
 				`,
 				{
 					params: {
@@ -39,13 +39,13 @@ export async function findItems(query: any) {
 	const items = await prisma.item.findMany(query)
 
 	// Add like/dislike ratio to each item
-	for (let item of items as any) {
+	for (let item of items as (Item & { ratio: any })[]) {
 		let ratio = Math.floor(
 			(await roQuery(
 				"items",
 				`
-					RETURN (SIZE(() -[:likes]-> (:Item { name: $itemid })))
-					/ (SIZE(() -[:likes|dislikes]-> (:Item { name: $itemid })))
+					RETURN (SIZE((:User) -[:likes]-> (:Item { name: $itemid })))
+					/ (SIZE((:User) -[:likes|dislikes]-> (:Item { name: $itemid })))
 				`,
 				{
 					params: {
@@ -57,7 +57,7 @@ export async function findItems(query: any) {
 		)
 		item["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
-	return items as (Item & { ratio: any })[]
+	return items
 }
 
 // Required because group members are stored in RedisGraph,
@@ -66,7 +66,7 @@ export async function findGroups(query: any) {
 	const groups = await prisma.group.findMany(query)
 
 	// Add members to each group
-	for (let group of groups as any)
+	for (let group of groups as (Group & { members: any })[])
 		group["members"] = await roQuery(
 			"groups",
 			"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
@@ -78,7 +78,7 @@ export async function findGroups(query: any) {
 			true
 		)
 
-	return groups as (Group & { members: any })[]
+	return groups
 }
 
 type User = {
