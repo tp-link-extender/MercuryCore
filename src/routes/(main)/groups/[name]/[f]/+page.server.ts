@@ -5,8 +5,26 @@ import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
 
+const types = ["followers", "members"]
+
+const usersQueries: any = {
+	followers: `
+		MATCH (:Group { name: $group }) <-[r:follows]- (u:User)
+		RETURN u.name AS name`,
+	members: `
+		MATCH (:Group { name: $group }) <-[r:in]- (u:User)
+		RETURN u.name AS name`,
+}
+
+const numberQueries: any = {
+	followers: "RETURN SIZE((:Group { name: $group }) <-[:follows]- (:User))",
+	members: "RETURN SIZE((:Group { name: $group }) <-[:in]- (:User))",
+}
+
 export const load: PageServerLoad = async ({ params }) => {
-	console.time("group members")
+	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
+	const type = params.f
+	console.time("group " + type)
 
 	const group = await prisma.group.findUnique({
 		where: {
@@ -24,15 +42,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		}
 
 		async function Users() {
-			const usersQuery = await roQuery(
-				`
-					MATCH (:Group { name: $group }) <-[r:in]- (u:User)
-					RETURN u.name AS name
-				`,
-				query,
-				false,
-				true
-			)
+			const usersQuery = await roQuery(usersQueries[type], query, false, true)
 
 			let users: any[] = []
 
@@ -46,6 +56,7 @@ export const load: PageServerLoad = async ({ params }) => {
 							select: {
 								number: true,
 								username: true,
+								displayname: true,
 								image: true,
 								status: true,
 							},
@@ -56,11 +67,12 @@ export const load: PageServerLoad = async ({ params }) => {
 			return users
 		}
 
-		console.timeEnd("group members")
+		console.timeEnd("group " + type)
 		return {
+			type,
 			name: group.name,
 			users: Users(),
-			number: roQuery("RETURN SIZE((:Group { name: $group }) <-[:in]- (:User))", query, true),
+			number: roQuery(numberQueries[type], query, true),
 		}
 	} else {
 		throw error(404, `Not found`)

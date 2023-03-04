@@ -10,7 +10,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		taxRate: client.get("taxRate"),
 		dailyStipend: Number((await client.get("dailyStipend")) || 10),
-		stipendTime: Number((await client.get("stipendTime")) || 12),
 	}
 }
 

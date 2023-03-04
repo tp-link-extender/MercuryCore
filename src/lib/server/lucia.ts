@@ -18,6 +18,7 @@ export const auth = lucia({
 		bio: data.bio,
 		email: data.email,
 		username: data.username,
+		displayname: data.displayname,
 		image: data.image,
 		currency: data.currency,
 		currencyCollected: data.currencyCollected,
@@ -32,14 +33,14 @@ export const auth = lucia({
 
 export type Auth = typeof auth
 
-export async function authorise(promise: () => Promise<Session | null>) {
-	const session = await promise()
+export async function authorise(promise: Promise<Session | null>) {
+	const session = await promise
 	if (!session) throw redirect(302, "/login")
 	return session
 }
 
 export async function authoriseUser(
-	promise: () => Promise<
+	promise: Promise<
 		| {
 				session: Session
 				user: User
@@ -50,7 +51,7 @@ export async function authoriseUser(
 		  }
 	>
 ) {
-	const { session, user } = await promise()
+	const { session, user } = await promise
 	if (!session) throw redirect(302, "/login")
 	return { session, user }
 }
@@ -58,5 +59,5 @@ export async function authoriseUser(
 export async function authoriseAdmin(locals: any) {
 	const { session, user } = await locals.validateUser()
 
-	if (!session || user.permissionLevel != 5) throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
+	if (!session || user.permissionLevel != "Administrator") throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
 }

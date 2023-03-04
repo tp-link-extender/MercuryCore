@@ -7,9 +7,9 @@
 	export let data: PageData
 
 	const titles: any = {
-		friends: `${data.username}'s friends`,
-		followers: `${data.username}'s followers`,
-		following: `Followed by ${data.username}`,
+		friends: `${data.displayname}'s friends`,
+		followers: `${data.displayname}'s followers`,
+		following: `Followed by ${data.displayname}`,
 	}
 </script>
 
