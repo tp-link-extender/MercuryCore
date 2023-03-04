@@ -191,7 +191,7 @@
 			</p>
 		</div>
 		<div class="tab-pane fade" id="pills-game" role="tabpanel" aria-labelledby="pills-game-tab" tabindex={0}>
-			{#if $user?.permissionLevel == 5}
+			{#if $user?.permissionLevel == 5 || data.ownerUser?.number == $user?.number}
 				<h4 class="light-text">Hosting</h4>
 				<div class="card mb-2">
 					<div class="card-body">
