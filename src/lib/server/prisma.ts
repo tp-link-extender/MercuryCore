@@ -15,6 +15,7 @@ export async function findPlaces(query: any) {
 	for (let place of places as any) {
 		let ratio = Math.floor(
 			(await roQuery(
+				"places",
 				`
 					RETURN (SIZE(() -[:likes]-> (:Place { name: $place })))
 					/ (SIZE(() -[:likes|dislikes]-> (:Place { name: $place })))
@@ -41,6 +42,7 @@ export async function findItems(query: any) {
 	for (let item of items as any) {
 		let ratio = Math.floor(
 			(await roQuery(
+				"items",
 				`
 					RETURN (SIZE(() -[:likes]-> (:Item { name: $itemid })))
 					/ (SIZE(() -[:likes|dislikes]-> (:Item { name: $itemid })))
