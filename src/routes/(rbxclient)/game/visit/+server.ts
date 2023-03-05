@@ -1,9 +1,9 @@
-import type { RequestHandler } from './$types';
-import { SignData } from '$lib/server/sign';
+import type { RequestHandler } from "./$types"
+import { SignData } from "$lib/server/sign"
 export const GET: RequestHandler = async () => {
-    return new Response(
-        SignData(
-            `-- Prepended to Edit.lua and Visit.lua and Studio.lua and PlaySolo.lua--
+	return new Response(
+		SignData(
+			`-- Prepended to Edit.lua and Visit.lua and Studio.lua and PlaySolo.lua--
 
             if true then
                 pcall(function() game:SetPlaceID(${0}) end)
@@ -124,6 +124,6 @@ export const GET: RequestHandler = async () => {
                     game:HttpPost("http://${"banland.xyz"}/Error/Lua.ashx?", "Visit.lua: " .. err)
                 end
             end`
-        )
-    );
-};
+		)
+	)
+}

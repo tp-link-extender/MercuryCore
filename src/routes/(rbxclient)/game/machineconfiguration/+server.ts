@@ -1,5 +1,5 @@
-import type { RequestHandler } from './$types';
+import type { RequestHandler } from "./$types"
 
 export const GET: RequestHandler = async () => {
-    return new Response("OK");
-};
+	return new Response("OK")
+}
