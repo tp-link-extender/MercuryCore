@@ -29,7 +29,7 @@
 							{/if}
 						</button>
 					</div>
-					<span class="my-2 text-center">
+					<span class="my-2 text-center {post.likes ? "text-success fw-bold" : post.dislikes ? "text-danger fw-bold" : ""}">
 						{post.likeCount - post.dislikeCount}
 					</span>
 					<div>

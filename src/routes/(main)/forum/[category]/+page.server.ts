@@ -66,7 +66,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				id: post.id,
 			},
 		})
-
 		post["dislikes"] = await roQuery("forum", "MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id }) RETURN r", {
 			params: {
 				user: user?.username,
@@ -84,16 +83,24 @@ export const actions: Actions = {
 		const data = await request.formData()
 		const action = data.get("action") as string
 		const id = data.get("id") as string
+		const replyId = data.get("replyId") as string
 
-		const post = await prisma.forumPost.findUnique({
-			where: { id },
-		})
-		if (!post) throw error(404)
+		if (
+			(id &&
+				!(await prisma.forumPost.findUnique({
+					where: { id },
+				}))) ||
+			(replyId &&
+				!(await prisma.forumReply.findUnique({
+					where: { id: replyId },
+				})))
+		)
+			throw error(404)
 
 		const query = {
 			params: {
 				user: user.username,
-				id,
+				id: id || replyId,
 			},
 		}
 
@@ -105,7 +112,7 @@ export const actions: Actions = {
 					await Query(
 						"forum",
 						`
-							MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id })
+							MATCH (:User { name: $user }) -[r:dislikes]-> (:${replyId ? "Reply" : "Post"} { name: $id })
 							DELETE r
 						`,
 						query
@@ -114,7 +121,7 @@ export const actions: Actions = {
 						"forum",
 						`
 							MERGE (u:User { name: $user })
-							MERGE (p:Post { name: $id })
+							MERGE (p:${replyId ? "Reply" : "Post"} { name: $id })
 							MERGE (u) -[:likes]-> (p)
 						`,
 						query
@@ -124,7 +131,7 @@ export const actions: Actions = {
 					await Query(
 						"forum",
 						`
-							MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id })
+							MATCH (:User { name: $user }) -[r:likes]-> (:${replyId ? "Reply" : "Post"} { name: $id })
 							DELETE r
 						`,
 						query
@@ -134,7 +141,7 @@ export const actions: Actions = {
 					await Query(
 						"forum",
 						`
-							MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id })
+							MATCH (:User { name: $user }) -[r:likes]-> (:${replyId ? "Reply" : "Post"} { name: $id })
 							DELETE r
 						`,
 						query
@@ -143,7 +150,7 @@ export const actions: Actions = {
 						"forum",
 						`
 							MERGE (u:User { name: $user })
-							MERGE (p:Post { name: $id })
+							MERGE (p:${replyId ? "Reply" : "Post"} { name: $id })
 							MERGE (u) -[:dislikes]-> (p)
 						`,
 						query
@@ -153,7 +160,7 @@ export const actions: Actions = {
 					await Query(
 						"forum",
 						`
-							MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id })
+							MATCH (:User { name: $user }) -[r:dislikes]-> (:${replyId ? "Reply" : "Post"} { name: $id })
 							DELETE r
 						`,
 						query
