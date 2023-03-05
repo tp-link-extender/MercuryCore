@@ -9,6 +9,8 @@ server {
 	rewrite (?i)^/Asset$ /asset/assetfetch last;
 	rewrite (?i)^/Asset/$ /asset/assetfetch last;
 	rewrite (?i)^/Asset/Default.ashx$ /asset/assetfetch last;
+	rewrite (?i)^/Asset/CharacterFetch.ashx$ /asset/characterfetch.php last;
+    rewrite (?i)^/Asset/BodyColors.ashx$ /asset/bodycolors.php last;
 
 	# rewrite (?i)^/Game/PlaceLauncher.ashx$ /api/games/placelauncher last;	
 	rewrite (?i)^/Game/Studio.ashx$ /game/studio last;
