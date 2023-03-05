@@ -138,7 +138,7 @@
 							<input
 								id="port"
 								type="number"
-								min="49152"
+								min="25565"
 								max="65535"
 								required
 								name="port"
