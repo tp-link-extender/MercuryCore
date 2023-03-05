@@ -5,6 +5,8 @@ import { prisma } from "$lib/server/prisma"
 
 export const GET: RequestHandler = async ({ url }) => {
 	const ticket = url.searchParams.get("ticket")
+	let mapLocation = url.searchParams.get("autopilot")
+
 	if (!ticket) throw error(400, "Invalid Request")
 
 	const data = await prisma.place.findUnique({ where: { serverTicket: ticket } })
@@ -19,6 +21,14 @@ export const GET: RequestHandler = async ({ url }) => {
 		serverId = data.id.toString()
 		serverPresenceUrl = `${baseUrl}/Game/ServerPresence?ticket=${ticket}`
 	} 
+
+	if(mapLocation) {
+		mapLocation = Buffer.from(mapLocation, "base64").toString()
+		if(mapLocation.slice(-5) != ".rbxl") mapLocation = null
+
+		if(mapLocation = null) mapLocation = `rbxasset://maps/${mapLocation}`
+	}
+
 
 	return new Response(
 		SignData(
@@ -207,12 +217,12 @@ if placeId~=nil and url~=nil then
 	game:Load(url .. "/asset/?id=" .. placeId)
 end
 
-if ${false} then
+if ${!!mapLocation} then
 	-- yield so that file load happens in the heartbeat thread
 	wait()
 
 	-- load the game
-	game:Load("${false}")
+	game:Load("${mapLocation}")
 end
 
 -- Now start the connection
