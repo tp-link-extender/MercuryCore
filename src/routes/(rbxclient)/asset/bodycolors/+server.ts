@@ -1,21 +1,21 @@
-import { error } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
+import { error } from "@sveltejs/kit"
+import type { RequestHandler } from "./$types"
 import { prisma } from "$lib/server/prisma"
 
-export const GET: RequestHandler = async ({url}) => {
-    const ID = url.searchParams.get("id") 
-    if(!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
+export const GET: RequestHandler = async ({ url }) => {
+	const ID = url.searchParams.get("id")
+	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
-    const userInfo = await prisma.user.findUnique({
-        where: {number: parseInt(ID)},
-        select: {bodyColours: true}
-    })
+	const userInfo = await prisma.user.findUnique({
+		where: { number: parseInt(ID) },
+		select: { bodyColours: true },
+	})
 
-    if(!userInfo) throw error(404, "User Not Found")
+	if (!userInfo) throw error(404, "User Not Found")
 
-    const colors: any = userInfo.bodyColours
+	const colors: any = userInfo.bodyColours
 
-    return new Response(`
+	return new Response(`
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
 	<External>null</External>
@@ -33,5 +33,5 @@ export const GET: RequestHandler = async ({url}) => {
 		</Properties>
 	</Item>
 </roblox>
-    `);
-};
+    `)
+}
