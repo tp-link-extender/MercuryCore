@@ -5,6 +5,7 @@
 	import { fly } from "svelte/transition"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import customProtocolCheck from "custom-protocol-check"
+	import { Buffer } from "buffer"
 
 	export let data: PageData
 
