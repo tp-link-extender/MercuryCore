@@ -49,7 +49,8 @@ model User {
     transactionsSent     Transaction[] @relation("sent")
     transactionsReceived Transaction[] @relation("received")
 
-    bodyColours Json @default("[{\"Head\": \"24\",\"Torso\": \"23\",\"LeftArm\": \"24\",\"RightArm\": \"24\",\"LeftLeg\": \"119\",\"RightLeg\": \"119\"}]")
+    bodyColours Json @default("{\"Head\": \"24\",\"Torso\": \"23\",\"LeftArm\": \"24\",\"RightArm\": \"24\",\"LeftLeg\": \"119\",\"RightLeg\": \"119\"}")
+    // {"Head": "24","Torso": "23","LeftArm": "24","RightArm": "24","LeftLeg": "119","RightLeg": "119"}
 
     theme             String?
     animationSettings String?
