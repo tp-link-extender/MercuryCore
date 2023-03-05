@@ -135,7 +135,16 @@
 					<div class="row mb-2">
 						<label for="port" class="col-md-3 col-form-label text-md-right">Port</label>
 						<div class="col-md-9">
-							<input id="port" type="number" min="53640" max="65535" required name="port" value={form?.serverPort || data.serverPort} class="form-control {form?.area == 'port' ? 'is-invalid' : 'valid'}" />
+							<input
+								id="port"
+								type="number"
+								min="49152"
+								max="65535"
+								required
+								name="port"
+								value={form?.serverPort || data.serverPort}
+								class="form-control {form?.area == 'port' ? 'is-invalid' : 'valid'}"
+							/>
 							{#if form?.area == "port"}
 								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
 							{/if}

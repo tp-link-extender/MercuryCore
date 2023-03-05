@@ -18,7 +18,7 @@ export const actions: Actions = {
 		console.log(name, description, serverIP, serverPort, maxPlayers, privateServer)
 
 		if (!name || !description || !serverIP || !serverPort || !maxPlayers) return fail(400, { msg: "Missing fields" })
-		if (name.length < 3 || name.length > 50 || description.length > 1000 || serverPort > 65535 || serverPort < 53640 || maxPlayers > 99 || maxPlayers < 1 || !/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(serverIP)) return fail(400, { msg: "Invalid fields" })
+		if (name.length < 3 || name.length > 50 || description.length > 1000 || serverPort > 65535 || serverPort < 49152 || maxPlayers > 99 || maxPlayers < 1 || !/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(serverIP)) return fail(400, { msg: "Invalid fields" })
 
 		const gameCount = await prisma.user.findUnique({
 			where: { id: user.userId },
