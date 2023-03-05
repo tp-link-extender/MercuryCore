@@ -49,6 +49,8 @@ model User {
     transactionsSent     Transaction[] @relation("sent")
     transactionsReceived Transaction[] @relation("received")
 
+    bodyColours Json @default("[]")
+
     theme             String?
     animationSettings String?
     GameSessions      GameSessions[]
@@ -87,7 +89,7 @@ model GameSessions {
     user    User    @relation(references: [id], fields: [userId], onDelete: Cascade)
     userId  String
     ticket  String  @id @unique @default(uuid())
-    ping    BigInt     @default(0)
+    ping    BigInt  @default(0)
     valid   Boolean @default(true)
 }
 
@@ -129,10 +131,10 @@ model Place {
 
     serverIP      String
     serverPort    Int
-    serverTicket  String   @unique @default(cuid())
-    serverPing    BigInt      @default(0)
-    privateServer Boolean  @default(false)
-    privateTicket String   @unique @default(uuid())
+    serverTicket  String  @unique @default(cuid())
+    serverPing    BigInt  @default(0)
+    privateServer Boolean @default(false)
+    privateTicket String  @unique @default(uuid())
 
     description String
     image       String
