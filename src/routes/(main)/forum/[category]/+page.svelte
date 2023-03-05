@@ -18,7 +18,7 @@
 		<a href="/forum/create?category={data.name}" class="btn btn-primary ms-4"><i class="fa fa-file me-2" />Create post</a>
 	</h1>
 	{#each data.posts as post, num}
-		<div in:fade|global={{ num, total: data.posts.length }} class="card mb-3 flex-row">
+		<div in:fade|global={{ num, total: data.posts.length }} class="post card mb-3 flex-row">
 			<form use:enhance class="sidebar me-2 p-1" method="POST" action="?/like">
 				<input type="hidden" name="id" value={post.id} />
 				<div class="mb-2 d-flex flex-column">
@@ -48,7 +48,7 @@
 					</div> -->
 				</div>
 			</form>
-			<a href="/forum/{data.name}/{post.id}" class="p-3 pb-0 text-decoration-none light-text">
+			<a href="/forum/{data.name}/{post.id}" class="p-3 pb-0 text-decoration-none light-text w-100">
 				<div>
 					<a href="/user/{post.author.number}" class="user d-flex text-decoration-none">
 						<span class="pfp rounded-circle">
@@ -61,7 +61,7 @@
 						{post.title}
 					</h2>
 				</div>
-				<div id="content" class="mb-0">
+				<div class="mb-0">
 					<div id="gradient" class="w-100 h-75" />
 					{post.content}
 				</div>
@@ -83,6 +83,11 @@
 	// #replycount
 	// 	justify-content: center
 
+	.post
+		height: 10rem
+		overflow: hidden
+		word-break: break-word
+
 	.card
 		background: var(--darker)
 		border-color: var(--accent2)
@@ -91,16 +96,12 @@
 			background: var(--background)
 			border-color: var(--accent3)
 
-	#content
-		max-height: 7rem
-		overflow: hidden
-		word-break: break-word
-
 	#gradient
 		position: absolute
 		bottom: 0
 		left: 0
-		background: linear-gradient(rgba(0, 0, 0, 0), var(--darker))
+		height: 5rem !important
+		background: linear-gradient(#0000, var(--darker))
 
 	.user
 		align-items: center 
