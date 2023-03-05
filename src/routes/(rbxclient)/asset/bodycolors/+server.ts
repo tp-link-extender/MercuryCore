@@ -13,7 +13,8 @@ export const GET: RequestHandler = async ({url}) => {
 
     if(!userInfo) throw error(404, "User Not Found")
 
-    const userBodyColours = userInfo.bodyColours
+    
+
 
     return new Response();
 };
