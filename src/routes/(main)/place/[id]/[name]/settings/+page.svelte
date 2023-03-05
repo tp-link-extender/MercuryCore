@@ -138,7 +138,7 @@
 							<input
 								id="port"
 								type="number"
-								min="25565"
+								min="1024"
 								max="65535"
 								required
 								name="port"
@@ -148,6 +148,7 @@
 							{#if form?.area == "port"}
 								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
 							{/if}
+						<small class="grey-text">Using a port number lower than 49152 may not work correctly.</small>
 						</div>
 					</div>
 					<hr class="grey-text" />
