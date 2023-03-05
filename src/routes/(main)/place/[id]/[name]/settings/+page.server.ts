@@ -123,7 +123,7 @@ export const actions: Actions = {
 				if (serverIP == getPlace?.serverIP && serverPort == getPlace?.serverPort) return fail(400)
 				if (!serverIP) return fail(400, { area: "address", msg: "Missing address" })
 				if (!serverPort) return fail(400, { area: "port", msg: "Missing port" })
-				if (serverPort > 65535 || serverPort < 49152) return fail(400, { area: "port", msg: "Invalid port" })
+				if (serverPort > 65535 || serverPort < 1024) return fail(400, { area: "port", msg: "Invalid port" })
 				if (!/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(serverIP)) return fail(400, { area: "address", msg: "Invalid address" })
 
 				await prisma.place.update({
