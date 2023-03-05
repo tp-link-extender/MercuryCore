@@ -108,19 +108,19 @@
 									<div class="bodyPart" on:click={() => {openColorPicker("Head")}} on:keydown={() => {openColorPicker("Head")}} style="background-color:#E5E4DF;height:44px;width:44px;" />
 								</div>
 								<div style="position: absolute; left: 0px; top: 52px; cursor: pointer">
-									<div class="bodyPart" on:click={() => {openColorPicker("Right Arm")}} on:keydown={() => {openColorPicker("Right Arm")}} data-body-part="Right Arm" style="background-color:#E5E4DF;height:88px;width:40px;" />
+									<div class="bodyPart" on:click={() => {openColorPicker("RightArm")}} on:keydown={() => {openColorPicker("Right Arm")}} data-body-part="Right Arm" style="background-color:#E5E4DF;height:88px;width:40px;" />
 								</div>
 								<div style="position: absolute; left: 48px; top: 52px; cursor: pointer">
 									<div class="bodyPart" on:click={() => {openColorPicker("Torso")}} on:keydown={() => {openColorPicker("Torso")}} data-body-part="Torso" style="background-color:#635F62;height:88px;width:88px;" />
 								</div>
 								<div style="position: absolute; left: 144px; top: 52px; cursor: pointer">
-									<div class="bodyPart" on:click={() => {openColorPicker("Left Arm")}} on:keydown={() => {openColorPicker("Left Arm")}} data-body-part="Left Arm" style="background-color:#E5E4DF;height:88px;width:40px;" />
+									<div class="bodyPart" on:click={() => {openColorPicker("LeftArm")}} on:keydown={() => {openColorPicker("Left Arm")}} data-body-part="Left Arm" style="background-color:#E5E4DF;height:88px;width:40px;" />
 								</div>
 								<div style="position: absolute; left: 48px; top: 146px; cursor: pointer">
-									<div class="bodyPart" on:click={() => {openColorPicker("Left Leg")}} on:keydown={() => {openColorPicker("Left Leg")}} data-body-part="Left Leg" style="background-color:#6E99CA;height:88px;width:40px;" />
+									<div class="bodyPart" on:click={() => {openColorPicker("LeftLeg")}} on:keydown={() => {openColorPicker("Left Leg")}} data-body-part="Left Leg" style="background-color:#6E99CA;height:88px;width:40px;" />
 								</div>
 								<div style="position: absolute; left: 96px; top: 146px; cursor: pointer">
-									<div class="bodyPart" on:click={() => {openColorPicker("Right Leg")}} on:keydown={() => {openColorPicker("Right Leg")}} data-body-part="Right Leg" style="background-color:#6E99CA;height:88px;width:40px;" />
+									<div class="bodyPart" on:click={() => {openColorPicker("RightLeg")}} on:keydown={() => {openColorPicker("Right Leg")}} data-body-part="Right Leg" style="background-color:#6E99CA;height:88px;width:40px;" />
 								</div>
 							</div>
 						</div>
