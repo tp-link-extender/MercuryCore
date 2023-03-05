@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	let placeId = -1
 	let creatorId = 0
 	let MembershipType = "None"
-	let charApp = "http://banland.xyz/Asset/CharacterFetch.ashx?userId=0"
+	let charApp = "http://banland.xyz/Asset/CharacterFetch.ashx?userID=0"
 
 	if ((joinMethod = "Ticket")) {
 		const gameSession = (
@@ -53,7 +53,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		userId = gameSession.user.number
 		placeId = gameSession.place.id
 		creatorId = gameSession.place.ownerUser?.number || 0
-		charApp = `http://banland.xyz/Asset/CharacterFetch.ashx?userId=${userId}`
+		charApp = `http://banland.xyz/Asset/CharacterFetch.ashx?userID=${userId}`
 
 		if (gameSession.user.permissionLevel = 5) MembershipType = "OutrageousBuildersClub"
 
