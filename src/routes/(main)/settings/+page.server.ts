@@ -13,15 +13,15 @@ export const actions: Actions = {
 
 		let same
 		for (let i in entries)
-			if (entries[i] != (user as any)[i]) {
-				same = false
-				break
-			}
+		if (entries[i] != (user as any)[i]) {
+			same = false
+			break
+		}
 		if (same) return fail(400)
-
-		if (!entries.username || entries.username?.length < 3 || entries.username?.length > 30) return fail(400, { area: "username", msg: "Invalid username" })
+		
 		if (!["standard", "darken", "storm", "solar"].includes(entries.theme)) return fail(400, { area: "theme", msg: "Invalid theme" })
 		// if (!["on", "off"].includes(entries.animation)) return fail(400, { area: "theme", msg: "Invalid animation settings" })
+
 
 		await prisma.user.update({
 			where: {
