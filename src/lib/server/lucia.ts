@@ -23,6 +23,7 @@ export const auth = lucia({
 		currencyCollected: data.currencyCollected,
 		permissionLevel: data.permissionLevel,
 		accountCreated: data.created,
+		bodyColours: data.bodyColours,
 
 		theme: data.theme,
 		animationSettings: data.animationSettings,

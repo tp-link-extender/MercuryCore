@@ -2,9 +2,10 @@
 	import type { PageData } from "./$types"
 	import { enhance, deserialize } from "$app/forms"
 	import fade from "$lib/fade"
-	import { fly } from "svelte/transition"
+	import Modal from "$lib/components/Modal.svelte"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import customProtocolCheck from "custom-protocol-check"
+	import { writable } from "svelte/store"
 
 	export let data: PageData
 
@@ -23,7 +24,7 @@
 
 	// Place Launcher
 
-	let modal = false
+	let modal = writable(false)
 	let installed = true
 	let success = false
 	let filepath = ""
@@ -46,7 +47,7 @@
 
 	async function placeLauncher() {
 		installed = true
-		modal = true
+		modal.set(true)
 
 		const formdata = new FormData()
 
@@ -110,7 +111,7 @@
 						<b>By</b> <a href="/user/{data.ownerUser?.number}" class="text-decoration-none">{data.ownerUser?.username}</a>
 					</p>
 					<p class="light-text mb-0">Gears: <i class="fa-regular fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tooltip on top" /></p>
-					<span class="badge text-bg-{data.serverPing < Date.now() - 35 * 1000 ? "danger" : "success"} mb-1">{data.serverPing < Date.now() - 45 * 1000 ? "Offline" : "Online"}</span>
+					<span class="badge text-bg-{data.serverPing < Date.now() - 35 * 1000 ? 'danger' : 'success'} mb-1">{data.serverPing < Date.now() - 45 * 1000 ? "Offline" : "Online"}</span>
 				</div>
 			</div>
 			<div id="buttons" class="row">
@@ -194,31 +195,83 @@
 		<div class="tab-pane fade" id="pills-game" role="tabpanel" aria-labelledby="pills-game-tab" tabindex={0}>
 			{#if $user?.permissionLevel == 5 || data.ownerUser?.number == $user?.number}
 				<h1 class="h4 light-text">Hosting on Mercury</h1>
-				<p class="light-text">To begin hosting your map for everybody to play, you need to make sure that you are forwarding the port you wish to run the server on. If you are unsure on how to host, there are many resources available online on how to port forward on your router.</p>
-				<p class="light-text">If you have port forwarded already, it's time to get your server running. Below are two methods of hosting - we recommend using Autopilot to get started easily.</p>
+				<p class="light-text">
+					To begin hosting your map for everybody to play, you need to make sure that you are forwarding the port you wish to run the server on. If you are unsure on how to host, there are
+					many resources available online on how to port forward on your router.
+				</p>
+				<p class="light-text">
+					If you have port forwarded already, it's time to get your server running. Below are two methods of hosting - we recommend using Autopilot to get started easily.
+				</p>
 				<div class="d-flex align-items-start mb-3">
 					<div class="nav flex-column nav-pills nav-vert-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-					  <button class="nav-link active" id="v-pills-manual-tab" data-bs-toggle="pill" data-bs-target="#v-pills-manual" type="button" role="tab" aria-controls="v-pills-manual" aria-selected="true">Manual</button>
-					  <button class="nav-link" id="v-pills-autopilot-tab" data-bs-toggle="pill" data-bs-target="#v-pills-autopilot" type="button" role="tab" aria-controls="v-pills-autopilot" aria-selected="false">Autopilot</button>
+						<button
+							class="nav-link active"
+							id="v-pills-manual-tab"
+							data-bs-toggle="pill"
+							data-bs-target="#v-pills-manual"
+							type="button"
+							role="tab"
+							aria-controls="v-pills-manual"
+							aria-selected="true">Manual</button
+						>
+						<button
+							class="nav-link"
+							id="v-pills-autopilot-tab"
+							data-bs-toggle="pill"
+							data-bs-target="#v-pills-autopilot"
+							type="button"
+							role="tab"
+							aria-controls="v-pills-autopilot"
+							aria-selected="false">Autopilot</button
+						>
 					</div>
 					<div class="tab-content" id="v-pills-tabContent">
-					  <div class="tab-pane fade show active" id="v-pills-manual" role="tabpanel" aria-labelledby="v-pills-manual-tab" tabindex="0">
-						<p class="light-text mb-1">You can host your server by opening your map in <button class="btn btn-primary p-1 btn-sm" on:click={() => {launch("mercury-player:1+launchmode:ide")}}><i class="fa-solid fa-arrow-up-right-from-square"></i> Studio</button> and then in the command bar, paste this in:</p>
-						<code>loadfile("http://banland.xyz/Game/Host?ticket={data.serverTicket}")()</code>
-					  </div>
-					  <div class="tab-pane fade" id="v-pills-autopilot" role="tabpanel" aria-labelledby="v-pills-autopilot-tab" tabindex="0">
-						<p class="light-text">Autopilot manages initial Studio operations. All you need to do is type in a map that's in the map folder, and start the server.</p>
-						<p class="light-text">Place your maps in Mercury Studio's maps folder. For example, entering <code>CoolMap.rbxl</code> will point to <code>content\maps\CoolMap.rbxl</code>.</p>
-						<div class="input-group">
-							<input type="text" class="form-control valid" id="filepath" bind:value={filepath} placeholder="Map location" aria-label="Map location">
-							<button class="btn btn-primary" on:click={() => {launch("mercury-player:1+launchmode:maps")}} type="button"><i class="fa-solid fa-arrow-up-right-from-square"></i> Map Folder</button>
-							<button class="btn btn-success" on:click={() => {launch(`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${data.serverTicket}&autopilot=${btoa(filepath)}`)}} type="button"><i class="fa-solid fa-wifi"></i> Begin Hosting</button>
-							<button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-							<ul class="dropdown-menu dropdown-menu-end">
-							  <li><button class="dropdown-item light-text" on:click={() => {launch(`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${data.serverTicket}&autopilot=${btoa(filepath)}`)}} type="button">Begin Hosting (no Studio tools)</button></li>
-							</ul>
+						<div class="tab-pane fade show active" id="v-pills-manual" role="tabpanel" aria-labelledby="v-pills-manual-tab" tabindex="0">
+							<p class="light-text mb-1">
+								You can host your server by opening your map in <button
+									class="btn btn-primary p-1 btn-sm"
+									on:click={() => {
+										launch("mercury-player:1+launchmode:ide")
+									}}><i class="fa-solid fa-arrow-up-right-from-square" /> Studio</button
+								> and then in the command bar, paste this in:
+							</p>
+							<code>loadfile("http://banland.xyz/Game/Host?ticket={data.serverTicket}")()</code>
 						</div>
-					  </div>
+						<div class="tab-pane fade" id="v-pills-autopilot" role="tabpanel" aria-labelledby="v-pills-autopilot-tab" tabindex="0">
+							<p class="light-text">Autopilot manages initial Studio operations. All you need to do is type in a map that's in the map folder, and start the server.</p>
+							<p class="light-text">
+								Place your maps in Mercury Studio's maps folder. For example, entering <code>CoolMap.rbxl</code> will point to <code>content\maps\CoolMap.rbxl</code>.
+							</p>
+							<div class="input-group">
+								<input type="text" class="form-control valid" id="filepath" bind:value={filepath} placeholder="Map location" aria-label="Map location" />
+								<button
+									class="btn btn-primary"
+									on:click={() => {
+										launch("mercury-player:1+launchmode:maps")
+									}}
+									type="button"><i class="fa-solid fa-arrow-up-right-from-square" /> Map Folder</button
+								>
+								<button
+									class="btn btn-success"
+									on:click={() => {
+										launch(`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${data.serverTicket}&autopilot=${btoa(filepath)}`)
+									}}
+									type="button"><i class="fa-solid fa-wifi" /> Begin Hosting</button
+								>
+								<button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" />
+								<ul class="dropdown-menu dropdown-menu-end">
+									<li>
+										<button
+											class="dropdown-item light-text"
+											on:click={() => {
+												launch(`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${data.serverTicket}&autopilot=${btoa(filepath)}`)
+											}}
+											type="button">Begin Hosting (no Studio tools)</button
+										>
+									</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 				</div>
 			{/if}
@@ -255,38 +308,24 @@
 	<hr />
 </div>
 
-{#if modal}
-	<div id="fade" in:fade class="vh-100 vw-100 position-absolute top-0 bg-black" />
-	<div class="modal d-block" tabindex="-1" in:fly={{ y: -50 }}>
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-body d-flex flex-column p-4">
-					{#key installed}
-						<div in:fade={{ duration: 500 }} id="wrapper" class="text-center align-self-center mt-5 mb-4">
-							<img src="/innerlogo.svg" alt="Mercury logo inner part (M)" width="128" height="128" />
-							<img
-								src="/outerlogo.svg"
-								alt="Mercury logo outer part (circle around M)"
-								id="outer"
-								width="128"
-								height="128"
-								style={installed ? "" : "animation: none; --rotation: 0deg"}
-							/>
-						</div>
-					{/key}
-					{#if success}
-						<h1 class="text-center h5 light-text">"{data.name}" is ready to play! Have fun!</h1>
-					{:else if installed}
-						<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.ownerUser?.username}!</h1>
-					{:else}
-						<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
-						<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>
-					{/if}
-				</div>
+<Modal {modal}>
+	<div class="modal-body d-flex flex-column p-4">
+		{#key installed}
+			<div in:fade={{ duration: 500 }} id="wrapper" class="text-center align-self-center mt-5 mb-4">
+				<img src="/innerlogo.svg" alt="Mercury logo inner part (M)" width="128" height="128" />
+				<img src="/outerlogo.svg" alt="Mercury logo outer part (circle around M)" id="outer" width="128" height="128" style={installed ? "" : "animation: none; --rotation: 0deg"} />
 			</div>
-		</div>
+		{/key}
+		{#if success}
+			<h1 class="text-center h5 light-text">"{data.name}" is ready to play! Have fun!</h1>
+		{:else if installed}
+			<h1 class="text-center h5 light-text">Get ready to join "{data.name}" by {data.ownerUser?.username}!</h1>
+		{:else}
+			<h1 class="text-center h5 light-text mb-3">Install the Mercury client and start playing now!</h1>
+			<a class="btn btn-success" href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">Download 2013</a>
+		{/if}
 	</div>
-{/if}
+</Modal>
 
 <style lang="sass">
 	:target
@@ -350,13 +389,6 @@
 			border-style: solid
 			border-width: 0px 2px 0px 0px
 			border-color: var(--bs-blue)
-
-	.modal-content
-		background: var(--background)
-		border-color: var(--accent)
-
-	#fade
-		opacity: 0.5
 
 	#pfp
 		background: var(--background)
