@@ -9,6 +9,7 @@
 	export let baseDepth: Writable<number>
 	export let depth: number = $baseDepth
 	export let replyingTo: Writable<string>
+	export let postAuthorName: string
 	export let forumCategory: string
 	export let postId: string
 	export let repliesCollapsed: Writable<any>
@@ -35,7 +36,7 @@
 			<a href="/forum/{forumCategory}/{postId}/{reply.parentReplyId}?depth={depth - 1}" class="text-decoration-none"><i class="fa fa-arrow-up me-2" />Parent reply</a>
 		{/if}
 	{/if}
-	<div in:fade|global={{ num }} class="d-flex mt-2">
+	<div in:fade|global={{ num }} class="d-flex mt-2 w-100">
 		<form use:enhance class="me-2 p-1 pt-2 ps-0 sidebar2 d-flex h-100" method="POST" action="/forum/{forumCategory}?/like">
 			<input type="hidden" name="replyId" value={reply.id} />
 			<div class="row mb-2">
@@ -68,7 +69,12 @@
 				<span class="pfp rounded-circle">
 					<img src={reply.author.image} alt={reply.author.username} class="rounded-circle rounded-top-0" />
 				</span>
-				<span class="fw-bold ms-3 light-text">{reply.author.username}</span>
+				<span class="fw-bold ms-3 {reply.author.username == postAuthorName ? 'text-primary' : 'light-text '}">
+					{reply.author.username}
+					{#if reply.author.username == postAuthorName}
+						<i class="fa fa-microphone ms-2" />
+					{/if}
+				</span>
 				<small class="light-text ps-4">{reply.posted.toLocaleString()}</small>
 			</a>
 			<p class="my-2">
@@ -82,11 +88,11 @@
 			{#if $replyingTo == reply.id}
 				<div class="mb-2 card reply">
 					<div class="card-body p-3 pt-1 pb-0">
-						<form use:enhance class="mb-4" method="POST" action="/forum/{forumCategory}/{reply.id}?/reply">
+						<form use:enhance on:submit={() => replyingTo.set("")} class="mb-4" method="POST" action="/forum/{forumCategory}/{reply.id}?/reply">
 							<input type="hidden" name="replyId" value={reply.id} />
 							<label for="content" class="form-label light-text mt-2">Post a Reply</label>
 							<fieldset>
-								<textarea bind:value={content} class="form-control valid mb-2" required name="content" placeholder="What are your thoughts?" rows="4" />
+								<textarea bind:value={content} class="form-control valid mb-2" required minlength="15" maxlength="1000" name="content" placeholder="What are your thoughts?" rows="4" />
 								<button type="submit" class="btn btn-success">
 									<i class="fa-regular fa-message me-2" />Reply
 								</button>
@@ -107,13 +113,13 @@
 
 	{#each reply.replies as reply2}
 		<div class="d-flex">
-			<button on:click={collapse(reply2.id)} id="collapse" class="mx-2 p-0 border-0" />
+			<button on:click={collapse(reply2.id)} id="collapse" class="mx-1 p-0 border-0" />
 			{#if $repliesCollapsed?.[reply2.id]}
 				<button on:click={collapse(reply2.id)} id="collapse2" class="m-2"> Expand replies </button>
 			{:else}
-				<div>
+				<div class="w-100">
 					<!-- Get READY for some RECURSION!!! -->
-					<svelte:self reply={reply2} {num} {replyingTo} {forumCategory} {postId} {repliesCollapsed} depth={depth + 1} {baseDepth} />
+					<svelte:self reply={reply2} {num} {replyingTo} {forumCategory} {postId} {postAuthorName} {repliesCollapsed} depth={depth + 1} {baseDepth} />
 				</div>
 			{/if}
 		</div>
@@ -141,6 +147,9 @@
 		color: var(--accent3)
 		&:hover
 			color: var(--grey-text)
+
+	.card
+		max-width: 75%
 
 	.reply
 		background: var(--background)

@@ -10,16 +10,15 @@
 	<title>Forum - Mercury</title>
 </svelte:head>
 
-<h1 class="text-center light-text">Forum</h1>
-
-<div class="container mt-5 light-text h5">
+<div class="container light-text">
+	<h1 class="light-text mb-5">Forum</h1>
 	{#each data.categories as category, num}
 		<a in:fade={{ num, total: data.categories.length }} href="/forum/{category.name}" class="category card text-decoration-none light-text p-3 mb-3">
-			<div class="row mb-3">
+			<div class="">
 				<h2 class="h4 col col-md-3">
 					{category.name}
 				</h2>
-				<p class="fs-6 col">
+				<p>
 					{category.description}
 				</p>
 			</div>
@@ -30,7 +29,7 @@
 <style lang="sass">
 	@media only screen and (min-width: 576px)
 		.container
-			width: 50rem
+			width: 70rem
 
 	.category
 		background: var(--darker)

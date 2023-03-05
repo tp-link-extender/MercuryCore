@@ -5,7 +5,7 @@
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
-	
+
 	export let data: PageData
 	const baseDepth = writable(data.baseDepth)
 </script>
@@ -16,7 +16,7 @@
 
 <div class="container light-text">
 	{#each data.replies as reply, num}
-		<ForumReply {reply} {num} {replyingTo} forumCategory={data.forumCategory} postId={data.postId} {repliesCollapsed} {baseDepth}/>
+		<ForumReply {reply} {num} {replyingTo} forumCategory={data.forumCategory} postId={data.postId} postAuthorName={data.author} {repliesCollapsed} {baseDepth} />
 	{/each}
 </div>
 

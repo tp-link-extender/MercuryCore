@@ -6,7 +6,7 @@
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
-	
+
 	export let data: PageData
 	const baseDepth = writable(data.baseDepth)
 </script>
@@ -65,13 +65,13 @@
 	<form use:enhance class="mt-2 mb-4 p-1 row" method="POST" action="?/reply">
 		<label for="content" class="form-label light-text mt-2">Post a Reply</label>
 		<fieldset class="col-lg-7 d-flex">
-			<textarea class="form-control valid" required name="content" placeholder="What are your thoughts?" rows="4" />
+			<textarea class="form-control valid" required minlength="15" maxlength="1000" name="content" placeholder="What are your thoughts?" rows="4" />
 			<button type="submit" class="btn btn-success h-100 ms-3">Reply</button>
 		</fieldset>
 	</form>
 
 	{#each data.replies as reply, num}
-		<ForumReply {reply} {num} {replyingTo} forumCategory={data.forumCategory.name} postId={data.id} {repliesCollapsed} {baseDepth} topLevel />
+		<ForumReply {reply} {num} {replyingTo} forumCategory={data.forumCategory.name} postId={data.id} postAuthorName={data.author.username} {repliesCollapsed} {baseDepth} topLevel />
 	{/each}
 </div>
 
@@ -82,10 +82,14 @@
 
 	.sidebar
 		background: var(--accent)
+		width: 2.5rem
 
 	.post
 		background: var(--darker)
 		border-color: var(--accent2)
+
+	p
+		word-break: break-word
 		
 	.user
 		align-items: center 

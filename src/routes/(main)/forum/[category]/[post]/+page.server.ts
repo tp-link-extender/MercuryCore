@@ -61,8 +61,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		}
 		post["likeCount"] = await roQuery("forum", `RETURN SIZE((:User) -[:likes]-> (:${reply ? "Reply" : "Post"} { name: $id }))`, query, true)
 		post["dislikeCount"] = await roQuery("forum", `RETURN SIZE((:User) -[:dislikes]-> (:${reply ? "Reply" : "Post"} { name: $id }))`, query, true)
-		post["likes"] = !!await roQuery("forum", `MATCH (:User { name: $user }) -[r:likes]-> (:${reply ? "Reply" : "Post"} { name: $id }) RETURN r`, query)
-		post["dislikes"] = !!await roQuery("forum", `MATCH (:User { name: $user }) -[r:dislikes]-> (:${reply ? "Reply" : "Post"} { name: $id }) RETURN r`, query)
+		post["likes"] = !!(await roQuery("forum", `MATCH (:User { name: $user }) -[r:likes]-> (:${reply ? "Reply" : "Post"} { name: $id }) RETURN r`, query))
+		post["dislikes"] = !!(await roQuery("forum", `MATCH (:User { name: $user }) -[r:dislikes]-> (:${reply ? "Reply" : "Post"} { name: $id }) RETURN r`, query))
 
 		if (post.replies) post.replies = await Promise.all(post.replies.map(async (reply: any) => await addLikes(reply, true)))
 
@@ -75,7 +75,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	return {
 		...post,
 		...replies,
-		baseDepth: 0
+		baseDepth: 0,
 	}
 }
 
@@ -84,7 +84,7 @@ export const actions: Actions = {
 		const { user } = await authoriseUser(locals.validateUser)
 		const data = await request.formData()
 		const content = data.get("content") as string
-		if (!content) return fail(400)
+		if (!content || content.length > 1000 || content.length < 15) return fail(400)
 
 		const id = data.get("replyId") as string
 		// If there is a replyId, it is a reply to another comment

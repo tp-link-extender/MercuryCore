@@ -29,6 +29,11 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 								image: true,
 							},
 						},
+						_count: {
+							select: {
+								replies: true,
+							},
+						},
 					},
 				},
 			},
