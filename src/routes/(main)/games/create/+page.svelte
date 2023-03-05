@@ -49,7 +49,7 @@
 			<div class="row mb-3">
 				<label for="serverPort" class="col-md-3 col-form-label text-md-right">Server Port</label>
 				<div class="col-md-8">
-					<input type="number" bind:value={fields.serverPort} name="serverPort" id="serverPort" placeholder="Port ranges 49152 - 65536" required class="form-control valid" min="49152" max="65536" />
+					<input type="number" bind:value={fields.serverPort} name="serverPort" id="serverPort" placeholder="Port ranges 49152 - 65536" required class="form-control valid" min="25565" max="65536" />
 				</div>
 			</div>
 			<div class="row mb-3">
