@@ -5,6 +5,21 @@ import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ url, locals, params }) => {
+	const post = await prisma.forumPost.findUnique({
+		where: {
+			id: params.post,
+		},
+		select: {
+			author: {
+				select: {
+					username: true,
+				},
+			},
+		},
+	})
+
+	if (!post) throw error(404, "Post not found")
+
 	// Since prisma does not yet support recursive copying, we have to do it manually
 	const selectReplies = {
 		select: {
@@ -59,5 +74,6 @@ export const load: PageServerLoad = async ({ url, locals, params }) => {
 		baseDepth: parseInt(url.searchParams.get("depth")) || 0,
 		forumCategory: params.category,
 		postId: params.post,
+		author: post?.author.username,
 	}
 }
