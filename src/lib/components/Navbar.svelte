@@ -109,7 +109,7 @@
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">Profile</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/inventory">Inventory</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/requests">Friends</a>
-					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">Avatar</a>
+					<a class="light-text btn nav-item m-0 py-1" href="/avatar">Avatar</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/user/{$user.number}">My Groups</a>
 				</div>
 			</nav>
