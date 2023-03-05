@@ -5,7 +5,6 @@
 	import { fly } from "svelte/transition"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import customProtocolCheck from "custom-protocol-check"
-	import { Buffer } from "buffer"
 
 	export let data: PageData
 
@@ -213,10 +212,10 @@
 						<div class="input-group">
 							<input type="text" class="form-control valid" id="filepath" bind:value={filepath} placeholder="Map location" aria-label="Map location">
 							<button class="btn btn-primary" on:click={() => {launch("mercury-player:1+launchmode:maps")}} type="button"><i class="fa-solid fa-arrow-up-right-from-square"></i> Map Folder</button>
-							<button class="btn btn-success" on:click={() => {launch(`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${data.serverTicket}&autopilot=${Buffer.from(filepath).toString("base64")}`)}} type="button"><i class="fa-solid fa-wifi"></i> Begin Hosting</button>
+							<button class="btn btn-success" on:click={() => {launch(`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${data.serverTicket}&autopilot=${btoa(filepath)}`)}} type="button"><i class="fa-solid fa-wifi"></i> Begin Hosting</button>
 							<button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
 							<ul class="dropdown-menu dropdown-menu-end">
-							  <li><button class="dropdown-item light-text" on:click={() => {launch(`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${data.serverTicket}&autopilot=${Buffer.from(filepath).toString("base64")}`)}} type="button">Begin Hosting (no Studio tools)</button></li>
+							  <li><button class="dropdown-item light-text" on:click={() => {launch(`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${data.serverTicket}&autopilot=${btoa(filepath)}`)}} type="button">Begin Hosting (no Studio tools)</button></li>
 							</ul>
 						</div>
 					  </div>
