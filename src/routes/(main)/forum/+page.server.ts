@@ -6,6 +6,27 @@ export const load: PageServerLoad = async () => ({
 		select: {
 			name: true,
 			description: true,
+			_count: {
+				select: {
+					posts: true,
+				},
+			},
+			posts: {
+				orderBy: {
+					posted: "desc",
+				},
+				take: 1,
+				select: {
+					id: true,
+					title: true,
+					author: {
+						select: {
+							username: true,
+							number: true,
+						}
+					}
+				}
+			},
 		},
 	}),
 })
