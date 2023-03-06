@@ -1,6 +1,7 @@
 import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
+import id from "$lib/server/id"
 import { error, fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ url, locals, params }) => {
@@ -57,6 +58,7 @@ export const actions: Actions = {
 
 		const post = await prisma.forumPost.create({
 			data: {
+				id: await id(),
 				title,
 				content,
 				authorId: user.userId,
