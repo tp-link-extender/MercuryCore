@@ -9,6 +9,7 @@
 	const user = getUser()
 	
 	export let data: any
+	//
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark py-0">
@@ -36,7 +37,7 @@
 					<a class="btn mt-1 px-1 light-text nav-item" href="/">Home</a>
 					<a class="btn mt-1 px-1 light-text nav-item" href="/games">Games</a>
 					<a class="btn mt-1 px-1 light-text nav-item" href="/avatarshop">Avatar Shop</a>
-					<a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a>
+					<!-- <a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a> -->
 					<a class="btn mt-1 px-1 light-text nav-item" href="/forum">Forum</a>
 					{#if $user?.permissionLevel >= 4}
 						<a class="btn mt-1 px-1 light-text nav-item" href="/admin">Admin</a>
@@ -55,14 +56,14 @@
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=users" title="Search Users">Search <b>{search}</b> in Users</a>
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=places" title="Search Places">Search <b>{search}</b> in Places</a>
 								<a class="btn text-start light-text py-2" href="/search?q={search}&c=items" title="Search Avatar shop">Search <b>{search}</b> in Avatar shop</a>
-								<a class="btn text-start light-text py-2" href="/search?q={search}&c=groups" title="Search Groups">Search <b>{search}</b> in Groups</a>
+								<!-- <a class="btn text-start light-text py-2" href="/search?q={search}&c=groups" title="Search Groups">Search <b>{search}</b> in Groups</a> -->
 							</div>
 						{/if}
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
 					<li class="dropdown ms-3 me-2 pt-1">
-						<a href="/transactions" role="button" class="fw-bold nav-link text-success">
+						<a href="/transactions/your" role="button" class="fw-bold nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
 							<span class="h6 text-success">
 								{$user.currency}
