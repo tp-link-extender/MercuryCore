@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
 	let charApp = `https://banland.xyz/Asset/BodyColors.ashx?id=${userId}`
 
 	setHeaders({
-		Pragma: "no-cache",
+		"Pragma": "no-cache",
 		"Cache-Control": "no-cache",
 	})
 
