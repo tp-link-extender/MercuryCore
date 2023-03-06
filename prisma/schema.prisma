@@ -169,7 +169,7 @@ enum ItemCategory {
 
 model Item {
     name        String
-    id          String       @id @unique @default(cuid())
+    id          String       @id @unique
     price       Int
     category    ItemCategory
     creator     User         @relation(fields: [creatorName], references: [username])
@@ -202,7 +202,7 @@ model ForumCategory {
 }
 
 model ForumPost {
-    id                String        @id @unique @default(cuid())
+    id                String        @id @unique
     author            User          @relation(fields: [authorId], references: [id])
     authorId          String
     posted            DateTime      @default(now())
@@ -214,7 +214,7 @@ model ForumPost {
 }
 
 model ForumReply {
-    id       String   @id @unique @default(cuid())
+    id       String   @id @unique
     author   User     @relation(fields: [authorId], references: [id])
     authorId String
     posted   DateTime @default(now())
