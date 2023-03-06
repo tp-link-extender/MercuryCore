@@ -9,7 +9,7 @@
 	export let total: number
 </script>
 
-<a in:fade={{ num, total }} class="rounded-3 w-100 text-center light-text text-decoration-none h6" href="/item/{item.id}">
+<a in:fade={{ num, total }} class="rounded-3 w-100 text-center light-text text-decoration-none h6" href="/avatarshop/item/{item.id}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
 		<div class="w-100 h-100" />
 	</div>

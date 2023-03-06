@@ -3,7 +3,7 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import { auth, authoriseUser } from "$lib/server/lucia"
+import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { client } from "$lib/server/redis"
 import type { Handle } from "@sveltejs/kit"
