@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
 
 	setHeaders({
 		"Pragma": "no-cache",
-		"Cache-Control": "no-cache",
+		"Cache-Control": "no-cache", 
 	})
 
 	return new Response(`
