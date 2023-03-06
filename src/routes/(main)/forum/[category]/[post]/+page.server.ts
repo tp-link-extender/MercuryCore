@@ -2,6 +2,7 @@ import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
+import id from "$lib/server/id"
 import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -86,35 +87,27 @@ export const actions: Actions = {
 		const content = data.get("content") as string
 		if (!content || content.length > 1000 || content.length < 15) return fail(400)
 
-		const id = data.get("replyId") as string
+		const replyId = data.get("replyId") as string
 		// If there is a replyId, it is a reply to another comment
 
-		if (id) {
-			const reply = await prisma.forumReply.findUnique({
-				where: { id },
+		let replypost
+		if (replyId)
+			replypost = await prisma.forumReply.findUnique({
+				where: { id: replyId },
 			})
-			if (!reply) throw error(404)
-
-			await prisma.forumReply.create({
-				data: {
-					authorId: user.userId,
-					content,
-					parentReplyId: id,
-				},
-			})
-		} else {
-			const post = await prisma.forumPost.findUnique({
+		else
+			replypost = await prisma.forumPost.findUnique({
 				where: { id: params.post },
 			})
-			if (!post) throw error(404)
+		if (!replypost) throw error(404)
 
-			await prisma.forumReply.create({
-				data: {
-					authorId: user.userId,
-					content,
-					parentPostId: params.post,
-				},
-			})
-		}
+		await prisma.forumReply.create({
+			data: {
+				id: await id(),
+				authorId: user.userId,
+				content,
+				...(replyId ? { parentReplyId: replyId } : { parentPostId: params.post }),
+			},
+		})
 	},
 }
