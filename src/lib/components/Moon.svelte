@@ -17,6 +17,10 @@
 			name: "rock",
 			camPos: { x: 100, y: 100, z: 100 },
 		},
+		{
+			name: "mercury2",
+			camPos: { x: 100, y: 20, z: 100 },
+		},
 	]
 
 	const item = items[Math.floor(Math.random() * items.length)]
@@ -30,5 +34,5 @@
 	<DirectionalLight color="white" position={{ x: -15, y: 45, z: 20 }} />
 	<HemisphereLight skyColor="white" groundColor="#ac844c" intensity={0.4} />
 
-	<GLTF url="/landing/{item.name}.gltf" />
+	<GLTF url="/landing/{item.name}.glb" />
 </Canvas>
