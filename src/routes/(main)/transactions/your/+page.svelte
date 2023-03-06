@@ -3,6 +3,7 @@
 	import fade from "$lib/fade"
 
 	export let data: PageData
+	//
 </script>
 
 <svelte:head>
@@ -11,7 +12,7 @@
 
 <h1 class="text-center light-text">
 	Your transactions
-	<a href="/transactions" class="btn btn-primary ms-4">All transactions</a>
+	<!-- <a href="/transactions" class="btn btn-primary ms-4">All transactions</a> -->
 </h1>
 
 <div class="container mt-5">
