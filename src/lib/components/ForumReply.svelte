@@ -30,10 +30,10 @@
 
 {#if reply && reply.author}
 	{#if depth == $baseDepth && !topLevel}
-		<a href="/forum/{forumCategory}/{postId}" class="text-decoration-none"><i class="fa fa-arrow-left me-2" />Parent post</a>
+		<a href="/forum/{forumCategory.toLowerCase()}/{postId}" class="text-decoration-none"><i class="fa fa-arrow-left me-2" />Parent post</a>
 		{#if reply.parentReplyId}
 			<br />
-			<a href="/forum/{forumCategory}/{postId}/{reply.parentReplyId}?depth={depth - 1}" class="text-decoration-none"><i class="fa fa-arrow-up me-2" />Parent reply</a>
+			<a href="/forum/{forumCategory.toLowerCase()}/{postId}/{reply.parentReplyId}?depth={depth - 1}" class="text-decoration-none"><i class="fa fa-arrow-up me-2" />Parent reply</a>
 		{/if}
 	{/if}
 	<div in:fade|global={{ num }} class="d-flex mt-2 w-100">
@@ -108,7 +108,7 @@
 	</div>
 
 	{#if depth > $baseDepth + 8}
-		<a href="/forum/{forumCategory}/{postId}/{reply.id}?depth={depth}" class="text-decoration-none"><i class="fa fa-arrow-down me-2" />More replies</a>
+		<a href="/forum/{forumCategory.toLowerCase()}/{postId}/{reply.id}?depth={depth}" class="text-decoration-none"><i class="fa fa-arrow-down me-2" />More replies</a>
 	{/if}
 
 	{#each reply.replies as reply2}

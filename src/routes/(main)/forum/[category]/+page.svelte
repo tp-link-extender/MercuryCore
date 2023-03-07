@@ -48,7 +48,7 @@
 					</div> -->
 				</div>
 			</form>
-			<a href="/forum/{data.name}/{post.id}" class="p-3 pb-0 text-decoration-none light-text w-100">
+			<a href="/forum/{data.name.toLowerCase()}/{post.id}" class="p-3 pb-0 text-decoration-none light-text w-100">
 				<div>
 					<a href="/user/{post.author.number}" class="user d-flex text-decoration-none">
 						<span class="pfp rounded-circle">
