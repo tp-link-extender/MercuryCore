@@ -3,6 +3,7 @@ import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import id from "$lib/server/id"
+import ratelimit from "$lib/server/ratelimit"
 import { error, fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -81,11 +82,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 }
 
 export const actions: Actions = {
-	reply: async ({ request, locals, params }) => {
+	default: async ({ request, locals, params, getClientAddress }) => {
+		const limit = ratelimit("forumPost", getClientAddress, 5)
+		if (limit) return limit
+
 		const { user } = await authoriseUser(locals.validateUser)
 		const data = await request.formData()
 		const content = data.get("content") as string
-		if (!content || content.length > 1000 || content.length < 15) return fail(400)
+		if (!content || content.length > 1000 || content.length < 5) return fail(400)
 
 		const replyId = data.get("replyId") as string
 		// If there is a replyId, it is a reply to another comment
