@@ -8,7 +8,7 @@ export const actions: Actions = {
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
-		const name = data.get("name")?.toString()
+		const name = (data.get("name") as string).trim()
 
 		if (!name) return fail(400, { msg: "Missing fields" })
 		if (name.length < 3 || name.length > 40) return fail(400, { msg: "Invalid fields" })

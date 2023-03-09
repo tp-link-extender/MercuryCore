@@ -88,7 +88,7 @@ export const actions: Actions = {
 
 		const { user } = await authoriseUser(locals.validateUser)
 		const data = await request.formData()
-		const content = data.get("content") as string
+		const content = (data.get("content") as string).trim()
 		if (!content || content.length > 1000 || content.length < 5) return fail(400)
 
 		const replyId = data.get("replyId") as string

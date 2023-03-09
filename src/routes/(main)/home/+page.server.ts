@@ -90,7 +90,7 @@ export const actions: Actions = {
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
-		const status = data.get("status")?.toString() || ""
+		const status = (data.get("status") as string).trim()
 		if (!status) return fail(400, { msg: "Invalid status" })
 
 		await prisma.post.create({

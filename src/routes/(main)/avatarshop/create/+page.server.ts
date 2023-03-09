@@ -10,9 +10,9 @@ export const actions: Actions = {
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
-		const name = data.get("name")?.toString()
+		const name = (data.get("name") as string).trim()
 		const price = Number(data.get("price"))
-		const category = data.get("category")?.toString()
+		const category = (data.get("category") as string).trim()
 
 		if (!name || !category) return fail(400, { msg: "Missing fields" })
 		if (name.length < 3 || name.length > 50 || price < 0 || !["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)) return fail(400, { msg: "Invalid fields" })
