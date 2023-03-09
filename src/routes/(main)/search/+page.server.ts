@@ -76,8 +76,8 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const data = await request.formData()
-		const query = data.get("query")?.toString() || ""
-		const category = data.get("category")?.toString() || ""
+		const query = data.get("query") as string
+		const category = data.get("category") as string
 		console.log(`searching for ${query} in ${category}`)
 
 		throw redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)

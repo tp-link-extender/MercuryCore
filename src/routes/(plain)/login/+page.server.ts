@@ -5,8 +5,8 @@ import { redirect, fail } from "@sveltejs/kit"
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const data = await request.formData()
-		const username = data.get("username")?.toString() || ""
-		const password = data.get("password")?.toString() || ""
+		const username = (data.get("username") as string).trim()
+		const password = (data.get("password") as string).trim()
 
 		if (username.length < 3) return fail(400, { area: "username", msg: "Username must be at least 3 characters" })
 		if (username.length > 30) return fail(400, { area: "username", msg: "Username must be less than 30 characters" })

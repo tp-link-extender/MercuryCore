@@ -5,7 +5,7 @@ import { prisma } from "$lib/server/prisma"
 
 export const GET: RequestHandler = async ({ url }) => {
 	const clientTicket = url.searchParams.get("ticket")
-	const privateServer = url.searchParams.get("privateServer")?.toString() 
+	const privateServer = url.searchParams.get("privateServer") as string
 
 	let isStudioJoin = false
 	let joinMethod = "Studio"
@@ -18,7 +18,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		joinMethod = "Ticket"
 	}
 
-	let serverAddress = "localhost" 
+	let serverAddress = "localhost"
 	let serverPort = 53640
 	let userName = "Player"
 	let userId = 0
@@ -38,14 +38,13 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		await prisma.gameSessions.update({ where: { ticket: clientTicket }, data: { valid: false } })
 
-		
-	if(privateServer) {
-		const privateSession = await prisma.place.findUnique({
-			where: {privateTicket: privateServer}
-		})
-		
-		if(!privateSession) throw error(400, "Invalid Private Server")
-	}
+		if (privateServer) {
+			const privateSession = await prisma.place.findUnique({
+				where: { privateTicket: privateServer },
+			})
+
+			if (!privateSession) throw error(400, "Invalid Private Server")
+		}
 
 		serverAddress = gameSession.place.serverIP
 		serverPort = gameSession.place.serverPort
@@ -55,8 +54,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		creatorId = gameSession.place.ownerUser?.number || 0
 		charApp = `http://banland.xyz/Asset/CharacterFetch.ashx?userID=${userId}`
 
-		if (gameSession.user.permissionLevel = 5) MembershipType = "OutrageousBuildersClub"
-
+		if (gameSession.user.permissionLevel == 5) MembershipType = "OutrageousBuildersClub"
 	}
 
 	return new Response(

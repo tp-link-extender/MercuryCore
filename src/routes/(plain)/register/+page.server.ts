@@ -6,10 +6,10 @@ import { redirect, fail } from "@sveltejs/kit"
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const data = await request.formData()
-		const username = data.get("username")?.toString() || ""
+		const username = data.get("username") as string
 		const email = data.get("email")?.toString().toLowerCase() || ""
-		const password = data.get("password")?.toString() || ""
-		const cpassword = data.get("cpassword")?.toString() || ""
+		const password = data.get("password") as string
+		const cpassword = data.get("cpassword") as string
 		const regkey = data.get("regkey")?.toString().split("-") || ""
 
 		if (username.length < 3) return fail(400, { area: "username", msg: "Username must be at least 3 characters" })

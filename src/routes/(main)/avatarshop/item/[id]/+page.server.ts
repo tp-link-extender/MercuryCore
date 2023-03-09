@@ -70,7 +70,7 @@ export const actions: Actions = {
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
-		const action = data.get("action")?.toString() || ""
+		const action = data.get("action") as string
 
 		if (
 			!(await prisma.item.findUnique({

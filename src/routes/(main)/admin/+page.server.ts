@@ -19,8 +19,8 @@ export const actions: Actions = {
 		await authoriseAdmin(locals)
 
 		const data = await request.formData()
-		const bannerText = data.get("bannerText")?.toString() || ""
-		const bannerColour = data.get("bannerColour")?.toString()
+		const bannerText = data.get("bannerText") as string
+		const bannerColour = data.get("bannerColour") as string
 		const bannerTextLight = data.get("bannerTextLight")
 
 		if (!bannerColour) return fail(400, { error: true, msg: "Missing fields" })
@@ -58,8 +58,8 @@ export const actions: Actions = {
 
 	user: async ({ request }) => {
 		const data = await request.formData()
-		const username = data.get("username")?.toString().toLowerCase()
-		const password = data.get("password")?.toString()
+		const username = (data.get("username") as string).trim()
+		const password = (data.get("password") as string).trim()
 
 		if (!username || !password) return fail(400, { error: true, msg: "Missing fields" })
 
