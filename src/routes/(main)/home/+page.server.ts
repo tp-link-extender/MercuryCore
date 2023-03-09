@@ -2,6 +2,7 @@ import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
+import ratelimit from "$lib/server/ratelimit"
 import { fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -11,7 +12,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 	// but sometimes errors for this page.
 
 	async function Friends() {
-		const friendsQuery = await roQuery("friends",
+		const friendsQuery = await roQuery(
+			"friends",
 			`
 				MATCH (:User { name: $user }) -[r:friends]- (u:User)
 				RETURN u.name as name
@@ -57,7 +59,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			},
 			where: {
 				privateServer: false,
-			}
+			},
 		}),
 		friends: Friends(),
 		feed: prisma.post.findMany({
@@ -81,12 +83,15 @@ export const load: PageServerLoad = async ({ locals }) => {
 }
 
 export const actions: Actions = {
-	default: async ({ request, locals }) => {
+	default: async ({ request, locals, getClientAddress }) => {
+		const limit = ratelimit("statusPost", getClientAddress, 30)
+		if (limit) return limit
+
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
 		const status = data.get("status")?.toString() || ""
-		if (status.length <= 0) return fail(400, { msg: "Invalid status" })
+		if (!status) return fail(400, { msg: "Invalid status" })
 
 		await prisma.post.create({
 			data: {

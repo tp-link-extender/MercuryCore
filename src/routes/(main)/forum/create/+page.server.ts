@@ -2,6 +2,7 @@ import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import id from "$lib/server/id"
+import ratelimit from "$lib/server/ratelimit"
 import { error, fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ url, locals, params }) => {
@@ -28,7 +29,10 @@ export const load: PageServerLoad = async ({ url, locals, params }) => {
 }
 
 export const actions: Actions = {
-	default: async ({ url, locals, request }) => {
+	default: async ({ url, locals, request, getClientAddress }) => {
+		const limit = ratelimit("forumPost", getClientAddress, 30)
+		if (limit) return limit
+
 		const { user } = await authoriseUser(locals.validateUser)
 
 		const data = await request.formData()
@@ -37,7 +41,7 @@ export const actions: Actions = {
 		const category = url.searchParams.get("category")
 
 		if (!title || !content || !category) return fail(400, { msg: "Missing fields" })
-		if (title.length < 3 || title.length > 50 || content.length < 50 || content.length > 3000) return fail(400, { msg: "Invalid fields" })
+		if (title.length < 5 || title.length > 50 || content.length < 5 || content.length > 3000) return fail(400, { msg: "Invalid fields" })
 
 		if (
 			!(

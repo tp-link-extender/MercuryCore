@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
+	import type { ActionData, PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import ForumReply from "$lib/components/ForumReply.svelte"
 	import { writable } from "svelte/store"
@@ -8,6 +8,8 @@
 	const repliesCollapsed = writable({})
 
 	export let data: PageData
+	export let form: ActionData
+
 	const baseDepth = writable(data.baseDepth)
 </script>
 
@@ -60,13 +62,17 @@
 		</div>
 	</div>
 
-	<form use:enhance class="mt-2 mb-4 p-1 row" method="POST" action="?/reply">
+	<form use:enhance class="mt-2 mb-4 p-1 row" method="POST">
 		<label for="content" class="form-label light-text mt-2">Post a Reply</label>
 		<fieldset class="col-lg-7 d-flex">
-			<textarea class="form-control valid" required minlength="15" maxlength="1000" name="content" placeholder="What are your thoughts?" rows="4" />
+			<textarea class="form-control valid" required minlength="5" maxlength="1000" name="content" placeholder="What are your thoughts?" rows="4" />
 			<button type="submit" class="btn btn-success h-100 ms-3">Reply</button>
 		</fieldset>
+		{#if form?.msg} 
+			<small class="text-danger mt-1">{form.msg}</small>
+		{/if}
 	</form>
+
 
 	{#each data.replies as reply, num}
 		<ForumReply {reply} {num} {replyingTo} forumCategory={data.forumCategory.name} postId={data.id} postAuthorName={data.author.username} {repliesCollapsed} {baseDepth} topLevel />
