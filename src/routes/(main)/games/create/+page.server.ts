@@ -8,9 +8,9 @@ export const actions: Actions = {
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
-		const name = data.get("name") as string
-		const description = data.get("description") as string
-		const serverIP = data.get("serverIP") as string
+		const name = (data.get("name") as string).trim()
+		const description = (data.get("description") as string).trim()
+		const serverIP = (data.get("serverIP") as string).trim()
 		const serverPort = parseInt(data.get("serverPort") as string)
 		const maxPlayers = parseInt(data.get("maxPlayers") as string)
 		const privateServer = !!data.get("privateServer")

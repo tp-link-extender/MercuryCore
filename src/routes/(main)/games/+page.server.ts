@@ -4,7 +4,7 @@ import { findPlaces } from "$lib/server/prisma"
 export const load: PageServerLoad = async () => ({
 	places: findPlaces({
 		where: {
-			privateServer: false	
+			privateServer: false,
 		},
 		select: {
 			name: true,
@@ -16,7 +16,7 @@ export const load: PageServerLoad = async () => ({
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const filter = (await request.formData()).get("query")?.toString()
+		const filter = (await request.formData()).get("query") as string
 		return {
 			places: await findPlaces({
 				where: {
@@ -29,7 +29,7 @@ export const actions: Actions = {
 				select: {
 					name: true,
 					id: true,
-					image: true
+					image: true,
 				},
 			}),
 		}

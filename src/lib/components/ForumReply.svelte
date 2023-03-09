@@ -88,11 +88,11 @@
 			{#if $replyingTo == reply.id}
 				<div class="mb-2 card reply">
 					<div class="card-body p-3 pt-1 pb-0">
-						<form use:enhance on:submit={() => replyingTo.set("")} class="mb-4" method="POST" action="/forum/{forumCategory}/{reply.id}?/reply">
+						<form use:enhance on:submit={() => replyingTo.set("")} class="mb-4" method="POST" action="/forum/{forumCategory}/{reply.id}">
 							<input type="hidden" name="replyId" value={reply.id} />
 							<label for="content" class="form-label light-text mt-2">Post a Reply</label>
 							<fieldset>
-								<textarea bind:value={content} class="form-control valid mb-2" required minlength="15" maxlength="1000" name="content" placeholder="What are your thoughts?" rows="4" />
+								<textarea bind:value={content} class="form-control valid mb-2" required minlength="5" maxlength="1000" name="content" placeholder="What are your thoughts?" rows="4" />
 								<button type="submit" class="btn btn-success">
 									<i class="fa-regular fa-message me-2" />Reply
 								</button>

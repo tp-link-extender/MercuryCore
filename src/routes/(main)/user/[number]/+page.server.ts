@@ -101,7 +101,7 @@ export const actions: Actions = {
 		})
 
 		const data = await request.formData()
-		const action = data.get("action")?.toString() || ""
+		const action = data.get("action") as string
 
 		const user2Exists = await prisma.user.findUnique({
 			where: {
