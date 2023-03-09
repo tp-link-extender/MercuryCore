@@ -11,7 +11,7 @@ export const load: PageServerLoad = async () => ({
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const filter = (await request.formData()).get("query")?.toString()
+		const filter = (await request.formData()).get("query") as string
 		return {
 			places: await findGroups({
 				where: {

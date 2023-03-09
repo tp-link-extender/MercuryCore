@@ -71,7 +71,7 @@ export const actions: Actions = {
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
-		const action = (data.get("action")?.toString() || "").split(" ")
+		const action = (data.get("action") as string).split(" ")
 
 		const user2 = await prisma.user.findUnique({
 			where: {
