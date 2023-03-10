@@ -1,17 +1,16 @@
 <script lang="ts">
-	import type { ActionData, Snapshot } from "./$types"
 	import { enhance } from "$app/forms"
 
 	let fields = {
 		name: "",
 	}
 
-	export const snapshot: Snapshot = {
+	export const snapshot = {
 		capture: () => fields,
 		restore: v => (fields = v),
 	}
 
-	export let form: ActionData
+	export let form
 </script>
 
 <svelte:head>

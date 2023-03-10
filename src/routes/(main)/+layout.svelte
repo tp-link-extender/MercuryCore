@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { LayoutData } from "./$types"
 	import Navbar from "$lib/components/Navbar.svelte"
 	import Footer from "$lib/components/Footer.svelte"
 
-	export let data: LayoutData
+	export let data
 </script>
 
 <div id="all">

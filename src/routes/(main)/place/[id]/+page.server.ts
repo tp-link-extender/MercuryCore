@@ -1,9 +1,8 @@
-import type { PageServerLoad } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { error, redirect } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export async function load({ locals, params }) {
 	if (!params.id || !/^\d+$/.test(params.id)) throw error(400, `Invalid place id: ${params.id}`)
 
 	const place = await prisma.place.findUnique({

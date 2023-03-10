@@ -1,8 +1,7 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { prisma, findPlaces, findItems, findGroups } from "$lib/server/prisma"
 import { error, redirect } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load = async ({ url }) => {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) throw error(400, "No query provided")
@@ -73,7 +72,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	}
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request }) => {
 		const data = await request.formData()
 		const query = data.get("query") as string

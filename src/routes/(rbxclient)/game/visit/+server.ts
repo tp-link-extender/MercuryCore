@@ -1,7 +1,6 @@
-import type { RequestHandler } from "./$types"
 import { SignData } from "$lib/server/sign"
-export const GET: RequestHandler = async () => {
-	return new Response(
+export const GET = async () =>
+	new Response(
 		SignData(
 			`-- Prepended to Edit.lua and Visit.lua and Studio.lua and PlaySolo.lua--
 
@@ -126,4 +125,3 @@ export const GET: RequestHandler = async () => {
             end`
 		)
 	)
-}

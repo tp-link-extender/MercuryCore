@@ -1,6 +1,5 @@
 // The friends, followers, and following pages for a user.
 
-import type { PageServerLoad } from "./$types"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
@@ -25,7 +24,7 @@ const numberQueries: any = {
 	following: "RETURN SIZE((:User { name: $user }) -[:follows]-> (:User))",
 }
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
 

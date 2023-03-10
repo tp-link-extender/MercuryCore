@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { ActionData, Snapshot } from "./$types"
 	import { enhance } from "$app/forms"
 
 	let fields = {
@@ -11,12 +10,12 @@
 		privateServer: false,
 	}
 
-	export const snapshot: Snapshot = {
+	export const snapshot = {
 		capture: () => fields,
 		restore: v => (fields = v),
 	}
 
-	export let form: ActionData
+	export let form
 </script>
 
 <svelte:head>
@@ -43,13 +42,31 @@
 			<div class="row mb-3">
 				<label for="serverIP" class="col-md-3 col-form-label text-md-right">Server IP</label>
 				<div class="col-md-8">
-					<input bind:value={fields.serverIP} name="serverIP" id="serverIP" placeholder="You can use URLs instead of an IP if you wish" required class="form-control valid" maxlength="1000" />
+					<input
+						bind:value={fields.serverIP}
+						name="serverIP"
+						id="serverIP"
+						placeholder="You can use URLs instead of an IP if you wish"
+						required
+						class="form-control valid"
+						maxlength="1000"
+					/>
 				</div>
 			</div>
 			<div class="row mb-3">
 				<label for="serverPort" class="col-md-3 col-form-label text-md-right">Server Port</label>
 				<div class="col-md-8">
-					<input type="number" bind:value={fields.serverPort} name="serverPort" id="serverPort" placeholder="Port ranges 49152 - 65536" required class="form-control valid" min="25565" max="65536" />
+					<input
+						type="number"
+						bind:value={fields.serverPort}
+						name="serverPort"
+						id="serverPort"
+						placeholder="Port ranges 49152 - 65536"
+						required
+						class="form-control valid"
+						min="25565"
+						max="65536"
+					/>
 				</div>
 			</div>
 			<div class="row mb-3">
@@ -61,7 +78,7 @@
 			<div class="row mb-3">
 				<label for="privateServer" class="col-md-3 col-form-label text-md-right">Private Server</label>
 				<div class="col-md-8">
-					<input class="form-check-input" type="checkbox"  bind:checked={fields.privateServer} value="privateServer" id="privateServer">
+					<input class="form-check-input" type="checkbox" bind:checked={fields.privateServer} value="privateServer" id="privateServer" />
 				</div>
 			</div>
 			<br />

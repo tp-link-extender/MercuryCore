@@ -1,11 +1,10 @@
 // The following and members pages for a group.
 
-import type { PageServerLoad } from "./$types"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	console.time("group members")
 
 	const group = await prisma.group.findUnique({

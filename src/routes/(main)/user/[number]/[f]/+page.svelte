@@ -1,10 +1,8 @@
 <script lang="ts">
 	// The friends, followers, and following pages for a user.
-
-	import type { PageData } from "./$types"
 	import UserCard from "$lib/components/UserCard.svelte"
 
-	export let data: PageData
+	export let data
 
 	const titles: any = {
 		friends: `${data.username}'s friends`,

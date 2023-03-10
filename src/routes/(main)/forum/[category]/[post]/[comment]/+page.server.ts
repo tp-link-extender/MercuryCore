@@ -1,10 +1,9 @@
-import type { PageServerLoad } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ url, locals, params }) => {
+export async function load({ url, locals, params }) {
 	const post = await prisma.forumPost.findUnique({
 		where: {
 			id: params.post,

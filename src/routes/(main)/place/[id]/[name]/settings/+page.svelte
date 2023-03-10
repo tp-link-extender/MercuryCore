@@ -1,10 +1,9 @@
 <script lang="ts">
-	import type { ActionData, PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 
-	export let form: ActionData
-	export let data: PageData
+	export let form
+	export let data
 
 	let copiedSuccess = false
 	let copiedSuccessMsg: any
@@ -148,7 +147,7 @@
 							{#if form?.area == "port"}
 								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
 							{/if}
-						<small class="grey-text">Using a port number lower than 49152 may not work correctly.</small>
+							<small class="grey-text">Using a port number lower than 49152 may not work correctly.</small>
 						</div>
 					</div>
 					<hr class="grey-text" />

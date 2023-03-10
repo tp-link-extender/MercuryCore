@@ -1,8 +1,7 @@
 <script lang="ts">
-	import type { PageData } from "../inventory/$types"
 	import Item from "$lib/components/Item.svelte"
 
-	export let data: PageData
+	export let data
 </script>
 
 <svelte:head>
@@ -13,7 +12,7 @@
 
 <div class="container mt-5 d-grid">
 	{#each data.items || [] as item, num}
-		<Item {item} {num} total={(data.items || []).length}  />
+		<Item {item} {num} total={(data.items || []).length} />
 	{/each}
 </div>
 
