@@ -54,7 +54,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		creatorId = gameSession.place.ownerUser?.number || 0
 		charApp = `http://banland.xyz/Asset/CharacterFetch.ashx?userID=${userId}`
 
-		if (gameSession.user.permissionLevel == 5) MembershipType = "OutrageousBuildersClub"
+		if (gameSession.user.permissionLevel == 2) MembershipType = "BuildersClub"
 	}
 
 	return new Response(
@@ -89,7 +89,7 @@ end
 
 local test = ${isStudioJoin}
 
-print("! Joining game '${69}' place ${placeId} at ${serverAddress}")
+print("! Joining game '${placeId}' place ${placeId} at ${serverAddress}")
 
 game:GetService("ChangeHistoryService"):SetEnabled(false)
 game:GetService("ContentProvider"):SetThreadPool(16)
