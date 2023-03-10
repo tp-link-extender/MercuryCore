@@ -1,10 +1,9 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail, redirect } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export async function load({ locals, params }) {
 	console.time("group")
 
 	const group = await prisma.group.findUnique({
@@ -63,7 +62,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request, locals, params }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
 

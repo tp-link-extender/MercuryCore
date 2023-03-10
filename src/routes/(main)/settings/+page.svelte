@@ -1,11 +1,10 @@
 <script lang="ts">
-	import type { ActionData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	const user = getUser()
 
-	export let form: ActionData
+	export let form
 </script>
 
 <svelte:head>

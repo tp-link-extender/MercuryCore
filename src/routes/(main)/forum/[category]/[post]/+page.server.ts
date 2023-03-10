@@ -1,4 +1,3 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
@@ -6,7 +5,7 @@ import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import { error, fail } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export async function load({ locals, params }) {
 	// Since prisma does not yet support recursive copying, we have to do it manually
 	const selectReplies = {
 		select: {
@@ -81,7 +80,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request, locals, params, getClientAddress }) => {
 		const limit = ratelimit("forumReply", getClientAddress, 5)
 		if (limit) return limit

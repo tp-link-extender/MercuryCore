@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import Place from "$lib/components/Place.svelte"
 	import Item from "$lib/components/Item.svelte"
 	import Group from "$lib/components/Group.svelte"
@@ -10,7 +9,7 @@
 		Developing: "bg-warning",
 	}
 
-	export let data: PageData
+	export let data
 </script>
 
 <svelte:head>

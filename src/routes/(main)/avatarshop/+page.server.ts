@@ -1,7 +1,6 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { findItems } from "$lib/server/prisma"
 
-export const load: PageServerLoad = async () => ({
+export const load = async () => ({
 	items: findItems({
 		select: {
 			name: true,
@@ -11,7 +10,7 @@ export const load: PageServerLoad = async () => ({
 	}),
 })
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request }) => {
 		const filter = (await request.formData()).get("query") as string
 		return {

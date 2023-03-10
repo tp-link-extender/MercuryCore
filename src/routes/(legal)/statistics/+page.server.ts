@@ -1,8 +1,7 @@
-import type { PageServerLoad } from "./$types"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 
-export const load: PageServerLoad = async () => ({
+export const load = async () => ({
 	users: prisma.user.count(),
 	places: prisma.place.count(),
 	groups: prisma.group.count(),

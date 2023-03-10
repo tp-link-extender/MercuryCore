@@ -24,7 +24,6 @@ export default function (category: string, getClientAddress: () => string, timeW
 			id,
 			setTimeout(() => {
 				ratelimitRequests.delete(id)
-				
 			}, timeWindow * 1000)
 		)
 		ratelimitRequests.set(id, currentRequests)
