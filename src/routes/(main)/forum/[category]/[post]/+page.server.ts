@@ -83,7 +83,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params, getClientAddress }) => {
-		const limit = ratelimit("forumPost", getClientAddress, 5)
+		const limit = ratelimit("forumReply", getClientAddress, 5)
 		if (limit) return limit
 
 		const { user } = await authoriseUser(locals.validateUser)

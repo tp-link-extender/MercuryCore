@@ -19,7 +19,7 @@ server {
 	rewrite (?i)^/Game/Join.ashx$ /game/join last;
 	rewrite (?i)^/Game/MachineConfiguration.ashx$ /game/machineconfiguration;
 	# rewrite (?i)^/Game/GameServer.ashx$ /game/gameserver last;
-	# rewrite (?i)^/Game/ClientPresence.ashx$ /game/clientpresence last; 
+	rewrite (?i)^/Game/ClientPresence.ashx$ /game/clientpresence last; 
 	rewrite (?i)^/Game/ServerPresence$ /game/serverpresence last;
 	rewrite (?i)^/Game/Host$ /game/host last;
 	rewrite (?i)^/Asset/GetScriptState.ashx$ /asset/getscriptstate last;

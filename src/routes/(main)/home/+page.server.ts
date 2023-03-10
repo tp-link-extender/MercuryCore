@@ -3,6 +3,7 @@ import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import ratelimit from "$lib/server/ratelimit"
+import filter from "$lib/server/filter"
 import { fail } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async ({ locals }) => {
