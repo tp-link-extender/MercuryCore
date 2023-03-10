@@ -8,7 +8,7 @@ export async function GET({ url, request }) {
 
 	await prisma.place.update({
 		where: { serverTicket: ticket },
-		data: { serverPing: Date.now() },
+		data: { serverPing: Math.floor(Date.now() / 1000) },
 	})
 
 	return new Response("OK")

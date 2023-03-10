@@ -110,7 +110,7 @@
 						<b>By</b> <a href="/user/{data.ownerUser?.number}" class="text-decoration-none">{data.ownerUser?.username}</a>
 					</p>
 					<p class="light-text mb-0">Gears: <i class="fa-regular fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tooltip on top" /></p>
-					<span class="badge text-bg-{data.serverPing < Date.now() - 35 * 1000 ? 'danger' : 'success'} mb-1">{data.serverPing < Date.now() - 45 * 1000 ? "Offline" : "Online"}</span>
+					<span class="badge text-bg-{data.serverPing < Math.floor(Date.now() / 1000) - 35  ? 'success' : 'danger'} mb-1">{data.serverPing < Math.floor(Date.now() / 1000) - 35  ? "Online" : "Offline"}</span>
 				</div>
 			</div>
 			<div id="buttons" class="row">
