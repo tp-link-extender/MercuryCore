@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import fade from "$lib/fade"
@@ -15,7 +14,7 @@
 		["crimson", "scale-balanced", "Administrator"],
 	]
 
-	export let data: PageData
+	export let data
 </script>
 
 <svelte:head>

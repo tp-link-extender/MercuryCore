@@ -1,10 +1,9 @@
-import type { RequestHandler } from "./$types"
 import { SignData } from "$lib/server/sign"
 import { error, redirect } from "@sveltejs/kit"
 import md5 from "crypto-js/md5"
 import fs from "fs"
 
-export const GET: RequestHandler = async ({ url, setHeaders }) => {
+export async function GET({ url, setHeaders }) {
 	const ID = url.searchParams.get("id")
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 

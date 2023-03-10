@@ -1,10 +1,9 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export async function load({ locals, params }) {
 	const user = (await authoriseUser(locals.validateUser)).user
 
 	console.time("requests")
@@ -66,7 +65,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request, locals }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
 

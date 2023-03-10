@@ -2,7 +2,7 @@
 	import Navbar from "$lib/components/Navbar.svelte"
 	import Footer from "$lib/components/Footer.svelte"
 
-	export let data: any
+	export let data
 </script>
 
 <div id="bg" class="position-fixed w-100 h-100 z-n1" />

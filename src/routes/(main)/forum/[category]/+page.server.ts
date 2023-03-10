@@ -1,10 +1,9 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export async function load({ locals, params }) {
 	const category = (
 		await prisma.forumCategory.findMany({
 			where: {
@@ -82,7 +81,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	return category as typeof category & { posts: { likeCount: number; dislikeCount: number; likes: boolean; dislikes: boolean }[] }
 }
 
-export const actions: Actions = {
+export const actions = {
 	like: async ({ request, locals }) => {
 		const { user } = await authoriseUser(locals.validateUser)
 		const data = await request.formData()

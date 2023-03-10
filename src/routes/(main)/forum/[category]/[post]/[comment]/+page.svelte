@@ -1,12 +1,11 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import ForumReply from "$lib/components/ForumReply.svelte"
 	import { writable } from "svelte/store"
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 
-	export let data: PageData
+	export let data
 	const baseDepth = writable(data.baseDepth)
 </script>
 

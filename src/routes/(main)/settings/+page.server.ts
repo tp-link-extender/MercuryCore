@@ -1,10 +1,9 @@
-import type { Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { auth } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 
-export const actions: Actions = {
+export const actions = {
 	profile: async ({ request, locals }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
 		const data = await request.formData()
@@ -13,15 +12,14 @@ export const actions: Actions = {
 
 		let same
 		for (let i in entries)
-		if (entries[i] != (user as any)[i]) {
-			same = false
-			break
-		}
+			if (entries[i] != (user as any)[i]) {
+				same = false
+				break
+			}
 		if (same) return fail(400)
-		
+
 		if (!["standard", "darken", "storm", "solar"].includes(entries.theme)) return fail(400, { area: "theme", msg: "Invalid theme" })
 		// if (!["on", "off"].includes(entries.animation)) return fail(400, { area: "theme", msg: "Invalid animation settings" })
-
 
 		await prisma.user.update({
 			where: {

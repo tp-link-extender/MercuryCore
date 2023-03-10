@@ -1,9 +1,7 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import fade from "$lib/fade"
 
-	export let data: PageData
-	//
+	export let data
 </script>
 
 <svelte:head>

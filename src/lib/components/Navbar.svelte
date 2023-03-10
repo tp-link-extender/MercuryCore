@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { LayoutData } from "../../routes/$types"
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
 	import { fade } from "svelte/transition"
@@ -7,9 +8,8 @@
 	let search = ""
 
 	const user = getUser()
-	
-	export let data: any
-	//
+
+	export let data: LayoutData
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark py-0">
