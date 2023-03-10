@@ -1,8 +1,7 @@
 import { error } from "@sveltejs/kit"
-import type { RequestHandler } from "./$types"
 import { prisma } from "$lib/server/prisma"
 
-export const GET: RequestHandler = async ({ url, setHeaders }) => {
+export async function GET({ url, setHeaders }) {
 	const ID = url.searchParams.get("id")
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
@@ -16,8 +15,8 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
 	const colors: any = userInfo.bodyColours
 
 	setHeaders({
-		"Pragma": "no-cache",
-		"Cache-Control": "no-cache", 
+		Pragma: "no-cache",
+		"Cache-Control": "no-cache",
 	})
 
 	return new Response(`

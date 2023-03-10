@@ -1,9 +1,8 @@
-import type { Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import { fail, redirect } from "@sveltejs/kit"
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ locals, request }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
 

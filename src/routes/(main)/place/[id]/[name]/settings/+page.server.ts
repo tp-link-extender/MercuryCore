@@ -1,11 +1,10 @@
-import type { PageServerLoad } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { error, type Actions, fail } from "@sveltejs/kit"
 import { createId } from "@paralleldrive/cuid2"
 import { v4 as uuid } from "uuid"
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) throw error(400, `Invalid game id: ${params.id}`)
 
 	console.time("place settings")
@@ -43,7 +42,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	return getPlace
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request, locals, params }) => {
 		if (!/^\d+$/.test(params.id || "")) throw error(400, `Invalid game id: ${params.id}`)
 		const id = parseInt(params.id || "")
@@ -124,7 +123,12 @@ export const actions: Actions = {
 				if (!serverIP) return fail(400, { area: "address", msg: "Missing address" })
 				if (!serverPort) return fail(400, { area: "port", msg: "Missing port" })
 				if (serverPort > 65535 || serverPort < 1024) return fail(400, { area: "port", msg: "Invalid port" })
-				if (!/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(serverIP)) return fail(400, { area: "address", msg: "Invalid address" })
+				if (
+					!/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(
+						serverIP
+					)
+				)
+					return fail(400, { area: "address", msg: "Invalid address" })
 
 				await prisma.place.update({
 					where: {

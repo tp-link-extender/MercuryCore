@@ -1,10 +1,9 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ url, locals, params }) => {
+export async function load({ url, locals, params }) {
 	console.time("place")
 	if (!/^\d+$/.test(params.id)) throw error(400, `Invalid place id: ${params.id}`)
 	const id = parseInt(params.id)
@@ -57,7 +56,7 @@ export const load: PageServerLoad = async ({ url, locals, params }) => {
 	} else throw error(404, "Not found")
 }
 
-export const actions: Actions = {
+export const actions = {
 	like: async ({ request, locals, params }) => {
 		if (!/^\d+$/.test(params.id)) throw error(400, `Invalid place id: ${params.id}`)
 		const id = parseInt(params.id)

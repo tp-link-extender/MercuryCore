@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData, Snapshot } from "./$types"
 	import { enhance, deserialize } from "$app/forms"
 	import PlaceCard from "$lib/components/PlaceCard.svelte"
 	import { onMount } from "svelte"
@@ -27,12 +26,12 @@
 
 	// Snapshots allow form values on a page to be restored
 	// if the user navigates away and then back again.
-	export const snapshot: Snapshot = {
+	export const snapshot = {
 		capture: () => query,
 		restore: v => (query = v),
 	}
 
-	export let data: PageData
+	export let data
 </script>
 
 <svelte:head>
@@ -43,7 +42,7 @@
 	<div class="row mb-5">
 		<h1 class="col light-text">
 			Games
-			<a href="/games/create" class="btn btn-primary ms-4"><i class="fa-solid fa-plus"></i> Create</a>
+			<a href="/games/create" class="btn btn-primary ms-4"><i class="fa-solid fa-plus" /> Create</a>
 		</h1>
 		<div class="col-8">
 			<form use:enhance method="POST" action="/search" class="row">

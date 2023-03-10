@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import { enhance, deserialize } from "$app/forms"
 	import fade from "$lib/fade"
 	import Modal from "$lib/components/Modal.svelte"
@@ -7,7 +6,7 @@
 	import customProtocolCheck from "custom-protocol-check"
 	import { writable } from "svelte/store"
 
-	export let data: PageData
+	export let data
 
 	const statistics = [
 		["Activity", "0 visits"],
@@ -111,7 +110,7 @@
 						<b>By</b> <a href="/user/{data.ownerUser?.number}" class="text-decoration-none">{data.ownerUser?.username}</a>
 					</p>
 					<p class="light-text mb-0">Gears: <i class="fa-regular fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tooltip on top" /></p>
-					<span class="badge text-bg-{data.serverPing < Math.floor(Date.now() / 1000) - 35  ? 'success' : 'danger'} mb-1">{data.serverPing < Math.floor(Date.now() / 1000) - 35  ? "Online" : "Offline"}</span>
+					<span class="badge text-bg-{data.serverPing > Math.floor(Date.now() / 1000) - 35  ? 'success' : 'danger'} mb-1">{data.serverPing > Math.floor(Date.now() / 1000) - 35  ? "Online" : "Offline"}</span>
 				</div>
 			</div>
 			<div id="buttons" class="row">

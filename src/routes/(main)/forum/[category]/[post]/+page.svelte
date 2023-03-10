@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { ActionData, PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import ForumReply from "$lib/components/ForumReply.svelte"
 	import { writable } from "svelte/store"
@@ -7,8 +6,8 @@
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 
-	export let data: PageData
-	export let form: ActionData
+	export let data
+	export let form
 
 	const baseDepth = writable(data.baseDepth)
 </script>
