@@ -38,6 +38,9 @@ local placeId, port, sleeptime, access, url, killID, deathID, timeout, autosaveI
 pcall(function() game:GetService("ScriptContext"):AddStarterScript(injectScriptAssetID) end)
 game:GetService("RunService"):Run()
 
+-- GLOBALS --
+visit = game:GetService("Visit")
+
 
 
 -- REQUIRES: StartGanmeSharedArgs.txt
@@ -226,7 +229,7 @@ end
 -- Now start the connection
 ns:Start(${port}, sleeptime) 
 
-game:GetService("Visit"):SetPing("${serverPresenceUrl}", 30)
+visit:SetPing("${serverPresenceUrl}", 30) 
 
 if timeout then
 	scriptContext:SetTimeout(timeout)
