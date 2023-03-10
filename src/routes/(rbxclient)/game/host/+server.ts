@@ -16,7 +16,7 @@ export async function GET({ url }) {
 
 	if (data) {
 		port = data.serverPort
-		baseUrl = "http://banland.xyz"
+		baseUrl = "https://banland.xyz"
 		serverId = data.id.toString()
 		serverPresenceUrl = `${baseUrl}/Game/ServerPresence?ticket=${ticket}`
 	}
