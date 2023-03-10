@@ -1,8 +1,7 @@
-import type { PageServerLoad } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 
-export const load: PageServerLoad = async ({ locals }) => {
+export async function load({ locals }) {
 	console.time("inventory")
 	const user = (await authoriseUser(locals.validateUser)).user
 

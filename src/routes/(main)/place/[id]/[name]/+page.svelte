@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import { enhance, deserialize } from "$app/forms"
 	import fade from "$lib/fade"
 	import Modal from "$lib/components/Modal.svelte"
@@ -7,7 +6,7 @@
 	import customProtocolCheck from "custom-protocol-check"
 	import { writable } from "svelte/store"
 
-	export let data: PageData
+	export let data
 
 	const statistics = [
 		["Activity", "0 visits"],

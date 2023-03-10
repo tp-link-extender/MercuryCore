@@ -1,7 +1,6 @@
-import type { PageServerLoad } from "./$types"
 import { prisma } from "$lib/server/prisma"
 
-export const load: PageServerLoad = async () => ({
+export const load = async () => ({
 	categories: prisma.forumCategory.findMany({
 		select: {
 			name: true,
@@ -23,9 +22,9 @@ export const load: PageServerLoad = async () => ({
 						select: {
 							username: true,
 							number: true,
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 		},
 	}),

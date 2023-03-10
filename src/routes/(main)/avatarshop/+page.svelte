@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData, Snapshot } from "./$types"
 	import { enhance, deserialize } from "$app/forms"
 	import Item from "$lib/components/Item.svelte"
 	import { onMount } from "svelte"
@@ -27,12 +26,12 @@
 
 	// Snapshots allow form values on a page to be restored
 	// if the user navigates away and then back again.
-	export const snapshot: Snapshot = {
+	export const snapshot = {
 		capture: () => query,
 		restore: v => (query = v),
 	}
 
-	export let data: PageData
+	export let data
 </script>
 
 <svelte:head>

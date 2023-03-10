@@ -1,11 +1,10 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import { error, fail, redirect } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ url, locals, params }) => {
+export async function load({ url, locals, params }) {
 	const category = url.searchParams.get("category")
 	if (!category) throw error(400, "Missing category")
 
@@ -28,7 +27,7 @@ export const load: PageServerLoad = async ({ url, locals, params }) => {
 	return getCategory
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ url, locals, request, getClientAddress }) => {
 		const limit = ratelimit("forumPost", getClientAddress, 30)
 		if (limit) return limit

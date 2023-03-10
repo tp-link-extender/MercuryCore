@@ -1,9 +1,8 @@
-import type { RequestHandler } from "./$types"
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 import { prisma } from "$lib/server/prisma"
 
-export const GET: RequestHandler = async ({ url }) => {
+export async function GET({ url }) {
 	const ticket = url.searchParams.get("ticket")
 	let mapLocation = url.searchParams.get("autopilot")
 
@@ -15,20 +14,19 @@ export const GET: RequestHandler = async ({ url }) => {
 	let serverId = "..."
 	let serverPresenceUrl = "..."
 
-	if(data) {
+	if (data) {
 		port = data.serverPort
 		baseUrl = "http://banland.xyz"
 		serverId = data.id.toString()
 		serverPresenceUrl = `${baseUrl}/Game/ServerPresence?ticket=${ticket}`
-	} 
-
-	if(mapLocation) {
-		mapLocation = Buffer.from(mapLocation, "base64").toString()
-		if(mapLocation.slice(-5) != ".rbxl") mapLocation = null
-
-		if(mapLocation != null) mapLocation = `rbxasset://maps/${mapLocation}`
 	}
 
+	if (mapLocation) {
+		mapLocation = Buffer.from(mapLocation, "base64").toString()
+		if (mapLocation.slice(-5) != ".rbxl") mapLocation = null
+
+		if (mapLocation != null) mapLocation = `rbxasset://maps/${mapLocation}`
+	}
 
 	return new Response(
 		SignData(

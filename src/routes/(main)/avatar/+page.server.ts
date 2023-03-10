@@ -1,4 +1,3 @@
-import type { Actions, PageServerLoad } from "./$types"
 import { fail } from "@sveltejs/kit"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
@@ -218,15 +217,11 @@ function hexToBrick(hex: string) {
 	return brickcolors[hex]
 }
 
-export const load: PageServerLoad = async () => {
-	return {}
-}
-
-export const actions: Actions = {
+export const actions = {
 	paint: async ({ request, locals }) => {
 		const { user } = await authoriseUser(locals.validateUser)
 		const data = await request.formData()
-		
+
 		const bodyPart = data.get("bodyPart") as string
 		const bodyColour = data.get("bodyColour") as string
 		if (!bodyPart || !bodyColour) return fail(400, { message: "Invalid Request" })

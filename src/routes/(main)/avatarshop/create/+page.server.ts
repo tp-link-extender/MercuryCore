@@ -1,11 +1,10 @@
-import type { Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import id, { rollback } from "$lib/server/id"
 import type { ItemCategory } from "@prisma/client"
 import { fail, redirect } from "@sveltejs/kit"
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ locals, request }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
 
@@ -15,7 +14,13 @@ export const actions: Actions = {
 		const category = (data.get("category") as string).trim()
 
 		if (!name || !category) return fail(400, { msg: "Missing fields" })
-		if (name.length < 3 || name.length > 50 || price < 0 || !["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)) return fail(400, { msg: "Invalid fields" })
+		if (
+			name.length < 3 ||
+			name.length > 50 ||
+			price < 0 ||
+			!["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)
+		)
+			return fail(400, { msg: "Invalid fields" })
 
 		let item
 		const itemId = await id()

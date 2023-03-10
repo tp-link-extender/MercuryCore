@@ -1,8 +1,7 @@
-import type { RequestHandler } from "./$types"
 import { json } from "@sveltejs/kit"
 
-export const GET: RequestHandler = async () => {
-	return json({
+export const GET = async () =>
+	json({
 		FFlagUserHttpAPIVisible: "True",
 		FFlagModuleScriptsVisible: "True",
 		FFlagSurfaceGuiVisible: "True",
@@ -26,6 +25,5 @@ export const GET: RequestHandler = async () => {
 
 		FFlagTrimExtraSlashesAfterRobloxDomain: "False",
 		FFlagStudioIntellesenseEnabled: "False",
-		FFlagStudioShowToolboxByDefault: "False"
+		FFlagStudioShowToolboxByDefault: "False",
 	})
-}

@@ -1,8 +1,7 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import UserCard from "$lib/components/UserCard.svelte"
 
-	export let data: PageData
+	export let data
 </script>
 
 <svelte:head>
