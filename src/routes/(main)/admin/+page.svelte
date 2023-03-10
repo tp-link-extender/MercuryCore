@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { ActionData, PageData } from "./$types"
 	import { enhance } from "$app/forms"
 
-	export let form: ActionData
-	export let data: PageData
+	export let form
+	export let data
 </script>
 
 <svelte:head>

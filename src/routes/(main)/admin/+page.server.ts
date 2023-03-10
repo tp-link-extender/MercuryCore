@@ -1,10 +1,9 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { auth, authoriseAdmin } from "$lib/server/lucia"
 import { client } from "$lib/server/redis"
 import { fail } from "@sveltejs/kit"
 
 // Make sure a user is an administrator before loading the page.
-export const load: PageServerLoad = async ({ locals }) => {
+export async function load({ locals }) {
 	await authoriseAdmin(locals)
 
 	return {
@@ -14,7 +13,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 }
 
-export const actions: Actions = {
+export const actions = {
 	updateBanner: async ({ request, locals }) => {
 		await authoriseAdmin(locals)
 

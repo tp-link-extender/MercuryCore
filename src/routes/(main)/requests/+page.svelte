@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 
@@ -9,7 +8,7 @@
 		Developing: "bg-warning",
 	}
 
-	export let data: PageData
+	export let data
 </script>
 
 <svelte:head>

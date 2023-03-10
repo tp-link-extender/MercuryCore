@@ -1,8 +1,7 @@
-import type { RequestHandler } from "./$types"
 import { json } from "@sveltejs/kit"
 
-export const GET: RequestHandler = async () => {
-	return json({
+export const GET = async () =>
+	json({
 		applicationSettings: {
 			AndroidSwipeGestureUseStartingPosition: "True",
 			DFFlagAccoutrementWeldingFilteringEnabled: "False",
@@ -3786,4 +3785,3 @@ export const GET: RequestHandler = async () => {
 			DebugForceMSAASamples: "16",
 		},
 	})
-}

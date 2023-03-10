@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 
-	export let data: PageData
+	export let data
 	// Forum
 	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}
 </script>

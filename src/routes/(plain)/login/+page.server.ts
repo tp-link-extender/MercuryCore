@@ -1,8 +1,7 @@
-import type { Actions } from "./$types"
 import { auth } from "$lib/server/lucia"
 import { redirect, fail } from "@sveltejs/kit"
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request, locals }) => {
 		const data = await request.formData()
 		const username = (data.get("username") as string).trim()

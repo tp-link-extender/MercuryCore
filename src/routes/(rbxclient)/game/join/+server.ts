@@ -1,9 +1,8 @@
-import type { RequestHandler } from "./$types"
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 import { prisma } from "$lib/server/prisma"
 
-export const GET: RequestHandler = async ({ url }) => {
+export async function GET({ url }) {
 	const clientTicket = url.searchParams.get("ticket")
 	const privateServer = url.searchParams.get("privateServer") as string
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import fade from "$lib/fade"
@@ -36,7 +35,7 @@
 		`You are the ${$user?.number}${["st", "nd", "rd"][($user?.number % 10) - 1] || "th"} user to join Mercury!`,
 	]
 
-	export let data: PageData
+	export let data
 	export let form: any
 </script>
 

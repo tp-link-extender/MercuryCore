@@ -1,12 +1,10 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import ratelimit from "$lib/server/ratelimit"
-import filter from "$lib/server/filter"
 import { fail } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ locals }) => {
+export async function load({ locals }) {
 	console.time("home")
 	const user = (await authoriseUser(locals.validateUser)).user
 	// (main)/+layout.server.ts will handle most redirects for logged-out users,
@@ -83,7 +81,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
 		const limit = ratelimit("statusPost", getClientAddress, 30)
 		if (limit) return limit

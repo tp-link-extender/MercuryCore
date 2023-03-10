@@ -6,12 +6,11 @@
 import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { client } from "$lib/server/redis"
-import type { Handle } from "@sveltejs/kit"
 import { sequence } from "@sveltejs/kit/hooks"
 import { handleHooks } from "@lucia-auth/sveltekit"
 
 // Ran every time a request is made
-export const handle: Handle = sequence(handleHooks(auth), async ({ event, resolve }) => {
+export const handle = sequence(handleHooks(auth), async ({ event, resolve }) => {
 	const { user, session } = await event.locals.validateUser()
 	if (!session) return await resolve(event)
 
