@@ -25,6 +25,7 @@ export async function GET({ url }) {
 	let creatorId = 0
 	let MembershipType = "None"
 	let charApp = "http://banland.xyz/Asset/CharacterFetch.ashx?userID=0"
+	let pingUrl = ""
 
 	if ((joinMethod = "Ticket")) {
 		const gameSession = (
@@ -52,6 +53,7 @@ export async function GET({ url }) {
 		placeId = gameSession.place.id
 		creatorId = gameSession.place.ownerUser?.number || 0
 		charApp = `http://banland.xyz/Asset/CharacterFetch.ashx?userID=${userId}`
+		pingUrl = `http://banland.xyz/Game/ClientPresence?ticket=${clientTicket}`
 
 		if (gameSession.user.permissionLevel == 2) MembershipType = "BuildersClub"
 	}
@@ -190,7 +192,7 @@ local waitingForMarker = true
 
 local success, err = pcall(function()	
 if not test then 
-visit:SetPing("${"https://banland.xyz/IGNORETHISMESSAGEFORNOW"}", 30) 
+visit:SetPing("${pingUrl}", 30) 
 end
 
 if not ${false} then
