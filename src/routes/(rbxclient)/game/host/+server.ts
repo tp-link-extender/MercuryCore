@@ -245,6 +245,15 @@ game.Players.PlayerAdded:connect(function(player)
     end
   end)
 end)
+
+
+while true do
+	pcall(function()
+		game:HttpGet("${serverPresenceUrl}")
+	end)
+	wait(30)
+end
+
 ------------------------------END START GAME SHARED SCRIPT--------------------------`
 		)
 	)
