@@ -229,7 +229,7 @@ end
 -- Now start the connection
 ns:Start(${port}, sleeptime) 
 
-visit:SetPing("${serverPresenceUrl}", 30) 
+visit:SetPing("${serverPresenceUrl}", 5) 
 
 if timeout then
 	scriptContext:SetTimeout(timeout)
