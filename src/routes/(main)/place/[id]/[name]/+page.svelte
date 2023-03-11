@@ -15,7 +15,7 @@
 		["Updated", data.updated.toLocaleDateString()],
 		["Genre", "Horror"],
 		["Server Limit", data.maxPlayers],
-		["Now Playing", "0 players"],
+		["Now Playing", data.GameSessions.length],
 	]
 
 	const images = ["/place/placeholderImage1.png", "/place/placeholderImage2.png", "/place/placeholderImage3.png"]
