@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import Report from "$lib/components/Report.svelte"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	const user = getUser()
@@ -25,6 +26,9 @@
 					<br />
 					<p class="light-text mt-2 mb-0">
 						{data.description}
+						<span class="float-end">
+							<Report user={data.creator.username} url="/avatarshop/item/{data.id}" />
+						</span>
 					</p>
 				</div>
 			</div>
@@ -118,7 +122,7 @@
 	</ul>
 	<div class="tab-content" id="pills-tabContent">
 		<div class="tab-pane fade show active" id="pills-desc" role="tabpanel" aria-labelledby="pills-desc-tab" tabindex={0}>
-			<p class="light-text">what go here</p>
+			<p class="light-text">{data.description}</p>
 		</div>
 		<div class="tab-pane fade" id="pills-game" role="tabpanel" aria-labelledby="pills-game-tab" tabindex={0}>
 			<div class="row">

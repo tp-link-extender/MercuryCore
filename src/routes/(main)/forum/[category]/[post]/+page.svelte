@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import ForumReply from "$lib/components/ForumReply.svelte"
+	import Report from "$lib/components/Report.svelte"
 	import { writable } from "svelte/store"
 
 	let replyingTo = writable("")
@@ -50,7 +51,9 @@
 					<img src={data.author.image} alt={data.author.username} class="rounded-circle rounded-top-0" />
 				</span>
 				<span class="fw-bold ms-3 light-text">{data.author.username}</span>
-				<span class="light-text ms-auto">{data.posted.toLocaleString()}</span>
+				<span class="light-text ms-auto">{data.posted.toLocaleString()}
+					<Report user={data.author.username} url="/forum/{data.forumCategory.name}/{data.id}" />
+				</span>
 			</a>
 			<h2 class="h4 mt-2">
 				{data.title}
@@ -67,11 +70,10 @@
 			<textarea class="form-control valid" required minlength="5" maxlength="1000" name="content" placeholder="What are your thoughts?" rows="4" />
 			<button type="submit" class="btn btn-success h-100 ms-3">Reply</button>
 		</fieldset>
-		{#if form?.msg} 
+		{#if form?.msg}
 			<small class="text-danger mt-1">{form.msg}</small>
 		{/if}
 	</form>
-
 
 	{#each data.replies as reply, num}
 		<ForumReply {reply} {num} {replyingTo} forumCategory={data.forumCategory.name} postId={data.id} postAuthorName={data.author.username} {repliesCollapsed} {baseDepth} topLevel />

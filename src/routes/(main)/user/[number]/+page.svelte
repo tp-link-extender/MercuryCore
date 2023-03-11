@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import Report from "$lib/components/Report.svelte"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import fade from "$lib/fade"
 
@@ -22,7 +23,7 @@
 </svelte:head>
 
 <div id="all" class="container">
-	<div class="card py-4">
+	<div class="card pt-4">
 		<div class="d-flex px-4">
 			<div id="image-background" class="me-4 rounded-circle">
 				<img src={data.image} alt={data.username} class="rounded-circle rounded-top-0" />
@@ -86,6 +87,9 @@
 							</button>
 						</form>
 					{/if}
+				</div>
+				<div class="float-end mb-3">
+					<Report user={data.username} url="/user/{data.number}" />
 				</div>
 			</div>
 		</div>
