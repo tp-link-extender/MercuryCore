@@ -46,9 +46,9 @@
 
 	.text
 		background-color: vars.$darker
-		padding: 0.5rem
+		padding: 0.7rem
 		margin-top: -0.5rem
-		padding-bottom: 1.5rem
+		padding-bottom: 1.8rem
 	p
 		margin: 0
 		margin-bottom: 0.5rem

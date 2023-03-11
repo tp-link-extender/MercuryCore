@@ -57,8 +57,10 @@ model User {
     GameSessions      GameSessions[]
     forumPosts        ForumPost[]
     forumReplies      ForumReply[]
+    reportsSent       Report[]       @relation("sent")
+    reportsReceived   Report[]       @relation("received")
 
-@@map("user")
+    @@map("user")
 }
 
 model Key {
@@ -226,4 +228,34 @@ model ForumReply {
     parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
     parentReplyId String?
     replies       ForumReply[] @relation("replies")
+}
+
+// Reports
+
+enum ReportCategory {
+    AccountTheft
+    Dating
+    Exploiting
+    Harassment
+    InappropriateContent
+    PersonalInformation
+    Scamming
+    Spam
+    Swearing
+    Threats
+    Under13
+}
+
+model Report {
+    id         String   @id @unique @default(cuid())
+    reporter   User     @relation("sent", fields: [reporterId], references: [id])
+    reporterId String
+    reportee   User     @relation("received", fields: [reporteeId], references: [id])
+    reporteeId String
+    time       DateTime @default(now())
+
+    note     String? // Note from the reporter
+    url      String
+    category ReportCategory
+    inGame   Boolean        @default(false)
 }
