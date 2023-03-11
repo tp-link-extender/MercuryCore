@@ -12,22 +12,27 @@ export async function load({ url, locals, params }) {
 
 	const getPlace = await prisma.place.findUnique({
 		where: { id },
-		select: {
-			id: true,
-			name: true,
-			description: true,
-			image: true,
-			maxPlayers: true,
-			created: true,
-			updated: true,
-			serverTicket: true,
-			privateServer: true,
-			privateTicket: true,
-			serverPing: true,
+		include: {
 			ownerUser: {
 				select: {
 					number: true,
 					username: true,
+				},
+			},
+			GameSessions: {
+				where: {
+					ping: {
+						gt: Math.floor(Date.now() / 1000) - 35,
+					},
+				},
+				select: {
+					user: {
+						select: {
+							number: true,
+							username: true,
+							image: true,
+						},
+					},
 				},
 			},
 		},
