@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { prisma } from "$lib/server/prisma"
 
-export async function GET({ url, request }) {
+export async function GET({ url, request, setHeaders }) {
 	const ticket = url.searchParams.get("ticket") as string
 
 	if (!ticket || request.headers.get("user-agent") != "Roblox/WinInet") throw error(400, "Invalid Request")
@@ -10,6 +10,11 @@ export async function GET({ url, request }) {
 	await prisma.place.update({
 		where: { serverTicket: ticket },
 		data: { serverPing: Math.floor(Date.now() / 1000) },
+	})
+
+	setHeaders({
+		Pragma: "no-cache",
+		"Cache-Control": "no-cache",
 	})
 
 	return new Response("OK")
