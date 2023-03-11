@@ -172,7 +172,7 @@ local Chat = {
 								'Totbl', 'LordRugDump', 'David.Baszucki', 'Dbapostle', 'DaveYorkRBX', 'nJay', 'OstrichSized', 'TobotRobot', 'twberg', 'ROBLOX', 'RBAdam', 'Doughtless',
 								'Anaminus', 'Stravant', 'Cr3470r', 'CodeWriter', 'Games', 'AcesWayUpHigh', 'Phil'
 								}, --]]
-			Admins_List = {'taskmanager', 'Heliodex'},
+			Admins_List = {'taskmanager', 'Heliodex', 'tako'},
 
 			SafeChat_List = {
 								['Use the Chat menu to talk to me.'] = {'/sc 0', true},
