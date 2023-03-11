@@ -19,10 +19,12 @@ server {
 	rewrite (?i)^/Game/Join.ashx$ /game/join last;
 	rewrite (?i)^/Game/MachineConfiguration.ashx$ /game/machineconfiguration;
 	# rewrite (?i)^/Game/GameServer.ashx$ /game/gameserver last;
-	rewrite (?i)^/Game/ClientPresence.ashx$ /game/clientpresence last; 
+	rewrite (?i)^/Game/ClientPresence$ /game/clientpresence last; 
 	rewrite (?i)^/Game/ServerPresence$ /game/serverpresence last;
 	rewrite (?i)^/Game/Host$ /game/host last;
 	rewrite (?i)^/Asset/GetScriptState.ashx$ /asset/getscriptstate last;
+
+	listen 80;
 	listen 443 ssl; # managed by Certbot
 	ssl_certificate /etc/letsencrypt/live/banland.xyz/fullchain.pem; # managed by Certbot
 	ssl_certificate_key /etc/letsencrypt/live/banland.xyz/privkey.pem; # managed by Certbot
@@ -72,17 +74,4 @@ server {
 		rewrite ^ /api/clientappsettings break;
 		proxy_pass http://sveltekit;
 	}
-}
-
-
-server {
-	if ($host = banland.xyz) {
-		return 301 https://$host$request_uri;
-	} # managed by Certbot
-
-
-	server_name banland.xyz;
-
-	listen 80;
-	return 404; # managed by Certbot
 }
