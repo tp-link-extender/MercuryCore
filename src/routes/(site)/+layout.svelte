@@ -16,6 +16,22 @@
 	const user = getUser()
 </script>
 
+<svelte:head>
+	<meta charset="utf-8" />
+	<meta name="theme-color" content="#1f1d1c" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="icon" href="/favicon.svg" />
+	<link rel="manifest" href="/manifest.json" />
+	<link rel="apple-touch-icon" href="/icon192.png" />
+
+	<script
+		defer
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+		crossorigin="anonymous"
+	></script>
+</svelte:head>
+
 <slot />
 
 <!-- While a page is loading, a loading spinner can be shown -->
@@ -29,18 +45,18 @@
 
 {#if $user?.theme == "darken"}
 	<style lang="sass">
-		@use "../themes/darken.sass"
+		@use "../../themes/darken.sass"
 	</style>
 {:else if $user?.theme == "storm"}
 	<style lang="sass">
-		@use "../themes/storm.sass"
+		@use "../../themes/storm.sass"
 	</style>
 {:else if $user?.theme == "solar"}
 	<style lang="sass">
-		@use "../themes/solar.sass"
+		@use "../../themes/solar.sass"
 	</style>
 {:else}
 	<style lang="sass">
-		@use "../themes/standard.sass"
+		@use "../../themes/standard.sass"
 	</style>
 {/if}
