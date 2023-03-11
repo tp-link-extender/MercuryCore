@@ -61,6 +61,7 @@ export const actions = {
 				serverTicket: true,
 				privateServer: true,
 				privateTicket: true,
+				maxPlayers: true,
 				ownerUser: {
 					select: {
 						id: true,
@@ -118,11 +119,14 @@ export const actions = {
 			case "network":
 				const serverIP = data.get("address") as string
 				const serverPort = parseInt(data.get("port") as string)
+				const maxPlayers = parseInt(data.get("maxPlayers") as string)
 
-				if (serverIP == getPlace?.serverIP && serverPort == getPlace?.serverPort) return fail(400)
+				if (serverIP == getPlace?.serverIP && serverPort == getPlace?.serverPort && maxPlayers == getPlace?.maxPlayers) return fail(400)
 				if (!serverIP) return fail(400, { area: "address", msg: "Missing address" })
 				if (!serverPort) return fail(400, { area: "port", msg: "Missing port" })
+				if (!maxPlayers) return fail(400, { area: "maxPlayers", msg: "Missing server limit" })
 				if (serverPort > 65535 || serverPort < 1024) return fail(400, { area: "port", msg: "Invalid port" })
+				if (maxPlayers > 100 || serverPort < 1) return fail(400, { area: "port", msg: "Invalid server limit" })
 				if (
 					!/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(
 						serverIP
@@ -137,6 +141,7 @@ export const actions = {
 					data: {
 						serverIP,
 						serverPort,
+						maxPlayers,
 					},
 				})
 
@@ -144,6 +149,7 @@ export const actions = {
 					networksuccess: true,
 					serverIP,
 					serverPort,
+					maxPlayers,
 				}
 
 			case "privacy":
