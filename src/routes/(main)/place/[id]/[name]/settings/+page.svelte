@@ -150,6 +150,24 @@
 							<small class="grey-text">Using a port number lower than 49152 may not work correctly.</small>
 						</div>
 					</div>
+					<div class="row mb-2">
+						<label for="serverLimit" class="col-md-3 col-form-label text-md-right">Server Limit</label>
+						<div class="col-md-9">
+							<input
+								id="serverLimit"
+								type="number"
+								min="1"
+								max="100"
+								required
+								name="serverLimit"
+								value={form?.maxPlayers || data.maxPlayers}
+								class="form-control {form?.area == 'maxPlayers' ? 'is-invalid' : 'valid'}"
+							/>
+							{#if form?.area == "maxPlayers"}
+								<small class="col-12 mb-3 text-danger">{form?.msg}</small>
+							{/if}
+						</div>
+					</div>
 					<hr class="grey-text" />
 				</fieldset>
 				<button type="submit" class="btn btn-success mt-2 mb-2">Save Changes</button>
