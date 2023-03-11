@@ -9,28 +9,39 @@ export const load = async () => ({
 			name: true,
 			id: true,
 			image: true,
+			GameSessions: {
+				where: {
+					ping: {
+						gt: Math.floor(Date.now() / 1000) - 35,
+					},
+				},
+			},
 		},
 	}),
 })
 
 export const actions = {
-	default: async ({ request }) => {
-		const filter = (await request.formData()).get("query") as string
-		return {
-			places: await findPlaces({
-				where: {
-					name: {
-						contains: filter,
-						mode: "insensitive",
+	default: async ({ request }) => ({
+		places: await findPlaces({
+			where: {
+				name: {
+					contains: (await request.formData()).get("query") as string,
+					mode: "insensitive",
+				},
+				privateServer: false,
+			},
+			select: {
+				name: true,
+				id: true,
+				image: true,
+				GameSessions: {
+					where: {
+						ping: {
+							gt: Math.floor(Date.now() / 1000) - 35,
+						},
 					},
-					privateServer: false,
 				},
-				select: {
-					name: true,
-					id: true,
-					image: true,
-				},
-			}),
-		}
-	},
+			},
+		}),
+	}),
 }
