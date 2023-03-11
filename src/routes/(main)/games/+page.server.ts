@@ -34,6 +34,7 @@ export const actions = {
 				name: true,
 				id: true,
 				image: true,
+				serverPing: true,
 				GameSessions: {
 					where: {
 						ping: {
