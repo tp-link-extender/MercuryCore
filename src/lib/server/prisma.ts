@@ -1,14 +1,15 @@
 // A collection of functions useful for Prisma, as well
 // as only needing to initialise PrismaClient once.
 
-import { PrismaClient, type Place, type Item, type Group } from "@prisma/client"
+import { PrismaClient } from "@prisma/client"
+import type { Place, Item, Group, Prisma } from "@prisma/client"
 import { client, roQuery } from "./redis"
 
 export const prisma = new PrismaClient()
 
 // Required because likes and dislikes are stored in RedisGraph,
 // while the rest of the info for places is stored in Postgres.
-export async function findPlaces(query: any) {
+export async function findPlaces(query: Prisma.PlaceFindManyArgs) {
 	const places = await prisma.place.findMany(query)
 
 	// Add like/dislike ratio to each place
@@ -35,7 +36,7 @@ export async function findPlaces(query: any) {
 
 // Required because likes and dislikes are stored in RedisGraph,
 // while the rest of the info for items is stored in Postgres.
-export async function findItems(query: any) {
+export async function findItems(query: Prisma.ItemFindManyArgs) {
 	const items = await prisma.item.findMany(query)
 
 	// Add like/dislike ratio to each item
@@ -62,7 +63,7 @@ export async function findItems(query: any) {
 
 // Required because group members are stored in RedisGraph,
 // while the rest of the info for groups is stored in Postgres.
-export async function findGroups(query: any) {
+export async function findGroups(query: Prisma.GroupFindManyArgs) {
 	const groups = await prisma.group.findMany(query)
 
 	// Add members to each group

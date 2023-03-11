@@ -148,7 +148,8 @@
 														</div>
 														<div class="float-end">
 															<span>
-																<i class="fa fa-user opacity-75" /> 12
+																<i class="fa fa-user opacity-75" />
+																{place.GameSessions.length}
 															</span>
 														</div>
 													</div>
