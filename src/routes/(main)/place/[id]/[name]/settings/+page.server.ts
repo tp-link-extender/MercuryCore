@@ -119,7 +119,7 @@ export const actions = {
 			case "network":
 				const serverIP = data.get("address") as string
 				const serverPort = parseInt(data.get("port") as string)
-				const maxPlayers = parseInt(data.get("maxPlayers") as string)
+				const maxPlayers = parseInt(data.get("serverLimit") as string)
 
 				if (serverIP == getPlace?.serverIP && serverPort == getPlace?.serverPort && maxPlayers == getPlace?.maxPlayers) return fail(400)
 				if (!serverIP) return fail(400, { area: "address", msg: "Missing address" })
