@@ -3,6 +3,7 @@
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import fade from "$lib/fade"
 	import Place from "$lib/components/Place.svelte"
+	import Report from "$lib/components/Report.svelte"
 
 	const user = getUser()
 
@@ -36,7 +37,7 @@
 	]
 
 	export let data
-	export let form: any
+	export let form
 </script>
 
 <svelte:head>
@@ -79,6 +80,7 @@
 									</span>
 									<span class="username fw-bold ms-3 light-text">{status.authorUser?.username}</span>
 									<small class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</small>
+									<Report user={status.authorUser?.username || ""} url="status:{status.id}" />
 								</a>
 								<p class="text-start">
 									{status.content}

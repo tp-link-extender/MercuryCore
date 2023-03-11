@@ -70,6 +70,7 @@ export async function load({ locals }) {
 						image: true,
 					},
 				},
+				id: true,
 				posted: true,
 				content: true,
 			},

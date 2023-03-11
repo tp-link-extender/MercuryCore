@@ -2,6 +2,7 @@
 	import { enhance, deserialize } from "$app/forms"
 	import fade from "$lib/fade"
 	import Modal from "$lib/components/Modal.svelte"
+	import Report from "$lib/components/Report.svelte"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import customProtocolCheck from "custom-protocol-check"
 	import { writable } from "svelte/store"
@@ -110,7 +111,12 @@
 						<b>By</b> <a href="/user/{data.ownerUser?.number}" class="text-decoration-none">{data.ownerUser?.username}</a>
 					</p>
 					<p class="light-text mb-0">Gears: <i class="fa-regular fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tooltip on top" /></p>
-					<span class="badge text-bg-{data.serverPing > Math.floor(Date.now() / 1000) - 35  ? 'success' : 'danger'} mb-1">{data.serverPing > Math.floor(Date.now() / 1000) - 35  ? "Online" : "Offline"}</span>
+					<span class="badge text-bg-{data.serverPing > Math.floor(Date.now() / 1000) - 35 ? 'success' : 'danger'} mb-1"
+						>{data.serverPing > Math.floor(Date.now() / 1000) - 35 ? "Online" : "Offline"}</span
+					>
+					<span class="float-end">
+						<Report user={data.ownerUser?.username || ""} url="/place/{data.id}/{data.name}" />
+					</span>
 				</div>
 			</div>
 			<div id="buttons" class="row">

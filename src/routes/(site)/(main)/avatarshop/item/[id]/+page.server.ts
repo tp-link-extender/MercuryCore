@@ -12,6 +12,7 @@ export async function load({ locals, params }) {
 			id: params.id,
 		},
 		select: {
+			id: true,
 			name: true,
 			price: true,
 			creator: {
