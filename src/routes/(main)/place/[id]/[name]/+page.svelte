@@ -112,7 +112,7 @@
 					</p>
 					<p class="light-text mb-0">Gears: <i class="fa-regular fa-circle-xmark" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Tooltip on top" /></p>
 					<span class="badge text-bg-{data.serverPing > Math.floor(Date.now() / 1000) - 35 ? 'success' : 'danger'} mb-1"
-						>{data.serverPing > Math.floor(Date.now() / 1000) - 35 ? "Online" : "Offline"}</span
+						>{data.serverPing > Date.now() / 1000 - 35 ? "Online" : "Offline"}</span
 					>
 					<span class="float-end">
 						<Report user={data.ownerUser?.username || ""} url="/place/{data.id}/{data.name}" />
@@ -120,9 +120,10 @@
 				</div>
 			</div>
 			<div id="buttons" class="row">
-				<button on:click={placeLauncher} id="play" class="btn btn-lg btn-success mt-4">
+				<button on:click={placeLauncher} id="play" class="btn btn-lg btn-success mt-4 {data.serverPing > Date.now() / 1000 - 35 ? '' : 'disabled'}">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
+
 				<form use:enhance class="align-self-center col mt-3 px-0 mb-2" method="POST" action="?/like">
 					<input type="hidden" name="privateTicket" value={data.privateTicket} />
 					<div class="row mb-2">
@@ -285,16 +286,15 @@
 				<div class="card-body">
 					<div class="row">
 						<div class="col col-2">
-							<p class="light-text mb-2">Currently Playing: 0/{data.maxPlayers}</p>
+							<p class="light-text mb-2">Currently Playing: {data.GameSessions.length}/{data.maxPlayers}</p>
 							<button on:click={placeLauncher} id="join" class="btn btn-sm btn-success">Join Server</button>
 						</div>
 						<div class="col">
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
-							<img src={$user?.image} id="pfp" alt="You" height="75" width="75" class="rounded-circle img-fluid rounded-top-0 ml-2" />
+							{#each data.GameSessions as { user }}
+								<a href="/user/{user.number}" class="text-decoration-none">
+									<img src={user.image} alt={user.username} height="75" width="75" class="pfp rounded-circle img-fluid rounded-top-0 m-1" />
+								</a>
+							{/each}
 						</div>
 					</div>
 				</div>
@@ -344,6 +344,9 @@
 		margin: auto
 		display: flex
 		flex-direction: column
+
+	#play img
+		height: 2rem
 
 	#settings
 		position: absolute
@@ -395,6 +398,6 @@
 			border-width: 0px 2px 0px 0px
 			border-color: var(--bs-blue)
 
-	#pfp
+	.pfp
 		background: var(--background)
 </style>

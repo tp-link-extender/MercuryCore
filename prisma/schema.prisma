@@ -60,6 +60,9 @@ model User {
     reportsSent       Report[]       @relation("sent")
     reportsReceived   Report[]       @relation("received")
 
+    moderationActionsGiven    ModerationAction[] @relation("given")
+    moderationActionsReceived ModerationAction[] @relation("received")
+
     @@map("user")
 }
 
@@ -258,4 +261,26 @@ model Report {
     url      String
     category ReportCategory
     inGame   Boolean        @default(false)
+}
+
+enum ModerationActionType {
+    Reminder
+    Warning
+    Ban
+    Termination
+}
+
+model ModerationAction {
+    id          String   @id @unique @default(cuid())
+    moderator   User     @relation("given", fields: [moderatorId], references: [id])
+    moderatorId String
+    moderatee   User     @relation("received", fields: [moderateeId], references: [id])
+    moderateeId String
+    time        DateTime @default(now())
+
+    note       String
+    materials  String?
+    type       ModerationActionType
+    daysLength Int?
+    active     Boolean              @default(true)
 }

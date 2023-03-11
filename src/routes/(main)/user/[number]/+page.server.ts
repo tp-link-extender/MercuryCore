@@ -49,6 +49,15 @@ export async function load({ locals, params }) {
 					ownerUsername: userExists.username,
 					privateServer: false,
 				},
+				include: {
+					GameSessions: {
+						where: {
+							ping: {
+								gt: Math.floor(Date.now() / 1000) - 35,
+							},
+						},
+					},
+				},
 			}),
 			groups: findGroups({
 				where: {
