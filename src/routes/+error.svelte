@@ -2,7 +2,7 @@
 	// If an error happens in any +page or +layout file,
 	// this page will be rendered instead.
 
-	import type { LayoutData } from "./$types"
+	import type { LayoutData } from "./(site)/$types"
 	import { page } from "$app/stores"
 	import Navbar from "$lib/components/Navbar.svelte"
 	import Footer from "$lib/components/Footer.svelte"

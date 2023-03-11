@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Report from "./Report.svelte"
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 	import type { Writable } from "svelte/store"
@@ -84,6 +85,7 @@
 				<button on:click={() => replyingTo.set(reply.id)} class="p-0 btn btn-sm grey-text px-1">
 					<i class="fa-regular fa-message pe-2" /> Reply
 				</button>
+				<Report user={reply.author.username} url="/forum/{forumCategory}/{reply.id}" reverse />
 			{/if}
 			{#if $replyingTo == reply.id}
 				<div class="mb-2 card reply">
