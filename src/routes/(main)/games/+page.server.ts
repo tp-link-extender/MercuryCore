@@ -9,6 +9,7 @@ export const load = async () => ({
 			name: true,
 			id: true,
 			image: true,
+			serverPing: true,
 			GameSessions: {
 				where: {
 					ping: {
