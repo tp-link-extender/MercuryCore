@@ -224,8 +224,6 @@ end
 -- Now start the connection
 ns:Start(${port}, sleeptime) 
 
-game:GetService("Visit"):SetPing("${serverPresenceUrl}", 30)
-
 if timeout then
 	scriptContext:SetTimeout(timeout)
 end
@@ -250,6 +248,7 @@ end)
 while true do
 	pcall(function()
 		game:HttpGet("${serverPresenceUrl}")
+		print("PING")
 	end)
 	wait(30)
 end
