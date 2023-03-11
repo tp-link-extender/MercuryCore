@@ -125,7 +125,7 @@
 local ADMINS = 
 {
 	taskmanager = 1,
-	Heliodex = 1,
+	Heliodex = 'http://www.roblox.com/asset/?id=6923328292',
 	multako = 'http://www.roblox.com/asset/?id=6923328292',
 	mercury = 1,
 	pizzaboxer = 'http://www.roblox.com/asset/?id=6917566633'
