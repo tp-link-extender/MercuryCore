@@ -55,6 +55,13 @@ export async function load({ locals }) {
 				name: true,
 				id: true,
 				image: true,
+				GameSessions: {
+					where: {
+						ping: {
+							gt: Math.floor(Date.now() / 1000) - 35,
+						},
+					},
+				},
 			},
 			where: {
 				privateServer: false,

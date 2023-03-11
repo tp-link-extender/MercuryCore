@@ -20,7 +20,8 @@
 		{place.ratio}%
 	</span>
 	<span class="float-end me-1">
-		<i class="fa fa-user opacity-75" /> 12
+		<i class="fa fa-user opacity-75" />
+		{place.GameSessions.length}
 	</span>
 </a>
 
