@@ -30,12 +30,30 @@ export async function GET({ url }) {
 		const gameSession = (
 			await prisma.gameSessions.findMany({
 				where: { ticket: clientTicket, valid: true },
-				select: { user: true, place: { select: { serverIP: true, serverPort: true, ownerUser: true, ownerGroup: true, id: true } } },
+				select: {
+					user: true,
+					place: {
+						select: {
+							serverIP: true,
+							serverPort: true,
+							ownerUser: true,
+							ownerGroup: true,
+							id: true
+						}
+					}
+				},
 			})
 		)[0]
 		if (!gameSession) throw error(400, "Invalid Game Session")
 
-		await prisma.gameSessions.update({ where: { ticket: clientTicket }, data: { valid: false } })
+		await prisma.gameSessions.update({
+			where: {
+				ticket: clientTicket
+			},
+			data: {
+				valid: false
+			}
+		})
 
 		if (privateServer) {
 			const privateSession = await prisma.place.findUnique({
