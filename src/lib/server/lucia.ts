@@ -59,5 +59,17 @@ export async function authoriseUser(
 export async function authoriseAdmin(locals: any) {
 	const { session, user } = await locals.validateUser()
 
-	if (!session || user.permissionLevel != 5) throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
+	if (!session || user.permissionLevel < 5) throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
+}
+
+export async function authoriseMod(locals: any) {
+	const { session, user } = await locals.validateUser()
+
+	if (!session || user.permissionLevel < 4) throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
+}
+
+export async function authoriseAllAdmin(locals: any) {
+	const { session, user } = await locals.validateUser()
+
+	if (!session || user.permissionLevel < 3) throw error(451, Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"))
 }

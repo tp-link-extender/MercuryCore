@@ -14,6 +14,7 @@ datasource db {
     url      = env("POSTGRES_URL")
 }
 
+
 // Users & Groups
 // ADMIN LEVELS:
 // 1: User
@@ -55,6 +56,7 @@ model User {
     theme             String?
     animationSettings String?
     GameSessions      GameSessions[]
+    Announcements     Announcements[]
     forumPosts        ForumPost[]
     forumReplies      ForumReply[]
     reportsSent       Report[]       @relation("sent")
@@ -87,6 +89,16 @@ model Session {
 
     @@index([user_id])
     @@map("session")
+}
+
+model Announcements {
+    id        String @id @unique @default(cuid())
+    body      String
+    bgColour  String
+    textLight Boolean
+    active    Boolean @default(true) 
+    creatorId String
+    user      User    @relation(references: [id], fields: [creatorId], onDelete: Cascade)
 }
 
 model GameSessions {
