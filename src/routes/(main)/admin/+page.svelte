@@ -1,11 +1,7 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	const user = getUser()
-
-	export let form
-	export let data
 
 	const permissions: any = [
 		[], // index from 1
@@ -37,7 +33,7 @@
 					</li>
 				{/if}
 				<li class="nav-item" role="presentation">
-					<a class="nav-link {$user?.permissionLevel == 5 ? "" : "active"}" data-bs-toggle="tab" href="#moderation" aria-selected="false" role="tab" tabindex="-1">Moderation</a>
+					<a class="nav-link {$user?.permissionLevel == 5 ? '' : 'active'}" data-bs-toggle="tab" href="#moderation" aria-selected="false" role="tab" tabindex="-1">Moderation</a>
 				</li>
 				<li class="nav-item" role="presentation">
 					<a class="nav-link" data-bs-toggle="tab" href="#economy" aria-selected="false" role="tab" tabindex="-1">Economy</a>
@@ -51,67 +47,67 @@
 			<div id="myTabContent" class="tab-content">
 				{#if $user?.permissionLevel == 5}
 					<div class="tab-pane fade active show" id="administration" role="tabpanel">
-					<div class="row g-3">
-						<div class="col-lg-3">
-							<a href="/admin/banners" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-solid fa-bullhorn"/></h1>
-										<h5 class="fw-normal mt-3">Banners</h5>
+						<div class="row g-3">
+							<div class="col-lg-3">
+								<a href="/admin/banners" class="shadow-hover">
+									<div class="card text-center light-text">
+										<div class="card-body rounded-1 p-4">
+											<h1><i class="fa-solid fa-bullhorn" /></h1>
+											<h5 class="fw-normal mt-3">Banners</h5>
+										</div>
 									</div>
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3">
-							<a href="/admin/accounts" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-regular fa-user" /></h1>
-										<h5 class="fw-normal mt-3">Accounts</h5>
+								</a>
+							</div>
+							<div class="col-lg-3">
+								<a href="/admin/accounts" class="shadow-hover">
+									<div class="card text-center light-text">
+										<div class="card-body rounded-1 p-4">
+											<h1><i class="fa-regular fa-user" /></h1>
+											<h5 class="fw-normal mt-3">Accounts</h5>
+										</div>
 									</div>
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3">
-							<a href="#" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-solid fa-book"/></h1>
-										<h5 class="fw-normal mt-3">Audit Logs</h5>
+								</a>
+							</div>
+							<div class="col-lg-3">
+								<a href="#" class="shadow-hover">
+									<div class="card text-center light-text">
+										<div class="card-body rounded-1 p-4">
+											<h1><i class="fa-solid fa-book" /></h1>
+											<h5 class="fw-normal mt-3">Audit Logs</h5>
+										</div>
 									</div>
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3">
-							<a href="#" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-solid fa-key"></h1>
-										<h5 class="fw-normal mt-3">Invites</h5>
+								</a>
+							</div>
+							<div class="col-lg-3">
+								<a href="#" class="shadow-hover">
+									<div class="card text-center light-text">
+										<div class="card-body rounded-1 p-4">
+											<h1><i class="fa-solid fa-key" /></h1>
+											<h5 class="fw-normal mt-3">Invites</h5>
+										</div>
 									</div>
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3">
-							<a href="#" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-solid fa-dice"/></h1>
-										<h5 class="fw-normal mt-3">Coin Flip</h5>
+								</a>
+							</div>
+							<div class="col-lg-3">
+								<a href="#" class="shadow-hover">
+									<div class="card text-center light-text">
+										<div class="card-body rounded-1 p-4">
+											<h1><i class="fa-solid fa-dice" /></h1>
+											<h5 class="fw-normal mt-3">Coin Flip</h5>
+										</div>
 									</div>
-								</div>
-							</a>
+								</a>
+							</div>
 						</div>
-					</div>
 					</div>
 				{/if}
-				<div class="tab-pane fade {$user?.permissionLevel == 5 ? "" : "active show"}" id="moderation" role="tabpanel">
+				<div class="tab-pane fade {$user?.permissionLevel == 5 ? '' : 'active show'}" id="moderation" role="tabpanel">
 					<div class="row g-3">
 						<div class="col-lg-3">
 							<a href="#" class="shadow-hover">
 								<div class="card text-center light-text">
 									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-solid fa-user-slash"/></h1>
+										<h1><i class="fa-solid fa-user-slash" /></h1>
 										<h5 class="fw-normal mt-3">Moderate User</h5>
 									</div>
 								</div>
@@ -131,7 +127,7 @@
 							<a href="#" class="shadow-hover">
 								<div class="card text-center light-text">
 									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-solid fa-file-circle-check"/></h1>
+										<h1><i class="fa-solid fa-file-circle-check" /></h1>
 										<h5 class="fw-normal mt-3">Asset Approval</h5>
 									</div>
 								</div>
@@ -142,16 +138,16 @@
 				<div class="tab-pane fade" id="economy" role="tabpanel">
 					<div class="row g-3">
 						{#if $user?.permissionLevel == 5}
-						<div class="col-lg-3">
-							<a href="/admin/stipend" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-regular fa-clock" /></h1>
-										<h5 class="fw-normal mt-3">Daily Stipend</h5>
+							<div class="col-lg-3">
+								<a href="/admin/stipend" class="shadow-hover">
+									<div class="card text-center light-text">
+										<div class="card-body rounded-1 p-4">
+											<h1><i class="fa-regular fa-clock" /></h1>
+											<h5 class="fw-normal mt-3">Daily Stipend</h5>
+										</div>
 									</div>
-								</div>
-							</a>
-						</div>
+								</a>
+							</div>
 						{/if}
 						<div class="col-lg-3">
 							<a href="#" class="shadow-hover">
@@ -164,22 +160,22 @@
 							</a>
 						</div>
 						{#if $user?.permissionLevel == 5 || $user?.permissionLevel == 3}
-						<div class="col-lg-3">
-							<a href="#" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-solid fa-file-circle-plus"/></h1>
-										<h5 class="fw-normal mt-3">Create New Asset</h5>
+							<div class="col-lg-3">
+								<a href="#" class="shadow-hover">
+									<div class="card text-center light-text">
+										<div class="card-body rounded-1 p-4">
+											<h1><i class="fa-solid fa-file-circle-plus" /></h1>
+											<h5 class="fw-normal mt-3">Create New Asset</h5>
+										</div>
 									</div>
-								</div>
-							</a>
-						</div>
+								</a>
+							</div>
 						{/if}
 						<div class="col-lg-3">
 							<a href="/admin/transactions" class="shadow-hover">
 								<div class="card text-center light-text">
 									<div class="card-body rounded-1 p-4">
-										<h1><i class="fa-solid fa-money-bill-transfer"/></h1>
+										<h1><i class="fa-solid fa-money-bill-transfer" /></h1>
 										<h5 class="fw-normal mt-3">Transactions</h5>
 									</div>
 								</div>
@@ -192,15 +188,15 @@
 						<div class="col-lg-7 col-md-7">
 							<div class="card text-black mb-3">
 								<div class="card-body rounded-1">
-									<h3 class="light-text"><i class="fa-solid fa-memory"></i> 0 / 0 GB</h3>
+									<h3 class="light-text"><i class="fa-solid fa-memory" /> 0 / 0 GB</h3>
 									<span class="light-text">0 MB is being used</span>
 									<div class="progress mt-2">
 										<div
 											class="progress-bar progress-bar-striped progress-bar-animated"
 											role="progressbar"
-											aria-valuenow="1"
-											aria-valuemin="0"
-											aria-valuemax="100"
+											aria-valuenow={1}
+											aria-valuemin={0}
+											aria-valuemax={100}
 											style="width: 1%;"
 										/>
 									</div>
@@ -214,9 +210,9 @@
 										<div
 											class="progress-bar progress-bar-striped progress-bar-animated"
 											role="progressbar"
-											aria-valuenow="1"
-											aria-valuemin="0"
-											aria-valuemax="100"
+											aria-valuenow={1}
+											aria-valuemin={0}
+											aria-valuemax={100}
 											style="width: 1%;"
 										/>
 									</div>
@@ -286,5 +282,5 @@
 	.nav-link
 		border-radius: 0
 		color: var(--light-text)
-        
+
 </style>
