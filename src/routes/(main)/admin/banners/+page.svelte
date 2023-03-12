@@ -17,7 +17,7 @@
 </svelte:head>
 
 <div class="container py-4">
-	<h2 class="light-text mb-0">Admin - Banners</h2>
+	<h1 class="light-text mb-0">Admin - Banners</h1>
     <a href="/admin" class="text-decoration-none"><i class="fa-solid fa-caret-left"></i> Back to panel</a>
 	<div class="row mt-4">
 		<div class="col-lg-2 col-md-3 mb-4">
