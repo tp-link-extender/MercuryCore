@@ -31,11 +31,13 @@
 	<div class="row">
 		<div class="col-lg-2 col-md-3 mb-4">
 			<ul class="nav nav-tabs flex-column border-0" role="tablist">
+				{#if $user?.permissionLevel == 5}
+					<li class="nav-item" role="presentation">
+						<a class="nav-link active" data-bs-toggle="tab" href="#administration" aria-selected="true" role="tab">Administration</a>
+					</li>
+				{/if}
 				<li class="nav-item" role="presentation">
-					<a class="nav-link active" data-bs-toggle="tab" href="#administration" aria-selected="true" role="tab">Administration</a>
-				</li>
-				<li class="nav-item" role="presentation">
-					<a class="nav-link" data-bs-toggle="tab" href="#moderation" aria-selected="false" role="tab" tabindex="-1">Moderation</a>
+					<a class="nav-link {$user?.permissionLevel == 5 ? "" : "active"}" data-bs-toggle="tab" href="#moderation" aria-selected="false" role="tab" tabindex="-1">Moderation</a>
 				</li>
 				<li class="nav-item" role="presentation">
 					<a class="nav-link" data-bs-toggle="tab" href="#economy" aria-selected="false" role="tab" tabindex="-1">Economy</a>
@@ -47,7 +49,8 @@
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<div id="myTabContent" class="tab-content">
-				<div class="tab-pane fade active show" id="administration" role="tabpanel">
+				{#if $user?.permissionLevel == 5}
+					<div class="tab-pane fade active show" id="administration" role="tabpanel">
 					<div class="row g-3">
 						<div class="col-lg-3">
 							<a href="/admin/banners" class="shadow-hover">
@@ -60,11 +63,11 @@
 							</a>
 						</div>
 						<div class="col-lg-3">
-							<a href="#" class="shadow-hover">
+							<a href="/admin/accounts" class="shadow-hover">
 								<div class="card text-center light-text">
 									<div class="card-body rounded-1 p-4">
 										<h1><i class="fa-regular fa-user" /></h1>
-										<h5 class="fw-normal mt-3">User Information</h5>
+										<h5 class="fw-normal mt-3">Accounts</h5>
 									</div>
 								</div>
 							</a>
@@ -100,8 +103,9 @@
 							</a>
 						</div>
 					</div>
-				</div>
-				<div class="tab-pane fade" id="moderation" role="tabpanel">
+					</div>
+				{/if}
+				<div class="tab-pane fade {$user?.permissionLevel == 5 ? "" : "active show"}" id="moderation" role="tabpanel">
 					<div class="row g-3">
 						<div class="col-lg-3">
 							<a href="#" class="shadow-hover">
@@ -137,8 +141,9 @@
 				</div>
 				<div class="tab-pane fade" id="economy" role="tabpanel">
 					<div class="row g-3">
+						{#if $user?.permissionLevel == 5}
 						<div class="col-lg-3">
-							<a href="#" class="shadow-hover">
+							<a href="/admin/stipend" class="shadow-hover">
 								<div class="card text-center light-text">
 									<div class="card-body rounded-1 p-4">
 										<h1><i class="fa-regular fa-clock" /></h1>
@@ -147,6 +152,7 @@
 								</div>
 							</a>
 						</div>
+						{/if}
 						<div class="col-lg-3">
 							<a href="#" class="shadow-hover">
 								<div class="card text-center light-text">
@@ -157,6 +163,7 @@
 								</div>
 							</a>
 						</div>
+						{#if $user?.permissionLevel == 5 || $user?.permissionLevel == 3}
 						<div class="col-lg-3">
 							<a href="#" class="shadow-hover">
 								<div class="card text-center light-text">
@@ -167,8 +174,9 @@
 								</div>
 							</a>
 						</div>
+						{/if}
 						<div class="col-lg-3">
-							<a href="#" class="shadow-hover">
+							<a href="/admin/transactions" class="shadow-hover">
 								<div class="card text-center light-text">
 									<div class="card-body rounded-1 p-4">
 										<h1><i class="fa-solid fa-money-bill-transfer"/></h1>
@@ -239,117 +247,6 @@
 	</div>
 </div>
 
-<hr />
-
-<h1 class="text-center light-text">Admin panel</h1>
-
-<div class="container mt-5 light-text">
-	<h2 class="light-text">Banner</h2>
-	<form use:enhance method="POST" action="?/updateBanner">
-		<fieldset>
-			<div class="row">
-				<label for="bannerText" class="col-md-3 col-form-label text-md-right">Banner text</label>
-				<div class="col-md-8">
-					<input type="text" name="bannerText" id="bannerText" class="form-control valid" />
-				</div>
-			</div>
-			<br />
-			<div class="row">
-				<label for="bannerColour" class="col-md-3 col-form-label text-md-right">Banner colour</label>
-				<div class="col-md-2">
-					<input type="color" name="bannerColour" id="bannerColour" required class="valid" />
-				</div>
-			</div>
-			<br />
-			<div class="row">
-				<label for="bannerTextLight" class="col-md-3 col-form-label text-md-right">Light text?</label>
-				<div class="col-md-2">
-					<input type="checkbox" name="bannerTextLight" id="bannerTextLight" value="true" class="valid form-check-input" />
-				</div>
-			</div>
-			<br />
-			<button type="submit" class="btn btn-success">Submit</button>
-		</fieldset>
-	</form>
-	<br />
-	{#if form?.bannersuccess}
-		<p class="col-12 mb-3 text-success">{form?.msg}</p>
-	{/if}
-
-	<br />
-	<h2 class="light-text">Economy</h2>
-	<form use:enhance method="POST" action="?/economy">
-		<fieldset>
-			<div class="row">
-				<label for="taxRate" class="col-md-3 col-form-label text-md-right">Tax rate</label>
-				<div class="col-md-8">
-					<div class="input-group">
-						<input type="number" name="taxRate" id="taxRate" value={data.taxRate} required class="form-control valid" />
-						<span class="input-group-text light-text">%</span>
-					</div>
-				</div>
-			</div>
-			<br />
-			<div class="row">
-				<label for="dailyStipend" class="col-md-3 col-form-label text-md-right">Daily stipend</label>
-				<div class="col-md-8">
-					<div class="input-group">
-						<input type="number" name="dailyStipend" id="dailyStipend" value={data.dailyStipend} required class="form-control valid" />
-						<span class="input-group-text light-text"><i class="fa fa-gem text-success" /></span>
-					</div>
-				</div>
-			</div>
-			<br />
-			<div class="row">
-				<label for="stipendTime" class="col-md-3 col-form-label text-md-right">Time between stipend</label>
-				<div class="col-md-8">
-					<div class="input-group">
-						<input type="number" name="stipendTime" id="stipendTime" value={data.stipendTime} required class="form-control valid" />
-						<span class="input-group-text light-text">hours</span>
-					</div>
-				</div>
-			</div>
-			<br />
-			<button type="submit" class="btn btn-success">Submit</button>
-		</fieldset>
-	</form>
-	<br />
-	{#if form?.economysuccess}
-		<p class="col-12 mb-3 text-success">{form?.msg}</p>
-	{/if}
-
-	<br />
-
-	<h2 class="light-text">User</h2>
-	<form use:enhance method="POST" action="?/user">
-		<fieldset>
-			<div class="row">
-				<label for="username" class="col-md-3 col-form-label text-md-right">Username</label>
-				<div class="col-md-8">
-					<input type="text" name="username" id="username" required class="form-control valid" />
-				</div>
-			</div>
-			<br />
-			<div class="row">
-				<label for="password" class="col-md-3 col-form-label text-md-right">New password</label>
-				<div class="col-md-8">
-					<input type="text" name="password" id="password" required class="form-control valid" />
-				</div>
-			</div>
-			<br />
-			<button type="submit" class="btn btn-success">Submit</button>
-		</fieldset>
-	</form>
-	<br />
-	{#if form?.usersuccess}
-		<p class="col-12 mb-3 text-success">{form?.msg}</p>
-	{/if}
-
-	{#if form?.error}
-		<p class="col-12 mb-3 text-danger">{form?.msg}</p>
-	{/if}
-</div>
-
 <style lang="sass">
 
 	.card-body
@@ -390,13 +287,4 @@
 		border-radius: 0
 		color: var(--light-text)
         
-	input[type="color"]
-		height: 2.5rem
-	input[type="checkbox"]
-		height: 1.5rem
-		width: 1.5rem
-
-	.input-group-text
-		background: var(--accent1)
-		border-color: var(--accent3)
 </style>
