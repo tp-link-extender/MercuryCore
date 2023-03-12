@@ -1,115 +1,97 @@
-import { auth, authoriseAdmin, authoriseUser } from "$lib/server/lucia"
-import { client } from "$lib/server/redis"
+import { authoriseAdmin, authoriseUser } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import { prisma } from "$lib/server/prisma"
 import ratelimit from "$lib/server/ratelimit"
 
 // Make sure a user is an administrator before loading the page.
-export async function load ({ locals }) {
+export async function load({ locals }) {
 	await authoriseAdmin(locals)
-	
+
 	return {
 		banners: prisma.announcements.findMany({
-			select: {
-				body: true,
-				bgColour: true,
-				active: true,
-				textLight: true,
-				id: true,
+			include: {
 				user: {
 					select: {
 						username: true,
 						number: true,
-					}
-				}
-			}
-		})
+					},
+				},
+			},
+			orderBy: {
+				id: "asc",
+			},
+		}),
 	}
 }
 
 export const actions = {
-	createBanner: async ({ request, locals, getClientAddress }) => {
+	default: async ({ request, locals, getClientAddress }) => {
 		await authoriseAdmin(locals)
 
-		const limit = ratelimit("createBanner", getClientAddress, 30)
-		if (limit) return limit
+		const { user } = await authoriseUser(locals.validateUser)
 
-		const user = (await authoriseUser(locals.validateUser)).user
 		const data = await request.formData()
-
-		const bannerText = data.get("bannerText") as string
-		const bannerColour = data.get("bannerColour") as string
-		const bannerTextLight = !!data.get("bannerTextLight")
-
-		if (!bannerColour || !bannerText) return fail(400, { error: true, msg: "Missing fields" })
-		if (bannerText.length > 100 || bannerText.length < 3) return fail(400, { error: true, msg: "Banner text too long" })
+		const action = data.get("action") as string
+		const bannerId = data.get("id") as string
 
 		const bannerActiveCount = await prisma.announcements.findMany({
-			where: {active: true },
+			where: { active: true },
 		})
 
-		if(bannerActiveCount && bannerActiveCount.length > 2) return fail(400, { error: true, msg: "Too many active banners" })
+		switch (action) {
+			case "create":
+				const limit = ratelimit("createBanner", getClientAddress, 30)
+				if (limit) return limit
 
-		await prisma.announcements.create({
-			data: {
-				body: bannerText,
-				bgColour: bannerColour,
-				textLight: bannerTextLight,
-				user: {
-					connect: {
-						id: user.userId
-					}
+				const bannerText = data.get("bannerText") as string
+				const bannerColour = data.get("bannerColour") as string
+				const bannerTextLight = !!data.get("bannerTextLight")
+
+				if (!bannerColour || !bannerText) return fail(400, { msg: "Missing fields" })
+				if (bannerText.length > 100 || bannerText.length < 3) return fail(400, { msg: "Banner text too long" })
+
+				if (bannerActiveCount && bannerActiveCount.length > 2) return fail(400, { msg: "Too many active banners" })
+
+				await prisma.announcements.create({
+					data: {
+						body: bannerText,
+						bgColour: bannerColour,
+						textLight: bannerTextLight,
+						user: {
+							connect: {
+								id: user.userId,
+							},
+						},
+					},
+				})
+
+				return {
+					success: true,
+					msg: "Banner created successfully!",
 				}
-			},
-		})
+			case "show":
+			case "hide":
+				if (!bannerId) return fail(400, { msg: "Missing fields" })
 
-		return {
-			error: false,
-			bannersuccess: true,
-			msg: "Banner created successfully!",
-		}
-	},
+				await prisma.announcements.update({
+					where: {
+						id: bannerId,
+					},
+					data: {
+						active: action == "show",
+					},
+				})
 
-	bannerVisible: async ({ request, locals, getClientAddress }) => {
-		await authoriseAdmin(locals)
+				return
+			case "delete":
+				if (!bannerId) return fail(400, { msg: "Missing fields" })
 
-		const limit = ratelimit("createBanner", getClientAddress, 30)
-		if (limit) return limit
-
-		const user = (await authoriseUser(locals.validateUser)).user
-		
-		const data = await request.formData()
-
-		const bannerText = data.get("bannerText") as string
-		const bannerColour = data.get("bannerColour") as string
-		const bannerTextLight = !!data.get("bannerTextLight")
-
-		if (!bannerColour || !bannerText) return fail(400, { error: true, msg: "Missing fields" })
-		if (bannerText.length > 100 || bannerText.length < 3) return fail(400, { error: true, msg: "Banner text too long" })
-
-		const bannerActiveCount = await prisma.announcements.findMany({
-			where: {active: true },
-		})
-
-		if(bannerActiveCount && bannerActiveCount.length > 2) return fail(400, { error: true, msg: "Too many active banners" })
-
-		await prisma.announcements.create({
-			data: {
-				body: bannerText,
-				bgColour: bannerColour,
-				textLight: bannerTextLight,
-				user: {
-					connect: {
-						id: user.userId
-					}
-				}
-			},
-		})
-
-		return {
-			error: false,
-			bannersuccess: true,
-			msg: "Banner created successfully!",
+				await prisma.announcements.delete({
+					where: {
+						id: bannerId,
+					},
+				})
+				return
 		}
 	},
 }
