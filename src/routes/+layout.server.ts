@@ -6,10 +6,12 @@ export const load = handleServerSession(async () => ({
 	// Some globals for pages, loaded from Redis
 
 	banners: prisma.announcements.findMany({
+		where: {
+			active: true,
+		},
 		select: {
 			body: true,
 			bgColour: true,
-			active: true,
 			textLight: true,
 		}
 	})
