@@ -1,10 +1,10 @@
-import { auth, authoriseAdmin } from "$lib/server/lucia"
+import { auth, authoriseAllAdmin } from "$lib/server/lucia"
 import { client } from "$lib/server/redis"
 import { fail } from "@sveltejs/kit"
 
 // Make sure a user is an administrator before loading the page.
 export async function load({ locals }) {
-	await authoriseAdmin(locals)
+	await authoriseAllAdmin(locals)
 
 	return {
 		taxRate: client.get("taxRate"),
