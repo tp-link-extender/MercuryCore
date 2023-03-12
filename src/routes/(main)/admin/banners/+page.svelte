@@ -1,15 +1,9 @@
 <script lang="ts">
-    import { enhance } from "$app/forms"
+	import { enhance } from "$app/forms"
+	import fade from "$lib/fade"
 
-    export let data
+	export let data
 	export let form
-
-	async function updateVisibility(bannerID: any) {
-		const formdata = new FormData()
-
-		formdata.append("bannerID", bannerID)
-	}
-
 </script>
 
 <svelte:head>
@@ -18,7 +12,7 @@
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Banners</h1>
-    <a href="/admin" class="text-decoration-none"><i class="fa-solid fa-caret-left"></i> Back to panel</a>
+	<a href="/admin" class="text-decoration-none"><i class="fa-solid fa-caret-left" /> Back to panel</a>
 	<div class="row mt-4">
 		<div class="col-lg-2 col-md-3 mb-4">
 			<ul class="nav nav-tabs flex-column border-0" role="tablist">
@@ -33,14 +27,12 @@
 		<div class="col-lg-10 col-md-9">
 			<div id="myTabContent" class="tab-content">
 				<div class="tab-pane fade active show" id="makebanner" role="tabpanel">
-					<form use:enhance method="POST" action="?/createBanner">
+					<form use:enhance method="POST">
 						<fieldset>
 							<div class="row">
 								<label for="bannerText" class="col-md-3 col-form-label text-md-right light-text">Banner text</label>
 								<div class="col-md-8">
-									<textarea name="bannerText" id="bannerText" class="form-control valid">
-
-									</textarea>
+									<textarea name="bannerText" id="bannerText" class="form-control valid" />
 									<small class="light-text">3-100 characters</small>
 								</div>
 							</div>
@@ -59,42 +51,47 @@
 								</div>
 							</div>
 							<br />
-							<button type="submit" class="btn btn-success">Submit</button>
+							<button name="action" value="create" class="btn btn-success">Submit</button>
 							<br />
-							{#if form?.bannersuccess}
-								<p class="col-12 mb-3 text-success">{form?.msg}</p>
-							{/if}
-
-							{#if form?.error}
-								<p class="col-12 mb-3 text-danger">{form?.msg}</p>
-							{/if}
+							<p class="col-12 mb-3 text-{form?.success ? 'success' : 'danger'}">{form?.msg || ""}</p>
 						</fieldset>
 					</form>
 				</div>
 				<div class="tab-pane fade" id="viewbanners" role="tabpanel">
 					<table class="table table-responsive">
 						<thead class="light-text">
-						  <tr>
-							<th scope="col">Options</th>
-							<th scope="col">Active</th>
-							<th scope="col">Body</th>
-							<th scope="col">Creator</th>
-						  </tr>
+							<tr>
+								<th scope="col">Options</th>
+								<th scope="col">Active</th>
+								<th scope="col">Body</th>
+								<th scope="col">Creator</th>
+							</tr>
 						</thead>
 						<tbody class="light-text">
-						{#each data.banners as banner}
-						  <tr>
-							<th>
-								<button type="button" class="btn btn-sm btn-link text-decoration-none text-danger my-0"><i class="fa-solid fa-trash"></i> Delete Banner</button>
-								<button type="button" on:click={() => {updateVisibility(banner.id)}} class="btn btn-sm btn-link text-decoration-none text-{banner.active ? "warning" : "success"} my-0"><i class="fa-solid fa-eye{banner.active ? "-slash" : ""}"></i> {banner.active ? "Dea" : "A"}ctivate</button>
-							</th>
-							<th>{banner.active ? "Yes" : "No"}</th>
-							<td><button type="button" class="btn btn-sm btn-success my-0">View Body</button></td>
-							<td><a href="/user/{banner.user.number}" class="text-decoration-none">{banner.user.username}</a></td>
-						  </tr>
-						{/each}
+							{#each data.banners as banner, num}
+								<!-- <tr in:fade|global={{ num, total: data.banners.length }}> -->
+								<tr>
+									<th>
+										<form use:enhance method="POST">
+											<input type="hidden" name="id" value={banner.id} />
+											<button name="action" value="delete" class="btn btn-sm btn-link text-decoration-none text-danger my-0"><i class="fa-solid fa-trash" /> Delete Banner</button
+											>
+										</form>
+										<form use:enhance method="POST">
+											<input type="hidden" name="action" value={banner.active ? "hide" : "show"} />
+											<input type="hidden" name="id" value={banner.id} />
+											<button type="submit" class="btn btn-sm btn-link text-decoration-none text-{banner.active ? 'warning' : 'success'} my-0"
+												><i class="fa-solid fa-eye{banner.active ? '-slash' : ''}" /> {banner.active ? "Dea" : "A"}ctivate</button
+											>
+										</form>
+									</th>
+									<th>{banner.active ? "Yes" : "No"}</th>
+									<td><button type="button" class="btn btn-sm btn-success my-0">View Body</button></td>
+									<td><a href="/user/{banner.user.number}" class="text-decoration-none">{banner.user.username}</a></td>
+								</tr>
+							{/each}
 						</tbody>
-					  </table>
+					</table>
 				</div>
 			</div>
 		</div>
@@ -102,7 +99,6 @@
 </div>
 
 <style lang="sass">
-
 	.nav-tabs .nav-item.show .nav-link,
 	.nav-tabs .nav-link.active 
 		color: rgb(255, 255, 255)
