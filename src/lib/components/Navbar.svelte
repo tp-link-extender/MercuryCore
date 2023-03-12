@@ -94,10 +94,10 @@
 				</ul>
 			{:else}
 				<ul class="navbar-nav loggedin">
-					<li class="nav-item">
+					<li class="nav-item mt-1">
 						<a type="button" href="/login" class="btn mb-1 light-text">Log in</a>
 					</li>
-					<li class="nav-item">
+					<li class="nav-item mt-1">
 						<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
 					</li>
 				</ul>
@@ -118,7 +118,7 @@
 	</div>
 </nav>
 
-{#if data.bannerText}
+{#if data.bannerText && $user}
 	<p class="text-center text-{data.bannerTextLight ? 'light' : ''}" style="background: {data.bannerColour}">
 		{data.bannerText}
 	</p>
