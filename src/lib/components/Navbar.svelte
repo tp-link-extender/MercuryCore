@@ -118,10 +118,12 @@
 	</div>
 </nav>
 
-{#if data.bannerText && $user}
-	<p class="text-center text-{data.bannerTextLight ? 'light' : ''}" style="background: {data.bannerColour}">
-		{data.bannerText}
-	</p>
+{#if data.banners && $user}
+	{#each data.banners as announcement}
+		<div class="alert py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight ? 'light' : ''}" role="alert" style="background: {announcement.bgColour}">
+			{announcement.body}
+	  	</div>
+	{/each}
 {/if}
 
 <style lang="sass">
