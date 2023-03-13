@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { applyAction, enhance } from "$app/forms"
 
-	function input(name: string, e: any) {
-		data[name].value = e.target.value
-	}
+	const input = (name: string, e: any) => (data[name].value = e.target.value)
 
 	let data: any = {
 		username: { value: "", invalid: false },
@@ -39,7 +37,7 @@
 		// (data.password.value.length < 1 && update("password", "Password must be at least 1 character")) || Doesn't appear anyway if form has no input
 		data.password.value.length > 6969 && update("password", "Password must be less than 6969 characters")
 
-	export let form: any
+	export let form
 </script>
 
 <svelte:head>
@@ -96,9 +94,7 @@
 								bindings require the type to be determined at compile time.
 							-->
 							<input
-								on:input={e => {
-									input(name, e)
-								}}
+								on:input={e => input(name, e)}
 								id={name}
 								{name}
 								{type}
