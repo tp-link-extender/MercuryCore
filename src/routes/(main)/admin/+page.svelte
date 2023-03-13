@@ -79,7 +79,7 @@
 								</a>
 							</div>
 							<div class="col-lg-3">
-								<a href="#" class="shadow-hover">
+								<a href="/admin/invites" class="shadow-hover">
 									<div class="card text-center light-text">
 										<div class="card-body rounded-1 p-4">
 											<h1><i class="fa-solid fa-key" /></h1>
