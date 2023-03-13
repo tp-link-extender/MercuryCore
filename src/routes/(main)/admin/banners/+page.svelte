@@ -1,9 +1,28 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import { writable } from "svelte/store"
+	import Modal from "$lib/components/Modal.svelte"
 	import fade from "$lib/fade"
 
 	export let data
-	export let form
+	export let form: any
+
+	let modal = writable(false)
+
+	let bannerId = ""
+	let bannerBody = ""
+	let newBannerBody = ""
+	let textarea: any
+
+	const viewBody = (id: any, body: any) => () => {
+		modal.set(true)
+
+		bannerId = id
+		bannerBody = body.trim()
+		newBannerBody = body.trim()
+	}
+
+	$: form && (() => (textarea.value = form?.bannerBody))()
 </script>
 
 <svelte:head>
@@ -53,7 +72,9 @@
 							<br />
 							<button name="action" value="create" class="btn btn-success">Submit</button>
 							<br />
-							<p class="col-12 mb-3 text-{form?.success ? 'success' : 'danger'}">{form?.msg || ""}</p>
+							{#if form?.area == "create"}
+								<p class="col-12 mb-3 text-{form?.success ? 'success' : 'danger'}">{form?.msg || ""}</p>
+							{/if}
 						</fieldset>
 					</form>
 				</div>
@@ -64,6 +85,8 @@
 								<th scope="col">Options</th>
 								<th scope="col">Active</th>
 								<th scope="col">Body</th>
+								<th scope="col">Color</th>
+								<th scope="col">Text Color</th>
 								<th scope="col">Creator</th>
 							</tr>
 						</thead>
@@ -86,7 +109,9 @@
 										</form>
 									</th>
 									<th>{banner.active ? "Yes" : "No"}</th>
-									<td><button type="button" class="btn btn-sm btn-success my-0">View Body</button></td>
+									<td><button type="button" on:click={viewBody(banner.id, banner.body)} class="btn btn-sm btn-success my-0">View Body</button></td>
+									<th><input type="color" value={banner.bgColour} disabled class="valid" /></th>
+									<td>{banner.textLight ? "Light" : "Dark"}</td>
 									<td><a href="/user/{banner.user.number}" class="text-decoration-none">{banner.user.username}</a></td>
 								</tr>
 							{/each}
@@ -97,6 +122,29 @@
 		</div>
 	</div>
 </div>
+
+{#if $modal}
+	<Modal {modal}>
+		<div class="modal-header">
+			<h1 class="h4 light-text">Banner #{bannerId}</h1>
+			<button type="button" class="btn-close" on:click={() => modal.set(false)} data-bs-dismiss="modal" aria-label="Close" />
+		</div>
+		<div class="modal-body light-text">
+			<form use:enhance method="POST">
+				<input type="hidden" name="id" value={bannerId} />
+				{#if form?.area == "modal"}
+					<p class="col-12 mb-1 text-{form?.success ? 'success' : 'danger'}">{form?.msg || ""}</p>
+				{/if}
+				<textarea name="bannerBody" bind:this={textarea} bind:value={bannerBody} id="bannerBody" class="form-control valid mb-3" />
+				{#if newBannerBody.trim() != bannerBody.trim() }
+					<div transition:fade class="d-grid gap-2">
+						<button value="updateBody" class="btn btn-success" name="action" id="saveBannerBody">Save Changes</button>
+					</div>
+				{/if}
+			</form>
+		</div>
+	</Modal>
+{/if}
 
 <style lang="sass">
 	.nav-tabs .nav-item.show .nav-link,
@@ -121,5 +169,8 @@
 	input[type="checkbox"]
 		height: 1.5rem
 		width: 1.5rem
+
+	.btn-close
+		filter: invert(1) grayscale(100%) brightness(200%)
 
 </style>

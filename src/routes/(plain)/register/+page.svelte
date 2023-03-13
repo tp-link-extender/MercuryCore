@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { applyAction, enhance } from "$app/forms"
 
-	function input(name: string, e: any) {
-		data[name].value = e.target.value
-	}
+	const input = (name: string, e: any) => (data[name].value = e.target.value)
 
 	let data: any = {
 		username: { value: "", invalid: false, message: "" },
@@ -46,7 +44,7 @@
 
 	$: data.cpassword.invalid = data.password.value != data.cpassword.value && update("cpassword", "The specified password does not match")
 
-	export let form: any
+	export let form
 </script>
 
 <svelte:head>
@@ -103,9 +101,7 @@
 								bindings require the type to be determined at compile time.
 							-->
 							<input
-								on:input={e => {
-									input(name, e)
-								}}
+								on:input={e => input(name, e)}
 								id={name}
 								{name}
 								{type}
