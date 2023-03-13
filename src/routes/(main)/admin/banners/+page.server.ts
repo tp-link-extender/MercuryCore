@@ -47,10 +47,10 @@ export const actions = {
 				const bannerColour = data.get("bannerColour") as string
 				const bannerTextLight = !!data.get("bannerTextLight")
 
-				if (!bannerColour || !bannerText) return fail(400, { msg: "Missing fields" })
-				if (bannerText.length > 100 || bannerText.length < 3) return fail(400, { msg: "Banner text too long" })
+				if (!bannerColour || !bannerText) return fail(400, { area: "create", msg: "Missing fields" })
+				if (bannerText.length > 100 || bannerText.length < 3) return fail(400, { area: "create", msg: "Banner text too long" })
 
-				if (bannerActiveCount && bannerActiveCount.length > 2) return fail(400, { msg: "Too many active banners" })
+				if (bannerActiveCount && bannerActiveCount.length > 2) return fail(400, { area: "create", msg: "Too many active banners" })
 
 				await prisma.announcements.create({
 					data: {
@@ -68,6 +68,7 @@ export const actions = {
 				return {
 					success: true,
 					msg: "Banner created successfully!",
+					area: "create",
 				}
 			case "show":
 			case "hide":
@@ -92,6 +93,27 @@ export const actions = {
 					},
 				})
 				return
+			case "updateBody":
+				const bannerBody = data.get("bannerBody") as string
+
+				if (!bannerBody || !bannerId) return fail(400, {area: "modal", msg: "Missing fields" })
+
+				if (bannerBody.length < 3 || bannerBody.length > 99) return fail(400, {area: "modal", msg: "Banner text is too long/short" })
+
+				await prisma.announcements.update({
+					where: {
+						id: bannerId,
+					},
+					data: {
+						body: bannerBody,
+					},
+				})
+				return {
+					success: true,
+					msg: "Banner updated successfully!",
+					area: "modal",
+					bannerBody,
+				}
 		}
 	},
 }
