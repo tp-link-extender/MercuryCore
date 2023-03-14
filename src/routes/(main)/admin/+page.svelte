@@ -1,4 +1,5 @@
 <script lang="ts">
+	import os from "os"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	const user = getUser()
@@ -11,6 +12,11 @@
 		["orange", "shield-alt", "Moderator"],
 		["crimson", "scale-balanced", "Administrator"],
 	]
+
+	const freemem = os.freemem()
+	const totalmem = os.totalmem()
+
+	export let data
 </script>
 
 <svelte:head>
@@ -188,32 +194,32 @@
 						<div class="col-lg-7 col-md-7">
 							<div class="card text-black mb-3">
 								<div class="card-body rounded-1">
-									<h3 class="light-text"><i class="fa-solid fa-memory" /> 0 / 0 GB</h3>
-									<span class="light-text">0 MB is being used</span>
+									<h3 class="light-text"><i class="fa-solid fa-memory" />{((totalmem - freemem) / 1024 ** 3).toFixed(2)} / {(totalmem / 1024 ** 3).toFixed(2)} GB</h3>
+									<span class="light-text">{Math.round((totalmem - freemem) / 1024 ** 2)} MB is being used</span>
 									<div class="progress mt-2">
 										<div
 											class="progress-bar progress-bar-striped progress-bar-animated"
 											role="progressbar"
-											aria-valuenow={1}
+											aria-valuenow={totalmem - freemem}
 											aria-valuemin={0}
-											aria-valuemax={100}
-											style="width: 1%;"
+											aria-valuemax={totalmem}
+											style="width: {((totalmem - freemem) / totalmem) * 100}%;"
 										/>
 									</div>
 								</div>
 							</div>
 							<div class="card text-black mb-3">
 								<div class="card-body rounded-1">
-									<h3 class="light-text"><i class="fa-solid fa-hard-drive me-2" />0 / 0 GB</h3>
-									<span class="light-text">0 MB is being used</span>
+									<h3 class="light-text"><i class="fa-solid fa-hard-drive me-2" />{((data.size - data.free) / 1024 ** 3).toFixed(2)} / {(data.size / 1024 ** 3).toFixed(2)} GB</h3>
+									<span class="light-text">{Math.round((data.size - data.free) / 1024 ** 2)} MB is being used</span>
 									<div class="progress mt-2">
 										<div
 											class="progress-bar progress-bar-striped progress-bar-animated"
 											role="progressbar"
-											aria-valuenow={1}
+											aria-valuenow={data.size - data.free}
 											aria-valuemin={0}
-											aria-valuemax={100}
-											style="width: 1%;"
+											aria-valuemax={data.size}
+											style="width: {((data.size - data.free) / data.size) * 100}%;"
 										/>
 									</div>
 								</div>
