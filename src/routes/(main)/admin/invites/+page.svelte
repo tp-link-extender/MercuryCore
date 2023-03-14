@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import fade from "$lib/fade"
 
 	export let data
 	export let form: any
@@ -9,6 +8,7 @@
     let expiryDate = false
 
     const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+
 </script>
 
 <svelte:head>
@@ -83,48 +83,40 @@
 					</form>
 				</div>
 				<div class="tab-pane fade" id="invites" role="tabpanel">
-					<!-- <table class="table table-responsive">
+					<table class="table table-responsive">
 						<thead class="light-text">
 							<tr>
 								<th scope="col">Options</th>
-								<th scope="col">Active</th>
-								<th scope="col">Body</th>
-								<th scope="col">Color</th>
-								<th scope="col">Text Color</th>
+								<th scope="col">Invite</th>
+								<th scope="col">Uses Left</th>
 								<th scope="col">Creator</th>
+								<th scope="col">Creation Date</th>
 							</tr>
 						</thead>
 						<tbody class="light-text">
-							{#each data.banners as banner, num}
+							{#each data.invites as invite}
 								<tr>
-									<th>
+									<td>
 										<form use:enhance method="POST">
-											<input type="hidden" name="id" value={banner.id} />
-											<button name="action" value="delete" class="btn btn-sm btn-link text-decoration-none text-danger my-0"><i class="fa-solid fa-trash" /> Delete Banner</button
+											<input type="hidden" name="id" value={invite.key} />
+											<button name="action" value="disable" class="btn btn-sm btn-link text-decoration-none text-danger my-0"><i class="fa-solid fa-ban"/> Disable Invite</button
 											>
 										</form>
-										<form use:enhance method="POST">
-											<input type="hidden" name="action" value={banner.active ? "hide" : "show"} />
-											<input type="hidden" name="id" value={banner.id} />
-											<button type="submit" class="btn btn-sm btn-link text-decoration-none text-{banner.active ? 'warning' : 'success'} my-0"
-												><i class="fa-solid fa-eye{banner.active ? '-slash' : ''}" /> {banner.active ? "Dea" : "A"}ctivate</button
-											>
-										</form>
-									</th>
-									<th>{banner.active ? "Yes" : "No"}</th>
-									<td><button type="button" on:click={viewBody(banner.id, banner.body)} class="btn btn-sm btn-success my-0">View Body</button></td>
-									<th><input type="color" value={banner.bgColour} disabled class="valid" /></th>
-									<td>{banner.textLight ? "Light" : "Dark"}</td>
-									<td><a href="/user/{banner.user.number}" class="text-decoration-none">{banner.user.username}</a></td>
+									</td>
+									<td>mercurkey-{invite.key}</td>
+									<td>{invite.usesLeft}</td>
+									<td>{invite.creator?.username}</td>
+									<td>{new Date(invite.creation).toLocaleDateString()}</td>
 								</tr>
 							{/each}
 						</tbody>
-					</table> -->
+					</table>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
 
 <style lang="sass">
 	.nav-tabs .nav-item.show .nav-link,
@@ -144,13 +136,7 @@
 		border-radius: 0
 		color: var(--light-text)
         
-	input[type="color"]
-		height: 2.5rem
 	input[type="checkbox"]
 		height: 1.5rem
 		width: 1.5rem
-
-	.btn-close
-		filter: invert(1) grayscale(100%) brightness(200%)
-
 </style>

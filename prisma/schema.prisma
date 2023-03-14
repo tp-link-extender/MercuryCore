@@ -32,6 +32,7 @@ model User {
     email                String        @unique
     usedRegkey           Regkey        @relation(fields: [regkeyKey], references: [key])
     regkeyKey            String
+    createdRegkey        Regkey[]      @relation("creator")
     permissionLevel      Int           @default(1)
     bio                  String?
     image                String?
@@ -63,6 +64,7 @@ model User {
 
     moderationActionsGiven    ModerationAction[] @relation("given")
     moderationActionsReceived ModerationAction[] @relation("received")
+    
 
     @@map("user")
 }
@@ -111,10 +113,13 @@ model GameSessions {
 }
 
 model Regkey {
-    key      String    @unique @default(cuid())
-    usesLeft Int       @default(1)
-    expiry   DateTime?
-    users    User[]
+    key       String    @unique @default(cuid())
+    usesLeft  Int       @default(1)
+    expiry    DateTime? 
+    creation  DateTime  @default(now())
+    creator   User?     @relation("creator", fields: [creatorId], references: [id])
+    creatorId String?  
+    users     User[]
 }
 
 model Post {
