@@ -20,7 +20,7 @@ export async function load({ locals }) {
 				},
 			},
 			orderBy: {
-				creation: "asc",
+				creation: "desc",
 			},
 		}),
 	}
