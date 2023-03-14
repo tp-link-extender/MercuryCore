@@ -194,7 +194,7 @@
 						<div class="col-lg-7 col-md-7">
 							<div class="card text-black mb-3">
 								<div class="card-body rounded-1">
-									<h3 class="light-text"><i class="fa-solid fa-memory" />{((totalmem - freemem) / 1024 ** 3).toFixed(2)} / {(totalmem / 1024 ** 3).toFixed(2)} GB</h3>
+									<h3 class="light-text"><i class="fa-solid fa-memory" /> {((totalmem - freemem) / 1024 ** 3).toFixed(2)} / {(totalmem / 1024 ** 3).toFixed(2)} GB</h3>
 									<span class="light-text">{Math.round((totalmem - freemem) / 1024 ** 2)} MB is being used</span>
 									<div class="progress mt-2">
 										<div
