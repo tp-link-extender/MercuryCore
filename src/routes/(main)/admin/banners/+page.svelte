@@ -94,7 +94,7 @@
 							{#each data.banners as banner, num}
 								<!-- <tr in:fade|global={{ num, total: data.banners.length }}> -->
 								<tr>
-									<th>
+									<td>
 										<form use:enhance method="POST">
 											<input type="hidden" name="id" value={banner.id} />
 											<button name="action" value="delete" class="btn btn-sm btn-link text-decoration-none text-danger my-0"><i class="fa-solid fa-trash" /> Delete Banner</button
@@ -107,10 +107,10 @@
 												><i class="fa-solid fa-eye{banner.active ? '-slash' : ''}" /> {banner.active ? "Dea" : "A"}ctivate</button
 											>
 										</form>
-									</th>
-									<th>{banner.active ? "Yes" : "No"}</th>
+									</td>
+									<td>{banner.active ? "Yes" : "No"}</td>
 									<td><button type="button" on:click={viewBody(banner.id, banner.body)} class="btn btn-sm btn-success my-0">View Body</button></td>
-									<th><input type="color" value={banner.bgColour} disabled class="valid" /></th>
+									<td><input type="color" value={banner.bgColour} disabled class="valid" /></td>
 									<td>{banner.textLight ? "Light" : "Dark"}</td>
 									<td><a href="/user/{banner.user.number}" class="text-decoration-none">{banner.user.username}</a></td>
 								</tr>
