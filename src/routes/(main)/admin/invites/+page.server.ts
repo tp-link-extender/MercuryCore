@@ -63,7 +63,11 @@ export const actions = {
 						key: customInviteEnabled ? customInvite : cuid2.createId(),
 						usesLeft: inviteUses,
 						expiry: inviteExpiryEnabled ? inviteExpiry : null,
-						creatorId: user.number,
+						creator: {
+							connect: {
+								id: user.userId
+							}
+						}
 					},
 				})
 
