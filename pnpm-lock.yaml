@@ -2,11 +2,11 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@lucia-auth/adapter-prisma':
-    specifier: ^0.4.0
-    version: 0.4.0(lucia-auth@0.6.2)
+    specifier: ^0.6.0
+    version: 0.6.0(lucia-auth@0.9.1)
   '@lucia-auth/sveltekit':
     specifier: ^0.6.10
-    version: 0.6.10(lucia-auth@0.6.2)(svelte@3.56.0)
+    version: 0.6.10(lucia-auth@0.9.1)(svelte@3.56.0)
   '@paralleldrive/cuid2':
     specifier: ^2.2.0
     version: 2.2.0
@@ -53,8 +53,8 @@ dependencies:
     specifier: ^0.15.18
     version: 0.15.18
   lucia-auth:
-    specifier: ^0.6.2
-    version: 0.6.2
+    specifier: ^0.9.1
+    version: 0.9.1
   nanoid:
     specifier: ^4.0.1
     version: 4.0.1
@@ -320,22 +320,22 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@lucia-auth/adapter-prisma@0.4.0(lucia-auth@0.6.2):
-    resolution: {integrity: sha512-HMaGbVfB5KTZBs6KPqI5z6RFKVl4AKfm9u2KrrQglthpd/rWJoJRDI2oYkdcEX4Xu1FNdNJJrEtKKBtVAXYqrw==}
+  /@lucia-auth/adapter-prisma@0.6.0(lucia-auth@0.9.1):
+    resolution: {integrity: sha512-8tyPRGnPscL5xYA+/H443SznbVVY6Brd0PTgI2HdFmEA/VsedMtlvEa5iSNXIGqwNj2BsABQHJHfqvBc/1KSQQ==}
     peerDependencies:
-      lucia-auth: 0.6.x
+      lucia-auth: 0.9.x
     dependencies:
-      lucia-auth: 0.6.2
+      lucia-auth: 0.9.1
     dev: false
 
-  /@lucia-auth/sveltekit@0.6.10(lucia-auth@0.6.2)(svelte@3.56.0):
+  /@lucia-auth/sveltekit@0.6.10(lucia-auth@0.9.1)(svelte@3.56.0):
     resolution: {integrity: sha512-R2Zxx68zuvoqtSgAJUIPgAwGHjfXydbcyuGPUVDaoWY6W/k6cYiTzYPDh17rFGqGj4wdfODDxqOAkO6ndrC1uQ==}
     peerDependencies:
       lucia-auth: 0.5.x - 0.9.x
       svelte: 3.x
     dependencies:
       '@noble/hashes': 1.2.0
-      lucia-auth: 0.6.2
+      lucia-auth: 0.9.1
       svelte: 3.56.0
     dev: false
 
@@ -1154,8 +1154,8 @@ packages:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
 
-  /lucia-auth@0.6.2:
-    resolution: {integrity: sha512-zePlt6YRLK48oqKd4k11kShYW7/4OEJ3LMow/zvN50rdciRh5hgkM2c2BSdaOCgaVMiJFjg1Fz7tbmFIuVriXw==}
+  /lucia-auth@0.9.1:
+    resolution: {integrity: sha512-Mfg1fEcqrZtvLwqHLHgjMDcF58BOFrC0P40ggivURP7d11c10WXCaXYJhAsALWpE8hsSZgxzMIEcNbyVAMkYKQ==}
     dependencies:
       '@noble/hashes': 1.2.0
       nanoid: 4.0.1
