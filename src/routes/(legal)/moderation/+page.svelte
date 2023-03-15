@@ -78,5 +78,5 @@
 		.container
 			width: 50rem
 	.card
-		background: rgba(54,50,48,0.7)
+		background: var(--accent)
 </style>
