@@ -45,6 +45,7 @@ export const actions = {
 		if(!getModeratee) return fail(400, {error: true, msg: "User does not exist" })
 
 		if(getModeratee.permissionLevel > 2) return fail(400, {error: true, msg: "You cannot moderate staff members" })
+		if(getModeratee.id = user.userId) return fail(400, {error: true, msg: "You cannot moderate yourself" })
 
 		const moderationMessage = [
 			"has been warned",
