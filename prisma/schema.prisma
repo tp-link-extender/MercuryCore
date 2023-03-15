@@ -280,7 +280,6 @@ model Report {
 }
 
 enum ModerationActionType {
-    Reminder
     Warning
     Ban
     Termination
@@ -294,7 +293,7 @@ model ModerationAction {
     moderatee   User                 @relation("received", fields: [moderateeId], references: [id])
     moderateeId String
     time        DateTime             @default(now())
-    timeEnds    DateTime
+    timeEnds    DateTime             
     note        String
     type        ModerationActionType
     active      Boolean              @default(true)
