@@ -18,16 +18,15 @@ export const actions = {
 		const username = (data.get("username") as string).trim()
 		const password = (data.get("password") as string).trim()
 
-		if (!username || !password) return fail(400, { error: true, msg: "Missing fields" })
+		if (!username || !password) return fail(400, { msg: "Missing fields" })
 
 		try {
-			await auth.updateKeyPassword("username", username, password)
+			await auth.updateKeyPassword("username", username.toLowerCase(), password)
 		} catch {
-			return fail(400, { error: true, msg: "Invalid credentials" })
+			return fail(400, { msg: "Invalid credentials" })
 		}
 
 		return {
-            error: false,
 			usersuccess: true,
 			msg: "Password changed successfully!",
 		}
