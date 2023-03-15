@@ -64,7 +64,7 @@ model User {
 
     moderationActionsGiven    ModerationAction[] @relation("given")
     moderationActionsReceived ModerationAction[] @relation("received")
-    
+    AuditLog                  AuditLog[] @relation("actor")
 
     @@map("user")
 }
@@ -115,10 +115,10 @@ model GameSessions {
 model Regkey {
     key       String    @unique @default(cuid())
     usesLeft  Int       @default(1)
-    expiry    DateTime? 
+    expiry    DateTime?
     creation  DateTime  @default(now())
     creator   User?     @relation("creator", fields: [creatorId], references: [id])
-    creatorId String?  
+    creatorId String?
     users     User[]
 }
 
@@ -284,19 +284,35 @@ enum ModerationActionType {
     Warning
     Ban
     Termination
+    AccountDeleted
 }
 
 model ModerationAction {
-    id          String   @id @unique @default(cuid())
-    moderator   User     @relation("given", fields: [moderatorId], references: [id])
+    id          String               @id @unique @default(cuid())
+    moderator   User                 @relation("given", fields: [moderatorId], references: [id])
     moderatorId String
-    moderatee   User     @relation("received", fields: [moderateeId], references: [id])
+    moderatee   User                 @relation("received", fields: [moderateeId], references: [id])
     moderateeId String
-    time        DateTime @default(now())
+    time        DateTime             @default(now())
+    timeEnds    DateTime
+    note        String
+    type        ModerationActionType
+    active      Boolean              @default(true)
+}
 
-    note       String
-    materials  String?
-    type       ModerationActionType
-    daysLength Int?
-    active     Boolean              @default(true)
+// Admin
+
+enum AuditActionType {
+    Moderation
+    Invite
+    Account
+}
+
+model AuditLog {
+    id     Int             @id @unique @default(autoincrement())
+    action AuditActionType
+    note   String
+    user   User            @relation("actor", fields: [userId], references: [id])
+    userId String
+    date   DateTime        @default(now())
 }

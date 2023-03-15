@@ -24,12 +24,12 @@
 </svelte:head>
 
 <div class="container py-4">
-	<h2 class="text-light">Admin Panel</h2>
-	<h4 class="mb-4 border-bottom border-2 pb-3 text-light">
+	<h1 class="h2 text-light">Admin Panel</h1>
+	<h2 class="h4 mb-4 border-bottom border-2 pb-3 text-light">
 		Your permission level is: <span style="color: {permissions[$user?.permissionLevel][0]}"
 			><i class="fa fa-{permissions[$user?.permissionLevel][1]} me-1" />{permissions[$user?.permissionLevel][2]}</span
 		>
-	</h4>
+	</h2>
 	<div class="row">
 		<div class="col-lg-2 col-md-3 mb-4">
 			<ul class="nav nav-tabs flex-column border-0" role="tablist">
@@ -75,7 +75,7 @@
 								</a>
 							</div>
 							<div class="col-lg-3">
-								<a href="#" class="shadow-hover">
+								<a href="/admin/audit" class="shadow-hover">
 									<div class="card text-center light-text">
 										<div class="card-body rounded-1 p-4">
 											<h1><i class="fa-solid fa-book" /></h1>
@@ -250,12 +250,19 @@
 </div>
 
 <style lang="sass">
+	h2
+		border-color: var(--accent3) !important
+
+	.progress
+		background: var(--accent2)
 
 	.card-body
 		background: var(--accent)
 
 	.card
 		border-width: 2px
+		border-color: var(--accent3)
+		background: var(--accent3)
 
 	.shadow-hover,
 	.shadow-hover:link 
@@ -263,13 +270,13 @@
 		text-decoration: none
 		font-size: 14px
 
-	.shadow-hover>.card 
+	.shadow-hover > .card 
 		border-radius: 0.2rem
 		box-shadow: none
 		transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)
 
-	.shadow-hover:not(.no-hover-shadow-hover)>.card:active,
-	.shadow-hover:not(.no-hover-shadow-hover)>.card:hover 
+	.shadow-hover:not(.no-hover-shadow-hover) > .card:active,
+	.shadow-hover:not(.no-hover-shadow-hover) > .card:hover 
 		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1), 0 1px 4px 2px rgba(0, 0, 0, 0.1)
 
 	.nav-tabs .nav-item.show .nav-link,
