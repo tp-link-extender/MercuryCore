@@ -12,6 +12,8 @@ export const actions = {
 		if (password.length < 1) return fail(400, { area: "password", msg: "Password must be at least 1 character" })
 		if (password.length > 6969) return fail(400, { area: "password", msg: "Password must be less than 6969 characters" })
 
+		if(username.includes("[")) return fail(400, { area: "username", msg: "Invalid username" })
+
 		let session
 		try {
 			const user: any = await auth.useKey("username", username.toLowerCase(), password)

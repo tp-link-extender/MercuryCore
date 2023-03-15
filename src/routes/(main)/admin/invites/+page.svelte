@@ -8,7 +8,7 @@
     let customKey = false
     let expiryDate = false
 
-    const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10)
 
 </script>
 

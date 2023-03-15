@@ -110,7 +110,7 @@
 				<div class="tab-pane fade {$user?.permissionLevel == 5 ? '' : 'active show'}" id="moderation" role="tabpanel">
 					<div class="row g-3">
 						<div class="col-lg-3">
-							<a href="#" class="shadow-hover">
+							<a href="/admin/moderation" class="shadow-hover">
 								<div class="card text-center light-text">
 									<div class="card-body rounded-1 p-4">
 										<h1><i class="fa-solid fa-user-slash" /></h1>

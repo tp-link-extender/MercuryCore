@@ -56,7 +56,7 @@ export const actions = {
 				if ((customInviteEnabled && customInvite.length > 50) || (customInviteEnabled && customInvite.length < 3))
 					return fail(400, { area: "create", msg: "Custom invite is too short/too long" })
 
-				if (inviteExpiryEnabled && inviteExpiry.getTime() < now.getTime()) return fail(400, { area: "create", msg: "Invalid date" })
+				if (inviteExpiryEnabled && inviteExpiry.getTime() < new Date().getTime()) return fail(400, { area: "create", msg: "Invalid date" })
 
 				await prisma.regkey.create({
 					data: {
