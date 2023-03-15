@@ -75,7 +75,7 @@
 								</a>
 							</div>
 							<div class="col-lg-3">
-								<a href="#" class="shadow-hover">
+								<a href="/admin/audit" class="shadow-hover">
 									<div class="card text-center light-text">
 										<div class="card-body rounded-1 p-4">
 											<h1><i class="fa-solid fa-book" /></h1>
