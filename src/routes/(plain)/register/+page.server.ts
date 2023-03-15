@@ -55,9 +55,9 @@ export const actions = {
 			if (regkeyCheck.usesLeft < 1) return fail(400, { area: "regkey", msg: "This registration key has ran out of uses" })
 
 			const user = await auth.createUser({
-				key: {
+				primaryKey: {
 					providerId: "username",
-					providerUserId: username,
+					providerUserId: username.toLowerCase(),
 					password,
 				},
 				attributes: {
@@ -76,8 +76,14 @@ export const actions = {
 			locals.setSession(session)
 
 			await prisma.regkey.update({
-				where: { key: regkey[1] },
-				data: { usesLeft: { decrement: 1 } },
+				where: {
+					key: regkey[1]
+				},
+				data: {
+					usesLeft: {
+						decrement: 1
+					}
+				},
 			})
 		} catch (e) {
 			const error = e as Error
