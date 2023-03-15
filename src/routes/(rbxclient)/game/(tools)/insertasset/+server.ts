@@ -1,10 +1,10 @@
 
-export const GET = async ({setHeaders}) => {
+export async function GET({ url, setHeaders }) { 
 
     setHeaders({
-        "Location":"http://www.roblox.com" + location.pathname + location.search
+         "Location":"http://www.roblox.com" + url.pathname + url.search
     })
-    
-    return new Response("OK")
+
+    return new Response("ok")
 };
 
