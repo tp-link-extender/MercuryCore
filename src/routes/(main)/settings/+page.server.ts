@@ -44,7 +44,7 @@ export const actions = {
 		if (entries.npassword != entries.cnpassword) return fail(400, { area: "cnpassword", msg: "Passwords do not match" })
 
 		try {
-			await auth.validateKeyPassword("username", user.username.toLowerCase(), entries.cpassword)
+			await auth.useKey("username", user.username.toLowerCase(), entries.cpassword)
 		} catch {
 			return fail(400, { area: "cpassword", msg: "Incorrect username or password" })
 		}

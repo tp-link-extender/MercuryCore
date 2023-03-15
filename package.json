@@ -23,7 +23,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-auth/adapter-prisma": "^0.4.0",
+		"@lucia-auth/adapter-prisma": "^0.6.0",
 		"@lucia-auth/sveltekit": "^0.6.10",
 		"@paralleldrive/cuid2": "^2.2.0",
 		"@popperjs/core": "^2.11.6",
@@ -40,7 +40,7 @@
 		"dayjs": "^1.11.7",
 		"dotenv": "^16.0.3",
 		"esbuild": "^0.15.18",
-		"lucia-auth": "^0.6.2",
+		"lucia-auth": "^0.9.1",
 		"nanoid": "^4.0.1",
 		"profane-words": "^1.5.5",
 		"redis": "^4.6.5",
