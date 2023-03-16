@@ -4,13 +4,13 @@ export const GET = async () =>
 	new Response(
 		SignData(
 			`-- Setup studio cmd bar & load core scripts
-pcall(function() game:GetService("InsertService"):SetFreeModelUrl("http://www.roblox.com/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d") end)
-pcall(function() game:GetService("InsertService"):SetFreeDecalUrl("http://www.roblox.com/Game/Tools/InsertAsset.ashx?type=fd&q=%s&pg=%d&rs=%d") end)
+pcall(function() game:GetService("InsertService"):SetFreeModelUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d") end)
+pcall(function() game:GetService("InsertService"):SetFreeDecalUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?type=fd&q=%s&pg=%d&rs=%d") end)
 
 game:GetService("ScriptInformationProvider"):SetAssetUrl("http://banland.xyz/Asset/")
-game:GetService("InsertService"):SetBaseSetsUrl("http://www.roblox.com/Game/Tools/InsertAsset.ashx?nsets=10&type=base")
-game:GetService("InsertService"):SetUserSetsUrl("http://www.roblox.com/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d")
-game:GetService("InsertService"):SetCollectionUrl("http://www.roblox.com/Game/Tools/InsertAsset.ashx?sid=%d")
+game:GetService("InsertService"):SetBaseSetsUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?nsets=10&type=base")
+game:GetService("InsertService"):SetUserSetsUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d")
+game:GetService("InsertService"):SetCollectionUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?sid=%d")
 game:GetService("InsertService"):SetAssetUrl("http://banland.xyz/Asset/?id=%d")
 game:GetService("InsertService"):SetAssetVersionUrl("http://www.roblox.com/Asset/?assetversionid=%d")
 game:GetService("InsertService"):SetTrustLevel(0)
