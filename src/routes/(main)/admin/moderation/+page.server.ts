@@ -23,9 +23,10 @@ export const actions = {
 		const username = (data.get("username") as string).trim()
 		const action = parseInt(data.get("action") as string)
 		const banDate = new Date(data.get("banDate") as string)
-		const reason = (data.get("username") as string).trim()
+		const reason = (data.get("reason") as string).trim()
 
-		if (!username || !action || !reason) return fail(400, {error: true, msg: "Missing fields" })
+		if (!username || !action) return fail(400, {error: true, msg: "Missing fields" })
+		if (action != 5 && !reason) return fail(400, {error: true, msg: "Missing fields" })
 		if(action == 2 && !banDate) return fail(400, { msg: "Missing fields" })
 		if(reason.length < 15 && reason.length > 150) return fail(400, {error: true, msg: "Reason is too long/short" })
 
@@ -87,24 +88,6 @@ export const actions = {
 		if(await prisma.moderationAction.count({where:{moderateeId: getModeratee.id, active: true}})) return fail(400, {error: true, msg: "User has already been moderated" })
 
 		if(action == 4) { // Delete Account
-			await prisma.moderationAction.create({
-				data: {
-					moderator: {
-						connect: {
-							id: user.userId,
-						}
-					},
-					moderatee: {
-						connect: {
-							username
-						}
-					},
-					timeEnds: new Date(),
-					note: reason,
-					type: moderationAction as ModerationActionType
-				}
-			})
-
 			await prisma.user.update({
 				where: {
 					username
@@ -113,11 +96,6 @@ export const actions = {
 					username: `[ Deleted User ${getModeratee.number} ]`
 				}
 			})
-
-			return {
-				moderationsuccess: true,
-				msg: `${username} ${moderationMessage[action - 1]}`,
-			}
 		}
 
 		await prisma.moderationAction.create({
