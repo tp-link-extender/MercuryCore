@@ -23,7 +23,7 @@ server {
 	rewrite (?i)^/Game/ServerPresence$ /game/serverpresence last;
 	rewrite (?i)^/Game/Host$ /game/host last;
 	rewrite (?i)^/Asset/GetScriptState.ashx$ /asset/getscriptstate last;
-	rewrite (?i)^/Game/Tools/InsertAsset.ashx$ /game/tools/insertasset last;
+	rewrite (?i)^/Game/Tools/InsertAsset.ashx$ /game/tools/insertasset.ashx last;
 
 	listen 80;
 	listen 443 ssl; # managed by Certbot
