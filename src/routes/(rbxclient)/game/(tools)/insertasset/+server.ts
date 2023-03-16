@@ -1,9 +1,8 @@
+import { redirect } from "@sveltejs/kit"
 
-export async function GET({ url, setHeaders }) { 
+export async function GET({ url }) { 
 
-    setHeaders({
-         "Location":"http://www.roblox.com" + url.pathname + url.search
-    })
+    redirect(302, "http://www.roblox.com" + url.pathname + url.search)
 
     return new Response("ok")
 };
