@@ -176,6 +176,15 @@ export const actions = {
 		})
 		if (!place) return fail(404, { message: "Place not found" })
 
+		const userModeration = await prisma.moderationAction.findMany({
+			where: {
+				moderateeId: user.userId,
+				active: true,
+			}, 
+		})
+	
+		if(userModeration[0]) return fail(400, { message: "You cannot currently play games" })
+
 		// We will use a different method to check if place is full, via GameSessions
 
 		// if (
