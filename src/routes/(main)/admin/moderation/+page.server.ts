@@ -25,56 +25,48 @@ export const actions = {
 		const banDate = new Date(data.get("banDate") as string)
 		const reason = (data.get("reason") as string).trim()
 
-		if (!username || !action) return fail(400, {error: true, msg: "Missing fields" })
-		if (action != 5 && !reason) return fail(400, {error: true, msg: "Missing fields" })
-		if(action == 2 && !banDate) return fail(400, { msg: "Missing fields" })
-		if(reason.length < 15 && reason.length > 150) return fail(400, {error: true, msg: "Reason is too long/short" })
+		if (!username || !action) return fail(400, { error: true, msg: "Missing fields" })
+		if (action != 5 && !reason) return fail(400, { error: true, msg: "Missing fields" })
+		if (action == 2 && !banDate) return fail(400, { msg: "Missing fields" })
+		if (reason.length < 15 && reason.length > 150) return fail(400, { error: true, msg: "Reason is too long/short" })
 
-		if (action == 2 && banDate.getTime() < new Date().getTime()) return fail(400, {error: true, msg: "Invalid date" })
+		if (action == 2 && banDate.getTime() < new Date().getTime()) return fail(400, { error: true, msg: "Invalid date" })
 
 		const getModeratee = await prisma.user.findUnique({
 			where: {
-				username 
+				username,
 			},
 			select: {
 				id: true,
 				number: true,
-				permissionLevel: true
-			}
+				permissionLevel: true,
+			},
 		})
 
-		if(!getModeratee) return fail(400, {error: true, msg: "User does not exist" })
+		if (!getModeratee) return fail(400, { error: true, msg: "User does not exist" })
 
-		if(getModeratee.permissionLevel > 2) return fail(400, {error: true, msg: "You cannot moderate staff members" })
-		if(getModeratee.id == user.userId) return fail(400, {error: true, msg: "You cannot moderate yourself" })
+		if (getModeratee.permissionLevel > 2) return fail(400, { error: true, msg: "You cannot moderate staff members" })
+		if (getModeratee.id == user.userId) return fail(400, { error: true, msg: "You cannot moderate yourself" })
 
-		const moderationMessage = [
-			"has been warned",
-			`has been banned until ${banDate.toLocaleDateString()}`,
-			"has been terminated",
-			"has been deleted",
-			"has been unbanned",
-		]
+		const moderationMessage = ["has been warned", `has been banned until ${banDate.toLocaleDateString()}`, "has been terminated", "has been deleted", "has been unbanned"]
 
-		const moderationActions = [
-			"Warning", 
-			"Ban", 
-			"Termination", 
-			"AccountDeleted"
-		]
+		const moderationActions = ["Warning", "Ban", "Termination", "AccountDeleted"]
 
-		if(action == 5) { // Unban
-			if(!await prisma.moderationAction.count({where:{moderateeId: getModeratee.id, active: true}})) return fail(400, {error: true, msg: "You cannot unban a user that has not been moderated yet" })
-			
-			if(await prisma.moderationAction.count({where:{moderateeId: getModeratee.id, active: true, type: "AccountDeleted"}})) return fail(400, {error: true, msg: "You cannot undo a deleted user" })
+		if (action == 5) {
+			// Unban
+			if (!(await prisma.moderationAction.count({ where: { moderateeId: getModeratee.id, active: true } })))
+				return fail(400, { error: true, msg: "You cannot unban a user that has not been moderated yet" })
+
+			if (await prisma.moderationAction.count({ where: { moderateeId: getModeratee.id, active: true, type: "AccountDeleted" } }))
+				return fail(400, { error: true, msg: "You cannot undo a deleted user" })
 
 			await prisma.moderationAction.updateMany({
 				where: {
 					moderateeId: getModeratee.id,
 				},
 				data: {
-					active: false
-				}
+					active: false,
+				},
 			})
 
 			return {
@@ -85,16 +77,17 @@ export const actions = {
 
 		const moderationAction = moderationActions[action - 1]
 
-		if(await prisma.moderationAction.count({where:{moderateeId: getModeratee.id, active: true}})) return fail(400, {error: true, msg: "User has already been moderated" })
+		if (await prisma.moderationAction.count({ where: { moderateeId: getModeratee.id, active: true } })) return fail(400, { error: true, msg: "User has already been moderated" })
 
-		if(action == 4) { // Delete Account
+		if (action == 4) {
+			// Delete Account
 			await prisma.user.update({
 				where: {
-					username
+					username,
 				},
 				data: {
-					username: `[ Deleted User ${getModeratee.number} ]`
-				}
+					username: `[ Deleted User ${getModeratee.number} ]`,
+				},
 			})
 		}
 
@@ -103,17 +96,17 @@ export const actions = {
 				moderator: {
 					connect: {
 						id: user.userId,
-					}
+					},
 				},
 				moderatee: {
 					connect: {
-						username
-					}
+						username,
+					},
 				},
 				timeEnds: action == 2 ? banDate : new Date(),
 				note: reason,
-				type: moderationAction as ModerationActionType
-			}
+				type: moderationAction as ModerationActionType,
+			},
 		})
 
 		return {

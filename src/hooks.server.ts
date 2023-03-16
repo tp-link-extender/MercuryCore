@@ -15,23 +15,27 @@ export const handle = sequence(handleHooks(auth), async ({ event, resolve }) => 
 	const { user, session } = await event.locals.validateUser()
 	if (!session) return await resolve(event)
 
-	if (!["/moderation","/api","/terms"].includes(event.url.pathname) &&
-		(await prisma.moderationAction.findMany({
-			where: {
-				moderateeId: user.userId,
-				active: true,
-			},
-		}))[0]
-	) throw redirect(302, "/moderation")
-	
-		await prisma.user.update({
-			where: {
-				id: user.userId,
-			},
-			data: {
-				lastOnline: new Date(),
-			},
-		})
+	if (
+		!["/moderation", "/api", "/terms"].includes(event.url.pathname) &&
+		(
+			await prisma.moderationAction.findMany({
+				where: {
+					moderateeId: user.userId,
+					active: true,
+				},
+			})
+		)[0]
+	)
+		throw redirect(302, "/moderation")
+
+	await prisma.user.update({
+		where: {
+			id: user.userId,
+		},
+		data: {
+			lastOnline: new Date(),
+		},
+	})
 
 	if (!(user.currencyCollected.getTime() - (new Date().getTime() - 1000 * 3600 * Number((await client.get("stipendTime")) || 12)) > 0)) {
 		await prisma.user.update({
