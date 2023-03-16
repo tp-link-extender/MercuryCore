@@ -180,10 +180,10 @@ export const actions = {
 			where: {
 				moderateeId: user.userId,
 				active: true,
-			}, 
+			},
 		})
-	
-		if(userModeration[0]) return fail(400, { message: "You cannot currently play games" })
+
+		if (userModeration[0]) return fail(400, { message: "You cannot currently play games" })
 
 		// We will use a different method to check if place is full, via GameSessions
 
