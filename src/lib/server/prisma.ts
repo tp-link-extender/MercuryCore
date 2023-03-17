@@ -15,9 +15,7 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs) {
 	// Add like/dislike ratio to each place
 	for (let place of places as (Place & { ratio: any })[]) {
 		const query = {
-			params: {
-				place: place.id,
-			},
+			place: place.id,
 		}
 		const [likes, total] = await Promise.all([
 			roQuery(
@@ -48,9 +46,7 @@ export async function findItems(query: Prisma.ItemFindManyArgs) {
 	// Add like/dislike ratio to each item
 	for (let item of items as (Item & { ratio: any })[]) {
 		const query = {
-			params: {
-				itemid: item.id,
-			},
+			itemid: item.id,
 		}
 		const [likes, total] = await Promise.all([
 			roQuery(
@@ -83,9 +79,7 @@ export async function findGroups(query: Prisma.GroupFindManyArgs) {
 			"groups",
 			"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
 			{
-				params: {
-					group: group.name,
-				},
+				group: group.name,
 			},
 			true
 		)

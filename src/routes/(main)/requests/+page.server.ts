@@ -19,9 +19,7 @@ export async function load({ locals, params }) {
 	})
 
 	const query = {
-		params: {
-			user: userExists?.username,
-		},
+		user: userExists?.username,
 	}
 
 	async function Users() {
@@ -85,10 +83,8 @@ export const actions = {
 		if (!user2) return fail(400, { msg: "User not found" })
 
 		const query = {
-			params: {
-				user1: user.username,
-				user2: action[1],
-			},
+			user1: user.username,
+			user2: action[1],
 		}
 
 		console.log("Action:", action)

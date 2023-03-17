@@ -48,9 +48,7 @@ export async function load({ locals, params }) {
 			"forum",
 			"RETURN SIZE((:User) -[:likes]-> (:Post { name: $id }))",
 			{
-				params: {
-					id: post.id,
-				},
+				id: post.id,
 			},
 			true
 		)
@@ -58,9 +56,7 @@ export async function load({ locals, params }) {
 			"forum",
 			"RETURN SIZE((:User) -[:dislikes]-> (:Post { name: $id }))",
 			{
-				params: {
-					id: post.id,
-				},
+				id: post.id,
 			},
 			true
 		)
@@ -68,20 +64,16 @@ export async function load({ locals, params }) {
 			"forum",
 			"MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id }) RETURN r",
 			{
-				params: {
-					user: user?.username,
-					id: post.id,
-				},
+				user: user?.username,
+				id: post.id,
 			}
 		)
 		post["dislikes"] = await roQuery(
 			"forum",
 			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id }) RETURN r",
 			{
-				params: {
-					user: user?.username,
-					id: post.id,
-				},
+				user: user?.username,
+				id: post.id,
 			}
 		)
 	}
@@ -117,10 +109,8 @@ export const actions = {
 			throw error(404)
 
 		const query = {
-			params: {
-				user: user.username,
-				id: id || replyId,
-			},
+			user: user.username,
+			id: id || replyId,
 		}
 
 		console.log("Action:", action)

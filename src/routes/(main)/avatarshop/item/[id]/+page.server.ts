@@ -48,10 +48,8 @@ export async function load({ locals, params }) {
 
 	if (item) {
 		const query = {
-			params: {
-				user: user?.username,
-				itemid: params.id,
-			},
+			user: user?.username,
+			itemid: params.id,
 		}
 		return {
 			...item,
@@ -104,10 +102,8 @@ export const actions = {
 			return fail(404, { msg: "Not found" })
 
 		const query = {
-			params: {
-				user: user.username,
-				itemid: params.id, // item id (unique)
-			},
+			user: user.username,
+			itemid: params.id, // item id (unique)
 		}
 
 		console.log("Action:", action)

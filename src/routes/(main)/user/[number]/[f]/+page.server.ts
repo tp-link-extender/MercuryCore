@@ -44,9 +44,7 @@ export const load = async ({ params }) => {
 	})
 	if (user) {
 		const query = {
-			params: {
-				user: user?.username,
-			},
+			user: user?.username,
 		}
 
 		async function Users() {

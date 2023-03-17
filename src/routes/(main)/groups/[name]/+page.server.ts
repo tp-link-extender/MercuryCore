@@ -30,16 +30,12 @@ export async function load({ locals, params }) {
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const query = {
-			params: {
-				group: group.name,
-			},
+			group: group.name,
 		}
 
 		const query2 = {
-			params: {
-				user: user?.username,
-				group: group.name,
-			},
+			user: user?.username,
+			group: group.name,
 		}
 
 		console.timeEnd("group")
@@ -89,10 +85,8 @@ export const actions = {
 		const action = data.get("action") as string
 
 		const query = {
-			params: {
-				user: user.username,
-				group: group.name,
-			},
+			user: user.username,
+			group: group.name,
 		}
 
 		console.log("Action:", action)
