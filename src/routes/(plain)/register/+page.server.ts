@@ -77,12 +77,12 @@ export const actions = {
 
 			await prisma.regkey.update({
 				where: {
-					key: regkey[1]
+					key: regkey[1],
 				},
 				data: {
 					usesLeft: {
-						decrement: 1
-					}
+						decrement: 1,
+					},
 				},
 			})
 		} catch (e) {

@@ -65,9 +65,9 @@ export const actions = {
 						expiry: inviteExpiryEnabled ? inviteExpiry : null,
 						creator: {
 							connect: {
-								id: user.userId
-							}
-						}
+								id: user.userId,
+							},
+						},
 					},
 				})
 
@@ -79,15 +79,15 @@ export const actions = {
 			case "disable":
 				const inviteKey = data.get("id") as string
 
-				if(!inviteKey) return fail(400, {msg: "Missing fields"})
+				if (!inviteKey) return fail(400, { msg: "Missing fields" })
 
 				await prisma.regkey.update({
 					where: {
 						key: inviteKey,
 					},
 					data: {
-						usesLeft: 0
-					}
+						usesLeft: 0,
+					},
 				})
 
 				return
