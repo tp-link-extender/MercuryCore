@@ -39,9 +39,9 @@ export async function GET({ url }) {
 							serverPort: true,
 							ownerUser: true,
 							ownerGroup: true,
-							id: true
-						}
-					}
+							id: true,
+						},
+					},
 				},
 			})
 		)[0]
@@ -49,11 +49,11 @@ export async function GET({ url }) {
 
 		await prisma.gameSessions.update({
 			where: {
-				ticket: clientTicket
+				ticket: clientTicket,
 			},
 			data: {
-				valid: false
-			}
+				valid: false,
+			},
 		})
 
 		if (privateServer) {

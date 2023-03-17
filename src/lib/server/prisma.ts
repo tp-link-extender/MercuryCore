@@ -14,21 +14,14 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs) {
 
 	// Add like/dislike ratio to each place
 	for (let place of places as (Place & { ratio: any })[]) {
-		let ratio = Math.floor(
-			(await roQuery(
-				"places",
-				`
-					RETURN (SIZE((:User) -[:likes]-> (:Place { name: $place })))
-					/ (SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place })))
-				`,
-				{
-					params: {
-						place: place.id,
-					},
-				},
-				true
-			)) * 100
-		)
+		const query = {
+			params: {
+				place: place.id,
+			},
+		}
+		const [likes, total] = await Promise.all([roQuery("places", "RETURN SIZE((:User) -[:likes]-> (:Place { name: $place }))", query, true), roQuery("places", "RETURN SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place }))", query, true)])
+		const ratio = Math.floor((likes / total) * 100)
+
 		place["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
 	return places
@@ -41,21 +34,13 @@ export async function findItems(query: Prisma.ItemFindManyArgs) {
 
 	// Add like/dislike ratio to each item
 	for (let item of items as (Item & { ratio: any })[]) {
-		let ratio = Math.floor(
-			(await roQuery(
-				"items",
-				`
-					RETURN (SIZE((:User) -[:likes]-> (:Item { name: $itemid })))
-					/ (SIZE((:User) -[:likes|dislikes]-> (:Item { name: $itemid })))
-				`,
-				{
-					params: {
-						itemid: item.id,
-					},
-				},
-				true
-			)) * 100
-		)
+		const query = {
+			params: {
+				itemid: item.id,
+			},
+		}
+		const [likes, total] = await Promise.all([roQuery("items", "RETURN SIZE((:User) -[:likes]-> (:Item { name: $itemid }))", query, true), roQuery("items", "RETURN SIZE((:User) -[:likes|dislikes]-> (:Item { name: $itemid }))", query, true)])
+		const ratio = Math.floor((likes / total) * 100)
 		item["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
 	return items
