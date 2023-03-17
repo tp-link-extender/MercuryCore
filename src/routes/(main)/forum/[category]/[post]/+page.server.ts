@@ -56,10 +56,8 @@ export async function load({ locals, params }) {
 
 	async function addLikes(post: any, reply = false) {
 		const query = {
-			params: {
-				user: user?.username,
-				id: post.id,
-			},
+			user: user?.username,
+			id: post.id,
 		}
 		post["likeCount"] = await roQuery(
 			"forum",

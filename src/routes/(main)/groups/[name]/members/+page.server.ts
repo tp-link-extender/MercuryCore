@@ -17,9 +17,7 @@ export const load = async ({ params }) => {
 	})
 	if (group) {
 		const query = {
-			params: {
-				group: params.name,
-			},
+			group: params.name,
 		}
 
 		async function Users() {

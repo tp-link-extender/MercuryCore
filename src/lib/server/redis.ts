@@ -22,7 +22,7 @@ const graphs: any = {
 }
 
 export async function Query(graph: string, query: any, params: any) {
-	await graphs[graph].query(query, params)
+	await graphs[graph].query(query, { params })
 }
 
 // Read-only query, cannot modify the graph
@@ -46,7 +46,7 @@ export async function roQuery(
 			(
 				await graphs[graph].roQuery(
 					res ? `${query} as ${rand}` : query,
-					params
+					{ params }
 				)
 			).data || []
 		if (!arr) result = result[0]

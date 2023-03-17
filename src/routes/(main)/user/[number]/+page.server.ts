@@ -31,15 +31,11 @@ export async function load({ locals, params }) {
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const query = {
-			params: {
-				user1: user?.username || "",
-				user2: userExists.username,
-			},
+			user1: user?.username || "",
+			user2: userExists.username,
 		}
 		const query2 = {
-			params: {
-				user: userExists.username,
-			},
+			user: userExists.username,
 		}
 
 		console.timeEnd("user")
@@ -156,10 +152,8 @@ export const actions = {
 		if (!user2Exists) return fail(400, { msg: "User not found" })
 
 		const query = {
-			params: {
-				user1: user.username,
-				user2: userExists?.username,
-			},
+			user1: user.username,
+			user2: userExists?.username,
 		}
 
 		console.log("Action:", action)

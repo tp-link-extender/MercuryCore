@@ -51,10 +51,8 @@ export async function load({ url, locals, params }) {
 			throw error(404, "Not Found")
 
 		const query = {
-			params: {
-				user: user?.username || "",
-				id,
-			},
+			user: user?.username || "",
+			id,
 		}
 
 		return {
@@ -114,10 +112,8 @@ export const actions = {
 			return fail(404, { msg: "Not found" })
 
 		const query = {
-			params: {
-				user: user.username,
-				id: id,
-			},
+			user: user.username,
+			id,
 		}
 
 		console.log("Action:", action)
@@ -222,23 +218,6 @@ export const actions = {
 
 		if (userModeration[0])
 			return fail(400, { message: "You cannot currently play games" })
-
-		// We will use a different method to check if place is full, via GameSessions
-
-		// if (
-		// 	place.maxPlayers <=
-		// 	(await roQuery("friends",
-		// 		"RETURN SIZE ((:User) -[:playing]-> (:Game { name: $id }))",
-		// 		{
-		// 			params: {
-		// 				id: serverId,
-		// 			},
-		// 		},
-		// 		true
-		// 	))
-		// 	false
-		// )
-		// 	return fail(400, { message: "Place is currently full. Join back later!" })
 
 		await prisma.gameSessions.updateMany({
 			// invalidate all game sessions
