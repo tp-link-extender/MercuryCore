@@ -54,8 +54,17 @@ export async function load({ locals, params }) {
 				},
 			}),
 			feed: group.posts,
-			memberCount: roQuery("groups", "RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true),
-			in: roQuery("groups", "MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r", query2),
+			memberCount: roQuery(
+				"groups",
+				"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
+				query,
+				true
+			),
+			in: roQuery(
+				"groups",
+				"MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r",
+				query2
+			),
 		}
 	} else {
 		throw error(404, "Not found")

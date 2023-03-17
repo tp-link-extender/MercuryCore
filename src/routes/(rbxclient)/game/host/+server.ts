@@ -8,7 +8,9 @@ export async function GET({ url }) {
 
 	if (!ticket) throw error(400, "Invalid Request")
 
-	const data = await prisma.place.findUnique({ where: { serverTicket: ticket } })
+	const data = await prisma.place.findUnique({
+		where: { serverTicket: ticket },
+	})
 	let port = 53640
 	let baseUrl = "..."
 	let serverId = "..."

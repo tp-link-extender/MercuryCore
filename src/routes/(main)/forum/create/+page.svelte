@@ -25,15 +25,41 @@
 	<form use:enhance method="POST">
 		<fieldset>
 			<div class="row mb-3">
-				<label for="title" class="col-md-3 col-form-label text-md-right">Post title</label>
+				<label
+					for="title"
+					class="col-md-3 col-form-label text-md-right">
+					Post title
+				</label>
 				<div class="col-md-9">
-					<input bind:value={fields.title} minlength="5" maxlength="50" type="text" name="title" id="title" placeholder="Make sure to make it accurate" required class="form-control valid" />
+					<input
+						bind:value={fields.title}
+						minlength="5"
+						maxlength="50"
+						type="text"
+						name="title"
+						id="title"
+						placeholder="Make sure to make it accurate"
+						required
+						class="form-control valid" />
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label for="content" class="col-md-3 col-form-label text-md-right">Post content</label>
+				<label
+					for="content"
+					class="col-md-3 col-form-label text-md-right">
+					Post content
+				</label>
 				<div class="col-md-9">
-					<textarea bind:value={fields.content} minlength="5" maxlength="3000" rows="6" name="content" id="content" placeholder="50-3000 characters" required class="form-control valid" />
+					<textarea
+						bind:value={fields.content}
+						minlength="5"
+						maxlength="3000"
+						rows="6"
+						name="content"
+						id="content"
+						placeholder="50-3000 characters"
+						required
+						class="form-control valid" />
 				</div>
 			</div>
 			<br />

@@ -28,15 +28,17 @@
 		defer
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-		crossorigin="anonymous"
-	></script>
+		crossorigin="anonymous"></script>
 </svelte:head>
 
 <slot />
 
 <!-- While a page is loading, a loading spinner can be shown -->
 {#if $navigating}
-	<div class="position-fixed bottom-0 end-0 m-4" in:fade={{ duration: 1500, delay: 100 }} out:fade={{ duration: 100 }}>
+	<div
+		class="position-fixed bottom-0 end-0 m-4"
+		in:fade={{ duration: 1500, delay: 100 }}
+		out:fade={{ duration: 100 }}>
 		<h1 class="light-text overflow-hidden">
 			<Loading />
 		</h1>

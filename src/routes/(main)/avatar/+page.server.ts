@@ -224,10 +224,12 @@ export const actions = {
 
 		const bodyPart = data.get("bodyPart") as string
 		const bodyColour = data.get("bodyColour") as string
-		if (!bodyPart || !bodyColour) return fail(400, { message: "Invalid Request" })
+		if (!bodyPart || !bodyColour)
+			return fail(400, { message: "Invalid Request" })
 
 		const brickcolor = hexToBrick(bodyColour)
-		if (!brickcolor) return fail(400, { message: `Invalid Hex ${bodyColour}` })
+		if (!brickcolor)
+			return fail(400, { message: `Invalid Hex ${bodyColour}` })
 
 		const currentBodyColour = user.bodyColours
 

@@ -19,11 +19,20 @@
 
 <div class="container light-text">
 	<div class="card post flex-row">
-		<form use:enhance class="sidebar me-2 p-1" method="POST" action="/forum/{data.forumCategory.name}?/like">
+		<form
+			use:enhance
+			class="sidebar me-2 p-1"
+			method="POST"
+			action="/forum/{data.forumCategory.name}?/like">
 			<input type="hidden" name="id" value={data.id} />
 			<div class="row mb-2 d-flex">
 				<div>
-					<button name="action" value={data.likes ? "unlike" : "like"} class="btn btn-sm {data.likes ? 'btn-success' : 'btn-outline-success'}">
+					<button
+						name="action"
+						value={data.likes ? "unlike" : "like"}
+						class="btn btn-sm {data.likes
+							? 'btn-success'
+							: 'btn-outline-success'}">
 						{#if data.likes}
 							<i class="fa fa-thumbs-up" />
 						{:else}
@@ -31,11 +40,21 @@
 						{/if}
 					</button>
 				</div>
-				<span class="my-2 text-center {data.likes ? 'text-success fw-bold' : data.dislikes ? 'text-danger fw-bold' : ''}">
+				<span
+					class="my-2 text-center {data.likes
+						? 'text-success fw-bold'
+						: data.dislikes
+						? 'text-danger fw-bold'
+						: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
 				<div>
-					<button name="action" value={data.dislikes ? "undislike" : "dislike"} class="btn btn-sm {data.dislikes ? 'btn-danger' : 'btn-outline-danger'}">
+					<button
+						name="action"
+						value={data.dislikes ? "undislike" : "dislike"}
+						class="btn btn-sm {data.dislikes
+							? 'btn-danger'
+							: 'btn-outline-danger'}">
 						{#if data.dislikes}
 							<i class="fa fa-thumbs-down" />
 						{:else}
@@ -46,13 +65,23 @@
 			</div>
 		</form>
 		<div class="p-3 text-decoration-none light-text w-100">
-			<a href="/user/{data.author.number}" class="user d-flex text-decoration-none">
+			<a
+				href="/user/{data.author.number}"
+				class="user d-flex text-decoration-none">
 				<span class="pfp rounded-circle">
-					<img src={data.author.image} alt={data.author.username} class="rounded-circle rounded-top-0" />
+					<img
+						src={data.author.image}
+						alt={data.author.username}
+						class="rounded-circle rounded-top-0" />
 				</span>
-				<span class="fw-bold ms-3 light-text">{data.author.username}</span>
-				<span class="light-text ms-auto">{data.posted.toLocaleString()}
-					<Report user={data.author.username} url="/forum/{data.forumCategory.name}/{data.id}" />
+				<span class="fw-bold ms-3 light-text">
+					{data.author.username}
+				</span>
+				<span class="light-text ms-auto">
+					{data.posted.toLocaleString()}
+					<Report
+						user={data.author.username}
+						url="/forum/{data.forumCategory.name}/{data.id}" />
 				</span>
 			</a>
 			<h2 class="h4 mt-2">
@@ -65,10 +94,21 @@
 	</div>
 
 	<form use:enhance class="mt-2 mb-4 p-1 row" method="POST">
-		<label for="content" class="form-label light-text mt-2">Post a Reply</label>
+		<label for="content" class="form-label light-text mt-2">
+			Post a Reply
+		</label>
 		<fieldset class="col-lg-7 d-flex">
-			<textarea class="form-control valid" required minlength="5" maxlength="1000" name="content" placeholder="What are your thoughts?" rows="4" />
-			<button type="submit" class="btn btn-success h-100 ms-3">Reply</button>
+			<textarea
+				class="form-control valid"
+				required
+				minlength="5"
+				maxlength="1000"
+				name="content"
+				placeholder="What are your thoughts?"
+				rows="4" />
+			<button type="submit" class="btn btn-success h-100 ms-3">
+				Reply
+			</button>
 		</fieldset>
 		{#if form?.msg}
 			<small class="text-danger mt-1">{form.msg}</small>
@@ -76,7 +116,16 @@
 	</form>
 
 	{#each data.replies as reply, num}
-		<ForumReply {reply} {num} {replyingTo} forumCategory={data.forumCategory.name} postId={data.id} postAuthorName={data.author.username} {repliesCollapsed} {baseDepth} topLevel />
+		<ForumReply
+			{reply}
+			{num}
+			{replyingTo}
+			forumCategory={data.forumCategory.name}
+			postId={data.id}
+			postAuthorName={data.author.username}
+			{repliesCollapsed}
+			{baseDepth}
+			topLevel />
 	{/each}
 </div>
 

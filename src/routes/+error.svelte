@@ -17,7 +17,8 @@
 <Navbar {data} />
 
 <main>
-	<div class="container d-flex flex-column justify-content-center align-items-center light-text rounded-4">
+	<div
+		class="container d-flex flex-column justify-content-center align-items-center light-text rounded-4">
 		<h1 class="light-text">Error {$page.status}</h1>
 		{$page.error?.message}
 	</div>

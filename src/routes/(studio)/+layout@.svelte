@@ -2,7 +2,10 @@
 	<slot />
 
 	<footer>
-		<p><a href="/">Mercury</a> 2022-{new Date().getFullYear()}</p>
+		<p>
+			<a href="/">Mercury</a>
+			2022-{new Date().getFullYear()}
+		</p>
 		<a class="footer" href="/about">About</a>
 		|
 		<a class="footer" href="/terms">Terms of Service</a>

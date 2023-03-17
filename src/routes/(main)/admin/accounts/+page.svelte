@@ -10,39 +10,77 @@
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Accounts</h1>
-	<a href="/admin" class="text-decoration-none"><i class="fa-solid fa-caret-left" /> Back to panel</a>
+	<a href="/admin" class="text-decoration-none">
+		<i class="fa-solid fa-caret-left" />
+		Back to panel
+	</a>
 	<div class="row mt-4">
 		<div class="col-lg-2 col-md-3 mb-4">
 			<ul class="nav nav-tabs flex-column border-0" role="tablist">
 				<li class="nav-item" role="presentation">
-					<a class="nav-link active" data-bs-toggle="tab" href="#resetPassword" aria-selected="true" role="tab">Reset User Password</a>
+					<a
+						class="nav-link active"
+						data-bs-toggle="tab"
+						href="#resetPassword"
+						aria-selected="true"
+						role="tab">
+						Reset User Password
+					</a>
 				</li>
 			</ul>
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<div id="myTabContent" class="tab-content">
-				<div class="tab-pane fade active show" id="resetPassword" role="tabpanel">
+				<div
+					class="tab-pane fade active show"
+					id="resetPassword"
+					role="tabpanel">
 					<form use:enhance method="POST" action="?/resetPassword">
 						<fieldset>
 							<div class="row light-text">
-								<label for="username" class="col-md-3 col-form-label text-md-right">Username</label>
+								<label
+									for="username"
+									class="col-md-3 col-form-label text-md-right">
+									Username
+								</label>
 								<div class="col-md-8">
-									<input type="text" name="username" id="username" required class="form-control valid" />
+									<input
+										type="text"
+										name="username"
+										id="username"
+										required
+										class="form-control valid" />
 								</div>
 							</div>
 							<br />
 							<div class="row light-text">
-								<label for="password" class="col-md-3 col-form-label text-md-right">New password</label>
+								<label
+									for="password"
+									class="col-md-3 col-form-label text-md-right">
+									New password
+								</label>
 								<div class="col-md-8">
-									<input type="text" name="password" id="password" required class="form-control valid" />
+									<input
+										type="text"
+										name="password"
+										id="password"
+										required
+										class="form-control valid" />
 								</div>
 							</div>
 							<br />
-							<button type="submit" class="btn btn-success">Submit</button>
+							<button type="submit" class="btn btn-success">
+								Submit
+							</button>
 						</fieldset>
 					</form>
 					<br />
-					<p class="col-12 mb-3 text-{form?.usersuccess ? 'success' : 'danger'}">{form?.msg || ""}</p>
+					<p
+						class="col-12 mb-3 text-{form?.usersuccess
+							? 'success'
+							: 'danger'}">
+						{form?.msg || ""}
+					</p>
 				</div>
 			</div>
 		</div>

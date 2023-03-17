@@ -5,7 +5,8 @@ export const load = async ({ url }) => {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) throw error(400, "No query provided")
-	if (category && !["users", "places", "items", "groups"].includes(category)) throw error(400, "Invalid category")
+	if (category && !["users", "places", "items", "groups"].includes(category))
+		throw error(400, "Invalid category")
 
 	console.log(`search for ${query} in ${category}`)
 
@@ -79,6 +80,9 @@ export const actions = {
 		const category = data.get("category") as string
 		console.log(`searching for ${query} in ${category}`)
 
-		throw redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
+		throw redirect(
+			302,
+			`/search?q=${query}${category ? `&c=${category}` : ""}`
+		)
 	},
 }

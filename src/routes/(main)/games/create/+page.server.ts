@@ -14,9 +14,17 @@ export const actions = {
 		const maxPlayers = parseInt(data.get("maxPlayers") as string)
 		const privateServer = !!data.get("privateServer")
 
-		console.log(name, description, serverIP, serverPort, maxPlayers, privateServer)
+		console.log(
+			name,
+			description,
+			serverIP,
+			serverPort,
+			maxPlayers,
+			privateServer
+		)
 
-		if (!name || !description || !serverIP || !serverPort || !maxPlayers) return fail(400, { msg: "Missing fields" })
+		if (!name || !description || !serverIP || !serverPort || !maxPlayers)
+			return fail(400, { msg: "Missing fields" })
 		if (
 			name.length < 3 ||
 			name.length > 50 ||
@@ -36,7 +44,8 @@ export const actions = {
 			select: { _count: { select: { places: true } } },
 		})
 
-		if (gameCount && gameCount?._count.places >= 2) return fail(400, { msg: "You may only have 2 places at most" })
+		if (gameCount && gameCount?._count.places >= 2)
+			return fail(400, { msg: "You may only have 2 places at most" })
 
 		let place: any
 		try {
@@ -49,7 +58,9 @@ export const actions = {
 						serverPort,
 						privateServer,
 						maxPlayers,
-						image: `/place/placeholderIcon${Math.floor(Math.random() * 3) + 1}.png`,
+						image: `/place/placeholderIcon${
+							Math.floor(Math.random() * 3) + 1
+						}.png`,
 						ownerUsername: user.username,
 					},
 					select: {
@@ -57,7 +68,16 @@ export const actions = {
 					},
 				})
 
-				await transaction({ id: user.userId }, { number: 1 }, 10, { note: `Created place ${name}`, link: `/place/${place.id}` }, tx)
+				await transaction(
+					{ id: user.userId },
+					{ number: 1 },
+					10,
+					{
+						note: `Created place ${name}`,
+						link: `/place/${place.id}`,
+					},
+					tx
+				)
 			})
 		} catch (e: any) {
 			return fail(402, { msg: e.message })

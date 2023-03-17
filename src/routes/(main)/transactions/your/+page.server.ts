@@ -7,7 +7,10 @@ export async function load({ locals }) {
 	return {
 		transactions: prisma.transaction.findMany({
 			where: {
-				OR: [{ receiverName: user.username }, { senderName: user.username }],
+				OR: [
+					{ receiverName: user.username },
+					{ senderName: user.username },
+				],
 			},
 			select: {
 				id: true,

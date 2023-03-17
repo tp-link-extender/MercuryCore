@@ -55,15 +55,22 @@
 							class="form-control light-text valid"
 							placeholder="Search for an item"
 							aria-label="Search for an item"
-							aria-describedby="button-addon2"
-						/>
+							aria-describedby="button-addon2" />
 						<input type="hidden" name="category" value="items" />
-						<select class="form-select form-select-sm light-text ps-3" placeholder="Type" aria-label="Type">
+						<select
+							class="form-select form-select-sm light-text ps-3"
+							placeholder="Type"
+							aria-label="Type">
 							<option value="Shirt">Shirts</option>
 							<option value="TShirt">T-Shirts</option>
 							<option value="Hat">Hats</option>
 						</select>
-						<button class="btn btn-success" type="submit" id="button-addon2"><i class="fa fa-magnifying-glass" /></button>
+						<button
+							class="btn btn-success"
+							type="submit"
+							id="button-addon2">
+							<i class="fa fa-magnifying-glass" />
+						</button>
 					</div>
 				</div>
 			</form>
@@ -75,7 +82,9 @@
 				<Item {item} {num} total={data.items.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
-				<h2 class="h5 light-text mt-5">No items found with search term {query}</h2>
+				<h2 class="h5 light-text mt-5">
+					No items found with search term {query}
+				</h2>
 			{/if}
 		</div>
 	</div>

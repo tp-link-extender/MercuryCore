@@ -30,14 +30,24 @@
 	{#if data.category == "users" && data.users}
 		<div class="grid d-grid">
 			{#each data.users as user}
-				<a class="px-2 mb-2 text-center light-text text-decoration-none" href="/user/{user.number}">
+				<a
+					class="px-2 mb-2 text-center light-text text-decoration-none"
+					href="/user/{user.number}">
 					<div class="position-relative mb-2">
 						<div class="image-background rounded-circle">
-							<img src={user.image} alt={user.username} class="h-100 rounded-circle img-fluid rounded-top-0" />
+							<img
+								src={user.image}
+								alt={user.username}
+								class="h-100 rounded-circle img-fluid rounded-top-0" />
 						</div>
 						{#if user.status}
-							<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[user.status]}">
-								<span class="visually-hidden">{user.status}</span>
+							<span
+								class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
+									user.status
+								]}">
+								<span class="visually-hidden">
+									{user.status}
+								</span>
 							</span>
 						{/if}
 					</div>
@@ -77,9 +87,15 @@
 		</div>
 	{:else}
 		<div id="buttons" class="d-flex justify-content-center gap-3">
-			<a class="btn btn-primary" href="/search?q={data.query}&c=users">Users</a>
-			<a class="btn btn-primary" href="/search?q={data.query}&c=places">Places</a>
-			<a class="btn btn-primary" href="/search?q={data.query}&c=items">Items</a>
+			<a class="btn btn-primary" href="/search?q={data.query}&c=users">
+				Users
+			</a>
+			<a class="btn btn-primary" href="/search?q={data.query}&c=places">
+				Places
+			</a>
+			<a class="btn btn-primary" href="/search?q={data.query}&c=items">
+				Items
+			</a>
 		</div>
 	{/if}
 </div>
