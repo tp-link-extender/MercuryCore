@@ -96,9 +96,9 @@ export const actions = {
 			case "updateBody":
 				const bannerBody = data.get("bannerBody") as string
 
-				if (!bannerBody || !bannerId) return fail(400, {area: "modal", msg: "Missing fields" })
+				if (!bannerBody || !bannerId) return fail(400, { area: "modal", msg: "Missing fields" })
 
-				if (bannerBody.length < 3 || bannerBody.length > 99) return fail(400, {area: "modal", msg: "Banner text is too long/short" })
+				if (bannerBody.length < 3 || bannerBody.length > 99) return fail(400, { area: "modal", msg: "Banner text is too long/short" })
 
 				await prisma.announcements.update({
 					where: {

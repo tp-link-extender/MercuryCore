@@ -19,8 +19,8 @@ export const load = async () => ({
 			},
 		},
 		orderBy: {
-			serverPing: "desc"
-		}
+			serverPing: "desc",
+		},
 	}),
 })
 

@@ -27,7 +27,8 @@ export const actions = {
 		const note = (data.get("note") as string).trim() || null
 
 		if (!reportUser || !reportUrl || !category) return fail(400, { msg: "Missing fields" })
-		if (!["AccountTheft", "Dating", "Exploiting", "Harassment", "InappropriateContent", "PersonalInformation", "Scamming", "Spam", "Swearing", "Threats", "Under13"].includes(category)) return fail(400, { msg: "Invalid category" })
+		if (!["AccountTheft", "Dating", "Exploiting", "Harassment", "InappropriateContent", "PersonalInformation", "Scamming", "Spam", "Swearing", "Threats", "Under13"].includes(category))
+			return fail(400, { msg: "Invalid category" })
 
 		const reportee = await prisma.user.findUnique({
 			where: {

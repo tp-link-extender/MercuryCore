@@ -4,20 +4,20 @@ import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 
 // Make sure a user is an administrator before loading the page.
-export async function load ({ locals }) {
+export async function load({ locals }) {
 	await authoriseAdmin(locals)
 
-    return {
+	return {
 		dailyStipend: Number((await client.get("dailyStipend")) || 10),
 		stipendTime: Number((await client.get("stipendTime")) || 12),
 	}
 }
 
 export const actions = {
-    updateStipend: async ({ request, locals, getClientAddress }) => {
+	updateStipend: async ({ request, locals, getClientAddress }) => {
 		await authoriseAdmin(locals)
 
-        const limit = ratelimit("resetPassword", getClientAddress, 30)
+		const limit = ratelimit("resetPassword", getClientAddress, 30)
 		if (limit) return limit
 
 		const data = await request.formData()
@@ -31,7 +31,7 @@ export const actions = {
 		await client.set("stipendTime", stipendTime)
 
 		return {
-            error: false,
+			error: false,
 			economysuccess: true,
 			msg: "Economy updated successfully!",
 		}
