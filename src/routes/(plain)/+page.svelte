@@ -3,32 +3,57 @@
 	import Gradient from "$lib/gradient"
 	import Moon from "$lib/components/Moon.svelte"
 
+	// Gradient must run upon page being loaded,
+	// and cannot be rendered on serverside.
 	onMount(() => {
-		// otherwise "window is not defined"
 		const gradient = new Gradient()
 		gradient.initGradient("#gradient-canvas")
 	})
 </script>
 
 <svelte:head>
-	<meta name="description" content="Mercury: Endless possibilities. New features. Same nostalgia." />
+	<meta
+		name="description"
+		content="Mercury: Endless possibilities. New features. Same nostalgia." />
 	<title>Mercury - Mercury</title>
 </svelte:head>
 
 <canvas id="gradient-canvas" class="w-100 h-100 position-fixed" />
 
-<div id="info" class="container d-flex flex-column justify-content-center align-items-center position-relative">
-	<div id="moon" class="container d-flex flex-column justify-content-center align-items-center position-absolute">
+<div
+	id="info"
+	class="container d-flex flex-column justify-content-center align-items-center position-relative">
+	<div
+		id="moon"
+		class="container d-flex flex-column justify-content-center align-items-center position-absolute">
 		<Moon />
 	</div>
 	<h1 id="title" class="fw-bolder text-white opacity-75">Mercury 2</h1>
-	<p class="lead text-white text-center">Endless possibilities. New features. Same nostalgia.</p>
+	<p class="lead text-white text-center">
+		Endless possibilities. New features. Same nostalgia.
+	</p>
 	<div class="d-inline mb-3">
-		<b><a type="button" href="/register" class="d-inline btn btn-sm btn-success text-decoration-none">Register <i class="fa fa-chevron-right" /></a></b>
-		<b><a type="button" href="/login" class="d-inline btn btn-sm btn-primary text-decoration-none">Login <i class="fa fa-chevron-right" /></a></b>
+		<b>
+			<a
+				type="button"
+				href="/register"
+				class="d-inline btn btn-sm btn-success text-decoration-none">
+				Register <i class="fa fa-chevron-right" />
+			</a>
+		</b>
+		<b>
+			<a
+				type="button"
+				href="/login"
+				class="d-inline btn btn-sm btn-primary text-decoration-none">
+				Login <i class="fa fa-chevron-right" />
+			</a>
+		</b>
 	</div>
 	<h5>
-		<a href="/about" class="text-decoration-none pt-3">About us <i class="fa fa-chevron-right" /></a>
+		<a href="/about" class="text-decoration-none pt-3">
+			About us <i class="fa fa-chevron-right" />
+		</a>
 	</h5>
 </div>
 <div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">

@@ -1,4 +1,8 @@
+// Styles that will be applied to every page.
+// It's best to only put things in here that apply to many pages, to keep bundle size down.
+
 :root
+	overflow: overlay // Scrollbar is above content instead of beside
 	overflow-x: hidden
 	background-color: var(--background)
 
@@ -23,8 +27,9 @@ input, select, textarea
 	background: var(--mainaccent)
 
 ::-webkit-scrollbar
-	width: 0.75rem
-	height: 0.75rem
+	position: fixed
+	width: 0.50rem
+	height: 0.50rem
 	&-track, &-corner
 		background: none
 	&-thumb

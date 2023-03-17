@@ -1,12 +1,14 @@
-import type { PageServerLoad, Actions } from "./$types"
 import { prisma, findPlaces, findItems, findGroups } from "$lib/server/prisma"
 import { error, redirect } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load = async ({ url }) => {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) throw error(400, "No query provided")
-	if (category && !["users", "places", "items", "groups"].includes(category)) throw error(400, "Invalid category")
+	if (category && !["users", "places", "items", "groups"].includes(category))
+		throw error(400, "Invalid category")
+
+	console.log(`search for ${query} in ${category}`)
 
 	if (category == "users") {
 		const user = await prisma.user.findUnique({
@@ -27,7 +29,7 @@ export const load: PageServerLoad = async ({ url }) => {
 			category == "users"
 				? prisma.user.findMany({
 						where: {
-							displayname: {
+							username: {
 								contains: query,
 								mode: "insensitive",
 							},
@@ -42,6 +44,7 @@ export const load: PageServerLoad = async ({ url }) => {
 								contains: query,
 								mode: "insensitive",
 							},
+							privateServer: false,
 						},
 				  })
 				: null,
@@ -70,13 +73,16 @@ export const load: PageServerLoad = async ({ url }) => {
 	}
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request }) => {
 		const data = await request.formData()
-		const query = data.get("query")?.toString() || ""
-		const category = data.get("category")?.toString() || ""
-		console.log(query)
+		const query = data.get("query") as string
+		const category = data.get("category") as string
+		console.log(`searching for ${query} in ${category}`)
 
-		throw redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
+		throw redirect(
+			302,
+			`/search?q=${query}${category ? `&c=${category}` : ""}`
+		)
 	},
 }

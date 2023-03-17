@@ -1,12 +1,11 @@
 <script lang="ts">
-	import type { PageData } from "./$types"
 	import { enhance } from "$app/forms"
 	import { getUser } from "@lucia-auth/sveltekit/client"
 	import Place from "$lib/components/Place.svelte"
 
 	const user = getUser()
 
-	export let data: PageData
+	export let data
 </script>
 
 <svelte:head>
@@ -18,42 +17,34 @@
 		<div class="container light-text">
 			<h1 class="light-text">{data.name}</h1>
 			<p class="light-text">
-				<b>By</b> <a href="/user/{data.owner.number}">{data.owner.displayname}</a>
+				<b>By</b>
+				<a href="/user/{data.owner.number}">{data.owner.username}</a>
 			</p>
 			<br />
 			<div class="d-flex">
-				<a href="/groups/{data.name}/followers" class="light-text text-center text-decoration-none ms-4">
-					Followers
-					<h3 class="light-text">
-						{data.followerCount}
-					</h3>
-				</a>
-				<a href="/groups/{data.name}/members" class="light-text text-center text-decoration-none ms-4">
+				<a
+					href="/groups/{data.name}/members"
+					class="light-text text-center text-decoration-none ms-4">
 					Members
 					<h3 class="light-text">
 						{data.memberCount}
 					</h3>
 				</a>
-				{#if $user}
-					<form class="align-self-center ms-auto" method="POST" use:enhance>
-						<button name="action" value={data.following ? "unfollow" : "follow"} class="btn {data.following ? 'btn-danger' : 'btn-primary'}">
-							{#if data.following}
-								Unfollow
-							{:else}
-								Follow
-							{/if}
-						</button>
-					</form>
-					<form class="align-self-center ms-3" method="POST" use:enhance>
-						<button name="action" value={data.in ? "leave" : "join"} class="btn {data.in ? 'btn-danger' : 'btn-success'}">
-							{#if data.in}
-								Leave
-							{:else}
-								Join
-							{/if}
-						</button>
-					</form>
-				{/if}
+				<form
+					class="align-self-center ms-auto"
+					method="POST"
+					use:enhance>
+					<button
+						name="action"
+						value={data.in ? "leave" : "join"}
+						class="btn {data.in ? 'btn-danger' : 'btn-success'}">
+						{#if data.in}
+							Leave
+						{:else}
+							Join
+						{/if}
+					</button>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -61,9 +52,9 @@
 		<div class="mt-4">
 			<h2 class="h4 light-text">Creations</h2>
 			<div class="row m-0 p-0">
-				{#each data.places as place}
+				{#each data.places as place, num}
 					<div class="col col-4 col-sm-3 col-md-2 text-center">
-						<Place {place} />
+						<Place {place} {num} total={data.places.length} />
 					</div>
 				{/each}
 			</div>
@@ -78,8 +69,13 @@
 						<div class="card h-100">
 							<div class="card-body pb-0">
 								<div id="user" class="d-flex mb-2">
-									<span class="fw-bold ms-3 light-text">{data.name}</span>
-									<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
+									<span class="fw-bold ms-3 light-text">
+										{data.name}
+									</span>
+									<span
+										class="ms-auto fw-italic light-text text-end">
+										{status.posted.toLocaleString()}
+									</span>
 								</div>
 								<p class="text-start">
 									{status.content}

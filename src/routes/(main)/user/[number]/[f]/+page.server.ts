@@ -1,4 +1,5 @@
-import type { PageServerLoad } from "./$types"
+// The friends, followers, and following pages for a user.
+
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
@@ -23,8 +24,9 @@ const numberQueries: any = {
 	following: "RETURN SIZE((:User { name: $user }) -[:follows]-> (:User))",
 }
 
-export const load: PageServerLoad = async ({ params }) => {
-	if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
+export const load = async ({ params }) => {
+	if (!/^\d+$/.test(params.number))
+		throw error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
 
 	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
@@ -37,19 +39,22 @@ export const load: PageServerLoad = async ({ params }) => {
 		},
 		select: {
 			username: true,
-			displayname: true,
 			image: true,
 		},
 	})
 	if (user) {
 		const query = {
-			params: {
-				user: user?.username,
-			},
+			user: user?.username,
 		}
 
 		async function Users() {
-			const usersQuery = await roQuery(usersQueries[type], query, false, true)
+			const usersQuery = await roQuery(
+				"friends",
+				usersQueries[type],
+				query,
+				false,
+				true
+			)
 
 			let users: any[] = []
 
@@ -63,7 +68,6 @@ export const load: PageServerLoad = async ({ params }) => {
 							select: {
 								number: true,
 								username: true,
-								displayname: true,
 								image: true,
 								status: true,
 							},
@@ -77,9 +81,9 @@ export const load: PageServerLoad = async ({ params }) => {
 		console.timeEnd("user " + type)
 		return {
 			type,
-			displayname: user.displayname,
+			username: user.username,
 			users: Users(),
-			number: roQuery(numberQueries[type], query, true),
+			number: roQuery("friends", numberQueries[type], query, true),
 		}
 	} else {
 		throw error(404, `Not found`)

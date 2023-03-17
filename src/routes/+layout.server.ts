@@ -1,9 +1,15 @@
-import { client } from "$lib/server/redis"
+import { prisma } from "$lib/server/prisma"
 import { handleServerSession } from "@lucia-auth/sveltekit"
 
 export const load = handleServerSession(async () => ({
-	bannerText: client.get("bannerText"),
-	bannerColour: client.get("bannerColour"),
-	bannerTextLight: client.get("bannerTextLight"), // truthy or falsy string
-	stipendTime: Number((await client.get("stipendTime")) || 12),
+	banners: prisma.announcements.findMany({
+		where: {
+			active: true,
+		},
+		select: {
+			body: true,
+			bgColour: true,
+			textLight: true,
+		},
+	}),
 }))

@@ -1,6 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// This is the Prisma schema file, determining the structure of the Postgres database
+// and how it can be accessed by Prisma.
 
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
 // Sections are commented out, not yet implemented
 
 generator client {
@@ -14,14 +15,12 @@ datasource db {
 }
 
 // Users & Groups
-
-enum Permission {
-    User
-    Verified
-    Moderator
-    ItemManager
-    Administrator
-}
+// ADMIN LEVELS:
+// 1: User
+// 2: Verified
+// 3: Catalog Manager
+// 4: Moderator
+// 5: Administrator
 
 model User {
     id      String    @id @unique @default(uuid())
@@ -30,17 +29,16 @@ model User {
     number               Int           @unique @default(autoincrement())
     username             String        @unique
     email                String        @unique
-    displayname          String
     usedRegkey           Regkey        @relation(fields: [regkeyKey], references: [key])
     regkeyKey            String
-    permissionLevel      Permission    @default(User)
+    createdRegkey        Regkey[]      @relation("creator")
+    permissionLevel      Int           @default(1)
     bio                  String?
     image                String?
     created              DateTime      @default(now())
     lastOnline           DateTime      @default(now())
     currencyCollected    DateTime      @default(now())
     status               String?
-    theme                String?
     currency             Int           @default(0)
     groupsOwned          Group[]
     places               Place[]
@@ -51,6 +49,22 @@ model User {
     transactionsSent     Transaction[] @relation("sent")
     transactionsReceived Transaction[] @relation("received")
 
+    bodyColours Json @default("{\"Head\": \"24\",\"Torso\": \"23\",\"LeftArm\": \"24\",\"RightArm\": \"24\",\"LeftLeg\": \"119\",\"RightLeg\": \"119\"}")
+    // {"Head": "24","Torso": "23","LeftArm": "24","RightArm": "24","LeftLeg": "119","RightLeg": "119"}
+
+    theme             String?
+    animationSettings String?
+    GameSessions      GameSessions[]
+    Announcements     Announcements[]
+    forumPosts        ForumPost[]
+    forumReplies      ForumReply[]
+    reportsSent       Report[]        @relation("sent")
+    reportsReceived   Report[]        @relation("received")
+
+    moderationActionsGiven    ModerationAction[] @relation("given")
+    moderationActionsReceived ModerationAction[] @relation("received")
+    AuditLog                  AuditLog[] @relation("actor")
+
     @@map("user")
 }
 
@@ -60,16 +74,51 @@ model Key {
     user_id         String
     primary         Boolean
     user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    expires         BigInt?
 
     @@index([user_id])
     @@map("key")
 }
 
+model Session {
+    id             String @id @unique
+    user_id        String
+    active_expires BigInt
+    idle_expires   BigInt
+    user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("session")
+}
+
+model Announcements {
+    id        String  @id @unique @default(cuid())
+    body      String
+    bgColour  String
+    textLight Boolean
+    active    Boolean @default(true)
+    creatorId String
+    user      User    @relation(references: [id], fields: [creatorId], onDelete: Cascade)
+}
+
+model GameSessions {
+    place   Place   @relation(references: [id], fields: [placeId], onDelete: Cascade)
+    placeId Int
+    user    User    @relation(references: [id], fields: [userId], onDelete: Cascade)
+    userId  String
+    ticket  String  @id @unique @default(uuid())
+    ping    BigInt  @default(0)
+    valid   Boolean @default(true)
+}
+
 model Regkey {
-    key      String    @unique @default(cuid())
-    usesLeft Int       @default(1)
-    expiry   DateTime?
-    users    User[]
+    key       String    @unique @default(cuid())
+    usesLeft  Int       @default(1)
+    expiry    DateTime?
+    creation  DateTime  @default(now())
+    creator   User?     @relation("creator", fields: [creatorId], references: [id])
+    creatorId String?
+    users     User[]
 }
 
 model Post {
@@ -93,18 +142,30 @@ model Group {
 // Places
 
 model Place {
+    id Int @id @unique @default(autoincrement())
+
     name           String
-    slug           String  @id @unique
     ownerUser      User?   @relation(fields: [ownerUsername], references: [username])
     ownerUsername  String?
     ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
     ownerGroupname String?
 
+    serverIP      String
+    serverPort    Int
+    serverTicket  String  @unique @default(cuid())
+    serverPing    BigInt  @default(0)
+    privateServer Boolean @default(false)
+    privateTicket String  @unique @default(uuid())
+
     description String
     image       String
 
-    created DateTime @default(now())
-    updated DateTime @default(now())
+    maxPlayers Int
+
+    created      DateTime       @default(now())
+    updated      DateTime       @default(now())
+    deleted      Boolean        @default(false)
+    GameSessions GameSessions[]
 }
 
 // Items
@@ -128,7 +189,7 @@ enum ItemCategory {
 
 model Item {
     name        String
-    id          String       @id @unique @default(cuid())
+    id          String       @id @unique
     price       Int
     category    ItemCategory
     creator     User         @relation(fields: [creatorName], references: [username])
@@ -148,4 +209,108 @@ model Transaction {
     amountSent   Int
     taxRate      Float
     time         DateTime @default(now())
+    note         String?
+    link         String?
+}
+
+// Forum
+
+model ForumCategory {
+    name        String      @id @unique
+    posts       ForumPost[]
+    description String
+}
+
+model ForumPost {
+    id                String        @id @unique
+    author            User          @relation(fields: [authorId], references: [id])
+    authorId          String
+    posted            DateTime      @default(now())
+    title             String
+    content           String
+    forumCategory     ForumCategory @relation(fields: [forumCategoryName], references: [name])
+    forumCategoryName String
+    replies           ForumReply[]
+}
+
+model ForumReply {
+    id       String   @id @unique
+    author   User     @relation(fields: [authorId], references: [id])
+    authorId String
+    posted   DateTime @default(now())
+    content  String
+
+    // A reply can be to a post or another reply
+    parentPost    ForumPost?   @relation(fields: [parentPostId], references: [id])
+    parentPostId  String?
+    parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
+    parentReplyId String?
+    replies       ForumReply[] @relation("replies")
+}
+
+// Reports
+
+enum ReportCategory {
+    AccountTheft
+    Dating
+    Exploiting
+    Harassment
+    InappropriateContent
+    PersonalInformation
+    Scamming
+    Spam
+    Swearing
+    Threats
+    Under13
+}
+
+model Report {
+    id         String   @id @unique @default(cuid())
+    reporter   User     @relation("sent", fields: [reporterId], references: [id])
+    reporterId String
+    reportee   User     @relation("received", fields: [reporteeId], references: [id])
+    reporteeId String
+    time       DateTime @default(now())
+
+    note     String? // Note from the reporter
+    url      String
+    category ReportCategory
+    inGame   Boolean        @default(false)
+}
+
+enum ModerationActionType {
+    Warning
+    Ban
+    Termination
+    AccountDeleted
+}
+
+model ModerationAction {
+    id          String               @id @unique @default(cuid())
+    moderator   User                 @relation("given", fields: [moderatorId], references: [id])
+    moderatorId String
+    moderatee   User                 @relation("received", fields: [moderateeId], references: [id])
+    moderateeId String
+    time        DateTime             @default(now())
+    timeEnds    DateTime             
+    note        String
+    type        ModerationActionType
+    active      Boolean              @default(true)
+}
+
+// Admin
+
+enum AuditActionType {
+    Moderation
+    Invite
+    Account
+}
+
+model AuditLog {
+    id     Int             @id @unique @default(autoincrement())
+    action AuditActionType
+    note   String
+    user   User            @relation("actor", fields: [userId], references: [id])
+    userId String
+    date   DateTime        @default(now())
 }

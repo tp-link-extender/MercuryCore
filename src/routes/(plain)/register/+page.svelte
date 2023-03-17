@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { applyAction, enhance } from "$app/forms"
 
-	function input(name: string, e: any) {
-		data[name].value = e.target.value
-	}
+	const input = (name: string, e: any) => (data[name].value = e.target.value)
 
 	let data: any = {
 		username: { value: "", invalid: false, message: "" },
@@ -14,9 +12,18 @@
 	}
 
 	const things = [
-		["Original username", "Make sure it is appropriate and between 3-21 characters. Underscores are allowed."],
-		["Valid email", "Mercury requires a valid email so you can reset your password at any time."],
-		["Secure password", "Make sure your password has a mix of letters, numbers, and symbols to protect against hackers."],
+		[
+			"Original username",
+			"Make sure it is appropriate and between 3-21 characters. Underscores are allowed.",
+		],
+		[
+			"Valid email",
+			"Mercury requires a valid email so you can reset your password at any time.",
+		],
+		[
+			"Secure password",
+			"Make sure your password has a mix of letters, numbers, and symbols to protect against hackers.",
+		],
 	]
 
 	const fields = [
@@ -34,19 +41,25 @@
 
 	// This system is extremely magicky
 	$: data.username.invalid =
-		(data.username.value.length < 3 && update("username", "Username must be at least 3 characters")) ||
-		(data.username.value.length > 21 && update("username", "Username must be less than 30 characters")) ||
-		(!data.username.value.match(/^[A-Za-z0-9_]+$/) && update("username", "Username must be alphanumeric (A-Z, 0-9, _)"))
+		(data.username.value.length < 3 &&
+			update("username", "Username must be at least 3 characters")) ||
+		(data.username.value.length > 21 &&
+			update("username", "Username must be less than 30 characters")) ||
+		(!data.username.value.match(/^[A-Za-z0-9_]+$/) &&
+			update("username", "Username must be alphanumeric (A-Z, 0-9, _)"))
 
 	// todo: EMAIL REGEX!
 
 	$: data.password.invalid =
 		// (data.password.value.length < 1 && update("password", "Password must be at least 1 character")) || // Doesn't appear anyway if form has no input
-		data.password.value.length > 6969 && update("password", "Password must be less than 6969 characters")
+		data.password.value.length > 6969 &&
+		update("password", "Password must be less than 6969 characters")
 
-	$: data.cpassword.invalid = data.password.value != data.cpassword.value && update("cpassword", "The specified password does not match")
+	$: data.cpassword.invalid =
+		data.password.value != data.cpassword.value &&
+		update("cpassword", "The specified password does not match")
 
-	export let form: any
+	export let form
 </script>
 
 <svelte:head>
@@ -63,8 +76,13 @@
 
 <div class="row">
 	<div id="dark" class="col light-text">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0"><i class="fa fa-arrow-left me-2" /> Home</a>
-		<h1 class="fw-bolder light-text mb-4">Mercury 2 <span class="opacity-50">beta</span></h1>
+		<a type="button" href="/" class="btn btn-lg border-0 px-0">
+			<i class="fa fa-arrow-left me-2" />
+			Home
+		</a>
+		<h1 class="fw-bolder light-text mb-4">
+			Mercury 2 <span class="opacity-50">beta</span>
+		</h1>
 		{#each things as [thing, more]}
 			<div class="thing d-flex flex-row mt-3">
 				<div class="ms-3 w-100">
@@ -88,27 +106,37 @@
 				method="POST"
 				use:enhance={() =>
 					async ({ result }) =>
-						result.type == "redirect" ? window.location.reload() : await applyAction(result)}
-			>
-				<!-- use:enhance function prevents lucia getUser() still being undefined after login -->
+						result.type == "redirect"
+							? window.location.reload()
+							: await applyAction(result)}>
+				<!-- 
+					The use:enhance function prevents lucia getUser() still being undefined after login,
+					while still allowing the form to update without reloading when an error occurs.
+				-->
 				<fieldset>
 					{#each fields as [name, label, placeholder, type]}
 						<label for={name} class="form-label">{label}</label>
 						<div class="mb-4">
-							<!-- bind directive cannot be used here, as type is dynamic, and two-way bindings require the type to be determined at compile -->
+							<!--
+								Bind directive cannot be used here, as type is dynamic, and two-way
+								bindings require the type to be determined at compile time.
+							-->
 							<input
-								on:input={e => {
-									input(name, e)
-								}}
+								on:input={e => input(name, e)}
 								id={name}
 								{name}
 								{type}
-								class="light-text form-control {form?.area == name || (data[name].value && data[name].invalid) ? 'is-invalid' : 'valid'}"
+								class="light-text form-control {form?.area ==
+									name ||
+								(data[name].value && data[name].invalid)
+									? 'is-invalid'
+									: 'valid'}"
 								{placeholder}
-								required
-							/>
+								required />
 							{#if form?.area == name || (data[name].value && data[name].invalid)}
-								<small class="col-12 mb-3 text-danger">{form?.msg || data[name].message}</small>
+								<small class="col-12 mb-3 text-danger">
+									{form?.msg || data[name].message}
+								</small>
 							{/if}
 						</div>
 					{/each}
@@ -116,14 +144,23 @@
 					{#if form?.area == "unexp"}
 						<p class="col-12 mb-3 text-danger">{form.msg}</p>
 					{/if}
-					<button type="submit" class="container-fluid btn btn-primary mb-3">Register</button>
+					<button
+						type="submit"
+						class="container-fluid btn btn-primary mb-3">
+						Register
+					</button>
 				</fieldset>
 			</form>
 			<p>
 				By signing up, you agree to our
-				<a href="/terms" class="text-decoration-none">Terms of Service</a>
+				<a href="/terms" class="text-decoration-none">
+					Terms of Service
+				</a>
 				and
-				<a href="/privacy" class="text-decoration-none">Privacy policy</a>.
+				<a href="/privacy" class="text-decoration-none">
+					Privacy policy
+				</a>
+				.
 			</p>
 		</div>
 	</div>

@@ -60,10 +60,12 @@ Upon shutting down the databases, their contents will be dumped to the /data/red
 You will need:
 
 -   Everything above including pnpm
--   A TLS certificate, nginx reverse proxy with certbot works well
 
 Instructions:
 
+-   Add the nginx configuration file, located at /nginx/default, to your nginx configuration (/etc/nginx/sites-available/default if you have no other nginx sites)
+-   Use the certbot tool to generate a free certificate for your domain (`sudo certbot --nginx -d <your domain>`)
+    -   Be careful with replacing certificates for debugging, as CA ratelimits can be as low as 5 per week
 -   Clone the repository to your server, and navigate to its directory
 -   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)

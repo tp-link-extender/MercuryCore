@@ -10,3 +10,5 @@ node_modules
 /yes
 .vscode
 /data
+/keys
+/setup

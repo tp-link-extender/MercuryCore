@@ -1,3 +1,5 @@
+// The service worker script, adding some offline functionality to Mercury.
+
 import { build, files, prerendered, version } from "$service-worker"
 
 // Generate unique ID for new cache
@@ -62,12 +64,16 @@ function checks(event) {
 	const isHttp = url.protocol.startsWith("http")
 
 	// Is the resource within the scope of the app?
-	const isLocal = url.hostname === self.location.hostname && url.port === self.location.port
+	const isLocal =
+		url.hostname === self.location.hostname &&
+		url.port === self.location.port
 
-	const isStaticAsset = url.host === self.location.host && cachePayloadSet.has(url.pathname)
+	const isStaticAsset =
+		url.host === self.location.host && cachePayloadSet.has(url.pathname)
 
 	// Was the resource cached on install?
-	const isUncached = event.request.cache === "only-if-cached" && !isStaticAsset
+	const isUncached =
+		event.request.cache === "only-if-cached" && !isStaticAsset
 
 	return {
 		isHttp,
