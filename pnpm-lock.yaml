@@ -4,6 +4,9 @@ dependencies:
   '@lucia-auth/adapter-prisma':
     specifier: ^0.6.0
     version: 0.6.0(lucia-auth@0.9.1)
+  '@lucia-auth/adapter-session-redis':
+    specifier: ^0.1.5
+    version: 0.1.5(lucia-auth@0.9.1)(redis@4.6.5)
   '@lucia-auth/sveltekit':
     specifier: ^0.6.10
     version: 0.6.10(lucia-auth@0.9.1)(svelte@3.57.0)
@@ -314,6 +317,16 @@ packages:
       lucia-auth: 0.9.x
     dependencies:
       lucia-auth: 0.9.1
+    dev: false
+
+  /@lucia-auth/adapter-session-redis@0.1.5(lucia-auth@0.9.1)(redis@4.6.5):
+    resolution: {integrity: sha512-7Qs3u03zoJwLXSK2YjuJKKT0zy2CR4f5kq9iqKh/Zf7tmtwLClJfj8VyVj7P9Eseq4Si9wWLkhxcZAWJm5gwSQ==}
+    peerDependencies:
+      lucia-auth: 0.6.x - 0.9.x
+      redis: 4.x
+    dependencies:
+      lucia-auth: 0.9.1
+      redis: 4.6.5
     dev: false
 
   /@lucia-auth/sveltekit@0.6.10(lucia-auth@0.9.1)(svelte@3.57.0):
