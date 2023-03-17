@@ -1,28 +1,23 @@
 import { findGroups } from "$lib/server/prisma"
 
 export const load = async () => ({
-	groups: findGroups({
-		select: {
-			name: true,
-		},
-	}),
+	groups: findGroups(),
 })
 
 export const actions = {
-	default: async ({ request }) => {
-		const filter = (await request.formData()).get("query") as string
-		return {
-			places: await findGroups({
-				where: {
-					name: {
-						contains: filter,
-						mode: "insensitive",
-					},
+	default: async ({ request }) => ({
+		places: await findGroups({
+			where: {
+				name: {
+					contains: (await request.formData()).get("query") as string,
+					mode: "insensitive",
 				},
-				select: {
-					name: true,
-				},
-			}),
-		}
-	},
+			},
+			// When returning from an action, remember to only select
+			// the data needed, as it will by sent directly to the client.
+			select: {
+				name: true,
+			},
+		}),
+	}),
 }

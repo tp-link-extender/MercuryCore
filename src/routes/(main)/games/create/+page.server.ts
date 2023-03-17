@@ -40,8 +40,12 @@ export const actions = {
 			return fail(400, { msg: "Invalid fields" })
 
 		const gameCount = await prisma.user.findUnique({
-			where: { id: user.userId },
-			select: { _count: { select: { places: true } } },
+			where: {
+				id: user.userId
+			},
+			select: {
+				_count: true
+			},
 		})
 
 		if (gameCount && gameCount?._count.places >= 2)
@@ -62,9 +66,6 @@ export const actions = {
 							Math.floor(Math.random() * 3) + 1
 						}.png`,
 						ownerUsername: user.username,
-					},
-					select: {
-						id: true,
 					},
 				})
 

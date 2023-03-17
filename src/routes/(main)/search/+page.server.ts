@@ -15,9 +15,6 @@ export const load = async ({ url }) => {
 			where: {
 				username: query,
 			},
-			select: {
-				number: true,
-			},
 		})
 		if (user) throw redirect(302, `/user/${user.number}`)
 	}

@@ -10,12 +10,7 @@ export async function load({ locals }) {
 	return {
 		banners: prisma.announcements.findMany({
 			include: {
-				user: {
-					select: {
-						username: true,
-						number: true,
-					},
-				},
+				user: true
 			},
 			orderBy: {
 				id: "asc",

@@ -9,11 +9,7 @@ export async function load({ url, locals, params }) {
 			id: params.post,
 		},
 		select: {
-			author: {
-				select: {
-					username: true,
-				},
-			},
+			author: true,
 		},
 	})
 
@@ -21,23 +17,13 @@ export async function load({ url, locals, params }) {
 
 	// Since prisma does not yet support recursive copying, we have to do it manually
 	const selectReplies = {
-		select: {
-			id: true,
-			author: {
-				select: {
-					username: true,
-					number: true,
-					image: true,
-				},
-			},
-			content: true,
-			posted: true,
-			parentReplyId: true,
+		include: {
+			author: true,
 			replies: {},
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
+		selectReplies.include.replies = JSON.parse(JSON.stringify(selectReplies))
 
 	const forumReplies = await prisma.forumReply.findUnique({
 		where: {
@@ -92,7 +78,7 @@ export async function load({ url, locals, params }) {
 
 	return {
 		replies,
-		baseDepth: parseInt(url.searchParams.get("depth")) || 0,
+		baseDepth: parseInt(url.searchParams.get("depth") as string),
 		forumCategory: params.category,
 		postId: params.post,
 		author: post?.author.username,
