@@ -11,23 +11,9 @@ export async function load({ locals, params }) {
 		where: {
 			id: params.id,
 		},
-		select: {
-			id: true,
-			name: true,
-			price: true,
-			creator: {
-				select: {
-					number: true,
-					username: true,
-				},
-			},
-			owners: {
-				select: {
-					image: true,
-					number: true,
-					username: true,
-				},
-			},
+		include: {
+			creator: true,
+			owners: true
 		},
 	})
 
@@ -114,9 +100,7 @@ export const actions = {
 					where: {
 						id: params.id,
 					},
-					select: {
-						name: true,
-						price: true,
+					include: {
 						creator: true,
 						owners: {
 							where: {
@@ -165,9 +149,7 @@ export const actions = {
 					where: {
 						id: params.id,
 					},
-					select: {
-						price: true,
-						creator: true,
+					include: {
 						owners: {
 							where: {
 								id: user?.userId,

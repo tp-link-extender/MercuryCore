@@ -8,44 +8,21 @@ import { error, fail } from "@sveltejs/kit"
 export async function load({ locals, params }) {
 	// Since prisma does not yet support recursive copying, we have to do it manually
 	const selectReplies = {
-		select: {
-			id: true,
-			author: {
-				select: {
-					username: true,
-					number: true,
-					image: true,
-				},
-			},
-			content: true,
-			posted: true,
+		include: {
+			author: true,
 			replies: {},
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
+		selectReplies.include.replies = JSON.parse(JSON.stringify(selectReplies))
 
 	const forumPost = await prisma.forumPost.findUnique({
 		where: {
 			id: params.post,
 		},
-		select: {
-			id: true,
-			title: true,
-			content: true,
-			posted: true,
-			author: {
-				select: {
-					username: true,
-					number: true,
-					image: true,
-				},
-			},
-			forumCategory: {
-				select: {
-					name: true,
-				},
-			},
+		include: {
+			author: true,
+			forumCategory: true,
 			replies: selectReplies,
 		},
 	})

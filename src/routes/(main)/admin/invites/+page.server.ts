@@ -1,5 +1,4 @@
-import { auth, authoriseAdmin, authoriseUser } from "$lib/server/lucia"
-import { client } from "$lib/server/redis"
+import { authoriseAdmin, authoriseUser } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 import { prisma } from "$lib/server/prisma"
@@ -12,12 +11,7 @@ export async function load({ locals }) {
 	return {
 		invites: prisma.regkey.findMany({
 			include: {
-				creator: {
-					select: {
-						username: true,
-						number: true,
-					},
-				},
+				creator: true
 			},
 			orderBy: {
 				creation: "desc",

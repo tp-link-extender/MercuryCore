@@ -10,14 +10,8 @@ export async function load({ locals, params }) {
 		where: {
 			id: parseInt(params.id),
 		},
-		select: {
-			name: true,
-			privateServer: true,
-			ownerUser: {
-				select: {
-					id: true,
-				},
-			},
+		include: {
+			ownerUser: true,
 		},
 	})
 

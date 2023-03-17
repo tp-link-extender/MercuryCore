@@ -56,9 +56,6 @@ export const actions = {
 							},
 						},
 					},
-					select: {
-						id: true,
-					},
 				})
 				await transaction(
 					{ id: user.userId },

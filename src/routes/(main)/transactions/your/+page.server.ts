@@ -12,27 +12,9 @@ export async function load({ locals }) {
 					{ senderName: user.username },
 				],
 			},
-			select: {
-				id: true,
-				time: true,
-				amountSent: true,
-				taxRate: true,
-				sender: {
-					select: {
-						image: true,
-						number: true,
-						username: true,
-					},
-				},
-				receiver: {
-					select: {
-						image: true,
-						number: true,
-						username: true,
-					},
-				},
-				note: true,
-				link: true,
+			include: {
+				sender: true,
+				receiver: true,
 			},
 			orderBy: {
 				time: "desc",

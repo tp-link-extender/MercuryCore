@@ -50,7 +50,6 @@ export const actions = {
 			where: {
 				username: reportUser,
 			},
-			select: { id: true },
 		})
 		if (!reportee) return fail(400, { msg: "Invalid user" })
 

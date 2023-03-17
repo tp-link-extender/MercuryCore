@@ -13,12 +13,7 @@ export async function load({ locals, params }) {
 		where: {
 			number,
 		},
-		select: {
-			number: true,
-			username: true,
-			bio: true,
-			image: true,
-			permissionLevel: true,
+		include: {
 			posts: {
 				orderBy: {
 					posted: "desc",
@@ -135,9 +130,6 @@ export const actions = {
 		const userExists = await prisma.user.findUnique({
 			where: {
 				number,
-			},
-			select: {
-				username: true,
 			},
 		})
 
