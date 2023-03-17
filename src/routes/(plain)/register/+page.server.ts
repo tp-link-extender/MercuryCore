@@ -11,12 +11,36 @@ export const actions = {
 		const cpassword = data.get("cpassword") as string
 		const regkey = data.get("regkey")?.toString().split("-") || ""
 
-		if (username.length < 3) return fail(400, { area: "username", msg: "Username must be at least 3 characters" })
-		if (username.length > 30) return fail(400, { area: "username", msg: "Username must be less than 30 characters" })
-		if (!username.match(/^[A-Za-z0-9_]+$/)) return fail(400, { area: "username", msg: "Username must be alphanumeric (A-Z, 0-9, _)" })
-		if (password.length < 1) return fail(400, { area: "password", msg: "Password must be at least 1 character" })
-		if (password.length > 6969) return fail(400, { area: "password", msg: "Password must be less than 6969 characters" })
-		if (cpassword != password) return fail(400, { area: "cpassword", msg: "The specified password does not match" })
+		if (username.length < 3)
+			return fail(400, {
+				area: "username",
+				msg: "Username must be at least 3 characters",
+			})
+		if (username.length > 30)
+			return fail(400, {
+				area: "username",
+				msg: "Username must be less than 30 characters",
+			})
+		if (!username.match(/^[A-Za-z0-9_]+$/))
+			return fail(400, {
+				area: "username",
+				msg: "Username must be alphanumeric (A-Z, 0-9, _)",
+			})
+		if (password.length < 1)
+			return fail(400, {
+				area: "password",
+				msg: "Password must be at least 1 character",
+			})
+		if (password.length > 6969)
+			return fail(400, {
+				area: "password",
+				msg: "Password must be less than 6969 characters",
+			})
+		if (cpassword != password)
+			return fail(400, {
+				area: "cpassword",
+				msg: "The specified password does not match",
+			})
 		try {
 			if (
 				(
@@ -30,7 +54,10 @@ export const actions = {
 					})
 				)[0]
 			)
-				return fail(400, { area: "username", msg: "Username is already being used" })
+				return fail(400, {
+					area: "username",
+					msg: "Username is already being used",
+				})
 
 			if (
 				(
@@ -44,15 +71,26 @@ export const actions = {
 					})
 				)[0]
 			)
-				return fail(400, { area: "email", msg: "Email is already being used" })
+				return fail(400, {
+					area: "email",
+					msg: "Email is already being used",
+				})
 
 			const regkeyCheck = await prisma.regkey.findUnique({
 				where: {
 					key: regkey[1] || "",
 				},
 			})
-			if (!regkeyCheck) return fail(400, { area: "regkey", msg: "Registration key is invalid" })
-			if (regkeyCheck.usesLeft < 1) return fail(400, { area: "regkey", msg: "This registration key has ran out of uses" })
+			if (!regkeyCheck)
+				return fail(400, {
+					area: "regkey",
+					msg: "Registration key is invalid",
+				})
+			if (regkeyCheck.usesLeft < 1)
+				return fail(400, {
+					area: "regkey",
+					msg: "This registration key has ran out of uses",
+				})
 
 			const user = await auth.createUser({
 				primaryKey: {
@@ -87,10 +125,17 @@ export const actions = {
 			})
 		} catch (e) {
 			const error = e as Error
-			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID") return fail(400, { area: "username", msg: "User already exists" })
+			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID")
+				return fail(400, {
+					area: "username",
+					msg: "User already exists",
+				})
 
 			console.error("Registration error:", error)
-			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })
+			return fail(500, {
+				area: "unexp",
+				msg: "An unexpected error occurred",
+			})
 		}
 
 		throw redirect(302, "/home")

@@ -43,24 +43,47 @@ export const actions = {
 				const customInviteEnabled = !!data.get("enableInviteCustom")
 				const customInvite = data.get("inviteCustom") as string
 				const inviteExpiryEnabled = !!data.get("enableInviteExpiry")
-				const inviteExpiry = new Date(data.get("inviteExpiry") as string)
+				const inviteExpiry = new Date(
+					data.get("inviteExpiry") as string
+				)
 				const inviteUses = parseInt(data.get("inviteUses") as string)
 
 				const now = new Date()
 
-				if (!inviteUses) return fail(400, { area: "create", msg: "Missing fields" })
-				if ((customInviteEnabled && !customInvite) || (inviteExpiryEnabled && !inviteExpiry)) return fail(400, { area: "create", msg: "Missing fields" })
+				if (!inviteUses)
+					return fail(400, { area: "create", msg: "Missing fields" })
+				if (
+					(customInviteEnabled && !customInvite) ||
+					(inviteExpiryEnabled && !inviteExpiry)
+				)
+					return fail(400, { area: "create", msg: "Missing fields" })
 
-				if (inviteUses < 1 || inviteUses > 100) return fail(400, { area: "create", msg: "Invalid amount of uses" })
+				if (inviteUses < 1 || inviteUses > 100)
+					return fail(400, {
+						area: "create",
+						msg: "Invalid amount of uses",
+					})
 
-				if ((customInviteEnabled && customInvite.length > 50) || (customInviteEnabled && customInvite.length < 3))
-					return fail(400, { area: "create", msg: "Custom invite is too short/too long" })
+				if (
+					(customInviteEnabled && customInvite.length > 50) ||
+					(customInviteEnabled && customInvite.length < 3)
+				)
+					return fail(400, {
+						area: "create",
+						msg: "Custom invite is too short/too long",
+					})
 
-				if (inviteExpiryEnabled && inviteExpiry.getTime() < new Date().getTime()) return fail(400, { area: "create", msg: "Invalid date" })
+				if (
+					inviteExpiryEnabled &&
+					inviteExpiry.getTime() < new Date().getTime()
+				)
+					return fail(400, { area: "create", msg: "Invalid date" })
 
 				await prisma.regkey.create({
 					data: {
-						key: customInviteEnabled ? customInvite : cuid2.createId(),
+						key: customInviteEnabled
+							? customInvite
+							: cuid2.createId(),
 						usesLeft: inviteUses,
 						expiry: inviteExpiryEnabled ? inviteExpiry : null,
 						creator: {

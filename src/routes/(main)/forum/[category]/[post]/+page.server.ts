@@ -22,7 +22,8 @@ export async function load({ locals, params }) {
 			replies: {},
 		},
 	}
-	for (let i = 0; i < 9; i++) selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
+	for (let i = 0; i < 9; i++)
+		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
 
 	const forumPost = await prisma.forumPost.findUnique({
 		where: {
@@ -60,18 +61,56 @@ export async function load({ locals, params }) {
 				id: post.id,
 			},
 		}
-		post["likeCount"] = await roQuery("forum", `RETURN SIZE((:User) -[:likes]-> (:${reply ? "Reply" : "Post"} { name: $id }))`, query, true)
-		post["dislikeCount"] = await roQuery("forum", `RETURN SIZE((:User) -[:dislikes]-> (:${reply ? "Reply" : "Post"} { name: $id }))`, query, true)
-		post["likes"] = !!(await roQuery("forum", `MATCH (:User { name: $user }) -[r:likes]-> (:${reply ? "Reply" : "Post"} { name: $id }) RETURN r`, query))
-		post["dislikes"] = !!(await roQuery("forum", `MATCH (:User { name: $user }) -[r:dislikes]-> (:${reply ? "Reply" : "Post"} { name: $id }) RETURN r`, query))
+		post["likeCount"] = await roQuery(
+			"forum",
+			`RETURN SIZE((:User) -[:likes]-> (:${
+				reply ? "Reply" : "Post"
+			} { name: $id }))`,
+			query,
+			true
+		)
+		post["dislikeCount"] = await roQuery(
+			"forum",
+			`RETURN SIZE((:User) -[:dislikes]-> (:${
+				reply ? "Reply" : "Post"
+			} { name: $id }))`,
+			query,
+			true
+		)
+		post["likes"] = !!(await roQuery(
+			"forum",
+			`MATCH (:User { name: $user }) -[r:likes]-> (:${
+				reply ? "Reply" : "Post"
+			} { name: $id }) RETURN r`,
+			query
+		))
+		post["dislikes"] = !!(await roQuery(
+			"forum",
+			`MATCH (:User { name: $user }) -[r:dislikes]-> (:${
+				reply ? "Reply" : "Post"
+			} { name: $id }) RETURN r`,
+			query
+		))
 
-		if (post.replies) post.replies = await Promise.all(post.replies.map(async (reply: any) => await addLikes(reply, true)))
+		if (post.replies)
+			post.replies = await Promise.all(
+				post.replies.map(
+					async (reply: any) => await addLikes(reply, true)
+				)
+			)
 
 		return post
 	}
 
-	const replies: any = await Promise.all(forumPost.replies.map(async reply => await addLikes(reply, true)))
-	const post: typeof forumPost & { likeCount: number; dislikeCount: number; likes: boolean; dislikes: boolean } = await addLikes(forumPost)
+	const replies: any = await Promise.all(
+		forumPost.replies.map(async reply => await addLikes(reply, true))
+	)
+	const post: typeof forumPost & {
+		likeCount: number
+		dislikeCount: number
+		likes: boolean
+		dislikes: boolean
+	} = await addLikes(forumPost)
 
 	return {
 		...post,
@@ -88,7 +127,8 @@ export const actions = {
 		const { user } = await authoriseUser(locals.validateUser)
 		const data = await request.formData()
 		const content = (data.get("content") as string).trim()
-		if (!content || content.length > 1000 || content.length < 5) return fail(400)
+		if (!content || content.length > 1000 || content.length < 5)
+			return fail(400)
 
 		const replyId = data.get("replyId") as string
 		// If there is a replyId, it is a reply to another comment
@@ -109,7 +149,9 @@ export const actions = {
 				id: await id(),
 				authorId: user.userId,
 				content,
-				...(replyId ? { parentReplyId: replyId } : { parentPostId: params.post }),
+				...(replyId
+					? { parentReplyId: replyId }
+					: { parentPostId: params.post }),
 			},
 		})
 	},

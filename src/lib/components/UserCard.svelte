@@ -12,13 +12,22 @@
 	export let total: number
 </script>
 
-<a in:fade={{ num, total, max: 12 }} class="card light-text h-100 w-100 d-flex flex-row" href="/user/{user.number}">
+<a
+	in:fade={{ num, total, max: 12 }}
+	class="card light-text h-100 w-100 d-flex flex-row"
+	href="/user/{user.number}">
 	<div class="p-4">
 		<div class="image-background rounded-circle">
-			<img src={user.image} alt={user.username} class="h-100 rounded-circle img-fluid rounded-top-0" />
+			<img
+				src={user.image}
+				alt={user.username}
+				class="h-100 rounded-circle img-fluid rounded-top-0" />
 		</div>
 		{#if user.status}
-			<span class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[user.status]}">
+			<span
+				class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
+					user.status
+				]}">
 				<span class="visually-hidden">{user.status}</span>
 			</span>
 		{/if}

@@ -19,7 +19,20 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs) {
 				place: place.id,
 			},
 		}
-		const [likes, total] = await Promise.all([roQuery("places", "RETURN SIZE((:User) -[:likes]-> (:Place { name: $place }))", query, true), roQuery("places", "RETURN SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place }))", query, true)])
+		const [likes, total] = await Promise.all([
+			roQuery(
+				"places",
+				"RETURN SIZE((:User) -[:likes]-> (:Place { name: $place }))",
+				query,
+				true
+			),
+			roQuery(
+				"places",
+				"RETURN SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place }))",
+				query,
+				true
+			),
+		])
 		const ratio = Math.floor((likes / total) * 100)
 
 		place["ratio"] = isNaN(ratio) ? "--" : ratio
@@ -39,7 +52,20 @@ export async function findItems(query: Prisma.ItemFindManyArgs) {
 				itemid: item.id,
 			},
 		}
-		const [likes, total] = await Promise.all([roQuery("items", "RETURN SIZE((:User) -[:likes]-> (:Item { name: $itemid }))", query, true), roQuery("items", "RETURN SIZE((:User) -[:likes|dislikes]-> (:Item { name: $itemid }))", query, true)])
+		const [likes, total] = await Promise.all([
+			roQuery(
+				"items",
+				"RETURN SIZE((:User) -[:likes]-> (:Item { name: $itemid }))",
+				query,
+				true
+			),
+			roQuery(
+				"items",
+				"RETURN SIZE((:User) -[:likes|dislikes]-> (:Item { name: $itemid }))",
+				query,
+				true
+			),
+		])
 		const ratio = Math.floor((likes / total) * 100)
 		item["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
@@ -72,7 +98,13 @@ type User = {
 	number?: number
 	username?: string
 }
-export async function transaction(sender: User, receiver: User, amountSent: number, { note, link }: { note: String | undefined; link: String | undefined }, tx: any /* awful */ = prisma) {
+export async function transaction(
+	sender: User,
+	receiver: User,
+	amountSent: number,
+	{ note, link }: { note: String | undefined; link: String | undefined },
+	tx: any /* awful */ = prisma
+) {
 	const sender2 = await tx.user.findUnique({
 		where: sender,
 		select: {
@@ -80,7 +112,12 @@ export async function transaction(sender: User, receiver: User, amountSent: numb
 		},
 	})
 	if (!sender2) throw new Error("Sender not found")
-	if (sender2.currency < amountSent) throw new Error(`Insufficient funds: You need ${amountSent - sender2.currency} more to buy this`)
+	if (sender2.currency < amountSent)
+		throw new Error(
+			`Insufficient funds: You need ${
+				amountSent - sender2.currency
+			} more to buy this`
+		)
 	// const receiver2 = await prisma.user.findUnique({
 	// 	where: receiver,
 	// })

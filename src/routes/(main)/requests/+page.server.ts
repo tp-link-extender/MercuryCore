@@ -61,7 +61,12 @@ export async function load({ locals, params }) {
 	console.timeEnd("requests")
 	return {
 		users: Users(),
-		number: roQuery("friends", "RETURN SIZE((:User { name: $user }) <-[:request]- (:User))", query, true),
+		number: roQuery(
+			"friends",
+			"RETURN SIZE((:User { name: $user }) <-[:request]- (:User))",
+			query,
+			true
+		),
 	}
 }
 
@@ -101,7 +106,13 @@ export const actions = {
 					)
 					break
 				case "accept":
-					if (await roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
+					if (
+						await roQuery(
+							"friends",
+							"MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r",
+							query
+						)
+					)
 						// Make sure an incoming request exists before accepting
 						await Query(
 							"friends",

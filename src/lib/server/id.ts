@@ -1,7 +1,10 @@
 import { customAlphabet } from "nanoid"
 import { client } from "./redis"
 
-const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~", 5)
+const nanoid = customAlphabet(
+	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~",
+	5
+)
 
 export default async function () {
 	let id = nanoid()

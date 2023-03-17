@@ -25,7 +25,8 @@ const numberQueries: any = {
 }
 
 export const load = async ({ params }) => {
-	if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
+	if (!/^\d+$/.test(params.number))
+		throw error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
 
 	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
@@ -49,7 +50,13 @@ export const load = async ({ params }) => {
 		}
 
 		async function Users() {
-			const usersQuery = await roQuery("friends", usersQueries[type], query, false, true)
+			const usersQuery = await roQuery(
+				"friends",
+				usersQueries[type],
+				query,
+				false,
+				true
+			)
 
 			let users: any[] = []
 

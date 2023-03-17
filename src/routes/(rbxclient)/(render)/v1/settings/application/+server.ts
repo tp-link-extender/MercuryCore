@@ -31,10 +31,12 @@ export const GET = async () =>
 			DFFlagDataStoreAutoHttpRetry: "False",
 			DFFlagDataStoreInitialThrottlingBudgetFix: "True",
 			DFFlagDataStoreLargeValueError: "True",
-			DFFlagDataStoreLargeValueError_PlaceFilter: "True;2910792538;69184822",
+			DFFlagDataStoreLargeValueError_PlaceFilter:
+				"True;2910792538;69184822",
 			DFFlagDataStoreTrackNewAPIRequest: "True",
 			DFFlagDataStoreUpdateGetAPI: "True",
-			DFFlagDataStoreUpdateGetAPI_PlaceFilter: "True;2432005634;70501379;2910792538",
+			DFFlagDataStoreUpdateGetAPI_PlaceFilter:
+				"True;2432005634;70501379;2910792538",
 			DFFlagDataStoreUpdateGetSortedAPI: "True",
 			DFFlagDataStoreUpdateGetSortedAPI_PlaceFilter: "True;2910792538",
 			DFFlagDataStoreUpdateIncrementAPI: "True",
@@ -44,14 +46,16 @@ export const GET = async () =>
 			DFFlagDataStoreUpdateRemoveAPI: "True",
 			DFFlagDataStoreUpdateRemoveAPI_PlaceFilter: "True;2910792538",
 			DFFlagDataStoreUpdateSetAPI: "True",
-			DFFlagDataStoreUpdateSetAPI_PlaceFilter: "True;2432005634;70501379;2910792538",
+			DFFlagDataStoreUpdateSetAPI_PlaceFilter:
+				"True;2432005634;70501379;2910792538",
 			DFFlagDataStoreUpdateSetIfAPI: "True",
 			DFFlagDataStoreUpdateSetIfAPI_PlaceFilter: "True;2910792538",
 			DFFlagDebugCurlOption32: "True",
 			DFFlagDebugCurlOption42: "True",
 			DFFlagDebugEnableRemoteProfiling2: "True",
 			DFFlagDebugGAReportThrottledSessions: "True",
-			DFFlagDebugLaunchTimeByCountryPlaceSpecific_PlaceFilter: "true;189707",
+			DFFlagDebugLaunchTimeByCountryPlaceSpecific_PlaceFilter:
+				"true;189707",
 			DFFlagDebugRakPeerReceive: "True",
 			DFFlagDebugRakPeerReceiveCountDistributedPackets: "True",
 			DFFlagDebugRealityCheck3: "True",
@@ -76,7 +80,8 @@ export const GET = async () =>
 			DFFlagEnablePerfAudioCollection_PlaceFilter: "True;5064251723",
 			DFFlagEnablePerfDataCollection: "True",
 			DFFlagEnablePerfDataExtendedMemoryCollection: "True",
-			DFFlagEnablePerfDataExtendedMemoryCollection_PlaceFilter: "True;5064251723",
+			DFFlagEnablePerfDataExtendedMemoryCollection_PlaceFilter:
+				"True;5064251723",
 			DFFlagEnablePerfDataMemoryCollection: "True",
 			DFFlagEnableSoapMicroprofiles: "True",
 			DFFlagEnableTelegrafPriorityTag: "False",
@@ -117,7 +122,8 @@ export const GET = async () =>
 			DFFlagLocalThrottlingReportStatistics: "True",
 			DFFlagLockTheftInstanceCrash: "True",
 			DFFlagMeshLoDV22: "True",
-			DFFlagMeshLoDV22_PlaceFilter: "True;5505305045;5438291517;5423642405;4656923017;4657384818",
+			DFFlagMeshLoDV22_PlaceFilter:
+				"True;5505305045;5438291517;5423642405;4656923017;4657384818",
 			DFFlagMessagingServiceFixErrorMessage: "True",
 			DFFlagMessagingServiceFixUnsubscribeTwiceOnClose: "True",
 			DFFlagMessagingServiceSentUtcTime2: "True",
@@ -146,14 +152,17 @@ export const GET = async () =>
 			DFFlagReplicatorKickReadEventStringDataAndVariantLimit: "False",
 			DFFlagReplicatorKickWriteEventStringDataAndVariantLimit: "True",
 			DFFlagReplicatorLabelItemTypesProcessed: "True",
-			DFFlagReplicatorStreamingReportAncestorsSentWithoutAllDescendants: "False",
+			DFFlagReplicatorStreamingReportAncestorsSentWithoutAllDescendants:
+				"False",
 			DFFlagReportCSGMeshVersionOnce: "True",
 			DFFlagReportCoalescingStats: "True",
 			DFFlagReportCollisionDetectionTime: "True",
 			DFFlagReportDataStoreErrorCases: "True",
 			DFFlagReportLuaKicks: "True",
-			DFFlagReportPhysicsFPSStatsPlaceSpecific_PlaceFilter: "True;606849621;171391948;189707",
-			DFFlagReportPhysicsSolverStatsPlaceSpecific_PlaceFilter: "True;606849621;171391948;189707",
+			DFFlagReportPhysicsFPSStatsPlaceSpecific_PlaceFilter:
+				"True;606849621;171391948;189707",
+			DFFlagReportPhysicsSolverStatsPlaceSpecific_PlaceFilter:
+				"True;606849621;171391948;189707",
 			DFFlagReportPhysicsStatsToHUD: "True",
 			DFFlagReportReplicationVariantLimitHit: "True",
 			DFFlagReportReplicatorJoinDataItemStatsToInflux: "True",
@@ -167,7 +176,8 @@ export const GET = async () =>
 			DFFlagServerConfigurerDoCDNProbe: "True",
 			DFFlagServerCopiesPlayerGui3: "True",
 			DFFlagShowLevelOfDetailMesh: "True",
-			DFFlagShowLevelOfDetailMesh_PlaceFilter: "True;5505305045;5438291517;5423642405;4656923017;4657384818",
+			DFFlagShowLevelOfDetailMesh_PlaceFilter:
+				"True;5505305045;5438291517;5423642405;4656923017;4657384818",
 			DFFlagSimDrawNoCollisionConstraintToolTip: "True",
 			DFFlagSimEnableInterpolationThrottling: "False",
 			DFFlagSimFixConstraintSelectionBoxCrash: "True",
@@ -215,7 +225,8 @@ export const GET = async () =>
 			DFFlagUseDistanceThinning: "True",
 			DFFlagUseLockFreeVoronoiSimplexContainer: "True",
 			DFFlagUseMomentumThinning: "True",
-			DFFlagUseMomentumThinning_PlaceFilter: "False;1694497805;1225846869",
+			DFFlagUseMomentumThinning_PlaceFilter:
+				"False;1694497805;1225846869",
 			DFFlagUsePugiXmlForSettings: "False",
 			DFFlagUseRoundRobin: "False",
 			DFFlagUseSort: "False",
@@ -245,8 +256,10 @@ export const GET = async () =>
 			DFIntBatchThumbnailMaxRetries: "5",
 			DFIntBulletContactBreakOrthogonalThresholdPercent: "200",
 			DFIntBulletContactBreakThresholdPercent: "200",
-			DFIntCSGLevelOfDetailSwitchingDistanceL12_PlaceFilter: "500;2434889832;2568147212",
-			DFIntCSGLevelOfDetailSwitchingDistance_PlaceFilter: "250;2434889832;2568147212",
+			DFIntCSGLevelOfDetailSwitchingDistanceL12_PlaceFilter:
+				"500;2434889832;2568147212",
+			DFIntCSGLevelOfDetailSwitchingDistance_PlaceFilter:
+				"250;2434889832;2568147212",
 			DFIntCSGv2LodMinTriangleCount: "100",
 			DFIntCSGv2LodsToGenerate: "3",
 			DFIntCSGv2OperationInfluxHundredthsPercentage: "100",
@@ -254,26 +267,34 @@ export const GET = async () =>
 			DFIntChatCap: "100",
 			DFIntChatTime: "10",
 			DFIntClientJoinProcessPositiveSamplesThousandths: "10",
-			DFIntClientJoinProcessPositiveSamplesThousandths_PlaceFilter: "1000;3027055174;3917136599;2291717546",
+			DFIntClientJoinProcessPositiveSamplesThousandths_PlaceFilter:
+				"1000;3027055174;3917136599;2291717546",
 			DFIntClientNetworkInfluxHundredthsPercentage: "500",
-			DFIntClientReportLuaConnectionSignalsInfluxHundrethsPercentage: "10000",
+			DFIntClientReportLuaConnectionSignalsInfluxHundrethsPercentage:
+				"10000",
 			DFIntClientSendEventStringDataLimitBytes: "100000000",
 			DFIntClientSendEventVariantCountLimit: "5000000",
 			DFIntCrashUploadHttpResponseDefaultTimeoutMillis: "80000",
 			DFIntCrashUploadToBacktracePercentage: "10",
 			DFIntDataModelPatcherErrorInfluxHundredthsPercentage: "5000",
-			DFIntDataModelPatcherErrorInfluxPriorityHundredthsPercentage: "10000",
+			DFIntDataModelPatcherErrorInfluxPriorityHundredthsPercentage:
+				"10000",
 			DFIntDataModelPatcherFunnelInfluxHundredthsPercentage: "2500",
-			DFIntDataModelPatcherFunnelInfluxPriorityHundredthsPercentage: "10000",
+			DFIntDataModelPatcherFunnelInfluxPriorityHundredthsPercentage:
+				"10000",
 			DFIntDataStoreApiRefreshRolloutPercentage: "100",
-			DFIntDataStoreApiRefreshRolloutPercentage_PlaceFilter: "100;2910792538;185655149",
+			DFIntDataStoreApiRefreshRolloutPercentage_PlaceFilter:
+				"100;2910792538;185655149",
 			DFIntDataStoreCachedKeysMemSize: "16777216",
-			DFIntDataStoreCachedKeysMemSize_PlaceFilter: "16777216;2910792538;69184822",
+			DFIntDataStoreCachedKeysMemSize_PlaceFilter:
+				"16777216;2910792538;69184822",
 			DFIntDataStoreInfluxReportNonParsableDataPerMyriad: "10000",
 			DFIntDataStoreMaxValueSize: "4194304",
-			DFIntDataStoreMaxValueSize_PlaceFilter: "4194304;2910792538;69184822",
+			DFIntDataStoreMaxValueSize_PlaceFilter:
+				"4194304;2910792538;69184822",
 			DFIntDebugDefaultTargetWorldStepsPerFrame: "0",
-			DFIntDebugDefaultTargetWorldStepsPerFrame_PlaceFilter: "1;4306999063",
+			DFIntDebugDefaultTargetWorldStepsPerFrame_PlaceFilter:
+				"1;4306999063",
 			DFIntDebugRakPeerReceiveAfterSeconds: "10",
 			DFIntDefaultBalanceD: "100",
 			DFIntDefaultBalanceP: "7000",
@@ -285,16 +306,20 @@ export const GET = async () =>
 			DFIntESGamePerfMonitorDelayBeforeFirstReportInSeconds: "60",
 			DFIntESGamePerfMonitorHundredthsPercentage: "200",
 			DFIntESGamePerfMonitorReportTimerInSeconds: "30",
-			DFIntEphemeralCounterInfluxReportingPriorityHundredthsPercent: "10000",
-			DFIntEphemeralCounterInfluxReportingThrottleHundredthsPercent: "10000",
-			DFIntEphemeralStatsInfluxReportingPriorityHundredthsPercent: "10000",
+			DFIntEphemeralCounterInfluxReportingPriorityHundredthsPercent:
+				"10000",
+			DFIntEphemeralCounterInfluxReportingThrottleHundredthsPercent:
+				"10000",
+			DFIntEphemeralStatsInfluxReportingPriorityHundredthsPercent:
+				"10000",
 			DFIntEphemeralStatsInfluxReportingThrottleHundredthsPercent: "5",
 			DFIntExpireMarketPlaceServiceCacheSeconds: "60",
 			DFIntFriendsListCacheOptimizationRolloutPercentage: "0",
 			DFIntFriendshipEndpointMigrationRolloutPercentageV2: "100",
 			DFIntGamePassOwnershipCacheSeconds: "30",
 			DFIntGetUserThumbnailAsyncThrottleTime: "3",
-			DFIntHttpClientExternalTlsPeerVerificationFailHundrethsPercentage: "10000",
+			DFIntHttpClientExternalTlsPeerVerificationFailHundrethsPercentage:
+				"10000",
 			DFIntHttpConnMaxAge: "600000",
 			DFIntHttpConnectDefaultTimeoutMillis: "60000",
 			DFIntHttpCurlConnectionCacheSize: "-1",
@@ -328,7 +353,8 @@ export const GET = async () =>
 			DFIntMpsRateLimitDuration: "10",
 			DFIntNetworkStreamingGCUrgentMaxMicroSecondLimit: "8000",
 			DFIntNewSettingsEndpointExceptionInfluxPermyriad: "10000",
-			DFIntNumberFramesSubmergedBeforeVSquaredViscocity_PlaceFilter: "0;1221071288;1107780422;1223560318",
+			DFIntNumberFramesSubmergedBeforeVSquaredViscocity_PlaceFilter:
+				"0;1221071288;1107780422;1223560318",
 			DFIntOnDisconnectHTTPTimeout: "500",
 			DFIntPackageAutoUpdateDelayMs: "0",
 			DFIntPackagePermissionPullingIntervalInSeconds: "10",
@@ -336,7 +362,8 @@ export const GET = async () =>
 			DFIntPercentApiRequestsRecordGoogleAnalytics: "5",
 			DFIntPercentageThresholdUsingFriendsV2A3: "100",
 			DFIntPerfDataGlobalThrottleHundredthsPercent: "6",
-			DFIntPerfDataGlobalThrottleHundredthsPercent_PlaceFilter: "100;5064251723",
+			DFIntPerfDataGlobalThrottleHundredthsPercent_PlaceFilter:
+				"100;5064251723",
 			DFIntPhysicsSenderMaxBandwidthBps: "38760",
 			DFIntPlayerConfigurerCDNProbeDelayMs: "10000",
 			DFIntPrimStatsGANumDelimited: "3000",
@@ -353,7 +380,8 @@ export const GET = async () =>
 			DFIntRccMultipleDmsErrorInfluxHundrethsPercentage: "10000",
 			DFIntReplicationVariantLimitHundredthPercent: "10000",
 			DFIntReplicatorAnimationTrackLimitPerAnimator: "50",
-			DFIntReplicatorAnimationTrackLimitPerAnimator_PlaceFilter: "120;2116452049",
+			DFIntReplicatorAnimationTrackLimitPerAnimator_PlaceFilter:
+				"120;2116452049",
 			DFIntReplicatorCountLimitInfluxHundrethsPercentage: "10000",
 			DFIntReplicatorJoinDataItemStatsInfluxHundrethsPercentage: "1000",
 			DFIntReplicatorJoinDataItemV2StatsInfluxHundrethsPercentage: "1000",
@@ -367,18 +395,21 @@ export const GET = async () =>
 			DFIntReportJoinDataItemV2CacheEfficiencyHundrethsPercentage2: "1",
 			DFIntReportParameterContentHundredthsPercent: "8000",
 			DFIntReportParsingAnomalyRate: "1",
-			DFIntReportReplicatorStatsToInfluxHundredthsPercent_PlaceFilter: "10000;3027055174;3917136599;2291717546;2039079715",
+			DFIntReportReplicatorStatsToInfluxHundredthsPercent_PlaceFilter:
+				"10000;3027055174;3917136599;2291717546;2039079715",
 			DFIntReportSimulationToFBLatencyInfluxHundredthsPercentage: "100",
 			DFIntReportSoundAssetsRate: "0",
 			DFIntReportTeamOrderExposedHundredthsPercent: "100",
-			DFIntSendJoinTimesToDiag_HundredthsPercentage_PlaceFilter: "4000;370731277",
+			DFIntSendJoinTimesToDiag_HundredthsPercentage_PlaceFilter:
+				"4000;370731277",
 			DFIntSendRakNetStatsInterval: "300",
 			DFIntServerBandwidthPlayerSampleRate: "20",
 			DFIntSmoothTerrainPhysicsRayAabbSlop: "1",
 			DFIntStepsToJoin: "2",
 			DFIntStreamPauseVelBufFactorHundredths: "100",
 			DFIntStreamedRegionGCUrgentFactor: "20",
-			DFIntStreamingMaxTargetPercentage_PlaceFilter: "200;5597122238;6403373991",
+			DFIntStreamingMaxTargetPercentage_PlaceFilter:
+				"200;5597122238;6403373991",
 			DFIntStreamingPauseVelBufMaxDurationMS: "4000",
 			DFIntStudioPluginLoadTimingsHundredthsPercentage: "100",
 			DFIntTattletaleCheckWordCount: "0",
@@ -396,10 +427,12 @@ export const GET = async () =>
 				"500;4686746335;4702658078;1067560271;1067660288;735030788;2033617470;4709927839;2033617613;1765700510;1187101243;4728133914;4728134592;4728135073;4728136238;4728136475;4728136681;4728136927;4728137133;4728137352;4728137581",
 			DFIntVideoImageReductionFactor: "1",
 			DFIntVideoMaxNumberOfVideosPlaying: "2",
-			DFIntVideoMaxNumberOfVideosPlaying_PlaceFilter: "6;5646917919;5535247402;5796554295;5796546949;5796518985;5792232897;5790039516;5938526032;5947859215;5064251723",
+			DFIntVideoMaxNumberOfVideosPlaying_PlaceFilter:
+				"6;5646917919;5535247402;5796554295;5796546949;5796518985;5792232897;5790039516;5938526032;5947859215;5064251723",
 			DFIntVideoStreamMaxBufferMs: "200",
 			DFIntVideoStreamMinBufferMs: "100",
-			DFIntWaterViscosityDragFudgeFactor_PlaceFilter: "500;1221071288;1107780422;1223560318",
+			DFIntWaterViscosityDragFudgeFactor_PlaceFilter:
+				"500;1221071288;1107780422;1223560318",
 			DFIntWebParserInfluxWriteNanInfPerMyriad: "1000",
 			DFIntWorldStepDtAveExpFactorHundredth: "1",
 			DFLogAnalyticsDeferredEphemeralReportingDiagnostic: "0",
@@ -407,13 +440,15 @@ export const GET = async () =>
 			DFLogMaxJoinDataSizeKB: "20",
 			DFLogMessagingService: "6",
 			DFLogPartStreamingRequests: "0",
-			DFLogPartStreamingRequests_PlaceFilter: "6;2291717546;2623652930;3027055174",
+			DFLogPartStreamingRequests_PlaceFilter:
+				"6;2291717546;2623652930;3027055174",
 			DFLogSessionCrypto: "333",
 			DFLogSignalRConnection: "6",
 			DFLogSoundCheckResult: "4",
 			DFLogTrackTeamCreateSaveMD5HashOutput: "6",
 			DFStringAdditionalBlacklistHeaders: "SOAPAction",
-			DFStringDataStoreThrottleMsg: "DataStore request was added to queue. If request queue fills, further requests will be dropped. Try sending fewer requests.",
+			DFStringDataStoreThrottleMsg:
+				"DataStore request was added to queue. If request queue fills, further requests will be dropped. Try sending fewer requests.",
 			DFStringGlobalUniverse17sIds: "14743789;1482020489",
 			DFStringHttpRbxApi17sAllowedHosts: "",
 			DFStringPerfFilterPlaceId: "",
@@ -472,7 +507,8 @@ export const GET = async () =>
 			FFlagCollabEditVersionHistoryEnabled: "True",
 			FFlagCollectAnalyticsForSystemMenu: "True",
 			FFlagConnectErrorHandlerInLoadingScript: "True",
-			FFlagConnectErrorHandlerInLoadingScript_PlaceFilter: "False;731863175;731680819",
+			FFlagConnectErrorHandlerInLoadingScript_PlaceFilter:
+				"False;731863175;731680819",
 			FFlagConnectionScriptEnabled: "True",
 			FFlagContentProviderTempDirWithPid2: "True",
 			FFlagCrashReporterNew: "False",
@@ -482,10 +518,12 @@ export const GET = async () =>
 			FFlagCurlProbe4: "False",
 			FFlagDataStoreAdditionalMetricsEnabled: "True",
 			FFlagDebugClientNetworkPerPlaceMetrics: "False",
-			FFlagDebugClientNetworkPerPlaceMetrics_PlaceFilter: "True;1818;3498890;189707",
+			FFlagDebugClientNetworkPerPlaceMetrics_PlaceFilter:
+				"True;1818;3498890;189707",
 			FFlagDebugDeleteDiscrimination: "True",
 			FFlagDebugDontForceCollisionsOnHumanoidParts: "False",
-			FFlagDebugDontForceCollisionsOnHumanoidParts_PlaceFilter: "True;3360073263",
+			FFlagDebugDontForceCollisionsOnHumanoidParts_PlaceFilter:
+				"True;3360073263",
 			FFlagDebugVersionHistoryDialogLocalTestMode: "False",
 			FFlagDebugVersionHistoryHttpCompressData: "True",
 			FFlagDelayPurchasePromptActivation: "True",
@@ -687,7 +725,8 @@ export const GET = async () =>
 			FFlagMemoryPrioritizationEnabled: "False",
 			FFlagMouseWheelEventSinkingPropagatesToGUI: "True",
 			FFlagNetworkDeserializePacketsInAJob: "True",
-			FFlagNetworkDeserializePacketsInAJob_PlaceFilter: "False;2291717546",
+			FFlagNetworkDeserializePacketsInAJob_PlaceFilter:
+				"False;2291717546",
 			FFlagNetworkOwnershipUnitWorldSignals: "True",
 			FFlagNewAwardBadgeEndpoint2: "True",
 			FFlagNewGeometryGeneratorImplementation_PlaceFilter:
@@ -730,7 +769,8 @@ export const GET = async () =>
 			FFlagReportRuntimeJoinCount: "True",
 			FFlagResetMobileGamepadsOnDataModelLoad: "True",
 			FFlagRoactBubbleChat: "False",
-			FFlagRoactBubbleChat_PlaceFilter: "True;5465723678;5100919959;5064251723;4794228797;2146460778;1987001769",
+			FFlagRoactBubbleChat_PlaceFilter:
+				"True;5465723678;5100919959;5064251723;4794228797;2146460778;1987001769",
 			FFlagRotateCameraForRightPart: "True",
 			FFlagRoundUpTextSizeInEngine: "False",
 			FFlagSHComputeExtentsTimeReportingEnabled: "True",
@@ -842,7 +882,8 @@ export const GET = async () =>
 			FFlagUserFixZoomClampingIssues: "True",
 			FFlagUserFixZoomInZoomOutDiscrepancy: "True",
 			FFlagUserHandleChatHotKeyWithContextActionService: "False",
-			FFlagUserHandleChatHotKeyWithContextActionService_PlaceFilter: "True;4738806136",
+			FFlagUserHandleChatHotKeyWithContextActionService_PlaceFilter:
+				"True;4738806136",
 			FFlagUserInGameChatUseNewFilterAPIV2: "True",
 			FFlagUserIsNowADynamicThumbstick: "True",
 			FFlagUserJSONConvertInfAndNanToNull: "True",
@@ -946,18 +987,23 @@ export const GET = async () =>
 			FLogNetwork: "7",
 			FLogRccSoapMicroprofiling: "6",
 			FLogStudioLocalSaveMD5HashOutput: "6",
-			FStringABTestNameIPhoneLuaGameDetails: "iPhone.AllUsers.LuaGameDetails2",
-			FStringCoreScriptBacktraceErrorUploadToken: "53268e7f81b40f5dca5b80ad0fb9b7b2fd750e96ece3480ad1fb89a4a4cc4766",
-			FStringEnableiCloudWebCredentialsBtIdsList: "49593556386,49593556386,44219219422,49373021284,49849080647",
+			FStringABTestNameIPhoneLuaGameDetails:
+				"iPhone.AllUsers.LuaGameDetails2",
+			FStringCoreScriptBacktraceErrorUploadToken:
+				"53268e7f81b40f5dca5b80ad0fb9b7b2fd750e96ece3480ad1fb89a4a4cc4766",
+			FStringEnableiCloudWebCredentialsBtIdsList:
+				"49593556386,49593556386,44219219422,49373021284,49849080647",
 			FStringGraphicsVulkanBlacklist: "",
-			FStringLuobuMarketplaceDisabledCategories: "FreePlugins;PaidPlugins;Plugins;FreeVideo",
+			FStringLuobuMarketplaceDisabledCategories:
+				"FreePlugins;PaidPlugins;Plugins;FreeVideo",
 			FStringNewGamepadMenuForcedUserIds:
 				"959520514,656046844,146914182,975669155,344925094,247305679,956690111,1026207482,485327537,166540505,1300488959,1220631541,169775909,1498251806,401950003,751568948,2231221,7210880,931389991,1478764079,597663806,1298953044,1542933305,1182179679,1516442,1155027644,648897862",
 			FStringSIMForceCSGv2LearnMoreUrl: "",
 			FStringStudioBuiltinPluginDefaultFont: "SourceSans",
 			FStringStudioEmergencyMessageV3:
 				"eyAicmVnaXN0cnlLZXkiOiAiRW1lcmdlbmN5TWVzc2FnZUZvckNoaW5lc2VTdHVkaW8iLCAicGxhdGZvcm1zIjogWyAiV2luZG93cyIgXSwgIm1lc3NhZ2UiOiB7ImVuIjogIlRvIGdldCB0aGUgYmVzdCBTdHVkaW8gZXhwZXJpZW5jZSBhbmQgcGVyZm9ybWFuY2UgaW4gQ2hpbmEgdXNlIHRoZSBDaGluZXNlIHZlcnNpb24gb2YgU3R1ZGlvIGF2YWlsYWJsZSBvbiA8YSBocmVmPWh0dHA6Ly93d3cucm9ibG94ZGV2LmNuPmh0dHA6Ly93d3cucm9ibG94ZGV2LmNuPC9hPiIsICJ6aF9DTiI6ICJcdTU5ODJcdTY3OWNcdTRmNjBcdTYwZjNcdTRmNTNcdTlhOGNcdTU3MjhcdTRlMmRcdTU2ZmRcdTY3MDBcdTdhMzNcdTViOWFcdTc2ODRcdTAwNTNcdTAwNzRcdTAwNzVcdTAwNjRcdTAwNjlcdTAwNmZcdTcyNDhcdTY3MmNcdWZmMGNcdThiZjdcdTRmNjBcdTUyNGRcdTVmODAgXHUwMDNjXHUwMDYxIFx1MDA2OFx1MDA3Mlx1MDA2NVx1MDA2Nlx1MDAzZFx1MDA2OFx1MDA3NFx1MDA3NFx1MDA3MFx1MDAzYVx1MDAyZlx1MDAyZlx1MDA3N1x1MDA3N1x1MDA3N1x1MDAyZVx1MDA3Mlx1MDA2Zlx1MDA2Mlx1MDA2Y1x1MDA2Zlx1MDA3OFx1MDA2NFx1MDA2NVx1MDA3Nlx1MDAyZVx1MDA2M1x1MDA2ZVx1MDAzZVx1MDA2OFx1MDA3NFx1MDA3NFx1MDA3MFx1MDAzYVx1MDAyZlx1MDAyZlx1MDA3N1x1MDA3N1x1MDA3N1x1MDAyZVx1MDA3Mlx1MDA2Zlx1MDA2Mlx1MDA2Y1x1MDA2Zlx1MDA3OFx1MDA2NFx1MDA2NVx1MDA3Nlx1MDAyZVx1MDA2M1x1MDA2ZVx1MDAzY1x1MDAyZlx1MDA2MVx1MDAzZSBcdTRlMGJcdThmN2RcdTdmNTdcdTVlMDNcdTRlNTBcdTYwMWRcdTcyNDggXHUwMDUzXHUwMDc0XHUwMDc1XHUwMDY0XHUwMDY5XHUwMDZmXHUzMDAyIn0sICJzaHV0ZG93biI6IGZhbHNlIH0=",
-			FStringStudioLuauLints: "1,2,3,6,10,11,12,13,14,15,17,18,19,20,21,22,23,24",
+			FStringStudioLuauLints:
+				"1,2,3,6,10,11,12,13,14,15,17,18,19,20,21,22,23,24",
 			FStringStudioPlaceVersionHistoryHelpLink: "",
 			FStringStudioReportOpenPlaceTimeFilter: "95206881",
 			FixChromebookEnterKeyIssue: "True",
@@ -989,7 +1035,8 @@ export const GET = async () =>
 			FFlagExtendPlayerScrollListWindowingForGamepadSelection: "True",
 			DFFlagDebugLogAvatarLoadTimeStatsByPlace_PlaceFilter: "True;189707",
 			DFFlagDebugLogAvatarLoadTimeStatsByPlace: "False",
-			DFIntSendAvatarLoadTimeStats_HundredthsPercentage_PlaceFilter: "500;189707",
+			DFIntSendAvatarLoadTimeStats_HundredthsPercentage_PlaceFilter:
+				"500;189707",
 			DFFlagAddMetricsToTextScraperHttpRequest: "True",
 			FFlagEnableBubbleChatFromChatService: "True",
 			FFlagBubbleChatSettingsApi: "True",
@@ -1045,7 +1092,8 @@ export const GET = async () =>
 			FFlagFixTextboxSinkingInputOfOverlappingButtons: "False",
 			DFFlagAnalyticsServiceVerifyFireEventName: "True",
 			DFStringDeveloperEventIngestEnd2EndLogUniveseIds: "1149251775",
-			DFIntDeveloperEventIngestEnd2EndLogPercetage_PlaceFilter: "100;3182856628",
+			DFIntDeveloperEventIngestEnd2EndLogPercetage_PlaceFilter:
+				"100;3182856628",
 			DFFlagAvatarEditorServiceEnabled2: "False",
 			DFFlagHumanoidDescriptionAssetTypeVerificationApi: "True",
 			DFFlagAvatarEditorServiceAnalytics: "True",
@@ -1098,13 +1146,15 @@ export const GET = async () =>
 			FFlagUserFixExternalJumpRequest: "False",
 			FFlagEnableAutoUpgradeWin32: "True",
 			DFFlagPromptBundlePurchaseEnabled: "False",
-			DFFlagPromptBundlePurchaseEnabled_PlaceFilter: "True;5790039516;5889411563;5947859215;2431195974",
+			DFFlagPromptBundlePurchaseEnabled_PlaceFilter:
+				"True;5790039516;5889411563;5947859215;2431195974",
 			FFlagLuaChatRespectCreatorNamePolicy: "True",
 			FFlagSaveBuildAndReloadPlugin: "True",
 			DFFlagTrackRemoteBackpackAccesses: "True",
 			FFlagReduceTouchEventsOnSlowdown: "True",
 			DFLogPlayerCharacterLoadingLog: "0",
-			DFLogPlayerCharacterLoadingLog_PlaceFilter: "6;5646917919;5947859215;5064251723",
+			DFLogPlayerCharacterLoadingLog_PlaceFilter:
+				"6;5646917919;5947859215;5064251723",
 			FFlagApplyGuiEffectsOnSelectionObjects: "True",
 			FFlagHideSeeAllWhenEmpty: "True",
 			FFlagNewEconomyDeveloperProductUrlLua: "True",
@@ -1164,7 +1214,8 @@ export const GET = async () =>
 			DFFlagDataModelFasterTaskProcessing: "False",
 			FFlagSimExpandPartPhysicsApi: "True",
 			FFlagLuaAppCJVMorePageShowGroups: "False",
-			DFFlagSimSolverConstraintServoMotorLimitFix_PlaceFilter: "True;4636955314",
+			DFFlagSimSolverConstraintServoMotorLimitFix_PlaceFilter:
+				"True;4636955314",
 			DFFlagTeleportAsyncEnabled: "True",
 			DFFlagTeleportAsyncEnabled_PlaceFilter:
 				"True;6028885309;3388553819;6069934719;4559218023;4111023553;6032399813;5735553160;3260590327;4140094110;4797063885;4797191109;3817;99308;234674;6174493;32221233;34273585;43774374;47564676;117392863;127243303;133815151;175145684;239266443;245651287;260201770;286090429;286194356;309777642;312969221;325107118;329942288;333370625;380305410;390718079;393688252;406914719;419517999;430367172;455487186;475943327;479638380;508693446;558916496;568789627;606849621;617834035;632574862;642895013;649197432;663027247;712717349;765214978;841531820;851426785;869351572;901421457;915545262;958958866;966399489;1014313584;1090923299;1097288251;1112795253;1119468289;1198369988;1201618699;1234777974;1245556788;1297741873;1324061305;1326515829;1336862186;1383356634;1405701328;1412794081;1512278103;1613747331;1715716216;1766202603;1800545204;1820994456;1849056378;1852165199;1908452994;1911397946;1988050801;2051682813;2102794810;2120256007;2129144719;2142669871;2161068932;2179817103;2213827867;2228471329;2230731085;2244869356;2247498435;2260759709;2262371873;2268297861;2269041966;2271418810;2271421573;2277629691;2277630015;2378440937;2433583525;2483064823;2483181858;2506647097;2537274968;2644446230;2699891546;2714311804;2784773364;2872154782;2875915901;2916899287;2934790530;2942660767;2943226593;2960777560;2982639429;2986568959;2988554876;3018748854;3044477754;3094821548;3100326397;3138672714;3146541075;3153021141;3162363365;3190767416;3194820651;3194823512;3201617292;3204374376;3214306383;3240897476;3241297377;3244983644;3244985257;3246870877;3247100483;3253821504;3266947691;3285368977;3294102893;3300980249;3300988881;3307963712;3326691959;3350006801;3360156532;3374871698;3405625253;3406421830;3409678003;3416484751;3422254926;3434602709;3449573444;3487742603;3506726216;3519513262;3540454961;3576579844;3576597031;3576618096;3576622248;3578698200;3579244394;3598232959;3613269714;3613283561;3636985192;3667961326;3763545623;3774643032;3826587512;3900961465;3906714435;3908399349;3916360736;3922886438;3925170006;3926959598;3940833927;3971269762;4142858848;4150099138;4238458434;4341043264;4348614749;4389306054;4392803558;4426252252;4434324454;4453150092;4464235702;4482712909;4484251962;4490601563;4508183796;4508881497;4521134571;4523423698;4524359706;4526203623;4527539482;4536931350;4538006970;4538240213;4545021574;4545054277;4559769750;4565220667;4571735159;4575225189;4584761088;4586116053;4588179349;4590337879;4595920096;4599687840;4600709596;4606870383;4606896152;4610955859;4620778305;4623386862;4637930673;4641123764;4645256533;4651456521;4656807268;4658102754;4668496970;4673694625;4675467679;4681780390;4682474618;4688884268;4691258953;4691748414;4693954129;4693972729;4696283640;4697912943;4703267841;4712432173;4717700836;4724929820;4727464597;4730603402;4732129420;4732214172;4732238938;4742675529;4746792788;4752097793;4754159533;4759656418;4767483737;4779685308;4792214673;4795886823;4796526870;4807288588;4811583863;4811767098;4815493441;4822129686;4829075671;4837882841;4842364293;4851907937;4857914453;4860192633;4861325888;4863692603;4863693700;4875568798;4888516489;4894089872;4903144517;4907800042;4943952898;4953508391;4956263338;4956265216;4956265740;4962281041;4986234201;4987942895;4992059055;4992294140;4997468978;5002210114;5010754428;5013859105;5019196198;5026862895;5041144419;5050900608;5054064751;5075362833;5075766023;5087012007;5087306053;5099644031;5107716758;5116905475;5128693334;5142882341;5152631020;5155805783;5159768322;5182834709;5194213785;5202348042;5213326914;5213327564;5228147779;5230561570;5233022809;5234478489;5235529519;5237237547;5238031707;5238033252;5238034925;5242189327;5245293311;5245828140;5263056615;5272841703;5282546317;5289429734;5293075435;5293548032;5294033437;5321709389;5323308177;5325439096;5325519885;5331693920;5340290966;5341614848;5345266689;5349115784;535934465;6127503683;5863560677;6230334550",
@@ -1194,7 +1245,8 @@ export const GET = async () =>
 			DFFlagNewEconomyDeveloperProductUrlMock: "True",
 			FFlagDebugCrashEnabled_PlaceFilter: "True;6036870533",
 			DFIntCrashUploadToBacktracePercentage_PlaceFilter: "100;6036870533",
-			DFIntCrashpadUploadToBacktracePercentage_PlaceFilter: "100;6036870533",
+			DFIntCrashpadUploadToBacktracePercentage_PlaceFilter:
+				"100;6036870533",
 			FFlagLuobuAppBillingHidden: "True",
 			FFlagLuaChatCancelButtonBugFix: "True",
 			DFIntExternalHttpRequestSizeLimitKB_PlaceFilter:
@@ -1214,7 +1266,8 @@ export const GET = async () =>
 			DFFlagVoiceChatThreadFactory: "True",
 			FFlagFixCreatorTypeParameterForAssetRequest: "True",
 			DFFlagAnalyticsServiceNotEnrolledLogErrorAndReturn: "True",
-			DFFlagMegaReplicatorFixAndLogConnDataInfo_DataCenterFilter: "True;214;295",
+			DFFlagMegaReplicatorFixAndLogConnDataInfo_DataCenterFilter:
+				"True;214;295",
 			DFLogMegaReplicatorConnData_DataCenterFilter: "10;214;295",
 			FFlagSmoothGridDontWriteEmptyCells: "True",
 			FFlagSmoothClusterSkipEmptyChunks: "True",
@@ -1270,7 +1323,8 @@ export const GET = async () =>
 			FFlagWrapDeformer: "False",
 			FFlagCageMeshImporter_PlaceFilter:
 				"True;6283882559;2431195974;6337871940;6337872921;6337877104;6336591565;6382608640;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
-			FFlagSkeletonDebugRenderer_PlaceFilter: "True;2431195974;6382608640",
+			FFlagSkeletonDebugRenderer_PlaceFilter:
+				"True;2431195974;6382608640",
 			FFlagWrapDeformer_PlaceFilter:
 				"True;6283882559;2431195974;6337871940;6337872921;6337877104;6336591565;6382608640;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagStudioInternalScriptVersionHistorySetting: "False",
@@ -1279,7 +1333,8 @@ export const GET = async () =>
 			FFlagStudioPersistentFifoComboBoxThemeChanging: "True",
 			FIntMessageListMountingBuffer: "1000",
 			FIntStudioInfluxDAUReportPercent: "100",
-			DFFlagSimSolverConstraintServoMotorLimitFix2_PlaceFilter: "True;4636955314;461287719;3933153756;4797048909;5644451718;2546612479;3087031540",
+			DFFlagSimSolverConstraintServoMotorLimitFix2_PlaceFilter:
+				"True;4636955314;461287719;3933153756;4797048909;5644451718;2546612479;3087031540",
 			FFlagAE_ImporterIgnoreScale: "True",
 			FFlagSurfaceAppearanceFixThumbnail: "True",
 			DFFlagAttributeShortCircuit: "True",
@@ -1322,7 +1377,8 @@ export const GET = async () =>
 			DFFlagRemoveOldLuaKey: "True",
 			DFFlagSimEnableInterpolationThrottling3: "True",
 			FFlagFixCjvLocalizedForms: "True",
-			FLogWrapLogChannel_PlaceFilter: "7;6283882559;2431195974;6337871940;6337872921;6337877104;6336591565;6382608640;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FLogWrapLogChannel_PlaceFilter:
+				"7;6283882559;2431195974;6337871940;6337872921;6337877104;6336591565;6382608640;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FLogWrapLogChannel: "0",
 			DFFlagSimACPNeedsUpdateAfterHumanoidSetCollide: "True",
 			FFlagEnableRoactInspector: "True",
@@ -1333,7 +1389,8 @@ export const GET = async () =>
 			DFFlagHttpResponseErrorReporting: "True",
 			DFFlagAnalyticsServicePlayingDuration2: "True",
 			DFFlagEnableAnalyticsServiceInStudio_PlaceFilter: "True;5972791689",
-			FFlagTestDeveloperEventIngestVerifyFeature_PlaceFilter: "True;5972791689",
+			FFlagTestDeveloperEventIngestVerifyFeature_PlaceFilter:
+				"True;5972791689",
 			DFIntPlayerConfigurerLMSTestDelayMs: "10000",
 			FFlagRenderTerrainFixDataLodUpdate2: "True",
 			FFlagStudioFastAliasDereference: "True",
@@ -1353,11 +1410,14 @@ export const GET = async () =>
 			FFlagGraphicsGLCacheFeatureLevel: "True",
 			DFFlagRakNetNoCopyFromApp: "True",
 			FFlagTerrainInvalidationRenderThreadOnly: "True",
-			DFIntServerReportRakNetBandwidthTelemetryHundredthsPercentage: "100",
+			DFIntServerReportRakNetBandwidthTelemetryHundredthsPercentage:
+				"100",
 			FFlagSimSolverUniversalConstraintEnabled: "True",
 			DFFlagIntegrateSendInPeer: "False",
-			DFIntSimDefaultTimestepMultiplier_PlaceFilter: "0;1333478699;5758131327;6928987669",
-			DFFlagSimTimestepArbiterEnabled_PlaceFilter: "True;1333478699;5758131327;6928987669",
+			DFIntSimDefaultTimestepMultiplier_PlaceFilter:
+				"0;1333478699;5758131327;6928987669",
+			DFFlagSimTimestepArbiterEnabled_PlaceFilter:
+				"True;1333478699;5758131327;6928987669",
 			DFFlagNfAddReport: "True",
 			FFlagHideLoadToastIfAnimationClipped: "True",
 			DFFlagThumbnaiRenderImportantPerformUpdatesOnly: "True",
@@ -1384,7 +1444,8 @@ export const GET = async () =>
 			DFFlagGImageSetPixelRespectsChannels: "True",
 			FIntLuaAppIXPUserEnabledRollout: "100",
 			FIntAppBridgeIXPBrowserTrackerFetchRollout: "100",
-			FFlagAutomaticSizing2_PlaceFilter: "False;2534724415;3032856162;606849621;5232896677;5914275584;6158369151",
+			FFlagAutomaticSizing2_PlaceFilter:
+				"False;2534724415;3032856162;606849621;5232896677;5914275584;6158369151",
 			DFFlagReportSessionCountInSeconds: "True",
 			FFlagEnableEventEmulatorStylizer: "True",
 			SFFlagBodyColorsColor3PropertyReplicationEnabled: "True",
@@ -1436,7 +1497,8 @@ export const GET = async () =>
 			FFlagLuaAppGameDetailsLayoutFixesUpdate: "True",
 			FFlagGraphicsVulkanAdreno10A2: "True",
 			FFlagUGCFetchAssetWithFormatEnabled_PlaceFilter: "True;2573981315",
-			FFlagUGCMeshPartAccessoriesValidation_PlaceFilter: "True;2573981315",
+			FFlagUGCMeshPartAccessoriesValidation_PlaceFilter:
+				"True;2573981315",
 			DFFlagCloudLocalizationTableSelfCleaningEnabled: "True",
 			FFlagXboxAppBridgePercentRollouts: "True",
 			FIntClientCompressionFormatRequestMobile3: "3",
@@ -1449,13 +1511,15 @@ export const GET = async () =>
 			FFlagStudioExplorerUpdateAssertFix: "true",
 			FFlagStudioPlaceVersionCanShow: "True",
 			FFlagStudioEnableParallelLuaBetaFeature: "True",
-			FFlagHumanoidParallelRemoveNoPhysics_PlaceFilter: "True;5064251723;2573981315;6317172524;4999654929;5614144350;6238231040;1080039206;5282546317;915545262;37103783;189707",
+			FFlagHumanoidParallelRemoveNoPhysics_PlaceFilter:
+				"True;5064251723;2573981315;6317172524;4999654929;5614144350;6238231040;1080039206;5282546317;915545262;37103783;189707",
 			FFlagCrossVMLuaErrorMoveToRuntime: "True",
 			FIntStudioBFRolloutPercentParallelLuaBeta: "0",
 			DFFlagBouncingScriptListEn: "True",
 			DFFlagBouncingScriptBlockEn: "True",
 			FFlagInitStoreManagerOnStart: "True",
-			FFlagLocalizationToolsPluginInvalidEntryIdentifierMessageEnabled: "True",
+			FFlagLocalizationToolsPluginInvalidEntryIdentifierMessageEnabled:
+				"True",
 			DFFlagAnimatorHumanoidThrottlingEnabled: "True",
 			FFlagGroupCreatorLinkToUserFix: "True",
 			FFlagXboxInitializeABTestsForUser: "True",
@@ -1528,7 +1592,8 @@ export const GET = async () =>
 			FFlagStudioExplorerWidgetScrollPerPixel: "True",
 			FFlagStudioPropertiesWidgetScrollPerPixel: "True",
 			DFFlagReportDeveloperEventIngestHttpErrorByInfluxDb: "true",
-			DFIntReportDeveloperEventIngestHttpErrorByInfluxDbTenThousandth: "10000",
+			DFIntReportDeveloperEventIngestHttpErrorByInfluxDbTenThousandth:
+				"10000",
 			DFFlagHttpRbxApiServiceEnableNativeRetryFor503: "True",
 			DFFlagVoiceChatMixerUseLocalTimeStamp: "True",
 			DFFlagThumbnailerOnlyFocusesOnTheLastModel: "True",
@@ -1540,7 +1605,8 @@ export const GET = async () =>
 			DFIntLinkingProtocolInfluxPriorityHundredthsPercentage: "10000",
 			DFFlagEnableLightstepReporting2: "True",
 			DFFlagHttpEnableTracing: "True",
-			DFStringLightstepToken: "S3EXjCZQQr6OixnmKu+hoa3OSfpvPP5qgU0esiWgwreFUUMBnPhEaoS5yIIrf9bdYlSgW0XKCb1So9Rhtj1eMzt/MJWcyKZ4TwIckHVj",
+			DFStringLightstepToken:
+				"S3EXjCZQQr6OixnmKu+hoa3OSfpvPP5qgU0esiWgwreFUUMBnPhEaoS5yIIrf9bdYlSgW0XKCb1So9Rhtj1eMzt/MJWcyKZ4TwIckHVj",
 			DFFlagRuppHeaderFromClientEnabled3: "True",
 			FFlagFixPublishAsWhenQueryFails: "False",
 			FFlagTexturePackPropertyFix2: "True",
@@ -1609,7 +1675,8 @@ export const GET = async () =>
 			FFlagAXCostumeChangeConfirmation: "True",
 			FFlagLocalizationToolsAllowUploadZhCjv: "True",
 			FFlagParameterizeHandlerTextLenghtLimitEnabled: "True",
-			FFlagParameterizeHandlerTextLenghtLimitWarningMessageEnabled: "True",
+			FFlagParameterizeHandlerTextLenghtLimitWarningMessageEnabled:
+				"True",
 			FFlagCharacterModelRootsSentLastAtJoin2: "True",
 			FFlagUseContentStringForLocalization: "True",
 			FFlagRespectDisplayOrderForOnTopOfCoreBlur: "True",
@@ -1621,7 +1688,8 @@ export const GET = async () =>
 			DFFlagVoiceChatSinglePeerConnectionFactory: "True",
 			DFFlagNoClusterSenderIfNothingToDo: "True",
 			DFIntLightstepHTTPTransportHundredthsPercent2: "1",
-			DFIntLightstepHTTPTransportHundredthsPercent2_PlaceFilter: "10000;5064251723",
+			DFIntLightstepHTTPTransportHundredthsPercent2_PlaceFilter:
+				"10000;5064251723",
 			FFlagEnableAppTracing3: "True",
 			FFlagEnableAppTracing3_PlaceFilter: "True;5064251723",
 			FIntPolicyServiceHttpErrorHundredthsPercentage: "0",
@@ -1655,7 +1723,8 @@ export const GET = async () =>
 			FFlagStudioEnableBadgesInMonetizationPage: "True",
 			FFlagStudioAssetManagerShowBadgesTeachingCallout: "False",
 			FFlagDisplaySecondsOnTimeline: "True",
-			DFIntStudioReportLuauPerformanceStatsInfluxHundredthsPercentage: "10",
+			DFIntStudioReportLuauPerformanceStatsInfluxHundredthsPercentage:
+				"10",
 			DFFlagNumericBannedIps: "True",
 			FFlagLocalizationServicePassStatReporterToLocalizationTable: "True",
 			FFlagLocalizationTableParseExpiryV2: "True",
@@ -1766,7 +1835,8 @@ export const GET = async () =>
 			FFlagStudioAssetManagerLoadLinkedScriptsOnInit: "True",
 			FFlagLuaAppSignUpWithLocale: "True",
 			DFFlagWorldModelPlayerAddedCrash: "True",
-			FFlagPlayerEmulatorUseBinaryStringForSerializedEmulatedPolicyInfo: "True",
+			FFlagPlayerEmulatorUseBinaryStringForSerializedEmulatedPolicyInfo:
+				"True",
 			FFlagStudioAssetManagerDisableHoverOnOverlay: "True",
 			FFlagVirtualCursorRespectScreenGuiEnabled: "True",
 			FFlagExternalSitePromptEnabledV2: "True",
@@ -1837,7 +1907,8 @@ export const GET = async () =>
 			FFlagUpdateModelMeshCFrame: "True",
 			FFlagLuaGameJoinsUseGameProtocol: "True",
 			FFlagTextFormatShouldUpdateWhenNoTextChange: "True",
-			FStringEnableCaptureModePlaceIds: "6536060882,6833753645,7172485708,6985028626",
+			FStringEnableCaptureModePlaceIds:
+				"6536060882,6833753645,7172485708,6985028626",
 			FFlagLuaAppAlwaysFetchSiteMessageBanner: "True",
 			DFIntAnalyticsMaxShutdownWaitTimeMs: "600",
 			FFlagLuaAppShowGameDetailsUnderWeb: "True",
@@ -1962,13 +2033,15 @@ export const GET = async () =>
 			FFlagAvatarRenderLayeredClothHSR_PlaceFilter:
 				"True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524;6283882559;6441011658",
 			FFlagHSRDataGeneration: "False",
-			FFlagHSRDataGeneration_PlaceFilter: "True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagHSRDataGeneration_PlaceFilter:
+				"True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagLuauFixRbxpFastFlagFilePathTracking: "True",
 			DFFlagEnablePerfFpsCollection2: "True",
 			FFlagFixAppPolicyDefaultUserId: "True",
 			FFlagGameSettingsStandardizeLocalizationId: "True",
 			FFlagLuauAlwaysCheckFunctionBodies: "True",
-			FFlagDisableAssetFormatServiceUpload_PlaceFilter: "False;5937771077",
+			FFlagDisableAssetFormatServiceUpload_PlaceFilter:
+				"False;5937771077",
 			FFlagClearTexturePackOnCheck: "True",
 			FFlagTexturePackPropertyBackfill: "True",
 			DFFlagReportMPHAStats2: "True",
@@ -1990,11 +2063,14 @@ export const GET = async () =>
 			FFlagSimAccCollisionPipelineEnabled4: "True",
 			DFFlagDebugForceDefaultTimestepMultiplier: "False",
 			DFFlagSimMultifrequencySolverEnabled5: "False",
-			DFFlagSimMultifrequencySolverEnabled5_PlaceFilter: "True;1333478699;5758131327;6928987669",
+			DFFlagSimMultifrequencySolverEnabled5_PlaceFilter:
+				"True;1333478699;5758131327;6928987669",
 			DFFlagSimReadFuturePVForControllers: "False",
-			DFFlagSimReadFuturePVForControllers_PlaceFilter: "True;1333478699;5758131327;6928987669",
+			DFFlagSimReadFuturePVForControllers_PlaceFilter:
+				"True;1333478699;5758131327;6928987669",
 			FFlagDebugSimTurnOnAdaptivePhysicsSteppingWithFlag: "False",
-			FFlagDebugSimTurnOnAdaptivePhysicsSteppingWithFlag_PlaceFilter: "True;1333478699;5758131327;6928987669",
+			FFlagDebugSimTurnOnAdaptivePhysicsSteppingWithFlag_PlaceFilter:
+				"True;1333478699;5758131327;6928987669",
 			FFlagFixToolboxInCli: "True",
 			FFlagScrollingFrameClampBoundsFix2: "True",
 			FFlagToolboxDefaultBackgroundMatches: "True",
@@ -2038,7 +2114,8 @@ export const GET = async () =>
 			FFlagStudioScriptVersionDocsShowInExplorer: "True",
 			FFlagLuauFixClassDefinitionFunctionTypeProps: "True",
 			FFlagFastClusterFixTBN: "False",
-			FFlagFastClusterFixTBN_PlaceFilter: "True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagFastClusterFixTBN_PlaceFilter:
+				"True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagFixWriteCombinedMemoryReadWrite: "False",
 			FFlagFixWriteCombinedMemoryReadWrite_PlaceFilter:
 				"True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
@@ -2078,7 +2155,8 @@ export const GET = async () =>
 			FFlagPluginActivationFocusesViewport: "True",
 			FFlagLuaSignupShowEarlyPasswordSelectionErrors: "True",
 			DFFlagSimOwnedNOUReporterFixWeightedStat: "True",
-			FFlagStudioMigratePatchTeamCreateToggleRequestToStudioHTTPRequest: "True",
+			FFlagStudioMigratePatchTeamCreateToggleRequestToStudioHTTPRequest:
+				"True",
 			FFlagStudioMigrateGetDevForumPageRequestToStudioHTTPRequest: "True",
 			FFlagStudioMigrateCreateGameRequestToStudioHttpRequest: "True",
 			FFlagEnableImprovedInnerBoxBetaFeature: "False",
@@ -2158,13 +2236,15 @@ export const GET = async () =>
 			FFlagUserFixModalEnabled: "True",
 			FFlagStrictTypePlayerScripts: "True",
 			FFlagEnableVoiceDefaultChannel: "True",
-			FFlagEnableVoiceDefaultChannel_PlaceFilter: "False;5064251723;5465723678;7017799672;7097215816",
+			FFlagEnableVoiceDefaultChannel_PlaceFilter:
+				"False;5064251723;5465723678;7017799672;7097215816",
 			FFlagDevFrameworkFixButtonStyles: "True",
 			FFlagUseRoactAnalyticsForCaptchaPageBrowserService: "True",
 			DFFlagEnablePerfDataMpTimeSplit: "True",
 			FFlagMultiSelectionPivot: "True",
 			FFlagStudioPublishFailPageFix: "True",
-			FFlagStudioMigrateGetAssetVersionNumberRequestToStudioHttpRequest: "True",
+			FFlagStudioMigrateGetAssetVersionNumberRequestToStudioHttpRequest:
+				"True",
 			FFlagStudioScriptUpdateStatusWhenReceivedLockState: "True",
 			FFlagStudioWorkspaceMonitorScriptChangeWhenPlaceIsReady: "True",
 			DFFlagEnablePerfDataCoreTimersCollection2: "True",
@@ -2234,7 +2314,8 @@ export const GET = async () =>
 			FFlagLuauTablePackCheckTailAndReduce: "True",
 			FFlagLuauFixInfiniteTypePackUnify: "True",
 			FFlagLuauFixVariadicArgumentBounds: "True",
-			FFlagStudioMigrateCreatePlaceInGameRequestToStudioHttpRequest: "True",
+			FFlagStudioMigrateCreatePlaceInGameRequestToStudioHttpRequest:
+				"True",
 			FFlagLuauLoadStringDefinitionFix: "True",
 			FFlagLuaAppLowerExtraCatalogNavClicks: "True",
 			FFlagStudioUseInstanceClassDescriptorsInApiDumper: "True",
@@ -2254,7 +2335,8 @@ export const GET = async () =>
 			FFlagCustomizeShortcutWindowNoChangeAfterRefreshAction: "True",
 			FFlagLuauUseInstanceClassDescriptors: "True",
 			FFlagHSRDataSupportCluster: "False",
-			FFlagHSRDataSupportCluster_PlaceFilter: "True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagHSRDataSupportCluster_PlaceFilter:
+				"True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagIgnoreHSRForTransparencyTexture: "False",
 			FFlagIgnoreHSRForTransparencyTexture_PlaceFilter:
 				"True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
@@ -2281,16 +2363,20 @@ export const GET = async () =>
 			DFFlagStreamJobGetNextTimeLimitCheck: "True",
 			FFlagTrackHTTPCookieUpdateFailed: "True",
 			DFFlagWorldRootPhysicsServiceErrorFirstIfPartCastFails: "True",
-			FFlagCheckNetworkConnectionBeforeValidatingDisplayNameForIOS: "True",
+			FFlagCheckNetworkConnectionBeforeValidatingDisplayNameForIOS:
+				"True",
 			FFlagDiaplayNameValidationErrorHandlingFixEnabled: "True",
 			DFFlagCleanTeamCreateFlyweightServiceOnDMClose2: "True",
 			FFlagLuauFixOperatorEquality: "True",
 			FFlagEnumItemIsA: "True",
 			FFlagSkinUseSkeletonAPI_PlaceFilter:
 				"True;6283882559;2431195974;6337871940;6337872921;6337877104;6336591565;6382608640;6831747993;6690060033;6900883313;6901134961;6933816837;5595252083;5064251723;5100919959",
-			FFlagClearTexturePackOnCheck_PlaceFilter: "False;6432409200;6959625816",
-			FFlagTexturePackPropertyBackfill_PlaceFilter: "False;6432409200;6959625816",
-			FFlagTexturePackPropertyFix2_PlaceFilter: "False;6432409200;6959625816",
+			FFlagClearTexturePackOnCheck_PlaceFilter:
+				"False;6432409200;6959625816",
+			FFlagTexturePackPropertyBackfill_PlaceFilter:
+				"False;6432409200;6959625816",
+			FFlagTexturePackPropertyFix2_PlaceFilter:
+				"False;6432409200;6959625816",
 			DFIntAnimationScaleDampeningPercent: "40",
 			FFlagStudioFixPlaceSessionConfigOnInit: "True",
 			FFlagInGameFixMenuIconHoverEatKeyboard: "True",
@@ -2298,7 +2384,8 @@ export const GET = async () =>
 			DFFlagSimACPCapDynamicAssemblyExtentsForCollisionDetection: "True",
 			FFlagLuaAppSendAppReadyForAppInputFocused: "True",
 			FFlagBatchVertexDeformation: "False",
-			FFlagBatchVertexDeformation_PlaceFilter: "True;6831747993;6690060033;6900883313;6901134961;6933816837;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagBatchVertexDeformation_PlaceFilter:
+				"True;6831747993;6690060033;6900883313;6901134961;6933816837;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagLuauBetterBlockSpans: "True",
 			DFFlagRemoveCalculateNextSpawnLocation: "True",
 			DFFlagDontLoadEmotesInventoryInThumbnails: "True",
@@ -2420,7 +2507,8 @@ export const GET = async () =>
 			FFlagTerrainToolsOutputIssue: "True",
 			DFFlagFixLogTimestampOverflow: "True",
 			FFlagReflectionAllowFalseyDefaultArgument: "True",
-			DFIntReportDestroyedInstanceUsageStatsClientHundredthsPercentage: "10",
+			DFIntReportDestroyedInstanceUsageStatsClientHundredthsPercentage:
+				"10",
 			FFlagACEReduceDeepcopyCalls: "True",
 			FIntToolboxEndpointMigrationRolloutPercentage: "100",
 			FFlagACERealtimeChanges: "True",
@@ -2461,15 +2549,20 @@ export const GET = async () =>
 			FFlagGamepadFocusTests: "True",
 			FFlagUsePubKey2: "True",
 			FFlagEnableLoadLayeredClothingByDefault: "False",
-			FFlagEnableLoadLayeredClothingByDefault_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagEnableLoadLayeredClothingByDefault_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagHumanoidDescriptionAccessoriesProperty4: "False",
-			FFlagHumanoidDescriptionAccessoriesProperty4_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagHumanoidDescriptionAccessoriesProperty4_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagHumanoidDescriptionLayeredAccessories5: "False",
-			FFlagHumanoidDescriptionLayeredAccessories5_PlaceFilter: "True;2431195974;5064251723;5100919959;7263004204;6959329418;7095858303;7208091524",
+			FFlagHumanoidDescriptionLayeredAccessories5_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7263004204;6959329418;7095858303;7208091524",
 			FFlagHumanoidDescriptionLayeredAccessoriesPuffiness4: "False",
-			FFlagHumanoidDescriptionLayeredAccessoriesPuffiness4_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagHumanoidDescriptionLayeredAccessoriesPuffiness4_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagInspectAndBuyLayeredClothingSupport2: "False",
-			FFlagInspectAndBuyLayeredClothingSupport2_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303",
+			FFlagInspectAndBuyLayeredClothingSupport2_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303",
 			FFlagSkinUseSkeletonAPI2: "False",
 			FFlagSkinUseSkeletonAPI2_PlaceFilter:
 				"True;6283882559;2431195974;6337871940;6337872921;6337877104;6336591565;6382608640;6831747993;6690060033;6900883313;6901134961;6933816837;5595252083;5064251723;5100919959;7095858303;4390337206;156220906;6110495686",
@@ -2483,7 +2576,8 @@ export const GET = async () =>
 			DFFlagAbuseReportV2SendGameServerEnrichment: "True",
 			FFlagBootcampCLI43290: "True",
 			FFlagStudioLogCloudPluginFetching: "True",
-			FFlagStudioFixDataModelPluginLoaderMigrateToSessionizedEventIngest: "True",
+			FFlagStudioFixDataModelPluginLoaderMigrateToSessionizedEventIngest:
+				"True",
 			FFlagAEAssetManagmentIXPEnabled3: "True",
 			FFlagStudioExitQuicklyOnFatalError: "true",
 			FFlagReduceLineHeightClamp: "True",
@@ -2524,12 +2618,14 @@ export const GET = async () =>
 			FFlagProductPurchaseABTestV2: "True",
 			FFlagImproveGetUserOutfitsFailure: "True",
 			FFlagFixMidasInGamePayments: "True",
-			DFFlagWhitelistTestServiceCollectConditionalResultRemoteEvent: "True",
+			DFFlagWhitelistTestServiceCollectConditionalResultRemoteEvent:
+				"True",
 			FFlagCleanupSoundUpdates2: "True",
 			FFlagFixForRCCSkinnedBoxMappedShrinkToLod: "True",
 			FFlagEnableVoiceChatOptionsDeviceChangedHook: "True",
 			FFlagStudioRemoveWorkspacePropertyChangedConnection: "True",
-			FFlagStudioRemoveExplicitStudioDeviceEmulatorCallInOpenPlace: "True",
+			FFlagStudioRemoveExplicitStudioDeviceEmulatorCallInOpenPlace:
+				"True",
 			FFlagStudioNoExtraSubmitTaskWhenLoadingSession: "True",
 			DFFlagVoiceChatLeaveUponDisconnectionSignal: "True",
 			FFlagSimFixCrashInMutexLock: "True",
@@ -2564,7 +2660,8 @@ export const GET = async () =>
 			FFlagStudioRbxpPropagateToNewStudioProcesses: "True",
 			FFlagTeleportOutOfRetryErrorCounter: "True",
 			DFFlagVoiceChatEnableApiSecurityCheck: "True",
-			DFFlagVoiceChatEnableApiSecurityCheck_PlaceFilter: "False;5064251723;5465723678;7017799672;7097215816;6985028626;7241827834;6937477528;7277614429",
+			DFFlagVoiceChatEnableApiSecurityCheck_PlaceFilter:
+				"False;5064251723;5465723678;7017799672;7097215816;6985028626;7241827834;6937477528;7277614429",
 			FFlagStartupControllerInitProtocolsWin32: "True",
 			FFlagStudioByPassQFatalInQQmlNotifier: "True",
 			FFlagStudioUseAsyncCallForLogoutCancelDiag: "True",
@@ -2592,9 +2689,11 @@ export const GET = async () =>
 			DFFlagVoiceChatLeaveFailedSub: "True",
 			DFFlagVoiceChatEnableEventCounters2: "True",
 			DFFlagRenderTC2DebugAtlasVisualize: "False",
-			DFFlagRenderTC2DebugAtlasVisualize_PlaceFilter: "True;2431195974;7095858303;7263004204;6959329418;189707",
+			DFFlagRenderTC2DebugAtlasVisualize_PlaceFilter:
+				"True;2431195974;7095858303;7263004204;6959329418;189707",
 			FFlagRenderTC2SaveTC1Memory: "False",
-			FFlagRenderTC2SaveTC1Memory_PlaceFilter: "True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;7095858303;7263004204;6959329418;189707",
+			FFlagRenderTC2SaveTC1Memory_PlaceFilter:
+				"True;2431195974;6831747993;6690060033;6900883313;6901134961;6933816837;7095858303;7263004204;6959329418;189707",
 			FFlagCloudsMvp: "True",
 			FFlagCloudsMvpOnMobile: "True",
 			FFlagRenderClouds: "True",
@@ -2602,16 +2701,19 @@ export const GET = async () =>
 			FFlagFixLoadModuleDebugging2: "True",
 			FFlagFixRoundCornerTestWithStroke: "True",
 			FFlagHumanoidDescriptionLayeredAccessories6: "False",
-			FFlagHumanoidDescriptionLayeredAccessories6_PlaceFilter: "True;2431195974;5064251723;5100919959;7263004204;6959329418;7095858303;7208091524",
+			FFlagHumanoidDescriptionLayeredAccessories6_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7263004204;6959329418;7095858303;7208091524",
 			FFlagHumanoidDescriptionLayeredAccessories7: "False",
-			FFlagHumanoidDescriptionLayeredAccessories7_PlaceFilter: "True;2431195974;5064251723;5100919959;7263004204;6959329418;7095858303;7208091524",
+			FFlagHumanoidDescriptionLayeredAccessories7_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7263004204;6959329418;7095858303;7208091524",
 			FFlagAddBoneInstanceWithMappedName: "True",
 			DFIntCSGV3OperationMetricsHundredthsPercentage: "500",
 			FFlagDevFrameworkConvertTextProperties: "True",
 			DFFlagFixMovingPartsStat: "True",
 			DFFlagGameNetRemoveTimeOffsetDueToPhysics: "True",
 			DFFlagGameNetDisableVelocityLodWhenSendingAll: "True",
-			DFFlagLocalizationServiceDisableRedirectCacheOnFetchingAssets: "True",
+			DFFlagLocalizationServiceDisableRedirectCacheOnFetchingAssets:
+				"True",
 			DFFlagReplicatorReportBigV: "True",
 			DFIntEventMetaDataReportingDepthThreshold: "295",
 			DFIntEventMetaDataReportingStringSizeThreshold: "20000000",
@@ -2642,7 +2744,8 @@ export const GET = async () =>
 			DFFlagCLI33125depricateLuaChallenge: "True",
 			FFlagLuauLinterDisambiguateKindClass2: "True",
 			FFlagEnableVoiceChatPlayersList: "False",
-			FFlagEnableVoiceChatPlayersList_PlaceFilter: "True;6783491168;6985028626;6937477528",
+			FFlagEnableVoiceChatPlayersList_PlaceFilter:
+				"True;6783491168;6985028626;6937477528",
 			FFlagListenToMegaClusterInstanceRemove: "True",
 			DFFlagAudioVisualPreloadAsyncFixes2: "True",
 			DFFlagVideoStreamFixAudioOnlyPlayback: "True",
@@ -2689,7 +2792,8 @@ export const GET = async () =>
 			FIntEnableVoiceChatRejoinOnBlockDelay: "3",
 			FFlagStreamingGCRespectsNOUs9: "True",
 			FFlagVirtualInputManagerEnableFilterInputEvents: "True",
-			FFlagVirtualInputManagerSendCompletedSignalAfterInternalReset: "True",
+			FFlagVirtualInputManagerSendCompletedSignalAfterInternalReset:
+				"True",
 			FFlagStudioPluginHostUseUserPluginsModel: "True",
 			FFlagOnlyGetGeometryOnce: "True",
 			FFlagSpeakersListenForSoundGroupChanges: "True",
@@ -2706,7 +2810,8 @@ export const GET = async () =>
 			FFlagLuaAppRemoveIXPProp: "True",
 			FFlagSetAppVersionEarlyMac: "True",
 			DFFlagVoiceChatRccToken: "False",
-			DFFlagVoiceChatRccToken_PlaceFilter: "True;6783491168;5064251723;5465723678;2807301554",
+			DFFlagVoiceChatRccToken_PlaceFilter:
+				"True;6783491168;5064251723;5465723678;2807301554",
 			FFlagReportDeviceInfoMac: "True",
 			FFlagSendMoreTerrainForLODTransition4: "True",
 			FFlagLuauInstanceFindMagicFunctions: "True",
@@ -2714,15 +2819,20 @@ export const GET = async () =>
 			DFFlagHttpClientAddHandlerJob: "True",
 			FFlagStudioWorkspaceRevisitFragmentScripts: "True",
 			DFFlagLayeredAccessoriesUseMeshParts: "False",
-			DFFlagLayeredAccessoriesUseMeshParts_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			DFFlagLayeredAccessoriesUseMeshParts_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			DFFlagLoadCharacterLayeredClothingProperty: "False",
-			DFFlagLoadCharacterLayeredClothingProperty_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			DFFlagLoadCharacterLayeredClothingProperty_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagFastClusterFinishedEvent: "False",
-			FFlagFastClusterFinishedEvent_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagFastClusterFinishedEvent_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagHumanoidDescriptionLayeredAccessories8: "False",
-			FFlagHumanoidDescriptionLayeredAccessories8_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagHumanoidDescriptionLayeredAccessories8_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagInspectAndBuyLayeredClothingSupport4: "False",
-			FFlagInspectAndBuyLayeredClothingSupport4_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagInspectAndBuyLayeredClothingSupport4_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			DFFlagZeroZombies: "True",
 			DFFlagVoiceChatEventLogIncludePlaceId2: "True",
 			DFFlagMegaPropertyChecks: "True",
@@ -2855,7 +2965,8 @@ export const GET = async () =>
 			FFlagLuauMigrateToFileSyncUtils: "True",
 			FFlagLuauFixInvalidInstancePathList: "True",
 			FFlagResumeNewThreadPreserveLuauStack: "True",
-			DFIntStudioReportLuauWarningDetailsInfluxPriorityHundredthsPercentage: "10",
+			DFIntStudioReportLuauWarningDetailsInfluxPriorityHundredthsPercentage:
+				"10",
 			FFlagStudioReportLuauWarningDetails: "True",
 			FFlagVirtualInputManagerRemoveDoubleTextInputEvents: "True",
 			FFlagVirtualInputManagerEnableReplay: "True",
@@ -2928,7 +3039,8 @@ export const GET = async () =>
 			FFlagStudioScriptVersionHistoryDynamicDialog: "True",
 			FFlagTightenR15Criteria: "True",
 			FFlagHumanoidDescriptionLayeredAccessories9: "False",
-			FFlagHumanoidDescriptionLayeredAccessories9_PlaceFilter: "True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FFlagHumanoidDescriptionLayeredAccessories9_PlaceFilter:
+				"True;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			FFlagStudioSaveCloudEditUserDataOnClose: "True",
 			FFlagItemDetailsCaptureFocusFix2: "True",
 			FFlagUIBloxUseNewContext: "True",
@@ -2946,7 +3058,8 @@ export const GET = async () =>
 			DFFlagEnableSocketPortSharding: "False",
 			DFFlagMegaReplicatorDepthTraversalFirst2: "True",
 			FLogAvatarJoinMetrics: "0",
-			FLogAvatarJoinMetrics_PlaceFilter: "7;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
+			FLogAvatarJoinMetrics_PlaceFilter:
+				"7;2431195974;5064251723;5100919959;7095858303;7263004204;6959329418;189707;7208091524",
 			DFFlagFixMixedSlashPathInSandbox: "True",
 			FFlagForcePreferredPathForScripts: "True",
 			FFlagDevFrameworkExpandablePane: "True",
@@ -2970,10 +3083,13 @@ export const GET = async () =>
 			FFlagScriptDebuggerLogpoint: "True",
 			DFFlagReplicatorReportAdditionalStatsToKibana: "True",
 			FFlagAudioWatchForHangOnOpen: "False",
-			FFlagHumanoidOnlySetCollisionsOnStateChangeDefaultIsEnabled: "False",
-			FFlagHumanoidOnlySetCollisionsOnStateChangeDefaultIsEnabled_PlaceFilter: "True;6317172524;4999654929",
+			FFlagHumanoidOnlySetCollisionsOnStateChangeDefaultIsEnabled:
+				"False",
+			FFlagHumanoidOnlySetCollisionsOnStateChangeDefaultIsEnabled_PlaceFilter:
+				"True;6317172524;4999654929",
 			FFlagUseHumanoidOnlySetCollisionsOnStateChange: "True",
-			FIntNonTeamCreateScriptVersionHistoryBetaFeatureRolloutPercent: "100",
+			FIntNonTeamCreateScriptVersionHistoryBetaFeatureRolloutPercent:
+				"100",
 			DFFlagNoPeersAliveForAllSharedNewInstance: "True",
 			FIntOpenHangTimeoutMs: "90000",
 			FFlagInitializeNetworkDisconnectCleanUpJob: "True",
@@ -3067,7 +3183,8 @@ export const GET = async () =>
 			FFlagDevFrameworkFixCheckboxTheme: "True",
 			FFlagDevFrameworkFixCheckboxChildren: "True",
 			FFlagHumanoidParallelRemoveNoPhysicsNoSimulate: "False",
-			FFlagHumanoidParallelRemoveNoPhysicsNoSimulate_PlaceFilter: "True;5064251723;2573981315;6317172524;4999654929;5614144350;6238231040;1080039206;5282546317;915545262;37103783;189707",
+			FFlagHumanoidParallelRemoveNoPhysicsNoSimulate_PlaceFilter:
+				"True;5064251723;2573981315;6317172524;4999654929;5614144350;6238231040;1080039206;5282546317;915545262;37103783;189707",
 			FFlagBubbleVoiceHideAfterDelay: "True",
 			FFlagStudioSimplifyPluginReloadOptionsForInternal: "True",
 			DFFlagReplicatorVariantReportD: "True",
@@ -3197,7 +3314,8 @@ export const GET = async () =>
 			FFlagMacInputCaptureOptimization: "True",
 			FFlagFixPlayerPermissionsPerf3: "True",
 			DFFlagPivotPartsUnderParts: "True",
-			DFFlagPivotPartsUnderParts_PlaceFilter: "False;54865335;3255925346;5833504336;7158892988;5952445986",
+			DFFlagPivotPartsUnderParts_PlaceFilter:
+				"False;54865335;3255925346;5833504336;7158892988;5952445986",
 			FFlagDevFrameworkTextBoxRefProp: "True",
 			FFlagTextLabelRefProps: "True",
 			FFlagBubbleVoiceHideInitialState: "True",
@@ -3327,7 +3445,8 @@ export const GET = async () =>
 			FFlagAEFixFullViewLandscapePosition: "True",
 			FFlagBubbleVoiceLocalErrorStateV2: "True",
 			DFFlagVoiceChatUnlockJoin: "True",
-			FFlagVirtualInputManagerAddResolutionAndScreenOrientationMetadata: "True",
+			FFlagVirtualInputManagerAddResolutionAndScreenOrientationMetadata:
+				"True",
 			FFlagVirtualInputManagerSendOutputToStdOut: "True",
 			DFFlagClientNetworkReportPlaySessionId: "True",
 			FFlagLuauUseLuauFirst: "True",
@@ -3474,7 +3593,8 @@ export const GET = async () =>
 			DFIntChatFloodCheckExpirySeconds: "120",
 			DFIntChatFloodCheckLimit: "3",
 			DFFlagReplicatorJoinBreakup: "False",
-			DFFlagReplicatorJoinBreakup_DataCenterFilter: "True;214;213;189;265",
+			DFFlagReplicatorJoinBreakup_DataCenterFilter:
+				"True;214;213;189;265",
 			FFlagDifferentiateUWPCrashes: "True",
 			FFlagDontExportPlasticDefaultTexture: "True",
 			FLogLuobuStudioInternetZone: "6",
@@ -3565,7 +3685,8 @@ export const GET = async () =>
 			DFIntApiRateLimit: "200",
 			DFIntBgUpdateRedirectsHttpErrInfluxHundredthsPercentage: "100",
 			DFIntBroadPhaseIslandBufferZoneMinPartLimit: "0",
-			DFIntBroadPhaseIslandBufferZoneMinPartLimit_PlaceFilter: "5;1105449649",
+			DFIntBroadPhaseIslandBufferZoneMinPartLimit_PlaceFilter:
+				"5;1105449649",
 			DFIntCSGLevelOfDetailSwitchingDistance: "250",
 			DFIntCSGLevelOfDetailSwitchingDistanceL12: "500",
 			DFIntDraggerMaxMovePercent: "60",
@@ -3583,23 +3704,33 @@ export const GET = async () =>
 			DFIntSendJoinTimeDeltasToDiag_HundredthsPercentage: "100",
 			DFIntSendRakNetStatsThrottle: "2",
 			DFIntStreamJobMaxBufferHealthThresholdHundredths: "75",
-			DFIntStreamJobMaxBufferHealthThresholdHundredths_PlaceFilter: "50;1526666203",
+			DFIntStreamJobMaxBufferHealthThresholdHundredths_PlaceFilter:
+				"50;1526666203",
 			DFIntStreamJobMinBufferHealthThresholdHundredths: "40",
-			DFIntStreamJobMinBufferHealthThresholdHundredths_PlaceFilter: "30;1526666203",
+			DFIntStreamJobMinBufferHealthThresholdHundredths_PlaceFilter:
+				"30;1526666203",
 			DFIntTargetTimeDelayFacctorTenths: "20",
 			DFIntTeleportExceptionInfluxHundredthsPercentage: "9000",
 			DFLogPlaceLauncherTeleportLog: "6",
 			DFLogSoundTrace: "4",
-			DFStringCrashUploadToBacktraceMacPlayerToken: "24cb37449e120c3a0618b1bf0585e339571828cae4dc73c7b8c99f67fcd751e9",
-			DFStringCrashUploadToBacktraceWindowsPlayerToken: "417ecb0fbc032ce087e6af3b780c298e3356089f050c8130d2318109e80417a4",
-			DFStringGamePerfMonitorPercentageCountryOverride: "CN,50,AU,50,NZ,50",
+			DFStringCrashUploadToBacktraceMacPlayerToken:
+				"24cb37449e120c3a0618b1bf0585e339571828cae4dc73c7b8c99f67fcd751e9",
+			DFStringCrashUploadToBacktraceWindowsPlayerToken:
+				"417ecb0fbc032ce087e6af3b780c298e3356089f050c8130d2318109e80417a4",
+			DFStringGamePerfMonitorPercentageCountryOverride:
+				"CN,50,AU,50,NZ,50",
 			DFStringHttpInfluxDatabase: "prod",
-			DFStringOverrideSendRakNetStatsThrottleCountries: "CN,50,JP,20,NO,20,FI,20,SE,20,NZ,20",
-			DFStringSendJoinTimeDeltasHundPrecCountryOverride: "CN,5000,US,100,AU,3000,KR,2000,NZ,3000,JP,4000,NO,2000,FI,2000,SE,1000,FR,1000,DK,1000",
-			DFStringSendJoinTimeStatsHundPrecCountryOverride: "CN,5000,US,100,AU,3000,KR,2000,NZ,3000",
-			DFStringSendJoinTimeStatsHundPrecCountryOverride_PlaceFilter: "CN,10000,US,10000,AU,10000,KR,10000,NZ,10000;189707",
+			DFStringOverrideSendRakNetStatsThrottleCountries:
+				"CN,50,JP,20,NO,20,FI,20,SE,20,NZ,20",
+			DFStringSendJoinTimeDeltasHundPrecCountryOverride:
+				"CN,5000,US,100,AU,3000,KR,2000,NZ,3000,JP,4000,NO,2000,FI,2000,SE,1000,FR,1000,DK,1000",
+			DFStringSendJoinTimeStatsHundPrecCountryOverride:
+				"CN,5000,US,100,AU,3000,KR,2000,NZ,3000",
+			DFStringSendJoinTimeStatsHundPrecCountryOverride_PlaceFilter:
+				"CN,10000,US,10000,AU,10000,KR,10000,NZ,10000;189707",
 			DFStringWorkspaceMessageLink: "",
-			DFStringWorkspaceMessageText: "We are in the process of disabling and removing the legacy solver.  Click here for more info...",
+			DFStringWorkspaceMessageText:
+				"We are in the process of disabling and removing the legacy solver.  Click here for more info...",
 			EnableRemoteThemeCheckOnAndroidV3: "True",
 			FFlagAvatarEditorLightThemeFix2: "True",
 			FFlagCLI26858: "False",
@@ -3671,7 +3802,8 @@ export const GET = async () =>
 			FFlagUserDTDoesNotTrackTools: "True",
 			FFlagUserDTFastInit: "True",
 			FFlagUserDynamicThumbstickUseContextActionSevice: "True",
-			FFlagUserEnableDynamicThumbstickIntro_PlaceFilter: "True;1817743405",
+			FFlagUserEnableDynamicThumbstickIntro_PlaceFilter:
+				"True;1817743405",
 			FFlagUserFixCharacterRemovingControlModule: "True",
 			FFlagUserFixChatMessageLogPerformance3: "False",
 			FFlagUserFixChatMessageLogPerformance4: "True",
@@ -3749,28 +3881,36 @@ export const GET = async () =>
 			FStringLuaErrorByPlatformCounter: "LuaErrorPlatformWin32UA",
 			FFlagReportLuaErrorsByPlatform2: "True",
 			FFlagAutoUpgradeEnableVersionCheckWithChannels: "True",
-			DFStringCrashUploadToBacktraceWindowsPlayerToken_PlaceFilter: "30a794c06f5d61e51cf4b0b8103ef2cd7039c6b46bafce0cfba33518d5409010;6036870533",
+			DFStringCrashUploadToBacktraceWindowsPlayerToken_PlaceFilter:
+				"30a794c06f5d61e51cf4b0b8103ef2cd7039c6b46bafce0cfba33518d5409010;6036870533",
 			FFlagDontOverwriteSettingsWithPartialSerialization: "True",
 			FIntCtrlPinchRejectionTimeoutMillis: "80",
-			DFFlagSupportJoinDataItemV2iv_PlaceFilter: "True;920587237;142823291;2753915549;192800;893973440;205224386;1715716216",
+			DFFlagSupportJoinDataItemV2iv_PlaceFilter:
+				"True;920587237;142823291;2753915549;192800;893973440;205224386;1715716216",
 			DFIntHttpCacheAsyncWriterMaxPendingSize: "300000000",
 			FFlagLuaAppCarouselUseGameGridCardSize: "True",
 			FFlagLuaAppSkipWindowUpdateWithNewCarousel: "False",
 			FFlagInGameMenuUseOpenEduPopupThunk: "True",
-			FFlagHumanoidParallelFasterSetCollision_PlaceFilter: "True;2573981315;6317172524;4999654929",
-			FFlagHumanoidParallelOnStep_PlaceFilter: "True;2573981315;6317172524;4999654929",
+			FFlagHumanoidParallelFasterSetCollision_PlaceFilter:
+				"True;2573981315;6317172524;4999654929",
+			FFlagHumanoidParallelOnStep_PlaceFilter:
+				"True;2573981315;6317172524;4999654929",
 			FFlagLuaAppDuarOptOut3: "True",
 			FFlagEnableOptOutDUAR3: "True",
 			FFlagLuaAppEnableSinglePageSignUp: "True",
-			FFlagHumanoidParallelSafeCofmUpdate_PlaceFilter: "True;2573981315;6317172524;4999654929",
-			FFlagHumanoidParallelSafeUnseat_PlaceFilter: "True;2573981315;6317172524;4999654929",
-			FFlagHumanoidParallelUseManager4_PlaceFilter: "True;2573981315;6317172524;4999654929",
+			FFlagHumanoidParallelSafeCofmUpdate_PlaceFilter:
+				"True;2573981315;6317172524;4999654929",
+			FFlagHumanoidParallelSafeUnseat_PlaceFilter:
+				"True;2573981315;6317172524;4999654929",
+			FFlagHumanoidParallelUseManager4_PlaceFilter:
+				"True;2573981315;6317172524;4999654929",
 			FFlagCallAdjustAppbridgeSettings: "True",
 			FStringFeature_PlaceLauncherUseNewEndpoints: "485;0",
 			DFIntHttpSendStatsEveryXSeconds_PlaceFilter: "30;2727067538",
 			FFlagLuaScreenTimeShowLogoutPromptInGame: "True",
 			DFIntInfluxPointReporterShutdownTimeoutMs: "100",
-			FFlagHumanoidDeferredSyncFunction2_PlaceFilter: "True;2573981315;6317172524;4999654929",
+			FFlagHumanoidDeferredSyncFunction2_PlaceFilter:
+				"True;2573981315;6317172524;4999654929",
 			FFlagShowGitHashInGame: "True",
 			FFlagLuaAppShowGitHash: "True",
 			FFlagShowGitHashInNewExperienceMenu: "True",
@@ -3778,7 +3918,8 @@ export const GET = async () =>
 			FFlagReportDesktopClientOsVersion: "True",
 			FFlagCancelHideTitleBarOnReenter: "True",
 			FStringRoactChatUserLoadedCounter: "RoactChatUserLoadedDUAR",
-			FFlagHumanoidParallelFixTickleFloor2_PlaceFilter: "True;2573981315;6317172524;4999654929",
+			FFlagHumanoidParallelFixTickleFloor2_PlaceFilter:
+				"True;2573981315;6317172524;4999654929",
 			FFlagWebViewProtocol: "True",
 			FFlagRenderTC2Compress: "True",
 			FFlagDebugForceMSAASamples: "16",

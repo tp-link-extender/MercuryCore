@@ -11,7 +11,10 @@
 <div class="container light-text">
 	<h1 class="light-text mb-5">Forum</h1>
 	{#each data.categories as category, num}
-		<a in:fade={{ num, total: data.categories.length }} href="/forum/{category.name.toLowerCase()}" class="category card text-decoration-none light-text p-3 mb-3">
+		<a
+			in:fade={{ num, total: data.categories.length }}
+			href="/forum/{category.name.toLowerCase()}"
+			class="category card text-decoration-none light-text p-3 mb-3">
 			<div class="row">
 				<div class="col col-6">
 					<h2 class="h4 col col-md-3">
@@ -22,15 +25,28 @@
 				<div class="col col-6 row">
 					<div class="col col-6">
 						<h3 class="h5">
-							{category._count.posts} post{category._count.posts > 1 ? "s" : ""}
+							{category._count.posts} post{category._count.posts >
+							1
+								? "s"
+								: ""}
 						</h3>
 					</div>
 					<div class="col col-6">
-						Last post:<br />
-						<a href="/forum/{category.name.toLowerCase()}/{category.posts[0].id}" class="h5 text-decoration-none">
+						Last post:
+						<br />
+						<a
+							href="/forum/{category.name.toLowerCase()}/{category
+								.posts[0].id}"
+							class="h5 text-decoration-none">
 							{category.posts[0].title}
-						</a><br />
-						by <a href="/user/{category.posts[0].author.number}" class="light-text">{category.posts[0].author.username}</a>
+						</a>
+						<br />
+						by
+						<a
+							href="/user/{category.posts[0].author.number}"
+							class="light-text">
+							{category.posts[0].author.username}
+						</a>
 					</div>
 				</div>
 			</div>

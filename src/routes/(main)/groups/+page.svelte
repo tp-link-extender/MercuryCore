@@ -54,10 +54,14 @@
 						class="form-control light-text valid"
 						placeholder="Search for a group"
 						aria-label="Search for a group"
-						aria-describedby="button-addon2"
-					/>
+						aria-describedby="button-addon2" />
 					<input type="hidden" name="category" value="places" />
-					<button class="btn btn-success" type="submit" id="button-addon2"><i class="fa fa-magnifying-glass" /></button>
+					<button
+						class="btn btn-success"
+						type="submit"
+						id="button-addon2">
+						<i class="fa fa-magnifying-glass" />
+					</button>
 				</div>
 			</form>
 		</div>
@@ -68,7 +72,9 @@
 				<Group {group} {num} total={data.groups.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
-				<h2 class="h5 light-text mt-5">No groups found with search term {query}</h2>
+				<h2 class="h5 light-text mt-5">
+					No groups found with search term {query}
+				</h2>
 			{/if}
 		</div>
 	</div>

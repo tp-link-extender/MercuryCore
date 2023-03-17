@@ -1,7 +1,9 @@
 <footer class="position-relative text-center">
 	<br />
 	<p class="grey-text mb-2">
-		© <a href="/" class="text-decoration-none">Mercury</a> 2022-{new Date().getFullYear()}<br />
+		© <a href="/" class="text-decoration-none">Mercury</a>
+		2022-{new Date().getFullYear()}
+		<br />
 	</p>
 	<a class="light-text" href="/about">About</a>
 	<span class="text-muted">|</span>
@@ -16,7 +18,10 @@
 
 <noscript>
 	<div id="nojs" class="position-fixed bottom-0 d-block vw-100">
-		<p class="light-text text-center">Javascript is disabled. You may have a diminished experience while using Mercury.</p>
+		<p class="light-text text-center">
+			Javascript is disabled. You may have a diminished experience while
+			using Mercury.
+		</p>
 	</div>
 </noscript>
 

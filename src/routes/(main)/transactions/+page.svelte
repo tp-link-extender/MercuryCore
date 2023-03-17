@@ -10,17 +10,26 @@
 
 <h1 class="text-center light-text">
 	Transactions
-	<a href="/transactions/your" class="btn btn-primary ms-4">Your transactions</a>
+	<a href="/transactions/your" class="btn btn-primary ms-4">
+		Your transactions
+	</a>
 </h1>
 
 <div class="container mt-5">
 	<table class="table m-auto">
 		{#each data.transactions as transaction, num}
-			<tr in:fade={{ num, total: data.transactions.length, max: 12 }} class="light-text">
+			<tr
+				in:fade={{ num, total: data.transactions.length, max: 12 }}
+				class="light-text">
 				<td class="p-0">
-					<a href="/user/{transaction.sender.number}" class="d-flex text-decoration-none">
+					<a
+						href="/user/{transaction.sender.number}"
+						class="d-flex text-decoration-none">
 						<div class="me-2 rounded-circle pfp">
-							<img src={transaction.sender?.image} alt={transaction.sender.username} class="rounded-circle rounded-top-0" />
+							<img
+								src={transaction.sender?.image}
+								alt={transaction.sender.username}
+								class="rounded-circle rounded-top-0" />
 						</div>
 						<p class="light-text my-auto fs-6 text-truncate">
 							{transaction.sender.username}
@@ -47,18 +56,26 @@
 						<i class="fa fa-arrow-right me-1" />
 						<span class="text-success">
 							<i class="fa fa-gem" />
-							{Math.round((1 - transaction.taxRate / 100) * transaction.amountSent)}
+							{Math.round(
+								(1 - transaction.taxRate / 100) *
+									transaction.amountSent
+							)}
 						</span>
 					</div>
 				</td>
 
 				<td class="p-0">
-					<a href="/user/{transaction.receiver.number}" class="d-flex justify-content-end text-decoration-none">
+					<a
+						href="/user/{transaction.receiver.number}"
+						class="d-flex justify-content-end text-decoration-none">
 						<p class="light-text my-auto fs-6">
 							{transaction.receiver.username}
 						</p>
 						<div class="ms-2 rounded-circle pfp">
-							<img src={transaction.receiver?.image} alt={transaction.receiver.username} class="rounded-circle rounded-top-0" />
+							<img
+								src={transaction.receiver?.image}
+								alt={transaction.receiver.username}
+								class="rounded-circle rounded-top-0" />
 						</div>
 					</a>
 				</td>

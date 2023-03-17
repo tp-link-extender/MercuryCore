@@ -57,10 +57,32 @@ export async function load({ locals, params }) {
 			...item,
 			owned: (itemOwned?.owners || []).length > 0,
 			description: "item description", //item.description,
-			likeCount: roQuery("items", "RETURN SIZE((:User) -[:likes]-> (:Item { name: $itemid }))", query, true),
-			dislikeCount: roQuery("items", "RETURN SIZE((:User) -[:dislikes]-> (:Item { name: $itemid }))", query, true),
-			likes: session ? roQuery("items", "MATCH (:User { name: $user }) -[r:likes]-> (:Item { name: $itemid }) RETURN r", query) : false,
-			dislikes: session ? roQuery("items", "MATCH (:User { name: $user }) -[r:dislikes]-> (:Item { name: $itemid }) RETURN r", query) : false,
+			likeCount: roQuery(
+				"items",
+				"RETURN SIZE((:User) -[:likes]-> (:Item { name: $itemid }))",
+				query,
+				true
+			),
+			dislikeCount: roQuery(
+				"items",
+				"RETURN SIZE((:User) -[:dislikes]-> (:Item { name: $itemid }))",
+				query,
+				true
+			),
+			likes: session
+				? roQuery(
+						"items",
+						"MATCH (:User { name: $user }) -[r:likes]-> (:Item { name: $itemid }) RETURN r",
+						query
+				  )
+				: false,
+			dislikes: session
+				? roQuery(
+						"items",
+						"MATCH (:User { name: $user }) -[r:dislikes]-> (:Item { name: $itemid }) RETURN r",
+						query
+				  )
+				: false,
 		}
 	} else throw error(404, "Not found")
 }
@@ -108,11 +130,20 @@ export const actions = {
 					},
 				})
 				if (!item) return fail(404, { msg: "Not found" })
-				if ((item.owners || []).length > 0) return fail(400, { msg: "You already own this item" })
+				if ((item.owners || []).length > 0)
+					return fail(400, { msg: "You already own this item" })
 
 				if (item.price != 0)
 					try {
-						await transaction({ id: user.userId }, { id: item.creator.id }, item.price, { note: `Purchased item ${item.name}`, link: `/avatarshop/item/${params.id}` })
+						await transaction(
+							{ id: user.userId },
+							{ id: item.creator.id },
+							item.price,
+							{
+								note: `Purchased item ${item.name}`,
+								link: `/avatarshop/item/${params.id}`,
+							}
+						)
 					} catch (e: any) {
 						console.log(e.message)
 						return fail(400, { msg: e.message })
@@ -149,7 +180,8 @@ export const actions = {
 					},
 				})
 				if (!item2) throw error(404, "Not found")
-				if ((item2?.owners || []).length < 1) return fail(400, { msg: "You don't own this item" })
+				if ((item2?.owners || []).length < 1)
+					return fail(400, { msg: "You don't own this item" })
 
 				await prisma.user.update({
 					where: {

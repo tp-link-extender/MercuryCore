@@ -8,8 +8,16 @@
 </script>
 
 {#if $modal}
-	<div class="modal d-block" tabindex="-1" transition:fly={{ y: -50, duration: 300 }}>
-		<div id="fade" transition:fade={{ duration: 300 }} on:click={close} on:keypress={close} class="vh-100 vw-100 position-fixed top-0 bg-black" />
+	<div
+		class="modal d-block"
+		tabindex="-1"
+		transition:fly={{ y: -50, duration: 300 }}>
+		<div
+			id="fade"
+			transition:fade={{ duration: 300 }}
+			on:click={close}
+			on:keypress={close}
+			class="vh-100 vw-100 position-fixed top-0 bg-black" />
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<slot />
