@@ -300,7 +300,10 @@
 			<div class="card mb-3">
 				<div class="card-body">
 					<div class="d-grid gap-2 mb-4">
-						<button class="btn btn-primary" disabled><i class="fa-solid fa-rotate" /> Regenerate</button>
+						<button class="btn btn-primary" disabled>
+							<i class="fa-solid fa-rotate" />
+							Regenerate
+						</button>
 					</div>
 					<img class="img-fluid" alt="Avatar" src="/favicon.svg" />
 				</div>
@@ -309,56 +312,70 @@
 				<div class="card-header light-text">Body Colours</div>
 				<div class="card-body">
 					<div class="mannequin text-center">
-						<div class="mx-auto" style="height:240px;width:194px;text-align:center;">
+						<div
+							class="mx-auto"
+							style="height:240px;width:194px;text-align:center;">
 							<div style="position: relative; margin: 11px 4px;">
-								<div style="position: absolute; left: 68px; top: -4px; cursor: pointer">
+								<div
+									style="position: absolute; left: 68px; top: -4px; cursor: pointer">
 									<div
 										class="bodyPart"
 										id="Head"
 										on:click={openColorPicker("Head")}
 										on:keydown={openColorPicker("Head")}
-										style="background-color:#{brickToHex[$user?.bodyColours['Head']]};height:48px;width:48px;"
-									/>
+										style="background-color:#{brickToHex[
+											$user?.bodyColours['Head']
+										]};height:48px;width:48px;" />
 								</div>
-								<div style="position: absolute; left: 1px; top: 52px; cursor: pointer">
+								<div
+									style="position: absolute; left: 1px; top: 52px; cursor: pointer">
 									<div
 										class="bodyPart"
 										on:click={openColorPicker("RightArm")}
 										on:keydown={openColorPicker("RightArm")}
-										style="background-color:#{brickToHex[$user?.bodyColours['RightArm']]};height:88px;width:40px;"
-									/>
+										style="background-color:#{brickToHex[
+											$user?.bodyColours['RightArm']
+										]};height:88px;width:40px;" />
 								</div>
-								<div style="position: absolute; left: 48px; top: 52px; cursor: pointer">
+								<div
+									style="position: absolute; left: 48px; top: 52px; cursor: pointer">
 									<div
 										class="bodyPart"
 										on:click={openColorPicker("Torso")}
 										on:keydown={openColorPicker("Torso")}
-										style="background-color:#{brickToHex[$user?.bodyColours['Torso']]};height:88px;width:88px;"
-									/>
+										style="background-color:#{brickToHex[
+											$user?.bodyColours['Torso']
+										]};height:88px;width:88px;" />
 								</div>
-								<div style="position: absolute; left: 144px; top: 52px; cursor: pointer">
+								<div
+									style="position: absolute; left: 144px; top: 52px; cursor: pointer">
 									<div
 										class="bodyPart"
 										on:click={openColorPicker("LeftArm")}
 										on:keydown={openColorPicker("LeftArm")}
-										style="background-color:#{brickToHex[$user?.bodyColours['LeftArm']]};height:88px;width:40px;"
-									/>
+										style="background-color:#{brickToHex[
+											$user?.bodyColours['LeftArm']
+										]};height:88px;width:40px;" />
 								</div>
-								<div style="position: absolute; left: 48px; top: 146px; cursor: pointer">
+								<div
+									style="position: absolute; left: 48px; top: 146px; cursor: pointer">
 									<div
 										class="bodyPart"
 										on:click={openColorPicker("LeftLeg")}
 										on:keydown={openColorPicker("LeftLeg")}
-										style="background-color:#{brickToHex[$user?.bodyColours['LeftLeg']]};height:88px;width:40px;"
-									/>
+										style="background-color:#{brickToHex[
+											$user?.bodyColours['LeftLeg']
+										]};height:88px;width:40px;" />
 								</div>
-								<div style="position: absolute; left: 96px; top: 146px; cursor: pointer">
+								<div
+									style="position: absolute; left: 96px; top: 146px; cursor: pointer">
 									<div
 										class="bodyPart"
 										on:click={openColorPicker("RightLeg")}
 										on:keydown={openColorPicker("RightLeg")}
-										style="background-color:#{brickToHex[$user?.bodyColours['RightLeg']]};height:88px;width:40px;"
-									/>
+										style="background-color:#{brickToHex[
+											$user?.bodyColours['RightLeg']
+										]};height:88px;width:40px;" />
 								</div>
 							</div>
 						</div>
@@ -380,15 +397,28 @@
 	<Modal {modal}>
 		<div class="modal-header">
 			<h1 class="h4 light-text">Choose a {bodyPart} color</h1>
-			<button type="button" class="btn-close" on:click={() => modal.set(false)} data-bs-dismiss="modal" aria-label="Close" />
+			<button
+				type="button"
+				class="btn-close"
+				on:click={() => modal.set(false)}
+				data-bs-dismiss="modal"
+				aria-label="Close" />
 		</div>
 		<div class="modal-body d-flex flex-column p-1">
 			<div class="colourPicker text-left mx-auto" style="max-width:351px">
 				{#each bodyColours as colour}
-					<form use:enhance method="POST" action="?/paint" class="d-inline">
+					<form
+						use:enhance
+						method="POST"
+						action="?/paint"
+						class="d-inline">
 						<input type="hidden" name="bodyColour" value={colour} />
 						<input type="hidden" name="bodyPart" value={bodyPart} />
-						<button class="colour m-1" type="submit" on:click={() => modal.set(false)} style="display:inline-block;background-color:#{colour};height:40px;width:40px;" />
+						<button
+							class="colour m-1"
+							type="submit"
+							on:click={() => modal.set(false)}
+							style="display:inline-block;background-color:#{colour};height:40px;width:40px;" />
 					</form>
 				{/each}
 			</div>

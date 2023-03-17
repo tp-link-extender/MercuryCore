@@ -28,19 +28,46 @@
 	<form use:enhance method="POST">
 		<fieldset>
 			<div class="row mb-3">
-				<label for="name" class="col-md-3 col-form-label text-md-right">Place name</label>
+				<label for="name" class="col-md-3 col-form-label text-md-right">
+					Place name
+				</label>
 				<div class="col-md-8">
-					<input bind:value={fields.name} type="text" name="name" id="name" placeholder="Make sure to make it accurate" required class="form-control valid" minlength="3" maxlength="50" />
+					<input
+						bind:value={fields.name}
+						type="text"
+						name="name"
+						id="name"
+						placeholder="Make sure to make it accurate"
+						required
+						class="form-control valid"
+						minlength="3"
+						maxlength="50" />
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label for="description" class="col-md-3 col-form-label text-md-right">Description</label>
+				<label
+					for="description"
+					class="col-md-3 col-form-label text-md-right">
+					Description
+				</label>
 				<div class="col-md-8">
-					<textarea bind:value={fields.description} name="description" id="description" placeholder="1-1000 characters" required class="form-control valid" minlength="1" maxlength="1000" />
+					<textarea
+						bind:value={fields.description}
+						name="description"
+						id="description"
+						placeholder="1-1000 characters"
+						required
+						class="form-control valid"
+						minlength="1"
+						maxlength="1000" />
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label for="serverIP" class="col-md-3 col-form-label text-md-right">Server IP</label>
+				<label
+					for="serverIP"
+					class="col-md-3 col-form-label text-md-right">
+					Server IP
+				</label>
 				<div class="col-md-8">
 					<input
 						bind:value={fields.serverIP}
@@ -49,12 +76,15 @@
 						placeholder="You can use URLs instead of an IP if you wish"
 						required
 						class="form-control valid"
-						maxlength="1000"
-					/>
+						maxlength="1000" />
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label for="serverPort" class="col-md-3 col-form-label text-md-right">Server Port</label>
+				<label
+					for="serverPort"
+					class="col-md-3 col-form-label text-md-right">
+					Server Port
+				</label>
 				<div class="col-md-8">
 					<input
 						type="number"
@@ -65,24 +95,49 @@
 						required
 						class="form-control valid"
 						min="25565"
-						max="65536"
-					/>
+						max="65536" />
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label for="maxPlayers" class="col-md-3 col-form-label text-md-right">Server Limit</label>
+				<label
+					for="maxPlayers"
+					class="col-md-3 col-form-label text-md-right">
+					Server Limit
+				</label>
 				<div class="col-md-8">
-					<input type="number" bind:value={fields.maxPlayers} name="maxPlayers" id="maxPlayers" placeholder="1 - 99 players" required class="form-control valid" min="1" max="99" />
+					<input
+						type="number"
+						bind:value={fields.maxPlayers}
+						name="maxPlayers"
+						id="maxPlayers"
+						placeholder="1 - 99 players"
+						required
+						class="form-control valid"
+						min="1"
+						max="99" />
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label for="privateServer" class="col-md-3 col-form-label text-md-right">Private Server</label>
+				<label
+					for="privateServer"
+					class="col-md-3 col-form-label text-md-right">
+					Private Server
+				</label>
 				<div class="col-md-8">
-					<input class="form-check-input" type="checkbox" bind:checked={fields.privateServer} value="privateServer" id="privateServer" />
+					<input
+						class="form-check-input"
+						type="checkbox"
+						bind:checked={fields.privateServer}
+						value="privateServer"
+						id="privateServer" />
 				</div>
 			</div>
 			<br />
-			<button type="submit" class="btn btn-success">Create (<i class="fa fa-gem" /> 10)</button>
+			<button type="submit" class="btn btn-success">
+				Create (
+				<i class="fa fa-gem" />
+				10)
+			</button>
 		</fieldset>
 	</form>
 	<br />

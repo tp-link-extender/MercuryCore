@@ -17,17 +17,23 @@ export async function GET({ url }) {
 		format: "Png",
 		isCircular: "false",
 	})
-    
-    const cache = await client.hGet("thumbnailAsset", assetId.toString())
 
-    if(cache) throw redirect(302, cache)
+	const cache = await client.hGet("thumbnailAsset", assetId.toString())
 
-	const thumb = await fetch(`https://thumbnails.roblox.com/v1/assets?${params}`)
+	if (cache) throw redirect(302, cache)
+
+	const thumb = await fetch(
+		`https://thumbnails.roblox.com/v1/assets?${params}`
+	)
 
 	if (thumb.status == 200) {
 		const thumbnail = JSON.parse(await thumb.text())
 
-        await client.hSet("thumbnailAsset", assetId.toString(), thumbnail.data[0].imageUrl)
+		await client.hSet(
+			"thumbnailAsset",
+			assetId.toString(),
+			thumbnail.data[0].imageUrl
+		)
 
 		throw redirect(302, thumbnail.data[0].imageUrl)
 	}

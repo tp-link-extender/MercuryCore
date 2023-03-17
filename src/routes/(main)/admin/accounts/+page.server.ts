@@ -21,7 +21,11 @@ export const actions = {
 		if (!username || !password) return fail(400, { msg: "Missing fields" })
 
 		try {
-			await auth.updateKeyPassword("username", username.toLowerCase(), password)
+			await auth.updateKeyPassword(
+				"username",
+				username.toLowerCase(),
+				password
+			)
 		} catch {
 			return fail(400, { msg: "Invalid credentials" })
 		}

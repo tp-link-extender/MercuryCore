@@ -39,8 +39,15 @@ export const actions = {
 		const content = data.get("content") as string
 		const category = url.searchParams.get("category")
 
-		if (!title || !content || !category) return fail(400, { msg: "Missing fields" })
-		if (title.length < 5 || title.length > 50 || content.length < 5 || content.length > 3000) return fail(400, { msg: "Invalid fields" })
+		if (!title || !content || !category)
+			return fail(400, { msg: "Missing fields" })
+		if (
+			title.length < 5 ||
+			title.length > 50 ||
+			content.length < 5 ||
+			content.length > 3000
+		)
+			return fail(400, { msg: "Invalid fields" })
 
 		if (
 			!(

@@ -17,18 +17,27 @@
 		<div class="container light-text">
 			<h1 class="light-text">{data.name}</h1>
 			<p class="light-text">
-				<b>By</b> <a href="/user/{data.owner.number}">{data.owner.username}</a>
+				<b>By</b>
+				<a href="/user/{data.owner.number}">{data.owner.username}</a>
 			</p>
 			<br />
 			<div class="d-flex">
-				<a href="/groups/{data.name}/members" class="light-text text-center text-decoration-none ms-4">
+				<a
+					href="/groups/{data.name}/members"
+					class="light-text text-center text-decoration-none ms-4">
 					Members
 					<h3 class="light-text">
 						{data.memberCount}
 					</h3>
 				</a>
-				<form class="align-self-center ms-auto" method="POST" use:enhance>
-					<button name="action" value={data.in ? "leave" : "join"} class="btn {data.in ? 'btn-danger' : 'btn-success'}">
+				<form
+					class="align-self-center ms-auto"
+					method="POST"
+					use:enhance>
+					<button
+						name="action"
+						value={data.in ? "leave" : "join"}
+						class="btn {data.in ? 'btn-danger' : 'btn-success'}">
 						{#if data.in}
 							Leave
 						{:else}
@@ -60,8 +69,13 @@
 						<div class="card h-100">
 							<div class="card-body pb-0">
 								<div id="user" class="d-flex mb-2">
-									<span class="fw-bold ms-3 light-text">{data.name}</span>
-									<span class="ms-auto fw-italic light-text text-end">{status.posted.toLocaleString()}</span>
+									<span class="fw-bold ms-3 light-text">
+										{data.name}
+									</span>
+									<span
+										class="ms-auto fw-italic light-text text-end">
+										{status.posted.toLocaleString()}
+									</span>
 								</div>
 								<p class="text-start">
 									{status.content}

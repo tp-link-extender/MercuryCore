@@ -12,16 +12,23 @@ export async function GET({ url, setHeaders }) {
 
 		setHeaders({
 			"Content-Type": "binary/octet-stream",
-			"Content-Disposition": `attachment; filename="${md5(file).toString()}"`,
+			"Content-Disposition": `attachment; filename="${md5(
+				file
+			).toString()}"`,
 		})
 
-		let file2 = file.toString().replaceAll("roblox.com/asset", "banland.xyz/asset")
+		let file2 = file
+			.toString()
+			.replaceAll("roblox.com/asset", "banland.xyz/asset")
 
 		// Health corescript
 		if (ID != "38037265") file2 = SignData(file2, parseInt(ID))
 
 		return new Response(file2)
 	} catch {
-		throw redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${ID}`)
+		throw redirect(
+			302,
+			`https://assetdelivery.roblox.com/v1/asset?id=${ID}`
+		)
 	}
 }

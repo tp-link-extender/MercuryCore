@@ -5,7 +5,8 @@ import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
 	console.time("user")
-	if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
+	if (!/^\d+$/.test(params.number))
+		throw error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
 
 	const userExists = await prisma.user.findUnique({
@@ -30,15 +31,11 @@ export async function load({ locals, params }) {
 		const user = (await authoriseUser(locals.validateUser)).user
 
 		const query = {
-			params: {
-				user1: user?.username || "",
-				user2: userExists.username,
-			},
+			user1: user?.username || "",
+			user2: userExists.username,
 		}
 		const query2 = {
-			params: {
-				user: userExists.username,
-			},
+			user: userExists.username,
 		}
 
 		console.timeEnd("user")
@@ -78,14 +75,49 @@ export async function load({ locals, params }) {
 					ownerUsername: userExists.username,
 				},
 			}),
-			friendCount: roQuery("friends", "RETURN SIZE((:User) -[:friends]- (:User { name: $user }))", query2, true),
-			followerCount: roQuery("friends", "RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))", query2, true),
-			followingCount: roQuery("friends", "RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))", query2, true),
-			friends: roQuery("friends", "MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query),
-			following: roQuery("friends", "MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r", query),
-			follower: roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r", query),
-			incomingRequest: roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query),
-			outgoingRequest: roQuery("friends", "MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r", query),
+			friendCount: roQuery(
+				"friends",
+				"RETURN SIZE((:User) -[:friends]- (:User { name: $user }))",
+				query2,
+				true
+			),
+			followerCount: roQuery(
+				"friends",
+				"RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))",
+				query2,
+				true
+			),
+			followingCount: roQuery(
+				"friends",
+				"RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))",
+				query2,
+				true
+			),
+			friends: roQuery(
+				"friends",
+				"MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r",
+				query
+			),
+			following: roQuery(
+				"friends",
+				"MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r",
+				query
+			),
+			follower: roQuery(
+				"friends",
+				"MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r",
+				query
+			),
+			incomingRequest: roQuery(
+				"friends",
+				"MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r",
+				query
+			),
+			outgoingRequest: roQuery(
+				"friends",
+				"MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r",
+				query
+			),
 		}
 	} else {
 		throw error(404, "Not found")
@@ -96,7 +128,8 @@ export const actions = {
 	default: async ({ request, locals, params }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
 
-		if (!/^\d+$/.test(params.number)) throw error(400, `Invalid user id: ${params.number}`)
+		if (!/^\d+$/.test(params.number))
+			throw error(400, `Invalid user id: ${params.number}`)
 		const number = parseInt(params.number)
 
 		const userExists = await prisma.user.findUnique({
@@ -119,10 +152,8 @@ export const actions = {
 		if (!user2Exists) return fail(400, { msg: "User not found" })
 
 		const query = {
-			params: {
-				user1: user.username,
-				user2: userExists?.username,
-			},
+			user1: user.username,
+			user2: userExists?.username,
 		}
 
 		console.log("Action:", action)
@@ -161,9 +192,21 @@ export const actions = {
 					)
 					break
 				case "request":
-					if (!(await roQuery("friends", "MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r", query))) {
+					if (
+						!(await roQuery(
+							"friends",
+							"MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r",
+							query
+						))
+					) {
 						// Make sure users are not already friends
-						if (await roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
+						if (
+							await roQuery(
+								"friends",
+								"MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r",
+								query
+							)
+						)
 							// If there is already an incoming request, accept it instead
 							await Query(
 								"friends",
@@ -209,7 +252,13 @@ export const actions = {
 					)
 					break
 				case "accept":
-					if (await roQuery("friends", "MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r", query))
+					if (
+						await roQuery(
+							"friends",
+							"MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r",
+							query
+						)
+					)
 						// Make sure an incoming request exists before accepting
 						await Query(
 							"friends",

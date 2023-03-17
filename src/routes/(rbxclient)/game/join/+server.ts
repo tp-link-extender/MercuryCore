@@ -73,7 +73,8 @@ export async function GET({ url }) {
 		charApp = `http://banland.xyz/Asset/CharacterFetch.ashx?userID=${userId}`
 		pingUrl = `http://banland.xyz/Game/ClientPresence?ticket=${clientTicket}`
 
-		if (gameSession.user.permissionLevel == 2) MembershipType = "BuildersClub"
+		if (gameSession.user.permissionLevel == 2)
+			MembershipType = "BuildersClub"
 	}
 
 	return new Response(

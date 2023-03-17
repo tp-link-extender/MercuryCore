@@ -3,7 +3,9 @@
 <div id="all">
 	{#each Array(10) as _}
 		<a href="/place">
-			<img src="/place/placeholderIcon{Math.ceil(Math.random() * 3)}.png" alt="place" />
+			<img
+				src="/place/placeholderIcon{Math.ceil(Math.random() * 3)}.png"
+				alt="place" />
 			<div class="text">
 				<p>yeah game</p>
 				<div>

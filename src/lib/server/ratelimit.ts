@@ -7,11 +7,17 @@ const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()
 const existingTimeouts = new Map<string, any>()
 
-export default function (category: string, getClientAddress: () => string, timeWindow: number, maxRequests = 1) {
+export default function (
+	category: string,
+	getClientAddress: () => string,
+	timeWindow: number,
+	maxRequests = 1
+) {
 	const id = getClientAddress() + category
 
 	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
-	if (currentTimewindow > Date.now() + timeWindow * 1000) return fail(429, { msg: "Too many requests" })
+	if (currentTimewindow > Date.now() + timeWindow * 1000)
+		return fail(429, { msg: "Too many requests" })
 
 	const currentRequests = (ratelimitRequests.get(id) || 0) + 1
 

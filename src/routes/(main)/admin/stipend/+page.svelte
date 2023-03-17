@@ -1,9 +1,8 @@
 <script lang="ts">
-    import { enhance } from "$app/forms"
+	import { enhance } from "$app/forms"
 
-    export let data
+	export let data
 	export let form
-
 </script>
 
 <svelte:head>
@@ -12,51 +11,92 @@
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Daily Stipend</h1>
-    <a href="/admin" class="text-decoration-none"><i class="fa-solid fa-caret-left"></i> Back to panel</a>
+	<a href="/admin" class="text-decoration-none">
+		<i class="fa-solid fa-caret-left" />
+		Back to panel
+	</a>
 	<div class="row mt-4">
 		<div class="col-lg-2 col-md-3 mb-4">
 			<ul class="nav nav-tabs flex-column border-0" role="tablist">
 				<li class="nav-item" role="presentation">
-					<a class="nav-link active" data-bs-toggle="tab" href="#dailyStipend" aria-selected="true" role="tab">Daily Stipend</a>
+					<a
+						class="nav-link active"
+						data-bs-toggle="tab"
+						href="#dailyStipend"
+						aria-selected="true"
+						role="tab">
+						Daily Stipend
+					</a>
 				</li>
 			</ul>
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<div id="myTabContent" class="tab-content">
-				<div class="tab-pane fade active show" id="dailyStipend" role="tabpanel">
-                    <form use:enhance method="POST" action="?/updateStipend">
-                        <fieldset>
-                            <div class="row">
-                                <label for="dailyStipend" class="col-md-3 col-form-label light-text text-md-right">Daily stipend</label>
-                                <div class="col-md-8">
-                                    <div class="input-group">
-                                        <input type="number" name="dailyStipend" id="dailyStipend" value={data.dailyStipend} required class="form-control valid" />
-                                        <span class="input-group-text light-text"><i class="fa fa-gem text-success" /></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <br />
-                            <div class="row">
-                                <label for="stipendTime" class="col-md-3 col-form-label light-text text-md-right">Time between stipend</label>
-                                <div class="col-md-8">
-                                    <div class="input-group">
-                                        <input type="number" name="stipendTime" id="stipendTime" value={data.stipendTime} required class="form-control valid" />
-                                        <span class="input-group-text light-text">hours</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <br />
-                            <button type="submit" class="btn btn-success">Submit</button>
-                        </fieldset>
-                    </form>
-                    <br />
-                    {#if form?.economysuccess}
-                        <p class="col-12 mb-3 text-success">{form?.msg}</p>
-                    {/if}
-                    
-                    {#if form?.error}
-                    <p class="col-12 mb-3 text-danger">{form?.msg}</p>
-                    {/if}
+				<div
+					class="tab-pane fade active show"
+					id="dailyStipend"
+					role="tabpanel">
+					<form use:enhance method="POST" action="?/updateStipend">
+						<fieldset>
+							<div class="row">
+								<label
+									for="dailyStipend"
+									class="col-md-3 col-form-label light-text text-md-right">
+									Daily stipend
+								</label>
+								<div class="col-md-8">
+									<div class="input-group">
+										<input
+											type="number"
+											name="dailyStipend"
+											id="dailyStipend"
+											value={data.dailyStipend}
+											required
+											class="form-control valid" />
+										<span
+											class="input-group-text light-text">
+											<i class="fa fa-gem text-success" />
+										</span>
+									</div>
+								</div>
+							</div>
+							<br />
+							<div class="row">
+								<label
+									for="stipendTime"
+									class="col-md-3 col-form-label light-text text-md-right">
+									Time between stipend
+								</label>
+								<div class="col-md-8">
+									<div class="input-group">
+										<input
+											type="number"
+											name="stipendTime"
+											id="stipendTime"
+											value={data.stipendTime}
+											required
+											class="form-control valid" />
+										<span
+											class="input-group-text light-text">
+											hours
+										</span>
+									</div>
+								</div>
+							</div>
+							<br />
+							<button type="submit" class="btn btn-success">
+								Submit
+							</button>
+						</fieldset>
+					</form>
+					<br />
+					{#if form?.economysuccess}
+						<p class="col-12 mb-3 text-success">{form?.msg}</p>
+					{/if}
+
+					{#if form?.error}
+						<p class="col-12 mb-3 text-danger">{form?.msg}</p>
+					{/if}
 				</div>
 			</div>
 		</div>

@@ -21,43 +21,73 @@
 				<div class="card-body">
 					<h2 class="light-text">{data.name}</h2>
 					<p class="light-text mt-2 mb-0">
-						<b>By</b> <a href="/user/{data.creator.number}" class="text-decoration-none">{data.creator.username}</a>
+						<b>By</b>
+						<a
+							href="/user/{data.creator.number}"
+							class="text-decoration-none">
+							{data.creator.username}
+						</a>
 					</p>
 					<br />
 					<p class="light-text mt-2 mb-0">
 						{data.description}
 						<span class="float-end">
-							<Report user={data.creator.username} url="/avatarshop/item/{data.id}" />
+							<Report
+								user={data.creator.username}
+								url="/avatarshop/item/{data.id}" />
 						</span>
 					</p>
 				</div>
 			</div>
-			<form use:enhance class="align-self-center col px-0 mb-2" method="POST">
+			<form
+				use:enhance
+				class="align-self-center col px-0 mb-2"
+				method="POST">
 				<button
 					name="action"
 					id="buy"
 					value="buy"
-					class="btn btn-lg w-100 float-left {data.owned ? 'btn-secondary disabled' : $user?.currency < data.price ? 'btn-danger disabled' : 'btn-success'}"
-				>
+					class="btn btn-lg w-100 float-left {data.owned
+						? 'btn-secondary disabled'
+						: $user?.currency < data.price
+						? 'btn-danger disabled'
+						: 'btn-success'}">
 					{#if data.owned}
-						<i class="fa fa-gem" /> {data.price == 0 ? "Free" : data.price} <i class="fa fa-check" /> Owned
+						<i class="fa fa-gem" />
+						{data.price == 0 ? "Free" : data.price}
+						<i class="fa fa-check" />
+						Owned
 					{:else if data.price == 0}
 						Get
 					{:else}
-						Buy for <i class="fa fa-gem" /> {data.price}
+						Buy for <i class="fa fa-gem" />
+						{data.price}
 					{/if}
 				</button>
 				{#if data.owned}
-					<button name="action" value="delete" class="btn btn-sm w-100 float-right btn-danger"> [debug] delete from inventory </button>
+					<button
+						name="action"
+						value="delete"
+						class="btn btn-sm w-100 float-right btn-danger">
+						[debug] delete from inventory
+					</button>
 				{:else if data.price != 0}
-					<p class="light-text" id="notify">Funds will be deducted from your account immediately upon pressing the buy button.</p>
+					<p class="light-text" id="notify">
+						Funds will be deducted from your account immediately
+						upon pressing the buy button.
+					</p>
 				{/if}
 				{#if form?.msg}
 					<p class="text-danger">{form.msg}</p>
 				{/if}
 				<div class="row mb-2 mt-3">
 					<div class="col d-flex justify-content-start">
-						<button name="action" value={data.likes ? "unlike" : "like"} class="btn btn-sm {data.likes ? 'btn-success' : 'btn-outline-success'}">
+						<button
+							name="action"
+							value={data.likes ? "unlike" : "like"}
+							class="btn btn-sm {data.likes
+								? 'btn-success'
+								: 'btn-outline-success'}">
 							{#if data.likes}
 								<i class="fa fa-thumbs-up" />
 							{:else}
@@ -66,7 +96,12 @@
 						</button>
 					</div>
 					<div class="col d-flex justify-content-end">
-						<button name="action" value={data.dislikes ? "undislike" : "dislike"} class="btn btn-sm {data.dislikes ? 'btn-danger' : 'btn-outline-danger'}">
+						<button
+							name="action"
+							value={data.dislikes ? "undislike" : "dislike"}
+							class="btn btn-sm {data.dislikes
+								? 'btn-danger'
+								: 'btn-outline-danger'}">
 							{#if data.dislikes}
 								<i class="fa fa-thumbs-down" />
 							{:else}
@@ -80,30 +115,36 @@
 						class="progress-bar bg-success"
 						role="progressbar"
 						aria-label="Likes"
-						style="width: {(data.likeCount / (data.dislikeCount + data.likeCount || 1)) * 100}%"
+						style="width: {(data.likeCount /
+							(data.dislikeCount + data.likeCount || 1)) *
+							100}%"
 						aria-valuenow={data.likeCount}
 						aria-valuemin={0}
-						aria-valuemax={data.dislikeCount + data.likeCount}
-					/>
+						aria-valuemax={data.dislikeCount + data.likeCount} />
 					<div
 						class="progress-bar bg-danger"
 						role="progressbar"
 						aria-label="Dislikes"
-						style="width: {(data.dislikeCount / (data.dislikeCount + data.likeCount || 1)) * 100}%"
+						style="width: {(data.dislikeCount /
+							(data.dislikeCount + data.likeCount || 1)) *
+							100}%"
 						aria-valuenow={data.dislikeCount}
 						aria-valuemin={0}
-						aria-valuemax={data.dislikeCount + data.likeCount}
-					/>
+						aria-valuemax={data.dislikeCount + data.likeCount} />
 				</div>
 				<div class="row">
 					<div class="col d-flex justify-content-start">
 						<span class="light-text mx-2">
-							{data.likeCount} like{data.likeCount == 1 ? "" : "s"}
+							{data.likeCount} like{data.likeCount == 1
+								? ""
+								: "s"}
 						</span>
 					</div>
 					<div class="col d-flex justify-content-end">
 						<span class="light-text mx-2">
-							{data.dislikeCount} dislike{data.dislikeCount == 1 ? "" : "s"}
+							{data.dislikeCount} dislike{data.dislikeCount == 1
+								? ""
+								: "s"}
 						</span>
 					</div>
 				</div>
@@ -112,24 +153,57 @@
 	</div>
 	<ul class="nav nav-pills nav-justified mb-3" id="pills-tab" role="tablist">
 		<li class="nav-item" role="presentation">
-			<button class="nav-link active" id="pills-desc-tab" data-bs-toggle="pill" data-bs-target="#pills-desc" type="button" role="tab" aria-controls="pills-desc" aria-selected="true"
-				>Description</button
-			>
+			<button
+				class="nav-link active"
+				id="pills-desc-tab"
+				data-bs-toggle="pill"
+				data-bs-target="#pills-desc"
+				type="button"
+				role="tab"
+				aria-controls="pills-desc"
+				aria-selected="true">
+				Description
+			</button>
 		</li>
 		<li class="nav-item" role="presentation">
-			<button class="nav-link" id="pills-game-tab" data-bs-toggle="pill" data-bs-target="#pills-game" type="button" role="tab" aria-controls="pills-game" aria-selected="false">Owners</button>
+			<button
+				class="nav-link"
+				id="pills-game-tab"
+				data-bs-toggle="pill"
+				data-bs-target="#pills-game"
+				type="button"
+				role="tab"
+				aria-controls="pills-game"
+				aria-selected="false">
+				Owners
+			</button>
 		</li>
 	</ul>
 	<div class="tab-content" id="pills-tabContent">
-		<div class="tab-pane fade show active" id="pills-desc" role="tabpanel" aria-labelledby="pills-desc-tab" tabindex={0}>
+		<div
+			class="tab-pane fade show active"
+			id="pills-desc"
+			role="tabpanel"
+			aria-labelledby="pills-desc-tab"
+			tabindex={0}>
 			<p class="light-text">{data.description}</p>
 		</div>
-		<div class="tab-pane fade" id="pills-game" role="tabpanel" aria-labelledby="pills-game-tab" tabindex={0}>
+		<div
+			class="tab-pane fade"
+			id="pills-game"
+			role="tabpanel"
+			aria-labelledby="pills-game-tab"
+			tabindex={0}>
 			<div class="row">
 				{#each data.owners as owner}
-					<a href="/user/{owner.number}" class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
+					<a
+						href="/user/{owner.number}"
+						class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
 						<div class="me-3 rounded-circle pfp">
-							<img src={owner?.image} alt={owner.username} class="rounded-circle rounded-top-0" />
+							<img
+								src={owner?.image}
+								alt={owner.username}
+								class="rounded-circle rounded-top-0" />
 						</div>
 						<p class="light-text my-auto h5 me-4 text-truncate">
 							{owner.username}

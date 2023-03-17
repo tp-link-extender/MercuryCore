@@ -25,7 +25,8 @@ export const actions = {
 		const stipendTime = Number(data.get("stipendTime"))
 		console.log(stipendTime)
 
-		if (!dailyStipend || !stipendTime) return fail(400, { error: true, msg: "Missing fields" })
+		if (!dailyStipend || !stipendTime)
+			return fail(400, { error: true, msg: "Missing fields" })
 
 		await client.set("dailyStipend", dailyStipend)
 		await client.set("stipendTime", stipendTime)
