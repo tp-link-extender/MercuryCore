@@ -4,7 +4,9 @@
 	export let reverse = false
 </script>
 
-<a class="text-danger text-decoration-none ps-2" href="/report?user={user}&url={url}">
+<a
+	class="text-danger text-decoration-none ps-2"
+	href="/report?user={user}&url={url}">
 	<small>
 		{#if reverse}
 			<i class="fa-regular fa-flag" />

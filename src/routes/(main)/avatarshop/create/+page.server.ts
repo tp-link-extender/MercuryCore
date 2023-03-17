@@ -18,7 +18,22 @@ export const actions = {
 			name.length < 3 ||
 			name.length > 50 ||
 			price < 0 ||
-			!["TShirt", "Shirt", "Pants", "HeadShape", "Hair", "Face", "Skirt", "Dress", "Hat", "Headgear", "Gear", "Neck", "Back", "Shoulder"].includes(category)
+			![
+				"TShirt",
+				"Shirt",
+				"Pants",
+				"HeadShape",
+				"Hair",
+				"Face",
+				"Skirt",
+				"Dress",
+				"Hat",
+				"Headgear",
+				"Gear",
+				"Neck",
+				"Back",
+				"Shoulder",
+			].includes(category)
 		)
 			return fail(400, { msg: "Invalid fields" })
 
@@ -45,7 +60,16 @@ export const actions = {
 						id: true,
 					},
 				})
-				await transaction({ id: user.userId }, { number: 1 }, 10, { note: `Created item ${name}`, link: `/avatarshop/item/${created.id}` }, tx)
+				await transaction(
+					{ id: user.userId },
+					{ number: 1 },
+					10,
+					{
+						note: `Created item ${name}`,
+						link: `/avatarshop/item/${created.id}`,
+					},
+					tx
+				)
 				return created
 			})
 		} catch (e: any) {

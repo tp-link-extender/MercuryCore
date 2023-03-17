@@ -48,9 +48,7 @@ export async function load({ locals, params }) {
 			"forum",
 			"RETURN SIZE((:User) -[:likes]-> (:Post { name: $id }))",
 			{
-				params: {
-					id: post.id,
-				},
+				id: post.id,
 			},
 			true
 		)
@@ -58,27 +56,36 @@ export async function load({ locals, params }) {
 			"forum",
 			"RETURN SIZE((:User) -[:dislikes]-> (:Post { name: $id }))",
 			{
-				params: {
-					id: post.id,
-				},
+				id: post.id,
 			},
 			true
 		)
-		post["likes"] = await roQuery("forum", "MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id }) RETURN r", {
-			params: {
+		post["likes"] = await roQuery(
+			"forum",
+			"MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id }) RETURN r",
+			{
 				user: user?.username,
 				id: post.id,
-			},
-		})
-		post["dislikes"] = await roQuery("forum", "MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id }) RETURN r", {
-			params: {
+			}
+		)
+		post["dislikes"] = await roQuery(
+			"forum",
+			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id }) RETURN r",
+			{
 				user: user?.username,
 				id: post.id,
-			},
-		})
+			}
+		)
 	}
 
-	return category as typeof category & { posts: { likeCount: number; dislikeCount: number; likes: boolean; dislikes: boolean }[] }
+	return category as typeof category & {
+		posts: {
+			likeCount: number
+			dislikeCount: number
+			likes: boolean
+			dislikes: boolean
+		}[]
+	}
 }
 
 export const actions = {
@@ -102,10 +109,8 @@ export const actions = {
 			throw error(404)
 
 		const query = {
-			params: {
-				user: user.username,
-				id: id || replyId,
-			},
+			user: user.username,
+			id: id || replyId,
 		}
 
 		console.log("Action:", action)
@@ -116,7 +121,9 @@ export const actions = {
 					await Query(
 						"forum",
 						`
-							MATCH (:User { name: $user }) -[r:dislikes]-> (:${replyId ? "Reply" : "Post"} { name: $id })
+							MATCH (:User { name: $user }) -[r:dislikes]-> (:${
+								replyId ? "Reply" : "Post"
+							} { name: $id })
 							DELETE r
 						`,
 						query
@@ -135,7 +142,9 @@ export const actions = {
 					await Query(
 						"forum",
 						`
-							MATCH (:User { name: $user }) -[r:likes]-> (:${replyId ? "Reply" : "Post"} { name: $id })
+							MATCH (:User { name: $user }) -[r:likes]-> (:${
+								replyId ? "Reply" : "Post"
+							} { name: $id })
 							DELETE r
 						`,
 						query
@@ -145,7 +154,9 @@ export const actions = {
 					await Query(
 						"forum",
 						`
-							MATCH (:User { name: $user }) -[r:likes]-> (:${replyId ? "Reply" : "Post"} { name: $id })
+							MATCH (:User { name: $user }) -[r:likes]-> (:${
+								replyId ? "Reply" : "Post"
+							} { name: $id })
 							DELETE r
 						`,
 						query
@@ -164,7 +175,9 @@ export const actions = {
 					await Query(
 						"forum",
 						`
-							MATCH (:User { name: $user }) -[r:dislikes]-> (:${replyId ? "Reply" : "Post"} { name: $id })
+							MATCH (:User { name: $user }) -[r:dislikes]-> (:${
+								replyId ? "Reply" : "Post"
+							} { name: $id })
 							DELETE r
 						`,
 						query

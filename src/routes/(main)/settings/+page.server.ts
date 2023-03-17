@@ -18,7 +18,8 @@ export const actions = {
 			}
 		if (same) return fail(400)
 
-		if (!["standard", "darken", "storm", "solar"].includes(entries.theme)) return fail(400, { area: "theme", msg: "Invalid theme" })
+		if (!["standard", "darken", "storm", "solar"].includes(entries.theme))
+			return fail(400, { area: "theme", msg: "Invalid theme" })
 		// if (!["on", "off"].includes(entries.animation)) return fail(400, { area: "theme", msg: "Invalid animation settings" })
 
 		await prisma.user.update({
@@ -41,15 +42,30 @@ export const actions = {
 		const data = await request.formData()
 		const entries: any = Object.fromEntries(data.entries())
 
-		if (entries.npassword != entries.cnpassword) return fail(400, { area: "cnpassword", msg: "Passwords do not match" })
+		if (entries.npassword != entries.cnpassword)
+			return fail(400, {
+				area: "cnpassword",
+				msg: "Passwords do not match",
+			})
 
 		try {
-			await auth.useKey("username", user.username.toLowerCase(), entries.cpassword)
+			await auth.useKey(
+				"username",
+				user.username.toLowerCase(),
+				entries.cpassword
+			)
 		} catch {
-			return fail(400, { area: "cpassword", msg: "Incorrect username or password" })
+			return fail(400, {
+				area: "cpassword",
+				msg: "Incorrect username or password",
+			})
 		}
 
-		await auth.updateKeyPassword("username", user.username.toLowerCase(), entries.npassword)
+		await auth.updateKeyPassword(
+			"username",
+			user.username.toLowerCase(),
+			entries.npassword
+		)
 
 		return {
 			passwordsuccess: true,

@@ -17,9 +17,7 @@ export const load = async ({ params }) => {
 	})
 	if (group) {
 		const query = {
-			params: {
-				group: params.name,
-			},
+			group: params.name,
 		}
 
 		async function Users() {
@@ -60,7 +58,12 @@ export const load = async ({ params }) => {
 		return {
 			name: group.name,
 			users: Users(),
-			number: roQuery("groups", "RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true),
+			number: roQuery(
+				"groups",
+				"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
+				query,
+				true
+			),
 		}
 	} else {
 		throw error(404, `Not found`)

@@ -69,7 +69,9 @@ export const GET = async () =>
                 message.Text = "Creating Player"
                 if ${false} then
                     player = game:GetService("Players"):CreateLocalPlayer(${1})
-                    player.Name = [====[${"Guest " + Math.floor(Math.random() * 10000)}]====]
+                    player.Name = [====[${
+						"Guest " + Math.floor(Math.random() * 10000)
+					}]====]
                 else
                     player = game:GetService("Players"):CreateLocalPlayer(0)
                 end

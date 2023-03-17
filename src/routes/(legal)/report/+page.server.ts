@@ -8,7 +8,8 @@ export async function load({ url, locals }) {
 	const reportedUser = url.searchParams.get("user")
 	const reportedUrl = url.searchParams.get("url")
 
-	if (!reportedUser || !reportedUrl) throw error(400, "Missing user or url parameters")
+	if (!reportedUser || !reportedUrl)
+		throw error(400, "Missing user or url parameters")
 
 	return {
 		user: reportedUser,
@@ -26,8 +27,23 @@ export const actions = {
 		const category = (data.get("category") as string).trim()
 		const note = (data.get("note") as string).trim() || null
 
-		if (!reportUser || !reportUrl || !category) return fail(400, { msg: "Missing fields" })
-		if (!["AccountTheft", "Dating", "Exploiting", "Harassment", "InappropriateContent", "PersonalInformation", "Scamming", "Spam", "Swearing", "Threats", "Under13"].includes(category))
+		if (!reportUser || !reportUrl || !category)
+			return fail(400, { msg: "Missing fields" })
+		if (
+			![
+				"AccountTheft",
+				"Dating",
+				"Exploiting",
+				"Harassment",
+				"InappropriateContent",
+				"PersonalInformation",
+				"Scamming",
+				"Spam",
+				"Swearing",
+				"Threats",
+				"Under13",
+			].includes(category)
+		)
 			return fail(400, { msg: "Invalid category" })
 
 		const reportee = await prisma.user.findUnique({

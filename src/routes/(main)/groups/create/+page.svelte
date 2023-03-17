@@ -23,15 +23,31 @@
 	<form use:enhance method="POST">
 		<fieldset>
 			<div class="row">
-				<label for="name" class="col-md-3 col-form-label text-md-right">Group name</label>
+				<label for="name" class="col-md-3 col-form-label text-md-right">
+					Group name
+				</label>
 				<div class="col-md-8">
-					<input bind:value={fields.name} type="text" name="name" id="name" required class="form-control valid" minlength="3" maxlength="40" />
+					<input
+						bind:value={fields.name}
+						type="text"
+						name="name"
+						id="name"
+						required
+						class="form-control valid"
+						minlength="3"
+						maxlength="40" />
 				</div>
 			</div>
-			<small class="grey-text pb-2">This cannot be changed. Choose wisely.</small>
+			<small class="grey-text pb-2">
+				This cannot be changed. Choose wisely.
+			</small>
 			<br />
 			<br />
-			<button type="submit" class="btn btn-success">Create (<i class="fa fa-gem" /> 10)</button>
+			<button type="submit" class="btn btn-success">
+				Create (
+				<i class="fa fa-gem" />
+				10)
+			</button>
 		</fieldset>
 	</form>
 	<br />

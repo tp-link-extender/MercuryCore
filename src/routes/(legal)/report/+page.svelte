@@ -29,15 +29,31 @@
 	<form use:enhance method="POST" class="mt-4">
 		<fieldset>
 			<div class="row">
-				<label for="category" class="col-md-3 col-form-label text-md-right">Item category</label>
+				<label
+					for="category"
+					class="col-md-3 col-form-label text-md-right">
+					Item category
+				</label>
 				<div class="col-md-8">
-					<select bind:value={fields.category} name="category" id="category" class="form-select valid" required>
+					<select
+						bind:value={fields.category}
+						name="category"
+						id="category"
+						class="form-select valid"
+						required>
 						<option value="AccountTheft">Account theft</option>
 						<option value="Dating">Dating</option>
 						<option value="Exploiting">Exploiting</option>
-						<option value="Harassment">Harassment or discrimination</option>
-						<option value="InappropriateContent">Inappropriate content</option>
-						<option value="PersonalInformation">Personal information (displaying their own or asking for others')</option>
+						<option value="Harassment">
+							Harassment or discrimination
+						</option>
+						<option value="InappropriateContent">
+							Inappropriate content
+						</option>
+						<option value="PersonalInformation">
+							Personal information (displaying their own or asking
+							for others')
+						</option>
 						<option value="Scamming">Scamming</option>
 						<option value="Under13">Suspected under 13 user</option>
 						<option value="Spam">Spam</option>
@@ -48,9 +64,19 @@
 			</div>
 			<br />
 			<div class="row mb-3">
-				<label for="note" class="col-md-3 col-form-label text-md-right">Further information</label>
+				<label for="note" class="col-md-3 col-form-label text-md-right">
+					Further information
+				</label>
 				<div class="col-md-8">
-					<textarea bind:value={fields.note} name="note" id="note" placeholder="Up to 1000 characters" required class="form-control valid" maxlength="1000" rows="5" />
+					<textarea
+						bind:value={fields.note}
+						name="note"
+						id="note"
+						placeholder="Up to 1000 characters"
+						required
+						class="form-control valid"
+						maxlength="1000"
+						rows="5" />
 				</div>
 			</div>
 			<br />
@@ -58,7 +84,9 @@
 		</fieldset>
 	</form>
 	<br />
-	<p class="col-12 mb-3 text-{form?.success ? 'success' : 'danger'}">{form?.msg || ""}</p>
+	<p class="col-12 mb-3 text-{form?.success ? 'success' : 'danger'}">
+		{form?.msg || ""}
+	</p>
 </div>
 
 <style lang="sass">

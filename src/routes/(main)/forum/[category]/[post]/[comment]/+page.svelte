@@ -15,7 +15,15 @@
 
 <div class="container light-text">
 	{#each data.replies as reply, num}
-		<ForumReply {reply} {num} {replyingTo} forumCategory={data.forumCategory} postId={data.postId} postAuthorName={data.author} {repliesCollapsed} {baseDepth} />
+		<ForumReply
+			{reply}
+			{num}
+			{replyingTo}
+			forumCategory={data.forumCategory}
+			postId={data.postId}
+			postAuthorName={data.author}
+			{repliesCollapsed}
+			{baseDepth} />
 	{/each}
 </div>
 

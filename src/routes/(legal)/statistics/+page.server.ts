@@ -7,7 +7,12 @@ export const load = async () => ({
 	groups: prisma.group.count(),
 	items: prisma.item.count(),
 	transactions: prisma.transaction.count(),
-	friendships: roQuery("friends", "RETURN SIZE((:User) -[:friends]- (:User))", {}, true),
+	friendships: roQuery(
+		"friends",
+		"RETURN SIZE((:User) -[:friends]- (:User))",
+		{},
+		true
+	),
 	currency: prisma.user.aggregate({
 		_sum: {
 			currency: true,

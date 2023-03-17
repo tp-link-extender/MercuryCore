@@ -5,7 +5,8 @@ import { createId } from "@paralleldrive/cuid2"
 import { v4 as uuid } from "uuid"
 
 export async function load({ locals, params }) {
-	if (!/^\d+$/.test(params.id)) throw error(400, `Invalid game id: ${params.id}`)
+	if (!/^\d+$/.test(params.id))
+		throw error(400, `Invalid game id: ${params.id}`)
 
 	console.time("place settings")
 	const getPlace = await prisma.place.findUnique({
@@ -37,14 +38,16 @@ export async function load({ locals, params }) {
 
 	const { user } = await authoriseUser(locals.validateUser)
 
-	if (user.number != getPlace.ownerUser?.number && user.permissionLevel < 4) throw error(401, "You do not have permission to view this page.")
+	if (user.number != getPlace.ownerUser?.number && user.permissionLevel < 4)
+		throw error(401, "You do not have permission to view this page.")
 
 	return getPlace
 }
 
 export const actions = {
 	default: async ({ request, locals, params }) => {
-		if (!/^\d+$/.test(params.id || "")) throw error(400, `Invalid game id: ${params.id}`)
+		if (!/^\d+$/.test(params.id || ""))
+			throw error(400, `Invalid game id: ${params.id}`)
 		const id = parseInt(params.id || "")
 		const { user } = await authoriseUser(locals.validateUser)
 
@@ -70,7 +73,8 @@ export const actions = {
 			},
 		})
 
-		if (user.userId != getPlace?.ownerUser?.id && user.permissionLevel < 4) throw error(401, "You do not have permission to update this page.")
+		if (user.userId != getPlace?.ownerUser?.id && user.permissionLevel < 4)
+			throw error(401, "You do not have permission to update this page.")
 
 		const data = await request.formData()
 		const action = data.get("action") as string
@@ -82,9 +86,18 @@ export const actions = {
 				const title = data.get("title") as string
 				const description = data.get("desc") as string
 
-				if (title == getPlace?.name && description == getPlace?.description) return fail(400)
-				if (!title) return fail(400, { area: "title", msg: "Missing title" })
-				if (!description) return fail(400, { area: "description", msg: "Missing description" })
+				if (
+					title == getPlace?.name &&
+					description == getPlace?.description
+				)
+					return fail(400)
+				if (!title)
+					return fail(400, { area: "title", msg: "Missing title" })
+				if (!description)
+					return fail(400, {
+						area: "description",
+						msg: "Missing description",
+					})
 
 				await prisma.place.update({
 					where: {
@@ -121,18 +134,46 @@ export const actions = {
 				const serverPort = parseInt(data.get("port") as string)
 				const maxPlayers = parseInt(data.get("serverLimit") as string)
 
-				if (serverIP == getPlace?.serverIP && serverPort == getPlace?.serverPort && maxPlayers == getPlace?.maxPlayers) return fail(400)
-				if (!serverIP) return fail(400, { area: "address", msg: "Missing address" })
-				if (!serverPort) return fail(400, { area: "port", msg: "Missing port" })
-				if (!maxPlayers) return fail(400, { area: "maxPlayers", msg: "Missing server limit" })
-				if (serverPort > 65535 || serverPort < 1024) return fail(400, { area: "port", msg: "Invalid port" })
-				if (maxPlayers > 100 || serverPort < 1) return fail(400, { area: "port", msg: "Invalid server limit" })
+				if (
+					serverIP == getPlace?.serverIP &&
+					serverPort == getPlace?.serverPort &&
+					maxPlayers == getPlace?.maxPlayers
+				)
+					return fail(400)
+
+				if (!serverIP)
+					return fail(400, {
+						area: "address",
+						msg: "Missing address",
+					})
+
+				if (!serverPort)
+					return fail(400, { area: "port", msg: "Missing port" })
+
+				if (!maxPlayers)
+					return fail(400, {
+						area: "maxPlayers",
+						msg: "Missing server limit",
+					})
+
+				if (serverPort > 65535 || serverPort < 1024)
+					return fail(400, { area: "port", msg: "Invalid port" })
+
+				if (maxPlayers > 100 || serverPort < 1)
+					return fail(400, {
+						area: "port",
+						msg: "Invalid server limit",
+					})
+
 				if (
 					!/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(
 						serverIP
 					)
 				)
-					return fail(400, { area: "address", msg: "Invalid address" })
+					return fail(400, {
+						area: "address",
+						msg: "Invalid address",
+					})
 
 				await prisma.place.update({
 					where: {
