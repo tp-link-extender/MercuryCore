@@ -1,87 +1,135 @@
 <script lang="ts">
-	import type { PageData, Snapshot } from "./$types"
-	import { enhance } from "$app/forms"
+	import { enhance, deserialize } from "$app/forms"
 	import PlaceCard from "$lib/components/PlaceCard.svelte"
+	import { onMount } from "svelte"
 
-	let value = ""
+	let query = ""
+	let rendered = false
+	onMount(() => (rendered = true))
 
-	export const snapshot: Snapshot = {
-		capture: () => value,
-		restore: v => (value = v),
+	let searchedData: any = []
+
+	// Run function whenever query changes
+	$: (query || rendered) &&
+		(async () => {
+			const formdata = new FormData()
+			formdata.append("query", query)
+
+			const response = await fetch("/games", {
+				method: "POST",
+				body: formdata,
+			})
+
+			const result: any = deserialize(await response.text())
+			searchedData = result.data.places
+		})()
+
+	// Snapshots allow form values on a page to be restored
+	// if the user navigates away and then back again.
+	export const snapshot = {
+		capture: () => query,
+		restore: v => (query = v),
 	}
 
-	export let data: PageData
+	export let data
 </script>
 
 <svelte:head>
 	<title>Discover - Mercury</title>
 </svelte:head>
 
-<h1 class="light-text text-center">
-	Games
-	<a href="/games/create" class="btn btn-primary ms-4">Create</a>
-</h1>
-
-<div class="container row">
-	<div class="col-lg-4 col-xl-3 mb-4 mb-auto pe-0 pb-3">
-		<div class="card rounded-none">
-			<div class="card-header light-text px-3 py-2"><i class="fa fa-magnifying-glass" /> Filter</div>
-			<div class="card-body">
-				<form use:enhance method="POST" action="/search">
-					<div class="input-group mb-3">
-						<input bind:value type="text" name="query" class="form-control light-text input" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" />
+<div class="container">
+	<div class="row mb-5">
+		<h1 class="col light-text">
+			Games
+			<a href="/games/create" class="btn btn-primary ms-4">
+				<i class="fa-solid fa-plus" />
+				Create
+			</a>
+		</h1>
+		<div class="col-8">
+			<form use:enhance method="POST" action="/search" class="row">
+				<div class="col-5">
+					<div class="input-group">
+						<input
+							bind:value={query}
+							type="text"
+							name="query"
+							class="form-control light-text valid"
+							placeholder="Search for a game"
+							aria-label="Search for a game"
+							aria-describedby="button-addon2" />
 						<input type="hidden" name="category" value="places" />
-						<button class="btn btn-success" type="submit" id="button-addon2">Search</button>
+						<button
+							class="btn btn-success"
+							type="submit"
+							id="button-addon2">
+							<i class="fa fa-magnifying-glass" />
+						</button>
 					</div>
-					<p>
-						<a class="text-decoration-none" data-bs-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse">
-							<b>Advanced</b> <i class="fa fa-circle-chevron-down" />
-						</a>
-					</p>
-					<div class="collapse" id="collapse">
-						<div class="mb-3">
-							<label for="genre" class="form-label light-text">Genre</label>
-							<select class="form-select form-select-sm light-text" id="genre" placeholder="Genre" aria-label="genre">
+				</div>
+				<div class="col-7 row">
+					<div class="ms-3 col">
+						<div class="row">
+							<label
+								for="genre"
+								class="form-label light-text col mt-1">
+								Genre
+							</label>
+							<select
+								class="form-select form-select-sm light-text col"
+								id="genre"
+								placeholder="Genre"
+								aria-label="genre">
 								<option value="Obby">Obby</option>
 								<option value="Horror">Horror</option>
 								<option value="Comedy">Comedy</option>
 							</select>
 						</div>
-						<div class="mb-3">
-							<div class="form-check light-text">
-								<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-								<label class="form-check-label" for="flexCheckDefault"> Gears Allowed </label>
-							</div>
+					</div>
+					<div class="ms-3 col">
+						<div class="form-check light-text mt-1">
+							<input
+								class="form-check-input"
+								type="checkbox"
+								value=""
+								id="flexCheckDefault" />
+							<label
+								class="form-check-label"
+								for="flexCheckDefault">
+								Gears Allowed
+							</label>
 						</div>
 					</div>
-				</form>
-			</div>
+				</div>
+			</form>
 		</div>
 	</div>
-	<div class="col pe-0">
-		<div class="container d-grid p-0">
-			{#each data.places || [] as place}
-				<PlaceCard {place} />
+	<div class="row">
+		<div class="container d-grid m-0">
+			{#each query ? searchedData : data.places || [] as place, num}
+				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
+			{#if query && searchedData.length == 0}
+				<h2 class="h5 light-text mt-5">
+					No games found with search term {query}
+				</h2>
+			{/if}
 		</div>
 	</div>
 </div>
 
 <style lang="sass">
-	.input, select
+	input, select
 		background-color: var(--accent)
 		border-color: var(--accent2)
 
-	.container
-		max-width: 100%
+	.d-grid
+		width: fit-content
 		font-size: 0.9rem
 
-	.d-grid
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
 		column-gap: 0.7rem
 		row-gap: 0.7rem
 		place-items: center
-	
-	.card
-		background: var(--darker)
 </style>

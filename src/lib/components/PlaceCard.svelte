@@ -1,8 +1,20 @@
 <script lang="ts">
+	// Link to a place used on Games page.
+
+	import fade from "$lib/fade"
+
 	export let place: any
+	export let num: number
+	export let total: number
 </script>
 
-<a class="card text-center light-text text-decoration-none h6 rounded-4 m-0" href="/place/{place.slug}">
+<a
+	in:fade={{ num, total }}
+	class="card text-center light-text border-{place.serverPing >
+	Math.floor(Date.now() / 1000) - 35
+		? 'success'
+		: 'danger'} text-decoration-none h6 rounded-4 m-0"
+	href="/place/{place.id}/{place.name}">
 	<div class="row">
 		<div class="col col-6">
 			<div id="shadow" class="overflow-hidden bg-black">
@@ -22,7 +34,8 @@
 				</div>
 				<div class="float-end">
 					<span>
-						<i class="fa fa-user opacity-75" /> 12
+						<i class="fa fa-user opacity-75" />
+						{place.GameSessions.length}
 					</span>
 				</div>
 			</div>
@@ -32,7 +45,7 @@
 
 <style lang="sass">
 	.card
-		border: none
+		max-width: 22rem
 		background: var(--darker)
 	a
 		transition: all 0.2s

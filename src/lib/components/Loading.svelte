@@ -1,16 +1,25 @@
 <script lang="ts">
+	// The loading spinner used when a page is loading,
+	// referenced in the root layout component.
+
 	const size = 80
 	const duration = "0.7s"
 	const unit = "px"
 </script>
 
-<div id="wrapper" class="rounded-circle" style="--size: {size}{unit}; --duration: {duration}; --rotation: {Math.random() * 360}deg;">
-	<img src="/innerlogo.svg" alt="Mercury logo inner part (M)"/>
-	<img src="/outerlogo.svg" alt="Mercury logo outer part (circle around M)" id="outer"/>
+<div
+	id="wrapper"
+	class="rounded-circle"
+	style="--size: {size}{unit}; --duration: {duration}; --rotation: {Math.random() *
+		360}deg;">
+	<img src="/innerlogo.svg" alt="Mercury logo inner part (M)" />
+	<img
+		src="/outerlogo.svg"
+		alt="Mercury logo outer part (circle around M)"
+		id="outer" />
 </div>
 
 <style lang="sass">
-
 	#wrapper
 		height: var(--size)
 		width: var(--size)

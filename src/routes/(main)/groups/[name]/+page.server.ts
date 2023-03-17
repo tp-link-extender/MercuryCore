@@ -1,9 +1,9 @@
-import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import { error, fail, redirect } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ locals, params }) => {
+export async function load({ locals, params }) {
 	console.time("group")
 
 	const group = await prisma.group.findUnique({
@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			name: true,
 			owner: {
 				select: {
-					displayname: true,
+					username: true,
 					number: true,
 				},
 			},
@@ -27,19 +27,15 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		},
 	})
 	if (group) {
-		const session = await locals.validateUser()
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const query = {
-			params: {
-				group: group.name,
-			},
+			group: group.name,
 		}
 
 		const query2 = {
-			params: {
-				user: session.user.username || "",
-				group: group.name,
-			},
+			user: user?.username,
+			group: group.name,
 		}
 
 		console.timeEnd("group")
@@ -54,20 +50,26 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				},
 			}),
 			feed: group.posts,
-			followerCount: roQuery("RETURN SIZE((:User) -[:follows]-> (:Group { name: $group }))", query, true),
-			memberCount: roQuery("RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))", query, true),
-			following: roQuery("MATCH (:User { name: $user }) -[r:follows]-> (:Group { name: $group }) RETURN r", query2),
-			in: roQuery("MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r", query2),
+			memberCount: roQuery(
+				"groups",
+				"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
+				query,
+				true
+			),
+			in: roQuery(
+				"groups",
+				"MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r",
+				query2
+			),
 		}
 	} else {
 		throw error(404, "Not found")
 	}
 }
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request, locals, params }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const group = await prisma.group.findUnique({
 			where: {
@@ -80,13 +82,11 @@ export const actions: Actions = {
 		if (!group) return fail(400, { msg: "User not found" })
 
 		const data = await request.formData()
-		const action = data.get("action")?.toString() || ""
+		const action = data.get("action") as string
 
 		const query = {
-			params: {
-				user: session.user.username,
-				group: group.name,
-			},
+			user: user.username,
+			group: group.name,
 		}
 
 		console.log("Action:", action)
@@ -95,38 +95,21 @@ export const actions: Actions = {
 			switch (action) {
 				case "join":
 					await Query(
+						"groups",
 						`
-						MERGE (u:User { name: $user })
-						MERGE (g:Group { name: $group })
-						MERGE (u) -[:in]-> (g)
+							MERGE (u:User { name: $user })
+							MERGE (g:Group { name: $group })
+							MERGE (u) -[:in]-> (g)
 						`,
 						query
 					)
 					break
 				case "leave":
 					await Query(
+						"groups",
 						`
-						MATCH (u:User { name: $user }) -[r:in]-> (g:Group { name: $group })
-						DELETE r
-						`,
-						query
-					)
-					break
-				case "follow":
-					await Query(
-						`
-						MERGE (u:User { name: $user })
-						MERGE (g:Group { name: $group })
-						MERGE (u) -[:follows]-> (g)
-						`,
-						query
-					)
-					break
-				case "unfollow":
-					await Query(
-						`
-						MATCH (u:User { name: $user }) -[r:follows]-> (g:Group { name: $group })
-						DELETE r
+							MATCH (u:User { name: $user }) -[r:in]-> (g:Group { name: $group })
+							DELETE r
 						`,
 						query
 					)

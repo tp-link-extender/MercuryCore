@@ -1,24 +1,24 @@
-import type { PageServerLoad, Actions } from "./$types"
+import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
-import { fail, redirect } from "@sveltejs/kit"
+import ratelimit from "$lib/server/ratelimit"
+import { fail } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ locals }) => {
+export async function load({ locals }) {
 	console.time("home")
-	const session = await locals.validateUser()
-	if (!session.session) throw redirect(302, "/login")
-	// (main)/+layout.server.ts will handle most redirects for logged-out users except for this one
+	const user = (await authoriseUser(locals.validateUser)).user
+	// (main)/+layout.server.ts will handle most redirects for logged-out users,
+	// but sometimes errors for this page.
 
 	async function Friends() {
 		const friendsQuery = await roQuery(
+			"friends",
 			`
-			MATCH (:User { name: $user }) -[r:friends]- (u:User)
-			RETURN u.name as name
+				MATCH (:User { name: $user }) -[r:friends]- (u:User)
+				RETURN u.name as name
 			`,
 			{
-				params: {
-					user: session.user.username,
-				},
+				user: user?.username,
 			},
 			false,
 			true
@@ -36,7 +36,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 						select: {
 							number: true,
 							username: true,
-							displayname: true,
 							image: true,
 							status: true,
 						},
@@ -52,8 +51,18 @@ export const load: PageServerLoad = async ({ locals }) => {
 		places: findPlaces({
 			select: {
 				name: true,
-				slug: true,
+				id: true,
 				image: true,
+				GameSessions: {
+					where: {
+						ping: {
+							gt: Math.floor(Date.now() / 1000) - 35,
+						},
+					},
+				},
+			},
+			where: {
+				privateServer: false,
 			},
 		}),
 		friends: Friends(),
@@ -62,10 +71,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 				authorUser: {
 					select: {
 						number: true,
-						displayname: true,
+						username: true,
 						image: true,
 					},
 				},
+				id: true,
 				posted: true,
 				content: true,
 			},
@@ -77,20 +87,22 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 }
 
-export const actions: Actions = {
-	default: async ({ request, locals }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+export const actions = {
+	default: async ({ request, locals, getClientAddress }) => {
+		const limit = ratelimit("statusPost", getClientAddress, 30)
+		if (limit) return limit
+
+		const user = (await authoriseUser(locals.validateUser)).user
 
 		const data = await request.formData()
-		const status = data.get("status")?.toString() || ""
-		if (status.length <= 0) return fail(400, { msg: "Invalid status" })
+		const status = (data.get("status") as string).trim()
+		if (!status) return fail(400, { msg: "Invalid status" })
 
 		await prisma.post.create({
 			data: {
 				authorUser: {
 					connect: {
-						username: session.user.username,
+						username: user.username,
 					},
 				},
 				content: status,

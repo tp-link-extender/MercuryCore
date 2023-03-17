@@ -1,4 +1,7 @@
 <script lang="ts">
+	// Used on the About page to allow a part of the page to be displayed
+	// fullscreen or on either side, and to be animated in.
+
 	import { fly } from "svelte/transition"
 	import { inview } from "svelte-inview"
 
@@ -10,13 +13,20 @@
 	const width = fullwidth ? "full min-vw-100" : "half"
 </script>
 
-<div class="container {width}" id={side} use:inview={{ unobserveOnEnter: true, rootMargin: "-20%" }} on:change={({ detail }) => (isInView = detail.inView)}>
+<div
+	class="container {width}"
+	id={side}
+	use:inview={{ unobserveOnEnter: true, rootMargin: "-20%" }}
+	on:change={({ detail }) => (isInView = detail.inView)}>
 	{#if isInView}
-		<div in:fly={{ y: -100, duration: 500 }} id="b" class="d-flex flex-row align-items-center min-vh-100">
+		<div
+			in:fly={{ y: -100, duration: 500 }}
+			id="b"
+			class="d-flex flex-row align-items-center min-vh-100">
 			<slot />
 		</div>
 	{:else}
-		<div id="b" class="min-vh-100"/>
+		<div id="b" class="min-vh-100" />
 	{/if}
 </div>
 
