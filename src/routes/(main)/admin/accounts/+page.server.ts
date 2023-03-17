@@ -3,15 +3,15 @@ import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 
 // Make sure a user is an administrator before loading the page.
-export async function load ({ locals }) {
+export async function load({ locals }) {
 	await authoriseAdmin(locals)
 }
 
 export const actions = {
 	resetPassword: async ({ request, locals, getClientAddress }) => {
-        await authoriseAdmin(locals)
+		await authoriseAdmin(locals)
 
-        const limit = ratelimit("resetPassword", getClientAddress, 30)
+		const limit = ratelimit("resetPassword", getClientAddress, 30)
 		if (limit) return limit
 
 		const data = await request.formData()
