@@ -6,10 +6,5 @@ export const load = handleServerSession(async () => ({
 		where: {
 			active: true,
 		},
-		select: {
-			body: true,
-			bgColour: true,
-			textLight: true,
-		},
 	}),
 }))

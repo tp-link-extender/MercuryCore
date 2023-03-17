@@ -31,15 +31,12 @@ export async function GET({ url }) {
 		const gameSession = (
 			await prisma.gameSessions.findMany({
 				where: { ticket: clientTicket, valid: true },
-				select: {
+				include: {
 					user: true,
 					place: {
-						select: {
-							serverIP: true,
-							serverPort: true,
+						include: {
 							ownerUser: true,
 							ownerGroup: true,
-							id: true,
 						},
 					},
 				},

@@ -1,6 +1,6 @@
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { error, type Actions, fail } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 import { createId } from "@paralleldrive/cuid2"
 import { v4 as uuid } from "uuid"
 
@@ -13,23 +13,8 @@ export async function load({ locals, params }) {
 		where: {
 			id: parseInt(params.id),
 		},
-		select: {
-			id: true,
-			name: true,
-			description: true,
-			image: true,
-			maxPlayers: true,
-			serverTicket: true,
-			serverIP: true,
-			serverPort: true,
-			privateServer: true,
-			privateTicket: true,
-			ownerUser: {
-				select: {
-					number: true,
-					username: true,
-				},
-			},
+		include: {
+			ownerUser: true,
 		},
 	})
 	console.timeEnd("place settings")
@@ -55,21 +40,8 @@ export const actions = {
 			where: {
 				id,
 			},
-			select: {
-				id: true,
-				name: true,
-				description: true,
-				serverIP: true,
-				serverPort: true,
-				serverTicket: true,
-				privateServer: true,
-				privateTicket: true,
-				maxPlayers: true,
-				ownerUser: {
-					select: {
-						id: true,
-					},
-				},
+			include: {
+				ownerUser: true,
 			},
 		})
 

@@ -5,14 +5,13 @@ export async function GET({ url, setHeaders }) {
 	const ID = url.searchParams.get("id")
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
-	const userInfo = await prisma.user.findUnique({
+	const getUser = await prisma.user.findUnique({
 		where: { number: parseInt(ID) },
-		select: { bodyColours: true },
 	})
 
-	if (!userInfo) throw error(404, "User Not Found")
+	if (!getUser) throw error(404, "User Not Found")
 
-	const colors: any = userInfo.bodyColours
+	const colors: any = getUser.bodyColours
 
 	setHeaders({
 		Pragma: "no-cache",

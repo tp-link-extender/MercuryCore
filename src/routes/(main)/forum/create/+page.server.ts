@@ -4,7 +4,7 @@ import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import { error, fail, redirect } from "@sveltejs/kit"
 
-export async function load({ url, locals, params }) {
+export async function load({ url }) {
 	const category = url.searchParams.get("category")
 	if (!category) throw error(400, "Missing category")
 
@@ -15,9 +15,6 @@ export async function load({ url, locals, params }) {
 					equals: category,
 					mode: "insensitive",
 				},
-			},
-			select: {
-				name: true,
 			},
 		})
 	)[0]
@@ -57,9 +54,6 @@ export const actions = {
 							equals: category,
 							mode: "insensitive",
 						},
-					},
-					select: {
-						name: true,
 					},
 				})
 			)[0]

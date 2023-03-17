@@ -12,10 +12,6 @@ export async function load({ locals, params }) {
 		where: {
 			number: user?.number,
 		},
-		select: {
-			username: true,
-			image: true,
-		},
 	})
 
 	const query = {
@@ -42,12 +38,6 @@ export async function load({ locals, params }) {
 					await prisma.user.findUnique({
 						where: {
 							username: i.name,
-						},
-						select: {
-							number: true,
-							username: true,
-							image: true,
-							status: true,
 						},
 					})
 				)

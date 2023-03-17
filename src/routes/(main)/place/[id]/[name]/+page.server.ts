@@ -14,25 +14,11 @@ export async function load({ url, locals, params }) {
 	const getPlace = await prisma.place.findUnique({
 		where: { id },
 		include: {
-			ownerUser: {
-				select: {
-					number: true,
-					username: true,
-				},
-			},
+			ownerUser: true,
 			GameSessions: {
 				where: {
 					ping: {
 						gt: Math.floor(Date.now() / 1000) - 35,
-					},
-				},
-				select: {
-					user: {
-						select: {
-							number: true,
-							username: true,
-							image: true,
-						},
 					},
 				},
 			},
@@ -99,10 +85,8 @@ export const actions = {
 		const privateTicket = data.get("privateTicket") as string
 
 		const place = await prisma.place.findUnique({
-			where: { id },
-			select: {
-				privateServer: true,
-				privateTicket: true,
+			where: {
+				id,
 			},
 		})
 		if (
@@ -203,9 +187,6 @@ export const actions = {
 			where: {
 				id: serverId,
 			},
-			select: {
-				maxPlayers: true,
-			},
 		})
 		if (!place) return fail(404, { message: "Place not found" })
 
@@ -238,9 +219,6 @@ export const actions = {
 						id: user.userId,
 					},
 				},
-			},
-			select: {
-				ticket: true,
 			},
 		})
 

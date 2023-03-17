@@ -1,7 +1,7 @@
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
-import { error, fail, redirect } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
 	console.time("group")
@@ -10,14 +10,8 @@ export async function load({ locals, params }) {
 		where: {
 			name: params.name,
 		},
-		select: {
-			name: true,
-			owner: {
-				select: {
-					username: true,
-					number: true,
-				},
-			},
+		include: {
+			owner: true,
 			posts: {
 				orderBy: {
 					posted: "desc",

@@ -33,12 +33,6 @@ export async function load({ locals }) {
 						where: {
 							username: i.name,
 						},
-						select: {
-							number: true,
-							username: true,
-							image: true,
-							status: true,
-						},
 					})
 				)
 		}
@@ -49,10 +43,7 @@ export async function load({ locals }) {
 	console.timeEnd("home")
 	return {
 		places: findPlaces({
-			select: {
-				name: true,
-				id: true,
-				image: true,
+			include: {
 				GameSessions: {
 					where: {
 						ping: {
@@ -67,17 +58,8 @@ export async function load({ locals }) {
 		}),
 		friends: Friends(),
 		feed: prisma.post.findMany({
-			select: {
-				authorUser: {
-					select: {
-						number: true,
-						username: true,
-						image: true,
-					},
-				},
-				id: true,
-				posted: true,
-				content: true,
+			include: {
+				authorUser: true,
 			},
 			orderBy: {
 				posted: "desc",
