@@ -5,11 +5,7 @@ export const load = async () => ({
 		where: {
 			privateServer: false,
 		},
-		select: {
-			name: true,
-			id: true,
-			image: true,
-			serverPing: true,
+		include: {
 			GameSessions: {
 				where: {
 					ping: {
@@ -34,6 +30,8 @@ export const actions = {
 				},
 				privateServer: false,
 			},
+			// When returning from an action, remember to only select
+			// the data needed, as it will by sent directly to the client.
 			select: {
 				name: true,
 				id: true,

@@ -1,5 +1,4 @@
-import { auth, authoriseMod, authoriseUser } from "$lib/server/lucia"
-import { client } from "$lib/server/redis"
+import { authoriseMod, authoriseUser } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 import { prisma } from "$lib/server/prisma"
@@ -39,11 +38,6 @@ export const actions = {
 		const getModeratee = await prisma.user.findUnique({
 			where: {
 				username,
-			},
-			select: {
-				id: true,
-				number: true,
-				permissionLevel: true,
 			},
 		})
 

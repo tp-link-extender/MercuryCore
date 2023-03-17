@@ -12,27 +12,11 @@ export async function load({ locals, params }) {
 					mode: "insensitive",
 				},
 			},
-			select: {
-				name: true,
-				description: true,
+			include: {
 				posts: {
-					select: {
-						id: true,
-						title: true,
-						content: true,
-						posted: true,
-						author: {
-							select: {
-								username: true,
-								number: true,
-								image: true,
-							},
-						},
-						_count: {
-							select: {
-								replies: true,
-							},
-						},
+					include: {
+						author: true,
+						// _count: true,
 					},
 				},
 			},
