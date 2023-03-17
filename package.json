@@ -26,6 +26,7 @@
 	"type": "module",
 	"dependencies": {
 		"@lucia-auth/adapter-prisma": "^0.6.0",
+		"@lucia-auth/adapter-session-redis": "^0.1.5",
 		"@lucia-auth/sveltekit": "^0.6.10",
 		"@paralleldrive/cuid2": "^2.2.0",
 		"@popperjs/core": "^2.11.6",

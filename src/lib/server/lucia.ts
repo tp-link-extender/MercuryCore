@@ -3,12 +3,25 @@
 import { dev } from "$app/environment"
 import { prisma } from "$lib/server/prisma"
 import { redirect, error } from "@sveltejs/kit"
+import { createClient } from "redis"
 import lucia from "lucia-auth"
 import type { Session, User } from "lucia-auth"
 import prismaAdapter from "@lucia-auth/adapter-prisma"
+import redisAdapter from "@lucia-auth/adapter-session-redis"
+
+const session = createClient({ url: "redis://localhost:6479" })
+const userSession = createClient({ url: "redis://localhost:6479" })
+session.connect()
+userSession.connect()
 
 export const auth = lucia({
-	adapter: prismaAdapter(prisma),
+	adapter: {
+		user: prismaAdapter(prisma),
+		session: redisAdapter({
+			session,
+			userSession,
+		}),
+	},
 	env: dev ? "DEV" : "PROD",
 	transformUserData: (data: any) => ({
 		// This is the data that will be available after calling
