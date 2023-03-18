@@ -10,10 +10,10 @@
 
 <a
 	in:fade={{ num, total }}
-	class="card text-center light-text border-{place.serverPing >
+	class="card text-center light-text {place.serverPing >
 	Math.floor(Date.now() / 1000) - 35
-		? 'success'
-		: 'danger'} text-decoration-none h6 rounded-4 m-0"
+		? 'border-success'
+		: 'opacity-50'} text-decoration-none h6 rounded-4 m-0"
 	href="/place/{place.id}/{place.name}">
 	<div class="row">
 		<div class="col col-6">
