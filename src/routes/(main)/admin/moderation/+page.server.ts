@@ -25,15 +25,15 @@ export const actions = {
 		const reason = (data.get("reason") as string).trim()
 
 		if (!username || !action)
-			return fail(400, { error: true, msg: "Missing fields" })
+			return fail(400, { msg: "Missing fields" })
 		if (action != 5 && !reason)
-			return fail(400, { error: true, msg: "Missing fields" })
+			return fail(400, { msg: "Missing fields" })
 		if (action == 2 && !banDate) return fail(400, { msg: "Missing fields" })
 		if (reason.length < 15 && reason.length > 150)
-			return fail(400, { error: true, msg: "Reason is too long/short" })
+			return fail(400, { msg: "Reason is too long/short" })
 
 		if (action == 2 && banDate.getTime() < new Date().getTime())
-			return fail(400, { error: true, msg: "Invalid date" })
+			return fail(400, { msg: "Invalid date" })
 
 		const getModeratee = await prisma.user.findUnique({
 			where: {
@@ -42,16 +42,14 @@ export const actions = {
 		})
 
 		if (!getModeratee)
-			return fail(400, { error: true, msg: "User does not exist" })
+			return fail(400, { msg: "User does not exist" })
 
 		if (getModeratee.permissionLevel > 2)
 			return fail(400, {
-				error: true,
 				msg: "You cannot moderate staff members",
 			})
 		if (getModeratee.id == user.userId)
 			return fail(400, {
-				error: true,
 				msg: "You cannot moderate yourself",
 			})
 
@@ -78,7 +76,6 @@ export const actions = {
 				}))
 			)
 				return fail(400, {
-					error: true,
 					msg: "You cannot unban a user that has not been moderated yet",
 				})
 
@@ -92,7 +89,6 @@ export const actions = {
 				})
 			)
 				return fail(400, {
-					error: true,
 					msg: "You cannot undo a deleted user",
 				})
 
@@ -119,7 +115,6 @@ export const actions = {
 			})
 		)
 			return fail(400, {
-				error: true,
 				msg: "User has already been moderated",
 			})
 
