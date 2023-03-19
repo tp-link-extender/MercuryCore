@@ -125,7 +125,7 @@ export const actions = {
 		await prisma.forumReply.create({
 			data: {
 				id: await id(),
-				authorId: user.userId,
+				authorId: user.id,
 				content,
 				...(replyId
 					? { parentReplyId: replyId }

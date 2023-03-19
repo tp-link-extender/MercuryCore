@@ -46,7 +46,7 @@ export const actions = {
 			},
 		})
 
-		if (user.userId != getPlace?.ownerUser?.id && user.permissionLevel < 4)
+		if (user.id != getPlace?.ownerUser?.id && user.permissionLevel < 4)
 			throw error(401, "You do not have permission to update this page.")
 
 		const data = await formData(request)

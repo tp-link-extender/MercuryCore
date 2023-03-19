@@ -22,7 +22,7 @@ export const handle = sequence(
 			(
 				await prisma.moderationAction.findMany({
 					where: {
-						moderateeId: user.userId,
+						moderateeId: user.id,
 						active: true,
 					},
 				})
@@ -32,7 +32,7 @@ export const handle = sequence(
 
 		await prisma.user.update({
 			where: {
-				id: user.userId,
+				id: user.id,
 			},
 			data: {
 				lastOnline: new Date(),
@@ -51,7 +51,7 @@ export const handle = sequence(
 		) {
 			await prisma.user.update({
 				where: {
-					id: user.userId,
+					id: user.id,
 				},
 				data: {
 					currencyCollected: new Date(),

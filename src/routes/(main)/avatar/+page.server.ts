@@ -237,7 +237,7 @@ export const actions = {
 		currentBodyColour[bodyPart] = brickcolor
 
 		await prisma.user.update({
-			where: { id: user.userId },
+			where: { id: user.id },
 			data: { bodyColours: currentBodyColour },
 		})
 	},

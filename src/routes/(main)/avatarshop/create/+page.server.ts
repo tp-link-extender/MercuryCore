@@ -53,13 +53,13 @@ export const actions = {
 						texture: "",
 						owners: {
 							connect: {
-								id: user.userId,
+								id: user.id,
 							},
 						},
 					},
 				})
 				await transaction(
-					{ id: user.userId },
+					{ id: user.id },
 					{ number: 1 },
 					10,
 					{

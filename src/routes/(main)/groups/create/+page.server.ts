@@ -37,7 +37,7 @@ export const actions = {
 		try {
 			await prisma.$transaction(async tx => {
 				await transaction(
-					{ id: user.userId },
+					{ id: user.id },
 					{ number: 1 },
 					10,
 					{ note: `Created group ${name}`, link: `/groups/${name}` },

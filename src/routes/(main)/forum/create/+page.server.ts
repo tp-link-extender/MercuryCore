@@ -66,7 +66,7 @@ export const actions = {
 				id: await id(),
 				title,
 				content,
-				authorId: user.userId,
+				authorId: user.id,
 				forumCategoryName: category,
 			},
 		})

@@ -46,7 +46,7 @@ export const actions = {
 			return fail(400, {
 				msg: "You cannot moderate staff members",
 			})
-		if (getModeratee.id == user.userId)
+		if (getModeratee.id == user.id)
 			return fail(400, {
 				msg: "You cannot moderate yourself",
 			})
@@ -132,7 +132,7 @@ export const actions = {
 			data: {
 				moderator: {
 					connect: {
-						id: user.userId,
+						id: user.id,
 					},
 				},
 				moderatee: {
