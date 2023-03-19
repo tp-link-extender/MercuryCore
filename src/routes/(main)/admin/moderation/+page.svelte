@@ -127,13 +127,12 @@
 						</fieldset>
 					</form>
 					<br />
-					{#if form?.moderationsuccess}
-						<p class="col-12 mb-3 text-success">{form?.msg}</p>
-					{/if}
-
-					{#if form?.error}
-						<p class="col-12 mb-3 text-danger">{form?.msg}</p>
-					{/if}
+					<p
+						class="col-12 mb-3 text-{form?.moderationsuccess
+							? 'success'
+							: 'danger'}">
+						{form?.msg || ""}
+					</p>
 				</div>
 			</div>
 		</div>
