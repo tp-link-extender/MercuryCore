@@ -7,8 +7,17 @@ import { client, roQuery } from "./redis"
 
 export const prisma = new PrismaClient()
 
-// Required because likes and dislikes are stored in RedisGraph,
-// while the rest of the info for places is stored in Postgres.
+/**
+ * Finds places in the database, and adds a like/dislike ratio to each place. Required because likes and dislikes are stored in RedisGraph, while the rest of the info for places is stored in Postgres.
+ * @param query The prisma query to execute.
+ * @returns The result of the query, with the like/dislike ratio added to each place.
+ * @example
+ * const places = await findPlaces({
+ * 	where: {
+ * 		privateServer: false,
+ * 	},
+ * })
+ */
 export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 	const places = await prisma.place.findMany(query)
 
@@ -38,8 +47,19 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 	return places
 }
 
-// Required because likes and dislikes are stored in RedisGraph,
-// while the rest of the info for items is stored in Postgres.
+/**
+ * Finds avatar shoitems in the database, and adds a like/dislike ratio to each place. Required because likes and dislikes are stored in RedisGraph, while the rest of the info for items is stored in Postgres.
+ * @param query The prisma query to execute.
+ * @returns The result of the query, with the like/dislike ratio added to each place.
+ * @example
+ * const places = await findItems({
+ * 	where: {
+ * 		price: {
+ * 			lt: 100,
+ * 		}
+ * 	},
+ * })
+ */
 export async function findItems(query: Prisma.ItemFindManyArgs = {}) {
 	const items = await prisma.item.findMany(query)
 
@@ -68,8 +88,19 @@ export async function findItems(query: Prisma.ItemFindManyArgs = {}) {
 	return items
 }
 
-// Required because group members are stored in RedisGraph,
-// while the rest of the info for groups is stored in Postgres.
+/**
+ * Finds avatar shoitems in the database, and adds a like/dislike ratio to each place. Required because group members are stored in RedisGraph, while the rest of the info for groups is stored in Postgres.
+ * @param query The prisma query to execute.
+ * @returns The result of the query, with the like/dislike ratio added to each place.
+ * @example
+ * const places = await findPlaces({
+ * 	where: {
+ * 		name: {
+ * 			contains: search,
+ * 		}
+ * 	},
+ * })
+ */
 export async function findGroups(query: Prisma.GroupFindManyArgs = {}) {
 	const groups = await prisma.group.findMany(query)
 
@@ -92,6 +123,14 @@ type User = {
 	number?: number
 	username?: string
 }
+/**
+ * Transfers currency from one user to another, and creates a transaction in the database.
+ * @param sender An object containing the id, number or username of the user sending the currency.
+ * @param receiver An object containing the id, number or username of the user receiving the currency.
+ * @param amountSent The amount of currency to send.
+ * @param notelink An object containing a note for the transaction, as well as a link to what the transaction was for if possible.
+ * @param tx A prisma transaction object, if it needs to be rolled back when an error occurs.
+ */
 export async function transaction(
 	sender: User,
 	receiver: User,
