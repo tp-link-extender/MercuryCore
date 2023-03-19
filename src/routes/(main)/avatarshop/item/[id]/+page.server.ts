@@ -1,6 +1,7 @@
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
+import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
@@ -13,7 +14,7 @@ export async function load({ locals, params }) {
 		},
 		include: {
 			creator: true,
-			owners: true
+			owners: true,
 		},
 	})
 
@@ -75,8 +76,8 @@ export const actions = {
 	default: async ({ request, locals, params }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
 
-		const data = await request.formData()
-		const action = data.get("action") as string
+		const data = await formData(request)
+		const action = data.action
 
 		if (
 			!(await prisma.item.findUnique({

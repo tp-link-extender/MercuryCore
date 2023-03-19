@@ -1,6 +1,7 @@
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
+import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
@@ -75,8 +76,8 @@ export const actions = {
 		})
 		if (!group) return fail(400, { msg: "User not found" })
 
-		const data = await request.formData()
-		const action = data.get("action") as string
+		const data = await formData(request)
+		const action = data.action
 
 		const query = {
 			user: user.username,

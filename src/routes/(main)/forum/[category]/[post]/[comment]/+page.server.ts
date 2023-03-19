@@ -23,7 +23,9 @@ export async function load({ url, locals, params }) {
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.include.replies = JSON.parse(JSON.stringify(selectReplies))
+		selectReplies.include.replies = JSON.parse(
+			JSON.stringify(selectReplies)
+		)
 
 	const forumReplies = await prisma.forumReply.findUnique({
 		where: {

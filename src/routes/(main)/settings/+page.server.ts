@@ -1,12 +1,13 @@
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { auth } from "$lib/server/lucia"
+import formData from "$lib/server/formData"
 import { fail } from "@sveltejs/kit"
 
 export const actions = {
 	profile: async ({ request, locals }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
-		const data = await request.formData()
+		const data = await formData(request)
 
 		const entries: any = Object.fromEntries(data.entries())
 
@@ -39,7 +40,7 @@ export const actions = {
 
 	password: async ({ request, locals }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
-		const data = await request.formData()
+		const data = await formData(request)
 		const entries: any = Object.fromEntries(data.entries())
 
 		if (entries.npassword != entries.cnpassword)
