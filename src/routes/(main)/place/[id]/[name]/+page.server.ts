@@ -1,4 +1,4 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import formData from "$lib/server/formData"
@@ -31,7 +31,7 @@ export async function load({ url, locals, params }) {
 
 	console.timeEnd("place")
 	if (getPlace) {
-		const { session, user } = await authoriseUser(locals.validateUser)
+		const { session, user } = await authorise(locals.validateUser)
 
 		if (
 			user?.number != getPlace.ownerUser?.number &&
@@ -83,7 +83,7 @@ export const actions = {
 			throw error(400, `Invalid place id: ${params.id}`)
 		const id = parseInt(params.id)
 
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 		const data = await formData(request)
 		const action = data.action
 		const privateTicket = data.privateTicket
@@ -173,7 +173,7 @@ export const actions = {
 		}
 	},
 	join: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
 		const data = await formData(request)
 

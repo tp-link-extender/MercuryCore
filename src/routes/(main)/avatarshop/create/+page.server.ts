@@ -1,4 +1,4 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import id, { rollback } from "$lib/server/id"
 import formData from "$lib/server/formData"
@@ -7,7 +7,7 @@ import { fail, redirect } from "@sveltejs/kit"
 
 export const actions = {
 	default: async ({ locals, request }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
 		const data = await formData(request)
 		const name = data.name

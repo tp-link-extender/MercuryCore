@@ -1,4 +1,4 @@
-import { authoriseMod, authoriseUser } from "$lib/server/lucia"
+import { authoriseMod, authorise } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
@@ -14,7 +14,7 @@ export const actions = {
 	moderateUser: async ({ request, locals, getClientAddress }) => {
 		await authoriseMod(locals)
 
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 
 		const limit = ratelimit("moderateUser", getClientAddress, 30)
 		if (limit) return limit

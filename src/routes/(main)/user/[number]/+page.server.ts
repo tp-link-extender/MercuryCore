@@ -1,4 +1,4 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import formData from "$lib/server/formData"
@@ -24,7 +24,7 @@ export async function load({ locals, params }) {
 		},
 	})
 	if (userExists) {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
 		const query = {
 			user1: user?.username || "",
@@ -122,7 +122,7 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	default: async ({ request, locals, params }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
 		if (!/^\d+$/.test(params.number))
 			throw error(400, `Invalid user id: ${params.number}`)

@@ -1,4 +1,4 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
@@ -36,7 +36,7 @@ export async function load({ url, locals, params }) {
 
 	if (!forumReplies) throw error(404, "Reply not found")
 
-	const { user } = await authoriseUser(locals.validateUser)
+	const { user } = await authorise(locals.validateUser)
 
 	async function addLikes(reply: any) {
 		const query = {

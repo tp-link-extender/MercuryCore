@@ -1,4 +1,4 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
@@ -22,7 +22,7 @@ export async function load({ locals, params }) {
 
 	if (!getPlace) throw error(404, "Not found")
 
-	const { user } = await authoriseUser(locals.validateUser)
+	const { user } = await authorise(locals.validateUser)
 
 	if (user.number != getPlace.ownerUser?.number && user.permissionLevel < 4)
 		throw error(401, "You do not have permission to view this page.")
@@ -35,7 +35,7 @@ export const actions = {
 		if (!/^\d+$/.test(params.id || ""))
 			throw error(400, `Invalid game id: ${params.id}`)
 		const id = parseInt(params.id || "")
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 
 		const getPlace = await prisma.place.findUnique({
 			where: {

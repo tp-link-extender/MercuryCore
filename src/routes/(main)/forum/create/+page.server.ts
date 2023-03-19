@@ -1,4 +1,4 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
@@ -30,7 +30,7 @@ export const actions = {
 		const limit = ratelimit("forumPost", getClientAddress, 30)
 		if (limit) return limit
 
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 
 		const data = await formData(request)
 		const title = data.title

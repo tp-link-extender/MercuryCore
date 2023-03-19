@@ -1,4 +1,4 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
@@ -21,7 +21,7 @@ export async function load({ url }) {
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
 		ratelimit("report", getClientAddress, 120)
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 		const data = await formData(request)
 		const reportUser = url.searchParams.get("user")
 		const reportUrl = url.searchParams.get("url")
