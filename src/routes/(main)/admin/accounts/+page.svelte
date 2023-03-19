@@ -16,7 +16,7 @@
 	</a>
 	<div class="row mt-4">
 		<div class="col-lg-2 col-md-3 mb-4">
-			<ul class="nav nav-tabs flex-column border-0" role="tablist">
+			<ul class="nav nav-tabs flex-column border-0">
 				<li class="nav-item" role="presentation">
 					<a
 						class="nav-link active"

@@ -7,6 +7,16 @@ const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()
 const existingTimeouts = new Map<string, any>()
 
+/** Ratelimit a function by a category.
+ * @param category The category to ratelimit by
+ * @param getClientAddress The client's IP address, set by the adapter.
+ * @param timeWindow The time window in seconds. If there are no successful requests in this time, the ratelimit is reset.
+ * @param maxRequests The maximum number of requests allowed in the time window.
+ * @returns A fail(429) error if the ratelimit is exceeded.
+ * @example
+ *	const limit = ratelimit("statusPost", getClientAddress, 30)
+ *	if (limit) return limit
+ */
 export default function (
 	category: string,
 	getClientAddress: () => string,

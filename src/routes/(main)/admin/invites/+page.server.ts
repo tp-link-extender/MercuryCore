@@ -1,6 +1,7 @@
-import { authoriseAdmin, authoriseUser } from "$lib/server/lucia"
+import { authoriseAdmin, authorise } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 import { prisma } from "$lib/server/prisma"
 import cuid2 from "@paralleldrive/cuid2"
 
@@ -11,7 +12,7 @@ export async function load({ locals }) {
 	return {
 		invites: prisma.regkey.findMany({
 			include: {
-				creator: true
+				creator: true,
 			},
 			orderBy: {
 				creation: "desc",
@@ -24,23 +25,21 @@ export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
 		await authoriseAdmin(locals)
 
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 
-		const data = await request.formData()
-		const action = data.get("action") as string
+		const data = await formData(request)
+		const action = data.action
 
 		switch (action) {
 			case "create":
 				const limit = ratelimit("createInvite", getClientAddress, 30)
 				if (limit) return limit
 
-				const customInviteEnabled = !!data.get("enableInviteCustom")
-				const customInvite = data.get("inviteCustom") as string
-				const inviteExpiryEnabled = !!data.get("enableInviteExpiry")
-				const inviteExpiry = new Date(
-					data.get("inviteExpiry") as string
-				)
-				const inviteUses = parseInt(data.get("inviteUses") as string)
+				const customInviteEnabled = !!data.enableInviteCustom
+				const customInvite = data.inviteCustom
+				const inviteExpiryEnabled = !!data.enableInviteExpiry
+				const inviteExpiry = new Date(data.inviteExpiry)
+				const inviteUses = parseInt(data.inviteUses)
 
 				const now = new Date()
 
@@ -94,7 +93,7 @@ export const actions = {
 					area: "create",
 				}
 			case "disable":
-				const inviteKey = data.get("id") as string
+				const inviteKey = data.id
 
 				if (!inviteKey) return fail(400, { msg: "Missing fields" })
 

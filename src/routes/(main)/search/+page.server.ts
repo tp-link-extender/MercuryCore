@@ -1,4 +1,5 @@
 import { prisma, findPlaces, findItems, findGroups } from "$lib/server/prisma"
+import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
 export const load = async ({ url }) => {
@@ -72,9 +73,9 @@ export const load = async ({ url }) => {
 
 export const actions = {
 	default: async ({ request }) => {
-		const data = await request.formData()
-		const query = data.get("query") as string
-		const category = data.get("category") as string
+		const data = await formData(request)
+		const query = data.query
+		const category = data.category
 		console.log(`searching for ${query} in ${category}`)
 
 		throw redirect(

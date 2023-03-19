@@ -1,13 +1,14 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
+import formData from "$lib/server/formData"
 import { fail, redirect } from "@sveltejs/kit"
 
 export const actions = {
 	default: async ({ locals, request }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
-		const data = await request.formData()
-		const name = (data.get("name") as string).trim()
+		const data = await formData(request)
+		const name = data.name
 
 		if (!name) return fail(400, { msg: "Missing fields" })
 		if (name.length < 3 || name.length > 40)

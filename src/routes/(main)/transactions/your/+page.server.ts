@@ -1,8 +1,8 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 
 export async function load({ locals }) {
-	const user = (await authoriseUser(locals.validateUser)).user
+	const { user } = await authorise(locals.validateUser)
 
 	return {
 		transactions: prisma.transaction.findMany({

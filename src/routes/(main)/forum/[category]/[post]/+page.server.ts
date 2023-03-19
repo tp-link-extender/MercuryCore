@@ -1,8 +1,9 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
@@ -14,7 +15,9 @@ export async function load({ locals, params }) {
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.include.replies = JSON.parse(JSON.stringify(selectReplies))
+		selectReplies.include.replies = JSON.parse(
+			JSON.stringify(selectReplies)
+		)
 
 	const forumPost = await prisma.forumPost.findUnique({
 		where: {
@@ -29,7 +32,7 @@ export async function load({ locals, params }) {
 
 	if (!forumPost) throw error(404, "Not found")
 
-	const { user } = await authoriseUser(locals.validateUser)
+	const { user } = await authorise(locals.validateUser)
 
 	async function addLikes(post: any, reply = false) {
 		const query = {
@@ -99,13 +102,13 @@ export const actions = {
 		const limit = ratelimit("forumReply", getClientAddress, 5)
 		if (limit) return limit
 
-		const { user } = await authoriseUser(locals.validateUser)
-		const data = await request.formData()
-		const content = (data.get("content") as string).trim()
+		const { user } = await authorise(locals.validateUser)
+		const data = await formData(request)
+		const content = data.content
 		if (!content || content.length > 1000 || content.length < 5)
 			return fail(400)
 
-		const replyId = data.get("replyId") as string
+		const replyId = data.replyId
 		// If there is a replyId, it is a reply to another comment
 
 		let replypost

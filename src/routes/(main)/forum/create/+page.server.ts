@@ -1,7 +1,8 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 import { error, fail, redirect } from "@sveltejs/kit"
 
 export async function load({ url }) {
@@ -29,11 +30,11 @@ export const actions = {
 		const limit = ratelimit("forumPost", getClientAddress, 30)
 		if (limit) return limit
 
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 
-		const data = await request.formData()
-		const title = data.get("title") as string
-		const content = data.get("content") as string
+		const data = await formData(request)
+		const title = data.title
+		const content = data.content
 		const category = url.searchParams.get("category")
 
 		if (!title || !content || !category)

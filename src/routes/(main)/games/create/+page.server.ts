@@ -1,18 +1,19 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import { fail, redirect } from "@sveltejs/kit"
+import formData from "$lib/server/formData"
 
 export const actions = {
 	default: async ({ locals, request }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
-		const data = await request.formData()
-		const name = (data.get("name") as string).trim()
-		const description = (data.get("description") as string).trim()
-		const serverIP = (data.get("serverIP") as string).trim()
-		const serverPort = parseInt(data.get("serverPort") as string)
-		const maxPlayers = parseInt(data.get("maxPlayers") as string)
-		const privateServer = !!data.get("privateServer")
+		const data = await formData(request)
+		const name = data.name
+		const description = data.description
+		const serverIP = data.serverIP
+		const serverPort = parseInt(data.serverPort)
+		const maxPlayers = parseInt(data.maxPlayers)
+		const privateServer = !!data.privateServer
 
 		console.log(
 			name,
@@ -41,10 +42,10 @@ export const actions = {
 
 		const gameCount = await prisma.user.findUnique({
 			where: {
-				id: user.userId
+				id: user.userId,
 			},
 			select: {
-				_count: true
+				_count: true,
 			},
 		})
 

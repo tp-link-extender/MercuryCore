@@ -46,13 +46,14 @@ export const auth = lucia({
 
 export type Auth = typeof auth
 
-export async function authorise(promise: () => Promise<Session | null>) {
-	const session = await promise()
-	if (!session) throw redirect(302, "/login")
-	return session
-}
-
-export async function authoriseUser(
+/**
+ * Authorises a user and returns their session and user data, or redirects them to the login page.
+ * @param promise locals.validateUser, the function that returns data about the user.
+ * @returns An object containing the session and user data. If the authorisation fails, it will throw a redirect to /login.
+ * @example
+ * const { session, user } = await authorise(locals.validateUser)
+ */
+export async function authorise(
 	promise: () => Promise<
 		| {
 				session: Session
@@ -69,6 +70,13 @@ export async function authoriseUser(
 	return { session, user }
 }
 
+/**
+ * Authorises an administrator and returns their session and user data, or throws an error if they are not authorised.
+ * @param promise locals.validateUser, the function that returns data about the user.
+ * @returns An object containing the session and user data. If the authorisation fails, it will throw an error page.
+ * @example
+ * const { session, user } = await authoriseAdmin(locals)
+ */
 export async function authoriseAdmin(locals: any) {
 	const { session, user } = await locals.validateUser()
 
@@ -81,6 +89,13 @@ export async function authoriseAdmin(locals: any) {
 		)
 }
 
+/**
+ * Authorises a moderator and returns their session and user data, or throws an error if they are not authorised.
+ * @param promise locals.validateUser, the function that returns data about the user.
+ * @returns An object containing the session and user data. If the authorisation fails, it will throw an error page.
+ * @example
+ * const { session, user } = await authoriseMod(locals)
+ */
 export async function authoriseMod(locals: any) {
 	const { session, user } = await locals.validateUser()
 
@@ -93,6 +108,13 @@ export async function authoriseMod(locals: any) {
 		)
 }
 
+/**
+ * Authorises any user with permissionLevel > 2 and returns their session and user data or throws an error if they are not authorised.
+ * @param promise locals.validateUser, the function that returns data about the user.
+ * @returns An object containing the session and user data. If the authorisation fails, it will throw an error page.
+ * @example
+ * const { session, user } = await authoriseAllAdmin(locals)
+ */
 export async function authoriseAllAdmin(locals: any) {
 	const { session, user } = await locals.validateUser()
 

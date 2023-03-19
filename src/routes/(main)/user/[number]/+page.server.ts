@@ -1,6 +1,7 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
+import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
@@ -23,7 +24,7 @@ export async function load({ locals, params }) {
 		},
 	})
 	if (userExists) {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
 		const query = {
 			user1: user?.username || "",
@@ -121,7 +122,7 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	default: async ({ request, locals, params }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
 		if (!/^\d+$/.test(params.number))
 			throw error(400, `Invalid user id: ${params.number}`)
@@ -133,8 +134,8 @@ export const actions = {
 			},
 		})
 
-		const data = await request.formData()
-		const action = data.get("action") as string
+		const data = await formData(request)
+		const action = data.action
 
 		const user2Exists = await prisma.user.findUnique({
 			where: {

@@ -1,15 +1,16 @@
 import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
+import formData from "$lib/server/formData"
 import { redirect, fail } from "@sveltejs/kit"
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const data = await request.formData()
-		const username = data.get("username") as string
-		const email = data.get("email")?.toString().toLowerCase() || ""
-		const password = data.get("password") as string
-		const cpassword = data.get("cpassword") as string
-		const regkey = data.get("regkey")?.toString().split("-") || ""
+		const data = await formData(request)
+		const username = data.username
+		const email = data.email.toLowerCase() || ""
+		const password = data.password
+		const cpassword = data.cpassword
+		const regkey = data.regkey.split("-") || ""
 
 		if (username.length < 3)
 			return fail(400, {

@@ -2,6 +2,7 @@ import { auth, authoriseAdmin } from "$lib/server/lucia"
 import { client } from "$lib/server/redis"
 import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 
 // Make sure a user is an administrator before loading the page.
 export async function load({ locals }) {
@@ -20,9 +21,9 @@ export const actions = {
 		const limit = ratelimit("resetPassword", getClientAddress, 30)
 		if (limit) return limit
 
-		const data = await request.formData()
-		const dailyStipend = Number(data.get("dailyStipend"))
-		const stipendTime = Number(data.get("stipendTime"))
+		const data = await formData(request)
+		const dailyStipend = Number(data.dailyStipend)
+		const stipendTime = Number(data.stipendTime)
 		console.log(stipendTime)
 
 		if (!dailyStipend || !stipendTime)

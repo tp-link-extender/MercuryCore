@@ -1,9 +1,9 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 
 export async function load({ locals }) {
 	console.time("inventory")
-	const user = (await authoriseUser(locals.validateUser)).user
+	const { user } = await authorise(locals.validateUser)
 
 	const userExists = await prisma.user.findUnique({
 		where: {

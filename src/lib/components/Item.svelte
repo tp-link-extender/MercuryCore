@@ -16,7 +16,7 @@
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
 		<div class="w-100 h-100" />
 	</div>
-	<p class="{item.ratio != undefined ? '' : 'float-start'} mb-1">
+	<p class:float-start={item.ratio == undefined} class="mb-1">
 		{item.name}
 	</p>
 	{#if item.ratio != undefined}
