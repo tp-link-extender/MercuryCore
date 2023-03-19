@@ -7,7 +7,7 @@ export async function load({ locals }) {
 
 	const userExists = await prisma.user.findUnique({
 		where: {
-			number: user?.number,
+			number: user.number,
 		},
 		select: {
 			itemsOwned: true,

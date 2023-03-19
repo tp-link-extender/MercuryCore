@@ -1,5 +1,4 @@
-import { auth, authorise } from "$lib/server/lucia"
-import { client } from "$lib/server/redis"
+import { authorise } from "$lib/server/lucia"
 import { fail, error, redirect } from "@sveltejs/kit"
 import { prisma } from "$lib/server/prisma"
 
