@@ -25,7 +25,7 @@ export async function load({ locals, params }) {
 		select: {
 			owners: {
 				where: {
-					id: user?.userId,
+					id: user.userId,
 				},
 			},
 		},
@@ -35,7 +35,7 @@ export async function load({ locals, params }) {
 
 	if (item) {
 		const query = {
-			user: user?.username,
+			user: user.username,
 			itemid: params.id,
 		}
 		return {
@@ -105,7 +105,7 @@ export const actions = {
 						creator: true,
 						owners: {
 							where: {
-								id: user?.userId,
+								id: user.userId,
 							},
 						},
 					},
@@ -153,7 +153,7 @@ export const actions = {
 					include: {
 						owners: {
 							where: {
-								id: user?.userId,
+								id: user.userId,
 							},
 						},
 					},

@@ -40,7 +40,7 @@ export async function load({ url, locals, params }) {
 
 	async function addLikes(reply: any) {
 		const query = {
-			user: user?.username,
+			user: user.username,
 			id: reply.id,
 		}
 		reply["likeCount"] = await roQuery(

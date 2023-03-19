@@ -34,14 +34,14 @@ export async function load({ url, locals, params }) {
 		const { session, user } = await authorise(locals.validateUser)
 
 		if (
-			user?.number != getPlace.ownerUser?.number &&
+			user.number != getPlace.ownerUser?.number &&
 			getPlace.privateServer &&
 			privateServerCode != getPlace.privateTicket
 		)
 			throw error(404, "Not Found")
 
 		const query = {
-			user: user?.username || "",
+			user: user.username,
 			id,
 		}
 

@@ -40,7 +40,7 @@ export const load = async ({ params }) => {
 	})
 	if (user) {
 		const query = {
-			user: user?.username,
+			user: user.username,
 		}
 
 		async function Users() {
@@ -75,7 +75,5 @@ export const load = async ({ params }) => {
 			users: Users(),
 			number: roQuery("friends", numberQueries[type], query, true),
 		}
-	} else {
-		throw error(404, `Not found`)
-	}
+	} else throw error(404, `Not found`)
 }

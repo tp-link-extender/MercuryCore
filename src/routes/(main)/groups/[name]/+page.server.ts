@@ -29,7 +29,7 @@ export async function load({ locals, params }) {
 		}
 
 		const query2 = {
-			user: user?.username,
+			user: user.username,
 			group: group.name,
 		}
 
@@ -57,9 +57,7 @@ export async function load({ locals, params }) {
 				query2
 			),
 		}
-	} else {
-		throw error(404, "Not found")
-	}
+	} else throw error(404, "Not found")
 }
 
 export const actions = {

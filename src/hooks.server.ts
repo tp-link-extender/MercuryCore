@@ -51,7 +51,7 @@ export const handle = sequence(
 		) {
 			await prisma.user.update({
 				where: {
-					id: user?.userId,
+					id: user.userId,
 				},
 				data: {
 					currencyCollected: new Date(),
