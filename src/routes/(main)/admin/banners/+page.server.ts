@@ -64,7 +64,7 @@ export const actions = {
 						textLight: bannerTextLight,
 						user: {
 							connect: {
-								id: user.userId,
+								id: user.id,
 							},
 						},
 					},

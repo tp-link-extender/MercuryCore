@@ -196,7 +196,7 @@ export const actions = {
 
 		const userModeration = await prisma.moderationAction.findMany({
 			where: {
-				moderateeId: user.userId,
+				moderateeId: user.id,
 				active: true,
 			},
 		})
@@ -206,7 +206,7 @@ export const actions = {
 
 		await prisma.gameSessions.updateMany({
 			// invalidate all game sessions
-			where: { userId: user.userId },
+			where: { userId: user.id },
 			data: { valid: false },
 		})
 
@@ -220,7 +220,7 @@ export const actions = {
 				},
 				user: {
 					connect: {
-						id: user.userId,
+						id: user.id,
 					},
 				},
 			},
