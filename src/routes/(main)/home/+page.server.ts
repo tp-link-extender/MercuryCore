@@ -1,12 +1,13 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 import { fail } from "@sveltejs/kit"
 
 export async function load({ locals }) {
 	console.time("home")
-	const user = (await authoriseUser(locals.validateUser)).user
+	const { user } = await authorise(locals.validateUser)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users,
 	// but sometimes errors for this page.
 
@@ -74,10 +75,10 @@ export const actions = {
 		const limit = ratelimit("statusPost", getClientAddress, 30)
 		if (limit) return limit
 
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
-		const data = await request.formData()
-		const status = (data.get("status") as string).trim()
+		const data = await formData(request)
+		const status = data.status
 		if (!status) return fail(400, { msg: "Invalid status" })
 
 		await prisma.post.create({

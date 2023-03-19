@@ -1,10 +1,11 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 import { fail, error } from "@sveltejs/kit"
 import type { ReportCategory } from "@prisma/client"
 
-export async function load({ url, locals }) {
+export async function load({ url }) {
 	const reportedUser = url.searchParams.get("user")
 	const reportedUrl = url.searchParams.get("url")
 
@@ -19,13 +20,13 @@ export async function load({ url, locals }) {
 
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
-		// ratelimit("report", getClientAddress, 120)
-		const { user } = await authoriseUser(locals.validateUser)
-		const data = await request.formData()
+		ratelimit("report", getClientAddress, 120)
+		const { user } = await authorise(locals.validateUser)
+		const data = await formData(request)
 		const reportUser = url.searchParams.get("user")
 		const reportUrl = url.searchParams.get("url")
-		const category = (data.get("category") as string).trim()
-		const note = (data.get("note") as string).trim() || null
+		const category = data.category
+		const note = data.note || null
 
 		if (!reportUser || !reportUrl || !category)
 			return fail(400, { msg: "Missing fields" })

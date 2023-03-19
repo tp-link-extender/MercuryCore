@@ -1,4 +1,4 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
@@ -23,7 +23,9 @@ export async function load({ url, locals, params }) {
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.include.replies = JSON.parse(JSON.stringify(selectReplies))
+		selectReplies.include.replies = JSON.parse(
+			JSON.stringify(selectReplies)
+		)
 
 	const forumReplies = await prisma.forumReply.findUnique({
 		where: {
@@ -34,7 +36,7 @@ export async function load({ url, locals, params }) {
 
 	if (!forumReplies) throw error(404, "Reply not found")
 
-	const { user } = await authoriseUser(locals.validateUser)
+	const { user } = await authorise(locals.validateUser)
 
 	async function addLikes(reply: any) {
 		const query = {

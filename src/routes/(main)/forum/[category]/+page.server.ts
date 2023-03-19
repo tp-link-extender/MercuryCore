@@ -1,6 +1,7 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
+import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
@@ -25,7 +26,7 @@ export async function load({ locals, params }) {
 
 	if (!category) throw error(404, "Not found")
 
-	const { user } = await authoriseUser(locals.validateUser)
+	const { user } = await authorise(locals.validateUser)
 
 	for (let post of category.posts as any) {
 		post["likeCount"] = await roQuery(
@@ -74,11 +75,11 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	like: async ({ request, locals }) => {
-		const { user } = await authoriseUser(locals.validateUser)
-		const data = await request.formData()
-		const action = data.get("action") as string
-		const id = data.get("id") as string
-		const replyId = data.get("replyId") as string
+		const { user } = await authorise(locals.validateUser)
+		const data = await formData(request)
+		const action = data.action
+		const id = data.id
+		const replyId = data.replyId
 
 		if (
 			(id &&

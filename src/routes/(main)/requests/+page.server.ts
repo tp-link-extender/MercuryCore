@@ -1,10 +1,11 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
+import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
-	const user = (await authoriseUser(locals.validateUser)).user
+	const { user } = await authorise(locals.validateUser)
 
 	console.time("requests")
 
@@ -60,10 +61,10 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
-		const data = await request.formData()
-		const action = (data.get("action") as string).split(" ")
+		const data = await formData(request)
+		const action = data.action.split(" ")
 
 		const user2 = await prisma.user.findUnique({
 			where: {

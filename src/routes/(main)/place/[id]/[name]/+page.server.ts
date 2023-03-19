@@ -1,6 +1,7 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
+import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ url, locals, params }) {
@@ -30,7 +31,7 @@ export async function load({ url, locals, params }) {
 
 	console.timeEnd("place")
 	if (getPlace) {
-		const { session, user } = await authoriseUser(locals.validateUser)
+		const { session, user } = await authorise(locals.validateUser)
 
 		if (
 			user?.number != getPlace.ownerUser?.number &&
@@ -82,10 +83,10 @@ export const actions = {
 			throw error(400, `Invalid place id: ${params.id}`)
 		const id = parseInt(params.id)
 
-		const user = (await authoriseUser(locals.validateUser)).user
-		const data = await request.formData()
-		const action = data.get("action") as string
-		const privateTicket = data.get("privateTicket") as string
+		const { user } = await authorise(locals.validateUser)
+		const data = await formData(request)
+		const action = data.action
+		const privateTicket = data.privateTicket
 
 		const place = await prisma.place.findUnique({
 			where: {
@@ -172,12 +173,12 @@ export const actions = {
 		}
 	},
 	join: async ({ request, locals }) => {
-		const user = (await authoriseUser(locals.validateUser)).user
+		const { user } = await authorise(locals.validateUser)
 
-		const data = await request.formData()
+		const data = await formData(request)
 
-		const requestType = data.get("request")
-		const serverId = parseInt(data.get("serverId") as string)
+		const requestType = data.request
+		const serverId = parseInt(data.serverId)
 
 		if (!requestType || !serverId)
 			return fail(400, { message: "Invalid Request" })

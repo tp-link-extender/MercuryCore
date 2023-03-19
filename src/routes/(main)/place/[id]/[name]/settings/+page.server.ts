@@ -1,5 +1,6 @@
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
+import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 import { createId } from "@paralleldrive/cuid2"
 import { v4 as uuid } from "uuid"
@@ -21,7 +22,7 @@ export async function load({ locals, params }) {
 
 	if (!getPlace) throw error(404, "Not found")
 
-	const { user } = await authoriseUser(locals.validateUser)
+	const { user } = await authorise(locals.validateUser)
 
 	if (user.number != getPlace.ownerUser?.number && user.permissionLevel < 4)
 		throw error(401, "You do not have permission to view this page.")
@@ -34,7 +35,7 @@ export const actions = {
 		if (!/^\d+$/.test(params.id || ""))
 			throw error(400, `Invalid game id: ${params.id}`)
 		const id = parseInt(params.id || "")
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 
 		const getPlace = await prisma.place.findUnique({
 			where: {
@@ -48,15 +49,15 @@ export const actions = {
 		if (user.userId != getPlace?.ownerUser?.id && user.permissionLevel < 4)
 			throw error(401, "You do not have permission to update this page.")
 
-		const data = await request.formData()
-		const action = data.get("action") as string
+		const data = await formData(request)
+		const action = data.action
 
 		console.log("Action:", action)
 
 		switch (action) {
 			case "view":
-				const title = data.get("title") as string
-				const description = data.get("desc") as string
+				const title = data.title
+				const description = data.desc
 
 				if (
 					title == getPlace?.name &&
@@ -102,9 +103,9 @@ export const actions = {
 				}
 
 			case "network":
-				const serverIP = data.get("address") as string
-				const serverPort = parseInt(data.get("port") as string)
-				const maxPlayers = parseInt(data.get("serverLimit") as string)
+				const serverIP = data.address
+				const serverPort = parseInt(data.port)
+				const maxPlayers = parseInt(data.serverLimit)
 
 				if (
 					serverIP == getPlace?.serverIP &&
@@ -166,7 +167,7 @@ export const actions = {
 				}
 
 			case "privacy":
-				const privateServer = !!data.get("privacy")
+				const privateServer = !!data.privacy
 
 				if (privateServer == getPlace?.privateServer) return fail(400)
 
