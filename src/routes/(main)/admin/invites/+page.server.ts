@@ -1,4 +1,4 @@
-import { authoriseAdmin, authoriseUser } from "$lib/server/lucia"
+import { authoriseAdmin, authorise } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
@@ -25,7 +25,7 @@ export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
 		await authoriseAdmin(locals)
 
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 
 		const data = await formData(request)
 		const action = data.action

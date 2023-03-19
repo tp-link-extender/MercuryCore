@@ -1,5 +1,5 @@
 import { fail } from "@sveltejs/kit"
-import { authoriseUser } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import formData from "$lib/server/formData"
 
@@ -220,7 +220,7 @@ function hexToBrick(hex: string) {
 
 export const actions = {
 	paint: async ({ request, locals }) => {
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 		const data = await formData(request)
 
 		const bodyPart = data.bodyPart

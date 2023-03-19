@@ -46,13 +46,7 @@ export const auth = lucia({
 
 export type Auth = typeof auth
 
-export async function authorise(promise: () => Promise<Session | null>) {
-	const session = await promise()
-	if (!session) throw redirect(302, "/login")
-	return session
-}
-
-export async function authoriseUser(
+export async function authorise(
 	promise: () => Promise<
 		| {
 				session: Session

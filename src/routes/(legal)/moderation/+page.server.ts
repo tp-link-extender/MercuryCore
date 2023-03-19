@@ -1,11 +1,11 @@
-import { auth, authoriseUser } from "$lib/server/lucia"
+import { auth, authorise } from "$lib/server/lucia"
 import { client } from "$lib/server/redis"
 import { fail, error, redirect } from "@sveltejs/kit"
 import { prisma } from "$lib/server/prisma"
 
 // Make sure a user has been moderated before loading the page.
 export async function load({ locals }) {
-	const { user } = await authoriseUser(locals.validateUser)
+	const { user } = await authorise(locals.validateUser)
 
 	const userModeration = await prisma.moderationAction.findMany({
 		where: {
@@ -25,7 +25,7 @@ export async function load({ locals }) {
 
 export const actions = {
 	default: async ({ locals }) => {
-		const { user } = await authoriseUser(locals.validateUser)
+		const { user } = await authorise(locals.validateUser)
 
 		const userModeration = await prisma.moderationAction.findMany({
 			where: {
