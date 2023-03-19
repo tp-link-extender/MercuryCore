@@ -21,15 +21,53 @@ const graphs: any = {
 	forum: new Graph(client, "forum"), // Stores forum post and reply likes and dislikes
 }
 
-export async function Query(graph: string, query: any, params: any) {
+/**
+ * A writable RedisGraph query.
+ * @param graph The name of the graph to query, eg. friends, groups, etc.
+ * @param query A query to execute, in Cypher.
+ * @param params Parameters to pass to the query.
+ * @returns the result of the query.
+ * @example
+ *	await Query(
+ *		"places",
+ *		`
+ *			MERGE (u:User { name: $user })
+ *			MERGE (p:Place { name: $id })
+ *			MERGE (u) -[:likes]-> (p)
+ *		`,
+ *		query
+ *	)
+ */
+export async function Query(
+	graph: string,
+	query: string,
+	params: { [k: string]: string | number }
+) {
 	await graphs[graph].query(query, { params })
 }
 
-// Read-only query, cannot modify the graph
+/**
+ * A read-only query, cannot modify the graph.
+ * @param graph The name of the graph to query, eg. friends, groups, etc.
+ * @param query A query to execute, in Cypher.
+ * @param params Parameters to pass to the query.
+ * @param res Whether to immediately extract the result from the query. Useful when doing "RETURN {query}" rather than returning a variable from a previous statement.
+ * @param arr Whether to return an array of results, otherwise returns the first result.
+ * @returns the result of the query.
+ * @example
+ *	friendCount: roQuery(
+ *		"friends",
+ *		"RETURN SIZE((:User) -[:friends]- (:User { name: $user }))",
+ *		{
+ *			user: "Heliodex",
+ *		},
+ *		true
+ *	),
+ */
 export async function roQuery(
 	graph: string,
 	query: string,
-	params: any,
+	params: { [k: string]: string | number },
 	res = false,
 	arr = false
 ) {
