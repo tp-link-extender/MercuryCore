@@ -1,11 +1,12 @@
 import { auth } from "$lib/server/lucia"
+import formData from "$lib/server/formData"
 import { redirect, fail } from "@sveltejs/kit"
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const data = await request.formData()
-		const username = (data.get("username") as string).trim()
-		const password = (data.get("password") as string).trim()
+		const data = await formData(request)
+		const username = data.username
+		const password = data.password
 
 		if (username.length < 3)
 			return fail(400, {

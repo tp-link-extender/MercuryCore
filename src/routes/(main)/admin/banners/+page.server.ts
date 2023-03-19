@@ -2,6 +2,7 @@ import { authoriseAdmin, authoriseUser } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import { prisma } from "$lib/server/prisma"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 
 // Make sure a user is an administrator before loading the page.
 export async function load({ locals }) {
@@ -10,7 +11,7 @@ export async function load({ locals }) {
 	return {
 		banners: prisma.announcements.findMany({
 			include: {
-				user: true
+				user: true,
 			},
 			orderBy: {
 				id: "asc",
@@ -25,9 +26,9 @@ export const actions = {
 
 		const { user } = await authoriseUser(locals.validateUser)
 
-		const data = await request.formData()
-		const action = data.get("action") as string
-		const bannerId = data.get("id") as string
+		const data = await formData(request)
+		const action = data.action
+		const bannerId = data.id
 
 		const bannerActiveCount = await prisma.announcements.findMany({
 			where: { active: true },
@@ -38,9 +39,9 @@ export const actions = {
 				const limit = ratelimit("createBanner", getClientAddress, 30)
 				if (limit) return limit
 
-				const bannerText = data.get("bannerText") as string
-				const bannerColour = data.get("bannerColour") as string
-				const bannerTextLight = !!data.get("bannerTextLight")
+				const bannerText = data.bannerText
+				const bannerColour = data.bannerColour
+				const bannerTextLight = !!data.bannerTextLight
 
 				if (!bannerColour || !bannerText)
 					return fail(400, { area: "create", msg: "Missing fields" })
@@ -98,7 +99,7 @@ export const actions = {
 				})
 				return
 			case "updateBody":
-				const bannerBody = data.get("bannerBody") as string
+				const bannerBody = data.bannerBody
 
 				if (!bannerBody || !bannerId)
 					return fail(400, { area: "modal", msg: "Missing fields" })

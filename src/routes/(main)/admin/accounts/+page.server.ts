@@ -1,6 +1,7 @@
 import { auth, authoriseAdmin } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 
 // Make sure a user is an administrator before loading the page.
 export async function load({ locals }) {
@@ -14,9 +15,9 @@ export const actions = {
 		const limit = ratelimit("resetPassword", getClientAddress, 30)
 		if (limit) return limit
 
-		const data = await request.formData()
-		const username = (data.get("username") as string).trim()
-		const password = (data.get("password") as string).trim()
+		const data = await formData(request)
+		const username = data.username
+		const password = data.password
 
 		if (!username || !password) return fail(400, { msg: "Missing fields" })
 

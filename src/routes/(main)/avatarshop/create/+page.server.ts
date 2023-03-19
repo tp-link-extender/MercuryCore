@@ -1,6 +1,7 @@
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import id, { rollback } from "$lib/server/id"
+import formData from "$lib/server/formData"
 import type { ItemCategory } from "@prisma/client"
 import { fail, redirect } from "@sveltejs/kit"
 
@@ -8,10 +9,10 @@ export const actions = {
 	default: async ({ locals, request }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
 
-		const data = await request.formData()
-		const name = (data.get("name") as string).trim()
-		const price = Number(data.get("price"))
-		const category = (data.get("category") as string).trim()
+		const data = await formData(request)
+		const name = data.name
+		const price = Number(data.price)
+		const category = data.category
 
 		if (!name || !category) return fail(400, { msg: "Missing fields" })
 		if (

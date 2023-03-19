@@ -1,6 +1,7 @@
 import { authoriseMod, authoriseUser } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 import { prisma } from "$lib/server/prisma"
 import type { ModerationActionType } from "@prisma/client"
 
@@ -18,16 +19,14 @@ export const actions = {
 		const limit = ratelimit("moderateUser", getClientAddress, 30)
 		if (limit) return limit
 
-		const data = await request.formData()
-		const username = (data.get("username") as string).trim()
-		const action = parseInt(data.get("action") as string)
-		const banDate = new Date(data.get("banDate") as string)
-		const reason = (data.get("reason") as string).trim()
+		const data = await formData(request)
+		const username = data.username
+		const action = parseInt(data.action)
+		const banDate = new Date(data.banDate)
+		const reason = data.reason
 
-		if (!username || !action)
-			return fail(400, { msg: "Missing fields" })
-		if (action != 5 && !reason)
-			return fail(400, { msg: "Missing fields" })
+		if (!username || !action) return fail(400, { msg: "Missing fields" })
+		if (action != 5 && !reason) return fail(400, { msg: "Missing fields" })
 		if (action == 2 && !banDate) return fail(400, { msg: "Missing fields" })
 		if (reason.length < 15 && reason.length > 150)
 			return fail(400, { msg: "Reason is too long/short" })
@@ -41,8 +40,7 @@ export const actions = {
 			},
 		})
 
-		if (!getModeratee)
-			return fail(400, { msg: "User does not exist" })
+		if (!getModeratee) return fail(400, { msg: "User does not exist" })
 
 		if (getModeratee.permissionLevel > 2)
 			return fail(400, {

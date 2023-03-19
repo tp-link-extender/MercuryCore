@@ -2,6 +2,7 @@ import { authoriseUser } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import ratelimit from "$lib/server/ratelimit"
+import formData from "$lib/server/formData"
 import { fail } from "@sveltejs/kit"
 
 export async function load({ locals }) {
@@ -76,8 +77,8 @@ export const actions = {
 
 		const user = (await authoriseUser(locals.validateUser)).user
 
-		const data = await request.formData()
-		const status = (data.get("status") as string).trim()
+		const data = await formData(request)
+		const status = data.status
 		if (!status) return fail(400, { msg: "Invalid status" })
 
 		await prisma.post.create({

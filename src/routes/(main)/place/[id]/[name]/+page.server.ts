@@ -1,6 +1,7 @@
 import { authoriseUser } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
+import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ url, locals, params }) {
@@ -83,9 +84,9 @@ export const actions = {
 		const id = parseInt(params.id)
 
 		const user = (await authoriseUser(locals.validateUser)).user
-		const data = await request.formData()
-		const action = data.get("action") as string
-		const privateTicket = data.get("privateTicket") as string
+		const data = await formData(request)
+		const action = data.action
+		const privateTicket = data.privateTicket
 
 		const place = await prisma.place.findUnique({
 			where: {
@@ -174,10 +175,10 @@ export const actions = {
 	join: async ({ request, locals }) => {
 		const user = (await authoriseUser(locals.validateUser)).user
 
-		const data = await request.formData()
+		const data = await formData(request)
 
-		const requestType = data.get("request")
-		const serverId = parseInt(data.get("serverId") as string)
+		const requestType = data.request
+		const serverId = parseInt(data.serverId)
 
 		if (!requestType || !serverId)
 			return fail(400, { message: "Invalid Request" })
