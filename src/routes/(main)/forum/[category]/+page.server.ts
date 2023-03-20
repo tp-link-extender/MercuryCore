@@ -49,7 +49,7 @@ export async function load({ locals, params }) {
 			"forum",
 			"MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id }) RETURN r",
 			{
-				user: user?.username,
+				user: user.username,
 				id: post.id,
 			}
 		)
@@ -57,7 +57,7 @@ export async function load({ locals, params }) {
 			"forum",
 			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id }) RETURN r",
 			{
-				user: user?.username,
+				user: user.username,
 				id: post.id,
 			}
 		)

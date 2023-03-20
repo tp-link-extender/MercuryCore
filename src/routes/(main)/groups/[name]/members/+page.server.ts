@@ -56,7 +56,5 @@ export const load = async ({ params }) => {
 				true
 			),
 		}
-	} else {
-		throw error(404, `Not found`)
-	}
+	} else throw error(404, `Not found`)
 }

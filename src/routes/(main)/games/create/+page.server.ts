@@ -42,7 +42,7 @@ export const actions = {
 
 		const gameCount = await prisma.user.findUnique({
 			where: {
-				id: user.userId,
+				id: user.id,
 			},
 			select: {
 				_count: true,
@@ -71,7 +71,7 @@ export const actions = {
 				})
 
 				await transaction(
-					{ id: user.userId },
+					{ id: user.id },
 					{ number: 1 },
 					10,
 					{

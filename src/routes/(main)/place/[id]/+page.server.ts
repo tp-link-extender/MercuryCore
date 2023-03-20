@@ -18,8 +18,7 @@ export async function load({ locals, params }) {
 	if (!place) throw error(404, "Not found")
 	if (
 		!place.privateServer ||
-		(await authorise(locals.validateUser)).user.userId ==
-			place.ownerUser?.id
+		(await authorise(locals.validateUser)).user.id == place.ownerUser?.id
 	)
 		throw redirect(302, `/place/${params.id}/${place.name}`)
 

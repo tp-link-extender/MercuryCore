@@ -4,19 +4,20 @@ import { Query, roQuery } from "$lib/server/redis"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
-export async function load({ locals, params }) {
+export async function load({ locals }) {
 	const { user } = await authorise(locals.validateUser)
 
 	console.time("requests")
 
 	const userExists = await prisma.user.findUnique({
 		where: {
-			number: user?.number,
+			number: user.number,
 		},
 	})
+	if (!userExists) throw error(401)
 
 	const query = {
-		user: userExists?.username,
+		user: userExists.username,
 	}
 
 	async function Users() {

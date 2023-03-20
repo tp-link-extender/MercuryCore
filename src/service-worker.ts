@@ -21,9 +21,8 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
 	event.waitUntil(
 		caches.keys().then(async keys => {
-			for (const key of keys) {
+			for (const key of keys)
 				if (key !== cacheId) await caches.delete(key)
-			}
 
 			self.clients.claim()
 		})
@@ -44,7 +43,7 @@ self.addEventListener('fetch', (event) => {
 		isUncached 
 	} = checks(event)
 
-	if (isHttp && isLocal && !isUncached) {
+	if (isHttp && isLocal && !isUncached)
 		event.respondWith(
 			(async () => {
 				const cachedAsset =
@@ -54,7 +53,7 @@ self.addEventListener('fetch', (event) => {
 				return cachedAsset || fetchAndCache(event.request)
 			})()
 		)
-	}
+	
 })
 
 function checks(event) {

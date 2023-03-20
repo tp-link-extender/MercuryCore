@@ -13,9 +13,7 @@ export async function GET({ url }) {
 		joinMethod = "Studio"
 		isStudioJoin = true
 		throw error(400, "Invalid Request")
-	} else {
-		joinMethod = "Ticket"
-	}
+	} else joinMethod = "Ticket"
 
 	let serverAddress = "localhost"
 	let serverPort = 53640
