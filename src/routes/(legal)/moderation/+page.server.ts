@@ -1,5 +1,4 @@
-import { auth, authorise } from "$lib/server/lucia"
-import { client } from "$lib/server/redis"
+import { authorise } from "$lib/server/lucia"
 import { fail, error, redirect } from "@sveltejs/kit"
 import { prisma } from "$lib/server/prisma"
 
@@ -9,7 +8,7 @@ export async function load({ locals }) {
 
 	const userModeration = await prisma.moderationAction.findMany({
 		where: {
-			moderateeId: user.userId,
+			moderateeId: user.id,
 			active: true,
 		},
 	})
@@ -29,7 +28,7 @@ export const actions = {
 
 		const userModeration = await prisma.moderationAction.findMany({
 			where: {
-				moderateeId: user.userId,
+				moderateeId: user.id,
 				active: true,
 			},
 		})
@@ -50,7 +49,7 @@ export const actions = {
 
 		await prisma.moderationAction.updateMany({
 			where: {
-				moderateeId: user.userId,
+				moderateeId: user.id,
 				active: true,
 			},
 			data: {

@@ -13,7 +13,7 @@ client.on("error", e => {
 })
 await client.connect()
 
-const graphs: any = {
+const graphs = {
 	friends: new Graph(client, "friends"), // Stores follows, friends, requests, etc
 	groups: new Graph(client, "groups"), // Stores groups, members, etc
 	places: new Graph(client, "places"), // Stores likes and dislikes on places
@@ -35,16 +35,17 @@ const graphs: any = {
  *			MERGE (p:Place { name: $id })
  *			MERGE (u) -[:likes]-> (p)
  *		`,
- *		query
+ *		{
+ *			user: "Heliodex",
+ *			id: "1",
+ *		}
  *	)
  */
-export async function Query(
-	graph: string,
+export const Query = (
+	graph: keyof typeof graphs,
 	query: string,
 	params: { [k: string]: string | number }
-) {
-	await graphs[graph].query(query, { params })
-}
+) => graphs[graph].query(query, { params })
 
 /**
  * A read-only query, cannot modify the graph.
@@ -65,7 +66,7 @@ export async function Query(
  *	),
  */
 export async function roQuery(
-	graph: string,
+	graph: keyof typeof graphs,
 	query: string,
 	params: { [k: string]: string | number },
 	res = false,

@@ -56,7 +56,7 @@ export const actions = {
 
 		await prisma.report.create({
 			data: {
-				reporterId: user.userId,
+				reporterId: user.id,
 				reporteeId: reportee.id,
 				note,
 				url: reportUrl,

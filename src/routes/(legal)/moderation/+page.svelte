@@ -19,20 +19,17 @@
 
 		if (diffInMilliseconds < 0) return "0 minute(s)"
 
-		if (diffInDays >= 1) {
-			return diffInDays + " day(s)"
-		} else {
+		if (diffInDays >= 1) return diffInDays + " day(s)"
+		else {
 			const diffInHours = Math.floor(
 				diffInMilliseconds / (60 * 60 * 1000)
 			)
 			const diffInMinutes = Math.floor(
 				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000)
 			)
-			if (diffInHours >= 1) {
+			if (diffInHours >= 1)
 				return diffInHours + " hour(s) " + diffInMinutes + " minute(s)"
-			} else {
-				return diffInMinutes + " minute(s)"
-			}
+			else return diffInMinutes + " minute(s)"
 		}
 	}
 </script>

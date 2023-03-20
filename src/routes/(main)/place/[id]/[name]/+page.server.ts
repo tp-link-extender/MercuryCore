@@ -34,14 +34,14 @@ export async function load({ url, locals, params }) {
 		const { session, user } = await authorise(locals.validateUser)
 
 		if (
-			user?.number != getPlace.ownerUser?.number &&
+			user.number != getPlace.ownerUser?.number &&
 			getPlace.privateServer &&
 			privateServerCode != getPlace.privateTicket
 		)
 			throw error(404, "Not Found")
 
 		const query = {
-			user: user?.username || "",
+			user: user.username,
 			id,
 		}
 
@@ -196,7 +196,7 @@ export const actions = {
 
 		const userModeration = await prisma.moderationAction.findMany({
 			where: {
-				moderateeId: user.userId,
+				moderateeId: user.id,
 				active: true,
 			},
 		})
@@ -206,7 +206,7 @@ export const actions = {
 
 		await prisma.gameSessions.updateMany({
 			// invalidate all game sessions
-			where: { userId: user.userId },
+			where: { userId: user.id },
 			data: { valid: false },
 		})
 
@@ -220,7 +220,7 @@ export const actions = {
 				},
 				user: {
 					connect: {
-						id: user.userId,
+						id: user.id,
 					},
 				},
 			},

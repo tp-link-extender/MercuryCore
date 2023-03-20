@@ -81,7 +81,7 @@ export const actions = {
 						expiry: inviteExpiryEnabled ? inviteExpiry : null,
 						creator: {
 							connect: {
-								id: user.userId,
+								id: user.id,
 							},
 						},
 					},

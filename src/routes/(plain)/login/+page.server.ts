@@ -39,7 +39,7 @@ export const actions = {
 				username.toLowerCase(),
 				password
 			)
-			session = await auth.createSession(user.userId)
+			session = await auth.createSession(user.id)
 		} catch {
 			return fail(400, {
 				area: "password",

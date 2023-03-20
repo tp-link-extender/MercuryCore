@@ -27,7 +27,7 @@ export async function load({ locals, params }) {
 		const { user } = await authorise(locals.validateUser)
 
 		const query = {
-			user1: user?.username || "",
+			user1: user.username,
 			user2: userExists.username,
 		}
 		const query2 = {
@@ -115,9 +115,7 @@ export async function load({ locals, params }) {
 				query
 			),
 		}
-	} else {
-		throw error(404, "Not found")
-	}
+	} else throw error(404, "Not found")
 }
 
 export const actions = {
@@ -133,6 +131,7 @@ export const actions = {
 				number,
 			},
 		})
+		if (!userExists) return fail(401)
 
 		const data = await formData(request)
 		const action = data.action
@@ -146,7 +145,7 @@ export const actions = {
 
 		const query = {
 			user1: user.username,
-			user2: userExists?.username,
+			user2: userExists.username,
 		}
 
 		console.log("Action:", action)

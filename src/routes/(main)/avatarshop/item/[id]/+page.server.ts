@@ -25,7 +25,7 @@ export async function load({ locals, params }) {
 		select: {
 			owners: {
 				where: {
-					id: user?.userId,
+					id: user.id,
 				},
 			},
 		},
@@ -35,7 +35,7 @@ export async function load({ locals, params }) {
 
 	if (item) {
 		const query = {
-			user: user?.username,
+			user: user.username,
 			itemid: params.id,
 		}
 		return {
@@ -105,7 +105,7 @@ export const actions = {
 						creator: true,
 						owners: {
 							where: {
-								id: user?.userId,
+								id: user.id,
 							},
 						},
 					},
@@ -117,7 +117,7 @@ export const actions = {
 				if (item.price != 0)
 					try {
 						await transaction(
-							{ id: user.userId },
+							{ id: user.id },
 							{ id: item.creator.id },
 							item.price,
 							{
@@ -132,7 +132,7 @@ export const actions = {
 
 				await prisma.user.update({
 					where: {
-						id: user.userId,
+						id: user.id,
 					},
 					data: {
 						itemsOwned: {
@@ -153,7 +153,7 @@ export const actions = {
 					include: {
 						owners: {
 							where: {
-								id: user?.userId,
+								id: user.id,
 							},
 						},
 					},
@@ -164,7 +164,7 @@ export const actions = {
 
 				await prisma.user.update({
 					where: {
-						id: user.userId,
+						id: user.id,
 					},
 					data: {
 						itemsOwned: {

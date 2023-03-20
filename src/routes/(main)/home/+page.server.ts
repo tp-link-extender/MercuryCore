@@ -19,7 +19,7 @@ export async function load({ locals }) {
 				RETURN u.name as name
 			`,
 			{
-				user: user?.username,
+				user: user.username,
 			},
 			false,
 			true

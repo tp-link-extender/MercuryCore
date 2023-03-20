@@ -38,9 +38,7 @@ export default function (
 		clearTimeout(existingTimeouts.get(id))
 		existingTimeouts.set(
 			id,
-			setTimeout(() => {
-				ratelimitRequests.delete(id)
-			}, timeWindow * 1000)
+			setTimeout(() => ratelimitRequests.delete(id), timeWindow * 1000)
 		)
 		ratelimitRequests.set(id, currentRequests)
 	}

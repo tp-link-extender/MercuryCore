@@ -36,7 +36,7 @@ export async function load({ locals, params }) {
 
 	async function addLikes(post: any, reply = false) {
 		const query = {
-			user: user?.username,
+			user: user.username,
 			id: post.id,
 		}
 		post["likeCount"] = await roQuery(
@@ -125,7 +125,7 @@ export const actions = {
 		await prisma.forumReply.create({
 			data: {
 				id: await id(),
-				authorId: user.userId,
+				authorId: user.id,
 				content,
 				...(replyId
 					? { parentReplyId: replyId }
