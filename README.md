@@ -3,10 +3,27 @@
 Contents:
 
 -   [Mercury website](#mercury-website)
+-   [Recommended development setup](#recommended-development-setup)
 -   [Editing the website](#editing-the-website)
 -   [Hosting the website](#hosting-the-website)
 -   [Mercury's stack](#mercurys-stack)
     -   [Route structure](#route-structure)
+
+# Recommended development setup
+
+We recommend using [Visual Studio Code](https://code.visualstudio.com) as your editor, as it has great support for TypeScript and allows for easier navigation of the codebase.
+
+The following extensions are recommended:
+
+-   [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
+-   [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
+-   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
+-   [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
+-   [NGINX Configuration](https://marketplace.visualstudio.com/items?itemName=william-voyek.vscode-nginx)
+-   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+-   [Prisma](https://marketplace.visualstudio.com/items?itemName=Prisma.prisma)
+-   [Sass (.sass only)](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented)
+-   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 
 # Editing the website
 
@@ -97,6 +114,6 @@ Actual pages for the site are stored in /src/routes. The structure for them migh
 
 See the [SvelteKit Routing docs](https://kit.svelte.dev/docs/routing) for more information.
 
-The markup for pages is enhanced with Svelte syntax, which adds extra features such as adding variables, reactivity, and logic blocks such as {#if} and {#each}.
+The markup for pages is enhanced with HTMLx templating, which adds extra features such as adding variables, reactivity, and logic blocks such as {#if} and {#each}.
 
 Take a look at the [Svelte docs](https://svelte.dev/docs), or the incredibly helpful [Svelte tutorial](https://learn.svelte.dev), for more information.
