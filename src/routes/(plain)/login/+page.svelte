@@ -67,7 +67,7 @@
 
 <div class="row">
 	<div id="dark" class="col light-text">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0">
+		<a type="button" href="/" class="btn btn-lg border-0 px-0 shadow-none">
 			<i class="fa fa-arrow-left me-2" />
 			Home
 		</a>
