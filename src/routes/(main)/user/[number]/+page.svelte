@@ -137,10 +137,10 @@
 	</div>
 	<div class="row">
 		<div class="col-6">
-			{#if data.bio}
+			{#if data.bio[0]}
 				<div class="mt-4 light-text">
 					<h2 class="h4 light-text">Bio</h2>
-					<p class="light-text ms-2">{data.bio}</p>
+					<p class="light-text ms-2">{data.bio[0].text}</p>
 				</div>
 			{/if}
 		</div>

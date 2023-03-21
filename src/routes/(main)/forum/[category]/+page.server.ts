@@ -17,6 +17,12 @@ export async function load({ locals, params }) {
 				posts: {
 					include: {
 						author: true,
+						content: {
+							orderBy: {
+								updated: "desc",
+							},
+							take: 1,
+						},
 						// _count: true,
 					},
 				},

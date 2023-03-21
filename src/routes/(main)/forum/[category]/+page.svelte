@@ -99,7 +99,7 @@
 				</div>
 				<div class="mb-0">
 					<div id="gradient" class="w-100 h-75" />
-					{post.content}
+					{post.content[0].text}
 				</div>
 			</a>
 		</div>
