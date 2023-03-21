@@ -4,6 +4,7 @@
 
 	const user = getUser()
 
+	export let data
 	export let form
 </script>
 
@@ -110,7 +111,7 @@
 								id="bio"
 								name="bio"
 								rows={3}
-								value={$user?.bio} />
+								value={data.bio?.[0]?.text || ""} />
 							<small class="grey-text pb-2">
 								Maximum 1000 characters, your bio will appear on
 								your profile and allow other users to know who
