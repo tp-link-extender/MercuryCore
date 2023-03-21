@@ -34,12 +34,12 @@ export const actions = {
 
 		let session
 		try {
-			const user: any = await auth.useKey(
+			const user = await auth.useKey(
 				"username",
 				username.toLowerCase(),
 				password
 			)
-			session = await auth.createSession(user.id)
+			session = await auth.createSession(user.userId)
 		} catch {
 			return fail(400, {
 				area: "password",
