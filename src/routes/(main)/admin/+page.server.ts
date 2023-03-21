@@ -6,5 +6,9 @@ import checkDiskSpace from "check-disk-space"
 export async function load({ locals }) {
 	await authoriseAllAdmin(locals)
 
-	return checkDiskSpace(os.homedir()) // because top level await doesnt work in svelte
+	return {
+		freemem: os.freemem(), // because cant do os on clientside
+		totalmem: os.totalmem(),
+		disk: checkDiskSpace(os.homedir()), // because top level await doesnt work in svelte
+	}
 }
