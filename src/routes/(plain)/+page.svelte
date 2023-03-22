@@ -15,6 +15,7 @@
 	<meta
 		name="description"
 		content="Mercury: Endless possibilities. New features. Same nostalgia." />
+	<meta property="og:image" content="/merc.gif" />
 	<title>Mercury - Mercury</title>
 </svelte:head>
 
