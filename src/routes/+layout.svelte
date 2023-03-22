@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page, navigating } from "$app/stores"
 	import { handleSession, getUser } from "@lucia-auth/sveltekit/client"
-	import {configure, start, done} from "nprogress"
-	
+	import nprogress from "nprogress"
+
 	import "/src/global.sass"
 	import "/src/bootstrap.scss"
 	import "/src/nprogress.sass"
@@ -17,12 +17,8 @@
 
 	// Settings for nprogress, the loading bar shown
 	// at the top of the page when navigating
-	configure({ showSpinner: false })
-	$: {
-		if ($navigating) {
-			start()
-		} else done()
-	}
+	nprogress.configure({ showSpinner: false })
+	$: $navigating ? nprogress.start() : nprogress.done()
 </script>
 
 <svelte:head>
