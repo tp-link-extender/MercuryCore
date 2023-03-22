@@ -126,7 +126,7 @@
 								name="desc"
 								rows={3}
 								value={form?.description?.toString() ||
-									data.description} />
+									data.description[0]?.text || ""} />
 						</div>
 					</div>
 				</fieldset>

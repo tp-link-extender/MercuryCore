@@ -16,6 +16,12 @@ export async function load({ url, locals, params }) {
 		where: { id },
 		include: {
 			ownerUser: true,
+			description: {
+				orderBy: {
+					updated: "desc",
+				},
+				take: 1,
+			},
 			GameSessions: {
 				where: {
 					ping: {
