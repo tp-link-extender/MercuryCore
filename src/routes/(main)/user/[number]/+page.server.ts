@@ -46,7 +46,7 @@ export async function load({ locals, params }) {
 			places: findPlaces({
 				where: {
 					ownerUsername: userExists.username,
-					privateServer: false,
+					privateServer: user.username = userExists.username ? true : false,
 				},
 				include: {
 					GameSessions: {
