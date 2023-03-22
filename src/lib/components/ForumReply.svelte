@@ -98,7 +98,7 @@
 							</small>
 						</a>
 						<p class="my-2">
-							{reply.content}
+							{reply.content[0].text}
 						</p>
 						{#if $replyingTo != reply.id}
 							<form

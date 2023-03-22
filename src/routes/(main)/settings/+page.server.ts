@@ -4,32 +4,56 @@ import { auth } from "$lib/server/lucia"
 import formData from "$lib/server/formData"
 import { fail } from "@sveltejs/kit"
 
+export const load = async ({ locals }) => {
+	const { user } = await authorise(locals.validateUser)
+
+	const getUser = await prisma.user.findUnique({
+		where: {
+			id: user.id,
+		},
+		select: {
+			bio: {
+				orderBy: {
+					updated: "desc",
+				},
+				take: 1,
+			},
+		},
+	})
+
+	
+	return {
+		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
+	}
+}
+
 export const actions = {
 	profile: async ({ request, locals }) => {
 		const { user } = await authorise(locals.validateUser)
 		const data = await formData(request)
 
-		const entries: any = Object.fromEntries(data.entries())
-
 		let same
-		for (let i in entries)
-			if (entries[i] != (user as any)[i]) {
+		for (let i in data)
+			if (data[i] != (user as any)[i]) {
 				same = false
 				break
 			}
 		if (same) return fail(400)
 
-		if (!["standard", "darken", "storm", "solar"].includes(entries.theme))
+		if (!["standard", "darken", "storm", "solar"].includes(data.theme))
 			return fail(400, { area: "theme", msg: "Invalid theme" })
-		// if (!["on", "off"].includes(entries.animation)) return fail(400, { area: "theme", msg: "Invalid animation settings" })
 
 		await prisma.user.update({
 			where: {
 				number: user.number,
 			},
 			data: {
-				bio: entries.bio || "",
-				theme: entries.theme,
+				bio: {
+					create: {
+						text: data.bio,
+					},
+				},
+				theme: data.theme,
 			},
 		})
 
@@ -41,9 +65,8 @@ export const actions = {
 	password: async ({ request, locals }) => {
 		const { user } = await authorise(locals.validateUser)
 		const data = await formData(request)
-		const entries: any = Object.fromEntries(data.entries())
 
-		if (entries.npassword != entries.cnpassword)
+		if (data.npassword != data.cnpassword)
 			return fail(400, {
 				area: "cnpassword",
 				msg: "Passwords do not match",
@@ -53,7 +76,7 @@ export const actions = {
 			await auth.useKey(
 				"username",
 				user.username.toLowerCase(),
-				entries.cpassword
+				data.cpassword
 			)
 		} catch {
 			return fail(400, {
@@ -65,7 +88,7 @@ export const actions = {
 		await auth.updateKeyPassword(
 			"username",
 			user.username.toLowerCase(),
-			entries.npassword
+			data.npassword
 		)
 
 		return {

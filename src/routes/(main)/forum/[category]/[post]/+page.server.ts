@@ -8,9 +8,15 @@ import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
 	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectReplies = {
+	const selectReplies: any = { // odd type errors in "replies: selectReplies" if not any
 		include: {
 			author: true,
+			content: {
+				orderBy: {
+					updated: "desc",
+				},
+				take: 1,
+			},
 			replies: {},
 		},
 	}
@@ -27,6 +33,12 @@ export async function load({ locals, params }) {
 			author: true,
 			forumCategory: true,
 			replies: selectReplies,
+			content: {
+				orderBy: {
+					updated: "desc",
+				},
+				take: 1,
+			},
 		},
 	})
 
@@ -126,7 +138,11 @@ export const actions = {
 			data: {
 				id: await id(),
 				authorId: user.id,
-				content,
+				content: {
+					create: {
+						text: content,
+					},
+				},
 				...(replyId
 					? { parentReplyId: replyId }
 					: { parentPostId: params.post }),

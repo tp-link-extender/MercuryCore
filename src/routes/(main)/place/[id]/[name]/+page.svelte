@@ -298,7 +298,7 @@
 			aria-labelledby="pills-desc-tab"
 			tabindex={0}>
 			<p class="light-text">
-				{data.description}
+				{data.description[0]?.text || ""}
 			</p>
 		</div>
 		<div

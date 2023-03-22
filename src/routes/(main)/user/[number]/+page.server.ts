@@ -21,6 +21,12 @@ export async function load({ locals, params }) {
 				},
 				take: 40,
 			},
+			bio: {
+				orderBy: {
+					updated: "desc",
+				},
+				take: 1,
+			},
 		},
 	})
 	if (userExists) {

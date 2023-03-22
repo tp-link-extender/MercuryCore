@@ -88,7 +88,7 @@
 				{data.title}
 			</h2>
 			<p>
-				{data.content}
+				{data.content[0].text}
 			</p>
 		</div>
 	</div>
