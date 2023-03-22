@@ -4,6 +4,7 @@
 
 	const user = getUser()
 
+	export let data
 	export let form
 </script>
 
