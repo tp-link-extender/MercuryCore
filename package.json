@@ -13,6 +13,7 @@
 	"devDependencies": {
 		"@sveltejs/kit": "^1.12.0",
 		"@sveltejs/vite-plugin-svelte": "^2.0.3",
+		"@types/nprogress": "^0.2.0",
 		"prettier": "^2.8.4",
 		"prettier-plugin-svelte": "^2.9.0",
 		"prisma": "^4.11.0",
@@ -45,6 +46,7 @@
 		"esbuild": "^0.17.11",
 		"lucia-auth": "^0.9.1",
 		"nanoid": "^4.0.1",
+		"nprogress": "^0.2.0",
 		"profane-words": "^1.5.5",
 		"redis": "^4.6.5",
 		"svelte-inview": "^4.0.0",
