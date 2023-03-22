@@ -14,6 +14,25 @@ datasource db {
     url      = env("POSTGRES_URL")
 }
 
+// Miscellaneous
+
+// A TextContent can be used for anything that needs an edit history.
+model TextContent {
+    id           String      @id @unique @default(cuid())
+    text         String
+    updated      DateTime    @default(now())
+    ForumPost    ForumPost?  @relation(fields: [forumPostId], references: [id])
+    forumPostId  String?
+    ForumReply   ForumReply? @relation(fields: [forumReplyId], references: [id])
+    forumReplyId String?
+    User         User?       @relation(fields: [userId], references: [id])
+    userId       String?
+    Place        Place?      @relation(fields: [placeId], references: [id])
+    placeId      Int?
+    Item         Item?       @relation(fields: [itemId], references: [id])
+    itemId       String?
+}
+
 // Users & Groups
 // ADMIN LEVELS:
 // 1: User
@@ -33,7 +52,7 @@ model User {
     regkeyKey            String
     createdRegkey        Regkey[]      @relation("creator")
     permissionLevel      Int           @default(1)
-    bio                  String?
+    bio                  TextContent[]
     image                String?
     created              DateTime      @default(now())
     lastOnline           DateTime      @default(now())
@@ -146,7 +165,7 @@ model Place {
     privateServer Boolean @default(false)
     privateTicket String  @unique @default(uuid())
 
-    description String
+    description TextContent[]
     image       String
 
     maxPlayers Int
@@ -178,13 +197,14 @@ enum ItemCategory {
 
 model Item {
     name        String
-    id          String       @id @unique
+    id          String        @id @unique
     price       Int
+    description TextContent[]
     category    ItemCategory
-    creator     User         @relation(fields: [creatorName], references: [username])
+    creator     User          @relation(fields: [creatorName], references: [username])
     creatorName String
-    owners      User[]       @relation("owns")
-    wearers     User[]       @relation("wears")
+    owners      User[]        @relation("owns")
+    wearers     User[]        @relation("wears")
     mesh        String
     texture     String
 }
@@ -211,23 +231,24 @@ model ForumCategory {
 }
 
 model ForumPost {
-    id                String        @id @unique
-    author            User          @relation(fields: [authorId], references: [id])
-    authorId          String
-    posted            DateTime      @default(now())
-    title             String
-    content           String
+    id       String        @id @unique
+    author   User          @relation(fields: [authorId], references: [id])
+    authorId String
+    posted   DateTime      @default(now())
+    title    String
+    content  TextContent[]
+
     forumCategory     ForumCategory @relation(fields: [forumCategoryName], references: [name])
     forumCategoryName String
     replies           ForumReply[]
 }
 
 model ForumReply {
-    id       String   @id @unique
-    author   User     @relation(fields: [authorId], references: [id])
+    id       String        @id @unique
+    author   User          @relation(fields: [authorId], references: [id])
     authorId String
-    posted   DateTime @default(now())
-    content  String
+    posted   DateTime      @default(now())
+    content  TextContent[]
 
     // A reply can be to a post or another reply
     parentPost    ForumPost?   @relation(fields: [parentPostId], references: [id])

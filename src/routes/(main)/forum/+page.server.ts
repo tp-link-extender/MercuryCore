@@ -11,6 +11,12 @@ export const load = async () => ({
 				take: 1,
 				include: {
 					author: true,
+					content: {
+						orderBy: {
+							updated: "desc",
+						},
+						take: 1,
+					},
 				},
 			},
 		},
