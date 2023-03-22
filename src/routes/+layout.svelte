@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { page, navigating } from "$app/stores"
-	import Loading from "$lib/components/Loading.svelte"
-	import { fade } from "svelte/transition"
 	import { handleSession, getUser } from "@lucia-auth/sveltekit/client"
-
+	import {configure, start, done} from "nprogress"
+	
 	import "/src/global.sass"
 	import "/src/bootstrap.scss"
+	import "/src/nprogress.sass"
 
 	// Theme files contain CSS variables that are used throughout the app.
 	import "/src/fa/sass/fontawesome.sass"
@@ -14,6 +14,15 @@
 
 	handleSession(page)
 	const user = getUser()
+
+	// Settings for nprogress, the loading bar shown
+	// at the top of the page when navigating
+	configure({ showSpinner: false })
+	$: {
+		if ($navigating) {
+			start()
+		} else done()
+	}
 </script>
 
 <svelte:head>
@@ -32,18 +41,6 @@
 </svelte:head>
 
 <slot />
-
-<!-- While a page is loading, a loading spinner can be shown -->
-{#if $navigating}
-	<div
-		class="position-fixed bottom-0 end-0 m-4"
-		in:fade={{ duration: 1500, delay: 100 }}
-		out:fade={{ duration: 100 }}>
-		<h1 class="light-text overflow-hidden">
-			<Loading />
-		</h1>
-	</div>
-{/if}
 
 {#if $user?.theme == "darken"}
 	<style lang="sass">
