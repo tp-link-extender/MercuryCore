@@ -31,6 +31,7 @@
 								: ""}
 						</h3>
 					</div>
+					{#if category.posts[0]}
 					<div class="col col-6">
 						Last post:
 						<br />
@@ -48,6 +49,7 @@
 							{category.posts[0].author.username}
 						</a>
 					</div>
+					{/if}
 				</div>
 			</div>
 		</a>

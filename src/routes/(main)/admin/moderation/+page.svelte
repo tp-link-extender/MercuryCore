@@ -2,7 +2,6 @@
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 
-	export let data
 	export let form
 
 	let moderationAction = 1

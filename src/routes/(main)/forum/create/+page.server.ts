@@ -65,7 +65,11 @@ export const actions = {
 			data: {
 				id: await id(),
 				title,
-				content,
+				content: {
+					create: {
+						text: content,
+					},
+				},
 				authorId: user.id,
 				forumCategoryName: category,
 			},

@@ -16,6 +16,12 @@ export async function load({ locals, params }) {
 		},
 		include: {
 			ownerUser: true,
+			description: {
+				orderBy: {
+					updated: "desc",
+				},
+				take: 1,
+			},
 		},
 	})
 	console.timeEnd("place settings")
@@ -43,6 +49,12 @@ export const actions = {
 			},
 			include: {
 				ownerUser: true,
+				description: {
+					orderBy: {
+						updated: "desc",
+					},
+					take: 1,
+				},
 			},
 		})
 
@@ -61,7 +73,7 @@ export const actions = {
 
 				if (
 					title == getPlace?.name &&
-					description == getPlace?.description
+					description == getPlace?.description[0]?.text
 				)
 					return fail(400)
 				if (!title)
@@ -78,7 +90,11 @@ export const actions = {
 					},
 					data: {
 						name: title,
-						description,
+						description: {
+							create: {
+								text: description,
+							},
+						},
 					},
 				})
 
