@@ -1,0 +1,38 @@
+banland.xyz {
+	rewrite /Asset /asset/assetfetch
+	rewrite /Asset/ /asset/assetfetch
+	rewrite /Asset/Default.ashx /asset/assetfetch
+	rewrite /Asset/CharacterFetch.ashx /asset/characterfetch
+	rewrite /Asset/BodyColors.ashx /asset/bodycolors
+
+	# rewrite /Game/PlaceLauncher.ashx /api/games/placelauncher	
+	rewrite /Game/Studio.ashx /game/studio
+	# rewrite /Game/Edit.ashx /game/edit
+	rewrite /Game/Visit.ashx /game/visit
+	rewrite /Game/Join.ashx /game/join
+	rewrite /Game/MachineConfiguration.ashx /game/machineconfiguration
+	# rewrite /Game/GameServer.ashx /game/gameserver
+	rewrite /Game/ClientPresence /game/clientpresence
+	rewrite /Game/ServerPresence /game/serverpresence
+	rewrite /Game/Host /game/host
+	rewrite /Asset/GetScriptState.ashx /asset/getscriptstate
+	rewrite /Game/Tools/InsertAsset.ashx /game/tools/insertasset
+	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
+
+	reverse_proxy localhost:4173
+}
+
+setup.banland.xyz {
+	root * /var/www/setup
+
+	uri path_regexp /version-(\w+)-(.*) /version-$1/$2
+
+	file_server browse
+}
+
+api.banland.xyz {
+	reverse_proxy localhost:4443
+
+	rewrite /Setting/QuietGet/ClientSharedSetting /api/clientsharedsettings
+	rewrite /Setting/QuietGet/ClientAppSettings /api/clientappsettings
+}
