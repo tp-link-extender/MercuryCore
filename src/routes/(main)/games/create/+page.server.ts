@@ -58,7 +58,11 @@ export const actions = {
 				place = await tx.place.create({
 					data: {
 						name,
-						description,
+						description: {
+							create: {
+								text: description,
+							},
+						},
 						serverIP,
 						serverPort,
 						privateServer,
