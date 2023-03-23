@@ -1,4 +1,4 @@
-banland.xyz, http://banland.xyz {
+banland.xyz {
 	rewrite /Asset /asset/assetfetch
 	rewrite /Asset/ /asset/assetfetch
 	rewrite /Asset/Default.ashx /asset/assetfetch
