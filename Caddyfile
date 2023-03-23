@@ -1,4 +1,4 @@
-banland.xyz {
+banland.xyz, http://banland.xyz {
 	rewrite /Asset /asset/assetfetch
 	rewrite /Asset/ /asset/assetfetch
 	rewrite /Asset/Default.ashx /asset/assetfetch
@@ -22,7 +22,7 @@ banland.xyz {
 	reverse_proxy localhost:4443
 }
 
-setup.banland.xyz {
+setup.banland.xyz, http://setup.banland.xyz {
 	root * /var/www/setup
 
 	uri path_regexp /version-(\w+)-(.*) /version-$1/$2
@@ -30,7 +30,7 @@ setup.banland.xyz {
 	file_server browse
 }
 
-api.banland.xyz {
+api.banland.xyz, http://api.banland.xyz {
 	reverse_proxy localhost:4443
 
 	rewrite /Setting/QuietGet/ClientSharedSetting /api/clientsharedsettings
