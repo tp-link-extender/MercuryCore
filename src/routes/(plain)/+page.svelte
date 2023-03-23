@@ -5,10 +5,7 @@
 
 	// Gradient must run upon page being loaded,
 	// and cannot be rendered on serverside.
-	onMount(() => {
-		const gradient = new Gradient()
-		gradient.initGradient("#gradient-canvas")
-	})
+	onMount(() => new Gradient().initGradient("#gradient-canvas"))
 </script>
 
 <svelte:head>

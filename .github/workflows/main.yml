@@ -16,7 +16,7 @@ jobs:
             - name: Deploy to Server
               uses: fifsky/ssh-action@master
               with:
-                  command: cd mercuryv2 && git restore . && gh repo sync && npx prisma migrate deploy && pnpm i && npx prisma generate && pnpm run build && sudo systemctl reload nginx && pm2 start pm2.config.cjs && exit
+                  command: cd mercuryv2 && git restore . && gh repo sync && npx prisma migrate deploy && pnpm i && npx prisma generate && pnpm run build && caddy reload && pm2 start pm2.config.cjs && exit
                   host: ${{ secrets.HOST }}
                   port: ${{ secrets.PORT }}
                   user: ${{ secrets.USER }}
