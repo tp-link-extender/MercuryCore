@@ -41,9 +41,7 @@ Instructions:
 -   Open a terminal and navigate to the directory of the repository
 -   Run `npm i -g pnpm` to install pnpm
 -   Run `pnpm i` to install all dependencies.
-
     -   If you are using PowerShell on windows, you may encounter an execution policy error when running pnpm. Run the command `set-executionpolicy remotesigned` in an administrator PowerShell to fix this.
-
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
 -   Run `npx prisma migrate dev` to apply the schema to the Postgres database and create the PrismaClient package
@@ -77,13 +75,13 @@ Upon shutting down the databases, their contents will be dumped to the /data/red
 You will need:
 
 -   Everything above including pnpm
+-   Latest version of Caddy server installed
 
 Instructions:
 
--   Add the nginx configuration file, located at /nginx/default, to your nginx configuration (/etc/nginx/sites-available/default if you have no other nginx sites)
--   Use the certbot tool to generate a free certificate for your domain (`sudo certbot --nginx -d <your domain>`)
-    -   Be careful with replacing certificates for debugging, as CA ratelimits can be as low as 5 per week
 -   Clone the repository to your server, and navigate to its directory
+-   Run `caddy start` to start the Caddy reverse proxy server
+    -   You can also run `caddy reload` to reload the configuration file without restarting the server.
 -   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Run `npx prisma migrate deploy` to apply the schema to the Postgres database and create the PrismaClient package
@@ -107,6 +105,8 @@ The [PostgreSQL](https://postgresql.org) relational database is managed by [Pris
 A [Redis](https://redis.io) database with the [RedisGraph](https://redis.com/modules/redis-graph) module is used to store a graph of data that is extremely relational, including likes, dislikes, friends, and followers. Redis also stores some of the site's global variables, such as the current site banner, tax rate, etc.
 
 [Vite](https://vitejs.dev) brings the stack for the website together, giving an extremely fast and responsive development environment, as well as zero-downtime deployments.
+
+[Caddy](https://caddyserver.com) is used as a reverse proxy server, which allows for automatic HTTPS and TLS certificates, rewriting URLs, and provides a simpler configuration interface than nginx.
 
 ## Route structure
 
