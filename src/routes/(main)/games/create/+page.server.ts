@@ -16,6 +16,7 @@ export const actions = {
 		const privateServer = !!data.privateServer
 
 		console.log(
+			"Place create",
 			name,
 			description,
 			serverIP,
@@ -49,8 +50,8 @@ export const actions = {
 			},
 		})
 
-		if (gameCount && gameCount?._count.places >= 2)
-			return fail(400, { msg: "You may only have 2 places at most" })
+		// if (gameCount && gameCount?._count.places >= 2)
+		// 	return fail(400, { msg: "You may only have 2 places at most" })
 
 		let place: any
 		try {

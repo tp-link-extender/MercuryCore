@@ -128,6 +128,7 @@
 						class="form-check-input"
 						type="checkbox"
 						bind:checked={fields.privateServer}
+						name="privateServer"
 						value="privateServer"
 						id="privateServer" />
 				</div>
