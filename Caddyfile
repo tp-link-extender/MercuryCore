@@ -19,7 +19,7 @@ banland.xyz {
 	rewrite /Game/Tools/InsertAsset.ashx /game/tools/insertasset
 	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
 
-	reverse_proxy localhost:4173
+	reverse_proxy localhost:4443
 }
 
 setup.banland.xyz {
