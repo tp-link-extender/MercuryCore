@@ -21,7 +21,6 @@ export const load = async ({ locals }) => {
 		},
 	})
 
-	
 	return {
 		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
 	}
