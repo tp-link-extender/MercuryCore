@@ -18,7 +18,14 @@
 	// Settings for nprogress, the loading bar shown
 	// at the top of the page when navigating
 	nprogress.configure({ showSpinner: false })
-	$: $navigating ? nprogress.start() : nprogress.done()
+
+	let timeout: any
+	// 100ms is the minimum time the loading bar will be shown
+	$: if ($navigating) timeout = setTimeout(nprogress.start, 100)
+	else {
+		clearTimeout(timeout)
+		nprogress.done()
+	}
 </script>
 
 <svelte:head>
