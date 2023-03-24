@@ -34,5 +34,4 @@
 		transition: all 0.2s
 		&:hover
 			transition: all 0.2s
-			text-shadow: 0 0 5px var(--light-text)
 </style>

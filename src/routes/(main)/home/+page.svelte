@@ -125,27 +125,33 @@
 							in:fade|global={{ num, total: data.feed.length }}
 							class="card mb-2">
 							<div class="card-body pb-0 p-3">
-								<a
-									class="d-flex mb-2 text-decoration-none user"
-									href="/user/{status.authorUser?.number}">
-									<span class="pfp rounded-circle">
-										<img
-											src={status.authorUser?.image}
-											alt={status.authorUser?.username}
-											class="rounded-circle img-fluid rounded-top-0" />
+								<div class="d-flex mb-2 user d-inline">
+									<a
+										href="/user/{status.authorUser?.number}"
+										class="text-decoration-none">
+										<span class="pfp rounded-circle">
+											<img
+												src={status.authorUser?.image}
+												alt={status.authorUser
+													?.username}
+												class="rounded-circle img-fluid rounded-top-0" />
+										</span>
+										<span
+											class="username fw-bold ms-3 light-text">
+											{status.authorUser?.username}
+										</span>
+										<small
+											class="ms-3 fw-italic light-text">
+											{status.posted.toLocaleString()}
+										</small>
+									</a>
+									<span class="ms-auto">
+										<Report
+											user={status.authorUser?.username ||
+												""}
+											url="status:{status.id}" />
 									</span>
-									<span
-										class="username fw-bold ms-3 light-text">
-										{status.authorUser?.username}
-									</span>
-									<small
-										class="ms-auto fw-italic light-text text-end">
-										{status.posted.toLocaleString()}
-									</small>
-									<Report
-										user={status.authorUser?.username || ""}
-										url="status:{status.id}" />
-								</a>
+								</div>
 								<p class="text-start">
 									{status.content}
 								</p>

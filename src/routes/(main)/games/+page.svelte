@@ -125,7 +125,6 @@
 		border-color: var(--accent2)
 
 	.d-grid
-		width: fit-content
 		font-size: 0.9rem
 
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))

@@ -48,11 +48,9 @@
 			</a>
 		</b>
 	</div>
-	<h5>
-		<a href="/about" class="text-decoration-none pt-3">
-			About us <i class="fa fa-chevron-right" />
-		</a>
-	</h5>
+	<a href="/about" class="text-decoration-none pt-3 fs-5">
+		About us <i class="fa fa-chevron-right" />
+	</a>
 </div>
 <div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
 	<div class="w-100 position-absolute bottom-0">
@@ -77,6 +75,7 @@
 						margin-left: 0
 					100%
 						margin-left: -1600px
+
 			div:nth-of-type(2)
 				animation: 11s cubic-bezier(0.4, 0.2, 0.2, 0.2) -0.124s infinite normal none running waves, 11s ease -1.24s infinite normal none running swell
 				top: -174px

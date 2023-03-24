@@ -99,7 +99,6 @@
 		max-width: 9rem
 
 	.d-grid
-		width: fit-content
 		font-size: 0.9rem
 
 		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr))

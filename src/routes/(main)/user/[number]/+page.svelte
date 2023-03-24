@@ -157,11 +157,11 @@
 									class="accordion-header rounded-2"
 									id="heading{num}">
 									<button
-										class="accordion-button p-2 light-text rounded-3"
+										class="accordion-button collapsed p-2 light-text rounded-3"
 										type="button"
 										data-bs-toggle="collapse"
 										data-bs-target="#collapse{num}"
-										aria-expanded="true"
+										aria-expanded="false"
 										aria-controls="collapse{num}">
 										{place.name}
 									</button>
@@ -326,7 +326,6 @@
 		border: none
 		&:hover
 			transition: all 0.2s
-			text-shadow: 0 0 5px var(--light-text)
 			.shadow::after
 				box-shadow: inset 0 0 4rem 0 #fff2
 

@@ -18,7 +18,6 @@
 
 <style lang="sass">
 	.container
-		width: fit-content
 		max-width: 100%
 		font-size: 0.9rem
 
