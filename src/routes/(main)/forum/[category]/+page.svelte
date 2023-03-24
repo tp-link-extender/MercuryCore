@@ -73,35 +73,36 @@
 					</div> -->
 				</div>
 			</form>
-			<a
-				href="/forum/{data.name.toLowerCase()}/{post.id}"
-				class="p-3 pb-0 text-decoration-none light-text w-100">
-				<div>
-					<a
-						href="/user/{post.author.number}"
-						class="user d-flex text-decoration-none">
-						<span class="pfp rounded-circle">
-							<img
-								src={post.author.image}
-								alt={post.author.username}
-								class="rounded-circle rounded-top-0" />
-						</span>
-						<span class="fw-bold ms-3 light-text">
-							{post.author.username}
-						</span>
-						<span class="light-text ms-auto">
-							{post.posted.toLocaleString()}
-						</span>
-					</a>
+			<div class="d-flex flex-column w-100">
+				<a
+					href="/user/{post.author.number}"
+					class="user d-flex text-decoration-none m-2 pe-4 mb-0 w-100">
+					<span class="pfp rounded-circle">
+						<img
+							src={post.author.image}
+							alt={post.author.username}
+							class="rounded-circle rounded-top-0" />
+					</span>
+					<span class="fw-bold ms-3 light-text">
+						{post.author.username}
+					</span>
+					<span class="light-text ms-auto">
+						{post.posted.toLocaleString()}
+					</span>
+				</a>
+				<a
+					href="/forum/{data.name.toLowerCase()}/{post.id}"
+					class="p-3 pb-0 text-decoration-none light-text w-100">
 					<h2 class="h4 mt-2">
 						{post.title}
 					</h2>
-				</div>
-				<div class="mb-0">
-					<div id="gradient" class="w-100 h-75" />
-					{post.content[0].text}
-				</div>
-			</a>
+
+					<div class="mb-0">
+						<div id="gradient" class="w-100 h-75" />
+						{post.content[0].text}
+					</div>
+				</a>
+			</div>
 		</div>
 	{/each}
 </div>
@@ -124,7 +125,6 @@
 		overflow: hidden
 		word-break: break-word
 
-	.card
 		background: var(--darker)
 		border-color: var(--accent2)
 		transition: all 0.3s ease-out

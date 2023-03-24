@@ -8,7 +8,8 @@ import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
 	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectReplies: any = { // odd type errors in "replies: selectReplies" if not any
+	const selectReplies: any = {
+		// odd type errors in "replies: selectReplies" if not any
 		include: {
 			author: true,
 			content: {

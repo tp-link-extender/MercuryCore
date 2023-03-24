@@ -72,7 +72,13 @@
 				id="collapse2"
 				class="m-2 ms-3 p-0 mt-0">
 				<small>
-					{reply.author.username}: {reply.content}
+					<span class="grey-text">
+						{reply.author.username}
+						{#if reply.author.username == postAuthorName}
+							<i class="fa fa-microphone ms-1" />
+						{/if}
+					</span>
+					- {reply.content[0].text}
 				</small>
 			</button>
 		{:else}

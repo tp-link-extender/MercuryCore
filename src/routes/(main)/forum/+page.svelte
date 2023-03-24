@@ -11,17 +11,18 @@
 <div class="container light-text">
 	<h1 class="light-text mb-5">Forum</h1>
 	{#each data.categories as category, num}
-		<a
+		<div
 			in:fade={{ num, total: data.categories.length }}
-			href="/forum/{category.name.toLowerCase()}"
-			class="category card text-decoration-none light-text p-3 mb-3">
+			class="category card p-3 mb-3">
 			<div class="row">
-				<div class="col col-6">
+				<a
+					class="col col-6 light-text text-decoration-none"
+					href="/forum/{category.name.toLowerCase()}">
 					<h2 class="h4 col col-md-3">
 						{category.name}
 					</h2>
 					{category.description}
-				</div>
+				</a>
 				<div class="col col-6 row">
 					<div class="col col-6">
 						<h3 class="h5">
@@ -32,27 +33,27 @@
 						</h3>
 					</div>
 					{#if category.posts[0]}
-					<div class="col col-6">
-						Last post:
-						<br />
-						<a
-							href="/forum/{category.name.toLowerCase()}/{category
-								.posts[0].id}"
-							class="h5 text-decoration-none">
-							{category.posts[0].title}
-						</a>
-						<br />
-						by
-						<a
-							href="/user/{category.posts[0].author.number}"
-							class="light-text">
-							{category.posts[0].author.username}
-						</a>
-					</div>
+						<div class="col col-6">
+							Last post:
+							<br />
+							<a
+								href="/forum/{category.name.toLowerCase()}/{category
+									.posts[0].id}"
+								class="h5 text-decoration-none">
+								{category.posts[0].title}
+							</a>
+							<br />
+							by
+							<a
+								href="/user/{category.posts[0].author.number}"
+								class="light-text">
+								{category.posts[0].author.username}
+							</a>
+						</div>
 					{/if}
 				</div>
 			</div>
-		</a>
+		</div>
 	{/each}
 </div>
 
@@ -65,7 +66,4 @@
 		background: var(--darker)
 		border-color: var(--accent2)
 		transition: all 0.3s ease-out
-		&:hover
-			background: var(--accent)
-			border-color: var(--accent3)
 </style>
