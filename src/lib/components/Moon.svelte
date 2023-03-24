@@ -1,5 +1,6 @@
 <script lang="ts">
-	// The component that controls the 3D object on the landing page.
+	// The component that controls the 3D object
+	// on the landing and maintenance pages.
 
 	import {
 		Canvas,
@@ -29,7 +30,7 @@
 		},
 	]
 
-	const item = items[Math.floor(Math.random() * items.length)]
+	export let item = items[Math.floor(Math.random() * items.length)]
 </script>
 
 <Canvas>
