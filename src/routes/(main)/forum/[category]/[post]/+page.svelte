@@ -65,25 +65,29 @@
 			</div>
 		</form>
 		<div class="p-3 text-decoration-none light-text w-100">
-			<a
-				href="/user/{data.author.number}"
-				class="user d-flex text-decoration-none">
-				<span class="pfp rounded-circle">
-					<img
-						src={data.author.image}
-						alt={data.author.username}
-						class="rounded-circle rounded-top-0" />
-				</span>
-				<span class="fw-bold ms-3 light-text">
-					{data.author.username}
-				</span>
-				<span class="light-text ms-auto">
-					{data.posted.toLocaleString()}
+			<span class="d-flex">
+				<a
+					href="/user/{data.author.number}"
+					class="user d-flex text-decoration-none">
+					<span class="pfp rounded-circle">
+						<img
+							src={data.author.image}
+							alt={data.author.username}
+							class="rounded-circle rounded-top-0" />
+					</span>
+					<span class="fw-bold ms-3 light-text">
+						{data.author.username}
+					</span>
+					<span class="ms-3 light-text">
+						{data.posted.toLocaleString()}
+					</span>
+				</a>
+				<span class="ms-auto">
 					<Report
 						user={data.author.username}
 						url="/forum/{data.forumCategory.name}/{data.id}" />
 				</span>
-			</a>
+			</span>
 			<h2 class="h4 mt-2">
 				{data.title}
 			</h2>
