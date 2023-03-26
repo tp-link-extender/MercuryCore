@@ -37,10 +37,11 @@ self.addEventListener("fetch", event => {
 		const cache = await caches.open(CACHE)
 
 		// `build`/`files` can always be served from the cache
-		if (ASSETS.includes(url.pathname)) return cache.match(event.request)
+		// buggy atm so disabled
+		// if (ASSETS.includes(url.pathname)) return cache.match(event.request)
 
 		// for everything else, try the network first, but
-		// fall back to the cache if we"re offline
+		// fall back to the cache if we're offline
 		try {
 			const response = await fetch(event.request)
 
