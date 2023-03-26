@@ -22,7 +22,7 @@
 
 <div class="container mt-5">
 	{#each data.notifications as notification}
-		<div class="card mb-3 p-3">
+		<div class:read={notification.read} class="card mb-3 p-3">
 			<h2 class="light-text h5 d-flex align-items-center">
 				<a href="/user/{notification.sender.number}" class="image-background rounded-circle me-3">
 					<img
@@ -46,6 +46,8 @@
 			width: 50rem
 
 	.card
+		background: var(--accent)
+	.read
 		background: var(--darker)
 
 	.image-background

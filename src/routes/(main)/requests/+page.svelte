@@ -50,16 +50,17 @@
 			<form
 				class="align-self-center row w-100 p-2 pt-0"
 				method="POST"
-				use:enhance>
+				use:enhance
+				action="/user/{user.number}">
 				<button
 					name="action"
-					value="accept {user.username}"
+					value="accept"
 					class="btn btn-info me-1 col">
 					Accept
 				</button>
 				<button
 					name="action"
-					value="decline {user.username}"
+					value="decline"
 					class="btn btn-danger ms-1 col">
 					Decline
 				</button>
