@@ -14,11 +14,28 @@ export async function load({ url, locals, params }) {
 
 	const getPlace = await prisma.place.findUnique({
 		where: { id },
-		include: {
-			ownerUser: true,
+		select: {
+			id: true,
+			name: true,
+			serverPing: true,
+			serverTicket: true,
+			privateTicket: true,
+			created: true,
+			updated: true,
+			maxPlayers: true,
+
+			ownerUser: {
+				select: {
+					username: true,
+					number: true,
+				},
+			},
 			description: {
 				orderBy: {
 					updated: "desc",
+				},
+				select: {
+					text: true,
 				},
 				take: 1,
 			},
@@ -29,7 +46,13 @@ export async function load({ url, locals, params }) {
 					},
 				},
 				include: {
-					user: true,
+					user: {
+						select: {
+							username: true,
+							number: true,
+							image: true,
+						},
+					},
 				},
 			},
 		},

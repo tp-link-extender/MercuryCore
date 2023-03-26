@@ -13,13 +13,28 @@ export async function load({ locals, params }) {
 					mode: "insensitive",
 				},
 			},
-			include: {
+			select: {
+				name: true,
+
 				posts: {
-					include: {
-						author: true,
+					select: {
+						id: true,
+						title: true,
+						posted: true,
+
+						author: {
+							select: {
+								username: true,
+								number: true,
+								image: true,
+							},
+						},
 						content: {
 							orderBy: {
 								updated: "desc",
+							},
+							select: {
+								text: true,
 							},
 							take: 1,
 						},
@@ -51,7 +66,7 @@ export async function load({ locals, params }) {
 			},
 			true
 		)
-		post["likes"] = await roQuery(
+		post["likes"] = !!await roQuery(
 			"forum",
 			"MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id }) RETURN r",
 			{
@@ -59,7 +74,7 @@ export async function load({ locals, params }) {
 				id: post.id,
 			}
 		)
-		post["dislikes"] = await roQuery(
+		post["dislikes"] = !!await roQuery(
 			"forum",
 			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id }) RETURN r",
 			{

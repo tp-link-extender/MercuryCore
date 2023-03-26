@@ -16,12 +16,23 @@ export async function load({ url, locals, params }) {
 	if (!post) throw error(404, "Post not found")
 
 	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectReplies = {
-		include: {
-			author: true,
+	const selectReplies: any = {
+		select: {
+			id: true,
+			posted: true,
+			author: {
+				select: {
+					username: true,
+					number: true,
+					image: true,
+				},
+			},
 			content: {
 				orderBy: {
 					updated: "desc",
+				},
+				select: {
+					text: true,
 				},
 				take: 1,
 			},
@@ -29,9 +40,7 @@ export async function load({ url, locals, params }) {
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.include.replies = JSON.parse(
-			JSON.stringify(selectReplies)
-		)
+		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
 
 	const forumReplies = await prisma.forumReply.findUnique({
 		where: {
