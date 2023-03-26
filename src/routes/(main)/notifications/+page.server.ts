@@ -63,6 +63,12 @@ export async function load({ locals }) {
 				break
 			case "Message":
 		}
+	
+	await prisma.notification.updateMany({
+		data: {
+			read: true,
+		}
+	})
 
 	return {
 		notifications,
