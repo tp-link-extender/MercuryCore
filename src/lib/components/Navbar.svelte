@@ -125,7 +125,15 @@
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
-					<li class="dropdown ms-3 me-2 pt-1">
+					<li class="ms-3 pt-1">
+						<a
+							href="/notifications"
+							role="button"
+							class="fw-bold nav-link">
+							<i class="fa fa-bell me-1" />
+						</a>
+					</li>
+					<li class="me-2 pt-1">
 						<a
 							href="/transactions/your"
 							role="button"

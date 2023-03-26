@@ -19,6 +19,12 @@ export async function load({ url, locals, params }) {
 	const selectReplies = {
 		include: {
 			author: true,
+			content: {
+				orderBy: {
+					updated: "desc",
+				},
+				take: 1,
+			},
 			replies: {},
 		},
 	}
