@@ -61,6 +61,12 @@ export const load = async ({ params }) => {
 							where: {
 								username: i.name,
 							},
+							select: {
+								username: true,
+								number: true,
+								image: true,
+								status: true,
+							}
 						})
 					)
 			}

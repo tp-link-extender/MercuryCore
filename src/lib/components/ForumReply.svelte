@@ -158,7 +158,7 @@
 							</button>
 							<Report
 								user={reply.author.username}
-								url="/forum/{forumCategory}/{reply.id}"
+								url="/forum/{forumCategory}/{postId}/{reply.id}"
 								reverse />
 						{:else}
 							<div class="mb-2 card reply">
@@ -168,7 +168,7 @@
 										on:submit={() => replyingTo.set("")}
 										class="mb-4"
 										method="POST"
-										action="/forum/{forumCategory}/{reply.id}">
+										action="/forum/{forumCategory}/{postId}">
 										<input
 											type="hidden"
 											name="replyId"

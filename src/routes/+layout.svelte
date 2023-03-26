@@ -21,9 +21,11 @@
 
 	let timeout: any
 	// 100ms is the minimum time the loading bar will be shown
-	$: if ($navigating) timeout = setTimeout(nprogress.start, 100)
+	$: if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
 	else {
 		clearTimeout(timeout)
+		timeout = null
+
 		nprogress.done()
 	}
 </script>
@@ -38,8 +40,8 @@
 
 	<script
 		defer
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
 		crossorigin="anonymous"></script>
 </svelte:head>
 

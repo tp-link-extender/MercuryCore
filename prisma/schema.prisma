@@ -83,6 +83,8 @@ model User {
     moderationActionsGiven    ModerationAction[] @relation("given")
     moderationActionsReceived ModerationAction[] @relation("received")
     AuditLog                  AuditLog[]         @relation("actor")
+    notificationsSent         Notification[]     @relation("sent")
+    notificationsReceived     Notification[]     @relation("received")
 
     @@map("user")
 }
@@ -250,9 +252,9 @@ model ForumReply {
     posted   DateTime      @default(now())
     content  TextContent[]
 
+    parentPost    ForumPost   @relation(fields: [parentPostId], references: [id])
+    parentPostId  String
     // A reply can be to a post or another reply
-    parentPost    ForumPost?   @relation(fields: [parentPostId], references: [id])
-    parentPostId  String?
     parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
     parentReplyId String?
     replies       ForumReply[] @relation("replies")
@@ -323,4 +325,33 @@ model AuditLog {
     user   User            @relation("actor", fields: [userId], references: [id])
     userId String
     date   DateTime        @default(now())
+}
+
+// Notifications
+
+enum NotificationType {
+    AssetApproved
+    FriendRequest
+    Follower
+    ForumPostReply // When someone replies to a post you made
+    ForumReplyReply // When someone replies to a reply you made
+    ForumMention
+    ForumPost // Subscribing to a forum category
+    ItemPurchase
+    Message
+    NewFriend
+}
+
+model Notification {
+    id   String           @id @unique @default(cuid())
+    type NotificationType
+
+    time       DateTime @default(now())
+    sender     User     @relation("sent", fields: [senderId], references: [id])
+    senderId   String
+    receiver   User     @relation("received", fields: [receiverId], references: [id])
+    receiverId String
+    read       Boolean  @default(false)
+    note       String
+    relativeId String // The id of whatever the notification concerns
 }

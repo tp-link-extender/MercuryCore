@@ -16,6 +16,9 @@ export const load = async ({ locals }) => {
 				orderBy: {
 					updated: "desc",
 				},
+				select: {
+					text: true,
+				},
 				take: 1,
 			},
 		},

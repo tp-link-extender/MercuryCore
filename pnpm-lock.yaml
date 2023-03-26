@@ -93,6 +93,9 @@ devDependencies:
   '@types/nprogress':
     specifier: ^0.2.0
     version: 0.2.0
+  '@types/serviceworker':
+    specifier: ^0.0.67
+    version: 0.0.67
   '@types/uuid':
     specifier: ^9.0.1
     version: 9.0.1
@@ -613,6 +616,10 @@ packages:
   /@types/resolve@1.20.2:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
     dev: false
+
+  /@types/serviceworker@0.0.67:
+    resolution: {integrity: sha512-7TCH7iNsCSNb+aUD9M/36TekrWFSLCjNK8zw/3n5kOtRjbLtDfGYMXTrDnGhSfqXNwpqmt9Vd90w5C/ad1tX6Q==}
+    dev: true
 
   /@types/uuid@9.0.1:
     resolution: {integrity: sha512-rFT3ak0/2trgvp4yYZo5iKFEPsET7vKydKF+VRCxlQ9bpheehyAJH89dAkaLEq/j/RZXJIqcgsmPJKUP1Z28HA==}

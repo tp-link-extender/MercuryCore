@@ -14,16 +14,28 @@ export async function load({ locals, params }) {
 		where: {
 			number,
 		},
-		include: {
+		select: {
+			id: true,
+			username: true,
+			image: true,
+			number: true,
+			permissionLevel: true,
 			posts: {
 				orderBy: {
 					posted: "desc",
+				},
+				select: {
+					posted: true,
+					content: true,
 				},
 				take: 40,
 			},
 			bio: {
 				orderBy: {
 					updated: "desc",
+				},
+				select: {
+					text: true,
 				},
 				take: 1,
 			},
@@ -48,12 +60,18 @@ export async function load({ locals, params }) {
 					ownerUsername: userExists.username,
 					privateServer: user.id == userExists.id ? undefined : false,
 				},
-				include: {
+				select: {
+					id: true,
+					name: true,
+					image: true,
 					GameSessions: {
 						where: {
 							ping: {
 								gt: Math.floor(Date.now() / 1000) - 35,
 							},
+						},
+						select: {
+							valid: true,
 						},
 					},
 				},
@@ -71,10 +89,16 @@ export async function load({ locals, params }) {
 						true
 					),
 				},
+				select: {
+					name: true,
+				},
 			}),
 			groupsOwned: findGroups({
 				where: {
 					ownerUsername: userExists.username,
+				},
+				select: {
+					name: true,
 				},
 			}),
 			friendCount: roQuery(

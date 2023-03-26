@@ -2,7 +2,7 @@
 // as only needing to initialise PrismaClient once.
 
 import { PrismaClient } from "@prisma/client"
-import type { Place, Item, Group, Prisma } from "@prisma/client"
+import type { Prisma } from "@prisma/client"
 import { client, roQuery } from "./redis"
 
 export const prisma = new PrismaClient()
@@ -22,7 +22,7 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 	const places = await prisma.place.findMany(query)
 
 	// Add like/dislike ratio to each place
-	for (let place of places as (Place & { ratio: any })[]) {
+	for (let place of places as typeof places & { ratio: any }[]) {
 		const query = {
 			place: place.id,
 		}
@@ -44,7 +44,7 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 
 		place["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
-	return places
+	return places as typeof places & { ratio: any }[]
 }
 
 /**
@@ -64,7 +64,7 @@ export async function findItems(query: Prisma.ItemFindManyArgs = {}) {
 	const items = await prisma.item.findMany(query)
 
 	// Add like/dislike ratio to each item
-	for (let item of items as (Item & { ratio: any })[]) {
+	for (let item of items as typeof items & { ratio: any }[]) {
 		const query = {
 			itemid: item.id,
 		}
@@ -85,7 +85,7 @@ export async function findItems(query: Prisma.ItemFindManyArgs = {}) {
 		const ratio = Math.floor((likes / total) * 100)
 		item["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
-	return items
+	return items as typeof items & { ratio: any }[]
 }
 
 /**
@@ -105,7 +105,7 @@ export async function findGroups(query: Prisma.GroupFindManyArgs = {}) {
 	const groups = await prisma.group.findMany(query)
 
 	// Add members to each group
-	for (let group of groups as (Group & { members: any })[])
+	for (let group of groups as typeof groups & { members: any }[])
 		group["members"] = await roQuery(
 			"groups",
 			"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
@@ -115,7 +115,7 @@ export async function findGroups(query: Prisma.GroupFindManyArgs = {}) {
 			true
 		)
 
-	return groups
+	return groups as typeof groups & { members: any }[]
 }
 
 type User = {
