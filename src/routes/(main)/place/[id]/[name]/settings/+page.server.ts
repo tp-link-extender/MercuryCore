@@ -20,6 +20,9 @@ export async function load({ locals, params }) {
 				orderBy: {
 					updated: "desc",
 				},
+				select: {
+					text: true,
+				},
 				take: 1,
 			},
 		},
@@ -52,6 +55,9 @@ export const actions = {
 				description: {
 					orderBy: {
 						updated: "desc",
+					},
+					select: {
+						text: true,
 					},
 					take: 1,
 				},

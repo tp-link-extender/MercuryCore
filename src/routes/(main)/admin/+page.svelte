@@ -317,36 +317,40 @@
 							</div>
 							<div class="card text-black mb-3">
 								<div class="card-body rounded-1">
-									<h3 class="light-text">
-										<i
-											class="fa-solid fa-hard-drive me-2" />
-										{(
-											(data.disk.size - data.disk.free) /
-											1024 ** 3
-										).toFixed(2)} / {(
-											data.disk.size /
-											1024 ** 3
-										).toFixed(2)} GB
-									</h3>
-									<span class="light-text">
-										{Math.round(
-											(data.disk.size - data.disk.free) /
-												1024 ** 2
-										)} MB is being used
-									</span>
-									<div class="progress mt-2">
-										<div
-											class="progress-bar progress-bar-striped progress-bar-animated"
-											role="progressbar"
-											aria-valuenow={data.disk.size -
-												data.disk.free}
-											aria-valuemin={0}
-											aria-valuemax={data.disk.size}
-											style="width: {((data.disk.size -
-												data.disk.free) /
-												data.disk.size) *
-												100}%;" />
-									</div>
+									{#await data.stream.disk}
+										<h3 class="light-text">Loading...</h3>
+									{:then disk}
+										<h3 class="light-text">
+											<i
+												class="fa-solid fa-hard-drive me-2" />
+											{(
+												(disk.size - disk.free) /
+												1024 ** 3
+											).toFixed(2)} / {(
+												disk.size /
+												1024 ** 3
+											).toFixed(2)} GB
+										</h3>
+										<span class="light-text">
+											{Math.round(
+												(disk.size - disk.free) /
+													1024 ** 2
+											)} MB is being used
+										</span>
+										<div class="progress mt-2">
+											<div
+												class="progress-bar progress-bar-striped progress-bar-animated"
+												role="progressbar"
+												aria-valuenow={disk.size -
+													disk.free}
+												aria-valuemin={0}
+												aria-valuemax={disk.size}
+												style="width: {((disk.size -
+													disk.free) /
+													disk.size) *
+													100}%;" />
+										</div>
+									{/await}
 								</div>
 							</div>
 						</div>

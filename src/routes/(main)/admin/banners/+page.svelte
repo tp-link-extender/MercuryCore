@@ -149,7 +149,7 @@
 							</tr>
 						</thead>
 						<tbody class="light-text">
-							{#each data.banners as banner, num}
+							{#each data.banners as banner}
 								<!-- <tr in:fade|global={{ num, total: data.banners.length }}> -->
 								<tr>
 									<td>

@@ -1,7 +1,11 @@
 import { findGroups } from "$lib/server/prisma"
 
 export const load = async () => ({
-	groups: findGroups(),
+	groups: findGroups({
+		select: {
+			name: true,
+		}
+	}),
 })
 
 export const actions = {

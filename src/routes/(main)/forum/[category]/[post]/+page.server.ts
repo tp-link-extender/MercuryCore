@@ -5,16 +5,29 @@ import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
+import { NotificationType } from "@prisma/client"
 
 export async function load({ locals, params }) {
 	// Since prisma does not yet support recursive copying, we have to do it manually
 	const selectReplies: any = {
 		// odd type errors in "replies: selectReplies" if not any
-		include: {
-			author: true,
+		select: {
+			id: true,
+			posted: true,
+			parentReplyId: true,
+			author: {
+				select: {
+					username: true,
+					number: true,
+					image: true,
+				},
+			},
 			content: {
 				orderBy: {
 					updated: "desc",
+				},
+				select: {
+					text: true,
 				},
 				take: 1,
 			},
@@ -22,21 +35,40 @@ export async function load({ locals, params }) {
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.include.replies = JSON.parse(
-			JSON.stringify(selectReplies)
-		)
+		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
 
 	const forumPost = await prisma.forumPost.findUnique({
 		where: {
 			id: params.post,
 		},
-		include: {
-			author: true,
-			forumCategory: true,
-			replies: selectReplies,
+		select: {
+			id: true,
+			title: true,
+			posted: true,
+			author: {
+				select: {
+					username: true,
+					number: true,
+					image: true,
+				},
+			},
+			forumCategory: {
+				select: {
+					name: true,
+				},
+			},
+			replies: {
+				where: {
+					parentReplyId: null,
+				},
+				...selectReplies,
+			},
 			content: {
 				orderBy: {
 					updated: "desc",
+				},
+				select: {
+					text: true,
 				},
 				take: 1,
 			},
@@ -135,19 +167,33 @@ export const actions = {
 			})
 		if (!replypost) throw error(404)
 
+		const newReplyId = await id()
+
 		await prisma.forumReply.create({
 			data: {
-				id: await id(),
+				id: newReplyId,
 				authorId: user.id,
 				content: {
 					create: {
 						text: content,
 					},
 				},
-				...(replyId
-					? { parentReplyId: replyId }
-					: { parentPostId: params.post }),
+				parentPostId: params.post,
+				parentReplyId: replyId,
 			},
 		})
+
+		if (user.id != replypost.authorId)
+			await prisma.notification.create({
+				data: {
+					type: replyId
+						? NotificationType.ForumReplyReply
+						: NotificationType.ForumPostReply,
+					senderId: user.id,
+					receiverId: replypost.authorId,
+					note: `${user.username} replied to your reply: ${content}`,
+					relativeId: newReplyId,
+				},
+			})
 	},
 }
