@@ -128,7 +128,7 @@
 								<div class="d-flex mb-2 user d-inline">
 									<a
 										href="/user/{status.authorUser?.number}"
-										class="text-decoration-none">
+										class="text-decoration-none d-flex align-items-center">
 										<span class="pfp rounded-circle">
 											<img
 												src={status.authorUser?.image}
