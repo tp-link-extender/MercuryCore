@@ -21,9 +21,11 @@
 
 	let timeout: any
 	// 100ms is the minimum time the loading bar will be shown
-	$: if ($navigating) timeout = setTimeout(nprogress.start, 100)
+	$: if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
 	else {
 		clearTimeout(timeout)
+		timeout = null
+
 		nprogress.done()
 	}
 </script>
