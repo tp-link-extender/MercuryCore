@@ -41,6 +41,12 @@ export async function load({ locals }) {
 						where: {
 							username: i.name,
 						},
+						select: {
+							username: true,
+							number: true,
+							image: true,
+							status: true,
+						},
 					})
 				)
 		}

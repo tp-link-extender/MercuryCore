@@ -11,11 +11,23 @@ export async function load({ locals, params }) {
 	// Since prisma does not yet support recursive copying, we have to do it manually
 	const selectReplies: any = {
 		// odd type errors in "replies: selectReplies" if not any
-		include: {
-			author: true,
+		select: {
+			id: true,
+			posted: true,
+			parentReplyId: true,
+			author: {
+				select: {
+					username: true,
+					number: true,
+					image: true,
+				},
+			},
 			content: {
 				orderBy: {
 					updated: "desc",
+				},
+				select: {
+					text: true,
 				},
 				take: 1,
 			},
@@ -23,21 +35,40 @@ export async function load({ locals, params }) {
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.include.replies = JSON.parse(
-			JSON.stringify(selectReplies)
-		)
+		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
 
 	const forumPost = await prisma.forumPost.findUnique({
 		where: {
 			id: params.post,
 		},
-		include: {
-			author: true,
-			forumCategory: true,
-			replies: selectReplies,
+		select: {
+			id: true,
+			title: true,
+			posted: true,
+			author: {
+				select: {
+					username: true,
+					number: true,
+					image: true,
+				},
+			},
+			forumCategory: {
+				select: {
+					name: true,
+				},
+			},
+			replies: {
+				where: {
+					parentReplyId: null,
+				},
+				...selectReplies,
+			},
 			content: {
 				orderBy: {
 					updated: "desc",
+				},
+				select: {
+					text: true,
 				},
 				take: 1,
 			},

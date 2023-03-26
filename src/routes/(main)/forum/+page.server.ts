@@ -9,11 +9,21 @@ export const load = async () => ({
 					posted: "desc",
 				},
 				take: 1,
-				include: {
-					author: true,
+				select: {
+					id: true,
+					title: true,
+					author: {
+						select: {
+							username: true,
+							number: true,
+						},
+					},
 					content: {
 						orderBy: {
 							updated: "desc",
+						},
+						select: {
+							text: true,
 						},
 						take: 1,
 					},
