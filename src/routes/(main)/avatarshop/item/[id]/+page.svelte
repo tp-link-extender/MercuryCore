@@ -151,7 +151,7 @@
 			</form>
 		</div>
 	</div>
-	<ul class="nav nav-pills nav-justified mb-3" id="pills-tab">
+	<ul class="nav nav-pills nav-justified mb-3 bg-a" id="pills-tab">
 		<li class="nav-item" role="presentation">
 			<button
 				class="nav-link active"
@@ -199,7 +199,7 @@
 					<a
 						href="/user/{owner.number}"
 						class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
-						<div class="me-3 rounded-circle pfp">
+						<div class="me-3 rounded-circle pfp bg-a">
 							<img
 								src={owner?.image}
 								alt={owner.username}
@@ -223,9 +223,6 @@
 		.container
 			width: 60rem
 
-	.card
-		background: var(--accent)
-
 	#notify
 		font-size: 0.8rem
 		opacity: 0
@@ -247,18 +244,13 @@
 		border-radius: 0
 		color: var(--light-text)
 
-	.nav-pills
-		background: var(--accent)
-		// border-radius: 1rem 1rem 0 0
-
-		.active
+	.nav-pills .active
 			background: transparent
 			border-style: solid
 			border-width: 0px 0px 2px 0px
 			border-color: var(--bs-blue)
 
 	.pfp
-		background: var(--accent)
 		width: 3.5rem
 		height: 3.5rem
 		img

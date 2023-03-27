@@ -79,7 +79,7 @@
 				<a
 					href="/user/{$user?.number}"
 					class="text-decoration-none d-flex">
-					<div class="pfp rounded-circle">
+					<div class="pfp bg-a rounded-circle">
 						<img
 							src={$user?.image}
 							alt="You"
@@ -90,7 +90,7 @@
 					</h1>
 				</a>
 			</div>
-			<div id="feed" class="card mt-4">
+			<div id="feed" class="card mt-4 bg-darker">
 				<div class="card-body light-text">
 					<p>
 						Post your status - your friends and followers can view
@@ -129,7 +129,7 @@
 									<a
 										href="/user/{status.authorUser?.number}"
 										class="text-decoration-none d-flex align-items-center">
-										<span class="pfp rounded-circle">
+										<span class="pfp bg-background rounded-circle">
 											<img
 												src={status.authorUser?.image}
 												alt={status.authorUser
@@ -175,7 +175,7 @@
 								href="/user/{friend.number}">
 								<div class="position-relative mb-2">
 									<div
-										class="image-background rounded-circle">
+										class="image-background bg-a rounded-circle">
 										<img
 											src={friend.image}
 											alt={friend.username}
@@ -221,7 +221,7 @@
 			</div>
 			<div class="mt-5 col-12">
 				<h2 class="h4 light-text">News</h2>
-				<div id="news" class="card">
+				<div id="news" class="card bg-darker">
 					<div class="card-body row">
 						{#each news as thing, num}
 							<div
@@ -253,7 +253,7 @@
 			</div>
 			<div class="mt-5 col-6 col-md-8 col-lg-6 col-xl-4">
 				<h2 class="h4 light-text">Random fact</h2>
-				<div id="fact" class="card card-body light-text h5">
+				<div id="fact" class="card bg-darker card-body light-text h5">
 					{facts[Math.floor(Math.random() * facts.length)]}
 					<br />
 					<br />
@@ -270,7 +270,6 @@
 	.top
 		width: 100vw
 		.pfp
-			background: var(--accent)
 			width: 6rem
 			min-width: 6rem
 			height: 6rem !important
@@ -280,9 +279,6 @@
 
 	.col2
 		margin-top: 7rem
-
-	.card
-		background: var(--accent)
 
 	.username
 		max-width: 50%
@@ -308,18 +304,14 @@
 		max-height: 5rem
 		overflow: hidden
 
-	#feed, #news, #fact
-		background: var(--darker)
 	#feed, #news
 		overflow-x: hidden
 
 	.user
 		align-items: center
-		.pfp
-			background: var(--accent2)
-			img
-				width: 2rem
-				min-width: 2rem
+		.pfp img
+			width: 2rem
+			min-width: 2rem
 
 	.home-row
 		overflow-x: auto
@@ -330,7 +322,6 @@
 			width: 8rem
 			margin: auto
 		.image-background
-			background: var(--accent)
 			width: 7rem
 			height: 7rem
 			margin: auto

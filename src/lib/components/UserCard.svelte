@@ -10,11 +10,12 @@
 	export let user: any
 	export let num: number
 	export let total: number
+
 </script>
 
 <a
 	in:fade={{ num, total, max: 12 }}
-	class="card light-text h-100 w-100 d-flex flex-row"
+	class="card light-text h-100 w-100 d-flex flex-row bg-darker"
 	href="/user/{user.number}">
 	<div class="p-4">
 		<div class="image-background rounded-circle">
@@ -25,7 +26,7 @@
 		</div>
 		{#if user.status}
 			<span
-				class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
+				class="position-absolute bottom-0 end-0 badge rounded-circle bg-a {statusColours[
 					user.status
 				]}">
 				<span class="visually-hidden">{user.status}</span>
@@ -41,7 +42,6 @@
 	.card
 		max-width: 25rem
 		text-decoration: none
-		background: var(--darker)
 		p
 			width: fit-content
 			word-break: break-all
@@ -49,7 +49,6 @@
 		.badge
 			padding: 0.75rem
 		.image-background
-			background: var(--accent)
 			min-width: 6rem
 			img
 				width: 6rem

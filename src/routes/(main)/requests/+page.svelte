@@ -21,10 +21,10 @@
 	{#each data.users as user, num}
 		<div
 			in:fade={{ num, total: data.users.length, max: 12 }}
-			class="card light-text h-100 w-100 d-flex flex-col">
+			class="card bg-darker light-text h-100 w-100 d-flex flex-col">
 			<div class="d-flex flex-row">
 				<a class="p-4 pe-2" href="/user/{user.number}">
-					<div class="image-background rounded-circle">
+					<div class="image-background bg-a rounded-circle">
 						<img
 							src={user.image}
 							alt={user.username}
@@ -82,17 +82,14 @@
 	.card
 		max-width: 25rem
 		text-decoration: none
-		background: var(--darker)
-
 		div
 			word-break: break-all
 		
-		.badge
-			padding: 0.75rem
-		.image-background
-			background: var(--accent)
-			min-width: 6rem
-			img
-				width: 6rem
-				height: 6rem !important
+	.badge
+		padding: 0.75rem
+	.image-background
+		min-width: 6rem
+		img
+			width: 6rem
+			height: 6rem !important
 </style>

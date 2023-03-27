@@ -23,9 +23,9 @@
 </svelte:head>
 
 <div id="all" class="container">
-	<div class="card pt-4">
+	<div class="card bg-darker pt-4">
 		<div class="d-flex px-4">
-			<div id="image-background" class="me-4 rounded-circle">
+			<div id="image-background" class="me-4 rounded-circle bg-a">
 				<img
 					src={data.image}
 					alt={data.username}
@@ -177,7 +177,7 @@
 												num,
 												total: data.places.length,
 											}}
-											class="card shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
+											class="card bg-darker shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
 											href="/place/{place.id}/{place.name}">
 											<div class="row">
 												<div class="col col-6">
@@ -230,7 +230,7 @@
 					{#each data.groupsOwned as group, num}
 						<a
 							in:fade={{ num, total: data.groupsOwned.length }}
-							class="card light-text text-decoration-none h6 my-2"
+							class="card bg-darker light-text text-decoration-none h6 my-2"
 							href="/groups/{group.name}">
 							<div class="p-2">
 								<span class="float-start">
@@ -253,7 +253,7 @@
 					{#each data.groups as group, num}
 						<a
 							in:fade={{ num, total: data.groups.length }}
-							class="card light-text text-decoration-none h6 my-2"
+							class="card bg-darker light-text text-decoration-none h6 my-2"
 							href="/groups/{group.name}">
 							<div class="p-2">
 								<span class="float-start">
@@ -277,10 +277,10 @@
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
 							class="p-2 col-md-6 col-sm-12">
-							<div class="card h-100">
-								<div class="card-body pb-0">
+							<div class="card bg-darker h-100">
+								<div class="card bg-darker-body pb-0">
 									<div id="user" class="d-flex mb-2">
-										<span class="pfp rounded-circle">
+										<span class="pfp rounded-circle bg-a2">
 											<img
 												src={data.image}
 												alt={data.username}
@@ -314,12 +314,8 @@
 	#image-background
 		width: 7rem
 		height: 7rem
-		background: var(--accent)
 		img
 			height: 7rem
-
-	.card
-		background: var(--darker)
 
 	.placecard
 		transition: all 0.2s
@@ -347,15 +343,9 @@
 		div, button
 			border: none
 			box-shadow: none
-			background: var(--darker)
 
-	#feed
-		.card
-			background: var(--accent)
-		#user
-			align-items: center
-			.pfp
-				background: var(--accent2)
-				img
-					width: 2rem
+	#user
+		align-items: center
+		.pfp img
+			width: 2rem
 </style>

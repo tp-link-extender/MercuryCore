@@ -105,7 +105,6 @@
 		background: var(--darker)
 
 	.pfp
-		background: var(--accent)
 		width: 2.5rem
 		height: 2.5rem
 

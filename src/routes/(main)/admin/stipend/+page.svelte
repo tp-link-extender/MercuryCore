@@ -54,7 +54,7 @@
 											required
 											class="form-control valid" />
 										<span
-											class="input-group-text light-text">
+											class="input-group-text light-text bg-a1">
 											<i class="fa fa-gem text-success" />
 										</span>
 									</div>
@@ -123,8 +123,5 @@
         color: var(--light-text)
 
     .input-group-text
-        background: var(--accent1)
         border-color: var(--accent3)
-
-
 </style>
