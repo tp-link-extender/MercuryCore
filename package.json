@@ -11,7 +11,6 @@
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
-		"@sveltejs/kit": "^1.14.0",
 		"@sveltejs/vite-plugin-svelte": "^2.0.3",
 		"@types/crypto-js": "^4.1.1",
 		"@types/node": "^18.15.10",
@@ -37,6 +36,7 @@
 		"@popperjs/core": "^2.11.7",
 		"@prisma/client": "^4.11.0",
 		"@sveltejs/adapter-node": "^1.2.3",
+		"@sveltejs/kit": "^1.14.0",
 		"@threlte/core": "^5.0.9",
 		"@threlte/extras": "^4.9.3",
 		"check-disk-space": "^3.3.1",
@@ -46,7 +46,7 @@
 		"dotenv": "^16.0.3",
 		"esbuild": "^0.17.14",
 		"lucia-auth": "^0.10.0",
-		"nanoid": "^3.3.6",
+		"nanoid": "^4.0.2",
 		"nprogress": "^0.2.0",
 		"profane-words": "^1.5.7",
 		"redis": "^4.6.5",
