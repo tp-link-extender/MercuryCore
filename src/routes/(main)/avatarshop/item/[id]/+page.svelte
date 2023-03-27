@@ -244,7 +244,7 @@
 		border-radius: 0
 		color: var(--light-text)
 
-		.active
+	.nav-pills .active
 			background: transparent
 			border-style: solid
 			border-width: 0px 0px 2px 0px

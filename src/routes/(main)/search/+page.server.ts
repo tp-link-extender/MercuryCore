@@ -32,6 +32,12 @@ export const load = async ({ url }) => {
 								mode: "insensitive",
 							},
 						},
+						select: {
+							number: true,
+							username: true,
+							image: true,
+							status: true,
+						},
 				  })
 				: null,
 		places:
@@ -44,6 +50,21 @@ export const load = async ({ url }) => {
 							},
 							privateServer: false,
 						},
+						select: {
+							GameSessions: {
+								where: {
+									ping: {
+										gt: Math.floor(Date.now() / 1000) - 35,
+									},
+								},
+								select: {
+									valid: true,
+								},
+							},
+							id: true,
+							name: true,
+							image: true,
+						},
 				  })
 				: null,
 		items:
@@ -55,6 +76,11 @@ export const load = async ({ url }) => {
 								mode: "insensitive",
 							},
 						},
+						select: {
+							id: true,
+							name: true,
+							price: true,
+						},
 				  })
 				: null,
 		groups:
@@ -65,6 +91,9 @@ export const load = async ({ url }) => {
 								contains: query,
 								mode: "insensitive",
 							},
+						},
+						select: {
+							name: true,
 						},
 				  })
 				: null,
