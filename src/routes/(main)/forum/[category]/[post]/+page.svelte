@@ -69,7 +69,7 @@
 				<a
 					href="/user/{data.author.number}"
 					class="user d-flex text-decoration-none">
-					<span class="pfp rounded-circle">
+					<span class="pfp bg-a2 rounded-circle">
 						<img
 							src={data.author.image}
 							alt={data.author.username}
@@ -151,9 +151,7 @@
 		
 	.user
 		align-items: center 
-		.pfp
-			background: var(--accent2)
-			img
-				max-width: 2rem
-				width: 2rem
+		.pfp img
+			max-width: 2rem
+			width: 2rem
 </style>

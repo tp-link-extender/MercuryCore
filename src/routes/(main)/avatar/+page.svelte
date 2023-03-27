@@ -427,8 +427,6 @@
 {/if}
 
 <style lang="sass">
-	.card 
-		background: var(--accent)
 
 	.bodyPart
 		border-radius: 3px

@@ -155,7 +155,7 @@
 								id="user"
 								href="/user/{$user.number}"
 								class="btn p-0 d-flex text-decoration-none light-text w-50">
-								<div id="pfp" class="mx-2 rounded-circle">
+								<div id="pfp" class="mx-2 rounded-circle bg-background">
 									<img
 										src={$user?.image}
 										alt="You"
@@ -364,7 +364,6 @@
 		box-shadow: none !important
 
 	#pfp
-		background: var(--background)
 		width: 2.4rem
 		height: 2.4rem
 
@@ -382,7 +381,7 @@
 		background: var(--darker)
 		min-width: 25vw
 		a:hover
-				background: var(--accent2)
+			background: var(--accent2)
 
 	.input-group
 		width: 25vw

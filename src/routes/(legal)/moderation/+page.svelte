@@ -132,6 +132,4 @@
 	@media only screen and (min-width: 576px)
 		.container
 			width: 50rem
-	.card
-		background: var(--accent)
 </style>

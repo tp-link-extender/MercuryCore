@@ -280,7 +280,7 @@
 							<div class="card h-100">
 								<div class="card-body pb-0">
 									<div id="user" class="d-flex mb-2">
-										<span class="pfp rounded-circle">
+										<span class="pfp rounded-circle bg-a2">
 											<img
 												src={data.image}
 												alt={data.username}
@@ -347,15 +347,9 @@
 		div, button
 			border: none
 			box-shadow: none
-			background: var(--darker)
 
-	#feed
-		.card
-			background: var(--accent)
-		#user
-			align-items: center
-			.pfp
-				background: var(--accent2)
-				img
-					width: 2rem
+	#user
+		align-items: center
+		.pfp img
+			width: 2rem
 </style>

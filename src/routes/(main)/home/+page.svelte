@@ -79,7 +79,7 @@
 				<a
 					href="/user/{$user?.number}"
 					class="text-decoration-none d-flex">
-					<div class="pfp rounded-circle">
+					<div class="pfp bg-a rounded-circle">
 						<img
 							src={$user?.image}
 							alt="You"
@@ -129,7 +129,7 @@
 									<a
 										href="/user/{status.authorUser?.number}"
 										class="text-decoration-none d-flex align-items-center">
-										<span class="pfp rounded-circle">
+										<span class="pfp bg-background rounded-circle">
 											<img
 												src={status.authorUser?.image}
 												alt={status.authorUser
@@ -270,7 +270,6 @@
 	.top
 		width: 100vw
 		.pfp
-			background: var(--accent)
 			width: 6rem
 			min-width: 6rem
 			height: 6rem !important
@@ -280,9 +279,6 @@
 
 	.col2
 		margin-top: 7rem
-
-	.card
-		background: var(--accent)
 
 	.username
 		max-width: 50%
@@ -315,11 +311,9 @@
 
 	.user
 		align-items: center
-		.pfp
-			background: var(--accent2)
-			img
-				width: 2rem
-				min-width: 2rem
+		.pfp img
+			width: 2rem
+			min-width: 2rem
 
 	.home-row
 		overflow-x: auto
