@@ -104,7 +104,7 @@
 						</label>
 						<div class="container">
 							<textarea
-								class="form-control light-text mb-1 {form?.area ==
+								class="form-control light-text mb-1 bg-a {form?.area ==
 								'bio'
 									? 'is-invalid'
 									: 'valid'}"
@@ -309,8 +309,6 @@
 		border-radius: 0
 		color: var(--light-text)
 	
-	textarea
-		background: var(--accent)
 	.form-control
 		color: var(--light-text)
 

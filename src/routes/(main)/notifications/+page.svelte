@@ -22,11 +22,11 @@
 
 <div class="container mt-5">
 	{#each data.notifications as notification}
-		<div class:read={notification.read} class="card mb-3 p-3">
+		<div class:bg-darker={notification.read} class="card mb-3 p-3">
 			<h2 class="light-text h5 d-flex align-items-center">
 				<a
 					href="/user/{notification.sender.number}"
-					class="image-background rounded-circle me-3">
+					class="image-background bg-a rounded-circle me-3">
 					<img
 						src={notification.sender.image}
 						alt={notification.sender.username}
@@ -46,12 +46,8 @@
 	@media only screen and (min-width: 576px)
 		.container
 			width: 50rem
-			
-	.read
-		background: var(--darker)
 
 	.image-background
-		background: var(--accent)
 		max-width: 3rem
 		min-height: 3rem
 		img

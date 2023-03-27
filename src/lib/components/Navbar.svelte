@@ -77,7 +77,7 @@
 						<div class="input-group">
 							<input
 								bind:value={search}
-								class="form-control valid"
+								class="form-control valid bg-background"
 								name="query"
 								type="search"
 								placeholder="Search"
@@ -97,7 +97,7 @@
 							<div
 								transition:fade={{ duration: 150 }}
 								id="results"
-								class="position-absolute card p-2 pe-0 mt-2">
+								class="position-absolute card bg-darker p-2 pe-0 mt-2">
 								<a
 									class="btn text-start light-text py-2"
 									href="/search?q={search}&c=users"
@@ -329,9 +329,6 @@
 			div
 				width: 100% !important
 
-	input
-		background: var(--background) !important
-
 	hr
 		display: none
 
@@ -372,13 +369,11 @@
 		height: 2.4rem
 
 	.dropdown-menu
-		background: var(--darker)
 		border: none
 		z-index: 5
 
 	#results
 		z-index: 5
-		background: var(--darker)
 		min-width: 25vw
 		a:hover
 			background: var(--accent2)

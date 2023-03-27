@@ -194,10 +194,9 @@
 
 	#login
 		max-width: 30rem
-		form 
-			button
-				background: var(--mainaccent)
-				border-color: var(--mainaccent)
+		form button
+			background: var(--mainaccent)
+			border-color: var(--mainaccent)
 
 	#wavep // rpcs3 momnt
 		div

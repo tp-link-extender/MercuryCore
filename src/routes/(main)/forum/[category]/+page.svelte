@@ -24,7 +24,7 @@
 	{#each data.posts as post, num}
 		<div
 			in:fade|global={{ num, total: data.posts.length }}
-			class="post card mb-3 flex-row">
+			class="post card bg-darker mb-3 flex-row">
 			<form
 				use:enhance
 				class="sidebar bg-a me-2 p-1"
@@ -124,7 +124,6 @@
 		overflow: hidden
 		word-break: break-word
 
-		background: var(--darker)
 		border-color: var(--accent2)
 		transition: all 0.3s ease-out
 		&:hover

@@ -18,10 +18,10 @@
 </svelte:head>
 
 <div class="container light-text">
-	<div class="card post flex-row">
+	<div class="post card bg-darker flex-row">
 		<form
 			use:enhance
-			class="sidebar me-2 p-1"
+			class="sidebar bg-a me-2 p-1"
 			method="POST"
 			action="/forum/{data.forumCategory.name}?/like">
 			<input type="hidden" name="id" value={data.id} />
@@ -139,11 +139,9 @@
 			width: 70rem
 
 	.sidebar
-		background: var(--accent)
 		width: 2.5rem
 
 	.post
-		background: var(--darker)
 		border-color: var(--accent2)
 
 	p
