@@ -117,7 +117,7 @@
 						<div class="container">
 							<textarea
 								required
-								class="form-control light-text mb-1 {form?.area ==
+								class="form-control light-text mb-1 bg-a {form?.area ==
 								'desc'
 									? 'is-invalid'
 									: 'valid'}"
@@ -395,9 +395,7 @@
 	.nav-link
 		border-radius: 0
 		color: var(--light-text)
-	
-	textarea
-		background: var(--accent)
+
 	.form-control
 		color: var(--light-text)
 

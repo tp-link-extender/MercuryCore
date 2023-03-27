@@ -18,10 +18,10 @@
 </svelte:head>
 
 <div class="container light-text">
-	<div class="card post flex-row">
+	<div class="post card bg-darker flex-row">
 		<form
 			use:enhance
-			class="sidebar me-2 p-1"
+			class="sidebar bg-a me-2 p-1"
 			method="POST"
 			action="/forum/{data.forumCategory.name}?/like">
 			<input type="hidden" name="id" value={data.id} />
@@ -69,7 +69,7 @@
 				<a
 					href="/user/{data.author.number}"
 					class="user d-flex text-decoration-none">
-					<span class="pfp rounded-circle">
+					<span class="pfp bg-a2 rounded-circle">
 						<img
 							src={data.author.image}
 							alt={data.author.username}
@@ -139,11 +139,9 @@
 			width: 70rem
 
 	.sidebar
-		background: var(--accent)
 		width: 2.5rem
 
 	.post
-		background: var(--darker)
 		border-color: var(--accent2)
 
 	p
@@ -151,9 +149,7 @@
 		
 	.user
 		align-items: center 
-		.pfp
-			background: var(--accent2)
-			img
-				max-width: 2rem
-				width: 2rem
+		.pfp img
+			max-width: 2rem
+			width: 2rem
 </style>

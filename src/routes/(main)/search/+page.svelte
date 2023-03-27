@@ -34,7 +34,7 @@
 					class="px-2 mb-2 text-center light-text text-decoration-none"
 					href="/user/{user.number}">
 					<div class="position-relative mb-2">
-						<div class="image-background rounded-circle">
+						<div class="image-background bg-a rounded-circle">
 							<img
 								src={user.image}
 								alt={user.username}
@@ -105,13 +105,12 @@
 		grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))
 		grid-gap: 0 1rem
 
-		.badge
-			padding: 0.75rem
-		.place
-			width: 8rem
-			margin: auto
-		.image-background
-			background: var(--accent)
-			width: 7rem
-			margin: auto
+	.badge
+		padding: 0.75rem
+	.place
+		width: 8rem
+		margin: auto
+	.image-background
+		width: 7rem
+		margin: auto
 </style>

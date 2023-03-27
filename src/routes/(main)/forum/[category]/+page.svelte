@@ -24,10 +24,10 @@
 	{#each data.posts as post, num}
 		<div
 			in:fade|global={{ num, total: data.posts.length }}
-			class="post card mb-3 flex-row">
+			class="post card bg-darker mb-3 flex-row">
 			<form
 				use:enhance
-				class="sidebar me-2 p-1"
+				class="sidebar bg-a me-2 p-1"
 				method="POST"
 				action="?/like">
 				<input type="hidden" name="id" value={post.id} />
@@ -77,7 +77,7 @@
 				<a
 					href="/user/{post.author.number}"
 					class="user d-flex text-decoration-none m-2 pe-4 mb-0 w-100">
-					<span class="pfp rounded-circle">
+					<span class="pfp bg-a2 rounded-circle">
 						<img
 							src={post.author.image}
 							alt={post.author.username}
@@ -114,7 +114,6 @@
 
 	.sidebar
 		z-index: 1
-		background: var(--accent)
 		// min-width: 3rem
 
 	// #replycount
@@ -125,7 +124,6 @@
 		overflow: hidden
 		word-break: break-word
 
-		background: var(--darker)
 		border-color: var(--accent2)
 		transition: all 0.3s ease-out
 		&:hover
@@ -141,9 +139,7 @@
 
 	.user
 		align-items: center 
-		.pfp
-			background: var(--accent2)
-			img
-				max-width: 2rem
-				width: 2rem
+		.pfp img
+			max-width: 2rem
+			width: 2rem
 </style>

@@ -93,7 +93,7 @@
 		{/each}
 	</div>
 
-	<div id="light" class="col col-12 col-lg-6 light-text">
+	<div id="light" class="col col-12 col-lg-6 light-text bg-background">
 		<div id="login" class="m-auto">
 			<h2 class="light-text">Create a free account</h2>
 			<p class="light-text">
@@ -188,17 +188,15 @@
 
 	#light
 		z-index: 1
-		background: var(--background)
 	#dark
 		z-index: 0
 		background: linear-gradient(-20deg, var(--darker) 50%, var(--mainaccent) 250%)
 
 	#login
 		max-width: 30rem
-		form 
-			button
-				background: var(--mainaccent)
-				border-color: var(--mainaccent)
+		form button
+			background: var(--mainaccent)
+			border-color: var(--mainaccent)
 
 	#wavep // rpcs3 momnt
 		div

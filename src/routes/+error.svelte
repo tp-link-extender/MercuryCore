@@ -2,7 +2,7 @@
 	// If an error happens in any +page or +layout file,
 	// this page will be rendered instead.
 
-	import type { LayoutData } from "./(site)/$types"
+	import type { LayoutData } from "./$types"
 	import { page } from "$app/stores"
 	import Navbar from "$lib/components/Navbar.svelte"
 	import Footer from "$lib/components/Footer.svelte"
@@ -18,7 +18,7 @@
 
 <main>
 	<div
-		class="container d-flex flex-column justify-content-center align-items-center light-text rounded-4">
+		class="container d-flex flex-column justify-content-center align-items-center light-text bg-a rounded-4">
 		<h1 class="light-text">Error {$page.status}</h1>
 		{$page.error?.message}
 	</div>
@@ -35,7 +35,6 @@
 			padding-bottom: 25vh
 
 		div
-			background: var(--accent)
 			width: fit-content
 			padding: 2rem 5rem
 </style>

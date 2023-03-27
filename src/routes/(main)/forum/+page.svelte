@@ -13,7 +13,7 @@
 	{#each data.categories as category, num}
 		<div
 			in:fade={{ num, total: data.categories.length }}
-			class="category card p-3 mb-3">
+			class="category card bg-darker p-3 mb-3">
 			<div class="row">
 				<a
 					class="col col-6 light-text text-decoration-none"
@@ -63,7 +63,6 @@
 			width: 70rem
 
 	.category
-		background: var(--darker)
 		border-color: var(--accent2)
 		transition: all 0.3s ease-out
 </style>

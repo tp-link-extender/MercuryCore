@@ -90,8 +90,10 @@
 						<div class="row g-3">
 							<div class="col-lg-3">
 								<a href="/admin/banners" class="shadow-hover">
-									<div class="card text-center light-text">
-										<div class="card-body rounded-1 p-4">
+									<div
+										class="card bg-a3 text-center light-text">
+										<div
+											class="card-body bg-a rounded-1 p-4">
 											<h1>
 												<i
 													class="fa-solid fa-bullhorn" />
@@ -105,8 +107,10 @@
 							</div>
 							<div class="col-lg-3">
 								<a href="/admin/accounts" class="shadow-hover">
-									<div class="card text-center light-text">
-										<div class="card-body rounded-1 p-4">
+									<div
+										class="card bg-a3 text-center light-text">
+										<div
+											class="card-body bg-a rounded-1 p-4">
 											<h1>
 												<i class="fa-regular fa-user" />
 											</h1>
@@ -119,8 +123,10 @@
 							</div>
 							<div class="col-lg-3">
 								<a href="/admin/audit" class="shadow-hover">
-									<div class="card text-center light-text">
-										<div class="card-body rounded-1 p-4">
+									<div
+										class="card bg-a3 text-center light-text">
+										<div
+											class="card-body bg-a rounded-1 p-4">
 											<h1>
 												<i class="fa-solid fa-book" />
 											</h1>
@@ -133,8 +139,10 @@
 							</div>
 							<div class="col-lg-3">
 								<a href="/admin/invites" class="shadow-hover">
-									<div class="card text-center light-text">
-										<div class="card-body rounded-1 p-4">
+									<div
+										class="card bg-a3 text-center light-text">
+										<div
+											class="card-body bg-a rounded-1 p-4">
 											<h1>
 												<i class="fa-solid fa-key" />
 											</h1>
@@ -147,8 +155,10 @@
 							</div>
 							<div class="col-lg-3">
 								<a href="#" class="shadow-hover">
-									<div class="card text-center light-text">
-										<div class="card-body rounded-1 p-4">
+									<div
+										class="card bg-a3 text-center light-text">
+										<div
+											class="card-body bg-a rounded-1 p-4">
 											<h1>
 												<i class="fa-solid fa-dice" />
 											</h1>
@@ -171,8 +181,8 @@
 					<div class="row g-3">
 						<div class="col-lg-3">
 							<a href="/admin/moderation" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
+								<div class="card bg-a3 text-center light-text">
+									<div class="card-body bg-a rounded-1 p-4">
 										<h1>
 											<i class="fa-solid fa-user-slash" />
 										</h1>
@@ -185,8 +195,8 @@
 						</div>
 						<div class="col-lg-3">
 							<a href="#" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
+								<div class="card bg-a3 text-center light-text">
+									<div class="card-body bg-a rounded-1 p-4">
 										<h1>
 											<i class="fa-regular fa-flag" />
 										</h1>
@@ -199,8 +209,8 @@
 						</div>
 						<div class="col-lg-3">
 							<a href="#" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
+								<div class="card bg-a3 text-center light-text">
+									<div class="card-body bg-a rounded-1 p-4">
 										<h1>
 											<i
 												class="fa-solid fa-file-circle-check" />
@@ -219,8 +229,10 @@
 						{#if $user?.permissionLevel == 5}
 							<div class="col-lg-3">
 								<a href="/admin/stipend" class="shadow-hover">
-									<div class="card text-center light-text">
-										<div class="card-body rounded-1 p-4">
+									<div
+										class="card bg-a3 text-center light-text">
+										<div
+											class="card-body bg-a rounded-1 p-4">
 											<h1>
 												<i
 													class="fa-regular fa-clock" />
@@ -235,8 +247,8 @@
 						{/if}
 						<div class="col-lg-3">
 							<a href="#" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
+								<div class="card bg-a3 text-center light-text">
+									<div class="card-body bg-a rounded-1 p-4">
 										<h1><i class="fa-regular fa-gem" /></h1>
 										<h5 class="fw-normal mt-3">
 											Award Currency
@@ -248,8 +260,10 @@
 						{#if $user?.permissionLevel == 5 || $user?.permissionLevel == 3}
 							<div class="col-lg-3">
 								<a href="#" class="shadow-hover">
-									<div class="card text-center light-text">
-										<div class="card-body rounded-1 p-4">
+									<div
+										class="card bg-a3 text-center light-text">
+										<div
+											class="card-body bg-a rounded-1 p-4">
 											<h1>
 												<i
 													class="fa-solid fa-file-circle-plus" />
@@ -264,8 +278,8 @@
 						{/if}
 						<div class="col-lg-3">
 							<a href="/admin/transactions" class="shadow-hover">
-								<div class="card text-center light-text">
-									<div class="card-body rounded-1 p-4">
+								<div class="card bg-a3 text-center light-text">
+									<div class="card-body bg-a rounded-1 p-4">
 										<h1>
 											<i
 												class="fa-solid fa-money-bill-transfer" />
@@ -282,8 +296,8 @@
 				<div class="tab-pane fade" id="statistics" role="tabpanel">
 					<div class="row g-3">
 						<div class="col-lg-7 col-md-7">
-							<div class="card text-black mb-3">
-								<div class="card-body rounded-1">
+							<div class="card bg-a3 text-black mb-3">
+								<div class="card-body bg-a rounded-1">
 									<h3 class="light-text">
 										<i class="fa-solid fa-memory" />
 										{(
@@ -300,7 +314,7 @@
 												1024 ** 2
 										)} MB is being used
 									</span>
-									<div class="progress mt-2">
+									<div class="progress bg-a mt-2">
 										<div
 											class="progress-bar progress-bar-striped progress-bar-animated bg-success"
 											role="progressbar"
@@ -315,8 +329,8 @@
 									</div>
 								</div>
 							</div>
-							<div class="card text-black mb-3">
-								<div class="card-body rounded-1">
+							<div class="card bg-a3 text-black mb-3">
+								<div class="card-body bg-a rounded-1">
 									{#await data.stream.disk}
 										<h3 class="light-text">Loading...</h3>
 									{:then disk}
@@ -337,7 +351,7 @@
 													1024 ** 2
 											)} MB is being used
 										</span>
-										<div class="progress mt-2">
+										<div class="progress bg-a mt-2">
 											<div
 												class="progress-bar progress-bar-striped progress-bar-animated"
 												role="progressbar"
@@ -355,8 +369,8 @@
 							</div>
 						</div>
 						<div class="col-lg-5 col-md-5">
-							<div class="card text-black mb-3">
-								<div class="card-body rounded-1">
+							<div class="card bg-a3 text-black mb-3">
+								<div class="card-body bg-a rounded-1">
 									<h3 class="light-text">
 										<i class="fa-regular fa-user me-2" />
 										Users
@@ -367,8 +381,8 @@
 									</span>
 								</div>
 							</div>
-							<div class="card text-black mb-3">
-								<div class="card-body rounded-1">
+							<div class="card bg-a3 text-black mb-3">
+								<div class="card-body bg-a rounded-1">
 									<h3 class="light-text">
 										<i class="fa-regular fa-file me-2" />
 										Assets
@@ -414,16 +428,9 @@
 	h2
 		border-color: var(--accent3) !important
 
-	.progress
-		background: var(--accent2)
-
-	.card-body
-		background: var(--accent)
-
 	.card
 		border-width: 2px
 		border-color: var(--accent3)
-		background: var(--accent3)
 
 	.shadow-hover,
 	.shadow-hover:link 
@@ -431,7 +438,7 @@
 		text-decoration: none
 		font-size: 14px
 
-	.shadow-hover > .card 
+	.shadow-hover > .card
 		border-radius: 0.2rem
 		box-shadow: none
 		transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)
@@ -456,5 +463,4 @@
 	.nav-link
 		border-radius: 0
 		color: var(--light-text)
-
 </style>
