@@ -25,7 +25,7 @@
 					<a
 						href="/user/{transaction.sender.number}"
 						class="d-flex text-decoration-none">
-						<div class="me-2 rounded-circle pfp">
+						<div class="me-2 rounded-circle pfp bg-a">
 							<img
 								src={transaction.sender?.image}
 								alt={transaction.sender.username}
@@ -71,7 +71,7 @@
 						<p class="light-text my-auto fs-6">
 							{transaction.receiver.username}
 						</p>
-						<div class="ms-2 rounded-circle pfp">
+						<div class="ms-2 rounded-circle pfp bg-a">
 							<img
 								src={transaction.receiver?.image}
 								alt={transaction.receiver.username}
@@ -107,7 +107,6 @@
 		background: var(--darker)
 
 	.pfp
-		background: var(--accent)
 		width: 2.5rem
 		height: 2.5rem
 

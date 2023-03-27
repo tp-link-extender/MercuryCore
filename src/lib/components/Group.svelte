@@ -11,7 +11,7 @@
 
 <a
 	in:fade={{ num, total }}
-	class="card text-center light-text text-decoration-none h6 rounded-4 m-0"
+	class="card text-center light-text bg-darker text-decoration-none h6 rounded-4 m-0"
 	href="/groups/{group.name}">
 	<div class="p-3 d-flex flex-column h-100">
 		{group.name}
@@ -29,7 +29,6 @@
 		width: 11rem
 		height: 11rem
 		border: none
-		background: var(--darker)
 	a
 		transition: all 0.2s
 		&:hover

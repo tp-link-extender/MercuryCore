@@ -262,7 +262,7 @@
 			</div>
 		</div>
 	</div>
-	<ul class="nav nav-pills nav-justified mb-3" id="pills-tab">
+	<ul class="nav nav-pills nav-justified mb-3 bg-a" id="pills-tab">
 		<li class="nav-item" role="presentation">
 			<button
 				class="nav-link active"
@@ -323,7 +323,7 @@
 				</p>
 				<div class="d-flex align-items-start mb-3">
 					<div
-						class="nav flex-column nav-pills nav-vert-pills me-3"
+						class="nav flex-column nav-pills nav-vert-pills me-3 bg-a"
 						id="v-pills-tab"
 						role="tablist"
 						aria-orientation="vertical">
@@ -480,7 +480,7 @@
 										alt={user.username}
 										height="75"
 										width="75"
-										class="pfp rounded-circle img-fluid rounded-top-0 m-1" />
+										class="pfp bg-background rounded-circle img-fluid rounded-top-0 m-1" />
 								</a>
 							{/each}
 						</div>
@@ -566,7 +566,6 @@
 		margin: 3px 0px 0px -10px
 	
 	.dropdown-menu
-		background: var(--darker)
 		border-color: var(--accent2)
 		z-index: 5
 
@@ -590,24 +589,9 @@
 		border-radius: 0
 		color: var(--light-text)
 
-	#pills-tab
-		background: var(--accent)
-		// border-radius: 1rem 1rem 0 0
-
-		.active
-			background: transparent
-			border-style: solid
-			border-width: 0px 0px 2px 0px
-			border-color: var(--bs-blue)
-
-	#v-pills-tab
-		background: var(--accent)
-		.active
-			background: transparent
-			border-style: solid
-			border-width: 0px 2px 0px 0px
-			border-color: var(--bs-blue)
-
-	.pfp
-		background: var(--background)
+	#pills-tab .active, #v-pills-tab .active
+		background: transparent
+		border-style: solid
+		border-width: 0px 0px 2px 0px
+		border-color: var(--bs-blue)
 </style>
