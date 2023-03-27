@@ -3,6 +3,7 @@ import { prisma, transaction } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
+import { NotificationType } from "@prisma/client"
 
 export async function load({ locals, params }) {
 	console.time("item")
@@ -130,18 +131,31 @@ export const actions = {
 						return fail(400, { msg: e.message })
 					}
 
-				await prisma.user.update({
-					where: {
-						id: user.id,
-					},
-					data: {
-						itemsOwned: {
-							connect: {
-								id: params.id,
+				await Promise.all([
+					prisma.user.update({
+						where: {
+							id: user.id,
+						},
+						data: {
+							itemsOwned: {
+								connect: {
+									id: params.id,
+								},
 							},
 						},
-					},
-				})
+					}),
+					user.id == item.creator.id
+						? null
+						: prisma.notification.create({
+								data: {
+									type: NotificationType.ItemPurchase,
+									senderId: user.id,
+									receiverId: item.creator.id, // won't be null
+									note: `${user.username} just purchased your item: ${item.name}`,
+									relativeId: item.id,
+								},
+						  }),
+				])
 
 				break
 			case "delete":
@@ -151,6 +165,7 @@ export const actions = {
 						id: params.id,
 					},
 					include: {
+						creator: true,
 						owners: {
 							where: {
 								id: user.id,

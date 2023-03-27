@@ -3,6 +3,7 @@ import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
+import { NotificationType } from "@prisma/client"
 
 export async function load({ locals, params }) {
 	console.time("user")
@@ -153,7 +154,7 @@ export const actions = {
 		const { user } = await authorise(locals.validateUser)
 
 		if (!/^\d+$/.test(params.number))
-			throw error(400, `Invalid user id: ${params.number}`)
+			return fail(400, { msg: `Invalid user id: ${params.number}` })
 		const number = parseInt(params.number)
 
 		const userExists = await prisma.user.findUnique({
@@ -161,7 +162,11 @@ export const actions = {
 				number,
 			},
 		})
-		if (!userExists) return fail(401)
+		if (
+			!userExists ||
+			user.id == userExists.id // You can't friend/follow yourself
+		)
+			return fail(401)
 
 		const data = await formData(request)
 		const action = data.action
@@ -180,38 +185,95 @@ export const actions = {
 
 		console.log("Action:", action)
 
+		async function accept() {
+			await Promise.all([
+				Query(
+					"friends",
+					`
+						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
+						DELETE r
+						MERGE (u1)
+						MERGE (u2)
+						MERGE (u1) <-[:friends]- (u2)
+					`,
+					query
+					// The direction of the [:friends] relationship matches the direction of the previous [:request] relationship
+				),
+				prisma.notification.create({
+					data: {
+						type: NotificationType.NewFriend,
+						senderId: user.id,
+						receiverId: userExists?.id || "", // won't be null
+						note: `${user.username} is now friends with you!`,
+						relativeId: user.id,
+					},
+				}),
+			])
+		}
+
 		try {
 			switch (action) {
 				case "follow":
-					await Query(
-						"friends",
-						`
-							MERGE (u1:User { name: $user1 })
-							MERGE (u2:User { name: $user2 })
-							MERGE (u1) -[:follows]-> (u2)
-						`,
-						query
-					)
+					await Promise.all([
+						Query(
+							"friends",
+							`
+								MERGE (u1:User { name: $user1 })
+								MERGE (u2:User { name: $user2 })
+								MERGE (u1) -[:follows]-> (u2)
+							`,
+							query
+						),
+						prisma.notification.create({
+							data: {
+								type: NotificationType.Follower,
+								senderId: user.id,
+								receiverId: userExists?.id || "",
+								note: `${user.username} is now following you!`,
+								relativeId: user.id,
+							},
+						}),
+					])
 					break
 				case "unfollow":
-					await Query(
-						"friends",
-						`
-							MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
-							DELETE r
-						`,
-						query
-					)
+					await Promise.all([
+						Query(
+							"friends",
+							`
+								MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
+								DELETE r
+							`,
+							query
+						),
+						prisma.notification.deleteMany({
+							where: {
+								type: NotificationType.Follower,
+								senderId: user.id,
+								receiverId: userExists?.id || "",
+								read: false,
+							},
+						}),
+					])
 					break
 				case "unfriend":
-					await Query(
-						"friends",
-						`
-							MATCH (u1:User { name: $user1 }) -[r:friends]- (u2:User { name: $user2 })
-							DELETE r
-						`,
-						query
-					)
+					await Promise.all([
+						Query(
+							"friends",
+							`
+								MATCH (u1:User { name: $user1 }) -[r:friends]- (u2:User { name: $user2 })
+								DELETE r
+							`,
+							query
+						),
+						prisma.notification.deleteMany({
+							where: {
+								type: NotificationType.NewFriend,
+								senderId: user.id,
+								receiverId: userExists?.id || "",
+								read: false,
+							},
+						}),
+					])
 					break
 				case "request":
 					if (
@@ -220,8 +282,7 @@ export const actions = {
 							"MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r",
 							query
 						))
-					) {
-						// Make sure users are not already friends
+					)
 						if (
 							await roQuery(
 								"friends",
@@ -229,39 +290,51 @@ export const actions = {
 								query
 							)
 						)
+							// Make sure users are not already friends
 							// If there is already an incoming request, accept it instead
-							await Query(
-								"friends",
-								`
-									MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-									DELETE r
-									MERGE (u1)
-									MERGE (u2)
-									MERGE (u1) <-[:friends]- (u2)
-								`,
-								query
-							)
+							await accept()
 						else
-							await Query(
-								"friends",
-								`
-									MERGE (u1:User { name: $user1 })
-									MERGE (u2:User { name: $user2 })
-									MERGE (u1) -[:request]-> (u2)
-								`,
-								query
-							)
-					} else return fail(400)
+							await Promise.all([
+								Query(
+									"friends",
+									`
+												MERGE (u1:User { name: $user1 })
+												MERGE (u2:User { name: $user2 })
+												MERGE (u1) -[:request]-> (u2)
+											`,
+									query
+								),
+								prisma.notification.create({
+									data: {
+										type: NotificationType.FriendRequest,
+										senderId: user.id,
+										receiverId: userExists?.id || "",
+										note: `${user.username} has sent you a friend request.`,
+										relativeId: user.id,
+									},
+								}),
+							])
+					else return fail(400)
 					break
 				case "cancel":
-					await Query(
-						"friends",
-						`
-							MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
-							DELETE r
-						`,
-						query
-					)
+					await Promise.all([
+						Query(
+							"friends",
+							`
+								MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
+								DELETE r
+							`,
+							query
+						),
+						prisma.notification.deleteMany({
+							where: {
+								type: NotificationType.FriendRequest,
+								senderId: user.id,
+								receiverId: userExists?.id || "",
+								read: false,
+							},
+						}),
+					])
 					break
 				case "decline":
 					await Query(
@@ -282,18 +355,7 @@ export const actions = {
 						)
 					)
 						// Make sure an incoming request exists before accepting
-						await Query(
-							"friends",
-							`
-								MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-								DELETE r
-								MERGE (u1)
-								MERGE (u2)
-								MERGE (u1) <-[:friends]- (u2)
-							`,
-							query
-							// The direction of the [:friends] relationship matches the direction of the previous [:request] relationship
-						)
+						await accept()
 					else return fail(400)
 					break
 			}
