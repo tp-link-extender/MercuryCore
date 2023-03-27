@@ -191,7 +191,9 @@ export const actions = {
 						: NotificationType.ForumPostReply,
 					senderId: user.id,
 					receiverId: replypost.authorId,
-					note: `${user.username} replied to your reply: ${content}`,
+					note: `${user.username} replied to your ${
+						replyId ? "reply" : "post"
+					}: ${content}`,
 					relativeId: newReplyId,
 				},
 			})

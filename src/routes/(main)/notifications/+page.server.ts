@@ -24,7 +24,7 @@ export async function load({ locals }) {
 			case "FriendRequest":
 			case "Follower":
 			case "NewFriend":
-				i.link = `/user/${i.sender.username}`
+				i.link = `/user/${i.sender.number}`
 				break
 
 			case "ForumPostReply":
@@ -59,7 +59,7 @@ export async function load({ locals }) {
 				break
 
 			case "ItemPurchase":
-				i.link = `/item/${i.relativeId}`
+				i.link = `/avatarshop/item/${i.relativeId}`
 				break
 			case "Message":
 		}
