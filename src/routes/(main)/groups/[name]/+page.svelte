@@ -92,7 +92,4 @@
 <style lang="sass">
 	#all
 		max-width: 60rem
-
-	.card
-		background: var(--accent)
 </style>

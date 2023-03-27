@@ -564,9 +564,6 @@
 	#settings
 		position: absolute
 		margin: 3px 0px 0px -10px
-
-	.card
-		background: var(--accent)
 	
 	.dropdown-menu
 		background: var(--darker)

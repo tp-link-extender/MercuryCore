@@ -10,7 +10,7 @@
 
 <a
 	in:fade={{ num, total }}
-	class="card text-center light-text {place.serverPing >
+	class="card text-center light-text bg-darker {place.serverPing >
 	Math.floor(Date.now() / 1000) - 35
 		? 'border-success'
 		: 'opacity-50'} text-decoration-none h6 rounded-4 m-0"
@@ -46,7 +46,6 @@
 <style lang="sass">
 	.card
 		max-width: 22rem
-		background: var(--darker)
 	a
 		transition: all 0.2s
 		&:hover

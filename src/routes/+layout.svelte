@@ -3,9 +3,8 @@
 	import { handleSession, getUser } from "@lucia-auth/sveltekit/client"
 	import nprogress from "nprogress"
 
-	import "/src/global.sass"
-	import "/src/bootstrap.scss"
 	import "/src/nprogress.sass"
+	import "/src/global.sass"
 
 	// Theme files contain CSS variables that are used throughout the app.
 	import "/src/fa/sass/fontawesome.sass"
@@ -46,6 +45,37 @@
 </svelte:head>
 
 <slot />
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+	9999
+	<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+		<div class="toast-header">
+			<img src="..." class="rounded me-2" alt="..." />
+			<strong class="me-auto">Bootstrap</strong>
+			<small class="text-body-secondary">just now</small>
+			<button
+				type="button"
+				class="btn-close"
+				data-bs-dismiss="toast"
+				aria-label="Close" />
+		</div>
+		<div class="toast-body">See? Just like this.</div>
+	</div>
+
+	<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+		<div class="toast-header">
+			<img src="..." class="rounded me-2" alt="..." />
+			<strong class="me-auto">Bootstrap</strong>
+			<small class="text-body-secondary">2 seconds ago</small>
+			<button
+				type="button"
+				class="btn-close"
+				data-bs-dismiss="toast"
+				aria-label="Close" />
+		</div>
+		<div class="toast-body">Heads up, toasts will stack automatically</div>
+	</div>
+</div>
 
 {#if $user?.theme == "darken"}
 	<style lang="sass">

@@ -1,6 +1,8 @@
 // Styles that will be applied to every page.
 // It's best to only put things in here that apply to many pages, to keep bundle size down.
 
+@use "./bootstrap.scss"
+
 :root
 	overflow: overlay // Scrollbar is above content instead of beside
 	overflow-x: hidden
@@ -8,14 +10,27 @@
 
 	--mainaccent: #7531ff
 
-	.light-text
-		color: var(--light-text) !important
-	.grey-text
-		color: var(--grey-text) !important
-	// .dark-text
-	// 	color: var(--dark-text) !important
-	.accent-text
-		color: var(--mainaccent) !important
+.light-text
+	color: var(--light-text) !important
+.grey-text
+	color: var(--grey-text) !important
+// .dark-text
+// 	color: var(--dark-text) !important
+.accent-text
+	color: var(--mainaccent) !important
+
+.bg-background
+	background: var(--background) !important
+.bg-darker
+	background: var(--darker) !important
+.bg-a
+	background: var(--accent) !important
+.bg-a1
+	background: var(--accent1) !important
+.bg-a2
+	background: var(--accent2) !important
+.bg-a3
+	background: var(--accent3) !important
 
 input, select, textarea
 	background-color: var(--accent) !important
@@ -40,3 +55,10 @@ a.light-text
 		background: var(--accent)
 		&:hover
 			background: var(--accent3)
+
+// bootstrap variables
+.card
+	--bs-card-bg: var(--accent)
+.accordion
+	--bs-accordion-bg: var(--darker)
+	--bs-accordion-active-bg: var(--darker)

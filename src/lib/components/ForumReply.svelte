@@ -53,7 +53,7 @@
 			<a
 				href="/user/{reply.author.number}"
 				class="user d-flex text-decoration-none pt-2">
-				<span class="pfp rounded-circle">
+				<span class="pfp bg-a2 rounded-circle">
 					<img
 						src={reply.author.image}
 						alt={reply.author.username}
@@ -63,7 +63,7 @@
 			<button
 				on:click={collapse(reply.id)}
 				id="collapse"
-				class="p-0 border-0 h-100 mt-3" />
+				class="bg-a2 p-0 border-0 h-100 mt-3" />
 		</span>
 
 		{#if $repliesCollapsed?.[reply.id]}
@@ -161,7 +161,7 @@
 								url="/forum/{forumCategory}/{postId}/{reply.id}"
 								reverse />
 						{:else}
-							<div class="mb-2 card reply">
+							<div class="mb-2 card reply bg-darker">
 								<div class="card-body p-3 pt-1 pb-0">
 									<form
 										use:enhance
@@ -243,11 +243,10 @@
 	
 	#collapse
 		width: auto
-		background: var(--accent2)
 		border-left: 9px solid var(--background) !important
 		border-right: 13px solid var(--background) !important
 		&:hover
-			background: var(--grey-text)
+			background: var(--grey-text) !important
 
 	#collapse2
 		border: none
@@ -265,16 +264,11 @@
 		max-width: 75%
 
 	.reply
-		background: var(--background)
 		border-color: var(--accent2)
 
 	.smallbutton
 		width: 1.5rem
 		height: 1.5rem
-
-	.reply
-		background: var(--background)
-		border-color: var(--accent2)
 
 	p
 		word-break: break-word
@@ -284,9 +278,7 @@
 
 	.user
 		align-items: center 
-	.pfp
-		background: var(--accent2)
-		img
-			max-width: 1.5rem
-			width: 1.5rem
+	.pfp img
+		max-width: 1.5rem
+		width: 1.5rem
 </style>

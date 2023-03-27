@@ -52,7 +52,7 @@
 												.number}"
 											class="d-flex text-decoration-none">
 											<div
-												class="me-2 rounded-circle pfp">
+												class="me-2 rounded-circle pfp bg-a">
 												<img
 													src={transaction.sender
 														?.image}
@@ -106,7 +106,7 @@
 												{transaction.receiver.username}
 											</p>
 											<div
-												class="ms-2 rounded-circle pfp">
+												class="ms-2 rounded-circle pfp bg-a">
 												<img
 													src={transaction.receiver
 														?.image}
@@ -165,7 +165,6 @@
 	.currency
 		margin-top: 0.5rem
 	.pfp
-		background: var(--accent)
 		width: 2.5rem
 		height: 2.5rem
                     
@@ -175,5 +174,4 @@
 	
 	tr:nth-child(2n)
 		background: var(--darker)
-
 </style>
