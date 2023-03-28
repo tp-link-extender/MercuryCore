@@ -1,4 +1,4 @@
-import { authoriseMod, authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
@@ -7,14 +7,14 @@ import type { ModerationActionType } from "@prisma/client"
 
 // Make sure a user is an administrator/moderator before loading the page.
 export async function load({ locals }) {
-	await authoriseMod(locals)
+	await authorise(locals, 4)
 }
 
 export const actions = {
 	moderateUser: async ({ request, locals, getClientAddress }) => {
-		await authoriseMod(locals)
+		await authorise(locals, 4)
 
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const limit = ratelimit("moderateUser", getClientAddress, 30)
 		if (limit) return limit

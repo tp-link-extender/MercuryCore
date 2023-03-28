@@ -5,7 +5,7 @@ export const load = async ({ locals }) => ({
 	items: (
 		await prisma.user.findUnique({
 			where: {
-				number: (await authorise(locals.validateUser)).user.number,
+				number: (await authorise(locals)).user.number,
 			},
 			select: {
 				itemsOwned: true,

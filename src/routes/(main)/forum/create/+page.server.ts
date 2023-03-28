@@ -30,7 +30,7 @@ export const actions = {
 		const limit = ratelimit("forumPost", getClientAddress, 30)
 		if (limit) return limit
 
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const data = await formData(request)
 		const title = data.title

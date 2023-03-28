@@ -13,7 +13,7 @@ export async function load() {
 
 export const actions = {
 	logout: async ({ locals }) => {
-		const { session } = await authorise(locals.validateUser)
+		const { session } = await authorise(locals)
 
 		await auth.invalidateSession(session.sessionId) // invalidate session
 		locals.setSession(null) // remove cookie

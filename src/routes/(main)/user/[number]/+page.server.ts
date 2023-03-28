@@ -43,7 +43,7 @@ export async function load({ locals, params }) {
 		},
 	})
 	if (userExists) {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const query = {
 			user1: user.username,
@@ -151,7 +151,7 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	default: async ({ request, locals, params }) => {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		if (!/^\d+$/.test(params.number))
 			return fail(400, { msg: `Invalid user id: ${params.number}` })

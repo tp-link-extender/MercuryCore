@@ -51,7 +51,7 @@ export async function load({ url, locals, params }) {
 
 	if (!forumReplies) throw error(404, "Reply not found")
 
-	const { user } = await authorise(locals.validateUser)
+	const { user } = await authorise(locals)
 
 	async function addLikes(reply: any) {
 		const query = {
