@@ -1,4 +1,4 @@
-import { authoriseAdmin, authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { fail } from "@sveltejs/kit"
 import { prisma } from "$lib/server/prisma"
 import ratelimit from "$lib/server/ratelimit"
@@ -6,7 +6,7 @@ import formData from "$lib/server/formData"
 
 // Make sure a user is an administrator before loading the page.
 export async function load({ locals }) {
-	await authoriseAdmin(locals)
+	await authorise(locals, 5)
 
 	return {
 		banners: prisma.announcements.findMany({
@@ -22,9 +22,9 @@ export async function load({ locals }) {
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
-		await authoriseAdmin(locals)
+		await authorise(locals, 5)
 
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const data = await formData(request)
 		const action = data.action

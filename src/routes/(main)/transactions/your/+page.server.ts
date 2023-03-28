@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 
 export async function load({ locals }) {
-	const { user } = await authorise(locals.validateUser)
+	const { user } = await authorise(locals)
 
 	return {
 		transactions: prisma.transaction.findMany({

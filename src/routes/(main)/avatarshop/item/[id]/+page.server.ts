@@ -7,7 +7,7 @@ import { NotificationType } from "@prisma/client"
 
 export async function load({ locals, params }) {
 	console.time("item")
-	const { session, user } = await authorise(locals.validateUser)
+	const { session, user } = await authorise(locals)
 
 	const item = await prisma.item.findUnique({
 		where: {
@@ -75,7 +75,7 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	default: async ({ request, locals, params }) => {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const data = await formData(request)
 		const action = data.action
