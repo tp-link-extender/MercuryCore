@@ -21,7 +21,7 @@ export async function load({ url }) {
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
 		ratelimit("report", getClientAddress, 120)
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 		const data = await formData(request)
 		const reportUser = url.searchParams.get("user")
 		const reportUrl = url.searchParams.get("url")

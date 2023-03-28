@@ -60,7 +60,7 @@ export async function load({ url, locals, params }) {
 
 	console.timeEnd("place")
 	if (getPlace) {
-		const { session, user } = await authorise(locals.validateUser)
+		const { session, user } = await authorise(locals)
 
 		if (
 			user.number != getPlace.ownerUser?.number &&
@@ -112,7 +112,7 @@ export const actions = {
 			throw error(400, `Invalid place id: ${params.id}`)
 		const id = parseInt(params.id)
 
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 		const data = await formData(request)
 		const action = data.action
 		const privateTicket = data.privateTicket
@@ -202,7 +202,7 @@ export const actions = {
 		}
 	},
 	join: async ({ request, locals }) => {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const data = await formData(request)
 

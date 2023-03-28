@@ -4,7 +4,7 @@ import { prisma } from "$lib/server/prisma"
 
 // Make sure a user has been moderated before loading the page.
 export async function load({ locals }) {
-	const { user } = await authorise(locals.validateUser)
+	const { user } = await authorise(locals)
 
 	const userModeration = await prisma.moderationAction.findMany({
 		where: {
@@ -24,7 +24,7 @@ export async function load({ locals }) {
 
 export const actions = {
 	default: async ({ locals }) => {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const userModeration = await prisma.moderationAction.findMany({
 			where: {

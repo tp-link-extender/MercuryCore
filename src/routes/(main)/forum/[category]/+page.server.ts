@@ -47,7 +47,7 @@ export async function load({ locals, params }) {
 
 	if (!category) throw error(404, "Not found")
 
-	const { user } = await authorise(locals.validateUser)
+	const { user } = await authorise(locals)
 
 	for (let post of category.posts as any) {
 		post["likeCount"] = await roQuery(
@@ -66,22 +66,22 @@ export async function load({ locals, params }) {
 			},
 			true
 		)
-		post["likes"] = !!await roQuery(
+		post["likes"] = !!(await roQuery(
 			"forum",
 			"MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id }) RETURN r",
 			{
 				user: user.username,
 				id: post.id,
 			}
-		)
-		post["dislikes"] = !!await roQuery(
+		))
+		post["dislikes"] = !!(await roQuery(
 			"forum",
 			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id }) RETURN r",
 			{
 				user: user.username,
 				id: post.id,
 			}
-		)
+		))
 	}
 
 	return category as typeof category & {
@@ -96,7 +96,7 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	like: async ({ request, locals }) => {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 		const data = await formData(request)
 		const action = data.action
 		const id = data.id

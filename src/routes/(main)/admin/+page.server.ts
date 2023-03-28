@@ -1,10 +1,10 @@
 import os from "os"
-import { authoriseAllAdmin } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import checkDiskSpace from "check-disk-space"
 
 // Make sure a user is an administrator before loading the page.
 export async function load({ locals }) {
-	await authoriseAllAdmin(locals)
+	await authorise(locals, 3)
 
 	return {
 		freemem: os.freemem(), // because cant do os on clientside

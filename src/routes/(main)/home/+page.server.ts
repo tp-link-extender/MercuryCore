@@ -7,7 +7,7 @@ import { fail } from "@sveltejs/kit"
 
 export async function load({ locals }) {
 	console.time("home")
-	const { user } = await authorise(locals.validateUser)
+	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users,
 	// but sometimes errors for this page.
 
@@ -92,7 +92,7 @@ export const actions = {
 		const limit = ratelimit("statusPost", getClientAddress, 30)
 		if (limit) return limit
 
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const data = await formData(request)
 		const status = data.status

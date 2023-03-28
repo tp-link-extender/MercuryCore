@@ -220,7 +220,7 @@ function hexToBrick(hex: string) {
 
 export const actions = {
 	paint: async ({ request, locals }) => {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 		const data = await formData(request)
 
 		const bodyPart = data.bodyPart

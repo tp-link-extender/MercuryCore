@@ -49,81 +49,32 @@ export type Auth = typeof auth
 
 /**
  * Authorises a user and returns their session and user data, or redirects them to the login page.
- * @param promise locals.validateUser, the function that returns data about the user.
+ * @param locals the locals object, containing the validateUser function that returns data about the user.
+ * @param level The permission level that is required.
  * @returns An object containing the session and user data. If the authorisation fails, it will throw a redirect to /login.
  * @example
- * const { session, user } = await authorise(locals.validateUser)
+ * const { session, user } = await authorise(locals)
  */
 export async function authorise(
-	promise: () => Promise<
-		| {
-				session: Session
-				user: User
-		  }
-		| {
-				session: null
-				user: null
-		  }
-	>
+	{
+		validateUser,
+	}: {
+		validateUser: () => Promise<
+			| {
+					session: Session
+					user: User
+			  }
+			| {
+					session: null
+					user: null
+			  }
+		>
+	},
+	level?: number
 ) {
-	const { session, user } = await promise()
+	const { session, user } = await validateUser()
 	if (!session) throw redirect(302, "/login")
+	if (level && user.permissionLevel < level)
+		throw error(403, "You do not have permission to view this page.")
 	return { session, user }
-}
-
-/**
- * Authorises an administrator and returns their session and user data, or throws an error if they are not authorised.
- * @param promise locals.validateUser, the function that returns data about the user.
- * @returns An object containing the session and user data. If the authorisation fails, it will throw an error page.
- * @example
- * const { session, user } = await authoriseAdmin(locals)
- */
-export async function authoriseAdmin(locals: any) {
-	const { session, user } = await locals.validateUser()
-
-	if (!session || user.permissionLevel < 5)
-		throw error(
-			451,
-			Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString(
-				"ascii"
-			)
-		)
-}
-
-/**
- * Authorises a moderator and returns their session and user data, or throws an error if they are not authorised.
- * @param promise locals.validateUser, the function that returns data about the user.
- * @returns An object containing the session and user data. If the authorisation fails, it will throw an error page.
- * @example
- * const { session, user } = await authoriseMod(locals)
- */
-export async function authoriseMod(locals: any) {
-	const { session, user } = await locals.validateUser()
-
-	if (!session || user.permissionLevel < 4)
-		throw error(
-			451,
-			Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString(
-				"ascii"
-			)
-		)
-}
-
-/**
- * Authorises any user with permissionLevel > 2 and returns their session and user data or throws an error if they are not authorised.
- * @param promise locals.validateUser, the function that returns data about the user.
- * @returns An object containing the session and user data. If the authorisation fails, it will throw an error page.
- * @example
- * const { session, user } = await authoriseAllAdmin(locals)
- */
-export async function authoriseAllAdmin(locals: any) {
-	const { session, user } = await locals.validateUser()
-
-	if (!session || user.permissionLevel < 3)
-		throw error(
-			451,
-			Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString(
-				"ascii"
-			)
-		)
 }

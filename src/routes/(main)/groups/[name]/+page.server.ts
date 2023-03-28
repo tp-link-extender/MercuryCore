@@ -22,7 +22,7 @@ export async function load({ locals, params }) {
 		},
 	})
 	if (group) {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const query = {
 			group: group.name,
@@ -62,7 +62,7 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	default: async ({ request, locals, params }) => {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const group = await prisma.group.findUnique({
 			where: {

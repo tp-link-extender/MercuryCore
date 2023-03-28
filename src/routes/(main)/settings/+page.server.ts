@@ -5,7 +5,7 @@ import formData from "$lib/server/formData"
 import { fail } from "@sveltejs/kit"
 
 export const load = async ({ locals }) => {
-	const { user } = await authorise(locals.validateUser)
+	const { user } = await authorise(locals)
 
 	const getUser = await prisma.user.findUnique({
 		where: {
@@ -31,7 +31,7 @@ export const load = async ({ locals }) => {
 
 export const actions = {
 	profile: async ({ request, locals }) => {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 		const data = await formData(request)
 
 		let same
@@ -65,7 +65,7 @@ export const actions = {
 	},
 
 	password: async ({ request, locals }) => {
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 		const data = await formData(request)
 
 		if (data.npassword != data.cnpassword)
