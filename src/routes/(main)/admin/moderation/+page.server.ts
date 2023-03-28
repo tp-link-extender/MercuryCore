@@ -116,18 +116,6 @@ export const actions = {
 				msg: "User has already been moderated",
 			})
 
-		if (action == 4) {
-			// Delete Account
-			await prisma.user.update({
-				where: {
-					username,
-				},
-				data: {
-					username: `[ Deleted User ${getModeratee.number} ]`,
-				},
-			})
-		}
-
 		await prisma.moderationAction.create({
 			data: {
 				moderator: {
@@ -145,6 +133,17 @@ export const actions = {
 				type: moderationAction as ModerationActionType,
 			},
 		})
+
+		if (action == 4)
+			// Delete Account
+			await prisma.user.update({
+				where: {
+					username,
+				},
+				data: {
+					username: `[ Deleted User ${getModeratee.number} ]`,
+				},
+			})
 
 		return {
 			moderationsuccess: true,
