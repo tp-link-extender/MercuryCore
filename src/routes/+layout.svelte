@@ -46,7 +46,7 @@
 
 <slot />
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
+<!-- <div class="toast-container position-fixed bottom-0 end-0 p-3">
 	9999
 	<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
 		<div class="toast-header">
@@ -75,7 +75,7 @@
 		</div>
 		<div class="toast-body">Heads up, toasts will stack automatically</div>
 	</div>
-</div>
+</div> -->
 
 {#if $user?.theme == "darken"}
 	<style lang="sass">
