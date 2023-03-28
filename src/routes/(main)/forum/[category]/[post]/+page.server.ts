@@ -77,7 +77,7 @@ export async function load({ locals, params }) {
 
 	if (!forumPost) throw error(404, "Not found")
 
-	const { user } = await authorise(locals.validateUser)
+	const { user } = await authorise(locals)
 
 	async function addLikes(post: any, reply = false) {
 		const query = {
@@ -147,7 +147,7 @@ export const actions = {
 		const limit = ratelimit("forumReply", getClientAddress, 5)
 		if (limit) return limit
 
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 		const data = await formData(request)
 		const content = data.content
 		if (!content || content.length > 1000 || content.length < 5)

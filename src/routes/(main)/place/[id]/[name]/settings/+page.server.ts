@@ -31,10 +31,10 @@ export async function load({ locals, params }) {
 
 	if (!getPlace) throw error(404, "Not found")
 
-	const { user } = await authorise(locals.validateUser)
+	const { user } = await authorise(locals)
 
 	if (user.number != getPlace.ownerUser?.number && user.permissionLevel < 4)
-		throw error(401, "You do not have permission to view this page.")
+		throw error(403, "You do not have permission to view this page.")
 
 	return getPlace
 }
@@ -44,7 +44,7 @@ export const actions = {
 		if (!/^\d+$/.test(params.id || ""))
 			throw error(400, `Invalid game id: ${params.id}`)
 		const id = parseInt(params.id || "")
-		const { user } = await authorise(locals.validateUser)
+		const { user } = await authorise(locals)
 
 		const getPlace = await prisma.place.findUnique({
 			where: {
@@ -65,7 +65,7 @@ export const actions = {
 		})
 
 		if (user.id != getPlace?.ownerUser?.id && user.permissionLevel < 4)
-			throw error(401, "You do not have permission to update this page.")
+			throw error(403, "You do not have permission to update this page.")
 
 		const data = await formData(request)
 		const action = data.action

@@ -8,7 +8,7 @@ export async function load({ locals }) {
 			time: "desc",
 		},
 		where: {
-			receiverId: (await authorise(locals.validateUser)).user.id,
+			receiverId: (await authorise(locals)).user.id,
 		},
 		include: {
 			sender: true,
@@ -63,11 +63,11 @@ export async function load({ locals }) {
 				break
 			case "Message":
 		}
-	
+
 	await prisma.notification.updateMany({
 		data: {
 			read: true,
-		}
+		},
 	})
 
 	return {
