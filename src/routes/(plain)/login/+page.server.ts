@@ -1,10 +1,15 @@
 import { auth } from "$lib/server/lucia"
-import { redirect, fail } from "@sveltejs/kit"
+import formError from "$lib/server/formError"
+import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({
-	username: z.string().min(3).max(30),
+	username: z
+		.string()
+		.min(3)
+		.max(21)
+		.regex(/^[A-Za-z0-9_]+$/),
 	password: z.string().min(1).max(6969),
 })
 
@@ -18,28 +23,27 @@ export const load = async (
 export const actions = {
 	default: async event => {
 		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
+
 		const { username, password } = form.data
 
-		if (form.valid)
-			try {
-				const user = await auth.useKey(
-					"username",
-					username.toLowerCase(),
-					password
-				)
-				event.locals.setSession(await auth.createSession(user.userId))
-			} catch {
-				console.log(form)
-				form.valid = false
-				form.errors = {
-					...form.errors,
-					username: ["Incorrect username or password"],
-					password: ["Incorrect username or password"],
-				}
-				console.log(form)
-				return fail(400, { form })
-			}
-		else return fail(400, { form })
+		try {
+			const user = await auth.useKey(
+				"username",
+				username.toLowerCase(),
+				password
+			)
+			event.locals.setSession(await auth.createSession(user.userId))
+		} catch {
+			return formError(
+				form,
+				["username", "password"],
+				[
+					"Incorrect username or password",
+					"Incorrect username or password",
+				]
+			)
+		}
 
 		throw redirect(302, "/home")
 	},

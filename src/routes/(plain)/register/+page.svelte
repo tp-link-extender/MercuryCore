@@ -1,50 +1,16 @@
 <script lang="ts">
-	import { applyAction, enhance } from "$app/forms"
+	import { superForm } from "sveltekit-superforms/client"
 
-	const input = (name: string, e: any) => (data[name].value = e.target.value)
+	export let data
+	const { form, errors, constraints, enhance, delayed, capture, restore } =
+		superForm(data.form, {
+			taintedMessage: false,
+			onResult: async ({ result }) =>
+				// Reload to get the new session after redirecting to homepage
+				result.type == "redirect" ? window.location.reload() : null,
+		})
 
-	let data: any = {
-		username: { value: "", invalid: false, message: "" },
-		email: { value: "", invalid: false, message: "" },
-		password: { value: "", invalid: false, message: "" },
-		cpassword: { value: "", invalid: false, message: "" },
-		regkey: { value: "", invalid: false, message: "" },
-	}
-
-	const fields = [
-		["username", "Username", "3-21 characters", "text"],
-		["email", "Email Address", "mercury@banland.xyz", "email"],
-		["password", "Password", "Password", "password"],
-		["cpassword", "Confirm Password", "Confirm Password", "password"],
-		["regkey", "Registration Key", "mercurkey-12311121123", "password"],
-	]
-
-	function update(field: string, message: string) {
-		data[field].message = message
-		return true
-	}
-
-	// This system is extremely magicky
-	$: data.username.invalid =
-		(data.username.value.length < 3 &&
-			update("username", "Username must be at least 3 characters")) ||
-		(data.username.value.length > 21 &&
-			update("username", "Username must be less than 30 characters")) ||
-		(!data.username.value.match(/^[A-Za-z0-9_]+$/) &&
-			update("username", "Username must be alphanumeric (A-Z, 0-9, _)"))
-
-	// todo: EMAIL REGEX!
-
-	$: data.password.invalid =
-		// (data.password.value.length < 1 && update("password", "Password must be at least 1 character")) || // Doesn't appear anyway if form has no input
-		data.password.value.length > 6969 &&
-		update("password", "Password must be less than 6969 characters")
-
-	$: data.cpassword.invalid =
-		data.password.value != data.cpassword.value &&
-		update("cpassword", "The specified password does not match")
-
-	export let form
+	export const snapshot = { capture, restore }
 </script>
 
 <svelte:head>
@@ -100,53 +66,99 @@
 				<a href="/login" class="text-decoration-none">Log in</a>
 			</p>
 
-			<form
-				class="m-auto form-group mt-4"
-				method="POST"
-				use:enhance={() =>
-					async ({ result }) =>
-						result.type == "redirect"
-							? window.location.reload()
-							: await applyAction(result)}>
-				<!-- 
-					The use:enhance function prevents lucia getUser() still being undefined after login,
-					while still allowing the form to update without reloading when an error occurs.
-				-->
+			<form use:enhance class="m-auto form-group mt-4" method="POST">
 				<fieldset>
-					{#each fields as [name, label, placeholder, type]}
-						<label for={name} class="form-label">{label}</label>
-						<div class="mb-4">
-							<!--
-								Bind directive cannot be used here, as type is dynamic, and two-way
-								bindings require the type to be determined at compile time.
-							-->
-							<input
-								on:input={e => input(name, e)}
-								id={name}
-								{name}
-								{type}
-								class="light-text form-control {form?.area ==
-									name ||
-								(data[name].value && data[name].invalid)
-									? 'is-invalid'
-									: 'valid'}"
-								{placeholder}
-								required />
-							{#if form?.area == name || (data[name].value && data[name].invalid)}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg || data[name].message}
-								</small>
-							{/if}
-						</div>
-					{/each}
+					<label for="username" class="form-label">Username</label>
+					<div class="mb-4">
+						<input
+							bind:value={$form.username}
+							{...$constraints.username}
+							id="username"
+							name="username"
+							class="light-text form-control {$errors.username
+								? 'is-in'
+								: ''}valid"
+							placeholder="3-21 characters" />
+						<small class="col-12 mb-3 text-danger">
+							{$errors.username || ""}
+						</small>
+					</div>
 
-					{#if form?.area == "unexp"}
-						<p class="col-12 mb-3 text-danger">{form.msg}</p>
-					{/if}
-					<button
-						type="submit"
-						class="container-fluid btn btn-primary mb-3">
-						Register
+					<label for="email" class="form-label">Email Address</label>
+					<div class="mb-4">
+						<input
+							bind:value={$form.email}
+							{...$constraints.email}
+							type="email"
+							id="email"
+							name="email"
+							class="light-text form-control {$errors.email
+								? 'is-in'
+								: ''}valid"
+							placeholder="mercury@banland.xyz" />
+						<small class="col-12 mb-3 text-danger">
+							{$errors.email || ""}
+						</small>
+					</div>
+
+					<label for="password" class="form-label">Password</label>
+					<div class="mb-4">
+						<input
+							bind:value={$form.password}
+							{...$constraints.password}
+							type="password"
+							id="password"
+							name="password"
+							class="light-text form-control {$errors.password
+								? 'is-in'
+								: ''}valid"
+							placeholder="Password" />
+						<small class="col-12 mb-3 text-danger">
+							{$errors.password || ""}
+						</small>
+					</div>
+
+					<label for="cpassword" class="form-label">
+						Confirm Password
+					</label>
+					<div class="mb-4">
+						<input
+							bind:value={$form.cpassword}
+							{...$constraints.cpassword}
+							type="password"
+							id="cpassword"
+							name="cpassword"
+							class="light-text form-control {$errors.cpassword
+								? 'is-in'
+								: ''}valid"
+							placeholder="Confirm Password" />
+						<small class="col-12 mb-3 text-danger">
+							{$errors.cpassword || ""}
+						</small>
+					</div>
+
+					<label for="regkey" class="form-label">
+						Registration Key
+					</label>
+					<div class="mb-4">
+						<input
+							bind:value={$form.regkey}
+							{...$constraints.regkey}
+							id="regkey"
+							name="regkey"
+							class="light-text form-control {$errors.regkey
+								? 'is-in'
+								: ''}valid"
+							placeholder="mercurkey-12311121123" />
+						<small class="col-12 mb-3 text-danger">
+							{$errors.regkey || ""}
+						</small>
+					</div>
+
+					<button class="container-fluid btn btn-primary mb-3">
+						{$delayed ? "Working..." : "Log in"}
+						<!-- $delayed is true if the form takes 
+							more than a few hundred ms to submit -->
 					</button>
 				</fieldset>
 			</form>
