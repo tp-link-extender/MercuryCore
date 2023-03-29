@@ -8,20 +8,6 @@
 			onResult: async ({ result }) =>
 				// Reload to get the new session after redirecting to homepage
 				result.type == "redirect" ? window.location.reload() : null,
-			// validators: {
-			// 	username: v =>
-			// 		v.length < 3
-			// 			? "Username must be at least 3 characters long"
-			// 			: v.length > 30
-			// 			? "Username must be at most 30 characters long"
-			// 			: null,
-			// 	password: v =>
-			// 		v.length < 1
-			// 			? "Password must be at least 1 character long"
-			// 			: v.length > 6969
-			// 			? "Password must be at most 6969 characters long"
-			// 			: null,
-			// },
 		})
 
 	export const snapshot = { capture, restore }
@@ -104,6 +90,7 @@
 						<input
 							bind:value={$form.password}
 							{...$constraints.password}
+							type="password"
 							id="password"
 							name="password"
 							class="light-text form-control {$errors.password
