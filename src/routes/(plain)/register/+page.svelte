@@ -11,21 +11,6 @@
 		regkey: { value: "", invalid: false, message: "" },
 	}
 
-	const things = [
-		[
-			"Original username",
-			"Make sure it is appropriate and between 3-21 characters. Underscores are allowed.",
-		],
-		[
-			"Valid email",
-			"Mercury requires a valid email so you can reset your password at any time.",
-		],
-		[
-			"Secure password",
-			"Make sure your password has a mix of letters, numbers, and symbols to protect against hackers.",
-		],
-	]
-
 	const fields = [
 		["username", "Username", "3-21 characters", "text"],
 		["email", "Email Address", "mercury@banland.xyz", "email"],
@@ -83,14 +68,28 @@
 		<h1 class="fw-bolder light-text mb-4">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
-		{#each things as [thing, more]}
-			<div class="thing d-flex flex-row mt-3">
-				<div class="ms-3 w-100">
-					<h2 class="h4 light-text">{thing}</h2>
-					<p class="light-text opacity-75 more">{more}</p>
-				</div>
-			</div>
-		{/each}
+
+		<div class="ms-3 mt-3 w-100">
+			<h2 class="h4 light-text">Original username</h2>
+			<p class="light-text opacity-75 more">
+				Make sure it is appropriate and between 3-21 characters.
+				Underscores are allowed.
+			</p>
+		</div>
+		<div class="ms-3 mt-3 w-100">
+			<h2 class="h4 light-text">Valid email</h2>
+			<p class="light-text opacity-75 more">
+				Mercury requires a valid email so you can reset your password at
+				any time.
+			</p>
+		</div>
+		<div class="ms-3 mt-3 w-100">
+			<h2 class="h4 light-text">Secure password</h2>
+			<p class="light-text opacity-75 more">
+				Make sure your password has a mix of letters, numbers, and
+				symbols to protect against hackers.
+			</p>
+		</div>
 	</div>
 
 	<div id="light" class="col col-12 col-lg-6 light-text bg-background">
@@ -167,54 +166,15 @@
 </div>
 
 <style lang="sass">
-	h1
-		font-size: 3.5rem
-	a
-		color: var(--mainaccent)
+	@use "../loginregister.sass"
 
-	.more
-		margin-top: -0.7rem
+	@keyframes waves
+		0%
+			margin-left: -1600px
+		100%
+			margin-left: 0
 
-	.row
-		height: 100vh
-	.col
-		padding: 8vw
-		padding-top: 5vh
-		padding-bottom: 0
-
-	@media only screen and (min-width: 993px)
+	@media only screen and (min-width: 992px)
 		.col
 			padding-top: 11vh
-
-	#light
-		z-index: 1
-	#dark
-		z-index: 0
-		background: linear-gradient(-20deg, var(--darker) 50%, var(--mainaccent) 250%)
-
-	#login
-		max-width: 30rem
-		form button
-			background: var(--mainaccent)
-			border-color: var(--mainaccent)
-
-	#wavep // rpcs3 momnt
-		div
-			z-index: 1
-			transition: all 1s ease-in-out 0s
-			div
-				background: url("/landing/wave.svg") repeat-x
-				top: -198px
-				width: 6144px
-				height: 198px
-				animation: 11s cubic-bezier(0.36, 0.45, 0.63, 0.53) 0s infinite normal none running waves
-				transform: translate3d(0px,0px,0px)
-				@keyframes waves
-					0%
-						margin-left: -1600px
-					100%
-						margin-left: 0
-			div:nth-of-type(2)
-				animation: 11s cubic-bezier(0.4, 0.2, 0.2, 0.2) -0.124s infinite normal none running waves, 11s ease -1.24s infinite normal none running swell
-				top: -174px
 </style>
