@@ -4,6 +4,6 @@ export default {
 	plugins: [sveltekit()],
 
 	ssr: {
-		noExternal: ["three", "troika-three-text", "@lucia-auth/sveltekit"],
+		noExternal: ["three", "troika-three-text"],
 	},
 }

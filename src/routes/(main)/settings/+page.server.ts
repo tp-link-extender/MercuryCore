@@ -7,7 +7,7 @@ import { fail } from "@sveltejs/kit"
 export const load = async ({ locals }) => {
 	const { user } = await authorise(locals)
 
-	const getUser = await prisma.user.findUnique({
+	const getUser = await prisma.authUser.findUnique({
 		where: {
 			id: user.id,
 		},
@@ -45,7 +45,7 @@ export const actions = {
 		if (!["standard", "darken", "storm", "solar"].includes(data.theme))
 			return fail(400, { area: "theme", msg: "Invalid theme" })
 
-		await prisma.user.update({
+		await prisma.authUser.update({
 			where: {
 				number: user.number,
 			},

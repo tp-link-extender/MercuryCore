@@ -16,14 +16,14 @@
 </script>
 
 <svelte:head>
-	<title>Report {data.user} - Mercury</title>
+	<title>Report {data.reportee} - Mercury</title>
 </svelte:head>
 
 <h1 class="text-center light-text">Report</h1>
 
 <div class="container mt-4 light-text">
 	<h2 class="light-text h5">
-		Tell us how you think {data.user} is breaking the rules.
+		Tell us how you think {data.reportee} is breaking the rules.
 	</h2>
 
 	<form use:enhance method="POST" class="mt-4">

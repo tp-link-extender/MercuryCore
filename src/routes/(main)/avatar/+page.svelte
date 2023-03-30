@@ -2,9 +2,9 @@
 	import Modal from "$lib/components/Modal.svelte"
 	import { writable } from "svelte/store"
 	import { enhance } from "$app/forms"
-	import { getUser } from "@lucia-auth/sveltekit/client"
 
-	const user = getUser()
+	export let data
+	const user = data.user
 
 	let modal = writable(false)
 	let bodyPart = ""
@@ -324,7 +324,7 @@
 										on:click={openColorPicker("Head")}
 										on:keydown={openColorPicker("Head")}
 										style="background-color:#{brickToHex[
-											$user?.bodyColours['Head']
+											user?.bodyColours['Head']
 										]};height:48px;width:48px;" />
 								</div>
 								<div
@@ -334,7 +334,7 @@
 										on:click={openColorPicker("RightArm")}
 										on:keydown={openColorPicker("RightArm")}
 										style="background-color:#{brickToHex[
-											$user?.bodyColours['RightArm']
+											user?.bodyColours['RightArm']
 										]};height:88px;width:40px;" />
 								</div>
 								<div
@@ -344,7 +344,7 @@
 										on:click={openColorPicker("Torso")}
 										on:keydown={openColorPicker("Torso")}
 										style="background-color:#{brickToHex[
-											$user?.bodyColours['Torso']
+											user?.bodyColours['Torso']
 										]};height:88px;width:88px;" />
 								</div>
 								<div
@@ -354,7 +354,7 @@
 										on:click={openColorPicker("LeftArm")}
 										on:keydown={openColorPicker("LeftArm")}
 										style="background-color:#{brickToHex[
-											$user?.bodyColours['LeftArm']
+											user?.bodyColours['LeftArm']
 										]};height:88px;width:40px;" />
 								</div>
 								<div
@@ -364,7 +364,7 @@
 										on:click={openColorPicker("LeftLeg")}
 										on:keydown={openColorPicker("LeftLeg")}
 										style="background-color:#{brickToHex[
-											$user?.bodyColours['LeftLeg']
+											user?.bodyColours['LeftLeg']
 										]};height:88px;width:40px;" />
 								</div>
 								<div
@@ -374,7 +374,7 @@
 										on:click={openColorPicker("RightLeg")}
 										on:keydown={openColorPicker("RightLeg")}
 										style="background-color:#{brickToHex[
-											$user?.bodyColours['RightLeg']
+											user?.bodyColours['RightLeg']
 										]};height:88px;width:40px;" />
 								</div>
 							</div>

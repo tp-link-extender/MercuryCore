@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import Report from "$lib/components/Report.svelte"
-	import { getUser } from "@lucia-auth/sveltekit/client"
 	import fade from "$lib/fade"
-
-	const user = getUser()
 
 	const permissions: any = [
 		[], // index from 1
@@ -16,6 +13,7 @@
 	]
 
 	export let data
+	const user = data.user
 </script>
 
 <svelte:head>
@@ -70,7 +68,7 @@
 						</h3>
 					</a>
 
-					{#if data.username != $user?.username}
+					{#if data.username != user?.username}
 						<form
 							in:fade
 							class="align-self-center ms-auto me-2"

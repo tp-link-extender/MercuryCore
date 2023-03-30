@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import { getUser } from "@lucia-auth/sveltekit/client"
-
-	const user = getUser()
 
 	export let data
 	export let form
+	const user = data.user
 </script>
 
 <svelte:head>
@@ -81,7 +79,7 @@
 								id="theme"
 								required
 								name="theme"
-								value={$user?.theme || "standard"}
+								value={user?.theme || "standard"}
 								class="form-select {form?.area == 'theme'
 									? 'is-invalid'
 									: 'valid'}">
@@ -155,7 +153,7 @@
 						readonly
 						id="name"
 						disabled
-						value={$user?.username}
+						value={user?.username}
 						class="form-control valid" />
 				</div>
 				<small class="grey-text pb-2">
@@ -172,7 +170,7 @@
 						type="text"
 						readonly
 						id="email"
-						value={`*******@${($user?.email).split("@")[1]}`}
+						value={`*******@${(user?.email).split("@")[1]}`}
 						required
 						class="form-control valid" />
 				</div>

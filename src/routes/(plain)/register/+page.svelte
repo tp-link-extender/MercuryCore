@@ -110,7 +110,7 @@
 							? window.location.reload()
 							: await applyAction(result)}>
 				<!-- 
-					The use:enhance function prevents lucia getUser() still being undefined after login,
+					The use:enhance function prevents lucia data.user still being undefined after login,
 					while still allowing the form to update without reloading when an error occurs.
 				-->
 				<fieldset>

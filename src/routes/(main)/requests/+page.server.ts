@@ -8,7 +8,7 @@ export async function load({ locals }) {
 
 	console.time("requests")
 
-	const userExists = await prisma.user.findUnique({
+	const userExists = await prisma.authUser.findUnique({
 		where: {
 			number: user.number,
 		},
@@ -36,7 +36,7 @@ export async function load({ locals }) {
 		for (let i of usersQuery || ([] as any)) {
 			if (i.name)
 				users.push(
-					await prisma.user.findUnique({
+					await prisma.authUser.findUnique({
 						where: {
 							username: i.name,
 						},
