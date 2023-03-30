@@ -45,7 +45,7 @@ export const actions = {
 		try {
 			if (
 				(
-					await prisma.user.findMany({
+					await prisma.authUser.findMany({
 						where: {
 							username: {
 								equals: username,
@@ -62,7 +62,7 @@ export const actions = {
 
 			if (
 				(
-					await prisma.user.findMany({
+					await prisma.authUser.findMany({
 						where: {
 							email: {
 								equals: email,

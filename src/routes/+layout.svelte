@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page, navigating } from "$app/stores"
-	import { handleSession, getUser } from "@lucia-auth/sveltekit/client"
 	import nprogress from "nprogress"
 
 	import "/src/nprogress.sass"
@@ -11,8 +10,8 @@
 	import "/src/fa/sass/regular.sass"
 	import "/src/fa/sass/solid.sass"
 
-	handleSession(page)
-	const user = getUser()
+	export let data
+	const user = data.user
 
 	// Settings for nprogress, the loading bar shown
 	// at the top of the page when navigating
@@ -77,15 +76,15 @@
 	</div>
 </div> -->
 
-{#if $user?.theme == "darken"}
+{#if user?.theme == "darken"}
 	<style lang="sass">
 		@use "../themes/darken.sass"
 	</style>
-{:else if $user?.theme == "storm"}
+{:else if user?.theme == "storm"}
 	<style lang="sass">
 		@use "../themes/storm.sass"
 	</style>
-{:else if $user?.theme == "solar"}
+{:else if user?.theme == "solar"}
 	<style lang="sass">
 		@use "../themes/solar.sass"
 	</style>

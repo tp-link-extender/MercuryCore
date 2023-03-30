@@ -1,8 +1,4 @@
 <script lang="ts">
-	import { getUser } from "@lucia-auth/sveltekit/client"
-
-	const user = getUser()
-
 	const permissions: any = [
 		[], // index from 1
 		["white", "user", "User"],
@@ -13,6 +9,7 @@
 	]
 
 	export let data
+	const user = data.user
 </script>
 
 <svelte:head>
@@ -23,15 +20,15 @@
 	<h1 class="h2 text-light">Admin Panel</h1>
 	<h2 class="h4 mb-4 border-bottom border-2 pb-3 text-light">
 		Your permission level is: <span
-			style="color: {permissions[$user?.permissionLevel][0]}">
-			<i class="fa fa-{permissions[$user?.permissionLevel][1]} me-1" />
-			{permissions[$user?.permissionLevel][2]}
+			style="color: {permissions[user?.permissionLevel][0]}">
+			<i class="fa fa-{permissions[user?.permissionLevel][1]} me-1" />
+			{permissions[user?.permissionLevel][2]}
 		</span>
 	</h2>
 	<div class="row">
 		<div class="col-lg-2 col-md-3 mb-4">
 			<ul class="nav nav-tabs flex-column border-0">
-				{#if $user?.permissionLevel == 5}
+				{#if user?.permissionLevel == 5}
 					<li class="nav-item" role="presentation">
 						<a
 							class="nav-link active"
@@ -45,7 +42,7 @@
 				{/if}
 				<li class="nav-item" role="presentation">
 					<a
-						class="nav-link {$user?.permissionLevel == 5
+						class="nav-link {user?.permissionLevel == 5
 							? ''
 							: 'active'}"
 						data-bs-toggle="tab"
@@ -82,7 +79,7 @@
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<div id="myTabContent" class="tab-content">
-				{#if $user?.permissionLevel == 5}
+				{#if user?.permissionLevel == 5}
 					<div
 						class="tab-pane fade active show"
 						id="administration"
@@ -173,7 +170,7 @@
 					</div>
 				{/if}
 				<div
-					class="tab-pane fade {$user?.permissionLevel == 5
+					class="tab-pane fade {user?.permissionLevel == 5
 						? ''
 						: 'active show'}"
 					id="moderation"
@@ -226,7 +223,7 @@
 				</div>
 				<div class="tab-pane fade" id="economy" role="tabpanel">
 					<div class="row g-3">
-						{#if $user?.permissionLevel == 5}
+						{#if user?.permissionLevel == 5}
 							<div class="col-lg-3">
 								<a href="/admin/stipend" class="shadow-hover">
 									<div
@@ -257,7 +254,7 @@
 								</div>
 							</a>
 						</div>
-						{#if $user?.permissionLevel == 5 || $user?.permissionLevel == 3}
+						{#if user?.permissionLevel == 5 || user?.permissionLevel == 3}
 							<div class="col-lg-3">
 								<a href="#" class="shadow-hover">
 									<div

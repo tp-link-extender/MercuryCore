@@ -2,7 +2,7 @@ import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 
 export const load = async () => ({
-	users: prisma.user.count(),
+	users: prisma.authUser.count(),
 	places: prisma.place.count(),
 	groups: prisma.group.count(),
 	items: prisma.item.count(),
@@ -13,7 +13,7 @@ export const load = async () => ({
 		{},
 		true
 	),
-	currency: prisma.user.aggregate({
+	currency: prisma.authUser.aggregate({
 		_sum: {
 			currency: true,
 		},

@@ -34,7 +34,7 @@ export const load = async ({ params }) => {
 			for (let i of usersQuery || ([] as any)) {
 				if (i.name)
 					users.push(
-						await prisma.user.findUnique({
+						await prisma.authUser.findUnique({
 							where: {
 								username: i.name,
 							},

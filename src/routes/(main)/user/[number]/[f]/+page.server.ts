@@ -33,7 +33,7 @@ export const load = async ({ params }) => {
 	const type = params.f
 	console.time("user " + type)
 
-	const user = await prisma.user.findUnique({
+	const user = await prisma.authUser.findUnique({
 		where: {
 			number,
 		},
@@ -57,7 +57,7 @@ export const load = async ({ params }) => {
 			for (let i of usersQuery || ([] as any)) {
 				if (i.name)
 					users.push(
-						await prisma.user.findUnique({
+						await prisma.authUser.findUnique({
 							where: {
 								username: i.name,
 							},
@@ -66,7 +66,7 @@ export const load = async ({ params }) => {
 								number: true,
 								image: true,
 								status: true,
-							}
+							},
 						})
 					)
 			}

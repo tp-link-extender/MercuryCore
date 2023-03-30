@@ -151,7 +151,7 @@ export async function transaction(
 				amountSent - sender2.currency
 			} more to buy this`
 		)
-	// const receiver2 = await prisma.user.findUnique({
+	// const receiver2 = await prisma.authUser.findUnique({
 	// 	where: receiver,
 	// })
 	// if (!receiver2) throw new Error("Receiver not found")
