@@ -24,7 +24,7 @@ dependencies:
     version: 5.0.9
   '@threlte/extras':
     specifier: ^4.9.3
-    version: 4.9.3(three@0.151.0)
+    version: 4.9.3(three@0.150.1)
   check-disk-space:
     specifier: ^3.3.1
     version: 3.3.1
@@ -65,8 +65,8 @@ dependencies:
     specifier: ^0.6.0
     version: 0.6.0
   three:
-    specifier: ^0.151.0
-    version: 0.151.0
+    specifier: ^0.150.1
+    version: 0.150.1
   uuid:
     specifier: ^9.0.0
     version: 9.0.0
@@ -569,10 +569,10 @@ packages:
     resolution: {integrity: sha512-3u8SGLD/fzOh0sEf1MDa0FVpp7oLqdEUR8nvGEkWZvGDwKUlhe0XxSmXNzvAYwCSnNLsYYfwiAWy8wBrVkoRlg==}
     dev: false
 
-  /@threlte/extras@4.9.3(three@0.151.0):
+  /@threlte/extras@4.9.3(three@0.150.1):
     resolution: {integrity: sha512-1XVa9a3C+EQE9vMCZopZ2oZGncDlk/Claz+voFCTZvUqJl0xpPWBQTPNM6V61nXu8k5t+JKSGam3TWygBnfxug==}
     dependencies:
-      troika-three-text: 0.46.4(three@0.151.0)
+      troika-three-text: 0.46.4(three@0.150.1)
     transitivePeerDependencies:
       - three
     dev: false
@@ -1377,8 +1377,8 @@ packages:
     resolution: {integrity: sha512-brIBNNB76mXFmU/Kerm4wFnkskBbluBDCjx/8TcpYRb298Yh2dztS2kQ6bhtjMcvUhd5ynClfwpz5h2gnzdQ1A==}
     engines: {node: '>= 8'}
 
-  /three@0.151.0:
-    resolution: {integrity: sha512-ZvjJbNhZ/t0L8I36tc1I1ZP9j1q42ANE9WTlR+P3lZfOzlSfNa5VfR1rZRHNyjn/ZPP4kU7xGI1v8QSJOpxE4w==}
+  /three@0.150.1:
+    resolution: {integrity: sha512-5C1MqKUWaHYo13BX0Q64qcdwImgnnjSOFgBscOzAo8MYCzEtqfQqorEKMcajnA3FHy1yVlIe9AmaMQ0OQracNA==}
     dev: false
 
   /tiny-glob@0.2.9:
@@ -1397,24 +1397,24 @@ packages:
     resolution: {integrity: sha512-eM+pCBxXO/njtF7vdFsHuqb+ElbxqtI4r5EAvk6grfAFyJ6IvWlSkfZ5T9ozC6xWw3Fj1fGoSmrl0gUs46JVIw==}
     engines: {node: '>=6'}
 
-  /troika-three-text@0.46.4(three@0.151.0):
+  /troika-three-text@0.46.4(three@0.150.1):
     resolution: {integrity: sha512-Qsv0HhUKTZgSmAJs5wvO7YlBoJSP9TGPLmrg+K9pbQq4lseQdcevbno/WI38bwJBZ/qS56hvfqEzY0zUEFzDIw==}
     peerDependencies:
       three: '>=0.103.0'
     dependencies:
       bidi-js: 1.0.2
-      three: 0.151.0
-      troika-three-utils: 0.46.0(three@0.151.0)
+      three: 0.150.1
+      troika-three-utils: 0.46.0(three@0.150.1)
       troika-worker-utils: 0.46.0
       webgl-sdf-generator: 1.1.1
     dev: false
 
-  /troika-three-utils@0.46.0(three@0.151.0):
+  /troika-three-utils@0.46.0(three@0.150.1):
     resolution: {integrity: sha512-llHyrXAcwzr0bpg80GxsIp73N7FuImm4WCrKDJkAqcAsWmE5pfP9+Qzw+oMWK1P/AdHQ79eOrOl9NjyW4aOw0w==}
     peerDependencies:
       three: '>=0.103.0'
     dependencies:
-      three: 0.151.0
+      three: 0.150.1
     dev: false
 
   /troika-worker-utils@0.46.0:
