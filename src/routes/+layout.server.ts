@@ -1,14 +1,14 @@
 import { prisma } from "$lib/server/prisma"
-import { handleServerSession } from "@lucia-auth/sveltekit"
 
-export const load = handleServerSession(async () => ({
+export const load = async ({ locals }) => ({
 	banners: prisma.announcements.findMany({
 		where: {
 			active: true,
 		},
 		select: {
 			body: true,
-			bgColour: true
-		}
+			bgColour: true,
+		},
 	}),
-}))
+	user: (await locals.validateUser()).user,
+})

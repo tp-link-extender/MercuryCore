@@ -11,7 +11,7 @@ export async function load({ locals, params }) {
 		throw error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
 
-	const userExists = await prisma.user.findUnique({
+	const userExists = await prisma.authUser.findUnique({
 		where: {
 			number,
 		},
@@ -157,7 +157,7 @@ export const actions = {
 			return fail(400, { msg: `Invalid user id: ${params.number}` })
 		const number = parseInt(params.number)
 
-		const userExists = await prisma.user.findUnique({
+		const userExists = await prisma.authUser.findUnique({
 			where: {
 				number,
 			},
@@ -171,7 +171,7 @@ export const actions = {
 		const data = await formData(request)
 		const action = data.action
 
-		const user2Exists = await prisma.user.findUnique({
+		const user2Exists = await prisma.authUser.findUnique({
 			where: {
 				username: userExists?.username,
 			},

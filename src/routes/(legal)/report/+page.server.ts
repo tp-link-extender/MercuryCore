@@ -13,7 +13,7 @@ export async function load({ url }) {
 		throw error(400, "Missing user or url parameters")
 
 	return {
-		user: reportedUser,
+		reportee: reportedUser,
 		url: reportedUrl,
 	}
 }
@@ -47,7 +47,7 @@ export const actions = {
 		)
 			return fail(400, { msg: "Invalid category" })
 
-		const reportee = await prisma.user.findUnique({
+		const reportee = await prisma.authUser.findUnique({
 			where: {
 				username: reportUser,
 			},

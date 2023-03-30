@@ -3,13 +3,11 @@
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
 	import { fade } from "svelte/transition"
-	import { getUser } from "@lucia-auth/sveltekit/client"
 
 	let search = ""
 
-	const user = getUser()
-
 	export let data: LayoutData
+	const user = data.user
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark py-0">
@@ -42,7 +40,7 @@
 
 		<div id="nav1" class="offcanvas-body px-4 py-1 d-flex">
 			<a class="navbar-brand light-text me-4 mt-1" href="/">Mercury</a>
-			{#if $user}
+			{#if user}
 				<div class="navbar-nav">
 					<a class="btn mt-1 px-1 light-text nav-item" href="/">
 						Home
@@ -59,7 +57,7 @@
 					<a class="btn mt-1 px-1 light-text nav-item" href="/forum">
 						Forum
 					</a>
-					{#if $user?.permissionLevel >= 4}
+					{#if user?.permissionLevel >= 4}
 						<a
 							class="btn mt-1 px-1 light-text nav-item"
 							href="/admin">
@@ -140,31 +138,31 @@
 							class="fw-bold nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
 							<span class="h6 text-success">
-								{$user.currency}
+								{user.currency}
 							</span>
 						</a>
 					</li>
 					<li class="dropdown">
 						<a
-							href="/user/{$user.number}"
+							href="/user/{user.number}"
 							role="button"
 							data-bs-toggle="dropdown"
 							aria-expanded="false"
 							class="fw-bold nav-item mx-0 text-decoration-none px-0 mb-2">
 							<a
 								id="user"
-								href="/user/{$user.number}"
+								href="/user/{user.number}"
 								class="btn p-0 d-flex text-decoration-none light-text w-50">
 								<div
 									id="pfp"
 									class="mx-2 rounded-circle bg-background">
 									<img
-										src={$user?.image}
+										src={user?.image}
 										alt="You"
 										class="rounded-circle rounded-top-0" />
 								</div>
 								<p id="username" class="my-auto fs-6 me-2">
-									{$user?.username}
+									{user?.username}
 								</p>
 							</a>
 						</a>
@@ -219,12 +217,12 @@
 			{/if}
 		</div>
 		<hr class="pt-0 mb-2" />
-		{#if $user}
+		{#if user}
 			<nav id="nav2" class="navbar navbar-dark px-4 py-0 w-100">
 				<div id="nav2-1" class="navbar-nav w-50">
 					<a
 						class="light-text btn nav-item m-0 py-1"
-						href="/user/{$user.number}">
+						href="/user/{user.number}">
 						Profile
 					</a>
 					<a
@@ -246,7 +244,7 @@
 	</div>
 </nav>
 
-{#if data.banners && $user}
+{#if data.banners && user}
 	{#each data.banners as announcement}
 		<div
 			class="alert py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight

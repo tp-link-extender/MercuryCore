@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import { getUser } from "@lucia-auth/sveltekit/client"
 	import Place from "$lib/components/Place.svelte"
 
-	const user = getUser()
-
 	export let data
+	const user = data.user
 </script>
 
 <svelte:head>

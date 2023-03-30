@@ -132,7 +132,7 @@ export const actions = {
 					}
 
 				await Promise.all([
-					prisma.user.update({
+					prisma.authUser.update({
 						where: {
 							id: user.id,
 						},
@@ -177,7 +177,7 @@ export const actions = {
 				if ((item2?.owners || []).length < 1)
 					return fail(400, { msg: "You don't own this item" })
 
-				await prisma.user.update({
+				await prisma.authUser.update({
 					where: {
 						id: user.id,
 					},
