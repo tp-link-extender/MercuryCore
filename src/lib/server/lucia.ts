@@ -6,6 +6,7 @@ import { redirect, error } from "@sveltejs/kit"
 import { createClient } from "redis"
 import lucia from "lucia-auth"
 import type { Session, User } from "lucia-auth"
+import { sveltekit } from "lucia-auth/middleware"
 import prismaAdapter from "@lucia-auth/adapter-prisma"
 import redisAdapter from "@lucia-auth/adapter-session-redis"
 
@@ -15,6 +16,7 @@ session.connect()
 userSession.connect()
 
 export const auth = lucia({
+	middleware: sveltekit(),
 	adapter: {
 		user: prismaAdapter(prisma),
 		session: redisAdapter({
