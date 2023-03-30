@@ -25,7 +25,7 @@ model TextContent {
     forumPostId  String?
     ForumReply   ForumReply? @relation(fields: [forumReplyId], references: [id])
     forumReplyId String?
-    User         User?       @relation(fields: [userId], references: [id])
+    user         AuthUser?   @relation(fields: [userId], references: [id])
     userId       String?
     Place        Place?      @relation(fields: [placeId], references: [id])
     placeId      Int?
@@ -41,9 +41,9 @@ model TextContent {
 // 4: Moderator
 // 5: Administrator
 
-model User {
-    id  String @id @unique @default(uuid())
-    Key Key[]
+model AuthUser {
+    id       String    @id @unique @default(uuid())
+    auth_key AuthKey[]
 
     number               Int           @unique @default(autoincrement())
     username             String        @unique
@@ -89,12 +89,13 @@ model User {
     @@map("user")
 }
 
-model Key {
-    id              String  @id @unique
+// Authentication key for a user
+model AuthKey {
+    id              String   @id @unique
     hashed_password String?
     user_id         String
-    primary         Boolean
-    user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    primary_key     Boolean
+    auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
     expires         BigInt?
 
     @@index([user_id])
@@ -102,48 +103,48 @@ model Key {
 }
 
 model Announcements {
-    id        String  @id @unique @default(cuid())
+    id        String   @id @unique @default(cuid())
     body      String
     bgColour  String
     textLight Boolean
-    active    Boolean @default(true)
+    active    Boolean  @default(true)
     creatorId String
-    user      User    @relation(references: [id], fields: [creatorId], onDelete: Cascade)
+    user      AuthUser @relation(references: [id], fields: [creatorId], onDelete: Cascade)
 }
 
 model GameSessions {
-    place   Place   @relation(references: [id], fields: [placeId], onDelete: Cascade)
+    place   Place    @relation(references: [id], fields: [placeId], onDelete: Cascade)
     placeId Int
-    user    User    @relation(references: [id], fields: [userId], onDelete: Cascade)
+    user    AuthUser @relation(references: [id], fields: [userId], onDelete: Cascade)
     userId  String
-    ticket  String  @id @unique @default(uuid())
-    ping    BigInt  @default(0)
-    valid   Boolean @default(true)
+    ticket  String   @id @unique @default(uuid())
+    ping    BigInt   @default(0)
+    valid   Boolean  @default(true)
 }
 
 model Regkey {
-    key       String    @unique @default(cuid())
-    usesLeft  Int       @default(1)
+    key       String     @unique @default(cuid())
+    usesLeft  Int        @default(1)
     expiry    DateTime?
-    creation  DateTime  @default(now())
-    creator   User?     @relation("creator", fields: [creatorId], references: [id])
+    creation  DateTime   @default(now())
+    creator   AuthUser?  @relation("creator", fields: [creatorId], references: [id])
     creatorId String?
-    users     User[]
+    users     AuthUser[]
 }
 
 model Post {
-    id              String   @id @unique @default(cuid())
-    authorUser      User?    @relation(fields: [authorUsername], references: [username])
+    id              String    @id @unique @default(cuid())
+    authorUser      AuthUser? @relation(fields: [authorUsername], references: [username])
     authorUsername  String?
-    authorGroup     Group?   @relation(fields: [authorGroupname], references: [name])
+    authorGroup     Group?    @relation(fields: [authorGroupname], references: [name])
     authorGroupname String?
-    posted          DateTime @default(now())
+    posted          DateTime  @default(now())
     content         String
 }
 
 model Group {
-    name          String  @id @unique
-    owner         User    @relation(fields: [ownerUsername], references: [username])
+    name          String   @id @unique
+    owner         AuthUser @relation(fields: [ownerUsername], references: [username])
     ownerUsername String
     places        Place[]
     posts         Post[]
@@ -155,9 +156,9 @@ model Place {
     id Int @id @unique @default(autoincrement())
 
     name           String
-    ownerUser      User?   @relation(fields: [ownerUsername], references: [username])
+    ownerUser      AuthUser? @relation(fields: [ownerUsername], references: [username])
     ownerUsername  String?
-    ownerGroup     Group?  @relation(fields: [ownerGroupname], references: [name])
+    ownerGroup     Group?    @relation(fields: [ownerGroupname], references: [name])
     ownerGroupname String?
 
     serverIP      String
@@ -203,19 +204,19 @@ model Item {
     price       Int
     description TextContent[]
     category    ItemCategory
-    creator     User          @relation(fields: [creatorName], references: [username])
+    creator     AuthUser      @relation(fields: [creatorName], references: [username])
     creatorName String
-    owners      User[]        @relation("owns")
-    wearers     User[]        @relation("wears")
+    owners      AuthUser[]    @relation("owns")
+    wearers     AuthUser[]    @relation("wears")
     mesh        String
     texture     String
 }
 
 model Transaction {
     id           String   @id @unique @default(cuid())
-    sender       User     @relation("sent", fields: [senderName], references: [username])
+    sender       AuthUser @relation("sent", fields: [senderName], references: [username])
     senderName   String
-    receiver     User     @relation("received", fields: [receiverName], references: [username])
+    receiver     AuthUser @relation("received", fields: [receiverName], references: [username])
     receiverName String
     amountSent   Int
     taxRate      Float
@@ -234,7 +235,7 @@ model ForumCategory {
 
 model ForumPost {
     id       String        @id @unique
-    author   User          @relation(fields: [authorId], references: [id])
+    author   AuthUser      @relation(fields: [authorId], references: [id])
     authorId String
     posted   DateTime      @default(now())
     title    String
@@ -247,12 +248,12 @@ model ForumPost {
 
 model ForumReply {
     id       String        @id @unique
-    author   User          @relation(fields: [authorId], references: [id])
+    author   AuthUser      @relation(fields: [authorId], references: [id])
     authorId String
     posted   DateTime      @default(now())
     content  TextContent[]
 
-    parentPost    ForumPost   @relation(fields: [parentPostId], references: [id])
+    parentPost    ForumPost    @relation(fields: [parentPostId], references: [id])
     parentPostId  String
     // A reply can be to a post or another reply
     parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
@@ -278,9 +279,9 @@ enum ReportCategory {
 
 model Report {
     id         String   @id @unique @default(cuid())
-    reporter   User     @relation("sent", fields: [reporterId], references: [id])
+    reporter   AuthUser @relation("sent", fields: [reporterId], references: [id])
     reporterId String
-    reportee   User     @relation("received", fields: [reporteeId], references: [id])
+    reportee   AuthUser @relation("received", fields: [reporteeId], references: [id])
     reporteeId String
     time       DateTime @default(now())
 
@@ -299,9 +300,9 @@ enum ModerationActionType {
 
 model ModerationAction {
     id          String               @id @unique @default(cuid())
-    moderator   User                 @relation("given", fields: [moderatorId], references: [id])
+    moderator   AuthUser             @relation("given", fields: [moderatorId], references: [id])
     moderatorId String
-    moderatee   User                 @relation("received", fields: [moderateeId], references: [id])
+    moderatee   AuthUser             @relation("received", fields: [moderateeId], references: [id])
     moderateeId String
     time        DateTime             @default(now())
     timeEnds    DateTime
@@ -322,7 +323,7 @@ model AuditLog {
     id     Int             @id @unique @default(autoincrement())
     action AuditActionType
     note   String
-    user   User            @relation("actor", fields: [userId], references: [id])
+    user   AuthUser        @relation("actor", fields: [userId], references: [id])
     userId String
     date   DateTime        @default(now())
 }
@@ -347,9 +348,9 @@ model Notification {
     type NotificationType
 
     time       DateTime @default(now())
-    sender     User     @relation("sent", fields: [senderId], references: [id])
+    sender     AuthUser @relation("sent", fields: [senderId], references: [id])
     senderId   String
-    receiver   User     @relation("received", fields: [receiverId], references: [id])
+    receiver   AuthUser @relation("received", fields: [receiverId], references: [id])
     receiverId String
     read       Boolean  @default(false)
     note       String
