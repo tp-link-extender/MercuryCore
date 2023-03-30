@@ -51,7 +51,7 @@
 		"redis": "^4.6.5",
 		"svelte-inview": "^4.0.0",
 		"svelte-parallax": "^0.6.0",
-		"three": "^0.151.0",
+		"three": "^0.150.1",
 		"uuid": "^9.0.0",
 		"vite": "^4.2.1"
 	}
