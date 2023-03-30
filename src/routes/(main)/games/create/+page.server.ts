@@ -41,7 +41,7 @@ export const actions = {
 		)
 			return fail(400, { msg: "Invalid fields" })
 
-		const gameCount = await prisma.user.findUnique({
+		const gameCount = await prisma.authUser.findUnique({
 			where: {
 				id: user.id,
 			},

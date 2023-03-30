@@ -34,7 +34,7 @@ export const actions = {
 		if (action == 2 && banDate.getTime() < new Date().getTime())
 			return fail(400, { msg: "Invalid date" })
 
-		const getModeratee = await prisma.user.findUnique({
+		const getModeratee = await prisma.authUser.findUnique({
 			where: {
 				username,
 			},
@@ -136,7 +136,7 @@ export const actions = {
 
 		if (action == 4)
 			// Delete Account
-			await prisma.user.update({
+			await prisma.authUser.update({
 				where: {
 					username,
 				},

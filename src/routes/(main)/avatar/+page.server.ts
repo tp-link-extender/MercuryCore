@@ -236,7 +236,7 @@ export const actions = {
 
 		currentBodyColour[bodyPart] = brickcolor
 
-		await prisma.user.update({
+		await prisma.authUser.update({
 			where: { id: user.id },
 			data: { bodyColours: currentBodyColour },
 		})
