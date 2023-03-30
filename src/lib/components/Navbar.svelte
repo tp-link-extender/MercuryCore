@@ -155,7 +155,9 @@
 								id="user"
 								href="/user/{$user.number}"
 								class="btn p-0 d-flex text-decoration-none light-text w-50">
-								<div id="pfp" class="mx-2 rounded-circle bg-background">
+								<div
+									id="pfp"
+									class="mx-2 rounded-circle bg-background">
 									<img
 										src={$user?.image}
 										alt="You"
@@ -261,7 +263,7 @@
 	.mobile-brand
 		display: none
 
-	@media only screen and (max-width: 991px)
+	@media only screen and (max-width: 992px)
 		.offcanvas-header
 			background: var(--accent)
 		.offcanvas
@@ -309,7 +311,7 @@
 
 	#nav1
 		background: #fff1
-		@media only screen and (max-width: 991px)
+		@media only screen and (max-width: 992px)
 			background: none
 			min-height: fit-content !important
 			overflow-x: hidden
@@ -317,7 +319,7 @@
 	#nav2
 		background: #0003
 		z-index: 1
-		@media only screen and (max-width: 991px)
+		@media only screen and (max-width: 992px)
 			background: none !important
 			min-height: 48vh !important
 			flex-direction: column
@@ -384,7 +386,7 @@
 		font-size: 0.8rem
 		@media only screen and (max-width: 1199px)
 			width: 12rem
-		@media only screen and (max-width: 991px)
+		@media only screen and (max-width: 992px)
 			width: 100%
 		button, input
 			height: 2.3rem
