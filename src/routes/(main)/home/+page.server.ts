@@ -30,7 +30,7 @@ export async function load({ locals }) {
 		for (let i of friendsQuery || ([] as any)) {
 			if (i.name)
 				friends.push(
-					await prisma.user.findUnique({
+					await prisma.authUser.findUnique({
 						where: {
 							username: i.name,
 						},

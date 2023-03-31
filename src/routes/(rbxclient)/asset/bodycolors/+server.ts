@@ -5,7 +5,7 @@ export async function GET({ url, setHeaders }) {
 	const ID = url.searchParams.get("id")
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
-	const getUser = await prisma.user.findUnique({
+	const getUser = await prisma.authUser.findUnique({
 		where: { number: parseInt(ID) },
 	})
 

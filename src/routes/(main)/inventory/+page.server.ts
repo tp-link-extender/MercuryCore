@@ -3,7 +3,7 @@ import { prisma } from "$lib/server/prisma"
 
 export const load = async ({ locals }) => ({
 	items: (
-		await prisma.user.findUnique({
+		await prisma.authUser.findUnique({
 			where: {
 				number: (await authorise(locals)).user.number,
 			},

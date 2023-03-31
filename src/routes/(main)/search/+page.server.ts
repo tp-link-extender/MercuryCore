@@ -12,7 +12,7 @@ export const load = async ({ url }) => {
 	console.log(`search for ${query} in ${category}`)
 
 	if (category == "users") {
-		const user = await prisma.user.findUnique({
+		const user = await prisma.authUser.findUnique({
 			where: {
 				username: query,
 			},
@@ -25,7 +25,7 @@ export const load = async ({ url }) => {
 		category,
 		users:
 			category == "users"
-				? prisma.user.findMany({
+				? prisma.authUser.findMany({
 						where: {
 							username: {
 								contains: query,

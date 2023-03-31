@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import Report from "$lib/components/Report.svelte"
-	import { getUser } from "@lucia-auth/sveltekit/client"
-
-	const user = getUser()
 
 	export let data
 	export let form
+	const user = data.user
 </script>
 
 <svelte:head>
@@ -49,7 +47,7 @@
 					value="buy"
 					class="btn btn-lg w-100 float-left {data.owned
 						? 'btn-secondary disabled'
-						: $user?.currency < data.price
+						: user?.currency < data.price
 						? 'btn-danger disabled'
 						: 'btn-success'}">
 					{#if data.owned}
