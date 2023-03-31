@@ -8,6 +8,7 @@ export const load = async ({ locals }) => ({
 		select: {
 			body: true,
 			bgColour: true,
+			textLight: true,
 		},
 	}),
 	user: (await locals.validateUser()).user,
