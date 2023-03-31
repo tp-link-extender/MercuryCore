@@ -138,7 +138,7 @@ export async function transaction(
 	{ note, link }: { note: String | undefined; link: String | undefined },
 	tx: any /* awful */ = prisma
 ) {
-	const sender2 = await tx.user.findUnique({
+	const sender2 = await tx.authUser.findUnique({
 		where: sender,
 		select: {
 			currency: true,
@@ -159,7 +159,7 @@ export async function transaction(
 	const taxRate = Number((await client.get("taxRate")) || 30)
 	const finalAmount = Math.round(amountSent * (1 - taxRate / 100))
 
-	await tx.user.update({
+	await tx.authUser.update({
 		where: sender,
 		data: {
 			currency: {
@@ -167,7 +167,7 @@ export async function transaction(
 			},
 		},
 	})
-	await tx.user.update({
+	await tx.authUser.update({
 		where: receiver,
 		data: {
 			currency: {
