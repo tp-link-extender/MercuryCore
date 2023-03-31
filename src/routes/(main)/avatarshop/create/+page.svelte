@@ -5,9 +5,6 @@
 	const { form, errors, constraints, enhance, delayed, capture, restore } =
 		superForm(data.form, {
 			taintedMessage: false,
-			onResult: async ({ result }) =>
-				// Reload to get the new session after redirecting to homepage
-				result.type == "redirect" ? window.location.reload() : null,
 		})
 
 	export const snapshot = { capture, restore }
