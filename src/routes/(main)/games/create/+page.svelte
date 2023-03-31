@@ -1,21 +1,17 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { superForm } from "sveltekit-superforms/client"
 
-	let fields = {
-		name: "",
-		description: "",
-		serverIP: "",
-		serverPort: "",
-		maxPlayers: "",
-		privateServer: false,
-	}
+	export let data
+	const { form, errors, constraints, enhance, delayed, capture, restore } =
+		superForm(data.form, {
+			taintedMessage: false,
+			onResult: async ({ result }) =>
+				// Reload to get the new session after redirecting to homepage
+				result.type == "redirect" ? window.location.reload() : null,
+		})
 
-	export const snapshot = {
-		capture: () => fields,
-		restore: v => (fields = v),
-	}
-
-	export let form
+	export const snapshot = { capture, restore }
+	$: other = ($errors as any).other || ""
 </script>
 
 <svelte:head>
@@ -24,133 +20,143 @@
 
 <h1 class="text-center light-text">Create a place</h1>
 
-<div class="container mt-5 light-text">
-	<form use:enhance method="POST">
-		<fieldset>
-			<div class="row mb-3">
-				<label for="name" class="col-md-3 col-form-label text-md-right">
-					Place name
-				</label>
-				<div class="col-md-8">
-					<input
-						bind:value={fields.name}
-						type="text"
-						name="name"
-						id="name"
-						placeholder="Make sure to make it accurate"
-						required
-						class="form-control valid"
-						minlength="3"
-						maxlength="50" />
-				</div>
+<form use:enhance method="POST" class="container mt-5 light-text">
+	<fieldset>
+		<div class="row mb-3">
+			<label for="name" class="col-md-3 col-form-label">Place name</label>
+			<div class="col-md-8">
+				<input
+					bind:value={$form.name}
+					{...$constraints.name}
+					name="name"
+					id="name"
+					placeholder="Make sure to make it accurate"
+					class="form-control {$errors.name ? 'is-in' : ''}valid" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.name || ""}
+				</p>
 			</div>
-			<div class="row mb-3">
-				<label
-					for="description"
-					class="col-md-3 col-form-label text-md-right">
-					Description
-				</label>
-				<div class="col-md-8">
-					<textarea
-						bind:value={fields.description}
-						name="description"
-						id="description"
-						placeholder="1-1000 characters"
-						required
-						class="form-control valid"
-						minlength="1"
-						maxlength="1000" />
-				</div>
+		</div>
+		<div class="row mb-3">
+			<label for="description" class="col-md-3 col-form-label">
+				Description
+			</label>
+			<div class="col-md-8">
+				<textarea
+					bind:value={$form.description}
+					{...$constraints.description}
+					name="description"
+					id="description"
+					placeholder="1-1000 characters"
+					class="form-control {$errors.description
+						? 'is-in'
+						: ''}valid" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.description || ""}
+				</p>
 			</div>
-			<div class="row mb-3">
-				<label
-					for="serverIP"
-					class="col-md-3 col-form-label text-md-right">
-					Server IP
-				</label>
-				<div class="col-md-8">
-					<input
-						bind:value={fields.serverIP}
-						name="serverIP"
-						id="serverIP"
-						placeholder="You can use URLs instead of an IP if you wish"
-						required
-						class="form-control valid"
-						maxlength="1000" />
-				</div>
+		</div>
+		<div class="row mb-3">
+			<label for="serverIP" class="col-md-3 col-form-label">
+				Server IP
+			</label>
+			<div class="col-md-8">
+				<input
+					bind:value={$form.serverIP}
+					{...$constraints.serverIP}
+					name="serverIP"
+					id="serverIP"
+					placeholder="You can use a URL instead of an IP if you wish"
+					required
+					class="form-control {$errors.serverIP
+						? 'is-in'
+						: ''}valid" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.serverIP || ""}
+				</p>
 			</div>
-			<div class="row mb-3">
-				<label
-					for="serverPort"
-					class="col-md-3 col-form-label text-md-right">
-					Server Port
-				</label>
-				<div class="col-md-8">
-					<input
-						type="number"
-						bind:value={fields.serverPort}
-						name="serverPort"
-						id="serverPort"
-						placeholder="Port ranges 49152 - 65536"
-						required
-						class="form-control valid"
-						min="25565"
-						max="65536" />
-				</div>
+		</div>
+		<div class="row mb-3">
+			<label for="serverPort" class="col-md-3 col-form-label">
+				Server Port
+			</label>
+			<div class="col-md-8">
+				<input
+					bind:value={$form.serverPort}
+					{...$constraints.serverPort}
+					type="number"
+					name="serverPort"
+					id="serverPort"
+					placeholder="25565 - 65536"
+					class="form-control {$errors.serverPort
+						? 'is-in'
+						: ''}valid" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.serverPort || ""}
+				</p>
 			</div>
-			<div class="row mb-3">
-				<label
-					for="maxPlayers"
-					class="col-md-3 col-form-label text-md-right">
-					Server Limit
-				</label>
-				<div class="col-md-8">
-					<input
-						type="number"
-						bind:value={fields.maxPlayers}
-						name="maxPlayers"
-						id="maxPlayers"
-						placeholder="1 - 99 players"
-						required
-						class="form-control valid"
-						min="1"
-						max="99" />
-				</div>
+		</div>
+		<div class="row mb-3">
+			<label for="maxPlayers" class="col-md-3 col-form-label">
+				Player Limit
+			</label>
+			<div class="col-md-8">
+				<input
+					bind:value={$form.maxPlayers}
+					{...$constraints.maxPlayers}
+					type="number"
+					name="maxPlayers"
+					id="maxPlayers"
+					placeholder="1 - 99 players"
+					class="form-control {$errors.maxPlayers
+						? 'is-in'
+						: ''}valid" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.maxPlayers || ""}
+				</p>
 			</div>
-			<div class="row mb-3">
-				<label
-					for="privateServer"
-					class="col-md-3 col-form-label text-md-right">
-					Private Server
-				</label>
-				<div class="col-md-8">
-					<input
-						class="form-check-input"
-						type="checkbox"
-						bind:checked={fields.privateServer}
-						name="privateServer"
-						value="privateServer"
-						id="privateServer" />
-				</div>
+		</div>
+		<div class="row mb-4">
+			<label for="privateServer" class="col-md-3 col-form-label">
+				Private Server
+			</label>
+			<div class="col-md-8">
+				<input
+					bind:checked={$form.privateServer}
+					{...$constraints.privateServer}
+					class="form-check-input"
+					type="checkbox"
+					name="privateServer"
+					id="privateServer" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.privateServer || ""}
+				</p>
 			</div>
-			<br />
-			<button type="submit" class="btn btn-success">
+		</div>
+		<button type="submit" class="btn btn-success">
+			{#if $delayed}
+				Working...
+			{:else}
 				Create (
 				<i class="fa fa-gem" />
-				10)
-			</button>
-		</fieldset>
-	</form>
-	<br />
-	<p class="col-12 mb-3 text-danger">{form?.msg || ""}</p>
-</div>
+				10 )
+			{/if}
+		</button>
+	</fieldset>
+	<p class="col-12 mb-3 text-danger">
+		{other}
+	</p>
+</form>
 
 <style lang="sass">
 	@media only screen and (min-width: 576px)
 		.container
 			width: 50rem
 	
-	input[type="checkbox"]
-		height: 1.5rem
-		width: 1.5rem
+	input
+		&[type="checkbox"]
+			height: 1.5rem
+			width: 1.5rem
+		&[type="number"]
+			width: 9rem
 </style>

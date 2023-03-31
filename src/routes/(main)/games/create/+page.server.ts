@@ -1,45 +1,44 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
-import { fail, redirect } from "@sveltejs/kit"
-import formData from "$lib/server/formData"
+import { redirect } from "@sveltejs/kit"
+import formError from "$lib/server/formError"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
+
+const schema = z.object({
+	name: z.string().min(3).max(50),
+	description: z.string().max(1000),
+	serverIP: z
+		.string()
+		.regex(
+			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+		),
+	serverPort: z.number().min(25565).max(65535).default(53640),
+	maxPlayers: z.number().min(1).max(99).default(10),
+	privateServer: z.boolean().optional(),
+})
+
+export const load = async (event /**/) => ({
+	form: await superValidate(event, schema),
+})
 
 export const actions = {
-	default: async ({ locals, request }) => {
-		const { user } = await authorise(locals)
+	default: async event => {
+		const { user } = await authorise(event.locals)
 
-		const data = await formData(request)
-		const name = data.name
-		const description = data.description
-		const serverIP = data.serverIP
-		const serverPort = parseInt(data.serverPort)
-		const maxPlayers = parseInt(data.maxPlayers)
-		const privateServer = !!data.privateServer
+		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
 
-		console.log(
-			"Place create",
+		const {
 			name,
 			description,
 			serverIP,
 			serverPort,
 			maxPlayers,
-			privateServer
-		)
+			privateServer,
+		} = form.data
 
-		if (!name || !description || !serverIP || !serverPort || !maxPlayers)
-			return fail(400, { msg: "Missing fields" })
-		if (
-			name.length < 3 ||
-			name.length > 50 ||
-			description.length > 1000 ||
-			serverPort > 65535 ||
-			serverPort < 25565 ||
-			maxPlayers > 99 ||
-			maxPlayers < 1 ||
-			!/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(
-				serverIP
-			)
-		)
-			return fail(400, { msg: "Invalid fields" })
+		console.log("Place create", form.data)
 
 		const gameCount = await prisma.authUser.findUnique({
 			where: {
@@ -50,8 +49,12 @@ export const actions = {
 			},
 		})
 
-		// if (gameCount && gameCount?._count.places >= 2)
-		// 	return fail(400, { msg: "You may only have 2 places at most" })
+		if (gameCount && gameCount?._count.places >= 2)
+			return formError(
+				form,
+				["other"],
+				["You may only have 2 places at most"]
+			)
 
 		let place: any
 		try {
@@ -87,7 +90,7 @@ export const actions = {
 				)
 			})
 		} catch (e: any) {
-			return fail(402, { msg: e.message })
+			return formError(form, ["other"], [e.message])
 		}
 
 		throw redirect(302, `/place/${place.id}`)
