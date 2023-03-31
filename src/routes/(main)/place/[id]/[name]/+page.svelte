@@ -3,11 +3,11 @@
 	import fade from "$lib/fade"
 	import Modal from "$lib/components/Modal.svelte"
 	import Report from "$lib/components/Report.svelte"
-	import { getUser } from "@lucia-auth/sveltekit/client"
 	import customProtocolCheck from "custom-protocol-check"
 	import { writable } from "svelte/store"
 
 	export let data
+	const user = data.user
 
 	const statistics = [
 		["Activity", "0 visits"],
@@ -23,8 +23,6 @@
 		"/place/placeholderImage2.png",
 		"/place/placeholderImage3.png",
 	]
-
-	const user = getUser()
 
 	// Place Launcher
 
@@ -124,7 +122,7 @@
 						<div class="col">
 							<h2 class="light-text">{data.name}</h2>
 						</div>
-						{#if data.ownerUser?.number == $user?.number || $user?.permissionLevel >= 4}
+						{#if data.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
 							<div
 								id="settings"
 								class="col d-flex justify-content-end">
@@ -307,7 +305,7 @@
 			role="tabpanel"
 			aria-labelledby="pills-game-tab"
 			tabindex={0}>
-			{#if $user?.permissionLevel == 5 || data.ownerUser?.number == $user?.number}
+			{#if user?.permissionLevel == 5 || data.ownerUser?.number == user?.number}
 				<h1 class="h4 light-text">Hosting on Mercury</h1>
 				<p class="light-text">
 					To begin hosting your map for everybody to play, you need to

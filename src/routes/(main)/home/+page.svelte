@@ -1,11 +1,8 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import { getUser } from "@lucia-auth/sveltekit/client"
 	import fade from "$lib/fade"
 	import Place from "$lib/components/Place.svelte"
 	import Report from "$lib/components/Report.svelte"
-
-	const user = getUser()
 
 	const statusColours: any = {
 		Online: "bg-info",
@@ -13,7 +10,11 @@
 		Developing: "bg-warning",
 	}
 
-	const greets = [`Hi, ${$user?.username}!`, `Hello, ${$user?.username}!`]
+	export let data
+	export let form
+	const user = data.user
+
+	const greets = [`Hi, ${user?.username}!`, `Hello, ${user?.username}!`]
 
 	const news = [
 		{
@@ -55,17 +56,14 @@
 	]
 
 	const facts = [
-		`You joined mercury on ${$user?.accountCreated
+		`You joined mercury on ${user?.accountCreated
 			.toLocaleString()
 			.substring(0, 10)}!`,
 		// Add "st", "nd", "rd", "th" to number
-		`You are the ${$user?.number}${
-			["st", "nd", "rd"][($user?.number % 10) - 1] || "th"
+		`You are the ${user?.number}${
+			["st", "nd", "rd"][(user?.number % 10) - 1] || "th"
 		} user to join Mercury!`,
 	]
-
-	export let data
-	export let form
 </script>
 
 <svelte:head>
@@ -77,11 +75,11 @@
 		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
 			<div class="top d-flex px-2">
 				<a
-					href="/user/{$user?.number}"
+					href="/user/{user?.number}"
 					class="text-decoration-none d-flex">
 					<div class="bg-a rounded-circle">
 						<img
-							src={$user?.image}
+							src={user?.image}
 							alt="You"
 							class="rounded-circle img-fluid rounded-top-0" />
 					</div>
@@ -129,7 +127,8 @@
 									<a
 										href="/user/{status.authorUser?.number}"
 										class="text-decoration-none d-flex align-items-center">
-										<span class="bg-background rounded-circle">
+										<span
+											class="bg-background rounded-circle">
 											<img
 												src={status.authorUser?.image}
 												alt={status.authorUser
