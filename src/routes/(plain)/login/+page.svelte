@@ -80,9 +80,9 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Username" />
-						<small class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.username || ""}
-						</small>
+						</p>
 					</div>
 
 					<label for="password" class="form-label">Password</label>
@@ -97,9 +97,9 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Password" />
-						<small class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.password || ""}
-						</small>
+						</p>
 					</div>
 					<button class="container-fluid btn btn-primary mb-3">
 						{$delayed ? "Working..." : "Log in"}

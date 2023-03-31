@@ -1,73 +1,74 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-
-	let fields = {
-		title: "",
-		content: "",
-	}
-
-	export const snapshot = {
-		capture: () => fields,
-		restore: v => (fields = v),
-	}
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	export let form
+	const { form, errors, constraints, enhance, delayed, capture, restore } =
+		superForm(data.form, {
+			taintedMessage: false,
+			onResult: async ({ result }) =>
+				// Reload to get the new session after redirecting to homepage
+				result.type == "redirect" ? window.location.reload() : null,
+		})
+
+	export const snapshot = { capture, restore }
 </script>
 
 <svelte:head>
-	<title>Create a post in {data.name} - Mercury</title>
+	<title>Create a post in {data.category.name} - Mercury</title>
 </svelte:head>
 
-<h1 class="text-center light-text">Create a post in {data.name}</h1>
+<h1 class="text-center light-text">Create a post in {data.category.name}</h1>
 
 <div class="container mt-5 light-text">
 	<form use:enhance method="POST">
 		<fieldset>
 			<div class="row mb-3">
-				<label
-					for="title"
-					class="col-md-3 col-form-label text-md-right">
+				<label for="title" class="col-md-3 col-form-label">
 					Post title
 				</label>
 				<div class="col-md-9">
 					<input
-						bind:value={fields.title}
-						minlength="5"
-						maxlength="50"
-						type="text"
+						bind:value={$form.title}
+						{...$constraints.title}
 						name="title"
 						id="title"
 						placeholder="Make sure to make it accurate"
-						required
-						class="form-control valid" />
+						class="form-control {$errors.title
+							? 'is-in'
+							: ''}valid" />
+
+					<small class="col-12 mb-3 text-danger">
+						{$errors.title || ""}
+					</small>
 				</div>
 			</div>
 			<div class="row mb-3">
-				<label
-					for="content"
-					class="col-md-3 col-form-label text-md-right">
+				<label for="content" class="col-md-3 col-form-label">
 					Post content
 				</label>
 				<div class="col-md-9">
 					<textarea
-						bind:value={fields.content}
-						minlength="5"
-						maxlength="3000"
+						bind:value={$form.content}
+						{...$constraints.content}
 						rows="6"
 						name="content"
 						id="content"
 						placeholder="50-3000 characters"
-						required
-						class="form-control valid" />
+						class="form-control {$errors.content
+							? 'is-in'
+							: ''}valid" />
+
+					<small class="col-12 mb-3 text-danger">
+						{$errors.content || ""}
+					</small>
 				</div>
 			</div>
-			<br />
-			<button type="submit" class="btn btn-success">Create</button>
+			<button class="btn btn-success mt-3">
+				{$delayed ? "Working..." : "Post"}
+			</button>
 		</fieldset>
 	</form>
 	<br />
-	<p class="col-12 mb-3 text-danger">{form?.msg || ""}</p>
 </div>
 
 <style lang="sass">
