@@ -12,28 +12,154 @@
  * Copyright 2011-2022 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-@font-face {
-	font-family: "SF UI Display Regular";
-	font-style: normal;
-	font-weight: 400;
-	font-display: swap;
-	src: url(/SFregular.woff2) format("woff2"),
-		url(/SFregular.woff) format("woff"), url(/SFregular.ttf) format("ttf");
-	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-		U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212,
-		U+2215, U+FEFF, U+FFFD;
+// @font-face {
+// 	font-family: "SF UI Display Regular";
+// 	font-style: normal;
+// 	font-weight: 400;
+// 	font-display: swap;
+// 	src: url(/SFregular.woff2) format("woff2"),
+// 		url(/SFregular.woff) format("woff"), url(/SFregular.ttf) format("ttf");
+// 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+// 		U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212,
+// 		U+2215, U+FEFF, U+FFFD;
+// }
+// @font-face {
+// 	font-family: "SF UI Display Regular";
+// 	font-style: normal;
+// 	font-weight: 700;
+// 	font-display: swap;
+// 	src: url(/SFbold.woff2) format("woff2"), url(/SFregular.woff) format("woff"),
+// 		url(/SFregular.ttf) format("ttf");
+// 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+// 		U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212,
+// 		U+2215, U+FEFF, U+FFFD;
+// }
+
+@keyframes funny-animation {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+
+	25% {
+		transform: translate3d(0, 30px, 10px) rotate3d(1, 1, 1, 20deg);
+	}
+
+	50% {
+		transform: translate3d(0, 0, 0);
+	}
+
+	75% {
+		transform: translate3d(-20px, -30px, -20px) rotate3d(1, 1, 1, -20deg);
+	}
 }
-@font-face {
-	font-family: "SF UI Display Regular";
-	font-style: normal;
-	font-weight: 700;
-	font-display: swap;
-	src: url(/SFbold.woff2) format("woff2"), url(/SFregular.woff) format("woff"),
-		url(/SFregular.ttf) format("ttf");
-	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-		U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212,
-		U+2215, U+FEFF, U+FFFD;
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
+@keyframes spin2 {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(-360deg);
+	}
+}
+@keyframes pop {
+	0% {
+		transform: rotate(0deg);
+	}
+	25% {
+		transform: rotate(15deg) scale(1.1);
+	}
+	50% {
+		transform: rotate(0deg);
+	}
+	75% {
+		transform: rotate(-15deg) scale(1.1);
+	}
+	100% {
+		transform: rotate(0deg);
+	}
+}
+@keyframes pop2 {
+	0% {
+		transform: rotate(0deg);
+	}
+	25% {
+		transform: rotate(-5deg) scale(0.9);
+	}
+	50% {
+		transform: rotate(0deg);
+	}
+	75% {
+		transform: rotate(30deg) scale(0.8);
+	}
+	100% {
+		transform: rotate(0deg);
+	}
+}
+@keyframes funny-animation-2 {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+	25% {
+		transform: translate3d(0, 3px, 1px) rotate3d(1, 1, 1, 1deg);
+	}
+	50% {
+		transform: translate3d(0, 0, 0);
+	}
+	75% {
+		transform: translate3d(-2px, -3px, -2px) rotate3d(1, 1, 1, -1deg);
+	}
+}
+
+@keyframes hilarious-text-animation {
+	0% {
+		text-align: center;
+	}
+	25% {
+		text-align: right;
+	}
+	50% {
+		text-align: center;
+	}
+	75% {
+		text-align: left;
+	}
+	100% {
+		text-align: center;
+	}
+}
+
+@keyframes button-animation-1 {
+	0% {
+		box-shadow: -10px 5px 0 20px green;
+		transform: scale(1.0);
+	}
+	50% {
+		box-shadow: 50px 0 50px 10px blue;
+		transform: scale(1.2);
+	}
+	100% {box-shadow: -10px 5px 0 10px green;
+		transform: scale(1.0);
+	}
+}
+
+input, textarea, select {
+	animation: hilarious-text-animation 1s ease infinite;
+}
+
+img {
+	animation: spin 3s ease infinite;
+}
+li {
+	animation: pop 1.6s ease-in-out infinite;
+}
+
 :root {
 	--bs-blue: #3459e6;
 	--bs-indigo: #6610f2;
@@ -78,11 +204,11 @@
 	--bs-black-rgb: 0, 0, 0;
 	--bs-body-color-rgb: 73, 80, 87;
 	--bs-body-bg-rgb: 255, 255, 255;
-	--bs-font-sans-serif: SF UI Display Regular, -apple-system,
-		BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-		sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-	--bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
-		"Liberation Mono", "Courier New", monospace;
+	// --bs-font-sans-serif: SF UI Display Regular, -apple-system,
+	// 	BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+	// 	sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	--bs-font-sans-serif: "Comic sans MS";
+	--bs-font-monospace: "Courier New", monospace;
 	--bs-gradient: linear-gradient(
 		180deg,
 		rgba(255, 255, 255, 0.15),
@@ -159,7 +285,9 @@ h1,
 	font-weight: 500;
 	line-height: 1.2;
 	color: #212529;
+	animation: funny-animation 1s ease infinite;
 }
+
 
 h1,
 .h1 {
@@ -216,6 +344,7 @@ h6,
 }
 
 p {
+	animation: hilarious-text-animation 1.75s ease infinite;
 	margin-top: 0;
 	margin-bottom: 1rem;
 }
@@ -304,6 +433,7 @@ a {
 }
 a:hover {
 	color: var(--bs-link-hover-color);
+	animation: spin2 0.95s ease infinite !important;
 }
 
 a:not([href]):not([class]),
@@ -333,7 +463,7 @@ pre code {
 	word-break: normal;
 }
 
-code {
+code {animation: pop2 0.75s ease infinite !important;
 	font-size: 0.875em;
 	color: var(--bs-code-color);
 	word-wrap: break-word;
@@ -2955,6 +3085,7 @@ textarea.form-control.is-invalid {
 }
 
 .btn {
+	animation: button-animation-1 1.75s ease infinite !important;
 	--bs-btn-padding-x: 1rem;
 	--bs-btn-padding-y: 0.5rem;
 	--bs-btn-font-family: ;
@@ -3001,6 +3132,8 @@ textarea.form-control.is-invalid {
 	color: var(--bs-btn-hover-color);
 	background-color: var(--bs-btn-hover-bg);
 	border-color: var(--bs-btn-hover-border-color);
+	// spin animation
+	animation: spin 0.75s ease infinite !important;
 }
 .btn-check + .btn:hover {
 	color: var(--bs-btn-color);
@@ -4385,6 +4518,7 @@ fieldset:disabled .btn {
 }
 
 .card {
+	animation: funny-animation-2 1.5s ease infinite;
 	--bs-card-spacer-y: 1rem;
 	--bs-card-spacer-x: 1.5rem;
 	--bs-card-title-spacer-y: 0.5rem;
