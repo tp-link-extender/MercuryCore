@@ -6,12 +6,7 @@
 :root
 	overflow: overlay // Scrollbar is above content instead of beside
 	overflow-x: hidden
-	--background: linear-gradient(120deg, red 0%, orange 14%, yellow 28%, green 42%, blue 56%, indigo 70%, magenta 84%, red 100%) !important
-	--darker:  linear-gradient(80deg, darkred 0%, brown 14%, orange 28%, darkgreen 42%, darkblue 56%, indigo 70%, purple 84%, darkred 100%) !important
-	background: var(--background) !important
-	background-attachment: fixed !important
-
-	--light-text: magenta !important
+	background-color: var(--background)
 
 	--mainaccent: #7531ff
 
@@ -51,12 +46,12 @@ a.light-text
 
 ::-webkit-scrollbar
 	position: fixed
-	width: 3rem
-	height: 3rem
+	width: 0.50rem
+	height: 0.50rem
 	&-track, &-corner
 		background: none
 	&-thumb
-		border-radius: 5rem
+		border-radius: 0.2rem
 		background: var(--accent)
 		&:hover
 			background: var(--accent3)
