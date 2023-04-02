@@ -1,16 +1,14 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { superForm } from "sveltekit-superforms/client"
 
-	let fields = {
-		name: "",
-	}
+	export let data
+	const { form, errors, constraints, enhance, delayed, capture, restore } =
+		superForm(data.form, {
+			taintedMessage: false,
+		})
 
-	export const snapshot = {
-		capture: () => fields,
-		restore: v => (fields = v),
-	}
-
-	export let form
+	export const snapshot = { capture, restore }
+	$: other = ($errors as any).other || ""
 </script>
 
 <svelte:head>
@@ -19,40 +17,39 @@
 
 <h1 class="text-center light-text">Create a group</h1>
 
-<div class="container mt-5 light-text">
-	<form use:enhance method="POST">
-		<fieldset>
-			<div class="row">
-				<label for="name" class="col-md-3 col-form-label text-md-right">
-					Group name
-				</label>
-				<div class="col-md-8">
-					<input
-						bind:value={fields.name}
-						type="text"
-						name="name"
-						id="name"
-						required
-						class="form-control valid"
-						minlength="3"
-						maxlength="40" />
-				</div>
+<form use:enhance method="POST" class="container mt-5 light-text">
+	<fieldset>
+		<div class="row mb-3">
+			<label for="name" class="col-md-3 col-form-label text-md-right">
+				Group name
+			</label>
+			<div class="col-md-8">
+				<input
+					bind:value={$form.name}
+					{...$constraints.name}
+					name="name"
+					id="name"
+					placeholder="This cannot be changed. Choose wisely."
+					class="form-control {$errors.name ? 'is-in' : ''}valid" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.name || ""}
+				</p>
 			</div>
-			<small class="grey-text pb-2">
-				This cannot be changed. Choose wisely.
-			</small>
-			<br />
-			<br />
-			<button type="submit" class="btn btn-success">
+		</div>
+		<button type="submit" class="btn btn-success">
+			{#if $delayed}
+				Working...
+			{:else}
 				Create (
 				<i class="fa fa-gem" />
-				10)
-			</button>
-		</fieldset>
-	</form>
-	<br />
-	<p class="col-12 mb-3 text-danger">{form?.msg || ""}</p>
-</div>
+				10 )
+			{/if}
+		</button>
+	</fieldset>
+	<p class="col-12 mb-3 text-danger">
+		{other}
+	</p>
+</form>
 
 <style lang="sass">
 	@media only screen and (min-width: 576px)
