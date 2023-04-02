@@ -11,7 +11,7 @@
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark py-0">
-	<a class="navbar-brand light-text mx-4 mobile-brand" href="/">MERCURY!!!!!!</a>
+	<a class="navbar-brand light-text mx-4 mobile-brand" href="/">Mercury</a>
 	<button
 		class="navbar-toggler ms-auto my-1 me-3"
 		type="button"
@@ -30,7 +30,7 @@
 		id="offcanvasNavbar-expand-lg"
 		aria-labelledby="offcanvasNavbar-expand-lg">
 		<div class="offcanvas-header">
-			<a href="/" class="offcanvas-title light-text h5">MERCURY!!!!!!</a>
+			<a href="/" class="offcanvas-title light-text h5">Mercury</a>
 			<button
 				type="button"
 				class="btn-close btn-close-white text-reset me-1"
@@ -39,7 +39,7 @@
 		</div>
 
 		<div id="nav1" class="offcanvas-body px-4 py-1 d-flex">
-			<a class="navbar-brand light-text me-4 mt-1" href="/">MERCURY!!!!!!</a>
+			<a class="navbar-brand light-text me-4 mt-1" href="/">Mercury</a>
 			{#if user}
 				<div class="navbar-nav">
 					<a class="btn mt-1 px-1 light-text nav-item" href="/">
@@ -252,9 +252,7 @@
 				: ''}"
 			role="alert"
 			style="background: {announcement.bgColour}">
-			<marquee direction={Math.random() > 0.5 ? (Math.random() > 0.5 ? "Left" : "Right") : (Math.random() > 0.5 ? "Up" : "Down")}>
-				{announcement.body}
-			</marquee>
+			{announcement.body}
 		</div>
 	{/each}
 {/if}
