@@ -1,11 +1,23 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { auth } from "$lib/server/lucia"
-import formData from "$lib/server/formData"
-import { fail } from "@sveltejs/kit"
+import formError from "$lib/server/formError"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
 
-export const load = async ({ locals }) => {
-	const { user } = await authorise(locals)
+const profileSchema = z.object({
+	theme: z.enum(["standard", "darken", "storm", "solar"]),
+	bio: z.string().max(1000),
+})
+
+const passwordSchema = z.object({
+	cpassword: z.string().min(1),
+	npassword: z.string().min(1),
+	cnpassword: z.string().min(1),
+})
+
+export const load = async (event /**/) => {
+	const { user } = await authorise(event.locals)
 
 	const getUser = await prisma.authUser.findUnique({
 		where: {
@@ -24,26 +36,22 @@ export const load = async ({ locals }) => {
 		},
 	})
 
+	
 	return {
 		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
+		profileForm: await superValidate(event, profileSchema),
+		passwordForm: await superValidate(event, passwordSchema),
 	}
 }
 
 export const actions = {
-	profile: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-		const data = await formData(request)
+	profile: async (event) => {
+		const { user } = await authorise(event.locals)
 
-		let same
-		for (let i in data)
-			if (data[i] != (user as any)[i]) {
-				same = false
-				break
-			}
-		if (same) return fail(400)
+		const form = await superValidate(event, profileSchema)
+		if (!form.valid) return formError(form)
 
-		if (!["standard", "darken", "storm", "solar"].includes(data.theme))
-			return fail(400, { area: "theme", msg: "Invalid theme" })
+		const { bio, theme } = form.data
 
 		await prisma.authUser.update({
 			where: {
@@ -52,49 +60,47 @@ export const actions = {
 			data: {
 				bio: {
 					create: {
-						text: data.bio,
+						text: bio,
 					},
 				},
-				theme: data.theme,
+				theme,
 			},
 		})
 
-		return {
-			profilesuccess: true,
-		}
+		return { profileForm: form }
 	},
 
-	password: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-		const data = await formData(request)
+	password: async (event) => {
+		const { user } = await authorise(event.locals)
 
-		if (data.npassword != data.cnpassword)
-			return fail(400, {
-				area: "cnpassword",
-				msg: "Passwords do not match",
-			})
+		const form = await superValidate(event, passwordSchema)
+		if (!form.valid) return formError(form)
+
+		const { cpassword, npassword, cnpassword } = form.data
+
+		if (npassword != cnpassword)
+			return formError(form, ["cnpassword"], ["Passwords do not match"])
 
 		try {
 			await auth.useKey(
 				"username",
 				user.username.toLowerCase(),
-				data.cpassword
+				cpassword
 			)
 		} catch {
-			return fail(400, {
-				area: "cpassword",
-				msg: "Incorrect username or password",
-			})
+			return formError(
+				form,
+				["cpassword"],
+				["Incorrect username or password"]
+			)
 		}
 
 		await auth.updateKeyPassword(
 			"username",
 			user.username.toLowerCase(),
-			data.npassword
+			npassword
 		)
 
-		return {
-			passwordsuccess: true,
-		}
+		return { passwordForm: form }
 	},
 }
