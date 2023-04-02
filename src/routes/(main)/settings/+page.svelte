@@ -1,9 +1,29 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	export let form
 	const user = data.user
+
+	const profile = superForm(data.profileForm, {
+		taintedMessage: false,
+	})
+	const password = superForm(data.passwordForm, {
+		taintedMessage: false,
+	})
+
+	export const snapshot = {
+		capture: profile.capture,
+		restore: profile.restore,
+	}
+
+	const [profileForm, profileErrors, profileConstraints, profileDelayed] = [
+		profile.form,
+		profile.errors,
+		profile.constraints,
+		profile.delayed,
+	]
+	const [passwordForm, passwordErrors, passwordConstraints, passwordDelayed] =
+		[password.form, password.errors, password.constraints, password.delayed]
 </script>
 
 <svelte:head>
@@ -66,7 +86,11 @@
 			<p class="mb-0 grey-text mb-4">
 				Change your bio, site theme and more.
 			</p>
-			<form class="col-lg-8" method="POST" action="?/profile" use:enhance>
+			<form
+				class="col-lg-8"
+				method="POST"
+				action="?/profile"
+				use:profile.enhance>
 				<fieldset>
 					<div class="row">
 						<label
@@ -76,23 +100,21 @@
 						</label>
 						<div class="col-md-8">
 							<select
+								bind:value={$profileForm.theme}
+								{...$profileConstraints.theme}
 								id="theme"
-								required
 								name="theme"
-								value={user?.theme || "standard"}
-								class="form-select {form?.area == 'theme'
-									? 'is-invalid'
-									: 'valid'}">
+								class="form-select {$profileErrors.theme
+									? 'is-in'
+									: ''}valid">
 								<option value="standard">Standard</option>
 								<option value="darken">Darken</option>
 								<option value="storm">Storm</option>
 								<option value="solar">Solar</option>
 							</select>
-							{#if form?.area == "theme"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
+							<p class="col-12 mb-3 text-danger">
+								{$profileErrors.theme || ""}
+							</p>
 						</div>
 					</div>
 					<hr class="grey-text" />
@@ -102,14 +124,17 @@
 						</label>
 						<div class="container">
 							<textarea
-								class="form-control light-text mb-1 bg-a {form?.area ==
-								'bio'
-									? 'is-invalid'
-									: 'valid'}"
+								bind:value={$profileForm.bio}
+								{...$profileConstraints.bio}
+								class="form-control light-text mb-1 bg-a {$profileErrors.bio
+									? 'is-in'
+									: ''}valid"
 								id="bio"
 								name="bio"
-								rows={3}
-								value={data.bio?.[0]?.text || ""} />
+								rows={3} />
+							<p class="col-12 mb-3 text-danger">
+								{$profileErrors.bio || ""}
+							</p>
 							<small class="grey-text pb-2">
 								Maximum 1000 characters, your bio will appear on
 								your profile and allow other users to know who
@@ -119,17 +144,12 @@
 					</div>
 				</fieldset>
 				<button type="submit" class="btn btn-success mt-4">
-					Save Changes
+					{#if $profileDelayed}
+						Working...
+					{:else}
+						Save changes
+					{/if}
 				</button>
-				{#if form?.profilesuccess}
-					<p class="text-success mt-3">
-						Profile changed successfully!
-					</p>
-					<noscript class="text-warning mt-3">
-						Javascript is disabled, you may have to reload to apply
-						changes.
-					</noscript>
-				{/if}
 			</form>
 		</div>
 		<div
@@ -171,7 +191,6 @@
 						readonly
 						id="email"
 						value={`*******@${(user?.email).split("@")[1]}`}
-						required
 						class="form-control valid" />
 				</div>
 			</div>
@@ -211,7 +230,7 @@
 				class="col-sm-8"
 				method="POST"
 				action="?/password"
-				use:enhance>
+				use:password.enhance>
 				<fieldset>
 					<div class="form-group row gx-0 mb-2">
 						<label
@@ -221,19 +240,17 @@
 						</label>
 						<div class="col-sm-10">
 							<input
+								bind:value={$passwordForm.cpassword}
+								{...$passwordConstraints.cpassword}
 								type="password"
-								class="form-control mb-1 light-text {form?.area ==
-								'cpassword'
-									? 'is-invalid'
-									: 'valid'}"
+								class="form-control mb-1 light-text {$passwordErrors.cpassword
+									? 'is-in'
+									: ''}valid"
 								id="cpassword"
-								name="cpassword"
-								required />
-							{#if form?.area == "cpassword"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
+								name="cpassword" />
+							<p class="col-12 mb-3 text-danger">
+								{$passwordErrors.cpassword || ""}
+							</p>
 						</div>
 					</div>
 					<div class="form-group row gx-0 mb-2">
@@ -244,19 +261,17 @@
 						</label>
 						<div class="col-sm-10">
 							<input
+								bind:value={$passwordForm.npassword}
+								{...$passwordConstraints.npassword}
 								type="password"
-								class="form-control mb-1 light-text {form?.area ==
-								'npassword'
-									? 'is-invalid'
-									: 'valid'}"
+								class="form-control mb-1 light-text {$passwordErrors.npassword
+									? 'is-in'
+									: ''}valid"
 								id="npassword"
-								name="npassword"
-								required />
-							{#if form?.area == "npassword"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
+								name="npassword" />
+							<p class="col-12 mb-3 text-danger">
+								{$passwordErrors.npassword || ""}
+							</p>
 						</div>
 						<small class="grey-text">
 							Make sure your password is unique.
@@ -270,30 +285,27 @@
 						</label>
 						<div class="col-sm-10">
 							<input
+								bind:value={$passwordForm.cnpassword}
+								{...$passwordConstraints.cnpassword}
 								type="password"
-								class="form-control mb-1 light-text {form?.area ==
-								'cnpassword'
-									? 'is-invalid'
-									: 'valid'}"
+								class="form-control mb-1 light-text {$passwordErrors.cnpassword
+									? 'is-in'
+									: ''}valid"
 								id="cnpassword"
-								name="cnpassword"
-								required />
-							{#if form?.area == "cnpassword"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
+								name="cnpassword" />
+							<p class="col-12 mb-3 text-danger">
+								{$passwordErrors.cnpassword || ""}
+							</p>
 						</div>
 					</div>
 				</fieldset>
-				<button type="submit" class="btn btn-success mt-4">
-					Save Changes
+				<button type="submit" class="btn btn-success">
+					{#if $passwordDelayed}
+						Working...
+					{:else}
+						Save changes
+					{/if}
 				</button>
-				{#if form?.passwordsuccess}
-					<p class="text-success mt-3">
-						Password changed successfully!
-					</p>
-				{/if}
 			</form>
 		</div>
 	</div>
