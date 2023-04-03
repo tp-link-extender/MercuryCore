@@ -28,19 +28,19 @@ export async function load({ locals }) {
 		let friends: any[] = []
 
 		for (let i of friendsQuery || ([] as any)) {
-			if (i.name)
-				friends.push(
-					await prisma.authUser.findUnique({
-						where: {
-							username: i.name,
-						},
-						select: {
-							username: true,
-							image: true,
-							number: true,
-						},
-					})
-				)
+			if (i.name) {
+				const user = await prisma.authUser.findUnique({
+					where: {
+						username: i.name,
+					},
+					select: {
+						username: true,
+						image: true,
+						number: true,
+					},
+				})
+				if (user) friends.push(user)
+			}
 		}
 
 		return friends
