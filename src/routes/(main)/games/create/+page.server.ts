@@ -19,7 +19,7 @@ const schema = z.object({
 })
 
 export const load = async (event /**/) => ({
-	form: await superValidate(event, schema),
+	form: superValidate(event, schema),
 })
 
 export const actions = {
