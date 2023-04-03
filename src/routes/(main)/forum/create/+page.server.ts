@@ -34,7 +34,7 @@ export async function load(event) {
 
 	return {
 		category: getCategory,
-		form: await superValidate(event, schema),
+		form: superValidate(event, schema),
 	}
 }
 

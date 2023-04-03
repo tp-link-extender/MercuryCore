@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
@@ -16,14 +17,33 @@
 		restore: profile.restore,
 	}
 
-	const [profileForm, profileErrors, profileConstraints, profileDelayed] = [
+	// get() moment
+	const [
+		profileForm,
+		profileErrors,
+		profileMessage,
+		profileConstraints,
+		profileDelayed,
+	] = [
 		profile.form,
 		profile.errors,
+		profile.message,
 		profile.constraints,
 		profile.delayed,
 	]
-	const [passwordForm, passwordErrors, passwordConstraints, passwordDelayed] =
-		[password.form, password.errors, password.constraints, password.delayed]
+	const [
+		passwordForm,
+		passwordErrors,
+		passwordMessage,
+		passwordConstraints,
+		passwordDelayed,
+	] = [
+		password.form,
+		password.errors,
+		password.message,
+		password.constraints,
+		password.delayed,
+	]
 </script>
 
 <svelte:head>
@@ -132,18 +152,18 @@
 								id="bio"
 								name="bio"
 								rows={3} />
-							<p class="col-12 mb-3 text-danger">
-								{$profileErrors.bio || ""}
-							</p>
 							<small class="grey-text pb-2">
 								Maximum 1000 characters, your bio will appear on
 								your profile and allow other users to know who
 								you are.
 							</small>
+							<p class="col-12 mb-3 text-danger">
+								{$profileErrors.bio || ""}
+							</p>
 						</div>
 					</div>
 				</fieldset>
-				<button type="submit" class="btn btn-success mt-4">
+				<button type="submit" class="btn btn-success">
 					{#if $profileDelayed}
 						Working...
 					{:else}
@@ -151,6 +171,11 @@
 					{/if}
 				</button>
 			</form>
+			<p
+				class:text-success={$page.status == 200}
+				class:text-danger={$page.status >= 400}>
+				{$profileMessage || ""}
+			</p>
 		</div>
 		<div
 			class="tab-pane fade"
@@ -269,13 +294,13 @@
 									: ''}valid"
 								id="npassword"
 								name="npassword" />
+							<small class="grey-text">
+								Make sure your password is unique.
+							</small>
 							<p class="col-12 mb-3 text-danger">
 								{$passwordErrors.npassword || ""}
 							</p>
 						</div>
-						<small class="grey-text">
-							Make sure your password is unique.
-						</small>
 					</div>
 					<div class="form-group row gx-0 mb-2">
 						<label
@@ -307,6 +332,11 @@
 					{/if}
 				</button>
 			</form>
+			<p
+				class:text-success={$page.status == 200}
+				class:text-danger={$page.status >= 400}>
+				{$passwordMessage || ""}
+			</p>
 		</div>
 	</div>
 </div>

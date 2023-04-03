@@ -21,7 +21,7 @@ export const load = async (
 	event
 	// removing parentheses breaks things
 ) => ({
-	form: await superValidate(event, schema),
+	form: superValidate(event, schema),
 })
 
 export const actions = {

@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { auth } from "$lib/server/lucia"
 import formError from "$lib/server/formError"
-import { superValidate } from "sveltekit-superforms/server"
+import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const profileSchema = z.object({
@@ -36,16 +36,15 @@ export const load = async (event /**/) => {
 		},
 	})
 
-	
 	return {
 		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
-		profileForm: await superValidate(event, profileSchema),
-		passwordForm: await superValidate(event, passwordSchema),
+		profileForm: superValidate(event, profileSchema),
+		passwordForm: superValidate(event, passwordSchema),
 	}
 }
 
 export const actions = {
-	profile: async (event) => {
+	profile: async event => {
 		const { user } = await authorise(event.locals)
 
 		const form = await superValidate(event, profileSchema)
@@ -67,10 +66,12 @@ export const actions = {
 			},
 		})
 
-		return { profileForm: form }
+		return {
+			profileForm: message(form, "Profile updated successfully!").form,
+		}
 	},
 
-	password: async (event) => {
+	password: async event => {
 		const { user } = await authorise(event.locals)
 
 		const form = await superValidate(event, passwordSchema)
@@ -101,6 +102,8 @@ export const actions = {
 			npassword
 		)
 
-		return { passwordForm: form }
+		return {
+			passwordForm: message(form, "Password updated successfully!").form,
+		}
 	},
 }
