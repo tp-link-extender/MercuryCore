@@ -1,16 +1,29 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { page } from "$app/stores"
+	import { superForm } from "sveltekit-superforms/client"
 	import { writable } from "svelte/store"
 	import Modal from "$lib/components/Modal.svelte"
 	import fade from "$lib/fade"
 
 	export let data
-	export let form: any
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+
+	export const snapshot = { capture, restore }
 
 	let modal = writable(false)
 
 	let bannerId = ""
-	let bannerBody = ""
 	let newBannerBody = ""
 	let textarea: any
 
@@ -18,11 +31,9 @@
 		modal.set(true)
 
 		bannerId = id
-		bannerBody = body.trim()
+		$form.bannerBody = body.trim()
 		newBannerBody = body.trim()
 	}
-
-	$: form && (() => (textarea.value = form?.bannerBody))()
 </script>
 
 <svelte:head>
@@ -77,12 +88,19 @@
 								</label>
 								<div class="col-md-8">
 									<textarea
+										bind:value={$form.bannerBody}
+										{...$constraints.bannerBody}
 										name="bannerText"
 										id="bannerText"
-										class="form-control valid" />
+										class="form-control {$errors.bannerBody
+											? 'is-in'
+											: ''}valid" />
 									<small class="light-text">
 										3-100 characters
 									</small>
+									<p class="col-12 mb-3 text-danger">
+										{$errors.bannerBody || ""}
+									</p>
 								</div>
 							</div>
 							<br />
@@ -94,11 +112,15 @@
 								</label>
 								<div class="col-md-2">
 									<input
+										bind:value={$form.bannerColour}
+										{...$constraints.bannerColour}
 										type="color"
 										name="bannerColour"
 										id="bannerColour"
-										required
 										class="valid" />
+									<p class="col-12 mb-3 text-danger">
+										{$errors.bannerColour || ""}
+									</p>
 								</div>
 							</div>
 							<br />
@@ -110,31 +132,32 @@
 								</label>
 								<div class="col-md-2">
 									<input
+										bind:checked={$form.bannerTextLight}
+										value="true"
 										type="checkbox"
 										name="bannerTextLight"
 										id="bannerTextLight"
-										value="true"
 										class="valid form-check-input" />
 								</div>
 							</div>
-							<br />
 							<button
 								name="action"
 								value="create"
-								class="btn btn-success">
-								Submit
+								class="btn btn-success mt-3">
+								{#if $delayed}
+									Working...
+								{:else}
+									Create
+								{/if}
 							</button>
-							<br />
-							{#if form?.area == "create"}
-								<p
-									class="col-12 mb-3 text-{form?.success
-										? 'success'
-										: 'danger'}">
-									{form?.msg || ""}
-								</p>
-							{/if}
 						</fieldset>
 					</form>
+
+					<p
+						class:text-success={$page.status == 200}
+						class:text-danger={$page.status >= 400}>
+						{$message || ""}
+					</p>
 				</div>
 				<div class="tab-pane fade" id="viewbanners" role="tabpanel">
 					<table class="table table-responsive">
@@ -150,7 +173,6 @@
 						</thead>
 						<tbody class="light-text">
 							{#each data.banners as banner}
-								<!-- <tr in:fade|global={{ num, total: data.banners.length }}> -->
 								<tr>
 									<td>
 										<form use:enhance method="POST">
@@ -245,32 +267,39 @@
 		<div class="modal-body light-text">
 			<form use:enhance method="POST">
 				<input type="hidden" name="id" value={bannerId} />
-				{#if form?.area == "modal"}
-					<p
-						class="col-12 mb-1 text-{form?.success
-							? 'success'
-							: 'danger'}">
-						{form?.msg || ""}
-					</p>
-				{/if}
 				<textarea
+					bind:value={$form.bannerBody}
+					{...$constraints.bannerBody}
 					name="bannerBody"
 					bind:this={textarea}
-					bind:value={bannerBody}
 					id="bannerBody"
-					class="form-control valid mb-3" />
-				{#if newBannerBody.trim() != bannerBody.trim()}
+					class="form-control {$errors.bannerBody
+						? 'is-in'
+						: ''}valid mb-3" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.bannerBody || ""}
+				</p>
+				{#if newBannerBody.trim() != $form.bannerBody?.trim()}
 					<div transition:fade class="d-grid gap-2">
 						<button
 							value="updateBody"
 							class="btn btn-success"
 							name="action"
 							id="saveBannerBody">
-							Save Changes
+							{#if $delayed}
+								Working...
+							{:else}
+								Save changes
+							{/if}
 						</button>
 					</div>
 				{/if}
 			</form>
+			<p
+				class:text-success={$page.status == 200}
+				class:text-danger={$page.status >= 400}>
+				{$message || ""}
+			</p>
 		</div>
 	</Modal>
 {/if}
