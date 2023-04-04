@@ -1,8 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import ratelimit from "$lib/server/ratelimit"
-import formData from "$lib/server/formData"
-import { fail, error } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 import type { ReportCategory } from "@prisma/client"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -48,10 +47,14 @@ export const actions = {
 		if (!form.valid) return formError(form)
 
 		const { category, note } = form.data
+		const username = event.url.searchParams.get("user")
+		const url = event.url.searchParams.get("user")
+
+		if (!username || !url) throw error(400, "Missing fields")
 
 		const reportee = await prisma.authUser.findUnique({
 			where: {
-				username: event.url.searchParams.get("user"),
+				username,
 			},
 		})
 		if (!reportee)
@@ -64,7 +67,7 @@ export const actions = {
 				reporterId: user.id,
 				reporteeId: reportee.id,
 				note: (note as ReportCategory) || null,
-				url: event.url.searchParams.get("url"),
+				url,
 				category,
 			},
 		})

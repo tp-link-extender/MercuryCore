@@ -1,7 +1,22 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { page } from "$app/stores"
+	import { superForm } from "sveltekit-superforms/client"
 
-	export let form
+	export let data
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+
+	export const snapshot = { capture, restore }
 </script>
 
 <svelte:head>
@@ -37,49 +52,59 @@
 					role="tabpanel">
 					<form use:enhance method="POST" action="?/resetPassword">
 						<fieldset>
-							<div class="row light-text">
+							<div class="row light-text mb-3">
 								<label
 									for="username"
-									class="col-md-3 col-form-label text-md-right">
+									class="col-md-3 col-form-label">
 									Username
 								</label>
 								<div class="col-md-8">
 									<input
-										type="text"
+										bind:value={$form.username}
+										{...$constraints.username}
 										name="username"
 										id="username"
-										required
-										class="form-control valid" />
+										class="form-control {$errors.username
+											? 'is-in'
+											: ''}valid" />
+									<p class="col-12 mb-3 text-danger">
+										{$errors.username || ""}
+									</p>
 								</div>
 							</div>
-							<br />
-							<div class="row light-text">
+							<div class="row light-text mb-3">
 								<label
 									for="password"
-									class="col-md-3 col-form-label text-md-right">
+									class="col-md-3 col-form-label">
 									New password
 								</label>
 								<div class="col-md-8">
 									<input
-										type="text"
+										bind:value={$form.password}
+										{...$constraints.password}
 										name="password"
 										id="password"
-										required
-										class="form-control valid" />
+										class="form-control {$errors.password
+											? 'is-in'
+											: ''}valid" />
+									<p class="col-12 mb-3 text-danger">
+										{$errors.password || ""}
+									</p>
 								</div>
 							</div>
-							<br />
 							<button type="submit" class="btn btn-success">
-								Submit
+								{#if $delayed}
+									Working...
+								{:else}
+									Submit
+								{/if}
 							</button>
 						</fieldset>
 					</form>
-					<br />
 					<p
-						class="col-12 mb-3 text-{form?.usersuccess
-							? 'success'
-							: 'danger'}">
-						{form?.msg || ""}
+						class:text-success={$page.status == 200}
+						class:text-danger={$page.status >= 400}>
+						{$message || ""}
 					</p>
 				</div>
 			</div>
