@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {  navigating } from "$app/stores"
+	import { navigating } from "$app/stores"
 	import nprogress from "nprogress"
 
 	import "/src/nprogress.sass"

@@ -99,7 +99,9 @@
 			</button>
 		</fieldset>
 	</form>
-	<p class:text-success={$page.status == 200} class:text-danger={$page.status >= 400}>
+	<p
+		class:text-success={$page.status == 200}
+		class:text-danger={$page.status >= 400}>
 		{$message || ""}
 	</p>
 </div>

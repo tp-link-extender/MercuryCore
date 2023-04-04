@@ -4,7 +4,7 @@ export const load = async () => ({
 	groups: findGroups({
 		select: {
 			name: true,
-		}
+		},
 	}),
 })
 
