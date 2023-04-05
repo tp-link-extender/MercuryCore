@@ -117,7 +117,9 @@
 										type="color"
 										name="bannerColour"
 										id="bannerColour"
-										class="valid" />
+										class="{$errors.bannerColour
+											? 'is-in'
+											: ''}valid" />
 									<p class="col-12 mb-3 text-danger">
 										{$errors.bannerColour || ""}
 									</p>
