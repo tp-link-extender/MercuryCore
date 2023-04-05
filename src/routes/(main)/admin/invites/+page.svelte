@@ -1,9 +1,23 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
+	import { page } from "$app/stores"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	export let form: any
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+
+	export const snapshot = { capture, restore }
 
 	let customKey = false
 	let expiryDate = false
@@ -63,16 +77,17 @@
 								</label>
 								<div class="col-md-2">
 									<input
+										bind:checked={$form.enableInviteCustom}
+										{...$constraints.enableInviteCustom}
 										type="checkbox"
 										name="enableInviteCustom"
 										id="enableInviteCustom"
-										bind:checked={customKey}
 										value="true"
-										class="valid form-check-input" />
+										class="form-check-input valid" />
 								</div>
 							</div>
 							<br />
-							{#if customKey}
+							{#if $form.enableInviteCustom}
 								<div class="row" transition:fade>
 									<label
 										for="inviteCustom"
@@ -81,18 +96,22 @@
 									</label>
 									<div class="col-md-8">
 										<input
+											bind:value={$form.inviteCustom}
+											{...$constraints.inviteCustom}
 											type="text"
 											name="inviteCustom"
 											id="inviteCustom"
-											maxlength="50"
-											minlength="3"
-											required
-											class="form-control valid" />
+											class="form-control {$errors.inviteCustom
+											? 'is-in'
+											: ''}valid" />
 										<small class="light-text">
 											Instead of having a randomly
 											generated key, this allows you to
 											set the key.
 										</small>
+										<p class="col-12 mb-3 text-danger">
+											{$errors.inviteCustom || ""}
+										</p>
 									</div>
 								</div>
 								<br />
@@ -105,16 +124,17 @@
 								</label>
 								<div class="col-md-2">
 									<input
+										bind:checked={$form.enableInviteExpiry}
+										{...$constraints.enableInviteExpiry}
 										type="checkbox"
 										name="enableInviteExpiry"
 										id="enableInviteExpiry"
-										bind:checked={expiryDate}
 										value="true"
-										class="valid form-check-input" />
+										class="form-check-input valid" />
 								</div>
 							</div>
 							<br />
-							{#if expiryDate}
+							{#if $form.enableInviteExpiry}
 								<div class="row" transition:fade>
 									<label
 										for="inviteExpiry"
@@ -123,12 +143,19 @@
 									</label>
 									<div class="col-md-8">
 										<input
+											bind:value={$form.inviteExpiry}
+											{...$constraints.inviteExpiry}
 											type="date"
 											name="inviteExpiry"
 											id="inviteExpiry"
 											min={tomorrow}
 											required
-											class="form-control valid" />
+											class="form-control {$errors.inviteExpiry
+											? 'is-in'
+											: ''}valid" />
+										<p class="col-12 mb-3 text-danger">
+											{$errors.inviteExpiry || ""}
+										</p>
 									</div>
 								</div>
 								<br />
@@ -141,32 +168,36 @@
 								</label>
 								<div class="col-md-8">
 									<input
+										bind:value={$form.inviteUses}
+										{...$constraints.inviteUses}
 										type="number"
-										min="1"
 										name="inviteUses"
 										id="inviteUses"
-										required
-										class="form-control valid" />
+										class="form-control {$errors.inviteUses
+											? 'is-in'
+											: ''}valid" />
+									<p class="col-12 mb-3 text-danger">
+										{$errors.inviteUses || ""}
+									</p>
 								</div>
 							</div>
-							<br />
 							<button
 								name="action"
 								value="create"
-								class="btn btn-success">
-								Submit
+								class="btn btn-success mt-3">
+								{#if $delayed}
+									Working...
+								{:else}
+									Create
+								{/if}
 							</button>
-							<br />
-							{#if form?.area == "create"}
-								<p
-									class="col-12 mb-3 text-{form?.success
-										? 'success'
-										: 'danger'}">
-									{form?.msg || ""}
-								</p>
-							{/if}
 						</fieldset>
 					</form>
+					<p
+						class:text-success={$page.status == 200}
+						class:text-danger={$page.status >= 400}>
+						{$message || ""}
+					</p>
 				</div>
 				<div class="tab-pane fade" id="invites" role="tabpanel">
 					<table class="table table-responsive">
