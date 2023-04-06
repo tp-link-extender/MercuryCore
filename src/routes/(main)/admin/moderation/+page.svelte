@@ -1,10 +1,23 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
+	import { page } from "$app/stores"
+	import { superForm } from "sveltekit-superforms/client"
 
-	export let form
+	export let data
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
 
-	let moderationAction = 1
+	export const snapshot = { capture, restore }
 
 	const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10)
 </script>
@@ -45,32 +58,39 @@
 							<div class="row">
 								<label
 									for="username"
-									class="col-md-3 col-form-label light-text text-md-right">
+									class="col-md-3 col-form-label light-text">
 									Username
 								</label>
 								<div class="col-md-8">
 									<input
+										bind:value={$form.username}
+										{...$constraints.username}
 										type="text"
 										name="username"
 										id="username"
-										required
-										class="form-control valid" />
+										class="form-control {$errors.username
+											? 'is-in'
+											: ''}valid" />
+									<p class="col-12 text-danger">
+										{$errors.username || ""}
+									</p>
 								</div>
 							</div>
-							<br />
 							<div class="row">
 								<label
 									for="action"
-									class="col-md-3 col-form-label light-text text-md-right">
+									class="col-md-3 col-form-label light-text">
 									Action
 								</label>
 								<div class="col-md-8">
 									<select
+										bind:value={$form.action}
+										{...$constraints.action}
 										name="action"
-										bind:value={moderationAction}
 										id="action"
-										required
-										class="form-control light-text valid">
+										class="form-control light-text {$errors.action
+											? 'is-in'
+											: ''}valid">
 										<option value="1" selected>
 											Warning
 										</option>
@@ -81,56 +101,69 @@
 										</option>
 										<option value="5">Unban</option>
 									</select>
+									<p class="col-12 text-danger">
+										{$errors.action || ""}
+									</p>
 								</div>
 							</div>
-							<br />
-							{#if moderationAction == 2}
+							{#if $form.action == 2}
 								<div class="row" transition:fade>
 									<label
 										for="banDate"
-										class="col-md-3 col-form-label light-text text-md-right">
+										class="col-md-3 col-form-label light-text">
 										Ban until
 									</label>
 									<div class="col-md-8">
 										<input
+											bind:value={$form.banDate}
+											{...$constraints.banDate}
 											type="date"
 											name="banDate"
 											id="banDate"
 											min={tomorrow}
 											required
-											class="form-control valid" />
+											class="form-control {$errors.banDate
+												? 'is-in'
+												: ''}valid" />
+										<p class="col-12 text-danger">
+											{$errors.banDate || ""}
+										</p>
 									</div>
 								</div>
 							{/if}
-							<br />
 							<div class="row">
 								<label
 									for="reason"
-									class="col-md-3 col-form-label light-text text-md-right">
+									class="col-md-3 col-form-label light-text">
 									Reason
 								</label>
 								<div class="col-md-8">
 									<textarea
+										bind:value={$form.reason}
+										{...$constraints.reason}
 										name="reason"
 										id="reason"
-										minlength="15"
-										maxlength="150"
-										required
-										class="form-control valid" />
+										class="form-control {$errors.reason
+											? 'is-in'
+											: ''}valid" />
+									<p class="col-12 text-danger">
+										{$errors.reason || ""}
+									</p>
 								</div>
 							</div>
-							<br />
-							<button type="submit" class="btn btn-success">
-								Submit
+							<button type="submit" class="btn btn-success mt-3">
+								{#if $delayed}
+									Working...
+								{:else}
+									Submit
+								{/if}
 							</button>
 						</fieldset>
 					</form>
-					<br />
 					<p
-						class="col-12 mb-3 text-{form?.moderationsuccess
-							? 'success'
-							: 'danger'}">
-						{form?.msg || ""}
+						class:text-success={$page.status == 200}
+						class:text-danger={$page.status >= 400}>
+						{$message || ""}
 					</p>
 				</div>
 			</div>
