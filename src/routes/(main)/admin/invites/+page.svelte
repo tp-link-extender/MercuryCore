@@ -19,9 +19,6 @@
 
 	export const snapshot = { capture, restore }
 
-	let customKey = false
-	let expiryDate = false
-
 	const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10)
 </script>
 
@@ -267,4 +264,7 @@
 	input[type="checkbox"]
 		height: 1.5rem
 		width: 1.5rem
+
+	input[type="number"]
+		width: 10rem
 </style>

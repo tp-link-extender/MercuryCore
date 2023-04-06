@@ -59,7 +59,7 @@ export const actions = {
 					event.getClientAddress,
 					30
 				)
-				// if (limit) return limit
+				if (limit) return limit
 
 				const customInviteEnabled = !!enableInviteCustom
 				const customInvite = inviteCustom
