@@ -1,15 +1,27 @@
 import { authorise } from "$lib/server/lucia"
-import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
-import formData from "$lib/server/formData"
 import { prisma } from "$lib/server/prisma"
 import cuid2 from "@paralleldrive/cuid2"
+import formError from "$lib/server/formError"
+import { superValidate, message } from "sveltekit-superforms/server"
+import { z } from "zod"
 
-// Make sure a user is an administrator before loading the page.
-export async function load({ locals }) {
-	await authorise(locals, 5)
+const schema = z.object({
+	action: z.enum(["create", "disable"]),
+	id: z.string().optional(),
+	enableInviteCustom: z.boolean().optional(),
+	inviteCustom: z.string().min(3).max(50).optional(),
+	enableInviteExpiry: z.boolean().optional(),
+	inviteExpiry: z.string().optional(),
+	inviteUses: z.number().min(1).max(100).default(1),
+})
+
+export async function load(event) {
+	// Make sure a user is an administrator before loading the page.
+	await authorise(event.locals, 5)
 
 	return {
+		form: superValidate(event, schema),
 		invites: prisma.regkey.findMany({
 			include: {
 				creator: true,
@@ -22,55 +34,53 @@ export async function load({ locals }) {
 }
 
 export const actions = {
-	default: async ({ request, locals, getClientAddress }) => {
-		await authorise(locals, 5)
+	default: async event => {
+		await authorise(event.locals, 5)
 
-		const { user } = await authorise(locals)
+		const { user } = await authorise(event.locals)
 
-		const data = await formData(request)
-		const action = data.action
+		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
+
+		const {
+			action,
+			id,
+			enableInviteCustom,
+			inviteCustom,
+			enableInviteExpiry,
+			inviteExpiry,
+			inviteUses,
+		} = form.data
 
 		switch (action) {
 			case "create":
-				const limit = ratelimit("createInvite", getClientAddress, 30)
+				const limit = ratelimit(
+					"createInvite",
+					event.getClientAddress,
+					30
+				)
 				if (limit) return limit
 
-				const customInviteEnabled = !!data.enableInviteCustom
-				const customInvite = data.inviteCustom
-				const inviteExpiryEnabled = !!data.enableInviteExpiry
-				const inviteExpiry = new Date(data.inviteExpiry)
-				const inviteUses = parseInt(data.inviteUses)
+				const customInviteEnabled = !!enableInviteCustom
+				const customInvite = inviteCustom
+				const inviteExpiryEnabled = !!enableInviteExpiry
 
-				const now = new Date()
-
-				if (!inviteUses)
-					return fail(400, { area: "create", msg: "Missing fields" })
 				if (
+					!inviteUses ||
 					(customInviteEnabled && !customInvite) ||
 					(inviteExpiryEnabled && !inviteExpiry)
 				)
-					return fail(400, { area: "create", msg: "Missing fields" })
-
-				if (inviteUses < 1 || inviteUses > 100)
-					return fail(400, {
-						area: "create",
-						msg: "Invalid amount of uses",
+					return message(form, "Missing fields", {
+						status: 400,
 					})
 
-				if (
-					(customInviteEnabled && customInvite.length > 50) ||
-					(customInviteEnabled && customInvite.length < 3)
-				)
-					return fail(400, {
-						area: "create",
-						msg: "Custom invite is too short/too long",
-					})
+				const expiry = inviteExpiry ? new Date(inviteExpiry) : null
 
 				if (
-					inviteExpiryEnabled &&
-					inviteExpiry.getTime() < new Date().getTime()
+					((inviteExpiryEnabled && expiry?.getTime()) || 0) <
+					new Date().getTime()
 				)
-					return fail(400, { area: "create", msg: "Invalid date" })
+					return formError(form, ["inviteExpiry"], ["Invalid date"])
 
 				await prisma.regkey.create({
 					data: {
@@ -78,7 +88,7 @@ export const actions = {
 							? customInvite
 							: cuid2.createId(),
 						usesLeft: inviteUses,
-						expiry: inviteExpiryEnabled ? inviteExpiry : null,
+						expiry: inviteExpiryEnabled ? expiry : null,
 						creator: {
 							connect: {
 								id: user.id,
@@ -87,19 +97,19 @@ export const actions = {
 					},
 				})
 
-				return {
-					success: true,
-					msg: "Invite created successfully! Check the Invites tab for your new key.",
-					area: "create",
-				}
+				return message(
+					form,
+					"Invite created successfully! Check the Invites tab for your new key."
+				)
 			case "disable":
-				const inviteKey = data.id
-
-				if (!inviteKey) return fail(400, { msg: "Missing fields" })
+				if (!id)
+					return message(form, "Missing fields", {
+						status: 400,
+					})
 
 				await prisma.regkey.update({
 					where: {
-						key: inviteKey,
+						key: id,
 					},
 					data: {
 						usesLeft: 0,

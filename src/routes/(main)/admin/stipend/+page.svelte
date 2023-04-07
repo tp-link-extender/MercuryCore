@@ -1,8 +1,25 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { page } from "$app/stores"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	export let form
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+
+	export const snapshot = { capture, restore }
+
+	$form.dailyStipend = data.dailyStipend
+	$form.stipendTime = data.stipendTime
 </script>
 
 <svelte:head>
@@ -41,18 +58,20 @@
 							<div class="row">
 								<label
 									for="dailyStipend"
-									class="col-md-3 col-form-label light-text text-md-right">
+									class="col-md-3 col-form-label light-text">
 									Daily stipend
 								</label>
 								<div class="col-md-8">
 									<div class="input-group">
 										<input
+											bind:value={$form.dailyStipend}
+											{...$constraints.dailyStipend}
 											type="number"
 											name="dailyStipend"
 											id="dailyStipend"
-											value={data.dailyStipend}
-											required
-											class="form-control valid" />
+											class="form-control {$errors.dailyStipend
+												? 'is-in'
+												: ''}valid" />
 										<span
 											class="input-group-text light-text bg-a1">
 											<i class="fa fa-gem text-success" />
@@ -64,20 +83,22 @@
 							<div class="row">
 								<label
 									for="stipendTime"
-									class="col-md-3 col-form-label light-text text-md-right">
+									class="col-md-3 col-form-label light-text">
 									Time between stipend
 								</label>
 								<div class="col-md-8">
 									<div class="input-group">
 										<input
+											bind:value={$form.stipendTime}
+											{...$constraints.stipendTime}
 											type="number"
 											name="stipendTime"
 											id="stipendTime"
-											value={data.stipendTime}
-											required
-											class="form-control valid" />
+											class="form-control {$errors.stipendTime
+												? 'is-in'
+												: ''}valid" />
 										<span
-											class="input-group-text light-text">
+											class="input-group-text light-text bg-a1">
 											hours
 										</span>
 									</div>
@@ -89,14 +110,11 @@
 							</button>
 						</fieldset>
 					</form>
-					<br />
-					{#if form?.economysuccess}
-						<p class="col-12 mb-3 text-success">{form?.msg}</p>
-					{/if}
-
-					{#if form?.error}
-						<p class="col-12 mb-3 text-danger">{form?.msg}</p>
-					{/if}
+					<p
+						class:text-success={$page.status == 200}
+						class:text-danger={$page.status >= 400}>
+						{$message || ""}
+					</p>
 				</div>
 			</div>
 		</div>
@@ -105,23 +123,26 @@
 
 <style lang="sass">
 
-    .nav-tabs .nav-item.show .nav-link,
-    .nav-tabs .nav-link.active 
-        color: rgb(255, 255, 255)
-        background-color: rgb(13, 109, 252)
-        border-color: var(--bs-nav-tabs-link-active-border-color)
-        border-radius: 0.375rem
-        
-    .nav-tabs .nav-link 
-        margin-bottom: calc(0 * var(--bs-nav-tabs-border-width))
-        background: 0 0
-        border: var(--bs-nav-tabs-border-width) solid transparent
-        border-radius: 0.375rem
+	.nav-tabs .nav-item.show .nav-link,
+	.nav-tabs .nav-link.active 
+		color: rgb(255, 255, 255)
+		background-color: rgb(13, 109, 252)
+		border-color: var(--bs-nav-tabs-link-active-border-color)
+		border-radius: 0.375rem
+		
+	.nav-tabs .nav-link 
+		margin-bottom: calc(0 * var(--bs-nav-tabs-border-width))
+		background: 0 0
+		border: var(--bs-nav-tabs-border-width) solid transparent
+		border-radius: 0.375rem
 
-    .nav-link
-        border-radius: 0
-        color: var(--light-text)
+	.nav-link
+		border-radius: 0
+		color: var(--light-text)
 
-    .input-group-text
-        border-color: var(--accent3)
+	.input-group-text
+		border-color: var(--accent3)
+
+	.input-group
+		max-width: 12rem
 </style>

@@ -1,18 +1,22 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-
-	let fields = {
-		category: "",
-		note: "",
-	}
-
-	export const snapshot = {
-		capture: () => fields,
-		restore: v => (fields = v),
-	}
+	import { page } from "$app/stores"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	export let form
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+
+	export const snapshot = { capture, restore }
 </script>
 
 <svelte:head>
@@ -36,11 +40,13 @@
 				</label>
 				<div class="col-md-8">
 					<select
-						bind:value={fields.category}
+						bind:value={$form.category}
+						{...$constraints.category}
 						name="category"
 						id="category"
-						class="form-select valid"
-						required>
+						class="form-select {$errors.category
+							? 'is-in'
+							: ''}valid">
 						<option value="AccountTheft">Account theft</option>
 						<option value="Dating">Dating</option>
 						<option value="Exploiting">Exploiting</option>
@@ -60,6 +66,9 @@
 						<option value="Swearing">Swearing</option>
 						<option value="Threats">Threats</option>
 					</select>
+					<p class="col-12 mb-3 text-danger">
+						{$errors.category || ""}
+					</p>
 				</div>
 			</div>
 			<br />
@@ -69,23 +78,31 @@
 				</label>
 				<div class="col-md-8">
 					<textarea
-						bind:value={fields.note}
+						bind:value={$form.note}
+						{...$constraints.note}
 						name="note"
 						id="note"
 						placeholder="Up to 1000 characters"
-						required
-						class="form-control valid"
-						maxlength="1000"
+						class="form-control {$errors.note ? 'is-in' : ''}valid"
 						rows="5" />
+					<p class="col-12 mb-3 text-danger">
+						{$errors.note || ""}
+					</p>
 				</div>
 			</div>
-			<br />
-			<button type="submit" class="btn btn-success">Submit</button>
+			<button type="submit" class="btn btn-success">
+				{#if $delayed}
+					Working...
+				{:else}
+					Submit
+				{/if}
+			</button>
 		</fieldset>
 	</form>
-	<br />
-	<p class="col-12 mb-3 text-{form?.success ? 'success' : 'danger'}">
-		{form?.msg || ""}
+	<p
+		class:text-success={$page.status == 200}
+		class:text-danger={$page.status >= 400}>
+		{$message || ""}
 	</p>
 </div>
 

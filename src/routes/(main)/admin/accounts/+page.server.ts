@@ -1,25 +1,38 @@
 import { auth, authorise } from "$lib/server/lucia"
-import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
-import formData from "$lib/server/formData"
+import formError from "$lib/server/formError"
+import { superValidate, message } from "sveltekit-superforms/server"
+import { z } from "zod"
 
-// Make sure a user is an administrator before loading the page.
-export async function load({ locals }) {
-	await authorise(locals, 5)
+const schema = z.object({
+	username: z
+		.string()
+		.min(3)
+		.max(21)
+		.regex(/^[A-Za-z0-9_]+$/),
+	password: z.string().min(1).max(6969),
+})
+
+export async function load(event) {
+	// Make sure a user is an administrator before loading the page.
+	await authorise(event.locals, 5)
+
+	return {
+		form: superValidate(event, schema),
+	}
 }
 
 export const actions = {
-	resetPassword: async ({ request, locals, getClientAddress }) => {
-		await authorise(locals,5)
+	resetPassword: async event => {
+		await authorise(event.locals, 5)
 
-		const limit = ratelimit("resetPassword", getClientAddress, 30)
+		const limit = ratelimit("resetPassword", event.getClientAddress, 30)
 		if (limit) return limit
 
-		const data = await formData(request)
-		const username = data.username
-		const password = data.password
+		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
 
-		if (!username || !password) return fail(400, { msg: "Missing fields" })
+		const { username, password } = form.data
 
 		try {
 			await auth.updateKeyPassword(
@@ -28,12 +41,11 @@ export const actions = {
 				password
 			)
 		} catch {
-			return fail(400, { msg: "Invalid credentials" })
+			return message(form, "Invalid credentials", {
+				status: 400,
+			})
 		}
 
-		return {
-			usersuccess: true,
-			msg: "Password changed successfully!",
-		}
+		return message(form, "Password changed successfully!")
 	},
 }

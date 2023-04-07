@@ -1,42 +1,45 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
 import id, { rollback } from "$lib/server/id"
-import formData from "$lib/server/formData"
 import type { ItemCategory } from "@prisma/client"
-import { fail, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
+import formError from "$lib/server/formError"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
+
+const schema = z.object({
+	name: z.string().min(3).max(50),
+	price: z.number().min(0).max(9999),
+	category: z.enum([
+		"TShirt",
+		"Shirt",
+		"Pants",
+		"HeadShape",
+		"Hair",
+		"Face",
+		"Skirt",
+		"Dress",
+		"Hat",
+		"Headgear",
+		"Gear",
+		"Neck",
+		"Back",
+		"Shoulder",
+	]),
+})
+
+export const load = async (event /**/) => ({
+	form: superValidate(event, schema),
+})
 
 export const actions = {
-	default: async ({ locals, request }) => {
-		const { user } = await authorise(locals)
+	default: async event => {
+		const { user } = await authorise(event.locals)
 
-		const data = await formData(request)
-		const name = data.name
-		const price = Number(data.price)
-		const category = data.category
+		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
 
-		if (!name || !category) return fail(400, { msg: "Missing fields" })
-		if (
-			name.length < 3 ||
-			name.length > 50 ||
-			price < 0 ||
-			![
-				"TShirt",
-				"Shirt",
-				"Pants",
-				"HeadShape",
-				"Hair",
-				"Face",
-				"Skirt",
-				"Dress",
-				"Hat",
-				"Headgear",
-				"Gear",
-				"Neck",
-				"Back",
-				"Shoulder",
-			].includes(category)
-		)
-			return fail(400, { msg: "Invalid fields" })
+		const { name, price, category } = form.data
 
 		let item
 		const itemId = await id()
@@ -72,7 +75,7 @@ export const actions = {
 			})
 		} catch (e: any) {
 			rollback(itemId)
-			return fail(402, { msg: e.message })
+			return formError(form, ["other"], [e.message])
 		}
 
 		throw redirect(302, `/avatarshop/item/${item.id}`)

@@ -9,5 +9,19 @@ declare namespace Lucia {
 
 /// <reference types="@sveltejs/kit" />
 declare namespace App {
-	type Locals = import("lucia-auth").AuthRequest;
+	interface Locals {
+		setSession: (session: Session | null) => void
+		validate: () => Promise<Session | null>
+		validateUser: () => Promise<
+			| {
+					user: null
+					session: null
+			  }
+			| {
+					user: User
+					session: Session
+			  }
+		>
+		getCookie: () => Cookie | null
+	}
 }
