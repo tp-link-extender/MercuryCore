@@ -125,7 +125,7 @@
 										<i
 											class="fa fa-thumbs-up text-success" />
 									{:else}
-										<i class="fa-regular fa-thumbs-up" />
+										<i class="far fa-thumbs-up" />
 									{/if}
 								</button>
 								<span
@@ -146,14 +146,14 @@
 										<i
 											class="fa fa-thumbs-down text-danger" />
 									{:else}
-										<i class="fa-regular fa-thumbs-down" />
+										<i class="far fa-thumbs-down" />
 									{/if}
 								</button>
 							</form>
 							<button
 								on:click={() => replyingTo.set(reply.id)}
 								class="p-0 btn btn-sm grey-text px-1">
-								<i class="fa-regular fa-message pe-2" />
+								<i class="far fa-message pe-2" />
 								Reply
 							</button>
 							<Report
@@ -192,7 +192,7 @@
 												type="submit"
 												class="btn btn-success">
 												<i
-													class="fa-regular fa-message me-2" />
+													class="far fa-message me-2" />
 												Reply
 											</button>
 											<button

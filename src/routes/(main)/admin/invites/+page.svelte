@@ -29,7 +29,7 @@
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Invites</h1>
 	<a href="/admin" class="text-decoration-none">
-		<i class="fa-solid fa-caret-left" />
+		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
 	<div class="row mt-4">
@@ -99,8 +99,8 @@
 											name="inviteCustom"
 											id="inviteCustom"
 											class="form-control {$errors.inviteCustom
-											? 'is-in'
-											: ''}valid" />
+												? 'is-in'
+												: ''}valid" />
 										<small class="light-text">
 											Instead of having a randomly
 											generated key, this allows you to
@@ -148,8 +148,8 @@
 											min={tomorrow}
 											required
 											class="form-control {$errors.inviteExpiry
-											? 'is-in'
-											: ''}valid" />
+												? 'is-in'
+												: ''}valid" />
 										<p class="col-12 mb-3 text-danger">
 											{$errors.inviteExpiry || ""}
 										</p>
@@ -220,7 +220,7 @@
 												name="action"
 												value="disable"
 												class="btn btn-sm btn-link text-decoration-none text-danger my-0">
-												<i class="fa-solid fa-ban" />
+												<i class="fas fa-ban" />
 												Disable Invite
 											</button>
 										</form>

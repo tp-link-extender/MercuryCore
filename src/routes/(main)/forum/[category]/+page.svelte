@@ -42,7 +42,7 @@
 							{#if post.likes}
 								<i class="fa fa-thumbs-up" />
 							{:else}
-								<i class="fa-regular fa-thumbs-up" />
+								<i class="far fa-thumbs-up" />
 							{/if}
 						</button>
 					</div>
@@ -64,12 +64,12 @@
 							{#if post.dislikes}
 								<i class="fa fa-thumbs-down" />
 							{:else}
-								<i class="fa-regular fa-thumbs-down" />
+								<i class="far fa-thumbs-down" />
 							{/if}
 						</button>
 					</div>
 					<!-- <div id="replycount" class="d-flex">
-						<div class="mt-auto"><i class="fa-regular fa-message" /> {post._count.replies}</div>
+						<div class="mt-auto"><i class="far fa-message" /> {post._count.replies}</div>
 					</div> -->
 				</div>
 			</form>
