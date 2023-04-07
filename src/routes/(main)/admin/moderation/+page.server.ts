@@ -27,7 +27,7 @@ export const actions = {
 		const { user } = await authorise(event.locals, 4)
 
 		const limit = ratelimit("moderateUser", event.getClientAddress, 30)
-		// if (limit) return limit
+		if (limit) return limit
 
 		const form = await superValidate(event, schema)
 		if (!form.valid) return formError(form)
