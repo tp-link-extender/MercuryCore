@@ -9,8 +9,9 @@ export async function load({ locals }) {
 	return {
 		freemem: os.freemem(), // because cant do os on clientside
 		totalmem: os.totalmem(),
-		stream: { // This function takes like 700ms to run
+		stream: {
+			// This function takes like 700ms to run
 			disk: checkDiskSpace(os.homedir()), // because top level await doesnt work in svelte
-		}
+		},
 	}
 }

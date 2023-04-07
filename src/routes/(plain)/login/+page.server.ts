@@ -1,52 +1,49 @@
 import { auth } from "$lib/server/lucia"
-import formData from "$lib/server/formData"
-import { redirect, fail } from "@sveltejs/kit"
+import formError from "$lib/server/formError"
+import { redirect } from "@sveltejs/kit"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
+
+const schema = z.object({
+	username: z
+		.string()
+		.min(3)
+		.max(21)
+		.regex(/^[A-Za-z0-9_]+$/),
+	password: z.string().min(1).max(6969),
+})
+
+export const load = async (
+	event
+	// removing parentheses breaks things
+) => ({
+	form: superValidate(event, schema),
+})
 
 export const actions = {
-	default: async ({ request, locals }) => {
-		const data = await formData(request)
-		const username = data.username
-		const password = data.password
+	default: async event => {
+		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
 
-		if (username.length < 3)
-			return fail(400, {
-				area: "username",
-				msg: "Username must be at least 3 characters",
-			})
-		if (username.length > 30)
-			return fail(400, {
-				area: "username",
-				msg: "Username must be less than 30 characters",
-			})
-		if (password.length < 1)
-			return fail(400, {
-				area: "password",
-				msg: "Password must be at least 1 character",
-			})
-		if (password.length > 6969)
-			return fail(400, {
-				area: "password",
-				msg: "Password must be less than 6969 characters",
-			})
+		const { username, password } = form.data
 
-		if (username.includes("["))
-			return fail(400, { area: "username", msg: "Invalid username" })
-
-		let session
 		try {
 			const user = await auth.useKey(
 				"username",
 				username.toLowerCase(),
 				password
 			)
-			session = await auth.createSession(user.userId)
+			event.locals.setSession(await auth.createSession(user.userId))
 		} catch {
-			return fail(400, {
-				area: "password",
-				msg: "Incorrect username or password",
-			})
+			return formError(
+				form,
+				["username", "password"],
+				[
+					"Incorrect username or password",
+					"Incorrect username or password",
+				]
+			)
 		}
-		locals.setSession(session)
 
 		throw redirect(302, "/home")
 	},
