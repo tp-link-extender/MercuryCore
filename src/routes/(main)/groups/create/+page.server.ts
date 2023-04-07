@@ -1,29 +1,44 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
-import formData from "$lib/server/formData"
-import { fail, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
+import formError from "$lib/server/formError"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
+
+const schema = z.object({
+	name: z.string().min(3).max(40),
+})
+
+export const load = async (event /**/) => ({
+	form: superValidate(event, schema),
+})
 
 export const actions = {
-	default: async ({ locals, request }) => {
-		const { user } = await authorise(locals)
+	default: async event => {
+		const { user } = await authorise(event.locals)
 
-		const data = await formData(request)
-		const name = data.name
+		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
 
-		if (!name) return fail(400, { msg: "Missing fields" })
-		if (name.length < 3 || name.length > 40)
-			return fail(400, { msg: "Invalid fields" })
+		const { name } = form.data
+
 		if (name == "create")
-			return fail(400, {
-				msg: Buffer.from(
-					"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
-					"base64"
-				).toString("ascii"),
-			})
+			return formError(
+				form,
+				["name"],
+				[
+					Buffer.from(
+						"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
+						"base64"
+					).toString("ascii"),
+				]
+			)
 		if (name == "wisely")
-			return fail(400, {
-				msg: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
-			})
+			return formError(
+				form,
+				["name"],
+				["GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"]
+			)
 
 		if (
 			await prisma.group.findUnique({
@@ -32,7 +47,11 @@ export const actions = {
 				},
 			})
 		)
-			return fail(400, { msg: "A group with this name already exists" })
+			return formError(
+				form,
+				["name"],
+				["A group with this name already exists"]
+			)
 
 		try {
 			await prisma.$transaction(async tx => {
@@ -52,7 +71,7 @@ export const actions = {
 				})
 			})
 		} catch (e: any) {
-			return fail(402, { msg: e.message })
+			return formError(form, ["other"], [e.message])
 		}
 
 		throw redirect(302, `/groups/${name}`)

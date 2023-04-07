@@ -1,72 +1,77 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import ratelimit from "$lib/server/ratelimit"
-import formData from "$lib/server/formData"
-import { fail, error } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 import type { ReportCategory } from "@prisma/client"
+import formError from "$lib/server/formError"
+import { superValidate, message } from "sveltekit-superforms/server"
+import { z } from "zod"
 
-export async function load({ url }) {
-	const reportedUser = url.searchParams.get("user")
-	const reportedUrl = url.searchParams.get("url")
+const schema = z.object({
+	category: z.enum([
+		"AccountTheft",
+		"Dating",
+		"Exploiting",
+		"Harassment",
+		"InappropriateContent",
+		"PersonalInformation",
+		"Scamming",
+		"Spam",
+		"Swearing",
+		"Threats",
+		"Under13",
+	]),
+	note: z.string().optional(),
+})
 
-	if (!reportedUser || !reportedUrl)
+export async function load(event) {
+	const reportee = event.url.searchParams.get("user")
+	const reportedUrl = event.url.searchParams.get("url")
+
+	if (!reportee || !reportedUrl)
 		throw error(400, "Missing user or url parameters")
 
 	return {
-		reportee: reportedUser,
+		reportee,
 		url: reportedUrl,
+		form: superValidate(event, schema),
 	}
 }
 
 export const actions = {
-	default: async ({ request, locals, url, getClientAddress }) => {
-		ratelimit("report", getClientAddress, 120)
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const reportUser = url.searchParams.get("user")
-		const reportUrl = url.searchParams.get("url")
-		const category = data.category
-		const note = data.note || null
+	default: async event => {
+		ratelimit("report", event.getClientAddress, 120)
+		const { user } = await authorise(event.locals)
 
-		if (!reportUser || !reportUrl || !category)
-			return fail(400, { msg: "Missing fields" })
-		if (
-			![
-				"AccountTheft",
-				"Dating",
-				"Exploiting",
-				"Harassment",
-				"InappropriateContent",
-				"PersonalInformation",
-				"Scamming",
-				"Spam",
-				"Swearing",
-				"Threats",
-				"Under13",
-			].includes(category)
-		)
-			return fail(400, { msg: "Invalid category" })
+		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
+
+		const { category, note } = form.data
+		const username = event.url.searchParams.get("user")
+		const url = event.url.searchParams.get("user")
+
+		if (!username || !url) throw error(400, "Missing fields")
 
 		const reportee = await prisma.authUser.findUnique({
 			where: {
-				username: reportUser,
+				username,
 			},
 		})
-		if (!reportee) return fail(400, { msg: "Invalid user" })
+		if (!reportee)
+			return message(form, "Invalid user", {
+				status: 400,
+			})
 
 		await prisma.report.create({
 			data: {
 				reporterId: user.id,
 				reporteeId: reportee.id,
-				note,
-				url: reportUrl,
-				category: category as ReportCategory,
+				note: (note as ReportCategory) || null,
+				url,
+				category,
 			},
 		})
 
-		return {
-			success: true,
-			msg: "Report sent successfully.",
-		}
+		return message(form, "Report sent successfully.")
 	},
 }

@@ -1,14 +1,25 @@
 import { authorise } from "$lib/server/lucia"
-import { fail } from "@sveltejs/kit"
 import { prisma } from "$lib/server/prisma"
 import ratelimit from "$lib/server/ratelimit"
-import formData from "$lib/server/formData"
+import formError from "$lib/server/formError"
+import { superValidate, message } from "sveltekit-superforms/server"
+import { z } from "zod"
 
-// Make sure a user is an administrator before loading the page.
-export async function load({ locals }) {
-	await authorise(locals, 5)
+const schema = z.object({
+	action: z.enum(["create", "show", "hide", "delete", "updateBody"]),
+	id: z.string().optional(),
+	bannerText: z.string().min(3).max(100).optional(),
+	bannerColour: z.string().optional(),
+	bannerTextLight: z.boolean().optional(),
+	bannerBody: z.string().optional(),
+})
+
+export async function load(event) {
+	// Make sure a user is an administrator before loading the page.
+	await authorise(event.locals, 5)
 
 	return {
+		form: superValidate(event, schema),
 		banners: prisma.announcements.findMany({
 			include: {
 				user: true,
@@ -21,14 +32,15 @@ export async function load({ locals }) {
 }
 
 export const actions = {
-	default: async ({ request, locals, getClientAddress }) => {
-		await authorise(locals, 5)
+	default: async event => {
+		await authorise(event.locals, 5)
 
-		const { user } = await authorise(locals)
+		const { user } = await authorise(event.locals)
 
-		const data = await formData(request)
-		const action = data.action
-		const bannerId = data.id
+		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
+
+		const { action, id, bannerText, bannerColour, bannerBody } = form.data
 
 		const bannerActiveCount = await prisma.announcements.findMany({
 			where: { active: true },
@@ -36,25 +48,23 @@ export const actions = {
 
 		switch (action) {
 			case "create":
-				const limit = ratelimit("createBanner", getClientAddress, 30)
+				const limit = ratelimit(
+					"createBanner",
+					event.getClientAddress,
+					30
+				)
 				if (limit) return limit
 
-				const bannerText = data.bannerText
-				const bannerColour = data.bannerColour
-				const bannerTextLight = !!data.bannerTextLight
-
-				if (!bannerColour || !bannerText)
-					return fail(400, { area: "create", msg: "Missing fields" })
-				if (bannerText.length > 100 || bannerText.length < 3)
-					return fail(400, {
-						area: "create",
-						msg: "Banner text too long",
+				if (!bannerText || !bannerColour)
+					return message(form, "Missing fields", {
+						status: 400,
 					})
 
+				const bannerTextLight = !!form.data.bannerTextLight
+
 				if (bannerActiveCount && bannerActiveCount.length > 2)
-					return fail(400, {
-						area: "create",
-						msg: "Too many active banners",
+					return message(form, "Too many active banners", {
+						status: 400,
 					})
 
 				await prisma.announcements.create({
@@ -70,18 +80,17 @@ export const actions = {
 					},
 				})
 
-				return {
-					success: true,
-					msg: "Banner created successfully!",
-					area: "create",
-				}
+				return message(form, "Banner created successfully!")
 			case "show":
 			case "hide":
-				if (!bannerId) return fail(400, { msg: "Missing fields" })
+				if (!id)
+					return message(form, "Missing fields", {
+						status: 400,
+					})
 
 				await prisma.announcements.update({
 					where: {
-						id: bannerId,
+						id,
 					},
 					data: {
 						active: action == "show",
@@ -90,40 +99,32 @@ export const actions = {
 
 				return
 			case "delete":
-				if (!bannerId) return fail(400, { msg: "Missing fields" })
+				if (!id)
+					return message(form, "Missing fields", {
+						status: 400,
+					})
 
 				await prisma.announcements.delete({
 					where: {
-						id: bannerId,
+						id,
 					},
 				})
 				return
 			case "updateBody":
-				const bannerBody = data.bannerBody
-
-				if (!bannerBody || !bannerId)
-					return fail(400, { area: "modal", msg: "Missing fields" })
-
-				if (bannerBody.length < 3 || bannerBody.length > 99)
-					return fail(400, {
-						area: "modal",
-						msg: "Banner text is too long/short",
+				if (!bannerBody || !id)
+					return message(form, "Missing fields", {
+						status: 400,
 					})
 
 				await prisma.announcements.update({
 					where: {
-						id: bannerId,
+						id,
 					},
 					data: {
 						body: bannerBody,
 					},
 				})
-				return {
-					success: true,
-					msg: "Banner updated successfully!",
-					area: "modal",
-					bannerBody,
-				}
+				return
 		}
 	},
 }
