@@ -1,38 +1,43 @@
 import { authorise } from "$lib/server/lucia"
-import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
-import formData from "$lib/server/formData"
 import { prisma } from "$lib/server/prisma"
 import type { ModerationActionType } from "@prisma/client"
+import formError from "$lib/server/formError"
+import { superValidate, message } from "sveltekit-superforms/server"
+import { z } from "zod"
 
-// Make sure a user is an administrator/moderator before loading the page.
-export async function load({ locals }) {
-	await authorise(locals, 4)
+const schema = z.object({
+	username: z.string().min(3).max(21),
+	action: z.number().min(1).max(5),
+	banDate: z.string().optional(),
+	reason: z.string().min(15).max(150),
+})
+
+export async function load(event) {
+	// Make sure a user is an administrator/moderator before loading the page.
+	await authorise(event.locals, 4)
+
+	return {
+		form: superValidate(event, schema),
+	}
 }
 
 export const actions = {
-	moderateUser: async ({ request, locals, getClientAddress }) => {
-		await authorise(locals, 4)
+	moderateUser: async event => {
+		const { user } = await authorise(event.locals, 4)
 
-		const { user } = await authorise(locals)
-
-		const limit = ratelimit("moderateUser", getClientAddress, 30)
+		const limit = ratelimit("moderateUser", event.getClientAddress, 30)
 		if (limit) return limit
 
-		const data = await formData(request)
-		const username = data.username
-		const action = parseInt(data.action)
-		const banDate = new Date(data.banDate)
-		const reason = data.reason
+		const form = await superValidate(event, schema)
+		if (!form.valid) return formError(form)
 
-		if (!username || !action) return fail(400, { msg: "Missing fields" })
-		if (action != 5 && !reason) return fail(400, { msg: "Missing fields" })
-		if (action == 2 && !banDate) return fail(400, { msg: "Missing fields" })
-		if (reason.length < 15 && reason.length > 150)
-			return fail(400, { msg: "Reason is too long/short" })
+		const { username, action, banDate, reason } = form.data
 
-		if (action == 2 && banDate.getTime() < new Date().getTime())
-			return fail(400, { msg: "Invalid date" })
+		const date = banDate ? new Date(banDate) : null
+
+		if (action == 2 && (date?.getTime() || 0) < new Date().getTime())
+			return formError(form, ["banDate"], ["Invalid date"])
 
 		const getModeratee = await prisma.authUser.findUnique({
 			where: {
@@ -40,20 +45,25 @@ export const actions = {
 			},
 		})
 
-		if (!getModeratee) return fail(400, { msg: "User does not exist" })
+		if (!getModeratee)
+			return formError(form, ["username"], ["User does not exist"])
 
 		if (getModeratee.permissionLevel > 2)
-			return fail(400, {
-				msg: "You cannot moderate staff members",
-			})
+			return formError(
+				form,
+				["username"],
+				["You cannot moderate staff members"]
+			)
 		if (getModeratee.id == user.id)
-			return fail(400, {
-				msg: "You cannot moderate yourself",
-			})
+			return formError(
+				form,
+				["username"],
+				["You cannot moderate yourself"]
+			)
 
 		const moderationMessage = [
 			"has been warned",
-			`has been banned until ${banDate.toLocaleDateString()}`,
+			`has been banned until ${date?.toLocaleDateString()}`,
 			"has been terminated",
 			"has been deleted",
 			"has been unbanned",
@@ -73,9 +83,11 @@ export const actions = {
 					where: { moderateeId: getModeratee.id, active: true },
 				}))
 			)
-				return fail(400, {
-					msg: "You cannot unban a user that has not been moderated yet",
-				})
+				return formError(
+					form,
+					["action"],
+					["You cannot unban a user that has not been moderated yet"]
+				)
 
 			if (
 				await prisma.moderationAction.count({
@@ -86,9 +98,11 @@ export const actions = {
 					},
 				})
 			)
-				return fail(400, {
-					msg: "You cannot undo a deleted user",
-				})
+				return formError(
+					form,
+					["action"],
+					["You cannot unban a deleted user"]
+				)
 
 			await prisma.moderationAction.updateMany({
 				where: {
@@ -112,9 +126,11 @@ export const actions = {
 				where: { moderateeId: getModeratee.id, active: true },
 			})
 		)
-			return fail(400, {
-				msg: "User has already been moderated",
-			})
+			return formError(
+				form,
+				["username"],
+				["User has already been moderated"]
+			)
 
 		await prisma.moderationAction.create({
 			data: {
@@ -128,7 +144,7 @@ export const actions = {
 						username,
 					},
 				},
-				timeEnds: action == 2 ? banDate : new Date(),
+				timeEnds: date || new Date(),
 				note: reason,
 				type: moderationAction as ModerationActionType,
 			},
@@ -145,9 +161,6 @@ export const actions = {
 				},
 			})
 
-		return {
-			moderationsuccess: true,
-			msg: `${username} ${moderationMessage[action - 1]}`,
-		}
+		return message(form, `${username} ${moderationMessage[action - 1]}`)
 	},
 }
