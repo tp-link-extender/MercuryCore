@@ -43,7 +43,7 @@
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Banners</h1>
 	<a href="/admin" class="text-decoration-none">
-		<i class="fa-solid fa-caret-left" />
+		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
 	<div class="row mt-4">
@@ -186,7 +186,7 @@
 												name="action"
 												value="delete"
 												class="btn btn-sm btn-link text-decoration-none text-danger my-0">
-												<i class="fa-solid fa-trash" />
+												<i class="fas fa-trash" />
 												Delete Banner
 											</button>
 										</form>
@@ -207,7 +207,7 @@
 													? 'warning'
 													: 'success'} my-0">
 												<i
-													class="fa-solid fa-eye{banner.active
+													class="fas fa-eye{banner.active
 														? '-slash'
 														: ''}" />
 												{banner.active

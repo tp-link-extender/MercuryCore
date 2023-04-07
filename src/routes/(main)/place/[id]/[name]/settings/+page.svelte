@@ -38,7 +38,7 @@
 				role="tab"
 				aria-controls="pills-view"
 				aria-selected="true">
-				<i class="fa-regular fa-eye" />
+				<i class="far fa-eye" />
 				View
 			</button>
 		</li>
@@ -53,7 +53,7 @@
 				aria-controls="pills-network"
 				aria-selected="false"
 				tabindex={-1}>
-				<i class="fa-solid fa-network-wired" />
+				<i class="fas fa-network-wired" />
 				Network
 			</button>
 		</li>
@@ -68,7 +68,7 @@
 				aria-controls="pills-privacy"
 				aria-selected="false"
 				tabindex={-1}>
-				<i class="fa-solid fa-eye-low-vision" />
+				<i class="fas fa-eye-low-vision" />
 				Privacy
 			</button>
 		</li>
@@ -174,7 +174,7 @@
 								</small>
 							{/if}
 							<button class="btn btn-primary" type="submit">
-								<i class="fa-solid fa-rotate" />
+								<i class="fas fa-rotate" />
 								Regenerate
 							</button>
 						</div>
@@ -319,13 +319,13 @@
 								class="btn btn-info"
 								type="button"
 								id="button-addon2">
-								<i class="fa-solid fa-paste" />
+								<i class="fas fa-paste" />
 							</button>
 							<button
 								class="btn btn-primary"
 								type="submit"
 								id="button-addon2">
-								<i class="fa-solid fa-rotate" />
+								<i class="fas fa-rotate" />
 								Regen
 							</button>
 						</div>

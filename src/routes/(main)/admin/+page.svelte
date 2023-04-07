@@ -92,8 +92,7 @@
 										<div
 											class="card-body bg-a rounded-1 p-4">
 											<h1>
-												<i
-													class="fa-solid fa-bullhorn" />
+												<i class="fas fa-bullhorn" />
 											</h1>
 											<h5 class="fw-normal mt-3">
 												Banners
@@ -109,7 +108,7 @@
 										<div
 											class="card-body bg-a rounded-1 p-4">
 											<h1>
-												<i class="fa-regular fa-user" />
+												<i class="far fa-user" />
 											</h1>
 											<h5 class="fw-normal mt-3">
 												Accounts
@@ -125,7 +124,7 @@
 										<div
 											class="card-body bg-a rounded-1 p-4">
 											<h1>
-												<i class="fa-solid fa-book" />
+												<i class="fas fa-book" />
 											</h1>
 											<h5 class="fw-normal mt-3">
 												Audit Logs
@@ -141,7 +140,7 @@
 										<div
 											class="card-body bg-a rounded-1 p-4">
 											<h1>
-												<i class="fa-solid fa-key" />
+												<i class="fas fa-key" />
 											</h1>
 											<h5 class="fw-normal mt-3">
 												Invites
@@ -157,7 +156,7 @@
 										<div
 											class="card-body bg-a rounded-1 p-4">
 											<h1>
-												<i class="fa-solid fa-dice" />
+												<i class="fas fa-dice" />
 											</h1>
 											<h5 class="fw-normal mt-3">
 												Coin Flip
@@ -181,7 +180,7 @@
 								<div class="card bg-a3 text-center light-text">
 									<div class="card-body bg-a rounded-1 p-4">
 										<h1>
-											<i class="fa-solid fa-user-slash" />
+											<i class="fas fa-user-slash" />
 										</h1>
 										<h5 class="fw-normal mt-3">
 											Moderate User
@@ -195,7 +194,7 @@
 								<div class="card bg-a3 text-center light-text">
 									<div class="card-body bg-a rounded-1 p-4">
 										<h1>
-											<i class="fa-regular fa-flag" />
+											<i class="far fa-flag" />
 										</h1>
 										<h5 class="fw-normal mt-3">
 											Report Abuse
@@ -210,7 +209,7 @@
 									<div class="card-body bg-a rounded-1 p-4">
 										<h1>
 											<i
-												class="fa-solid fa-file-circle-check" />
+												class="fas fa-file-circle-check" />
 										</h1>
 										<h5 class="fw-normal mt-3">
 											Asset Approval
@@ -231,8 +230,7 @@
 										<div
 											class="card-body bg-a rounded-1 p-4">
 											<h1>
-												<i
-													class="fa-regular fa-clock" />
+												<i class="far fa-clock" />
 											</h1>
 											<h5 class="fw-normal mt-3">
 												Daily Stipend
@@ -246,7 +244,7 @@
 							<a href="#" class="shadow-hover">
 								<div class="card bg-a3 text-center light-text">
 									<div class="card-body bg-a rounded-1 p-4">
-										<h1><i class="fa-regular fa-gem" /></h1>
+										<h1><i class="far fa-gem" /></h1>
 										<h5 class="fw-normal mt-3">
 											Award Currency
 										</h5>
@@ -263,7 +261,7 @@
 											class="card-body bg-a rounded-1 p-4">
 											<h1>
 												<i
-													class="fa-solid fa-file-circle-plus" />
+													class="fas fa-file-circle-plus" />
 											</h1>
 											<h5 class="fw-normal mt-3">
 												Create New Asset
@@ -279,7 +277,7 @@
 									<div class="card-body bg-a rounded-1 p-4">
 										<h1>
 											<i
-												class="fa-solid fa-money-bill-transfer" />
+												class="fas fa-money-bill-transfer" />
 										</h1>
 										<h5 class="fw-normal mt-3">
 											Transactions
@@ -296,7 +294,7 @@
 							<div class="card bg-a3 text-black mb-3">
 								<div class="card-body bg-a rounded-1">
 									<h3 class="light-text">
-										<i class="fa-solid fa-memory" />
+										<i class="fas fa-memory" />
 										{(
 											(data.totalmem - data.freemem) /
 											1024 ** 3
@@ -332,8 +330,7 @@
 										<h3 class="light-text">Loading...</h3>
 									{:then disk}
 										<h3 class="light-text">
-											<i
-												class="fa-solid fa-hard-drive me-2" />
+											<i class="fas fa-hard-drive me-2" />
 											{(
 												(disk.size - disk.free) /
 												1024 ** 3
@@ -369,7 +366,7 @@
 							<div class="card bg-a3 text-black mb-3">
 								<div class="card-body bg-a rounded-1">
 									<h3 class="light-text">
-										<i class="fa-regular fa-user me-2" />
+										<i class="far fa-user me-2" />
 										Users
 									</h3>
 									<span class="light-text">
@@ -381,33 +378,33 @@
 							<div class="card bg-a3 text-black mb-3">
 								<div class="card-body bg-a rounded-1">
 									<h3 class="light-text">
-										<i class="fa-regular fa-file me-2" />
+										<i class="far fa-file me-2" />
 										Assets
 									</h3>
 									<span class="light-text">
 										<i
-											class="fa-solid text-warning fa-file-circle-minus me-2" />
+											class="fas text-warning fa-file-circle-minus me-2" />
 										<b class="light-text">0 assets</b>
 										are currently pending
 									</span>
 									<br />
 									<span class="light-text">
 										<i
-											class="fa-solid text-success fa-file-circle-check me-2" />
+											class="fas text-success fa-file-circle-check me-2" />
 										<b class="light-text">0 assets</b>
 										have been approved
 									</span>
 									<br />
 									<span class="light-text">
 										<i
-											class="fa-solid text-danger fa-file-circle-xmark me-2" />
+											class="fas text-danger fa-file-circle-xmark me-2" />
 										<b class="light-text">0 assets</b>
 										have been disapproved
 									</span>
 									<br />
 									<span class="light-text">
 										<i
-											class="fa-solid text-info fa-folder-closed me-2" />
+											class="fas text-info fa-folder-closed me-2" />
 										<b class="light-text">0 assets</b>
 										in total
 									</span>

@@ -301,7 +301,7 @@
 				<div class="card-body">
 					<div class="d-grid gap-2 mb-4">
 						<button class="btn btn-primary" disabled>
-							<i class="fa-solid fa-rotate" />
+							<i class="fas fa-rotate" />
 							Regenerate
 						</button>
 					</div>
