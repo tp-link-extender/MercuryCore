@@ -54,7 +54,6 @@ local Camera = Game.Workspace.CurrentCamera
 -- Services
 local CoreGuiService = Game:GetService "CoreGui"
 local PlayersService = Game:GetService "Players"
-local DebrisService = Game:GetService "Debris"
 local GuiService = Game:GetService "GuiService"
 
 -- Lua Enums
@@ -900,7 +899,6 @@ function Chat:EnableScrolling(toggle)
 		self.RenderFrame.MouseEnter:connect(function()
 			local character = Player.Character
 			local torso = WaitForChild(character, "Torso")
-			local humanoid = WaitForChild(character, "Humanoid")
 			local head = WaitForChild(character, "Head")
 			if toggle then
 				self.MouseOnFrame = true
@@ -1111,13 +1109,13 @@ function Chat:RecalculateSpacing()
 	end ]]
 end
 
-function Chat:ApplyFilter(str)
-	--[[for _, word in pair(self.Filter_List) do 
-		if string.find(str, word) then 
-			str:gsub(word, '@#$^')
-		end 
-	end ]]
-end
+-- function Chat:ApplyFilter(str)
+-- 	--[[for _, word in pair(self.Filter_List) do
+-- 		if string.find(str, word) then
+-- 			str:gsub(word, '@#$^')
+-- 		end
+-- 	end ]]
+-- end
 
 -- NOTE: Temporarily disabled ring buffer to allow for chat to always wrap around
 function Chat:CreateMessage(cPlayer, message)
@@ -1173,7 +1171,7 @@ function Chat:CreateMessage(cPlayer, message)
 	pLabel = Gui.Create "TextLabel" {
 		Name = pName,
 		Text = pName .. ":",
-		TextColor3 = pColor,
+		-- TextColor3 = pColor,
 		FontSize = Chat.Configuration.FontSize,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Top,
@@ -1188,7 +1186,6 @@ function Chat:CreateMessage(cPlayer, message)
 		TextStrokeTransparency = 0.75,
 		--Active = false;
 	}
-	local pColor
 	if cPlayer.Neutral then
 		pLabel.TextColor3 = Chat:ComputeChatColor(pName)
 	else
@@ -1244,9 +1241,6 @@ function Chat:CreateMessage(cPlayer, message)
 
 	mLabel.Size = UDim2.new(1, 0, heightField / self.RenderFrame.AbsoluteSize.Y, 0)
 	pLabel.Size = mLabel.Size
-
-	local yPixels = self.RenderFrame.AbsoluteSize.Y
-	local yFieldSize = mLabel.TextBounds.Y
 
 	local queueField = {}
 	queueField["Player"] = pLabel
@@ -1322,8 +1316,8 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 
 			if type(list[msg]) == "table" then
 				text_List[rootButton][chatText] = Chat:CreateSafeChatOptions(list[msg], chatText)
-			else
-				--table.insert(text_List[chatText], true)
+				-- else
+				-- 	--table.insert(text_List[chatText], true)
 			end
 			chatText.MouseEnter:connect(function()
 				Chat:ToggleSafeChatMenu(chatText)
@@ -1335,11 +1329,11 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 
 			chatText.MouseButton1Click:connect(function()
 				local lList = Chat:FindButtonTree(chatText)
-				if lList then
-					for i, v in pairs(lList) do
-					end
-				else
-				end
+				-- if lList then
+				-- 	for i, v in pairs(lList) do
+				-- 	end
+				-- else
+				-- end
 				pcall(function()
 					PlayersService:Chat(lList[1])
 				end)
@@ -1471,7 +1465,6 @@ function Chat:CreateChatBar()
 			TextColor3 = Color3.new(1, 1, 1),
 			FontSize = Enum.FontSize.Size12,
 			ClearTextOnFocus = false,
-			Text = "",
 		}
 
 		-- Engine has code to offset the entire world, so if we do it by -20 pixels nothing gets in our chat's way
@@ -1672,7 +1665,7 @@ end
 -- Just a wrapper around our PlayerChatted event
 function Chat:PlayerChatted(...)
 	local args = { ... }
-	local argCount = select("#", ...)
+	-- local argCount = select("#", ...)
 	local player
 	local message
 	-- This doesn't look very good, but what else to do?
@@ -1689,14 +1682,13 @@ function Chat:PlayerChatted(...)
 	if PlayersService.ClassicChat then
 		if string.sub(message, 1, 3) == "/e " or string.sub(message, 1, 7) == "/emote " then
 			-- don't do anything right now
-		elseif forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu then
+			-- print(1)
+		elseif
+			(forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu)
+			or (Player.ChatMode == Enum.ChatMode.Menu and string.sub(message, 1, 3) == "/sc")
+			or (Chat:FindMessageInSafeChat(message, self.SafeChat_List))
+		then
 			Chat:UpdateChat(player, message)
-		elseif Player.ChatMode == Enum.ChatMode.Menu and string.sub(message, 1, 3) == "/sc" then
-			Chat:UpdateChat(player, message)
-		else
-			if Chat:FindMessageInSafeChat(message, self.SafeChat_List) then
-				Chat:UpdateChat(player, message)
-			end
 		end
 	end
 end

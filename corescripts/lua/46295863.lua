@@ -55,7 +55,7 @@ local function robloxLock(instance)
 	instance.RobloxLocked = true
 	children = instance:GetChildren()
 	if children then
-		for i, child in ipairs(children) do
+		for _, child in ipairs(children) do
 			robloxLock(child)
 		end
 	end
@@ -93,13 +93,12 @@ function goToMenu(container, menuName, moveDirection, size, position)
 	end
 
 	local containerChildren = container:GetChildren()
-	local selectedMenu = false
 	for i = 1, #containerChildren do
 		if containerChildren[i].Name == menuName then
 			containerChildren[i].Visible = true
 			currentMenuSelection =
 				{ container = container, name = menuName, direction = moveDirection, lastSize = size }
-			selectedMenu = true
+			-- selectedMenu = true
 			if size and position then
 				containerChildren[i]:TweenSizeAndPosition(
 					size,
@@ -198,7 +197,7 @@ local function CreateTextButtons(frame, buttons, yPos, ySize)
 	local buttonObjs = {}
 
 	local function toggleSelection(button)
-		for i, obj in ipairs(buttonObjs) do
+		for _, obj in ipairs(buttonObjs) do
 			if obj == button then
 				obj.Style = Enum.ButtonStyle.RobloxButtonDefault
 			else
@@ -207,7 +206,7 @@ local function CreateTextButtons(frame, buttons, yPos, ySize)
 		end
 	end
 
-	for i, obj in ipairs(buttons) do
+	for _, obj in ipairs(buttons) do
 		local button = Instance.new "TextButton"
 		button.Name = "Button" .. buttonNum
 		button.Font = Enum.Font.Arial
@@ -775,7 +774,7 @@ local function createGameMainMenu(baseZIndex, shield)
 	return gameMainMenuFrame
 end
 
-local function createGameSettingsMenu(baseZIndex, shield)
+local function createGameSettingsMenu(baseZIndex, _)
 	local gameSettingsMenuFrame = Instance.new "Frame"
 	gameSettingsMenuFrame.Name = "GameSettingsMenu"
 	gameSettingsMenuFrame.BackgroundTransparency = 1
@@ -1109,7 +1108,7 @@ local function createGameSettingsMenu(baseZIndex, shield)
 			graphicsSetter.Text = tostring(graphicsLevel.Value)
 		end)
 
-		graphicsLevel.Changed:connect(function(prop)
+		graphicsLevel.Changed:connect(function(_)
 			if isAutoGraphics then
 				return
 			end
@@ -1147,7 +1146,6 @@ local function createGameSettingsMenu(baseZIndex, shield)
 			end
 		end)
 
-		local lastUpdate = nil
 		game.GraphicsQualityChangeRequest:connect(function(graphicsIncrease)
 			if isAutoGraphics then
 				return
@@ -1314,7 +1312,7 @@ local function createGameSettingsMenu(baseZIndex, shield)
 	backButton.ZIndex = baseZIndex + 4
 	backButton.Parent = gameSettingsMenuFrame
 
-	local syncVideoCaptureSetting = nil
+	local syncVideoCaptureSetting
 
 	if not macClient then
 		local videoCaptureLabel = Instance.new "TextLabel"
@@ -2282,20 +2280,20 @@ if LoadLibrary then
 
 		chatButton.MouseButton1Click:connect(activateChat)
 
-		local hotKeyEnabled = true
-		local toggleHotKey = function(value)
-			hotKeyEnabled = value
+		-- local hotKeyEnabled = true
+		local toggleHotKey = function(_)
+			-- hotKeyEnabled = value
 		end
 
-		local guiService = game:GetService "GuiService"
-		local newChatMode = pcall(function()
+		-- local guiService = game:GetService "GuiService"
+		--[[local newChatMode = ]]pcall(function()
 			--guiService:AddSpecialKey(Enum.SpecialKey.ChatHotkey)
 			--guiService.SpecialKeyPressed:connect(function(key) if key == Enum.SpecialKey.ChatHotkey and hotKeyEnabled then activateChat() end end)
 		end)
-		if not newChatMode then
+		-- if not newChatMode then
 			--guiService:AddKey("/")
 			--guiService.KeyPressed:connect(function(key) if key == "/" and hotKeyEnabled then activateChat() end end)
-		end
+		-- end
 
 		chatBox.FocusLost:connect(function(enterPressed)
 			if enterPressed then
@@ -2318,7 +2316,7 @@ if LoadLibrary then
 
 	--Spawn a thread for the Save dialogs
 	local isSaveDialogSupported = pcall(function()
-		local var = game.LocalSaveEnabled
+		-- local var = game.LocalSaveEnabled
 	end)
 	if isSaveDialogSupported then
 		delay(0, function()
@@ -2357,11 +2355,10 @@ if LoadLibrary then
 	end)
 
 	--Spawn a thread for Chat Bar
-	local coreGuiVersion = game.CoreGui.Version
-	local success, luaChat = pcall(function()
+	--[[local success, luaChat = ]]pcall(function()
 		return game.GuiService.UseLuaChat
 	end)
-	if success and luaChat then
+	-- if success and luaChat then
 
 		--[[delay(0,
 		function()
@@ -2395,7 +2392,7 @@ if LoadLibrary then
 				--game.GuiService:SetGlobalSizeOffsetPixel(0,-22)
 			end
 		end)]]
-	end
+	-- end
 
 	local BurningManPlaceID = 41324860
 	-- TODO: remove click to walk completely if testing shows we don't need it

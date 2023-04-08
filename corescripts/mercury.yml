@@ -5510,6 +5510,10 @@ globals:
     args:
       - type: number
       - type: function
+  Delay:
+    args:
+      - type: number
+      - type: function
   dofile:
     removed: true
   elapsedTime:
@@ -6896,6 +6900,17 @@ structs:
       deprecated:
         message: this property is deprecated.
         replace: []
+
+    SaveToRoblox:
+      method: true
+      args:
+        - required: false
+          type: any
+    FinishShutdown:
+      method: true
+      args:
+        - required: false
+          type: any
     GetService:
       args:
         - type:
@@ -7002,6 +7017,7 @@ structs:
             - PackageUIService
             - PathfindingService
             - PermissionsService
+            - PersonalServerService
             - PhysicsService
             - PlayerEmulatorService
             - Players
@@ -7055,6 +7071,7 @@ structs:
             - TeleportService
             - TemporaryCageMeshProvider
             - TemporaryScriptService
+            - Terrain
             - TestService
             - TextBoxService
             - TextChatService

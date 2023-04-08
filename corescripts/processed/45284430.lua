@@ -56,68 +56,68 @@ Enum.TextYAlignment.Center f.Parent=e local g=Instance.new'TextLabel'g.Name=
 FontSize.Size18 g.TextWrap=true g.TextXAlignment=Enum.TextXAlignment.Left g.
 TextYAlignment=Enum.TextYAlignment.Top g.Parent=e CreateButtons(e,d,UDim.new(0.8
 ,0),UDim.new(0.15,0))return e end a.CreateDropDownMenu=function(b,c,d)local e,f,
-g,h=UDim.new(0,100),UDim.new(0,32),0.055,Instance.new'Frame'h.Name=
-'DropDownMenu'h.BackgroundTransparency=1 h.Size=UDim2.new(e,f)local i=Instance.
-new'TextButton'i.Name='DropDownMenuButton'i.TextWrap=true i.TextColor3=Color3.
-new(1,1,1)i.Text='Choose One'i.Font=Enum.Font.ArialBold i.FontSize=Enum.FontSize
-.Size18 i.TextXAlignment=Enum.TextXAlignment.Left i.TextYAlignment=Enum.
-TextYAlignment.Center i.BackgroundTransparency=1 i.AutoButtonColor=true i.Style=
-Enum.ButtonStyle.RobloxButton i.Size=UDim2.new(1,0,1,0)i.Parent=h i.ZIndex=2
-local j=Instance.new'ImageLabel'j.Name='Icon'j.Active=false j.Image=
-'http://www.roblox.com/asset/?id=45732894'j.BackgroundTransparency=1 j.Size=
-UDim2.new(0,11,0,6)j.Position=UDim2.new(1,-11,0.5,-2)j.Parent=i j.ZIndex=2 local
-k,l,m=#b,#b,false if l>6 then m=true l=6 end local n=Instance.new'TextButton'n.
-Name='List'n.Text=''n.BackgroundTransparency=1 n.Style=Enum.ButtonStyle.
-RobloxButton n.Visible=false n.Active=true n.Position=UDim2.new(0,0,0,0)n.Size=
-UDim2.new(1,0,(1+l)*0.8,0)n.Parent=h n.ZIndex=2 local o=Instance.new'TextButton'
-o.Name='ChoiceButton'o.BackgroundTransparency=1 o.BorderSizePixel=0 o.Text=
-'ReplaceMe'o.TextColor3=Color3.new(1,1,1)o.TextXAlignment=Enum.TextXAlignment.
-Left o.TextYAlignment=Enum.TextYAlignment.Center o.BackgroundColor3=Color3.new(1
-,1,1)o.Font=Enum.Font.Arial o.FontSize=Enum.FontSize.Size18 if m then o.Size=
-UDim2.new(1,-13,0.8/((l+1)*0.8),0)else o.Size=UDim2.new(1,0,0.8/((l+1)*0.8),0)
-end o.TextWrap=true o.ZIndex=2 local p=Instance.new'TextButton'p.Name='AreaSoak'
-p.Text=''p.BackgroundTransparency=1 p.Active=true p.Size=UDim2.new(1,0,1,0)p.
-Visible=false p.ZIndex=3 local q,r,s,t=false,nil,nil,0 local u,v=function(u)n.
-ZIndex=u+1 if r then r.ZIndex=u+3 end if s then s.ZIndex=u+3 end local v=n:
-GetChildren()if v then for w,x in ipairs(v)do if x.Name=='ChoiceButton'then x.
-ZIndex=u+2 elseif x.Name=='ClickCaptureButton'then x.ZIndex=u end end end end,1
-local w=function()if r then r.Active=v>1 end if s then s.Active=v+l<=k end local
-w=n:GetChildren()if not w then return end local x=1 for y,z in ipairs(w)do if z.
-Name=='ChoiceButton'then if x<v or x>=v+l then z.Visible=false else z.Position=
-UDim2.new(0,0,((x-v+1)*0.8)/((l+1)*0.8),0)z.Visible=true end z.TextColor3=Color3
-.new(1,1,1)z.BackgroundTransparency=1 x=x+1 end end end local x=function()q=not
-q p.Visible=not p.Visible i.Visible=not q n.Visible=q if q then u(4)else u(2)end
-if m then w()end end n.MouseButton1Click:connect(x)local y=function(y)local z,A,
-B=false,n:GetChildren(),1 if A then for C,D in ipairs(A)do if D.Name==
-'ChoiceButton'then if D.Text==y then D.Font=Enum.Font.ArialBold z=true v=B else
-D.Font=Enum.Font.Arial end B=B+1 end end end if not y then i.Text='Choose One'v=
-1 else if not z then error('Invalid Selection Update -- '..y)end if v+l>k+1 then
-v=k-l+1 end i.Text=y end end local function scrollDown()if v+l<=k then v=v+1 w()
-return true end return false end local function scrollUp()if v>1 then v=v-1 w()
-return true end return false end if m then r=Instance.new'ImageButton'r.Name=
-'ScrollUpButton'r.BackgroundTransparency=1 r.Image=
-'rbxasset://textures/ui/scrollbuttonUp.png'r.Size=UDim2.new(0,17,0,17)r.Position
-=UDim2.new(1,-11,(0.8)/((l+1)*0.8),0)r.MouseButton1Click:connect(function()t=t+1
-end)r.MouseLeave:connect(function()t=t+1 end)r.MouseButton1Down:connect(function
-()t=t+1 scrollUp()local z=t wait(0.5)while z==t do if scrollUp()==false then
-break end wait(0.1)end end)r.Parent=n s=Instance.new'ImageButton's.Name=
-'ScrollDownButton's.BackgroundTransparency=1 s.Image=
-'rbxasset://textures/ui/scrollbuttonDown.png's.Size=UDim2.new(0,17,0,17)s.
-Position=UDim2.new(1,-11,1,-11)s.Parent=n s.MouseButton1Click:connect(function()
-t=t+1 end)s.MouseLeave:connect(function()t=t+1 end)s.MouseButton1Down:connect(
-function()t=t+1 scrollDown()local z=t wait(0.5)while z==t do if scrollDown()==
-false then break end wait(0.1)end end)local z=Instance.new'ImageLabel'z.Name=
-'ScrollBar'z.Image='rbxasset://textures/ui/scrollbar.png'z.
-BackgroundTransparency=1 z.Size=UDim2.new(0,18,(l*0.8)/((l+1)*0.8),-32)z.
-Position=UDim2.new(1,-11,(0.8)/((l+1)*0.8),19)z.Parent=n end for z,A in ipairs(b
-)do local B=o:clone()if d then B.RobloxLocked=true end B.Text=A B.Parent=n B.
-MouseButton1Click:connect(function()B.TextColor3=Color3.new(1,1,1)B.
-BackgroundTransparency=1 y(A)c(A)x()end)B.MouseEnter:connect(function()B.
-TextColor3=Color3.new(0,0,0)B.BackgroundTransparency=0 end)B.MouseLeave:connect(
-function()B.TextColor3=Color3.new(1,1,1)B.BackgroundTransparency=1 end)end w()h.
-AncestryChanged:connect(function(B,C)if C==nil then p.Parent=nil else p.Parent=
-getScreenGuiAncestor(h)end end)i.MouseButton1Click:connect(x)p.MouseButton1Click
-:connect(x)return h,y end a.CreatePropertyDropDownMenu=function(b,c,d)local e,f,
+g=UDim.new(0,100),UDim.new(0,32),Instance.new'Frame'g.Name='DropDownMenu'g.
+BackgroundTransparency=1 g.Size=UDim2.new(e,f)local h=Instance.new'TextButton'h.
+Name='DropDownMenuButton'h.TextWrap=true h.TextColor3=Color3.new(1,1,1)h.Text=
+'Choose One'h.Font=Enum.Font.ArialBold h.FontSize=Enum.FontSize.Size18 h.
+TextXAlignment=Enum.TextXAlignment.Left h.TextYAlignment=Enum.TextYAlignment.
+Center h.BackgroundTransparency=1 h.AutoButtonColor=true h.Style=Enum.
+ButtonStyle.RobloxButton h.Size=UDim2.new(1,0,1,0)h.Parent=g h.ZIndex=2 local i=
+Instance.new'ImageLabel'i.Name='Icon'i.Active=false i.Image=
+'http://www.roblox.com/asset/?id=45732894'i.BackgroundTransparency=1 i.Size=
+UDim2.new(0,11,0,6)i.Position=UDim2.new(1,-11,0.5,-2)i.Parent=h i.ZIndex=2 local
+j,k,l=#b,#b,false if k>6 then l=true k=6 end local m=Instance.new'TextButton'm.
+Name='List'm.Text=''m.BackgroundTransparency=1 m.Style=Enum.ButtonStyle.
+RobloxButton m.Visible=false m.Active=true m.Position=UDim2.new(0,0,0,0)m.Size=
+UDim2.new(1,0,(1+k)*0.8,0)m.Parent=g m.ZIndex=2 local n=Instance.new'TextButton'
+n.Name='ChoiceButton'n.BackgroundTransparency=1 n.BorderSizePixel=0 n.Text=
+'ReplaceMe'n.TextColor3=Color3.new(1,1,1)n.TextXAlignment=Enum.TextXAlignment.
+Left n.TextYAlignment=Enum.TextYAlignment.Center n.BackgroundColor3=Color3.new(1
+,1,1)n.Font=Enum.Font.Arial n.FontSize=Enum.FontSize.Size18 if l then n.Size=
+UDim2.new(1,-13,0.8/((k+1)*0.8),0)else n.Size=UDim2.new(1,0,0.8/((k+1)*0.8),0)
+end n.TextWrap=true n.ZIndex=2 local o=Instance.new'TextButton'o.Name='AreaSoak'
+o.Text=''o.BackgroundTransparency=1 o.Active=true o.Size=UDim2.new(1,0,1,0)o.
+Visible=false o.ZIndex=3 local p,q,r,s=false,nil,nil,0 local t,u=function(t)m.
+ZIndex=t+1 if q then q.ZIndex=t+3 end if r then r.ZIndex=t+3 end local u=m:
+GetChildren()if u then for v,w in ipairs(u)do if w.Name=='ChoiceButton'then w.
+ZIndex=t+2 elseif w.Name=='ClickCaptureButton'then w.ZIndex=t end end end end,1
+local v=function()if q then q.Active=u>1 end if r then r.Active=u+k<=j end local
+v=m:GetChildren()if not v then return end local w=1 for x,y in ipairs(v)do if y.
+Name=='ChoiceButton'then if w<u or w>=u+k then y.Visible=false else y.Position=
+UDim2.new(0,0,((w-u+1)*0.8)/((k+1)*0.8),0)y.Visible=true end y.TextColor3=Color3
+.new(1,1,1)y.BackgroundTransparency=1 w=w+1 end end end local w=function()p=not
+p o.Visible=not o.Visible h.Visible=not p m.Visible=p if p then t(4)else t(2)end
+if l then v()end end m.MouseButton1Click:connect(w)local x=function(x)local y,z,
+A=false,m:GetChildren(),1 if z then for B,C in ipairs(z)do if C.Name==
+'ChoiceButton'then if C.Text==x then C.Font=Enum.Font.ArialBold y=true u=A else
+C.Font=Enum.Font.Arial end A=A+1 end end end if not x then h.Text='Choose One'u=
+1 else if not y then error('Invalid Selection Update -- '..x)end if u+k>j+1 then
+u=j-k+1 end h.Text=x end end local function scrollDown()if u+k<=j then u=u+1 v()
+return true end return false end local function scrollUp()if u>1 then u=u-1 v()
+return true end return false end if l then q=Instance.new'ImageButton'q.Name=
+'ScrollUpButton'q.BackgroundTransparency=1 q.Image=
+'rbxasset://textures/ui/scrollbuttonUp.png'q.Size=UDim2.new(0,17,0,17)q.Position
+=UDim2.new(1,-11,(0.8)/((k+1)*0.8),0)q.MouseButton1Click:connect(function()s=s+1
+end)q.MouseLeave:connect(function()s=s+1 end)q.MouseButton1Down:connect(function
+()s=s+1 scrollUp()local y=s wait(0.5)while y==s do if scrollUp()==false then
+break end wait(0.1)end end)q.Parent=m r=Instance.new'ImageButton'r.Name=
+'ScrollDownButton'r.BackgroundTransparency=1 r.Image=
+'rbxasset://textures/ui/scrollbuttonDown.png'r.Size=UDim2.new(0,17,0,17)r.
+Position=UDim2.new(1,-11,1,-11)r.Parent=m r.MouseButton1Click:connect(function()
+s=s+1 end)r.MouseLeave:connect(function()s=s+1 end)r.MouseButton1Down:connect(
+function()s=s+1 scrollDown()local y=s wait(0.5)while y==s do if scrollDown()==
+false then break end wait(0.1)end end)local y=Instance.new'ImageLabel'y.Name=
+'ScrollBar'y.Image='rbxasset://textures/ui/scrollbar.png'y.
+BackgroundTransparency=1 y.Size=UDim2.new(0,18,(k*0.8)/((k+1)*0.8),-32)y.
+Position=UDim2.new(1,-11,(0.8)/((k+1)*0.8),19)y.Parent=m end for y,z in ipairs(b
+)do local A=n:clone()if d then A.RobloxLocked=true end A.Text=z A.Parent=m A.
+MouseButton1Click:connect(function()A.TextColor3=Color3.new(1,1,1)A.
+BackgroundTransparency=1 x(z)c(z)w()end)A.MouseEnter:connect(function()A.
+TextColor3=Color3.new(0,0,0)A.BackgroundTransparency=0 end)A.MouseLeave:connect(
+function()A.TextColor3=Color3.new(1,1,1)A.BackgroundTransparency=1 end)end v()g.
+AncestryChanged:connect(function(A,B)if B==nil then o.Parent=nil else o.Parent=
+getScreenGuiAncestor(g)end end)h.MouseButton1Click:connect(w)o.MouseButton1Click
+:connect(w)return g,x end a.CreatePropertyDropDownMenu=function(b,c,d)local e,f,
 g=d:GetEnumItems(),{},{}for h,i in ipairs(e)do f[h]=i.Name g[i.Name]=i end local
 j,k j,k=a.CreateDropDownMenu(f,function(l)b[c]=g[l]end)ScopedConnect(j,b,
 'Changed',function(l)if l==c then k(b[c].Name)end end,function()k(b[c].Name)end)
@@ -161,335 +161,330 @@ d={}end if not d['TextLabelSizePadY']then d['TextLabelSizePadY']=0 end if not d[
 1,0)g.Parent=b for h,i in ipairs(c)do i.Parent=g end local j=function()wait()
 layoutGuiObjectsHelper(g,c,d)end b.Changed:connect(function(k)if k==
 'AbsoluteSize'then j(nil)end end)b.AncestryChanged:connect(j)
-layoutGuiObjectsHelper(g,c,d)end a.CreateSlider=function(b,c,d)local g=Instance.
-new'Frame'g.Size=UDim2.new(1,0,1,0)g.BackgroundTransparency=1 g.Name='SliderGui'
-local h=Instance.new'IntValue'h.Name='SliderSteps'h.Value=b h.Parent=g local i=
-Instance.new'TextButton'i.Name='AreaSoak'i.Text=''i.BackgroundTransparency=1 i.
-Active=false i.Size=UDim2.new(1,0,1,0)i.Visible=false i.ZIndex=4 g.
-AncestryChanged:connect(function(j,k)if k==nil then i.Parent=nil else i.Parent=
-getScreenGuiAncestor(g)end end)local j=Instance.new'IntValue'j.Name=
-'SliderPosition'j.Value=0 j.Parent=g local k,l=math.random(1,100),Instance.new
-'TextButton'l.Text=''l.AutoButtonColor=false l.Name='Bar'l.BackgroundColor3=
-Color3.new(0,0,0)if type(c)=='number'then l.Size=UDim2.new(0,c,0,5)else l.Size=
-UDim2.new(0,200,0,5)end l.BorderColor3=Color3.new(0.37254901960784315,
-0.37254901960784315,0.37254901960784315)l.ZIndex=2 l.Parent=g if d['X']and d['X'
+layoutGuiObjectsHelper(g,c,d)end a.CreateSlider=function(b,c,d)local e=Instance.
+new'Frame'e.Size=UDim2.new(1,0,1,0)e.BackgroundTransparency=1 e.Name='SliderGui'
+local g=Instance.new'IntValue'g.Name='SliderSteps'g.Value=b g.Parent=e local h=
+Instance.new'TextButton'h.Name='AreaSoak'h.Text=''h.BackgroundTransparency=1 h.
+Active=false h.Size=UDim2.new(1,0,1,0)h.Visible=false h.ZIndex=4 e.
+AncestryChanged:connect(function(i,j)if j==nil then h.Parent=nil else h.Parent=
+getScreenGuiAncestor(e)end end)local i=Instance.new'IntValue'i.Name=
+'SliderPosition'i.Value=0 i.Parent=e local j,k=math.random(1,100),Instance.new
+'TextButton'k.Text=''k.AutoButtonColor=false k.Name='Bar'k.BackgroundColor3=
+Color3.new(0,0,0)if type(c)=='number'then k.Size=UDim2.new(0,c,0,5)else k.Size=
+UDim2.new(0,200,0,5)end k.BorderColor3=Color3.new(0.37254901960784315,
+0.37254901960784315,0.37254901960784315)k.ZIndex=2 k.Parent=e if d['X']and d['X'
 ]['Scale']and d['X']['Offset']and d['Y']and d['Y']['Scale']and d['Y']['Offset']
-then l.Position=d end local m=Instance.new'ImageButton'm.Name='Slider'm.
-BackgroundTransparency=1 m.Image='rbxasset://textures/ui/Slider.png'm.Position=
-UDim2.new(0,0,0.5,-10)m.Size=UDim2.new(0,20,0,20)m.ZIndex=3 m.Parent=l local n=
-nil i.MouseLeave:connect(function()if i.Visible then cancelSlide(i)end end)i.
-MouseButton1Up:connect(function()if i.Visible then cancelSlide(i)end end)m.
-MouseButton1Down:connect(function()i.Visible=true if n then n:disconnect()end n=
-i.MouseMoved:connect(function(o,p)setSliderPos(o,m,j,l,b)end)end)m.
-MouseButton1Up:connect(function()cancelSlide(i)end)j.Changed:connect(function(o)
-j.Value=math.min(b,math.max(1,j.Value))local p=(j.Value-1)/(b-1)m.Position=UDim2
-.new(p,-m.AbsoluteSize.X/2,m.Position.Y.Scale,m.Position.Y.Offset)end)l.
-MouseButton1Down:connect(function(o,p)setSliderPos(o,m,j,l,b)end)return g,j,h
-end a.CreateTrueScrollingFrame=function()local b,c,d,g,h,i,j=nil,nil,nil,nil,
-false,{},Instance.new'Frame'j.Name='ScrollingFrame'j.Active=true j.Size=UDim2.
-new(1,0,1,0)j.ClipsDescendants=true local k=Instance.new'Frame'k.Name=
-'ControlFrame'k.BackgroundTransparency=1 k.Size=UDim2.new(0,18,1,0)k.Position=
-UDim2.new(1,-20,0,0)k.Parent=j local l=Instance.new'BoolValue'l.Value=false l.
-Name='ScrollBottom'l.Parent=k local m=Instance.new'BoolValue'm.Value=false m.
-Name='scrollUp'm.Parent=k local n=Instance.new'TextButton'n.Name=
-'ScrollUpButton'n.Text=''n.AutoButtonColor=false n.BackgroundColor3=Color3.new(0
-,0,0)n.BorderColor3=Color3.new(1,1,1)n.BackgroundTransparency=0.5 n.Size=UDim2.
-new(0,18,0,18)n.ZIndex=2 n.Parent=k for o=1,6 do local p=Instance.new'Frame'p.
-BorderColor3=Color3.new(1,1,1)p.Name='tri'..tostring(o)p.ZIndex=3 p.
-BackgroundTransparency=0.5 p.Size=UDim2.new(0,12-((o-1)*2),0,0)p.Position=UDim2.
-new(0,3+(o-1),0.5,2-(o-1))p.Parent=n end n.MouseEnter:connect(function()n.
-BackgroundTransparency=0.1 local o=n:GetChildren()for p=1,#o do o[p].
+then k.Position=d end local l=Instance.new'ImageButton'l.Name='Slider'l.
+BackgroundTransparency=1 l.Image='rbxasset://textures/ui/Slider.png'l.Position=
+UDim2.new(0,0,0.5,-10)l.Size=UDim2.new(0,20,0,20)l.ZIndex=3 l.Parent=k local m=
+nil h.MouseLeave:connect(function()if h.Visible then cancelSlide(h)end end)h.
+MouseButton1Up:connect(function()if h.Visible then cancelSlide(h)end end)l.
+MouseButton1Down:connect(function()h.Visible=true if m then m:disconnect()end m=
+h.MouseMoved:connect(function(n,o)setSliderPos(n,l,i,k,b)end)end)l.
+MouseButton1Up:connect(function()cancelSlide(h)end)i.Changed:connect(function(n)
+i.Value=math.min(b,math.max(1,i.Value))local o=(i.Value-1)/(b-1)l.Position=UDim2
+.new(o,-l.AbsoluteSize.X/2,l.Position.Y.Scale,l.Position.Y.Offset)end)k.
+MouseButton1Down:connect(function(n,o)setSliderPos(n,l,i,k,b)end)return e,i,g
+end a.CreateTrueScrollingFrame=function()local b,c,d,e,g,h,i=nil,nil,nil,nil,
+false,{},Instance.new'Frame'i.Name='ScrollingFrame'i.Active=true i.Size=UDim2.
+new(1,0,1,0)i.ClipsDescendants=true local j=Instance.new'Frame'j.Name=
+'ControlFrame'j.BackgroundTransparency=1 j.Size=UDim2.new(0,18,1,0)j.Position=
+UDim2.new(1,-20,0,0)j.Parent=i local k=Instance.new'BoolValue'k.Value=false k.
+Name='ScrollBottom'k.Parent=j local l=Instance.new'BoolValue'l.Value=false l.
+Name='scrollUp'l.Parent=j local m=Instance.new'TextButton'm.Name=
+'ScrollUpButton'm.Text=''m.AutoButtonColor=false m.BackgroundColor3=Color3.new(0
+,0,0)m.BorderColor3=Color3.new(1,1,1)m.BackgroundTransparency=0.5 m.Size=UDim2.
+new(0,18,0,18)m.ZIndex=2 m.Parent=j for n=1,6 do local o=Instance.new'Frame'o.
+BorderColor3=Color3.new(1,1,1)o.Name='tri'..tostring(n)o.ZIndex=3 o.
+BackgroundTransparency=0.5 o.Size=UDim2.new(0,12-((n-1)*2),0,0)o.Position=UDim2.
+new(0,3+(n-1),0.5,2-(n-1))o.Parent=m end m.MouseEnter:connect(function()m.
+BackgroundTransparency=0.1 local n=m:GetChildren()for o=1,#n do n[o].
+BackgroundTransparency=0.1 end end)m.MouseLeave:connect(function()m.
+BackgroundTransparency=0.5 local n=m:GetChildren()for o=1,#n do n[o].
+BackgroundTransparency=0.5 end end)local n=m:clone()n.Name='ScrollDownButton'n.
+Position=UDim2.new(0,0,1,-18)local o=n:GetChildren()for p=1,#o do o[p].Position=
+UDim2.new(0,3+(p-1),0.5,-2+(p-1))end n.MouseEnter:connect(function()n.
+BackgroundTransparency=0.1 local p=n:GetChildren()for q=1,#p do p[q].
 BackgroundTransparency=0.1 end end)n.MouseLeave:connect(function()n.
-BackgroundTransparency=0.5 local o=n:GetChildren()for p=1,#o do o[p].
-BackgroundTransparency=0.5 end end)local o=n:clone()o.Name='ScrollDownButton'o.
-Position=UDim2.new(0,0,1,-18)local p=o:GetChildren()for q=1,#p do p[q].Position=
-UDim2.new(0,3+(q-1),0.5,-2+(q-1))end o.MouseEnter:connect(function()o.
-BackgroundTransparency=0.1 local q=o:GetChildren()for r=1,#q do q[r].
-BackgroundTransparency=0.1 end end)o.MouseLeave:connect(function()o.
-BackgroundTransparency=0.5 local q=o:GetChildren()for r=1,#q do q[r].
-BackgroundTransparency=0.5 end end)o.Parent=k local q=Instance.new'Frame'q.Name=
-'ScrollTrack'q.BackgroundTransparency=1 q.Size=UDim2.new(0,18,1,-38)q.Position=
-UDim2.new(0,0,0,19)q.Parent=k local r=Instance.new'TextButton'r.BackgroundColor3
-=Color3.new(0,0,0)r.BorderColor3=Color3.new(1,1,1)r.BackgroundTransparency=0.5 r
-.AutoButtonColor=false r.Text=''r.Active=true r.Name='ScrollBar'r.ZIndex=2 r.
-BackgroundTransparency=0.5 r.Size=UDim2.new(0,18,0.1,0)r.Position=UDim2.new(0,0,
-0,0)r.Parent=q local s=Instance.new'Frame's.Name='ScrollNub's.BorderColor3=
-Color3.new(1,1,1)s.Size=UDim2.new(0,10,0,0)s.Position=UDim2.new(0.5,-5,0.5,0)s.
-ZIndex=2 s.BackgroundTransparency=0.5 s.Parent=r local t=s:clone()t.Position=
-UDim2.new(0.5,-5,0.5,-2)t.Parent=r local u=s:clone()u.Position=UDim2.new(0.5,-5,
-0.5,2)u.Parent=r r.MouseEnter:connect(function()r.BackgroundTransparency=0.1 s.
-BackgroundTransparency=0.1 t.BackgroundTransparency=0.1 u.BackgroundTransparency
-=0.1 end)r.MouseLeave:connect(function()r.BackgroundTransparency=0.5 s.
-BackgroundTransparency=0.5 t.BackgroundTransparency=0.5 u.BackgroundTransparency
-=0.5 end)local v=Instance.new'ImageButton'v.Active=false v.Size=UDim2.new(1.5,0,
-1.5,0)v.AutoButtonColor=false v.BackgroundTransparency=1 v.Name='mouseDrag'v.
-Position=UDim2.new(-0.25,0,-0.25,0)v.ZIndex=10 local function positionScrollBar(
-w,x,y)local z=r.Position if x<q.AbsolutePosition.y then r.Position=UDim2.new(r.
-Position.X.Scale,r.Position.X.Offset,0,0)return(z~=r.Position)end local A=r.
-AbsoluteSize.Y/q.AbsoluteSize.Y if x>(q.AbsolutePosition.y+q.AbsoluteSize.y)then
-r.Position=UDim2.new(r.Position.X.Scale,r.Position.X.Offset,1-A,0)return(z~=r.
-Position)end local B=(x-q.AbsolutePosition.y-y)/q.AbsoluteSize.y if B+A>1 then B
-=1-A l.Value=true m.Value=false elseif B<=0 then B=0 m.Value=true l.Value=false
-else m.Value=false l.Value=false end r.Position=UDim2.new(r.Position.X.Scale,r.
-Position.X.Offset,B,0)return(z~=r.Position)end local function
-drillDownSetHighLow(w)if not w or not w:IsA'GuiObject'then return end if w==k
-then return end if w:IsDescendantOf(k)then return end if not w.Visible then
-return end if b and b>w.AbsolutePosition.Y then b=w.AbsolutePosition.Y elseif
-not b then b=w.AbsolutePosition.Y end if c and c<(w.AbsolutePosition.Y+w.
-AbsoluteSize.Y)then c=w.AbsolutePosition.Y+w.AbsoluteSize.Y elseif not c then c=
-w.AbsolutePosition.Y+w.AbsoluteSize.Y end local x=w:GetChildren()for y=1,#x do
-drillDownSetHighLow(x[y])end end local function resetHighLow()local w=j:
-GetChildren()for x=1,#w do drillDownSetHighLow(w[x])end end local function
-recalculate()h=true local w=0 if r.Position.Y.Scale>0 then if r.Visible then w=r
-.Position.Y.Scale/((q.AbsoluteSize.Y-r.AbsoluteSize.Y)/q.AbsoluteSize.Y)else w=0
-end end if w>0.99 then w=1 end local x,y=(j.AbsoluteSize.Y-(c-b))*w,j:
-GetChildren()for z=1,#y do if y[z]~=k then y[z].Position=UDim2.new(y[z].Position
-.X.Scale,y[z].Position.X.Offset,0,math.ceil(y[z].AbsolutePosition.Y)-math.ceil(b
-)+x)end end b=nil c=nil resetHighLow()h=false end local function
-setSliderSizeAndPosition()if not c or not b then return end local w=math.abs(c-b
-)if w==0 then r.Visible=false o.Visible=false n.Visible=false if d then d:
-disconnect()d=nil end if g then g:disconnect()g=nil end return end local x=j.
-AbsoluteSize.Y/w if x>=1 then r.Visible=false o.Visible=false n.Visible=false
-recalculate()else r.Visible=true o.Visible=true n.Visible=true r.Size=UDim2.new(
-r.Size.X.Scale,r.Size.X.Offset,x,0)end local y=(j.AbsolutePosition.Y-b)/w r.
-Position=UDim2.new(r.Position.X.Scale,r.Position.X.Offset,y,-r.AbsoluteSize.X/2)
-if r.AbsolutePosition.y<q.AbsolutePosition.y then r.Position=UDim2.new(r.
-Position.X.Scale,r.Position.X.Offset,0,0)end if(r.AbsolutePosition.y+r.
-AbsoluteSize.Y)>(q.AbsolutePosition.y+q.AbsoluteSize.y)then local z=r.
-AbsoluteSize.Y/q.AbsoluteSize.Y r.Position=UDim2.new(r.Position.X.Scale,r.
-Position.X.Offset,1-z,0)end end local w,x=7,false local function doScrollUp()if
-x then return end x=true if positionScrollBar(0,r.AbsolutePosition.Y-w,0)then
-recalculate()end x=false end local y=false local function doScrollDown()if y
-then return end y=true if positionScrollBar(0,r.AbsolutePosition.Y+w,0)then
-recalculate()end y=false end local function scrollUp(z)if n.Active then
-scrollStamp=tick()local A,B=scrollStamp,nil B=v.MouseButton1Up:connect(function(
-)scrollStamp=tick()v.Parent=nil B:disconnect()end)v.Parent=getScreenGuiAncestor(
-r)doScrollUp()wait(0.2)local C,D=tick(),0.1 while scrollStamp==A do doScrollUp()
-if z and z>r.AbsolutePosition.y then break end if not n.Active then break end if
-tick()-C>5 then D=0 elseif tick()-C>2 then D=0.06 end wait(D)end end end
-local function scrollDown(z)if o.Active then scrollStamp=tick()local A,B=
-scrollStamp,nil B=v.MouseButton1Up:connect(function()scrollStamp=tick()v.Parent=
-nil B:disconnect()end)v.Parent=getScreenGuiAncestor(r)doScrollDown()wait(0.2)
-local C,D=tick(),0.1 while scrollStamp==A do doScrollDown()if z and z<(r.
-AbsolutePosition.y+r.AbsoluteSize.x)then break end if not o.Active then break
-end if tick()-C>5 then D=0 elseif tick()-C>2 then D=0.06 end wait(D)end end end
-r.MouseButton1Down:connect(function(z,A)if r.Active then scrollStamp=tick()local
-B=A-r.AbsolutePosition.y if d then d:disconnect()d=nil end if g then g:
-disconnect()g=nil end local C,D=A,false d=v.MouseMoved:connect(function(E,F)if D
-then return end D=true if positionScrollBar(E,F,B)then recalculate()end D=false
-end)g=v.MouseButton1Up:connect(function()scrollStamp=tick()v.Parent=nil d:
-disconnect()d=nil g:disconnect()drag=nil end)v.Parent=getScreenGuiAncestor(r)end
-end)local z=0 n.MouseButton1Down:connect(function()m()end)n.MouseButton1Up:
-connect(function()scrollStamp=tick()end)o.MouseButton1Up:connect(function()
-scrollStamp=tick()end)o.MouseButton1Down:connect(function()scrollDown()end)r.
-MouseButton1Up:connect(function()scrollStamp=tick()end)local function
-heightCheck(A)if c and(A.AbsolutePosition.Y+A.AbsoluteSize.Y)>c then c=A.
-AbsolutePosition.Y+A.AbsoluteSize.Y elseif not c then c=A.AbsolutePosition.Y+A.
-AbsoluteSize.Y end setSliderSizeAndPosition()end local function highLowRecheck()
-local A,B=b,c b=nil c=nil resetHighLow()if(b~=A)or(c~=B)then
-setSliderSizeAndPosition()end end local function descendantChanged(A,B)if h then
-return end if not A.Visible then return end if B=='Size'or B=='Position'then
-wait()highLowRecheck()end end j.DescendantAdded:connect(function(A)if not A:IsA
-'GuiObject'then return end if A.Visible then wait()highLowRecheck()end i[A]=A.
-Changed:connect(function(B)descendantChanged(A,B)end)end)j.DescendantRemoving:
-connect(function(A)if not A:IsA'GuiObject'then return end if i[A]then i[A]:
-disconnect()i[A]=nil end wait()highLowRecheck()end)j.Changed:connect(function(A)
-if A=='AbsoluteSize'then if not c or not b then return end highLowRecheck()
-setSliderSizeAndPosition()end end)return j,k end a.CreateScrollingFrame=function
-(b,c)local d=Instance.new'Frame'd.Name='ScrollingFrame'd.BackgroundTransparency=
-1 d.Size=UDim2.new(1,0,1,0)local g=Instance.new'ImageButton'g.Name=
-'ScrollUpButton'g.BackgroundTransparency=1 g.Image=
-'rbxasset://textures/ui/scrollbuttonUp.png'g.Size=UDim2.new(0,17,0,17)local h=
-Instance.new'ImageButton'h.Name='ScrollDownButton'h.BackgroundTransparency=1 h.
-Image='rbxasset://textures/ui/scrollbuttonDown.png'h.Size=UDim2.new(0,17,0,17)
-local i=Instance.new'ImageButton'i.Name='ScrollBar'i.Image=
-'rbxasset://textures/ui/scrollbar.png'i.BackgroundTransparency=1 i.Size=UDim2.
-new(0,18,0,150)local j,k=0,Instance.new'ImageButton'k.Image=
-'http://www.roblox.com/asset/?id=61367186'k.Size=UDim2.new(1,0,0,16)k.
-BackgroundTransparency=1 k.Name='ScrollDrag'k.Active=true k.Parent=i local l=
-Instance.new'ImageButton'l.Active=false l.Size=UDim2.new(1.5,0,1.5,0)l.
-AutoButtonColor=false l.BackgroundTransparency=1 l.Name='mouseDrag'l.Position=
-UDim2.new(-0.25,0,-0.25,0)l.ZIndex=10 local m='simple'if c and tostring(c)then m
-=c end local n,o,p=1,0,0 local q,r,s,t=function()p=0 local q={}if b then for r,s
-in ipairs(b)do if s.Parent==d then table.insert(q,s)end end else local r=d:
-GetChildren()if r then for s,t in ipairs(r)do if t:IsA'GuiObject'then table.
-insert(q,t)end end end end if#q==0 then g.Active=false h.Active=false k.Active=
-false n=1 return end if n>#q then n=#q end if n<1 then n=1 end local r,s,t,u,v,w
-,x,y,z=d.AbsoluteSize.Y,d.AbsoluteSize.Y,d.AbsoluteSize.X,0,0,true,0,#q,0 y=n
-while y<=#q and x<r do u=u+q[y].AbsoluteSize.X if u>=t then x=x+z z=0 u=q[y].
-AbsoluteSize.X end if q[y].AbsoluteSize.Y>z then z=q[y].AbsoluteSize.Y end y=y+1
-end x=x+z z=0 y=n-1 u=0 while x+z<r and y>=1 do u=u+q[y].AbsoluteSize.X v=v+1 if
-u>=t then o=v-1 v=0 u=q[y].AbsoluteSize.X if x+z<=r then x=x+z if n<=o then n=1
-break else n=n-o end z=0 else break end end if q[y].AbsoluteSize.Y>z then z=q[y]
-.AbsoluteSize.Y end y=y-1 end if(y==0)and(x+z<=r)then n=1 end u=0 v=0 w=true
-local A,B,C=0,0 if q[1]then C=math.ceil(math.floor(math.fmod(r,q[1].AbsoluteSize
-.X))/2)B=math.ceil(math.floor(math.fmod(t,q[1].AbsoluteSize.Y))/2)end for D,E in
-ipairs(q)do if D<n then E.Visible=false else if s<0 then E.Visible=false else if
-w then v=v+1 end if u+E.AbsoluteSize.X>=t then if w then o=v-1 w=false end u=0 s
-=s-E.AbsoluteSize.Y end E.Position=UDim2.new(E.Position.X.Scale,u+B,0,r-s+C)u=u+
-E.AbsoluteSize.X E.Visible=((s-E.AbsoluteSize.Y)>=0)if E.Visible then p=p+1 end
-A=E.AbsoluteSize end end end g.Active=(n>1)if A==0 then h.Active=false else h.
-Active=((s-A.Y)<0)end k.Active=#q>p k.Visible=k.Active end,function()local q={}p
-=0 if b then for r,s in ipairs(b)do if s.Parent==d then table.insert(q,s)end end
-else local r=d:GetChildren()if r then for s,t in ipairs(r)do if t:IsA'GuiObject'
-then table.insert(q,t)end end end end if#q==0 then g.Active=false h.Active=false
-k.Active=false n=1 return end if n>#q then n=#q end local r,s,t,u=d.AbsoluteSize
-.Y,d.AbsoluteSize.Y,0,#q while t<r and u>=1 do if u>=n then t=t+q[u].
-AbsoluteSize.Y else if t+q[u].AbsoluteSize.Y<=r then t=t+q[u].AbsoluteSize.Y if
-n<=1 then n=1 break else n=n-1 end else break end end u=u-1 end u=n for v,w in
-ipairs(q)do if v<n then w.Visible=false else if s<0 then w.Visible=false else w.
-Position=UDim2.new(w.Position.X.Scale,w.Position.X.Offset,0,r-s)s=s-w.
-AbsoluteSize.Y if s>=0 then w.Visible=true p=p+1 else w.Visible=false end end
-end end g.Active=(n>1)h.Active=(s<0)k.Active=#q>p k.Visible=k.Active end,
-function()local q,r=0,d:GetChildren()if r then for s,t in ipairs(r)do if t:IsA
-'GuiObject'then q=q+1 end end end if not k.Parent then return end local s=k.
-Parent.AbsoluteSize.y*(1/(q-p+1))if s<16 then s=16 end k.Size=UDim2.new(k.Size.X
-.Scale,k.Size.X.Offset,k.Size.Y.Scale,s)local t=(n-1)/(q-p)if t>1 then t=1
-elseif t<0 then t=0 end local u=0 if t~=0 then u=(t*i.AbsoluteSize.y)-(t*k.
-AbsoluteSize.y)end k.Position=UDim2.new(k.Position.X.Scale,k.Position.X.Offset,k
-.Position.Y.Scale,u)end,false local u=function()if t then return end t=true
-wait()local u,v=nil if m=='grid'then u,v=pcall(function()q()end)elseif m==
-'simple'then u,v=pcall(function()r()end)end if not u then print(v)end s()t=false
-end local v,w=function()n=n-o if n<1 then n=1 end u(nil)end,function()n=n+o u(
-nil)end local x,y,z=function(x)if g.Active then j=tick()local y,z=j,nil z=l.
-MouseButton1Up:connect(function()j=tick()l.Parent=nil z:disconnect()end)l.Parent
-=getScreenGuiAncestor(i)v()wait(0.2)local A,B=tick(),0.1 while j==y do v()if x
-and x>k.AbsolutePosition.y then break end if not g.Active then break end if
-tick()-A>5 then B=0 elseif tick()-A>2 then B=0.06 end wait(B)end end end,
-function(x)if h.Active then j=tick()local y,z=j,nil z=l.MouseButton1Up:connect(
-function()j=tick()l.Parent=nil z:disconnect()end)l.Parent=getScreenGuiAncestor(i
-)w()wait(0.2)local A,B=tick(),0.1 while j==y do w()if x and x<(k.
-AbsolutePosition.y+k.AbsoluteSize.x)then break end if not h.Active then break
-end if tick()-A>5 then B=0 elseif tick()-A>2 then B=0.06 end wait(B)end end end,
-0 k.MouseButton1Down:connect(function(A,B)if k.Active then j=tick()local C,D,E=B
--k.AbsolutePosition.y,nil,nil D=l.MouseMoved:connect(function(F,G)local H,I,J=i.
-AbsolutePosition.y,i.AbsoluteSize.y,k.AbsoluteSize.y local K=H+I-J G=G-C G=G<H
-and H or G>K and K or G G=G-H local L,M=0,d:GetChildren()if M then for N,O in
-ipairs(M)do if O:IsA'GuiObject'then L=L+1 end end end local N,O,P=G/(I-J),o,L-(p
--1)local Q=math.floor((N*P)+0.5)+O if Q<n then O=-O end if Q<1 then Q=1 end n=Q
-u(nil)end)E=l.MouseButton1Up:connect(function()j=tick()l.Parent=nil D:
-disconnect()D=nil E:disconnect()drag=nil end)l.Parent=getScreenGuiAncestor(i)end
-end)local A=0 g.MouseButton1Down:connect(function()x()end)g.MouseButton1Up:
-connect(function()j=tick()end)h.MouseButton1Up:connect(function()j=tick()end)h.
-MouseButton1Down:connect(function()y()end)i.MouseButton1Up:connect(function()j=
-tick()end)i.MouseButton1Down:connect(function(B,C)if C>(k.AbsoluteSize.y+k.
-AbsolutePosition.y)then y(C)elseif C<k.AbsolutePosition.y then x(C)end end)d.
-ChildAdded:connect(function()u(nil)end)d.ChildRemoved:connect(function()u(nil)
-end)d.Changed:connect(function(B)if B=='AbsoluteSize'then u(nil)end end)d.
-AncestryChanged:connect(function()u(nil)end)return d,g,h,u,i end local function
-binaryGrow(b,c,d)if b>c then return b end local g=b while b<=c do local h=b+math
-.floor((c-b)/2)if d(h)and(g==nil or g<h)then g=h b=h+1 else c=h-1 end end return
-g end local function binaryShrink(b,c,d)if b>c then return b end local g=c while
-b<=c do local h=b+math.floor((c-b)/2)if d(h)and(g==nil or g>h)then g=h c=h-1
-else b=h+1 end end return g end local function getGuiOwner(b)while b~=nil do if
+BackgroundTransparency=0.5 local p=n:GetChildren()for q=1,#p do p[q].
+BackgroundTransparency=0.5 end end)n.Parent=j local p=Instance.new'Frame'p.Name=
+'ScrollTrack'p.BackgroundTransparency=1 p.Size=UDim2.new(0,18,1,-38)p.Position=
+UDim2.new(0,0,0,19)p.Parent=j local q=Instance.new'TextButton'q.BackgroundColor3
+=Color3.new(0,0,0)q.BorderColor3=Color3.new(1,1,1)q.BackgroundTransparency=0.5 q
+.AutoButtonColor=false q.Text=''q.Active=true q.Name='ScrollBar'q.ZIndex=2 q.
+BackgroundTransparency=0.5 q.Size=UDim2.new(0,18,0.1,0)q.Position=UDim2.new(0,0,
+0,0)q.Parent=p local r=Instance.new'Frame'r.Name='ScrollNub'r.BorderColor3=
+Color3.new(1,1,1)r.Size=UDim2.new(0,10,0,0)r.Position=UDim2.new(0.5,-5,0.5,0)r.
+ZIndex=2 r.BackgroundTransparency=0.5 r.Parent=q local s=r:clone()s.Position=
+UDim2.new(0.5,-5,0.5,-2)s.Parent=q local t=r:clone()t.Position=UDim2.new(0.5,-5,
+0.5,2)t.Parent=q q.MouseEnter:connect(function()q.BackgroundTransparency=0.1 r.
+BackgroundTransparency=0.1 s.BackgroundTransparency=0.1 t.BackgroundTransparency
+=0.1 end)q.MouseLeave:connect(function()q.BackgroundTransparency=0.5 r.
+BackgroundTransparency=0.5 s.BackgroundTransparency=0.5 t.BackgroundTransparency
+=0.5 end)local u=Instance.new'ImageButton'u.Active=false u.Size=UDim2.new(1.5,0,
+1.5,0)u.AutoButtonColor=false u.BackgroundTransparency=1 u.Name='mouseDrag'u.
+Position=UDim2.new(-0.25,0,-0.25,0)u.ZIndex=10 local function positionScrollBar(
+v,w,x)local y=q.Position if w<p.AbsolutePosition.y then q.Position=UDim2.new(q.
+Position.X.Scale,q.Position.X.Offset,0,0)return(y~=q.Position)end local z=q.
+AbsoluteSize.Y/p.AbsoluteSize.Y if w>(p.AbsolutePosition.y+p.AbsoluteSize.y)then
+q.Position=UDim2.new(q.Position.X.Scale,q.Position.X.Offset,1-z,0)return(y~=q.
+Position)end local A=(w-p.AbsolutePosition.y-x)/p.AbsoluteSize.y if A+z>1 then A
+=1-z k.Value=true l.Value=false elseif A<=0 then A=0 l.Value=true k.Value=false
+else l.Value=false k.Value=false end q.Position=UDim2.new(q.Position.X.Scale,q.
+Position.X.Offset,A,0)return(y~=q.Position)end local function
+drillDownSetHighLow(v)if not v or not v:IsA'GuiObject'then return end if v==j
+then return end if v:IsDescendantOf(j)then return end if not v.Visible then
+return end if b and b>v.AbsolutePosition.Y then b=v.AbsolutePosition.Y elseif
+not b then b=v.AbsolutePosition.Y end if c and c<(v.AbsolutePosition.Y+v.
+AbsoluteSize.Y)then c=v.AbsolutePosition.Y+v.AbsoluteSize.Y elseif not c then c=
+v.AbsolutePosition.Y+v.AbsoluteSize.Y end local w=v:GetChildren()for x=1,#w do
+drillDownSetHighLow(w[x])end end local function resetHighLow()local v=i:
+GetChildren()for w=1,#v do drillDownSetHighLow(v[w])end end local function
+recalculate()g=true local v=0 if q.Position.Y.Scale>0 then if q.Visible then v=q
+.Position.Y.Scale/((p.AbsoluteSize.Y-q.AbsoluteSize.Y)/p.AbsoluteSize.Y)else v=0
+end end if v>0.99 then v=1 end local w,x=(i.AbsoluteSize.Y-(c-b))*v,i:
+GetChildren()for y=1,#x do if x[y]~=j then x[y].Position=UDim2.new(x[y].Position
+.X.Scale,x[y].Position.X.Offset,0,math.ceil(x[y].AbsolutePosition.Y)-math.ceil(b
+)+w)end end b=nil c=nil resetHighLow()g=false end local function
+setSliderSizeAndPosition()if not c or not b then return end local v=math.abs(c-b
+)if v==0 then q.Visible=false n.Visible=false m.Visible=false if d then d:
+disconnect()d=nil end if e then e:disconnect()e=nil end return end local w=i.
+AbsoluteSize.Y/v if w>=1 then q.Visible=false n.Visible=false m.Visible=false
+recalculate()else q.Visible=true n.Visible=true m.Visible=true q.Size=UDim2.new(
+q.Size.X.Scale,q.Size.X.Offset,w,0)end local x=(i.AbsolutePosition.Y-b)/v q.
+Position=UDim2.new(q.Position.X.Scale,q.Position.X.Offset,x,-q.AbsoluteSize.X/2)
+if q.AbsolutePosition.y<p.AbsolutePosition.y then q.Position=UDim2.new(q.
+Position.X.Scale,q.Position.X.Offset,0,0)end if(q.AbsolutePosition.y+q.
+AbsoluteSize.Y)>(p.AbsolutePosition.y+p.AbsoluteSize.y)then local y=q.
+AbsoluteSize.Y/p.AbsoluteSize.Y q.Position=UDim2.new(q.Position.X.Scale,q.
+Position.X.Offset,1-y,0)end end local v,w=7,false local function doScrollUp()if
+w then return end w=true if positionScrollBar(0,q.AbsolutePosition.Y-v,0)then
+recalculate()end w=false end local x=false local function doScrollDown()if x
+then return end x=true if positionScrollBar(0,q.AbsolutePosition.Y+v,0)then
+recalculate()end x=false end local function scrollUp(y)if m.Active then
+scrollStamp=tick()local z,A=scrollStamp,nil A=u.MouseButton1Up:connect(function(
+)scrollStamp=tick()u.Parent=nil A:disconnect()end)u.Parent=getScreenGuiAncestor(
+q)doScrollUp()wait(0.2)local B,C=tick(),0.1 while scrollStamp==z do doScrollUp()
+if y and y>q.AbsolutePosition.y then break end if not m.Active then break end if
+tick()-B>5 then C=0 elseif tick()-B>2 then C=0.06 end wait(C)end end end
+local function scrollDown(y)if n.Active then scrollStamp=tick()local z,A=
+scrollStamp,nil A=u.MouseButton1Up:connect(function()scrollStamp=tick()u.Parent=
+nil A:disconnect()end)u.Parent=getScreenGuiAncestor(q)doScrollDown()wait(0.2)
+local B,C=tick(),0.1 while scrollStamp==z do doScrollDown()if y and y<(q.
+AbsolutePosition.y+q.AbsoluteSize.x)then break end if not n.Active then break
+end if tick()-B>5 then C=0 elseif tick()-B>2 then C=0.06 end wait(C)end end end
+q.MouseButton1Down:connect(function(y,z)if q.Active then scrollStamp=tick()local
+A=z-q.AbsolutePosition.y if d then d:disconnect()d=nil end if e then e:
+disconnect()e=nil end local B,C=z,false d=u.MouseMoved:connect(function(D,E)if C
+then return end C=true if positionScrollBar(D,E,A)then recalculate()end C=false
+end)e=u.MouseButton1Up:connect(function()scrollStamp=tick()u.Parent=nil d:
+disconnect()d=nil e:disconnect()drag=nil end)u.Parent=getScreenGuiAncestor(q)end
+end)local y=0 m.MouseButton1Down:connect(function()l()end)n.MouseButton1Down:
+connect(function()scrollDown()end)local function scrollTick()scrollStamp=tick()
+end m.MouseButton1Up:connect(scrollTick)n.MouseButton1Up:connect(scrollTick)q.
+MouseButton1Up:connect(scrollTick)local function highLowRecheck()local z,A=b,c b
+=nil c=nil resetHighLow()if(b~=z)or(c~=A)then setSliderSizeAndPosition()end end
+local function descendantChanged(z,A)if g then return end if not z.Visible then
+return end if A=='Size'or A=='Position'then wait()highLowRecheck()end end i.
+DescendantAdded:connect(function(z)if not z:IsA'GuiObject'then return end if z.
+Visible then wait()highLowRecheck()end h[z]=z.Changed:connect(function(A)
+descendantChanged(z,A)end)end)i.DescendantRemoving:connect(function(z)if not z:
+IsA'GuiObject'then return end if h[z]then h[z]:disconnect()h[z]=nil end wait()
+highLowRecheck()end)i.Changed:connect(function(z)if z=='AbsoluteSize'then if not
+c or not b then return end highLowRecheck()setSliderSizeAndPosition()end end)
+return i,j end a.CreateScrollingFrame=function(b,c)local d=Instance.new'Frame'd.
+Name='ScrollingFrame'd.BackgroundTransparency=1 d.Size=UDim2.new(1,0,1,0)local e
+=Instance.new'ImageButton'e.Name='ScrollUpButton'e.BackgroundTransparency=1 e.
+Image='rbxasset://textures/ui/scrollbuttonUp.png'e.Size=UDim2.new(0,17,0,17)
+local g=Instance.new'ImageButton'g.Name='ScrollDownButton'g.
+BackgroundTransparency=1 g.Image='rbxasset://textures/ui/scrollbuttonDown.png'g.
+Size=UDim2.new(0,17,0,17)local h=Instance.new'ImageButton'h.Name='ScrollBar'h.
+Image='rbxasset://textures/ui/scrollbar.png'h.BackgroundTransparency=1 h.Size=
+UDim2.new(0,18,0,150)local i,j=0,Instance.new'ImageButton'j.Image=
+'http://www.roblox.com/asset/?id=61367186'j.Size=UDim2.new(1,0,0,16)j.
+BackgroundTransparency=1 j.Name='ScrollDrag'j.Active=true j.Parent=h local k=
+Instance.new'ImageButton'k.Active=false k.Size=UDim2.new(1.5,0,1.5,0)k.
+AutoButtonColor=false k.BackgroundTransparency=1 k.Name='mouseDrag'k.Position=
+UDim2.new(-0.25,0,-0.25,0)k.ZIndex=10 local l='simple'if c and tostring(c)then l
+=c end local m,n,o=1,0,0 local p,q,r,s=function()o=0 local p={}if b then for q,r
+in ipairs(b)do if r.Parent==d then table.insert(p,r)end end else local q=d:
+GetChildren()if q then for r,s in ipairs(q)do if s:IsA'GuiObject'then table.
+insert(p,s)end end end end if#p==0 then e.Active=false g.Active=false j.Active=
+false m=1 return end if m>#p then m=#p end if m<1 then m=1 end local q,r,s,t,u,v
+,w,x,y=d.AbsoluteSize.Y,d.AbsoluteSize.Y,d.AbsoluteSize.X,0,0,true,0,#p,0 x=m
+while x<=#p and w<q do t=t+p[x].AbsoluteSize.X if t>=s then w=w+y y=0 t=p[x].
+AbsoluteSize.X end if p[x].AbsoluteSize.Y>y then y=p[x].AbsoluteSize.Y end x=x+1
+end w=w+y y=0 x=m-1 t=0 while w+y<q and x>=1 do t=t+p[x].AbsoluteSize.X u=u+1 if
+t>=s then n=u-1 u=0 t=p[x].AbsoluteSize.X if w+y<=q then w=w+y if m<=n then m=1
+break else m=m-n end y=0 else break end end if p[x].AbsoluteSize.Y>y then y=p[x]
+.AbsoluteSize.Y end x=x-1 end if(x==0)and(w+y<=q)then m=1 end t=0 u=0 v=true
+local z,A,B=0,0 if p[1]then B=math.ceil(math.floor(math.fmod(q,p[1].AbsoluteSize
+.X))/2)A=math.ceil(math.floor(math.fmod(s,p[1].AbsoluteSize.Y))/2)end for C,D in
+ipairs(p)do if C<m then D.Visible=false else if r<0 then D.Visible=false else if
+v then u=u+1 end if t+D.AbsoluteSize.X>=s then if v then n=u-1 v=false end t=0 r
+=r-D.AbsoluteSize.Y end D.Position=UDim2.new(D.Position.X.Scale,t+A,0,q-r+B)t=t+
+D.AbsoluteSize.X D.Visible=((r-D.AbsoluteSize.Y)>=0)if D.Visible then o=o+1 end
+z=D.AbsoluteSize end end end e.Active=(m>1)if z==0 then g.Active=false else g.
+Active=((r-z.Y)<0)end j.Active=#p>o j.Visible=j.Active end,function()local p={}o
+=0 if b then for q,r in ipairs(b)do if r.Parent==d then table.insert(p,r)end end
+else local q=d:GetChildren()if q then for r,s in ipairs(q)do if s:IsA'GuiObject'
+then table.insert(p,s)end end end end if#p==0 then e.Active=false g.Active=false
+j.Active=false m=1 return end if m>#p then m=#p end local q,r,s,t=d.AbsoluteSize
+.Y,d.AbsoluteSize.Y,0,#p while s<q and t>=1 do if t>=m then s=s+p[t].
+AbsoluteSize.Y else if s+p[t].AbsoluteSize.Y<=q then s=s+p[t].AbsoluteSize.Y if
+m<=1 then m=1 break else m=m-1 end else break end end t=t-1 end t=m for u,v in
+ipairs(p)do if u<m then v.Visible=false else if r<0 then v.Visible=false else v.
+Position=UDim2.new(v.Position.X.Scale,v.Position.X.Offset,0,q-r)r=r-v.
+AbsoluteSize.Y if r>=0 then v.Visible=true o=o+1 else v.Visible=false end end
+end end e.Active=(m>1)g.Active=(r<0)j.Active=#p>o j.Visible=j.Active end,
+function()local p,q=0,d:GetChildren()if q then for r,s in ipairs(q)do if s:IsA
+'GuiObject'then p=p+1 end end end if not j.Parent then return end local r=j.
+Parent.AbsoluteSize.y*(1/(p-o+1))if r<16 then r=16 end j.Size=UDim2.new(j.Size.X
+.Scale,j.Size.X.Offset,j.Size.Y.Scale,r)local s=(m-1)/(p-o)if s>1 then s=1
+elseif s<0 then s=0 end local t=0 if s~=0 then t=(s*h.AbsoluteSize.y)-(s*j.
+AbsoluteSize.y)end j.Position=UDim2.new(j.Position.X.Scale,j.Position.X.Offset,j
+.Position.Y.Scale,t)end,false local t=function()if s then return end s=true
+wait()local t,u=nil if l=='grid'then t,u=pcall(function()p()end)elseif l==
+'simple'then t,u=pcall(function()q()end)end if not t then print(u)end r()s=false
+end local u,v=function()m=m-n if m<1 then m=1 end t(nil)end,function()m=m+n t(
+nil)end local w,x,y=function(w)if e.Active then i=tick()local x,y=i,nil y=k.
+MouseButton1Up:connect(function()i=tick()k.Parent=nil y:disconnect()end)k.Parent
+=getScreenGuiAncestor(h)u()wait(0.2)local z,A=tick(),0.1 while i==x do u()if w
+and w>j.AbsolutePosition.y then break end if not e.Active then break end if
+tick()-z>5 then A=0 elseif tick()-z>2 then A=0.06 end wait(A)end end end,
+function(w)if g.Active then i=tick()local x,y=i,nil y=k.MouseButton1Up:connect(
+function()i=tick()k.Parent=nil y:disconnect()end)k.Parent=getScreenGuiAncestor(h
+)v()wait(0.2)local z,A=tick(),0.1 while i==x do v()if w and w<(j.
+AbsolutePosition.y+j.AbsoluteSize.x)then break end if not g.Active then break
+end if tick()-z>5 then A=0 elseif tick()-z>2 then A=0.06 end wait(A)end end end,
+0 j.MouseButton1Down:connect(function(z,A)if j.Active then i=tick()local B,C,D=A
+-j.AbsolutePosition.y,nil,nil C=k.MouseMoved:connect(function(E,F)local G,H,I=h.
+AbsolutePosition.y,h.AbsoluteSize.y,j.AbsoluteSize.y local J=G+H-I F=F-B F=F<G
+and G or F>J and J or F F=F-G local K,L=0,d:GetChildren()if L then for M,N in
+ipairs(L)do if N:IsA'GuiObject'then K=K+1 end end end local M,N,O=F/(H-I),n,K-(o
+-1)local P=math.floor((M*O)+0.5)+N if P<m then N=-N end if P<1 then P=1 end m=P
+t(nil)end)D=k.MouseButton1Up:connect(function()i=tick()k.Parent=nil C:
+disconnect()C=nil D:disconnect()drag=nil end)k.Parent=getScreenGuiAncestor(h)end
+end)local z=0 e.MouseButton1Down:connect(function()w()end)e.MouseButton1Up:
+connect(function()i=tick()end)g.MouseButton1Up:connect(function()i=tick()end)g.
+MouseButton1Down:connect(function()x()end)h.MouseButton1Up:connect(function()i=
+tick()end)h.MouseButton1Down:connect(function(A,B)if B>(j.AbsoluteSize.y+j.
+AbsolutePosition.y)then x(B)elseif B<j.AbsolutePosition.y then w(B)end end)d.
+ChildAdded:connect(function()t(nil)end)d.ChildRemoved:connect(function()t(nil)
+end)d.Changed:connect(function(A)if A=='AbsoluteSize'then t(nil)end end)d.
+AncestryChanged:connect(function()t(nil)end)return d,e,g,t,h end local function
+binaryGrow(b,c,d)if b>c then return b end local e=b while b<=c do local g=b+math
+.floor((c-b)/2)if d(g)and(e==nil or e<g)then e=g b=g+1 else c=g-1 end end return
+e end local function binaryShrink(b,c,d)if b>c then return b end local e=c while
+b<=c do local g=b+math.floor((c-b)/2)if d(g)and(e==nil or e>g)then e=g c=g-1
+else b=g+1 end end return e end local function getGuiOwner(b)while b~=nil do if
 b:IsA'ScreenGui'or b:IsA'BillboardGui'then return b end b=b.Parent end return
 nil end a.AutoTruncateTextObject=function(b)local c,d=b.Text,b:Clone()d.Name=
 'Full'..b.Name d.BorderSizePixel=0 d.BackgroundTransparency=0 d.Text=c d.
 TextXAlignment=Enum.TextXAlignment.Center d.Position=UDim2.new(0,-3,0,0)d.Size=
-UDim2.new(0,100,1,0)d.Visible=false d.Parent=b local g,h,i=nil,nil,nil local j=
+UDim2.new(0,100,1,0)d.Visible=false d.Parent=b local e,g,h=nil,nil,nil local i=
 function()if getGuiOwner(b)==nil then return end b.Text=c if b.TextFits then if
-h then h:disconnect()h=nil end if i then i:disconnect()i=nil end else local j=
-string.len(c)b.Text=c..'~'local k=binaryGrow(0,j,function(k)if k==0 then b.Text=
-'~'else b.Text=string.sub(c,1,k)..'~'end return b.TextFits end)g=string.sub(c,1,
-k)..'~'b.Text=g if not d.TextFits then d.Size=UDim2.new(0,10000,1,0)end local l=
-binaryShrink(b.AbsoluteSize.X,d.AbsoluteSize.X,function(l)d.Size=UDim2.new(0,l,1
-,0)return d.TextFits end)d.Size=UDim2.new(0,l+6,1,0)if h==nil then h=b.
-MouseEnter:connect(function()d.ZIndex=b.ZIndex+1 d.Visible=true end)end if i==
-nil then i=b.MouseLeave:connect(function()d.Visible=false end)end end end b.
-AncestryChanged:connect(j)b.Changed:connect(function(k)if k=='AbsoluteSize'then
-j()end end)j()local function changeText(k)c=k d.Text=c j()end return b,
-changeText end local function TransitionTutorialPages(b,c,d,g)if b then b.
+g then g:disconnect()g=nil end if h then h:disconnect()h=nil end else local i=
+string.len(c)b.Text=c..'~'local j=binaryGrow(0,i,function(j)if j==0 then b.Text=
+'~'else b.Text=string.sub(c,1,j)..'~'end return b.TextFits end)e=string.sub(c,1,
+j)..'~'b.Text=e if not d.TextFits then d.Size=UDim2.new(0,10000,1,0)end local k=
+binaryShrink(b.AbsoluteSize.X,d.AbsoluteSize.X,function(k)d.Size=UDim2.new(0,k,1
+,0)return d.TextFits end)d.Size=UDim2.new(0,k+6,1,0)if g==nil then g=b.
+MouseEnter:connect(function()d.ZIndex=b.ZIndex+1 d.Visible=true end)end if h==
+nil then h=b.MouseLeave:connect(function()d.Visible=false end)end end end b.
+AncestryChanged:connect(i)b.Changed:connect(function(j)if j=='AbsoluteSize'then
+i()end end)i()local function changeText(j)c=j d.Text=c i()end return b,
+changeText end local function TransitionTutorialPages(b,c,d,e)if b then b.
 Visible=false if d.Visible==false then d.Size=b.Size d.Position=b.Position end
 else if d.Visible==false then d.Size=UDim2.new(0,50,0,50)d.Position=UDim2.new(
-0.5,-25,0.5,-25)end end d.Visible=true g.Value=nil local h,i if c then c.Visible
-=true newSize=c.Size i=c.Position c.Visible=false else newSize=UDim2.new(0,50,0,
-50)i=UDim2.new(0.5,-25,0.5,-25)end d:TweenSizeAndPosition(newSize,i,Enum.
-EasingDirection.InOut,Enum.EasingStyle.Quad,0.3,true,function(j)if j==Enum.
-TweenStatus.Completed then d.Visible=false if c then c.Visible=true g.Value=c
-end end end)end a.CreateTutorial=function(b,c,d)local g=Instance.new'Frame'g.
-Name='Tutorial-'..b g.BackgroundTransparency=1 g.Size=UDim2.new(0.6,0,0.6,0)g.
-Position=UDim2.new(0.2,0,0.2,0)local h=Instance.new'Frame'h.Name=
-'TransitionFrame'h.Style=Enum.FrameStyle.RobloxRound h.Size=UDim2.new(0.6,0,0.6,
-0)h.Position=UDim2.new(0.2,0,0.2,0)h.Visible=false h.Parent=g local i=Instance.
-new'ObjectValue'i.Name='CurrentTutorialPage'i.Value=nil i.Parent=g local j=
-Instance.new'BoolValue'j.Name='Buttons'j.Value=d j.Parent=g local k=Instance.new
-'Frame'k.Name='Pages'k.BackgroundTransparency=1 k.Size=UDim2.new(1,0,1,0)k.
-Parent=g local function getVisiblePageAndHideOthers()local l,m=nil,k:
-GetChildren()if m then for n,o in ipairs(m)do if o.Visible then if l then o.
-Visible=false else l=o end end end end return l end local l,m,n=function(l)if l
-or UserSettings().GameSettings:GetTutorialState(c)==false then print(
-'Showing tutorial-',c)local m,n=getVisiblePageAndHideOthers(),k:FindFirstChild
-'TutorialPage1'if n then TransitionTutorialPages(m,n,h,i)else error
-'Could not find TutorialPage1'end end end,function()local l=
-getVisiblePageAndHideOthers()if l then TransitionTutorialPages(l,nil,h,i)end
-UserSettings().GameSettings:SetTutorialState(c,true)end,function(l)local m,n=k:
-FindFirstChild('TutorialPage'..l),getVisiblePageAndHideOthers()
-TransitionTutorialPages(n,m,h,i)end return g,l,m,n end local function
-CreateBasicTutorialPage(b,c,d,g)local h=Instance.new'Frame'h.Name='TutorialPage'
-h.Style=Enum.FrameStyle.RobloxRound h.Size=UDim2.new(0.6,0,0.6,0)h.Position=
-UDim2.new(0.2,0,0.2,0)h.Visible=false local i=Instance.new'TextLabel'i.Name=
-'Header'i.Text=b i.BackgroundTransparency=1 i.FontSize=Enum.FontSize.Size24 i.
-Font=Enum.Font.ArialBold i.TextColor3=Color3.new(1,1,1)i.TextXAlignment=Enum.
-TextXAlignment.Center i.TextWrap=true i.Size=UDim2.new(1,-55,0,22)i.Position=
-UDim2.new(0,0,0,0)i.Parent=h local j=Instance.new'ImageButton'j.Name=
-'SkipButton'j.AutoButtonColor=false j.BackgroundTransparency=1 j.Image=
-'rbxasset://textures/ui/closeButton.png'j.MouseButton1Click:connect(function()d(
-)end)j.MouseEnter:connect(function()j.Image=
-'rbxasset://textures/ui/closeButton_dn.png'end)j.MouseLeave:connect(function()j.
-Image='rbxasset://textures/ui/closeButton.png'end)j.Size=UDim2.new(0,25,0,25)j.
-Position=UDim2.new(1,-25,0,0)j.Parent=h if g then local k=Instance.new
-'TextButton'k.Name='DoneButton'k.Style=Enum.ButtonStyle.RobloxButtonDefault k.
-Text='Done'k.TextColor3=Color3.new(1,1,1)k.Font=Enum.Font.ArialBold k.FontSize=
-Enum.FontSize.Size18 k.Size=UDim2.new(0,100,0,50)k.Position=UDim2.new(0.5,-50,1,
--50)if d then k.MouseButton1Click:connect(function()d()end)end k.Parent=h end
-local k=Instance.new'Frame'k.Name='ContentFrame'k.BackgroundTransparency=1 k.
-Position=UDim2.new(0,0,0,25)k.Parent=h local l=Instance.new'TextButton'l.Name=
-'NextButton'l.Text='Next'l.TextColor3=Color3.new(1,1,1)l.Font=Enum.Font.Arial l.
-FontSize=Enum.FontSize.Size18 l.Style=Enum.ButtonStyle.RobloxButtonDefault l.
-Size=UDim2.new(0,80,0,32)l.Position=UDim2.new(0.5,5,1,-32)l.Active=false l.
-Visible=false l.Parent=h local m=Instance.new'TextButton'm.Name='PrevButton'm.
-Text='Previous'm.TextColor3=Color3.new(1,1,1)m.Font=Enum.Font.Arial m.FontSize=
-Enum.FontSize.Size18 m.Style=Enum.ButtonStyle.RobloxButton m.Size=UDim2.new(0,80
-,0,32)m.Position=UDim2.new(0.5,-85,1,-32)m.Active=false m.Visible=false m.Parent
-=h if g then k.Size=UDim2.new(1,0,1,-75)else k.Size=UDim2.new(1,0,1,-22)end
-local n=nil local function basicHandleResize()if h.Visible and h.Parent then
-local o=math.min(h.Parent.AbsoluteSize.X,h.Parent.AbsoluteSize.Y)c(200,o)end end
-h.Changed:connect(function(o)if o=='Parent'then if n~=nil then n:disconnect()n=
-nil end if h.Parent and h.Parent:IsA'GuiObject'then n=h.Parent.Changed:connect(
-function(p)if p=='AbsoluteSize'then wait()basicHandleResize()end end)
-basicHandleResize()end end if o=='Visible'then basicHandleResize()end end)return
-h,k end a.CreateTextTutorialPage=function(b,c,d)local g,h,i=nil,nil,Instance.new
-'TextLabel'i.BackgroundTransparency=1 i.TextColor3=Color3.new(1,1,1)i.Text=c i.
-TextWrap=true i.TextXAlignment=Enum.TextXAlignment.Left i.TextYAlignment=Enum.
-TextYAlignment.Center i.Font=Enum.Font.Arial i.FontSize=Enum.FontSize.Size14 i.
-Size=UDim2.new(1,0,1,0)local function handleResize(j,k)size=binaryShrink(j,k,
-function(l)g.Size=UDim2.new(0,l,0,l)return i.TextFits end)g.Size=UDim2.new(0,
-size,0,size)g.Position=UDim2.new(0.5,-size/2,0.5,-size/2)end g,h=
-CreateBasicTutorialPage(b,handleResize,d)i.Parent=h return g end a.
-CreateImageTutorialPage=function(b,c,d,g,h,i)local j,k,l=nil,nil,Instance.new
-'ImageLabel'l.BackgroundTransparency=1 l.Image=c l.Size=UDim2.new(0,d,0,g)l.
-Position=UDim2.new(0.5,-d/2,0.5,-g/2)local function handleResize(m,n)size=
-binaryShrink(m,n,function(o)return o>=d and o>=g end)if size>=d and size>=g then
-l.Size=UDim2.new(0,d,0,g)l.Position=UDim2.new(0.5,-d/2,0.5,-g/2)else if d>g then
-l.Size=UDim2.new(1,0,g/d,0)l.Position=UDim2.new(0,0,0.5-(g/d)/2,0)else l.Size=
-UDim2.new(d/g,0,1,0)l.Position=UDim2.new(0.5-(d/g)/2,0,0,0)end end size=size+50
-j.Size=UDim2.new(0,size,0,size)j.Position=UDim2.new(0.5,-size/2,0.5,-size/2)end
-j,k=CreateBasicTutorialPage(b,handleResize,h,i)l.Parent=k return j end a.
-AddTutorialPage=function(b,c)local d,g=b.TransitionFrame,b.CurrentTutorialPage
+0.5,-25,0.5,-25)end end d.Visible=true e.Value=nil local g,h if c then c.Visible
+=true g=c.Size h=c.Position c.Visible=false else g=UDim2.new(0,50,0,50)h=UDim2.
+new(0.5,-25,0.5,-25)end d:TweenSizeAndPosition(g,h,Enum.EasingDirection.InOut,
+Enum.EasingStyle.Quad,0.3,true,function(i)if i==Enum.TweenStatus.Completed then
+d.Visible=false if c then c.Visible=true e.Value=c end end end)end a.
+CreateTutorial=function(b,c,d)local e=Instance.new'Frame'e.Name='Tutorial-'..b e
+.BackgroundTransparency=1 e.Size=UDim2.new(0.6,0,0.6,0)e.Position=UDim2.new(0.2,
+0,0.2,0)local g=Instance.new'Frame'g.Name='TransitionFrame'g.Style=Enum.
+FrameStyle.RobloxRound g.Size=UDim2.new(0.6,0,0.6,0)g.Position=UDim2.new(0.2,0,
+0.2,0)g.Visible=false g.Parent=e local h=Instance.new'ObjectValue'h.Name=
+'CurrentTutorialPage'h.Value=nil h.Parent=e local i=Instance.new'BoolValue'i.
+Name='Buttons'i.Value=d i.Parent=e local j=Instance.new'Frame'j.Name='Pages'j.
+BackgroundTransparency=1 j.Size=UDim2.new(1,0,1,0)j.Parent=e local function
+getVisiblePageAndHideOthers()local k,l=nil,j:GetChildren()if l then for m,n in
+ipairs(l)do if n.Visible then if k then n.Visible=false else k=n end end end end
+return k end local k,l,m=function(k)if k or UserSettings().GameSettings:
+GetTutorialState(c)==false then print('Showing tutorial-',c)local l,m=
+getVisiblePageAndHideOthers(),j:FindFirstChild'TutorialPage1'if m then
+TransitionTutorialPages(l,m,g,h)else error'Could not find TutorialPage1'end end
+end,function()local k=getVisiblePageAndHideOthers()if k then
+TransitionTutorialPages(k,nil,g,h)end UserSettings().GameSettings:
+SetTutorialState(c,true)end,function(k)local l,m=j:FindFirstChild('TutorialPage'
+..k),getVisiblePageAndHideOthers()TransitionTutorialPages(m,l,g,h)end return e,k
+,l,m end local function CreateBasicTutorialPage(b,c,d,e)local g=Instance.new
+'Frame'g.Name='TutorialPage'g.Style=Enum.FrameStyle.RobloxRound g.Size=UDim2.
+new(0.6,0,0.6,0)g.Position=UDim2.new(0.2,0,0.2,0)g.Visible=false local h=
+Instance.new'TextLabel'h.Name='Header'h.Text=b h.BackgroundTransparency=1 h.
+FontSize=Enum.FontSize.Size24 h.Font=Enum.Font.ArialBold h.TextColor3=Color3.
+new(1,1,1)h.TextXAlignment=Enum.TextXAlignment.Center h.TextWrap=true h.Size=
+UDim2.new(1,-55,0,22)h.Position=UDim2.new(0,0,0,0)h.Parent=g local i=Instance.
+new'ImageButton'i.Name='SkipButton'i.AutoButtonColor=false i.
+BackgroundTransparency=1 i.Image='rbxasset://textures/ui/closeButton.png'i.
+MouseButton1Click:connect(function()d()end)i.MouseEnter:connect(function()i.
+Image='rbxasset://textures/ui/closeButton_dn.png'end)i.MouseLeave:connect(
+function()i.Image='rbxasset://textures/ui/closeButton.png'end)i.Size=UDim2.new(0
+,25,0,25)i.Position=UDim2.new(1,-25,0,0)i.Parent=g if e then local j=Instance.
+new'TextButton'j.Name='DoneButton'j.Style=Enum.ButtonStyle.RobloxButtonDefault j
+.Text='Done'j.TextColor3=Color3.new(1,1,1)j.Font=Enum.Font.ArialBold j.FontSize=
+Enum.FontSize.Size18 j.Size=UDim2.new(0,100,0,50)j.Position=UDim2.new(0.5,-50,1,
+-50)if d then j.MouseButton1Click:connect(function()d()end)end j.Parent=g end
+local j=Instance.new'Frame'j.Name='ContentFrame'j.BackgroundTransparency=1 j.
+Position=UDim2.new(0,0,0,25)j.Parent=g local k=Instance.new'TextButton'k.Name=
+'NextButton'k.Text='Next'k.TextColor3=Color3.new(1,1,1)k.Font=Enum.Font.Arial k.
+FontSize=Enum.FontSize.Size18 k.Style=Enum.ButtonStyle.RobloxButtonDefault k.
+Size=UDim2.new(0,80,0,32)k.Position=UDim2.new(0.5,5,1,-32)k.Active=false k.
+Visible=false k.Parent=g local l=Instance.new'TextButton'l.Name='PrevButton'l.
+Text='Previous'l.TextColor3=Color3.new(1,1,1)l.Font=Enum.Font.Arial l.FontSize=
+Enum.FontSize.Size18 l.Style=Enum.ButtonStyle.RobloxButton l.Size=UDim2.new(0,80
+,0,32)l.Position=UDim2.new(0.5,-85,1,-32)l.Active=false l.Visible=false l.Parent
+=g if e then j.Size=UDim2.new(1,0,1,-75)else j.Size=UDim2.new(1,0,1,-22)end
+local m=nil local function basicHandleResize()if g.Visible and g.Parent then
+local n=math.min(g.Parent.AbsoluteSize.X,g.Parent.AbsoluteSize.Y)c(200,n)end end
+g.Changed:connect(function(n)if n=='Parent'then if m~=nil then m:disconnect()m=
+nil end if g.Parent and g.Parent:IsA'GuiObject'then m=g.Parent.Changed:connect(
+function(o)if o=='AbsoluteSize'then wait()basicHandleResize()end end)
+basicHandleResize()end end if n=='Visible'then basicHandleResize()end end)return
+g,j end a.CreateTextTutorialPage=function(b,c,d)local e,g,h=nil,nil,Instance.new
+'TextLabel'h.BackgroundTransparency=1 h.TextColor3=Color3.new(1,1,1)h.Text=c h.
+TextWrap=true h.TextXAlignment=Enum.TextXAlignment.Left h.TextYAlignment=Enum.
+TextYAlignment.Center h.Font=Enum.Font.Arial h.FontSize=Enum.FontSize.Size14 h.
+Size=UDim2.new(1,0,1,0)local function handleResize(i,j)size=binaryShrink(i,j,
+function(k)e.Size=UDim2.new(0,k,0,k)return h.TextFits end)e.Size=UDim2.new(0,
+size,0,size)e.Position=UDim2.new(0.5,-size/2,0.5,-size/2)end e,g=
+CreateBasicTutorialPage(b,handleResize,d)h.Parent=g return e end a.
+CreateImageTutorialPage=function(b,c,d,e,g,h)local i,j,k=nil,nil,Instance.new
+'ImageLabel'k.BackgroundTransparency=1 k.Image=c k.Size=UDim2.new(0,d,0,e)k.
+Position=UDim2.new(0.5,-d/2,0.5,-e/2)local function handleResize(l,m)size=
+binaryShrink(l,m,function(n)return n>=d and n>=e end)if size>=d and size>=e then
+k.Size=UDim2.new(0,d,0,e)k.Position=UDim2.new(0.5,-d/2,0.5,-e/2)else if d>e then
+k.Size=UDim2.new(1,0,e/d,0)k.Position=UDim2.new(0,0,0.5-(e/d)/2,0)else k.Size=
+UDim2.new(d/e,0,1,0)k.Position=UDim2.new(0.5-(d/e)/2,0,0,0)end end size=size+50
+i.Size=UDim2.new(0,size,0,size)i.Position=UDim2.new(0.5,-size/2,0.5,-size/2)end
+i,j=CreateBasicTutorialPage(b,handleResize,g,h)k.Parent=j return i end a.
+AddTutorialPage=function(b,c)local d,e=b.TransitionFrame,b.CurrentTutorialPage
 if not b.Buttons.Value then c.NextButton.Parent=nil c.PrevButton.Parent=nil end
-local h=b.Pages:GetChildren()if h and#h>0 then c.Name='TutorialPage'..(#h+1)
-local i=h[#h]if not i:IsA'GuiObject'then error
-'All elements under Pages must be GuiObjects'end if b.Buttons.Value then if i.
+local g=b.Pages:GetChildren()if g and#g>0 then c.Name='TutorialPage'..(#g+1)
+local h=g[#g]if not h:IsA'GuiObject'then error
+'All elements under Pages must be GuiObjects'end if b.Buttons.Value then if h.
 NextButton.Active then error
 [[NextButton already Active on previousPage, please only add pages with RbxGui.AddTutorialPage function]]
-end i.NextButton.MouseButton1Click:connect(function()TransitionTutorialPages(i,c
-,d,g)end)i.NextButton.Active=true i.NextButton.Visible=true if c.PrevButton.
+end h.NextButton.MouseButton1Click:connect(function()TransitionTutorialPages(h,c
+,d,e)end)h.NextButton.Active=true h.NextButton.Visible=true if c.PrevButton.
 Active then error
 [[PrevButton already Active on tutorialPage, please only add pages with RbxGui.AddTutorialPage function]]
-end c.PrevButton.MouseButton1Click:connect(function()TransitionTutorialPages(c,i
-,d,g)end)c.PrevButton.Active=true c.PrevButton.Visible=true end c.Parent=b.Pages
+end c.PrevButton.MouseButton1Click:connect(function()TransitionTutorialPages(c,h
+,d,e)end)c.PrevButton.Active=true c.PrevButton.Visible=true end c.Parent=b.Pages
 else c.Name='TutorialPage1'c.Parent=b.Pages end end a.CreateSetPanel=function(b,
-c,d,g,h,i,j)if not b then error
+c,d,e,g,h,i)if not b then error
 [[CreateSetPanel: userIdsForSets (first arg) is nil, should be a table of number ids]]
 end if type(b)~='table'and type(b)~='userdata'then error(
 'CreateSetPanel: userIdsForSets (first arg) is of type '..type(b)..
@@ -499,383 +494,383 @@ end if type(c)~='function'then error(
 'CreateSetPanel: objectSelected (second arg) is of type '..type(c)..
 ', should be of type function!')end if d and type(d)~='function'then error(
 'CreateSetPanel: dialogClosed (third arg) is of type '..type(d)..
-', should be of type function!')end if i==nil then i=false end local k,l,m,n,o,p
-,q,r,s=1,{},{},nil,nil,'NegX','None',nil local t={}t.CurrentCategory=nil t.
-Category={}local u,v,w={},nil,64 local x,y,z,A=w,nil,nil,game:GetService
-'ContentProvider'.BaseUrl:lower()if j then z=A..
-[[Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=420&ht=420&assetversionid=]]y=A..
-[[Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&assetversionid=]]else z=A..
-'Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=420&ht=420&aid='y=A..
+', should be of type function!')end if h==nil then h=false end local j,k,l,m,n,o
+,p,q,r=1,{},{},nil,nil,'NegX','None',nil local s={}s.CurrentCategory=nil s.
+Category={}local t,u,v={},nil,64 local w,x,y,z=v,nil,nil,game:GetService
+'ContentProvider'.BaseUrl:lower()if i then y=z..
+[[Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=420&ht=420&assetversionid=]]x=z..
+[[Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&assetversionid=]]else y=z..
+'Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=420&ht=420&aid='x=z..
 'Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&aid='end local function
-drillDownSetZIndex(B,C)local D=B:GetChildren()for E=1,#D do if D[E]:IsA
-'GuiObject'then D[E].ZIndex=C end drillDownSetZIndex(D[E],C)end end local B,C,D=
+drillDownSetZIndex(A,B)local C=A:GetChildren()for D=1,#C do if C[D]:IsA
+'GuiObject'then C[D].ZIndex=B end drillDownSetZIndex(C[D],B)end end local A,B,C=
 nil,{'Block','Vertical Ramp','Corner Wedge','Inverse Corner Wedge',
-'Horizontal Ramp','Auto-Wedge'},{}for E=1,#C do D[C[E]]=E-1 end D[C[#C]]=6
-local function createWaterGui()local E,F,G={'NegX','X','NegY','Y','NegZ','Z'},{
-'None','Small','Medium','Strong','Max'},Instance.new'Frame'G.Name='WaterFrame'G.
-Style=Enum.FrameStyle.RobloxSquare G.Size=UDim2.new(0,150,0,110)G.Visible=false
-local H=Instance.new'TextLabel'H.Name='WaterForceLabel'H.BackgroundTransparency=
-1 H.Size=UDim2.new(1,0,0,12)H.Font=Enum.Font.ArialBold H.FontSize=Enum.FontSize.
-Size12 H.TextColor3=Color3.new(1,1,1)H.TextXAlignment=Enum.TextXAlignment.Left H
-.Text='Water Force'H.Parent=G local I=H:Clone()I.Name='WaterForceDirectionLabel'
-I.Text='Water Force Direction'I.Position=UDim2.new(0,0,0,50)I.Parent=G local J=
-Instance.new'BindableEvent'J.Name='WaterTypeChangedEvent'J.Parent=G local K,L=
-function(K)p=K J:Fire{q,p}end,function(K)q=K J:Fire{q,p}end local M,N=a.
-CreateDropDownMenu(E,K)M.Size=UDim2.new(1,0,0,25)M.Position=UDim2.new(0,0,1,3)N
-'NegX'M.Parent=I local O,P=a.CreateDropDownMenu(F,L)P'None'O.Size=UDim2.new(1,0,
-0,25)O.Position=UDim2.new(0,0,1,3)O.Parent=H return G,J end local function
-createSetGui()local E=Instance.new'ScreenGui'E.Name='SetGui'local F=Instance.new
-'Frame'F.Name='SetPanel'F.Active=true F.BackgroundTransparency=1 if h then F.
-Position=h else F.Position=UDim2.new(0.2,29,0.1,24)end if g then F.Size=g else F
-.Size=UDim2.new(0.6,-58,0.64,0)end F.Style=Enum.FrameStyle.RobloxRound F.ZIndex=
-6 F.Parent=E local G=Instance.new'Frame'G.Name='ItemPreview'G.
-BackgroundTransparency=1 G.Position=UDim2.new(0.8,5,0.085,0)G.Size=UDim2.new(
-0.21,0,0.9,0)G.ZIndex=6 G.Parent=F local H=Instance.new'Frame'H.Name='TextPanel'
-H.BackgroundTransparency=1 H.Position=UDim2.new(0,0,0.45,0)H.Size=UDim2.new(1,0,
-0.55,0)H.ZIndex=6 H.Parent=G local I=Instance.new'TextLabel'I.Name=
-'RolloverText'I.BackgroundTransparency=1 I.Size=UDim2.new(1,0,0,48)I.ZIndex=6 I.
-Font=Enum.Font.ArialBold I.FontSize=Enum.FontSize.Size24 I.Text=''I.TextColor3=
-Color3.new(1,1,1)I.TextWrap=true I.TextXAlignment=Enum.TextXAlignment.Left I.
-TextYAlignment=Enum.TextYAlignment.Top I.Parent=H local J=Instance.new
-'ImageLabel'J.Name='LargePreview'J.BackgroundTransparency=1 J.Image=''J.Size=
-UDim2.new(1,0,0,170)J.ZIndex=6 J.Parent=G local K=Instance.new'Frame'K.Name=
-'Sets'K.BackgroundTransparency=1 K.Position=UDim2.new(0,0,0,5)K.Size=UDim2.new(
-0.23,0,1,-5)K.ZIndex=6 K.Parent=F local L=Instance.new'Frame'L.Name='Line'L.
-BackgroundColor3=Color3.new(1,1,1)L.BackgroundTransparency=0.7 L.BorderSizePixel
-=0 L.Position=UDim2.new(1,-3,0.06,0)L.Size=UDim2.new(0,3,0.9,0)L.ZIndex=6 L.
-Parent=K local M,N=a.CreateTrueScrollingFrame()M.Size=UDim2.new(1,-6,0.94,0)M.
-Position=UDim2.new(0,0,0.06,0)M.BackgroundTransparency=1 M.Name='SetsLists'M.
-ZIndex=6 M.Parent=K drillDownSetZIndex(N,7)local O=Instance.new'TextLabel'O.Name
-='SetsHeader'O.BackgroundTransparency=1 O.Size=UDim2.new(0,47,0,24)O.ZIndex=6 O.
-Font=Enum.Font.ArialBold O.FontSize=Enum.FontSize.Size24 O.Text='Sets'O.
-TextColor3=Color3.new(1,1,1)O.TextXAlignment=Enum.TextXAlignment.Left O.
-TextYAlignment=Enum.TextYAlignment.Top O.Parent=K local P=Instance.new
-'TextButton'P.Name='CancelButton'P.Position=UDim2.new(1,-32,0,-2)P.Size=UDim2.
-new(0,34,0,34)P.Style=Enum.ButtonStyle.RobloxButtonDefault P.ZIndex=6 P.Text=''P
-.Modal=true P.Parent=F local Q=Instance.new'ImageLabel'Q.Name='CancelImage'Q.
-BackgroundTransparency=1 Q.Image='http://www.roblox.com/asset?id=54135717'Q.
-Position=UDim2.new(0,-2,0,-2)Q.Size=UDim2.new(0,16,0,16)Q.ZIndex=6 Q.Parent=P
-return E end local function createSetButton(E)local F=Instance.new'TextButton'if
-E then F.Text=E else F.Text=''end F.AutoButtonColor=false F.
-BackgroundTransparency=1 F.BackgroundColor3=Color3.new(1,1,1)F.BorderSizePixel=0
-F.Size=UDim2.new(1,-5,0,18)F.ZIndex=6 F.Visible=false F.Font=Enum.Font.Arial F.
-FontSize=Enum.FontSize.Size18 F.TextColor3=Color3.new(1,1,1)F.TextXAlignment=
-Enum.TextXAlignment.Left return F end local function buildSetButton(E,F,G,H,I)
-local J=createSetButton(E)J.Text=E J.Name='SetButton'J.Visible=true local K=
-Instance.new'IntValue'K.Name='SetId'K.Value=F K.Parent=J local L=Instance.new
-'StringValue'L.Name='SetName'L.Value=E L.Parent=J return J end local function
-processCategory(E)local F,G={},0 for H=1,#E do if not i and E[H].Name=='Beta'
-then G=G+1 else F[H-G]=buildSetButton(E[H].Name,E[H].CategoryId,E[H].
-ImageAssetId,H-G,#E)end end return F end local function handleResize()wait()
-local E=o.SetPanel.ItemPreview E.LargePreview.Size=UDim2.new(1,0,0,E.
-AbsoluteSize.X)E.LargePreview.Position=UDim2.new(0.5,-E.LargePreview.
-AbsoluteSize.X/2,0,0)E.TextPanel.Position=UDim2.new(0,0,0,E.LargePreview.
-AbsoluteSize.Y)E.TextPanel.Size=UDim2.new(1,0,0,E.AbsoluteSize.Y-E.LargePreview.
-AbsoluteSize.Y)end local function makeInsertAssetButton()local E=Instance.new
-'Frame'E.Name='InsertAssetButtonExample'E.Position=UDim2.new(0,128,0,64)E.Size=
-UDim2.new(0,64,0,64)E.BackgroundTransparency=1 E.ZIndex=6 E.Visible=false local
-F=Instance.new'IntValue'F.Name='AssetId'F.Value=0 F.Parent=E local G=Instance.
-new'StringValue'G.Name='AssetName'G.Value=''G.Parent=E local H=Instance.new
-'TextButton'H.Name='Button'H.Text=''H.Style=Enum.ButtonStyle.RobloxButton H.
-Position=UDim2.new(0.025,0,0.025,0)H.Size=UDim2.new(0.95,0,0.95,0)H.ZIndex=6 H.
-Parent=E local I=Instance.new'ImageLabel'I.Name='ButtonImage'I.Image=''I.
-Position=UDim2.new(0,-7,0,-7)I.Size=UDim2.new(1,14,1,14)I.BackgroundTransparency
-=1 I.ZIndex=7 I.Parent=H local J=I:clone()J.Name='ConfigIcon'J.Visible=false J.
-Position=UDim2.new(1,-23,1,-24)J.Size=UDim2.new(0,16,0,16)J.Image=''J.ZIndex=6 J
-.Parent=E return E end local function showLargePreview(E)if E:FindFirstChild
-'AssetId'then delay(0,function()game:GetService'ContentProvider':Preload(z..
-tostring(E.AssetId.Value))o.SetPanel.ItemPreview.LargePreview.Image=z..tostring(
-E.AssetId.Value)end)end if E:FindFirstChild'AssetName'then o.SetPanel.
-ItemPreview.TextPanel.RolloverText.Text=E.AssetName.Value end end local function
-selectTerrainShape(E)if B then c(tostring(B.AssetName.Value),tonumber(B.AssetId.
-Value),E)end end local function createTerrainTypeButton(E,F)local G=Instance.new
-'TextButton'G.Name=E..'Button'G.Font=Enum.Font.ArialBold G.FontSize=Enum.
-FontSize.Size14 G.BorderSizePixel=0 G.TextColor3=Color3.new(1,1,1)G.Text=E G.
-TextXAlignment=Enum.TextXAlignment.Left G.BackgroundTransparency=1 G.ZIndex=F.
-ZIndex+1 G.Size=UDim2.new(0,F.Size.X.Offset-2,0,16)G.Position=UDim2.new(0,1,0,0)
-G.MouseEnter:connect(function()G.BackgroundTransparency=0 G.TextColor3=Color3.
-new(0,0,0)end)G.MouseLeave:connect(function()G.BackgroundTransparency=1 G.
-TextColor3=Color3.new(1,1,1)end)G.MouseButton1Click:connect(function()G.
-BackgroundTransparency=1 G.TextColor3=Color3.new(1,1,1)if G.Parent and G.Parent:
-IsA'GuiObject'then G.Parent.Visible=false end selectTerrainShape(D[G.Text])end)
-return G end local function createTerrainDropDownMenu(E)local F=Instance.new
-'Frame'F.Name='TerrainDropDown'F.BackgroundColor3=Color3.new(0,0,0)F.
-BorderColor3=Color3.new(1,0,0)F.Size=UDim2.new(0,200,0,0)F.Visible=false F.
-ZIndex=E F.Parent=o for G=1,#C do local H=createTerrainTypeButton(C[G],F)H.
-Position=UDim2.new(0,1,0,(G-1)*H.Size.Y.Offset)H.Parent=F F.Size=UDim2.new(0,200
-,0,F.Size.Y.Offset+H.Size.Y.Offset)end F.MouseLeave:connect(function()F.Visible=
-false end)end local function createDropDownMenuButton(E)local F=Instance.new
-'ImageButton'F.Name='DropDownButton'F.Image=
-'http://www.roblox.com/asset/?id=67581509'F.BackgroundTransparency=1 F.Size=
-UDim2.new(0,16,0,16)F.Position=UDim2.new(1,-24,0,6)F.ZIndex=E.ZIndex+2 F.Parent=
-E if not o:FindFirstChild'TerrainDropDown'then createTerrainDropDownMenu(8)end F
-.MouseButton1Click:connect(function()o.TerrainDropDown.Visible=true o.
-TerrainDropDown.Position=UDim2.new(0,E.AbsolutePosition.X,0,E.AbsolutePosition.Y
-)B=E end)end local function buildInsertButton()local E=makeInsertAssetButton()E.
-Name='InsertAssetButton'E.Visible=true if t.Category[t.CurrentCategory].SetName
-=='High Scalability'then createDropDownMenuButton(E)end local F=nil local G=E.
-MouseEnter:connect(function()F=E delay(0.1,function()if F==E then
-showLargePreview(E)end end)end)return E,G end local function realignButtonGrid(E
-)local F,G=0,0 for H=1,#l do l[H].Position=UDim2.new(0,w*F,0,x*G)F=F+1 if F>=E
-then F=0 G=G+1 end end end local function setInsertButtonImageBehavior(E,F,G,H)
-if F then E.AssetName.Value=G E.AssetId.Value=H local I=y..H if I~=E.Button.
+'Horizontal Ramp','Auto-Wedge'},{}for D=1,#B do C[B[D]]=D-1 end C[B[#B]]=6
+local function createWaterGui()local D,E,F={'NegX','X','NegY','Y','NegZ','Z'},{
+'None','Small','Medium','Strong','Max'},Instance.new'Frame'F.Name='WaterFrame'F.
+Style=Enum.FrameStyle.RobloxSquare F.Size=UDim2.new(0,150,0,110)F.Visible=false
+local G=Instance.new'TextLabel'G.Name='WaterForceLabel'G.BackgroundTransparency=
+1 G.Size=UDim2.new(1,0,0,12)G.Font=Enum.Font.ArialBold G.FontSize=Enum.FontSize.
+Size12 G.TextColor3=Color3.new(1,1,1)G.TextXAlignment=Enum.TextXAlignment.Left G
+.Text='Water Force'G.Parent=F local H=G:Clone()H.Name='WaterForceDirectionLabel'
+H.Text='Water Force Direction'H.Position=UDim2.new(0,0,0,50)H.Parent=F local I=
+Instance.new'BindableEvent'I.Name='WaterTypeChangedEvent'I.Parent=F local J,K=
+function(J)o=J I:Fire{p,o}end,function(J)p=J I:Fire{p,o}end local L,M=a.
+CreateDropDownMenu(D,J)L.Size=UDim2.new(1,0,0,25)L.Position=UDim2.new(0,0,1,3)M
+'NegX'L.Parent=H local N,O=a.CreateDropDownMenu(E,K)O'None'N.Size=UDim2.new(1,0,
+0,25)N.Position=UDim2.new(0,0,1,3)N.Parent=G return F,I end local function
+createSetGui()local D=Instance.new'ScreenGui'D.Name='SetGui'local E=Instance.new
+'Frame'E.Name='SetPanel'E.Active=true E.BackgroundTransparency=1 if g then E.
+Position=g else E.Position=UDim2.new(0.2,29,0.1,24)end if e then E.Size=e else E
+.Size=UDim2.new(0.6,-58,0.64,0)end E.Style=Enum.FrameStyle.RobloxRound E.ZIndex=
+6 E.Parent=D local F=Instance.new'Frame'F.Name='ItemPreview'F.
+BackgroundTransparency=1 F.Position=UDim2.new(0.8,5,0.085,0)F.Size=UDim2.new(
+0.21,0,0.9,0)F.ZIndex=6 F.Parent=E local G=Instance.new'Frame'G.Name='TextPanel'
+G.BackgroundTransparency=1 G.Position=UDim2.new(0,0,0.45,0)G.Size=UDim2.new(1,0,
+0.55,0)G.ZIndex=6 G.Parent=F local H=Instance.new'TextLabel'H.Name=
+'RolloverText'H.BackgroundTransparency=1 H.Size=UDim2.new(1,0,0,48)H.ZIndex=6 H.
+Font=Enum.Font.ArialBold H.FontSize=Enum.FontSize.Size24 H.Text=''H.TextColor3=
+Color3.new(1,1,1)H.TextWrap=true H.TextXAlignment=Enum.TextXAlignment.Left H.
+TextYAlignment=Enum.TextYAlignment.Top H.Parent=G local I=Instance.new
+'ImageLabel'I.Name='LargePreview'I.BackgroundTransparency=1 I.Image=''I.Size=
+UDim2.new(1,0,0,170)I.ZIndex=6 I.Parent=F local J=Instance.new'Frame'J.Name=
+'Sets'J.BackgroundTransparency=1 J.Position=UDim2.new(0,0,0,5)J.Size=UDim2.new(
+0.23,0,1,-5)J.ZIndex=6 J.Parent=E local K=Instance.new'Frame'K.Name='Line'K.
+BackgroundColor3=Color3.new(1,1,1)K.BackgroundTransparency=0.7 K.BorderSizePixel
+=0 K.Position=UDim2.new(1,-3,0.06,0)K.Size=UDim2.new(0,3,0.9,0)K.ZIndex=6 K.
+Parent=J local L,M=a.CreateTrueScrollingFrame()L.Size=UDim2.new(1,-6,0.94,0)L.
+Position=UDim2.new(0,0,0.06,0)L.BackgroundTransparency=1 L.Name='SetsLists'L.
+ZIndex=6 L.Parent=J drillDownSetZIndex(M,7)local N=Instance.new'TextLabel'N.Name
+='SetsHeader'N.BackgroundTransparency=1 N.Size=UDim2.new(0,47,0,24)N.ZIndex=6 N.
+Font=Enum.Font.ArialBold N.FontSize=Enum.FontSize.Size24 N.Text='Sets'N.
+TextColor3=Color3.new(1,1,1)N.TextXAlignment=Enum.TextXAlignment.Left N.
+TextYAlignment=Enum.TextYAlignment.Top N.Parent=J local O=Instance.new
+'TextButton'O.Name='CancelButton'O.Position=UDim2.new(1,-32,0,-2)O.Size=UDim2.
+new(0,34,0,34)O.Style=Enum.ButtonStyle.RobloxButtonDefault O.ZIndex=6 O.Text=''O
+.Modal=true O.Parent=E local P=Instance.new'ImageLabel'P.Name='CancelImage'P.
+BackgroundTransparency=1 P.Image='http://www.roblox.com/asset?id=54135717'P.
+Position=UDim2.new(0,-2,0,-2)P.Size=UDim2.new(0,16,0,16)P.ZIndex=6 P.Parent=O
+return D end local function createSetButton(D)local E=Instance.new'TextButton'if
+D then E.Text=D else E.Text=''end E.AutoButtonColor=false E.
+BackgroundTransparency=1 E.BackgroundColor3=Color3.new(1,1,1)E.BorderSizePixel=0
+E.Size=UDim2.new(1,-5,0,18)E.ZIndex=6 E.Visible=false E.Font=Enum.Font.Arial E.
+FontSize=Enum.FontSize.Size18 E.TextColor3=Color3.new(1,1,1)E.TextXAlignment=
+Enum.TextXAlignment.Left return E end local function buildSetButton(D,E,F,G,H)
+local I=createSetButton(D)I.Text=D I.Name='SetButton'I.Visible=true local J=
+Instance.new'IntValue'J.Name='SetId'J.Value=E J.Parent=I local K=Instance.new
+'StringValue'K.Name='SetName'K.Value=D K.Parent=I return I end local function
+processCategory(D)local E,H={},0 for I=1,#D do if not h and D[I].Name=='Beta'
+then H=H+1 else E[I-H]=buildSetButton(D[I].Name,D[I].CategoryId,D[I].
+ImageAssetId,I-H,#D)end end return E end local function handleResize()wait()
+local D=n.SetPanel.ItemPreview D.LargePreview.Size=UDim2.new(1,0,0,D.
+AbsoluteSize.X)D.LargePreview.Position=UDim2.new(0.5,-D.LargePreview.
+AbsoluteSize.X/2,0,0)D.TextPanel.Position=UDim2.new(0,0,0,D.LargePreview.
+AbsoluteSize.Y)D.TextPanel.Size=UDim2.new(1,0,0,D.AbsoluteSize.Y-D.LargePreview.
+AbsoluteSize.Y)end local function makeInsertAssetButton()local D=Instance.new
+'Frame'D.Name='InsertAssetButtonExample'D.Position=UDim2.new(0,128,0,64)D.Size=
+UDim2.new(0,64,0,64)D.BackgroundTransparency=1 D.ZIndex=6 D.Visible=false local
+E=Instance.new'IntValue'E.Name='AssetId'E.Value=0 E.Parent=D local H=Instance.
+new'StringValue'H.Name='AssetName'H.Value=''H.Parent=D local I=Instance.new
+'TextButton'I.Name='Button'I.Text=''I.Style=Enum.ButtonStyle.RobloxButton I.
+Position=UDim2.new(0.025,0,0.025,0)I.Size=UDim2.new(0.95,0,0.95,0)I.ZIndex=6 I.
+Parent=D local J=Instance.new'ImageLabel'J.Name='ButtonImage'J.Image=''J.
+Position=UDim2.new(0,-7,0,-7)J.Size=UDim2.new(1,14,1,14)J.BackgroundTransparency
+=1 J.ZIndex=7 J.Parent=I local K=J:clone()K.Name='ConfigIcon'K.Visible=false K.
+Position=UDim2.new(1,-23,1,-24)K.Size=UDim2.new(0,16,0,16)K.Image=''K.ZIndex=6 K
+.Parent=D return D end local function showLargePreview(D)if D:FindFirstChild
+'AssetId'then delay(0,function()game:GetService'ContentProvider':Preload(y..
+tostring(D.AssetId.Value))n.SetPanel.ItemPreview.LargePreview.Image=y..tostring(
+D.AssetId.Value)end)end if D:FindFirstChild'AssetName'then n.SetPanel.
+ItemPreview.TextPanel.RolloverText.Text=D.AssetName.Value end end local function
+selectTerrainShape(D)if A then c(tostring(A.AssetName.Value),tonumber(A.AssetId.
+Value),D)end end local function createTerrainTypeButton(D,E)local H=Instance.new
+'TextButton'H.Name=D..'Button'H.Font=Enum.Font.ArialBold H.FontSize=Enum.
+FontSize.Size14 H.BorderSizePixel=0 H.TextColor3=Color3.new(1,1,1)H.Text=D H.
+TextXAlignment=Enum.TextXAlignment.Left H.BackgroundTransparency=1 H.ZIndex=E.
+ZIndex+1 H.Size=UDim2.new(0,E.Size.X.Offset-2,0,16)H.Position=UDim2.new(0,1,0,0)
+H.MouseEnter:connect(function()H.BackgroundTransparency=0 H.TextColor3=Color3.
+new(0,0,0)end)H.MouseLeave:connect(function()H.BackgroundTransparency=1 H.
+TextColor3=Color3.new(1,1,1)end)H.MouseButton1Click:connect(function()H.
+BackgroundTransparency=1 H.TextColor3=Color3.new(1,1,1)if H.Parent and H.Parent:
+IsA'GuiObject'then H.Parent.Visible=false end selectTerrainShape(C[H.Text])end)
+return H end local function createTerrainDropDownMenu(D)local E=Instance.new
+'Frame'E.Name='TerrainDropDown'E.BackgroundColor3=Color3.new(0,0,0)E.
+BorderColor3=Color3.new(1,0,0)E.Size=UDim2.new(0,200,0,0)E.Visible=false E.
+ZIndex=D E.Parent=n for H=1,#B do local I=createTerrainTypeButton(B[H],E)I.
+Position=UDim2.new(0,1,0,(H-1)*I.Size.Y.Offset)I.Parent=E E.Size=UDim2.new(0,200
+,0,E.Size.Y.Offset+I.Size.Y.Offset)end E.MouseLeave:connect(function()E.Visible=
+false end)end local function createDropDownMenuButton(D)local E=Instance.new
+'ImageButton'E.Name='DropDownButton'E.Image=
+'http://www.roblox.com/asset/?id=67581509'E.BackgroundTransparency=1 E.Size=
+UDim2.new(0,16,0,16)E.Position=UDim2.new(1,-24,0,6)E.ZIndex=D.ZIndex+2 E.Parent=
+D if not n:FindFirstChild'TerrainDropDown'then createTerrainDropDownMenu(8)end E
+.MouseButton1Click:connect(function()n.TerrainDropDown.Visible=true n.
+TerrainDropDown.Position=UDim2.new(0,D.AbsolutePosition.X,0,D.AbsolutePosition.Y
+)A=D end)end local function buildInsertButton()local D=makeInsertAssetButton()D.
+Name='InsertAssetButton'D.Visible=true if s.Category[s.CurrentCategory].SetName
+=='High Scalability'then createDropDownMenuButton(D)end local E=nil local H=D.
+MouseEnter:connect(function()E=D delay(0.1,function()if E==D then
+showLargePreview(D)end end)end)return D,H end local function realignButtonGrid(D
+)local E,H=0,0 for I=1,#k do k[I].Position=UDim2.new(0,v*E,0,w*H)E=E+1 if E>=D
+then E=0 H=H+1 end end end local function setInsertButtonImageBehavior(D,E,H,I)
+if E then D.AssetName.Value=H D.AssetId.Value=I local J=x..I if J~=D.Button.
 ButtonImage.Image then delay(0,function()game:GetService'ContentProvider':
-Preload(y..H)E.Button.ButtonImage.Image=y..H end)end table.insert(m,E.Button.
-MouseButton1Click:connect(function()local J=(G=='Water')and(t.Category[t.
-CurrentCategory].SetName=='High Scalability')r.Visible=J if J then c(G,tonumber(
-H),nil)else c(G,tonumber(H))end end))E.Visible=true else E.Visible=false end end
-local function loadSectionOfItems(E,F,G)local H=F*G if k>#n then return end
-local I,J=k,0 for K=1,H+1 do if k>=#n+1 then break end local L l[k],L=
-buildInsertButton()table.insert(m,L)l[k].Parent=E.SetPanel.ItemsFrame k=k+1 end
-realignButtonGrid(G)local K=I for L=I,k do if l[L]then if n[L]then if n[L].Name
-=='Water'then if t.Category[t.CurrentCategory].SetName=='High Scalability'then l
-[L]:FindFirstChild('DropDownButton',true):Destroy()end end local M if j then M=n
-[L].AssetVersionId else M=n[L].AssetId end setInsertButtonImageBehavior(l[L],
-true,n[L].Name,M)else break end else break end K=L end end local function
-setSetIndex()t.Category[t.CurrentCategory].Index=0 rows=7 columns=math.floor(o.
-SetPanel.ItemsFrame.AbsoluteSize.X/w)n=t.Category[t.CurrentCategory].Contents if
-n then for E=1,#l do l[E]:remove()end for E=1,#m do if m[E]then m[E]:disconnect(
-)end end m={}l={}k=1 loadSectionOfItems(o,rows,columns)end end local function
-selectSet(E,F,G,H)if E and t.Category[t.CurrentCategory]~=nil then if E~=t.
-Category[t.CurrentCategory].Button then t.Category[t.CurrentCategory].Button=E
-if u[G]==nil then u[G]=game:GetService'InsertService':GetCollection(G)end t.
-Category[t.CurrentCategory].Contents=u[G]t.Category[t.CurrentCategory].SetName=F
-t.Category[t.CurrentCategory].SetId=G end setSetIndex()end end local function
-selectCategoryPage(E,F)if E~=t.CurrentCategory then if t.CurrentCategory then
-for G,H in pairs(t.CurrentCategory)do H.Visible=false end end t.CurrentCategory=
-E if t.Category[t.CurrentCategory]==nil then t.Category[t.CurrentCategory]={}if#
-E>0 then selectSet(E[1],E[1].SetName.Value,E[1].SetId.Value,0)end else t.
-Category[t.CurrentCategory].Button=nil selectSet(t.Category[t.CurrentCategory].
-ButtonFrame,t.Category[t.CurrentCategory].SetName,t.Category[t.CurrentCategory].
-SetId,t.Category[t.CurrentCategory].Index)end end end local function
-selectCategory(E)selectCategoryPage(E,0)end local function
-resetAllSetButtonSelection()local E=o.SetPanel.Sets.SetsLists:GetChildren()for F
-=1,#E do if E[F]:IsA'TextButton'then E[F].Selected=false E[F].
-BackgroundTransparency=1 E[F].TextColor3=Color3.new(1,1,1)E[F].BackgroundColor3=
-Color3.new(1,1,1)end end end local function populateSetsFrame()local E=0 for F=1
-,#v do local G=v[F]G.Visible=true G.Position=UDim2.new(0,5,0,E*G.Size.Y.Offset)G
-.Parent=o.SetPanel.Sets.SetsLists if F==1 then G.Selected=true G.
-BackgroundColor3=Color3.new(0,0.8,0)G.TextColor3=Color3.new(0,0,0)G.
-BackgroundTransparency=0 end G.MouseEnter:connect(function()if not G.Selected
-then G.BackgroundTransparency=0 G.TextColor3=Color3.new(0,0,0)end end)G.
-MouseLeave:connect(function()if not G.Selected then G.BackgroundTransparency=1 G
-.TextColor3=Color3.new(1,1,1)end end)G.MouseButton1Click:connect(function()
-resetAllSetButtonSelection()G.Selected=not G.Selected G.BackgroundColor3=Color3.
-new(0,0.8,0)G.TextColor3=Color3.new(0,0,0)G.BackgroundTransparency=0 selectSet(G
-,G.Text,v[F].SetId.Value,0)end)E=E+1 end local F=o.SetPanel.Sets.SetsLists:
-GetChildren()if F then for G=1,#F do if F[G]:IsA'TextButton'then selectSet(F[G],
-F[G].Text,v[G].SetId.Value,0)selectCategory(v)break end end end end o=
-createSetGui()r,s=createWaterGui()r.Position=UDim2.new(0,55,0,0)r.Parent=o o.
-Changed:connect(function(E)if E=='AbsoluteSize'then handleResize()setSetIndex()
-end end)local E,F=a.CreateTrueScrollingFrame()E.Size=UDim2.new(0.54,0,0.85,0)E.
-Position=UDim2.new(0.24,0,0.085,0)E.Name='ItemsFrame'E.ZIndex=6 E.Parent=o.
-SetPanel E.BackgroundTransparency=1 drillDownSetZIndex(F,7)F.Parent=o.SetPanel F
-.Position=UDim2.new(0.76,5,0,0)local G=false F.ScrollBottom.Changed:connect(
-function(H)if F.ScrollBottom.Value==true then if G then return end G=true
-loadSectionOfItems(o,rows,columns)G=false end end)local H={}for I=1,#b do local
-J=game:GetService'InsertService':GetUserSets(b[I])if J and#J>2 then for K=3,#J
-do if J[K].Name=='High Scalability'then table.insert(H,1,J[K])else table.insert(
-H,J[K])end end end end if H then v=processCategory(H)end rows=math.floor(o.
-SetPanel.ItemsFrame.AbsoluteSize.Y/x)columns=math.floor(o.SetPanel.ItemsFrame.
-AbsoluteSize.X/w)populateSetsFrame()insertPanelCloseCon=o.SetPanel.CancelButton.
-MouseButton1Click:connect(function()o.SetPanel.Visible=false if d then d()end
-end)local I,J=function(I)if I then o.SetPanel.Visible=true else o.SetPanel.
-Visible=false end end,function()if o then if o:FindFirstChild'SetPanel'then
-return o.SetPanel.Visible end end return false end return o,I,J,s end a.
+Preload(x..I)D.Button.ButtonImage.Image=x..I end)end table.insert(l,D.Button.
+MouseButton1Click:connect(function()local K=(H=='Water')and(s.Category[s.
+CurrentCategory].SetName=='High Scalability')q.Visible=K if K then c(H,tonumber(
+I),nil)else c(H,tonumber(I))end end))D.Visible=true else D.Visible=false end end
+local function loadSectionOfItems(D,E,H)local I=E*H if j>#m then return end
+local J,K=j,0 for L=1,I+1 do if j>=#m+1 then break end local M k[j],M=
+buildInsertButton()table.insert(l,M)k[j].Parent=D.SetPanel.ItemsFrame j=j+1 end
+realignButtonGrid(H)local L=J for M=J,j do if k[M]then if m[M]then if m[M].Name
+=='Water'then if s.Category[s.CurrentCategory].SetName=='High Scalability'then k
+[M]:FindFirstChild('DropDownButton',true):Destroy()end end local N if i then N=m
+[M].AssetVersionId else N=m[M].AssetId end setInsertButtonImageBehavior(k[M],
+true,m[M].Name,N)else break end else break end L=M end end local function
+setSetIndex()s.Category[s.CurrentCategory].Index=0 rows=7 columns=math.floor(n.
+SetPanel.ItemsFrame.AbsoluteSize.X/v)m=s.Category[s.CurrentCategory].Contents if
+m then for D=1,#k do k[D]:remove()end for D=1,#l do if l[D]then l[D]:disconnect(
+)end end l={}k={}j=1 loadSectionOfItems(n,rows,columns)end end local function
+selectSet(D,E,H,I)if D and s.Category[s.CurrentCategory]~=nil then if D~=s.
+Category[s.CurrentCategory].Button then s.Category[s.CurrentCategory].Button=D
+if t[H]==nil then t[H]=game:GetService'InsertService':GetCollection(H)end s.
+Category[s.CurrentCategory].Contents=t[H]s.Category[s.CurrentCategory].SetName=E
+s.Category[s.CurrentCategory].SetId=H end setSetIndex()end end local function
+selectCategoryPage(D,E)if D~=s.CurrentCategory then if s.CurrentCategory then
+for H,I in pairs(s.CurrentCategory)do I.Visible=false end end s.CurrentCategory=
+D if s.Category[s.CurrentCategory]==nil then s.Category[s.CurrentCategory]={}if#
+D>0 then selectSet(D[1],D[1].SetName.Value,D[1].SetId.Value,0)end else s.
+Category[s.CurrentCategory].Button=nil selectSet(s.Category[s.CurrentCategory].
+ButtonFrame,s.Category[s.CurrentCategory].SetName,s.Category[s.CurrentCategory].
+SetId,s.Category[s.CurrentCategory].Index)end end end local function
+selectCategory(D)selectCategoryPage(D,0)end local function
+resetAllSetButtonSelection()local D=n.SetPanel.Sets.SetsLists:GetChildren()for E
+=1,#D do if D[E]:IsA'TextButton'then D[E].Selected=false D[E].
+BackgroundTransparency=1 D[E].TextColor3=Color3.new(1,1,1)D[E].BackgroundColor3=
+Color3.new(1,1,1)end end end local function populateSetsFrame()local D=0 for E=1
+,#u do local H=u[E]H.Visible=true H.Position=UDim2.new(0,5,0,D*H.Size.Y.Offset)H
+.Parent=n.SetPanel.Sets.SetsLists if E==1 then H.Selected=true H.
+BackgroundColor3=Color3.new(0,0.8,0)H.TextColor3=Color3.new(0,0,0)H.
+BackgroundTransparency=0 end H.MouseEnter:connect(function()if not H.Selected
+then H.BackgroundTransparency=0 H.TextColor3=Color3.new(0,0,0)end end)H.
+MouseLeave:connect(function()if not H.Selected then H.BackgroundTransparency=1 H
+.TextColor3=Color3.new(1,1,1)end end)H.MouseButton1Click:connect(function()
+resetAllSetButtonSelection()H.Selected=not H.Selected H.BackgroundColor3=Color3.
+new(0,0.8,0)H.TextColor3=Color3.new(0,0,0)H.BackgroundTransparency=0 selectSet(H
+,H.Text,u[E].SetId.Value,0)end)D=D+1 end local E=n.SetPanel.Sets.SetsLists:
+GetChildren()if E then for H=1,#E do if E[H]:IsA'TextButton'then selectSet(E[H],
+E[H].Text,u[H].SetId.Value,0)selectCategory(u)break end end end end n=
+createSetGui()q,r=createWaterGui()q.Position=UDim2.new(0,55,0,0)q.Parent=n n.
+Changed:connect(function(D)if D=='AbsoluteSize'then handleResize()setSetIndex()
+end end)local D,E=a.CreateTrueScrollingFrame()D.Size=UDim2.new(0.54,0,0.85,0)D.
+Position=UDim2.new(0.24,0,0.085,0)D.Name='ItemsFrame'D.ZIndex=6 D.Parent=n.
+SetPanel D.BackgroundTransparency=1 drillDownSetZIndex(E,7)E.Parent=n.SetPanel E
+.Position=UDim2.new(0.76,5,0,0)local H=false E.ScrollBottom.Changed:connect(
+function(I)if E.ScrollBottom.Value==true then if H then return end H=true
+loadSectionOfItems(n,rows,columns)H=false end end)local I={}for J=1,#b do local
+K=game:GetService'InsertService':GetUserSets(b[J])if K and#K>2 then for L=3,#K
+do if K[L].Name=='High Scalability'then table.insert(I,1,K[L])else table.insert(
+I,K[L])end end end end if I then u=processCategory(I)end rows=math.floor(n.
+SetPanel.ItemsFrame.AbsoluteSize.Y/w)columns=math.floor(n.SetPanel.ItemsFrame.
+AbsoluteSize.X/v)populateSetsFrame()insertPanelCloseCon=n.SetPanel.CancelButton.
+MouseButton1Click:connect(function()n.SetPanel.Visible=false if d then d()end
+end)local J,K=function(J)if J then n.SetPanel.Visible=true else n.SetPanel.
+Visible=false end end,function()if n then if n:FindFirstChild'SetPanel'then
+return n.SetPanel.Visible end end return false end return n,J,K,r end a.
 CreateTerrainMaterialSelector=function(b,c)local d=Instance.new'BindableEvent'd.
-Name='TerrainMaterialSelectionChanged'local g,h=nil,Instance.new'Frame'h.Name=
-'TerrainMaterialSelector'if b then h.Size=b else h.Size=UDim2.new(0,245,0,230)
-end if c then h.Position=c end h.BorderSizePixel=0 h.BackgroundColor3=Color3.
-new(0,0,0)h.Active=true d.Parent=h local i,j,k=true,{},{'Grass','Sand','Brick',
+Name='TerrainMaterialSelectionChanged'local e,g=nil,Instance.new'Frame'g.Name=
+'TerrainMaterialSelector'if b then g.Size=b else g.Size=UDim2.new(0,245,0,230)
+end if c then g.Position=c end g.BorderSizePixel=0 g.BackgroundColor3=Color3.
+new(0,0,0)g.Active=true d.Parent=g local h,i,j=true,{},{'Grass','Sand','Brick',
 'Granite','Asphalt','Iron','Aluminum','Gold','Plank','Log','Gravel',
-'Cinder Block','Stone Wall','Concrete','Plastic (red)','Plastic (blue)'}if i
-then table.insert(k,'Water')end local l=1 function getEnumFromName(m)if m==
-'Grass'then return 1 end if m=='Sand'then return 2 end if m=='Erase'then return
-0 end if m=='Brick'then return 3 end if m=='Granite'then return 4 end if m==
-'Asphalt'then return 5 end if m=='Iron'then return 6 end if m=='Aluminum'then
-return 7 end if m=='Gold'then return 8 end if m=='Plank'then return 9 end if m==
-'Log'then return 10 end if m=='Gravel'then return 11 end if m=='Cinder Block'
-then return 12 end if m=='Stone Wall'then return 13 end if m=='Concrete'then
-return 14 end if m=='Plastic (red)'then return 15 end if m=='Plastic (blue)'then
-return 16 end if m=='Water'then return 17 end end function getNameFromEnum(m)if
-m==Enum.CellMaterial.Grass or m==1 then return'Grass'end if m==Enum.CellMaterial
-.Sand or m==2 then return'Sand'end if m==Enum.CellMaterial.Empty or m==0 then
-return'Erase'end if m==Enum.CellMaterial.Brick or m==3 then return'Brick'end if
-m==Enum.CellMaterial.Granite or m==4 then return'Granite'end if m==Enum.
-CellMaterial.Asphalt or m==5 then return'Asphalt'end if m==Enum.CellMaterial.
-Iron or m==6 then return'Iron'end if m==Enum.CellMaterial.Aluminum or m==7 then
-return'Aluminum'end if m==Enum.CellMaterial.Gold or m==8 then return'Gold'end if
-m==Enum.CellMaterial.WoodPlank or m==9 then return'Plank'end if m==Enum.
-CellMaterial.WoodLog or m==10 then return'Log'end if m==Enum.CellMaterial.Gravel
-or m==11 then return'Gravel'end if m==Enum.CellMaterial.CinderBlock or m==12
-then return'Cinder Block'end if m==Enum.CellMaterial.MossyStone or m==13 then
-return'Stone Wall'end if m==Enum.CellMaterial.Cement or m==14 then return
-'Concrete'end if m==Enum.CellMaterial.RedPlastic or m==15 then return
-'Plastic (red)'end if m==Enum.CellMaterial.BluePlastic or m==16 then return
-'Plastic (blue)'end if i then if m==Enum.CellMaterial.Water or m==17 then return
-'Water'end end end local function updateMaterialChoice(m)l=getEnumFromName(m)d:
-Fire(l)end for m,n in pairs(k)do j[n]={}if n=='Grass'then j[n].Regular=
-'http://www.roblox.com/asset/?id=56563112'elseif n=='Sand'then j[n].Regular=
-'http://www.roblox.com/asset/?id=62356652'elseif n=='Brick'then j[n].Regular=
-'http://www.roblox.com/asset/?id=65961537'elseif n=='Granite'then j[n].Regular=
-'http://www.roblox.com/asset/?id=67532153'elseif n=='Asphalt'then j[n].Regular=
-'http://www.roblox.com/asset/?id=67532038'elseif n=='Iron'then j[n].Regular=
-'http://www.roblox.com/asset/?id=67532093'elseif n=='Aluminum'then j[n].Regular=
-'http://www.roblox.com/asset/?id=67531995'elseif n=='Gold'then j[n].Regular=
-'http://www.roblox.com/asset/?id=67532118'elseif n=='Plastic (red)'then j[n].
-Regular='http://www.roblox.com/asset/?id=67531848'elseif n=='Plastic (blue)'then
-j[n].Regular='http://www.roblox.com/asset/?id=67531924'elseif n=='Plank'then j[n
-].Regular='http://www.roblox.com/asset/?id=67532015'elseif n=='Log'then j[n].
-Regular='http://www.roblox.com/asset/?id=67532051'elseif n=='Gravel'then j[n].
-Regular='http://www.roblox.com/asset/?id=67532206'elseif n=='Cinder Block'then j
-[n].Regular='http://www.roblox.com/asset/?id=67532103'elseif n=='Stone Wall'then
-j[n].Regular='http://www.roblox.com/asset/?id=67531804'elseif n=='Concrete'then
-j[n].Regular='http://www.roblox.com/asset/?id=67532059'elseif n=='Water'then j[n
-].Regular='http://www.roblox.com/asset/?id=81407474'else j[n].Regular=
-'http://www.roblox.com/asset/?id=66887593'end end local o,p,q,r=a.
-CreateScrollingFrame(nil,'grid')o.Size=UDim2.new(0.85,0,1,0)o.Position=UDim2.
-new(0,0,0,0)o.Parent=h p.Parent=h p.Visible=true p.Position=UDim2.new(1,-19,0,0)
-q.Parent=h q.Visible=true q.Position=UDim2.new(1,-19,1,-17)local function
-goToNewMaterial(s,t)updateMaterialChoice(t)s.BackgroundTransparency=0 g.
-BackgroundTransparency=1 g=s end local function createMaterialButton(s)local t=
-Instance.new'TextButton't.Text=''t.Size=UDim2.new(0,32,0,32)t.BackgroundColor3=
-Color3.new(1,1,1)t.BorderSizePixel=0 t.BackgroundTransparency=1 t.
-AutoButtonColor=false t.Name=tostring(s)local u=Instance.new'ImageButton'u.
-AutoButtonColor=false u.BackgroundTransparency=1 u.Size=UDim2.new(0,30,0,30)u.
-Position=UDim2.new(0,1,0,1)u.Name=tostring(s)u.Parent=t u.Image=j[s].Regular
-local v=Instance.new'NumberValue'v.Name='EnumType'v.Parent=t v.Value=0 u.
-MouseEnter:connect(function()t.BackgroundTransparency=0 end)u.MouseLeave:
-connect(function()if g~=t then t.BackgroundTransparency=1 end end)u.
-MouseButton1Click:connect(function()if g~=t then goToNewMaterial(t,tostring(s))
-end end)return t end for s=1,#k do local t=createMaterialButton(k[s])if k[s]==
-'Grass'then g=t t.BackgroundTransparency=0 end t.Parent=o end local s=function(s
-)if not s then return end if l==s then return end local t,u=getNameFromEnum(s),o
-:GetChildren()for v=1,#u do if u[v].Name=='Plastic (blue)'and t==
-'Plastic (blue)'then goToNewMaterial(u[v],t)return end if u[v].Name==
-'Plastic (red)'and t=='Plastic (red)'then goToNewMaterial(u[v],t)return end if
-string.find(u[v].Name,t)then goToNewMaterial(u[v],t)return end end end h.Changed
-:connect(function(t)if t=='AbsoluteSize'then r()end end)r()return h,d,s end a.
+'Cinder Block','Stone Wall','Concrete','Plastic (red)','Plastic (blue)'}if h
+then table.insert(j,'Water')end local k=1 function getEnumFromName(l)if l==
+'Grass'then return 1 end if l=='Sand'then return 2 end if l=='Erase'then return
+0 end if l=='Brick'then return 3 end if l=='Granite'then return 4 end if l==
+'Asphalt'then return 5 end if l=='Iron'then return 6 end if l=='Aluminum'then
+return 7 end if l=='Gold'then return 8 end if l=='Plank'then return 9 end if l==
+'Log'then return 10 end if l=='Gravel'then return 11 end if l=='Cinder Block'
+then return 12 end if l=='Stone Wall'then return 13 end if l=='Concrete'then
+return 14 end if l=='Plastic (red)'then return 15 end if l=='Plastic (blue)'then
+return 16 end if l=='Water'then return 17 end end function getNameFromEnum(l)if
+l==Enum.CellMaterial.Grass or l==1 then return'Grass'elseif l==Enum.CellMaterial
+.Sand or l==2 then return'Sand'elseif l==Enum.CellMaterial.Empty or l==0 then
+return'Erase'elseif l==Enum.CellMaterial.Brick or l==3 then return'Brick'elseif
+l==Enum.CellMaterial.Granite or l==4 then return'Granite'elseif l==Enum.
+CellMaterial.Asphalt or l==5 then return'Asphalt'elseif l==Enum.CellMaterial.
+Iron or l==6 then return'Iron'elseif l==Enum.CellMaterial.Aluminum or l==7 then
+return'Aluminum'elseif l==Enum.CellMaterial.Gold or l==8 then return'Gold'elseif
+l==Enum.CellMaterial.WoodPlank or l==9 then return'Plank'elseif l==Enum.
+CellMaterial.WoodLog or l==10 then return'Log'elseif l==Enum.CellMaterial.Gravel
+or l==11 then return'Gravel'elseif l==Enum.CellMaterial.CinderBlock or l==12
+then return'Cinder Block'elseif l==Enum.CellMaterial.MossyStone or l==13 then
+return'Stone Wall'elseif l==Enum.CellMaterial.Cement or l==14 then return
+'Concrete'elseif l==Enum.CellMaterial.RedPlastic or l==15 then return
+'Plastic (red)'elseif l==Enum.CellMaterial.BluePlastic or l==16 then return
+'Plastic (blue)'end if h then if l==Enum.CellMaterial.Water or l==17 then return
+'Water'end end end local function updateMaterialChoice(l)k=getEnumFromName(l)d:
+Fire(k)end for l,m in pairs(j)do i[m]={}if m=='Grass'then i[m].Regular=
+'http://www.roblox.com/asset/?id=56563112'elseif m=='Sand'then i[m].Regular=
+'http://www.roblox.com/asset/?id=62356652'elseif m=='Brick'then i[m].Regular=
+'http://www.roblox.com/asset/?id=65961537'elseif m=='Granite'then i[m].Regular=
+'http://www.roblox.com/asset/?id=67532153'elseif m=='Asphalt'then i[m].Regular=
+'http://www.roblox.com/asset/?id=67532038'elseif m=='Iron'then i[m].Regular=
+'http://www.roblox.com/asset/?id=67532093'elseif m=='Aluminum'then i[m].Regular=
+'http://www.roblox.com/asset/?id=67531995'elseif m=='Gold'then i[m].Regular=
+'http://www.roblox.com/asset/?id=67532118'elseif m=='Plastic (red)'then i[m].
+Regular='http://www.roblox.com/asset/?id=67531848'elseif m=='Plastic (blue)'then
+i[m].Regular='http://www.roblox.com/asset/?id=67531924'elseif m=='Plank'then i[m
+].Regular='http://www.roblox.com/asset/?id=67532015'elseif m=='Log'then i[m].
+Regular='http://www.roblox.com/asset/?id=67532051'elseif m=='Gravel'then i[m].
+Regular='http://www.roblox.com/asset/?id=67532206'elseif m=='Cinder Block'then i
+[m].Regular='http://www.roblox.com/asset/?id=67532103'elseif m=='Stone Wall'then
+i[m].Regular='http://www.roblox.com/asset/?id=67531804'elseif m=='Concrete'then
+i[m].Regular='http://www.roblox.com/asset/?id=67532059'elseif m=='Water'then i[m
+].Regular='http://www.roblox.com/asset/?id=81407474'else i[m].Regular=
+'http://www.roblox.com/asset/?id=66887593'end end local n,o,p,q=a.
+CreateScrollingFrame(nil,'grid')n.Size=UDim2.new(0.85,0,1,0)n.Position=UDim2.
+new(0,0,0,0)n.Parent=g o.Parent=g o.Visible=true o.Position=UDim2.new(1,-19,0,0)
+p.Parent=g p.Visible=true p.Position=UDim2.new(1,-19,1,-17)local function
+goToNewMaterial(r,s)updateMaterialChoice(s)r.BackgroundTransparency=0 e.
+BackgroundTransparency=1 e=r end local function createMaterialButton(r)local s=
+Instance.new'TextButton's.Text=''s.Size=UDim2.new(0,32,0,32)s.BackgroundColor3=
+Color3.new(1,1,1)s.BorderSizePixel=0 s.BackgroundTransparency=1 s.
+AutoButtonColor=false s.Name=tostring(r)local t=Instance.new'ImageButton't.
+AutoButtonColor=false t.BackgroundTransparency=1 t.Size=UDim2.new(0,30,0,30)t.
+Position=UDim2.new(0,1,0,1)t.Name=tostring(r)t.Parent=s t.Image=i[r].Regular
+local u=Instance.new'NumberValue'u.Name='EnumType'u.Parent=s u.Value=0 t.
+MouseEnter:connect(function()s.BackgroundTransparency=0 end)t.MouseLeave:
+connect(function()if e~=s then s.BackgroundTransparency=1 end end)t.
+MouseButton1Click:connect(function()if e~=s then goToNewMaterial(s,tostring(r))
+end end)return s end for r=1,#j do local s=createMaterialButton(j[r])if j[r]==
+'Grass'then e=s s.BackgroundTransparency=0 end s.Parent=n end local r=function(r
+)if not r then return end if k==r then return end local s,t=getNameFromEnum(r),n
+:GetChildren()for u=1,#t do if t[u].Name=='Plastic (blue)'and s==
+'Plastic (blue)'then goToNewMaterial(t[u],s)return end if t[u].Name==
+'Plastic (red)'and s=='Plastic (red)'then goToNewMaterial(t[u],s)return end if
+string.find(t[u].Name,s)then goToNewMaterial(t[u],s)return end end end g.Changed
+:connect(function(s)if s=='AbsoluteSize'then q()end end)q()return g,d,r end a.
 CreateLoadingFrame=function(b,c,d)game:GetService'ContentProvider':Preload
-'http://www.roblox.com/asset/?id=35238053'local g=Instance.new'Frame'g.Name=
-'LoadingFrame'g.Style=Enum.FrameStyle.RobloxRound if c then g.Size=c else g.Size
-=UDim2.new(0,300,0,160)end if d then g.Position=d else g.Position=UDim2.new(0.5,
--150,0.5,-80)end local h=Instance.new'Frame'h.Name='LoadingBar'h.
-BackgroundColor3=Color3.new(0,0,0)h.BorderColor3=Color3.new(0.30980392156862746,
-0.30980392156862746,0.30980392156862746)h.Position=UDim2.new(0,0,0,41)h.Size=
-UDim2.new(1,0,0,30)h.Parent=g local i=Instance.new'ImageLabel'i.Name=
-'LoadingGreenBar'i.Image='http://www.roblox.com/asset/?id=35238053'i.Position=
-UDim2.new(0,0,0,0)i.Size=UDim2.new(0,0,1,0)i.Visible=false i.Parent=h local j=
-Instance.new'TextLabel'j.Name='LoadingPercent'j.BackgroundTransparency=1 j.
-Position=UDim2.new(0,0,1,0)j.Size=UDim2.new(1,0,0,14)j.Font=Enum.Font.Arial j.
-Text='0%'j.FontSize=Enum.FontSize.Size14 j.TextColor3=Color3.new(1,1,1)j.Parent=
-h local k=Instance.new'TextButton'k.Name='CancelButton'k.Position=UDim2.new(0.5,
--60,1,-40)k.Size=UDim2.new(0,120,0,40)k.Font=Enum.Font.Arial k.FontSize=Enum.
-FontSize.Size18 k.TextColor3=Color3.new(1,1,1)k.Text='Cancel'k.Style=Enum.
-ButtonStyle.RobloxButton k.Parent=g local l=Instance.new'TextLabel'l.Name=
-'loadingName'l.BackgroundTransparency=1 l.Size=UDim2.new(1,0,0,18)l.Position=
-UDim2.new(0,0,0,2)l.Font=Enum.Font.Arial l.Text=b l.TextColor3=Color3.new(1,1,1)
-l.TextStrokeTransparency=1 l.FontSize=Enum.FontSize.Size18 l.Parent=g local m=
-Instance.new'BindableEvent'm.Name='CancelButtonClicked'm.Parent=k k.
-MouseButton1Click:connect(function()m:Fire()end)local n=function(n,o,p)if n and
-type(n)~='number'then error(
-'updateLoadingGuiPercent expects number as argument, got',type(n),'instead')end
-local q=nil if n<0 then q=UDim2.new(0,0,1,0)elseif n>1 then q=UDim2.new(1,0,1,0)
-else q=UDim2.new(n,0,1,0)end if o then if not p then error
+'http://www.roblox.com/asset/?id=35238053'local e=Instance.new'Frame'e.Name=
+'LoadingFrame'e.Style=Enum.FrameStyle.RobloxRound if c then e.Size=c else e.Size
+=UDim2.new(0,300,0,160)end if d then e.Position=d else e.Position=UDim2.new(0.5,
+-150,0.5,-80)end local g=Instance.new'Frame'g.Name='LoadingBar'g.
+BackgroundColor3=Color3.new(0,0,0)g.BorderColor3=Color3.new(0.30980392156862746,
+0.30980392156862746,0.30980392156862746)g.Position=UDim2.new(0,0,0,41)g.Size=
+UDim2.new(1,0,0,30)g.Parent=e local h=Instance.new'ImageLabel'h.Name=
+'LoadingGreenBar'h.Image='http://www.roblox.com/asset/?id=35238053'h.Position=
+UDim2.new(0,0,0,0)h.Size=UDim2.new(0,0,1,0)h.Visible=false h.Parent=g local i=
+Instance.new'TextLabel'i.Name='LoadingPercent'i.BackgroundTransparency=1 i.
+Position=UDim2.new(0,0,1,0)i.Size=UDim2.new(1,0,0,14)i.Font=Enum.Font.Arial i.
+Text='0%'i.FontSize=Enum.FontSize.Size14 i.TextColor3=Color3.new(1,1,1)i.Parent=
+g local j=Instance.new'TextButton'j.Name='CancelButton'j.Position=UDim2.new(0.5,
+-60,1,-40)j.Size=UDim2.new(0,120,0,40)j.Font=Enum.Font.Arial j.FontSize=Enum.
+FontSize.Size18 j.TextColor3=Color3.new(1,1,1)j.Text='Cancel'j.Style=Enum.
+ButtonStyle.RobloxButton j.Parent=e local k=Instance.new'TextLabel'k.Name=
+'loadingName'k.BackgroundTransparency=1 k.Size=UDim2.new(1,0,0,18)k.Position=
+UDim2.new(0,0,0,2)k.Font=Enum.Font.Arial k.Text=b k.TextColor3=Color3.new(1,1,1)
+k.TextStrokeTransparency=1 k.FontSize=Enum.FontSize.Size18 k.Parent=e local l=
+Instance.new'BindableEvent'l.Name='CancelButtonClicked'l.Parent=j j.
+MouseButton1Click:connect(function()l:Fire()end)local m=function(m,n,o)if m and
+type(m)~='number'then error(
+'updateLoadingGuiPercent expects number as argument, got',type(m),'instead')end
+local p=nil if m<0 then p=UDim2.new(0,0,1,0)elseif m>1 then p=UDim2.new(1,0,1,0)
+else p=UDim2.new(m,0,1,0)end if n then if not o then error
 [[updateLoadingGuiPercent is set to tween new percentage, but got no tween time length! Please pass this in as third argument]]
-end if q.X.Scale>0 then i.Visible=true i:TweenSize(q,Enum.EasingDirection.Out,
-Enum.EasingStyle.Quad,p,true)else i:TweenSize(q,Enum.EasingDirection.Out,Enum.
-EasingStyle.Quad,p,true,function()if q.X.Scale<0 then i.Visible=false end end)
-end else i.Size=q i.Visible=(q.X.Scale>0)end end i.Changed:connect(function(o)if
-o=='Size'then j.Text=tostring(math.ceil(i.Size.X.Scale*100))..'%'end end)return
-g,n,m end a.CreatePluginFrame=function(b,c,d,g,h)function createMenuButton(i,j,k
-,l,m,n)local o=Instance.new'TextButton'o.AutoButtonColor=false o.Name=m o.
-BackgroundTransparency=1 o.Position=j o.Size=i o.Font=Enum.Font.ArialBold o.
-FontSize=l o.Text=k o.TextColor3=Color3.new(1,1,1)o.BorderSizePixel=0 o.
+end if p.X.Scale>0 then h.Visible=true h:TweenSize(p,Enum.EasingDirection.Out,
+Enum.EasingStyle.Quad,o,true)else h:TweenSize(p,Enum.EasingDirection.Out,Enum.
+EasingStyle.Quad,o,true,function()if p.X.Scale<0 then h.Visible=false end end)
+end else h.Size=p h.Visible=(p.X.Scale>0)end end h.Changed:connect(function(n)if
+n=='Size'then i.Text=tostring(math.ceil(h.Size.X.Scale*100))..'%'end end)return
+e,m,l end a.CreatePluginFrame=function(b,c,d,e,g)function createMenuButton(h,i,j
+,k,l,m)local n=Instance.new'TextButton'n.AutoButtonColor=false n.Name=l n.
+BackgroundTransparency=1 n.Position=i n.Size=h n.Font=Enum.Font.ArialBold n.
+FontSize=k n.Text=j n.TextColor3=Color3.new(1,1,1)n.BorderSizePixel=0 n.
 BackgroundColor3=Color3.new(7.8431372549019605E-2,7.8431372549019605E-2,
-7.8431372549019605E-2)o.MouseEnter:connect(function()if o.Selected then return
-end o.BackgroundTransparency=0 end)o.MouseLeave:connect(function()if o.Selected
-then return end o.BackgroundTransparency=1 end)o.Parent=n return o end local i=
-Instance.new'Frame'i.Name=tostring(b)..'DragBar'i.BackgroundColor3=Color3.new(
-0.15294117647058825,0.15294117647058825,0.15294117647058825)i.BorderColor3=
-Color3.new(0,0,0)if c then i.Size=UDim2.new(c.X.Scale,c.X.Offset,0,20)+UDim2.
-new(0,20,0,0)else i.Size=UDim2.new(0,183,0,20)end if d then i.Position=d end i.
-Active=true i.Draggable=true i.MouseEnter:connect(function()i.BackgroundColor3=
-Color3.new(0.19215686274509805,0.19215686274509805,0.19215686274509805)end)i.
-MouseLeave:connect(function()i.BackgroundColor3=Color3.new(0.15294117647058825,
-0.15294117647058825,0.15294117647058825)end)i.Parent=h local j=Instance.new
-'TextLabel'j.Name='BarNameLabel'j.Text=' '..tostring(b)j.TextColor3=Color3.new(1
-,1,1)j.TextStrokeTransparency=0 j.Size=UDim2.new(1,0,1,0)j.Font=Enum.Font.
-ArialBold j.FontSize=Enum.FontSize.Size18 j.TextXAlignment=Enum.TextXAlignment.
-Left j.BackgroundTransparency=1 j.Parent=i local k,l=createMenuButton(UDim2.new(
-0,15,0,17),UDim2.new(1,-16,0.5,-8),'X',Enum.FontSize.Size14,'CloseButton',i),
-Instance.new'BindableEvent'l.Name='CloseEvent'l.Parent=k k.MouseButton1Click:
-connect(function()l:Fire()k.BackgroundTransparency=1 end)local m,n=
+7.8431372549019605E-2)n.MouseEnter:connect(function()if n.Selected then return
+end n.BackgroundTransparency=0 end)n.MouseLeave:connect(function()if n.Selected
+then return end n.BackgroundTransparency=1 end)n.Parent=m return n end local h=
+Instance.new'Frame'h.Name=tostring(b)..'DragBar'h.BackgroundColor3=Color3.new(
+0.15294117647058825,0.15294117647058825,0.15294117647058825)h.BorderColor3=
+Color3.new(0,0,0)if c then h.Size=UDim2.new(c.X.Scale,c.X.Offset,0,20)+UDim2.
+new(0,20,0,0)else h.Size=UDim2.new(0,183,0,20)end if d then h.Position=d end h.
+Active=true h.Draggable=true h.MouseEnter:connect(function()h.BackgroundColor3=
+Color3.new(0.19215686274509805,0.19215686274509805,0.19215686274509805)end)h.
+MouseLeave:connect(function()h.BackgroundColor3=Color3.new(0.15294117647058825,
+0.15294117647058825,0.15294117647058825)end)h.Parent=g local i=Instance.new
+'TextLabel'i.Name='BarNameLabel'i.Text=' '..tostring(b)i.TextColor3=Color3.new(1
+,1,1)i.TextStrokeTransparency=0 i.Size=UDim2.new(1,0,1,0)i.Font=Enum.Font.
+ArialBold i.FontSize=Enum.FontSize.Size18 i.TextXAlignment=Enum.TextXAlignment.
+Left i.BackgroundTransparency=1 i.Parent=h local j,k=createMenuButton(UDim2.new(
+0,15,0,17),UDim2.new(1,-16,0.5,-8),'X',Enum.FontSize.Size14,'CloseButton',h),
+Instance.new'BindableEvent'k.Name='CloseEvent'k.Parent=j j.MouseButton1Click:
+connect(function()k:Fire()j.BackgroundTransparency=1 end)local l,m=
 createMenuButton(UDim2.new(0,15,0,17),UDim2.new(1,-51,0.5,-8),'?',Enum.FontSize.
-Size14,'HelpButton',i),Instance.new'Frame'n.Name='HelpFrame'n.BackgroundColor3=
-Color3.new(0,0,0)n.Size=UDim2.new(0,300,0,552)n.Position=UDim2.new(1,5,0,0)n.
-Active=true n.BorderSizePixel=0 n.Visible=false n.Parent=i m.MouseButton1Click:
-connect(function()n.Visible=not n.Visible if n.Visible then m.Selected=true m.
-BackgroundTransparency=0 local o=getScreenGuiAncestor(n)if o then if n.
-AbsolutePosition.X+n.AbsoluteSize.X>o.AbsoluteSize.X then n.Position=UDim2.new(0
-,-5-n.AbsoluteSize.X,0,0)else n.Position=UDim2.new(1,5,0,0)end else n.Position=
-UDim2.new(1,5,0,0)end else m.Selected=false m.BackgroundTransparency=1 end end)
-local o=createMenuButton(UDim2.new(0,16,0,17),UDim2.new(1,-34,0.5,-8),'-',Enum.
-FontSize.Size14,'MinimizeButton',i)o.TextYAlignment=Enum.TextYAlignment.Top
-local p=Instance.new'Frame'p.Name='MinimizeFrame'p.BackgroundColor3=Color3.new(
-0.28627450980392155,0.28627450980392155,0.28627450980392155)p.BorderColor3=
-Color3.new(0,0,0)p.Position=UDim2.new(0,0,1,0)if c then p.Size=UDim2.new(c.X.
-Scale,c.X.Offset,0,50)+UDim2.new(0,20,0,0)else p.Size=UDim2.new(0,183,0,50)end p
-.Visible=false p.Parent=i local q=Instance.new'TextButton'q.Position=UDim2.new(
-0.5,-50,0.5,-20)q.Name='MinimizeButton'q.Size=UDim2.new(0,100,0,40)q.Style=Enum.
-ButtonStyle.RobloxButton q.Font=Enum.Font.ArialBold q.FontSize=Enum.FontSize.
-Size18 q.TextColor3=Color3.new(1,1,1)q.Text='Show'q.Parent=p local r=Instance.
-new'Frame'r.Name='SeparatingLine'r.BackgroundColor3=Color3.new(
-0.45098039215686275,0.45098039215686275,0.45098039215686275)r.BorderSizePixel=0
-r.Position=UDim2.new(1,-18,0.5,-7)r.Size=UDim2.new(0,1,0,14)r.Parent=i local s=r
-:clone()s.Position=UDim2.new(1,-35,0.5,-7)s.Parent=i local t=Instance.new'Frame'
-t.Name='WidgetContainer't.BackgroundTransparency=1 t.Position=UDim2.new(0,0,1,0)
-t.BorderColor3=Color3.new(0,0,0)if not g then t.BackgroundTransparency=0 t.
+Size14,'HelpButton',h),Instance.new'Frame'm.Name='HelpFrame'm.BackgroundColor3=
+Color3.new(0,0,0)m.Size=UDim2.new(0,300,0,552)m.Position=UDim2.new(1,5,0,0)m.
+Active=true m.BorderSizePixel=0 m.Visible=false m.Parent=h l.MouseButton1Click:
+connect(function()m.Visible=not m.Visible if m.Visible then l.Selected=true l.
+BackgroundTransparency=0 local n=getScreenGuiAncestor(m)if n then if m.
+AbsolutePosition.X+m.AbsoluteSize.X>n.AbsoluteSize.X then m.Position=UDim2.new(0
+,-5-m.AbsoluteSize.X,0,0)else m.Position=UDim2.new(1,5,0,0)end else m.Position=
+UDim2.new(1,5,0,0)end else l.Selected=false l.BackgroundTransparency=1 end end)
+local n=createMenuButton(UDim2.new(0,16,0,17),UDim2.new(1,-34,0.5,-8),'-',Enum.
+FontSize.Size14,'MinimizeButton',h)n.TextYAlignment=Enum.TextYAlignment.Top
+local o=Instance.new'Frame'o.Name='MinimizeFrame'o.BackgroundColor3=Color3.new(
+0.28627450980392155,0.28627450980392155,0.28627450980392155)o.BorderColor3=
+Color3.new(0,0,0)o.Position=UDim2.new(0,0,1,0)if c then o.Size=UDim2.new(c.X.
+Scale,c.X.Offset,0,50)+UDim2.new(0,20,0,0)else o.Size=UDim2.new(0,183,0,50)end o
+.Visible=false o.Parent=h local p=Instance.new'TextButton'p.Position=UDim2.new(
+0.5,-50,0.5,-20)p.Name='MinimizeButton'p.Size=UDim2.new(0,100,0,40)p.Style=Enum.
+ButtonStyle.RobloxButton p.Font=Enum.Font.ArialBold p.FontSize=Enum.FontSize.
+Size18 p.TextColor3=Color3.new(1,1,1)p.Text='Show'p.Parent=o local q=Instance.
+new'Frame'q.Name='SeparatingLine'q.BackgroundColor3=Color3.new(
+0.45098039215686275,0.45098039215686275,0.45098039215686275)q.BorderSizePixel=0
+q.Position=UDim2.new(1,-18,0.5,-7)q.Size=UDim2.new(0,1,0,14)q.Parent=h local r=q
+:clone()r.Position=UDim2.new(1,-35,0.5,-7)r.Parent=h local s=Instance.new'Frame'
+s.Name='WidgetContainer's.BackgroundTransparency=1 s.Position=UDim2.new(0,0,1,0)
+s.BorderColor3=Color3.new(0,0,0)if not e then s.BackgroundTransparency=0 s.
 BackgroundColor3=Color3.new(0.2823529411764706,0.2823529411764706,
-0.2823529411764706)end t.Parent=i if c then if g then t.Size=c else t.Size=UDim2
-.new(0,i.AbsoluteSize.X,c.Y.Scale,c.Y.Offset)end else if g then t.Size=UDim2.
-new(0,163,0,400)else t.Size=UDim2.new(0,i.AbsoluteSize.X,0,400)end end if d then
-t.Position=d+UDim2.new(0,0,0,20)end local u,v,w=nil if g then u,v=a.
-CreateTrueScrollingFrame()u.Size=UDim2.new(1,0,1,0)u.BackgroundColor3=Color3.
-new(0.2823529411764706,0.2823529411764706,0.2823529411764706)u.BorderColor3=
-Color3.new(0,0,0)u.Active=true u.Parent=t v.Parent=i v.BackgroundColor3=Color3.
-new(0.2823529411764706,0.2823529411764706,0.2823529411764706)v.BorderSizePixel=0
-v.BackgroundTransparency=0 v.Position=UDim2.new(1,-21,1,1)if c then v.Size=UDim2
-.new(0,21,c.Y.Scale,c.Y.Offset)else v.Size=UDim2.new(0,21,0,400)end v:
-FindFirstChild'ScrollDownButton'.Position=UDim2.new(0,0,1,-20)local x=Instance.
-new'Frame'x.Name='FakeLine'x.BorderSizePixel=0 x.BackgroundColor3=Color3.new(0,0
-,0)x.Size=UDim2.new(0,1,1,1)x.Position=UDim2.new(1,0,0,0)x.Parent=v w=Instance.
-new'TextButton'w.ZIndex=2 w.AutoButtonColor=false w.Name='VerticalDragger'w.
+0.2823529411764706)end s.Parent=h if c then if e then s.Size=c else s.Size=UDim2
+.new(0,h.AbsoluteSize.X,c.Y.Scale,c.Y.Offset)end else if e then s.Size=UDim2.
+new(0,163,0,400)else s.Size=UDim2.new(0,h.AbsoluteSize.X,0,400)end end if d then
+s.Position=d+UDim2.new(0,0,0,20)end local t,u,v=nil if e then t,u=a.
+CreateTrueScrollingFrame()t.Size=UDim2.new(1,0,1,0)t.BackgroundColor3=Color3.
+new(0.2823529411764706,0.2823529411764706,0.2823529411764706)t.BorderColor3=
+Color3.new(0,0,0)t.Active=true t.Parent=s u.Parent=h u.BackgroundColor3=Color3.
+new(0.2823529411764706,0.2823529411764706,0.2823529411764706)u.BorderSizePixel=0
+u.BackgroundTransparency=0 u.Position=UDim2.new(1,-21,1,1)if c then u.Size=UDim2
+.new(0,21,c.Y.Scale,c.Y.Offset)else u.Size=UDim2.new(0,21,0,400)end u:
+FindFirstChild'ScrollDownButton'.Position=UDim2.new(0,0,1,-20)local w=Instance.
+new'Frame'w.Name='FakeLine'w.BorderSizePixel=0 w.BackgroundColor3=Color3.new(0,0
+,0)w.Size=UDim2.new(0,1,1,1)w.Position=UDim2.new(1,0,0,0)w.Parent=u v=Instance.
+new'TextButton'v.ZIndex=2 v.AutoButtonColor=false v.Name='VerticalDragger'v.
 BackgroundColor3=Color3.new(0.19607843137254902,0.19607843137254902,
-0.19607843137254902)w.BorderColor3=Color3.new(0,0,0)w.Size=UDim2.new(1,20,0,20)w
-.Position=UDim2.new(0,0,1,0)w.Active=true w.Text=''w.Parent=t local y=Instance.
-new'Frame'y.Name='ScrubFrame'y.BackgroundColor3=Color3.new(1,1,1)y.
-BorderSizePixel=0 y.Position=UDim2.new(0.5,-5,0.5,0)y.Size=UDim2.new(0,10,0,1)y.
-ZIndex=5 y.Parent=w local z=y:clone()z.Position=UDim2.new(0.5,-5,0.5,-2)z.Parent
-=w local A=y:clone()A.Position=UDim2.new(0.5,-5,0.5,2)A.Parent=w local B=
-Instance.new'TextButton'B.Name='AreaSoak'B.Size=UDim2.new(1,0,1,0)B.
-BackgroundTransparency=1 B.BorderSizePixel=0 B.Text=''B.ZIndex=10 B.Visible=
-false B.Active=true B.Parent=getScreenGuiAncestor(h)local C,D=false,nil w.
-MouseEnter:connect(function()w.BackgroundColor3=Color3.new(0.23529411764705882,
-0.23529411764705882,0.23529411764705882)end)w.MouseLeave:connect(function()w.
+0.19607843137254902)v.BorderColor3=Color3.new(0,0,0)v.Size=UDim2.new(1,20,0,20)v
+.Position=UDim2.new(0,0,1,0)v.Active=true v.Text=''v.Parent=s local x=Instance.
+new'Frame'x.Name='ScrubFrame'x.BackgroundColor3=Color3.new(1,1,1)x.
+BorderSizePixel=0 x.Position=UDim2.new(0.5,-5,0.5,0)x.Size=UDim2.new(0,10,0,1)x.
+ZIndex=5 x.Parent=v local y=x:clone()y.Position=UDim2.new(0.5,-5,0.5,-2)y.Parent
+=v local z=x:clone()z.Position=UDim2.new(0.5,-5,0.5,2)z.Parent=v local A=
+Instance.new'TextButton'A.Name='AreaSoak'A.Size=UDim2.new(1,0,1,0)A.
+BackgroundTransparency=1 A.BorderSizePixel=0 A.Text=''A.ZIndex=10 A.Visible=
+false A.Active=true A.Parent=getScreenGuiAncestor(g)local B,C=false,nil v.
+MouseEnter:connect(function()v.BackgroundColor3=Color3.new(0.23529411764705882,
+0.23529411764705882,0.23529411764705882)end)v.MouseLeave:connect(function()v.
 BackgroundColor3=Color3.new(0.19607843137254902,0.19607843137254902,
-0.19607843137254902)end)w.MouseButton1Down:connect(function(E,F)C=true B.Visible
-=true D=F end)B.MouseButton1Up:connect(function()C=false B.Visible=false end)B.
-MouseMoved:connect(function(E,F)if not C then return end local G=F-D if not v.
-ScrollDownButton.Visible and G>0 then return end if(t.Size.Y.Offset+G)<150 then
-t.Size=UDim2.new(t.Size.X.Scale,t.Size.X.Offset,t.Size.Y.Scale,150)v.Size=UDim2.
-new(0,21,0,150)return end D=F if t.Size.Y.Offset+G>=0 then t.Size=UDim2.new(t.
-Size.X.Scale,t.Size.X.Offset,t.Size.Y.Scale,t.Size.Y.Offset+G)v.Size=UDim2.new(0
-,21,0,v.Size.Y.Offset+G)end end)end local function switchMinimize()p.Visible=not
-p.Visible if g then u.Visible=not u.Visible w.Visible=not w.Visible v.Visible=
-not v.Visible else t.Visible=not t.Visible end if p.Visible then o.Text='+'else
-o.Text='-'end end q.MouseButton1Click:connect(function()switchMinimize()end)o.
-MouseButton1Click:connect(function()switchMinimize()end)if g then return i,u,n,l
-else return i,t,n,l end end a.Help=function(b)if b=='CreatePropertyDropDownMenu'
+0.19607843137254902)end)v.MouseButton1Down:connect(function(D,E)B=true A.Visible
+=true C=E end)A.MouseButton1Up:connect(function()B=false A.Visible=false end)A.
+MouseMoved:connect(function(D,E)if not B then return end local H=E-C if not u.
+ScrollDownButton.Visible and H>0 then return end if(s.Size.Y.Offset+H)<150 then
+s.Size=UDim2.new(s.Size.X.Scale,s.Size.X.Offset,s.Size.Y.Scale,150)u.Size=UDim2.
+new(0,21,0,150)return end C=E if s.Size.Y.Offset+H>=0 then s.Size=UDim2.new(s.
+Size.X.Scale,s.Size.X.Offset,s.Size.Y.Scale,s.Size.Y.Offset+H)u.Size=UDim2.new(0
+,21,0,u.Size.Y.Offset+H)end end)end local function switchMinimize()o.Visible=not
+o.Visible if e then t.Visible=not t.Visible v.Visible=not v.Visible u.Visible=
+not u.Visible else s.Visible=not s.Visible end if o.Visible then n.Text='+'else
+n.Text='-'end end p.MouseButton1Click:connect(function()switchMinimize()end)n.
+MouseButton1Click:connect(function()switchMinimize()end)if e then return h,t,m,k
+else return h,s,m,k end end a.Help=function(b)if b=='CreatePropertyDropDownMenu'
 or b==a.CreatePropertyDropDownMenu then return
 [[Function CreatePropertyDropDownMenu.  Arguments: (instance, propertyName, enumType).  Side effect: returns a container with a drop-down-box that is linked to the 'property' field of 'instance' which is of type 'enumType']]
 end if b=='CreateDropDownMenu'or b==a.CreateDropDownMenu then return

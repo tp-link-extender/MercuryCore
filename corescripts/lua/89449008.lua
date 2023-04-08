@@ -204,9 +204,9 @@ function addToGrid(child)
 		end
 	end)
 	local ancestryCon = nil
-	ancestryCon = child.AncestryChanged:connect(function(theChild, theParent)
+	ancestryCon = child.AncestryChanged:connect(function(_, _)
 		local thisObject = nil
-		for k, v in pairs(backpackItems) do
+		for _, v in pairs(backpackItems) do
 			if v == child then
 				thisObject = v
 				break
@@ -223,7 +223,7 @@ function addToGrid(child)
 				changeCon:disconnect()
 			end
 
-			for k, v in pairs(backpackItems) do
+			for _, v in pairs(backpackItems) do
 				if v == thisObject then
 					if mouseEnterCons[buttons[v]] then
 						mouseEnterCons[buttons[v]]:disconnect()

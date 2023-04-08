@@ -5,33 +5,33 @@ local function IsPhone()local b=Game:GetService'CoreGui'local c=WaitForChild(b,
 local function StringTrim(b)return(b:gsub('^%s*(.-)%s*$','%1'))end while Game.
 Players.LocalPlayer==nil do wait(0.03)end local b=Game.Players.LocalPlayer while
 b.Character==nil do wait(0.03)end local c=LoadLibrary'RbxUtility'local d,e,f,g,h
-,i,j=typedef(c),Game.Workspace.CurrentCamera,Game:GetService'CoreGui',Game:
-GetService'Players',Game:GetService'Debris',Game:GetService'GuiService',nil do j
-={}local k={}local l,m={__call=function(l,m)return l[m]or l[tonumber(m)]end,
-__index={GetEnumItems=function(l)local m={}for n,o in pairs(l)do if type(n)==
-'number'then m[#m+1]=o end end table.sort(m,function(p,q)return p.Value<q.Value
-end)return m end},__tostring=function(l)return'Enum.'..l[k]end},{__call=function
-(l,m)return m==l or m==l.Name or m==l.Value end,__tostring=function(l)return
-'Enum.'..l[k]..'.'..l.Name end}function CreateEnum(n)return function(o)local p={
-[k]=n}for q,r in pairs(o)do local s=setmetatable({Name=r,Value=q,Enum=p,[k]=n},m
-)p[q]=s p[r]=s p[s]=s end j[n]=p return setmetatable(p,l)end end end local k,l={
-Mouse=b:GetMouse(),Speed=0,Simulating=false,Configuration={DefaultSpeed=1},
-UserIsScrolling=false},{ChatColors={BrickColor.new'Bright red',BrickColor.new
-'Bright blue',BrickColor.new'Earth green',BrickColor.new'Bright violet',
-BrickColor.new'Bright orange',BrickColor.new'Bright yellow',BrickColor.new
-'Light reddish violet',BrickColor.new'Brick yellow'},Gui=nil,Frame=nil,
-RenderFrame=nil,TapToChatLabel=nil,ClickToChatButton=nil,ScrollingLock=false,
-EventListener=nil,MessageQueue={},Configuration={FontSize=Enum.FontSize.Size12,
-NumFontSize=12,HistoryLength=20,Size=UDim2.new(0.38,0,0.2,0),MessageColor=Color3
-.new(1,1,1),AdminMessageColor=Color3.new(1,0.8431372549019608,0),XScale=0.025,
-LifeTime=45,Position=UDim2.new(0,2,0.05,0),DefaultTweenSpeed=0.15},
-SlotPositions_List={},CachedSpaceStrings_List={},MouseOnFrame=false,GotFocus=
-false,Messages_List={},MessageThread=nil,Admins_List={'taskmanager','Heliodex',
-'tako'},SafeChat_List={['Use the Chat menu to talk to me.']={'/sc 0',true},[
-'I can only see menu chats.']={'/sc 1',true},['Hello']={['Hi']={'/sc 2_0',true,[
-'Hi there!']=true,['Hi everyone']=true},['Howdy']={'/sc 2_1',true,[
-'Howdy partner!']=true},['Greetings']={'/sc 2_2',true,['Greetings everyone']=
-true,['Greetings Robloxians!']=true,['Seasons greetings!']=true},['Welcome']={
+,i=typedef(c),Game.Workspace.CurrentCamera,Game:GetService'CoreGui',Game:
+GetService'Players',Game:GetService'GuiService',nil do i={}local j={}local k,l={
+__call=function(k,l)return k[l]or k[tonumber(l)]end,__index={GetEnumItems=
+function(k)local l={}for m,n in pairs(k)do if type(m)=='number'then l[#l+1]=n
+end end table.sort(l,function(o,p)return o.Value<p.Value end)return l end},
+__tostring=function(k)return'Enum.'..k[j]end},{__call=function(k,l)return l==k
+or l==k.Name or l==k.Value end,__tostring=function(k)return'Enum.'..k[j]..'.'..k
+.Name end}function CreateEnum(m)return function(n)local o={[j]=m}for p,q in
+pairs(n)do local r=setmetatable({Name=q,Value=p,Enum=o,[j]=m},l)o[p]=r o[q]=r o[
+r]=r end i[m]=o return setmetatable(o,k)end end end local j,k={Mouse=b:GetMouse(
+),Speed=0,Simulating=false,Configuration={DefaultSpeed=1},UserIsScrolling=false}
+,{ChatColors={BrickColor.new'Bright red',BrickColor.new'Bright blue',BrickColor.
+new'Earth green',BrickColor.new'Bright violet',BrickColor.new'Bright orange',
+BrickColor.new'Bright yellow',BrickColor.new'Light reddish violet',BrickColor.
+new'Brick yellow'},Gui=nil,Frame=nil,RenderFrame=nil,TapToChatLabel=nil,
+ClickToChatButton=nil,ScrollingLock=false,EventListener=nil,MessageQueue={},
+Configuration={FontSize=Enum.FontSize.Size12,NumFontSize=12,HistoryLength=20,
+Size=UDim2.new(0.38,0,0.2,0),MessageColor=Color3.new(1,1,1),AdminMessageColor=
+Color3.new(1,0.8431372549019608,0),XScale=0.025,LifeTime=45,Position=UDim2.new(0
+,2,0.05,0),DefaultTweenSpeed=0.15},SlotPositions_List={},CachedSpaceStrings_List
+={},MouseOnFrame=false,GotFocus=false,Messages_List={},MessageThread=nil,
+Admins_List={'taskmanager','Heliodex','tako'},SafeChat_List={[
+'Use the Chat menu to talk to me.']={'/sc 0',true},['I can only see menu chats.'
+]={'/sc 1',true},['Hello']={['Hi']={'/sc 2_0',true,['Hi there!']=true,[
+'Hi everyone']=true},['Howdy']={'/sc 2_1',true,['Howdy partner!']=true},[
+'Greetings']={'/sc 2_2',true,['Greetings everyone']=true,[
+'Greetings Robloxians!']=true,['Seasons greetings!']=true},['Welcome']={
 '/sc 2_3',true,['Welcome to my place']=true,['Welcome to my barbeque']=true,[
 'Welcome to our base']=true},['Hey there!']={'/sc 2_4',true},["What's up?"]={
 '/sc 2_5',true,['How are you doing?']=true,["How's it going?"]=true,[
@@ -196,100 +196,97 @@ true},['Ratings']={['Rate it!']=true,['I give it a 1 out of 10']=true,[
 'I give it a 6 out of 10']=true,['I give it a 7 out of 10']=true,[
 'I give it a 8 out of 10']=true,['I give it a 9 out of 10']=true,[
 'I give it a 10 out of 10!']=true}},CreateEnum'SafeChat'{'Level1','Level2',
-'Level3'},SafeChatTree={},TempSpaceLabel=nil}local function GetNameValue(m)local
-n=0 for o=1,#m do local p,q=string.byte(string.sub(m,o,o)),#m-o+1 if#m%2==1 then
-q=q-1 end if q%4>=2 then p=-p end n=n+p end return n%8 end function l:
-ComputeChatColor(m)return self.ChatColors[GetNameValue(m)+1].Color end function
-l:EnableScrolling(m)self.MouseOnFrame=false if self.RenderFrame then self.
-RenderFrame.MouseEnter:connect(function()local n=b.Character local o,p,q=
-WaitForChild(n,'Torso'),WaitForChild(n,'Humanoid'),WaitForChild(n,'Head')if m
-then self.MouseOnFrame=true e.CameraType='Scriptable'Spawn(function()local r=e.
-CoordinateFrame.p-o.Position while l.MouseOnFrame do e.CoordinateFrame=CFrame.
-new(o.Position+r,q.Position)wait(0.015)end end)end end)self.RenderFrame.
-MouseLeave:connect(function()e.CameraType='Custom'self.MouseOnFrame=false end)
-end end function l:IsTouchDevice()local m=false pcall(function()m=Game:
-GetService'UserInputService'.TouchEnabled end)return m end function l:
-UpdateQueue(m,n)for o=#self.MessageQueue,1,-1 do if self.MessageQueue[o]then for
-p,q in pairs(self.MessageQueue[o])do if q and type(q)~='table'and type(q)~=
-'number'then if q:IsA'TextLabel'or q:IsA'TextButton'then if n then q.Position=q.
-Position-UDim2.new(0,0,n,0)else if m==self.MessageQueue[o]then q.Position=UDim2.
-new(self.Configuration.XScale,0,q.Position.Y.Scale-m['Message'].Size.Y.Scale,0)
-Spawn(function()wait(0.05)while q.TextTransparency>=0 do q.TextTransparency=q.
-TextTransparency-0.2 wait(0.03)end if q==m['Message']then q.
-TextStrokeTransparency=0.8 else q.TextStrokeTransparency=1 end end)else q.
-Position=UDim2.new(self.Configuration.XScale,0,q.Position.Y.Scale-m['Message'].
-Size.Y.Scale,0)end if q.Position.Y.Scale<-1E-2 then q.Visible=false q:Destroy()
-end end end end end end end end function l:CreateScrollBar()end function l:
-CheckIfInBounds(m)if#l.MessageQueue<3 then return true end if m>0 and l.
-MessageQueue[1]and l.MessageQueue[1]['Player']and l.MessageQueue[1]['Player'].
-Position.Y.Scale==0 then return true elseif m<0 and l.MessageQueue[1]and l.
-MessageQueue[1]['Player']and l.MessageQueue[1]['Player'].Position.Y.Scale<0 then
-return true else return false end return false end function l:ComputeSpaceString
-(m)local n=' 'if not self.TempSpaceLabel then self.TempSpaceLabel=d.Create
-'TextButton'{Size=UDim2.new(0,m.AbsoluteSize.X,0,m.AbsoluteSize.Y),FontSize=self
-.Configuration.FontSize,Parent=self.RenderFrame,BackgroundTransparency=1,Text=n,
-Name='SpaceButton'}else self.TempSpaceLabel.Text=n end while self.TempSpaceLabel
-.TextBounds.X<m.TextBounds.X do n=n..' 'self.TempSpaceLabel.Text=n end n=n..' '
-self.CachedSpaceStrings_List[m.Text]=n self.TempSpaceLabel.Text=''return n end
-function l:UpdateChat(m,n)local o={['Player']=m,['Message']=n}if coroutine.
-status(l.MessageThread)=='dead'then table.insert(l.Messages_List,o)l.
-MessageThread=coroutine.create(function()for p=1,#l.Messages_List do local q=l.
-Messages_List[p]l:CreateMessage(q['Player'],q['Message'])end l.Messages_List={}
-end)coroutine.resume(l.MessageThread)else table.insert(l.Messages_List,o)end end
-function l:RecalculateSpacing()end function l:ApplyFilter(m)end function l:
-CreateMessage(m,n)local o if not m then o=''else o=m.Name end n=StringTrim(n)
-local p,q if#self.MessageQueue>self.Configuration.HistoryLength then self.
-MessageQueue[#self.MessageQueue]=nil end p=d.Create'TextLabel'{Name=o,Text=o..
-':',TextColor3=pColor,FontSize=l.Configuration.FontSize,TextXAlignment=Enum.
-TextXAlignment.Left,TextYAlignment=Enum.TextYAlignment.Top,Parent=self.
-RenderFrame,TextWrapped=false,Size=UDim2.new(1,0,0.1,0),BackgroundTransparency=1
-,TextTransparency=1,Position=UDim2.new(0,0,1,0),BorderSizePixel=0,
-TextStrokeColor3=Color3.new(0.5,0.5,0.5),TextStrokeTransparency=0.75}local r if
-m.Neutral then p.TextColor3=l:ComputeChatColor(o)else p.TextColor3=m.TeamColor.
-Color end local s if not self.CachedSpaceStrings_List[o]then s=l:
-ComputeSpaceString(p)else s=self.CachedSpaceStrings_List[o]end q=d.Create
-'TextLabel'{Name=o..' - message',Size=UDim2.new(1,0,0.5,0),TextColor3=l.
-Configuration.MessageColor,FontSize=l.Configuration.FontSize,TextXAlignment=Enum
-.TextXAlignment.Left,TextYAlignment=Enum.TextYAlignment.Top,Text='',Parent=self.
-RenderFrame,TextWrapped=true,BackgroundTransparency=1,TextTransparency=1,
-Position=UDim2.new(0,0,1,0),BorderSizePixel=0,TextStrokeColor3=Color3.new(0,0,0)
-}q.Text=s..n if not o then p.Text=''q.TextColor3=Color3.new(0,0.4,1)end for t,u
-in pairs(self.Admins_List)do if string.lower(u)==string.lower(o)then q.
-TextColor3=self.Configuration.AdminMessageColor end end p.Visible=true q.Visible
-=true local v=q.TextBounds.Y q.Size=UDim2.new(1,0,v/self.RenderFrame.
-AbsoluteSize.Y,0)p.Size=q.Size local w,x,y=self.RenderFrame.AbsoluteSize.Y,q.
-TextBounds.Y,{}y['Player']=p y['Message']=q y['SpawnTime']=tick()table.insert(
-self.MessageQueue,1,y)l:UpdateQueue(y)end function l:ScreenSizeChanged()wait()
-while self.Frame.AbsoluteSize.Y>120 do self.Frame.Size=self.Frame.Size-UDim2.
-new(0,0,0.005,0)end l:RecalculateSpacing()end function l:FindButtonTree(m,n)
-local o={}n=n or self.SafeChatTree for p,q in pairs(n)do if p==m then o=n[p]
-elseif type(n[p])=='table'then o=l:FindButtonTree(m,n[p])end end return o end
-function l:ToggleSafeChatMenu(m)local n=l:FindButtonTree(m,self.SafeChatTree)if
-n then for o,p in pairs(n)do if o:IsA'TextButton'or o:IsA'ImageButton'then o.
-Visible=not o.Visible end end return true end return false end function l:
-CreateSafeChatOptions(m,n)local o={}level=level or 0 local p=0 o[n]={}o[n][1]=m[
-1]n=n or self.SafeChatButton for q,r in pairs(m)do if type(q)=='string'then
-local s=d.Create'TextButton'{Name=q,Text=q,Size=UDim2.new(0,100,0,20),
+'Level3'},SafeChatTree={},TempSpaceLabel=nil}local function GetNameValue(l)local
+m=0 for n=1,#l do local o,p=string.byte(string.sub(l,n,n)),#l-n+1 if#l%2==1 then
+p=p-1 end if p%4>=2 then o=-o end m=m+o end return m%8 end function k:
+ComputeChatColor(l)return self.ChatColors[GetNameValue(l)+1].Color end function
+k:EnableScrolling(l)self.MouseOnFrame=false if self.RenderFrame then self.
+RenderFrame.MouseEnter:connect(function()local m=b.Character local n,o=
+WaitForChild(m,'Torso'),WaitForChild(m,'Head')if l then self.MouseOnFrame=true e
+.CameraType='Scriptable'Spawn(function()local p=e.CoordinateFrame.p-n.Position
+while k.MouseOnFrame do e.CoordinateFrame=CFrame.new(n.Position+p,o.Position)
+wait(0.015)end end)end end)self.RenderFrame.MouseLeave:connect(function()e.
+CameraType='Custom'self.MouseOnFrame=false end)end end function k:IsTouchDevice(
+)local l=false pcall(function()l=Game:GetService'UserInputService'.TouchEnabled
+end)return l end function k:UpdateQueue(l,m)for n=#self.MessageQueue,1,-1 do if
+self.MessageQueue[n]then for o,p in pairs(self.MessageQueue[n])do if p and type(
+p)~='table'and type(p)~='number'then if p:IsA'TextLabel'or p:IsA'TextButton'then
+if m then p.Position=p.Position-UDim2.new(0,0,m,0)else if l==self.MessageQueue[n
+]then p.Position=UDim2.new(self.Configuration.XScale,0,p.Position.Y.Scale-l[
+'Message'].Size.Y.Scale,0)Spawn(function()wait(0.05)while p.TextTransparency>=0
+do p.TextTransparency=p.TextTransparency-0.2 wait(0.03)end if p==l['Message']
+then p.TextStrokeTransparency=0.8 else p.TextStrokeTransparency=1 end end)else p
+.Position=UDim2.new(self.Configuration.XScale,0,p.Position.Y.Scale-l['Message'].
+Size.Y.Scale,0)end if p.Position.Y.Scale<-1E-2 then p.Visible=false p:Destroy()
+end end end end end end end end function k:CreateScrollBar()end function k:
+CheckIfInBounds(l)if#k.MessageQueue<3 then return true end if l>0 and k.
+MessageQueue[1]and k.MessageQueue[1]['Player']and k.MessageQueue[1]['Player'].
+Position.Y.Scale==0 then return true elseif l<0 and k.MessageQueue[1]and k.
+MessageQueue[1]['Player']and k.MessageQueue[1]['Player'].Position.Y.Scale<0 then
+return true else return false end return false end function k:ComputeSpaceString
+(l)local m=' 'if not self.TempSpaceLabel then self.TempSpaceLabel=d.Create
+'TextButton'{Size=UDim2.new(0,l.AbsoluteSize.X,0,l.AbsoluteSize.Y),FontSize=self
+.Configuration.FontSize,Parent=self.RenderFrame,BackgroundTransparency=1,Text=m,
+Name='SpaceButton'}else self.TempSpaceLabel.Text=m end while self.TempSpaceLabel
+.TextBounds.X<l.TextBounds.X do m=m..' 'self.TempSpaceLabel.Text=m end m=m..' '
+self.CachedSpaceStrings_List[l.Text]=m self.TempSpaceLabel.Text=''return m end
+function k:UpdateChat(l,m)local n={['Player']=l,['Message']=m}if coroutine.
+status(k.MessageThread)=='dead'then table.insert(k.Messages_List,n)k.
+MessageThread=coroutine.create(function()for o=1,#k.Messages_List do local p=k.
+Messages_List[o]k:CreateMessage(p['Player'],p['Message'])end k.Messages_List={}
+end)coroutine.resume(k.MessageThread)else table.insert(k.Messages_List,n)end end
+function k:RecalculateSpacing()end function k:CreateMessage(l,m)local n if not l
+then n=''else n=l.Name end m=StringTrim(m)local o,p if#self.MessageQueue>self.
+Configuration.HistoryLength then self.MessageQueue[#self.MessageQueue]=nil end o
+=d.Create'TextLabel'{Name=n,Text=n..':',FontSize=k.Configuration.FontSize,
+TextXAlignment=Enum.TextXAlignment.Left,TextYAlignment=Enum.TextYAlignment.Top,
+Parent=self.RenderFrame,TextWrapped=false,Size=UDim2.new(1,0,0.1,0),
+BackgroundTransparency=1,TextTransparency=1,Position=UDim2.new(0,0,1,0),
+BorderSizePixel=0,TextStrokeColor3=Color3.new(0.5,0.5,0.5),
+TextStrokeTransparency=0.75}if l.Neutral then o.TextColor3=k:ComputeChatColor(n)
+else o.TextColor3=l.TeamColor.Color end local q if not self.
+CachedSpaceStrings_List[n]then q=k:ComputeSpaceString(o)else q=self.
+CachedSpaceStrings_List[n]end p=d.Create'TextLabel'{Name=n..' - message',Size=
+UDim2.new(1,0,0.5,0),TextColor3=k.Configuration.MessageColor,FontSize=k.
+Configuration.FontSize,TextXAlignment=Enum.TextXAlignment.Left,TextYAlignment=
+Enum.TextYAlignment.Top,Text='',Parent=self.RenderFrame,TextWrapped=true,
+BackgroundTransparency=1,TextTransparency=1,Position=UDim2.new(0,0,1,0),
+BorderSizePixel=0,TextStrokeColor3=Color3.new(0,0,0)}p.Text=q..m if not n then o
+.Text=''p.TextColor3=Color3.new(0,0.4,1)end for r,s in pairs(self.Admins_List)do
+if string.lower(s)==string.lower(n)then p.TextColor3=self.Configuration.
+AdminMessageColor end end o.Visible=true p.Visible=true local t=p.TextBounds.Y p
+.Size=UDim2.new(1,0,t/self.RenderFrame.AbsoluteSize.Y,0)o.Size=p.Size local u={}
+u['Player']=o u['Message']=p u['SpawnTime']=tick()table.insert(self.MessageQueue
+,1,u)k:UpdateQueue(u)end function k:ScreenSizeChanged()wait()while self.Frame.
+AbsoluteSize.Y>120 do self.Frame.Size=self.Frame.Size-UDim2.new(0,0,0.005,0)end
+k:RecalculateSpacing()end function k:FindButtonTree(l,m)local n={}m=m or self.
+SafeChatTree for o,p in pairs(m)do if o==l then n=m[o]elseif type(m[o])=='table'
+then n=k:FindButtonTree(l,m[o])end end return n end function k:
+ToggleSafeChatMenu(l)local m=k:FindButtonTree(l,self.SafeChatTree)if m then for
+n,o in pairs(m)do if n:IsA'TextButton'or n:IsA'ImageButton'then n.Visible=not n.
+Visible end end return true end return false end function k:
+CreateSafeChatOptions(l,m)local n={}level=level or 0 local o=0 n[m]={}n[m][1]=l[
+1]m=m or self.SafeChatButton for p,q in pairs(l)do if type(p)=='string'then
+local r=d.Create'TextButton'{Name=p,Text=p,Size=UDim2.new(0,100,0,20),
 TextXAlignment=Enum.TextXAlignment.Center,TextColor3=Color3.new(0.2,0.1,0.1),
 BackgroundTransparency=0.5,BackgroundColor3=Color3.new(1,1,1),Parent=self.
-SafeChatFrame,Visible=false,Position=UDim2.new(0,n.Position.X.Scale+105,0,n.
-Position.Y.Scale-((p-3)*100))}p=p+1 if type(m[q])=='table'then o[n][s]=l:
-CreateSafeChatOptions(m[q],s)else end s.MouseEnter:connect(function()l:
-ToggleSafeChatMenu(s)end)s.MouseLeave:connect(function()l:ToggleSafeChatMenu(s)
-end)s.MouseButton1Click:connect(function()local t=l:FindButtonTree(s)if t then
-for u,v in pairs(t)do end else end pcall(function()g:Chat(t[1])end)end)end end
-return o end function l:CreateSafeChatGui()self.SafeChatFrame=d.Create'Frame'{
-Name='SafeChatFrame',Size=UDim2.new(1,0,1,0),Parent=self.Gui,
-BackgroundTransparency=1,d.Create'ImageButton'{Name='SafeChatButton',Size=UDim2.
-new(0,44,0,31),Position=UDim2.new(0,1,0.35,0),BackgroundTransparency=1,Image=
-'http://www.roblox.com/asset/?id=97080365'}}self.SafeChatButton=self.
-SafeChatFrame.SafeChatButton self.SafeChatTree[self.SafeChatButton]=l:
-CreateSafeChatOptions(self.SafeChat_List,self.SafeChatButton)self.SafeChatButton
-.MouseButton1Click:connect(function()l:ToggleSafeChatMenu(self.SafeChatButton)
-end)end function l:FocusOnChatBar()if self.ClickToChatButton then self.
-ClickToChatButton.Visible=false end self.GotFocus=true if self.Frame[
+SafeChatFrame,Visible=false,Position=UDim2.new(0,m.Position.X.Scale+105,0,m.
+Position.Y.Scale-((o-3)*100))}o=o+1 if type(l[p])=='table'then n[m][r]=k:
+CreateSafeChatOptions(l[p],r)end r.MouseEnter:connect(function()k:
+ToggleSafeChatMenu(r)end)r.MouseLeave:connect(function()k:ToggleSafeChatMenu(r)
+end)r.MouseButton1Click:connect(function()local s=k:FindButtonTree(r)pcall(
+function()g:Chat(s[1])end)end)end end return n end function k:CreateSafeChatGui(
+)self.SafeChatFrame=d.Create'Frame'{Name='SafeChatFrame',Size=UDim2.new(1,0,1,0)
+,Parent=self.Gui,BackgroundTransparency=1,d.Create'ImageButton'{Name=
+'SafeChatButton',Size=UDim2.new(0,44,0,31),Position=UDim2.new(0,1,0.35,0),
+BackgroundTransparency=1,Image='http://www.roblox.com/asset/?id=97080365'}}self.
+SafeChatButton=self.SafeChatFrame.SafeChatButton self.SafeChatTree[self.
+SafeChatButton]=k:CreateSafeChatOptions(self.SafeChat_List,self.SafeChatButton)
+self.SafeChatButton.MouseButton1Click:connect(function()k:ToggleSafeChatMenu(
+self.SafeChatButton)end)end function k:FocusOnChatBar()if self.ClickToChatButton
+then self.ClickToChatButton.Visible=false end self.GotFocus=true if self.Frame[
 'Background']then self.Frame.Background.Visible=false end self.ChatBar:
-CaptureFocus()end function l:CreateTouchButton()self.ChatTouchFrame=d.Create
+CaptureFocus()end function k:CreateTouchButton()self.ChatTouchFrame=d.Create
 'Frame'{Name='ChatTouchFrame',Size=UDim2.new(0,128,0,32),Position=UDim2.new(0,88
 ,0,0),BackgroundTransparency=1,Parent=self.Gui,d.Create'ImageButton'{Name=
 'ChatLabel',Size=UDim2.new(0,74,0,28),Position=UDim2.new(0,0,0,0),
@@ -303,8 +300,8 @@ Parent=self.Frame,TextXAlignment=Enum.TextXAlignment.Left,TextColor3=Color3.new(
 1,1,1),ClearTextOnFocus=false}self.TapToChatLabel.MouseButton1Click:connect(
 function()self.TapToChatLabel.Visible=false self.ChatBar:CaptureFocus()self.
 GotFocus=true if self.TouchLabelBackground then self.TouchLabelBackground.
-Visible=false end end)end function l:CreateChatBar()local m,n=pcall(function()
-return i.UseLuaChat end)if a or(m and n)then self.ClickToChatButton=d.Create
+Visible=false end end)end function k:CreateChatBar()local l,m=pcall(function()
+return h.UseLuaChat end)if a or(l and m)then self.ClickToChatButton=d.Create
 'TextButton'{Name='ClickToChat',Size=UDim2.new(1,0,0,20),BackgroundTransparency=
 1,ZIndex=2,Parent=self.Gui,Text='To chat click here or press "/" key',TextColor3
 =Color3.new(1,1,0.9),Position=UDim2.new(0,0,1,0),TextXAlignment=Enum.
@@ -312,71 +309,69 @@ TextXAlignment.Left,FontSize=Enum.FontSize.Size12}self.ChatBar=d.Create'TextBox'
 {Name='ChatBar',Size=UDim2.new(1,0,0,20),Position=UDim2.new(0,0,1,0),Text='',
 ZIndex=1,BackgroundColor3=Color3.new(0,0,0),BackgroundTransparency=0.25,Parent=
 self.Gui,TextXAlignment=Enum.TextXAlignment.Left,TextColor3=Color3.new(1,1,1),
-FontSize=Enum.FontSize.Size12,ClearTextOnFocus=false,Text=''}local o,p=pcall(
-function()i:SetGlobalGuiInset(0,0,0,20)end)if not o then i:
-SetGlobalSizeOffsetPixel(0,-20)end i:AddSpecialKey(Enum.SpecialKey.ChatHotkey)i.
-SpecialKeyPressed:connect(function(q)if q==Enum.SpecialKey.ChatHotkey then l:
-FocusOnChatBar()end end)self.ClickToChatButton.MouseButton1Click:connect(
-function()l:FocusOnChatBar()end)end end function l:CreateGui()self.Gui=
-WaitForChild(f,'RobloxGui')self.Frame=d.Create'Frame'{Name='ChatFrame',Size=
-UDim2.new(0,500,0,120),Position=UDim2.new(0,0,0,5),BackgroundTransparency=1,
-ZIndex=0,Parent=self.Gui,Active=false,d.Create'ImageLabel'{Name='Background',
-Image='http://www.roblox.com/asset/?id=97120937',Size=UDim2.new(1.3,0,1.64,0),
-Position=UDim2.new(0,0,0,0),BackgroundTransparency=1,ZIndex=0,Visible=false},d.
-Create'Frame'{Name='Border',Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,0.8,0
-),BackgroundTransparency=0,BackgroundColor3=Color3.new(0.9254901960784314,
-0.9254901960784314,0.9254901960784314),BorderSizePixel=0,Visible=false},d.Create
-'Frame'{Name='ChatRenderFrame',Size=UDim2.new(1.02,0,1.01,0),Position=UDim2.new(
-0,0,0,0),BackgroundTransparency=1,ZIndex=0,Active=false}}Spawn(function()wait(
-0.5)if IsPhone()then self.Frame.Size=UDim2.new(0,280,0,120)end end)self.
-RenderFrame=self.Frame.ChatRenderFrame if l:IsTouchDevice()then self.Frame.
-Position=self.Configuration.Position self.RenderFrame.Size=UDim2.new(1,0,1,0)
-elseif self.Frame.AbsoluteSize.Y>120 then l:ScreenSizeChanged()self.Gui.Changed:
-connect(function(m)if m=='AbsoluteSize'then l:ScreenSizeChanged()end end)end if
-a or b.ChatMode==Enum.ChatMode.TextAndMenu then if l:IsTouchDevice()then l:
-CreateTouchButton()else l:CreateChatBar()end if self.ChatBar then self.ChatBar.
-FocusLost:connect(function(m)l.GotFocus=false if l:IsTouchDevice()then self.
+FontSize=Enum.FontSize.Size12,ClearTextOnFocus=false}local n,o=pcall(function()h
+:SetGlobalGuiInset(0,0,0,20)end)if not n then h:SetGlobalSizeOffsetPixel(0,-20)
+end h:AddSpecialKey(Enum.SpecialKey.ChatHotkey)h.SpecialKeyPressed:connect(
+function(p)if p==Enum.SpecialKey.ChatHotkey then k:FocusOnChatBar()end end)self.
+ClickToChatButton.MouseButton1Click:connect(function()k:FocusOnChatBar()end)end
+end function k:CreateGui()self.Gui=WaitForChild(f,'RobloxGui')self.Frame=d.
+Create'Frame'{Name='ChatFrame',Size=UDim2.new(0,500,0,120),Position=UDim2.new(0,
+0,0,5),BackgroundTransparency=1,ZIndex=0,Parent=self.Gui,Active=false,d.Create
+'ImageLabel'{Name='Background',Image='http://www.roblox.com/asset/?id=97120937',
+Size=UDim2.new(1.3,0,1.64,0),Position=UDim2.new(0,0,0,0),BackgroundTransparency=
+1,ZIndex=0,Visible=false},d.Create'Frame'{Name='Border',Size=UDim2.new(1,0,0,1),
+Position=UDim2.new(0,0,0.8,0),BackgroundTransparency=0,BackgroundColor3=Color3.
+new(0.9254901960784314,0.9254901960784314,0.9254901960784314),BorderSizePixel=0,
+Visible=false},d.Create'Frame'{Name='ChatRenderFrame',Size=UDim2.new(1.02,0,1.01
+,0),Position=UDim2.new(0,0,0,0),BackgroundTransparency=1,ZIndex=0,Active=false}}
+Spawn(function()wait(0.5)if IsPhone()then self.Frame.Size=UDim2.new(0,280,0,120)
+end end)self.RenderFrame=self.Frame.ChatRenderFrame if k:IsTouchDevice()then
+self.Frame.Position=self.Configuration.Position self.RenderFrame.Size=UDim2.new(
+1,0,1,0)elseif self.Frame.AbsoluteSize.Y>120 then k:ScreenSizeChanged()self.Gui.
+Changed:connect(function(l)if l=='AbsoluteSize'then k:ScreenSizeChanged()end end
+)end if a or b.ChatMode==Enum.ChatMode.TextAndMenu then if k:IsTouchDevice()then
+k:CreateTouchButton()else k:CreateChatBar()end if self.ChatBar then self.ChatBar
+.FocusLost:connect(function(l)k.GotFocus=false if k:IsTouchDevice()then self.
 ChatBar.Visible=false self.TapToChatLabel.Visible=true if self.
-TouchLabelBackground then self.TouchLabelBackground.Visible=true end end if m
-and self.ChatBar.Text~=''then local n=self.ChatBar.Text if string.sub(self.
-ChatBar.Text,1,1)=='%'then n='(TEAM) '..string.sub(n,2,#n)pcall(function()g:
-TeamChat(n)end)else pcall(function()g:Chat(n)end)end if self.ClickToChatButton
+TouchLabelBackground then self.TouchLabelBackground.Visible=true end end if l
+and self.ChatBar.Text~=''then local m=self.ChatBar.Text if string.sub(self.
+ChatBar.Text,1,1)=='%'then m='(TEAM) '..string.sub(m,2,#m)pcall(function()g:
+TeamChat(m)end)else pcall(function()g:Chat(m)end)end if self.ClickToChatButton
 then self.ClickToChatButton.Visible=true end self.ChatBar.Text=''end Spawn(
-function()wait(5)if not l.GotFocus then l.Frame.Background.Visible=false end end
-)end)end end end function k:OnMouseScroll()Spawn(function()while k.Speed~=0 do
-if k.Speed>1 then while k.Speed>0 do k.Speed=k.Speed-1 wait(0.25)end elseif k.
-Speed<0 then while k.Speed<0 do k.Speed=k.Speed+1 wait(0.25)end end wait(0.03)
-end end)if l:CheckIfInBounds(k.Speed)then return end l:ScrollQueue()end function
-k:ApplySpeed(m)k.Speed=k.Speed+m if not self.Simulating then k:OnMouseScroll()
-end end function k:Initialize()self.Mouse.WheelBackward:connect(function()k:
+function()wait(5)if not k.GotFocus then k.Frame.Background.Visible=false end end
+)end)end end end function j:OnMouseScroll()Spawn(function()while j.Speed~=0 do
+if j.Speed>1 then while j.Speed>0 do j.Speed=j.Speed-1 wait(0.25)end elseif j.
+Speed<0 then while j.Speed<0 do j.Speed=j.Speed+1 wait(0.25)end end wait(0.03)
+end end)if k:CheckIfInBounds(j.Speed)then return end k:ScrollQueue()end function
+j:ApplySpeed(l)j.Speed=j.Speed+l if not self.Simulating then j:OnMouseScroll()
+end end function j:Initialize()self.Mouse.WheelBackward:connect(function()j:
 ApplySpeed(self.Configuration.DefaultSpeed)end)self.Mouse.WheelForward:connect(
-function()k:ApplySpeed(self.Configuration.DefaultSpeed)end)end function l:
-FindMessageInSafeChat(m,n)local o=false for p,q in pairs(n)do if p==m then
-return true end if type(n[p])=='table'then o=l:FindMessageInSafeChat(m,n[p])if o
-then return true end end end return o end function l:PlayerChatted(...)local m,n
-,o,p={...},select('#',...),nil,nil if m[2]then o=m[2]end if m[3]then p=m[3]if
-string.sub(p,1,1)=='%'then p='(TEAM) '..string.sub(p,2,#p)end end if g.
-ClassicChat then if string.sub(p,1,3)=='/e 'or string.sub(p,1,7)=='/emote 'then
-elseif a or b.ChatMode==Enum.ChatMode.TextAndMenu then l:UpdateChat(o,p)elseif b
-.ChatMode==Enum.ChatMode.Menu and string.sub(p,1,3)=='/sc'then l:UpdateChat(o,p)
-else if l:FindMessageInSafeChat(p,self.SafeChat_List)then l:UpdateChat(o,p)end
-end end end function l:CullThread()while true do if#self.MessageQueue>0 then for
-m,n in pairs(self.MessageQueue)do if n['SpawnTime']and n['Player']and n[
-'Message']and tick()-n['SpawnTime']>self.Configuration.LifeTime then n['Player']
-.Visible=false n['Message'].Visible=false end end end wait(5)end end function l:
-LockAllFields(m)local n=m:GetChildren()for o=1,#n do n[o].RobloxLocked=true if#n
-[o]:GetChildren()>0 then l:LockAllFields(n[o])end end end function l:
-CoreGuiChanged(m,n)if m==Enum.CoreGuiType.Chat or m==Enum.CoreGuiType.All then
-if self.Frame then self.Frame.Visible=n end if not l:IsTouchDevice()and self.
-ChatBar then self.ChatBar.Visible=n if n then i:SetGlobalGuiInset(0,0,0,20)else
-i:SetGlobalGuiInset(0,0,0,0)end end end end function l:Initialize()l:CreateGui()
-pcall(function()l:CoreGuiChanged(Enum.CoreGuiType.Chat,Game.StarterGui:
+function()j:ApplySpeed(self.Configuration.DefaultSpeed)end)end function k:
+FindMessageInSafeChat(l,m)local n=false for o,p in pairs(m)do if o==l then
+return true end if type(m[o])=='table'then n=k:FindMessageInSafeChat(l,m[o])if n
+then return true end end end return n end function k:PlayerChatted(...)local l,m
+,n={...},nil,nil if l[2]then m=l[2]end if l[3]then n=l[3]if string.sub(n,1,1)==
+'%'then n='(TEAM) '..string.sub(n,2,#n)end end if g.ClassicChat then if string.
+sub(n,1,3)=='/e 'or string.sub(n,1,7)=='/emote 'then elseif(a or b.ChatMode==
+Enum.ChatMode.TextAndMenu)or(b.ChatMode==Enum.ChatMode.Menu and string.sub(n,1,3
+)=='/sc')or(k:FindMessageInSafeChat(n,self.SafeChat_List))then k:UpdateChat(m,n)
+end end end function k:CullThread()while true do if#self.MessageQueue>0 then for
+l,m in pairs(self.MessageQueue)do if m['SpawnTime']and m['Player']and m[
+'Message']and tick()-m['SpawnTime']>self.Configuration.LifeTime then m['Player']
+.Visible=false m['Message'].Visible=false end end end wait(5)end end function k:
+LockAllFields(l)local m=l:GetChildren()for n=1,#m do m[n].RobloxLocked=true if#m
+[n]:GetChildren()>0 then k:LockAllFields(m[n])end end end function k:
+CoreGuiChanged(l,m)if l==Enum.CoreGuiType.Chat or l==Enum.CoreGuiType.All then
+if self.Frame then self.Frame.Visible=m end if not k:IsTouchDevice()and self.
+ChatBar then self.ChatBar.Visible=m if m then h:SetGlobalGuiInset(0,0,0,20)else
+h:SetGlobalGuiInset(0,0,0,0)end end end end function k:Initialize()k:CreateGui()
+pcall(function()k:CoreGuiChanged(Enum.CoreGuiType.Chat,Game.StarterGui:
 GetCoreGuiEnabled(Enum.CoreGuiType.Chat))Game.StarterGui.CoreGuiChangedSignal:
-connect(function(m,n)l:CoreGuiChanged(m,n)end)end)self.EventListener=g.
-PlayerChatted:connect(function(...)l:PlayerChatted(...)end)self.MessageThread=
-coroutine.create(function()end)coroutine.resume(self.MessageThread)k:Initialize(
-)g.ChildAdded:connect(function()l.EventListener:disconnect()self.EventListener=g
-.PlayerChatted:connect(function(...)l:PlayerChatted(...)end)end)Spawn(function()
-l:CullThread()end)self.Frame.RobloxLocked=true l:LockAllFields(self.Frame)self.
-Frame.DescendantAdded:connect(function(m)l:LockAllFields(m)end)end l:Initialize(
+connect(function(l,m)k:CoreGuiChanged(l,m)end)end)self.EventListener=g.
+PlayerChatted:connect(function(...)k:PlayerChatted(...)end)self.MessageThread=
+coroutine.create(function()end)coroutine.resume(self.MessageThread)j:Initialize(
+)g.ChildAdded:connect(function()k.EventListener:disconnect()self.EventListener=g
+.PlayerChatted:connect(function(...)k:PlayerChatted(...)end)end)Spawn(function()
+k:CullThread()end)self.Frame.RobloxLocked=true k:LockAllFields(self.Frame)self.
+Frame.DescendantAdded:connect(function(l)k:LockAllFields(l)end)end k:Initialize(
 )

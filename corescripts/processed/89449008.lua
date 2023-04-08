@@ -75,7 +75,7 @@ ZIndex=10 S=T end)R.DragStopped:connect(function(T,U)waitForChild(R,'Background'
 true)R.Draggable=false delay(0.5,function()R.Draggable=true end)else R.Position=
 S end end end)local T=tick()j[R]=R.MouseEnter:connect(function()previewGear(R)
 end)k[R]=R.MouseButton1Click:connect(function()local U=tick()if R.Active and(U-T
-)<0.5 then local V=findEmptySlot()if V then R.ZIndex=1 swapGearSlot(V,R)end else
+)<0.5 then local W=findEmptySlot()if W then R.ZIndex=1 swapGearSlot(W,R)end else
 buttonClick(R)end T=U end)end end end F()end function showPartialGrid(aa)for Q,R
 in pairs(g)do R.Parent=nil end if aa then for S,T in pairs(aa)do T.Parent=s.
 ScrollingFrame end end F()end function showEntireGrid()for aa,Q in pairs(g)do Q.
@@ -110,9 +110,9 @@ new(0.8,0.8,0.8)end function clearHighlight(aa)aa.TextColor3=Color3.new(1,1,1)aa
 then u.Slot.Value=aa u.GearButton.Value=Q u.Value=true updateGridActive()end end
 local aa=function(aa,Q)if type(aa.Action)~='number'then return end local R=aa.
 Action if R==1 then unequipGear(Q.Parent.GearReference.Value)local S=Q.Parent
-local T,U,V=S.GearReference.Value,r:GetChildren(),-1 for W=1,#U do if U[W]:IsA
-'Frame'then local X=U[W]:GetChildren()if X[1]and X[1].GearReference.Value==T
-then V=X[1].SlotNumber.Text break end end end swapGearSlot(V,nil)end end
+local T,U,W=S.GearReference.Value,r:GetChildren(),-1 for X=1,#U do if U[X]:IsA
+'Frame'then local Y=U[X]:GetChildren()if Y[1]and Y[1].GearReference.Value==T
+then W=Y[1].SlotNumber.Text break end end end swapGearSlot(W,nil)end end
 function setupCharacterConnections()if n then n:disconnect()end n=game.Players.
 LocalPlayer.Backpack.ChildAdded:connect(function(Q)addToGrid(Q)end)local Q=game.
 Players.LocalPlayer.Backpack:GetChildren()for R=1,#Q do addToGrid(Q[R])end if l
@@ -123,7 +123,7 @@ end)wait()centerGear(r:GetChildren())end function removeCharacterConnections()if
 l then l:disconnect()end if m then m:disconnect()end if n then n:disconnect()end
 end function trim(Q)return(Q:gsub('^%s*(.-)%s*$','%1'))end function filterGear(Q
 )local R={}for S,T in pairs(f)do if g[T]then local U=string.lower(g[T].
-GearReference.Value.Name)U=trim(U)for V=1,#Q do if string.match(U,Q[V])then
+GearReference.Value.Name)U=trim(U)for W=1,#Q do if string.match(U,Q[W])then
 table.insert(R,g[T])break end end end end return R end function
 splitByWhitespace(Q)if type(Q)~='string'then return nil end local R={}for S in
 string.gmatch(Q,'[^%s]+')do if string.len(S)>0 then table.insert(R,S)end end
@@ -138,30 +138,30 @@ getGearContextMenu()local Q=Instance.new'Frame'Q.Active=true Q.Name=
 )Q.BackgroundTransparency=1 Q.Visible=false local R=Instance.new'TextButton'R.
 Name='UnequipContextMenuButton'R.Text=''R.Style=Enum.ButtonStyle.
 RobloxButtonDefault R.ZIndex=8 R.Size=UDim2.new(1,0,1,-20)R.Visible=true R.
-Parent=Q local S,T,U=12,{},{'Remove Hotkey'}for V=1,#U do local W={}W.Type=
-'Button'W.Text=U[V]W.Action=V W.DoIt=aa table.insert(T,W)end for V,W in ipairs(T
-)do local X=W if X.Type=='Button'then local Y=Instance.new'TextButton'Y.Name=
-'UnequipContextButton'..V Y.BackgroundColor3=Color3.new(0,0,0)Y.BorderSizePixel=
-0 Y.TextXAlignment=Enum.TextXAlignment.Left Y.Text=' '..W.Text Y.Font=Enum.Font.
-Arial Y.FontSize=Enum.FontSize.Size14 Y.Size=UDim2.new(1,8,0,S)Y.Position=UDim2.
-new(0,0,0,S*V)Y.TextColor3=Color3.new(1,1,1)Y.ZIndex=9 Y.Parent=R if not
-IsTouchDevice()then Y.MouseButton1Click:connect(function()if Y.Active and not Q.
-Parent.Active then pcall(function()X.DoIt(X,Q)end)i=false Q.Visible=false
-clearHighlight(Y)clearPreview()end end)Y.MouseEnter:connect(function()if Y.
-Active and Q.Parent.Active then highlight(Y)end end)Y.MouseLeave:connect(
-function()if Y.Active and Q.Parent.Active then clearHighlight(Y)end end)end W.
-Button=Y W.Element=Y elseif X.Type=='Label'then local Y=Instance.new'Frame'Y.
-Name='ContextLabel'..V Y.BackgroundTransparency=1 Y.Size=UDim2.new(1,8,0,S)local
-Z=Instance.new'TextLabel'Z.Name='Text1'Z.BackgroundTransparency=1 Z.
-BackgroundColor3=Color3.new(1,1,1)Z.BorderSizePixel=0 Z.TextXAlignment=Enum.
-TextXAlignment.Left Z.Font=Enum.Font.ArialBold Z.FontSize=Enum.FontSize.Size14 Z
-.Position=UDim2.new(0,0,0,0)Z.Size=UDim2.new(0.5,0,1,0)Z.TextColor3=Color3.new(1
-,1,1)Z.ZIndex=9 Z.Parent=Y X.Label1=Z if X.GetText2 then Z=Instance.new
-'TextLabel'Z.Name='Text2'Z.BackgroundTransparency=1 Z.BackgroundColor3=Color3.
-new(1,1,1)Z.BorderSizePixel=0 Z.TextXAlignment=Enum.TextXAlignment.Right Z.Font=
-Enum.Font.Arial Z.FontSize=Enum.FontSize.Size14 Z.Position=UDim2.new(0.5,0,0,0)Z
-.Size=UDim2.new(0.5,0,1,0)Z.TextColor3=Color3.new(1,1,1)Z.ZIndex=9 Z.Parent=Y X.
-Label2=Z end Y.Parent=R X.Label=Y X.Element=Y end end Q.ZIndex=4 Q.MouseLeave:
+Parent=Q local S,T,U=12,{},{'Remove Hotkey'}for W=1,#U do local X={}X.Type=
+'Button'X.Text=U[W]X.Action=W X.DoIt=aa table.insert(T,X)end for W,X in ipairs(T
+)do local Y=X if Y.Type=='Button'then local Z=Instance.new'TextButton'Z.Name=
+'UnequipContextButton'..W Z.BackgroundColor3=Color3.new(0,0,0)Z.BorderSizePixel=
+0 Z.TextXAlignment=Enum.TextXAlignment.Left Z.Text=' '..X.Text Z.Font=Enum.Font.
+Arial Z.FontSize=Enum.FontSize.Size14 Z.Size=UDim2.new(1,8,0,S)Z.Position=UDim2.
+new(0,0,0,S*W)Z.TextColor3=Color3.new(1,1,1)Z.ZIndex=9 Z.Parent=R if not
+IsTouchDevice()then Z.MouseButton1Click:connect(function()if Z.Active and not Q.
+Parent.Active then pcall(function()Y.DoIt(Y,Q)end)i=false Q.Visible=false
+clearHighlight(Z)clearPreview()end end)Z.MouseEnter:connect(function()if Z.
+Active and Q.Parent.Active then highlight(Z)end end)Z.MouseLeave:connect(
+function()if Z.Active and Q.Parent.Active then clearHighlight(Z)end end)end X.
+Button=Z X.Element=Z elseif Y.Type=='Label'then local Z=Instance.new'Frame'Z.
+Name='ContextLabel'..W Z.BackgroundTransparency=1 Z.Size=UDim2.new(1,8,0,S)local
+_=Instance.new'TextLabel'_.Name='Text1'_.BackgroundTransparency=1 _.
+BackgroundColor3=Color3.new(1,1,1)_.BorderSizePixel=0 _.TextXAlignment=Enum.
+TextXAlignment.Left _.Font=Enum.Font.ArialBold _.FontSize=Enum.FontSize.Size14 _
+.Position=UDim2.new(0,0,0,0)_.Size=UDim2.new(0.5,0,1,0)_.TextColor3=Color3.new(1
+,1,1)_.ZIndex=9 _.Parent=Z Y.Label1=_ if Y.GetText2 then _=Instance.new
+'TextLabel'_.Name='Text2'_.BackgroundTransparency=1 _.BackgroundColor3=Color3.
+new(1,1,1)_.BorderSizePixel=0 _.TextXAlignment=Enum.TextXAlignment.Right _.Font=
+Enum.Font.Arial _.FontSize=Enum.FontSize.Size14 _.Position=UDim2.new(0.5,0,0,0)_
+.Size=UDim2.new(0.5,0,1,0)_.TextColor3=Color3.new(1,1,1)_.ZIndex=9 _.Parent=Z Y.
+Label2=_ end Z.Parent=R Y.Label=Z Y.Element=Z end end Q.ZIndex=4 Q.MouseLeave:
 connect(function()i=false Q.Visible=false clearPreview()end)robloxLock(Q)return
 Q end function coreGuiChanged(Q,R)if Q==Enum.CoreGuiType.Backpack or Q==Enum.
 CoreGuiType.All then if not R then e.Gear.Visible=false end end end local Q=a.

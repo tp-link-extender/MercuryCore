@@ -24,7 +24,6 @@ end
 -- make sure everything is loaded in before we do anything
 -- get our local player
 waitForProperty(game.Players, "LocalPlayer")
-local player = game.Players.LocalPlayer
 
 ------------------------ Locals ------------------------------
 local backpack = script.Parent
@@ -39,9 +38,11 @@ local closeButton = backpack.Tabs.CloseButton
 
 waitForChild(backpack.Tabs, "InventoryButton")
 local inventoryButton = backpack.Tabs.InventoryButton
+
+local wardrobeButton
 if game.CoreGui.Version >= 8 then
 	waitForChild(backpack.Tabs, "WardrobeButton")
-	local wardrobeButton = backpack.Tabs.WardrobeButton
+	wardrobeButton = backpack.Tabs.WardrobeButton
 end
 waitForChild(backpack.Parent, "ControlFrame")
 local backpackButton = waitForChild(backpack.Parent.ControlFrame, "BackpackButton")
@@ -64,8 +65,6 @@ local active = true
 local disabledByDeveloper = false
 
 local humanoidDiedCon = nil
-
-local backpackButtonPos
 
 local guiTweenSpeed = 0.25 -- how quickly we open/close the backpack
 
@@ -123,15 +122,6 @@ function deactivateBackpack()
 	active = false
 end
 
-function activateBackpack()
-	initHumanoidDiedConnections()
-	active = true
-	backpack.Visible = backpackIsOpen
-	if backpackIsOpen then
-		toggleBackpack()
-	end
-end
-
 function initHumanoidDiedConnections()
 	if humanoidDiedCon then
 		humanoidDiedCon:disconnect()
@@ -139,6 +129,15 @@ function initHumanoidDiedConnections()
 	waitForProperty(game.Players.LocalPlayer, "Character")
 	waitForChild(game.Players.LocalPlayer.Character, "Humanoid")
 	humanoidDiedCon = game.Players.LocalPlayer.Character.Humanoid.Died:connect(deactivateBackpack)
+end
+
+function activateBackpack()
+	initHumanoidDiedConnections()
+	active = true
+	backpack.Visible = backpackIsOpen
+	if backpackIsOpen then
+		toggleBackpack()
+	end
 end
 
 local hideBackpack = function()

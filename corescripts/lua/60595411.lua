@@ -98,9 +98,7 @@ function JsonWriter:Write(o)
 	local t = type(o)
 	if t == "nil" then
 		self:WriteNil()
-	elseif t == "boolean" then
-		self:WriteString(o)
-	elseif t == "number" then
+	elseif t == "boolean" or t == "number" then
 		self:WriteString(o)
 	elseif t == "string" then
 		self:ParseString(o)
@@ -108,9 +106,7 @@ function JsonWriter:Write(o)
 		self:WriteTable(o)
 	elseif t == "function" then
 		self:WriteFunction(o)
-	elseif t == "thread" then
-		self:WriteError(o)
-	elseif t == "userdata" then
+	elseif t == "thread" or t == "userdata" then
 		self:WriteError(o)
 	end
 end
@@ -145,7 +141,7 @@ function JsonWriter:IsArray(t)
 		end
 		return false
 	end
-	for k, v in pairs(t) do
+	for k, _ in pairs(t) do
 		if not isindex(k) then
 			return false, "{", "}"
 		else
@@ -286,7 +282,7 @@ function JsonReader:ReadNull()
 end
 
 function JsonReader:TestReservedWord(t)
-	for i, v in ipairs(t) do
+	for _, v in ipairs(t) do
 		if self:Next() ~= v then
 			error(string.format("Error reading '%s': %s", table.concat(t), self:All()))
 		end
@@ -483,7 +479,7 @@ end
 --makes a wedge at location x, y, z
 --sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously w
 --returns true if made a wedge, false if the cell remains a block
-t.MakeWedge = function(x, y, z, defaultmaterial)
+t.MakeWedge = function(x, y, z, _)
 	return game:GetService("Terrain"):AutoWedgeCell(x, y, z)
 end
 
