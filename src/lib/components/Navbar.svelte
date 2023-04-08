@@ -3,8 +3,21 @@
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
 	import { fade } from "svelte/transition"
+	import { quadOut } from "svelte/easing"
 
 	let search = ""
+
+	const height = (_: any) => ({
+		duration: 300,
+		css: (t: any) => {
+			const x = `
+					height: ${2 * quadOut(t)}rem;
+					overflow: hidden;
+				`
+			console.log(x)
+			return x
+		},
+	})
 
 	export let data: LayoutData
 	const user = data.user
@@ -245,9 +258,10 @@
 </nav>
 
 {#if data.banners && user}
-	{#each data.banners as announcement}
+	{#each data.banners as announcement (announcement.id)}
 		<div
-			class="alert py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight
+			transition:height
+			class="py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight
 				? 'light'
 				: ''}"
 			role="alert"
@@ -349,7 +363,6 @@
 	nav
 		z-index: 9
 		max-height: 10vh
-		
 
 	.navbar-nav
 		a
@@ -360,11 +373,7 @@
 	.offcanvas
 		box-shadow: none !important
 
-	#pfp
-		width: 2.4rem
-		height: 2.4rem
-
-	img
+	#pfp, img
 		width: 2.4rem
 		height: 2.4rem
 

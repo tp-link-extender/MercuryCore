@@ -207,9 +207,9 @@
 													? 'warning'
 													: 'success'} my-0">
 												<i
-													class="fas fa-eye{banner.active
-														? '-slash'
-														: ''}" />
+													class="fas {banner.active
+														? 'fa-eye-slash'
+														: 'fa-eye'}" />
 												{banner.active
 													? "Dea"
 													: "A"}ctivate
