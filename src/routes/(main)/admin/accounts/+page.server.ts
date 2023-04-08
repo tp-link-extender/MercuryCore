@@ -13,23 +13,23 @@ const schema = z.object({
 	password: z.string().min(1).max(6969),
 })
 
-export async function load(event) {
+export async function load({ locals }) {
 	// Make sure a user is an administrator before loading the page.
-	await authorise(event.locals, 5)
+	await authorise(locals, 5)
 
 	return {
-		form: superValidate(event, schema),
+		form: superValidate(schema),
 	}
 }
 
 export const actions = {
-	resetPassword: async event => {
-		await authorise(event.locals, 5)
+	resetPassword: async ({ request, locals, getClientAddress }) => {
+		await authorise(locals, 5)
 
-		const limit = ratelimit("resetPassword", event.getClientAddress, 30)
+		const limit = ratelimit("resetPassword", getClientAddress, 30)
 		if (limit) return limit
 
-		const form = await superValidate(event, schema)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { username, password } = form.data

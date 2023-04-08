@@ -13,16 +13,13 @@ const schema = z.object({
 	password: z.string().min(1).max(6969),
 })
 
-export const load = async (
-	event
-	// removing parentheses breaks things
-) => ({
-	form: superValidate(event, schema),
+export const load = async ({ request }) => ({
+	form: superValidate(schema),
 })
 
 export const actions = {
-	default: async event => {
-		const form = await superValidate(event, schema)
+	default: async ({ request, locals }) => {
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { username, password } = form.data
@@ -33,7 +30,7 @@ export const actions = {
 				username.toLowerCase(),
 				password
 			)
-			event.locals.setSession(await auth.createSession(user.userId))
+			locals.setSession(await auth.createSession(user.userId))
 		} catch {
 			return formError(
 				form,

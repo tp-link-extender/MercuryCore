@@ -2,13 +2,10 @@
 	import { navigating } from "$app/stores"
 	import nprogress from "nprogress"
 
+	import "uno.css"
 	import "/src/nprogress.sass"
 	import "/src/global.sass"
-
-	// Theme files contain CSS variables that are used throughout the app.
 	import "/src/fa/sass/fontawesome.sass"
-	import "/src/fa/sass/regular.sass"
-	import "/src/fa/sass/solid.sass"
 
 	export let data
 	const user = data.user
@@ -76,6 +73,7 @@
 	</div>
 </div> -->
 
+<!-- Theme files contain CSS variables that are used throughout the app. -->
 {#if user?.theme == "darken"}
 	<style lang="sass">
 		@use "../themes/darken.sass"

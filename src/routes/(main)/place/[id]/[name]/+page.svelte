@@ -129,7 +129,7 @@
 								<a
 									href="/place/{data.id}/{data.name}/settings"
 									class="btn btn-sm btn-outline-warning">
-									<i class="fa-solid fa-sliders" />
+									<i class="fas fa-sliders" />
 								</a>
 							</div>
 						{/if}
@@ -144,7 +144,7 @@
 					</p>
 					<p class="light-text mb-0">
 						Gears: <i
-							class="fa-regular fa-circle-xmark"
+							class="far fa-circle-xmark"
 							data-bs-toggle="tooltip"
 							data-bs-placement="bottom"
 							data-bs-title="Tooltip on top" />
@@ -196,7 +196,7 @@
 								{#if data.likes}
 									<i class="fa fa-thumbs-up" />
 								{:else}
-									<i class="fa-regular fa-thumbs-up" />
+									<i class="far fa-thumbs-up" />
 								{/if}
 							</button>
 						</div>
@@ -210,7 +210,7 @@
 								{#if data.dislikes}
 									<i class="fa fa-thumbs-down" />
 								{:else}
-									<i class="fa-regular fa-thumbs-down" />
+									<i class="far fa-thumbs-down" />
 								{/if}
 							</button>
 						</div>
@@ -364,7 +364,7 @@
 										)
 									}}>
 									<i
-										class="fa-solid fa-arrow-up-right-from-square" />
+										class="fas fa-arrow-up-right-from-square" />
 									Studio
 								</button>
 								and then in the command bar, paste this in:
@@ -408,7 +408,7 @@
 									}}
 									type="button">
 									<i
-										class="fa-solid fa-arrow-up-right-from-square" />
+										class="fas fa-arrow-up-right-from-square" />
 									Map Folder
 								</button>
 								<button
@@ -421,7 +421,7 @@
 										)
 									}}
 									type="button">
-									<i class="fa-solid fa-wifi" />
+									<i class="fas fa-wifi" />
 									Begin Hosting
 								</button>
 								<button

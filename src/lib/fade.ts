@@ -4,7 +4,7 @@
 // import { get } from "svelte/store"
 import { fade } from "svelte/transition"
 
-export default (node: any, props: any = { duration: 300 }) => {
+export default (node: HTMLElement, props: any = { duration: 300 }) => {
 	// if (get(user)?.animationSettings == "off") return () => {}
 	if (props.num && props.total)
 		props.delay = (props.num * 150) / Math.min(props.total, props?.max || 6)

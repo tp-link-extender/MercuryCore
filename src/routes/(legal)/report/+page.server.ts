@@ -24,9 +24,9 @@ const schema = z.object({
 	note: z.string().optional(),
 })
 
-export async function load(event) {
-	const reportee = event.url.searchParams.get("user")
-	const reportedUrl = event.url.searchParams.get("url")
+export async function load({ url }) {
+	const reportee = url.searchParams.get("user")
+	const reportedUrl = url.searchParams.get("url")
 
 	if (!reportee || !reportedUrl)
 		throw error(400, "Missing user or url parameters")
@@ -34,23 +34,23 @@ export async function load(event) {
 	return {
 		reportee,
 		url: reportedUrl,
-		form: superValidate(event, schema),
+		form: superValidate(schema),
 	}
 }
 
 export const actions = {
-	default: async event => {
-		ratelimit("report", event.getClientAddress, 120)
-		const { user } = await authorise(event.locals)
+	default: async ({ request, locals, url, getClientAddress }) => {
+		ratelimit("report", getClientAddress, 120)
+		const { user } = await authorise(locals)
 
-		const form = await superValidate(event, schema)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { category, note } = form.data
-		const username = event.url.searchParams.get("user")
-		const url = event.url.searchParams.get("user")
+		const username = url.searchParams.get("user")
+		const userUrl = url.searchParams.get("user")
 
-		if (!username || !url) throw error(400, "Missing fields")
+		if (!username || !userUrl) throw error(400, "Missing fields")
 
 		const reportee = await prisma.authUser.findUnique({
 			where: {
@@ -67,7 +67,7 @@ export const actions = {
 				reporterId: user.id,
 				reporteeId: reportee.id,
 				note: (note as ReportCategory) || null,
-				url,
+				url: userUrl,
 				category,
 			},
 		})

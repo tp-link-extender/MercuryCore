@@ -9,15 +9,15 @@ const schema = z.object({
 	name: z.string().min(3).max(40),
 })
 
-export const load = async (event /**/) => ({
-	form: superValidate(event, schema),
+export const load = async ({ request }) => ({
+	form: superValidate(schema),
 })
 
 export const actions = {
-	default: async event => {
-		const { user } = await authorise(event.locals)
+	default: async ({ request, locals }) => {
+		const { user } = await authorise(locals)
 
-		const form = await superValidate(event, schema)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { name } = form.data

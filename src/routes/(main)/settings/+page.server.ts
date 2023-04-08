@@ -16,8 +16,8 @@ const passwordSchema = z.object({
 	cnpassword: z.string().min(1),
 })
 
-export const load = async (event /**/) => {
-	const { user } = await authorise(event.locals)
+export const load = async ({ request, locals }) => {
+	const { user } = await authorise(locals)
 
 	const getUser = await prisma.authUser.findUnique({
 		where: {
@@ -38,16 +38,16 @@ export const load = async (event /**/) => {
 
 	return {
 		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
-		profileForm: superValidate(event, profileSchema),
-		passwordForm: superValidate(event, passwordSchema),
+		profileForm: superValidate(request, profileSchema),
+		passwordForm: superValidate(request, passwordSchema),
 	}
 }
 
 export const actions = {
-	profile: async event => {
-		const { user } = await authorise(event.locals)
+	profile: async ({ request, locals }) => {
+		const { user } = await authorise(locals)
 
-		const form = await superValidate(event, profileSchema)
+		const form = await superValidate(request, profileSchema)
 		if (!form.valid) return formError(form)
 
 		const { bio, theme } = form.data
@@ -71,10 +71,10 @@ export const actions = {
 		}
 	},
 
-	password: async event => {
-		const { user } = await authorise(event.locals)
+	password: async ({ request, locals }) => {
+		const { user } = await authorise(locals)
 
-		const form = await superValidate(event, passwordSchema)
+		const form = await superValidate(request, passwordSchema)
 		if (!form.valid) return formError(form)
 
 		const { cpassword, npassword, cnpassword } = form.data

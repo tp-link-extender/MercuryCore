@@ -9,7 +9,7 @@
 
 {#if $modal}
 	<div
-		class="modal bg-background d-block"
+		class="modal d-block"
 		tabindex="-1"
 		transition:fly={{ y: -50, duration: 300 }}>
 		<div
@@ -31,5 +31,6 @@
 		opacity: 0.5
 	
 	.modal-content
+		background: var(--background)
 		--bs-modal-border-color: var(--accent2)
 </style>

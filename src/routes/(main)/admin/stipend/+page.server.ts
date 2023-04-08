@@ -1,6 +1,5 @@
-import { auth, authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/lucia"
 import { client } from "$lib/server/redis"
-import { fail } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -11,25 +10,25 @@ const schema = z.object({
 	stipendTime: z.number().min(1),
 })
 
-export async function load(event) {
+export async function load({ locals }) {
 	// Make sure a user is an administrator before loading the page.
-	await authorise(event.locals, 5)
+	await authorise(locals, 5)
 
 	return {
-		form: superValidate(event, schema),
+		form: superValidate(schema),
 		dailyStipend: Number((await client.get("dailyStipend")) || 10),
 		stipendTime: Number((await client.get("stipendTime")) || 12),
 	}
 }
 
 export const actions = {
-	updateStipend: async event => {
-		await authorise(event.locals, 5)
+	updateStipend: async ({ request, locals, getClientAddress }) => {
+		await authorise(locals, 5)
 
-		const limit = ratelimit("resetPassword", event.getClientAddress, 30)
+		const limit = ratelimit("resetPassword", getClientAddress, 30)
 		if (limit) return limit
 
-		const form = await superValidate(event, schema)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { dailyStipend, stipendTime } = form.data

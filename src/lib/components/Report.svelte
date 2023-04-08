@@ -9,11 +9,11 @@
 	href="/report?user={user}&url={url}">
 	<small>
 		{#if reverse}
-			<i class="fa-regular fa-flag me-1" />
+			<i class="far fa-flag me-1" />
 		{/if}
 		<span>Report abuse</span>
 		{#if !reverse}
-			<i class="fa-regular fa-flag" />
+			<i class="far fa-flag" />
 		{/if}
 	</small>
 </a>
