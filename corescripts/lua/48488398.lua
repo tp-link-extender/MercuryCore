@@ -153,20 +153,6 @@ function showTwoButtons()
 	end
 end
 
-function onTeleport(teleportState, _, _)
-	if game:GetService("TeleportService").CustomizedTeleportUI == false then
-		if teleportState == Enum.TeleportState.Started then
-			showTeleportUI("Teleport started...", 0)
-		elseif teleportState == Enum.TeleportState.WaitingForServer then
-			showTeleportUI("Requesting server...", 0)
-		elseif teleportState == Enum.TeleportState.InProgress then
-			showTeleportUI("Teleporting...", 0)
-		elseif teleportState == Enum.TeleportState.Failed then
-			showTeleportUI("Teleport failed. Insufficient privileges or target place does not exist.", 3)
-		end
-	end
-end
-
 function showTeleportUI(message, timer)
 	if teleportUI ~= nil then
 		teleportUI:Remove()
@@ -178,6 +164,20 @@ function showTeleportUI(message, timer)
 	if timer > 0 then
 		wait(timer)
 		teleportUI:Remove()
+	end
+end
+
+function onTeleport(teleportState, _, _)
+	if game:GetService("TeleportService").CustomizedTeleportUI == false then
+		if teleportState == Enum.TeleportState.Started then
+			showTeleportUI("Teleport started...", 0)
+		elseif teleportState == Enum.TeleportState.WaitingForServer then
+			showTeleportUI("Requesting server...", 0)
+		elseif teleportState == Enum.TeleportState.InProgress then
+			showTeleportUI("Teleporting...", 0)
+		elseif teleportState == Enum.TeleportState.Failed then
+			showTeleportUI("Teleport failed. Insufficient privileges or target place does not exist.", 3)
+		end
 	end
 end
 

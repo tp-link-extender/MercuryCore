@@ -34,51 +34,51 @@ showOneButton()local f=script.Parent:FindFirstChild'Popup'if f then f.OKButton.
 Visible=true f.DeclineButton.Visible=false f.AcceptButton.Visible=false end end
 function showTwoButtons()local f=script.Parent:FindFirstChild'Popup'if f then f.
 OKButton.Visible=false f.DeclineButton.Visible=true f.AcceptButton.Visible=true
-end end function onTeleport(f,g,h)if game:GetService'TeleportService'.
-CustomizedTeleportUI==false then if f==Enum.TeleportState.Started then
-showTeleportUI('Teleport started...',0)elseif f==Enum.TeleportState.
-WaitingForServer then showTeleportUI('Requesting server...',0)elseif f==Enum.
+end end function showTeleportUI(f,g)if b~=nil then b:Remove()end waitForChild(a,
+'PlayerGui')b=Instance.new'Message'b.Text=f b.Parent=a.PlayerGui if g>0 then
+wait(g)b:Remove()end end function onTeleport(f,g,h)if game:GetService
+'TeleportService'.CustomizedTeleportUI==false then if f==Enum.TeleportState.
+Started then showTeleportUI('Teleport started...',0)elseif f==Enum.TeleportState
+.WaitingForServer then showTeleportUI('Requesting server...',0)elseif f==Enum.
 TeleportState.InProgress then showTeleportUI('Teleporting...',0)elseif f==Enum.
 TeleportState.Failed then showTeleportUI(
 [[Teleport failed. Insufficient privileges or target place does not exist.]],3)
-end end end function showTeleportUI(f,h)if b~=nil then b:Remove()end
-waitForChild(a,'PlayerGui')b=Instance.new'Message'b.Text=f b.Parent=a.PlayerGui
-if h>0 then wait(h)b:Remove()end end if d then a.OnTeleport:connect(onTeleport)
-game:GetService'TeleportService'.ErrorCallback=function(f)local h=script.Parent:
-FindFirstChild'Popup'showOneButton()h.PopupText.Text=f local i i=h.OKButton.
-MouseButton1Click:connect(function()game:GetService'TeleportService':
-TeleportCancel()if i then i:disconnect()end game.GuiService:RemoveCenterDialog(
-script.Parent:FindFirstChild'Popup')h:TweenSize(UDim2.new(0,0,0,0),Enum.
-EasingDirection.Out,Enum.EasingStyle.Quart,1,true,e())end)game.GuiService:
-AddCenterDialog(script.Parent:FindFirstChild'Popup',Enum.CenterDialogType.
-QuitDialog,function()showOneButton()script.Parent:FindFirstChild'Popup'.Visible=
-true h:TweenSize(UDim2.new(0,330,0,350),Enum.EasingDirection.Out,Enum.
-EasingStyle.Quart,1,true)end,function()h:TweenSize(UDim2.new(0,0,0,0),Enum.
-EasingDirection.Out,Enum.EasingStyle.Quart,1,true,e())end)end game:GetService
-'TeleportService'.ConfirmationCallback=function(f,h,i)local j=script.Parent:
-FindFirstChild'Popup'j.PopupText.Text=f j.PopupImage.Image=''local k,l
-local function killCons()if k then k:disconnect()end if l then l:disconnect()end
-game.GuiService:RemoveCenterDialog(script.Parent:FindFirstChild'Popup')j:
+end end end if d then a.OnTeleport:connect(onTeleport)game:GetService
+'TeleportService'.ErrorCallback=function(f)local h=script.Parent:FindFirstChild
+'Popup'showOneButton()h.PopupText.Text=f local i i=h.OKButton.MouseButton1Click:
+connect(function()game:GetService'TeleportService':TeleportCancel()if i then i:
+disconnect()end game.GuiService:RemoveCenterDialog(script.Parent:FindFirstChild
+'Popup')h:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle
+.Quart,1,true,e())end)game.GuiService:AddCenterDialog(script.Parent:
+FindFirstChild'Popup',Enum.CenterDialogType.QuitDialog,function()showOneButton()
+script.Parent:FindFirstChild'Popup'.Visible=true h:TweenSize(UDim2.new(0,330,0,
+350),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end,function()h:
 TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,
-true,e())end k=j.AcceptButton.MouseButton1Click:connect(function()killCons()
-local m,n=pcall(function()game:GetService'TeleportService':TeleportImpl(h,i)end)
-if not m then showOneButton()j.PopupText.Text=n local o o=j.OKButton.
-MouseButton1Click:connect(function()if o then o:disconnect()end game.GuiService:
-RemoveCenterDialog(script.Parent:FindFirstChild'Popup')j:TweenSize(UDim2.new(0,0
-,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true,e())end)game.
-GuiService:AddCenterDialog(script.Parent:FindFirstChild'Popup',Enum.
-CenterDialogType.QuitDialog,function()showOneButton()script.Parent:
+true,e())end)end game:GetService'TeleportService'.ConfirmationCallback=function(
+f,h,i)local j=script.Parent:FindFirstChild'Popup'j.PopupText.Text=f j.PopupImage
+.Image=''local k,l local function killCons()if k then k:disconnect()end if l
+then l:disconnect()end game.GuiService:RemoveCenterDialog(script.Parent:
+FindFirstChild'Popup')j:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,
+Enum.EasingStyle.Quart,1,true,e())end k=j.AcceptButton.MouseButton1Click:
+connect(function()killCons()local m,n=pcall(function()game:GetService
+'TeleportService':TeleportImpl(h,i)end)if not m then showOneButton()j.PopupText.
+Text=n local o o=j.OKButton.MouseButton1Click:connect(function()if o then o:
+disconnect()end game.GuiService:RemoveCenterDialog(script.Parent:FindFirstChild
+'Popup')j:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle
+.Quart,1,true,e())end)game.GuiService:AddCenterDialog(script.Parent:
+FindFirstChild'Popup',Enum.CenterDialogType.QuitDialog,function()showOneButton()
+script.Parent:FindFirstChild'Popup'.Visible=true j:TweenSize(UDim2.new(0,330,0,
+350),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end,function()j:
+TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,
+true,e())end)end end)l=j.DeclineButton.MouseButton1Click:connect(function()
+killCons()pcall(function()game:GetService'TeleportService':TeleportCancel()end)
+end)local m=pcall(function()game.GuiService:AddCenterDialog(script.Parent:
+FindFirstChild'Popup',Enum.CenterDialogType.QuitDialog,function()showTwoButtons(
+)j.AcceptButton.Text='Leave'j.DeclineButton.Text='Stay'script.Parent:
 FindFirstChild'Popup'.Visible=true j:TweenSize(UDim2.new(0,330,0,350),Enum.
 EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end,function()j:TweenSize(
 UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true,e())
-end)end end)l=j.DeclineButton.MouseButton1Click:connect(function()killCons()
-pcall(function()game:GetService'TeleportService':TeleportCancel()end)end)local m
-=pcall(function()game.GuiService:AddCenterDialog(script.Parent:FindFirstChild
-'Popup',Enum.CenterDialogType.QuitDialog,function()showTwoButtons()j.
-AcceptButton.Text='Leave'j.DeclineButton.Text='Stay'script.Parent:FindFirstChild
-'Popup'.Visible=true j:TweenSize(UDim2.new(0,330,0,350),Enum.EasingDirection.Out
-,Enum.EasingStyle.Quart,1,true)end,function()j:TweenSize(UDim2.new(0,0,0,0),Enum
-.EasingDirection.Out,Enum.EasingStyle.Quart,1,true,e())end)end)if m==false then
-script.Parent:FindFirstChild'Popup'.Visible=true j.AcceptButton.Text='Leave'j.
-DeclineButton.Text='Stay'j:TweenSize(UDim2.new(0,330,0,350),Enum.EasingDirection
-.Out,Enum.EasingStyle.Quart,1,true)end return true end end
+end)end)if m==false then script.Parent:FindFirstChild'Popup'.Visible=true j.
+AcceptButton.Text='Leave'j.DeclineButton.Text='Stay'j:TweenSize(UDim2.new(0,330,
+0,350),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end return true
+end end

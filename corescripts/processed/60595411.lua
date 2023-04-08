@@ -7,19 +7,18 @@ end local o={backslashes={['\b']='\\b',['\t']='\\t',['\n']='\\n',['\f']='\\f',[
 writer=n:New()i(p,self)self.__index=self return p end function o:Append(p)self.
 writer:Append(p)end function o:ToString()return self.writer:ToString()end
 function o:Write(p)local q=h(p)if q=='nil'then self:WriteNil()elseif q==
-'boolean'then self:WriteString(p)elseif q=='number'then self:WriteString(p)
-elseif q=='string'then self:ParseString(p)elseif q=='table'then self:WriteTable(
-p)elseif q=='function'then self:WriteFunction(p)elseif q=='thread'then self:
-WriteError(p)elseif q=='userdata'then self:WriteError(p)end end function o:
-WriteNil()self:Append'null'end function o:WriteString(p)self:Append(g(p))end
-function o:ParseString(p)self:Append'"'self:Append(b.gsub(p,'[%z%c\\"/]',
-function(q)local r=self.backslashes[q]if r then return r end return b.format(
-'\\u%.4X',b.byte(q))end))self:Append'"'end function o:IsArray(p)local q,r=0,
-function(q)if h(q)=='number'and q>0 then if c.floor(q)==q then return true end
-end return false end for s,t in j(p)do if not r(s)then return false,'{','}'else
-q=c.max(q,s)end end return true,'[',']',q end function o:WriteTable(p)local q,r,
-s,t=self:IsArray(p)self:Append(r)if q then for u=1,t do self:Write(p[u])if u<t
-then self:Append','end end else local u=true for v,w in j(p)do if not u then
+'boolean'or q=='number'then self:WriteString(p)elseif q=='string'then self:
+ParseString(p)elseif q=='table'then self:WriteTable(p)elseif q=='function'then
+self:WriteFunction(p)elseif q=='thread'or q=='userdata'then self:WriteError(p)
+end end function o:WriteNil()self:Append'null'end function o:WriteString(p)self:
+Append(g(p))end function o:ParseString(p)self:Append'"'self:Append(b.gsub(p,
+'[%z%c\\"/]',function(q)local r=self.backslashes[q]if r then return r end return
+b.format('\\u%.4X',b.byte(q))end))self:Append'"'end function o:IsArray(p)local q
+,r=0,function(q)if h(q)=='number'and q>0 then if c.floor(q)==q then return true
+end end return false end for s,t in j(p)do if not r(s)then return false,'{','}'
+else q=c.max(q,s)end end return true,'[',']',q end function o:WriteTable(p)local
+q,r,s,t=self:IsArray(p)self:Append(r)if q then for u=1,t do self:Write(p[u])if u
+<t then self:Append','end end else local u=true for v,w in j(p)do if not u then
 self:Append','end u=false self:ParseString(v)self:Append':'self:Write(w)end end
 self:Append(s)end function o:WriteError(p)e(b.format(
 'Encoding of %s unsupported',g(p)))end function o:WriteFunction(p)if p==Null

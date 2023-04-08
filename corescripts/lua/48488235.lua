@@ -984,25 +984,25 @@ end)
 -------------------------------
 -- Static Functions
 -------------------------------
-function GetTotalEntries()
-	return math.min(#MiddleFrameBackgrounds, DefaultEntriesOnScreen)
-end
+-- function GetTotalEntries()
+-- 	return math.min(#MiddleFrameBackgrounds, DefaultEntriesOnScreen)
+-- end
 
-function GetEntryListLength()
-	local numEnts = #PlayerFrames + #TeamFrames
-	if NeutralTeam then
-		numEnts = numEnts + 1
-	end
-	return numEnts
-end
+-- function GetEntryListLength()
+-- 	local numEnts = #PlayerFrames + #TeamFrames
+-- 	if NeutralTeam then
+-- 		numEnts = numEnts + 1
+-- 	end
+-- 	return numEnts
+-- end
 
 function AreAllEntriesOnScreen()
 	return #MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale <= 1 + DefaultBottomClipPos
 end
 
-function GetLengthOfVisbleScroll()
-	return 1 + DefaultBottomClipPos
-end
+-- function GetLengthOfVisbleScroll()
+-- 	return 1 + DefaultBottomClipPos
+-- end
 
 function GetMaxScroll()
 	return DefaultBottomClipPos * -1
@@ -1093,19 +1093,19 @@ end
 	rank	Integer rank value for player
 	@Return		Normalized integer value for rank?
 --]]
-function GetPrivilegeType(rank)
-	if rank <= PrivilegeLevel["Banned"] then
-		return PrivilegeLevel["Banned"]
-	elseif rank <= PrivilegeLevel["Visitor"] then
-		return PrivilegeLevel["Visitor"]
-	elseif rank <= PrivilegeLevel["Member"] then
-		return PrivilegeLevel["Member"]
-	elseif rank <= PrivilegeLevel["Admin"] then
-		return PrivilegeLevel["Admin"]
-	else
-		return PrivilegeLevel["Owner"]
-	end
-end
+-- function GetPrivilegeType(rank)
+-- 	if rank <= PrivilegeLevel["Banned"] then
+-- 		return PrivilegeLevel["Banned"]
+-- 	elseif rank <= PrivilegeLevel["Visitor"] then
+-- 		return PrivilegeLevel["Visitor"]
+-- 	elseif rank <= PrivilegeLevel["Member"] then
+-- 		return PrivilegeLevel["Member"]
+-- 	elseif rank <= PrivilegeLevel["Admin"] then
+-- 		return PrivilegeLevel["Admin"]
+-- 	else
+-- 		return PrivilegeLevel["Owner"]
+-- 	end
+-- end
 
 --[[
 	gives a player a new privilage rank
@@ -1220,7 +1220,7 @@ function InitReportAbuse()
 		end
 	end
 
-	AbuseDropDown, UpdateAbuseSelection = RbxGui.CreateDropDownMenu(Abuses, UpdateAbuseFunction, true)
+	AbuseDropDown, _ = RbxGui.CreateDropDownMenu(Abuses, UpdateAbuseFunction, true)
 	AbuseDropDown.Name = "AbuseComboBox"
 	AbuseDropDown.Position = UDim2.new(0.425, 0, 0, 142)
 	AbuseDropDown.Size = UDim2.new(0.55, 0, 0, 32)
@@ -1333,7 +1333,7 @@ end
 	playerEntry		Entry of player who had a stat change
 	property		Name of stat changed
 --]]
-function StatChanged(playerEntry, property)
+function StatChanged(_, _) --playerEntry, property)
 	-- if(playerEntry['MyTeam']) then
 	-- UpdateSingleTeam(playerEntry['MyTeam'])
 	-- else
@@ -1808,22 +1808,14 @@ function UpdateMaximize()
 			end
 		end
 
-		for i, entry in ipairs(TeamFrames) do
+		for _, entry in ipairs(TeamFrames) do
 			WaitForChild(entry["Frame"], "TitleFrame").Size =
 				UDim2.new(0, BaseScreenXSize * 0.9, entry["Frame"].TitleFrame.Size.Y.Scale, 0)
 		end
-		for i, entry in ipairs(PlayerFrames) do
+		for _, entry in ipairs(PlayerFrames) do
 			WaitForChild(entry["Frame"], "TitleFrame").Size =
 				UDim2.new(0, BaseScreenXSize * 0.9, entry["Frame"].TitleFrame.Size.Y.Scale, 0)
 		end
-	end
-end
-
-function UpdateStatNames()
-	if not AreNamesExpanded.Value or IsMinimized.Value then
-		CloseNames()
-	else
-		ExpandNames()
 	end
 end
 
@@ -1881,6 +1873,14 @@ function CloseNames()
 			BASE_TWEEN * 1.2,
 			true
 		)
+	end
+end
+
+function UpdateStatNames()
+	if not AreNamesExpanded.Value or IsMinimized.Value then
+		CloseNames()
+	else
+		ExpandNames()
 	end
 end
 
@@ -1980,12 +1980,11 @@ end
 	Manages scrolling of the playerlist on mouse drag
 --]]
 function StartDrag(entry, startx, starty)
-	local startDragTime = tick()
-	local stopDrag = false
 	local openPanel = true
-	local draggedFrame = WaitForChild(entry["Frame"], "ClickListener")
+	--[[local draggedFrame = ]]
+	WaitForChild(entry["Frame"], "ClickListener")
 	local function dragExit()
-		stopDrag = true
+		-- stopDrag = true
 
 		if
 			entry["Player"]
@@ -2021,7 +2020,6 @@ function StartMinimizeDrag()
 	Delay(0, function()
 		local startTime = tick()
 		debugprint "Got Click2"
-		local stopDrag = false
 		local function dragExit()
 			--debugprint('undone click2')
 			if tick() - startTime < 0.25 then --was click
@@ -2032,7 +2030,7 @@ function StartMinimizeDrag()
 					ToggleMinimize()
 				end
 			end
-			stopDrag = true
+			-- stopDrag = true
 		end
 		local startY = nil
 		local StartFrame = DefaultBottomClipPos
@@ -2225,7 +2223,7 @@ end
 	oldLeaderstats	leaderstats object to be removed
 	playerEntry		A reference to the ENTRY(table) of the player
 --]]
-function LeaderstatsRemoved(oldLeaderstats, playerEntry)
+function LeaderstatsRemoved(_, playerEntry)
 	while AddingFrameLock do
 		debugprint("waiting to insert " .. playerEntry["Player"].Name)
 		wait(1 / 30)
@@ -2449,8 +2447,8 @@ function InsertPlayerFrame(nplayer)
 		dropShadow.Position = nFrame.TitleFrame.Title.Position + UDim2.new(0, 1, 0, 1)
 		dropShadow.Name = "DropShadow"
 		dropShadow.Parent = nFrame.TitleFrame
-	else
-		--Delay(2, function () OnFriendshipChanged(nplayer,LocalPlayer:GetFriendStatus(nplayer)) end)
+	-- else
+	-- 	--Delay(2, function () OnFriendshipChanged(nplayer,LocalPlayer:GetFriendStatus(nplayer)) end)
 	end
 	nFrame.TitleFrame.Title.Font = "ArialBold"
 
@@ -3030,8 +3028,8 @@ function RemoveTeamFrame(nteam)
 		wait(1 / 30)
 	end
 	AddingFrameLock = true
-	if IsMinimized.Value then
-	end
+	-- if IsMinimized.Value then
+	-- end
 	local myEntry
 	for i, key in ipairs(TeamFrames) do
 		if nteam == key["MyTeam"] then
