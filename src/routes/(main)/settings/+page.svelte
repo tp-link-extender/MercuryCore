@@ -109,8 +109,7 @@
 			<form
 				class="col-lg-8"
 				method="POST"
-				action="?/profile"
-				use:profile.enhance>
+				action="?/profile">
 				<fieldset>
 					<div class="row">
 						<label
