@@ -13,23 +13,23 @@ const schema = z.object({
 	reason: z.string().min(15).max(150),
 })
 
-export async function load(event) {
+export async function load({ locals }) {
 	// Make sure a user is an administrator/moderator before loading the page.
-	await authorise(event.locals, 4)
+	await authorise(locals, 4)
 
 	return {
-		form: superValidate(event, schema),
+		form: superValidate(schema),
 	}
 }
 
 export const actions = {
-	moderateUser: async event => {
-		const { user } = await authorise(event.locals, 4)
+	moderateUser: async ({ request, locals, getClientAddress }) => {
+		const { user } = await authorise(locals, 4)
 
-		const limit = ratelimit("moderateUser", event.getClientAddress, 30)
+		const limit = ratelimit("moderateUser", getClientAddress, 30)
 		if (limit) return limit
 
-		const form = await superValidate(event, schema)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { username, action, banDate, reason } = form.data
