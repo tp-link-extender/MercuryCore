@@ -306,7 +306,7 @@ function checkForSwap(button, x, y)
 end
 
 function resizeGrid()
-	for k, v in pairs(backpackItems) do
+	for _, v in pairs(backpackItems) do
 		if not v:FindFirstChild "RobloxBuildTool" then
 			if not buttons[v] then
 				local buttonClone = gearButton:clone()
@@ -500,7 +500,7 @@ function loadoutCheck(child, selectState)
 	if not child:IsA "ImageButton" then
 		return
 	end
-	for k, v in pairs(backpackItems) do
+	for _, v in pairs(backpackItems) do
 		if buttons[v] then
 			if child:FindFirstChild "GearReference" and buttons[v]:FindFirstChild "GearReference" then
 				if buttons[v].GearReference.Value == child.GearReference.Value then

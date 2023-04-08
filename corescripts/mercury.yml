@@ -7954,9 +7954,6 @@ structs:
     Remove:
       args: []
       method: true
-      deprecated:
-        message: this property is deprecated.
-        replace: []
     SetAttribute:
       args:
         - required: false
@@ -8039,9 +8036,6 @@ structs:
     remove:
       args: []
       method: true
-      deprecated:
-        message: this property is deprecated.
-        replace: []
   Terrain:
     "*":
       struct: Instance

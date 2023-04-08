@@ -538,18 +538,18 @@ t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, select
 	local selectionBox = Instance.new "SelectionBox"
 
 	-- srs translation from region3 to region3int16
-	function Region3ToRegion3int16(region3)
-		local theLowVec = region3.CFrame.p - (region3.Size / 2) + Vector3.new(2, 2, 2)
-		local lowCell = WorldToCellPreferSolid(terrain, theLowVec)
+	-- function Region3ToRegion3int16(region3)
+	-- 	local theLowVec = region3.CFrame.p - (region3.Size / 2) + Vector3.new(2, 2, 2)
+	-- 	local lowCell = WorldToCellPreferSolid(terrain, theLowVec)
 
-		local theHighVec = region3.CFrame.p + (region3.Size / 2) - Vector3.new(2, 2, 2)
-		local highCell = WorldToCellPreferSolid(terrain, theHighVec)
+	-- 	local theHighVec = region3.CFrame.p + (region3.Size / 2) - Vector3.new(2, 2, 2)
+	-- 	local highCell = WorldToCellPreferSolid(terrain, theHighVec)
 
-		local highIntVec = Vector3int16.new(highCell.x, highCell.y, highCell.z)
-		local lowIntVec = Vector3int16.new(lowCell.x, lowCell.y, lowCell.z)
+	-- 	local highIntVec = Vector3int16.new(highCell.x, highCell.y, highCell.z)
+	-- 	local lowIntVec = Vector3int16.new(lowCell.x, lowCell.y, lowCell.z)
 
-		return Region3int16.new(lowIntVec, highIntVec)
-	end
+	-- 	return Region3int16.new(lowIntVec, highIntVec)
+	-- end
 
 	-- helper function that creates the basis for a selection box
 	function createAdornment(theColor)
