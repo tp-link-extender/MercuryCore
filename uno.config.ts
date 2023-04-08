@@ -1954,8 +1954,11 @@ const fa = {
 	"level-up-alt": "f3bf",
 }
 
+const bsRem = ["0", "0.25rem", "0.5rem", "1rem", "1.5rem", "3rem"]
+
 export default defineConfig({
 	rules: [
+		// Fontawesome
 		[
 			/^fa-([a-zA-Z0-9-]+)$/,
 			([_, c], { rawSelector }) =>
@@ -1963,12 +1966,72 @@ export default defineConfig({
 					fa[c]
 				}" !important }`,
 		],
-		[/^fa-([\.\d]+)x$/, ([_, num]) => ({ "font-size": `${num}em` })],
+		[/^fa-([\.\d]+)x$/, ([_, n]) => ({ "font-size": `${n}em` })],
 		[
 			/^fa-rotate-([\.\d]+)$/,
-			([_, num]) => ({
-				transform: `rotate(${num}deg)`,
-				"-webkit-transform": `rotate(${num}deg)`,
+			([_, n]) => ({
+				transform: `rotate(${n}deg)`,
+				"-webkit-transform": `rotate(${n}deg)`,
+			}),
+		],
+		// Bootstrap
+		// padding & margin
+		[
+			/^([pm])([sexybt]?)-([0-5])$/,
+			([_, pm, d, n]) => {
+				const str = `${bsRem[n]} !important`
+				const p = pm == "p" ? "padding" : "margin"
+
+				switch (d) {
+					case "s":
+						return { [`${p}-left`]: str }
+					case "e":
+						return { [`${p}-right`]: str }
+					case "x":
+						return { [`${p}-left`]: str, [`${p}-right`]: str }
+					case "y":
+						return { [`${p}-top`]: str, [`${p}-bottom`]: str }
+					case "b":
+						return { [`${p}-bottom`]: str }
+					case "t":
+						return { [`${p}-top`]: str }
+					default:
+						return { [p]: str }
+				}
+			},
+		],
+		// gap
+		[/^gap-([0-5])$/, ([_, n]) => ({ gap: `${bsRem[n]} !important` })],
+		// // cols
+		// [
+		// 	/^col-(10|11|12|[1-9])$/,
+		// 	([_, n]) => ({
+		// 		flex: "0 0 auto",
+		// 		width: `${(100 / 12) * parseInt(n)}%`,
+		// 	}),
+		// ],
+		// offsets
+		[
+			/^offset-([1-9]|10|11)$/,
+			([_, n]) => ({
+				"margin-left": `${(100 / 12) * parseInt(n)}%`,
+			}),
+		],
+		// borders
+		[
+			/^border-([\.\d]+)$/,
+			([_, n]) =>
+				n == "0"
+					? {}
+					: {
+							"--bs-border-width": `${n}px`,
+					  },
+		],
+		// orders
+		[
+			/^order-([\.\d]+)$/,
+			([_, n]) => ({
+				order: `${n} !important`,
 			}),
 		],
 	],
