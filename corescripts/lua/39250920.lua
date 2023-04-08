@@ -187,24 +187,6 @@ function highlightColor(frame, tone)
 	end
 end
 
-function wanderDialog()
-	print "Wander"
-	mainFrame.Visible = false
-	endDialog()
-	showMessage(characterWanderedOffMessage, characterWanderedOffSize)
-end
-
-function timeoutDialog()
-	print "Timeout"
-	mainFrame.Visible = false
-	endDialog()
-	showMessage(conversationTimedOut, conversationTimedOutSize)
-end
-function normalEndDialog()
-	print "Done"
-	endDialog()
-end
-
 function endDialog()
 	if currentAbortDialogScript then
 		currentAbortDialogScript:Remove()
@@ -227,6 +209,24 @@ function endDialog()
 	end
 
 	currentConversationPartner = nil
+end
+
+function wanderDialog()
+	print "Wander"
+	mainFrame.Visible = false
+	endDialog()
+	showMessage(characterWanderedOffMessage, characterWanderedOffSize)
+end
+
+function timeoutDialog()
+	print "Timeout"
+	mainFrame.Visible = false
+	endDialog()
+	showMessage(conversationTimedOut, conversationTimedOutSize)
+end
+function normalEndDialog()
+	print "Done"
+	endDialog()
 end
 
 function sanitizeMessage(msg)
@@ -337,7 +337,7 @@ function initialize(parent)
 	imageLabel.RobloxLocked = true
 	imageLabel.Parent = mainFrame
 
-	for n, obj in pairs(choices) do
+	for _, obj in pairs(choices) do
 		obj.RobloxLocked = true
 		obj.Parent = mainFrame
 	end
@@ -355,7 +355,7 @@ function presentDialogChoices(talkingPart, dialogChoices)
 
 	currentConversationPartner = talkingPart
 	sortedDialogChoices = {}
-	for n, obj in pairs(dialogChoices) do
+	for _, obj in pairs(dialogChoices) do
 		if obj:IsA "DialogChoice" then
 			table.insert(sortedDialogChoices, obj)
 		end
@@ -372,11 +372,11 @@ function presentDialogChoices(talkingPart, dialogChoices)
 	local pos = 1
 	local yPosition = 0
 	choiceMap = {}
-	for n, obj in pairs(choices) do
+	for _, obj in pairs(choices) do
 		obj.Visible = false
 	end
 
-	for n, obj in pairs(sortedDialogChoices) do
+	for _, obj in pairs(sortedDialogChoices) do
 		if pos <= #choices then
 			--3 lines is the maximum, set it to that temporarily
 			choices[pos].Size = UDim2.new(1, 0, 0, 24 * 3)
