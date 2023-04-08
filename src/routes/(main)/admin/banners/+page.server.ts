@@ -14,12 +14,12 @@ const schema = z.object({
 	bannerBody: z.string().optional(),
 })
 
-export async function load(event) {
+export async function load({ locals }) {
 	// Make sure a user is an administrator before loading the page.
-	await authorise(event.locals, 5)
+	await authorise(locals, 5)
 
 	return {
-		form: superValidate(event, schema),
+		form: superValidate(schema),
 		banners: prisma.announcements.findMany({
 			include: {
 				user: true,
@@ -32,12 +32,12 @@ export async function load(event) {
 }
 
 export const actions = {
-	default: async event => {
-		await authorise(event.locals, 5)
+	default: async ({ request, locals, getClientAddress }) => {
+		await authorise(locals, 5)
 
-		const { user } = await authorise(event.locals)
+		const { user } = await authorise(locals)
 
-		const form = await superValidate(event, schema)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { action, id, bannerText, bannerColour, bannerBody } = form.data
@@ -48,11 +48,7 @@ export const actions = {
 
 		switch (action) {
 			case "create":
-				const limit = ratelimit(
-					"createBanner",
-					event.getClientAddress,
-					30
-				)
+				const limit = ratelimit("createBanner", getClientAddress, 30)
 				if (limit) return limit
 
 				if (!bannerText || !bannerColour)

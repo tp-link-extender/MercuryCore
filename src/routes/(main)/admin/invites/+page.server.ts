@@ -16,12 +16,12 @@ const schema = z.object({
 	inviteUses: z.number().min(1).max(100).default(1),
 })
 
-export async function load(event) {
+export async function load({ locals }) {
 	// Make sure a user is an administrator before loading the page.
-	await authorise(event.locals, 5)
+	await authorise(locals, 5)
 
 	return {
-		form: superValidate(event, schema),
+		form: superValidate(schema),
 		invites: prisma.regkey.findMany({
 			include: {
 				creator: true,
@@ -34,12 +34,12 @@ export async function load(event) {
 }
 
 export const actions = {
-	default: async event => {
-		await authorise(event.locals, 5)
+	default: async ({ request, locals, getClientAddress }) => {
+		await authorise(locals, 5)
 
-		const { user } = await authorise(event.locals)
+		const { user } = await authorise(locals)
 
-		const form = await superValidate(event, schema)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const {
@@ -54,11 +54,7 @@ export const actions = {
 
 		switch (action) {
 			case "create":
-				const limit = ratelimit(
-					"createInvite",
-					event.getClientAddress,
-					30
-				)
+				const limit = ratelimit("createInvite", getClientAddress, 30)
 				if (limit) return limit
 
 				const customInviteEnabled = !!enableInviteCustom

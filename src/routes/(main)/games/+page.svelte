@@ -43,7 +43,7 @@
 		<h1 class="col light-text">
 			Games
 			<a href="/games/create" class="btn btn-primary ms-4">
-				<i class="fa-solid fa-plus" />
+				<i class="fas fa-plus" />
 				Create
 			</a>
 		</h1>

@@ -36,7 +36,7 @@
 						{#if data.likes}
 							<i class="fa fa-thumbs-up" />
 						{:else}
-							<i class="fa-regular fa-thumbs-up" />
+							<i class="far fa-thumbs-up" />
 						{/if}
 					</button>
 				</div>
@@ -58,7 +58,7 @@
 						{#if data.dislikes}
 							<i class="fa fa-thumbs-down" />
 						{:else}
-							<i class="fa-regular fa-thumbs-down" />
+							<i class="far fa-thumbs-down" />
 						{/if}
 					</button>
 				</div>

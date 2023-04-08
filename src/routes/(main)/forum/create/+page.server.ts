@@ -12,8 +12,8 @@ const schema = z.object({
 	content: z.string().min(50).max(3000),
 })
 
-export async function load(event) {
-	const category = event.url.searchParams.get("category")
+export async function load({ url }) {
+	const category = url.searchParams.get("category")
 	if (!category) throw error(400, "Missing category")
 
 	const getCategory = (
@@ -34,19 +34,18 @@ export async function load(event) {
 
 	return {
 		category: getCategory,
-		form: superValidate(event, schema),
+		form: superValidate(schema),
 	}
 }
 
 export const actions = {
-	default: async event => {
-		const { url, locals, getClientAddress } = event
+	default: async ({ request, locals, url, getClientAddress }) => {
 		const limit = ratelimit("forumPost", getClientAddress, 30)
 		if (limit) return limit
 
 		const { user } = await authorise(locals)
 
-		const form = await superValidate(event, schema)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { title, content } = form.data

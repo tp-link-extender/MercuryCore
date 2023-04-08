@@ -6,6 +6,7 @@ export const load = async ({ locals }) => ({
 			active: true,
 		},
 		select: {
+			id: true,
 			body: true,
 			bgColour: true,
 			textLight: true,
