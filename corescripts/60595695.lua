@@ -3,15 +3,15 @@
 -- access to all of the libraries (otherwise only local scripts do)
 
 local deepakTestingPlace = 3569749
-local sc = game:GetService("ScriptContext")
+local sc = game:GetService "ScriptContext"
 local tries = 0
- 
+
 while not sc and tries < 3 do
 	tries = tries + 1
-	sc = game:GetService("ScriptContext")
+	sc = game:GetService "ScriptContext"
 	wait(0.2)
 end
- 
+
 if sc then
 	sc:RegisterLibrary("Libraries/RbxGui", "45284430")
 	sc:RegisterLibrary("Libraries/RbxGear", "45374389")
@@ -22,5 +22,5 @@ if sc then
 	sc:RegisterLibrary("Libraries/RbxStamper", "73157242")
 	sc:LibraryRegistrationComplete()
 else
-	print("failed to find script context, libraries did not load")
+	print "failed to find script context, libraries did not load"
 end
