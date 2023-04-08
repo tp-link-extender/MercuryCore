@@ -85,7 +85,6 @@ for i = 1, #bottomLeftChildren do
 		exitTip.Parent = bottomLeftChildren[i]
 		setUpListeners(exitTip)
 	elseif bottomLeftChildren[i].Name == "SettingsButton" then
-		hasSettingsTip = true
 		createSettingsButtonTip(bottomLeftChildren[i])
 	end
 end

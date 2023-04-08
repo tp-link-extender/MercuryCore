@@ -731,7 +731,7 @@ function initializeDeveloperConsole()
 		end
 	end)
 
-	Dev_ScrollArea.Handle.MouseButton1Up:connect(function(x, y)
+	Dev_ScrollArea.Handle.MouseButton1Up:connect(function(_, _)
 		clean()
 	end)
 

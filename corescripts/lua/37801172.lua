@@ -15,11 +15,11 @@ local function waitForChild(instance, name)
 		instance.ChildAdded:wait()
 	end
 end
-local function waitForProperty(instance, property)
-	while not instance[property] do
-		instance.Changed:wait()
-	end
-end
+-- local function waitForProperty(instance, property)
+-- 	while not instance[property] do
+-- 		instance.Changed:wait()
+-- 	end
+-- end
 
 -- Responsible for tracking logging items
 local scriptContext = game:GetService "ScriptContext"

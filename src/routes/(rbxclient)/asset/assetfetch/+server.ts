@@ -8,7 +8,7 @@ export async function GET({ url, setHeaders }) {
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
 	try {
-		let file = fs.readFileSync(`./corescripts/${ID}.lua`)
+		let file = fs.readFileSync(`./corescripts/processed/${ID}.lua`)
 
 		setHeaders({
 			"Content-Type": "binary/octet-stream",
@@ -23,6 +23,8 @@ export async function GET({ url, setHeaders }) {
 
 		// Health corescript
 		if (ID != "38037265") file2 = SignData(file2, parseInt(ID))
+
+		console.log("served corescript", ID)
 
 		return new Response(file2)
 	} catch {
