@@ -25,7 +25,7 @@ export const auth = lucia({
 		}),
 	},
 	env: dev ? "DEV" : "PROD",
-	transformUserData: (data: any) => ({
+	transformDatabaseUser: (data: any) => ({
 		// This is the data that will be available after calling getUser()
 		// in a +page.svelte or +layout.svelte file, or authorise() in a
 		// +page.server.ts or +layout.server.ts file.
