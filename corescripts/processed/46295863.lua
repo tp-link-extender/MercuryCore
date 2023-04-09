@@ -15,25 +15,25 @@ end function resumeGameFunction(u)u.Settings:TweenPosition(UDim2.new(0.5,-262,-
 function()u.Visible=false for v=1,#o do o[v].Visible=false game.GuiService:
 RemoveCenterDialog(o[v])end game.GuiService:RemoveCenterDialog(u)settingsButton.
 Active=true k=nil l={}end)end function goToMenu(u,v,w,x,y)if type(v)~='string'
-then return end table.insert(l,k)if v=='GameMainMenu'then l={}end local z,A=u:
-GetChildren(),false for B=1,#z do if z[B].Name==v then z[B].Visible=true k={
-container=u,name=v,direction=w,lastSize=x}A=true if x and y then z[B]:
-TweenSizeAndPosition(x,y,Enum.EasingDirection.InOut,Enum.EasingStyle.Sine,e,true
-)elseif x then z[B]:TweenSizeAndPosition(x,UDim2.new(0.5,-x.X.Offset/2,0.5,-x.Y.
-Offset/2),Enum.EasingDirection.InOut,Enum.EasingStyle.Sine,e,true)else z[B]:
-TweenPosition(UDim2.new(0,0,0,0),Enum.EasingDirection.InOut,Enum.EasingStyle.
-Sine,e,true)end else if w=='left'then z[B]:TweenPosition(UDim2.new(-1,-525,0,0),
-Enum.EasingDirection.InOut,Enum.EasingStyle.Sine,e,true)elseif w=='right'then z[
-B]:TweenPosition(UDim2.new(1,525,0,0),Enum.EasingDirection.InOut,Enum.
-EasingStyle.Sine,e,true)elseif w=='up'then z[B]:TweenPosition(UDim2.new(0,0,-1,-
-400),Enum.EasingDirection.InOut,Enum.EasingStyle.Sine,e,true)elseif w=='down'
-then z[B]:TweenPosition(UDim2.new(0,0,1,400),Enum.EasingDirection.InOut,Enum.
-EasingStyle.Sine,e,true)end delay(e,function()z[B].Visible=false end)end end end
-function resetLocalCharacter()local u=game.Players.LocalPlayer if u then if u.
-Character and u.Character:FindFirstChild'Humanoid'then u.Character.Humanoid.
-Health=0 end end end local function createTextButton(u,v,w,x,y)local z=Instance.
-new'TextButton'z.Font=Enum.Font.Arial z.FontSize=w z.Size=x z.Position=y z.Style
-=v z.TextColor3=Color3.new(1,1,1)z.Text=u return z end local function
+then return end table.insert(l,k)if v=='GameMainMenu'then l={}end local z=u:
+GetChildren()for A=1,#z do if z[A].Name==v then z[A].Visible=true k={container=u
+,name=v,direction=w,lastSize=x}if x and y then z[A]:TweenSizeAndPosition(x,y,
+Enum.EasingDirection.InOut,Enum.EasingStyle.Sine,e,true)elseif x then z[A]:
+TweenSizeAndPosition(x,UDim2.new(0.5,-x.X.Offset/2,0.5,-x.Y.Offset/2),Enum.
+EasingDirection.InOut,Enum.EasingStyle.Sine,e,true)else z[A]:TweenPosition(UDim2
+.new(0,0,0,0),Enum.EasingDirection.InOut,Enum.EasingStyle.Sine,e,true)end else
+if w=='left'then z[A]:TweenPosition(UDim2.new(-1,-525,0,0),Enum.EasingDirection.
+InOut,Enum.EasingStyle.Sine,e,true)elseif w=='right'then z[A]:TweenPosition(
+UDim2.new(1,525,0,0),Enum.EasingDirection.InOut,Enum.EasingStyle.Sine,e,true)
+elseif w=='up'then z[A]:TweenPosition(UDim2.new(0,0,-1,-400),Enum.
+EasingDirection.InOut,Enum.EasingStyle.Sine,e,true)elseif w=='down'then z[A]:
+TweenPosition(UDim2.new(0,0,1,400),Enum.EasingDirection.InOut,Enum.EasingStyle.
+Sine,e,true)end delay(e,function()z[A].Visible=false end)end end end function
+resetLocalCharacter()local u=game.Players.LocalPlayer if u then if u.Character
+and u.Character:FindFirstChild'Humanoid'then u.Character.Humanoid.Health=0 end
+end end local function createTextButton(u,v,w,x,y)local z=Instance.new
+'TextButton'z.Font=Enum.Font.Arial z.FontSize=w z.Size=x z.Position=y z.Style=v
+z.TextColor3=Color3.new(1,1,1)z.Text=u return z end local function
 CreateTextButtons(u,v,w,x)if#v<1 then error'Must have more than one button'end
 local y,z=1,{}local function toggleSelection(A)for B,C in ipairs(z)do if C==A
 then C.Style=Enum.ButtonStyle.RobloxButtonDefault else C.Style=Enum.ButtonStyle.
@@ -279,25 +279,25 @@ goToAutoGraphics()end else settings().Rendering.EnableFRM=true
 goToManualGraphics(translateSavedQualityLevelToInt(UserSettings().GameSettings.
 SavedQualityLevel))end J.MouseButton1Click:connect(function()if q and not game.
 Players.LocalPlayer then return end if not N then goToAutoGraphics()else
-goToManualGraphics(L.Value)end end)local P=nil game.GraphicsQualityChangeRequest
-:connect(function(Q)if N then return end if Q then if(L.Value+1)>i then return
-end L.Value=L.Value+1 M.Text=tostring(L.Value)setGraphicsQualityLevel(L.Value)
-game:GetService'GuiService':SendNotification('Graphics Quality','Increased to ('
-..M.Text..')','',2,function()end)else if(L.Value-1)<=0 then return end L.Value=L
-.Value-1 M.Text=tostring(L.Value)setGraphicsQualityLevel(L.Value)game:GetService
+goToManualGraphics(L.Value)end end)game.GraphicsQualityChangeRequest:connect(
+function(P)if N then return end if P then if(L.Value+1)>i then return end L.
+Value=L.Value+1 M.Text=tostring(L.Value)setGraphicsQualityLevel(L.Value)game:
+GetService'GuiService':SendNotification('Graphics Quality','Increased to ('..M.
+Text..')','',2,function()end)else if(L.Value-1)<=0 then return end L.Value=L.
+Value-1 M.Text=tostring(L.Value)setGraphicsQualityLevel(L.Value)game:GetService
 'GuiService':SendNotification('Graphics Quality','Decreased to ('..M.Text..')',
-'',2,function()end)end end)game.Players.PlayerAdded:connect(function(Q)if Q==
+'',2,function()end)end end)game.Players.PlayerAdded:connect(function(P)if P==
 game.Players.LocalPlayer and q then enableGraphicsWidget()end end)game.Players.
-PlayerRemoving:connect(function(Q)if Q==game.Players.LocalPlayer and q then
+PlayerRemoving:connect(function(P)if P==game.Players.LocalPlayer and q then
 disableGraphicsWidget()end end)C=createTextButton('',Enum.ButtonStyle.
 RobloxButton,Enum.FontSize.Size18,UDim2.new(0,25,0,25),UDim2.new(0,30,0,176))C.
 Name='StudioCheckbox'C.ZIndex=u+4 C:SetVerb'TogglePlayMode'C.Visible=false local
-Q=(settings().Rendering.QualityLevel~=Enum.QualityLevel.Automatic)if q and not
+P=(settings().Rendering.QualityLevel~=Enum.QualityLevel.Automatic)if q and not
 game.Players.LocalPlayer then C.Text='X'disableGraphicsWidget()elseif q then C.
 Text='X'enableGraphicsWidget()end if h then UserSettings().GameSettings.
-StudioModeChanged:connect(function(R)q=R if R then Q=(settings().Rendering.
+StudioModeChanged:connect(function(Q)q=Q if Q then P=(settings().Rendering.
 QualityLevel~=Enum.QualityLevel.Automatic)goToAutoGraphics()C.Text='X'J.ZIndex=1
-E.ZIndex=1 else if Q then goToManualGraphics()end C.Text=''J.ZIndex=u+4 E.ZIndex
+E.ZIndex=1 else if P then goToManualGraphics()end C.Text=''J.ZIndex=u+4 E.ZIndex
 =u+4 end end)else C.MouseButton1Click:connect(function()if not C.Active then
 return end if C.Text==''then C.Text='X'else C.Text=''end end)end end local D=
 createTextButton('',Enum.ButtonStyle.RobloxButton,Enum.FontSize.Size18,UDim2.
@@ -312,14 +312,14 @@ setDisabledState(B)setDisabledState(C)end local E if h then E=createTextButton(
 ,50),UDim2.new(0,170,0,330))E.Modal=true else E=createTextButton('OK',Enum.
 ButtonStyle.RobloxButtonDefault,Enum.FontSize.Size24,UDim2.new(0,180,0,50),UDim2
 .new(0,170,0,270))E.Modal=true end E.Name='BackButton'E.ZIndex=u+4 E.Parent=w
-local F=nil if not r then local G=Instance.new'TextLabel'G.Name=
-'VideoCaptureLabel'G.Text='After Capturing Video'G.Font=Enum.Font.Arial G.
-FontSize=Enum.FontSize.Size18 G.Position=UDim2.new(0,32,0,100)G.Size=UDim2.new(0
-,164,0,18)G.BackgroundTransparency=1 G.TextColor3=Color3I(255,255,255)G.
-TextXAlignment=Enum.TextXAlignment.Left G.ZIndex=u+4 G.Parent=w local H,I={},{}H
-[1]='Just Save to Disk'I[H[1]]=Enum.UploadSetting['Never']H[2]=
-'Upload to YouTube'I[H[2]]=Enum.UploadSetting['Ask me first']local J=nil J,d=
-RbxGui.CreateDropDownMenu(H,function(K)UserSettings().GameSettings.
+local F if not r then local G=Instance.new'TextLabel'G.Name='VideoCaptureLabel'G
+.Text='After Capturing Video'G.Font=Enum.Font.Arial G.FontSize=Enum.FontSize.
+Size18 G.Position=UDim2.new(0,32,0,100)G.Size=UDim2.new(0,164,0,18)G.
+BackgroundTransparency=1 G.TextColor3=Color3I(255,255,255)G.TextXAlignment=Enum.
+TextXAlignment.Left G.ZIndex=u+4 G.Parent=w local H,I={},{}H[1]=
+'Just Save to Disk'I[H[1]]=Enum.UploadSetting['Never']H[2]='Upload to YouTube'I[
+H[2]]=Enum.UploadSetting['Ask me first']local J=nil J,d=RbxGui.
+CreateDropDownMenu(H,function(K)UserSettings().GameSettings.
 VideoUploadPromptBehavior=I[K]end)J.Name='VideoCaptureField'J.ZIndex=u+4 J.
 DropDownMenuButton.ZIndex=u+4 J.DropDownMenuButton.Icon.ZIndex=u+4 J.Position=
 UDim2.new(0,270,0,94)J.Size=UDim2.new(0,200,0,32)J.Parent=w F=function()if
@@ -553,26 +553,24 @@ new(1,-4,1,0)x.Position=UDim2.new(0,2,0,0)x.AutoButtonColor=false x.Text=
 .Font=Enum.Font.Arial x.FontSize=Enum.FontSize.Size14 x.TextColor3=Color3.new(1,
 1,1)x.BackgroundTransparency=1 local y=function()if w.Visible then return end x.
 Visible=false w.Text=''w.Visible=true w:CaptureFocus()end x.MouseButton1Click:
-connect(y)local z=true local A,B,C=function(A)z=A end,game:GetService
-'GuiService',pcall(function()end)if not C then end w.FocusLost:connect(function(
-D)if D then if w.Text~=''then local E=w.Text if string.sub(E,1,1)=='%'then game.
-Players:TeamChat(string.sub(E,2))else game.Players:Chat(E)end end end w.Text=''w
-.Visible=false x.Visible=true end)robloxLock(v)return v,A end,pcall(function()
-local v=game.LocalSaveEnabled end)if y then delay(0,function()local z=v()z.
-Parent=a game.RequestShutdown=function()table.insert(o,z)game.GuiService:
-AddCenterDialog(z,Enum.CenterDialogType.QuitDialog,function()z.Visible=true end,
-function()z.Visible=false end)return true end end)end delay(0,function()w().
-Parent=a waitForChild(a,'UserSettingsShield')waitForChild(a.UserSettingsShield,
-'Settings')waitForChild(a.UserSettingsShield.Settings,'SettingsStyle')
-waitForChild(a.UserSettingsShield.Settings.SettingsStyle,'GameMainMenu')
-waitForChild(a.UserSettingsShield.Settings.SettingsStyle.GameMainMenu,
-'ReportAbuseButton')a.UserSettingsShield.Settings.SettingsStyle.GameMainMenu.
-ReportAbuseButton.Active=true end)local z,A,B=game.CoreGui.Version,pcall(
-function()return game.GuiService.UseLuaChat end)if A and B then end local C=
-41324860 delay(0,function()waitForChild(game,'NetworkClient')waitForChild(game,
-'Players')waitForProperty(game.Players,'LocalPlayer')waitForProperty(game.
-Players.LocalPlayer,'Character')waitForChild(game.Players.LocalPlayer.Character,
-'Humanoid')waitForProperty(game,'PlaceId')if game.PlaceId==C then game.Players.
+connect(y)local z=function(z)end pcall(function()end)w.FocusLost:connect(
+function(A)if A then if w.Text~=''then local B=w.Text if string.sub(B,1,1)=='%'
+then game.Players:TeamChat(string.sub(B,2))else game.Players:Chat(B)end end end
+w.Text=''w.Visible=false x.Visible=true end)robloxLock(v)return v,z end,pcall(
+function()end)if y then delay(0,function()local z=v()z.Parent=a game.
+RequestShutdown=function()table.insert(o,z)game.GuiService:AddCenterDialog(z,
+Enum.CenterDialogType.QuitDialog,function()z.Visible=true end,function()z.
+Visible=false end)return true end end)end delay(0,function()w().Parent=a
+waitForChild(a,'UserSettingsShield')waitForChild(a.UserSettingsShield,'Settings'
+)waitForChild(a.UserSettingsShield.Settings,'SettingsStyle')waitForChild(a.
+UserSettingsShield.Settings.SettingsStyle,'GameMainMenu')waitForChild(a.
+UserSettingsShield.Settings.SettingsStyle.GameMainMenu,'ReportAbuseButton')a.
+UserSettingsShield.Settings.SettingsStyle.GameMainMenu.ReportAbuseButton.Active=
+true end)pcall(function()return game.GuiService.UseLuaChat end)local z=41324860
+delay(0,function()waitForChild(game,'NetworkClient')waitForChild(game,'Players')
+waitForProperty(game.Players,'LocalPlayer')waitForProperty(game.Players.
+LocalPlayer,'Character')waitForChild(game.Players.LocalPlayer.Character,
+'Humanoid')waitForProperty(game,'PlaceId')if game.PlaceId==z then game.Players.
 LocalPlayer.Character.Humanoid:SetClickToWalkEnabled(false)game.Players.
-LocalPlayer.CharacterAdded:connect(function(D)waitForChild(D,'Humanoid')D.
+LocalPlayer.CharacterAdded:connect(function(A)waitForChild(A,'Humanoid')A.
 Humanoid:SetClickToWalkEnabled(false)end)end end)end

@@ -44,7 +44,7 @@ end
 local function CreateButtons(frame, buttons, yPos, ySize)
 	local buttonNum = 1
 	local buttonObjs = {}
-	for i, obj in ipairs(buttons) do
+	for _, obj in ipairs(buttons) do
 		local button = Instance.new "TextButton"
 		button.Name = "Button" .. buttonNum
 		button.Font = Enum.Font.Arial
@@ -217,7 +217,6 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	local width = UDim.new(0, 100)
 	local height = UDim.new(0, 32)
 
-	local xPos = 0.055
 	local frame = Instance.new "Frame"
 	frame.Name = "DropDownMenu"
 	frame.BackgroundTransparency = 1
@@ -315,7 +314,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 
 		local children = droppedDownMenu:GetChildren()
 		if children then
-			for i, child in ipairs(children) do
+			for _, child in ipairs(children) do
 				if child.Name == "ChoiceButton" then
 					child.ZIndex = baseZIndex + 2
 				elseif child.Name == "ClickCaptureButton" then
@@ -340,7 +339,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 		end
 
 		local childNum = 1
-		for i, obj in ipairs(children) do
+		for _, obj in ipairs(children) do
 			if obj.Name == "ChoiceButton" then
 				if childNum < scrollBarPosition or childNum >= scrollBarPosition + dropDownItemCount then
 					obj.Visible = false
@@ -378,7 +377,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 		local children = droppedDownMenu:GetChildren()
 		local childNum = 1
 		if children then
-			for i, obj in ipairs(children) do
+			for _, obj in ipairs(children) do
 				if obj.Name == "ChoiceButton" then
 					if obj.Text == text then
 						obj.Font = Enum.Font.ArialBold
@@ -490,7 +489,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 		scrollbar.Parent = droppedDownMenu
 	end
 
-	for i, item in ipairs(items) do
+	for _, item in ipairs(items) do
 		-- needed to maintain local scope for items in event listeners below
 		local button = choiceButton:clone()
 		if forRoblox then
@@ -524,7 +523,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	--This does the initial layout of the buttons
 	updateScroll()
 
-	frame.AncestryChanged:connect(function(child, parent)
+	frame.AncestryChanged:connect(function(_, parent)
 		if parent == nil then
 			areaSoak.Parent = nil
 		else
@@ -624,7 +623,7 @@ end
 local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 	local totalPixels = frame.AbsoluteSize.Y
 	local pixelsRemaining = frame.AbsoluteSize.Y
-	for i, child in ipairs(guiObjects) do
+	for _, child in ipairs(guiObjects) do
 		if child:IsA "TextLabel" or child:IsA "TextButton" then
 			local isLabel = child:IsA "TextLabel"
 			if isLabel then
@@ -712,7 +711,7 @@ t.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
 	wrapperFrame.Size = UDim2.new(1, 0, 1, 0)
 	wrapperFrame.Parent = frame
 
-	for i, child in ipairs(guiObjects) do
+	for _, child in ipairs(guiObjects) do
 		child.Parent = wrapperFrame
 	end
 
@@ -819,7 +818,7 @@ t.CreateSlider = function(steps, width, position)
 		if areaSoakMouseMoveCon then
 			areaSoakMouseMoveCon:disconnect()
 		end
-		areaSoakMouseMoveCon = areaSoak.MouseMoved:connect(function(x, y)
+		areaSoakMouseMoveCon = areaSoak.MouseMoved:connect(function(x, _)
 			setSliderPos(x, slider, sliderPosition, bar, steps)
 		end)
 	end)
@@ -828,14 +827,14 @@ t.CreateSlider = function(steps, width, position)
 		cancelSlide(areaSoak)
 	end)
 
-	sliderPosition.Changed:connect(function(prop)
+	sliderPosition.Changed:connect(function(_)
 		sliderPosition.Value = math.min(steps, math.max(1, sliderPosition.Value))
 		local relativePosX = (sliderPosition.Value - 1) / (steps - 1)
 		slider.Position =
 			UDim2.new(relativePosX, -slider.AbsoluteSize.X / 2, slider.Position.Y.Scale, slider.Position.Y.Offset)
 	end)
 
-	bar.MouseButton1Down:connect(function(x, y)
+	bar.MouseButton1Down:connect(function(x, _)
 		setSliderPos(x, slider, sliderPosition, bar, steps)
 	end)
 
@@ -994,7 +993,7 @@ t.CreateTrueScrollingFrame = function()
 	mouseDrag.Position = UDim2.new(-0.25, 0, -0.25, 0)
 	mouseDrag.ZIndex = 10
 
-	local function positionScrollBar(x, y, offset)
+	local function positionScrollBar(_, y, offset)
 		local oldPos = scrollbar.Position
 
 		if y < scrollTrack.AbsolutePosition.y then
@@ -1292,29 +1291,24 @@ t.CreateTrueScrollingFrame = function()
 	scrollUpButton.MouseButton1Down:connect(function()
 		scrollUp()
 	end)
-	scrollUpButton.MouseButton1Up:connect(function()
-		scrollStamp = tick()
-	end)
-
-	scrollDownButton.MouseButton1Up:connect(function()
-		scrollStamp = tick()
-	end)
 	scrollDownButton.MouseButton1Down:connect(function()
 		scrollDown()
 	end)
 
-	scrollbar.MouseButton1Up:connect(function()
+	local function scrollTick()
 		scrollStamp = tick()
-	end)
-
-	local function heightCheck(instance)
-		if highY and (instance.AbsolutePosition.Y + instance.AbsoluteSize.Y) > highY then
-			highY = instance.AbsolutePosition.Y + instance.AbsoluteSize.Y
-		elseif not highY then
-			highY = instance.AbsolutePosition.Y + instance.AbsoluteSize.Y
-		end
-		setSliderSizeAndPosition()
 	end
+
+	scrollUpButton.MouseButton1Up:connect(scrollTick)
+	scrollDownButton.MouseButton1Up:connect(scrollTick)
+	scrollbar.MouseButton1Up:connect(scrollTick)
+
+	-- local function heightCheck(instance)
+	-- 	if (highY and (instance.AbsolutePosition.Y + instance.AbsoluteSize.Y) > highY) or not highY then
+	-- 		highY = instance.AbsolutePosition.Y + instance.AbsoluteSize.Y
+	-- 	end
+	-- 	setSliderSizeAndPosition()
+	-- end
 
 	local function highLowRecheck()
 		local oldLowY = lowY
@@ -1439,7 +1433,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		howManyDisplayed = 0
 		local guiObjects = {}
 		if orderList then
-			for i, child in ipairs(orderList) do
+			for _, child in ipairs(orderList) do
 				if child.Parent == frame then
 					table.insert(guiObjects, child)
 				end
@@ -1447,7 +1441,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		else
 			local children = frame:GetChildren()
 			if children then
-				for i, child in ipairs(children) do
+				for _, child in ipairs(children) do
 					if child:IsA "GuiObject" then
 						table.insert(guiObjects, child)
 					end
@@ -1696,7 +1690,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		local guiObjects = 0
 		local children = frame:GetChildren()
 		if children then
-			for i, child in ipairs(children) do
+			for _, child in ipairs(children) do
 				if child:IsA "GuiObject" then
 					guiObjects = guiObjects + 1
 				end
@@ -1834,13 +1828,13 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 	end
 
 	local y = 0
-	scrollDrag.MouseButton1Down:connect(function(x, y)
+	scrollDrag.MouseButton1Down:connect(function(_, y)
 		if scrollDrag.Active then
 			scrollStamp = tick()
 			local mouseOffset = y - scrollDrag.AbsolutePosition.y
 			local dragCon
 			local upCon
-			dragCon = mouseDrag.MouseMoved:connect(function(x, y)
+			dragCon = mouseDrag.MouseMoved:connect(function(_, y)
 				local barAbsPos = scrollbar.AbsolutePosition.y
 				local barAbsSize = scrollbar.AbsoluteSize.y
 
@@ -1853,7 +1847,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 				local guiObjects = 0
 				local children = frame:GetChildren()
 				if children then
-					for i, child in ipairs(children) do
+					for _, child in ipairs(children) do
 						if child:IsA "GuiObject" then
 							guiObjects = guiObjects + 1
 						end
@@ -1906,7 +1900,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 	scrollbar.MouseButton1Up:connect(function()
 		scrollStamp = tick()
 	end)
-	scrollbar.MouseButton1Down:connect(function(x, y)
+	scrollbar.MouseButton1Down:connect(function(_, y)
 		if y > (scrollDrag.AbsoluteSize.y + scrollDrag.AbsolutePosition.y) then
 			scrollDown(y)
 		elseif y < scrollDrag.AbsolutePosition.y then
@@ -2098,7 +2092,7 @@ local function TransitionTutorialPages(fromPage, toPage, transitionFrame, curren
 	transitionFrame.Visible = true
 	currentPageValue.Value = nil
 
-	local newsize, newPosition
+	local newSize, newPosition
 	if toPage then
 		--Make it visible so it resizes
 		toPage.Visible = true
@@ -2165,7 +2159,7 @@ t.CreateTutorial = function(name, tutorialKey, createButtons)
 		local visiblePage = nil
 		local children = pages:GetChildren()
 		if children then
-			for i, child in ipairs(children) do
+			for _, child in ipairs(children) do
 				if child.Visible then
 					if visiblePage then
 						child.Visible = false
@@ -2758,7 +2752,7 @@ t.CreateSetPanel = function(
 		return setButton
 	end
 
-	local function buildSetButton(name, setId, setImageId, i, count)
+	local function buildSetButton(name, setId, _, _, _)
 		local button = createSetButton(name)
 		button.Text = name
 		button.Name = "SetButton"
@@ -3095,7 +3089,7 @@ t.CreateSetPanel = function(
 		end
 	end
 
-	local function selectSet(button, setName, setId, setIndex)
+	local function selectSet(button, setName, setId, _)
 		if button and Data.Category[Data.CurrentCategory] ~= nil then
 			if button ~= Data.Category[Data.CurrentCategory].Button then
 				Data.Category[Data.CurrentCategory].Button = button
@@ -3112,10 +3106,10 @@ t.CreateSetPanel = function(
 		end
 	end
 
-	local function selectCategoryPage(buttons, page)
+	local function selectCategoryPage(buttons, _)
 		if buttons ~= Data.CurrentCategory then
 			if Data.CurrentCategory then
-				for key, button in pairs(Data.CurrentCategory) do
+				for _, button in pairs(Data.CurrentCategory) do
 					button.Visible = false
 				end
 			end
@@ -3232,7 +3226,7 @@ t.CreateSetPanel = function(
 	controlFrame.Position = UDim2.new(0.76, 5, 0, 0)
 
 	local debounce = false
-	controlFrame.ScrollBottom.Changed:connect(function(prop)
+	controlFrame.ScrollBottom.Changed:connect(function(_)
 		if controlFrame.ScrollBottom.Value == true then
 			if debounce then
 				return
@@ -3402,53 +3396,37 @@ t.CreateTerrainMaterialSelector = function(size, position)
 	function getNameFromEnum(choice)
 		if choice == Enum.CellMaterial.Grass or choice == 1 then
 			return "Grass"
-		end
-		if choice == Enum.CellMaterial.Sand or choice == 2 then
+		elseif choice == Enum.CellMaterial.Sand or choice == 2 then
 			return "Sand"
-		end
-		if choice == Enum.CellMaterial.Empty or choice == 0 then
+		elseif choice == Enum.CellMaterial.Empty or choice == 0 then
 			return "Erase"
-		end
-		if choice == Enum.CellMaterial.Brick or choice == 3 then
+		elseif choice == Enum.CellMaterial.Brick or choice == 3 then
 			return "Brick"
-		end
-		if choice == Enum.CellMaterial.Granite or choice == 4 then
+		elseif choice == Enum.CellMaterial.Granite or choice == 4 then
 			return "Granite"
-		end
-		if choice == Enum.CellMaterial.Asphalt or choice == 5 then
+		elseif choice == Enum.CellMaterial.Asphalt or choice == 5 then
 			return "Asphalt"
-		end
-		if choice == Enum.CellMaterial.Iron or choice == 6 then
+		elseif choice == Enum.CellMaterial.Iron or choice == 6 then
 			return "Iron"
-		end
-		if choice == Enum.CellMaterial.Aluminum or choice == 7 then
+		elseif choice == Enum.CellMaterial.Aluminum or choice == 7 then
 			return "Aluminum"
-		end
-		if choice == Enum.CellMaterial.Gold or choice == 8 then
+		elseif choice == Enum.CellMaterial.Gold or choice == 8 then
 			return "Gold"
-		end
-		if choice == Enum.CellMaterial.WoodPlank or choice == 9 then
+		elseif choice == Enum.CellMaterial.WoodPlank or choice == 9 then
 			return "Plank"
-		end
-		if choice == Enum.CellMaterial.WoodLog or choice == 10 then
+		elseif choice == Enum.CellMaterial.WoodLog or choice == 10 then
 			return "Log"
-		end
-		if choice == Enum.CellMaterial.Gravel or choice == 11 then
+		elseif choice == Enum.CellMaterial.Gravel or choice == 11 then
 			return "Gravel"
-		end
-		if choice == Enum.CellMaterial.CinderBlock or choice == 12 then
+		elseif choice == Enum.CellMaterial.CinderBlock or choice == 12 then
 			return "Cinder Block"
-		end
-		if choice == Enum.CellMaterial.MossyStone or choice == 13 then
+		elseif choice == Enum.CellMaterial.MossyStone or choice == 13 then
 			return "Stone Wall"
-		end
-		if choice == Enum.CellMaterial.Cement or choice == 14 then
+		elseif choice == Enum.CellMaterial.Cement or choice == 14 then
 			return "Concrete"
-		end
-		if choice == Enum.CellMaterial.RedPlastic or choice == 15 then
+		elseif choice == Enum.CellMaterial.RedPlastic or choice == 15 then
 			return "Plastic (red)"
-		end
-		if choice == Enum.CellMaterial.BluePlastic or choice == 16 then
+		elseif choice == Enum.CellMaterial.BluePlastic or choice == 16 then
 			return "Plastic (blue)"
 		end
 
@@ -3465,7 +3443,7 @@ t.CreateTerrainMaterialSelector = function(size, position)
 	end
 
 	-- we so need a better way to do this
-	for i, v in pairs(materialNames) do
+	for _, v in pairs(materialNames) do
 		materialToImageMap[v] = {}
 		if v == "Grass" then
 			materialToImageMap[v].Regular = "http://www.roblox.com/asset/?id=56563112"

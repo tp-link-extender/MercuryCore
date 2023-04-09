@@ -112,7 +112,7 @@ export const actions = {
 				},
 			})
 
-			const session = await auth.createSession(user.id)
+			const session = await auth.createSession(user.userId)
 			locals.setSession(session)
 
 			await prisma.regkey.update({

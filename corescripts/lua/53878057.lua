@@ -183,8 +183,8 @@ function removeGear(gear)
 
 		gearSlots[emptySlot] = "empty"
 
-		local centerizeX = gear.Size.X.Scale / 2
-		local centerizeY = gear.Size.Y.Scale / 2
+		-- local centerizeX = gear.Size.X.Scale / 2
+		-- local centerizeY = gear.Size.Y.Scale / 2
 		--[[gear:TweenSizeAndPosition(UDim2.new(0,0,0,0),
 			UDim2.new(gear.Position.X.Scale + centerizeX,gear.Position.X.Offset,gear.Position.Y.Scale + centerizeY,gear.Position.Y.Offset),
 			Enum.EasingDirection.Out, Enum.EasingStyle.Quad,guiTweenSpeed/4,true)]]

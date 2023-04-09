@@ -398,7 +398,7 @@ function setupJumpButton(parentFrame)
 		if inputObject == cameraTouch then
 			return
 		end
-		for i, touch in pairs(oldJumpTouches) do
+		for _, touch in pairs(oldJumpTouches) do
 			if touch == inputObject then
 				return
 			end
@@ -444,7 +444,7 @@ function isTouchUsedByJumpButton(touch)
 	if touch == currentJumpTouch then
 		return true
 	end
-	for i, touchToCompare in pairs(oldJumpTouches) do
+	for _, touchToCompare in pairs(oldJumpTouches) do
 		if touch == touchToCompare then
 			return true
 		end
@@ -454,7 +454,7 @@ function isTouchUsedByJumpButton(touch)
 end
 
 function isTouchUsedByThumbstick(touch)
-	for i, touchToCompare in pairs(thumbstickTouches) do
+	for _, touchToCompare in pairs(thumbstickTouches) do
 		if touch == touchToCompare then
 			return true
 		end

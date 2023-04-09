@@ -1,5 +1,4 @@
-local a={}function waitForChild(b,c)while not b:FindFirstChild(c)do b.ChildAdded
-:wait()end end function PlaneIntersection(b)local c,d=false,game.Workspace.
+local a={}function PlaneIntersection(b)local c,d=false,game.Workspace.
 CurrentCamera local e,f,g,h=Vector3.new(d.CoordinateFrame.p.X,d.CoordinateFrame.
 p.Y,d.CoordinateFrame.p.Z),Vector3.new(b.X,b.Y,b.Z),Vector3.new(0,1,0),Vector3.
 new(0,0,0)local i,j=g:Dot(f-e),b if i~=0 then local k=g:Dot(h-e)/i if k>=0 and k
