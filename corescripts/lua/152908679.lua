@@ -54,20 +54,20 @@ function createContextActionGui()
 end
 
 -- functions
-function setButtonSizeAndPosition(object)
-	local buttonSize = 55
-	local xOffset = 10
-	local yOffset = 95
+-- function setButtonSizeAndPosition(object)
+-- 	local buttonSize = 55
+-- 	local xOffset = 10
+-- 	local yOffset = 95
 
-	-- todo: better way to determine mobile sized screens
-	local onSmallScreen = (game.CoreGui.RobloxGui.AbsoluteSize.X < 600)
-	if not onSmallScreen then
-		buttonSize = 85
-		xOffset = 40
-	end
+-- 	-- todo: better way to determine mobile sized screens
+-- 	local onSmallScreen = (game.CoreGui.RobloxGui.AbsoluteSize.X < 600)
+-- 	if not onSmallScreen then
+-- 		buttonSize = 85
+-- 		xOffset = 40
+-- 	end
 
-	object.Size = UDim2.new(0, buttonSize, 0, buttonSize)
-end
+-- 	object.Size = UDim2.new(0, buttonSize, 0, buttonSize)
+-- end
 
 function contextButtonDown(button, inputObject, actionName)
 	if inputObject.UserInputType == Enum.UserInputType.Touch then
@@ -248,8 +248,8 @@ contextActionService.BoundActionChanged:connect(function(actionName, changeName,
 				button.ActionIcon.Image = changeTable[changeName]
 			elseif changeName == "title" then
 				button.ActionTitle.Text = changeTable[changeName]
-			elseif changeName == "description" then
-				-- todo: add description to menu
+			-- elseif changeName == "description" then
+			-- 	-- todo: add description to menu
 			elseif changeName == "position" then
 				button.Position = changeTable[changeName]
 			end
@@ -261,7 +261,7 @@ contextActionService.BoundActionAdded:connect(function(actionName, createTouchBu
 	addAction(actionName, createTouchButton, functionInfoTable)
 end)
 
-contextActionService.BoundActionRemoved:connect(function(actionName, functionInfoTable)
+contextActionService.BoundActionRemoved:connect(function(actionName, _)
 	removeAction(actionName)
 end)
 

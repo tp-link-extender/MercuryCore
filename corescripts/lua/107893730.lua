@@ -29,7 +29,7 @@ local enableBrowserWindowClosedEvent = true
 -- gui variables
 local openBuyCurrencyWindowConnection = nil
 local currentlyPrompting = false
-local purchaseDialog, errorDialog = nil
+local purchaseDialog = nil
 local tweenTime = 0.3
 local showPosition = UDim2.new(0.5, -330, 0.5, -200)
 local hidePosition = UDim2.new(0.5, -330, 1, 25)

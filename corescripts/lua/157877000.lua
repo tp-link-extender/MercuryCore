@@ -472,7 +472,7 @@ function initializeDeveloperConsole()
 		pPos = Dev_Container.AbsolutePosition
 	end)
 
-	Dev_TitleBar.TextButton.MouseButton1Up:connect(function(x, y)
+	Dev_TitleBar.TextButton.MouseButton1Up:connect(function(_, _)
 		clean()
 	end)
 
@@ -819,7 +819,6 @@ function initializeDeveloperConsole()
 		local minute = math.floor(dayTime / 60)
 
 		dayTime = dayTime - (minute * 60)
-		local second = dayTime
 
 		local h = numberWithZero(hour)
 		local m = numberWithZero(minute)
@@ -830,35 +829,35 @@ function initializeDeveloperConsole()
 
 	--Filter
 
-	Dev_OptionsBar.ErrorToggleButton.MouseButton1Down:connect(function(x, y)
+	Dev_OptionsBar.ErrorToggleButton.MouseButton1Down:connect(function(_, _)
 		errorToggleOn = not errorToggleOn
 		Dev_OptionsBar.ErrorToggleButton.CheckFrame.Visible = errorToggleOn
 		refreshTextHolder()
 		repositionList()
 	end)
 
-	Dev_OptionsBar.WarningToggleButton.MouseButton1Down:connect(function(x, y)
+	Dev_OptionsBar.WarningToggleButton.MouseButton1Down:connect(function(_, _)
 		warningToggleOn = not warningToggleOn
 		Dev_OptionsBar.WarningToggleButton.CheckFrame.Visible = warningToggleOn
 		refreshTextHolder()
 		repositionList()
 	end)
 
-	Dev_OptionsBar.InfoToggleButton.MouseButton1Down:connect(function(x, y)
+	Dev_OptionsBar.InfoToggleButton.MouseButton1Down:connect(function(_, _)
 		infoToggleOn = not infoToggleOn
 		Dev_OptionsBar.InfoToggleButton.CheckFrame.Visible = infoToggleOn
 		refreshTextHolder()
 		repositionList()
 	end)
 
-	Dev_OptionsBar.OutputToggleButton.MouseButton1Down:connect(function(x, y)
+	Dev_OptionsBar.OutputToggleButton.MouseButton1Down:connect(function(_, _)
 		outputToggleOn = not outputToggleOn
 		Dev_OptionsBar.OutputToggleButton.CheckFrame.Visible = outputToggleOn
 		refreshTextHolder()
 		repositionList()
 	end)
 
-	Dev_OptionsBar.WordWrapToggleButton.MouseButton1Down:connect(function(x, y)
+	Dev_OptionsBar.WordWrapToggleButton.MouseButton1Down:connect(function(_, _)
 		wordWrapToggleOn = not wordWrapToggleOn
 		Dev_OptionsBar.WordWrapToggleButton.CheckFrame.Visible = wordWrapToggleOn
 		refreshTextHolder()
@@ -891,7 +890,7 @@ function initializeDeveloperConsole()
 	end
 
 	--Handle Dev-Console Local/Server Buttons
-	Dev_Container.Body.LocalConsole.MouseButton1Click:connect(function(x, y)
+	Dev_Container.Body.LocalConsole.MouseButton1Click:connect(function(_, _)
 		if currentConsole == SERVER_CONSOLE then
 			currentConsole = LOCAL_CONSOLE
 			local localConsole = Dev_Container.Body.LocalConsole
@@ -904,7 +903,6 @@ function initializeDeveloperConsole()
 
 			if game:FindFirstChild "Players" and game.Players["LocalPlayer"] then
 				local mouse = game.Players.LocalPlayer:GetMouse()
-				local mousePos = Vector2.new(mouse.X, mouse.Y)
 				refreshConsolePosition(mouse.X, mouse.Y)
 				refreshConsoleSize(mouse.X, mouse.Y)
 				handleScroll(mouse.X, mouse.Y)
@@ -921,7 +919,7 @@ function initializeDeveloperConsole()
 
 	local serverHistoryRequested = false
 
-	Dev_Container.Body.ServerConsole.MouseButton1Click:connect(function(x, y)
+	Dev_Container.Body.ServerConsole.MouseButton1Click:connect(function(_, _)
 		if not serverHistoryRequested then
 			serverHistoryRequested = true
 			game:GetService("LogService"):RequestServerOutput()
