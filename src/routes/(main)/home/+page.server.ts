@@ -1,9 +1,14 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
-import ratelimit from "$lib/server/ratelimit"
-import formData from "$lib/server/formData"
-import { fail } from "@sveltejs/kit"
+import ratelimit from "$lib/server/ratelimitNew"
+import formError from "$lib/server/formError"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
+
+const schema = z.object({
+	status: z.string().min(1).max(1000),
+})
 
 export async function load({ locals }) {
 	console.time("home")
@@ -48,6 +53,7 @@ export async function load({ locals }) {
 
 	console.timeEnd("home")
 	return {
+		form: superValidate(schema),
 		places: findPlaces({
 			where: {
 				privateServer: false,
@@ -89,14 +95,12 @@ export async function load({ locals }) {
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
-		const limit = ratelimit("statusPost", getClientAddress, 30)
+		const form = await superValidate(request, schema)
+		const limit = ratelimit(form, "statusPost", getClientAddress, 30)
 		if (limit) return limit
+		if (!form.valid) return formError(form)
 
 		const { user } = await authorise(locals)
-
-		const data = await formData(request)
-		const status = data.status
-		if (!status) return fail(400, { msg: "Invalid status" })
 
 		await prisma.post.create({
 			data: {
@@ -105,7 +109,7 @@ export const actions = {
 						username: user.username,
 					},
 				},
-				content: status,
+				content: form.data.status,
 			},
 		})
 	},
