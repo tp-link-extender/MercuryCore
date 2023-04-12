@@ -1,6 +1,6 @@
 import { findItems } from "$lib/server/prisma"
 
-export const load = async () => ({
+export const load = () => ({
 	items: findItems(),
 })
 

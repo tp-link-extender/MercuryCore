@@ -1,6 +1,6 @@
 import { findGroups } from "$lib/server/prisma"
 
-export const load = async () => ({
+export const load = () => ({
 	groups: findGroups({
 		select: {
 			name: true,

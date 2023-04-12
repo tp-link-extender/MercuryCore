@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { page } from "$app/stores"
 	import fade from "$lib/fade"
 	import Place from "$lib/components/Place.svelte"
 	import Report from "$lib/components/Report.svelte"
+	import { superForm } from "sveltekit-superforms/client"
 
 	const statusColours: any = {
 		Online: "bg-info",
@@ -11,8 +12,21 @@
 	}
 
 	export let data
-	export let form
 	const user = data.user
+
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+	export const snapshot = { capture, restore }
 
 	const greets = [`Hi, ${user?.username}!`, `Hello, ${user?.username}!`]
 
@@ -94,29 +108,30 @@
 						Post your status - your friends and followers can view
 						how you're doing!
 					</p>
-					<form method="POST" use:enhance>
-						<div class="input-group">
-							<input
-								type="text"
-								class="form-control light-text {form?.msg
-									? 'is-invalid'
-									: 'valid'}"
-								placeholder="Post status"
-								name="status"
-								aria-label="Post Status"
-								required />
-							<button
-								class="btn btn-success"
-								type="submit"
-								id="button-addon2">
+					<form use:enhance method="POST" class="input-group">
+						<input
+							bind:value={$form.status}
+							{...$constraints.status}
+							placeholder="Post status"
+							name="status"
+							aria-label="Post Status"
+							class="form-control light-text {$errors.status
+								? 'is-in'
+								: ''}valid" />
+						<button class="btn btn-success" type="submit">
+							{#if $delayed}
+								Working...
+							{:else}
 								Send
-							</button>
-						</div>
-						{#if form?.msg}
-							<div class="text-danger">{form.msg}</div>
-						{/if}
-						<div class="mb-3" />
+							{/if}
+						</button>
 					</form>
+					<p
+						class="mb-3"
+						class:text-success={$page.status == 200}
+						class:text-danger={$page.status >= 400 || $errors.status}>
+						{$errors.status || $message || ""}
+					</p>
 					{#each data.feed.sort((a, b) => b.posted - a.posted) as status, num}
 						<!-- |global is not mentioned anywhere in the Svelte docs, yet it is exactly what is needed here. -->
 						<div

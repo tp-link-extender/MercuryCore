@@ -24,7 +24,7 @@ const schema = z.object({
 	note: z.string().optional(),
 })
 
-export async function load({ url }) {
+export function load({ url }) {
 	const reportee = url.searchParams.get("user")
 	const reportedUrl = url.searchParams.get("url")
 
@@ -40,11 +40,12 @@ export async function load({ url }) {
 
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
-		ratelimit("report", getClientAddress, 120)
-		const { user } = await authorise(locals)
-
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "report", getClientAddress, 120)
+		if (limit) return limit
+
+		const { user } = await authorise(locals)
 
 		const { category, note } = form.data
 		const username = url.searchParams.get("user")

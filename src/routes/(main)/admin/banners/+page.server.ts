@@ -48,7 +48,12 @@ export const actions = {
 
 		switch (action) {
 			case "create":
-				const limit = ratelimit("createBanner", getClientAddress, 30)
+				const limit = ratelimit(
+					form,
+					"createBanner",
+					getClientAddress,
+					30
+				)
 				if (limit) return limit
 
 				if (!bannerText || !bannerColour)

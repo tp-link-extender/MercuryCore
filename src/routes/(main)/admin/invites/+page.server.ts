@@ -54,7 +54,12 @@ export const actions = {
 
 		switch (action) {
 			case "create":
-				const limit = ratelimit("createInvite", getClientAddress, 30)
+				const limit = ratelimit(
+					form,
+					"createInvite",
+					getClientAddress,
+					30
+				)
 				if (limit) return limit
 
 				const customInviteEnabled = !!enableInviteCustom
