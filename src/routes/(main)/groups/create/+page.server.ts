@@ -9,7 +9,7 @@ const schema = z.object({
 	name: z.string().min(3).max(40),
 })
 
-export const load = async ({ request }) => ({
+export const load = () => ({
 	form: superValidate(schema),
 })
 

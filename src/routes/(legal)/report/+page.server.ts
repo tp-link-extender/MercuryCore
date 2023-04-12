@@ -24,7 +24,7 @@ const schema = z.object({
 	note: z.string().optional(),
 })
 
-export async function load({ url }) {
+export function load({ url }) {
 	const reportee = url.searchParams.get("user")
 	const reportedUrl = url.searchParams.get("url")
 
