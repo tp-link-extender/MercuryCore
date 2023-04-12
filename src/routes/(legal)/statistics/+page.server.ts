@@ -1,7 +1,7 @@
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 
-export const load = async () => ({
+export const load = () => ({
 	users: prisma.authUser.count(),
 	places: prisma.place.count(),
 	groups: prisma.group.count(),
