@@ -26,11 +26,10 @@ export const actions = {
 	resetPassword: async ({ request, locals, getClientAddress }) => {
 		await authorise(locals, 5)
 
-		const limit = ratelimit("resetPassword", getClientAddress, 30)
-		if (limit) return limit
-
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
+		if (limit) return limit
 
 		const { username, password } = form.data
 

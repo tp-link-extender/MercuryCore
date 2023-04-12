@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 
-export async function GET({ url, setHeaders }) {
+export function GET({ url, setHeaders }) {
 	const userId = url.searchParams.get("userID")
 
 	if (!userId || !/^\d+$/.test(userId)) throw error(400, "Invalid Request")

@@ -1,6 +1,6 @@
 import { prisma } from "$lib/server/prisma"
 
-export const load = async () => ({
+export const load = () => ({
 	categories: prisma.forumCategory.findMany({
 		include: {
 			_count: true,

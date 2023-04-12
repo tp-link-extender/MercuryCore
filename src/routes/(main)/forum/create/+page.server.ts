@@ -40,13 +40,12 @@ export async function load({ url }) {
 
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
-		const limit = ratelimit("forumPost", getClientAddress, 30)
-		if (limit) return limit
-
 		const { user } = await authorise(locals)
 
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "forumPost", getClientAddress, 30)
+		if (limit) return limit
 
 		const { title, content } = form.data
 

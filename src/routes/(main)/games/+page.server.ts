@@ -1,6 +1,6 @@
 import { findPlaces } from "$lib/server/prisma"
 
-export const load = async () => ({
+export const load = () => ({
 	places: findPlaces({
 		where: {
 			privateServer: false,

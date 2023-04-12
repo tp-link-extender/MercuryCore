@@ -13,13 +13,13 @@ export async function GET({ url }) {
 	})
 	let port = 53640
 	let baseUrl = "..."
-	let serverId = "..."
+	// let serverId = "..."
 	let serverPresenceUrl = "..."
 
 	if (data) {
 		port = data.serverPort
 		baseUrl = "http://banland.xyz"
-		serverId = data.id.toString()
+		// serverId = data.id.toString()
 		serverPresenceUrl = `${baseUrl}/game/serverpresence?ticket=${ticket}`
 	}
 

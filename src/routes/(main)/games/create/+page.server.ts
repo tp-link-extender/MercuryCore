@@ -18,7 +18,7 @@ const schema = z.object({
 	privateServer: z.boolean().optional(),
 })
 
-export const load = async ({ request }) => ({
+export const load = () => ({
 	form: superValidate(schema),
 })
 

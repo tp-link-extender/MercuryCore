@@ -13,7 +13,7 @@ const schema = z.object({
 	password: z.string().min(1).max(6969),
 })
 
-export const load = async ({ request }) => ({
+export const load = () => ({
 	form: superValidate(schema),
 })
 
