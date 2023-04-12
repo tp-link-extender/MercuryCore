@@ -1,5 +1,5 @@
 import { auth, authorise } from "$lib/server/lucia"
-import ratelimit from "$lib/server/ratelimitNew"
+import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -30,7 +30,6 @@ export const actions = {
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
 		if (limit) return limit
-		
 
 		const { username, password } = form.data
 

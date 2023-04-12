@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import ratelimit from "$lib/server/ratelimitNew"
+import ratelimit from "$lib/server/ratelimit"
 import { error } from "@sveltejs/kit"
 import type { ReportCategory } from "@prisma/client"
 import formError from "$lib/server/formError"
@@ -44,7 +44,7 @@ export const actions = {
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "report", getClientAddress, 120)
 		if (limit) return limit
-		
+
 		const { user } = await authorise(locals)
 
 		const { category, note } = form.data

@@ -3,9 +3,16 @@ import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
-import formData from "$lib/server/formData"
-import { error, fail } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 import { NotificationType } from "@prisma/client"
+import formError from "$lib/server/formError"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
+
+const schema = z.object({
+	content: z.string().min(5).max(1000),
+	replyId: z.string().optional(),
+})
 
 export async function load({ locals, params }) {
 	// Since prisma does not yet support recursive copying, we have to do it manually
@@ -136,6 +143,7 @@ export async function load({ locals, params }) {
 	} = await addLikes(forumPost)
 
 	return {
+		form: superValidate(schema),
 		...post,
 		...replies,
 		baseDepth: 0,
@@ -144,16 +152,14 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	default: async ({ request, locals, params, getClientAddress }) => {
-		const limit = ratelimit("forumReply", getClientAddress, 5)
+		const { user } = await authorise(locals)
+
+		const form = await superValidate(request, schema)
+		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
 		if (limit) return limit
 
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const content = data.content
-		if (!content || content.length > 1000 || content.length < 5)
-			return fail(400)
-
-		const replyId = data.replyId
+		const { content, replyId } = form.data
 		// If there is a replyId, it is a reply to another comment
 
 		let replypost
