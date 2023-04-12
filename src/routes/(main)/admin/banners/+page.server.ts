@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import ratelimit from "$lib/server/ratelimitNew"
+import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"

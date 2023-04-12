@@ -1,7 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
-import ratelimit from "$lib/server/ratelimitNew"
+import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"

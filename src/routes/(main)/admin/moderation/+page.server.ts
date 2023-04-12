@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import ratelimit from "$lib/server/ratelimitNew"
+import ratelimit from "$lib/server/ratelimit"
 import { prisma } from "$lib/server/prisma"
 import type { ModerationActionType } from "@prisma/client"
 import formError from "$lib/server/formError"

@@ -1,14 +1,28 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { page } from "$app/stores"
 	import ForumReply from "$lib/components/ForumReply.svelte"
 	import Report from "$lib/components/Report.svelte"
 	import { writable } from "svelte/store"
+	import { superForm } from "sveltekit-superforms/client"
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 
 	export let data
-	export let form
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+
+	export const snapshot = { capture, restore }
 
 	const baseDepth = writable(data.baseDepth)
 </script>
@@ -103,20 +117,26 @@
 		</label>
 		<fieldset class="col-lg-7 d-flex">
 			<textarea
-				class="form-control valid"
-				required
-				minlength="5"
-				maxlength="1000"
+				bind:value={$form.content}
+				{...$constraints.content}
+				class="form-control {$errors.content ? 'is-in' : ''}valid"
 				name="content"
 				placeholder="What are your thoughts?"
 				rows="4" />
 			<button type="submit" class="btn btn-success h-100 ms-3">
-				Reply
+				{#if $delayed}
+					Working...
+				{:else}
+					Reply
+				{/if}
 			</button>
 		</fieldset>
-		{#if form?.msg}
-			<small class="text-danger mt-1">{form.msg}</small>
-		{/if}
+		<p
+			class="mb-3"
+			class:text-success={$page.status == 200}
+			class:text-danger={$page.status >= 400 || $errors.status}>
+			{$errors.status || $message || ""}
+		</p>
 	</form>
 
 	{#each data.replies as reply, num}
