@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import ratelimit from "$lib/server/ratelimit"
+import ratelimit from "$lib/server/ratelimitNew"
 import { error } from "@sveltejs/kit"
 import type { ReportCategory } from "@prisma/client"
 import formError from "$lib/server/formError"
@@ -40,11 +40,12 @@ export function load({ url }) {
 
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
-		ratelimit("report", getClientAddress, 120)
-		const { user } = await authorise(locals)
-
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "report", getClientAddress, 120)
+		if (limit) return limit
+		
+		const { user } = await authorise(locals)
 
 		const { category, note } = form.data
 		const username = url.searchParams.get("user")

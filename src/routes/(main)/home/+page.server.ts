@@ -96,9 +96,9 @@ export async function load({ locals }) {
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
 		const form = await superValidate(request, schema)
+		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "statusPost", getClientAddress, 30)
 		if (limit) return limit
-		if (!form.valid) return formError(form)
 
 		const { user } = await authorise(locals)
 
