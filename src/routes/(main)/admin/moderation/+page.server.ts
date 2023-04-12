@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import ratelimit from "$lib/server/ratelimit"
+import ratelimit from "$lib/server/ratelimitNew"
 import { prisma } from "$lib/server/prisma"
 import type { ModerationActionType } from "@prisma/client"
 import formError from "$lib/server/formError"
@@ -26,11 +26,10 @@ export const actions = {
 	moderateUser: async ({ request, locals, getClientAddress }) => {
 		const { user } = await authorise(locals, 4)
 
-		const limit = ratelimit("moderateUser", getClientAddress, 30)
-		if (limit) return limit
-
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
+		if (limit) return limit
 
 		const { username, action, banDate, reason } = form.data
 

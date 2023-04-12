@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import ratelimit from "$lib/server/ratelimit"
+import ratelimit from "$lib/server/ratelimitNew"
 import { prisma } from "$lib/server/prisma"
 import cuid2 from "@paralleldrive/cuid2"
 import formError from "$lib/server/formError"
@@ -54,7 +54,12 @@ export const actions = {
 
 		switch (action) {
 			case "create":
-				const limit = ratelimit("createInvite", getClientAddress, 30)
+				const limit = ratelimit(
+					form,
+					"createInvite",
+					getClientAddress,
+					30
+				)
 				if (limit) return limit
 
 				const customInviteEnabled = !!enableInviteCustom

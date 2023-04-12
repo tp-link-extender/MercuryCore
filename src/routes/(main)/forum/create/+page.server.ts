@@ -1,7 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import id from "$lib/server/id"
-import ratelimit from "$lib/server/ratelimit"
+import ratelimit from "$lib/server/ratelimitNew"
 import formError from "$lib/server/formError"
 import { error, redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -40,13 +40,12 @@ export async function load({ url }) {
 
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
-		const limit = ratelimit("forumPost", getClientAddress, 30)
-		if (limit) return limit
-
 		const { user } = await authorise(locals)
 
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "forumPost", getClientAddress, 30)
+		if (limit) return limit
 
 		const { title, content } = form.data
 

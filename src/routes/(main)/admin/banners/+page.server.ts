@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import ratelimit from "$lib/server/ratelimit"
+import ratelimit from "$lib/server/ratelimitNew"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -48,7 +48,12 @@ export const actions = {
 
 		switch (action) {
 			case "create":
-				const limit = ratelimit("createBanner", getClientAddress, 30)
+				const limit = ratelimit(
+					form,
+					"createBanner",
+					getClientAddress,
+					30
+				)
 				if (limit) return limit
 
 				if (!bannerText || !bannerColour)

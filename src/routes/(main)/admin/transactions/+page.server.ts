@@ -1,7 +1,4 @@
-import { auth, authorise } from "$lib/server/lucia"
-import { client } from "$lib/server/redis"
-import { fail } from "@sveltejs/kit"
-import ratelimit from "$lib/server/ratelimit"
+import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 
 // Make sure a user is an administrator before loading the page.
