@@ -50,40 +50,38 @@ q=2*l else q=3*m end end return q end local function getBoundingBox2(c)local d,e
 =Vector3.new(math.huge,math.huge,math.huge),Vector3.new(-math.huge,-math.huge,-
 math.huge)if c:IsA'Terrain'then d=Vector3.new(-2,-2,-2)e=Vector3.new(2,2,2)
 elseif c:IsA'BasePart'then d=-0.5*c.Size e=-d else e=c:GetModelSize()*0.5 d=-e
-end local f=c:FindFirstChild'Justification'if f~=nil then justify=f.Value two=
-Vector3.new(2,2,2)actualBox=e-d-Vector3.new(0.01,0.01,0.01)containingGridBox=
-Vector3.new(4*math.ceil(actualBox.x/4),4*math.ceil(actualBox.y/4),4*math.ceil(
-actualBox.z/4))adjustment=containingGridBox-actualBox d=d-0.5*adjustment*justify
-e=e+0.5*adjustment*(two-justify)end return d,e end local function
-getBoundingBoxInWorldCoordinates(c)local d,e=Vector3.new(math.huge,math.huge,
-math.huge),Vector3.new(-math.huge,-math.huge,-math.huge)if c:IsA'BasePart'and
-not c:IsA'Terrain'then vec1=c.CFrame:pointToWorldSpace(-0.5*c.Size)vec2=c.CFrame
-:pointToWorldSpace(0.5*c.Size)d=Vector3.new(math.min(vec1.X,vec2.X),math.min(
-vec1.Y,vec2.Y),math.min(vec1.Z,vec2.Z))e=Vector3.new(math.max(vec1.X,vec2.X),
-math.max(vec1.Y,vec2.Y),math.max(vec1.Z,vec2.Z))elseif c:IsA'Terrain'then else
-vec1=c:GetModelCFrame():pointToWorldSpace(-0.5*c:GetModelSize())vec2=c:
-GetModelCFrame():pointToWorldSpace(0.5*c:GetModelSize())d=Vector3.new(math.min(
-vec1.X,vec2.X),math.min(vec1.Y,vec2.Y),math.min(vec1.Z,vec2.Z))e=Vector3.new(
-math.max(vec1.X,vec2.X),math.max(vec1.Y,vec2.Y),math.max(vec1.Z,vec2.Z))end
-return d,e end local function getTargetPartBoundingBox(c)if c.Parent:
-FindFirstChild'RobloxModel'~=nil then return getBoundingBox2(c.Parent)else
-return getBoundingBox2(c)end end local function getMouseTargetCFrame(c)if c.
-Parent:FindFirstChild'RobloxModel'~=nil then if c.Parent:IsA'Tool'then return c.
-Parent.Handle.CFrame else return c.Parent:GetModelCFrame()end else return c.
-CFrame end end local function isBlocker(c)if not c then return false end if not
-c.Parent then return false end if c:FindFirstChild'Humanoid'then return false
-end if c:FindFirstChild'RobloxStamper'or c:FindFirstChild'RobloxModel'then
-return true end if c:IsA'Part'and not c.CanCollide then return false end if c==
-game.Lighting then return false end return isBlocker(c.Parent)end local function
-spaceAboveCharacter(c,d,e)local f=game.Workspace:FindPartsInRegion3(Region3.new(
-Vector3.new(c.Position.X,d,c.Position.Z)-Vector3.new(0.75,2.75,0.75),Vector3.
-new(c.Position.X,d,c.Position.Z)+Vector3.new(0.75,1.75,0.75)),c.Parent,100)for g
-=1,#f do if f[g].CanCollide and not f[g]:IsDescendantOf(e.CurrentParts)then
-return false end end if clusterPartsInRegion(Vector3.new(c.Position.X,d,c.
+end local f=c:FindFirstChild'Justification'if f~=nil then local g,h,i=f.Value,
+Vector3.new(2,2,2),e-d-Vector3.new(0.01,0.01,0.01)local j=Vector3.new(4*math.
+ceil(i.x/4),4*math.ceil(i.y/4),4*math.ceil(i.z/4))local k=j-i d=d-0.5*k*g e=e+
+0.5*k*(h-g)end return d,e end local function getBoundingBoxInWorldCoordinates(c)
+local d,e=Vector3.new(math.huge,math.huge,math.huge),Vector3.new(-math.huge,-
+math.huge,-math.huge)if c:IsA'BasePart'and not c:IsA'Terrain'then local f,g=c.
+CFrame:pointToWorldSpace(-0.5*c.Size),c.CFrame:pointToWorldSpace(0.5*c.Size)d=
+Vector3.new(math.min(f.X,g.X),math.min(f.Y,g.Y),math.min(f.Z,g.Z))e=Vector3.new(
+math.max(f.X,g.X),math.max(f.Y,g.Y),math.max(f.Z,g.Z))elseif not c:IsA'Terrain'
+then local f,g=c:GetModelCFrame():pointToWorldSpace(-0.5*c:GetModelSize()),c:
+GetModelCFrame():pointToWorldSpace(0.5*c:GetModelSize())d=Vector3.new(math.min(f
+.X,g.X),math.min(f.Y,g.Y),math.min(f.Z,g.Z))e=Vector3.new(math.max(f.X,g.X),math
+.max(f.Y,g.Y),math.max(f.Z,g.Z))end return d,e end local function
+getTargetPartBoundingBox(c)if c.Parent:FindFirstChild'RobloxModel'~=nil then
+return getBoundingBox2(c.Parent)else return getBoundingBox2(c)end end
+local function getMouseTargetCFrame(c)if c.Parent:FindFirstChild'RobloxModel'~=
+nil then if c.Parent:IsA'Tool'then return c.Parent.Handle.CFrame else return c.
+Parent:GetModelCFrame()end else return c.CFrame end end local function isBlocker
+(c)if not c then return false end if not c.Parent then return false end if c:
+FindFirstChild'Humanoid'then return false end if c:FindFirstChild'RobloxStamper'
+or c:FindFirstChild'RobloxModel'then return true end if c:IsA'Part'and not c.
+CanCollide then return false end if c==game.Lighting then return false end
+return isBlocker(c.Parent)end local function spaceAboveCharacter(c,d,e)local f=
+game.Workspace:FindPartsInRegion3(Region3.new(Vector3.new(c.Position.X,d,c.
 Position.Z)-Vector3.new(0.75,2.75,0.75),Vector3.new(c.Position.X,d,c.Position.Z)
-+Vector3.new(0.75,1.75,0.75))then return false end return true end
-local function findConfigAtMouseTarget(c,d)if not c then return nil end if not d
-then error'findConfigAtMouseTarget: stampData is nil'return nil end if not d[
++Vector3.new(0.75,1.75,0.75)),c.Parent,100)for g=1,#f do if f[g].CanCollide and
+not f[g]:IsDescendantOf(e.CurrentParts)then return false end end if
+clusterPartsInRegion(Vector3.new(c.Position.X,d,c.Position.Z)-Vector3.new(0.75,
+2.75,0.75),Vector3.new(c.Position.X,d,c.Position.Z)+Vector3.new(0.75,1.75,0.75))
+then return false end return true end local function findConfigAtMouseTarget(c,d
+)if not c then return nil end if not d then error
+'findConfigAtMouseTarget: stampData is nil'return nil end if not d[
 'CurrentParts']then return nil end local e,f,g,h,i=4,false,CFrame.new(0,0,0),
 getBoundingBox2(d.CurrentParts)local j,k=i-h,nil if d.CurrentParts:IsA'Model'or
 d.CurrentParts:IsA'Tool'then k=d.CurrentParts:GetModelCFrame()else k=d.
@@ -156,26 +154,26 @@ end if g==2 or g==3 then k=0 end i.CFrame=CFrame.Angles(0,math.pi/2*h+k,j)if g==
 3 then local l=Instance.new'SpecialMesh'l.MeshType='FileMesh'l.MeshId=
 'http://www.roblox.com/asset?id=66832495'l.Scale=Vector3.new(2,2,2)l.Parent=i
 end local l=Instance.new'Vector3Value'l.Value=Vector3.new(f,g,h)l.Name=
-'ClusterMaterial'l.Parent=i return i end local f,g loading=true if e then g=
-coroutine.create(function()f=game:GetService'InsertService':LoadAssetVersion(c)
-loading=false end)coroutine.resume(g)else g=coroutine.create(function()f=game:
-GetService'InsertService':LoadAsset(c)loading=false end)coroutine.resume(g)end
-local h,i,j=0,0,8 while loading and i<j do h=tick()wait(1)i=i+tick()-h end
-loading=false if i>=j then return nil,'Load Time Fail'end if f==nil then return
-nil,'Load Asset Fail'end if not f:IsA'Model'then return nil,'Load Type Fail'end
-local k=f:GetChildren()if#k==0 then return nil,'Empty Model Fail'end
-UnlockInstances(f)f=f:GetChildren()[1]for l,m in pairs(k)do if m:IsA'Team'then m
-.Parent=game:GetService'Teams'elseif m:IsA'Sky'then local n=game:GetService
-'Lighting'for o,p in pairs(n:GetChildren())do if p:IsA'Sky'then p:Remove()end
-end m.Parent=n return end end if f:FindFirstChild'RobloxModel'==nil then local n
-=Instance.new'BoolValue'n.Name='RobloxModel'n.Parent=f if f:FindFirstChild
-'RobloxStamper'==nil then local o=Instance.new'BoolValue'o.Name='RobloxStamper'o
-.Parent=f end end if d then if f.Name=='MegaClusterCube'then if d==6 then local
-n=Instance.new'BoolValue'n.Name='AutoWedge'n.Parent=f else local n=f:
-FindFirstChild'ClusterMaterial'if n then if n:IsA'Vector3Value'then f=
-setupFakeTerrainPart(n.Value.X,d,n.Value.Z)else f=setupFakeTerrainPart(n.Value,d
-,0)end else f=setupFakeTerrainPart(1,d,0)end end end end return f end a.
-SetupStamperDragger=function(c,d,e,f,g)if not c then error
+'ClusterMaterial'l.Parent=i return i end local f,g,h=nil,nil,true if e then g=
+coroutine.create(function()f=game:GetService'InsertService':LoadAssetVersion(c)h
+=false end)coroutine.resume(g)else g=coroutine.create(function()f=game:
+GetService'InsertService':LoadAsset(c)h=false end)coroutine.resume(g)end local i
+,j,k=0,0,8 while h and j<k do i=tick()wait(1)j=j+tick()-i end h=false if j>=k
+then return nil,'Load Time Fail'end if f==nil then return nil,'Load Asset Fail'
+end if not f:IsA'Model'then return nil,'Load Type Fail'end local l=f:
+GetChildren()if#l==0 then return nil,'Empty Model Fail'end UnlockInstances(f)f=f
+:GetChildren()[1]for m,n in pairs(l)do if n:IsA'Team'then n.Parent=game:
+GetService'Teams'elseif n:IsA'Sky'then local o=game:GetService'Lighting'for p,q
+in pairs(o:GetChildren())do if q:IsA'Sky'then q:Remove()end end n.Parent=o
+return end end if f:FindFirstChild'RobloxModel'==nil then local o=Instance.new
+'BoolValue'o.Name='RobloxModel'o.Parent=f if f:FindFirstChild'RobloxStamper'==
+nil then local p=Instance.new'BoolValue'p.Name='RobloxStamper'p.Parent=f end end
+if d then if f.Name=='MegaClusterCube'then if d==6 then local o=Instance.new
+'BoolValue'o.Name='AutoWedge'o.Parent=f else local o=f:FindFirstChild
+'ClusterMaterial'if o then if o:IsA'Vector3Value'then f=setupFakeTerrainPart(o.
+Value.X,d,o.Value.Z)else f=setupFakeTerrainPart(o.Value,d,0)end else f=
+setupFakeTerrainPart(1,d,0)end end end end return f end a.SetupStamperDragger=
+function(c,d,e,f,g)if not c then error
 [[SetupStamperDragger: modelToStamp (first arg) is nil!  Should be a stamper model]]
 return nil end if not c:IsA'Model'and not c:IsA'BasePart'then error
 [[SetupStamperDragger: modelToStamp (first arg) is neither a Model or Part!]]
@@ -205,33 +203,32 @@ FindFirstChild'MegaClusterCube'if not A then if not l.CurrentParts.Name==
 'MegaClusterCube'then return else A=l.CurrentParts end end q.End=A.CFrame.p
 local B,C,D=nil,Vector3.new(0,0,0),Vector3.new(0,0,0)if q.Dimensions==1 then B=(
 q.End-q.Start)if math.abs(B.X)<math.abs(B.Y)then if math.abs(B.X)<math.abs(B.Z)
-then local E,F if math.abs(B.Y)>math.abs(B.Z)then E,F=truncateToCircleEighth(B.Y
-,B.Z)else F,E=truncateToCircleEighth(B.Z,B.Y)end B=Vector3.new(0,E,F)else local
-E,F=truncateToCircleEighth(B.Y,B.X)B=Vector3.new(F,E,0)end else if math.abs(B.Y)
-<math.abs(B.Z)then local E,F if math.abs(B.X)>math.abs(B.Z)then E,F=
-truncateToCircleEighth(B.X,B.Z)else F,E=truncateToCircleEighth(B.Z,B.X)end B=
-Vector3.new(E,0,F)else local E,F=truncateToCircleEighth(B.X,B.Y)B=Vector3.new(E,
-F,0)end end q.InternalLine=B elseif q.Dimensions==2 then B=q.MoreLines[1]C=q.End
+then local G,H if math.abs(B.Y)>math.abs(B.Z)then G,H=truncateToCircleEighth(B.Y
+,B.Z)else H,G=truncateToCircleEighth(B.Z,B.Y)end B=Vector3.new(0,G,H)else local
+G,H=truncateToCircleEighth(B.Y,B.X)B=Vector3.new(H,G,0)end else if math.abs(B.Y)
+<math.abs(B.Z)then local G,H if math.abs(B.X)>math.abs(B.Z)then G,H=
+truncateToCircleEighth(B.X,B.Z)else H,G=truncateToCircleEighth(B.Z,B.X)end B=
+Vector3.new(G,0,H)else local G,H=truncateToCircleEighth(B.X,B.Y)B=Vector3.new(G,
+H,0)end end q.InternalLine=B elseif q.Dimensions==2 then B=q.MoreLines[1]C=q.End
 -q.MorePoints[1]C=C-B.unit*B.unit:Dot(C)tempCFrame=CFrame.new(q.Start,q.Start+B)
-local E,F=tempCFrame:vectorToWorldSpace(Vector3.new(0,1,0)),tempCFrame:
-vectorToWorldSpace(Vector3.new(1,0,0))local G,H=F:Dot(C),E:Dot(C)if math.abs(H)>
-math.abs(G)then C=C-F*G else C=C-E*H end q.InternalLine=C elseif q.Dimensions==3
+local G,H=tempCFrame:vectorToWorldSpace(Vector3.new(0,1,0)),tempCFrame:
+vectorToWorldSpace(Vector3.new(1,0,0))local I,J=H:Dot(C),G:Dot(C)if math.abs(J)>
+math.abs(I)then C=C-H*I else C=C-G*J end q.InternalLine=C elseif q.Dimensions==3
 then B=q.MoreLines[1]C=q.MoreLines[2]D=q.End-q.MorePoints[2]D=D-B.unit*B.unit:
 Dot(D)D=D-C.unit*C.unit:Dot(D)q.InternalLine=D end tempCFrame=CFrame.new(q.Start
 ,q.Start+B)if q.Dimensions==1 then q.AdornPart.Size=Vector3.new(4,4,B.magnitude+
 4)q.AdornPart.CFrame=tempCFrame+tempCFrame:vectorToWorldSpace(Vector3.new(2,2,2)
--q.AdornPart.Size/2)else local E=tempCFrame:vectorToObjectSpace(B+C+D)q.
-AdornPart.Size=Vector3.new(4,4,4)+Vector3.new(math.abs(E.X),math.abs(E.Y),math.
-abs(E.Z))q.AdornPart.CFrame=tempCFrame+tempCFrame:vectorToWorldSpace(E/2)end
-local E=nil if game.Players['LocalPlayer']then E=game.Players.LocalPlayer:
-FindFirstChild'PlayerGui'if E and E:IsA'PlayerGui'then if q.Dimensions==1 and B.
-magnitude>3 then q.Adorn.Parent=E elseif q.Dimensions>1 then q.Adorn.Parent=E
-end end end if E==nil then E=game:GetService'CoreGui'if q.Dimensions==1 and B.
-magnitude>3 then q.Adorn.Parent=E elseif q.Dimensions>1 then q.Adorn.Parent=E
-end end end local function DoStamperMouseMove(A)if not A then error
-'Error: RbxStamper.DoStamperMouseMove: Mouse is nil'return end if not A:IsA
-'Mouse'then error('Error: RbxStamper.DoStamperMouseMove: Mouse is of type',A.
-className,'should be of type Mouse')return end if not A.Target then local B=
+-q.AdornPart.Size/2)else local G=tempCFrame:vectorToObjectSpace(B+C+D)q.
+AdornPart.Size=Vector3.new(4,4,4)+Vector3.new(math.abs(G.X),math.abs(G.Y),math.
+abs(G.Z))q.AdornPart.CFrame=tempCFrame+tempCFrame:vectorToWorldSpace(G/2)end
+local G=nil if game.Players['LocalPlayer']then G=game.Players.LocalPlayer:
+FindFirstChild'PlayerGui'if G and G:IsA'PlayerGui'then if(q.Dimensions==1 and B.
+magnitude>3)or q.Dimensions>1 then q.Adorn.Parent=G end end end if G==nil then G
+=game:GetService'CoreGui'if(q.Dimensions==1 and B.magnitude>3)or q.Dimensions>1
+then q.Adorn.Parent=G end end end local function DoStamperMouseMove(A)if not A
+then error'Error: RbxStamper.DoStamperMouseMove: Mouse is nil'return end if not
+A:IsA'Mouse'then error('Error: RbxStamper.DoStamperMouseMove: Mouse is of type',
+A.className,'should be of type Mouse')return end if not A.Target then local B=
 GetTerrainForMouse(A)if nil==B then return end end if not l then return end
 configFound,targetCFrame,targetSurface=findConfigAtMouseTarget(A,l)if not
 configFound then error'RbxStamper.DoStamperMouseMove No configFound, returning'
@@ -242,30 +239,30 @@ elseif targetSurface==5 then B=3-k+autoAlignToFace(l.CurrentParts)elseif
 targetSurface==2 then B=1-k+autoAlignToFace(l.CurrentParts)end end local C=math.
 pi/2 k=k+B if l.CurrentParts:IsA'Model'or l.CurrentParts:IsA'Tool'then
 modelRotate(l.CurrentParts,C*B)else l.CurrentParts.CFrame=CFrame.
-fromEulerAnglesXYZ(0,C*B,0)*l.CurrentParts.CFrame end local D,E=
-getBoundingBoxInWorldCoordinates(l.CurrentParts)local F=nil if l.CurrentParts:
-IsA'Model'then F=l.CurrentParts:GetModelCFrame()else F=l.CurrentParts.CFrame end
-D=D+targetCFrame.p-F.p E=E+targetCFrame.p-F.p if clusterPartsInRegion(D+b,E-b)
+fromEulerAnglesXYZ(0,C*B,0)*l.CurrentParts.CFrame end local D,G=
+getBoundingBoxInWorldCoordinates(l.CurrentParts)local H=nil if l.CurrentParts:
+IsA'Model'then H=l.CurrentParts:GetModelCFrame()else H=l.CurrentParts.CFrame end
+D=D+targetCFrame.p-H.p G=G+targetCFrame.p-H.p if clusterPartsInRegion(D+b,G-b)
 then if y.CFrame then if l.CurrentParts:FindFirstChild('ClusterMaterial',true)
-then local G=l.CurrentParts:FindFirstChild('ClusterMaterial',true)if G:IsA
-'Vector3Value'then local H=l.CurrentParts:FindFirstChild('ClusterMaterial',true)
-if H then H=clusterMat end end end end return end if isMegaClusterPart()then
-local G=game.Workspace.Terrain:WorldToCell(targetCFrame.p)local H,I,J,K,L,M,N,O,
-P,Q,R,S,T=game.Workspace.Terrain:CellCenterToWorld(G.X,G.Y,G.Z),targetCFrame:
-components()targetCFrame=CFrame.new(H.X,H.Y,H.Z,L,M,N,O,P,Q,R,S,T)end
+then local I=l.CurrentParts:FindFirstChild('ClusterMaterial',true)if I:IsA
+'Vector3Value'then local J=l.CurrentParts:FindFirstChild('ClusterMaterial',true)
+if J then J=clusterMat end end end end return end if isMegaClusterPart()then
+local I=game.Workspace.Terrain:WorldToCell(targetCFrame.p)local J,K,L,M,N,O,P,Q,
+R,S,T,U,V=game.Workspace.Terrain:CellCenterToWorld(I.X,I.Y,I.Z),targetCFrame:
+components()targetCFrame=CFrame.new(J.X,J.Y,J.Z,N,O,P,Q,R,S,T,U,V)end
 positionPartsAtCFrame3(targetCFrame,l.CurrentParts)y.CFrame=targetCFrame if l.
-CurrentParts:FindFirstChild('ClusterMaterial',true)then local G=l.CurrentParts:
-FindFirstChild('ClusterMaterial',true)if G:IsA'Vector3Value'then y.
-TerrainOrientation=G.Value.Z end end if A and A.Target and A.Target.Parent then
-local G=A.Target:FindFirstChild'RobloxModel'if not G then G=A.Target.Parent:
-FindFirstChild'RobloxModel'end local H=l.CurrentParts:FindFirstChild
-'UnstampableFaces'do local I,J='',''if G and G.Parent:FindFirstChild
-'UnstampableFaces'then I=G.Parent.UnstampableFaces.Value end if H then J=H.Value
-end local K=0 if G then K=modelTargetSurface(G.Parent,game.Workspace.
-CurrentCamera.CoordinateFrame.p,A.Hit.p)end for L in string.gmatch(I,'[^,]+')do
-if K==tonumber(L)then u=true game.JointsService:ClearJoinAfterMoveJoints()return
-end end K=modelTargetSurface(l.CurrentParts,A.Hit.p,game.Workspace.CurrentCamera
-.CoordinateFrame.p)for M in string.gmatch(J,'[^,]+')do if K==tonumber(M)then u=
+CurrentParts:FindFirstChild('ClusterMaterial',true)then local I=l.CurrentParts:
+FindFirstChild('ClusterMaterial',true)if I:IsA'Vector3Value'then y.
+TerrainOrientation=I.Value.Z end end if A and A.Target and A.Target.Parent then
+local I=A.Target:FindFirstChild'RobloxModel'if not I then I=A.Target.Parent:
+FindFirstChild'RobloxModel'end local J=l.CurrentParts:FindFirstChild
+'UnstampableFaces'do local M,N='',''if I and I.Parent:FindFirstChild
+'UnstampableFaces'then M=I.Parent.UnstampableFaces.Value end if J then N=J.Value
+end local O=0 if I then O=modelTargetSurface(I.Parent,game.Workspace.
+CurrentCamera.CoordinateFrame.p,A.Hit.p)end for P in string.gmatch(M,'[^,]+')do
+if O==tonumber(P)then u=true game.JointsService:ClearJoinAfterMoveJoints()return
+end end O=modelTargetSurface(l.CurrentParts,A.Hit.p,game.Workspace.CurrentCamera
+.CoordinateFrame.p)for Q in string.gmatch(N,'[^,]+')do if O==tonumber(Q)then u=
 true game.JointsService:ClearJoinAfterMoveJoints()return end end end end u=false
 game.JointsService:SetJoinAfterMoveInstance(l.CurrentParts)if not pcall(function
 ()if A and A.Target and A.Target.Parent:FindFirstChild'RobloxModel'==nil then
@@ -311,175 +308,173 @@ loadSurfaceTypes(A,B)A.TopSurface=B[1]A.BottomSurface=B[2]A.LeftSurface=B[3]A.
 RightSurface=B[4]A.FrontSurface=B[5]A.BackSurface=B[6]end local function
 saveSurfaceTypes(A,B)local C={}C[1]=A.TopSurface C[2]=A.BottomSurface C[3]=A.
 LeftSurface C[4]=A.RightSurface C[5]=A.FrontSurface C[6]=A.BackSurface B[A]=C
-end local function makeSurfaceUnjoinable(A,B)end local function prepareModel(A)
-if not A then return nil end local B,C,D,E,F,G=0.7,1,A:Clone(),{},{},{}l={}l.
-DisabledScripts={}l.TransparencyTable={}l.MaterialTable={}l.CanCollideTable={}l.
-AnchoredTable={}l.ArchivableTable={}l.DecalTransparencyTable={}l.
-SurfaceTypeTable={}collectParts(D,F,E,G)if#F<=0 then return nil,
-'no parts found in modelToStamp'end for H,I in pairs(E)do if not I.Disabled then
-I.Disabled=true l.DisabledScripts[#l.DisabledScripts+1]=I end end for J,K in
-pairs(F)do l.TransparencyTable[K]=K.Transparency K.Transparency=C+(1-C)*K.
-Transparency l.MaterialTable[K]=K.Material K.Material=Enum.Material.Plastic l.
-CanCollideTable[K]=K.CanCollide K.CanCollide=false l.AnchoredTable[K]=K.Anchored
-K.Anchored=true l.ArchivableTable[K]=K.Archivable K.Archivable=false
-saveSurfaceTypes(K,l.SurfaceTypeTable)local M,N=0.5,0.5 delay(0,function()wait(M
-)local O=tick()local P=O while(P-O)<N and K and K:IsA'BasePart'and K.
-Transparency>B do local Q=1-(((P-O)/N)*(C-B))if l['TransparencyTable']and l.
-TransparencyTable[K]then K.Transparency=Q+(1-Q)*l.TransparencyTable[K]end wait(
-0.03)P=tick()end if K and K:IsA'BasePart'then if l['TransparencyTable']and l.
-TransparencyTable[K]then K.Transparency=B+(1-B)*l.TransparencyTable[K]end end
-end)end for M,N in pairs(G)do l.DecalTransparencyTable[N]=N.Transparency N.
-Transparency=B+(1-B)*N.Transparency end setSeatEnabledStatus(D,true)
+end local function prepareModel(A)if not A then return nil end local B,C,D,G,H,I
+=0.7,1,A:Clone(),{},{},{}l={}l.DisabledScripts={}l.TransparencyTable={}l.
+MaterialTable={}l.CanCollideTable={}l.AnchoredTable={}l.ArchivableTable={}l.
+DecalTransparencyTable={}l.SurfaceTypeTable={}collectParts(D,H,G,I)if#H<=0 then
+return nil,'no parts found in modelToStamp'end for J,M in pairs(G)do if not M.
+Disabled then M.Disabled=true l.DisabledScripts[#l.DisabledScripts+1]=M end end
+for N,O in pairs(H)do l.TransparencyTable[O]=O.Transparency O.Transparency=C+(1-
+C)*O.Transparency l.MaterialTable[O]=O.Material O.Material=Enum.Material.Plastic
+l.CanCollideTable[O]=O.CanCollide O.CanCollide=false l.AnchoredTable[O]=O.
+Anchored O.Anchored=true l.ArchivableTable[O]=O.Archivable O.Archivable=false
+saveSurfaceTypes(O,l.SurfaceTypeTable)local Q,R=0.5,0.5 delay(0,function()wait(Q
+)local S=tick()local T=S while(T-S)<R and O and O:IsA'BasePart'and O.
+Transparency>B do local U=1-(((T-S)/R)*(C-B))if l['TransparencyTable']and l.
+TransparencyTable[O]then O.Transparency=U+(1-U)*l.TransparencyTable[O]end wait(
+0.03)T=tick()end if O and O:IsA'BasePart'then if l['TransparencyTable']and l.
+TransparencyTable[O]then O.Transparency=B+(1-B)*l.TransparencyTable[O]end end
+end)end for Q,R in pairs(I)do l.DecalTransparencyTable[R]=R.Transparency R.
+Transparency=B+(1-B)*R.Transparency end setSeatEnabledStatus(D,true)
 setSeatEnabledStatus(D,false)l.CurrentParts=D if autoAlignToFace(D)then l.
-CurrentParts:ResetOrientationToIdentity()k=0 else local O=k*math.pi/2 if l.
+CurrentParts:ResetOrientationToIdentity()k=0 else local S=k*math.pi/2 if l.
 CurrentParts:IsA'Model'or l.CurrentParts:IsA'Tool'then modelRotate(l.
-CurrentParts,O)else l.CurrentParts.CFrame=CFrame.fromEulerAnglesXYZ(0,O,0)*l.
-CurrentParts.CFrame end end local O=l.CurrentParts:FindFirstChild(
-'ClusterMaterial',true)if O and O:IsA'Vector3Value'then O.Value=Vector3.new(O.
-Value.X,O.Value.Y,(O.Value.Z+k)%4)end local P,Q=findConfigAtMouseTarget(d,l)if P
-then l.CurrentParts=positionPartsAtCFrame3(Q,l.CurrentParts)end game.
-JointsService:SetJoinAfterMoveInstance(l.CurrentParts)return D,F end
+CurrentParts,S)else l.CurrentParts.CFrame=CFrame.fromEulerAnglesXYZ(0,S,0)*l.
+CurrentParts.CFrame end end local S=l.CurrentParts:FindFirstChild(
+'ClusterMaterial',true)if S and S:IsA'Vector3Value'then S.Value=Vector3.new(S.
+Value.X,S.Value.Y,(S.Value.Z+k)%4)end local T,U=findConfigAtMouseTarget(d,l)if T
+then l.CurrentParts=positionPartsAtCFrame3(U,l.CurrentParts)end game.
+JointsService:SetJoinAfterMoveInstance(l.CurrentParts)return D,H end
 local function checkTerrainBlockCollisions(A,B)local C=game.Workspace.Terrain.
-CellCenterToWorld local D=C(game.Workspace.Terrain,A.X,A.Y,A.Z)local E,F=game.
+CellCenterToWorld local D=C(game.Workspace.Terrain,A.X,A.Y,A.Z)local G,H=game.
 Workspace:FindPartsInRegion3(Region3.new(D-Vector3.new(2,2,2)+b,D+Vector3.new(2,
-2,2)-b),l.CurrentParts,100),false for G=1,#E do if isBlocker(E[G])then F=true
-break end end if not F then local G={}for I=1,#E do if E[I].Parent and not G[E[I
-].Parent]and E[I].Parent:FindFirstChild'Humanoid'and E[I].Parent:FindFirstChild
-'Humanoid':IsA'Humanoid'then local K=E[I].Parent:FindFirstChild'Torso'G[E[I].
-Parent]=true if K then local M=D.Y+5 if spaceAboveCharacter(K,M,l)then K.CFrame=
-K.CFrame+Vector3.new(0,M-K.CFrame.p.Y,0)else F=true break end end end end end if
-not F then local G=true if B then if i then local I=C(game.Workspace.Terrain,A.X
-,A.Y,A.Z)if I.X+2>i.CFrame.p.X+i.Size.X/2 then G=false elseif I.X-2<i.CFrame.p.X
--i.Size.X/2 then G=false elseif I.Y+2>i.CFrame.p.Y+i.Size.Y/2 then G=false
-elseif I.Y-2<i.CFrame.p.Y-i.Size.Y/2 then G=false elseif I.Z+2>i.CFrame.p.Z+i.
-Size.Z/2 then G=false elseif I.Z-2<i.CFrame.p.Z-i.Size.Z/2 then G=false end end
-end return G end return false end local function ResolveMegaClusterStamp(A)local
-B,C,D,E,F,G,I,K,M=false,game.Workspace.Terrain,q.InternalLine,game.Workspace.
-Terrain.MaxExtents.Max,game.Workspace.Terrain.MaxExtents.Min,1,0,0,false if l.
-CurrentParts:FindFirstChild'AutoWedge'then M=true end if l.CurrentParts:
-FindFirstChild('ClusterMaterial',true)then G=l.CurrentParts:FindFirstChild(
-'ClusterMaterial',true)if G:IsA'Vector3Value'then I=G.Value.Y K=G.Value.Z G=G.
-Value.X elseif G:IsA'IntValue'then G=G.Value end end if q.Adorn.Parent and q.
-Start and((q.Dimensions>1)or(D and D.magnitude>0))then local N,O,P,Q,R,S,T,U,V=
-game.Workspace.Terrain:WorldToCell(q.Start),{0,0,0},{0,0,0},{0,0,0},game.
-Workspace.Terrain,{nil,nil,nil},{Vector3.new(0,0,0),Vector3.new(0,0,0),Vector3.
-new(0,0,0)},{Vector3.new(1,0,0),Vector3.new(0,1,0),Vector3.new(0,0,1)},{}if q.
-Dimensions>1 then table.insert(V,q.MoreLines[1])end if D and D.magnitude>0 then
-table.insert(V,D)end if q.Dimensions>2 then table.insert(V,q.MoreLines[2])end
-for W=1,#V do V[W]=Vector3.new(math.floor(V[W].X+0.5),math.floor(V[W].Y+0.5),
-math.floor(V[W].Z+0.5))if V[W].X>0 then O[W]=1 elseif V[W].X<0 then O[W]=-1 end
-if V[W].Y>0 then P[W]=1 elseif V[W].Y<0 then P[W]=-1 end if V[W].Z>0 then Q[W]=1
-elseif V[W].Z<0 then Q[W]=-1 end S[W]=Vector3.new(O[W],P[W],Q[W])if S[W].
-magnitude<0.9 then S[W]=nil end end if not V[2]then V[2]=Vector3.new(0,0,0)end
-if not V[3]then V[3]=Vector3.new(0,0,0)end local W,X=l.CurrentParts:
-FindFirstChild('WaterForceTag',true),l.CurrentParts:FindFirstChild(
-'WaterForceDirectionTag',true)while T[3].magnitude*4<=V[3].magnitude do local Y=
-1 while Y<4 do T[2]=Vector3.new(0,0,0)while T[2].magnitude*4<=V[2].magnitude do
-local Z=1 while Z<4 do T[1]=Vector3.new(0,0,0)while T[1].magnitude*4<=V[1].
-magnitude do local _=T[1]+T[2]+T[3]local aa=Vector3int16.new(N.X+_.X,N.Y+_.Y,N.Z
-+_.Z)if aa.X>=F.X and aa.Y>=F.Y and aa.Z>=F.Z and aa.X<E.X and aa.Y<E.Y and aa.Z
-<E.Z then local ab=checkTerrainBlockCollisions(aa,A)if ab then if W then R:
-SetWaterCell(aa.X,aa.Y,aa.Z,Enum.WaterForce[W.Value],Enum.WaterDirection[X.Value
-])else R:SetCell(aa.X,aa.Y,aa.Z,G,I,K)end B=true if M then game.Workspace.
-Terrain:AutowedgeCells(Region3int16.new(Vector3int16.new(aa.x-1,aa.y-1,aa.z-1),
-Vector3int16.new(aa.x+1,aa.y+1,aa.z+1)))end end end T[1]=T[1]+S[1]end if S[2]
-then while Z<4 and U[Z]:Dot(S[2])==0 do Z=Z+1 end if Z<4 then T[2]=T[2]+U[Z]*U[Z
-]:Dot(S[2])end Z=Z+1 else T[2]=Vector3.new(1,0,0)Z=4 end if T[2].magnitude*4>V[2
-].magnitude then Z=4 end end end if S[3]then while Y<4 and U[Y]:Dot(S[3])==0 do
-Y=Y+1 end if Y<4 then T[3]=T[3]+U[Y]*U[Y]:Dot(S[3])end Y=Y+1 else T[3]=Vector3.
-new(1,0,0)Y=4 end if T[3].magnitude*4>V[3].magnitude then Y=4 end end end end q.
-Start=nil q.Adorn.Parent=nil if B then l.CurrentParts.Parent=nil pcall(function(
-)game:GetService'ChangeHistoryService':SetWaypoint'StamperMulti'end)end return B
-end local function DoStamperMouseUp(aa)if not aa then error
+2,2)-b),l.CurrentParts,100),false for I=1,#G do if isBlocker(G[I])then H=true
+break end end if not H then local I={}for M=1,#G do if G[M].Parent and not I[G[M
+].Parent]and G[M].Parent:FindFirstChild'Humanoid'and G[M].Parent:FindFirstChild
+'Humanoid':IsA'Humanoid'then local O=G[M].Parent:FindFirstChild'Torso'I[G[M].
+Parent]=true if O then local Q=D.Y+5 if spaceAboveCharacter(O,Q,l)then O.CFrame=
+O.CFrame+Vector3.new(0,Q-O.CFrame.p.Y,0)else H=true break end end end end end if
+not H then local I=true if B then if i then local M=C(game.Workspace.Terrain,A.X
+,A.Y,A.Z)if(M.X+2>i.CFrame.p.X+i.Size.X/2)or(M.X-2<i.CFrame.p.X-i.Size.X/2)or(M.
+Y+2>i.CFrame.p.Y+i.Size.Y/2)or(M.Y-2<i.CFrame.p.Y-i.Size.Y/2)or(M.Z+2>i.CFrame.p
+.Z+i.Size.Z/2)or(M.Z-2<i.CFrame.p.Z-i.Size.Z/2)then I=false end end end return I
+end return false end local function ResolveMegaClusterStamp(A)local B,C,D,G,H,I,
+M,O,Q=false,game.Workspace.Terrain,q.InternalLine,game.Workspace.Terrain.
+MaxExtents.Max,game.Workspace.Terrain.MaxExtents.Min,1,0,0,false if l.
+CurrentParts:FindFirstChild'AutoWedge'then Q=true end if l.CurrentParts:
+FindFirstChild('ClusterMaterial',true)then I=l.CurrentParts:FindFirstChild(
+'ClusterMaterial',true)if I:IsA'Vector3Value'then M=I.Value.Y O=I.Value.Z I=I.
+Value.X elseif I:IsA'IntValue'then I=I.Value end end if q.Adorn.Parent and q.
+Start and((q.Dimensions>1)or(D and D.magnitude>0))then local R,S,T,U,V,W,X,Y=
+game.Workspace.Terrain:WorldToCell(q.Start),{0,0,0},{0,0,0},{0,0,0},{nil,nil,nil
+},{Vector3.new(0,0,0),Vector3.new(0,0,0),Vector3.new(0,0,0)},{Vector3.new(1,0,0)
+,Vector3.new(0,1,0),Vector3.new(0,0,1)},{}if q.Dimensions>1 then table.insert(Y,
+q.MoreLines[1])end if D and D.magnitude>0 then table.insert(Y,D)end if q.
+Dimensions>2 then table.insert(Y,q.MoreLines[2])end for Z=1,#Y do Y[Z]=Vector3.
+new(math.floor(Y[Z].X+0.5),math.floor(Y[Z].Y+0.5),math.floor(Y[Z].Z+0.5))if Y[Z]
+.X>0 then S[Z]=1 elseif Y[Z].X<0 then S[Z]=-1 end if Y[Z].Y>0 then T[Z]=1 elseif
+Y[Z].Y<0 then T[Z]=-1 end if Y[Z].Z>0 then U[Z]=1 elseif Y[Z].Z<0 then U[Z]=-1
+end V[Z]=Vector3.new(S[Z],T[Z],U[Z])if V[Z].magnitude<0.9 then V[Z]=nil end end
+if not Y[2]then Y[2]=Vector3.new(0,0,0)end if not Y[3]then Y[3]=Vector3.new(0,0,
+0)end local Z,_=l.CurrentParts:FindFirstChild('WaterForceTag',true),l.
+CurrentParts:FindFirstChild('WaterForceDirectionTag',true)while W[3].magnitude*4
+<=Y[3].magnitude do local aa=1 while aa<4 do W[2]=Vector3.new(0,0,0)while W[2].
+magnitude*4<=Y[2].magnitude do local ab=1 while ab<4 do W[1]=Vector3.new(0,0,0)
+while W[1].magnitude*4<=Y[1].magnitude do local ac=W[1]+W[2]+W[3]local ad=
+Vector3int16.new(R.X+ac.X,R.Y+ac.Y,R.Z+ac.Z)if ad.X>=H.X and ad.Y>=H.Y and ad.Z
+>=H.Z and ad.X<G.X and ad.Y<G.Y and ad.Z<G.Z then local ae=
+checkTerrainBlockCollisions(ad,A)if ae then if Z then C:SetWaterCell(ad.X,ad.Y,
+ad.Z,Enum.WaterForce[Z.Value],Enum.WaterDirection[_.Value])else C:SetCell(ad.X,
+ad.Y,ad.Z,I,M,O)end B=true if Q then game.Workspace.Terrain:AutowedgeCells(
+Region3int16.new(Vector3int16.new(ad.x-1,ad.y-1,ad.z-1),Vector3int16.new(ad.x+1,
+ad.y+1,ad.z+1)))end end end W[1]=W[1]+V[1]end if V[2]then while ab<4 and X[ab]:
+Dot(V[2])==0 do ab=ab+1 end if ab<4 then W[2]=W[2]+X[ab]*X[ab]:Dot(V[2])end ab=
+ab+1 else W[2]=Vector3.new(1,0,0)ab=4 end if W[2].magnitude*4>Y[2].magnitude
+then ab=4 end end end if V[3]then while aa<4 and X[aa]:Dot(V[3])==0 do aa=aa+1
+end if aa<4 then W[3]=W[3]+X[aa]*X[aa]:Dot(V[3])end aa=aa+1 else W[3]=Vector3.
+new(1,0,0)aa=4 end if W[3].magnitude*4>Y[3].magnitude then aa=4 end end end end
+q.Start=nil q.Adorn.Parent=nil if B then l.CurrentParts.Parent=nil pcall(
+function()game:GetService'ChangeHistoryService':SetWaypoint'StamperMulti'end)end
+return B end local function DoStamperMouseUp(aa)if not aa then error
 'Error: RbxStamper.DoStamperMouseUp: Mouse is nil'return false end if not aa:IsA
 'Mouse'then error('Error: RbxStamper.DoStamperMouseUp: Mouse is of type',aa.
 className,'should be of type Mouse')return false end if not l.Dragger then error
 [[Error: RbxStamper.DoStamperMouseUp: stampData.Dragger is nil]]return false end
-if not q then return false end local ab=nil if h then local A,B=nil,
-isMegaClusterPart()if B and q and q.Start and q.InternalLine and q.InternalLine.
-magnitude>0 then A=true ab=true else A,ab=a.CanEditRegion(l.CurrentParts,i)end
-if not A then if j then j()end return false end end if u then flashRedBox()
+if not q then return false end local ab=nil if h then local ac,ad=nil,
+isMegaClusterPart()if ad and q and q.Start and q.InternalLine and q.InternalLine
+.magnitude>0 then ac=true ab=true else ac,ab=a.CanEditRegion(l.CurrentParts,i)
+end if not ac then if j then j()end return false end end if u then flashRedBox()
 return false end canStamp,ab=a.CanEditRegion(l.CurrentParts,i)if not canStamp
-then if j then j()end return false end local A,B=
+then if j then j()end return false end local ac,ad=
 getBoundingBoxInWorldCoordinates(l.CurrentParts)configFound,targetCFrame=
 findConfigAtMouseTarget(aa,l)if configFound and not q.Adorn.Parent then if
-clusterPartsInRegion(A+b,B-b)then flashRedBox()return false end local C=game.
-Workspace:FindPartsInRegion3(Region3.new(A+b,B-b),l.CurrentParts,100)for D=1,#C
-do if isBlocker(C[D])then flashRedBox()return false end end local D={}for E=1,#C
-do if C[E].Parent and not D[C[E].Parent]and C[E].Parent:FindFirstChild'Humanoid'
-and C[E].Parent:FindFirstChild'Humanoid':IsA'Humanoid'then local F=C[E].Parent:
-FindFirstChild'Torso'D[C[E].Parent]=true if F then local G=B.Y+3 if
-spaceAboveCharacter(F,G,l)then F.CFrame=F.CFrame+Vector3.new(0,G-F.CFrame.p.Y,0)
+clusterPartsInRegion(ac+b,ad-b)then flashRedBox()return false end local ae=game.
+Workspace:FindPartsInRegion3(Region3.new(ac+b,ad-b),l.CurrentParts,100)for A=1,#
+ae do if isBlocker(ae[A])then flashRedBox()return false end end local A={}for B=
+1,#ae do if ae[B].Parent and not A[ae[B].Parent]and ae[B].Parent:FindFirstChild
+'Humanoid'and ae[B].Parent:FindFirstChild'Humanoid':IsA'Humanoid'then local C=ae
+[B].Parent:FindFirstChild'Torso'A[ae[B].Parent]=true if C then local D=ad.Y+3 if
+spaceAboveCharacter(C,D,l)then C.CFrame=C.CFrame+Vector3.new(0,D-C.CFrame.p.Y,0)
 else flashRedBox()return false end end end end elseif(not configFound)and not(q.
 Start and q.Adorn.Parent)then resetHighScalabilityLine()return false end if game
 :FindFirstChild'Players'then if game.Players['LocalPlayer']then if game.Players.
-LocalPlayer['Character']then local C=game.Players.LocalPlayer.Character local D=
-C:FindFirstChild'StampTracker'if D and not D.Value then D.Value=true end end end
-end if q.Start and q.Adorn.Parent and isMegaClusterPart()then if
+LocalPlayer['Character']then local ae=game.Players.LocalPlayer.Character local A
+=ae:FindFirstChild'StampTracker'if A and not A.Value then A.Value=true end end
+end end if q.Start and q.Adorn.Parent and isMegaClusterPart()then if
 ResolveMegaClusterStamp(ab)or ab then l.CurrentParts.Parent=nil return true end
-end q.Start=nil q.Adorn.Parent=nil local C=game.Workspace.Terrain if
-isMegaClusterPart()then local D if l.CurrentParts:IsA'Model'then D=C:
-WorldToCell(l.CurrentParts:GetModelCFrame().p)else D=C:WorldToCell(l.
-CurrentParts.CFrame.p)end local E,F=game.Workspace.Terrain.MaxExtents.Max,game.
-Workspace.Terrain.MaxExtents.Min if checkTerrainBlockCollisions(D,false)then
-local G,I,K=l.CurrentParts:FindFirstChild('ClusterMaterial',true),l.CurrentParts
+end q.Start=nil q.Adorn.Parent=nil local ae=game.Workspace.Terrain if
+isMegaClusterPart()then local A if l.CurrentParts:IsA'Model'then A=ae:
+WorldToCell(l.CurrentParts:GetModelCFrame().p)else A=ae:WorldToCell(l.
+CurrentParts.CFrame.p)end local B,C=game.Workspace.Terrain.MaxExtents.Max,game.
+Workspace.Terrain.MaxExtents.Min if checkTerrainBlockCollisions(A,false)then
+local D,G,H=l.CurrentParts:FindFirstChild('ClusterMaterial',true),l.CurrentParts
 :FindFirstChild('WaterForceTag',true),l.CurrentParts:FindFirstChild(
-'WaterForceDirectionTag',true)if D.X>=F.X and D.Y>=F.Y and D.Z>=F.Z and D.X<E.X
-and D.Y<E.Y and D.Z<E.Z then if I then C:SetWaterCell(D.X,D.Y,D.Z,Enum.
-WaterForce[I.Value],Enum.WaterDirection[K.Value])elseif not G then C:SetCell(D.X
-,D.Y,D.Z,z.Material,z.clusterType,k%4)elseif G:IsA'Vector3Value'then C:SetCell(D
-.X,D.Y,D.Z,G.Value.X,G.Value.Y,G.Value.Z)else C:SetCell(D.X,D.Y,D.Z,G.Value,0,0)
-end local M=false if l.CurrentParts:FindFirstChild'AutoWedge'then M=true end if
-M then game.Workspace.Terrain:AutowedgeCells(Region3int16.new(Vector3int16.new(D
-.x-1,D.y-1,D.z-1),Vector3int16.new(D.x+1,D.y+1,D.z+1)))end l.CurrentParts.Parent
-=nil pcall(function()game:GetService'ChangeHistoryService':SetWaypoint
-'StamperSingle'end)return true end else flashRedBox()return false end end
-local function getPlayer()if game:FindFirstChild'Players'then if game.Players[
-'LocalPlayer']then return game.Players.LocalPlayer end end return nil end if l.
-CurrentParts:IsA'Model'or l.CurrentParts:IsA'Tool'then if l.CurrentParts:IsA
-'Model'then local D,E={},{}saveTheWelds(l.CurrentParts,D,E)l.CurrentParts:
-BreakJoints()l.CurrentParts:MakeJoints()restoreTheWelds(D,E)end playerIdTag=l.
-CurrentParts:FindFirstChild'PlayerIdTag'playerNameTag=l.CurrentParts:
-FindFirstChild'PlayerNameTag'if playerIdTag~=nil then tempPlayerValue=getPlayer(
-)if tempPlayerValue~=nil then playerIdTag.Value=tempPlayerValue.userId end end
-if playerNameTag~=nil then if game:FindFirstChild'Players'and game.Players[
-'LocalPlayer']then tempPlayerValue=game.Players.LocalPlayer if tempPlayerValue~=
-nil then playerNameTag.Value=tempPlayerValue.Name end end end if l.CurrentParts:
-FindFirstChild'RobloxModel'==nil then local D=Instance.new'BoolValue'D.Name=
-'RobloxModel'D.Parent=l.CurrentParts if l.CurrentParts:FindFirstChild
-'RobloxStamper'==nil then local E=Instance.new'BoolValue'E.Name='RobloxStamper'E
-.Parent=l.CurrentParts end end else l.CurrentParts:BreakJoints()if l.
-CurrentParts:FindFirstChild'RobloxStamper'==nil then local D=Instance.new
-'BoolValue'D.Name='RobloxStamper'D.Parent=l.CurrentParts end end if not
-createJoints then game.JointsService:CreateJoinAfterMoveJoints()end for D,E in
-pairs(l.TransparencyTable)do D.Transparency=E end for F,G in pairs(l.
-ArchivableTable)do F.Archivable=G end for I,K in pairs(l.MaterialTable)do I.
-Material=K end for M,N in pairs(l.CanCollideTable)do M.CanCollide=N end for O,P
-in pairs(l.AnchoredTable)do O.Anchored=P end for Q,R in pairs(l.
-DecalTransparencyTable)do Q.Transparency=R end for S,T in pairs(l.
-SurfaceTypeTable)do loadSurfaceTypes(S,T)end if isMegaClusterPart()then l.
-CurrentParts.Transparency=0 end setSeatEnabledStatus(l.CurrentParts,true)l.
-TransparencyTable=nil l.ArchivableTable=nil l.MaterialTable=nil l.
-CanCollideTable=nil l.AnchoredTable=nil l.SurfaceTypeTable=nil if l.CurrentParts
-:FindFirstChild'RobloxModel'==nil then local U=Instance.new'BoolValue'U.Name=
-'RobloxModel'U.Parent=l.CurrentParts end if ghostRemovalScript then
-ghostRemovalScript.Parent=nil end for U,V in pairs(l.DisabledScripts)do V.
-Disabled=false end for W,X in pairs(l.DisabledScripts)do local Y=X.Parent X.
-Parent=nil X:Clone().Parent=Y end l.DisabledScripts=nil l.Dragger=nil l.
+'WaterForceDirectionTag',true)if A.X>=C.X and A.Y>=C.Y and A.Z>=C.Z and A.X<B.X
+and A.Y<B.Y and A.Z<B.Z then if G then ae:SetWaterCell(A.X,A.Y,A.Z,Enum.
+WaterForce[G.Value],Enum.WaterDirection[H.Value])elseif not D then ae:SetCell(A.
+X,A.Y,A.Z,z.Material,z.clusterType,k%4)elseif D:IsA'Vector3Value'then ae:
+SetCell(A.X,A.Y,A.Z,D.Value.X,D.Value.Y,D.Value.Z)else ae:SetCell(A.X,A.Y,A.Z,D.
+Value,0,0)end local I=false if l.CurrentParts:FindFirstChild'AutoWedge'then I=
+true end if I then game.Workspace.Terrain:AutowedgeCells(Region3int16.new(
+Vector3int16.new(A.x-1,A.y-1,A.z-1),Vector3int16.new(A.x+1,A.y+1,A.z+1)))end l.
+CurrentParts.Parent=nil pcall(function()game:GetService'ChangeHistoryService':
+SetWaypoint'StamperSingle'end)return true end else flashRedBox()return false end
+end local function getPlayer()if game:FindFirstChild'Players'then if game.
+Players['LocalPlayer']then return game.Players.LocalPlayer end end return nil
+end if l.CurrentParts:IsA'Model'or l.CurrentParts:IsA'Tool'then if l.
+CurrentParts:IsA'Model'then local A,B={},{}saveTheWelds(l.CurrentParts,A,B)l.
+CurrentParts:BreakJoints()l.CurrentParts:MakeJoints()restoreTheWelds(A,B)end
+playerIdTag=l.CurrentParts:FindFirstChild'PlayerIdTag'playerNameTag=l.
+CurrentParts:FindFirstChild'PlayerNameTag'if playerIdTag~=nil then
+tempPlayerValue=getPlayer()if tempPlayerValue~=nil then playerIdTag.Value=
+tempPlayerValue.userId end end if playerNameTag~=nil then if game:FindFirstChild
+'Players'and game.Players['LocalPlayer']then tempPlayerValue=game.Players.
+LocalPlayer if tempPlayerValue~=nil then playerNameTag.Value=tempPlayerValue.
+Name end end end if l.CurrentParts:FindFirstChild'RobloxModel'==nil then local A
+=Instance.new'BoolValue'A.Name='RobloxModel'A.Parent=l.CurrentParts if l.
+CurrentParts:FindFirstChild'RobloxStamper'==nil then local B=Instance.new
+'BoolValue'B.Name='RobloxStamper'B.Parent=l.CurrentParts end end else l.
+CurrentParts:BreakJoints()if l.CurrentParts:FindFirstChild'RobloxStamper'==nil
+then local A=Instance.new'BoolValue'A.Name='RobloxStamper'A.Parent=l.
+CurrentParts end end if not createJoints then game.JointsService:
+CreateJoinAfterMoveJoints()end for A,B in pairs(l.TransparencyTable)do A.
+Transparency=B end for C,D in pairs(l.ArchivableTable)do C.Archivable=D end for
+G,H in pairs(l.MaterialTable)do G.Material=H end for I,M in pairs(l.
+CanCollideTable)do I.CanCollide=M end for O,Q in pairs(l.AnchoredTable)do O.
+Anchored=Q end for R,S in pairs(l.DecalTransparencyTable)do R.Transparency=S end
+for T,U in pairs(l.SurfaceTypeTable)do loadSurfaceTypes(T,U)end if
+isMegaClusterPart()then l.CurrentParts.Transparency=0 end setSeatEnabledStatus(l
+.CurrentParts,true)l.TransparencyTable=nil l.ArchivableTable=nil l.MaterialTable
+=nil l.CanCollideTable=nil l.AnchoredTable=nil l.SurfaceTypeTable=nil if l.
+CurrentParts:FindFirstChild'RobloxModel'==nil then local V=Instance.new
+'BoolValue'V.Name='RobloxModel'V.Parent=l.CurrentParts end if ghostRemovalScript
+then ghostRemovalScript.Parent=nil end for V,W in pairs(l.DisabledScripts)do W.
+Disabled=false end for X,Y in pairs(l.DisabledScripts)do local Z=Y.Parent Y.
+Parent=nil Y:Clone().Parent=Z end l.DisabledScripts=nil l.Dragger=nil l.
 CurrentParts=nil pcall(function()game:GetService'ChangeHistoryService':
 SetWaypoint'StampedObject'end)return true end local function pauseStamper()for
 aa=1,#v do v[aa]:disconnect()v[aa]=nil end v={}if l and l.CurrentParts then l.
 CurrentParts.Parent=nil l.CurrentParts:Remove()end resetHighScalabilityLine()
 game.JointsService:ClearJoinAfterMoveJoints()end local function
-prepareUnjoinableSurfaces(aa,ab,A)local B,C={Vector3.new(1,0,0),Vector3.new(0,1,
-0),Vector3.new(0,0,1)},1 if A<0 then C=C*-1 A=A*-1 end local G=C*aa:
-vectorToWorldSpace(B[A])for K=1,#ab do local N=ab[K]local P=N.CFrame:
-vectorToObjectSpace(G)if math.abs(P.X)>math.abs(P.Y)then if math.abs(P.X)>math.
-abs(P.Z)then if P.X>0 then N.RightSurface='Unjoinable'else N.LeftSurface=
-'Unjoinable'end else if P.Z>0 then N.BackSurface='Unjoinable'else N.FrontSurface
-='Unjoinable'end end else if math.abs(P.Y)>math.abs(P.Z)then if P.Y>0 then N.
-TopSurface='Unjoinable'else N.BottomSurface='Unjoinable'end else if P.Z>0 then N
-.BackSurface='Unjoinable'else N.FrontSurface='Unjoinable'end end end end end
+prepareUnjoinableSurfaces(aa,ab,ac)local ad,ae={Vector3.new(1,0,0),Vector3.new(0
+,1,0),Vector3.new(0,0,1)},1 if ac<0 then ae=ae*-1 ac=ac*-1 end local D=ae*aa:
+vectorToWorldSpace(ad[ac])for H=1,#ab do local M=ab[H]local Q=M.CFrame:
+vectorToObjectSpace(D)if math.abs(Q.X)>math.abs(Q.Y)then if math.abs(Q.X)>math.
+abs(Q.Z)then if Q.X>0 then M.RightSurface='Unjoinable'else M.LeftSurface=
+'Unjoinable'end else if Q.Z>0 then M.BackSurface='Unjoinable'else M.FrontSurface
+='Unjoinable'end end else if math.abs(Q.Y)>math.abs(Q.Z)then if Q.Y>0 then M.
+TopSurface='Unjoinable'else M.BottomSurface='Unjoinable'end else if Q.Z>0 then M
+.BackSurface='Unjoinable'else M.FrontSurface='Unjoinable'end end end end end
 local function resumeStamper()clone,parts=prepareModel(c)if not clone or not
 parts then return end local aa=clone:FindFirstChild('UnjoinableFaces',true)if aa
 then for ab in string.gmatch(aa.Value,'[^,]*')do if tonumber(ab)then if clone:
@@ -493,13 +488,13 @@ clusterOrientation=clusterMaterial.Value.Z elseif clusterMaterial:IsA'IntValue'
 then z.Material=clusterMaterial.Value end end pcall(function()m=d.Target end)if
 m and m.Parent:FindFirstChild'RobloxModel'==nil then game.JointsService:
 SetJoinAfterMoveTarget(m)else game.JointsService:SetJoinAfterMoveTarget(nil)end
-game.JointsService:ShowPermissibleJoints()for ab,A in pairs(l.DisabledScripts)do
-if A.Name=='GhostRemovalScript'then A.Parent=l.CurrentParts end end l.Dragger=
-Instance.new'Dragger'l.Dragger:MouseDown(parts[1],Vector3.new(0,0,0),parts)l.
-Dragger:MouseUp()DoStamperMouseMove(d)table.insert(v,d.Move:connect(function()if
-s or t then return end s=true DoStamperMouseMove(d)s=false end))table.insert(v,d
-.Button1Down:connect(function()DoStamperMouseDown(d)end))table.insert(v,d.
-Button1Up:connect(function()t=true while s do wait()end x.Value=
+game.JointsService:ShowPermissibleJoints()for ab,ac in pairs(l.DisabledScripts)
+do if ac.Name=='GhostRemovalScript'then ac.Parent=l.CurrentParts end end l.
+Dragger=Instance.new'Dragger'l.Dragger:MouseDown(parts[1],Vector3.new(0,0,0),
+parts)l.Dragger:MouseUp()DoStamperMouseMove(d)table.insert(v,d.Move:connect(
+function()if s or t then return end s=true DoStamperMouseMove(d)s=false end))
+table.insert(v,d.Button1Down:connect(function()DoStamperMouseDown(d)end))table.
+insert(v,d.Button1Up:connect(function()t=true while s do wait()end x.Value=
 DoStamperMouseUp(d)resetHighScalabilityLine()t=false end))x.Value=false end
 local function resetStamperState(aa)if aa then if not aa:IsA'Model'and not aa:
 IsA'BasePart'then error

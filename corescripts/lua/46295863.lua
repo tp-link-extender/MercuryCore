@@ -33,8 +33,8 @@ local recordingVideo = false
 local currentMenuSelection = nil
 local lastMenuSelection = {}
 
-local defaultPosition = UDim2.new(0, 0, 0, 0)
-local newGuiPlaces = { 0, 41324860 }
+-- local defaultPosition = UDim2.new(0, 0, 0, 0)
+-- local newGuiPlaces = { 0, 41324860 }
 
 local centerDialogs = {}
 local mainShield = nil
@@ -53,7 +53,7 @@ end
 
 local function robloxLock(instance)
 	instance.RobloxLocked = true
-	children = instance:GetChildren()
+	local children = instance:GetChildren()
 	if children then
 		for _, child in ipairs(children) do
 			robloxLock(child)
@@ -1312,7 +1312,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	backButton.ZIndex = baseZIndex + 4
 	backButton.Parent = gameSettingsMenuFrame
 
-	local syncVideoCaptureSetting
+	syncVideoCaptureSetting = nil
 
 	if not macClient then
 		local videoCaptureLabel = Instance.new "TextLabel"
@@ -1937,7 +1937,7 @@ if LoadLibrary then
 		shield.BackgroundTransparency = 0.4
 		shield.ZIndex = baseZIndex + 1
 
-		local closeAndResetDialgo
+		local closeAndResetDialog
 
 		local messageBoxButtons = {}
 		messageBoxButtons[1] = {}
@@ -2037,7 +2037,7 @@ if LoadLibrary then
 			local children = players:GetChildren()
 			local pos = 1
 			if children then
-				for i, player in ipairs(children) do
+				for _, player in ipairs(children) do
 					if player:IsA "Player" and player ~= localPlayer then
 						playerNames[pos] = player.Name
 						nameToPlayer[player.Name] = player
@@ -2229,90 +2229,90 @@ if LoadLibrary then
 		return shield
 	end
 
-	local createChatBar = function()
-		--Only show a chat bar if we are a NetworkClient
-		waitForChild(game, "NetworkClient")
+	-- local createChatBar = function()
+	-- 	--Only show a chat bar if we are a NetworkClient
+	-- 	waitForChild(game, "NetworkClient")
 
-		waitForChild(game, "Players")
-		waitForProperty(game.Players, "LocalPlayer")
+	-- 	waitForChild(game, "Players")
+	-- 	waitForProperty(game.Players, "LocalPlayer")
 
-		local chatBar = Instance.new "Frame"
-		chatBar.Name = "ChatBar"
-		chatBar.Size = UDim2.new(1, 0, 0, 22)
-		chatBar.Position = UDim2.new(0, 0, 1, 0)
-		chatBar.BackgroundColor3 = Color3.new(0, 0, 0)
-		chatBar.BorderSizePixel = 0
+	-- 	local chatBar = Instance.new "Frame"
+	-- 	chatBar.Name = "ChatBar"
+	-- 	chatBar.Size = UDim2.new(1, 0, 0, 22)
+	-- 	chatBar.Position = UDim2.new(0, 0, 1, 0)
+	-- 	chatBar.BackgroundColor3 = Color3.new(0, 0, 0)
+	-- 	chatBar.BorderSizePixel = 0
 
-		local chatBox = Instance.new "TextBox"
-		chatBox.Text = ""
-		chatBox.Visible = false
-		chatBox.Size = UDim2.new(1, -4, 1, 0)
-		chatBox.Position = UDim2.new(0, 2, 0, 0)
-		chatBox.TextXAlignment = Enum.TextXAlignment.Left
-		chatBox.Font = Enum.Font.Arial
-		chatBox.ClearTextOnFocus = false
-		chatBox.FontSize = Enum.FontSize.Size14
-		chatBox.TextColor3 = Color3.new(1, 1, 1)
-		chatBox.BackgroundTransparency = 1
-		--chatBox.Parent = chatBar
+	-- 	local chatBox = Instance.new "TextBox"
+	-- 	chatBox.Text = ""
+	-- 	chatBox.Visible = false
+	-- 	chatBox.Size = UDim2.new(1, -4, 1, 0)
+	-- 	chatBox.Position = UDim2.new(0, 2, 0, 0)
+	-- 	chatBox.TextXAlignment = Enum.TextXAlignment.Left
+	-- 	chatBox.Font = Enum.Font.Arial
+	-- 	chatBox.ClearTextOnFocus = false
+	-- 	chatBox.FontSize = Enum.FontSize.Size14
+	-- 	chatBox.TextColor3 = Color3.new(1, 1, 1)
+	-- 	chatBox.BackgroundTransparency = 1
+	-- 	--chatBox.Parent = chatBar
 
-		local chatButton = Instance.new "TextButton"
-		chatButton.Size = UDim2.new(1, -4, 1, 0)
-		chatButton.Position = UDim2.new(0, 2, 0, 0)
-		chatButton.AutoButtonColor = false
-		chatButton.Text = 'To chat click here or press "/" key'
-		chatButton.TextXAlignment = Enum.TextXAlignment.Left
-		chatButton.Font = Enum.Font.Arial
-		chatButton.FontSize = Enum.FontSize.Size14
-		chatButton.TextColor3 = Color3.new(1, 1, 1)
-		chatButton.BackgroundTransparency = 1
-		--chatButton.Parent = chatBar
+	-- 	local chatButton = Instance.new "TextButton"
+	-- 	chatButton.Size = UDim2.new(1, -4, 1, 0)
+	-- 	chatButton.Position = UDim2.new(0, 2, 0, 0)
+	-- 	chatButton.AutoButtonColor = false
+	-- 	chatButton.Text = 'To chat click here or press "/" key'
+	-- 	chatButton.TextXAlignment = Enum.TextXAlignment.Left
+	-- 	chatButton.Font = Enum.Font.Arial
+	-- 	chatButton.FontSize = Enum.FontSize.Size14
+	-- 	chatButton.TextColor3 = Color3.new(1, 1, 1)
+	-- 	chatButton.BackgroundTransparency = 1
+	-- 	--chatButton.Parent = chatBar
 
-		local activateChat = function()
-			if chatBox.Visible then
-				return
-			end
-			chatButton.Visible = false
-			chatBox.Text = ""
-			chatBox.Visible = true
-			chatBox:CaptureFocus()
-		end
+	-- 	local activateChat = function()
+	-- 		if chatBox.Visible then
+	-- 			return
+	-- 		end
+	-- 		chatButton.Visible = false
+	-- 		chatBox.Text = ""
+	-- 		chatBox.Visible = true
+	-- 		chatBox:CaptureFocus()
+	-- 	end
 
-		chatButton.MouseButton1Click:connect(activateChat)
+	-- 	chatButton.MouseButton1Click:connect(activateChat)
 
-		-- local hotKeyEnabled = true
-		local toggleHotKey = function(_)
-			-- hotKeyEnabled = value
-		end
+	-- 	-- local hotKeyEnabled = true
+	-- 	local toggleHotKey = function(_)
+	-- 		-- hotKeyEnabled = value
+	-- 	end
 
-		-- local guiService = game:GetService "GuiService"
-		--[[local newChatMode = ]]pcall(function()
-			--guiService:AddSpecialKey(Enum.SpecialKey.ChatHotkey)
-			--guiService.SpecialKeyPressed:connect(function(key) if key == Enum.SpecialKey.ChatHotkey and hotKeyEnabled then activateChat() end end)
-		end)
-		-- if not newChatMode then
-			--guiService:AddKey("/")
-			--guiService.KeyPressed:connect(function(key) if key == "/" and hotKeyEnabled then activateChat() end end)
-		-- end
+	-- 	-- local guiService = game:GetService "GuiService"
+	-- 	--[[local newChatMode = ]]pcall(function()
+	-- 		--guiService:AddSpecialKey(Enum.SpecialKey.ChatHotkey)
+	-- 		--guiService.SpecialKeyPressed:connect(function(key) if key == Enum.SpecialKey.ChatHotkey and hotKeyEnabled then activateChat() end end)
+	-- 	end)
+	-- 	-- if not newChatMode then
+	-- 		--guiService:AddKey("/")
+	-- 		--guiService.KeyPressed:connect(function(key) if key == "/" and hotKeyEnabled then activateChat() end end)
+	-- 	-- end
 
-		chatBox.FocusLost:connect(function(enterPressed)
-			if enterPressed then
-				if chatBox.Text ~= "" then
-					local str = chatBox.Text
-					if string.sub(str, 1, 1) == "%" then
-						game.Players:TeamChat(string.sub(str, 2))
-					else
-						game.Players:Chat(str)
-					end
-				end
-			end
-			chatBox.Text = ""
-			chatBox.Visible = false
-			chatButton.Visible = true
-		end)
-		robloxLock(chatBar)
-		return chatBar, toggleHotKey
-	end
+	-- 	chatBox.FocusLost:connect(function(enterPressed)
+	-- 		if enterPressed then
+	-- 			if chatBox.Text ~= "" then
+	-- 				local str = chatBox.Text
+	-- 				if string.sub(str, 1, 1) == "%" then
+	-- 					game.Players:TeamChat(string.sub(str, 2))
+	-- 				else
+	-- 					game.Players:Chat(str)
+	-- 				end
+	-- 			end
+	-- 		end
+	-- 		chatBox.Text = ""
+	-- 		chatBox.Visible = false
+	-- 		chatButton.Visible = true
+	-- 	end)
+	-- 	robloxLock(chatBar)
+	-- 	return chatBar, toggleHotKey
+	-- end
 
 	--Spawn a thread for the Save dialogs
 	local isSaveDialogSupported = pcall(function()
@@ -2355,12 +2355,13 @@ if LoadLibrary then
 	end)
 
 	--Spawn a thread for Chat Bar
-	--[[local success, luaChat = ]]pcall(function()
+	--[[local success, luaChat = ]]
+	pcall(function()
 		return game.GuiService.UseLuaChat
 	end)
 	-- if success and luaChat then
 
-		--[[delay(0,
+	--[[delay(0,
 		function()
 			waitForChild(game, "Players")
 			waitForProperty(game.Players, "LocalPlayer")

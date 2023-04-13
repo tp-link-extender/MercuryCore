@@ -92,7 +92,7 @@ local function collectParts(object, baseParts, scripts, decals)
 		decals[#decals + 1] = object
 	end
 
-	for index, child in pairs(object:GetChildren()) do
+	for _, child in pairs(object:GetChildren()) do
 		collectParts(child, baseParts, scripts, decals)
 	end
 end
@@ -323,12 +323,12 @@ local function getBoundingBox2(partOrModel)
 	local justifyValue = partOrModel:FindFirstChild "Justification"
 	if justifyValue ~= nil then
 		-- find the multiple of 4 that contains the model
-		justify = justifyValue.Value
-		two = Vector3.new(2, 2, 2)
-		actualBox = maxVec - minVec - Vector3.new(0.01, 0.01, 0.01)
-		containingGridBox =
+		local justify = justifyValue.Value
+		local two = Vector3.new(2, 2, 2)
+		local actualBox = maxVec - minVec - Vector3.new(0.01, 0.01, 0.01)
+		local containingGridBox =
 			Vector3.new(4 * math.ceil(actualBox.x / 4), 4 * math.ceil(actualBox.y / 4), 4 * math.ceil(actualBox.z / 4))
-		adjustment = containingGridBox - actualBox
+		local adjustment = containingGridBox - actualBox
 		minVec = minVec - 0.5 * adjustment * justify
 		maxVec = maxVec + 0.5 * adjustment * (two - justify)
 	end
@@ -341,17 +341,17 @@ local function getBoundingBoxInWorldCoordinates(partOrModel)
 	local maxVec = Vector3.new(-math.huge, -math.huge, -math.huge)
 
 	if partOrModel:IsA "BasePart" and not partOrModel:IsA "Terrain" then
-		vec1 = partOrModel.CFrame:pointToWorldSpace(-0.5 * partOrModel.Size)
-		vec2 = partOrModel.CFrame:pointToWorldSpace(0.5 * partOrModel.Size)
+		local vec1 = partOrModel.CFrame:pointToWorldSpace(-0.5 * partOrModel.Size)
+		local vec2 = partOrModel.CFrame:pointToWorldSpace(0.5 * partOrModel.Size)
 		minVec = Vector3.new(math.min(vec1.X, vec2.X), math.min(vec1.Y, vec2.Y), math.min(vec1.Z, vec2.Z))
 		maxVec = Vector3.new(math.max(vec1.X, vec2.X), math.max(vec1.Y, vec2.Y), math.max(vec1.Z, vec2.Z))
-	elseif partOrModel:IsA "Terrain" then
+	elseif not partOrModel:IsA "Terrain" then
 		-- we shouldn't have to deal with this case
 		--minVec = Vector3.new(-2, -2, -2)
 		--maxVec = Vector3.new(2, 2, 2)
-	else
-		vec1 = partOrModel:GetModelCFrame():pointToWorldSpace(-0.5 * partOrModel:GetModelSize())
-		vec2 = partOrModel:GetModelCFrame():pointToWorldSpace(0.5 * partOrModel:GetModelSize())
+		-- else
+		local vec1 = partOrModel:GetModelCFrame():pointToWorldSpace(-0.5 * partOrModel:GetModelSize())
+		local vec2 = partOrModel:GetModelCFrame():pointToWorldSpace(0.5 * partOrModel:GetModelSize())
 		minVec = Vector3.new(math.min(vec1.X, vec2.X), math.min(vec1.Y, vec2.Y), math.min(vec1.Z, vec2.Z))
 		maxVec = Vector3.new(math.max(vec1.X, vec2.X), math.max(vec1.Y, vec2.Y), math.max(vec1.Z, vec2.Z))
 	end
@@ -587,7 +587,7 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 	local InsertTouchInWorld = insertCFrame:vectorToWorldSpace(insertRefPointInInsert)
 	local posInsertOriginInWorld = TargetTouchRelToWorld - InsertTouchInWorld
 
-	local x, y, z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = insertCFrame:components()
+	local _, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22 = insertCFrame:components()
 	targetConfig = CFrame.new(
 		posInsertOriginInWorld.x,
 		posInsertOriginInWorld.y,
@@ -687,7 +687,7 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 		if object:IsA "BasePart" then
 			object.Locked = false
 		end
-		for index, child in pairs(object:GetChildren()) do
+		for _, child in pairs(object:GetChildren()) do
 			UnlockInstances(child)
 		end
 	end
@@ -781,7 +781,7 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	-- below we wait a max of 8 seconds before deciding to bail out on loading
 	local root
 	local loader
-	loading = true
+	local loading = true
 	if useAssetVersionId then
 		loader = coroutine.create(function()
 			root = game:GetService("InsertService"):LoadAssetVersion(assetId)
@@ -830,12 +830,12 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	root = root:GetChildren()[1]
 
 	--Examine the contents and decide what it looks like
-	for pos, instance in pairs(instances) do
+	for _, instance in pairs(instances) do
 		if instance:IsA "Team" then
 			instance.Parent = game:GetService "Teams"
 		elseif instance:IsA "Sky" then
 			local lightingService = game:GetService "Lighting"
-			for index, child in pairs(lightingService:GetChildren()) do
+			for _, child in pairs(lightingService:GetChildren()) do
 				if child:IsA "Sky" then
 					child:Remove()
 				end
@@ -848,12 +848,12 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	-- ...and tag all inserted models for subsequent origin identification
 	-- if no RobloxModel tag already exists, then add it.
 	if root:FindFirstChild "RobloxModel" == nil then
-		local stringTag = Instance.new("BoolValue")
+		local stringTag = Instance.new "BoolValue"
 		stringTag.Name = "RobloxModel"
 		stringTag.Parent = root
 
 		if root:FindFirstChild "RobloxStamper" == nil then
-			local stringTag2 = Instance.new("BoolValue")
+			local stringTag2 = Instance.new "BoolValue"
 			stringTag2.Name = "RobloxStamper"
 			stringTag2.Parent = root
 		end
@@ -1098,9 +1098,10 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		if game.Players["LocalPlayer"] then
 			gui = game.Players.LocalPlayer:FindFirstChild "PlayerGui"
 			if gui and gui:IsA "PlayerGui" then
-				if HighScalabilityLine.Dimensions == 1 and line.magnitude > 3 then -- don't show if mouse hasn't moved enough
-					HighScalabilityLine.Adorn.Parent = gui
-				elseif HighScalabilityLine.Dimensions > 1 then
+				if
+					(HighScalabilityLine.Dimensions == 1 and line.magnitude > 3)
+					or HighScalabilityLine.Dimensions > 1
+				then -- don't show if mouse hasn't moved enough
 					HighScalabilityLine.Adorn.Parent = gui
 				end
 			end
@@ -1108,9 +1109,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 		if gui == nil then -- we are in studio
 			gui = game:GetService "CoreGui"
-			if HighScalabilityLine.Dimensions == 1 and line.magnitude > 3 then -- don't show if mouse hasn't moved enough
-				HighScalabilityLine.Adorn.Parent = gui
-			elseif HighScalabilityLine.Dimensions > 1 then
+			if (HighScalabilityLine.Dimensions == 1 and line.magnitude > 3) or HighScalabilityLine.Dimensions > 1 then -- don't show if mouse hasn't moved enough
 				HighScalabilityLine.Adorn.Parent = gui
 			end
 		end
@@ -1204,7 +1203,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			local cellToStamp = game.Workspace.Terrain:WorldToCell(targetCFrame.p)
 			local newCFramePosition =
 				game.Workspace.Terrain:CellCenterToWorld(cellToStamp.X, cellToStamp.Y, cellToStamp.Z)
-			local x, y, z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = targetCFrame:components()
+			local _, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22 = targetCFrame:components()
 			targetCFrame = CFrame.new(
 				newCFramePosition.X,
 				newCFramePosition.Y,
@@ -1404,7 +1403,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 
 		delay(0, function()
-			for i = 1, 3 do
+			for _ = 1, 3 do
 				if stampData["ErrorBox"] then
 					stampData.ErrorBox.Visible = true
 				end
@@ -1474,9 +1473,9 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		myTable[part] = tempTable
 	end
 
-	local function makeSurfaceUnjoinable(part, surface)
-		-- TODO: FILL OUT!
-	end
+	-- local function makeSurfaceUnjoinable(part, surface)
+	-- 	-- TODO: FILL OUT!
+	-- end
 
 	local function prepareModel(model)
 		if not model then
@@ -1507,13 +1506,13 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			return nil, "no parts found in modelToStamp"
 		end
 
-		for index, script in pairs(scripts) do
+		for _, script in pairs(scripts) do
 			if not script.Disabled then
 				script.Disabled = true
 				stampData.DisabledScripts[#stampData.DisabledScripts + 1] = script
 			end
 		end
-		for index, part in pairs(parts) do
+		for _, part in pairs(parts) do
 			stampData.TransparencyTable[part] = part.Transparency
 			part.Transparency = gStaticTrans + (1 - gStaticTrans) * part.Transparency
 			stampData.MaterialTable[part] = part.Material
@@ -1555,7 +1554,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			end)
 		end
 
-		for index, decal in pairs(decals) do
+		for _, decal in pairs(decals) do
 			stampData.DecalTransparencyTable[decal] = decal.Transparency
 			decal.Transparency = gDesiredTrans + (1 - gDesiredTrans) * decal.Transparency
 		end
@@ -1664,17 +1663,14 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			if checkHighScalabilityStamp then -- check to see if cell is in region, if not we'll skip set
 				if allowedStampRegion then
 					local cellPos = cellCenterToWorld(game.Workspace.Terrain, cellPos.X, cellPos.Y, cellPos.Z)
-					if cellPos.X + 2 > allowedStampRegion.CFrame.p.X + allowedStampRegion.Size.X / 2 then
-						canSetCell = false
-					elseif cellPos.X - 2 < allowedStampRegion.CFrame.p.X - allowedStampRegion.Size.X / 2 then
-						canSetCell = false
-					elseif cellPos.Y + 2 > allowedStampRegion.CFrame.p.Y + allowedStampRegion.Size.Y / 2 then
-						canSetCell = false
-					elseif cellPos.Y - 2 < allowedStampRegion.CFrame.p.Y - allowedStampRegion.Size.Y / 2 then
-						canSetCell = false
-					elseif cellPos.Z + 2 > allowedStampRegion.CFrame.p.Z + allowedStampRegion.Size.Z / 2 then
-						canSetCell = false
-					elseif cellPos.Z - 2 < allowedStampRegion.CFrame.p.Z - allowedStampRegion.Size.Z / 2 then
+					if
+						(cellPos.X + 2 > allowedStampRegion.CFrame.p.X + allowedStampRegion.Size.X / 2)
+						or (cellPos.X - 2 < allowedStampRegion.CFrame.p.X - allowedStampRegion.Size.X / 2)
+						or (cellPos.Y + 2 > allowedStampRegion.CFrame.p.Y + allowedStampRegion.Size.Y / 2)
+						or (cellPos.Y - 2 < allowedStampRegion.CFrame.p.Y - allowedStampRegion.Size.Y / 2)
+						or (cellPos.Z + 2 > allowedStampRegion.CFrame.p.Z + allowedStampRegion.Size.Z / 2)
+						or (cellPos.Z - 2 < allowedStampRegion.CFrame.p.Z - allowedStampRegion.Size.Z / 2)
+					then
 						canSetCell = false
 					end
 				end
@@ -1688,7 +1684,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 	local function ResolveMegaClusterStamp(checkHighScalabilityStamp)
 		local cellSet = false
 
-		local cluser = game.Workspace.Terrain
+		local cluster = game.Workspace.Terrain
 
 		local line = HighScalabilityLine.InternalLine
 		local cMax = game.Workspace.Terrain.MaxExtents.Max
@@ -1723,8 +1719,6 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			local xInc = { 0, 0, 0 }
 			local yInc = { 0, 0, 0 }
 			local zInc = { 0, 0, 0 }
-
-			local cluster = game.Workspace.Terrain
 
 			local incrementVect = { nil, nil, nil }
 			local stepVect = { Vector3.new(0, 0, 0), Vector3.new(0, 0, 0), Vector3.new(0, 0, 0) }
@@ -2179,12 +2173,12 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			-- ...and tag all inserted models for subsequent origin identification
 			-- if no RobloxModel tag already exists, then add it.
 			if stampData.CurrentParts:FindFirstChild "RobloxModel" == nil then
-				local stringTag = Instance.new("BoolValue")
+				local stringTag = Instance.new "BoolValue"
 				stringTag.Name = "RobloxModel"
 				stringTag.Parent = stampData.CurrentParts
 
 				if stampData.CurrentParts:FindFirstChild "RobloxStamper" == nil then
-					local stringTag2 = Instance.new("BoolValue")
+					local stringTag2 = Instance.new "BoolValue"
 					stringTag2.Name = "RobloxStamper"
 					stringTag2.Parent = stampData.CurrentParts
 				end
@@ -2192,7 +2186,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		else
 			stampData.CurrentParts:BreakJoints()
 			if stampData.CurrentParts:FindFirstChild "RobloxStamper" == nil then
-				local stringTag2 = Instance.new("BoolValue")
+				local stringTag2 = Instance.new "BoolValue"
 				stringTag2.Name = "RobloxStamper"
 				stringTag2.Parent = stampData.CurrentParts
 			end
@@ -2244,7 +2238,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		-- ...and tag all inserted models for subsequent origin identification
 		-- if no RobloxModel tag already exists, then add it.
 		if stampData.CurrentParts:FindFirstChild "RobloxModel" == nil then
-			local stringTag = Instance.new("BoolValue")
+			local stringTag = Instance.new "BoolValue"
 			stringTag.Name = "RobloxModel"
 			stringTag.Parent = stampData.CurrentParts
 		end
@@ -2255,12 +2249,12 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 
 		--Re-enable the scripts
-		for index, script in pairs(stampData.DisabledScripts) do
+		for _, script in pairs(stampData.DisabledScripts) do
 			script.Disabled = false
 		end
 
 		--Now that they are all marked enabled, reinsert them into the world so they start running
-		for index, script in pairs(stampData.DisabledScripts) do
+		for _, script in pairs(stampData.DisabledScripts) do
 			local oldParent = script.Parent
 			script.Parent = nil
 			script:Clone().Parent = oldParent
@@ -2390,7 +2384,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 		game.JointsService:ShowPermissibleJoints()
 
-		for index, object in pairs(stampData.DisabledScripts) do
+		for _, object in pairs(stampData.DisabledScripts) do
 			if object.Name == "GhostRemovalScript" then
 				object.Parent = stampData.CurrentParts
 			end
@@ -2461,17 +2455,19 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 	control.Stamped = stamped -- BoolValue that fires when user stamps
 	control.Paused = false
 
-	control.LoadNewModel = function(newStampModel) -- allows us to specify a new stamper model to be used with this stamper
-		if newStampModel and not newStampModel:IsA "Model" and not newStampModel:IsA "BasePart" then
-			error "Control.LoadNewModel: newStampModel (first arg) is not a Model or Part!"
-			return nil
+	control.LoadNewModel =
+		function(newStampModel) -- allows us to specify a new stamper model to be used with this stamper
+			if newStampModel and not newStampModel:IsA "Model" and not newStampModel:IsA "BasePart" then
+				error "Control.LoadNewModel: newStampModel (first arg) is not a Model or Part!"
+				return nil
+			end
+			resetStamperState(newStampModel)
 		end
-		resetStamperState(newStampModel)
-	end
 
-	control.ReloadModel = function() -- will automatically set stamper to get a new model of current model and start stamping with new model
-		resetStamperState()
-	end
+	control.ReloadModel =
+		function() -- will automatically set stamper to get a new model of current model and start stamping with new model
+			resetStamperState()
+		end
 
 	control.Pause = function() -- temporarily stops stamping, use resume to start up again
 		if not control.Paused then

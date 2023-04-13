@@ -31,18 +31,16 @@ x-v.x,t.y-v.y)local A=(y.x*w.y)-(y.y*w.x)local B=math.atan2(A,dotProduct(y,w))
 local C=B*math.min(z.magnitude/x.magnitude,1)if math.abs(C)>0.00001 then local D
 =rotatePointAboutLocation(u,v,C)s.Position=transformFromCenterToTopLeft(Vector2.
 new(D.x,D.y),s)end s.Position=UDim2.new(0,s.Position.X.Offset+z.x,0,s.Position.Y
-.Offset+z.y)end r.Position=transformFromCenterToTopLeft(t,r)
-thumbstickFramePosition=Vector2.new(r.Position.X.Offset,r.Position.Y.Offset)
-thumbstickOuterPosition=Vector2.new(s.Position.X.Offset,s.Position.Y.Offset)if
-DistanceBetweenTwoPoints(thumbstickFramePosition,thumbstickOuterPosition)>e/2
-then local v=(thumbstickOuterPosition-thumbstickFramePosition).unit*e/2 s.
-Position=UDim2.new(0,thumbstickFramePosition.x+v.x,0,thumbstickFramePosition.y+v
-.y)end return Vector2.new(r.Position.X.Offset-s.Position.X.Offset,r.Position.Y.
-Offset-s.Position.Y.Offset)end function movementOutsideDeadZone(r)return((math.
-abs(r.x)>g)or(math.abs(r.y)>g))end function constructThumbstick(r,s,t)local u=
-Instance.new'Frame'u.Name='ThumbstickFrame'u.Active=true u.Size=UDim2.new(0,e,0,
-e)u.Position=r u.BackgroundTransparency=1 local v=Instance.new'ImageLabel'v.Name
-='OuterThumbstick'v.Image=f v.ImageRectOffset=Vector2.new(0,0)v.ImageRectSize=
+.Offset+z.y)end r.Position=transformFromCenterToTopLeft(t,r)local v,w=Vector2.
+new(r.Position.X.Offset,r.Position.Y.Offset),Vector2.new(s.Position.X.Offset,s.
+Position.Y.Offset)if DistanceBetweenTwoPoints(v,w)>e/2 then local x=(w-v).unit*e
+/2 s.Position=UDim2.new(0,v.x+x.x,0,v.y+x.y)end return Vector2.new(r.Position.X.
+Offset-s.Position.X.Offset,r.Position.Y.Offset-s.Position.Y.Offset)end function
+movementOutsideDeadZone(r)return((math.abs(r.x)>g)or(math.abs(r.y)>g))end
+function constructThumbstick(r,s,t)local u=Instance.new'Frame'u.Name=
+'ThumbstickFrame'u.Active=true u.Size=UDim2.new(0,e,0,e)u.Position=r u.
+BackgroundTransparency=1 local v=Instance.new'ImageLabel'v.Name=
+'OuterThumbstick'v.Image=f v.ImageRectOffset=Vector2.new(0,0)v.ImageRectSize=
 Vector2.new(220,220)v.BackgroundTransparency=1 v.Size=UDim2.new(0,e,0,e)v.
 Position=r v.Parent=Game.CoreGui.RobloxGui local w=Instance.new'ImageLabel'w.
 Name='InnerThumbstick'w.Image=f w.ImageRectOffset=Vector2.new(220,0)w.
@@ -100,15 +98,15 @@ tick()-w)<=p)if x then table.insert(A,F)E(A[1],A[2])else A={}end end end r.
 InputBegan:connect(function(G)if G.UserInputType~=Enum.UserInputType.Touch then
 return end if isTouchUsedByJumpButton(G)then return end local H=
 isTouchUsedByThumbstick(G)if not H then F(G)end if q==nil and not H then q=G t=
-Vector2.new(q.Position.x,q.Position.y)lastTick=tick()end end)a.InputChanged:
-connect(function(G)if G.UserInputType~=Enum.UserInputType.Touch then return end
-if q~=G then return end local H=Vector2.new(q.Position.x,q.Position.y)local I=(t
--H)*m if not u and(I.magnitude>n)then u=true t=H end if u and(t~=H)then v(a,I)s(
-)t=H end end)a.InputEnded:connect(function(G)if q==G or q==nil then C()end for H
-,I in pairs(A)do if I==G then table.remove(A,H)end end end)end function
-setupTouchControls()local r=Instance.new'Frame'r.Name='TouchControlFrame'r.Size=
-UDim2.new(1,0,1,0)r.BackgroundTransparency=1 r.Parent=Game.CoreGui.RobloxGui
-local s=setupCharacterMovement(r)setupJumpButton(r)setupCameraControl(r,s)a.
+Vector2.new(q.Position.x,q.Position.y)end end)a.InputChanged:connect(function(G)
+if G.UserInputType~=Enum.UserInputType.Touch then return end if q~=G then return
+end local H=Vector2.new(q.Position.x,q.Position.y)local I=(t-H)*m if not u and(I
+.magnitude>n)then u=true t=H end if u and(t~=H)then v(a,I)s()t=H end end)a.
+InputEnded:connect(function(G)if q==G or q==nil then C()end for H,I in pairs(A)
+do if I==G then table.remove(A,H)end end end)end function setupTouchControls()
+local r=Instance.new'Frame'r.Name='TouchControlFrame'r.Size=UDim2.new(1,0,1,0)r.
+BackgroundTransparency=1 r.Parent=Game.CoreGui.RobloxGui local s=
+setupCharacterMovement(r)setupJumpButton(r)setupCameraControl(r,s)a.
 ProcessedEvent:connect(function(t,u)if not u then return end if t==q and t.
 UserInputState==Enum.UserInputState.Begin then q=nil end end)end do
 setupTouchControls()end

@@ -354,7 +354,7 @@ function doSearch()
 	end
 	searchText = trim(searchText)
 	resetButton.Visible = true
-	termTable = splitByWhitespace(searchText)
+	-- termTable = splitByWhitespace(searchText)
 	searchRequestedEvent:Fire(searchText) -- todo: replace this with termtable when table passing is possible
 end
 

@@ -426,7 +426,7 @@ function initializeDeveloperConsole()
 		Size = UDim2.new(0, 185, 0, 20),
 		Font = "SourceSansBold",
 		FontSize = Enum.FontSize.Size18,
-		Text = "Server Console",
+		-- Text = "Server Console",
 		TextColor3 = Color3.new(1, 1, 1),
 		Text = "Roblox Developer Console",
 		TextYAlignment = Enum.TextYAlignment.Top,
@@ -440,6 +440,9 @@ function initializeDeveloperConsole()
 	local pSize = nil
 
 	local previousMousePosScroll = nil
+
+	local pScrollHandle = nil
+
 	local pOffset = nil
 
 	local scrollUpIsDown = false
