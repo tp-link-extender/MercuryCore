@@ -904,7 +904,6 @@ local NeutralTeam = nil
 -- final 'to be displayed' list of frames
 local MiddleFrames = {}
 local MiddleFrameBackgrounds = {}
-local MiddleFrameHeight = 0.03
 -- time of last click
 local LastClick = 0
 local ButtonCooldown = 0.25
@@ -1459,7 +1458,7 @@ end
 	used when leaderstats are removed, or when new leaderstats are added(for weird edge case)+
 --]]
 function RemoveAllStats(playerEntry)
-	for i, val in ipairs(ScoreNames) do
+	for _, val in ipairs(ScoreNames) do
 		StatRemoved(val, playerEntry)
 	end
 end
@@ -1789,7 +1788,7 @@ function UpdateMaximize()
 				i.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["midLight"]
 			end
 		end
-		for index, i in ipairs(MiddleFrames) do
+		for _, i in ipairs(MiddleFrames) do
 			if i:FindFirstChild "ClickListener" then
 				i.ClickListener.Size = UDim2.new(0.96, 0, i.ClickListener.Size.Y.Scale, 0)
 				for j = 1, #ScoreNames, 1 do
@@ -2447,8 +2446,8 @@ function InsertPlayerFrame(nplayer)
 		dropShadow.Position = nFrame.TitleFrame.Title.Position + UDim2.new(0, 1, 0, 1)
 		dropShadow.Name = "DropShadow"
 		dropShadow.Parent = nFrame.TitleFrame
-	-- else
-	-- 	--Delay(2, function () OnFriendshipChanged(nplayer,LocalPlayer:GetFriendStatus(nplayer)) end)
+		-- else
+		-- 	--Delay(2, function () OnFriendshipChanged(nplayer,LocalPlayer:GetFriendStatus(nplayer)) end)
 	end
 	nFrame.TitleFrame.Title.Font = "ArialBold"
 
@@ -2471,7 +2470,7 @@ function InsertPlayerFrame(nplayer)
 			end
 		else
 			local addedToTeam = false
-			for i, tval in ipairs(TeamFrames) do
+			for _, tval in ipairs(TeamFrames) do
 				if tval["MyTeam"].TeamColor == nplayer.TeamColor then
 					AddPlayerToTeam(tval, nentry)
 					nentry["MyTeam"] = tval
@@ -2621,7 +2620,7 @@ end
 	tentries		table of team entries	
 --]]
 function SortTeams(tentries)
-	for i, val in ipairs(tentries) do
+	for _, val in ipairs(tentries) do
 		table.sort(val["MyPlayers"], PlayerSortFunction)
 		AddTeamScores(val)
 	end

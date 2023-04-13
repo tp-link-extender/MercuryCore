@@ -43,7 +43,6 @@ local setmetatable = setmetatable
 local pairs = pairs
 local ipairs = ipairs
 local assert = assert
-local Chipmunk = Chipmunk
 
 local StringBuilder = {
 	buffer = {},
@@ -458,6 +457,10 @@ end
 -------------------- End JSON Parser ------------------------
 
 t.DecodeJSON = function(jsonString)
+	pcall(function()
+		warn "RbxUtility.DecodeJSON is deprecated, please use Game:GetService('HttpService'):JSONDecode() instead."
+	end)
+
 	if type(jsonString) == "string" then
 		return Decode(jsonString)
 	end
@@ -466,6 +469,9 @@ t.DecodeJSON = function(jsonString)
 end
 
 t.EncodeJSON = function(jsonTable)
+	pcall(function()
+		warn "RbxUtility.EncodeJSON is deprecated, please use Game:GetService('HttpService'):JSONEncode() instead."
+	end)
 	return Encode(jsonTable)
 end
 
@@ -528,13 +534,12 @@ t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, select
 	selectionPart.Anchored = true
 	selectionPart.Locked = true
 	selectionPart.CanCollide = false
-	selectionPart.FormFactor = Enum.FormFactor.Custom
 	selectionPart.Size = Vector3.new(4.2, 4.2, 4.2)
 
 	local selectionBox = Instance.new "SelectionBox"
 
 	-- srs translation from region3 to region3int16
-	-- function Region3ToRegion3int16(region3)
+	-- local function Region3ToRegion3int16(region3)
 	-- 	local theLowVec = region3.CFrame.p - (region3.Size / 2) + Vector3.new(2, 2, 2)
 	-- 	local lowCell = WorldToCellPreferSolid(terrain, theLowVec)
 
@@ -749,8 +754,11 @@ function t.CreateSignal()
 			cn:disconnect()
 			mAllCns[cn] = nil
 		end
+		pubCn.Disconnect = pubCn.disconnect
+
 		return pubCn
 	end
+
 	function this:disconnect()
 		if self ~= this then
 			error("disconnect must be called with `:`, not `.`", 2)
@@ -760,18 +768,25 @@ function t.CreateSignal()
 			mAllCns[cn] = nil
 		end
 	end
+
 	function this:wait()
 		if self ~= this then
 			error("wait must be called with `:`, not `.`", 2)
 		end
 		return mBindableEvent.Event:wait()
 	end
+
 	function this:fire(...)
 		if self ~= this then
 			error("fire must be called with `:`, not `.`", 2)
 		end
 		mBindableEvent:Fire(...)
 	end
+
+	this.Connect = this.connect
+	this.Disconnect = this.disconnect
+	this.Wait = this.wait
+	this.Fire = this.fire
 
 	return this
 end
@@ -885,6 +900,7 @@ local function Create_PrivImpl(objectType)
 
 		--make the object to mutate
 		local obj = Instance.new(objectType)
+		local parent = nil
 
 		--stored constructor function to be called after other initialization
 		local ctor = nil
@@ -892,7 +908,13 @@ local function Create_PrivImpl(objectType)
 		for k, v in pairs(dat) do
 			--add property
 			if type(k) == "string" then
-				obj[k] = v
+				if k == "Parent" then
+					-- Parent should always be set last, setting the Parent of a new object
+					-- immediately makes performance worse for all subsequent property updates.
+					parent = v
+				else
+					obj[k] = v
+				end
 
 			--add child
 			elseif type(k) == "number" then
@@ -935,6 +957,10 @@ local function Create_PrivImpl(objectType)
 		--apply constructor function if it exists
 		if ctor then
 			ctor(obj)
+		end
+
+		if parent then
+			obj.Parent = parent
 		end
 
 		--return the completed object

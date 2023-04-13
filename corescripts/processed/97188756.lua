@@ -265,26 +265,26 @@ then n=k:FindButtonTree(l,m[o])end end return n end function k:
 ToggleSafeChatMenu(l)local m=k:FindButtonTree(l,self.SafeChatTree)if m then for
 n,o in pairs(m)do if n:IsA'TextButton'or n:IsA'ImageButton'then n.Visible=not n.
 Visible end end return true end return false end function k:
-CreateSafeChatOptions(l,m)local n={}level=level or 0 local o=0 n[m]={}n[m][1]=l[
-1]m=m or self.SafeChatButton for p,q in pairs(l)do if type(p)=='string'then
-local r=d.Create'TextButton'{Name=p,Text=p,Size=UDim2.new(0,100,0,20),
-TextXAlignment=Enum.TextXAlignment.Center,TextColor3=Color3.new(0.2,0.1,0.1),
-BackgroundTransparency=0.5,BackgroundColor3=Color3.new(1,1,1),Parent=self.
-SafeChatFrame,Visible=false,Position=UDim2.new(0,m.Position.X.Scale+105,0,m.
-Position.Y.Scale-((o-3)*100))}o=o+1 if type(l[p])=='table'then n[m][r]=k:
-CreateSafeChatOptions(l[p],r)end r.MouseEnter:connect(function()k:
-ToggleSafeChatMenu(r)end)r.MouseLeave:connect(function()k:ToggleSafeChatMenu(r)
-end)r.MouseButton1Click:connect(function()local s=k:FindButtonTree(r)pcall(
-function()g:Chat(s[1])end)end)end end return n end function k:CreateSafeChatGui(
-)self.SafeChatFrame=d.Create'Frame'{Name='SafeChatFrame',Size=UDim2.new(1,0,1,0)
-,Parent=self.Gui,BackgroundTransparency=1,d.Create'ImageButton'{Name=
-'SafeChatButton',Size=UDim2.new(0,44,0,31),Position=UDim2.new(0,1,0.35,0),
-BackgroundTransparency=1,Image='http://www.roblox.com/asset/?id=97080365'}}self.
-SafeChatButton=self.SafeChatFrame.SafeChatButton self.SafeChatTree[self.
-SafeChatButton]=k:CreateSafeChatOptions(self.SafeChat_List,self.SafeChatButton)
-self.SafeChatButton.MouseButton1Click:connect(function()k:ToggleSafeChatMenu(
-self.SafeChatButton)end)end function k:FocusOnChatBar()if self.ClickToChatButton
-then self.ClickToChatButton.Visible=false end self.GotFocus=true if self.Frame[
+CreateSafeChatOptions(l,m)local n,o={},0 n[m]={}n[m][1]=l[1]m=m or self.
+SafeChatButton for p,q in pairs(l)do if type(p)=='string'then local r=d.Create
+'TextButton'{Name=p,Text=p,Size=UDim2.new(0,100,0,20),TextXAlignment=Enum.
+TextXAlignment.Center,TextColor3=Color3.new(0.2,0.1,0.1),BackgroundTransparency=
+0.5,BackgroundColor3=Color3.new(1,1,1),Parent=self.SafeChatFrame,Visible=false,
+Position=UDim2.new(0,m.Position.X.Scale+105,0,m.Position.Y.Scale-((o-3)*100))}o=
+o+1 if type(l[p])=='table'then n[m][r]=k:CreateSafeChatOptions(l[p],r)end r.
+MouseEnter:connect(function()k:ToggleSafeChatMenu(r)end)r.MouseLeave:connect(
+function()k:ToggleSafeChatMenu(r)end)r.MouseButton1Click:connect(function()local
+s=k:FindButtonTree(r)pcall(function()g:Chat(s[1])end)end)end end return n end
+function k:CreateSafeChatGui()self.SafeChatFrame=d.Create'Frame'{Name=
+'SafeChatFrame',Size=UDim2.new(1,0,1,0),Parent=self.Gui,BackgroundTransparency=1
+,d.Create'ImageButton'{Name='SafeChatButton',Size=UDim2.new(0,44,0,31),Position=
+UDim2.new(0,1,0.35,0),BackgroundTransparency=1,Image=
+'http://www.roblox.com/asset/?id=97080365'}}self.SafeChatButton=self.
+SafeChatFrame.SafeChatButton self.SafeChatTree[self.SafeChatButton]=k:
+CreateSafeChatOptions(self.SafeChat_List,self.SafeChatButton)self.SafeChatButton
+.MouseButton1Click:connect(function()k:ToggleSafeChatMenu(self.SafeChatButton)
+end)end function k:FocusOnChatBar()if self.ClickToChatButton then self.
+ClickToChatButton.Visible=false end self.GotFocus=true if self.Frame[
 'Background']then self.Frame.Background.Visible=false end self.ChatBar:
 CaptureFocus()end function k:CreateTouchButton()self.ChatTouchFrame=d.Create
 'Frame'{Name='ChatTouchFrame',Size=UDim2.new(0,128,0,32),Position=UDim2.new(0,88
@@ -351,8 +351,8 @@ FindMessageInSafeChat(l,m)local n=false for o,p in pairs(m)do if o==l then
 return true end if type(m[o])=='table'then n=k:FindMessageInSafeChat(l,m[o])if n
 then return true end end end return n end function k:PlayerChatted(...)local l,m
 ,n={...},nil,nil if l[2]then m=l[2]end if l[3]then n=l[3]if string.sub(n,1,1)==
-'%'then n='(TEAM) '..string.sub(n,2,#n)end end if g.ClassicChat then if string.
-sub(n,1,3)=='/e 'or string.sub(n,1,7)=='/emote 'then elseif(a or b.ChatMode==
+'%'then n='(TEAM) '..string.sub(n,2,#n)end end if g.ClassicChat then if not(
+string.sub(n,1,3)=='/e 'or string.sub(n,1,7)=='/emote ')and(a or b.ChatMode==
 Enum.ChatMode.TextAndMenu)or(b.ChatMode==Enum.ChatMode.Menu and string.sub(n,1,3
 )=='/sc')or(k:FindMessageInSafeChat(n,self.SafeChat_List))then k:UpdateChat(m,n)
 end end end function k:CullThread()while true do if#self.MessageQueue>0 then for

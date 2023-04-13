@@ -8100,17 +8100,11 @@ structs:
         - required: false
           type: any
       method: true
-      deprecated:
-        message: this property is deprecated.
-        replace: []
     AutowedgeCells:
       args:
         - required: false
           type: any
       method: true
-      deprecated:
-        message: this property is deprecated.
-        replace: []
     BackParamA:
       property: override-fields
       deprecated:
@@ -8374,9 +8368,6 @@ structs:
         - required: false
           type: any
       method: true
-      deprecated:
-        message: this property is deprecated.
-        replace: []
     GetChildren:
       args: []
       method: true
@@ -9066,9 +9057,6 @@ structs:
         - required: false
           type: any
       method: true
-      deprecated:
-        message: this property is deprecated.
-        replace: []
     FindPartsInRegion3WithIgnoreList:
       args:
         - required: false
@@ -9078,9 +9066,6 @@ structs:
         - required: false
           type: any
       method: true
-      deprecated:
-        message: this property is deprecated.
-        replace: []
     FindPartsInRegion3WithWhiteList:
       args:
         - required: false
@@ -9090,9 +9075,6 @@ structs:
         - required: false
           type: any
       method: true
-      deprecated:
-        message: this property is deprecated.
-        replace: []
     GetActor:
       args: []
       method: true

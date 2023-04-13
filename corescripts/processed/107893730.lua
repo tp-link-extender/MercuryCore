@@ -42,13 +42,11 @@ ItemPreview.ItemDescription.Text=W if l then p.BodyFrame.ItemPreview.Image=b..
 'thumbs/asset.ashx?assetid='..tostring(c['IconImageAssetId'])..
 '&x=100&y=100&format=png'else p.BodyFrame.ItemPreview.Image=b..
 'thumbs/asset.ashx?assetid='..tostring(d)..'&x=100&y=100&format=png'end end
-function doPlayerFundsCheck(V)if j then canPurchase,insufficientFunds=
-canPurchaseItem()if canPurchase and insufficientFunds then local W=1000 while(W>
-0 or V)and insufficientFunds and j and canPurchase do wait(0.1)canPurchase,
-insufficientFunds=canPurchaseItem()W=W-1 end end if canPurchase and not
-insufficientFunds then setButtonsVisible(p.BodyFrame.BuyButton,p.BodyFrame.
-CancelButton,p.BodyFrame.AfterBalanceButton)end end end function
-showPurchasePrompt()local V,W,X,Y,Z=canPurchaseItem()if V then
+function doPlayerFundsCheck(V)if j then local W,X=canPurchaseItem()if W and X
+then local Y=1000 while(Y>0 or V)and X and j and W do wait(0.1)W,X=
+canPurchaseItem()Y=Y-1 end end if W and not X then setButtonsVisible(p.BodyFrame
+.BuyButton,p.BodyFrame.CancelButton,p.BodyFrame.AfterBalanceButton)end end end
+function showPurchasePrompt()local V,W,X,Y,Z=canPurchaseItem()if V then
 updatePurchasePromptData()if Y and Z then p.BodyFrame.ItemPreview.
 ItemDescription.Text=Z p.BodyFrame.AfterBalanceButton.Visible=false end game.
 GuiService:AddCenterDialog(p,Enum.CenterDialogType.ModalDialog,function()p.
@@ -183,12 +181,8 @@ and(c['Remaining']==''or c['Remaining']==0 or c['Remaining']==nil)then W=
 return true,nil,nil,true,W end if not Z then W=
 [[Could not update your balance. Please check back after some time.]]return true
 ,nil,nil,true,W end p.BodyFrame.AfterBalanceButton.Active=true return true,_ end
-function computeSpaceString(aa)local V,W=' ',Instance.new'TextButton'W.Size=
-UDim2.new(0,aa.AbsoluteSize.X,0,aa.AbsoluteSize.Y)W.FontSize=aa.FontSize W.
-Parent=aa.Parent W.BackgroundTransparency=1 W.Text=V W.Name='SpaceButton'while W
-.TextBounds.X<aa.TextBounds.X do V=V..' 'W.Text=V end V=V..' 'W.Text=''return V
-end function startSpinner()u=true Spawn(function()local aa=0 while u do local V=
-0 while V<8 do if V==aa or V==((aa+1)%8)then v[V+1].Image=
+function startSpinner()u=true Spawn(function()local aa=0 while u do local V=0
+while V<8 do if V==aa or V==((aa+1)%8)then v[V+1].Image=
 'http://www.roblox.com/Asset/?id=45880668'else v[V+1].Image=
 'http://www.roblox.com/Asset/?id=45880710'end V=V+1 end aa=(aa+1)%8 wait(
 6.666666666666666E-2)end end)end function stopSpinner()u=false end function

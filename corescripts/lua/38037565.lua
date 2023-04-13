@@ -111,7 +111,7 @@ myHealth.Changed:connect(setMaxHealth)
 
 -- Visual Effects --
 
-fireEffect = Instance.new "Fire"
+local fireEffect = Instance.new "Fire"
 fireEffect.Heat = 0.1
 fireEffect.Size = 3.0
 fireEffect.Name = "FireEffect"
@@ -125,11 +125,11 @@ while true do
 	if health > 0 then -- and health < Humanoid.MaxHealth then
 		local delta = 0
 		if config then
-			regen = config:FindFirstChild "Regen"
-			poison = config:FindFirstChild "Poison"
-			ice = config:FindFirstChild "Ice"
-			fire = config:FindFirstChild "Fire"
-			stun = config:FindFirstChild "Stun"
+			local regen = config:FindFirstChild "Regen"
+			local poison = config:FindFirstChild "Poison"
+			local ice = config:FindFirstChild "Ice"
+			local fire = config:FindFirstChild "Fire"
+			local stun = config:FindFirstChild "Stun"
 			if regen then
 				delta = delta + regen.Value.X
 				if regen.Value.Y >= 0 then
@@ -200,7 +200,7 @@ while true do
 				else
 					Torso.Anchored = false
 					for i = 1, #backpackTools do
-						rbTool = backpackTools[i]:FindFirstChild "RobloxBuildTool"
+						local rbTool = backpackTools[i]:FindFirstChild "RobloxBuildTool"
 						if rbTool then
 							rbTool:Remove()
 						end
@@ -208,7 +208,7 @@ while true do
 					end
 					wait(0.2)
 					for i = 1, #backpackTools do
-						wasInCharacter = backpackTools[i]:FindFirstChild "InCharTag"
+						local wasInChar = backpackTools[i]:FindFirstChild "InCharTag"
 						if wasInChar then
 							wasInChar:Remove()
 							backpackTools[i].Parent = script.Parent
@@ -221,8 +221,7 @@ while true do
 			end
 
 			if delta ~= 0 then
-				newCo = coroutine.create(billboardHealthChange)
-				coroutine.resume(newCo, delta)
+				coroutine.resume(coroutine.create(billboardHealthChange), delta)
 			end
 			--delta = delta * .01
 		end

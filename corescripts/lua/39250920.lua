@@ -328,7 +328,7 @@ function initialize(parent)
 	mainFrame.Style = Enum.FrameStyle.ChatBlue
 	mainFrame.Visible = false
 
-	imageLabel = Instance.new "ImageLabel"
+	local imageLabel = Instance.new "ImageLabel"
 	imageLabel.Name = "Tail"
 	imageLabel.Size = UDim2.new(0, 62, 0, 53)
 	imageLabel.Position = UDim2.new(1, 8, 0.25)
@@ -354,7 +354,7 @@ function presentDialogChoices(talkingPart, dialogChoices)
 	end
 
 	currentConversationPartner = talkingPart
-	sortedDialogChoices = {}
+	local sortedDialogChoices = {}
 	for _, obj in pairs(dialogChoices) do
 		if obj:IsA "DialogChoice" then
 			table.insert(sortedDialogChoices, obj)
