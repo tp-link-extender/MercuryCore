@@ -186,7 +186,7 @@ function addToGrid(child)
 		return
 	end
 
-	for i, v in pairs(backpackItems) do -- check to see if we already have this gear registered
+	for _, v in pairs(backpackItems) do -- check to see if we already have this gear registered
 		if v == child then
 			return
 		end
@@ -517,20 +517,20 @@ function clearPreview()
 	gearPreview.GearStats.GearName.Text = ""
 end
 
-function removeAllEquippedGear(physGear)
-	local stuff = player.Character:GetChildren()
-	for i = 1, #stuff do
-		if (stuff[i]:IsA "Tool" or stuff[i]:IsA "HopperBin") and stuff[i] ~= physGear then
-			stuff[i].Parent = playerBackpack
-		end
-	end
-end
+-- function removeAllEquippedGear(physGear)
+-- 	local stuff = player.Character:GetChildren()
+-- 	for i = 1, #stuff do
+-- 		if (stuff[i]:IsA "Tool" or stuff[i]:IsA "HopperBin") and stuff[i] ~= physGear then
+-- 			stuff[i].Parent = playerBackpack
+-- 		end
+-- 	end
+-- end
 
-function equipGear(physGear)
-	removeAllEquippedGear(physGear)
-	physGear.Parent = player.Character
-	updateGridActive()
-end
+-- function equipGear(physGear)
+-- 	removeAllEquippedGear(physGear)
+-- 	physGear.Parent = player.Character
+-- 	updateGridActive()
+-- end
 
 function unequipGear(physGear)
 	physGear.Parent = playerBackpack
@@ -630,7 +630,7 @@ end
 
 function filterGear(terms)
 	local filteredGear = {}
-	for k, v in pairs(backpackItems) do
+	for _, v in pairs(backpackItems) do
 		if buttons[v] then
 			local gearString = string.lower(buttons[v].GearReference.Value.Name)
 			gearString = trim(gearString)
@@ -664,6 +664,7 @@ function showSearchGear(searchTerms)
 	end -- currently not active tab
 
 	local searchTermTable = splitByWhitespace(searchTerms)
+	local currSearchTerms
 	if searchTermTable and (#searchTermTable > 0) then
 		currSearchTerms = searchTermTable
 	else

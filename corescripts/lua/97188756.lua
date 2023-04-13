@@ -1287,7 +1287,6 @@ end
 
 function Chat:CreateSafeChatOptions(list, rootButton)
 	local text_List = {}
-	level = level or 0
 	local count = 0
 	text_List[rootButton] = {}
 	text_List[rootButton][1] = list[1]
@@ -1680,11 +1679,9 @@ function Chat:PlayerChatted(...)
 	end
 
 	if PlayersService.ClassicChat then
-		if string.sub(message, 1, 3) == "/e " or string.sub(message, 1, 7) == "/emote " then
-			-- don't do anything right now
-			-- print(1)
-		elseif
-			(forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu)
+		if
+			not (string.sub(message, 1, 3) == "/e " or string.sub(message, 1, 7) == "/emote ")
+				and (forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu)
 			or (Player.ChatMode == Enum.ChatMode.Menu and string.sub(message, 1, 3) == "/sc")
 			or (Chat:FindMessageInSafeChat(message, self.SafeChat_List))
 		then

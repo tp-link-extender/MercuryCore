@@ -189,8 +189,8 @@ function followThumbstickTouchMove(thumbstickFrame, thumbstickOuter, touchLocati
 	thumbstickFrame.Position = transformFromCenterToTopLeft(touchLocation, thumbstickFrame)
 
 	-- a bit of error checking to make sure thumbsticks stay close to eachother
-	thumbstickFramePosition = Vector2.new(thumbstickFrame.Position.X.Offset, thumbstickFrame.Position.Y.Offset)
-	thumbstickOuterPosition = Vector2.new(thumbstickOuter.Position.X.Offset, thumbstickOuter.Position.Y.Offset)
+	local thumbstickFramePosition = Vector2.new(thumbstickFrame.Position.X.Offset, thumbstickFrame.Position.Y.Offset)
+	local thumbstickOuterPosition = Vector2.new(thumbstickOuter.Position.X.Offset, thumbstickOuter.Position.Y.Offset)
 	if DistanceBetweenTwoPoints(thumbstickFramePosition, thumbstickOuterPosition) > thumbstickSize / 2 then
 		local vectorWithLength = (thumbstickOuterPosition - thumbstickFramePosition).unit * thumbstickSize / 2
 		thumbstickOuter.Position = UDim2.new(
@@ -573,7 +573,7 @@ function setupCameraControl(parentFrame, refreshCharacterMoveFunc)
 		if cameraTouch == nil and not usedByThumbstick then
 			cameraTouch = inputObject
 			lastPos = Vector2.new(cameraTouch.Position.x, cameraTouch.Position.y)
-			lastTick = tick()
+			-- lastTick = tick()
 		end
 	end)
 	userInputService.InputChanged:connect(function(inputObject)

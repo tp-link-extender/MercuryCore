@@ -100,20 +100,17 @@ return end for R,S in pairs(f)do if g[S]then if aa:FindFirstChild'GearReference'
 and g[S]:FindFirstChild'GearReference'then if g[S].GearReference.Value==aa.
 GearReference.Value then g[S].Active=Q break end end end end end function
 clearPreview()p.GearImage.Image=''p.GearStats.GearName.Text=''end function
-removeAllEquippedGear(aa)local Q=a.Character:GetChildren()for R=1,#Q do if(Q[R]:
-IsA'Tool'or Q[R]:IsA'HopperBin')and Q[R]~=aa then Q[R].Parent=o end end end
-function equipGear(aa)removeAllEquippedGear(aa)aa.Parent=a.Character
-updateGridActive()end function unequipGear(aa)aa.Parent=o updateGridActive()end
-function highlight(aa)aa.TextColor3=Color3.new(0,0,0)aa.BackgroundColor3=Color3.
-new(0.8,0.8,0.8)end function clearHighlight(aa)aa.TextColor3=Color3.new(1,1,1)aa
-.BackgroundColor3=Color3.new(0,0,0)end function swapGearSlot(aa,Q)if not u.Value
-then u.Slot.Value=aa u.GearButton.Value=Q u.Value=true updateGridActive()end end
-local aa=function(aa,Q)if type(aa.Action)~='number'then return end local R=aa.
-Action if R==1 then unequipGear(Q.Parent.GearReference.Value)local S=Q.Parent
-local T,U,W=S.GearReference.Value,r:GetChildren(),-1 for X=1,#U do if U[X]:IsA
-'Frame'then local Y=U[X]:GetChildren()if Y[1]and Y[1].GearReference.Value==T
-then W=Y[1].SlotNumber.Text break end end end swapGearSlot(W,nil)end end
-function setupCharacterConnections()if n then n:disconnect()end n=game.Players.
+unequipGear(aa)aa.Parent=o updateGridActive()end function highlight(aa)aa.
+TextColor3=Color3.new(0,0,0)aa.BackgroundColor3=Color3.new(0.8,0.8,0.8)end
+function clearHighlight(aa)aa.TextColor3=Color3.new(1,1,1)aa.BackgroundColor3=
+Color3.new(0,0,0)end function swapGearSlot(aa,Q)if not u.Value then u.Slot.Value
+=aa u.GearButton.Value=Q u.Value=true updateGridActive()end end local aa=
+function(aa,Q)if type(aa.Action)~='number'then return end local R=aa.Action if R
+==1 then unequipGear(Q.Parent.GearReference.Value)local S=Q.Parent local T,U,W=S
+.GearReference.Value,r:GetChildren(),-1 for X=1,#U do if U[X]:IsA'Frame'then
+local Y=U[X]:GetChildren()if Y[1]and Y[1].GearReference.Value==T then W=Y[1].
+SlotNumber.Text break end end end swapGearSlot(W,nil)end end function
+setupCharacterConnections()if n then n:disconnect()end n=game.Players.
 LocalPlayer.Backpack.ChildAdded:connect(function(Q)addToGrid(Q)end)local Q=game.
 Players.LocalPlayer.Backpack:GetChildren()for R=1,#Q do addToGrid(Q[R])end if l
 then l:disconnect()end l=game.Players.LocalPlayer.Character.ChildAdded:connect(
@@ -128,15 +125,14 @@ table.insert(R,g[T])break end end end end return R end function
 splitByWhitespace(Q)if type(Q)~='string'then return nil end local R={}for S in
 string.gmatch(Q,'[^%s]+')do if string.len(S)>0 then table.insert(R,S)end end
 return R end function showSearchGear(Q)if not e.Gear.Visible then return end
-local R=splitByWhitespace(Q)if R and(#R>0)then currSearchTerms=R else
-currSearchTerms=nil end if R==nil then showEntireGrid()return end local S=
-filterGear(currSearchTerms)showPartialGrid(S)end function nukeBackpack()while#g>
-0 do table.remove(g)end g={}while#f>0 do table.remove(f)end f={}local Q=s.
-ScrollingFrame:GetChildren()for R=1,#Q do Q[R]:remove()end end function
-getGearContextMenu()local Q=Instance.new'Frame'Q.Active=true Q.Name=
-'UnequipContextMenu'Q.Size=UDim2.new(0,115,0,70)Q.Position=UDim2.new(0,-16,0,-16
-)Q.BackgroundTransparency=1 Q.Visible=false local R=Instance.new'TextButton'R.
-Name='UnequipContextMenuButton'R.Text=''R.Style=Enum.ButtonStyle.
+local R,S=splitByWhitespace(Q),nil if R and(#R>0)then S=R else S=nil end if R==
+nil then showEntireGrid()return end local T=filterGear(S)showPartialGrid(T)end
+function nukeBackpack()while#g>0 do table.remove(g)end g={}while#f>0 do table.
+remove(f)end f={}local Q=s.ScrollingFrame:GetChildren()for R=1,#Q do Q[R]:
+remove()end end function getGearContextMenu()local Q=Instance.new'Frame'Q.Active
+=true Q.Name='UnequipContextMenu'Q.Size=UDim2.new(0,115,0,70)Q.Position=UDim2.
+new(0,-16,0,-16)Q.BackgroundTransparency=1 Q.Visible=false local R=Instance.new
+'TextButton'R.Name='UnequipContextMenuButton'R.Text=''R.Style=Enum.ButtonStyle.
 RobloxButtonDefault R.ZIndex=8 R.Size=UDim2.new(1,0,1,-20)R.Visible=true R.
 Parent=Q local S,T,U=12,{},{'Remove Hotkey'}for W=1,#U do local X={}X.Type=
 'Button'X.Text=U[W]X.Action=W X.DoIt=aa table.insert(T,X)end for W,X in ipairs(T
