@@ -72,13 +72,12 @@ splitByWhitespace(F)if type(F)~='string'then return nil end local G={}for H in
 string.gmatch(F,'[^%s]+')do if string.len(H)>0 then table.insert(G,H)end end
 return G end function resetSearchBoxGui()k.Visible=false i.Text=v end function
 doSearch()local F=i.Text if F==''then resetSearch()return end F=trim(F)k.Visible
-=true termTable=splitByWhitespace(F)D:Fire(F)end function resetSearch()
-resetSearchBoxGui()D:Fire()end local F=function()p=true end function
-coreGuiChanged(G,H)if G==Enum.CoreGuiType.Backpack or G==Enum.CoreGuiType.All
-then r=H s=not H if s then pcall(function()game:GetService'GuiService':
-RemoveKey(w)game:GetService'GuiService':RemoveKey(x)end)else game:GetService
-'GuiService':AddKey(w)game:GetService'GuiService':AddKey(x)end resetSearch()h.
-Visible=H and q m.Visible=H a.Visible=H f.Visible=H end end
+=true D:Fire(F)end function resetSearch()resetSearchBoxGui()D:Fire()end local F=
+function()p=true end function coreGuiChanged(G,H)if G==Enum.CoreGuiType.Backpack
+or G==Enum.CoreGuiType.All then r=H s=not H if s then pcall(function()game:
+GetService'GuiService':RemoveKey(w)game:GetService'GuiService':RemoveKey(x)end)
+else game:GetService'GuiService':AddKey(w)game:GetService'GuiService':AddKey(x)
+end resetSearch()h.Visible=H and q m.Visible=H a.Visible=H f.Visible=H end end
 createPublicFunction('CloseBackpack',E)createPublicFunction('BackpackReady',F)
 pcall(function()coreGuiChanged(Enum.CoreGuiType.Backpack,Game.StarterGui:
 GetCoreGuiEnabled(Enum.CoreGuiType.Backpack))Game.StarterGui.

@@ -81,7 +81,7 @@ local backpackManager = waitForChild(guiBackpack, "CoreScripts/BackpackScripts/B
 local backpackOpenEvent = waitForChild(backpackManager, "BackpackOpenEvent")
 local backpackCloseEvent = waitForChild(backpackManager, "BackpackCloseEvent")
 local tabClickedEvent = waitForChild(backpackManager, "TabClickedEvent")
-local resizeEvent = waitForChild(backpackManager, "ResizeEvent")
+-- local resizeEvent = waitForChild(backpackManager, "ResizeEvent")
 
 local inGearTab = true
 
@@ -275,7 +275,7 @@ function insertGear(gear, addToSlot)
 	end)
 end
 
-function reorganizeLoadout(gear, inserting, equipped, addToSlot)
+function reorganizeLoadout(gear, inserting, _, addToSlot)
 	if inserting then -- add in gear
 		insertGear(gear, addToSlot)
 	else
@@ -304,11 +304,10 @@ function checkToolAncestry(child, parent)
 						gearSlots[i].Selected = false
 					end
 					return true
-				else
-					gearSlots[i].Kill.Value = true
-					return false
 				end
-				return true
+
+				gearSlots[i].Kill.Value = true
+				return false
 			end
 		end
 	end
@@ -501,7 +500,6 @@ normalizeButton = function(button, speed)
 
 	if button:IsA "ImageButton" or button:IsA "TextButton" then
 		button.ZIndex = 1
-		local inverseEnlarge = 1 / enlargeFactor
 		local centerizeX = -(buttonSizeNormal.X.Scale - button.Size.X.Scale) / 2
 		local centerizeY = -(buttonSizeNormal.Y.Scale - button.Size.Y.Scale) / 2
 		button:TweenSizeAndPosition(
@@ -604,10 +602,10 @@ function resolveDrag(gearClone, x, y)
 		end
 	end
 
-	if x < frame.AbsolutePosition.x or x > (frame.AbsolutePosition.x + frame.AbsoluteSize.x) then
-		reorganizeLoadout(gearClone, false)
-		return false
-	elseif y < frame.AbsolutePosition.y or y > (frame.AbsolutePosition.y + frame.AbsoluteSize.y) then
+	if
+		(x < frame.AbsolutePosition.x or x > (frame.AbsolutePosition.x + frame.AbsoluteSize.x))
+		or (y < frame.AbsolutePosition.y or y > (frame.AbsolutePosition.y + frame.AbsoluteSize.y))
+	then
 		reorganizeLoadout(gearClone, false)
 		return false
 	else
@@ -649,7 +647,7 @@ function showToolTip(button, tip)
 	end
 end
 
-function hideToolTip(button, tip)
+function hideToolTip(button, _)
 	if button and button:FindFirstChild "ToolTipLabel" and button.ToolTipLabel:IsA "TextLabel" then
 		button.ToolTipLabel.Visible = false
 	end
@@ -1128,7 +1126,7 @@ player.ChildAdded:connect(function(child)
 end)
 
 waitForProperty(player, "Character")
-for i, v in ipairs(player.Character:GetChildren()) do
+for _, v in ipairs(player.Character:GetChildren()) do
 	playerCharacterChildAdded(v)
 end
 characterChildAddedCon = player.Character.ChildAdded:connect(function(child)

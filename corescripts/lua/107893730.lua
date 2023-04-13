@@ -161,7 +161,7 @@ function signalPromptEnded(isSuccess)
 end
 
 -- make sure our gui displays the proper purchase data, and set the productid we will try and buy if use specifies a buy action
-function updatePurchasePromptData(toggleColoredText)
+function updatePurchasePromptData(_)
 	local newItemDescription = ""
 
 	-- id to use when we request a purchase
@@ -199,7 +199,7 @@ end
 
 function doPlayerFundsCheck(checkIndefinitely)
 	if checkingPlayerFunds then
-		canPurchase, insufficientFunds = canPurchaseItem() -- check again to see if we can buy item
+		local canPurchase, insufficientFunds = canPurchaseItem() -- check again to see if we can buy item
 		if canPurchase and insufficientFunds then -- wait a bit and try a few more times
 			local retries = 1000
 			while (retries > 0 or checkIndefinitely) and insufficientFunds and checkingPlayerFunds and canPurchase do
@@ -344,7 +344,7 @@ function purchaseFailed(inGamePurchasesDisabled)
 end
 
 -- user has specified they want to buy an item, now try to attempt to buy it for them
-function doAcceptPurchase(currencyPreferredByUser)
+function doAcceptPurchase(_)
 	showPurchasing() -- shows a purchasing ui (shows spinner)
 
 	local startTime = tick()
@@ -813,24 +813,24 @@ function canPurchaseItem()
 	return true, insufficientFunds
 end
 
-function computeSpaceString(pLabel)
-	local nString = " "
-	local tempSpaceLabel = Instance.new "TextButton"
-	tempSpaceLabel.Size = UDim2.new(0, pLabel.AbsoluteSize.X, 0, pLabel.AbsoluteSize.Y)
-	tempSpaceLabel.FontSize = pLabel.FontSize
-	tempSpaceLabel.Parent = pLabel.Parent
-	tempSpaceLabel.BackgroundTransparency = 1
-	tempSpaceLabel.Text = nString
-	tempSpaceLabel.Name = "SpaceButton"
+-- function computeSpaceString(pLabel)
+-- 	local nString = " "
+-- 	local tempSpaceLabel = Instance.new "TextButton"
+-- 	tempSpaceLabel.Size = UDim2.new(0, pLabel.AbsoluteSize.X, 0, pLabel.AbsoluteSize.Y)
+-- 	tempSpaceLabel.FontSize = pLabel.FontSize
+-- 	tempSpaceLabel.Parent = pLabel.Parent
+-- 	tempSpaceLabel.BackgroundTransparency = 1
+-- 	tempSpaceLabel.Text = nString
+-- 	tempSpaceLabel.Name = "SpaceButton"
 
-	while tempSpaceLabel.TextBounds.X < pLabel.TextBounds.X do
-		nString = nString .. " "
-		tempSpaceLabel.Text = nString
-	end
-	nString = nString .. " "
-	tempSpaceLabel.Text = ""
-	return nString
-end
+-- 	while tempSpaceLabel.TextBounds.X < pLabel.TextBounds.X do
+-- 		nString = nString .. " "
+-- 		tempSpaceLabel.Text = nString
+-- 	end
+-- 	nString = nString .. " "
+-- 	tempSpaceLabel.Text = ""
+-- 	return nString
+-- end
 
 ---------------------------------------------- End Data Functions -----------------------------------------------------
 
@@ -1149,7 +1149,7 @@ function setHeaderText(text)
 	purchaseDialog.TitleBackdrop.Text = text
 end
 
-function cutSizeInHalfRecursive(instance)
+function cutSizeInHalfRecursive(_)
 	-- todo: change the gui size based on how much space we have
 	--[[changeSize(instance,0.5)
 	
@@ -1159,7 +1159,7 @@ function cutSizeInHalfRecursive(instance)
 	end]]
 end
 
-function doubleSizeRecursive(instance)
+function doubleSizeRecursive(_)
 	-- todo: change the gui size based on how much space we have
 	--[[changeSize(instance,2)
 	

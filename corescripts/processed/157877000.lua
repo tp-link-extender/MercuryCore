@@ -95,121 +95,121 @@ UDim2.new(0,3,0,3),Size=UDim2.new(0,14,0,14),Image=
 Parent=M,BackgroundColor3=Color3.new(0,0,0),BackgroundTransparency=0.5,Position=
 UDim2.new(0,0,0,0),Size=UDim2.new(1,-23,1,0),Text=''}a'TextLabel'{Name=
 'TitleText',Parent=M,BackgroundTransparency=1,Position=UDim2.new(0,0,0,0),Size=
-UDim2.new(0,185,0,20),Font='SourceSansBold',FontSize=Enum.FontSize.Size18,Text=
-'Server Console',TextColor3=Color3.new(1,1,1),Text='Roblox Developer Console',
-TextYAlignment=Enum.TextYAlignment.Top}local O,P,Q,R,S,T,U,V=nil,nil,nil,nil,nil
-,nil,false,false function clean()O=nil P=nil Q=nil R=nil S=nil pScrollHandle=nil
-T=nil U=false V=false end function refreshConsolePosition(W,X)if not O then
-return end local Y=Vector2.new(W,X)-O c.Position=UDim2.new(0,P.X+Y.X,0,P.Y+Y.Y)
-end M.TextButton.MouseButton1Down:connect(function(W,X)O=Vector2.new(W,X)P=c.
-AbsolutePosition end)M.TextButton.MouseButton1Up:connect(function(W,X)clean()end
-)function refreshConsoleSize(X,Y)if not Q then return end local Z=Vector2.new(X,
-Y)-Q c.Size=UDim2.new(0,math.max(R.X+Z.X,i.X),0,math.max(R.Y+Z.Y,i.Y))end c.Body
-.ResizeButton.MouseButton1Down:connect(function(X,Y)Q=Vector2.new(X,Y)R=c.
-AbsoluteSize end)c.Body.ResizeButton.MouseButton1Up:connect(function(X,Y)clean()
-end)M.CloseButton.MouseButton1Down:connect(function(Y,Z)c.Visible=false end)c.
-TitleBar.CloseButton.MouseButton1Up:connect(function()clean()end)local Z,_=true,
-false function startAnimation()if _ then return end _=true repeat if Z then u=u-
-1 else u=u+1 end local aa=u/5 local ab=aa*aa*(3-(2*aa))K.ImageLabel.Rotation=ab*
-5*9 x.Position=UDim2.new(0,(ab*5*50)-250,0,4)wait()if(u<=0 and Z)or(u>=5 and not
-Z)then _=false end until not _ end K.MouseButton1Down:connect(function(aa,ab)Z=
-not Z startAnimation()end)function changeOffset(ab)if j==f then m=m+ab elseif j
-==g then n=n+ab end repositionList()end function refreshTextHolderForReal()local
-ab,ac=J:GetChildren(),nil if j==f then ac=k elseif j==g then ac=l end local ad=0
-for ae=1,#ab do ab[ae].Visible=false end for ae=1,#ac do local af,ag=nil,false
-if ae>#ab then af=a'TextLabel'{Name='Message',Parent=J,BackgroundTransparency=1,
-TextXAlignment='Left',Size=UDim2.new(1,0,0,14),FontSize='Size10',ZIndex=1}ag=
-true else af=ab[ae]end if(r or ac[ae].Type~=Enum.MessageType.MessageOutput)and(q
-or ac[ae].Type~=Enum.MessageType.MessageInfo)and(p or ac[ae].Type~=Enum.
-MessageType.MessageWarning)and(o or ac[ae].Type~=Enum.MessageType.MessageError)
-then af.TextWrapped=s af.Size=UDim2.new(0.98,0,0,2000)af.Parent=c af.Text=ac[ae]
-.Time..' -- '..ac[ae].Message af.Size=UDim2.new(0.98,0,0,af.TextBounds.Y)af.
-Position=UDim2.new(0,5,0,ad)af.Parent=J ad=ad+af.TextBounds.Y if ag then if(j==f
-and m>0)or(j==g and n>0)then changeOffset(af.TextBounds.Y)end end af.Visible=
-true if ac[ae].Type==Enum.MessageType.MessageError then af.TextColor3=Color3.
-new(1,0,0)elseif ac[ae].Type==Enum.MessageType.MessageInfo then af.TextColor3=
-Color3.new(0.4,0.5,1)elseif ac[ae].Type==Enum.MessageType.MessageWarning then af
-.TextColor3=Color3.new(1,0.6,0.4)else af.TextColor3=Color3.new(1,1,1)end end end
-t=ad end local ab=false function refreshTextHolder()if ab then return end Delay(
-0.1,function()ab=false refreshTextHolderForReal()end)ab=true end local ac=0
-function holdingUpButton()if U then return end U=true wait(0.6)ac=ac+1 while U
-and ac<2 do wait()changeOffset(12)end ac=ac-1 end function holdingDownButton()if
-V then return end V=true wait(0.6)ac=ac+1 while V and ac<2 do wait()
-changeOffset(-12)end ac=ac-1 end c.Body.ScrollBar.Up.MouseButton1Click:connect(
-function()changeOffset(10)end)c.Body.ScrollBar.Up.MouseButton1Down:connect(
-function()changeOffset(10)holdingUpButton()end)c.Body.ScrollBar.Up.
-MouseButton1Up:connect(function()clean()end)c.Body.ScrollBar.Down.
-MouseButton1Down:connect(function()changeOffset(-10)holdingDownButton()end)c.
-Body.ScrollBar.Down.MouseButton1Up:connect(function()clean()end)function
-handleScroll(ad,ae)if not S then return end local af,ag,ah=(Vector2.new(ad,ae)-S
-).Y,1-(c.Body.TextBox.AbsoluteSize.Y/J.AbsoluteSize.Y),E.AbsoluteSize.Y-E.Handle
-.AbsoluteSize.Y local ai=math.max(math.min(af,ah),0-ah)local aj,ak=ai/ah,(ag*J.
-AbsoluteSize.Y)local al=ak*aj if j==f then m=T-al elseif j==g then n=T-al end
-end E.Handle.MouseButton1Down:connect(function(ad,ae)S=Vector2.new(ad,ae)
-pScrollHandle=E.Handle.AbsolutePosition if j==f then T=m elseif j==g then T=n
-end end)E.Handle.MouseButton1Up:connect(function(ad,ae)clean()end)local function
-existsInsideContainer(ae,af,ag)local ah,ai=ae.AbsolutePosition,ae.AbsoluteSize
-if af<ah.X or af>ah.X+ai.X or ag<ah.y or ag>ah.y+ai.y then return false end
-return true end function repositionList()if j==f then m=math.min(math.max(m,0),t
--c.Body.TextBox.AbsoluteSize.Y)J.Size=UDim2.new(1,0,0,t)elseif j==g then n=math.
-min(math.max(n,0),t-c.Body.TextBox.AbsoluteSize.Y)J.Size=UDim2.new(1,0,0,t)end
-local ae=c.Body.TextBox.AbsoluteSize.Y/J.AbsoluteSize.Y if ae>=1 then c.Body.
-ScrollBar.Visible=false c.Body.TextBox.Size=UDim2.new(1,-4,1,-28)if j==f or j==g
-then J.Position=UDim2.new(0,0,1,0-t)end else c.Body.ScrollBar.Visible=true c.
-Body.TextBox.Size=UDim2.new(1,-25,1,-28)local af,ag=1-ae,nil if j==f then ag=m/J
-.AbsoluteSize.Y elseif j==g then ag=n/J.AbsoluteSize.Y end local ah,ai=math.max(
-0,af-ag),math.max(E.AbsoluteSize.Y*ae,21)local aj=ai/E.AbsoluteSize.Y local ak=(
-1-aj)/(1-ae)local al=ah*ak local am=math.min(E.AbsoluteSize.Y*al,E.AbsoluteSize.
-Y-ai)E.Handle.Size=UDim2.new(1,0,0,ai)E.Handle.Position=UDim2.new(0,0,0,am)if j
-==f then J.Position=UDim2.new(0,0,1,0-t+m)elseif j==g then J.Position=UDim2.new(
-0,0,1,0-t+n)end end end local function numberWithZero(ae)return(ae<10 and'0'or''
-)..ae end local ae='%s:%s:%s'function ConvertTimeStamp(af)local ag=af-os.time()+
-math.floor(tick())local ah=ag%86400 local ai=math.floor(ah/3600)ah=ah-(ai*3600)
-local aj=math.floor(ah/60)ah=ah-(aj*60)local ak,al,am=numberWithZero(ai),
-numberWithZero(aj),numberWithZero(ah)return ae:format(ak,al,am)end x.
-ErrorToggleButton.MouseButton1Down:connect(function(af,ag)o=not o x.
+UDim2.new(0,185,0,20),Font='SourceSansBold',FontSize=Enum.FontSize.Size18,
+TextColor3=Color3.new(1,1,1),Text='Roblox Developer Console',TextYAlignment=Enum
+.TextYAlignment.Top}local O,P,Q,R,S,T,U,V,W=nil,nil,nil,nil,nil,nil,nil,false,
+false function clean()O=nil P=nil Q=nil R=nil S=nil T=nil U=nil V=false W=false
+end function refreshConsolePosition(X,Y)if not O then return end local Z=Vector2
+.new(X,Y)-O c.Position=UDim2.new(0,P.X+Z.X,0,P.Y+Z.Y)end M.TextButton.
+MouseButton1Down:connect(function(X,Y)O=Vector2.new(X,Y)P=c.AbsolutePosition end
+)M.TextButton.MouseButton1Up:connect(function(X,Y)clean()end)function
+refreshConsoleSize(Y,Z)if not Q then return end local _=Vector2.new(Y,Z)-Q c.
+Size=UDim2.new(0,math.max(R.X+_.X,i.X),0,math.max(R.Y+_.Y,i.Y))end c.Body.
+ResizeButton.MouseButton1Down:connect(function(Y,Z)Q=Vector2.new(Y,Z)R=c.
+AbsoluteSize end)c.Body.ResizeButton.MouseButton1Up:connect(function(Y,Z)clean()
+end)M.CloseButton.MouseButton1Down:connect(function(Z,_)c.Visible=false end)c.
+TitleBar.CloseButton.MouseButton1Up:connect(function()clean()end)local _,aa=true
+,false function startAnimation()if aa then return end aa=true repeat if _ then u
+=u-1 else u=u+1 end local ab=u/5 local ac=ab*ab*(3-(2*ab))K.ImageLabel.Rotation=
+ac*5*9 x.Position=UDim2.new(0,(ac*5*50)-250,0,4)wait()if(u<=0 and _)or(u>=5 and
+not _)then aa=false end until not aa end K.MouseButton1Down:connect(function(ab,
+ac)_=not _ startAnimation()end)function changeOffset(ac)if j==f then m=m+ac
+elseif j==g then n=n+ac end repositionList()end function
+refreshTextHolderForReal()local ac,ad=J:GetChildren(),nil if j==f then ad=k
+elseif j==g then ad=l end local ae=0 for af=1,#ac do ac[af].Visible=false end
+for af=1,#ad do local ag,ah=nil,false if af>#ac then ag=a'TextLabel'{Name=
+'Message',Parent=J,BackgroundTransparency=1,TextXAlignment='Left',Size=UDim2.
+new(1,0,0,14),FontSize='Size10',ZIndex=1}ah=true else ag=ac[af]end if(r or ad[af
+].Type~=Enum.MessageType.MessageOutput)and(q or ad[af].Type~=Enum.MessageType.
+MessageInfo)and(p or ad[af].Type~=Enum.MessageType.MessageWarning)and(o or ad[af
+].Type~=Enum.MessageType.MessageError)then ag.TextWrapped=s ag.Size=UDim2.new(
+0.98,0,0,2000)ag.Parent=c ag.Text=ad[af].Time..' -- '..ad[af].Message ag.Size=
+UDim2.new(0.98,0,0,ag.TextBounds.Y)ag.Position=UDim2.new(0,5,0,ae)ag.Parent=J ae
+=ae+ag.TextBounds.Y if ah then if(j==f and m>0)or(j==g and n>0)then
+changeOffset(ag.TextBounds.Y)end end ag.Visible=true if ad[af].Type==Enum.
+MessageType.MessageError then ag.TextColor3=Color3.new(1,0,0)elseif ad[af].Type
+==Enum.MessageType.MessageInfo then ag.TextColor3=Color3.new(0.4,0.5,1)elseif ad
+[af].Type==Enum.MessageType.MessageWarning then ag.TextColor3=Color3.new(1,0.6,
+0.4)else ag.TextColor3=Color3.new(1,1,1)end end end t=ae end local ac=false
+function refreshTextHolder()if ac then return end Delay(0.1,function()ac=false
+refreshTextHolderForReal()end)ac=true end local ad=0 function holdingUpButton()
+if V then return end V=true wait(0.6)ad=ad+1 while V and ad<2 do wait()
+changeOffset(12)end ad=ad-1 end function holdingDownButton()if W then return end
+W=true wait(0.6)ad=ad+1 while W and ad<2 do wait()changeOffset(-12)end ad=ad-1
+end c.Body.ScrollBar.Up.MouseButton1Click:connect(function()changeOffset(10)end)
+c.Body.ScrollBar.Up.MouseButton1Down:connect(function()changeOffset(10)
+holdingUpButton()end)c.Body.ScrollBar.Up.MouseButton1Up:connect(function()clean(
+)end)c.Body.ScrollBar.Down.MouseButton1Down:connect(function()changeOffset(-10)
+holdingDownButton()end)c.Body.ScrollBar.Down.MouseButton1Up:connect(function()
+clean()end)function handleScroll(ae,af)if not S then return end local ag,ah,ai=(
+Vector2.new(ae,af)-S).Y,1-(c.Body.TextBox.AbsoluteSize.Y/J.AbsoluteSize.Y),E.
+AbsoluteSize.Y-E.Handle.AbsoluteSize.Y local aj=math.max(math.min(ag,ai),0-ai)
+local ak,al=aj/ai,(ah*J.AbsoluteSize.Y)local am=al*ak if j==f then m=U-am elseif
+j==g then n=U-am end end E.Handle.MouseButton1Down:connect(function(ae,af)S=
+Vector2.new(ae,af)T=E.Handle.AbsolutePosition if j==f then U=m elseif j==g then
+U=n end end)E.Handle.MouseButton1Up:connect(function(ae,af)clean()end)
+local function existsInsideContainer(af,ag,ah)local ai,aj=af.AbsolutePosition,af
+.AbsoluteSize if ag<ai.X or ag>ai.X+aj.X or ah<ai.y or ah>ai.y+aj.y then return
+false end return true end function repositionList()if j==f then m=math.min(math.
+max(m,0),t-c.Body.TextBox.AbsoluteSize.Y)J.Size=UDim2.new(1,0,0,t)elseif j==g
+then n=math.min(math.max(n,0),t-c.Body.TextBox.AbsoluteSize.Y)J.Size=UDim2.new(1
+,0,0,t)end local af=c.Body.TextBox.AbsoluteSize.Y/J.AbsoluteSize.Y if af>=1 then
+c.Body.ScrollBar.Visible=false c.Body.TextBox.Size=UDim2.new(1,-4,1,-28)if j==f
+or j==g then J.Position=UDim2.new(0,0,1,0-t)end else c.Body.ScrollBar.Visible=
+true c.Body.TextBox.Size=UDim2.new(1,-25,1,-28)local ag,ah=1-af,nil if j==f then
+ah=m/J.AbsoluteSize.Y elseif j==g then ah=n/J.AbsoluteSize.Y end local ai,aj=
+math.max(0,ag-ah),math.max(E.AbsoluteSize.Y*af,21)local ak=aj/E.AbsoluteSize.Y
+local al=(1-ak)/(1-af)local am=ai*al local an=math.min(E.AbsoluteSize.Y*am,E.
+AbsoluteSize.Y-aj)E.Handle.Size=UDim2.new(1,0,0,aj)E.Handle.Position=UDim2.new(0
+,0,0,an)if j==f then J.Position=UDim2.new(0,0,1,0-t+m)elseif j==g then J.
+Position=UDim2.new(0,0,1,0-t+n)end end end local function numberWithZero(af)
+return(af<10 and'0'or'')..af end local af='%s:%s:%s'function ConvertTimeStamp(ag
+)local ah=ag-os.time()+math.floor(tick())local ai=ah%86400 local aj=math.floor(
+ai/3600)ai=ai-(aj*3600)local ak=math.floor(ai/60)ai=ai-(ak*60)local al,am,an=
+numberWithZero(aj),numberWithZero(ak),numberWithZero(ai)return af:format(al,am,
+an)end x.ErrorToggleButton.MouseButton1Down:connect(function(ag,ah)o=not o x.
 ErrorToggleButton.CheckFrame.Visible=o refreshTextHolder()repositionList()end)x.
-WarningToggleButton.MouseButton1Down:connect(function(ag,ah)p=not p x.
+WarningToggleButton.MouseButton1Down:connect(function(ah,ai)p=not p x.
 WarningToggleButton.CheckFrame.Visible=p refreshTextHolder()repositionList()end)
-x.InfoToggleButton.MouseButton1Down:connect(function(ah,ai)q=not q x.
+x.InfoToggleButton.MouseButton1Down:connect(function(ai,aj)q=not q x.
 InfoToggleButton.CheckFrame.Visible=q refreshTextHolder()repositionList()end)x.
-OutputToggleButton.MouseButton1Down:connect(function(ai,aj)r=not r x.
+OutputToggleButton.MouseButton1Down:connect(function(aj,ak)r=not r x.
 OutputToggleButton.CheckFrame.Visible=r refreshTextHolder()repositionList()end)x
-.WordWrapToggleButton.MouseButton1Down:connect(function(aj,ak)s=not s x.
+.WordWrapToggleButton.MouseButton1Down:connect(function(ak,al)s=not s x.
 WordWrapToggleButton.CheckFrame.Visible=s refreshTextHolder()repositionList()end
-)function AddLocalMessage(ak,al,am)k[#k+1]={Message=ak,Time=ConvertTimeStamp(am)
-,Type=al}while#k>h do table.remove(k,1)end refreshTextHolder()repositionList()
-end function AddServerMessage(ak,al,am)l[#l+1]={Message=ak,Time=
-ConvertTimeStamp(am),Type=al}while#l>h do table.remove(l,1)end
+)function AddLocalMessage(al,am,an)k[#k+1]={Message=al,Time=ConvertTimeStamp(an)
+,Type=am}while#k>h do table.remove(k,1)end refreshTextHolder()repositionList()
+end function AddServerMessage(al,am,an)l[#l+1]={Message=al,Time=
+ConvertTimeStamp(an),Type=am}while#l>h do table.remove(l,1)end
 refreshTextHolder()repositionList()end c.Body.LocalConsole.MouseButton1Click:
-connect(function(ak,al)if j==g then j=f local am,an=c.Body.LocalConsole,c.Body.
-ServerConsole am.Size=UDim2.new(0,90,0,20)an.Size=UDim2.new(0,90,0,17)am.
-BackgroundTransparency=0.6 an.BackgroundTransparency=0.8 if game:FindFirstChild
-'Players'and game.Players['LocalPlayer']then local ao=game.Players.LocalPlayer:
-GetMouse()refreshConsolePosition(ao.X,ao.Y)refreshConsoleSize(ao.X,ao.Y)
-handleScroll(ao.X,ao.Y)end refreshTextHolder()repositionList()end end)c.Body.
-LocalConsole.MouseButton1Up:connect(function()clean()end)local al=false c.Body.
-ServerConsole.MouseButton1Click:connect(function(am,an)if not al then al=true
-game:GetService'LogService':RequestServerOutput()end if j==f then j=g local ao,
-ap=c.Body.LocalConsole,c.Body.ServerConsole ap.Size=UDim2.new(0,90,0,20)ao.Size=
-UDim2.new(0,90,0,17)ap.BackgroundTransparency=0.6 ao.BackgroundTransparency=0.8
-if game:FindFirstChild'Players'and game.Players['LocalPlayer']then local aq=game
-.Players.LocalPlayer:GetMouse()refreshConsolePosition(aq.X,aq.Y)
-refreshConsoleSize(aq.X,aq.Y)handleScroll(aq.X,aq.Y)end refreshTextHolder()
+connect(function(al,am)if j==g then j=f local an,ao=c.Body.LocalConsole,c.Body.
+ServerConsole an.Size=UDim2.new(0,90,0,20)ao.Size=UDim2.new(0,90,0,17)an.
+BackgroundTransparency=0.6 ao.BackgroundTransparency=0.8 if game:FindFirstChild
+'Players'and game.Players['LocalPlayer']then local ap=game.Players.LocalPlayer:
+GetMouse()refreshConsolePosition(ap.X,ap.Y)refreshConsoleSize(ap.X,ap.Y)
+handleScroll(ap.X,ap.Y)end refreshTextHolder()repositionList()end end)c.Body.
+LocalConsole.MouseButton1Up:connect(function()clean()end)local am=false c.Body.
+ServerConsole.MouseButton1Click:connect(function(an,ao)if not am then am=true
+game:GetService'LogService':RequestServerOutput()end if j==f then j=g local ap,
+aq=c.Body.LocalConsole,c.Body.ServerConsole aq.Size=UDim2.new(0,90,0,20)ap.Size=
+UDim2.new(0,90,0,17)aq.BackgroundTransparency=0.6 ap.BackgroundTransparency=0.8
+if game:FindFirstChild'Players'and game.Players['LocalPlayer']then local ar=game
+.Players.LocalPlayer:GetMouse()refreshConsolePosition(ar.X,ar.Y)
+refreshConsoleSize(ar.X,ar.Y)handleScroll(ar.X,ar.Y)end refreshTextHolder()
 repositionList()end end)c.Body.ServerConsole.MouseButton1Up:connect(function()
 clean()end)if game:FindFirstChild'Players'and game.Players['LocalPlayer']then
-local an=game.Players.LocalPlayer:GetMouse()an.Move:connect(function()if not c.
-Visible then return end local ao=game.Players.LocalPlayer:GetMouse()
-refreshConsolePosition(ao.X,ao.Y)refreshConsoleSize(ao.X,ao.Y)handleScroll(ao.X,
-ao.Y)refreshTextHolder()repositionList()end)an.Button1Up:connect(function()
-clean()end)an.WheelForward:connect(function()if not c.Visible then return end if
-existsInsideContainer(c,an.X,an.Y)then changeOffset(10)end end)an.WheelBackward:
-connect(function()if not c.Visible then return end if existsInsideContainer(c,an
-.X,an.Y)then changeOffset(-10)end end)end E.Handle.MouseButton1Down:connect(
-function()repositionList()end)local an=game:GetService'LogService':
-GetLogHistory()for ao=1,#an do AddLocalMessage(an[ao].message,an[ao].messageType
-,an[ao].timestamp)end game:GetService'LogService'.MessageOut:connect(function(ao
-,ap)AddLocalMessage(ao,ap,os.time())end)game:GetService'LogService'.
-ServerMessageOut:connect(AddServerMessage)end local ab=false function d.OnInvoke
-()if ab then return end ab=true initializeDeveloperConsole()c.Visible=not c.
-Visible ab=false end
+local ao=game.Players.LocalPlayer:GetMouse()ao.Move:connect(function()if not c.
+Visible then return end local ap=game.Players.LocalPlayer:GetMouse()
+refreshConsolePosition(ap.X,ap.Y)refreshConsoleSize(ap.X,ap.Y)handleScroll(ap.X,
+ap.Y)refreshTextHolder()repositionList()end)ao.Button1Up:connect(function()
+clean()end)ao.WheelForward:connect(function()if not c.Visible then return end if
+existsInsideContainer(c,ao.X,ao.Y)then changeOffset(10)end end)ao.WheelBackward:
+connect(function()if not c.Visible then return end if existsInsideContainer(c,ao
+.X,ao.Y)then changeOffset(-10)end end)end E.Handle.MouseButton1Down:connect(
+function()repositionList()end)local ao=game:GetService'LogService':
+GetLogHistory()for ap=1,#ao do AddLocalMessage(ao[ap].message,ao[ap].messageType
+,ao[ap].timestamp)end game:GetService'LogService'.MessageOut:connect(function(ap
+,aq)AddLocalMessage(ap,aq,os.time())end)game:GetService'LogService'.
+ServerMessageOut:connect(AddServerMessage)end local aa=false function d.OnInvoke
+()if aa then return end aa=true initializeDeveloperConsole()c.Visible=not c.
+Visible aa=false end
