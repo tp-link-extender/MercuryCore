@@ -1,0 +1,231 @@
+-- Heliodex's basic New function (basically a simplified version of melt)
+New = (className, name, props) ->
+	if not props? -- no name was provided
+		props = name
+		name = nil
+
+	obj = Instance.new className
+	obj.Name = name if name
+	local parent
+
+	for k, v in pairs props
+		if type(k) == "string" then
+			if k == "Parent"
+				parent = v
+			else
+				obj[k] = v
+
+		elseif type(k) == "number" and type(v) == "userdata"
+			v.Parent = obj
+
+	obj.Parent = parent
+	obj
+--
+
+damageGuiWidth = 5.0
+damageGuiHeight = 5.0
+
+waitForChild = (parent, childName) ->
+	child = parent\findFirstChild childName
+	if child
+		return child
+
+	while true
+		child = parent.ChildAdded\wait!
+		if child.Name == childName
+			return child
+
+-- declarations
+Figure = script.Parent
+Humanoid = waitForChild Figure, "Humanoid"
+Torso = waitForChild Figure, "Torso"
+
+config = Figure\FindFirstChild "PlayerStats"
+
+inCharTag = Instance.new "BoolValue"
+inCharTag.Name = "InCharTag"
+
+hider = Instance.new "BoolValue"
+hider.Name = "RobloxBuildTool"
+
+if not config?
+	config = Instance.new "Configuration"
+	config.Parent = Figure
+	config.Name = "PlayerStats"
+
+myHealth = config\FindFirstChild "MaxHealth"
+if not myHealth?
+	myHealth = Instance.new "NumberValue"
+	myHealth.Parent = config
+	myHealth.Value = 100
+	myHealth.Name = "MaxHealth"
+
+Humanoid.MaxHealth = myHealth.Value
+Humanoid.Health = myHealth.Value
+
+onMaxHealthChange = ->
+	Humanoid.MaxHealth = myHealth.Value
+	Humanoid.Health = myHealth.Value
+
+myHealth.Changed\connect onMaxHealthChange
+
+--Humanoid.MaxHealth = myHealth.Value
+--Humanoid.Health = Humanoid.MaxHealth
+
+vPlayer = game.Players\GetPlayerFromCharacter script.Parent
+dotGui = vPlayer.PlayerGui\FindFirstChild "DamageOverTimeGui"
+if not dotGui?
+	dotGui = New "BillboardGui", "DamageOverTimeGui"
+		Parent: vPlayer.PlayerGui
+		Adornee: script.Parent\FindFirstChild "Head"
+		Active: true
+		size: UDim2.new damageGuiWidth, 0, damageGuiHeight, 0.0
+		StudsOffset: Vector3.new 0, 2.0, 0.0
+
+
+print "newHealth declarations finished"
+
+billboardHealthChange = (dmg) ->
+	textLabel = New "TextLabel"
+		Text: tostring dmg
+		TextColor3: if dmg > 0
+			Color3.new 0, 1, 0
+		else
+			Color3.new 1, 0, 1
+		size: UDim2.new 1, 0, 1, 0.0
+		Active: true
+		FontSize: 6
+		BackgroundTransparency: 1
+		Parent: dotGui
+
+	for t = 1, 10
+		wait 0.1
+		textLabel.TextTransparency = t / 10
+		textLabel.Position = UDim2.new 0, 0, 0, -t * 5
+		textLabel.FontSize = 6 - t * 0.6
+
+	textLabel\remove!
+
+setMaxHealth = ->
+	--print Humanoid.Health
+	if myHealth.Value >= 0
+		Humanoid.MaxHealth = myHealth.Value
+		print Humanoid.MaxHealth
+		if Humanoid.Health > Humanoid.MaxHealth
+			Humanoid.Health = Humanoid.MaxHealth
+
+myHealth.Changed\connect setMaxHealth
+
+-- Visual Effects --
+
+fireEffect = New "Fire", "FireEffect"
+	Heat: 0.1
+	Size: 3.0
+	Enabled: false
+--
+
+-- regeneration
+while true
+	s = wait 1
+	health = Humanoid.Health
+	if health > 0 -- and health < Humanoid.MaxHealth
+		delta = 0
+		if config
+			regen = config\FindFirstChild "Regen"
+			poison = config\FindFirstChild "Poison"
+			ice = config\FindFirstChild "Ice"
+			fire = config\FindFirstChild "Fire"
+			stun = config\FindFirstChild "Stun"
+			if regen
+				delta = delta + regen.Value.X
+				if regen.Value.Y >= 0
+					regen.Value = Vector3.new regen.Value.X + regen.Value.Z, regen.Value.Y - s, regen.Value.Z -- maybe have 3rd parameter be an increaser/decreaser?
+				elseif regen.Value.Y == -1
+					regen.Value = Vector3.new regen.Value.X + regen.Value.Z, -1, regen.Value.Z
+				else
+					regen\remove!
+				 -- infinity is -1
+
+			if poison
+				delta = delta - poison.Value.X
+				if poison.Value.Y >= 0
+					poison.Value = Vector3.new poison.Value.X + poison.Value.Z, poison.Value.Y - s, poison.Value.Z
+				elseif poison.Value.Y == -1
+					poison.Value = Vector3.new poison.Value.X + poison.Value.Z, -1, poison.Value.Z
+				else
+					poison\remove!
+				 -- infinity is -1
+
+			if ice
+				--print "IN ICE"
+				delta = delta - ice.Value.X
+				if ice.Value.Y >= 0
+					ice.Value = Vector3.new ice.Value.X, ice.Value.Y - s, ice.Value.Z
+				else
+					ice\remove!
+
+			if fire
+				fireEffect.Enabled = true
+				fireEffect.Parent = Figure.Torso
+				delta = delta - fire.Value.X
+				if fire.Value.Y >= 0
+					fire.Value = Vector3.new fire.Value.X, fire.Value.Y - s, fire.Value.Z
+				else
+					fire\remove!
+					fireEffect.Enabled = false
+					fireEffect.Parent = nil
+
+			if stun
+				local backpackTools
+				if stun.Value > 0
+					Torso.Anchored = true
+					currentChildren = script.Parent\GetChildren!
+					backpackTools = game.Players\GetPlayerFromCharacter(script.Parent).Backpack\GetChildren!
+					for i = 1, #currentChildren
+						if currentChildren[i].className == "Tool"
+							inCharTag\Clone!.Parent = currentChildren[i]
+							print(backpackTools)
+							table.insert(backpackTools, currentChildren[i])
+
+					for i = 1, #backpackTools
+						if not backpackTools[i]\FindFirstChild("RobloxBuildTool")?
+							hider\Clone!.Parent = backpackTools[i]
+							backpackTools[i].Parent = game.Lighting
+
+					wait 0.2
+					for i = 1, #backpackTools
+						backpackTools[i].Parent = game.Players\GetPlayerFromCharacter(script.Parent).Backpack
+
+					stun.Value = stun.Value - s
+				else
+					Torso.Anchored = false
+					for i = 1, #backpackTools
+						rbTool = backpackTools[i]\FindFirstChild "RobloxBuildTool"
+						if rbTool
+							rbTool\Remove!
+
+						backpackTools[i].Parent = game.Lighting
+
+					wait 0.2
+					for i = 1, #backpackTools
+						wasInChar = backpackTools[i]\FindFirstChild "InCharTag"
+						if wasInChar
+							wasInChar\Remove!
+							backpackTools[i].Parent = script.Parent
+						else
+							backpackTools[i].Parent = game.Players\GetPlayerFromCharacter(script.Parent).Backpack
+
+					stun\Remove!
+
+			if delta ~= 0
+				coroutine.resume(coroutine.create(billboardHealthChange), delta)
+			--delta *= .01
+		--health += delta * s * Humanoid.MaxHealth
+
+		health = Humanoid.Health + delta * s
+		if health * 1.01 < Humanoid.MaxHealth
+			Humanoid.Health = health
+			--myHealth.Value = math.floor Humanoid.Health
+		elseif delta > 0
+			Humanoid.Health = Humanoid.MaxHealth
+			--myHealth.Value = Humanoid.Health
