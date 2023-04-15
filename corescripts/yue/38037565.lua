@@ -47,16 +47,16 @@ inCharTag.Name = "InCharTag"
 local hider = Instance.new("BoolValue")
 hider.Name = "RobloxBuildTool"
 if not (config ~= nil) then
-	config = Instance.new("Configuration")
-	config.Parent = Figure
-	config.Name = "PlayerStats"
+	config = New("Configuration", "PlayerStats", {
+		Parent = Figure
+	})
 end
 local myHealth = config:FindFirstChild("MaxHealth")
 if not (myHealth ~= nil) then
-	myHealth = Instance.new("NumberValue")
-	myHealth.Parent = config
-	myHealth.Value = 100
-	myHealth.Name = "MaxHealth"
+	myHealth = New("NumberValue", "MaxHealth", {
+		Value = 100,
+		Parent = config
+	})
 end
 Humanoid.MaxHealth = myHealth.Value
 Humanoid.Health = myHealth.Value

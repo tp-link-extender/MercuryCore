@@ -818,27 +818,29 @@ t.CreateTrueScrollingFrame = function()
 		end
 	end)
 	local scrollDownButton = scrollUpButton:clone()
-	scrollDownButton.Name = "ScrollDownButton"
-	scrollDownButton.Position = UDim2.new(0, 0, 1, -18)
-	local downChildren = scrollDownButton:GetChildren()
-	for i = 1, #downChildren do
-		downChildren[i].Position = UDim2.new(0, 3 + (i - 1), 0.5, -2 + (i - 1))
+	do
+		scrollDownButton.Name = "ScrollDownButton"
+		scrollDownButton.Position = UDim2.new(0, 0, 1, -18)
+		local downChildren = scrollDownButton:GetChildren()
+		for i = 1, #downChildren do
+			downChildren[i].Position = UDim2.new(0, 3 + (i - 1), 0.5, -2 + (i - 1))
+		end
+		scrollDownButton.MouseEnter:connect(function()
+			scrollDownButton.BackgroundTransparency = 0.1
+			downChildren = scrollDownButton:GetChildren()
+			for i = 1, #downChildren do
+				downChildren[i].BackgroundTransparency = 0.1
+			end
+		end)
+		scrollDownButton.MouseLeave:connect(function()
+			scrollDownButton.BackgroundTransparency = 0.5
+			downChildren = scrollDownButton:GetChildren()
+			for i = 1, #downChildren do
+				downChildren[i].BackgroundTransparency = 0.5
+			end
+		end)
+		scrollDownButton.Parent = controlFrame
 	end
-	scrollDownButton.MouseEnter:connect(function()
-		scrollDownButton.BackgroundTransparency = 0.1
-		downChildren = scrollDownButton:GetChildren()
-		for i = 1, #downChildren do
-			downChildren[i].BackgroundTransparency = 0.1
-		end
-	end)
-	scrollDownButton.MouseLeave:connect(function()
-		scrollDownButton.BackgroundTransparency = 0.5
-		downChildren = scrollDownButton:GetChildren()
-		for i = 1, #downChildren do
-			downChildren[i].BackgroundTransparency = 0.5
-		end
-	end)
-	scrollDownButton.Parent = controlFrame
 	local newNub = scrollNub:clone()
 	newNub.Position = UDim2.new(0.5, -5, 0.5, -2)
 	newNub.Parent = scrollbar

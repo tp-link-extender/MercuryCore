@@ -6,21 +6,21 @@ deepakTestingPlace = 3569749
 sc = game\GetService "ScriptContext"
 tries = 0
 
-while not sc and tries < 3
+until sc or tries > 2
 	tries += 1
 	sc = game\GetService "ScriptContext"
 	wait 0.2
 
-if sc
-	sc\RegisterLibrary "Libraries/RbxGui", "45284430"
-	sc\RegisterLibrary "Libraries/RbxGear", "45374389"
+with sc do if sc
+	\RegisterLibrary "Libraries/RbxGui", "45284430"
+	\RegisterLibrary "Libraries/RbxGear", "45374389"
 
 	if game.PlaceId == deepakTestingPlace
-		sc\RegisterLibrary "Libraries/RbxStatus", "52177566"
+		\RegisterLibrary "Libraries/RbxStatus", "52177566"
 
-	sc\RegisterLibrary "Libraries/RbxUtility", "60595411"
-	sc\RegisterLibrary "Libraries/RbxStamper", "73157242"
-	sc\LibraryRegistrationComplete!
+	\RegisterLibrary "Libraries/RbxUtility", "60595411"
+	\RegisterLibrary "Libraries/RbxStamper", "73157242"
+	\LibraryRegistrationComplete!
 
 else
 	print "failed to find script context, libraries did not load"

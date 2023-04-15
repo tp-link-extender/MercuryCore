@@ -23,11 +23,11 @@ New = (className, name, props) ->
 --
 
 waitForProperty = (instance, name) ->
-	while not instance[name]
+	until instance[name]
 		instance.Changed\wait!
 
 waitForChild = (instance, name) ->
-	while not instance\FindFirstChild name
+	until instance\FindFirstChild name
 		instance.ChildAdded\wait!
 
 local mainFrame
@@ -132,43 +132,41 @@ styleMainFrame = (tone) ->
 	styleChoices tone
 
 setChatNotificationTone = (gui, purpose, tone) ->
-	if tone == Enum.DialogTone.Neutral
-		gui.Image.Image = "rbxasset://textures/chatBubble_botBlue_notify_bkg.png"
+	gui.Image.Image = if tone == Enum.DialogTone.Neutral
+		"rbxasset://textures/chatBubble_botBlue_notify_bkg.png"
 	elseif tone == Enum.DialogTone.Friendly
-		gui.Image.Image = "rbxasset://textures/chatBubble_botGreen_notify_bkg.png"
+		"rbxasset://textures/chatBubble_botGreen_notify_bkg.png"
 	elseif tone == Enum.DialogTone.Enemy
-		gui.Image.Image = "rbxasset://textures/chatBubble_botRed_notify_bkg.png"
+		"rbxasset://textures/chatBubble_botRed_notify_bkg.png"
 
-	if purpose == Enum.DialogPurpose.Quest
-		gui.Image.Button.Image = "rbxasset://textures/chatBubble_bot_notify_bang.png"
+	gui.Image.Button.Image = if purpose == Enum.DialogPurpose.Quest
+		"rbxasset://textures/chatBubble_bot_notify_bang.png"
 	elseif purpose == Enum.DialogPurpose.Help
-		gui.Image.Button.Image = "rbxasset://textures/chatBubble_bot_notify_question.png"
+		"rbxasset://textures/chatBubble_bot_notify_question.png"
 	elseif purpose == Enum.DialogPurpose.Shop
-		gui.Image.Button.Image = "rbxasset://textures/chatBubble_bot_notify_money.png"
+		"rbxasset://textures/chatBubble_bot_notify_money.png"
 
 createMessageDialog = ->
-	messageDialog = Instance.new "Frame"
-	messageDialog.Name = "DialogScriptMessage"
-	messageDialog.Style = Enum.FrameStyle.RobloxRound
-	messageDialog.Visible = false
+	messageDialog = New "Frame", "DialogScriptMessage"
+		Style: Enum.FrameStyle.RobloxRound
+		Visible: false
 
-	text = Instance.new "TextLabel"
-	text.Name = "Text"
-	text.Position = UDim2.new 0, 0, 0, -1
-	text.Size = UDim2.new 1, 0, 1, 0
-	text.FontSize = Enum.FontSize.Size14
-	text.BackgroundTransparency = 1
-	text.TextColor3 = Color3.new 1, 1, 1
-	text.RobloxLocked = true
-	text.Parent = messageDialog
+		* New "TextLabel", "Text"
+			Position: UDim2.new 0, 0, 0, -1
+			Size: UDim2.new 1, 0, 1, 0
+			FontSize: Enum.FontSize.Size14
+			BackgroundTransparency: 1
+			TextColor3: Color3.new 1, 1, 1
+			RobloxLocked: true
 
 showMessage = (msg, size) ->
-	messageDialog.Text.Text = msg
-	messageDialog.Size = UDim2.new 0, size, 0, 40
-	messageDialog.Position = UDim2.new 0.5, -size / 2, 0.5, -40
-	messageDialog.Visible = true
-	wait 2
-	messageDialog.Visible = false
+	with messageDialog
+		.Text.Text = msg
+		.Size = UDim2.new 0, size, 0, 40
+		.Position = UDim2.new 0.5, -size / 2, 0.5, -40
+		.Visible = true
+		wait 2
+		.Visible = false
 
 variableDelay = (str) ->
 	length = math.min string.len(str), 100
@@ -226,14 +224,15 @@ sanitizeMessage = (msg) ->
 		msg
 
 renewKillswitch = (dialog) ->
-	if currentAbortDialogScript
-		currentAbortDialogScript\Remove!
-		currentAbortDialogScript = nil
+	with currentAbortDialogScript
+		if currentAbortDialogScript
+			\Remove!
+			currentAbortDialogScript = nil
 
-	currentAbortDialogScript = timeoutScript\Clone!
-	currentAbortDialogScript.archivable = false
-	currentAbortDialogScript.Disabled = false
-	currentAbortDialogScript.Parent = dialog
+		currentAbortDialogScript = timeoutScript\Clone!
+		.archivable = false
+		.Disabled = false
+		.Parent = dialog
 
 presentDialogChoices = (talkingPart, dialogChoices) ->
 	return if not currentConversationDialog
@@ -269,8 +268,8 @@ presentDialogChoices = (talkingPart, dialogChoices) ->
 
 			choiceMap[choices[pos]] = obj
 
-			yPosition = yPosition + height
-			pos = pos + 1
+			yPosition += height
+			pos += 1
 
 	lastChoice.Position = UDim2.new 0, 0, 0, yPosition
 	lastChoice.Number.Text = pos .. ")"
@@ -310,44 +309,41 @@ selectChoice = (choice) ->
 		presentDialogChoices currentConversationPartner, dialogChoice\GetChildren!
 
 newChoice = (numberText) ->
-	frame = Instance.new "TextButton"
-	frame.BackgroundColor3 = Color3.new 0, 0, 179 / 255
-	frame.AutoButtonColor = false
-	frame.BorderSizePixel = 0
-	frame.Text = ""
+	frame = New "TextButton"
+		BackgroundColor3: Color3.new 0, 0, 179 / 255
+		AutoButtonColor: false
+		BorderSizePixel: 0
+		Text: ""
+		RobloxLocked: true
+
+		* New "TextLabel", "Number"
+			TextColor3: Color3.new 127 / 255, 212 / 255, 255 / 255
+			Text: numberText
+			FontSize: Enum.FontSize.Size14
+			BackgroundTransparency: 1
+			Position: UDim2.new 0, 4, 0, 2
+			Size: UDim2.new 0, 20, 0, 24
+			TextXAlignment: Enum.TextXAlignment.Left
+			TextYAlignment: Enum.TextYAlignment.Top
+			RobloxLocked: true
+
+		* New "TextLabel", "UserPrompt"
+			BackgroundTransparency: 1
+			TextColor3: Color3.new 1, 1, 1
+			FontSize: Enum.FontSize.Size14
+			Position: UDim2.new 0, 28, 0, 2
+			Size: UDim2.new 1, -32, 1, -4
+			TextXAlignment: Enum.TextXAlignment.Left
+			TextYAlignment: Enum.TextYAlignment.Top
+			TextWrap: true
+			RobloxLocked: true
+
 	frame.MouseEnter\connect ->
 		highlightColor frame, currentTone!
 	frame.MouseLeave\connect ->
 		resetColor frame, currentTone!
 	frame.MouseButton1Click\connect ->
 		selectChoice frame
-	frame.RobloxLocked = true
-
-	number = Instance.new "TextLabel"
-	number.Name = "Number"
-	number.TextColor3 = Color3.new 127 / 255, 212 / 255, 255 / 255
-	number.Text = numberText
-	number.FontSize = Enum.FontSize.Size14
-	number.BackgroundTransparency = 1
-	number.Position = UDim2.new 0, 4, 0, 2
-	number.Size = UDim2.new 0, 20, 0, 24
-	number.TextXAlignment = Enum.TextXAlignment.Left
-	number.TextYAlignment = Enum.TextYAlignment.Top
-	number.RobloxLocked = true
-	number.Parent = frame
-
-	prompt = Instance.new "TextLabel"
-	prompt.Name = "UserPrompt"
-	prompt.BackgroundTransparency = 1
-	prompt.TextColor3 = Color3.new 1, 1, 1
-	prompt.FontSize = Enum.FontSize.Size14
-	prompt.Position = UDim2.new 0, 28, 0, 2
-	prompt.Size = UDim2.new 1, -32, 1, -4
-	prompt.TextXAlignment = Enum.TextXAlignment.Left
-	prompt.TextYAlignment = Enum.TextYAlignment.Top
-	prompt.TextWrap = true
-	prompt.RobloxLocked = true
-	prompt.Parent = frame
 
 	frame
 
@@ -361,20 +357,17 @@ initialize = (parent) ->
 	lastChoice.UserPrompt.Text = "Goodbye!"
 	lastChoice.Size = UDim2.new 1, 0, 0, 28
 
-	mainFrame = Instance.new "Frame"
-	mainFrame.Name = "UserDialogArea"
-	mainFrame.Size = UDim2.new 0, 350, 0, 200
-	mainFrame.Style = Enum.FrameStyle.ChatBlue
-	mainFrame.Visible = false
+	mainFrame = New "Frame", "UserDialogArea"
+		Size: UDim2.new 0, 350, 0, 200
+		Style: Enum.FrameStyle.ChatBlue
+		Visible: false
 
-	imageLabel = Instance.new "ImageLabel"
-	imageLabel.Name = "Tail"
-	imageLabel.Size = UDim2.new 0, 62, 0, 53
-	imageLabel.Position = UDim2.new 1, 8, 0.25
-	imageLabel.Image = "rbxasset://textures/chatBubble_botBlue_tailRight.png"
-	imageLabel.BackgroundTransparency = 1
-	imageLabel.RobloxLocked = true
-	imageLabel.Parent = mainFrame
+		* New "ImageLabel", "Tail"
+			Size: UDim2.new 0, 62, 0, 53
+			Position: UDim2.new 1, 8, 0.25
+			Image: "rbxasset://textures/chatBubble_botBlue_tailRight.png"
+			BackgroundTransparency: 1
+			RobloxLocked: true
 
 	for _, obj in pairs choices
 		obj.RobloxLocked = true
@@ -386,7 +379,7 @@ initialize = (parent) ->
 	mainFrame.Parent = parent
 
 doDialog = (dialog) ->
-	while not Instance.Lock dialog, player
+	until Instance.Lock dialog, player
 		wait!
 
 	if dialog.InUse
@@ -438,12 +431,13 @@ addDialog = (dialog) ->
 	if dialog.Parent
 		if dialog.Parent\IsA "BasePart"
 			chatGui = chatNotificationGui\clone!
-			chatGui.Enabled = not dialog.InUse
-			chatGui.Adornee = dialog.Parent
-			chatGui.RobloxLocked = true
-			chatGui.Parent = game.CoreGui
-			chatGui.Image.Button.MouseButton1Click\connect ->
-				startDialog dialog
+			with chatGui
+				.Enabled = not dialog.InUse
+				.Adornee = dialog.Parent
+				.RobloxLocked = true
+				.Parent = game.CoreGui
+				.Image.Button.MouseButton1Click\connect ->
+					startDialog dialog
 
 			setChatNotificationTone chatGui, dialog.Purpose, dialog.Tone
 
@@ -501,13 +495,13 @@ onLoad = ->
 	waitForChild gui, "BottomLeftControl"
 
 	--print "Initializing Frame"
-	frame = Instance.new "Frame"
-	frame.Name = "DialogFrame"
-	frame.Position = UDim2.new 0, 0, 0, 0
-	frame.Size = UDim2.new 0, 0, 0, 0
-	frame.BackgroundTransparency = 1
-	frame.RobloxLocked = true
-	frame.Parent = gui.BottomLeftControl
+	frame = New "Frame", "DialogFrame"
+		Position: UDim2.new 0, 0, 0, 0
+		Size: UDim2.new 0, 0, 0, 0
+		BackgroundTransparency: 1
+		RobloxLocked: true
+		Parent: gui.BottomLeftControl
+
 	initialize frame
 
 	--print "Adding Dialogs"

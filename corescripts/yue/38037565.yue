@@ -49,16 +49,14 @@ hider = Instance.new "BoolValue"
 hider.Name = "RobloxBuildTool"
 
 if not config?
-	config = Instance.new "Configuration"
-	config.Parent = Figure
-	config.Name = "PlayerStats"
+	config = New "Configuration", "PlayerStats"
+		Parent: Figure
 
 myHealth = config\FindFirstChild "MaxHealth"
 if not myHealth?
-	myHealth = Instance.new "NumberValue"
-	myHealth.Parent = config
-	myHealth.Value = 100
-	myHealth.Name = "MaxHealth"
+	myHealth = New "NumberValue", "MaxHealth"
+		Value: 100
+		Parent: config
 
 Humanoid.MaxHealth = myHealth.Value
 Humanoid.Health = myHealth.Value
@@ -136,42 +134,42 @@ while true
 			ice = config\FindFirstChild "Ice"
 			fire = config\FindFirstChild "Fire"
 			stun = config\FindFirstChild "Stun"
-			if regen
-				delta = delta + regen.Value.X
-				if regen.Value.Y >= 0
-					regen.Value = Vector3.new regen.Value.X + regen.Value.Z, regen.Value.Y - s, regen.Value.Z -- maybe have 3rd parameter be an increaser/decreaser?
-				elseif regen.Value.Y == -1
-					regen.Value = Vector3.new regen.Value.X + regen.Value.Z, -1, regen.Value.Z
-				else
-					regen\remove!
-				 -- infinity is -1
+			with regen do if regen
+					delta += .Value.X
+					if .Value.Y >= 0
+						.Value = Vector3.new .Value.X + .Value.Z, .Value.Y - s, .Value.Z -- maybe have 3rd parameter be an increaser/decreaser?
+					elseif .Value.Y == -1
+						.Value = Vector3.new .Value.X + .Value.Z, -1, .Value.Z
+					else
+						\remove!
+					-- infinity is -1
 
-			if poison
-				delta = delta - poison.Value.X
-				if poison.Value.Y >= 0
-					poison.Value = Vector3.new poison.Value.X + poison.Value.Z, poison.Value.Y - s, poison.Value.Z
-				elseif poison.Value.Y == -1
-					poison.Value = Vector3.new poison.Value.X + poison.Value.Z, -1, poison.Value.Z
-				else
-					poison\remove!
-				 -- infinity is -1
+			with poison do if poison
+					delta -= .Value.X
+					if .Value.Y >= 0
+						.Value = Vector3.new .Value.X + .Value.Z, .Value.Y - s, .Value.Z
+					elseif .Value.Y == -1
+						.Value = Vector3.new .Value.X + .Value.Z, -1, .Value.Z
+					else
+						\remove!
+					-- infinity is -1
 
-			if ice
+			with ice do if ice
 				--print "IN ICE"
-				delta = delta - ice.Value.X
-				if ice.Value.Y >= 0
-					ice.Value = Vector3.new ice.Value.X, ice.Value.Y - s, ice.Value.Z
+				delta -= .Value.X
+				if .Value.Y >= 0
+					.Value = Vector3.new .Value.X, .Value.Y - s, .Value.Z
 				else
-					ice\remove!
+					\remove!
 
-			if fire
+			with fire do if fire
 				fireEffect.Enabled = true
 				fireEffect.Parent = Figure.Torso
-				delta = delta - fire.Value.X
-				if fire.Value.Y >= 0
-					fire.Value = Vector3.new fire.Value.X, fire.Value.Y - s, fire.Value.Z
+				delta -= .Value.X
+				if .Value.Y >= 0
+					.Value = Vector3.new .Value.X, .Value.Y - s, .Value.Z
 				else
-					fire\remove!
+					\remove!
 					fireEffect.Enabled = false
 					fireEffect.Parent = nil
 
@@ -184,8 +182,8 @@ while true
 					for i = 1, #currentChildren
 						if currentChildren[i].className == "Tool"
 							inCharTag\Clone!.Parent = currentChildren[i]
-							print(backpackTools)
-							table.insert(backpackTools, currentChildren[i])
+							print backpackTools
+							table.insert backpackTools, currentChildren[i]
 
 					for i = 1, #backpackTools
 						if not backpackTools[i]\FindFirstChild("RobloxBuildTool")?
@@ -218,7 +216,7 @@ while true
 					stun\Remove!
 
 			if delta ~= 0
-				coroutine.resume(coroutine.create(billboardHealthChange), delta)
+				coroutine.resume coroutine.create(billboardHealthChange), delta
 			--delta *= .01
 		--health += delta * s * Humanoid.MaxHealth
 
