@@ -1,0 +1,16 @@
+t = {}
+
+t.Foo = ->
+	print "foo"
+
+t.Bar = ->
+	print "bar"
+
+t.Help = (funcNameOrFunc) ->
+	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
+	if funcNameOrFunc == "Foo" or funcNameOrFunc == t.Foo
+		return "Function Foo.  Arguments: None.  Side effect: prints foo"
+	elseif funcNameOrFunc == "Bar" or funcNameOrFunc == t.Bar
+		return "Function Bar.  Arguments: None.  Side effect: prints bar"
+
+t

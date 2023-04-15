@@ -1243,7 +1243,7 @@ t.CreateTrueScrollingFrame = function()
 		end
 	end
 
-	scrollbar.MouseButton1Down:connect(function(x, y)
+	scrollbar.MouseButton1Down:connect(function(_, y)
 		if scrollbar.Active then
 			local scrollStamp = tick()
 			local mouseOffset = y - scrollbar.AbsolutePosition.y
@@ -1604,7 +1604,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		else
 			local children = frame:GetChildren()
 			if children then
-				for i, child in ipairs(children) do
+				for _, child in ipairs(children) do
 					if child:IsA "GuiObject" then
 						table.insert(guiObjects, child)
 					end
