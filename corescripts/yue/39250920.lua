@@ -162,19 +162,18 @@ setChatNotificationTone = function(gui, purpose, tone)
 end
 local createMessageDialog
 createMessageDialog = function()
-	messageDialog = Instance.new("Frame")
-	messageDialog.Name = "DialogScriptMessage"
-	messageDialog.Style = Enum.FrameStyle.RobloxRound
-	messageDialog.Visible = false
-	local text = Instance.new("TextLabel")
-	text.Name = "Text"
-	text.Position = UDim2.new(0, 0, 0, -1)
-	text.Size = UDim2.new(1, 0, 1, 0)
-	text.FontSize = Enum.FontSize.Size14
-	text.BackgroundTransparency = 1
-	text.TextColor3 = Color3.new(1, 1, 1)
-	text.RobloxLocked = true
-	text.Parent = messageDialog
+	messageDialog = New("Frame", "DialogScriptMessage", {
+		Style = Enum.FrameStyle.RobloxRound,
+		Visible = false,
+		New("TextLabel", "Text", {
+			Position = UDim2.new(0, 0, 0, -1),
+			Size = UDim2.new(1, 0, 1, 0),
+			FontSize = Enum.FontSize.Size14,
+			BackgroundTransparency = 1,
+			TextColor3 = Color3.new(1, 1, 1),
+			RobloxLocked = true
+		})
+	})
 end
 local showMessage
 showMessage = function(msg, size)
@@ -184,6 +183,7 @@ showMessage = function(msg, size)
 	messageDialog.Visible = true
 	wait(2)
 	messageDialog.Visible = false
+	return messageDialog
 end
 local variableDelay
 variableDelay = function(str)
@@ -261,6 +261,7 @@ renewKillswitch = function(dialog)
 	currentAbortDialogScript.archivable = false
 	currentAbortDialogScript.Disabled = false
 	currentAbortDialogScript.Parent = dialog
+	return currentAbortDialogScript
 end
 local presentDialogChoices
 presentDialogChoices = function(talkingPart, dialogChoices)
@@ -326,11 +327,35 @@ selectChoice = function(choice)
 end
 local newChoice
 newChoice = function(numberText)
-	local frame = Instance.new("TextButton")
-	frame.BackgroundColor3 = Color3.new(0, 0, 179 / 255)
-	frame.AutoButtonColor = false
-	frame.BorderSizePixel = 0
-	frame.Text = ""
+	local frame = New("TextButton", {
+		BackgroundColor3 = Color3.new(0, 0, 179 / 255),
+		AutoButtonColor = false,
+		BorderSizePixel = 0,
+		Text = "",
+		RobloxLocked = true,
+		New("TextLabel", "Number", {
+			TextColor3 = Color3.new(127 / 255, 212 / 255, 255 / 255),
+			Text = numberText,
+			FontSize = Enum.FontSize.Size14,
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 4, 0, 2),
+			Size = UDim2.new(0, 20, 0, 24),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top,
+			RobloxLocked = true
+		}),
+		New("TextLabel", "UserPrompt", {
+			BackgroundTransparency = 1,
+			TextColor3 = Color3.new(1, 1, 1),
+			FontSize = Enum.FontSize.Size14,
+			Position = UDim2.new(0, 28, 0, 2),
+			Size = UDim2.new(1, -32, 1, -4),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top,
+			TextWrap = true,
+			RobloxLocked = true
+		})
+	})
 	frame.MouseEnter:connect(function()
 		return highlightColor(frame, currentTone())
 	end)
@@ -340,31 +365,6 @@ newChoice = function(numberText)
 	frame.MouseButton1Click:connect(function()
 		return selectChoice(frame)
 	end)
-	frame.RobloxLocked = true
-	local number = Instance.new("TextLabel")
-	number.Name = "Number"
-	number.TextColor3 = Color3.new(127 / 255, 212 / 255, 255 / 255)
-	number.Text = numberText
-	number.FontSize = Enum.FontSize.Size14
-	number.BackgroundTransparency = 1
-	number.Position = UDim2.new(0, 4, 0, 2)
-	number.Size = UDim2.new(0, 20, 0, 24)
-	number.TextXAlignment = Enum.TextXAlignment.Left
-	number.TextYAlignment = Enum.TextYAlignment.Top
-	number.RobloxLocked = true
-	number.Parent = frame
-	local prompt = Instance.new("TextLabel")
-	prompt.Name = "UserPrompt"
-	prompt.BackgroundTransparency = 1
-	prompt.TextColor3 = Color3.new(1, 1, 1)
-	prompt.FontSize = Enum.FontSize.Size14
-	prompt.Position = UDim2.new(0, 28, 0, 2)
-	prompt.Size = UDim2.new(1, -32, 1, -4)
-	prompt.TextXAlignment = Enum.TextXAlignment.Left
-	prompt.TextYAlignment = Enum.TextYAlignment.Top
-	prompt.TextWrap = true
-	prompt.RobloxLocked = true
-	prompt.Parent = frame
 	return frame
 end
 local initialize
@@ -376,19 +376,18 @@ initialize = function(parent)
 	lastChoice = newChoice("5)")
 	lastChoice.UserPrompt.Text = "Goodbye!"
 	lastChoice.Size = UDim2.new(1, 0, 0, 28)
-	mainFrame = Instance.new("Frame")
-	mainFrame.Name = "UserDialogArea"
-	mainFrame.Size = UDim2.new(0, 350, 0, 200)
-	mainFrame.Style = Enum.FrameStyle.ChatBlue
-	mainFrame.Visible = false
-	local imageLabel = Instance.new("ImageLabel")
-	imageLabel.Name = "Tail"
-	imageLabel.Size = UDim2.new(0, 62, 0, 53)
-	imageLabel.Position = UDim2.new(1, 8, 0.25)
-	imageLabel.Image = "rbxasset://textures/chatBubble_botBlue_tailRight.png"
-	imageLabel.BackgroundTransparency = 1
-	imageLabel.RobloxLocked = true
-	imageLabel.Parent = mainFrame
+	mainFrame = New("Frame", "UserDialogArea", {
+		Size = UDim2.new(0, 350, 0, 200),
+		Style = Enum.FrameStyle.ChatBlue,
+		Visible = false,
+		New("ImageLabel", "Tail", {
+			Size = UDim2.new(0, 62, 0, 53),
+			Position = UDim2.new(1, 8, 0.25),
+			Image = "rbxasset://textures/chatBubble_botBlue_tailRight.png",
+			BackgroundTransparency = 1,
+			RobloxLocked = true
+		})
+	})
 	for _, obj in pairs(choices) do
 		obj.RobloxLocked = true
 		obj.Parent = mainFrame
@@ -515,13 +514,13 @@ onLoad = function()
 	messageDialog.RobloxLocked = true
 	messageDialog.Parent = gui
 	waitForChild(gui, "BottomLeftControl")
-	local frame = Instance.new("Frame")
-	frame.Name = "DialogFrame"
-	frame.Position = UDim2.new(0, 0, 0, 0)
-	frame.Size = UDim2.new(0, 0, 0, 0)
-	frame.BackgroundTransparency = 1
-	frame.RobloxLocked = true
-	frame.Parent = gui.BottomLeftControl
+	local frame = New("Frame", "DialogFrame", {
+		Position = UDim2.new(0, 0, 0, 0),
+		Size = UDim2.new(0, 0, 0, 0),
+		BackgroundTransparency = 1,
+		RobloxLocked = true,
+		Parent = gui.BottomLeftControl
+	})
 	initialize(frame)
 	game.CollectionService.ItemAdded:connect(function(obj)
 		if obj:IsA("Dialog") then

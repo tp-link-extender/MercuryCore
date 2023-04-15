@@ -12,11 +12,11 @@ try
 scriptContext\AddCoreScript 60595695, scriptContext, "/Libraries/LibraryRegistration/LibraryRegistration"
 
 waitForChild = (instance, name) ->
-	while not instance\FindFirstChild name
+	until instance\FindFirstChild name
 		instance.ChildAdded\wait!
 
 -- waitForProperty = (instance, property) ->
--- 	while not instance[property]
+-- 	until instance[property]
 -- 		instance.Changed\wait!
 
 -- Responsible for tracking logging items

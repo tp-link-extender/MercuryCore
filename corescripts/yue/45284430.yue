@@ -114,7 +114,7 @@ setSliderPos = (newAbsPosX, slider, sliderPosition, bar, steps) ->
 	relativePosX = math.min 1, math.max 0, (newAbsPosX - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
 	wholeNum, remainder = math.modf relativePosX * newStep
 	if remainder > 0.5
-		wholeNum = wholeNum + 1
+		wholeNum += 1
 
 	relativePosX = wholeNum / newStep
 
@@ -350,7 +350,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 				obj.TextColor3 = Color3.new 1, 1, 1
 				obj.BackgroundTransparency = 1
 
-				childNum = childNum + 1
+				childNum += 1
 
 	toggleVisibility = ->
 		dropDownSelected = not dropDownSelected
@@ -381,7 +381,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 					else
 						obj.Font = Enum.Font.Arial
 
-					childNum = childNum + 1
+					childNum += 1
 
 		if not text
 			dropDownMenu.Text = "Choose One"
@@ -397,7 +397,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 
 	scrollDown = ->
 		if scrollBarPosition + dropDownItemCount <= itemCount
-			scrollBarPosition = scrollBarPosition + 1
+			scrollBarPosition += 1
 			updateScroll!
 			return true
 
@@ -405,7 +405,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 
 	scrollUp = ->
 		if scrollBarPosition > 1
-			scrollBarPosition = scrollBarPosition - 1
+			scrollBarPosition -= 1
 			updateScroll!
 			return true
 
@@ -578,7 +578,7 @@ layoutGuiObjectsHelper = (frame, guiObjects, settingsTable) ->
 					child.TextBounds.Y + settingsTable[settingsTableIndex]
 				)
 
-				while not child.TextFits
+				until child.TextFits
 					child.Size = UDim2.new child.Size.X.Scale, child.Size.X.Offset, 0, child.AbsoluteSize.Y + 1
 
 				pixelsRemaining -= child.AbsoluteSize.Y
@@ -820,25 +820,27 @@ t.CreateTrueScrollingFrame = ->
 			upChildren[i].BackgroundTransparency = 0.5
 
 	scrollDownButton = scrollUpButton\clone!
-	scrollDownButton.Name = "ScrollDownButton"
-	scrollDownButton.Position = UDim2.new 0, 0, 1, -18
-	downChildren = scrollDownButton\GetChildren!
-	for i = 1, #downChildren
-		downChildren[i].Position = UDim2.new 0, 3 + (i - 1), 0.5, -2 + (i - 1)
 
-	scrollDownButton.MouseEnter\connect ->
-		scrollDownButton.BackgroundTransparency = 0.1
-		downChildren = scrollDownButton\GetChildren!
+	with scrollDownButton
+		.Name = "ScrollDownButton"
+		.Position = UDim2.new 0, 0, 1, -18
+		downChildren = \GetChildren!
 		for i = 1, #downChildren
-			downChildren[i].BackgroundTransparency = 0.1
+			downChildren[i].Position = UDim2.new 0, 3 + (i - 1), 0.5, -2 + (i - 1)
 
-	scrollDownButton.MouseLeave\connect ->
-		scrollDownButton.BackgroundTransparency = 0.5
-		downChildren = scrollDownButton\GetChildren!
-		for i = 1, #downChildren
-			downChildren[i].BackgroundTransparency = 0.5
+		.MouseEnter\connect ->
+			.BackgroundTransparency = 0.1
+			downChildren = \GetChildren!
+			for i = 1, #downChildren
+				downChildren[i].BackgroundTransparency = 0.1
 
-	scrollDownButton.Parent = controlFrame
+		.MouseLeave\connect ->
+			.BackgroundTransparency = 0.5
+			downChildren = \GetChildren!
+			for i = 1, #downChildren
+				downChildren[i].BackgroundTransparency = 0.5
+
+		.Parent = controlFrame
 
 	newNub = scrollNub\clone!
 	newNub.Position = UDim2.new 0.5, -5, 0.5, -2
@@ -1072,10 +1074,10 @@ t.CreateTrueScrollingFrame = ->
 				break if mouseYPos and mouseYPos < (scrollbar.AbsolutePosition.y + scrollbar.AbsoluteSize.x)
 				break if not scrollDownButton.Active
 
-				if tick! - t > 5
-					w = 0
+				w = if tick! - t > 5
+					0
 				elseif tick! - t > 2
-					w = 0.06
+					0.06
 
 				wait w
 
@@ -1242,7 +1244,7 @@ t.CreateTrueScrollingFrame = ->
 			button.Parent = frame
 			buttonObjs[buttonNum] = button
 
-			buttonNum = buttonNum + 1
+			buttonNum += 1
 		numButtons = buttonNum - 1
 
 		if numButtons == 1
@@ -1263,7 +1265,7 @@ t.CreateTrueScrollingFrame = ->
 				buttonObjs[buttonNum].Position =
 					UDim2.new(spacing * buttonNum + (buttonNum - 1) * buttonSize, 0, yPos.Scale, yPos.Offset)
 				buttonObjs[buttonNum].Size = UDim2.new(buttonSize, 0, ySize.Scale, ySize.Offset)
-				buttonNum = buttonNum + 1
+				buttonNum += 1
 
 	end
 
@@ -1272,7 +1274,7 @@ t.CreateTrueScrollingFrame = ->
 		relativePosX = math.min(1, math.max(0, (newAbsPosX - bar.AbsolutePosition.X) / bar.AbsoluteSize.X))
 		local wholeNum, remainder = math.modf(relativePosX * newStep)
 		if remainder > 0.5
-			wholeNum = wholeNum + 1
+			wholeNum += 1
 		relativePosX = wholeNum / newStep
 
 		result = math.ceil(relativePosX * newStep)
@@ -1522,7 +1524,7 @@ t.CreateTrueScrollingFrame = ->
 					obj.TextColor3 = Color3.new 1, 1, 1
 					obj.BackgroundTransparency = 1
 
-					childNum = childNum + 1
+					childNum += 1
 
 
 		toggleVisibility = function()
@@ -1555,7 +1557,7 @@ t.CreateTrueScrollingFrame = ->
 						else
 							obj.Font = Enum.Font.Arial
 
-						childNum = childNum + 1
+						childNum += 1
 
 
 
@@ -1576,14 +1578,14 @@ t.CreateTrueScrollingFrame = ->
 
 		scrollDown = !
 			if scrollBarPosition + dropDownItemCount <= itemCount
-				scrollBarPosition = scrollBarPosition + 1
+				scrollBarPosition += 1
 				updateScroll!
 				return true
 
 			return false
 		scrollUp = !
 			if scrollBarPosition > 1
-				scrollBarPosition = scrollBarPosition - 1
+				scrollBarPosition -= 1
 				updateScroll!
 				return true
 
@@ -1599,7 +1601,7 @@ t.CreateTrueScrollingFrame = ->
 			scrollUpButton.Position = UDim2.new(1, -11, (1 * 0.8) / ((dropDownItemCount + 1) * 0.8), 0)
 			scrollUpButton.MouseButton1Click\connect ->
 				scrollMouseCount += 1
-)
+
 			scrollUpButton.MouseLeave\connect ->
 				scrollMouseCount += 1
 )
@@ -1813,7 +1815,7 @@ t.CreateTrueScrollingFrame = ->
 						)
 
 
-					while not child.TextFits
+					until child.TextFits
 						child.Size = UDim2.new(child.Size.X.Scale, child.Size.X.Offset, 0, child.AbsoluteSize.Y + 1)
 
 					pixelsRemaining -= child.AbsoluteSize.Y
@@ -2607,20 +2609,20 @@ t.CreateTrueScrollingFrame = ->
 			pos = scrollPosition
 			--count up from current scroll position to fill out grid
 			while pos <= #guiObjects and pixelsBelowScrollbar < totalPixelsY
-				xCounter = xCounter + guiObjects[pos].AbsoluteSize.X
+				xCounter += guiObjects[pos].AbsoluteSize.X
 				--previous pos was the end of a row
 				if xCounter >= totalPixelsX
-					pixelsBelowScrollbar = pixelsBelowScrollbar + currentRowY
+					pixelsBelowScrollbar += currentRowY
 					currentRowY = 0
 					xCounter = guiObjects[pos].AbsoluteSize.X
 
 				if guiObjects[pos].AbsoluteSize.Y > currentRowY
 					currentRowY = guiObjects[pos].AbsoluteSize.Y
 
-				pos = pos + 1
+				pos += 1
 
 			--Count wherever current row left off
-			pixelsBelowScrollbar = pixelsBelowScrollbar + currentRowY
+			pixelsBelowScrollbar += currentRowY
 			currentRowY = 0
 
 			pos = scrollPosition - 1
@@ -2631,20 +2633,20 @@ t.CreateTrueScrollingFrame = ->
 
 			--count backwards from current scrollPosition to see if we can add more rows
 			while pixelsBelowScrollbar + currentRowY < totalPixelsY and pos >= 1
-				xCounter = xCounter + guiObjects[pos].AbsoluteSize.X
-				rowSizeCounter = rowSizeCounter + 1
+				xCounter += guiObjects[pos].AbsoluteSize.X
+				rowSizeCounter += 1
 				if xCounter >= totalPixelsX
 					rowSize = rowSizeCounter - 1
 					rowSizeCounter = 0
 					xCounter = guiObjects[pos].AbsoluteSize.X
 					if pixelsBelowScrollbar + currentRowY <= totalPixelsY
 						--It fits, so back up our scroll position
-						pixelsBelowScrollbar = pixelsBelowScrollbar + currentRowY
+						pixelsBelowScrollbar += currentRowY
 						if scrollPosition <= rowSize
 							scrollPosition = 1
 							break
 						else
-							scrollPosition = scrollPosition - rowSize
+							scrollPosition -= rowSize
 
 						currentRowY = 0
 					else
@@ -2656,7 +2658,7 @@ t.CreateTrueScrollingFrame = ->
 					currentRowY = guiObjects[pos].AbsoluteSize.Y
 
 
-				pos = pos - 1
+				pos -= 1
 
 
 			--Do check last time if pos = 0
@@ -2688,7 +2690,7 @@ t.CreateTrueScrollingFrame = ->
 						--print("Laying out " .. child.Name)
 						--GuiObject
 						if setRowSize
-							rowSizeCounter = rowSizeCounter + 1
+							rowSizeCounter += 1
 
 						if xCounter + child.AbsoluteSize.X >= totalPixelsX
 							if setRowSize
@@ -2696,7 +2698,7 @@ t.CreateTrueScrollingFrame = ->
 								setRowSize = false
 
 							xCounter = 0
-							pixelsRemainingY = pixelsRemainingY - child.AbsoluteSize.Y
+							pixelsRemainingY -= child.AbsoluteSize.Y
 
 						child.Position = UDim2.new(
 							child.Position.X.Scale,
@@ -2704,10 +2706,10 @@ t.CreateTrueScrollingFrame = ->
 							0,
 							totalPixelsY - pixelsRemainingY + yOffset
 						)
-						xCounter = xCounter + child.AbsoluteSize.X
+						xCounter += child.AbsoluteSize.X
 						child.Visible = ((pixelsRemainingY - child.AbsoluteSize.Y) >= 0)
 						if child.Visible
-							howManyDisplayed = howManyDisplayed + 1
+							howManyDisplayed += 1
 
 						lastChildSize = child.AbsoluteSize
 
@@ -2762,23 +2764,23 @@ t.CreateTrueScrollingFrame = ->
 			pos = #guiObjects
 			while pixelsBelowScrollbar < totalPixels and pos >= 1
 				if pos >= scrollPosition
-					pixelsBelowScrollbar = pixelsBelowScrollbar + guiObjects[pos].AbsoluteSize.Y
+					pixelsBelowScrollbar += guiObjects[pos].AbsoluteSize.Y
 				else
 					if pixelsBelowScrollbar + guiObjects[pos].AbsoluteSize.Y <= totalPixels
 						--It fits, so back up our scroll position
-						pixelsBelowScrollbar = pixelsBelowScrollbar + guiObjects[pos].AbsoluteSize.Y
+						pixelsBelowScrollbar += guiObjects[pos].AbsoluteSize.Y
 						if scrollPosition <= 1
 							scrollPosition = 1
 							break
 						else
 							--local ("Backing up ScrollPosition from -- " ..scrollPosition)
-							scrollPosition = scrollPosition - 1
+							scrollPosition -= 1
 
 					else
 						break
 
 
-				pos = pos - 1
+				pos -= 1
 
 
 			pos = scrollPosition
@@ -2798,7 +2800,7 @@ t.CreateTrueScrollingFrame = ->
 						pixelsRemaining -= child.AbsoluteSize.Y
 						if pixelsRemaining >= 0
 							child.Visible = true
-							howManyDisplayed = howManyDisplayed + 1
+							howManyDisplayed += 1
 						else
 							child.Visible = false
 
@@ -2816,7 +2818,7 @@ t.CreateTrueScrollingFrame = ->
 			if children
 				for _, child in ipairs(children)
 					if child\IsA "GuiObject"
-						guiObjects = guiObjects + 1
+						guiObjects += 1
 
 
 
@@ -2871,14 +2873,14 @@ t.CreateTrueScrollingFrame = ->
 			reentrancyGuard = false
 
 		doScrollUp = function()
-			scrollPosition = scrollPosition - rowSize
+			scrollPosition -= rowSize
 			if scrollPosition < 1
 				scrollPosition = 1
 
 			recalculate(nil)
 
 		doScrollDown = function()
-			scrollPosition = scrollPosition + rowSize
+			scrollPosition += rowSize
 			recalculate(nil)
 
 		scrollUp = function(mouseYPos)
@@ -2958,19 +2960,16 @@ t.CreateTrueScrollingFrame = ->
 
 					dragAbsSize = scrollDrag.AbsoluteSize.y
 					barAbsOne = barAbsPos + barAbsSize - dragAbsSize
-					y = y - mouseOffset
+					y -= mouseOffset
 					y = y < barAbsPos and barAbsPos or y > barAbsOne and barAbsOne or y
-					y = y - barAbsPos
+					y -= barAbsPos
 
 					guiObjects = 0
 					children = frame\GetChildren!
 					if children
 						for _, child in ipairs(children)
 							if child\IsA "GuiObject"
-								guiObjects = guiObjects + 1
-
-
-
+								guiObjects += 1
 
 					doublePercent = y / (barAbsSize - dragAbsSize)
 					rowDiff = rowSize
@@ -2979,10 +2978,8 @@ t.CreateTrueScrollingFrame = ->
 					if newScrollPosition < scrollPosition
 						rowDiff = -rowDiff
 
-
 					if newScrollPosition < 1
 						newScrollPosition = 1
-
 
 					scrollPosition = newScrollPosition
 					recalculate(nil)
@@ -3495,7 +3492,7 @@ t.CreateTrueScrollingFrame = ->
 					imageLabel.Position = UDim2.new 0.5 - (x / y) / 2, 0, 0, 0)
 
 
-			size = size + 50
+			size += 50
 			frame.Size = UDim2.new 0, size, 0, size)
 			frame.Position = UDim2.new 0.5, -size / 2, 0.5, -size / 2)
 
@@ -3868,7 +3865,7 @@ t.CreateTrueScrollingFrame = ->
 				numSkipped = 0
 				for i = 1, #sets
 					if not showAdminCategories and sets[i].Name == "Beta"
-						numSkipped = numSkipped + 1
+						numSkipped += 1
 					else
 						setButtons[i - numSkipped] =
 							buildSetButton(sets[i].Name, sets[i].CategoryId, sets[i].ImageAssetId, i - numSkipped, #sets)
@@ -4068,10 +4065,10 @@ t.CreateTrueScrollingFrame = ->
 				y = 0
 				for i = 1, #insertButtons
 					insertButtons[i].Position = UDim2.new 0, buttonWidth * x, 0, buttonHeight * y)
-					x = x + 1
+					x += 1
 					if x >= columns
 						x = 0
-						y = y + 1
+						y += 1
 
 
 
@@ -4125,7 +4122,7 @@ t.CreateTrueScrollingFrame = ->
 					insertButtons[arrayPosition], buttonCon = buildInsertButton()
 					table.insert(insertButtonCons, buttonCon)
 					insertButtons[arrayPosition].Parent = setGui.SetPanel.ItemsFrame
-					arrayPosition = arrayPosition + 1
+					arrayPosition += 1
 
 				realignButtonGrid(columns)
 
@@ -4277,7 +4274,7 @@ t.CreateTrueScrollingFrame = ->
 						selectSet(button, button.Text, userCategoryButtons[i].SetId.Value, 0)
 		)
 
-					currRow = currRow + 1
+					currRow += 1
 
 
 				buttons = setGui.SetPanel.Sets.SetsLists\GetChildren!
@@ -4988,7 +4985,7 @@ t.CreateTrueScrollingFrame = ->
 				widgetContainer.Size = UDim2.new 0, dragBar.AbsoluteSize.X, 0, 400)
 
 		if position
-			widgetContainer.Position = position + UDim2.new 0, 0, 0, 20)
+			widgetContainer.Position += UDim2.new 0, 0, 0, 20)
 
 		local frame, control, verticalDragger = nil
 		if scrollable
