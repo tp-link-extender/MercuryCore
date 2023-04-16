@@ -1,7 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import { prisma } from "$lib/server/prisma"
-import cuid2 from "@paralleldrive/cuid2"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -78,16 +77,14 @@ export const actions = {
 				const expiry = inviteExpiry ? new Date(inviteExpiry) : null
 
 				if (
-					((inviteExpiryEnabled && expiry?.getTime()) || 0) <
+					inviteExpiryEnabled && ((expiry?.getTime()) || 0) <
 					new Date().getTime()
 				)
 					return formError(form, ["inviteExpiry"], ["Invalid date"])
 
 				await prisma.regkey.create({
 					data: {
-						key: customInviteEnabled
-							? customInvite
-							: cuid2.createId(),
+						key: customInviteEnabled ? customInvite : undefined,
 						usesLeft: inviteUses,
 						expiry: inviteExpiryEnabled ? expiry : null,
 						creator: {
