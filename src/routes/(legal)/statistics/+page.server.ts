@@ -13,6 +13,15 @@ export const load = () => ({
 		{},
 		true
 	),
+	followerships: roQuery(
+		"friends",
+		"RETURN SIZE((:User) -[:follows]-> (:User))",
+		{},
+		true
+	),
+	statusPosts: prisma.post.count(),
+	forumPosts: prisma.forumPost.count(),
+	forumReplies: prisma.forumReply.count(),
 	currency: prisma.authUser.aggregate({
 		_sum: {
 			currency: true,
