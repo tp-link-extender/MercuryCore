@@ -93,7 +93,7 @@ contextButtonMoved = (button, inputObject, actionName) ->
 
 contextButtonUp = (button, inputObject, actionName) ->
 	button.Image = ContextUpImage
-	if inputObject.UserInputType == Enum.UserInputType.Touch and 
+	if inputObject.UserInputType == Enum.UserInputType.Touch and
 		inputObject.UserInputState == Enum.UserInputState.End
 
 		contextActionService\CallFunction actionName, Enum.UserInputState.End, inputObject
@@ -104,7 +104,7 @@ isSmallScreenDevice = ->
 createNewButton = (actionName, functionInfoTable) ->
 	contextButton = New "ImageButton", "ContextActionButton"
 		BackgroundTransparency: 1
-		Size: UDim2.new if isSmallScreenDevice! 
+		Size: UDim2.new if isSmallScreenDevice!
 			0, 90, 0, 90
 		else
 			0, 70, 0, 70

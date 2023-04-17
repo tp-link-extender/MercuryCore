@@ -280,7 +280,7 @@ presentDialogChoices = (talkingPart, dialogChoices) ->
 	mainFrame.Visible = true
 
 selectChoice = (choice) ->
-	renewKillswitch currentConversationDialog 
+	renewKillswitch currentConversationDialog
 
 	--First hide the Gui
 	mainFrame.Visible = false
@@ -464,10 +464,10 @@ addDialog = (dialog) ->
 					addDialog dialog
 
 fetchScripts = ->
-	model = game\GetService("InsertService")\LoadAsset 39226062 
+	model = game\GetService("InsertService")\LoadAsset 39226062
 	if type(model) == "string" -- load failed, lets try again
 		wait 0.1
-		model = game\GetService("InsertService")\LoadAsset 39226062 
+		model = game\GetService("InsertService")\LoadAsset 39226062
 	return if type(model) == "string" -- not going to work, lets bail
 
 	waitForChild model, "TimeoutScript"

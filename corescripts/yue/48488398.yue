@@ -3,7 +3,7 @@ waitForProperty = (instance, property) ->
 		instance.Changed\wait!
 
 waitForChild = (instance, name) ->
-	until instance\FindFirstChild name 
+	until instance\FindFirstChild name
 		instance.ChildAdded\wait!
 
 waitForProperty game.Players, "LocalPlayer"
@@ -111,7 +111,7 @@ game.Players.FriendRequestEvent\connect (fromPlayer, toPlayer, event) ->
 				"From #{fromPlayer.Name}",
 				"http://www.roblox.com/thumbs/avatar.ashx?userId=#{fromPlayer.userId}&x=48&y=48",
 				8,
-				-> makeFriend fromPlayer, toPlayer 
+				-> makeFriend fromPlayer, toPlayer
 			)
 		elseif event == Enum.FriendRequestEvent.Accept
 			game\GetService("GuiService")\SendNotification(
@@ -197,7 +197,7 @@ if teleportEnabled
 			yesCon?\disconnect!
 			noCon?\disconnect!
 
-			game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup" 
+			game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup"
 			popup\TweenSize(
 				UDim2.new(0, 0, 0, 0),
 				Enum.EasingDirection.Out,
@@ -216,7 +216,7 @@ if teleportEnabled
 				popup.PopupText.Text = err
 				local clickCon = popup.OKButton.MouseButton1Click\connect ->
 					clickCon?\disconnect!
-					game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup" 
+					game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup"
 					popup\TweenSize(
 						UDim2.new(0, 0, 0, 0),
 						Enum.EasingDirection.Out,
