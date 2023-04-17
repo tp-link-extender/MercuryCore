@@ -706,7 +706,7 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 --[[
-A 'Signal' object identical to the internal RBXScriptSignal object in it's public API and semantics. This function 
+A 'Signal' object identical to the internal RBXScriptSignal object in it's public API and semantics. This function
 can be used to create "custom events" for user-made code.
 API:
 Method :connect( function handler )
@@ -730,7 +730,7 @@ Method :fire( ... )
 Method :wait()
 	Arguments:   None
 	Returns:     The arguments given to fire
-	Description: This call blocks until 
+	Description: This call blocks until
 ]]
 
 function t.CreateSignal()
@@ -802,8 +802,8 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 --[[
 A "Create" function for easy creation of Roblox instances. The function accepts a string which is the classname of
-the object to be created. The function then returns another function which either accepts accepts no arguments, in 
-which case it simply creates an object of the given type, or a table argument that may contain several types of data, 
+the object to be created. The function then returns another function which either accepts accepts no arguments, in
+which case it simply creates an object of the given type, or a table argument that may contain several types of data,
 in which case it mutates the object in varying ways depending on the nature of the aggregate data. These are the
 type of data and what operation each will perform:
 1) A string key mapping to some value:
@@ -817,18 +817,18 @@ type of data and what operation each will perform:
       need for temporary variables to store references to those objects.
 
 3) A key which is a value returned from Create.Event( eventname ), and a value which is a function function
-      The Create.E( string ) function provides a limited way to connect to signals inside of a Create hierarchy 
-      for those who really want such a functionality. The name of the event whose name is passed to 
+      The Create.E( string ) function provides a limited way to connect to signals inside of a Create hierarchy
+      for those who really want such a functionality. The name of the event whose name is passed to
       Create.E( string )
 
 4) A key which is the Create function itself, and a value which is a function
-      The function will be run with the argument of the object itself after all other initialization of the object is 
-      done by create. This provides a way to do arbitrary things involving the object from withing the create 
-      hierarchy. 
+      The function will be run with the argument of the object itself after all other initialization of the object is
+      done by create. This provides a way to do arbitrary things involving the object from withing the create
+      hierarchy.
       Note: This function is called SYNCHRONOUSLY, that means that you should only so initialization in
-      it, not stuff which requires waiting, as the Create call will block until it returns. While waiting in the 
+      it, not stuff which requires waiting, as the Create call will block until it returns. While waiting in the
       constructor callback function is possible, it is probably not a good design choice.
-      Note: Since the constructor function is called after all other initialization, a Create block cannot have two 
+      Note: Since the constructor function is called after all other initialization, a Create block cannot have two
       constructor functions, as it would not be possible to call both of them last, also, this would be unnecessary.
 
 

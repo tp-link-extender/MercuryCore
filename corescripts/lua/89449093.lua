@@ -327,19 +327,19 @@ function trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
-function splitByWhitespace(text)
-	if type(text) ~= "string" then
-		return nil
-	end
+-- function splitByWhitespace(text)
+-- 	if type(text) ~= "string" then
+-- 		return nil
+-- 	end
 
-	local terms = {}
-	for token in string.gmatch(text, "[^%s]+") do
-		if string.len(token) > 0 then
-			table.insert(terms, token)
-		end
-	end
-	return terms
-end
+-- 	local terms = {}
+-- 	for token in string.gmatch(text, "[^%s]+") do
+-- 		if string.len(token) > 0 then
+-- 			table.insert(terms, token)
+-- 		end
+-- 	end
+-- 	return terms
+-- end
 
 function resetSearchBoxGui()
 	resetButton.Visible = false

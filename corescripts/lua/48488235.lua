@@ -58,7 +58,7 @@
 	majortom4321 = 1,
 	malcomso = 1,
 	maxvee = 1,
-	midwinterfires = 1, 
+	midwinterfires = 1,
 	mistersquirrel = 1,
 	morganic = 1,
 	motornerve = 1,
@@ -156,8 +156,8 @@ local BASE_TWEEN = 0.25
 local MOUSE_DRAG_DISTANCE = 15
 
 --[[
-	Generic object Create function, which I am using to create Gui's 
-	Thanks to Stravant! 
+	Generic object Create function, which I am using to create Gui's
+	Thanks to Stravant!
 --]]
 local Obj = {}
 function Obj.Create(guiType)
@@ -1257,7 +1257,7 @@ local function GetFriendStatus(player)
 end
 
 --[[
-	when friend button is clicked, tries to take appropriate action, 
+	when friend button is clicked, tries to take appropriate action,
 	based on current friend status with SelectedPlayer
 --]]
 function OnFriendButtonSelect()
@@ -1973,7 +1973,7 @@ function UpdateScrollPosition()
 		UDim2.new(0, 0, adjustedLength - (adjustedLength * ((ListFrame.Position.Y.Scale - minPos) / scrollLength)), 0)
 end
 
---[[ 
+--[[
 	WARNING:this is in a working state, but uses massive hacks
 	revize when global input is available
 	Manages scrolling of the playerlist on mouse drag
@@ -2170,7 +2170,7 @@ function ChangeHeaderName(nname)
 	UpdateHeaderNameSize()
 end
 
---[[ 
+--[[
 	Will fit the player's name to the bounds of the header
 	called on resize of the window and playedr name change events
 	HACK: cannot use 'Textscaled' due to unable to find text bounds when scaled
