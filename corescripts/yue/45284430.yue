@@ -2027,8 +2027,8 @@ t.CreateImageTutorialPage = (name, imageAsset, x, y, skipTutorialFunc, giveDoneB
 	imageLabel = New "ImageLabel"
 		BackgroundTransparency: 1
 		Image: imageAsset
-		Size: UDim2.new 0, x, 0, y 
-		Position: UDim2.new 0.5, -x / 2, 0.5, -y / 2 
+		Size: UDim2.new 0, x, 0, y
+		Position: UDim2.new 0.5, -x / 2, 0.5, -y / 2
 
 	handleResize = (minSize, maxSize) ->
 		size = binaryShrink minSize, maxSize, (size) ->
@@ -2151,7 +2151,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 		-- for terrain stamping
 		local currTerrainDropDownFrame
-		terrainShapes = 
+		terrainShapes =
 			* "Block"
 			* "Vertical Ramp"
 			* "Corner Wedge"
@@ -2203,13 +2203,13 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				waterTypeChangedEvent\Fire { waterForce, waterForceDirection }
 
 
-			waterForceDirectionDropDown, forceWaterDirectionSelection = t.CreateDropDownMenu waterForceDirections, waterForceDirectionSelectedFunc 
+			waterForceDirectionDropDown, forceWaterDirectionSelection = t.CreateDropDownMenu waterForceDirections, waterForceDirectionSelectedFunc
 			waterForceDirectionDropDown.Size = UDim2.new 1, 0, 0, 25
 			waterForceDirectionDropDown.Position = UDim2.new 0, 0, 1, 3
 			forceWaterDirectionSelection "NegX"
 			waterForceDirectionDropDown.Parent = waterForceDirLabel
 
-			waterForceDropDown, forceWaterForceSelection = t.CreateDropDownMenu waterForces, waterForceSelectedFunc 
+			waterForceDropDown, forceWaterForceSelection = t.CreateDropDownMenu waterForces, waterForceSelectedFunc
 			forceWaterForceSelection "None"
 			waterForceDropDown.Size = UDim2.new 1, 0, 0, 25
 			waterForceDropDown.Position = UDim2.new 0, 0, 1, 3
@@ -2227,14 +2227,14 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				Active: true
 				BackgroundTransparency: 1
 				Position: position or UDim2.new 0.2, 29, 0.1, 24
-				Size: size or UDim2.new 0.6, -58, 0.64, 0 
+				Size: size or UDim2.new 0.6, -58, 0.64, 0
 				Style: Enum.FrameStyle.RobloxRound
 				ZIndex: 6
 				Parent: setGui
 
 				* New "TextButton", "CancelButton"
-					Position: UDim2.new 1, -32, 0, -2 
-					Size: UDim2.new 0, 34, 0, 34 
+					Position: UDim2.new 1, -32, 0, -2
+					Size: UDim2.new 0, 34, 0, 34
 					Style: Enum.ButtonStyle.RobloxButtonDefault
 					ZIndex: 6
 					Text: ""
@@ -2249,51 +2249,51 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 				* New "Frame", "ItemPreview"
 					BackgroundTransparency: 1
-					Position: UDim2.new 0.8, 5, 0.085, 0 
-					Size: UDim2.new 0.21, 0, 0.9, 0 
+					Position: UDim2.new 0.8, 5, 0.085, 0
+					Size: UDim2.new 0.21, 0, 0.9, 0
 					ZIndex: 6
 
 					* New "ImageLabel", "LargePreview"
 						BackgroundTransparency: 1
 						Image: ""
-						Size: UDim2.new 1, 0, 0, 170 
+						Size: UDim2.new 1, 0, 0, 170
 						ZIndex: 6
 
 					* New "Frame", "TextPanel"
 						BackgroundTransparency: 1
-						Position: UDim2.new 0, 0, 0.45, 0 
-						Size: UDim2.new 1, 0, 0.55, 0 
+						Position: UDim2.new 0, 0, 0.45, 0
+						Size: UDim2.new 1, 0, 0.55, 0
 						ZIndex: 6
 
 						* New "TextLabel", "RolloverText"
 							BackgroundTransparency: 1
-							Size: UDim2.new 1, 0, 0, 48 
+							Size: UDim2.new 1, 0, 0, 48
 							ZIndex: 6
 							Font: Enum.Font.ArialBold
 							FontSize: Enum.FontSize.Size24
 							Text: ""
-							TextColor3: Color3.new 1, 1, 1 
+							TextColor3: Color3.new 1, 1, 1
 							TextWrap: true
 							TextXAlignment: Enum.TextXAlignment.Left
 							TextYAlignment: Enum.TextYAlignment.Top
 
 				* New "Frame", "Sets"
 					BackgroundTransparency: 1
-					Position: UDim2.new 0, 0, 0, 5 
-					Size: UDim2.new 0.23, 0, 1, -5 
+					Position: UDim2.new 0, 0, 0, 5
+					Size: UDim2.new 0.23, 0, 1, -5
 					ZIndex: 6
 
 					* New "Frame", "Line"
-						BackgroundColor3: Color3.new 1, 1, 1 
+						BackgroundColor3: Color3.new 1, 1, 1
 						BackgroundTransparency: 0.7
 						BorderSizePixel: 0
-						Position: UDim2.new 1, -3, 0.06, 0 
-						Size: UDim2.new 0, 3, 0.9, 0 
+						Position: UDim2.new 1, -3, 0.06, 0
+						Size: UDim2.new 0, 3, 0.9, 0
 						ZIndex: 6
 
 					* New "TextLabel", "SetsHeader"
 						BackgroundTransparency: 1
-						Size: UDim2.new 0, 47, 0, 24 
+						Size: UDim2.new 0, 47, 0, 24
 						ZIndex: 6
 						Font: Enum.Font.ArialBold
 						FontSize: Enum.FontSize.Size24
@@ -2304,8 +2304,8 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 			setsLists, controlFrame = t.CreateTrueScrollingFrame!
 			with setsLists
-				.Size = UDim2.new 1, -6, 0.94, 0 
-				.Position = UDim2.new 0, 0, 0.06, 0 
+				.Size = UDim2.new 1, -6, 0.94, 0
+				.Position = UDim2.new 0, 0, 0.06, 0
 				.BackgroundTransparency = 1
 				.Name = "SetsLists"
 				.ZIndex = 6
@@ -2321,7 +2321,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				BackgroundTransparency: 1
 				BackgroundColor3: Color3.new 1, 1, 1
 				BorderSizePixel: 0
-				Size: UDim2.new 1, -5, 0, 18 
+				Size: UDim2.new 1, -5, 0, 18
 				ZIndex: 6
 				Visible: false
 				Font: Enum.Font.Arial
@@ -2332,7 +2332,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 			setButton
 
 		buildSetButton = (name, setId, _, _, _) ->
-			button = createSetButton name 
+			button = createSetButton name
 			with button
 				.Text = name
 				.Name = "SetButton"
@@ -2355,7 +2355,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				if not showAdminCategories and sets[i].Name == "Beta"
 					numSkipped += 1
 				else
-					setButtons[i - numSkipped] = buildSetButton sets[i].Name, sets[i].CategoryId, sets[i].ImageAssetId, i - numSkipped, #sets 
+					setButtons[i - numSkipped] = buildSetButton sets[i].Name, sets[i].CategoryId, sets[i].ImageAssetId, i - numSkipped, #sets
 
 			setButtons
 
@@ -2385,22 +2385,22 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				* New "TextButton", "Button"
 					Text: ""
 					Style: Enum.ButtonStyle.RobloxButton
-					Position: UDim2.new 0.025, 0, 0.025, 0 
-					Size: UDim2.new 0.95, 0, 0.95, 0 
+					Position: UDim2.new 0.025, 0, 0.025, 0
+					Size: UDim2.new 0.95, 0, 0.95, 0
 					ZIndex: 6
 
 					* New "ImageLabel", "ButtonImage"
 						Image: ""
-						Position: UDim2.new 0, -7, 0, -7 
-						Size: UDim2.new 1, 14, 1, 14 
+						Position: UDim2.new 0, -7, 0, -7
+						Size: UDim2.new 1, 14, 1, 14
 						BackgroundTransparency: 1
 						ZIndex: 7
 
 			with insertAssetButtonExample.button.ButtonImage\clone!
 				.Name = "ConfigIcon"
 				.Visible = false
-				.Position = UDim2.new 1, -23, 1, -24 
-				.Size = UDim2.new 0, 16, 0, 16 
+				.Position = UDim2.new 1, -23, 1, -24
+				.Size = UDim2.new 0, 16, 0, 16
 				.Image = ""
 				.ZIndex = 6
 				.Parent = insertAssetButtonExample
@@ -2434,7 +2434,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				TextXAlignment: Enum.TextXAlignment.Left
 				BackgroundTransparency: 1
 				ZIndex: parent.ZIndex + 1
-				Size: UDim2.new 0, parent.Size.X.Offset - 2, 0, 16 
+				Size: UDim2.new 0, parent.Size.X.Offset - 2, 0, 16
 				Position: UDim2.new 0, 1, 0, 0
 
 			with dropDownTextButton
@@ -2452,24 +2452,24 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 					if .Parent and .Parent\IsA "GuiObject"
 						.Parent.Visible = false
 
-					selectTerrainShape terrainShapeMap[.Text] 
+					selectTerrainShape terrainShapeMap[.Text]
 
 			dropDownTextButton
 
 		createTerrainDropDownMenu = (zIndex) ->
 			dropDown = New "Frame", "TerrainDropDown"
 				BackgroundColor3: Color3.new 0, 0, 0
-				BorderColor3: Color3.new 1, 0, 0 
-				Size: UDim2.new 0, 200, 0, 0 
+				BorderColor3: Color3.new 1, 0, 0
+				Size: UDim2.new 0, 200, 0, 0
 				Visible: false
 				ZIndex: zIndex
 				Parent: setGui
 
 			for i = 1, #terrainShapes
-				shapeButton = createTerrainTypeButton terrainShapes[i], dropDown 
-				shapeButton.Position = UDim2.new 0, 1, 0, (i - 1) * shapeButton.Size.Y.Offset 
+				shapeButton = createTerrainTypeButton terrainShapes[i], dropDown
+				shapeButton.Position = UDim2.new 0, 1, 0, (i - 1) * shapeButton.Size.Y.Offset
 				shapeButton.Parent = dropDown
-				dropDown.Size = UDim2.new 0, 200, 0, dropDown.Size.Y.Offset + shapeButton.Size.Y.Offset 
+				dropDown.Size = UDim2.new 0, 200, 0, dropDown.Size.Y.Offset + shapeButton.Size.Y.Offset
 
 			dropDown.MouseLeave\connect ->
 				dropDown.Visible = false
@@ -2480,12 +2480,12 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				Image: "http://www.roblox.com/asset/?id=67581509"
 				BackgroundTransparency: 1
 				Size: UDim2.new 0, 16, 0, 16
-				Position: UDim2.new 1, -24, 0, 6 
+				Position: UDim2.new 1, -24, 0, 6
 				ZIndex: parent.ZIndex + 2
 				Parent: parent
 
 			if not setGui\FindFirstChild "TerrainDropDown"
-				createTerrainDropDownMenu 8 
+				createTerrainDropDownMenu 8
 
 			dropDownButton.MouseButton1Click\connect ->
 				setGui.TerrainDropDown.Visible = true
@@ -2498,14 +2498,14 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 			insertButton.Visible = true
 
 			if Data.Category[Data.CurrentCategory].SetName == "High Scalability"
-				createDropDownMenuButton insertButton 
+				createDropDownMenuButton insertButton
 
 			lastEnter = nil
 			mouseEnterCon = insertButton.MouseEnter\connect ->
 				lastEnter = insertButton
 				delay 0.1, ->
 					if lastEnter == insertButton
-						showLargePreview insertButton 
+						showLargePreview insertButton
 
 			insertButton, mouseEnterCon
 
@@ -2528,16 +2528,16 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 					delay 0, ->
 						game\GetService("ContentProvider")\Preload(SmallThumbnailUrl .. assetId)
 						insertFrame.Button.ButtonImage.Image = SmallThumbnailUrl .. assetId
-					 
+					
 				table.insert(
 					insertButtonCons,
 					insertFrame.Button.MouseButton1Click\connect ->
 						-- special case for water, show water selection gui
-						isWaterSelected = name == "Water" and 
+						isWaterSelected = name == "Water" and
 							(Data.Category[Data.CurrentCategory].SetName == "High Scalability")
 						waterGui.Visible = isWaterSelected
 						objectSelected name, if isWaterSelected
-							tonumber(assetId), nil 
+							tonumber(assetId), nil
 						else
 							tonumber assetId
 
@@ -2563,14 +2563,14 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				insertButtons[arrayPosition].Parent = setGui.SetPanel.ItemsFrame
 				arrayPosition += 1
 
-			realignButtonGrid columns 
+			realignButtonGrid columns
 
 			-- indexCopy = origArrayPos
 			for index = origArrayPos, arrayPosition
 				if insertButtons[index]
 					if contents[index]
 						-- we don't want water to have a drop down button
-						if contents[index].Name == "Water" and 
+						if contents[index].Name == "Water" and
 							Data.Category[Data.CurrentCategory].SetName == "High Scalability"
 							insertButtons[index]\FindFirstChild("DropDownButton", true)\Destroy!
 
@@ -2580,7 +2580,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 						else
 							contents[index].AssetId
 
-						setInsertButtonImageBehavior insertButtons[index], true, contents[index].Name, assetId 
+						setInsertButtonImageBehavior insertButtons[index], true, contents[index].Name, assetId
 					else break
 				else break
 
@@ -2590,7 +2590,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 			Data.Category[Data.CurrentCategory].Index = 0
 
 			rows = 7
-			columns = math.floor setGui.SetPanel.ItemsFrame.AbsoluteSize.X / buttonWidth 
+			columns = math.floor setGui.SetPanel.ItemsFrame.AbsoluteSize.X / buttonWidth
 
 			contents = Data.Category[Data.CurrentCategory].Contents
 			if contents
@@ -2607,7 +2607,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				insertButtons = {}
 
 				arrayPosition = 1
-				loadSectionOfItems setGui, rows, columns 
+				loadSectionOfItems setGui, rows, columns
 
 		selectSet = (button, setName, setId, _) ->
 			if button and Data.Category[Data.CurrentCategory]?
@@ -2627,7 +2627,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 		selectCategoryPage = (buttons, _) ->
 			if buttons ~= Data.CurrentCategory
 				if Data.CurrentCategory
-					for _, button in pairs Data.CurrentCategory 
+					for _, button in pairs Data.CurrentCategory
 						button.Visible = false
 
 				Data.CurrentCategory = buttons
@@ -2646,7 +2646,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 					)
 
 		selectCategory = (category) ->
-			selectCategoryPage category, 0 
+			selectCategoryPage category, 0
 
 		resetAllSetButtonSelection = ->
 			setButtons = setGui.SetPanel.Sets.SetsLists\GetChildren!
@@ -2662,12 +2662,12 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 			for i = 1, #userCategoryButtons do with button = userCategoryButtons[i]
 				.Visible = true
-				.Position = UDim2.new 0, 5, 0, currRow * .Size.Y.Offset 
+				.Position = UDim2.new 0, 5, 0, currRow * .Size.Y.Offset
 				.Parent = setGui.SetPanel.Sets.SetsLists
 
 				if i == 1 -- we will have this selected by default, so show it
 					.Selected = true
-					.BackgroundColor3 = Color3.new 0, 204 / 255, 0 
+					.BackgroundColor3 = Color3.new 0, 204 / 255, 0
 					.TextColor3 = Color3.new 0, 0, 0
 					.BackgroundTransparency = 0
 
@@ -2684,10 +2684,10 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				.MouseButton1Click\connect ->
 					resetAllSetButtonSelection!
 					.Selected = not .Selected
-					.BackgroundColor3 = Color3.new 0, 204 / 255, 0 
+					.BackgroundColor3 = Color3.new 0, 204 / 255, 0
 					.TextColor3 = Color3.new 0, 0, 0
 					.BackgroundTransparency = 0
-					selectSet button, .Text, userCategoryButtons[i].SetId.Value, 0 
+					selectSet button, .Text, userCategoryButtons[i].SetId.Value, 0
 
 				currRow += 1
 
@@ -2697,8 +2697,8 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 			if buttons
 				for i = 1, #buttons
 					if buttons[i]\IsA "TextButton"
-						selectSet buttons[i], buttons[i].Text, userCategoryButtons[i].SetId.Value, 0 
-						selectCategory userCategoryButtons 
+						selectSet buttons[i], buttons[i].Text, userCategoryButtons[i].SetId.Value, 0
+						selectCategory userCategoryButtons
 						break
 
 		setGui = createSetGui!
@@ -2719,22 +2719,22 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 			.Parent = setGui.SetPanel
 			.BackgroundTransparency = 1
 
-		drillDownSetZIndex controlFrame, 7 
+		drillDownSetZIndex controlFrame, 7
 
 		controlFrame.Parent = setGui.SetPanel
 		controlFrame.Position = UDim2.new 0.76, 5, 0, 0
 
 		debounce = false
 
-		rows = math.floor setGui.SetPanel.ItemsFrame.AbsoluteSize.Y / buttonHeight 
-		columns = math.floor setGui.SetPanel.ItemsFrame.AbsoluteSize.X / buttonWidth 
+		rows = math.floor setGui.SetPanel.ItemsFrame.AbsoluteSize.Y / buttonHeight
+		columns = math.floor setGui.SetPanel.ItemsFrame.AbsoluteSize.X / buttonWidth
 
 		controlFrame.ScrollBottom.Changed\connect (_) ->
 			if controlFrame.ScrollBottom.Value == true
 				return if debounce
 
 				debounce = true
-				loadSectionOfItems setGui, rows, columns 
+				loadSectionOfItems setGui, rows, columns
 				debounce = false
 
 		userData = {}
@@ -2749,7 +2749,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 						newUserData[category]
 
 		if userData
-			userCategoryButtons = processCategory userData 
+			userCategoryButtons = processCategory userData
 
 		populateSetsFrame!
 
@@ -2788,7 +2788,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 	-- waterEnabled = true -- todo: turn this on when water is ready
 
 	materialToImageMap = {}
-	materialNames = 
+	materialNames =
 		* "Grass"
 		* "Sand"
 		* "Brick"
@@ -2837,11 +2837,11 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 			when Enum.CellMaterial.Water, 17 then "Water"
 
 	updateMaterialChoice = (choice) ->
-		currentMaterial = getEnumFromName choice 
-		terrainMaterialSelectionChanged\Fire currentMaterial 
+		currentMaterial = getEnumFromName choice
+		terrainMaterialSelectionChanged\Fire currentMaterial
 
 	-- we so need a better way to do this
-	for _, v in pairs materialNames 
+	for _, v in pairs materialNames
 		materialToImageMap[v] = {}
 		materialToImageMap[v].Regular = "http://www.roblox.com/asset/?id=#{switch v
 			when "Grass" then 56563112
@@ -2861,29 +2861,29 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 			when "Stone Wall" then 67531804
 			when "Concrete" then 67532059
 			when "Water" then 81407474
-			else 66887593}" 
+			else 66887593}"
 			
 		-- fill in the rest here!!
 
-	scrollFrame, scrollUp, scrollDown, recalculateScroll = t.CreateScrollingFrame nil, "grid" 
+	scrollFrame, scrollUp, scrollDown, recalculateScroll = t.CreateScrollingFrame nil, "grid"
 	
 	with scrollFrame
-		.Size = UDim2.new 0.85, 0, 1, 0 
-		.Position = UDim2.new 0, 0, 0, 0 
+		.Size = UDim2.new 0.85, 0, 1, 0
+		.Position = UDim2.new 0, 0, 0, 0
 		.Parent = frame
 
 	with scrollUp
 		.Parent = frame
 		.Visible = true
-		.Position = UDim2.new 1, -19, 0, 0 
+		.Position = UDim2.new 1, -19, 0, 0
 
 	with scrollDown
 		.Parent = frame
 		.Visible = true
-		.Position = UDim2.new 1, -19, 1, -17 
+		.Position = UDim2.new 1, -19, 1, -17
 
 	goToNewMaterial = (buttonWrap, materialName) ->
-		updateMaterialChoice materialName 
+		updateMaterialChoice materialName
 		buttonWrap.BackgroundTransparency = 0
 		selectedButton.BackgroundTransparency = 1
 		selectedButton = buttonWrap
@@ -2891,8 +2891,8 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 	createMaterialButton = (name) ->
 		buttonWrap = New "TextButton", "#{name}"
 			Text: ""
-			Size: UDim2.new 0, 32, 0, 32 
-			BackgroundColor3: Color3.new 1, 1, 1 
+			Size: UDim2.new 0, 32, 0, 32
+			BackgroundColor3: Color3.new 1, 1, 1
 			BorderSizePixel: 0
 			BackgroundTransparency: 1
 			AutoButtonColor: false
@@ -2920,7 +2920,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 		buttonWrap
 
 	for i = 1, #materialNames
-		imageButton = createMaterialButton materialNames[i] 
+		imageButton = createMaterialButton materialNames[i]
 
 		if materialNames[i] == "Grass" then -- always start with grass as the default
 			selectedButton = imageButton
@@ -2932,13 +2932,13 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 		return if not newMaterialType
 		return if currentMaterial == newMaterialType
 
-		matName = getNameFromEnum newMaterialType 
+		matName = getNameFromEnum newMaterialType
 		buttons = scrollFrame\GetChildren!
 		for i = 1, #buttons
 			if (buttons[i].Name == "Plastic (blue)" and matName == "Plastic (blue)") or
 				(buttons[i].Name == "Plastic (red)" and matName == "Plastic (red)") or
 				(string.find buttons[i].Name, matName)
-				goToNewMaterial buttons[i], matName 
+				goToNewMaterial buttons[i], matName
 				return
 
 	frame.Changed\connect (prop) ->
@@ -2953,8 +2953,8 @@ t.CreateLoadingFrame = (name, size, position) ->
 
 	loadingFrame = New "Frame", "LoadingFrame"
 		Style: Enum.FrameStyle.RobloxRound
-		Size: size or UDim2.new 0, 300, 0, 160 
-		Position: position or UDim2.new 0.5, -150, 0.5, -80 
+		Size: size or UDim2.new 0, 300, 0, 160
+		Position: position or UDim2.new 0.5, -150, 0.5, -80
 
 		* New "TextLabel", "loadingName"
 			BackgroundTransparency: 1
@@ -2994,7 +2994,7 @@ t.CreateLoadingFrame = (name, size, position) ->
 				Font: Enum.Font.Arial
 				Text: "0%"
 				FontSize: Enum.FontSize.Size14
-				TextColor3: Color3.new 1, 1, 1 
+				TextColor3: Color3.new 1, 1, 1
 
 	{ -- Destructure
 		CancelButton: cancelButton
@@ -3072,7 +3072,7 @@ t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
 		BackgroundColor3: Color3.new 39 / 255, 39 / 255, 39 / 255
 		BorderColor3: Color3.new 0, 0, 0
 		Size: if size
-			UDim2.new(size.X.Scale, size.X.Offset, 0, 20) + UDim2.new 0, 20, 0, 0 
+			UDim2.new(size.X.Scale, size.X.Offset, 0, 20) + UDim2.new 0, 20, 0, 0
 		else
 			UDim2.new 0, 183, 0, 20
 		Active: true
@@ -3108,7 +3108,7 @@ t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
 			BorderColor3: Color3.new 0, 0, 0
 			Position: UDim2.new 0, 0, 1, 0
 			Size: if size
-				UDim2.new(size.X.Scale, size.X.Offset, 0, 50) + UDim2.new 0, 20, 0, 0 
+				UDim2.new(size.X.Scale, size.X.Offset, 0, 50) + UDim2.new 0, 20, 0, 0
 			else
 				UDim2.new 0, 183, 0, 50
 			Visible: false
@@ -3294,7 +3294,7 @@ t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
 			ZIndex: 10
 			Visible: false
 			Active: true
-			Parent: getScreenGuiAncestor parent 
+			Parent: getScreenGuiAncestor parent
 
 		draggingVertical = false
 		local startYPos
@@ -3393,7 +3393,7 @@ t.Help = (funcNameOrFunc) ->
 		when 'CreateScrollingFrame', t.CreateScrollingFrame
 			'Function CreateScrollingFrame.  ' ..
 			'Arguments: (orderList, style) ' ..
-			'Side effect: returns 4 objects, (scrollFrame, scrollUpButton, scrollDownButton, recalculateFunction).  "scrollFrame" can be filled with GuiObjects.  It will lay them out and allow scrollUpButton/scrollDownButton to interact with them.  Orderlist is optional (and specifies the order to layout the children.  Without orderlist, it uses the children order. style is also optional, and allows for a "grid" styling if style is passed "grid" as a string.  recalculateFunction can be called 
+			'Side effect: returns 4 objects, (scrollFrame, scrollUpButton, scrollDownButton, recalculateFunction).  "scrollFrame" can be filled with GuiObjects.  It will lay them out and allow scrollUpButton/scrollDownButton to interact with them.  Orderlist is optional (and specifies the order to layout the children.  Without orderlist, it uses the children order. style is also optional, and allows for a "grid" styling if style is passed "grid" as a string.  recalculateFunction can be called
 			when a relayout is needed (
 				when orderList changes)'
 
@@ -3415,7 +3415,7 @@ t.Help = (funcNameOrFunc) ->
 		when 'CreateLoadingFrame', t.CreateLoadingFrame
 			'Function CreateLoadingFrame.  ' ..
 			'Arguments: (name, size, position) ' ..
-			'Side effect: Creates a gui that can be manipulated to show progress for a particular action.  Name appears above the loading bar, and size and position are udim2 values (both size and position are optional arguments).  Returns 3 arguments, the first being the gui created. The second being updateLoadingGuiPercent, which is a bindable function.  This function takes one argument (two optionally), which should be a number between 0 and 1, representing the percentage the loading gui should be at.  The second argument to this function is a boolean value that if set to true will tween the current percentage value to the new percentage value, therefore our third argument is how long this tween should take. Our third returned argument is a BindableEvent, that 
+			'Side effect: Creates a gui that can be manipulated to show progress for a particular action.  Name appears above the loading bar, and size and position are udim2 values (both size and position are optional arguments).  Returns 3 arguments, the first being the gui created. The second being updateLoadingGuiPercent, which is a bindable function.  This function takes one argument (two optionally), which should be a number between 0 and 1, representing the percentage the loading gui should be at.  The second argument to this function is a boolean value that if set to true will tween the current percentage value to the new percentage value, therefore our third argument is how long this tween should take. Our third returned argument is a BindableEvent, that
 			when fired means that someone clicked the cancel button on the dialog.'
 
 		when 'CreateTerrainMaterialSelector', t.CreateTerrainMaterialSelector

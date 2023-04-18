@@ -75,7 +75,7 @@ function UpdateGUI(health)
 	local x = 0.019 + (maxWidth - width)
 	local y = 0.1
 	
-	tray.bar.Position = UDim2.new(x,0,y, 0) 
+	tray.bar.Position = UDim2.new(x,0,y, 0)
 	tray.bar.Size = UDim2.new(width, 0, height, 0)
 	-- If more than 1/4 health, bar = green.  Else, bar = red.
 	if( (health / humanoid.MaxHealth) &gt; 0.25 ) then

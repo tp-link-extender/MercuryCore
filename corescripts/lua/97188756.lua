@@ -1,8 +1,8 @@
 --[[
-	//FileName: ChatScript.LUA 
-	//Written by: Sorcus 
+	//FileName: ChatScript.LUA
+	//Written by: Sorcus
 	//Description: Code for lua side chat on ROBLOX. Supports Scrolling.
-	//NOTE: If you find any bugs or inaccuracies PM Sorcus on ROBLOX or @Canavus on Twitter 
+	//NOTE: If you find any bugs or inaccuracies PM Sorcus on ROBLOX or @Canavus on Twitter
 ]]
 
 local forceChatGUI = false
@@ -173,7 +173,7 @@ local Chat = {
 	Messages_List = {},
 	MessageThread = nil,
 
-	--[[ Admins_List = {'Sorcus', 'Shedletsky', 'Telamon', 'Tarabyte', 'StickMasterLuke', 'OnlyTwentyCharacters', 'FusRoblox', 'SolarCrane', 
+	--[[ Admins_List = {'Sorcus', 'Shedletsky', 'Telamon', 'Tarabyte', 'StickMasterLuke', 'OnlyTwentyCharacters', 'FusRoblox', 'SolarCrane',
 								'HotThoth', 'JediTkacheff', 'Builderman', 'Brighteyes', 'ReeseMcblox', 'GemLocker', 'GongfuTiger', 'Erik.Cassel', 'Matt Dusek', 'Keith',
 								'Totbl', 'LordRugDump', 'David.Baszucki', 'Dbapostle', 'DaveYorkRBX', 'nJay', 'OstrichSized', 'TobotRobot', 'twberg', 'ROBLOX', 'RBAdam', 'Doughtless',
 								'Anaminus', 'Stravant', 'Cr3470r', 'CodeWriter', 'Games', 'AcesWayUpHigh', 'Phil'
@@ -1090,7 +1090,7 @@ function Chat:UpdateChat(cPlayer, message)
 end
 
 function Chat:RecalculateSpacing()
-	--[[for i = 1, #self.MessageQueue do 
+	--[[for i = 1, #self.MessageQueue do
 		local pLabel = self.MessageQueue[i]['Player']
 		local mLabel = self.MessageQueue[i]['Message']		
 
@@ -1138,26 +1138,26 @@ function Chat:CreateMessage(cPlayer, message)
 		pLabel.Text = pName .. ':'
 		pLabel.Name = pName
 
-		local pColor 
-		if cPlayer.Neutral then  
+		local pColor
+		if cPlayer.Neutral then
 			pLabel.TextColor3 = Chat:ComputeChatColor(pName)
-		else 
-			pLabel.TextColor3 = cPlayer.TeamColor.Color 
-		end 
+		else
+			pLabel.TextColor3 = cPlayer.TeamColor.Color
+		end
 
-		local nString 
+		local nString
 
-		if not self.CachedSpaceStrings_List[pName] then 
+		if not self.CachedSpaceStrings_List[pName] then
 			nString = Chat:ComputeSpaceString(pLabel)
-		else 
+		else
 			nString = self.CachedSpaceStrings_List[pName]
 		end 	
 
-		mLabel.Text = "" 
+		mLabel.Text = ""
 		mLabel.Name = pName .. " - message"
-		mLabel.Text = nString .. message; 
+		mLabel.Text = nString .. message;
 
-		mLabel.Parent = nil 
+		mLabel.Parent = nil
 		mLabel.Parent = self.RenderFrame		
 
 		mLabel.Position = UDim2.new(0, 0, 1, 0);
