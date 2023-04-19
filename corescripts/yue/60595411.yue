@@ -1,0 +1,383 @@
+t = {}
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------JSON Functions Begin----------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+
+--JSON Encoder and Parser for Lua 5.1
+--
+--2007 Shaun Brown  (http://www.chipmunkav.com)
+
+assert = assert
+Null = -> Null
+
+StringBuilder = {
+	buffer: {}
+}
+
+StringBuilder.New ==>
+	o = <>: @
+	@__index = @
+	o.buffer = {}
+	o
+
+
+StringBuilder.Append = (s) =>
+	@buffer[] = s
+
+
+StringBuilder.ToString ==> table.concat @buffer
+
+
+JsonWriter =
+	backslashes:
+		["\b"]: "\\b",
+		["\t"]: "\\t",
+		["\n"]: "\\n",
+		["\f"]: "\\f",
+		["\r"]: "\\r",
+		['"']: '\\"',
+		["\\"]: "\\\\",
+		["/"]: "\\/",
+
+JsonWriter.New ==>
+	o = <>: @
+	o.writer = StringBuilder\New!
+	@__index = @
+	o
+
+
+JsonWriter.Append = (s) =>
+	@writer\Append s
+
+
+JsonWriter.ToString ==> @writer\ToString!
+
+
+JsonWriter.Write = (o) =>
+	switch type o
+		when "nil"
+			@\WriteNil!
+		when "boolean", "number"
+			@\WriteString o
+		when "string"
+			@\ParseString o
+		when "table"
+			@\WriteTable o
+		when "function"
+			@\WriteFunction o
+		when "thread", "userdata"
+			@\WriteError o
+
+JsonWriter.WriteNil ==> @\Append "null"
+JsonWriter.WriteString = (o) => @\Append "#{o}"
+
+
+JsonWriter.ParseString = (s) =>
+	@\Append '"'
+	@\Append string.gsub s, '[%z%c\\"/]', (n) ->
+		c = @backslashes[n]
+		if c
+			return c
+
+		return string.format "\\u%.4X", string.byte n
+
+	@\Append '"'
+
+
+JsonWriter.IsArray = (t) =>
+	count = 0
+	isindex = (k) ->
+		if type(k) == "number" and 
+			k > 0 and
+			math.floor(k) == k
+
+			return true
+		return false
+
+	for k, _ in pairs t
+		if not isindex k
+			return false, "{", "}"
+		else
+			count = math.max count, k
+
+
+	return true, "[", "]", count
+
+
+JsonWriter.WriteTable = (t) =>
+	ba, st, et, n = @\IsArray t
+	@\Append st
+	if ba
+		for i = 1, n
+			@\Write t[i]
+			if i < n
+				@\Append ","
+
+	else
+		first = true
+		for k, v in pairs t
+			if not first
+				@\Append ","
+
+			first = false
+			@\ParseString k
+			@\Append ":"
+			@\Write v
+
+
+	@\Append et
+
+
+JsonWriter.WriteError = (o) =>
+	error string.format "Encoding of %s unsupported", "#{o}"
+
+
+JsonWriter.WriteFunction = (o) =>
+	if o == Null
+		@\WriteNil!
+	else
+		@\WriteError o
+
+
+
+StringReader =
+	s: "",
+	i: 0,
+
+StringReader.New = (s) =>
+	o = <>: @
+	@__index = @
+	o.s = s or o.s
+	o
+
+
+StringReader.Peek ==>
+	i = @i + 1
+	if i <= #@s
+		return string.sub @s, i, i
+	nil
+
+StringReader.Next ==>
+	@i = @i + 1
+	if @i <= #@s
+		return string.sub @s, @i, @i
+	nil
+
+
+StringReader.All ==> @s
+
+
+JsonReader =
+	escapes:
+		["t"]: "\t",
+		["n"]: "\n",
+		["f"]: "\f",
+		["r"]: "\r",
+		["b"]: "\b",
+
+JsonReader.New = (s) =>
+	o = <>: @
+	o.reader = StringReader\New s
+	@__index = @
+	o
+
+
+JsonReader.Read ==>
+	@\SkipWhiteSpace!
+	peek = @\Peek!
+	return if not peek?
+		error string.format "Nil string: '%s'", @\All!
+	elseif peek == "{"
+		@\ReadObject!
+	elseif peek == "["
+		@\ReadArray!
+	elseif peek == '"'
+		@\ReadString!
+	elseif string.find peek, "[%+%-%d]"
+		@\ReadNumber!
+	elseif peek == "t"
+		@\ReadTrue!
+	elseif peek == "f"
+		@\ReadFalse!
+	elseif peek == "n"
+		@\ReadNull!
+	elseif peek == "/"
+		@\ReadComment!
+		@\Read!
+	else
+		nil
+
+JsonReader.ReadTrue ==>
+	@\TestReservedWord { "t", "r", "u", "e" }
+	true
+
+JsonReader.ReadFalse ==>
+	@\TestReservedWord { "f", "a", "l", "s", "e" }
+	false
+
+JsonReader.ReadNull ==>
+	@\TestReservedWord { "n", "u", "l", "l" }
+	nil
+
+JsonReader.TestReservedWord = (t) =>
+	for _, v in ipairs t
+		if @\Next! ~= v
+			error string.format "Error reading '%s': %s", table.concat(t), @\All!
+
+
+JsonReader.ReadNumber ==>
+	result = @\Next!
+	peek = @\Peek!
+	while peek? and string.find peek, "[%+%-%d%.eE]" 
+		result ..= @\Next!
+		peek = @\Peek!
+
+	result = tonumber result 
+	if not result?
+		error string.format "Invalid number: '%s'", result
+	else
+		return result
+
+
+
+JsonReader.ReadString ==>
+	result = ""
+	assert @\Next! == '"'
+	while @\Peek! ~= '"'
+		ch = @\Next!
+		if ch == "\\"
+			ch = @\Next!
+			if @escapes[ch]
+				ch = @escapes[ch]
+
+		result ..= ch
+
+	assert @\Next! == '"'
+	fromunicode = (m) -> string.char tonumber m, 16
+
+	string.gsub result, "u%x%x(%x%x)", fromunicode
+
+
+JsonReader.ReadComment ==>
+	assert @\Next! == "/"
+	second = @\Next!
+	if second == "/"
+		@\ReadSingleLineComment!
+	elseif second == "*"
+		@\ReadBlockComment!
+	else
+		error string.format "Invalid comment: %s", @\All!
+
+
+JsonReader.ReadBlockComment ==>
+	done = false
+	until done
+		ch = @\Next!
+		if ch == "*" and @\Peek! == "/"
+			done = true
+
+		if not done and ch == "/" and @\Peek! == "*"
+			error string.format "Invalid comment: %s, '/*' illegal.", @\All! 
+
+
+	@\Next!
+
+
+JsonReader.ReadSingleLineComment ==>
+	ch = @\Next!
+	while ch ~= "\r" and ch ~= "\n"
+		ch = @\Next!
+
+
+JsonReader.ReadArray ==>
+	result = {}
+	assert @\Next! == "["
+	done = false
+	if @\Peek! == "]"
+		done = true
+
+	until done
+		item = @\Read!
+		result[] = item
+		@\SkipWhiteSpace!
+		if @\Peek! == "]"
+			done = true
+
+		if not done
+			ch = @\Next!
+			if ch ~= ","
+				error string.format "Invalid array: '%s' due to: '%s'", @\All!, ch
+
+
+	assert "]" == @\Next!
+	result
+
+
+JsonReader.ReadObject ==>
+	result = {}
+	assert @\Next! == "{"
+	done = false
+	if @\Peek! == "}"
+		done = true
+
+	until done
+		key = @\Read!
+		if type(key) ~= "string"
+			error string.format "Invalid non-string object key: %s", key
+
+		@\SkipWhiteSpace!
+		ch = @\Next!
+		if ch ~= ":"
+			error string.format "Invalid object: '%s' due to: '%s'", @\All!, ch
+
+		@\SkipWhiteSpace!
+		val = @\Read!
+		result[key] = val
+		@\SkipWhiteSpace!
+		if @\Peek! == "}"
+			done = true
+
+		if not done
+			ch = @\Next!
+			if ch ~= ","
+				error string.format "Invalid array: '%s' near: '%s'", @\All!, ch
+
+
+
+	assert @\Next! == "}"
+	result
+
+
+JsonReader.SkipWhiteSpace ==>
+	p = @\Peek!
+	while p? and string.find p, "[%s/]"
+		if p == "/"
+			@\ReadComment!
+		else
+			@\Next!
+
+		p = @\Peek!
+
+
+JsonReader.Peek ==> @reader\Peek!
+JsonReader.Next ==> @reader\Next!
+JsonReader.All ==> @reader\All!
+
+Encode = (o) ->
+	with JsonWriter\New!
+		\Write o 
+		\ToString!
+
+
+Decode = (s) ->
+	with JsonReader\New s 
+		\Read!
+
+-------------------- End JSON Parser ------------------------
+
+-- TODO
