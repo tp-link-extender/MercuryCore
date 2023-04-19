@@ -94,7 +94,7 @@ game.Players.FriendRequestEvent\connect (fromPlayer, toPlayer, event) ->
 
 	if fromPlayer == localPlayer
 		if event == Enum.FriendRequestEvent.Accept
-			game\GetService("GuiService")\SendNotification(
+			game\GetService"GuiService"\SendNotification(
 				"You are Friends",
 				"With #{toPlayer.Name}!",
 				"http://www.roblox.com/thumbs/avatar.ashx?userId=#{toPlayer.userId}&x=48&y=48",
@@ -106,7 +106,7 @@ game.Players.FriendRequestEvent\connect (fromPlayer, toPlayer, event) ->
 			if friendRequestBlacklist[fromPlayer]
 				return
 			-- previously cancelled friend request, we don't want it!
-			game\GetService("GuiService")\SendNotification(
+			game\GetService"GuiService"\SendNotification(
 				"Friend Request",
 				"From #{fromPlayer.Name}",
 				"http://www.roblox.com/thumbs/avatar.ashx?userId=#{fromPlayer.userId}&x=48&y=48",
@@ -114,7 +114,7 @@ game.Players.FriendRequestEvent\connect (fromPlayer, toPlayer, event) ->
 				-> makeFriend fromPlayer, toPlayer
 			)
 		elseif event == Enum.FriendRequestEvent.Accept
-			game\GetService("GuiService")\SendNotification(
+			game\GetService"GuiService"\SendNotification(
 				"You are Friends",
 				"With #{fromPlayer.Name}!",
 				"http://www.roblox.com/thumbs/avatar.ashx?userId=#{fromPlayer.userId}&x=48&y=48",
@@ -135,7 +135,7 @@ showTeleportUI = (message, timer) ->
 			\Remove!
 
 onTeleport = (teleportState, _, _) ->
-	if game\GetService("TeleportService").CustomizedTeleportUI == false
+	if game\GetService"TeleportService".CustomizedTeleportUI == false
 		showTeleportUI switch teleportState
 			when Enum.TeleportState.Started
 				"Teleport started...", 0
@@ -149,13 +149,13 @@ onTeleport = (teleportState, _, _) ->
 if teleportEnabled
 	localPlayer.OnTeleport\connect onTeleport
 
-	game\GetService("TeleportService").ErrorCallback = (message) ->
+	game\GetService"TeleportService".ErrorCallback = (message) ->
 		popup = script.Parent\FindFirstChild "Popup"
 		showOneButton!
 		popup.PopupText.Text = message
 		local clickCon
 		clickCon = popup.OKButton.MouseButton1Click\connect ->
-			game\GetService("TeleportService")\TeleportCancel!
+			game\GetService"TeleportService"\TeleportCancel!
 			if clickCon
 				clickCon\disconnect!
 			game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup"
@@ -173,7 +173,7 @@ if teleportEnabled
 			--ShowFunction
 			->
 				showOneButton!
-				script.Parent\FindFirstChild("Popup").Visible = true
+				script.Parent\FindFirstChild"Popup".Visible = true
 				popup\TweenSize UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true
 			--HideFunction
 			->
@@ -186,7 +186,7 @@ if teleportEnabled
 					makePopupInvisible!
 				)
 		)
-	game\GetService("TeleportService").ConfirmationCallback = (message, placeId, spawnName) ->
+	game\GetService"TeleportService".ConfirmationCallback = (message, placeId, spawnName) ->
 		popup = script.Parent\FindFirstChild "Popup"
 		popup.PopupText.Text = message
 		popup.PopupImage.Image = ""
@@ -210,7 +210,7 @@ if teleportEnabled
 		yesCon = popup.AcceptButton.MouseButton1Click\connect ->
 			killCons!
 			local success, err = try
-				game\GetService("TeleportService")\TeleportImpl placeId, spawnName
+				game\GetService"TeleportService"\TeleportImpl placeId, spawnName
 			if not success
 				showOneButton!
 				popup.PopupText.Text = err
@@ -231,7 +231,7 @@ if teleportEnabled
 					--ShowFunction
 					->
 						showOneButton!
-						script.Parent\FindFirstChild("Popup").Visible = true
+						script.Parent\FindFirstChild"Popup".Visible = true
 						popup\TweenSize(
 							UDim2.new(0, 330, 0, 350),
 							Enum.EasingDirection.Out,
@@ -254,7 +254,7 @@ if teleportEnabled
 		noCon = popup.DeclineButton.MouseButton1Click\connect ->
 			killCons!
 			try
-				game\GetService("TeleportService")\TeleportCancel!
+				game\GetService"TeleportService"\TeleportCancel!
 
 		centerDialogSuccess = try
 			game.GuiService\AddCenterDialog(
@@ -265,7 +265,7 @@ if teleportEnabled
 					showTwoButtons!
 					popup.AcceptButton.Text = "Leave"
 					popup.DeclineButton.Text = "Stay"
-					script.Parent\FindFirstChild("Popup").Visible = true
+					script.Parent\FindFirstChild"Popup".Visible = true
 					popup\TweenSize(
 						UDim2.new(0, 330, 0, 350),
 						Enum.EasingDirection.Out,
@@ -286,7 +286,7 @@ if teleportEnabled
 			)
 
 		if centerDialogSuccess == false
-			script.Parent\FindFirstChild("Popup").Visible = true
+			script.Parent\FindFirstChild"Popup".Visible = true
 			popup.AcceptButton.Text = "Leave"
 			popup.DeclineButton.Text = "Stay"
 			popup\TweenSize UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true

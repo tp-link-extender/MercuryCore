@@ -29,7 +29,7 @@ New = (className, name, props) ->
 
 -- Variables
 contextActionService = Game\GetService "ContextActionService"
-isTouchDevice = Game\GetService("UserInputService").TouchEnabled
+isTouchDevice = Game\GetService"UserInputService".TouchEnabled
 functionTable = {}
 buttonVector = {}
 local buttonScreenGui
@@ -99,7 +99,7 @@ contextButtonUp = (button, inputObject, actionName) ->
 		contextActionService\CallFunction actionName, Enum.UserInputState.End, inputObject
 
 isSmallScreenDevice = ->
-	Game\GetService("GuiService")\GetScreenResolution!.y <= 320
+	Game\GetService"GuiService"\GetScreenResolution!.y <= 320
 
 createNewButton = (actionName, functionInfoTable) ->
 	contextButton = New "ImageButton", "ContextActionButton"
@@ -114,7 +114,7 @@ createNewButton = (actionName, functionInfoTable) ->
 
 	local currentButtonTouch
 
-	Game\GetService("UserInputService").InputEnded\connect (inputObject) ->
+	Game\GetService"UserInputService".InputEnded\connect (inputObject) ->
 		oldTouches[inputObject] = nil
 	
 	contextButton.InputBegan\connect (inputObject) ->

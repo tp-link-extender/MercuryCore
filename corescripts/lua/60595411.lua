@@ -32,16 +32,6 @@ local t = {}
 --CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 --CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-local string = string
-local math = math
-local table = table
-local error = error
-local tonumber = tonumber
-local tostring = tostring
-local type = type
-local setmetatable = setmetatable
-local pairs = pairs
-local ipairs = ipairs
 local assert = assert
 
 local StringBuilder = {
