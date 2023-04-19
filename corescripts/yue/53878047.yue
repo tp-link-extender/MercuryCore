@@ -42,7 +42,7 @@ waitForProperty = (instance, property) ->
 IsTouchDevice = ->
 	touchEnabled = false
 	try
-		touchEnabled = Game\GetService("UserInputService").TouchEnabled
+		touchEnabled = Game\GetService"UserInputService".TouchEnabled
 	touchEnabled
 
 IsPhone = ->
@@ -322,7 +322,7 @@ Tabs = New "Frame", "Tabs"
 		* New "ImageLabel", "XImage"
 			RobloxLocked: true
 			Image: (->
-				game\GetService("ContentProvider")\Preload "http://www.roblox.com/asset/?id=75547445"
+				game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75547445"
 				"http://www.roblox.com/asset/?id=75547445"
 			)! --TODO: move to rbxasset
 			BackgroundTransparency: 1
@@ -685,7 +685,7 @@ CharacterPane = New "Frame", "CharacterPane"
 
 --CharacterPane Children
 FaceFrame = makeCharFrame "FacesFrame", CharacterPane
-game\GetService("ContentProvider")\Preload "http://www.roblox.com/asset/?id=75460621"
+game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75460621"
 makeZone(
 	"FaceZone",
 	"http://www.roblox.com/asset/?id=75460621",
@@ -706,7 +706,7 @@ makeZone(
 makeStyledButton "Head", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.5, -135), HeadFrame
 
 HatsFrame = makeCharFrame "HatsFrame", CharacterPane
-game\GetService("ContentProvider")\Preload "http://www.roblox.com/asset/?id=75457888"
+game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75457888"
 HatsZone = makeZone(
 	"HatsZone",
 	"http://www.roblox.com/asset/?id=75457888",
@@ -737,7 +737,7 @@ makeStyledButton(
 )
 
 PantsFrame = makeCharFrame "PantsFrame", CharacterPane
-game\GetService("ContentProvider")\Preload "http://www.roblox.com/asset/?id=75457920"
+game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75457920"
 makeZone(
 	"PantsZone",
 	"http://www.roblox.com/asset/?id=75457920",
@@ -810,7 +810,7 @@ leftArmButton = makeStyledButton(
 makeTextLabel "LeftArmLabel", "Left Arm", UDim2.new(0.5, -16, 0, -25), leftArmButton
 
 TShirtFrame = makeCharFrame "T-ShirtsFrame", CharacterPane
-game\GetService("ContentProvider")\Preload "http://www.roblox.com/asset/?id=75460642"
+game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75460642"
 makeZone(
 	"TShirtZone",
 	"http://www.roblox.com/asset/?id=75460642",
@@ -831,7 +831,7 @@ makeZone(
 makeStyledButton "ShirtButton", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.5, -64), ShirtFrame
 
 ColorFrame = makeCharFrame "ColorFrame", CharacterPane
-game\GetService("ContentProvider")\Preload "http://www.roblox.com/asset/?id=76049888"
+game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=76049888"
 ColorZone = makeZone(
 	"ColorZone",
 	"http://www.roblox.com/asset/?id=76049888",

@@ -1686,7 +1686,7 @@ binaryShrink = (min, max, fits) ->
 
 getGuiOwner = (instance) ->
 	while instance?
-		if instance\IsA("ScreenGui") or instance\IsA("BillboardGui")
+		if instance\IsA"ScreenGui" or instance\IsA"BillboardGui"
 			return instance
 
 		instance = instance.Parent
@@ -2133,7 +2133,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 		buttonHeight = buttonWidth
 
 		local SmallThumbnailUrl, LargeThumbnailUrl
-		BaseUrl = game\GetService("ContentProvider").BaseUrl\lower!
+		BaseUrl = game\GetService"ContentProvider".BaseUrl\lower!
 
 		LargeThumbnailUrl, SmallThumbnailUrl = if useAssetVersionId
 			"#{BaseUrl}Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=420&ht=420&assetversionid=", "#{BaseUrl}Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&assetversionid="
@@ -2410,7 +2410,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 		showLargePreview = (insertButton) ->
 			if insertButton\FindFirstChild "AssetId"
 				delay 0, ->
-					game\GetService("ContentProvider")\Preload LargeThumbnailUrl .. "#{insertButton.AssetId.Value}"
+					game\GetService"ContentProvider"\Preload LargeThumbnailUrl .. "#{insertButton.AssetId.Value}"
 					setGui.SetPanel.ItemPreview.LargePreview.Image = LargeThumbnailUrl .. "#{insertButton.AssetId.Value}"
 
 			if insertButton\FindFirstChild "AssetName"
@@ -2526,7 +2526,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				newImageUrl = SmallThumbnailUrl .. assetId
 				if newImageUrl ~= insertFrame.Button.ButtonImage.Image
 					delay 0, ->
-						game\GetService("ContentProvider")\Preload(SmallThumbnailUrl .. assetId)
+						game\GetService"ContentProvider"\Preload(SmallThumbnailUrl .. assetId)
 						insertFrame.Button.ButtonImage.Image = SmallThumbnailUrl .. assetId
 					
 				table.insert(
@@ -2616,7 +2616,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 						.Button = button
 
 						if not SetCache[setId]?
-							SetCache[setId] = game\GetService("InsertService")\GetCollection setId
+							SetCache[setId] = game\GetService"InsertService"\GetCollection setId
 
 						.Contents = SetCache[setId]
 						.SetName = setName
@@ -2739,7 +2739,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 		userData = {}
 		for id = 1, #userIdsForSets
-			newUserData = game\GetService("InsertService")\GetUserSets userIdsForSets[id]
+			newUserData = game\GetService"InsertService"\GetUserSets userIdsForSets[id]
 			if newUserData and #newUserData > 2
 				-- start at #3 to skip over My Decals and My Models for each account
 				for category = 3, #newUserData
@@ -2949,7 +2949,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 	frame, terrainMaterialSelectionChanged, forceTerrainMaterialSelection
 
 t.CreateLoadingFrame = (name, size, position) ->
-	game\GetService("ContentProvider")\Preload "http://www.roblox.com/asset/?id=35238053"
+	game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=35238053"
 
 	loadingFrame = New "Frame", "LoadingFrame"
 		Style: Enum.FrameStyle.RobloxRound
@@ -3270,7 +3270,7 @@ t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
 				size.Y.Scale, size.Y.Offset
 			else
 				0, 400
-			\FindFirstChild("ScrollDownButton").Position = UDim2.new 0, 0, 1, -20
+			\FindFirstChild"ScrollDownButton".Position = UDim2.new 0, 0, 1, -20
 
 			.Parent = dragBar
 

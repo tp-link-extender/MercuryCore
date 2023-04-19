@@ -107,7 +107,7 @@ for i = 1, #bottomLeftChildren
 bottomRightChildren = bottomRightControl\GetChildren!
 
 for i = 1, #bottomRightChildren
-	if bottomRightChildren[i].Name\find("Camera")?
+	if bottomRightChildren[i].Name\find"Camera"?
 		with cameraTip = frameTip\clone!
 			.RobloxLocked = true
 			.Text = "Camera View"

@@ -44,7 +44,7 @@ if not success
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
 -- Variables
-screenResolution = Game\GetService("GuiService")\GetScreenResolution!
+screenResolution = Game\GetService"GuiService"\GetScreenResolution!
 isSmallScreenDevice = ->
 	return screenResolution.y <= 320
 
@@ -74,7 +74,7 @@ PinchZoomDelay = 0.2
 local cameraTouch
 
 -- make sure all of our images are good to go
-Game\GetService("ContentProvider")\Preload touchControlsSheet
+Game\GetService"ContentProvider"\Preload touchControlsSheet
 
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
