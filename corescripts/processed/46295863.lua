@@ -424,17 +424,17 @@ local u,v,w,x,y,z=nil,nil,nil,nil,nil,{}z[1]={}z[1].Text='Save'z[1].Style=Enum.
 ButtonStyle.RobloxButtonDefault z[1].Function=function()v()end z[2]={}z[2].Text=
 'Cancel'z[2].Function=function()y()end z[3]={}z[3].Text="Don't Save"z[3].
 Function=function()x()end local A=RbxGui.CreateStyledMessageDialog(
-'Unsaved Changes','Save your changes to ROBLOX before leaving?','Confirm',z)A.
+'Unsaved Changes','Save your changes to Mercury before leaving?','Confirm',z)A.
 Visible=true A.Parent=t local B,C={},1 if game.LocalSaveEnabled then B[C]={}B[C]
 .Text='Save to Disk'B[C].Function=function()w()end C=C+1 end B[C]={}B[C].Text=
 'Keep Playing'B[C].Function=function()y()end B[C+1]={}B[C+1].Text="Don't Save"B[
 C+1].Function=function()x()end local D=RbxGui.CreateStyledMessageDialog(
-'Upload Failed','Sorry, we could not save your changes to ROBLOX.','Error',B)D.
+'Upload Failed','Sorry, we could not save your changes to Mercury.','Error',B)D.
 Visible=false D.Parent=t local E=Instance.new'Frame'E.Name='SpinnerDialog'E.
 Style=Enum.FrameStyle.RobloxRound E.Size=UDim2.new(0,350,0,150)E.Position=UDim2.
 new(0.5,-175,0.5,-75)E.Visible=false E.Active=true E.Parent=t local F=Instance.
-new'TextLabel'F.Name='WaitingLabel'F.Text='Saving to ROBLOX...'F.Font=Enum.Font.
-ArialBold F.FontSize=Enum.FontSize.Size18 F.Position=UDim2.new(0.5,25,0.5,0)F.
+new'TextLabel'F.Name='WaitingLabel'F.Text='Saving to Mercury...'F.Font=Enum.Font
+.ArialBold F.FontSize=Enum.FontSize.Size18 F.Position=UDim2.new(0.5,25,0.5,0)F.
 TextColor3=Color3.new(1,1,1)F.Parent=E local G=Instance.new'Frame'G.Name=
 'Spinner'G.Size=UDim2.new(0,80,0,80)G.Position=UDim2.new(0.5,-150,0.5,-40)G.
 BackgroundTransparency=1 G.Parent=E local H,I={},1 while I<=8 do local J=
