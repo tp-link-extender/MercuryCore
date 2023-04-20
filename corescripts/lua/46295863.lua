@@ -1746,7 +1746,7 @@ if LoadLibrary then
 
 		local saveDialogMessageBox = RbxGui.CreateStyledMessageDialog(
 			"Unsaved Changes",
-			"Save your changes to ROBLOX before leaving?",
+			"Save your changes to Mercury before leaving?",
 			"Confirm",
 			messageBoxButtons
 		)
@@ -1777,7 +1777,7 @@ if LoadLibrary then
 
 		local errorDialogMessageBox = RbxGui.CreateStyledMessageDialog(
 			"Upload Failed",
-			"Sorry, we could not save your changes to ROBLOX.",
+			"Sorry, we could not save your changes to Mercury.",
 			"Error",
 			errorBoxButtons
 		)
@@ -1795,7 +1795,7 @@ if LoadLibrary then
 
 		local waitingLabel = Instance.new "TextLabel"
 		waitingLabel.Name = "WaitingLabel"
-		waitingLabel.Text = "Saving to ROBLOX..."
+		waitingLabel.Text = "Saving to Mercury..."
 		waitingLabel.Font = Enum.Font.ArialBold
 		waitingLabel.FontSize = Enum.FontSize.Size18
 		waitingLabel.Position = UDim2.new(0.5, 25, 0.5, 0)

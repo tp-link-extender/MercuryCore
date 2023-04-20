@@ -186,7 +186,7 @@ while true
 							table.insert backpackTools, currentChildren[i]
 
 					for i = 1, #backpackTools
-						if not backpackTools[i]\FindFirstChild("RobloxBuildTool")?
+						if not backpackTools[i]\FindFirstChild"RobloxBuildTool"?
 							hider\Clone!.Parent = backpackTools[i]
 							backpackTools[i].Parent = game.Lighting
 

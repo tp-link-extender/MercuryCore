@@ -10,7 +10,7 @@ local t = {}
 
 --JSON Encoder and Parser for Lua 5.1
 --
---Copyright 2007 Shaun Brown  (http://www.chipmunkav.com)
+--2007 Shaun Brown  (http://www.chipmunkav.com)
 --All Rights Reserved.
 
 --Permission is hereby granted, free of charge, to any person
@@ -32,16 +32,6 @@ local t = {}
 --CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 --CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-local string = string
-local math = math
-local table = table
-local error = error
-local tonumber = tonumber
-local tostring = tostring
-local type = type
-local setmetatable = setmetatable
-local pairs = pairs
-local ipairs = ipairs
 local assert = assert
 
 local StringBuilder = {
