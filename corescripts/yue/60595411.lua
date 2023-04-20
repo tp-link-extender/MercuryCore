@@ -1,4 +1,29 @@
 local t = { }
+local New
+New = function(className, name, props)
+	if not (props ~= nil) then
+		props = name
+		name = nil
+	end
+	local obj = Instance.new(className)
+	if name then
+		obj.Name = name
+	end
+	local parent
+	for k, v in pairs(props) do
+		if type(k) == "string" then
+			if k == "Parent" then
+				parent = v
+			else
+				obj[k] = v
+			end
+		elseif type(k) == "number" and type(v) == "userdata" then
+			v.Parent = obj
+		end
+	end
+	obj.Parent = parent
+	return obj
+end
 local assert = assert
 local Null
 Null = function()
@@ -201,29 +226,29 @@ JsonReader.Read = function(self)
 end
 JsonReader.ReadTrue = function(self)
 	self:TestReservedWord({
-		"t",
-		"r",
-		"u",
-		"e"
+		't',
+		'r',
+		'u',
+		'e'
 	})
 	return true
 end
 JsonReader.ReadFalse = function(self)
 	self:TestReservedWord({
-		"f",
-		"a",
-		"l",
-		"s",
-		"e"
+		'f',
+		'a',
+		'l',
+		's',
+		'e'
 	})
 	return false
 end
 JsonReader.ReadNull = function(self)
 	self:TestReservedWord({
-		"n",
-		"u",
-		"l",
-		"l"
+		'n',
+		'u',
+		'l',
+		'l'
 	})
 	return nil
 end
@@ -389,3 +414,317 @@ Decode = function(s)
 	_with_0:Read()
 	return _with_0
 end
+t.DecodeJSON = function(jsonString)
+pcall(function()
+		return warn('RbxUtility.DecodeJSON is deprecated, please use Game:GetService("HttpService"):JSONDecode() instead.')
+	end)
+	if type(jsonString) == "string" then
+		return Decode(jsonString)
+	end
+	print("RbxUtil.DecodeJSON expects string argument!")
+	return nil
+end
+t.EncodeJSON = function(jsonTable)
+pcall(function()
+		return warn('RbxUtility.EncodeJSON is deprecated, please use Game:GetService("HttpService"):JSONEncode() instead.')
+	end)
+	return Encode(jsonTable)
+end
+t.MakeWedge = function(x, y, z, _)
+	return game:GetService("Terrain"):AutoWedgeCell(x, y, z)
+end
+t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, selectionParent)
+	local terrain = game.Workspace:FindFirstChild("Terrain")
+	if not terrain then
+		return
+	end
+	assert(regionToSelect)
+	assert(color)
+	if not type(regionToSelect) == "Region3" then
+		error("regionToSelect (first arg), should be of type Region3, but is type", type(regionToSelect))
+	end
+	if not type(color) == "BrickColor" then
+		error("color (second arg), should be of type BrickColor, but is type", type(color))
+	end
+	local GetCell = terrain.GetCell
+	local WorldToCellPreferSolid = terrain.WorldToCellPreferSolid
+	local CellCenterToWorld = terrain.CellCenterToWorld
+	local emptyMaterial = Enum.CellMaterial.Empty
+	local selectionContainer = New("Model", "SelectionContainer", {
+		Archivable = false,
+		Parent = (function()
+			if selectionParent then
+				return selectionParent
+			else
+				return game.Workspace
+			end
+		end)()
+	})
+	local updateSelection
+	local currentKeepAliveTag
+	local aliveCounter = 0
+	local lastRegion
+	local adornments = { }
+	local reusableAdorns = { }
+	local selectionPart = New("Part", "SelectionPart", {
+		Transparency = 1,
+		Anchored = true,
+		Locked = true,
+		CanCollide = false,
+		Size = Vector3.new(4.2, 4.2, 4.2)
+	})
+	local selectionBox = Instance.new("SelectionBox")
+	local createAdornment
+	createAdornment = function(theColor)
+		local selectionPartClone
+		local selectionBoxClone
+		if #reusableAdorns > 0 then
+			selectionPartClone = reusableAdorns[1]["part"]
+			selectionBoxClone = reusableAdorns[1]["box"]
+			table.remove(reusableAdorns, 1)
+			selectionBoxClone.Visible = true
+		else
+			selectionPartClone = selectionPart:Clone()
+			selectionPartClone.Archivable = false
+			selectionBoxClone = selectionBox:Clone()
+			selectionBoxClone.Archivable = false
+			selectionBoxClone.Adornee = selectionPartClone
+			selectionBoxClone.Parent = selectionContainer
+			selectionBoxClone.Adornee = selectionPartClone
+			selectionBoxClone.Parent = selectionContainer
+		end
+		if theColor then
+			selectionBoxClone.Color = theColor
+		end
+		return selectionPartClone, selectionBoxClone
+	end
+	local cleanUpAdornments
+	cleanUpAdornments = function()
+		for cellPos, adornTable in pairs(adornments) do
+			if adornTable.KeepAlive ~= currentKeepAliveTag then
+				adornTable.SelectionBox.Visible = false
+				table.insert(reusableAdorns, {
+					part = adornTable.SelectionPart,
+					box = adornTable.SelectionBox
+				})
+				adornments[cellPos] = nil
+			end
+		end
+	end
+	local incrementAliveCounter
+	incrementAliveCounter = function()
+		aliveCounter = aliveCounter + 1
+		if aliveCounter > 1000000 then
+			aliveCounter = 0
+		end
+		return aliveCounter
+	end
+	local adornFullCellsInRegion
+	adornFullCellsInRegion = function(region, color)
+		local regionBegin = region.CFrame.p - region.Size / 2 + Vector3.new(2, 2, 2)
+		local regionEnd = region.CFrame.p + region.Size / 2 - Vector3.new(2, 2, 2)
+		local cellPosBegin = WorldToCellPreferSolid(terrain, regionBegin)
+		local cellPosEnd = WorldToCellPreferSolid(terrain, regionEnd)
+		currentKeepAliveTag = incrementAliveCounter()
+		for y = cellPosBegin.y, cellPosEnd.y do
+			for z = cellPosBegin.z, cellPosEnd.z do
+				for x = cellPosBegin.x, cellPosEnd.x do
+					local cellMaterial = GetCell(terrain, x, y, z)
+					if cellMaterial ~= emptyMaterial then
+						local cframePos = CellCenterToWorld(terrain, x, y, z)
+						local cellPos = Vector3int16.new(x, y, z)
+						local updated = false
+						for cellPosAdorn, adornTable in pairs(adornments) do
+							if cellPosAdorn == cellPos then
+								adornTable.KeepAlive = currentKeepAliveTag
+								if color then
+									adornTable.SelectionBox.Color = color
+								end
+								updated = true
+								break
+							end
+						end
+						if not updated then
+							local selectionPart, selectionBox
+							selectionPart, selectionBox = createAdornment(color)
+							selectionPart.Size = Vector3.new(4, 4, 4)
+							selectionPart.CFrame = CFrame.new(cframePos)
+							local adornTable = {
+								SelectionPart = selectionPart,
+								SelectionBox = selectionBox,
+								KeepAlive = currentKeepAliveTag
+							}
+							adornments[cellPos] = adornTable
+						end
+					end
+				end
+			end
+		end
+		return cleanUpAdornments()
+	end
+	lastRegion = regionToSelect
+	if selectEmptyCells then
+		local selectionPart, selectionBox
+		selectionPart, selectionBox = createAdornment(color)
+		selectionPart.Size = regionToSelect.Size
+		selectionPart.CFrame = regionToSelect.CFrame
+		adornments.SelectionPart = selectionPart
+		adornments.SelectionBox = selectionBox
+		updateSelection = function(newRegion, color)
+			if newRegion and newRegion ~= lastRegion then
+				lastRegion = newRegion
+				selectionPart.Size = newRegion.Size
+				selectionPart.CFrame = newRegion.CFrame
+			end
+			if color then
+				selectionBox.Color = color
+			end
+		end
+	else
+		adornFullCellsInRegion(regionToSelect, color)
+		updateSelection = function(newRegion, color)
+			if newRegion and newRegion ~= lastRegion then
+				lastRegion = newRegion
+				return adornFullCellsInRegion(newRegion, color)
+			end
+		end
+	end
+	local destroyFunc
+	destroyFunc = function()
+		updateSelection = nil
+		if selectionContainer ~= nil then
+			selectionContainer:Destroy()
+		end
+		adornments = nil
+	end
+	return updateSelection, destroyFunc
+end
+t.CreateSignal = function()
+	local this = { }
+	local mBindableEvent = Instance.new("BindableEvent")
+	local mAllCns = { }
+	this.connect = function(self, func)
+		if self ~= this then
+			error("connect must be called with `:`, not `.`", 2)
+		end
+		if type(func) ~= "function" then
+			error("Argument #1 of connect must be a function, got a " .. tostring(type(func)), 2)
+		end
+		local cn = mBindableEvent.Event:connect(func)
+		mAllCns[cn] = true
+		local pubCn = { }
+		pubCn.disconnect = function(self)
+			cn:disconnect()
+			mAllCns[cn] = nil
+		end
+		pubCn.Disconnect = pubCn.disconnect
+		return pubCn
+	end
+	this.disconnect = function(self)
+		if self ~= this then
+			error("disconnect must be called with `:`, not `.`", 2)
+		end
+		for cn, _ in pairs(mAllCns) do
+			cn:disconnect()
+			mAllCns[cn] = nil
+		end
+	end
+	this.wait = function(self)
+		if self ~= this then
+			error("wait must be called with `:`, not `.`", 2)
+		end
+		return mBindableEvent.Event:wait()
+	end
+	this.fire = function(self, ...)
+		if self ~= this then
+			error("fire must be called with `:`, not `.`", 2)
+		end
+		return mBindableEvent:Fire(...)
+	end
+	this.Connect = this.connect
+	this.Disconnect = this.disconnect
+	this.Wait = this.wait
+	this.Fire = this.fire
+	return this
+end
+local Create_PrivImpl
+Create_PrivImpl = function(objectType)
+	if type(objectType) ~= "string" then
+		error("Argument of Create must be a string", 2)
+	end
+	return function(dat)
+		dat = dat or { }
+		local obj = Instance.new(objectType)
+		local parent
+		local ctor
+		for k, v in pairs(dat) do
+			if type(k) == "string" then
+				if k == "Parent" then
+					parent = v
+				else
+					obj[k] = v
+				end
+			elseif type(k) == "number" then
+				if type(v) ~= "userdata" then
+					error("Bad entry in Create body: Numeric keys must be paired with children, got a: " .. tostring(type(v)), 2)
+				end
+				v.Parent = obj
+			elseif type(k) == "table" and k.__eventname then
+				if type(v) ~= "function" then
+					error("Bad entry in Create body: Key `[Create.E'" .. tostring(k.__eventname) .. "']` must have a function value, got: " .. tostring(v), 2)
+				end
+				obj[k.__eventname]:connect(v)
+			elseif k == t.Create then
+				if type(v) ~= "function" then
+					error("Bad entry in Create body: Key `[Create]` should be paired with a constructor function, got: " .. tostring(v), 2)
+				elseif ctor then
+					error("Bad entry in Create body: Only one constructor function is allowed", 2)
+				end
+				ctor = v
+			else
+				error("Bad entry (" .. tostring(k) .. " => " .. tostring(v) .. ") in Create body", 2)
+			end
+		end
+		if ctor ~= nil then
+			ctor(obj)
+		end
+		if parent then
+			obj.Parent = parent
+		end
+		return obj
+	end
+end
+t.Create = setmetatable({ }, {
+	["__call"] = function(_, ...)
+		return Create_PrivImpl(...)
+	end
+})
+t.Create.E = function(eventName)
+	return {
+		__eventname = eventName
+	}
+end
+t.Help = function(funcNameOrFunc)
+	if "DecodeJSON" == funcNameOrFunc or t.DecodeJSON == funcNameOrFunc then
+		return "Function DecodeJSON.  " .. "Arguments: (string).  " .. "Side effect: returns a table with all parsed JSON values"
+	elseif "EncodeJSON" == funcNameOrFunc or t.EncodeJSON == funcNameOrFunc then
+		return "Function EncodeJSON.  " .. "Arguments: (table).  " .. "Side effect: returns a string composed of argument table in JSON data format"
+	elseif "MakeWedge" == funcNameOrFunc or t.MakeWedge == funcNameOrFunc then
+		return "Function MakeWedge. " .. "Arguments: (x, y, z, [default material]). " .. "Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if " .. "parameter is provided, if not sets cell x, y, z to be whatever material it previously was. " .. "Returns true if made a wedge, false if the cell remains a block "
+	elseif "SelectTerrainRegion" == funcNameOrFunc or t.SelectTerrainRegion == funcNameOrFunc then
+		return "Function SelectTerrainRegion. " .. "Arguments: (regionToSelect, color, selectEmptyCells, selectionParent). " .. "Description: Selects all terrain via a series of selection boxes within the regionToSelect " .. "(this should be a region3 value). The selection box color is detemined by the color argument " .. "(should be a brickcolor value). SelectionParent is the parent that the selection model gets placed to (optional)." .. "SelectEmptyCells is bool, when true will select all cells in the " .. "region, otherwise we only select non-empty cells. Returns a function that can update the selection," .. "arguments to said function are a new region3 to select, and the adornment color (color arg is optional). " .. "Also returns a second function that takes no arguments and destroys the selection"
+	elseif "CreateSignal" == funcNameOrFunc or t.CreateSignal == funcNameOrFunc then
+		return "Function CreateSignal. " .. "Arguments: None. " .. "Returns: The newly created Signal object. This object is identical to the RBXScriptSignal class " .. "used for events in Objects, but is a Lua-side object so it can be used to create custom events in" .. "Lua code. " .. "Methods of the Signal object: :connect, :wait, :fire, :disconnect. " .. "For more info you can pass the method name to the Help function, or view the wiki page " .. "for this library. EG: Help('Signal:connect')."
+	elseif "Signal:connect" == funcNameOrFunc then
+		return "Method Signal:connect. " .. "Arguments: (function handler). " .. "Return: A connection object which can be used to disconnect the connection to this handler. " .. "Description: Connectes a handler function to this Signal, so that when |fire| is called the " .. "handler function will be called with the arguments passed to |fire|."
+	elseif "Signal:wait" == funcNameOrFunc then
+		return "Method Signal:wait. " .. "Arguments: None. " .. "Returns: The arguments passed to the next call to |fire|. " .. "Description: This call does not return until the next call to |fire| is made, at which point it " .. "will return the values which were passed as arguments to that |fire| call."
+	elseif "Signal:fire" == funcNameOrFunc then
+		return "Method Signal:fire. " .. "Arguments: Any number of arguments of any type. " .. "Returns: None. " .. "Description: This call will invoke any connected handler functions, and notify any waiting code " .. "attached to this Signal to continue, with the arguments passed to this function. Note: The calls " .. "to handlers are made asynchronously, so this call will return immediately regardless of how long " .. "it takes the connected handler functions to complete."
+	elseif "Signal:disconnect" == funcNameOrFunc then
+		return "Method Signal:disconnect. " .. "Arguments: None. " .. "Returns: None. " .. "Description: This call disconnects all handlers attacched to this function, note however, it " .. "does NOT make waiting code continue, as is the behavior of normal Roblox events. This method " .. "can also be called on the connection object which is returned from Signal:connect to only " .. "disconnect a single handler, as opposed to this method, which will disconnect all handlers."
+	elseif "Create" == funcNameOrFunc then
+		return "Function Create. " .. "Arguments: A table containing information about how to construct a collection of objects. " .. "Returns: The constructed objects. " .. "Descrition: Create is a very powerfull function, whose description is too long to fit here, and " .. "is best described via example, please see the wiki page for a description of how to use it."
+	end
+end
+return t
