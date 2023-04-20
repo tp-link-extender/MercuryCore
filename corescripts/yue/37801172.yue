@@ -6,7 +6,7 @@ scriptContext = game\GetService "ScriptContext"
 touchEnabled = false
 
 try
-	touchEnabled = game\GetService("UserInputService").TouchEnabled
+	touchEnabled = game\GetService"UserInputService".TouchEnabled
 
 -- library registration
 scriptContext\AddCoreScript 60595695, scriptContext, "/Libraries/LibraryRegistration/LibraryRegistration"
@@ -23,8 +23,8 @@ waitForChild = (instance, name) ->
 scriptContext = game\GetService "ScriptContext"
 scriptContext\AddCoreScript 59002209, scriptContext, "CoreScripts/Sections"
 
-waitForChild game\GetService("CoreGui"), "RobloxGui"
-screenGui = game\GetService("CoreGui")\FindFirstChild "RobloxGui"
+waitForChild game\GetService"CoreGui", "RobloxGui"
+screenGui = game\GetService"CoreGui"\FindFirstChild "RobloxGui"
 
 if not touchEnabled
 	-- ToolTipper  (creates tool tips for gui)

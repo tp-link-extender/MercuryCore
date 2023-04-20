@@ -1,0 +1,968 @@
+t = {}
+
+-- Heliodex's basic New function (basically a simplified version of melt)
+New = (className, name, props) ->
+	if not props? -- no name was provided
+		props = name
+		name = nil
+
+	obj = Instance.new className
+	obj.Name = name if name
+	local parent
+
+	for k, v in pairs props
+		if type(k) == "string"
+			if k == "Parent"
+				parent = v
+			else
+				obj[k] = v
+
+		elseif type(k) == "number" and type(v) == "userdata"
+			v.Parent = obj
+
+	obj.Parent = parent
+	obj
+-- if a bit redundant due to the Create function at the bottom
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------JSON Functions Begin----------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+
+--JSON Encoder and Parser for Lua 5.1
+--
+--2007 Shaun Brown  (http://www.chipmunkav.com)
+
+assert = assert
+Null = -> Null
+
+StringBuilder =
+	buffer: {}
+
+StringBuilder.New ==>
+	o = <>: @
+	@__index = @
+	o.buffer = {}
+	o
+
+
+StringBuilder.Append = (s) =>
+	@buffer[] = s
+
+
+StringBuilder.ToString ==> table.concat @buffer
+
+
+JsonWriter =
+	backslashes:
+		["\b"]: "\\b",
+		["\t"]: "\\t",
+		["\n"]: "\\n",
+		["\f"]: "\\f",
+		["\r"]: "\\r",
+		['"']: '\\"',
+		["\\"]: "\\\\",
+		["/"]: "\\/",
+
+JsonWriter.New ==>
+	o = <>: @
+	o.writer = StringBuilder\New!
+	@__index = @
+	o
+
+
+JsonWriter.Append = (s) =>
+	@writer\Append s
+
+
+JsonWriter.ToString ==> @writer\ToString!
+
+
+JsonWriter.Write = (o) =>
+	switch type o
+		when "nil"
+			@\WriteNil!
+		when "boolean", "number"
+			@\WriteString o
+		when "string"
+			@\ParseString o
+		when "table"
+			@\WriteTable o
+		when "function"
+			@\WriteFunction o
+		when "thread", "userdata"
+			@\WriteError o
+
+JsonWriter.WriteNil ==> @\Append "null"
+JsonWriter.WriteString = (o) => @\Append "#{o}"
+
+
+JsonWriter.ParseString = (s) =>
+	@\Append '"'
+	@\Append string.gsub s, '[%z%c\\"/]', (n) ->
+		c = @backslashes[n]
+		if c
+			return c
+
+		return string.format "\\u%.4X", string.byte n
+
+	@\Append '"'
+
+
+JsonWriter.IsArray = (t) =>
+	count = 0
+	isindex = (k) ->
+		if type(k) == "number" and 
+			k > 0 and
+			math.floor(k) == k
+
+			return true
+		return false
+
+	for k, _ in pairs t
+		if not isindex k
+			return false, "{", "}"
+		else
+			count = math.max count, k
+
+	true, "[", "]", count
+
+
+JsonWriter.WriteTable = (t) =>
+	ba, st, et, n = @\IsArray t
+	@\Append st
+	if ba
+		for i = 1, n
+			@\Write t[i]
+			if i < n
+				@\Append ","
+
+	else
+		first = true
+		for k, v in pairs t
+			if not first
+				@\Append ","
+
+			first = false
+			@\ParseString k
+			@\Append ":"
+			@\Write v
+
+
+	@\Append et
+
+
+JsonWriter.WriteError = (o) =>
+	error string.format "Encoding of %s unsupported", "#{o}"
+
+
+JsonWriter.WriteFunction = (o) =>
+	if o == Null
+		@\WriteNil!
+	else
+		@\WriteError o
+
+
+
+StringReader =
+	s: "",
+	i: 0,
+
+StringReader.New = (s) =>
+	o = <>: @
+	@__index = @
+	o.s = s or o.s
+	o
+
+
+StringReader.Peek ==>
+	i = @i + 1
+	if i <= #@s
+		return string.sub @s, i, i
+	nil
+
+StringReader.Next ==>
+	@i = @i + 1
+	if @i <= #@s
+		return string.sub @s, @i, @i
+	nil
+
+
+StringReader.All ==> @s
+
+
+JsonReader =
+	escapes:
+		["t"]: "\t",
+		["n"]: "\n",
+		["f"]: "\f",
+		["r"]: "\r",
+		["b"]: "\b",
+
+JsonReader.New = (s) =>
+	o = <>: @
+	o.reader = StringReader\New s
+	@__index = @
+	o
+
+
+JsonReader.Read ==>
+	@\SkipWhiteSpace!
+	peek = @\Peek!
+	return if not peek?
+		error string.format "Nil string: '%s'", @\All!
+	elseif peek == "{"
+		@\ReadObject!
+	elseif peek == "["
+		@\ReadArray!
+	elseif peek == '"'
+		@\ReadString!
+	elseif string.find peek, "[%+%-%d]"
+		@\ReadNumber!
+	elseif peek == "t"
+		@\ReadTrue!
+	elseif peek == "f"
+		@\ReadFalse!
+	elseif peek == "n"
+		@\ReadNull!
+	elseif peek == "/"
+		@\ReadComment!
+		@\Read!
+	else
+		nil
+
+JsonReader.ReadTrue ==>
+	@\TestReservedWord { 't', 'r', 'u', 'e' }
+	true
+
+JsonReader.ReadFalse ==>
+	@\TestReservedWord { 'f', 'a', 'l', 's', 'e' }
+	false
+
+JsonReader.ReadNull ==>
+	@\TestReservedWord { 'n', 'u', 'l', 'l' }
+	nil
+
+JsonReader.TestReservedWord = (t) =>
+	for _, v in ipairs t
+		if @\Next! ~= v
+			error string.format "Error reading '%s': %s", table.concat(t), @\All!
+
+
+JsonReader.ReadNumber ==>
+	result = @\Next!
+	peek = @\Peek!
+	while peek? and string.find peek, "[%+%-%d%.eE]" 
+		result ..= @\Next!
+		peek = @\Peek!
+
+	result = tonumber result 
+	if not result?
+		error string.format "Invalid number: '%s'", result
+	else
+		return result
+
+
+JsonReader.ReadString ==>
+	result = ""
+	assert @\Next! == '"'
+	while @\Peek! ~= '"'
+		ch = @\Next!
+		if ch == "\\"
+			ch = @\Next!
+			if @escapes[ch]
+				ch = @escapes[ch]
+
+		result ..= ch
+
+	assert @\Next! == '"'
+	fromunicode = (m) -> string.char tonumber m, 16
+
+	string.gsub result, "u%x%x(%x%x)", fromunicode
+
+
+JsonReader.ReadComment ==>
+	assert @\Next! == "/"
+	second = @\Next!
+	if second == "/"
+		@\ReadSingleLineComment!
+	elseif second == "*"
+		@\ReadBlockComment!
+	else
+		error string.format "Invalid comment: %s", @\All!
+
+
+JsonReader.ReadBlockComment ==>
+	done = false
+	until done
+		ch = @\Next!
+		if ch == "*" and @\Peek! == "/"
+			done = true
+
+		if not done and ch == "/" and @\Peek! == "*"
+			error string.format "Invalid comment: %s, '/*' illegal.", @\All! 
+
+	@\Next!
+
+
+JsonReader.ReadSingleLineComment ==>
+	ch = @\Next!
+	while ch ~= "\r" and ch ~= "\n"
+		ch = @\Next!
+
+
+JsonReader.ReadArray ==>
+	result = {}
+	assert @\Next! == "["
+	done = false
+	if @\Peek! == "]"
+		done = true
+
+	until done
+		item = @\Read!
+		result[] = item
+		@\SkipWhiteSpace!
+		if @\Peek! == "]"
+			done = true
+
+		if not done
+			ch = @\Next!
+			if ch ~= ","
+				error string.format "Invalid array: '%s' due to: '%s'", @\All!, ch
+
+	assert "]" == @\Next!
+	result
+
+
+JsonReader.ReadObject ==>
+	result = {}
+	assert @\Next! == "{"
+	done = false
+	if @\Peek! == "}"
+		done = true
+
+	until done
+		key = @\Read!
+		if type(key) ~= "string"
+			error string.format "Invalid non-string object key: %s", key
+
+		@\SkipWhiteSpace!
+		ch = @\Next!
+		if ch ~= ":"
+			error string.format "Invalid object: '%s' due to: '%s'", @\All!, ch
+
+		@\SkipWhiteSpace!
+		val = @\Read!
+		result[key] = val
+		@\SkipWhiteSpace!
+		if @\Peek! == "}"
+			done = true
+
+		if not done
+			ch = @\Next!
+			if ch ~= ","
+				error string.format "Invalid array: '%s' near: '%s'", @\All!, ch
+
+
+
+	assert @\Next! == "}"
+	result
+
+
+JsonReader.SkipWhiteSpace ==>
+	p = @\Peek!
+	while p? and string.find p, "[%s/]"
+		if p == "/"
+			@\ReadComment!
+		else
+			@\Next!
+
+		p = @\Peek!
+
+
+JsonReader.Peek ==> @reader\Peek!
+JsonReader.Next ==> @reader\Next!
+JsonReader.All ==> @reader\All!
+
+Encode = (o) ->
+	with JsonWriter\New!
+		\Write o 
+		\ToString!
+
+
+Decode = (s) ->
+	with JsonReader\New s 
+		\Read!
+
+-------------------- End JSON Parser ------------------------
+
+t.DecodeJSON = (jsonString) ->
+	try
+		warn 'RbxUtility.DecodeJSON is deprecated, please use Game:GetService("HttpService"):JSONDecode() instead.'
+
+	if type(jsonString) == "string"
+		return Decode jsonString
+
+	print "RbxUtil.DecodeJSON expects string argument!"
+	nil
+
+t.EncodeJSON = (jsonTable) ->
+	try
+		warn 'RbxUtility.EncodeJSON is deprecated, please use Game:GetService("HttpService"):JSONEncode() instead.'
+
+	Encode jsonTable
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------Terrain Utilities Begin-----------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+--makes a wedge at location x, y, z
+--sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously w
+--returns true if made a wedge, false if the cell remains a block
+t.MakeWedge = (x, y, z, _) -> game\GetService"Terrain"\AutoWedgeCell x, y, z
+
+
+t.SelectTerrainRegion = (regionToSelect, color, selectEmptyCells, selectionParent) ->
+	terrain = game.Workspace\FindFirstChild "Terrain"
+	return if not terrain
+
+	assert regionToSelect
+	assert color
+
+	if not type(regionToSelect) == "Region3"
+		error "regionToSelect (first arg), should be of type Region3, but is type", type regionToSelect
+
+	if not type(color) == "BrickColor"
+		error "color (second arg), should be of type BrickColor, but is type", type color
+
+
+	-- frequently used terrain calls (speeds up call, no lookup necessary)
+	GetCell = terrain.GetCell
+	WorldToCellPreferSolid = terrain.WorldToCellPreferSolid
+	CellCenterToWorld = terrain.CellCenterToWorld
+	emptyMaterial = Enum.CellMaterial.Empty
+
+	-- container for all adornments, passed back to user
+	selectionContainer = New "Model", "SelectionContainer"
+		Archivable: false
+		Parent: if selectionParent
+			selectionParent
+		else
+			game.Workspace
+
+	local updateSelection -- function we return to allow user to update selection
+	local currentKeepAliveTag -- a tag that determines whether adorns should be destroyed
+	aliveCounter = 0 -- helper for currentKeepAliveTag
+	local lastRegion -- used to stop updates that do nothing
+	adornments = {} -- contains all adornments
+	reusableAdorns = {}
+
+	selectionPart = New "Part", "SelectionPart"
+		Transparency: 1
+		Anchored: true
+		Locked: true
+		CanCollide: false
+		Size: Vector3.new 4.2, 4.2, 4.2
+
+	selectionBox = Instance.new "SelectionBox"
+
+	-- srs translation from region3 to region3int16
+	-- Region3ToRegion3int16 = (region3) ->
+	-- 	theLowVec = region3.CFrame.p - region3.Size / 2 + Vector3.new 2, 2, 2
+	-- 	lowCell = WorldToCellPreferSolid terrain, theLowVec
+
+	-- 	theHighVec = region3.CFrame.p + region3.Size / 2 - Vector3.new 2, 2, 2
+	-- 	highCell = WorldToCellPreferSolid terrain, theHighVec
+
+	-- 	highIntVec = Vector3int16.new highCell.x, highCell.y, highCell.z
+	-- 	lowIntVec = Vector3int16.new lowCell.x, lowCell.y, lowCell.z
+
+	-- 	Region3int16.new lowIntVec, highIntVec
+
+	-- helper function that creates the basis for a selection box
+	createAdornment = (theColor) ->
+		local selectionPartClone
+		local selectionBoxClone
+
+		if #reusableAdorns > 0
+			selectionPartClone = reusableAdorns[1]["part"]
+			selectionBoxClone = reusableAdorns[1]["box"]
+			table.remove reusableAdorns, 1
+
+			selectionBoxClone.Visible = true
+		else
+			selectionPartClone = selectionPart\Clone!
+			selectionPartClone.Archivable = false
+
+			selectionBoxClone = selectionBox\Clone!
+
+			with selectionBoxClone
+				.Archivable = false
+				.Adornee = selectionPartClone
+				.Parent = selectionContainer
+				.Adornee = selectionPartClone
+				.Parent = selectionContainer
+
+
+		if theColor
+			selectionBoxClone.Color = theColor
+
+		selectionPartClone, selectionBoxClone
+
+	-- iterates through all current adornments and deletes any that don't have latest tag
+	cleanUpAdornments = ->
+		for cellPos, adornTable in pairs adornments
+			if adornTable.KeepAlive ~= currentKeepAliveTag -- old news, we should get rid of this
+				adornTable.SelectionBox.Visible = false
+				table.insert reusableAdorns, part: adornTable.SelectionPart, box: adornTable.SelectionBox
+				adornments[cellPos] = nil
+
+
+	-- helper function to update tag
+	incrementAliveCounter = ->
+		aliveCounter +=  1
+		if aliveCounter > 1000000
+			aliveCounter = 0
+
+		aliveCounter
+
+	-- finds full cells in region and adorns each cell with a box, with the argument color
+	adornFullCellsInRegion = (region, color) ->
+		regionBegin = region.CFrame.p - region.Size / 2 + Vector3.new 2, 2, 2
+		regionEnd = region.CFrame.p + region.Size / 2 - Vector3.new 2, 2, 2
+
+		cellPosBegin = WorldToCellPreferSolid terrain, regionBegin
+		cellPosEnd = WorldToCellPreferSolid terrain, regionEnd
+
+		currentKeepAliveTag = incrementAliveCounter!
+		for y = cellPosBegin.y, cellPosEnd.y
+			for z = cellPosBegin.z, cellPosEnd.z
+				for x = cellPosBegin.x, cellPosEnd.x
+					cellMaterial = GetCell terrain, x, y, z
+
+					if cellMaterial ~= emptyMaterial
+						cframePos = CellCenterToWorld terrain, x, y, z
+						cellPos = Vector3int16.new x, y, z
+
+						updated = false
+						for cellPosAdorn, adornTable in pairs adornments
+							if cellPosAdorn == cellPos
+								adornTable.KeepAlive = currentKeepAliveTag
+								if color
+									adornTable.SelectionBox.Color = color
+
+								updated = true
+								break
+
+
+						if not updated
+							local selectionPart, selectionBox = createAdornment color
+							selectionPart.Size = Vector3.new 4, 4, 4
+							selectionPart.CFrame = CFrame.new cframePos
+							adornTable =
+								SelectionPart: selectionPart
+								SelectionBox: selectionBox
+								KeepAlive: currentKeepAliveTag
+							
+							adornments[cellPos] = adornTable
+
+		cleanUpAdornments!
+
+
+	------------------------------------- setup code ------------------------------
+	lastRegion = regionToSelect
+
+	if selectEmptyCells -- use one big selection to represent the area selected
+		local selectionPart, selectionBox = createAdornment color
+
+		selectionPart.Size = regionToSelect.Size
+		selectionPart.CFrame = regionToSelect.CFrame
+
+		adornments.SelectionPart = selectionPart
+		adornments.SelectionBox = selectionBox
+
+		updateSelection = (newRegion, color) ->
+			if newRegion and newRegion ~= lastRegion
+				lastRegion = newRegion
+				selectionPart.Size = newRegion.Size
+				selectionPart.CFrame = newRegion.CFrame
+
+			if color
+				selectionBox.Color = color
+
+
+	else -- use individual cell adorns to represent the area selected
+		adornFullCellsInRegion regionToSelect, color
+		updateSelection = (newRegion, color) ->
+			if newRegion and newRegion ~= lastRegion
+				lastRegion = newRegion
+				adornFullCellsInRegion newRegion, color
+
+
+	destroyFunc = ->
+		updateSelection = nil
+		selectionContainer?\Destroy!
+
+		adornments = nil
+
+	updateSelection, destroyFunc
+
+
+-----------------------------Terrain Utilities End-----------------------------
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------Signal class begin------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+--[[
+A 'Signal' object identical to the internal RBXScriptSignal object in it's public API and semantics. This function
+can be used to create "custom events" for user-made code.
+API:
+Method \connect function handler
+	Arguments:   The function to connect to.
+	Returns:     A new connection object which can be used to disconnect the connection
+	Description: Connects this signal to the function specified by |handler|. That is, when |fire ...| is called for
+	             the signal the |handler| will be called with the arguments given to |fire ...|. Note, the functions
+	             connected to a signal are called in NO PARTICULAR ORDER, so connecting one function after another does
+	             NOT mean that the first will be called before the second as a result of a call to |fire|.
+
+Method \disconnect!
+	Arguments:   None
+	Returns:     None
+	Description: Disconnects all of the functions connected to this signal.
+
+Method \fire ...
+	Arguments:   Any arguments are accepted
+	Returns:     None
+	Description: Calls all of the currently connected functions with the given arguments.
+
+Method \wait!
+	Arguments:   None
+	Returns:     The arguments given to fire
+	Description: This call blocks until
+]]
+
+t.CreateSignal = ->
+	this = {}
+
+	mBindableEvent = Instance.new "BindableEvent"
+	mAllCns = {} --all connection objects returned by mBindableEvent::connect
+
+	--main functions
+	this.connect = (func) =>
+		if self ~= this
+			error "connect must be called with `:`, not `.`", 2
+
+		if type(func) ~= "function"
+			error "Argument #1 of connect must be a function, got a #{type func}" , 2
+
+		cn = mBindableEvent.Event\connect func
+		mAllCns[cn] = true
+		pubCn = {}
+		pubCn.disconnect ==>
+			cn\disconnect!
+			mAllCns[cn] = nil
+
+		pubCn.Disconnect = pubCn.disconnect
+		pubCn
+
+	this.disconnect ==>
+		if self ~= this
+			error "disconnect must be called with `:`, not `.`", 2
+
+		for cn, _ in pairs mAllCns
+			cn\disconnect!
+			mAllCns[cn] = nil
+
+	this.wait ==>
+		if self ~= this
+			error "wait must be called with `:`, not `.`", 2
+
+		mBindableEvent.Event\wait!
+
+
+	this.fire = (...) =>
+		if self ~= this
+			error "fire must be called with `:`, not `.`", 2
+
+		mBindableEvent\Fire ...
+
+	this.Connect = this.connect
+	this.Disconnect = this.disconnect
+	this.Wait = this.wait
+	this.Fire = this.fire
+	this
+
+
+------------------------------------------------- Signal class End ------------------------------------------------------
+
+-- this 1s my favourite (heliodex)
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------Create Function Begins---------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+--[[
+A "Create" function for easy creation of Roblox instances. The function accepts a string which is the classname of
+the object to be created. The function then returns another function which either accepts accepts no arguments, in
+which case it simply creates an object of the given type, or a table argument that may contain several types of data,
+in which case it mutates the object in varying ways depending on the nature of the aggregate data. These are the
+type of data and what operation each will perform:
+1) A string key mapping to some value:
+      Key-Value pairs in this form will be treated as properties of the object, and will be assigned in NO PARTICULAR
+      ORDER. If the order in which properties is assigned matter, then they must be assigned somewhere else than the
+      |Create| call's body.
+
+2) An integral key mapping to another Instance:
+      Normal numeric keys mapping to Instances will be treated as children if the object being created, and will be
+      parented to it. This allows nice recursive calls to Create to create a whole hierarchy of objects without a
+      need for temporary variables to store references to those objects.
+
+3) A key which is a value returned from Create.Event( eventname ), and a value which is a function function
+      The Create.E( string ) function provides a limited way to connect to signals inside of a Create hierarchy
+      for those who really want such a functionality. The name of the event whose name is passed to
+      Create.E( string )
+
+4) A key which is the Create function itself, and a value which is a function
+      The function will be run with the argument of the object itself after all other initialization of the object is
+      done by create. This provides a way to do arbitrary things involving the object from withing the create
+      hierarchy.
+      Note: This function is called SYNCHRONOUSLY, that means that you should only so initialization in
+      it, not stuff which requires waiting, as the Create call will block until it returns. While waiting in the
+      constructor callback function is possible, it is probably not a good design choice.
+      Note: Since the constructor function is called after all other initialization, a Create block cannot have two
+      constructor functions, as it would not be possible to call both of them last, also, this would be unnecessary.
+
+
+Some example usages:
+
+A simple example which uses the Create function to create a model object and assign two of it's properties.
+local model = Create'Model'{
+    Name = 'A New model',
+    Parent = game.Workspace,
+}
+
+
+An example where a larger hierarchy of object is made. After the call the hierarchy will look like this:
+Model_Container
+ |-ObjectValue
+ |  |
+ |  `-BoolValueChild
+ `-IntValue
+
+local model = Create'Model'{
+    Name = 'Model_Container',
+    Create'ObjectValue'{
+        Create'BoolValue'{
+            Name = 'BoolValueChild',
+        },
+    },
+    Create'IntValue'{},
+}
+
+
+An example using the event syntax:
+
+local part = Create'Part'{
+    [Create.E'Touched'] = function(part)
+        print("I was touched by "..part.Name)
+    end,	
+}
+
+
+An example using the general constructor syntax:
+
+local model = Create'Part'{
+    [Create] = function(this)
+        print("Constructor running!")
+        this.Name = GetGlobalFoosAndBars(this)
+    end,
+}
+
+
+Note: It is also perfectly legal to save a reference to the function returned by a call Create, this will not cause
+      any unexpected behavior. EG:
+      local partCreatingFunction = Create'Part'
+      local part = partCreatingFunction()
+]]
+
+--the Create function need to be created as a functor, not a function, in order to support the Create.E syntax, so it
+--will be created in several steps rather than as a single function declaration.
+Create_PrivImpl = (objectType) ->
+	if type(objectType) ~= "string"
+		error "Argument of Create must be a string", 2
+
+	--return the proxy function that gives us the nice Create'string'{data} syntax
+	--The first function call is a function call using Lua's single-string-argument syntax
+	--The second function call is using Lua's single-table-argument syntax
+	--Both can be chained together for the nice effect.
+	(dat) ->
+		--default to nothing, to handle the no argument given case
+		dat or= {}
+
+		--make the object to mutate
+		obj = Instance.new objectType
+		local parent
+
+		--stored constructor function to be called after other initialization
+		local ctor
+
+		for k, v in pairs dat
+			--add property
+			if type(k) == "string"
+				if k == "Parent"
+					-- Parent should always be set last, setting the Parent of a new object
+					-- immediately makes performance worse for all subsequent property updates.
+					parent = v
+				else
+					obj[k] = v
+
+			--add child
+			elseif type(k) == "number"
+				if type(v) ~= "userdata"
+					error "Bad entry in Create body: Numeric keys must be paired with children, got a: #{type v}", 2
+
+				v.Parent = obj
+
+			--event connect
+			elseif type(k) == "table" and k.__eventname
+				if type(v) ~= "function"
+					error "Bad entry in Create body: Key `[Create.E'#{k.__eventname}']` must have a function value, got: #{v}", 2
+
+				obj[k.__eventname]\connect v
+
+			--define constructor function
+			elseif k == t.Create
+				if type(v) ~= "function"
+					error "Bad entry in Create body: Key `[Create]` should be paired with a constructor function, got: #{v}", 2
+
+				elseif ctor
+					--ctor already exists, only one allowed
+					error "Bad entry in Create body: Only one constructor function is allowed", 2
+
+				ctor = v
+			else
+				error "Bad entry (#{k} => #{v}) in Create body", 2
+
+
+		--apply constructor function if it exists
+		ctor? obj
+
+		if parent
+			obj.Parent = parent
+
+		--return the completed object
+		obj
+
+
+--now, create the functor:
+t.Create = <"__call">: (_, ...) -> Create_PrivImpl ...
+
+--and create the "Event.E" syntax stub. Really it's just a stub to construct a table which our Create
+--function can recognize as special.
+t.Create.E = (eventName) -> __eventname: eventName
+
+-------------------------------------------------Create function End----------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------Documentation Begin-----------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+
+t.Help = (funcNameOrFunc) ->
+	switch funcNameOrFunc
+		--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
+		when "DecodeJSON", t.DecodeJSON
+			"Function DecodeJSON.  " ..
+			"Arguments: (string).  " ..
+			"Side effect: returns a table with all parsed JSON values"
+
+		when "EncodeJSON", t.EncodeJSON
+			"Function EncodeJSON.  " ..
+			"Arguments: (table).  " ..
+			"Side effect: returns a string composed of argument table in JSON data format"
+
+		when "MakeWedge", t.MakeWedge
+			"Function MakeWedge. " ..
+			"Arguments: (x, y, z, [default material]). " ..
+			"Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if " ..
+			"parameter is provided, if not sets cell x, y, z to be whatever material it previously was. " ..
+			"Returns true if made a wedge, false if the cell remains a block "
+
+		when "SelectTerrainRegion", t.SelectTerrainRegion
+			"Function SelectTerrainRegion. " ..
+			"Arguments: (regionToSelect, color, selectEmptyCells, selectionParent). " ..
+			"Description: Selects all terrain via a series of selection boxes within the regionToSelect " ..
+			"(this should be a region3 value). The selection box color is detemined by the color argument " ..
+			"(should be a brickcolor value). SelectionParent is the parent that the selection model gets placed to (optional)." ..
+			"SelectEmptyCells is bool, when true will select all cells in the " ..
+			"region, otherwise we only select non-empty cells. Returns a function that can update the selection," ..
+			"arguments to said function are a new region3 to select, and the adornment color (color arg is optional). " ..
+			"Also returns a second function that takes no arguments and destroys the selection"
+
+		when "CreateSignal", t.CreateSignal
+			"Function CreateSignal. " ..
+			"Arguments: None. " ..
+			"Returns: The newly created Signal object. This object is identical to the RBXScriptSignal class " ..
+			"used for events in Objects, but is a Lua-side object so it can be used to create custom events in" ..
+			"Lua code. " ..
+			"Methods of the Signal object: :connect, :wait, :fire, :disconnect. " ..
+			"For more info you can pass the method name to the Help function, or view the wiki page " ..
+			"for this library. EG: Help('Signal:connect')."
+
+		when "Signal:connect"
+			"Method Signal:connect. " ..
+			"Arguments: (function handler). " ..
+			"Return: A connection object which can be used to disconnect the connection to this handler. " ..
+			"Description: Connectes a handler function to this Signal, so that when |fire| is called the " ..
+			"handler function will be called with the arguments passed to |fire|."
+
+		when "Signal:wait"
+			"Method Signal:wait. " ..
+			"Arguments: None. " ..
+			"Returns: The arguments passed to the next call to |fire|. " ..
+			"Description: This call does not return until the next call to |fire| is made, at which point it " ..
+			"will return the values which were passed as arguments to that |fire| call."
+
+		when "Signal:fire"
+			"Method Signal:fire. " ..
+			"Arguments: Any number of arguments of any type. " ..
+			"Returns: None. " ..
+			"Description: This call will invoke any connected handler functions, and notify any waiting code " ..
+			"attached to this Signal to continue, with the arguments passed to this function. Note: The calls " ..
+			"to handlers are made asynchronously, so this call will return immediately regardless of how long " ..
+			"it takes the connected handler functions to complete."
+
+		when "Signal:disconnect"
+			"Method Signal:disconnect. " ..
+			"Arguments: None. " ..
+			"Returns: None. " ..
+			"Description: This call disconnects all handlers attacched to this function, note however, it " ..
+			"does NOT make waiting code continue, as is the behavior of normal Roblox events. This method " ..
+			"can also be called on the connection object which is returned from Signal:connect to only " ..
+			"disconnect a single handler, as opposed to this method, which will disconnect all handlers."
+
+		when "Create"
+			"Function Create. " ..
+			"Arguments: A table containing information about how to construct a collection of objects. " ..
+			"Returns: The constructed objects. " ..
+			"Descrition: Create is a very powerfull function, whose description is too long to fit here, and " ..
+			"is best described via example, please see the wiki page for a description of how to use it."
+
+--------------------------------------------Documentation Ends----------------------------------------------------------
+
+t

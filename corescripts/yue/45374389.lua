@@ -6,9 +6,9 @@ t.Bar = function()
 	return print("bar")
 end
 t.Help = function(funcNameOrFunc)
-	if funcNameOrFunc == "Foo" or funcNameOrFunc == t.Foo then
+	if "Foo" == funcNameOrFunc or t.Foo == funcNameOrFunc then
 		return "Function Foo.  Arguments: None.  Side effect: prints foo"
-	elseif funcNameOrFunc == "Bar" or funcNameOrFunc == t.Bar then
+	elseif "Bar" == funcNameOrFunc or t.Bar == funcNameOrFunc then
 		return "Function Bar.  Arguments: None.  Side effect: prints bar"
 	end
 end

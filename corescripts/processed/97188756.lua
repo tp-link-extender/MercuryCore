@@ -45,7 +45,7 @@ Admins_List={'taskmanager','Heliodex','tako'},SafeChat_List={[
 'Happy Easter!']=true,['Happy Earth Day!']=true,['Happy 4th of July!']=true,[
 'Happy Thanksgiving!']=true,['Happy Halloween!']=true,['Happy Hanukkah!']=true,[
 'Merry Christmas!']=true,['Happy May Day!']=true,['Happy Towel Day!']=true,[
-'Happy ROBLOX Day!']=true,['Happy LOL Day!']=true},[1]='/sc 2'},['Goodbye']={[
+'Happy Mercury Day!']=true,['Happy LOL Day!']=true},[1]='/sc 2'},['Goodbye']={[
 'Good Night']={'/sc 3_0',true,['Sweet dreams']=true,['Go to sleep!']=true,[
 'Lights out!']=true,['Bedtime']=true,['Going to bed now']=true},['Later']={
 '/sc 3_1',true,['See ya later']=true,['Later gator!']=true,['See you tomorrow']=

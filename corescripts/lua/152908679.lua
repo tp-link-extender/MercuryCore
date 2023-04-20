@@ -1,5 +1,5 @@
 -- ContextActionTouch.lua
--- Copyright ROBLOX 2014, created by Ben Tkacheff
+-- 2014, created by Ben Tkacheff
 -- this script controls ui and firing of lua functions that are bound in ContextActionService for touch inputs
 -- Essentially a user can bind a lua function to a key code, input type (mousebutton1 etc.) and this
 
