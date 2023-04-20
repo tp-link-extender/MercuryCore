@@ -10,7 +10,7 @@ local t = {}
 
 --JSON Encoder and Parser for Lua 5.1
 --
---Copyright 2007 Shaun Brown  (http://www.chipmunkav.com)
+--2007 Shaun Brown  (http://www.chipmunkav.com)
 --All Rights Reserved.
 
 --Permission is hereby granted, free of charge, to any person

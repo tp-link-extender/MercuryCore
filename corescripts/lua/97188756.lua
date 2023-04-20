@@ -1,8 +1,8 @@
 --[[
 	//FileName: ChatScript.LUA
 	//Written by: Sorcus
-	//Description: Code for lua side chat on ROBLOX. Supports Scrolling.
-	//NOTE: If you find any bugs or inaccuracies PM Sorcus on ROBLOX or @Canavus on Twitter
+	//Description: Code for lua side chat on Mercury. Supports Scrolling.
+	//NOTE: If you find any bugs or inaccuracies PM Sorcus on Roblox or @Canavus on Twitter
 ]]
 
 local forceChatGUI = false
@@ -175,7 +175,7 @@ local Chat = {
 
 	--[[ Admins_List = {'Sorcus', 'Shedletsky', 'Telamon', 'Tarabyte', 'StickMasterLuke', 'OnlyTwentyCharacters', 'FusRoblox', 'SolarCrane',
 								'HotThoth', 'JediTkacheff', 'Builderman', 'Brighteyes', 'ReeseMcblox', 'GemLocker', 'GongfuTiger', 'Erik.Cassel', 'Matt Dusek', 'Keith',
-								'Totbl', 'LordRugDump', 'David.Baszucki', 'Dbapostle', 'DaveYorkRBX', 'nJay', 'OstrichSized', 'TobotRobot', 'twberg', 'ROBLOX', 'RBAdam', 'Doughtless',
+								'Totbl', 'LordRugDump', 'David.Baszucki', 'Dbapostle', 'DaveYorkRBX', 'nJay', 'OstrichSized', 'TobotRobot', 'twberg', 'Mercury', 'RBAdam', 'Doughtless',
 								'Anaminus', 'Stravant', 'Cr3470r', 'CodeWriter', 'Games', 'AcesWayUpHigh', 'Phil'
 								}, --]]
 	Admins_List = { "taskmanager", "Heliodex", "tako" },
@@ -241,7 +241,7 @@ local Chat = {
 				["Merry Christmas!"] = true,
 				["Happy May Day!"] = true,
 				["Happy Towel Day!"] = true,
-				["Happy ROBLOX Day!"] = true,
+				["Happy Mercury Day!"] = true,
 				["Happy LOL Day!"] = true,
 			},
 
