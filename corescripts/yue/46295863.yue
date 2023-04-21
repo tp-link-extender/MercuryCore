@@ -213,7 +213,7 @@ CreateTextButtons = (frame, buttons, yPos, ySize) ->
 			obj.Style = if obj == button
 				Enum.ButtonStyle.RobloxButtonDefault
 			else
-				objEnum.ButtonStyle.RobloxButton
+				Enum.ButtonStyle.RobloxButton
 
 
 	for _, obj in ipairs buttons

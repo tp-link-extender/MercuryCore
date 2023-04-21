@@ -167,7 +167,7 @@ CreateTextButtons = function(frame, buttons, yPos, ySize)
 			if obj == button then
 				obj.Style = Enum.ButtonStyle.RobloxButtonDefault
 			else
-				obj.Style = objEnum.ButtonStyle.RobloxButton
+				obj.Style = Enum.ButtonStyle.RobloxButton
 			end
 		end
 	end
