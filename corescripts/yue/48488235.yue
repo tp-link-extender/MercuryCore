@@ -1,0 +1,1939 @@
+--new playerlist by Zach Lindblad (fusroblox)
+--contact him for any revisions/issues
+--------------------
+-- Super Util
+--------------------
+
+--[[ ADMINS =
+	aceswayuphigh: 1
+	adamintygum: 1
+	afackler11: 1
+	aleverns: 1
+	aquabot8: 1
+	arbolito: 1
+	argforpirates: 1
+	argonpirate: 1
+	asmohdian: 1
+	bellavour: 1
+	blockhaak: 1
+	brighteyes: 1
+	briguy9876: 1
+	builderman: 1
+	cdakkar: 1
+	chiefjustus: 1
+	chro: 1
+	cmed: 1
+	coatp0cketninja: 1
+	codewriter: 1
+	commandercrow: 1
+	corgiparade: 1
+	dapperbuffalo: 1
+	dbapostle: 1
+	deeana00: 1
+	doughtless: 1
+	dunbar1138: 1
+	echodown: 1
+	ffjosh: 1
+	foyle: 1
+	gemlocker: 1
+	goddessnoob: 1
+	gongfutiger: 1
+	gordonrox24: 1
+	gorroth: 1
+	grossinger: 1
+	groundcontroll2: 1
+	hawkeyebandit: 1
+	hawkington: 1
+	ibanez2189: 1
+	iltalumi: 1
+	inventx: 1
+	jackssmirkingrevenge: 1
+	jeditkacheff: 'http://www.roblox.com/asset/?id=134032333'
+	kbux: 1
+	keith: 1
+	limon: 1
+	loopylens: 1
+	lordrugdumph: 1
+	majortom4321: 1
+	malcomso: 1
+	maxvee: 1
+	midwinterfires: 1
+	mistersquirrel: 1
+	morganic: 1
+	motornerve: 1
+	mrdoombringer: 1
+	mse6: 1
+	newtrat: 1
+	niquemonster: 1
+	nobledragon: 1
+	noob007: 1
+	nrawat1: 1
+	olive71: 1
+	onlytwentycharacters: 1
+	orcasparkles: 1
+	ostrichsized: 1
+	phaedre: 1
+	phil: 1
+	pulmoesflor: 1
+	raeglyn: 1
+	rbadam: 1
+	reesemcblox: 1
+	robliu: 1
+	roblowilson: 1
+	robloxsai: 1
+	roboyz: 1
+	saurauss: 1
+	screenme: 1
+	scubasomething: 1
+	seanthornton: 1
+	shedletsky: 'http://www.roblox.com/asset/?id=105897927'
+	sickenedmonkey: 1
+	slingshotjunkie: 1
+	smeaferblox: 1
+	soggoth: 1
+	solarcrane: 1
+	sooraya: 1
+	sorcus: 'http://www.roblox.com/asset/?id=113059239'
+	squidcod: 1
+	stickmasterluke: 1
+	stuball: 1
+	tabemono: 1
+	tarabyte: 1
+	thelorekt: 1
+	thorasaur: 1
+	timobius: 1
+	tobotrobot: 1
+	tone: 1
+	totallynothere: 1
+	totbl: 1
+	twberg: 1
+	vaiobot: 1
+	varia: 1
+	vladthefirst: 1
+	wonderboy76: 1
+	xerolayne: 1
+	yesth: 1
+	yumyumcheerios: 1
+	zeuxcg: 1
+	zodiaczak: 1
+	['erik.cassel']: 1
+	['david.baszucki']: 1
+	['matt dusek']: 1
+} --]]
+
+ADMINS =
+	taskmanager: 1
+	Heliodex: 1
+	multako: "http://www.roblox.com/asset/?id=6923328292"
+	mercury: 1
+	pizzaboxer: "http://www.roblox.com/asset/?id=6917566633"
+
+Images =
+	bottomDark: "94691904"
+	bottomLight: "94691940"
+	midDark: "94691980"
+	midLight: "94692025"
+	LargeDark: "96098866"
+	LargeLight: "96098920"
+	LargeHeader: "96097470"
+	NormalHeader: "94692054"
+	LargeBottom: "96397271"
+	NormalBottom: "94754966"
+	DarkBluePopupMid: "97114905"
+	LightBluePopupMid: "97114905"
+	DarkPopupMid: "97112126"
+	LightPopupMid: "97109338"
+	DarkBluePopupTop: "97114838"
+	DarkBluePopupBottom: "97114758"
+	DarkPopupBottom: "100869219"
+	LightPopupBottom: "97109175"
+
+BASE_TWEEN = 0.25
+MOUSE_DRAG_DISTANCE = 15
+
+-- Heliodex's basic New function (basically a simplified version of melt)
+New = (className, name, props) ->
+	if not props? -- no name was provided
+		props = name
+		name = nil
+
+	obj = Instance.new className
+	obj.Name = name if name
+	local parent
+
+	for k, v in pairs props
+		if type(k) == "string"
+			if k == "Parent"
+				parent = v
+			else
+				obj[k] = v
+
+		elseif type(k) == "number" and type(v) == "userdata"
+			v.Parent = obj
+
+	obj.Parent = parent
+	obj
+--
+
+--[[
+	makes a full sized background for a guiobject
+	@Args:
+	imgName		asset name of image to fill background
+	@Return:	background gui object
+--]]
+MakeBackgroundGuiObj = (imgName) ->
+	New "ImageLabel", "Background"
+		BackgroundTransparency: 1
+		Image: imgName
+		Position: UDim2.new 0, 0, 0, 0
+		Size: UDim2.new 1, 0, 1, 0
+
+--[[ turns 255 integer color value to a color3 --]]
+Color3I = (r, g, b) -> Color3.new r / 255, g / 255, b / 255
+
+
+--[[
+	Gets correct icon for builder's club status to display by name
+	@Args:
+	membershipType		Enum of membership status
+	@Return: 			string of image asset
+--]]
+getMembershipTypeIcon = (membershipType, playerName) ->
+	if ADMINS[string.lower playerName]?
+		if ADMINS[string.lower playerName] == 1
+			"http://www.roblox.com/asset/?id=6923330951"
+		else
+			ADMINS[string.lower playerName]
+
+	elseif membershipType == Enum.MembershipType.None
+		""
+	elseif membershipType == Enum.MembershipType.BuildersClub
+		"rbxasset://textures/ui/TinyBcIcon.png"
+	elseif membershipType == Enum.MembershipType.TurboBuildersClub
+		"rbxasset://textures/ui/TinyTbcIcon.png"
+	elseif membershipType == Enum.MembershipType.OutrageousBuildersClub
+		 "rbxasset://textures/ui/TinyObcIcon.png"
+	else
+		error "Unknown membershipType #{membershipType}"
+
+
+getFriendStatusIcon = (friendStatus) ->
+	if friendStatus == Enum.FriendStatus.Unknown or friendStatus == Enum.FriendStatus.NotFriend
+		""
+	elseif friendStatus == Enum.FriendStatus.Friend
+		 "http://www.roblox.com/asset/?id=99749771"
+	elseif friendStatus == Enum.FriendStatus.FriendRequestSent
+		"http://www.roblox.com/asset/?id=99776888"
+	elseif friendStatus == Enum.FriendStatus.FriendRequestReceived
+		"http://www.roblox.com/asset/?id=99776838"
+	else
+		error "Unknown FriendStatus: #{friendStatus}"
+
+
+
+--[[
+	Utility function to create buttons for the popup menus
+	@Args:
+	nparent		what to parent this button to
+	ntext		text to put on this button
+	index		number index of this entry in menu
+	last		is this the last element of the popup menu
+	@Return:	a popup menu button
+--]]
+MakePopupButton = (nparent, ntext, index, last) ->
+	tobj = New "ImageButton", "ReportButton",
+		BackgroundTransparency: 1
+		Position: UDim2.new 0, 0, 1 * index, 0
+		Size: UDim2.new 1, 0, 1, 0
+		ZIndex: 7
+		Parent: nparent
+
+		* New "TextLabel", "ButtonText",
+			BackgroundTransparency: 1
+			Position: UDim2.new 0.07, 0, 0.07, 0
+			Size: UDim2.new 0.86, 0, 0.86, 0
+			Parent: HeaderFrame
+			Font: "ArialBold"
+			Text: ntext
+			FontSize: "Size14"
+			TextScaled: true
+			TextColor3: Color3.new 1, 1, 1
+			TextStrokeTransparency: 1
+			ZIndex: 7
+
+	tobj.Image = "http://www.roblox.com/asset/?id=" .. if index == 0
+		"97108784"
+	elseif last
+		if index % 2 == 1
+			Images["LightPopupBottom"]
+		else
+			Images["DarkPopupBottom"]
+	else
+		if index % 2 == 1
+			"97112126"
+		else
+			"97109338"
+
+	tobj
+
+--[[
+	simple function to toggle the display of debug output
+--]]
+DebugPrintEnabled = true
+debugprint = (str) ->
+	--print(str)
+	if DebugPrintEnabled
+		debugOutput.Text = str
+
+--[[
+	obligatory wait for child function
+	@Args:
+	parent		Parent object to look for child in
+	child		name of child object to look for
+	@Return: object waited for
+--]]
+WaitForChild = (parent, child) ->
+	while not parent\FindFirstChild child
+		wait!
+		debugprint " child #{parent.Name} waiting for #{child}"
+
+	parent[child]
+
+---------------------------
+-- Workspace Objects
+---------------------------
+
+-- might want to move all this to an init function, wait for localplayer elsewhere
+Players = game\GetService "Players"
+-- make sure this doesn't run on the server(it will if you dont do this)
+while not Players.LocalPlayer
+	Players.Changed\wait!
+
+
+LocalPlayer = Players.LocalPlayer
+Mouse = LocalPlayer\GetMouse!
+
+ScreenGui = New "Frame", "PlayerListScreen"
+	Size: UDim2.new 1, 0, 1, 0
+	BackgroundTransparency: 1
+	Parent: script.Parent
+
+MainFrame = New "Frame", "LeaderBoardFrame"
+	Position: UDim2.new 1, -150, 0.005, 0
+	Size: UDim2.new 0, 150, 0, 800
+	BackgroundTransparency: 1
+	Parent: ScreenGui
+
+--frame used for expanding leaderstats when frame is 'focused'
+FocusFrame = New "Frame", "FocusFrame"
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 0, 100
+	BackgroundTransparency: 1
+	Active: true
+	Parent: MainFrame
+
+-- HEADER
+HeaderFrame = New "Frame", "Header"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 0.07, 0
+	Parent: MainFrame
+
+	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94692054"
+
+HeaderFrameHeight = HeaderFrame.Size.Y.Scale
+MaximizeButton = New "ImageButton", "MaximizeButton"
+	Active: true
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 1, 0
+	Parent: HeaderFrame
+
+HeaderName = New "TextLabel", "PlayerName"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0.01, 0
+	Size: UDim2.new 0.98, 0, 0.38, 0
+	Parent: HeaderFrame
+	Font: "ArialBold"
+	Text: LocalPlayer.Name
+	FontSize: "Size24"
+	--TextScaled: true
+	TextColor3: Color3.new 1, 1, 1
+	TextStrokeColor3: Color3.new 0, 0, 0
+	TextStrokeTransparency: 0
+	TextXAlignment: "Right"
+	TextYAlignment: "Center"
+
+HeaderScore = New "TextLabel", "PlayerScore"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0.4, 0
+	Size: UDim2.new 0.98, 0, 0, 30
+	Parent: HeaderFrame
+	Font: "ArialBold"
+	Text: ""
+	FontSize: "Size24"
+	TextYAlignment: "Top"
+	-- TextScaled: true
+	TextColor3: Color3.new 1, 1, 1
+	TextStrokeTransparency: 1
+	TextXAlignment: "Right"
+
+-- BOTTOM
+--used for shifting bottom frame for mouse over effects
+BottomShiftFrame = New "Frame", "BottomShiftFrame"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, HeaderFrameHeight, 0
+	Size: UDim2.new 1, 0, 1, 0
+	Parent: MainFrame
+
+BottomFrame = New "Frame", "Bottom"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0.07, 0
+	Size: UDim2.new 1, 0, 0.03, 0
+	Parent: BottomShiftFrame
+
+	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94754966"
+
+ExtendButton = New "ImageButton", "bigbutton"
+	Active: true
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 1.5, 0
+	ZIndex: 3
+	Parent: BottomFrame
+
+ExtendTab = New "ImageButton", "extendTab"
+	Active: true
+	BackgroundTransparency: 1
+	Image: "http://www.roblox.com/asset/?id=94692731"
+	Position: UDim2.new 0.608, 0, 0.3, 0
+	Size: UDim2.new 0.3, 0, 0.7, 0
+	Parent: BottomFrame
+
+TopClipFrame = New "Frame", "ListFrame"
+	BackgroundTransparency: 1
+	Position: UDim2.new -1, 0, 0.07, 0
+	Size: UDim2.new 2, 0, 1, 0
+	Parent: MainFrame
+	ClipsDescendants: true
+
+BottomClipFrame = New "Frame", "BottomFrame"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, -0.8, 0
+	Size: UDim2.new 1, 0, 1, 0
+	Parent: TopClipFrame
+	ClipsDescendants: true
+
+ScrollBarFrame = New "Frame", "ScrollBarFrame"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0.987, 0, 0.8, 0
+	Size: UDim2.new 0.01, 0, 0.2, 0
+	Parent: BottomClipFrame
+
+ScrollBar = New "Frame", "ScrollBar"
+	BackgroundTransparency: 0
+	BackgroundColor3: Color3.new 0.2, 0.2, 0.2
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 0.5, 0
+	ZIndex: 5
+	Parent: ScrollBarFrame
+
+ListFrame = New "Frame", "SubFrame"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0.8, 0
+	Size: UDim2.new 1, 0, 1, 0
+	Parent: BottomClipFrame
+
+PopUpClipFrame = New "Frame", "PopUpFrame",
+	BackgroundTransparency: 1
+	SizeConstraint: "RelativeXX"
+	Position: MainFrame.Position + UDim2.new 0, -150, 0, 0
+	Size: UDim2.new 0, 150, 0, 800
+	Parent: MainFrame
+	ClipsDescendants: true
+	ZIndex: 7
+
+PopUpPanel = nil
+PopUpPanelTemplate = New "Frame", "Panel"
+	BackgroundTransparency: 1
+	Position: UDim2.new 1, 0, 0, 0
+	Size: UDim2.new 1, 0, 0.032, 0
+	Parent: PopUpClipFrame
+
+StatTitles = New "Frame", "StatTitles",
+	BackgroundTransparency: 1,
+	Position: UDim2.new 0, 0, 1, -10,
+	Size: UDim2.new 1, 0, 0, 0,
+	Parent: HeaderFrame,
+
+IsMinimized = Instance.new "BoolValue"
+IsMaximized = Instance.new "BoolValue"
+IsTabified = Instance.new "BoolValue"
+AreNamesExpanded = Instance.new "BoolValue"
+
+MiddleTemplate = New "Frame"
+	Name: "MidTemplate"
+	BackgroundTransparency: 1
+	Position: UDim2.new 100, 0, 0.07, 0
+	Size: UDim2.new 0.5, 0, 0.025, 0 --UDim2.new 1, 0, .03, 0
+
+	* New "ImageLabel"
+		Name: "BCLabel"
+		Active: true
+		BackgroundTransparency: 1
+		Position: UDim2.new 0.005, 5, 0.20, 0
+		Size: UDim2.new 0, 16, 0, 16
+		SizeConstraint: "RelativeYY"
+		Image: ""
+		ZIndex: 3
+
+	* New "ImageLabel"
+		Name: "FriendLabel"
+		Active: true
+		BackgroundTransparency: 1
+		Position: UDim2.new 0.005, 5, 0.15, 0
+		Size: UDim2.new 0, 16, 0, 16
+		SizeConstraint: "RelativeYY"
+		Image: ""
+		ZIndex: 3
+
+	* New "ImageButton", "ClickListener"
+		Active: true
+		BackgroundTransparency: 1
+		Position: UDim2.new 0.005, 1, 0, 0
+		Size: UDim2.new 0.96, 0, 1, 0
+		ZIndex: 3
+
+	* New "Frame", "TitleFrame"
+		BackgroundTransparency: 1
+		Position: UDim2.new 0.01, 0, 0, 0
+		Size: UDim2.new 0, 140, 1, 0
+		ClipsDescendants: true
+
+		* New "TextLabel", "Title"
+			BackgroundTransparency: 1
+			Position: UDim2.new 0, 5, 0, 0
+			Size: UDim2.new 100, 0, 1, 0
+			Font: "Arial"
+			FontSize: "Size14"
+			TextColor3: Color3.new 1, 1, 1
+			TextXAlignment: "Left"
+			TextYAlignment: "Center"
+			ZIndex: 3
+
+	* New "TextLabel", "PlayerScore",
+		BackgroundTransparency: 1
+		Position: UDim2.new 0, 0, 0, 0
+		Size: UDim2.new 1, 0, 1, 0
+		Font: "ArialBold"
+		Text: ""
+		FontSize: "Size14"
+		TextColor3: Color3.new 1, 1, 1
+		TextXAlignment: "Right"
+		TextYAlignment: "Center"
+		ZIndex: 3
+
+	--New'IntValue'{Name = 'ID'},
+	--New'ObjectValue'{Name = 'Player'},
+	--New'IntValue'{Name = 'Score'},
+	ZIndex: 3,
+
+MiddleBGTemplate = New "Frame", "MidBGTemplate"
+	BackgroundTransparency: 1
+	Position: UDim2.new 100, 0, 0.07, 0
+	Size: UDim2.new 0.5, 0, 0.025, 0 --UDim2.new 1, 0, .03, 0
+
+	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94692025"
+
+-- REPORT ABUSE OBJECTS
+
+ReportAbuseShield = New "TextButton", "ReportAbuseShield"
+	Text: ""
+	AutoButtonColor: false
+	Active: true
+	Visible: true
+	Size: UDim2.new 1, 0, 1, 0
+	BackgroundColor3: Color3I 51, 51, 51
+	BorderColor3: Color3I 27, 42, 53
+	BackgroundTransparency: 1
+
+ReportAbuseFrame = New "Frame", "Settings"
+	Position: UDim2.new 0.5, -250, 0.5, -200
+	Size: UDim2.new 0, 500, 0, 400
+	BackgroundTransparency: 1
+	Active: true
+	Parent: ReportAbuseShield
+
+AbuseSettingsFrame = New "Frame", "ReportAbuseStyle"
+	Size: UDim2.new 1, 0, 1, 0
+	Active: true
+	BackgroundTransparency: 1
+	Parent: ReportAbuseFrame
+
+	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=96488767" -- 96480351"
+
+	* New "TextLabel", "Title"
+		Text: "Report Abuse"
+		TextColor3: Color3I 221, 221, 221
+		Position: UDim2.new 0.5, 0, 0, 30
+		Font: Enum.Font.ArialBold
+		FontSize: Enum.FontSize.Size36
+
+	* New "TextLabel", "Description"
+		Text: "This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action."
+		TextColor3: Color3I 221, 221, 221
+		Position: UDim2.new 0.01, 0, 0, 55
+		Size: UDim2.new 0.99, 0, 0, 40
+		BackgroundTransparency: 1
+		Font: Enum.Font.Arial
+		FontSize: Enum.FontSize.Size18
+		TextWrap: true
+		TextXAlignment: Enum.TextXAlignment.Left
+		TextYAlignment: Enum.TextYAlignment.Top
+
+	* New "TextLabel", "AbuseLabel"
+		Text: "What did they do?"
+		Font: Enum.Font.Arial
+		BackgroundTransparency: 1
+		FontSize: Enum.FontSize.Size18
+		Position: UDim2.new 0.025, 0, 0, 140
+		Size: UDim2.new 0.4, 0, 0, 36
+		TextColor3: Color3I 255, 255, 255
+		TextXAlignment: Enum.TextXAlignment.Left
+
+	* New "TextLabel", "ShortDescriptionLabel"
+		Text: "Short Description: (optional)"
+		Font: Enum.Font.Arial
+		FontSize: Enum.FontSize.Size18
+		Position: UDim2.new 0.025, 0, 0, 180
+		Size: UDim2.new 0.95, 0, 0, 36
+		TextColor3: Color3I 255, 255, 255
+		TextXAlignment: Enum.TextXAlignment.Left
+		BackgroundTransparency: 1
+
+	* New "TextLabel", "ReportingPlayerLabel"
+		Text: "Reporting Player"
+		BackgroundTransparency: 1
+		Font: Enum.Font.Arial
+		FontSize: Enum.FontSize.Size18
+		Position: UDim2.new 0.025, 0, 0, 100
+		Size: UDim2.new 0.95, 0, 0, 36
+		TextColor3: Color3I 255, 255, 255
+		TextXAlignment: Enum.TextXAlignment.Left
+		Parent: AbuseSettingsFrame
+
+AbusePlayerLabel = New "TextLabel", "PlayerLabel"
+	Text: ""
+	BackgroundTransparency: 1
+	Font: Enum.Font.ArialBold
+	FontSize: Enum.FontSize.Size18
+	Position: UDim2.new 0.025, 0, 0, 100
+	Size: UDim2.new 0.95, 0, 0, 36
+	TextColor3: Color3I 255, 255, 255
+	TextXAlignment: Enum.TextXAlignment.Right
+	Parent: AbuseSettingsFrame
+
+SubmitReportButton = New "ImageButton", "SubmitReportBtn"
+	Active: false
+	BackgroundTransparency: 1
+	Position: UDim2.new 0.5, -200, 1, -80
+	Size: UDim2.new 0, 150, 0, 50
+	AutoButtonColor: false
+	Image: "http://www.roblox.com/asset/?id=96502438" -- 96501119'
+	Parent: AbuseSettingsFrame
+
+CancelReportButton = New "ImageButton", "CancelBtn"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0.5, 50, 1, -80
+	Size: UDim2.new 0, 150, 0, 50
+	AutoButtonColor: true
+	Image: "http://www.roblox.com/asset/?id=96500683"
+	Parent: AbuseSettingsFrame
+
+AbuseDescriptionWrapper = New "Frame", "AbuseDescriptionWrapper"
+	Position: UDim2.new 0.025, 0, 0, 220
+	Size: UDim2.new 0.95, 0, 1, -310
+	BackgroundColor3: Color3I 0, 0, 0
+	BorderSizePixel: 0
+	Parent: AbuseSettingsFrame
+
+local AbuseDescriptionBox
+
+OriginalAbuseDescriptionBox = New "TextBox"
+	Text: ""
+	ClearTextOnFocus: false
+	Font: Enum.Font.Arial
+	FontSize: Enum.FontSize.Size18
+	Position: UDim2.new 0, 3, 0, 3
+	Size: UDim2.new 1, -6, 1, -6
+	TextColor3: Color3I 255, 255, 255
+	TextXAlignment: Enum.TextXAlignment.Left
+	TextYAlignment: Enum.TextYAlignment.Top
+	TextWrap: true
+	BackgroundColor3: Color3I 0, 0, 0
+	BorderSizePixel: 0
+
+CalmingAbuseBox = New "Frame", "AbuseFeedbackBox"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0.25, 0, 0.3, 0
+	Size: UDim2.new 0.5, 0, 0.37, 0
+
+	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=96506233"
+
+	* New "TextLabel", "Header",
+		Position: UDim2.new 0, 10, 0.05, 0
+		Size: UDim2.new 1, -30, 0.15, 0
+		TextScaled: true
+		BackgroundTransparency: 1
+		TextXAlignment: Enum.TextXAlignment.Center
+		TextYAlignment: Enum.TextYAlignment.Top
+		Text: "Thanks for your report!"
+		TextColor3: Color3.new 1, 1, 1
+		FontSize: Enum.FontSize.Size48
+		Font: "ArialBold"
+
+	* New "TextLabel", "content"
+		Position: UDim2.new 0, 10, 0.20, 0
+		Size: UDim2.new 1, -30, 0.40, 0
+		TextScaled: true
+		BackgroundTransparency: 1
+		TextColor3: Color3.new 1, 1, 1
+		Text: "Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats"
+		TextWrapped: true
+		TextYAlignment: Enum.TextYAlignment.Top
+		FontSize: Enum.FontSize.Size24
+		Font: "Arial"
+
+	* New "ImageButton", "OkButton"
+		BackgroundTransparency: 1,
+		Position: UDim2.new 0.5, -75, 1, -80,
+		Size: UDim2.new 0, 150, 0, 50,
+		AutoButtonColor: true,
+		Image: "http://www.roblox.com/asset/?id=96507959",
+
+NormalAbuseBox = New "Frame", "AbuseFeedbackBox"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0.25, 0, 0.300000012, 0
+	Size: UDim2.new 0.5, 0, 0.370000005, 0
+
+	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=96506233"
+
+	* New "TextLabel", "Header"
+		Position: UDim2.new 0, 10, 0.05, 0
+		Size: UDim2.new 1, -30, 0.15, 0
+		TextScaled: true
+		BackgroundTransparency: 1
+		TextColor3: Color3.new 1, 1, 1
+		TextXAlignment: Enum.TextXAlignment.Center
+		TextYAlignment: Enum.TextYAlignment.Top
+		Text: "Thanks for your report!"
+		FontSize: Enum.FontSize.Size48
+		Font: "ArialBold"
+
+	* New "TextLabel", "content",
+		Position: UDim2.new 0, 10, 0.20, 0
+		Size: UDim2.new 1, -30, 0.15, 0
+		TextScaled: true
+		BackgroundTransparency: 1
+		TextColor3: Color3.new 1, 1, 1
+		Text: "Our moderators will review the chat logs and determine what happened."
+		TextWrapped: true
+		TextYAlignment: Enum.TextYAlignment.Top
+		FontSize: Enum.FontSize.Size24
+		Font: "Arial"
+
+	* New "ImageButton", "OkButton",
+		BackgroundTransparency: 1
+		Position: UDim2.new 0.5, -75, 1, -80
+		Size: UDim2.new 0, 150, 0, 50
+		AutoButtonColor: true
+		Image: "http://www.roblox.com/asset/?id=96507959"
+
+BigButton = Instance.new "ImageButton"
+BigButton.Size = UDim2.new 1, 0, 1, 0
+BigButton.BackgroundTransparency = 1
+BigButton.ZIndex = 8
+BigButton.Visible = false
+--BigButton.Active=false
+BigButton.Parent = ScreenGui
+
+debugFrame = New "Frame", "debugframe"
+	-- Position: UDim2.new 0, 0, 0, 0
+	-- Size: UDim2.new 0, 150, 0, 800 --0.99000001
+	-- BackgroundTransparency: 1
+	BackgroundTransparency: 1
+	Position: UDim2.new 0.25, 0, 0.3, 0
+	Size: UDim2.new 0.5, 0, 0.37, 0
+
+	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=96506233"
+
+debugplayers = New "TextLabel"
+	BackgroundTransparency: 0.8
+	Position: UDim2.new 0, 0, 0.01, 0
+	Size: UDim2.new 1, 0, 0.5, 0
+	Parent: debugFrame
+	Font: "ArialBold"
+	Text: "--"
+	FontSize: "Size14"
+	TextWrapped: true
+	TextColor3: Color3.new 1, 1, 1
+	TextStrokeColor3: Color3.new 0, 0, 0
+	TextStrokeTransparency: 0
+	TextXAlignment: "Right"
+	TextYAlignment: "Center"
+
+debugOutput = New "TextLabel"
+	BackgroundTransparency: 0.8
+	Position: UDim2.new 0, 0, 0.5, 0
+	Size: UDim2.new 1, 0, 0.5, 0
+	Parent: debugFrame
+	Font: "ArialBold"
+	Text: "--"
+	FontSize: "Size14"
+	TextWrapped: true
+	TextColor3: Color3.new 1, 1, 1
+	TextStrokeColor3: Color3.new 0, 0, 0
+	TextStrokeTransparency: 0
+	TextXAlignment: "Right"
+	TextYAlignment: "Center"
+
+-------------------------
+-- Script objects
+-------------------------
+RbxGui = assert LoadLibrary "RbxGui"
+
+-- number of entries to show if you click minimize
+DefaultEntriesOnScreen = 8
+
+for _, i in pairs Images
+	Game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=#{i}"
+
+
+-- ordered array of 'score data', each entry has:
+-- Name(String)
+-- Priority(number)
+-- IsPrimary (bool, should it be shown in upper right)
+-- MaxLength (integer, of the length of the longest element for this column)
+ScoreNames = {}
+-- prevents flipping in playerlist panels
+AddId = 0
+-- intermediate table form of all player entries in format of:
+-- Frame
+-- Player
+-- Score
+-- ID
+-- MyTeam (team ENRTY(not actual team) I am currently on)
+PlayerFrames = {}
+-- intermediate ordered frame array, composed of Entrys of
+-- Frame
+-- MyTeam (my team object)
+-- MyPlayers ( an ordered array of all player frames in team )
+-- AutoHide (bool saying whether it should be hidden)
+-- IsHidden (bool)
+-- ID (int to prevent flipping out of leaderboard, fun times)
+TeamFrames = {}
+-- one special entry from teamFrames, for unaffiliated players, only shown if players non - empty
+local NeutralTeam
+
+-- final 'to be displayed' list of frames
+MiddleFrames = {}
+MiddleFrameBackgrounds = {}
+-- time of last click
+LastClick = 0
+ButtonCooldown = 0.25
+
+OnIos = false
+try
+	OnIos = Game\GetService"UserInputService".TouchEnabled
+
+-- you get 200 of x screen space per stat added, start width 16%
+BaseScreenXSize = 150
+SpacingPerStat = 10 --spacing between stats
+
+MaximizedBounds = UDim2.new 0.5, 0, 1, 0
+MaximizedPosition = UDim2.new 0.25, 0, 0.1, 0
+NormalBounds = UDim2.new 0, BaseScreenXSize, 0, 800
+NormalPosition = UDim2.new 1, -BaseScreenXSize, 0.005, 0
+
+--free space to give last stat on the right
+RightEdgeSpace = -0.04
+
+-- where the scroll par currently is positioned
+
+DefaultBottomClipPos = BottomClipFrame.Position.Y.Scale
+
+local SelectedPlayerEntry
+local SelectedPlayer
+
+-- locks(semaphores) for stopping race conditions
+AddingFrameLock = false
+AddingStatLock = false
+BaseUpdateLock = false
+WaitForClickLock = false
+InPopupWaitForClick = false
+PlayerChangedLock = false
+NeutralTeamLock = false
+
+ScrollWheelConnections = {}
+
+DefaultListSize = 8
+if not OnIos
+	DefaultListSize = 12
+
+DidMinimizeDrag = false
+
+--local PlaceCreatorId=game.CreatorId
+
+-- report abuse objects
+local AbuseName
+Abuses =
+	* "Bad Words or Threats"
+	* "Bad Username"
+	* "Talking about Dating"
+	* "Account Trading or Sharing"
+	* "Asking Personal Questions"
+	* "Rude or Mean Behavior"
+	* "False Reporting Me"
+
+local UpdateAbuseFunction
+local AbuseDropDown
+
+PrivilegeLevel =
+	Owner: 255
+	Admin: 240
+	Member: 128
+	Visitor: 10
+	Banned: 0
+
+IsPersonalServer = not not game.Workspace\FindFirstChild "PSVariable"
+
+game.Workspace.ChildAdded\connect (nchild) ->
+	if nchild.Name == "PSVariable" and nchild\IsA "BoolValue"
+		IsPersonalServer = true
+
+-------------------------------
+-- Static Functions
+-------------------------------
+-- GetTotalEntries = ->
+-- 	return math.min(#MiddleFrameBackgrounds, DefaultEntriesOnScreen)
+
+-- GetEntryListLength = ->
+-- 	numEnts = #PlayerFrames + #TeamFrames
+-- 	if NeutralTeam
+-- 		numEnts += 1
+-- 	numEnts
+
+AreAllEntriesOnScreen = ->
+	#MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale <= 1 + DefaultBottomClipPos
+
+
+-- GetLengthOfVisbleScroll = ->
+-- 	1 + DefaultBottomClipPos
+
+GetMaxScroll = ->
+	DefaultBottomClipPos * -1
+
+-- can be optimized by caching when this varible changes
+GetMinScroll = ->
+	if AreAllEntriesOnScreen!
+		GetMaxScroll!
+	else
+		(GetMaxScroll! - (#MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale)) + (1 + DefaultBottomClipPos)
+
+
+AbsoluteToPercent = (x, y) ->
+	Vector2.new(x, y) / ScreenGui.AbsoluteSize
+
+--[[
+	tweens property of element from starta to enda over length of time
+	Warning: should be put in a Spawn call
+	@Args:
+	element		textobject to tween transparency on
+	propName
+	starta		alpha to start tweening
+	enda		alpha to end tweening on
+	length		how many seconds to spend tweening
+--]]
+TweenProperty = (obj, propName, inita, enda, length) ->
+	startTime = tick!
+	while tick! - startTime < length
+		obj[propName] = ((enda - inita) * ((tick! - startTime) / length)) + inita
+		wait 1 / 30
+
+	obj[propName] = enda
+
+--[[
+	UGLY UGLY HACK FUNCTION
+	replace with some sort of global input catching A.S.A. FREAKING P.
+	creates a fullsize gui element to catch next mouse up event(completeing a click)
+	@Args:
+	frameParent		Object to parent fullscreen gui to
+	polledFunction	function to call on mouse moved events in this gui
+	exitFunction	function to call when click event is fired
+--]]
+
+WaitForClick = (frameParent, polledFunction, exitFunction) ->
+	return if WaitForClickLock
+
+	WaitForClickLock = true
+	local connection, connection2
+	connection = BigButton.MouseButton1Up\connect (nx, ny) ->
+		exitFunction nx, ny
+		BigButton.Visible = false
+		connection\disconnect!
+		connection2?\disconnect!
+
+		--debugprint('mouse up!')
+
+	connection2 = BigButton.MouseMoved\connect (nx, ny) ->
+		polledFunction nx, ny
+
+
+	--debugprint "waiting for click!"
+	BigButton.Visible = true
+	BigButton.Active = true
+	BigButton.Parent = frameParent
+	frameParent.AncestryChanged\connect (child, nparent) ->
+		if child == frameParent and not nparent?
+			exitFunction nx, ny
+			BigButton.Visible = false
+			connection\disconnect!
+			connection2\disconnect!
+			debugprint "forced out of wait for click"
+
+	WaitForClickLock = false
+
+
+---------------------------
+--Personal Server Handling
+---------------------------
+--[[
+	returns privlage level based on integer rank
+	Note: these privilege levels seem completely arbitrary, but no documentation exists
+	this is all from the old player list, really weird
+	@Args:
+	rank	Integer rank value for player
+	@Return		Normalized integer value for rank?
+--]]
+-- GetPrivilegeType = (rank) ->
+-- 	if rank <= PrivilegeLevel["Banned"]
+-- 		PrivilegeLevel["Banned"]
+-- 	elseif rank <= PrivilegeLevel["Visitor"]
+-- 		PrivilegeLevel["Visitor"]
+-- 	elseif rank <= PrivilegeLevel["Member"]
+-- 		PrivilegeLevel["Member"]
+-- 	elseif rank <= PrivilegeLevel["Admin"]
+-- 		PrivilegeLevel["Admin"]
+-- 	else
+-- 		PrivilegeLevel["Owner"]
+
+--[[
+	gives a player a new privilage rank
+	Note: Very odd that I have to use loops with this instead of directly setting the rank
+	but no documentation for personal server service exists
+	@Args:
+	player		player to change rank of
+	nrank		new integer rank to give player
+--]]
+SetPrivilegeRank = (player, nrank) ->
+	while player.PersonalServerRank < nrank
+		game\GetService"PersonalServerService"\Promote player
+
+	while player.PersonalServerRank > nrank
+		game\GetService"PersonalServerService"\Demote player
+
+
+--[[
+	called when player selects new privilege level from popup menu
+	@Args:
+	player		player to set privileges on
+	nlevel		new privilege level for this player
+--]]
+OnPrivilegeLevelSelect = (player, nlevel, BanPlayerButton, VisitorButton, MemberButton, AdminButton) ->
+	debugprint "setting privilege level"
+	SetPrivilegeRank player, nlevel
+	HighlightMyRank player, BanPlayerButton, VisitorButton, MemberButton, AdminButton
+
+--[[
+	Highlights current rank of this player in the popup menu
+	@Args:
+	player		Player to check for rank on
+--]]
+
+assetid = "http://www.roblox.com/asset/?id="
+HighlightMyRank = (player, BanPlayerButton, VisitorButton, MemberButton, AdminButton) ->
+	BanPlayerButton.Image = assetid .. Images["LightPopupMid"]
+	VisitorButton.Image = assetid .. Images["DarkPopupMid"]
+	MemberButton.Image = assetid .. Images["LightPopupMid"]
+	AdminButton.Image = assetid .. Images["DarkPopupBottom"]
+
+	rank = player.PersonalServerRank
+	if rank <= PrivilegeLevel["Banned"]
+		BanPlayerButton.Image = assetid .. Images["LightBluePopupMid"]
+	elseif rank <= PrivilegeLevel["Visitor"]
+		VisitorButton.Image = assetid .. Images["DarkBluePopupMid"]
+	elseif rank <= PrivilegeLevel["Member"]
+		MemberButton.Image = assetid .. Images["LightBluePopupMid"]
+	elseif rank <= PrivilegeLevel["Admin"]
+		AdminButton.Image = assetid .. Images["DarkBluePopupBottom"]
+
+--------------------------
+-- Report abuse handling
+--------------------------
+--[[
+	does final reporting of abuse on selected player, calls closeAbuseDialog
+--]]
+OnSubmitAbuse = ->
+	if SubmitReportButton.Active
+		if AbuseName and SelectedPlayer
+			AbuseSettingsFrame.Visible = false
+			game.Players\ReportAbuse(SelectedPlayer, AbuseName, AbuseDescriptionBox.Text)
+			if AbuseName == "Rude or Mean Behavior" or AbuseName == "False Reporting Me"
+				CalmingAbuseBox.Parent = ReportAbuseShield
+			else
+				debugprint "opening abuse box"
+				NormalAbuseBox.Parent = ReportAbuseShield
+		else
+			CloseAbuseDialog!
+
+--[[
+	opens the abuse dialog, initialises text to display selectedplayer
+--]]
+OpenAbuseDialog = ->
+	debugprint "adding report dialog"
+	AbusePlayerLabel.Text = SelectedPlayer.Name
+	--AbuseDescriptionBox.Text = ""
+	PopUpPanel\TweenPosition UDim2.new(1, 0, 0, 0), "Out", "Linear", BASE_TWEEN, true
+	AbuseDescriptionBox = OriginalAbuseDescriptionBox\Clone!
+	AbuseDescriptionBox.Parent = AbuseDescriptionWrapper
+	ReportAbuseShield.Parent = ScreenGui
+	ClosePopUpPanel!
+
+--[[
+	resets and closes abuse dialog
+--]]
+CloseAbuseDialog = ->
+	AbuseName = nil
+	SubmitReportButton.Active = false
+	SubmitReportButton.Image = "http://www.roblox.com/asset/?id=96502438" -- 96501119'
+	AbuseDescriptionBox\Destroy!
+	CalmingAbuseBox.Parent = nil
+	NormalAbuseBox.Parent = nil
+	ReportAbuseShield.Parent = nil
+	AbuseSettingsFrame.Visible = true
+
+
+--[[
+	creates dropdownbox, registers all listeners for abuse dialog
+--]]
+InitReportAbuse = ->
+	UpdateAbuseFunction = (abuseText) ->
+		AbuseName = abuseText
+		if AbuseName and SelectedPlayer
+			SubmitReportButton.Active = true
+			SubmitReportButton.Image = "http://www.roblox.com/asset/?id=96501119"
+
+	AbuseDropDown, _ = RbxGui.CreateDropDownMenu Abuses, UpdateAbuseFunction, true
+	AbuseDropDown.Name = "AbuseComboBox"
+	AbuseDropDown.Position = UDim2.new 0.425, 0, 0, 142
+	AbuseDropDown.Size = UDim2.new 0.55, 0, 0, 32
+	AbuseDropDown.Parent = AbuseSettingsFrame
+
+	CancelReportButton.MouseButton1Click\connect CloseAbuseDialog
+	SubmitReportButton.MouseButton1Click\connect OnSubmitAbuse
+
+	CalmingAbuseBox\FindFirstChild"OkButton".MouseButton1Down\connect CloseAbuseDialog
+	NormalAbuseBox\FindFirstChild"OkButton".MouseButton1Down\connect CloseAbuseDialog
+
+-------------------------------------
+-- Friend/unfriending
+-------------------------------------
+--[[
+	gets enum val of friend status, uses pcall for some reason?(from old playerlist)
+	@Args:
+	player	player object to check if friends with
+	@Return: enum of friend status
+--]]
+GetFriendStatus = (player) ->
+	if player == game.Players.LocalPlayer
+		return Enum.FriendStatus.NotFriend
+	else
+		success, result = try
+			game.Players.LocalPlayer\GetFriendStatus player
+
+		return if success
+			result
+		else
+			Enum.FriendStatus.NotFriend
+
+
+--[[
+	when friend button is clicked, tries to take appropriate action,
+	based on current friend status with SelectedPlayer
+--]]
+OnFriendButtonSelect = ->
+	friendStatus = GetFriendStatus SelectedPlayer
+	if friendStatus == Enum.FriendStatus.Friend
+		LocalPlayer\RevokeFriendship SelectedPlayer
+	elseif friendStatus == Enum.FriendStatus.Unknown or
+		friendStatus == Enum.FriendStatus.NotFriend or
+		friendStatus == Enum.FriendStatus.FriendRequestSent or
+		friendStatus == Enum.FriendStatus.FriendRequestReceived
+
+		LocalPlayer\RequestFriendship SelectedPlayer
+
+	--PersonalServerPanel\TweenPosition UDim2.new(1,0,0,0), "Out", "Quad", .5,true
+	ClosePopUpPanel!
+	--PopUpPanel\TweenPosition UDim2.new(1,0,0,0), "Out", "Linear", BASE_TWEEN,true
+
+
+OnFriendRefuseButtonSelect = ->
+	LocalPlayer\RevokeFriendship SelectedPlayer
+	ClosePopUpPanel!
+	PopUpPanel\TweenPosition UDim2.new(1, 0, 0, 0), "Out", "Linear", BASE_TWEEN, true
+
+------------------------------------
+-- Player Entry Handling
+------------------------------------
+--[[
+	used by lua's table.sort to sort player entries
+--]]
+PlayerSortFunction = (a, b) ->
+	-- prevents flipping out leaderboard
+	if a["Score"] == b["Score"]
+		return a["Player"].Name\upper! < b["Player"].Name\upper!
+
+	if not a["Score"]
+		return false
+
+	if not b["Score"]
+		return true
+
+	a["Score"] < b["Score"]
+
+---------------------------------
+-- Stat Handling
+---------------------------------
+-- removes and closes all leaderboard stuffs
+BlowThisPopsicleStand = ->
+	--ScreenGui\Destroy!
+	--script\Destroy!
+	--time to make the fanboys rage...
+	Tabify!
+
+--[[
+	used by lua's table.sort to prioritize score entries
+--]]
+StatSort = (a, b) ->
+	-- primary stats should be shown before all others
+	if a.IsPrimary ~= b.IsPrimary
+		return a.IsPrimary
+
+	-- if priorities are equal, then return the first added one
+	if a.Priority == b.Priority
+		return a.AddId < b.AddId
+
+	a.Priority < b.Priority
+
+--[[
+	doing WAAY too much here, for optimization update only your team
+	@Args:
+	playerEntry		Entry of player who had a stat change
+	property		Name of stat changed
+--]]
+StatChanged = (_, _) -> --playerEntry, property)
+	-- if(playerEntry['MyTeam'])
+	-- UpdateSingleTeam(playerEntry['MyTeam'])
+	-- else
+	BaseUpdate!
+	-- end
+
+--[[
+	Called when stat is added
+	if playerEntry is localplayer, will add to score names and re-sort the stats, and resize the width of the leaderboard
+	for all players, will add a listener for if this stat changes
+	if stat is a string value, crashes the leaderboard
+	Note:change crash to a 'tabify' leaderboard later
+	@Args:
+	nchild			new child value to leaderstats
+	playerEntry		entry this stat was added to
+--]]
+StatAdded = (nchild, playerEntry) ->
+	-- dont re - add a leaderstat I alreday have
+	while AddingStatLock
+		debugprint "in stat added function lock"
+		wait 1 / 30
+
+	AddingStatLock = true
+	if not (
+		nchild\IsA "StringValue" or
+		nchild\IsA "IntValue" or
+		nchild\IsA "BoolValue" or
+		nchild\IsA "NumberValue" or
+		nchild\IsA "DoubleConstrainedValue" or
+		nchild\IsA "IntConstrainedValue")
+
+		BlowThisPopsicleStand!
+	else
+		haveScore = false
+		for _, i in pairs ScoreNames
+			if i["Name"] == nchild.Name
+				haveScore = true
+
+
+		if not haveScore
+			nstat = {}
+			nstat["Name"] = nchild.Name
+			nstat["Priority"] = 0
+			if nchild\FindFirstChild "Priority"
+				nstat["Priority"] = nchild.Priority
+
+			nstat["IsPrimary"] = false
+			if nchild\FindFirstChild "IsPrimary"
+				nstat["IsPrimary"] = true
+
+			nstat.AddId = AddId
+			AddId = AddId + 1
+			table.insert ScoreNames, nstat
+			table.sort ScoreNames, StatSort
+			if not StatTitles\FindFirstChild nstat["Name"]
+				CreateStatTitle nstat["Name"]
+
+			UpdateMaximize!
+
+	AddingStatLock = false
+	StatChanged playerEntry
+	nchild.Changed\connect (property) ->
+		StatChanged playerEntry, property
+
+
+--returns whether any of the existing players has this stat
+DoesStatExist = (statName, exception) ->
+	for _, playerf in pairs PlayerFrames
+		if playerf["Player"] ~= exception and
+			playerf["Player"]\FindFirstChild "leaderstats" and
+			playerf["Player"].leaderstats\FindFirstChild statName
+
+			--print 'player:' .. playerf['Player'].Name ..' has stat'
+			return true
+	false
+
+
+--[[
+	Called when stat is removed from player
+	for all players, destroys the stat frame associated with this value,
+	then calls statchanged(to resize frame)
+	if playerEntry==localplayer, will remove from scorenames
+	@Args:
+	nchild			___value to be removed
+	playerEntry		entry of player value is being removed from
+--]]
+StatRemoved = (nchild, playerEntry) ->
+	while AddingStatLock
+		debugprint "In Adding Stat Lock1"
+		wait 1 / 30
+
+	AddingStatLock = true
+	if playerEntry["Frame"]\FindFirstChild nchild.Name
+		debugprint "Destroyed frame!"
+		playerEntry["Frame"][nchild.Name].Parent = nil
+
+	if not DoesStatExist nchild.Name, playerEntry["Player"]
+		for i, val in ipairs ScoreNames
+			if val["Name"] == nchild.Name
+				table.remove ScoreNames, i
+				if StatTitles\FindFirstChild nchild.Name
+					StatTitles[nchild.Name]\Destroy!
+
+				for _, teamf in pairs TeamFrames
+					if teamf["Frame"]\FindFirstChild nchild.Name
+						teamf["Frame"][nchild.Name]\Destroy!
+
+	AddingStatLock = false
+	StatChanged playerEntry
+
+--[[
+	clears all stats from a given playerEntry
+	used when leaderstats are removed, or when new leaderstats are added(for weird edge case)+
+--]]
+RemoveAllStats = (playerEntry) ->
+	for _, val in ipairs ScoreNames
+		StatRemoved val, playerEntry
+
+GetScoreValue = (score) ->
+	return if score\IsA"DoubleConstrainedValue" or score\IsA "IntConstrainedValue"
+		score.ConstrainedValue
+	elseif score\IsA "BoolValue"
+		if score.Value
+			1
+		else
+			0
+	else
+		score.Value
+
+--[[
+
+--]]
+MakeScoreEntry = (entry, scoreval, panel) ->
+	return if not panel\FindFirstChild "PlayerScore"
+
+	nscoretxt = panel\FindFirstChild"PlayerScore"\Clone!
+	local thisScore
+	--here lies the resting place of a once great and terrible bug
+	--may its treachery never be forgoten, lest its survivors fall for it again
+	--RIP the leaderstat bug, oct 2012-nov 2012
+	wait!
+	if entry["Player"]\FindFirstChild"leaderstats" and entry["Player"].leaderstats\FindFirstChild scoreval["Name"]
+		thisScore = entry["Player"]\FindFirstChild"leaderstats"\FindFirstChild scoreval["Name"]
+	else
+		return
+
+	return if not entry["Player"].Parent
+
+	nscoretxt.Name = scoreval["Name"]
+	nscoretxt.Text = "#{GetScoreValue thisScore}"
+	if scoreval["Name"] == ScoreNames[1]["Name"]
+		debugprint "changing score"
+		entry["Score"] = GetScoreValue thisScore
+		if entry["Player"] == LocalPlayer
+			HeaderScore.Text = "#{GetScoreValue thisScore}"
+
+
+	thisScore.Changed\connect ->
+		return if not thisScore.Parent
+
+		if scoreval["Name"] == ScoreNames[1]["Name"]
+			entry["Score"] = GetScoreValue thisScore
+			if entry["Player"] == LocalPlayer
+				HeaderScore.Text = "#{GetScoreValue thisScore}"
+
+
+		nscoretxt.Text = "#{GetScoreValue thisScore}"
+		BaseUpdate!
+
+	nscoretxt
+
+
+CreateStatTitle = (statName) ->
+	ntitle = MiddleTemplate\FindFirstChild"PlayerScore"\Clone!
+	ntitle.Name = statName
+	ntitle.Text = statName
+	-- ntitle
+	ntitle.TextTransparency = if IsMaximized.Value
+		0
+	else
+		1
+
+	ntitle.Parent = StatTitles
+
+
+RecreateScoreColumns = (ptable) ->
+	while AddingStatLock
+		debugprint "In Adding Stat Lock2"
+		wait 1 / 30
+
+	AddingStatLock = true
+	Xoffset = 5 --15 --current offset from Right
+	maxXOffset = Xoffset
+	MaxSizeColumn = 0 --max size for this column
+
+	-- foreach known leaderstat
+	for j = #ScoreNames, 1, -1
+		scoreval = ScoreNames[j]
+
+		MaxSizeColumn = 0
+		-- for each entry in this player table
+		for _, entry in ipairs ptable
+			panel = entry["Frame"]
+			tplayer = entry["Player"]
+			-- if this panel does not have an element named after this stat
+			if not panel\FindFirstChild scoreval["Name"]
+				-- make an entry for this object
+				nentry = MakeScoreEntry(entry, scoreval, panel)
+				if nentry
+					debugprint "adding #{nentry.Name} to #{entry["Player"].Name}"
+					nentry.Parent = panel
+					-- add score to team
+					if entry["MyTeam"] and
+						entry["MyTeam"] ~= NeutralTeam and
+						not entry["MyTeam"]["Frame"]\FindFirstChild scoreval["Name"]
+
+						ntitle = nentry\Clone!
+						--ntitle.TextXAlignment  = 'Right'
+						ntitle.Parent = entry["MyTeam"]["Frame"]
+
+
+			scoreval["XOffset"] = Xoffset
+
+			if panel\FindFirstChild scoreval["Name"]
+				MaxSizeColumn = math.max MaxSizeColumn, panel[scoreval["Name"]].TextBounds.X
+
+
+		if AreNamesExpanded.Value
+			MaxSizeColumn = math.max MaxSizeColumn, StatTitles[scoreval["Name"]].TextBounds.X
+			StatTitles[scoreval["Name"]]\TweenPosition(
+				UDim2.new(RightEdgeSpace, -Xoffset, 0, 0),
+				"Out",
+				"Linear",
+				BASE_TWEEN,
+				true
+			)
+		else
+			StatTitles[scoreval["Name"]]\TweenPosition(
+				UDim2.new((0.4 + ((0.6 / #ScoreNames) * (j - 1))) - 1, 0, 0, 0),
+				"Out",
+				"Linear",
+				BASE_TWEEN,
+				true
+			)
+
+		scoreval["ColumnSize"] = MaxSizeColumn
+		Xoffset = Xoffset + SpacingPerStat + MaxSizeColumn
+		maxXOffset = math.max Xoffset, maxXOffset
+
+	NormalBounds = UDim2.new 0, BaseScreenXSize + maxXOffset - SpacingPerStat, 0, 800
+	NormalPosition = UDim2.new 1, -NormalBounds.X.Offset, NormalPosition.Y.Scale, 0
+	UpdateHeaderNameSize!
+	UpdateMaximize!
+
+	AddingStatLock = false
+
+---------------------------
+-- Minimizing and maximizing
+---------------------------
+
+ToggleMinimize = ->
+	IsMinimized.Value = not IsMinimized.Value
+	UpdateStatNames!
+
+
+ToggleMaximize = ->
+	IsMaximized.Value = not IsMaximized.Value
+	RecreateScoreColumns PlayerFrames --done to re-position stat names NOTE: optimize-able
+
+
+Tabify = ->
+	IsTabified.Value = true
+	IsMaximized.Value = false
+	IsMinimized.Value = true
+	UpdateMinimize!
+	IsTabified.Value = true
+	ScreenGui\TweenPosition(
+		UDim2.new(NormalBounds.X.Scale, NormalBounds.X.Offset - 10, 0, 0),
+		"Out",
+		"Linear",
+		BASE_TWEEN * 1.2,
+		true
+	)
+
+
+UnTabify = ->
+	if IsTabified.Value
+		IsTabified.Value = false
+		ScreenGui\TweenPosition UDim2.new(0, 0, 0, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
+
+--[[
+	Does more than it looks like
+	monitors positions of the clipping frames and bottom frames
+	called from EVERYWHERE, too much probably
+--]]
+UpdateMinimize = ->
+	if IsMinimized.Value
+		if IsMaximized.Value
+			ToggleMaximize!
+
+		if not IsTabified.Value
+			MainFrame\TweenSizeAndPosition(
+				UDim2.new(0.010, HeaderName.TextBounds.X, NormalBounds.Y.Scale, NormalBounds.Y.Offset),
+				UDim2.new(0.990, -HeaderName.TextBounds.X, NormalPosition.Y.Scale, 0),
+				"Out",
+				"Linear",
+				BASE_TWEEN * 1.2,
+				true
+			)
+		else
+			MainFrame\TweenSizeAndPosition NormalBounds, NormalPosition, "Out", "Linear", BASE_TWEEN * 1.2, true
+
+		--(#MiddleFrameBackgrounds*MiddleBGTemplate.Size.Y.Scale)
+		BottomClipFrame\TweenPosition UDim2.new(0, 0, -1, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
+		BottomFrame\TweenPosition UDim2.new(0, 0, 0, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
+		FocusFrame.Size = UDim2.new 1, 0, HeaderFrameHeight, 0
+		ExtendTab.Image = "http://www.roblox.com/asset/?id=94692731"
+	else
+		if not IsMaximized.Value
+			MainFrame\TweenSizeAndPositionNormalBounds, NormalPosition, "Out", "Linear", BASE_TWEEN * 1.2, true
+
+		--do limiting
+		DefaultBottomClipPos = math.min math.max(DefaultBottomClipPos, -1), -1 + (#MiddleFrameBackgrounds * MiddleBGTemplate.Size.Y.Scale)
+		UpdateScrollPosition!
+
+		BottomClipFrame.Position = UDim2.new 0, 0, DefaultBottomClipPos, 0
+		bottomPositon = DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale
+		BottomFrame.Position = UDim2.new 0, 0, bottomPositon, 0
+		FocusFrame.Size = UDim2.new 1, 0, bottomPositon + HeaderFrameHeight, 0
+		ExtendTab.Image = "http://www.roblox.com/asset/?id=94825585"
+
+
+
+--[[
+	Manages the position/size of the mainFrame, swaps out different resolution images for the frame
+	fades in and out the stat names, moves position of headername and header score
+--]]
+UpdateMaximize = ->
+	if IsMaximized.Value
+		for j = 1, #ScoreNames, 1
+			scoreval = ScoreNames[j]
+			StatTitles[scoreval["Name"]]\TweenPosition(
+				UDim2.new(0.4 + ((0.6 / #ScoreNames) * (j - 1)) - 1, 0, 0, 0),
+				"Out",
+				"Linear",
+				BASE_TWEEN,
+				true
+			)
+
+
+		if IsMinimized.Value
+			ToggleMinimize!
+		else
+			UpdateMinimize!
+
+
+		MainFrame\TweenSizeAndPosition(MaximizedBounds, MaximizedPosition, "Out", "Linear", BASE_TWEEN * 1.2, true)
+		HeaderScore\TweenPosition(
+			UDim2.new(0, 0, HeaderName.Position.Y.Scale, 0),
+			"Out",
+			"Linear",
+			BASE_TWEEN * 1.2,
+			true
+		)
+		HeaderName\TweenPosition(
+			UDim2.new(-0.1, -HeaderScore.TextBounds.x, HeaderName.Position.Y.Scale, 0),
+			"Out",
+			"Linear",
+			BASE_TWEEN * 1.2,
+			true
+		)
+		HeaderFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeHeader"]
+		BottomFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeBottom"]
+		for index, i in ipairs MiddleFrameBackgrounds
+			if index % 2 ~= 1
+				i.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeDark"]
+			else
+				i.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeLight"]
+
+
+		for _, i in ipairs MiddleFrames
+			if i\FindFirstChild "ClickListener"
+				i.ClickListener.Size = UDim2.new 0.974, 0, i.ClickListener.Size.Y.Scale, 0
+
+			for j = 1, #ScoreNames, 1
+				scoreval = ScoreNames[j]
+				if i\FindFirstChild scoreval["Name"]
+					i[scoreval["Name"]]\TweenPosition(
+						UDim2.new(0.4 + ((0.6 / #ScoreNames) * (j - 1)) - 1, 0, 0, 0),
+						"Out",
+						"Linear",
+						BASE_TWEEN,
+						true
+					)
+
+
+
+		for _, entry in ipairs PlayerFrames
+			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+				0.38,
+				0,
+				entry["Frame"].TitleFrame.Size.Y.Scale,
+				0
+			)
+
+
+		for _, entry in ipairs TeamFrames
+			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+				0.38,
+				0,
+				entry["Frame"].TitleFrame.Size.Y.Scale,
+				0
+			)
+
+	else
+		if not IsMinimized.Value
+			MainFrame\TweenSizeAndPosition NormalBounds, NormalPosition, "Out", "Linear", BASE_TWEEN * 1.2, true
+
+		HeaderScore\TweenPosition UDim2.new(0, 0, 0.4, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
+		HeaderName\TweenPosition(
+			UDim2.new(0, 0, HeaderName.Position.Y.Scale, 0),
+			"Out",
+			"Linear",
+			BASE_TWEEN * 1.2,
+			true
+		)
+		HeaderFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["NormalHeader"]
+		BottomFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["NormalBottom"]
+		for index, i in ipairs MiddleFrameBackgrounds
+			i.Background.Image = "http://www.roblox.com/asset/?id=" .. if index % 2 ~= 1
+				Images["midDark"]
+			else
+				Images["midLight"]
+
+
+		for _, i in ipairs MiddleFrames
+			if i\FindFirstChild "ClickListener"
+				i.ClickListener.Size = UDim2.new 0.96, 0, i.ClickListener.Size.Y.Scale, 0
+				for j = 1, #ScoreNames, 1
+					scoreval = ScoreNames[j]
+					if i\FindFirstChild(scoreval["Name"]) and scoreval["XOffset"]
+						--print('updateing stat position: ' .. scoreval['Name'])
+						i[scoreval["Name"]]\TweenPosition(
+							UDim2.new(RightEdgeSpace, -scoreval["XOffset"], 0, 0),
+							"Out",
+							"Linear",
+							BASE_TWEEN,
+							true
+						)
+
+
+		for _, entry in ipairs TeamFrames
+			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+				0,
+				BaseScreenXSize * 0.9,
+				entry["Frame"].TitleFrame.Size.Y.Scale,
+				0
+			) 
+
+		for _, entry in ipairs PlayerFrames
+			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+				0,
+				BaseScreenXSize * 0.9,
+				entry["Frame"].TitleFrame.Size.Y.Scale,
+				0
+			) 
+
+ExpandNames = ->
+	if #ScoreNames ~= 0
+		for _, i in pairs StatTitles\GetChildren!
+			Spawn ->
+				TweenProperty i, "TextTransparency", i.TextTransparency, 0, BASE_TWEEN 
+
+
+		HeaderFrameHeight = 0.09
+		--as of writing, this and 'CloseNames' are the only places headerframe is resized
+		HeaderFrame\TweenSizeAndPosition(
+			UDim2.new(HeaderFrame.Size.X.Scale, HeaderFrame.Size.X.Offset, HeaderFrameHeight, 0),
+			HeaderFrame.Position,
+			"Out",
+			"Linear",
+			BASE_TWEEN * 1.2,
+			true
+		)
+		TopClipFrame\TweenPosition(
+			UDim2.new(TopClipFrame.Position.X.Scale, 0, HeaderFrameHeight, 0),
+			"Out",
+			"Linear",
+			BASE_TWEEN * 1.2,
+			true
+		)
+		BottomShiftFrame\TweenPosition(UDim2.new(0, 0, HeaderFrameHeight, 0), "Out", "Linear", BASE_TWEEN * 1.2, true)
+
+
+
+CloseNames = ->
+	if #ScoreNames ~= 0
+		HeaderFrameHeight = 0.07
+		if not IsMaximized.Value
+			for _, i in pairs StatTitles\GetChildren!
+				Spawn ->
+					TweenProperty i, "TextTransparency", i.TextTransparency, 1, BASE_TWEEN 
+
+
+
+		BottomShiftFrame\TweenPosition(UDim2.new(0, 0, HeaderFrameHeight, 0), "Out", "Linear", BASE_TWEEN * 1.2, true)
+		HeaderFrame\TweenSizeAndPosition(
+			UDim2.new(HeaderFrame.Size.X.Scale, HeaderFrame.Size.X.Offset, HeaderFrameHeight, 0),
+			HeaderFrame.Position,
+			"Out",
+			"Linear",
+			BASE_TWEEN * 1.2,
+			true
+		)
+		TopClipFrame\TweenPosition(
+			UDim2.new(TopClipFrame.Position.X.Scale, 0, HeaderFrameHeight, 0),
+			"Out",
+			"Linear",
+			BASE_TWEEN * 1.2,
+			true
+		)
+
+
+UpdateStatNames = ->
+	if not AreNamesExpanded.Value or IsMinimized.Value
+		CloseNames!
+	else
+		ExpandNames!
+
+
+OnScrollWheelMove = (direction) ->
+	if not (IsTabified.Value or IsMinimized.Value or InPopupWaitForClick)
+		StartFrame = ListFrame.Position
+		newFrameY = math.max math.min(StartFrame.Y.Scale + direction, GetMaxScroll!), GetMinScroll!
+
+		ListFrame.Position = UDim2.new StartFrame.X.Scale, StartFrame.X.Offset, newFrameY, StartFrame.Y.Offset
+		UpdateScrollPosition!
+
+
+AttachScrollWheel = ->
+	return if ScrollWheelConnections
+
+	ScrollWheelConnections = {}
+	table.insert(
+		ScrollWheelConnections,
+		Mouse.WheelForward\connect ->
+			OnScrollWheelMove 0.05
+	)
+	table.insert(
+		ScrollWheelConnections,
+		Mouse.WheelBackward\connect ->
+			OnScrollWheelMove -0.05
+	)
+
+DetachScrollWheel = ->
+	if ScrollWheelConnections
+		for _, i in pairs ScrollWheelConnections
+			i\disconnect!
+
+	ScrollWheelConnections = nil
+
+
+FocusFrame.MouseEnter\connect ->
+	if not (IsMinimized.Value or IsTabified.Value)
+		AttachScrollWheel!
+
+
+FocusFrame.MouseLeave\connect ->
+	--if not (IsMaximized.Value or IsMinimized.Value)
+	DetachScrollWheel!
+
+------------------------
+-- Scroll Bar functions
+------------------------
+--[[
+	updates whether the scroll bar should be showing, if it is showing, updates
+	the size of it
+--]]
+UpdateScrollBarVisibility = ->
+	if AreAllEntriesOnScreen!
+		ScrollBar.BackgroundTransparency = 1
+	else
+		ScrollBar.BackgroundTransparency = 0
+		UpdateScrollBarSize!
+
+
+--[[
+	updates size of scrollbar depending on how many entries exist
+--]]
+UpdateScrollBarSize = ->
+	entryListSize = #MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale
+	shownAreaSize = BottomClipFrame.Position.Y.Scale + 1
+	ScrollBar.Size = UDim2.new 1, 0, shownAreaSize / entryListSize, 0
+
+--[[
+	updates position of listframe so that no gaps at the bottom or top of the list are visible
+	updates position of scrollbar to match what parts of the list are visible
+--]]
+UpdateScrollPosition = ->
+	minPos = GetMinScroll!
+	maxPos = GetMaxScroll!
+	scrollLength = maxPos - minPos
+
+	yscrollpos = math.max math.min(ListFrame.Position.Y.Scale, maxPos), minPos 
+	ListFrame.Position = UDim2.new ListFrame.Position.X.Scale, ListFrame.Position.X.Offset, yscrollpos, ListFrame.Position.Y.Offset
+
+	adjustedLength = 1 - ScrollBar.Size.Y.Scale
+	ScrollBar.Position = UDim2.new 0, 0, adjustedLength - (adjustedLength * ((ListFrame.Position.Y.Scale - minPos) / scrollLength)), 0
+
+
+--[[
+	WARNING:this is in a working state, but uses massive hacks
+	revize when global input is available
+	Manages scrolling of the playerlist on mouse drag
+--]]
+StartDrag = (entry, startx, starty) ->
+	openPanel = true
+	--[[draggedFrame = ]]
+	WaitForChild(entry["Frame"], "ClickListener")
+	dragExit = ->
+		-- stopDrag = true
+
+		if
+			entry["Player"] and
+			SelectedPlayer and
+			openPanel and
+			entry["Player"] ~= LocalPlayer and
+			SelectedPlayer.userId > 1 and
+			LocalPlayer.userId > 1
+
+			ActivatePlayerEntryPanel entry
+
+
+	local startY
+	StartFrame = ListFrame.Position
+	dragpoll = (nx, ny) ->
+		if not startY
+			startY = AbsoluteToPercent(nx, ny).Y
+
+		nowY = AbsoluteToPercent(nx, ny).Y
+		debugprint "drag dist: #{Vector2.new(startx - nx, starty - ny).magnitude}"
+		if Vector2.new(startx - nx, starty - ny).magnitude > MOUSE_DRAG_DISTANCE
+			openPanel = false
+
+
+		newFrameY = math.max math.min(StartFrame.Y.Scale + (nowY - startY), GetMaxScroll!), GetMinScroll!
+		ListFrame.Position = UDim2.new StartFrame.X.Scale, StartFrame.X.Offset, newFrameY, StartFrame.Y.Offset
+		UpdateScrollPosition!
+
+	WaitForClick ScreenGui, dragpoll, dragExit
+
+
+StartMinimizeDrag = ->
+	Delay 0, ->
+		startTime = tick!
+		debugprint "Got Click2"
+		dragExit = ->
+			--debugprint 'undone click2'
+			if tick! - startTime < 0.25 --was click
+				ToggleMinimize!
+			else --was drag
+				DidMinimizeDrag = true
+				if IsMinimized.Value
+					ToggleMinimize!
+
+			-- stopDrag = true
+
+		local startY
+		StartFrame = DefaultBottomClipPos
+		dragpoll = (nx, ny) ->
+			if not IsMinimized.Value
+				if not startY
+					startY = AbsoluteToPercent(nx, ny).Y
+
+				nowY = AbsoluteToPercent(nx, ny).Y
+				newFrameY = math.min(
+					math.max(StartFrame + (nowY - startY), -1),
+					-1 + (#MiddleFrameBackgrounds * MiddleBGTemplate.Size.Y.Scale)
+				)
+				DefaultBottomClipPos = newFrameY
+				UpdateMinimize!
+				ScrollBarFrame.Size =
+					UDim2.new(ScrollBarFrame.Size.X.Scale, 0, (DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale), 0)
+				ScrollBarFrame.Position =
+					UDim2.new(ScrollBarFrame.Position.X.Scale, 0, 1 - ScrollBarFrame.Size.Y.Scale, 0)
+				UpdateScrollBarSize!
+				UpdateScrollPosition!
+				UpdateScrollBarVisibility!
+
+
+		Spawn ->
+			WaitForClick ScreenGui, dragpoll, dragExit
+
+
+

@@ -1556,7 +1556,7 @@ function RecreateScoreColumns(ptable)
 
 		MaxSizeColumn = 0
 		-- for each entry in this player table
-		for i, entry in ipairs(ptable) do
+		for _, entry in ipairs(ptable) do
 			local panel = entry["Frame"]
 			local tplayer = entry["Player"]
 			-- if this panel does not have an element named after this stat
