@@ -552,7 +552,7 @@ layoutGuiObjectsHelper = (frame, guiObjects, settingsTable) ->
 	totalPixels = pixelsRemaining = frame.AbsoluteSize.Y
 
 	for _, child in ipairs guiObjects
-		if child\IsA "TextLabel" or child\IsA "TextButton"
+		if child\IsA"TextLabel" or child\IsA "TextButton"
 			isLabel = child\IsA "TextLabel"
 			settingsTableIndex = "Text#{if isLabel then "Label" else "Button"}PositionPadY"
 			pixelsRemaining -= settingsTable[settingsTableIndex]

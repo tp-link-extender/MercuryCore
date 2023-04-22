@@ -1931,7 +1931,7 @@ if LoadLibrary
 			pos = 1
 			if children
 				for _, player in ipairs children
-					if player\IsA "Player" and player ~= localPlayer
+					if player\IsA"Player" and player ~= localPlayer
 						playerNames[pos] = player.Name
 						nameToPlayer[player.Name] = player
 						pos += 1
