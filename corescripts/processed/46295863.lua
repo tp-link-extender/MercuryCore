@@ -42,7 +42,6 @@ if script.Parent:FindFirstChild("ControlFrame") then
 else
 	gui = script.Parent
 end
-local RbxGui = assert(LoadLibrary("RbxGui"))
 local syncVideoCaptureSetting
 local settingsButton, helpButton, settingsFrame, mouseLockLabel
 local updateCameraDropDownSelection
@@ -323,7 +322,7 @@ createHelpDialog = function(baseZIndex)
 		if UserSettings().GameSettings.ControlMode == Enum.ControlMode["Mouse Lock Switch"] then
 			image.Image = mouseLockLookScreenUrl
 		else
-			image.Image = imageclassicLookScreenUrl
+			image.Image = classicLookScreenUrl
 		end
 	end
 	buttons[2] = { }
