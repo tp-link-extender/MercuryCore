@@ -494,7 +494,7 @@ setupCameraControl = (parentFrame, refreshCharacterMoveFunc) ->
 
 	pinchGestureReceivedTouch = (inputObject) ->
 		if #pinchTouches < 1
-			table.insert pinchTouches, inputObject 
+			table.insert pinchTouches, inputObject
 			pinchTime = tick!
 			shouldPinch = false
 		elseif #pinchTouches == 1
@@ -517,14 +517,14 @@ setupCameraControl = (parentFrame, refreshCharacterMoveFunc) ->
 
 		if not cameraTouch? and not usedByThumbstick
 			cameraTouch = inputObject
-			lastPos = Vector2.new cameraTouch.Position.x, cameraTouch.Position.y 
+			lastPos = Vector2.new cameraTouch.Position.x, cameraTouch.Position.y
 			-- lastTick = tick!
 
 	userInputService.InputChanged\connect (inputObject) ->
 		return if inputObject.UserInputType ~= Enum.UserInputType.Touch
 		return if cameraTouch ~= inputObject
 
-		newPos = Vector2.new cameraTouch.Position.x, cameraTouch.Position.y 
+		newPos = Vector2.new cameraTouch.Position.x, cameraTouch.Position.y
 		touchDiff = (lastPos - newPos) * CameraRotateSensitivity
 
 		-- first time rotating outside deadzone, just setup for next changed event

@@ -89,7 +89,7 @@ local characterChildAddedCon, backpackChildCon
 debounce = false
 
 enlargeFactor = 1.18
-buttonSizeEnlarge = UDim2.new 1 * enlargeFactor, 0, 1 * enlargeFactor, 0 
+buttonSizeEnlarge = UDim2.new 1 * enlargeFactor, 0, 1 * enlargeFactor, 0
 buttonSizeNormal = UDim2.new 1, 0, 1, 0
 enlargeOverride = true
 guiTweenSpeed = 0.5
@@ -135,7 +135,7 @@ characterInWorkspace = ->
 		game.Players.LocalPlayer["Character"] and
 		game.Players.LocalPlayer.Character? and
 		game.Players.LocalPlayer.Character.Parent?
-		
+
 		return true
 	false
 
@@ -464,12 +464,12 @@ swapGear = (gearClone, toFrame) ->
 			toFrameChildren[1].SlotNumberDownShadow.Text = gearClone.SlotNumber.Text
 			toFrameChildren[1].SlotNumberUpShadow.Text = gearClone.SlotNumber.Text
 
-			subString = string.sub toFrame.Name, 5 
+			subString = string.sub toFrame.Name, 5
 			gearClone.SlotNumber.Text = subString
 			gearClone.SlotNumberDownShadow.Text = subString
 			gearClone.SlotNumberUpShadow.Text = subString
 
-			gearClone.Position = UDim2.new gearClone.Position.X.Scale, 0, gearClone.Position.Y.Scale, 0 
+			gearClone.Position = UDim2.new gearClone.Position.X.Scale, 0, gearClone.Position.Y.Scale, 0
 			toFrameChildren[1].Position = UDim2.new(
 				toFrameChildren[1].Position.X.Scale, 0,
 				toFrameChildren[1].Position.Y.Scale, 0
@@ -485,7 +485,7 @@ swapGear = (gearClone, toFrame) ->
 
 		gearSlots[slotNum] = "empty" -- reset this gear slot
 
-		subString = string.sub toFrame.Name, 5 
+		subString = string.sub toFrame.Name, 5
 		gearClone.SlotNumber.Text = subString
 		gearClone.SlotNumberDownShadow.Text = subString
 		gearClone.SlotNumberUpShadow.Text = subString
@@ -506,7 +506,7 @@ resolveDrag = (gearClone, x, y) ->
 	frames = frame.Parent\GetChildren!
 
 	for i = 1, #frames
-		if frames[i]\IsA"Frame" and 
+		if frames[i]\IsA"Frame" and
 			pointInRectangle mousePoint, frames[i].AbsolutePosition, frames[i].AbsoluteSize
 
 			swapGear gearClone, frames[i]
@@ -597,7 +597,7 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 			gearClone.GearReference.Value["ToolTip"] and
 			gearClone.GearReference.Value.ToolTip ~= ""
 
-			showToolTip gearClone, gearClone.GearReference.Value.ToolTip 
+			showToolTip gearClone, gearClone.GearReference.Value.ToolTip
 
 
 	gearClone.MouseLeave\connect ->
@@ -605,7 +605,7 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 			gearClone.GearReference.Value["ToolTip"] and
 			gearClone.GearReference.Value.ToolTip ~= ""
 
-			hideToolTip gearClone, gearClone.GearReference.Value.ToolTip 
+			hideToolTip gearClone, gearClone.GearReference.Value.ToolTip
 
 
 	gearClone.RobloxLocked = true
@@ -716,8 +716,8 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 		return if gearClone.Parent and gearClone.Parent.Parent == currentLoadout
 
 		clickCon?\disconnect!
-		buttonDeleteCon?\disconnect!	
-		mouseEnterCon?\disconnect!	
+		buttonDeleteCon?\disconnect!
+		mouseEnterCon?\disconnect!
 		mouseLeaveCon?\disconnect!
 		dragStop?\disconnect!
 		dragBegin?\disconnect!
@@ -727,7 +727,7 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 	local childChangeCon
 	childCon = child.AncestryChanged\connect (newChild, parent) ->
 		if not checkToolAncestry newChild, parent
-			
+
 			childCon?\disconnect!
 			childChangeCon?\disconnect!
 
@@ -936,13 +936,13 @@ waitForProperty player, "Character"
 -- not sure why this had no delay but the player.CharacterAdded one had one...  this type of error would be easier to avoid with function reusage
 delay 1, ->
 	backpackChildren = player.Backpack\GetChildren!
-	size = math.min 10, #backpackChildren 
+	size = math.min 10, #backpackChildren
 	for i = 1, size
 		if backpackEnabled
 			backpackButton.Visible = true
 			clBackground.Visible = true
 
-		addingPlayerChild backpackChildren[i], false 
+		addingPlayerChild backpackChildren[i], false
 
 	setupBackpackListener!
 
@@ -1034,8 +1034,8 @@ player.CharacterAdded\connect ->
 		backpackChildCon = nil
 
 
-	waitForChild player, "PlayerGui" 
-	moveHealthBar player.PlayerGui 
+	waitForChild player, "PlayerGui"
+	moveHealthBar player.PlayerGui
 	delay 2, ->
 		--while true
 		if (not backpackWasOpened) and
@@ -1071,7 +1071,7 @@ game\GetService"GuiService".KeyPressed\connect (key) ->
 		activateGear key
 
 
-backpackOpenEvent.Event\connect editLoadout 
-backpackCloseEvent.Event\connect centerGear 
+backpackOpenEvent.Event\connect editLoadout
+backpackCloseEvent.Event\connect centerGear
 tabClickedEvent.Event\connect (tabName) ->
 	tabHandler tabName == StaticTabName

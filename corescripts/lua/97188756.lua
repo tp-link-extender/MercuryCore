@@ -1092,15 +1092,15 @@ end
 function Chat:RecalculateSpacing()
 	--[[for i = 1, #self.MessageQueue do
 		local pLabel = self.MessageQueue[i]['Player']
-		local mLabel = self.MessageQueue[i]['Message']		
+		local mLabel = self.MessageQueue[i]['Message']
 
 		local prevYScale = mLabel.Size.Y.Scale
 		local prevText = mLabel.Text
 		mLabel.Text = prevText
 
-		local heightField = mLabel.TextBounds.Y	
+		local heightField = mLabel.TextBounds.Y
 
-		mLabel.Size = UDim2.new(1, 0, heightField/self.RenderFrame.AbsoluteSize.Y, 0)	
+		mLabel.Size = UDim2.new(1, 0, heightField/self.RenderFrame.AbsoluteSize.Y, 0)
 		pLabel.Size = mLabel.Size
 
 		local diff = mLabel.Size.Y.Scale - prevYScale
@@ -1151,14 +1151,14 @@ function Chat:CreateMessage(cPlayer, message)
 			nString = Chat:ComputeSpaceString(pLabel)
 		else
 			nString = self.CachedSpaceStrings_List[pName]
-		end 	
+		end 
 
 		mLabel.Text = ""
 		mLabel.Name = pName .. " - message"
 		mLabel.Text = nString .. message;
 
 		mLabel.Parent = nil
-		mLabel.Parent = self.RenderFrame		
+		mLabel.Parent = self.RenderFrame
 
 		mLabel.Position = UDim2.new(0, 0, 1, 0);
 		pLabel.Position = UDim2.new(0, 0, 1, 0);]]

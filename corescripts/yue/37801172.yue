@@ -54,7 +54,7 @@ else
 		if screenGui.AbsoluteSize.Y >= 600
 			-- New Player List
 			scriptContext\AddCoreScript 48488235, screenGui, "CoreScripts/PlayerListScript"
-		
+
 if game.CoreGui.Version >= 3 and game.PlaceId ~= 130815926 --todo: remove placeid hack for halloween
 	-- Backpack Builder, creates most of the backpack gui
 	scriptContext\AddCoreScript 53878047, screenGui, "CoreScripts/BackpackScripts/BackpackBuilder"

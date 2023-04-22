@@ -82,9 +82,9 @@ CreateEnum = (enumName) ->
 				Enum: e
 				[EnumName]: enumName
 
-				<call>: (@, value) -> 
+				<call>: (@, value) ->
 					value == @ or value == @Name or value == @Value
-				<tostring>: (@) -> 
+				<tostring>: (@) ->
 					"Enum.#{@[EnumName]}.#{@Name}"
 
 			e[i] = e[name] = e[item] = item
@@ -103,7 +103,7 @@ CreateEnum = (enumName) ->
 
 					table.sort t, (a, b) -> a.Value < b.Value
 					t
-			__tostring: (@) -> 
+			__tostring: (@) ->
 				"Enum.#{@[EnumName]}"
 
 ---------------------------------------------------
@@ -181,23 +181,23 @@ Chat =
 		* "tako"
 
 	SafeChat_List:
-		"Use the Chat menu to talk to me.": 
+		"Use the Chat menu to talk to me.":
 			* "/sc0"
 			* true
-		"I can only see menu chats.": 
+		"I can only see menu chats.":
 			* "/sc1"
 			* true
 		Hello:
 			Hi:
-				* "/sc2_0" 
-				* true 
-				"Hi there!": true 
-				"Hi everyone": true 
+				* "/sc2_0"
+				* true
+				"Hi there!": true
+				"Hi everyone": true
 
 			Howdy:
 				* "/sc2_1"
-				* true 
-				"Howdy partner!": true 
+				* true
+				"Howdy partner!": true
 
 			Greetings:
 				* "/sc2_2"
@@ -287,7 +287,7 @@ Chat =
 				* "/sc3_3"
 				* true
 			"I have to go":
-				* "/sc3_4" 
+				* "/sc3_4"
 				* true
 
 			Farewell:
@@ -300,9 +300,9 @@ Chat =
 
 			Peace:
 				* "/sc3_6"
-				* true 
-				"Peace out!": true 
-				"Peace dudes!": true 
+				* true
+				"Peace out!": true
+				"Peace dudes!": true
 				"Rest in pieces!": true
 
 			Silly:
@@ -514,14 +514,14 @@ Chat =
 					Retriever: true
 
 				Horses:
-					Ponies: true 
-					Stallions: true 
+					Ponies: true
+					Stallions: true
 					Pwnyz: true
 
 				Reptiles:
-					Dinosaurs: true 
-					Lizards: true 
-					Snakes: true 
+					Dinosaurs: true
+					Lizards: true
+					Snakes: true
 					"Turtles!": true
 
 				Hamster: true
@@ -592,8 +592,8 @@ Chat =
 				Tennis: true
 				"Sports team practice": true
 				Watersports:
-					Surfing: true 
-					Swimming: true 
+					Surfing: true
+					Swimming: true
 					"Water Polo": true
 
 				"Winter sports":
@@ -767,7 +767,7 @@ Chat =
 						Wales: true
 						"Northern Ireland": true
 
-	
+
 				Asia:
 					China: true
 					India: true
@@ -777,11 +777,11 @@ Chat =
 					Vietnam: true
 
 				"South America":
-					Argentina: true 
+					Argentina: true
 					Brazil: true
 
 				Africa:
-					Eygpt: true 
+					Eygpt: true
 					Swaziland: true
 
 				Australia: true
@@ -821,7 +821,7 @@ Chat =
 				* "/sc6_13"
 				* true
 			"I don't want to say boy or girl. Don't ask.":
-				* "/sc6_14" 
+				* "/sc6_14"
 				* true
 
 			* "/sc6"
@@ -1123,29 +1123,29 @@ Chat.UpdateChat = (cPlayer, message) =>
 
 	if coroutine.status(Chat.MessageThread) == "dead"
 		--Chat.Messages_List = {}
-		table.insert Chat.Messages_List, messageField 
+		table.insert Chat.Messages_List, messageField
 		Chat.MessageThread = coroutine.create ->
 			for i = 1, #Chat.Messages_List
 				field = Chat.Messages_List[i]
-				Chat\CreateMessage field["Player"], field["Message"] 
+				Chat\CreateMessage field["Player"], field["Message"]
 			Chat.Messages_List = {}
 
-		coroutine.resume Chat.MessageThread 
+		coroutine.resume Chat.MessageThread
 	else
-		table.insert Chat.Messages_List, messageField 
+		table.insert Chat.Messages_List, messageField
 
 -- Chat.RecalculateSpacing ==>
 	--[[for i = 1, #@MessageQueue
 		pLabel = @MessageQueue[i]['Player']
-		mLabel = @MessageQueue[i]['Message']		
+		mLabel = @MessageQueue[i]['Message']
 
 		prevYScale = mLabel.Size.Y.Scale
 		prevText = mLabel.Text
 		mLabel.Text = prevText
 
-		heightField = mLabel.TextBounds.Y	
+		heightField = mLabel.TextBounds.Y
 
-		mLabel.Size = UDim2.new(1, 0, heightField/@RenderFrame.AbsoluteSize.Y, 0)	
+		mLabel.Size = UDim2.new(1, 0, heightField/@RenderFrame.AbsoluteSize.Y, 0)
 		pLabel.Size = mLabel.Size
 
 		diff = mLabel.Size.Y.Scale - prevYScale
@@ -1191,14 +1191,14 @@ Chat.CreateMessage = (cPlayer, message) =>
 			nString = Chat\ComputeSpaceString(pLabel)
 		else
 			nString = @CachedSpaceStrings_List[pName]
-		end 	
+		end 
 
 		mLabel.Text = ""
 		mLabel.Name = pName .. " - message"
 		mLabel.Text = nString .. message;
 
 		mLabel.Parent = nil
-		mLabel.Parent = @RenderFrame		
+		mLabel.Parent = @RenderFrame
 
 		mLabel.Position = UDim2.new 0, 0, 1, 0;
 		pLabel.Position = UDim2.new 0, 0, 1, 0;]]
@@ -1589,7 +1589,7 @@ Chat.FindMessageInSafeChat = (message, list) =>
 		if msg == message
 			return true
 		if type(list[msg]) == "table"
-			foundMessage = Chat\FindMessageInSafeChat message, list[msg] 
+			foundMessage = Chat\FindMessageInSafeChat message, list[msg]
 			if foundMessage
 				return true
 	foundMessage
@@ -1613,7 +1613,7 @@ Chat.PlayerChatted = (...) =>
 			(Player.ChatMode == Enum.ChatMode.Menu and string.sub(message, 1, 3) == "/sc") or
 			Chat\FindMessageInSafeChat message, @SafeChat_List
 
-			Chat\UpdateChat player, message 
+			Chat\UpdateChat player, message
 
 -- After Chat.Configuration.Lifetime seconds of existence, the labels become invisible
 -- Runs only every 5 seconds and has to loop through 50 values
@@ -1657,9 +1657,9 @@ Chat.Initialize ==>
 	Chat\CreateGui!
 
 	try
-		Chat\CoreGuiChanged Enum.CoreGuiType.Chat, Game.StarterGui\GetCoreGuiEnabled Enum.CoreGuiType.Chat 
+		Chat\CoreGuiChanged Enum.CoreGuiType.Chat, Game.StarterGui\GetCoreGuiEnabled Enum.CoreGuiType.Chat
 		Game.StarterGui.CoreGuiChangedSignal\connect (coreGuiType, enabled) ->
-			Chat\CoreGuiChanged coreGuiType, enabled 
+			Chat\CoreGuiChanged coreGuiType, enabled
 
 	@EventListener = PlayersService.PlayerChatted\connect (...) ->
 		-- This event has 4 callback arguments
