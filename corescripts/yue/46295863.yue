@@ -39,7 +39,7 @@ gui = if script.Parent\FindFirstChild "ControlFrame"
 else
 	script.Parent
 
-local RbxGui
+RbxGui = assert LoadLibrary "RbxGui"
 local syncVideoCaptureSetting
 local settingsButton, helpButton, settingsFrame, mouseLockLabel
 local updateCameraDropDownSelection
@@ -1340,7 +1340,6 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 if LoadLibrary
-	RbxGui = LoadLibrary "RbxGui"
 	baseZIndex = 0
 	if UserSettings
 		createSettingsDialog = ->
