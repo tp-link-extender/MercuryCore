@@ -1,142 +1,131 @@
-function waitForProperty(a,b)while not a[b]do a.Changed:wait()end end function
-waitForChild(a,b)while not a:FindFirstChild(b)do a.ChildAdded:wait()end end
-local a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u=nil,{},nil,{},nil,nil,nil,
-'You are too far away to chat!',300,'Chat ended because you walked away',350,
-"Chat ended because you didn't reply",350,nil,nil,nil,nil,nil,{},{},nil
-waitForChild(game,'CoreGui')waitForChild(game.CoreGui,'RobloxGui')if game.
-CoreGui.RobloxGui:FindFirstChild'ControlFrame'then u=game.CoreGui.RobloxGui.
-ControlFrame else u=game.CoreGui.RobloxGui end function currentTone()if e then
-return e.Tone else return Enum.DialogTone.Neutral end end function
-createChatNotificationGui()o=Instance.new'BillboardGui'o.Name=
-'ChatNotificationGui'o.ExtentsOffset=Vector3.new(0,1,0)o.Size=UDim2.new(4,0,
-5.42857122,0)o.SizeOffset=Vector2.new(0,0)o.StudsOffset=Vector3.new(0.4,4.3,0)o.
-Enabled=true o.RobloxLocked=true o.Active=true local v=Instance.new'ImageLabel'v
-.Name='Image'v.Active=false v.BackgroundTransparency=1 v.Position=UDim2.new(0,0,
-0,0)v.Size=UDim2.new(1,0,1,0)v.Image=''v.RobloxLocked=true v.Parent=o local w=
-Instance.new'ImageButton'w.Name='Button'w.AutoButtonColor=false w.Position=UDim2
-.new(0.0879999995,0,0.0529999994,0)w.Size=UDim2.new(0.829999983,0,0.460000008,0)
-w.Image=''w.BackgroundTransparency=1 w.RobloxLocked=true w.Parent=v end function
-getChatColor(v)if v==Enum.DialogTone.Neutral then return Enum.ChatColor.Blue
-elseif v==Enum.DialogTone.Friendly then return Enum.ChatColor.Green elseif v==
-Enum.DialogTone.Enemy then return Enum.ChatColor.Red end end function
-styleChoices(v)for w,x in pairs(b)do resetColor(x,v)end resetColor(c,v)end
-function styleMainFrame(v)if v==Enum.DialogTone.Neutral then a.Style=Enum.
-FrameStyle.ChatBlue a.Tail.Image=
-'rbxasset://textures/chatBubble_botBlue_tailRight.png'elseif v==Enum.DialogTone.
-Friendly then a.Style=Enum.FrameStyle.ChatGreen a.Tail.Image=
-'rbxasset://textures/chatBubble_botGreen_tailRight.png'elseif v==Enum.DialogTone
-.Enemy then a.Style=Enum.FrameStyle.ChatRed a.Tail.Image=
-'rbxasset://textures/chatBubble_botRed_tailRight.png'end styleChoices(v)end
-function setChatNotificationTone(v,w,x)if x==Enum.DialogTone.Neutral then v.
-Image.Image='rbxasset://textures/chatBubble_botBlue_notify_bkg.png'elseif x==
-Enum.DialogTone.Friendly then v.Image.Image=
-'rbxasset://textures/chatBubble_botGreen_notify_bkg.png'elseif x==Enum.
-DialogTone.Enemy then v.Image.Image=
-'rbxasset://textures/chatBubble_botRed_notify_bkg.png'end if w==Enum.
-DialogPurpose.Quest then v.Image.Button.Image=
-'rbxasset://textures/chatBubble_bot_notify_bang.png'elseif w==Enum.DialogPurpose
-.Help then v.Image.Button.Image=
-'rbxasset://textures/chatBubble_bot_notify_question.png'elseif w==Enum.
-DialogPurpose.Shop then v.Image.Button.Image=
-'rbxasset://textures/chatBubble_bot_notify_money.png'end end function
-createMessageDialog()p=Instance.new'Frame'p.Name='DialogScriptMessage'p.Style=
-Enum.FrameStyle.RobloxRound p.Visible=false local v=Instance.new'TextLabel'v.
-Name='Text'v.Position=UDim2.new(0,0,0,-1)v.Size=UDim2.new(1,0,1,0)v.FontSize=
-Enum.FontSize.Size14 v.BackgroundTransparency=1 v.TextColor3=Color3.new(1,1,1)v.
-RobloxLocked=true v.Parent=p end function showMessage(v,w)p.Text.Text=v p.Size=
-UDim2.new(0,w,0,40)p.Position=UDim2.new(0.5,-w/2,0.5,-40)p.Visible=true wait(2)p
-.Visible=false end function variableDelay(v)local w=math.min(string.len(v),100)
-wait(0.75+((w/75)*1.5))end function resetColor(v,w)if w==Enum.DialogTone.Neutral
-then v.BackgroundColor3=Color3.new(0,0,0.7019607843137254)v.Number.TextColor3=
-Color3.new(0.17647058823529413,0.5568627450980392,0.9607843137254902)elseif w==
-Enum.DialogTone.Friendly then v.BackgroundColor3=Color3.new(0,
-0.30196078431372547,0)v.Number.TextColor3=Color3.new(0,0.7450980392156863,0)
-elseif w==Enum.DialogTone.Enemy then v.BackgroundColor3=Color3.new(
-0.5490196078431373,0,0)v.Number.TextColor3=Color3.new(1,0.34509803921568627,
-0.30980392156862746)end end function highlightColor(v,w)if w==Enum.DialogTone.
-Neutral then v.BackgroundColor3=Color3.new(7.8431372549019605E-3,
-0.4235294117647059,1)v.Number.TextColor3=Color3.new(1,1,1)elseif w==Enum.
-DialogTone.Friendly then v.BackgroundColor3=Color3.new(0,0.5019607843137255,0)v.
-Number.TextColor3=Color3.new(1,1,1)elseif w==Enum.DialogTone.Enemy then v.
-BackgroundColor3=Color3.new(0.8,0,0)v.Number.TextColor3=Color3.new(1,1,1)end end
-function endDialog()if g then g:Remove()g=nil end local v=e e=nil if v and v.
-InUse then local w=r:Clone()w.archivable=false w.Disabled=false w.Parent=v end
-for w,x in pairs(s)do if w and x then x.Enabled=not w.InUse end end f=nil end
-function wanderDialog()print'Wander'a.Visible=false endDialog()showMessage(j,k)
-end function timeoutDialog()print'Timeout'a.Visible=false endDialog()
-showMessage(l,m)end function normalEndDialog()print'Done'endDialog()end function
-sanitizeMessage(w)if string.len(w)==0 then return'...'else return w end end
-function selectChoice(w)renewKillswitch(e)a.Visible=false if w==c then game.Chat
-:Chat(game.Players.LocalPlayer.Character,'Goodbye!',getChatColor(currentTone()))
-normalEndDialog()else local x=d[w]game.Chat:Chat(game.Players.LocalPlayer.
-Character,sanitizeMessage(x.UserDialog),getChatColor(currentTone()))wait(1)e:
-SignalDialogChoiceSelected(n,x)game.Chat:Chat(f,sanitizeMessage(x.ResponseDialog
-),getChatColor(currentTone()))variableDelay(x.ResponseDialog)
-presentDialogChoices(f,x:GetChildren())end end function newChoice(w)local x=
-Instance.new'TextButton'x.BackgroundColor3=Color3.new(0,0,0.7019607843137254)x.
-AutoButtonColor=false x.BorderSizePixel=0 x.Text=''x.MouseEnter:connect(function
-()highlightColor(x,currentTone())end)x.MouseLeave:connect(function()resetColor(x
-,currentTone())end)x.MouseButton1Click:connect(function()selectChoice(x)end)x.
-RobloxLocked=true local y=Instance.new'TextLabel'y.Name='Number'y.TextColor3=
-Color3.new(0.4980392156862745,0.8313725490196079,1)y.Text=w y.FontSize=Enum.
-FontSize.Size14 y.BackgroundTransparency=1 y.Position=UDim2.new(0,4,0,2)y.Size=
-UDim2.new(0,20,0,24)y.TextXAlignment=Enum.TextXAlignment.Left y.TextYAlignment=
-Enum.TextYAlignment.Top y.RobloxLocked=true y.Parent=x local z=Instance.new
-'TextLabel'z.Name='UserPrompt'z.BackgroundTransparency=1 z.TextColor3=Color3.
-new(1,1,1)z.FontSize=Enum.FontSize.Size14 z.Position=UDim2.new(0,28,0,2)z.Size=
-UDim2.new(1,-32,1,-4)z.TextXAlignment=Enum.TextXAlignment.Left z.TextYAlignment=
-Enum.TextYAlignment.Top z.TextWrap=true z.RobloxLocked=true z.Parent=x return x
-end function initialize(w)b[1]=newChoice'1)'b[2]=newChoice'2)'b[3]=newChoice'3)'
-b[4]=newChoice'4)'c=newChoice'5)'c.UserPrompt.Text='Goodbye!'c.Size=UDim2.new(1,
-0,0,28)a=Instance.new'Frame'a.Name='UserDialogArea'a.Size=UDim2.new(0,350,0,200)
-a.Style=Enum.FrameStyle.ChatBlue a.Visible=false local x=Instance.new
-'ImageLabel'x.Name='Tail'x.Size=UDim2.new(0,62,0,53)x.Position=UDim2.new(1,8,
-0.25)x.Image='rbxasset://textures/chatBubble_botBlue_tailRight.png'x.
-BackgroundTransparency=1 x.RobloxLocked=true x.Parent=a for y,z in pairs(b)do z.
-RobloxLocked=true z.Parent=a end c.RobloxLocked=true c.Parent=a a.RobloxLocked=
-true a.Parent=w end function presentDialogChoices(w,x)if not e then return end f
-=w local y={}for z,A in pairs(x)do if A:IsA'DialogChoice'then table.insert(y,A)
-end end table.sort(y,function(B,C)return B.Name<C.Name end)if#y==0 then
-normalEndDialog()return end local B,C=1,0 d={}for D,E in pairs(b)do E.Visible=
-false end for F,G in pairs(y)do if B<=#b then b[B].Size=UDim2.new(1,0,0,72)b[B].
-UserPrompt.Text=G.UserDialog local H=math.ceil(b[B].UserPrompt.TextBounds.Y/24)*
-24 b[B].Position=UDim2.new(0,0,0,C)b[B].Size=UDim2.new(1,0,0,H)b[B].Visible=true
-d[b[B]]=G C=C+H B=B+1 end end c.Position=UDim2.new(0,0,0,C)c.Number.Text=B..')'a
-.Size=UDim2.new(0,350,0,C+24+32)a.Position=UDim2.new(0,20,0,-a.Size.Y.Offset-20)
-styleMainFrame(currentTone())a.Visible=true end function doDialog(w)while not
-Instance.Lock(w,n)do wait()end if w.InUse then Instance.Unlock(w)return else w.
-InUse=true Instance.Unlock(w)end e=w game.Chat:Chat(w.Parent,w.InitialPrompt,
-getChatColor(w.Tone))variableDelay(w.InitialPrompt)presentDialogChoices(w.Parent
-,w:GetChildren())end function renewKillswitch(w)if g then g:Remove()g=nil end g=
-q:Clone()g.archivable=false g.Disabled=false g.Parent=w end function
-checkForLeaveArea()while e do if e.Parent and(n:DistanceFromCharacter(e.Parent.
-Position)>=e.ConversationDistance)then wanderDialog()end wait(1)end end function
-startDialog(w)if w.Parent and w.Parent:IsA'BasePart'then if n:
-DistanceFromCharacter(w.Parent.Position)>=w.ConversationDistance then
-showMessage(h,i)return end for x,y in pairs(s)do if x and y then y.Enabled=false
-end end renewKillswitch(x)delay(1,checkForLeaveArea)doDialog(x)end end function
-removeDialog(w)if s[w]then s[w]:Remove()s[w]=nil end if t[w]then t[w]:
-disconnect()t[w]=nil end end function addDialog(w)if w.Parent then if w.Parent:
-IsA'BasePart'then local x=o:clone()x.Enabled=not w.InUse x.Adornee=w.Parent x.
-RobloxLocked=true x.Parent=game.CoreGui x.Image.Button.MouseButton1Click:
-connect(function()startDialog(w)end)setChatNotificationTone(x,w.Purpose,w.Tone)s
-[w]=x t[w]=w.Changed:connect(function(y)if y=='Parent'and w.Parent then
-removeDialog(w)addDialog(w)elseif y=='InUse'then x.Enabled=not e and not w.InUse
-if w==e then timeoutDialog()end elseif y=='Tone'or y=='Purpose'then
-setChatNotificationTone(x,w.Purpose,w.Tone)end end)else t[w]=w.Changed:connect(
-function(x)if x=='Parent'and w.Parent then removeDialog(w)addDialog(w)end end)
-end end end function fetchScripts()local w=game:GetService'InsertService':
-LoadAsset(39226062)if type(w)=='string'then wait(0.1)w=game:GetService
-'InsertService':LoadAsset(39226062)end if type(w)=='string'then return end
-waitForChild(w,'TimeoutScript')q=w.TimeoutScript waitForChild(w,
-'ReenableDialogScript')r=w.ReenableDialogScript end function onLoad()
-waitForProperty(game.Players,'LocalPlayer')n=game.Players.LocalPlayer
-waitForProperty(n,'Character')fetchScripts()createChatNotificationGui()
-createMessageDialog()p.RobloxLocked=true p.Parent=u waitForChild(u,
-'BottomLeftControl')local w=Instance.new'Frame'w.Name='DialogFrame'w.Position=
-UDim2.new(0,0,0,0)w.Size=UDim2.new(0,0,0,0)w.BackgroundTransparency=1 w.
-RobloxLocked=true w.Parent=u.BottomLeftControl initialize(w)game.
-CollectionService.ItemAdded:connect(function(x)if x:IsA'Dialog'then addDialog(x)
-end end)game.CollectionService.ItemRemoved:connect(function(x)if x:IsA'Dialog'
-then removeDialog(x)end end)for x,y in pairs(game.CollectionService:
-GetCollection'Dialog')do if y:IsA'Dialog'then addDialog(y)end end end onLoad()
+local a a=function(b,c,d)if not(d~=nil)then d=c c=nil end local e=Instance.new(b
+)if c then e.Name=c end local f for g,h in pairs(d)do if type(g)=='string'then
+if g=='Parent'then f=h else e[g]=h end elseif type(g)=='number'and type(h)==
+'userdata'then h.Parent=e end end e.Parent=f return e end local b b=function(c,d
+)while not c[d]do c.Changed:wait()end end local c c=function(d,e)while not d:
+FindFirstChild(e)do d.ChildAdded:wait()end end local d,e,f,g,h,i,j,k,l,m,n,o,p,q
+,r,s,t,u,v,w,x=nil,{},nil,{},nil,nil,nil,'You are too far away to chat!',300,
+'Chat ended because you walked away',350,"Chat ended because you didn't reply",
+350,nil,nil,nil,nil,nil,{},{},nil c(game,'CoreGui')c(game.CoreGui,'RobloxGui')if
+game.CoreGui.RobloxGui:FindFirstChild'ControlFrame'then x=game.CoreGui.RobloxGui
+.ControlFrame else x=game.CoreGui.RobloxGui end local y y=function()if h then
+return h.Tone else return Enum.DialogTone.Neutral end end local z z=function()r=
+a('BillboardGui','ChatNotificationGui',{ExtentsOffset=Vector3.new(0,1,0),Size=
+UDim2.new(4,0,5.42857122,0),SizeOffset=Vector2.new(0,0),StudsOffset=Vector3.new(
+0.4,4.3,0),Enabled=true,RobloxLocked=true,Active=true,a('ImageLabel','Image',{
+Active=false,BackgroundTransparency=1,Position=UDim2.new(0,0,0,0),Size=UDim2.
+new(1,0,1,0),Image='',RobloxLocked=true,a('ImageButton','Button',{
+AutoButtonColor=false,Position=UDim2.new(0.088,0,0.053,0),Size=UDim2.new(0.83,0,
+0.46,0),Image='',BackgroundTransparency=1,RobloxLocked=true})})})end local A A=
+function(B)if B==Enum.DialogTone.Neutral then return Enum.ChatColor.Blue elseif
+B==Enum.DialogTone.Friendly then return Enum.ChatColor.Green elseif B==Enum.
+DialogTone.Enemy then return Enum.ChatColor.Red end end local B B=function(C,D)
+if D==Enum.DialogTone.Neutral then C.BackgroundColor3=Color3.new(0,0,
+0.7019607843137254)C.Number.TextColor3=Color3.new(0.17647058823529413,
+0.5568627450980392,0.9607843137254902)elseif D==Enum.DialogTone.Friendly then C.
+BackgroundColor3=Color3.new(0,0.30196078431372547,0)C.Number.TextColor3=Color3.
+new(0,0.7450980392156863,0)elseif D==Enum.DialogTone.Enemy then C.
+BackgroundColor3=Color3.new(0.5490196078431373,0,0)C.Number.TextColor3=Color3.
+new(1,0.34509803921568627,0.30980392156862746)end end local C C=function(D)for E
+,F in pairs(e)do B(F,D)end return B(f,D)end local D D=function(E)if E==Enum.
+DialogTone.Neutral then d.Style=Enum.FrameStyle.ChatBlue d.Tail.Image=
+'rbxasset://textures/chatBubble_botBlue_tailRight.png'elseif E==Enum.DialogTone.
+Friendly then d.Style=Enum.FrameStyle.ChatGreen d.Tail.Image=
+'rbxasset://textures/chatBubble_botGreen_tailRight.png'elseif E==Enum.DialogTone
+.Enemy then d.Style=Enum.FrameStyle.ChatRed d.Tail.Image=
+'rbxasset://textures/chatBubble_botRed_tailRight.png'end return C(E)end local E
+E=function(F,G,H)if H==Enum.DialogTone.Neutral then F.Image.Image=
+'rbxasset://textures/chatBubble_botBlue_notify_bkg.png'elseif H==Enum.DialogTone
+.Friendly then F.Image.Image=
+'rbxasset://textures/chatBubble_botGreen_notify_bkg.png'elseif H==Enum.
+DialogTone.Enemy then F.Image.Image=
+'rbxasset://textures/chatBubble_botRed_notify_bkg.png'end if G==Enum.
+DialogPurpose.Quest then F.Image.Button.Image=
+'rbxasset://textures/chatBubble_bot_notify_bang.png'elseif G==Enum.DialogPurpose
+.Help then F.Image.Button.Image=
+'rbxasset://textures/chatBubble_bot_notify_question.png'elseif G==Enum.
+DialogPurpose.Shop then F.Image.Button.Image=
+'rbxasset://textures/chatBubble_bot_notify_money.png'end end local F F=function(
+)s=a('Frame','DialogScriptMessage',{Style=Enum.FrameStyle.RobloxRound,Visible=
+false,a('TextLabel','Text',{Position=UDim2.new(0,0,0,-1),Size=UDim2.new(1,0,1,0)
+,FontSize=Enum.FontSize.Size14,BackgroundTransparency=1,TextColor3=Color3.new(1,
+1,1),RobloxLocked=true})})end local G G=function(H,I)s.Text.Text=H s.Size=UDim2.
+new(0,I,0,40)s.Position=UDim2.new(0.5,-I/2,0.5,-40)s.Visible=true wait(2)s.
+Visible=false return s end local H H=function(I)local J=math.min(string.len(I),
+100)return wait(0.75+(J/75)*1.5)end local I I=function(J,K)if K==Enum.DialogTone
+.Neutral then J.BackgroundColor3=Color3.new(7.8431372549019605E-3,
+0.4235294117647059,1)J.Number.TextColor3=Color3.new(1,1,1)elseif K==Enum.
+DialogTone.Friendly then J.BackgroundColor3=Color3.new(0,0.5019607843137255,0)J.
+Number.TextColor3=Color3.new(1,1,1)elseif K==Enum.DialogTone.Enemy then J.
+BackgroundColor3=Color3.new(0.8,0,0)J.Number.TextColor3=Color3.new(1,1,1)end end
+local J J=function()if j then j:Remove()j=nil end local K=h h=nil if K and K.
+InUse then local L=u:Clone()L.archivable=false L.Disabled=false L.Parent=K end
+for L,M in pairs(v)do if L and M then M.Enabled=not L.InUse end end i=nil end
+local L L=function()print'Wander'd.Visible=false J()return G(m,n)end local M M=
+function()print'Timeout'd.Visible=false J()return G(o,p)end local N N=function()
+print'Done'return J()end local O O=function(P)if string.len(P)==0 then return
+'...'else return P end end local P P=function(Q)if j then j:Remove()j=nil end j=
+t:Clone()j.archivable=false j.Disabled=false j.Parent=Q return j end local Q Q=
+function(R,S)if not h then return end i=R local T={}for U,V in pairs(S)do if V:
+IsA'DialogChoice'then table.insert(T,V)end end table.sort(T,function(W,X)return
+W.Name<X.Name end)if#T==0 then N()return end local W,X=1,0 g={}for Y,Z in pairs(
+e)do Z.Visible=false end for _,aa in pairs(T)do if W<=#e then e[W].Size=UDim2.
+new(1,0,0,72)e[W].UserPrompt.Text=aa.UserDialog local ab=math.ceil(e[W].
+UserPrompt.TextBounds.Y/24)*24 e[W].Position=UDim2.new(0,0,0,X)e[W].Size=UDim2.
+new(1,0,0,ab)e[W].Visible=true g[e[W]]=aa X=X+ab W=W+1 end end f.Position=UDim2.
+new(0,0,0,X)f.Number.Text=W..')'d.Size=UDim2.new(0,350,0,X+24+32)d.Position=
+UDim2.new(0,20,0,-d.Size.Y.Offset-20)D(y())d.Visible=true end local aa aa=
+function(ab)P(h)d.Visible=false if ab==f then game.Chat:Chat(game.Players.
+LocalPlayer.Character,'Goodbye!',A(y()))return N()else local R=g[ab]game.Chat:
+Chat(game.Players.LocalPlayer.Character,O(R.UserDialog),A(y()))wait(1)h:
+SignalDialogChoiceSelected(q,R)game.Chat:Chat(i,O(R.ResponseDialog),A(y()))H(R.
+ResponseDialog)return Q(i,R:GetChildren())end end local ab ab=function(R)local S
+=a('TextButton',{BackgroundColor3=Color3.new(0,0,0.7019607843137254),
+AutoButtonColor=false,BorderSizePixel=0,Text='',RobloxLocked=true,a('TextLabel',
+'Number',{TextColor3=Color3.new(0.4980392156862745,0.8313725490196079,1),Text=R,
+FontSize=Enum.FontSize.Size14,BackgroundTransparency=1,Position=UDim2.new(0,4,0,
+2),Size=UDim2.new(0,20,0,24),TextXAlignment=Enum.TextXAlignment.Left,
+TextYAlignment=Enum.TextYAlignment.Top,RobloxLocked=true}),a('TextLabel',
+'UserPrompt',{BackgroundTransparency=1,TextColor3=Color3.new(1,1,1),FontSize=
+Enum.FontSize.Size14,Position=UDim2.new(0,28,0,2),Size=UDim2.new(1,-32,1,-4),
+TextXAlignment=Enum.TextXAlignment.Left,TextYAlignment=Enum.TextYAlignment.Top,
+TextWrap=true,RobloxLocked=true})})S.MouseEnter:connect(function()return I(S,y()
+)end)S.MouseLeave:connect(function()return B(S,y())end)S.MouseButton1Click:
+connect(function()return aa(S)end)return S end local R R=function(S)e[1]=ab'1)'e
+[2]=ab'2)'e[3]=ab'3)'e[4]=ab'4)'f=ab'5)'f.UserPrompt.Text='Goodbye!'f.Size=UDim2
+.new(1,0,0,28)d=a('Frame','UserDialogArea',{Size=UDim2.new(0,350,0,200),Style=
+Enum.FrameStyle.ChatBlue,Visible=false,a('ImageLabel','Tail',{Size=UDim2.new(0,
+62,0,53),Position=UDim2.new(1,8,0.25),Image=
+'rbxasset://textures/chatBubble_botBlue_tailRight.png',BackgroundTransparency=1,
+RobloxLocked=true})})for T,W in pairs(e)do W.RobloxLocked=true W.Parent=d f.
+RobloxLocked=true end f.Parent=d d.RobloxLocked=true d.Parent=S end local S S=
+function(T)while not Instance.Lock(T,q)do wait()end if T.InUse then Instance.
+Unlock(T)return else T.InUse=true Instance.Unlock(T)end h=T game.Chat:Chat(T.
+Parent,T.InitialPrompt,A(T.Tone))H(T.InitialPrompt)return Q(T.Parent,T:
+GetChildren())end local T T=function()while h do if h.Parent and(q:
+DistanceFromCharacter(h.Parent.Position>=h.ConversationDistance))then L()end
+wait(1)end end local W W=function(X)if X.Parent and X.Parent:IsA'BasePart'then
+if q:DistanceFromCharacter(X.Parent.Position)>=X.ConversationDistance then G(k,l
+)return end for _,ac in pairs(v)do if _ and ac then ac.Enabled=false end end P(_
+)delay(1,T)return S(_)end end local ac ac=function(X)if v[X]then v[X]:Remove()v[
+X]=nil end if w[X]then w[X]:disconnect()w[X]=nil end end local X X=function(_)if
+_.Parent then if _.Parent:IsA'BasePart'then local ad=r:clone()ad.Enabled=not _.
+InUse ad.Adornee=_.Parent ad.RobloxLocked=true ad.Parent=game.CoreGui ad.Image.
+Button.MouseButton1Click:connect(function()return W(_)end)E(ad,_.Purpose,_.Tone)
+v[_]=ad w[_]=_.Changed:connect(function(ae)if ae=='Parent'and _.Parent then ac(_
+)return X(_)elseif ae=='InUse'then ad.Enabled=not h and not _.InUse if _==h then
+return M()end elseif ae=='Tone'or ae=='Purpose'then return E(ad,_.Purpose,_.Tone
+)end end)else w[_]=_.Changed:connect(function(ad)if ad=='Parent'and _.Parent
+then ac(_)return X(_)end end)end end end local ad ad=function()local ae=game:
+GetService'InsertService':LoadAsset(39226062)if type(ae)=='string'then wait(0.1)
+ae=game:GetService'InsertService':LoadAsset(39226062)end if type(ae)=='string'
+then return end c(ae,'TimeoutScript')t=ae.TimeoutScript c(ae,
+'ReenableDialogScript')u=ae.ReenableDialogScript end local ae ae=function()b(
+game.Players,'LocalPlayer')q=game.Players.LocalPlayer b(q,'Character')ad()z()F()
+s.RobloxLocked=true s.Parent=x c(x,'BottomLeftControl')local _=a('Frame',
+'DialogFrame',{Position=UDim2.new(0,0,0,0),Size=UDim2.new(0,0,0,0),
+BackgroundTransparency=1,RobloxLocked=true,Parent=x.BottomLeftControl})R(_)game.
+CollectionService.ItemAdded:connect(function(af)if af:IsA'Dialog'then return X(
+af)end end)game.CollectionService.ItemRemoved:connect(function(af)if af:IsA
+'Dialog'then return ac(af)end end)for af,ag in pairs(game.CollectionService:
+GetCollection'Dialog')do if ag:IsA'Dialog'then X(ag)end end end return ae()
