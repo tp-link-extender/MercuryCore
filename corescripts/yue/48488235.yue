@@ -1561,7 +1561,7 @@ UpdateMinimize = ->
 		ExtendTab.Image = "http://www.roblox.com/asset/?id=94692731"
 	else
 		if not IsMaximized.Value
-			MainFrame\TweenSizeAndPositionNormalBounds, NormalPosition, "Out", "Linear", BASE_TWEEN * 1.2, true
+			MainFrame\TweenSizeAndPosition NormalBounds, NormalPosition, "Out", "Linear", BASE_TWEEN * 1.2, true
 
 		--do limiting
 		DefaultBottomClipPos = math.min math.max(DefaultBottomClipPos, -1), -1 + (#MiddleFrameBackgrounds * MiddleBGTemplate.Size.Y.Scale)
@@ -1864,8 +1864,7 @@ StartDrag = (entry, startx, starty) ->
 	dragExit = ->
 		-- stopDrag = true
 
-		if
-			entry["Player"] and
+		if entry["Player"] and
 			SelectedPlayer and
 			openPanel and
 			entry["Player"] ~= LocalPlayer and
@@ -1923,10 +1922,8 @@ StartMinimizeDrag = ->
 				)
 				DefaultBottomClipPos = newFrameY
 				UpdateMinimize!
-				ScrollBarFrame.Size =
-					UDim2.new(ScrollBarFrame.Size.X.Scale, 0, (DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale), 0)
-				ScrollBarFrame.Position =
-					UDim2.new(ScrollBarFrame.Position.X.Scale, 0, 1 - ScrollBarFrame.Size.Y.Scale, 0)
+				ScrollBarFrame.Size = UDim2.new(ScrollBarFrame.Size.X.Scale, 0, (DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale), 0)
+				ScrollBarFrame.Position = UDim2.new(ScrollBarFrame.Position.X.Scale, 0, 1 - ScrollBarFrame.Size.Y.Scale, 0)
 				UpdateScrollBarSize!
 				UpdateScrollPosition!
 				UpdateScrollBarVisibility!

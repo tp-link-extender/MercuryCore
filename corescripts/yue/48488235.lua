@@ -989,7 +989,7 @@ RemoveAllStats = function(playerEntry)
 end
 local GetScoreValue
 GetScoreValue = function(score)
-	if score:IsA("DoubleConstrainedValue" or score:IsA("IntConstrainedValue")) then
+	if score:IsA("DoubleConstrainedValue") or score:IsA("IntConstrainedValue") then
 		return score.ConstrainedValue
 	elseif score:IsA("BoolValue") then
 		if score.Value then
@@ -1149,7 +1149,7 @@ UpdateMinimize = function()
 		DefaultBottomClipPos = math.min(math.max(DefaultBottomClipPos, -1), -1 + (#MiddleFrameBackgrounds * MiddleBGTemplate.Size.Y.Scale))
 		UpdateScrollPosition()
 		BottomClipFrame.Position = UDim2.new(0, 0, DefaultBottomClipPos, 0)
-		local bottomPositon = (DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale)
+		local bottomPositon = DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale
 		BottomFrame.Position = UDim2.new(0, 0, bottomPositon, 0)
 		FocusFrame.Size = UDim2.new(1, 0, bottomPositon + HeaderFrameHeight, 0)
 		ExtendTab.Image = "http://www.roblox.com/asset/?id=94825585"
@@ -1173,7 +1173,7 @@ UpdateMaximize = function()
 		HeaderFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeHeader"]
 		BottomFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeBottom"]
 		for index, i in ipairs(MiddleFrameBackgrounds) do
-			if (index % 2) ~= 1 then
+			if index % 2 ~= 1 then
 				i.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeDark"]
 			else
 				i.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeLight"]
@@ -1205,11 +1205,13 @@ UpdateMaximize = function()
 		HeaderFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["NormalHeader"]
 		BottomFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["NormalBottom"]
 		for index, i in ipairs(MiddleFrameBackgrounds) do
-			if index % 2 ~= 1 then
-				i.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["midDark"]
-			else
-				i.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["midLight"]
-			end
+			i.Background.Image = "http://www.roblox.com/asset/?id=" .. (function()
+				if index % 2 ~= 1 then
+					return Images["midDark"]
+				else
+					return Images["midLight"]
+				end
+			end)()
 		end
 		for _, i in ipairs(MiddleFrames) do
 			if i:FindFirstChild("ClickListener") then
@@ -1304,6 +1306,99 @@ FocusFrame.MouseEnter:connect(function()
 		return AttachScrollWheel()
 	end
 end)
-return FocusFrame.MouseLeave:connect(function()
+FocusFrame.MouseLeave:connect(function()
 	return DetachScrollWheel()
 end)
+local UpdateScrollBarVisibility
+UpdateScrollBarVisibility = function()
+	if AreAllEntriesOnScreen() then
+		ScrollBar.BackgroundTransparency = 1
+	else
+		ScrollBar.BackgroundTransparency = 0
+		return UpdateScrollBarSize()
+	end
+end
+local UpdateScrollBarSize
+UpdateScrollBarSize = function()
+	local entryListSize = #MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale
+	local shownAreaSize = BottomClipFrame.Position.Y.Scale + 1
+	ScrollBar.Size = UDim2.new(1, 0, shownAreaSize / entryListSize, 0)
+end
+local UpdateScrollPosition
+UpdateScrollPosition = function()
+	local minPos = GetMinScroll()
+	local maxPos = GetMaxScroll()
+	local scrollLength = maxPos - minPos
+	local yscrollpos = math.max(math.min(ListFrame.Position.Y.Scale, maxPos), minPos)
+	ListFrame.Position = UDim2.new(ListFrame.Position.X.Scale, ListFrame.Position.X.Offset, yscrollpos, ListFrame.Position.Y.Offset)
+	local adjustedLength = 1 - ScrollBar.Size.Y.Scale
+	ScrollBar.Position = UDim2.new(0, 0, adjustedLength - (adjustedLength * ((ListFrame.Position.Y.Scale - minPos) / scrollLength)), 0)
+end
+local StartDrag
+StartDrag = function(entry, startx, starty)
+	local openPanel = true
+	WaitForChild(entry["Frame"], "ClickListener")
+	local dragExit
+	dragExit = function()
+		if entry["Player"] and SelectedPlayer and openPanel and entry["Player"] ~= LocalPlayer and SelectedPlayer.userId > 1 and LocalPlayer.userId > 1 then
+			return ActivatePlayerEntryPanel(entry)
+		end
+	end
+	local startY
+	local StartFrame = ListFrame.Position
+	local dragpoll
+	dragpoll = function(nx, ny)
+		if not startY then
+			startY = AbsoluteToPercent(nx, ny).Y
+		end
+		local nowY = AbsoluteToPercent(nx, ny).Y
+		debugprint("drag dist: " .. tostring(Vector2.new(startx - nx, starty - ny).magnitude))
+		if Vector2.new(startx - nx, starty - ny).magnitude > MOUSE_DRAG_DISTANCE then
+			openPanel = false
+		end
+		local newFrameY = math.max(math.min(StartFrame.Y.Scale + (nowY - startY), GetMaxScroll()), GetMinScroll())
+		ListFrame.Position = UDim2.new(StartFrame.X.Scale, StartFrame.X.Offset, newFrameY, StartFrame.Y.Offset)
+		return UpdateScrollPosition()
+	end
+	return WaitForClick(ScreenGui, dragpoll, dragExit)
+end
+local StartMinimizeDrag
+StartMinimizeDrag = function()
+	return Delay(0, function()
+		local startTime = tick()
+		debugprint("Got Click2")
+		local dragExit
+		dragExit = function()
+			if tick() - startTime < 0.25 then
+				return ToggleMinimize()
+			else
+				DidMinimizeDrag = true
+				if IsMinimized.Value then
+					return ToggleMinimize()
+				end
+			end
+		end
+		local startY
+		local StartFrame = DefaultBottomClipPos
+		local dragpoll
+		dragpoll = function(nx, ny)
+			if not IsMinimized.Value then
+				if not startY then
+					startY = AbsoluteToPercent(nx, ny).Y
+				end
+				local nowY = AbsoluteToPercent(nx, ny).Y
+				local newFrameY = math.min(math.max(StartFrame + (nowY - startY), -1), -1 + (#MiddleFrameBackgrounds * MiddleBGTemplate.Size.Y.Scale))
+				DefaultBottomClipPos = newFrameY
+				UpdateMinimize()
+				ScrollBarFrame.Size = UDim2.new(ScrollBarFrame.Size.X.Scale, 0, (DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale), 0)
+				ScrollBarFrame.Position = UDim2.new(ScrollBarFrame.Position.X.Scale, 0, 1 - ScrollBarFrame.Size.Y.Scale, 0)
+				UpdateScrollBarSize()
+				UpdateScrollPosition()
+				return UpdateScrollBarVisibility()
+			end
+		end
+		return Spawn(function()
+			return WaitForClick(ScreenGui, dragpoll, dragExit)
+		end)
+	end)
+end
