@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 --Include
 Create = assert(LoadLibrary "RbxUtility").Create
 
