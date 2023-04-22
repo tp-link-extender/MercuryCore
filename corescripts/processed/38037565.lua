@@ -1,48 +1,231 @@
-local a,b=5,5 function waitForChild(c,d)local e=c:findFirstChild(d)if e then
-return e end while true do e=c.ChildAdded:wait()if e.Name==d then return e end
-end end local c=script.Parent local d,e,f,g=waitForChild(c,'Humanoid'),
-waitForChild(c,'Torso'),c:FindFirstChild'PlayerStats',Instance.new'BoolValue'g.
-Name='InCharTag'local h=Instance.new'BoolValue'h.Name='RobloxBuildTool'local i,j
-if f==nil then f=Instance.new'Configuration'f.Parent=c f.Name='PlayerStats'end
-local k=f:FindFirstChild'MaxHealth'if k==nil then k=Instance.new'NumberValue'k.
-Parent=f k.Value=100 k.Name='MaxHealth'end d.MaxHealth=k.Value d.Health=k.Value
-function onMaxHealthChange()d.MaxHealth=k.Value d.Health=k.Value end k.Changed:
-connect(onMaxHealthChange)local l=game.Players:GetPlayerFromCharacter(script.
-Parent)local m=l.PlayerGui:FindFirstChild'DamageOverTimeGui'if m==nil then m=
-Instance.new'BillboardGui'm.Name='DamageOverTimeGui'm.Parent=l.PlayerGui m.
-Adornee=script.Parent:FindFirstChild'Head'm.Active=true m.size=UDim2.new(a,0,b,0
-)m.StudsOffset=Vector3.new(0,2,0)end print'newHealth declarations finished'
-function billboardHealthChange(n)local o=Instance.new'TextLabel'if n>0 then o.
-Text=tostring(n)o.TextColor3=Color3.new(0,1,0)else o.Text=tostring(n)o.
-TextColor3=Color3.new(1,0,1)end o.size=UDim2.new(1,0,1,0)o.Active=true o.
-FontSize=6 o.BackgroundTransparency=1 o.Parent=m for p=1,10 do wait(0.1)o.
-TextTransparency=p/10 o.Position=UDim2.new(0,0,0,-p*5)o.FontSize=6-p*0.6 end o:
-remove()end function setMaxHealth()if k.Value>=0 then d.MaxHealth=k.Value print(
-d.MaxHealth)if d.Health>d.MaxHealth then d.Health=d.MaxHealth end end end k.
-Changed:connect(setMaxHealth)local n=Instance.new'Fire'n.Heat=0.1 n.Size=3 n.
-Name='FireEffect'n.Enabled=false while true do local o,p=wait(1),d.Health if p>0
-then local q=0 if f then local r,s,t,u,v=f:FindFirstChild'Regen',f:
-FindFirstChild'Poison',f:FindFirstChild'Ice',f:FindFirstChild'Fire',f:
-FindFirstChild'Stun'if r then q=q+r.Value.X if r.Value.Y>=0 then r.Value=Vector3
-.new(r.Value.X+r.Value.Z,r.Value.Y-o,r.Value.Z)elseif r.Value.Y==-1 then r.Value
-=Vector3.new(r.Value.X+r.Value.Z,-1,r.Value.Z)else r:remove()end end if s then q
-=q-s.Value.X if s.Value.Y>=0 then s.Value=Vector3.new(s.Value.X+s.Value.Z,s.
-Value.Y-o,s.Value.Z)elseif s.Value.Y==-1 then s.Value=Vector3.new(s.Value.X+s.
-Value.Z,-1,s.Value.Z)else s:remove()end end if t then q=q-t.Value.X if t.Value.Y
->=0 then t.Value=Vector3.new(t.Value.X,t.Value.Y-o,t.Value.Z)else t:remove()end
-end if u then n.Enabled=true n.Parent=c.Torso q=q-u.Value.X if u.Value.Y>=0 then
-u.Value=Vector3.new(u.Value.X,u.Value.Y-o,u.Value.Z)else u:remove()n.Enabled=
-false n.Parent=nil end end if v then if v.Value>0 then e.Anchored=true i=script.
-Parent:GetChildren()j=game.Players:GetPlayerFromCharacter(script.Parent).
-Backpack:GetChildren()for w=1,#i do if i[w].className=='Tool'then g:Clone().
-Parent=i[w]print(j)table.insert(j,i[w])end end for w=1,#j do if j[w]:
-FindFirstChild'RobloxBuildTool'==nil then h:Clone().Parent=j[w]j[w].Parent=game.
-Lighting end end wait(0.2)for w=1,#j do j[w].Parent=game.Players:
-GetPlayerFromCharacter(script.Parent).Backpack end v.Value=v.Value-o else e.
-Anchored=false for w=1,#j do local x=j[w]:FindFirstChild'RobloxBuildTool'if x
-then x:Remove()end j[w].Parent=game.Lighting end wait(0.2)for w=1,#j do local x=
-j[w]:FindFirstChild'InCharTag'if x then x:Remove()j[w].Parent=script.Parent else
-j[w].Parent=game.Players:GetPlayerFromCharacter(script.Parent).Backpack end end
-v:Remove()end end if q~=0 then coroutine.resume(coroutine.create(
-billboardHealthChange),q)end end p=d.Health+q*o if p*1.01<d.MaxHealth then d.
-Health=p elseif q>0 then d.Health=d.MaxHealth end end end
+print("[Mercury]: Loaded corescript 38037565")
+local New
+New = function(className, name, props)
+	if not (props ~= nil) then
+		props = name
+		name = nil
+	end
+	local obj = Instance.new(className)
+	if name then
+		obj.Name = name
+	end
+	local parent
+	for k, v in pairs(props) do
+		if type(k) == "string" then
+			if k == "Parent" then
+				parent = v
+			else
+				obj[k] = v
+			end
+		elseif type(k) == "number" and type(v) == "userdata" then
+			v.Parent = obj
+		end
+	end
+	obj.Parent = parent
+	return obj
+end
+local damageGuiWidth = 5.0
+local damageGuiHeight = 5.0
+local waitForChild
+waitForChild = function(parent, childName)
+	local child = parent:findFirstChild(childName)
+	if child then
+		return child
+	end
+	while true do
+		child = parent.ChildAdded:wait()
+		if child.Name == childName then
+			return child
+		end
+	end
+end
+local Figure = script.Parent
+local Humanoid = waitForChild(Figure, "Humanoid")
+local Torso = waitForChild(Figure, "Torso")
+local config = Figure:FindFirstChild("PlayerStats")
+local inCharTag = Instance.new("BoolValue")
+inCharTag.Name = "InCharTag"
+local hider = Instance.new("BoolValue")
+hider.Name = "RobloxBuildTool"
+if not (config ~= nil) then
+	config = New("Configuration", "PlayerStats", {
+		Parent = Figure
+	})
+end
+local myHealth = config:FindFirstChild("MaxHealth")
+if not (myHealth ~= nil) then
+	myHealth = New("NumberValue", "MaxHealth", {
+		Value = 100,
+		Parent = config
+	})
+end
+Humanoid.MaxHealth = myHealth.Value
+Humanoid.Health = myHealth.Value
+local onMaxHealthChange
+onMaxHealthChange = function()
+	Humanoid.MaxHealth = myHealth.Value
+	Humanoid.Health = myHealth.Value
+end
+myHealth.Changed:connect(onMaxHealthChange)
+local vPlayer = game.Players:GetPlayerFromCharacter(script.Parent)
+local dotGui = vPlayer.PlayerGui:FindFirstChild("DamageOverTimeGui")
+if not (dotGui ~= nil) then
+	dotGui = New("BillboardGui", "DamageOverTimeGui", {
+		Parent = vPlayer.PlayerGui,
+		Adornee = script.Parent:FindFirstChild("Head"),
+		Active = true,
+		size = UDim2.new(damageGuiWidth, 0, damageGuiHeight, 0.0),
+		StudsOffset = Vector3.new(0, 2.0, 0.0)
+	})
+end
+print("newHealth declarations finished")
+local billboardHealthChange
+billboardHealthChange = function(dmg)
+	local textLabel = New("TextLabel", {
+		Text = tostring(dmg),
+		TextColor3 = (function()
+			if dmg > 0 then
+				return Color3.new(0, 1, 0)
+			else
+				return Color3.new(1, 0, 1)
+			end
+		end)(),
+		size = UDim2.new(1, 0, 1, 0.0),
+		Active = true,
+		FontSize = 6,
+		BackgroundTransparency = 1,
+		Parent = dotGui
+	})
+	for t = 1, 10 do
+		wait(0.1)
+		textLabel.TextTransparency = t / 10
+		textLabel.Position = UDim2.new(0, 0, 0, -t * 5)
+		textLabel.FontSize = 6 - t * 0.6
+	end
+	return textLabel:remove()
+end
+local setMaxHealth
+setMaxHealth = function()
+	if myHealth.Value >= 0 then
+		Humanoid.MaxHealth = myHealth.Value
+		print(Humanoid.MaxHealth)
+		if Humanoid.Health > Humanoid.MaxHealth then
+			Humanoid.Health = Humanoid.MaxHealth
+		end
+	end
+end
+myHealth.Changed:connect(setMaxHealth)
+local fireEffect = New("Fire", "FireEffect", {
+	Heat = 0.1,
+	Size = 3.0,
+	Enabled = false
+})
+while true do
+	local s = wait(1)
+	local health = Humanoid.Health
+	if health > 0 then
+		local delta = 0
+		if config then
+			local regen = config:FindFirstChild("Regen")
+			local poison = config:FindFirstChild("Poison")
+			local ice = config:FindFirstChild("Ice")
+			local fire = config:FindFirstChild("Fire")
+			local stun = config:FindFirstChild("Stun")
+			if regen then
+				delta = delta + regen.Value.X
+				if regen.Value.Y >= 0 then
+					regen.Value = Vector3.new(regen.Value.X + regen.Value.Z, regen.Value.Y - s, regen.Value.Z)
+				elseif regen.Value.Y == -1 then
+					regen.Value = Vector3.new(regen.Value.X + regen.Value.Z, -1, regen.Value.Z)
+				else
+					regen:remove()
+				end
+			end
+			if poison then
+				delta = delta - poison.Value.X
+				if poison.Value.Y >= 0 then
+					poison.Value = Vector3.new(poison.Value.X + poison.Value.Z, poison.Value.Y - s, poison.Value.Z)
+				elseif poison.Value.Y == -1 then
+					poison.Value = Vector3.new(poison.Value.X + poison.Value.Z, -1, poison.Value.Z)
+				else
+					poison:remove()
+				end
+			end
+			if ice then
+				delta = delta - ice.Value.X
+				if ice.Value.Y >= 0 then
+					ice.Value = Vector3.new(ice.Value.X, ice.Value.Y - s, ice.Value.Z)
+				else
+					ice:remove()
+				end
+			end
+			if fire then
+				fireEffect.Enabled = true
+				fireEffect.Parent = Figure.Torso
+				delta = delta - fire.Value.X
+				if fire.Value.Y >= 0 then
+					fire.Value = Vector3.new(fire.Value.X, fire.Value.Y - s, fire.Value.Z)
+				else
+					fire:remove()
+					fireEffect.Enabled = false
+					fireEffect.Parent = nil
+				end
+			end
+			if stun then
+				local backpackTools
+				if stun.Value > 0 then
+					Torso.Anchored = true
+					local currentChildren = script.Parent:GetChildren()
+					backpackTools = game.Players:GetPlayerFromCharacter(script.Parent).Backpack:GetChildren()
+					for i = 1, #currentChildren do
+						if currentChildren[i].className == "Tool" then
+							inCharTag:Clone().Parent = currentChildren[i]
+							print(backpackTools)
+							table.insert(backpackTools, currentChildren[i])
+						end
+					end
+					for i = 1, #backpackTools do
+						if not (backpackTools[i]:FindFirstChild("RobloxBuildTool") ~= nil) then
+							hider:Clone().Parent = backpackTools[i]
+							backpackTools[i].Parent = game.Lighting
+						end
+					end
+					wait(0.2)
+					for i = 1, #backpackTools do
+						backpackTools[i].Parent = game.Players:GetPlayerFromCharacter(script.Parent).Backpack
+					end
+					stun.Value = stun.Value - s
+				else
+					Torso.Anchored = false
+					for i = 1, #backpackTools do
+						local rbTool = backpackTools[i]:FindFirstChild("RobloxBuildTool")
+						if rbTool then
+							rbTool:Remove()
+						end
+						backpackTools[i].Parent = game.Lighting
+					end
+					wait(0.2)
+					for i = 1, #backpackTools do
+						local wasInChar = backpackTools[i]:FindFirstChild("InCharTag")
+						if wasInChar then
+							wasInChar:Remove()
+							backpackTools[i].Parent = script.Parent
+						else
+							backpackTools[i].Parent = game.Players:GetPlayerFromCharacter(script.Parent).Backpack
+						end
+					end
+					stun:Remove()
+				end
+			end
+			if delta ~= 0 then
+				coroutine.resume(coroutine.create(billboardHealthChange), delta)
+			end
+		end
+		health = Humanoid.Health + delta * s
+		if health * 1.01 < Humanoid.MaxHealth then
+			Humanoid.Health = health
+		elseif delta > 0 then
+			Humanoid.Health = Humanoid.MaxHealth
+		end
+	end
+end
