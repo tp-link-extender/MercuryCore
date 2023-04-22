@@ -42,7 +42,7 @@ if script.Parent:FindFirstChild("ControlFrame") then
 else
 	gui = script.Parent
 end
-local RbxGui
+local RbxGui = assert(LoadLibrary("RbxGui"))
 local syncVideoCaptureSetting
 local settingsButton, helpButton, settingsFrame, mouseLockLabel
 local updateCameraDropDownSelection
