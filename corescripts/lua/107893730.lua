@@ -1152,7 +1152,7 @@ end
 function cutSizeInHalfRecursive(_)
 	-- todo: change the gui size based on how much space we have
 	--[[changeSize(instance,0.5)
-	
+
 	local children = instance:GetChildren()
 	for i = 1, #children do
 		cutSizeInHalfRecursive(children[i])
@@ -1162,7 +1162,7 @@ end
 function doubleSizeRecursive(_)
 	-- todo: change the gui size based on how much space we have
 	--[[changeSize(instance,2)
-	
+
 	local children = instance:GetChildren()
 	for i = 1, #children do
 		doubleSizeRecursive(children[i])

@@ -1477,7 +1477,7 @@ function GetScoreValue(score)
 	end
 end
 --[[
-	
+
 --]]
 function MakeScoreEntry(entry, scoreval, panel)
 	if not panel:FindFirstChild "PlayerScore" then
@@ -1556,7 +1556,7 @@ function RecreateScoreColumns(ptable)
 
 		MaxSizeColumn = 0
 		-- for each entry in this player table
-		for i, entry in ipairs(ptable) do
+		for _, entry in ipairs(ptable) do
 			local panel = entry["Frame"]
 			local tplayer = entry["Player"]
 			-- if this panel does not have an element named after this stat
@@ -2617,7 +2617,7 @@ end
 	consider adding lock with wait for performance
 	sorts each of the team's player lists induvidually, adds up the team scores.
 	@Args:
-	tentries		table of team entries	
+	tentries		table of team entries
 --]]
 function SortTeams(tentries)
 	for _, val in ipairs(tentries) do
@@ -2880,7 +2880,7 @@ function RemoveNeutralTeam()
 end
 
 --[[
-	
+
 --]]
 function TeamScoreChanged(entry, nscore)
 	WaitForChild(entry["Frame"], "PlayerScore").Text = tostring(nscore)

@@ -116,7 +116,7 @@ createNewButton = (actionName, functionInfoTable) ->
 
 	Game\GetService"UserInputService".InputEnded\connect (inputObject) ->
 		oldTouches[inputObject] = nil
-	
+
 	contextButton.InputBegan\connect (inputObject) ->
 		return if oldTouches[inputObject]
 
@@ -160,7 +160,7 @@ createNewButton = (actionName, functionInfoTable) ->
 
 	if functionInfoTable["title"] and type(functionInfoTable["title"]) == "string"
 		actionTitle.Text = functionInfoTable["title"]
-	
+
 	actionTitle.Parent = contextButton
 
 	contextButton
@@ -209,7 +209,7 @@ removeAction = (actionName) ->
 addAction = (actionName, createTouchButton, functionInfoTable) ->
 	if functionTable[actionName]
 		removeAction actionName
-	
+
 	functionTable[actionName] = { functionInfoTable }
 	if createTouchButton and isTouchDevice
 		createContextActionGui!

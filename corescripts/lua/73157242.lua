@@ -538,7 +538,7 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 		end]]
 	end
 
-	local targetRefPointInTarget
+	local targetRefPointInTarget, insertRefPointInInsert
 	local clampToSurface
 
 	if getClosestAlignedWorldDirection(targetVectorInWorld) == 0 then

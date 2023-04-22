@@ -1,0 +1,1 @@
+yue ./yue && darklua process ./yue ./processed
