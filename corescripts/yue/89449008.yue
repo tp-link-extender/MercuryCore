@@ -7,7 +7,7 @@ New = (className, name, props) ->
 		props = name
 		name = nil
 
-	obj = New className
+	obj = Instance.new className
 	obj.Name = name if name
 	local parent
 

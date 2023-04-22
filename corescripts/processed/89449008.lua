@@ -5,7 +5,7 @@ New = function(className, name, props)
 		props = name
 		name = nil
 	end
-	local obj = New(className)
+	local obj = Instance.new(className)
 	if name then
 		obj.Name = name
 	end
