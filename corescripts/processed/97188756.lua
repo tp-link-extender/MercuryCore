@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 97188756")
 local forceChatGUI = false
 local WaitForChild
 WaitForChild = function(parent, childName)

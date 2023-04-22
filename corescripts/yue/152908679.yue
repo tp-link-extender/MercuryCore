@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 -- ContextActionTouch.lua
 -- Created by Ben Tkacheff
 -- this script controls ui and firing of lua functions that are bound in ContextActionService for touch inputs

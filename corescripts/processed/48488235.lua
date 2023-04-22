@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 48488235")
 local ADMINS = {
 	taskmanager = 1,
 	Heliodex = 1,

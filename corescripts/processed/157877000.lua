@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 157877000")
 local Create = assert(LoadLibrary("RbxUtility")).Create
 local gui = script.Parent:FindFirstChild("ControlFrame") or script.Parent
 local Dev_Container = Create("Frame")({

@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 --[[
 	//FileName: ChatScript.LUA
 	//Written by: Sorcus

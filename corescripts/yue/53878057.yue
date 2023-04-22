@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 return if game.CoreGui.Version < 3
 -- peace out if we aren't using the right client
 
