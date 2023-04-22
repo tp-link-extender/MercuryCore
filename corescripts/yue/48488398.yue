@@ -75,7 +75,7 @@ makeFriend = (fromPlayer, toPlayer) ->
 		toPlayer\RevokeFriendship fromPlayer
 		friendRequestBlacklist[fromPlayer] = true
 		print "pop up blacklist"
-		
+
 		yesCon?\disconnect!
 		noCon?\disconnect!
 
@@ -290,5 +290,5 @@ if teleportEnabled
 			popup.AcceptButton.Text = "Leave"
 			popup.DeclineButton.Text = "Stay"
 			popup\TweenSize UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true
-		
+
 		true

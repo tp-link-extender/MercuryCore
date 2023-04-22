@@ -1,97 +1,86 @@
-if game.CoreGui.Version<7 then return end local function waitForChild(a,b)while
-not a:FindFirstChild(b)do a.ChildAdded:wait()end return a:FindFirstChild(b)end
-local function waitForProperty(a,b)while not a[b]do a.Changed:wait()end end
-waitForChild(game,'Players')if#game.Players:GetChildren()<1 then game.Players.
-ChildAdded:wait()end waitForProperty(game.Players,'LocalPlayer')local a=script.
-Parent waitForChild(a,'Gear')local b=script.Parent.Parent assert(b:IsA
-'ScreenGui')waitForChild(a,'Tabs')waitForChild(a.Tabs,'CloseButton')local c=a.
-Tabs.CloseButton waitForChild(a.Tabs,'InventoryButton')local d,e=a.Tabs.
-InventoryButton,nil if game.CoreGui.Version>=8 then waitForChild(a.Tabs,
-'WardrobeButton')e=a.Tabs.WardrobeButton end waitForChild(a.Parent,
-'ControlFrame')local f,g,h=waitForChild(a.Parent.ControlFrame,'BackpackButton'),
-'gear',waitForChild(a,'SearchFrame')waitForChild(a.SearchFrame,'SearchBoxFrame')
-local i,j,k,l=waitForChild(a.SearchFrame.SearchBoxFrame,'SearchBox'),
-waitForChild(a.SearchFrame,'SearchButton'),waitForChild(a.SearchFrame,
-'ResetButton'),waitForChild(Game.CoreGui,'RobloxGui')local m=waitForChild(l,
-'CurrentLoadout')local n,o,p,q,r,s,t,u,v,w,x,y=waitForChild(m,'Background'),true
-,true,false,true,false,nil,0.25,'Search...','~','`',UDim2.new(0,600,0,400)if l.
-AbsoluteSize.Y<=320 then y=UDim2.new(0,200,0,140)end function createPublicEvent(
-z)assert(z,'eventName is nil')assert(tostring(z),'eventName is not a string')
-local A=Instance.new'BindableEvent'A.Name=tostring(z)A.Parent=script return A
-end function createPublicFunction(z,A)assert(z,'funcName is nil')assert(
-tostring(z),'funcName is not a string')assert(A,'invokeFunc is nil')assert(type(
-A)=='function',"invokeFunc should be of type 'function'")local B=Instance.new
-'BindableFunction'B.Name=tostring(z)B.OnInvoke=A B.Parent=script return B end
-local z,A,B,C,D=createPublicEvent'ResizeEvent',createPublicEvent
-'BackpackOpenEvent',createPublicEvent'BackpackCloseEvent',createPublicEvent
-'TabClickedEvent',createPublicEvent'SearchRequestedEvent'function
-deactivateBackpack()a.Visible=false r=false end function
-initHumanoidDiedConnections()if t then t:disconnect()end waitForProperty(game.
-Players.LocalPlayer,'Character')waitForChild(game.Players.LocalPlayer.Character,
-'Humanoid')t=game.Players.LocalPlayer.Character.Humanoid.Died:connect(
-deactivateBackpack)end function activateBackpack()initHumanoidDiedConnections()r
-=true a.Visible=q if q then toggleBackpack()end end local E=function()q=false p=
-false f.Selected=false resetSearch()B:Fire(g)a.Tabs.Visible=false h.Visible=
-false a:TweenSizeAndPosition(UDim2.new(0,y.X.Offset,0,0),UDim2.new(0.5,-y.X.
-Offset/2,1,-85),Enum.EasingDirection.Out,Enum.EasingStyle.Quad,u,true,function()
-game.GuiService:RemoveCenterDialog(a)a.Visible=false f.Selected=false end)delay(
-u,function()game.GuiService:RemoveCenterDialog(a)a.Visible=false f.Selected=
-false p=true o=true end)end function showBackpack()game.GuiService:
-AddCenterDialog(a,Enum.CenterDialogType.PlayerInitiatedDialog,function()a.
-Visible=true f.Selected=true end,function()a.Visible=false f.Selected=false end)
-a.Visible=true f.Selected=true a:TweenSizeAndPosition(y,UDim2.new(0.5,-y.X.
-Offset/2,1,-y.Y.Offset-88),Enum.EasingDirection.Out,Enum.EasingStyle.Quad,u,true
-)delay(u,function()a.Tabs.Visible=false h.Visible=true A:Fire(g)o=true p=true f.
-Image='http://www.roblox.com/asset/?id=97644093'f.Position=UDim2.new(0.5,-60,1,-
-y.Y.Offset-103)end)end function toggleBackpack()if not game.Players.LocalPlayer
-then return end if not game.Players.LocalPlayer['Character']then return end if
-not o then return end if not p then return end p=false o=false q=not q if q then
-n.Image='http://www.roblox.com/asset/?id=97623721'n.Position=UDim2.new(-3E-2,0,-
-0.17,0)n.Size=UDim2.new(1.05,0,1.25,0)n.ZIndex=2 n.Visible=true showBackpack()
-else f.Position=UDim2.new(0.5,-60,1,-44)n.Visible=false f.Selected=false f.Image
-='http://www.roblox.com/asset/?id=97617958'n.Image=
-'http://www.roblox.com/asset/?id=96536002'n.Position=UDim2.new(-0.1,0,-0.1,0)n.
-Size=UDim2.new(1.2,0,1.2,0)E()local F=m:GetChildren()for G=1,#F do if F[G]and F[
-G]:IsA'Frame'then local H=F[G]if#H:GetChildren()>0 then f.Position=UDim2.new(0.5
-,-60,1,-108)f.Visible=true n.Visible=true if H:GetChildren()[1]:IsA'ImageButton'
-then local I=H:GetChildren()[1]I.Active=true I.Draggable=false end end end end
-end end function closeBackpack()if q then toggleBackpack()end end function
-setSelected(F)assert(F)assert(F:IsA'TextButton')F.BackgroundColor3=Color3.new(1,
-1,1)F.TextColor3=Color3.new(0,0,0)F.Selected=true F.ZIndex=3 end function
-setUnselected(F)assert(F)assert(F:IsA'TextButton')F.BackgroundColor3=Color3.new(
-0,0,0)F.TextColor3=Color3.new(1,1,1)F.Selected=false F.ZIndex=1 end function
-updateTabGui(F)assert(F)if F=='gear'then setSelected(d)setUnselected(e)elseif F
-=='wardrobe'then setSelected(e)setUnselected(d)end end function mouseLeaveTab(F)
-assert(F)assert(F:IsA'TextButton')if F.Selected then return end F.
-BackgroundColor3=Color3.new(0,0,0)end function mouseOverTab(F)assert(F)assert(F:
-IsA'TextButton')if F.Selected then return end F.BackgroundColor3=Color3.new(
-0.15294117647058825,0.15294117647058825,0.15294117647058825)end function
-newTabClicked(F)assert(F)F=string.lower(F)g=F updateTabGui(F)C:Fire(F)
-resetSearch()end function trim(F)return(F:gsub('^%s*(.-)%s*$','%1'))end function
-resetSearchBoxGui()k.Visible=false i.Text=v end function doSearch()local F=i.
-Text if F==''then resetSearch()return end F=trim(F)k.Visible=true D:Fire(F)end
-function resetSearch()resetSearchBoxGui()D:Fire()end local F=function()p=true
-end function coreGuiChanged(G,H)if G==Enum.CoreGuiType.Backpack or G==Enum.
-CoreGuiType.All then r=H s=not H if s then pcall(function()game:GetService
-'GuiService':RemoveKey(w)game:GetService'GuiService':RemoveKey(x)end)else game:
-GetService'GuiService':AddKey(w)game:GetService'GuiService':AddKey(x)end
-resetSearch()h.Visible=H and q m.Visible=H a.Visible=H f.Visible=H end end
-createPublicFunction('CloseBackpack',E)createPublicFunction('BackpackReady',F)
-pcall(function()coreGuiChanged(Enum.CoreGuiType.Backpack,Game.StarterGui:
-GetCoreGuiEnabled(Enum.CoreGuiType.Backpack))Game.StarterGui.
-CoreGuiChangedSignal:connect(coreGuiChanged)end)d.MouseButton1Click:connect(
-function()newTabClicked'gear'end)d.MouseEnter:connect(function()mouseOverTab(d)
-end)d.MouseLeave:connect(function()mouseLeaveTab(d)end)if game.CoreGui.Version>=
-8 then e.MouseButton1Click:connect(function()newTabClicked'wardrobe'end)e.
-MouseEnter:connect(function()mouseOverTab(e)end)e.MouseLeave:connect(function()
-mouseLeaveTab(e)end)end c.MouseButton1Click:connect(closeBackpack)b.Changed:
-connect(function(G)if G=='AbsoluteSize'then z:Fire(b.AbsoluteSize)end end)game:
-GetService'GuiService':AddKey(w)game:GetService'GuiService':AddKey(x)game:
-GetService'GuiService'.KeyPressed:connect(function(G)if not r or s then return
-end if G==w or G==x then toggleBackpack()end end)f.MouseButton1Click:connect(
-function()if not r or s then return end toggleBackpack()end)if game.Players.
-LocalPlayer['Character']then activateBackpack()end game.Players.LocalPlayer.
-CharacterAdded:connect(activateBackpack)i.FocusLost:connect(function(G)if G or i
-.Text~=''then doSearch()elseif i.Text==''then resetSearch()end end)j.
-MouseButton1Click:connect(doSearch)k.MouseButton1Click:connect(resetSearch)if h
-and l.AbsoluteSize.Y<=320 then h.RobloxLocked=false h:Destroy()end
+if game.CoreGui.Version<7 then return end local a a=function(b,c)while not b:
+FindFirstChild(c)do b.ChildAdded:wait()end return b:FindFirstChild(c)end local b
+b=function(c,d)while not c[d]do c.Changed:wait()end end a(game,'Players')if#game
+.Players:GetChildren()<1 then game.Players.ChildAdded:wait()end b(game.Players,
+'LocalPlayer')local c=script.Parent a(c,'Gear')local d=script.Parent.Parent
+assert(d:IsA'ScreenGui')a(c,'Tabs')a(c.Tabs,'CloseButton')local e=c.Tabs.
+CloseButton a(c.Tabs,'InventoryButton')local f,g=c.Tabs.InventoryButton,nil if
+game.CoreGui.Version>=8 then a(c.Tabs,'WardrobeButton')g=c.Tabs.WardrobeButton
+end a(c.Parent,'ControlFrame')local h,i,j=a(c.Parent.ControlFrame,
+'BackpackButton'),'gear',a(c,'SearchFrame')a(c.SearchFrame,'SearchBoxFrame')
+local k,l,m,n=a(c.SearchFrame.SearchBoxFrame,'SearchBox'),a(c.SearchFrame,
+'SearchButton'),a(c.SearchFrame,'ResetButton'),a(Game.CoreGui,'RobloxGui')local
+o=a(n,'CurrentLoadout')local p,q,r,s,t,u,v,w,x,y,z,A=a(o,'Background'),true,true
+,false,true,false,nil,0.25,'Search...','~','`',UDim2.new(0,600,0,400)if n.
+AbsoluteSize.Y<=320 then A=UDim2.new(0,200,0,140)end local B B=function(C)
+assert(C,'eventName is nil')assert(tostring(C),'eventName is not a string')local
+D=Instance.new'BindableEvent'D.Name=tostring(C)D.Parent=script return D end
+local C C=function(D,E)assert(D,'funcName is nil')assert(tostring(D),
+'funcName is not a string')assert(E,'invokeFunc is nil')assert(type(E)==
+'function',"invokeFunc should be of type 'function'")local F=Instance.new
+'BindableFunction'F.Name=tostring(D)F.OnInvoke=E F.Parent=script return F end
+local D,E,F,G,H,I=B'ResizeEvent',B'BackpackOpenEvent',B'BackpackCloseEvent',B
+'TabClickedEvent',B'SearchRequestedEvent',nil I=function()m.Visible=false k.Text
+=x end local J J=function()I()return H:Fire()end local K K=function()c.Visible=
+false t=false end local L L=function()if v then v:disconnect()end b(game.Players
+.LocalPlayer,'Character')a(game.Players.LocalPlayer.Character,'Humanoid')v=game.
+Players.LocalPlayer.Character.Humanoid.Died:connect(K)end local M M=function()s=
+false r=false h.Selected=false J()F:Fire(i)c.Tabs.Visible=false j.Visible=false
+c:TweenSizeAndPosition(UDim2.new(0,A.X.Offset,0,0),UDim2.new(0.5,-A.X.Offset/2,1
+,-85),Enum.EasingDirection.Out,Enum.EasingStyle.Quad,w,true,function()game.
+GuiService:RemoveCenterDialog(c)c.Visible=false h.Selected=false end)return
+delay(w,function()game.GuiService:RemoveCenterDialog(c)c.Visible=false h.
+Selected=false r=true q=true end)end local N N=function()game.GuiService:
+AddCenterDialog(c,Enum.CenterDialogType.PlayerInitiatedDialog,function()c.
+Visible=true h.Selected=true end,function()c.Visible=false h.Selected=false end)
+c.Visible=true h.Selected=true c:TweenSizeAndPosition(A,UDim2.new(0.5,-A.X.
+Offset/2,1,-A.Y.Offset-88),Enum.EasingDirection.Out,Enum.EasingStyle.Quad,w,true
+)return delay(w,function()c.Tabs.Visible=false j.Visible=true E:Fire(i)q=true r=
+true h.Image='http://www.roblox.com/asset/?id=97644093'h.Position=UDim2.new(0.5,
+-60,1,-A.Y.Offset-103)end)end local O O=function()if not game.Players.
+LocalPlayer then return end if not game.Players.LocalPlayer['Character']then
+return end if not q then return end if not r then return end r=false q=false s=
+not s if s then p.Image='http://www.roblox.com/asset/?id=97623721'p.Position=
+UDim2.new(-3E-2,0,-0.17,0)p.Size=UDim2.new(1.05,0,1.25,0)p.ZIndex=2 p.Visible=
+true return N()else h.Position=UDim2.new(0.5,-60,1,-44)p.Visible=false h.
+Selected=false h.Image='http://www.roblox.com/asset/?id=97617958'p.Image=
+'http://www.roblox.com/asset/?id=96536002'p.Position=UDim2.new(-0.1,0,-0.1,0)p.
+Size=UDim2.new(1.2,0,1.2,0)M()local P=o:GetChildren()for Q=1,#P do if P[Q]and P[
+Q]:IsA'Frame'then local R=P[Q]if#R:GetChildren()>0 then h.Position=UDim2.new(0.5
+,-60,1,-108)h.Visible=true p.Visible=true if R:GetChildren()[1]:IsA'ImageButton'
+then local S=R:GetChildren()[1]S.Active=true S.Draggable=false end end end end
+end end local P P=function()L()t=true c.Visible=s if s then return O()end end
+local Q Q=function()if s then return O()end end local R R=function(S)assert(S)
+assert(S:IsA'TextButton')S.BackgroundColor3=Color3.new(1,1,1)S.TextColor3=Color3
+.new(0,0,0)S.Selected=true S.ZIndex=3 return S end local S S=function(T)assert(T
+)assert(T:IsA'TextButton')T.BackgroundColor3=Color3.new(0,0,0)T.TextColor3=
+Color3.new(1,1,1)T.Selected=false T.ZIndex=1 return T end local T T=function(U)
+assert(U)if U=='gear'then R(f)return S(g)elseif U=='wardrobe'then R(g)return S(f
+)end end local U U=function(V)assert(V)assert(V:IsA'TextButton')if V.Selected
+then return end V.BackgroundColor3=Color3.new(0,0,0)end local V V=function(W)
+assert(W)assert(W:IsA'TextButton')if W.Selected then return end W.
+BackgroundColor3=Color3.new(0.15294117647058825,0.15294117647058825,
+0.15294117647058825)end local W W=function(X)assert(X)X=string.lower(X)i=X T(X)G
+:Fire(X)return J()end local X X=function(Y)return Y:gsub('^%s*(.-)%s*$','%1')end
+local Y Y=function()local Z=k.Text if Z==''then J()return end Z=X(Z)m.Visible=
+true return H:Fire(Z)end local Z Z=function()r=true end local _ _=function(aa,ab
+)if aa==Enum.CoreGuiType.Backpack or aa==Enum.CoreGuiType.All then t=ab u=not ab
+do local ac=game:GetService'GuiService'if u then pcall(function()ac:RemoveKey(y)
+return ac:RemoveKey(z)end)else ac:AddKey(y)ac:AddKey(z)end end J()j.Visible=ab
+and s o.Visible=ab c.Visible=ab h.Visible=ab end end C('CloseBackpack',M)C(
+'BackpackReady',Z)pcall(function()_(Enum.CoreGuiType.Backpack,Game.StarterGui:
+GetCoreGuiEnabled(Enum.CoreGuiType.Backpack))return Game.StarterGui.
+CoreGuiChangedSignal:connect(_)end)f.MouseButton1Click:connect(function()return
+W'gear'end)f.MouseEnter:connect(function()return V(f)end)f.MouseLeave:connect(
+function()return U(f)end)if game.CoreGui.Version>=8 then g.MouseButton1Click:
+connect(function()return W'wardrobe'end)g.MouseEnter:connect(function()return V(
+g)end)g.MouseLeave:connect(function()return U(g)end)end e.MouseButton1Click:
+connect(Q)d.Changed:connect(function(aa)if aa=='AbsoluteSize'then return D:Fire(
+d.AbsoluteSize)end end)do local aa=game:GetService'GuiService'aa:AddKey(y)aa:
+AddKey(z)aa.KeyPressed:connect(function(ab)if not t or u then return end if ab==
+y or ab==z then return O()end end)end h.MouseButton1Click:connect(function()if
+not t or u then return end return O()end)if game.Players.LocalPlayer['Character'
+]then P()end game.Players.LocalPlayer.CharacterAdded:connect(P)k.FocusLost:
+connect(function(aa)if aa or k.Text~=''then return Y()elseif k.Text==''then
+return J()end end)l.MouseButton1Click:connect(Y)m.MouseButton1Click:connect(J)if
+j and n.AbsoluteSize.Y<=320 then j.RobloxLocked=false return j:Destroy()end

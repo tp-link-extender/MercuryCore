@@ -767,8 +767,8 @@ local addingPlayerChild = function(child, equipped, addToSlot, inventoryGearButt
 		end)
 	end
 
-	local dragBeginPos = nil
-	local clickCon, buttonDeleteCon, mouseEnterCon, mouseLeaveCon, dragStop, dragBegin = nil
+	local dragBeginPos
+	local clickCon, buttonDeleteCon, mouseEnterCon, mouseLeaveCon, dragStop, dragBegin
 	clickCon = gearClone.MouseButton1Click:connect(function()
 		if characterInWorkspace() then
 			if not gearClone.Draggable then

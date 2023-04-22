@@ -2368,7 +2368,7 @@ if LoadLibrary then
 
 			local advancedChatBarSupported = game.Players.LocalPlayer.ChatMode
 			local chatBar, toggleHotKey = createChatBar()
-			
+
 			[if advancedChatBarSupported then
 				local function toggleChatBar(chatMode)
 					if chatMode == Enum.ChatMode.Menu then

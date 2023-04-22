@@ -242,7 +242,7 @@ presentDialogChoices = (talkingPart, dialogChoices) ->
 	for _, obj in pairs dialogChoices
 		if obj\IsA "DialogChoice"
 			table.insert sortedDialogChoices, obj
-	
+
 	table.sort sortedDialogChoices, (a, b) -> a.Name < b.Name
 
 	if #sortedDialogChoices == 0
@@ -296,7 +296,7 @@ selectChoice = (choice) ->
 			sanitizeMessage(dialogChoice.UserDialog),
 			getChatColor currentTone!
 		)
-		
+
 		wait 1
 		currentConversationDialog\SignalDialogChoiceSelected player, dialogChoice
 		game.Chat\Chat(

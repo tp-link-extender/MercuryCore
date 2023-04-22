@@ -6,660 +6,600 @@ LargeLight='96098920',LargeHeader='96097470',NormalHeader='94692054',LargeBottom
 ='96397271',NormalBottom='94754966',DarkBluePopupMid='97114905',
 LightBluePopupMid='97114905',DarkPopupMid='97112126',LightPopupMid='97109338',
 DarkBluePopupTop='97114838',DarkBluePopupBottom='97114758',DarkPopupBottom=
-'100869219',LightPopupBottom='97109175'},0.25,15,{}function e.Create(f)return
-function(g)local h=Instance.new(f)for i,j in pairs(g)do if type(i)=='number'then
-j.Parent=h else h[i]=j end end return h end end function MakeBackgroundGuiObj(f)
-return e.Create'ImageLabel'{Name='Background',BackgroundTransparency=1,Image=f,
-Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,1,0)}end function Color3I(f,g,h)
-return Color3.new(f/255,g/255,h/255)end function getMembershipTypeIcon(f,g)if a[
-string.lower(g)]~=nil then if a[string.lower(g)]==1 then return
-'http://www.roblox.com/asset/?id=6923330951'else return a[string.lower(g)]end
-elseif f==Enum.MembershipType.None then return''elseif f==Enum.MembershipType.
-BuildersClub then return'rbxasset://textures/ui/TinyBcIcon.png'elseif f==Enum.
-MembershipType.TurboBuildersClub then return
-'rbxasset://textures/ui/TinyTbcIcon.png'elseif f==Enum.MembershipType.
+'100869219',LightPopupBottom='97109175'},0.25,15,nil e=function(f,g,h)if not(h~=
+nil)then h=g g=nil end local i=Instance.new(f)if g then i.Name=g end local j for
+k,l in pairs(h)do if type(k)=='string'then if k=='Parent'then j=l else i[k]=l
+end elseif type(k)=='number'and type(l)=='userdata'then l.Parent=i end end i.
+Parent=j return i end local f f=function(g)return e('ImageLabel','Background',{
+BackgroundTransparency=1,Image=g,Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,
+1,0)})end local g g=function(h,i,j)return Color3.new(h/255,i/255,j/255)end local
+h h=function(i,j)if(a[string.lower(j)]~=nil)then if a[string.lower(j)]==1 then
+return'http://www.roblox.com/asset/?id=6923330951'else return a[string.lower(j)]
+end elseif i==Enum.MembershipType.None then return''elseif i==Enum.
+MembershipType.BuildersClub then return'rbxasset://textures/ui/TinyBcIcon.png'
+elseif i==Enum.MembershipType.TurboBuildersClub then return
+'rbxasset://textures/ui/TinyTbcIcon.png'elseif i==Enum.MembershipType.
 OutrageousBuildersClub then return'rbxasset://textures/ui/TinyObcIcon.png'else
-error('Unknown membershipType'..f)end end local function getFriendStatusIcon(f)
-if f==Enum.FriendStatus.Unknown or f==Enum.FriendStatus.NotFriend then return''
-elseif f==Enum.FriendStatus.Friend then return
-'http://www.roblox.com/asset/?id=99749771'elseif f==Enum.FriendStatus.
-FriendRequestSent then return'http://www.roblox.com/asset/?id=99776888'elseif f
+return error('Unknown membershipType '..tostring(i))end end local i i=function(j
+)if j==Enum.FriendStatus.Unknown or j==Enum.FriendStatus.NotFriend then return''
+elseif j==Enum.FriendStatus.Friend then return
+'http://www.roblox.com/asset/?id=99749771'elseif j==Enum.FriendStatus.
+FriendRequestSent then return'http://www.roblox.com/asset/?id=99776888'elseif j
 ==Enum.FriendStatus.FriendRequestReceived then return
-'http://www.roblox.com/asset/?id=99776838'else error('Unknown FriendStatus: '..f
-)end end function MakePopupButton(f,g,h,i)local j=e.Create'ImageButton'{Name=
-'ReportButton',BackgroundTransparency=1,Position=UDim2.new(0,0,1*h,0),Size=UDim2
-.new(1,0,1,0),ZIndex=7,e.Create'TextLabel'{Name='ButtonText',
+'http://www.roblox.com/asset/?id=99776838'else return error(
+'Unknown FriendStatus: '..tostring(j))end end local j j=function(k,l,m,n)local o
+=e('ImageButton','ReportButton',{BackgroundTransparency=1,Position=UDim2.new(0,0
+,1*m,0),Size=UDim2.new(1,0,1,0),ZIndex=7,Parent=k,e('TextLabel','ButtonText',{
 BackgroundTransparency=1,Position=UDim2.new(0.07,0,0.07,0),Size=UDim2.new(0.86,0
-,0.86,0),Parent=HeaderFrame,Font='ArialBold',Text=g,FontSize='Size14',TextScaled
-=true,TextColor3=Color3.new(1,1,1),TextStrokeTransparency=1,ZIndex=7},Parent=f}
-if h==0 then j.Image='http://www.roblox.com/asset/?id=97108784'elseif i then if
-h%2==1 then j.Image='http://www.roblox.com/asset/?id='..b['LightPopupBottom']
-else j.Image='http://www.roblox.com/asset/?id='..b['DarkPopupBottom']end else if
-h%2==1 then j.Image='http://www.roblox.com/asset/?id=97112126'else j.Image=
-'http://www.roblox.com/asset/?id=97109338'end end return j end function
-WaitForChild(f,g)while not f:FindFirstChild(g)do wait()debugprint(' child '..f.
-Name..' waiting for '..g)end return f[g]end local f=game:GetService'Players'
-while not f.LocalPlayer do f.Changed:wait()end local g=f.LocalPlayer local h,i=g
-:GetMouse(),e.Create'Frame'{Name='PlayerListScreen',Size=UDim2.new(1,0,1,0),
-BackgroundTransparency=1,Parent=script.Parent}local j=e.Create'Frame'{Name=
-'LeaderBoardFrame',Position=UDim2.new(1,-150,0.005,0),Size=UDim2.new(0,150,0,800
-),BackgroundTransparency=1,Parent=i}local k,l=e.Create'Frame'{Name='FocusFrame',
+,0.86,0),Font='ArialBold',Text=l,FontSize='Size14',TextScaled=true,TextColor3=
+Color3.new(1,1,1),TextStrokeTransparency=1,ZIndex=7})})o.Image=
+'http://www.roblox.com/asset/?id='..(function()if m==0 then return'97108784'
+elseif n then if m%2==1 then return b['LightPopupBottom']else return b[
+'DarkPopupBottom']end else if m%2==1 then return'97112126'else return'97109338'
+end end end)()return o end local k,l,m=nil,true,nil m=function(n)if l then k.
+Text=n end end local n n=function(o,p)while not o:FindFirstChild(p)do wait()m(
+' child '..tostring(o.Name)..' waiting for '..tostring(p))end return o[p]end
+local o=game:GetService'Players'while not o.LocalPlayer do o.Changed:wait()end
+local p=o.LocalPlayer local q,r=p:GetMouse(),e('Frame','PlayerListScreen',{Size=
+UDim2.new(1,0,1,0),BackgroundTransparency=1,Parent=script.Parent})local s=e(
+'Frame','LeaderBoardFrame',{Position=UDim2.new(1,-150,0.005,0),Size=UDim2.new(0,
+150,0,800),BackgroundTransparency=1,Parent=r})local t,u=e('Frame','FocusFrame',{
 Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,0,100),BackgroundTransparency=1,
-Active=true,Parent=j},e.Create'Frame'{Name='Header',BackgroundTransparency=1,
-Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,0.07,0),Parent=j,
-MakeBackgroundGuiObj'http://www.roblox.com/asset/?id=94692054'}local m,n,o,p=l.
-Size.Y.Scale,e.Create'ImageButton'{Name='MaximizeButton',Active=true,
-BackgroundTransparency=1,Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,1,0),
-Parent=l},e.Create'TextLabel'{Name='PlayerName',BackgroundTransparency=1,
-Position=UDim2.new(0,0,0.01,0),Size=UDim2.new(0.98,0,0.38,0),Parent=l,Font=
-'ArialBold',Text=g.Name,FontSize='Size24',TextColor3=Color3.new(1,1,1),
-TextStrokeColor3=Color3.new(0,0,0),TextStrokeTransparency=0,TextXAlignment=
-'Right',TextYAlignment='Center'},e.Create'TextLabel'{Name='PlayerScore',
+Active=true,Parent=s}),e('Frame','Header',{BackgroundTransparency=1,Position=
+UDim2.new(0,0,0,0),Size=UDim2.new(1,0,0.07,0),Parent=s,f
+'http://www.roblox.com/asset/?id=94692054'})local v,w,x,y=u.Size.Y.Scale,e(
+'ImageButton','MaximizeButton',{Active=true,BackgroundTransparency=1,Position=
+UDim2.new(0,0,0,0),Size=UDim2.new(1,0,1,0),Parent=u}),e('TextLabel','PlayerName'
+,{BackgroundTransparency=1,Position=UDim2.new(0,0,0.01,0),Size=UDim2.new(0.98,0,
+0.38,0),Parent=u,Font='ArialBold',Text=p.Name,FontSize='Size24',TextColor3=
+Color3.new(1,1,1),TextStrokeColor3=Color3.new(0,0,0),TextStrokeTransparency=0,
+TextXAlignment='Right',TextYAlignment='Center'}),e('TextLabel','PlayerScore',{
 BackgroundTransparency=1,Position=UDim2.new(0,0,0.4,0),Size=UDim2.new(0.98,0,0,
-30),Parent=l,Font='ArialBold',Text='',FontSize='Size24',TextYAlignment='Top',
-TextColor3=Color3.new(1,1,1),TextStrokeTransparency=1,TextXAlignment='Right'}
-local q=e.Create'Frame'{Name='BottomShiftFrame',BackgroundTransparency=1,
-Position=UDim2.new(0,0,m,0),Size=UDim2.new(1,0,1,0),Parent=j}local r=e.Create
-'Frame'{Name='Bottom',BackgroundTransparency=1,Position=UDim2.new(0,0,0.07,0),
-Size=UDim2.new(1,0,0.03,0),Parent=q,MakeBackgroundGuiObj
-'http://www.roblox.com/asset/?id=94754966'}local s,t,u=e.Create'ImageButton'{
-Name='bigbutton',Active=true,BackgroundTransparency=1,Position=UDim2.new(0,0,0,0
-),Size=UDim2.new(1,0,1.5,0),ZIndex=3,Parent=r},e.Create'ImageButton'{Name=
-'extendTab',Active=true,BackgroundTransparency=1,Image=
+30),Parent=u,Font='ArialBold',Text='',FontSize='Size24',TextYAlignment='Top',
+TextColor3=Color3.new(1,1,1),TextStrokeTransparency=1,TextXAlignment='Right'})
+local z=e('Frame','BottomShiftFrame',{BackgroundTransparency=1,Position=UDim2.
+new(0,0,v,0),Size=UDim2.new(1,0,1,0),Parent=s})local A=e('Frame','Bottom',{
+BackgroundTransparency=1,Position=UDim2.new(0,0,0.07,0),Size=UDim2.new(1,0,0.03,
+0),Parent=z,f'http://www.roblox.com/asset/?id=94754966'})local B,C,D=e(
+'ImageButton','bigbutton',{Active=true,BackgroundTransparency=1,Position=UDim2.
+new(0,0,0,0),Size=UDim2.new(1,0,1.5,0),ZIndex=3,Parent=A}),e('ImageButton',
+'extendTab',{Active=true,BackgroundTransparency=1,Image=
 'http://www.roblox.com/asset/?id=94692731',Position=UDim2.new(0.608,0,0.3,0),
-Size=UDim2.new(0.3,0,0.7,0),Parent=r},e.Create'Frame'{Name='ListFrame',
+Size=UDim2.new(0.3,0,0.7,0),Parent=A}),e('Frame','ListFrame',{
 BackgroundTransparency=1,Position=UDim2.new(-1,0,0.07,0),Size=UDim2.new(2,0,1,0)
-,Parent=j,ClipsDescendants=true}local v=e.Create'Frame'{Name='BottomFrame',
+,Parent=s,ClipsDescendants=true})local E=e('Frame','BottomFrame',{
 BackgroundTransparency=1,Position=UDim2.new(0,0,-0.8,0),Size=UDim2.new(1,0,1,0),
-Parent=u,ClipsDescendants=true}local w=e.Create'Frame'{Name='ScrollBarFrame',
+Parent=D,ClipsDescendants=true})local F=e('Frame','ScrollBarFrame',{
 BackgroundTransparency=1,Position=UDim2.new(0.987,0,0.8,0),Size=UDim2.new(0.01,0
-,0.2,0),Parent=v}local x,y,z,A=e.Create'Frame'{Name='ScrollBar',
-BackgroundTransparency=0,BackgroundColor3=Color3.new(0.2,0.2,0.2),Position=UDim2
-.new(0,0,0,0),Size=UDim2.new(1,0,0.5,0),ZIndex=5,Parent=w},e.Create'Frame'{Name=
-'SubFrame',BackgroundTransparency=1,Position=UDim2.new(0,0,0.8,0),Size=UDim2.
-new(1,0,1,0),Parent=v},e.Create'Frame'{Name='PopUpFrame',BackgroundTransparency=
-1,SizeConstraint='RelativeXX',Position=j.Position+UDim2.new(0,-150,0,0),Size=
-UDim2.new(0,150,0,800),Parent=j,ClipsDescendants=true,ZIndex=7},nil local B,C,D,
-E,F,G,H,I,J=e.Create'Frame'{Name='Panel',BackgroundTransparency=1,Position=UDim2
-.new(1,0,0,0),Size=UDim2.new(1,0,0.032,0),Parent=z},e.Create'Frame'{Name=
-'StatTitles',BackgroundTransparency=1,Position=UDim2.new(0,0,1,-10),Size=UDim2.
-new(1,0,0,0),Parent=l},Instance.new'BoolValue',Instance.new'BoolValue',Instance.
-new'BoolValue',Instance.new'BoolValue',e.Create'Frame'{Name='MidTemplate',
-BackgroundTransparency=1,Position=UDim2.new(100,0,0.07,0),Size=UDim2.new(0.5,0,
-0.025,0),e.Create'ImageLabel'{Name='BCLabel',Active=true,BackgroundTransparency=
-1,Position=UDim2.new(0.005,5,0.2,0),Size=UDim2.new(0,16,0,16),SizeConstraint=
-'RelativeYY',Image='',ZIndex=3},e.Create'ImageLabel'{Name='FriendLabel',Active=
-true,BackgroundTransparency=1,Position=UDim2.new(0.005,5,0.15,0),Size=UDim2.new(
-0,16,0,16),SizeConstraint='RelativeYY',Image='',ZIndex=3},e.Create'ImageButton'{
-Name='ClickListener',Active=true,BackgroundTransparency=1,Position=UDim2.new(
-0.005,1,0,0),Size=UDim2.new(0.96,0,1,0),ZIndex=3},e.Create'Frame'{Name=
-'TitleFrame',BackgroundTransparency=1,Position=UDim2.new(0.01,0,0,0),Size=UDim2.
-new(0,140,1,0),ClipsDescendants=true,e.Create'TextLabel'{Name='Title',
+,0.2,0),Parent=E})local G,H,I,J=e('Frame','ScrollBar',{BackgroundTransparency=0,
+BackgroundColor3=Color3.new(0.2,0.2,0.2),Position=UDim2.new(0,0,0,0),Size=UDim2.
+new(1,0,0.5,0),ZIndex=5,Parent=F}),e('Frame','SubFrame',{BackgroundTransparency=
+1,Position=UDim2.new(0,0,0.8,0),Size=UDim2.new(1,0,1,0),Parent=E}),e('Frame',
+'PopUpFrame',{BackgroundTransparency=1,SizeConstraint='RelativeXX',Position=s.
+Position+UDim2.new(0,-150,0,0),Size=UDim2.new(0,150,0,800),Parent=s,
+ClipsDescendants=true,ZIndex=7}),nil local K,L,M,N,O,P,Q,R,S=e('Frame','Panel',{
+BackgroundTransparency=1,Position=UDim2.new(1,0,0,0),Size=UDim2.new(1,0,0.032,0)
+,Parent=I}),e('Frame','StatTitles',{BackgroundTransparency=1,Position=UDim2.new(
+0,0,1,-10),Size=UDim2.new(1,0,0,0),Parent=u}),Instance.new'BoolValue',Instance.
+new'BoolValue',Instance.new'BoolValue',Instance.new'BoolValue',e('Frame',{Name=
+'MidTemplate',BackgroundTransparency=1,Position=UDim2.new(100,0,0.07,0),Size=
+UDim2.new(0.5,0,0.025,0),e('ImageLabel',{Name='BCLabel',Active=true,
+BackgroundTransparency=1,Position=UDim2.new(0.005,5,0.2,0),Size=UDim2.new(0,16,0
+,16),SizeConstraint='RelativeYY',Image='',ZIndex=3}),e('ImageLabel',{Name=
+'FriendLabel',Active=true,BackgroundTransparency=1,Position=UDim2.new(0.005,5,
+0.15,0),Size=UDim2.new(0,16,0,16),SizeConstraint='RelativeYY',Image='',ZIndex=3}
+),e('ImageButton','ClickListener',{Active=true,BackgroundTransparency=1,Position
+=UDim2.new(0.005,1,0,0),Size=UDim2.new(0.96,0,1,0),ZIndex=3}),e('Frame',
+'TitleFrame',{BackgroundTransparency=1,Position=UDim2.new(0.01,0,0,0),Size=UDim2
+.new(0,140,1,0),ClipsDescendants=true,e('TextLabel','Title',{
 BackgroundTransparency=1,Position=UDim2.new(0,5,0,0),Size=UDim2.new(100,0,1,0),
 Font='Arial',FontSize='Size14',TextColor3=Color3.new(1,1,1),TextXAlignment=
-'Left',TextYAlignment='Center',ZIndex=3}},e.Create'TextLabel'{Name='PlayerScore'
-,BackgroundTransparency=1,Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,1,0),
+'Left',TextYAlignment='Center',ZIndex=3})}),e('TextLabel','PlayerScore',{
+BackgroundTransparency=1,Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,1,0),
 Font='ArialBold',Text='',FontSize='Size14',TextColor3=Color3.new(1,1,1),
-TextXAlignment='Right',TextYAlignment='Center',ZIndex=3},ZIndex=3},e.Create
-'Frame'{Name='MidBGTemplate',BackgroundTransparency=1,Position=UDim2.new(100,0,
-0.07,0),Size=UDim2.new(0.5,0,0.025,0),MakeBackgroundGuiObj
-'http://www.roblox.com/asset/?id=94692025'},e.Create'TextButton'{Name=
-'ReportAbuseShield',Text='',AutoButtonColor=false,Active=true,Visible=true,Size=
-UDim2.new(1,0,1,0),BackgroundColor3=Color3I(51,51,51),BorderColor3=Color3I(27,42
-,53),BackgroundTransparency=1}local K=e.Create'Frame'{Name='Settings',Position=
+TextXAlignment='Right',TextYAlignment='Center',ZIndex=3}),ZIndex=3}),e('Frame',
+'MidBGTemplate',{BackgroundTransparency=1,Position=UDim2.new(100,0,0.07,0),Size=
+UDim2.new(0.5,0,0.025,0),f'http://www.roblox.com/asset/?id=94692025'}),e(
+'TextButton','ReportAbuseShield',{Text='',AutoButtonColor=false,Active=true,
+Visible=true,Size=UDim2.new(1,0,1,0),BackgroundColor3=g(51,51,51),BorderColor3=
+g(27,42,53),BackgroundTransparency=1})local T,U=e('Frame','Settings',{Position=
 UDim2.new(0.5,-250,0.5,-200),Size=UDim2.new(0,500,0,400),BackgroundTransparency=
-1,Active=true,Parent=J}local L=e.Create'Frame'{Name='ReportAbuseStyle',Size=
-UDim2.new(1,0,1,0),Active=true,BackgroundTransparency=1,MakeBackgroundGuiObj
-'http://www.roblox.com/asset/?id=96488767',e.Create'TextLabel'{Name='Title',Text
-='Report Abuse',TextColor3=Color3I(221,221,221),Position=UDim2.new(0.5,0,0,30),
-Font=Enum.Font.ArialBold,FontSize=Enum.FontSize.Size36},e.Create'TextLabel'{Name
-='Description',Text=
+1,Active=true,Parent=S}),nil U=e('Frame','ReportAbuseStyle',{Size=UDim2.new(1,0,
+1,0),Active=true,BackgroundTransparency=1,Parent=T,f
+'http://www.roblox.com/asset/?id=96488767',e('TextLabel','Title',{Text=
+'Report Abuse',TextColor3=g(221,221,221),Position=UDim2.new(0.5,0,0,30),Font=
+Enum.Font.ArialBold,FontSize=Enum.FontSize.Size36}),e('TextLabel','Description',
+{Text=
 [[This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action.]]
-,TextColor3=Color3I(221,221,221),Position=UDim2.new(0.01,0,0,55),Size=UDim2.new(
-0.99,0,0,40),BackgroundTransparency=1,Font=Enum.Font.Arial,FontSize=Enum.
-FontSize.Size18,TextWrap=true,TextXAlignment=Enum.TextXAlignment.Left,
-TextYAlignment=Enum.TextYAlignment.Top},e.Create'TextLabel'{Name='AbuseLabel',
-Text='What did they do?',Font=Enum.Font.Arial,BackgroundTransparency=1,FontSize=
-Enum.FontSize.Size18,Position=UDim2.new(0.025,0,0,140),Size=UDim2.new(0.4,0,0,36
-),TextColor3=Color3I(255,255,255),TextXAlignment=Enum.TextXAlignment.Left},e.
-Create'TextLabel'{Name='ShortDescriptionLabel',Text=
-'Short Description: (optional)',Font=Enum.Font.Arial,FontSize=Enum.FontSize.
-Size18,Position=UDim2.new(0.025,0,0,180),Size=UDim2.new(0.95,0,0,36),TextColor3=
-Color3I(255,255,255),TextXAlignment=Enum.TextXAlignment.Left,
-BackgroundTransparency=1},e.Create'TextLabel'{Name='ReportingPlayerLabel',Text=
+,TextColor3=g(221,221,221),Position=UDim2.new(0.01,0,0,55),Size=UDim2.new(0.99,0
+,0,40),BackgroundTransparency=1,Font=Enum.Font.Arial,FontSize=Enum.FontSize.
+Size18,TextWrap=true,TextXAlignment=Enum.TextXAlignment.Left,TextYAlignment=Enum
+.TextYAlignment.Top}),e('TextLabel','AbuseLabel',{Text='What did they do?',Font=
+Enum.Font.Arial,BackgroundTransparency=1,FontSize=Enum.FontSize.Size18,Position=
+UDim2.new(0.025,0,0,140),Size=UDim2.new(0.4,0,0,36),TextColor3=g(255,255,255),
+TextXAlignment=Enum.TextXAlignment.Left}),e('TextLabel','ShortDescriptionLabel',
+{Text='Short Description: (optional)',Font=Enum.Font.Arial,FontSize=Enum.
+FontSize.Size18,Position=UDim2.new(0.025,0,0,180),Size=UDim2.new(0.95,0,0,36),
+TextColor3=g(255,255,255),TextXAlignment=Enum.TextXAlignment.Left,
+BackgroundTransparency=1}),e('TextLabel','ReportingPlayerLabel',{Text=
 'Reporting Player',BackgroundTransparency=1,Font=Enum.Font.Arial,FontSize=Enum.
 FontSize.Size18,Position=UDim2.new(0.025,0,0,100),Size=UDim2.new(0.95,0,0,36),
-TextColor3=Color3I(255,255,255),TextXAlignment=Enum.TextXAlignment.Left,Parent=
-AbuseSettingsFrame},Parent=K}local M,N,O,P,Q,R,S,T,U=e.Create'TextLabel'{Name=
-'PlayerLabel',Text='',BackgroundTransparency=1,Font=Enum.Font.ArialBold,FontSize
-=Enum.FontSize.Size18,Position=UDim2.new(0.025,0,0,100),Size=UDim2.new(0.95,0,0,
-36),TextColor3=Color3I(255,255,255),TextXAlignment=Enum.TextXAlignment.Right,
-Parent=L},e.Create'ImageButton'{Name='SubmitReportBtn',Active=false,
-BackgroundTransparency=1,Position=UDim2.new(0.5,-200,1,-80),Size=UDim2.new(0,150
-,0,50),AutoButtonColor=false,Image='http://www.roblox.com/asset/?id=96502438',
-Parent=L},e.Create'ImageButton'{Name='CancelBtn',BackgroundTransparency=1,
-Position=UDim2.new(0.5,50,1,-80),Size=UDim2.new(0,150,0,50),AutoButtonColor=true
-,Image='http://www.roblox.com/asset/?id=96500683',Parent=L},e.Create'Frame'{Name
-='AbuseDescriptionWrapper',Position=UDim2.new(0.025,0,0,220),Size=UDim2.new(0.95
-,0,1,-310),BackgroundColor3=Color3I(0,0,0),BorderSizePixel=0,Parent=L},nil,e.
-Create'TextBox'{Name='TextBox',Text='',ClearTextOnFocus=false,Font=Enum.Font.
-Arial,FontSize=Enum.FontSize.Size18,Position=UDim2.new(0,3,0,3),Size=UDim2.new(1
-,-6,1,-6),TextColor3=Color3I(255,255,255),TextXAlignment=Enum.TextXAlignment.
-Left,TextYAlignment=Enum.TextYAlignment.Top,TextWrap=true,BackgroundColor3=
-Color3I(0,0,0),BorderSizePixel=0},e.Create'Frame'{Name='AbuseFeedbackBox',
-BackgroundTransparency=1,Position=UDim2.new(0.25,0,0.300000012,0),Size=UDim2.
-new(0.5,0,0.370000005,0),MakeBackgroundGuiObj
-'http://www.roblox.com/asset/?id=96506233',e.Create'TextLabel'{Name='Header',
-Position=UDim2.new(0,10,0.05,0),Size=UDim2.new(1,-30,0.15,0),TextScaled=true,
-BackgroundTransparency=1,TextXAlignment=Enum.TextXAlignment.Center,
-TextYAlignment=Enum.TextYAlignment.Top,Text='Thanks for your report!',TextColor3
-=Color3.new(1,1,1),FontSize=Enum.FontSize.Size48,Font='ArialBold'},e.Create
-'TextLabel'{Name='content',Position=UDim2.new(0,10,0.2,0),Size=UDim2.new(1,-30,
-0.4,0),TextScaled=true,BackgroundTransparency=1,TextColor3=Color3.new(1,1,1),
-Text=
+TextColor3=g(255,255,255),TextXAlignment=Enum.TextXAlignment.Left,Parent=U})})
+local V,W,X,Y,Z,_,aa,ab,ac,ad=e('TextLabel','PlayerLabel',{Text='',
+BackgroundTransparency=1,Font=Enum.Font.ArialBold,FontSize=Enum.FontSize.Size18,
+Position=UDim2.new(0.025,0,0,100),Size=UDim2.new(0.95,0,0,36),TextColor3=g(255,
+255,255),TextXAlignment=Enum.TextXAlignment.Right,Parent=U}),e('ImageButton',
+'SubmitReportBtn',{Active=false,BackgroundTransparency=1,Position=UDim2.new(0.5,
+-200,1,-80),Size=UDim2.new(0,150,0,50),AutoButtonColor=false,Image=
+'http://www.roblox.com/asset/?id=96502438',Parent=U}),e('ImageButton',
+'CancelBtn',{BackgroundTransparency=1,Position=UDim2.new(0.5,50,1,-80),Size=
+UDim2.new(0,150,0,50),AutoButtonColor=true,Image=
+'http://www.roblox.com/asset/?id=96500683',Parent=U}),e('Frame',
+'AbuseDescriptionWrapper',{Position=UDim2.new(0.025,0,0,220),Size=UDim2.new(0.95
+,0,1,-310),BackgroundColor3=g(0,0,0),BorderSizePixel=0,Parent=U}),nil,e(
+'TextBox',{Text='',ClearTextOnFocus=false,Font=Enum.Font.Arial,FontSize=Enum.
+FontSize.Size18,Position=UDim2.new(0,3,0,3),Size=UDim2.new(1,-6,1,-6),TextColor3
+=g(255,255,255),TextXAlignment=Enum.TextXAlignment.Left,TextYAlignment=Enum.
+TextYAlignment.Top,TextWrap=true,BackgroundColor3=g(0,0,0),BorderSizePixel=0}),
+e('Frame','AbuseFeedbackBox',{BackgroundTransparency=1,Position=UDim2.new(0.25,0
+,0.3,0),Size=UDim2.new(0.5,0,0.37,0),f'http://www.roblox.com/asset/?id=96506233'
+,e('TextLabel','Header',{Position=UDim2.new(0,10,0.05,0),Size=UDim2.new(1,-30,
+0.15,0),TextScaled=true,BackgroundTransparency=1,TextXAlignment=Enum.
+TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Top,Text=
+'Thanks for your report!',TextColor3=Color3.new(1,1,1),FontSize=Enum.FontSize.
+Size48,Font='ArialBold'}),e('TextLabel','content',{Position=UDim2.new(0,10,0.2,0
+),Size=UDim2.new(1,-30,0.4,0),TextScaled=true,BackgroundTransparency=1,
+TextColor3=Color3.new(1,1,1),Text=
 [[Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.
 
 If anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats]]
 ,TextWrapped=true,TextYAlignment=Enum.TextYAlignment.Top,FontSize=Enum.FontSize.
-Size24,Font='Arial'},e.Create'ImageButton'{Name='OkButton',
-BackgroundTransparency=1,Position=UDim2.new(0.5,-75,1,-80),Size=UDim2.new(0,150,
-0,50),AutoButtonColor=true,Image='http://www.roblox.com/asset/?id=96507959'}},e.
-Create'Frame'{Name='AbuseFeedbackBox',BackgroundTransparency=1,Position=UDim2.
-new(0.25,0,0.300000012,0),Size=UDim2.new(0.5,0,0.370000005,0),
-MakeBackgroundGuiObj'http://www.roblox.com/asset/?id=96506233',e.Create
-'TextLabel'{Name='Header',Position=UDim2.new(0,10,0.05,0),Size=UDim2.new(1,-30,
-0.15,0),TextScaled=true,BackgroundTransparency=1,TextColor3=Color3.new(1,1,1),
-TextXAlignment=Enum.TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Top
-,Text='Thanks for your report!',FontSize=Enum.FontSize.Size48,Font='ArialBold'},
-e.Create'TextLabel'{Name='content',Position=UDim2.new(0,10,0.2,0),Size=UDim2.
-new(1,-30,0.15,0),TextScaled=true,BackgroundTransparency=1,TextColor3=Color3.
-new(1,1,1),Text=
+Size24,Font='Arial'}),e('ImageButton','OkButton',{BackgroundTransparency=1,
+Position=UDim2.new(0.5,-75,1,-80),Size=UDim2.new(0,150,0,50),AutoButtonColor=
+true,Image='http://www.roblox.com/asset/?id=96507959'})}),e('Frame',
+'AbuseFeedbackBox',{BackgroundTransparency=1,Position=UDim2.new(0.25,0,
+0.300000012,0),Size=UDim2.new(0.5,0,0.370000005,0),f
+'http://www.roblox.com/asset/?id=96506233',e('TextLabel','Header',{Position=
+UDim2.new(0,10,0.05,0),Size=UDim2.new(1,-30,0.15,0),TextScaled=true,
+BackgroundTransparency=1,TextColor3=Color3.new(1,1,1),TextXAlignment=Enum.
+TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Top,Text=
+'Thanks for your report!',FontSize=Enum.FontSize.Size48,Font='ArialBold'}),e(
+'TextLabel','content',{Position=UDim2.new(0,10,0.2,0),Size=UDim2.new(1,-30,0.15,
+0),TextScaled=true,BackgroundTransparency=1,TextColor3=Color3.new(1,1,1),Text=
 [[Our moderators will review the chat logs and determine what happened.]],
 TextWrapped=true,TextYAlignment=Enum.TextYAlignment.Top,FontSize=Enum.FontSize.
-Size24,Font='Arial'},e.Create'ImageButton'{Name='OkButton',
-BackgroundTransparency=1,Position=UDim2.new(0.5,-75,1,-80),Size=UDim2.new(0,150,
-0,50),AutoButtonColor=true,Image='http://www.roblox.com/asset/?id=96507959'}},
-Instance.new'ImageButton'U.Size=UDim2.new(1,0,1,0)U.BackgroundTransparency=1 U.
-ZIndex=8 U.Visible=false U.Parent=i local V=e.Create'Frame'{Name='debugframe',
-BackgroundTransparency=1,Position=UDim2.new(0.25,0,0.300000012,0),Size=UDim2.
-new(0.5,0,0.370000005,0),MakeBackgroundGuiObj
-'http://www.roblox.com/asset/?id=96506233'}local W,X,Y=e.Create'TextLabel'{
-BackgroundTransparency=0.8,Position=UDim2.new(0,0,0.01,0),Size=UDim2.new(1,0,0.5
-,0),Parent=V,Font='ArialBold',Text='--',FontSize='Size14',TextWrapped=true,
-TextColor3=Color3.new(1,1,1),TextStrokeColor3=Color3.new(0,0,0),
-TextStrokeTransparency=0,TextXAlignment='Right',TextYAlignment='Center'},e.
-Create'TextLabel'{BackgroundTransparency=0.8,Position=UDim2.new(0,0,0.5,0),Size=
-UDim2.new(1,0,0.5,0),Parent=V,Font='ArialBold',Text='--',FontSize='Size14',
+Size24,Font='Arial'}),e('ImageButton','OkButton',{BackgroundTransparency=1,
+Position=UDim2.new(0.5,-75,1,-80),Size=UDim2.new(0,150,0,50),AutoButtonColor=
+true,Image='http://www.roblox.com/asset/?id=96507959'})}),e('ImageButton',{Size=
+UDim2.new(1,0,1,0),BackgroundTransparency=1,ZIndex=8,Visible=false,Parent=r}),e(
+'Frame','debugframe',{BackgroundTransparency=1,Position=UDim2.new(0.25,0,0.3,0),
+Size=UDim2.new(0.5,0,0.37,0),f'http://www.roblox.com/asset/?id=96506233'})local
+ae=e('TextLabel',{BackgroundTransparency=0.8,Position=UDim2.new(0,0,0.01,0),Size
+=UDim2.new(1,0,0.5,0),Parent=ad,Font='ArialBold',Text='--',FontSize='Size14',
 TextWrapped=true,TextColor3=Color3.new(1,1,1),TextStrokeColor3=Color3.new(0,0,0)
-,TextStrokeTransparency=0,TextXAlignment='Right',TextYAlignment='Center'},true
-function debugprint(Z)if Y then X.Text=Z end end local Z,_=assert(LoadLibrary
-'RbxGui'),8 for aa,ab in pairs(b)do Game:GetService'ContentProvider':Preload(
-'http://www.roblox.com/asset/?id='..ab)end local ac,ad,ae,af,ag,ah,ai,aj,ak,al={
-},0,{},{},nil,{},{},0,0.25,false pcall(function()al=Game:GetService
-'UserInputService'.TouchEnabled end)local am,an,ao,ap=150,10,UDim2.new(0.5,0,1,0
-),UDim2.new(0.25,0,0.1,0)local aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE=
-UDim2.new(0,am,0,800),UDim2.new(1,-am,0.005,0),-4E-2,v.Position.Y.Scale,nil,nil,
-false,false,false,false,false,false,false,{},8 if not al then aE=12 end local aF
-,aG,aH,aI,aJ,aK,aL=false,nil,{'Bad Words or Threats','Bad Username',
-'Talking about Dating','Account Trading or Sharing','Asking Personal Questions',
-'Rude or Mean Behavior','False Reporting Me'},nil,nil,{Owner=255,Admin=240,
-Member=128,Visitor=10,Banned=0},not not game.Workspace:FindFirstChild
-'PSVariable'game.Workspace.ChildAdded:connect(function(aM)if aM.Name==
-'PSVariable'and aM:IsA'BoolValue'then aL=true end end)function
-AreAllEntriesOnScreen()return#ai*H.Size.Y.Scale<=1+at end function GetMaxScroll(
-)return at*-1 end function GetMinScroll()if AreAllEntriesOnScreen()then return
-GetMaxScroll()else return(GetMaxScroll()-(#ai*H.Size.Y.Scale))+(1+at)end end
-function AbsoluteToPercent(aM,aN)return Vector2.new(aM,aN)/i.AbsoluteSize end
-function TweenProperty(aM,aN,aO,aP,aQ)local aR=tick()while tick()-aR<aQ do aM[aN
-]=((aP-aO)*((tick()-aR)/aQ))+aO wait(3.333333333333333E-2)end aM[aN]=aP end
-function WaitForClick(aM,aN,aO)if az then return end az=true local aP,aQ aP=U.
-MouseButton1Up:connect(function(aR,aS)aO(aR,aS)U.Visible=false aP:disconnect()if
-aQ then aQ:disconnect()end end)aQ=U.MouseMoved:connect(function(aR,aS)aN(aR,aS)
-end)U.Visible=true U.Active=true U.Parent=aM aM.AncestryChanged:connect(function
-(aR,aS)if aR==aM and aS==nil then aO(nx,ny)U.Visible=false aP:disconnect()aQ:
-disconnect()debugprint'forced out of wait for click'end end)az=false end
-function SetPrivilegeRank(aM,aN)while aM.PersonalServerRank<aN do game:
-GetService'PersonalServerService':Promote(aM)end while aM.PersonalServerRank>aN
-do game:GetService'PersonalServerService':Demote(aM)end end function
-OnPrivilegeLevelSelect(aM,aN,aO,aP,aQ,aR)debugprint'setting privilege level'
-SetPrivilegeRank(aM,aN)HighlightMyRank(aM,aO,aP,aQ,aR)end function
-HighlightMyRank(aM,aN,aO,aP,aQ)aN.Image='http://www.roblox.com/asset/?id='..b[
-'LightPopupMid']aO.Image='http://www.roblox.com/asset/?id='..b['DarkPopupMid']aP
-.Image='http://www.roblox.com/asset/?id='..b['LightPopupMid']aQ.Image=
-'http://www.roblox.com/asset/?id='..b['DarkPopupBottom']local aR=aM.
-PersonalServerRank if aR<=aK['Banned']then aN.Image=
-'http://www.roblox.com/asset/?id='..b['LightBluePopupMid']elseif aR<=aK[
-'Visitor']then aO.Image='http://www.roblox.com/asset/?id='..b['DarkBluePopupMid'
-]elseif aR<=aK['Member']then aP.Image='http://www.roblox.com/asset/?id='..b[
-'LightBluePopupMid']elseif aR<=aK['Admin']then aQ.Image=
-'http://www.roblox.com/asset/?id='..b['DarkBluePopupBottom']end end function
-OnSubmitAbuse()if N.Active then if aG and av then L.Visible=false game.Players:
-ReportAbuse(av,aG,Q.Text)if aG=='Rude or Mean Behavior'or aG==
-'False Reporting Me'then S.Parent=J else debugprint'opening abuse box'T.Parent=J
-end else CloseAbuseDialog()end end end function OpenAbuseDialog()debugprint
-'adding report dialog'M.Text=av.Name A:TweenPosition(UDim2.new(1,0,0,0),'Out',
-'Linear',c,true)Q=R:Clone()Q.Parent=P J.Parent=i ClosePopUpPanel()end function
-CloseAbuseDialog()aG=nil N.Active=false N.Image=
-'http://www.roblox.com/asset/?id=96502438'Q:Destroy()S.Parent=nil T.Parent=nil J
-.Parent=nil L.Visible=true end function InitReportAbuse()aI=function(aM)aG=aM if
-aG and av then N.Active=true N.Image='http://www.roblox.com/asset/?id=96501119'
-end end aJ,aa=Z.CreateDropDownMenu(aH,aI,true)aJ.Name='AbuseComboBox'aJ.Position
-=UDim2.new(0.425,0,0,142)aJ.Size=UDim2.new(0.55,0,0,32)aJ.Parent=L O.
-MouseButton1Click:connect(CloseAbuseDialog)N.MouseButton1Click:connect(
-OnSubmitAbuse)S:FindFirstChild'OkButton'.MouseButton1Down:connect(
-CloseAbuseDialog)T:FindFirstChild'OkButton'.MouseButton1Down:connect(
-CloseAbuseDialog)end local function GetFriendStatus(aM)if aM==game.Players.
-LocalPlayer then return Enum.FriendStatus.NotFriend else local aN,aO=pcall(
-function()return game.Players.LocalPlayer:GetFriendStatus(aM)end)if aN then
-return aO else return Enum.FriendStatus.NotFriend end end end function
-OnFriendButtonSelect()local aM=GetFriendStatus(av)if aM==Enum.FriendStatus.
-Friend then g:RevokeFriendship(av)elseif aM==Enum.FriendStatus.Unknown or aM==
-Enum.FriendStatus.NotFriend or aM==Enum.FriendStatus.FriendRequestSent or aM==
-Enum.FriendStatus.FriendRequestReceived then g:RequestFriendship(av)end
-ClosePopUpPanel()end function OnFriendRefuseButtonSelect()g:RevokeFriendship(av)
-ClosePopUpPanel()A:TweenPosition(UDim2.new(1,0,0,0),'Out','Linear',c,true)end
-function PlayerSortFunction(aM,aN)if aM['Score']==aN['Score']then return aM[
-'Player'].Name:upper()<aN['Player'].Name:upper()end if not aM['Score']then
-return false end if not aN['Score']then return true end return aM['Score']<aN[
-'Score']end function BlowThisPopsicleStand()Tabify()end function StatSort(aM,aN)
-if aM.IsPrimary~=aN.IsPrimary then return aM.IsPrimary end if aM.Priority==aN.
-Priority then return aM.AddId<aN.AddId end return aM.Priority<aN.Priority end
-function StatChanged(aM,aN)BaseUpdate()end function StatAdded(aN,aO)while ax do
-debugprint'in stat added function lock'wait(3.333333333333333E-2)end ax=true if
-not(aN:IsA'StringValue'or aN:IsA'IntValue'or aN:IsA'BoolValue'or aN:IsA
-'NumberValue'or aN:IsA'DoubleConstrainedValue'or aN:IsA'IntConstrainedValue')
-then BlowThisPopsicleStand()else local aP=false for aQ,aR in pairs(ac)do if aR[
-'Name']==aN.Name then aP=true end end if not aP then local aS={}aS['Name']=aN.
-Name aS['Priority']=0 if aN:FindFirstChild'Priority'then aS['Priority']=aN.
-Priority end aS['IsPrimary']=false if aN:FindFirstChild'IsPrimary'then aS[
-'IsPrimary']=true end aS.AddId=ad ad=ad+1 table.insert(ac,aS)table.sort(ac,
-StatSort)if not C:FindFirstChild(aS['Name'])then CreateStatTitle(aS['Name'])end
-UpdateMaximize()end end ax=false StatChanged(aO)aN.Changed:connect(function(aP)
-StatChanged(aO,aP)end)end function DoesStatExist(aN,aO)for aP,aQ in pairs(ae)do
-if aQ['Player']~=aO and aQ['Player']:FindFirstChild'leaderstats'and aQ['Player']
-.leaderstats:FindFirstChild(aN)then return true end end return false end
-function StatRemoved(aN,aO)while ax do debugprint'In Adding Stat Lock1'wait(
-3.333333333333333E-2)end ax=true if aO['Frame']:FindFirstChild(aN.Name)then
-debugprint'Destroyed frame!'aO['Frame'][aN.Name].Parent=nil end if not
-DoesStatExist(aN.Name,aO['Player'])then for aP,aQ in ipairs(ac)do if aQ['Name']
-==aN.Name then table.remove(ac,aP)if C:FindFirstChild(aN.Name)then C[aN.Name]:
-Destroy()end for aR,aS in pairs(af)do if aS['Frame']:FindFirstChild(aN.Name)then
-aS['Frame'][aN.Name]:Destroy()end end end end end ax=false StatChanged(aO)end
-function RemoveAllStats(aN)for aO,aP in ipairs(ac)do StatRemoved(aP,aN)end end
-function GetScoreValue(aN)if aN:IsA'DoubleConstrainedValue'or aN:IsA
-'IntConstrainedValue'then return aN.ConstrainedValue elseif aN:IsA'BoolValue'
-then if aN.Value then return 1 else return 0 end else return aN.Value end end
-function MakeScoreEntry(aN,aO,aP)if not aP:FindFirstChild'PlayerScore'then
-return end local aQ,aR=aP:FindFirstChild'PlayerScore':Clone(),nil wait()if aN[
-'Player']:FindFirstChild'leaderstats'and aN['Player'].leaderstats:
-FindFirstChild(aO['Name'])then aR=aN['Player']:FindFirstChild'leaderstats':
-FindFirstChild(aO['Name'])else return end if not aN['Player'].Parent then return
-end aQ.Name=aO['Name']aQ.Text=tostring(GetScoreValue(aR))if aO['Name']==ac[1][
-'Name']then debugprint'changing score'aN['Score']=GetScoreValue(aR)if aN[
-'Player']==g then p.Text=tostring(GetScoreValue(aR))end end aR.Changed:connect(
-function()if not aR.Parent then return end if aO['Name']==ac[1]['Name']then aN[
-'Score']=GetScoreValue(aR)if aN['Player']==g then p.Text=tostring(GetScoreValue(
-aR))end end aQ.Text=tostring(GetScoreValue(aR))BaseUpdate()end)return aQ end
-function CreateStatTitle(aN)local aO=H:FindFirstChild'PlayerScore':Clone()aO.
-Name=aN aO.Text=aN if E.Value then aO.TextTransparency=0 else aO.
-TextTransparency=1 end aO.Parent=C end function RecreateScoreColumns(aN)while ax
-do debugprint'In Adding Stat Lock2'wait(3.333333333333333E-2)end ax=true local
-aO=5 local aP,aQ=aO,0 for aR=#ac,1,-1 do local aS=ac[aR]aQ=0 for aT,aU in
-ipairs(aN)do local aV,aW=aU['Frame'],aU['Player']if not aV:FindFirstChild(aS[
-'Name'])then local aX=MakeScoreEntry(aU,aS,aV)if aX then debugprint('adding '..
-aX.Name..' to '..aU['Player'].Name)aX.Parent=aV if aU['MyTeam']and aU['MyTeam']
-~=ag and not aU['MyTeam']['Frame']:FindFirstChild(aS['Name'])then local aY=aX:
-Clone()aY.Parent=aU['MyTeam']['Frame']end end end aS['XOffset']=aO if aV:
-FindFirstChild(aS['Name'])then aQ=math.max(aQ,aV[aS['Name']].TextBounds.X)end
-end if G.Value then aQ=math.max(aQ,C[aS['Name']].TextBounds.X)C[aS['Name']]:
-TweenPosition(UDim2.new(as,-aO,0,0),'Out','Linear',c,true)else C[aS['Name']]:
-TweenPosition(UDim2.new((0.4+((0.6/#ac)*(aR-1)))-1,0,0,0),'Out','Linear',c,true)
-end aS['ColumnSize']=aQ aO=aO+an+aQ aP=math.max(aO,aP)end aq=UDim2.new(0,am+aP-
-an,0,800)ar=UDim2.new(1,-aq.X.Offset,ar.Y.Scale,0)UpdateHeaderNameSize()
-UpdateMaximize()ax=false end function ToggleMinimize()D.Value=not D.Value
-UpdateStatNames()end function ToggleMaximize()E.Value=not E.Value
-RecreateScoreColumns(ae)end function Tabify()F.Value=true E.Value=false D.Value=
-true UpdateMinimize()F.Value=true i:TweenPosition(UDim2.new(aq.X.Scale,aq.X.
-Offset-10,0,0),'Out','Linear',c*1.2,true)end function UnTabify()if F.Value then
-F.Value=false i:TweenPosition(UDim2.new(0,0,0,0),'Out','Linear',c*1.2,true)end
-end function UpdateMinimize()if D.Value then if E.Value then ToggleMaximize()end
-if not F.Value then j:TweenSizeAndPosition(UDim2.new(0.01,o.TextBounds.X,aq.Y.
-Scale,aq.Y.Offset),UDim2.new(0.99,-o.TextBounds.X,ar.Y.Scale,0),'Out','Linear',c
-*1.2,true)else j:TweenSizeAndPosition(aq,ar,'Out','Linear',c*1.2,true)end v:
-TweenPosition(UDim2.new(0,0,-1,0),'Out','Linear',c*1.2,true)r:TweenPosition(
-UDim2.new(0,0,0,0),'Out','Linear',c*1.2,true)k.Size=UDim2.new(1,0,m,0)t.Image=
-'http://www.roblox.com/asset/?id=94692731'else if not E.Value then j:
-TweenSizeAndPosition(aq,ar,'Out','Linear',c*1.2,true)end at=math.min(math.max(at
-,-1),-1+(#ai*I.Size.Y.Scale))UpdateScrollPosition()v.Position=UDim2.new(0,0,at,0
-)local aN=(at+v.Size.Y.Scale)r.Position=UDim2.new(0,0,aN,0)k.Size=UDim2.new(1,0,
-aN+m,0)t.Image='http://www.roblox.com/asset/?id=94825585'end end function
-UpdateMaximize()if E.Value then for aN=1,#ac,1 do local aO=ac[aN]C[aO['Name']]:
-TweenPosition(UDim2.new(0.4+((0.6/#ac)*(aN-1))-1,0,0,0),'Out','Linear',c,true)
-end if D.Value then ToggleMinimize()else UpdateMinimize()end j:
-TweenSizeAndPosition(ao,ap,'Out','Linear',c*1.2,true)p:TweenPosition(UDim2.new(0
-,0,o.Position.Y.Scale,0),'Out','Linear',c*1.2,true)o:TweenPosition(UDim2.new(-
-0.1,-p.TextBounds.x,o.Position.Y.Scale,0),'Out','Linear',c*1.2,true)l.Background
-.Image='http://www.roblox.com/asset/?id='..b['LargeHeader']r.Background.Image=
-'http://www.roblox.com/asset/?id='..b['LargeBottom']for aN,aO in ipairs(ai)do if
-(aN%2)~=1 then aO.Background.Image='http://www.roblox.com/asset/?id='..b[
-'LargeDark']else aO.Background.Image='http://www.roblox.com/asset/?id='..b[
-'LargeLight']end end for aP,aQ in ipairs(ah)do if aQ:FindFirstChild
-'ClickListener'then aQ.ClickListener.Size=UDim2.new(0.974,0,aQ.ClickListener.
-Size.Y.Scale,0)end for aR=1,#ac,1 do local aS=ac[aR]if aQ:FindFirstChild(aS[
-'Name'])then aQ[aS['Name']]:TweenPosition(UDim2.new(0.4+((0.6/#ac)*(aR-1))-1,0,0
-,0),'Out','Linear',c,true)end end end for aR,aS in ipairs(ae)do WaitForChild(aS[
-'Frame'],'TitleFrame').Size=UDim2.new(0.38,0,aS['Frame'].TitleFrame.Size.Y.Scale
-,0)end for aT,aU in ipairs(af)do WaitForChild(aU['Frame'],'TitleFrame').Size=
-UDim2.new(0.38,0,aU['Frame'].TitleFrame.Size.Y.Scale,0)end else if not D.Value
-then j:TweenSizeAndPosition(aq,ar,'Out','Linear',c*1.2,true)end p:TweenPosition(
-UDim2.new(0,0,0.4,0),'Out','Linear',c*1.2,true)o:TweenPosition(UDim2.new(0,0,o.
-Position.Y.Scale,0),'Out','Linear',c*1.2,true)l.Background.Image=
-'http://www.roblox.com/asset/?id='..b['NormalHeader']r.Background.Image=
-'http://www.roblox.com/asset/?id='..b['NormalBottom']for aN,aQ in ipairs(ai)do
-if aN%2~=1 then aQ.Background.Image='http://www.roblox.com/asset/?id='..b[
-'midDark']else aQ.Background.Image='http://www.roblox.com/asset/?id='..b[
-'midLight']end end for aT,aU in ipairs(ah)do if aU:FindFirstChild'ClickListener'
-then aU.ClickListener.Size=UDim2.new(0.96,0,aU.ClickListener.Size.Y.Scale,0)for
-aV=1,#ac,1 do local aW=ac[aV]if aU:FindFirstChild(aW['Name'])and aW['XOffset']
-then aU[aW['Name']]:TweenPosition(UDim2.new(as,-aW['XOffset'],0,0),'Out',
-'Linear',c,true)end end end end for aV,aW in ipairs(af)do WaitForChild(aW[
-'Frame'],'TitleFrame').Size=UDim2.new(0,am*0.9,aW['Frame'].TitleFrame.Size.Y.
-Scale,0)end for aX,aY in ipairs(ae)do WaitForChild(aY['Frame'],'TitleFrame').
-Size=UDim2.new(0,am*0.9,aY['Frame'].TitleFrame.Size.Y.Scale,0)end end end
-function ExpandNames()if#ac~=0 then for aN,aU in pairs(C:GetChildren())do Spawn(
-function()TweenProperty(aU,'TextTransparency',aU.TextTransparency,0,c)end)end m=
-0.09 l:TweenSizeAndPosition(UDim2.new(l.Size.X.Scale,l.Size.X.Offset,m,0),l.
-Position,'Out','Linear',c*1.2,true)u:TweenPosition(UDim2.new(u.Position.X.Scale,
-0,m,0),'Out','Linear',c*1.2,true)q:TweenPosition(UDim2.new(0,0,m,0),'Out',
-'Linear',c*1.2,true)end end function CloseNames()if#ac~=0 then m=0.07 if not E.
-Value then for aN,aU in pairs(C:GetChildren())do Spawn(function()TweenProperty(
-aU,'TextTransparency',aU.TextTransparency,1,c)end)end end q:TweenPosition(UDim2.
-new(0,0,m,0),'Out','Linear',c*1.2,true)l:TweenSizeAndPosition(UDim2.new(l.Size.X
-.Scale,l.Size.X.Offset,m,0),l.Position,'Out','Linear',c*1.2,true)u:
-TweenPosition(UDim2.new(u.Position.X.Scale,0,m,0),'Out','Linear',c*1.2,true)end
-end function UpdateStatNames()if not G.Value or D.Value then CloseNames()else
-ExpandNames()end end function OnScrollWheelMove(aN)if not(F.Value or D.Value or
-aA)then local aU=y.Position local aX=math.max(math.min(aU.Y.Scale+aN,
-GetMaxScroll()),GetMinScroll())y.Position=UDim2.new(aU.X.Scale,aU.X.Offset,aX,aU
-.Y.Offset)UpdateScrollPosition()end end function AttachScrollWheel()if aD then
-return end aD={}table.insert(aD,h.WheelForward:connect(function()
-OnScrollWheelMove(0.05)end))table.insert(aD,h.WheelBackward:connect(function()
-OnScrollWheelMove(-5E-2)end))end function DetachScrollWheel()if aD then for aN,
-aU in pairs(aD)do aU:disconnect()end end aD=nil end k.MouseEnter:connect(
-function()if not(D.Value or F.Value)then AttachScrollWheel()end end)k.MouseLeave
-:connect(function()DetachScrollWheel()end)function UpdateScrollBarVisibility()if
-AreAllEntriesOnScreen()then x.BackgroundTransparency=1 else x.
-BackgroundTransparency=0 UpdateScrollBarSize()end end function
-UpdateScrollBarSize()local aN,aU=#ai*H.Size.Y.Scale,(v.Position.Y.Scale+1)x.Size
-=UDim2.new(1,0,aU/aN,0)end function UpdateScrollPosition()local aN,aU=
-GetMinScroll(),GetMaxScroll()local aX,aY=aU-aN,math.max(math.min(y.Position.Y.
-Scale,aU),aN)y.Position=UDim2.new(y.Position.X.Scale,y.Position.X.Offset,aY,y.
-Position.Y.Offset)local aZ=1-x.Size.Y.Scale x.Position=UDim2.new(0,0,aZ-(aZ*((y.
-Position.Y.Scale-aN)/aX)),0)end function StartDrag(aN,aU,aX)local aY=true
-WaitForChild(aN['Frame'],'ClickListener')local function dragExit()if aN['Player'
-]and av and aY and aN['Player']~=g and av.userId>1 and g.userId>1 then
-ActivatePlayerEntryPanel(aN)end end local aZ,a_=nil,y.Position local function
-dragpoll(a0,a1)if not aZ then aZ=AbsoluteToPercent(a0,a1).Y end local a2=
-AbsoluteToPercent(a0,a1).Y debugprint('drag dist:'..Vector2.new(aU-a0,aX-a1).
-magnitude)if Vector2.new(aU-a0,aX-a1).magnitude>d then aY=false end local a3=
-math.max(math.min(a_.Y.Scale+(a2-aZ),GetMaxScroll()),GetMinScroll())y.Position=
-UDim2.new(a_.X.Scale,a_.X.Offset,a3,a_.Y.Offset)UpdateScrollPosition()end
-WaitForClick(i,dragpoll,dragExit)end function StartMinimizeDrag()Delay(0,
-function()local aN=tick()debugprint'Got Click2'local function dragExit()if tick(
-)-aN<0.25 then ToggleMinimize()else aF=true if D.Value then ToggleMinimize()end
-end end local aU,aX=nil,at local function dragpoll(aY,aZ)if not D.Value then if
-not aU then aU=AbsoluteToPercent(aY,aZ).Y end local a_,a0=AbsoluteToPercent(aY,
-aZ).Y,nil a0=math.min(math.max(aX+(a_-aU),-1),-1+(#ai*I.Size.Y.Scale))at=a0
-UpdateMinimize()w.Size=UDim2.new(w.Size.X.Scale,0,(at+v.Size.Y.Scale),0)w.
-Position=UDim2.new(w.Position.X.Scale,0,1-w.Size.Y.Scale,0)UpdateScrollBarSize()
-UpdateScrollPosition()UpdateScrollBarVisibility()end end Spawn(function()
-WaitForClick(i,dragpoll,dragExit)end)end)end E.Value=false D.Value=false E.
-Changed:connect(UpdateMaximize)D.Changed:connect(UpdateMinimize)s.
-MouseButton1Down:connect(function()if(time()-aj<ak)or aA then return end aj=
-time()if F.Value then UnTabify()else StartMinimizeDrag()end end)n.
-MouseButton1Click:connect(function()if(time()-aj<ak)or aA then return end aj=
-time()if F.Value then UnTabify()elseif not G.Value then G.Value=true BaseUpdate(
-)else ToggleMaximize()end end)n.MouseButton2Click:connect(function()if(time()-aj
-<ak)or aA then return end aj=time()if F.Value then UnTabify()elseif E.Value then
-ToggleMaximize()elseif G.Value then G.Value=false BaseUpdate()else Tabify()end
-end)function AddMiddleBGFrame()local aN=I:Clone()aN.Position=UDim2.new(0.5,0,(#
-ai*aN.Size.Y.Scale),0)if(#ai+1)%2~=1 then if E.Value then aN.Background.Image=
-'http://www.roblox.com/asset/?id='..b['LargeDark']else aN.Background.Image=
-'http://www.roblox.com/asset/?id='..b['midDark']end else if E.Value then aN.
-Background.Image='http://www.roblox.com/asset/?id='..b['LargeLight']else aN.
-Background.Image='http://www.roblox.com/asset/?id='..b['midLight']end end aN.
-Parent=y table.insert(ai,aN)if#ai<aE and not aF then at=-1+(#ai*I.Size.Y.Scale)
-end if not D.Value then UpdateMinimize()end end function RemoveMiddleBGFrame()ai
-[#ai]:Destroy()table.remove(ai,#ai)if not D.Value then UpdateMinimize()end end
-local aN={'Size8','Size9','Size10','Size11','Size12','Size14','Size24','Size36',
-'Size48'}function ChangeHeaderName(aU)o.Text=aU UpdateHeaderNameSize()end
-function UpdateHeaderNameSize()local aU=o:Clone()aU.Position=UDim2.new(2,0,2,0)
-aU.Parent=i local aX=7 aU.FontSize=aN[aX]Delay(0.2,function()while aU.TextBounds
-.x==0 do wait(3.333333333333333E-2)end while aU.TextBounds.x-aq.X.Offset>1 do aX
-=aX-1 aU.FontSize=aN[aX]wait(0.2)end o.FontSize=aU.FontSize aU:Destroy()end)end
-i.Changed:connect(UpdateHeaderNameSize)function LeaderstatsAdded(aU)local aX=aU[
-'Player']for aY,aZ in pairs(aX.leaderstats:GetChildren())do StatAdded(aZ,aU)end
-aX.leaderstats.ChildAdded:connect(function(a_)StatAdded(a_,aU)end)aX.leaderstats
-.ChildRemoved:connect(function(a_)StatRemoved(a_,aU)end)end function
-LeaderstatsRemoved(aU,aX)while aw do debugprint('waiting to insert '..aX[
-'Player'].Name)wait(3.333333333333333E-2)end aw=true RemoveAllStats(aX)aw=false
-end function ClosePopUpPanel()if au then local aU=au['Frame']Spawn(function()
-TweenProperty(aU,'BackgroundTransparency',0.5,1,c)end)end A:TweenPosition(UDim2.
-new(1,0,0,0),'Out','Linear',c,true)wait(0.1)aA=false au=nil end function
-InitMovingPanel(aU,aX)z.Parent=i if A then A:Destroy()end A=B:Clone()A.Parent=z
-local aY,aZ=2,GetFriendStatus(aX)debugprint(tostring(aZ))local a_,a0=aL and g.
-PersonalServerRank>=aK['Admin']and g.PersonalServerRank>av.PersonalServerRank,
-MakePopupButton(A,'Report Player',0)a0.MouseButton1Click:connect(function()
-OpenAbuseDialog()end)local a1=MakePopupButton(A,'Friend',1,not a_ and aZ~=Enum.
-FriendStatus.FriendRequestReceived)a1.MouseButton1Click:connect(
-OnFriendButtonSelect)if aZ==Enum.FriendStatus.Friend then a1:FindFirstChild
-'ButtonText'.Text='UnFriend Player'elseif aZ==Enum.FriendStatus.Unknown or aZ==
-Enum.FriendStatus.NotFriend then a1:FindFirstChild'ButtonText'.Text=
-'Send Request'elseif aZ==Enum.FriendStatus.FriendRequestSent then a1:
-FindFirstChild'ButtonText'.Text='Revoke Request'elseif aZ==Enum.FriendStatus.
-FriendRequestReceived then a1:FindFirstChild'ButtonText'.Text='Accept Friend'
-local a2=MakePopupButton(A,'Decline Friend',2,not a_)a2.MouseButton1Click:
-connect(OnFriendRefuseButtonSelect)aY=aY+1 end if a_ then local a2,a3,a4,a5=
-MakePopupButton(A,'Ban',aY),MakePopupButton(A,'Visitor',aY+1),MakePopupButton(A,
-'Member',aY+2),MakePopupButton(A,'Admin',aY+3,true)a2.MouseButton1Click:connect(
-function()OnPrivilegeLevelSelect(aX,aK['Banned'],a2,a3,a4,a5)end)a3.
-MouseButton1Click:connect(function()OnPrivilegeLevelSelect(aX,aK['Visitor'],a2,
-a3,a4,a5)end)a4.MouseButton1Click:connect(function()OnPrivilegeLevelSelect(aX,aK
-['Member'],a2,a3,a4,a5)end)a5.MouseButton1Click:connect(function()
-OnPrivilegeLevelSelect(aX,aK['Admin'],a2,a3,a4,a5)end)HighlightMyRank(av,a2,a3,
-a4,a5)end A:TweenPosition(UDim2.new(0,0,0,0),'Out','Linear',c,true)Delay(0,
-function()local a2 a2=h.Button1Down:connect(function()a2:disconnect()
-ClosePopUpPanel()end)end)local a2=aU['Frame']Spawn(function()while aA do z.
-Position=UDim2.new(0,a2.AbsolutePosition.X-z.Size.X.Offset,0,a2.AbsolutePosition
-.Y)wait()end end)end function OnPlayerEntrySelect(aU,aX,aY)if not aA then au=aU
-av=aU['Player']StartDrag(aU,aX,aY)end end function ActivatePlayerEntryPanel(aU)
-aU['Frame'].BackgroundColor3=Color3.new(0,1,1)Spawn(function()TweenProperty(aU[
-'Frame'],'BackgroundTransparency',1,0.5,0.5)end)aA=true InitMovingPanel(aU,aU[
-'Player'])end function PlayerListModeUpdate()RecreateScoreColumns(ae)table.sort(
-ae,PlayerSortFunction)for aU,aX in ipairs(ae)do ah[aU]=aX['Frame']end for aY=#ae
-+1,#ah,1 do ah[aY]=nil end UpdateMinimize()end function InsertPlayerFrame(aU)
-while aw do debugprint('waiting to insert '..aU.Name)wait(3.333333333333333E-2)
-end aw=true local aX=H:Clone()WaitForChild(WaitForChild(aX,'TitleFrame'),'Title'
-).Text=aU.Name aX.Position=UDim2.new(1,0,(#ah*aX.Size.Y.Scale),0)local aY=
-GetFriendStatus(aU)aX:FindFirstChild'BCLabel'.Image=getMembershipTypeIcon(aU.
-MembershipType,aU.Name)aX:FindFirstChild'FriendLabel'.Image=getFriendStatusIcon(
-aY)aX.Name=aU.Name WaitForChild(WaitForChild(aX,'TitleFrame'),'Title').Text=aU.
-Name aX.FriendLabel.Position=aX.FriendLabel.Position+UDim2.new(0,17,0,0)aX.
-TitleFrame.Title.Position=aX.TitleFrame.Title.Position+UDim2.new(0,17,0,0)if aX:
-FindFirstChild'FriendLabel'.Image~=''then aX.TitleFrame.Title.Position=aX.
-TitleFrame.Title.Position+UDim2.new(0,17,0,0)end if aU.Name==g.Name then aX.
-TitleFrame.Title.Font='ArialBold'aX.PlayerScore.Font='ArialBold'
-ChangeHeaderName(aU.Name)local aZ=aX.TitleFrame.Title:Clone()aZ.TextColor3=
-Color3.new(0,0,0)aZ.TextTransparency=0 aZ.ZIndex=2 aZ.Position=aX.TitleFrame.
-Title.Position+UDim2.new(0,1,0,1)aZ.Name='DropShadow'aZ.Parent=aX.TitleFrame end
-aX.TitleFrame.Title.Font='ArialBold'aX.Parent=y aX:TweenPosition(UDim2.new(0.5,0
-,(#ah*aX.Size.Y.Scale),0),'Out','Linear',c,true)UpdateMinimize()local aZ={}aZ[
-'Frame']=aX aZ['Player']=aU aZ['ID']=ad ad=ad+1 table.insert(ae,aZ)if#af~=0 then
-if aU.Neutral then aZ['MyTeam']=nil if not ag then AddNeutralTeam()else
-AddPlayerToTeam(ag,aZ)end else local a_=false for a0,a1 in ipairs(af)do if a1[
-'MyTeam'].TeamColor==aU.TeamColor then AddPlayerToTeam(a1,aZ)aZ['MyTeam']=a1 a_=
-true end end if not a_ then aZ['MyTeam']=nil if not ag then AddNeutralTeam()else
-AddPlayerToTeam(ag,aZ)end aZ['MyTeam']=ag end end end if aU:FindFirstChild
-'leaderstats'then LeaderstatsAdded(aZ)end aU.ChildAdded:connect(function(a_)if
-a_.Name=='leaderstats'then while aw do debugprint'in adding leaderstats lock'
-wait(3.333333333333333E-2)end aw=true LeaderstatsAdded(aZ)aw=false end end)aU.
-ChildRemoved:connect(function(a_)if aU==g and a_.Name=='leaderstats'then
-LeaderstatsRemoved(a_,aZ)end end)aU.Changed:connect(function(a_)PlayerChanged(aZ
-,a_)end)local a_=WaitForChild(aX,'ClickListener')a_.Active=true a_.
-MouseButton1Down:connect(function(a0,a1)OnPlayerEntrySelect(aZ,a0,a1)end)
-AddMiddleBGFrame()BaseUpdate()aw=false end function RemovePlayerFrame(aU)while
-aw do debugprint'in removing player frame lock'wait(3.333333333333333E-2)end aw=
-true local aX for aY,aZ in ipairs(ae)do if aU==aZ['Player']then if z.Parent==aZ[
-'Frame']then z.Parent=nil end aZ['Frame']:Destroy()aX=aZ['MyTeam']table.remove(
-ae,aY)end end if aX then for a_,a0 in ipairs(aX['MyPlayers'])do if a0['Player']
-==aU then RemovePlayerFromTeam(aX,a_)end end end RemoveMiddleBGFrame()
-UpdateMinimize()BaseUpdate()aw=false end f.ChildRemoved:connect(
-RemovePlayerFrame)function UnrollTeams(aU,aX)local aY=0 if ag and not ag[
-'IsHidden']then for aZ,a_ in ipairs(ag['MyPlayers'])do aY=aY+1 aX[aY]=a_['Frame'
-]end aY=aY+1 aX[aY]=ag['Frame']end for aZ,a_ in ipairs(aU)do if not a_[
-'IsHidden']then for a0,a1 in ipairs(a_.MyPlayers)do aY=aY+1 aX[aY]=a1['Frame']
-end aY=aY+1 aX[aY]=a_['Frame']end end for a0=aY+1,#aX,1 do aX[a0]=nil end end
-function TeamSortFunc(aU,aX)if aU['TeamScore']==aX['TeamScore']then return aU[
-'ID']<aX['ID']end if not aU['TeamScore']then return false end if not aX[
-'TeamScore']then return true end return aU['TeamScore']<aX['TeamScore']end
-function SortTeams(aU)for aX,aY in ipairs(aU)do table.sort(aY['MyPlayers'],
-PlayerSortFunction)AddTeamScores(aY)end table.sort(aU,TeamSortFunc)end function
-TeamListModeUpdate()RecreateScoreColumns(ae)SortTeams(af)if ag then
-AddTeamScores(ag)end UnrollTeams(af,ah)end function AddTeamScores(aU)for aX=1,#
-ac,1 do local aY,aZ=ac[aX],0 for a_,a0 in ipairs(aU['MyPlayers'])do local a1=a0[
-'Player']:FindFirstChild'leaderstats'and a0['Player'].leaderstats:
-FindFirstChild(aY['Name'])if a1 and not a1:IsA'StringValue'then aZ=aZ+
-GetScoreValue((a0['Player'].leaderstats)[aY['Name']])end end if aU['Frame']:
-FindFirstChild(aY['Name'])then aU['Frame'][aY['Name']].Text=tostring(aZ)end end
-UpdateMinimize()end function FindRemovePlayerFromTeam(aU)if aU['MyTeam']then for
-aX,aY in ipairs(aU['MyTeam']['MyPlayers'])do if aY['Player']==aU['Player']then
-RemovePlayerFromTeam(aU['MyTeam'],aX)return end end elseif ag then for aX,aY in
-ipairs(ag['MyPlayers'])do if aY['Player']==aU['Player']then
-RemovePlayerFromTeam(ag,aX)return end end end end function RemovePlayerFromTeam(
-aU,aX)table.remove(aU['MyPlayers'],aX)if aU==ag and#aU['MyPlayers']==0 then
-RemoveNeutralTeam()end end function AddPlayerToTeam(aU,aX)
-FindRemovePlayerFromTeam(aX)table.insert(aU['MyPlayers'],aX)aX['MyTeam']=aU if
-aU['IsHidden']then aU['Frame'].Parent=y AddMiddleBGFrame()end aU['IsHidden']=
-false end function SetPlayerToTeam(aU)FindRemovePlayerFromTeam(aU)local aX=false
-for aY,aZ in ipairs(af)do if aZ['MyTeam'].TeamColor==aU['Player'].TeamColor then
-AddPlayerToTeam(aZ,aU)aX=true end end if not aX and#(game.Teams:GetTeams())>0
-then debugprint(aU['Player'].Name..'could not find team')aU['MyTeam']=nil if not
-ag then AddNeutralTeam()else AddPlayerToTeam(ag,aU)end end end function
-PlayerChanged(aU,aX)while aB do debugprint'in playerchanged lock'wait(
-3.333333333333333E-2)end aB=true if aX=='Neutral'then if aU['Player'].Neutral
-and#(game.Teams:GetTeams())>0 then debugprint(aU['Player'].Name..
-'setting to neutral')FindRemovePlayerFromTeam(aU)aU['MyTeam']=nil if not ag then
-debugprint(aU['Player'].Name..'creating neutral team')AddNeutralTeam()else
-debugprint(aU['Player'].Name..'adding to neutral team')AddPlayerToTeam(ag,aU)end
-elseif#(game.Teams:GetTeams())>0 then debugprint(aU['Player'].Name..
-'has been set non-neutral')SetPlayerToTeam(aU)end BaseUpdate()elseif aX==
-'TeamColor'and not aU['Player'].Neutral and aU['Player']~=aU['MyTeam']then
-debugprint(aU['Player'].Name..'setting to new team')SetPlayerToTeam(aU)
-BaseUpdate()elseif aX=='Name'or aX=='MembershipType'then aU['Frame']:
-FindFirstChild'BCLabel'.Image=getMembershipTypeIcon(aU['Player'].MembershipType,
-aU['Player'].Name)aU['Frame'].Name=aU['Player'].Name aU['Frame'].TitleFrame.
-Title.Text=aU['Player'].Name if aU['Frame'].BCLabel.Image~=''then aU['Frame'].
-TitleFrame.Title.Position=UDim2.new(0.01,30,0.1,0)end if aU['Player']==g then aU
-['Frame'].TitleFrame.DropShadow.Text=aU['Player'].Name ChangeHeaderName(aU[
-'Player'].Name)end BaseUpdate()end aB=false end function OnFriendshipChanged(aU,
-aX)Delay(0.5,function()debugprint('friend status changed for:'..aU.Name..' '..
-tostring(aX)..' vs '..tostring(GetFriendStatus(aU)))for aY,aZ in ipairs(ae)do if
-aZ['Player']==aU then local a_=getFriendStatusIcon(aX)if a_==''and aZ['Frame'].
-FriendLabel.Image~=''then aZ['Frame'].TitleFrame.Title.Position=aZ['Frame'].
-TitleFrame.Title.Position-UDim2.new(0,17,0,0)elseif a_~=''and aZ['Frame'].
-FriendLabel.Image==''then aZ['Frame'].TitleFrame.Title.Position=aZ['Frame'].
-TitleFrame.Title.Position+UDim2.new(0,17,0,0)debugprint('confirmed status:'..aU.
-Name)end aZ['Frame'].FriendLabel.Image=a_ return end end end)end g.
-FriendStatusChanged:connect(OnFriendshipChanged)function AddNeutralTeam()while
-aC do debugprint'in neutral team 2 lock'wait()end aC=true local aU=Instance.new
-'Team'aU.TeamColor=BrickColor.new'White'aU.Name='Neutral'local aX={}aX['MyTeam']
-=aU aX['MyPlayers']={}aX['Frame']=H:Clone()WaitForChild(WaitForChild(aX['Frame']
-,'TitleFrame'),'Title').Text=aU.Name aX['Frame'].TitleFrame.Position=UDim2.new(
-aX['Frame'].TitleFrame.Position.X.Scale,aX['Frame'].TitleFrame.Position.X.Offset
-,0.1,0)aX['Frame'].TitleFrame.Size=UDim2.new(aX['Frame'].TitleFrame.Size.X.Scale
-,aX['Frame'].TitleFrame.Size.X.Offset,0.8,0)aX['Frame'].TitleFrame.Title.Font=
-'ArialBold'aX['Frame'].Position=UDim2.new(1,0,(#ah*aX['Frame'].Size.Y.Scale),0)
-WaitForChild(aX['Frame'],'ClickListener').MouseButton1Down:connect(function(aY,
-aZ)StartDrag(aX,aY,aZ)end)aX['Frame'].ClickListener.BackgroundColor3=Color3.new(
-1,1,1)aX['Frame'].ClickListener.BackgroundTransparency=0.7 aX['Frame'].
-ClickListener.AutoButtonColor=false aX['AutoHide']=true aX['IsHidden']=true for
-aY,aZ in pairs(ae)do if aZ['Player'].Neutral or not aZ['MyTeam']then
-AddPlayerToTeam(aX,aZ)end end if#aX['MyPlayers']>0 then ag=aX UpdateMinimize()
-BaseUpdate()end aC=false end function RemoveNeutralTeam()while aC do debugprint
-'in neutral team lock'wait()end aC=true ag['Frame']:Destroy()ag=nil
-RemoveMiddleBGFrame()aC=false end function TeamScoreChanged(aU,aX)WaitForChild(
-aU['Frame'],'PlayerScore').Text=tostring(aX)aU['TeamScore']=aX end function
-TeamChildAdded(aU,aX)if aX.Name=='AutoHide'then aU['AutoHide']=true elseif aX.
-Name=='TeamScore'then WaitForChild(aU['Frame'],'PlayerScore').Text=tostring(aX.
-Value)aU['TeamScore']=aX.Value aX.Changed:connect(function()TeamScoreChanged(aU,
-aX.Value)end)end end function TeamChildRemoved(aU,aX)if aX.Name=='AutoHide'then
-aU['AutoHide']=false elseif aX.Name=='TeamScore'then WaitForChild(aU['Frame'],
-'PlayerScore').Text=''aU['TeamScore']=nil end end function TeamChanged(aU,aX)if
-aX=='Name'then WaitForChild(WaitForChild(aU['Frame'],'TitleFrame'),'Title').Text
-=aU['MyTeam'].Name elseif aX=='TeamColor'then aU['Frame'].ClickListener.
-BackgroundColor3=aU['MyTeam'].TeamColor.Color for aY,aZ in pairs(af)do if aZ[
-'MyTeam'].TeamColor==aU['MyTeam']then RemoveTeamFrame(aU['MyTeam'])end end aU[
-'MyPlayers']={}for a_,a0 in pairs(ae)do SetPlayerToTeam(a0)end BaseUpdate()end
-end function InsertTeamFrame(aU)while aw do debugprint
-'in adding team frame lock'wait(3.333333333333333E-2)end aw=true local aX={}aX[
-'MyTeam']=aU aX['MyPlayers']={}aX['Frame']=H:Clone()WaitForChild(WaitForChild(aX
-['Frame'],'TitleFrame'),'Title').Text=aU.Name aX['Frame'].TitleFrame.Title.Font=
-'ArialBold'aX['Frame'].TitleFrame.Title.FontSize='Size18'aX['Frame'].TitleFrame.
-Position=UDim2.new(aX['Frame'].TitleFrame.Position.X.Scale,aX['Frame'].
-TitleFrame.Position.X.Offset,0.1,0)aX['Frame'].TitleFrame.Size=UDim2.new(aX[
-'Frame'].TitleFrame.Size.X.Scale,aX['Frame'].TitleFrame.Size.X.Offset,0.8,0)aX[
-'Frame'].Position=UDim2.new(1,0,(#ah*aX['Frame'].Size.Y.Scale),0)WaitForChild(aX
-['Frame'],'ClickListener').MouseButton1Down:connect(function(a_,a0)StartDrag(aX,
-a_,a0)end)aX['Frame'].ClickListener.BackgroundColor3=aU.TeamColor.Color aX[
-'Frame'].ClickListener.BackgroundTransparency=0.7 aX['Frame'].ClickListener.
-AutoButtonColor=false ad=ad+1 aX['ID']=ad aX['AutoHide']=false if aU:
-FindFirstChild'AutoHide'then aX['AutoHide']=true end if aU:FindFirstChild
-'TeamScore'then TeamChildAdded(aX,aU.TeamScore)end aU.ChildAdded:connect(
-function(a_)TeamChildAdded(aX,a_)end)aU.ChildRemoved:connect(function(a_)
-TeamChildRemoved(aX,a_)end)aU.Changed:connect(function(a_)TeamChanged(aX,a_)end)
-for a_,a0 in pairs(ae)do if not a0['Player'].Neutral and a0['Player'].TeamColor
-==aU.TeamColor then AddPlayerToTeam(aX,a0)end end aX['IsHidden']=false if not aX
-['AutoHide']or#aX['MyPlayers']>0 then aX['Frame'].Parent=y aX['Frame']:
-TweenPosition(UDim2.new(0.5,0,(#ah*aX['Frame'].Size.Y.Scale),0),'Out','Linear',c
-,true)AddMiddleBGFrame()else aX['IsHidden']=true aX['Frame'].Parent=nil end
-table.insert(af,aX)UpdateMinimize()BaseUpdate()if#af==1 and not ag then
-AddNeutralTeam()end aw=false end function RemoveTeamFrame(aU)while aw do
-debugprint'in removing team frame lock'wait(3.333333333333333E-2)end aw=true
-local aX for a_,a0 in ipairs(af)do if aU==a0['MyTeam']then aX=a0 a0['Frame']:
-Destroy()table.remove(af,a_)end end if#af==0 then debugprint
-'removeteamframe, remove neutral'if ag then RemoveNeutralTeam()end end for a1,a2
-in ipairs(aX['MyPlayers'])do RemovePlayerFromTeam(aX,a1)PlayerChanged(a2,
-'TeamColor')end RemoveMiddleBGFrame()BaseUpdate()aw=false end function TeamAdded
-(aU)InsertTeamFrame(aU)end function TeamRemoved(aU)RemoveTeamFrame(aU)end
-function BaseUpdate()while ay do debugprint'in baseupdate lock'wait(
-3.333333333333333E-2)end ay=true UpdateStatNames()if#af==0 and not ag then
-PlayerListModeUpdate()else TeamListModeUpdate()end for aU,aX in ipairs(ah)do if
-aX.Parent~=nil then aX:TweenPosition(UDim2.new(0.5,0,((#ah-aU)*aX.Size.Y.Scale),
-0),'Out','Linear',c,true)end end if not D.Value and#ah>_ then
-UpdateScrollPosition()end UpdateMinimize()UpdateScrollBarSize()
-UpdateScrollPosition()UpdateScrollBarVisibility()ay=false end game.GuiService:
-AddKey'\t'local aU=time()game.GuiService.KeyPressed:connect(function(aX)if aX==
-'\t'then debugprint'caught tab key'local a1,a2=pcall(function()return game.
-GuiService.IsModalDialog end)if a1==false or(a1 and a2==false)then if time()-aU>
-0.4 then aU=time()if F.Value then if not E.Value then i:TweenPosition(UDim2.new(
-0,0,0,0),'Out','Linear',c*1.2,true)E.Value=true else i:TweenPosition(UDim2.new(
-aq.X.Scale,aq.X.Offset-10,0,0),'Out','Linear',c*1.2,true)E.Value=false D.Value=
-true end else ToggleMaximize()end end end end end)function PlayersChildAdded(aX)
-if aX:IsA'Player'then Spawn(function()debugPlayerAdd(aX)end)else
-BlowThisPopsicleStand()end end function coreGuiChanged(aX,a1)if aX==Enum.
-CoreGuiType.All or aX==Enum.CoreGuiType.PlayerList then j.Visible=a1 end end
-function TeamsChildAdded(aX)if aX:IsA'Team'then TeamAdded(aX)else
-BlowThisPopsicleStand()end end function TeamsChildRemoved(aX)if aX:IsA'Team'then
-TeamRemoved(aX)else BlowThisPopsicleStand()end end function debugPlayerAdd(aX)
-InsertPlayerFrame(aX)end pcall(function()coreGuiChanged(Enum.CoreGuiType.
-PlayerList,Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList))Game.
-StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)end)while not game:
-GetService'Teams'do wait(3.333333333333333E-2)debugprint'Waiting For Teams'end
-for aX,a1 in pairs(game.Teams:GetTeams())do TeamAdded(a1)end for a2,a3 in pairs(
-f:GetPlayers())do Spawn(function()debugPlayerAdd(a3)end)end game.Teams.
-ChildAdded:connect(TeamsChildAdded)game.Teams.ChildRemoved:connect(
-TeamsChildRemoved)f.ChildAdded:connect(PlayersChildAdded)InitReportAbuse()G.
-Value=true BaseUpdate()wait(2)aL=not not game.Workspace:FindFirstChild
-'PSVariable'if g.Name=='newplayerlistisbad'or g.Name=='imtotallyadmin'then V.
-Parent=i Spawn(function()while true do local a4=''for a5,a6 in pairs(game.
-Players:GetPlayers())do a4=a4..' '..a6.Name end W.Text=a4 wait(0.5)end end)end
+,TextStrokeTransparency=0,TextXAlignment='Right',TextYAlignment='Center'})k=e(
+'TextLabel',{BackgroundTransparency=0.8,Position=UDim2.new(0,0,0.5,0),Size=UDim2
+.new(1,0,0.5,0),Parent=ad,Font='ArialBold',Text='--',FontSize='Size14',
+TextWrapped=true,TextColor3=Color3.new(1,1,1),TextStrokeColor3=Color3.new(0,0,0)
+,TextStrokeTransparency=0,TextXAlignment='Right',TextYAlignment='Center'})local
+af,ag=assert(LoadLibrary'RbxGui'),8 for ah,ai in pairs(b)do Game:GetService
+'ContentProvider':Preload('http://www.roblox.com/asset/?id='..tostring(ai))end
+local aj,ak,al,am,an,ao,ap,aq,ar,as={},0,{},{},nil,{},{},0,0.25,false pcall(
+function()as=Game:GetService'UserInputService'.TouchEnabled end)local at,au,av,
+aw=150,10,UDim2.new(0.5,0,1,0),UDim2.new(0.25,0,0.1,0)local ax,ay,az,aA,aB,aC,aD
+,aE,aF,aG,aH,aI,aJ,aK,aL=UDim2.new(0,at,0,800),UDim2.new(1,-at,0.005,0),-4E-2,E.
+Position.Y.Scale,nil,nil,false,false,false,false,false,false,false,{},8 if not
+as then aL=12 end local aM,aN,aO,aP,aQ,aR,aS=false,nil,{'Bad Words or Threats',
+'Bad Username','Talking about Dating','Account Trading or Sharing',
+'Asking Personal Questions','Rude or Mean Behavior','False Reporting Me'},nil,
+nil,{Owner=255,Admin=240,Member=128,Visitor=10,Banned=0},not not game.Workspace:
+FindFirstChild'PSVariable'game.Workspace.ChildAdded:connect(function(aT)if aT.
+Name=='PSVariable'and aT:IsA'BoolValue'then aS=true end end)local aT aT=function
+()return#ap*Q.Size.Y.Scale<=1+aA end local aU aU=function()return aA*-1 end
+local aV aV=function()if aT()then return aU()else return(aU()-(#ap*Q.Size.Y.
+Scale))+(1+aA)end end local aW aW=function(aX,aY)return Vector2.new(aX,aY)/r.
+AbsoluteSize end local aX aX=function(aY,aZ,a_,a0,a1)local a2=tick()while tick()
+-a2<a1 do aY[aZ]=((a0-a_)*((tick()-a2)/a1))+a_ wait(3.333333333333333E-2)end aY[
+aZ]=a0 end local aY aY=function(aZ,a_,a0)if aG then return end aG=true local a1,
+a2 a1=ac.MouseButton1Up:connect(function(a3,a4)a0(a3,a4)ac.Visible=false a1:
+disconnect()if a2~=nil then return a2:disconnect()end return nil end)a2=ac.
+MouseMoved:connect(function(a3,a4)return a_(a3,a4)end)ac.Visible=true ac.Active=
+true ac.Parent=aZ aZ.AncestryChanged:connect(function(a3,a4)if a3==aZ and not(a4
+~=nil)then a0(nx,ny)ac.Visible=false a1:disconnect()a2:disconnect()return m
+'forced out of wait for click'end end)aG=false end local aZ aZ=function(a_,a0)
+while a_.PersonalServerRank<a0 do game:GetService'PersonalServerService':
+Promote(a_)end while a_.PersonalServerRank>a0 do game:GetService
+'PersonalServerService':Demote(a_)end end local a_,a0=
+'http://www.roblox.com/asset/?id=',nil a0=function(a1,a2,a3,a4,a5)a2.Image=a_..b
+['LightPopupMid']a3.Image=a_..b['DarkPopupMid']a4.Image=a_..b['LightPopupMid']a5
+.Image=a_..b['DarkPopupBottom']local a6=a1.PersonalServerRank if a6<=aR['Banned'
+]then a2.Image=a_..b['LightBluePopupMid']elseif a6<=aR['Visitor']then a3.Image=
+a_..b['DarkBluePopupMid']elseif a6<=aR['Member']then a4.Image=a_..b[
+'LightBluePopupMid']elseif a6<=aR['Admin']then a5.Image=a_..b[
+'DarkBluePopupBottom']end end local a1 a1=function(a2,a3,a4,a5,a6,a7)m
+'setting privilege level'aZ(a2,a3)return a0(a2,a4,a5,a6,a7)end local a2 a2=
+function()aN=nil W.Active=false W.Image=
+'http://www.roblox.com/asset/?id=96502438'Z:Destroy()aa.Parent=nil ab.Parent=nil
+S.Parent=nil U.Visible=true end local a3 a3=function()if W.Active then if aN and
+aC then U.Visible=false game.Players:ReportAbuse(aC,aN,Z.Text)if aN==
+'Rude or Mean Behavior'or aN=='False Reporting Me'then aa.Parent=S else m
+'opening abuse box'ab.Parent=S end else return a2()end end end local a4 a4=
+function()if aB then local a5=aB['Frame']Spawn(function()return aX(a5,
+'BackgroundTransparency',0.5,1,c)end)end J:TweenPosition(UDim2.new(1,0,0,0),
+'Out','Linear',c,true)wait(0.1)aH=false aB=nil end local a5 a5=function()m
+'adding report dialog'V.Text=aC.Name J:TweenPosition(UDim2.new(1,0,0,0),'Out',
+'Linear',c,true)Z=_:Clone()Z.Parent=Y S.Parent=r return a4()end local a6 a6=
+function()aP=function(a7)aN=a7 if aN and aC then W.Active=true W.Image=
+'http://www.roblox.com/asset/?id=96501119'end end local a7 aQ,a7=af.
+CreateDropDownMenu(aO,aP,true)aQ.Name='AbuseComboBox'aQ.Position=UDim2.new(0.425
+,0,0,142)aQ.Size=UDim2.new(0.55,0,0,32)aQ.Parent=U X.MouseButton1Click:connect(
+a2)W.MouseButton1Click:connect(a3)aa:FindFirstChild'OkButton'.MouseButton1Down:
+connect(a2)return ab:FindFirstChild'OkButton'.MouseButton1Down:connect(a2)end
+local a7 a7=function(a8)if a8==game.Players.LocalPlayer then return Enum.
+FriendStatus.NotFriend else local a9,ba=pcall(function()return game.Players.
+LocalPlayer:GetFriendStatus(a8)end)if a9 then return ba else return Enum.
+FriendStatus.NotFriend end end end local a8 a8=function()local a9=a7(aC)if a9==
+Enum.FriendStatus.Friend then p:RevokeFriendship(aC)elseif a9==Enum.FriendStatus
+.Unknown or a9==Enum.FriendStatus.NotFriend or a9==Enum.FriendStatus.
+FriendRequestSent or a9==Enum.FriendStatus.FriendRequestReceived then p:
+RequestFriendship(aC)end return a4()end local a9 a9=function()p:
+RevokeFriendship(aC)a4()return J:TweenPosition(UDim2.new(1,0,0,0),'Out','Linear'
+,c,true)end local ba ba=function(bb,bc)if bb['Score']==bc['Score']then return bb
+['Player'].Name:upper()<bc['Player'].Name:upper()end if not bb['Score']then
+return false end if not bc['Score']then return true end return bb['Score']<bc[
+'Score']end local bb,bc bc=function()O.Value=true N.Value=false M.Value=true bb(
+)O.Value=true return r:TweenPosition(UDim2.new(ax.X.Scale,ax.X.Offset-10,0,0),
+'Out','Linear',c*1.2,true)end local bd bd=function()if O.Value then O.Value=
+false return r:TweenPosition(UDim2.new(0,0,0,0),'Out','Linear',c*1.2,true)end
+end local be be=function()return bc()end local bf bf=function(bg,bh)if bg.
+IsPrimary~=bh.IsPrimary then return bg.IsPrimary end if bg.Priority==bh.Priority
+then return bg.AddId<bh.AddId end return bg.Priority<bh.Priority end local bg,bh
+bh=function(bi,bj)return bg()end local bj bj=function(bk)local bl=Q:
+FindFirstChild'PlayerScore':Clone()bl.Name=bk bl.Text=bk if N.Value then bl.
+TextTransparency=0 else bl.TextTransparency=1 end bl.Parent=L return bl end
+local bk,bl bl=function(bm,bn)while aE do m'in stat added function lock'wait(
+3.333333333333333E-2)end aE=true if not(bm:IsA'StringValue'or bm:IsA'IntValue'or
+bm:IsA'BoolValue'or bm:IsA'NumberValue'or bm:IsA'DoubleConstrainedValue'or bm:
+IsA'IntConstrainedValue')then be()else local bo=false for bp,bq in pairs(aj)do
+if bq['Name']==bm.Name then bo=true end end if not bo then local br={}br['Name']
+=bm.Name br['Priority']=0 if bm:FindFirstChild'Priority'then br['Priority']=bm.
+Priority end br['IsPrimary']=false if bm:FindFirstChild'IsPrimary'then br[
+'IsPrimary']=true end br.AddId=ak ak=ak+1 table.insert(aj,br)table.sort(aj,bf)if
+not L:FindFirstChild(br['Name'])then bj(br['Name'])end bk()end end aE=false bh(
+bn)return bm.Changed:connect(function(bo)return bh(bn,bo)end)end local bm bm=
+function(bn,bo)for bp,bq in pairs(al)do if bq['Player']~=bo and bq['Player']:
+FindFirstChild(bq['Player'].leaderstats:FindFirstChild(bn))then return true end
+end return false end local bn bn=function(bo,bp)while aE do m
+'In Adding Stat Lock1'wait(3.333333333333333E-2)end aE=true if bp['Frame']:
+FindFirstChild(bo.Name)then m'Destroyed frame!'bp['Frame'][bo.Name].Parent=nil
+end if not bm(bo.Name,bp['Player'])then for bq,br in ipairs(aj)do if br['Name']
+==bo.Name then table.remove(aj,bq)if L:FindFirstChild(bo.Name)then L[bo.Name]:
+Destroy()end for bs,bt in pairs(am)do if bt['Frame']:FindFirstChild(bo.Name)then
+bt['Frame'][bo.Name]:Destroy()end end end end end aE=false return bh(bp)end
+local bo bo=function(bp)for bq,br in ipairs(aj)do bn(br,bp)end end local bp bp=
+function(bq)if bq:IsA'DoubleConstrainedValue'or bq:IsA'IntConstrainedValue'then
+return bq.ConstrainedValue elseif bq:IsA'BoolValue'then if bq.Value then return
+1 else return 0 end else return bq.Value end end local bq bq=function(br,bs,bt)
+if not bt:FindFirstChild'PlayerScore'then return end local bu,bv=bt:
+FindFirstChild'PlayerScore':Clone(),nil wait()if br['Player']:FindFirstChild
+'leaderstats'and br['Player'].leaderstats:FindFirstChild(bs['Name'])then bv=br[
+'Player']:FindFirstChild'leaderstats':FindFirstChild(bs['Name'])else return end
+if not br['Player'].Parent then return end bu.Name=bs['Name']bu.Text=tostring(
+bp(bv))if bs['Name']==aj[1]['Name']then m'changing score'br['Score']=bp(bv)if br
+['Player']==p then y.Text=tostring(bp(bv))end end bv.Changed:connect(function()
+if not bv.Parent then return end if bs['Name']==aj[1]['Name']then br['Score']=
+bp(bv)if br['Player']==p then y.Text=tostring(bp(bv))end end bu.Text=tostring(
+bp(bv))return bg()end)return bu end local br,bs={'Size8','Size9','Size10',
+'Size11','Size12','Size14','Size24','Size36','Size48'},nil bs=function()local bt
+=x:Clone()bt.Position=UDim2.new(2,0,2,0)bt.Parent=r local bu=7 bt.FontSize=br[bu
+]return Delay(0.2,function()while bt.TextBounds.x==0 do wait(
+3.333333333333333E-2)end while bt.TextBounds.x-ax.X.Offset>1 do bu=bu-1 bt.
+FontSize=br[bu]wait(0.2)end x.FontSize=bt.FontSize return bt:Destroy()end)end
+local bt bt=function(bu)while aE do m'In Adding Stat Lock2'wait(
+3.333333333333333E-2)end aE=true local bv=5 local bw,bx=bv,0 for by=#aj,1,-1 do
+local bz=aj[by]bx=0 for bA,bB in ipairs(bu)do local bC=bB['Frame']if not bC:
+FindFirstChild(bz['Name'])then local bD=bq(bB,bz,bC)if bD then m('adding '..
+tostring(bD.Name)..' to '..tostring(bB['Player'].Name))bD.Parent=bC if bB[
+'MyTeam']and bB['MyTeam']~=an and not bB['MyTeam']['Frame']:FindFirstChild(bz[
+'Name'])then local bE=bD:Clone()bE.Parent=bB['MyTeam']['Frame']end end end bz[
+'XOffset']=bv if bC:FindFirstChild(bz['Name'])then bx=math.max(bx,bC[bz['Name']]
+.TextBounds.X)end end if P.Value then bx=math.max(bx,L[bz['Name']].TextBounds.X)
+L[bz['Name']]:TweenPosition(UDim2.new(az,-bv,0,0),'Out','Linear',c,true)else L[
+bz['Name']]:TweenPosition(UDim2.new((0.4+((0.6/#aj)*(by-1)))-1,0,0,0),'Out',
+'Linear',c,true)end bz['ColumnSize']=bx bv=bv+(au+bx)bw=math.max(bv,bw)end ax=
+UDim2.new(0,at+bw-au,0,800)ay=UDim2.new(1,-ax.X.Offset,ay.Y.Scale,0)bs()bk()aE=
+false end local bu bu=function()if#aj~=0 then for bv,bw in pairs(L:GetChildren()
+)do Spawn(function()return aX(bw,'TextTransparency',bw.TextTransparency,0,c)end)
+end v=0.09 u:TweenSizeAndPosition(UDim2.new(u.Size.X.Scale,u.Size.X.Offset,v,0),
+u.Position,'Out','Linear',c*1.2,true)D:TweenPosition(UDim2.new(D.Position.X.
+Scale,0,v,0),'Out','Linear',c*1.2,true)return z:TweenPosition(UDim2.new(0,0,v,0)
+,'Out','Linear',c*1.2,true)end end local bv bv=function()if#aj~=0 then v=0.07 if
+not N.Value then for bw,bx in pairs(L:GetChildren())do Spawn(function()return
+aX(bx,'TextTransparency',bx.TextTransparency,1,c)end)end end z:TweenPosition(
+UDim2.new(0,0,v,0),'Out','Linear',c*1.2,true)u:TweenSizeAndPosition(UDim2.new(u.
+Size.X.Scale,u.Size.X.Offset,v,0),u.Position,'Out','Linear',c*1.2,true)return D:
+TweenPosition(UDim2.new(D.Position.X.Scale,0,v,0),'Out','Linear',c*1.2,true)end
+end local bw bw=function()if not P.Value or M.Value then return bv()else return
+bu()end end local bx bx=function()M.Value=not M.Value return bw()end local by by
+=function()N.Value=not N.Value return bt(al)end local bz bz=function()local bA,
+bB=aV(),aU()local bC,bD=bB-bA,math.max(math.min(H.Position.Y.Scale,bB),bA)H.
+Position=UDim2.new(H.Position.X.Scale,H.Position.X.Offset,bD,H.Position.Y.Offset
+)local bE=1-G.Size.Y.Scale G.Position=UDim2.new(0,0,bE-(bE*((H.Position.Y.Scale-
+bA)/bC)),0)end bb=function()if M.Value then if N.Value then by()end if not O.
+Value then s:TweenSizeAndPosition(UDim2.new(0.01,x.TextBounds.X,ax.Y.Scale,ax.Y.
+Offset),UDim2.new(0.99,-x.TextBounds.X,ay.Y.Scale,0),'Out','Linear',c*1.2,true)
+else s:TweenSizeAndPosition(ax,ay,'Out','Linear',c*1.2,true)end E:TweenPosition(
+UDim2.new(0,0,-1,0),'Out','Linear',c*1.2,true)A:TweenPosition(UDim2.new(0,0,0,0)
+,'Out','Linear',c*1.2,true)t.Size=UDim2.new(1,0,v,0)C.Image=
+'http://www.roblox.com/asset/?id=94692731'else if not N.Value then s:
+TweenSizeAndPosition(ax,ay,'Out','Linear',c*1.2,true)end aA=math.min(math.max(aA
+,-1),-1+#ap*R.Size.Y.Scale)bz()E.Position=UDim2.new(0,0,aA,0)local bA=aA+E.Size.
+Y.Scale A.Position=UDim2.new(0,0,bA,0)t.Size=UDim2.new(1,0,bA+v,0)C.Image=
+'http://www.roblox.com/asset/?id=94825585'end end bk=function()if N.Value then
+for bA=1,#aj,1 do local bB=aj[bA]L[bB['Name']]:TweenPosition(UDim2.new(0.4+((0.6
+/#aj)*(bA-1))-1,0,0,0),'Out','Linear',c,true)end if M.Value then bx()else bb()
+end s:TweenSizeAndPosition(av,aw,'Out','Linear',c*1.2,true)y:TweenPosition(UDim2
+.new(0,0,x.Position.Y.Scale,0),'Out','Linear',c*1.2,true)x:TweenPosition(UDim2.
+new(-0.1,-y.TextBounds.x,x.Position.Y.Scale,0),'Out','Linear',c*1.2,true)u.
+Background.Image='http://www.roblox.com/asset/?id='..b['LargeHeader']A.
+Background.Image='http://www.roblox.com/asset/?id='..b['LargeBottom']for bA,bB
+in ipairs(ap)do bB.Background.Image='http://www.roblox.com/asset/?id='..(
+function()if bA%2~=1 then return b['LargeDark']else return b['LargeLight']end
+end)()end for bC,bD in ipairs(ao)do if bD:FindFirstChild'ClickListener'then bD.
+ClickListener.Size=UDim2.new(0.974,0,bD.ClickListener.Size.Y.Scale,0)end for bE=
+1,#aj,1 do local bF=aj[bE]if bD:FindFirstChild(bF['Name'])then bD[bF['Name']]:
+TweenPosition(UDim2.new(0.4+((0.6/#aj)*(bE-1))-1,0,0,0),'Out','Linear',c,true)
+end end end for bE,bF in ipairs(al)do n(bF['Frame'],'TitleFrame').Size=UDim2.
+new(0.38,0,bF['Frame'].TitleFrame.Size.Y.Scale,0)end for bG,bH in ipairs(am)do
+n(bH['Frame'],'TitleFrame').Size=UDim2.new(0.38,0,bH['Frame'].TitleFrame.Size.Y.
+Scale,0)end else if not M.Value then s:TweenSizeAndPosition(ax,ay,'Out','Linear'
+,c*1.2,true)end y:TweenPosition(UDim2.new(0,0,0.4,0),'Out','Linear',c*1.2,true)x
+:TweenPosition(UDim2.new(0,0,x.Position.Y.Scale,0),'Out','Linear',c*1.2,true)u.
+Background.Image='http://www.roblox.com/asset/?id='..b['NormalHeader']A.
+Background.Image='http://www.roblox.com/asset/?id='..b['NormalBottom']for bA,bD
+in ipairs(ap)do bD.Background.Image='http://www.roblox.com/asset/?id='..(
+function()if bA%2~=1 then return b['midDark']else return b['midLight']end end)()
+end for bG,bH in ipairs(ao)do if bH:FindFirstChild'ClickListener'then bH.
+ClickListener.Size=UDim2.new(0.96,0,bH.ClickListener.Size.Y.Scale,0)for bI=1,#aj
+,1 do local bJ=aj[bI]if bH:FindFirstChild(bJ['Name'])and bJ['XOffset']then bH[bJ
+['Name']]:TweenPosition(UDim2.new(az,-bJ['XOffset'],0,0),'Out','Linear',c,true)
+end end end end for bI,bJ in ipairs(am)do n(bJ['Frame'],'TitleFrame').Size=UDim2
+.new(0,at*0.9,bJ['Frame'].TitleFrame.Size.Y.Scale,0)end for bK,bL in ipairs(al)
+do n(bL['Frame'],'TitleFrame').Size=UDim2.new(0,at*0.9,bL['Frame'].TitleFrame.
+Size.Y.Scale,0)end end end local bA bA=function(bH)if not(O.Value or M.Value or
+aH)then local bK=H.Position local bL=math.max(math.min(bK.Y.Scale+bH,aU()),aV())
+H.Position=UDim2.new(bK.X.Scale,bK.X.Offset,bL,bK.Y.Offset)return bz()end end
+local bH bH=function()if aK then return end aK={}table.insert(aK,q.WheelForward:
+connect(function()return bA(0.05)end))return table.insert(aK,q.WheelBackward:
+connect(function()return bA(-5E-2)end))end local bK bK=function()if aK then for
+bL,bM in pairs(aK)do bM:disconnect()end end aK=nil end t.MouseEnter:connect(
+function()if not(M.Value or O.Value)then return bH()end end)t.MouseLeave:
+connect(function()return bK()end)local bL bL=function()local bM,bN=#ap*Q.Size.Y.
+Scale,E.Position.Y.Scale+1 G.Size=UDim2.new(1,0,bN/bM,0)end local bM bM=function
+(bN,bO)I.Parent=r if J~=nil then J:Destroy()end J=K:Clone()J.Parent=I local bP,
+bQ=2,a7(bO)m(tostring(bQ))local bR,bS=aS and p.PersonalServerRank>=aR['Admin']
+and p.PersonalServerRank>aC.PersonalServerRank,j(J,'Report Player',0)bS.
+MouseButton1Click:connect(function()return a5()end)local bT=j(J,'Friend',1,not
+bR and bQ~=Enum.FriendStatus.FriendRequestReceived)bT.MouseButton1Click:connect(
+a8)if bQ==Enum.FriendStatus.Friend then bT:FindFirstChild'ButtonText'.Text=
+'UnFriend Player'elseif bQ==Enum.FriendStatus.Unknown or bQ==Enum.FriendStatus.
+NotFriend then bT:FindFirstChild'ButtonText'.Text='Send Request'elseif bQ==Enum.
+FriendStatus.FriendRequestSent then bT:FindFirstChild'ButtonText'.Text=
+'Revoke Request'elseif bQ==Enum.FriendStatus.FriendRequestReceived then bT:
+FindFirstChild'ButtonText'.Text='Accept Friend'local bU=j(J,'Decline Friend',2,
+not bR)bU.MouseButton1Click:connect(a9)bP=bP+1 end if bR then local bU,bV,bW,bX=
+j(J,'Ban',bP),j(J,'Visitor',bP+1),j(J,'Member',bP+2),j(J,'Admin',bP+3,true)bU.
+MouseButton1Click:connect(function()return a1(bO,aR['Banned'],bU,bV,bW,bX)end)bV
+.MouseButton1Click:connect(function()return a1(bO,aR['Visitor'],bU,bV,bW,bX)end)
+bW.MouseButton1Click:connect(function()return a1(bO,aR['Member'],bU,bV,bW,bX)end
+)bX.MouseButton1Click:connect(function()return a1(bO,aR['Admin'],bU,bV,bW,bX)end
+)a0(aC,bU,bV,bW,bX)end J:TweenPosition(UDim2.new(0,0,0,0),'Out','Linear',c,true)
+Delay(0,function()local bU=q.Button1Down:connect(function()tconnection:
+disconnect()return a4()end)end)local bU=bN['Frame']return Spawn(function()while
+aH do I.Position=UDim2.new(0,bU.AbsolutePosition.X-I.Size.X.Offset,0,bU.
+AbsolutePosition.Y)wait()end end)end local bN bN=function()if aT()then G.
+BackgroundTransparency=1 else G.BackgroundTransparency=0 return bL()end end
+local bO bO=function(bP)bP['Frame'].BackgroundColor3=Color3.new(0,1,1)Spawn(
+function()return aX(bP['Frame'],'BackgroundTransparency',1,0.5,0.5)end)aH=true
+return bM(bP,bP['Player'])end local bP bP=function(bQ,bR,bS)local bT=true n(bQ[
+'Frame'],'ClickListener')local bU bU=function()if bQ['Player']and aC and bT and
+bQ['Player']~=p and aC.userId>1 and p.userId>1 then return bO(bQ)end end local
+bV,bW,bX=nil,H.Position,nil bX=function(bY,bZ)if not bV then bV=aW(bY,bZ).Y end
+local b_=aW(bY,bZ).Y m('drag dist: '..tostring(Vector2.new(bR-bY,bS-bZ).
+magnitude))if Vector2.new(bR-bY,bS-bZ).magnitude>d then bT=false end local b0=
+math.max(math.min(bW.Y.Scale+(b_-bV),aU()),aV())H.Position=UDim2.new(bW.X.Scale,
+bW.X.Offset,b0,bW.Y.Offset)return bz()end return aY(r,bX,bU)end local bQ bQ=
+function()return Delay(0,function()local bR=tick()m'Got Click2'local bS bS=
+function()if tick()-bR<0.25 then return bx()else aM=true if M.Value then return
+bx()end end end local bT,bU,bV=nil,aA,nil bV=function(bW,bX)if not M.Value then
+if not bT then bT=aW(bW,bX).Y end local bY=aW(bW,bX).Y local bZ=math.min(math.
+max(bU+(bY-bT),-1),-1+#ap*R.Size.Y.Scale)aA=bZ bb()F.Size=UDim2.new(F.Size.X.
+Scale,0,(aA+E.Size.Y.Scale),0)F.Position=UDim2.new(F.Position.X.Scale,0,1-F.Size
+.Y.Scale,0)bL()bz()return bN()end end return Spawn(function()return aY(r,bV,bS)
+end)end)end N.Value=false M.Value=false N.Changed:connect(bk)M.Changed:connect(
+bb)B.MouseButton1Down:connect(function()if(time()-aq<ar)or aH then return end aq
+=time()if O.Value then return bd()else return bQ()end end)w.MouseButton1Click:
+connect(function()if(time()-aq<ar)or aH then return end aq=time()if O.Value then
+return bd()elseif not P.Value then P.Value=true return bg()else return by()end
+end)w.MouseButton2Click:connect(function()if(time()-aq<ar)or aH then return end
+aq=time()if O.Value then return bd()elseif N.Value then return by()elseif P.
+Value then P.Value=false return bg()else return bc()end end)local bR bR=function
+()local bS=R:Clone()bS.Position=UDim2.new(0.5,0,(#ap*bS.Size.Y.Scale),0)bS.
+Background.Image='http://www.roblox.com/asset/?id='..(function()if(#ap+1)%2~=1
+then if N.Value then return b['LargeDark']else return b['midDark']end else if N.
+Value then return b['LargeLight']else return b['midLight']end end end)()bS.
+Parent=H table.insert(ap,bS)if#ap<aL and not aM then aA=-1+#ap*R.Size.Y.Scale
+end if not M.Value then return bb()end end local bS bS=function()ap[#ap]:
+Destroy()table.remove(ap,#ap)if not M.Value then return bb()end end local bT bT=
+function(bU)x.Text=bU return bs()end r.Changed:connect(bs)local bU bU=function(
+bV)local bW=bV['Player']for bX,bY in pairs(bW.leaderstats:GetChildren())do bl(bY
+,bV)end bW.leaderstats.ChildAdded:connect(function(bZ)return bl(bZ,bV)end)return
+bW.leaderstats.ChildRemoved:connect(function(bZ)return bn(bZ,bV)end)end local bV
+bV=function(bW,bX)while aD do m('waiting to insert '..tostring(bX['Player'].Name
+))wait(3.333333333333333E-2)end aD=true bo(bX)aD=false end local bW bW=function(
+bX,bY,bZ)if not aH then aB=bX aC=bX['Player']return bP(bX,bY,bZ)end end local bX
+bX=function()bt(al)table.sort(al,ba)for bY,bZ in ipairs(al)do ao[bY]=bZ['Frame']
+end for b_=#al+1,#ao,1 do ao[b_]=nil end return bb()end local bY bY=function()
+while aJ do m'in neutral team lock'wait()end aJ=true an['Frame']:Destroy()an=nil
+bS()aJ=false end local bZ bZ=function(b_,b0)table.remove(b_['MyPlayers'],b0)if
+b_==an and#b_['MyPlayers']==0 then return bY()end end local b_ b_=function(b0)if
+b0['MyTeam']then for b1,b2 in ipairs(b0['MyTeam']['MyPlayers'])do if b2['Player'
+]==b0['Player']then bZ(b0['MyTeam'],b1)return end end elseif an then for b1,b2
+in ipairs(an['MyPlayers'])do if b2['Player']==b0['Player']then bZ(an,b1)return
+end end end end local b0 b0=function(b1,b2)b_(b2)table.insert(b1['MyPlayers'],b2
+)b2['MyTeam']=b1 if b1['IsHidden']then b1['Frame'].Parent=H bR()end b1[
+'IsHidden']=false end local b1 b1=function()while aJ do m
+'in neutral team 2 lock'wait()end aJ=true local b2=Instance.new'Team'b2.
+TeamColor=BrickColor.new'White'b2.Name='Neutral'local b3={}b3['MyTeam']=b2 b3[
+'MyPlayers']={}b3['Frame']=Q:Clone()n(n(b3['Frame'],'TitleFrame'),'Title').Text=
+b2.Name b3['Frame'].TitleFrame.Position=UDim2.new(b3['Frame'].TitleFrame.
+Position.X.Scale,b3['Frame'].TitleFrame.Position.X.Offset,0.1,0)b3['Frame'].
+TitleFrame.Size=UDim2.new(b3['Frame'].TitleFrame.Size.X.Scale,b3['Frame'].
+TitleFrame.Size.X.Offset,0.8,0)b3['Frame'].TitleFrame.Title.Font='ArialBold'b3[
+'Frame'].Position=UDim2.new(1,0,(#ao*b3['Frame'].Size.Y.Scale),0)n(b3['Frame'],
+'ClickListener').MouseButton1Down:connect(function(b4,b5)return bP(b3,b4,b5)end)
+b3['Frame'].ClickListener.BackgroundColor3=Color3.new(1,1,1)b3['Frame'].
+ClickListener.BackgroundTransparency=0.7 b3['Frame'].ClickListener.
+AutoButtonColor=false b3['AutoHide']=true b3['IsHidden']=true for b4,b5 in
+pairs(al)do if b5['Player'].Neutral or not b5['MyTeam']then b0(b3,b5)end end if#
+b3['MyPlayers']>0 then an=b3 bb()bg()end aJ=false end local b2 b2=function(b3)
+b_(b3)local b4=false for b5,b6 in ipairs(am)do if b6['MyTeam'].TeamColor==b3[
+'Player'].TeamColor then b0(b6,b3)b4=true end end if not b4 and#(game.Teams:
+GetTeams())>0 then m(tostring(b3['Player'].Name)..' could not find team')b3[
+'MyTeam']=nil if not an then return b1()else return b0(an,b3)end end end local
+b3 b3=function(b4,b5)while aI do m'in playerchanged lock'wait(
+3.333333333333333E-2)end aI=true if b5=='Neutral'then if b4['Player'].Neutral
+and#game.Teams:GetTeams()>0 then m(tostring(b4['Player'].Name)..
+' setting to neutral')b_(b4)b4['MyTeam']=nil if not an then m(tostring(b4[
+'Player'].Name)..' creating neutral team')b1()else m(tostring(b4['Player'].Name)
+..' adding to neutral team')b0(an,b4)end elseif#(game.Teams:GetTeams())>0 then
+m(tostring(b4['Player'].Name)..' has been set non-neutral')b2(b4)end bg()elseif
+b5=='TeamColor'and not b4['Player'].Neutral and b4['Player']~=b4['MyTeam']then
+m(tostring(b4['Player'].Name)..' setting to new team')b2(b4)bg()elseif b5==
+'Name'or b5=='MembershipType'then b4['Frame']:FindFirstChild'BCLabel'.Image=h(b4
+['Player'].MembershipType,b4['Player'].Name)b4['Frame'].Name=b4['Player'].Name
+b4['Frame'].TitleFrame.Title.Text=b4['Player'].Name if b4['Frame'].BCLabel.Image
+~=''then b4['Frame'].TitleFrame.Title.Position=UDim2.new(0.01,30,0.1,0)end if b4
+['Player']==p then b4['Frame'].TitleFrame.DropShadow.Text=b4['Player'].Name bT(
+b4['Player'].Name)end bg()end aI=false end local b4 b4=function(b5)while aD do
+m('waiting to insert '..tostring(b5.Name))wait(3.333333333333333E-2)end aD=true
+local b6=Q:Clone()n(n(b6,'TitleFrame'),'Title').Text=b5.Name b6.Position=UDim2.
+new(1,0,(#ao*b6.Size.Y.Scale),0)local b7=a7(b5)b6:FindFirstChild'BCLabel'.Image=
+h(b5.MembershipType,b5.Name)b6:FindFirstChild'FriendLabel'.Image=i(b7)b6.Name=b5
+.Name n(n(b6,'TitleFrame'),'Title').Text=b5.Name b6.FriendLabel.Position=b6.
+FriendLabel.Position+UDim2.new(0,17,0,0)b6.TitleFrame.Title.Position=b6.
+TitleFrame.Title.Position+UDim2.new(0,17,0,0)if b6:FindFirstChild'FriendLabel'.
+Image~=''then b6.TitleFrame.Title.Position=b6.TitleFrame.Title.Position+UDim2.
+new(0,17,0,0)end if b5.Name==p.Name then b6.TitleFrame.Title.Font='ArialBold'b6.
+PlayerScore.Font='ArialBold'bT(b5.Name)do local b8=b6.TitleFrame.Title:Clone()b8
+.TextColor3=Color3.new(0,0,0)b8.TextTransparency=0 b8.ZIndex=2 b8.Position=b6.
+TitleFrame.Title.Position+UDim2.new(0,1,0,1)b8.Name='DropShadow'b8.Parent=b6.
+TitleFrame end end b6.TitleFrame.Title.Font='ArialBold'b6.Parent=H b6:
+TweenPosition(UDim2.new(0.5,0,(#ao*b6.Size.Y.Scale),0),'Out','Linear',c,true)bb(
+)local b8={}b8['Frame']=b6 b8['Player']=b5 b8['ID']=ak ak=ak+1 table.insert(al,
+b8)if#am~=0 then if b5.Neutral then b8['MyTeam']=nil if not an then b1()else b0(
+an,b8)end else local b9=false for ca,cb in ipairs(am)do if cb['MyTeam'].
+TeamColor==b5.TeamColor then b0(cb,b8)b8['MyTeam']=cb b9=true end end if not b9
+then b8['MyTeam']=nil if not an then b1()else b0(an,b8)end b8['MyTeam']=an end
+end end if b5:FindFirstChild'leaderstats'then bU(b8)end b5.ChildAdded:connect(
+function(b9)if b9.Name=='leaderstats'then while aD do m
+'in adding leaderstats lock'wait(3.333333333333333E-2)end aD=true bU(b8)aD=false
+end end)b5.ChildRemoved:connect(function(b9)if b5==p and b9.Name=='leaderstats'
+then return bV(b9,b8)end end)b5.Changed:connect(function(b9)return b3(b8,b9)end)
+local b9=n(b6,'ClickListener')b9.Active=true b9.MouseButton1Down:connect(
+function(ca,cb)return bW(b8,ca,cb)end)bR()bg()aD=false end local b5 b5=function(
+b6)while aD do m'in removing player frame lock'wait(3.333333333333333E-2)end aD=
+true local b7 for b8,b9 in ipairs(al)do if b6==b9['Player']then if I.Parent==b9[
+'Frame']then I.Parent=nil end b9['Frame']:Destroy()b7=b9['MyTeam']table.remove(
+al,b8)end end if b7 then for ca,cb in ipairs(b7['MyPlayers'])do if cb['Player']
+==b6 then bZ(b7,ca)end end end bS()bb()bg()aD=false end o.ChildRemoved:connect(
+b5)local b6 b6=function(b7,b8)local b9=0 if an and not an['IsHidden']then for ca
+,cb in ipairs(an['MyPlayers'])do b9=b9+1 b8[b9]=cb['Frame']end b9=b9+1 b8[b9]=an
+['Frame']end for ca,cb in ipairs(b7)do if not cb['IsHidden']then for cc,cd in
+ipairs(cb.MyPlayers)do b9=b9+1 b8[b9]=cd['Frame']end b9=b9+1 b8[b9]=cb['Frame']
+end end for cc=b9+1,#b8,1 do b8[cc]=nil end end local b7 b7=function(b8,b9)if b8
+['TeamScore']==b9['TeamScore']then return b8['ID']<b9['ID']end if not b8[
+'TeamScore']then return false end if not b9['TeamScore']then return true end
+return b8['TeamScore']<b9['TeamScore']end local b8 b8=function(b9)for ca=1,#aj,1
+do local cb,cc=aj[ca],0 for cd,ce in ipairs(b9['MyPlayers'])do local cf=ce[
+'Player']:FindFirstChild(ce['Player'].leaderstats:FindFirstChild(cb['Name']))if
+cf and not cf:IsA'StringValue'then cc=cc+bp((ce['Player'].leaderstats)[cb['Name'
+]])end end if b9['Frame']:FindFirstChild(cb['Name'])then b9['Frame'][cb['Name']]
+.Text=tostring(cc)end end return bb()end local b9 b9=function(ca)for cb,cc in
+ipairs(ca)do table.sort(cc['MyPlayers'],ba)b8(cc)end return table.sort(ca,b7)end
+local ca ca=function()bt(al)b9(am)if an then b8(an)end return b6(am,ao)end local
+cb cb=function(cc,cd)return Delay(0.5,function()m('friend status changed for: '
+..tostring(cc.Name)..' '..tostring(cd)..' vs '..tostring(a7(cc)))for ce,cf in
+ipairs(al)do if cf['Player']==cc then local cg=i(cd)if cg==''and cf['Frame'].
+FriendLabel.Image~=''then cf['Frame'].TitleFrame.Title.Position=cf['Frame'].
+TitleFrame.Title.Position-UDim2.new(0,17,0,0)elseif cg~=''and cf['Frame'].
+FriendLabel.Image==''then cf['Frame'].TitleFrame.Title.Position=cf['Frame'].
+TitleFrame.Title.Position+UDim2.new(0,17,0,0)m('confirmed status: '..tostring(cc
+.Name))end cf['Frame'].FriendLabel.Image=cg return end end end)end p.
+FriendStatusChanged:connect(cb)local cc cc=function(cd,ce)n(cd['Frame'],
+'PlayerScore').Text=tostring(ce)cd['TeamScore']=ce end local cd cd=function(ce,
+cf)if cf.Name=='AutoHide'then ce['AutoHide']=true elseif cf.Name=='TeamScore'
+then n(ce['Frame'],'PlayerScore').Text=tostring(cf.Value)ce['TeamScore']=cf.
+Value return cf.Changed:connect(function()return cc(ce,cf.Value)end)end end
+local ce ce=function(cf,cg)if cg.Name=='AutoHide'then cf['AutoHide']=false
+elseif cg.Name=='TeamScore'then n(cf['Frame'],'PlayerScore').Text=''cf[
+'TeamScore']=nil end end local cf cf=function(cg)while aD do m
+'in removing team frame lock'wait(3.333333333333333E-2)end aD=true local ch for
+ci,cj in ipairs(am)do if cg==cj['MyTeam']then ch=cj cj['Frame']:Destroy()table.
+remove(am,ci)end end if#am==0 then m'removeteamframe, remove neutral'if an then
+bY()end end for ck,cl in ipairs(ch['MyPlayers'])do bZ(ch,ck)b3(cl,'TeamColor')
+end bS()bg()aD=false end local cg cg=function(ch,ck)if ck=='Name'then n(n(ch[
+'Frame'],'TitleFrame'),'Title').Text=ch['MyTeam'].Name elseif ck=='TeamColor'
+then ch['Frame'].ClickListener.BackgroundColor3=ch['MyTeam'].TeamColor.Color for
+cl,cm in pairs(am)do if cm['MyTeam'].TeamColor==ch['MyTeam']then cf(ch['MyTeam']
+)end end ch['MyPlayers']={}for cn,co in pairs(al)do b2(co)end return bg()end end
+local ch ch=function(ck)while aD do m'in adding team frame lock'wait(
+3.333333333333333E-2)end aD=true local cn={}cn['MyTeam']=ck cn['MyPlayers']={}cn
+['Frame']=Q:Clone()n(n(cn['Frame'],'TitleFrame'),'Title').Text=ck.Name cn[
+'Frame'].TitleFrame.Title.Font='ArialBold'cn['Frame'].TitleFrame.Title.FontSize=
+'Size18'cn['Frame'].TitleFrame.Position=UDim2.new(cn['Frame'].TitleFrame.
+Position.X.Scale,cn['Frame'].TitleFrame.Position.X.Offset,0.1,0)cn['Frame'].
+TitleFrame.Size=UDim2.new(cn['Frame'].TitleFrame.Size.X.Scale,cn['Frame'].
+TitleFrame.Size.X.Offset,0.8,0)cn['Frame'].Position=UDim2.new(1,0,(#ao*cn[
+'Frame'].Size.Y.Scale),0)n(cn['Frame'],'ClickListener').MouseButton1Down:
+connect(function(co,cp)return bP(cn,co,cp)end)cn['Frame'].ClickListener.
+BackgroundColor3=ck.TeamColor.Color cn['Frame'].ClickListener.
+BackgroundTransparency=0.7 cn['Frame'].ClickListener.AutoButtonColor=false ak=ak
++1 cn['ID']=ak cn['AutoHide']=false if ck:FindFirstChild'AutoHide'then cn[
+'AutoHide']=true end if ck:FindFirstChild'TeamScore'then cd(cn,ck.TeamScore)end
+ck.ChildAdded:connect(function(co)return cd(cn,co)end)ck.ChildRemoved:connect(
+function(co)return ce(cn,co)end)ck.Changed:connect(function(co)return cg(cn,co)
+end)for co,cp in pairs(al)do if not cp['Player'].Neutral and cp['Player'].
+TeamColor==ck.TeamColor then b0(cn,cp)end end cn['IsHidden']=false if not cn[
+'AutoHide']or#cn['MyPlayers']>0 then cn['Frame'].Parent=H cn['Frame']:
+TweenPosition(UDim2.new(0.5,0,(#ao*cn['Frame'].Size.Y.Scale),0),'Out','Linear',c
+,true)bR()else cn['IsHidden']=true cn['Frame'].Parent=nil end table.insert(am,cn
+)bb()bg()if#am==1 and not an then b1()end aD=false end local ck ck=function(cn)
+return ch(cn)end local cn cn=function(co)return cf(co)end bg=function()while aF
+do m'in baseupdate lock'wait(3.333333333333333E-2)end aF=true bw()if#am==0 and
+not an then bX()else ca()end for co,cp in ipairs(ao)do if not(cp.Parent~=nil)
+then cp:TweenPosition(UDim2.new(0.5,0,((#ao-co)*cp.Size.Y.Scale),0),'Out',
+'Linear',c,true)end end if not M.Value and#ao>ag then bz()end bb()bL()bz()bN()aF
+=false end game.GuiService:AddKey'\t'local co=time()game.GuiService.KeyPressed:
+connect(function(cp)if cp=='\t'then m'caught tab key'local cq,cr cq,cr=pcall(
+function()return game.GuiService.IsModalDialog end)if cq==false or(cq and cr==
+false)then if time()-co>0.4 then co=time()if O.Value then if not N.Value then r:
+TweenPosition(UDim2.new(0,0,0,0),'Out','Linear',c*1.2,true)N.Value=true else r:
+TweenPosition(UDim2.new(ax.X.Scale,ax.X.Offset-10,0,0),'Out','Linear',c*1.2,true
+)N.Value=false M.Value=true end else return by()end end end end end)local cp cp=
+function(cq)return b4(cq)end local cq cq=function(cr)if cr:IsA'Player'then
+return Spawn(function()return cp(cr)end)else return be()end end local cr cr=
+function(cs,ct)if cs==Enum.CoreGuiType.All or cs==Enum.CoreGuiType.PlayerList
+then s.Visible=ct end end local cs cs=function(ct)if ct:IsA'Team'then return ck(
+ct)else return be()end end local ct ct=function(cu)if cu:IsA'Team'then return
+cn(cu)else return be()end end pcall(function()cr(Enum.CoreGuiType.PlayerList,
+Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList))return Game.
+StarterGui.CoreGuiChangedSignal:connect(cr)end)while not game:GetService'Teams'
+do wait(3.333333333333333E-2)m'Waiting For Teams'end for cu,cv in pairs(game.
+Teams:GetTeams())do ck(cv)end for cw,cx in pairs(o:GetPlayers())do Spawn(
+function()return cp(cx)end)end game.Teams.ChildAdded:connect(cs)game.Teams.
+ChildRemoved:connect(ct)o.ChildAdded:connect(cq)a6()P.Value=true bg()wait(2)aS=
+not not game.Workspace:FindFirstChild'PSVariable'if p.Name=='newplayerlistisbad'
+or p.Name=='imtotallyadmin'then ad.Parent=r return Spawn(function()while true do
+local cy cy=''for cz,cA in pairs(game.Players:GetPlayers())do cy=cy..' '..
+tostring(cA.Name)end ae.Text=cy wait(0.5)end end)end

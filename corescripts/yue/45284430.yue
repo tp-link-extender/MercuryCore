@@ -552,7 +552,7 @@ layoutGuiObjectsHelper = (frame, guiObjects, settingsTable) ->
 	totalPixels = pixelsRemaining = frame.AbsoluteSize.Y
 
 	for _, child in ipairs guiObjects
-		if child\IsA "TextLabel" or child\IsA "TextButton"
+		if child\IsA"TextLabel" or child\IsA "TextButton"
 			isLabel = child\IsA "TextLabel"
 			settingsTableIndex = "Text#{if isLabel then "Label" else "Button"}PositionPadY"
 			pixelsRemaining -= settingsTable[settingsTableIndex]
@@ -2528,7 +2528,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 					delay 0, ->
 						game\GetService"ContentProvider"\Preload(SmallThumbnailUrl .. assetId)
 						insertFrame.Button.ButtonImage.Image = SmallThumbnailUrl .. assetId
-					
+
 				table.insert(
 					insertButtonCons,
 					insertFrame.Button.MouseButton1Click\connect ->
@@ -2862,11 +2862,11 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 			when "Concrete" then 67532059
 			when "Water" then 81407474
 			else 66887593}"
-			
+
 		-- fill in the rest here!!
 
 	scrollFrame, scrollUp, scrollDown, recalculateScroll = t.CreateScrollingFrame nil, "grid"
-	
+
 	with scrollFrame
 		.Size = UDim2.new 0.85, 0, 1, 0
 		.Position = UDim2.new 0, 0, 0, 0
@@ -3032,7 +3032,7 @@ t.CreateLoadingFrame = (name, size, position) ->
 					true, ->
 						if newSize.X.Scale < 0
 							loadingGreenBar.Visible = false
-				
+
 		else
 			loadingGreenBar.Size = newSize
 			loadingGreenBar.Visible = newSize.X.Scale > 0
