@@ -57,7 +57,7 @@ local PlayersService = Game:GetService "Players"
 local GuiService = Game:GetService "GuiService"
 
 -- Lua Enums
-local Enums
+local Enums, CreateEnum
 do
 	Enums = {}
 	local EnumName = {} -- used as unique key for enum name
@@ -91,7 +91,7 @@ do
 			return "Enum." .. self[EnumName] .. "." .. self.Name
 		end,
 	}
-	function CreateEnum(enumName)
+	CreateEnum = function(enumName)
 		return function(t)
 			local e = { [EnumName] = enumName }
 			for i, name in pairs(t) do
