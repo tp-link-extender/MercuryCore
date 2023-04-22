@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
 	if not props? -- no name was provided
@@ -36,7 +39,6 @@ gui = if script.Parent\FindFirstChild "ControlFrame"
 else
 	script.Parent
 
-local RbxGui
 local syncVideoCaptureSetting
 local settingsButton, helpButton, settingsFrame, mouseLockLabel
 local updateCameraDropDownSelection
@@ -367,7 +369,7 @@ createHelpDialog = (baseZIndex) ->
 
 			mouseLockLookScreenUrl
 		else
-			imageclassicLookScreenUrl
+			classicLookScreenUrl
 
 
 	buttons[2] = {}
@@ -1337,7 +1339,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 if LoadLibrary
-	RbxGui = LoadLibrary "RbxGui"
+	global RbxGui = LoadLibrary "RbxGui"
 	baseZIndex = 0
 	if UserSettings
 		createSettingsDialog = ->

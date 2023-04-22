@@ -1,10 +1,13 @@
+import "macros" as { $ }
+$load $FILE
+
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
 	if not props? -- no name was provided
 		props = name
 		name = nil
 
-	obj = New className
+	obj = Instance.new className
 	obj.Name = name if name
 	local parent
 
