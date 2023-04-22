@@ -1,84 +1,234 @@
-local a a=function(b,c)while not b[c]do b.Changed:wait()end end local b b=
-function(c,d)while not c:FindFirstChild(d)do c.ChildAdded:wait()end end a(game.
-Players,'LocalPlayer')b(script.Parent,'Popup')b(script.Parent.Popup,
-'AcceptButton')script.Parent.Popup.AcceptButton.Modal=true local c,d,e,f,g=game.
-Players.LocalPlayer,nil,{},true,nil g=function()local h=script.Parent:
-FindFirstChild'Popup'if h then h.OKButton.Visible=true h.DeclineButton.Visible=
-false h.AcceptButton.Visible=false end return h end local h h=function()local i=
-script.Parent:FindFirstChild'Popup'if i then i.OKButton.Visible=false i.
-DeclineButton.Visible=true i.AcceptButton.Visible=true end return i end local i
-i=function()if script.Parent.Popup then script.Parent.Popup.Visible=false end
-end local j j=function(k,l)local m=script.Parent:FindFirstChild'Popup'if not(m~=
-nil)then return end if m.Visible then return end if e[k]then return end m.
-PopupText.Text='Accept Friend Request from '..tostring(k.Name)..'?'m.PopupImage.
-Image='http://www.roblox.com/thumbs/avatar.ashx?userId='..tostring(k.userId)..
-'&x=352&y=352'h()m.Visible=true m.AcceptButton.Text='Accept'm.DeclineButton.Text
-='Decline'm:TweenSize(UDim2.new(0,330,0,350),Enum.EasingDirection.Out,Enum.
-EasingStyle.Quart,1,true)local n,o n=m.AcceptButton.MouseButton1Click:connect(
-function()m.Visible=false l:RequestFriendship(k)if n~=nil then n:disconnect()end
-if o~=nil then o:disconnect()end return m:TweenSize(UDim2.new(0,0,0,0),Enum.
-EasingDirection.Out,Enum.EasingStyle.Quart,1,true,i())end)o=m.DeclineButton.
-MouseButton1Click:connect(function()m.Visible=false l:RevokeFriendship(k)e[k]=
-true print'pop up blacklist'if n~=nil then n:disconnect()end if o~=nil then o:
-disconnect()end return m:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,
-Enum.EasingStyle.Quart,1,true,i())end)end game.Players.FriendRequestEvent:
-connect(function(k,l,m)if k~=c and l~=c then return end if k==c then if m==Enum.
-FriendRequestEvent.Accept then return game:GetService'GuiService':
-SendNotification('You are Friends','With '..tostring(l.Name)..'!',
-'http://www.roblox.com/thumbs/avatar.ashx?userId='..tostring(l.userId)..
-'&x=48&y=48',5,function()end)end elseif l==c then if m==Enum.FriendRequestEvent.
-Issue then if e[k]then return end return game:GetService'GuiService':
-SendNotification('Friend Request','From '..tostring(k.Name),
-'http://www.roblox.com/thumbs/avatar.ashx?userId='..tostring(k.userId)..
-'&x=48&y=48',8,function()return j(k,l)end)elseif m==Enum.FriendRequestEvent.
-Accept then return game:GetService'GuiService':SendNotification(
-'You are Friends','With '..tostring(k.Name)..'!',
-'http://www.roblox.com/thumbs/avatar.ashx?userId='..tostring(k.userId)..
-'&x=48&y=48',5,function()end)end end end)local k k=function(l,m)if d~=nil then d
-:Remove()end b(c,'PlayerGui')local n=Instance.new'Message'n.Text=l n.Parent=c.
-PlayerGui if m>0 then wait(m)n:Remove()end return n end local l l=function(m,n,o
-)if game:GetService'TeleportService'.CustomizedTeleportUI==false then return k((
-function()if Enum.TeleportState.Started==m then return'Teleport started...',0
-elseif Enum.TeleportState.WaitingForServer==m then return'Requesting server...',
-0 elseif Enum.TeleportState.InProgress==m then return'Teleporting...',0 elseif
-Enum.TeleportState.Failed==m then return
-[[Teleport failed. Insufficient privileges or target place does not exist.]],3
-end end)())end end if f then c.OnTeleport:connect(l)game:GetService
-'TeleportService'.ErrorCallback=function(m)local o=script.Parent:FindFirstChild
-'Popup'g()o.PopupText.Text=m local p p=o.OKButton.MouseButton1Click:connect(
-function()game:GetService'TeleportService':TeleportCancel()if p then p:
-disconnect()end game.GuiService:RemoveCenterDialog(script.Parent:FindFirstChild
-'Popup')return o:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.
-EasingStyle.Quart,1,true,i())end)return game.GuiService:AddCenterDialog(script.
-Parent:FindFirstChild('Popup',Enum.CenterDialogType.QuitDialog),function()g()
-script.Parent:FindFirstChild'Popup'.Visible=true return o:TweenSize(UDim2.new(0,
-330,0,350),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end,function()
-return o:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.
-Quart,1,true,i())end)end game:GetService'TeleportService'.ConfirmationCallback=
-function(m,o,p)local q=script.Parent:FindFirstChild'Popup'q.PopupText.Text=m q.
-PopupImage.Image=''local r,s,t t=function()if r~=nil then r:disconnect()end if s
-~=nil then s:disconnect()end game.GuiService:RemoveCenterDialog(script.Parent:
-FindFirstChild'Popup')return q:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection
-.Out,Enum.EasingStyle.Quart,1,true,i())end r=q.AcceptButton.MouseButton1Click:
-connect(function()t()local u,v u,v=pcall(function()return game:GetService
-'TeleportService':TeleportImpl(o,p)end)if not u then g()q.PopupText.Text=v local
-w w=q.OKButton.MouseButton1Click:connect(function()if w~=nil then w:disconnect()
-end game.GuiService:RemoveCenterDialog(script.Parent:FindFirstChild'Popup')
-return q:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.
-Quart,1,true,i())end)return game.GuiService:AddCenterDialog(script.Parent:
-FindFirstChild('Popup',Enum.CenterDialogType.QuitDialog),function()g()script.
-Parent:FindFirstChild'Popup'.Visible=true return q:TweenSize(UDim2.new(0,330,0,
-350),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end,function()return
-q:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1
-,true,i())end)end end)s=q.DeclineButton.MouseButton1Click:connect(function()t()
-return pcall(function()return game:GetService'TeleportService':TeleportCancel()
-end)end)local u=pcall(function()return game.GuiService:AddCenterDialog(script.
-Parent:FindFirstChild('Popup',Enum.CenterDialogType.QuitDialog),function()h()q.
-AcceptButton.Text='Leave'q.DeclineButton.Text='Stay'script.Parent:FindFirstChild
-'Popup'.Visible=true return q:TweenSize(UDim2.new(0,330,0,350),Enum.
-EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end,function()return q:
-TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,
-true,i())end)end)if u==false then script.Parent:FindFirstChild'Popup'.Visible=
-true q.AcceptButton.Text='Leave'q.DeclineButton.Text='Stay'q:TweenSize(UDim2.
-new(0,330,0,350),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end
-return true end end
+local waitForProperty
+waitForProperty = function(instance, property)
+	while not instance[property] do
+		instance.Changed:wait()
+	end
+end
+local waitForChild
+waitForChild = function(instance, name)
+	while not instance:FindFirstChild(name) do
+		instance.ChildAdded:wait()
+	end
+end
+waitForProperty(game.Players, "LocalPlayer")
+waitForChild(script.Parent, "Popup")
+waitForChild(script.Parent.Popup, "AcceptButton")
+script.Parent.Popup.AcceptButton.Modal = true
+local localPlayer = game.Players.LocalPlayer
+local teleportUI
+local friendRequestBlacklist = { }
+local teleportEnabled = true
+local showOneButton
+showOneButton = function()
+	local popup = script.Parent:FindFirstChild("Popup")
+	if popup then
+		popup.OKButton.Visible = true
+		popup.DeclineButton.Visible = false
+		popup.AcceptButton.Visible = false
+	end
+	return popup
+end
+local showTwoButtons
+showTwoButtons = function()
+	local popup = script.Parent:FindFirstChild("Popup")
+	if popup then
+		popup.OKButton.Visible = false
+		popup.DeclineButton.Visible = true
+		popup.AcceptButton.Visible = true
+	end
+	return popup
+end
+local makePopupInvisible
+makePopupInvisible = function()
+	if script.Parent.Popup then
+		script.Parent.Popup.Visible = false
+	end
+end
+local makeFriend
+makeFriend = function(fromPlayer, toPlayer)
+	local popup = script.Parent:FindFirstChild("Popup")
+	if not (popup ~= nil) then
+		return
+	end
+	if popup.Visible then
+		return
+	end
+	if friendRequestBlacklist[fromPlayer] then
+		return
+	end
+	popup.PopupText.Text = "Accept Friend Request from " .. tostring(fromPlayer.Name) .. "?"
+	popup.PopupImage.Image = "http://www.roblox.com/thumbs/avatar.ashx?userId=" .. tostring(fromPlayer.userId) .. "&x=352&y=352"
+	showTwoButtons()
+	popup.Visible = true
+	popup.AcceptButton.Text = "Accept"
+	popup.DeclineButton.Text = "Decline"
+	popup:TweenSize(UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true)
+	local yesCon, noCon
+	yesCon = popup.AcceptButton.MouseButton1Click:connect(function()
+		popup.Visible = false
+		toPlayer:RequestFriendship(fromPlayer)
+		if yesCon ~= nil then
+			yesCon:disconnect()
+		end
+		if noCon ~= nil then
+			noCon:disconnect()
+		end
+		return popup:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true, makePopupInvisible())
+	end)
+	noCon = popup.DeclineButton.MouseButton1Click:connect(function()
+		popup.Visible = false
+		toPlayer:RevokeFriendship(fromPlayer)
+		friendRequestBlacklist[fromPlayer] = true
+		print("pop up blacklist")
+		if yesCon ~= nil then
+			yesCon:disconnect()
+		end
+		if noCon ~= nil then
+			noCon:disconnect()
+		end
+		return popup:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true, makePopupInvisible())
+	end)
+end
+game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
+	if fromPlayer ~= localPlayer and toPlayer ~= localPlayer then
+		return
+	end
+	if fromPlayer == localPlayer then
+		if event == Enum.FriendRequestEvent.Accept then
+			return game:GetService("GuiService"):SendNotification("You are Friends", "With " .. tostring(toPlayer.Name) .. "!", "http://www.roblox.com/thumbs/avatar.ashx?userId=" .. tostring(toPlayer.userId) .. "&x=48&y=48", 5, function() end)
+		end
+	elseif toPlayer == localPlayer then
+		if event == Enum.FriendRequestEvent.Issue then
+			if friendRequestBlacklist[fromPlayer] then
+				return
+			end
+			return game:GetService("GuiService"):SendNotification("Friend Request", "From " .. tostring(fromPlayer.Name), "http://www.roblox.com/thumbs/avatar.ashx?userId=" .. tostring(fromPlayer.userId) .. "&x=48&y=48", 8, function()
+				return makeFriend(fromPlayer, toPlayer)
+			end)
+		elseif event == Enum.FriendRequestEvent.Accept then
+			return game:GetService("GuiService"):SendNotification("You are Friends", "With " .. tostring(fromPlayer.Name) .. "!", "http://www.roblox.com/thumbs/avatar.ashx?userId=" .. tostring(fromPlayer.userId) .. "&x=48&y=48", 5, function() end)
+		end
+	end
+end)
+local showTeleportUI
+showTeleportUI = function(message, timer)
+	if teleportUI ~= nil then
+		teleportUI:Remove()
+	end
+	waitForChild(localPlayer, "PlayerGui")
+	local _with_0 = Instance.new("Message")
+	_with_0.Text = message
+	_with_0.Parent = localPlayer.PlayerGui
+	if timer > 0 then
+		wait(timer)
+		_with_0:Remove()
+	end
+	return _with_0
+end
+local onTeleport
+onTeleport = function(teleportState, _, _)
+	if game:GetService("TeleportService").CustomizedTeleportUI == false then
+		return showTeleportUI((function()
+			if Enum.TeleportState.Started == teleportState then
+				return "Teleport started...", 0
+			elseif Enum.TeleportState.WaitingForServer == teleportState then
+				return "Requesting server...", 0
+			elseif Enum.TeleportState.InProgress == teleportState then
+				return "Teleporting...", 0
+			elseif Enum.TeleportState.Failed == teleportState then
+				return "Teleport failed. Insufficient privileges or target place does not exist.", 3
+			end
+		end)())
+	end
+end
+if teleportEnabled then
+	localPlayer.OnTeleport:connect(onTeleport)
+	game:GetService("TeleportService").ErrorCallback = function(message)
+		local popup = script.Parent:FindFirstChild("Popup")
+		showOneButton()
+		popup.PopupText.Text = message
+		local clickCon
+		clickCon = popup.OKButton.MouseButton1Click:connect(function()
+			game:GetService("TeleportService"):TeleportCancel()
+			if clickCon then
+				clickCon:disconnect()
+			end
+			game.GuiService:RemoveCenterDialog(script.Parent:FindFirstChild("Popup"))
+			return popup:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true, makePopupInvisible())
+		end)
+		return game.GuiService:AddCenterDialog(script.Parent:FindFirstChild("Popup", Enum.CenterDialogType.QuitDialog), function()
+			showOneButton()
+			script.Parent:FindFirstChild("Popup").Visible = true
+			return popup:TweenSize(UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true)
+		end, function()
+			return popup:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true, makePopupInvisible())
+		end)
+	end
+	game:GetService("TeleportService").ConfirmationCallback = function(message, placeId, spawnName)
+		local popup = script.Parent:FindFirstChild("Popup")
+		popup.PopupText.Text = message
+		popup.PopupImage.Image = ""
+		local yesCon, noCon
+		local killCons
+		killCons = function()
+			if yesCon ~= nil then
+				yesCon:disconnect()
+			end
+			if noCon ~= nil then
+				noCon:disconnect()
+			end
+			game.GuiService:RemoveCenterDialog(script.Parent:FindFirstChild("Popup"))
+			return popup:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true, makePopupInvisible())
+		end
+		yesCon = popup.AcceptButton.MouseButton1Click:connect(function()
+			killCons()
+			local success, err
+			success, err = pcall(function()
+				return game:GetService("TeleportService"):TeleportImpl(placeId, spawnName)
+			end)
+			if not success then
+				showOneButton()
+				popup.PopupText.Text = err
+				local clickCon
+				clickCon = popup.OKButton.MouseButton1Click:connect(function()
+					if clickCon ~= nil then
+						clickCon:disconnect()
+					end
+					game.GuiService:RemoveCenterDialog(script.Parent:FindFirstChild("Popup"))
+					return popup:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true, makePopupInvisible())
+				end)
+				return game.GuiService:AddCenterDialog(script.Parent:FindFirstChild("Popup", Enum.CenterDialogType.QuitDialog), function()
+					showOneButton()
+					script.Parent:FindFirstChild("Popup").Visible = true
+					return popup:TweenSize(UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true)
+				end, function()
+					return popup:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true, makePopupInvisible())
+				end)
+			end
+		end)
+		noCon = popup.DeclineButton.MouseButton1Click:connect(function()
+			killCons()
+			return pcall(function()
+				return game:GetService("TeleportService"):TeleportCancel()
+			end)
+		end)
+		local centerDialogSuccess = pcall(function()
+			return game.GuiService:AddCenterDialog(script.Parent:FindFirstChild("Popup", Enum.CenterDialogType.QuitDialog), function()
+				showTwoButtons()
+				popup.AcceptButton.Text = "Leave"
+				popup.DeclineButton.Text = "Stay"
+				script.Parent:FindFirstChild("Popup").Visible = true
+				return popup:TweenSize(UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true)
+			end, function()
+				return popup:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true, makePopupInvisible())
+			end)
+		end)
+		if centerDialogSuccess == false then
+			script.Parent:FindFirstChild("Popup").Visible = true
+			popup.AcceptButton.Text = "Leave"
+			popup.DeclineButton.Text = "Stay"
+			popup:TweenSize(UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true)
+		end
+		return true
+	end
+end

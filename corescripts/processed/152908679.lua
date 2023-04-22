@@ -1,51 +1,245 @@
-local a a=function(b,c,d)if not(d~=nil)then d=c c=nil end local e=Instance.new(b
-)if c then e.Name=c end local f for g,h in pairs(d)do if type(g)=='string'then
-if g=='Parent'then f=h else e[g]=h end elseif type(g)=='number'and type(h)==
-'userdata'then h.Parent=e end end e.Parent=f return e end local b,c,d,e,f,g,h,i,
-j,k=Game:GetService'ContextActionService',Game:GetService'UserInputService'.
-TouchEnabled,{},{},nil,nil,'http://www.banland.xyz/asset/?id=97166756',
-'http://www.banland.xyz/asset/?id=97166444',{},{UDim2.new(0,123,0,70),UDim2.new(
-0,30,0,60),UDim2.new(0,180,0,160),UDim2.new(0,85,0,-25),UDim2.new(0,185,0,-25),
-UDim2.new(0,185,0,260),UDim2.new(0,216,0,65)}local l=#k do local m=Game:
-GetService'ContentProvider'm:Preload(h)m:Preload(i)end while not Game.Players do
-wait()end while not Game.Players.LocalPlayer do wait()end local m m=function()if
-not f and c then f=a('ScreenGui','ContextActionGui',{a('Frame',
-'ContextButtonFrame',{BackgroundTransparency=1,Size=UDim2.new(0.3,0,0.5,0),
-Position=UDim2.new(0.7,0,0.5,0)})})end end local n n=function(o,p,q)if p.
-UserInputType==Enum.UserInputType.Touch then o.Image=h return b:CallFunction(q,
-Enum.UserInputState.Begin)end end local o o=function(p,q,r)if q.UserInputType==
-Enum.UserInputType.Touch then p.Image=h return b:CallFunction(r,Enum.
-UserInputState.Change)end end local p p=function(q,r,s)q.Image=i if r.
-UserInputType==Enum.UserInputType.Touch and r.UserInputState==Enum.
-UserInputState.End then return b:CallFunction(s,Enum.UserInputState.End,r)end
-end local q q=function()return Game:GetService'GuiService':GetScreenResolution()
-.y<=320 end local r r=function(s,t)local u,v=a('ImageButton',
-'ContextActionButton',{BackgroundTransparency=1,Size=UDim2.new((function()if q()
-then return 0,90,0,90 else return 0,70,0,70 end end)()),Active=true,Image=i,
-Parent=g}),nil Game:GetService'UserInputService'.InputEnded:connect(function(w)j
-[w]=nil end)u.InputBegan:connect(function(w)if j[w]then return end if w.
-UserInputState==Enum.UserInputState.Begin and not(v~=nil)then v=w return n(u,w,s
-)end end)u.InputChanged:connect(function(w)if j[w]or v~=w then return end return
-o(u,w,s)end)u.InputEnded:connect(function(w)if j[w]or v~=w then return end v=nil
-j[w]=true return p(u,w,s)end)local w=a('ImageLabel','ActionIcon',{Position=UDim2
-.new(0.175,0,0.175,0),Size=UDim2.new(0.65,0,0.65,0),BackgroundTransparency=1})if
-t['image']and type(t['image'])=='string'then w.Image=t['image']end w.Parent=u
-local x=a('TextLabel','ActionTitle',{Size=UDim2.new(1,0,1,0),
-BackgroundTransparency=1,Font=Enum.Font.SourceSansBold,TextColor3=Color3.new(1,1
-,1),TextStrokeTransparency=0,FontSize=Enum.FontSize.Size18,TextWrapped=true,Text
-=''})if t['title']and type(t['title'])=='string'then x.Text=t['title']end x.
-Parent=u return u end local s s=function(t,u)local v,w=r(t,u),nil for x=1,#e do
-if e[x]=='empty'then w=x break end end if not w then w=#e+1 end if w>l then
-return end e[w]=v d[t]['button']=v v.Position=k[w]v.Parent=g if f and not(f.
-Parent~=nil)then f.Parent=Game.Players.LocalPlayer.PlayerGui end end local t t=
-function(u)if not d[u]then return end local v=d[u]['button']if v then v.Parent=
-nil for w=1,#e do if e[w]==v then e[w]='empty'break end end v:Destroy()end d[u]=
-nil end local u u=function(v,w,x)if d[v]then t(v)end d[v]={x}if w and c then m()
-return s(v,x)end end b.BoundActionChanged:connect(function(v,w,x)if d[v]and x
-then do local y=d[v]['button']if y then if w=='image'then y.ActionIcon.Image=x[w
-]elseif w=='title'then y.ActionTitle.Text=x[w]elseif w=='position'then y.
-Position=x[w]end end end end end)b.BoundActionAdded:connect(function(v,w,x)
-return u(v,w,x)end)b.BoundActionRemoved:connect(function(v,w)return t(v)end)b.
-GetActionButtonEvent:connect(function(v)if d[v]then return b:
-FireActionButtonFoundSignal(v,d[v]['button'])end end)local v=b:
-GetAllBoundActionInfo()for w,x in pairs(v)do u(w,x['createTouchButton'],x)end
+local New
+New = function(className, name, props)
+	if not (props ~= nil) then
+		props = name
+		name = nil
+	end
+	local obj = Instance.new(className)
+	if name then
+		obj.Name = name
+	end
+	local parent
+	for k, v in pairs(props) do
+		if type(k) == "string" then
+			if k == "Parent" then
+				parent = v
+			else
+				obj[k] = v
+			end
+		elseif type(k) == "number" and type(v) == "userdata" then
+			v.Parent = obj
+		end
+	end
+	obj.Parent = parent
+	return obj
+end
+local contextActionService = Game:GetService("ContextActionService")
+local isTouchDevice = Game:GetService("UserInputService").TouchEnabled
+local functionTable = { }
+local buttonVector = { }
+local buttonScreenGui
+local buttonFrame
+local ContextDownImage = "http://www.banland.xyz/asset/?id=97166756"
+local ContextUpImage = "http://www.banland.xyz/asset/?id=97166444"
+local oldTouches = { }
+local buttonPositionTable = {
+	UDim2.new(0, 123, 0, 70),
+	UDim2.new(0, 30, 0, 60),
+	UDim2.new(0, 180, 0, 160),
+	UDim2.new(0, 85, 0, -25),
+	UDim2.new(0, 185, 0, -25),
+	UDim2.new(0, 185, 0, 260),
+	UDim2.new(0, 216, 0, 65)
+}
+local maxButtons = #buttonPositionTable
+do
+	local _with_0 = Game:GetService("ContentProvider")
+	_with_0:Preload(ContextDownImage)
+	_with_0:Preload(ContextUpImage)
+end
+while not Game.Players do
+	wait()
+end
+while not Game.Players.LocalPlayer do
+	wait()
+end
+local createContextActionGui
+createContextActionGui = function()
+	if not buttonScreenGui and isTouchDevice then
+		buttonScreenGui = New("ScreenGui", "ContextActionGui", {
+			New("Frame", "ContextButtonFrame", {
+				BackgroundTransparency = 1,
+				Size = UDim2.new(0.3, 0, 0.5, 0),
+				Position = UDim2.new(0.7, 0, 0.5, 0)
+			})
+		})
+	end
+end
+local contextButtonDown
+contextButtonDown = function(button, inputObject, actionName)
+	if inputObject.UserInputType == Enum.UserInputType.Touch then
+		button.Image = ContextDownImage
+		return contextActionService:CallFunction(actionName, Enum.UserInputState.Begin)
+	end
+end
+local contextButtonMoved
+contextButtonMoved = function(button, inputObject, actionName)
+	if inputObject.UserInputType == Enum.UserInputType.Touch then
+		button.Image = ContextDownImage
+		return contextActionService:CallFunction(actionName, Enum.UserInputState.Change)
+	end
+end
+local contextButtonUp
+contextButtonUp = function(button, inputObject, actionName)
+	button.Image = ContextUpImage
+	if inputObject.UserInputType == Enum.UserInputType.Touch and inputObject.UserInputState == Enum.UserInputState.End then
+		return contextActionService:CallFunction(actionName, Enum.UserInputState.End, inputObject)
+	end
+end
+local isSmallScreenDevice
+isSmallScreenDevice = function()
+	return Game:GetService("GuiService"):GetScreenResolution().y <= 320
+end
+local createNewButton
+createNewButton = function(actionName, functionInfoTable)
+	local contextButton = New("ImageButton", "ContextActionButton", {
+		BackgroundTransparency = 1,
+		Size = UDim2.new((function()
+			if isSmallScreenDevice() then
+				return 0, 90, 0, 90
+			else
+				return 0, 70, 0, 70
+			end
+		end)()),
+		Active = true,
+		Image = ContextUpImage,
+		Parent = buttonFrame
+	})
+	local currentButtonTouch
+	Game:GetService("UserInputService").InputEnded:connect(function(inputObject)
+		oldTouches[inputObject] = nil
+	end)
+	contextButton.InputBegan:connect(function(inputObject)
+		if oldTouches[inputObject] then
+			return
+		end
+		if inputObject.UserInputState == Enum.UserInputState.Begin and not (currentButtonTouch ~= nil) then
+			currentButtonTouch = inputObject
+			return contextButtonDown(contextButton, inputObject, actionName)
+		end
+	end)
+	contextButton.InputChanged:connect(function(inputObject)
+		if oldTouches[inputObject] or currentButtonTouch ~= inputObject then
+			return
+		end
+		return contextButtonMoved(contextButton, inputObject, actionName)
+	end)
+	contextButton.InputEnded:connect(function(inputObject)
+		if oldTouches[inputObject] or currentButtonTouch ~= inputObject then
+			return
+		end
+		currentButtonTouch = nil
+		oldTouches[inputObject] = true
+		return contextButtonUp(contextButton, inputObject, actionName)
+	end)
+	local actionIcon = New("ImageLabel", "ActionIcon", {
+		Position = UDim2.new(0.175, 0, 0.175, 0),
+		Size = UDim2.new(0.65, 0, 0.65, 0),
+		BackgroundTransparency = 1
+	})
+	if functionInfoTable["image"] and type(functionInfoTable["image"]) == "string" then
+		actionIcon.Image = functionInfoTable["image"]
+	end
+	actionIcon.Parent = contextButton
+	local actionTitle = New("TextLabel", "ActionTitle", {
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		Font = Enum.Font.SourceSansBold,
+		TextColor3 = Color3.new(1, 1, 1),
+		TextStrokeTransparency = 0,
+		FontSize = Enum.FontSize.Size18,
+		TextWrapped = true,
+		Text = ""
+	})
+	if functionInfoTable["title"] and type(functionInfoTable["title"]) == "string" then
+		actionTitle.Text = functionInfoTable["title"]
+	end
+	actionTitle.Parent = contextButton
+	return contextButton
+end
+local createButton
+createButton = function(actionName, functionInfoTable)
+	local button = createNewButton(actionName, functionInfoTable)
+	local position
+	for i = 1, #buttonVector do
+		if buttonVector[i] == "empty" then
+			position = i
+			break
+		end
+	end
+	if not position then
+		position = #buttonVector + 1
+	end
+	if position > maxButtons then
+		return
+	end
+	buttonVector[position] = button
+	functionTable[actionName]["button"] = button
+	button.Position = buttonPositionTable[position]
+	button.Parent = buttonFrame
+	if buttonScreenGui and not (buttonScreenGui.Parent ~= nil) then
+		buttonScreenGui.Parent = Game.Players.LocalPlayer.PlayerGui
+	end
+end
+local removeAction
+removeAction = function(actionName)
+	if not functionTable[actionName] then
+		return
+	end
+	local actionButton = functionTable[actionName]["button"]
+	if actionButton then
+		actionButton.Parent = nil
+		for i = 1, #buttonVector do
+			if buttonVector[i] == actionButton then
+				buttonVector[i] = "empty"
+				break
+			end
+		end
+		actionButton:Destroy()
+	end
+	functionTable[actionName] = nil
+end
+local addAction
+addAction = function(actionName, createTouchButton, functionInfoTable)
+	if functionTable[actionName] then
+		removeAction(actionName)
+	end
+	functionTable[actionName] = {
+		functionInfoTable
+	}
+	if createTouchButton and isTouchDevice then
+		createContextActionGui()
+		return createButton(actionName, functionInfoTable)
+	end
+end
+contextActionService.BoundActionChanged:connect(function(actionName, changeName, changeTable)
+	if functionTable[actionName] and changeTable then
+		do
+			local button = functionTable[actionName]["button"]
+			if button then
+				if changeName == "image" then
+					button.ActionIcon.Image = changeTable[changeName]
+				elseif changeName == "title" then
+					button.ActionTitle.Text = changeTable[changeName]
+				elseif changeName == "position" then
+					button.Position = changeTable[changeName]
+				end
+			end
+		end
+	end
+end)
+contextActionService.BoundActionAdded:connect(function(actionName, createTouchButton, functionInfoTable)
+	return addAction(actionName, createTouchButton, functionInfoTable)
+end)
+contextActionService.BoundActionRemoved:connect(function(actionName, _)
+	return removeAction(actionName)
+end)
+contextActionService.GetActionButtonEvent:connect(function(actionName)
+	if functionTable[actionName] then
+		return contextActionService:FireActionButtonFoundSignal(actionName, functionTable[actionName]["button"])
+	end
+end)
+local boundActions = contextActionService:GetAllBoundActionInfo()
+for actionName, actionData in pairs(boundActions) do
+	addAction(actionName, actionData["createTouchButton"], actionData)
+end
