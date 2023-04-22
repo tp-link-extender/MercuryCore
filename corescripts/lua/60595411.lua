@@ -854,7 +854,7 @@ An example using the event syntax:
 local part = Create'Part'{
     [Create.E'Touched'] = function(part)
         print("I was touched by "..part.Name)
-    end,	
+    end,
 }
 
 

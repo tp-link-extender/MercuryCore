@@ -57,7 +57,7 @@ setUpListeners = (frameToListen) ->
 					frameToListen.BackgroundTransparency -= fadeSpeed
 					frameToListen.TextTransparency -= fadeSpeed
 					wait!
-	
+
 	killTip = (killFrame) ->
 		killFrame.inside.Value = false
 		killFrame.BackgroundTransparency = 1
@@ -73,7 +73,7 @@ createSettingsButtonTip = (parent) ->
 	if not parent?
 		parent = bottomLeftControl\FindFirstChild "SettingsButton"
 
-	
+
 	with toolTip = frameTip\clone!
 		.RobloxLocked = true
 		.Text = "Settings/Leave Game"
@@ -90,7 +90,7 @@ bottomLeftChildren = bottomLeftControl\GetChildren!
 
 for i = 1, #bottomLeftChildren
 	if bottomLeftChildren[i].Name == "Exit"
-		
+
 		with exitTip = frameTip\clone!
 			.RobloxLocked = true
 			.Text = "Leave Place"
@@ -116,7 +116,7 @@ for i = 1, #bottomRightChildren
 				UDim2.new -1, 0, -1.5
 			else
 				UDim2.new 0, 0, -1.5, 0
-		
+
 			.Size = UDim2.new 2, 0, 1.25, 0
 			.Parent = bottomRightChildren[i]
 			setUpListeners cameraTip

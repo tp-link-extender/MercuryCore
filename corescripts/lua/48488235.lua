@@ -1477,7 +1477,7 @@ function GetScoreValue(score)
 	end
 end
 --[[
-	
+
 --]]
 function MakeScoreEntry(entry, scoreval, panel)
 	if not panel:FindFirstChild "PlayerScore" then
@@ -2617,7 +2617,7 @@ end
 	consider adding lock with wait for performance
 	sorts each of the team's player lists induvidually, adds up the team scores.
 	@Args:
-	tentries		table of team entries	
+	tentries		table of team entries
 --]]
 function SortTeams(tentries)
 	for _, val in ipairs(tentries) do
@@ -2880,7 +2880,7 @@ function RemoveNeutralTeam()
 end
 
 --[[
-	
+
 --]]
 function TeamScoreChanged(entry, nscore)
 	WaitForChild(entry["Frame"], "PlayerScore").Text = tostring(nscore)

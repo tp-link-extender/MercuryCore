@@ -1699,7 +1699,7 @@ UpdateMaximize = ->
 				BaseScreenXSize * 0.9,
 				entry["Frame"].TitleFrame.Size.Y.Scale,
 				0
-			) 
+			)
 
 		for _, entry in ipairs PlayerFrames
 			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
@@ -1707,13 +1707,13 @@ UpdateMaximize = ->
 				BaseScreenXSize * 0.9,
 				entry["Frame"].TitleFrame.Size.Y.Scale,
 				0
-			) 
+			)
 
 ExpandNames = ->
 	if #ScoreNames ~= 0
 		for _, i in pairs StatTitles\GetChildren!
 			Spawn ->
-				TweenProperty i, "TextTransparency", i.TextTransparency, 0, BASE_TWEEN 
+				TweenProperty i, "TextTransparency", i.TextTransparency, 0, BASE_TWEEN
 
 
 		HeaderFrameHeight = 0.09
@@ -1743,7 +1743,7 @@ CloseNames = ->
 		if not IsMaximized.Value
 			for _, i in pairs StatTitles\GetChildren!
 				Spawn ->
-					TweenProperty i, "TextTransparency", i.TextTransparency, 1, BASE_TWEEN 
+					TweenProperty i, "TextTransparency", i.TextTransparency, 1, BASE_TWEEN
 
 
 
@@ -1845,7 +1845,7 @@ UpdateScrollPosition = ->
 	maxPos = GetMaxScroll!
 	scrollLength = maxPos - minPos
 
-	yscrollpos = math.max math.min(ListFrame.Position.Y.Scale, maxPos), minPos 
+	yscrollpos = math.max math.min(ListFrame.Position.Y.Scale, maxPos), minPos
 	ListFrame.Position = UDim2.new ListFrame.Position.X.Scale, ListFrame.Position.X.Offset, yscrollpos, ListFrame.Position.Y.Offset
 
 	adjustedLength = 1 - ScrollBar.Size.Y.Scale

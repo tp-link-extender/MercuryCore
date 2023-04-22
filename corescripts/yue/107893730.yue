@@ -178,7 +178,7 @@ userPurchaseActionsEnded = (isSuccess) ->
 
 	if isSuccess -- show the user we bought the item successfully, when they close this dialog we will call signalPromptEnded
 		newPurchasedSucceededText = string.gsub(
-			purchaseSucceededText, "itemName", 
+			purchaseSucceededText, "itemName",
 			"#{currentProductInfo["Name"]}"
 		)
 		purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text = newPurchasedSucceededText
@@ -251,14 +251,14 @@ updatePurchasePromptData = (_) ->
 	if isFreeItem!
 		newItemDescription = string.gsub freeItemPurchaseText, "itemName", "#{currentProductInfo["Name"]}"
 		newItemDescription = string.gsub(
-			newItemDescription, "assetType", 
+			newItemDescription, "assetType",
 			"#{assetTypeToString currentProductInfo["AssetTypeId"]}"
 		)
 		setHeaderText takeHeaderText
 	else -- otherwise item costs something, so different prompt
 		newItemDescription = string.gsub productPurchaseText, "itemName", "#{currentProductInfo["Name"]}"
 		newItemDescription = string.gsub(
-			newItemDescription, "currencyType", 
+			newItemDescription, "currencyType",
 			"#{currencyTypeToString currentCurrencyType}"
 		)
 		newItemDescription = string.gsub newItemDescription, "currencyAmount", "#{currentCurrencyAmount}"
@@ -466,7 +466,7 @@ canPurchaseItem = ->
 
 
 	if tonumber(currentProductInfo["MinimumMembershipLevel"]) >
-		membershipTypeToNumber game.Players.LocalPlayer.MembershipType 
+		membershipTypeToNumber game.Players.LocalPlayer.MembershipType
 
 		notRightBc = true
 
@@ -563,7 +563,7 @@ showPurchasePrompt = ->
 									"You require an upgrade to your Builders Club membership to purchase this item. Click here to upgrade."
 
 									openBCUpSellWindow!
-							
+
 
 						setButtonsVisible(
 							.BodyFrame.BuyDisabledButton,
@@ -632,7 +632,7 @@ purchaseFailed = (inGamePurchasesDisabled) ->
 	newPurchasedFailedText = string.gsub(purchaseFailedText, "itemName", "#{name}")
 	if inGamePurchasesDisabled
 		newPurchasedFailedText = string.gsub(
-			newPurchasedFailedText, "errorReason", 
+			newPurchasedFailedText, "errorReason",
 			"#{errorPurchasesDisabledText}"
 		)
 	else
@@ -703,7 +703,7 @@ doAcceptPurchase = (_) ->
 			"&purchasePrice=#{currentCurrencyAmount}" ..
 			"&locationType=Game" ..
 			"&locationId=#{Game.PlaceId}"
-			
+
 
 
 	local success, reason = try
@@ -852,7 +852,7 @@ userPurchaseProductActionsEnded = (userIsClosingDialog) ->
 		removeCurrentPurchaseInfo!
 	else
 		newPurchasedSucceededText = string.gsub(
-			purchaseSucceededText, "itemName", 
+			purchaseSucceededText, "itemName",
 			"#{currentProductInfo["Name"]}"
 		)
 		purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text = newPurchasedSucceededText
@@ -1049,16 +1049,17 @@ createPurchasePromptGui = ->
 		Parent: purchaseDialog
 
 	purchasingLabel = createTextObject "PurchasingLabel", "Purchasing...", "TextLabel", Enum.FontSize.Size48
-	purchasingLabel.Size = UDim2.new 1, 0, 1, 0
-	purchasingLabel.ZIndex = 10
-	purchasingLabel.Parent = purchasingFrame
+	with purchasingLabel
+		.Size = UDim2.new 1, 0, 1, 0
+		.ZIndex = 10
+		.Parent = purchasingFrame
 
 	createSpinner UDim2.new(0, 50, 0, 50), UDim2.new(0.5, -25, 0.5, 30), purchasingLabel
 
 cutSizeInHalfRecursive = (_) ->
 	-- todo: change the gui size based on how much space we have
 	--[[changeSize(instance,0.5)
-	
+
 	children = instance\GetChildren!
 	for i = 1, #children
 		cutSizeInHalfRecursive(children[i])
@@ -1068,7 +1069,7 @@ cutSizeInHalfRecursive = (_) ->
 doubleSizeRecursive = (_) ->
 	-- todo: change the gui size based on how much space we have
 	--[[changeSize(instance,2)
-	
+
 	children = instance\GetChildren!
 	for i = 1, #children
 		doubleSizeRecursive(children[i])
@@ -1121,16 +1122,16 @@ preloadAssets!
 
 game\GetService"MarketplaceService".PromptProductPurchaseRequested
 	\connect (player, productId, equipIfPurchased, currencyType) ->
-		doPurchasePrompt player, nil, equipIfPurchased, currencyType, productId 
+		doPurchasePrompt player, nil, equipIfPurchased, currencyType, productId
 
 
 Game\GetService"MarketplaceService".PromptPurchaseRequested
 	\connect (player, assetId, equipIfPurchased, currencyType) ->
-		doPurchasePrompt player, assetId, equipIfPurchased, currencyType, nil 
+		doPurchasePrompt player, assetId, equipIfPurchased, currencyType, nil
 
 
 Game\GetService"MarketplaceService".ServerPurchaseVerification\connect (serverResponseTable) ->
-	doProcessServerPurchaseResponse serverResponseTable 
+	doProcessServerPurchaseResponse serverResponseTable
 
 
 if enableBrowserWindowClosedEvent

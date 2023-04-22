@@ -322,7 +322,7 @@ createHelpDialog = function(baseZIndex)
 		if UserSettings().GameSettings.ControlMode == Enum.ControlMode["Mouse Lock Switch"] then
 			image.Image = mouseLockLookScreenUrl
 		else
-			image.Image = classicLookScreenUrl
+			image.Image = imageclassicLookScreenUrl
 		end
 	end
 	buttons[2] = { }
@@ -675,7 +675,7 @@ createGameSettingsMenu = function(baseZIndex, _)
 		autoText.Name = "AutoText"
 		autoText.Text = "Auto"
 		autoText.Position = UDim2.new(0, 183, 0, 214)
-		autoText.TextColor3 = Color3.new(128 / 255, 128 / 255, 128 / 255)
+		autoText.TextColor3 = Color3.new(0.5, 0.5, 0.5)
 		autoText.Size = UDim2.new(0, 34, 0, 18)
 		autoText.Parent = gameSettingsMenuFrame
 		autoText.Visible = not inStudioMode
@@ -724,7 +724,7 @@ createGameSettingsMenu = function(baseZIndex, _)
 		graphicsLevel.Value = math.floor((settings().Rendering:GetMaxQualityLevel() - 1) / 2)
 		local graphicsSetter = New("TextBox", "GraphicsSetter", {
 			BackgroundColor3 = Color3.new(0, 0, 0),
-			BorderColor3 = Color3.new(128 / 255, 128 / 255, 128 / 255),
+			BorderColor3 = Color3.new(0.5, 0.5, 0.5),
 			Size = UDim2.new(0, 50, 0, 25),
 			Position = UDim2.new(0, 450, 0, 269),
 			TextColor3 = Color3.new(1, 1, 1),
@@ -1333,22 +1333,18 @@ pcall(function()
 	end
 	local createSaveDialogs
 	createSaveDialogs = function()
-		local shield = Instance.new("TextButton")
-		shield.Text = ""
-		shield.AutoButtonColor = false
-		shield.Name = "SaveDialogShield"
-		shield.Active = true
-		shield.Visible = false
-		shield.Size = UDim2.new(1, 0, 1, 0)
-		shield.BackgroundColor3 = Color3I(51, 51, 51)
-		shield.BorderColor3 = Color3I(27, 42, 53)
-		shield.BackgroundTransparency = 0.4
-		shield.ZIndex = baseZIndex + 1
-		local clearAndResetDialog
-		local save
-		local saveLocal
-		local dontSave
-		local cancel
+		local shield = New("TextButton", "SaveDialogShield", {
+			Text = "",
+			AutoButtonColor = false,
+			Active = true,
+			Visible = false,
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundColor3 = Color3I(51, 51, 51),
+			BorderColor3 = Color3I(27, 42, 53),
+			BackgroundTransparency = 0.4,
+			ZIndex = baseZIndex + 1
+		})
+		local clearAndResetDialog, save, saveLocal, dontSave, cancel
 		local messageBoxButtons = { }
 		messageBoxButtons[1] = { }
 		messageBoxButtons[1].Text = "Save"
@@ -1586,9 +1582,7 @@ pcall(function()
 				ZIndex = baseZIndex + 2
 			})
 		})
-		local abusingPlayer
-		local abuse
-		local submitReportButton
+		local abusingPlayer, abuse, submitReportButton
 		local updatePlayerSelection
 		local createPlayersDropDown
 		createPlayersDropDown = function()

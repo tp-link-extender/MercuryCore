@@ -187,8 +187,8 @@ inLoadout = (gear) ->
 	for i = 1, #children
 		if children[i]\IsA "Frame"
 			button = children[i]\GetChildren!
-			if #button > 0 and 
-				button[1].GearReference.Value and 
+			if #button > 0 and
+				button[1].GearReference.Value and
 				button[1].GearReference.Value == gear
 					return true
 
@@ -280,7 +280,7 @@ getGearContextMenu = ->
 				BackgroundColor3: Color3.new 0, 0, 0
 				BorderSizePixel: 0
 				TextXAlignment: Enum.TextXAlignment.Left
-				Text: " #{contextElement.Text}" 
+				Text: " #{contextElement.Text}"
 				Font: Enum.Font.Arial
 				FontSize: Enum.FontSize.Size14
 				Size: UDim2.new 1, 8, 0, elementHeight
@@ -473,7 +473,7 @@ resizeGrid = ->
 						buttonClick buttonClone
 
 					clickTime = newClickTime
-	
+
 	recalculateScroll!
 
 resize = ->
@@ -491,7 +491,7 @@ resize = ->
 
 
 addToGrid = (child) ->
-	return if not child\IsA"Tool" and 
+	return if not child\IsA"Tool" and
 		not child\IsA "HopperBin"
 
 	return if child\FindFirstChild "RobloxBuildTool"
@@ -689,7 +689,7 @@ splitByWhitespace = (text) ->
 
 showSearchGear = (searchTerms) ->
 	return if not backpack.Gear.Visible
-		
+
 	-- currently not active tab
 
 	searchTermTable = splitByWhitespace searchTerms
@@ -757,7 +757,7 @@ currentLoadout.DescendantAdded\connect (descendant) ->
 currentLoadout.DescendantRemoving\connect (descendant) ->
 	if not backpack.Visible and (descendant\IsA"ImageButton" or descendant\IsA "TextButton")
 		wait!
-		centerGear currentLoadout\GetChildren! 
+		centerGear currentLoadout\GetChildren!
 
 
 grid.MouseEnter\connect -> clearPreview!

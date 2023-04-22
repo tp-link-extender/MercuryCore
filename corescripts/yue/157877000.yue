@@ -58,7 +58,7 @@ initializeDeveloperConsole = ->
 		BackgroundTransparency: 0.5
 		Position: UDim2.new 0, 0, 0, 21
 		Size: UDim2.new 1, 0, 1, -25
-		
+
 	Dev_OptionsHolder = Create"Frame"
 		Name: "OptionsHolder"
 		Parent: Dev_Body
@@ -67,7 +67,7 @@ initializeDeveloperConsole = ->
 		Position: UDim2.new 0, 220, 0, 0
 		Size: UDim2.new 1, -255, 0, 24
 		ClipsDescendants: true
-		
+
 	Dev_OptionsBar = Create"Frame"
 		Name: "OptionsBar"
 		Parent: Dev_OptionsHolder
@@ -75,7 +75,7 @@ initializeDeveloperConsole = ->
 		BackgroundTransparency: 1
 		Position: UDim2.new 0, -250, 0, 4
 		Size: UDim2.new 0, 234, 0, 18
-		
+
 	Dev_ErrorToggleFilter = Create"TextButton"
 		Name: "ErrorToggleButton"
 		Parent: Dev_OptionsBar
@@ -87,7 +87,7 @@ initializeDeveloperConsole = ->
 		FontSize: Enum.FontSize.Size14
 		Text: ""
 		TextColor3: Color3.new 1, 0, 0
-		
+
 	Create"Frame"
 		Name: "CheckFrame"
 		Parent: Dev_ErrorToggleFilter
@@ -95,7 +95,7 @@ initializeDeveloperConsole = ->
 		BorderColor3: Color3.new 1, 0, 0
 		Position: UDim2.new 0, 4, 0, 4
 		Size: UDim2.new 0, 10, 0, 10
-		
+
 	Dev_InfoToggleFilter = Create"TextButton"
 		Name: "InfoToggleButton"
 		Parent: Dev_OptionsBar
@@ -107,7 +107,7 @@ initializeDeveloperConsole = ->
 		FontSize: Enum.FontSize.Size14
 		Text: ""
 		TextColor3: Color3.new 0.4, 0.5, 1.0
-		
+
 	Create"Frame"
 		Name: "CheckFrame"
 		Parent: Dev_InfoToggleFilter
@@ -115,7 +115,7 @@ initializeDeveloperConsole = ->
 		BorderColor3: Color3.new 0.4, 0.5, 1.0
 		Position: UDim2.new 0, 4, 0, 4
 		Size: UDim2.new 0, 10, 0, 10
-		
+
 	Dev_OutputToggleFilter = Create"TextButton"
 		Name: "OutputToggleButton"
 		Parent: Dev_OptionsBar
@@ -127,7 +127,7 @@ initializeDeveloperConsole = ->
 		FontSize: Enum.FontSize.Size14
 		Text: ""
 		TextColor3: Color3.new 1, 1, 1.0
-		
+
 	Create"Frame"
 		Name: "CheckFrame"
 		Parent: Dev_OutputToggleFilter
@@ -135,7 +135,7 @@ initializeDeveloperConsole = ->
 		BorderColor3: Color3.new 1, 1, 1.0
 		Position: UDim2.new 0, 4, 0, 4
 		Size: UDim2.new 0, 10, 0, 10
-		
+
 	Dev_WarningToggleFilter = Create"TextButton"
 		Name: "WarningToggleButton"
 		Parent: Dev_OptionsBar
@@ -147,7 +147,7 @@ initializeDeveloperConsole = ->
 		FontSize: Enum.FontSize.Size14
 		Text: ""
 		TextColor3: Color3.new 1, 0.6, 0.4
-		
+
 	Create"Frame"
 		Name: "CheckFrame"
 		Parent: Dev_WarningToggleFilter
@@ -155,7 +155,7 @@ initializeDeveloperConsole = ->
 		BorderColor3: Color3.new 1, 0.6, 0.4
 		Position: UDim2.new 0, 4, 0, 4
 		Size: UDim2.new 0, 10, 0, 10
-		
+
 	Dev_WordWrapToggle = Create"TextButton"
 		Name: "WordWrapToggleButton"
 		Parent: Dev_OptionsBar
@@ -167,7 +167,7 @@ initializeDeveloperConsole = ->
 		FontSize: Enum.FontSize.Size14
 		Text: ""
 		TextColor3: Color3.new 0.8, 0.8, 0.8
-		
+
 	Create"Frame"
 		Name: "CheckFrame"
 		Parent: Dev_WordWrapToggle
@@ -176,7 +176,7 @@ initializeDeveloperConsole = ->
 		Position: UDim2.new 0, 4, 0, 4
 		Size: UDim2.new 0, 10, 0, 10
 		Visible: false
-		
+
 	Create"TextLabel"
 		Name: "Filter"
 		Parent: Dev_OptionsBar
@@ -187,7 +187,7 @@ initializeDeveloperConsole = ->
 		FontSize: Enum.FontSize.Size14
 		Text: "Filter"
 		TextColor3: Color3.new 1, 1, 1
-		
+
 	Create"TextLabel"
 		Name: "WordWrap"
 		Parent: Dev_OptionsBar
@@ -207,14 +207,14 @@ initializeDeveloperConsole = ->
 		Position: UDim2.new 1, -20, 0, 26
 		Size: UDim2.new 0, 20, 1, -50
 		Visible: false
-		
+
 	Dev_ScrollArea = Create"Frame"
 		Name: "ScrollArea"
 		Parent: Dev_ScrollBar
 		BackgroundTransparency: 1
 		Position: UDim2.new 0, 0, 0, 23
 		Size: UDim2.new 1, 0, 1, -46
-		
+
 	Dev_Handle = Create"ImageButton"
 		Name: "Handle"
 		Parent: Dev_ScrollArea
@@ -222,7 +222,7 @@ initializeDeveloperConsole = ->
 		BackgroundTransparency: 0.5
 		Position: UDim2.new 0, 0, 0.2, 0
 		Size: UDim2.new 0, 20, 0, 40
-		
+
 	Create"ImageLabel"
 		Name: "ImageLabel"
 		Parent: Dev_Handle
@@ -231,7 +231,7 @@ initializeDeveloperConsole = ->
 		Rotation: 180
 		Size: UDim2.new 1, 0, 0, 16
 		Image: "http://www.roblox.com/Asset?id=151205881"
-		
+
 	Dev_DownButton = Create"ImageButton"
 		Name: "Down"
 		Parent: Dev_ScrollBar
@@ -239,7 +239,7 @@ initializeDeveloperConsole = ->
 		BackgroundTransparency: 0.5
 		Position: UDim2.new 0, 0, 1, -20
 		Size: UDim2.new 0, 20, 0, 20
-		
+
 	Create"ImageLabel"
 		Name: "ImageLabel"
 		Parent: Dev_DownButton
@@ -248,7 +248,7 @@ initializeDeveloperConsole = ->
 		Size: UDim2.new 0, 14, 0, 14
 		Rotation: 180
 		Image: "http://www.roblox.com/Asset?id=151205813"
-		
+
 	Dev_UpButton = Create"ImageButton"
 		Name: "Up"
 		Parent: Dev_ScrollBar
@@ -256,7 +256,7 @@ initializeDeveloperConsole = ->
 		BackgroundTransparency: 0.5
 		Position: UDim2.new 0, 0, 0, 0
 		Size: UDim2.new 0, 20, 0, 20
-		
+
 	Create"ImageLabel"
 		Name: "ImageLabel"
 		Parent: Dev_UpButton
@@ -264,7 +264,7 @@ initializeDeveloperConsole = ->
 		Position: UDim2.new 0, 3, 0, 3
 		Size: UDim2.new 0, 14, 0, 14
 		Image: "http://www.roblox.com/Asset?id=151205813"
-		
+
 	Dev_TextBox = Create"Frame"
 		Name: "TextBox"
 		Parent: Dev_Body
@@ -273,14 +273,14 @@ initializeDeveloperConsole = ->
 		Position: UDim2.new 0, 2, 0, 26
 		Size: UDim2.new 1, -4, 1, -28
 		ClipsDescendants: true
-		
+
 	Dev_TextHolder = Create"Frame"
 		Name: "TextHolder"
 		Parent: Dev_TextBox
 		BackgroundTransparency: 1
 		Position: UDim2.new 0, 0, 0, 0
 		Size: UDim2.new 1, 0, 1, 0
-		
+
 	Dev_OptionsButton = Create"ImageButton"
 		Name: "OptionsButton"
 		Parent: Dev_Body
@@ -288,7 +288,7 @@ initializeDeveloperConsole = ->
 		BackgroundTransparency: 1
 		Position: UDim2.new 0, 200, 0, 2
 		Size: UDim2.new 0, 20, 0, 20
-		
+
 	Create"ImageLabel"
 		Name: "ImageLabel"
 		Parent: Dev_OptionsButton
@@ -297,7 +297,7 @@ initializeDeveloperConsole = ->
 		Size: UDim2.new 1, 0, 1, 0
 		Rotation: 0
 		Image: "http://www.roblox.com/Asset?id=152093917"
-		
+
 	Dev_ResizeButton = Create"ImageButton"
 		Name: "ResizeButton"
 		Parent: Dev_Body
@@ -305,7 +305,7 @@ initializeDeveloperConsole = ->
 		BackgroundTransparency: 0.5
 		Position: UDim2.new 1, -20, 1, -20
 		Size: UDim2.new 0, 20, 0, 20
-		
+
 	Create"ImageLabel"
 		Name: "ImageLabel"
 		Parent: Dev_ResizeButton
@@ -314,7 +314,7 @@ initializeDeveloperConsole = ->
 		Size: UDim2.new 0.8, 0, 0.8, 0
 		Rotation: 135
 		Image: "http://www.roblox.com/Asset?id=151205813"
-		
+
 	Create"TextButton"
 		Name: "LocalConsole"
 		Parent: Dev_Body
@@ -327,7 +327,7 @@ initializeDeveloperConsole = ->
 		Text: "Local Console"
 		TextColor3: Color3.new 1, 1, 1
 		TextYAlignment: Enum.TextYAlignment.Center
-		
+
 	Create"TextButton"
 		Name: "ServerConsole"
 		Parent: Dev_Body
@@ -340,7 +340,7 @@ initializeDeveloperConsole = ->
 		Text: "Server Console"
 		TextColor3: Color3.new 1, 1, 1
 		TextYAlignment: Enum.TextYAlignment.Center
-		
+
 	Dev_TitleBar = Create"Frame"
 		Name: "TitleBar"
 		Parent: Dev_Container
@@ -348,7 +348,7 @@ initializeDeveloperConsole = ->
 		BackgroundTransparency: 0.5
 		Position: UDim2.new 0, 0, 0, 0
 		Size: UDim2.new 1, 0, 0, 20
-		
+
 	Dev_CloseButton = Create"ImageButton"
 		Name: "CloseButton"
 		Parent: Dev_TitleBar
@@ -356,7 +356,7 @@ initializeDeveloperConsole = ->
 		BackgroundTransparency: 0.5
 		Position: UDim2.new 1, -20, 0, 0
 		Size: UDim2.new 0, 20, 0, 20
-		
+
 	Create"ImageLabel"
 		Parent: Dev_CloseButton
 		BackgroundColor3: Color3.new 0, 0, 0
@@ -364,7 +364,7 @@ initializeDeveloperConsole = ->
 		Position: UDim2.new 0, 3, 0, 3
 		Size: UDim2.new 0, 14, 0, 14
 		Image: "http://www.roblox.com/Asset?id=151205852"
-		
+
 	Create"TextButton"
 		Name: "TextButton"
 		Parent: Dev_TitleBar
@@ -373,7 +373,7 @@ initializeDeveloperConsole = ->
 		Position: UDim2.new 0, 0, 0, 0
 		Size: UDim2.new 1, -23, 1, 0
 		Text: ""
-		
+
 	Create"TextLabel"
 		Name: "TitleText"
 		Parent: Dev_TitleBar
@@ -511,9 +511,9 @@ initializeDeveloperConsole = ->
 				offsetRatio = serverOffset / Dev_TextHolder.AbsoluteSize.Y
 
 
-			topRatio = math.max 0, backRatio - offsetRatio 
+			topRatio = math.max 0, backRatio - offsetRatio
 
-			scrollHandleSize = math.max Dev_ScrollArea.AbsoluteSize.Y * ratio, 21 
+			scrollHandleSize = math.max Dev_ScrollArea.AbsoluteSize.Y * ratio, 21
 
 			scrollRatio = scrollHandleSize / Dev_ScrollArea.AbsoluteSize.Y
 			ratioConversion = (1 - scrollRatio) / (1 - ratio)
@@ -599,7 +599,7 @@ initializeDeveloperConsole = ->
 					if (currentConsole == LOCAL_CONSOLE and localOffset > 0) or
 						(currentConsole == SERVER_CONSOLE and serverOffset > 0)
 
-						changeOffset message.TextBounds.Y 
+						changeOffset message.TextBounds.Y
 
 				message.Visible = true
 
@@ -654,7 +654,7 @@ initializeDeveloperConsole = ->
 		inside += 1
 		while scrollDownIsDown and inside < 2
 			wait!
-			changeOffset -12 
+			changeOffset -12
 
 		inside -= 1
 
@@ -714,7 +714,7 @@ initializeDeveloperConsole = ->
 
 
 	-- Easy, fast, and working nicely
-	numberWithZero = (num) -> 
+	numberWithZero = (num) ->
 		if num < 10
 			"0#{num}"
 		else
@@ -730,7 +730,7 @@ initializeDeveloperConsole = ->
 		hour = math.floor dayTime / 3600
 
 		dayTime -= hour * 3600
-		minute = math.floor dayTime / 60 
+		minute = math.floor dayTime / 60
 
 		dayTime -= minute * 60
 
@@ -901,7 +901,7 @@ initializeDeveloperConsole = ->
 
 	with game\GetService"LogService"
 		.MessageOut\connect (message, messageType) ->
-			AddLocalMessage message, messageType, os.time! 
+			AddLocalMessage message, messageType, os.time!
 		.ServerMessageOut\connect AddServerMessage
 
 currentlyToggling = false

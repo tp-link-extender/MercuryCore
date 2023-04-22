@@ -115,7 +115,7 @@ JsonWriter.ParseString = (s) =>
 JsonWriter.IsArray = (t) =>
 	count = 0
 	isindex = (k) ->
-		if type(k) == "number" and 
+		if type(k) == "number" and
 			k > 0 and
 			math.floor(k) == k
 
@@ -255,11 +255,11 @@ JsonReader.TestReservedWord = (t) =>
 JsonReader.ReadNumber ==>
 	result = @\Next!
 	peek = @\Peek!
-	while peek? and string.find peek, "[%+%-%d%.eE]" 
+	while peek? and string.find peek, "[%+%-%d%.eE]"
 		result ..= @\Next!
 		peek = @\Peek!
 
-	result = tonumber result 
+	result = tonumber result
 	if not result?
 		error string.format "Invalid number: '%s'", result
 	else
@@ -303,7 +303,7 @@ JsonReader.ReadBlockComment ==>
 			done = true
 
 		if not done and ch == "/" and @\Peek! == "*"
-			error string.format "Invalid comment: %s, '/*' illegal.", @\All! 
+			error string.format "Invalid comment: %s, '/*' illegal.", @\All!
 
 	@\Next!
 
@@ -389,12 +389,12 @@ JsonReader.All ==> @reader\All!
 
 Encode = (o) ->
 	with JsonWriter\New!
-		\Write o 
+		\Write o
 		\ToString!
 
 
 Decode = (s) ->
-	with JsonReader\New s 
+	with JsonReader\New s
 		\Read!
 
 -------------------- End JSON Parser ------------------------
@@ -569,7 +569,7 @@ t.SelectTerrainRegion = (regionToSelect, color, selectEmptyCells, selectionParen
 								SelectionPart: selectionPart
 								SelectionBox: selectionBox
 								KeepAlive: currentKeepAliveTag
-							
+
 							adornments[cellPos] = adornTable
 
 		cleanUpAdornments!
@@ -777,7 +777,7 @@ An example using the event syntax:
 local part = Create'Part'{
     [Create.E'Touched'] = function(part)
         print("I was touched by "..part.Name)
-    end,	
+    end,
 }
 
 
