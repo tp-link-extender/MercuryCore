@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 60595411")
 local t = { }
 local New
 New = function(className, name, props)

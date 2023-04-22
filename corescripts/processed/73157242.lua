@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 73157242")
 local t = { }
 local PlaneIntersection
 PlaneIntersection = function(vectorPos)

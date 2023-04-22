@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 53878057")
 if game.CoreGui.Version < 3 then
 	return
 end

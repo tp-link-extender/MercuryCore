@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 37801172")
 local scriptContext = game:GetService("ScriptContext")
 local touchEnabled = false
 pcall(function()

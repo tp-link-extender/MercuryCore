@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 46295863")
 local New
 New = function(className, name, props)
 	if not (props ~= nil) then

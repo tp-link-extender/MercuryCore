@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 -- this script creates the gui and sends the web requests for in game purchase prompts
 
 -- Heliodex's basic New function (basically a simplified version of melt)

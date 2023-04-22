@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 36868950")
 local controlFrame = script.Parent:FindFirstChild("ControlFrame")
 if not controlFrame then
 	return

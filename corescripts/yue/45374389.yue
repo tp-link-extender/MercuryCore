@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 t = {}
 
 t.Foo = -> print "foo"

@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 48488398")
 local waitForProperty
 waitForProperty = function(instance, property)
 	while not instance[property] do

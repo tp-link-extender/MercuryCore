@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded corescript 60595695")
 local deepakTestingPlace = 3569749
 local sc = game:GetService("ScriptContext")
 local tries = 0
