@@ -1,481 +1,1944 @@
-local a,b={},nil b=function(c)local d,e,f=false,game.Workspace.CurrentCamera,nil
-do local g=e.CoordinateFrame.p f=Vector3.new(g.X,g.Y,g.Z)end local g,h,i=Vector3
-.new(c.X,c.Y,c.Z),Vector3.new(0,1,0),Vector3.new(0,0,0)local j,k=h:Dot(g-f),c if
-j~=0 then a=h:Dot(i-f)/j if a>=0 and a<=1 then local l=((g-f)*a)+f k=game.
-Workspace.Terrain:WorldToCell(l)d=true end end return k,d end local c c=function
-(d)local e,f=game.Workspace.Terrain:WorldToCellPreferSolid(Vector3.new(d.hit.x,d
-.hit.y,d.hit.z)),nil if 0==game.Workspace.Terrain:GetCell(e.X,e.Y,e.Z).Value
-then e=nil local g f,g=b(Vector3.new(d.hit.x,d.hit.y,d.hit.z))if g then e=f end
-end return e end local d,e=Vector3.new(0.3,0.3,0.3),nil e=function(f,g,h)if f:
-IsA'BasePart'then f.CFrame=(g*(f.CFrame-h))+h end local i=f:GetChildren()for j=1
-,#i do e(i[j],g,h)end end local f f=function(g,h)local i,j=CFrame.Angles(0,h,0),
-g:GetModelCFrame().p return e(g,i,j)end local g g=function(h,i,j,k)if h:IsA
-'BasePart'then i[#i+1]=h elseif h:IsA'Script'then j[#j+1]=h elseif h:IsA'Decal'
-then k[#k+1]=h end for l,m in pairs(h:GetChildren())do g(m,i,j,k)end end local h
-h=function(i,j)local k=game.Workspace:FindFirstChild'Terrain'local l,m=k:
-WorldToCell(i),k:WorldToCell(j)local n,o,p,q,r,s=l.X,l.Y,l.Z,m.X,m.Y,m.Z if n<k.
-MaxExtents.Min.X then n=k.MaxExtents.Min.X end if o<k.MaxExtents.Min.Y then o=k.
-MaxExtents.Min.Y end if p<k.MaxExtents.Min.Z then p=k.MaxExtents.Min.Z end if q>
-k.MaxExtents.Max.X then q=k.MaxExtents.Max.X end if r>k.MaxExtents.Max.Y then r=
-k.MaxExtents.Max.Y end if s>k.MaxExtents.Max.Z then s=k.MaxExtents.Max.Z end for
-t=n,q do for u=o,r do for v=p,s do if k:GetCell(t,u,v).Value>0 then return true
-end end end end return false end local i i=function(j,k)if not j then return end
-if j.className=='Seat'or j.className=='VehicleSeat'then table.insert(k,j)end
-local l=j:GetChildren()for m=1,#l do i(l[m],k)end end local j j=function(k,l)
-local m={}i(k,m)if l then for n=1,#m do local o=m[n]:FindFirstChild'SeatWeld'
-while o do o:Remove()o=m[n]:FindFirstChild'SeatWeld'end end else for n=1,#m do
-local o=Instance.new'Weld'o.Name='SeatWeld'o.Parent=m[n]end end end local k k=
-function(l)local m=l:FindFirstChild'AutoAlignToFace'if m then return m.Value
-else return false end end local l l=function(m)local n,o,p=Vector3.new(1,0,0),
-Vector3.new(0,1,0),Vector3.new(0,0,1)local q,r,s=m.x*n.x+m.y*n.y+m.z*n.z,m.x*o.x
-+m.y*o.y+m.z*o.z,m.x*p.x+m.y*p.y+m.z*p.z if math.abs(q)>math.abs(r)and math.abs(
-q)>math.abs(s)then if q>0 then return 0 else return 3 end elseif math.abs(r)>
-math.abs(q)and math.abs(r)>math.abs(s)then if r>0 then return 1 else return 4
-end else if s>0 then return 2 else return 5 end end end local m m=function(n,o)
-local p if not o then return o end if o and(o:IsA'Model'or o:IsA'Tool')then p=o:
-GetModelCFrame()o:TranslateBy(n.p-p.p)else o.CFrame=n end return o end local n n
-=function(o,p,q)if math.abs(p)<0.01 then return 0 end return(q-o)/p end local o
-o=function(p,q,r)if not p then return 0 end local s,t if p:IsA'Model'then s=p:
-GetModelCFrame()t=p:GetModelSize()else s=p.CFrame t=p.Size end local u,v=s:
-pointToObjectSpace(q),s:pointToObjectSpace(r)local w,x,y,z=v-u,1,1,1 if w.X>0
-then x=-1 end if w.Y>0 then y=-1 end if w.Z>0 then z=-1 end local A,B,C,D=n(u.X,
-w.X,t.X/2*x),n(u.Y,w.Y,t.Y/2*y),n(u.Z,w.Z,t.Z/2*z),0 if A>B then if A>C then D=1
-*x else D=3*z end else if B>C then D=2*y else D=3*z end end return D end local p
-p=function(q)local r,s=Vector3.new(math.huge,math.huge,math.huge),Vector3.new(-
-math.huge,-math.huge,-math.huge)if q:IsA'Terrain'then r=Vector3.new(-2,-2,-2)s=
-Vector3.new(2,2,2)elseif q:IsA'BasePart'then r=-0.5*q.Size s=-r else s=q:
-GetModelSize()*0.5 r=-s end local t=q:FindFirstChild'Justification'if(t~=nil)
-then local u,v,w=t.Value,Vector3.new(2,2,2),s-r-Vector3.new(0.01,0.01,0.01)local
-x=Vector3.new(4*math.ceil(w.x/4),4*math.ceil(w.y/4),4*math.ceil(w.z/4))local y=x
--w r=r-(0.5*y*u)s=s+(0.5*y*(v-u))end return r,s end local q q=function(r)local s
-,t=Vector3.new(math.huge,math.huge,math.huge),Vector3.new(-math.huge,-math.huge,
--math.huge)if r:IsA'BasePart'and not r:IsA'Terrain'then local u,v=r.CFrame:
-pointToWorldSpace(-0.5*r.Size),r.CFrame:pointToWorldSpace(0.5*r.Size)s=Vector3.
-new(math.min(u.X,v.X),math.min(u.Y,v.Y),math.min(u.Z,v.Z))t=Vector3.new(math.
-max(u.X,v.X),math.max(u.Y,v.Y),math.max(u.Z,v.Z))elseif not r:IsA'Terrain'then
-local u,v=r:GetModelCFrame():pointToWorldSpace(-0.5*r:GetModelSize()),r:
-GetModelCFrame():pointToWorldSpace(0.5*r:GetModelSize())s=Vector3.new(math.min(u
-.X,v.X),math.min(u.Y,v.Y),math.min(u.Z,v.Z))t=Vector3.new(math.max(u.X,v.X),math
-.max(u.Y,v.Y),math.max(u.Z,v.Z))end return s,t end local r r=function(s)return
-p((function()if(s.Parent:FindFirstChild'RobloxModel'~=nil)then return s.Parent
-else return s end end)())end local s s=function(t)if(t.Parent:FindFirstChild
-'RobloxModel'~=nil)then if t.Parent:IsA'Tool'then return t.Parent.Handle.CFrame
-else return t.Parent:GetModelCFrame()end else return t.CFrame end end local t t=
-function(u)if not u then return false end if not u.Parent then return false end
-if u:FindFirstChild'Humanoid'then return false end if u:FindFirstChild
-'RobloxStamper'then return true end if u:IsA'Part'and not u.CanCollide then
-return false end if u==game.Lighting then return false end return t(u.Parent)end
-local u u=function(v,w,x)local y=game.Workspace:FindPartsInRegion3(Region3.new(
-Vector3.new(v.Position.X,w,v.Position.Z)-Vector3.new(0.75,2.75,0.75),Vector3.
-new(v.Position.X,w,v.Position.Z)+Vector3.new(0.75,1.75,0.75)),v.Parent,100)for z
-=1,#y do if y[z].CanCollide and not y[z]:IsDescendantOf(x.CurrentParts)then
-return false end end if h(Vector3.new(v.Position.X,w,v.Position.Z)-Vector3.new(
-0.75,2.75,0.75),Vector3.new(v.Position.X,w,v.Position.Z)+Vector3.new(0.75,1.75,
-0.75))then return false end return true end local v v=function(w,x)if not w then
-return end if not x then return error'findConfigAtMouseTarget: stampData is nil'
-end if not x['CurrentParts']then return end local y,z,A,B,C=4,false,CFrame.new(0
-,0,0),p(x.CurrentParts)local D,E=C-B,nil if x.CurrentParts:IsA'Model'or x.
-CurrentParts:IsA'Tool'then E=x.CurrentParts:GetModelCFrame()else E=x.
-CurrentParts.CFrame end if w then if x.CurrentParts:IsA'Tool'then w.TargetFilter
-=x.CurrentParts.Handle else w.TargetFilter=x.CurrentParts end end local F,G=
-false,nil local H=pcall(function()G=w.Target end)if not H then return z,A end
-local I=Vector3.new(0,0,0)if w then I=Vector3.new(w.Hit.x,w.Hit.y,w.Hit.z)end
-local J if nil==G then J=c(w)if nil==J then F=false return z,A else G=game.
-Workspace.Terrain F=true J=Vector3.new(J.X-1,J.Y,J.Z)I=game.Workspace.Terrain:
-CellCenterToWorld(J.x,J.y,J.z)end end local K,L K,L=r(G)local M,N=L-K,s(G)if G:
-IsA'Terrain'then if not cluster then cluster=game.Workspace:FindFirstChild
-'Terrain'end local O=cluster:WorldToCellPreferSolid(I)if F then O=J end N=CFrame
-.new(game.Workspace.Terrain:CellCenterToWorld(O.x,O.y,O.z))end local O,P=N:
-pointToObjectSpace(I),Vector3.new(0,0,0)if w then P=G.CFrame:vectorToWorldSpace(
-Vector3.FromNormalId(w.TargetSurface))end local Q,R,S if l(P)==0 then Q=N:
-vectorToObjectSpace(Vector3.new(1,-1,1))R=E:vectorToObjectSpace(Vector3.new(-1,-
-1,1))S=Vector3.new(0,1,1)elseif l(P)==3 then Q=N:vectorToObjectSpace(Vector3.
-new(-1,-1,-1))R=E:vectorToObjectSpace(Vector3.new(1,-1,-1))S=Vector3.new(0,1,1)
-elseif l(P)==1 then Q=N:vectorToObjectSpace(Vector3.new(-1,1,1))R=E:
-vectorToObjectSpace(Vector3.new(-1,-1,1))S=Vector3.new(1,0,1)elseif l(P)==4 then
-Q=N:vectorToObjectSpace(Vector3.new(-1,-1,1))R=E:vectorToObjectSpace(Vector3.
-new(-1,1,1))S=Vector3.new(1,0,1)elseif l(P)==2 then Q=N:vectorToObjectSpace(
-Vector3.new(-1,-1,1))R=E:vectorToObjectSpace(Vector3.new(-1,-1,-1))S=Vector3.
-new(1,1,0)else Q=N:vectorToObjectSpace(Vector3.new(1,-1,-1))R=E:
-vectorToObjectSpace(Vector3.new(1,-1,1))S=Vector3.new(1,1,0)end Q=Q*((0.5*M)+0.5
-*(L+K))R=R*((0.5*D)+0.5*(C+B))local T=O-Q local U=Vector3.new(y*math.modf(T.x/y)
-,y*math.modf(T.y/y),y*math.modf(T.z/y))U=U*S local V=U+Q local W,X=N:
-pointToWorldSpace(V),E:vectorToWorldSpace(R)local Y,Z,_,aa,ab,ac,ad,ae,af,ag,ah,
-ai,aj=W-X,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil aa,aa,aa,ab,ac,ad,ae,
-af,ag,ah,ai,aj=E:components()A=CFrame.new(Y.x,Y.y,Y.z,ab,ac,ad,ae,af,ag,ah,ai,aj
-)z=true return z,A,l(P)end local aa aa=function(ab,ac)local ad,ae=math.abs(ab),
-math.abs(ac)local af=math.sqrt(ad*ad+ae*ae)local ag,ah,ai=ae/af,1,1 if ab<0 then
-ah=-1 end if ac<0 then ai=-1 end if ag>0.382683432 then return 0.707106781*af*ah
-,0.707106781*af*ai else return af*ah,0 end end local ab ab=function(ac,ad,ae)if
-ac:IsA'ManualWeld'or ac:IsA'Rotate'then table.insert(ad,ac)return table.insert(
-ae,ac.Parent)else local af=ac:GetChildren()for ag=1,#af do ab(af[ag],ad,ae)end
-end end local ac ac=function(ad,ae)for af=1,#ad do ad[af].Parent=ae[af]end end a
-.CanEditRegion=function(ad,ae)if not ae then return true,false end local af,ag
-af,ag=q(ad)if af.X<ae.CFrame.p.X-ae.Size.X/2 or af.Y<ae.CFrame.p.Y-ae.Size.Y/2
-or af.Z<ae.CFrame.p.Z-ae.Size.Z/2 then return false,false end if ag.X>ae.CFrame.
-p.X+ae.Size.X/2 or ag.Y>ae.CFrame.p.Y+ae.Size.Y/2 or ag.Z>ae.CFrame.p.Z+ae.Size.
-Z/2 then return false,false end return true,false end a.GetStampModel=function(
-ad,ae,af)if ad==0 then return nil,'No Asset'end if ad<0 then return nil,
-'Negative Asset'end local ag ag=function(ah)if ah:IsA'BasePart'then ah.Locked=
-false end for ai,aj in pairs(ah:GetChildren())do ag(aj)end end local ah ah=
-function(ai)return BrickColor.new((function()if 1==ai then return'Bright green'
-elseif 2==ai then return'Bright yellow'elseif 3==ai then return'Bright red'
-elseif 4==ai then return'Sand red'elseif 5==ai then return'Black'elseif 6==ai
-then return'Dark stone grey'elseif 7==ai then return'Sand blue'elseif 8==ai then
-return'Deep orange'elseif 9==ai then return'Dark orange'elseif 10==ai then
-return'Reddish brown'elseif 11==ai then return'Light orange'elseif 12==ai then
-return'Light stone grey'elseif 13==ai then return'Sand green'elseif 14==ai then
-return'Medium stone grey'elseif 15==ai then return'Really red'elseif 16==ai then
-return'Really blue'elseif 17==ai then return'Bright blue'else return
-'Bright green'end end)())end local ai ai=function(aj,w,x)local y if w==1 or w==4
-then y=Instance.new'WedgePart'y.formFactor='Custom'elseif w==2 then y=Instance.
-new'CornerWedgePart'else y=Instance.new'Part'y.formFactor='Custom'end y.Name=
-'MegaClusterCube'y.Size=Vector3.new(4,4,4)y.BottomSurface='Smooth'y.TopSurface=
-'Smooth'y.BrickColor=ah(aj)local z,A=0,math.pi if w==4 then z=-math.pi/2 end if
-w==2 or w==3 then A=0 end y.CFrame=CFrame.Angles(0,math.pi/2*x+A,z)if w==3 then
-local B=Instance.new'SpecialMesh'B.MeshType='FileMesh'B.MeshId=
-'http://www.roblox.com/asset?id=66832495'B.Scale=Vector3.new(2,2,2)B.Parent=y
-end local B=Instance.new'Vector3Value'B.Value=Vector3.new(aj,w,x)B.Name=
-'ClusterMaterial'B.Parent=y return y end local aj,w,x=nil,nil,true if af then w=
-coroutine.create(function()aj=game:GetService'InsertService':LoadAssetVersion(ad
-)x=false end)coroutine.resume(w)else w=coroutine.create(function()aj=game:
-GetService'InsertService':LoadAsset(ad)x=false end)coroutine.resume(w)end local
-y,z,A=0,0,8 while x and z<A do y=tick()wait(1)z=z+(tick()-y)end x=false if z>=A
-then return nil,'Load Time Fail'end if aj==nil then return nil,'Load Asset Fail'
-end if not aj:IsA'Model'then return nil,'Load Type Fail'end local B=aj:
-GetChildren()if#B==0 then return nil,'Empty Model Fail'end ag(aj)aj=aj:
-GetChildren()[1]for C,D in pairs(B)do if D:IsA'Team'then D.Parent=game:
-GetService'Teams'elseif D:IsA'Sky'then local E=game:GetService'Lighting'for F,G
-in pairs(E:GetChildren())do if G:IsA'Sky'then G:Remove()end end D.Parent=E
-return end end if not(aj:FindFirstChild'RobloxModel'~=nil)then local E=Instance.
-new'BoolValue'E.Name='RobloxModel'E.Parent=aj if not(aj:FindFirstChild
-'RobloxStamper'~=nil)then local F=Instance.new'BoolValue'F.Name='RobloxStamper'F
-.Parent=aj end end if ae then if aj.Name=='MegaClusterCube'then if ae==6 then
-local E=Instance.new'BoolValue'E.Name='AutoWedge'E.Parent=aj else local E=aj:
-FindFirstChild'ClusterMaterial'if E then if E:IsA'Vector3Value'then aj=ai(E.
-Value.X,ae,E.Value.Z)else aj=ai(E.Value,ae,0)end else aj=ai(1,ae,0)end end end
-end return aj end a.SetupStamperDragger=function(ad,ae,af,ag,ah)if not ad then
-error
-[[SetupStamperDragger: modelToStamp (first arg) is nil!  Should be a stamper model]]
-return nil end if not ad:IsA'Model'and not ad:IsA'BasePart'then error
-[[SetupStamperDragger: modelToStamp (first arg) is neither a Model or Part!]]
-return nil end if not ae then error
-[[SetupStamperDragger: Mouse (second arg) is nil!  Should be a mouse object]]
-return nil end if not ae:IsA'Mouse'then error
-[[SetupStamperDragger: Mouse (second arg) is not of type Mouse!]]return nil end
-local ai,aj,w if af then if not af:IsA'Model'then error
-[[SetupStamperDragger: StampInModel (optional third arg) is not of type 'Model']]
-return nil end if not ag then error
-[[SetupStamperDragger: AllowedStampRegion (optional fourth arg) is nil when StampInModel (optional third arg) is defined]]
-return nil end w=ah ai=af aj=ag end local x,y,z,A=0,nil,nil,Instance.new
-'SelectionBox'A.Color=BrickColor.new'Bright red'A.Transparency=0 A.Archivable=
-false local B=Instance.new'Part'B.Parent=nil B.formFactor='Custom'B.Size=Vector3
-.new(4,4,4)B.CFrame=CFrame.new()B.Archivable=false local C=Instance.new
-'SelectionBox'C.Color=BrickColor.new'Toothpaste'C.Adornee=B C.Visible=true C.
-Transparency=0 C.Name='HighScalabilityStamperLine'C.Archivable=false local D={}D
-.Start=nil D.End=nil D.Adorn=C D.AdornPart=B D.InternalLine=nil D.NewHint=true D
-.MorePoints={nil,nil}D.MoreLines={nil,nil}D.Dimensions=1 local E,F,G,H,I,J,K={},
-false,false,false,{},nil,Instance.new'BoolValue'K.Archivable=false K.Value=false
-local L={}L.TerrainOrientation=0 L.CFrame=0 local M={}M.Material=1 M.clusterType
-=0 M.clusterOrientation=0 local N N=function()if not y then return false end if
-not y.CurrentParts then return false end return y.CurrentParts:FindFirstChild(
-'ClusterMaterial',true)or(y.CurrentParts.Name=='MegaClusterCube')end local O O=
-function()local P=y.CurrentParts:FindFirstChild'MegaClusterCube'if not P then if
-not y.CurrentParts.Name=='MegaClusterCube'then return else P=y.CurrentParts end
-end D.End=P.CFrame.p local Q,R,S=nil,Vector3.new(0,0,0),Vector3.new(0,0,0)if D.
-Dimensions==1 then Q=(D.End-D.Start)if math.abs(Q.X)<math.abs(Q.Y)then if math.
-abs(Q.X)<math.abs(Q.Z)then local T,U if math.abs(Q.Y)>math.abs(Q.Z)then T,U=aa(Q
-.Y,Q.Z)else U,T=aa(Q.Z,Q.Y)end Q=Vector3.new(0,T,U)else local T,U T,U=aa(Q.Y,Q.X
-)Q=Vector3.new(U,T,0)end else if math.abs(Q.Y)<math.abs(Q.Z)then local T,U if
-math.abs(Q.X)>math.abs(Q.Z)then T,U=aa(Q.X,Q.Z)else U,T=aa(Q.Z,Q.X)end Q=Vector3
-.new(T,0,U)else local T,U T,U=aa(Q.X,Q.Y)Q=Vector3.new(T,U,0)end end D.
-InternalLine=Q elseif D.Dimensions==2 then Q=D.MoreLines[1]R=D.End-D.MorePoints[
-1]R=R-(Q.unit*Q.unit:Dot(R))local T=CFrame.new(D.Start,D.Start+Q)local U,V=T:
-vectorToWorldSpace(Vector3.new(0,1,0)),T:vectorToWorldSpace(Vector3.new(1,0,0))
-local W,X=V:Dot(R),U:Dot(R)if math.abs(X)>math.abs(W)then R=R-(V*W)else R=R-(U*X
-)end D.InternalLine=R elseif D.Dimensions==3 then Q=D.MoreLines[1]R=D.MoreLines[
-2]S=D.End-D.MorePoints[2]S=S-(Q.unit*Q.unit:Dot(S))S=S-(R.unit*R.unit:Dot(S))D.
-InternalLine=S end local T=CFrame.new(D.Start,D.Start+Q)if D.Dimensions==1 then
-D.AdornPart.Size=Vector3.new(4,4,Q.magnitude+4)D.AdornPart.CFrame=T+T:
-vectorToWorldSpace(Vector3.new(2,2,2)-D.AdornPart.Size/2)else local U=T:
-vectorToObjectSpace(Q+R+S)D.AdornPart.Size=Vector3.new(4,4,4)+Vector3.new(math.
-abs(U.X),math.abs(U.Y),math.abs(U.Z))D.AdornPart.CFrame=T+T:vectorToWorldSpace(U
-/2)end local U if game.Players['LocalPlayer']then U=game.Players.LocalPlayer:
-FindFirstChild'PlayerGui'if U and U:IsA'PlayerGui'then if(D.Dimensions==1 and Q.
-magnitude>3)or D.Dimensions>1 then D.Adorn.Parent=U end end end if not(U~=nil)
-then U=game:GetService'CoreGui'if(D.Dimensions==1 and Q.magnitude>3)or D.
-Dimensions>1 then D.Adorn.Parent=U end end end local P P=function(Q)if not Q
-then error'Error: RbxStamper.DoStamperMouseMove: Mouse is nil'return end if not
-Q:IsA'Mouse'then error('Error: RbxStamper.DoStamperMouseMove: Mouse is of type',
-Q.className,'should be of type Mouse')return end if not Q.Target then local R=c(
-Q)if nil==R then return end end if not y then return end local R,S,T=v(Q,y)if
-not R then error'RbxStamper.DoStamperMouseMove No configFound, returning'return
-end local U=0 if k(y.CurrentParts)and T~=1 and T~=4 then if T==3 then U=0-x+k(y.
-CurrentParts)elseif T==0 then U=2-x+k(y.CurrentParts)elseif T==5 then U=3-x+k(y.
-CurrentParts)elseif T==2 then U=1-x+k(y.CurrentParts)end end local V=math.pi/2 x
-=x+U if y.CurrentParts:IsA'Model'or y.CurrentParts:IsA'Tool'then f(y.
-CurrentParts,V*U)else y.CurrentParts.CFrame=CFrame.fromEulerAnglesXYZ(0,V*U,0){y
-.CurrentParts.CFrame}end local W,X W,X=q(y.CurrentParts)local Y if y.
-CurrentParts:IsA'Model'then Y=y.CurrentParts:GetModelCFrame()else Y=y.
-CurrentParts.CFrame end W=W+(S.p-Y.p)X=X+(S.p-Y.p)if h(W+d,X-d)then if L.CFrame
-then if y.CurrentParts:FindFirstChild('ClusterMaterial',true)then local ak=y.
-CurrentParts:FindFirstChild('ClusterMaterial',true)if ak:IsA'Vector3Value'then
-local al=y.CurrentParts:FindFirstChild('ClusterMaterial',true)if al then al=
-clusterMat end end end end return end if N()then local ak=game.Workspace.Terrain
-:WorldToCell(S.p)local al,am,an,ao,ap,aq,ar,as,at,au,av,aw,ax=game.Workspace.
-Terrain:CellCenterToWorld(ak.X,ak.Y,ak.Z),nil,nil,nil,nil,nil,nil,nil,nil,nil,
-nil,nil,nil ao,ao,ao,ap,aq,ar,as,at,au,av,aw,ax=S:components()S=CFrame.new(al.X,
-al.Y,al.Z,ap,aq,ar,as,at,au,av,aw,ax)end m(S,y.CurrentParts)L.CFrame=S if y.
-CurrentParts:FindFirstChild('ClusterMaterial',true)then local ak=y.CurrentParts:
-FindFirstChild('ClusterMaterial',true)if ak:IsA'Vector3Value'then L.
-TerrainOrientation=ak.Value.Z end end if Q and Q.Target and Q.Target.Parent then
-local ak=Q.Target:FindFirstChild'RobloxModel'if not ak then ak=Q.Target.Parent:
-FindFirstChild'RobloxModel'end local al=y.CurrentParts:FindFirstChild
-'UnstampableFaces'do local ao,ap='',''if ak and ak.Parent:FindFirstChild
-'UnstampableFaces'then ao=ak.Parent.UnstampableFaces.Value end if al then ap=al.
-Value end local aq=0 if ak then aq=o(ak.Parent,game.Workspace.CurrentCamera.
-CoordinateFrame.p,Q.Hit.p)end for ar in string.gmatch(ao,'[^,]+')do if aq==
-tonumber(ar)then H=true game.JointsService:ClearJoinAfterMoveJoints()return end
-end aq=o(y.CurrentParts,Q.Hit.p,game.Workspace.CurrentCamera.CoordinateFrame.p)
-for as in string.gmatch(ap,'[^,]+')do if aq==tonumber(as)then H=true game.
-JointsService:ClearJoinAfterMoveJoints()return end end end end H=false game.
-JointsService:SetJoinAfterMoveInstance(y.CurrentParts)if(not pcall(function()if
-Q and Q.Target and not(Q.Target.Parent:FindFirstChild'RobloxModel'~=nil)then
-return else return end end))then error
-[[Error: RbxStamper.DoStamperMouseMove Mouse is nil on second check]]game.
-JointsService:ClearJoinAfterMoveJoints()Q=nil return end if Q and Q.Target and
-not(Q.Target.Parent:FindFirstChild'RobloxModel'~=nil)then game.JointsService:
-SetJoinAfterMoveTarget(Q.Target)else game.JointsService:SetJoinAfterMoveTarget(
-nil)end game.JointsService:ShowPermissibleJoints()if N()and D and D.Start then
-return O()end end local ak ak=function(al,ao)if E and E['Paused']then return end
-al=string.lower(al)if al=='r'and not k(y.CurrentParts)then x=x+1 local ap=y.
-CurrentParts:FindFirstChild('ClusterMaterial',true)if ap and ap:IsA
-'Vector3Value'then ap.Value=Vector3.new(ap.Value.X,ap.Value.Y,(ap.Value.Z+1)%4)
-end local aq=math.pi/2 if y.CurrentParts:IsA'Model'or y.CurrentParts:IsA'Tool'
-then f(y.CurrentParts,aq)else y.CurrentParts.CFrame=CFrame.fromEulerAnglesXYZ(0,
-aq,0)*y.CurrentParts.CFrame end local as,at=v(ao,y)if as then m(at,y.
-CurrentParts)return P(ao)end elseif al=='c'then if D.InternalLine and D.
-InternalLine.magnitude>0 and D.Dimensions<3 then D.MorePoints[D.Dimensions]=D.
-End D.MoreLines[D.Dimensions]=D.InternalLine D.Dimensions=D.Dimensions+1 D.
-NewHint=true end end end J=ae.KeyDown:connect(function(al)return ak(al,ae)end)
-local al al=function()if D then D.Start=nil D.End=nil D.InternalLine=nil D.
-NewHint=true end end local ao ao=function()local ap=game.CoreGui if game:
-FindFirstChild'Players'then if game.Players['LocalPlayer']then if game.Players.
-LocalPlayer:FindFirstChild'PlayerGui'then ap=game.Players.LocalPlayer.PlayerGui
-end end end if not y['ErrorBox']then return end y.ErrorBox.Parent=ap if y.
-CurrentParts:IsA'Tool'then y.ErrorBox.Adornee=y.CurrentParts.Handle else y.
-ErrorBox.Adornee=y.CurrentParts end return delay(0,function()for aq=1,3 do if y[
-'ErrorBox']then y.ErrorBox.Visible=true end wait(0.13)if y['ErrorBox']then y.
-ErrorBox.Visible=false end wait(0.13)end if y['ErrorBox']then y.ErrorBox.Adornee
-=nil y.ErrorBox.Parent=Tool end end)end local ap ap=function(aq)if not aq then
-error'Error: RbxStamper.DoStamperMouseDown: Mouse is nil'return end if not aq:
-IsA'Mouse'then error('Error: RbxStamper.DoStamperMouseDown: Mouse is of type',aq
-.className,'should be of type Mouse')return end if not y then return end if N()
-then if aq and D then local as,at=y.CurrentParts:FindFirstChild(
-'MegaClusterCube',true),game.Workspace.Terrain if as then D.Dimensions=1 local
-au=at:WorldToCell(as.CFrame.p)D.Start=at:CellCenterToWorld(au.X,au.Y,au.Z)return
-else D.Dimensions=1 local au=at:WorldToCell(y.CurrentParts.CFrame.p)D.Start=at:
-CellCenterToWorld(au.X,au.Y,au.Z)return end end end end local aq aq=function(as,
-at)as.TopSurface=at[1]as.BottomSurface=at[2]as.LeftSurface=at[3]as.RightSurface=
-at[4]as.FrontSurface=at[5]as.BackSurface=at[6]return as end local as as=function
-(at,au)local av={}av[1]=at.TopSurface av[2]=at.BottomSurface av[3]=at.
-LeftSurface av[4]=at.RightSurface av[5]=at.FrontSurface av[6]=at.BackSurface au[
-at]=av end local at at=function(au)if not au then return nil end local av,aw,ax,
-Q,R,S=0.7,1,au:Clone(),{},{},{}y={}y.DisabledScripts={}y.TransparencyTable={}y.
-MaterialTable={}y.CanCollideTable={}y.AnchoredTable={}y.ArchivableTable={}y.
-DecalTransparencyTable={}y.SurfaceTypeTable={}g(ax,R,Q,S)if#R<=0 then return nil
-,'no parts found in modelToStamp'end for T,U in pairs(Q)do if not U.Disabled
-then U.Disabled=true y.DisabledScripts[#y.DisabledScripts+1]=U end end for V,W
-in pairs(R)do y.TransparencyTable[W]=W.Transparency W.Transparency=aw+(1-aw)*W.
-Transparency y.MaterialTable[W]=W.Material W.Material=Enum.Material.Plastic y.
-CanCollideTable[W]=W.CanCollide W.CanCollide=false y.AnchoredTable[W]=W.Anchored
-W.Anchored=true y.ArchivableTable[W]=W.Archivable W.Archivable=false as(W,y.
-SurfaceTypeTable)local X,Y=0.5,0.5 delay(0,function()wait(X)local ay=tick()local
-az=ay while(az-ay)<Y and W and W:IsA'BasePart'and W.Transparency>av do local aA=
-1-(((az-ay)/Y)*(aw-av))if y['TransparencyTable']and y.TransparencyTable[W]then W
-.Transparency=aA+(1-aA)*y.TransparencyTable[W]end wait(0.03)az=tick()end if W
-and W:IsA'BasePart'then if y['TransparencyTable']and y.TransparencyTable[W]then
-W.Transparency=av+(1-av)*y.TransparencyTable[W]end end end)end for ay,az in
-pairs(S)do y.DecalTransparencyTable[az]=az.Transparency az.Transparency=av+(1-av
-)*az.Transparency end j(ax,true)j(ax,false)y.CurrentParts=ax if k(ax)then y.
-CurrentParts:ResetOrientationToIdentity()x=0 else local aA=x*math.pi/2 if y.
-CurrentParts:IsA'Model'or y.CurrentParts:IsA'Tool'then f(y.CurrentParts,aA)else
-y.CurrentParts.CFrame=CFrame.fromEulerAnglesXYZ(0,aA,0)*y.CurrentParts.CFrame
-end end local aA=y.CurrentParts:FindFirstChild('ClusterMaterial',true)if aA and
-aA:IsA'Vector3Value'then aA.Value=Vector3.new(aA.Value.X,aA.Value.Y,(aA.Value.Z+
-x)%4)end local X,Y X,Y=v(ae,y)if X then y.CurrentParts=m(Y,y.CurrentParts)end
-game.JointsService:SetJoinAfterMoveInstance(y.CurrentParts)return ax,R end local
-au au=function(av,aw)local ax=game.Workspace.Terrain.CellCenterToWorld local ay=
-ax(game.Workspace.Terrain,av.X,av.Y,av.Z)local az,aA=game.Workspace:
-FindPartsInRegion3(Region3.new(ay-Vector3.new(2,2,2)+d,ay+Vector3.new(2,2,2)-d),
-y.CurrentParts,100),false for Q=1,#az do if t(az[Q])then aA=true break end end
-if not aA then local Q={}for R=1,#az do if az[R].Parent and not Q[az[R].Parent]
-and az[R].Parent:FindFirstChild(az[R].Parent:FindFirstChild'Humanoid':IsA
-'Humanoid')then local S=az[R].Parent:FindFirstChild'Torso'Q[az[R].Parent]=true
-if S then local U=ay.Y+5 if u(S,U,y)then S.CFrame=S.CFrame+Vector3.new(0,U-S.
-CFrame.p.Y,0)else aA=true break end end end end end if not aA then local Q=true
-if aw then if aj then av=ax(game.Workspace.Terrain,av.X,av.Y,av.Z)if(av.X+2>aj.
-CFrame.p.X+aj.Size.X/2)or(av.X-2<aj.CFrame.p.X-aj.Size.X/2)or(av.Y+2>aj.CFrame.p
-.Y+aj.Size.Y/2)or(av.Y-2<aj.CFrame.p.Y-aj.Size.Y/2)or(av.Z+2>aj.CFrame.p.Z+aj.
-Size.Z/2)or(av.Z-2<aj.CFrame.p.Z-aj.Size.Z/2)then Q=false end end end return Q
-end return false end local av av=function(aw)local ax,ay,az,aA,Q,R,S,U,W=false,
-game.Workspace.Terrain,D.InternalLine,game.Workspace.Terrain.MaxExtents.Max,game
-.Workspace.Terrain.MaxExtents.Min,1,0,0,false if y.CurrentParts:FindFirstChild
-'AutoWedge'then W=true end if y.CurrentParts:FindFirstChild('ClusterMaterial',
-true)then R=y.CurrentParts:FindFirstChild('ClusterMaterial',true)if R:IsA
-'Vector3Value'then S=R.Value.Y U=R.Value.Z R=R.Value.X elseif R:IsA'IntValue'
-then R=R.Value end end if D.Adorn.Parent and D.Start and((D.Dimensions>1)or(az
-and az.magnitude>0))then local X,Y,aB,aC,aD,aE,aF,aG=game.Workspace.Terrain:
-WorldToCell(D.Start),{0,0,0},{0,0,0},{0,0,0},{nil,nil,nil},{Vector3.new(0,0,0),
-Vector3.new(0,0,0),Vector3.new(0,0,0)},{Vector3.new(1,0,0),Vector3.new(0,1,0),
-Vector3.new(0,0,1)},{}if D.Dimensions>1 then table.insert(aG,D.MoreLines[1])end
-if az and az.magnitude>0 then table.insert(aG,az)end if D.Dimensions>2 then
-table.insert(aG,D.MoreLines[2])end for aH=1,#aG do aG[aH]=Vector3.new(math.
-floor(aG[aH].X+0.5),math.floor(aG[aH].Y+0.5),math.floor(aG[aH].Z+0.5))if aG[aH].
-X>0 then Y[aH]=1 elseif aG[aH].X<0 then Y[aH]=-1 end if aG[aH].Y>0 then aB[aH]=1
-elseif aG[aH].Y<0 then aB[aH]=-1 end if aG[aH].Z>0 then aC[aH]=1 elseif aG[aH].Z
-<0 then aC[aH]=-1 end aD[aH]=Vector3.new(Y[aH],aB[aH],aC[aH])if aD[aH].magnitude
-<0.9 then aD[aH]=nil end end if not aG[2]then aG[2]=Vector3.new(0,0,0)end if not
-aG[3]then aG[3]=Vector3.new(0,0,0)end local aH,aI=y.CurrentParts:FindFirstChild(
-'WaterForceTag',true),y.CurrentParts:FindFirstChild('WaterForceDirectionTag',
-true)while aE[3].magnitude*4<=aG[3].magnitude do local aJ=1 while aJ<4 do aE[2]=
-Vector3.new(0,0,0)while aE[2].magnitude*4<=aG[2].magnitude do local aK=1 while
-aK<4 do aE[1]=Vector3.new(0,0,0)while aE[1].magnitude*4<=aG[1].magnitude do
-local aL=aE[1]+aE[2]+aE[3]local aM=Vector3int16.new(X.X+aL.X,X.Y+aL.Y,X.Z+aL.Z)
-if aM.X>=Q.X and aM.Y>=Q.Y and aM.Z>=Q.Z and aM.X<aA.X and aM.Y<aA.Y and aM.Z<aA
-.Z then local aN=au(aM,aw)if aN then if aH then ay:SetWaterCell(aM.X,aM.Y,aM.Z,
-Enum.WaterForce[aH.Value],Enum.WaterDirection[aI.Value])else ay:SetCell(aM.X,aM.
-Y,aM.Z,R,S,U)end ax=true if W then game.Workspace.Terrain:AutowedgeCells(
-Region3int16.new(Vector3int16.new(aM.x-1,aM.y-1,aM.z-1),Vector3int16.new(aM.x+1,
-aM.y+1,aM.z+1)))end end end aE[1]=aE[1]+aD[1]end if aD[2]then while aK<4 and aF[
-aK]:Dot(aD[2])==0 do aK=aK+1 end if aK<4 then aE[2]=aE[2]+aF[aK]*aF[aK]:Dot(aD[2
-])end aK=aK+1 else aE[2]=Vector3.new(1,0,0)aK=4 end if aE[2].magnitude*4>aG[2].
-magnitude then aK=4 end end end if aD[3]then while aJ<4 and aF[aJ]:Dot(aD[3])==0
-do aJ=aJ+1 end if aJ<4 then aE[3]=aE[3]+aF[aJ]*aF[aJ]:Dot(aD[3])end aJ=aJ+1 else
-aE[3]=Vector3.new(1,0,0)aJ=4 end if aE[3].magnitude*4>aG[3].magnitude then aJ=4
-end end end end D.Start=nil D.Adorn.Parent=nil if ax then y.CurrentParts.Parent=
-nil pcall(function()return game:GetService'ChangeHistoryService':SetWaypoint
-'StamperMulti'end)end return ax end local aw aw=function(ax)if not ax then error
-'Error: RbxStamper.DoStamperMouseUp: Mouse is nil'return false end if not ax:IsA
-'Mouse'then error('Error: RbxStamper.DoStamperMouseUp: Mouse is of type',ax.
-className,'should be of type Mouse')return false end if not y.Dragger then error
-[[Error: RbxStamper.DoStamperMouseUp: stampData.Dragger is nil]]return false end
-if not D then return false end local ay if ai then local az,aA=nil,N()if aA and
-D and D.Start and D.InternalLine and D.InternalLine.magnitude>0 then az=true ay=
-true else az,ay=a.CanEditRegion(y.CurrentParts,aj)end if not az then if w then
-w()end return false end end if H then ao()return false end local az az,ay=a.
-CanEditRegion(y.CurrentParts,aj)if not az then if w then w()end return false end
-local aA,aB aA,aB=q(y.CurrentParts)local aC,aD=v(ax,y)if aC and not D.Adorn.
-Parent then if h(aA+d,aB-d)then ao()return false end local aE=game.Workspace:
-FindPartsInRegion3(Region3.new(aA+d,aB-d),y.CurrentParts,100)for aF=1,#aE do if
-t(aE[aF])then ao()return false end end local aF={}for aG=1,#aE do if aE[aG].
-Parent and not aF[aE[aG].Parent]and aE[aG].Parent:FindFirstChild'Humanoid'and aE
-[aG].Parent:FindFirstChild'Humanoid':IsA'Humanoid'then local aH=aE[aG].Parent:
-FindFirstChild'Torso'aF[aE[aG].Parent]=true if aH then local aI=aB.Y+3 if u(aH,
-aI,y)then aH.CFrame=aH.CFrame+Vector3.new(0,aI-aH.CFrame.p.Y,0)else ao()return
-false end end end end elseif(not aC)and not(D.Start and D.Adorn.Parent)then al()
-return false end if game:FindFirstChild'Players'then if game.Players[
-'LocalPlayer']then if game.Players.LocalPlayer['Character']then local aE=game.
-Players.LocalPlayer.Character local aF=aE:FindFirstChild'StampTracker'if aF and
-not aF.Value then aF.Value=true end end end end if D.Start and D.Adorn.Parent
-and N()then if av(ay)or ay then y.CurrentParts.Parent=nil return true end end D.
-Start=nil D.Adorn.Parent=nil local aE=game.Workspace.Terrain if N()then local aF
-if y.CurrentParts:IsA'Model'then aF=aE:WorldToCell(y.CurrentParts:
-GetModelCFrame().p)else aF=aE:WorldToCell(y.CurrentParts.CFrame.p)end local aG,
-aH=game.Workspace.Terrain.MaxExtents.Max,game.Workspace.Terrain.MaxExtents.Min
-if au(aF,false)then local aI,aJ,aK=y.CurrentParts:FindFirstChild(
-'ClusterMaterial',true),y.CurrentParts:FindFirstChild('WaterForceTag',true),y.
-CurrentParts:FindFirstChild('WaterForceDirectionTag',true)if aF.X>=aH.X and aF.Y
->=aH.Y and aF.Z>=aH.Z and aF.X<aG.X and aF.Y<aG.Y and aF.Z<aG.Z then if aJ then
-aE:SetWaterCell(aF.X,aF.Y,aF.Z,Enum.WaterForce[aJ.Value],Enum.WaterDirection[aK.
-Value])elseif not aI then aE:SetCell(aF.X,aF.Y,aF.Z,M.Material,M.clusterType,x%4
-)elseif aI:IsA'Vector3Value'then aE:SetCell(aF.X,aF.Y,aF.Z,aI.Value.X,aI.Value.Y
-,aI.Value.Z)else aE:SetCell(aF.X,aF.Y,aF.Z,aI.Value,0,0)end local aL=false if y.
-CurrentParts:FindFirstChild'AutoWedge'then aL=true end if aL then game.Workspace
-.Terrain:AutowedgeCells(Region3int16.new(Vector3int16.new(aF.x-1,aF.y-1,aF.z-1),
-Vector3int16.new(aF.x+1,aF.y+1,aF.z+1)))end y.CurrentParts.Parent=nil pcall(
-function()return game:GetService'ChangeHistoryService':SetWaypoint
-'StamperSingle'end)return true end else ao()return false end end local aF aF=
-function()if game:FindFirstChild'Players'then if game.Players['LocalPlayer']then
-return game.Players.LocalPlayer end end return nil end if y.CurrentParts:IsA
-'Model'or y.CurrentParts:IsA'Tool'then if y.CurrentParts:IsA'Model'then local aG
-,aH={},{}ab(y.CurrentParts,aG,aH)y.CurrentParts:BreakJoints()y.CurrentParts:
-MakeJoints()ac(aG,aH)end local aG,aH=y.CurrentParts:FindFirstChild'PlayerIdTag',
-y.CurrentParts:FindFirstChild'PlayerNameTag'if(aG~=nil)then local aI=aF()if(aI~=
-nil)then aG.Value=aI.userId end end if(aH~=nil)then if game:FindFirstChild(game.
-Players['LocalPlayer'])then local aI=game.Players.LocalPlayer if(aI~=nil)then aH
-.Value=aI.Name end end end if not(y.CurrentParts:FindFirstChild'RobloxModel'~=
-nil)then local aI=Instance.new'BoolValue'aI.Name='RobloxModel'aI.Parent=y.
-CurrentParts if not(y.CurrentParts:FindFirstChild'RobloxStamper'~=nil)then local
-aJ=Instance.new'BoolValue'aJ.Name='RobloxStamper'aJ.Parent=y.CurrentParts end
-end else y.CurrentParts:BreakJoints()if not(y.CurrentParts:FindFirstChild
-'RobloxStamper'~=nil)then local aG=Instance.new'BoolValue'aG.Name=
-'RobloxStamper'aG.Parent=y.CurrentParts end end if not createJoints then game.
-JointsService:CreateJoinAfterMoveJoints()end for aG,aH in pairs(y.
-TransparencyTable)do aG.Transparency=aH end for aI,aJ in pairs(y.ArchivableTable
-)do aI.Archivable=aJ end for aK,aL in pairs(y.MaterialTable)do aK.Material=aL
-end for aM,aN in pairs(y.CanCollideTable)do aM.CanCollide=aN end for Q,R in
-pairs(y.AnchoredTable)do Q.Anchored=R end for S,U in pairs(y.
-DecalTransparencyTable)do S.Transparency=U end for W,X in pairs(y.
-SurfaceTypeTable)do aq(W,X)end if N()then y.CurrentParts.Transparency=0 end j(y.
-CurrentParts,true)y.TransparencyTable=nil y.ArchivableTable=nil y.MaterialTable=
-nil y.CanCollideTable=nil y.AnchoredTable=nil y.SurfaceTypeTable=nil if not(y.
-CurrentParts:FindFirstChild'RobloxModel'~=nil)then local Y=Instance.new
-'BoolValue'Y.Name='RobloxModel'Y.Parent=y.CurrentParts end if ghostRemovalScript
-then ghostRemovalScript.Parent=nil end for Y,aO in pairs(y.DisabledScripts)do aO
-.Disabled=false end for aP,aQ in pairs(y.DisabledScripts)do local aR=aQ.Parent
-aQ.Parent=nil aQ:Clone().Parent=aR end y.DisabledScripts=nil y.Dragger=nil y.
-CurrentParts=nil pcall(function()return game:GetService'ChangeHistoryService':
-SetWaypoint'StampedObject'end)return true end local ax ax=function()for ay=1,#I
-do I[ay]:disconnect()I[ay]=nil end I={}if y and y.CurrentParts then y.
-CurrentParts.Parent=nil y.CurrentParts:Remove()end al()return game.JointsService
-:ClearJoinAfterMoveJoints()end local ay ay=function(az,aA,aB)local aC,aD={
-Vector3.new(1,0,0),Vector3.new(0,1,0),Vector3.new(0,0,1)},1 if aB<0 then aD=aD*(
--1)aB=aB*(-1)end local aE=aD*az:vectorToWorldSpace(aC[aB])for aF=1,#aA do local
-aJ=aA[aF]local aL=aJ.CFrame:vectorToObjectSpace(aE)if math.abs(aL.X)>math.abs(aL
-.Y)then if math.abs(aL.X)>math.abs(aL.Z)then if aL.X>0 then aJ.RightSurface=
-'Unjoinable'else aJ.LeftSurface='Unjoinable'end else if aL.Z>0 then aJ.
-BackSurface='Unjoinable'else aJ.FrontSurface='Unjoinable'end end else if math.
-abs(aL.Y)>math.abs(aL.Z)then if aL.Y>0 then aJ.TopSurface='Unjoinable'else aJ.
-BottomSurface='Unjoinable'end else if aL.Z>0 then aJ.BackSurface='Unjoinable'
-else aJ.FrontSurface='Unjoinable'end end end end end local az az=function()local
-aA,aB=at(ad)if not aA or not aB then return end local aC=aA:FindFirstChild(
-'UnjoinableFaces',true)if aC then for aD in string.gmatch(aC.Value,'[^,]*')do if
-tonumber(aD)then if aA:IsA'Model'then ay(aA:GetModelCFrame(),aB,tonumber(aD))
-else ay(aA.CFrame,aB,tonumber(aD))end end end end y.ErrorBox=A if ai then aA.
-Parent=ai else aA.Parent=game.Workspace end if aA:FindFirstChild(
-'ClusterMaterial',true)then local aD=aA:FindFirstChild('ClusterMaterial',true)if
-aD:IsA'Vector3Value'then M.Material=aD.Value.X M.clusterType=aD.Value.Y M.
-clusterOrientation=aD.Value.Z elseif aD:IsA'IntValue'then M.Material=aD.Value
-end end pcall(function()z=ae.Target end)if z and not(z.Parent:FindFirstChild
-'RobloxModel'~=nil)then game.JointsService:SetJoinAfterMoveTarget(z)else game.
-JointsService:SetJoinAfterMoveTarget(nil)end game.JointsService:
-ShowPermissibleJoints()for aD,aE in pairs(y.DisabledScripts)do if aE.Name==
-'GhostRemovalScript'then aE.Parent=y.CurrentParts end end y.Dragger=Instance.new
-'Dragger'y.Dragger:MouseDown(aB[1],Vector3.new(0,0,0,aB))y.Dragger:MouseUp()P(ae
-)table.insert(I,ae.Move:connect(function()if F or G then return end F=true P(ae)
-F=false end))table.insert(I,ae.Button1Down:connect(function()return ap(ae)end))
-table.insert(I,ae.Button1Up:connect(function()G=true while F do wait()end K.
-Value=aw(ae)al()G=false end))K.Value=false end local aA aA=function(aB)if aB
-then if not aB:IsA'Model'and not aB:IsA'BasePart'then error
-[[resetStamperState: newModelToStamp (first arg) is not nil, but not a model or part!]]
-end ad=aB end ax()return az()end aA()E.Stamped=K E.Paused=false E.LoadNewModel=
-function(aB)if aB and not aB:IsA'Model'and not aB:IsA'BasePart'then error
-[[Control.LoadNewModel: newStampModel (first arg) is not a Model or Part!]]
-return nil end return aA(aB)end E.ReloadModel=function()return aA()end E.Pause=
-function()if not E.Paused then ax()E.Paused=true else return print
-[[RbxStamper Warning: Tried to call Control.Pause! when already paused]]end end
-E.Resume=function()if E.Paused then az()E.Paused=false else return print
-[[RbxStamper Warning: Tried to call Control.Resume! without Pausing First]]end
-end E.ResetRotation=function()end E.Destroy=function()for aB=1,#I do I[aB]:
-disconnect()I[aB]=nil end if J~=nil then J:disconnect()end game.JointsService:
-ClearJoinAfterMoveJoints()if C~=nil then C:Destroy()end if B~=nil then B:
-Destroy()end if A~=nil then A:Destroy()end if y~=nil then do local aB=y.Dragger
-if aB~=nil then aB:Destroy()end end end if y~=nil then do local aB=y.
-CurrentParts if aB~=nil then aB:Destroy()end end end if E and E['Stamped']then E
-.Stamped:Destroy()end E=nil end return E end a.Help=function(ad)if
-'GetStampModel'==ad or a.GetStampModel==ad then return
-[[Function GetStampModel.  Arguments: assetId, useAssetVersionId.  assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId.  Side effect: returns a model of the assetId, or a string with error message if something fails]]
-elseif'SetupStamperDragger'==ad or a.SetupStamperDragger==ad then return
-[[Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4.  Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action.]]
-end end return a
+local t = { }
+local PlaneIntersection
+PlaneIntersection = function(vectorPos)
+	local hit = false
+	local currCamera = game.Workspace.CurrentCamera
+	local startPos
+	do
+		local _with_0 = currCamera.CoordinateFrame.p
+		startPos = Vector3.new(_with_0.X, _with_0.Y, _with_0.Z)
+	end
+	local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
+	local normal = Vector3.new(0, 1, 0)
+	local p3 = Vector3.new(0, 0, 0)
+	local startEndDot = normal:Dot(endPos - startPos)
+	local cellPos = vectorPos
+	if startEndDot ~= 0 then
+		t = normal:Dot(p3 - startPos) / startEndDot
+		if t >= 0 and t <= 1 then
+			local intersection = ((endPos - startPos) * t) + startPos
+			cellPos = game.Workspace.Terrain:WorldToCell(intersection)
+			hit = true
+		end
+	end
+	return cellPos, hit
+end
+local GetTerrainForMouse
+GetTerrainForMouse = function(mouse)
+	local cell = game.Workspace.Terrain:WorldToCellPreferSolid(Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z))
+	local planeLoc
+	if 0 == game.Workspace.Terrain:GetCell(cell.X, cell.Y, cell.Z).Value then
+		cell = nil
+		local hit
+		planeLoc, hit = PlaneIntersection(Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z))
+		if hit then
+			cell = planeLoc
+		end
+	end
+	return cell
+end
+local insertBoundingBoxOverlapVector = Vector3.new(0.3, 0.3, 0.3)
+local rotatePartAndChildren
+rotatePartAndChildren = function(part, rotCF, offsetFromOrigin)
+	if part:IsA("BasePart") then
+		part.CFrame = (rotCF * (part.CFrame - offsetFromOrigin)) + offsetFromOrigin
+	end
+	local partChildren = part:GetChildren()
+	for c = 1, #partChildren do
+		rotatePartAndChildren(partChildren[c], rotCF, offsetFromOrigin)
+	end
+end
+local modelRotate
+modelRotate = function(model, yAngle)
+	local rotCF = CFrame.Angles(0, yAngle, 0)
+	local offsetFromOrigin = model:GetModelCFrame().p
+	return rotatePartAndChildren(model, rotCF, offsetFromOrigin)
+end
+local collectParts
+collectParts = function(object, baseParts, scripts, decals)
+	if object:IsA("BasePart") then
+		baseParts[#baseParts + 1] = object
+	elseif object:IsA("Script") then
+		scripts[#scripts + 1] = object
+	elseif object:IsA("Decal") then
+		decals[#decals + 1] = object
+	end
+	for _, child in pairs(object:GetChildren()) do
+		collectParts(child, baseParts, scripts, decals)
+	end
+end
+local clusterPartsInRegion
+clusterPartsInRegion = function(startVector, endVector)
+	local cluster = game.Workspace:FindFirstChild("Terrain")
+	local startCell = cluster:WorldToCell(startVector)
+	local endCell = cluster:WorldToCell(endVector)
+	local startX = startCell.X
+	local startY = startCell.Y
+	local startZ = startCell.Z
+	local endX = endCell.X
+	local endY = endCell.Y
+	local endZ = endCell.Z
+	if startX < cluster.MaxExtents.Min.X then
+		startX = cluster.MaxExtents.Min.X
+	end
+	if startY < cluster.MaxExtents.Min.Y then
+		startY = cluster.MaxExtents.Min.Y
+	end
+	if startZ < cluster.MaxExtents.Min.Z then
+		startZ = cluster.MaxExtents.Min.Z
+	end
+	if endX > cluster.MaxExtents.Max.X then
+		endX = cluster.MaxExtents.Max.X
+	end
+	if endY > cluster.MaxExtents.Max.Y then
+		endY = cluster.MaxExtents.Max.Y
+	end
+	if endZ > cluster.MaxExtents.Max.Z then
+		endZ = cluster.MaxExtents.Max.Z
+	end
+	for x = startX, endX do
+		for y = startY, endY do
+			for z = startZ, endZ do
+				if cluster:GetCell(x, y, z).Value > 0 then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+local findSeatsInModel
+findSeatsInModel = function(parent, seatTable)
+	if not parent then
+		return
+	end
+	if parent.className == "Seat" or parent.className == "VehicleSeat" then
+		table.insert(seatTable, parent)
+	end
+	local myChildren = parent:GetChildren()
+	for j = 1, #myChildren do
+		findSeatsInModel(myChildren[j], seatTable)
+	end
+end
+local setSeatEnabledStatus
+setSeatEnabledStatus = function(model, isEnabled)
+	local seatList = { }
+	findSeatsInModel(model, seatList)
+	if isEnabled then
+		for i = 1, #seatList do
+			local nextSeat = seatList[i]:FindFirstChild("SeatWeld")
+			while nextSeat do
+				nextSeat:Remove()
+				nextSeat = seatList[i]:FindFirstChild("SeatWeld")
+			end
+		end
+	else
+		for i = 1, #seatList do
+			local fakeWeld = Instance.new("Weld")
+			fakeWeld.Name = "SeatWeld"
+			fakeWeld.Parent = seatList[i]
+		end
+	end
+end
+local autoAlignToFace
+autoAlignToFace = function(parts)
+	local aatf = parts:FindFirstChild("AutoAlignToFace")
+	if aatf then
+		return aatf.Value
+	else
+		return false
+	end
+end
+local getClosestAlignedWorldDirection
+getClosestAlignedWorldDirection = function(aVector3InWorld)
+	local xDir = Vector3.new(1, 0, 0)
+	local yDir = Vector3.new(0, 1, 0)
+	local zDir = Vector3.new(0, 0, 1)
+	local xDot = aVector3InWorld.x * xDir.x + aVector3InWorld.y * xDir.y + aVector3InWorld.z * xDir.z
+	local yDot = aVector3InWorld.x * yDir.x + aVector3InWorld.y * yDir.y + aVector3InWorld.z * yDir.z
+	local zDot = aVector3InWorld.x * zDir.x + aVector3InWorld.y * zDir.y + aVector3InWorld.z * zDir.z
+	if math.abs(xDot) > math.abs(yDot) and math.abs(xDot) > math.abs(zDot) then
+		if xDot > 0 then
+			return 0
+		else
+			return 3
+		end
+	elseif math.abs(yDot) > math.abs(xDot) and math.abs(yDot) > math.abs(zDot) then
+		if yDot > 0 then
+			return 1
+		else
+			return 4
+		end
+	else
+		if zDot > 0 then
+			return 2
+		else
+			return 5
+		end
+	end
+end
+local positionPartsAtCFrame3
+positionPartsAtCFrame3 = function(aCFrame, currentParts)
+	local insertCFrame
+	if not currentParts then
+		return currentParts
+	end
+	if currentParts and (currentParts:IsA("Model") or currentParts:IsA("Tool")) then
+		insertCFrame = currentParts:GetModelCFrame()
+		currentParts:TranslateBy(aCFrame.p - insertCFrame.p)
+	else
+		currentParts.CFrame = aCFrame
+	end
+	return currentParts
+end
+local calcRayHitTime
+calcRayHitTime = function(rayStart, raySlope, intersectionPlane)
+	if math.abs(raySlope) < 0.01 then
+		return 0
+	end
+	return (intersectionPlane - rayStart) / raySlope
+end
+local modelTargetSurface
+modelTargetSurface = function(partOrModel, rayStart, rayEnd)
+	if not partOrModel then
+		return 0
+	end
+	local modelCFrame, modelSize
+	if partOrModel:IsA("Model") then
+		modelCFrame = partOrModel:GetModelCFrame()
+		modelSize = partOrModel:GetModelSize()
+	else
+		modelCFrame = partOrModel.CFrame
+		modelSize = partOrModel.Size
+	end
+	local mouseRayStart = modelCFrame:pointToObjectSpace(rayStart)
+	local mouseRayEnd = modelCFrame:pointToObjectSpace(rayEnd)
+	local mouseSlope = mouseRayEnd - mouseRayStart
+	local xPositive = 1
+	local yPositive = 1
+	local zPositive = 1
+	if mouseSlope.X > 0 then
+		xPositive = -1
+	end
+	if mouseSlope.Y > 0 then
+		yPositive = -1
+	end
+	if mouseSlope.Z > 0 then
+		zPositive = -1
+	end
+	local xHitTime = calcRayHitTime(mouseRayStart.X, mouseSlope.X, modelSize.X / 2 * xPositive)
+	local yHitTime = calcRayHitTime(mouseRayStart.Y, mouseSlope.Y, modelSize.Y / 2 * yPositive)
+	local zHitTime = calcRayHitTime(mouseRayStart.Z, mouseSlope.Z, modelSize.Z / 2 * zPositive)
+	local hitFace = 0
+	if xHitTime > yHitTime then
+		if xHitTime > zHitTime then
+			hitFace = 1 * xPositive
+		else
+			hitFace = 3 * zPositive
+		end
+	else
+		if yHitTime > zHitTime then
+			hitFace = 2 * yPositive
+		else
+			hitFace = 3 * zPositive
+		end
+	end
+	return hitFace
+end
+local getBoundingBox2
+getBoundingBox2 = function(partOrModel)
+	local minVec = Vector3.new(math.huge, math.huge, math.huge)
+	local maxVec = Vector3.new(-math.huge, -math.huge, -math.huge)
+	if partOrModel:IsA("Terrain") then
+		minVec = Vector3.new(-2, -2, -2)
+		maxVec = Vector3.new(2, 2, 2)
+	elseif partOrModel:IsA("BasePart") then
+		minVec = -0.5 * partOrModel.Size
+		maxVec = -minVec
+	else
+		maxVec = partOrModel:GetModelSize() * 0.5
+		minVec = -maxVec
+	end
+	local justifyValue = partOrModel:FindFirstChild("Justification")
+	if (justifyValue ~= nil) then
+		local justify = justifyValue.Value
+		local two = Vector3.new(2, 2, 2)
+		local actualBox = maxVec - minVec - Vector3.new(0.01, 0.01, 0.01)
+		local containingGridBox = Vector3.new(4 * math.ceil(actualBox.x / 4), 4 * math.ceil(actualBox.y / 4), 4 * math.ceil(actualBox.z / 4))
+		local adjustment = containingGridBox - actualBox
+		minVec = minVec - (0.5 * adjustment * justify)
+		maxVec = maxVec + (0.5 * adjustment * (two - justify))
+	end
+	return minVec, maxVec
+end
+local getBoundingBoxInWorldCoordinates
+getBoundingBoxInWorldCoordinates = function(partOrModel)
+	local minVec = Vector3.new(math.huge, math.huge, math.huge)
+	local maxVec = Vector3.new(-math.huge, -math.huge, -math.huge)
+	if partOrModel:IsA("BasePart") and not partOrModel:IsA("Terrain") then
+		local vec1 = partOrModel.CFrame:pointToWorldSpace(-0.5 * partOrModel.Size)
+		local vec2 = partOrModel.CFrame:pointToWorldSpace(0.5 * partOrModel.Size)
+		minVec = Vector3.new(math.min(vec1.X, vec2.X), math.min(vec1.Y, vec2.Y), math.min(vec1.Z, vec2.Z))
+		maxVec = Vector3.new(math.max(vec1.X, vec2.X), math.max(vec1.Y, vec2.Y), math.max(vec1.Z, vec2.Z))
+	elseif not partOrModel:IsA("Terrain") then
+		local vec1 = partOrModel:GetModelCFrame():pointToWorldSpace(-0.5 * partOrModel:GetModelSize())
+		local vec2 = partOrModel:GetModelCFrame():pointToWorldSpace(0.5 * partOrModel:GetModelSize())
+		minVec = Vector3.new(math.min(vec1.X, vec2.X), math.min(vec1.Y, vec2.Y), math.min(vec1.Z, vec2.Z))
+		maxVec = Vector3.new(math.max(vec1.X, vec2.X), math.max(vec1.Y, vec2.Y), math.max(vec1.Z, vec2.Z))
+	end
+	return minVec, maxVec
+end
+local getTargetPartBoundingBox
+getTargetPartBoundingBox = function(targetPart)
+	return getBoundingBox2((function()
+		if (targetPart.Parent:FindFirstChild("RobloxModel") ~= nil) then
+			return targetPart.Parent
+		else
+			return targetPart
+		end
+	end)())
+end
+local getMouseTargetCFrame
+getMouseTargetCFrame = function(targetPart)
+	if (targetPart.Parent:FindFirstChild("RobloxModel") ~= nil) then
+		if targetPart.Parent:IsA("Tool") then
+			return targetPart.Parent.Handle.CFrame
+		else
+			return targetPart.Parent:GetModelCFrame()
+		end
+	else
+		return targetPart.CFrame
+	end
+end
+local isBlocker
+isBlocker = function(part)
+	if not part then
+		return false
+	end
+	if not part.Parent then
+		return false
+	end
+	if part:FindFirstChild("Humanoid") then
+		return false
+	end
+	if part:FindFirstChild("RobloxStamper" or part:FindFirstChild("RobloxModel")) then
+		return true
+	end
+	if part:IsA("Part") and not part.CanCollide then
+		return false
+	end
+	if part == game.Lighting then
+		return false
+	end
+	return isBlocker(part.Parent)
+end
+local spaceAboveCharacter
+spaceAboveCharacter = function(charTorso, newTorsoY, stampData)
+	local partsAboveChar = game.Workspace:FindPartsInRegion3(Region3.new(Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z) - Vector3.new(0.75, 2.75, 0.75), Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z) + Vector3.new(0.75, 1.75, 0.75)), charTorso.Parent, 100)
+	for j = 1, #partsAboveChar do
+		if partsAboveChar[j].CanCollide and not partsAboveChar[j]:IsDescendantOf(stampData.CurrentParts) then
+			return false
+		end
+	end
+	if clusterPartsInRegion(Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z) - Vector3.new(0.75, 2.75, 0.75), Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z) + Vector3.new(0.75, 1.75, 0.75)) then
+		return false
+	end
+	return true
+end
+local findConfigAtMouseTarget
+findConfigAtMouseTarget = function(Mouse, stampData)
+	if not Mouse then
+		return
+	end
+	if not stampData then
+		return error("findConfigAtMouseTarget: stampData is nil")
+	end
+	if not stampData["CurrentParts"] then
+		return
+	end
+	local grid = 4.0
+	local admissibleConfig = false
+	local targetConfig = CFrame.new(0, 0, 0)
+	local minBB, maxBB = getBoundingBox2(stampData.CurrentParts)
+	local diagBB = maxBB - minBB
+	local insertCFrame
+	if stampData.CurrentParts:IsA("Model") or stampData.CurrentParts:IsA("Tool") then
+		insertCFrame = stampData.CurrentParts:GetModelCFrame()
+	else
+		insertCFrame = stampData.CurrentParts.CFrame
+	end
+	if Mouse then
+		if stampData.CurrentParts:IsA("Tool") then
+			Mouse.TargetFilter = stampData.CurrentParts.Handle
+		else
+			Mouse.TargetFilter = stampData.CurrentParts
+		end
+	end
+	local hitPlane = false
+	local targetPart
+	local success = pcall(function()
+		targetPart = Mouse.Target
+	end)
+	if not success then
+		return admissibleConfig, targetConfig
+	end
+	local mouseHitInWorld = Vector3.new(0, 0, 0)
+	if Mouse then
+		mouseHitInWorld = Vector3.new(Mouse.Hit.x, Mouse.Hit.y, Mouse.Hit.z)
+	end
+	local cellPos
+	if nil == targetPart then
+		cellPos = GetTerrainForMouse(Mouse)
+		if nil == cellPos then
+			hitPlane = false
+			return admissibleConfig, targetConfig
+		else
+			targetPart = game.Workspace.Terrain
+			hitPlane = true
+			cellPos = Vector3.new(cellPos.X - 1, cellPos.Y, cellPos.Z)
+			mouseHitInWorld = game.Workspace.Terrain:CellCenterToWorld(cellPos.x, cellPos.y, cellPos.z)
+		end
+	end
+	local minBBTarget, maxBBTarget
+	minBBTarget, maxBBTarget = getTargetPartBoundingBox(targetPart)
+	local diagBBTarget = maxBBTarget - minBBTarget
+	local targetCFrame = getMouseTargetCFrame(targetPart)
+	if targetPart:IsA("Terrain") then
+		if not cluster then
+			cluster = game.Workspace:FindFirstChild("Terrain")
+		end
+		local cellID = cluster:WorldToCellPreferSolid(mouseHitInWorld)
+		if hitPlane then
+			cellID = cellPos
+		end
+		targetCFrame = CFrame.new(game.Workspace.Terrain:CellCenterToWorld(cellID.x, cellID.y, cellID.z))
+	end
+	local mouseHitInTarget = targetCFrame:pointToObjectSpace(mouseHitInWorld)
+	local targetVectorInWorld = Vector3.new(0, 0, 0)
+	if Mouse then
+		targetVectorInWorld = targetPart.CFrame:vectorToWorldSpace(Vector3.FromNormalId(Mouse.TargetSurface))
+	end
+	local targetRefPointInTarget, insertRefPointInInsert
+	local clampToSurface
+	if getClosestAlignedWorldDirection(targetVectorInWorld) == 0 then
+		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(1, -1, 1))
+		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
+		clampToSurface = Vector3.new(0, 1, 1)
+	elseif getClosestAlignedWorldDirection(targetVectorInWorld) == 3 then
+		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(-1, -1, -1))
+		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(1, -1, -1))
+		clampToSurface = Vector3.new(0, 1, 1)
+	elseif getClosestAlignedWorldDirection(targetVectorInWorld) == 1 then
+		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(-1, 1, 1))
+		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
+		clampToSurface = Vector3.new(1, 0, 1)
+	elseif getClosestAlignedWorldDirection(targetVectorInWorld) == 4 then
+		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
+		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(-1, 1, 1))
+		clampToSurface = Vector3.new(1, 0, 1)
+	elseif getClosestAlignedWorldDirection(targetVectorInWorld) == 2 then
+		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
+		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(-1, -1, -1))
+		clampToSurface = Vector3.new(1, 1, 0)
+	else
+		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(1, -1, -1))
+		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(1, -1, 1))
+		clampToSurface = Vector3.new(1, 1, 0)
+	end
+	targetRefPointInTarget = targetRefPointInTarget * ((0.5 * diagBBTarget) + 0.5 * (maxBBTarget + minBBTarget))
+	insertRefPointInInsert = insertRefPointInInsert * ((0.5 * diagBB) + 0.5 * (maxBB + minBB))
+	local delta = mouseHitInTarget - targetRefPointInTarget
+	local deltaClamped = Vector3.new(grid * math.modf(delta.x / grid), grid * math.modf(delta.y / grid), grid * math.modf(delta.z / grid))
+	deltaClamped = deltaClamped * clampToSurface
+	local targetTouchInTarget = deltaClamped + targetRefPointInTarget
+	local TargetTouchRelToWorld = targetCFrame:pointToWorldSpace(targetTouchInTarget)
+	local InsertTouchInWorld = insertCFrame:vectorToWorldSpace(insertRefPointInInsert)
+	local posInsertOriginInWorld = TargetTouchRelToWorld - InsertTouchInWorld
+	local _, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22
+	_, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22 = insertCFrame:components()
+	targetConfig = CFrame.new(posInsertOriginInWorld.x, posInsertOriginInWorld.y, posInsertOriginInWorld.z, R00, R01, R02, R10, R11, R12, R20, R21, R22)
+	admissibleConfig = true
+	return admissibleConfig, targetConfig, getClosestAlignedWorldDirection(targetVectorInWorld)
+end
+local truncateToCircleEighth
+truncateToCircleEighth = function(bigValue, littleValue)
+	local big = math.abs(bigValue)
+	local little = math.abs(littleValue)
+	local hypotenuse = math.sqrt(big * big + little * little)
+	local frac = little / hypotenuse
+	local bigSign = 1
+	local littleSign = 1
+	if bigValue < 0 then
+		bigSign = -1
+	end
+	if littleValue < 0 then
+		littleSign = -1
+	end
+	if frac > 0.382683432 then
+		return 0.707106781 * hypotenuse * bigSign, 0.707106781 * hypotenuse * littleSign
+	else
+		return hypotenuse * bigSign, 0
+	end
+end
+local saveTheWelds
+saveTheWelds = function(object, manualWeldTable, manualWeldParentTable)
+	if object:IsA("ManualWeld") or object:IsA("Rotate") then
+		table.insert(manualWeldTable, object)
+		return table.insert(manualWeldParentTable, object.Parent)
+	else
+		local children = object:GetChildren()
+		for i = 1, #children do
+			saveTheWelds(children[i], manualWeldTable, manualWeldParentTable)
+		end
+	end
+end
+local restoreTheWelds
+restoreTheWelds = function(manualWeldTable, manualWeldParentTable)
+	for i = 1, #manualWeldTable do
+		manualWeldTable[i].Parent = manualWeldParentTable[i]
+	end
+end
+t.CanEditRegion = function(partOrModel, EditRegion)
+	if not EditRegion then
+		return true, false
+	end
+	local minBB, maxBB
+	minBB, maxBB = getBoundingBoxInWorldCoordinates(partOrModel)
+	if minBB.X < EditRegion.CFrame.p.X - EditRegion.Size.X / 2 or minBB.Y < EditRegion.CFrame.p.Y - EditRegion.Size.Y / 2 or minBB.Z < EditRegion.CFrame.p.Z - EditRegion.Size.Z / 2 then
+		return false, false
+	end
+	if maxBB.X > EditRegion.CFrame.p.X + EditRegion.Size.X / 2 or maxBB.Y > EditRegion.CFrame.p.Y + EditRegion.Size.Y / 2 or maxBB.Z > EditRegion.CFrame.p.Z + EditRegion.Size.Z / 2 then
+		return false, false
+	end
+	return true, false
+end
+t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
+	if assetId == 0 then
+		return nil, "No Asset"
+	end
+	if assetId < 0 then
+		return nil, "Negative Asset"
+	end
+	local UnlockInstances
+	UnlockInstances = function(object)
+		if object:IsA("BasePart") then
+			object.Locked = false
+		end
+		for _, child in pairs(object:GetChildren()) do
+			UnlockInstances(child)
+		end
+	end
+	local getClosestColorToTerrainMaterial
+	getClosestColorToTerrainMaterial = function(terrainValue)
+		return BrickColor.new((function()
+			if 1 == terrainValue then
+				return "Bright green"
+			elseif 2 == terrainValue then
+				return "Bright yellow"
+			elseif 3 == terrainValue then
+				return "Bright red"
+			elseif 4 == terrainValue then
+				return "Sand red"
+			elseif 5 == terrainValue then
+				return "Black"
+			elseif 6 == terrainValue then
+				return "Dark stone grey"
+			elseif 7 == terrainValue then
+				return "Sand blue"
+			elseif 8 == terrainValue then
+				return "Deep orange"
+			elseif 9 == terrainValue then
+				return "Dark orange"
+			elseif 10 == terrainValue then
+				return "Reddish brown"
+			elseif 11 == terrainValue then
+				return "Light orange"
+			elseif 12 == terrainValue then
+				return "Light stone grey"
+			elseif 13 == terrainValue then
+				return "Sand green"
+			elseif 14 == terrainValue then
+				return "Medium stone grey"
+			elseif 15 == terrainValue then
+				return "Really red"
+			elseif 16 == terrainValue then
+				return "Really blue"
+			elseif 17 == terrainValue then
+				return "Bright blue"
+			else
+				return "Bright green"
+			end
+		end)())
+	end
+	local setupFakeTerrainPart
+	setupFakeTerrainPart = function(cellMat, cellType, cellOrient)
+		local newTerrainPiece
+		if cellType == 1 or cellType == 4 then
+			newTerrainPiece = Instance.new("WedgePart")
+			newTerrainPiece.formFactor = "Custom"
+		elseif cellType == 2 then
+			newTerrainPiece = Instance.new("CornerWedgePart")
+		else
+			newTerrainPiece = Instance.new("Part")
+			newTerrainPiece.formFactor = "Custom"
+		end
+		newTerrainPiece.Name = "MegaClusterCube"
+		newTerrainPiece.Size = Vector3.new(4, 4, 4)
+		newTerrainPiece.BottomSurface = "Smooth"
+		newTerrainPiece.TopSurface = "Smooth"
+		newTerrainPiece.BrickColor = getClosestColorToTerrainMaterial(cellMat)
+		local sideways = 0
+		local flipped = math.pi
+		if cellType == 4 then
+			sideways = -math.pi / 2
+		end
+		if cellType == 2 or cellType == 3 then
+			flipped = 0
+		end
+		newTerrainPiece.CFrame = CFrame.Angles(0, math.pi / 2 * cellOrient + flipped, sideways)
+		if cellType == 3 then
+			local inverseCornerWedgeMesh = Instance.new("SpecialMesh")
+			inverseCornerWedgeMesh.MeshType = "FileMesh"
+			inverseCornerWedgeMesh.MeshId = "http://www.roblox.com/asset?id=66832495"
+			inverseCornerWedgeMesh.Scale = Vector3.new(2, 2, 2)
+			inverseCornerWedgeMesh.Parent = newTerrainPiece
+		end
+		local materialTag = Instance.new("Vector3Value")
+		materialTag.Value = Vector3.new(cellMat, cellType, cellOrient)
+		materialTag.Name = "ClusterMaterial"
+		materialTag.Parent = newTerrainPiece
+		return newTerrainPiece
+	end
+	local root
+	local loader
+	local loading = true
+	if useAssetVersionId then
+		loader = coroutine.create(function()
+			root = game:GetService("InsertService"):LoadAssetVersion(assetId)
+			loading = false
+		end)
+		coroutine.resume(loader)
+	else
+		loader = coroutine.create(function()
+			root = game:GetService("InsertService"):LoadAsset(assetId)
+			loading = false
+		end)
+		coroutine.resume(loader)
+	end
+	local lastGameTime = 0
+	local totalTime = 0
+	local maxWait = 8
+	while loading and totalTime < maxWait do
+		lastGameTime = tick()
+		wait(1)
+		totalTime = totalTime + (tick() - lastGameTime)
+	end
+	loading = false
+	if totalTime >= maxWait then
+		return nil, "Load Time Fail"
+	end
+	if root == nil then
+		return nil, "Load Asset Fail"
+	end
+	if not root:IsA("Model") then
+		return nil, "Load Type Fail"
+	end
+	local instances = root:GetChildren()
+	if #instances == 0 then
+		return nil, "Empty Model Fail"
+	end
+	UnlockInstances(root)
+	root = root:GetChildren()[1]
+	for _, instance in pairs(instances) do
+		if instance:IsA("Team") then
+			instance.Parent = game:GetService("Teams")
+		elseif instance:IsA("Sky") then
+			local lightingService = game:GetService("Lighting")
+			for _, child in pairs(lightingService:GetChildren()) do
+				if child:IsA("Sky") then
+					child:Remove()
+				end
+			end
+			instance.Parent = lightingService
+			return
+		end
+	end
+	if not (root:FindFirstChild("RobloxModel") ~= nil) then
+		local stringTag = Instance.new("BoolValue")
+		stringTag.Name = "RobloxModel"
+		stringTag.Parent = root
+		if not (root:FindFirstChild("RobloxStamper") ~= nil) then
+			local stringTag2 = Instance.new("BoolValue")
+			stringTag2.Name = "RobloxStamper"
+			stringTag2.Parent = root
+		end
+	end
+	if terrainShape then
+		if root.Name == "MegaClusterCube" then
+			if terrainShape == 6 then
+				local autowedgeTag = Instance.new("BoolValue")
+				autowedgeTag.Name = "AutoWedge"
+				autowedgeTag.Parent = root
+			else
+				local clusterTag = root:FindFirstChild("ClusterMaterial")
+				if clusterTag then
+					if clusterTag:IsA("Vector3Value") then
+						root = setupFakeTerrainPart(clusterTag.Value.X, terrainShape, clusterTag.Value.Z)
+					else
+						root = setupFakeTerrainPart(clusterTag.Value, terrainShape, 0)
+					end
+				else
+					root = setupFakeTerrainPart(1, terrainShape, 0)
+				end
+			end
+		end
+	end
+	return root
+end
+t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStampRegion, StampFailedFunc)
+	if not modelToStamp then
+		error("SetupStamperDragger: modelToStamp (first arg) is nil!  Should be a stamper model")
+		return nil
+	end
+	if not modelToStamp:IsA("Model") and not modelToStamp:IsA("BasePart") then
+		error("SetupStamperDragger: modelToStamp (first arg) is neither a Model or Part!")
+		return nil
+	end
+	if not Mouse then
+		error("SetupStamperDragger: Mouse (second arg) is nil!  Should be a mouse object")
+		return nil
+	end
+	if not Mouse:IsA("Mouse") then
+		error("SetupStamperDragger: Mouse (second arg) is not of type Mouse!")
+		return nil
+	end
+	local stampInModel
+	local allowedStampRegion
+	local stampFailedFunc
+	if StampInModel then
+		if not StampInModel:IsA("Model") then
+			error("SetupStamperDragger: StampInModel (optional third arg) is not of type 'Model'")
+			return nil
+		end
+		if not AllowedStampRegion then
+			error("SetupStamperDragger: AllowedStampRegion (optional fourth arg) is nil when StampInModel (optional third arg) is defined")
+			return nil
+		end
+		stampFailedFunc = StampFailedFunc
+		stampInModel = StampInModel
+		allowedStampRegion = AllowedStampRegion
+	end
+	local gInitial90DegreeRotations = 0
+	local stampData
+	local mouseTarget
+	local errorBox = Instance.new("SelectionBox")
+	errorBox.Color = BrickColor.new("Bright red")
+	errorBox.Transparency = 0
+	errorBox.Archivable = false
+	local adornPart = Instance.new("Part")
+	adornPart.Parent = nil
+	adornPart.formFactor = "Custom"
+	adornPart.Size = Vector3.new(4, 4, 4)
+	adornPart.CFrame = CFrame.new()
+	adornPart.Archivable = false
+	local adorn = Instance.new("SelectionBox")
+	adorn.Color = BrickColor.new("Toothpaste")
+	adorn.Adornee = adornPart
+	adorn.Visible = true
+	adorn.Transparency = 0
+	adorn.Name = "HighScalabilityStamperLine"
+	adorn.Archivable = false
+	local HighScalabilityLine = { }
+	HighScalabilityLine.Start = nil
+	HighScalabilityLine.End = nil
+	HighScalabilityLine.Adorn = adorn
+	HighScalabilityLine.AdornPart = adornPart
+	HighScalabilityLine.InternalLine = nil
+	HighScalabilityLine.NewHint = true
+	HighScalabilityLine.MorePoints = {
+		nil,
+		nil
+	}
+	HighScalabilityLine.MoreLines = {
+		nil,
+		nil
+	}
+	HighScalabilityLine.Dimensions = 1
+	local control = { }
+	local movingLock = false
+	local stampUpLock = false
+	local unstampableSurface = false
+	local mouseCons = { }
+	local keyCon
+	local stamped = Instance.new("BoolValue")
+	stamped.Archivable = false
+	stamped.Value = false
+	local lastTarget = { }
+	lastTarget.TerrainOrientation = 0
+	lastTarget.CFrame = 0
+	local cellInfo = { }
+	cellInfo.Material = 1
+	cellInfo.clusterType = 0
+	cellInfo.clusterOrientation = 0
+	local isMegaClusterPart
+	isMegaClusterPart = function()
+		if not stampData then
+			return false
+		end
+		if not stampData.CurrentParts then
+			return false
+		end
+		return stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) or (stampData.CurrentParts.Name == "MegaClusterCube")
+	end
+	local DoHighScalabilityRegionSelect
+	DoHighScalabilityRegionSelect = function()
+		local megaCube = stampData.CurrentParts:FindFirstChild("MegaClusterCube")
+		if not megaCube then
+			if not stampData.CurrentParts.Name == "MegaClusterCube" then
+				return
+			else
+				megaCube = stampData.CurrentParts
+			end
+		end
+		HighScalabilityLine.End = megaCube.CFrame.p
+		local line
+		local line2 = Vector3.new(0, 0, 0)
+		local line3 = Vector3.new(0, 0, 0)
+		if HighScalabilityLine.Dimensions == 1 then
+			line = (HighScalabilityLine.End - HighScalabilityLine.Start)
+			if math.abs(line.X) < math.abs(line.Y) then
+				if math.abs(line.X) < math.abs(line.Z) then
+					local newY, newZ
+					if math.abs(line.Y) > math.abs(line.Z) then
+						newY, newZ = truncateToCircleEighth(line.Y, line.Z)
+					else
+						newZ, newY = truncateToCircleEighth(line.Z, line.Y)
+					end
+					line = Vector3.new(0, newY, newZ)
+				else
+					local newY, newX
+					newY, newX = truncateToCircleEighth(line.Y, line.X)
+					line = Vector3.new(newX, newY, 0)
+				end
+			else
+				if math.abs(line.Y) < math.abs(line.Z) then
+					local newX, newZ
+					if math.abs(line.X) > math.abs(line.Z) then
+						newX, newZ = truncateToCircleEighth(line.X, line.Z)
+					else
+						newZ, newX = truncateToCircleEighth(line.Z, line.X)
+					end
+					line = Vector3.new(newX, 0, newZ)
+				else
+					local newX, newY
+					newX, newY = truncateToCircleEighth(line.X, line.Y)
+					line = Vector3.new(newX, newY, 0)
+				end
+			end
+			HighScalabilityLine.InternalLine = line
+		elseif HighScalabilityLine.Dimensions == 2 then
+			line = HighScalabilityLine.MoreLines[1]
+			line2 = HighScalabilityLine.End - HighScalabilityLine.MorePoints[1]
+			line2 = line2 - (line.unit * line.unit:Dot(line2))
+			local tempCFrame = CFrame.new(HighScalabilityLine.Start, HighScalabilityLine.Start + line)
+			local yAxis = tempCFrame:vectorToWorldSpace(Vector3.new(0, 1, 0))
+			local xAxis = tempCFrame:vectorToWorldSpace(Vector3.new(1, 0, 0))
+			local xComp = xAxis:Dot(line2)
+			local yComp = yAxis:Dot(line2)
+			if math.abs(yComp) > math.abs(xComp) then
+				line2 = line2 - (xAxis * xComp)
+			else
+				line2 = line2 - (yAxis * yComp)
+			end
+			HighScalabilityLine.InternalLine = line2
+		elseif HighScalabilityLine.Dimensions == 3 then
+			line = HighScalabilityLine.MoreLines[1]
+			line2 = HighScalabilityLine.MoreLines[2]
+			line3 = HighScalabilityLine.End - HighScalabilityLine.MorePoints[2]
+			line3 = line3 - (line.unit * line.unit:Dot(line3))
+			line3 = line3 - (line2.unit * line2.unit:Dot(line3))
+			HighScalabilityLine.InternalLine = line3
+		end
+		local tempCFrame = CFrame.new(HighScalabilityLine.Start, HighScalabilityLine.Start + line)
+		if HighScalabilityLine.Dimensions == 1 then
+			HighScalabilityLine.AdornPart.Size = Vector3.new(4, 4, line.magnitude + 4)
+			HighScalabilityLine.AdornPart.CFrame = tempCFrame + tempCFrame:vectorToWorldSpace(Vector3.new(2, 2, 2) - HighScalabilityLine.AdornPart.Size / 2)
+		else
+			local boxSize = tempCFrame:vectorToObjectSpace(line + line2 + line3)
+			HighScalabilityLine.AdornPart.Size = Vector3.new(4, 4, 4) + Vector3.new(math.abs(boxSize.X), math.abs(boxSize.Y), math.abs(boxSize.Z))
+			HighScalabilityLine.AdornPart.CFrame = tempCFrame + tempCFrame:vectorToWorldSpace(boxSize / 2)
+		end
+		local gui
+		if game.Players["LocalPlayer"] then
+			gui = game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+			if gui and gui:IsA("PlayerGui") then
+				if (HighScalabilityLine.Dimensions == 1 and line.magnitude > 3) or HighScalabilityLine.Dimensions > 1 then
+					HighScalabilityLine.Adorn.Parent = gui
+				end
+			end
+		end
+		if not (gui ~= nil) then
+			gui = game:GetService("CoreGui")
+			if (HighScalabilityLine.Dimensions == 1 and line.magnitude > 3) or HighScalabilityLine.Dimensions > 1 then
+				HighScalabilityLine.Adorn.Parent = gui
+			end
+		end
+	end
+	local DoStamperMouseMove
+	DoStamperMouseMove = function(Mouse)
+		if not Mouse then
+			error("Error: RbxStamper.DoStamperMouseMove: Mouse is nil")
+			return
+		end
+		if not Mouse:IsA("Mouse") then
+			error("Error: RbxStamper.DoStamperMouseMove: Mouse is of type", Mouse.className, "should be of type Mouse")
+			return
+		end
+		if not Mouse.Target then
+			local cellPos = GetTerrainForMouse(Mouse)
+			if nil == cellPos then
+				return
+			end
+		end
+		if not stampData then
+			return
+		end
+		local configFound, targetCFrame, targetSurface = findConfigAtMouseTarget(Mouse, stampData)
+		if not configFound then
+			error("RbxStamper.DoStamperMouseMove No configFound, returning")
+			return
+		end
+		local numRotations = 0
+		if autoAlignToFace(stampData.CurrentParts) and targetSurface ~= 1 and targetSurface ~= 4 then
+			if targetSurface == 3 then
+				numRotations = 0 - gInitial90DegreeRotations + autoAlignToFace(stampData.CurrentParts)
+			elseif targetSurface == 0 then
+				numRotations = 2 - gInitial90DegreeRotations + autoAlignToFace(stampData.CurrentParts)
+			elseif targetSurface == 5 then
+				numRotations = 3 - gInitial90DegreeRotations + autoAlignToFace(stampData.CurrentParts)
+			elseif targetSurface == 2 then
+				numRotations = 1 - gInitial90DegreeRotations + autoAlignToFace(stampData.CurrentParts)
+			end
+		end
+		local ry = math.pi / 2
+		gInitial90DegreeRotations = gInitial90DegreeRotations + numRotations
+		if stampData.CurrentParts:IsA("Model") or stampData.CurrentParts:IsA("Tool") then
+			modelRotate(stampData.CurrentParts, ry * numRotations)
+		else
+			stampData.CurrentParts.CFrame = CFrame.fromEulerAnglesXYZ(0, ry * numRotations, 0)({
+				stampData.CurrentParts.CFrame
+			})
+		end
+		local minBB, maxBB
+		minBB, maxBB = getBoundingBoxInWorldCoordinates(stampData.CurrentParts)
+		local currModelCFrame
+		if stampData.CurrentParts:IsA("Model") then
+			currModelCFrame = stampData.CurrentParts:GetModelCFrame()
+		else
+			currModelCFrame = stampData.CurrentParts.CFrame
+		end
+		minBB = minBB + (targetCFrame.p - currModelCFrame.p)
+		maxBB = maxBB + (targetCFrame.p - currModelCFrame.p)
+		if clusterPartsInRegion(minBB + insertBoundingBoxOverlapVector, maxBB - insertBoundingBoxOverlapVector) then
+			if lastTarget.CFrame then
+				if stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) then
+					local theClusterMaterial = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+					if theClusterMaterial:IsA("Vector3Value") then
+						local stampClusterMaterial = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+						if stampClusterMaterial then
+							stampClusterMaterial = clusterMat
+						end
+					end
+				end
+			end
+			return
+		end
+		if isMegaClusterPart() then
+			local cellToStamp = game.Workspace.Terrain:WorldToCell(targetCFrame.p)
+			local newCFramePosition = game.Workspace.Terrain:CellCenterToWorld(cellToStamp.X, cellToStamp.Y, cellToStamp.Z)
+			local _, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22
+			_, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22 = targetCFrame:components()
+			targetCFrame = CFrame.new(newCFramePosition.X, newCFramePosition.Y, newCFramePosition.Z, R00, R01, R02, R10, R11, R12, R20, R21, R22)
+		end
+		positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
+		lastTarget.CFrame = targetCFrame
+		if stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) then
+			local clusterMat = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+			if clusterMat:IsA("Vector3Value") then
+				lastTarget.TerrainOrientation = clusterMat.Value.Z
+			end
+		end
+		if Mouse and Mouse.Target and Mouse.Target.Parent then
+			local modelInfo = Mouse.Target:FindFirstChild("RobloxModel")
+			if not modelInfo then
+				modelInfo = Mouse.Target.Parent:FindFirstChild("RobloxModel")
+			end
+			local myModelInfo = stampData.CurrentParts:FindFirstChild("UnstampableFaces")
+			if true then
+				local breakingFaces = ""
+				local myBreakingFaces = ""
+				if modelInfo and modelInfo.Parent:FindFirstChild("UnstampableFaces") then
+					breakingFaces = modelInfo.Parent.UnstampableFaces.Value
+				end
+				if myModelInfo then
+					myBreakingFaces = myModelInfo.Value
+				end
+				local hitFace = 0
+				if modelInfo then
+					hitFace = modelTargetSurface(modelInfo.Parent, game.Workspace.CurrentCamera.CoordinateFrame.p, Mouse.Hit.p)
+				end
+				for bf in string.gmatch(breakingFaces, "[^,]+") do
+					if hitFace == tonumber(bf) then
+						unstampableSurface = true
+						game.JointsService:ClearJoinAfterMoveJoints()
+						return
+					end
+				end
+				hitFace = modelTargetSurface(stampData.CurrentParts, Mouse.Hit.p, game.Workspace.CurrentCamera.CoordinateFrame.p)
+				for bf in string.gmatch(myBreakingFaces, "[^,]+") do
+					if hitFace == tonumber(bf) then
+						unstampableSurface = true
+						game.JointsService:ClearJoinAfterMoveJoints()
+						return
+					end
+				end
+			end
+		end
+		unstampableSurface = false
+		game.JointsService:SetJoinAfterMoveInstance(stampData.CurrentParts)
+		if (not pcall(function()
+			if Mouse and Mouse.Target and not (Mouse.Target.Parent:FindFirstChild("RobloxModel") ~= nil) then
+				return
+			else
+				return
+			end
+		end)) then
+			error("Error: RbxStamper.DoStamperMouseMove Mouse is nil on second check")
+			game.JointsService:ClearJoinAfterMoveJoints()
+			Mouse = nil
+			return
+		end
+		if Mouse and Mouse.Target and not (Mouse.Target.Parent:FindFirstChild("RobloxModel") ~= nil) then
+			game.JointsService:SetJoinAfterMoveTarget(Mouse.Target)
+		else
+			game.JointsService:SetJoinAfterMoveTarget(nil)
+		end
+		game.JointsService:ShowPermissibleJoints()
+		if isMegaClusterPart() and HighScalabilityLine and HighScalabilityLine.Start then
+			return DoHighScalabilityRegionSelect()
+		end
+	end
+	local setupKeyListener
+	setupKeyListener = function(key, Mouse)
+		if control and control["Paused"] then
+			return
+		end
+		key = string.lower(key)
+		if key == "r" and not autoAlignToFace(stampData.CurrentParts) then
+			gInitial90DegreeRotations = gInitial90DegreeRotations + 1
+			local clusterValues = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+			if clusterValues and clusterValues:IsA("Vector3Value") then
+				clusterValues.Value = Vector3.new(clusterValues.Value.X, clusterValues.Value.Y, (clusterValues.Value.Z + 1) % 4)
+			end
+			local ry = math.pi / 2
+			if stampData.CurrentParts:IsA("Model") or stampData.CurrentParts:IsA("Tool") then
+				modelRotate(stampData.CurrentParts, ry)
+			else
+				stampData.CurrentParts.CFrame = CFrame.fromEulerAnglesXYZ(0, ry, 0) * stampData.CurrentParts.CFrame
+			end
+			local configFound, targetCFrame = findConfigAtMouseTarget(Mouse, stampData)
+			if configFound then
+				positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
+				return DoStamperMouseMove(Mouse)
+			end
+		elseif key == "c" then
+			if HighScalabilityLine.InternalLine and HighScalabilityLine.InternalLine.magnitude > 0 and HighScalabilityLine.Dimensions < 3 then
+				HighScalabilityLine.MorePoints[HighScalabilityLine.Dimensions] = HighScalabilityLine.End
+				HighScalabilityLine.MoreLines[HighScalabilityLine.Dimensions] = HighScalabilityLine.InternalLine
+				HighScalabilityLine.Dimensions = HighScalabilityLine.Dimensions + 1
+				HighScalabilityLine.NewHint = true
+			end
+		end
+	end
+	keyCon = Mouse.KeyDown:connect(function(key)
+		return setupKeyListener(key, Mouse)
+	end)
+	local resetHighScalabilityLine
+	resetHighScalabilityLine = function()
+		if HighScalabilityLine then
+			HighScalabilityLine.Start = nil
+			HighScalabilityLine.End = nil
+			HighScalabilityLine.InternalLine = nil
+			HighScalabilityLine.NewHint = true
+		end
+	end
+	local flashRedBox
+	flashRedBox = function()
+		local gui = game.CoreGui
+		if game:FindFirstChild("Players") then
+			if game.Players["LocalPlayer"] then
+				if game.Players.LocalPlayer:FindFirstChild("PlayerGui") then
+					gui = game.Players.LocalPlayer.PlayerGui
+				end
+			end
+		end
+		if not stampData["ErrorBox"] then
+			return
+		end
+		stampData.ErrorBox.Parent = gui
+		if stampData.CurrentParts:IsA("Tool") then
+			stampData.ErrorBox.Adornee = stampData.CurrentParts.Handle
+		else
+			stampData.ErrorBox.Adornee = stampData.CurrentParts
+		end
+		return delay(0, function()
+			for _ = 1, 3 do
+				if stampData["ErrorBox"] then
+					stampData.ErrorBox.Visible = true
+				end
+				wait(0.13)
+				if stampData["ErrorBox"] then
+					stampData.ErrorBox.Visible = false
+				end
+				wait(0.13)
+			end
+			if stampData["ErrorBox"] then
+				stampData.ErrorBox.Adornee = nil
+				stampData.ErrorBox.Parent = Tool
+			end
+		end)
+	end
+	local DoStamperMouseDown
+	DoStamperMouseDown = function(Mouse)
+		if not Mouse then
+			error("Error: RbxStamper.DoStamperMouseDown: Mouse is nil")
+			return
+		end
+		if not Mouse:IsA("Mouse") then
+			error("Error: RbxStamper.DoStamperMouseDown: Mouse is of type", Mouse.className, "should be of type Mouse")
+			return
+		end
+		if not stampData then
+			return
+		end
+		if isMegaClusterPart() then
+			if Mouse and HighScalabilityLine then
+				local megaCube = stampData.CurrentParts:FindFirstChild("MegaClusterCube", true)
+				local terrain = game.Workspace.Terrain
+				if megaCube then
+					HighScalabilityLine.Dimensions = 1
+					local tempCell = terrain:WorldToCell(megaCube.CFrame.p)
+					HighScalabilityLine.Start = terrain:CellCenterToWorld(tempCell.X, tempCell.Y, tempCell.Z)
+					return
+				else
+					HighScalabilityLine.Dimensions = 1
+					local tempCell = terrain:WorldToCell(stampData.CurrentParts.CFrame.p)
+					HighScalabilityLine.Start = terrain:CellCenterToWorld(tempCell.X, tempCell.Y, tempCell.Z)
+					return
+				end
+			end
+		end
+	end
+	local loadSurfaceTypes
+	loadSurfaceTypes = function(part, surfaces)
+		part.TopSurface = surfaces[1]
+		part.BottomSurface = surfaces[2]
+		part.LeftSurface = surfaces[3]
+		part.RightSurface = surfaces[4]
+		part.FrontSurface = surfaces[5]
+		part.BackSurface = surfaces[6]
+		return part
+	end
+	local saveSurfaceTypes
+	saveSurfaceTypes = function(part, myTable)
+		local tempTable = { }
+		tempTable[1] = part.TopSurface
+		tempTable[2] = part.BottomSurface
+		tempTable[3] = part.LeftSurface
+		tempTable[4] = part.RightSurface
+		tempTable[5] = part.FrontSurface
+		tempTable[6] = part.BackSurface
+		myTable[part] = tempTable
+	end
+	local prepareModel
+	prepareModel = function(model)
+		if not model then
+			return nil
+		end
+		local gDesiredTrans = 0.7
+		local gStaticTrans = 1
+		local clone = model:Clone()
+		local scripts = { }
+		local parts = { }
+		local decals = { }
+		stampData = { }
+		stampData.DisabledScripts = { }
+		stampData.TransparencyTable = { }
+		stampData.MaterialTable = { }
+		stampData.CanCollideTable = { }
+		stampData.AnchoredTable = { }
+		stampData.ArchivableTable = { }
+		stampData.DecalTransparencyTable = { }
+		stampData.SurfaceTypeTable = { }
+		collectParts(clone, parts, scripts, decals)
+		if #parts <= 0 then
+			return nil, "no parts found in modelToStamp"
+		end
+		for _, script in pairs(scripts) do
+			if not script.Disabled then
+				script.Disabled = true
+				stampData.DisabledScripts[#stampData.DisabledScripts + 1] = script
+			end
+		end
+		for _, part in pairs(parts) do
+			stampData.TransparencyTable[part] = part.Transparency
+			part.Transparency = gStaticTrans + (1 - gStaticTrans) * part.Transparency
+			stampData.MaterialTable[part] = part.Material
+			part.Material = Enum.Material.Plastic
+			stampData.CanCollideTable[part] = part.CanCollide
+			part.CanCollide = false
+			stampData.AnchoredTable[part] = part.Anchored
+			part.Anchored = true
+			stampData.ArchivableTable[part] = part.Archivable
+			part.Archivable = false
+			saveSurfaceTypes(part, stampData.SurfaceTypeTable)
+			local fadeInDelayTime = 0.5
+			local transFadeInTime = 0.5
+			delay(0, function()
+				wait(fadeInDelayTime)
+				local begTime = tick()
+				local currTime = begTime
+				while (currTime - begTime) < transFadeInTime and part and part:IsA("BasePart") and part.Transparency > gDesiredTrans do
+					local newTrans = 1 - (((currTime - begTime) / transFadeInTime) * (gStaticTrans - gDesiredTrans))
+					if stampData["TransparencyTable"] and stampData.TransparencyTable[part] then
+						part.Transparency = newTrans + (1 - newTrans) * stampData.TransparencyTable[part]
+					end
+					wait(0.03)
+					currTime = tick()
+				end
+				if part and part:IsA("BasePart") then
+					if stampData["TransparencyTable"] and stampData.TransparencyTable[part] then
+						part.Transparency = gDesiredTrans + (1 - gDesiredTrans) * stampData.TransparencyTable[part]
+					end
+				end
+			end)
+		end
+		for _, decal in pairs(decals) do
+			stampData.DecalTransparencyTable[decal] = decal.Transparency
+			decal.Transparency = gDesiredTrans + (1 - gDesiredTrans) * decal.Transparency
+		end
+		setSeatEnabledStatus(clone, true)
+		setSeatEnabledStatus(clone, false)
+		stampData.CurrentParts = clone
+		if autoAlignToFace(clone) then
+			stampData.CurrentParts:ResetOrientationToIdentity()
+			gInitial90DegreeRotations = 0
+		else
+			local ry = gInitial90DegreeRotations * math.pi / 2
+			if stampData.CurrentParts:IsA("Model") or stampData.CurrentParts:IsA("Tool") then
+				modelRotate(stampData.CurrentParts, ry)
+			else
+				stampData.CurrentParts.CFrame = CFrame.fromEulerAnglesXYZ(0, ry, 0) * stampData.CurrentParts.CFrame
+			end
+		end
+		local clusterMaterial = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+		if clusterMaterial and clusterMaterial:IsA("Vector3Value") then
+			clusterMaterial.Value = Vector3.new(clusterMaterial.Value.X, clusterMaterial.Value.Y, (clusterMaterial.Value.Z + gInitial90DegreeRotations) % 4)
+		end
+		local configFound, targetCFrame
+		configFound, targetCFrame = findConfigAtMouseTarget(Mouse, stampData)
+		if configFound then
+			stampData.CurrentParts = positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
+		end
+		game.JointsService:SetJoinAfterMoveInstance(stampData.CurrentParts)
+		return clone, parts
+	end
+	local checkTerrainBlockCollisions
+	checkTerrainBlockCollisions = function(cellPos, checkHighScalabilityStamp)
+		local cellCenterToWorld = game.Workspace.Terrain.CellCenterToWorld
+		local cellCenter = cellCenterToWorld(game.Workspace.Terrain, cellPos.X, cellPos.Y, cellPos.Z)
+		local cellBlockingParts = game.Workspace:FindPartsInRegion3(Region3.new(cellCenter - Vector3.new(2, 2, 2) + insertBoundingBoxOverlapVector, cellCenter + Vector3.new(2, 2, 2) - insertBoundingBoxOverlapVector), stampData.CurrentParts, 100)
+		local skipThisCell = false
+		for b = 1, #cellBlockingParts do
+			if isBlocker(cellBlockingParts[b]) then
+				skipThisCell = true
+				break
+			end
+		end
+		if not skipThisCell then
+			local alreadyPushedUp = { }
+			for b = 1, #cellBlockingParts do
+				if cellBlockingParts[b].Parent and not alreadyPushedUp[cellBlockingParts[b].Parent] and cellBlockingParts[b].Parent:FindFirstChild("Humanoid" and cellBlockingParts[b].Parent:FindFirstChild("Humanoid"):IsA("Humanoid")) then
+					local blockingPersonTorso = cellBlockingParts[b].Parent:FindFirstChild("Torso")
+					alreadyPushedUp[cellBlockingParts[b].Parent] = true
+					if blockingPersonTorso then
+						local newY = cellCenter.Y + 5
+						if spaceAboveCharacter(blockingPersonTorso, newY, stampData) then
+							blockingPersonTorso.CFrame = blockingPersonTorso.CFrame + Vector3.new(0, newY - blockingPersonTorso.CFrame.p.Y, 0)
+						else
+							skipThisCell = true
+							break
+						end
+					end
+				end
+			end
+		end
+		if not skipThisCell then
+			local canSetCell = true
+			if checkHighScalabilityStamp then
+				if allowedStampRegion then
+					cellPos = cellCenterToWorld(game.Workspace.Terrain, cellPos.X, cellPos.Y, cellPos.Z)
+					if (cellPos.X + 2 > allowedStampRegion.CFrame.p.X + allowedStampRegion.Size.X / 2) or (cellPos.X - 2 < allowedStampRegion.CFrame.p.X - allowedStampRegion.Size.X / 2) or (cellPos.Y + 2 > allowedStampRegion.CFrame.p.Y + allowedStampRegion.Size.Y / 2) or (cellPos.Y - 2 < allowedStampRegion.CFrame.p.Y - allowedStampRegion.Size.Y / 2) or (cellPos.Z + 2 > allowedStampRegion.CFrame.p.Z + allowedStampRegion.Size.Z / 2) or (cellPos.Z - 2 < allowedStampRegion.CFrame.p.Z - allowedStampRegion.Size.Z / 2) then
+						canSetCell = false
+					end
+				end
+			end
+			return canSetCell
+		end
+		return false
+	end
+	local ResolveMegaClusterStamp
+	ResolveMegaClusterStamp = function(checkHighScalabilityStamp)
+		local cellSet = false
+		local cluster = game.Workspace.Terrain
+		local line = HighScalabilityLine.InternalLine
+		local cMax = game.Workspace.Terrain.MaxExtents.Max
+		local cMin = game.Workspace.Terrain.MaxExtents.Min
+		local clusterMaterial = 1
+		local clusterType = 0
+		local clusterOrientation = 0
+		local autoWedgeClusterParts = false
+		if stampData.CurrentParts:FindFirstChild("AutoWedge") then
+			autoWedgeClusterParts = true
+		end
+		if stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) then
+			clusterMaterial = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+			if clusterMaterial:IsA("Vector3Value") then
+				clusterType = clusterMaterial.Value.Y
+				clusterOrientation = clusterMaterial.Value.Z
+				clusterMaterial = clusterMaterial.Value.X
+			elseif clusterMaterial:IsA("IntValue") then
+				clusterMaterial = clusterMaterial.Value
+			end
+		end
+		if HighScalabilityLine.Adorn.Parent and HighScalabilityLine.Start and ((HighScalabilityLine.Dimensions > 1) or (line and line.magnitude > 0)) then
+			local startCell = game.Workspace.Terrain:WorldToCell(HighScalabilityLine.Start)
+			local xInc = {
+				0,
+				0,
+				0
+			}
+			local yInc = {
+				0,
+				0,
+				0
+			}
+			local zInc = {
+				0,
+				0,
+				0
+			}
+			local incrementVect = {
+				nil,
+				nil,
+				nil
+			}
+			local stepVect = {
+				Vector3.new(0, 0, 0),
+				Vector3.new(0, 0, 0),
+				Vector3.new(0, 0, 0)
+			}
+			local worldAxes = {
+				Vector3.new(1, 0, 0),
+				Vector3.new(0, 1, 0),
+				Vector3.new(0, 0, 1)
+			}
+			local lines = { }
+			if HighScalabilityLine.Dimensions > 1 then
+				table.insert(lines, HighScalabilityLine.MoreLines[1])
+			end
+			if line and line.magnitude > 0 then
+				table.insert(lines, line)
+			end
+			if HighScalabilityLine.Dimensions > 2 then
+				table.insert(lines, HighScalabilityLine.MoreLines[2])
+			end
+			for i = 1, #lines do
+				lines[i] = Vector3.new(math.floor(lines[i].X + 0.5), math.floor(lines[i].Y + 0.5), math.floor(lines[i].Z + 0.5))
+				if lines[i].X > 0 then
+					xInc[i] = 1
+				elseif lines[i].X < 0 then
+					xInc[i] = -1
+				end
+				if lines[i].Y > 0 then
+					yInc[i] = 1
+				elseif lines[i].Y < 0 then
+					yInc[i] = -1
+				end
+				if lines[i].Z > 0 then
+					zInc[i] = 1
+				elseif lines[i].Z < 0 then
+					zInc[i] = -1
+				end
+				incrementVect[i] = Vector3.new(xInc[i], yInc[i], zInc[i])
+				if incrementVect[i].magnitude < 0.9 then
+					incrementVect[i] = nil
+				end
+			end
+			if not lines[2] then
+				lines[2] = Vector3.new(0, 0, 0)
+			end
+			if not lines[3] then
+				lines[3] = Vector3.new(0, 0, 0)
+			end
+			local waterForceTag = stampData.CurrentParts:FindFirstChild("WaterForceTag", true)
+			local waterForceDirectionTag = stampData.CurrentParts:FindFirstChild("WaterForceDirectionTag", true)
+			while stepVect[3].magnitude * 4 <= lines[3].magnitude do
+				local outerStepVectIndex = 1
+				while outerStepVectIndex < 4 do
+					stepVect[2] = Vector3.new(0, 0, 0)
+					while stepVect[2].magnitude * 4 <= lines[2].magnitude do
+						local innerStepVectIndex = 1
+						while innerStepVectIndex < 4 do
+							stepVect[1] = Vector3.new(0, 0, 0)
+							while stepVect[1].magnitude * 4 <= lines[1].magnitude do
+								local stepVectSum = stepVect[1] + stepVect[2] + stepVect[3]
+								local cellPos = Vector3int16.new(startCell.X + stepVectSum.X, startCell.Y + stepVectSum.Y, startCell.Z + stepVectSum.Z)
+								if cellPos.X >= cMin.X and cellPos.Y >= cMin.Y and cellPos.Z >= cMin.Z and cellPos.X < cMax.X and cellPos.Y < cMax.Y and cellPos.Z < cMax.Z then
+									local okToStampTerrainBlock = checkTerrainBlockCollisions(cellPos, checkHighScalabilityStamp)
+									if okToStampTerrainBlock then
+										if waterForceTag then
+											cluster:SetWaterCell(cellPos.X, cellPos.Y, cellPos.Z, Enum.WaterForce[waterForceTag.Value], Enum.WaterDirection[waterForceDirectionTag.Value])
+										else
+											cluster:SetCell(cellPos.X, cellPos.Y, cellPos.Z, clusterMaterial, clusterType, clusterOrientation)
+										end
+										cellSet = true
+										if autoWedgeClusterParts then
+											game.Workspace.Terrain:AutowedgeCells(Region3int16.new(Vector3int16.new(cellPos.x - 1, cellPos.y - 1, cellPos.z - 1), Vector3int16.new(cellPos.x + 1, cellPos.y + 1, cellPos.z + 1)))
+										end
+									end
+								end
+								stepVect[1] = stepVect[1] + incrementVect[1]
+							end
+							if incrementVect[2] then
+								while innerStepVectIndex < 4 and worldAxes[innerStepVectIndex]:Dot(incrementVect[2]) == 0 do
+									innerStepVectIndex = innerStepVectIndex + 1
+								end
+								if innerStepVectIndex < 4 then
+									stepVect[2] = stepVect[2] + worldAxes[innerStepVectIndex] * worldAxes[innerStepVectIndex]:Dot(incrementVect[2])
+								end
+								innerStepVectIndex = innerStepVectIndex + 1
+							else
+								stepVect[2] = Vector3.new(1, 0, 0)
+								innerStepVectIndex = 4
+							end
+							if stepVect[2].magnitude * 4 > lines[2].magnitude then
+								innerStepVectIndex = 4
+							end
+						end
+					end
+					if incrementVect[3] then
+						while outerStepVectIndex < 4 and worldAxes[outerStepVectIndex]:Dot(incrementVect[3]) == 0 do
+							outerStepVectIndex = outerStepVectIndex + 1
+						end
+						if outerStepVectIndex < 4 then
+							stepVect[3] = stepVect[3] + worldAxes[outerStepVectIndex] * worldAxes[outerStepVectIndex]:Dot(incrementVect[3])
+						end
+						outerStepVectIndex = outerStepVectIndex + 1
+					else
+						stepVect[3] = Vector3.new(1, 0, 0)
+						outerStepVectIndex = 4
+					end
+					if stepVect[3].magnitude * 4 > lines[3].magnitude then
+						outerStepVectIndex = 4
+					end
+				end
+			end
+		end
+		HighScalabilityLine.Start = nil
+		HighScalabilityLine.Adorn.Parent = nil
+		if cellSet then
+			stampData.CurrentParts.Parent = nil
+pcall(function()
+				return game:GetService("ChangeHistoryService"):SetWaypoint("StamperMulti")
+			end)
+		end
+		return cellSet
+	end
+	local DoStamperMouseUp
+	DoStamperMouseUp = function(Mouse)
+		if not Mouse then
+			error("Error: RbxStamper.DoStamperMouseUp: Mouse is nil")
+			return false
+		end
+		if not Mouse:IsA("Mouse") then
+			error("Error: RbxStamper.DoStamperMouseUp: Mouse is of type", Mouse.className, "should be of type Mouse")
+			return false
+		end
+		if not stampData.Dragger then
+			error("Error: RbxStamper.DoStamperMouseUp: stampData.Dragger is nil")
+			return false
+		end
+		if not HighScalabilityLine then
+			return false
+		end
+		local checkHighScalabilityStamp
+		if stampInModel then
+			local canStamp
+			local isHSLPart = isMegaClusterPart()
+			if isHSLPart and HighScalabilityLine and HighScalabilityLine.Start and HighScalabilityLine.InternalLine and HighScalabilityLine.InternalLine.magnitude > 0 then
+				canStamp = true
+				checkHighScalabilityStamp = true
+			else
+				canStamp, checkHighScalabilityStamp = t.CanEditRegion(stampData.CurrentParts, allowedStampRegion)
+			end
+			if not canStamp then
+				if stampFailedFunc then
+					stampFailedFunc()
+				end
+				return false
+			end
+		end
+		if unstampableSurface then
+			flashRedBox()
+			return false
+		end
+		local canStamp
+		canStamp, checkHighScalabilityStamp = t.CanEditRegion(stampData.CurrentParts, allowedStampRegion)
+		if not canStamp then
+			if stampFailedFunc then
+				stampFailedFunc()
+			end
+			return false
+		end
+		local minBB, maxBB
+		minBB, maxBB = getBoundingBoxInWorldCoordinates(stampData.CurrentParts)
+		local configFound, targetCFrame = findConfigAtMouseTarget(Mouse, stampData)
+		if configFound and not HighScalabilityLine.Adorn.Parent then
+			if clusterPartsInRegion(minBB + insertBoundingBoxOverlapVector, maxBB - insertBoundingBoxOverlapVector) then
+				flashRedBox()
+				return false
+			end
+			local blockingParts = game.Workspace:FindPartsInRegion3(Region3.new(minBB + insertBoundingBoxOverlapVector, maxBB - insertBoundingBoxOverlapVector), stampData.CurrentParts, 100)
+			for b = 1, #blockingParts do
+				if isBlocker(blockingParts[b]) then
+					flashRedBox()
+					return false
+				end
+			end
+			local alreadyPushedUp = { }
+			for b = 1, #blockingParts do
+				if blockingParts[b].Parent and not alreadyPushedUp[blockingParts[b].Parent] and blockingParts[b].Parent:FindFirstChild("Humanoid") and blockingParts[b].Parent:FindFirstChild("Humanoid"):IsA("Humanoid") then
+					local blockingPersonTorso = blockingParts[b].Parent:FindFirstChild("Torso")
+					alreadyPushedUp[blockingParts[b].Parent] = true
+					if blockingPersonTorso then
+						local newY = maxBB.Y + 3
+						if spaceAboveCharacter(blockingPersonTorso, newY, stampData) then
+							blockingPersonTorso.CFrame = blockingPersonTorso.CFrame + Vector3.new(0, newY - blockingPersonTorso.CFrame.p.Y, 0)
+						else
+							flashRedBox()
+							return false
+						end
+					end
+				end
+			end
+		elseif (not configFound) and not (HighScalabilityLine.Start and HighScalabilityLine.Adorn.Parent) then
+			resetHighScalabilityLine()
+			return false
+		end
+		if game:FindFirstChild("Players") then
+			if game.Players["LocalPlayer"] then
+				if game.Players.LocalPlayer["Character"] then
+					local localChar = game.Players.LocalPlayer.Character
+					local stampTracker = localChar:FindFirstChild("StampTracker")
+					if stampTracker and not stampTracker.Value then
+						stampTracker.Value = true
+					end
+				end
+			end
+		end
+		if HighScalabilityLine.Start and HighScalabilityLine.Adorn.Parent and isMegaClusterPart() then
+			if ResolveMegaClusterStamp(checkHighScalabilityStamp) or checkHighScalabilityStamp then
+				stampData.CurrentParts.Parent = nil
+				return true
+			end
+		end
+		HighScalabilityLine.Start = nil
+		HighScalabilityLine.Adorn.Parent = nil
+		local cluster = game.Workspace.Terrain
+		if isMegaClusterPart() then
+			local cellPos
+			if stampData.CurrentParts:IsA("Model") then
+				cellPos = cluster:WorldToCell(stampData.CurrentParts:GetModelCFrame().p)
+			else
+				cellPos = cluster:WorldToCell(stampData.CurrentParts.CFrame.p)
+			end
+			local cMax = game.Workspace.Terrain.MaxExtents.Max
+			local cMin = game.Workspace.Terrain.MaxExtents.Min
+			if checkTerrainBlockCollisions(cellPos, false) then
+				local clusterValues = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+				local waterForceTag = stampData.CurrentParts:FindFirstChild("WaterForceTag", true)
+				local waterForceDirectionTag = stampData.CurrentParts:FindFirstChild("WaterForceDirectionTag", true)
+				if cellPos.X >= cMin.X and cellPos.Y >= cMin.Y and cellPos.Z >= cMin.Z and cellPos.X < cMax.X and cellPos.Y < cMax.Y and cellPos.Z < cMax.Z then
+					if waterForceTag then
+						cluster:SetWaterCell(cellPos.X, cellPos.Y, cellPos.Z, Enum.WaterForce[waterForceTag.Value], Enum.WaterDirection[waterForceDirectionTag.Value])
+					elseif not clusterValues then
+						cluster:SetCell(cellPos.X, cellPos.Y, cellPos.Z, cellInfo.Material, cellInfo.clusterType, gInitial90DegreeRotations % 4)
+					elseif clusterValues:IsA("Vector3Value") then
+						cluster:SetCell(cellPos.X, cellPos.Y, cellPos.Z, clusterValues.Value.X, clusterValues.Value.Y, clusterValues.Value.Z)
+					else
+						cluster:SetCell(cellPos.X, cellPos.Y, cellPos.Z, clusterValues.Value, 0, 0)
+					end
+					local autoWedgeClusterParts = false
+					if stampData.CurrentParts:FindFirstChild("AutoWedge") then
+						autoWedgeClusterParts = true
+					end
+					if autoWedgeClusterParts then
+						game.Workspace.Terrain:AutowedgeCells(Region3int16.new(Vector3int16.new(cellPos.x - 1, cellPos.y - 1, cellPos.z - 1), Vector3int16.new(cellPos.x + 1, cellPos.y + 1, cellPos.z + 1)))
+					end
+					stampData.CurrentParts.Parent = nil
+pcall(function()
+						return game:GetService("ChangeHistoryService"):SetWaypoint("StamperSingle")
+					end)
+					return true
+				end
+			else
+				flashRedBox()
+				return false
+			end
+		end
+		local getPlayer
+		getPlayer = function()
+			if game:FindFirstChild("Players") then
+				if game.Players["LocalPlayer"] then
+					return game.Players.LocalPlayer
+				end
+			end
+			return nil
+		end
+		if stampData.CurrentParts:IsA("Model") or stampData.CurrentParts:IsA("Tool") then
+			if stampData.CurrentParts:IsA("Model") then
+				local manualWeldTable = { }
+				local manualWeldParentTable = { }
+				saveTheWelds(stampData.CurrentParts, manualWeldTable, manualWeldParentTable)
+				stampData.CurrentParts:BreakJoints()
+				stampData.CurrentParts:MakeJoints()
+				restoreTheWelds(manualWeldTable, manualWeldParentTable)
+			end
+			local playerIdTag = stampData.CurrentParts:FindFirstChild("PlayerIdTag")
+			local playerNameTag = stampData.CurrentParts:FindFirstChild("PlayerNameTag")
+			if (playerIdTag ~= nil) then
+				local tempPlayerValue = getPlayer()
+				if (tempPlayerValue ~= nil) then
+					playerIdTag.Value = tempPlayerValue.userId
+				end
+			end
+			if (playerNameTag ~= nil) then
+				if game:FindFirstChild("Players" and game.Players["LocalPlayer"]) then
+					local tempPlayerValue = game.Players.LocalPlayer
+					if (tempPlayerValue ~= nil) then
+						playerNameTag.Value = tempPlayerValue.Name
+					end
+				end
+			end
+			if not (stampData.CurrentParts:FindFirstChild("RobloxModel") ~= nil) then
+				local stringTag = Instance.new("BoolValue")
+				stringTag.Name = "RobloxModel"
+				stringTag.Parent = stampData.CurrentParts
+				if not (stampData.CurrentParts:FindFirstChild("RobloxStamper") ~= nil) then
+					local stringTag2 = Instance.new("BoolValue")
+					stringTag2.Name = "RobloxStamper"
+					stringTag2.Parent = stampData.CurrentParts
+				end
+			end
+		else
+			stampData.CurrentParts:BreakJoints()
+			if not (stampData.CurrentParts:FindFirstChild("RobloxStamper") ~= nil) then
+				local stringTag2 = Instance.new("BoolValue")
+				stringTag2.Name = "RobloxStamper"
+				stringTag2.Parent = stampData.CurrentParts
+			end
+		end
+		if not createJoints then
+			game.JointsService:CreateJoinAfterMoveJoints()
+		end
+		for part, transparency in pairs(stampData.TransparencyTable) do
+			part.Transparency = transparency
+		end
+		for part, archivable in pairs(stampData.ArchivableTable) do
+			part.Archivable = archivable
+		end
+		for part, material in pairs(stampData.MaterialTable) do
+			part.Material = material
+		end
+		for part, collide in pairs(stampData.CanCollideTable) do
+			part.CanCollide = collide
+		end
+		for part, anchored in pairs(stampData.AnchoredTable) do
+			part.Anchored = anchored
+		end
+		for decal, transparency in pairs(stampData.DecalTransparencyTable) do
+			decal.Transparency = transparency
+		end
+		for part, surfaces in pairs(stampData.SurfaceTypeTable) do
+			loadSurfaceTypes(part, surfaces)
+		end
+		if isMegaClusterPart() then
+			stampData.CurrentParts.Transparency = 0
+		end
+		setSeatEnabledStatus(stampData.CurrentParts, true)
+		stampData.TransparencyTable = nil
+		stampData.ArchivableTable = nil
+		stampData.MaterialTable = nil
+		stampData.CanCollideTable = nil
+		stampData.AnchoredTable = nil
+		stampData.SurfaceTypeTable = nil
+		if not (stampData.CurrentParts:FindFirstChild("RobloxModel") ~= nil) then
+			local stringTag = Instance.new("BoolValue")
+			stringTag.Name = "RobloxModel"
+			stringTag.Parent = stampData.CurrentParts
+		end
+		if ghostRemovalScript then
+			ghostRemovalScript.Parent = nil
+		end
+		for _, script in pairs(stampData.DisabledScripts) do
+			script.Disabled = false
+		end
+		for _, script in pairs(stampData.DisabledScripts) do
+			local oldParent = script.Parent
+			script.Parent = nil
+			script:Clone().Parent = oldParent
+		end
+		stampData.DisabledScripts = nil
+		stampData.Dragger = nil
+		stampData.CurrentParts = nil
+pcall(function()
+			return game:GetService("ChangeHistoryService"):SetWaypoint("StampedObject")
+		end)
+		return true
+	end
+	local pauseStamper
+	pauseStamper = function()
+		for i = 1, #mouseCons do
+			mouseCons[i]:disconnect()
+			mouseCons[i] = nil
+		end
+		mouseCons = { }
+		if stampData and stampData.CurrentParts then
+			stampData.CurrentParts.Parent = nil
+			stampData.CurrentParts:Remove()
+		end
+		resetHighScalabilityLine()
+		return game.JointsService:ClearJoinAfterMoveJoints()
+	end
+	local prepareUnjoinableSurfaces
+	prepareUnjoinableSurfaces = function(modelCFrame, parts, whichSurface)
+		local AXIS_VECTORS = {
+			Vector3.new(1, 0, 0),
+			Vector3.new(0, 1, 0),
+			Vector3.new(0, 0, 1)
+		}
+		local isPositive = 1
+		if whichSurface < 0 then
+			isPositive = isPositive * (-1)
+			whichSurface = whichSurface * (-1)
+		end
+		local surfaceNormal = isPositive * modelCFrame:vectorToWorldSpace(AXIS_VECTORS[whichSurface])
+		for i = 1, #parts do
+			local currPart = parts[i]
+			local surfaceNormalInLocalCoords = currPart.CFrame:vectorToObjectSpace(surfaceNormal)
+			if math.abs(surfaceNormalInLocalCoords.X) > math.abs(surfaceNormalInLocalCoords.Y) then
+				if math.abs(surfaceNormalInLocalCoords.X) > math.abs(surfaceNormalInLocalCoords.Z) then
+					if surfaceNormalInLocalCoords.X > 0 then
+						currPart.RightSurface = "Unjoinable"
+					else
+						currPart.LeftSurface = "Unjoinable"
+					end
+				else
+					if surfaceNormalInLocalCoords.Z > 0 then
+						currPart.BackSurface = "Unjoinable"
+					else
+						currPart.FrontSurface = "Unjoinable"
+					end
+				end
+			else
+				if math.abs(surfaceNormalInLocalCoords.Y) > math.abs(surfaceNormalInLocalCoords.Z) then
+					if surfaceNormalInLocalCoords.Y > 0 then
+						currPart.TopSurface = "Unjoinable"
+					else
+						currPart.BottomSurface = "Unjoinable"
+					end
+				else
+					if surfaceNormalInLocalCoords.Z > 0 then
+						currPart.BackSurface = "Unjoinable"
+					else
+						currPart.FrontSurface = "Unjoinable"
+					end
+				end
+			end
+		end
+	end
+	local resumeStamper
+	resumeStamper = function()
+		local clone, parts = prepareModel(modelToStamp)
+		if not clone or not parts then
+			return
+		end
+		local unjoinableTag = clone:FindFirstChild("UnjoinableFaces", true)
+		if unjoinableTag then
+			for unjoinableSurface in string.gmatch(unjoinableTag.Value, "[^,]*") do
+				if tonumber(unjoinableSurface) then
+					if clone:IsA("Model") then
+						prepareUnjoinableSurfaces(clone:GetModelCFrame(), parts, tonumber(unjoinableSurface))
+					else
+						prepareUnjoinableSurfaces(clone.CFrame, parts, tonumber(unjoinableSurface))
+					end
+				end
+			end
+		end
+		stampData.ErrorBox = errorBox
+		if stampInModel then
+			clone.Parent = stampInModel
+		else
+			clone.Parent = game.Workspace
+		end
+		if clone:FindFirstChild("ClusterMaterial", true) then
+			local clusterMaterial = clone:FindFirstChild("ClusterMaterial", true)
+			if clusterMaterial:IsA("Vector3Value") then
+				cellInfo.Material = clusterMaterial.Value.X
+				cellInfo.clusterType = clusterMaterial.Value.Y
+				cellInfo.clusterOrientation = clusterMaterial.Value.Z
+			elseif clusterMaterial:IsA("IntValue") then
+				cellInfo.Material = clusterMaterial.Value
+			end
+		end
+pcall(function()
+			mouseTarget = Mouse.Target
+		end)
+		if mouseTarget and not (mouseTarget.Parent:FindFirstChild("RobloxModel") ~= nil) then
+			game.JointsService:SetJoinAfterMoveTarget(mouseTarget)
+		else
+			game.JointsService:SetJoinAfterMoveTarget(nil)
+		end
+		game.JointsService:ShowPermissibleJoints()
+		for _, object in pairs(stampData.DisabledScripts) do
+			if object.Name == "GhostRemovalScript" then
+				object.Parent = stampData.CurrentParts
+			end
+		end
+		stampData.Dragger = Instance.new("Dragger")
+		stampData.Dragger:MouseDown(parts[1], Vector3.new(0, 0, 0, parts))
+		stampData.Dragger:MouseUp()
+		DoStamperMouseMove(Mouse)
+		table.insert(mouseCons, Mouse.Move:connect(function()
+			if movingLock or stampUpLock then
+				return
+			end
+			movingLock = true
+			DoStamperMouseMove(Mouse)
+			movingLock = false
+		end))
+		table.insert(mouseCons, Mouse.Button1Down:connect(function()
+			return DoStamperMouseDown(Mouse)
+		end))
+		table.insert(mouseCons, Mouse.Button1Up:connect(function()
+			stampUpLock = true
+			while movingLock do
+				wait()
+			end
+			stamped.Value = DoStamperMouseUp(Mouse)
+			resetHighScalabilityLine()
+			stampUpLock = false
+		end))
+		stamped.Value = false
+	end
+	local resetStamperState
+	resetStamperState = function(newModelToStamp)
+		if newModelToStamp then
+			if not newModelToStamp:IsA("Model") and not newModelToStamp:IsA("BasePart") then
+				error("resetStamperState: newModelToStamp (first arg) is not nil, but not a model or part!")
+			end
+			modelToStamp = newModelToStamp
+		end
+		pauseStamper()
+		return resumeStamper()
+	end
+	resetStamperState()
+	control.Stamped = stamped
+	control.Paused = false
+	control.LoadNewModel = function(newStampModel)
+		if newStampModel and not newStampModel:IsA("Model") and not newStampModel:IsA("BasePart") then
+			error("Control.LoadNewModel: newStampModel (first arg) is not a Model or Part!")
+			return nil
+		end
+		return resetStamperState(newStampModel)
+	end
+	control.ReloadModel = function()
+		return resetStamperState()
+	end
+	control.Pause = function()
+		if not control.Paused then
+			pauseStamper()
+			control.Paused = true
+		else
+			return print("RbxStamper Warning: Tried to call Control.Pause! when already paused")
+		end
+	end
+	control.Resume = function()
+		if control.Paused then
+			resumeStamper()
+			control.Paused = false
+		else
+			return print("RbxStamper Warning: Tried to call Control.Resume! without Pausing First")
+		end
+	end
+	control.ResetRotation = function() end
+	control.Destroy = function()
+		for i = 1, #mouseCons do
+			mouseCons[i]:disconnect()
+			mouseCons[i] = nil
+		end
+		if keyCon ~= nil then
+			keyCon:disconnect()
+		end
+		game.JointsService:ClearJoinAfterMoveJoints()
+		if adorn ~= nil then
+			adorn:Destroy()
+		end
+		if adornPart ~= nil then
+			adornPart:Destroy()
+		end
+		if errorBox ~= nil then
+			errorBox:Destroy()
+		end
+		if stampData ~= nil then
+			do
+				local _obj_0 = stampData.Dragger
+				if _obj_0 ~= nil then
+					_obj_0:Destroy()
+				end
+			end
+		end
+		if stampData ~= nil then
+			do
+				local _obj_0 = stampData.CurrentParts
+				if _obj_0 ~= nil then
+					_obj_0:Destroy()
+				end
+			end
+		end
+		if control and control["Stamped"] then
+			control.Stamped:Destroy()
+		end
+		control = nil
+	end
+	return control
+end
+t.Help = function(funcNameOrFunc)
+	if "GetStampModel" == funcNameOrFunc or t.GetStampModel == funcNameOrFunc then
+		return "Function GetStampModel.  Arguments: assetId, useAssetVersionId.  assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId.  Side effect: returns a model of the assetId, or a string with error message if something fails"
+	elseif "SetupStamperDragger" == funcNameOrFunc or t.SetupStamperDragger == funcNameOrFunc then
+		return "Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4.  Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action."
+	end
+end
+return t
