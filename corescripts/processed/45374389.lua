@@ -1,16 +1,5 @@
-print("[Mercury]: Loaded corescript 45374389")
-local t = { }
-t.Foo = function()
-	return print("foo")
-end
-t.Bar = function()
-	return print("bar")
-end
-t.Help = function(funcNameOrFunc)
-	if "Foo" == funcNameOrFunc or t.Foo == funcNameOrFunc then
-		return "Function Foo.  Arguments: None.  Side effect: prints foo"
-	elseif "Bar" == funcNameOrFunc or t.Bar == funcNameOrFunc then
-		return "Function Bar.  Arguments: None.  Side effect: prints bar"
-	end
-end
-return t
+local a={}a.Foo=function()print'foo'end a.Bar=function()print'bar'end a.Help=
+function(b)if b=='Foo'or b==a.Foo then return
+'Function Foo.  Arguments: None.  Side effect: prints foo'elseif b=='Bar'or b==a
+.Bar then return'Function Bar.  Arguments: None.  Side effect: prints bar'end
+end return a
