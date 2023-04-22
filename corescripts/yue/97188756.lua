@@ -1025,7 +1025,7 @@ Chat.UpdateQueue = function(self, field, diff)
 		if self.MessageQueue[i] then
 			for _, label in pairs(self.MessageQueue[i]) do
 				if label and type(label) ~= "table" and type(label) ~= "number" then
-					if label:IsA("TextLabel" or label:IsA("TextButton")) then
+					if label:IsA("TextLabel") or label:IsA("TextButton") then
 						if diff then
 							label.Position = label.Position - UDim2.new(0, 0, diff, 0)
 						else
@@ -1209,7 +1209,7 @@ Chat.ToggleSafeChatMenu = function(self, scButton)
 	local list = Chat:FindButtonTree(scButton, self.SafeChatTree)
 	if list then
 		for button, _ in pairs(list) do
-			if button:IsA("TextButton" or button:IsA("ImageButton")) then
+			if button:IsA("TextButton") or button:IsA("ImageButton") then
 				button.Visible = not button.Visible
 			end
 		end

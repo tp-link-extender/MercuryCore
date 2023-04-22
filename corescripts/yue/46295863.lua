@@ -1593,7 +1593,7 @@ pcall(function()
 			local pos = 1
 			if children then
 				for _, player in ipairs(children) do
-					if player:IsA("Player" and player ~= localPlayer) then
+					if player:IsA("Player") and player ~= localPlayer then
 						playerNames[pos] = player.Name
 						nameToPlayer[player.Name] = player
 						pos = pos + 1

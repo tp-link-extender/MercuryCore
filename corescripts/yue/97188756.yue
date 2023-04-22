@@ -1034,7 +1034,7 @@ Chat.UpdateQueue = (field, diff) =>
 		if @MessageQueue[i]
 			for _, label in pairs @MessageQueue[i]
 				if label and type(label) ~= "table" and type(label) ~= "number"
-					if label\IsA "TextLabel" or label\IsA "TextButton"
+					if label\IsA"TextLabel" or label\IsA "TextButton"
 						if diff
 							label.Position = label.Position - UDim2.new(0, 0, diff, 0)
 						else
@@ -1302,7 +1302,7 @@ Chat.ToggleSafeChatMenu = (scButton) =>
 	list = Chat\FindButtonTree scButton, @SafeChatTree
 	if list
 		for button, _ in pairs list
-			if button\IsA "TextButton" or button\IsA "ImageButton"
+			if button\IsA"TextButton" or button\IsA "ImageButton"
 				button.Visible = not button.Visible
 		return true
 	return false

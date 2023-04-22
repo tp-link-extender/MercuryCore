@@ -579,7 +579,7 @@ layoutGuiObjectsHelper = function(frame, guiObjects, settingsTable)
 	local totalPixels = frame.AbsoluteSize.Y
 	local pixelsRemaining = totalPixels
 	for _, child in ipairs(guiObjects) do
-		if child:IsA("TextLabel" or child:IsA("TextButton")) then
+		if child:IsA("TextLabel") or child:IsA("TextButton") then
 			local isLabel = child:IsA("TextLabel")
 			local settingsTableIndex = "Text" .. tostring((function()
 				if isLabel then
