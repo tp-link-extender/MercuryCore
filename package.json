@@ -19,7 +19,7 @@
 		"@types/serviceworker": "^0.0.67",
 		"@types/uuid": "^9.0.1",
 		"@unocss/core": "^0.51.6",
-		"prettier": "3.0.0-alpha.6",
+		"prettier": "^2.8.8",
 		"prettier-plugin-svelte": "^2.10.0",
 		"prisma": "^4.13.0",
 		"sass": "^1.62.0",
