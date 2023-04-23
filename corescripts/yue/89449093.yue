@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 -- This script manages context switches in the backpack (Gear to Wardrobe, etc.) and player state changes. Also manages global functions across different tabs (currently only search)
 return if game.CoreGui.Version < 7
 -- peace out if we aren't using the right client
