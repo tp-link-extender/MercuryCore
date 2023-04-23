@@ -10,7 +10,6 @@
 	export let user: any
 	export let num: number
 	export let total: number
-
 </script>
 
 <a

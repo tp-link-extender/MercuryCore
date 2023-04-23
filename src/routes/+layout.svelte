@@ -23,7 +23,6 @@
 
 		nprogress.done()
 	}
-
 </script>
 
 <svelte:head>

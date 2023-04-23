@@ -31,7 +31,6 @@
 	]
 
 	export let item = items[Math.floor(Math.random() * items.length)]
-
 </script>
 
 <Canvas>
