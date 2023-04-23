@@ -10,12 +10,14 @@
 
 <a
 	in:fade={{ num, total }}
-	class="card text-center light-text bg-darker {place.serverPing >
-	Math.floor(Date.now() / 1000) - 35
-		? 'border-success'
-		: 'opacity-50'} text-decoration-none h6 rounded-4 m-0"
+	class="card text-center light-text bg-darker text-decoration-none h6 rounded-4 m-0"
+	class:border-success={place.serverPing >=
+		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
-	<div class="row">
+	<div
+		class="row"
+		class:opacity-50={place.serverPing <
+			Math.floor(Date.now() / 1000) - 35}>
 		<div class="col col-6">
 			<div id="shadow" class="overflow-hidden bg-black">
 				<img src={place.image} alt={place.name} class="w-100 h-100" />

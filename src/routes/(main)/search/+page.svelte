@@ -1,4 +1,5 @@
 <script lang="ts">
+	import fade from "$lib/fade"
 	import Place from "$lib/components/Place.svelte"
 	import Item from "$lib/components/Item.svelte"
 	import Group from "$lib/components/Group.svelte"
@@ -29,8 +30,9 @@
 <div class="container-fluid mt-5">
 	{#if data.category == "users" && data.users}
 		<div class="grid d-grid">
-			{#each data.users as user}
+			{#each data.users as user, num}
 				<a
+					in:fade={{ num, total: data.users.length }}
 					class="px-2 mb-2 text-center light-text text-decoration-none"
 					href="/user/{user.number}">
 					<div class="position-relative mb-2">
