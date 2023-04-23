@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 controlFrame = script.Parent\FindFirstChild "ControlFrame"
 
 return if not controlFrame

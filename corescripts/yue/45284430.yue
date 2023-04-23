@@ -1,3 +1,6 @@
+import "macros" as { $ }
+$load $FILE
+
 t = {}
 
 -- Heliodex's basic New function (basically a simplified version of melt)
