@@ -78,7 +78,7 @@
 	</div>
 	<div class="row">
 		<div class="container d-grid m-0">
-			{#each query ? searchedData : data.items || [] as item, num}
+			{#each query ? searchedData : data.items || [] as item, num (item.id)}
 				<Item {item} {num} total={data.items.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
