@@ -5,6 +5,7 @@
 
 	export let modal: Writable<boolean>
 	const close = () => modal.set(false)
+
 </script>
 
 {#if $modal}

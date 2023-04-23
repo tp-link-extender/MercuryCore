@@ -8,6 +8,7 @@
 	let isInView: boolean
 	export let right = false
 	export let fullwidth = false
+
 </script>
 
 <div
