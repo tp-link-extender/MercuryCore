@@ -107,7 +107,7 @@
 	</div>
 	<div class="row">
 		<div class="container d-grid m-0">
-			{#each query ? searchedData : data.places || [] as place, num}
+			{#each query ? searchedData : data.places || [] as place, num (place.id)}
 				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
