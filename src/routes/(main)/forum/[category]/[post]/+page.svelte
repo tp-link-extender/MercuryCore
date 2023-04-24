@@ -123,7 +123,7 @@
 				name="content"
 				placeholder="What are your thoughts?"
 				rows="4" />
-			<button type="submit" class="btn btn-success h-100 ms-3">
+			<button type="submit" class="btn btn-success ms-3 mt-auto">
 				{#if $delayed}
 					Working...
 				{:else}
