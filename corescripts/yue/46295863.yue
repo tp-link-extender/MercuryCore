@@ -1246,7 +1246,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 	backButton.ZIndex = baseZIndex + 4
 	backButton.Parent = gameSettingsMenuFrame
 
-	syncVideoCaptureSetting = nil
+	global syncVideoCaptureSetting = nil
 
 	if not macClient
 		videoCaptureLabel = Instance.new "TextLabel"
@@ -1335,12 +1335,12 @@ createGameSettingsMenu = (baseZIndex, _) ->
 	gameSettingsMenuFrame
 
 if LoadLibrary
-	RbxGui = LoadLibrary "RbxGui"
+	global RbxGui = LoadLibrary "RbxGui"
 	baseZIndex = 0
 	if UserSettings
 		createSettingsDialog = ->
 			waitForChild gui, "BottomLeftControl"
-			settingsButton = gui.BottomLeftControl\FindFirstChild "SettingsButton"
+			global settingsButton = gui.BottomLeftControl\FindFirstChild "SettingsButton"
 
 			if settingsButton == nil
 				settingsButton = Instance.new "ImageButton"
