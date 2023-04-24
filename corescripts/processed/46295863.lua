@@ -170,18 +170,19 @@ CreateTextButtons = function(frame, buttons, yPos, ySize)
 		end
 	end
 	for _, obj in ipairs(buttons) do
-		local button = New("TextButton", "Button" .. buttonNum)
-		button.Font = Enum.Font.Arial
-		button.FontSize = Enum.FontSize.Size18
-		button.AutoButtonColor = true
-		button.Style = Enum.ButtonStyle.RobloxButton
-		button.Text = obj.Text
-		button.TextColor3 = Color3.new(1, 1, 1)
+		local button = New("TextButton", "Button" .. tostring(buttonNum), {
+			Font = Enum.Font.Arial,
+			FontSize = Enum.FontSize.Size18,
+			AutoButtonColor = true,
+			Style = Enum.ButtonStyle.RobloxButton,
+			Text = obj.Text,
+			TextColor3 = Color3.new(1, 1, 1),
+			Parent = frame
+		})
 		button.MouseButton1Click:connect(function()
 			toggleSelection(button)
 			return obj.Function()
 		end)
-		button.Parent = frame
 		buttonObjs[buttonNum] = button
 		buttonNum = buttonNum + 1
 	end

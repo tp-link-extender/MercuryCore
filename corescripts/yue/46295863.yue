@@ -212,25 +212,25 @@ CreateTextButtons = (frame, buttons, yPos, ySize) ->
 
 	toggleSelection = (button) ->
 		for _, obj in ipairs buttonObjs
-			if obj == button
-				obj.Style = Enum.ButtonStyle.RobloxButtonDefault
+			obj.Style = if obj == button
+				Enum.ButtonStyle.RobloxButtonDefault
 			else
-				obj.Style = Enum.ButtonStyle.RobloxButton
+				Enum.ButtonStyle.RobloxButton
 
 
 	for _, obj in ipairs buttons
-		button = New "TextButton", "Button" .. buttonNum
-		button.Font = Enum.Font.Arial
-		button.FontSize = Enum.FontSize.Size18
-		button.AutoButtonColor = true
-		button.Style = Enum.ButtonStyle.RobloxButton
-		button.Text = obj.Text
-		button.TextColor3 = Color3.new 1, 1, 1
+		button = New "TextButton", "Button#{buttonNum}"
+			Font: Enum.Font.Arial
+			FontSize: Enum.FontSize.Size18
+			AutoButtonColor: true
+			Style: Enum.ButtonStyle.RobloxButton
+			Text: obj.Text
+			TextColor3: Color3.new 1, 1, 1
+			Parent: frame
+
 		button.MouseButton1Click\connect ->
 			toggleSelection button
 			obj.Function!
-
-		button.Parent = frame
 		buttonObjs[buttonNum] = button
 
 		buttonNum += 1
