@@ -311,7 +311,7 @@ createHelpDialog = function(baseZIndex)
 			})
 		})
 	})
-	local buttonRow, image = helpDialog.Buttons, helpDialog.LayoutFrame.Image
+	local buttonRow, image = helpDialog.Buttons, helpDialog.ImageFrame.LayoutFrame.Image
 	local buttons = { }
 	buttons[1] = { }
 	buttons[1].Text = "Look"
