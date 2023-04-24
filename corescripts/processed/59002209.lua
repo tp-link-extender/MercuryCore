@@ -1,1 +1,1 @@
-return print("[Mercury]: Loaded corescript 59002209")
+return print'[Mercury]: Loaded corescript 59002209'

@@ -1,1056 +1,228 @@
-print("[Mercury]: Loaded corescript 53878057")
-if game.CoreGui.Version < 3 then
-	return
-end
-local waitForChild
-waitForChild = function(instance, name)
-	while not instance:FindFirstChild(name) do
-		instance.ChildAdded:wait()
-	end
-	return instance:FindFirstChild(name)
-end
-local waitForProperty
-waitForProperty = function(instance, property)
-	while not instance[property] do
-		instance.Changed:wait()
-	end
-end
-local currentLoadout = script.Parent
-local StaticTabName = "gear"
-local backpackEnabled = true
-local robloxGui = game:GetService("CoreGui"):FindFirstChild("RobloxGui")
-assert(robloxGui)
-local controlFrame = waitForChild(robloxGui, "ControlFrame")
-local backpackButton = waitForChild(controlFrame, "BackpackButton")
-local backpack = waitForChild(robloxGui, "Backpack")
-waitForChild(robloxGui, "CurrentLoadout")
-waitForChild(robloxGui.CurrentLoadout, "TempSlot")
-waitForChild(robloxGui.CurrentLoadout.TempSlot, "SlotNumber")
-waitForChild(currentLoadout, "Background")
-local clBackground = currentLoadout.Background
-local IsTouchDevice
-IsTouchDevice = function()
-	local touchEnabled = false
-pcall(function()
-		touchEnabled = Game:GetService("UserInputService").TouchEnabled
-	end)
-	return touchEnabled
-end
-local moveHealthBar
-moveHealthBar = function(pGui)
-	waitForChild(pGui, "HealthGUI")
-	waitForChild(pGui["HealthGUI"], "tray")
-	local tray = pGui["HealthGUI"]["tray"]
-	tray.Position = UDim2.new(0.5, -85, 1, -26)
-end
-local setHealthBarVisible
-setHealthBarVisible = function(pGui, visible)
-	waitForChild(pGui, "HealthGUI")
-	waitForChild(pGui["HealthGUI"], "tray")
-	local tray = pGui["HealthGUI"]["tray"]
-	tray.Visible = visible
-end
-waitForChild(game, "Players")
-waitForProperty(game.Players, "LocalPlayer")
-local player = game.Players.LocalPlayer
-waitForChild(player, "PlayerGui")
-Spawn(function()
-	return moveHealthBar(player.PlayerGui)
-end)
-while not (player.Character ~= nil) do
-	wait(0.03)
-end
-local humanoid = waitForChild(player.Character, "Humanoid")
-humanoid.Died:connect(function()
-	backpackButton.Visible = false
-end)
-waitForChild(game, "LocalBackpack")
-game.LocalBackpack:SetOldSchoolBackpack(false)
-waitForChild(currentLoadout.Parent, "Backpack")
-local guiBackpack = currentLoadout.Parent.Backpack
-local backpackManager = waitForChild(guiBackpack, "CoreScripts/BackpackScripts/BackpackManager")
-local backpackOpenEvent = waitForChild(backpackManager, "BackpackOpenEvent")
-local backpackCloseEvent = waitForChild(backpackManager, "BackpackCloseEvent")
-local tabClickedEvent = waitForChild(backpackManager, "TabClickedEvent")
-local inGearTab = true
-local maxNumLoadoutItems = 10
-if robloxGui.AbsoluteSize.Y <= 320 then
-	maxNumLoadoutItems = 4
-end
-local characterChildAddedCon, backpackChildCon
-local debounce = false
-local enlargeFactor = 1.18
-local buttonSizeEnlarge = UDim2.new(1 * enlargeFactor, 0, 1 * enlargeFactor, 0)
-local buttonSizeNormal = UDim2.new(1, 0, 1, 0)
-local enlargeOverride = true
-local guiTweenSpeed = 0.5
-local firstInstanceOfLoadout = false
-local inventory = { }
-local gearSlots = { }
-for i = 1, maxNumLoadoutItems do
-	gearSlots[i] = "empty"
-end
-local backpackWasOpened = false
-local backpackIsOpen
-backpackIsOpen = function()
-	if guiBackpack then
-		return guiBackpack.Visible
-	end
-	return false
-end
-local reorganizeLoadout
-local kill
-kill = function(prop, con, gear)
-	if con ~= nil then
-		con:disconnect()
-	end
-	if prop == true and gear then
-		return reorganizeLoadout(gear, false)
-	end
-end
-local registerNumberKeys
-registerNumberKeys = function()
-	for i = 0, 9 do
-		game:GetService("GuiService"):AddKey(tostring(i))
-	end
-end
-local unregisterNumberKeys
-unregisterNumberKeys = function()
-	return pcall(function()
-		for i = 0, 9 do
-			game:GetService("GuiService"):RemoveKey(tostring(i))
-		end
-	end)
-end
-local characterInWorkspace
-characterInWorkspace = function()
-	if game.Players["LocalPlayer"] and game.Players.LocalPlayer["Character"] and (game.Players.LocalPlayer.Character ~= nil) and (game.Players.LocalPlayer.Character.Parent ~= nil) then
-		return true
-	end
-	return false
-end
-local removeGear
-removeGear = function(gear)
-	local emptySlot
-	for i = 1, #gearSlots do
-		if gearSlots[i] == gear and (gear.Parent ~= nil) then
-			emptySlot = i
-			break
-		end
-	end
-	if emptySlot then
-		do
-			local _with_0 = gearSlots[emptySlot]
-			if _with_0.GearReference.Value then
-				if _with_0.GearReference.Value.Parent == game.Players.LocalPlayer.Character then
-					_with_0.GearReference.Value.Parent = game.Players.LocalPlayer.Backpack
-				end
-				if _with_0.GearReference.Value:IsA("HopperBin") and _with_0.GearReference.Value.Active then
-					_with_0.GearReference.Value:Disable()
-					_with_0.GearReference.Value.Active = false
-				end
-			end
-		end
-		gearSlots[emptySlot] = "empty"
-		delay(0, function()
-			return gear:remove()
-		end)
-		return Spawn(function()
-			while backpackIsOpen() do
-				wait(0.03)
-			end
-			waitForChild(player, "Backpack")
-			local allEmpty = true
-			for i = 1, #gearSlots do
-				if gearSlots[i] ~= "empty" then
-					allEmpty = false
-				end
-			end
-			if allEmpty then
-				if #player.Backpack:GetChildren() < 1 then
-					backpackButton.Visible = false
-				else
-					backpackButton.Position = UDim2.new(0.5, -60, 1, -44)
-				end
-				clBackground.Visible = false
-			end
-		end)
-	end
-end
-local insertGear
-insertGear = function(gear, addToSlot)
-	local pos
-	if not addToSlot then
-		for i = 1, #gearSlots do
-			if gearSlots[i] == "empty" then
-				pos = i
-				break
-			end
-		end
-		if pos == 1 and gearSlots[1] ~= "empty" then
-			gear:remove()
-			return
-		end
-	else
-		pos = addToSlot
-		local start = 1
-		for i = 1, #gearSlots do
-			if gearSlots[i] == "empty" then
-				start = i
-				break
-			end
-		end
-		for i = start, pos + 1, -1 do
-			gearSlots[i] = gearSlots[i - 1]
-			do
-				local _tmp_0
-				if i == 10 then
-					_tmp_0 = "0"
-				else
-					_tmp_0 = i
-				end
-				gearSlots[i].SlotNumber.Text = _tmp_0
-				gearSlots[i].SlotNumberDownShadow.Text = _tmp_0
-				gearSlots[i].SlotNumberUpShadow.Text = _tmp_0
-			end
-		end
-	end
-	gearSlots[pos] = gear
-	if pos ~= maxNumLoadoutItems then
-		if type(tostring(pos)) == "string" then
-			local posString = tostring(pos)
-			gear.SlotNumber.Text = posString
-			gear.SlotNumberDownShadow.Text = posString
-			gear.SlotNumberUpShadow.Text = posString
-		end
-	else
-		gear.SlotNumber.Text = "0"
-		gear.SlotNumberDownShadow.Text = "0"
-		gear.SlotNumberUpShadow.Text = "0"
-	end
-	gear.Visible = true
-	local con = gear.Kill.Changed:connect(function(prop)
-		return kill(prop, con, gear)
-	end)
-end
-reorganizeLoadout = function(gear, inserting, _, addToSlot)
-	if inserting then
-		insertGear(gear, addToSlot)
-	else
-		removeGear(gear)
-	end
-	if gear ~= "empty" then
-		gear.ZIndex = 1
-	end
-end
-local checkToolAncestry
-checkToolAncestry = function(child, parent)
-	if child:FindFirstChild("RobloxBuildTool") then
-		return
-	end
-	if child:IsA("Tool") or child:IsA("HopperBin") then
-		for i = 1, #gearSlots do
-			if gearSlots[i] ~= "empty" and gearSlots[i].GearReference.Value == child then
-				if not (parent ~= nil) then
-					gearSlots[i].Kill.Value = true
-					return false
-				elseif child.Parent == player.Character then
-					gearSlots[i].Selected = true
-					return true
-				elseif child.Parent == player.Backpack then
-					if child:IsA("Tool") or child:IsA("HopperBin") then
-						gearSlots[i].Selected = false
-					end
-					return true
-				end
-				gearSlots[i].Kill.Value = true
-				return false
-			end
-		end
-	end
-end
-local removeAllEquippedGear
-removeAllEquippedGear = function(physGear)
-	local stuff = player.Character:GetChildren()
-	for i = 1, #stuff do
-		if (stuff[i]:IsA("Tool") or stuff[i]:IsA("HopperBin")) and stuff[i] ~= physGear then
-			if stuff[i]:IsA("Tool") then
-				stuff[i].Parent = player.Backpack
-			end
-			if stuff[i]:IsA("HopperBin") then
-				stuff[i]:Disable()
-			end
-		end
-	end
-end
-local normalizeButton
-normalizeButton = function(button, speed)
-	if not button then
-		return
-	end
-	if button.Size.Y.Scale <= 1 then
-		return
-	end
-	if button.Selected then
-		return
-	end
-	if not button.Parent then
-		return
-	end
-	local moveSpeed = speed
-	if not (moveSpeed ~= nil) or type(moveSpeed) ~= "number" then
-		moveSpeed = guiTweenSpeed / 5
-	end
-	if button:FindFirstChild("Highlight") then
-		button.Highlight.Visible = false
-	end
-	if button:IsA("ImageButton") or button:IsA("TextButton") then
-		button.ZIndex = 1
-		local centerizeX = -(buttonSizeNormal.X.Scale - button.Size.X.Scale) / 2
-		local centerizeY = -(buttonSizeNormal.Y.Scale - button.Size.Y.Scale) / 2
-		return button:TweenSizeAndPosition(buttonSizeNormal, UDim2.new(button.Position.X.Scale + centerizeX, button.Position.X.Offset, button.Position.Y.Scale + centerizeY, button.Position.Y.Offset), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, moveSpeed, enlargeOverride)
-	end
-end
-local enlargeButton
-enlargeButton = function(button)
-	if button.Size.Y.Scale > 1 then
-		return
-	end
-	if not button.Parent then
-		return
-	end
-	if not button.Selected then
-		return
-	end
-	for i = 1, #gearSlots do
-		if gearSlots[i] == "empty" then
-			break
-		end
-		if gearSlots[i] ~= button then
-			normalizeButton(gearSlots[i])
-		end
-	end
-	if not enlargeOverride then
-		return
-	end
-	if button:FindFirstChild("Highlight") then
-		button.Highlight.Visible = true
-	end
-	if button:IsA("ImageButton") or button:IsA("TextButton") then
-		button.ZIndex = 5
-		local centerizeX = -(buttonSizeEnlarge.X.Scale - button.Size.X.Scale) / 2
-		local centerizeY = -(buttonSizeEnlarge.Y.Scale - button.Size.Y.Scale) / 2
-		return button:TweenSizeAndPosition(buttonSizeEnlarge, UDim2.new(button.Position.X.Scale + centerizeX, button.Position.X.Offset, button.Position.Y.Scale + centerizeY, button.Position.Y.Offset), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, guiTweenSpeed / 5, enlargeOverride)
-	end
-end
-local hopperBinSwitcher
-hopperBinSwitcher = function(numKey, physGear)
-	if not physGear then
-		return
-	end
-	physGear:ToggleSelect()
-	if gearSlots[numKey] == "empty" then
-		return
-	end
-	if not physGear.Active then
-		gearSlots[numKey].Selected = false
-		return normalizeButton(gearSlots[numKey])
-	else
-		gearSlots[numKey].Selected = true
-		return enlargeButton(gearSlots[numKey])
-	end
-end
-local toolSwitcher
-toolSwitcher = function(numKey)
-	if not gearSlots[numKey] then
-		return
-	end
-	local physGear = gearSlots[numKey].GearReference.Value
-	if not (physGear ~= nil) then
-		return
-	end
-	removeAllEquippedGear(physGear)
-	local key = numKey
-	if numKey == 0 then
-		key = 10
-	end
-	for i = 1, #gearSlots do
-		if gearSlots[i] and gearSlots[i] ~= "empty" and i ~= key then
-			normalizeButton(gearSlots[i])
-			do
-				local _with_0 = gearSlots[i]
-				_with_0.Selected = false
-				if _with_0.GearReference and _with_0.GearReference.Value and _with_0.GearReference.Value:IsA("HopperBin") and _with_0.GearReference.Value.Active then
-					_with_0.GearReference.Value:ToggleSelect()
-				end
-			end
-		end
-	end
-	if physGear:IsA("HopperBin") then
-		return hopperBinSwitcher(numKey, physGear)
-	else
-		if physGear.Parent == player.Character then
-			physGear.Parent = player.Backpack
-			if gearSlots[numKey] ~= "empty" then
-				gearSlots[numKey].Selected = false
-				return normalizeButton(gearSlots[numKey])
-			end
-		else
-			physGear.Parent = player.Character
-			gearSlots[numKey].Selected = true
-			return enlargeButton(gearSlots[numKey])
-		end
-	end
-end
-local activateGear
-activateGear = function(num)
-	local numKey
-	if num == "0" then
-		numKey = 10
-	else
-		numKey = tonumber(num)
-	end
-	if not (numKey ~= nil) then
-		return
-	end
-	if gearSlots[numKey] ~= "empty" then
-		return toolSwitcher(numKey)
-	end
-end
-local normalizeAllButtons
-normalizeAllButtons = function()
-	for i = 1, #gearSlots do
-		if gearSlots[i] == "empty" then
-			break
-		end
-		if gearSlots[i] ~= button then
-			normalizeButton(gearSlots[i], 0.1)
-		end
-	end
-end
-local waitForDebounce
-waitForDebounce = function()
-	while debounce do
-		wait()
-	end
-end
-local pointInRectangle
-pointInRectangle = function(point, rectTopLeft, rectSize)
-	if (point.x > rectTopLeft.x and point.x < (rectTopLeft.x + rectSize.x)) or (point.y > rectTopLeft.y and point.y < (rectTopLeft.y + rectSize.y)) then
-		return true
-	end
-	return false
-end
-local swapGear
-swapGear = function(gearClone, toFrame)
-	local toFrameChildren = toFrame:GetChildren()
-	if #toFrameChildren == 1 then
-		if toFrameChildren[1]:FindFirstChild("SlotNumber") then
-			local toSlot = tonumber(toFrameChildren[1].SlotNumber.Text)
-			local gearCloneSlot = tonumber(gearClone.SlotNumber.Text)
-			if toSlot == 0 then
-				toSlot = 10
-			end
-			if gearCloneSlot == 0 then
-				gearCloneSlot = 10
-			end
-			gearSlots[toSlot] = gearClone
-			gearSlots[gearCloneSlot] = toFrameChildren[1]
-			toFrameChildren[1].SlotNumber.Text = gearClone.SlotNumber.Text
-			toFrameChildren[1].SlotNumberDownShadow.Text = gearClone.SlotNumber.Text
-			toFrameChildren[1].SlotNumberUpShadow.Text = gearClone.SlotNumber.Text
-			local subString = string.sub(toFrame.Name, 5)
-			gearClone.SlotNumber.Text = subString
-			gearClone.SlotNumberDownShadow.Text = subString
-			gearClone.SlotNumberUpShadow.Text = subString
-			gearClone.Position = UDim2.new(gearClone.Position.X.Scale, 0, gearClone.Position.Y.Scale, 0)
-			toFrameChildren[1].Position = UDim2.new(toFrameChildren[1].Position.X.Scale, 0, toFrameChildren[1].Position.Y.Scale, 0)
-			toFrameChildren[1].Parent = gearClone.Parent
-			gearClone.Parent = toFrame
-		end
-	else
-		local slotNum = tonumber(gearClone.SlotNumber.Text)
-		if slotNum == 0 then
-			slotNum = 10
-		end
-		gearSlots[slotNum] = "empty"
-		local subString = string.sub(toFrame.Name, 5)
-		gearClone.SlotNumber.Text = subString
-		gearClone.SlotNumberDownShadow.Text = subString
-		gearClone.SlotNumberUpShadow.Text = subString
-		local toSlotNum = tonumber(gearClone.SlotNumber.Text)
-		if toSlotNum == 0 then
-			toSlotNum = 10
-		end
-		gearSlots[toSlotNum] = gearClone
-		gearClone.Position = UDim2.new(gearClone.Position.X.Scale, 0, gearClone.Position.Y.Scale, 0)
-		gearClone.Parent = toFrame
-	end
-end
-local resolveDrag
-resolveDrag = function(gearClone, x, y)
-	local mousePoint = Vector2.new(x, y)
-	local frame = gearClone.Parent
-	local frames = frame.Parent:GetChildren()
-	for i = 1, #frames do
-		if frames[i]:IsA("Frame") and pointInRectangle(mousePoint, frames[i].AbsolutePosition, frames[i].AbsoluteSize) then
-			swapGear(gearClone, frames[i])
-			return true
-		end
-	end
-	if (x < frame.AbsolutePosition.x or x > (frame.AbsolutePosition.x + frame.AbsoluteSize.x)) or (y < frame.AbsolutePosition.y or y > (frame.AbsolutePosition.y + frame.AbsoluteSize.y)) then
-		reorganizeLoadout(gearClone, false)
-		return false
-	else
-		if dragBeginPos then
-			gearClone.Position = dragBeginPos
-		end
-		return -1
-	end
-end
-local unequipAllItems
-unequipAllItems = function(dontEquipThis)
-	for i = 1, #gearSlots do
-		if gearSlots[i] == "empty" then
-			break
-		end
-		do
-			local _with_0 = gearSlots[i]
-			if _with_0.GearReference.Value and _with_0.GearReference.Value ~= dontEquipThis then
-				if _with_0.GearReference.Value:IsA("HopperBin") then
-					_with_0.GearReference.Value:Disable()
-				elseif _with_0.GearReference.Value:IsA("Tool") then
-					_with_0.GearReference.Value.Parent = game.Players.LocalPlayer.Backpack
-				end
-				_with_0.Selected = false
-			end
-		end
-	end
-end
-local showToolTip
-showToolTip = function(button, tip)
-	if button and button:FindFirstChild("ToolTipLabel") and button.ToolTipLabel:IsA("TextLabel") and not IsTouchDevice() then
-		button.ToolTipLabel.Text = tostring(tip)
-		local xSize = button.ToolTipLabel.TextBounds.X + 6
-		button.ToolTipLabel.Size = UDim2.new(0, xSize, 0, 20)
-		button.ToolTipLabel.Position = UDim2.new(0.5, -xSize / 2, 0, -30)
-		button.ToolTipLabel.Visible = true
-	end
-end
-local hideToolTip
-hideToolTip = function(button, _)
-	if button and button:FindFirstChild("ToolTipLabel") and button.ToolTipLabel:IsA("TextLabel") then
-		button.ToolTipLabel.Visible = false
-	end
-end
-local removeFromInventory
-removeFromInventory = function(child)
-	for i = 1, #inventory do
-		if inventory[i] == child then
-			table.remove(inventory, i)
-			inventory[i] = nil
-		end
-	end
-end
-local addingPlayerChild
-addingPlayerChild = function(child, equipped, addToSlot, inventoryGearButton)
-	waitForDebounce()
-	debounce = true
-	if child:FindFirstChild("RobloxBuildTool") then
-		debounce = false
-		return
-	end
-	if not child:IsA("Tool") and not child:IsA("HopperBin") then
-		debounce = false
-		return
-	end
-	if not addToSlot then
-		for i = 1, #gearSlots do
-			if gearSlots[i] ~= "empty" and gearSlots[i].GearReference.Value == child then
-				debounce = false
-				return
-			end
-		end
-	end
-	local gearClone = currentLoadout.TempSlot:clone()
-	gearClone.Name = child.Name
-	gearClone.GearImage.Image = child.TextureId
-	if gearClone.GearImage.Image == "" then
-		gearClone.GearText.Text = child.Name
-	end
-	gearClone.GearReference.Value = child
-	gearClone.MouseEnter:connect(function()
-		if gearClone.GearReference and gearClone.GearReference.Value["ToolTip"] and gearClone.GearReference.Value.ToolTip ~= "" then
-			return showToolTip(gearClone, gearClone.GearReference.Value.ToolTip)
-		end
-	end)
-	gearClone.MouseLeave:connect(function()
-		if gearClone.GearReference and gearClone.GearReference.Value["ToolTip"] and gearClone.GearReference.Value.ToolTip ~= "" then
-			return hideToolTip(gearClone, gearClone.GearReference.Value.ToolTip)
-		end
-	end)
-	gearClone.RobloxLocked = true
-	local slotToMod = -1
-	if not addToSlot then
-		for i = 1, #gearSlots do
-			if gearSlots[i] == "empty" then
-				slotToMod = i
-				break
-			end
-		end
-	else
-		slotToMod = addToSlot
-	end
-	if slotToMod == -1 then
-		debounce = false
-		return
-	end
-	local slotNum = slotToMod % 10
-	local parent = currentLoadout:FindFirstChild("Slot" .. tostring(slotNum))
-	gearClone.Parent = parent
-	if inventoryGearButton then
-		local absolutePositionFinal = inventoryGearButton.AbsolutePosition
-		local currentAbsolutePosition = gearClone.AbsolutePosition
-		local diff = absolutePositionFinal - currentAbsolutePosition
-		gearClone.Position = UDim2.new(gearClone.Position.X.Scale, diff.x, gearClone.Position.Y.Scale, diff.y)
-		gearClone.ZIndex = 4
-	end
-	reorganizeLoadout(gearClone, (function()
-		if addToSlot then
-			return true, equipped, addToSlot
-		else
-			return true
-		end
-	end)())
-	if not (gearClone.Parent ~= nil) then
-		debounce = false
-		return
-	end
-	if equipped then
-		gearClone.Selected = true
-		unequipAllItems(child)
-		delay(guiTweenSpeed + 0.01, function()
-			if gearClone:FindFirstChild("GearReference") and ((gearClone.GearReference.Value:IsA("Tool") and gearClone.GearReference.Value.Parent == player.Character) or (gearClone.GearReference.Value:IsA("HopperBin") and gearClone.GearReference.Value.Active == true)) then
-				return enlargeButton(gearClone)
-			end
-		end)
-	end
-	local dragBeginPos
-	local clickCon, buttonDeleteCon, mouseEnterCon, mouseLeaveCon, dragStop, dragBegin
-	clickCon = gearClone.MouseButton1Click:connect(function()
-		if characterInWorkspace() then
-			if not gearClone.Draggable then
-				return activateGear(gearClone.SlotNumber.Text)
-			end
-		end
-	end)
-	mouseEnterCon = gearClone.MouseEnter:connect(function()
-		if guiBackpack.Visible then
-			gearClone.Draggable = true
-		end
-	end)
-	dragBegin = gearClone.DragBegin:connect(function(pos)
-		dragBeginPos = pos
-		gearClone.ZIndex = 7
-		local children = gearClone:GetChildren()
-		for i = 1, #children do
-			if children[i]:IsA("TextLabel") then
-				if string.find(children[i].Name, "Shadow") then
-					children[i].ZIndex = 8
-				else
-					children[i].ZIndex = 9
-				end
-			elseif children[i]:IsA("Frame") or children[i]:IsA("ImageLabel") then
-				children[i].ZIndex = 7
-			end
-		end
-	end)
-	dragStop = gearClone.DragStopped:connect(function(x, y)
-		if gearClone.Selected then
-			gearClone.ZIndex = 4
-		else
-			gearClone.ZIndex = 3
-		end
-		local children = gearClone:GetChildren()
-		for i = 1, #children do
-			if children[i]:IsA("TextLabel") then
-				if string.find(children[i].Name, "Shadow") then
-					children[i].ZIndex = 3
-				else
-					children[i].ZIndex = 4
-				end
-			elseif children[i]:IsA("Frame") or children[i]:IsA("ImageLabel") then
-				children[i].ZIndex = 2
-			end
-		end
-		return resolveDrag(gearClone, x, y)
-	end)
-	mouseLeaveCon = gearClone.MouseLeave:connect(function()
-		gearClone.Draggable = false
-	end)
-	buttonDeleteCon = gearClone.AncestryChanged:connect(function()
-		if gearClone.Parent and gearClone.Parent.Parent == currentLoadout then
-			return
-		end
-		if clickCon ~= nil then
-			clickCon:disconnect()
-		end
-		if buttonDeleteCon ~= nil then
-			buttonDeleteCon:disconnect()
-		end
-		if mouseEnterCon ~= nil then
-			mouseEnterCon:disconnect()
-		end
-		if mouseLeaveCon ~= nil then
-			mouseLeaveCon:disconnect()
-		end
-		if dragStop ~= nil then
-			dragStop:disconnect()
-		end
-		if dragBegin ~= nil then
-			return dragBegin:disconnect()
-		end
-		return nil
-	end)
-	local childCon
-	local childChangeCon
-	childCon = child.AncestryChanged:connect(function(newChild, parent)
-		if not checkToolAncestry(newChild, parent) then
-			if childCon ~= nil then
-				childCon:disconnect()
-			end
-			if childChangeCon ~= nil then
-				childChangeCon:disconnect()
-			end
-			return removeFromInventory(child)
-		elseif parent == game.Players.LocalPlayer.Backpack then
-			return normalizeButton(gearClone)
-		end
-	end)
-	childChangeCon = child.Changed:connect(function(prop)
-		if prop == "Name" then
-			if gearClone and gearClone.GearImage.Image == "" then
-				gearClone.GearText.Text = child.Name
-			end
-		elseif prop == "Active" then
-			if child and child:IsA("HopperBin") then
-				if not child.Active then
-					gearClone.Selected = false
-					return normalizeButton(gearClone)
-				end
-			end
-		elseif prop == "TextureId" then
-			gearClone.GearImage.Image = child.TextureId
-		end
-	end)
-	debounce = false
-	return Spawn(function()
-		while backpackIsOpen() do
-			wait(0.03)
-		end
-		for i = 1, #gearSlots do
-			if gearSlots[i] ~= "empty" then
-				backpackButton.Position = UDim2.new(0.5, -60, 1, -108)
-				if backpackEnabled then
-					backpackButton.Visible = true
-					clBackground.Visible = true
-				end
-			end
-		end
-	end)
-end
-local addToInventory
-addToInventory = function(child)
-	if not child:IsA("Tool") or not child:IsA("HopperBin") then
-		return
-	end
-	local slot
-	for i = 1, #inventory do
-		if inventory[i] and inventory[i] == child then
-			return
-		end
-		if not inventory[i] then
-			slot = i
-		end
-	end
-	if slot then
-		inventory[slot] = child
-	elseif #inventory < 1 then
-		inventory[1] = child
-	else
-		inventory[#inventory + 1] = child
-	end
-end
-local spreadOutGear
-spreadOutGear = function()
-	local loadoutChildren = currentLoadout:GetChildren()
-	for i = 1, #loadoutChildren do
-		if loadoutChildren[i]:IsA("Frame") then
-			loadoutChildren[i].BackgroundTransparency = 0.5
-			local slot = tonumber(string.sub(loadoutChildren[i].Name, 5))
-			if slot == 0 then
-				slot = 10
-			end
-			if robloxGui.AbsoluteSize.Y <= 320 then
-				loadoutChildren[i]:TweenPosition(UDim2.new(0, (slot - 1) * 60, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.25, true)
-			else
-				loadoutChildren[i]:TweenPosition(UDim2.new((slot - 1) / 10, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.25, true)
-			end
-		end
-	end
-end
-local centerGear
-centerGear = function()
-	local loadoutChildren = currentLoadout:GetChildren()
-	local gearButtons = { }
-	local lastSlotAdd
-	for i = 1, #loadoutChildren do
-		if loadoutChildren[i]:IsA("Frame") then
-			if #loadoutChildren[i]:GetChildren() > 0 then
-				if loadoutChildren[i].Name == "Slot0" then
-					lastSlotAdd = loadoutChildren[i]
-				else
-					table.insert(gearButtons, loadoutChildren[i])
-				end
-			end
-			loadoutChildren[i].BackgroundTransparency = 1
-		end
-	end
-	if lastSlotAdd then
-		table.insert(gearButtons, lastSlotAdd)
-	end
-	local startPos = (1 - (#gearButtons * 0.1)) / 2
-	for i = 1, #gearButtons do
-		if robloxGui.AbsoluteSize.Y <= 320 then
-			startPos = 0.5 - (#gearButtons * 0.333) / 2
-			gearButtons[i]:TweenPosition(UDim2.new(startPos + (i - 1) * 0.33, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.25, true)
-		else
-			gearButtons[i]:TweenPosition(UDim2.new(startPos + ((i - 1) * 0.1), 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.25, true)
-		end
-	end
-end
-local editLoadout
-editLoadout = function()
-	backpackWasOpened = true
-	if inGearTab then
-		return spreadOutGear()
-	end
-end
-local readonlyLoadout
-readonlyLoadout = function()
-	if not inGearTab then
-		return centerGear()
-	end
-end
-local setupBackpackListener
-setupBackpackListener = function()
-	if backpackChildCon ~= nil then
-		backpackChildCon:disconnect()
-	end
-	backpackChildCon = nil
-	backpackChildCon = player.Backpack.ChildAdded:connect(function(child)
-		if not firstInstanceOfLoadout then
-			firstInstanceOfLoadout = true
-			if backpackEnabled then
-				backpackButton.Visible = true
-				clBackground.Visible = true
-			end
-		end
-		addingPlayerChild(child)
-		return addToInventory(child)
-	end)
-end
-local playerCharacterChildAdded
-playerCharacterChildAdded = function(child)
-	addingPlayerChild(child, true)
-	return addToInventory(child)
-end
-local activateLoadout
-activateLoadout = function()
-	currentLoadout.Visible = true
-end
-local deactivateLoadout
-deactivateLoadout = function()
-	currentLoadout.Visible = false
-end
-local tabHandler
-tabHandler = function(inFocus)
-	inGearTab = inFocus
-	if inFocus then
-		return editLoadout()
-	else
-		return readonlyLoadout()
-	end
-end
-local coreGuiChanged
-coreGuiChanged = function(coreGuiType, enabled)
-	if coreGuiType == Enum.CoreGuiType.Backpack or coreGuiType == Enum.CoreGuiType.All then
-		backpackButton.Visible = enabled
-		clBackground.Visible = enabled
-		backpackEnabled = enabled
-		if enabled then
-			registerNumberKeys()
-		else
-			unregisterNumberKeys()
-		end
-	end
-	if coreGuiType == Enum.CoreGuiType.Health or coreGuiType == Enum.CoreGuiType.All then
-		return setHealthBarVisible(game.Players.LocalPlayer.PlayerGui, enabled)
-	end
-end
-registerNumberKeys()
-pcall(function()
-	coreGuiChanged(Enum.CoreGuiType.Backpack, Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack))
-	coreGuiChanged(Enum.CoreGuiType.Health, Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health))
-	return Game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
-end)
-wait()
-waitForChild(player, "Backpack")
-waitForProperty(player, "Character")
-delay(1, function()
-	local backpackChildren = player.Backpack:GetChildren()
-	local size = math.min(10, #backpackChildren)
-	for i = 1, size do
-		if backpackEnabled then
-			backpackButton.Visible = true
-			clBackground.Visible = true
-		end
-		addingPlayerChild(backpackChildren[i], false)
-	end
-	return setupBackpackListener()
-end)
-delay(2, function()
-	if not backpackWasOpened then
-		if robloxGui.AbsoluteSize.Y <= 320 then
-			local cChildren = currentLoadout:GetChildren()
-			for i = 1, #cChildren do
-				local slotNum = tonumber(string.sub(cChildren[i].Name, 5, string.len(cChildren[i].Name)))
-				if type(slotNum) == "number" then
-					cChildren[i].Position = UDim2.new(0, (slotNum - 1) * 60, 0, 0)
-				end
-			end
-		end
-	end
-	return wait(0.25)
-end)
-player.ChildAdded:connect(function(child)
-	if child:IsA("PlayerGui") then
-		return moveHealthBar(child)
-	end
-end)
-waitForProperty(player, "Character")
-for _, v in ipairs(player.Character:GetChildren()) do
-	playerCharacterChildAdded(v)
-end
-characterChildAddedCon = player.Character.ChildAdded:connect(function(child)
-	return playerCharacterChildAdded(child)
-end)
-waitForChild(player.Character, "Humanoid")
-local humanoidDiedCon = player.Character.Humanoid.Died:connect(function()
-	do
-		local _obj_0 = humanoidDiedCon
-		if _obj_0 ~= nil then
-			_obj_0:disconnect()
-		end
-	end
-	humanoidDiedCon = nil
-	deactivateLoadout()
-	if backpackChildCon ~= nil then
-		backpackChildCon:disconnect()
-	end
-	backpackChildCon = nil
-	backpackWasOpened = false
-end)
-player.CharacterRemoving:connect(function()
-	for i = 1, #gearSlots do
-		if gearSlots[i] ~= "empty" then
-			gearSlots[i].Parent = nil
-			gearSlots[i] = "empty"
-		end
-	end
-end)
-player.CharacterAdded:connect(function()
-	waitForProperty(game.Players, "LocalPlayer")
-	player = game.Players.LocalPlayer
-	waitForChild(player, "Backpack")
-	delay(1, function()
-		local backpackChildren = player.Backpack:GetChildren()
-		local size = math.min(10, #backpackChildren)
-		for i = 1, size do
-			if backpackEnabled then
-				backpackButton.Visible = true
-				clBackground.Visible = true
-			end
-			addingPlayerChild(backpackChildren[i], false)
-		end
-		return setupBackpackListener()
-	end)
-	activateLoadout()
-	if characterChildAddedCon ~= nil then
-		characterChildAddedCon:disconnect()
-	end
-	characterChildAddedCon = player.Character.ChildAdded:connect(function(child)
-		return addingPlayerChild(child, true)
-	end)
-	waitForChild(player.Character, "Humanoid")
-	if backpack.Visible then
-		backpackOpenEvent:Fire()
-	end
-	humanoidDiedCon = player.Character.Humanoid.Died:connect(function()
-		if backpackEnabled then
-			backpackButton.Visible = false
-			clBackground.Visible = false
-		end
-		firstInstanceOfLoadout = false
-		deactivateLoadout()
-		if humanoidDiedCon ~= nil then
-			humanoidDiedCon:disconnect()
-		end
-		humanoidDiedCon = nil
-		if backpackChildCon ~= nil then
-			backpackChildCon:disconnect()
-		end
-		backpackChildCon = nil
-	end)
-	waitForChild(player, "PlayerGui")
-	moveHealthBar(player.PlayerGui)
-	return delay(2, function()
-		if (not backpackWasOpened) and (robloxGui.AbsoluteSize.Y <= 320) then
-			local cChildren = currentLoadout:GetChildren()
-			for i = 1, #cChildren do
-				local slotNum = tonumber(string.sub(cChildren[i].Name, 5, string.len(cChildren[i].Name)))
-				if type(slotNum) == "number" then
-					cChildren[i].Position = UDim2.new(0, (slotNum - 1) * 60, 0, 0)
-				end
-			end
-		end
-		return wait(0.25)
-	end)
-end)
-waitForChild(guiBackpack, "SwapSlot")
-guiBackpack.SwapSlot.Changed:connect(function()
-	if guiBackpack.SwapSlot.Value then
-		local swapSlot = guiBackpack.SwapSlot
-		local pos = swapSlot.Slot.Value
-		if pos == 0 then
-			pos = 10
-		end
-		if gearSlots[pos] then
-			reorganizeLoadout(gearSlots[pos], false)
-		end
-		if swapSlot.GearButton.Value then
-			addingPlayerChild(swapSlot.GearButton.Value.GearReference.Value, false, pos)
-		end
-		guiBackpack.SwapSlot.Value = false
-	end
-end)
-game:GetService("GuiService").KeyPressed:connect(function(key)
-	if characterInWorkspace() then
-		return activateGear(key)
-	end
-end)
-backpackOpenEvent.Event:connect(editLoadout)
-backpackCloseEvent.Event:connect(centerGear)
-return tabClickedEvent.Event:connect(function(tabName)
-	return tabHandler(tabName == StaticTabName)
-end)
+print'[Mercury]: Loaded corescript 53878057'if game.CoreGui.Version<3 then
+return end local a a=function(b,c)while not b:FindFirstChild(c)do b.ChildAdded:
+wait()end return b:FindFirstChild(c)end local b b=function(c,d)while not c[d]do
+c.Changed:wait()end end local c,d,e,f=script.Parent,'gear',true,game:GetService
+'CoreGui':FindFirstChild'RobloxGui'assert(f)local g=a(f,'ControlFrame')local h,i
+=a(g,'BackpackButton'),a(f,'Backpack')a(f,'CurrentLoadout')a(f.CurrentLoadout,
+'TempSlot')a(f.CurrentLoadout.TempSlot,'SlotNumber')a(c,'Background')local j,k=c
+.Background,nil k=function()local l=false pcall(function()l=Game:GetService
+'UserInputService'.TouchEnabled end)return l end local l l=function(m)a(m,
+'HealthGUI')a(m['HealthGUI'],'tray')local n=m['HealthGUI']['tray']n.Position=
+UDim2.new(0.5,-85,1,-26)end local m m=function(n,o)a(n,'HealthGUI')a(n[
+'HealthGUI'],'tray')local p=n['HealthGUI']['tray']p.Visible=o end a(game,
+'Players')b(game.Players,'LocalPlayer')local n=game.Players.LocalPlayer a(n,
+'PlayerGui')Spawn(function()return l(n.PlayerGui)end)while not(n.Character~=nil)
+do wait(0.03)end local o=a(n.Character,'Humanoid')o.Died:connect(function()h.
+Visible=false end)a(game,'LocalBackpack')game.LocalBackpack:
+SetOldSchoolBackpack(false)a(c.Parent,'Backpack')local p=c.Parent.Backpack local
+q=a(p,'CoreScripts/BackpackScripts/BackpackManager')local r,s,t,u,v=a(q,
+'BackpackOpenEvent'),a(q,'BackpackCloseEvent'),a(q,'TabClickedEvent'),true,10 if
+f.AbsoluteSize.Y<=320 then v=4 end local w,x,y,z=nil,nil,false,1.18 local A,B,C,
+D,E,F,G=UDim2.new(1*z,0,1*z,0),UDim2.new(1,0,1,0),true,0.5,false,{},{}for H=1,v
+do G[H]='empty'end local H,I=false,nil I=function()if p then return p.Visible
+end return false end local J,K K=function(L,M,N)if M~=nil then M:disconnect()end
+if L==true and N then return J(N,false)end end local L L=function()for M=0,9 do
+game:GetService'GuiService':AddKey(tostring(M))end end local M M=function()
+return pcall(function()for N=0,9 do game:GetService'GuiService':RemoveKey(
+tostring(N))end end)end local N N=function()if game.Players['LocalPlayer']and
+game.Players.LocalPlayer['Character']and(game.Players.LocalPlayer.Character~=nil
+)and(game.Players.LocalPlayer.Character.Parent~=nil)then return true end return
+false end local O O=function(P)local Q for R=1,#G do if G[R]==P and(P.Parent~=
+nil)then Q=R break end end if Q then do local R=G[Q]if R.GearReference.Value
+then if R.GearReference.Value.Parent==game.Players.LocalPlayer.Character then R.
+GearReference.Value.Parent=game.Players.LocalPlayer.Backpack end if R.
+GearReference.Value:IsA'HopperBin'and R.GearReference.Value.Active then R.
+GearReference.Value:Disable()R.GearReference.Value.Active=false end end end G[Q]
+='empty'delay(0,function()return P:remove()end)return Spawn(function()while I()
+do wait(0.03)end a(n,'Backpack')local R=true for S=1,#G do if G[S]~='empty'then
+R=false end end if R then if#n.Backpack:GetChildren()<1 then h.Visible=false
+else h.Position=UDim2.new(0.5,-60,1,-44)end j.Visible=false end end)end end
+local P P=function(Q,R)local S if not R then for T=1,#G do if G[T]=='empty'then
+S=T break end end if S==1 and G[1]~='empty'then Q:remove()return end else S=R
+local T=1 for U=1,#G do if G[U]=='empty'then T=U break end end for U=T,S+1,-1 do
+G[U]=G[U-1]do local V if U==10 then V='0'else V=U end G[U].SlotNumber.Text=V G[U
+].SlotNumberDownShadow.Text=V G[U].SlotNumberUpShadow.Text=V end end end G[S]=Q
+if S~=v then if type(tostring(S))=='string'then local T=tostring(S)Q.SlotNumber.
+Text=T Q.SlotNumberDownShadow.Text=T Q.SlotNumberUpShadow.Text=T end else Q.
+SlotNumber.Text='0'Q.SlotNumberDownShadow.Text='0'Q.SlotNumberUpShadow.Text='0'
+end Q.Visible=true local T=Q.Kill.Changed:connect(function(T)return K(T,con,Q)
+end)end J=function(Q,R,S,T)if R then P(Q,T)else O(Q)end if Q~='empty'then Q.
+ZIndex=1 end end local Q Q=function(R,S)if R:FindFirstChild'RobloxBuildTool'then
+return end if R:IsA'Tool'or R:IsA'HopperBin'then for T=1,#G do if G[T]~='empty'
+and G[T].GearReference.Value==R then if not(S~=nil)then G[T].Kill.Value=true
+return false elseif R.Parent==n.Character then G[T].Selected=true return true
+elseif R.Parent==n.Backpack then if R:IsA'Tool'or R:IsA'HopperBin'then G[T].
+Selected=false end return true end G[T].Kill.Value=true return false end end end
+end local R R=function(S)local T=n.Character:GetChildren()for U=1,#T do if(T[U]:
+IsA'Tool'or T[U]:IsA'HopperBin')and T[U]~=S then if T[U]:IsA'Tool'then T[U].
+Parent=n.Backpack end if T[U]:IsA'HopperBin'then T[U]:Disable()end end end end
+local S S=function(T,U)if not T then return end if T.Size.Y.Scale<=1 then return
+end if T.Selected then return end if not T.Parent then return end local V=U if
+not(V~=nil)or type(V)~='number'then V=D/5 end if T:FindFirstChild'Highlight'then
+T.Highlight.Visible=false end if T:IsA'ImageButton'or T:IsA'TextButton'then T.
+ZIndex=1 local W,X=-(B.X.Scale-T.Size.X.Scale)/2,-(B.Y.Scale-T.Size.Y.Scale)/2
+return T:TweenSizeAndPosition(B,UDim2.new(T.Position.X.Scale+W,T.Position.X.
+Offset,T.Position.Y.Scale+X,T.Position.Y.Offset),Enum.EasingDirection.Out,Enum.
+EasingStyle.Quad,V,C)end end local T T=function(U)if U.Size.Y.Scale>1 then
+return end if not U.Parent then return end if not U.Selected then return end for
+V=1,#G do if G[V]=='empty'then break end if G[V]~=U then S(G[V])end end if not C
+then return end if U:FindFirstChild'Highlight'then U.Highlight.Visible=true end
+if U:IsA'ImageButton'or U:IsA'TextButton'then U.ZIndex=5 local V,W=-(A.X.Scale-U
+.Size.X.Scale)/2,-(A.Y.Scale-U.Size.Y.Scale)/2 return U:TweenSizeAndPosition(A,
+UDim2.new(U.Position.X.Scale+V,U.Position.X.Offset,U.Position.Y.Scale+W,U.
+Position.Y.Offset),Enum.EasingDirection.Out,Enum.EasingStyle.Quad,D/5,C)end end
+local U U=function(V,W)if not W then return end W:ToggleSelect()if G[V]=='empty'
+then return end if not W.Active then G[V].Selected=false return S(G[V])else G[V]
+.Selected=true return T(G[V])end end local V V=function(W)if not G[W]then return
+end local X=G[W].GearReference.Value if not(X~=nil)then return end R(X)local Y=W
+if W==0 then Y=10 end for Z=1,#G do if G[Z]and G[Z]~='empty'and Z~=Y then S(G[Z]
+)do local _=G[Z]_.Selected=false if _.GearReference and _.GearReference.Value
+and _.GearReference.Value:IsA'HopperBin'and _.GearReference.Value.Active then _.
+GearReference.Value:ToggleSelect()end end end end if X:IsA'HopperBin'then return
+U(W,X)else if X.Parent==n.Character then X.Parent=n.Backpack if G[W]~='empty'
+then G[W].Selected=false return S(G[W])end else X.Parent=n.Character G[W].
+Selected=true return T(G[W])end end end local W W=function(X)local Y if X=='0'
+then Y=10 else Y=tonumber(X)end if not(Y~=nil)then return end if G[Y]~='empty'
+then return V(Y)end end local X X=function()for Y=1,#G do if G[Y]=='empty'then
+break end if G[Y]~=button then S(G[Y],0.1)end end end local Y Y=function()while
+y do wait()end end local Z Z=function(_,aa,ab)if(_.x>aa.x and _.x<(aa.x+ab.x))or
+(_.y>aa.y and _.y<(aa.y+ab.y))then return true end return false end local aa aa=
+function(ab,_)local ac=_:GetChildren()if#ac==1 then if ac[1]:FindFirstChild
+'SlotNumber'then local ad,ae=tonumber(ac[1].SlotNumber.Text),tonumber(ab.
+SlotNumber.Text)if ad==0 then ad=10 end if ae==0 then ae=10 end G[ad]=ab G[ae]=
+ac[1]ac[1].SlotNumber.Text=ab.SlotNumber.Text ac[1].SlotNumberDownShadow.Text=ab
+.SlotNumber.Text ac[1].SlotNumberUpShadow.Text=ab.SlotNumber.Text local af=
+string.sub(_.Name,5)ab.SlotNumber.Text=af ab.SlotNumberDownShadow.Text=af ab.
+SlotNumberUpShadow.Text=af ab.Position=UDim2.new(ab.Position.X.Scale,0,ab.
+Position.Y.Scale,0)ac[1].Position=UDim2.new(ac[1].Position.X.Scale,0,ac[1].
+Position.Y.Scale,0)ac[1].Parent=ab.Parent ab.Parent=_ end else local ad=
+tonumber(ab.SlotNumber.Text)if ad==0 then ad=10 end G[ad]='empty'local ae=string
+.sub(_.Name,5)ab.SlotNumber.Text=ae ab.SlotNumberDownShadow.Text=ae ab.
+SlotNumberUpShadow.Text=ae local af=tonumber(ab.SlotNumber.Text)if af==0 then af
+=10 end G[af]=ab ab.Position=UDim2.new(ab.Position.X.Scale,0,ab.Position.Y.Scale
+,0)ab.Parent=_ end end local ab ab=function(ac,ad,ae)local af,_=Vector2.new(ad,
+ae),ac.Parent local ag=_.Parent:GetChildren()for ah=1,#ag do if ag[ah]:IsA
+'Frame'and Z(af,ag[ah].AbsolutePosition,ag[ah].AbsoluteSize)then aa(ac,ag[ah])
+return true end end if(ad<_.AbsolutePosition.x or ad>(_.AbsolutePosition.x+_.
+AbsoluteSize.x))or(ae<_.AbsolutePosition.y or ae>(_.AbsolutePosition.y+_.
+AbsoluteSize.y))then J(ac,false)return false else if dragBeginPos then ac.
+Position=dragBeginPos end return-1 end end local ac ac=function(ad)for ae=1,#G
+do if G[ae]=='empty'then break end do local af=G[ae]if af.GearReference.Value
+and af.GearReference.Value~=ad then if af.GearReference.Value:IsA'HopperBin'then
+af.GearReference.Value:Disable()elseif af.GearReference.Value:IsA'Tool'then af.
+GearReference.Value.Parent=game.Players.LocalPlayer.Backpack end af.Selected=
+false end end end end local ad ad=function(ae,af)if ae and ae:FindFirstChild
+'ToolTipLabel'and ae.ToolTipLabel:IsA'TextLabel'and not k()then ae.ToolTipLabel.
+Text=tostring(af)local ag=ae.ToolTipLabel.TextBounds.X+6 ae.ToolTipLabel.Size=
+UDim2.new(0,ag,0,20)ae.ToolTipLabel.Position=UDim2.new(0.5,-ag/2,0,-30)ae.
+ToolTipLabel.Visible=true end end local ae ae=function(af,ag)if af and af:
+FindFirstChild'ToolTipLabel'and af.ToolTipLabel:IsA'TextLabel'then af.
+ToolTipLabel.Visible=false end end local af af=function(ag)for ah=1,#F do if F[
+ah]==ag then table.remove(F,ah)F[ah]=nil end end end local ag ag=function(ah,_,
+ai,aj)Y()y=true if ah:FindFirstChild'RobloxBuildTool'then y=false return end if
+not ah:IsA'Tool'and not ah:IsA'HopperBin'then y=false return end if not ai then
+for ak=1,#G do if G[ak]~='empty'and G[ak].GearReference.Value==ah then y=false
+return end end end local ak=c.TempSlot:clone()ak.Name=ah.Name ak.GearImage.Image
+=ah.TextureId if ak.GearImage.Image==''then ak.GearText.Text=ah.Name end ak.
+GearReference.Value=ah ak.MouseEnter:connect(function()if ak.GearReference and
+ak.GearReference.Value['ToolTip']and ak.GearReference.Value.ToolTip~=''then
+return ad(ak,ak.GearReference.Value.ToolTip)end end)ak.MouseLeave:connect(
+function()if ak.GearReference and ak.GearReference.Value['ToolTip']and ak.
+GearReference.Value.ToolTip~=''then return ae(ak,ak.GearReference.Value.ToolTip)
+end end)ak.RobloxLocked=true local al=-1 if not ai then for am=1,#G do if G[am]
+=='empty'then al=am break end end else al=ai end if al==-1 then y=false return
+end local am=al%10 local an=c:FindFirstChild('Slot'..tostring(am))ak.Parent=an
+if aj then local ao,ap=aj.AbsolutePosition,ak.AbsolutePosition local aq=ao-ap ak
+.Position=UDim2.new(ak.Position.X.Scale,aq.x,ak.Position.Y.Scale,aq.y)ak.ZIndex=
+4 end J(ak,(function()if ai then return true,_,ai else return true end end)())if
+not(ak.Parent~=nil)then y=false return end if _ then ak.Selected=true ac(ah)
+delay(D+0.01,function()if ak:FindFirstChild'GearReference'and((ak.GearReference.
+Value:IsA'Tool'and ak.GearReference.Value.Parent==n.Character)or(ak.
+GearReference.Value:IsA'HopperBin'and ak.GearReference.Value.Active==true))then
+return T(ak)end end)end local ao,ap,aq,ar,as,at,au ap=ak.MouseButton1Click:
+connect(function()if N()then if not ak.Draggable then return W(ak.SlotNumber.
+Text)end end end)ar=ak.MouseEnter:connect(function()if p.Visible then ak.
+Draggable=true end end)au=ak.DragBegin:connect(function(av)ao=av ak.ZIndex=7
+local aw=ak:GetChildren()for ax=1,#aw do if aw[ax]:IsA'TextLabel'then if string.
+find(aw[ax].Name,'Shadow')then aw[ax].ZIndex=8 else aw[ax].ZIndex=9 end elseif
+aw[ax]:IsA'Frame'or aw[ax]:IsA'ImageLabel'then aw[ax].ZIndex=7 end end end)at=ak
+.DragStopped:connect(function(av,aw)if ak.Selected then ak.ZIndex=4 else ak.
+ZIndex=3 end local ax=ak:GetChildren()for ay=1,#ax do if ax[ay]:IsA'TextLabel'
+then if string.find(ax[ay].Name,'Shadow')then ax[ay].ZIndex=3 else ax[ay].ZIndex
+=4 end elseif ax[ay]:IsA'Frame'or ax[ay]:IsA'ImageLabel'then ax[ay].ZIndex=2 end
+end return ab(ak,av,aw)end)as=ak.MouseLeave:connect(function()ak.Draggable=false
+end)aq=ak.AncestryChanged:connect(function()if ak.Parent and ak.Parent.Parent==c
+then return end if ap~=nil then ap:disconnect()end if aq~=nil then aq:
+disconnect()end if ar~=nil then ar:disconnect()end if as~=nil then as:
+disconnect()end if at~=nil then at:disconnect()end if au~=nil then return au:
+disconnect()end return nil end)local av,aw av=ah.AncestryChanged:connect(
+function(ax,ay)if not Q(ax,ay)then if av~=nil then av:disconnect()end if aw~=nil
+then aw:disconnect()end return af(ah)elseif ay==game.Players.LocalPlayer.
+Backpack then return S(ak)end end)aw=ah.Changed:connect(function(ax)if ax==
+'Name'then if ak and ak.GearImage.Image==''then ak.GearText.Text=ah.Name end
+elseif ax=='Active'then if ah and ah:IsA'HopperBin'then if not ah.Active then ak
+.Selected=false return S(ak)end end elseif ax=='TextureId'then ak.GearImage.
+Image=ah.TextureId end end)y=false return Spawn(function()while I()do wait(0.03)
+end for ax=1,#G do if G[ax]~='empty'then h.Position=UDim2.new(0.5,-60,1,-108)if
+e then h.Visible=true j.Visible=true end end end end)end local ah ah=function(ai
+)if not ai:IsA'Tool'or not ai:IsA'HopperBin'then return end local aj for ak=1,#F
+do if F[ak]and F[ak]==ai then return end if not F[ak]then aj=ak end end if aj
+then F[aj]=ai elseif#F<1 then F[1]=ai else F[#F+1]=ai end end local ai ai=
+function()local aj=c:GetChildren()for ak=1,#aj do if aj[ak]:IsA'Frame'then aj[ak
+].BackgroundTransparency=0.5 local al=tonumber(string.sub(aj[ak].Name,5))if al==
+0 then al=10 end if f.AbsoluteSize.Y<=320 then aj[ak]:TweenPosition(UDim2.new(0,
+(al-1)*60,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quad,0.25,true)else aj[
+ak]:TweenPosition(UDim2.new((al-1)/10,0,0,0),Enum.EasingDirection.Out,Enum.
+EasingStyle.Quad,0.25,true)end end end end local aj aj=function()local ak,al,am=
+c:GetChildren(),{},nil for an=1,#ak do if ak[an]:IsA'Frame'then if#ak[an]:
+GetChildren()>0 then if ak[an].Name=='Slot0'then am=ak[an]else table.insert(al,
+ak[an])end end ak[an].BackgroundTransparency=1 end end if am then table.insert(
+al,am)end local an=(1-(#al*0.1))/2 for ao=1,#al do if f.AbsoluteSize.Y<=320 then
+an=0.5-(#al*0.333)/2 al[ao]:TweenPosition(UDim2.new(an+(ao-1)*0.33,0,0,0),Enum.
+EasingDirection.Out,Enum.EasingStyle.Quad,0.25,true)else al[ao]:TweenPosition(
+UDim2.new(an+((ao-1)*0.1),0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quad,
+0.25,true)end end end local ak ak=function()H=true if u then return ai()end end
+local al al=function()if not u then return aj()end end local am am=function()if
+x~=nil then x:disconnect()end x=nil x=n.Backpack.ChildAdded:connect(function(an)
+if not E then E=true if e then h.Visible=true j.Visible=true end end ag(an)
+return ah(an)end)end local an an=function(ao)ag(ao,true)return ah(ao)end local
+ao ao=function()c.Visible=true end local ap ap=function()c.Visible=false end
+local aq aq=function(ar)u=ar if ar then return ak()else return al()end end local
+ar ar=function(as,at)if as==Enum.CoreGuiType.Backpack or as==Enum.CoreGuiType.
+All then h.Visible=at j.Visible=at e=at if at then L()else M()end end if as==
+Enum.CoreGuiType.Health or as==Enum.CoreGuiType.All then return m(game.Players.
+LocalPlayer.PlayerGui,at)end end L()pcall(function()ar(Enum.CoreGuiType.Backpack
+,Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack))ar(Enum.
+CoreGuiType.Health,Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health))
+return Game.StarterGui.CoreGuiChangedSignal:connect(ar)end)wait()a(n,'Backpack')
+b(n,'Character')delay(1,function()local as=n.Backpack:GetChildren()local at=math
+.min(10,#as)for au=1,at do if e then h.Visible=true j.Visible=true end ag(as[au]
+,false)end return am()end)delay(2,function()if not H then if f.AbsoluteSize.Y<=
+320 then local as=c:GetChildren()for at=1,#as do local au=tonumber(string.sub(as
+[at].Name,5,string.len(as[at].Name)))if type(au)=='number'then as[at].Position=
+UDim2.new(0,(au-1)*60,0,0)end end end end return wait(0.25)end)n.ChildAdded:
+connect(function(as)if as:IsA'PlayerGui'then return l(as)end end)b(n,'Character'
+)for as,at in ipairs(n.Character:GetChildren())do an(at)end w=n.Character.
+ChildAdded:connect(function(au)return an(au)end)a(n.Character,'Humanoid')local
+au=n.Character.Humanoid.Died:connect(function()do local au=humanoidDiedCon if au
+~=nil then au:disconnect()end end humanoidDiedCon=nil ap()if x~=nil then x:
+disconnect()end x=nil H=false end)n.CharacterRemoving:connect(function()for av=1
+,#G do if G[av]~='empty'then G[av].Parent=nil G[av]='empty'end end end)n.
+CharacterAdded:connect(function()b(game.Players,'LocalPlayer')n=game.Players.
+LocalPlayer a(n,'Backpack')delay(1,function()local av=n.Backpack:GetChildren()
+local aw=math.min(10,#av)for ax=1,aw do if e then h.Visible=true j.Visible=true
+end ag(av[ax],false)end return am()end)ao()if w~=nil then w:disconnect()end w=n.
+Character.ChildAdded:connect(function(av)return ag(av,true)end)a(n.Character,
+'Humanoid')if i.Visible then r:Fire()end au=n.Character.Humanoid.Died:connect(
+function()if e then h.Visible=false j.Visible=false end E=false ap()if au~=nil
+then au:disconnect()end au=nil if x~=nil then x:disconnect()end x=nil end)a(n,
+'PlayerGui')l(n.PlayerGui)return delay(2,function()if(not H)and(f.AbsoluteSize.Y
+<=320)then local av=c:GetChildren()for aw=1,#av do local ax=tonumber(string.sub(
+av[aw].Name,5,string.len(av[aw].Name)))if type(ax)=='number'then av[aw].Position
+=UDim2.new(0,(ax-1)*60,0,0)end end end return wait(0.25)end)end)a(p,'SwapSlot')p
+.SwapSlot.Changed:connect(function()if p.SwapSlot.Value then local av=p.SwapSlot
+local aw=av.Slot.Value if aw==0 then aw=10 end if G[aw]then J(G[aw],false)end if
+av.GearButton.Value then ag(av.GearButton.Value.GearReference.Value,false,aw)end
+p.SwapSlot.Value=false end end)game:GetService'GuiService'.KeyPressed:connect(
+function(av)if N()then return W(av)end end)r.Event:connect(ak)s.Event:connect(aj
+)return t.Event:connect(function(av)return aq(av==d)end)
