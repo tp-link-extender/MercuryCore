@@ -3016,7 +3016,8 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 
 t.CreateTerrainMaterialSelector = (size, position) ->
-	terrainMaterialSelectionChanged = New "BindableEvent", "TerrainMaterialSelectionChanged"
+	terrainMaterialSelectionChanged = Instance.new "BindableEvent"
+	terrainMaterialSelectionChanged.Name = "TerrainMaterialSelectionChanged"
 
 	local selectedButton
 

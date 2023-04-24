@@ -2846,7 +2846,8 @@ t.CreateSetPanel = function(userIdsForSets, objectSelected, dialogClosed, size, 
 	return setGui, setVisibilityFunction, getVisibilityFunction, waterTypeChangedEvent
 end
 t.CreateTerrainMaterialSelector = function(size, position)
-	local terrainMaterialSelectionChanged = New("BindableEvent", "TerrainMaterialSelectionChanged")
+	local terrainMaterialSelectionChanged = Instance.new("BindableEvent")
+	terrainMaterialSelectionChanged.Name = "TerrainMaterialSelectionChanged"
 	local selectedButton
 	local frame = New("Frame", "TerrainMaterialSelector", {
 		Size = (function()
