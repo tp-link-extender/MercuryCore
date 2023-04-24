@@ -77,9 +77,9 @@ CreateButtons = function(frame, buttons, yPos, ySize)
 			end)(),
 			Text = obj.Text,
 			TextColor3 = Color3.new(1, 1, 1),
-			MouseButton1Click = onnect(obj.Function),
 			Parent = frame
 		})
+		button.MouseButton1Click:connect(obj.Function)
 		buttonObjs[buttonNum] = button
 		buttonNum = buttonNum + 1
 	end
@@ -130,7 +130,32 @@ t.CreateStyledMessageDialog = function(title, message, style, buttons)
 		Size = UDim2.new(0.5, 0, 0, 165),
 		Position = UDim2.new(0.25, 0, 0.5, -72.5),
 		Active = true,
-		Style = Enum.FrameStyle.RobloxRound
+		Style = Enum.FrameStyle.RobloxRound,
+		New("TextLabel", "Title", {
+			Text = title,
+			TextStrokeTransparency = 0,
+			BackgroundTransparency = 1,
+			TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255),
+			Position = UDim2.new(0, 80, 0, 0),
+			Size = UDim2.new(1, -80, 0, 40),
+			Font = Enum.Font.ArialBold,
+			FontSize = Enum.FontSize.Size36,
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Center
+		}),
+		New("TextLabel", "Message", {
+			Text = message,
+			TextStrokeTransparency = 0,
+			TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255),
+			Position = UDim2.new(0.025, 80, 0, 45),
+			Size = UDim2.new(0.95, -80, 0, 55),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.Arial,
+			FontSize = Enum.FontSize.Size18,
+			TextWrap = true,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top
+		})
 	})
 	local styleImage = New("ImageLabel", "StyleImage", {
 		BackgroundTransparency = 1,
@@ -149,33 +174,6 @@ t.CreateStyledMessageDialog = function(title, message, style, buttons)
 		return t.CreateMessageDialog(title, message, buttons)
 	end
 	styleImage.Parent = frame
-	local titleLabel = New("TextLabel", "Title", {
-		Text = title,
-		TextStrokeTransparency = 0,
-		BackgroundTransparency = 1,
-		TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255),
-		Position = UDim2.new(0, 80, 0, 0),
-		Size = UDim2.new(1, -80, 0, 40),
-		Font = Enum.Font.ArialBold,
-		FontSize = Enum.FontSize.Size36,
-		TextXAlignment = Enum.TextXAlignment.Center,
-		TextYAlignment = Enum.TextYAlignment.Center,
-		Parent = frame
-	})
-	local messageLabel = New("TextLabel", "Message", {
-		Text = message,
-		TextStrokeTransparency = 0,
-		TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255),
-		Position = UDim2.new(0.025, 80, 0, 45),
-		Size = UDim2.new(0.95, -80, 0, 55),
-		BackgroundTransparency = 1,
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size18,
-		TextWrap = true,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextYAlignment = Enum.TextYAlignment.Top,
-		Parent = frame
-	})
 	CreateButtons(frame, buttons, UDim.new(0, 105), UDim.new(0, 40))
 	return frame
 end
@@ -184,32 +182,30 @@ t.CreateMessageDialog = function(title, message, buttons)
 		Size = UDim2.new(0.5, 0, 0.5, 0),
 		Position = UDim2.new(0.25, 0, 0.25, 0),
 		Active = true,
-		Style = Enum.FrameStyle.RobloxRound
-	})
-	local titleLabel = New("TextLabel", "Title", {
-		Text = title,
-		BackgroundTransparency = 1,
-		TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255),
-		Position = UDim2.new(0, 0, 0, 0),
-		Size = UDim2.new(1, 0, 0.15, 0),
-		Font = Enum.Font.ArialBold,
-		FontSize = Enum.FontSize.Size36,
-		TextXAlignment = Enum.TextXAlignment.Center,
-		TextYAlignment = Enum.TextYAlignment.Center,
-		Parent = frame
-	})
-	local messageLabel = New("TextLabel", "Message", {
-		Text = message,
-		TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255),
-		Position = UDim2.new(0.025, 0, 0.175, 0),
-		Size = UDim2.new(0.95, 0, 0.55, 0),
-		BackgroundTransparency = 1,
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size18,
-		TextWrap = true,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextYAlignment = Enum.TextYAlignment.Top,
-		Parent = frame
+		Style = Enum.FrameStyle.RobloxRound,
+		New("TextLabel", "Title", {
+			Text = title,
+			BackgroundTransparency = 1,
+			TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255),
+			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(1, 0, 0.15, 0),
+			Font = Enum.Font.ArialBold,
+			FontSize = Enum.FontSize.Size36,
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Center
+		}),
+		New("TextLabel", "Message", {
+			Text = message,
+			TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255),
+			Position = UDim2.new(0.025, 0, 0.175, 0),
+			Size = UDim2.new(0.95, 0, 0.55, 0),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.Arial,
+			FontSize = Enum.FontSize.Size18,
+			TextWrap = true,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top
+		})
 	})
 	CreateButtons(frame, buttons, UDim.new(0.8, 0), UDim.new(0.15, 0))
 	return frame
@@ -234,16 +230,15 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 		Style = Enum.ButtonStyle.RobloxButton,
 		Size = UDim2.new(1, 0, 1, 0),
 		Parent = frame,
-		ZIndex = 2
-	})
-	local dropDownIcon = New("ImageLabel", "Icon", {
-		Active = false,
-		Image = "http://www.roblox.com/asset/?id=45732894",
-		BackgroundTransparency = 1,
-		Size = UDim2.new(0, 11, 0, 6),
-		Position = UDim2.new(1, -11, 0.5, -2),
-		Parent = dropDownMenu,
-		ZIndex = 2
+		ZIndex = 2,
+		New("ImageLabel", "Icon", {
+			Active = false,
+			Image = "http://www.roblox.com/asset/?id=45732894",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(0, 11, 0, 6),
+			Position = UDim2.new(1, -11, 0.5, -2),
+			ZIndex = 2
+		})
 	})
 	local itemCount = #items
 	local dropDownItemCount = #items
@@ -460,7 +455,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 				wait(0.1)
 			end
 		end)
-		local scrollbar = New("ImageLabel", "ScrollBar", {
+		New("ImageLabel", "ScrollBar", {
 			Image = "rbxasset://textures/ui/scrollbar.png",
 			BackgroundTransparency = 1,
 			Size = UDim2.new(0, 18, (dropDownItemCount * 0.8) / ((dropDownItemCount + 1) * 0.8), -17 - 11 - 4),
@@ -646,10 +641,11 @@ t.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
 	if not settingsTable["TextButtonPositionPadY"] then
 		settingsTable["TextButtonPositionPadY"] = 2
 	end
-	local wrapperFrame = New("Frame", "WrapperFrame")
-	wrapperFrame.BackgroundTransparency = 1
-	wrapperFrame.Size = UDim2.new(1, 0, 1, 0)
-	wrapperFrame.Parent = frame
+	local wrapperFrame = New("Frame", "WrapperFrame", {
+		BackgroundTransparency = 1,
+		Size = UDim2.new(1, 0, 1, 0),
+		Parent = frame
+	})
 	for _, child in ipairs(guiObjects) do
 		child.Parent = wrapperFrame
 	end
@@ -690,9 +686,10 @@ t.CreateSlider = function(steps, width, position)
 			areaSoak.Parent = getScreenGuiAncestor(sliderGui)
 		end
 	end)
-	local sliderPosition = New("IntValue", "SliderPosition")
-	sliderPosition.Value = 0
-	sliderPosition.Parent = sliderGui
+	local sliderPosition = New("IntValue", "SliderPosition", {
+		Value = 0,
+		Parent = sliderGui
+	})
 	local bar = New("TextButton", "Bar", {
 		Text = "",
 		AutoButtonColor = false,
@@ -787,7 +784,7 @@ t.CreateTrueScrollingFrame = function()
 		Parent = controlFrame
 	})
 	for i = 1, 6 do
-		local triFrame = New("Frame", "tri" .. tostring(i), {
+		New("Frame", "tri" .. tostring(i), {
 			BorderColor3 = Color3.new(1, 1, 1),
 			ZIndex = 3,
 			BackgroundTransparency = 0.5,

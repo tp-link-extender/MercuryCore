@@ -664,9 +664,9 @@ t.LayoutGuiObjects = (frame, guiObjects, settingsTable) ->
 
 	--Wrapper frame takes care of styled objects
 	wrapperFrame = New "Frame", "WrapperFrame"
-	wrapperFrame.BackgroundTransparency = 1
-	wrapperFrame.Size = UDim2.new 1, 0, 1, 0
-	wrapperFrame.Parent = frame
+		BackgroundTransparency: 1
+		Size: UDim2.new 1, 0, 1, 0
+		Parent: frame
 
 	for _, child in ipairs guiObjects
 		child.Parent = wrapperFrame
@@ -713,8 +713,8 @@ t.CreateSlider = (steps, width, position) ->
 
 
 	sliderPosition = New "IntValue", "SliderPosition"
-	sliderPosition.Value = 0
-	sliderPosition.Parent = sliderGui
+		Value: 0
+		Parent: sliderGui
 
 	bar = New "TextButton", "Bar"
 		Text: ""
