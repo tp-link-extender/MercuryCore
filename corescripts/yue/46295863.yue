@@ -8,11 +8,11 @@ New = (className, name, props) ->
 		name = nil
 
 	obj = Instance.new className
-	obj.Name = name if name
+	obj.Name = name if name 
 	local parent
 
 	for k, v in pairs props
-		if type(k) == "string"
+		if type(k) == "string" then
 			if k == "Parent"
 				parent = v
 			else
@@ -26,11 +26,11 @@ New = (className, name, props) ->
 --
 
 waitForChild = (instance, name) ->
-	while not instance\FindFirstChild name
+	until instance\FindFirstChild name
 		instance.ChildAdded\wait!
 
 waitForProperty = (instance, property) ->
-	while not instance[property]
+	until instance[property]
 		instance.Changed\wait!
 
 -- A Few Script Globals
@@ -39,8 +39,8 @@ gui = if script.Parent\FindFirstChild "ControlFrame"
 else
 	script.Parent
 
-local syncVideoCaptureSetting
-local settingsButton, helpButton, settingsFrame, mouseLockLabel
+
+local helpButton
 local updateCameraDropDownSelection
 local updateVideoCaptureDropDownSelection
 tweenTime = 0.2
@@ -64,14 +64,12 @@ local mainShield
 inStudioMode = UserSettings!.GameSettings\InStudioMode!
 
 macClient = false
-success, isMac = try
+local success, isMac = try
 	not game.GuiService.IsWindows
 
 macClient = success and isMac
 
-Color3I = (r, g, b) ->
-	Color3.new r / 255, g / 255, b / 255
-
+Color3I = (r, g, b) -> Color3.new r / 255, g / 255, b / 255
 
 robloxLock = (instance) ->
 	instance.RobloxLocked = true
@@ -79,7 +77,6 @@ robloxLock = (instance) ->
 	if children
 		for _, child in ipairs children
 			robloxLock child
-
 
 resumeGameFunction = (shield) ->
 	shield.Settings\TweenPosition(
@@ -104,20 +101,20 @@ resumeGameFunction = (shield) ->
 goToMenu = (container, menuName, moveDirection, size, position) ->
 	return if type(menuName) ~= "string"
 
-	table.insert lastMenuSelection, currentMenuSelection
+	table.insert(lastMenuSelection, currentMenuSelection)
 	if menuName == "GameMainMenu"
 		lastMenuSelection = {}
-
 
 	containerChildren = container\GetChildren!
 	for i = 1, #containerChildren
 		if containerChildren[i].Name == menuName
 			containerChildren[i].Visible = true
-			currentMenuSelection =
+			currentMenuSelection = 
 				container: container
 				name: menuName
 				direction: moveDirection
 				lastSize: size
+
 			-- selectedMenu = true
 			if size and position
 				containerChildren[i]\TweenSizeAndPosition(
@@ -186,20 +183,23 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 
 resetLocalCharacter = ->
 	player = game.Players.LocalPlayer
-	if player
-		if player.Character and player.Character\FindFirstChild "Humanoid"
-			player.Character.Humanoid.Health = 0
+	if player and
+		player.Character and 
+		player.Character\FindFirstChild "Humanoid"
+		
+		player.Character.Humanoid.Health = 0
 
 
 createTextButton = (text, style, fontSize, buttonSize, buttonPosition) ->
-	New "TextButton"
-		Font: Enum.Font.Arial
-		FontSize: fontSize
-		Size: buttonSize
-		Position: buttonPosition
-		Style: style
-		TextColor3: Color3.new 1, 1, 1
-		Text: text
+	newTextButton = Instance.new "TextButton"
+	newTextButton.Font = Enum.Font.Arial
+	newTextButton.FontSize = fontSize
+	newTextButton.Size = buttonSize
+	newTextButton.Position = buttonPosition
+	newTextButton.Style = style
+	newTextButton.TextColor3 = Color3.new 1, 1, 1
+	newTextButton.Text = text
+	newTextButton
 
 
 CreateTextButtons = (frame, buttons, yPos, ySize) ->
@@ -217,6 +217,7 @@ CreateTextButtons = (frame, buttons, yPos, ySize) ->
 			else
 				Enum.ButtonStyle.RobloxButton
 
+
 	for _, obj in ipairs buttons
 		button = New "TextButton", "Button#{buttonNum}"
 			Font: Enum.Font.Arial
@@ -225,16 +226,17 @@ CreateTextButtons = (frame, buttons, yPos, ySize) ->
 			Style: Enum.ButtonStyle.RobloxButton
 			Text: obj.Text
 			TextColor3: Color3.new 1, 1, 1
+			Parent: frame
+
 		button.MouseButton1Click\connect ->
 			toggleSelection button
 			obj.Function!
-
-		button.Parent = frame
 		buttonObjs[buttonNum] = button
 
 		buttonNum += 1
 
-	toggleSelection buttonObjs[1]
+
+	toggleSelection(buttonObjs[1])
 
 	numButtons = buttonNum - 1
 
@@ -253,7 +255,10 @@ CreateTextButtons = (frame, buttons, yPos, ySize) ->
 
 		buttonNum = 1
 		while buttonNum <= numButtons
-			buttonObjs[buttonNum].Position = UDim2.new spacing * buttonNum + (buttonNum - 1) * buttonSize, 0, yPos.Scale, yPos.Offset
+			buttonObjs[buttonNum].Position = UDim2.new(
+				spacing * buttonNum + (buttonNum - 1) * buttonSize, 0, 
+				yPos.Scale, yPos.Offset
+			)
 			buttonObjs[buttonNum].Size = UDim2.new buttonSize, 0, ySize.Scale, ySize.Offset
 			buttonNum += 1
 
@@ -294,16 +299,15 @@ setDisabledState = (guiObject) ->
 		guiObject.Active = false
 	else
 		if guiObject["ClassName"]
-			print "setDisabledState() got object of unsupported type.  object type is ", guiObject.ClassName
+			print("setDisabledState! got object of unsupported type. object type is ", guiObject.ClassName)
 
 
 createHelpDialog = (baseZIndex) ->
-	if not helpButton?
-		if gui\FindFirstChild "TopLeftControl" and gui.TopLeftControl\FindFirstChild "Help"
-			helpButton = gui.TopLeftControl.Help
+	if helpButton == nil
+		helpButton = if gui\FindFirstChild "TopLeftControl" and gui.TopLeftControl\FindFirstChild "Help"
+			gui.TopLeftControl.Help
 		elseif gui\FindFirstChild "BottomRightControl" and gui.BottomRightControl\FindFirstChild "Help"
-			helpButton = gui.BottomRightControl.Help
-
+			gui.BottomRightControl.Help
 
 	shield = New "Frame", "HelpDialogShield"
 		Active: true
@@ -330,47 +334,47 @@ createHelpDialog = (baseZIndex) ->
 			TextColor3: Color3.new 1, 1, 1
 			BackgroundTransparency: 1
 
-	buttonRow = New "Frame", "Buttons"
-		Position: UDim2.new 0.1, 0, 0.07, 40
-		Size: UDim2.new 0.8, 0, 0, 45
-		BackgroundTransparency: 1
-		Parent: helpDialog
+		* New "Frame", "Buttons"
+			Position: UDim2.new 0.1, 0, 0.07, 40
+			Size: UDim2.new 0.8, 0, 0, 45
+			BackgroundTransparency: 1
 
-	imageFrame = New "Frame", "ImageFrame"
-		Position: UDim2.new 0.05, 0, 0.075, 80
-		Size: UDim2.new 0.9, 0, 0.9, -120
-		BackgroundTransparency: 1
-		Parent: helpDialog
+		* New "Frame", "ImageFrame"
+			Position: UDim2.new 0.05, 0, 0.075, 80
+			Size: UDim2.new 0.9, 0, 0.9, -120
+			BackgroundTransparency: 1
 
-	layoutFrame = New "Frame", "LayoutFrame"
-		Position: UDim2.new 0.5, 0, 0, 0
-		Size: UDim2.new 1.5, 0, 1, 0
-		BackgroundTransparency: 1
-		SizeConstraint: Enum.SizeConstraint.RelativeYY
-		Parent: imageFrame
+			* New "Frame", "LayoutFrame"
+				Position: UDim2.new 0.5, 0, 0, 0
+				Size: UDim2.new 1.5, 0, 1, 0
+				BackgroundTransparency: 1
+				SizeConstraint: Enum.SizeConstraint.RelativeYY
 
-	image = New "ImageLabel", "Image"
-	if UserSettings!.GameSettings.ControlMode == Enum.ControlMode["Mouse Lock Switch"]
-		image.Image = mouseLockLookScreenUrl
-	else
-		image.Image = classicLookScreenUrl
+				* New "ImageLabel", "Image"
+					Image: if UserSettings!.GameSettings.ControlMode == Enum.ControlMode["Mouse Lock Switch"]
+						mouseLockLookScreenUrl
+					else
+						classicLookScreenUrl
+					Position: UDim2.new -0.5, 0, 0, 0
+					Size: UDim2.new 1, 0, 1, 0
+					BackgroundTransparency: 1
 
-	image.Position = UDim2.new -0.5, 0, 0, 0
-	image.Size = UDim2.new 1, 0, 1, 0
-	image.BackgroundTransparency = 1
-	image.Parent = layoutFrame
+	{
+		Buttons: buttonRow
+		ImageFrame:
+			LayoutFrame:
+				Image: image
+	} = helpDialog
+
 
 	buttons = {}
 	buttons[1] = {}
 	buttons[1].Text = "Look"
 	buttons[1].Function = ->
-		image.Image = if UserSettings!.GameSettings.ControlMode ==
-			Enum.ControlMode["Mouse Lock Switch"]
-
+		image.Image = if UserSettings!.GameSettings.ControlMode == Enum.ControlMode["Mouse Lock Switch"]
 			mouseLockLookScreenUrl
 		else
 			classicLookScreenUrl
-
 
 	buttons[2] = {}
 	buttons[2].Text = "Move"
@@ -398,16 +402,17 @@ createHelpDialog = (baseZIndex) ->
 		waitForChild gui.UserSettingsShield.Settings.SettingsStyle, "GameSettingsMenu"
 		waitForChild gui.UserSettingsShield.Settings.SettingsStyle.GameSettingsMenu, "CameraField"
 		waitForChild gui.UserSettingsShield.Settings.SettingsStyle.GameSettingsMenu.CameraField, "DropDownMenuButton"
-		gui.UserSettingsShield.Settings.SettingsStyle.GameSettingsMenu.CameraField.DropDownMenuButton.Changed\connect (prop) ->
-			return if prop ~= "Text"
+		gui.UserSettingsShield.Settings.SettingsStyle.GameSettingsMenu.CameraField.DropDownMenuButton.Changed
+			\connect (prop) ->
+				return if prop ~= "Text"
 
-			if buttonRow.Button1.Style == Enum.ButtonStyle.RobloxButtonDefault -- only change if this is the currently selected panel
-				image.Image = if gui.UserSettingsShield.Settings.SettingsStyle.GameSettingsMenu.CameraField.DropDownMenuButton.Text ==
-					"Classic"
+				if buttonRow.Button1.Style == Enum.ButtonStyle.RobloxButtonDefault -- only change if this is the currently selected panel
+					image.Image = if gui.UserSettingsShield.Settings.SettingsStyle.GameSettingsMenu.CameraField.DropDownMenuButton.Text ==
+						"Classic"
 
-					classicLookScreenUrl
-				else
-					mouseLockLookScreenUrl
+						classicLookScreenUrl
+					else
+						mouseLockLookScreenUrl
 
 
 	okBtn = New "TextButton", "OkBtn"
@@ -421,6 +426,7 @@ createHelpDialog = (baseZIndex) ->
 		TextColor3: Color3.new 1, 1, 1
 		Style: Enum.ButtonStyle.RobloxButtonDefault
 		Parent: helpDialog
+
 	okBtn.MouseButton1Click\connect ->
 		shield.Visible = false
 		game.GuiService\RemoveCenterDialog shield
@@ -446,41 +452,40 @@ createLeaveConfirmationMenu = (baseZIndex, shield) ->
 			BackgroundTransparency: 1
 			ZIndex: baseZIndex + 4
 
-	with createTextButton(
+	yesButton = createTextButton(
 		"Leave",
 		Enum.ButtonStyle.RobloxButton,
 		Enum.FontSize.Size24,
 		UDim2.new(0, 128, 0, 50),
-		UDim2.new(0, 313, 0.8, 0)
+		UDim2.new 0, 313, 0.8, 0
 	)
-		.Name = "YesButton"
-		.ZIndex = baseZIndex + 4
-		.Parent = frame
-		.Modal = true
-		\SetVerb "Exit"
+	yesButton.Name = "YesButton"
+	yesButton.ZIndex = baseZIndex + 4
+	yesButton.Parent = frame
+	yesButton.Modal = true
+	yesButton\SetVerb "Exit"
 
-	with createTextButton(
+	noButton = createTextButton(
 		"Stay",
 		Enum.ButtonStyle.RobloxButtonDefault,
 		Enum.FontSize.Size24,
 		UDim2.new(0, 128, 0, 50),
-		UDim2.new(0, 90, 0.8, 0)
+		UDim2.new 0, 90, 0.8, 0
 	)
-		.Name = "NoButton"
-		.Parent = frame
-		.ZIndex = baseZIndex + 4
-		.MouseButton1Click\connect ->
-			goToMenu shield.Settings.SettingsStyle, "GameMainMenu", "down", UDim2.new 0, 525, 0, 430
-			shield.Settings\TweenSize(
-				UDim2.new(0, 525, 0, 430),
-				Enum.EasingDirection.InOut,
-				Enum.EasingStyle.Sine,
-				tweenTime,
-				true
-			)
+	noButton.Name = "NoButton"
+	noButton.Parent = frame
+	noButton.ZIndex = baseZIndex + 4
+	noButton.MouseButton1Click\connect ->
+		goToMenu shield.Settings.SettingsStyle, "GameMainMenu", "down", UDim2.new 0, 525, 0, 430
+		shield.Settings\TweenSize(
+			UDim2.new(0, 525, 0, 430),
+			Enum.EasingDirection.InOut,
+			Enum.EasingStyle.Sine,
+			tweenTime,
+			true
+		)
 
 	frame
-
 
 createResetConfirmationMenu = (baseZIndex, shield) ->
 	frame = New "Frame", "ResetConfirmationMenu"
@@ -489,41 +494,41 @@ createResetConfirmationMenu = (baseZIndex, shield) ->
 		Position: UDim2.new 0, 0, 2, 400
 		ZIndex: baseZIndex + 4
 
-	with createTextButton(
+	yesButton = createTextButton(
 		"Reset",
 		Enum.ButtonStyle.RobloxButtonDefault,
 		Enum.FontSize.Size24,
 		UDim2.new(0, 128, 0, 50),
-		UDim2.new(0, 313, 0, 299)
+		UDim2.new 0, 313, 0, 299
 	)
-		.Name = "YesButton"
-		.ZIndex = baseZIndex + 4
-		.Parent = frame
-		.Modal = true
-		.MouseButton1Click\connect ->
-			resumeGameFunction shield
-			resetLocalCharacter!
+	yesButton.Name = "YesButton"
+	yesButton.ZIndex = baseZIndex + 4
+	yesButton.Parent = frame
+	yesButton.Modal = true
+	yesButton.MouseButton1Click\connect ->
+		resumeGameFunction shield
+		resetLocalCharacter!
 
 
-	with createTextButton(
+	noButton = createTextButton(
 		"Cancel",
 		Enum.ButtonStyle.RobloxButton,
 		Enum.FontSize.Size24,
 		UDim2.new(0, 128, 0, 50),
-		UDim2.new(0, 90, 0, 299)
+		UDim2.new 0, 90, 0, 299
 	)
-		.Name = "NoButton"
-		.Parent = frame
-		.ZIndex = baseZIndex + 4
-		.MouseButton1Click\connect ->
-			goToMenu shield.Settings.SettingsStyle, "GameMainMenu", "down", UDim2.new 0, 525, 0, 430
-			shield.Settings\TweenSize(
-				UDim2.new(0, 525, 0, 430),
-				Enum.EasingDirection.InOut,
-				Enum.EasingStyle.Sine,
-				tweenTime,
-				true
-			)
+	noButton.Name = "NoButton"
+	noButton.Parent = frame
+	noButton.ZIndex = baseZIndex + 4
+	noButton.MouseButton1Click\connect ->
+		goToMenu shield.Settings.SettingsStyle, "GameMainMenu", "down", UDim2.new 0, 525, 0, 430
+		shield.Settings\TweenSize(
+			UDim2.new(0, 525, 0, 430),
+			Enum.EasingDirection.InOut,
+			Enum.EasingStyle.Sine,
+			tweenTime,
+			true
+		)
 
 
 	resetCharacterText = New "TextLabel", "ResetCharacterText"
@@ -617,12 +622,11 @@ createGameMainMenu = (baseZIndex, shield) ->
 		UDim2.new(0, 168, 0, 50),
 		UDim2.new 0, 254, 0, 256
 	)
-	with screenshotButton
-		.Name = "ScreenshotButton"
-		.ZIndex = baseZIndex + 4
-		.Parent = gameMainMenuFrame
-		.Visible = not macClient
-		\SetVerb "Screenshot"
+	screenshotButton.Name = "ScreenshotButton"
+	screenshotButton.ZIndex = baseZIndex + 4
+	screenshotButton.Parent = gameMainMenuFrame
+	screenshotButton.Visible = not macClient
+	screenshotButton\SetVerb "Screenshot"
 
 	with helpShortcut\clone!
 		.Name = "ScreenshotShortcutText"
@@ -638,16 +642,15 @@ createGameMainMenu = (baseZIndex, shield) ->
 		UDim2.new(0, 168, 0, 50),
 		UDim2.new 0, 254, 0, 306
 	)
-	with recordVideoButton
-		.Name = "RecordVideoButton"
-		.ZIndex = baseZIndex + 4
-		.Parent = gameMainMenuFrame
-		.Visible = not macClient
-		\SetVerb "RecordToggle"
+	recordVideoButton.Name = "RecordVideoButton"
+	recordVideoButton.ZIndex = baseZIndex + 4
+	recordVideoButton.Parent = gameMainMenuFrame
+	recordVideoButton.Visible = not macClient
+	recordVideoButton\SetVerb "RecordToggle"
 
 	with helpShortcut\clone!
-		.Name = "RecordVideoShortcutText"
 		.Visible = hasGraphicsSlider
+		.Name = "RecordVideoShortcutText"
 		.Text = "F12"
 		.Position = UDim2.new 0, 120, 0, 0
 		.Parent = recordVideoButton
@@ -675,30 +678,30 @@ createGameMainMenu = (baseZIndex, shield) ->
 	reportAbuseButton.ZIndex = baseZIndex + 4
 	reportAbuseButton.Parent = gameMainMenuFrame
 
-	with createTextButton(
+	leaveGameButton = createTextButton(
 		"Leave Game",
 		Enum.ButtonStyle.RobloxButton,
 		Enum.FontSize.Size24,
 		UDim2.new(0, 340, 0, 50),
 		UDim2.new 0, 82, 0, 358
 	)
-		.Name = "LeaveGameButton"
-		.ZIndex = baseZIndex + 4
-		.Parent = gameMainMenuFrame
+	leaveGameButton.Name = "LeaveGameButton"
+	leaveGameButton.ZIndex = baseZIndex + 4
+	leaveGameButton.Parent = gameMainMenuFrame
 
-	with createTextButton(
+	resumeGameButton = createTextButton(
 		"Resume Game",
 		Enum.ButtonStyle.RobloxButtonDefault,
 		Enum.FontSize.Size24,
 		UDim2.new(0, 340, 0, 50),
 		UDim2.new 0, 82, 0, 54
 	)
-		.Name = "resumeGameButton"
-		.ZIndex = baseZIndex + 4
-		.Parent = gameMainMenuFrame
-		.Modal = true
-		.MouseButton1Click\connect ->
-			resumeGameFunction shield
+	resumeGameButton.Name = "resumeGameButton"
+	resumeGameButton.ZIndex = baseZIndex + 4
+	resumeGameButton.Parent = gameMainMenuFrame
+	resumeGameButton.Modal = true
+	resumeGameButton.MouseButton1Click\connect ->
+		resumeGameFunction(shield)
 
 
 	gameSettingsButton = createTextButton(
@@ -712,7 +715,7 @@ createGameMainMenu = (baseZIndex, shield) ->
 	gameSettingsButton.ZIndex = baseZIndex + 4
 	gameSettingsButton.Parent = gameMainMenuFrame
 
-	if game\FindFirstChild "LoadingGuiService" and #game.LoadingGuiService\GetChildren! > 0
+	if game\FindFirstChild"LoadingGuiService" and #game.LoadingGuiService\GetChildren! > 0
 		gameSettingsButton = createTextButton(
 			"Game Instructions",
 			Enum.ButtonStyle.RobloxButton,
@@ -822,7 +825,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 			.Name = "AutoText"
 			.Text = "Auto"
 			.Position = UDim2.new 0, 183, 0, 214
-			.TextColor3 = Color3.new 0.5, 0.5, 0.5
+			.TextColor3 = Color3.new 128 / 255, 128 / 255, 128 / 255
 			.Size = UDim2.new 0, 34, 0, 18
 			.Parent = gameSettingsMenuFrame
 			.Visible = not inStudioMode
@@ -858,11 +861,12 @@ createGameSettingsMenu = (baseZIndex, _) ->
 			.Visible = not inStudioMode
 
 		betterQualityShortcut = fullscreenShortcut\clone!
-			Name: "BetterQualityShortcut"
-			Text: "F10"
-			Position: UDim2.new 0, 394, 0, 288
-			Parent: gameSettingsMenuFrame
-			Visible: not inStudioMode
+		with betterQualityShortcut
+			.Name = "BetterQualityShortcut"
+			.Text = "F10"
+			.Position = UDim2.new 0, 394, 0, 288
+			.Parent = gameSettingsMenuFrame
+			.Visible = not inStudioMode
 
 		autoGraphicsButton = createTextButton(
 			"X",
@@ -871,23 +875,21 @@ createGameSettingsMenu = (baseZIndex, _) ->
 			UDim2.new(0, 25, 0, 25),
 			UDim2.new 0, 187, 0, 239
 		)
-		with autoGraphicsButton
-			.Name = "AutoGraphicsButton"
-			.ZIndex = baseZIndex + 4
-			.Parent = gameSettingsMenuFrame
-			.Visible = not inStudioMode
+		autoGraphicsButton.Name = "AutoGraphicsButton"
+		autoGraphicsButton.ZIndex = baseZIndex + 4
+		autoGraphicsButton.Parent = gameSettingsMenuFrame
+		autoGraphicsButton.Visible = not inStudioMode
 
-		local graphicsSlider, graphicsLevel = RbxGui.CreateSlider GraphicsQualityLevels, 150, UDim2.new 0, 230, 0, 280 -- graphics - 1 because slider starts at 1 instead of 0
-		with graphicsSlider
-			.Parent = gameSettingsMenuFrame
-			.Bar.ZIndex = baseZIndex + 4
-			.Bar.Slider.ZIndex = baseZIndex + 5
-			.Visible = not inStudioMode
+		graphicsSlider, graphicsLevel = RbxGui.CreateSlider GraphicsQualityLevels, 150, UDim2.new 0, 230, 0, 280 -- graphics - 1 because slider starts at 1 instead of 0
+		graphicsSlider.Parent = gameSettingsMenuFrame
+		graphicsSlider.Bar.ZIndex = baseZIndex + 4
+		graphicsSlider.Bar.Slider.ZIndex = baseZIndex + 5
+		graphicsSlider.Visible = not inStudioMode
 		graphicsLevel.Value = math.floor (settings!.Rendering\GetMaxQualityLevel! - 1) / 2
 
 		graphicsSetter = New "TextBox", "GraphicsSetter"
 			BackgroundColor3: Color3.new 0, 0, 0
-			BorderColor3: Color3.new 0.5, 0.5, 0.5
+			BorderColor3: Color3.new 128 / 255, 128 / 255, 128 / 255
 			Size: UDim2.new 0, 50, 0, 25
 			Position: UDim2.new 0, 450, 0, 269
 			TextColor3: Color3.new 1, 1, 1
@@ -901,7 +903,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 		isAutoGraphics = true
 		if not inStudioMode
-			isAutoGraphics = UserSettings!.GameSettings.SavedQualityLevel == Enum.SavedQualitySetting.Automatic
+			isAutoGraphics = (UserSettings!.GameSettings.SavedQualityLevel == Enum.SavedQualitySetting.Automatic)
 		else
 			settings!.Rendering.EnableFRM = false
 
@@ -932,7 +934,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 		goToAutoGraphics = ->
-			setAutoGraphicsGui true
+			setAutoGraphicsGui(true)
 
 			UserSettings!.GameSettings.SavedQualityLevel = Enum.SavedQualitySetting.Automatic
 
@@ -941,13 +943,13 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 		setGraphicsQualityLevel = (newLevel) ->
 			percentage = newLevel / GraphicsQualityLevels
-			newSetting = math.floor (settings!.Rendering\GetMaxQualityLevel! - 1) * percentage
-			newSetting = if newSetting == 20 -- Level 20 is the same as level 21, except it doesn't render ambient occlusion
-				21
+			newSetting = math.floor((settings!.Rendering\GetMaxQualityLevel! - 1) * percentage)
+			if newSetting == 20 -- Level 20 is the same as level 21, except it doesn't render ambient occlusion
+				newSetting = 21
 			elseif newLevel == 1 -- make sure we can go to lowest settings (for terrible computers)
-				1
+				newSetting = 1
 			elseif newSetting > settings!.Rendering\GetMaxQualityLevel!
-				settings!.Rendering\GetMaxQualityLevel! - 1
+				newSetting = settings!.Rendering\GetMaxQualityLevel! - 1
 
 
 			UserSettings!.GameSettings.SavedQualityLevel = newLevel
@@ -955,7 +957,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 		goToManualGraphics = (explicitLevel) ->
-			setAutoGraphicsGui false
+			setAutoGraphicsGui(false)
 
 			if explicitLevel
 				graphicsLevel.Value = explicitLevel
@@ -967,7 +969,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 			if explicitLevel == graphicsLevel.Value -- make sure we are actually in right graphics mode
-				setGraphicsQualityLevel graphicsLevel.Value
+				setGraphicsQualityLevel(graphicsLevel.Value)
 
 
 			if not explicitLevel
@@ -1024,14 +1026,14 @@ createGameSettingsMenu = (baseZIndex, _) ->
 		enableGraphicsWidget = ->
 			settings!.Rendering.EnableFRM = true
 
-			isAutoGraphics = (UserSettings!.GameSettings.SavedQualityLevel == Enum.SavedQualitySetting.Automatic)
+			isAutoGraphics = UserSettings!.GameSettings.SavedQualityLevel == Enum.SavedQualitySetting.Automatic
 			if isAutoGraphics
 				showAutoGraphics!
 				goToAutoGraphics!
 			else
 				showAutoGraphics!
 				showManualGraphics!
-				goToManualGraphics(translateSavedQualityLevelToInt(UserSettings!.GameSettings.SavedQualityLevel))
+				goToManualGraphics translateSavedQualityLevelToInt UserSettings!.GameSettings.SavedQualityLevel
 
 
 		disableGraphicsWidget = ->
@@ -1046,8 +1048,8 @@ createGameSettingsMenu = (baseZIndex, _) ->
 				return
 
 
-			newGraphicsValue = tonumber(graphicsSetter.Text)
-			if not newGraphicsValue?
+			newGraphicsValue = tonumber graphicsSetter.Text
+			if newGraphicsValue == nil
 				graphicsSetter.Text = "#{graphicsLevel.Value}"
 				return
 
@@ -1082,7 +1084,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 		else
 			settings!.Rendering.EnableFRM = true
-			goToManualGraphics(translateSavedQualityLevelToInt(UserSettings!.GameSettings.SavedQualityLevel))
+			goToManualGraphics translateSavedQualityLevelToInt UserSettings!.GameSettings.SavedQualityLevel
 
 
 		autoGraphicsButton.MouseButton1Click\connect ->
@@ -1096,7 +1098,6 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 		game.GraphicsQualityChangeRequest\connect (graphicsIncrease) ->
 			return if isAutoGraphics
-
 			-- only can set graphics in manual mode
 
 			if graphicsIncrease
@@ -1114,8 +1115,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 					->
 				)
 			else
-				if (graphicsLevel.Value - 1) <= 0
-					return
+				return if (graphicsLevel.Value - 1) <= 0
 
 				graphicsLevel.Value = graphicsLevel.Value - 1
 				graphicsSetter.Text = "#{graphicsLevel.Value}"
@@ -1178,17 +1178,14 @@ createGameSettingsMenu = (baseZIndex, _) ->
 					autoGraphicsButton.ZIndex = baseZIndex + 4
 					autoText.ZIndex = baseZIndex + 4
 
-
 		else
 			studioCheckbox.MouseButton1Click\connect ->
-				if not studioCheckbox.Active
-					return
+				return if not studioCheckbox.Active
 
-
-				if studioCheckbox.Text == ""
-					studioCheckbox.Text = "X"
+				studioCheckbox.Text = if studioCheckbox.Text == ""
+					"X"
 				else
-					studioCheckbox.Text = ""
+					""
 
 
 	fullscreenCheckbox = createTextButton(
@@ -1196,7 +1193,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 		Enum.ButtonStyle.RobloxButton,
 		Enum.FontSize.Size18,
 		UDim2.new(0, 25, 0, 25),
-		UDim2.new(0, 30, 0, 144)
+		UDim2.new 0, 30, 0, 144
 	)
 	fullscreenCheckbox.Name = "FullscreenCheckbox"
 	fullscreenCheckbox.ZIndex = baseZIndex + 4
@@ -1249,6 +1246,8 @@ createGameSettingsMenu = (baseZIndex, _) ->
 	backButton.Name = "BackButton"
 	backButton.ZIndex = baseZIndex + 4
 	backButton.Parent = gameSettingsMenuFrame
+
+	global syncVideoCaptureSetting = nil
 
 	if not macClient
 		New "TextLabel", "VideoCaptureLabel"
@@ -1320,11 +1319,10 @@ createGameSettingsMenu = (baseZIndex, _) ->
 		UserSettings!.GameSettings.ControlMode = enumNameToItem[text]
 
 		try
-			if mouseLockLabel and UserSettings!.GameSettings.ControlMode == Enum.ControlMode["Mouse Lock Switch"]
-				mouseLockLabel.Visible = true
+			mouseLockLabel.Visible = if mouseLockLabel and UserSettings!.GameSettings.ControlMode == Enum.ControlMode["Mouse Lock Switch"]
+				true
 			elseif mouseLockLabel
-				mouseLockLabel.Visible = false
-
+				false
 
 	with cameraDropDown
 		.Name = "CameraField"
@@ -1337,16 +1335,15 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 	gameSettingsMenuFrame
 
-
 if LoadLibrary
 	global RbxGui = LoadLibrary "RbxGui"
 	baseZIndex = 0
 	if UserSettings
 		createSettingsDialog = ->
 			waitForChild gui, "BottomLeftControl"
-			settingsButton = gui.BottomLeftControl\FindFirstChild "SettingsButton"
+			global settingsButton = gui.BottomLeftControl\FindFirstChild "SettingsButton"
 
-			if not settingsButton?
+			if settingsButton == nil
 				settingsButton = New "ImageButton", "SettingsButton"
 					Image: "rbxasset://textures/ui/SettingsButton.png"
 					BackgroundTransparency: 1
@@ -1354,6 +1351,7 @@ if LoadLibrary
 					Size: UDim2.new 0, 54, 0, 46
 					Position: UDim2.new 0, 2, 0, 50
 					Parent: gui.BottomLeftControl
+
 
 			shield = New "TextButton", "UserSettingsShield"
 				Text: ""
@@ -1405,12 +1403,14 @@ if LoadLibrary
 					recordVideoClick gameMainMenu.RecordVideoButton, gui.StopRecordButton
 
 
+
 			localPlayerChange = ->
 				gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
 				if game.Players.LocalPlayer
 					settings!.Rendering.EnableFRM = true
 				elseif inStudioMode
 					settings!.Rendering.EnableFRM = false
+
 
 
 			gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
@@ -1420,11 +1420,10 @@ if LoadLibrary
 
 			else
 				delay 0, ->
-					waitForProperty game.Players, "LocalPlayer"
+					waitForProperty game.Players, "LocalPlayer" 
 					gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
 					game.Players.LocalPlayer.Changed\connect ->
 						localPlayerChange!
-
 
 			gameMainMenu.ReportAbuseButton.Visible = game\FindFirstChild "NetworkClient"
 			if not gameMainMenu.ReportAbuseButton.Visible
@@ -1432,29 +1431,28 @@ if LoadLibrary
 					if child\IsA "NetworkClient"
 						gameMainMenu.ReportAbuseButton.Visible = game\FindFirstChild "NetworkClient"
 
-
 			gameMainMenu.ResetButton.MouseButton1Click\connect ->
 				goToMenu settingsFrame, "ResetConfirmationMenu", "up", UDim2.new 0, 525, 0, 370
-
 
 			gameMainMenu.LeaveGameButton.MouseButton1Click\connect ->
 				goToMenu settingsFrame, "LeaveConfirmationMenu", "down", UDim2.new 0, 525, 0, 300
 
-
-			if game.CoreGui.Version >= 4 -- we can use escape!
+			if game.CoreGui.Version >= 4 then -- we can use escape!
 				game\GetService"GuiService".EscapeKeyPressed\connect ->
-					if not currentMenuSelection?
+					if currentMenuSelection == nil
 						game.GuiService\AddCenterDialog(
 							shield,
 							Enum.CenterDialogType.ModalDialog,
 							--showFunction
 							->
 								settingsButton.Active = false
-								updateCameraDropDownSelection UserSettings!.GameSettings.ControlMode.Name
-								syncVideoCaptureSetting?!
+								updateCameraDropDownSelection(UserSettings!.GameSettings.ControlMode.Name)
+
+								if syncVideoCaptureSetting
+									syncVideoCaptureSetting!
 
 
-								goToMenu settingsFrame, "GameMainMenu", "right", UDim2.new 0, 525, 0, 430
+								goToMenu(settingsFrame, "GameMainMenu", "right", UDim2.new(0, 525, 0, 430))
 								shield.Visible = true
 								shield.Active = true
 								settingsFrame.Parent\TweenPosition(
@@ -1471,7 +1469,6 @@ if LoadLibrary
 									tweenTime,
 									true
 								)
-
 							--hideFunction
 							->
 								settingsFrame.Parent\TweenPosition(
@@ -1509,14 +1506,16 @@ if LoadLibrary
 						)
 
 						table.remove lastMenuSelection, #lastMenuSelection
-						if #lastMenuSelection == 1 -- apparently lua can't reduce count to 0... T_T
+						if #lastMenuSelection == 1 then -- apparently lua can't reduce count to 0... T_T
 							lastMenuSelection = {}
 
 					else
 						resumeGameFunction shield
 
 
-			gameSettingsMenu = createGameSettingsMenu baseZIndex, shield
+
+
+			gameSettingsMenu = createGameSettingsMenu(baseZIndex, shield)
 			gameSettingsMenu.Visible = false
 			gameSettingsMenu.Parent = settingsFrame
 
@@ -1536,7 +1535,7 @@ if LoadLibrary
 			leaveConfirmationWindow.Visible = false
 			leaveConfirmationWindow.Parent = settingsFrame
 
-			robloxLock(shield)
+			robloxLock shield
 
 			settingsButton.MouseButton1Click\connect ->
 				game.GuiService\AddCenterDialog(
@@ -1546,7 +1545,9 @@ if LoadLibrary
 					->
 						settingsButton.Active = false
 						updateCameraDropDownSelection UserSettings!.GameSettings.ControlMode.Name
-						syncVideoCaptureSetting?!
+
+						if syncVideoCaptureSetting
+							syncVideoCaptureSetting!
 
 
 						goToMenu settingsFrame, "GameMainMenu", "right", UDim2.new 0, 525, 0, 430
@@ -1565,7 +1566,6 @@ if LoadLibrary
 							tweenTime,
 							true
 						)
-
 					--hideFunction
 					->
 						settingsFrame.Parent\TweenPosition(
@@ -1596,9 +1596,7 @@ if LoadLibrary
 			gui.BottomLeftControl.SettingsButton.Active = true
 			gui.BottomLeftControl.SettingsButton.Position = UDim2.new 0, 2, 0, -2
 
-			mouseLockLabel.Visible = if mouseLockLabel and
-				UserSettings!.GameSettings.ControlMode == Enum.ControlMode["Mouse Lock Switch"]
-
+			mouseLockLabel.Visible = if mouseLockLabel and UserSettings!.GameSettings.ControlMode == Enum.ControlMode["Mouse Lock Switch"]
 				true
 			elseif mouseLockLabel
 				false
@@ -1606,17 +1604,17 @@ if LoadLibrary
 
 			-- our script has loaded, get rid of older buttons now
 			leaveGameButton = gui.BottomLeftControl\FindFirstChild "Exit"
-			if leaveGameButton
-				leaveGameButton\Remove!
+			leaveGameButton?\Remove!
 
 
 			topLeft = gui\FindFirstChild "TopLeftControl"
 			if topLeft
 				leaveGameButton = topLeft\FindFirstChild "Exit"
-				if leaveGameButton
-					leaveGameButton\Remove!
+				leaveGameButton?\Remove!
+
 
 				topLeft\Remove!
+
 	--UserSettings call
 
 	createSaveDialogs = ->
@@ -1744,17 +1742,15 @@ if LoadLibrary
 					pos = 0
 
 					while pos < 8
-						spinnerIcons[pos + 1].Image = "http://www.roblox.com/Asset?id=" ..
-						if pos == spinPos or pos == ((spinPos + 1) % 8)
-							45880668
+						spinnerIcons[pos + 1].Image = if pos == spinPos or pos == ((spinPos + 1) % 8)
+							"http://www.roblox.com/Asset?id=45880668"
 						else
-							45880710
-
+							"http://www.roblox.com/Asset?id=45880710"
 
 						pos += 1
 
 					spinPos = (spinPos + 1) % 8
-					wait(0.2)
+					wait 0.2
 
 
 			--Do the save while the spinner is going, function will wait
@@ -1784,6 +1780,7 @@ if LoadLibrary
 			game\FinishShutdown true
 			clearAndResetDialog!
 
+
 		dontSave = ->
 			saveDialogMessageBox.Visible = false
 			errorDialogMessageBox.Visible = false
@@ -1795,6 +1792,7 @@ if LoadLibrary
 			errorDialogMessageBox.Visible = false
 			clearAndResetDialog!
 
+
 		clearAndResetDialog = ->
 			saveDialogMessageBox.Visible = true
 			errorDialogMessageBox.Visible = false
@@ -1802,9 +1800,11 @@ if LoadLibrary
 			shield.Visible = false
 			game.GuiService\RemoveCenterDialog shield
 
+
 		robloxLock shield
 		shield.Visible = false
 		shield
+
 
 	createReportAbuseDialog = ->
 		--Only show things if we are a NetworkClient
@@ -1844,7 +1844,7 @@ if LoadLibrary
 
 		calmingMessageBox = RbxGui.CreateMessageDialog(
 			"Thanks for your report!",
-			"Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
+			"Our moderators will review the chat logs and determine what happened. The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
 			messageBoxButtons
 		)
 		calmingMessageBox.Visible = false
@@ -1889,7 +1889,7 @@ if LoadLibrary
 				ZIndex: baseZIndex + 2
 
 			* New "TextLabel", "Description"
-				Text: "This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action."
+				Text: "This will send a complete report to a moderator. The moderator will review the chat log and take appropriate action."
 				TextColor3: Color3I 221, 221, 221
 				Position: UDim2.new 0, 0, 0, 55
 				Size: UDim2.new 1, 0, 0, 40
@@ -1923,7 +1923,10 @@ if LoadLibrary
 				TextXAlignment: Enum.TextXAlignment.Left
 				ZIndex: baseZIndex + 2
 
-		local abusingPlayer, abuse, submitReportButton
+		local abusingPlayer
+		local abuse
+		local submitReportButton
+
 		local updatePlayerSelection
 		createPlayersDropDown = ->
 			players = game\GetService "Players"
@@ -1945,11 +1948,12 @@ if LoadLibrary
 				if abuse and abusingPlayer
 					submitReportButton.Active = true
 
-			with playerDropDown
-				.Name = "PlayersComboBox"
-				.ZIndex = baseZIndex + 2
-				.Position = UDim2.new 0.425, 0, 0, 102
-				.Size = UDim2.new 0.55, 0, 0, 32
+
+			playerDropDown.Name = "PlayersComboBox"
+			playerDropDown.ZIndex = baseZIndex + 2
+			playerDropDown.Position = UDim2.new 0.425, 0, 0, 102
+			playerDropDown.Size = UDim2.new 0.55, 0, 0, 32
+			playerDropDown
 
 		abuses =
 			* "Swearing"
@@ -1962,18 +1966,17 @@ if LoadLibrary
 			* "Bad Model or Script"
 			* "Bad Username"
 
-		local abuseDropDown, updateAbuseSelection = RbxGui.CreateDropDownMenu(abuses, (abuseText) ->
+		abuseDropDown, updateAbuseSelection = RbxGui.CreateDropDownMenu(abuses, (abuseText) ->
 			abuse = abuseText
 			if abuse and abusingPlayer
 				submitReportButton.Active = true
-		true)
 
-		with abuseDropDown
-			.Name = "AbuseComboBox"
-			.ZIndex = baseZIndex + 2
-			.Position = UDim2.new 0.425, 0, 0, 142
-			.Size = UDim2.new 0.55, 0, 0, 32
-			.Parent = settingsFrame
+		true)
+		abuseDropDown.Name = "AbuseComboBox"
+		abuseDropDown.ZIndex = baseZIndex + 2
+		abuseDropDown.Position = UDim2.new 0.425, 0, 0, 142
+		abuseDropDown.Size = UDim2.new 0.55, 0, 0, 32
+		abuseDropDown.Parent = settingsFrame
 
 		New "TextLabel", "ShortDescriptionLabel"
 			Text: "Short Description: (optional)"
@@ -2040,7 +2043,6 @@ if LoadLibrary
 				else
 					closeAndResetDialog!
 
-
 		cancelButton = New "TextButton", "CancelBtn"
 			Font: Enum.Font.Arial
 			FontSize: Enum.FontSize.Size18
@@ -2088,17 +2090,14 @@ if LoadLibrary
 					reportAbuseButton.Active = false
 					shield.Visible = true
 					mainShield.Visible = false
-
 				--HideFunction
 				->
 					reportAbuseButton.Active = true
 					shield.Visible = false
-
 			)
 
 
 		robloxLock shield
-
 		shield
 
 	-- createChatBar = ->
@@ -2108,7 +2107,8 @@ if LoadLibrary
 	-- 	waitForChild game, "Players"
 	-- 	waitForProperty game.Players, "LocalPlayer"
 
-	-- 	chatBar = New "Frame", "ChatBar"
+	-- 	chatBar = New "Frame"
+	-- 		Name: "ChatBar"
 	-- 		Size: UDim2.new 1, 0, 0, 22
 	-- 		Position: UDim2.new 0, 0, 1, 0
 	-- 		BackgroundColor3: Color3.new 0, 0, 0
@@ -2125,7 +2125,7 @@ if LoadLibrary
 	-- 		FontSize: Enum.FontSize.Size14
 	-- 		TextColor3: Color3.new 1, 1, 1
 	-- 		BackgroundTransparency: 1
-	-- 		--chatBox.Parent: chatBar
+	-- 		-- Parent: chatBar
 
 	-- 	chatButton = New "TextButton"
 	-- 		Size: UDim2.new 1, -4, 1, 0
@@ -2137,46 +2137,41 @@ if LoadLibrary
 	-- 		FontSize: Enum.FontSize.Size14
 	-- 		TextColor3: Color3.new 1, 1, 1
 	-- 		BackgroundTransparency: 1
-	-- 		--chatButton.Parent: chatBar
+	-- 		-- Parent: chatBar
 
 	-- 	activateChat = ->
 	-- 		return if chatBox.Visible
-
 	-- 		chatButton.Visible = false
 	-- 		chatBox.Text = ""
 	-- 		chatBox.Visible = true
 	-- 		chatBox\CaptureFocus!
 
-	-- 	chatButton.MouseButton1Click\connect activateChat
+	-- 	chatButton.MouseButton1Click\connect(activateChat)
 
 	-- 	-- hotKeyEnabled = true
 	-- 	toggleHotKey = (_) ->
 	-- 		-- hotKeyEnabled = value
 
-
 	-- 	-- guiService = game\GetService "GuiService"
 	-- 	--[[newChatMode = ]]try
 	-- 		--guiService\AddSpecialKey(Enum.SpecialKey.ChatHotkey)
-	-- 		--guiService.SpecialKeyPressed\connect (key) -> if key == Enum.SpecialKey.ChatHotkey and hotKeyEnabled then activateChat! end end)
+	-- 		--guiService.SpecialKeyPressed\connect (key) -> if key == Enum.SpecialKey.ChatHotkey and hotKeyEnabled then activateChat!
 
 	-- 	-- if not newChatMode
 	-- 		--guiService\AddKey("/")
-	-- 		--guiService.KeyPressed\connect (key) -> if key == "/" and hotKeyEnabled then activateChat! end end)
-	-- 	-- end
+	-- 		--guiService.KeyPressed\connect (key) -> if key == "/" and hotKeyEnabled then activateChat!
 
 	-- 	chatBox.FocusLost\connect (enterPressed) ->
 	-- 		if enterPressed
 	-- 			if chatBox.Text ~= ""
 	-- 				str = chatBox.Text
 	-- 				if string.sub(str, 1, 1) == "%"
-	-- 					game.Players\TeamChat string.substr, 2
+	-- 					game.Players\TeamChat string.sub str, 2
 	-- 				else
 	-- 					game.Players\Chat str
-
 	-- 		chatBox.Text = ""
 	-- 		chatBox.Visible = false
 	-- 		chatButton.Visible = true
-
 	-- 	robloxLock chatBar
 	-- 	chatBar, toggleHotKey
 
@@ -2190,17 +2185,14 @@ if LoadLibrary
 			saveDialogs.Parent = gui
 
 			game.RequestShutdown = ->
-				table.insert(centerDialogs, saveDialogs)
+				table.insert centerDialogs, saveDialogs
 				game.GuiService\AddCenterDialog(
 					saveDialogs,
 					Enum.CenterDialogType.QuitDialog,
 					--ShowFunction
-					->
-						saveDialogs.Visible = true
+					-> saveDialogs.Visible = true
 					--HideFunction
-					->
-						saveDialogs.Visible = false
-
+					-> saveDialogs.Visible = false
 				)
 
 				true
@@ -2216,7 +2208,6 @@ if LoadLibrary
 		waitForChild gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu, "ReportAbuseButton"
 		gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu.ReportAbuseButton.Active = true
 
-
 	--Spawn a thread for Chat Bar
 	--[[local success, luaChat = ]]
 	try
@@ -2224,8 +2215,7 @@ if LoadLibrary
 
 	-- if success and luaChat
 
-	--[[delay 0,
-		->
+	--[[delay 0, ->
 			waitForChild(game, "Players")
 			waitForProperty(game.Players, "LocalPlayer")
 
@@ -2254,9 +2244,7 @@ if LoadLibrary
 			else
 				--chatBar.Parent = gui
 				--game.GuiService\SetGlobalSizeOffsetPixel(0,-22)
-
-		end)]]
-	-- end
+		]]
 
 	BurningManPlaceID = 41324860
 	-- TODO: remove click to walk completely if testing shows we don't need it
@@ -2274,4 +2262,3 @@ if LoadLibrary
 			game.Players.LocalPlayer.CharacterAdded\connect (character) ->
 				waitForChild character, "Humanoid"
 				character.Humanoid\SetClickToWalkEnabled false
---LoadLibrary if

@@ -44,6 +44,10 @@
 		password.constraints,
 		password.delayed,
 	]
+
+	if (data.theme) $profileForm.theme = data.theme as typeof $profileForm.theme
+
+	if (data.bio) $profileForm.bio = data.bio[0].text
 </script>
 
 <svelte:head>

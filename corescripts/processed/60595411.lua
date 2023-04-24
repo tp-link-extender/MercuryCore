@@ -1,731 +1,165 @@
-print("[Mercury]: Loaded corescript 60595411")
-local t = { }
-local New
-New = function(className, name, props)
-	if not (props ~= nil) then
-		props = name
-		name = nil
-	end
-	local obj = Instance.new(className)
-	if name then
-		obj.Name = name
-	end
-	local parent
-	for k, v in pairs(props) do
-		if type(k) == "string" then
-			if k == "Parent" then
-				parent = v
-			else
-				obj[k] = v
-			end
-		elseif type(k) == "number" and type(v) == "userdata" then
-			v.Parent = obj
-		end
-	end
-	obj.Parent = parent
-	return obj
-end
-local assert = assert
-local Null
-Null = function()
-	return Null
-end
-local StringBuilder = {
-	buffer = { }
-}
-StringBuilder.New = function(self)
-	local o = setmetatable({ }, self)
-	self.__index = self
-	o.buffer = { }
-	return o
-end
-StringBuilder.Append = function(self, s)
-	do
-		local _obj_0 = self.buffer
-		_obj_0[#_obj_0 + 1] = s
-	end
-end
-StringBuilder.ToString = function(self)
-	return table.concat(self.buffer)
-end
-local JsonWriter = {
-	backslashes = {
-		["\b"] = "\\b",
-		["\t"] = "\\t",
-		["\n"] = "\\n",
-		["\f"] = "\\f",
-		["\r"] = "\\r",
-		['"'] = '\\"',
-		["\\"] = "\\\\",
-		["/"] = "\\/"
-	}
-}
-JsonWriter.New = function(self)
-	local o = setmetatable({ }, self)
-	o.writer = StringBuilder:New()
-	self.__index = self
-	return o
-end
-JsonWriter.Append = function(self, s)
-	return self.writer:Append(s)
-end
-JsonWriter.ToString = function(self)
-	return self.writer:ToString()
-end
-JsonWriter.Write = function(self, o)
-	local _exp_0 = type(o)
-	if "nil" == _exp_0 then
-		return self:WriteNil()
-	elseif "boolean" == _exp_0 or "number" == _exp_0 then
-		return self:WriteString(o)
-	elseif "string" == _exp_0 then
-		return self:ParseString(o)
-	elseif "table" == _exp_0 then
-		return self:WriteTable(o)
-	elseif "function" == _exp_0 then
-		return self:WriteFunction(o)
-	elseif "thread" == _exp_0 or "userdata" == _exp_0 then
-		return self:WriteError(o)
-	end
-end
-JsonWriter.WriteNil = function(self)
-	return self:Append("null")
-end
-JsonWriter.WriteString = function(self, o)
-	return self:Append(tostring(o))
-end
-JsonWriter.ParseString = function(self, s)
-	self:Append('"')
-	self:Append(string.gsub(s, '[%z%c\\"/]', function(n)
-		local c = self.backslashes[n]
-		if c then
-			return c
-		end
-		return string.format("\\u%.4X", string.byte(n))
-	end))
-	return self:Append('"')
-end
-JsonWriter.IsArray = function(self, t)
-	local count = 0
-	local isindex
-	isindex = function(k)
-		if type(k) == "number" and k > 0 and math.floor(k) == k then
-			return true
-		end
-		return false
-	end
-	for k, _ in pairs(t) do
-		if not isindex(k) then
-			return false, "{", "}"
-		else
-			count = math.max(count, k)
-		end
-	end
-	return true, "[", "]", count
-end
-JsonWriter.WriteTable = function(self, t)
-	local ba, st, et, n = self:IsArray(t)
-	self:Append(st)
-	if ba then
-		for i = 1, n do
-			self:Write(t[i])
-			if i < n then
-				self:Append(",")
-			end
-		end
-	else
-		local first = true
-		for k, v in pairs(t) do
-			if not first then
-				self:Append(",")
-			end
-			first = false
-			self:ParseString(k)
-			self:Append(":")
-			self:Write(v)
-		end
-	end
-	return self:Append(et)
-end
-JsonWriter.WriteError = function(self, o)
-	return error(string.format("Encoding of %s unsupported", tostring(o)))
-end
-JsonWriter.WriteFunction = function(self, o)
-	if o == Null then
-		return self:WriteNil()
-	else
-		return self:WriteError(o)
-	end
-end
-local StringReader = {
-	s = "",
-	i = 0
-}
-StringReader.New = function(self, s)
-	local o = setmetatable({ }, self)
-	self.__index = self
-	o.s = s or o.s
-	return o
-end
-StringReader.Peek = function(self)
-	local i = self.i + 1
-	if i <= #self.s then
-		return string.sub(self.s, i, i)
-	end
-	return nil
-end
-StringReader.Next = function(self)
-	self.i = self.i + 1
-	if self.i <= #self.s then
-		return string.sub(self.s, self.i, self.i)
-	end
-	return nil
-end
-StringReader.All = function(self)
-	return self.s
-end
-local JsonReader = {
-	escapes = {
-		["t"] = "\t",
-		["n"] = "\n",
-		["f"] = "\f",
-		["r"] = "\r",
-		["b"] = "\b"
-	}
-}
-JsonReader.New = function(self, s)
-	local o = setmetatable({ }, self)
-	o.reader = StringReader:New(s)
-	self.__index = self
-	return o
-end
-JsonReader.Read = function(self)
-	self:SkipWhiteSpace()
-	local peek = self:Peek()
-	if not (peek ~= nil) then
-		return error(string.format("Nil string: '%s'", self:All()))
-	elseif peek == "{" then
-		return self:ReadObject()
-	elseif peek == "[" then
-		return self:ReadArray()
-	elseif peek == '"' then
-		return self:ReadString()
-	elseif string.find(peek, "[%+%-%d]") then
-		return self:ReadNumber()
-	elseif peek == "t" then
-		return self:ReadTrue()
-	elseif peek == "f" then
-		return self:ReadFalse()
-	elseif peek == "n" then
-		return self:ReadNull()
-	elseif peek == "/" then
-		self:ReadComment()
-		return self:Read()
-	else
-		return nil
-	end
-end
-JsonReader.ReadTrue = function(self)
-	self:TestReservedWord({
-		't',
-		'r',
-		'u',
-		'e'
-	})
-	return true
-end
-JsonReader.ReadFalse = function(self)
-	self:TestReservedWord({
-		'f',
-		'a',
-		'l',
-		's',
-		'e'
-	})
-	return false
-end
-JsonReader.ReadNull = function(self)
-	self:TestReservedWord({
-		'n',
-		'u',
-		'l',
-		'l'
-	})
-	return nil
-end
-JsonReader.TestReservedWord = function(self, t)
-	for _, v in ipairs(t) do
-		if self:Next() ~= v then
-			error(string.format("Error reading '%s': %s", table.concat(t), self:All()))
-		end
-	end
-end
-JsonReader.ReadNumber = function(self)
-	local result = self:Next()
-	local peek = self:Peek()
-	while (peek ~= nil) and string.find(peek, "[%+%-%d%.eE]") do
-		result = result .. self:Next()
-		peek = self:Peek()
-	end
-	result = tonumber(result)
-	if not (result ~= nil) then
-		return error(string.format("Invalid number: '%s'", result))
-	else
-		return result
-	end
-end
-JsonReader.ReadString = function(self)
-	local result = ""
-	assert(self:Next() == '"')
-	while self:Peek() ~= '"' do
-		local ch = self:Next()
-		if ch == "\\" then
-			ch = self:Next()
-			if self.escapes[ch] then
-				ch = self.escapes[ch]
-			end
-		end
-		result = result .. ch
-	end
-	assert(self:Next() == '"')
-	local fromunicode
-	fromunicode = function(m)
-		return string.char(tonumber(m, 16))
-	end
-	return string.gsub(result, "u%x%x(%x%x)", fromunicode)
-end
-JsonReader.ReadComment = function(self)
-	assert(self:Next() == "/")
-	local second = self:Next()
-	if second == "/" then
-		return self:ReadSingleLineComment()
-	elseif second == "*" then
-		return self:ReadBlockComment()
-	else
-		return error(string.format("Invalid comment: %s", self:All()))
-	end
-end
-JsonReader.ReadBlockComment = function(self)
-	local done = false
-	while not done do
-		local ch = self:Next()
-		if ch == "*" and self:Peek() == "/" then
-			done = true
-		end
-		if not done and ch == "/" and self:Peek() == "*" then
-			error(string.format("Invalid comment: %s, '/*' illegal.", self:All()))
-		end
-	end
-	return self:Next()
-end
-JsonReader.ReadSingleLineComment = function(self)
-	local ch = self:Next()
-	while ch ~= "\r" and ch ~= "\n" do
-		ch = self:Next()
-	end
-end
-JsonReader.ReadArray = function(self)
-	local result = { }
-	assert(self:Next() == "[")
-	local done = false
-	if self:Peek() == "]" then
-		done = true
-	end
-	while not done do
-		local item = self:Read()
-		result[#result + 1] = item
-		self:SkipWhiteSpace()
-		if self:Peek() == "]" then
-			done = true
-		end
-		if not done then
-			local ch = self:Next()
-			if ch ~= "," then
-				error(string.format("Invalid array: '%s' due to: '%s'", self:All(), ch))
-			end
-		end
-	end
-	assert("]" == self:Next())
-	return result
-end
-JsonReader.ReadObject = function(self)
-	local result = { }
-	assert(self:Next() == "{")
-	local done = false
-	if self:Peek() == "}" then
-		done = true
-	end
-	while not done do
-		local key = self:Read()
-		if type(key) ~= "string" then
-			error(string.format("Invalid non-string object key: %s", key))
-		end
-		self:SkipWhiteSpace()
-		local ch = self:Next()
-		if ch ~= ":" then
-			error(string.format("Invalid object: '%s' due to: '%s'", self:All(), ch))
-		end
-		self:SkipWhiteSpace()
-		local val = self:Read()
-		result[key] = val
-		self:SkipWhiteSpace()
-		if self:Peek() == "}" then
-			done = true
-		end
-		if not done then
-			ch = self:Next()
-			if ch ~= "," then
-				error(string.format("Invalid array: '%s' near: '%s'", self:All(), ch))
-			end
-		end
-	end
-	assert(self:Next() == "}")
-	return result
-end
-JsonReader.SkipWhiteSpace = function(self)
-	local p = self:Peek()
-	while (p ~= nil) and string.find(p, "[%s/]") do
-		if p == "/" then
-			self:ReadComment()
-		else
-			self:Next()
-		end
-		p = self:Peek()
-	end
-end
-JsonReader.Peek = function(self)
-	return self.reader:Peek()
-end
-JsonReader.Next = function(self)
-	return self.reader:Next()
-end
-JsonReader.All = function(self)
-	return self.reader:All()
-end
-local Encode
-Encode = function(o)
-	local _with_0 = JsonWriter:New()
-	_with_0:Write(o)
-	_with_0:ToString()
-	return _with_0
-end
-local Decode
-Decode = function(s)
-	local _with_0 = JsonReader:New(s)
-	_with_0:Read()
-	return _with_0
-end
-t.DecodeJSON = function(jsonString)
-pcall(function()
-		return warn('RbxUtility.DecodeJSON is deprecated, please use Game:GetService("HttpService"):JSONDecode() instead.')
-	end)
-	if type(jsonString) == "string" then
-		return Decode(jsonString)
-	end
-	print("RbxUtil.DecodeJSON expects string argument!")
-	return nil
-end
-t.EncodeJSON = function(jsonTable)
-pcall(function()
-		return warn('RbxUtility.EncodeJSON is deprecated, please use Game:GetService("HttpService"):JSONEncode() instead.')
-	end)
-	return Encode(jsonTable)
-end
-t.MakeWedge = function(x, y, z, _)
-	return game:GetService("Terrain"):AutoWedgeCell(x, y, z)
-end
-t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, selectionParent)
-	local terrain = game.Workspace:FindFirstChild("Terrain")
-	if not terrain then
-		return
-	end
-	assert(regionToSelect)
-	assert(color)
-	if not type(regionToSelect) == "Region3" then
-		error("regionToSelect (first arg), should be of type Region3, but is type", type(regionToSelect))
-	end
-	if not type(color) == "BrickColor" then
-		error("color (second arg), should be of type BrickColor, but is type", type(color))
-	end
-	local GetCell = terrain.GetCell
-	local WorldToCellPreferSolid = terrain.WorldToCellPreferSolid
-	local CellCenterToWorld = terrain.CellCenterToWorld
-	local emptyMaterial = Enum.CellMaterial.Empty
-	local selectionContainer = New("Model", "SelectionContainer", {
-		Archivable = false,
-		Parent = (function()
-			if selectionParent then
-				return selectionParent
-			else
-				return game.Workspace
-			end
-		end)()
-	})
-	local updateSelection
-	local currentKeepAliveTag
-	local aliveCounter = 0
-	local lastRegion
-	local adornments = { }
-	local reusableAdorns = { }
-	local selectionPart = New("Part", "SelectionPart", {
-		Transparency = 1,
-		Anchored = true,
-		Locked = true,
-		CanCollide = false,
-		Size = Vector3.new(4.2, 4.2, 4.2)
-	})
-	local selectionBox = Instance.new("SelectionBox")
-	local createAdornment
-	createAdornment = function(theColor)
-		local selectionPartClone
-		local selectionBoxClone
-		if #reusableAdorns > 0 then
-			selectionPartClone = reusableAdorns[1]["part"]
-			selectionBoxClone = reusableAdorns[1]["box"]
-			table.remove(reusableAdorns, 1)
-			selectionBoxClone.Visible = true
-		else
-			selectionPartClone = selectionPart:Clone()
-			selectionPartClone.Archivable = false
-			selectionBoxClone = selectionBox:Clone()
-			selectionBoxClone.Archivable = false
-			selectionBoxClone.Adornee = selectionPartClone
-			selectionBoxClone.Parent = selectionContainer
-			selectionBoxClone.Adornee = selectionPartClone
-			selectionBoxClone.Parent = selectionContainer
-		end
-		if theColor then
-			selectionBoxClone.Color = theColor
-		end
-		return selectionPartClone, selectionBoxClone
-	end
-	local cleanUpAdornments
-	cleanUpAdornments = function()
-		for cellPos, adornTable in pairs(adornments) do
-			if adornTable.KeepAlive ~= currentKeepAliveTag then
-				adornTable.SelectionBox.Visible = false
-				table.insert(reusableAdorns, {
-					part = adornTable.SelectionPart,
-					box = adornTable.SelectionBox
-				})
-				adornments[cellPos] = nil
-			end
-		end
-	end
-	local incrementAliveCounter
-	incrementAliveCounter = function()
-		aliveCounter = aliveCounter + 1
-		if aliveCounter > 1000000 then
-			aliveCounter = 0
-		end
-		return aliveCounter
-	end
-	local adornFullCellsInRegion
-	adornFullCellsInRegion = function(region, color)
-		local regionBegin = region.CFrame.p - region.Size / 2 + Vector3.new(2, 2, 2)
-		local regionEnd = region.CFrame.p + region.Size / 2 - Vector3.new(2, 2, 2)
-		local cellPosBegin = WorldToCellPreferSolid(terrain, regionBegin)
-		local cellPosEnd = WorldToCellPreferSolid(terrain, regionEnd)
-		currentKeepAliveTag = incrementAliveCounter()
-		for y = cellPosBegin.y, cellPosEnd.y do
-			for z = cellPosBegin.z, cellPosEnd.z do
-				for x = cellPosBegin.x, cellPosEnd.x do
-					local cellMaterial = GetCell(terrain, x, y, z)
-					if cellMaterial ~= emptyMaterial then
-						local cframePos = CellCenterToWorld(terrain, x, y, z)
-						local cellPos = Vector3int16.new(x, y, z)
-						local updated = false
-						for cellPosAdorn, adornTable in pairs(adornments) do
-							if cellPosAdorn == cellPos then
-								adornTable.KeepAlive = currentKeepAliveTag
-								if color then
-									adornTable.SelectionBox.Color = color
-								end
-								updated = true
-								break
-							end
-						end
-						if not updated then
-							local selectionPart, selectionBox
-							selectionPart, selectionBox = createAdornment(color)
-							selectionPart.Size = Vector3.new(4, 4, 4)
-							selectionPart.CFrame = CFrame.new(cframePos)
-							local adornTable = {
-								SelectionPart = selectionPart,
-								SelectionBox = selectionBox,
-								KeepAlive = currentKeepAliveTag
-							}
-							adornments[cellPos] = adornTable
-						end
-					end
-				end
-			end
-		end
-		return cleanUpAdornments()
-	end
-	lastRegion = regionToSelect
-	if selectEmptyCells then
-		local selectionPart, selectionBox
-		selectionPart, selectionBox = createAdornment(color)
-		selectionPart.Size = regionToSelect.Size
-		selectionPart.CFrame = regionToSelect.CFrame
-		adornments.SelectionPart = selectionPart
-		adornments.SelectionBox = selectionBox
-		updateSelection = function(newRegion, color)
-			if newRegion and newRegion ~= lastRegion then
-				lastRegion = newRegion
-				selectionPart.Size = newRegion.Size
-				selectionPart.CFrame = newRegion.CFrame
-			end
-			if color then
-				selectionBox.Color = color
-			end
-		end
-	else
-		adornFullCellsInRegion(regionToSelect, color)
-		updateSelection = function(newRegion, color)
-			if newRegion and newRegion ~= lastRegion then
-				lastRegion = newRegion
-				return adornFullCellsInRegion(newRegion, color)
-			end
-		end
-	end
-	local destroyFunc
-	destroyFunc = function()
-		updateSelection = nil
-		if selectionContainer ~= nil then
-			selectionContainer:Destroy()
-		end
-		adornments = nil
-	end
-	return updateSelection, destroyFunc
-end
-t.CreateSignal = function()
-	local this = { }
-	local mBindableEvent = Instance.new("BindableEvent")
-	local mAllCns = { }
-	this.connect = function(self, func)
-		if self ~= this then
-			error("connect must be called with `:`, not `.`", 2)
-		end
-		if type(func) ~= "function" then
-			error("Argument #1 of connect must be a function, got a " .. tostring(type(func)), 2)
-		end
-		local cn = mBindableEvent.Event:connect(func)
-		mAllCns[cn] = true
-		local pubCn = { }
-		pubCn.disconnect = function(self)
-			cn:disconnect()
-			mAllCns[cn] = nil
-		end
-		pubCn.Disconnect = pubCn.disconnect
-		return pubCn
-	end
-	this.disconnect = function(self)
-		if self ~= this then
-			error("disconnect must be called with `:`, not `.`", 2)
-		end
-		for cn, _ in pairs(mAllCns) do
-			cn:disconnect()
-			mAllCns[cn] = nil
-		end
-	end
-	this.wait = function(self)
-		if self ~= this then
-			error("wait must be called with `:`, not `.`", 2)
-		end
-		return mBindableEvent.Event:wait()
-	end
-	this.fire = function(self, ...)
-		if self ~= this then
-			error("fire must be called with `:`, not `.`", 2)
-		end
-		return mBindableEvent:Fire(...)
-	end
-	this.Connect = this.connect
-	this.Disconnect = this.disconnect
-	this.Wait = this.wait
-	this.Fire = this.fire
-	return this
-end
-local Create_PrivImpl
-Create_PrivImpl = function(objectType)
-	if type(objectType) ~= "string" then
-		error("Argument of Create must be a string", 2)
-	end
-	return function(dat)
-		dat = dat or { }
-		local obj = Instance.new(objectType)
-		local parent
-		local ctor
-		for k, v in pairs(dat) do
-			if type(k) == "string" then
-				if k == "Parent" then
-					parent = v
-				else
-					obj[k] = v
-				end
-			elseif type(k) == "number" then
-				if type(v) ~= "userdata" then
-					error("Bad entry in Create body: Numeric keys must be paired with children, got a: " .. tostring(type(v)), 2)
-				end
-				v.Parent = obj
-			elseif type(k) == "table" and k.__eventname then
-				if type(v) ~= "function" then
-					error("Bad entry in Create body: Key `[Create.E'" .. tostring(k.__eventname) .. "']` must have a function value, got: " .. tostring(v), 2)
-				end
-				obj[k.__eventname]:connect(v)
-			elseif k == t.Create then
-				if type(v) ~= "function" then
-					error("Bad entry in Create body: Key `[Create]` should be paired with a constructor function, got: " .. tostring(v), 2)
-				elseif ctor then
-					error("Bad entry in Create body: Only one constructor function is allowed", 2)
-				end
-				ctor = v
-			else
-				error("Bad entry (" .. tostring(k) .. " => " .. tostring(v) .. ") in Create body", 2)
-			end
-		end
-		if ctor ~= nil then
-			ctor(obj)
-		end
-		if parent then
-			obj.Parent = parent
-		end
-		return obj
-	end
-end
-t.Create = setmetatable({ }, {
-	["__call"] = function(_, ...)
-		return Create_PrivImpl(...)
-	end
-})
-t.Create.E = function(eventName)
-	return {
-		__eventname = eventName
-	}
-end
-t.Help = function(funcNameOrFunc)
-	if "DecodeJSON" == funcNameOrFunc or t.DecodeJSON == funcNameOrFunc then
-		return "Function DecodeJSON.  " .. "Arguments: (string).  " .. "Side effect: returns a table with all parsed JSON values"
-	elseif "EncodeJSON" == funcNameOrFunc or t.EncodeJSON == funcNameOrFunc then
-		return "Function EncodeJSON.  " .. "Arguments: (table).  " .. "Side effect: returns a string composed of argument table in JSON data format"
-	elseif "MakeWedge" == funcNameOrFunc or t.MakeWedge == funcNameOrFunc then
-		return "Function MakeWedge. " .. "Arguments: (x, y, z, [default material]). " .. "Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if " .. "parameter is provided, if not sets cell x, y, z to be whatever material it previously was. " .. "Returns true if made a wedge, false if the cell remains a block "
-	elseif "SelectTerrainRegion" == funcNameOrFunc or t.SelectTerrainRegion == funcNameOrFunc then
-		return "Function SelectTerrainRegion. " .. "Arguments: (regionToSelect, color, selectEmptyCells, selectionParent). " .. "Description: Selects all terrain via a series of selection boxes within the regionToSelect " .. "(this should be a region3 value). The selection box color is detemined by the color argument " .. "(should be a brickcolor value). SelectionParent is the parent that the selection model gets placed to (optional)." .. "SelectEmptyCells is bool, when true will select all cells in the " .. "region, otherwise we only select non-empty cells. Returns a function that can update the selection," .. "arguments to said function are a new region3 to select, and the adornment color (color arg is optional). " .. "Also returns a second function that takes no arguments and destroys the selection"
-	elseif "CreateSignal" == funcNameOrFunc or t.CreateSignal == funcNameOrFunc then
-		return "Function CreateSignal. " .. "Arguments: None. " .. "Returns: The newly created Signal object. This object is identical to the RBXScriptSignal class " .. "used for events in Objects, but is a Lua-side object so it can be used to create custom events in" .. "Lua code. " .. "Methods of the Signal object: :connect, :wait, :fire, :disconnect. " .. "For more info you can pass the method name to the Help function, or view the wiki page " .. "for this library. EG: Help('Signal:connect')."
-	elseif "Signal:connect" == funcNameOrFunc then
-		return "Method Signal:connect. " .. "Arguments: (function handler). " .. "Return: A connection object which can be used to disconnect the connection to this handler. " .. "Description: Connectes a handler function to this Signal, so that when |fire| is called the " .. "handler function will be called with the arguments passed to |fire|."
-	elseif "Signal:wait" == funcNameOrFunc then
-		return "Method Signal:wait. " .. "Arguments: None. " .. "Returns: The arguments passed to the next call to |fire|. " .. "Description: This call does not return until the next call to |fire| is made, at which point it " .. "will return the values which were passed as arguments to that |fire| call."
-	elseif "Signal:fire" == funcNameOrFunc then
-		return "Method Signal:fire. " .. "Arguments: Any number of arguments of any type. " .. "Returns: None. " .. "Description: This call will invoke any connected handler functions, and notify any waiting code " .. "attached to this Signal to continue, with the arguments passed to this function. Note: The calls " .. "to handlers are made asynchronously, so this call will return immediately regardless of how long " .. "it takes the connected handler functions to complete."
-	elseif "Signal:disconnect" == funcNameOrFunc then
-		return "Method Signal:disconnect. " .. "Arguments: None. " .. "Returns: None. " .. "Description: This call disconnects all handlers attacched to this function, note however, it " .. "does NOT make waiting code continue, as is the behavior of normal Roblox events. This method " .. "can also be called on the connection object which is returned from Signal:connect to only " .. "disconnect a single handler, as opposed to this method, which will disconnect all handlers."
-	elseif "Create" == funcNameOrFunc then
-		return "Function Create. " .. "Arguments: A table containing information about how to construct a collection of objects. " .. "Returns: The constructed objects. " .. "Descrition: Create is a very powerfull function, whose description is too long to fit here, and " .. "is best described via example, please see the wiki page for a description of how to use it."
-	end
-end
-return t
+print'[Mercury]: Loaded corescript 60595411'local a,b={},nil b=function(c,d,e)if
+not(e~=nil)then e=d d=nil end local f=Instance.new(c)if d then f.Name=d end
+local g for h,i in pairs(e)do if type(h)=='string'then if h=='Parent'then g=i
+else f[h]=i end elseif type(h)=='number'and type(i)=='userdata'then i.Parent=f
+end end f.Parent=g return f end local c,d=assert,nil d=function()return d end
+local e={buffer={}}e.New=function(f)local g=setmetatable({},f)f.__index=f g.
+buffer={}return g end e.Append=function(f,g)do local h=f.buffer h[#h+1]=g end
+end e.ToString=function(f)return table.concat(f.buffer)end local f={backslashes=
+{['\b']='\\b',['\t']='\\t',['\n']='\\n',['\f']='\\f',['\r']='\\r',['"']='\\"',[
+'\\']='\\\\',['/']='\\/'}}f.New=function(g)local h=setmetatable({},g)h.writer=e:
+New()g.__index=g return h end f.Append=function(g,h)return g.writer:Append(h)end
+f.ToString=function(g)return g.writer:ToString()end f.Write=function(g,h)local i
+=type(h)if'nil'==i then return g:WriteNil()elseif'boolean'==i or'number'==i then
+return g:WriteString(h)elseif'string'==i then return g:ParseString(h)elseif
+'table'==i then return g:WriteTable(h)elseif'function'==i then return g:
+WriteFunction(h)elseif'thread'==i or'userdata'==i then return g:WriteError(h)end
+end f.WriteNil=function(g)return g:Append'null'end f.WriteString=function(g,h)
+return g:Append(tostring(h))end f.ParseString=function(g,h)g:Append'"'g:Append(
+string.gsub(h,'[%z%c\\"/]',function(i)local j=g.backslashes[i]if j then return j
+end return string.format('\\u%.4X',string.byte(i))end))return g:Append'"'end f.
+IsArray=function(g,h)local i,j=0,nil j=function(k)if type(k)=='number'and k>0
+and math.floor(k)==k then return true end return false end for k,l in pairs(h)do
+if not j(k)then return false,'{','}'else i=math.max(i,k)end end return true,'[',
+']',i end f.WriteTable=function(g,h)local i,j,k,l=g:IsArray(h)g:Append(j)if i
+then for m=1,l do g:Write(h[m])if m<l then g:Append','end end else local m=true
+for n,o in pairs(h)do if not m then g:Append','end m=false g:ParseString(n)g:
+Append':'g:Write(o)end end return g:Append(k)end f.WriteError=function(g,h)
+return error(string.format('Encoding of %s unsupported',tostring(h)))end f.
+WriteFunction=function(g,h)if h==d then return g:WriteNil()else return g:
+WriteError(h)end end local g={s='',i=0}g.New=function(h,i)local j=setmetatable({
+},h)h.__index=h j.s=i or j.s return j end g.Peek=function(h)local i=h.i+1 if i<=
+#h.s then return string.sub(h.s,i,i)end return nil end g.Next=function(h)h.i=h.i
++1 if h.i<=#h.s then return string.sub(h.s,h.i,h.i)end return nil end g.All=
+function(h)return h.s end local h={escapes={['t']='\t',['n']='\n',['f']='\f',[
+'r']='\r',['b']='\b'}}h.New=function(i,j)local k=setmetatable({},i)k.reader=g:
+New(j)i.__index=i return k end h.Read=function(i)i:SkipWhiteSpace()local j=i:
+Peek()if not(j~=nil)then return error(string.format("Nil string: '%s'",i:All()))
+elseif j=='{'then return i:ReadObject()elseif j=='['then return i:ReadArray()
+elseif j=='"'then return i:ReadString()elseif string.find(j,'[%+%-%d]')then
+return i:ReadNumber()elseif j=='t'then return i:ReadTrue()elseif j=='f'then
+return i:ReadFalse()elseif j=='n'then return i:ReadNull()elseif j=='/'then i:
+ReadComment()return i:Read()else return nil end end h.ReadTrue=function(i)i:
+TestReservedWord{'t','r','u','e'}return true end h.ReadFalse=function(i)i:
+TestReservedWord{'f','a','l','s','e'}return false end h.ReadNull=function(i)i:
+TestReservedWord{'n','u','l','l'}return nil end h.TestReservedWord=function(i,j)
+for k,l in ipairs(j)do if i:Next()~=l then error(string.format(
+"Error reading '%s': %s",table.concat(j),i:All()))end end end h.ReadNumber=
+function(i)local j,k=i:Next(),i:Peek()while(k~=nil)and string.find(k,
+'[%+%-%d%.eE]')do j=j..i:Next()k=i:Peek()end j=tonumber(j)if not(j~=nil)then
+return error(string.format("Invalid number: '%s'",j))else return j end end h.
+ReadString=function(i)local j=''c(i:Next()=='"')while i:Peek()~='"'do local k=i:
+Next()if k=='\\'then k=i:Next()if i.escapes[k]then k=i.escapes[k]end end j=j..k
+end c(i:Next()=='"')local k k=function(l)return string.char(tonumber(l,16))end
+return string.gsub(j,'u%x%x(%x%x)',k)end h.ReadComment=function(i)c(i:Next()==
+'/')local j=i:Next()if j=='/'then return i:ReadSingleLineComment()elseif j=='*'
+then return i:ReadBlockComment()else return error(string.format(
+'Invalid comment: %s',i:All()))end end h.ReadBlockComment=function(i)local j=
+false while not j do local k=i:Next()if k=='*'and i:Peek()=='/'then j=true end
+if not j and k=='/'and i:Peek()=='*'then error(string.format(
+"Invalid comment: %s, '/*' illegal.",i:All()))end end return i:Next()end h.
+ReadSingleLineComment=function(i)local j=i:Next()while j~='\r'and j~='\n'do j=i:
+Next()end end h.ReadArray=function(i)local j={}c(i:Next()=='[')local k=false if
+i:Peek()==']'then k=true end while not k do local l=i:Read()j[#j+1]=l i:
+SkipWhiteSpace()if i:Peek()==']'then k=true end if not k then local m=i:Next()if
+m~=','then error(string.format("Invalid array: '%s' due to: '%s'",i:All(),m))end
+end end c(']'==i:Next())return j end h.ReadObject=function(i)local j={}c(i:Next(
+)=='{')local k=false if i:Peek()=='}'then k=true end while not k do local l=i:
+Read()if type(l)~='string'then error(string.format(
+'Invalid non-string object key: %s',l))end i:SkipWhiteSpace()local m=i:Next()if
+m~=':'then error(string.format("Invalid object: '%s' due to: '%s'",i:All(),m))
+end i:SkipWhiteSpace()local n=i:Read()j[l]=n i:SkipWhiteSpace()if i:Peek()=='}'
+then k=true end if not k then m=i:Next()if m~=','then error(string.format(
+"Invalid array: '%s' near: '%s'",i:All(),m))end end end c(i:Next()=='}')return j
+end h.SkipWhiteSpace=function(i)local j=i:Peek()while(j~=nil)and string.find(j,
+'[%s/]')do if j=='/'then i:ReadComment()else i:Next()end j=i:Peek()end end h.
+Peek=function(i)return i.reader:Peek()end h.Next=function(i)return i.reader:
+Next()end h.All=function(i)return i.reader:All()end local i i=function(j)local k
+=f:New()k:Write(j)k:ToString()return k end local j j=function(k)local l=h:New(k)
+l:Read()return l end a.DecodeJSON=function(k)pcall(function()return warn
+[[RbxUtility.DecodeJSON is deprecated, please use Game:GetService("HttpService"):JSONDecode() instead.]]
+end)if type(k)=='string'then return j(k)end print
+'RbxUtil.DecodeJSON expects string argument!'return nil end a.EncodeJSON=
+function(k)pcall(function()return warn
+[[RbxUtility.EncodeJSON is deprecated, please use Game:GetService("HttpService"):JSONEncode() instead.]]
+end)return i(k)end a.MakeWedge=function(k,l,m,n)return game:GetService'Terrain':
+AutoWedgeCell(k,l,m)end a.SelectTerrainRegion=function(k,l,m,n)local o=game.
+Workspace:FindFirstChild'Terrain'if not o then return end c(k)c(l)if not type(k)
+=='Region3'then error(
+[[regionToSelect (first arg), should be of type Region3, but is type]],type(k))
+end if not type(l)=='BrickColor'then error(
+[[color (second arg), should be of type BrickColor, but is type]],type(l))end
+local p,q,r,s,t,u,v,w,x,y,z,A,B,C=o.GetCell,o.WorldToCellPreferSolid,o.
+CellCenterToWorld,Enum.CellMaterial.Empty,b('Model','SelectionContainer',{
+Archivable=false,Parent=(function()if n then return n else return game.Workspace
+end end)()}),nil,nil,0,nil,{},{},b('Part','SelectionPart',{Transparency=1,
+Anchored=true,Locked=true,CanCollide=false,Size=Vector3.new(4.2,4.2,4.2)}),
+Instance.new'SelectionBox',nil C=function(D)local E,F if#z>0 then E=z[1]['part']
+F=z[1]['box']table.remove(z,1)F.Visible=true else E=A:Clone()E.Archivable=false
+F=B:Clone()F.Archivable=false F.Adornee=E F.Parent=t F.Adornee=E F.Parent=t end
+if D then F.Color=D end return E,F end local D D=function()for E,F in pairs(y)do
+if F.KeepAlive~=v then F.SelectionBox.Visible=false table.insert(z,{part=F.
+SelectionPart,box=F.SelectionBox})y[E]=nil end end end local E E=function()w=w+1
+if w>1000000 then w=0 end return w end local F F=function(G,H)local I,J=G.CFrame
+.p-G.Size/2+Vector3.new(2,2,2),G.CFrame.p+G.Size/2-Vector3.new(2,2,2)local K,L=
+q(o,I),q(o,J)v=E()for M=K.y,L.y do for N=K.z,L.z do for O=K.x,L.x do local P=p(o
+,O,M,N)if P~=s then local Q,R,S=r(o,O,M,N),Vector3int16.new(O,M,N),false for T,U
+in pairs(y)do if T==R then U.KeepAlive=v if H then U.SelectionBox.Color=H end S=
+true break end end if not S then local V,W V,W=C(H)V.Size=Vector3.new(4,4,4)V.
+CFrame=CFrame.new(Q)local X={SelectionPart=V,SelectionBox=W,KeepAlive=v}y[R]=X
+end end end end end return D()end x=k if m then local G,H G,H=C(l)G.Size=k.Size
+G.CFrame=k.CFrame y.SelectionPart=G y.SelectionBox=H u=function(I,J)if I and I~=
+x then x=I G.Size=I.Size G.CFrame=I.CFrame end if J then H.Color=J end end else
+F(k,l)u=function(G,H)if G and G~=x then x=G return F(G,H)end end end local G G=
+function()u=nil if t~=nil then t:Destroy()end y=nil end return u,G end a.
+CreateSignal=function()local k,l,m={},Instance.new'BindableEvent',{}k.connect=
+function(n,o)if n~=k then error('connect must be called with `:`, not `.`',2)end
+if type(o)~='function'then error(
+'Argument #1 of connect must be a function, got a '..tostring(type(o)),2)end
+local p=l.Event:connect(o)m[p]=true local q={}q.disconnect=function(r)p:
+disconnect()m[p]=nil end q.Disconnect=q.disconnect return q end k.disconnect=
+function(n)if n~=k then error('disconnect must be called with `:`, not `.`',2)
+end for o,p in pairs(m)do o:disconnect()m[o]=nil end end k.wait=function(n)if n
+~=k then error('wait must be called with `:`, not `.`',2)end return l.Event:
+wait()end k.fire=function(n,...)if n~=k then error(
+'fire must be called with `:`, not `.`',2)end return l:Fire(...)end k.Connect=k.
+connect k.Disconnect=k.disconnect k.Wait=k.wait k.Fire=k.fire return k end local
+k k=function(l)if type(l)~='string'then error(
+'Argument of Create must be a string',2)end return function(m)m=m or{}local n,o,
+p=Instance.new(l),nil,nil for q,r in pairs(m)do if type(q)=='string'then if q==
+'Parent'then o=r else n[q]=r end elseif type(q)=='number'then if type(r)~=
+'userdata'then error(
+[[Bad entry in Create body: Numeric keys must be paired with children, got a: ]]
+..tostring(type(r)),2)end r.Parent=n elseif type(q)=='table'and q.__eventname
+then if type(r)~='function'then error(
+"Bad entry in Create body: Key `[Create.E'"..tostring(q.__eventname)..
+"']` must have a function value, got: "..tostring(r),2)end n[q.__eventname]:
+connect(r)elseif q==a.Create then if type(r)~='function'then error(
+[[Bad entry in Create body: Key `[Create]` should be paired with a constructor function, got: ]]
+..tostring(r),2)elseif p then error(
+[[Bad entry in Create body: Only one constructor function is allowed]],2)end p=r
+else error('Bad entry ('..tostring(q)..' => '..tostring(r)..') in Create body',2
+)end end if p~=nil then p(n)end if o then n.Parent=o end return n end end a.
+Create=setmetatable({},{['__call']=function(l,...)return k(...)end})a.Create.E=
+function(l)return{__eventname=l}end a.Help=function(l)if'DecodeJSON'==l or a.
+DecodeJSON==l then return
+[[Function DecodeJSON.  Arguments: (string).  Side effect: returns a table with all parsed JSON values]]
+elseif'EncodeJSON'==l or a.EncodeJSON==l then return
+[[Function EncodeJSON.  Arguments: (table).  Side effect: returns a string composed of argument table in JSON data format]]
+elseif'MakeWedge'==l or a.MakeWedge==l then return
+[[Function MakeWedge. Arguments: (x, y, z, [default material]). Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously was. Returns true if made a wedge, false if the cell remains a block ]]
+elseif'SelectTerrainRegion'==l or a.SelectTerrainRegion==l then return
+[[Function SelectTerrainRegion. Arguments: (regionToSelect, color, selectEmptyCells, selectionParent). Description: Selects all terrain via a series of selection boxes within the regionToSelect (this should be a region3 value). The selection box color is detemined by the color argument (should be a brickcolor value). SelectionParent is the parent that the selection model gets placed to (optional).SelectEmptyCells is bool, when true will select all cells in the region, otherwise we only select non-empty cells. Returns a function that can update the selection,arguments to said function are a new region3 to select, and the adornment color (color arg is optional). Also returns a second function that takes no arguments and destroys the selection]]
+elseif'CreateSignal'==l or a.CreateSignal==l then return
+[[Function CreateSignal. Arguments: None. Returns: The newly created Signal object. This object is identical to the RBXScriptSignal class used for events in Objects, but is a Lua-side object so it can be used to create custom events inLua code. Methods of the Signal object: :connect, :wait, :fire, :disconnect. For more info you can pass the method name to the Help function, or view the wiki page for this library. EG: Help('Signal:connect').]]
+elseif'Signal:connect'==l then return
+[[Method Signal:connect. Arguments: (function handler). Return: A connection object which can be used to disconnect the connection to this handler. Description: Connectes a handler function to this Signal, so that when |fire| is called the handler function will be called with the arguments passed to |fire|.]]
+elseif'Signal:wait'==l then return
+[[Method Signal:wait. Arguments: None. Returns: The arguments passed to the next call to |fire|. Description: This call does not return until the next call to |fire| is made, at which point it will return the values which were passed as arguments to that |fire| call.]]
+elseif'Signal:fire'==l then return
+[[Method Signal:fire. Arguments: Any number of arguments of any type. Returns: None. Description: This call will invoke any connected handler functions, and notify any waiting code attached to this Signal to continue, with the arguments passed to this function. Note: The calls to handlers are made asynchronously, so this call will return immediately regardless of how long it takes the connected handler functions to complete.]]
+elseif'Signal:disconnect'==l then return
+[[Method Signal:disconnect. Arguments: None. Returns: None. Description: This call disconnects all handlers attacched to this function, note however, it does NOT make waiting code continue, as is the behavior of normal Roblox events. This method can also be called on the connection object which is returned from Signal:connect to only disconnect a single handler, as opposed to this method, which will disconnect all handlers.]]
+elseif'Create'==l then return
+[[Function Create. Arguments: A table containing information about how to construct a collection of objects. Returns: The constructed objects. Descrition: Create is a very powerfull function, whose description is too long to fit here, and is best described via example, please see the wiki page for a description of how to use it.]]
+end end return a

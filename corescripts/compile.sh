@@ -1,1 +1,1 @@
-yue ./yue && darklua process ./yue ./processed
+yue ./yue && darklua process ./yue ./processed && rm -f ./yue/*.lua
