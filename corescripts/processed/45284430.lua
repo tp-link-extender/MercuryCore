@@ -1713,7 +1713,7 @@ binaryShrink = function(min, max, fits)
 end
 local getGuiOwner
 getGuiOwner = function(instance)
-	while instance ~= nil do
+	while (instance ~= nil) do
 		if instance:IsA("ScreenGui") or instance:IsA("BillboardGui") then
 			return instance
 		end
@@ -2002,7 +2002,7 @@ CreateBasicTutorialPage = function(name, handleResize, skipTutorial, giveDoneBut
 	end
 	frame.Changed:connect(function(prop)
 		if prop == "Parent" then
-			if parentConnection ~= nil then
+			if (parentConnection ~= nil) then
 				parentConnection:disconnect()
 				parentConnection = nil
 			end
@@ -2675,7 +2675,7 @@ t.CreateSetPanel = function(userIdsForSets, objectSelected, dialogClosed, size, 
 	end
 	local selectSet
 	selectSet = function(button, setName, setId, _)
-		if button and Data.Category[Data.CurrentCategory] ~= nil then
+		if button and (Data.Category[Data.CurrentCategory] ~= nil) then
 			if button ~= Data.Category[Data.CurrentCategory].Button then
 				Data.Category[Data.CurrentCategory].Button = button
 				if SetCache[setId] == nil then
