@@ -539,7 +539,7 @@ createGameMainMenu = function(baseZIndex, shield)
 	gameSettingsButton.Name = "SettingsButton"
 	gameSettingsButton.ZIndex = baseZIndex + 4
 	gameSettingsButton.Parent = gameMainMenuFrame
-	if game:FindFirstChild("LoadingGuiService" and #game.LoadingGuiService:GetChildren() > 0) then
+	if game:FindFirstChild("LoadingGuiService") and #game.LoadingGuiService:GetChildren() > 0 then
 		gameSettingsButton = createTextButton("Game Instructions", Enum.ButtonStyle.RobloxButton, Enum.FontSize.Size24, UDim2.new(0, 340, 0, 50), UDim2.new(0, 82, 0, 207))
 		gameSettingsButton.Name = "GameInstructions"
 		gameSettingsButton.ZIndex = baseZIndex + 4
