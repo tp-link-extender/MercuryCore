@@ -361,8 +361,9 @@ createHelpDialog = (baseZIndex) ->
 
 	{
 		Buttons: buttonRow
-		LayoutFrame:
-			Image: image
+		ImageFrame:
+			LayoutFrame:
+				Image: image
 	} = helpDialog
 
 
