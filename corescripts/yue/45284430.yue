@@ -1836,7 +1836,7 @@ binaryShrink = (min, max, fits) ->
 
 
 getGuiOwner = (instance) ->
-	while instance ~= nil
+	while instance?
 		if instance\IsA"ScreenGui" or instance\IsA "BillboardGui"
 			return instance
 
@@ -2152,7 +2152,7 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 
 	frame.Changed\connect (prop) ->
 		if prop == "Parent"
-			if parentConnection ~= nil
+			if parentConnection?
 				parentConnection\disconnect!
 				parentConnection = nil
 
@@ -2837,7 +2837,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 
 		selectSet = (button, setName, setId, _) ->
-			if button and Data.Category[Data.CurrentCategory] ~= nil
+			if button and Data.Category[Data.CurrentCategory]?
 				if button ~= Data.Category[Data.CurrentCategory].Button
 					Data.Category[Data.CurrentCategory].Button = button
 
