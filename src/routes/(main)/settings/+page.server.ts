@@ -23,7 +23,7 @@ export const load = async ({ request, locals }) => {
 		where: {
 			id: user.id,
 		},
-		select: {
+		include: {
 			bio: {
 				orderBy: {
 					updated: "desc",
@@ -38,6 +38,7 @@ export const load = async ({ request, locals }) => {
 
 	return {
 		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
+		theme: getUser?.theme,
 		profileForm: superValidate(request, profileSchema),
 		passwordForm: superValidate(request, passwordSchema),
 	}
