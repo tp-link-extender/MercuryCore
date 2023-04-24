@@ -59,7 +59,7 @@
 		</div>
 	</div>
 
-	<div id="light" class="col col-12 col-lg-6 light-text bg-background">
+	<div id="light" class="col col-12 col-lg-6 light-text">
 		<div id="login" class="m-auto">
 			<h2 class="light-text">Log into your account</h2>
 			<p class="light-text">
