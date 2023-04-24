@@ -68,7 +68,7 @@
 	</div>
 	<div class="row">
 		<div class="container d-grid m-0">
-			{#each query ? searchedData : data.groups || [] as group, num}
+			{#each query ? searchedData : data.groups || [] as group, num (group.name)}
 				<Group {group} {num} total={data.groups.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
