@@ -106,10 +106,7 @@
 			<p class="mb-0 grey-text mb-4">
 				Change your bio, site theme and more.
 			</p>
-			<form
-				class="col-lg-8"
-				method="POST"
-				action="?/profile">
+			<form class="col-lg-8" method="POST" action="?/profile">
 				<fieldset>
 					<div class="row">
 						<label
