@@ -8,7 +8,7 @@ export async function GET({ url, setHeaders }) {
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
 	try {
-		const file = fs.readFileSync(`corescripts/processed/${ID}.lua`, "utf-8")
+		let file = fs.readFileSync(`./corescripts/processed/${ID}.lua`)
 
 		setHeaders({
 			"Content-Type": "binary/octet-stream",
@@ -17,7 +17,9 @@ export async function GET({ url, setHeaders }) {
 			).toString()}"`,
 		})
 
-		let file2 = file.replaceAll("roblox.com/asset", "banland.xyz/asset")
+		let file2 = file
+			.toString()
+			.replaceAll("roblox.com/asset", "banland.xyz/asset")
 
 		// Health corescript
 		if (ID != "38037265") file2 = SignData(file2, parseInt(ID))
