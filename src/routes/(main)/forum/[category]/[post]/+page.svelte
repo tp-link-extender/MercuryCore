@@ -37,7 +37,7 @@
 			use:enhance
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
-			action="/forum/{data.forumCategory.name}?/like">
+			action="?/like">
 			<input type="hidden" name="id" value={data.id} />
 			<div class="row mb-2 d-flex">
 				<div>
@@ -111,7 +111,7 @@
 		</div>
 	</div>
 
-	<form use:enhance class="mt-2 mb-4 p-1 row" method="POST">
+	<form use:enhance class="mt-2 mb-4 p-1 row" method="POST" action="?/reply">
 		<label for="content" class="form-label light-text mt-2">
 			Post a Reply
 		</label>

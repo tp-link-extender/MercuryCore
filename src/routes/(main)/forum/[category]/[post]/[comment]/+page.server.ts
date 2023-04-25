@@ -1,3 +1,4 @@
+import { actions as postActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
@@ -20,6 +21,7 @@ export async function load({ url, locals, params }) {
 		select: {
 			id: true,
 			posted: true,
+			parentReplyId: true,
 			author: {
 				select: {
 					username: true,
@@ -101,3 +103,5 @@ export async function load({ url, locals, params }) {
 		author: post?.author.username,
 	}
 }
+
+export const actions = postActions

@@ -1,3 +1,4 @@
+import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
@@ -151,13 +152,13 @@ export async function load({ locals, params }) {
 }
 
 export const actions = {
-	default: async ({ request, locals, params, getClientAddress }) => {
+	reply: async ({ request, locals, params, getClientAddress }) => {
 		const { user } = await authorise(locals)
 
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
-		if (limit) return limit
+		// if (limit) return limit
 
 		const { content, replyId } = form.data
 		// If there is a replyId, it is a reply to another comment
@@ -204,4 +205,5 @@ export const actions = {
 				},
 			})
 	},
+	like: categoryActions.like
 }
