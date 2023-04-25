@@ -22,7 +22,6 @@
 	let content = "" // Allows current reply to not be lost on clicking to another reply
 
 	const collapse = (id: string) => () => {
-		console.log(2)
 		repliesCollapsed.update(collapsed => {
 			collapsed[id] = !collapsed[id]
 			return collapsed
@@ -111,7 +110,7 @@
 								use:enhance
 								class="d-inline me-2"
 								method="POST"
-								action="/forum/{forumCategory}?/like">
+								action="?/like&depth={depth}">
 								<input
 									type="hidden"
 									name="replyId"
@@ -168,7 +167,7 @@
 										on:submit={() => replyingTo.set("")}
 										class="mb-4"
 										method="POST"
-										action="/forum/{forumCategory}/{postId}">
+										action="?/reply">
 										<input
 											type="hidden"
 											name="replyId"
