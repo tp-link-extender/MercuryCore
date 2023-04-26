@@ -3,6 +3,28 @@
 base: lua51
 name: mercury
 globals:
+  # Substitutions
+  _USER_ID:
+    args: []
+  _CREATOR_ID:
+    args: []
+  _SERVER_PORT:
+    args: []
+  _SERVER_PRESENCE_URL:
+    args: []
+  _SERVER_ADDRESS:
+    args: []
+  _PLACE_ID:
+    args: []
+  _IS_STUDIO_JOIN:
+    args: []
+  _MAP_LOCATION:
+    args: []
+  _MAP_LOCATION_EXISTS:
+    args: []
+  _CHAR_APPEARANCE:
+    args: []
+
   ypcall:
     args:
       - type: function
@@ -213,6 +235,11 @@ globals:
         type: number
       - required: false
         type: number
+  Enum.PriorityMethod.AccumulatedError:
+    struct: EnumItem
+  Enum.PhysicsSendMethod.ErrorComputation2:
+    struct: EnumItem
+
   Enum.ABTestLoadingStatus.Error:
     struct: EnumItem
   Enum.ABTestLoadingStatus.GetEnumItems:
@@ -2995,6 +3022,8 @@ globals:
     struct: EnumItem
   Enum.MembershipType.TurboBuildersClub:
     struct: EnumItem
+  Enum.MembershipType._MEMBERSHIP_TYPE:
+    struct: EnumItem
   Enum.MeshPartDetailLevel.DistanceBased:
     struct: EnumItem
   Enum.MeshPartDetailLevel.GetEnumItems:
@@ -5534,8 +5563,6 @@ globals:
     removed: true
   load:
     removed: true
-  loadfile:
-    removed: true
   math.clamp:
     args:
       - type: number
@@ -6897,6 +6924,10 @@ structs:
       deprecated:
         message: this property is deprecated.
         replace: []
+    SetRemoteBuildMode:
+      args:
+        - type: any
+      method: true
 
     SaveToRoblox:
       method: true
@@ -7041,6 +7072,7 @@ structs:
             - ScriptCloneWatcherHelper
             - ScriptContext
             - ScriptEditorService
+            - ScriptInformationProvider
             - ScriptRegistrationService
             - ScriptService
             - Selection
@@ -7096,8 +7128,26 @@ structs:
       method: true
     GraphicsQualityChangeRequest:
       struct: Event
+    HttpGet:
+      args:
+        - required: false
+          type: any
+        - required: false
+          type: any
+      method: true
     HttpGetAsync:
       args:
+        - required: false
+          type: any
+        - required: false
+          type: any
+      method: true
+    HttpPost:
+      args:
+        - required: false
+          type: any
+        - required: false
+          type: any
         - required: false
           type: any
         - required: false
@@ -7248,10 +7298,36 @@ structs:
         - required: false
           type: any
       method: true
+    SetPlaceID:
+      args:
+        - type: any
+        - required: false
+          type: any
+      method: true
+    SetCreatorID:
+      args:
+        - type: any
+        - type: any
+      method: true
+    SetScreenshotInfo:
+      args:
+        - type: any
+      method: true
+    SetVideoInfo:
+      args:
+        - type: any
+      method: true
     SetUniverseId:
       args:
         - required: false
           type: any
+      method: true
+    SetMessage:
+      args:
+        - type: any
+      method: true
+    ClearMessage:
+      args: []
       method: true
     Shutdown:
       args: []
