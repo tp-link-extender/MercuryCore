@@ -1,4 +1,3 @@
-print "[Mercury]: Loaded Visit corescript"
 -- Prepended to Edit.lua and Visit.lua and Studio.lua and PlaySolo.lua--
 
 if true then
@@ -13,7 +12,7 @@ else
 	end
 end
 
-local visit = game:GetService "Visit"
+visit = game:GetService "Visit"
 
 local message = Instance.new "Message"
 message.Parent = workspace
@@ -92,7 +91,6 @@ workspace:SetPhysicsThrottleEnabled(true)
 local addedBuildTools = false
 local screenGui = game:GetService("CoreGui"):FindFirstChild "RobloxGui"
 
-local player
 function doVisit()
 	message.Text = "Loading Game"
 	if false then
@@ -117,7 +115,7 @@ function doVisit()
 		player = game:GetService("Players"):CreateLocalPlayer(0)
 	end
 	player.CharacterAppearance = ""
-	local propExists, canAutoLoadChar = false, false
+	local propExists, canAutoLoadChar = false
 	propExists = pcall(function()
 		canAutoLoadChar = game.Players.CharacterAutoLoads
 	end)
@@ -144,7 +142,7 @@ function doVisit()
 	end
 end
 
-local success, err = pcall(doVisit)
+success, err = pcall(doVisit)
 
 if not addedBuildTools then
 	local playerName = Instance.new "StringValue"
