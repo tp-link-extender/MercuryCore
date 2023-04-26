@@ -1,3 +1,4 @@
+print("[Mercury]: Loaded Join corescript");
 -- MultiplayerSharedScript.lua inserted here ------ Prepended to Join.lua --
 pcall(function()
 	return game:SetPlaceID(_PLACE_ID, false)
