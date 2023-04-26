@@ -4,7 +4,7 @@ import "macros" as { $ }
 -- onPlayerAdded = (player) ->
 -- 	-- override
 
-$lua "-- MultiplayerSharedScript.lua inserted here ------ Prepended to Join.lua --"
+$lua[[-- MultiplayerSharedScript.lua inserted here ------ Prepended to Join.lua --]]
 
 try
 	game\SetPlaceID _PLACE_ID, false
@@ -80,11 +80,11 @@ try
 
 -- globals -----------------------------------------
 
-client = game\GetService "NetworkClient"
-visit = game\GetService "Visit"
+global client = game\GetService "NetworkClient"
+global visit = game\GetService "Visit"
 
 -- functions ---------------------------------------
-setMessage = (message) ->
+global setMessage = (message) ->
 	-- todo: animated "..."
 	game\SetMessage if not false
 		message
@@ -93,11 +93,11 @@ setMessage = (message) ->
 		"Teleporting ..."
 
 
-showErrorWindow = (message, _, _) ->
+global showErrorWindow = (message, _, _) ->
 	game\SetMessage message
 
 
-reportError = (err, message) ->
+global reportError = (err, message) ->
 	print "***ERROR*** #{err}"
 	if not test
 		visit\SetUploadUrl ""
@@ -108,14 +108,14 @@ reportError = (err, message) ->
 
 
 -- called when the client connection closes
-onDisconnection = (_, lostConnection) ->
+global onDisconnection = (_, lostConnection) ->
 	if lostConnection
 		showErrorWindow "You have lost the connection to the game", "LostConnection", "LostConnection"
 	else
 		showErrorWindow "This game has shut down", "Kick", "Kick"
 
 
-requestCharacter = (replicator) ->
+global requestCharacter = (replicator) ->
 	-- prepare code for when the Character appears
 	local connection
 	connection = player.Changed\connect (property) ->
@@ -139,7 +139,7 @@ requestCharacter = (replicator) ->
 
 
 -- called when the client connection is established
-onConnectionAccepted = (url, replicator) ->
+global onConnectionAccepted = (url, replicator) ->
 	connectResolved = true
 
 	waitingForMarker = true
@@ -178,18 +178,18 @@ onConnectionAccepted = (url, replicator) ->
 
 
 -- called when the client connection fails
-onConnectionFailed = (_, err) ->
+global onConnectionFailed = (_, err) ->
 	showErrorWindow "Failed to connect to the Game. (ID=#{err})", "ID#{err}", "Other" 
 
 
 -- called when the client connection is rejected
-onConnectionRejected = ->
+global onConnectionRejected = ->
 	connectionFailed\disconnect!
 	showErrorWindow "This game is not available. Please try another", "WrongVersion", "WrongVersion" 
 
 
 idled = false
-onPlayerIdled = (time) ->
+global onPlayerIdled = (time) ->
 	if time > 20 * 60
 		showErrorWindow string.format("You were disconnected for being idle %d minutes", time / 60), "Idle", "Idle" 
 		client\disconnect!

@@ -71,9 +71,8 @@ pcall(function()
 		settings().Network.MtuOverride = 1400
 	end
 end)
-local client = game:GetService("NetworkClient")
-local visit = game:GetService("Visit")
-local setMessage
+client = game:GetService("NetworkClient")
+visit = game:GetService("Visit")
 setMessage = function(message)
 	return game:SetMessage((function()
 		if not false then
@@ -83,11 +82,9 @@ setMessage = function(message)
 		end
 	end)())
 end
-local showErrorWindow
 showErrorWindow = function(message, _, _)
 	return game:SetMessage(message)
 end
-local reportError
 reportError = function(err, message)
 	print("***ERROR*** " .. tostring(err))
 	if not test then
@@ -97,7 +94,6 @@ reportError = function(err, message)
 	wait(4)
 	return showErrorWindow("Error: " .. tostring(err), message, "Other")
 end
-local onDisconnection
 onDisconnection = function(_, lostConnection)
 	if lostConnection then
 		return showErrorWindow("You have lost the connection to the game", "LostConnection", "LostConnection")
@@ -105,7 +101,6 @@ onDisconnection = function(_, lostConnection)
 		return showErrorWindow("This game has shut down", "Kick", "Kick")
 	end
 end
-local requestCharacter
 requestCharacter = function(replicator)
 	local connection
 	connection = player.Changed:connect(function(property)
@@ -127,7 +122,6 @@ requestCharacter = function(replicator)
 		return
 	end
 end
-local onConnectionAccepted
 onConnectionAccepted = function(url, replicator)
 	local connectResolved = true
 	local waitingForMarker = true
@@ -157,17 +151,14 @@ onConnectionAccepted = function(url, replicator)
 		wait(0.5)
 	end
 end
-local onConnectionFailed
 onConnectionFailed = function(_, err)
 	return showErrorWindow("Failed to connect to the Game. (ID=" .. tostring(err) .. ")", "ID" .. tostring(err), "Other")
 end
-local onConnectionRejected
 onConnectionRejected = function()
 	connectionFailed:disconnect()
 	return showErrorWindow("This game is not available. Please try another", "WrongVersion", "WrongVersion")
 end
 local idled = false
-local onPlayerIdled
 onPlayerIdled = function(time)
 	if time > 20 * 60 then
 		showErrorWindow(string.format("You were disconnected for being idle %d minutes", time / 60), "Idle", "Idle")
