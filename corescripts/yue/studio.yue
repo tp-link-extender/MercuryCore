@@ -1,5 +1,4 @@
 print "[Mercury]: Loaded Studio corescript"
-
 -- Setup studio cmd bar & load core scripts
 
 with game\GetService "InsertService"

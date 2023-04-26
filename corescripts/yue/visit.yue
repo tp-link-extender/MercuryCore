@@ -1,5 +1,5 @@
--- Prepended to Edit.lua and Visit.lua and Studio.lua and PlaySolo.lua--
 print "[Mercury]: Loaded Visit corescript"
+-- Prepended to Edit.lua and Visit.lua and Studio.lua and PlaySolo.lua--
 
 if true
 	try
