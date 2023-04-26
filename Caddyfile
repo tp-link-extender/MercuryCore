@@ -33,6 +33,6 @@ setup.banland.xyz, http://setup.banland.xyz {
 api.banland.xyz, http://api.banland.xyz {
 	reverse_proxy localhost:4443
 
-	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings
-	rewrite /Setting/QuietGet/ClientAppSettings /api/clientappsettings
+	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
+	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
 }
