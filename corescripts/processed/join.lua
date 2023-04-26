@@ -1,6 +1,5 @@
-print "[Mercury]: Loaded Join corescript"
 -- functions --------------------------
-function onPlayerAdded(_)
+function onPlayerAdded(player)
 	-- override
 end
 
@@ -12,7 +11,7 @@ end)
 
 -- if we are on a touch device, no blocking http calls allowed! This can cause a crash on iOS
 -- In general we need a long term strategy to remove blocking http calls from all platforms
--- local isTouchDevice = Game:GetService("UserInputService").TouchEnabled
+local isTouchDevice = Game:GetService("UserInputService").TouchEnabled
 
 settings()["Game Options"].CollisionSoundEnabled = true
 pcall(function()
@@ -88,7 +87,7 @@ pcall(function()
 	game:GetService("Players"):SetChatStyle(Enum.ChatStyle.ClassicAndBubble)
 end)
 
--- local waitingForCharacter = false
+local waitingForCharacter = false
 pcall(function()
 	if settings().Network.MtuOverride == 0 then
 		settings().Network.MtuOverride = 1400
@@ -97,8 +96,8 @@ end)
 
 -- globals -----------------------------------------
 
-local client = game:GetService "NetworkClient"
-local visit = game:GetService "Visit"
+client = game:GetService "NetworkClient"
+visit = game:GetService "Visit"
 
 -- functions ---------------------------------------
 function setMessage(message)
@@ -111,7 +110,7 @@ function setMessage(message)
 	end
 end
 
-function showErrorWindow(message, _, _)
+function showErrorWindow(message, errorType, errorCategory)
 	game:SetMessage(message)
 end
 
@@ -126,7 +125,7 @@ function reportError(err, message)
 end
 
 -- called when the client connection closes
-function onDisconnection(_, lostConnection)
+function onDisconnection(peer, lostConnection)
 	if lostConnection then
 		showErrorWindow("You have lost the connection to the game", "LostConnection", "LostConnection")
 	else
@@ -140,7 +139,7 @@ function requestCharacter(replicator)
 	connection = player.Changed:connect(function(property)
 		if property == "Character" then
 			game:ClearMessage()
-			-- waitingForCharacter = false
+			waitingForCharacter = false
 			connection:disconnect()
 		end
 	end)
@@ -150,7 +149,7 @@ function requestCharacter(replicator)
 	local success, err = pcall(function()
 		replicator:RequestCharacter()
 		setMessage "Waiting for character"
-		-- waitingForCharacter = true
+		waitingForCharacter = true
 	end)
 
 	if not success then
@@ -160,8 +159,8 @@ function requestCharacter(replicator)
 end
 
 -- called when the client connection is established
-function onConnectionAccepted(_, replicator)
-	-- connectResolved = true
+function onConnectionAccepted(url, replicator)
+	connectResolved = true
 
 	local waitingForMarker = true
 
@@ -205,14 +204,13 @@ function onConnectionFailed(_, error)
 	showErrorWindow("Failed to connect to the Game. (ID=" .. error .. ")", "ID" .. error, "Other")
 end
 
-local connectionFailed
 -- called when the client connection is rejected
 function onConnectionRejected()
 	connectionFailed:disconnect()
 	showErrorWindow("This game is not available. Please try another", "WrongVersion", "WrongVersion")
 end
 
-local idled = false
+idled = false
 function onPlayerIdled(time)
 	if time > 20 * 60 then
 		showErrorWindow(string.format("You were disconnected for being idle %d minutes", time / 60), "Idle", "Idle")
@@ -237,7 +235,7 @@ local success, err = pcall(function()
 	connectionFailed = client.ConnectionFailed:connect(onConnectionFailed)
 	client.Ticket = ""
 
-	local playerConnectSucces, player = pcall(function()
+	playerConnectSucces, player = pcall(function()
 		return client:PlayerConnect(_USER_ID, "_SERVER_ADDRESS", _SERVER_PORT, 0, threadSleepTime)
 	end)
 	if not playerConnectSucces then
