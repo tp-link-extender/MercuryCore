@@ -1,4 +1,5 @@
 import "macros" as { $ }
+print "[Mercury]: Loaded Join corescript"
 
 -- functions --------------------------
 -- onPlayerAdded = (player) ->
