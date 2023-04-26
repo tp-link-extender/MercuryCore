@@ -1,0 +1,268 @@
+import "macros" as { $ }
+
+-- functions --------------------------
+-- onPlayerAdded = (player) ->
+-- 	-- override
+
+$lua "-- MultiplayerSharedScript.lua inserted here ------ Prepended to Join.lua --"
+
+try
+	game\SetPlaceID _PLACE_ID, false
+
+
+-- if we are on a touch device, no blocking http calls allowed! This can cause a crash on iOS
+-- In general we need a long term strategy to remove blocking http calls from all platforms
+isTouchDevice = Game\GetService"UserInputService".TouchEnabled
+
+settings!["Game Options"].CollisionSoundEnabled = true
+try
+	settings!.Rendering.EnableFRM = true
+try
+	settings!.Physics.Is30FpsThrottleEnabled = false
+try
+	settings!["Task Scheduler"].PriorityMethod = Enum.PriorityMethod.AccumulatedError
+try
+	settings!.Physics.PhysicsEnvironmentalThrottle = Enum.EnviromentalPhysicsThrottle.DefaultAuto
+
+
+-- arguments ---------------------------------------
+threadSleepTime = ...
+
+if threadSleepTime == nil
+	threadSleepTime = 15
+
+
+test = _IS_STUDIO_JOIN
+
+print "! Joining game '_PLACE_ID' place _PLACE_ID at _SERVER_ADDRESS"
+
+game\GetService"ChangeHistoryService"\SetEnabled false
+game\GetService"ContentProvider"\SetThreadPool 16
+
+with game\GetService "InsertService"
+	\SetBaseSetsUrl "http://www.roblox.com/Game/Tools/InsertAsset.ashx?nsets=10&type=base"
+	\SetUserSetsUrl "http://www.roblox.com/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d"
+	\SetCollectionUrl "http://www.roblox.com/Game/Tools/InsertAsset.ashx?sid=%d"
+	\SetAssetUrl "http://banland.xyz/Asset/?id=%d"
+	\SetAssetVersionUrl "http://www.roblox.com/Asset/?assetversionid=%d"
+
+with game\GetService "SocialService"
+	try
+		\SetFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d"
+	try
+		\SetBestFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d"
+	try
+		\SetGroupUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d"
+	try
+		\SetGroupRankUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d"
+	try
+		\SetGroupRoleUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d"
+
+try
+	game\GetService"GamePassService"\SetPlayerHasPassUrl "http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
+try
+	game\GetService"MarketplaceService"\SetProductInfoUrl "https://banland.xyz/marketplace/productinfo?assetId=%d"
+try
+	game\GetService"MarketplaceService"\SetPlayerOwnsAssetUrl "https://banland.xyz/ownership/hasasset?userId=%d&assetId=%d"
+try
+	game\SetCreatorID _CREATOR_ID, Enum.CreatorType.User 
+
+-- Bubble chat.  This is all-encapsulated to allow us to turn it off with a config setting
+try
+	game\GetService"Players"\SetChatStyle Enum.ChatStyle.ClassicAndBubble 
+
+
+waitingForCharacter = false
+try
+	if settings!.Network.MtuOverride == 0
+		settings!.Network.MtuOverride = 1400
+
+
+-- globals -----------------------------------------
+
+client = game\GetService "NetworkClient"
+visit = game\GetService "Visit"
+
+-- functions ---------------------------------------
+setMessage = (message) ->
+	-- todo: animated "..."
+	game\SetMessage if not false
+		message
+	else
+		-- hack, good enought for now
+		"Teleporting ..."
+
+
+showErrorWindow = (message, _, _) ->
+	game\SetMessage message
+
+
+reportError = (err, message) ->
+	print "***ERROR*** #{err}"
+	if not test
+		visit\SetUploadUrl ""
+
+	client\disconnect!
+	wait 4
+	showErrorWindow "Error: #{err}", message, "Other" 
+
+
+-- called when the client connection closes
+onDisconnection = (_, lostConnection) ->
+	if lostConnection
+		showErrorWindow "You have lost the connection to the game", "LostConnection", "LostConnection"
+	else
+		showErrorWindow "This game has shut down", "Kick", "Kick"
+
+
+requestCharacter = (replicator) ->
+	-- prepare code for when the Character appears
+	local connection
+	connection = player.Changed\connect (property) ->
+		if property == "Character"
+			game\ClearMessage!
+			waitingForCharacter = false
+			connection\disconnect!
+
+
+	setMessage "Requesting character"
+
+	local success, err = try
+		replicator\RequestCharacter!
+		setMessage "Waiting for character"
+		waitingForCharacter = true
+
+
+	if not success
+		reportError err, "W4C" 
+		return
+
+
+-- called when the client connection is established
+onConnectionAccepted = (url, replicator) ->
+	connectResolved = true
+
+	waitingForMarker = true
+
+	local success, err = try
+		if not test
+			visit\SetPing "_PING_URL", 30 
+
+
+		if not false
+			game\SetMessageBrickCount!
+		else
+			setMessage "Teleporting ..."
+
+
+		replicator.Disconnection\connect onDisconnection 
+
+		-- Wait for a marker to return before creating the Player
+		marker = replicator\SendMarker!
+
+		marker.Received\connect ->
+			waitingForMarker = false
+			requestCharacter replicator
+
+
+	if not success
+		reportError err, "ConnectionAccepted"
+		return
+
+
+	-- TODO: report marker progress
+
+	while waitingForMarker
+		workspace\ZoomToExtents!
+		wait 0.5 
+
+
+-- called when the client connection fails
+onConnectionFailed = (_, err) ->
+	showErrorWindow "Failed to connect to the Game. (ID=#{err})", "ID#{err}", "Other" 
+
+
+-- called when the client connection is rejected
+onConnectionRejected = ->
+	connectionFailed\disconnect!
+	showErrorWindow "This game is not available. Please try another", "WrongVersion", "WrongVersion" 
+
+
+idled = false
+onPlayerIdled = (time) ->
+	if time > 20 * 60
+		showErrorWindow string.format("You were disconnected for being idle %d minutes", time / 60), "Idle", "Idle" 
+		client\disconnect!
+		if not idled
+			idled = true
+
+
+-- main ------------------------------------------------------------
+
+try
+	settings!.Diagnostics\LegacyScriptMode!
+
+success, err = try
+	game\SetRemoteBuildMode true
+
+	setMessage "Connecting to Server"
+	client.ConnectionAccepted\connect onConnectionAccepted
+	client.ConnectionRejected\connect onConnectionRejected
+	global connectionFailed = client.ConnectionFailed\connect onConnectionFailed
+	client.Ticket = ""
+
+	global playerConnectSucces, player = try
+		client\PlayerConnect _USER_ID, "_SERVER_ADDRESS", _SERVER_PORT, 0, threadSleepTime
+
+	if not playerConnectSucces
+		--Old player connection scheme
+		player = game\GetService"Players"\CreateLocalPlayer _USER_ID
+		client\Connect "_SERVER_ADDRESS", _SERVER_PORT, 0, threadSleepTime
+
+
+	-- negotiate an auth token
+	if not test
+		delay 300, ->
+			while false
+				try
+					game\HttpPost "https://banland.xyz/auth/renew", "renew" 
+
+				wait 300 
+
+	with player
+		\SetSuperSafeChat false
+		try
+			\SetUnder13 false
+		try
+			\SetMembershipType Enum.MembershipType._MEMBERSHIP_TYPE
+		try
+			\SetAccountAge 1
+
+	player.Idled\connect onPlayerIdled
+
+	-- Overriden
+	-- onPlayerAdded player
+
+	try
+		player.Name = [========[_USER_NAME]========]
+
+	player.CharacterAppearance = "_CHAR_APPEARANCE"
+	if not test
+		visit\SetUploadUrl ""
+
+
+if not success
+	reportError err, "CreatePlayer" 
+
+
+if not test
+	-- TODO: Async get?
+	loadfile ""("", -1, 0)
+
+
+try
+	game\SetScreenshotInfo ""
+try
+	game\SetVideoInfo '<?xml version="1.0"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007"><media:group><media:title type="plain"><![CDATA[ROBLOX Place]]></media:title><media:description type="plain"><![CDATA[ For more games visit http://www.roblox.com]]></media:description><media:category scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Games</media:category><media:keywords>ROBLOX, video, free game, online virtual world</media:keywords></media:group></entry>'
+
+-- use single quotes here because the video info string may have unescaped double quotes
