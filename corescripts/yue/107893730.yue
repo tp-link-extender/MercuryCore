@@ -306,7 +306,7 @@ setCurrencyAmountAndType = (priceInRobux, priceInTix) ->
 -- will get the player's balance of robux and tix, return in a table
 getPlayerBalance = ->
 	local playerBalance
-	local success, errorCode = try
+	success, errorCode = try
 		playerBalance = game\HttpGetAsync "#{getSecureApiBaseUrl!}currency/balance"
 
 	if not success
@@ -417,7 +417,7 @@ canPurchaseItem = ->
 			return false
 
 
-		local success, errorCode = try
+		success, errorCode = try
 			playerOwnsAsset = game\HttpGetAsync(
 				getSecureApiBaseUrl! ..
 				"ownership/hasAsset?userId=#{game.Players.LocalPlayer.userId}" ..
@@ -432,7 +432,6 @@ canPurchaseItem = ->
 		if playerOwnsAsset == true or playerOwnsAsset == "true"
 			descText = "You already own this item."
 			return true, nil, nil, true, descText
-
 
 
 	purchaseDialog.BodyFrame.AfterBalanceButton.Visible = true
@@ -474,7 +473,7 @@ canPurchaseItem = ->
 		notRightBc = true
 
 
-	local updatedBalance, insufficientFunds = updateAfterBalanceText(playerBalance, notRightBc)
+	updatedBalance, insufficientFunds = updateAfterBalanceText(playerBalance, notRightBc)
 
 	if notRightBc
 		purchaseDialog.BodyFrame.AfterBalanceButton.Active = true
@@ -485,7 +484,6 @@ canPurchaseItem = ->
 		if game.Players.LocalPlayer\GetUnder13!
 			descText = "Your account is under 13 so purchase of this item is not allowed."
 			return true, nil, nil, true, descText
-
 
 
 	if (currentProductInfo["IsLimited"] == true or currentProductInfo["IsLimitedUnique"] == true) and
@@ -510,7 +508,7 @@ canPurchaseItem = ->
 
 doPlayerFundsCheck = (checkIndefinitely) ->
 	if checkingPlayerFunds
-		local canPurchase, insufficientFunds = canPurchaseItem! -- check again to see if we can buy item
+		canPurchase, insufficientFunds = canPurchaseItem! -- check again to see if we can buy item
 		if canPurchase and insufficientFunds -- wait a bit and try a few more times
 			retries = 1000
 			while (retries > 0 or checkIndefinitely) and insufficientFunds and checkingPlayerFunds and canPurchase
@@ -535,7 +533,7 @@ doDeclinePurchase = ->
 	userPurchaseActionsEnded false
 
 showPurchasePrompt = ->
-	local canPurchase, insufficientFunds, notRightBC, override, descText = canPurchaseItem!
+	canPurchase, insufficientFunds, notRightBC, override, descText = canPurchaseItem!
 
 	if canPurchase
 		updatePurchasePromptData!
@@ -595,7 +593,7 @@ showPurchasePrompt = ->
 
 					if canPurchase and insufficientFunds and not enableBrowserWindowClosedEvent
 						checkingPlayerFunds = true
-						doPlayerFundsCheck(true)
+						doPlayerFundsCheck true
 
 				--HideFunction
 				->
@@ -605,10 +603,9 @@ showPurchasePrompt = ->
 		doDeclinePurchase!
 
 
-
 -- given an asset id, this function will grab that asset from the website, and return the first "Tool" object found inside it
 getToolAssetID = (assetID) ->
-	newTool = game\GetService"InsertService"\LoadAsset(assetID)
+	newTool = game\GetService"InsertService"\LoadAsset assetID
 	if not newTool
 		return nil
 
@@ -708,8 +705,7 @@ doAcceptPurchase = (_) ->
 			"&locationId=#{Game.PlaceId}"
 
 
-
-	local success, reason = try
+	success, reason = try
 		response = game\HttpPostAsync url, "RobloxPurchaseRequest"
 
 
@@ -748,7 +744,6 @@ doAcceptPurchase = (_) ->
 		tool = getToolAssetID tonumber currentAssetId
 		if tool
 			tool.Parent = game.Players.LocalPlayer.Backpack
-
 
 
 	if purchasingConsumable

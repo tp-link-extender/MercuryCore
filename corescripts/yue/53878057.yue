@@ -154,7 +154,7 @@ removeGear = (gear) ->
 	if emptySlot
 		with gearSlots[emptySlot]
 			if .GearReference.Value
-				if .GearReference.Value.Parent == game.Players.LocalPlayer.Character then -- if we currently have this equipped, unequip it
+				if .GearReference.Value.Parent == game.Players.LocalPlayer.Character -- if we currently have this equipped, unequip it
 					.GearReference.Value.Parent = game.Players.LocalPlayer.Backpack
 
 
@@ -582,7 +582,7 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 
 	if not addToSlot
 		for i = 1, #gearSlots
-			if gearSlots[i] ~= "empty" and gearSlots[i].GearReference.Value == child then -- we already have gear, do nothing
+			if gearSlots[i] ~= "empty" and gearSlots[i].GearReference.Value == child -- we already have gear, do nothing
 				debounce = false
 				return
 

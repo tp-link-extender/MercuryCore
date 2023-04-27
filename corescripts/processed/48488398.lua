@@ -61,25 +61,25 @@ PopupImage.Image=''local r,s,t t=function()if r~=nil then r:disconnect()end if s
 ~=nil then s:disconnect()end game.GuiService:RemoveCenterDialog(script.Parent:
 FindFirstChild'Popup')return q:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection
 .Out,Enum.EasingStyle.Quart,1,true,i())end r=q.AcceptButton.MouseButton1Click:
-connect(function()t()local u,v u,v=pcall(function()return game:GetService
+connect(function()t()local u,v=pcall(function()return game:GetService
 'TeleportService':TeleportImpl(o,p)end)if not u then g()q.PopupText.Text=v local
-w w=q.OKButton.MouseButton1Click:connect(function()if w~=nil then w:disconnect()
-end game.GuiService:RemoveCenterDialog(script.Parent:FindFirstChild'Popup')
-return q:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.
-Quart,1,true,i())end)return game.GuiService:AddCenterDialog(script.Parent:
-FindFirstChild('Popup',Enum.CenterDialogType.QuitDialog),function()g()script.
-Parent:FindFirstChild'Popup'.Visible=true return q:TweenSize(UDim2.new(0,330,0,
-350),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end,function()return
-q:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1
-,true,i())end)end end)s=q.DeclineButton.MouseButton1Click:connect(function()t()
-return pcall(function()return game:GetService'TeleportService':TeleportCancel()
-end)end)local u=pcall(function()return game.GuiService:AddCenterDialog(script.
-Parent:FindFirstChild('Popup',Enum.CenterDialogType.QuitDialog),function()h()q.
-AcceptButton.Text='Leave'q.DeclineButton.Text='Stay'script.Parent:FindFirstChild
-'Popup'.Visible=true return q:TweenSize(UDim2.new(0,330,0,350),Enum.
-EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end,function()return q:
-TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,
-true,i())end)end)if u==false then script.Parent:FindFirstChild'Popup'.Visible=
-true q.AcceptButton.Text='Leave'q.DeclineButton.Text='Stay'q:TweenSize(UDim2.
-new(0,330,0,350),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end
-return true end end
+w=q.OKButton.MouseButton1Click:connect(function()do local w=clickCon if w~=nil
+then w:disconnect()end end game.GuiService:RemoveCenterDialog(script.Parent:
+FindFirstChild'Popup')return q:TweenSize(UDim2.new(0,0,0,0),Enum.EasingDirection
+.Out,Enum.EasingStyle.Quart,1,true,i())end)return game.GuiService:
+AddCenterDialog(script.Parent:FindFirstChild('Popup',Enum.CenterDialogType.
+QuitDialog),function()g()script.Parent:FindFirstChild'Popup'.Visible=true return
+q:TweenSize(UDim2.new(0,330,0,350),Enum.EasingDirection.Out,Enum.EasingStyle.
+Quart,1,true)end,function()return q:TweenSize(UDim2.new(0,0,0,0),Enum.
+EasingDirection.Out,Enum.EasingStyle.Quart,1,true,i())end)end end)s=q.
+DeclineButton.MouseButton1Click:connect(function()t()return pcall(function()
+return game:GetService'TeleportService':TeleportCancel()end)end)local u=pcall(
+function()return game.GuiService:AddCenterDialog(script.Parent:FindFirstChild(
+'Popup',Enum.CenterDialogType.QuitDialog),function()h()q.AcceptButton.Text=
+'Leave'q.DeclineButton.Text='Stay'script.Parent:FindFirstChild'Popup'.Visible=
+true return q:TweenSize(UDim2.new(0,330,0,350),Enum.EasingDirection.Out,Enum.
+EasingStyle.Quart,1,true)end,function()return q:TweenSize(UDim2.new(0,0,0,0),
+Enum.EasingDirection.Out,Enum.EasingStyle.Quart,1,true,i())end)end)if u==false
+then script.Parent:FindFirstChild'Popup'.Visible=true q.AcceptButton.Text=
+'Leave'q.DeclineButton.Text='Stay'q:TweenSize(UDim2.new(0,330,0,350),Enum.
+EasingDirection.Out,Enum.EasingStyle.Quart,1,true)end return true end end

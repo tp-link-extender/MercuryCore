@@ -39,7 +39,7 @@ export async function GET({ url }) {
 				.replaceAll("_BASE_URL", baseUrl)
 				.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())
 				.replaceAll("_MAP_LOCATION", mapLocation || "null")
-				.replaceAll("_PORT", port.toString())
+				.replaceAll("_SERVER_PORT", port.toString())
 				.replaceAll("_SERVER_PRESENCE_URL", serverPresenceUrl)
 		)
 	)
