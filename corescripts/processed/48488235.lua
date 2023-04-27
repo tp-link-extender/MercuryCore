@@ -581,9 +581,9 @@ not an then bX()else ca()end for co,cp in ipairs(ao)do if not(cp.Parent~=nil)
 then cp:TweenPosition(UDim2.new(0.5,0,((#ao-co)*cp.Size.Y.Scale),0),'Out',
 'Linear',c,true)end end if not M.Value and#ao>ag then bz()end bb()bL()bz()bN()aF
 =false end game.GuiService:AddKey'\t'local co=time()game.GuiService.KeyPressed:
-connect(function(cp)if cp=='\t'then m'caught tab key'local cq,cr cq,cr=pcall(
-function()return game.GuiService.IsModalDialog end)if cq==false or(cq and cr==
-false)then if time()-co>0.4 then co=time()if O.Value then if not N.Value then r:
+connect(function(cp)if cp=='\t'then m'caught tab key'local cq,cr=pcall(function(
+)return game.GuiService.IsModalDialog end)if cq==false or(cq and cr==false)then
+if time()-co>0.4 then co=time()if O.Value then if not N.Value then r:
 TweenPosition(UDim2.new(0,0,0,0),'Out','Linear',c*1.2,true)N.Value=true else r:
 TweenPosition(UDim2.new(ax.X.Scale,ax.X.Offset-10,0,0),'Out','Linear',c*1.2,true
 )N.Value=false M.Value=true end else return by()end end end end end)local cp cp=
@@ -601,5 +601,5 @@ function()return cp(cx)end)end game.Teams.ChildAdded:connect(cs)game.Teams.
 ChildRemoved:connect(ct)o.ChildAdded:connect(cq)a6()P.Value=true bg()wait(2)aS=
 not not game.Workspace:FindFirstChild'PSVariable'if p.Name=='newplayerlistisbad'
 or p.Name=='imtotallyadmin'then ad.Parent=r return Spawn(function()while true do
-local cy cy=''for cz,cA in pairs(game.Players:GetPlayers())do cy=cy..' '..
-tostring(cA.Name)end ae.Text=cy wait(0.5)end end)end
+local cy=''for cz,cA in pairs(game.Players:GetPlayers())do cy=cy..' '..tostring(
+cA.Name)end ae.Text=cy wait(0.5)end end)end

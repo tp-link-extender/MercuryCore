@@ -83,7 +83,7 @@ w.TargetFilter=x.CurrentParts end end local F,G=false,nil local H=pcall(function
 then I=Vector3.new(w.Hit.x,w.Hit.y,w.Hit.z)end local J if nil==G then J=c(w)if
 nil==J then F=false return z,A else G=game.Workspace.Terrain F=true J=Vector3.
 new(J.X-1,J.Y,J.Z)I=game.Workspace.Terrain:CellCenterToWorld(J.x,J.y,J.z)end end
-local K,L K,L=r(G)local M,N=L-K,s(G)if G:IsA'Terrain'then if not cluster then
+local K,L=r(G)local M,N=L-K,s(G)if G:IsA'Terrain'then if not cluster then
 cluster=game.Workspace:FindFirstChild'Terrain'end local O=cluster:
 WorldToCellPreferSolid(I)if F then O=J end N=CFrame.new(game.Workspace.Terrain:
 CellCenterToWorld(O.x,O.y,O.z))end local O,P=N:pointToObjectSpace(I),Vector3.
@@ -101,23 +101,22 @@ vectorToObjectSpace(Vector3.new(1,-1,-1))R=E:vectorToObjectSpace(Vector3.new(1,-
 1,1))S=Vector3.new(1,1,0)end Q=Q*((0.5*M)+0.5*(L+K))R=R*((0.5*D)+0.5*(C+B))local
 T=O-Q local U=Vector3.new(y*math.modf(T.x/y),y*math.modf(T.y/y),y*math.modf(T.z/
 y))U=U*S local V=U+Q local W,X=N:pointToWorldSpace(V),E:vectorToWorldSpace(R)
-local Y,Z,_,aa,ab,ac,ad,ae,af,ag,ah,ai,aj=W-X,nil,nil,nil,nil,nil,nil,nil,nil,
-nil,nil,nil,nil aa,aa,aa,ab,ac,ad,ae,af,ag,ah,ai,aj=E:components()A=CFrame.new(Y
-.x,Y.y,Y.z,ab,ac,ad,ae,af,ag,ah,ai,aj)z=true return z,A,l(P)end local aa aa=
-function(ab,ac)local ad,ae=math.abs(ab),math.abs(ac)local af=math.sqrt(ad*ad+ae*
-ae)local ag,ah,ai=ae/af,1,1 if ab<0 then ah=-1 end if ac<0 then ai=-1 end if ag>
+local Y,Z,_,aa,ab,ac,ad,ae,af,ag,ah,ai,aj=W-X,E:components()A=CFrame.new(Y.x,Y.y
+,Y.z,ab,ac,ad,ae,af,ag,ah,ai,aj)z=true return z,A,l(P)end local aa aa=function(
+ab,ac)local ad,ae=math.abs(ab),math.abs(ac)local af=math.sqrt(ad*ad+ae*ae)local
+ag,ah,ai=ae/af,1,1 if ab<0 then ah=-1 end if ac<0 then ai=-1 end if ag>
 0.382683432 then return 0.707106781*af*ah,0.707106781*af*ai else return af*ah,0
 end end local ab ab=function(ac,ad,ae)if ac:IsA'ManualWeld'or ac:IsA'Rotate'then
 table.insert(ad,ac)return table.insert(ae,ac.Parent)else local af=ac:
 GetChildren()for ag=1,#af do ab(af[ag],ad,ae)end end end local ac ac=function(ad
 ,ae)for af=1,#ad do ad[af].Parent=ae[af]end end a.CanEditRegion=function(ad,ae)
-if not ae then return true,false end local af,ag af,ag=q(ad)if af.X<ae.CFrame.p.
-X-ae.Size.X/2 or af.Y<ae.CFrame.p.Y-ae.Size.Y/2 or af.Z<ae.CFrame.p.Z-ae.Size.Z/
-2 then return false,false end if ag.X>ae.CFrame.p.X+ae.Size.X/2 or ag.Y>ae.
-CFrame.p.Y+ae.Size.Y/2 or ag.Z>ae.CFrame.p.Z+ae.Size.Z/2 then return false,false
-end return true,false end a.GetStampModel=function(ad,ae,af)if ad==0 then return
-nil,'No Asset'end if ad<0 then return nil,'Negative Asset'end local ag ag=
-function(ah)if ah:IsA'BasePart'then ah.Locked=false end for ai,aj in pairs(ah:
+if not ae then return true,false end local af,ag=q(ad)if af.X<ae.CFrame.p.X-ae.
+Size.X/2 or af.Y<ae.CFrame.p.Y-ae.Size.Y/2 or af.Z<ae.CFrame.p.Z-ae.Size.Z/2
+then return false,false end if ag.X>ae.CFrame.p.X+ae.Size.X/2 or ag.Y>ae.CFrame.
+p.Y+ae.Size.Y/2 or ag.Z>ae.CFrame.p.Z+ae.Size.Z/2 then return false,false end
+return true,false end a.GetStampModel=function(ad,ae,af)if ad==0 then return nil
+,'No Asset'end if ad<0 then return nil,'Negative Asset'end local ag ag=function(
+ah)if ah:IsA'BasePart'then ah.Locked=false end for ai,aj in pairs(ah:
 GetChildren())do ag(aj)end end local ah ah=function(ai)return BrickColor.new((
 function()if 1==ai then return'Bright green'elseif 2==ai then return
 'Bright yellow'elseif 3==ai then return'Bright red'elseif 4==ai then return
@@ -186,12 +185,12 @@ not y.CurrentParts.Name=='MegaClusterCube'then return else P=y.CurrentParts end
 end D.End=P.CFrame.p local Q,R,S=nil,Vector3.new(0,0,0),Vector3.new(0,0,0)if D.
 Dimensions==1 then Q=(D.End-D.Start)if math.abs(Q.X)<math.abs(Q.Y)then if math.
 abs(Q.X)<math.abs(Q.Z)then local T,U if math.abs(Q.Y)>math.abs(Q.Z)then T,U=aa(Q
-.Y,Q.Z)else U,T=aa(Q.Z,Q.Y)end Q=Vector3.new(0,T,U)else local T,U T,U=aa(Q.Y,Q.X
-)Q=Vector3.new(U,T,0)end else if math.abs(Q.Y)<math.abs(Q.Z)then local T,U if
-math.abs(Q.X)>math.abs(Q.Z)then T,U=aa(Q.X,Q.Z)else U,T=aa(Q.Z,Q.X)end Q=Vector3
-.new(T,0,U)else local T,U T,U=aa(Q.X,Q.Y)Q=Vector3.new(T,U,0)end end D.
-InternalLine=Q elseif D.Dimensions==2 then Q=D.MoreLines[1]R=D.End-D.MorePoints[
-1]R=R-(Q.unit*Q.unit:Dot(R))local T=CFrame.new(D.Start,D.Start+Q)local U,V=T:
+.Y,Q.Z)else U,T=aa(Q.Z,Q.Y)end Q=Vector3.new(0,T,U)else local T,U=aa(Q.Y,Q.X)Q=
+Vector3.new(U,T,0)end else if math.abs(Q.Y)<math.abs(Q.Z)then local T,U if math.
+abs(Q.X)>math.abs(Q.Z)then T,U=aa(Q.X,Q.Z)else U,T=aa(Q.Z,Q.X)end Q=Vector3.new(
+T,0,U)else local T,U=aa(Q.X,Q.Y)Q=Vector3.new(T,U,0)end end D.InternalLine=Q
+elseif D.Dimensions==2 then Q=D.MoreLines[1]R=D.End-D.MorePoints[1]R=R-(Q.unit*Q
+.unit:Dot(R))local T=CFrame.new(D.Start,D.Start+Q)local U,V=T:
 vectorToWorldSpace(Vector3.new(0,1,0)),T:vectorToWorldSpace(Vector3.new(1,0,0))
 local W,X=V:Dot(R),U:Dot(R)if math.abs(X)>math.abs(W)then R=R-(V*W)else R=R-(U*X
 )end D.InternalLine=R elseif D.Dimensions==3 then Q=D.MoreLines[1]R=D.MoreLines[
@@ -216,18 +215,17 @@ CurrentParts)elseif T==0 then U=2-x+k(y.CurrentParts)elseif T==5 then U=3-x+k(y.
 CurrentParts)elseif T==2 then U=1-x+k(y.CurrentParts)end end local V=math.pi/2 x
 =x+U if y.CurrentParts:IsA'Model'or y.CurrentParts:IsA'Tool'then f(y.
 CurrentParts,V*U)else y.CurrentParts.CFrame=CFrame.fromEulerAnglesXYZ(0,V*U,0){y
-.CurrentParts.CFrame}end local W,X W,X=q(y.CurrentParts)local Y if y.
-CurrentParts:IsA'Model'then Y=y.CurrentParts:GetModelCFrame()else Y=y.
-CurrentParts.CFrame end W=W+(S.p-Y.p)X=X+(S.p-Y.p)if h(W+d,X-d)then if L.CFrame
-then if y.CurrentParts:FindFirstChild('ClusterMaterial',true)then local ak=y.
-CurrentParts:FindFirstChild('ClusterMaterial',true)if ak:IsA'Vector3Value'then
-local al=y.CurrentParts:FindFirstChild('ClusterMaterial',true)if al then al=
-clusterMat end end end end return end if N()then local ak=game.Workspace.Terrain
-:WorldToCell(S.p)local al,am,an,ao,ap,aq,ar,as,at,au,av,aw,ax=game.Workspace.
-Terrain:CellCenterToWorld(ak.X,ak.Y,ak.Z),nil,nil,nil,nil,nil,nil,nil,nil,nil,
-nil,nil,nil ao,ao,ao,ap,aq,ar,as,at,au,av,aw,ax=S:components()S=CFrame.new(al.X,
-al.Y,al.Z,ap,aq,ar,as,at,au,av,aw,ax)end m(S,y.CurrentParts)L.CFrame=S if y.
-CurrentParts:FindFirstChild('ClusterMaterial',true)then local ak=y.CurrentParts:
+.CurrentParts.CFrame}end local W,X=q(y.CurrentParts)local Y if y.CurrentParts:
+IsA'Model'then Y=y.CurrentParts:GetModelCFrame()else Y=y.CurrentParts.CFrame end
+W=W+(S.p-Y.p)X=X+(S.p-Y.p)if h(W+d,X-d)then if L.CFrame then if y.CurrentParts:
+FindFirstChild('ClusterMaterial',true)then local ak=y.CurrentParts:
+FindFirstChild('ClusterMaterial',true)if ak:IsA'Vector3Value'then local al=y.
+CurrentParts:FindFirstChild('ClusterMaterial',true)if al then al=clusterMat end
+end end end return end if N()then local ak=game.Workspace.Terrain:WorldToCell(S.
+p)local al,am,an,ao,ap,aq,ar,as,at,au,av,aw,ax=game.Workspace.Terrain:
+CellCenterToWorld(ak.X,ak.Y,ak.Z),S:components()S=CFrame.new(al.X,al.Y,al.Z,ap,
+aq,ar,as,at,au,av,aw,ax)end m(S,y.CurrentParts)L.CFrame=S if y.CurrentParts:
+FindFirstChild('ClusterMaterial',true)then local ak=y.CurrentParts:
 FindFirstChild('ClusterMaterial',true)if ak:IsA'Vector3Value'then L.
 TerrainOrientation=ak.Value.Z end end if Q and Q.Target and Q.Target.Parent then
 local ak=Q.Target:FindFirstChild'RobloxModel'if not ak then ak=Q.Target.Parent:
@@ -304,10 +302,10 @@ CurrentParts:IsA'Model'or y.CurrentParts:IsA'Tool'then f(y.CurrentParts,aA)else
 y.CurrentParts.CFrame=CFrame.fromEulerAnglesXYZ(0,aA,0)*y.CurrentParts.CFrame
 end end local aA=y.CurrentParts:FindFirstChild('ClusterMaterial',true)if aA and
 aA:IsA'Vector3Value'then aA.Value=Vector3.new(aA.Value.X,aA.Value.Y,(aA.Value.Z+
-x)%4)end local X,Y X,Y=v(ae,y)if X then y.CurrentParts=m(Y,y.CurrentParts)end
-game.JointsService:SetJoinAfterMoveInstance(y.CurrentParts)return ax,R end local
-au au=function(av,aw)local ax=game.Workspace.Terrain.CellCenterToWorld local ay=
-ax(game.Workspace.Terrain,av.X,av.Y,av.Z)local az,aA=game.Workspace:
+x)%4)end local X,Y=v(ae,y)if X then y.CurrentParts=m(Y,y.CurrentParts)end game.
+JointsService:SetJoinAfterMoveInstance(y.CurrentParts)return ax,R end local au
+au=function(av,aw)local ax=game.Workspace.Terrain.CellCenterToWorld local ay=ax(
+game.Workspace.Terrain,av.X,av.Y,av.Z)local az,aA=game.Workspace:
 FindPartsInRegion3(Region3.new(ay-Vector3.new(2,2,2)+d,ay+Vector3.new(2,2,2)-d),
 y.CurrentParts,100),false for Q=1,#az do if t(az[Q])then aA=true break end end
 if not aA then local Q={}for R=1,#az do if az[R].Parent and not Q[az[R].Parent]
@@ -366,8 +364,8 @@ D and D.Start and D.InternalLine and D.InternalLine.magnitude>0 then az=true ay=
 true else az,ay=a.CanEditRegion(y.CurrentParts,aj)end if not az then if w then
 w()end return false end end if H then ao()return false end local az az,ay=a.
 CanEditRegion(y.CurrentParts,aj)if not az then if w then w()end return false end
-local aA,aB aA,aB=q(y.CurrentParts)local aC,aD=v(ax,y)if aC and not D.Adorn.
-Parent then if h(aA+d,aB-d)then ao()return false end local aE=game.Workspace:
+local aA,aB=q(y.CurrentParts)local aC,aD=v(ax,y)if aC and not D.Adorn.Parent
+then if h(aA+d,aB-d)then ao()return false end local aE=game.Workspace:
 FindPartsInRegion3(Region3.new(aA+d,aB-d),y.CurrentParts,100)for aF=1,#aE do if
 t(aE[aF])then ao()return false end end local aF={}for aG=1,#aE do if aE[aG].
 Parent and not aF[aE[aG].Parent]and aE[aG].Parent:FindFirstChild'Humanoid'and aE

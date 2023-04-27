@@ -37,11 +37,11 @@ getKillerOfHumanoidIfStillInGame = (humanoid) ->
 
 -- send kill and death stats when a player dies
 onDied = (victim, humanoid) ->
-	killer = getKillerOfHumanoidIfStillInGame humanoid 
+	killer = getKillerOfHumanoidIfStillInGame humanoid
 	victorId = 0
 	if killer
 		victorId = killer.userId
-		print "STAT: kill by #{victorId} of #{victim.userId}" 
+		print "STAT: kill by #{victorId} of #{victim.userId}"
 		game\HttpGet "#{url}/Game/Knockouts.ashx?UserID=#{victorId}&#{access}"
 
 	print "STAT: death of #{victim.userId} by #{victorId}"
@@ -98,10 +98,10 @@ if url?
 	try
 		game\GetService"ContentProvider"\SetBaseUrl "#{url}/"
 
-	-- try 
+	-- try
 	-- 	game\GetService"Players"\SetChatFilterUrl(url .. "/Game/ChatFilter.ashx")
 
-	-- game\GetService"BadgeService"\SetPlaceId(placeId)
+	-- game\GetService"BadgeService"\SetPlaceId placeId
 	if access?
 		with game\GetService "BadgeService"
 			\SetAwardBadgeUrl "#{url}/Game/Badge/AwardBadge.ashx?UserID=%d&BadgeID=%d&PlaceID=%d&#{access}"
@@ -199,12 +199,12 @@ if _MAP_LOCATION_EXISTS
 
 
 -- Now start the connection
-ns\Start _SERVER_PORT, sleeptime 
+ns\Start _SERVER_PORT, sleeptime
 
-game\GetService"Visit"\SetPing "_SERVER_PRESENCE_URL", 30 
+game\GetService"Visit"\SetPing "_SERVER_PRESENCE_URL", 30
 
 if timeout
-	scriptContext\SetTimeout timeout 
+	scriptContext\SetTimeout timeout
 
 scriptContext.ScriptsDisabled = false
 

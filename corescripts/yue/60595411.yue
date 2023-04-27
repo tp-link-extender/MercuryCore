@@ -169,7 +169,6 @@ JsonWriter.WriteFunction = (o) =>
 		@\WriteError o
 
 
-
 StringReader =
 	s: "",
 	i: 0,
@@ -370,7 +369,6 @@ JsonReader.ReadObject ==>
 				error string.format "Invalid array: '%s' near: '%s'", @\All!, ch
 
 
-
 	assert @\Next! == "}"
 	result
 
@@ -565,7 +563,7 @@ t.SelectTerrainRegion = (regionToSelect, color, selectEmptyCells, selectionParen
 
 
 						if not updated
-							local selectionPart, selectionBox = createAdornment color
+							selectionPart, selectionBox = createAdornment color
 							selectionPart.Size = Vector3.new 4, 4, 4
 							selectionPart.CFrame = CFrame.new cframePos
 							adornTable =
@@ -582,7 +580,7 @@ t.SelectTerrainRegion = (regionToSelect, color, selectEmptyCells, selectionParen
 	lastRegion = regionToSelect
 
 	if selectEmptyCells -- use one big selection to represent the area selected
-		local selectionPart, selectionBox = createAdornment color
+		selectionPart, selectionBox = createAdornment color
 
 		selectionPart.Size = regionToSelect.Size
 		selectionPart.CFrame = regionToSelect.CFrame
@@ -662,7 +660,7 @@ t.CreateSignal = ->
 
 	--main functions
 	this.connect = (func) =>
-		if self ~= this
+		if @ ~= this
 			error "connect must be called with `:`, not `.`", 2
 
 		if type(func) ~= "function"
@@ -679,7 +677,7 @@ t.CreateSignal = ->
 		pubCn
 
 	this.disconnect ==>
-		if self ~= this
+		if @ ~= this
 			error "disconnect must be called with `:`, not `.`", 2
 
 		for cn, _ in pairs mAllCns
@@ -687,14 +685,14 @@ t.CreateSignal = ->
 			mAllCns[cn] = nil
 
 	this.wait ==>
-		if self ~= this
+		if @ ~= this
 			error "wait must be called with `:`, not `.`", 2
 
 		mBindableEvent.Event\wait!
 
 
 	this.fire = (...) =>
-		if self ~= this
+		if @ ~= this
 			error "fire must be called with `:`, not `.`", 2
 
 		mBindableEvent\Fire ...
@@ -751,7 +749,7 @@ type of data and what operation each will perform:
 Some example usages:
 
 A simple example which uses the Create function to create a model object and assign two of it's properties.
-local model = Create'Model'{
+model = Create'Model'{
     Name = 'A New model',
     Parent = game.Workspace,
 }
@@ -764,7 +762,7 @@ Model_Container
  |  `-BoolValueChild
  `-IntValue
 
-local model = Create'Model'{
+model = Create'Model'{
     Name = 'Model_Container',
     Create'ObjectValue'{
         Create'BoolValue'{
@@ -777,8 +775,8 @@ local model = Create'Model'{
 
 An example using the event syntax:
 
-local part = Create'Part'{
-    [Create.E'Touched'] = function(part)
+part = Create'Part'{
+    [Create.E'Touched'] = function part
         print("I was touched by "..part.Name)
     end,
 }
@@ -786,18 +784,18 @@ local part = Create'Part'{
 
 An example using the general constructor syntax:
 
-local model = Create'Part'{
-    [Create] = function(this)
+model = Create'Part'{
+    [Create] = function this
         print("Constructor running!")
-        this.Name = GetGlobalFoosAndBars(this)
+        this.Name = GetGlobalFoosAndBars this
     end,
 }
 
 
 Note: It is also perfectly legal to save a reference to the function returned by a call Create, this will not cause
       any unexpected behavior. EG:
-      local partCreatingFunction = Create'Part'
-      local part = partCreatingFunction()
+      partCreatingFunction = Create'Part'
+      part = partCreatingFunction()
 ]]
 
 --the Create function need to be created as a functor, not a function, in order to support the Create.E syntax, so it

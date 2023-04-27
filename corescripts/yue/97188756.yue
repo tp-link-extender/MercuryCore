@@ -1184,17 +1184,17 @@ Chat.CreateMessage = (cPlayer, message) =>
 
 		local pColor
 		if cPlayer.Neutral
-			pLabel.TextColor3 = Chat\ComputeChatColor(pName)
+			pLabel.TextColor3 = Chat\ComputeChatColor pName
 		else
 			pLabel.TextColor3 = cPlayer.TeamColor.Color
 
 		local nString
 
 		if not @CachedSpaceStrings_List[pName]
-			nString = Chat\ComputeSpaceString(pLabel)
+			nString = Chat\ComputeSpaceString pLabel
 		else
 			nString = @CachedSpaceStrings_List[pName]
-		end 
+		end
 
 		mLabel.Text = ""
 		mLabel.Name = pName .. " - message"
@@ -1235,7 +1235,7 @@ Chat.CreateMessage = (cPlayer, message) =>
 	local nString
 
 	if not @CachedSpaceStrings_List[pName]
-		nString = Chat\ComputeSpaceString(pLabel)
+		nString = Chat\ComputeSpaceString pLabel
 	else
 		nString = @CachedSpaceStrings_List[pName]
 
@@ -1427,7 +1427,7 @@ Chat.CreateTouchButton ==>
 -- Non touch devices, create the bottom chat bar
 Chat.CreateChatBar ==>
 	-- okay now we
-	local status, result = try
+	status, result = try
 		return GuiService.UseLuaChat
 	if forceChatGUI or (status and result)
 		@ClickToChatButton = New "TextButton", "ClickToChat"
@@ -1456,7 +1456,7 @@ Chat.CreateChatBar ==>
 
 		-- Engine has code to offset the entire world, so if we do it by -20 pixels nothing gets in our chat's way
 		--GuiService\SetGlobalSizeOffsetPixel(0, -20)
-		local success, error = try
+		success, error = try
 			GuiService\SetGlobalGuiInset 0, 0, 0, 20
 		if not success
 			GuiService\SetGlobalSizeOffsetPixel 0, -20

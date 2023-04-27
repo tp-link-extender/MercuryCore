@@ -16,7 +16,7 @@ message.Parent = workspace
 message.archivable = false
 
 game\GetService"ScriptInformationProvider"\SetAssetUrl "http://banland.xyz/Asset/"
-game\GetService"ContentProvider"\SetThreadPool 16 
+game\GetService"ContentProvider"\SetThreadPool 16
 try
 	game\GetService"InsertService"\SetFreeModelUrl "http://www.roblox.com/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d"
 -- Used for free model search (insert tool)
@@ -48,7 +48,7 @@ with game\GetService "SocialService"
 try
 	game\GetService"GamePassService"\SetPlayerHasPassUrl "http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
 try
-	game\SetCreatorID 0, Enum.CreatorType.User 
+	game\SetCreatorID 0, Enum.CreatorType.User
 try
 	game\SetScreenshotInfo ""
 try
@@ -60,12 +60,12 @@ try
 	settings!["Task Scheduler"].PriorityMethod = Enum.PriorityMethod.AccumulatedError
 
 
-game\GetService"ChangeHistoryService"\SetEnabled false 
+game\GetService"ChangeHistoryService"\SetEnabled false
 try
 	game\GetService"Players"\SetBuildUserPermissionsUrl "http://banland.xyz//Game/BuildActionPermissionCheck.ashx?assetId=0&userId=%d&isSolo=true"
 
 
-workspace\SetPhysicsThrottleEnabled true 
+workspace\SetPhysicsThrottleEnabled true
 
 addedBuildTools = false
 screenGui = game\GetService"CoreGui"\FindFirstChild "RobloxGui"

@@ -66,11 +66,11 @@ try
 try
 	game\GetService"MarketplaceService"\SetPlayerOwnsAssetUrl "https://banland.xyz/ownership/hasasset?userId=%d&assetId=%d"
 try
-	game\SetCreatorID _CREATOR_ID, Enum.CreatorType.User 
+	game\SetCreatorID _CREATOR_ID, Enum.CreatorType.User
 
 -- Bubble chat.  This is all-encapsulated to allow us to turn it off with a config setting
 try
-	game\GetService"Players"\SetChatStyle Enum.ChatStyle.ClassicAndBubble 
+	game\GetService"Players"\SetChatStyle Enum.ChatStyle.ClassicAndBubble
 
 
 waitingForCharacter = false
@@ -105,7 +105,7 @@ global reportError = (err, message) ->
 
 	client\disconnect!
 	wait 4
-	showErrorWindow "Error: #{err}", message, "Other" 
+	showErrorWindow "Error: #{err}", message, "Other"
 
 
 -- called when the client connection closes
@@ -128,14 +128,14 @@ global requestCharacter = (replicator) ->
 
 	setMessage "Requesting character"
 
-	local success, err = try
+	success, err = try
 		replicator\RequestCharacter!
 		setMessage "Waiting for character"
 		waitingForCharacter = true
 
 
 	if not success
-		reportError err, "W4C" 
+		reportError err, "W4C"
 		return
 
 
@@ -145,9 +145,9 @@ global onConnectionAccepted = (url, replicator) ->
 
 	waitingForMarker = true
 
-	local success, err = try
+	success, err = try
 		if not test
-			visit\SetPing "_PING_URL", 30 
+			visit\SetPing "_PING_URL", 30
 
 
 		if not false
@@ -156,7 +156,7 @@ global onConnectionAccepted = (url, replicator) ->
 			setMessage "Teleporting ..."
 
 
-		replicator.Disconnection\connect onDisconnection 
+		replicator.Disconnection\connect onDisconnection
 
 		-- Wait for a marker to return before creating the Player
 		marker = replicator\SendMarker!
@@ -175,24 +175,24 @@ global onConnectionAccepted = (url, replicator) ->
 
 	while waitingForMarker
 		workspace\ZoomToExtents!
-		wait 0.5 
+		wait 0.5
 
 
 -- called when the client connection fails
 global onConnectionFailed = (_, err) ->
-	showErrorWindow "Failed to connect to the Game. (ID=#{err})", "ID#{err}", "Other" 
+	showErrorWindow "Failed to connect to the Game. (ID=#{err})", "ID#{err}", "Other"
 
 
 -- called when the client connection is rejected
 global onConnectionRejected = ->
 	connectionFailed\disconnect!
-	showErrorWindow "This game is not available. Please try another", "WrongVersion", "WrongVersion" 
+	showErrorWindow "This game is not available. Please try another", "WrongVersion", "WrongVersion"
 
 
 idled = false
 global onPlayerIdled = (time) ->
 	if time > 20 * 60
-		showErrorWindow string.format("You were disconnected for being idle %d minutes", time / 60), "Idle", "Idle" 
+		showErrorWindow string.format("You were disconnected for being idle %d minutes", time / 60), "Idle", "Idle"
 		client\disconnect!
 		if not idled
 			idled = true
@@ -226,9 +226,9 @@ success, err = try
 		delay 300, ->
 			while false
 				try
-					game\HttpPost "https://banland.xyz/auth/renew", "renew" 
+					game\HttpPost "https://banland.xyz/auth/renew", "renew"
 
-				wait 300 
+				wait 300
 
 	with player
 		\SetSuperSafeChat false
@@ -253,7 +253,7 @@ success, err = try
 
 
 if not success
-	reportError err, "CreatePlayer" 
+	reportError err, "CreatePlayer"
 
 
 if not test

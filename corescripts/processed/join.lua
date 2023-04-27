@@ -112,8 +112,7 @@ return connection:disconnect()
 end
 end)
 setMessage"Requesting character"
-local success,err
-success,err=pcall(function()
+local success,err=pcall(function()
 replicator:RequestCharacter()
 setMessage"Waiting for character"
 waitingForCharacter=true
@@ -125,9 +124,8 @@ end
 end
 onConnectionAccepted=function(url,replicator)
 local connectResolved,
-waitingForMarker,
-success,err=true,true,nil,nil
-success,err=pcall(function()
+waitingForMarker=true,true
+local success,err=pcall(function()
 if not test then
 visit:SetPing("_PING_URL",30)
 end do
