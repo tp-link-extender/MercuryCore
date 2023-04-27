@@ -1,0 +1,223 @@
+print "[Mercury]: Loaded Host corescript"
+-- Start Game Script Arguments
+local placeId, sleeptime, access, url, killID, deathID, timeout, injectScriptAssetID, servicesUrl, libraryRegistrationScriptAssetID
+
+-- StartGame --
+try
+	game\GetService"ScriptContext"\AddStarterScript injectScriptAssetID
+
+game\GetService"RunService"\Run!
+
+-- REQUIRES: StartGanmeSharedArgs.txt
+-- REQUIRES: MonitorGameStatus.txt
+
+------------------- UTILITY FUNCTIONS --------------------------
+
+waitForChild = (parent, childName) ->
+	while true
+		child = parent\findFirstChild childName
+		if child
+			return child
+
+		parent.ChildAdded\wait!
+
+
+-- returns the player object that killed this humanoid
+-- returns nil if the killer is no longer in the game
+getKillerOfHumanoidIfStillInGame = (humanoid) ->
+	-- check for kill tag on humanoid - may be more than one - todo: deal with this
+	tag = humanoid\findFirstChild "creator"
+
+	-- find player with name on tag
+	if tag
+		killer = tag.Value
+		if killer.Parent -- killer still in game
+			return killer
+
+
+-- send kill and death stats when a player dies
+onDied = (victim, humanoid) ->
+	killer = getKillerOfHumanoidIfStillInGame humanoid
+	victorId = 0
+	if killer
+		victorId = killer.userId
+		print "STAT: kill by #{victorId} of #{victim.userId}"
+		game\HttpGet "#{url}/Game/Knockouts.ashx?UserID=#{victorId}&#{access}"
+
+	print "STAT: death of #{victim.userId} by #{victorId}"
+	game\HttpGet "#{url}/Game/Wipeouts.ashx?UserID=#{victim.userId}&#{access}"
+
+
+-----------------------------------END UTILITY FUNCTIONS -------------------------
+
+-----------------------------------"CUSTOM" SHARED CODE----------------------------------
+
+try
+	settings!.Network.UseInstancePacketCache = true
+
+try
+	settings!.Network.UsePhysicsPacketCache = true
+
+--try settings!["Task Scheduler"].PriorityMethod = Enum.PriorityMethod.FIFO end)
+try
+	settings!["Task Scheduler"].PriorityMethod = Enum.PriorityMethod.AccumulatedError
+
+
+--settings!.Network.PhysicsSend = 1 -- 1==RoundRobin
+settings!.Network.PhysicsSend = Enum.PhysicsSendMethod.ErrorComputation2
+settings!.Network.ExperimentalPhysicsEnabled = true
+settings!.Network.WaitingForCharacterLogRate = 100
+try
+	settings!.Diagnostics\LegacyScriptMode!
+
+
+-----------------------------------START GAME SHARED SCRIPT------------------------------
+
+url = "_BASE_URL"
+-- assetId = placeId -- might be able to remove this now
+
+scriptContext = game\GetService "ScriptContext"
+try
+	scriptContext\AddStarterScript libraryRegistrationScriptAssetID
+
+scriptContext.ScriptsDisabled = true
+
+-- game\SetPlaceID(nil, false)
+game\GetService"ChangeHistoryService"\SetEnabled false
+
+-- establish this peer as the Server
+ns = game\GetService "NetworkServer"
+
+if url?
+	try
+		game\GetService"Players"\SetAbuseReportUrl "#{url}/Report/Games.ashx"
+
+	try
+		game\GetService"ScriptInformationProvider"\SetAssetUrl "#{url}/Asset/"
+
+	try
+		game\GetService"ContentProvider"\SetBaseUrl "#{url}/"
+
+	-- try
+	-- 	game\GetService"Players"\SetChatFilterUrl(url .. "/Game/ChatFilter.ashx")
+
+	-- game\GetService"BadgeService"\SetPlaceId placeId
+	if access?
+		with game\GetService "BadgeService"
+			\SetAwardBadgeUrl "#{url}/Game/Badge/AwardBadge.ashx?UserID=%d&BadgeID=%d&PlaceID=%d&#{access}"
+			\SetHasBadgeUrl "#{url}/Game/Badge/HasBadge.ashx?UserID=%d&BadgeID=%d&#{access}"
+			\SetIsBadgeDisabledUrl "#{url}/Game/Badge/IsBadgeDisabled.ashx?BadgeID=%d&PlaceID=%d&#{access}"
+
+		with game\GetService "FriendService"
+			\SetMakeFriendUrl "#{servicesUrl}/Friend/CreateFriend?firstUserId=%d&secondUserId=%d&#{access}"
+			\SetBreakFriendUrl "#{servicesUrl}/Friend/BreakFriend?firstUserId=%d&secondUserId=%d&#{access}"
+			\SetGetFriendsUrl "#{servicesUrl}/Friend/AreFriends?userId=%d&#{access}"
+
+	game\GetService"BadgeService"\SetIsBadgeLegalUrl ""
+
+	with game\GetService "InsertService"
+		\SetBaseSetsUrl "#{url}/Game/Tools/InsertAsset.ashx?nsets=10&type=base"
+		\SetUserSetsUrl "#{url}/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d"
+		\SetCollectionUrl "#{url}/Game/Tools/InsertAsset.ashx?sid=%d"
+		\SetAssetUrl "#{url}/Asset/?id=%d"
+		\SetAssetVersionUrl "#{url}/Asset/?assetversionid=%d"
+
+	try
+		loadfile"#{url}/Game/LoadPlaceInfo.ashx?PlaceId=#{placeId}"!
+
+	try
+		if access
+			loadfile"#{url}/Game/PlaceSpecificScript.ashx?PlaceId=#{placeId}&#{access}"!
+
+
+try
+	game\GetService"NetworkServer"\SetIsPlayerAuthenticationRequired true
+
+settings!.Diagnostics.LuaRamLimit = 0
+--settings!.Network\SetThroughputSensitivity(0.08, 0.01)
+--settings!.Network.SendRate = 35
+--settings!.Network.PhysicsSend = 0  -- 1==RoundRobin
+
+--shared["__time"] = 0
+--game\GetService"RunService".Stepped\connect(function (time) shared["__time"] = time end)
+
+if placeId? and killID? and deathID? and url?
+	-- listen for the death of a Player
+	createDeathMonitor = (player) ->
+		-- we don't need to clean up old monitors or connections since the Character will be destroyed soon
+		if player.Character
+			humanoid = waitForChild player.Character, "Humanoid"
+			humanoid.Died\connect ->
+				onDied player, humanoid
+
+
+	-- listen to all Players' Characters
+	game\GetService"Players".ChildAdded\connect (player) ->
+		createDeathMonitor player
+		player.Changed\connect (property) ->
+			if property == "Character"
+				createDeathMonitor player
+
+
+game\GetService"Players".PlayerAdded\connect (player) ->
+	print "Player #{player.userId} added"
+
+	if url and access and placeId and player and player.userId
+		game\HttpGet(
+			"#{url}/Game/ClientPresence.ashx?action=connect&#{access}" ..
+			"&PlaceID=#{placeId}" ..
+			"&UserID=#{player.userId}"
+		)
+		game\HttpGet "#{url}/Game/PlaceVisit.ashx?UserID=#{player.userId}&AssociatedPlaceID=#{placeId}&#{access}"
+
+
+game\GetService"Players".PlayerRemoving\connect (player) ->
+	print "Player #{player.userId} leaving"
+
+	if url and access and placeId and player and player.userId
+		game\HttpGet(
+			"#{url}/Game/ClientPresence.ashx?action=disconnect&" ..
+			"#{access}&PlaceID=#{placeId}"..
+			"&UserID=#{player.userId}"
+		)
+
+
+if placeId? and url?
+	-- yield so that file load happens in the heartbeat thread
+	wait!
+
+	-- load the game
+	game\Load "#{url}/asset/?id=#{placeId}"
+
+
+if _MAP_LOCATION_EXISTS
+	-- yield so that file load happens in the heartbeat thread
+	wait!
+
+	-- load the game
+	game\Load "_MAP_LOCATION"
+
+
+-- Now start the connection
+ns\Start _SERVER_PORT, sleeptime
+
+game\GetService"Visit"\SetPing "_SERVER_PRESENCE_URL", 30
+
+if timeout
+	scriptContext\SetTimeout timeout
+
+scriptContext.ScriptsDisabled = false
+
+--delay(1, function!
+--	loadfile(url .. "/analytics/GamePerfMonitor.ashx")(game.JobId, placeId)
+--end)
+
+reset = ";mc"
+game.Players.PlayerAdded\connect (player) ->
+	player.Chatted\connect (msg) ->
+		if msg == reset
+			if player.Character
+				player.Character.Humanoid.Health = 0
+
+
+------------------------------END START GAME SHARED SCRIPT--------------------------

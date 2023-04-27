@@ -283,17 +283,17 @@ ChatTouchFrame.Background q.ChatBar=g('TextBox','ChatBar',{Size=UDim2.new(1,0,
 1,1),ClearTextOnFocus=false})return q.TapToChatLabel.MouseButton1Click:connect(
 function()q.TapToChatLabel.Visible=false q.ChatBar:CaptureFocus()q.GotFocus=true
 if q.TouchLabelBackground then q.TouchLabelBackground.Visible=false end end)end
-o.CreateChatBar=function(q)local r,s r,s=pcall(function()return j.UseLuaChat end
-)if a or(r and s)then q.ClickToChatButton=g('TextButton','ClickToChat',{Size=
-UDim2.new(1,0,0,20),BackgroundTransparency=1,ZIndex=2,Parent=q.Gui,Text=
+o.CreateChatBar=function(q)local r,s=pcall(function()return j.UseLuaChat end)if
+a or(r and s)then q.ClickToChatButton=g('TextButton','ClickToChat',{Size=UDim2.
+new(1,0,0,20),BackgroundTransparency=1,ZIndex=2,Parent=q.Gui,Text=
 'To chat click here or press "/" key',TextColor3=Color3.new(1,1,0.9),Position=
 UDim2.new(0,0,1,0),TextXAlignment=Enum.TextXAlignment.Left,FontSize=Enum.
 FontSize.Size12})q.ChatBar=g('TextBox','ChatBar',{Size=UDim2.new(1,0,0,20),
 Position=UDim2.new(0,0,1,0),Text='',ZIndex=1,BackgroundColor3=Color3.new(0,0,0),
 BackgroundTransparency=0.25,Parent=q.Gui,TextXAlignment=Enum.TextXAlignment.Left
 ,TextColor3=Color3.new(1,1,1),FontSize=Enum.FontSize.Size12,ClearTextOnFocus=
-false})local t,u t,u=pcall(function()return j:SetGlobalGuiInset(0,0,0,20)end)if
-not t then j:SetGlobalSizeOffsetPixel(0,-20)end j:AddSpecialKey(Enum.SpecialKey.
+false})local t,u=pcall(function()return j:SetGlobalGuiInset(0,0,0,20)end)if not
+t then j:SetGlobalSizeOffsetPixel(0,-20)end j:AddSpecialKey(Enum.SpecialKey.
 ChatHotkey)j.SpecialKeyPressed:connect(function(v)if v==Enum.SpecialKey.
 ChatHotkey then return o:FocusOnChatBar()end end)return q.ClickToChatButton.
 MouseButton1Click:connect(function()return o:FocusOnChatBar()end)end end o.

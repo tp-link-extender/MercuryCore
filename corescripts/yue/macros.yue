@@ -1,2 +1,4 @@
 export macro load = (file) ->
 	"print \"[Mercury]: Loaded corescript #{file\sub 8, -6}\""
+
+export macro lua = (code) -> :code, type: "lua"

@@ -281,7 +281,7 @@ MakePopupButton = (nparent, ntext, index, last) ->
 local debugOutput
 DebugPrintEnabled = true
 debugprint = (str) ->
-	--print(str)
+	--print str
 	if DebugPrintEnabled
 		debugOutput.Text = str
 
@@ -1580,8 +1580,7 @@ ExpandNames = ->
 			BASE_TWEEN * 1.2,
 			true
 		)
-		BottomShiftFrame\TweenPosition UDim2.new(0, 0, HeaderFrameHeight, 0), "Out", "Linear", BASE_TWEEN * 1.2, true 
-
+		BottomShiftFrame\TweenPosition UDim2.new(0, 0, HeaderFrameHeight, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
 
 
 CloseNames = ->
@@ -1591,7 +1590,6 @@ CloseNames = ->
 			for _, i in pairs StatTitles\GetChildren!
 				Spawn ->
 					TweenProperty i, "TextTransparency", i.TextTransparency, 1, BASE_TWEEN
-
 
 
 		BottomShiftFrame\TweenPosition UDim2.new(0, 0, HeaderFrameHeight, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
@@ -1743,7 +1741,6 @@ UpdateMaximize = ->
 						BASE_TWEEN,
 						true
 					)
-
 
 
 		for _, entry in ipairs PlayerFrames
@@ -1908,7 +1905,7 @@ InitMovingPanel = (entry, player) ->
 	elseif friendStatus == Enum.FriendStatus.FriendRequestReceived
 		FriendPlayerButton\FindFirstChild"ButtonText".Text = "Accept Friend"
 		FriendRefuseButton = MakePopupButton PopUpPanel, "Decline Friend", 2, not showRankMenu
-		FriendRefuseButton.MouseButton1Click\connect OnFriendRefuseButtonSelect 
+		FriendRefuseButton.MouseButton1Click\connect OnFriendRefuseButtonSelect
 		nextIndex += 1
 
 	if showRankMenu
@@ -2175,7 +2172,7 @@ ChangeHeaderName = (nname) ->
 	HeaderName.Text = nname
 	UpdateHeaderNameSize!
 
-ScreenGui.Changed\connect UpdateHeaderNameSize 
+ScreenGui.Changed\connect UpdateHeaderNameSize
 
 --[[
 	called only when the leaderstats object is added to a given player entry
@@ -2184,7 +2181,7 @@ ScreenGui.Changed\connect UpdateHeaderNameSize
 	playerEntry		A reference to the ENTRY(table) of the player who had leaderstats added
 --]]
 LeaderstatsAdded = (playerEntry) ->
-	--RemoveAllStats(playerEntry)
+	--RemoveAllStats playerEntry
 	nplayer = playerEntry["Player"]
 	for _, i in pairs nplayer.leaderstats\GetChildren!
 		StatAdded i, playerEntry
@@ -2230,7 +2227,7 @@ OnPlayerEntrySelect = (entry, startx, starty) ->
 	assures the order and length of the player frames
 --]]
 PlayerListModeUpdate = ->
-	RecreateScoreColumns(PlayerFrames)
+	RecreateScoreColumns PlayerFrames
 	table.sort(PlayerFrames, PlayerSortFunction)
 	for i, val in ipairs PlayerFrames
 		MiddleFrames[i] = val["Frame"]
@@ -2270,9 +2267,9 @@ RemovePlayerFromTeam = (teamEntry, index) ->
 --]]
 FindRemovePlayerFromTeam = (entry) ->
 	if entry["MyTeam"]
-		for j, oldEntry in ipairs entry["MyTeam"]["MyPlayers"] 
+		for j, oldEntry in ipairs entry["MyTeam"]["MyPlayers"]
 			if oldEntry["Player"] == entry["Player"]
-				RemovePlayerFromTeam entry["MyTeam"], j 
+				RemovePlayerFromTeam entry["MyTeam"], j
 				return
 
 	elseif NeutralTeam
@@ -2290,7 +2287,7 @@ FindRemovePlayerFromTeam = (entry) ->
 --]]
 AddPlayerToTeam = (teamEntry, entry) ->
 	FindRemovePlayerFromTeam entry
-	table.insert teamEntry["MyPlayers"], entry 
+	table.insert teamEntry["MyPlayers"], entry
 	entry["MyTeam"] = teamEntry
 	if teamEntry["IsHidden"]
 		teamEntry["Frame"].Parent = ListFrame
@@ -2387,7 +2384,7 @@ PlayerChanged = (entry, property) ->
 		-- if player changing to neutral
 		if entry["Player"].Neutral and #game.Teams\GetTeams! > 0
 			debugprint "#{entry["Player"].Name} setting to neutral"
-			FindRemovePlayerFromTeam(entry)
+			FindRemovePlayerFromTeam entry
 			entry["MyTeam"] = nil
 			if not NeutralTeam
 				debugprint "#{entry["Player"].Name} creating neutral team"
@@ -2396,7 +2393,7 @@ PlayerChanged = (entry, property) ->
 				debugprint "#{entry["Player"].Name} adding to neutral team"
 				AddPlayerToTeam NeutralTeam, entry
 
-		elseif #(game.Teams\GetTeams!) > 0 then -- else player switching to a team, or a weird edgecase
+		elseif #(game.Teams\GetTeams!) > 0 -- else player switching to a team, or a weird edgecase
 			debugprint "#{entry["Player"].Name} has been set non-neutral"
 			SetPlayerToTeam entry
 
@@ -2416,7 +2413,7 @@ PlayerChanged = (entry, property) ->
 
 		if entry["Player"] == LocalPlayer
 			entry["Frame"].TitleFrame.DropShadow.Text = entry["Player"].Name
-			ChangeHeaderName entry["Player"].Name 
+			ChangeHeaderName entry["Player"].Name
 
 		BaseUpdate!
 
@@ -2444,7 +2441,7 @@ InsertPlayerFrame = (nplayer) ->
 	nfriendstatus = GetFriendStatus nplayer
 
 	nFrame\FindFirstChild"BCLabel".Image = getMembershipTypeIcon(nplayer.MembershipType, nplayer.Name)
-	nFrame\FindFirstChild"FriendLabel".Image = getFriendStatusIcon(nfriendstatus)
+	nFrame\FindFirstChild"FriendLabel".Image = getFriendStatusIcon nfriendstatus
 	nFrame.Name = nplayer.Name
 	WaitForChild(WaitForChild(nFrame, "TitleFrame"), "Title").Text = nplayer.Name
 
@@ -2508,7 +2505,7 @@ InsertPlayerFrame = (nplayer) ->
 
 
 	if nplayer\FindFirstChild "leaderstats"
-		LeaderstatsAdded nentry 
+		LeaderstatsAdded nentry
 
 
 	nplayer.ChildAdded\connect (nchild) ->
@@ -2522,20 +2519,19 @@ InsertPlayerFrame = (nplayer) ->
 			AddingFrameLock = false
 
 
-
 	nplayer.ChildRemoved\connect (nchild) ->
 		if nplayer == LocalPlayer and nchild.Name == "leaderstats"
-			LeaderstatsRemoved nchild, nentry 
+			LeaderstatsRemoved nchild, nentry
 
 
 	nplayer.Changed\connect (prop) ->
-		PlayerChanged nentry, prop 
+		PlayerChanged nentry, prop
 
 
-	listener = WaitForChild nFrame, "ClickListener" 
+	listener = WaitForChild nFrame, "ClickListener"
 	listener.Active = true
 	listener.MouseButton1Down\connect (nx, ny) ->
-		OnPlayerEntrySelect nentry, nx, ny 
+		OnPlayerEntrySelect nentry, nx, ny
 
 
 	AddMiddleBGFrame!
@@ -2562,10 +2558,10 @@ RemovePlayerFrame = (tplayer) ->
 
 			key["Frame"]\Destroy!
 			tteam = key["MyTeam"]
-			table.remove PlayerFrames, i 
+			table.remove PlayerFrames, i
 
 	if tteam
-		for j, tentry in ipairs tteam["MyPlayers"] 
+		for j, tentry in ipairs tteam["MyPlayers"]
 			if tentry["Player"] == tplayer
 				RemovePlayerFromTeam tteam, j
 
@@ -2654,10 +2650,10 @@ AddTeamScores = (team) ->
 --]]
 SortTeams = (tentries) ->
 	for _, val in ipairs tentries
-		table.sort val["MyPlayers"], PlayerSortFunction 
-		AddTeamScores val 
+		table.sort val["MyPlayers"], PlayerSortFunction
+		AddTeamScores val
 
-	table.sort tentries, TeamSortFunc 
+	table.sort tentries, TeamSortFunc
 
 --[[
 	base update for team mode, adds up the scores of all teams, sorts them,
@@ -2741,7 +2737,7 @@ RemoveTeamFrame = (nteam) ->
 		if nteam == key["MyTeam"]
 			myEntry = key
 			key["Frame"]\Destroy!
-			table.remove TeamFrames, i 
+			table.remove TeamFrames, i
 
 	if #TeamFrames == 0
 		debugprint "removeteamframe, remove neutral"
@@ -2828,7 +2824,7 @@ InsertTeamFrame = (nteam) ->
 
 	for _, i in pairs PlayerFrames
 		if not i["Player"].Neutral and i["Player"].TeamColor == nteam.TeamColor
-			AddPlayerToTeam nentry, i 
+			AddPlayerToTeam nentry, i
 
 	nentry["IsHidden"] = false
 	if not nentry["AutoHide"] or #nentry["MyPlayers"] > 0
@@ -2845,7 +2841,7 @@ InsertTeamFrame = (nteam) ->
 		nentry["IsHidden"] = true
 		nentry["Frame"].Parent = nil
 
-	table.insert TeamFrames, nentry 
+	table.insert TeamFrames, nentry
 	UpdateMinimize!
 	BaseUpdate!
 	if #TeamFrames == 1 and not NeutralTeam
@@ -2906,7 +2902,7 @@ LastTabTime = time!
 game.GuiService.KeyPressed\connect (key) ->
 	if key == "\t"
 		debugprint "caught tab key"
-		local modalCheck, isModal = try
+		modalCheck, isModal = try
 			return game.GuiService.IsModalDialog
 
 		if modalCheck == false or (modalCheck and isModal == false)
@@ -2964,16 +2960,16 @@ TeamsChildRemoved = (nteam) ->
 
 try
 	coreGuiChanged Enum.CoreGuiType.PlayerList, Game.StarterGui\GetCoreGuiEnabled Enum.CoreGuiType.PlayerList
-	Game.StarterGui.CoreGuiChangedSignal\connect coreGuiChanged 
+	Game.StarterGui.CoreGuiChangedSignal\connect coreGuiChanged
 
 while not game\GetService "Teams"
 	wait 1 / 30
 	debugprint "Waiting For Teams"
 
-for _, i in pairs game.Teams\GetTeams! 
-	TeamAdded i 
+for _, i in pairs game.Teams\GetTeams!
+	TeamAdded i
 
-for _, i in pairs Players\GetPlayers! 
+for _, i in pairs Players\GetPlayers!
 	Spawn ->
 		debugPlayerAdd i
 
@@ -2998,7 +2994,7 @@ if LocalPlayer.Name == "newplayerlistisbad" or LocalPlayer.Name == "imtotallyadm
 	debugFrame.Parent = ScreenGui
 	Spawn ->
 		while true
-			local str_players = ""
+			str_players = ""
 			for _, i in pairs game.Players\GetPlayers!
 				str_players ..= " #{i.Name}"
 

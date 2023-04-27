@@ -1,26 +1,58 @@
--- Setup studio cmd bar & load core scripts
-pcall(function() game:GetService("InsertService"):SetFreeModelUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d") end)
-pcall(function() game:GetService("InsertService"):SetFreeDecalUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?type=fd&q=%s&pg=%d&rs=%d") end)
-
-game:GetService("ScriptInformationProvider"):SetAssetUrl("http://banland.xyz/Asset/")
-game:GetService("InsertService"):SetBaseSetsUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?nsets=10&type=base")
-game:GetService("InsertService"):SetUserSetsUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d")
-game:GetService("InsertService"):SetCollectionUrl("http://banland.xyz/Game/Tools/InsertAsset.ashx?sid=%d")
-game:GetService("InsertService"):SetAssetUrl("http://banland.xyz/Asset/?id=%d")
-game:GetService("InsertService"):SetAssetVersionUrl("http://www.roblox.com/Asset/?assetversionid=%d")
-game:GetService("InsertService"):SetTrustLevel(0)
-
-pcall(function() game:GetService("SocialService"):SetFriendUrl("http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d") end)
-pcall(function() game:GetService("SocialService"):SetBestFriendUrl("http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d") end)
-pcall(function() game:GetService("SocialService"):SetGroupUrl("http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d") end)
-pcall(function() game:GetService("SocialService"):SetGroupRankUrl("http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d") end)
-pcall(function() game:GetService("SocialService"):SetGroupRoleUrl("http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d") end)
-pcall(function() game:GetService("GamePassService"):SetPlayerHasPassUrl("http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d") end)
-pcall(function() game:GetService("MarketplaceService"):SetProductInfoUrl("https://banland.xyz/marketplace/productinfo?assetId=%d") end)
-pcall(function() game:GetService("MarketplaceService"):SetDevProductInfoUrl("https://banland.xyz/marketplace/productDetails?productId=%d") end)
-pcall(function() game:GetService("MarketplaceService"):SetPlayerOwnsAssetUrl("https://banland.xyz/ownership/hasasset?userId=%d&assetId=%d") end)
-
-local result, err = pcall(function() game:GetService("ScriptContext"):AddStarterScript(37801172) end)
+print"[Mercury]: Loaded Studio corescript"
+do
+local _with_0=game:GetService"InsertService"
+pcall(function()
+return _with_0:SetFreeModelUrl"http://banland.xyz/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d"
+end)
+pcall(function()
+return _with_0:SetFreeDecalUrl"http://banland.xyz/Game/Tools/InsertAsset.ashx?type=fd&q=%s&pg=%d&rs=%d"
+end)
+game:GetService"ScriptInformationProvider":SetAssetUrl"http://banland.xyz/Asset/"
+_with_0:SetBaseSetsUrl"http://banland.xyz/Game/Tools/InsertAsset.ashx?nsets=10&type=base"
+_with_0:SetUserSetsUrl"http://banland.xyz/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d"
+_with_0:SetCollectionUrl"http://banland.xyz/Game/Tools/InsertAsset.ashx?sid=%d"
+_with_0:SetAssetUrl"http://banland.xyz/Asset/?id=%d"
+_with_0:SetAssetVersionUrl"http://www.roblox.com/Asset/?assetversionid=%d"
+_with_0:SetTrustLevel(0)
+end
+do
+local _with_0=game:GetService"SocialService"
+pcall(function()
+return _with_0:SetFriendUrl"http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d"
+end)
+pcall(function()
+return _with_0:SetBestFriendUrl"http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d"
+end)
+pcall(function()
+return _with_0:SetGroupUrl"http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d"
+end)
+pcall(function()
+return _with_0:SetGroupRankUrl"http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d"
+end)
+pcall(function()
+return _with_0:SetGroupRoleUrl"http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d"
+end)
+end
+pcall(function()
+return game:GetService"GamePassService":SetPlayerHasPassUrl"http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
+end)
+do
+local _with_0=game:GetService"MarketplaceService"
+pcall(function()
+return _with_0:SetProductInfoUrl"https://banland.xyz/marketplace/productinfo?assetId=%d"
+end)
+pcall(function()
+return _with_0:SetDevProductInfoUrl"https://banland.xyz/marketplace/productDetails?productId=%d"
+end)
+pcall(function()
+return _with_0:SetPlayerOwnsAssetUrl"https://banland.xyz/ownership/hasasset?userId=%d&assetId=%d"
+end)
+end
+local result,_=pcall(function()
+return game:GetService"ScriptContext":AddStarterScript(37801172)
+end)
 if not result then
-pcall(function() game:GetService("ScriptContext"):AddCoreScript(37801172,game:GetService("ScriptContext"),"StarterScript") end)
+return pcall(function()
+return game:GetService"ScriptContext":AddCoreScript(37801172,game:GetService("ScriptContext","StarterScript"))
+end)
 end

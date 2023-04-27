@@ -7,33 +7,33 @@ FindFirstChild(d)do print('Waiting for ...',c,d)c.ChildAdded:wait()end return c:
 FindFirstChild(d)end local c c=function(d,e)assert(d)assert(e)while not d[e]do d
 .Changed:wait()end end local d d=function()local e=false pcall(function()e=Game:
 GetService'UserInputService'.TouchEnabled end)return e end b(game,'Players')c(
-game.Players,'LocalPlayer')local e,f,g=game.Players.LocalPlayer,nil,nil f,g=
-LoadLibrary'RbxGui'if not f then print'could not find RbxGui!'return end local h
-,i,j,k,l,m,n,o,p,q,r,s='gear',script.Parent,{},{},false,false,{},{},nil,nil,nil,
-b(e,'Backpack')b(i,'Tabs')b(i,'Gear')local t,u,v,w=b(i.Gear,'GearPreview'),b(i.
-Gear,'GearGridScrollingArea'),b(i.Parent,'CurrentLoadout'),b(i.Gear,'GearGrid')
-local x,y,z=b(w,'GearButton'),b(script.Parent,'SwapSlot'),b(script.Parent,
+game.Players,'LocalPlayer')local e,f,g=game.Players.LocalPlayer,LoadLibrary
+'RbxGui'if not f then print'could not find RbxGui!'return end local h,i,j,k,l,m,
+n,o,p,q,r,s='gear',script.Parent,{},{},false,false,{},{},nil,nil,nil,b(e,
+'Backpack')b(i,'Tabs')b(i,'Gear')local t,u,v,w=b(i.Gear,'GearPreview'),b(i.Gear,
+'GearGridScrollingArea'),b(i.Parent,'CurrentLoadout'),b(i.Gear,'GearGrid')local
+x,y,z=b(w,'GearButton'),b(script.Parent,'SwapSlot'),b(script.Parent,
 'CoreScripts/BackpackScripts/BackpackManager')local A,B,C,D,E,F,G,H,I,J=b(z,
 'BackpackOpenEvent'),b(z,'BackpackCloseEvent'),b(z,'TabClickedEvent'),b(z,
-'ResizeEvent'),b(z,'SearchRequestedEvent'),b(z,'BackpackReady'),nil,nil,nil,nil
-G,H,I,J=f.CreateScrollingFrame(nil,'grid',Vector2.new(6,6))G.Position=UDim2.new(
-0,0,0,30)G.Size=UDim2.new(1,0,1,-30)G.Parent=i.Gear.GearGrid local K=a('Frame',
-'ScrollBar',{BackgroundTransparency=0.9,BackgroundColor3=Color3.new(1,1,1),
-BorderSizePixel=0,Size=UDim2.new(0,17,1,-36),Position=UDim2.new(0,0,0,18),Parent
-=u})I.Position=UDim2.new(0,0,1,-17)H.Parent=u I.Parent=u local L,M,N,O L,M,N,O=f
-.CreateScrollingFrame()L.Position=UDim2.new(0,0,0,0)L.Size=UDim2.new(1,0,1,0)L.
-Parent=i.Gear.GearLoadouts.LoadoutsList local P=a('TextButton','LoadoutButton',{
-RobloxLocked=true,Font=Enum.Font.ArialBold,FontSize=Enum.FontSize.Size14,
-Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,0,32),Style=Enum.ButtonStyle.
-RobloxButton,Text='Loadout #1',TextColor3=Color3.new(1,1,1),Parent=L})do local Q
-=P:clone()Q.Text='Loadout #2'Q.Parent=L end do local Q=P:clone()Q.Text=
-'Loadout #3'Q.Parent=L end do local Q=P:clone()Q.Text='Loadout #4'Q.Parent=L end
-a('Frame','ScrollBarLoadout',{BackgroundTransparency=0.9,BackgroundColor3=Color3
-.new(1,1,1),BorderSizePixel=0,Size=UDim2.new(0,17,1,-36),Position=UDim2.new(0,0,
-0,18),Parent=i.Gear.GearLoadouts.GearLoadoutsScrollingArea})N.Position=UDim2.
-new(0,0,1,-17)M.Parent=i.Gear.GearLoadouts.GearLoadoutsScrollingArea N.Parent=i.
-Gear.GearLoadouts.GearLoadoutsScrollingArea local Q Q=function(R,S)for T=1,#R do
-if R[T]==S then table.remove(R,T)break end end end local R R=function(S)S.
+'ResizeEvent'),b(z,'SearchRequestedEvent'),b(z,'BackpackReady'),f.
+CreateScrollingFrame(nil,'grid',Vector2.new(6,6))G.Position=UDim2.new(0,0,0,30)G
+.Size=UDim2.new(1,0,1,-30)G.Parent=i.Gear.GearGrid local K=a('Frame','ScrollBar'
+,{BackgroundTransparency=0.9,BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=
+0,Size=UDim2.new(0,17,1,-36),Position=UDim2.new(0,0,0,18),Parent=u})I.Position=
+UDim2.new(0,0,1,-17)H.Parent=u I.Parent=u local L,M,N,O=f.CreateScrollingFrame()
+L.Position=UDim2.new(0,0,0,0)L.Size=UDim2.new(1,0,1,0)L.Parent=i.Gear.
+GearLoadouts.LoadoutsList local P=a('TextButton','LoadoutButton',{RobloxLocked=
+true,Font=Enum.Font.ArialBold,FontSize=Enum.FontSize.Size14,Position=UDim2.new(0
+,0,0,0),Size=UDim2.new(1,0,0,32),Style=Enum.ButtonStyle.RobloxButton,Text=
+'Loadout #1',TextColor3=Color3.new(1,1,1),Parent=L})do local Q=P:clone()Q.Text=
+'Loadout #2'Q.Parent=L end do local Q=P:clone()Q.Text='Loadout #3'Q.Parent=L end
+do local Q=P:clone()Q.Text='Loadout #4'Q.Parent=L end a('Frame',
+'ScrollBarLoadout',{BackgroundTransparency=0.9,BackgroundColor3=Color3.new(1,1,1
+),BorderSizePixel=0,Size=UDim2.new(0,17,1,-36),Position=UDim2.new(0,0,0,18),
+Parent=i.Gear.GearLoadouts.GearLoadoutsScrollingArea})N.Position=UDim2.new(0,0,1
+,-17)M.Parent=i.Gear.GearLoadouts.GearLoadoutsScrollingArea N.Parent=i.Gear.
+GearLoadouts.GearLoadoutsScrollingArea local Q Q=function(R,S)for T=1,#R do if R
+[T]==S then table.remove(R,T)break end end end local R R=function(S)S.
 RobloxLocked=true local T=S:GetChildren()if T then for U,V in ipairs(T)do R(V)
 end end end local S S=function()t.GearImage.Image=''t.GearStats.GearName.Text=''
 end local T T=function(U)U.TextColor3=Color3.new(1,1,1)U.BackgroundColor3=Color3

@@ -69,7 +69,7 @@ CurrencyType.Robux then if(ak~=nil)and ak~=0 then g=ak f=Enum.CurrencyType.Robux
 else g=al f=Enum.CurrencyType.Tix end elseif f==Enum.CurrencyType.Tix then if(al
 ~=nil)and al~=0 then g=al f=Enum.CurrencyType.Tix else g=ak f=Enum.CurrencyType.
 Robux end else return false end if not(g~=nil)then return false end return true
-end local ak ak=function()local al,am,an am,an=pcall(function()al=game:
+end local ak ak=function()local al local am,an=pcall(function()al=game:
 HttpGetAsync(tostring(W())..'currency/balance')end)if not am then print(
 'Get player balance failed because',an)return nil end if al==''then return nil
 end al=X().DecodeJSON(al)return al end local al al=function(am)if Enum.
@@ -99,10 +99,10 @@ then d=X().DecodeJSON(at)end else as=pcall(function()d=game:GetService
 nil,nil,true,ar end if not m then if not e then print
 'current asset id is nil, this should always have a value'return false end if e
 <=0 then print[[current asset id is negative, this should always be positive]]
-return false end local at,au at,au=pcall(function()ap=game:HttpGetAsync(W()..
+return false end local at as,at=pcall(function()ap=game:HttpGetAsync(W()..
 'ownership/hasAsset?userId='..tostring(game.Players.LocalPlayer.userId)..
-'&assetId='..tostring(e))end)if not at then print(
-'could not tell if player owns asset because',au)return false end if ap==true or
+'&assetId='..tostring(e))end)if not as then print(
+'could not tell if player owns asset because',at)return false end if ap==true or
 ap=='true'then ar='You already own this item.'return true,nil,nil,true,ar end
 end q.BodyFrame.AfterBalanceButton.Visible=true if type(d)~='table'then d=X().
 DecodeJSON(d)end if not d then ar=
@@ -114,8 +114,8 @@ tonumber(d['PriceInRobux']),tonumber(d['PriceInTickets']))then ar=
 return true,nil,nil,true,ar end local at=ak()if not at then ar=
 'Could not retrieve your balance. Please try again later.'return true,nil,nil,
 true,ar end if tonumber(d['MinimumMembershipLevel'])>al(game.Players.LocalPlayer
-.MembershipType)then aq=true end local au,av au,av=an(at,aq)if aq then q.
-BodyFrame.AfterBalanceButton.Active=true return true,av,aq,false end if d[
+.MembershipType)then aq=true end local au,av=an(at,aq)if aq then q.BodyFrame.
+AfterBalanceButton.Active=true return true,av,aq,false end if d[
 'ContentRatingTypeId']==1 then if game.Players.LocalPlayer:GetUnder13()then ar=
 [[Your account is under 13 so purchase of this item is not allowed.]]return true
 ,nil,nil,true,ar end end if(d['IsLimited']==true or d['IsLimitedUnique']==true)
@@ -124,18 +124,18 @@ and(d['Remaining']==''or d['Remaining']==0 or not(d['Remaining']~=nil))then ar=
 return true,nil,nil,true,ar end if not au then ar=
 [[Could not update your balance. Please check back after some time.]]return true
 ,nil,nil,true,ar end q.BodyFrame.AfterBalanceButton.Active=true return true,av
-end local ap ap=function(aq)if k then local ar,as ar,as=ao()if ar and as then
-local at=1000 while(at>0 or aq)and as and k and ar do wait(0.1)ar,as=ao()at=at-1
-end end if ar and not as then return ab(q.BodyFrame.BuyButton,q.BodyFrame.
-CancelButton,q.BodyFrame.AfterBalanceButton)end end end local aq aq=function()
-return Game:GetService'GuiService':OpenBrowserWindow(tostring(c)..
+end local ap ap=function(aq)if k then local ar,as=ao()if ar and as then local at
+=1000 while(at>0 or aq)and as and k and ar do wait(0.1)ar,as=ao()at=at-1 end end
+if ar and not as then return ab(q.BodyFrame.BuyButton,q.BodyFrame.CancelButton,q
+.BodyFrame.AfterBalanceButton)end end end local aq aq=function()return Game:
+GetService'GuiService':OpenBrowserWindow(tostring(c)..
 'Upgrades/BuildersClubMemberships.aspx')end local ar ar=function()return ad(
-false)end local as as=function()local at,au,av,aw,ax at,au,av,aw,ax=ao()if at
-then ai()if aw and ax then q.BodyFrame.ItemPreview.ItemDescription.Text=ax q.
-BodyFrame.AfterBalanceButton.Visible=false end game.GuiService:AddCenterDialog(q
-,Enum.CenterDialogType.ModalDialog,function()q.Visible=true if ae()then ab(q.
-BodyFrame.FreeButton,q.BodyFrame.CancelButton,q.BodyFrame.AfterBalanceButton)
-elseif av then q.BodyFrame.AfterBalanceButton.Text=
+false)end local as as=function()local at,au,av,aw,ax=ao()if at then ai()if aw
+and ax then q.BodyFrame.ItemPreview.ItemDescription.Text=ax q.BodyFrame.
+AfterBalanceButton.Visible=false end game.GuiService:AddCenterDialog(q,Enum.
+CenterDialogType.ModalDialog,function()q.Visible=true if ae()then ab(q.BodyFrame
+.FreeButton,q.BodyFrame.CancelButton,q.BodyFrame.AfterBalanceButton)elseif av
+then q.BodyFrame.AfterBalanceButton.Text=
 [[You require an upgrade to your Builders Club membership to purchase this item. Click here to upgrade.]]
 if not l then l=q.BodyFrame.AfterBalanceButton.MouseButton1Click:connect(
 function()if q.BodyFrame.AfterBalanceButton.Text==
@@ -167,8 +167,8 @@ Enum.CurrencyType.Tix then return 2 end end local ay ay=function(az)aw()local aA
 tostring(ax(f))..'&expectedUnitPrice='..tostring(g)..'&placeId='..tostring(Game.
 PlaceId)else aC=W()..'marketplace/purchase?productId='..tostring(i)..
 '&currencyTypeId='..tostring(ax(f))..'&purchasePrice='..tostring(g)..
-'&locationType=Game'..'&locationId='..tostring(Game.PlaceId)end local aD,aE aD,
-aE=pcall(function()aB=game:HttpPostAsync(aC,'RobloxPurchaseRequest')end)print(
+'&locationType=Game'..'&locationId='..tostring(Game.PlaceId)end local aD,aE=
+pcall(function()aB=game:HttpPostAsync(aC,'RobloxPurchaseRequest')end)print(
 'doAcceptPurchase success from ypcall is ',aD,'reason is',aE)if(tick()-aA)<1
 then wait(1)end if aB=='none'or not(aB~=nil)or aB==''then print(
 'did not get a proper response from web on purchase of',e,i)au()return end aB=X(

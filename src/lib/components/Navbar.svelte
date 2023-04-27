@@ -9,14 +9,10 @@
 
 	const height = (_: any) => ({
 		duration: 300,
-		css: (t: any) => {
-			const x = `
-					height: ${2 * quadOut(t)}rem;
-					overflow: hidden;
-				`
-			console.log(x)
-			return x
-		},
+		css: (t: any) => `
+			height: ${2 * quadOut(t)}rem;
+			overflow: hidden;
+		`,
 	})
 
 	export let data: LayoutData

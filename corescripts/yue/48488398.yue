@@ -212,12 +212,12 @@ if teleportEnabled
 
 		yesCon = popup.AcceptButton.MouseButton1Click\connect ->
 			killCons!
-			local success, err = try
+			success, err = try
 				game\GetService"TeleportService"\TeleportImpl placeId, spawnName
 			if not success
 				showOneButton!
 				popup.PopupText.Text = err
-				local clickCon = popup.OKButton.MouseButton1Click\connect ->
+				clickCon = popup.OKButton.MouseButton1Click\connect ->
 					clickCon?\disconnect!
 					game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup"
 					popup\TweenSize(

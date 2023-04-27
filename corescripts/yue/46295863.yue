@@ -8,7 +8,7 @@ New = (className, name, props) ->
 		name = nil
 
 	obj = Instance.new className
-	obj.Name = name if name 
+	obj.Name = name if name
 	local parent
 
 	for k, v in pairs props
@@ -64,7 +64,7 @@ local mainShield
 inStudioMode = UserSettings!.GameSettings\InStudioMode!
 
 macClient = false
-local success, isMac = try
+success, isMac = try
 	not game.GuiService.IsWindows
 
 macClient = success and isMac
@@ -109,7 +109,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 	for i = 1, #containerChildren
 		if containerChildren[i].Name == menuName
 			containerChildren[i].Visible = true
-			currentMenuSelection = 
+			currentMenuSelection =
 				container: container
 				name: menuName
 				direction: moveDirection
@@ -184,7 +184,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 resetLocalCharacter = ->
 	player = game.Players.LocalPlayer
 	if player and
-		player.Character and 
+		player.Character and
 		player.Character\FindFirstChild "Humanoid"
 		
 		player.Character.Humanoid.Health = 0
@@ -256,7 +256,7 @@ CreateTextButtons = (frame, buttons, yPos, ySize) ->
 		buttonNum = 1
 		while buttonNum <= numButtons
 			buttonObjs[buttonNum].Position = UDim2.new(
-				spacing * buttonNum + (buttonNum - 1) * buttonSize, 0, 
+				spacing * buttonNum + (buttonNum - 1) * buttonSize, 0,
 				yPos.Scale, yPos.Offset
 			)
 			buttonObjs[buttonNum].Size = UDim2.new buttonSize, 0, ySize.Scale, ySize.Offset
@@ -701,7 +701,7 @@ createGameMainMenu = (baseZIndex, shield) ->
 	resumeGameButton.Parent = gameMainMenuFrame
 	resumeGameButton.Modal = true
 	resumeGameButton.MouseButton1Click\connect ->
-		resumeGameFunction(shield)
+		resumeGameFunction shield
 
 
 	gameSettingsButton = createTextButton(
@@ -934,7 +934,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 		goToAutoGraphics = ->
-			setAutoGraphicsGui(true)
+			setAutoGraphicsGui true
 
 			UserSettings!.GameSettings.SavedQualityLevel = Enum.SavedQualitySetting.Automatic
 
@@ -957,7 +957,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 		goToManualGraphics = (explicitLevel) ->
-			setAutoGraphicsGui(false)
+			setAutoGraphicsGui false
 
 			if explicitLevel
 				graphicsLevel.Value = explicitLevel
@@ -1403,14 +1403,12 @@ if LoadLibrary
 					recordVideoClick gameMainMenu.RecordVideoButton, gui.StopRecordButton
 
 
-
 			localPlayerChange = ->
 				gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
 				if game.Players.LocalPlayer
 					settings!.Rendering.EnableFRM = true
 				elseif inStudioMode
 					settings!.Rendering.EnableFRM = false
-
 
 
 			gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
@@ -1420,7 +1418,7 @@ if LoadLibrary
 
 			else
 				delay 0, ->
-					waitForProperty game.Players, "LocalPlayer" 
+					waitForProperty game.Players, "LocalPlayer"
 					gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
 					game.Players.LocalPlayer.Changed\connect ->
 						localPlayerChange!
@@ -1437,7 +1435,7 @@ if LoadLibrary
 			gameMainMenu.LeaveGameButton.MouseButton1Click\connect ->
 				goToMenu settingsFrame, "LeaveConfirmationMenu", "down", UDim2.new 0, 525, 0, 300
 
-			if game.CoreGui.Version >= 4 then -- we can use escape!
+			if game.CoreGui.Version >= 4 -- we can use escape!
 				game\GetService"GuiService".EscapeKeyPressed\connect ->
 					if currentMenuSelection == nil
 						game.GuiService\AddCenterDialog(
@@ -1506,13 +1504,11 @@ if LoadLibrary
 						)
 
 						table.remove lastMenuSelection, #lastMenuSelection
-						if #lastMenuSelection == 1 then -- apparently lua can't reduce count to 0... T_T
+						if #lastMenuSelection == 1 -- apparently lua can't reduce count to 0... T_T
 							lastMenuSelection = {}
 
 					else
 						resumeGameFunction shield
-
-
 
 
 			gameSettingsMenu = createGameSettingsMenu(baseZIndex, shield)
@@ -1775,7 +1771,7 @@ if LoadLibrary
 				errorDialogMessageBox.Visible = true
 
 
-		saveLocal = ->
+		save= ->
 			errorDialogMessageBox.Visible = false
 			game\FinishShutdown true
 			clearAndResetDialog!
@@ -2146,7 +2142,7 @@ if LoadLibrary
 	-- 		chatBox.Visible = true
 	-- 		chatBox\CaptureFocus!
 
-	-- 	chatButton.MouseButton1Click\connect(activateChat)
+	-- 	chatButton.MouseButton1Click\connect activateChat
 
 	-- 	-- hotKeyEnabled = true
 	-- 	toggleHotKey = (_) ->
@@ -2209,7 +2205,7 @@ if LoadLibrary
 		gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu.ReportAbuseButton.Active = true
 
 	--Spawn a thread for Chat Bar
-	--[[local success, luaChat = ]]
+	--[[success, luaChat = ]]
 	try
 		game.GuiService.UseLuaChat
 
@@ -2220,22 +2216,22 @@ if LoadLibrary
 			waitForProperty(game.Players, "LocalPlayer")
 
 			advancedChatBarSupported = game.Players.LocalPlayer.ChatMode
-			local chatBar, toggleHotKey = createChatBar!
+			chatBar, toggleHotKey = createChatBar!
 
 			[if advancedChatBarSupported
 				toggleChatBar = (chatMode) ->
 					if chatMode == Enum.ChatMode.Menu
 						chatBar.Parent = nil
 						game.GuiService\SetGlobalSizeOffsetPixel(0,0)
-						toggleHotKey(false)
+						toggleHotKey false
 					elseif chatMode == Enum.ChatMode.TextAndMenu
 						--chatBar.Parent = gui
 						--game.GuiService\SetGlobalSizeOffsetPixel(0,-22)
-						toggleHotKey(true)
+						toggleHotKey true
 
 
 				game.Players.LocalPlayer.Changed\connect(
-					function(prop)
+					function prop
 						if prop == "ChatMode"
 							toggleChatBar(game.Players.LocalPlayer.ChatMode)
 
