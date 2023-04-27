@@ -8,9 +8,9 @@ ChildAdded:wait()end end local c c=function(d,e)while not d[e]do d.Changed:wait(
 Parent:FindFirstChild'ControlFrame'else d=script.Parent end local e,f,g,h,i,j,k,
 l,m,n,o,p,q,r,s,t,u=nil,nil,nil,0.2,'http://www.roblox.com/asset?id=54071825',
 'http://www.roblox.com/Asset?id=45915798',game:GetService'CoreGui'.Version>=5,10
-,false,nil,{},{},nil,UserSettings().GameSettings:InStudioMode(),false,nil,nil t,
-u=pcall(function()return not game.GuiService.IsWindows end)s=t and u local v v=
-function(w,x,y)return Color3.new(w/255,x/255,y/255)end local w w=function(x)x.
+,false,nil,{},{},nil,UserSettings().GameSettings:InStudioMode(),false,pcall(
+function()return not game.GuiService.IsWindows end)s=t and u local v v=function(
+w,x,y)return Color3.new(w/255,x/255,y/255)end local w w=function(x)x.
 RobloxLocked=true local y=x:GetChildren()if y then for z,A in ipairs(y)do w(A)
 end end end local x x=function(y)y.Settings:TweenPosition(UDim2.new(0.5,-262,-
 0.5,-200),Enum.EasingDirection.InOut,Enum.EasingStyle.Sine,h,true)return delay(h
@@ -421,7 +421,7 @@ delay(0,function()local N=0 while M do local O=0 while O<8 do if O==N or O==((N+
 Image='http://www.roblox.com/Asset?id=45880710'end O=O+1 end N=(N+1)%8 wait(0.2)
 end end)local N=game:SaveToRoblox()if not N then N=game:SaveToRoblox()end an.
 Visible=false M=false if N then game:FinishShutdown(false)return ad()else am.
-Visible=true end end af=function()am.Visible=false game:FinishShutdown(true)
+Visible=true end end ae=function()am.Visible=false game:FinishShutdown(true)
 return ad()end ag=function()aj.Visible=false am.Visible=false game:
 FinishShutdown(false)return ad()end ah=function()aj.Visible=false am.Visible=
 false return ad()end ad=function()aj.Visible=true am.Visible=false an.Visible=

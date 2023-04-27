@@ -48,8 +48,7 @@ pcall(function()
 return _with_0:SetPlayerOwnsAssetUrl"https://banland.xyz/ownership/hasasset?userId=%d&assetId=%d"
 end)
 end
-local result,_
-result,_=pcall(function()
+local result,_=pcall(function()
 return game:GetService"ScriptContext":AddStarterScript(37801172)
 end)
 if not result then

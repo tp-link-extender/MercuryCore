@@ -42,7 +42,7 @@ waitForProperty = (instance, property) ->
 		instance.Changed\wait!
 
 
-local IsTouchDevice = ->
+IsTouchDevice = ->
 	touchEnabled = false
 	try
 		touchEnabled = Game\GetService"UserInputService".TouchEnabled
@@ -53,7 +53,7 @@ waitForChild game, "Players"
 waitForProperty game.Players, "LocalPlayer"
 player = game.Players.LocalPlayer
 
-local RbxGui, _ = LoadLibrary "RbxGui"
+RbxGui, _ = LoadLibrary "RbxGui"
 if not RbxGui
 	print "could not find RbxGui!"
 	return
@@ -101,7 +101,7 @@ searchRequestedEvent = waitForChild backpackManager, "SearchRequestedEvent"
 tellBackpackReadyFunc = waitForChild backpackManager, "BackpackReady"
 
 -- creating scroll bar early as to make sure items get placed correctly
-local scrollFrame, scrollUp, scrollDown, recalculateScroll = RbxGui.CreateScrollingFrame nil, "grid", Vector2.new 6, 6
+scrollFrame, scrollUp, scrollDown, recalculateScroll = RbxGui.CreateScrollingFrame nil, "grid", Vector2.new 6, 6
 
 scrollFrame.Position = UDim2.new 0, 0, 0, 30
 scrollFrame.Size = UDim2.new 1, 0, 1, -30
@@ -120,7 +120,7 @@ scrollDown.Position = UDim2.new 0, 0, 1, -17
 scrollUp.Parent = scroller
 scrollDown.Parent = scroller
 
-local scrollFrameLoadout, scrollUpLoadout, scrollDownLoadout, recalculateScrollLoadout = RbxGui.CreateScrollingFrame!
+scrollFrameLoadout, scrollUpLoadout, scrollDownLoadout, recalculateScrollLoadout = RbxGui.CreateScrollingFrame!
 
 scrollFrameLoadout.Position = UDim2.new 0, 0, 0, 0
 scrollFrameLoadout.Size = UDim2.new 1, 0, 1, 0
@@ -459,7 +459,6 @@ resizeGrid = ->
 							buttonClone.Position = beginPos
 
 
-
 				clickTime = tick!
 				mouseEnterCons[buttonClone] = buttonClone.MouseEnter\connect ->
 					previewGear buttonClone
@@ -727,8 +726,6 @@ coreGuiChanged = (coreGuiType, enabled) ->
 	if coreGuiType == Enum.CoreGuiType.Backpack or coreGuiType == Enum.CoreGuiType.All
 		if not enabled
 			backpack.Gear.Visible = false
-
-
 
 
 backpackChildren = player.Backpack\GetChildren!

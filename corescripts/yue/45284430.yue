@@ -8,7 +8,7 @@ New = (className, name, props) ->
 		name = nil
 
 	obj = Instance.new className
-	obj.Name = name if name 
+	obj.Name = name if name
 	local parent
 
 	for k, v in pairs props
@@ -105,24 +105,24 @@ CreateButtons = (frame, buttons, yPos, ySize) ->
 
 		buttonNum = 1
 		while buttonNum <= numButtons
-			buttonObjs[buttonNum].Position = UDim2.new spacing * buttonNum + (buttonNum - 1) * buttonSize, 0, yPos.Scale, yPos.Offset 
+			buttonObjs[buttonNum].Position = UDim2.new spacing * buttonNum + (buttonNum - 1) * buttonSize, 0, yPos.Scale, yPos.Offset
 			buttonObjs[buttonNum].Size = UDim2.new buttonSize, 0, ySize.Scale, ySize.Offset
 			buttonNum += 1
 
 
 setSliderPos = (newAbsPosX, slider, sliderPosition, bar, steps) ->
 	newStep = steps - 1 --otherwise we really get one more step than we want
-	relativePosX = math.min 1, math.max(0, (newAbsPosX - bar.AbsolutePosition.X) / bar.AbsoluteSize.X) 
+	relativePosX = math.min 1, math.max(0, (newAbsPosX - bar.AbsolutePosition.X) / bar.AbsoluteSize.X)
 	wholeNum, remainder = math.modf relativePosX * newStep
 	if remainder > 0.5
 		wholeNum += 1
 
 	relativePosX = wholeNum / newStep
 
-	result = math.ceil relativePosX * newStep 
+	result = math.ceil relativePosX * newStep
 	if sliderPosition.Value ~= (result + 1) --only update if we moved a step
 		sliderPosition.Value = result + 1
-		slider.Position = UDim2.new relativePosX, -slider.AbsoluteSize.X / 2, slider.Position.Y.Scale, slider.Position.Y.Offset 
+		slider.Position = UDim2.new relativePosX, -slider.AbsoluteSize.X / 2, slider.Position.Y.Scale, slider.Position.Y.Offset
 
 
 cancelSlide = (areaSoak) ->
@@ -3111,7 +3111,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 	-- we so need a better way to do this
 	for _, v in pairs materialNames
 		materialToImageMap[v] = {}
-		materialToImageMap[v].Regular = "http://www.roblox.com/asset/?id=" .. 
+		materialToImageMap[v].Regular = "http://www.roblox.com/asset/?id=" ..
 			switch v
 				when "Grass" then "56563112"
 				when "Sand" then "62356652"
@@ -3209,7 +3209,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 			return
 
 
-		matName = getNameFromEnum newMaterialType 
+		matName = getNameFromEnum newMaterialType
 		buttons = scrollFrame\GetChildren!
 		for i = 1, #buttons
 			if buttons[i].Name == "Plastic (blue)" and matName == "Plastic (blue)"
@@ -3220,7 +3220,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 				goToNewMaterial buttons[i], matName
 				return
 
-			if string.find buttons[i].Name, matName 
+			if string.find buttons[i].Name, matName
 				goToNewMaterial buttons[i], matName
 				return
 

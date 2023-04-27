@@ -105,18 +105,17 @@ if w>1000000 then w=0 end return w end local F F=function(G,H)local I,J=G.CFrame
 q(o,I),q(o,J)v=E()for M=K.y,L.y do for N=K.z,L.z do for O=K.x,L.x do local P=p(o
 ,O,M,N)if P~=s then local Q,R,S=r(o,O,M,N),Vector3int16.new(O,M,N),false for T,U
 in pairs(y)do if T==R then U.KeepAlive=v if H then U.SelectionBox.Color=H end S=
-true break end end if not S then local V,W V,W=C(H)V.Size=Vector3.new(4,4,4)V.
-CFrame=CFrame.new(Q)local X={SelectionPart=V,SelectionBox=W,KeepAlive=v}y[R]=X
-end end end end end return D()end x=k if m then local G,H G,H=C(l)G.Size=k.Size
-G.CFrame=k.CFrame y.SelectionPart=G y.SelectionBox=H u=function(I,J)if I and I~=
-x then x=I G.Size=I.Size G.CFrame=I.CFrame end if J then H.Color=J end end else
-F(k,l)u=function(G,H)if G and G~=x then x=G return F(G,H)end end end local G G=
-function()u=nil if t~=nil then t:Destroy()end y=nil end return u,G end a.
-CreateSignal=function()local k,l,m={},Instance.new'BindableEvent',{}k.connect=
-function(n,o)if n~=k then error('connect must be called with `:`, not `.`',2)end
-if type(o)~='function'then error(
-'Argument #1 of connect must be a function, got a '..tostring(type(o)),2)end
-local p=l.Event:connect(o)m[p]=true local q={}q.disconnect=function(r)p:
+true break end end if not S then A,B=C(H)A.Size=Vector3.new(4,4,4)A.CFrame=
+CFrame.new(Q)local V={SelectionPart=A,SelectionBox=B,KeepAlive=v}y[R]=V end end
+end end end return D()end x=k if m then A,B=C(l)A.Size=k.Size A.CFrame=k.CFrame
+y.SelectionPart=A y.SelectionBox=B u=function(G,H)if G and G~=x then x=G A.Size=
+G.Size A.CFrame=G.CFrame end if H then B.Color=H end end else F(k,l)u=function(G
+,H)if G and G~=x then x=G return F(G,H)end end end local G G=function()u=nil if
+t~=nil then t:Destroy()end y=nil end return u,G end a.CreateSignal=function()
+local k,l,m={},Instance.new'BindableEvent',{}k.connect=function(n,o)if n~=k then
+error('connect must be called with `:`, not `.`',2)end if type(o)~='function'
+then error('Argument #1 of connect must be a function, got a '..tostring(type(o)
+),2)end local p=l.Event:connect(o)m[p]=true local q={}q.disconnect=function(r)p:
 disconnect()m[p]=nil end q.Disconnect=q.disconnect return q end k.disconnect=
 function(n)if n~=k then error('disconnect must be called with `:`, not `.`',2)
 end for o,p in pairs(m)do o:disconnect()m[o]=nil end end k.wait=function(n)if n

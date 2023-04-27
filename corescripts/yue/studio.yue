@@ -39,11 +39,11 @@ with game\GetService "MarketplaceService"
 		\SetPlayerOwnsAssetUrl "https://banland.xyz/ownership/hasasset?userId=%d&assetId=%d"
 
 
-local result, _ = try
-	game\GetService"ScriptContext"\AddStarterScript 37801172 
+result, _ = try
+	game\GetService"ScriptContext"\AddStarterScript 37801172
 
 if not result
 	try
-		game\GetService"ScriptContext"\AddCoreScript 37801172, game\GetService "ScriptContext", "StarterScript" 
+		game\GetService"ScriptContext"\AddCoreScript 37801172, game\GetService "ScriptContext", "StarterScript"
 
 

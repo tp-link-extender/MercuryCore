@@ -466,7 +466,7 @@ setupCameraControl = (parentFrame, refreshCharacterMoveFunc) ->
 
 			resetCameraRotateState!
 
-			if not lastPinchScale? then -- first pinch move, just set up scale
+			if not lastPinchScale? -- first pinch move, just set up scale
 				if inputObject == firstTouch
 					lastPinchScale = (inputObject.Position - secondTouch.Position).magnitude
 					firstTouch = inputObject
@@ -572,7 +572,7 @@ setupTouchControls = ->
 ----------------------------------------------------------------------------
 -- Start of Script
 
--- if true then --userInputService\IsLuaTouchControls!
+-- if true --userInputService\IsLuaTouchControls!
 setupTouchControls!
 -- else
 	-- script\Destroy!
