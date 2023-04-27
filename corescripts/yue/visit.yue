@@ -62,7 +62,7 @@ try
 
 game\GetService"ChangeHistoryService"\SetEnabled false
 try
-	game\GetService"Players"\SetBuildUserPermissionsUrl "http://banland.xyz//Game/BuildActionPermissionCheck.ashx?assetId=0&userId=%d&isSolo=true"
+	game\GetService"Players"\SetBuildUserPermissionsUrl "http://banland.xyz/Game/BuildActionPermissionCheck.ashx?assetId=0&userId=%d&isSolo=true"
 
 
 workspace\SetPhysicsThrottleEnabled true

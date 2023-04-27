@@ -5,7 +5,7 @@ export function GET({ url, setHeaders }) {
 
 	if (!userId || !/^\d+$/.test(userId)) throw error(400, "Invalid Request")
 
-	let charApp = `https://banland.xyz/Asset/BodyColors.ashx?id=${userId}`
+	let charApp = `https://banland.xyz/asset/bodycolors?id=${userId}`
 
 	setHeaders({
 		Pragma: "no-cache",
