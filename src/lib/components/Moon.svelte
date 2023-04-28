@@ -12,22 +12,22 @@
 	import { GLTF } from "@threlte/extras"
 
 	const items = [
-		// {
-		// 	name: "moon",
-		// 	camPos: { x: 100, y: 60, z: 100 },
-		// },
-		// {
-		// 	name: "mercury",
-		// 	camPos: { x: 100, y: 20, z: 100 },
-		// },
-		// {
-		// 	name: "rock",
-		// 	camPos: { x: 100, y: 100, z: 100 },
-		// },
 		{
-			name: "planetMercury",
-			camPos: { x: 100, y: 40, z: 100 },
+			name: "moon",
+			camPos: { x: 100, y: 60, z: 100 },
 		},
+		{
+			name: "mercury",
+			camPos: { x: 100, y: 20, z: 100 },
+		},
+		{
+			name: "rock",
+			camPos: { x: 100, y: 100, z: 100 },
+		},
+		// {
+		// 	name: "planetMercury",
+		// 	camPos: { x: 100, y: 40, z: 100 },
+		// },
 	]
 
 	export let item = items[Math.floor(Math.random() * items.length)]
