@@ -12,25 +12,26 @@
 	import { GLTF } from "@threlte/extras"
 
 	const items = [
+		// {
+		// 	name: "moon",
+		// 	camPos: { x: 100, y: 60, z: 100 },
+		// },
+		// {
+		// 	name: "mercury",
+		// 	camPos: { x: 100, y: 20, z: 100 },
+		// },
+		// {
+		// 	name: "rock",
+		// 	camPos: { x: 100, y: 100, z: 100 },
+		// },
 		{
-			name: "moon",
-			camPos: { x: 100, y: 100, z: 100 },
-		},
-		{
-			name: "mercury",
-			camPos: { x: 100, y: 20, z: 100 },
-		},
-		{
-			name: "rock",
-			camPos: { x: 100, y: 100, z: 100 },
-		},
-		{
-			name: "mercury2",
-			camPos: { x: 100, y: 20, z: 100 },
+			name: "planetMercury",
+			camPos: { x: 100, y: 40, z: 100 },
 		},
 	]
 
 	export let item = items[Math.floor(Math.random() * items.length)]
+	console.log("   ")
 </script>
 
 <Canvas>
@@ -45,7 +46,7 @@
 	</PerspectiveCamera>
 
 	<DirectionalLight color="white" position={{ x: -15, y: 45, z: 20 }} />
-	<HemisphereLight skyColor="white" groundColor="#ac844c" intensity={0.4} />
+	<HemisphereLight skyColor="white" groundColor="#7531ff" intensity={0.4} />
 
-	<GLTF url="/landing/{item.name}.glb" />
+	<GLTF url="/landing/{item.name}.glb"/>
 </Canvas>
