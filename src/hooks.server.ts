@@ -3,6 +3,7 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
+import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { client } from "$lib/server/redis"
@@ -61,3 +62,8 @@ export async function handle({ event, resolve }) {
 
 	return await resolve(event)
 }
+
+export const handleError = ({ error }) =>
+	dev
+		? console.error(error)
+		: console.error(`[${new Date().toLocaleString()}] ${error}`)
