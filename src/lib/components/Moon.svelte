@@ -2,39 +2,39 @@
 	// The component that controls the 3D object
 	// on the landing and maintenance pages.
 
-	import {
-		Canvas,
-		DirectionalLight,
-		HemisphereLight,
-		OrbitControls,
-		PerspectiveCamera,
-	} from "@threlte/core"
-	import { GLTF } from "@threlte/extras"
+	import { Canvas, T } from "@threlte/core"
+	import { GLTF, OrbitControls } from "@threlte/extras"
+
+	const { PerspectiveCamera, DirectionalLight, HemisphereLight } = T
 
 	const items = [
 		{
 			name: "moon",
-			camPos: { x: 100, y: 100, z: 100 },
+			camPos: [100, 60, 100],
 		},
 		{
 			name: "mercury",
-			camPos: { x: 100, y: 20, z: 100 },
+			camPos: [100, 20, 100],
 		},
 		{
 			name: "rock",
-			camPos: { x: 100, y: 100, z: 100 },
+			camPos: [100, 100, 100],
 		},
 		{
 			name: "mercury2",
-			camPos: { x: 100, y: 20, z: 100 },
+			camPos: [100, 20, 100],
 		},
+		// {
+		// 	name: "planetMercury",
+		// 	camPos: [100, 40, 100],
+		// },
 	]
 
 	export let item = items[Math.floor(Math.random() * items.length)]
 </script>
 
 <Canvas>
-	<PerspectiveCamera position={item.camPos}>
+	<PerspectiveCamera makeDefault position={item.camPos}>
 		<OrbitControls
 			autoRotate
 			autoRotateSpeed={Math.random() > 0.5 ? 10 : -10}
@@ -44,8 +44,8 @@
 			enableZoom={false} />
 	</PerspectiveCamera>
 
-	<DirectionalLight color="white" position={{ x: -15, y: 45, z: 20 }} />
-	<HemisphereLight skyColor="white" groundColor="#ac844c" intensity={0.4} />
+	<DirectionalLight color="white" position={[15, 45, 20]} />
+	<HemisphereLight skyColor="white" groundColor="#7531ff" intensity={0.4} />
 
 	<GLTF url="/landing/{item.name}.glb" />
 </Canvas>
