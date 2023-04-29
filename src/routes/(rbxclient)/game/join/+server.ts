@@ -23,7 +23,7 @@ export async function GET({ url }) {
 	let placeId = -1
 	let creatorId = 0
 	let MembershipType = "None"
-	let charApp = "http://banland.xyz/Asset/CharacterFetch.ashx?userID=0"
+	let charApp = "http://banland.xyz/asset/characterfetch?userID=0"
 	let pingUrl = ""
 
 	// if ((joinMethod = "Ticket")) {
@@ -66,8 +66,8 @@ export async function GET({ url }) {
 	userId = gameSession.user.number
 	placeId = gameSession.place.id
 	creatorId = gameSession.place.ownerUser?.number || 0
-	charApp = `http://banland.xyz/Asset/CharacterFetch.ashx?userID=${userId}`
-	pingUrl = `http://banland.xyz/Game/ClientPresence?ticket=${clientTicket}`
+	charApp = `http://banland.xyz/asset/characterfetch?userID=${userId}`
+	pingUrl = `http://banland.xyz/game/clientpresence?ticket=${clientTicket}`
 
 	if (gameSession.user.permissionLevel == 2) MembershipType = "BuildersClub"
 	// }

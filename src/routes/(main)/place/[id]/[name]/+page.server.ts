@@ -255,7 +255,7 @@ export const actions = {
 			},
 		})
 
-		const joinScriptUrl = `https://banland.xyz/Game/Join.ashx?ticket=${session.ticket}`
+		const joinScriptUrl = `https://banland.xyz/game/join?ticket=${session.ticket}`
 
 		return { joinScriptUrl }
 	},
