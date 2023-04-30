@@ -15,11 +15,11 @@ We recommend using [Visual Studio Code](https://code.visualstudio.com) as your e
 
 The following extensions are recommended:
 
+-   [Caddyfile Support](https://marketplace.visualstudio.com/items?itemName=matthewpi.caddyfile-support)
 -   [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 -   [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
 -   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 -   [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
--   [NGINX Configuration](https://marketplace.visualstudio.com/items?itemName=william-voyek.vscode-nginx)
 -   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 -   [Prisma](https://marketplace.visualstudio.com/items?itemName=Prisma.prisma)
 -   [Sass (.sass only)](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented)
