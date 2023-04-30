@@ -546,7 +546,7 @@
 <style lang="sass">
 	:target
 		display: block !important
-		
+
 	@media only screen and (min-width: 576px)
 		.container
 			width: 60rem
@@ -562,7 +562,7 @@
 	#settings
 		position: absolute
 		margin: 3px 0px 0px -10px
-	
+
 	.dropdown-menu
 		border-color: var(--accent2)
 		z-index: 5
@@ -574,7 +574,7 @@
 		img
 			box-sizing: border-box
 			position: absolute
-	
+
 	#outer
 		transform: rotate(0)
 		animation: moon 1.5s 0s infinite linear

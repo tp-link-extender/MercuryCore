@@ -303,7 +303,7 @@
 		#user
 			margin-left: 0.5rem !important
 			margin-bottom: 1.5rem !important
-		
+
 		#search
 			width: 100%
 			margin: 0 !important
@@ -393,7 +393,7 @@
 			width: 100%
 		button, input
 			height: 2.3rem
-	
+
 	.btn
 		box-shadow: none !important
 </style>

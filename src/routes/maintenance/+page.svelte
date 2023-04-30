@@ -49,7 +49,7 @@
 		z-index: 3
 		height: 60vh
 		padding-top: 40vh
-	
+
 	#moon
 		margin-bottom: min(15rem, 40vh)
 

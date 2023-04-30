@@ -110,7 +110,7 @@ UDim2.new(0.5,-250,0.5,-200),Size=UDim2.new(0,500,0,400),BackgroundTransparency=
 'Report Abuse',TextColor3=g(221,221,221),Position=UDim2.new(0.5,0,0,30),Font=
 Enum.Font.ArialBold,FontSize=Enum.FontSize.Size36}),e('TextLabel','Description',
 {Text=
-[[This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action.]]
+[[This will send a complete report to a moderator. The moderator will review the chat log and take appropriate action.]]
 ,TextColor3=g(221,221,221),Position=UDim2.new(0.01,0,0,55),Size=UDim2.new(0.99,0
 ,0,40),BackgroundTransparency=1,Font=Enum.Font.Arial,FontSize=Enum.FontSize.
 Size18,TextWrap=true,TextXAlignment=Enum.TextXAlignment.Left,TextYAlignment=Enum
@@ -150,7 +150,7 @@ TextXAlignment.Center,TextYAlignment=Enum.TextYAlignment.Top,Text=
 Size48,Font='ArialBold'}),e('TextLabel','content',{Position=UDim2.new(0,10,0.2,0
 ),Size=UDim2.new(1,-30,0.4,0),TextScaled=true,BackgroundTransparency=1,
 TextColor3=Color3.new(1,1,1),Text=
-[[Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.
+[[Our moderators will review the chat logs and determine what happened. The other user is probably just trying to make you mad.
 
 If anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats]]
 ,TextWrapped=true,TextYAlignment=Enum.TextYAlignment.Top,FontSize=Enum.FontSize.

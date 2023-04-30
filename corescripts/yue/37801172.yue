@@ -30,7 +30,7 @@ waitForChild game\GetService"CoreGui", "RobloxGui"
 screenGui = game\GetService"CoreGui"\FindFirstChild "RobloxGui"
 
 if not touchEnabled
-	-- ToolTipper  (creates tool tips for gui)
+	-- ToolTipper (creates tool tips for gui)
 	scriptContext\AddCoreScript 36868950, screenGui, "CoreScripts/ToolTip"
 	-- SettingsScript
 	scriptContext\AddCoreScript 46295863, screenGui, "CoreScripts/Settings"

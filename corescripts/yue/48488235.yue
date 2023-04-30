@@ -581,7 +581,7 @@ AbuseSettingsFrame = New "Frame", "ReportAbuseStyle"
 		FontSize: Enum.FontSize.Size36
 
 	* New "TextLabel", "Description"
-		Text: "This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action."
+		Text: "This will send a complete report to a moderator. The moderator will review the chat log and take appropriate action."
 		TextColor3: Color3I 221, 221, 221
 		Position: UDim2.new 0.01, 0, 0, 55
 		Size: UDim2.new 0.99, 0, 0, 40
@@ -699,7 +699,7 @@ CalmingAbuseBox = New "Frame", "AbuseFeedbackBox"
 		TextScaled: true
 		BackgroundTransparency: 1
 		TextColor3: Color3.new 1, 1, 1
-		Text: "Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats"
+		Text: "Our moderators will review the chat logs and determine what happened. The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats"
 		TextWrapped: true
 		TextYAlignment: Enum.TextYAlignment.Top
 		FontSize: Enum.FontSize.Size24
@@ -1514,7 +1514,7 @@ RecreateScoreColumns = (ptable) ->
 						not entry["MyTeam"]["Frame"]\FindFirstChild scoreval["Name"]
 
 						ntitle = nentry\Clone!
-						--ntitle.TextXAlignment  = 'Right'
+						--ntitle.TextXAlignmen = 'Right'
 						ntitle.Parent = entry["MyTeam"]["Frame"]
 
 

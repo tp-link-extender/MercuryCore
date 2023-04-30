@@ -684,7 +684,7 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 		children = gearClone\GetChildren!
 		for i = 1, #children
 			if children[i]\IsA "TextLabel"
-				children[i].ZIndex =  if string.find children[i].Name, "Shadow"
+				children[i].ZIndex = if string.find children[i].Name, "Shadow"
 					8
 				else
 					9
@@ -936,7 +936,7 @@ wait! -- let stuff initialize incase this is first heartbeat...
 waitForChild player, "Backpack"
 waitForProperty player, "Character"
 
--- not sure why this had no delay but the player.CharacterAdded one had one...  this type of error would be easier to avoid with function reusage
+-- not sure why this had no delay but the player.CharacterAdded one had one... this type of error would be easier to avoid with function reusage
 delay 1, ->
 	backpackChildren = player.Backpack\GetChildren!
 	size = math.min 10, #backpackChildren

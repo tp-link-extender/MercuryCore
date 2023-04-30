@@ -2020,12 +2020,7 @@ export default defineConfig({
 		// borders
 		[
 			/^border-([\.\d]+)$/,
-			([_, n]) =>
-				n == "0"
-					? {}
-					: {
-							"--bs-border-width": `${n}px`,
-					  },
+			([_, n]) => (n == "0" ? {} : { "--bs-border-width": `${n}px` }),
 		],
 		// orders
 		[

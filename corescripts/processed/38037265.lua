@@ -9,10 +9,10 @@
 			<ProtectedString name="Source">function waitForChild(parent, childName)
 	local child = parent:findFirstChild(childName)
 	if child then return child end
-   while true do
+	while true do
 		child = parent.ChildAdded:wait()
 		if child.Name==childName then return child end
-   end
+	end
 end
 
 -- declarations
@@ -41,7 +41,7 @@ function regenHealth()
 end
 
 Humanoid.HealthChanged:connect(regenHealth)
-      </ProtectedString>
+		</ProtectedString>
 			<bool name="archivable">true</bool>
 		</Properties>
 	</Item>
@@ -77,7 +77,7 @@ function UpdateGUI(health)
 
 	tray.bar.Position = UDim2.new(x,0,y, 0)
 	tray.bar.Size = UDim2.new(width, 0, height, 0)
-	-- If more than 1/4 health, bar = green.  Else, bar = red.
+	-- If more than 1/4 health, bar = green. Else, bar = red.
 	if( (health / humanoid.MaxHealth) &gt; 0.25 ) then
 		tray.barRed.Size = UDim2.new(0, 0, 0, 0)
 	else

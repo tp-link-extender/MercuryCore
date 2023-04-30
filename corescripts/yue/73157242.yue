@@ -9,13 +9,13 @@ t = {}
 -- 	end
 -- end
 
--- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)
+-- Do a line/plane intersection. The line starts at the camera. The plane is at y == 0, normal(0, 1, 0)
 --
 -- vectorPos - End point of the line.
 --
 -- Return:
 -- cellPos - The terrain cell intersection point if there is one, vectorPos if there isn't.
--- hit - Whether there was a plane intersection.  Value is true if there was, false if not.
+-- hit - Whether there was a plane intersection. Value is true if there was, false if not.
 PlaneIntersection = (vectorPos) ->
 	hit = false
 	currCamera = game.Workspace.CurrentCamera
@@ -44,10 +44,10 @@ PlaneIntersection = (vectorPos) ->
 -- mouse - Mouse to check the .hit for.
 --
 -- Return:
--- cellPos - Cell position hit.  Nil if none.
+-- cellPos - Cell position hit. Nil if none.
 GetTerrainForMouse = (mouse) ->
 	-- There was no target, so all it could be is a plane intersection.
-	-- Check for a plane intersection.  If there isn't one then nothing will get hit.
+	-- Check for a plane intersection. If there isn't one then nothing will get hit.
 	cell = game.Workspace.Terrain\WorldToCellPreferSolid Vector3.new mouse.hit.x, mouse.hit.y, mouse.hit.z
 	local planeLoc
 	-- If nothing was hit, do the plane intersection.
@@ -156,7 +156,7 @@ setSeatEnabledStatus = (model, isEnabled) ->
 
 	else
 		-- put a weld called "SeatWeld" in every seat
-		--   this tricks it into thinking there's already someone sitting there, and it won't make you sit XD
+		-- 		this tricks it into thinking there's already someone sitting there, and it won't make you sit XD
 		for i = 1, #seatList
 			fakeWeld = Instance.new "Weld"
 			fakeWeld.Name = "SeatWeld"
@@ -215,7 +215,7 @@ positionPartsAtCFrame3 = (aCFrame, currentParts) ->
 calcRayHitTime = (rayStart, raySlope, intersectionPlane) ->
 	if math.abs(raySlope) < 0.01
 		return 0
-	-- 0 slope -->  we just say intersection time is 0, and sidestep this dimension
+	-- 0 slope --> we just say intersection time is 0, and sidestep this dimension
 	(intersectionPlane - rayStart) / raySlope
 
 
@@ -293,7 +293,7 @@ getBoundingBox2 = (partOrModel) ->
 		minVec = -maxVec
 
 
-	-- Adjust bounding box to reflect what the model or part author wants in  terms of justification
+	-- Adjust bounding box to reflect what the model or part author wants in terms of justification
 	justifyValue = partOrModel\FindFirstChild "Justification"
 	if justifyValue?
 		-- find the multiple of 4 that contains the model
@@ -482,12 +482,12 @@ findConfigAtMouseTarget = (Mouse, stampData) ->
 	mouseHitInTarget = targetCFrame\pointToObjectSpace mouseHitInWorld
 	targetVectorInWorld = Vector3.new 0, 0, 0
 	if Mouse
-		-- DON'T WANT THIS IN TERMS OF THE MODEL CFRAME!  (.TargetSurface is in terms of the part CFrame, so this would break, right?  [HotThoth])
-		--   (ideally, we would want to make the Mouse.TargetSurface a model-targetsurface instead, but for testing will be using the converse)
+		-- DON'T WANT THIS IN TERMS OF THE MODEL CFRAME! (.TargetSurface is in terms of the part CFrame, so this would break, right? [HotThoth])
+		-- (ideally, we would want to make the Mouse.TargetSurface a model-targetsurface instead, but for testing will be using the converse)
 		--targetVectorInWorld = targetCFrame\vectorToWorldSpace(Vector3.FromNormalId(Mouse.TargetSurface))
 		targetVectorInWorld = targetPart.CFrame\vectorToWorldSpace Vector3.FromNormalId Mouse.TargetSurface -- better, but model cframe would be best
 		--[[if targetPart.Parent\IsA("Model")
-			hitFace = modelTargetSurface(targetPart.Parent, Mouse.Hit.p, game.Workspace.CurrentCamera.CoordinateFrame.p)  -- best, if you get it right
+			hitFace = modelTargetSurface(targetPart.Parent, Mouse.Hit.p, game.Workspace.CurrentCamera.CoordinateFrame.p) -- best, if you get it right
 			WORLD_AXES = {Vector3.new(1, 0, 0), Vector3.new(0, 1, 0), Vector3.new(0, 0, 1)}
 			if hitFace > 0
 				targetVectorInWorld = targetCFrame\vectorToWorldSpace(WORLD_AXES[hitFace])
@@ -674,7 +674,7 @@ t.GetStampModel = (assetId, terrainShape, useAssetVersionId) ->
 		newTerrainPiece.BottomSurface = "Smooth"
 		newTerrainPiece.TopSurface = "Smooth"
 
-		-- can add decals or textures here if feeling particularly adventurous...  for now, can make a table of look-up colors
+		-- can add decals or textures here if feeling particularly adventurous... for now, can make a table of look-up colors
 		newTerrainPiece.BrickColor = getClosestColorToTerrainMaterial cellMat
 
 		sideways = 0
@@ -805,7 +805,7 @@ t.GetStampModel = (assetId, terrainShape, useAssetVersionId) ->
 
 t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, StampFailedFunc) ->
 	if not modelToStamp
-		error "SetupStamperDragger: modelToStamp (first arg) is nil!  Should be a stamper model"
+		error "SetupStamperDragger: modelToStamp (first arg) is nil! Should be a stamper model"
 		return nil
 
 	if not modelToStamp\IsA"Model" and not modelToStamp\IsA "BasePart"
@@ -813,7 +813,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		return nil
 
 	if not Mouse
-		error "SetupStamperDragger: Mouse (second arg) is nil!  Should be a mouse object"
+		error "SetupStamperDragger: Mouse (second arg) is nil! Should be a mouse object"
 		return nil
 
 	if not Mouse\IsA "Mouse"
@@ -922,8 +922,8 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 		if HighScalabilityLine.Dimensions == 1
 			-- extract the line from these positions and limit to a 2D plane made from 2 of the world axes
-			--   then use dominating axis to limit line to be at 45-degree intervals
-			--   will use this internal representation of the line for the actual stamping
+			-- 		 then use dominating axis to limit line to be at 45-degree intervals
+			-- 		 will use this internal representation of the line for the actual stamping
 			line = (HighScalabilityLine.End - HighScalabilityLine.Start)
 
 			if math.abs(line.X) < math.abs(line.Y)
@@ -1015,7 +1015,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 			if gui and gui\IsA "PlayerGui"
 				if (HighScalabilityLine.Dimensions == 1 and line.magnitude > 3) or
 					HighScalabilityLine.Dimensions > 1
-					
+
 					-- don't show if mouse hasn't moved enough
 					HighScalabilityLine.Adorn.Parent = gui
 
@@ -1143,7 +1143,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 			myModelInfo = stampData.CurrentParts\FindFirstChild "UnstampableFaces"
 
-			--if (modelInfo and modelInfo.Parent\FindFirstChild("UnstampableFaces")) or (modelInfo and myModelInfo) then  -- need better targetSurface calcs
+			--if (modelInfo and modelInfo.Parent\FindFirstChild"UnstampableFaces") or (modelInfo and myModelInfo) -- need better targetSurface calcs
 			if true
 				breakingFaces = ""
 				myBreakingFaces = ""
@@ -1417,7 +1417,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 					part and
 					part\IsA"BasePart" and
 					part.Transparency > gDesiredTrans
-				
+
 					newTrans = 1 - (((currTime - begTime) / transFadeInTime) * (gStaticTrans - gDesiredTrans))
 					if stampData["TransparencyTable"] and stampData.TransparencyTable[part]
 						part.Transparency = newTrans + (1 - newTrans) * stampData.TransparencyTable[part]
@@ -1454,8 +1454,8 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 
 		-- since we're cloning the old model instead of the new one, we will need to update the orientation based on the original value AND how many more
-		--  rotations we expect since then [either that or we need to store the just-stamped clusterMaterial.Value.Z somewhere].  This should fix the terrain rotation
-		--  issue (fingers crossed) [HotThoth]
+		-- 		rotations we expect since then [either that or we need to store the just-stamped clusterMaterial.Value.Z somewhere]. This should fix the terrain rotation
+		-- 		issue (fingers crossed) [HotThoth]
 
 		clusterMaterial = stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
 		if clusterMaterial and clusterMaterial\IsA"Vector3Value"
@@ -1527,7 +1527,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 					-----------------------------------------------------------------------------------
 
 
-		if not skipThisCell -- if we STILL aren't skipping...  then we're good to go!
+		if not skipThisCell -- if we STILL aren't skipping... then we're good to go!
 			canSetCell = true
 
 			if checkHighScalabilityStamp -- check to see if cell is in region, if not we'll skip set
@@ -1777,7 +1777,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 				HighScalabilityLine.Start and
 				HighScalabilityLine.InternalLine and
 				HighScalabilityLine.InternalLine.magnitude > 0
-				
+
 				-- we have an HSL line, test later
 				canStamp = true
 				checkHighScalabilityStamp = true
@@ -1811,9 +1811,9 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 		minBB, maxBB = getBoundingBoxInWorldCoordinates(stampData.CurrentParts)
 
-		-- HotThoth's note:  Now that above CurrentParts positioning has been commented out, to be truly correct, we would need to use the
-		--                     value of configFound from the previous onStamperMouseMove call which moved the CurrentParts
-		--                     Shouldn't this be true when lastTargetCFrame has been set and false otherwise?
+		-- HotThoth's note: Now that above CurrentParts positioning has been commented out, to be truly correct, we would need to use the
+		-- 		value of configFound from the previous onStamperMouseMove call which moved the CurrentParts
+		-- 		Shouldn't this be true when lastTargetCFrame has been set and false otherwise?
 		configFound, targetCFrame = findConfigAtMouseTarget(Mouse, stampData)
 
 		if configFound and not HighScalabilityLine.Adorn.Parent
@@ -1866,7 +1866,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 			return false
 
 
-		-- something will be stamped!  so set the "StampedSomething" toggle to true
+		-- something will be stamped! so set the "StampedSomething" toggle to true
 		if game\FindFirstChild "Players"
 			if game.Players["LocalPlayer"]
 				if game.Players.LocalPlayer["Character"]
@@ -1965,7 +1965,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 					-- kill the ghost part
 					stampData.CurrentParts.Parent = nil
 
-					-- Mark for undo.  It has to happen here or the selection display will come back also.
+					-- Mark for undo. It has to happen here or the selection display will come back also.
 					try
 						game\GetService"ChangeHistoryService"\SetWaypoint "StamperSingle"
 
@@ -1989,7 +1989,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		-- Post process: after positioning the part or model, restore transparency, material, anchored and collide states and create joints
 		if stampData.CurrentParts\IsA"Model" or stampData.CurrentParts\IsA "Tool"
 			if stampData.CurrentParts\IsA "Model"
-				-- Tyler's magical hack-code for allowing/preserving clones of both Surface and Manual Welds...  just don't ask X<
+				-- Tyler's magical hack-code for allowing/preserving clones of both Surface and Manual Welds... just don't ask X<
 				manualWeldTable = {}
 				manualWeldParentTable = {}
 				saveTheWelds(stampData.CurrentParts, manualWeldTable, manualWeldParentTable)
@@ -2134,8 +2134,8 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 			* Vector3.new 1, 0, 0
 			* Vector3.new 0, 1, 0
 			* Vector3.new 0, 0, 1
-		
-		-- maybe last one is negative?  TODO: check this!
+
+		-- maybe last one is negative? TODO: check this!
 		isPositive = 1
 		if whichSurface < 0
 			isPositive *= -1
@@ -2315,8 +2315,8 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 	control.ResetRotation = -> -- resets the model rotation so new models are at default orientation
 		-- gInitial90DegreeRotations = 0
-		-- Note:  This function will not always work quite the way we want it to; we will have to build this out further so it works with
-		--        High-Scalability and with the new model orientation setting methods (model\ResetOrientationToIdentity!)  [HotThoth]
+		-- Note: This function will not always work quite the way we want it to; we will have to build this out further so it works with
+		-- 		High-Scalability and with the new model orientation setting methods (model\ResetOrientationToIdentity!) [HotThoth]
 
 	control.Destroy = -> -- Stops current Stamp operation and destroys control construct
 		for i = 1, #mouseCons
@@ -2342,12 +2342,12 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 
 t.Help = (funcNameOrFunc) ->
-	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
+	--input argument can be a string or a function. Should return a description (of arguments and expected side effects)
 	switch funcNameOrFunc
 		when "GetStampModel", t.GetStampModel
-			"Function GetStampModel.  Arguments: assetId, useAssetVersionId.  assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId.  Side effect: returns a model of the assetId, or a string with error message if something fails"
+			"Function GetStampModel. Arguments: assetId, useAssetVersionId. assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId. Side effect: returns a model of the assetId, or a string with error message if something fails"
 
 		when "SetupStamperDragger", t.SetupStamperDragger
-			"Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4.  Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action."
+			"Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4. Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action."
 
 t

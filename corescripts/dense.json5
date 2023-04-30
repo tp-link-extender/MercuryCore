@@ -13,7 +13,7 @@
 		"filter_after_early_return",
 		{
 			rule: "rename_variables",
-  			globals: ["$default", "$roblox"],
+			globals: ["$default", "$roblox"],
 		}
 	]
 }

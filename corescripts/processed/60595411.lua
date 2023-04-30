@@ -142,9 +142,9 @@ else error('Bad entry ('..tostring(q)..' => '..tostring(r)..') in Create body',2
 Create=setmetatable({},{['__call']=function(l,...)return k(...)end})a.Create.E=
 function(l)return{__eventname=l}end a.Help=function(l)if'DecodeJSON'==l or a.
 DecodeJSON==l then return
-[[Function DecodeJSON.  Arguments: (string).  Side effect: returns a table with all parsed JSON values]]
+[[Function DecodeJSON. Arguments: (string). Side effect: returns a table with all parsed JSON values]]
 elseif'EncodeJSON'==l or a.EncodeJSON==l then return
-[[Function EncodeJSON.  Arguments: (table).  Side effect: returns a string composed of argument table in JSON data format]]
+[[Function EncodeJSON. Arguments: (table). Side effect: returns a string composed of argument table in JSON data format]]
 elseif'MakeWedge'==l or a.MakeWedge==l then return
 [[Function MakeWedge. Arguments: (x, y, z, [default material]). Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously was. Returns true if made a wedge, false if the cell remains a block ]]
 elseif'SelectTerrainRegion'==l or a.SelectTerrainRegion==l then return
