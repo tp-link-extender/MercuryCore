@@ -166,7 +166,7 @@
 
 	p
 		word-break: break-word
-		
+
 	.user
 		align-items: center 
 		.pfp img

@@ -452,7 +452,7 @@ setupCameraControl = (parentFrame, refreshCharacterMoveFunc) ->
 	startPinch = (firstTouch, secondTouch) ->
 		-- track pinching in new frame
 		pinchFrame?\Destroy!
- 		-- make sure we didn't track in any mud
+		-- make sure we didn't track in any mud
 		pinchFrame = New "Frame"
 			Name: "PinchFrame"
 			BackgroundTransparency: 1

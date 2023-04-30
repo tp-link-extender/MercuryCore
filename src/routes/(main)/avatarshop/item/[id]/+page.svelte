@@ -216,7 +216,7 @@
 <style lang="sass">
 	:target
 		display: block !important
-		
+
 	@media only screen and (min-width: 576px)
 		.container
 			width: 60rem
@@ -234,7 +234,7 @@
 			opacity: 1
 			height: 1.5rem
 			transform: none
-		
+
 	#notify
 		pointer-events: none
 

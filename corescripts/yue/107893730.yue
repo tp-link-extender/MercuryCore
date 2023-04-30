@@ -857,7 +857,7 @@ userPurchaseProductActionsEnded = (userIsClosingDialog) ->
 		setButtonsVisible purchaseDialog.BodyFrame.OkPurchasedButton
 		hidePurchasing!
 
--- all the gui init.  Would be nice if this didn't have to be a script
+-- all the gui init. Would be nice if this didn't have to be a script
 createPurchasePromptGui = ->
 	purchaseDialog = New "Frame", "PurchaseFrame"
 		Size: UDim2.new 0, 660, 0, 400

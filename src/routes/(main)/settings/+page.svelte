@@ -348,7 +348,7 @@
 	.nav-link
 		border-radius: 0
 		color: var(--light-text)
-	
+
 	.form-control
 		color: var(--light-text)
 

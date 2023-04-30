@@ -45,5 +45,4 @@
 		margin-left: 50vw
 	#left
 		margin-left: 0
-
 </style>
