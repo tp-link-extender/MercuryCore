@@ -112,7 +112,7 @@ export const actions = {
 				},
 			})
 
-			const session = await auth.createSession(user.userId)
+			const session = await auth.createSession(user.id)
 			locals.setSession(session)
 
 			await prisma.regkey.update({
@@ -139,5 +139,5 @@ export const actions = {
 		}
 
 		throw redirect(302, "/home")
-	},
+	}
 }

@@ -1,7 +1,3 @@
-<script lang="ts">
-	export let data
-</script>
-
 <svelte:head>
 	<title>Admin - Mercury</title>
 </svelte:head>
@@ -46,16 +42,14 @@
 		background-color: rgb(13, 109, 252)
 		border-color: var(--bs-nav-tabs-link-active-border-color)
 		border-radius: 0.375rem
-        
+
 	.nav-tabs .nav-link 
 		margin-bottom: calc(0 * var(--bs-nav-tabs-border-width))
 		background: 0 0
 		border: var(--bs-nav-tabs-border-width) solid transparent
 		border-radius: 0.375rem
-        
+
 	.nav-link
 		border-radius: 0
 		color: var(--light-text)
-
-
 </style>

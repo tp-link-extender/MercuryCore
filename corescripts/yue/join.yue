@@ -68,7 +68,7 @@ try
 try
 	game\SetCreatorID _CREATOR_ID, Enum.CreatorType.User
 
--- Bubble chat.  This is all-encapsulated to allow us to turn it off with a config setting
+-- Bubble chat. This is all-encapsulated to allow us to turn it off with a config setting
 try
 	game\GetService"Players"\SetChatStyle Enum.ChatStyle.ClassicAndBubble
 

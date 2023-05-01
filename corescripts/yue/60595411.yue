@@ -37,7 +37,7 @@ New = (className, name, props) ->
 
 --JSON Encoder and Parser for Lua 5.1
 --
---2007 Shaun Brown  (http://www.chipmunkav.com)
+--2007 Shaun Brown (http://www.chipmunkav.com)
 
 assert = assert
 Null = -> Null
@@ -527,7 +527,7 @@ t.SelectTerrainRegion = (regionToSelect, color, selectEmptyCells, selectionParen
 
 	-- helper function to update tag
 	incrementAliveCounter = ->
-		aliveCounter +=  1
+		aliveCounter += 1
 		if aliveCounter > 1000000
 			aliveCounter = 0
 
@@ -629,26 +629,26 @@ A 'Signal' object identical to the internal RBXScriptSignal object in it's publi
 can be used to create "custom events" for user-made code.
 API:
 Method \connect function handler
-	Arguments:   The function to connect to.
-	Returns:     A new connection object which can be used to disconnect the connection
+	Arguments: The function to connect to.
+	Returns: A new connection object which can be used to disconnect the connection
 	Description: Connects this signal to the function specified by |handler|. That is, when |fire ...| is called for
-	             the signal the |handler| will be called with the arguments given to |fire ...|. Note, the functions
-	             connected to a signal are called in NO PARTICULAR ORDER, so connecting one function after another does
-	             NOT mean that the first will be called before the second as a result of a call to |fire|.
+				the signal the |handler| will be called with the arguments given to |fire ...|. Note, the functions
+				connected to a signal are called in NO PARTICULAR ORDER, so connecting one function after another does
+				NOT mean that the first will be called before the second as a result of a call to |fire|.
 
 Method \disconnect!
-	Arguments:   None
-	Returns:     None
+	Arguments: None
+	Returns: None
 	Description: Disconnects all of the functions connected to this signal.
 
 Method \fire ...
-	Arguments:   Any arguments are accepted
-	Returns:     None
+	Arguments: Any arguments are accepted
+	Returns: None
 	Description: Calls all of the currently connected functions with the given arguments.
 
 Method \wait!
-	Arguments:   None
-	Returns:     The arguments given to fire
+	Arguments: None
+	Returns: The arguments given to fire
 	Description: This call blocks until
 ]]
 
@@ -721,81 +721,81 @@ which case it simply creates an object of the given type, or a table argument th
 in which case it mutates the object in varying ways depending on the nature of the aggregate data. These are the
 type of data and what operation each will perform:
 1) A string key mapping to some value:
-      Key-Value pairs in this form will be treated as properties of the object, and will be assigned in NO PARTICULAR
-      ORDER. If the order in which properties is assigned matter, then they must be assigned somewhere else than the
-      |Create| call's body.
+	Key-Value pairs in this form will be treated as properties of the object, and will be assigned in NO PARTICULAR
+	ORDER. If the order in which properties is assigned matter, then they must be assigned somewhere else than the
+	|Create| call's body.
 
 2) An integral key mapping to another Instance:
-      Normal numeric keys mapping to Instances will be treated as children if the object being created, and will be
-      parented to it. This allows nice recursive calls to Create to create a whole hierarchy of objects without a
-      need for temporary variables to store references to those objects.
+	Normal numeric keys mapping to Instances will be treated as children if the object being created, and will be
+	parented to it. This allows nice recursive calls to Create to create a whole hierarchy of objects without a
+	need for temporary variables to store references to those objects.
 
 3) A key which is a value returned from Create.Event( eventname ), and a value which is a function function
-      The Create.E( string ) function provides a limited way to connect to signals inside of a Create hierarchy
-      for those who really want such a functionality. The name of the event whose name is passed to
-      Create.E( string )
+	The Create.E( string ) function provides a limited way to connect to signals inside of a Create hierarchy
+	for those who really want such a functionality. The name of the event whose name is passed to
+	Create.E( string )
 
 4) A key which is the Create function itself, and a value which is a function
-      The function will be run with the argument of the object itself after all other initialization of the object is
-      done by create. This provides a way to do arbitrary things involving the object from withing the create
-      hierarchy.
-      Note: This function is called SYNCHRONOUSLY, that means that you should only so initialization in
-      it, not stuff which requires waiting, as the Create call will block until it returns. While waiting in the
-      constructor callback function is possible, it is probably not a good design choice.
-      Note: Since the constructor function is called after all other initialization, a Create block cannot have two
-      constructor functions, as it would not be possible to call both of them last, also, this would be unnecessary.
+	The function will be run with the argument of the object itself after all other initialization of the object is
+	done by create. This provides a way to do arbitrary things involving the object from withing the create
+	hierarchy.
+	Note: This function is called SYNCHRONOUSLY, that means that you should only so initialization in
+	it, not stuff which requires waiting, as the Create call will block until it returns. While waiting in the
+	constructor callback function is possible, it is probably not a good design choice.
+	Note: Since the constructor function is called after all other initialization, a Create block cannot have two
+	constructor functions, as it would not be possible to call both of them last, also, this would be unnecessary.
 
 
 Some example usages:
 
 A simple example which uses the Create function to create a model object and assign two of it's properties.
 model = Create'Model'{
-    Name = 'A New model',
-    Parent = game.Workspace,
+	Name = 'A New model',
+	Parent = game.Workspace,
 }
 
 
 An example where a larger hierarchy of object is made. After the call the hierarchy will look like this:
 Model_Container
- |-ObjectValue
- |  |
- |  `-BoolValueChild
- `-IntValue
+	|-ObjectValue
+	| |
+	| `-BoolValueChild
+	`-IntValue
 
 model = Create'Model'{
-    Name = 'Model_Container',
-    Create'ObjectValue'{
-        Create'BoolValue'{
-            Name = 'BoolValueChild',
-        },
-    },
-    Create'IntValue'{},
+	Name = 'Model_Container',
+	Create'ObjectValue'{
+		Create'BoolValue'{
+			Name = 'BoolValueChild',
+		},
+	},
+	Create'IntValue'{},
 }
 
 
 An example using the event syntax:
 
 part = Create'Part'{
-    [Create.E'Touched'] = function part
-        print("I was touched by "..part.Name)
-    end,
+	[Create.E'Touched'] = function part
+		print("I was touched by "..part.Name)
+	end,
 }
 
 
 An example using the general constructor syntax:
 
 model = Create'Part'{
-    [Create] = function this
-        print("Constructor running!")
-        this.Name = GetGlobalFoosAndBars this
-    end,
+	[Create] = function this
+		print("Constructor running!")
+		this.Name = GetGlobalFoosAndBars this
+	end,
 }
 
 
 Note: It is also perfectly legal to save a reference to the function returned by a call Create, this will not cause
-      any unexpected behavior. EG:
-      partCreatingFunction = Create'Part'
-      part = partCreatingFunction()
+	any unexpected behavior. EG:
+	partCreatingFunction = Create'Part'
+	part = partCreatingFunction()
 ]]
 
 --the Create function need to be created as a functor, not a function, in order to support the Create.E syntax, so it
@@ -886,15 +886,15 @@ t.Create.E = (eventName) -> __eventname: eventName
 
 t.Help = (funcNameOrFunc) ->
 	switch funcNameOrFunc
-		--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
+		--input argument can be a string or a function. Should return a description (of arguments and expected side effects)
 		when "DecodeJSON", t.DecodeJSON
-			"Function DecodeJSON.  " ..
-			"Arguments: (string).  " ..
+			"Function DecodeJSON. " ..
+			"Arguments: (string). " ..
 			"Side effect: returns a table with all parsed JSON values"
 
 		when "EncodeJSON", t.EncodeJSON
-			"Function EncodeJSON.  " ..
-			"Arguments: (table).  " ..
+			"Function EncodeJSON. " ..
+			"Arguments: (table). " ..
 			"Side effect: returns a string composed of argument table in JSON data format"
 
 		when "MakeWedge", t.MakeWedge

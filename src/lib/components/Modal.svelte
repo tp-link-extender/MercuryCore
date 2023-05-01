@@ -29,7 +29,7 @@
 <style lang="sass">
 	#fade
 		opacity: 0.5
-	
+
 	.modal-content
 		background: var(--background)
 		--bs-modal-border-color: var(--accent2)

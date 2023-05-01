@@ -51,7 +51,7 @@ export const load = async ({ url }) => {
 							privateServer: false,
 						},
 						select: {
-							GameSessions: {
+							gameSessions: {
 								where: {
 									ping: {
 										gt: Math.floor(Date.now() / 1000) - 35,

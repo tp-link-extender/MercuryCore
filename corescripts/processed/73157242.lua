@@ -156,11 +156,11 @@ FindFirstChild'ClusterMaterial'if E then if E:IsA'Vector3Value'then aj=ai(E.
 Value.X,ae,E.Value.Z)else aj=ai(E.Value,ae,0)end else aj=ai(1,ae,0)end end end
 end return aj end a.SetupStamperDragger=function(ad,ae,af,ag,ah)if not ad then
 error
-[[SetupStamperDragger: modelToStamp (first arg) is nil!  Should be a stamper model]]
+[[SetupStamperDragger: modelToStamp (first arg) is nil! Should be a stamper model]]
 return nil end if not ad:IsA'Model'and not ad:IsA'BasePart'then error
 [[SetupStamperDragger: modelToStamp (first arg) is neither a Model or Part!]]
 return nil end if not ae then error
-[[SetupStamperDragger: Mouse (second arg) is nil!  Should be a mouse object]]
+[[SetupStamperDragger: Mouse (second arg) is nil! Should be a mouse object]]
 return nil end if not ae:IsA'Mouse'then error
 [[SetupStamperDragger: Mouse (second arg) is not of type Mouse!]]return nil end
 local ai,aj,w if af then if not af:IsA'Model'then error
@@ -474,7 +474,7 @@ if aB~=nil then aB:Destroy()end end end if y~=nil then do local aB=y.
 CurrentParts if aB~=nil then aB:Destroy()end end end if E and E['Stamped']then E
 .Stamped:Destroy()end E=nil end return E end a.Help=function(ad)if
 'GetStampModel'==ad or a.GetStampModel==ad then return
-[[Function GetStampModel.  Arguments: assetId, useAssetVersionId.  assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId.  Side effect: returns a model of the assetId, or a string with error message if something fails]]
+[[Function GetStampModel. Arguments: assetId, useAssetVersionId. assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId. Side effect: returns a model of the assetId, or a string with error message if something fails]]
 elseif'SetupStamperDragger'==ad or a.SetupStamperDragger==ad then return
-[[Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4.  Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action.]]
+[[Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4. Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action.]]
 end end return a

@@ -41,7 +41,7 @@ local currentConversationDialog
 local currentConversationPartner
 local currentAbortDialogScript
 
-tooFarAwayMessage =  "You are too far away to chat!"
+tooFarAwayMessage = "You are too far away to chat!"
 tooFarAwaySize = 300
 characterWanderedOffMessage = "Chat ended because you walked away"
 characterWanderedOffSize = 350

@@ -15,7 +15,7 @@
 		["Updated", data.updated.toLocaleDateString()],
 		["Genre", "Horror"],
 		["Server Limit", data.maxPlayers],
-		["Now Playing", data.GameSessions.length],
+		["Now Playing", data.gameSessions.length],
 	]
 
 	const images = [
@@ -61,7 +61,7 @@
 			method: "POST",
 			body: formdata,
 		})
-		const joinScriptData = deserialize(await response.text())
+		const joinScriptData: any = deserialize(await response.text())
 
 		if (joinScriptData.status == 200) {
 			launch(
@@ -458,7 +458,7 @@
 					<div class="row">
 						<div class="col col-2">
 							<p class="light-text mb-2">
-								Currently Playing: {data.GameSessions
+								Currently Playing: {data.gameSessions
 									.length}/{data.maxPlayers}
 							</p>
 							<button
@@ -469,7 +469,7 @@
 							</button>
 						</div>
 						<div class="col">
-							{#each data.GameSessions as { user }}
+							{#each data.gameSessions as { user }}
 								<a
 									href="/user/{user.number}"
 									class="text-decoration-none">
@@ -546,7 +546,7 @@
 <style lang="sass">
 	:target
 		display: block !important
-		
+
 	@media only screen and (min-width: 576px)
 		.container
 			width: 60rem
@@ -562,7 +562,7 @@
 	#settings
 		position: absolute
 		margin: 3px 0px 0px -10px
-	
+
 	.dropdown-menu
 		border-color: var(--accent2)
 		z-index: 5
@@ -574,7 +574,7 @@
 		img
 			box-sizing: border-box
 			position: absolute
-	
+
 	#outer
 		transform: rotate(0)
 		animation: moon 1.5s 0s infinite linear

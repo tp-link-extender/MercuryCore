@@ -6,8 +6,6 @@
 	// Gradient must run upon page being loaded,
 	// and cannot be rendered on serverside.
 	onMount(() => new Gradient().initGradient("#gradient-canvas"))
-
-	const images = ["tools", "gears", "gear", "wrench", "hammer", "screwdriver"]
 </script>
 
 <svelte:head>
@@ -29,16 +27,16 @@
 		<Moon
 			item={{
 				name: "wrench",
-				camPos: { x: 100, y: 20, z: 100 },
+				camPos: [100, 20, 100],
 			}} />
 	</div>
 	<h1 id="title" class="fw-bolder text-white opacity-75">Mercury 2</h1>
 	<p class="h4 text-white opacity-75 text-center">
 		is currently undergoing maintenance. Check back later!
 	</p>
-	<button class="btn btn-link text-decoration-none pt-3 fs-5 fw-bold">
+	<a href="https://status.banland.xyz" class="text-decoration-none pt-3 fs-5 fw-bold accent-text">
 		Status <i class="fa fa-chevron-right" />
-	</button>
+	</a>
 </div>
 
 <style lang="sass">
@@ -49,7 +47,7 @@
 		z-index: 3
 		height: 60vh
 		padding-top: 40vh
-	
+
 	#moon
 		margin-bottom: min(15rem, 40vh)
 

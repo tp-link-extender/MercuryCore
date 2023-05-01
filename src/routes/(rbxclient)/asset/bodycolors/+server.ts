@@ -35,6 +35,5 @@ export async function GET({ url, setHeaders }) {
 			<bool name="archivable">true</bool>
 		</Properties>
 	</Item>
-</roblox>
-    `)
+</roblox>`)
 }

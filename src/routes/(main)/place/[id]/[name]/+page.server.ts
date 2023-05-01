@@ -19,6 +19,7 @@ export async function load({ url, locals, params }) {
 			name: true,
 			serverPing: true,
 			serverTicket: true,
+			privateServer: true,
 			privateTicket: true,
 			created: true,
 			updated: true,
@@ -39,7 +40,7 @@ export async function load({ url, locals, params }) {
 				},
 				take: 1,
 			},
-			GameSessions: {
+			gameSessions: {
 				where: {
 					ping: {
 						gt: Math.floor(Date.now() / 1000) - 35,

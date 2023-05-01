@@ -14,6 +14,8 @@
 
 	export let data
 	const user = data.user
+
+	const places = data.places as typeof data.places & { gameSessions: any[] }[]
 </script>
 
 <svelte:head>
@@ -143,13 +145,13 @@
 			{/if}
 		</div>
 		<div class="col-6">
-			{#if data.places.length > 0}
+			{#if places.length > 0}
 				<div class="mt-4">
 					<h2 class="h4 light-text">Creations</h2>
 					<div class="accordion" id="accordion">
-						{#each data.places as place, num}
+						{#each places as place, num}
 							<div
-								in:fade={{ num, total: data.places.length }}
+								in:fade={{ num, total: places.length }}
 								class="accordion-item rounded-2 my-2">
 								<div
 									class="accordion-header rounded-2"
@@ -205,7 +207,7 @@
 																<i
 																	class="fa fa-user opacity-75" />
 																{place
-																	.GameSessions
+																	.gameSessions
 																	.length}
 															</span>
 														</div>
@@ -271,7 +273,7 @@
 			<h2 class="h4 mt-5 light-text">Latest feed posts</h2>
 			<div id="feed" class="light-text p-3">
 				<div class="row">
-					{#each data.posts.sort((a, b) => b.posted - a.posted) as status, num}
+					{#each data.posts.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
 							class="p-2 col-md-6 col-sm-12">
@@ -334,7 +336,6 @@
 				left: 0
 				width: 100%
 				height: 100%
-
 
 	.accordion
 		border: none

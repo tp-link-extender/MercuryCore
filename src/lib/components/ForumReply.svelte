@@ -239,7 +239,7 @@
 <style lang="sass">
 	#collapse, #collapse2
 		transition: all 0.2s ease-out
-	
+
 	#collapse
 		width: auto
 		border-left: 9px solid var(--background) !important
@@ -271,7 +271,7 @@
 
 	p
 		word-break: break-word
-		
+
 	#userlink
 		margin-top: 1px
 

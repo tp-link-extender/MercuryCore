@@ -79,7 +79,7 @@
 			div:nth-of-type(2)
 				animation: 11s cubic-bezier(0.4, 0.2, 0.2, 0.2) -0.124s infinite normal none running waves, 11s ease -1.24s infinite normal none running swell
 				top: -174px
-	
+
 	#info
 		z-index: 3
 		height: 60vh
@@ -89,7 +89,7 @@
 
 		#title
 			font-size: 4rem
-	
+
 	#moon
 		margin-bottom: min(22rem, 60vh)
 

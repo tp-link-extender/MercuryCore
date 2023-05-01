@@ -28,7 +28,7 @@
 		flex: 1 0 auto
 		@media only screen and (max-width: 991px)
 			padding-top: 1vh
-		
+
 	#all
 		display: flex
 		flex-direction: column
