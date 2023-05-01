@@ -1,24 +1,35 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { page } from "$app/stores"
+	import { superForm } from "sveltekit-superforms/client"
 	import fade from "$lib/fade"
 
-	export let form
 	export let data
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+
+	export const snapshot = { capture, restore }
 
 	let copiedSuccess = false
-	let copiedSuccessMsg: any
 
-	function copyPrivateLink() {
-		copiedSuccess = false
+	if (data.name) $form.title = data.name
+	if (data.description[0]) $form.description = data.description[0].text
 
-		navigator.clipboard.writeText(
-			`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`
-		)
+	if (data.serverIP) $form.serverIP = data.serverIP
+	if (data.serverPort) $form.serverPort = data.serverPort
+	if (data.maxPlayers) $form.maxPlayers = data.maxPlayers
 
-		copiedSuccess = true
+	if (data.privateServer) $form.privateServer = data.privateServer
 
-		setTimeout(() => (copiedSuccess = false), 4000)
-	}
 </script>
 
 <svelte:head>
@@ -98,47 +109,46 @@
 								id="title"
 								required
 								name="title"
-								value={form?.title || data.name}
-								class="form-control {form?.area == 'title'
-									? 'is-invalid'
-									: 'valid'}" />
-							{#if form?.area == "title"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
+								bind:value={$form.title}
+								class="form-control {$errors.title
+									? 'is-in'
+									: ''}valid" />
+							<p class="col-12 mb-3 text-danger">
+								{$errors.title || ""}
+							</p>
 						</div>
 					</div>
 					<hr class="grey-text" />
 					<div class="row">
-						<label for="desc" class="form-label light-text">
+						<label for="description" class="form-label light-text">
 							Description
 						</label>
 						<div class="container">
 							<textarea
 								required
-								class="form-control light-text mb-1 bg-a {form?.area ==
-								'desc'
-									? 'is-invalid'
-									: 'valid'}"
 								placeholder="Maximum 1000 characters"
-								id="desc"
-								name="desc"
+								id="description"
+								name="description"
 								rows={3}
-								value={form?.description?.toString() ||
-									data.description[0]?.text ||
-									""} />
+								bind:value={$form.description}
+								class="form-control light-text mb-1 bg-a {$errors.description
+									? 'is-in'
+									: ''}valid" />
 						</div>
 					</div>
 				</fieldset>
 				<button type="submit" class="btn btn-success mt-4">
-					Save Changes
+					{#if $delayed}
+						Working...
+					{:else}
+						Save changes
+					{/if}
 				</button>
-				{#if form?.viewsuccess}
-					<p class="text-success mt-3">
-						Game view changed successfully!
-					</p>
-				{/if}
+				<p
+					class:text-success={$page.status == 200}
+					class:text-danger={$page.status >= 400}>
+					{$message || ""}
+				</p>
 			</form>
 		</div>
 
@@ -165,25 +175,14 @@
 							<input
 								id="ticket"
 								required
-								value={form?.serverTicket || data.serverTicket}
+								value={data.serverTicket}
 								class="form-control valid"
 								disabled />
-							{#if form?.area == "ticket"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
 							<button class="btn btn-primary" type="submit">
 								<i class="fas fa-rotate" />
 								Regenerate
 							</button>
 						</div>
-						{#if form?.ticketregensuccess}
-							<small in:fade class="text-success">
-								Successfully regenerated server ticket
-							</small>
-							<br />
-						{/if}
 						<small class="grey-text">
 							The server ticket is required to host servers on
 							Mercury. You can regenerate the ticket at any time.
@@ -196,49 +195,44 @@
 				<fieldset>
 					<div class="row mb-2">
 						<label
-							for="address"
+							for="serverIP"
 							class="col-md-3 col-form-label text-md-right">
 							Address
 						</label>
 						<div class="col-md-9">
 							<input
-								id="address"
+								bind:value={$form.serverIP}
+								{...$constraints.serverIP}
+								id="serverIP"
 								required
-								name="address"
-								value={form?.serverIP || data.serverIP}
-								class="form-control {form?.area == 'address'
-									? 'is-invalid'
-									: 'valid'}" />
-							{#if form?.area == "address"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
+								name="serverIP"
+								class="form-control {$errors.serverIP
+									? 'is-in'
+									: ''}valid" />
+							<p class="col-12 mb-3 text-danger">
+								{$errors.serverIP || ""}
+							</p>
 						</div>
 					</div>
 					<div class="row mb-2">
 						<label
-							for="port"
+							for="serverPort"
 							class="col-md-3 col-form-label text-md-right">
 							Port
 						</label>
 						<div class="col-md-9">
 							<input
-								id="port"
+								bind:value={$form.serverPort}
+								{...$constraints.serverPort}
 								type="number"
-								min="1024"
-								max="65535"
 								required
-								name="port"
-								value={form?.serverPort || data.serverPort}
-								class="form-control {form?.area == 'port'
-									? 'is-invalid'
-									: 'valid'}" />
-							{#if form?.area == "port"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
+								name="serverPort"
+								class="form-control {$errors.serverPort
+									? 'is-in'
+									: ''}valid" />
+							<p class="col-12 mb-3 text-danger">
+								{$errors.serverPort || ""}
+							</p>
 							<small class="grey-text">
 								Using a port number lower than 49152 may not
 								work correctly.
@@ -247,39 +241,40 @@
 					</div>
 					<div class="row mb-2">
 						<label
-							for="serverLimit"
+							for="maxPlayers"
 							class="col-md-3 col-form-label text-md-right">
 							Server Limit
 						</label>
 						<div class="col-md-9">
 							<input
-								id="serverLimit"
+								bind:value={$form.maxPlayers}
+								{...$constraints.maxPlayers}
+								id="maxPlayers"
 								type="number"
-								min="1"
-								max="100"
 								required
-								name="serverLimit"
-								value={form?.maxPlayers || data.maxPlayers}
-								class="form-control {form?.area == 'maxPlayers'
-									? 'is-invalid'
-									: 'valid'}" />
-							{#if form?.area == "maxPlayers"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
+								name="maxPlayers"
+								class="form-control {$errors.maxPlayers
+									? 'is-in'
+									: ''}valid" />
+							<p class="col-12 mb-3 text-danger">
+								{$errors.maxPlayers || ""}
+							</p>
 						</div>
 					</div>
 					<hr class="grey-text" />
 				</fieldset>
 				<button type="submit" class="btn btn-success mt-2 mb-2">
-					Save Changes
+					{#if $delayed}
+						Working...
+					{:else}
+						Save changes
+					{/if}
 				</button>
-				{#if form?.networksuccess}
-					<p class="text-success mt-3">
-						Network settings changed successfully!
-					</p>
-				{/if}
+				<p
+					class:text-success={$page.status == 200}
+					class:text-danger={$page.status >= 400}>
+					{$message || ""}
+				</p>
 			</form>
 		</div>
 
@@ -309,13 +304,19 @@
 								value={`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`}
 								class="form-control valid"
 								disabled />
-							{#if form?.area == "privacy"}
-								<small class="col-12 mb-3 text-danger">
-									{form?.msg}
-								</small>
-							{/if}
 							<button
-								on:click={copyPrivateLink}
+								on:click={() => {
+									navigator.clipboard.writeText(
+										`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`
+									)
+
+									copiedSuccess = true
+
+									setTimeout(
+										() => (copiedSuccess = false),
+										4000
+									)
+								}}
 								class="btn btn-info"
 								type="button"
 								id="button-addon2">
@@ -329,17 +330,10 @@
 								Regen
 							</button>
 						</div>
-						{#if form?.privateregensuccess}
-							<small in:fade class="text-success">
-								Successfully regenerated private link
-							</small>
-							<br />
-						{/if}
 						{#if copiedSuccess}
 							<small
 								id="copiedSuccess"
 								in:fade
-								bind:this={copiedSuccessMsg}
 								class="text-warning">
 								Successfully copied link to clipboard
 							</small>
@@ -365,23 +359,25 @@
 						</label>
 						<div class="col-md-9">
 							<input
+								bind:checked={$form.privateServer}
 								class="form-check-input"
-								name="privacy"
+								name="privateServer"
 								type="checkbox"
-								id="privacy"
-								checked={!!(
-									form?.privateServer || data.privateServer
-								)} />
+								id="privateServer" />
 						</div>
 					</div>
 					<button type="submit" class="btn btn-success mt-4">
-						Save Changes
+						{#if $delayed}
+							Working...
+						{:else}
+							Save changes
+						{/if}
 					</button>
-					{#if form?.privatesuccess}
-						<p class="text-success mt-3">
-							Game privacy changed successfully!
-						</p>
-					{/if}
+					<p
+						class:text-success={$page.status == 200}
+						class:text-danger={$page.status >= 400}>
+						{$message || ""}
+					</p>
 				</fieldset>
 			</form>
 		</div>
