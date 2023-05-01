@@ -22,7 +22,7 @@
 	export const snapshot = { capture, restore }
 
 	if (data.theme) $form.theme = data.theme as typeof $form.theme
-	if (data.bio) $form.bio = data.bio[0].text
+	if (data.bio?.[0]) $form.bio = data.bio[0].text
 </script>
 
 <svelte:head>

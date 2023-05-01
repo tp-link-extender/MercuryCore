@@ -62,7 +62,7 @@ export async function load({ locals }) {
 				name: true,
 				image: true,
 				id: true,
-				GameSessions: {
+				gameSessions: {
 					where: {
 						ping: {
 							gt: Math.floor(Date.now() / 1000) - 35,

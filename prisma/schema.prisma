@@ -73,7 +73,7 @@ model AuthUser {
 
     theme             String?
     animationSettings String?
-    GameSessions      GameSessions[]
+    gameSessions      GameSessions[]
     Announcements     Announcements[]
     forumPosts        ForumPost[]
     forumReplies      ForumReply[]
@@ -176,7 +176,7 @@ model Place {
     created      DateTime       @default(now())
     updated      DateTime       @default(now())
     deleted      Boolean        @default(false)
-    GameSessions GameSessions[]
+    gameSessions GameSessions[]
 }
 
 // Items

@@ -172,9 +172,6 @@
 </Parallax>
 
 <style lang="sass">
-	:global(:root)
-		scroll-snap-type: y proximity
-
 	#info
 		height: 70vh
 

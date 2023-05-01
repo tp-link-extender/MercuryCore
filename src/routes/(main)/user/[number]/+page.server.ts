@@ -54,6 +54,7 @@ export async function load({ locals, params }) {
 		}
 
 		console.timeEnd("user")
+
 		return {
 			...userExists,
 			places: findPlaces({
@@ -65,7 +66,7 @@ export async function load({ locals, params }) {
 					id: true,
 					name: true,
 					image: true,
-					GameSessions: {
+					gameSessions: {
 						where: {
 							ping: {
 								gt: Math.floor(Date.now() / 1000) - 35,
