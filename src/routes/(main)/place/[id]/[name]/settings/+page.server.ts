@@ -8,7 +8,6 @@ import { v4 as uuid } from "uuid"
 import { z } from "zod"
 
 const schema = z.object({
-	action: z.enum(["view", "ticket", "network", "privacy", "privatelink"]),
 	title: z.string().max(100).optional(),
 	description: z.string().max(1000).optional(),
 	serverIP: z
@@ -61,7 +60,7 @@ export async function load({ locals, params }) {
 }
 
 export const actions = {
-	default: async ({ request, locals, params }) => {
+	default: async ({ request, locals, params, url }) => {
 		if (!/^\d+$/.test(params.id || ""))
 			throw error(400, `Invalid game id: ${params.id}`)
 		const id = parseInt(params.id || "")
@@ -88,15 +87,22 @@ export const actions = {
 		if (user.id != getPlace?.ownerUser?.id && user.permissionLevel < 4)
 			throw error(403, "You do not have permission to update this page.")
 
-		const form = await superValidate(request, schema)
-		if (!form.valid) return formError(form)
-
-		const { action } = form.data
+		const action = url.searchParams.get("a")
 
 		console.log("Action:", action)
 
+		let form
 		switch (action) {
 			case "view":
+				form = await superValidate(
+					request,
+					z.object({
+						title: z.string().max(100),
+						description: z.string().max(1000),
+					})
+				)
+				if (!form.valid) return formError(form)
+
 				const { title, description } = form.data
 
 				await prisma.place.update({
@@ -125,9 +131,27 @@ export const actions = {
 					},
 				})
 
-				return message(form, "Successfully regenerated server ticket")
+				return message(
+					await superValidate(request, schema),
+					"Successfully regenerated server ticket"
+				)
 
 			case "network":
+				form = await superValidate(
+					request,
+					z.object({
+						serverIP: z
+							.string()
+							.max(100)
+							.regex(
+								/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+							),
+						serverPort: z.number().int().min(1024).max(65535),
+						maxPlayers: z.number().int().min(1).max(100),
+					})
+				)
+				if (!form.valid) return formError(form)
+
 				const { serverIP, serverPort, maxPlayers } = form.data
 
 				await prisma.place.update({
@@ -144,6 +168,14 @@ export const actions = {
 				return message(form, "Network settings updated successfully!")
 
 			case "privacy":
+				form = await superValidate(
+					request,
+					z.object({
+						privateServer: z.boolean(),
+					})
+				)
+				if (!form.valid) return formError(form)
+
 				const { privateServer } = form.data
 
 				await prisma.place.update({
@@ -170,7 +202,10 @@ export const actions = {
 					},
 				})
 
-				return message(form, "Successfully regenerated private link")
+				return message(
+					await superValidate(request, schema),
+					"Successfully regenerated private link"
+				)
 		}
 	},
 }
