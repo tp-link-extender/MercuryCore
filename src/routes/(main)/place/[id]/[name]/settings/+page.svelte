@@ -29,7 +29,6 @@
 	if (data.maxPlayers) $form.maxPlayers = data.maxPlayers
 
 	if (data.privateServer) $form.privateServer = data.privateServer
-
 </script>
 
 <svelte:head>
@@ -95,8 +94,7 @@
 			<p class="mb-0 grey-text mb-4">
 				Change the title and description of your server.
 			</p>
-			<form class="col-lg-8" method="POST" use:enhance>
-				<input type="hidden" name="action" value="view" />
+			<form use:enhance class="col-lg-8" method="POST" action="?a=view">
 				<fieldset>
 					<div class="row mb-2">
 						<label
@@ -106,10 +104,11 @@
 						</label>
 						<div class="col-md-9">
 							<input
+								bind:value={$form.title}
+								{...$constraints.title}
 								id="title"
 								required
 								name="title"
-								bind:value={$form.title}
 								class="form-control {$errors.title
 									? 'is-in'
 									: ''}valid" />
@@ -125,12 +124,13 @@
 						</label>
 						<div class="container">
 							<textarea
+								bind:value={$form.description}
+								{...$constraints.description}
 								required
 								placeholder="Maximum 1000 characters"
 								id="description"
 								name="description"
 								rows={3}
-								bind:value={$form.description}
 								class="form-control light-text mb-1 bg-a {$errors.description
 									? 'is-in'
 									: ''}valid" />
@@ -162,8 +162,7 @@
 			<p class="mb-0 grey-text mb-4">
 				Change the network configurations of your server.
 			</p>
-			<form method="POST" class="col-lg-8" use:enhance>
-				<input type="hidden" name="action" value="ticket" />
+			<form use:enhance method="POST" class="col-lg-8" action="?a=ticket">
 				<fieldset class="row mb-2">
 					<label
 						for="ticket"
@@ -190,8 +189,11 @@
 					</div>
 				</fieldset>
 			</form>
-			<form class="col-lg-8" method="POST" use:enhance>
-				<input type="hidden" name="action" value="network" />
+			<form
+				use:enhance
+				class="col-lg-8"
+				method="POST"
+				action="?a=network">
 				<fieldset>
 					<div class="row mb-2">
 						<label
@@ -289,8 +291,11 @@
 				Enable private server to make your game only accessible to those
 				with the link.
 			</p>
-			<form class="col-lg-8" method="POST" use:enhance>
-				<input type="hidden" name="action" value="privatelink" />
+			<form
+				use:enhance
+				class="col-lg-8"
+				method="POST"
+				action="?a=privatelink">
 				<fieldset class="row mb-2">
 					<label
 						for="privateLink"
@@ -348,8 +353,11 @@
 					</div>
 				</fieldset>
 			</form>
-			<form class="col-lg-8" method="POST" use:enhance>
-				<input type="hidden" name="action" value="privacy" />
+			<form
+				use:enhance
+				class="col-lg-8"
+				method="POST"
+				action="?a=privacy">
 				<fieldset>
 					<div class="row mb-2">
 						<label
@@ -405,4 +413,7 @@
 	input[type="checkbox"]
 		height: 1.5rem
 		width: 1.5rem
+
+	input[type="number"]
+		width: 10rem
 </style>
