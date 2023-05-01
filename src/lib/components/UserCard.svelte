@@ -44,7 +44,7 @@
 		p
 			width: fit-content
 			word-break: break-all
-		
+
 		.badge
 			padding: 0.75rem
 		.image-background

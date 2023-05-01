@@ -6,7 +6,7 @@ import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({
-	dailyStipend: z.number().positive().max(100),
+	dailyStipend: z.number().int().positive().max(100),
 	stipendTime: z.number().min(1),
 })
 

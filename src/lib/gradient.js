@@ -28,7 +28,7 @@ class MiniGl {
 	constructor(canvas, width, height, debug = false) {
 		const _miniGl = this,
 			debug_output =
-				-1 !==
+				-1 !=
 				document.location.search.toLowerCase().indexOf("debug=webgl")
 		;(_miniGl.canvas = canvas),
 			(_miniGl.gl = _miniGl.canvas.getContext("webgl", {
@@ -96,22 +96,21 @@ class MiniGl {
 							;(material.uniforms = uniforms),
 								(material.uniformInstances = [])
 
-							const prefix =
-								"\n              precision highp float;\n            "
-							;(material.vertexSource = `\n              ${prefix}\n              attribute vec4 position;\n              attribute vec2 uv;\n              attribute vec2 uvNorm;\n              ${getUniformVariableDeclarations(
+							const prefix = "precision highp float;"
+							;(material.vertexSource = `${prefix}attribute vec4 position;attribute vec2 uv;attribute vec2 uvNorm;${getUniformVariableDeclarations(
 								_miniGl.commonUniforms,
 								"vertex"
-							)}\n              ${getUniformVariableDeclarations(
+							)}${getUniformVariableDeclarations(
 								uniforms,
 								"vertex"
-							)}\n              ${vertexShaders}\n            `),
-								(material.Source = `\n              ${prefix}\n              ${getUniformVariableDeclarations(
+							)}${vertexShaders}`),
+								(material.Source = `${prefix}${getUniformVariableDeclarations(
 									_miniGl.commonUniforms,
-									"fragment"
-								)}\n              ${getUniformVariableDeclarations(
+									"f"
+								)}${getUniformVariableDeclarations(
 									uniforms,
-									"fragment"
-								)}\n              ${fragments}\n            `),
+									"f"
+								)}${fragments}`),
 								(material.vertexShader = getShaderByType(
 									context.VERTEX_SHADER,
 									material.vertexSource
@@ -151,9 +150,9 @@ class MiniGl {
 						}
 						// t = uniform
 						attachUniforms(name, uniforms) {
-							// n  = material
+							// n = material
 							const material = this
-							void 0 === name
+							void 0 == name
 								? Object.entries(uniforms).forEach(
 										([name, uniform]) => {
 											material.attachUniforms(
@@ -208,13 +207,13 @@ class MiniGl {
 								this.update()
 						}
 						update(value) {
-							void 0 !== this.value &&
+							void 0 != this.value &&
 								context[`uniform${this.typeFn}`](
 									value,
-									0 === this.typeFn.indexOf("Matrix")
+									0 == this.typeFn.indexOf("Matrix")
 										? this.transpose
 										: this.value,
-									0 === this.typeFn.indexOf("Matrix")
+									0 == this.typeFn.indexOf("Matrix")
 										? this.value
 										: null
 								)
@@ -224,17 +223,17 @@ class MiniGl {
 						// n - length
 						getDeclaration(name, type, length) {
 							const uniform = this
-							if (uniform.excludeFrom !== type) {
-								if ("array" === uniform.type)
+							if (uniform.excludeFrom != type) {
+								if ("array" == uniform.type)
 									return (
 										uniform.value[0].getDeclaration(
 											name,
 											type,
 											uniform.value.length
 										) +
-										`\nconst int ${name}_length = ${uniform.value.length};`
+										`const int ${name}_length=${uniform.value.length};`
 									)
-								if ("struct" === uniform.type) {
+								if ("struct" == uniform.type) {
 									let name_no_prefix = name.replace("u_", "")
 									return (
 										(name_no_prefix =
@@ -242,8 +241,7 @@ class MiniGl {
 												.charAt(0)
 												.toUpperCase() +
 											name_no_prefix.slice(1)),
-										`uniform struct ${name_no_prefix} 
-                                  {\n` +
+										`uniform struct ${name_no_prefix} {` +
 											Object.entries(uniform.value)
 												.map(([name, uniform]) =>
 													uniform
@@ -254,7 +252,7 @@ class MiniGl {
 														.replace(/^uniform/, "")
 												)
 												.join("") +
-											`\n} ${name}${
+											`} ${name}${
 												length > 0 ? `[${length}]` : ""
 											};`
 									)
@@ -358,7 +356,7 @@ class MiniGl {
 								(geometry.orientation = orientation),
 								(geometry.attributes.position.values &&
 									geometry.attributes.position.values
-										.length ===
+										.length ==
 										3 * geometry.vertexCount) ||
 									(geometry.attributes.position.values =
 										new Float32Array(
@@ -460,7 +458,7 @@ class MiniGl {
 								this.update()
 						}
 						update() {
-							void 0 !== this.values &&
+							void 0 != this.values &&
 								(context.bindBuffer(this.target, this.buffer),
 								context.bufferData(
 									this.target,
@@ -471,7 +469,7 @@ class MiniGl {
 						attach(e, t) {
 							const n = context.getAttribLocation(t, e)
 							return (
-								this.target === context.ARRAY_BUFFER &&
+								this.target == context.ARRAY_BUFFER &&
 									(context.enableVertexAttribArray(n),
 									context.vertexAttribPointer(
 										n,
@@ -486,7 +484,7 @@ class MiniGl {
 						}
 						use(e) {
 							context.bindBuffer(this.target, this.buffer),
-								this.target === context.ARRAY_BUFFER &&
+								this.target == context.ARRAY_BUFFER &&
 									(context.enableVertexAttribArray(e),
 									context.vertexAttribPointer(
 										e,
@@ -502,15 +500,15 @@ class MiniGl {
 			})
 		const a = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		_miniGl.commonUniforms = {
-			projectionMatrix: new _miniGl.Uniform({
+			pm: new _miniGl.Uniform({
 				type: "mat4",
 				value: a,
 			}),
-			modelViewMatrix: new _miniGl.Uniform({
+			mm: new _miniGl.Uniform({
 				type: "mat4",
 				value: a,
 			}),
-			resolution: new _miniGl.Uniform({
+			rs: new _miniGl.Uniform({
 				type: "vec2",
 				value: [1, 1],
 			}),
@@ -526,7 +524,7 @@ class MiniGl {
 			(this.canvas.width = e),
 			(this.canvas.height = t),
 			this.gl.viewport(0, 0, e, t),
-			(this.commonUniforms.resolution.value = [e, t]),
+			(this.commonUniforms.rs.value = [e, t]),
 			(this.commonUniforms.aspectRatio.value = e / t),
 			this.debug("MiniGL.setSize", {
 				width: e,
@@ -535,7 +533,7 @@ class MiniGl {
 	}
 	// left, right, top, bottom, near, far
 	setOrthographicCamera(e = 0, t = 0, n = 0, i = -2e3, s = 2e3) {
-		;(this.commonUniforms.projectionMatrix.value = [
+		;(this.commonUniforms.pm.value = [
 			2 / this.width,
 			0,
 			0,
@@ -553,10 +551,7 @@ class MiniGl {
 			n,
 			1,
 		]),
-			this.debug(
-				"setOrthographicCamera",
-				this.commonUniforms.projectionMatrix.value
-			)
+			this.debug("setOrthographicCamera", this.commonUniforms.pm.value)
 	}
 	render() {
 		this.gl.clearColor(0, 0, 0, 0),
@@ -580,20 +575,15 @@ const e = (object, propertyName, val) => (
 
 // Gradient object
 export default class Gradient {
-	initGradient(e) {
-		throw new Error("Method not implemented.")
-	}
+	initGradient(e) {}
 	constructor(...t) {
 		e(this, "el", void 0),
 			e(this, "cssVarRetries", 0),
 			e(this, "maxCssVarRetries", 200),
 			e(this, "angle", 0),
 			e(this, "isLoadedClass", false),
-			e(this, "isScrolling", false),
 			// e(this, "isStatic", o.disableAmbientAnimations()),
-			e(this, "scrollingTimeout", void 0),
-			e(this, "scrollingRefreshDelay", 200),
-			e(this, "isIntersecting", false),
+			// e(this, "isIntersecting", false),
 			e(this, "shaderFiles", void 0),
 			e(this, "vertexShader", void 0),
 			e(this, "sectionColors", void 0),
@@ -611,7 +601,7 @@ export default class Gradient {
 			e(this, "material", void 0),
 			e(this, "geometry", void 0),
 			e(this, "minigl", void 0),
-			e(this, "scrollObserver", void 0),
+			// e(this, "scrollObserver", void 0),
 			e(this, "amp", 500),
 			e(this, "seed", Math.random() * 1000),
 			e(this, "freqX", 14e-5), // 2.4e-4
@@ -619,21 +609,7 @@ export default class Gradient {
 			e(this, "freqDelta", 1e-5),
 			e(this, "activeColors", [1, 1, 1, 1]),
 			e(this, "isMetaKey", false),
-			e(this, "isGradientLegendVisible", false),
-			e(this, "isMouseDown", false),
-			e(this, "handleScroll", () => {
-				clearTimeout(this.scrollingTimeout),
-					(this.scrollingTimeout = setTimeout(
-						this.handleScrollEnd,
-						this.scrollingRefreshDelay
-					)),
-					this.isGradientLegendVisible && this.hideGradientLegend(),
-					this.conf.playing &&
-						((this.isScrolling = true), this.pause())
-			}),
-			e(this, "handleScrollEnd", () => {
-				;(this.isScrolling = false), this.isIntersecting && this.play()
-			}),
+			// e(this, "isGradientLegendVisible", false),
 			e(this, "resize", () => {
 				;(this.width = window.innerWidth),
 					this.minigl.setSize(this.width, this.height),
@@ -649,39 +625,28 @@ export default class Gradient {
 						this.ySegCount
 					),
 					this.mesh.geometry.setSize(this.width, this.height),
-					(this.mesh.material.uniforms.u_shadow_power.value =
+					(this.mesh.material.uniforms.us.value =
 						this.width < 600 ? 5 : 6)
 			}),
-			e(this, "handleMouseDown", e => {
-				this.isGradientLegendVisible &&
-					((this.isMetaKey = e.metaKey),
-					(this.isMouseDown = true),
-					false === this.conf.playing &&
-						requestAnimationFrame(this.animate))
-			}),
-			e(this, "handleMouseUp", () => {
-				this.isMouseDown = false
-			}),
 			e(this, "animate", e => {
-				if (!this.shouldSkipFrame(e) || this.isMouseDown) {
+				if (!this.shouldSkipFrame(e)) {
 					if (
 						((this.t += Math.min(e - this.last, 1e3 / 15)),
 						(this.last = e),
-						this.isMouseDown)
+						false)
 					) {
 						let e = 160
 						this.isMetaKey && (e = -160), (this.t += e)
 					}
-					;(this.mesh.material.uniforms.u_time.value = this.t),
+					;(this.mesh.material.uniforms.ti.value = this.t),
 						this.minigl.render()
 				}
-				if (0 !== this.last && this.isStatic)
+				if (0 != this.last && this.isStatic)
 					return (
 						this.minigl.render(), void this.disconnect()
 						// this.isIntersecting &&
 					)
-				;(this.conf.playing || this.isMouseDown) &&
-					requestAnimationFrame(this.animate)
+				this.conf.playing && requestAnimationFrame(this.animate)
 			}),
 			e(this, "addIsLoadedClass", () => {
 				// this.isIntersecting &&
@@ -706,11 +671,10 @@ export default class Gradient {
 	}
 	async connect() {
 		;(this.shaderFiles = {
-			vertex: "varying vec3 v_color;\n\nvoid main() {\n  float time = u_time * u_global.noiseSpeed;\n\n  vec2 noiseCoord = resolution * uvNorm * u_global.noiseFreq;\n\n  vec2 st = 1. - uvNorm.xy;\n\n  //\n  // Tilting the plane\n  //\n\n  // Front-to-back tilt\n  float tilt = resolution.y / 2.0 * uvNorm.y;\n\n  // Left-to-right angle\n  float incline = resolution.x * uvNorm.x / 2.0 * u_vertDeform.incline;\n\n  // Up-down shift to offset incline\n  float offset = resolution.x / 2.0 * u_vertDeform.incline * mix(u_vertDeform.offsetBottom, u_vertDeform.offsetTop, uv.y);\n\n  //\n  // Vertex noise\n  //\n\n  float noise = snoise(vec3(\n    noiseCoord.x * u_vertDeform.noiseFreq.x + time * u_vertDeform.noiseFlow,\n    noiseCoord.y * u_vertDeform.noiseFreq.y,\n    time * u_vertDeform.noiseSpeed + u_vertDeform.noiseSeed\n  )) * u_vertDeform.noiseAmp;\n\n  // Fade noise to zero at edges\n  noise *= 1.0 - pow(abs(uvNorm.y), 2.0);\n\n  // Clamp to 0\n  noise = max(0.0, noise);\n\n  vec3 pos = vec3(\n    position.x,\n    position.y + tilt + incline + noise - offset,\n    position.z\n  );\n\n  //\n  // Vertex color, to be passed to fragment shader\n  //\n\n  if (u_active_colors[0] == 1.) {\n    v_color = u_baseColor;\n  }\n\n  for (int i = 0; i < u_waveLayers_length; i++) {\n    if (u_active_colors[i + 1] == 1.) {\n      WaveLayers layer = u_waveLayers[i];\n\n      float noise = smoothstep(\n        layer.noiseFloor,\n        layer.noiseCeil,\n        snoise(vec3(\n          noiseCoord.x * layer.noiseFreq.x + time * layer.noiseFlow,\n          noiseCoord.y * layer.noiseFreq.y,\n          time * layer.noiseSpeed + layer.noiseSeed\n        )) / 2.0 + 0.5\n      );\n\n      v_color = blendNormal(v_color, layer.color, pow(noise, 4.));\n    }\n  }\n\n  //\n  // Finish\n  //\n\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);\n}",
-			noise: "//\n// Description : Array and textureless GLSL 2D/3D/4D simplex\n//               noise functions.\n//      Author : Ian McEwan, Ashima Arts.\n//  Maintainer : stegu\n//     Lastmod : 20110822 (ijm)\n//     License : Copyright (C) 2011 Ashima Arts. All rights reserved.\n//               Distributed under the MIT License. See LICENSE file.\n//               https://github.com/ashima/webgl-noise\n//               https://github.com/stegu/webgl-noise\n//\n\nvec3 mod289(vec3 x) {\n  return x - floor(x * (1.0 / 289.0)) * 289.0;\n}\n\nvec4 mod289(vec4 x) {\n  return x - floor(x * (1.0 / 289.0)) * 289.0;\n}\n\nvec4 permute(vec4 x) {\n    return mod289(((x*34.0)+1.0)*x);\n}\n\nvec4 taylorInvSqrt(vec4 r)\n{\n  return 1.79284291400159 - 0.85373472095314 * r;\n}\n\nfloat snoise(vec3 v)\n{\n  const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;\n  const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);\n\n// First corner\n  vec3 i  = floor(v + dot(v, C.yyy) );\n  vec3 x0 =   v - i + dot(i, C.xxx) ;\n\n// Other corners\n  vec3 g = step(x0.yzx, x0.xyz);\n  vec3 l = 1.0 - g;\n  vec3 i1 = min( g.xyz, l.zxy );\n  vec3 i2 = max( g.xyz, l.zxy );\n\n  //   x0 = x0 - 0.0 + 0.0 * C.xxx;\n  //   x1 = x0 - i1  + 1.0 * C.xxx;\n  //   x2 = x0 - i2  + 2.0 * C.xxx;\n  //   x3 = x0 - 1.0 + 3.0 * C.xxx;\n  vec3 x1 = x0 - i1 + C.xxx;\n  vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y\n  vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y\n\n// Permutations\n  i = mod289(i);\n  vec4 p = permute( permute( permute(\n            i.z + vec4(0.0, i1.z, i2.z, 1.0 ))\n          + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))\n          + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));\n\n// Gradients: 7x7 points over a square, mapped onto an octahedron.\n// The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)\n  float n_ = 0.142857142857; // 1.0/7.0\n  vec3  ns = n_ * D.wyz - D.xzx;\n\n  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)\n\n  vec4 x_ = floor(j * ns.z);\n  vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)\n\n  vec4 x = x_ *ns.x + ns.yyyy;\n  vec4 y = y_ *ns.x + ns.yyyy;\n  vec4 h = 1.0 - abs(x) - abs(y);\n\n  vec4 b0 = vec4( x.xy, y.xy );\n  vec4 b1 = vec4( x.zw, y.zw );\n\n  //vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;\n  //vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;\n  vec4 s0 = floor(b0)*2.0 + 1.0;\n  vec4 s1 = floor(b1)*2.0 + 1.0;\n  vec4 sh = -step(h, vec4(0.0));\n\n  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;\n  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;\n\n  vec3 p0 = vec3(a0.xy,h.x);\n  vec3 p1 = vec3(a0.zw,h.y);\n  vec3 p2 = vec3(a1.xy,h.z);\n  vec3 p3 = vec3(a1.zw,h.w);\n\n//Normalise gradients\n  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));\n  p0 *= norm.x;\n  p1 *= norm.y;\n  p2 *= norm.z;\n  p3 *= norm.w;\n\n// Mix final noise value\n  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);\n  m = m * m;\n  return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),\n                                dot(p2,x2), dot(p3,x3) ) );\n}",
-			blend: "//\n// https://github.com/jamieowen/glsl-blend\n//\n\n// Normal\n\nvec3 blendNormal(vec3 base, vec3 blend) {\n\treturn blend;\n}\n\nvec3 blendNormal(vec3 base, vec3 blend, float opacity) {\n\treturn (blendNormal(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Screen\n\nfloat blendScreen(float base, float blend) {\n\treturn 1.0-((1.0-base)*(1.0-blend));\n}\n\nvec3 blendScreen(vec3 base, vec3 blend) {\n\treturn vec3(blendScreen(base.r,blend.r),blendScreen(base.g,blend.g),blendScreen(base.b,blend.b));\n}\n\nvec3 blendScreen(vec3 base, vec3 blend, float opacity) {\n\treturn (blendScreen(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Multiply\n\nvec3 blendMultiply(vec3 base, vec3 blend) {\n\treturn base*blend;\n}\n\nvec3 blendMultiply(vec3 base, vec3 blend, float opacity) {\n\treturn (blendMultiply(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Overlay\n\nfloat blendOverlay(float base, float blend) {\n\treturn base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));\n}\n\nvec3 blendOverlay(vec3 base, vec3 blend) {\n\treturn vec3(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b));\n}\n\nvec3 blendOverlay(vec3 base, vec3 blend, float opacity) {\n\treturn (blendOverlay(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Hard light\n\nvec3 blendHardLight(vec3 base, vec3 blend) {\n\treturn blendOverlay(blend,base);\n}\n\nvec3 blendHardLight(vec3 base, vec3 blend, float opacity) {\n\treturn (blendHardLight(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Soft light\n\nfloat blendSoftLight(float base, float blend) {\n\treturn (blend<0.5)?(2.0*base*blend+base*base*(1.0-2.0*blend)):(sqrt(base)*(2.0*blend-1.0)+2.0*base*(1.0-blend));\n}\n\nvec3 blendSoftLight(vec3 base, vec3 blend) {\n\treturn vec3(blendSoftLight(base.r,blend.r),blendSoftLight(base.g,blend.g),blendSoftLight(base.b,blend.b));\n}\n\nvec3 blendSoftLight(vec3 base, vec3 blend, float opacity) {\n\treturn (blendSoftLight(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Color dodge\n\nfloat blendColorDodge(float base, float blend) {\n\treturn (blend==1.0)?blend:min(base/(1.0-blend),1.0);\n}\n\nvec3 blendColorDodge(vec3 base, vec3 blend) {\n\treturn vec3(blendColorDodge(base.r,blend.r),blendColorDodge(base.g,blend.g),blendColorDodge(base.b,blend.b));\n}\n\nvec3 blendColorDodge(vec3 base, vec3 blend, float opacity) {\n\treturn (blendColorDodge(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Color burn\n\nfloat blendColorBurn(float base, float blend) {\n\treturn (blend==0.0)?blend:max((1.0-((1.0-base)/blend)),0.0);\n}\n\nvec3 blendColorBurn(vec3 base, vec3 blend) {\n\treturn vec3(blendColorBurn(base.r,blend.r),blendColorBurn(base.g,blend.g),blendColorBurn(base.b,blend.b));\n}\n\nvec3 blendColorBurn(vec3 base, vec3 blend, float opacity) {\n\treturn (blendColorBurn(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Vivid Light\n\nfloat blendVividLight(float base, float blend) {\n\treturn (blend<0.5)?blendColorBurn(base,(2.0*blend)):blendColorDodge(base,(2.0*(blend-0.5)));\n}\n\nvec3 blendVividLight(vec3 base, vec3 blend) {\n\treturn vec3(blendVividLight(base.r,blend.r),blendVividLight(base.g,blend.g),blendVividLight(base.b,blend.b));\n}\n\nvec3 blendVividLight(vec3 base, vec3 blend, float opacity) {\n\treturn (blendVividLight(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Lighten\n\nfloat blendLighten(float base, float blend) {\n\treturn max(blend,base);\n}\n\nvec3 blendLighten(vec3 base, vec3 blend) {\n\treturn vec3(blendLighten(base.r,blend.r),blendLighten(base.g,blend.g),blendLighten(base.b,blend.b));\n}\n\nvec3 blendLighten(vec3 base, vec3 blend, float opacity) {\n\treturn (blendLighten(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Linear burn\n\nfloat blendLinearBurn(float base, float blend) {\n\t// Note : Same implementation as BlendSubtractf\n\treturn max(base+blend-1.0,0.0);\n}\n\nvec3 blendLinearBurn(vec3 base, vec3 blend) {\n\t// Note : Same implementation as BlendSubtract\n\treturn max(base+blend-vec3(1.0),vec3(0.0));\n}\n\nvec3 blendLinearBurn(vec3 base, vec3 blend, float opacity) {\n\treturn (blendLinearBurn(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Linear dodge\n\nfloat blendLinearDodge(float base, float blend) {\n\t// Note : Same implementation as BlendAddf\n\treturn min(base+blend,1.0);\n}\n\nvec3 blendLinearDodge(vec3 base, vec3 blend) {\n\t// Note : Same implementation as BlendAdd\n\treturn min(base+blend,vec3(1.0));\n}\n\nvec3 blendLinearDodge(vec3 base, vec3 blend, float opacity) {\n\treturn (blendLinearDodge(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Linear light\n\nfloat blendLinearLight(float base, float blend) {\n\treturn blend<0.5?blendLinearBurn(base,(2.0*blend)):blendLinearDodge(base,(2.0*(blend-0.5)));\n}\n\nvec3 blendLinearLight(vec3 base, vec3 blend) {\n\treturn vec3(blendLinearLight(base.r,blend.r),blendLinearLight(base.g,blend.g),blendLinearLight(base.b,blend.b));\n}\n\nvec3 blendLinearLight(vec3 base, vec3 blend, float opacity) {\n\treturn (blendLinearLight(base, blend) * opacity + base * (1.0 - opacity));\n}",
-			fragment:
-				"varying vec3 v_color;\n\nvoid main() {\n  vec3 color = v_color;\n  if (u_darken_top == 1.0) {\n    vec2 st = gl_FragCoord.xy/resolution.xy;\n    color.g -= pow(st.y + sin(-12.0) * st.x, u_shadow_power) * 0.4;\n  }\n  gl_FragColor = vec4(color, 1.0);\n}",
+			vertex: "varying vec3 vc;void main(){float time=ti*g.ns;vec2 n=rs*uvNorm*g.nF;vec2 st=1.-uvNorm.xy;float tilt=rs.y/2.0*uvNorm.y;float i=rs.x*uvNorm.x/2.0*um.i;float o=rs.x/2.0*um.i*mix(um.offsetBottom,um.offsetTop,uv.y);float N=sn(vec3(n.x*um.nF.x+time*um.nf,n.y*um.nF.y,time*um.ns+um.nw))*um.noiseAmp;N*=1.0-pow(abs(uvNorm.y),2.0);N=max(.0,N);vec3 p=vec3(position.x,position.y+tilt+i+N-o,position.z);if(ua[0]==1.){vc=ub;}for(int i=0;i<u_waveLayers_length;i++){if(ua[i+1]==1.){WaveLayers layer=u_waveLayers[i];float N=smoothstep(layer.nf,layer.noiseCeil,sn(vec3(n.x*layer.nF.x+time*layer.nf,n.y*layer.nF.y,time*layer.ns+layer.nw))/2.0+.5);vc=bN(vc,layer.color,pow(N,4.));}}gl_Position=pm*mm*vec4(p,1.0);}",
+			N: "vec3 m2(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}vec4 m2(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}vec4 p(vec4 x){return m2(((x*34.0)+1.0)*x);}vec4 t(vec4 r){return 1.79284291400159-.85373472095314*r;}float sn(vec3 v){const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(.0,.5,1.0,2.0);vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;i=m2(i);vec4 p=p(p(p(i.z+vec4(.0,i1.z,i2.z,1.0))+ i.y+vec4(.0,i1.y,i2.y,1.0))+ i.x+vec4(.0,i1.x,i2.x,1.0));float n_=.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.0*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.0-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh=-step(h,vec4(.0));vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);vec4 n=t(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=n.x;p1*=n.y;p2*=n.z;p3*=n.w;vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),.0);m=m*m;return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}",
+			b: "vec3 bN(vec3 E,vec3 b){return b;}vec3 bN(vec3 E,vec3 b,float o){return(bN(E,b)*o+E*(1.0-o));}float bS(float E,float b){return 1.0-((1.0-E)*(1.0-b));}vec3 bS(vec3 E,vec3 b){return vec3(bS(E.r,b.r),bS(E.g,b.g),bS(E.b,b.b));}vec3 bS(vec3 E,vec3 b,float o){return(bS(E,b)*o+E*(1.0-o));}vec3 bM(vec3 E,vec3 b){return E*b;}vec3 bM(vec3 E,vec3 b,float o){return(bM(E,b)*o+E*(1.0-o));}float bO(float E,float b){return E<.5?(2.0*E*b):(1.0-2.0*(1.0-E)*(1.0-b));}vec3 bO(vec3 E,vec3 b){return vec3(bO(E.r,b.r),bO(E.g,b.g),bO(E.b,b.b));}vec3 bO(vec3 E,vec3 b,float o){return(bO(E,b)*o+E*(1.0-o));}vec3 bH(vec3 E,vec3 b){return bO(b,E);}vec3 bH(vec3 E,vec3 b,float o){return(bH(E,b)*o+E*(1.0-o));}float bs(float E,float b){return(b<.5)?(2.0*E*b+E*E*(1.0-2.0*b)):(sqrt(E)*(2.0*b-1.0)+2.0*E*(1.0-b));}vec3 bs(vec3 E,vec3 b){return vec3(bs(E.r,b.r),bs(E.g,b.g),bs(E.b,b.b));}vec3 bs(vec3 E,vec3 b,float o){return(bs(E,b)*o+E*(1.0-o));}float bC(float E,float b){return(b==1.0)?b:min(E/(1.0-b),1.0);}vec3 bC(vec3 E,vec3 b){return vec3(bC(E.r,b.r),bC(E.g,b.g),bC(E.b,b.b));}vec3 bC(vec3 E,vec3 b,float o){return(bC(E,b)*o+E*(1.0-o));}float s(float E,float b){return(b==.0)?b:max((1.0-((1.0-E)/b)),.0);}vec3 s(vec3 E,vec3 b){return vec3(s(E.r,b.r),s(E.g,b.g),s(E.b,b.b));}vec3 s(vec3 E,vec3 b,float o){return(s(E,b)*o+E*(1.0-o));}float bV(float E,float b){return(b<.5)?s(E,(2.0*b)):bC(E,(2.0*(b-.5)));}vec3 bV(vec3 E,vec3 b){return vec3(bV(E.r,b.r),bV(E.g,b.g),bV(E.b,b.b));}vec3 bV(vec3 E,vec3 b,float o){return(bV(E,b)*o+E*(1.0-o));}float l(float E,float b){return max(b,E);}vec3 l(vec3 E,vec3 b){return vec3(l(E.r,b.r),l(E.g,b.g),l(E.b,b.b));}vec3 l(vec3 E,vec3 b,float o){return(l(E,b)*o+E*(1.0-o));}float bB(float E,float b){return max(E+b-1.0,.0);}vec3 bB(vec3 E,vec3 b){return max(E+b-vec3(1.0),vec3(.0));}vec3 bB(vec3 E,vec3 b,float o){return(bB(E,b)*o+E*(1.0-o));}float bL(float E,float b){return min(E+b,1.0);}vec3 bL(vec3 E,vec3 b){return min(E+b,vec3(1.0));}vec3 bL(vec3 E,vec3 b,float o){return(bL(E,b)*o+E*(1.0-o));}float bl(float E,float b){return b<.5?bB(E,(2.0*b)):bL(E,(2.0*(b-.5)));}vec3 bl(vec3 E,vec3 b){return vec3(bl(E.r,b.r),bl(E.g,b.g),bl(E.b,b.b));}vec3 bl(vec3 E,vec3 b,float o){return(bl(E,b)*o+E*(1.0-o));}",
+			f: "varying vec3 vc;void main(){vec3 color=vc;if(ud==1.0){vec2 st=gl_FragCoord.xy/rs.xy;color.g-=pow(st.y+sin(-12.0)*st.x,us)*.4;}gl_FragColor=vec4(color,1.0);}",
 		}),
 			(this.conf = {
 				presetName: "",
@@ -732,44 +696,39 @@ export default class Gradient {
 				  }))
 	}
 	disconnect() {
-		this.scrollObserver &&
-			(window.removeEventListener("scroll", this.handleScroll),
-			window.removeEventListener("mousedown", this.handleMouseDown),
-			window.removeEventListener("mouseup", this.handleMouseUp),
-			window.removeEventListener("keydown", this.handleKeyDown),
-			this.scrollObserver.disconnect()),
-			window.removeEventListener("resize", this.resize)
+		// this.scrollObserver && this.scrollObserver.disconnect(),
+		window.removeEventListener("resize", this.resize)
 	}
 	initMaterial() {
 		this.uniforms = {
-			u_time: new this.minigl.Uniform({
+			ti: new this.minigl.Uniform({
 				value: 0,
 			}),
-			u_shadow_power: new this.minigl.Uniform({
+			us: new this.minigl.Uniform({
 				value: 10,
 			}),
-			u_darken_top: new this.minigl.Uniform({
-				value: "" === this.el.dataset.jsDarkenTop ? 1 : 0,
+			ud: new this.minigl.Uniform({
+				value: "" == this.el.dataset.jsDarkenTop ? 1 : 0,
 			}),
-			u_active_colors: new this.minigl.Uniform({
+			ua: new this.minigl.Uniform({
 				value: this.activeColors,
 				type: "vec4",
 			}),
-			u_global: new this.minigl.Uniform({
+			g: new this.minigl.Uniform({
 				value: {
-					noiseFreq: new this.minigl.Uniform({
+					nF: new this.minigl.Uniform({
 						value: [this.freqX, this.freqY],
 						type: "vec2",
 					}),
-					noiseSpeed: new this.minigl.Uniform({
+					ns: new this.minigl.Uniform({
 						value: 5e-6,
 					}),
 				},
 				type: "struct",
 			}),
-			u_vertDeform: new this.minigl.Uniform({
+			um: new this.minigl.Uniform({
 				value: {
-					incline: new this.minigl.Uniform({
+					i: new this.minigl.Uniform({
 						value: Math.sin(this.angle) / Math.cos(this.angle),
 					}),
 					offsetTop: new this.minigl.Uniform({
@@ -778,34 +737,34 @@ export default class Gradient {
 					offsetBottom: new this.minigl.Uniform({
 						value: -0.5,
 					}),
-					noiseFreq: new this.minigl.Uniform({
+					nF: new this.minigl.Uniform({
 						value: [3, 4],
 						type: "vec2",
 					}),
 					noiseAmp: new this.minigl.Uniform({
 						value: this.amp,
 					}),
-					noiseSpeed: new this.minigl.Uniform({
+					ns: new this.minigl.Uniform({
 						value: 10,
 					}),
-					noiseFlow: new this.minigl.Uniform({
+					nf: new this.minigl.Uniform({
 						value: 3,
 					}),
-					noiseSeed: new this.minigl.Uniform({
+					nw: new this.minigl.Uniform({
 						value: this.seed,
 					}),
 				},
 				type: "struct",
-				excludeFrom: "fragment",
+				excludeFrom: "f",
 			}),
-			u_baseColor: new this.minigl.Uniform({
+			ub: new this.minigl.Uniform({
 				value: this.sectionColors[0],
 				type: "vec3",
-				excludeFrom: "fragment",
+				excludeFrom: "f",
 			}),
 			u_waveLayers: new this.minigl.Uniform({
 				value: [],
-				excludeFrom: "fragment",
+				excludeFrom: "f",
 				type: "array",
 			}),
 		}
@@ -817,23 +776,23 @@ export default class Gradient {
 							value: this.sectionColors[e],
 							type: "vec3",
 						}),
-						noiseFreq: new this.minigl.Uniform({
+						nF: new this.minigl.Uniform({
 							value: [
 								2 + e / this.sectionColors.length,
 								3 + e / this.sectionColors.length,
 							],
 							type: "vec2",
 						}),
-						noiseSpeed: new this.minigl.Uniform({
+						ns: new this.minigl.Uniform({
 							value: 11 + 0.3 * e,
 						}),
-						noiseFlow: new this.minigl.Uniform({
+						nf: new this.minigl.Uniform({
 							value: 6.5 + 0.3 * e,
 						}),
-						noiseSeed: new this.minigl.Uniform({
+						nw: new this.minigl.Uniform({
 							value: this.seed + 10 * e,
 						}),
-						noiseFloor: new this.minigl.Uniform({
+						nf: new this.minigl.Uniform({
 							value: 0.1,
 						}),
 						noiseCeil: new this.minigl.Uniform({
@@ -845,13 +804,13 @@ export default class Gradient {
 			)
 		return (
 			(this.vertexShader = [
-				this.shaderFiles.noise,
-				this.shaderFiles.blend,
+				this.shaderFiles.N,
+				this.shaderFiles.b,
 				this.shaderFiles.vertex,
-			].join("\n\n")),
+			].join("\n")),
 			new this.minigl.Material(
 				this.vertexShader,
-				this.shaderFiles.fragment,
+				this.shaderFiles.f,
 				this.uniforms
 			)
 		)
@@ -867,21 +826,6 @@ export default class Gradient {
 		parseInt(e, 10) % 2 == 0 ||
 		void 0
 
-	updateFrequency(e) {
-		;(this.freqX += e), (this.freqY += e)
-	}
-	toggleColor(index) {
-		this.activeColors[index] = 0 === this.activeColors[index] ? 1 : 0
-	}
-	showGradientLegend() {
-		this.width > this.minWidth &&
-			((this.isGradientLegendVisible = true),
-			document.body.classList.add("isGradientLegendVisible"))
-	}
-	hideGradientLegend() {
-		;(this.isGradientLegendVisible = false),
-			document.body.classList.remove("isGradientLegendVisible")
-	}
 	init() {
 		this.initGradientColors(),
 			this.initMesh(),
@@ -894,17 +838,14 @@ export default class Gradient {
 	waitForCssVars() {
 		if (
 			this.computedCanvasStyle &&
-			-1 !==
+			-1 !=
 				this.computedCanvasStyle
 					.getPropertyValue("--gradient-color-1")
 					.indexOf("#")
 		)
 			this.init(), this.addIsLoadedClass()
 		else {
-			if (
-				((this.cssVarRetries += 1),
-				this.cssVarRetries > this.maxCssVarRetries)
-			)
+			if ((this.cssVarRetries += 1 > this.maxCssVarRetries))
 				return (
 					(this.sectionColors = [
 						16711680, 16711680, 16711935, 65280, 255,
@@ -928,7 +869,7 @@ export default class Gradient {
 					.getPropertyValue(cssPropertyName)
 					.trim()
 				// Check if shorthand hex value was used and double the length so the conversion in normalizeColor will work.
-				if (4 === hex.length) {
+				if (4 == hex.length) {
 					const hexTemp = hex
 						.substring(1)
 						.split("")
@@ -944,15 +885,9 @@ export default class Gradient {
 }
 
 /*
- *Finally initializing the Gradient class, assigning a canvas to it and calling Gradient.connect() which initializes everything,
- * Use Gradient.pause() and Gradient.play() for controls.
- *
- * Here are some default property values you can change anytime:
- * Amplitude:    Gradient.amp = 0
- * Colors:       Gradient.sectionColors (if you change colors, use normalizeColor(#hexValue)) before you assign it.
- *
- *
- * Useful functions
- * Gradient.toggleColor(index)
- * Gradient.updateFrequency(freq)
- */
+	Finally initializing the Gradient class,assigning a canvas to it and calling Gradient.connect() which initializes everything,
+
+	Here are some default property values you can change anytime:
+	Amplitude: Gradient.amp = 0
+	Colors: Gradient.sectionColors (if you change colors,use normalizeColor(#hexValue)) before you assign it.
+*/

@@ -37,7 +37,7 @@
 				<div class="float-end">
 					<span>
 						<i class="fa fa-user opacity-75" />
-						{place.GameSessions.length}
+						{place.gameSessions.length}
 					</span>
 				</div>
 			</div>

@@ -5,16 +5,18 @@
 	import { fly } from "svelte/transition"
 	import { inview } from "svelte-inview"
 
-	let isInView: boolean
+	let isInView = false
 	export let right = false
 	export let fullwidth = false
+
+	const inView = (e: any) => (isInView = e.detail.inView)
 </script>
 
 <div
 	class="container {fullwidth ? 'full min-vw-100' : 'half'}"
 	id={fullwidth ? "" : right ? "right" : "left"}
 	use:inview={{ unobserveOnEnter: true, rootMargin: "-20%" }}
-	on:change={({ detail }) => (isInView = detail.inView)}>
+	on:change={inView}>
 	{#if isInView}
 		<div
 			in:fly={{ y: -100, duration: 500 }}
@@ -45,5 +47,4 @@
 		margin-left: 50vw
 	#left
 		margin-left: 0
-
 </style>

@@ -186,7 +186,7 @@ resetLocalCharacter = ->
 	if player and
 		player.Character and
 		player.Character\FindFirstChild "Humanoid"
-		
+
 		player.Character.Humanoid.Health = 0
 
 

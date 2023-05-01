@@ -8,7 +8,7 @@ import { z } from "zod"
 
 const schema = z.object({
 	username: z.string().min(3).max(21),
-	action: z.number().min(1).max(5),
+	action: z.number().int().min(1).max(5),
 	banDate: z.string().optional(),
 	reason: z.string().min(15).max(150),
 })

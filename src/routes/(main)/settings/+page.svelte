@@ -5,49 +5,24 @@
 	export let data
 	const user = data.user
 
-	const profile = superForm(data.profileForm, {
-		taintedMessage: false,
-	})
-	const password = superForm(data.passwordForm, {
-		taintedMessage: false,
-	})
-
-	export const snapshot = {
-		capture: profile.capture,
-		restore: profile.restore,
-	}
-
 	// get() moment
-	const [
-		profileForm,
-		profileErrors,
-		profileMessage,
-		profileConstraints,
-		profileDelayed,
-	] = [
-		profile.form,
-		profile.errors,
-		profile.message,
-		profile.constraints,
-		profile.delayed,
-	]
-	const [
-		passwordForm,
-		passwordErrors,
-		passwordMessage,
-		passwordConstraints,
-		passwordDelayed,
-	] = [
-		password.form,
-		password.errors,
-		password.message,
-		password.constraints,
-		password.delayed,
-	]
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
 
-	if (data.theme) $profileForm.theme = data.theme as typeof $profileForm.theme
+	export const snapshot = { capture, restore }
 
-	if (data.bio) $profileForm.bio = data.bio[0].text
+	if (data.theme) $form.theme = data.theme as typeof $form.theme
+	if (data.bio?.[0]) $form.bio = data.bio[0].text
 </script>
 
 <svelte:head>
@@ -110,7 +85,7 @@
 			<p class="mb-0 grey-text mb-4">
 				Change your bio, site theme and more.
 			</p>
-			<form class="col-lg-8" method="POST" action="?/profile">
+			<form class="col-lg-8" method="POST" action="?a=profile">
 				<fieldset>
 					<div class="row">
 						<label
@@ -120,11 +95,11 @@
 						</label>
 						<div class="col-md-8">
 							<select
-								bind:value={$profileForm.theme}
-								{...$profileConstraints.theme}
+								bind:value={$form.theme}
+								{...$constraints.theme}
 								id="theme"
 								name="theme"
-								class="form-select {$profileErrors.theme
+								class="form-select {$errors.theme
 									? 'is-in'
 									: ''}valid">
 								<option value="standard">Standard</option>
@@ -133,7 +108,7 @@
 								<option value="solar">Solar</option>
 							</select>
 							<p class="col-12 mb-3 text-danger">
-								{$profileErrors.theme || ""}
+								{$errors.theme || ""}
 							</p>
 						</div>
 					</div>
@@ -144,9 +119,9 @@
 						</label>
 						<div class="container">
 							<textarea
-								bind:value={$profileForm.bio}
-								{...$profileConstraints.bio}
-								class="form-control light-text mb-1 bg-a {$profileErrors.bio
+								bind:value={$form.bio}
+								{...$constraints.bio}
+								class="form-control light-text mb-1 bg-a {$errors.bio
 									? 'is-in'
 									: ''}valid"
 								id="bio"
@@ -158,13 +133,13 @@
 								you are.
 							</small>
 							<p class="col-12 mb-3 text-danger">
-								{$profileErrors.bio || ""}
+								{$errors.bio || ""}
 							</p>
 						</div>
 					</div>
 				</fieldset>
 				<button type="submit" class="btn btn-success">
-					{#if $profileDelayed}
+					{#if $delayed}
 						Working...
 					{:else}
 						Save changes
@@ -174,7 +149,7 @@
 			<p
 				class:text-success={$page.status == 200}
 				class:text-danger={$page.status >= 400}>
-				{$profileMessage || ""}
+				{$message || ""}
 			</p>
 		</div>
 		<div
@@ -251,11 +226,7 @@
 			aria-labelledby="pills-contact-tab"
 			tabindex={0}>
 			<h4 class="fw-normal light-text mb-3">Change Password</h4>
-			<form
-				class="col-sm-8"
-				method="POST"
-				action="?/password"
-				use:password.enhance>
+			<form use:enhance class="col-sm-8" method="POST" action="?a=password">
 				<fieldset>
 					<div class="form-group row gx-0 mb-2">
 						<label
@@ -265,16 +236,16 @@
 						</label>
 						<div class="col-sm-10">
 							<input
-								bind:value={$passwordForm.cpassword}
-								{...$passwordConstraints.cpassword}
+								bind:value={$form.cpassword}
+								{...$constraints.cpassword}
 								type="password"
-								class="form-control mb-1 light-text {$passwordErrors.cpassword
+								class="form-control mb-1 light-text {$errors.cpassword
 									? 'is-in'
 									: ''}valid"
 								id="cpassword"
 								name="cpassword" />
 							<p class="col-12 mb-3 text-danger">
-								{$passwordErrors.cpassword || ""}
+								{$errors.cpassword || ""}
 							</p>
 						</div>
 					</div>
@@ -286,10 +257,10 @@
 						</label>
 						<div class="col-sm-10">
 							<input
-								bind:value={$passwordForm.npassword}
-								{...$passwordConstraints.npassword}
+								bind:value={$form.npassword}
+								{...$constraints.npassword}
 								type="password"
-								class="form-control mb-1 light-text {$passwordErrors.npassword
+								class="form-control mb-1 light-text {$errors.npassword
 									? 'is-in'
 									: ''}valid"
 								id="npassword"
@@ -298,7 +269,7 @@
 								Make sure your password is unique.
 							</small>
 							<p class="col-12 mb-3 text-danger">
-								{$passwordErrors.npassword || ""}
+								{$errors.npassword || ""}
 							</p>
 						</div>
 					</div>
@@ -310,22 +281,22 @@
 						</label>
 						<div class="col-sm-10">
 							<input
-								bind:value={$passwordForm.cnpassword}
-								{...$passwordConstraints.cnpassword}
+								bind:value={$form.cnpassword}
+								{...$constraints.cnpassword}
 								type="password"
-								class="form-control mb-1 light-text {$passwordErrors.cnpassword
+								class="form-control mb-1 light-text {$errors.cnpassword
 									? 'is-in'
 									: ''}valid"
 								id="cnpassword"
 								name="cnpassword" />
 							<p class="col-12 mb-3 text-danger">
-								{$passwordErrors.cnpassword || ""}
+								{$errors.cnpassword || ""}
 							</p>
 						</div>
 					</div>
 				</fieldset>
 				<button type="submit" class="btn btn-success">
-					{#if $passwordDelayed}
+					{#if $delayed}
 						Working...
 					{:else}
 						Save changes
@@ -335,7 +306,7 @@
 			<p
 				class:text-success={$page.status == 200}
 				class:text-danger={$page.status >= 400}>
-				{$passwordMessage || ""}
+				{$message || ""}
 			</p>
 		</div>
 	</div>
@@ -348,7 +319,7 @@
 	.nav-link
 		border-radius: 0
 		color: var(--light-text)
-	
+
 	.form-control
 		color: var(--light-text)
 

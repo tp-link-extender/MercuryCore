@@ -12,7 +12,7 @@ const schema = z.object({
 	inviteCustom: z.string().min(3).max(50).optional(),
 	enableInviteExpiry: z.boolean().optional(),
 	inviteExpiry: z.string().optional(),
-	inviteUses: z.number().min(1).max(100).default(1),
+	inviteUses: z.number().int().min(1).max(100).default(1),
 })
 
 export async function load({ locals }) {

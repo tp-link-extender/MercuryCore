@@ -5,17 +5,6 @@ import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 
-const profileSchema = z.object({
-	theme: z.enum(["standard", "darken", "storm", "solar"]),
-	bio: z.string().max(1000),
-})
-
-const passwordSchema = z.object({
-	cpassword: z.string().min(1),
-	npassword: z.string().min(1),
-	cnpassword: z.string().min(1),
-})
-
 export const load = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
 
@@ -39,72 +28,101 @@ export const load = async ({ request, locals }) => {
 	return {
 		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
 		theme: getUser?.theme,
-		profileForm: superValidate(request, profileSchema),
-		passwordForm: superValidate(request, passwordSchema),
+		form: superValidate(
+			z.object({
+				theme: z.enum(["standard", "darken", "storm", "solar"]),
+				bio: z.string().max(1000),
+				cpassword: z.string().min(1),
+				npassword: z.string().min(1),
+				cnpassword: z.string().min(1),
+			})
+		),
 	}
 }
 
 export const actions = {
-	profile: async ({ request, locals }) => {
+	default: async ({ request, locals, url }) => {
 		const { user } = await authorise(locals)
 
-		const form = await superValidate(request, profileSchema)
-		if (!form.valid) return formError(form)
+		const action = url.searchParams.get("a")
 
-		const { bio, theme } = form.data
+		console.log(action)
 
-		await prisma.authUser.update({
-			where: {
-				number: user.number,
-			},
-			data: {
-				bio: {
-					create: {
-						text: bio,
+		let form
+		switch (action) {
+			case "profile":
+				form = await superValidate(
+					request,
+					z.object({
+						theme: z.enum(["standard", "darken", "storm", "solar"]),
+						bio: z.string().max(1000),
+					})
+				)
+				if (!form.valid) return formError(form)
+				const { bio, theme } = form.data
+
+				await prisma.authUser.update({
+					where: {
+						number: user.number,
 					},
-				},
-				theme,
-			},
-		})
+					data: {
+						bio: {
+							create: {
+								text: bio,
+							},
+						},
+						theme,
+					},
+				})
 
-		return {
-			profileForm: message(form, "Profile updated successfully!").form,
-		}
-	},
+				console.log("Profile updated successfully!")
 
-	password: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
+				return message(form, "Profile updated successfully!")
 
-		const form = await superValidate(request, passwordSchema)
-		if (!form.valid) return formError(form)
+			case "password":
+				form = await superValidate(
+					request,
+					z.object({
+						cpassword: z.string().min(1),
+						npassword: z.string().min(1),
+						cnpassword: z.string().min(1),
+					})
+				)
+				if (!form.valid) return formError(form)
 
-		const { cpassword, npassword, cnpassword } = form.data
+				const { cpassword, npassword, cnpassword } = form.data
 
-		if (npassword != cnpassword)
-			return formError(form, ["cnpassword"], ["Passwords do not match"])
+				if (npassword != cnpassword)
+					return formError(
+						form,
+						["cnpassword"],
+						["Passwords do not match"]
+					)
 
-		try {
-			await auth.useKey(
-				"username",
-				user.username.toLowerCase(),
-				cpassword
-			)
-		} catch {
-			return formError(
-				form,
-				["cpassword"],
-				["Incorrect username or password"]
-			)
-		}
+				try {
+					await auth.useKey(
+						"username",
+						user.username.toLowerCase(),
+						cpassword
+					)
+				} catch {
+					return formError(
+						form,
+						["cpassword"],
+						["Incorrect username or password"]
+					)
+				}
 
-		await auth.updateKeyPassword(
-			"username",
-			user.username.toLowerCase(),
-			npassword
-		)
+				await auth.updateKeyPassword(
+					"username",
+					user.username.toLowerCase(),
+					npassword
+				)
 
-		return {
-			passwordForm: message(form, "Password updated successfully!").form,
+				form.data.cpassword = ""
+				form.data.npassword = ""
+				form.data.cnpassword = ""
+				return message(form, "Password updated successfully!")
 		}
 	},
 }

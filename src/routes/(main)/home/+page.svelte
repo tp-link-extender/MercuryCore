@@ -133,7 +133,7 @@
 							$errors.status}>
 						{$errors.status || $message || ""}
 					</p>
-					{#each data.feed.sort((a, b) => b.posted - a.posted) as status, num}
+					{#each data.feed.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
 						<!-- |global is not mentioned anywhere in the Svelte docs, yet it is exactly what is needed here. -->
 						<div
 							in:fade|global={{ num, total: data.feed.length }}

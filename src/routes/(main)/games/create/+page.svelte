@@ -149,7 +149,7 @@
 	@media only screen and (min-width: 576px)
 		.container
 			width: 50rem
-	
+
 	input
 		&[type="checkbox"]
 			height: 1.5rem

@@ -63,7 +63,7 @@ settings()["Task Scheduler"].PriorityMethod=Enum.PriorityMethod.AccumulatedError
 end)
 game:GetService"ChangeHistoryService":SetEnabled(false)
 pcall(function()
-return game:GetService"Players":SetBuildUserPermissionsUrl"http://banland.xyz//Game/BuildActionPermissionCheck.ashx?assetId=0&userId=%d&isSolo=true"
+return game:GetService"Players":SetBuildUserPermissionsUrl"http://banland.xyz/Game/BuildActionPermissionCheck.ashx?assetId=0&userId=%d&isSolo=true"
 end)
 workspace:SetPhysicsThrottleEnabled(true)
 local addedBuildTools,

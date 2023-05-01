@@ -136,7 +136,7 @@ try
 settings!.Diagnostics.LuaRamLimit = 0
 --settings!.Network\SetThroughputSensitivity(0.08, 0.01)
 --settings!.Network.SendRate = 35
---settings!.Network.PhysicsSend = 0  -- 1==RoundRobin
+--settings!.Network.PhysicsSend = 0 -- 1==RoundRobin
 
 --shared["__time"] = 0
 --game\GetService"RunService".Stepped\connect(function (time) shared["__time"] = time end)

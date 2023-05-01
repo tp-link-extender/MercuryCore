@@ -1,18 +1,18 @@
 @charset "UTF-8";
 
-/*!
- * Bootswatch v5.2.3 (https://bootswatch.com)
- * Theme: zephyr
- * Copyright 2012-2022 Thomas Park
- * Licensed under MIT
- * Based on Bootstrap
+/*
+	Bootswatch v5.2.3 (https://bootswatch.com)
+	Theme: zephyr
+	Copyright 2012-2022 Thomas Park
+	Licensed under MIT
+	Based on Bootstrap
 */
-/*!
- * Bootstrap    v5.2.3 (https://getbootstrap.com/)
- * Copyright 2011-2022 The Bootstrap Authors
- * Copyright 2011-2022 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
- */
+/*
+	Bootstrap v5.2.3 (https://getbootstrap.com/)
+	Copyright 2011-2022 The Bootstrap Authors
+	Copyright 2011-2022 Twitter, Inc.
+	Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+*/
 @font-face {
 	font-family: "SF UI Display Regular";
 	font-style: normal;
@@ -578,7 +578,6 @@ progress {
 	}
 }
 
-
 .display-2 {
 	font-size: calc(1.575rem + 3.9vw);
 	font-weight: 300;
@@ -587,7 +586,6 @@ progress {
 		font-size: 4.5rem;
 	}
 }
-
 
 .display-3 {
 	font-size: calc(1.525rem + 3.3vw);
@@ -598,7 +596,6 @@ progress {
 	}
 }
 
-
 .display-4 {
 	font-size: calc(1.475rem + 2.7vw);
 	font-weight: 300;
@@ -607,7 +604,6 @@ progress {
 		font-size: 3.5rem;
 	}
 }
-
 
 .display-5 {
 	font-size: calc(1.425rem + 2.1vw);
@@ -618,7 +614,6 @@ progress {
 	}
 }
 
-
 .display-6 {
 	font-size: calc(1.375rem + 1.5vw);
 	font-weight: 300;
@@ -627,7 +622,6 @@ progress {
 		font-size: 2.5rem;
 	}
 }
-
 
 .list-unstyled {
 	padding-left: 0;
@@ -6827,8 +6821,8 @@ fieldset:disabled .btn {
 /* rtl:options: {
 	"autoRename": true,
 	"stringMap":[ {
-		"name"        : "prev-next",
-		"search"    : "prev",
+		"name" : "prev-next",
+		"search" : "prev",
 		"replace" : "next"
 	} ]
 } */
