@@ -35,7 +35,6 @@
 </div>
 
 <style lang="sass">
-
 	.nav-tabs .nav-item.show .nav-link,
 	.nav-tabs .nav-link.active 
 		color: rgb(255, 255, 255)
