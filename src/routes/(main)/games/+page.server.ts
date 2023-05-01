@@ -6,7 +6,7 @@ export const load = () => ({
 			privateServer: false,
 		},
 		include: {
-			GameSessions: {
+			gameSessions: {
 				where: {
 					ping: {
 						gt: Math.floor(Date.now() / 1000) - 35,
@@ -37,7 +37,7 @@ export const actions = {
 				id: true,
 				image: true,
 				serverPing: true,
-				GameSessions: {
+				gameSessions: {
 					where: {
 						ping: {
 							gt: Math.floor(Date.now() / 1000) - 35,
