@@ -5,7 +5,7 @@ import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 
-export const load = async ({ request, locals }) => {
+export const load = async ({ locals }) => {
 	const { user } = await authorise(locals)
 
 	const getUser = await prisma.authUser.findUnique({

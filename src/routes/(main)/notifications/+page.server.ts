@@ -1,76 +1,34 @@
-import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
+import { authorise } from "$lib/server/lucia"
+import { fail } from "@sveltejs/kit"
 
-export async function load({ locals }) {
-	const notifications1 = await prisma.notification.findMany({
-		take: 40,
-		orderBy: {
-			time: "desc",
-		},
-		where: {
-			receiverId: (await authorise(locals)).user.id,
-		},
-		include: {
-			sender: true,
-		},
-	})
-
-	const notifications: typeof notifications1 & { link?: string }[] =
-		notifications1
-
-	for (let i of notifications)
-		switch (i.type) {
-			case "AssetApproved":
-			case "FriendRequest":
-			case "Follower":
-			case "NewFriend":
-				i.link = `/user/${i.sender.number}`
-				break
-
-			case "ForumPostReply":
-			case "ForumReplyReply":
-				const reply = await prisma.forumReply.findUnique({
-					where: {
-						id: i.relativeId,
-					},
-					include: {
-						parentPost: true,
-					},
-				})
-				if (!reply) break
-
-				i.link = `/forum/${reply.parentPost.forumCategoryName.toLowerCase()}/${
-					reply.parentPost.id
-				}/${reply.id}?depth=1`
-				break
-
-			case "ForumMention":
-			case "ForumPost":
-				const post = await prisma.forumPost.findUnique({
-					where: {
-						id: i.relativeId,
-					},
-				})
-				if (!post) break
-
-				i.link = `/forum/${post.forumCategoryName.toLowerCase()}/${
-					post.id
-				}`
-				break
-
-			case "ItemPurchase":
-				i.link = `/avatarshop/item/${i.relativeId}`
-				break
-			case "Message":
-		}
-
-	await prisma.notification.updateMany({
+export const load = () =>
+	prisma.notification.updateMany({
 		data: {
 			read: true,
 		},
 	})
 
-	return {
-		notifications,
-	}
+export const actions = {
+	default: async ({ locals, url }) => {
+		const { user } = await authorise(locals)
+
+		const id = url.searchParams.get("s")
+		if (!id) return fail(400)
+
+		try {
+			await prisma.notification.updateMany({
+				where: {
+					id,
+					receiverId: user.id,
+				},
+				data: {
+					read: true,
+				},
+			})
+		} catch (e: any) {
+			console.log("Notification ID not found")
+			return fail(400)
+		}
+	},
 }

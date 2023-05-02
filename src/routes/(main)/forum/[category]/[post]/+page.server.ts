@@ -158,7 +158,7 @@ export const actions = {
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
-		// if (limit) return limit
+		if (limit) return limit
 
 		const { content, replyId } = form.data
 		// If there is a replyId, it is a reply to another comment
