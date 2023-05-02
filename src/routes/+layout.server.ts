@@ -1,16 +1,108 @@
 import { prisma } from "$lib/server/prisma"
 
-export const load = async ({ locals }) => ({
-	banners: prisma.announcements.findMany({
-		where: {
-			active: true,
-		},
-		select: {
-			id: true,
-			body: true,
-			bgColour: true,
-			textLight: true,
-		},
-	}),
-	user: (await locals.validateUser()).user,
-})
+export async function load({ locals }) {
+	const { user, session } = await locals.validateUser()
+	// Not authorise function, as we don't want
+	// to redirect to login page if not logged in
+
+	let notifications
+	if (session) {
+		const notifications1 = await prisma.notification.findMany({
+			take: 40,
+			orderBy: {
+				time: "desc",
+			},
+			where: {
+				receiverId: user.id,
+			},
+			select: {
+				id: true,
+				read: true,
+				type: true,
+				note: true,
+				time: true,
+				relativeId: true,
+				sender: {
+					select: {
+						number: true,
+						image: true,
+						username: true,
+					},
+				},
+			},
+		})
+
+		// Make type relativeId optional so we can delete it later
+		type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+		// i told myself i would never write types like this
+		const notifications2: (Optional<
+			(typeof notifications1)[0],
+			"relativeId"
+		> & { link?: string })[] = notifications1
+
+		for (let i of notifications2) {
+			switch (i.type) {
+				case "AssetApproved":
+				case "FriendRequest":
+				case "Follower":
+				case "NewFriend":
+					i.link = `/user/${i.sender.number}`
+					break
+
+				case "ForumPostReply":
+				case "ForumReplyReply":
+					const reply = await prisma.forumReply.findUnique({
+						where: {
+							id: i.relativeId,
+						},
+						include: {
+							parentPost: true,
+						},
+					})
+					if (!reply) break
+
+					i.link = `/forum/${reply.parentPost.forumCategoryName.toLowerCase()}/${
+						reply.parentPost.id
+					}/${reply.id}?depth=1`
+					break
+
+				case "ForumMention":
+				case "ForumPost":
+					const post = await prisma.forumPost.findUnique({
+						where: {
+							id: i.relativeId,
+						},
+					})
+					if (!post) break
+
+					i.link = `/forum/${post.forumCategoryName.toLowerCase()}/${
+						post.id
+					}`
+					break
+
+				case "ItemPurchase":
+					i.link = `/avatarshop/item/${i.relativeId}`
+					break
+				case "Message":
+			}
+			delete i.relativeId
+		}
+		notifications = notifications2
+	}
+
+	return {
+		banners: prisma.announcements.findMany({
+			where: {
+				active: true,
+			},
+			select: {
+				id: true,
+				body: true,
+				bgColour: true,
+				textLight: true,
+			},
+		}),
+		user,
+		notifications: notifications || [],
+	}
+}
