@@ -1,7 +1,7 @@
 import { SignData } from "$lib/server/sign"
 import fs from "fs"
 
-export const GET = async () =>
+export const GET = () =>
 	new Response(
 		SignData(
 			fs

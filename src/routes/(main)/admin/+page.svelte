@@ -84,7 +84,9 @@
 					id="administration"
 					role="tabpanel">
 					<div class="row">
-						<a href="/admin/banners" class="col-lg-3 p-1 text-decoration-none">
+						<a
+							href="/admin/banners"
+							class="col-lg-3 p-1 text-decoration-none">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -95,7 +97,9 @@
 							</div>
 						</a>
 
-						<a href="/admin/accounts" class="col-lg-3 p-1 text-decoration-none">
+						<a
+							href="/admin/accounts"
+							class="col-lg-3 p-1 text-decoration-none">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -106,7 +110,9 @@
 							</div>
 						</a>
 
-						<a href="/admin/audit" class="col-lg-3 p-1 text-decoration-none">
+						<a
+							href="/admin/audit"
+							class="col-lg-3 p-1 text-decoration-none">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -117,7 +123,9 @@
 							</div>
 						</a>
 
-						<a href="/admin/invites" class="col-lg-3 p-1 text-decoration-none">
+						<a
+							href="/admin/invites"
+							class="col-lg-3 p-1 text-decoration-none">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -148,7 +156,9 @@
 				id="moderation"
 				role="tabpanel">
 				<div class="row g-3">
-					<a href="/admin/moderation" class="col-lg-3 p-1 text-decoration-none">
+					<a
+						href="/admin/moderation"
+						class="col-lg-3 p-1 text-decoration-none">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>
@@ -185,7 +195,9 @@
 			<div class="tab-pane fade" id="economy" role="tabpanel">
 				<div class="row g-3">
 					{#if user?.permissionLevel == 5}
-						<a href="/admin/stipend" class="col-lg-3 p-1 text-decoration-none">
+						<a
+							href="/admin/stipend"
+							class="col-lg-3 p-1 text-decoration-none">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -222,7 +234,9 @@
 							</a>
 					{/if} -->
 
-					<a href="/admin/transactions" class="col-lg-3 p-1 text-decoration-none">
+					<a
+						href="/admin/transactions"
+						class="col-lg-3 p-1 text-decoration-none">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>

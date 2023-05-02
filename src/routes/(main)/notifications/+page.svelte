@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let data
-	const notificationNotes: { [k: string]: string } = {
+	const notificationNotes = {
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",
