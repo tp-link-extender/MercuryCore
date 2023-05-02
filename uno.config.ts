@@ -2002,17 +2002,10 @@ export default defineConfig({
 		],
 		// gap
 		[/^gap-([0-5])$/, ([_, n]) => ({ gap: `${bsRem[n]} !important` })],
-		// // cols
-		// [
-		// 	/^col-(10|11|12|[1-9])$/,
-		// 	([_, n]) => ({
-		// 		flex: "0 0 auto",
-		// 		width: `${(100 / 12) * parseInt(n)}%`,
-		// 	}),
-		// ],
+		// cols don't work
 		// offsets
 		[
-			/^offset-([1-9]|10|11)$/,
+			/^offset-(10|11|[1-9])$/,
 			([_, n]) => ({
 				"margin-left": `${(100 / 12) * parseInt(n)}%`,
 			}),
@@ -2027,6 +2020,73 @@ export default defineConfig({
 			/^order-([\.\d]+)$/,
 			([_, n]) => ({
 				order: `${n} !important`,
+			}),
+		],
+		// opacity
+		[
+			/^opacity-([\.\d]+)$/,
+			([_, n]) => ({
+				opacity: `${parseInt(n) / 100} !important`,
+			}),
+		],
+		// bg-opacity
+		[
+			/^bg-opacity-([\.\d]+)$/,
+			([_, n]) => ({
+				"--bs-bg-opacity": parseInt(n) / 100,
+			}),
+		],
+		// border-opacity
+		[
+			/^border-opacity-([\.\d]+)$/,
+			([_, n]) => ({
+				"--bs-border-opacity": parseInt(n) / 100,
+			}),
+		],
+		// text-opacity
+		[
+			/^text-opacity-([\.\d]+)$/,
+			([_, n]) => ({
+				"--bs-text-opacity": parseInt(n) / 100,
+			}),
+		],
+		// gutter
+		[
+			/^g([xy]?)-([0-5])$/,
+			([_, d, n]) => {
+				if (d) return { [`--bs-gutter-${d}`]: bsRem[n] }
+				else
+					return {
+						"--bs-gutter-x": bsRem[n],
+						"--bs-gutter-y": bsRem[n],
+					}
+			},
+		],
+		// width, height
+		[
+			/^(w|h|mw|vw|vh)-([\.\d]+)$/,
+			([_, wh, n]) => ({
+				[{
+					w: "width",
+					h: "height",
+					mw: "max-width",
+					vw: "width",
+					vh: "height",
+				}[wh] || ""]: `${parseInt(n)}${
+					wh == "vw" || wh == "vh" ? wh : "%"
+				} !important`,
+			}),
+		],
+		// absolute positioning
+		[
+			/^(top|bottom|start|end)-([\.\d]+)$/,
+			([_, wh, n]) => ({
+				[{
+					top: "top",
+					bottom: "bottom",
+					start: "left",
+					end: "right",
+				}[wh] || "wh"]: `${parseInt(n)}% !important`,
 			}),
 		],
 	],
