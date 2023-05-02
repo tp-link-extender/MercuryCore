@@ -1,1 +1,1 @@
-export const GET = async () => new Response("OK")
+export const GET = () => new Response("OK")
