@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { navigating } from "$app/stores"
+	import { enhance } from "$app/forms"
 	import nprogress from "nprogress"
 
 	import "uno.css"
@@ -23,6 +24,21 @@
 
 		nprogress.done()
 	}
+
+	const notificationNotes = {
+		AssetApproved: "Asset approval",
+		FriendRequest: "Friend request",
+		Follower: "New follower",
+		ForumPostReply: "Reply to your post",
+		ForumReplyReply: "Reply to your reply",
+		ForumMention: "Mention",
+		ForumPost: "New forum post",
+		ItemPurchase: "Item purchased",
+		Message: "New message",
+		NewFriend: "New friend",
+	}
+
+	$: notifications = data.notifications.filter(n => !n.read)
 </script>
 
 <svelte:head>
@@ -42,36 +58,50 @@
 
 <slot />
 
-<!-- <div class="toast-container position-fixed bottom-0 end-0 p-3">
-	9999
-	<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-		<div class="toast-header">
-			<img src="..." class="rounded me-2" alt="..." />
-			<strong class="me-auto">Bootstrap</strong>
-			<small class="text-body-secondary">just now</small>
-			<button
-				type="button"
-				class="btn-close"
-				data-bs-dismiss="toast"
-				aria-label="Close" />
+<!-- Toast notifications -->
+<div class="toast-container position-fixed bottom-0 end-0">
+	{#each notifications as notification}
+		<div
+			class="toast show bg-darker light-text m-3"
+			role="alert"
+			aria-live="assertive"
+			aria-atomic="true">
+			<div class="toast-header bg-a light-text">
+				<a
+					href="/user/{notification.sender.number}"
+					class="d-flex align-items-center w-100 light-text text-decoration-none">
+					<div
+						class="image-background bg-background rounded-circle me-3">
+						<img
+							src={notification.sender.image}
+							alt={notification.sender.username}
+							class="h-100 rounded-circle img-fluid rounded-top-0" />
+					</div>
+					<strong class="me-auto">
+						{notificationNotes[notification.type]}
+					</strong>
+					<small class="text-body-secondary">
+						{notification.time.toLocaleString()}
+					</small>
+				</a>
+				<form
+					use:enhance
+					method="POST"
+					action="/notifications?s={notification.id}">
+					<button
+						type="submit"
+						class="btn-close"
+						aria-label="Close" />
+				</form>
+			</div>
+			<a
+				href={notification.link}
+				class="toast-body bg-darker light-text text-decoration-none d-block">
+				{notification.note}
+			</a>
 		</div>
-		<div class="toast-body">See? Just like this.</div>
-	</div>
-
-	<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-		<div class="toast-header">
-			<img src="..." class="rounded me-2" alt="..." />
-			<strong class="me-auto">Bootstrap</strong>
-			<small class="text-body-secondary">2 seconds ago</small>
-			<button
-				type="button"
-				class="btn-close"
-				data-bs-dismiss="toast"
-				aria-label="Close" />
-		</div>
-		<div class="toast-body">Heads up, toasts will stack automatically</div>
-	</div>
-</div> -->
+	{/each}
+</div>
 
 <!-- Theme files contain CSS variables that are used throughout the app. -->
 {#if user?.theme == "darken"}
@@ -91,3 +121,24 @@
 		@use "../themes/standard.sass"
 	</style>
 {/if}
+
+<style lang="sass">
+	.btn-close
+		filter: invert(1) grayscale(100%) brightness(200%)
+		@media (prefers-color-scheme: light)
+			filter: none
+
+	.toast
+		min-width: 25rem
+		--bs-toast-box-shadow: 0 0 2rem #fff1
+		@media (prefers-color-scheme: light)
+			--bs-toast-box-shadow: 0 0 2rem #0001
+	.toast-body
+		min-height: 4rem
+
+	.image-background
+		max-width: 1.6rem
+		min-height: 1.6rem
+		img
+			width: 1.6rem
+</style>

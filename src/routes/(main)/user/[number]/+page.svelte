@@ -277,27 +277,25 @@
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
 							class="p-2 col-md-6 col-sm-12">
-							<div class="card bg-darker h-100">
-								<div class="card bg-darker-body pb-0">
-									<div id="user" class="d-flex mb-2">
-										<span class="pfp rounded-circle bg-a2">
-											<img
-												src={data.image}
-												alt={data.username}
-												class="rounded-circle img-fluid rounded-top-0" />
-										</span>
-										<span class="fw-bold ms-3 light-text">
-											{data.username}
-										</span>
-										<span
-											class="ms-auto fw-italic light-text text-end">
-											{status.posted.toLocaleString()}
-										</span>
-									</div>
-									<p class="text-start">
-										{status.content}
-									</p>
+							<div class="card bg-darker p-2 h-100">
+								<div id="user" class="d-flex mb-2">
+									<span class="pfp rounded-circle bg-a2">
+										<img
+											src={data.image}
+											alt={data.username}
+											class="rounded-circle img-fluid rounded-top-0" />
+									</span>
+									<span class="fw-bold ms-3 light-text">
+										{data.username}
+									</span>
+									<span
+										class="ms-auto fw-italic light-text text-end">
+										{status.posted.toLocaleString()}
+									</span>
 								</div>
+								<p class="text-start mb-0">
+									{status.content}
+								</p>
 							</div>
 						</div>
 					{/each}
@@ -312,7 +310,6 @@
 		max-width: 60rem
 
 	#image-background
-		width: 7rem
 		height: 7rem
 		img
 			height: 7rem
