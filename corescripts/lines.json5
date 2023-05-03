@@ -9,5 +9,5 @@
 		// "remove_method_definition",
 		"remove_function_call_parens",
 		"filter_after_early_return",
-	]
+	],
 }
