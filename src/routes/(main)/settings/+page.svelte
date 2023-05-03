@@ -226,7 +226,11 @@
 			aria-labelledby="pills-contact-tab"
 			tabindex={0}>
 			<h4 class="fw-normal light-text mb-3">Change Password</h4>
-			<form use:enhance class="col-sm-8" method="POST" action="?a=password">
+			<form
+				use:enhance
+				class="col-sm-8"
+				method="POST"
+				action="?a=password">
 				<fieldset>
 					<div class="form-group row gx-0 mb-2">
 						<label

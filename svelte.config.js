@@ -16,8 +16,8 @@ export default {
 	vitePlugin: {
 		experimental: {
 			inspector: {
-				toggleKeyCombo: "control-i"
-			}
-		}
-	}
+				toggleKeyCombo: "control-i",
+			},
+		},
+	},
 }
