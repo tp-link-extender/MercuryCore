@@ -94,7 +94,7 @@
 			<div class="carousel-inner rounded-4">
 				{#each images as src, i}
 					<div class="carousel-item" class:active={!i}>
-						<img {src} class="d-block w-100" alt="..." />
+						<img {src} class="d-block w-100" alt="Placeholder place thumbnail" />
 					</div>
 				{/each}
 			</div>
