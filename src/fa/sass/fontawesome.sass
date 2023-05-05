@@ -189,15 +189,8 @@
 	animation-timing-function: var(--fa-animation-timing, steps(8))
 
 @media (prefers-reduced-motion: reduce)
-	.fa-beat,
-	.fa-bounce,
-	.fa-fade,
-	.fa-beat-fade,
-	.fa-flip,
-	.fa-pulse,
-	.fa-shake,
-	.fa-spin,
-	.fa-spin-pulse
+	.fa-beat, .fa-bounce, .fa-fade, .fa-beat-fade, .fa-flip,
+	.fa-pulse, .fa-shake, .fa-spin, .fa-spin-pulse
 		-webkit-animation-delay: -1ms
 		animation-delay: -1ms
 		-webkit-animation-duration: 1ms
@@ -207,7 +200,8 @@
 		transition-delay: 0s
 		transition-duration: 0s
 
-@keyframes fa-beat, @-webkit-keyframes fa-beat
+
+@mixin beat()
 	0%, 90%
 		-webkit-transform: scale(1)
 		transform: scale(1)
@@ -215,7 +209,13 @@
 		-webkit-transform: scale(var(--fa-beat-scale, 1.25))
 		transform: scale(var(--fa-beat-scale, 1.25))
 
-@keyframes fa-bounce, @-webkit-keyframes fa-bounce
+@keyframes fa-beat
+	@include beat()
+@-webkit-keyframes fa-beat
+	@include beat()
+
+
+@mixin bounce()
 	0%
 		-webkit-transform: scale(1, 1) translateY(0)
 		transform: scale(1, 1) translateY(0)
@@ -238,11 +238,24 @@
 		-webkit-transform: scale(1, 1) translateY(0)
 		transform: scale(1, 1) translateY(0)
 
-@keyframes fa-fade, @-webkit-keyframes fa-fade
+@keyframes fa-bounce
+	@include bounce()
+@-webkit-keyframes fa-bounce
+	@include bounce()
+
+
+
+@mixin fade()
 	50%
 		opacity: var(--fa-fade-opacity, 0.4)
 
-@keyframes fa-beat-fade, @-webkit-keyframes fa-beat-fade
+@keyframes fa-fade
+	@include fade()
+@-webkit-keyframes fa-fade
+	@include fade()
+
+
+@mixin beat-fade()
 	0%, 100%
 		opacity: var(--fa-beat-fade-opacity, 0.4)
 		-webkit-transform: scale(1)
@@ -252,12 +265,24 @@
 		-webkit-transform: scale(var(--fa-beat-fade-scale, 1.125))
 		transform: scale(var(--fa-beat-fade-scale, 1.125))
 
-@keyframes fa-flip, @-webkit-keyframes fa-flip
+@keyframes fa-beat-fade
+	@include beat-fade()
+@-webkit-keyframes fa-beat-fade
+	@include beat-fade()
+
+
+@mixin flip()
 	50%
 		-webkit-transform: rotate3d(var(--fa-flip-x, 0), var(--fa-flip-y, 1), var(--fa-flip-z, 0), var(--fa-flip-angle, -180deg))
 		transform: rotate3d(var(--fa-flip-x, 0), var(--fa-flip-y, 1), var(--fa-flip-z, 0), var(--fa-flip-angle, -180deg))
 
-@keyframes fa-shake, @-webkit-keyframes fa-shake
+@keyframes fa-flip
+	@include flip()
+@-webkit-keyframes fa-flip
+	@include flip()
+
+
+@mixin shake()
 	0%
 		-webkit-transform: rotate(-15deg)
 		transform: rotate(-15deg)
@@ -286,13 +311,24 @@
 		-webkit-transform: rotate(0deg)
 		transform: rotate(0deg)
 
-@keyframes fa-spin, @-webkit-keyframes fa-spin
+@keyframes fa-shake
+	@include shake()
+@-webkit-keyframes fa-shake
+	@include shake()
+
+
+@mixin spin()
 	0%
 		-webkit-transform: rotate(0deg)
 		transform: rotate(0deg)
 	100%
 		-webkit-transform: rotate(360deg)
 		transform: rotate(360deg)
+
+@keyframes fa-spin
+	@include spin()
+@-webkit-keyframes fa-spin
+	@include spin()
 
 .fa-flip-horizontal
 	-webkit-transform: scale(-1, 1)
@@ -395,8 +431,7 @@
 	font-weight: 900
 	font-display: block
 	src: url(../webfonts/fa-solid-900.woff2) format("woff2"),url(../webfonts/fa-solid-900.ttf) format("truetype")
-.fa-solid,
-.fas
+.fa-solid, .fas
 	font-weight: 900
 
 @font-face
@@ -405,8 +440,7 @@
 	font-weight: 100
 	font-display: block
 	src: url(../webfonts/fa-thin-100.woff2) format("woff2"),url(../webfonts/fa-thin-100.ttf) format("truetype")
-.fa-thin,
-.fat
+.fa-thin, .fat
 	font-weight: 100
 
 @font-face
