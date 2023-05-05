@@ -17,11 +17,8 @@ end
 local getKillerOfHumanoidIfStillInGame
 getKillerOfHumanoidIfStillInGame=function(humanoid)
 local tag=humanoid:findFirstChild"creator"
-if tag then
-local killer=tag.Value
-if killer.Parent then
-return killer
-end
+if tag and tag.Value.Parent then
+return tag.Value
 end
 end
 local onDied

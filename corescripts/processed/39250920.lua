@@ -60,18 +60,18 @@ DialogTone.Friendly then J.BackgroundColor3=Color3.new(0,0.5019607843137255,0)J.
 Number.TextColor3=Color3.new(1,1,1)elseif K==Enum.DialogTone.Enemy then J.
 BackgroundColor3=Color3.new(0.8,0,0)J.Number.TextColor3=Color3.new(1,1,1)end end
 local J J=function()if j then j:Remove()j=nil end local K=h h=nil if K and K.
-InUse then local L=u:Clone()L.archivable=false L.Disabled=false L.Parent=K end
-for L,M in pairs(v)do if L and M then M.Enabled=not L.InUse end end i=nil end
-local L L=function()print'Wander'd.Visible=false J()return G(m,n)end local M M=
-function()print'Timeout'd.Visible=false J()return G(o,p)end local N N=function()
-print'Done'return J()end local O O=function(P)if string.len(P)==0 then return
-'...'else return P end end local P P=function(Q)if j then j:Remove()j=nil end j=
-t:Clone()j.archivable=false j.Disabled=false j.Parent=Q return j end local Q Q=
-function(R,S)if not h then return end i=R local T={}for U,V in pairs(S)do if V:
-IsA'DialogChoice'then table.insert(T,V)end end table.sort(T,function(W,X)return
-W.Name<X.Name end)if#T==0 then N()return end local W,X=1,0 g={}for Y,Z in pairs(
-e)do Z.Visible=false end for _,aa in pairs(T)do if W<=#e then e[W].Size=UDim2.
-new(1,0,0,72)e[W].UserPrompt.Text=aa.UserDialog local ab=math.ceil(e[W].
+InUse then do local L=u:Clone()L.archivable=false L.Disabled=false L.Parent=K
+end end for L,M in pairs(v)do if L and M then M.Enabled=not L.InUse end end i=
+nil end local L L=function()print'Wander'd.Visible=false J()return G(m,n)end
+local M M=function()print'Timeout'd.Visible=false J()return G(o,p)end local N N=
+function()print'Done'return J()end local O O=function(P)if string.len(P)==0 then
+return'...'else return P end end local P P=function(Q)if j then j:Remove()j=nil
+end j=t:Clone()j.archivable=false j.Disabled=false j.Parent=Q return j end local
+Q Q=function(R,S)if not h then return end i=R local T={}for U,V in pairs(S)do if
+V:IsA'DialogChoice'then table.insert(T,V)end end table.sort(T,function(W,X)
+return W.Name<X.Name end)if#T==0 then N()return end local W,X=1,0 g={}for Y,Z in
+pairs(e)do Z.Visible=false end for _,aa in pairs(T)do if W<=#e then e[W].Size=
+UDim2.new(1,0,0,72)e[W].UserPrompt.Text=aa.UserDialog local ab=math.ceil(e[W].
 UserPrompt.TextBounds.Y/24)*24 e[W].Position=UDim2.new(0,0,0,X)e[W].Size=UDim2.
 new(1,0,0,ab)e[W].Visible=true g[e[W]]=aa X=X+ab W=W+1 end end f.Position=UDim2.
 new(0,0,0,X)f.Number.Text=W..')'d.Size=UDim2.new(0,350,0,X+24+32)d.Position=

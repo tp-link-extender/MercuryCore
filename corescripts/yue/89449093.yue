@@ -223,9 +223,9 @@ toggleBackpack = ->
 					backpackButton.Visible = true
 					loadoutBackground.Visible = true
 					if frame\GetChildren![1]\IsA "ImageButton"
-						imgButton = frame\GetChildren![1]
-						imgButton.Active = true
-						imgButton.Draggable = false
+						with frame\GetChildren![1]
+							.Active = true
+							.Draggable = false
 
 
 activateBackpack = ->

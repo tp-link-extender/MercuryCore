@@ -101,7 +101,7 @@ resumeGameFunction = (shield) ->
 goToMenu = (container, menuName, moveDirection, size, position) ->
 	return if type(menuName) ~= "string"
 
-	table.insert(lastMenuSelection, currentMenuSelection)
+	table.insert lastMenuSelection, currentMenuSelection
 	if menuName == "GameMainMenu"
 		lastMenuSelection = {}
 
@@ -191,15 +191,14 @@ resetLocalCharacter = ->
 
 
 createTextButton = (text, style, fontSize, buttonSize, buttonPosition) ->
-	newTextButton = Instance.new "TextButton"
-	newTextButton.Font = Enum.Font.Arial
-	newTextButton.FontSize = fontSize
-	newTextButton.Size = buttonSize
-	newTextButton.Position = buttonPosition
-	newTextButton.Style = style
-	newTextButton.TextColor3 = Color3.new 1, 1, 1
-	newTextButton.Text = text
-	newTextButton
+	New "TextButton"
+		Font: Enum.Font.Arial
+		FontSize: fontSize
+		Size: buttonSize
+		Position: buttonPosition
+		Style: style
+		TextColor3: Color3.new 1, 1, 1
+		Text: text
 
 
 CreateTextButtons = (frame, buttons, yPos, ySize) ->
@@ -236,7 +235,7 @@ CreateTextButtons = (frame, buttons, yPos, ySize) ->
 		buttonNum += 1
 
 
-	toggleSelection(buttonObjs[1])
+	toggleSelection buttonObjs[1]
 
 	numButtons = buttonNum - 1
 
@@ -299,7 +298,7 @@ setDisabledState = (guiObject) ->
 		guiObject.Active = false
 	else
 		if guiObject["ClassName"]
-			print("setDisabledState! got object of unsupported type. object type is ", guiObject.ClassName)
+			print "setDisabledState! got object of unsupported type. object type is ", guiObject.ClassName
 
 
 createHelpDialog = (baseZIndex) ->
@@ -728,8 +727,7 @@ createGameMainMenu = (baseZIndex, shield) ->
 		gameSettingsButton.Parent = gameMainMenuFrame
 		gameSettingsButton.MouseButton1Click\connect ->
 			if game\FindFirstChild "Players" and game.Players["LocalPlayer"]
-				loadingGui = game.Players.LocalPlayer\FindFirstChild "PlayerLoadingGui"
-				if loadingGui
+				if loadingGui = game.Players.LocalPlayer\FindFirstChild "PlayerLoadingGui"
 					loadingGui.Visible = true
 
 
@@ -969,7 +967,7 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 			if explicitLevel == graphicsLevel.Value -- make sure we are actually in right graphics mode
-				setGraphicsQualityLevel(graphicsLevel.Value)
+				setGraphicsQualityLevel graphicsLevel.Value
 
 
 			if not explicitLevel
@@ -1444,7 +1442,7 @@ if LoadLibrary
 							--showFunction
 							->
 								settingsButton.Active = false
-								updateCameraDropDownSelection(UserSettings!.GameSettings.ControlMode.Name)
+								updateCameraDropDownSelection UserSettings!.GameSettings.ControlMode.Name
 
 								if syncVideoCaptureSetting
 									syncVideoCaptureSetting!
@@ -1511,7 +1509,7 @@ if LoadLibrary
 						resumeGameFunction shield
 
 
-			gameSettingsMenu = createGameSettingsMenu(baseZIndex, shield)
+			gameSettingsMenu = createGameSettingsMenu baseZIndex, shield
 			gameSettingsMenu.Visible = false
 			gameSettingsMenu.Parent = settingsFrame
 
@@ -2103,8 +2101,7 @@ if LoadLibrary
 	-- 	waitForChild game, "Players"
 	-- 	waitForProperty game.Players, "LocalPlayer"
 
-	-- 	chatBar = New "Frame"
-	-- 		Name: "ChatBar"
+	-- 	chatBar = New "Frame", "ChatBar"
 	-- 		Size: UDim2.new 1, 0, 0, 22
 	-- 		Position: UDim2.new 0, 0, 1, 0
 	-- 		BackgroundColor3: Color3.new 0, 0, 0
@@ -2150,11 +2147,11 @@ if LoadLibrary
 
 	-- 	-- guiService = game\GetService "GuiService"
 	-- 	--[[newChatMode = ]]try
-	-- 		--guiService\AddSpecialKey(Enum.SpecialKey.ChatHotkey)
+	-- 		--guiService\AddSpecialKey Enum.SpecialKey.ChatHotkey
 	-- 		--guiService.SpecialKeyPressed\connect (key) -> if key == Enum.SpecialKey.ChatHotkey and hotKeyEnabled then activateChat!
 
 	-- 	-- if not newChatMode
-	-- 		--guiService\AddKey("/")
+	-- 		--guiService\AddKey "/"
 	-- 		--guiService.KeyPressed\connect (key) -> if key == "/" and hotKeyEnabled then activateChat!
 
 	-- 	chatBox.FocusLost\connect (enterPressed) ->
@@ -2212,8 +2209,8 @@ if LoadLibrary
 	-- if success and luaChat
 
 	--[[delay 0, ->
-			waitForChild(game, "Players")
-			waitForProperty(game.Players, "LocalPlayer")
+			waitForChild game, "Players"
+			waitForProperty game.Players, "LocalPlayer"
 
 			advancedChatBarSupported = game.Players.LocalPlayer.ChatMode
 			chatBar, toggleHotKey = createChatBar!
@@ -2222,24 +2219,24 @@ if LoadLibrary
 				toggleChatBar = (chatMode) ->
 					if chatMode == Enum.ChatMode.Menu
 						chatBar.Parent = nil
-						game.GuiService\SetGlobalSizeOffsetPixel(0,0)
+						game.GuiService\SetGlobalSizeOffsetPixel 0,0
 						toggleHotKey false
 					elseif chatMode == Enum.ChatMode.TextAndMenu
 						--chatBar.Parent = gui
-						--game.GuiService\SetGlobalSizeOffsetPixel(0,-22)
+						--game.GuiService\SetGlobalSizeOffsetPixel 0,-22
 						toggleHotKey true
 
 
 				game.Players.LocalPlayer.Changed\connect(
 					function prop
 						if prop == "ChatMode"
-							toggleChatBar(game.Players.LocalPlayer.ChatMode)
+							toggleChatBar game.Players.LocalPlayer.ChatMode
 
 
-				toggleChatBar(game.Players.LocalPlayer.ChatMode)
+				toggleChatBar game.Players.LocalPlayer.ChatMode
 			else
 				--chatBar.Parent = gui
-				--game.GuiService\SetGlobalSizeOffsetPixel(0,-22)
+				--game.GuiService\SetGlobalSizeOffsetPixel 0,-22
 		]]
 
 	BurningManPlaceID = 41324860

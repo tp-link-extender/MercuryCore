@@ -364,8 +364,8 @@ IsA'ScreenGui'or n:IsA'BillboardGui'then return n end n=n.Parent end return nil
 end b.AutoTruncateTextObject=function(n)local o,p=n.Text,n:Clone()p.Name='Full'
 ..n.Name p.BorderSizePixel=0 p.BackgroundTransparency=0 p.Text=o p.
 TextXAlignment=Enum.TextXAlignment.Center p.Position=UDim2.new(0,-3,0,0)p.Size=
-UDim2.new(0,100,1,0)p.Visible=false p.Parent=n local q,r,s,t t=function()if k(n
-==nil)then return end n.Text=o if n.TextFits then if r then r:disconnect()r=nil
+UDim2.new(0,100,1,0)p.Visible=false p.Parent=n local q,r,s,t t=function()if k(n)
+==nil then return end n.Text=o if n.TextFits then if r then r:disconnect()r=nil
 end if s then s:disconnect()s=nil end else local u=string.len(o)n.Text=o..'~'
 local v=i(0,u,function(v)if v==0 then n.Text='~'else n.Text=string.sub(o,1,v)..
 '~'end return n.TextFits end)q=string.sub(o,1,v)..'~'n.Text=q if not p.TextFits
@@ -537,10 +537,10 @@ Value=0}),a('StringValue','AssetName',{Value=''})})local Z=a('TextButton',
 'Button',{Text='',Style=Enum.ButtonStyle.RobloxButton,Position=UDim2.new(0.025,0
 ,0.025,0),Size=UDim2.new(0.95,0,0.95,0),ZIndex=6,Parent=Y})local _=a(
 'ImageLabel','ButtonImage',{Image='',Position=UDim2.new(0,-7,0,-7),Size=UDim2.
-new(1,14,1,14),BackgroundTransparency=1,ZIndex=7,Parent=Z})local ac=_:clone()ac.
-Name='ConfigIcon'ac.Visible=false ac.Position=UDim2.new(1,-23,1,-24)ac.Size=
-UDim2.new(0,16,0,16)ac.Image=''ac.ZIndex=6 ac.Parent=Y return Y end local ac ac=
-function(Y)if Y:FindFirstChild'AssetId'then delay(0,function()game:GetService
+new(1,14,1,14),BackgroundTransparency=1,ZIndex=7,Parent=Z})do local ac=_:clone()
+ac.Name='ConfigIcon'ac.Visible=false ac.Position=UDim2.new(1,-23,1,-24)ac.Size=
+UDim2.new(0,16,0,16)ac.Image=''ac.ZIndex=6 ac.Parent=Y end return Y end local ac
+ac=function(Y)if Y:FindFirstChild'AssetId'then delay(0,function()game:GetService
 'ContentProvider':Preload(L..tostring(Y.AssetId.Value))A.SetPanel.ItemPreview.
 LargePreview.Image='LargeThumbnailUrl'..tostring(Y.AssetId.Value)end)end if Y:
 FindFirstChild'AssetName'then A.SetPanel.ItemPreview.TextPanel.RolloverText.Text
@@ -784,38 +784,38 @@ CreateTrueScrollingFrame()ar.Size=UDim2.new(1,0,1,0)ar.BackgroundColor3=Color3.
 new(0.2823529411764706,0.2823529411764706,0.2823529411764706)ar.BorderColor3=
 Color3.new(0,0,0)ar.Active=true ar.Parent=aq as.Parent=ag as.BackgroundColor3=
 Color3.new(0.2823529411764706,0.2823529411764706,0.2823529411764706)as.
-BorderSizePixel=0 as.BackgroundTransparency=0 as.Position=UDim2.new(1,-21,1,1)if
-ab then as.Size=UDim2.new(0,21,ab.Y.Scale,ab.Y.Offset)else as.Size=UDim2.new(0,
-21,0,400)end as:FindFirstChild'ScrollDownButton'.Position=UDim2.new(0,0,1,-20)a(
-'Frame','FakeLine',{BorderSizePixel=0,BackgroundColor3=Color3.new(0,0,0),Size=
-UDim2.new(0,1,1,1),Position=UDim2.new(1,0,0,0),Parent=as})at=a('TextButton',
-'VerticalDragger',{ZIndex=2,AutoButtonColor=false,BackgroundColor3=Color3.new(
-0.19607843137254902,0.19607843137254902,0.19607843137254902),BorderColor3=Color3
-.new(0,0,0),Size=UDim2.new(1,20,0,20),Position=UDim2.new(0,0,1,0),Active=true,
-Text='',Parent=aq})local au=a('Frame','ScrubFrame',{BackgroundColor3=Color3.new(
-1,1,1),BorderSizePixel=0,Position=UDim2.new(0.5,-5,0.5,0),Size=UDim2.new(0,10,0,
-1),ZIndex=5,Parent=at})local p=au:clone()p.Position=UDim2.new(0.5,-5,0.5,-2)p.
-Parent=at local q=au:clone()q.Position=UDim2.new(0.5,-5,0.5,2)q.Parent=at local
-r,s,t=a('TextButton','AreaSoak',{Size=UDim2.new(1,0,1,0),BackgroundTransparency=
-1,BorderSizePixel=0,Text='',ZIndex=10,Visible=false,Active=true,Parent=d(ae)}),
-false,nil at.MouseEnter:connect(function()at.BackgroundColor3=Color3.new(
-0.23529411764705882,0.23529411764705882,0.23529411764705882)end)at.MouseLeave:
-connect(function()at.BackgroundColor3=Color3.new(0.19607843137254902,
-0.19607843137254902,0.19607843137254902)end)at.MouseButton1Down:connect(function
-(u,v)s=true r.Visible=true t=v end)r.MouseButton1Up:connect(function()s=false r.
-Visible=false end)r.MouseMoved:connect(function(u,v)if not s then return end
-local w=v-t if not as.ScrollDownButton.Visible and w>0 then return end if(aq.
-Size.Y.Offset+w)<150 then aq.Size=UDim2.new(aq.Size.X.Scale,aq.Size.X.Offset,aq.
-Size.Y.Scale,150)as.Size=UDim2.new(0,21,0,150)return end t=v if aq.Size.Y.Offset
-+w>=0 then aq.Size=UDim2.new(aq.Size.X.Scale,aq.Size.X.Offset,aq.Size.Y.Scale,aq
-.Size.Y.Offset+w)as.Size=UDim2.new(0,21,0,as.Size.Y.Offset+w)end end)end local
-au au=function()am.Visible=not am.Visible if ad then ar.Visible=not ar.Visible
-at.Visible=not at.Visible as.Visible=not as.Visible else aq.Visible=not aq.
-Visible end if am.Visible then al.Text='+'else al.Text='-'end end an.
-MouseButton1Click:connect(function()return au()end)al.MouseButton1Click:connect(
-function()return au()end)if ad then return ag,ar,ak,ai else return ag,aq,ak,ai
-end end b.Help=function(aa)if aa=='CreatePropertyDropDownMenu'or aa==b.
-CreatePropertyDropDownMenu then return
+BorderSizePixel=0 as.BackgroundTransparency=0 as.Position=UDim2.new(1,-21,1,1)as
+.Size=UDim2.new(0,21,(function()if ab then return ab.Y.Scale,ab.Y.Offset else
+return 0,400 end end)())as:FindFirstChild'ScrollDownButton'.Position=UDim2.new(0
+,0,1,-20)a('Frame','FakeLine',{BorderSizePixel=0,BackgroundColor3=Color3.new(0,0
+,0),Size=UDim2.new(0,1,1,1),Position=UDim2.new(1,0,0,0),Parent=as})at=a(
+'TextButton','VerticalDragger',{ZIndex=2,AutoButtonColor=false,BackgroundColor3=
+Color3.new(0.19607843137254902,0.19607843137254902,0.19607843137254902),
+BorderColor3=Color3.new(0,0,0),Size=UDim2.new(1,20,0,20),Position=UDim2.new(0,0,
+1,0),Active=true,Text='',Parent=aq})local au=a('Frame','ScrubFrame',{
+BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,Position=UDim2.new(0.5,-5,
+0.5,0),Size=UDim2.new(0,10,0,1),ZIndex=5,Parent=at})local p=au:clone()p.Position
+=UDim2.new(0.5,-5,0.5,-2)p.Parent=at local q=au:clone()q.Position=UDim2.new(0.5,
+-5,0.5,2)q.Parent=at local r,s,t=a('TextButton','AreaSoak',{Size=UDim2.new(1,0,1
+,0),BackgroundTransparency=1,BorderSizePixel=0,Text='',ZIndex=10,Visible=false,
+Active=true,Parent=d(ae)}),false,nil at.MouseEnter:connect(function()at.
+BackgroundColor3=Color3.new(0.23529411764705882,0.23529411764705882,
+0.23529411764705882)end)at.MouseLeave:connect(function()at.BackgroundColor3=
+Color3.new(0.19607843137254902,0.19607843137254902,0.19607843137254902)end)at.
+MouseButton1Down:connect(function(u,v)s=true r.Visible=true t=v end)r.
+MouseButton1Up:connect(function()s=false r.Visible=false end)r.MouseMoved:
+connect(function(u,v)if not s then return end local w=v-t if not as.
+ScrollDownButton.Visible and w>0 then return end if(aq.Size.Y.Offset+w)<150 then
+aq.Size=UDim2.new(aq.Size.X.Scale,aq.Size.X.Offset,aq.Size.Y.Scale,150)as.Size=
+UDim2.new(0,21,0,150)return end t=v if aq.Size.Y.Offset+w>=0 then aq.Size=UDim2.
+new(aq.Size.X.Scale,aq.Size.X.Offset,aq.Size.Y.Scale,aq.Size.Y.Offset+w)as.Size=
+UDim2.new(0,21,0,as.Size.Y.Offset+w)end end)end local au au=function()am.Visible
+=not am.Visible if ad then ar.Visible=not ar.Visible at.Visible=not at.Visible
+as.Visible=not as.Visible else aq.Visible=not aq.Visible end if am.Visible then
+al.Text='+'else al.Text='-'end end an.MouseButton1Click:connect(function()return
+au()end)al.MouseButton1Click:connect(function()return au()end)if ad then return
+ag,ar,ak,ai else return ag,aq,ak,ai end end b.Help=function(aa)if aa==
+'CreatePropertyDropDownMenu'or aa==b.CreatePropertyDropDownMenu then return
 [[Function CreatePropertyDropDownMenu. Arguments: (instance, propertyName, enumType). Side effect: returns a container with a drop-down-box that is linked to the 'property' field of 'instance' which is of type 'enumType']]
 elseif aa=='CreateDropDownMenu'or aa==b.CreateDropDownMenu then return
 [[Function CreateDropDownMenu. Arguments: (items, onItemSelected). Side effect: Returns 2 results, a container to the gui object and a 'updateSelection' function for external updating. The container is a drop-down-box created around a list of items]]

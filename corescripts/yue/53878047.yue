@@ -99,8 +99,7 @@ if IsPhone!
 	CurrentLoadout.Position = UDim2.new 0.5, -90, 1, -85
 
 for i = 0, NumSlots
-	slotFrame = New "Frame"
-		Name: "Slot#{i}"
+	slotFrame = New "Frame", "Slot#{i}"
 		RobloxLocked: true
 		BackgroundColor3: Color3.new 0, 0, 0
 		BackgroundTransparency: 1
@@ -568,8 +567,7 @@ makeStyledButton = (buttonName, size, position, parent, buttonStyle) ->
 	button
 
 makeTextLabel = (TextLabelName, text, position, parent) ->
-	New "TextLabel"
-		Name: TextLabelName
+	New "TextLabel", TextLabelName,
 		RobloxLocked: true
 		BackgroundTransparency: 1
 		Size: UDim2.new 0, 32, 0, 14

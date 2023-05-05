@@ -77,8 +77,8 @@ export const actions = {
 				const expiry = inviteExpiry ? new Date(inviteExpiry) : null
 
 				if (
-					inviteExpiryEnabled && ((expiry?.getTime()) || 0) <
-					new Date().getTime()
+					inviteExpiryEnabled &&
+					(expiry?.getTime() || 0) < new Date().getTime()
 				)
 					return formError(form, ["inviteExpiry"], ["Invalid date"])
 

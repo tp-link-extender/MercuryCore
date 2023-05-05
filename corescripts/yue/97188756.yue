@@ -1021,10 +1021,10 @@ Chat.IsTouchDevice ==>
 -- Chat.ScrollQueue = (value) =>
 -- 	for i = 1, #@MessageQueue
 -- 		if @MessageQueue[i]
--- 			for _, label in pairs(@MessageQueue[i])
+-- 			for _, label in pairs @MessageQueue[i]
 -- 				next = @MessageQueue[i].Next
 -- 				previous = @MessageQueue[i].Previous
--- 				if label and label\IsA('TextLabel') or label\IsA('TextButton')
+-- 				if label and label\IsA('TextLabel') or label\IsA 'TextButton'
 -- 					if value > 0 and previous and previous['Message']
 -- 						label.Position = previous['Message'].Position
 -- 					elseif value < 1 and next['Message']
@@ -1039,7 +1039,7 @@ Chat.UpdateQueue = (field, diff) =>
 				if label and type(label) ~= "table" and type(label) ~= "number"
 					if label\IsA"TextLabel" or label\IsA "TextButton"
 						if diff
-							label.Position = label.Position - UDim2.new(0, 0, diff, 0)
+							label.Position = label.Position - UDim2.new 0, 0, diff, 0
 						else
 							if field == @MessageQueue[i]
 								label.Position = UDim2.new(
@@ -1148,17 +1148,17 @@ Chat.UpdateChat = (cPlayer, message) =>
 
 		heightField = mLabel.TextBounds.Y
 
-		mLabel.Size = UDim2.new(1, 0, heightField/@RenderFrame.AbsoluteSize.Y, 0)
+		mLabel.Size = UDim2.new 1, 0, heightField/@RenderFrame.AbsoluteSize.Y, 0
 		pLabel.Size = mLabel.Size
 
 		diff = mLabel.Size.Y.Scale - prevYScale
 
-		Chat\UpdateQueue(@MessageQueue[i], diff)
+		Chat\UpdateQueue @MessageQueue[i], diff
 	end ]]
 
 -- Chat.ApplyFilter = (str) =>
--- 	--[[for _, word in pair(@Filter_List)
--- 		if string.find(str, word)
+-- 	--[[for _, word in pair @Filter_List
+-- 		if string.find str, word
 -- 			str\gsub word, '@#$^'
 -- ]]
 
@@ -1232,12 +1232,10 @@ Chat.CreateMessage = (cPlayer, message) =>
 	else
 		pLabel.TextColor3 = cPlayer.TeamColor.Color
 
-	local nString
-
-	if not @CachedSpaceStrings_List[pName]
-		nString = Chat\ComputeSpaceString pLabel
+	nString = if not @CachedSpaceStrings_List[pName]
+		Chat\ComputeSpaceString pLabel
 	else
-		nString = @CachedSpaceStrings_List[pName]
+		@CachedSpaceStrings_List[pName]
 
 	mLabel = New "TextLabel", "#{pName} - message"
 		-- Max is 3 lines
@@ -1299,7 +1297,7 @@ Chat.FindButtonTree = (scButton, rootList) =>
 			list = rootList[button]
 		elseif type(rootList[button]) == "table"
 			list = Chat\FindButtonTree scButton, rootList[button]
-	return list
+	list
 
 Chat.ToggleSafeChatMenu = (scButton) =>
 	list = Chat\FindButtonTree scButton, @SafeChatTree
@@ -1308,7 +1306,7 @@ Chat.ToggleSafeChatMenu = (scButton) =>
 			if button\IsA"TextButton" or button\IsA "ImageButton"
 				button.Visible = not button.Visible
 		return true
-	return false
+	false
 
 Chat.CreateSafeChatOptions = (list, rootButton) =>
 	text_List = {}
@@ -1338,7 +1336,7 @@ Chat.CreateSafeChatOptions = (list, rootButton) =>
 			if type(list[msg]) == "table"
 				text_List[rootButton][chatText] = Chat\CreateSafeChatOptions list[msg], chatText
 				-- else
-				-- 	--table.insert(text_List[chatText], true)
+				-- 	--table.insert text_List[chatText], true
 			chatText.MouseEnter\connect ->
 				Chat\ToggleSafeChatMenu chatText
 
@@ -1351,7 +1349,7 @@ Chat.CreateSafeChatOptions = (list, rootButton) =>
 				-- 	for i, v in pairs lList
 				try
 					PlayersService\Chat lList[1]
-	return text_List
+	text_List
 
 Chat.CreateSafeChatGui ==>
 	@SafeChatFrame = New "Frame", "SafeChatFrame"
@@ -1455,7 +1453,7 @@ Chat.CreateChatBar ==>
 			ClearTextOnFocus: false
 
 		-- Engine has code to offset the entire world, so if we do it by -20 pixels nothing gets in our chat's way
-		--GuiService\SetGlobalSizeOffsetPixel(0, -20)
+		--GuiService\SetGlobalSizeOffsetPixel 0, -20
 		success, error = try
 			GuiService\SetGlobalGuiInset 0, 0, 0, 20
 		if not success
@@ -1600,7 +1598,7 @@ Chat.FindMessageInSafeChat = (message, list) =>
 -- Just a wrapper around our PlayerChatted event
 Chat.PlayerChatted = (...) =>
 	args = { ... }
-	-- argCount = select("#", ...)
+	-- argCount = select "#", ...
 	local player, message
 	-- This doesn't look very good, but what else to do?
 	if args[2]
@@ -1624,7 +1622,7 @@ Chat.PlayerChatted = (...) =>
 Chat.CullThread ==>
 	while true
 		if #@MessageQueue > 0
-			for _, field in pairs(@MessageQueue)
+			for _, field in pairs @MessageQueue
 				if field["SpawnTime"] and
 					field["Player"] and
 					field["Message"] and

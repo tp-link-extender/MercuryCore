@@ -3,13 +3,13 @@
 	import Report from "$lib/components/Report.svelte"
 	import fade from "$lib/fade"
 
-	const permissions: any = [
+	const permissions = [
 		[], // index from 1
-		["white", "user", "User"],
-		["aqua", "check", "Verified"],
-		["violet", "hammer", "Catalog Manager"],
-		["orange", "shield-alt", "Moderator"],
-		["crimson", "scale-balanced", "Administrator"],
+		["white", "fa-user", "User"],
+		["aqua", "fa-check", "Verified"],
+		["violet", "fa-hammer", "Catalog Manager"],
+		["orange", "fa-shield-alt", "Moderator"],
+		["crimson", "fa-scale-balanced", "Administrator"],
 	]
 
 	export let data
@@ -38,7 +38,7 @@
 						class="ms-auto"
 						style="color: {permissions[data.permissionLevel][0]}">
 						<i
-							class="fa fa-{permissions[
+							class="fa {permissions[
 								data.permissionLevel
 							][1]} me-1" />
 						{permissions[data.permissionLevel][2]}
@@ -49,25 +49,25 @@
 						href="/user/{data.number}/friends"
 						class="light-text text-center text-decoration-none">
 						Friends
-						<h3 class="light-text">
+						<h2 class="h3 light-text">
 							{data.friendCount}
-						</h3>
+						</h2>
 					</a>
 					<a
 						href="/user/{data.number}/followers"
 						class="light-text text-center text-decoration-none ms-4">
 						Followers
-						<h3 class="light-text">
+						<h2 class="h3 light-text">
 							{data.followerCount}
-						</h3>
+						</h2>
 					</a>
 					<a
 						href="/user/{data.number}/following"
 						class="light-text text-center text-decoration-none ms-4">
 						Following
-						<h3 class="light-text">
+						<h2 class="h3 light-text">
 							{data.followingCount}
-						</h3>
+						</h2>
 					</a>
 
 					{#if data.username != user?.username}

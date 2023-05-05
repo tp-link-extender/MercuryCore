@@ -180,7 +180,7 @@ followThumbstickTouchMove = (thumbstickFrame, thumbstickOuter, touchLocation) ->
 		crossOuterToInnerWithMovement = (outerToInnerVectorCurrentUnit.x * movementVectorUnit.y) -
 			(outerToInnerVectorCurrentUnit.y * movementVectorUnit.x)
 		angle = math.atan2 crossOuterToInnerWithMovement, dotProduct outerToInnerVectorCurrentUnit, movementVectorUnit
-		anglePercent = angle * math.min(movementVector.magnitude / outerToInnerVectorCurrent.magnitude, 1.0)
+		anglePercent = angle * math.min movementVector.magnitude / outerToInnerVectorCurrent.magnitude, 1.0
 
 		-- If angle is significant, rotate about the inner thumbsticks current center
 		if math.abs(anglePercent) > 0.00001
@@ -267,7 +267,7 @@ constructThumbstick = (defaultThumbstickPos, updateFunction, stationaryThumbstic
 		thumbstickTouch = inputObject
 		table.insert thumbstickTouches, thumbstickTouch
 
-		thumbstickFrame.Position = transformFromCenterToTopLeft(thumbstickTouch.Position, thumbstickFrame)
+		thumbstickFrame.Position = transformFromCenterToTopLeft thumbstickTouch.Position, thumbstickFrame
 		outerThumbstick.Position = thumbstickFrame.Position
 
 		userInputServiceTouchMovedCon = userInputService.TouchMoved\connect (movedInput) ->
@@ -453,8 +453,7 @@ setupCameraControl = (parentFrame, refreshCharacterMoveFunc) ->
 		-- track pinching in new frame
 		pinchFrame?\Destroy!
 		-- make sure we didn't track in any mud
-		pinchFrame = New "Frame"
-			Name: "PinchFrame"
+		pinchFrame = New "Frame", "PinchFrame"
 			BackgroundTransparency: 1
 			Size: UDim2.new 1, 0, 1, 0
 			Parent: parentFrame

@@ -24,7 +24,7 @@ export const actions = {
 			return fail(400)
 
 		const currentBodyColour = user.bodyColours
-		currentBodyColour[bodyPart] = bodyColour
+		currentBodyColour[bodyPart] = parseInt(bodyColour)
 
 		await prisma.authUser.update({
 			where: { id: user.id },

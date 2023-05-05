@@ -94,7 +94,10 @@
 			<div class="carousel-inner rounded-4">
 				{#each images as src, i}
 					<div class="carousel-item" class:active={!i}>
-						<img {src} class="d-block w-100" alt="..." />
+						<img
+							{src}
+							class="d-block w-100"
+							alt="Placeholder place thumbnail" />
 					</div>
 				{/each}
 			</div>
@@ -125,6 +128,7 @@
 						{#if data.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
 							<div
 								id="settings"
+								aria-label="Place settings"
 								class="col d-flex justify-content-end">
 								<a
 									href="/place/{data.id}/{data.name}/settings"
@@ -134,14 +138,20 @@
 							</div>
 						{/if}
 					</div>
-					<p class="light-text mt-2 mb-0">
-						<b>By</b>
+					<span class="light-text d-flex mb-2">
+						<b>by</b>
 						<a
 							href="/user/{data.ownerUser?.number}"
-							class="text-decoration-none">
+							class="light-text text-decoration-none d-flex">
+							<span class="pfp bg-darker rounded-circle mx-1">
+								<img
+									src={data.ownerUser?.image}
+									alt={data.ownerUser?.username}
+									class="rounded-circle rounded-top-0" />
+							</span>
 							{data.ownerUser?.username}
 						</a>
-					</p>
+					</span>
 					<p class="light-text mb-0">
 						Gears: <i
 							class="far fa-circle-xmark"
@@ -190,6 +200,7 @@
 							<button
 								name="action"
 								value={data.likes ? "unlike" : "like"}
+								aria-label={data.likes ? "Unlike" : "Like"}
 								class="btn btn-sm {data.likes
 									? 'btn-success'
 									: 'btn-outline-success'}">
@@ -204,6 +215,9 @@
 							<button
 								name="action"
 								value={data.dislikes ? "undislike" : "dislike"}
+								aria-label={data.dislikes
+									? "Undislike"
+									: "Dislike"}
 								class="btn btn-sm {data.dislikes
 									? 'btn-danger'
 									: 'btn-outline-danger'}">
@@ -260,7 +274,10 @@
 			</div>
 		</div>
 	</div>
-	<ul class="nav nav-pills nav-justified mb-3 bg-a" id="pills-tab">
+	<ul
+		id="pills-tab"
+		class="nav nav-pills nav-justified mb-3 bg-a"
+		role="tablist">
 		<li class="nav-item" role="presentation">
 			<button
 				class="nav-link active"
@@ -592,4 +609,8 @@
 		border-style: solid
 		border-width: 0px 0px 2px 0px
 		border-color: var(--bs-blue)
+
+	.pfp, .pfp img
+		width: 1.5rem
+		height: 1.5rem
 </style>

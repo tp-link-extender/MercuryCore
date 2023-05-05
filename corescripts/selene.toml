@@ -2,4 +2,3 @@ std = "mercury"
 
 [lints]
 multiple_statements = "allow"
-shadowing = "allow"

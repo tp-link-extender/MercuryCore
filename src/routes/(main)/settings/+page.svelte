@@ -180,8 +180,8 @@
 					You cannot change your username.
 				</small>
 			</div>
-			<hr />
-			<div class="form-group row">
+			<hr class="grey-text" />
+			<div class="form-group row mb-5">
 				<label for="name" class="col-md-3 col-form-label text-md-right">
 					Email Address
 				</label>
@@ -194,9 +194,8 @@
 						class="form-control valid" />
 				</div>
 			</div>
-			<h4 class="mt-5 border-top pt-4 light-text">
-				Discord Verification
-			</h4>
+			<hr class="grey-text" />
+			<h4 class="mb-2 light-text">Discord Verification</h4>
 			<p
 				class="mb-2
 				 ">
@@ -206,9 +205,8 @@
 				<i class="fa fa-link" />
 				Link Discord
 			</button>
-			<h4 class="mb-2 mt-3 border-top pt-4 light-text">
-				Email Verification
-			</h4>
+			<hr class="grey-text" />
+			<h4 class="mb-2 light-text">Email Verification</h4>
 			<p
 				class="mb-2
 				 ">
@@ -226,7 +224,11 @@
 			aria-labelledby="pills-contact-tab"
 			tabindex={0}>
 			<h4 class="fw-normal light-text mb-3">Change Password</h4>
-			<form use:enhance class="col-sm-8" method="POST" action="?a=password">
+			<form
+				use:enhance
+				class="col-sm-8"
+				method="POST"
+				action="?a=password">
 				<fieldset>
 					<div class="form-group row gx-0 mb-2">
 						<label
@@ -313,9 +315,6 @@
 </div>
 
 <style lang="sass">
-	hr
-		color: var(--accent)
-
 	.nav-link
 		border-radius: 0
 		color: var(--light-text)

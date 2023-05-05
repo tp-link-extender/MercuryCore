@@ -192,10 +192,10 @@ local aA aA=function(aB,aC,aD,aE)return a(aD,aB,{Font=Enum.Font.ArialBold,
 TextColor3=Color3.new(0.8509803921568627,0.8509803921568627,0.8509803921568627),
 TextWrapped=true,Text=aC,BackgroundTransparency=1,BorderSizePixel=0,FontSize=aE}
 )end local aB aB=function(aC)return a('ImageButton',aC,{Size=UDim2.new(0,153,0,
-46),Name=aC})end local aC aC=function(aD)k=false if aD then aa()if j then local
-aE=false if(tostring(j['isValid'])):lower()=='true'then aE=true end Game:
-GetService'MarketplaceService':SignalPromptProductPurchaseFinished(tonumber(j[
-'playerId']),tonumber(j['productId']),aE)else print
+46)})end local aC aC=function(aD)k=false if aD then aa()if j then local aE=false
+if(tostring(j['isValid'])):lower()=='true'then aE=true end Game:GetService
+'MarketplaceService':SignalPromptProductPurchaseFinished(tonumber(j['playerId'])
+,tonumber(j['productId']),aE)else print
 'Something went wrong, no currentServerResponseTable'end return Z()else local aE
 =string.gsub(R,'itemName',tostring(d['Name']))q.BodyFrame.ItemPreview.
 ItemDescription.Text=aE ab(q.BodyFrame.OkPurchasedButton)return _()end end local
