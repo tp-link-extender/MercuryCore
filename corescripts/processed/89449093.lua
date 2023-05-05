@@ -49,17 +49,17 @@ Selected=false h.Image='http://www.roblox.com/asset/?id=97617958'p.Image=
 Size=UDim2.new(1.2,0,1.2,0)M()local P=o:GetChildren()for Q=1,#P do if P[Q]and P[
 Q]:IsA'Frame'then local R=P[Q]if#R:GetChildren()>0 then h.Position=UDim2.new(0.5
 ,-60,1,-108)h.Visible=true p.Visible=true if R:GetChildren()[1]:IsA'ImageButton'
-then local S=R:GetChildren()[1]S.Active=true S.Draggable=false end end end end
-end end local P P=function()L()t=true c.Visible=s if s then return O()end end
-local Q Q=function()if s then return O()end end local R R=function(S)assert(S)
-assert(S:IsA'TextButton')S.BackgroundColor3=Color3.new(1,1,1)S.TextColor3=Color3
-.new(0,0,0)S.Selected=true S.ZIndex=3 return S end local S S=function(T)assert(T
-)assert(T:IsA'TextButton')T.BackgroundColor3=Color3.new(0,0,0)T.TextColor3=
-Color3.new(1,1,1)T.Selected=false T.ZIndex=1 return T end local T T=function(U)
-assert(U)if U=='gear'then R(f)return S(g)elseif U=='wardrobe'then R(g)return S(f
-)end end local U U=function(V)assert(V)assert(V:IsA'TextButton')if V.Selected
-then return end V.BackgroundColor3=Color3.new(0,0,0)end local V V=function(W)
-assert(W)assert(W:IsA'TextButton')if W.Selected then return end W.
+then do local S=R:GetChildren()[1]S.Active=true S.Draggable=false end end end
+end end end end local P P=function()L()t=true c.Visible=s if s then return O()
+end end local Q Q=function()if s then return O()end end local R R=function(S)
+assert(S)assert(S:IsA'TextButton')S.BackgroundColor3=Color3.new(1,1,1)S.
+TextColor3=Color3.new(0,0,0)S.Selected=true S.ZIndex=3 return S end local S S=
+function(T)assert(T)assert(T:IsA'TextButton')T.BackgroundColor3=Color3.new(0,0,0
+)T.TextColor3=Color3.new(1,1,1)T.Selected=false T.ZIndex=1 return T end local T
+T=function(U)assert(U)if U=='gear'then R(f)return S(g)elseif U=='wardrobe'then
+R(g)return S(f)end end local U U=function(V)assert(V)assert(V:IsA'TextButton')if
+V.Selected then return end V.BackgroundColor3=Color3.new(0,0,0)end local V V=
+function(W)assert(W)assert(W:IsA'TextButton')if W.Selected then return end W.
 BackgroundColor3=Color3.new(0.15294117647058825,0.15294117647058825,
 0.15294117647058825)end local W W=function(X)assert(X)X=string.lower(X)i=X T(X)G
 :Fire(X)return J()end local X X=function(Y)return Y:gsub('^%s*(.-)%s*$','%1')end

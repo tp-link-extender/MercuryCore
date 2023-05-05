@@ -26,7 +26,9 @@
 			<h2 class="light-text h5 d-flex align-items-center">
 				<a
 					href="/user/{notification.sender.number}"
-					class="image-background bg-a rounded-circle me-3">
+					class="image-background {notification.read
+						? 'bg-a'
+						: 'bg-darker'} rounded-circle me-3">
 					<img
 						src={notification.sender.image}
 						alt={notification.sender.username}

@@ -50,7 +50,7 @@ Instructions:
 -   Navigate to the Regkey table and create a registration key, set key and usesLeft fields to whatever you want
     -   You may wish to use a different database editor like [pgAdmin](https://pgadmin.org) to edith the database instead.
 
-To start a local dev server, run `npm run dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
+To start a local dev server, run `pnpm dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
 -   If you are using WSL2, the server may not correctly reflect the changes you make. To fix this, add the following to the default export of vite.config.ts:
 
@@ -66,7 +66,7 @@ After starting a local web server, navigate to /register and make an account. Se
 
 -   While in the browser, you can press ctrl-i to open the inspector, allowing you to select any element and show it in your editor.
 
-To build for production, run `npm run build`, then `npm run preview` (or `npm run buildview`) to preview the final site.
+To build for production, run `pnpm build`, then `pnpm preview` (or `pnpm buildview`) to preview the final site.
 
 Upon shutting down the databases, their contents will be dumped to the /data/redis and /data/postgres directories.
 
@@ -87,7 +87,7 @@ Instructions:
 -   Run `npx prisma migrate deploy` to apply the schema to the Postgres database and create the PrismaClient package
 -   Open a terminal and navigate to the directory of the repository
 -   Run `npm i -g pm2` to install pm2, the node process manager
--   Run `pnpm i` and `pnpm run build` to install dependencies and build the website
+-   Run `pnpm i` and `pnpm build` to install dependencies and build the website
 -   Run `pm2 start pm2.config.cjs` to start the website as a process named Mercury.
 
 You can run other commands to manage the process, see `pm2 --help` for more information.

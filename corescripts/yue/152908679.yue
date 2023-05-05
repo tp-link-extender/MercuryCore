@@ -125,13 +125,13 @@ createNewButton = (actionName, functionInfoTable) ->
 
 		if inputObject.UserInputState == Enum.UserInputState.Begin and not currentButtonTouch?
 			currentButtonTouch = inputObject
-			contextButtonDown(contextButton, inputObject, actionName)
+			contextButtonDown contextButton, inputObject, actionName
 
 	contextButton.InputChanged\connect (inputObject) ->
 		return if oldTouches[inputObject] or
 			currentButtonTouch ~= inputObject
 
-		contextButtonMoved(contextButton, inputObject, actionName)
+		contextButtonMoved contextButton, inputObject, actionName
 
 	contextButton.InputEnded\connect (inputObject) ->
 		return if oldTouches[inputObject] or
@@ -139,7 +139,7 @@ createNewButton = (actionName, functionInfoTable) ->
 
 		currentButtonTouch = nil
 		oldTouches[inputObject] = true
-		contextButtonUp(contextButton, inputObject, actionName)
+		contextButtonUp contextButton, inputObject, actionName
 
 	actionIcon = New "ImageLabel", "ActionIcon"
 		Position: UDim2.new 0.175, 0, 0.175, 0
@@ -169,7 +169,7 @@ createNewButton = (actionName, functionInfoTable) ->
 	contextButton
 
 createButton = (actionName, functionInfoTable) ->
-	button = createNewButton(actionName, functionInfoTable)
+	button = createNewButton actionName, functionInfoTable
 
 	local position
 	for i = 1, #buttonVector do

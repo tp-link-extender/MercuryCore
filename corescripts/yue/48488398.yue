@@ -106,8 +106,7 @@ game.Players.FriendRequestEvent\connect (fromPlayer, toPlayer, event) ->
 			)
 	elseif toPlayer == localPlayer
 		if event == Enum.FriendRequestEvent.Issue
-			if friendRequestBlacklist[fromPlayer]
-				return
+			return if friendRequestBlacklist[fromPlayer]
 			-- previously cancelled friend request, we don't want it!
 			game\GetService"GuiService"\SendNotification(
 				"Friend Request",

@@ -205,5 +205,5 @@ export const actions = {
 				},
 			})
 	},
-	like: categoryActions.like as any
+	like: categoryActions.like as any,
 }

@@ -4,22 +4,22 @@ g,h in pairs(d)do if type(g)=='string'then if g=='Parent'then f=h else e[g]=h
 end elseif type(g)=='number'and type(h)=='userdata'then h.Parent=e end end e.
 Parent=f return e end local b,c,d=5,5,nil d=function(e,f)local g=e:
 findFirstChild(f)if g then return g end while true do g=e.ChildAdded:wait()if g.
-Name==f then return g end end end local e=script.Parent local f,g,h,i=d(e,
-'Humanoid'),d(e,'Torso'),e:FindFirstChild'PlayerStats',Instance.new'BoolValue'i.
-Name='InCharTag'local j=Instance.new'BoolValue'j.Name='RobloxBuildTool'if not(h
-~=nil)then h=a('Configuration','PlayerStats',{Parent=e})end local k=h:
-FindFirstChild'MaxHealth'if not(k~=nil)then k=a('NumberValue','MaxHealth',{Value
-=100,Parent=h})end f.MaxHealth=k.Value f.Health=k.Value local l l=function()f.
-MaxHealth=k.Value f.Health=k.Value end k.Changed:connect(l)local m=game.Players:
+Name==f then return g end end end local e=script.Parent local f,g,h,i,j=d(e,
+'Humanoid'),d(e,'Torso'),e:FindFirstChild'PlayerStats',a('BoolValue',{Name=
+'InCharTag'}),a('BoolValue',{Name='RobloxBuildTool'})if not(h~=nil)then h=a(
+'Configuration','PlayerStats',{Parent=e})end local k=h:FindFirstChild'MaxHealth'
+if not(k~=nil)then k=a('NumberValue','MaxHealth',{Value=100,Parent=h})end f.
+MaxHealth=k.Value f.Health=k.Value local l l=function()f.MaxHealth=k.Value f.
+Health=k.Value end k.Changed:connect(l)local m=game.Players:
 GetPlayerFromCharacter(script.Parent)local n=m.PlayerGui:FindFirstChild
 'DamageOverTimeGui'if not(n~=nil)then n=a('BillboardGui','DamageOverTimeGui',{
 Parent=m.PlayerGui,Adornee=script.Parent:FindFirstChild'Head',Active=true,size=
 UDim2.new(b,0,c,0),StudsOffset=Vector3.new(0,2,0)})end print
 'newHealth declarations finished'local o o=function(p)local q=a('TextLabel',{
-Text=tostring(p),TextColor3=(function()if p>0 then return Color3.new(0,1,0)else
-return Color3.new(1,0,1)end end)(),size=UDim2.new(1,0,1,0),Active=true,FontSize=
-6,BackgroundTransparency=1,Parent=n})for r=1,10 do wait(0.1)q.TextTransparency=r
-/10 q.Position=UDim2.new(0,0,0,-r*5)q.FontSize=6-r*0.6 end return q:remove()end
+Text=tostring(p),TextColor3=Color3.new((function()if p>0 then return 0,1,0 else
+return 1,0,1 end end)()),size=UDim2.new(1,0,1,0),Active=true,FontSize=6,
+BackgroundTransparency=1,Parent=n})for r=1,10 do wait(0.1)q.TextTransparency=r/
+10 q.Position=UDim2.new(0,0,0,-r*5)q.FontSize=6-r*0.6 end q:remove()return q end
 local p p=function()if k.Value>=0 then f.MaxHealth=k.Value print(f.MaxHealth)if
 f.Health>f.MaxHealth then f.Health=f.MaxHealth end end end k.Changed:connect(p)
 local q=a('Fire','FireEffect',{Heat=0.1,Size=3,Enabled=false})while true do

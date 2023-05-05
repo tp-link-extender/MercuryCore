@@ -36,6 +36,7 @@
 						<button
 							name="action"
 							value={post.likes ? "unlike" : "like"}
+							aria-label={post.likes ? "Unlike" : "Like"}
 							class="btn btn-sm {post.likes
 								? 'btn-success'
 								: 'btn-outline-success'}">
@@ -58,6 +59,7 @@
 						<button
 							name="action"
 							value={post.dislikes ? "undislike" : "dislike"}
+							aria-label={post.dislikes ? "Undislike" : "Dislike"}
 							class="btn btn-sm {post.dislikes
 								? 'btn-danger'
 								: 'btn-outline-danger'}">
@@ -76,19 +78,19 @@
 			<div class="d-flex flex-column w-100">
 				<a
 					href="/user/{post.author.number}"
-					class="user d-flex text-decoration-none m-2 pe-4 mb-0 w-100">
-					<span class="pfp bg-a2 rounded-circle">
+					class="user d-flex light-text text-decoration-none m-2 pe-4 mb-0 w-100">
+					<span class="pfp bg-a2 rounded-circle me-1">
 						<img
 							src={post.author.image}
 							alt={post.author.username}
 							class="rounded-circle rounded-top-0" />
 					</span>
-					<span class="fw-bold ms-3 light-text">
+					<span class="fw-bold ms-2">
 						{post.author.username}
 					</span>
-					<span class="light-text ms-auto">
+					<em class="ms-auto">
 						{post.posted.toLocaleString()}
-					</span>
+					</em>
 				</a>
 				<a
 					href="/forum/{data.name.toLowerCase()}/{post.id}"

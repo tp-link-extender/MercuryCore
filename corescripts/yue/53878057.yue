@@ -254,8 +254,7 @@ reorganizeLoadout = (gear, inserting, _, addToSlot) ->
 
 
 checkToolAncestry = (child, parent) ->
-	if child\FindFirstChild "RobloxBuildTool"
-		return
+	return if child\FindFirstChild "RobloxBuildTool"
 	-- don't show roblox build tools
 	if child\IsA"Tool" or child\IsA "HopperBin"
 		for i = 1, #gearSlots

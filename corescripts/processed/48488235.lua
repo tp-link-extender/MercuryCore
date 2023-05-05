@@ -81,12 +81,12 @@ ClipsDescendants=true,ZIndex=7}),nil local K,L,M,N,O,P,Q,R,S=e('Frame','Panel',{
 BackgroundTransparency=1,Position=UDim2.new(1,0,0,0),Size=UDim2.new(1,0,0.032,0)
 ,Parent=I}),e('Frame','StatTitles',{BackgroundTransparency=1,Position=UDim2.new(
 0,0,1,-10),Size=UDim2.new(1,0,0,0),Parent=u}),Instance.new'BoolValue',Instance.
-new'BoolValue',Instance.new'BoolValue',Instance.new'BoolValue',e('Frame',{Name=
-'MidTemplate',BackgroundTransparency=1,Position=UDim2.new(100,0,0.07,0),Size=
-UDim2.new(0.5,0,0.025,0),e('ImageLabel',{Name='BCLabel',Active=true,
+new'BoolValue',Instance.new'BoolValue',Instance.new'BoolValue',e('Frame',
+'MidTemplate',{BackgroundTransparency=1,Position=UDim2.new(100,0,0.07,0),Size=
+UDim2.new(0.5,0,0.025,0),e('ImageLabel','BCLabel',{Active=true,
 BackgroundTransparency=1,Position=UDim2.new(0.005,5,0.2,0),Size=UDim2.new(0,16,0
-,16),SizeConstraint='RelativeYY',Image='',ZIndex=3}),e('ImageLabel',{Name=
-'FriendLabel',Active=true,BackgroundTransparency=1,Position=UDim2.new(0.005,5,
+,16),SizeConstraint='RelativeYY',Image='',ZIndex=3}),e('ImageLabel',
+'FriendLabel',{Active=true,BackgroundTransparency=1,Position=UDim2.new(0.005,5,
 0.15,0),Size=UDim2.new(0,16,0,16),SizeConstraint='RelativeYY',Image='',ZIndex=3}
 ),e('ImageButton','ClickListener',{Active=true,BackgroundTransparency=1,Position
 =UDim2.new(0.005,1,0,0),Size=UDim2.new(0.96,0,1,0),ZIndex=3}),e('Frame',

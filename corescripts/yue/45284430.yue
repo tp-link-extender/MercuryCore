@@ -332,9 +332,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 
 
 		children = droppedDownMenu\GetChildren!
-		if not children
-			return
-
+		return if not children
 
 		childNum = 1
 		for _, obj in ipairs children
@@ -405,16 +403,14 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 			scrollBarPosition += 1
 			updateScroll!
 			return true
-
-		return false
+		false
 
 	scrollUp = ->
 		if scrollBarPosition > 1
 			scrollBarPosition -= 1
 			updateScroll!
 			return true
-
-		return false
+		false
 
 
 	if useScrollButtons
@@ -529,8 +525,7 @@ t.CreatePropertyDropDownMenu = (instance, property, enum) ->
 		nameToItem[obj.Name] = obj
 
 
-	local frame
-	local updateSelection
+	local frame, updateSelection
 	frame, updateSelection = t.CreateDropDownMenu names, (text) ->
 		instance[property] = nameToItem[text]
 
@@ -773,7 +768,7 @@ t.CreateSlider = (steps, width, position) ->
 
 
 	sliderPosition.Changed\connect (_) ->
-		sliderPosition.Value = math.min steps, math.max(1, sliderPosition.Value)
+		sliderPosition.Value = math.min steps, math.max 1, sliderPosition.Value
 		relativePosX = (sliderPosition.Value - 1) / (steps - 1)
 		slider.Position = UDim2.new relativePosX, -slider.AbsoluteSize.X / 2, slider.Position.Y.Scale, slider.Position.Y.Offset
 
@@ -1015,9 +1010,7 @@ t.CreateTrueScrollingFrame = ->
 
 
 	setSliderSizeAndPosition = ->
-		if not highY or not lowY
-			return
-
+		return if not highY or not lowY
 
 		totalYSpan = math.abs highY - lowY
 		if totalYSpan == 0
@@ -1071,9 +1064,7 @@ t.CreateTrueScrollingFrame = ->
 	buttonScrollAmountPixels = 7
 	reentrancyGuardScrollUp = false
 	doScrollUp = ->
-		if reentrancyGuardScrollUp
-			return
-
+		return if reentrancyGuardScrollUp
 
 		reentrancyGuardScrollUp = true
 		if positionScrollBar 0, scrollbar.AbsolutePosition.Y - buttonScrollAmountPixels, 0
@@ -1084,9 +1075,7 @@ t.CreateTrueScrollingFrame = ->
 
 	reentrancyGuardScrollDown = false
 	doScrollDown = ->
-		if reentrancyGuardScrollDown
-			return
-
+		return if reentrancyGuardScrollDown
 
 		reentrancyGuardScrollDown = true
 		if positionScrollBar 0, scrollbar.AbsolutePosition.Y + buttonScrollAmountPixels, 0
@@ -1171,9 +1160,7 @@ t.CreateTrueScrollingFrame = ->
 
 			reentrancyGuardMouseScroll = false
 			dragCon = mouseDrag.MouseMoved\connect (x, y) ->
-				if reentrancyGuardMouseScroll
-					return
-
+				return if reentrancyGuardMouseScroll
 
 				reentrancyGuardMouseScroll = true
 				if positionScrollBar x, y, mouseOffset
@@ -1228,11 +1215,8 @@ t.CreateTrueScrollingFrame = ->
 
 
 	descendantChanged = (this, prop) ->
-		if internalChange
-			return
-
-		if not this.Visible
-			return
+		return if internalChange
+		return if not this.Visible
 
 
 		if prop == "Size" or prop == "Position"
@@ -1241,9 +1225,7 @@ t.CreateTrueScrollingFrame = ->
 
 
 	scrollingFrame.DescendantAdded\connect (instance) ->
-		if not instance\IsA "GuiObject"
-			return
-
+		return if not instance\IsA "GuiObject"
 
 		if instance.Visible
 			wait! -- wait a heartbeat for sizes to reconfig
@@ -1255,8 +1237,7 @@ t.CreateTrueScrollingFrame = ->
 
 
 	scrollingFrame.DescendantRemoving\connect (instance) ->
-		if not instance\IsA "GuiObject"
-			return
+		return if not instance\IsA "GuiObject"
 
 		if descendantsChangeConMap[instance]
 			descendantsChangeConMap[instance]\disconnect!
@@ -1268,15 +1249,13 @@ t.CreateTrueScrollingFrame = ->
 
 	scrollingFrame.Changed\connect (prop) ->
 		if prop == "AbsoluteSize"
-			if not highY or not lowY
-				return
-
+			return if not highY or not lowY
 
 			highLowRecheck!
 			setSliderSizeAndPosition!
 
 
-	return scrollingFrame, controlFrame
+	scrollingFrame, controlFrame
 
 
 t.CreateScrollingFrame = (orderList, scrollStyle) ->
@@ -1581,9 +1560,7 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 					guiObjects += 1
 
 
-		if not scrollDrag.Parent
-			return
-
+		return if not scrollDrag.Parent
 
 		dragSizeY = scrollDrag.Parent.AbsoluteSize.y * (1 / (guiObjects - howManyDisplayed + 1))
 		if dragSizeY < 16
@@ -1608,9 +1585,7 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 
 	reentrancyGuard = false
 	recalculate = ->
-		if reentrancyGuard
-			return
-
+		return if reentrancyGuard
 		reentrancyGuard = true
 		wait!
 		local success, err
@@ -1810,8 +1785,7 @@ binaryGrow = (min, max, fits) ->
 			--Doesn't fit, shrink
 			max = mid - 1
 
-
-	return biggestLegal
+	biggestLegal
 
 
 binaryShrink = (min, max, fits) ->
@@ -1831,8 +1805,7 @@ binaryShrink = (min, max, fits) ->
 			--Doesn't fit, grow
 			min = mid + 1
 
-
-	return smallestLegal
+	smallestLegal
 
 
 getGuiOwner = (instance) ->
@@ -1842,30 +1815,28 @@ getGuiOwner = (instance) ->
 
 		instance = instance.Parent
 
-	return nil
+	nil
 
 
 t.AutoTruncateTextObject = (textLabel) ->
 	text = textLabel.Text
 
 	fullLabel = textLabel\Clone!
-	fullLabel.Name = "Full" .. textLabel.Name
-	fullLabel.BorderSizePixel = 0
-	fullLabel.BackgroundTransparency = 0
-	fullLabel.Text = text
-	fullLabel.TextXAlignment = Enum.TextXAlignment.Center
-	fullLabel.Position = UDim2.new 0, -3, 0, 0
-	fullLabel.Size = UDim2.new 0, 100, 1, 0
-	fullLabel.Visible = false
-	fullLabel.Parent = textLabel
+	with fullLabel
+		.Name = "Full" .. textLabel.Name
+		.BorderSizePixel = 0
+		.BackgroundTransparency = 0
+		.Text = text
+		.TextXAlignment = Enum.TextXAlignment.Center
+		.Position = UDim2.new 0, -3, 0, 0
+		.Size = UDim2.new 0, 100, 1, 0
+		.Visible = false
+		.Parent = textLabel
 
-	local shortText
-	local mouseEnterConnection
-	local mouseLeaveConnection
+	local shortText, mouseEnterConnection, mouseLeaveConnection
 
 	checkForResize = ->
-		if getGuiOwner textLabel == nil
-			return
+		return if getGuiOwner(textLabel) == nil
 
 		textLabel.Text = text
 		if textLabel.TextFits
@@ -2602,14 +2573,14 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				ZIndex: 7
 				Parent: button
 
-			configIcon = buttonImage\clone!
-			configIcon.Name = "ConfigIcon"
-			configIcon.Visible = false
-			configIcon.Position = UDim2.new 1, -23, 1, -24
-			configIcon.Size = UDim2.new 0, 16, 0, 16
-			configIcon.Image = ""
-			configIcon.ZIndex = 6
-			configIcon.Parent = insertAssetButtonExample
+			with buttonImage\clone!
+				.Name = "ConfigIcon"
+				.Visible = false
+				.Position = UDim2.new 1, -23, 1, -24
+				.Size = UDim2.new 0, 16, 0, 16
+				.Image = ""
+				.ZIndex = 6
+				.Parent = insertAssetButtonExample
 
 			insertAssetButtonExample
 
@@ -2950,12 +2921,13 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 
 		scrollFrame, controlFrame = t.CreateTrueScrollingFrame!
-		scrollFrame.Size = UDim2.new 0.54, 0, 0.85, 0
-		scrollFrame.Position = UDim2.new 0.24, 0, 0.085, 0
-		scrollFrame.Name = "ItemsFrame"
-		scrollFrame.ZIndex = 6
-		scrollFrame.Parent = setGui.SetPanel
-		scrollFrame.BackgroundTransparency = 1
+		with scrollFrame
+			.Size = UDim2.new 0.54, 0, 0.85, 0
+			.Position = UDim2.new 0.24, 0, 0.085, 0
+			.Name = "ItemsFrame"
+			.ZIndex = 6
+			.Parent = setGui.SetPanel
+			.BackgroundTransparency = 1
 
 		drillDownSetZIndex controlFrame, 7
 
@@ -3186,8 +3158,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 			if selectedButton ~= buttonWrap
 				goToNewMaterial buttonWrap, "#{name}"
 
-
-		return buttonWrap
+		buttonWrap
 
 
 	for i = 1, #materialNames
@@ -3202,12 +3173,8 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 
 
 	forceTerrainMaterialSelection = (newMaterialType) ->
-		if not newMaterialType
-			return
-
-		if currentMaterial == newMaterialType
-			return
-
+		return if not newMaterialType
+		return if currentMaterial == newMaterialType
 
 		matName = getNameFromEnum newMaterialType
 		buttons = scrollFrame\GetChildren!
@@ -3534,20 +3501,22 @@ t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
 	if scrollable
 		--frame for widgets
 		frame, control = t.CreateTrueScrollingFrame!
-		frame.Size = UDim2.new 1, 0, 1, 0
-		frame.BackgroundColor3 = Color3.new 72 / 255, 72 / 255, 72 / 255
-		frame.BorderColor3 = Color3.new 0, 0, 0
-		frame.Active = true
-		frame.Parent = widgetContainer
-		control.Parent = dragBar
-		control.BackgroundColor3 = Color3.new 72 / 255, 72 / 255, 72 / 255
-		control.BorderSizePixel = 0
-		control.BackgroundTransparency = 0
-		control.Position = UDim2.new 1, -21, 1, 1
-		control.Size = if size
-			UDim2.new 0, 21, size.Y.Scale, size.Y.Offset
-		else
-			UDim2.new 0, 21, 0, 400
+		with frame
+			.Size = UDim2.new 1, 0, 1, 0
+			.BackgroundColor3 = Color3.new 72 / 255, 72 / 255, 72 / 255
+			.BorderColor3 = Color3.new 0, 0, 0
+			.Active = true
+			.Parent = widgetContainer
+		with control
+			.Parent = dragBar
+			.BackgroundColor3 = Color3.new 72 / 255, 72 / 255, 72 / 255
+			.BorderSizePixel = 0
+			.BackgroundTransparency = 0
+			.Position = UDim2.new 1, -21, 1, 1
+			.Size = UDim2.new 0, 21, if size
+				size.Y.Scale, size.Y.Offset
+			else
+				0, 400
 
 		control\FindFirstChild"ScrollDownButton".Position = UDim2.new 0, 0, 1, -20
 

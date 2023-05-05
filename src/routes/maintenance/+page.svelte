@@ -34,7 +34,9 @@
 	<p class="h4 text-white opacity-75 text-center">
 		is currently undergoing maintenance. Check back later!
 	</p>
-	<a href="https://status.banland.xyz" class="text-decoration-none pt-3 fs-5 fw-bold accent-text">
+	<a
+		href="https://status.banland.xyz"
+		class="text-decoration-none pt-3 fs-5 fw-bold accent-text">
 		Status <i class="fa fa-chevron-right" />
 	</a>
 </div>

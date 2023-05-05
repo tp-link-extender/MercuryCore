@@ -61,15 +61,15 @@
 			</a>
 			<button
 				on:click={collapse(reply.id)}
-				id="collapse"
-				class="bg-a2 p-0 border-0 h-100 mt-3" />
+				aria-label="Collapse reply"
+				class="collapseBar bg-a2 p-0 border-0 h-100 mt-3" />
 		</span>
 
 		{#if $repliesCollapsed?.[reply.id]}
 			<button
 				on:click={collapse(reply.id)}
-				id="collapse2"
-				class="m-2 ms-3 p-0 mt-0">
+				aria-label="Expand reply"
+				class="expandBar m-2 ms-3 p-0 mt-0">
 				<small>
 					<span class="grey-text">
 						{reply.author.username}
@@ -91,7 +91,7 @@
 							<span
 								class="fw-bold {reply.author.username ==
 								postAuthorName
-									? 'text-primary'
+									? ''
 									: 'light-text '}">
 								{reply.author.username}
 								{#if reply.author.username == postAuthorName}
@@ -119,6 +119,7 @@
 								<button
 									name="action"
 									value={reply.likes ? "unlike" : "like"}
+									aria-label={reply.likes ? "Unlike" : "Like"}
 									class="smallbutton p-0 btn btn-sm">
 									{#if reply.likes}
 										<i
@@ -140,6 +141,9 @@
 									value={reply.dislikes
 										? "undislike"
 										: "dislike"}
+									aria-label={reply.dislikes
+										? "Undislike"
+										: "Dislike"}
 									class="smallbutton p-0 btn btn-sm">
 									{#if reply.dislikes}
 										<i
@@ -237,17 +241,17 @@
 {/if}
 
 <style lang="sass">
-	#collapse, #collapse2
+	.collapseBar, .expandBar
 		transition: all 0.2s ease-out
 
-	#collapse
+	.collapseBar
 		width: auto
 		border-left: 9px solid var(--background) !important
 		border-right: 13px solid var(--background) !important
 		&:hover
 			background: var(--grey-text) !important
 
-	#collapse2
+	.expandBar
 		border: none
 		background: none
 

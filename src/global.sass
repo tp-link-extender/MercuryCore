@@ -7,7 +7,7 @@
 :root
 	overflow: overlay // Scrollbar is above content instead of beside
 	overflow-x: hidden
-	background-color: var(--background)
+	background: var(--background)
 
 	--mainaccent: #7531ff
 
@@ -18,7 +18,7 @@
 // .dark-text
 // 	color: var(--dark-text) !important
 .accent-text
-	color: var(--mainaccent) !important
+	color: #9551ff !important
 
 .bg-background
 	background: var(--background) !important
@@ -26,12 +26,9 @@
 	background: var(--darker) !important
 .bg-a
 	background: var(--accent) !important
-.bg-a1
-	background: var(--accent1) !important
-.bg-a2
-	background: var(--accent2) !important
-.bg-a3
-	background: var(--accent3) !important
+@for $i from 1 through 3
+	.bg-a#{$i}
+		background: var(--accent#{$i}) !important
 
 input, select, textarea
 	background-color: var(--accent) !important
