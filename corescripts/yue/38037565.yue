@@ -45,11 +45,11 @@ Torso = waitForChild Figure, "Torso"
 
 config = Figure\FindFirstChild "PlayerStats"
 
-inCharTag = Instance.new "BoolValue"
-inCharTag.Name = "InCharTag"
+inCharTag = New "BoolValue"
+	Name: "InCharTag"
 
-hider = Instance.new "BoolValue"
-hider.Name = "RobloxBuildTool"
+hider = New "BoolValue"
+	Name: "RobloxBuildTool"
 
 if not config?
 	config = New "Configuration", "PlayerStats"
@@ -87,25 +87,25 @@ if not dotGui?
 print "newHealth declarations finished"
 
 billboardHealthChange = (dmg) ->
-	textLabel = New "TextLabel"
-		Text: tostring dmg
-		TextColor3: if dmg > 0
-			Color3.new 0, 1, 0
+	with New "TextLabel",
+		Text: "#{dmg}"
+		TextColor3: Color3.new if dmg > 0
+			0, 1, 0
 		else
-			Color3.new 1, 0, 1
+			1, 0, 1
 		size: UDim2.new 1, 0, 1, 0.0
 		Active: true
 		FontSize: 6
 		BackgroundTransparency: 1
 		Parent: dotGui
 
-	for t = 1, 10
-		wait 0.1
-		textLabel.TextTransparency = t / 10
-		textLabel.Position = UDim2.new 0, 0, 0, -t * 5
-		textLabel.FontSize = 6 - t * 0.6
+		for t = 1, 10
+			wait 0.1
+			.TextTransparency = t / 10
+			.Position = UDim2.new 0, 0, 0, -t * 5
+			.FontSize = 6 - t * 0.6
 
-	textLabel\remove!
+		\remove!
 
 setMaxHealth = ->
 	--print Humanoid.Health

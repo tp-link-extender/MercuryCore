@@ -194,10 +194,10 @@ endDialog = ->
 	dialog = currentConversationDialog
 	currentConversationDialog = nil
 	if dialog and dialog.InUse
-		reenableScript = reenableDialogScript\Clone!
-		reenableScript.archivable = false
-		reenableScript.Disabled = false
-		reenableScript.Parent = dialog
+		with reenableDialogScript\Clone!
+			.archivable = false
+			.Disabled = false
+			.Parent = dialog
 
 	for dialog, gui in pairs dialogMap
 		if dialog and gui
@@ -288,7 +288,7 @@ selectChoice = (choice) ->
 	--First hide the Gui
 	mainFrame.Visible = false
 	if choice == lastChoice
-		game.Chat\Chat game.Players.LocalPlayer.Character, "Goodbye!", getChatColor(currentTone!)
+		game.Chat\Chat game.Players.LocalPlayer.Character, "Goodbye!", getChatColor currentTone!
 
 		normalEndDialog!
 	else
