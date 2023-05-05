@@ -1,11 +1,11 @@
 <script lang="ts">
-	const permissions: any = [
+	const permissions = [
 		[], // index from 1
-		["white", "user", "User"],
-		["aqua", "check", "Verified"],
-		["violet", "hammer", "Catalog Manager"],
-		["orange", "shield-alt", "Moderator"],
-		["crimson", "scale-balanced", "Administrator"],
+		["white", "fa-user", "User"],
+		["aqua", "fa-check", "Verified"],
+		["violet", "fa-hammer", "Catalog Manager"],
+		["orange", "fa-shield-alt", "Moderator"],
+		["crimson", "fa-scale-balanced", "Administrator"],
 	]
 
 	export let data
@@ -21,7 +21,7 @@
 	<h2 class="h4 mb-4 border-bottom border-2 pb-3 text-light">
 		Your permission level is: <span
 			style="color: {permissions[user?.permissionLevel][0]}">
-			<i class="fa fa-{permissions[user?.permissionLevel][1]} me-1" />
+			<i class="fa {permissions[user?.permissionLevel][1]} me-1" />
 			{permissions[user?.permissionLevel][2]}
 		</span>
 	</h2>
@@ -269,7 +269,7 @@
 											1024 ** 2
 									)} MB is being used
 								</span>
-								<div class="progress bg-a mt-2">
+								<div class="progress bg-darker mt-2">
 									<div
 										class="progress-bar progress-bar-striped progress-bar-animated bg-success"
 										role="progressbar"
@@ -304,7 +304,7 @@
 											(disk.size - disk.free) / 1024 ** 2
 										)} MB is being used
 									</span>
-									<div class="progress bg-a mt-2">
+									<div class="progress bg-darker mt-2">
 										<div
 											class="progress-bar progress-bar-striped progress-bar-animated"
 											role="progressbar"

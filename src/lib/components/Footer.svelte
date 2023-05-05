@@ -1,7 +1,7 @@
 <footer class="position-relative text-center">
 	<br />
 	<p class="grey-text mb-2">
-		© <a href="/" class="text-decoration-none">Mercury</a>
+		<a href="/" class="text-decoration-none accent-text">Mercury</a>
 		2022-{new Date().getFullYear()}
 		<br />
 	</p>

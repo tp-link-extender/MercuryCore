@@ -44,6 +44,7 @@
 					<button
 						name="action"
 						value={data.likes ? "unlike" : "like"}
+						aria-label={data.likes ? "Unlike" : "Like"}
 						class="btn btn-sm {data.likes
 							? 'btn-success'
 							: 'btn-outline-success'}">
@@ -66,6 +67,7 @@
 					<button
 						name="action"
 						value={data.dislikes ? "undislike" : "dislike"}
+						aria-label={data.dislikes ? "Undislike" : "Dislike"}
 						class="btn btn-sm {data.dislikes
 							? 'btn-danger'
 							: 'btn-outline-danger'}">

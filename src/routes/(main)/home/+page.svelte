@@ -87,21 +87,21 @@
 <div class="container">
 	<div class="row">
 		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
-			<div class="top d-flex px-2">
+			<h1 class="top d-flex px-2">
 				<a
 					href="/user/{user?.number}"
-					class="text-decoration-none d-flex">
+					class="text-decoration-none light-text d-flex">
 					<div class="bg-a rounded-circle">
 						<img
 							src={user?.image}
 							alt="You"
 							class="rounded-circle img-fluid rounded-top-0" />
 					</div>
-					<h1 class="light-text inline">
+					<span class="my-auto ms-4">
 						{greets[Math.floor(Math.random() * greets.length)]}
-					</h1>
+					</span>
 				</a>
-			</div>
+			</h1>
 			<div id="feed" class="card mt-4 bg-darker">
 				<div class="card-body light-text">
 					<p>
@@ -118,11 +118,14 @@
 							class="form-control light-text {$errors.status
 								? 'is-in'
 								: ''}valid" />
-						<button class="btn btn-success" type="submit">
+						<button
+							class="btn btn-success"
+							type="submit"
+							aria-label="Send">
 							{#if $delayed}
-								Working...
+								...
 							{:else}
-								Send
+								<i class="fa fa-paper-plane-top" />
 							{/if}
 						</button>
 					</form>
@@ -142,7 +145,7 @@
 								<div class="d-flex mb-2 user d-inline">
 									<a
 										href="/user/{status.authorUser?.number}"
-										class="text-decoration-none d-flex align-items-center">
+										class="text-decoration-none d-flex align-items-center light-text">
 										<span
 											class="bg-background rounded-circle">
 											<img
@@ -152,13 +155,12 @@
 												class="rounded-circle img-fluid rounded-top-0" />
 										</span>
 										<span
-											class="username fw-bold ms-3 light-text">
+											class="username mw-50 fw-bold ms-3">
 											{status.authorUser?.username}
 										</span>
-										<small
-											class="ms-3 fw-italic light-text">
+										<em class="small ms-3">
 											{status.posted.toLocaleString()}
-										</small>
+										</em>
 									</a>
 									<span class="ms-auto">
 										<Report
@@ -268,10 +270,10 @@
 			</div>
 			<div class="mt-5 col-6 col-md-8 col-lg-6 col-xl-4">
 				<h2 class="h4 light-text">Random fact</h2>
-				<div id="fact" class="card bg-darker card-body light-text h5">
+				<div
+					id="fact"
+					class="card bg-darker card-body light-text h5 pb-4">
 					{facts[Math.floor(Math.random() * facts.length)]}
-					<br />
-					<br />
 				</div>
 			</div>
 		</div>
@@ -295,7 +297,6 @@
 		margin-top: 7rem
 
 	.username
-		max-width: 50%
 		overflow: hidden
 		text-overflow: ellipsis
 		white-space: nowrap
