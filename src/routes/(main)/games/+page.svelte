@@ -63,6 +63,7 @@
 						<button
 							class="btn btn-success"
 							type="submit"
+							aria-label="Search"
 							id="button-addon2">
 							<i class="fa fa-magnifying-glass" />
 						</button>

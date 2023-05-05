@@ -136,14 +136,16 @@
 						<a
 							href="/notifications"
 							role="button"
-							class="fw-bold nav-link">
-							<i class="fa fa-bell me-1" />
+							aria-label="Notifications"
+							class="fw-bold nav-link me-1">
+							<i class="fa fa-bell" />
 						</a>
 					</li>
 					<li class="me-2 pt-1">
 						<a
 							href="/transactions/your"
 							role="button"
+							aria-label="Transactions"
 							class="fw-bold nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
 							<span class="h6 text-success">

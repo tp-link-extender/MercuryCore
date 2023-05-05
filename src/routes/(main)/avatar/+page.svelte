@@ -26,7 +26,7 @@
 		1001, 1, 208, 1002, 194, 199, 26, 1003,
 	]
 
-	const brickToHex: any = {
+	const brickToHex: { [k: number]: string } = {
 		1: "F2F3F3",
 		5: "D7C59A",
 		9: "E8BAC8",
@@ -91,13 +91,13 @@
 		1032: "FF00BF",
 	}
 
-	const styles: any = {
+	const styles: { [k: string]: string } = {
 		Head: `left: 68px; height: 3rem; width: 3rem`,
-		Torso: `left: 3rem; top: 52px; height: 88px; width: 88px`,
-		LeftArm: `left: 1px; top: 52px; height: 88px; width: 40px`,
-		RightArm: `left: 142px; top: 52px; height: 88px; width: 40px`,
-		LeftLeg: `left: 3rem; top: 146px; height: 88px; width: 40px`,
-		RightLeg: `left: 96px; top: 146px; height: 88px; width: 40px`,
+		Torso: `left: 3rem; top: 54px; height: 88px; width: 88px`,
+		LeftArm: `left: 1px; top: 54px; height: 88px; width: 40px`,
+		RightArm: `left: 142px; top: 54px; height: 88px; width: 40px`,
+		LeftLeg: `left: 3rem; top: 148px; height: 88px; width: 40px`,
+		RightLeg: `left: 96px; top: 148px; height: 88px; width: 40px`,
 	}
 
 	const openColorPicker = (bodypart: string) => () => {
@@ -169,7 +169,7 @@
 				data-bs-dismiss="modal"
 				aria-label="Close" />
 		</div>
-		<div class="modal-body d-flex flex-column p-1">
+		<div class="modal-body d-flex flex-column p-1 pb-5">
 			<div class="colourPicker text-left mx-auto" style="max-width:351px">
 				{#each bodyColours as colour}
 					<form
@@ -178,7 +178,7 @@
 						action="?/paint&p={bodyPart}&c={colour}"
 						class="d-inline">
 						<button
-							class="btn m-1"
+							class="btn colour my-1"
 							type="submit"
 							on:click={() => {
 								bodyParts[bodyPart] = colour
@@ -200,6 +200,13 @@
 		border-radius: 3px
 		&:first-child // Head
 			border-radius: 12px
+	
+	.colour
+		margin-left: 2px
+		margin-right: 2px
+		transition: filter 0.2s ease-out
+		&:hover
+			filter: brightness(50%)
 
 	form button
 		height: 2.5rem

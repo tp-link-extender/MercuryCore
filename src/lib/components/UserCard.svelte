@@ -17,7 +17,7 @@
 	class="card light-text h-100 w-100 d-flex flex-row bg-darker"
 	href="/user/{user.number}">
 	<div class="p-4">
-		<div class="image-background rounded-circle">
+		<div class="image-background rounded-circle bg-a">
 			<img
 				src={user.image}
 				alt={user.username}
