@@ -33,30 +33,30 @@ TweenPosition(UDim2.new(0,0,1,400),Enum.EasingDirection.InOut,Enum.EasingStyle.
 Sine,h,true)end delay(h,function()E[F].Visible=false end)end end end local z z=
 function()local A=game.Players.LocalPlayer if A and A.Character and A.Character:
 FindFirstChild'Humanoid'then A.Character.Humanoid.Health=0 end end local A A=
-function(B,C,D,E,F)local G=Instance.new'TextButton'G.Font=Enum.Font.Arial G.
-FontSize=D G.Size=E G.Position=F G.Style=C G.TextColor3=Color3.new(1,1,1)G.Text=
-B return G end local B B=function(C,D,E,F)if#D<1 then error
-'Must have more than one button'end local G,H,I=1,{},nil I=function(J)for K,L in
-ipairs(H)do if L==J then L.Style=Enum.ButtonStyle.RobloxButtonDefault else L.
-Style=Enum.ButtonStyle.RobloxButton end end end for J,K in ipairs(D)do local L=
-a('TextButton','Button'..tostring(G),{Font=Enum.Font.Arial,FontSize=Enum.
-FontSize.Size18,AutoButtonColor=true,Style=Enum.ButtonStyle.RobloxButton,Text=K.
-Text,TextColor3=Color3.new(1,1,1),Parent=C})L.MouseButton1Click:connect(function
-()I(L)return K.Function()end)H[G]=L G=G+1 end I(H[1])local L=G-1 if L==1 then C.
-Button1.Position=UDim2.new(0.35,0,E.Scale,E.Offset)C.Button1.Size=UDim2.new(0.4,
-0,F.Scale,F.Offset)elseif L==2 then C.Button1.Position=UDim2.new(0.1,0,E.Scale,E
-.Offset)C.Button1.Size=UDim2.new(0.35,0,F.Scale,F.Offset)C.Button2.Position=
-UDim2.new(0.55,0,E.Scale,E.Offset)C.Button2.Size=UDim2.new(0.35,0,F.Scale,F.
-Offset)elseif L>=3 then local M,N=0.1/L,0.9/L G=1 while G<=L do H[G].Position=
-UDim2.new(M*G+(G-1)*N,0,E.Scale,E.Offset)H[G].Size=UDim2.new(N,0,F.Scale,F.
-Offset)G=G+1 end end end local C C=function(D,E,F)if D then E.Visible=true F.
-Text='Stop Recording'else E.Visible=false F.Text='Record Video'end end local D D
-=function(E,F)m=not m return C(m,F,E)end local E E=function(F,G,H)F.Parent.
-Parent.Parent.Parent.Visible=false G.Visible=false for I=1,#p do game.GuiService
-:RemoveCenterDialog(p[I])p[I].Visible=false end p={}game.GuiService:
-RemoveCenterDialog(G)H.Active=true end local F F=function(G)if not G then return
-end if G:IsA'TextLabel'then G.TextTransparency=0.9 elseif G:IsA'TextButton'then
-G.TextTransparency=0.9 G.Active=false else if G['ClassName']then return print(
+function(B,C,D,E,F)return a('TextButton',{Font=Enum.Font.Arial,FontSize=D,Size=E
+,Position=F,Style=C,TextColor3=Color3.new(1,1,1),Text=B})end local B B=function(
+C,D,E,F)if#D<1 then error'Must have more than one button'end local G,H,I=1,{},
+nil I=function(J)for K,L in ipairs(H)do if L==J then L.Style=Enum.ButtonStyle.
+RobloxButtonDefault else L.Style=Enum.ButtonStyle.RobloxButton end end end for J
+,K in ipairs(D)do local L=a('TextButton','Button'..tostring(G),{Font=Enum.Font.
+Arial,FontSize=Enum.FontSize.Size18,AutoButtonColor=true,Style=Enum.ButtonStyle.
+RobloxButton,Text=K.Text,TextColor3=Color3.new(1,1,1),Parent=C})L.
+MouseButton1Click:connect(function()I(L)return K.Function()end)H[G]=L G=G+1 end
+I(H[1])local L=G-1 if L==1 then C.Button1.Position=UDim2.new(0.35,0,E.Scale,E.
+Offset)C.Button1.Size=UDim2.new(0.4,0,F.Scale,F.Offset)elseif L==2 then C.
+Button1.Position=UDim2.new(0.1,0,E.Scale,E.Offset)C.Button1.Size=UDim2.new(0.35,
+0,F.Scale,F.Offset)C.Button2.Position=UDim2.new(0.55,0,E.Scale,E.Offset)C.
+Button2.Size=UDim2.new(0.35,0,F.Scale,F.Offset)elseif L>=3 then local M,N=0.1/L,
+0.9/L G=1 while G<=L do H[G].Position=UDim2.new(M*G+(G-1)*N,0,E.Scale,E.Offset)H
+[G].Size=UDim2.new(N,0,F.Scale,F.Offset)G=G+1 end end end local C C=function(D,E
+,F)if D then E.Visible=true F.Text='Stop Recording'else E.Visible=false F.Text=
+'Record Video'end end local D D=function(E,F)m=not m return C(m,F,E)end local E
+E=function(F,G,H)F.Parent.Parent.Parent.Parent.Visible=false G.Visible=false for
+I=1,#p do game.GuiService:RemoveCenterDialog(p[I])p[I].Visible=false end p={}
+game.GuiService:RemoveCenterDialog(G)H.Active=true end local F F=function(G)if
+not G then return end if G:IsA'TextLabel'then G.TextTransparency=0.9 elseif G:
+IsA'TextButton'then G.TextTransparency=0.9 G.Active=false else if G['ClassName']
+then return print(
 [[setDisabledState! got object of unsupported type. object type is ]],G.
 ClassName)end end end local G G=function(H)if e==nil then if d:FindFirstChild(d.
 TopLeftControl:FindFirstChild'Help')then e=d.TopLeftControl.Help elseif d:
@@ -167,9 +167,9 @@ Parent=M if game:FindFirstChild'LoadingGuiService'and#game.LoadingGuiService:
 GetChildren()>0 then W=A('Game Instructions',Enum.ButtonStyle.RobloxButton,Enum.
 FontSize.Size24,UDim2.new(0,340,0,50),UDim2.new(0,82,0,207))W.Name=
 'GameInstructions'W.ZIndex=K+4 W.Parent=M W.MouseButton1Click:connect(function()
-if game:FindFirstChild(game.Players['LocalPlayer'])then local X=game.Players.
+if game:FindFirstChild(game.Players['LocalPlayer'])then do local X=game.Players.
 LocalPlayer:FindFirstChild'PlayerLoadingGui'if X then X.Visible=true end end end
-)end local X=A('Reset Character',Enum.ButtonStyle.RobloxButton,Enum.FontSize.
+end)end local X=A('Reset Character',Enum.ButtonStyle.RobloxButton,Enum.FontSize.
 Size24,UDim2.new(0,340,0,50),UDim2.new(0,82,0,105))X.Name='ResetButton'X.ZIndex=
 K+4 X.Parent=M return M end local K K=function(L,M)local N=a('Frame',
 'GameSettingsMenu',{BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),ZIndex=L+4,

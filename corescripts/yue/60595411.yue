@@ -776,7 +776,7 @@ model = Create'Model'{
 An example using the event syntax:
 
 part = Create'Part'{
-	[Create.E'Touched'] = function part
+	[Create.E'Touched'] = function(part)
 		print("I was touched by "..part.Name)
 	end,
 }
@@ -787,7 +787,7 @@ An example using the general constructor syntax:
 model = Create'Part'{
 	[Create] = function this
 		print("Constructor running!")
-		this.Name = GetGlobalFoosAndBars this
+		this.Name = GetGlobalFoosAndBars(this)
 	end,
 }
 

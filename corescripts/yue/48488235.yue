@@ -305,7 +305,7 @@ WaitForChild = (parent, child) ->
 
 -- might want to move all this to an init function, wait for localplayer elsewhere
 Players = game\GetService "Players"
--- make sure this doesn't run on the server(it will if you dont do this)
+-- make sure this doesn't run on the server (it will if you dont do this)
 while not Players.LocalPlayer
 	Players.Changed\wait!
 
@@ -471,14 +471,12 @@ IsMaximized = Instance.new "BoolValue"
 IsTabified = Instance.new "BoolValue"
 AreNamesExpanded = Instance.new "BoolValue"
 
-MiddleTemplate = New "Frame"
-	Name: "MidTemplate"
+MiddleTemplate = New "Frame", "MidTemplate"
 	BackgroundTransparency: 1
 	Position: UDim2.new 100, 0, 0.07, 0
 	Size: UDim2.new 0.5, 0, 0.025, 0 --UDim2.new 1, 0, .03, 0
 
-	* New "ImageLabel"
-		Name: "BCLabel"
+	* New "ImageLabel", "BCLabel"
 		Active: true
 		BackgroundTransparency: 1
 		Position: UDim2.new 0.005, 5, 0.20, 0
@@ -487,8 +485,7 @@ MiddleTemplate = New "Frame"
 		Image: ""
 		ZIndex: 3
 
-	* New "ImageLabel"
-		Name: "FriendLabel"
+	* New "ImageLabel", "FriendLabel"
 		Active: true
 		BackgroundTransparency: 1
 		Position: UDim2.new 0.005, 5, 0.15, 0
@@ -811,8 +808,8 @@ for _, i in pairs Images
 
 
 -- ordered array of 'score data', each entry has:
--- Name(String)
--- Priority(number)
+-- Name String
+-- Priority number
 -- IsPrimary (bool, should it be shown in upper right)
 -- MaxLength (integer, of the length of the longest element for this column)
 ScoreNames = {}
@@ -916,7 +913,7 @@ game.Workspace.ChildAdded\connect (nchild) ->
 -- Static Functions
 -------------------------------
 -- GetTotalEntries = ->
--- 	return math.min(#MiddleFrameBackgrounds, DefaultEntriesOnScreen)
+-- 	return math.min #MiddleFrameBackgrounds, DefaultEntriesOnScreen
 
 -- GetEntryListLength = ->
 -- 	numEnts = #PlayerFrames + #TeamFrames
@@ -966,7 +963,7 @@ TweenProperty = (obj, propName, inita, enda, length) ->
 --[[
 	UGLY UGLY HACK FUNCTION
 	replace with some sort of global input catching A.S.A. FREAKING P.
-	creates a fullsize gui element to catch next mouse up event(completeing a click)
+	creates a fullsize gui element to catch next mouse up event completeing a click
 	@Args:
 	frameParent		Object to parent fullscreen gui to
 	polledFunction	function to call on mouse moved events in this gui
@@ -1273,8 +1270,8 @@ local BaseUpdate
 	property		Name of stat changed
 --]]
 StatChanged = (_, _) -> --playerEntry, property)
-	-- if(playerEntry['MyTeam'])
-	-- UpdateSingleTeam(playerEntry['MyTeam'])
+	-- if playerEntry['MyTeam']
+	-- UpdateSingleTeam playerEntry['MyTeam']
 	-- else
 	BaseUpdate!
 	-- end
@@ -1367,7 +1364,7 @@ DoesStatExist = (statName, exception) ->
 --[[
 	Called when stat is removed from player
 	for all players, destroys the stat frame associated with this value,
-	then calls statchanged(to resize frame)
+	then calls statchanged to resize frame
 	if playerEntry==localplayer, will remove from scorenames
 	@Args:
 	nchild			___value to be removed
@@ -1787,7 +1784,7 @@ UpdateMaximize = ->
 				for j = 1, #ScoreNames, 1
 					scoreval = ScoreNames[j]
 					if i\FindFirstChild(scoreval["Name"]) and scoreval["XOffset"]
-						--print('updateing stat position: ' .. scoreval['Name'])
+						-- print "updateing stat position: #{scoreval["Name"]}"
 						i[scoreval["Name"]]\TweenPosition(
 							UDim2.new(RightEdgeSpace, -scoreval["XOffset"], 0, 0),
 							"Out",
@@ -2143,7 +2140,7 @@ AddMiddleBGFrame = ->
 	table.insert MiddleFrameBackgrounds, nBGFrame
 
 	if #MiddleFrameBackgrounds < DefaultListSize and not DidMinimizeDrag
-		--print('readjusting bottom clip')
+		--print 'readjusting bottom clip'
 		DefaultBottomClipPos = -1 + #MiddleFrameBackgrounds * MiddleBGTemplate.Size.Y.Scale
 
 
@@ -2228,7 +2225,7 @@ OnPlayerEntrySelect = (entry, startx, starty) ->
 --]]
 PlayerListModeUpdate = ->
 	RecreateScoreColumns PlayerFrames
-	table.sort(PlayerFrames, PlayerSortFunction)
+	table.sort PlayerFrames, PlayerSortFunction
 	for i, val in ipairs PlayerFrames
 		MiddleFrames[i] = val["Frame"]
 
@@ -2255,7 +2252,7 @@ RemoveNeutralTeam = ->
 	index			index of player in 'MyPlayers' list to remove
 --]]
 RemovePlayerFromTeam = (teamEntry, index) ->
-	table.remove(teamEntry["MyPlayers"], index)
+	table.remove teamEntry["MyPlayers"], index
 	--if teamEntry['AutoHide'] and #teamEntry['MyPlayers'] == 0
 	if teamEntry == NeutralTeam and #teamEntry["MyPlayers"] == 0
 		RemoveNeutralTeam!
@@ -2440,7 +2437,7 @@ InsertPlayerFrame = (nplayer) ->
 
 	nfriendstatus = GetFriendStatus nplayer
 
-	nFrame\FindFirstChild"BCLabel".Image = getMembershipTypeIcon(nplayer.MembershipType, nplayer.Name)
+	nFrame\FindFirstChild"BCLabel".Image = getMembershipTypeIcon nplayer.MembershipType, nplayer.Name
 	nFrame\FindFirstChild"FriendLabel".Image = getFriendStatusIcon nfriendstatus
 	nFrame.Name = nplayer.Name
 	WaitForChild(WaitForChild(nFrame, "TitleFrame"), "Title").Text = nplayer.Name
@@ -2586,7 +2583,7 @@ Players.ChildRemoved\connect RemovePlayerFrame
 UnrollTeams = (tframes, outframes) ->
 	numEntries = 0
 	if NeutralTeam and not NeutralTeam["IsHidden"]
-		for _, val in ipairs(NeutralTeam["MyPlayers"])
+		for _, val in ipairs NeutralTeam["MyPlayers"]
 			numEntries += 1
 			outframes[numEntries] = val["Frame"]
 
@@ -2595,7 +2592,7 @@ UnrollTeams = (tframes, outframes) ->
 
 	for _, val in ipairs tframes
 		if not val["IsHidden"]
-			for _, pval in ipairs(val.MyPlayers)
+			for _, pval in ipairs val.MyPlayers
 				numEntries += 1
 				outframes[numEntries] = pval["Frame"]
 
@@ -2631,7 +2628,7 @@ AddTeamScores = (team) ->
 	for j = 1, #ScoreNames, 1
 		i = ScoreNames[j]
 		tscore = 0
-		for _, j in ipairs(team["MyPlayers"])
+		for _, j in ipairs team["MyPlayers"]
 			tval = j["Player"]\FindFirstChild "leaderstats" and j["Player"].leaderstats\FindFirstChild i["Name"]
 			if tval and not tval\IsA "StringValue"
 				tscore += GetScoreValue (j["Player"].leaderstats)[i["Name"]]
@@ -2664,7 +2661,7 @@ TeamListModeUpdate = ->
 	SortTeams TeamFrames
 	if NeutralTeam
 		AddTeamScores NeutralTeam
-		--RecreateScoreColumns(NeutralTeam['MyPlayers'])
+		--RecreateScoreColumns NeutralTeam['MyPlayers']
 
 	UnrollTeams TeamFrames, MiddleFrames
 
@@ -2890,7 +2887,7 @@ BaseUpdate = ->
 	UpdateScrollPosition!
 
 	UpdateScrollBarVisibility!
-	--debugprint('EndBaseUpdate')
+	--debugprint 'EndBaseUpdate'
 	BaseUpdateLock = false
 
 

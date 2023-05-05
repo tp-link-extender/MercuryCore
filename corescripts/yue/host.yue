@@ -29,10 +29,8 @@ getKillerOfHumanoidIfStillInGame = (humanoid) ->
 	tag = humanoid\findFirstChild "creator"
 
 	-- find player with name on tag
-	if tag
-		killer = tag.Value
-		if killer.Parent -- killer still in game
-			return killer
+	if tag and tag.Value.Parent -- killer still in game
+		return tag.Value
 
 
 -- send kill and death stats when a player dies
@@ -82,7 +80,7 @@ try
 
 scriptContext.ScriptsDisabled = true
 
--- game\SetPlaceID(nil, false)
+-- game\SetPlaceID nil, false
 game\GetService"ChangeHistoryService"\SetEnabled false
 
 -- establish this peer as the Server
@@ -99,7 +97,7 @@ if url?
 		game\GetService"ContentProvider"\SetBaseUrl "#{url}/"
 
 	-- try
-	-- 	game\GetService"Players"\SetChatFilterUrl(url .. "/Game/ChatFilter.ashx")
+	-- 	game\GetService"Players"\SetChatFilterUrl url .. "/Game/ChatFilter.ashx"
 
 	-- game\GetService"BadgeService"\SetPlaceId placeId
 	if access?
@@ -134,7 +132,7 @@ try
 	game\GetService"NetworkServer"\SetIsPlayerAuthenticationRequired true
 
 settings!.Diagnostics.LuaRamLimit = 0
---settings!.Network\SetThroughputSensitivity(0.08, 0.01)
+--settings!.Network\SetThroughputSensitivity 0.08, 0.01
 --settings!.Network.SendRate = 35
 --settings!.Network.PhysicsSend = 0 -- 1==RoundRobin
 

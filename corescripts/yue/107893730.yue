@@ -313,10 +313,8 @@ getPlayerBalance = ->
 		print "Get player balance failed because", errorCode
 		return nil
 
-
 	if playerBalance == ""
 		return nil
-
 
 	playerBalance = getRbxUtility!.DecodeJSON playerBalance
 	playerBalance
@@ -473,7 +471,7 @@ canPurchaseItem = ->
 		notRightBc = true
 
 
-	updatedBalance, insufficientFunds = updateAfterBalanceText(playerBalance, notRightBc)
+	updatedBalance, insufficientFunds = updateAfterBalanceText playerBalance, notRightBc
 
 	if notRightBc
 		purchaseDialog.BodyFrame.AfterBalanceButton.Active = true
@@ -609,10 +607,8 @@ getToolAssetID = (assetID) ->
 	if not newTool
 		return nil
 
-
 	if newTool\IsA "Tool"
 		return newTool
-
 
 	toolChildren = newTool\GetChildren!
 	for i = 1, #toolChildren
@@ -629,14 +625,14 @@ purchaseFailed = (inGamePurchasesDisabled) ->
 		name = currentProductInfo["Name"]
 
 
-	newPurchasedFailedText = string.gsub(purchaseFailedText, "itemName", "#{name}")
+	newPurchasedFailedText = string.gsub purchaseFailedText, "itemName", "#{name}"
 	if inGamePurchasesDisabled
 		newPurchasedFailedText = string.gsub(
 			newPurchasedFailedText, "errorReason",
 			"#{errorPurchasesDisabledText}"
 		)
 	else
-		newPurchasedFailedText = string.gsub(newPurchasedFailedText, "errorReason", "#{errorPurchasesUnknownText}")
+		newPurchasedFailedText = string.gsub newPurchasedFailedText, "errorReason", "#{errorPurchasesUnknownText}"
 
 
 	purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text = newPurchasedFailedText
@@ -827,7 +823,6 @@ createTextObject = (name, text, type, size) ->
 createImageButton = (name) ->
 	New "ImageButton", name,
 		Size: UDim2.new 0, 153, 0, 46
-		Name: name
 
 userPurchaseProductActionsEnded = (userIsClosingDialog) ->
 	checkingPlayerFunds = false
@@ -1056,21 +1051,21 @@ createPurchasePromptGui = ->
 
 cutSizeInHalfRecursive = (_) ->
 	-- todo: change the gui size based on how much space we have
-	--[[changeSize(instance,0.5)
+	--[[changeSize instance,0.5
 
 	children = instance\GetChildren!
 	for i = 1, #children
-		cutSizeInHalfRecursive(children[i])
+		cutSizeInHalfRecursive children[i]
 	end]]
 
 
 doubleSizeRecursive = (_) ->
 	-- todo: change the gui size based on how much space we have
-	--[[changeSize(instance,2)
+	--[[changeSize instance,2
 
 	children = instance\GetChildren!
 	for i = 1, #children
-		doubleSizeRecursive(children[i])
+		doubleSizeRecursive children[i]
 	end]]
 
 -- depending on screen size, we need to change the gui

@@ -20,27 +20,26 @@ UDim2.new(-0.1,0,-0.1,0),ZIndex=0,Visible=false,a('ImageLabel',{Size=UDim2.new(1
 ,BackgroundTransparency=1,Image='http://www.roblox.com/asset/?id=97617958',
 Position=UDim2.new(0.5,-60,1,-108),Size=UDim2.new(0,120,0,18),Parent=b.
 ControlFrame})local h=9 if f()then h=3 g.Size=UDim2.new(0,180,0,54)g.Position=
-UDim2.new(0.5,-90,1,-85)end for i=0,h do local j=a('Frame',{Name='Slot'..
-tostring(i),RobloxLocked=true,BackgroundColor3=Color3.new(0,0,0),
-BackgroundTransparency=1,BorderColor3=Color3.new(1,1,1),ZIndex=4,Position=UDim2.
-new((function()if i==0 then return 0.9,0,0,0 else return(i-1)*0.1,(i-1)*6,0,0
-end end)()),Size=UDim2.new(0,54,1,0),Parent=g})if b.AbsoluteSize.Y<=320 then j.
-Position=UDim2.new(0,(i-1)*60,0,-50)print('Well got here',j,j.Position.X.Scale,j
-.Position.X.Offset)if i==0 then j:Destroy()end end end local i=a('ImageButton',
-'TempSlot',{Active=true,Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,Style=
-'Custom',Visible=false,RobloxLocked=true,ZIndex=3,Parent=g,a('ImageLabel',
-'Background',{BackgroundTransparency=1,Image=
-'http://www.roblox.com/asset/?id=97613075',Size=UDim2.new(1,0,1,0)}),a(
-'ObjectValue','GearReference',{RobloxLocked=true}),a('TextLabel','ToolTipLabel',
-{RobloxLocked=true,Text='',BackgroundTransparency=0.5,BorderSizePixel=0,Visible=
-false,TextColor3=Color3.new(1,1,1),BackgroundColor3=Color3.new(0,0,0),
-TextStrokeTransparency=0,Font=Enum.Font.ArialBold,FontSize=Enum.FontSize.Size14,
-Size=UDim2.new(1,60,0,20),Position=UDim2.new(0,-30,0,-30)}),a('BoolValue','Kill'
-,{RobloxLocked=true}),a('TextLabel','GearText',{RobloxLocked=true,
-BackgroundTransparency=1,Font=Enum.Font.Arial,FontSize=Enum.FontSize.Size14,
-Position=UDim2.new(0,-8,0,-8),Size=UDim2.new(1,16,1,16),Text='',TextColor3=
-Color3.new(1,1,1),TextWrap=true,ZIndex=5}),a('ImageLabel','GearImage',{
-BackgroundTransparency=1,Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,1,0),
+UDim2.new(0.5,-90,1,-85)end for i=0,h do local j=a('Frame','Slot'..tostring(i),{
+RobloxLocked=true,BackgroundColor3=Color3.new(0,0,0),BackgroundTransparency=1,
+BorderColor3=Color3.new(1,1,1),ZIndex=4,Position=UDim2.new((function()if i==0
+then return 0.9,0,0,0 else return(i-1)*0.1,(i-1)*6,0,0 end end)()),Size=UDim2.
+new(0,54,1,0),Parent=g})if b.AbsoluteSize.Y<=320 then j.Position=UDim2.new(0,(i-
+1)*60,0,-50)print('Well got here',j,j.Position.X.Scale,j.Position.X.Offset)if i
+==0 then j:Destroy()end end end local i=a('ImageButton','TempSlot',{Active=true,
+Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,Style='Custom',Visible=false,
+RobloxLocked=true,ZIndex=3,Parent=g,a('ImageLabel','Background',{
+BackgroundTransparency=1,Image='http://www.roblox.com/asset/?id=97613075',Size=
+UDim2.new(1,0,1,0)}),a('ObjectValue','GearReference',{RobloxLocked=true}),a(
+'TextLabel','ToolTipLabel',{RobloxLocked=true,Text='',BackgroundTransparency=0.5
+,BorderSizePixel=0,Visible=false,TextColor3=Color3.new(1,1,1),BackgroundColor3=
+Color3.new(0,0,0),TextStrokeTransparency=0,Font=Enum.Font.ArialBold,FontSize=
+Enum.FontSize.Size14,Size=UDim2.new(1,60,0,20),Position=UDim2.new(0,-30,0,-30)})
+,a('BoolValue','Kill',{RobloxLocked=true}),a('TextLabel','GearText',{
+RobloxLocked=true,BackgroundTransparency=1,Font=Enum.Font.Arial,FontSize=Enum.
+FontSize.Size14,Position=UDim2.new(0,-8,0,-8),Size=UDim2.new(1,16,1,16),Text='',
+TextColor3=Color3.new(1,1,1),TextWrap=true,ZIndex=5}),a('ImageLabel','GearImage'
+,{BackgroundTransparency=1,Position=UDim2.new(0,0,0,0),Size=UDim2.new(1,0,1,0),
 ZIndex=5,RobloxLocked=true})})local j=a('TextLabel','SlotNumber',{
 BackgroundTransparency=1,BorderSizePixel=0,Font=Enum.Font.ArialBold,FontSize=
 Enum.FontSize.Size18,Position=UDim2.new(0,0,0,0),Size=UDim2.new(0,10,0,15),
@@ -146,9 +145,9 @@ BackgroundTransparency=1,Position=y,Parent=z})end local v v=function(w,x,y,z,A)
 local B=a('ImageButton',tostring(w),{RobloxLocked=true,Size=x,Position=y})if A
 then B.Style=A else B.BackgroundColor3=Color3.new(0,0,0)B.BorderColor3=Color3.
 new(1,1,1)end B.Parent=z return B end local w w=function(x,y,z,A)return a(
-'TextLabel',{Name=x,RobloxLocked=true,BackgroundTransparency=1,Size=UDim2.new(0,
-32,0,14),Font=Enum.Font.Arial,TextColor3=Color3.new(1,1,1),FontSize=Enum.
-FontSize.Size14,Text=y,Position=z,Parent=A})end local x=a('Frame','Wardrobe',{
+'TextLabel',x,{RobloxLocked=true,BackgroundTransparency=1,Size=UDim2.new(0,32,0,
+14),Font=Enum.Font.Arial,TextColor3=Color3.new(1,1,1),FontSize=Enum.FontSize.
+Size14,Text=y,Position=z,Parent=A})end local x=a('Frame','Wardrobe',{
 RobloxLocked=true,BackgroundTransparency=1,Visible=false,Size=UDim2.new(1,0,1,0)
 ,Parent=l,a('Frame','AssetList',{RobloxLocked=true,Position=UDim2.new(0,4,0,5),
 Size=UDim2.new(0,85,1,-5),BackgroundTransparency=1,Visible=true}),a('TextButton'

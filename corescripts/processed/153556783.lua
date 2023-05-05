@@ -80,16 +80,16 @@ if F==H then return true end end return false end local F F=function(G,H)local I
 ,J,K,L,M,N,O,P,Q,R=nil,false,b.RotateCamera,-1,false,nil,b.ZoomCamera,{},nil,nil
 R=function()s=nil J=false I=nil end local S S=function()P={}N=nil M=false Q:
 Destroy()Q=nil end local T T=function(U,V)if Q~=nil then Q:Destroy()end Q=a(
-'Frame',{Name='PinchFrame',BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),
-Parent=G})Q.InputChanged:connect(function(W)if not M then S()return end R()if
-not(N~=nil)then if W==U then N=(W.Position-V.Position).magnitude U=W elseif W==V
-then N=(W.Position-U.Position).magnitude V=W end else local X=0 if W==U then X=(
-W.Position-V.Position).magnitude U=W elseif W==V then X=(W.Position-U.Position).
-magnitude V=W end if X~=0 then local Y=X-N if Y~=0 then O(b,(Y*q))end N=X end
-end end)return Q.InputEnded:connect(function(W)if W==U or W==V then return S()
-end end)end local U U=function(V)if#P<1 then table.insert(P,V)L=tick()M=false
-elseif#P==1 then M=((tick()-L)<=r)if M then table.insert(P,V)return T(P[1],P[2])
-else P={}end end end G.InputBegan:connect(function(V)if V.UserInputType~=Enum.
+'Frame','PinchFrame',{BackgroundTransparency=1,Size=UDim2.new(1,0,1,0),Parent=G}
+)Q.InputChanged:connect(function(W)if not M then S()return end R()if not(N~=nil)
+then if W==U then N=(W.Position-V.Position).magnitude U=W elseif W==V then N=(W.
+Position-U.Position).magnitude V=W end else local X=0 if W==U then X=(W.Position
+-V.Position).magnitude U=W elseif W==V then X=(W.Position-U.Position).magnitude
+V=W end if X~=0 then local Y=X-N if Y~=0 then O(b,(Y*q))end N=X end end end)
+return Q.InputEnded:connect(function(W)if W==U or W==V then return S()end end)
+end local U U=function(V)if#P<1 then table.insert(P,V)L=tick()M=false elseif#P==
+1 then M=((tick()-L)<=r)if M then table.insert(P,V)return T(P[1],P[2])else P={}
+end end end G.InputBegan:connect(function(V)if V.UserInputType~=Enum.
 UserInputType.Touch then return end if D(V)then return end local W=E(V)if not W
 then U(V)end if not(s~=nil)and not W then s=V I=Vector2.new(s.Position.x,s.
 Position.y)end end)b.InputChanged:connect(function(V)if V.UserInputType~=Enum.
