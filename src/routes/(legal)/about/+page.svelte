@@ -17,6 +17,7 @@
 <!-- Keeps the scrollY variable updated with the scrollY property of the window. -->
 <svelte:window bind:scrollY />
 <svelte:head>
+	<meta name="description" content="About Mercury: Endless possibilities. New features. Same nostalgia." />
 	<title>About - Mercury</title>
 </svelte:head>
 
@@ -29,16 +30,17 @@
 	<p class="lead light-text text-center">
 		Endless possibilities. New features. Same nostalgia.
 	</p>
-	<h5>
-		<span class="badge text-bg-secondary text-dark opacity-50 mb-3">
+	<h2 class="h5">
+		<span class="badge text-bg-secondary dark-text opacity-75 mb-3">
 			Closed Beta
 		</span>
-	</h5>
+	</h2>
 </div>
 
 <button
 	id="arrow"
 	class="btn position-absolute shadow-none start-50"
+	aria-label="Scroll down"
 	on:click={downScroll}
 	on:keypress={downScroll}
 	style="opacity: {(500 - scrollY) / 300}">
@@ -47,6 +49,7 @@
 <button
 	id="arrow2"
 	class="btn position-fixed mb-3"
+	aria-label="Scroll up"
 	on:click={upScroll}
 	on:keypress={upScroll}
 	style="opacity: {(scrollY - 500) / 300}">
@@ -75,7 +78,7 @@
 		<Pagepart right>
 			<img
 				class="w-100"
-				src="/about/devices.webp"
+				src="/about_assets/devices.webp"
 				alt="Devices playing Mercury" />
 		</Pagepart>
 	</ParallaxLayer>
