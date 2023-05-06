@@ -5,7 +5,7 @@
 	export let data
 </script>
 
-<div id="bg" class="position-fixed w-100 h-100 z-n1" />
+<div id="bg" class="position-fixed w-100 h-100" />
 
 <div id="all">
 	<!--
@@ -37,5 +37,4 @@
 
 	#bg
 		background: linear-gradient(-20deg, #0000 50%, var(--mainaccent) 250%)
-		z-index: -1
 </style>
