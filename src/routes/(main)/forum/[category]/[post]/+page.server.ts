@@ -27,7 +27,6 @@ export async function load({ locals, params }) {
 				select: {
 					username: true,
 					number: true,
-					image: true,
 				},
 			},
 			content: {
@@ -57,7 +56,6 @@ export async function load({ locals, params }) {
 				select: {
 					username: true,
 					number: true,
-					image: true,
 				},
 			},
 			forumCategory: {

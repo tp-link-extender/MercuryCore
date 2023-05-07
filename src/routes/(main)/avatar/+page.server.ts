@@ -1,3 +1,4 @@
+import render from "$lib/server/render"
 import { fail } from "@sveltejs/kit"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
@@ -30,5 +31,7 @@ export const actions = {
 			where: { id: user.id },
 			data: { bodyColours: currentBodyColour },
 		})
+
+		render(user.username, currentBodyColour)
 	},
 }

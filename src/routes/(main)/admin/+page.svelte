@@ -9,7 +9,7 @@
 	]
 
 	export let data
-	const user = data.user
+	const { user } = data
 </script>
 
 <svelte:head>

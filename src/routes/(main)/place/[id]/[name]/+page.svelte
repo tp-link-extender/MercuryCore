@@ -7,7 +7,7 @@
 	import { writable } from "svelte/store"
 
 	export let data
-	const user = data.user
+	const { user } = data
 
 	const statistics = [
 		["Activity", "0 visits"],
@@ -145,7 +145,7 @@
 							class="light-text text-decoration-none d-flex">
 							<span class="pfp bg-darker rounded-circle mx-1">
 								<img
-									src={data.ownerUser?.image}
+									src="/api/avatar/{data.ownerUser?.username}"
 									alt={data.ownerUser?.username}
 									class="rounded-circle rounded-top-0" />
 							</span>
@@ -491,7 +491,7 @@
 									href="/user/{user.number}"
 									class="text-decoration-none">
 									<img
-										src={user.image}
+										src="/api/avatar/{user.username}"
 										alt={user.username}
 										height="75"
 										width="75"

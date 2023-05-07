@@ -62,7 +62,6 @@ export const load = async ({ params }) => {
 						},
 						select: {
 							username: true,
-							image: true,
 							number: true,
 						},
 					})

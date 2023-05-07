@@ -19,7 +19,7 @@
 	<div class="p-4">
 		<div class="image-background rounded-circle bg-a">
 			<img
-				src={user.image}
+				src="/api/avatar/{user.username}"
 				alt={user.username}
 				class="h-100 rounded-circle img-fluid rounded-top-0" />
 		</div>

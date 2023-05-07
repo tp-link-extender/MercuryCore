@@ -35,7 +35,6 @@ export const load = async ({ url }) => {
 						select: {
 							number: true,
 							username: true,
-							image: true,
 							status: true,
 						},
 				  })

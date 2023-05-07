@@ -40,7 +40,6 @@ export async function load({ locals }) {
 					},
 					select: {
 						username: true,
-						image: true,
 						number: true,
 					},
 				})
@@ -80,7 +79,6 @@ export async function load({ locals }) {
 				authorUser: {
 					select: {
 						username: true,
-						image: true,
 						number: true,
 					},
 				},

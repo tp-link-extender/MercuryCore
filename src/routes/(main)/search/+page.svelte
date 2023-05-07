@@ -38,7 +38,7 @@
 					<div class="position-relative mb-2">
 						<div class="image-background bg-a rounded-circle">
 							<img
-								src={user.image}
+								src="/api/avatar/{user.username}"
 								alt={user.username}
 								class="h-100 rounded-circle img-fluid rounded-top-0" />
 						</div>

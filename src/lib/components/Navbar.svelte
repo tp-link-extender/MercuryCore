@@ -16,7 +16,7 @@
 	})
 
 	export let data: LayoutData
-	const user = data.user
+	const { user } = data
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark py-0">
@@ -168,7 +168,7 @@
 									id="pfp"
 									class="mx-2 rounded-circle bg-background">
 									<img
-										src={user?.image}
+										src="/api/avatar/{user?.username}"
 										alt="You"
 										class="rounded-circle rounded-top-0" />
 								</div>
