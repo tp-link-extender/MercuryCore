@@ -54,8 +54,8 @@
 											<div
 												class="me-2 rounded-circle pfp bg-a">
 												<img
-													src={transaction.sender
-														?.image}
+													src="/api/avatar/{transaction
+														.sender?.username}"
 													alt={transaction.sender
 														.username}
 													class="rounded-circle rounded-top-0" />
@@ -108,8 +108,8 @@
 											<div
 												class="ms-2 rounded-circle pfp bg-a">
 												<img
-													src={transaction.receiver
-														?.image}
+													src="/api/avatar/{transaction
+														.receiver?.username}"
 													alt={transaction.receiver
 														.username}
 													class="rounded-circle rounded-top-0" />
@@ -121,7 +121,7 @@
 										{#if transaction.note && transaction.link}
 											<a
 												href={transaction.link}
-												class="text-light">
+												class="light-text">
 												{transaction.note}
 											</a>
 										{:else if transaction.note}

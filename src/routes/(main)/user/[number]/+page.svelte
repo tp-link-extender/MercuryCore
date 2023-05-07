@@ -13,7 +13,7 @@
 	]
 
 	export let data
-	const user = data.user
+	const { user } = data
 
 	const places = data.places as typeof data.places & { gameSessions: any[] }[]
 </script>
@@ -27,7 +27,7 @@
 		<div class="d-flex px-4">
 			<div id="image-background" class="me-4 rounded-circle bg-a">
 				<img
-					src={data.image}
+					src="/api/avatar/{data.username}"
 					alt={data.username}
 					class="rounded-circle rounded-top-0" />
 			</div>
@@ -281,7 +281,7 @@
 								<div id="user" class="d-flex mb-2">
 									<span class="pfp rounded-circle bg-a2">
 										<img
-											src={data.image}
+											src="/api/avatar/{data.username}"
 											alt={data.username}
 											class="rounded-circle img-fluid rounded-top-0" />
 									</span>

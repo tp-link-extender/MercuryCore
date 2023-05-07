@@ -87,7 +87,7 @@
 					class="user d-flex text-decoration-none">
 					<span class="pfp bg-a2 rounded-circle">
 						<img
-							src={data.author.image}
+							src="/api/avatar/{data.author.username}"
 							alt={data.author.username}
 							class="rounded-circle rounded-top-0" />
 					</span>

@@ -4,7 +4,7 @@
 
 	export let data
 	export let form
-	const user = data.user
+	const { user } = data
 </script>
 
 <svelte:head>
@@ -199,7 +199,7 @@
 						class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
 						<div class="me-3 rounded-circle pfp bg-a">
 							<img
-								src={owner?.image}
+								src="/api/avatar/{owner?.username}"
 								alt={owner.username}
 								class="rounded-circle rounded-top-0" />
 						</div>
