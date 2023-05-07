@@ -3,7 +3,7 @@ import render from "$lib/server/render"
 import fs from "fs"
 import { error } from "@sveltejs/kit"
 
-export async function GET({ params }) {
+export async function GET({ params, setHeaders }) {
 	const { username } = params
 	if (!username) throw error(400, "Invalid Request")
 
@@ -21,9 +21,9 @@ export async function GET({ params }) {
 	if (!fs.existsSync(`data/avatars/${username}.png`))
 		await render(username, user.bodyColours)
 
-	// setHeaders({
-	// 	"Cache-Control": "max-age=100",
-	// })
+	setHeaders({
+		"Cache-Control": "max-age=600",
+	})
 
 	return new Response(fs.readFileSync(`data/avatars/${username}.png`))
 }

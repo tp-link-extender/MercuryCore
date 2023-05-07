@@ -29,7 +29,6 @@ export async function load({ url, locals, params }) {
 				select: {
 					username: true,
 					number: true,
-					image: true,
 				},
 			},
 			description: {
