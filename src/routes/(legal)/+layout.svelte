@@ -5,21 +5,19 @@
 	export let data
 </script>
 
-<div id="bg" class="position-fixed w-100 h-100" />
+<template lang="pug">
+	#bg.position-fixed.w-100.h-100.pe-none
 
-<div id="all">
-	<!--
-		Data from the root layout must be passed into the
-		Navbar component, as it cannot be accessed directly.
-	-->
-	<Navbar {data} />
+	#all
+		// Data from the root layout must be passed into the
+		// Navbar component, as it cannot be accessed directly.
+		Navbar({data})
 
-	<main>
-		<slot />
-	</main>
+		main
+			slot
 
-	<Footer />
-</div>
+		Footer
+</template>
 
 <style lang="sass">
 	main

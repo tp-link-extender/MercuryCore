@@ -38,7 +38,7 @@
 		color: vars.$light-text
 
 	fa
-		font-family: faSolid
+		font-family: faSolid, "Font Awesome 6"
 		color: vars.$grey-text
 		line-height: 1
 	.thumbs-up::before

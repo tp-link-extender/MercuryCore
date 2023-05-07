@@ -53,6 +53,7 @@
 		"nanoid": "^4.0.2",
 		"nprogress": "^0.2.0",
 		"profane-words": "^1.5.8",
+		"pug": "^3.0.2",
 		"redis": "^4.6.6",
 		"svelte-inview": "^4.0.0",
 		"svelte-parallax": "^0.6.0",

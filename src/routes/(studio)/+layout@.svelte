@@ -1,20 +1,20 @@
-<main>
-	<slot />
+<template lang="pug">
+	main
+		slot
 
-	<footer>
-		<p>
-			<a href="/">Mercury</a>
-			2022-{new Date().getFullYear()}
-		</p>
-		<a class="footer" href="/about">About</a>
-		|
-		<a class="footer" href="/terms">Terms of Service</a>
-		|
-		<a class="footer" href="/privacy">Privacy Policy</a>
-		|
-		<a class="footer" href="/statistics">Statistics</a>
-	</footer>
-</main>
+	footer
+		p
+			a(href="/") Mercury
+			| 2022-{new Date().getFullYear()}
+
+		a.footer(href="/about") About
+		| |
+		a.footer(href="/terms") Terms of Service
+		| |
+		a.footer(href="/privacy") Privacy Policy
+		| |
+		a.footer(href="/statistics") Statistics
+</template>
 
 <style lang="sass">
 	@use "./vars.sass"

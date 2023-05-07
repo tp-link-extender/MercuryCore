@@ -2,29 +2,26 @@
 	// If an error happens in any +page or +layout file,
 	// this page will be rendered instead.
 
-	import type { LayoutData } from "./$types"
 	import { page } from "$app/stores"
 	import Navbar from "$lib/components/Navbar.svelte"
 	import Footer from "$lib/components/Footer.svelte"
 
-	export let data: LayoutData
+	export let data: import("./$types").LayoutData
 </script>
 
-<svelte:head>
-	<title>Error {$page.status} - Mercury</title>
-</svelte:head>
+<template lang="pug">
+	svelte:head
+		title Error {$page.status} - Mercury
 
-<Navbar {data} />
+	Navbar({data})
 
-<main>
-	<div
-		class="container d-flex flex-column justify-content-center align-items-center light-text bg-a rounded-4">
-		<h1 class="light-text">Error {$page.status}</h1>
-		{$page.error?.message}
-	</div>
-</main>
+	main
+		.container.d-flex.flex-column.justify-content-center.align-items-center.light-text.bg-a.rounded-4
+			h1.light-text Error {$page.status}
+			| {$page.error?.message}
 
-<Footer />
+	Footer
+</template>
 
 <style lang="sass">
 	main
