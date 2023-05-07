@@ -25,7 +25,6 @@ export async function load({ locals }) {
 				sender: {
 					select: {
 						number: true,
-						image: true,
 						username: true,
 					},
 				},

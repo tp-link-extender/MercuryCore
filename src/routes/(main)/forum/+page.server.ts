@@ -16,7 +16,6 @@ export const load = () => ({
 						select: {
 							username: true,
 							number: true,
-							image: true,
 						},
 					},
 					content: {

@@ -26,7 +26,6 @@ export async function load({ locals, params }) {
 							select: {
 								username: true,
 								number: true,
-								image: true,
 							},
 						},
 						content: {
