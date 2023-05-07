@@ -26,7 +26,7 @@
 				<a class="p-4 pe-2" href="/user/{user.number}">
 					<div class="image-background bg-a rounded-circle">
 						<img
-							src={user.image}
+							src="/api/avatar/{user.username}"
 							alt={user.username}
 							class="h-100 rounded-circle img-fluid rounded-top-0" />
 					</div>

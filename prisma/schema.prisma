@@ -53,7 +53,6 @@ model AuthUser {
     createdRegkey        Regkey[]      @relation("creator")
     permissionLevel      Int           @default(1)
     bio                  TextContent[]
-    image                String?
     created              DateTime      @default(now())
     lastOnline           DateTime      @default(now())
     currencyCollected    DateTime      @default(now())

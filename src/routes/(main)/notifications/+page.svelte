@@ -30,7 +30,7 @@
 						? 'bg-a'
 						: 'bg-darker'} rounded-circle me-3">
 					<img
-						src={notification.sender.image}
+						src="/api/avatar/{notification.sender.username}"
 						alt={notification.sender.username}
 						class="h-100 rounded-circle img-fluid rounded-top-0" />
 				</a>
