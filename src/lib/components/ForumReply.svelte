@@ -54,7 +54,7 @@
 				class="user d-flex text-decoration-none pt-2">
 				<span class="pfp bg-a2 rounded-circle">
 					<img
-						src={reply.author.image}
+						src="/api/avatar/{reply.author.username}"
 						alt={reply.author.username}
 						class="rounded-circle rounded-top-0" />
 				</span>

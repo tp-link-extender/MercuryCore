@@ -3,7 +3,7 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const user = data.user
+	const { user } = data
 
 	// get() moment
 	const {

@@ -50,7 +50,8 @@
 									class="light-text text-decoration-none d-flex">
 									<span class="pfp bg-a2 rounded-circle mx-1">
 										<img
-											src={category.posts[0].author.image}
+											src="/api/avatar/{category.posts[0]
+												.author.username}"
 											alt={category.posts[0].author
 												.username}
 											class="rounded-circle rounded-top-0" />

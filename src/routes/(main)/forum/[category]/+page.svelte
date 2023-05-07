@@ -81,7 +81,7 @@
 					class="user d-flex light-text text-decoration-none m-2 pe-4 mb-0 w-100">
 					<span class="pfp bg-a2 rounded-circle me-1">
 						<img
-							src={post.author.image}
+							src="/api/avatar/{post.author.username}"
 							alt={post.author.username}
 							class="rounded-circle rounded-top-0" />
 					</span>

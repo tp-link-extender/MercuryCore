@@ -9,7 +9,7 @@
 	import "/src/fa/sass/fontawesome.sass"
 
 	export let data
-	const user = data.user
+	const { user } = data
 
 	// Settings for nprogress, the loading bar shown
 	// at the top of the page when navigating
@@ -73,7 +73,7 @@
 					<div
 						class="image-background bg-background rounded-circle me-3">
 						<img
-							src={notification.sender.image}
+							src="/api/avatar/{notification.sender.username}"
 							alt={notification.sender.username}
 							class="h-100 rounded-circle img-fluid rounded-top-0" />
 					</div>

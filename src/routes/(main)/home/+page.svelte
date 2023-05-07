@@ -12,7 +12,7 @@
 	}
 
 	export let data
-	const user = data.user
+	const { user } = data
 
 	const {
 		form,
@@ -93,7 +93,7 @@
 					class="text-decoration-none light-text d-flex">
 					<div class="bg-a rounded-circle">
 						<img
-							src={user?.image}
+							src="/api/avatar/{user?.username}"
 							alt="You"
 							class="rounded-circle img-fluid rounded-top-0" />
 					</div>
@@ -149,7 +149,8 @@
 										<span
 											class="bg-background rounded-circle">
 											<img
-												src={status.authorUser?.image}
+												src="/api/avatar/{status
+													.authorUser?.username}"
 												alt={status.authorUser
 													?.username}
 												class="rounded-circle img-fluid rounded-top-0" />
@@ -194,7 +195,7 @@
 									<div
 										class="image-background bg-a rounded-circle">
 										<img
-											src={friend.image}
+											src="/api/avatar/{friend.username}"
 											alt={friend.username}
 											class="h-100 rounded-circle img-fluid rounded-top-0" />
 									</div>

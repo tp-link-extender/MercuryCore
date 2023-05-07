@@ -4,7 +4,7 @@
 	import { enhance } from "$app/forms"
 
 	export let data
-	const user = data.user
+	const { user } = data
 
 	let modal = writable(false)
 	let bodyPart = ""
