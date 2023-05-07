@@ -18,7 +18,6 @@ export async function load({ locals, params }) {
 		select: {
 			id: true,
 			username: true,
-			image: true,
 			number: true,
 			permissionLevel: true,
 			posts: {
