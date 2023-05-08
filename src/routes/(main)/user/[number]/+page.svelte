@@ -138,11 +138,19 @@
 	<div class="row">
 		<div class="col-6">
 			{#if data.bio[0]}
-				<div class="mt-4 light-text">
+				<div class="mt-4">
 					<h2 class="h4 light-text">Bio</h2>
 					<p class="light-text ms-2">{data.bio[0].text}</p>
 				</div>
 			{/if}
+			<div class="mt-4 d-flex">
+				<h2 class="h4 light-text mb-0">Avatar</h2>
+				<img
+					id="avatar"
+					class="w-50"
+					src="/api/avatar/{data.username}-body"
+					alt={data.username} />
+			</div>
 		</div>
 		<div class="col-6">
 			{#if places.length > 0}
@@ -344,4 +352,7 @@
 		align-items: center
 		.pfp img
 			width: 2rem
+
+	#avatar
+		aspect-ratio: 3/4
 </style>

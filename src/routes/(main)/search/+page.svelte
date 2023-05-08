@@ -112,7 +112,7 @@
 	.place
 		width: 8rem
 		margin: auto
-	.image-background
+	.image-background, img
 		width: 7rem
 		margin: auto
 </style>
