@@ -1,7 +1,8 @@
 import render from "$lib/server/render"
-import { fail } from "@sveltejs/kit"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
+import ratelimit from "$lib/server/ratelimit"
+import { fail } from "@sveltejs/kit"
 
 const brickColours = [
 	1, 5, 9, 11, 18, 21, 23, 24, 26, 28, 29, 37, 38, 101, 102, 104, 105, 106,
@@ -33,5 +34,15 @@ export const actions = {
 		})
 
 		render(user.username, currentBodyColour)
+	},
+	regen: async ({ locals, getClientAddress }) => {
+		const { user } = await authorise(locals)
+
+		if (ratelimit({}, "regen", getClientAddress, 1))
+			return fail(429, { msg: "Too many requests" })
+
+		return {
+			avatar: `${(await render(user.username, user.bodyColours, true))}?r=${Math.random()}`,
+		}
 	},
 }
