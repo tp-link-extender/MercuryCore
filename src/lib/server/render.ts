@@ -48,8 +48,9 @@ export default async function (
 	if (!fs.existsSync("data/avatars")) fs.mkdirSync("data/avatars")
 
 	await page.screenshot({
-		path: `data/avatars/${username}${bodyShot ? "-body" : ""}.png`,
+		path: `data/avatars/${username}${bodyShot ? "-body" : ""}.webp`,
 		omitBackground: true,
+		type: "webp",
 	})
 	await browser.close()
 
