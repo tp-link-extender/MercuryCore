@@ -495,7 +495,7 @@
 										alt={user.username}
 										height="75"
 										width="75"
-										class="pfp bg-background rounded-circle img-fluid rounded-top-0 m-1" />
+										class="pfp bg-background rounded-circle rounded-top-0 m-1" />
 								</a>
 							{/each}
 						</div>
