@@ -72,22 +72,27 @@ let bodyColours = {
 	Torso: 23,
 	LeftArm: 24,
 	RightArm: 24,
-	// LeftLeg: 119,
-	// RightLeg: 119,
+	LeftLeg: 119,
+	RightLeg: 119,
 }
 
 const params: any = new Proxy(new URLSearchParams(window.location.search), {
 	get: (searchParams, prop: any) => searchParams.get(prop),
 })
 
+let bodyShot = false
 if (params.c) bodyColours = JSON.parse(params.c)
+if (params.f == "") bodyShot = true
 
 const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(30)
+const camera = new THREE.PerspectiveCamera(30, bodyShot ? 300 / 400 : 1)
 const objLoader = new OBJLoader()
 
 const renderer = new THREE.WebGLRenderer({ alpha: true })
-renderer.setSize(150, 150)
+
+if (bodyShot) renderer.setSize(300, 400)
+else renderer.setSize(150, 150)
+
 scene.add(new THREE.HemisphereLight(0xffffff, 0))
 
 objLoader.load("./head.obj", (root: any) => {
@@ -127,18 +132,20 @@ objLoader.load("./limb.obj", (root: any) => {
 	root.material.color.set(brickToHex[bodyColours.RightArm])
 	scene.add(root)
 })
-// objLoader.load("./limb.obj", (root: any) => {
-// 	root = root.children[0]
-// 	root.position.set(0.5, -2, 0)
-// 	root.material.color.set(brickToHex[bodyColours.LeftLeg])
-// 	scene.add(root)
-// })
-// objLoader.load("./limb.obj", (root: any) => {
-//	root = root.children[0]
-// 	root.position.set(-0.5, -2, 0)
-// 	root.material.color.set(brickToHex[bodyColours.RightLeg])
-// 	scene.add(root)
-// })
+if (bodyShot) {
+	objLoader.load("./limb.obj", (root: any) => {
+		root = root.children[0]
+		root.position.set(0.5, -2, 0)
+		root.material.color.set(brickToHex[bodyColours.LeftLeg])
+		scene.add(root)
+	})
+	objLoader.load("./limb.obj", (root: any) => {
+		root = root.children[0]
+		root.position.set(-0.5, -2, 0)
+		root.material.color.set(brickToHex[bodyColours.RightLeg])
+		scene.add(root)
+	})
+}
 
 objLoader.load("./torso.obj", (root: any) => {
 	root = root.children[0]
@@ -146,8 +153,13 @@ objLoader.load("./torso.obj", (root: any) => {
 	scene.add(root)
 })
 
-camera.position.set(0, 1.5, 4)
-camera.lookAt(0, 1.5, 0)
+if (bodyShot) {
+	camera.position.set(4, 2.5, 11)
+	camera.lookAt(0, -0.5, -0.5)
+} else {
+	camera.position.set(0, 1.5, 4)
+	camera.lookAt(0, 1.5, 0)
+}
 scene.add(camera)
 
 document.body.appendChild(renderer.domElement)

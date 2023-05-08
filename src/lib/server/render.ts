@@ -15,22 +15,43 @@ const port = Math.floor(Math.random() * 100) + 3001
 app.listen(port)
 console.log(`Image server started on port ${port}`)
 
-export default async function (username: string, avatar: any) {
-	console.log(`Image render for ${username} started`)
+export default async function (
+	username: string,
+	avatar: any,
+	bodyShot = false
+) {
+	console.time(
+		`${bodyShot ? "Body" : "Head"}shot render for ${username}`
+	)
 	const browser = await puppeteer.launch({ headless: "new" })
 	const page = await browser.newPage()
 
-	await page.goto(`http://localhost:${port}?c=${JSON.stringify(avatar)}`)
-	await page.setViewport({ width: 150, height: 150 })
+	if (!bodyShot) {
+		delete avatar.LeftLeg
+		delete avatar.RightLeg
+	}
+
+	await page.goto(
+		`http://localhost:${port}?c=${JSON.stringify(avatar)}${
+			bodyShot ? "&f" : ""
+		}`
+	)
+	await page.setViewport(
+		bodyShot ? { width: 300, height: 400 } : { width: 150, height: 150 }
+	)
 
 	await page.waitForSelector("canvas")
-	console.log(`Image render for ${username} complete`)
+	console.timeEnd(
+		`${bodyShot ? "Body" : "Head"}shot render for ${username}`
+	)
 
 	if (!fs.existsSync("data/avatars")) fs.mkdirSync("data/avatars")
 
 	await page.screenshot({
-		path: `data/avatars/${username}.png`,
+		path: `data/avatars/${username}${bodyShot ? "-body" : ""}.png`,
 		omitBackground: true,
 	})
 	await browser.close()
+
+	return `api/avatar/${username}${bodyShot ? "-body" : ""}`
 }
