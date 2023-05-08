@@ -25,7 +25,7 @@ export async function GET({ params, setHeaders }) {
 
 	// Remove body colours not needed for avatar headshot
 	const colours: any = user.bodyColours
-	if (!fs.existsSync(`data/avatars/${username}${bodyShot}.png`))
+	if (!fs.existsSync(`data/avatars/${username}${bodyShot}.webp`))
 		if (bodyShot) await render(username, colours, true)
 		else await render(username, colours)
 
@@ -34,6 +34,6 @@ export async function GET({ params, setHeaders }) {
 	})
 
 	return new Response(
-		fs.readFileSync(`data/avatars/${username}${bodyShot}.png`)
+		fs.readFileSync(`data/avatars/${username}${bodyShot}.webp`)
 	)
 }

@@ -2,7 +2,7 @@ import * as THREE from "three"
 import { OBJLoader } from "three/addons/loaders/OBJLoader"
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry"
 
-const brickToHex = {
+const brickToHex: any = {
 	1: 0xf2f3f3,
 	5: 0xd7c59a,
 	9: 0xe8bac8,
@@ -85,7 +85,7 @@ if (params.c) bodyColours = JSON.parse(params.c)
 if (params.f == "") bodyShot = true
 
 const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(30, bodyShot ? 300 / 400 : 1)
+const camera = new THREE.PerspectiveCamera(30, bodyShot ? 3 / 4 : 1)
 const objLoader = new OBJLoader()
 
 const renderer = new THREE.WebGLRenderer({ alpha: true })
@@ -93,12 +93,22 @@ const renderer = new THREE.WebGLRenderer({ alpha: true })
 if (bodyShot) renderer.setSize(300, 400)
 else renderer.setSize(150, 150)
 
-scene.add(new THREE.HemisphereLight(0xffffff, 0))
+scene.add(new THREE.AmbientLight(0x808080, 1))
+const spotlight = new THREE.SpotLight(0xffffff, 1)
+spotlight.position.set(2, 10, 5)
+spotlight.lookAt(0, 0, 0)
+scene.add(spotlight)
+
+function shine(obj: any) {
+	obj.material.specular = new THREE.Color(0x808080)
+	obj.material.shininess = 10
+}
 
 objLoader.load("./head.obj", (root: any) => {
 	root = root.children[0]
 	root.position.set(0, 1.5, 0)
 	root.material.color.set(brickToHex[bodyColours.Head])
+	shine(root)
 
 	const decalMesh = new THREE.Mesh(
 		new DecalGeometry(
@@ -124,12 +134,14 @@ objLoader.load("./limb.obj", (root: any) => {
 	root = root.children[0]
 	root.position.set(1.5, 0, 0)
 	root.material.color.set(brickToHex[bodyColours.LeftArm])
+	shine(root)
 	scene.add(root)
 })
 objLoader.load("./limb.obj", (root: any) => {
 	root = root.children[0]
 	root.position.set(-1.5, 0, 0)
 	root.material.color.set(brickToHex[bodyColours.RightArm])
+	shine(root)
 	scene.add(root)
 })
 if (bodyShot) {
@@ -137,12 +149,14 @@ if (bodyShot) {
 		root = root.children[0]
 		root.position.set(0.5, -2, 0)
 		root.material.color.set(brickToHex[bodyColours.LeftLeg])
+		shine(root)
 		scene.add(root)
 	})
 	objLoader.load("./limb.obj", (root: any) => {
 		root = root.children[0]
 		root.position.set(-0.5, -2, 0)
 		root.material.color.set(brickToHex[bodyColours.RightLeg])
+		shine(root)
 		scene.add(root)
 	})
 }
@@ -150,6 +164,7 @@ if (bodyShot) {
 objLoader.load("./torso.obj", (root: any) => {
 	root = root.children[0]
 	root.material.color.set(brickToHex[bodyColours.Torso])
+	shine(root)
 	scene.add(root)
 })
 
