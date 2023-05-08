@@ -1,32 +1,30 @@
+// Editing this file in dev mode may cause the
+// server to start multiple times, resulting in a
+// port conflict which may crash the dev server.
+
 import fs from "fs"
 import puppeteer from "puppeteer"
 import serve from "koa-static"
 import Koa from "koa"
 
-let port = 3000
+const app = new Koa()
+app.use(serve("./avatar/dist"))
+
+const port = Math.floor(Math.random() * 100) + 3001
+
+app.listen(port)
+console.log(`Image server started on port ${port}`)
 
 export default async function (username: string, avatar: any) {
+	console.log(`Image render for ${username} started`)
 	const browser = await puppeteer.launch({ headless: "new" })
 	const page = await browser.newPage()
-
-	const app = new Koa()
-	app.use(serve("./avatar/dist"))
-
-	if (port++ > 3200) port = 3000
-
-	const server = app.listen(port)
-	const timeout = setTimeout(() => server.close(), 10000)
-
-	console.log(`Image server ${port} started for ${username}`)
 
 	await page.goto(`http://localhost:${port}?c=${JSON.stringify(avatar)}`)
 	await page.setViewport({ width: 150, height: 150 })
 
 	await page.waitForSelector("canvas")
 	console.log(`Image render for ${username} complete`)
-
-	server.close()
-	clearTimeout(timeout)
 
 	if (!fs.existsSync("data/avatars")) fs.mkdirSync("data/avatars")
 

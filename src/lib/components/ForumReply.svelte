@@ -86,13 +86,11 @@
 					<div class="w-100">
 						<a
 							href="/user/{reply.author.number}"
-							id="userlink"
-							class="user d-flex text-decoration-none pt-2 ms-3">
-							<span
-								class="fw-bold {reply.author.username ==
-								postAuthorName
-									? ''
-									: 'light-text '}">
+							class="user userlink d-flex text-decoration-none pt-2 ms-3 {reply
+								.author.username == postAuthorName
+								? ''
+								: 'light-text'}">
+							<span class="fw-bold">
 								{reply.author.username}
 								{#if reply.author.username == postAuthorName}
 									<i class="fa fa-microphone ms-2" />
@@ -276,8 +274,9 @@
 	p
 		word-break: break-word
 
-	#userlink
+	.userlink
 		margin-top: 1px
+		transition: color 0.2s
 
 	.user
 		align-items: center 
