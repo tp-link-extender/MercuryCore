@@ -84,17 +84,17 @@
 			<span class="d-flex">
 				<a
 					href="/user/{data.author.number}"
-					class="user d-flex text-decoration-none">
+					class="user d-flex text-decoration-none light-text">
 					<span class="pfp bg-a2 rounded-circle">
 						<img
 							src="/api/avatar/{data.author.username}"
 							alt={data.author.username}
 							class="rounded-circle rounded-top-0" />
 					</span>
-					<span class="fw-bold ms-3 light-text">
+					<span class="fw-bold ms-3">
 						{data.author.username}
 					</span>
-					<span class="ms-3 light-text">
+					<span class="ms-3">
 						{data.posted.toLocaleString()}
 					</span>
 				</a>

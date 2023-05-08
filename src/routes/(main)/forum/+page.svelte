@@ -32,34 +32,30 @@
 				</a>
 				<div class="col-lg-3 col-md-5 row">
 					{#if category.posts[0]}
-						<div class="col-6">
+						<a
+							href="/forum/{category.name.toLowerCase()}/{category
+								.posts[0].id}"
+							class="light-text text-decoration-none">
+							Last post:
+							<h3 class="h5">
+								{category.posts[0].title}
+							</h3>
+						</a>
+						<span class="d-flex">
+							by
 							<a
-								href="/forum/{category.name.toLowerCase()}/{category
-									.posts[0].id}"
-								class="light-text text-decoration-none">
-								Last post:
-								<h3 class="h5">
-									{category.posts[0].title}
-								</h3>
+								href="/user/{category.posts[0].author.number}"
+								class="light-text text-decoration-none d-flex">
+								<span class="pfp bg-a2 rounded-circle mx-1">
+									<img
+										src="/api/avatar/{category.posts[0]
+											.author.username}"
+										alt={category.posts[0].author.username}
+										class="rounded-circle rounded-top-0" />
+								</span>
+								{category.posts[0].author.username}
 							</a>
-							<span class="d-flex">
-								by
-								<a
-									href="/user/{category.posts[0].author
-										.number}"
-									class="light-text text-decoration-none d-flex">
-									<span class="pfp bg-a2 rounded-circle mx-1">
-										<img
-											src="/api/avatar/{category.posts[0]
-												.author.username}"
-											alt={category.posts[0].author
-												.username}
-											class="rounded-circle rounded-top-0" />
-									</span>
-									{category.posts[0].author.username}
-								</a>
-							</span>
-						</div>
+						</span>
 					{/if}
 				</div>
 			</div>
