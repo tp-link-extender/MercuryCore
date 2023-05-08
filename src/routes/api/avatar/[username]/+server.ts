@@ -18,8 +18,13 @@ export async function GET({ params, setHeaders }) {
 
 	if (!user) throw error(404, "User not found")
 
+	// Remove body colours not needed for avatar headshot
+	const colours: any = user.bodyColours
+	delete colours.LeftLeg
+	delete colours.RightLeg
+
 	if (!fs.existsSync(`data/avatars/${username}.png`))
-		await render(username, user.bodyColours)
+		await render(username, colours)
 
 	setHeaders({
 		"Cache-Control": "max-age=600",
