@@ -32,7 +32,7 @@
 					<img
 						src="/api/avatar/{notification.sender.username}"
 						alt={notification.sender.username}
-						class="h-100 rounded-circle img-fluid rounded-top-0" />
+						class="h-100 rounded-circle rounded-top-0" />
 				</a>
 
 				{notificationNotes[notification.type]}

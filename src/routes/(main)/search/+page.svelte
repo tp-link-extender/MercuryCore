@@ -40,7 +40,7 @@
 							<img
 								src="/api/avatar/{user.username}"
 								alt={user.username}
-								class="h-100 rounded-circle img-fluid rounded-top-0" />
+								class="h-100 rounded-circle rounded-top-0" />
 						</div>
 						{#if user.status}
 							<span
