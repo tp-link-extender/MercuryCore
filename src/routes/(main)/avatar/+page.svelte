@@ -4,6 +4,7 @@
 	import { enhance } from "$app/forms"
 
 	export let data
+	export let form
 	const { user } = data
 
 	let modal = writable(false)
@@ -108,18 +109,24 @@
 
 <div class="container">
 	<h1 class="text-white">Avatar</h1>
-	<code>Avatar system in alpha.</code>
+	<p class="light-text">Avatar system in alpha.</p>
 	<div class="row mt-4">
 		<div class="col-3">
 			<div class="card mb-3">
 				<div class="card-body">
-					<div class="d-grid gap-2 mb-4">
-						<button class="btn btn-primary" disabled>
-							<i class="fas fa-rotate" />
-							Regenerate
-						</button>
-					</div>
-					<img class="img-fluid" alt="Avatar" src="/favicon.svg" />
+						<form use:enhance action="?/regen" method="POST">
+							<button class="btn btn-primary w-100">
+								<i class="fa fa-rotate" />
+								Regenerate
+							</button>
+						</form>
+						<p class="text-danger">
+							{form?.msg || ""}
+						</p>
+					<img
+						alt="Your avatar"
+						class="w-100"
+						src={form?.avatar || `/api/avatar/${user.username}-body?r=${Math.random()}`} />
 				</div>
 			</div>
 			<div class="card">
@@ -151,7 +158,7 @@
 		<div class="col">
 			<div class="card">
 				<div class="card-body">
-					<code>To be implemented.</code>
+					<p class="light-text">To be implemented.</p>
 				</div>
 			</div>
 		</div>
@@ -170,7 +177,7 @@
 				aria-label="Close" />
 		</div>
 		<div class="modal-body d-flex flex-column p-1 pb-5">
-			<div class="colourPicker text-left mx-auto" style="max-width:351px">
+			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
 					<form
 						use:enhance
@@ -208,9 +215,15 @@
 		&:hover
 			filter: brightness(50%)
 
-	form button
+	#colourPicker
+		max-width: 27rem
+
+	button.colour
 		height: 2.5rem
 		width: 2.5rem
+
+	img
+		aspect-ratio: 3/4
 
 	.btn-close
 		filter: invert(1) grayscale(100%) brightness(200%)

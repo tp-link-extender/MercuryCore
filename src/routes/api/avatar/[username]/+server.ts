@@ -4,9 +4,14 @@ import fs from "fs"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ params, setHeaders }) {
-	const { username } = params
+	let { username } = params
 	if (!username) throw error(400, "Invalid Request")
 
+	let bodyShot = ""
+	if (username.endsWith("-body")) {
+		username = username.replace("-body", "")
+		bodyShot = "-body"
+	}
 	const user = await prisma.authUser.findUnique({
 		where: {
 			username,
@@ -20,15 +25,15 @@ export async function GET({ params, setHeaders }) {
 
 	// Remove body colours not needed for avatar headshot
 	const colours: any = user.bodyColours
-	delete colours.LeftLeg
-	delete colours.RightLeg
-
-	if (!fs.existsSync(`data/avatars/${username}.png`))
-		await render(username, colours)
+	if (!fs.existsSync(`data/avatars/${username}${bodyShot}.png`))
+		if (bodyShot) await render(username, colours, true)
+		else await render(username, colours)
 
 	setHeaders({
 		"Cache-Control": "max-age=600",
 	})
 
-	return new Response(fs.readFileSync(`data/avatars/${username}.png`))
+	return new Response(
+		fs.readFileSync(`data/avatars/${username}${bodyShot}.png`)
+	)
 }
