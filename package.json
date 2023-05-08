@@ -14,6 +14,8 @@
 		"@sveltejs/kit": "^1.16.2",
 		"@sveltejs/vite-plugin-svelte": "^2.2.0",
 		"@types/crypto-js": "^4.1.1",
+		"@types/koa": "^2.13.6",
+		"@types/koa-static": "^4.0.2",
 		"@types/node": "^20.1.0",
 		"@types/nprogress": "^0.2.0",
 		"@types/serviceworker": "^0.0.67",

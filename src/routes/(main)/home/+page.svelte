@@ -95,7 +95,7 @@
 						<img
 							src="/api/avatar/{user?.username}"
 							alt="You"
-							class="rounded-circle img-fluid rounded-top-0" />
+							class="rounded-circle rounded-top-0" />
 					</div>
 					<span class="my-auto ms-4">
 						{greets[Math.floor(Math.random() * greets.length)]}
@@ -153,7 +153,7 @@
 													.authorUser?.username}"
 												alt={status.authorUser
 													?.username}
-												class="rounded-circle img-fluid rounded-top-0" />
+												class="rounded-circle rounded-top-0" />
 										</span>
 										<span
 											class="username mw-50 fw-bold ms-3">
@@ -197,7 +197,7 @@
 										<img
 											src="/api/avatar/{friend.username}"
 											alt={friend.username}
-											class="h-100 rounded-circle img-fluid rounded-top-0" />
+											class="h-100 rounded-circle rounded-top-0" />
 									</div>
 									{#if friend.status}
 										<span

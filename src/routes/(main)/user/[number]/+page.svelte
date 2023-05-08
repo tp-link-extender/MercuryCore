@@ -283,7 +283,7 @@
 										<img
 											src="/api/avatar/{data.username}"
 											alt={data.username}
-											class="rounded-circle img-fluid rounded-top-0" />
+											class="rounded-circle rounded-top-0" />
 									</span>
 									<span class="fw-bold ms-3 light-text">
 										{data.username}
