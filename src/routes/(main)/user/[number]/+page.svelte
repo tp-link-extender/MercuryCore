@@ -179,7 +179,7 @@
 									class="accordion-collapse collapse rounded-3"
 									aria-labelledby="heading{num}"
 									data-bs-parent="#accordion">
-									<div class="accordion-body rounded-3">
+									<div class="accordion-body rounded-3 p-0">
 										<a
 											in:fade={{
 												num,
@@ -190,11 +190,11 @@
 											<div class="row">
 												<div class="col col-6">
 													<div
-														class="overflow-hidden bg-black shadow rounded-0">
+														class="overflow-hidden bg-black shadow">
 														<img
 															src={place.image}
 															alt={place.name}
-															class="w-100 h-100 rounded-0" />
+															class="w-100 h-100" />
 													</div>
 												</div>
 												<div class="col col-6 p-2 row">
@@ -347,6 +347,10 @@
 		div, button
 			border: none
 			box-shadow: none
+
+	.accordion-body .bg-black
+		overflow: hidden
+		border-radius: 0 0 0 0.25rem !important
 
 	#user
 		align-items: center
