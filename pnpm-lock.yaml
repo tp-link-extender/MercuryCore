@@ -20,11 +20,11 @@ dependencies:
     specifier: ^1.2.4
     version: 1.2.4(@sveltejs/kit@1.16.3)
   '@threlte/core':
-    specifier: 5.0.9
-    version: 5.0.9
+    specifier: 6.0.0-next.7
+    version: 6.0.0-next.7
   '@threlte/extras':
-    specifier: 4.9.3
-    version: 4.9.3(three@0.152.2)
+    specifier: 5.0.0-next.11
+    version: 5.0.0-next.11(three@0.152.2)
   '@unocss/extractor-svelte':
     specifier: ^0.51.12
     version: 0.51.12
@@ -702,13 +702,14 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@threlte/core@5.0.9:
-    resolution: {integrity: sha512-3u8SGLD/fzOh0sEf1MDa0FVpp7oLqdEUR8nvGEkWZvGDwKUlhe0XxSmXNzvAYwCSnNLsYYfwiAWy8wBrVkoRlg==}
+  /@threlte/core@6.0.0-next.7:
+    resolution: {integrity: sha512-hOfMKcZNoCch4uNg3rM7L4T4fcy9O++0KQiutWMZxjaxLd+udjQ/1OOxliJpG95UKzcc30agc4korVm9696omw==}
     dev: false
 
-  /@threlte/extras@4.9.3(three@0.152.2):
-    resolution: {integrity: sha512-1XVa9a3C+EQE9vMCZopZ2oZGncDlk/Claz+voFCTZvUqJl0xpPWBQTPNM6V61nXu8k5t+JKSGam3TWygBnfxug==}
+  /@threlte/extras@5.0.0-next.11(three@0.152.2):
+    resolution: {integrity: sha512-i7m7PLXEl7KCu8XVrqUjST1Whii2G9EeR/2nwzht7WZSqwzVevb/avpyZ7Dr12Nse1ZURUMnLxRaB+oDFlpjYQ==}
     dependencies:
+      lodash: 4.17.21
       troika-three-text: 0.46.4(three@0.152.2)
     transitivePeerDependencies:
       - three
@@ -2006,6 +2007,10 @@ packages:
     dependencies:
       p-locate: 5.0.0
     dev: true
+
+  /lodash@4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+    dev: false
 
   /lucia-auth@1.5.0:
     resolution: {integrity: sha512-lLgLvyJcCjK+dYwJrgzPWGjT+YGgl7JF13TahXKozf/C3KkX/fFzOAUkY0h5xnm585lJE5BBrQIXAXa+rDzW6g==}
