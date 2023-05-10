@@ -43,6 +43,14 @@ export async function load({ url, locals, params }) {
 	for (let i = 0; i < 9; i++)
 		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
 
+	selectReplies.select.parentPost = {
+		select: {
+			forumCategoryName: true,
+			title: true,
+			id: true,
+		},
+	}
+
 	const forumReplies = await prisma.forumReply.findUnique({
 		where: {
 			id: params.comment,

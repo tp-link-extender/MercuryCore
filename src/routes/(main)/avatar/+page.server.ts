@@ -34,7 +34,16 @@ export const actions = {
 		})
 
 		render(user.username, currentBodyColour)
+
+		return {
+			avatar: `${await render(
+				user.username,
+				user.bodyColours,
+				true
+			)}?r=${Math.random()}`,
+		}
 	},
+
 	regen: async ({ locals, getClientAddress }) => {
 		const { user } = await authorise(locals)
 
@@ -42,7 +51,11 @@ export const actions = {
 			return fail(429, { msg: "Too many requests" })
 
 		return {
-			avatar: `${(await render(user.username, user.bodyColours, true))}?r=${Math.random()}`,
+			avatar: `${await render(
+				user.username,
+				user.bodyColours,
+				true
+			)}?r=${Math.random()}`,
 		}
 	},
 }
