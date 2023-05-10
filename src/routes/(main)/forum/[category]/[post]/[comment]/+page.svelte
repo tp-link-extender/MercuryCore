@@ -7,6 +7,8 @@
 
 	export let data
 	const baseDepth = writable(data.baseDepth)
+	$: topReply = data.replies[0]
+	$: parentPost = topReply.parentPost
 </script>
 
 <svelte:head>
@@ -14,6 +16,31 @@
 </svelte:head>
 
 <div class="container light-text">
+	<nav aria-label="breadcrumb" class="mx-auto">
+		<ol class="breadcrumb border-0 m-0 p-0 fs-6">
+			<li class="breadcrumb-item">
+				<a href="/forum" class="accent-text">Forum</a>
+			</li>
+			<li class="breadcrumb-item">
+				<a
+					href="/forum/{parentPost.forumCategoryName}"
+					class="accent-text">
+					{parentPost.forumCategoryName}
+				</a>
+			</li>
+			<li class="breadcrumb-item">
+				<a
+					href="/forum/{parentPost.forumCategoryName}/{parentPost.id}"
+					class="accent-text">
+					{parentPost.title}
+				</a>
+			</li>
+			<li class="breadcrumb-item active" aria-current="page">
+				{topReply.content[0].text}
+			</li>
+		</ol>
+	</nav>
+
 	{#each data.replies as reply, num}
 		<ForumReply
 			{reply}

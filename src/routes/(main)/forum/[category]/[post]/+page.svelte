@@ -32,6 +32,22 @@
 </svelte:head>
 
 <div class="container light-text">
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb border-0 m-0 p-0 fs-6">
+			<li class="breadcrumb-item">
+				<a href="/forum" class="accent-text">Forum</a>
+			</li>
+			<li class="breadcrumb-item">
+				<a href="/forum/{data.forumCategory.name}" class="accent-text">
+					{data.forumCategory.name}
+				</a>
+			</li>
+			<li class="breadcrumb-item active" aria-current="page">
+				{data.title}
+			</li>
+		</ol>
+	</nav>
+
 	<div class="post card bg-darker flex-row">
 		<form
 			use:enhance

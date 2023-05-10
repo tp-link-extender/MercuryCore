@@ -29,10 +29,6 @@ export async function GET({ params, setHeaders }) {
 		if (bodyShot) await render(username, colours, true)
 		else await render(username, colours)
 
-	setHeaders({
-		"Cache-Control": "max-age=600",
-	})
-
 	return new Response(
 		fs.readFileSync(`data/avatars/${username}${bodyShot}.webp`)
 	)
