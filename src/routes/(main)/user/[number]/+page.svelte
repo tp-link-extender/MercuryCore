@@ -14,8 +14,6 @@
 
 	export let data
 	const { user } = data
-
-	const places = data.places as typeof data.places & { gameSessions: any[] }[]
 </script>
 
 <svelte:head>
@@ -153,13 +151,13 @@
 			</div>
 		</div>
 		<div class="col-6">
-			{#if places.length > 0}
+			{#if data.places.length > 0}
 				<div class="mt-4">
 					<h2 class="h4 light-text">Creations</h2>
 					<div class="accordion" id="accordion">
-						{#each places as place, num}
+						{#each data.places as place, num}
 							<div
-								in:fade={{ num, total: places.length }}
+								in:fade={{ num, total: data.places.length }}
 								class="accordion-item rounded-2 my-2">
 								<div
 									class="accordion-header rounded-2"
