@@ -105,7 +105,31 @@
 						</p>
 						{#if $replyingTo != reply.id}
 							<form
-								use:enhance
+								use:enhance={({ data }) => {
+									const action = data.get("action")
+
+									if (action == "like") {
+										reply.likes = true
+
+										if (reply.dislikes) reply.dislikeCount--
+										reply.dislikes = false
+										reply.likeCount++
+									} else if (action == "dislike") {
+										reply.dislikes = true
+
+										if (reply.likes) reply.likeCount--
+										reply.likes = false
+										reply.dislikeCount++
+									} else if (action == "unlike") {
+										reply.likes = false
+										reply.likeCount--
+									} else if (action == "undislike") {
+										reply.dislikes = false
+										reply.dislikeCount--
+									}
+
+									return () => {}
+								}}
 								class="d-inline me-2"
 								method="POST"
 								action="?/like&depth={depth}">
@@ -119,12 +143,10 @@
 									value={reply.likes ? "unlike" : "like"}
 									aria-label={reply.likes ? "Unlike" : "Like"}
 									class="smallbutton p-0 btn btn-sm">
-									{#if reply.likes}
-										<i
-											class="fa fa-thumbs-up text-success" />
-									{:else}
-										<i class="far fa-thumbs-up" />
-									{/if}
+									<i
+										class="fa{reply.likes
+											? ' text-success'
+											: 'r'} fa-thumbs-up" />
 								</button>
 								<span
 									class="my-1 text-center {reply.likes
@@ -143,12 +165,10 @@
 										? "Undislike"
 										: "Dislike"}
 									class="smallbutton p-0 btn btn-sm">
-									{#if reply.dislikes}
-										<i
-											class="fa fa-thumbs-down text-danger" />
-									{:else}
-										<i class="far fa-thumbs-down" />
-									{/if}
+									<i
+										class="fa{reply.dislikes
+											? ' text-danger'
+											: 'r'} fa-thumbs-down" />
 								</button>
 							</form>
 							<button

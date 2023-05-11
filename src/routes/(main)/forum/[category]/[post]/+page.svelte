@@ -53,8 +53,7 @@
 			use:enhance
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
-			action="?/like">
-			<input type="hidden" name="id" value={data.id} />
+			action="?/like&id={data.id}">
 			<div class="row mb-2 d-flex">
 				<div>
 					<button
