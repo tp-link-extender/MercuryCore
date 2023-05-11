@@ -5,6 +5,34 @@
 	export let data
 	export let form
 	const { user } = data
+
+	// type script mont
+	const likeEnhance = (e: any) => {
+		const action = e.data.get("action")
+
+		if (action == "like") {
+			data.likes = true
+
+			if (data.dislikes) data.dislikeCount--
+			data.dislikes = false
+			data.likeCount++
+		} else if (action == "dislike") {
+			data.dislikes = true
+
+			if (data.likes) data.likeCount--
+			data.likes = false
+			data.dislikeCount++
+		} else if (action == "unlike") {
+			data.likes = false
+			data.likeCount--
+		} else if (action == "undislike") {
+			data.dislikes = false
+			data.dislikeCount--
+		}
+
+		if (["like", "dislike", "unlike", "undislike"].includes(action))
+			return () => {}
+	}
 </script>
 
 <svelte:head>
@@ -38,7 +66,7 @@
 				</div>
 			</div>
 			<form
-				use:enhance
+				use:enhance={likeEnhance}
 				class="align-self-center col px-0 mb-2"
 				method="POST">
 				<button
