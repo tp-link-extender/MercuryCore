@@ -88,7 +88,10 @@ const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(30, bodyShot ? 3 / 4 : 1)
 const objLoader = new OBJLoader()
 
-const renderer = new THREE.WebGLRenderer({ alpha: true })
+const renderer = new THREE.WebGLRenderer({
+	alpha: true,
+	antialias: true,
+})
 
 if (bodyShot) renderer.setSize(300, 400)
 else renderer.setSize(150, 150)
