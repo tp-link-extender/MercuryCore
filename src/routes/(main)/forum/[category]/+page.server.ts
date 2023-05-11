@@ -94,11 +94,11 @@ export async function load({ locals, params }) {
 }
 
 export const actions = {
-	like: async ({ request, locals }) => {
+	like: async ({ request, locals, url }) => {
 		const { user } = await authorise(locals)
 		const data = await formData(request)
 		const action = data.action
-		const id = data.id
+		const id = url.searchParams.get("id")
 		const replyId = data.replyId
 
 		if (
