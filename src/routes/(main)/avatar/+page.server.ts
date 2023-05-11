@@ -38,7 +38,7 @@ export const actions = {
 		return {
 			avatar: `${await render(
 				user.username,
-				user.bodyColours,
+				currentBodyColour,
 				true
 			)}?r=${Math.random()}`,
 		}

@@ -3,7 +3,7 @@ import render from "$lib/server/render"
 import fs from "fs"
 import { error } from "@sveltejs/kit"
 
-export async function GET({ params, setHeaders }) {
+export async function GET({ params }) {
 	let { username } = params
 	if (!username) throw error(400, "Invalid Request")
 
@@ -23,11 +23,9 @@ export async function GET({ params, setHeaders }) {
 
 	if (!user) throw error(404, "User not found")
 
-	// Remove body colours not needed for avatar headshot
-	const colours: any = user.bodyColours
 	if (!fs.existsSync(`data/avatars/${username}${bodyShot}.webp`))
-		if (bodyShot) await render(username, colours, true)
-		else await render(username, colours)
+		if (bodyShot) await render(username, user.bodyColours, true)
+		else await render(username, user.bodyColours)
 
 	return new Response(
 		fs.readFileSync(`data/avatars/${username}${bodyShot}.webp`)

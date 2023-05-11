@@ -1,4 +1,5 @@
 <svelte:head>
+	<meta name="description" content="Mercury's Terms of Service" />
 	<title>Terms of Service - Mercury</title>
 </svelte:head>
 
@@ -72,39 +73,40 @@
 			<li>
 				By accessing Mercury, you agree that you will not commit any of
 				the following acts:
-			</li>
 
-			<ol type="a" class="my-3">
-				<li>
-					Using Mercury for any illegal purpose under applicable law.
-				</li>
-				<li>
-					Placing any material in Mercury that you do not have a right
-					to upload, link to, post, or otherwise transmit under
-					applicable law.
-				</li>
-				<li>
-					Placing any material in Mercury that contains a false
-					statement about any person/legal entity, infringes upon the
-					privacy rights of any other person/legal entity, or
-					threatens, harrases, abuses, defames or embarrasses any
-					other person/legal entity without explicit permission from
-					them.
-				</li>
-				<li>
-					Placing any obscene, pornographic, sexually explicit or
-					violent materials in Mercury.
-				</li>
-				<li>
-					Repeatedly uploading unsolicited advertising, marketing
-					materials, or sales/promotional materials to Mercury.
-				</li>
-				<li>
-					Placing any material in the Mercury that is disruptive or
-					defamatory to Mercury or other users of the Mercury service
-					including Moderators or Administrators.
-				</li>
-			</ol>
+				<ol type="a" class="my-3">
+					<li>
+						Using Mercury for any illegal purpose under applicable
+						law.
+					</li>
+					<li>
+						Placing any material in Mercury that you do not have a
+						right to upload, link to, post, or otherwise transmit
+						under applicable law.
+					</li>
+					<li>
+						Placing any material in Mercury that contains a false
+						statement about any person/legal entity, infringes upon
+						the privacy rights of any other person/legal entity, or
+						threatens, harrases, abuses, defames or embarrasses any
+						other person/legal entity without explicit permission
+						from them.
+					</li>
+					<li>
+						Placing any obscene, pornographic, sexually explicit or
+						violent materials in Mercury.
+					</li>
+					<li>
+						Repeatedly uploading unsolicited advertising, marketing
+						materials, or sales/promotional materials to Mercury.
+					</li>
+					<li>
+						Placing any material in the Mercury that is disruptive
+						or defamatory to Mercury or other users of the Mercury
+						service including Moderators or Administrators.
+					</li>
+				</ol>
+			</li>
 
 			<li>
 				By uploading any material to Mercury, you hereby grant any
@@ -159,7 +161,7 @@
 			</a>
 			.
 		</p>
-		<em>Last updated: 25 January 2023</em>
+		<em>Last updated 25 January 2023</em>
 	</div>
 </div>
 
