@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { dev } from "$app/environment"
 	import { navigating } from "$app/stores"
 	import { enhance } from "$app/forms"
 	import nprogress from "nprogress"
@@ -49,10 +50,12 @@
 	<link rel="manifest" href="/manifest.json" />
 	<link rel="apple-touch-icon" href="/icon192.png" />
 
-	<script
-		defer
-		data-domain="banland.xyz"
-		src="http://analytics.banland.xyz/js/script.js"></script>
+	{#if !dev}
+		<script
+			defer
+			data-domain="banland.xyz"
+			src="https://analytics.banland.xyz/js/script.js"></script>
+	{/if}
 	<script
 		defer
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
