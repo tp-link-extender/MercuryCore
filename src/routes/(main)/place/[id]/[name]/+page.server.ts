@@ -201,6 +201,7 @@ export const actions = {
 			throw error(500, "Redis error 2")
 		}
 	},
+
 	join: async ({ request, locals }) => {
 		const { user } = await authorise(locals)
 

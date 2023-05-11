@@ -52,31 +52,35 @@ export async function load({ locals, params }) {
 			user: userExists.username,
 		}
 
+		const places = findPlaces({
+			where: {
+				ownerUsername: userExists.username,
+				privateServer: user.id == userExists.id ? undefined : false,
+			},
+			select: {
+				id: true,
+				name: true,
+				image: true,
+				gameSessions: {
+					where: {
+						ping: {
+							gt: Math.floor(Date.now() / 1000) - 35,
+						},
+					},
+					select: {
+						valid: true,
+					},
+				},
+			},
+		})
+
 		console.timeEnd("user")
 
 		return {
 			...userExists,
-			places: findPlaces({
-				where: {
-					ownerUsername: userExists.username,
-					privateServer: user.id == userExists.id ? undefined : false,
-				},
-				select: {
-					id: true,
-					name: true,
-					image: true,
-					gameSessions: {
-						where: {
-							ping: {
-								gt: Math.floor(Date.now() / 1000) - 35,
-							},
-						},
-						select: {
-							valid: true,
-						},
-					},
-				},
-			}),
+			places: places as Promise<
+				Awaited<typeof places> & { gameSessions: any[] }[]
+			>,
 			groups: findGroups({
 				where: {
 					OR: await roQuery(

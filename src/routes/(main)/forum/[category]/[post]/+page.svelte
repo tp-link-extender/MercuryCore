@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
+	import { enhance as enhance2 } from "$app/forms"
 	import ForumReply from "$lib/components/ForumReply.svelte"
 	import Report from "$lib/components/Report.svelte"
 	import { writable } from "svelte/store"
@@ -50,7 +51,31 @@
 
 	<div class="post card bg-darker flex-row">
 		<form
-			use:enhance
+			use:enhance2={e => {
+				const action = e.data.get("action")
+
+				if (action == "like") {
+					data.likes = true
+
+					if (data.dislikes) data.dislikeCount--
+					data.dislikes = false
+					data.likeCount++
+				} else if (action == "dislike") {
+					data.dislikes = true
+
+					if (data.likes) data.likeCount--
+					data.likes = false
+					data.dislikeCount++
+				} else if (action == "unlike") {
+					data.likes = false
+					data.likeCount--
+				} else if (action == "undislike") {
+					data.dislikes = false
+					data.dislikeCount--
+				}
+
+				return () => {}
+			}}
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
@@ -63,11 +88,7 @@
 						class="btn btn-sm {data.likes
 							? 'btn-success'
 							: 'btn-outline-success'}">
-						{#if data.likes}
-							<i class="fa fa-thumbs-up" />
-						{:else}
-							<i class="far fa-thumbs-up" />
-						{/if}
+						<i class="fa{data.likes ? '' : 'r'} fa-thumbs-up" />
 					</button>
 				</div>
 				<span
@@ -86,11 +107,10 @@
 						class="btn btn-sm {data.dislikes
 							? 'btn-danger'
 							: 'btn-outline-danger'}">
-						{#if data.dislikes}
-							<i class="fa fa-thumbs-down" />
-						{:else}
-							<i class="far fa-thumbs-down" />
-						{/if}
+						<i
+							class="fa{data.dislikes
+								? ''
+								: 'r'} fa-thumbs-down" />
 					</button>
 				</div>
 			</div>

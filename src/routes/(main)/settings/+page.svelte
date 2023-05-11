@@ -241,6 +241,7 @@
 								bind:value={$form.cpassword}
 								{...$constraints.cpassword}
 								type="password"
+								autocomplete="current-password"
 								class="form-control mb-1 light-text {$errors.cpassword
 									? 'is-in'
 									: ''}valid"
@@ -262,6 +263,7 @@
 								bind:value={$form.npassword}
 								{...$constraints.npassword}
 								type="password"
+								autocomplete="new-password"
 								class="form-control mb-1 light-text {$errors.npassword
 									? 'is-in'
 									: ''}valid"
@@ -286,6 +288,7 @@
 								bind:value={$form.cnpassword}
 								{...$constraints.cnpassword}
 								type="password"
+								autocomplete="new-password"
 								class="form-control mb-1 light-text {$errors.cnpassword
 									? 'is-in'
 									: ''}valid"

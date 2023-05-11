@@ -76,6 +76,7 @@
 							{...$constraints.username}
 							id="username"
 							name="username"
+							autocomplete="username"
 							class="light-text form-control {$errors.username
 								? 'is-in'
 								: ''}valid"
@@ -93,6 +94,7 @@
 							type="password"
 							id="password"
 							name="password"
+							autocomplete="current-password"
 							class="light-text form-control {$errors.password
 								? 'is-in'
 								: ''}valid"
