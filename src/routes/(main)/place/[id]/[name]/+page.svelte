@@ -80,18 +80,18 @@
 <div class="container">
 	<div class="row">
 		<div in:fade id="carousel" class="carousel slide col-md-8 mb-3">
-			<div class="carousel-indicators">
-				{#each images as _, i}
-					<button
-						type="button"
-						data-bs-target="#carousel"
-						data-bs-slide-to={i}
-						aria-label="Slide {i + 1}"
-						class:active={!i}
-						aria-current={!i} />
-				{/each}
-			</div>
 			<div class="carousel-inner rounded-4">
+				<div class="carousel-indicators">
+					{#each images as _, i}
+						<button
+							type="button"
+							data-bs-target="#carousel"
+							data-bs-slide-to={i}
+							aria-label="Slide {i + 1}"
+							class:active={!i}
+							aria-current={!i} />
+					{/each}
+				</div>
 				{#each images as src, i}
 					<div class="carousel-item" class:active={!i}>
 						<img
@@ -100,23 +100,23 @@
 							alt="Placeholder place thumbnail" />
 					</div>
 				{/each}
+				<button
+					class="carousel-control-prev"
+					type="button"
+					data-bs-target="#carousel"
+					data-bs-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true" />
+					<span class="visually-hidden">Previous</span>
+				</button>
+				<button
+					class="carousel-control-next"
+					type="button"
+					data-bs-target="#carousel"
+					data-bs-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true" />
+					<span class="visually-hidden">Next</span>
+				</button>
 			</div>
-			<button
-				class="carousel-control-prev"
-				type="button"
-				data-bs-target="#carousel"
-				data-bs-slide="prev">
-				<span class="carousel-control-prev-icon" aria-hidden="true" />
-				<span class="visually-hidden">Previous</span>
-			</button>
-			<button
-				class="carousel-control-next"
-				type="button"
-				data-bs-target="#carousel"
-				data-bs-slide="next">
-				<span class="carousel-control-next-icon" aria-hidden="true" />
-				<span class="visually-hidden">Next</span>
-			</button>
 		</div>
 		<div class="flex col-md-4">
 			<div class="card rounded-none mb-4">
@@ -187,7 +187,31 @@
 				</button>
 
 				<form
-					use:enhance
+					use:enhance={e => {
+						const action = e.data.get("action")
+
+						if (action == "like") {
+							data.likes = true
+
+							if (data.dislikes) data.dislikeCount--
+							data.dislikes = false
+							data.likeCount++
+						} else if (action == "dislike") {
+							data.dislikes = true
+
+							if (data.likes) data.likeCount--
+							data.likes = false
+							data.dislikeCount++
+						} else if (action == "unlike") {
+							data.likes = false
+							data.likeCount--
+						} else if (action == "undislike") {
+							data.dislikes = false
+							data.dislikeCount--
+						}
+
+						return () => {}
+					}}
 					class="align-self-center col mt-3 px-0 mb-2"
 					method="POST"
 					action="?/like">
@@ -201,14 +225,13 @@
 								name="action"
 								value={data.likes ? "unlike" : "like"}
 								aria-label={data.likes ? "Unlike" : "Like"}
-								class="btn btn-sm {data.likes
-									? 'btn-success'
-									: 'btn-outline-success'}">
-								{#if data.likes}
-									<i class="fa fa-thumbs-up" />
-								{:else}
-									<i class="far fa-thumbs-up" />
-								{/if}
+								class="btn btn-sm btn-{data.likes
+									? ''
+									: 'outline-'}success">
+								<i
+									class="fa{data.likes
+										? ''
+										: 'r'} fa-thumbs-up" />
 							</button>
 						</div>
 						<div class="col d-flex justify-content-end">
@@ -218,14 +241,13 @@
 								aria-label={data.dislikes
 									? "Undislike"
 									: "Dislike"}
-								class="btn btn-sm {data.dislikes
-									? 'btn-danger'
-									: 'btn-outline-danger'}">
-								{#if data.dislikes}
-									<i class="fa fa-thumbs-down" />
-								{:else}
-									<i class="far fa-thumbs-down" />
-								{/if}
+								class="btn btn-sm btn-{data.dislikes
+									? ''
+									: 'outline-'}danger">
+								<i
+									class="fa{data.dislikes
+										? ''
+										: 'r'} fa-thumbs-down" />
 							</button>
 						</div>
 					</div>

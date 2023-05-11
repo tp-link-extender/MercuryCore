@@ -75,6 +75,7 @@
 							{...$constraints.username}
 							id="username"
 							name="username"
+							autocomplete="username"
 							class="light-text form-control {$errors.username
 								? 'is-in'
 								: ''}valid"
@@ -92,6 +93,7 @@
 							type="email"
 							id="email"
 							name="email"
+							autocomplete="email"
 							class="light-text form-control {$errors.email
 								? 'is-in'
 								: ''}valid"
@@ -109,6 +111,7 @@
 							type="password"
 							id="password"
 							name="password"
+							autocomplete="new-password"
 							class="light-text form-control {$errors.password
 								? 'is-in'
 								: ''}valid"
@@ -128,6 +131,7 @@
 							type="password"
 							id="cpassword"
 							name="cpassword"
+							autocomplete="new-password"
 							class="light-text form-control {$errors.cpassword
 								? 'is-in'
 								: ''}valid"
