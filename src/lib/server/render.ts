@@ -1,6 +1,5 @@
-// Editing this file in dev mode may cause the
-// server to start multiple times, resulting in a
-// port conflict which may crash the dev server.
+// Editing this file in dev mode can cause the server to start multiple
+// times, resulting in a port conflict which may crash the dev server.
 
 import fs from "fs"
 import puppeteer from "puppeteer"
@@ -25,11 +24,6 @@ export default async function (
 	)
 	const browser = await puppeteer.launch({ headless: "new" })
 	const page = await browser.newPage()
-
-	if (!bodyShot) {
-		delete avatar.LeftLeg
-		delete avatar.RightLeg
-	}
 
 	await page.goto(
 		`http://localhost:${port}?c=${JSON.stringify(avatar)}${

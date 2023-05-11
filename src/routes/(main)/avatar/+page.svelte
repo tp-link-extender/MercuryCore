@@ -223,7 +223,7 @@
 		width: 2.5rem
 
 	img
-		aspect-ratio: 3/4
+		aspect-ratio: 3/4 !important
 
 	.btn-close
 		filter: invert(1) grayscale(100%) brightness(200%)
