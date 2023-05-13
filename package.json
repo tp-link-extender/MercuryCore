@@ -60,6 +60,7 @@
 		"profane-words": "^1.5.8",
 		"puppeteer": "^20.1.2",
 		"redis": "^4.6.6",
+		"sharp": "^0.32.1",
 		"svelte-inview": "^4.0.0",
 		"svelte-parallax": "^0.6.0",
 		"three": "^0.152.2",

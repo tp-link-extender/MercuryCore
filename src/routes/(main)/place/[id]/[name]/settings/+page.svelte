@@ -36,7 +36,7 @@
 </svelte:head>
 
 <div class="container mt-4">
-	<h1 class="light-text mb-4">Configure Game</h1>
+	<h1 class="light-text mb-4">Configure {data.name}</h1>
 	<ul class="nav nav-pills mb-3" id="pills-tab">
 		<li class="nav-item" role="presentation">
 			<button
@@ -106,14 +106,37 @@
 							<input
 								bind:value={$form.title}
 								{...$constraints.title}
-								id="title"
 								required
+								id="title"
 								name="title"
 								class="form-control {$errors.title
 									? 'is-in'
 									: ''}valid" />
 							<p class="col-12 mb-3 text-danger">
 								{$errors.title || ""}
+							</p>
+						</div>
+					</div>
+					<div class="row mb-2">
+						<label
+							for="icon"
+							class="col-md-3 col-form-label text-md-right">
+							Place Icon
+						</label>
+						<div class="col-md-5">
+							<input
+								bind:value={$form.icon}
+								{...$constraints.icon}
+								required
+								id="icon"
+								name="icon"
+								type="file"
+								accept="image/*"
+								class="form-control {$errors.icon
+									? 'is-in'
+									: ''}valid" />
+							<p class="col-12 mb-3 text-danger">
+								{$errors.icon || ""}
 							</p>
 						</div>
 					</div>
@@ -205,8 +228,8 @@
 							<input
 								bind:value={$form.serverIP}
 								{...$constraints.serverIP}
-								id="serverIP"
 								required
+								id="serverIP"
 								name="serverIP"
 								class="form-control {$errors.serverIP
 									? 'is-in'
@@ -229,6 +252,7 @@
 								type="number"
 								required
 								name="serverPort"
+								id="serverPort"
 								class="form-control {$errors.serverPort
 									? 'is-in'
 									: ''}valid" />
@@ -251,10 +275,10 @@
 							<input
 								bind:value={$form.maxPlayers}
 								{...$constraints.maxPlayers}
-								id="maxPlayers"
-								type="number"
 								required
 								name="maxPlayers"
+								id="maxPlayers"
+								type="number"
 								class="form-control {$errors.maxPlayers
 									? 'is-in'
 									: ''}valid" />

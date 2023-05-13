@@ -190,7 +190,7 @@
 													<div
 														class="overflow-hidden bg-black shadow">
 														<img
-															src={place.image}
+															src="/place/{place.id}/{place.name}/icon"
 															alt={place.name}
 															class="w-100 h-100" />
 													</div>
