@@ -168,7 +168,6 @@ model Place {
     privateTicket String  @unique @default(uuid())
 
     description TextContent[]
-    image       String
 
     maxPlayers Int
 

@@ -22,6 +22,10 @@ banland.xyz {
 	reverse_proxy localhost:4443
 }
 
+analytics.banland.xyz {
+	reverse_proxy localhost:8000
+}
+
 setup.banland.xyz, http://setup.banland.xyz {
 	root * /var/www/setup
 
