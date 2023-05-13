@@ -13,7 +13,7 @@
 	class="rounded-3 text-center light-text text-decoration-none h6"
 	href="/place/{place.id}/{place.name}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
-		<img src={place.image} alt={place.name} class="w-100 h-100" />
+		<img src="/place/{place.id}/{place.name}/icon" alt={place.name} class="w-100 h-100" />
 	</div>
 	<p class="mb-1">
 		{place.name}

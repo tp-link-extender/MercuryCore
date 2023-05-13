@@ -1,14 +1,17 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import formError from "$lib/server/formError"
-import { superValidate, message } from "sveltekit-superforms/server"
 import { error } from "@sveltejs/kit"
+import fs from "fs"
+import sharp from "sharp"
+import { superValidate, message } from "sveltekit-superforms/server"
 import { createId } from "@paralleldrive/cuid2"
 import { v4 as uuid } from "uuid"
 import { z } from "zod"
 
 const schema = z.object({
 	title: z.string().max(100).optional(),
+	icon: z.any(),
 	description: z.string().max(1000).optional(),
 	serverIP: z
 		.string()
@@ -91,17 +94,38 @@ export const actions = {
 
 		console.log("Action:", action)
 
-		let form
+		let form: Awaited<ReturnType<typeof superValidate>>
 		switch (action) {
 			case "view":
+				const formData = await request.formData()
 				form = await superValidate(
-					request,
+					formData,
 					z.object({
 						title: z.string().max(100),
+						icon: z.any(),
 						description: z.string().max(1000),
 					})
 				)
 				if (!form.valid) return formError(form)
+
+				const icon = formData.get("icon") as File
+
+				if (icon) {
+					if (icon.size > 1e6)
+						return formError(
+							form,
+							["icon"],
+							["Icon must be less than 1MB in size"]
+						)
+
+					if (!fs.existsSync("data/icons")) fs.mkdirSync("data/icons")
+					sharp(await icon.arrayBuffer())
+						.resize(270, 270)
+						.toFile(`data/icons/${id}.webp`)
+						.catch(() =>
+							formError(form, ["icon"], ["Icon failed to upload"])
+						)
+				}
 
 				const { title, description } = form.data
 
