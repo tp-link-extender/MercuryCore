@@ -108,7 +108,6 @@ export const actions = {
 							key: regkey,
 						},
 					},
-					image: "https://tr.rbxcdn.com/54d17964492b5e0af66797942fcce26c/150/150/AvatarHeadshot/Png",
 				},
 			})
 

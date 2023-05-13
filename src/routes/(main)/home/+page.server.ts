@@ -59,7 +59,6 @@ export async function load({ locals }) {
 			},
 			select: {
 				name: true,
-				image: true,
 				id: true,
 				gameSessions: {
 					where: {

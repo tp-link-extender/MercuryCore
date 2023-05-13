@@ -71,9 +71,6 @@ export const actions = {
 						serverPort,
 						privateServer,
 						maxPlayers,
-						image: `/place/placeholderIcon${
-							Math.floor(Math.random() * 3) + 1
-						}.png`,
 						ownerUsername: user.username,
 					},
 				})
