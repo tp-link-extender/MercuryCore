@@ -60,7 +60,6 @@ export async function load({ locals, params }) {
 			select: {
 				id: true,
 				name: true,
-				image: true,
 				gameSessions: {
 					where: {
 						ping: {
