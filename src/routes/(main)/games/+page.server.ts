@@ -35,7 +35,6 @@ export const actions = {
 			select: {
 				name: true,
 				id: true,
-				image: true,
 				serverPing: true,
 				gameSessions: {
 					where: {
