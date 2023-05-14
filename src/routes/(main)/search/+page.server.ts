@@ -62,7 +62,6 @@ export const load = async ({ url }) => {
 							},
 							id: true,
 							name: true,
-							image: true,
 						},
 				  })
 				: null,
