@@ -85,7 +85,7 @@ if (params.c) bodyColours = JSON.parse(params.c)
 if (params.f == "") bodyShot = true
 
 const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(30, bodyShot ? 3 / 4 : 1)
+const camera = new THREE.PerspectiveCamera(bodyShot ? 65 : 30, bodyShot ? 3 / 4 : 1)
 const objLoader = new OBJLoader()
 
 const renderer = new THREE.WebGLRenderer({
@@ -172,8 +172,8 @@ objLoader.load("./torso.obj", (root: any) => {
 })
 
 if (bodyShot) {
-	camera.position.set(4, 2.5, 11)
-	camera.lookAt(0, -0.5, -0.5)
+	camera.position.set(2.3, 1.8, 4)
+	camera.lookAt(0, -0.3, -0.5)
 } else {
 	camera.position.set(0, 1.5, 4)
 	camera.lookAt(0, 1.5, 0)
