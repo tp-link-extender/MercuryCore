@@ -7,7 +7,7 @@
 	let rendered = false
 	onMount(() => (rendered = true))
 
-	let searchedData: any = []
+	let searchedData: any[] = []
 
 	// Run function whenever query changes
 	$: (query || rendered) &&

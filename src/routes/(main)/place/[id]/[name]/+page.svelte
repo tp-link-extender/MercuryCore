@@ -105,7 +105,9 @@
 					type="button"
 					data-bs-target="#carousel"
 					data-bs-slide="prev">
-					<span class="carousel-control-prev-icon" aria-hidden="true" />
+					<span
+						class="carousel-control-prev-icon"
+						aria-hidden="true" />
 					<span class="visually-hidden">Previous</span>
 				</button>
 				<button
@@ -113,7 +115,9 @@
 					type="button"
 					data-bs-target="#carousel"
 					data-bs-slide="next">
-					<span class="carousel-control-next-icon" aria-hidden="true" />
+					<span
+						class="carousel-control-next-icon"
+						aria-hidden="true" />
 					<span class="visually-hidden">Next</span>
 				</button>
 			</div>
@@ -187,8 +191,8 @@
 				</button>
 
 				<form
-					use:enhance={e => {
-						const action = e.data.get("action")
+					use:enhance={({ formData }) => {
+						const action = formData.get("action")
 
 						if (action == "like") {
 							data.likes = true

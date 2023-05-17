@@ -14,8 +14,8 @@
 
 <div in:fade|global={{ num, total }} class="post card bg-darker mb-3 flex-row">
 	<form
-		use:enhance={({ data }) => {
-			const action = data.get("action")
+		use:enhance={({ formData }) => {
+			const action = formData.get("action")
 
 			if (action == "like") {
 				post.likes = true

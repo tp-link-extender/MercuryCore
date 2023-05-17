@@ -3,7 +3,13 @@
 
 	import fade from "$lib/fade"
 
-	export let place: any
+	export let place: {
+		id: number
+		name: string
+		ratio: string | number
+		serverPing: number
+		gameSessions?: any[]
+	}
 	export let num: number
 	export let total: number
 </script>
@@ -37,7 +43,7 @@
 				<div class="float-end">
 					<span>
 						<i class="fa fa-user opacity-75" />
-						{place.gameSessions.length}
+						{place.gameSessions?.length}
 					</span>
 				</div>
 			</div>

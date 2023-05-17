@@ -77,7 +77,7 @@ export async function roQuery(
 		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(
 			Math.random() * 52
 		)
-	const rand: any = Array(5).fill(0).map(c).join("")
+	const rand = Array(5).fill(0).map(c).join("")
 	let result: any
 
 	try {

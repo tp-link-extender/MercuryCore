@@ -2,11 +2,11 @@
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 
-	const statusColours: any = {
-		Online: "bg-info",
-		Joined: "bg-success",
-		Developing: "bg-warning",
-	}
+	// const statusColours: { [k: string]: string } = {
+	// 	Online: "bg-info",
+	// 	Joined: "bg-success",
+	// 	Developing: "bg-warning",
+	// }
 
 	export let data
 </script>
@@ -30,14 +30,14 @@
 							alt={user.username}
 							class="h-100 rounded-circle rounded-top-0" />
 					</div>
-					{#if user.status}
+					<!-- {#if user.status}
 						<span
 							class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
 								user.status
 							]}">
 							<span class="visually-hidden">{user.status}</span>
 						</span>
-					{/if}
+					{/if} -->
 				</a>
 				<div class="h4 p-4">
 					<a
@@ -85,8 +85,8 @@
 		div
 			word-break: break-all
 
-	.badge
-		padding: 0.75rem
+	// .badge
+	// 	padding: 0.75rem
 	.image-background
 		min-width: 6rem
 		img

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { LayoutData } from "../../routes/$types"
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
 	import { fade } from "svelte/transition"
@@ -15,7 +14,7 @@
 		`,
 	})
 
-	export let data: LayoutData
+	export let data: import("../../routes/$types").LayoutData
 	const { user } = data
 </script>
 
