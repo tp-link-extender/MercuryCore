@@ -16,14 +16,24 @@ export const actions = {
 	paint: async ({ locals, url }) => {
 		const { user } = await authorise(locals)
 
-		const bodyPart = url.searchParams.get("p")
+		const bodyPartQuery = url.searchParams.get("p")
 		const bodyColour = url.searchParams.get("c")
 		if (
-			!bodyPart ||
+			!bodyPartQuery ||
 			!bodyColour ||
-			!brickColours.includes(parseInt(bodyColour))
+			!brickColours.includes(parseInt(bodyColour)) ||
+			![
+				"Head",
+				"Torso",
+				"LeftArm",
+				"RightArm",
+				"LeftLeg",
+				"RightLeg",
+			].includes(bodyPartQuery)
 		)
 			return fail(400)
+
+		const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
 
 		const currentBodyColour = user.bodyColours
 		currentBodyColour[bodyPart] = parseInt(bodyColour)

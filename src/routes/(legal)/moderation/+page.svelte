@@ -5,7 +5,7 @@
 
 	let checked = false
 
-	const moderationAction: any = {
+	const moderationAction: { [k: string]: string } = {
 		Warning: "Warning",
 		Ban: "Ban",
 		Termination: "Termination",

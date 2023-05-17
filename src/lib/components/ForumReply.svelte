@@ -105,8 +105,8 @@
 						</p>
 						{#if $replyingTo != reply.id}
 							<form
-								use:enhance={({ data }) => {
-									const action = data.get("action")
+								use:enhance={({ formData }) => {
+									const action = formData.get("action")
 
 									if (action == "like") {
 										reply.likes = true

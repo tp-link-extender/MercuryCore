@@ -5,11 +5,11 @@
 	import Report from "$lib/components/Report.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	const statusColours: any = {
-		Online: "bg-info",
-		Joined: "bg-success",
-		Developing: "bg-warning",
-	}
+	// const statusColours: { [k: string]: string } = {
+	// 	Online: "bg-info",
+	// 	Joined: "bg-success",
+	// 	Developing: "bg-warning",
+	// }
 
 	export let data
 	const { user } = data
@@ -28,7 +28,7 @@
 	})
 	export const snapshot = { capture, restore }
 
-	const greets = [`Hi, ${user?.username}!`, `Hello, ${user?.username}!`]
+	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
 
 	const news = [
 		{
@@ -199,7 +199,7 @@
 											alt={friend.username}
 											class="h-100 rounded-circle rounded-top-0" />
 									</div>
-									{#if friend.status}
+									<!-- {#if friend.status}
 										<span
 											class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
 												friend.status
@@ -208,7 +208,7 @@
 												{friend.status}
 											</span>
 										</span>
-									{/if}
+									{/if} -->
 								</div>
 								<p
 									class="friendname username"
@@ -332,8 +332,8 @@
 	.home-row
 		overflow-x: auto
 
-		.badge
-			padding: 0.75rem
+		// .badge
+		// 	padding: 0.75rem
 		.place
 			width: 8rem
 			margin: auto
