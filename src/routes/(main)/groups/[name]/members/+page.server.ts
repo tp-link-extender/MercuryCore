@@ -12,47 +12,38 @@ export const load = async ({ params }) => {
 			name: params.name,
 		},
 	})
+
+	console.timeEnd("group members")
+
 	if (group) {
 		const query = {
 			group: params.name,
 		}
 
-		async function Users() {
-			const usersQuery = await roQuery(
-				"groups",
-				`
-					MATCH (u:User) -[r:in]-> (:Group { name: $group })
-					RETURN u.name AS name
-				`,
-				query,
-				false,
-				true
-			)
-
-			let users: any[] = []
-
-			for (let i of usersQuery || ([] as any)) {
-				if (i.name) {
-					const user = await prisma.authUser.findUnique({
-						where: {
-							username: i.name,
-						},
-						select: {
-							username: true,
-							number: true,
-						},
-					})
-					if (user) users.push(user)
-				}
-			}
-
-			return users
-		}
-
-		console.timeEnd("group members")
 		return {
 			name: group.name,
-			users: Users(),
+			users: prisma.authUser.findMany({
+				where: {
+					username: {
+						in: (
+							await roQuery(
+								"groups",
+								`
+									MATCH (u:User) -[r:in]-> (:Group { name: $group })
+									RETURN u.name AS name
+								`,
+								query,
+								false,
+								true
+							)
+						).map((i: any) => i.name),
+					},
+				},
+				select: {
+					username: true,
+					number: true,
+				},
+			}),
 			number: roQuery(
 				"groups",
 				"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
@@ -60,5 +51,7 @@ export const load = async ({ params }) => {
 				true
 			),
 		}
-	} else throw error(404, `Not found`)
+	}
+
+	throw error(404, "Not found")
 }

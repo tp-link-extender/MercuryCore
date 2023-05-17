@@ -108,7 +108,7 @@ export const actions = {
 							key: regkey,
 						},
 					},
-				},
+				} as any,
 			})
 
 			const session = await auth.createSession(user.id)

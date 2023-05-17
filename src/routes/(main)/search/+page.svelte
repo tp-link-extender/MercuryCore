@@ -4,11 +4,11 @@
 	import Item from "$lib/components/Item.svelte"
 	import Group from "$lib/components/Group.svelte"
 
-	const statusColours: any = {
-		Online: "bg-info",
-		Joined: "bg-success",
-		Developing: "bg-warning",
-	}
+	// const statusColours: { [k: string]: string } = {
+	// 	Online: "bg-info",
+	// 	Joined: "bg-success",
+	// 	Developing: "bg-warning",
+	// }
 
 	export let data
 </script>
@@ -42,7 +42,7 @@
 								alt={user.username}
 								class="h-100 rounded-circle rounded-top-0" />
 						</div>
-						{#if user.status}
+						<!-- {#if user.status}
 							<span
 								class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
 									user.status
@@ -51,7 +51,7 @@
 									{user.status}
 								</span>
 							</span>
-						{/if}
+						{/if} -->
 					</div>
 					{user.username}
 				</a>
@@ -107,8 +107,8 @@
 		grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))
 		grid-gap: 0 1rem
 
-	.badge
-		padding: 0.75rem
+	// .badge
+	// 	padding: 0.75rem
 	.place
 		width: 8rem
 		margin: auto

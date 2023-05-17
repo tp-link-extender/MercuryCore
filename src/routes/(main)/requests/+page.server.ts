@@ -19,41 +19,30 @@ export async function load({ locals }) {
 		user: userExists.username,
 	}
 
-	async function Users() {
-		const usersQuery = await roQuery(
-			"friends",
-			`
-				MATCH (:User { name: $user }) <-[r:request]- (u:User)
-				RETURN u.name AS name
-			`,
-			query,
-			false,
-			true
-		)
-
-		let users: any[] = []
-
-		for (let i of usersQuery || ([] as any)) {
-			if (i.name) {
-				const user = await prisma.authUser.findUnique({
-					where: {
-						username: i.name,
-					},
-					select: {
-						username: true,
-						number: true,
-					},
-				})
-				if (user) users.push(user)
-			}
-		}
-
-		return users
-	}
-
 	console.timeEnd("requests")
 	return {
-		users: Users(),
+		users: prisma.authUser.findMany({
+			where: {
+				username: {
+					in: (
+						await roQuery(
+							"friends",
+							`
+								MATCH (:User { name: $user }) <-[r:request]- (u:User)
+								RETURN u.name AS name
+							`,
+							query,
+							false,
+							true
+						)
+					).map((i: any) => i.name),
+				},
+			},
+			select: {
+				username: true,
+				number: true,
+			},
+		}),
 		number: roQuery(
 			"friends",
 			"RETURN SIZE((:User { name: $user }) <-[:request]- (:User))",

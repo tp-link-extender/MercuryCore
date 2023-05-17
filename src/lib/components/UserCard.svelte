@@ -1,13 +1,17 @@
 <script lang="ts">
 	import fade from "$lib/fade"
 
-	const statusColours: any = {
+	const statusColours: { [k: string]: string } = {
 		Online: "bg-info",
 		Joined: "bg-success",
 		Developing: "bg-warning",
 	}
 
-	export let user: any
+	export let user: {
+		username: string
+		number: number
+		status?: keyof typeof statusColours
+	}
 	export let num: number
 	export let total: number
 </script>

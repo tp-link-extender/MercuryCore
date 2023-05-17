@@ -2,7 +2,7 @@ import * as THREE from "three"
 import { OBJLoader } from "three/addons/loaders/OBJLoader"
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry"
 
-const brickToHex: any = {
+const brickToHex: { [k: number]: number } = {
 	1: 0xf2f3f3,
 	5: 0xd7c59a,
 	9: 0xe8bac8,
@@ -85,7 +85,10 @@ if (params.c) bodyColours = JSON.parse(params.c)
 if (params.f == "") bodyShot = true
 
 const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(bodyShot ? 65 : 30, bodyShot ? 3 / 4 : 1)
+const camera = new THREE.PerspectiveCamera(
+	bodyShot ? 65 : 30,
+	bodyShot ? 3 / 4 : 1
+)
 const objLoader = new OBJLoader()
 
 const renderer = new THREE.WebGLRenderer({

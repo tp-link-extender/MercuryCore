@@ -98,7 +98,7 @@ export async function load({ url, locals, params }) {
 		return reply
 	}
 
-	const replies: any = await Promise.all(
+	const replies = await Promise.all(
 		[forumReplies].map(async reply => await addLikes(reply))
 	)
 

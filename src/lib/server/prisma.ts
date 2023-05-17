@@ -22,7 +22,7 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 	const places = await prisma.place.findMany(query)
 
 	// Add like/dislike ratio to each place
-	for (let place of places as typeof places & { ratio: any }[]) {
+	for (const place of places as typeof places & { ratio: number | "--" }[]) {
 		const query = {
 			place: place.id,
 		}
@@ -44,7 +44,7 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 
 		place["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
-	return places as typeof places & { ratio: any }[]
+	return places as typeof places & { ratio: number | "--" }[]
 }
 
 /**
@@ -64,7 +64,7 @@ export async function findItems(query: Prisma.ItemFindManyArgs = {}) {
 	const items = await prisma.item.findMany(query)
 
 	// Add like/dislike ratio to each item
-	for (let item of items as typeof items & { ratio: any }[]) {
+	for (let item of items as typeof items & { ratio: number | "--" }[]) {
 		const query = {
 			itemid: item.id,
 		}
@@ -85,7 +85,7 @@ export async function findItems(query: Prisma.ItemFindManyArgs = {}) {
 		const ratio = Math.floor((likes / total) * 100)
 		item["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
-	return items as typeof items & { ratio: any }[]
+	return items as typeof items & { ratio: number | "--" }[]
 }
 
 /**

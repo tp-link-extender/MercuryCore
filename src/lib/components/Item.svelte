@@ -4,7 +4,12 @@
 
 	import fade from "$lib/fade"
 
-	export let item: any
+	export let item: {
+		id: string
+		name: string
+		price: number
+		ratio?: string | number
+	}
 	export let num: number
 	export let total: number
 </script>
