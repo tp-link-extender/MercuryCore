@@ -3,7 +3,7 @@ lockfileVersion: '6.0'
 dependencies:
   '@lucia-auth/adapter-prisma':
     specifier: ^2.0.0
-    version: 2.0.0(@prisma/client@4.14.0)(lucia-auth@1.5.0)
+    version: 2.0.0(@prisma/client@4.14.1)(lucia-auth@1.5.0)
   '@lucia-auth/adapter-session-redis':
     specifier: ^1.0.0
     version: 1.0.0(lucia-auth@1.5.0)(redis@4.6.6)
@@ -14,11 +14,11 @@ dependencies:
     specifier: ^2.11.7
     version: 2.11.7
   '@prisma/client':
-    specifier: ^4.14.0
-    version: 4.14.0(prisma@4.14.0)
+    specifier: ^4.14.1
+    version: 4.14.1(prisma@4.14.1)
   '@sveltejs/adapter-node':
     specifier: ^1.2.4
-    version: 1.2.4(@sveltejs/kit@1.16.3)
+    version: 1.2.4(@sveltejs/kit@1.18.0)
   '@threlte/core':
     specifier: 6.0.0-next.7
     version: 6.0.0-next.7
@@ -91,8 +91,8 @@ dependencies:
 
 devDependencies:
   '@sveltejs/kit':
-    specifier: ^1.16.3
-    version: 1.16.3(svelte@3.59.1)(vite@4.3.7)
+    specifier: ^1.18.0
+    version: 1.18.0(svelte@3.59.1)(vite@4.3.7)
   '@sveltejs/vite-plugin-svelte':
     specifier: ^2.2.0
     version: 2.2.0(svelte@3.59.1)(vite@4.3.7)
@@ -133,8 +133,8 @@ devDependencies:
     specifier: ^2.10.0
     version: 2.10.0(prettier@2.8.8)(svelte@3.59.1)
   prisma:
-    specifier: ^4.14.0
-    version: 4.14.0
+    specifier: ^4.14.1
+    version: 4.14.1
   sass:
     specifier: ^1.62.1
     version: 1.62.1
@@ -149,7 +149,7 @@ devDependencies:
     version: 5.0.3(postcss@8.4.23)(sass@1.62.1)(svelte@3.59.1)(typescript@5.0.4)
   sveltekit-superforms:
     specifier: ^0.8.6
-    version: 0.8.6(@sveltejs/kit@1.16.3)(svelte@3.59.1)(zod@3.21.4)
+    version: 0.8.6(@sveltejs/kit@1.18.0)(svelte@3.59.1)(zod@3.21.4)
   tslib:
     specifier: ^2.5.0
     version: 2.5.0
@@ -435,13 +435,13 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@lucia-auth/adapter-prisma@2.0.0(@prisma/client@4.14.0)(lucia-auth@1.5.0):
+  /@lucia-auth/adapter-prisma@2.0.0(@prisma/client@4.14.1)(lucia-auth@1.5.0):
     resolution: {integrity: sha512-8qxEcoVNJDbK8zXzyMK/4SHnLTaih0oNjTfp7l4ndRg5WI+eMgP3N0OUGQVaq3C5N0iIfkXxgj/ZGH8ZidwVeQ==}
     peerDependencies:
       '@prisma/client': ^4.2.0
       lucia-auth: ^1.3.0
     dependencies:
-      '@prisma/client': 4.14.0(prisma@4.14.0)
+      '@prisma/client': 4.14.1(prisma@4.14.1)
       lucia-auth: 1.5.0
     dev: false
 
@@ -490,8 +490,8 @@ packages:
     resolution: {integrity: sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==}
     dev: false
 
-  /@prisma/client@4.14.0(prisma@4.14.0):
-    resolution: {integrity: sha512-MK/XaA2sFdfaOa7I9MjNKz6dxeIEdeZlnpNRoF2w3JuRLlFJLkpp6cD3yaqw2nUUhbrn3Iqe3ZpVV+VuGGil7Q==}
+  /@prisma/client@4.14.1(prisma@4.14.1):
+    resolution: {integrity: sha512-TZIswkeX1ccsHG/eN2kICzg/csXll0osK3EHu1QKd8VJ3XLcXozbNELKkCNfsCUvKJAwPdDtFCzF+O+raIVldw==}
     engines: {node: '>=14.17'}
     requiresBuild: true
     peerDependencies:
@@ -501,15 +501,15 @@ packages:
         optional: true
     dependencies:
       '@prisma/engines-version': 4.14.0-67.d9a4c5988f480fa576d43970d5a23641aa77bc9c
-      prisma: 4.14.0
+      prisma: 4.14.1
     dev: false
 
   /@prisma/engines-version@4.14.0-67.d9a4c5988f480fa576d43970d5a23641aa77bc9c:
     resolution: {integrity: sha512-3jum8/YSudeSN0zGW5qkpz+wAN2V/NYCQ+BPjvHYDfWatLWlQkqy99toX0GysDeaUoBIJg1vaz2yKqiA3CFcQw==}
     dev: false
 
-  /@prisma/engines@4.14.0:
-    resolution: {integrity: sha512-PDNlhP/1vyTgmNyiucGqGCdXIp7HIkkvKO50si3y3PcceeHvqtiKPaH1iJdz63jCWMVMbj2MElSxXPOeBvEVIQ==}
+  /@prisma/engines@4.14.1:
+    resolution: {integrity: sha512-APqFddPVHYmWNKqc+5J5SqrLFfOghKOLZxobmguDUacxOwdEutLsbXPVhNnpFDmuQWQFbXmrTTPoRrrF6B1MWA==}
     requiresBuild: true
 
   /@puppeteer/browsers@1.3.0(typescript@5.0.4):
@@ -585,7 +585,7 @@ packages:
       '@redis/client': 1.5.7
     dev: false
 
-  /@rollup/plugin-commonjs@24.1.0(rollup@3.21.8):
+  /@rollup/plugin-commonjs@24.1.0(rollup@3.22.0):
     resolution: {integrity: sha512-eSL45hjhCWI0jCCXcNtLVqM5N1JlBGvlFfY0m6oOYnLCJ6N0qEXoZql4sY2MOUArzhH4SA/qBpTxvvZp2Sc+DQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -594,16 +594,16 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@3.21.8)
+      '@rollup/pluginutils': 5.0.2(rollup@3.22.0)
       commondir: 1.0.1
       estree-walker: 2.0.2
       glob: 8.1.0
       is-reference: 1.2.1
       magic-string: 0.27.0
-      rollup: 3.21.8
+      rollup: 3.22.0
     dev: false
 
-  /@rollup/plugin-json@6.0.0(rollup@3.21.8):
+  /@rollup/plugin-json@6.0.0(rollup@3.22.0):
     resolution: {integrity: sha512-i/4C5Jrdr1XUarRhVu27EEwjt4GObltD7c+MkCIpO2QIbojw8MUs+CCTqOphQi3Qtg1FLmYt+l+6YeoIf51J7w==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -612,11 +612,11 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@3.21.8)
-      rollup: 3.21.8
+      '@rollup/pluginutils': 5.0.2(rollup@3.22.0)
+      rollup: 3.22.0
     dev: false
 
-  /@rollup/plugin-node-resolve@15.0.2(rollup@3.21.8):
+  /@rollup/plugin-node-resolve@15.0.2(rollup@3.22.0):
     resolution: {integrity: sha512-Y35fRGUjC3FaurG722uhUuG8YHOJRJQbI6/CkbRkdPotSpDj9NtIN85z1zrcyDcCQIW4qp5mgG72U+gJ0TAFEg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -625,16 +625,16 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@3.21.8)
+      '@rollup/pluginutils': 5.0.2(rollup@3.22.0)
       '@types/resolve': 1.20.2
       deepmerge: 4.3.1
       is-builtin-module: 3.2.1
       is-module: 1.0.0
       resolve: 1.22.2
-      rollup: 3.21.8
+      rollup: 3.22.0
     dev: false
 
-  /@rollup/pluginutils@5.0.2(rollup@3.21.8):
+  /@rollup/pluginutils@5.0.2(rollup@3.22.0):
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -646,22 +646,22 @@ packages:
       '@types/estree': 1.0.1
       estree-walker: 2.0.2
       picomatch: 2.3.1
-      rollup: 3.21.8
+      rollup: 3.22.0
 
-  /@sveltejs/adapter-node@1.2.4(@sveltejs/kit@1.16.3):
+  /@sveltejs/adapter-node@1.2.4(@sveltejs/kit@1.18.0):
     resolution: {integrity: sha512-TNnhS+OKRZ9RKnC+ho5mlE2FJquI61i0v7yOXxBUSU3LAoYH2kwVVL8P8ecjefmZ8BOfM1V54pBnDODBU5CEaA==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0
     dependencies:
-      '@rollup/plugin-commonjs': 24.1.0(rollup@3.21.8)
-      '@rollup/plugin-json': 6.0.0(rollup@3.21.8)
-      '@rollup/plugin-node-resolve': 15.0.2(rollup@3.21.8)
-      '@sveltejs/kit': 1.16.3(svelte@3.59.1)(vite@4.3.7)
-      rollup: 3.21.8
+      '@rollup/plugin-commonjs': 24.1.0(rollup@3.22.0)
+      '@rollup/plugin-json': 6.0.0(rollup@3.22.0)
+      '@rollup/plugin-node-resolve': 15.0.2(rollup@3.22.0)
+      '@sveltejs/kit': 1.18.0(svelte@3.59.1)(vite@4.3.7)
+      rollup: 3.22.0
     dev: false
 
-  /@sveltejs/kit@1.16.3(svelte@3.59.1)(vite@4.3.7):
-    resolution: {integrity: sha512-8uv0udYRpVuE1BweFidcWHfL+u2gAANKmvIal1dN/FWPBl7DJYbt9zYEtr3bNTiXystT8Sn0Wp54RfwpbPqHjQ==}
+  /@sveltejs/kit@1.18.0(svelte@3.59.1)(vite@4.3.7):
+    resolution: {integrity: sha512-QE5X9gCG34khrO6j01ZbRXtVx+yyUNe8PmVPeG0M+I8eyFejqYMEhD1JtjCrLzpd4KukvuO8bL35M1VWmPM7hQ==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     requiresBuild: true
@@ -927,7 +927,7 @@ packages:
     hasBin: true
     dependencies:
       '@ampproject/remapping': 2.2.1
-      '@rollup/pluginutils': 5.0.2(rollup@3.21.8)
+      '@rollup/pluginutils': 5.0.2(rollup@3.22.0)
       '@unocss/config': 0.51.13
       '@unocss/core': 0.51.13
       '@unocss/preset-uno': 0.51.13
@@ -1089,7 +1089,7 @@ packages:
       vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0
     dependencies:
       '@ampproject/remapping': 2.2.1
-      '@rollup/pluginutils': 5.0.2(rollup@3.21.8)
+      '@rollup/pluginutils': 5.0.2(rollup@3.22.0)
       '@unocss/config': 0.51.13
       '@unocss/core': 0.51.13
       '@unocss/inspector': 0.51.13
@@ -2402,13 +2402,13 @@ packages:
     hasBin: true
     dev: true
 
-  /prisma@4.14.0:
-    resolution: {integrity: sha512-+5dMl1uxMQb4RepndY6AwR9xi1cDcaGFICu+ws6/Nmgt93mFPNj8tYxSfTdmfg+rkNrUId9rk/Ac2vTgLe/oXA==}
+  /prisma@4.14.1:
+    resolution: {integrity: sha512-z6hxzTMYqT9SIKlzD08dhzsLUpxjFKKsLpp5/kBDnSqiOjtUyyl/dC5tzxLcOa3jkEHQ8+RpB/fE3w8bgNP51g==}
     engines: {node: '>=14.17'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 4.14.0
+      '@prisma/engines': 4.14.1
 
   /profane-words@1.5.9:
     resolution: {integrity: sha512-i0pKPhSYIb4mcXsShthq4ZzfyRm+cPj568kfzURW7MDNVE+IPS8jUS2GUjBUcUCYw44LLFph+RcIDXZ4Anj1vw==}
@@ -2549,8 +2549,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rollup@3.21.8:
-    resolution: {integrity: sha512-SSFV2T2fWtQ/vvBip85u2Nr0GNKireabH9d7nXswBg+XSH+jbVDSYptRAEbCEsquhs503rpPA9POYAp0/Jhasw==}
+  /rollup@3.22.0:
+    resolution: {integrity: sha512-imsigcWor5Y/dC0rz2q0bBt9PabcL3TORry2hAa6O6BuMvY71bqHyfReAz5qyAqiQATD1m70qdntqBfBQjVWpQ==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
@@ -2841,14 +2841,14 @@ packages:
     resolution: {integrity: sha512-pKj8fEBmqf6mq3/NfrB9SLtcJcUvjYSWyePlfCqN9gujLB25RitWK8PvFzlwim6hD/We35KbPlRteuA6rnPGcQ==}
     engines: {node: '>= 8'}
 
-  /sveltekit-superforms@0.8.6(@sveltejs/kit@1.16.3)(svelte@3.59.1)(zod@3.21.4):
+  /sveltekit-superforms@0.8.6(@sveltejs/kit@1.18.0)(svelte@3.59.1)(zod@3.21.4):
     resolution: {integrity: sha512-pX4nwr+xGcT/NC0IHiIQ1TFgCEWAKrX5ODq3SMVYaUayz+QikPnEOOOvhsR2+NwI1z+Khz5lVHpcx6ZG/tkuQQ==}
     peerDependencies:
       '@sveltejs/kit': 1.x
       svelte: 3.x
       zod: 3.x
     dependencies:
-      '@sveltejs/kit': 1.16.3(svelte@3.59.1)(vite@4.3.7)
+      '@sveltejs/kit': 1.18.0(svelte@3.59.1)(vite@4.3.7)
       svelte: 3.59.1
       zod: 3.21.4
     dev: true
@@ -3070,7 +3070,7 @@ packages:
       '@types/node': 20.1.7
       esbuild: 0.17.19
       postcss: 8.4.23
-      rollup: 3.21.8
+      rollup: 3.22.0
       sass: 1.62.1
     optionalDependencies:
       fsevents: 2.3.2
