@@ -4,7 +4,7 @@
 
 	export let data
 
-	const titles: any = {
+	const titles = {
 		friends: `${data.username}'s friends`,
 		followers: `${data.username}'s followers`,
 		following: `Followed by ${data.username}`,

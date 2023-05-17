@@ -16,41 +16,8 @@ export async function load({ locals }) {
 	// (main)/+layout.server.ts will handle most redirects for logged-out users,
 	// but sometimes errors for this page.
 
-	async function Friends() {
-		const friendsQuery = await roQuery(
-			"friends",
-			`
-				MATCH (:User { name: $user }) -[r:friends]- (u:User)
-				RETURN u.name as name
-			`,
-			{
-				user: user.username,
-			},
-			false,
-			true
-		)
-
-		let friends: any[] = []
-
-		for (let i of friendsQuery || ([] as any)) {
-			if (i.name) {
-				const user = await prisma.authUser.findUnique({
-					where: {
-						username: i.name,
-					},
-					select: {
-						username: true,
-						number: true,
-					},
-				})
-				if (user) friends.push(user)
-			}
-		}
-
-		return friends
-	}
-
 	console.timeEnd("home")
+
 	return {
 		form: superValidate(schema),
 		places: findPlaces({
@@ -69,7 +36,30 @@ export async function load({ locals }) {
 				},
 			},
 		}),
-		friends: Friends(),
+		friends: prisma.authUser.findMany({
+			where: {
+				username: {
+					in: (
+						await roQuery(
+							"friends",
+							`
+								MATCH (:User { name: $user }) -[r:friends]- (u:User)
+								RETURN u.name as name
+							`,
+							{
+								user: user.username,
+							},
+							false,
+							true
+						)
+					).map((i: any) => i.name),
+				},
+			},
+			select: {
+				username: true,
+				number: true,
+			},
+		}),
 		feed: prisma.post.findMany({
 			select: {
 				id: true,

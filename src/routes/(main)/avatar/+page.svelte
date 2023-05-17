@@ -10,7 +10,7 @@
 	let modal = writable(false)
 	let bodyPart = ""
 
-	const bodyParts: any = {
+	const bodyParts: { [k: string]: number } = {
 		Head: user?.bodyColours.Head,
 		Torso: user?.bodyColours.Torso,
 		LeftArm: user?.bodyColours.LeftArm,
@@ -114,19 +114,22 @@
 		<div class="col-3">
 			<div class="card mb-3">
 				<div class="card-body">
-						<form use:enhance action="?/regen" method="POST">
-							<button class="btn btn-primary w-100">
-								<i class="fa fa-rotate" />
-								Regenerate
-							</button>
-						</form>
-						<p class="text-danger">
-							{form?.msg || ""}
-						</p>
+					<form use:enhance action="?/regen" method="POST">
+						<button class="btn btn-primary w-100">
+							<i class="fa fa-rotate" />
+							Regenerate
+						</button>
+					</form>
+					<p class="text-danger">
+						{form?.msg || ""}
+					</p>
 					<img
 						alt="Your avatar"
 						class="w-100"
-						src={form?.avatar || `/api/avatar/${user.username}-body?r=${Math.random()}`} />
+						src={form?.avatar ||
+							`/api/avatar/${
+								user.username
+							}-body?r=${Math.random()}`} />
 				</div>
 			</div>
 			<div class="card">
