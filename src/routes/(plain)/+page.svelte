@@ -13,7 +13,7 @@
 		name="description"
 		content="Mercury: Endless possibilities. New features. Same nostalgia." />
 	<meta property="og:image" content="/mercury.gif" />
-	<title>Mercury - Mercury</title>
+	<title>Mercury: Endless possibilities. New features. Same nostalgia.</title>
 </svelte:head>
 
 <canvas id="gradient-canvas" class="w-100 h-100 position-fixed" />
