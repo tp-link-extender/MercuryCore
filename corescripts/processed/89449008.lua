@@ -144,38 +144,37 @@ connect(function(as)return V()end)wait()return al(v:GetChildren())end local ar
 ar=function()if p~=nil then p:disconnect()end if q~=nil then q:disconnect()end
 if r~=nil then return r:disconnect()end return nil end local as as=function(Z)
 return Z:gsub('^%s*(.-)%s*$','%1')end local Z Z=function(at)local au={}for av,aw
-in pairs(j)do if k[aw]then local ax=string.lower(k[aw].GearReference.Value.Name)
-ax=as(ax)for ay=1,#at do if string.match(ax,at[ay])then table.insert(au,k[aw])
-break end end end end return au end local at at=function(au)if type(au)~=
-'string'then return end local av={}for aw in string.gmatch(au,'[^%s]+')do if
-string.len(aw)>0 then table.insert(av,aw)end end return av end local au au=
-function(av)if not i.Gear.Visible then return end local aw,ax=at(av),nil if aw
-and(#aw>0)then ax=aw else ax=nil end if not(aw~=nil)then ak()return end local ay
-=Z(ax)return aj(ay)end local av av=function()while#k>0 do table.remove(k)end k={
-}while#j>0 do table.remove(j)end j={}local aw=w.ScrollingFrame:GetChildren()for
-ax=1,#aw do aw[ax]:remove()end end local aw aw=function(ax,ay)if ax==Enum.
-CoreGuiType.Backpack or ax==Enum.CoreGuiType.All then if not ay then i.Gear.
-Visible=false end end end local ax=e.Backpack:GetChildren()for ay=1,#ax do ai(ax
-[ay])end D.Event:connect(function(ay)if l then return end l=true wait()ah()ag()l
-=false end)v.ChildAdded:connect(function(ay)return ap(ay,false)end)v.
-ChildRemoved:connect(function(ay)return ap(ay,true)end)v.DescendantAdded:
-connect(function(ay)if not i.Visible and(ay:IsA'ImageButton'or ay:IsA
-'TextButton')then return al(v:GetChildren())end end)v.DescendantRemoving:
-connect(function(ay)if not i.Visible and(ay:IsA'ImageButton'or ay:IsA
-'TextButton')then wait()return al(v:GetChildren())end end)w.MouseEnter:connect(
-function()return S()end)w.MouseLeave:connect(function()return S()end)e.
-CharacterRemoving:connect(function()ar()return av()end)e.CharacterAdded:connect(
-function()return aq()end)e.ChildAdded:connect(function(ay)if ay:IsA'Backpack'
-then s=ay if r~=nil then r:disconnect()end r=game.Players.LocalPlayer.Backpack.
-ChildAdded:connect(function(az)return ai(az)end)end end)y.Changed:connect(
-function()if not y.Value then return V()end end)local ay=v:GetChildren()for az=1
-,#ay do if ay[az]:IsA'Frame'and string.find(ay[az].Name,'Slot')then ay[az].
-ChildRemoved:connect(function()return V()end)ay[az].ChildAdded:connect(function(
-)return V()end)end end pcall(function()aw(Enum.CoreGuiType.Backpack,Game.
-StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack))return Game.StarterGui.
-CoreGuiChangedSignal:connect(aw)end)ah()ag()ay=v:GetChildren()for az=1,#ay do
-ap(ay[az],false)end if not i.Visible then al(v:GetChildren())end if not(p~=nil)
-and game.Players.LocalPlayer['Character']then aq()end if not r then r=game.
-Players.LocalPlayer.Backpack.ChildAdded:connect(function(az)return ai(az)end)end
-A.Event:connect(am)B.Event:connect(an)C.Event:connect(ao)E.Event:connect(au)
-return O()
+in pairs(j)do if k[aw]then local ax=as(string.lower(k[aw].GearReference.Value.
+Name))for ay=1,#at do if string.match(ax,at[ay])then table.insert(au,k[aw])break
+end end end end return au end local at at=function(au)if type(au)~='string'then
+return end local av={}for aw in string.gmatch(au,'[^%s]+')do if string.len(aw)>0
+then table.insert(av,aw)end end return av end local au au=function(av)if not i.
+Gear.Visible then return end local aw,ax=at(av),nil if aw and(#aw>0)then ax=aw
+else ax=nil end if not(aw~=nil)then ak()return end local ay=Z(ax)return aj(ay)
+end local av av=function()while#k>0 do table.remove(k)end k={}while#j>0 do table
+.remove(j)end j={}local aw=w.ScrollingFrame:GetChildren()for ax=1,#aw do aw[ax]:
+remove()end end local aw aw=function(ax,ay)if ax==Enum.CoreGuiType.Backpack or
+ax==Enum.CoreGuiType.All then if not ay then i.Gear.Visible=false end end end
+local ax=e.Backpack:GetChildren()for ay=1,#ax do ai(ax[ay])end D.Event:connect(
+function(ay)if l then return end l=true wait()ah()ag()l=false end)v.ChildAdded:
+connect(function(ay)return ap(ay,false)end)v.ChildRemoved:connect(function(ay)
+return ap(ay,true)end)v.DescendantAdded:connect(function(ay)if not i.Visible and
+(ay:IsA'ImageButton'or ay:IsA'TextButton')then return al(v:GetChildren())end end
+)v.DescendantRemoving:connect(function(ay)if not i.Visible and(ay:IsA
+'ImageButton'or ay:IsA'TextButton')then wait()return al(v:GetChildren())end end)
+w.MouseEnter:connect(function()return S()end)w.MouseLeave:connect(function()
+return S()end)e.CharacterRemoving:connect(function()ar()return av()end)e.
+CharacterAdded:connect(function()return aq()end)e.ChildAdded:connect(function(ay
+)if ay:IsA'Backpack'then s=ay if r~=nil then r:disconnect()end r=game.Players.
+LocalPlayer.Backpack.ChildAdded:connect(function(az)return ai(az)end)end end)y.
+Changed:connect(function()if not y.Value then return V()end end)local ay=v:
+GetChildren()for az=1,#ay do if ay[az]:IsA'Frame'and string.find(ay[az].Name,
+'Slot')then ay[az].ChildRemoved:connect(function()return V()end)ay[az].
+ChildAdded:connect(function()return V()end)end end pcall(function()aw(Enum.
+CoreGuiType.Backpack,Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack
+))return Game.StarterGui.CoreGuiChangedSignal:connect(aw)end)ah()ag()ay=v:
+GetChildren()for az=1,#ay do ap(ay[az],false)end if not i.Visible then al(v:
+GetChildren())end if not(p~=nil)and game.Players.LocalPlayer['Character']then
+aq()end if not r then r=game.Players.LocalPlayer.Backpack.ChildAdded:connect(
+function(az)return ai(az)end)end A.Event:connect(am)B.Event:connect(an)C.Event:
+connect(ao)E.Event:connect(au)return O()

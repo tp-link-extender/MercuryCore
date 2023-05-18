@@ -442,164 +442,164 @@ bX=function()bt(al)table.sort(al,ba)for bY,bZ in ipairs(al)do ao[bY]=bZ['Frame']
 end for b_=#al+1,#ao,1 do ao[b_]=nil end return bb()end local bY bY=function()
 while aJ do m'in neutral team lock'wait()end aJ=true an['Frame']:Destroy()an=nil
 bS()aJ=false end local bZ bZ=function(b_,b0)table.remove(b_['MyPlayers'],b0)if
-b_==an and#b_['MyPlayers']==0 then return bY()end end local b_ b_=function(b0)if
-b0['MyTeam']then for b1,b2 in ipairs(b0['MyTeam']['MyPlayers'])do if b2['Player'
-]==b0['Player']then bZ(b0['MyTeam'],b1)return end end elseif an then for b1,b2
-in ipairs(an['MyPlayers'])do if b2['Player']==b0['Player']then bZ(an,b1)return
-end end end end local b0 b0=function(b1,b2)b_(b2)table.insert(b1['MyPlayers'],b2
-)b2['MyTeam']=b1 if b1['IsHidden']then b1['Frame'].Parent=H bR()end b1[
-'IsHidden']=false end local b1 b1=function()while aJ do m
-'in neutral team 2 lock'wait()end aJ=true local b2=Instance.new'Team'b2.
-TeamColor=BrickColor.new'White'b2.Name='Neutral'local b3={}b3['MyTeam']=b2 b3[
-'MyPlayers']={}b3['Frame']=Q:Clone()n(n(b3['Frame'],'TitleFrame'),'Title').Text=
-b2.Name b3['Frame'].TitleFrame.Position=UDim2.new(b3['Frame'].TitleFrame.
-Position.X.Scale,b3['Frame'].TitleFrame.Position.X.Offset,0.1,0)b3['Frame'].
-TitleFrame.Size=UDim2.new(b3['Frame'].TitleFrame.Size.X.Scale,b3['Frame'].
-TitleFrame.Size.X.Offset,0.8,0)b3['Frame'].TitleFrame.Title.Font='ArialBold'b3[
-'Frame'].Position=UDim2.new(1,0,(#ao*b3['Frame'].Size.Y.Scale),0)n(b3['Frame'],
-'ClickListener').MouseButton1Down:connect(function(b4,b5)return bP(b3,b4,b5)end)
-b3['Frame'].ClickListener.BackgroundColor3=Color3.new(1,1,1)b3['Frame'].
-ClickListener.BackgroundTransparency=0.7 b3['Frame'].ClickListener.
-AutoButtonColor=false b3['AutoHide']=true b3['IsHidden']=true for b4,b5 in
-pairs(al)do if b5['Player'].Neutral or not b5['MyTeam']then b0(b3,b5)end end if#
-b3['MyPlayers']>0 then an=b3 bb()bg()end aJ=false end local b2 b2=function(b3)
-b_(b3)local b4=false for b5,b6 in ipairs(am)do if b6['MyTeam'].TeamColor==b3[
-'Player'].TeamColor then b0(b6,b3)b4=true end end if not b4 and#(game.Teams:
-GetTeams())>0 then m(tostring(b3['Player'].Name)..' could not find team')b3[
-'MyTeam']=nil if not an then return b1()else return b0(an,b3)end end end local
-b3 b3=function(b4,b5)while aI do m'in playerchanged lock'wait(
-3.333333333333333E-2)end aI=true if b5=='Neutral'then if b4['Player'].Neutral
-and#game.Teams:GetTeams()>0 then m(tostring(b4['Player'].Name)..
-' setting to neutral')b_(b4)b4['MyTeam']=nil if not an then m(tostring(b4[
-'Player'].Name)..' creating neutral team')b1()else m(tostring(b4['Player'].Name)
-..' adding to neutral team')b0(an,b4)end elseif#(game.Teams:GetTeams())>0 then
-m(tostring(b4['Player'].Name)..' has been set non-neutral')b2(b4)end bg()elseif
-b5=='TeamColor'and not b4['Player'].Neutral and b4['Player']~=b4['MyTeam']then
-m(tostring(b4['Player'].Name)..' setting to new team')b2(b4)bg()elseif b5==
-'Name'or b5=='MembershipType'then b4['Frame']:FindFirstChild'BCLabel'.Image=h(b4
-['Player'].MembershipType,b4['Player'].Name)b4['Frame'].Name=b4['Player'].Name
-b4['Frame'].TitleFrame.Title.Text=b4['Player'].Name if b4['Frame'].BCLabel.Image
-~=''then b4['Frame'].TitleFrame.Title.Position=UDim2.new(0.01,30,0.1,0)end if b4
-['Player']==p then b4['Frame'].TitleFrame.DropShadow.Text=b4['Player'].Name bT(
-b4['Player'].Name)end bg()end aI=false end local b4 b4=function(b5)while aD do
-m('waiting to insert '..tostring(b5.Name))wait(3.333333333333333E-2)end aD=true
-local b6=Q:Clone()n(n(b6,'TitleFrame'),'Title').Text=b5.Name b6.Position=UDim2.
-new(1,0,(#ao*b6.Size.Y.Scale),0)local b7=a7(b5)b6:FindFirstChild'BCLabel'.Image=
-h(b5.MembershipType,b5.Name)b6:FindFirstChild'FriendLabel'.Image=i(b7)b6.Name=b5
-.Name n(n(b6,'TitleFrame'),'Title').Text=b5.Name b6.FriendLabel.Position=b6.
-FriendLabel.Position+UDim2.new(0,17,0,0)b6.TitleFrame.Title.Position=b6.
-TitleFrame.Title.Position+UDim2.new(0,17,0,0)if b6:FindFirstChild'FriendLabel'.
-Image~=''then b6.TitleFrame.Title.Position=b6.TitleFrame.Title.Position+UDim2.
-new(0,17,0,0)end if b5.Name==p.Name then b6.TitleFrame.Title.Font='ArialBold'b6.
-PlayerScore.Font='ArialBold'bT(b5.Name)do local b8=b6.TitleFrame.Title:Clone()b8
-.TextColor3=Color3.new(0,0,0)b8.TextTransparency=0 b8.ZIndex=2 b8.Position=b6.
-TitleFrame.Title.Position+UDim2.new(0,1,0,1)b8.Name='DropShadow'b8.Parent=b6.
-TitleFrame end end b6.TitleFrame.Title.Font='ArialBold'b6.Parent=H b6:
-TweenPosition(UDim2.new(0.5,0,(#ao*b6.Size.Y.Scale),0),'Out','Linear',c,true)bb(
-)local b8={}b8['Frame']=b6 b8['Player']=b5 b8['ID']=ak ak=ak+1 table.insert(al,
-b8)if#am~=0 then if b5.Neutral then b8['MyTeam']=nil if not an then b1()else b0(
-an,b8)end else local b9=false for ca,cb in ipairs(am)do if cb['MyTeam'].
-TeamColor==b5.TeamColor then b0(cb,b8)b8['MyTeam']=cb b9=true end end if not b9
-then b8['MyTeam']=nil if not an then b1()else b0(an,b8)end b8['MyTeam']=an end
-end end if b5:FindFirstChild'leaderstats'then bU(b8)end b5.ChildAdded:connect(
-function(b9)if b9.Name=='leaderstats'then while aD do m
-'in adding leaderstats lock'wait(3.333333333333333E-2)end aD=true bU(b8)aD=false
-end end)b5.ChildRemoved:connect(function(b9)if b5==p and b9.Name=='leaderstats'
-then return bV(b9,b8)end end)b5.Changed:connect(function(b9)return b3(b8,b9)end)
-local b9=n(b6,'ClickListener')b9.Active=true b9.MouseButton1Down:connect(
-function(ca,cb)return bW(b8,ca,cb)end)bR()bg()aD=false end local b5 b5=function(
-b6)while aD do m'in removing player frame lock'wait(3.333333333333333E-2)end aD=
-true local b7 for b8,b9 in ipairs(al)do if b6==b9['Player']then if I.Parent==b9[
-'Frame']then I.Parent=nil end b9['Frame']:Destroy()b7=b9['MyTeam']table.remove(
-al,b8)end end if b7 then for ca,cb in ipairs(b7['MyPlayers'])do if cb['Player']
-==b6 then bZ(b7,ca)end end end bS()bb()bg()aD=false end o.ChildRemoved:connect(
-b5)local b6 b6=function(b7,b8)local b9=0 if an and not an['IsHidden']then for ca
-,cb in ipairs(an['MyPlayers'])do b9=b9+1 b8[b9]=cb['Frame']end b9=b9+1 b8[b9]=an
-['Frame']end for ca,cb in ipairs(b7)do if not cb['IsHidden']then for cc,cd in
-ipairs(cb.MyPlayers)do b9=b9+1 b8[b9]=cd['Frame']end b9=b9+1 b8[b9]=cb['Frame']
-end end for cc=b9+1,#b8,1 do b8[cc]=nil end end local b7 b7=function(b8,b9)if b8
-['TeamScore']==b9['TeamScore']then return b8['ID']<b9['ID']end if not b8[
-'TeamScore']then return false end if not b9['TeamScore']then return true end
-return b8['TeamScore']<b9['TeamScore']end local b8 b8=function(b9)for ca=1,#aj,1
-do local cb,cc=aj[ca],0 for cd,ce in ipairs(b9['MyPlayers'])do local cf=ce[
-'Player']:FindFirstChild(ce['Player'].leaderstats:FindFirstChild(cb['Name']))if
-cf and not cf:IsA'StringValue'then cc=cc+bp((ce['Player'].leaderstats)[cb['Name'
-]])end end if b9['Frame']:FindFirstChild(cb['Name'])then b9['Frame'][cb['Name']]
-.Text=tostring(cc)end end return bb()end local b9 b9=function(ca)for cb,cc in
-ipairs(ca)do table.sort(cc['MyPlayers'],ba)b8(cc)end return table.sort(ca,b7)end
-local ca ca=function()bt(al)b9(am)if an then b8(an)end return b6(am,ao)end local
-cb cb=function(cc,cd)return Delay(0.5,function()m('friend status changed for: '
-..tostring(cc.Name)..' '..tostring(cd)..' vs '..tostring(a7(cc)))for ce,cf in
-ipairs(al)do if cf['Player']==cc then local cg=i(cd)if cg==''and cf['Frame'].
-FriendLabel.Image~=''then cf['Frame'].TitleFrame.Title.Position=cf['Frame'].
-TitleFrame.Title.Position-UDim2.new(0,17,0,0)elseif cg~=''and cf['Frame'].
-FriendLabel.Image==''then cf['Frame'].TitleFrame.Title.Position=cf['Frame'].
-TitleFrame.Title.Position+UDim2.new(0,17,0,0)m('confirmed status: '..tostring(cc
-.Name))end cf['Frame'].FriendLabel.Image=cg return end end end)end p.
-FriendStatusChanged:connect(cb)local cc cc=function(cd,ce)n(cd['Frame'],
-'PlayerScore').Text=tostring(ce)cd['TeamScore']=ce end local cd cd=function(ce,
-cf)if cf.Name=='AutoHide'then ce['AutoHide']=true elseif cf.Name=='TeamScore'
-then n(ce['Frame'],'PlayerScore').Text=tostring(cf.Value)ce['TeamScore']=cf.
-Value return cf.Changed:connect(function()return cc(ce,cf.Value)end)end end
-local ce ce=function(cf,cg)if cg.Name=='AutoHide'then cf['AutoHide']=false
-elseif cg.Name=='TeamScore'then n(cf['Frame'],'PlayerScore').Text=''cf[
-'TeamScore']=nil end end local cf cf=function(cg)while aD do m
-'in removing team frame lock'wait(3.333333333333333E-2)end aD=true local ch for
-ci,cj in ipairs(am)do if cg==cj['MyTeam']then ch=cj cj['Frame']:Destroy()table.
-remove(am,ci)end end if#am==0 then m'removeteamframe, remove neutral'if an then
-bY()end end for ck,cl in ipairs(ch['MyPlayers'])do bZ(ch,ck)b3(cl,'TeamColor')
-end bS()bg()aD=false end local cg cg=function(ch,ck)if ck=='Name'then n(n(ch[
-'Frame'],'TitleFrame'),'Title').Text=ch['MyTeam'].Name elseif ck=='TeamColor'
-then ch['Frame'].ClickListener.BackgroundColor3=ch['MyTeam'].TeamColor.Color for
-cl,cm in pairs(am)do if cm['MyTeam'].TeamColor==ch['MyTeam']then cf(ch['MyTeam']
-)end end ch['MyPlayers']={}for cn,co in pairs(al)do b2(co)end return bg()end end
-local ch ch=function(ck)while aD do m'in adding team frame lock'wait(
-3.333333333333333E-2)end aD=true local cn={}cn['MyTeam']=ck cn['MyPlayers']={}cn
-['Frame']=Q:Clone()n(n(cn['Frame'],'TitleFrame'),'Title').Text=ck.Name cn[
-'Frame'].TitleFrame.Title.Font='ArialBold'cn['Frame'].TitleFrame.Title.FontSize=
-'Size18'cn['Frame'].TitleFrame.Position=UDim2.new(cn['Frame'].TitleFrame.
-Position.X.Scale,cn['Frame'].TitleFrame.Position.X.Offset,0.1,0)cn['Frame'].
-TitleFrame.Size=UDim2.new(cn['Frame'].TitleFrame.Size.X.Scale,cn['Frame'].
-TitleFrame.Size.X.Offset,0.8,0)cn['Frame'].Position=UDim2.new(1,0,(#ao*cn[
-'Frame'].Size.Y.Scale),0)n(cn['Frame'],'ClickListener').MouseButton1Down:
-connect(function(co,cp)return bP(cn,co,cp)end)cn['Frame'].ClickListener.
-BackgroundColor3=ck.TeamColor.Color cn['Frame'].ClickListener.
-BackgroundTransparency=0.7 cn['Frame'].ClickListener.AutoButtonColor=false ak=ak
-+1 cn['ID']=ak cn['AutoHide']=false if ck:FindFirstChild'AutoHide'then cn[
-'AutoHide']=true end if ck:FindFirstChild'TeamScore'then cd(cn,ck.TeamScore)end
-ck.ChildAdded:connect(function(co)return cd(cn,co)end)ck.ChildRemoved:connect(
-function(co)return ce(cn,co)end)ck.Changed:connect(function(co)return cg(cn,co)
-end)for co,cp in pairs(al)do if not cp['Player'].Neutral and cp['Player'].
-TeamColor==ck.TeamColor then b0(cn,cp)end end cn['IsHidden']=false if not cn[
-'AutoHide']or#cn['MyPlayers']>0 then cn['Frame'].Parent=H cn['Frame']:
-TweenPosition(UDim2.new(0.5,0,(#ao*cn['Frame'].Size.Y.Scale),0),'Out','Linear',c
-,true)bR()else cn['IsHidden']=true cn['Frame'].Parent=nil end table.insert(am,cn
-)bb()bg()if#am==1 and not an then b1()end aD=false end local ck ck=function(cn)
-return ch(cn)end local cn cn=function(co)return cf(co)end bg=function()while aF
+b_==an and#b_['MyPlayers']==0 then return bY()end end local b_=5 b_=5 local b0
+b0=function(b1)if b1['MyTeam']then for b2,b3 in ipairs(b1['MyTeam']['MyPlayers']
+)do if b3['Player']==b1['Player']then bZ(b1['MyTeam'],b2)return end end elseif
+an then for b2,b3 in ipairs(an['MyPlayers'])do if b3['Player']==b1['Player']then
+bZ(an,b2)return end end end end local b1 b1=function(b2,b3)b0(b3)table.insert(b2
+['MyPlayers'],b3)b3['MyTeam']=b2 if b2['IsHidden']then b2['Frame'].Parent=H bR()
+end b2['IsHidden']=false end local b2 b2=function()while aJ do m
+'in neutral team 2 lock'wait()end aJ=true local b3=Instance.new'Team'b3.
+TeamColor=BrickColor.new'White'b3.Name='Neutral'local b4={}b4['MyTeam']=b3 b4[
+'MyPlayers']={}b4['Frame']=Q:Clone()n(n(b4['Frame'],'TitleFrame'),'Title').Text=
+b3.Name b4['Frame'].TitleFrame.Position=UDim2.new(b4['Frame'].TitleFrame.
+Position.X.Scale,b4['Frame'].TitleFrame.Position.X.Offset,0.1,0)b4['Frame'].
+TitleFrame.Size=UDim2.new(b4['Frame'].TitleFrame.Size.X.Scale,b4['Frame'].
+TitleFrame.Size.X.Offset,0.8,0)b4['Frame'].TitleFrame.Title.Font='ArialBold'b4[
+'Frame'].Position=UDim2.new(1,0,(#ao*b4['Frame'].Size.Y.Scale),0)n(b4['Frame'],
+'ClickListener').MouseButton1Down:connect(function(b5,b6)return bP(b4,b5,b6)end)
+b4['Frame'].ClickListener.BackgroundColor3=Color3.new(1,1,1)b4['Frame'].
+ClickListener.BackgroundTransparency=0.7 b4['Frame'].ClickListener.
+AutoButtonColor=false b4['AutoHide']=true b4['IsHidden']=true for b5,b6 in
+pairs(al)do if b6['Player'].Neutral or not b6['MyTeam']then b1(b4,b6)end end if#
+b4['MyPlayers']>0 then an=b4 bb()bg()end aJ=false end local b3 b3=function(b4)
+b0(b4)local b5=false for b6,b7 in ipairs(am)do if b7['MyTeam'].TeamColor==b4[
+'Player'].TeamColor then b1(b7,b4)b5=true end end if not b5 and#(game.Teams:
+GetTeams())>0 then m(tostring(b4['Player'].Name)..' could not find team')b4[
+'MyTeam']=nil if not an then return b2()else return b1(an,b4)end end end local
+b4 b4=function(b5,b6)while aI do m'in playerchanged lock'wait(
+3.333333333333333E-2)end aI=true if b6=='Neutral'then if b5['Player'].Neutral
+and#game.Teams:GetTeams()>0 then m(tostring(b5['Player'].Name)..
+' setting to neutral')b0(b5)b5['MyTeam']=nil if not an then m(tostring(b5[
+'Player'].Name)..' creating neutral team')b2()else m(tostring(b5['Player'].Name)
+..' adding to neutral team')b1(an,b5)end elseif#(game.Teams:GetTeams())>0 then
+m(tostring(b5['Player'].Name)..' has been set non-neutral')b3(b5)end bg()elseif
+b6=='TeamColor'and not b5['Player'].Neutral and b5['Player']~=b5['MyTeam']then
+m(tostring(b5['Player'].Name)..' setting to new team')b3(b5)bg()elseif b6==
+'Name'or b6=='MembershipType'then b5['Frame']:FindFirstChild'BCLabel'.Image=h(b5
+['Player'].MembershipType,b5['Player'].Name)b5['Frame'].Name=b5['Player'].Name
+b5['Frame'].TitleFrame.Title.Text=b5['Player'].Name if b5['Frame'].BCLabel.Image
+~=''then b5['Frame'].TitleFrame.Title.Position=UDim2.new(0.01,30,0.1,0)end if b5
+['Player']==p then b5['Frame'].TitleFrame.DropShadow.Text=b5['Player'].Name bT(
+b5['Player'].Name)end bg()end aI=false end local b5 b5=function(b6)while aD do
+m('waiting to insert '..tostring(b6.Name))wait(3.333333333333333E-2)end aD=true
+local b7=Q:Clone()n(n(b7,'TitleFrame'),'Title').Text=b6.Name b7.Position=UDim2.
+new(1,0,(#ao*b7.Size.Y.Scale),0)local b8=a7(b6)b7:FindFirstChild'BCLabel'.Image=
+h(b6.MembershipType,b6.Name)b7:FindFirstChild'FriendLabel'.Image=i(b8)b7.Name=b6
+.Name n(n(b7,'TitleFrame'),'Title').Text=b6.Name b7.FriendLabel.Position=b7.
+FriendLabel.Position+UDim2.new(0,17,0,0)b7.TitleFrame.Title.Position=b7.
+TitleFrame.Title.Position+UDim2.new(0,17,0,0)if b7:FindFirstChild'FriendLabel'.
+Image~=''then b7.TitleFrame.Title.Position=b7.TitleFrame.Title.Position+UDim2.
+new(0,17,0,0)end if b6.Name==p.Name then b7.TitleFrame.Title.Font='ArialBold'b7.
+PlayerScore.Font='ArialBold'bT(b6.Name)do local b9=b7.TitleFrame.Title:Clone()b9
+.TextColor3=Color3.new(0,0,0)b9.TextTransparency=0 b9.ZIndex=2 b9.Position=b7.
+TitleFrame.Title.Position+UDim2.new(0,1,0,1)b9.Name='DropShadow'b9.Parent=b7.
+TitleFrame end end b7.TitleFrame.Title.Font='ArialBold'b7.Parent=H b7:
+TweenPosition(UDim2.new(0.5,0,(#ao*b7.Size.Y.Scale),0),'Out','Linear',c,true)bb(
+)local b9={}b9['Frame']=b7 b9['Player']=b6 b9['ID']=ak ak=ak+1 table.insert(al,
+b9)if#am~=0 then if b6.Neutral then b9['MyTeam']=nil if not an then b2()else b1(
+an,b9)end else local ca=false for cb,cc in ipairs(am)do if cc['MyTeam'].
+TeamColor==b6.TeamColor then b1(cc,b9)b9['MyTeam']=cc ca=true end end if not ca
+then b9['MyTeam']=nil if not an then b2()else b1(an,b9)end b9['MyTeam']=an end
+end end if b6:FindFirstChild'leaderstats'then bU(b9)end b6.ChildAdded:connect(
+function(ca)if ca.Name=='leaderstats'then while aD do m
+'in adding leaderstats lock'wait(3.333333333333333E-2)end aD=true bU(b9)aD=false
+end end)b6.ChildRemoved:connect(function(ca)if b6==p and ca.Name=='leaderstats'
+then return bV(ca,b9)end end)b6.Changed:connect(function(ca)return b4(b9,ca)end)
+local ca=n(b7,'ClickListener')ca.Active=true ca.MouseButton1Down:connect(
+function(cb,cc)return bW(b9,cb,cc)end)bR()bg()aD=false end local b6 b6=function(
+b7)while aD do m'in removing player frame lock'wait(3.333333333333333E-2)end aD=
+true local b8 for b9,ca in ipairs(al)do if b7==ca['Player']then if I.Parent==ca[
+'Frame']then I.Parent=nil end ca['Frame']:Destroy()b8=ca['MyTeam']table.remove(
+al,b9)end end if b8 then for cb,cc in ipairs(b8['MyPlayers'])do if cc['Player']
+==b7 then bZ(b8,cb)end end end bS()bb()bg()aD=false end o.ChildRemoved:connect(
+b6)local b7 b7=function(b8,b9)local ca=0 if an and not an['IsHidden']then for cb
+,cc in ipairs(an['MyPlayers'])do ca=ca+1 b9[ca]=cc['Frame']end ca=ca+1 b9[ca]=an
+['Frame']end for cb,cc in ipairs(b8)do if not cc['IsHidden']then for cd,ce in
+ipairs(cc.MyPlayers)do ca=ca+1 b9[ca]=ce['Frame']end ca=ca+1 b9[ca]=cc['Frame']
+end end for cd=ca+1,#b9,1 do b9[cd]=nil end end local b8 b8=function(b9,ca)if b9
+['TeamScore']==ca['TeamScore']then return b9['ID']<ca['ID']end if not b9[
+'TeamScore']then return false end if not ca['TeamScore']then return true end
+return b9['TeamScore']<ca['TeamScore']end local b9 b9=function(ca)for cb=1,#aj,1
+do local cc,cd=aj[cb],0 for ce,cf in ipairs(ca['MyPlayers'])do local cg=cf[
+'Player']:FindFirstChild(cf['Player'].leaderstats:FindFirstChild(cc['Name']))if
+cg and not cg:IsA'StringValue'then cd=cd+bp((cf['Player'].leaderstats)[cc['Name'
+]])end end if ca['Frame']:FindFirstChild(cc['Name'])then ca['Frame'][cc['Name']]
+.Text=tostring(cd)end end return bb()end local ca ca=function(cb)for cc,cd in
+ipairs(cb)do table.sort(cd['MyPlayers'],ba)b9(cd)end return table.sort(cb,b8)end
+local cb cb=function()bt(al)ca(am)if an then b9(an)end return b7(am,ao)end local
+cc cc=function(cd,ce)return Delay(0.5,function()m('friend status changed for: '
+..tostring(cd.Name)..' '..tostring(ce)..' vs '..tostring(a7(cd)))for cf,cg in
+ipairs(al)do if cg['Player']==cd then local ch=i(ce)if ch==''and cg['Frame'].
+FriendLabel.Image~=''then cg['Frame'].TitleFrame.Title.Position=cg['Frame'].
+TitleFrame.Title.Position-UDim2.new(0,17,0,0)elseif ch~=''and cg['Frame'].
+FriendLabel.Image==''then cg['Frame'].TitleFrame.Title.Position=cg['Frame'].
+TitleFrame.Title.Position+UDim2.new(0,17,0,0)m('confirmed status: '..tostring(cd
+.Name))end cg['Frame'].FriendLabel.Image=ch return end end end)end p.
+FriendStatusChanged:connect(cc)local cd cd=function(ce,cf)n(ce['Frame'],
+'PlayerScore').Text=tostring(cf)ce['TeamScore']=cf end local ce ce=function(cf,
+cg)if cg.Name=='AutoHide'then cf['AutoHide']=true elseif cg.Name=='TeamScore'
+then n(cf['Frame'],'PlayerScore').Text=tostring(cg.Value)cf['TeamScore']=cg.
+Value return cg.Changed:connect(function()return cd(cf,cg.Value)end)end end
+local cf cf=function(cg,ch)if ch.Name=='AutoHide'then cg['AutoHide']=false
+elseif ch.Name=='TeamScore'then n(cg['Frame'],'PlayerScore').Text=''cg[
+'TeamScore']=nil end end local cg cg=function(ch)while aD do m
+'in removing team frame lock'wait(3.333333333333333E-2)end aD=true local ci for
+cj,ck in ipairs(am)do if ch==ck['MyTeam']then ci=ck ck['Frame']:Destroy()table.
+remove(am,cj)end end if#am==0 then m'removeteamframe, remove neutral'if an then
+bY()end end for cl,cm in ipairs(ci['MyPlayers'])do bZ(ci,cl)b4(cm,'TeamColor')
+end bS()bg()aD=false end local ch ch=function(ci,cl)if cl=='Name'then n(n(ci[
+'Frame'],'TitleFrame'),'Title').Text=ci['MyTeam'].Name elseif cl=='TeamColor'
+then ci['Frame'].ClickListener.BackgroundColor3=ci['MyTeam'].TeamColor.Color for
+cm,cn in pairs(am)do if cn['MyTeam'].TeamColor==ci['MyTeam']then cg(ci['MyTeam']
+)end end ci['MyPlayers']={}for co,cp in pairs(al)do b3(cp)end return bg()end end
+local ci ci=function(cl)while aD do m'in adding team frame lock'wait(
+3.333333333333333E-2)end aD=true local co={}co['MyTeam']=cl co['MyPlayers']={}co
+['Frame']=Q:Clone()n(n(co['Frame'],'TitleFrame'),'Title').Text=cl.Name co[
+'Frame'].TitleFrame.Title.Font='ArialBold'co['Frame'].TitleFrame.Title.FontSize=
+'Size18'co['Frame'].TitleFrame.Position=UDim2.new(co['Frame'].TitleFrame.
+Position.X.Scale,co['Frame'].TitleFrame.Position.X.Offset,0.1,0)co['Frame'].
+TitleFrame.Size=UDim2.new(co['Frame'].TitleFrame.Size.X.Scale,co['Frame'].
+TitleFrame.Size.X.Offset,0.8,0)co['Frame'].Position=UDim2.new(1,0,(#ao*co[
+'Frame'].Size.Y.Scale),0)n(co['Frame'],'ClickListener').MouseButton1Down:
+connect(function(cp,cq)return bP(co,cp,cq)end)co['Frame'].ClickListener.
+BackgroundColor3=cl.TeamColor.Color co['Frame'].ClickListener.
+BackgroundTransparency=0.7 co['Frame'].ClickListener.AutoButtonColor=false ak=ak
++1 co['ID']=ak co['AutoHide']=false if cl:FindFirstChild'AutoHide'then co[
+'AutoHide']=true end if cl:FindFirstChild'TeamScore'then ce(co,cl.TeamScore)end
+cl.ChildAdded:connect(function(cp)return ce(co,cp)end)cl.ChildRemoved:connect(
+function(cp)return cf(co,cp)end)cl.Changed:connect(function(cp)return ch(co,cp)
+end)for cp,cq in pairs(al)do if not cq['Player'].Neutral and cq['Player'].
+TeamColor==cl.TeamColor then b1(co,cq)end end co['IsHidden']=false if not co[
+'AutoHide']or#co['MyPlayers']>0 then co['Frame'].Parent=H co['Frame']:
+TweenPosition(UDim2.new(0.5,0,(#ao*co['Frame'].Size.Y.Scale),0),'Out','Linear',c
+,true)bR()else co['IsHidden']=true co['Frame'].Parent=nil end table.insert(am,co
+)bb()bg()if#am==1 and not an then b2()end aD=false end local cl cl=function(co)
+return ci(co)end local co co=function(cp)return cg(cp)end bg=function()while aF
 do m'in baseupdate lock'wait(3.333333333333333E-2)end aF=true bw()if#am==0 and
-not an then bX()else ca()end for co,cp in ipairs(ao)do if not(cp.Parent~=nil)
-then cp:TweenPosition(UDim2.new(0.5,0,((#ao-co)*cp.Size.Y.Scale),0),'Out',
+not an then bX()else cb()end for cp,cq in ipairs(ao)do if not(cq.Parent~=nil)
+then cq:TweenPosition(UDim2.new(0.5,0,((#ao-cp)*cq.Size.Y.Scale),0),'Out',
 'Linear',c,true)end end if not M.Value and#ao>ag then bz()end bb()bL()bz()bN()aF
-=false end game.GuiService:AddKey'\t'local co=time()game.GuiService.KeyPressed:
-connect(function(cp)if cp=='\t'then m'caught tab key'local cq,cr=pcall(function(
-)return game.GuiService.IsModalDialog end)if cq==false or(cq and cr==false)then
-if time()-co>0.4 then co=time()if O.Value then if not N.Value then r:
+=false end game.GuiService:AddKey'\t'local cp=time()game.GuiService.KeyPressed:
+connect(function(cq)if cq=='\t'then m'caught tab key'local cr,cs=pcall(function(
+)return game.GuiService.IsModalDialog end)if cr==false or(cr and cs==false)then
+if time()-cp>0.4 then cp=time()if O.Value then if not N.Value then r:
 TweenPosition(UDim2.new(0,0,0,0),'Out','Linear',c*1.2,true)N.Value=true else r:
 TweenPosition(UDim2.new(ax.X.Scale,ax.X.Offset-10,0,0),'Out','Linear',c*1.2,true
-)N.Value=false M.Value=true end else return by()end end end end end)local cp cp=
-function(cq)return b4(cq)end local cq cq=function(cr)if cr:IsA'Player'then
-return Spawn(function()return cp(cr)end)else return be()end end local cr cr=
-function(cs,ct)if cs==Enum.CoreGuiType.All or cs==Enum.CoreGuiType.PlayerList
-then s.Visible=ct end end local cs cs=function(ct)if ct:IsA'Team'then return ck(
-ct)else return be()end end local ct ct=function(cu)if cu:IsA'Team'then return
-cn(cu)else return be()end end pcall(function()cr(Enum.CoreGuiType.PlayerList,
+)N.Value=false M.Value=true end else return by()end end end end end)local cq cq=
+function(cr)return b5(cr)end local cr cr=function(cs)if cs:IsA'Player'then
+return Spawn(function()return cq(cs)end)else return be()end end local cs cs=
+function(ct,cu)if ct==Enum.CoreGuiType.All or ct==Enum.CoreGuiType.PlayerList
+then s.Visible=cu end end local ct ct=function(cu)if cu:IsA'Team'then return cl(
+cu)else return be()end end local cu cu=function(cv)if cv:IsA'Team'then return
+co(cv)else return be()end end pcall(function()cs(Enum.CoreGuiType.PlayerList,
 Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList))return Game.
-StarterGui.CoreGuiChangedSignal:connect(cr)end)while not game:GetService'Teams'
-do wait(3.333333333333333E-2)m'Waiting For Teams'end for cu,cv in pairs(game.
-Teams:GetTeams())do ck(cv)end for cw,cx in pairs(o:GetPlayers())do Spawn(
-function()return cp(cx)end)end game.Teams.ChildAdded:connect(cs)game.Teams.
-ChildRemoved:connect(ct)o.ChildAdded:connect(cq)a6()P.Value=true bg()wait(2)aS=
+StarterGui.CoreGuiChangedSignal:connect(cs)end)while not game:GetService'Teams'
+do wait(3.333333333333333E-2)m'Waiting For Teams'end for cv,cw in pairs(game.
+Teams:GetTeams())do cl(cw)end for cx,cy in pairs(o:GetPlayers())do Spawn(
+function()return cq(cy)end)end game.Teams.ChildAdded:connect(ct)game.Teams.
+ChildRemoved:connect(cu)o.ChildAdded:connect(cr)a6()P.Value=true bg()wait(2)aS=
 not not game.Workspace:FindFirstChild'PSVariable'if p.Name=='newplayerlistisbad'
 or p.Name=='imtotallyadmin'then ad.Parent=r return Spawn(function()while true do
-local cy=''for cz,cA in pairs(game.Players:GetPlayers())do cy=cy..' '..tostring(
-cA.Name)end ae.Text=cy wait(0.5)end end)end
+local cz=''for cA,cB in pairs(game.Players:GetPlayers())do cz=cz..' '..tostring(
+cB.Name)end ae.Text=cz wait(0.5)end end)end

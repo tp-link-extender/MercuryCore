@@ -16,7 +16,7 @@ New = (className, name, props) ->
 	local parent
 
 	for k, v in pairs props
-		if type(k) == "string" then
+		if type(k) == "string"
 			if k == "Parent"
 				parent = v
 			else

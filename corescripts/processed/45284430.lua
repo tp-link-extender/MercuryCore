@@ -421,25 +421,25 @@ Image='rbxasset://textures/ui/closeButton.png'end)if s then local v=a(
 FontSize.Size18,Size=UDim2.new(0,100,0,50),Position=UDim2.new(0.5,-50,1,-50)})if
 r then v.MouseButton1Click:connect(function()return r()end)end v.Parent=t end
 local v=a('Frame','ContentFrame',{BackgroundTransparency=1,Position=UDim2.new(0,
-0,0,25),Parent=t})if s then v.Size=UDim2.new(1,0,1,-75)else v.Size=UDim2.new(1,0
-,1,-22)end local w,x x=function()if t.Visible and t.Parent then local y=math.
-min(t.Parent.AbsoluteSize.X,t.Parent.AbsoluteSize.Y)return q(200,y)end end t.
-Changed:connect(function(y)if y=='Parent'then if(w~=nil)then w:disconnect()w=nil
-end if t.Parent and t.Parent:IsA'GuiObject'then w=t.Parent.Changed:connect(
-function(z)if z=='AbsoluteSize'then wait()return x()end end)x()end end if y==
-'Visible'then return x()end end)return t,v end b.CreateTextTutorialPage=function
-(p,q,r)local s,t,u,v=nil,nil,a('TextLabel',{BackgroundTransparency=1,TextColor3=
-Color3.new(1,1,1),Text=q,TextWrap=true,TextXAlignment=Enum.TextXAlignment.Left,
-TextYAlignment=Enum.TextYAlignment.Center,Font=Enum.Font.Arial,FontSize=Enum.
-FontSize.Size14,Size=UDim2.new(1,0,1,0)}),nil v=function(w,x)local y=j(w,x,
-function(y)s.Size=UDim2.new(0,y,0,y)return u.TextFits end)s.Size=UDim2.new(0,y,0
-,y)s.Position=UDim2.new(0.5,-y/2,0.5,-y/2)end s,t=o(p,v,r)u.Parent=t return s
-end b.CreateImageTutorialPage=function(p,q,r,s,t,u)local v,w,x,y=nil,nil,a(
-'ImageLabel',{BackgroundTransparency=1,Image=q,Size=UDim2.new(0,r,0,s),Position=
-UDim2.new(0.5,-r/2,0.5,-s/2)}),nil y=function(z,A)local B=j(z,A,function(B)
-return B>=r and B>=s end)if B>=r and B>=s then x.Size=UDim2.new(0,r,0,s)x.
-Position=UDim2.new(0.5,-r/2,0.5,-s/2)else if r>s then x.Size=UDim2.new(1,0,s/r,0
-)x.Position=UDim2.new(0,0,0.5-(s/r)/2,0)else x.Size=UDim2.new(r/s,0,1,0)x.
+0,0,25),Parent=t})v.Size=UDim2.new(1,0,1,(function()if s then return-75 else
+return-22 end end)())local w,x x=function()if t.Visible and t.Parent then local
+y=math.min(t.Parent.AbsoluteSize.X,t.Parent.AbsoluteSize.Y)return q(200,y)end
+end t.Changed:connect(function(y)if y=='Parent'then if(w~=nil)then w:disconnect(
+)w=nil end if t.Parent and t.Parent:IsA'GuiObject'then w=t.Parent.Changed:
+connect(function(z)if z=='AbsoluteSize'then wait()return x()end end)x()end end
+if y=='Visible'then return x()end end)return t,v end b.CreateTextTutorialPage=
+function(p,q,r)local s,t,u,v=nil,nil,a('TextLabel',{BackgroundTransparency=1,
+TextColor3=Color3.new(1,1,1),Text=q,TextWrap=true,TextXAlignment=Enum.
+TextXAlignment.Left,TextYAlignment=Enum.TextYAlignment.Center,Font=Enum.Font.
+Arial,FontSize=Enum.FontSize.Size14,Size=UDim2.new(1,0,1,0)}),nil v=function(w,x
+)local y=j(w,x,function(y)s.Size=UDim2.new(0,y,0,y)return u.TextFits end)s.Size=
+UDim2.new(0,y,0,y)s.Position=UDim2.new(0.5,-y/2,0.5,-y/2)end s,t=o(p,v,r)u.
+Parent=t return s end b.CreateImageTutorialPage=function(p,q,r,s,t,u)local v,w,x
+,y=nil,nil,a('ImageLabel',{BackgroundTransparency=1,Image=q,Size=UDim2.new(0,r,0
+,s),Position=UDim2.new(0.5,-r/2,0.5,-s/2)}),nil y=function(z,A)local B=j(z,A,
+function(B)return B>=r and B>=s end)if B>=r and B>=s then x.Size=UDim2.new(0,r,0
+,s)x.Position=UDim2.new(0.5,-r/2,0.5,-s/2)else if r>s then x.Size=UDim2.new(1,0,
+s/r,0)x.Position=UDim2.new(0,0,0.5-(s/r)/2,0)else x.Size=UDim2.new(r/s,0,1,0)x.
 Position=UDim2.new(0.5-(r/s)/2,0,0,0)end end B=B+50 v.Size=UDim2.new(0,B,0,B)v.
 Position=UDim2.new(0.5,-B/2,0.5,-B/2)end v,w=o(p,y,t,u)x.Parent=w return v end b
 .AddTutorialPage=function(p,q)local r,s=p.TransitionFrame,p.CurrentTutorialPage
@@ -692,35 +692,35 @@ BackgroundTransparency=1 end end)p.MouseButton1Click:connect(function()if ad~=au
 then return ar(au,tostring(at))end end)return au end for at=1,#ag do local au=
 as(ag[at])if ag[at]=='Grass'then ad=au au.BackgroundTransparency=0 end au.Parent
 =an end local at at=function(au)if not au then return end if ah==au then return
-end local p,q=aj(au),an:GetChildren()for r=1,#q do if q[r].Name==
-'Plastic (blue)'and p=='Plastic (blue)'then ar(q[r],p)return end if q[r].Name==
-'Plastic (red)'and p=='Plastic (red)'then ar(q[r],p)return end if string.find(q[
-r].Name,p)then ar(q[r],p)return end end end ae.Changed:connect(function(au)if au
-=='AbsoluteSize'then return aq()end end)aq()return ae,ac,at end b.
-CreateLoadingFrame=function(aa,ab,ac)game:GetService'ContentProvider':Preload
-'http://www.roblox.com/asset/?id=35238053'local ad=a('Frame','LoadingFrame',{
-Style=Enum.FrameStyle.RobloxRound,Size=(function()if ab then return ab else
-return UDim2.new(0,300,0,160)end end)(),Position=(function()if ac then return ac
-else return UDim2.new(0.5,-150,0.5,-80)end end)(),a('TextLabel','loadingName',{
-BackgroundTransparency=1,Size=UDim2.new(1,0,0,18),Position=UDim2.new(0,0,0,2),
-Font=Enum.Font.Arial,Text=aa,TextColor3=Color3.new(1,1,1),TextStrokeTransparency
-=1,FontSize=Enum.FontSize.Size18})})local ae=a('Frame','LoadingBar',{
-BackgroundColor3=Color3.new(0,0,0),BorderColor3=Color3.new(0.30980392156862746,
-0.30980392156862746,0.30980392156862746),Position=UDim2.new(0,0,0,41),Size=UDim2
-.new(1,0,0,30),Parent=ad})local af,ag,ah=a('ImageLabel','LoadingGreenBar',{Image
-='http://www.roblox.com/asset/?id=35238053',Position=UDim2.new(0,0,0,0),Size=
-UDim2.new(0,0,1,0),Visible=false,Parent=ae}),a('TextLabel','LoadingPercent',{
-BackgroundTransparency=1,Position=UDim2.new(0,0,1,0),Size=UDim2.new(1,0,0,14),
-Font=Enum.Font.Arial,Text='0%',FontSize=Enum.FontSize.Size14,TextColor3=Color3.
-new(1,1,1),Parent=ae}),a('TextButton','CancelButton',{Position=UDim2.new(0.5,-60
-,1,-40),Size=UDim2.new(0,120,0,40),Font=Enum.Font.Arial,FontSize=Enum.FontSize.
-Size18,TextColor3=Color3.new(1,1,1),Text='Cancel',Style=Enum.ButtonStyle.
-RobloxButton,Parent=ad})local ai=a('BindableEvent','CancelButtonClicked',{Parent
-=ah})ah.MouseButton1Click:connect(function()return ai:Fire()end)local aj aj=
-function(ak,al,am)if ak and type(ak~='number')then error(
-'updateLoadingGuiPercent expects number as argument, got '..tostring(type(ak))..
-' instead')end local an if ak<0 then an=UDim2.new(0,0,1,0)elseif ak>1 then an=
-UDim2.new(1,0,1,0)else an=UDim2.new(ak,0,1,0)end if al then if not am then error
+end local p,q=aj(au),an:GetChildren()for r=1,#q do if(q[r].Name==
+'Plastic (blue)'and p=='Plastic (blue)')or(q[r].Name=='Plastic (red)'and p==
+'Plastic (red)')or string.find(q[r].Name,p)then ar(q[r],p)return end end end ae.
+Changed:connect(function(au)if au=='AbsoluteSize'then return aq()end end)aq()
+return ae,ac,at end b.CreateLoadingFrame=function(aa,ab,ac)game:GetService
+'ContentProvider':Preload'http://www.roblox.com/asset/?id=35238053'local ad=a(
+'Frame','LoadingFrame',{Style=Enum.FrameStyle.RobloxRound,Size=(function()if ab
+then return ab else return UDim2.new(0,300,0,160)end end)(),Position=(function()
+if ac then return ac else return UDim2.new(0.5,-150,0.5,-80)end end)(),a(
+'TextLabel','loadingName',{BackgroundTransparency=1,Size=UDim2.new(1,0,0,18),
+Position=UDim2.new(0,0,0,2),Font=Enum.Font.Arial,Text=aa,TextColor3=Color3.new(1
+,1,1),TextStrokeTransparency=1,FontSize=Enum.FontSize.Size18})})local ae=a(
+'Frame','LoadingBar',{BackgroundColor3=Color3.new(0,0,0),BorderColor3=Color3.
+new(0.30980392156862746,0.30980392156862746,0.30980392156862746),Position=UDim2.
+new(0,0,0,41),Size=UDim2.new(1,0,0,30),Parent=ad})local af,ag,ah=a('ImageLabel',
+'LoadingGreenBar',{Image='http://www.roblox.com/asset/?id=35238053',Position=
+UDim2.new(0,0,0,0),Size=UDim2.new(0,0,1,0),Visible=false,Parent=ae}),a(
+'TextLabel','LoadingPercent',{BackgroundTransparency=1,Position=UDim2.new(0,0,1,
+0),Size=UDim2.new(1,0,0,14),Font=Enum.Font.Arial,Text='0%',FontSize=Enum.
+FontSize.Size14,TextColor3=Color3.new(1,1,1),Parent=ae}),a('TextButton',
+'CancelButton',{Position=UDim2.new(0.5,-60,1,-40),Size=UDim2.new(0,120,0,40),
+Font=Enum.Font.Arial,FontSize=Enum.FontSize.Size18,TextColor3=Color3.new(1,1,1),
+Text='Cancel',Style=Enum.ButtonStyle.RobloxButton,Parent=ad})local ai=a(
+'BindableEvent','CancelButtonClicked',{Parent=ah})ah.MouseButton1Click:connect(
+function()return ai:Fire()end)local aj aj=function(ak,al,am)if ak and type(ak~=
+'number')then error('updateLoadingGuiPercent expects number as argument, got '..
+tostring(type(ak))..' instead')end local an if ak<0 then an=UDim2.new(0,0,1,0)
+elseif ak>1 then an=UDim2.new(1,0,1,0)else an=UDim2.new(ak,0,1,0)end if al then
+if not am then error
 [[updateLoadingGuiPercent is set to tween new percentage, but got no tween time length! Please pass this in as third argument]]
 end if an.X.Scale>0 then af.Visible=true return af:TweenSize(an,Enum.
 EasingDirection.Out,Enum.EasingStyle.Quad,am,true)else return af:TweenSize(an,
