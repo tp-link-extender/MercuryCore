@@ -173,7 +173,7 @@ createButton = (actionName, functionInfoTable) ->
 
 	local position
 	for i = 1, #buttonVector do
-		if buttonVector[i] == "empty" then
+		if buttonVector[i] == "empty"
 			position = i
 			break
 
@@ -189,7 +189,7 @@ createButton = (actionName, functionInfoTable) ->
 	button.Position = buttonPositionTable[position]
 	button.Parent = buttonFrame
 
-	if buttonScreenGui and not buttonScreenGui.Parent? then
+	if buttonScreenGui and not buttonScreenGui.Parent?
 		buttonScreenGui.Parent = Game.Players.LocalPlayer.PlayerGui
 
 removeAction = (actionName) ->
