@@ -2107,10 +2107,10 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 		Position: UDim2.new 0, 0, 0, 25
 		Parent: frame
 
-	innerFrame.Size = UDim2.new 1, 0, 1, if giveDoneButton
-		-75
+	innerFrame.Size = if giveDoneButton
+		UDim2.new 1, 0, 1, -75
 	else
-		-22
+		UDim2.new 1, 0, 1, -22
 
 
 	local parentConnection
@@ -3179,10 +3179,15 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 		matName = getNameFromEnum newMaterialType
 		buttons = scrollFrame\GetChildren!
 		for i = 1, #buttons
-			if (buttons[i].Name == "Plastic (blue)" and matName == "Plastic (blue)") or
-				(buttons[i].Name == "Plastic (red)" and matName == "Plastic (red)") or
-				string.find buttons[i].Name, matName
+			if buttons[i].Name == "Plastic (blue)" and matName == "Plastic (blue)"
+				goToNewMaterial buttons[i], matName
+				return
 
+			if buttons[i].Name == "Plastic (red)" and matName == "Plastic (red)"
+				goToNewMaterial buttons[i], matName
+				return
+
+			if string.find buttons[i].Name, matName
 				goToNewMaterial buttons[i], matName
 				return
 

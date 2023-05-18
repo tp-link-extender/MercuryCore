@@ -2262,11 +2262,6 @@ RemovePlayerFromTeam = (teamEntry, index) ->
 	@Args
 	entry Player entry
 --]]
-
-test = 5
-
-test = 5
-
 FindRemovePlayerFromTeam = (entry) ->
 	if entry["MyTeam"]
 		for j, oldEntry in ipairs entry["MyTeam"]["MyPlayers"]
