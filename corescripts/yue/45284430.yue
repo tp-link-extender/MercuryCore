@@ -432,8 +432,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 			val = scrollMouseCount
 			wait 0.5
 			while val == scrollMouseCount
-				if scrollUp! == false
-					break
+				break if scrollUp! == false
 
 				wait 0.1
 
@@ -458,8 +457,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 			val = scrollMouseCount
 			wait 0.5
 			while val == scrollMouseCount
-				if scrollDown! == false
-					break
+				break if scrollDown! == false
 
 				wait 0.1
 
@@ -980,10 +978,10 @@ t.CreateTrueScrollingFrame = ->
 
 		percentFrame = 0
 		if scrollbar.Position.Y.Scale > 0
-			if scrollbar.Visible
-				percentFrame = scrollbar.Position.Y.Scale / ((scrollTrack.AbsoluteSize.Y - scrollbar.AbsoluteSize.Y) / scrollTrack.AbsoluteSize.Y)
+			percentFrame = if scrollbar.Visible
+				scrollbar.Position.Y.Scale / ((scrollTrack.AbsoluteSize.Y - scrollbar.AbsoluteSize.Y) / scrollTrack.AbsoluteSize.Y)
 			else
-				percentFrame = 0
+				0
 
 
 		if percentFrame > 0.99
@@ -1101,16 +1099,13 @@ t.CreateTrueScrollingFrame = ->
 			w = 0.1
 			while scrollStamp == current
 				doScrollUp!
-				if mouseYPos and mouseYPos > scrollbar.AbsolutePosition.y
-					break
+				break if mouseYPos and mouseYPos > scrollbar.AbsolutePosition.y
+				break if not scrollUpButton.Active
 
-				if not scrollUpButton.Active
-					break
-
-				if tick! - t > 5
-					w = 0
+				w = if tick! - t > 5
+					0
 				elseif tick! - t > 2
-					w = 0.06
+					0.06
 
 				wait w
 
@@ -1132,16 +1127,14 @@ t.CreateTrueScrollingFrame = ->
 			w = 0.1
 			while scrollStamp == current
 				doScrollDown!
-				if mouseYPos and mouseYPos < (scrollbar.AbsolutePosition.y + scrollbar.AbsoluteSize.x)
-					break
+				break if mouseYPos and mouseYPos < (scrollbar.AbsolutePosition.y + scrollbar.AbsoluteSize.x)
+				break if not scrollDownButton.Active
+				
 
-				if not scrollDownButton.Active
-					break
-
-				if tick! - t > 5
-					w = 0
+				w = if tick! - t > 5
+					0
 				elseif tick! - t > 2
-					w = 0.06
+					0.06
 
 				wait w
 
@@ -1569,10 +1562,10 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 		scrollDrag.Size = UDim2.new scrollDrag.Size.X.Scale, scrollDrag.Size.X.Offset, scrollDrag.Size.Y.Scale, dragSizeY
 
 		relativeYPos = (scrollPosition - 1) / (guiObjects - howManyDisplayed)
-		if relativeYPos > 1
-			relativeYPos = 1
+		relativeYPos = if relativeYPos > 1
+			1
 		elseif relativeYPos < 0
-			relativeYPos = 0
+			0
 
 		absYPos = 0
 
@@ -1637,10 +1630,10 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 				doScrollUp!
 				break if mouseYPos and mouseYPos > scrollDrag.AbsolutePosition.y
 				break if not scrollUpButton.Active
-				if tick! - t > 5
-					w = 0
+				w = if tick! - t > 5
+					0
 				elseif tick! - t > 2
-					w = 0.06
+					0.06
 
 				wait w
 
@@ -1664,10 +1657,10 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 				doScrollDown!
 				break if mouseYPos and mouseYPos < (scrollDrag.AbsolutePosition.y + scrollDrag.AbsoluteSize.x)
 				break if not scrollDownButton.Active
-				if tick! - t > 5
-					w = 0
+				w = if tick! - t > 5
+					0
 				elseif tick! - t > 2
-					w = 0.06
+					0.06
 
 				wait w
 
@@ -2765,16 +2758,17 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				if insertButtons[index]
 					if contents[index]
 						-- we don't want water to have a drop down button
-						if contents[index].Name == "Water"
-							if Data.Category[Data.CurrentCategory].SetName == "High Scalability"
-								insertButtons[index]\FindFirstChild("DropDownButton", true)\Destroy!
+						if (contents[index].Name == "Water") and
+							(Data.Category[Data.CurrentCategory].SetName == "High Scalability")
+
+							insertButtons[index]\FindFirstChild("DropDownButton", true)\Destroy!
 
 
 						local assetId
-						if useAssetVersionId
-							assetId = contents[index].AssetVersionId
+						assetId = if useAssetVersionId
+							contents[index].AssetVersionId
 						else
-							assetId = contents[index].AssetId
+							contents[index].AssetId
 
 						setInsertButtonImageBehavior insertButtons[index], true, contents[index].Name, assetId
 					else break

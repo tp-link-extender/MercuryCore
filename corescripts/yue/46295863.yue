@@ -942,12 +942,12 @@ createGameSettingsMenu = (baseZIndex, _) ->
 		setGraphicsQualityLevel = (newLevel) ->
 			percentage = newLevel / GraphicsQualityLevels
 			newSetting = math.floor((settings!.Rendering\GetMaxQualityLevel! - 1) * percentage)
-			if newSetting == 20 -- Level 20 is the same as level 21, except it doesn't render ambient occlusion
-				newSetting = 21
+			newSetting = if newSetting == 20 -- Level 20 is the same as level 21, except it doesn't render ambient occlusion
+				21
 			elseif newLevel == 1 -- make sure we can go to lowest settings (for terrible computers)
-				newSetting = 1
+				1
 			elseif newSetting > settings!.Rendering\GetMaxQualityLevel!
-				newSetting = settings!.Rendering\GetMaxQualityLevel! - 1
+				settings!.Rendering\GetMaxQualityLevel! - 1
 
 
 			UserSettings!.GameSettings.SavedQualityLevel = newLevel
@@ -1052,10 +1052,10 @@ createGameSettingsMenu = (baseZIndex, _) ->
 				return
 
 
-			if newGraphicsValue < 1
-				newGraphicsValue = 1
+			newGraphicsValue = if newGraphicsValue < 1
+				1
 			elseif newGraphicsValue >= settings!.Rendering\GetMaxQualityLevel!
-				newGraphicsValue = settings!.Rendering\GetMaxQualityLevel! - 1
+				settings!.Rendering\GetMaxQualityLevel! - 1
 
 
 			graphicsLevel.Value = newGraphicsValue

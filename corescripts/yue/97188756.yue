@@ -1165,10 +1165,10 @@ Chat.UpdateChat = (cPlayer, message) =>
 -- NOTE: Temporarily disabled ring buffer to allow for chat to always wrap around
 Chat.CreateMessage = (cPlayer, message) =>
 	local pName
-	if not cPlayer
-		pName = ""
+	pName = if not cPlayer
+		""
 	else
-		pName = cPlayer.Name
+		cPlayer.Name
 	message = StringTrim message
 	local pLabel
 	local mLabel
@@ -1293,10 +1293,10 @@ Chat.FindButtonTree = (scButton, rootList) =>
 	list = {}
 	rootList = rootList or @SafeChatTree
 	for button, _ in pairs rootList
-		if button == scButton
-			list = rootList[button]
+		list = if button == scButton
+			rootList[button]
 		elseif type(rootList[button]) == "table"
-			list = Chat\FindButtonTree scButton, rootList[button]
+			Chat\FindButtonTree scButton, rootList[button]
 	list
 
 Chat.ToggleSafeChatMenu = (scButton) =>

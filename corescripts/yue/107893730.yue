@@ -340,10 +340,10 @@ updateAfterBalanceText = (playerBalance, notRightBc) ->
 		return true, false
 
 	local keyWord
-	if currentCurrencyType == Enum.CurrencyType.Robux
-		keyWord = "robux"
+	keyWord = if currentCurrencyType == Enum.CurrencyType.Robux
+		"robux"
 	elseif currentCurrencyType == Enum.CurrencyType.Tix
-		keyWord = "tickets"
+		"tickets"
 
 	if not keyWord
 		return false
