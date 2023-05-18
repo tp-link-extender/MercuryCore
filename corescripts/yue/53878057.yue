@@ -323,8 +323,7 @@ enlargeButton = (button) ->
 	return if not button.Selected
 
 	for i = 1, #gearSlots
-		if gearSlots[i] == "empty"
-			break
+		break if gearSlots[i] == "empty"
 
 		if gearSlots[i] ~= button
 			normalizeButton gearSlots[i]
@@ -429,9 +428,7 @@ activateGear = (num) ->
 
 normalizeAllButtons = ->
 	for i = 1, #gearSlots
-		if gearSlots[i] == "empty"
-			break
-
+		break if gearSlots[i] == "empty"
 		if gearSlots[i] ~= button
 			normalizeButton gearSlots[i], 0.1
 
@@ -528,8 +525,7 @@ resolveDrag = (gearClone, x, y) ->
 
 unequipAllItems = (dontEquipThis) ->
 	for i = 1, #gearSlots
-		if gearSlots[i] == "empty"
-			break
+		break if gearSlots[i] == "empty"
 
 		with gearSlots[i]
 			if .GearReference.Value and .GearReference.Value ~= dontEquipThis
