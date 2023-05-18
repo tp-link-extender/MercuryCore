@@ -204,14 +204,14 @@ setHeaderText = (text) ->
 assetTypeToString = (assetType) ->
 	switch assetType
 		when 1 then "Image"
-		when 2 then	"T-Shirt"
-		when 3 then	"Audio"
-		when 4 then	"Mesh"
-		when 5 then	"Lua"
-		when 6 then	"HTML"
-		when 7 then	"Text"
-		when 8 then	"Hat"
-		when 9 then	"Place"
+		when 2 then "T-Shirt"
+		when 3 then "Audio"
+		when 4 then "Mesh"
+		when 5 then "Lua"
+		when 6 then "HTML"
+		when 7 then "Text"
+		when 8 then "Hat"
+		when 9 then "Place"
 		when 10 then "Model"
 		when 11 then "Shirt"
 		when 12 then "Pants"
@@ -233,7 +233,7 @@ assetTypeToString = (assetType) ->
 		when 32 then "Package"
 		when 33 then "YouTube Video"
 		when 34 then "Game Pass"
-		when 0 then	"Product"
+		when 0 then "Product"
 		else ""
 
 currencyTypeToString = (currencyType) ->

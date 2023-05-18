@@ -671,8 +671,7 @@ filterGear = (terms) ->
 	filteredGear = {}
 	for _, v in pairs backpackItems
 		if buttons[v]
-			gearString = string.lower buttons[v].GearReference.Value.Name
-			gearString = trim gearString
+			gearString = trim string.lower buttons[v].GearReference.Value.Name
 			for i = 1, #terms
 				if string.match gearString, terms[i]
 					table.insert filteredGear, buttons[v]

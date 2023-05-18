@@ -8,7 +8,12 @@ export async function GET({ url, setHeaders }) {
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
 	try {
-		const file = fs.readFileSync(`corescripts/processed/${ID}.lua`, "utf-8")
+		const file = fs.readFileSync(
+			ID == "38037265"
+				? "corescripts/38037265.xml"
+				: `corescripts/processed/${ID}.lua`,
+			"utf-8"
+		)
 
 		setHeaders({
 			"Content-Type": "binary/octet-stream",

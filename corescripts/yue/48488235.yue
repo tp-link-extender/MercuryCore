@@ -181,7 +181,7 @@ New = (className, name, props) ->
 --[[
 	makes a full sized background for a guiobject
 	@Args:
-	imgName		asset name of image to fill background
+	imgName asset name of image to fill background
 	@Return:	background gui object
 --]]
 MakeBackgroundGuiObj = (imgName) ->
@@ -197,7 +197,7 @@ Color3I = (r, g, b) -> Color3.new r / 255, g / 255, b / 255
 --[[
 	Gets correct icon for builder's club status to display by name
 	@Args:
-	membershipType		Enum of membership status
+	membershipType Enum of membership status
 	@Return: 			string of image asset
 --]]
 getMembershipTypeIcon = (membershipType, playerName) ->
@@ -234,10 +234,10 @@ getFriendStatusIcon = (friendStatus) ->
 --[[
 	Utility function to create buttons for the popup menus
 	@Args:
-	nparent		what to parent this button to
-	ntext		text to put on this button
-	index		number index of this entry in menu
-	last		is this the last element of the popup menu
+	nparent what to parent this button to
+	ntext text to put on this button
+	index number index of this entry in menu
+	last is this the last element of the popup menu
 	@Return:	a popup menu button
 --]]
 MakePopupButton = (nparent, ntext, index, last) ->
@@ -288,8 +288,8 @@ debugprint = (str) ->
 --[[
 	obligatory wait for child function
 	@Args:
-	parent		Parent object to look for child in
-	child		name of child object to look for
+	parent Parent object to look for child in
+	child name of child object to look for
 	@Return: object waited for
 --]]
 WaitForChild = (parent, child) ->
@@ -946,11 +946,11 @@ AbsoluteToPercent = (x, y) ->
 	tweens property of element from starta to enda over length of time
 	Warning: should be put in a Spawn call
 	@Args:
-	element		textobject to tween transparency on
+	element textobject to tween transparency on
 	propName
-	starta		alpha to start tweening
-	enda		alpha to end tweening on
-	length		how many seconds to spend tweening
+	starta alpha to start tweening
+	enda alpha to end tweening on
+	length how many seconds to spend tweening
 --]]
 TweenProperty = (obj, propName, inita, enda, length) ->
 	startTime = tick!
@@ -965,9 +965,9 @@ TweenProperty = (obj, propName, inita, enda, length) ->
 	replace with some sort of global input catching A.S.A. FREAKING P.
 	creates a fullsize gui element to catch next mouse up event completeing a click
 	@Args:
-	frameParent		Object to parent fullscreen gui to
-	polledFunction	function to call on mouse moved events in this gui
-	exitFunction	function to call when click event is fired
+	frameParent Object to parent fullscreen gui to
+	polledFunction function to call on mouse moved events in this gui
+	exitFunction function to call when click event is fired
 --]]
 
 WaitForClick = (frameParent, polledFunction, exitFunction) ->
@@ -1010,8 +1010,8 @@ WaitForClick = (frameParent, polledFunction, exitFunction) ->
 	Note: these privilege levels seem completely arbitrary, but no documentation exists
 	this is all from the old player list, really weird
 	@Args:
-	rank	Integer rank value for player
-	@Return		Normalized integer value for rank?
+	rank Integer rank value for player
+	@Return Normalized integer value for rank?
 --]]
 -- GetPrivilegeType = (rank) ->
 -- 	if rank <= PrivilegeLevel["Banned"]
@@ -1030,8 +1030,8 @@ WaitForClick = (frameParent, polledFunction, exitFunction) ->
 	Note: Very odd that I have to use loops with this instead of directly setting the rank
 	but no documentation for personal server service exists
 	@Args:
-	player		player to change rank of
-	nrank		new integer rank to give player
+	player player to change rank of
+	nrank new integer rank to give player
 --]]
 SetPrivilegeRank = (player, nrank) ->
 	while player.PersonalServerRank < nrank
@@ -1044,7 +1044,7 @@ assetid = "http://www.roblox.com/asset/?id="
 --[[
 	Highlights current rank of this player in the popup menu
 	@Args:
-	player		Player to check for rank on
+	player Player to check for rank on
 --]]
 HighlightMyRank = (player, BanPlayerButton, VisitorButton, MemberButton, AdminButton) ->
 	BanPlayerButton.Image = assetid .. Images["LightPopupMid"]
@@ -1065,8 +1065,8 @@ HighlightMyRank = (player, BanPlayerButton, VisitorButton, MemberButton, AdminBu
 --[[
 	called when player selects new privilege level from popup menu
 	@Args:
-	player		player to set privileges on
-	nlevel		new privilege level for this player
+	player player to set privileges on
+	nlevel new privilege level for this player
 --]]
 OnPrivilegeLevelSelect = (player, nlevel, BanPlayerButton, VisitorButton, MemberButton, AdminButton) ->
 	debugprint "setting privilege level"
@@ -1158,17 +1158,17 @@ InitReportAbuse = ->
 --[[
 	gets enum val of friend status, uses pcall for some reason?(from old playerlist)
 	@Args:
-	player	player object to check if friends with
+	player player object to check if friends with
 	@Return: enum of friend status
 --]]
 GetFriendStatus = (player) ->
 	if player == game.Players.LocalPlayer
-		return Enum.FriendStatus.NotFriend
+		Enum.FriendStatus.NotFriend
 	else
 		success, result = try
 			game.Players.LocalPlayer\GetFriendStatus player
 
-		return if success
+		if success
 			result
 		else
 			Enum.FriendStatus.NotFriend
@@ -1266,8 +1266,8 @@ local BaseUpdate
 --[[
 	doing WAAY too much here, for optimization update only your team
 	@Args:
-	playerEntry		Entry of player who had a stat change
-	property		Name of stat changed
+	playerEntry Entry of player who had a stat change
+	property Name of stat changed
 --]]
 StatChanged = (_, _) -> --playerEntry, property)
 	-- if playerEntry['MyTeam']
@@ -1296,8 +1296,8 @@ local UpdateMaximize
 	if stat is a string value, crashes the leaderboard
 	Note: change crash to a 'tabify' leaderboard later
 	@Args:
-	nchild			new child value to leaderstats
-	playerEntry		entry this stat was added to
+	nchild new child value to leaderstats
+	playerEntry entry this stat was added to
 --]]
 StatAdded = (nchild, playerEntry) ->
 	-- dont re - add a leaderstat I alreday have
@@ -1367,8 +1367,8 @@ DoesStatExist = (statName, exception) ->
 	then calls statchanged to resize frame
 	if playerEntry==localplayer, will remove from scorenames
 	@Args:
-	nchild			___value to be removed
-	playerEntry		entry of player value is being removed from
+	nchild ___value to be removed
+	playerEntry entry of player value is being removed from
 --]]
 StatRemoved = (nchild, playerEntry) ->
 	while AddingStatLock
@@ -2175,7 +2175,7 @@ ScreenGui.Changed\connect UpdateHeaderNameSize
 	called only when the leaderstats object is added to a given player entry
 	removes old stats, adds any existing stats, and sets up listeners for new stats
 	@Args:
-	playerEntry		A reference to the ENTRY(table) of the player who had leaderstats added
+	playerEntry A reference to the ENTRY(table) of the player who had leaderstats added
 --]]
 LeaderstatsAdded = (playerEntry) ->
 	--RemoveAllStats playerEntry
@@ -2194,8 +2194,8 @@ LeaderstatsAdded = (playerEntry) ->
 	called when leaderstats object is removed from play in player entry
 	Note: may not be needed, might be able to just rely on leaderstats added
 	@Args:
-	oldLeaderstats	leaderstats object to be removed
-	playerEntry		A reference to the ENTRY(table) of the player
+	oldLeaderstats leaderstats object to be removed
+	playerEntry A reference to the ENTRY(table) of the player
 --]]
 LeaderstatsRemoved = (_, playerEntry) ->
 	while AddingFrameLock
@@ -2210,7 +2210,7 @@ LeaderstatsRemoved = (_, playerEntry) ->
 	Called when a player entry in the leaderboard is clicked
 	either will highlight entry and start the drag event, or open a popup menu
 	@Args:
-	entry	the player entry clicked
+	entry the player entry clicked
 --]]
 OnPlayerEntrySelect = (entry, startx, starty) ->
 	if not InPopupWaitForClick
@@ -2248,8 +2248,8 @@ RemoveNeutralTeam = ->
 --[[
 	removes a single player from a given team (not usually called directly)
 	@Args:
-	teamEntry		team entry to remove player from
-	index			index of player in 'MyPlayers' list to remove
+	teamEntry team entry to remove player from
+	index index of player in 'MyPlayers' list to remove
 --]]
 RemovePlayerFromTeam = (teamEntry, index) ->
 	table.remove teamEntry["MyPlayers"], index
@@ -2260,7 +2260,7 @@ RemovePlayerFromTeam = (teamEntry, index) ->
 --[[
 	finds previous team this player was on, and if it exists calls removeplayerfromteam
 	@Args
-	entry	Player entry
+	entry Player entry
 --]]
 FindRemovePlayerFromTeam = (entry) ->
 	if entry["MyTeam"]
@@ -2279,8 +2279,8 @@ FindRemovePlayerFromTeam = (entry) ->
 	adds player entry entry to teamentry
 	removes them from any previous team
 	@Args:
-	teamEntry		entry of team to add player to
-	entry			player entry to add to this team
+	teamEntry entry of team to add player to
+	entry player entry to add to this team
 --]]
 AddPlayerToTeam = (teamEntry, entry) ->
 	FindRemovePlayerFromTeam entry
@@ -2368,8 +2368,8 @@ SetPlayerToTeam = (entry) ->
 	called when any children of player changes
 	handles 'Neutral', teamColor, Name and MembershipType changes
 	@Args
-	entry		Player entry changed
-	property	name of property changed
+	entry Player entry changed
+	property name of property changed
 --]]
 PlayerChanged = (entry, property) ->
 	while PlayerChangedLock
@@ -2421,7 +2421,7 @@ PlayerChanged = (entry, property) ->
 	inits their player frame and player entry, assigns them to a team if possible,
 	and hooks up their leaderstats
 	@Args:
-	nplayer		new player object to insert
+	nplayer new player object to insert
 --]]
 InsertPlayerFrame = (nplayer) ->
 	while AddingFrameLock
@@ -2577,8 +2577,8 @@ Players.ChildRemoved\connect RemovePlayerFrame
 	turns a list of team entries with sub lists of players into a single ordered
 	list, in the correct order,and of the correct length
 	@Args:
-	tframes		the team entries to unroll
-	outframes	the list to unroll these entries into
+	tframes the team entries to unroll
+	outframes the list to unroll these entries into
 --]]
 UnrollTeams = (tframes, outframes) ->
 	numEntries = 0
@@ -2622,7 +2622,7 @@ TeamSortFunc = (a, b) ->
 --[[
 	adds up all the score of this team's players to form the team score
 	@Args:
-	team		team entry to sum the scores of
+	team team entry to sum the scores of
 --]]
 AddTeamScores = (team) ->
 	for j = 1, #ScoreNames, 1
@@ -2643,7 +2643,7 @@ AddTeamScores = (team) ->
 	consider adding lock with wait for performance
 	sorts each of the team's player lists induvidually, adds up the team scores.
 	@Args:
-	tentries		table of team entries
+	tentries table of team entries
 --]]
 SortTeams = (tentries) ->
 	for _, val in ipairs tentries
@@ -2719,7 +2719,7 @@ TeamChildRemoved = (entry, nchild) ->
 --[[
 	removes team from team list
 	@Args:
-	nteam		Teamobject to remove
+	nteam Teamobject to remove
 --]]
 RemoveTeamFrame = (nteam) ->
 	while AddingFrameLock
@@ -2771,7 +2771,7 @@ TeamChanged = (entry, property) ->
 	adds any players intended for this team,Creates neutral team if this is the first team added
 	Note: might be best to break this into multiple functions to simplify
 	@Args:
-	nteam	new team object added
+	nteam new team object added
 --]]
 InsertTeamFrame = (nteam) ->
 	while AddingFrameLock
