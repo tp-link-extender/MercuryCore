@@ -12,5 +12,5 @@ export function GET({ url, setHeaders }) {
 		"Cache-Control": "no-cache",
 	})
 
-	return new Response(charApp)
+	return new Response(charApp + ";http://banland.xyz/asset/?id=20573078")
 }
