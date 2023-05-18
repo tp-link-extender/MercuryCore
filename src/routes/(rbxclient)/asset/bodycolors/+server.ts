@@ -18,9 +18,7 @@ export async function GET({ url, setHeaders }) {
 		"Cache-Control": "no-cache",
 	})
 
-	return new Response(`
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	return new Response(`<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
 	<External>null</External>
 	<External>nil</External>
 	<Item class="BodyColors">
