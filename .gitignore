@@ -13,4 +13,4 @@ node_modules
 /data
 /keys
 /setup
-/corescripts/yue/*.lua
+/corescripts/*.lua
