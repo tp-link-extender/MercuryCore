@@ -12,7 +12,7 @@ New = (className, name, props) ->
 	local parent
 
 	for k, v in pairs props
-		if type(k) == "string" then
+		if type(k) == "string"
 			if k == "Parent"
 				parent = v
 			else
@@ -1855,12 +1855,12 @@ t.AutoTruncateTextObject = (textLabel) ->
 
 			--Shrink the text
 			textSize = binaryGrow 0, len, (pos) ->
-				if pos == 0
-					textLabel.Text = "~"
+				textLabel.Text = if pos == 0
+					"~"
 				else
-					textLabel.Text = string.sub(text, 1, pos) .. "~"
+					string.sub(text, 1, pos) .. "~"
 
-				return textLabel.TextFits
+				textLabel.TextFits
 
 			shortText = string.sub(text, 1, textSize) .. "~"
 			textLabel.Text = shortText
@@ -1874,7 +1874,7 @@ t.AutoTruncateTextObject = (textLabel) ->
 			--Okay, now try to binary shrink it back down
 			fullLabelSize = binaryShrink textLabel.AbsoluteSize.X, fullLabel.AbsoluteSize.X, (size) ->
 				fullLabel.Size = UDim2.new 0, size, 1, 0
-				return fullLabel.TextFits
+				fullLabel.TextFits
 
 			fullLabel.Size = UDim2.new 0, fullLabelSize + 6, 1, 0
 
@@ -1906,7 +1906,7 @@ t.AutoTruncateTextObject = (textLabel) ->
 		checkForResize!
 
 
-	return textLabel, changeText
+	textLabel, changeText
 
 
 TransitionTutorialPages = (fromPage, toPage, transitionFrame, currentPageValue) ->
@@ -2107,10 +2107,10 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 		Position: UDim2.new 0, 0, 0, 25
 		Parent: frame
 
-	innerFrame.Size = if giveDoneButton
-		UDim2.new 1, 0, 1, -75
+	innerFrame.Size = UDim2.new 1, 0, 1, if giveDoneButton
+		-75
 	else
-		UDim2.new 1, 0, 1, -22
+		-22
 
 
 	local parentConnection
@@ -2141,7 +2141,7 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 			basicHandleResize!
 
 
-	return frame, innerFrame
+	frame, innerFrame
 
 
 t.CreateTextTutorialPage = (name, text, skipTutorialFunc) ->
@@ -3179,18 +3179,12 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 		matName = getNameFromEnum newMaterialType
 		buttons = scrollFrame\GetChildren!
 		for i = 1, #buttons
-			if buttons[i].Name == "Plastic (blue)" and matName == "Plastic (blue)"
+			if (buttons[i].Name == "Plastic (blue)" and matName == "Plastic (blue)") or
+				(buttons[i].Name == "Plastic (red)" and matName == "Plastic (red)") or
+				string.find buttons[i].Name, matName
+
 				goToNewMaterial buttons[i], matName
 				return
-
-			if buttons[i].Name == "Plastic (red)" and matName == "Plastic (red)"
-				goToNewMaterial buttons[i], matName
-				return
-
-			if string.find buttons[i].Name, matName
-				goToNewMaterial buttons[i], matName
-				return
-
 
 	frame.Changed\connect (prop) ->
 		if prop == "AbsoluteSize"
