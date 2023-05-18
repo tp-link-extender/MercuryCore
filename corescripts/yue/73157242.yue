@@ -441,10 +441,10 @@ findConfigAtMouseTarget = (Mouse, stampData) ->
 	diagBB = maxBB - minBB
 
 	local insertCFrame
-	if stampData.CurrentParts\IsA"Model" or stampData.CurrentParts\IsA "Tool"
-		insertCFrame = stampData.CurrentParts\GetModelCFrame!
+	insertCFrame = if stampData.CurrentParts\IsA"Model" or stampData.CurrentParts\IsA "Tool"
+		stampData.CurrentParts\GetModelCFrame!
 	else
-		insertCFrame = stampData.CurrentParts.CFrame
+		stampData.CurrentParts.CFrame
 
 
 	if Mouse
@@ -1093,10 +1093,10 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 		-- need to offset by distance to be dragged
 		local currModelCFrame
-		if stampData.CurrentParts\IsA "Model"
-			currModelCFrame = stampData.CurrentParts\GetModelCFrame!
+		currModelCFrame = if stampData.CurrentParts\IsA "Model"
+			stampData.CurrentParts\GetModelCFrame!
 		else
-			currModelCFrame = stampData.CurrentParts.CFrame
+			stampData.CurrentParts.CFrame
 
 
 		minBB += targetCFrame.p - currModelCFrame.p
@@ -1902,10 +1902,10 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 			--cellPos = cluster\WorldToCell targetCFrame.p
 
 			local cellPos
-			if stampData.CurrentParts\IsA "Model"
-				cellPos = cluster\WorldToCell stampData.CurrentParts\GetModelCFrame!.p
+			cellPos = if stampData.CurrentParts\IsA "Model"
+				cluster\WorldToCell stampData.CurrentParts\GetModelCFrame!.p
 			else
-				cellPos = cluster\WorldToCell stampData.CurrentParts.CFrame.p
+				cluster\WorldToCell stampData.CurrentParts.CFrame.p
 
 
 			cMax = game.Workspace.Terrain.MaxExtents.Max

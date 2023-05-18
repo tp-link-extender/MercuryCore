@@ -60,10 +60,10 @@ local gui
 waitForChild game, "CoreGui"
 waitForChild game.CoreGui, "RobloxGui"
 
-if game.CoreGui.RobloxGui\FindFirstChild "ControlFrame"
-	gui = game.CoreGui.RobloxGui.ControlFrame
+gui = if game.CoreGui.RobloxGui\FindFirstChild "ControlFrame"
+	game.CoreGui.RobloxGui.ControlFrame
 else
-	gui = game.CoreGui.RobloxGui
+	game.CoreGui.RobloxGui
 
 currentTone = ->
 	if currentConversationDialog

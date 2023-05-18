@@ -466,10 +466,10 @@ initializeDeveloperConsole = ->
 			backRatio = 1 - ratio
 			local offsetRatio
 
-			if currentConsole == LOCAL_CONSOLE
-				offsetRatio = localOffset / Dev_TextHolder.AbsoluteSize.Y
+			offsetRatio = if currentConsole == LOCAL_CONSOLE
+				localOffset / Dev_TextHolder.AbsoluteSize.Y
 			elseif currentConsole == SERVER_CONSOLE
-				offsetRatio = serverOffset / Dev_TextHolder.AbsoluteSize.Y
+				serverOffset / Dev_TextHolder.AbsoluteSize.Y
 
 
 			topRatio = math.max 0, backRatio - offsetRatio
