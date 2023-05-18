@@ -141,13 +141,15 @@
 					<p class="light-text ms-2">{data.bio[0].text}</p>
 				</div>
 			{/if}
-			<div class="mt-4 d-flex">
-				<h2 class="h4 light-text mb-0">Avatar</h2>
-				<img
-					id="avatar"
-					class="w-50"
-					src="/api/avatar/{data.username}-body"
-					alt={data.username} />
+			<div class="mt-4">
+				<h2 class="h4 light-text">Avatar</h2>
+				<div class="card bg-darker card-body">
+					<img
+						id="avatar"
+						class="w-60 mx-auto"
+						src="/api/avatar/{data.username}-body"
+						alt={data.username} />
+				</div>
 			</div>
 		</div>
 		<div class="col-6">
