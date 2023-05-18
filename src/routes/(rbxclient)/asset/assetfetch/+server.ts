@@ -11,6 +11,8 @@ export async function GET({ url, setHeaders }) {
 		const file = fs.readFileSync(
 			ID == "38037265"
 				? "corescripts/38037265.xml"
+				: ID == "20573078"
+				? "corescripts/20573078.xml"
 				: `corescripts/processed/${ID}.lua`,
 			"utf-8"
 		)
@@ -24,8 +26,9 @@ export async function GET({ url, setHeaders }) {
 
 		let file2 = file.replaceAll("roblox.com/asset", "banland.xyz/asset")
 
-		// Health corescript
-		if (ID != "38037265") file2 = SignData(file2, parseInt(ID))
+		// Health corescript and shaggy lol
+		if (!["38037265", "20573078"].includes(ID))
+			file2 = SignData(file2, parseInt(ID))
 
 		console.log("served corescript", ID)
 
