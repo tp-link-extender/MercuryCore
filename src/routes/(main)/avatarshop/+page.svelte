@@ -39,54 +39,133 @@
 </svelte:head>
 
 <div class="container">
-	<div class="row mb-5">
-		<h1 class="col light-text">
-			Catalog
-			<a href="/avatarshop/create" class="btn btn-primary ms-4">Create</a>
-		</h1>
-		<div class="col-8">
+	<div class="row mb-3">
+		<h1 class="col-xl-4 col-lg-4 col-md-3 mb-0 light-text">Catalog</h1>
+		<div class="col-xl-8 col-lg-8 col-md-9 mt-2">
 			<form use:enhance method="POST" action="/search" class="row">
-				<div class="col-8 ms-auto me-5">
-					<div class="input-group">
-						<input
-							bind:value={query}
-							type="text"
-							name="query"
-							class="form-control light-text valid"
-							placeholder="Search for an item"
-							aria-label="Search for an item"
-							aria-describedby="button-addon2" />
-						<input type="hidden" name="category" value="items" />
-						<select
-							class="form-select form-select-sm light-text ps-3"
-							placeholder="Type"
-							aria-label="Type">
-							<option value="Shirt">Shirts</option>
-							<option value="TShirt">T-Shirts</option>
-							<option value="Hat">Hats</option>
-						</select>
-						<button
-							class="btn btn-success"
-							type="submit"
-							aria-label="Search"
-							id="button-addon2">
-							<i class="fa fa-magnifying-glass" />
-						</button>
-					</div>
+				<div class="input-group">
+					<input
+						bind:value={query}
+						type="text"
+						name="query"
+						class="form-control light-text valid"
+						placeholder="Search for an item"
+						aria-label="Search for an item"
+						aria-describedby="button-addon2" />
+					<input type="hidden" name="category" value="items" />
+					<select
+						class="form-select form-select-sm light-text ps-3"
+						placeholder="Type"
+						aria-label="Type">
+						<option value="Shirt">Shirts</option>
+						<option value="TShirt">T-Shirts</option>
+						<option value="Hat">Hats</option>
+						<option value="Pant">Pants</option>
+						<option value="Decal">Decals</option>
+					</select>
+					<button
+						class="btn btn-success"
+						type="submit"
+						aria-label="Search"
+						id="button-addon2">
+						<i class="fa fa-magnifying-glass" />
+					</button>
 				</div>
 			</form>
 		</div>
 	</div>
 	<div class="row">
-		<div class="container d-grid m-0">
-			{#each query ? searchedData : data.items || [] as item, num (item.id)}
-				<Item {item} {num} total={data.items.length} />
-			{/each}
-			{#if query && searchedData.length == 0}
-				<h2 class="h5 light-text mt-5">
-					No items found with search term {query}
-				</h2>
-			{/if}
+		<div class="col d-flex justify-content-start">
+			<div class="card">
+				<div class="card-header light-text">Type</div>
+				<div class="card-body">
+					<a class="btn btn-outline-success" href="/develop">
+						<i class="fas fa-plus" />
+						Create Asset
+					</a>
+					<hr class="light-text" />
+					<div
+						class="nav flex-column nav-pills"
+						id="v-pills-tab"
+						role="tablist"
+						aria-orientation="vertical">
+						<button
+							class="nav-link active"
+							id="v-pills-hats-tab"
+							data-bs-toggle="pill"
+							data-bs-target="#v-pills-hats"
+							type="button"
+							role="tab"
+							aria-controls="v-pills-hats"
+							aria-selected="true">
+							Hats
+						</button>
+						<button
+							class="nav-link"
+							id="v-pills-t-shirts-tab"
+							data-bs-toggle="pill"
+							data-bs-target="#v-pills-t-shirts"
+							type="button"
+							role="tab"
+							aria-controls="v-pills-t-shirts"
+							aria-selected="false">
+							T-Shirts
+						</button>
+						<button
+							class="nav-link"
+							id="v-pills-shirts-tab"
+							data-bs-toggle="pill"
+							data-bs-target="#v-pills-shirts"
+							type="button"
+							role="tab"
+							aria-controls="v-pills-shirts"
+							aria-selected="false">
+							Shirts
+						</button>
+						<button
+							class="nav-link"
+							id="v-pills-pants-tab"
+							data-bs-toggle="pill"
+							data-bs-target="#v-pills-pants"
+							type="button"
+							role="tab"
+							aria-controls="v-pills-pants"
+							aria-selected="false">
+							Pants
+						</button>
+						<button
+							class="nav-link"
+							id="v-pills-decals-tab"
+							data-bs-toggle="pill"
+							data-bs-target="#v-pills-decals"
+							type="button"
+							role="tab"
+							aria-controls="v-pills-decals"
+							aria-selected="false">
+							Decals
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-10">
+			<div class="container d-grid m-0">
+				<!-- <div class="tab-content" id="v-pills-tabContent">
+					<div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">...</div>
+					<div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">...</div>
+					<div class="tab-pane fade" id="v-pills-disabled" role="tabpanel" aria-labelledby="v-pills-disabled-tab" tabindex="0">...</div>
+					<div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab" tabindex="0">...</div>
+					<div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab" tabindex="0">...</div>
+				  </div> -->
+				{#each query ? searchedData : data.items || [] as item, num (item.id)}
+					<Item {item} {num} total={data.items.length} />
+				{/each}
+				{#if query && searchedData.length == 0}
+					<h2 class="h5 light-text mt-5">
+						No items found with search term {query}
+					</h2>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>
@@ -98,6 +177,12 @@
 
 	select
 		max-width: 9rem
+
+	.card-header
+		background-color: var(--accent2)
+
+	.nav-pills .nav-link
+		color: white
 
 	.d-grid
 		font-size: 0.9rem
