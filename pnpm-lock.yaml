@@ -25,6 +25,9 @@ dependencies:
   '@threlte/extras':
     specifier: 5.0.0-next.13
     version: 5.0.0-next.13(three@0.152.2)
+  '@types/d3-interpolate':
+    specifier: ^3.0.1
+    version: 3.0.1
   check-disk-space:
     specifier: ^3.3.1
     version: 3.3.1
@@ -34,6 +37,9 @@ dependencies:
   custom-protocol-check:
     specifier: ^1.4.0
     version: 1.4.0
+  d3-interpolate:
+    specifier: ^3.0.1
+    version: 3.0.1
   dayjs:
     specifier: ^1.11.7
     version: 1.11.7
@@ -766,6 +772,16 @@ packages:
     resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
     dev: true
 
+  /@types/d3-color@3.1.0:
+    resolution: {integrity: sha512-HKuicPHJuvPgCD+np6Se9MQvS6OCbJmOjGvylzMJRlDwUXjKTTXs6Pwgk79O09Vj/ho3u1ofXnhFOaEWWPrlwA==}
+    dev: false
+
+  /@types/d3-interpolate@3.0.1:
+    resolution: {integrity: sha512-jx5leotSeac3jr0RePOH1KdR9rISG91QIE4Q2PYTu4OymLTZfA3SrnURSLzKH48HmXVUru50b8nje4E79oQSQw==}
+    dependencies:
+      '@types/d3-color': 3.1.0
+    dev: false
+
   /@types/estree@1.0.1:
     resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
 
@@ -1409,6 +1425,18 @@ packages:
 
   /custom-protocol-check@1.4.0:
     resolution: {integrity: sha512-eMTyp8AKnE5eo+mKNqG3743eb5ZND5LhBgf9F8BN2tVdhSBnOCHH7me7iTcv0BUDhUW2dBQiHWLWMy776yZW1A==}
+    dev: false
+
+  /d3-color@3.1.0:
+    resolution: {integrity: sha512-zg/chbXyeBtMQ1LbD/WSoW2DpC3I0mpmPdW+ynRTj/x2DAWYrIY7qeZIHidozwV24m4iavr15lNwIwLxRmOxhA==}
+    engines: {node: '>=12'}
+    dev: false
+
+  /d3-interpolate@3.0.1:
+    resolution: {integrity: sha512-3bYs1rOD33uo8aqJfKP3JWPAibgw8Zm2+L9vBKEHJ2Rg+viTR7o5Mmv5mZcieN+FRYaAOWX5SJATX6k1PWz72g==}
+    engines: {node: '>=12'}
+    dependencies:
+      d3-color: 3.1.0
     dev: false
 
   /dayjs@1.11.7:
