@@ -7,6 +7,9 @@ export async function GET({ url, setHeaders }) {
 	const ID = url.searchParams.get("id")
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
+	if (fs.existsSync(`data/assets/${ID}`))
+		return new Response(fs.readFileSync(`data/assets/${ID}`))
+
 	try {
 		const file = fs.readFileSync(
 			ID == "38037265"
