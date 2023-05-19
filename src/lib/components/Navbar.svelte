@@ -47,8 +47,10 @@
 		</div>
 
 		<div id="nav1" class="offcanvas-body px-4 py-1 d-flex">
-			<a class="navbar-brand light-text me-4 mt-1" href="/">Mercury</a>
+			<a id="nav-brand-1" class="navbar-brand light-text me-4 mt-1" href="/">Mercury</a>
 			{#if user}
+			<div class="row">
+				<div class="col-6">
 				<div class="navbar-nav">
 					<a class="btn mt-1 px-1 light-text nav-item" href="/">
 						Home
@@ -73,6 +75,34 @@
 						</a>
 					{/if}
 				</div>
+
+			</div>
+			<div class="col-6 mobilenav">
+				<div id="nav2-1" class="navbar-nav w-100">
+					<a
+						class="light-text mt-1 btn nav-item px-1"
+						href="/user/{user.number}">
+						Profile
+					</a>
+					<a
+						class="light-text mt-1 btn nav-item px-1"
+						href="/inventory">
+						Inventory
+					</a>
+					<a
+						class="light-text mt-1 btn nav-item px-1"
+						href="/requests">
+						Friends
+					</a>
+					<a class="light-text mt-1 btn nav-item px-1" href="/avatar">
+						Avatar
+					</a>
+					<a class="light-text mt-1 btn nav-item px-1" href="/develop">
+						Develop
+					</a>
+				</div>
+			</div>
+			</div>
 				<div id="search" class="navbar-nav ms-4 me-auto mt-1">
 					<form
 						use:enhance
@@ -226,10 +256,9 @@
 				</ul>
 			{/if}
 		</div>
-		<hr class="pt-0 mb-2" />
 		{#if user}
 			<nav id="nav2" class="navbar navbar-dark px-4 py-0 w-100">
-				<div id="nav2-1" class="navbar-nav w-50">
+				<div id="nav2-2" class="navbar-nav w-50">
 					<a
 						class="light-text btn nav-item m-0 py-1"
 						href="/user/{user.number}">
@@ -247,6 +276,9 @@
 					</a>
 					<a class="light-text btn nav-item m-0 py-1" href="/avatar">
 						Avatar
+					</a>
+					<a class="light-text btn nav-item m-0 py-1" href="/develop">
+						Develop
 					</a>
 				</div>
 			</nav>
@@ -301,6 +333,9 @@
 		.mobile-brand
 			display: block
 
+		#nav-brand-1
+			display: none
+
 		#user
 			margin-left: 0.5rem !important
 			margin-bottom: 1.5rem !important
@@ -312,11 +347,24 @@
 				margin: 1rem !important
 
 		#nav2-1
-			overflow-y: auto
+			display: block
+			overflow-x: none
+
+		#nav2
+			display: none
+
+		.mobilenav
+			display: block
 
 	@media only screen and (min-width: 992px)
 		.loggedin
 			margin-left: auto
+
+		#nav2-1
+			display: none
+		
+		.mobilenav
+			display: none
 
 	#nav1
 		background: #fff1
@@ -324,13 +372,14 @@
 			background: none
 			min-height: fit-content !important
 			overflow-x: hidden
+	
 
 	#nav2
 		background: #0003
 		z-index: 1
 		@media only screen and (max-width: 992px)
 			background: none !important
-			min-height: 48vh !important
+			min-height: 36vh !important
 			flex-direction: column
 			margin-left: auto
 
