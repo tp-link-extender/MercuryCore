@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import Report from "$lib/components/Report.svelte"
+	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	export let data
 	export let form
@@ -33,6 +34,8 @@
 		if (["like", "dislike", "unlike", "undislike"].includes(action))
 			return () => {}
 	}
+
+	let tabData = TabData(data.url, ["Description", "Owners"])
 </script>
 
 <svelte:head>
@@ -177,68 +180,34 @@
 			</form>
 		</div>
 	</div>
-	<ul class="nav nav-pills nav-justified mb-3 bg-a" id="pills-tab">
-		<li class="nav-item" role="presentation">
-			<button
-				class="nav-link active"
-				id="pills-desc-tab"
-				data-bs-toggle="pill"
-				data-bs-target="#pills-desc"
-				type="button"
-				role="tab"
-				aria-controls="pills-desc"
-				aria-selected="true">
-				Description
-			</button>
-		</li>
-		<li class="nav-item" role="presentation">
-			<button
-				class="nav-link"
-				id="pills-game-tab"
-				data-bs-toggle="pill"
-				data-bs-target="#pills-game"
-				type="button"
-				role="tab"
-				aria-controls="pills-game"
-				aria-selected="false">
-				Owners
-			</button>
-		</li>
-	</ul>
-	<div class="tab-content" id="pills-tabContent">
-		<div
-			class="tab-pane fade show active"
-			id="pills-desc"
-			role="tabpanel"
-			aria-labelledby="pills-desc-tab"
-			tabindex={0}>
-			<p class="light-text">{data.description}</p>
-		</div>
-		<div
-			class="tab-pane fade"
-			id="pills-game"
-			role="tabpanel"
-			aria-labelledby="pills-game-tab"
-			tabindex={0}>
-			<div class="row">
-				{#each data.owners as owner}
-					<a
-						href="/user/{owner.number}"
-						class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
-						<div class="me-3 rounded-circle pfp bg-a">
-							<img
-								src="/api/avatar/{owner?.username}"
-								alt={owner.username}
-								class="rounded-circle rounded-top-0" />
-						</div>
-						<p class="light-text my-auto h5 me-4 text-truncate">
-							{owner.username}
-						</p>
-					</a>
-				{/each}
-			</div>
-		</div>
+
+	<div class="bg-a">
+		<TabNav bind:tabData justify />
 	</div>
+
+	<Tab {tabData} pos={1}>
+		<p class="light-text">{data.description}</p>
+	</Tab>
+
+	<Tab {tabData} pos={2}>
+		<div class="row">
+			{#each data.owners as owner}
+				<a
+					href="/user/{owner.number}"
+					class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
+					<div class="me-3 rounded-circle pfp bg-a">
+						<img
+							src="/api/avatar/{owner?.username}"
+							alt={owner.username}
+							class="rounded-circle rounded-top-0" />
+					</div>
+					<p class="light-text my-auto h5 me-4 text-truncate">
+						{owner.username}
+					</p>
+				</a>
+			{/each}
+		</div>
+	</Tab>
 </div>
 
 <style lang="sass">
@@ -265,16 +234,6 @@
 
 	#notify
 		pointer-events: none
-
-	.nav-link
-		border-radius: 0
-		color: var(--light-text)
-
-	.nav-pills .active
-			background: transparent
-			border-style: solid
-			border-width: 0px 0px 2px 0px
-			border-color: var(--bs-blue)
 
 	.pfp
 		width: 3.5rem

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
+
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],
@@ -10,6 +12,15 @@
 
 	export let data
 	const { user } = data
+
+	const tabNames = ["Moderation", "Economy", "Statistics"]
+	let pos = 1
+	if (user?.permissionLevel == 5) {
+		tabNames.unshift("Administration")
+		pos = 0
+	}
+
+	let tabData = TabData(data.url, tabNames)
 </script>
 
 <svelte:head>
@@ -17,8 +28,8 @@
 </svelte:head>
 
 <div class="container py-4">
-	<h1 class="h2 text-light">Admin Panel</h1>
-	<h2 class="h4 mb-4 border-bottom border-2 pb-3 text-light">
+	<h1 class="h2 light-text">Admin Panel</h1>
+	<h2 class="h4 mb-4 border-bottom border-2 pb-3 light-text">
 		Your permission level is: <span
 			style="color: {permissions[user?.permissionLevel][0]}">
 			<i class="fa {permissions[user?.permissionLevel][1]} me-1" />
@@ -26,63 +37,12 @@
 		</span>
 	</h2>
 	<div class="row">
-		<div class="col-lg-2 col-md-3 mb-4">
-			<ul class="nav nav-tabs flex-column border-0">
-				{#if user?.permissionLevel == 5}
-					<li class="nav-item" role="presentation">
-						<a
-							class="nav-link active"
-							data-bs-toggle="tab"
-							href="#administration"
-							aria-selected="true"
-							role="tab">
-							Administration
-						</a>
-					</li>
-				{/if}
-				<li class="nav-item" role="presentation">
-					<a
-						class="nav-link {user?.permissionLevel == 5
-							? ''
-							: 'active'}"
-						data-bs-toggle="tab"
-						href="#moderation"
-						aria-selected="false"
-						role="tab"
-						tabindex="-1">
-						Moderation
-					</a>
-				</li>
-				<li class="nav-item" role="presentation">
-					<a
-						class="nav-link"
-						data-bs-toggle="tab"
-						href="#economy"
-						aria-selected="false"
-						role="tab"
-						tabindex="-1">
-						Economy
-					</a>
-				</li>
-				<li class="nav-item" role="presentation">
-					<a
-						class="nav-link"
-						data-bs-toggle="tab"
-						href="#statistics"
-						aria-selected="false"
-						role="tab"
-						tabindex="-1">
-						Statistics
-					</a>
-				</li>
-			</ul>
+		<div class="col-lg-2 col-md-3 mb-4 pe-0">
+			<TabNav bind:tabData tabs />
 		</div>
-		<div id="myTabContent" class="tab-content col-lg-10 col-md-9">
+		<div class="col-lg-10 col-md-9">
 			{#if user?.permissionLevel == 5}
-				<div
-					class="tab-pane fade active show"
-					id="administration"
-					role="tabpanel">
+				<Tab {tabData} pos={1}>
 					<div class="row">
 						<a
 							href="/admin/banners"
@@ -147,14 +107,9 @@
 							</div>
 						</a> -->
 					</div>
-				</div>
+				</Tab>
 			{/if}
-			<div
-				class="tab-pane fade {user?.permissionLevel == 5
-					? ''
-					: 'active show'}"
-				id="moderation"
-				role="tabpanel">
+			<Tab {tabData} pos={2 - pos}>
 				<div class="row g-3">
 					<a
 						href="/admin/moderation"
@@ -191,8 +146,9 @@
 						</div>
 						</a> -->
 				</div>
-			</div>
-			<div class="tab-pane fade" id="economy" role="tabpanel">
+			</Tab>
+
+			<Tab {tabData} pos={3 - pos}>
 				<div class="row g-3">
 					{#if user?.permissionLevel == 5}
 						<a
@@ -247,8 +203,9 @@
 						</div>
 					</a>
 				</div>
-			</div>
-			<div class="tab-pane fade" id="statistics" role="tabpanel">
+			</Tab>
+
+			<Tab {tabData} pos={4 - pos}>
 				<div class="row g-3">
 					<div class="col-lg-7 col-md-7">
 						<div class="card bg-a3 text-black mb-3">
@@ -371,7 +328,7 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			</Tab>
 		</div>
 	</div>
 </div>
@@ -388,18 +345,4 @@
 	.card
 		border-width: 2px
 		border-color: var(--accent3)
-
-	.nav-tabs .nav-item.show .nav-link,
-	.nav-tabs .nav-link.active 
-		color: white
-		background-color: rgb(13, 109, 252)
-		border-color: var(--bs-nav-tabs-link-active-border-color)
-		border-radius: 0.375rem
-
-	.nav-link
-		margin-bottom: calc(0 * var(--bs-nav-tabs-border-width))
-		background: 0 0
-		border: var(--bs-nav-tabs-border-width) solid transparent
-		border-radius: 0.375rem
-		color: var(--light-text)
 </style>
