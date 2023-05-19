@@ -59,7 +59,7 @@
 					<a
 						class="btn mt-1 px-1 light-text nav-item"
 						href="/avatarshop">
-						Avatar Shop
+					    Catalog
 					</a>
 					<!-- <a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a> -->
 					<a class="btn mt-1 px-1 light-text nav-item" href="/forum">
@@ -121,9 +121,9 @@
 								<a
 									class="btn text-start light-text py-2"
 									href="/search?q={search}&c=items"
-									title="Search Avatar shop">
+									title="Search Catalog">
 									Search <b>{search}</b>
-									in Avatar shop
+									in Catalog
 								</a>
 								<!-- <a class="btn text-start light-text py-2" href="/search?q={search}&c=groups" title="Search Groups">Search <b>{search}</b> in Groups</a> -->
 							</div>
