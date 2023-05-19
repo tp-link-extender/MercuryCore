@@ -35,13 +35,13 @@
 </script>
 
 <svelte:head>
-	<title>Avatar Shop - Mercury</title>
+	<title>Catalog - Mercury</title>
 </svelte:head>
 
 <div class="container">
 	<div class="row mb-5">
 		<h1 class="col light-text">
-			Avatar Shop
+			Catalog
 			<a href="/avatarshop/create" class="btn btn-primary ms-4">Create</a>
 		</h1>
 		<div class="col-8">

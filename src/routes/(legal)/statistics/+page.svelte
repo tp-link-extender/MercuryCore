@@ -24,7 +24,7 @@
 			<td class="ps-4">{data.groups}</td>
 		</tr>
 		<tr>
-			<td>Avatar shop items</td>
+			<td>Catalog items</td>
 			<td class="ps-4">{data.items}</td>
 		</tr>
 		<tr>
