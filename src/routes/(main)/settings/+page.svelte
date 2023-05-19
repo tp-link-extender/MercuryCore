@@ -167,7 +167,7 @@
 				<label for="name" class="col-md-3 col-form-label text-md-right">
 					Username
 				</label>
-				<div class="col-md-9">
+				<div class="col-md-6">
 					<input
 						type="text"
 						readonly
@@ -185,7 +185,7 @@
 				<label for="name" class="col-md-3 col-form-label text-md-right">
 					Email Address
 				</label>
-				<div class="col-md-9">
+				<div class="col-md-6">
 					<input
 						type="text"
 						readonly
