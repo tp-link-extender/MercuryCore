@@ -1,11 +1,19 @@
 // A collection of functions useful for Prisma, as well
 // as only needing to initialise PrismaClient once.
 
+import { building } from "$app/environment"
 import { PrismaClient } from "@prisma/client"
 import type { Prisma } from "@prisma/client"
 import { client, roQuery } from "./redis"
 
-export const prisma = new PrismaClient()
+let prisma: PrismaClient
+
+if (!building) {
+	prisma = new PrismaClient()
+	console.log("loaded prisma")
+}
+
+export { prisma }
 
 /**
  * Finds places in the database, and adds a like/dislike ratio to each place. Required because likes and dislikes are stored in RedisGraph, while the rest of the info for places is stored in Postgres.

@@ -167,7 +167,7 @@
 							role="button"
 							aria-label="Notifications"
 							class="fw-bold nav-link me-1">
-							<i class="fa fa-bell" />
+							<i class="fa fa-bell light-text" />
 						</a>
 					</li>
 					<li class="me-2 pt-1">
@@ -321,11 +321,6 @@
 				width: 100%
 				text-align: start
 
-		hr 
-			max-width: 25%
-			margin-left: 40% 
-			display: block !important
-
 		.loggedin
 			margin-bottom: 1rem
 			order: 1
@@ -388,9 +383,6 @@
 				padding: 1.2rem 0.8rem !important
 			div
 				width: 100% !important
-
-	hr
-		display: none
 
 	#user
 		margin-top: 0.1rem !important
