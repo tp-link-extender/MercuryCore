@@ -9,9 +9,11 @@
 	let div: HTMLDivElement
 </script>
 
-{#if tabData.currentTab == name || (!tabData.currentTab && name == tabData.tabs[0])}
+{#if tabData.currentTab == name}
 	<div
 		class="w-100"
+		role="tabpanel"
+		tabindex={0}
 		in:fade={{ duration: 200 }}
 		bind:this={div}>
 		<slot />
