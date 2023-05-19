@@ -31,6 +31,8 @@ model TextContent {
     placeId      Int?
     Item         Item?       @relation(fields: [itemId], references: [id])
     itemId       String?
+    Asset        Asset?      @relation(fields: [assetId], references: [id])
+    assetId      Int?
 }
 
 // Users & Groups
@@ -84,6 +86,8 @@ model AuthUser {
     AuditLog                  AuditLog[]         @relation("actor")
     notificationsSent         Notification[]     @relation("sent")
     notificationsReceived     Notification[]     @relation("received")
+    assetsCreated             Asset[]            @relation("created")
+    assetsOwned               Asset[]            @relation("owned")
 
     @@map("user")
 }
@@ -147,6 +151,7 @@ model Group {
     ownerUsername String
     places        Place[]
     posts         Post[]
+    assets        Asset[]
 }
 
 // Places
@@ -353,4 +358,25 @@ model Notification {
     read       Boolean  @default(false)
     note       String
     relativeId String // The id of whatever the notification concerns
+}
+
+// Assets
+
+model Asset {
+    id Int @id @unique @default(autoincrement())
+
+    creatorUser      AuthUser?  @relation("created", fields: [creatorUsername], references: [username])
+    creatorUsername  String?
+    creatorGroup     Group?     @relation(fields: [creatorGroupname], references: [name])
+    creatorGroupname String?
+    owners           AuthUser[] @relation("owned")
+
+    name        String
+    description TextContent[]
+    type        Int
+    price       Int
+
+    imageAsset   Asset?  @relation("imageAsset", fields: [imageAssetId], references: [id])
+    imageAssetId Int?
+    parentAssets Asset[] @relation("imageAsset")
 }

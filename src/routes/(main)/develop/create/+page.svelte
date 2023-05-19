@@ -1,5 +1,14 @@
 <script lang="ts">
+	import { superForm } from "sveltekit-superforms/client"
+
 	export let data
+
+	const { form, errors, constraints, enhance, delayed, capture, restore } =
+		superForm(data.form, {
+			taintedMessage: false,
+		})
+
+	export const snapshot = { capture, restore }
 
 	const assets: any = {
 		2: "T-Shirt",
@@ -24,7 +33,7 @@
 		</span>
 	</h6>
 </div>
-<form method="POST" class="container mt-5 light-text">
+<form use:enhance method="POST" class="container mt-5 light-text">
 	<fieldset>
 		<div class="row mb-3">
 			<label for="type" class="col-md-3 col-form-label light-text">
@@ -32,8 +41,11 @@
 			</label>
 			<div class="col-md-8">
 				<select
+					bind:value={$form.type}
+					{...$constraints.type}
+					name="type"
 					id="type"
-					class="form-select"
+					class="form-select {$errors.price ? 'is-in' : ''}valid"
 					aria-label="Asset type select">
 					{#each Object.keys(assets) as value}
 						<option {value} selected={value == data.assettype}>
@@ -41,6 +53,9 @@
 						</option>
 					{/each}
 				</select>
+				<p class="col-12 mb-3 text-danger">
+					{$errors.price || ""}
+				</p>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -49,10 +64,15 @@
 			</label>
 			<div class="col-md-8">
 				<input
+					bind:value={$form.name}
+					{...$constraints.name}
 					name="name"
 					id="name"
 					placeholder="Make sure to make it accurate"
-					class="form-control" />
+					class="form-control {$errors.name ? 'is-in' : ''}valid" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.name || ""}
+				</p>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -61,10 +81,17 @@
 			</label>
 			<div class="col-md-8">
 				<textarea
+					bind:value={$form.description}
+					{...$constraints.description}
 					name="description"
 					id="description"
 					placeholder="1-1000 characters"
-					class="form-control" />
+					class="form-control {$errors.description
+						? 'is-in'
+						: ''}valid" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.description || ""}
+				</p>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -73,11 +100,16 @@
 			</label>
 			<div class="col-md-8">
 				<input
+					bind:value={$form.price}
+					{...$constraints.price}
 					name="price"
 					id="price"
 					type="number"
 					placeholder="0-999 rocks"
-					class="form-control" />
+					class="form-control {$errors.price ? 'is-in' : ''}valid" />
+				<p class="col-12 mb-3 text-danger">
+					{$errors.price || ""}
+				</p>
 			</div>
 		</div>
 		<div class="row mb-3">
@@ -89,15 +121,24 @@
 					name="asset"
 					id="asset"
 					type="file"
-					class="form-control" />
+					class="form-control {$errors.asset ? 'is-in' : ''}valid" />
 				<small class="light-text">
 					Max image size: 20MB. Supported file types: .png, .jpg, .bmp
 				</small>
+				<p class="col-12 mb-3 text-danger">
+					{$errors.asset || ""}
+				</p>
 			</div>
 		</div>
+
 		<button class="btn btn-success">
-			Create Asset ( <i class="fa fa-gem me-1" />
-			15 )
+			{#if $delayed}
+				Working...
+			{:else}
+				Create (
+				<i class="fa fa-gem" />
+				15 )
+			{/if}
 		</button>
 	</fieldset>
 </form>
@@ -107,10 +148,6 @@
 		.container
 			width: 50rem
 
-	input
-		&[type="checkbox"]
-			height: 1.5rem
-			width: 1.5rem
-		&[type="number"]
-			width: 9rem
+	input[type="number"]
+		width: 9rem
 </style>
