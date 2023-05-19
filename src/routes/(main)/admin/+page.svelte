@@ -28,8 +28,8 @@
 </svelte:head>
 
 <div class="container py-4">
-	<h1 class="h2 text-light">Admin Panel</h1>
-	<h2 class="h4 mb-4 border-bottom border-2 pb-3 text-light">
+	<h1 class="h2 light-text">Admin Panel</h1>
+	<h2 class="h4 mb-4 border-bottom border-2 pb-3 light-text">
 		Your permission level is: <span
 			style="color: {permissions[user?.permissionLevel][0]}">
 			<i class="fa {permissions[user?.permissionLevel][1]} me-1" />

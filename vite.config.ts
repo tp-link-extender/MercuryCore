@@ -16,6 +16,6 @@ export default defineConfig({
 	],
 
 	ssr: {
-		noExternal: ["three", "troika-three-text"],
+		noExternal: ["three", "troika-three-text", "d3-interpolate"],
 	},
 })
