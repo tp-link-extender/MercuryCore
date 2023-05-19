@@ -4,26 +4,33 @@
 
 	export let tabData: any
 	export let vertical: boolean = false
+	export let justify: boolean = false
 	export let tabs: boolean = false
 
 	let colour: Tweened<string>
 </script>
 
 <ul
-	class="nav mb-4 {vertical ? 'nav-vert-pills flex-column me-4' : ''} {tabs
+	class="nav {vertical ? 'nav-vert-pills flex-column' : 'mb-4'} {tabs
 		? 'nav-tabs flex-column border-0 me-4'
 		: 'nav-pills'}"
+	class:nav-justified={justify}
 	role="tablist">
-	{#each tabData.tabs as tab}
-		<li class="nav-item">
+	{#each tabData.tabs as tab, pos}
+		<li class="nav-item" data-sveltekit-preload-data="off">
 			<a
 				class:rounded-0={!tabs}
-				class="nav-link light-text {tabData.currentTab == tab ||
-				(!tabData.currentTab && tab == tabData.tabs[0])
+				class="nav-link light-text {tabData.currentTab == tab
 					? 'disabled active'
 					: ''}"
-				style={tabs ? "" : `border-color: ${$colour || 'rgb(52, 89, 230)'}`}
-				href="?{tabData.name}={tab}"
+				style={tabs
+					? ""
+					: `border-color: ${$colour || "rgb(52, 89, 230)"}`}
+				href="?{(() => {
+					const currentSearch = new URL(tabData.url).searchParams
+					currentSearch.set(tabData.name, tab)
+					return currentSearch.toString()
+				})()}"
 				on:click|preventDefault={() => {
 					colour = tweened("rgb(255, 255, 255)", {
 						duration: 200,
@@ -32,6 +39,9 @@
 					tabData.currentTab = tab
 					$colour = "rgb(52, 89, 230)"
 				}}>
+				{#if tabData.icons}
+					<i class={tabData.icons[pos]} />
+				{/if}
 				{tab}
 			</a>
 		</li>
