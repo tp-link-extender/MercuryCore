@@ -88,6 +88,7 @@ model AuthUser {
     notificationsReceived     Notification[]     @relation("received")
     assetsCreated             Asset[]            @relation("created")
     assetsOwned               Asset[]            @relation("owned")
+    assetsModerated            Asset[]            @relation("moderated")
 
     @@map("user")
 }
@@ -362,6 +363,12 @@ model Notification {
 
 // Assets
 
+enum ApprovalStatus {
+    Pending
+    Approved
+    Rejected
+}
+
 model Asset {
     id Int @id @unique @default(autoincrement())
 
@@ -370,6 +377,10 @@ model Asset {
     creatorGroup     Group?     @relation(fields: [creatorGroupname], references: [name])
     creatorGroupname String?
     owners           AuthUser[] @relation("owned")
+
+    moderator         AuthUser?      @relation("moderated", fields: [moderatorUsername], references: [username])
+    moderatorUsername String?
+    approved          ApprovalStatus @default(Pending)
 
     name        String
     description TextContent[]

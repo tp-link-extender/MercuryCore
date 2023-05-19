@@ -45,7 +45,7 @@
 					{...$constraints.type}
 					name="type"
 					id="type"
-					class="form-select {$errors.price ? 'is-in' : ''}valid"
+					class="form-select {$errors.type ? 'is-in' : ''}valid"
 					aria-label="Asset type select">
 					{#each Object.keys(assets) as value}
 						<option {value} selected={value == data.assettype}>
@@ -54,7 +54,7 @@
 					{/each}
 				</select>
 				<p class="col-12 mb-3 text-danger">
-					{$errors.price || ""}
+					{$errors.type || ""}
 				</p>
 			</div>
 		</div>
@@ -105,7 +105,6 @@
 					name="price"
 					id="price"
 					type="number"
-					placeholder="0-999 rocks"
 					class="form-control {$errors.price ? 'is-in' : ''}valid" />
 				<p class="col-12 mb-3 text-danger">
 					{$errors.price || ""}
@@ -118,9 +117,12 @@
 			</label>
 			<div class="col-md-8">
 				<input
+					bind:value={$form.asset}
+					{...$constraints.asset}
 					name="asset"
 					id="asset"
 					type="file"
+					required
 					class="form-control {$errors.asset ? 'is-in' : ''}valid" />
 				<small class="light-text">
 					Max image size: 20MB. Supported file types: .png, .jpg, .bmp
