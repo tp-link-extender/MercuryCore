@@ -1,25 +1,33 @@
 // A collection of functions useful for Redis, as well
 // as only needing to initialise the Redis client once.
 
+import { building } from "$app/environment"
 import { error } from "@sveltejs/kit"
-import { createClient, Graph } from "redis"
+import { createClient, Graph, type Graph as graphType, type RedisClientType } from "redis"
 
-export const client = createClient({ url: "redis://localhost:6479" })
+let client: RedisClientType
+let graphs: { [k: string]: graphType }
 
-console.log("loaded redis")
-client.on("error", e => {
-	console.error("Redis error", e)
-	throw error(500, "Redis error")
-})
-await client.connect()
+if (!building) {
+	client = createClient({ url: "redis://localhost:6479" })
 
-const graphs = {
-	friends: new Graph(client, "friends"), // Stores follows, friends, requests, etc
-	groups: new Graph(client, "groups"), // Stores groups, members, etc
-	places: new Graph(client, "places"), // Stores likes and dislikes on places
-	items: new Graph(client, "items"), // Stores likes and dislikes on avatar shop items
-	forum: new Graph(client, "forum"), // Stores forum post and reply likes and dislikes
+	console.log("loaded redis")
+	client.on("error", (e: any) => {
+		console.error("Redis error", e)
+		throw error(500, "Redis error")
+	})
+	await client.connect()
+
+	graphs = {
+		friends: new Graph(client, "friends"), // Stores follows, friends, requests, etc
+		groups: new Graph(client, "groups"), // Stores groups, members, etc
+		places: new Graph(client, "places"), // Stores likes and dislikes on places
+		items: new Graph(client, "items"), // Stores likes and dislikes on avatar shop items
+		forum: new Graph(client, "forum"), // Stores forum post and reply likes and dislikes
+	}
 }
+
+export { client }
 
 /**
  * A writable RedisGraph query.
