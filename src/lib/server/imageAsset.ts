@@ -10,6 +10,7 @@ export async function imageAsset(
 			fit: "inside",
 			...sharpOptions,
 		})
+		.png()
 		.toBuffer()
 		.catch(() => {
 			throw new Error("Image asset failed to upload")
@@ -28,6 +29,7 @@ export async function thumbnail(
 			fit: "fill",
 			...sharpOptions,
 		})
+		.webp()
 		.toBuffer()
 		.catch(() => {
 			throw new Error("Thumbnail failed to upload")
@@ -44,6 +46,7 @@ export async function tShirt(file: File) {
 			position: "top",
 			background: { r: 0, g: 0, b: 0, alpha: 0 },
 		})
+		.png()
 		.toBuffer()
 		.catch(() => {
 			throw new Error("Image asset failed to upload")
@@ -66,6 +69,7 @@ export async function tShirtThumbnail(file: File) {
 					.toBuffer(),
 			},
 		])
+		.webp()
 		.toBuffer()
 		.catch(() => {
 			throw new Error("Thumbnail failed to upload")
