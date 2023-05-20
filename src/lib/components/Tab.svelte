@@ -1,21 +1,12 @@
 <script lang="ts">
 	import { fade } from "svelte/transition"
 
-	export let pos: number
 	export let tabData: any
-
-	const name = tabData.tabs[pos - 1]
-
-	let div: HTMLDivElement
+	const num = ++tabData.num
 </script>
 
-{#if tabData.currentTab == name}
-	<div
-		class="w-100"
-		role="tabpanel"
-		tabindex={0}
-		in:fade={{ duration: 200 }}
-		bind:this={div}>
+{#if tabData.currentTab == tabData.tabs[num - 1]}
+	<div class="w-100" role="tabpanel" tabindex={0} in:fade={{ duration: 200 }}>
 		<slot />
 	</div>
 {/if}

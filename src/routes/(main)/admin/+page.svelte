@@ -10,6 +10,24 @@
 		["crimson", "fa-scale-balanced", "Administrator"],
 	]
 
+	let diskSpace: any
+	async function getDiskSpace() {
+		const data = JSON.parse(
+			(
+				await (
+					await fetch("admin", {
+						body: "",
+						method: "POST",
+					})
+				).json()
+			).data
+		)
+		return diskSpace = {
+			free: data[1],
+			size: data[2],
+		}
+	}
+
 	export let data
 	const { user } = data
 
@@ -42,7 +60,7 @@
 		</div>
 		<div class="col-lg-10 col-md-9">
 			{#if user?.permissionLevel == 5}
-				<Tab {tabData} pos={1}>
+				<Tab {tabData}>
 					<div class="row">
 						<a
 							href="/admin/banners"
@@ -109,7 +127,7 @@
 					</div>
 				</Tab>
 			{/if}
-			<Tab {tabData} pos={2 - pos}>
+			<Tab {tabData}>
 				<div class="row g-3">
 					<a
 						href="/admin/moderation"
@@ -148,7 +166,7 @@
 				</div>
 			</Tab>
 
-			<Tab {tabData} pos={3 - pos}>
+			<Tab {tabData}>
 				<div class="row g-3">
 					{#if user?.permissionLevel == 5}
 						<a
@@ -205,7 +223,7 @@
 				</div>
 			</Tab>
 
-			<Tab {tabData} pos={4 - pos}>
+			<Tab {tabData}>
 				<div class="row g-3">
 					<div class="col-lg-7 col-md-7">
 						<div class="card bg-a3 text-black mb-3">
@@ -243,7 +261,7 @@
 						</div>
 						<div class="card bg-a3 text-black mb-3">
 							<div class="card-body bg-a rounded-1">
-								{#await data.stream.disk}
+								{#await diskSpace || getDiskSpace()}
 									<h3 class="light-text">Loading...</h3>
 								{:then disk}
 									<h3 class="light-text">

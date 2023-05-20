@@ -101,8 +101,7 @@ export const load = async ({ url }) => {
 export const actions = {
 	default: async ({ request }) => {
 		const data = await formData(request)
-		const query = data.query
-		const category = data.category
+		const { query, category } = data
 		console.log(`searching for ${query} in ${category}`)
 
 		throw redirect(
