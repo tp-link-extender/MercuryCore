@@ -62,7 +62,6 @@ export const actions = {
 
 		let saveImages: ((arg0: string | number) => void)[] = []
 
-		console.log(assetType)
 		switch (assetType) {
 			case 2: // T-Shirt
 				try {
