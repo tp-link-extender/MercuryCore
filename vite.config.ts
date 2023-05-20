@@ -1,6 +1,7 @@
 import { sveltekit } from "@sveltejs/kit/vite"
 import { warmup } from "vite-plugin-warmup"
 import UnoCSS from "unocss/vite"
+import civet from "vite-plugin-civet"
 import extractorSvelte from "@unocss/extractor-svelte"
 import { defineConfig } from "vite"
 
@@ -13,6 +14,10 @@ export default defineConfig({
 			extractors: [extractorSvelte],
 		}),
 		sveltekit(),
+		civet({
+			outputExtension: ".ts",
+			include: "**/*.js",
+		}),
 	],
 
 	ssr: {
