@@ -9,9 +9,15 @@ export async function load({ locals }) {
 	return {
 		freemem: os.freemem(), // because cant do os on clientside
 		totalmem: os.totalmem(),
-		stream: {
-			// This function takes like 700ms to run
-			disk: checkDiskSpace(os.homedir()), // because top level await doesnt work in svelte
-		},
 	}
+}
+
+export const actions = {
+	default: async () =>
+		// This function takes like 700ms to run, and 
+		// streaming promises still takes a good while
+		{
+			const { free, size } = await checkDiskSpace(os.homedir())
+			return { free, size }
+		},
 }

@@ -185,11 +185,11 @@
 		<TabNav bind:tabData justify />
 	</div>
 
-	<Tab {tabData} pos={1}>
+	<Tab {tabData}>
 		<p class="light-text">{data.description}</p>
 	</Tab>
 
-	<Tab {tabData} pos={2}>
+	<Tab {tabData}>
 		<div class="row">
 			{#each data.owners as owner}
 				<a

@@ -24,4 +24,5 @@ export const TabData = (
 	currentTab: new URL(url).searchParams.get(name || "tab") || tabs[0],
 	url,
 	icons,
+	num: 0,
 })

@@ -174,7 +174,7 @@ export const actions = {
 			return fail(401)
 
 		const data = await formData(request)
-		const action = data.action
+		const { action } = data
 
 		const user2Exists = await prisma.authUser.findUnique({
 			where: {

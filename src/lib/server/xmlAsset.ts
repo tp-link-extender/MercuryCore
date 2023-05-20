@@ -20,6 +20,14 @@ const strings = {
 	},
 }
 
+/**
+ * Creates a new XML graphic asset and saves it in data/assets
+ * @param type The type of asset to create
+ * @param imageAssetId The ID of the image asset to link to
+ * @param graphicAssetId The ID of the graphic asset to create
+ * @example
+ * graphicAsset("T-Shirt", imageAssetId, id)
+ */
 export const graphicAsset = (
 	type: keyof typeof strings,
 	imageAssetId: string | number,
