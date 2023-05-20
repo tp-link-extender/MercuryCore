@@ -16,6 +16,13 @@ const schema = z.object({
 	asset: z.any(),
 })
 
+const assets: any = {
+	2: "T-Shirt",
+	11: "Shirts",
+	12: "Pants",
+	13: "Decals",
+}
+
 export const load = async ({ request, locals }) => {
 	await authorise(locals, 5)
 
@@ -54,7 +61,6 @@ export const actions = {
 		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
 		let saveImages: ((arg0: string | number) => void)[] = []
-		let saveAssets: (arg0: string | number) => void
 
 		console.log(assetType)
 		switch (assetType) {
@@ -63,7 +69,6 @@ export const actions = {
 					saveImages = await Promise.all([
 						tShirt(asset),
 						tShirtThumbnail(asset),
-						graphicAsset("T-Shirt"),
 					])
 				} catch (e) {
 					console.log(e)
@@ -99,25 +104,50 @@ export const actions = {
 				)
 		}
 
-		const { id } = await prisma.asset.create({
-			data: {
-				creatorUsername: user.username,
-				owners: {
-					connect: {
-						id: user.id,
+		const { id, imageAssetId }: { id: number; imageAssetId: any } =
+			await prisma.asset.create({
+				data: {
+					creatorUser: {
+						// cannot be creatorUsername
+						connect: {
+							id: user.id,
+						},
 					},
-				},
-				name,
-				description: {
-					create: {
-						text: description,
+					owners: {
+						connect: {
+							id: user.id,
+						},
 					},
+					name,
+					description: {
+						create: {
+							text: description,
+						},
+					},
+					type: assetType,
+					imageAsset: {
+						create: {
+							creatorUser: {
+								// cannot be creatorUsername
+								connect: {
+									id: user.id,
+								},
+							},
+							owners: {
+								connect: {
+									id: user.id,
+								},
+							},
+							name,
+							type: 1,
+							price: 0,
+						},
+					},
+					price,
 				},
-				type: assetType,
-				price,
-			},
-		})
+			})
 
-		for (const save of saveImages) save(id)
+		for (const save of saveImages) save(imageAssetId)
+		graphicAsset(assets[assetType], imageAssetId, id)
 	},
 }
