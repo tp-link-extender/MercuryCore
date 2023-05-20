@@ -75,7 +75,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col d-flex justify-content-start">
+		<div class="col-xl-3 col-lg-5 d-flex justify-content-start">
 			<div class="card">
 				<div class="card-header light-text">Type</div>
 				<div class="card-body">
@@ -148,8 +148,54 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-10">
-			<div class="container d-grid m-0">
+		<div class="col-xl-9 col-lg-7">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="card">
+							<div class="card-body">
+								<img class="img-thumbnail" src="/tShirtTemplate.webp" alt="T-Shirt">
+
+								<h1 class="h5 mt-2 light-text">T-Shirt</h1>
+								<h1 class="h6 mt-2 light-text">by <a href="#" class="text-decoration-none">task</a></h1>
+								<h1 class="h6 mt-2 text-success"><i class="fas fa-gem" /> Free</h1>
+							</div>
+						</div>
+					</div>
+					<div class="col">
+						<div class="card">
+							<div class="card-body">
+								<img class="img-thumbnail" src="/tShirtTemplate.webp" alt="T-Shirt">
+
+								<h1 class="h5 mt-2 light-text">T-Shirt</h1>
+								<h1 class="h6 mt-2 light-text">by <a href="#" class="text-decoration-none">task</a></h1>
+								<h1 class="h6 mt-2 text-success"><i class="fas fa-gem" /> Free</h1>
+							</div>
+						</div>
+					</div>
+					<div class="col">
+						<div class="card">
+							<div class="card-body">
+								<img class="img-thumbnail" src="/tShirtTemplate.webp" alt="T-Shirt">
+
+								<h1 class="h5 mt-2 light-text">T-Shirt</h1>
+								<h1 class="h6 mt-2 light-text">by <a href="#" class="text-decoration-none">task</a></h1>
+								<h1 class="h6 mt-2 text-success"><i class="fas fa-gem" /> Free</h1>
+							</div>
+						</div>
+					</div>
+					<div class="col">
+						<div class="card">
+							<div class="card-body">
+								<img class="img-thumbnail" src="/tShirtTemplate.webp" alt="T-Shirt">
+
+								<h1 class="h5 mt-2 light-text">T-Shirt</h1>
+								<h1 class="h6 mt-2 light-text">by <a href="#" class="text-decoration-none">task</a></h1>
+								<h1 class="h6 mt-2 text-success"><i class="fas fa-gem" /> Free</h1>
+							</div>
+						</div>
+					</div>
+				</div>
 				<!-- <div class="tab-content" id="v-pills-tabContent">
 					<div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">...</div>
 					<div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">...</div>
