@@ -1,0 +1,3 @@
+[submodule "svelte-preprocess"]
+	path = svelte-preprocess
+	url = https://github.com/esthedebeste/svelte-preprocess

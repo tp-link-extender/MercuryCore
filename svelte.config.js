@@ -1,5 +1,5 @@
 import adapter from "@sveltejs/adapter-node"
-import preprocess from "svelte-preprocess"
+import preprocess from "./svelte-preprocess/dist/index.js"
 
 export default {
 	// Consult https://github.com/sveltejs/svelte-preprocess
