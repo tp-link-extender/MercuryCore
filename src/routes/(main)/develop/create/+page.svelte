@@ -12,9 +12,9 @@
 
 	const assets: any = {
 		2: "T-Shirt",
-		11: "Shirts",
+		11: "Shirt",
 		12: "Pants",
-		13: "Decals",
+		13: "Decal",
 	}
 </script>
 

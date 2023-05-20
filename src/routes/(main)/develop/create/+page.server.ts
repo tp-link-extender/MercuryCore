@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 // import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
-import { imageAsset, tShirt, tShirtThumbnail } from "$lib/server/imageAsset"
+import { imageAsset, tShirt, tShirtThumbnail, thumbnail } from "$lib/server/imageAsset"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import fs from "fs"
 import { superValidate } from "sveltekit-superforms/server"
@@ -18,9 +18,9 @@ const schema = z.object({
 
 const assets: any = {
 	2: "T-Shirt",
-	11: "Shirts",
+	11: "Shirt",
 	12: "Pants",
-	13: "Decals",
+	13: "Decal",
 }
 
 export const load = async ({ request, locals }) => {
@@ -96,11 +96,19 @@ export const actions = {
 				break
 
 			case 13: // Decal
+			try {
+				saveImages = await Promise.all([
+					imageAsset(asset),
+					thumbnail(asset),
+				])
+			} catch (e) {
+				console.log(e)
 				return formError(
 					form,
-					["type"],
-					["Cannot upload this type of asset yet"]
+					["asset"],
+					["Asset failed to upload"]
 				)
+			}
 		}
 
 		const { id, imageAssetId }: { id: number; imageAssetId: any } =
