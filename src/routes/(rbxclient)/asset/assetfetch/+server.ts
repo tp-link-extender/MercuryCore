@@ -18,6 +18,8 @@ export async function GET({ url, setHeaders }) {
 			).toString()}"`,
 		})
 
+		console.log(`served asset #${ID}`)
+
 		return new Response(fs.readFileSync(`data/assets/${ID}`))
 	}
 
