@@ -97,9 +97,9 @@ export const actions = {
 	like: async ({ request, locals, url }) => {
 		const { user } = await authorise(locals)
 		const data = await formData(request)
-		const action = data.action
+		const { action } = data
 		const id = url.searchParams.get("id")
-		const replyId = data.replyId
+		const { replyId } = data
 
 		if (
 			(id &&

@@ -77,7 +77,7 @@ export const actions = {
 		if (!group) return fail(400, { msg: "User not found" })
 
 		const data = await formData(request)
-		const action = data.action
+		const { action } = data
 
 		const query = {
 			user: user.username,

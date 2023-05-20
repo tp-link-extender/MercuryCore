@@ -45,7 +45,7 @@
 <div class="container mt-4 light-text">
 	<h1 class="light-text mb-4">Configure {data.name}</h1>
 	<TabNav bind:tabData />
-	<Tab {tabData} pos={1}>
+	<Tab {tabData}>
 		<h4 class="light-text fw-normal mb-1">Game View</h4>
 		<p class="mb-0 grey-text mb-4">
 			Change the title and description of your server.
@@ -131,7 +131,7 @@
 		</form>
 	</Tab>
 
-	<Tab {tabData} pos={2}>
+	<Tab {tabData}>
 		<h4 class="light-text fw-normal mb-1">Network</h4>
 		<p class="mb-0 grey-text mb-4">
 			Change the network configurations of your server.
@@ -251,7 +251,7 @@
 		</form>
 	</Tab>
 
-	<Tab {tabData} pos={3}>
+	<Tab {tabData}>
 		<h4 class="light-text fw-normal mb-1">Privacy</h4>
 		<p class="mb-0 grey-text mb-4">
 			Enable private server to make your game only accessible to those

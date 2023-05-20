@@ -6,7 +6,7 @@
  * @returns An object containing the form data.
  * @example
  * const data = await formData(request)
- * const text = data.text
+ * const { text } = data
  */
 export default async function (request: Request) {
 	const entries = Object.fromEntries((await request.formData()).entries())
