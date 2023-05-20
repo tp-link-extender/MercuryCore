@@ -40,7 +40,7 @@
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="col-lg-10 col-md-9">
-			<Tab {tabData} pos={1}>
+			<Tab {tabData}>
 				<form use:enhance method="POST">
 					<fieldset>
 						<div class="row">
@@ -173,7 +173,7 @@
 				</p>
 			</Tab>
 
-			<Tab {tabData} pos={2}>
+			<Tab {tabData}>
 				<table class="table table-responsive">
 					<thead class="light-text">
 						<tr>
