@@ -116,8 +116,7 @@ export const actions = {
 
 		const { user } = await authorise(locals)
 		const data = await formData(request)
-		const action = data.action
-		const privateTicket = data.privateTicket
+		const { action, privateTicket } = data
 
 		const place = await prisma.place.findUnique({
 			where: {
