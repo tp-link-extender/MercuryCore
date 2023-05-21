@@ -1781,8 +1781,8 @@ UpdateMaximize = ->
 		for _, i in ipairs MiddleFrames
 			if i\FindFirstChild "ClickListener"
 				i.ClickListener.Size = UDim2.new 0.96, 0, i.ClickListener.Size.Y.Scale, 0
-				for j = 1, #ScoreNames, 1
-					scoreval = ScoreNames[j]
+				for j in *ScoreNames
+					scoreval = j
 					if i\FindFirstChild(scoreval["Name"]) and scoreval["XOffset"]
 						-- print "updateing stat position: #{scoreval["Name"]}"
 						i[scoreval["Name"]]\TweenPosition(
@@ -2625,7 +2625,7 @@ TeamSortFunc = (a, b) ->
 	team team entry to sum the scores of
 --]]
 AddTeamScores = (team) ->
-	for j = 1, #ScoreNames, 1
+	for j = 1, #ScoreNames
 		i = ScoreNames[j]
 		tscore = 0
 		for _, j in ipairs team["MyPlayers"]

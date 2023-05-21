@@ -181,8 +181,8 @@ removeGear = (gear) ->
 
 			waitForChild player, "Backpack"
 			allEmpty = true
-			for i = 1, #gearSlots
-				if gearSlots[i] ~= "empty"
+			for i in *gearSlots
+				if i ~= "empty"
 					allEmpty = false
 
 			if allEmpty
@@ -257,34 +257,33 @@ checkToolAncestry = (child, parent) ->
 	return if child\FindFirstChild "RobloxBuildTool"
 	-- don't show roblox build tools
 	if child\IsA"Tool" or child\IsA "HopperBin"
-		for i = 1, #gearSlots
-			if gearSlots[i] ~= "empty" and gearSlots[i].GearReference.Value == child
+		for i in *gearSlots
+			if i ~= "empty" and i.GearReference.Value == child
 				if not parent?
-					gearSlots[i].Kill.Value = true
+					i.Kill.Value = true
 					return false
 				elseif child.Parent == player.Character
-					gearSlots[i].Selected = true
+					i.Selected = true
 					return true
 				elseif child.Parent == player.Backpack
 					if child\IsA"Tool" or child\IsA "HopperBin"
-						gearSlots[i].Selected = false
+						i.Selected = false
 
 					return true
 
-
-				gearSlots[i].Kill.Value = true
+				i.Kill.Value = true
 				return false
 
 
 removeAllEquippedGear = (physGear) ->
 	stuff = player.Character\GetChildren!
-	for i = 1, #stuff
-		if (stuff[i]\IsA"Tool" or stuff[i]\IsA"HopperBin") and stuff[i] ~= physGear
-			if stuff[i]\IsA "Tool"
-				stuff[i].Parent = player.Backpack
+	for i in *stuff
+		if (i\IsA"Tool" or i\IsA"HopperBin") and i ~= physGear
+			if i\IsA "Tool"
+				i.Parent = player.Backpack
 
-			if stuff[i]\IsA "HopperBin"
-				stuff[i]\Disable!
+			if i\IsA "HopperBin"
+				i\Disable!
 
 normalizeButton = (button, speed) ->
 	return if not button
@@ -322,11 +321,11 @@ enlargeButton = (button) ->
 	return if not button.Parent
 	return if not button.Selected
 
-	for i = 1, #gearSlots
-		break if gearSlots[i] == "empty"
+	for i in *gearSlots
+		break if i == "empty"
 
-		if gearSlots[i] ~= button
-			normalizeButton gearSlots[i]
+		if i ~= button
+			normalizeButton i
 
 	return if not enlargeOverride
 
@@ -427,10 +426,10 @@ activateGear = (num) ->
 
 
 normalizeAllButtons = ->
-	for i = 1, #gearSlots
-		break if gearSlots[i] == "empty"
-		if gearSlots[i] ~= button
-			normalizeButton gearSlots[i], 0.1
+	for i in *gearSlots
+		break if i == "empty"
+		if i ~= button
+			normalizeButton i, 0.1
 
 
 waitForDebounce = ->
@@ -504,11 +503,11 @@ resolveDrag = (gearClone, x, y) ->
 	frame = gearClone.Parent
 	frames = frame.Parent\GetChildren!
 
-	for i = 1, #frames
-		if frames[i]\IsA"Frame" and
-			pointInRectangle mousePoint, frames[i].AbsolutePosition, frames[i].AbsoluteSize
+	for i in *frames
+		if i\IsA"Frame" and
+			pointInRectangle mousePoint, i.AbsolutePosition, i.AbsoluteSize
 
-			swapGear gearClone, frames[i]
+			swapGear gearClone, i
 			return true
 
 	if (x < frame.AbsolutePosition.x or x > (frame.AbsolutePosition.x + frame.AbsoluteSize.x)) or
@@ -524,17 +523,16 @@ resolveDrag = (gearClone, x, y) ->
 
 
 unequipAllItems = (dontEquipThis) ->
-	for i = 1, #gearSlots
-		break if gearSlots[i] == "empty"
+	for i in *gearSlots
+		break if i == "empty"
 
-		with gearSlots[i]
-			if .GearReference.Value and .GearReference.Value ~= dontEquipThis
-				if .GearReference.Value\IsA "HopperBin"
-					.GearReference.Value\Disable!
-				elseif .GearReference.Value\IsA "Tool"
-					.GearReference.Value.Parent = game.Players.LocalPlayer.Backpack
+		if i.GearReference.Value and i.GearReference.Value ~= dontEquipThis
+			if i.GearReference.Value\IsA "HopperBin"
+				i.GearReference.Value\Disable!
+			elseif i.GearReference.Value\IsA "Tool"
+				i.GearReference.Value.Parent = game.Players.LocalPlayer.Backpack
 
-				.Selected = false
+			i.Selected = false
 
 
 showToolTip = (button, tip) ->
@@ -576,8 +574,8 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 
 
 	if not addToSlot
-		for i = 1, #gearSlots
-			if gearSlots[i] ~= "empty" and gearSlots[i].GearReference.Value == child -- we already have gear, do nothing
+		for i in *gearSlots
+			if i ~= "empty" and i.GearReference.Value == child -- we already have gear, do nothing
 				debounce = false
 				return
 
@@ -677,15 +675,15 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 		dragBeginPos = pos
 		gearClone.ZIndex = 7
 		children = gearClone\GetChildren!
-		for i = 1, #children
-			if children[i]\IsA "TextLabel"
-				children[i].ZIndex = if string.find children[i].Name, "Shadow"
+		for i in *children
+			if i\IsA "TextLabel"
+				i.ZIndex = if string.find i.Name, "Shadow"
 					8
 				else
 					9
 
-			elseif children[i]\IsA"Frame" or children[i]\IsA "ImageLabel"
-				children[i].ZIndex = 7
+			elseif i\IsA"Frame" or i\IsA "ImageLabel"
+				i.ZIndex = 7
 
 
 	dragStop = gearClone.DragStopped\connect (x, y) ->
@@ -695,15 +693,15 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 			3
 
 		children = gearClone\GetChildren!
-		for i = 1, #children
-			if children[i]\IsA "TextLabel"
-				children[i].ZIndex = if string.find children[i].Name, "Shadow"
+		for i in *children
+			if i\IsA "TextLabel"
+				i.ZIndex = if string.find i.Name, "Shadow"
 					3
 				else
 					4
 
-			elseif children[i]\IsA"Frame" or children[i]\IsA "ImageLabel"
-				children[i].ZIndex = 2
+			elseif i\IsA"Frame" or i\IsA "ImageLabel"
+				i.ZIndex = 2
 
 		resolveDrag gearClone, x, y
 
@@ -756,8 +754,8 @@ addingPlayerChild = (child, equipped, addToSlot, inventoryGearButton) ->
 		while backpackIsOpen!
 			wait 0.03
 
-		for i = 1, #gearSlots
-			if gearSlots[i] ~= "empty"
+		for i in *gearSlots
+			if i ~= "empty"
 				backpackButton.Position = UDim2.new 0.5, -60, 1, -108
 				if backpackEnabled
 					backpackButton.Visible = true
@@ -785,15 +783,15 @@ addToInventory = (child) ->
 spreadOutGear = ->
 	loadoutChildren = currentLoadout\GetChildren!
 
-	for i = 1, #loadoutChildren
-		if loadoutChildren[i]\IsA "Frame"
-			loadoutChildren[i].BackgroundTransparency = 0.5
-			slot = tonumber string.sub loadoutChildren[i].Name, 5
+	for i in *loadoutChildren
+		if i\IsA "Frame"
+			i.BackgroundTransparency = 0.5
+			slot = tonumber string.sub i.Name, 5
 			if slot == 0
 				slot = 10
 
 			if robloxGui.AbsoluteSize.Y <= 320
-				loadoutChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(0, (slot - 1) * 60, 0, 0),
 					Enum.EasingDirection.Out,
 					Enum.EasingStyle.Quad,
@@ -801,7 +799,7 @@ spreadOutGear = ->
 					true
 				)
 			else
-				loadoutChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new((slot - 1) / 10, 0, 0, 0),
 					Enum.EasingDirection.Out,
 					Enum.EasingStyle.Quad,
@@ -815,16 +813,16 @@ centerGear = ->
 	gearButtons = {}
 	local lastSlotAdd
 
-	for i = 1, #loadoutChildren
-		if loadoutChildren[i]\IsA "Frame"
-			if #loadoutChildren[i]\GetChildren! > 0
-				if loadoutChildren[i].Name == "Slot0"
-					lastSlotAdd = loadoutChildren[i]
+	for i in *loadoutChildren
+		if i\IsA "Frame"
+			if #i\GetChildren! > 0
+				if i.Name == "Slot0"
+					lastSlotAdd = i
 				else
-					table.insert gearButtons, loadoutChildren[i]
+					table.insert gearButtons, i
 
 
-			loadoutChildren[i].BackgroundTransparency = 1
+			i.BackgroundTransparency = 1
 
 
 	if lastSlotAdd
@@ -949,11 +947,10 @@ delay 2, ->
 	--while true
 	if not backpackWasOpened
 		if robloxGui.AbsoluteSize.Y <= 320
-			cChildren = currentLoadout\GetChildren!
-			for i = 1, #cChildren
-				slotNum = tonumber string.sub cChildren[i].Name, 5, string.len cChildren[i].Name
+			for i in *currentLoadout\GetChildren!
+				slotNum = tonumber string.sub i.Name, 5, string.len i.Name
 				if type(slotNum) == "number"
-					cChildren[i].Position = UDim2.new 0, (slotNum - 1) * 60, 0, 0
+					i.Position = UDim2.new 0, (slotNum - 1) * 60, 0, 0
 
 	wait 0.25
 
@@ -984,10 +981,10 @@ humanoidDiedCon = player.Character.Humanoid.Died\connect ->
 
 
 player.CharacterRemoving\connect ->
-	for i = 1, #gearSlots
-		if gearSlots[i] ~= "empty"
-			gearSlots[i].Parent = nil
-			gearSlots[i] = "empty"
+	for i in *gearSlots
+		if i ~= "empty"
+			i.Parent = nil
+			i = "empty"
 
 
 player.CharacterAdded\connect ->
@@ -1040,10 +1037,10 @@ player.CharacterAdded\connect ->
 			(robloxGui.AbsoluteSize.Y <= 320)
 
 			cChildren = currentLoadout\GetChildren!
-			for i = 1, #cChildren
-				slotNum = tonumber string.sub cChildren[i].Name, 5, string.len cChildren[i].Name
+			for i in *cChildren
+				slotNum = tonumber string.sub i.Name, 5, string.len i.Name
 				if type(slotNum) == "number"
-					cChildren[i].Position = UDim2.new 0, (slotNum - 1) * 60, 0, 0
+					i.Position = UDim2.new 0, (slotNum - 1) * 60, 0, 0
 
 		wait 0.25
 

@@ -519,8 +519,8 @@ initializeDeveloperConsole = ->
 
 		posOffset = 0
 
-		for i = 1, #childMessages
-			childMessages[i].Visible = false
+		for i in *childMessages
+			i.Visible = false
 
 		for i = 1, #messageList
 			local message
@@ -856,8 +856,8 @@ initializeDeveloperConsole = ->
 
 	history = game\GetService"LogService"\GetLogHistory!
 
-	for i = 1, #history
-		AddLocalMessage history[i].message, history[i].messageType, history[i].timestamp
+	for i in *history
+		AddLocalMessage i.message, i.messageType, i.timestamp
 
 	with game\GetService"LogService"
 		.MessageOut\connect (message, messageType) ->
