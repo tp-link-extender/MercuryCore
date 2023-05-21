@@ -158,8 +158,7 @@ if teleportEnabled
 		local clickCon
 		clickCon = popup.OKButton.MouseButton1Click\connect ->
 			game\GetService"TeleportService"\TeleportCancel!
-			if clickCon
-				clickCon\disconnect!
+			clickCon?\disconnect!
 			game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup"
 			popup\TweenSize(
 				UDim2.new(0, 0, 0, 0),

@@ -970,10 +970,10 @@ GetNameValue = (pName) ->
 		cValue = string.byte string.sub pName, index, index
 		reverseIndex = #pName - index + 1
 		if #pName % 2 == 1
-			reverseIndex = reverseIndex - 1
+			reverseIndex -= 1
 		if reverseIndex % 4 >= 2
 			cValue = -cValue
-		value = value + cValue
+		value += cValue
 	value % 8
 
 Chat.ComputeChatColor = (pName) =>
@@ -1007,8 +1007,6 @@ Chat.EnableScrolling = (toggle) =>
 -- Chat.OnScroll = (speed) =>
 -- 	if @MouseOnFrame
 -- 		--
--- 	end
--- end
 
 -- Check if we are running on a touch device
 Chat.IsTouchDevice ==>
@@ -1019,16 +1017,16 @@ Chat.IsTouchDevice ==>
 
 -- Scrolling
 -- Chat.ScrollQueue = (value) =>
--- 	for i = 1, #@MessageQueue
--- 		if @MessageQueue[i]
--- 			for _, label in pairs @MessageQueue[i]
--- 				next = @MessageQueue[i].Next
--- 				previous = @MessageQueue[i].Previous
+-- 	for i in *@MessageQueue
+-- 		if i
+-- 			for _, label in pairs i
+-- 				next = i.Next
+-- 				previous = i.Previous
 -- 				if label and label\IsA('TextLabel') or label\IsA 'TextButton'
--- 					if value > 0 and previous and previous['Message']
--- 						label.Position = previous['Message'].Position
+-- 					label.Position = if value > 0 and previous and previous['Message']
+-- 						previous['Message'].Position
 -- 					elseif value < 1 and next['Message']
--- 						label.Position = previous['Message'].Position
+-- 						previous['Message'].Position
 
 -- Handles the rendering of the text objects in their appropriate places
 Chat.UpdateQueue = (field, diff) =>
@@ -1128,8 +1126,7 @@ Chat.UpdateChat = (cPlayer, message) =>
 		--Chat.Messages_List = {}
 		table.insert Chat.Messages_List, messageField
 		Chat.MessageThread = coroutine.create ->
-			for i = 1, #Chat.Messages_List
-				field = Chat.Messages_List[i]
+			for field in *Chat.Messages_List
 				Chat\CreateMessage field["Player"], field["Message"]
 			Chat.Messages_List = {}
 
@@ -1138,9 +1135,9 @@ Chat.UpdateChat = (cPlayer, message) =>
 		table.insert Chat.Messages_List, messageField
 
 -- Chat.RecalculateSpacing ==>
-	--[[for i = 1, #@MessageQueue
-		pLabel = @MessageQueue[i]['Player']
-		mLabel = @MessageQueue[i]['Message']
+	--[[for i in *@MessageQueue
+		pLabel = i['Player']
+		mLabel = i['Message']
 
 		prevYScale = mLabel.Size.Y.Scale
 		prevText = mLabel.Text
@@ -1153,7 +1150,7 @@ Chat.UpdateChat = (cPlayer, message) =>
 
 		diff = mLabel.Size.Y.Scale - prevYScale
 
-		Chat\UpdateQueue @MessageQueue[i], diff
+		Chat\UpdateQueue i, diff
 	end ]]
 
 -- Chat.ApplyFilter = (str) =>
@@ -1179,22 +1176,21 @@ Chat.CreateMessage = (cPlayer, message) =>
 		--[[pLabel = @MessageQueue[#@MessageQueue]['Player']
 		mLabel = @MessageQueue[#@MessageQueue]['Message']
 
-		pLabel.Text = pName .. ':'
+		pLabel.Text = pName .. ":"
 		pLabel.Name = pName
 
 		local pColor
-		if cPlayer.Neutral
-			pLabel.TextColor3 = Chat\ComputeChatColor pName
+		pLabel.TextColor3 = if cPlayer.Neutral
+			Chat\ComputeChatColor pName
 		else
-			pLabel.TextColor3 = cPlayer.TeamColor.Color
+			cPlayer.TeamColor.Color
 
 		local nString
 
-		if not @CachedSpaceStrings_List[pName]
-			nString = Chat\ComputeSpaceString pLabel
+		nString = if not @CachedSpaceStrings_List[pName]
+			Chat\ComputeSpaceString pLabel
 		else
-			nString = @CachedSpaceStrings_List[pName]
-		end
+			@CachedSpaceStrings_List[pName]
 
 		mLabel.Text = ""
 		mLabel.Name = pName .. " - message"
@@ -1227,10 +1223,10 @@ Chat.CreateMessage = (cPlayer, message) =>
 		TextStrokeTransparency: 0.75
 		--Active = false
 
-	if cPlayer.Neutral
-		pLabel.TextColor3 = Chat\ComputeChatColor pName
+	pLabel.TextColor3 = if cPlayer.Neutral
+		Chat\ComputeChatColor pName
 	else
-		pLabel.TextColor3 = cPlayer.TeamColor.Color
+		cPlayer.TeamColor.Color
 
 	nString = if not @CachedSpaceStrings_List[pName]
 		Chat\ComputeSpaceString pLabel
@@ -1331,7 +1327,7 @@ Chat.CreateSafeChatOptions = (list, rootButton) =>
 				)
 
 
-			count = count + 1
+			count += 1
 
 			if type(list[msg]) == "table"
 				text_List[rootButton][chatText] = Chat\CreateSafeChatOptions list[msg], chatText
@@ -1635,10 +1631,10 @@ Chat.CullThread ==>
 -- RobloxLock everything so users can't delete them(?)
 Chat.LockAllFields = (gui) =>
 	children = gui\GetChildren!
-	for i = 1, #children
-		children[i].RobloxLocked = true
-		if #children[i]\GetChildren! > 0
-			Chat\LockAllFields children[i]
+	for i in *children
+		i.RobloxLocked = true
+		if #i\GetChildren! > 0
+			Chat\LockAllFields i
 
 Chat.CoreGuiChanged = (coreGuiType, enabled) =>
 	if coreGuiType == Enum.CoreGuiType.Chat or coreGuiType == Enum.CoreGuiType.All

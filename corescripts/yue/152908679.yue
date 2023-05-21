@@ -172,7 +172,7 @@ createButton = (actionName, functionInfoTable) ->
 	button = createNewButton actionName, functionInfoTable
 
 	local position
-	for i = 1, #buttonVector do
+	for i = 1, #buttonVector
 		if buttonVector[i] == "empty"
 			position = i
 			break
@@ -200,9 +200,9 @@ removeAction = (actionName) ->
 	if actionButton
 		actionButton.Parent = nil
 
-		for i = 1, #buttonVector
-			if buttonVector[i] == actionButton
-				buttonVector[i] = "empty"
+		for i in *buttonVector
+			if i == actionButton
+				i = "empty"
 				break
 
 		actionButton\Destroy!

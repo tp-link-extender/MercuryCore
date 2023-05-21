@@ -88,9 +88,9 @@ resumeGameFunction = (shield) ->
 	)
 	delay tweenTime, ->
 		shield.Visible = false
-		for i = 1, #centerDialogs
-			centerDialogs[i].Visible = false
-			game.GuiService\RemoveCenterDialog centerDialogs[i]
+		for i in *centerDialogs
+			i.Visible = false
+			game.GuiService\RemoveCenterDialog i
 
 		game.GuiService\RemoveCenterDialog shield
 		settingsButton.Active = true
@@ -106,9 +106,9 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 		lastMenuSelection = {}
 
 	containerChildren = container\GetChildren!
-	for i = 1, #containerChildren
-		if containerChildren[i].Name == menuName
-			containerChildren[i].Visible = true
+	for i in *containerChildren
+		if i.Name == menuName
+			i.Visible = true
 			currentMenuSelection =
 				container: container
 				name: menuName
@@ -117,7 +117,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 
 			-- selectedMenu = true
 			if size and position
-				containerChildren[i]\TweenSizeAndPosition(
+				i\TweenSizeAndPosition(
 					size,
 					position,
 					Enum.EasingDirection.InOut,
@@ -126,7 +126,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			elseif size
-				containerChildren[i]\TweenSizeAndPosition(
+				i\TweenSizeAndPosition(
 					size,
 					UDim2.new(0.5, -size.X.Offset / 2, 0.5, -size.Y.Offset / 2),
 					Enum.EasingDirection.InOut,
@@ -135,7 +135,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			else
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(0, 0, 0, 0),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -145,7 +145,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 
 		else
 			if moveDirection == "left"
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(-1, -525, 0, 0),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -153,7 +153,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			elseif moveDirection == "right"
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(1, 525, 0, 0),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -161,7 +161,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			elseif moveDirection == "up"
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(0, 0, -1, -400),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -169,7 +169,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			elseif moveDirection == "down"
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(0, 0, 1, 400),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -178,7 +178,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 				)
 
 			delay tweenTime, ->
-				containerChildren[i].Visible = false
+				i.Visible = false
 
 
 resetLocalCharacter = ->
@@ -279,9 +279,9 @@ recordVideoClick = (recordVideoButton, stopRecordButton) ->
 backToGame = (buttonClicked, shield, settingsButton) ->
 	buttonClicked.Parent.Parent.Parent.Parent.Visible = false
 	shield.Visible = false
-	for i = 1, #centerDialogs
-		game.GuiService\RemoveCenterDialog centerDialogs[i]
-		centerDialogs[i].Visible = false
+	for i in *centerDialogs
+		game.GuiService\RemoveCenterDialog i
+		i.Visible = false
 
 	centerDialogs = {}
 	game.GuiService\RemoveCenterDialog shield
@@ -1487,9 +1487,9 @@ if LoadLibrary
 						)
 					elseif #lastMenuSelection > 0
 						if #centerDialogs > 0
-							for i = 1, #centerDialogs
-								game.GuiService\RemoveCenterDialog centerDialogs[i]
-								centerDialogs[i].Visible = false
+							for i in *centerDialogs
+								game.GuiService\RemoveCenterDialog i
+								i.Visible = false
 
 							centerDialogs = {}
 
