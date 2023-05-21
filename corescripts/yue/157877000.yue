@@ -92,7 +92,7 @@ initializeDeveloperConsole = ->
 				Size: UDim2.new 0.8, 0, 0.8, 0
 				Rotation: 135
 				Image: "http://www.roblox.com/Asset?id=151205813"
-		
+
 		* New "TextButton", "LocalConsole"
 			BackgroundColor3: Color3.new 0, 0, 0
 			BackgroundTransparency: 0.6
@@ -349,12 +349,8 @@ initializeDeveloperConsole = ->
 			TextYAlignment: Enum.TextYAlignment.Top
 
 	---Saved Mouse Information
-	local previousMousePos
-	local pPos
-
-	local previousMousePosResize
-	local pSize
-
+	local previousMousePos, pPos
+	local previousMousePosResize, pSize
 	local previousMousePosScroll
 
 	-- local pScrollHandle
