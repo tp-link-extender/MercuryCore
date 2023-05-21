@@ -1034,39 +1034,40 @@ Chat.UpdateQueue = (field, diff) =>
 	for i = #@MessageQueue, 1, -1
 		if @MessageQueue[i]
 			for _, label in pairs @MessageQueue[i]
-				if label and type(label) ~= "table" and type(label) ~= "number"
-					if label\IsA"TextLabel" or label\IsA "TextButton"
-						if diff
-							label.Position = label.Position - UDim2.new 0, 0, diff, 0
+				if (label and type(label) ~= "table" and type(label) ~= "number") and
+					(label\IsA"TextLabel" or label\IsA "TextButton")
+
+					if diff
+						label.Position = label.Position - UDim2.new 0, 0, diff, 0
+					else
+						if field == @MessageQueue[i]
+							label.Position = UDim2.new(
+								@Configuration.XScale,
+								0,
+								label.Position.Y.Scale - field["Message"].Size.Y.Scale,
+								0
+							)
+							-- Just to show up popping effect for the latest message in chat
+							Spawn ->
+								wait 0.05
+								while label.TextTransparency >= 0
+									label.TextTransparency = label.TextTransparency - 0.2
+									wait 0.03
+								label.TextStrokeTransparency = if label == field["Message"]
+									0.8
+								else
+									1
 						else
-							if field == @MessageQueue[i]
-								label.Position = UDim2.new(
-									@Configuration.XScale,
-									0,
-									label.Position.Y.Scale - field["Message"].Size.Y.Scale,
-									0
-								)
-								-- Just to show up popping effect for the latest message in chat
-								Spawn ->
-									wait 0.05
-									while label.TextTransparency >= 0
-										label.TextTransparency = label.TextTransparency - 0.2
-										wait 0.03
-									label.TextStrokeTransparency = if label == field["Message"]
-										0.8
-									else
-										1
-							else
-								label.Position = UDim2.new(
-									@Configuration.XScale,
-									0,
-									label.Position.Y.Scale - field["Message"].Size.Y.Scale,
-									0
-								)
-							if label.Position.Y.Scale < -0.01
-								-- NOTE: Remove this fix when Textbounds is fixed
-								label.Visible = false
-								label\Destroy!
+							label.Position = UDim2.new(
+								@Configuration.XScale,
+								0,
+								label.Position.Y.Scale - field["Message"].Size.Y.Scale,
+								0
+							)
+						if label.Position.Y.Scale < -0.01
+							-- NOTE: Remove this fix when Textbounds is fixed
+							label.Visible = false
+							label\Destroy!
 
 Chat.CreateScrollBar ==>
 	-- Code for scrolling is in here, partially, but scroll bar drawing isn't drawn

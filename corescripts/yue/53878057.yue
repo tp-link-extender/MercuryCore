@@ -821,9 +821,7 @@ centerGear = ->
 				else
 					table.insert gearButtons, i
 
-
 			i.BackgroundTransparency = 1
-
 
 	if lastSlotAdd
 		table.insert gearButtons, lastSlotAdd

@@ -799,22 +799,22 @@ t.GetStampModel = (assetId, terrainShape, useAssetVersionId) ->
 				Parent: root
 
 
-	if terrainShape
-		if root.Name == "MegaClusterCube"
-			if terrainShape == 6 -- insert an autowedging tag
-				New "BoolValue", "AutoWedge"
-					Parent: root
-			else
-				clusterTag = root\FindFirstChild "ClusterMaterial"
-				root = if clusterTag
-					if clusterTag\IsA "Vector3Value"
-						setupFakeTerrainPart clusterTag.Value.X, terrainShape, clusterTag.Value.Z
-					else
-						setupFakeTerrainPart clusterTag.Value, terrainShape, 0
+	if terrainShape and
+		root.Name == "MegaClusterCube"
 
+		if terrainShape == 6 -- insert an autowedging tag
+			New "BoolValue", "AutoWedge"
+				Parent: root
+		else
+			clusterTag = root\FindFirstChild "ClusterMaterial"
+			root = if clusterTag
+				if clusterTag\IsA "Vector3Value"
+					setupFakeTerrainPart clusterTag.Value.X, terrainShape, clusterTag.Value.Z
 				else
-					setupFakeTerrainPart 1, terrainShape, 0
+					setupFakeTerrainPart clusterTag.Value, terrainShape, 0
 
+			else
+				setupFakeTerrainPart 1, terrainShape, 0
 
 	root
 
@@ -1104,14 +1104,14 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 		-- don't drag into terrain
 		if clusterPartsInRegion minBB + insertBoundingBoxOverlapVector, maxBB - insertBoundingBoxOverlapVector
-			if lastTarget.CFrame
-				if stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
-					theClusterMaterial = stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
-					if theClusterMaterial\IsA "Vector3Value"
-						stampClusterMaterial = stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
-						if stampClusterMaterial
-							stampClusterMaterial = clusterMat
+			if lastTarget.CFrame and
+				stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
 
+				theClusterMaterial = stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
+				if theClusterMaterial\IsA "Vector3Value"
+					stampClusterMaterial = stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
+					if stampClusterMaterial
+						stampClusterMaterial = clusterMat
 
 			return
 
@@ -1288,7 +1288,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		if game\FindFirstChild"Players" and
 			game.Players["LocalPlayer"] and
 			game.Players.LocalPlayer\FindFirstChild "PlayerGui"
-			
+
 			gui = game.Players.LocalPlayer.PlayerGui
 
 		return if not stampData["ErrorBox"]
@@ -1870,13 +1870,14 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 
 		-- something will be stamped! so set the "StampedSomething" toggle to true
-		if game\FindFirstChild "Players"
-			if game.Players["LocalPlayer"]
-				if game.Players.LocalPlayer["Character"]
-					localChar = game.Players.LocalPlayer.Character
-					stampTracker = localChar\FindFirstChild "StampTracker"
-					if stampTracker and not stampTracker.Value
-						stampTracker.Value = true
+		if game\FindFirstChild"Players" and
+			game.Players["LocalPlayer"] and
+			game.Players.LocalPlayer["Character"]
+
+			localChar = game.Players.LocalPlayer.Character
+			stampTracker = localChar\FindFirstChild "StampTracker"
+			if stampTracker and not stampTracker.Value
+				stampTracker.Value = true
 
 
 		-- if we drew a line of mega parts, stamp them out
@@ -1983,7 +1984,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		getPlayer = ->
 			if game\FindFirstChild"Players" and
 				game.Players["LocalPlayer"]
-				
+
 				return game.Players.LocalPlayer
 
 

@@ -1126,7 +1126,6 @@ t.CreateTrueScrollingFrame = ->
 				doScrollDown!
 				break if mouseYPos and mouseYPos < (scrollbar.AbsolutePosition.y + scrollbar.AbsoluteSize.x)
 				break if not scrollDownButton.Active
-				
 
 				w = if tick! - t > 5
 					0
@@ -3258,16 +3257,16 @@ t.CreateLoadingFrame = (name, size, position) ->
 
 
 	updateLoadingGuiPercent = (percent, tweenAction, tweenLength) ->
-		if percent and type percent ~= "number"
+		if percent and type(percent) ~= "number"
 			error "updateLoadingGuiPercent expects number as argument, got #{type percent} instead"
 
 
-		newSize = if percent < 0
-			UDim2.new 0, 0, 1, 0
+		newSize = UDim2.new if percent < 0
+			0, 0, 1, 0
 		elseif percent > 1
-			UDim2.new 1, 0, 1, 0
+			1, 0, 1, 0
 		else
-			UDim2.new percent, 0, 1, 0
+			percent, 0, 1, 0
 
 
 		if tweenAction
@@ -3477,10 +3476,10 @@ t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
 		else
 			UDim2.new 0, dragBar.AbsoluteSize.X, size.Y.Scale, size.Y.Offset
 	else
-		if scrollable
-			UDim2.new 0, 163, 0, 400
+		UDim2.new 0, if scrollable
+			163, 0, 400
 		else
-			UDim2.new 0, dragBar.AbsoluteSize.X, 0, 400
+			dragBar.AbsoluteSize.X, 0, 400
 
 	if position
 		widgetContainer.Position += UDim2.new 0, 0, 0, 20
@@ -3608,23 +3607,15 @@ t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
 			widgetContainer.Visible = not widgetContainer.Visible
 
 
-		if minimizeFrame.Visible
-			minimizeButton.Text = "+"
+		minimizeButton.Text = if minimizeFrame.Visible
+			"+"
 		else
-			minimizeButton.Text = "-"
+			"-"
 
+	minimizeBigButton.MouseButton1Click\connect -> switchMinimize!
+	minimizeButton.MouseButton1Click\connect -> switchMinimize!
 
-	minimizeBigButton.MouseButton1Click\connect ->
-		switchMinimize!
-
-	minimizeButton.MouseButton1Click\connect ->
-		switchMinimize!
-
-
-	if scrollable
-		dragBar, frame, helpFrame, closeEvent
-	else
-		dragBar, widgetContainer, helpFrame, closeEvent
+	dragBar, (if scrollable then frame else widgetContainer), helpFrame, closeEvent
 
 
 t.Help = (funcNameOrFunc) ->

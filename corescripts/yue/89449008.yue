@@ -193,7 +193,7 @@ inLoadout = (gear) ->
 			if #button > 0 and
 				button[1].GearReference.Value and
 				button[1].GearReference.Value == gear
-				
+
 				return true
 
 	false
