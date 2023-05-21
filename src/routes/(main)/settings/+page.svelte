@@ -35,7 +35,7 @@
 <div class="container mt-4 light-text">
 	<h1 class="light-text mb-4">Settings</h1>
 	<TabNav bind:tabData />
-	<Tab {tabData} pos={1}>
+	<Tab {tabData}>
 		<h4 class="light-text fw-normal mb-1">User Profile</h4>
 		<p class="mb-0 grey-text mb-4">Change your bio, site theme and more.</p>
 		<form class="col-lg-8" method="POST" action="?a=profile">
@@ -104,7 +104,7 @@
 		</p>
 	</Tab>
 
-	<Tab {tabData} pos={2}>
+	<Tab {tabData}>
 		<h4 class="light-text fw-normal mb-1">User Information</h4>
 		<p class="mb-0 grey-text mb-4">
 			Information about your account, you can change certain aspects of it
@@ -165,7 +165,7 @@
 		</button>
 	</Tab>
 
-	<Tab {tabData} pos={3}>
+	<Tab {tabData}>
 		<h4 class="fw-normal light-text mb-3">Change Password</h4>
 		<form use:enhance class="col-sm-8" method="POST" action="?a=password">
 			<fieldset>

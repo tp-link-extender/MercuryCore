@@ -2,6 +2,7 @@
 	import Modal from "$lib/components/Modal.svelte"
 	import { writable } from "svelte/store"
 	import { enhance } from "$app/forms"
+	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	export let data
 	export let form
@@ -9,6 +10,7 @@
 
 	let modal = writable(false)
 	let bodyPart = ""
+	let tabData = TabData(data.url, ["Recent", "Heads", "Faces", "T-Shirts", "Shirts", "Pants", "Gear"])
 
 	const bodyParts: { [k: string]: number } = {
 		Head: user?.bodyColours.Head,
@@ -111,7 +113,7 @@
 	<h1 class="text-white">Avatar</h1>
 	<p class="light-text">Avatar system in alpha.</p>
 	<div class="row mt-4">
-		<div class="col-3">
+		<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
 			<div class="card mb-3">
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
@@ -139,7 +141,7 @@
 						<div
 							class="mx-auto"
 							style="height:240px;width:194px;text-align:center;">
-							<div style="position: relative; margin: 11px 4px;">
+							<div class="parts">
 								{#each Object.keys(bodyParts) as bodyPart}
 									<button
 										style={styles[bodyPart] +
@@ -158,12 +160,25 @@
 				</div>
 			</div>
 		</div>
-		<div class="col">
-			<div class="card">
-				<div class="card-body">
-					<p class="light-text">To be implemented.</p>
-				</div>
-			</div>
+		<div class="col-xl-9 col-lg-9 col-md-12">
+			<TabNav bind:tabData justify />
+			<!-- <div class="input-group">
+				<input
+					type="text"
+					name="query"
+					class="form-control light-text valid"
+					placeholder="Search for an item"
+					aria-label="Search for an item"
+					aria-describedby="button-addon2" />
+				<input type="hidden" name="category" value="items" />
+				<button
+					class="btn btn-success"
+					type="submit"
+					aria-label="Search"
+					id="button-addon2">
+					<i class="fa fa-magnifying-glass" />
+				</button>
+			</div> -->
 		</div>
 	</div>
 </div>
@@ -230,4 +245,34 @@
 
 	.btn-close
 		filter: invert(1) grayscale(100%) brightness(200%)
+	
+	.parts
+		position: relative 
+		margin: 11px 0px 0px 36px
+
+	@media (max-width: 576px)
+		.parts
+			position: relative 
+			margin: 11px 4px 0px 7px
+	
+	@media (min-width: 576px)
+		.parts
+			position: relative 
+			margin: 11px 4px 0px 7px
+
+	@media (min-width: 768px)
+		.parts
+			position: relative 
+			margin: 11px 4px 0px 9px
+
+	@media (min-width: 992px)
+		.parts
+			position: relative 
+			margin: 11px 4px 0px -8px
+	
+	@media (min-width: 1200px)
+		.parts
+			position: relative
+			margin: 11px 0px 0px 7px
+
 </style>

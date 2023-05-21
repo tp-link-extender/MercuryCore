@@ -18,7 +18,7 @@
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="col-lg-10 col-md-9">
-			<Tab {tabData} pos={1}>
+			<Tab {tabData}>
 				<div class="row">
 					<a
 						href="/develop/create?asset=11"
@@ -78,7 +78,7 @@
 					{/if}
 				</div>
 			</Tab>
-			<Tab {tabData} pos={2}>
+			<Tab {tabData}>
 				<div class="row g-3">
 					<a
 						href="/admin/banners"

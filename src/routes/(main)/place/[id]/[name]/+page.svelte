@@ -310,11 +310,11 @@
 		<TabNav bind:tabData justify />
 	</div>
 
-	<Tab {tabData} pos={1}>
+	<Tab {tabData}>
 		{data.description[0]?.text || ""}
 	</Tab>
 
-	<Tab {tabData} pos={2}>
+	<Tab {tabData}>
 		{#if user?.permissionLevel == 5 || data.ownerUser?.number == user?.number}
 			<h1 class="h4 light-text">Hosting on Mercury</h1>
 			<p class="light-text">
@@ -332,8 +332,10 @@
 			<div class="d-flex align-items-start mb-3">
 				<div class="bg-a me-3">
 					<TabNav bind:tabData={tabData2} vertical />
+					<!-- Prevents nested tabs from breaking -->
+					{((tabData2.num = 0), "") }
 				</div>
-				<Tab tabData={tabData2} pos={1}>
+				<Tab tabData={tabData2}>
 					<p class="light-text mb-1">
 						You can host your server by opening your map in <button
 							class="btn btn-primary p-1 btn-sm"
@@ -349,7 +351,7 @@
 						loadfile("http://banland.xyz/Game/Host?ticket={data.serverTicket}")()
 					</code>
 				</Tab>
-				<Tab tabData={tabData2} pos={2}>
+				<Tab tabData={tabData2}>
 					<p class="light-text">
 						Autopilot manages initial Studio operations. All you
 						need to do is type in a map that's in the map folder,

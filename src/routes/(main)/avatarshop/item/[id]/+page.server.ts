@@ -80,7 +80,7 @@ export const actions = {
 		const { user } = await authorise(locals)
 
 		const data = await formData(request)
-		const action = data.action
+		const { action } = data
 
 		if (
 			!(await prisma.item.findUnique({

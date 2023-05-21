@@ -21,7 +21,7 @@
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="col-lg-10 col-md-9">
-			<Tab {tabData} pos={1} />
+			<Tab {tabData} />
 		</div>
 	</div>
 </div>
