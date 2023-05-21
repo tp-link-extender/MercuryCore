@@ -563,12 +563,12 @@ t.SelectTerrainRegion = (regionToSelect, color, selectEmptyCells, selectionParen
 
 
 						if not updated
-							selectionPart, selectionBox = createAdornment color
-							selectionPart.Size = Vector3.new 4, 4, 4
-							selectionPart.CFrame = CFrame.new cframePos
+							selectionPart2, selectionBox2 = createAdornment color
+							selectionPart2.Size = Vector3.new 4, 4, 4
+							selectionPart2.CFrame = CFrame.new cframePos
 							adornTable =
-								SelectionPart: selectionPart
-								SelectionBox: selectionBox
+								SelectionPart: selectionPart2
+								SelectionBox: selectionBox2
 								KeepAlive: currentKeepAliveTag
 
 							adornments[cellPos] = adornTable
