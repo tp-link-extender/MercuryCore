@@ -115,8 +115,8 @@ getRbxUtility = ->
 
 
 preloadAssets = ->
-	for i = 1, #assetUrls
-		game\GetService"ContentProvider"\Preload assetUrls[i]
+	for i in *assetUrls
+		game\GetService"ContentProvider"\Preload i
 
 
 ----------------------------- End Util Functions ---------------------------------------------
@@ -157,12 +157,12 @@ setButtonsVisible = (...) ->
 	argCount = select "#", ...
 
 	bodyFrameChildren = purchaseDialog.BodyFrame\GetChildren!
-	for i = 1, #bodyFrameChildren
-		if bodyFrameChildren[i]\IsA "GuiButton"
-			bodyFrameChildren[i].Visible = false
+	for i in *bodyFrameChildren
+		if i\IsA "GuiButton"
+			i.Visible = false
 			for j = 1, argCount
-				if bodyFrameChildren[i] == args[j]
-					bodyFrameChildren[i].Visible = true
+				if i == args[j]
+					i.Visible = true
 					break
 
 signalPromptEnded = (isSuccess) ->
@@ -611,9 +611,9 @@ getToolAssetID = (assetID) ->
 		return newTool
 
 	toolChildren = newTool\GetChildren!
-	for i = 1, #toolChildren
-		if toolChildren[i]\IsA "Tool"
-			return toolChildren[i]
+	for i in *toolChildren
+		if i\IsA "Tool"
+			return i
 	nil
 
 
@@ -723,11 +723,12 @@ doAcceptPurchase = (_) ->
 	response = getRbxUtility!.DecodeJSON response
 
 	if response
-		if response["success"] == false
-			if response["status"] ~= "AlreadyOwned"
-				print "web return response of fail on purchase of", currentAssetId, currentProductId
-				purchaseFailed response["status"] == "EconomyDisabled"
-				return
+		if response["success"] == false and
+			response["status"] ~= "AlreadyOwned"
+
+			print "web return response of fail on purchase of", currentAssetId, currentProductId
+			purchaseFailed response["status"] == "EconomyDisabled"
+			return
 
 	else
 		print "web return response of non parsable JSON on purchase of", currentAssetId
@@ -1054,9 +1055,9 @@ cutSizeInHalfRecursive = (_) ->
 	--[[changeSize instance,0.5
 
 	children = instance\GetChildren!
-	for i = 1, #children
-		cutSizeInHalfRecursive children[i]
-	end]]
+	for i in *children
+		cutSizeInHalfRecursive i
+	]]
 
 
 doubleSizeRecursive = (_) ->
@@ -1064,9 +1065,9 @@ doubleSizeRecursive = (_) ->
 	--[[changeSize instance,2
 
 	children = instance\GetChildren!
-	for i = 1, #children
-		doubleSizeRecursive children[i]
-	end]]
+	for i in *children
+		doubleSizeRecursive i
+	]]
 
 -- depending on screen size, we need to change the gui
 changeGuiToScreenSize = (smallScreen) ->

@@ -138,24 +138,24 @@ while true
 			fire = config\FindFirstChild "Fire"
 			stun = config\FindFirstChild "Stun"
 			with regen do if regen
-					delta += .Value.X
-					if .Value.Y >= 0
-						.Value = Vector3.new .Value.X + .Value.Z, .Value.Y - s, .Value.Z -- maybe have 3rd parameter be an increaser/decreaser?
-					elseif .Value.Y == -1
-						.Value = Vector3.new .Value.X + .Value.Z, -1, .Value.Z
-					else
-						\remove!
-					-- infinity is -1
+				delta += .Value.X
+				if .Value.Y >= 0
+					.Value = Vector3.new .Value.X + .Value.Z, .Value.Y - s, .Value.Z -- maybe have 3rd parameter be an increaser/decreaser?
+				elseif .Value.Y == -1
+					.Value = Vector3.new .Value.X + .Value.Z, -1, .Value.Z
+				else
+					\remove!
+				-- infinity is -1
 
 			with poison do if poison
-					delta -= .Value.X
-					if .Value.Y >= 0
-						.Value = Vector3.new .Value.X + .Value.Z, .Value.Y - s, .Value.Z
-					elseif .Value.Y == -1
-						.Value = Vector3.new .Value.X + .Value.Z, -1, .Value.Z
-					else
-						\remove!
-					-- infinity is -1
+				delta -= .Value.X
+				if .Value.Y >= 0
+					.Value = Vector3.new .Value.X + .Value.Z, .Value.Y - s, .Value.Z
+				elseif .Value.Y == -1
+					.Value = Vector3.new .Value.X + .Value.Z, -1, .Value.Z
+				else
+					\remove!
+				-- infinity is -1
 
 			with ice do if ice
 				--print "IN ICE"
@@ -182,39 +182,37 @@ while true
 					Torso.Anchored = true
 					currentChildren = script.Parent\GetChildren!
 					backpackTools = game.Players\GetPlayerFromCharacter(script.Parent).Backpack\GetChildren!
-					for i = 1, #currentChildren
-						if currentChildren[i].className == "Tool"
-							inCharTag\Clone!.Parent = currentChildren[i]
+					for i in *currentChildren
+						if i.className == "Tool"
+							inCharTag\Clone!.Parent = i
 							print backpackTools
-							table.insert backpackTools, currentChildren[i]
+							table.insert backpackTools, i
 
-					for i = 1, #backpackTools
-						if not backpackTools[i]\FindFirstChild"RobloxBuildTool"?
-							hider\Clone!.Parent = backpackTools[i]
-							backpackTools[i].Parent = game.Lighting
+					for i in *backpackTools
+						if not i\FindFirstChild"RobloxBuildTool"?
+							hider\Clone!.Parent = i
+							i.Parent = game.Lighting
 
 					wait 0.2
-					for i = 1, #backpackTools
-						backpackTools[i].Parent = game.Players\GetPlayerFromCharacter(script.Parent).Backpack
+					for i in *backpackTools
+						i.Parent = game.Players\GetPlayerFromCharacter(script.Parent).Backpack
 
 					stun.Value = stun.Value - s
 				else
 					Torso.Anchored = false
-					for i = 1, #backpackTools
-						rbTool = backpackTools[i]\FindFirstChild "RobloxBuildTool"
-						if rbTool
-							rbTool\Remove!
+					for i in *backpackTools
+						i\FindFirstChild"RobloxBuildTool"?\Remove!
 
-						backpackTools[i].Parent = game.Lighting
+						i.Parent = game.Lighting
 
 					wait 0.2
-					for i = 1, #backpackTools
-						wasInChar = backpackTools[i]\FindFirstChild "InCharTag"
-						if wasInChar
+					for i in *backpackTools
+						wasInChar = i\FindFirstChild "InCharTag"
+						i.Parent = if wasInChar
 							wasInChar\Remove!
-							backpackTools[i].Parent = script.Parent
+							script.Parent
 						else
-							backpackTools[i].Parent = game.Players\GetPlayerFromCharacter(script.Parent).Backpack
+							game.Players\GetPlayerFromCharacter(script.Parent).Backpack
 
 					stun\Remove!
 
@@ -224,9 +222,9 @@ while true
 		--health += delta * s * Humanoid.MaxHealth
 
 		health = Humanoid.Health + delta * s
-		if health * 1.01 < Humanoid.MaxHealth
-			Humanoid.Health = health
+		Humanoid.Health = if health * 1.01 < Humanoid.MaxHealth
+			health
 			--myHealth.Value = math.floor Humanoid.Health
 		elseif delta > 0
-			Humanoid.Health = Humanoid.MaxHealth
+			Humanoid.MaxHealth
 			--myHealth.Value = Humanoid.Health

@@ -187,24 +187,23 @@ clearHighlight = (button) ->
 
 inLoadout = (gear) ->
 	children = currentLoadout\GetChildren!
-	for i = 1, #children
-		if children[i]\IsA "Frame"
-			button = children[i]\GetChildren!
+	for i in *children
+		if i\IsA "Frame"
+			button = i\GetChildren!
 			if #button > 0 and
 				button[1].GearReference.Value and
 				button[1].GearReference.Value == gear
-					return true
+
+				return true
 
 	false
 
 updateGridActive = ->
 	for _, v in pairs backpackItems
 		if buttons[v]
-			local gear
 			gearRef = buttons[v]\FindFirstChild "GearReference"
 
-			if gearRef
-				gear = gearRef.Value
+			gear = gearRef?.Value
 
 			buttons[v].Active = if (not gear) or inLoadout gear
 				false
@@ -232,9 +231,9 @@ UnequipGearMenuClick = (element, menu) ->
 		gearToUnequip = inventoryButton.GearReference.Value
 		loadoutChildren = currentLoadout\GetChildren!
 		slot = -1
-		for i = 1, #loadoutChildren
-			if loadoutChildren[i]\IsA "Frame"
-				button = loadoutChildren[i]\GetChildren!
+		for i in *loadoutChildren
+			if i\IsA "Frame"
+				button = i\GetChildren!
 				if button[1] and button[1].GearReference.Value == gearToUnequip
 					slot = button[1].SlotNumber.Text
 					break
@@ -367,9 +366,9 @@ getGearContextMenu = ->
 findEmptySlot = ->
 	local smallestNum
 	loadout = currentLoadout\GetChildren!
-	for i = 1, #loadout
-		if loadout[i]\IsA"Frame" and #loadout[i]\GetChildren! <= 0
-			frameNum = tonumber string.sub loadout[i].Name, 5
+	for i in *loadout
+		if i\IsA"Frame" and #i\GetChildren! <= 0
+			frameNum = tonumber string.sub i.Name, 5
 			if frameNum == 0
 				frameNum = 10
 
@@ -383,15 +382,15 @@ findEmptySlot = ->
 
 checkForSwap = (button, x, y) ->
 	loadoutChildren = currentLoadout\GetChildren!
-	for i = 1, #loadoutChildren
-		if loadoutChildren[i]\IsA"Frame" and string.find loadoutChildren[i].Name, "Slot"
-			if x >= loadoutChildren[i].AbsolutePosition.x and
-				x <= (loadoutChildren[i].AbsolutePosition.x + loadoutChildren[i].AbsoluteSize.x)
+	for i in *loadoutChildren
+		if i\IsA"Frame" and string.find i.Name, "Slot"
+			if x >= i.AbsolutePosition.x and
+				x <= (i.AbsolutePosition.x + i.AbsoluteSize.x)
 
-				if y >= loadoutChildren[i].AbsolutePosition.y and
-					y <= (loadoutChildren[i].AbsolutePosition.y + loadoutChildren[i].AbsoluteSize.y)
+				if y >= i.AbsolutePosition.y and
+					y <= (i.AbsolutePosition.y + i.AbsoluteSize.y)
 
-					slot = tonumber string.sub loadoutChildren[i].Name, 5
+					slot = tonumber string.sub i.Name, 5
 					swapGearSlot slot, button
 					return true
 	false
@@ -563,12 +562,12 @@ showEntireGrid = ->
 centerGear = (loadoutChildren) ->
 	gearButtons = {}
 	local lastSlotAdd
-	for i = 1, #loadoutChildren
-		if loadoutChildren[i]\IsA"Frame" and #loadoutChildren[i]\GetChildren! > 0
-			if loadoutChildren[i].Name == "Slot0"
-				lastSlotAdd = loadoutChildren[i]
+	for i in *loadoutChildren
+		if i\IsA"Frame" and #i\GetChildren! > 0
+			if i.Name == "Slot0"
+				lastSlotAdd = i
 			else
-				table.insert gearButtons, loadoutChildren[i]
+				table.insert gearButtons, i
 
 	if lastSlotAdd
 		table.insert gearButtons, lastSlotAdd
@@ -627,9 +626,9 @@ loadoutCheck = (child, selectState) ->
 
 -- removeAllEquippedGear = (physGear) ->
 -- 	stuff = player.Character\GetChildren!
--- 	for i = 1, #stuff
--- 		if (stuff[i]\IsA"Tool" or stuff[i]\IsA"HopperBin") and stuff[i] ~= physGear
--- 			stuff[i].Parent = playerBackpack
+-- 	for i in *stuff
+-- 		if (i\IsA"Tool" or stuff[i]\IsA"HopperBin") and i ~= physGear
+-- 			i.Parent = playerBackpack
 
 -- equipGear = (physGear) ->
 -- 	removeAllEquippedGear physGear
@@ -644,8 +643,8 @@ setupCharacterConnections = ->
 
 	-- make sure we get all the children
 	backpackChildren = game.Players.LocalPlayer.Backpack\GetChildren!
-	for i = 1, #backpackChildren
-		addToGrid backpackChildren[i]
+	for i in *backpackChildren
+		addToGrid i
 
 
 	characterChildAddedCon?\disconnect!
@@ -672,8 +671,8 @@ filterGear = (terms) ->
 	for _, v in pairs backpackItems
 		if buttons[v]
 			gearString = trim string.lower buttons[v].GearReference.Value.Name
-			for i = 1, #terms
-				if string.match gearString, terms[i]
+			for i in *terms
+				if string.match gearString, i
 					table.insert filteredGear, buttons[v]
 					break
 
@@ -718,8 +717,8 @@ nukeBackpack = ->
 
 	backpackItems = {}
 	scrollingFrameChildren = grid.ScrollingFrame\GetChildren!
-	for i = 1, #scrollingFrameChildren
-		scrollingFrameChildren[i]\remove!
+	for i in *scrollingFrameChildren
+		i\remove!
 
 coreGuiChanged = (coreGuiType, enabled) ->
 	if coreGuiType == Enum.CoreGuiType.Backpack or coreGuiType == Enum.CoreGuiType.All
@@ -728,8 +727,8 @@ coreGuiChanged = (coreGuiType, enabled) ->
 
 
 backpackChildren = player.Backpack\GetChildren!
-for i = 1, #backpackChildren
-	addToGrid backpackChildren[i]
+for i in *backpackChildren
+	addToGrid i
 
 
 ------------------------- Start Lifelong Connections -----------------------
@@ -784,10 +783,10 @@ swapSlot.Changed\connect ->
 		updateGridActive!
 
 loadoutChildren = currentLoadout\GetChildren!
-for i = 1, #loadoutChildren
-	if loadoutChildren[i]\IsA"Frame" and string.find loadoutChildren[i].Name, "Slot"
-		loadoutChildren[i].ChildRemoved\connect -> updateGridActive!
-		loadoutChildren[i].ChildAdded\connect -> updateGridActive!
+for i in *loadoutChildren
+	if i\IsA"Frame" and string.find i.Name, "Slot"
+		i.ChildRemoved\connect -> updateGridActive!
+		i.ChildAdded\connect -> updateGridActive!
 
 
 ------------------------- End Lifelong Connections -----------------------
@@ -802,8 +801,8 @@ resizeGrid!
 
 -- make sure any items in the loadout are accounted for in inventory
 loadoutChildren = currentLoadout\GetChildren!
-for i = 1, #loadoutChildren
-	loadoutCheck loadoutChildren[i], false
+for i in *loadoutChildren
+	loadoutCheck i, false
 
 if not backpack.Visible
 	centerGear currentLoadout\GetChildren!

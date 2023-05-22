@@ -124,8 +124,7 @@ deactivateBackpack = ->
 	active = false
 
 initHumanoidDiedConnections = ->
-	if humanoidDiedCon
-		humanoidDiedCon\disconnect!
+	humanoidDiedCon?\disconnect!
 
 	waitForProperty game.Players.LocalPlayer, "Character"
 	waitForChild game.Players.LocalPlayer.Character, "Humanoid"
@@ -215,9 +214,9 @@ toggleBackpack = ->
 		hideBackpack!
 
 		clChildren = currentLoadout\GetChildren!
-		for i = 1, #clChildren
-			if clChildren[i] and clChildren[i]\IsA "Frame"
-				frame = clChildren[i]
+		for i in *clChildren
+			if i and i\IsA "Frame"
+				frame = i
 				if #frame\GetChildren! > 0
 					backpackButton.Position = UDim2.new 0.5, -60, 1, -108
 					backpackButton.Visible = true
