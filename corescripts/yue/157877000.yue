@@ -92,7 +92,7 @@ initializeDeveloperConsole = ->
 				Size: UDim2.new 0.8, 0, 0.8, 0
 				Rotation: 135
 				Image: "http://www.roblox.com/Asset?id=151205813"
-		
+
 		* New "TextButton", "LocalConsole"
 			BackgroundColor3: Color3.new 0, 0, 0
 			BackgroundTransparency: 0.6
@@ -349,12 +349,8 @@ initializeDeveloperConsole = ->
 			TextYAlignment: Enum.TextYAlignment.Top
 
 	---Saved Mouse Information
-	local previousMousePos
-	local pPos
-
-	local previousMousePosResize
-	local pSize
-
+	local previousMousePos, pPos
+	local previousMousePosResize, pSize
 	local previousMousePosScroll
 
 	-- local pScrollHandle
@@ -519,8 +515,8 @@ initializeDeveloperConsole = ->
 
 		posOffset = 0
 
-		for i = 1, #childMessages
-			childMessages[i].Visible = false
+		for i in *childMessages
+			i.Visible = false
 
 		for i = 1, #messageList
 			local message
@@ -856,8 +852,8 @@ initializeDeveloperConsole = ->
 
 	history = game\GetService"LogService"\GetLogHistory!
 
-	for i = 1, #history
-		AddLocalMessage history[i].message, history[i].messageType, history[i].timestamp
+	for i in *history
+		AddLocalMessage i.message, i.messageType, i.timestamp
 
 	with game\GetService"LogService"
 		.MessageOut\connect (message, messageType) ->
