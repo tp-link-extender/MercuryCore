@@ -2,6 +2,7 @@
 	import { enhance, deserialize } from "$app/forms"
 	import Item from "$lib/components/Item.svelte"
 	import { onMount } from "svelte"
+	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	let query = ""
 	let rendered = false
@@ -32,6 +33,8 @@
 	}
 
 	export let data
+
+	let tabData = TabData(data.url, ["Hats", "T-Shirts", "Shirts", "Pants", "Decals"])
 </script>
 
 <svelte:head>
@@ -74,94 +77,43 @@
 			</form>
 		</div>
 	</div>
+	<div class="row mb-3">
+		<h1 class="h4 col-xl-2 col-lg-4 col-md-3 mb-0 light-text">Categories</h1>
+		<div class="col-xl-10 col-lg-8 col-md-9">
+			<TabNav bind:tabData justify/>
+		</div>
+	</div>
 	
 	<div class="row">
-		<div class="col-xl-2 col-lg-5 d-flex justify-content-start">
-			<div class="card">
-				<div class="card-header light-text">Type</div>
-				<div class="card-body">
-					<a class="btn btn-outline-success" href="/develop">
-						<i class="fas fa-plus" />
-						Create Asset
-					</a>
-					<hr class="light-text" />
-					<div
-						class="nav flex-column nav-pills"
-						id="v-pills-tab"
-						role="tablist"
-						aria-orientation="vertical">
-						<button
-							class="nav-link active"
-							id="v-pills-hats-tab"
-							data-bs-toggle="pill"
-							data-bs-target="#v-pills-hats"
-							type="button"
-							role="tab"
-							aria-controls="v-pills-hats"
-							aria-selected="true">
-							Hats
-						</button>
-						<button
-							class="nav-link"
-							id="v-pills-t-shirts-tab"
-							data-bs-toggle="pill"
-							data-bs-target="#v-pills-t-shirts"
-							type="button"
-							role="tab"
-							aria-controls="v-pills-t-shirts"
-							aria-selected="false">
-							T-Shirts
-						</button>
-						<button
-							class="nav-link"
-							id="v-pills-shirts-tab"
-							data-bs-toggle="pill"
-							data-bs-target="#v-pills-shirts"
-							type="button"
-							role="tab"
-							aria-controls="v-pills-shirts"
-							aria-selected="false">
-							Shirts
-						</button>
-						<button
-							class="nav-link"
-							id="v-pills-pants-tab"
-							data-bs-toggle="pill"
-							data-bs-target="#v-pills-pants"
-							type="button"
-							role="tab"
-							aria-controls="v-pills-pants"
-							aria-selected="false">
-							Pants
-						</button>
-						<button
-							class="nav-link"
-							id="v-pills-decals-tab"
-							data-bs-toggle="pill"
-							data-bs-target="#v-pills-decals"
-							type="button"
-							role="tab"
-							aria-controls="v-pills-decals"
-							aria-selected="false">
-							Decals
-						</button>
-					</div>
-				</div>
-			</div>
+		<div class="col-xl-2 col-lg-5">
+			<h1 class="light-text h3">Filters</h1>
+			<p class="light-text mb-0">Sort by:</p>
+			<a href="/" class="text-decoration-none">Recently Updated</a><br/>
+			<a href="/" class="text-decoration-none">Bestselling</a><br/>
+			<p class="light-text mb-0">Price:</p>
+			<a href="/" class="text-decoration-none">Price (low to high)</a><br/>
+			<a href="/" class="text-decoration-none">Price (high to low)</a><br/>
 		</div>
 		<div class="col-xl-9 col-lg-7">
 			<div class="container">
 				<div class="row">
 					<div class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 pb-3 px-2 mb-2">
-						<div class="card">
-							<div class="card-body">
-								<img class="card-img-top img-fluid p-2" src="/tShirtTemplate.webp" alt="T-Shirt">
-
-								<h1 class="h5 mt-2 light-text">T-Shirt</h1>
-								<h1 class="h6 mt-2 light-text">by <a href="#" class="text-decoration-none">task</a></h1>
-								<h1 class="h6 mt-2 text-success"><i class="fas fa-gem" /> Free</h1>
-							</div>
-						</div>
+					   <div class="card hover-shadow">
+						  <div class="card-body">
+							 <p class="text-center"><img class="img-fluid" src="https://media.istockphoto.com/photos/traffic-cone-picture-id504567615?k=6&amp;m=504567615&amp;s=170667a&amp;w=0&amp;h=8dg2yif2eSK74tmJOV-b7Gk-976r2Kgo_ytjTTwnORc="></p>
+							 <a href="#" class="m-0 text-decoration-none">Traffic Cone</a>
+							 <p class="m-0 text-success"><i class="far fa-gem"></i> 2000</p>
+						  </div>
+					   </div>
+					</div>
+					<div class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 pb-3 px-2 mb-2">
+					   <div class="card hover-shadow">
+						  <div class="card-body">
+							 <p class="text-center"><img class="img-fluid" src="https://media.istockphoto.com/photos/traffic-cone-picture-id504567615?k=6&amp;m=504567615&amp;s=170667a&amp;w=0&amp;h=8dg2yif2eSK74tmJOV-b7Gk-976r2Kgo_ytjTTwnORc="></p>
+							 <a href="#" class="m-0 text-decoration-none">Traffic Cone</a>
+							 <p class="m-0 text-success"><i class="far fa-gem"></i> 2000</p>
+						  </div>
+					   </div>
 					</div>
 				</div>
 				<!-- <div class="tab-content" id="v-pills-tabContent">
