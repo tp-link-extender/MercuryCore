@@ -1,7 +1,7 @@
 <script lang="ts">
 	import fade from "$lib/fade"
 	import Place from "$lib/components/Place.svelte"
-	import Item from "$lib/components/Item.svelte"
+	import Item from "$lib/components/Asset.svelte"
 	import Group from "$lib/components/Group.svelte"
 
 	// const statusColours: { [k: string]: string } = {

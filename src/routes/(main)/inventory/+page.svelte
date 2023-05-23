@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Item from "$lib/components/Item.svelte"
+	import Asset from "$lib/components/Asset.svelte"
 
 	export let data
 </script>
@@ -11,8 +11,8 @@
 <h1 class="light-text text-center">Inventory</h1>
 
 <div class="container mt-5 d-grid">
-	{#each data.items || [] as item, num}
-		<Item {item} {num} total={(data.items || []).length} />
+	{#each data.assets || [] as asset, num}
+		<Asset {asset} {num} total={(data.assets || []).length} />
 	{/each}
 </div>
 
