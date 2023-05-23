@@ -96,7 +96,7 @@ export const actions = {
 
 		let form: Awaited<ReturnType<typeof superValidate>>
 		switch (action) {
-			case "view":
+			case "view": {
 				const formData = await request.formData()
 				form = await superValidate(
 					formData,
@@ -144,6 +144,7 @@ export const actions = {
 				})
 
 				return message(form, "View settings updated successfully!")
+			}
 
 			case "ticket":
 				await prisma.place.update({
@@ -160,7 +161,7 @@ export const actions = {
 					"Successfully regenerated server ticket"
 				)
 
-			case "network":
+			case "network": {
 				form = await superValidate(
 					request,
 					z.object({
@@ -190,8 +191,9 @@ export const actions = {
 				})
 
 				return message(form, "Network settings updated successfully!")
+			}
 
-			case "privacy":
+			case "privacy": {
 				form = await superValidate(
 					request,
 					z.object({
@@ -215,6 +217,7 @@ export const actions = {
 					privatesuccess: true,
 					privateServer,
 				}
+			}
 
 			case "privatelink":
 				await prisma.place.update({

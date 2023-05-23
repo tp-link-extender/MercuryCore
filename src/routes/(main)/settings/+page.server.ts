@@ -50,7 +50,7 @@ export const actions = {
 
 		let form
 		switch (action) {
-			case "profile":
+			case "profile": {
 				form = await superValidate(
 					request,
 					z.object({
@@ -78,8 +78,9 @@ export const actions = {
 				console.log("Profile updated successfully!")
 
 				return message(form, "Profile updated successfully!")
+			}
 
-			case "password":
+			case "password": {
 				form = await superValidate(
 					request,
 					z.object({
@@ -123,6 +124,7 @@ export const actions = {
 				form.data.npassword = ""
 				form.data.cnpassword = ""
 				return message(form, "Password updated successfully!")
+			}
 		}
 	},
 }

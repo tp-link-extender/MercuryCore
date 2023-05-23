@@ -72,7 +72,7 @@ export async function findItems(query: Prisma.ItemFindManyArgs = {}) {
 	const items = await prisma.item.findMany(query)
 
 	// Add like/dislike ratio to each item
-	for (let item of items as typeof items & { ratio: number | "--" }[]) {
+	for (const item of items as typeof items & { ratio: number | "--" }[]) {
 		const query = {
 			itemid: item.id,
 		}
@@ -113,7 +113,7 @@ export async function findGroups(query: Prisma.GroupFindManyArgs = {}) {
 	const groups = await prisma.group.findMany(query)
 
 	// Add members to each group
-	for (let group of groups as typeof groups & { members: any }[])
+	for (const group of groups as typeof groups & { members: any }[])
 		group["members"] = await roQuery(
 			"groups",
 			"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
