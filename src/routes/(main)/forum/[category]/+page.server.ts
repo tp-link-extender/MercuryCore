@@ -48,7 +48,7 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	for (let post of category.posts as any) {
+	for (const post of category.posts as any) {
 		post["likeCount"] = await roQuery(
 			"forum",
 			"RETURN SIZE((:User) -[:likes]-> (:Post { name: $id }))",

@@ -4,7 +4,10 @@
 
 	import fade from "$lib/fade"
 
-	export let group: any
+	export let group: {
+		name: string
+		members: number
+	}
 	export let num: number
 	export let total: number
 </script>

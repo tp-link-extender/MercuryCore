@@ -52,7 +52,7 @@ export const actions = {
 		} = form.data
 
 		switch (action) {
-			case "create":
+			case "create": {
 				const limit = ratelimit(
 					form,
 					"createInvite",
@@ -99,6 +99,7 @@ export const actions = {
 					form,
 					"Invite created successfully! Check the Invites tab for your new key."
 				)
+			}
 			case "disable":
 				if (!id)
 					return message(form, "Missing fields", {

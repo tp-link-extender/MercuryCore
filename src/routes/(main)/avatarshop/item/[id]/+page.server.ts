@@ -99,7 +99,7 @@ export const actions = {
 		console.log("Action:", action)
 
 		switch (action) {
-			case "buy":
+			case "buy": {
 				const item = await prisma.item.findUnique({
 					where: {
 						id: params.id,
@@ -160,7 +160,8 @@ export const actions = {
 				])
 
 				break
-			case "delete":
+			}
+			case "delete": {
 				const item2 = await prisma.item.findUnique({
 					// cAnnOt rEDeCLaRE bLoCK-SCOpeD varIabLE
 					where: {
@@ -193,6 +194,7 @@ export const actions = {
 				})
 
 				break
+			}
 			case "like":
 				await Query(
 					"items",
