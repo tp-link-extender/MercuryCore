@@ -9,7 +9,7 @@
 
 	// type script mont
 	const likeEnhance = (e: any) => {
-		const action = e.data.get("action")
+		const action = e.formData.get("action")
 
 		if (action == "like") {
 			data.likes = true
