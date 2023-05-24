@@ -82,8 +82,6 @@
 					<div class="col-md-5">
 						<input
 							bind:value={$form.icon}
-							{...$constraints.icon}
-							required
 							id="icon"
 							name="icon"
 							type="file"
