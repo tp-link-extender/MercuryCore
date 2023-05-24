@@ -64,6 +64,9 @@ dependencies:
   nprogress:
     specifier: ^0.2.0
     version: 0.2.0
+  picocolors:
+    specifier: ^1.0.0
+    version: 1.0.0
   profane-words:
     specifier: ^1.5.9
     version: 1.5.9

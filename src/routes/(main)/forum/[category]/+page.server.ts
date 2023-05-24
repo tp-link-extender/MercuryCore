@@ -118,8 +118,6 @@ export const actions = {
 			id: id || replyId,
 		}
 
-		console.log("Action:", action)
-
 		try {
 			switch (action) {
 				case "like":

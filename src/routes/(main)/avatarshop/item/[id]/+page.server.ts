@@ -6,7 +6,6 @@ import { error, fail } from "@sveltejs/kit"
 import { NotificationType } from "@prisma/client"
 
 export async function load({ locals, params }) {
-	console.time("item")
 	const { session, user } = await authorise(locals)
 
 	const item = await prisma.item.findUnique({
@@ -31,8 +30,6 @@ export async function load({ locals, params }) {
 			},
 		},
 	})
-
-	console.timeEnd("item")
 
 	if (item) {
 		const query = {
@@ -95,8 +92,6 @@ export const actions = {
 			user: user.username,
 			itemid: params.id, // item id (unique)
 		}
-
-		console.log("Action:", action)
 
 		switch (action) {
 			case "buy": {

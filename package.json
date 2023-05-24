@@ -60,6 +60,7 @@
 		"lucia-auth": "^1.7.0",
 		"nanoid": "^4.0.2",
 		"nprogress": "^0.2.0",
+		"picocolors": "^1.0.0",
 		"profane-words": "^1.5.9",
 		"puppeteer": "^20.3.0",
 		"redis": "^4.6.6",

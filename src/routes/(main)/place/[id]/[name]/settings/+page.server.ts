@@ -29,7 +29,6 @@ export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id))
 		throw error(400, `Invalid game id: ${params.id}`)
 
-	console.time("place settings")
 	const getPlace = await prisma.place.findUnique({
 		where: {
 			id: parseInt(params.id),
@@ -47,7 +46,6 @@ export async function load({ locals, params }) {
 			},
 		},
 	})
-	console.timeEnd("place settings")
 
 	if (!getPlace) throw error(404, "Not found")
 
@@ -92,8 +90,6 @@ export const actions = {
 
 		const action = url.searchParams.get("a")
 
-		console.log("Action:", action)
-
 		let form: Awaited<ReturnType<typeof superValidate>>
 		switch (action) {
 			case "view": {
@@ -110,7 +106,7 @@ export const actions = {
 
 				const icon = formData.get("icon") as File
 
-				if (icon) {
+				if (icon && icon.size > 0) {
 					if (icon.size > 1e6)
 						return formError(
 							form,

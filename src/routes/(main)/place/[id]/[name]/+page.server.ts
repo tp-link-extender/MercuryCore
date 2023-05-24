@@ -5,7 +5,6 @@ import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ url, locals, params }) {
-	console.time("place")
 	if (!/^\d+$/.test(params.id))
 		throw error(400, `Invalid place id: ${params.id}`)
 	const id = parseInt(params.id)
@@ -58,7 +57,6 @@ export async function load({ url, locals, params }) {
 		},
 	})
 
-	console.timeEnd("place")
 	if (getPlace) {
 		const { session, user } = await authorise(locals)
 
@@ -133,8 +131,6 @@ export const actions = {
 			user: user.username,
 			id,
 		}
-
-		console.log("Action:", action)
 
 		try {
 			switch (action) {

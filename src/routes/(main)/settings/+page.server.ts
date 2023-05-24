@@ -75,8 +75,6 @@ export const actions = {
 					},
 				})
 
-				console.log("Profile updated successfully!")
-
 				return message(form, "Profile updated successfully!")
 			}
 
