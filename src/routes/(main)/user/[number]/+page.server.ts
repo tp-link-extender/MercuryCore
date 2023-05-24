@@ -6,7 +6,6 @@ import { error, fail } from "@sveltejs/kit"
 import { NotificationType } from "@prisma/client"
 
 export async function load({ locals, params }) {
-	console.time("user")
 	if (!/^\d+$/.test(params.number))
 		throw error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
@@ -73,7 +72,6 @@ export async function load({ locals, params }) {
 			},
 		})
 
-		console.timeEnd("user")
 
 		return {
 			...userExists,
@@ -187,8 +185,6 @@ export const actions = {
 			user1: user.username,
 			user2: userExists.username,
 		}
-
-		console.log("Action:", action)
 
 		async function accept() {
 			await Promise.all([

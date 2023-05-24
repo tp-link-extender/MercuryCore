@@ -11,12 +11,9 @@ const schema = z.object({
 })
 
 export async function load({ locals }) {
-	console.time("home")
 	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users,
 	// but sometimes errors for this page.
-
-	console.timeEnd("home")
 
 	return {
 		form: superValidate(schema),
