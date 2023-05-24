@@ -1,17 +1,14 @@
 <script lang="ts">
 	import { enhance, deserialize } from "$app/forms"
 	import Asset from "$lib/components/Asset.svelte"
-	import { onMount } from "svelte"
 	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	let query = ""
-	let rendered = false
-	onMount(() => (rendered = true))
 
 	let searchedData: any[] = []
 
 	// Run function whenever query changes
-	$: (query || rendered) &&
+	$: query &&
 		(async () => {
 			const formdata = new FormData()
 			formdata.append("query", query)
@@ -110,7 +107,7 @@
 			<div class="container">
 				<div class="row">
 					{#each query ? searchedData : data.assets || [] as asset, num (asset.id)}
-						<Asset {asset} {num} total={data.assets.length}/>
+						<Asset {asset} {num} total={data.assets.length} />
 					{/each}
 					{#if query && searchedData.length == 0}
 						<h2 class="h5 light-text mt-5">
