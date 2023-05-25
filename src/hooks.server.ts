@@ -41,7 +41,7 @@ function pathnameColour(pathname: string) {
 export async function handle({ event, resolve }) {
 	event.locals = auth.handleRequest(event)
 	const { user, session } = await event.locals.validateUser()
-	const { pathname } = event.url
+	const { pathname, search } = event.url
 	const { method } = event.request
 
 	// Fancy logging: time, user, method, and path
@@ -52,7 +52,7 @@ export async function handle({ event, resolve }) {
 			: yellow("Logged-out user      "),
 		"|",
 		(methodColours[method] || method) + " ".repeat(7 - method.length),
-		pathnameColour(decodeURI(pathname))
+		pathnameColour(decodeURI(pathname) + search)
 	)
 
 	if (!session) return await resolve(event)

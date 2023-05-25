@@ -1,4 +1,4 @@
-import { findItems, prisma } from "$lib/server/prisma"
+import { prisma } from "$lib/server/prisma"
 
 export const load = () => ({
 	assets: prisma.asset.findMany({
