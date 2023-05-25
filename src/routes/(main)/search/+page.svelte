@@ -1,7 +1,7 @@
 <script lang="ts">
 	import fade from "$lib/fade"
 	import Place from "$lib/components/Place.svelte"
-	import Item from "$lib/components/Asset.svelte"
+	import Asset from "$lib/components/Asset.svelte"
 	import Group from "$lib/components/Group.svelte"
 
 	// const statusColours: { [k: string]: string } = {
@@ -67,12 +67,12 @@
 				</div>
 			{/each}
 		</div>
-	{:else if data.category == "items" && data.items}
+	{:else if data.category == "assets" && data.assets}
 		<div class="grid d-grid">
-			{#each data.items as item, num}
+			{#each data.assets as asset, num}
 				<div class="px-2 mb-2">
 					<div class="place">
-						<Item {item} {num} total={data.items.length} />
+						<Asset {asset} {num} total={data.assets.length} />
 					</div>
 				</div>
 			{/each}
@@ -95,8 +95,8 @@
 			<a class="btn btn-primary" href="/search?q={data.query}&c=places">
 				Places
 			</a>
-			<a class="btn btn-primary" href="/search?q={data.query}&c=items">
-				Items
+			<a class="btn btn-primary" href="/search?q={data.query}&c=assets">
+				Assets
 			</a>
 		</div>
 	{/if}

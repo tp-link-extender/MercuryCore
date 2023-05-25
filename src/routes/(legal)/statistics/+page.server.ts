@@ -9,7 +9,7 @@ export async function load({ locals }) {
 		users: prisma.authUser.count(),
 		places: prisma.place.count(),
 		groups: prisma.group.count(),
-		items: prisma.item.count(),
+		assets: prisma.asset.count(),
 		transactions: prisma.transaction.count(),
 		friendships: roQuery(
 			"friends",
