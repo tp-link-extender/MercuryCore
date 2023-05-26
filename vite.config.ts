@@ -1,8 +1,9 @@
 import { sveltekit } from "@sveltejs/kit/vite"
+import { defineConfig } from "vite"
 import { warmup } from "vite-plugin-warmup"
 import UnoCSS from "unocss/vite"
 import extractorSvelte from "@unocss/extractor-svelte"
-import { defineConfig } from "vite"
+import inlangPlugin from "@inlang/sdk-js/adapter-sveltekit"
 
 export default defineConfig({
 	plugins: [
@@ -12,6 +13,7 @@ export default defineConfig({
 		UnoCSS({
 			extractors: [extractorSvelte],
 		}),
+		inlangPlugin(),
 		sveltekit(),
 	],
 
