@@ -840,12 +840,13 @@ ColorZone = makeZone(
 	UDim2.new(0.5, -60, 0.5, -100),
 	ColorFrame
 )
-makeStyledButton("Head", UDim2.new(0.26, 0, 0.19, 0), UDim2.new(0.37, 0, 0.02, 0), ColorZone).AutoButtonColor = false
-makeStyledButton("LeftArm", UDim2.new(0.19, 0, 0.36, 0), UDim2.new(0.78, 0, 0.26, 0), ColorZone).AutoButtonColor = false
-makeStyledButton("RightArm", UDim2.new(0.19, 0, 0.36, 0), UDim2.new(0.025, 0, 0.26, 0), ColorZone).AutoButtonColor = false
-makeStyledButton("Torso", UDim2.new(0.43, 0, 0.36, 0), UDim2.new(0.28, 0, 0.26, 0), ColorZone).AutoButtonColor = false
-makeStyledButton("RightLeg", UDim2.new(0.19, 0, 0.31, 0), UDim2.new(0.275, 0, 0.67, 0), ColorZone).AutoButtonColor = false
-makeStyledButton("LeftLeg", UDim2.new(0.19, 0, 0.31, 0), UDim2.new(0.525, 0, 0.67, 0), ColorZone).AutoButtonColor = false
+makeStyledButton("Head", UDim2.new(0.26, 0, 0.19, 0), UDim2.new(0.37, 0, 0.02, 0), ColorZone).AutoButtonColor \
+= makeStyledButton("LeftArm", UDim2.new(0.19, 0, 0.36, 0), UDim2.new(0.78, 0, 0.26, 0), ColorZone).AutoButtonColor \
+= makeStyledButton("RightArm", UDim2.new(0.19, 0, 0.36, 0), UDim2.new(0.025, 0, 0.26, 0), ColorZone).AutoButtonColor \
+= makeStyledButton("Torso", UDim2.new(0.43, 0, 0.36, 0), UDim2.new(0.28, 0, 0.26, 0), ColorZone).AutoButtonColor \
+= makeStyledButton("RightLeg", UDim2.new(0.19, 0, 0.31, 0), UDim2.new(0.275, 0, 0.67, 0), ColorZone).AutoButtonColor \
+= makeStyledButton("LeftLeg", UDim2.new(0.19, 0, 0.31, 0), UDim2.new(0.525, 0, 0.67, 0), ColorZone).AutoButtonColor \
+= false
 
 -- no need for this to stick around
 

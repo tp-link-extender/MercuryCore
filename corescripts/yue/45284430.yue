@@ -309,9 +309,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 		if scrollDownButton
 			scrollDownButton.ZIndex = baseZIndex + 3
 
-
-		children = droppedDownMenu\GetChildren!
-		if children
+		if children = droppedDownMenu\GetChildren!
 			for _, child in ipairs children
 				if child.Name == "ChoiceButton"
 					child.ZIndex = baseZIndex + 2
@@ -352,10 +350,10 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 		areaSoak.Visible = not areaSoak.Visible
 		dropDownMenu.Visible = not dropDownSelected
 		droppedDownMenu.Visible = dropDownSelected
-		if dropDownSelected
-			setZIndex 4
+		setZIndex if dropDownSelected
+			4
 		else
-			setZIndex 2
+			2
 
 		if useScrollButtons
 			updateScroll!
@@ -418,10 +416,8 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 			Size: UDim2.new 0, 17, 0, 17
 			Position: UDim2.new 1, -11, (1 * 0.8) / ((dropDownItemCount + 1) * 0.8), 0
 
-		scrollUpButton.MouseButton1Click\connect ->
-			scrollMouseCount += 1
-		scrollUpButton.MouseLeave\connect ->
-			scrollMouseCount += 1
+		scrollUpButton.MouseButton1Click\connect -> scrollMouseCount += 1
+		scrollUpButton.MouseLeave\connect -> scrollMouseCount += 1
 		scrollUpButton.MouseButton1Down\connect ->
 			scrollMouseCount += 1
 
@@ -443,10 +439,8 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 			Position: UDim2.new 1, -11, 1, -11
 			Parent: droppedDownMenu
 
-		scrollDownButton.MouseButton1Click\connect ->
-			scrollMouseCount += 1
-		scrollDownButton.MouseLeave\connect ->
-			scrollMouseCount += 1
+		scrollDownButton.MouseButton1Click\connect -> scrollMouseCount += 1
+		scrollDownButton.MouseLeave\connect -> scrollMouseCount += 1
 		scrollDownButton.MouseButton1Down\connect ->
 			scrollMouseCount += 1
 
@@ -579,25 +573,25 @@ layoutGuiObjectsHelper = (frame, guiObjects, settingsTable) ->
 	for _, child in ipairs guiObjects
 		if child\IsA"TextLabel" or child\IsA "TextButton"
 			isLabel = child\IsA "TextLabel"
-			if isLabel
-				pixelsRemaining -= settingsTable["TextLabelPositionPadY"]
+			pixelsRemaining -= if isLabel
+				settingsTable["TextLabelPositionPadY"]
 			else
-				pixelsRemaining -= settingsTable["TextButtonPositionPadY"]
+				settingsTable["TextButtonPositionPadY"]
 
 			child.Position = UDim2.new child.Position.X.Scale, child.Position.X.Offset, 0, totalPixels - pixelsRemaining
 			child.Size = UDim2.new child.Size.X.Scale, child.Size.X.Offset, 0, pixelsRemaining
 
 			if child.TextFits and child.TextBounds.Y < pixelsRemaining
 				child.Visible = true
-				if isLabel
-					child.Size = UDim2.new(
+				child.Size = if isLabel
+					UDim2.new(
 						child.Size.X.Scale,
 						child.Size.X.Offset,
 						0,
 						child.TextBounds.Y + settingsTable["TextLabelSizePadY"]
 					)
 				else
-					child.Size = UDim2.new(
+					UDim2.new(
 						child.Size.X.Scale,
 						child.Size.X.Offset,
 						0,
@@ -610,10 +604,10 @@ layoutGuiObjectsHelper = (frame, guiObjects, settingsTable) ->
 
 				pixelsRemaining -= child.AbsoluteSize.Y
 
-				if isLabel
-					pixelsRemaining -= settingsTable["TextLabelPositionPadY"]
+				pixelsRemaining -= if isLabel
+					settingsTable["TextLabelPositionPadY"]
 				else
-					pixelsRemaining -= settingsTable["TextButtonPositionPadY"]
+					settingsTable["TextButtonPositionPadY"]
 
 			else
 				child.Visible = false
@@ -637,7 +631,6 @@ t.LayoutGuiObjects = (frame, guiObjects, settingsTable) ->
 
 	if not settingsTable
 		settingsTable = {}
-
 
 	if not settingsTable["TextLabelSizePadY"]
 		settingsTable["TextLabelSizePadY"] = 0
@@ -739,20 +732,16 @@ t.CreateSlider = (steps, width, position) ->
 
 	local areaSoakMouseMoveCon
 
-	areaSoak.MouseLeave\connect ->
-		if areaSoak.Visible
-			cancelSlide areaSoak
+	f = -> if areaSoak.Visible
+		cancelSlide areaSoak
 
-
-	areaSoak.MouseButton1Up\connect ->
-		if areaSoak.Visible
-			cancelSlide areaSoak
+	areaSoak.MouseLeave\connect f
+	areaSoak.MouseButton1Up\connect f
 
 
 	slider.MouseButton1Down\connect ->
 		areaSoak.Visible = true
-		if areaSoakMouseMoveCon
-			areaSoakMouseMoveCon\disconnect!
+		areaSoakMouseMoveCon?\disconnect!
 
 		areaSoakMouseMoveCon = areaSoak.MouseMoved\connect (x, _) ->
 			setSliderPos x, slider, sliderPosition, bar, steps
@@ -772,13 +761,11 @@ t.CreateSlider = (steps, width, position) ->
 		setSliderPos x, slider, sliderPosition, bar, steps
 
 
-	return sliderGui, sliderPosition, sliderSteps
+	sliderGui, sliderPosition, sliderSteps
 
 
 t.CreateTrueScrollingFrame = ->
-	local lowY, highY
-
-	local dragCon, upCon
+	local lowY, highY, dragCon, upCon
 
 	internalChange = false
 
@@ -789,29 +776,34 @@ t.CreateTrueScrollingFrame = ->
 		Size: UDim2.new 1, 0, 1, 0
 		ClipsDescendants: true
 
-	controlFrame = New "Frame", "ControlFrame"
-		BackgroundTransparency: 1
-		Size: UDim2.new 0, 18, 1, 0
-		Position: UDim2.new 1, -20, 0, 0
-		Parent: scrollingFrame
+		* New "Frame", "ControlFrame"
+			BackgroundTransparency: 1
+			Size: UDim2.new 0, 18, 1, 0
+			Position: UDim2.new 1, -20, 0, 0
 
-	scrollBottom = New "BoolValue", "ScrollBottom"
-		Value: false
-		Parent: controlFrame
+			* New "BoolValue", "ScrollBottom"
+				Value: false
 
-	scrollUp = New "BoolValue", "scrollUp"
-		Value: false
-		Parent: controlFrame
+			* New "BoolValue", "ScrollUp"
+				Value: false
 
-	scrollUpButton = New "TextButton", "ScrollUpButton"
-		Text: ""
-		AutoButtonColor: false
-		BackgroundColor3: Color3.new 0, 0, 0
-		BorderColor3: Color3.new 1, 1, 1
-		BackgroundTransparency: 0.5
-		Size: UDim2.new 0, 18, 0, 18
-		ZIndex: 2
-		Parent: controlFrame
+			* New "TextButton", "ScrollUpButton"
+				Text: ""
+				AutoButtonColor: false
+				BackgroundColor3: Color3.new 0, 0, 0
+				BorderColor3: Color3.new 1, 1, 1
+				BackgroundTransparency: 0.5
+				Size: UDim2.new 0, 18, 0, 18
+				ZIndex: 2
+
+	{
+		ControlFrame: controlFrame
+		ControlFrame:
+			ScrollBottom: scrollBottom
+			ScrollUp: scrollUp
+			ScrollUpButton: scrollUpButton
+	} = scrollingFrame
+
 
 	for i = 1, 6
 		New "Frame", "tri#{i}"
@@ -865,25 +857,30 @@ t.CreateTrueScrollingFrame = ->
 		Position: UDim2.new 0, 0, 0, 19
 		Parent: controlFrame
 
-	scrollbar = New "TextButton", "ScrollBar"
-		BackgroundColor3: Color3.new 0, 0, 0
-		BorderColor3: Color3.new 1, 1, 1
-		BackgroundTransparency: 0.5
-		AutoButtonColor: false
-		Text: ""
-		Active: true
-		ZIndex: 2
-		Size: UDim2.new 0, 18, 0.1, 0
-		Position: UDim2.new 0, 0, 0, 0
-		Parent: scrollTrack
+		* New "TextButton", "ScrollBar"
+			BackgroundColor3: Color3.new 0, 0, 0
+			BorderColor3: Color3.new 1, 1, 1
+			BackgroundTransparency: 0.5
+			AutoButtonColor: false
+			Text: ""
+			Active: true
+			ZIndex: 2
+			Size: UDim2.new 0, 18, 0.1, 0
+			Position: UDim2.new 0, 0, 0, 0
 
-	scrollNub = New "Frame", "ScrollNub"
-		BorderColor3: Color3.new 1, 1, 1
-		Size: UDim2.new 0, 10, 0, 0
-		Position: UDim2.new 0.5, -5, 0.5, 0
-		ZIndex: 2
-		BackgroundTransparency: 0.5
-		Parent: scrollbar
+			* New "Frame", "ScrollNub"
+				BorderColor3: Color3.new 1, 1, 1
+				Size: UDim2.new 0, 10, 0, 0
+				Position: UDim2.new 0.5, -5, 0.5, 0
+				ZIndex: 2
+				BackgroundTransparency: 0.5
+
+	{
+		ScrollBar: scrollbar
+		ScrollBar:
+			ScrollNub: scrollNub
+	} = scrollTrack
+
 
 	newNub = scrollNub\clone!
 	newNub.Position = UDim2.new 0.5, -5, 0.5, -2
@@ -894,15 +891,15 @@ t.CreateTrueScrollingFrame = ->
 	lastNub.Parent = scrollbar
 
 	scrollbar.MouseEnter\connect ->
-		scrollbar.BackgroundTransparency = 0.1
-		scrollNub.BackgroundTransparency = 0.1
-		newNub.BackgroundTransparency = 0.1
+		scrollbar.BackgroundTransparency = \
+		scrollNub.BackgroundTransparency = \
+		newNub.BackgroundTransparency = \
 		lastNub.BackgroundTransparency = 0.1
 
 	scrollbar.MouseLeave\connect ->
-		scrollbar.BackgroundTransparency = 0.5
-		scrollNub.BackgroundTransparency = 0.5
-		newNub.BackgroundTransparency = 0.5
+		scrollbar.BackgroundTransparency = \
+		scrollNub.BackgroundTransparency = \
+		newNub.BackgroundTransparency = \
 		lastNub.BackgroundTransparency = 0.5
 
 
@@ -919,14 +916,14 @@ t.CreateTrueScrollingFrame = ->
 
 		if y < scrollTrack.AbsolutePosition.y
 			scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, 0, 0
-			return (oldPos ~= scrollbar.Position)
+			return oldPos ~= scrollbar.Position
 
 
 		relativeSize = scrollbar.AbsoluteSize.Y / scrollTrack.AbsoluteSize.Y
 
 		if y > (scrollTrack.AbsolutePosition.y + scrollTrack.AbsoluteSize.y)
 			scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, 1 - relativeSize, 0
-			return (oldPos ~= scrollbar.Position)
+			return oldPos ~= scrollbar.Position
 
 		newScaleYPos = (y - scrollTrack.AbsolutePosition.y - offset) / scrollTrack.AbsoluteSize.y
 		if newScaleYPos + relativeSize > 1
@@ -943,7 +940,7 @@ t.CreateTrueScrollingFrame = ->
 
 		scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, newScaleYPos, 0
 
-		return (oldPos ~= scrollbar.Position)
+		oldPos ~= scrollbar.Position
 
 
 	drillDownSetHighLow = (instance) ->
@@ -998,7 +995,7 @@ t.CreateTrueScrollingFrame = ->
 				)
 
 
-		lowY = nil
+		lowY = \
 		highY = nil
 		resetHighLow!
 		internalChange = false
@@ -1009,8 +1006,8 @@ t.CreateTrueScrollingFrame = ->
 
 		totalYSpan = math.abs highY - lowY
 		if totalYSpan == 0
-			scrollbar.Visible = false
-			scrollDownButton.Visible = false
+			scrollbar.Visible = \
+			scrollDownButton.Visible = \
 			scrollUpButton.Visible = false
 
 			if dragCon
@@ -1083,8 +1080,7 @@ t.CreateTrueScrollingFrame = ->
 		if scrollUpButton.Active
 			scrollStamp = tick!
 			current = scrollStamp
-			local upCon
-			upCon = mouseDrag.MouseButton1Up\connect ->
+			local upCon = mouseDrag.MouseButton1Up\connect ->
 				scrollStamp = tick!
 				mouseDrag.Parent = nil
 				upCon\disconnect!
@@ -1148,11 +1144,11 @@ t.CreateTrueScrollingFrame = ->
 				upCon = nil
 
 			reentrancyGuardMouseScroll = false
-			dragCon = mouseDrag.MouseMoved\connect (x, y) ->
+			dragCon = mouseDrag.MouseMoved\connect (x2, y2) ->
 				return if reentrancyGuardMouseScroll
 
 				reentrancyGuardMouseScroll = true
-				if positionScrollBar x, y, mouseOffset
+				if positionScrollBar x2, y2, mouseOffset
 					recalculate!
 
 				reentrancyGuardMouseScroll = false
@@ -1170,11 +1166,8 @@ t.CreateTrueScrollingFrame = ->
 
 	scrollMouseCount = 0
 
-	scrollUpButton.MouseButton1Down\connect ->
-		scrollUp!
-
-	scrollDownButton.MouseButton1Down\connect ->
-		scrollDown!
+	scrollUpButton.MouseButton1Down\connect -> scrollUp!
+	scrollDownButton.MouseButton1Down\connect -> scrollDown!
 
 
 	scrollTick = ->
@@ -1331,7 +1324,7 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 
 		totalPixelsX = frame.AbsoluteSize.X
 
-		xCounter = 0
+		xCounter = \
 		rowSizeCounter = 0
 		setRowSize = true
 
@@ -2055,13 +2048,14 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 			Size: UDim2.new 1, -55, 0, 22
 			Position: UDim2.new 0, 0, 0, 0
 
-	skipButton = New "ImageButton", "SkipButton"
-		AutoButtonColor: false
-		BackgroundTransparency: 1
-		Image: "rbxasset://textures/ui/closeButton.png"
-		Size: UDim2.new 0, 25, 0, 25
-		Position: UDim2.new 1, -25, 0, 0
-		Parent: frame
+		* New "ImageButton", "SkipButton"
+			AutoButtonColor: false
+			BackgroundTransparency: 1
+			Image: "rbxasset://textures/ui/closeButton.png"
+			Size: UDim2.new 0, 25, 0, 25
+			Position: UDim2.new 1, -25, 0, 0
+
+	{ SkipButton: skipButton } = frame
 
 	skipButton.MouseButton1Click\connect ->
 		skipTutorial!
@@ -2096,10 +2090,10 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 		Position: UDim2.new 0, 0, 0, 25
 		Parent: frame
 
-	innerFrame.Size = if giveDoneButton
-		UDim2.new 1, 0, 1, -75
+	innerFrame.Size = UDim2.new 1, 0, 1, if giveDoneButton
+		-75
 	else
-		UDim2.new 1, 0, 1, -22
+		-22
 
 
 	local parentConnection
@@ -2122,9 +2116,7 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 						wait!
 						basicHandleResize!
 
-
 				basicHandleResize!
-
 
 		if prop == "Visible"
 			basicHandleResize!
