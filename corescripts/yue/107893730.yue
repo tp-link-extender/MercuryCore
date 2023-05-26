@@ -123,13 +123,14 @@ preloadAssets = ->
 
 -------------------------------- Accept/Decline Functions --------------------------------------
 removeCurrentPurchaseInfo = ->
-	currentAssetId = nil
-	currentCurrencyType = nil
-	currentCurrencyAmount = nil
-	currentEquipOnPurchase = nil
-	currentProductId = nil
-	currentProductInfo = nil
-	currentServerResponseTable = nil
+	currentAssetId \
+	= currentCurrencyType \
+	= currentCurrencyAmount \
+	= currentEquipOnPurchase \
+	= currentProductId \
+	= currentProductInfo \
+	= currentServerResponseTable \
+	= nil
 
 	checkingPlayerFunds = false
 
@@ -270,12 +271,11 @@ updatePurchasePromptData = (_) ->
 
 	purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text = newItemDescription
 
+	purchaseDialog.BodyFrame.ItemPreview.Image = "#{baseUrl}thumbs/asset.ashx?assetid=" ..
 	if purchasingConsumable
-		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl ..
-			"thumbs/asset.ashx?assetid=#{currentProductInfo["IconImageAssetId"]}&x=100&y=100&format=png"
+		"#{currentProductInfo["IconImageAssetId"]}&x=100&y=100&format=png"
 	else
-		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl ..
-			"thumbs/asset.ashx?assetid=#{currentAssetId}&x=100&y=100&format=png"
+		"#{currentAssetId}&x=100&y=100&format=png"
 
 -- figure out what currency to use based on the currency you can actually sell the item in and what the script specified
 setCurrencyAmountAndType = (priceInRobux, priceInTix) ->
@@ -594,8 +594,7 @@ showPurchasePrompt = ->
 						doPlayerFundsCheck true
 
 				--HideFunction
-				->
-					.Visible = false
+				-> .Visible = false
 		)
 	else -- we failed in prompting a purchase, do a decline
 		doDeclinePurchase!
@@ -604,8 +603,7 @@ showPurchasePrompt = ->
 -- given an asset id, this function will grab that asset from the website, and return the first "Tool" object found inside it
 getToolAssetID = (assetID) ->
 	newTool = game\GetService"InsertService"\LoadAsset assetID
-	if not newTool
-		return nil
+	return if not newTool
 
 	if newTool\IsA "Tool"
 		return newTool
@@ -614,8 +612,6 @@ getToolAssetID = (assetID) ->
 	for i in *toolChildren
 		if i\IsA "Tool"
 			return i
-	nil
-
 
 -- the user tried to purchase by clicking the purchase button, but something went wrong.
 -- let them know their account was not charged, and that they do not own the item yet.
@@ -738,8 +734,7 @@ doAcceptPurchase = (_) ->
 
 	-- check to see if this item was bought, and if we want to equip it (also need to make sure the asset type was gear)
 	if currentEquipOnPurchase and success and currentAssetId and tonumber(currentProductInfo["AssetTypeId"]) == 19
-		tool = getToolAssetID tonumber currentAssetId
-		if tool
+		if tool = getToolAssetID tonumber currentAssetId
 			tool.Parent = game.Players.LocalPlayer.Backpack
 
 
@@ -1135,16 +1130,13 @@ if enableBrowserWindowClosedEvent
 
 Game.CoreGui.RobloxGui.Changed\connect ->
 	nowIsSmallScreen = game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold
-	if nowIsSmallScreen and not isSmallScreen
-		changeGuiToScreenSize true
+	changeGuiToScreenSize if nowIsSmallScreen and not isSmallScreen
+		true
 	elseif not nowIsSmallScreen and isSmallScreen
-		changeGuiToScreenSize false
-
+		false
 
 	isSmallScreen = nowIsSmallScreen
 
-
-isSmallScreen = game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold
-if isSmallScreen
+if isSmallScreen = game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold
 	changeGuiToScreenSize true
 

@@ -106,11 +106,10 @@ JsonWriter.WriteString = (o) => @\Append "#{o}"
 JsonWriter.ParseString = (s) =>
 	@\Append '"'
 	@\Append string.gsub s, '[%z%c\\"/]', (n) ->
-		c = @backslashes[n]
-		if c
+		if c = @backslashes[n]
 			return c
 
-		return string.format "\\u%.4X", string.byte n
+		string.format "\\u%.4X", string.byte n
 
 	@\Append '"'
 
@@ -123,7 +122,7 @@ JsonWriter.IsArray = (t) =>
 			math.floor(k) == k
 
 			return true
-		return false
+		false
 
 	for k, _ in pairs t
 		if not isindex k

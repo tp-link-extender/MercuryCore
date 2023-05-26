@@ -361,8 +361,13 @@ initializeDeveloperConsole = ->
 	scrollDownIsDown = false
 
 	clean = ->
-		previousMousePos = pPos = previousMousePosResize = nil
-		pSize = previousMousePosScroll = pOffset = nil
+		previousMousePos \
+		= pPos \
+		= previousMousePosResize \
+		= pSize \
+		= previousMousePosScroll \
+		= pOffset \
+		= nil
 		-- pScrollHandle = nil
 		scrollUpIsDown = scrollDownIsDown = false
 
