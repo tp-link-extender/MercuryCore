@@ -8,7 +8,7 @@ import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { client } from "$lib/server/redis"
 import { redirect } from "@sveltejs/kit"
-import { magenta, red, yellow, green, blue } from "picocolors"
+import { magenta, red, yellow, green, blue, gray } from "picocolors"
 
 const methodColours: { [k: string]: string } = {
 	GET: green("GET"),
@@ -42,15 +42,14 @@ export async function handle({ event, resolve }) {
 	event.locals = auth.handleRequest(event)
 	const { user, session } = await event.locals.validateUser()
 	const { pathname, search } = event.url
-	const { method } = event.request
+	const { method, body } = event.request
 
 	// Fancy logging: time, user, method, and path
 	console.log(
-		`[${new Date().toLocaleString()}]`,
+		gray(new Date().toLocaleString()) + " ",
 		user
 			? blue(user.username) + " ".repeat(21 - user.username.length)
 			: yellow("Logged-out user      "),
-		"|",
 		(methodColours[method] || method) + " ".repeat(7 - method.length),
 		pathnameColour(decodeURI(pathname) + search)
 	)
@@ -105,7 +104,17 @@ export async function handle({ event, resolve }) {
 	return await resolve(event)
 }
 
-export const handleError = ({ error }) =>
-	console.error(
-		dev ? error : red(`[${new Date().toLocaleString()}] ${error}`)
-	)
+export const handleError = async ({ event, error }) => {
+	const { user } = await event.locals.validateUser()
+
+	// Fancy error logging: time, user, and error
+	if (dev) console.error(error)
+	else
+		console.error(
+			gray(new Date().toLocaleString()) + " ",
+			user
+				? blue(user.username) + " ".repeat(21 - user.username.length)
+				: yellow("Logged-out user      "),
+			red(error as string)
+		)
+}
