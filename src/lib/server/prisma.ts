@@ -56,47 +56,6 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 }
 
 /**
- * Finds avatar shoitems in the database, and adds a like/dislike ratio to each place. Required because likes and dislikes are stored in RedisGraph, while the rest of the info for items is stored in Postgres.
- * @param query The prisma query to execute.
- * @returns The result of the query, with the like/dislike ratio added to each place.
- * @example
- * const places = await findItems({
- * 	where: {
- * 		price: {
- * 			lt: 100,
- * 		}
- * 	},
- * })
- */
-export async function findItems(query: Prisma.ItemFindManyArgs = {}) {
-	const items = await prisma.item.findMany(query)
-
-	// Add like/dislike ratio to each item
-	for (let item of items as typeof items & { ratio: number | "--" }[]) {
-		const query = {
-			itemid: item.id,
-		}
-		const [likes, total] = await Promise.all([
-			roQuery(
-				"items",
-				"RETURN SIZE((:User) -[:likes]-> (:Item { name: $itemid }))",
-				query,
-				true
-			),
-			roQuery(
-				"items",
-				"RETURN SIZE((:User) -[:likes|dislikes]-> (:Item { name: $itemid }))",
-				query,
-				true
-			),
-		])
-		const ratio = Math.floor((likes / total) * 100)
-		item["ratio"] = isNaN(ratio) ? "--" : ratio
-	}
-	return items as typeof items & { ratio: number | "--" }[]
-}
-
-/**
  * Finds avatar shoitems in the database, and adds a like/dislike ratio to each place. Required because group members are stored in RedisGraph, while the rest of the info for groups is stored in Postgres.
  * @param query The prisma query to execute.
  * @returns The result of the query, with the like/dislike ratio added to each place.
@@ -113,7 +72,7 @@ export async function findGroups(query: Prisma.GroupFindManyArgs = {}) {
 	const groups = await prisma.group.findMany(query)
 
 	// Add members to each group
-	for (let group of groups as typeof groups & { members: any }[])
+	for (const group of groups as typeof groups & { members: any }[])
 		group["members"] = await roQuery(
 			"groups",
 			"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",

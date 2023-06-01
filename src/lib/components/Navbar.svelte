@@ -150,7 +150,7 @@
 								</a>
 								<a
 									class="btn text-start light-text py-2"
-									href="/search?q={search}&c=items"
+									href="/search?q={search}&c=assets"
 									title="Search Catalog">
 									Search <b>{search}</b>
 									in Catalog

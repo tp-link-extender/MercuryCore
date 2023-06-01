@@ -912,12 +912,12 @@ createGameSettingsMenu = (baseZIndex, _) ->
 			isAutoGraphics = active
 			if active
 				autoGraphicsButton.Text = "X"
-				betterQualityText.ZIndex = 1
-				betterQualityShortcut.ZIndex = 1
-				fasterShortcut.ZIndex = 1
-				fasterText.ZIndex = 1
-				graphicsSlider.Bar.ZIndex = 1
-				graphicsSlider.Bar.Slider.ZIndex = 1
+				betterQualityText.ZIndex = \
+				betterQualityShortcut.ZIndex = \
+				fasterShortcut.ZIndex = \
+				fasterText.ZIndex = \
+				graphicsSlider.Bar.ZIndex = \
+				graphicsSlider.Bar.Slider.ZIndex = \
 				graphicsSetter.ZIndex = 1
 				graphicsSetter.Text = "Auto"
 			else
@@ -997,13 +997,13 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 		hideManualGraphics = ->
-			betterQualityText.ZIndex = 1
-			betterQualityShortcut.ZIndex = 1
-			fasterShortcut.ZIndex = 1
-			fasterText.ZIndex = 1
-			graphicsSlider.Bar.ZIndex = 1
-			graphicsSlider.Bar.Slider.ZIndex = 1
-			graphicsSetter.ZIndex = 1
+			betterQualityText.ZIndex \
+			= betterQualityShortcut.ZIndex \
+			= fasterShortcut.ZIndex \
+			= fasterText.ZIndex \
+			= graphicsSlider.Bar.ZIndex \
+			= graphicsSlider.Bar.Slider.ZIndex \
+			= graphicsSetter.ZIndex = 1
 
 
 		translateSavedQualityLevelToInt = (savedQualityLevel) ->

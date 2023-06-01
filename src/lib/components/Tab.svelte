@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { fade } from "svelte/transition"
 
-	export let tabData: any
+	export let tabData: {
+		tabs: string[]
+		currentTab: string
+		num: number
+	}
 	const num = ++tabData.num
 </script>
 

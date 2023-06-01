@@ -218,7 +218,10 @@ insertGear = (gear, addToSlot) ->
 
 		for i = start, pos + 1, -1
 			gearSlots[i] = gearSlots[i - 1]
-			gearSlots[i].SlotNumber.Text = gearSlots[i].SlotNumberDownShadow.Text = gearSlots[i].SlotNumberUpShadow.Text = if i == 10
+			gearSlots[i].SlotNumber.Text \
+			= gearSlots[i].SlotNumberDownShadow.Text \
+			= gearSlots[i].SlotNumberUpShadow.Text \
+			= if i == 10
 				"0"
 			else
 				i
@@ -228,8 +231,8 @@ insertGear = (gear, addToSlot) ->
 	if pos ~= maxNumLoadoutItems
 		if type"#{pos}" == "string"
 			posString = "#{pos}"
-			gear.SlotNumber.Text = posString
-			gear.SlotNumberDownShadow.Text = posString
+			gear.SlotNumber.Text = \
+			gear.SlotNumberDownShadow.Text = \
 			gear.SlotNumberUpShadow.Text = posString
 
 	else -- tenth gear doesn't follow mathematical pattern :(

@@ -1,14 +1,20 @@
-import { findItems } from "$lib/server/prisma"
+import { prisma } from "$lib/server/prisma"
 
 export const load = () => ({
-	items: findItems(),
+	assets: prisma.asset.findMany({
+		select: {
+			name: true,
+			price: true,
+			id: true,
+		},
+	}),
 })
 
 export const actions = {
 	default: async ({ request }) => {
 		const filter = (await request.formData()).get("query") as string
 		return {
-			places: await findItems({
+			places: await prisma.asset.findMany({
 				where: {
 					name: {
 						contains: filter,

@@ -31,7 +31,6 @@ export const load = async ({ params }) => {
 
 	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
 	const type = params.f as "friends" | "followers" | "following"
-	console.time("user " + type)
 
 	const user = await prisma.authUser.findUnique({
 		where: {
@@ -43,7 +42,6 @@ export const load = async ({ params }) => {
 			user: user.username,
 		}
 
-		console.timeEnd("user " + type)
 		return {
 			type,
 			username: user.username,
