@@ -4,13 +4,11 @@
 	import { onMount } from "svelte"
 
 	let query = ""
-	let rendered = false
-	onMount(() => (rendered = true))
 
 	let searchedData: any[] = []
 
 	// Run function whenever query changes
-	$: (query || rendered) &&
+	$: query &&
 		(async () => {
 			const formdata = new FormData()
 			formdata.append("query", query)

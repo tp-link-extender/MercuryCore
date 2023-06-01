@@ -24,8 +24,8 @@
 			<td class="ps-4">{data.groups}</td>
 		</tr>
 		<tr>
-			<td>Catalog items</td>
-			<td class="ps-4">{data.items}</td>
+			<td>Assets</td>
+			<td class="ps-4">{data.assets}</td>
 		</tr>
 		<tr>
 			<td><i class="fa fa-gem" /></td>

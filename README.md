@@ -43,7 +43,8 @@ Instructions:
 -   Clone the repository to your local machine
 -   Open a terminal and navigate to the directory of the repository
 -   Run `npm i -g pnpm` to install pnpm
--   Run `pnpm i` to install all dependencies.
+-   Run `pnpm i` to install all dependencies
+-   Run `pnpm build avatar` to build the avatar renderer, so that user images will work correctly
     -   If you are using PowerShell on windows, you may encounter an execution policy error when running pnpm. Run the command `set-executionpolicy remotesigned` in an administrator PowerShell to fix this.
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Run `docker-compose up -d` to start the Postgres and RedisGraph databases

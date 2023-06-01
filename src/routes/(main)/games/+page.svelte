@@ -1,16 +1,13 @@
 <script lang="ts">
 	import { enhance, deserialize } from "$app/forms"
 	import PlaceCard from "$lib/components/PlaceCard.svelte"
-	import { onMount } from "svelte"
 
 	let query = ""
-	let rendered = false
-	onMount(() => (rendered = true))
 
 	let searchedData: any[] = []
 
 	// Run function whenever query changes
-	$: (query || rendered) &&
+	$: query &&
 		(async () => {
 			const formdata = new FormData()
 			formdata.append("query", query)

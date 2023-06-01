@@ -33,7 +33,11 @@
 		</span>
 	</h6>
 </div>
-<form use:enhance method="POST" class="container mt-5 light-text">
+<form
+	use:enhance
+	method="POST"
+	class="container mt-5 light-text"
+	enctype="multipart/form-data">
 	<fieldset>
 		<div class="row mb-3">
 			<label for="type" class="col-md-3 col-form-label light-text">

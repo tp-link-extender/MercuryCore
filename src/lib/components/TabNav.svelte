@@ -2,7 +2,14 @@
 	import { tweened, type Tweened } from "svelte/motion"
 	import { interpolateLab } from "d3-interpolate"
 
-	export let tabData: any
+	export let tabData: {
+		name: string
+		tabs: string[]
+		currentTab: string
+		url: string
+		icons?: string[]
+		num: number
+	}
 	export let vertical: boolean = false
 	export let justify: boolean = false
 	export let tabs: boolean = false

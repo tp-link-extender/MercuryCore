@@ -864,13 +864,14 @@ local SelectedPlayerEntry
 local SelectedPlayer
 
 -- locks(semaphores) for stopping race conditions
-AddingFrameLock = false
-AddingStatLock = false
-BaseUpdateLock = false
-WaitForClickLock = false
-InPopupWaitForClick = false
-PlayerChangedLock = false
-NeutralTeamLock = false
+AddingFrameLock \
+= AddingStatLock \
+= BaseUpdateLock \
+= WaitForClickLock \
+= InPopupWaitForClick \
+= PlayerChangedLock \
+= NeutralTeamLock \
+= false
 
 ScrollWheelConnections = {}
 
