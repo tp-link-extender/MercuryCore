@@ -258,7 +258,7 @@ if not success
 
 if not test
 	-- TODO: Async get?
-	loadfile ""("", -1, 0)
+	loadfile""("", -1, 0)
 
 
 try
