@@ -101,10 +101,7 @@ firstInstanceOfLoadout = false
 
 inventory = {}
 
-gearSlots = {}
-for i = 1, maxNumLoadoutItems
-	gearSlots[i] = "empty"
-
+gearSlots = ["empty" for _ = 1, maxNumLoadoutItems]
 
 backpackWasOpened = false
 --- End Locals
@@ -152,17 +149,17 @@ removeGear = (gear) ->
 
 
 	if emptySlot
-		with gearSlots[emptySlot]
-			if .GearReference.Value
-				if .GearReference.Value.Parent == game.Players.LocalPlayer.Character -- if we currently have this equipped, unequip it
-					.GearReference.Value.Parent = game.Players.LocalPlayer.Backpack
+		with g = gearSlots[emptySlot].GearReference.Value
+			if g
+				if .Parent == game.Players.LocalPlayer.Character -- if we currently have this equipped, unequip it
+					.Parent = game.Players.LocalPlayer.Backpack
 
 
-				if .GearReference.Value\IsA"HopperBin" and
-					.GearReference.Value.Active
+				if \IsA"HopperBin" and
+					.Active
 					-- this is an active hopperbin
-					.GearReference.Value\Disable!
-					.GearReference.Value.Active = false
+					\Disable!
+					.Active = false
 
 		gearSlots[emptySlot] = "empty"
 
@@ -171,9 +168,7 @@ removeGear = (gear) ->
 		--[[gear\TweenSizeAndPosition(UDim2.new 0,0,0,0,
 			UDim2.new(gear.Position.X.Scale + centerizeX,gear.Position.X.Offset,gear.Position.Y.Scale + centerizeY,gear.Position.Y.Offset),
 			Enum.EasingDirection.Out, Enum.EasingStyle.Quad,guiTweenSpeed/4,true)]]
-		delay 0, ->
-			gear\remove!
-
+		delay 0, -> gear\remove!
 
 		Spawn ->
 			while backpackIsOpen!
@@ -184,6 +179,7 @@ removeGear = (gear) ->
 			for i in *gearSlots
 				if i ~= "empty"
 					allEmpty = false
+					break
 
 			if allEmpty
 				if #player.Backpack\GetChildren! < 1
@@ -218,10 +214,9 @@ insertGear = (gear, addToSlot) ->
 
 		for i = start, pos + 1, -1
 			gearSlots[i] = gearSlots[i - 1]
-			gearSlots[i].SlotNumber.Text \
-			= gearSlots[i].SlotNumberDownShadow.Text \
-			= gearSlots[i].SlotNumberUpShadow.Text \
-			= if i == 10
+			gearSlots[i].SlotNumber.Text = \
+			gearSlots[i].SlotNumberDownShadow.Text = \
+			gearSlots[i].SlotNumberUpShadow.Text = if i == 10
 				"0"
 			else
 				i
@@ -236,8 +231,8 @@ insertGear = (gear, addToSlot) ->
 			gear.SlotNumberUpShadow.Text = posString
 
 	else -- tenth gear doesn't follow mathematical pattern :(
-		gear.SlotNumber.Text = "0"
-		gear.SlotNumberDownShadow.Text = "0"
+		gear.SlotNumber.Text = \
+		gear.SlotNumberDownShadow.Text = \
 		gear.SlotNumberUpShadow.Text = "0"
 
 	gear.Visible = true
@@ -262,7 +257,7 @@ checkToolAncestry = (child, parent) ->
 	if child\IsA"Tool" or child\IsA "HopperBin"
 		for i in *gearSlots
 			if i ~= "empty" and i.GearReference.Value == child
-				if not parent?
+				if parent == nil
 					i.Kill.Value = true
 					return false
 				elseif child.Parent == player.Character
@@ -295,7 +290,7 @@ normalizeButton = (button, speed) ->
 	return if not button.Parent
 
 	moveSpeed = speed
-	if not moveSpeed? or type(moveSpeed) ~= "number"
+	if moveSpeed == nil or type(moveSpeed) ~= "number"
 		moveSpeed = guiTweenSpeed / 5
 
 	if button\FindFirstChild "Highlight"
@@ -374,7 +369,7 @@ toolSwitcher = (numKey) ->
 	return if not gearSlots[numKey]
 
 	physGear = gearSlots[numKey].GearReference.Value
-	return if not physGear?
+	return if physGear == nil
 
 	removeAllEquippedGear physGear -- we don't remove this gear, as then we get a double switcheroo
 
@@ -422,7 +417,7 @@ activateGear = (num) ->
 	else
 		tonumber num
 
-	return if not numKey?
+	return if numKey == nil
 
 	if gearSlots[numKey] ~= "empty"
 		toolSwitcher numKey
