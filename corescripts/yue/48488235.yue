@@ -318,70 +318,65 @@ ScreenGui = New "Frame", "PlayerListScreen"
 	BackgroundTransparency: 1
 	Parent: script.Parent
 
-	* New "Frame", "LeaderBoardFrame"
-		Position: UDim2.new 1, -150, 0.005, 0
-		Size: UDim2.new 0, 150, 0, 800
-		BackgroundTransparency: 1
+MainFrame = New "Frame", "LeaderBoardFrame"
+	Position: UDim2.new 1, -150, 0.005, 0
+	Size: UDim2.new 0, 150, 0, 800
+	BackgroundTransparency: 1
+	Parent: ScreenGui
 
-		--frame used for expanding leaderstats when frame is 'focused'
-		* New "Frame", "FocusFrame"
-			Position: UDim2.new 0, 0, 0, 0
-			Size: UDim2.new 1, 0, 0, 100
-			BackgroundTransparency: 1
-			Active: true
+--frame used for expanding leaderstats when frame is 'focused'
+FocusFrame = New "Frame", "FocusFrame"
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 0, 100
+	BackgroundTransparency: 1
+	Active: true
+	Parent: MainFrame
 
-		-- HEADER
-		* New "Frame", "Header"
-			BackgroundTransparency: 1
-			Position: UDim2.new 0, 0, 0, 0
-			Size: UDim2.new 1, 0, 0.07, 0
+-- HEADER
+HeaderFrame = New "Frame", "Header"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 0.07, 0
+	Parent: MainFrame
 
-			* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94692054"
+	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94692054"
 
-			* New "ImageButton", "MaximizeButton"
-				Active: true
-				BackgroundTransparency: 1
-				Position: UDim2.new 0, 0, 0, 0
-				Size: UDim2.new 1, 0, 1, 0
+HeaderFrameHeight = HeaderFrame.Size.Y.Scale
+MaximizeButton = New "ImageButton", "MaximizeButton"
+	Active: true
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 1, 0
+	Parent: HeaderFrame
 
-			* New "TextLabel", "PlayerName"
-				BackgroundTransparency: 1
-				Position: UDim2.new 0, 0, 0.01, 0
-				Size: UDim2.new 0.98, 0, 0.38, 0
-				Font: "ArialBold"
-				Text: LocalPlayer.Name
-				FontSize: "Size24"
-				--TextScaled: true
-				TextColor3: Color3.new 1, 1, 1
-				TextStrokeColor3: Color3.new 0, 0, 0
-				TextStrokeTransparency: 0
-				TextXAlignment: "Right"
-				TextYAlignment: "Center"
+HeaderName = New "TextLabel", "PlayerName"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0.01, 0
+	Size: UDim2.new 0.98, 0, 0.38, 0
+	Parent: HeaderFrame
+	Font: "ArialBold"
+	Text: LocalPlayer.Name
+	FontSize: "Size24"
+	--TextScaled: true
+	TextColor3: Color3.new 1, 1, 1
+	TextStrokeColor3: Color3.new 0, 0, 0
+	TextStrokeTransparency: 0
+	TextXAlignment: "Right"
+	TextYAlignment: "Center"
 
-			* New "TextLabel", "PlayerScore"
-				BackgroundTransparency: 1
-				Position: UDim2.new 0, 0, 0.4, 0
-				Size: UDim2.new 0.98, 0, 0, 30
-				Font: "ArialBold"
-				Text: ""
-				FontSize: "Size24"
-				TextYAlignment: "Top"
-				-- TextScaled: true
-				TextColor3: Color3.new 1, 1, 1
-				TextStrokeTransparency: 1
-				TextXAlignment: "Right"
-
-{
-	LeaderBoardFrame: MainFrame
-	MainFrame:
-		:FocusFrame
-		Header: HeaderFrame
-		HeaderFrame:
-			:MaximizeButton
-			PlayerName: HeaderName
-			PlayerScore: HeaderScore
-		:BottomShiftFrame
-} = ScreenGui
+HeaderScore = New "TextLabel", "PlayerScore"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0.4, 0
+	Size: UDim2.new 0.98, 0, 0, 30
+	Parent: HeaderFrame
+	Font: "ArialBold"
+	Text: ""
+	FontSize: "Size24"
+	TextYAlignment: "Top"
+	-- TextScaled: true
+	TextColor3: Color3.new 1, 1, 1
+	TextStrokeTransparency: 1
+	TextXAlignment: "Right"
 
 HeaderFrameHeight = HeaderFrame.Size.Y.Scale
 
@@ -393,35 +388,29 @@ BottomShiftFrame = New "Frame", "BottomShiftFrame"
 	Size: UDim2.new 1, 0, 1, 0
 	Parent: MainFrame
 
-	* New "Frame", "Bottom"
-		BackgroundTransparency: 1
-		Position: UDim2.new 0, 0, 0.07, 0
-		Size: UDim2.new 1, 0, 0.03, 0
-		Parent: BottomShiftFrame
+BottomFrame = New "Frame", "Bottom"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0.07, 0
+	Size: UDim2.new 1, 0, 0.03, 0
+	Parent: BottomShiftFrame
 
-		* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94754966"
+	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94754966"
 
-		* New "ImageButton", "bigbutton"
-			Active: true
-			BackgroundTransparency: 1
-			Position: UDim2.new 0, 0, 0, 0
-			Size: UDim2.new 1, 0, 1.5, 0
-			ZIndex: 3
+ExtendButton = New "ImageButton", "bigbutton"
+	Active: true
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 1.5, 0
+	ZIndex: 3
+	Parent: BottomFrame
 
-		* New "ImageButton", "extendTab"
-			Active: true
-			BackgroundTransparency: 1
-			Image: "http://www.roblox.com/asset/?id=94692731"
-			Position: UDim2.new 0.608, 0, 0.3, 0
-			Size: UDim2.new 0.3, 0, 0.7, 0
-
-{
-	Bottom: BottomFrame
-	Bottom:
-		bigbutton: ExtendButton
-		extendTab: ExtendTab
-} = BottomShiftFrame
-
+ExtendTab = New "ImageButton", "extendTab"
+	Active: true
+	BackgroundTransparency: 1
+	Image: "http://www.roblox.com/asset/?id=94692731"
+	Position: UDim2.new 0.608, 0, 0.3, 0
+	Size: UDim2.new 0.3, 0, 0.7, 0
+	Parent: BottomFrame
 
 TopClipFrame = New "Frame", "ListFrame"
 	BackgroundTransparency: 1
@@ -430,37 +419,32 @@ TopClipFrame = New "Frame", "ListFrame"
 	Parent: MainFrame
 	ClipsDescendants: true
 
-	* New "Frame", "BottomFrame"
-		BackgroundTransparency: 1
-		Position: UDim2.new 0, 0, -0.8, 0
-		Size: UDim2.new 1, 0, 1, 0
-		ClipsDescendants: true
+BottomClipFrame = New "Frame", "BottomFrame"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, -0.8, 0
+	Size: UDim2.new 1, 0, 1, 0
+	Parent: TopClipFrame
+	ClipsDescendants: true
 
-		* New "Frame", "ScrollBarFrame"
-			BackgroundTransparency: 1
-			Position: UDim2.new 0.987, 0, 0.8, 0
-			Size: UDim2.new 0.01, 0, 0.2, 0
+ScrollBarFrame = New "Frame", "ScrollBarFrame"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0.987, 0, 0.8, 0
+	Size: UDim2.new 0.01, 0, 0.2, 0
+	Parent: BottomClipFrame
 
-			* New "Frame", "ScrollBar"
-				BackgroundTransparency: 0
-				BackgroundColor3: Color3.new 0.2, 0.2, 0.2
-				Position: UDim2.new 0, 0, 0, 0
-				Size: UDim2.new 1, 0, 0.5, 0
-				ZIndex: 5
+ScrollBar = New "Frame", "ScrollBar"
+	BackgroundTransparency: 0
+	BackgroundColor3: Color3.new 0.2, 0.2, 0.2
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 0.5, 0
+	ZIndex: 5
+	Parent: ScrollBarFrame
 
-		* New "Frame", "SubFrame"
-			BackgroundTransparency: 1
-			Position: UDim2.new 0, 0, 0.8, 0
-			Size: UDim2.new 1, 0, 1, 0
-
-{
-	BottomFrame: BottomClipFrame
-	BottomClipFrame:
-		:ScrollBarFrame
-		ScrollBarFrame:
-			:ScrollBar
-		SubFrame: ListFrame
-} = TopClipFrame
+ListFrame = New "Frame", "SubFrame"
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 0.8, 0
+	Size: UDim2.new 1, 0, 1, 0
+	Parent: BottomClipFrame
 
 PopUpClipFrame = New "Frame", "PopUpFrame",
 	BackgroundTransparency: 1
