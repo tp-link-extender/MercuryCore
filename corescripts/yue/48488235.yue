@@ -51,7 +51,7 @@ $load $FILE
 	iltalumi: 1
 	inventx: 1
 	jackssmirkingrevenge: 1
-	jeditkacheff: 'http://www.roblox.com/asset/?id=134032333'
+	jeditkacheff: 'http://banland.xyz/asset/?id=134032333'
 	kbux: 1
 	keith: 1
 	limon: 1
@@ -89,14 +89,14 @@ $load $FILE
 	screenme: 1
 	scubasomething: 1
 	seanthornton: 1
-	shedletsky: 'http://www.roblox.com/asset/?id=105897927'
+	shedletsky: 'http://banland.xyz/asset/?id=105897927'
 	sickenedmonkey: 1
 	slingshotjunkie: 1
 	smeaferblox: 1
 	soggoth: 1
 	solarcrane: 1
 	sooraya: 1
-	sorcus: 'http://www.roblox.com/asset/?id=113059239'
+	sorcus: 'http://banland.xyz/asset/?id=113059239'
 	squidcod: 1
 	stickmasterluke: 1
 	stuball: 1
@@ -127,9 +127,9 @@ $load $FILE
 ADMINS =
 	taskmanager: 1
 	Heliodex: 1
-	multako: "http://www.roblox.com/asset/?id=6923328292"
+	multako: "http://banland.xyz/asset/?id=6923328292"
 	mercury: 1
-	pizzaboxer: "http://www.roblox.com/asset/?id=6917566633"
+	pizzaboxer: "http://banland.xyz/asset/?id=6917566633"
 
 Images =
 	bottomDark: "94691904"
@@ -203,7 +203,7 @@ Color3I = (r, g, b) -> Color3.new r / 255, g / 255, b / 255
 getMembershipTypeIcon = (membershipType, playerName) ->
 	if ADMINS[string.lower playerName]?
 		if ADMINS[string.lower playerName] == 1
-			"http://www.roblox.com/asset/?id=6923330951"
+			"http://banland.xyz/asset/?id=6923330951"
 		else
 			ADMINS[string.lower playerName]
 
@@ -223,11 +223,11 @@ getFriendStatusIcon = (friendStatus) ->
 	if friendStatus == Enum.FriendStatus.Unknown or friendStatus == Enum.FriendStatus.NotFriend
 		""
 	elseif friendStatus == Enum.FriendStatus.Friend
-		 "http://www.roblox.com/asset/?id=99749771"
+		 "http://banland.xyz/asset/?id=99749771"
 	elseif friendStatus == Enum.FriendStatus.FriendRequestSent
-		"http://www.roblox.com/asset/?id=99776888"
+		"http://banland.xyz/asset/?id=99776888"
 	elseif friendStatus == Enum.FriendStatus.FriendRequestReceived
-		"http://www.roblox.com/asset/?id=99776838"
+		"http://banland.xyz/asset/?id=99776838"
 	else
 		error "Unknown FriendStatus: #{friendStatus}"
 
@@ -260,7 +260,7 @@ MakePopupButton = (nparent, ntext, index, last) ->
 			TextStrokeTransparency: 1
 			ZIndex: 7
 
-	tobj.Image = "http://www.roblox.com/asset/?id=" .. if index == 0
+	tobj.Image = "http://banland.xyz/asset/?id=" .. if index == 0
 		"97108784"
 	elseif last
 		if index % 2 == 1
@@ -339,7 +339,7 @@ HeaderFrame = New "Frame", "Header"
 	Size: UDim2.new 1, 0, 0.07, 0
 	Parent: MainFrame
 
-	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94692054"
+	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=94692054"
 
 HeaderFrameHeight = HeaderFrame.Size.Y.Scale
 MaximizeButton = New "ImageButton", "MaximizeButton"
@@ -394,7 +394,7 @@ BottomFrame = New "Frame", "Bottom"
 	Size: UDim2.new 1, 0, 0.03, 0
 	Parent: BottomShiftFrame
 
-	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94754966"
+	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=94754966"
 
 ExtendButton = New "ImageButton", "bigbutton"
 	Active: true
@@ -407,7 +407,7 @@ ExtendButton = New "ImageButton", "bigbutton"
 ExtendTab = New "ImageButton", "extendTab"
 	Active: true
 	BackgroundTransparency: 1
-	Image: "http://www.roblox.com/asset/?id=94692731"
+	Image: "http://banland.xyz/asset/?id=94692731"
 	Position: UDim2.new 0.608, 0, 0.3, 0
 	Size: UDim2.new 0.3, 0, 0.7, 0
 	Parent: BottomFrame
@@ -542,7 +542,7 @@ MiddleBGTemplate = New "Frame", "MidBGTemplate"
 	Position: UDim2.new 100, 0, 0.07, 0
 	Size: UDim2.new 0.5, 0, 0.025, 0 --UDim2.new 1, 0, .03, 0
 
-	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94692025"
+	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=94692025"
 
 -- REPORT ABUSE OBJECTS
 
@@ -570,7 +570,7 @@ AbuseSettingsFrame = New "Frame", "ReportAbuseStyle"
 	BackgroundTransparency: 1
 	Parent: ReportAbuseFrame
 
-	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=96488767" -- 96480351"
+	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=96488767" -- 96480351"
 
 	* New "TextLabel", "Title"
 		Text: "Report Abuse"
@@ -639,7 +639,7 @@ SubmitReportButton = New "ImageButton", "SubmitReportBtn"
 	Position: UDim2.new 0.5, -200, 1, -80
 	Size: UDim2.new 0, 150, 0, 50
 	AutoButtonColor: false
-	Image: "http://www.roblox.com/asset/?id=96502438" -- 96501119'
+	Image: "http://banland.xyz/asset/?id=96502438" -- 96501119'
 	Parent: AbuseSettingsFrame
 
 CancelReportButton = New "ImageButton", "CancelBtn"
@@ -647,7 +647,7 @@ CancelReportButton = New "ImageButton", "CancelBtn"
 	Position: UDim2.new 0.5, 50, 1, -80
 	Size: UDim2.new 0, 150, 0, 50
 	AutoButtonColor: true
-	Image: "http://www.roblox.com/asset/?id=96500683"
+	Image: "http://banland.xyz/asset/?id=96500683"
 	Parent: AbuseSettingsFrame
 
 AbuseDescriptionWrapper = New "Frame", "AbuseDescriptionWrapper"
@@ -678,7 +678,7 @@ CalmingAbuseBox = New "Frame", "AbuseFeedbackBox"
 	Position: UDim2.new 0.25, 0, 0.3, 0
 	Size: UDim2.new 0.5, 0, 0.37, 0
 
-	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=96506233"
+	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=96506233"
 
 	* New "TextLabel", "Header",
 		Position: UDim2.new 0, 10, 0.05, 0
@@ -709,14 +709,14 @@ CalmingAbuseBox = New "Frame", "AbuseFeedbackBox"
 		Position: UDim2.new 0.5, -75, 1, -80,
 		Size: UDim2.new 0, 150, 0, 50,
 		AutoButtonColor: true,
-		Image: "http://www.roblox.com/asset/?id=96507959",
+		Image: "http://banland.xyz/asset/?id=96507959",
 
 NormalAbuseBox = New "Frame", "AbuseFeedbackBox"
 	BackgroundTransparency: 1
 	Position: UDim2.new 0.25, 0, 0.300000012, 0
 	Size: UDim2.new 0.5, 0, 0.370000005, 0
 
-	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=96506233"
+	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=96506233"
 
 	* New "TextLabel", "Header"
 		Position: UDim2.new 0, 10, 0.05, 0
@@ -747,7 +747,7 @@ NormalAbuseBox = New "Frame", "AbuseFeedbackBox"
 		Position: UDim2.new 0.5, -75, 1, -80
 		Size: UDim2.new 0, 150, 0, 50
 		AutoButtonColor: true
-		Image: "http://www.roblox.com/asset/?id=96507959"
+		Image: "http://banland.xyz/asset/?id=96507959"
 
 BigButton = New "ImageButton"
 	Size: UDim2.new 1, 0, 1, 0
@@ -765,7 +765,7 @@ debugFrame = New "Frame", "debugframe"
 	Position: UDim2.new 0.25, 0, 0.3, 0
 	Size: UDim2.new 0.5, 0, 0.37, 0
 
-	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=96506233"
+	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=96506233"
 
 debugplayers = New "TextLabel"
 	BackgroundTransparency: 0.8
@@ -806,7 +806,7 @@ RbxGui = assert LoadLibrary "RbxGui"
 DefaultEntriesOnScreen = 8
 
 for _, i in pairs Images
-	Game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=#{i}"
+	Game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=#{i}"
 
 
 -- ordered array of 'score data', each entry has:
@@ -1043,7 +1043,7 @@ SetPrivilegeRank = (player, nrank) ->
 	while player.PersonalServerRank > nrank
 		game\GetService"PersonalServerService"\Demote player
 
-assetid = "http://www.roblox.com/asset/?id="
+assetid = "http://banland.xyz/asset/?id="
 --[[
 	Highlights current rank of this player in the popup menu
 	@Args:
@@ -1085,7 +1085,7 @@ OnPrivilegeLevelSelect = (player, nlevel, BanPlayerButton, VisitorButton, Member
 CloseAbuseDialog = ->
 	AbuseName = nil
 	SubmitReportButton.Active = false
-	SubmitReportButton.Image = "http://www.roblox.com/asset/?id=96502438" -- 96501119'
+	SubmitReportButton.Image = "http://banland.xyz/asset/?id=96502438" -- 96501119'
 	AbuseDescriptionBox\Destroy!
 	CalmingAbuseBox.Parent = nil
 	NormalAbuseBox.Parent = nil
@@ -1141,7 +1141,7 @@ InitReportAbuse = ->
 		AbuseName = abuseText
 		if AbuseName and SelectedPlayer
 			SubmitReportButton.Active = true
-			SubmitReportButton.Image = "http://www.roblox.com/asset/?id=96501119"
+			SubmitReportButton.Image = "http://banland.xyz/asset/?id=96501119"
 
 	AbuseDropDown, _ = RbxGui.CreateDropDownMenu Abuses, UpdateAbuseFunction, true
 	AbuseDropDown.Name = "AbuseComboBox"
@@ -1663,7 +1663,7 @@ UpdateMinimize = ->
 		BottomClipFrame\TweenPosition UDim2.new(0, 0, -1, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
 		BottomFrame\TweenPosition UDim2.new(0, 0, 0, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
 		FocusFrame.Size = UDim2.new 1, 0, HeaderFrameHeight, 0
-		ExtendTab.Image = "http://www.roblox.com/asset/?id=94692731"
+		ExtendTab.Image = "http://banland.xyz/asset/?id=94692731"
 	else
 		if not IsMaximized.Value
 			MainFrame\TweenSizeAndPosition NormalBounds, NormalPosition, "Out", "Linear", BASE_TWEEN * 1.2, true
@@ -1676,7 +1676,7 @@ UpdateMinimize = ->
 		bottomPositon = DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale
 		BottomFrame.Position = UDim2.new 0, 0, bottomPositon, 0
 		FocusFrame.Size = UDim2.new 1, 0, bottomPositon + HeaderFrameHeight, 0
-		ExtendTab.Image = "http://www.roblox.com/asset/?id=94825585"
+		ExtendTab.Image = "http://banland.xyz/asset/?id=94825585"
 
 
 --[[
@@ -1716,10 +1716,10 @@ UpdateMaximize = ->
 			BASE_TWEEN * 1.2,
 			true
 		)
-		HeaderFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeHeader"]
-		BottomFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["LargeBottom"]
+		HeaderFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["LargeHeader"]
+		BottomFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["LargeBottom"]
 		for index, i in ipairs MiddleFrameBackgrounds
-			i.Background.Image = "http://www.roblox.com/asset/?id=" .. if index % 2 ~= 1
+			i.Background.Image = "http://banland.xyz/asset/?id=" .. if index % 2 ~= 1
 				Images["LargeDark"]
 			else
 				Images["LargeLight"]
@@ -1770,10 +1770,10 @@ UpdateMaximize = ->
 			BASE_TWEEN * 1.2,
 			true
 		)
-		HeaderFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["NormalHeader"]
-		BottomFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. Images["NormalBottom"]
+		HeaderFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["NormalHeader"]
+		BottomFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["NormalBottom"]
 		for index, i in ipairs MiddleFrameBackgrounds
-			i.Background.Image = "http://www.roblox.com/asset/?id=" .. if index % 2 ~= 1
+			i.Background.Image = "http://banland.xyz/asset/?id=" .. if index % 2 ~= 1
 				Images["midDark"]
 			else
 				Images["midLight"]
@@ -2124,7 +2124,7 @@ MaximizeButton.MouseButton2Click\connect ->
 AddMiddleBGFrame = ->
 	nBGFrame = MiddleBGTemplate\Clone!
 	nBGFrame.Position = UDim2.new 0.5, 0, (#MiddleFrameBackgrounds * nBGFrame.Size.Y.Scale), 0
-	nBGFrame.Background.Image = "http://www.roblox.com/asset/?id=" .. if (#MiddleFrameBackgrounds + 1) % 2 ~= 1
+	nBGFrame.Background.Image = "http://banland.xyz/asset/?id=" .. if (#MiddleFrameBackgrounds + 1) % 2 ~= 1
 		if IsMaximized.Value
 			Images["LargeDark"]
 		else

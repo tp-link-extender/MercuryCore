@@ -69,7 +69,7 @@ CurrentLoadout = New "Frame", "CurrentLoadout"
 
 	* New "ImageLabel", "Background"
 		Size: UDim2.new 1.2, 0, 1.2, 0
-		Image: "http://www.roblox.com/asset/?id=96536002"
+		Image: "http://banland.xyz/asset/?id=96536002"
 		BackgroundTransparency: 1
 		Position: UDim2.new -0.1, 0, -0.1, 0
 		ZIndex: 0.0
@@ -78,7 +78,7 @@ CurrentLoadout = New "Frame", "CurrentLoadout"
 		* New "ImageLabel"
 			Size: UDim2.new 1, 0, 0.025, 1
 			Position: UDim2.new 0, 0, 0, 0
-			Image: "http://www.roblox.com/asset/?id=97662207"
+			Image: "http://banland.xyz/asset/?id=97662207"
 			BackgroundTransparency: 1
 
 waitForChild gui, "ControlFrame"
@@ -86,7 +86,7 @@ New "ImageButton", "BackpackButton"
 	RobloxLocked: true
 	Visible: false
 	BackgroundTransparency: 1
-	Image: "http://www.roblox.com/asset/?id=97617958"
+	Image: "http://banland.xyz/asset/?id=97617958"
 	Position: UDim2.new 0.5, -60, 1, -108
 	Size: UDim2.new 0, 120, 0, 18
 	Parent: gui.ControlFrame
@@ -131,7 +131,7 @@ TempSlot = New "ImageButton", "TempSlot"
 
 	* New "ImageLabel", "Background"
 		BackgroundTransparency: 1
-		Image: "http://www.roblox.com/asset/?id=97613075"
+		Image: "http://banland.xyz/asset/?id=97613075"
 		Size: UDim2.new 1, 0, 1, 0
 
 	* New "ObjectValue", "GearReference"
@@ -139,7 +139,7 @@ TempSlot = New "ImageButton", "TempSlot"
 
 	-- * New "ImageLabel", "Highlight"
 	-- 	BackgroundTransparency: 1
-	-- 	Image: "http://www.roblox.com/asset/?id=97643886"
+	-- 	Image: "http://banland.xyz/asset/?id=97643886"
 	-- 	Size: UDim2.new 1, 0, 1, 0
 	-- 	Visible: false
 
@@ -324,8 +324,8 @@ Tabs = New "Frame", "Tabs"
 		* New "ImageLabel", "XImage"
 			RobloxLocked: true
 			Image: (->
-				game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75547445"
-				"http://www.roblox.com/asset/?id=75547445"
+				game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=75547445"
+				"http://banland.xyz/asset/?id=75547445"
 			)! --TODO: move to rbxasset
 			BackgroundTransparency: 1
 			Position: UDim2.new -0.25, -1, -0.25, -1
@@ -377,7 +377,7 @@ Gear = New "Frame", "Gear"
 
 			* New "ImageLabel", "Background"
 				BackgroundTransparency: 1
-				Image: "http://www.roblox.com/asset/?id=97613075"
+				Image: "http://banland.xyz/asset/?id=97613075"
 				Size: UDim2.new 1, 0, 1, 0
 
 			* New "ObjectValue", "GearReference"
@@ -686,10 +686,10 @@ CharacterPane = New "Frame", "CharacterPane"
 
 --CharacterPane Children
 FaceFrame = makeCharFrame "FacesFrame", CharacterPane
-game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75460621"
+game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=75460621"
 makeZone(
 	"FaceZone",
-	"http://www.roblox.com/asset/?id=75460621",
+	"http://banland.xyz/asset/?id=75460621",
 	UDim2.new(0, 157, 0, 137),
 	UDim2.new(0.5, -78, 0.5, -68),
 	FaceFrame
@@ -699,7 +699,7 @@ makeStyledButton "Face", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.5, -135)
 HeadFrame = makeCharFrame "HeadsFrame", CharacterPane
 makeZone(
 	"FaceZone",
-	"http://www.roblox.com/asset/?id=75460621",
+	"http://banland.xyz/asset/?id=75460621",
 	UDim2.new(0, 157, 0, 137),
 	UDim2.new(0.5, -78, 0.5, -68),
 	HeadFrame
@@ -707,10 +707,10 @@ makeZone(
 makeStyledButton "Head", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.5, -135), HeadFrame
 
 HatsFrame = makeCharFrame "HatsFrame", CharacterPane
-game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75457888"
+game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=75457888"
 HatsZone = makeZone(
 	"HatsZone",
-	"http://www.roblox.com/asset/?id=75457888",
+	"http://banland.xyz/asset/?id=75457888",
 	UDim2.new(0, 186, 0, 184),
 	UDim2.new(0.5, -93, 0.5, -100),
 	HatsFrame
@@ -738,10 +738,10 @@ makeStyledButton(
 )
 
 PantsFrame = makeCharFrame "PantsFrame", CharacterPane
-game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75457920"
+game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=75457920"
 makeZone(
 	"PantsZone",
-	"http://www.roblox.com/asset/?id=75457920",
+	"http://banland.xyz/asset/?id=75457920",
 	UDim2.new(0, 121, 0, 99),
 	UDim2.new(0.5, -60, 0.5, -100),
 	PantsFrame
@@ -811,10 +811,10 @@ leftArmButton = makeStyledButton(
 makeTextLabel "LeftArmLabel", "Left Arm", UDim2.new(0.5, -16, 0, -25), leftArmButton
 
 TShirtFrame = makeCharFrame "T-ShirtsFrame", CharacterPane
-game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=75460642"
+game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=75460642"
 makeZone(
 	"TShirtZone",
-	"http://www.roblox.com/asset/?id=75460642",
+	"http://banland.xyz/asset/?id=75460642",
 	UDim2.new(0, 121, 0, 154),
 	UDim2.new(0.5, -60, 0.5, -100),
 	TShirtFrame
@@ -824,7 +824,7 @@ makeStyledButton "TShirtButton", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.
 ShirtFrame = makeCharFrame "ShirtsFrame", CharacterPane
 makeZone(
 	"ShirtZone",
-	"http://www.roblox.com/asset/?id=75460642",
+	"http://banland.xyz/asset/?id=75460642",
 	UDim2.new(0, 121, 0, 154),
 	UDim2.new(0.5, -60, 0.5, -100),
 	ShirtFrame
@@ -832,10 +832,10 @@ makeZone(
 makeStyledButton "ShirtButton", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.5, -64), ShirtFrame
 
 ColorFrame = makeCharFrame "ColorFrame", CharacterPane
-game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=76049888"
+game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=76049888"
 ColorZone = makeZone(
 	"ColorZone",
-	"http://www.roblox.com/asset/?id=76049888",
+	"http://banland.xyz/asset/?id=76049888",
 	UDim2.new(0, 120, 0, 150),
 	UDim2.new(0.5, -60, 0.5, -100),
 	ColorFrame
