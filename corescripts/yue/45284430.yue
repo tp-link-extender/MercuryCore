@@ -832,8 +832,8 @@ t.CreateTrueScrollingFrame = ->
 	scrollDownButton.Name = "ScrollDownButton"
 	scrollDownButton.Position = UDim2.new 0, 0, 1, -18
 	downChildren = scrollDownButton\GetChildren!
-	for i in *downChildren
-		i.Position = UDim2.new 0, 3 + (i - 1), 0.5, -2 + (i - 1)
+	for i = 1, #downChildren
+		downChildren[i].Position = UDim2.new 0, 3 + (i - 1), 0.5, -2 + (i - 1)
 
 	scrollDownButton.MouseEnter\connect ->
 		scrollDownButton.BackgroundTransparency = 0.1
