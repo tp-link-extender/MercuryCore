@@ -156,7 +156,7 @@ MOUSE_DRAG_DISTANCE = 15
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -318,65 +318,72 @@ ScreenGui = New "Frame", "PlayerListScreen"
 	BackgroundTransparency: 1
 	Parent: script.Parent
 
-MainFrame = New "Frame", "LeaderBoardFrame"
-	Position: UDim2.new 1, -150, 0.005, 0
-	Size: UDim2.new 0, 150, 0, 800
-	BackgroundTransparency: 1
-	Parent: ScreenGui
+	* New "Frame", "LeaderBoardFrame"
+		Position: UDim2.new 1, -150, 0.005, 0
+		Size: UDim2.new 0, 150, 0, 800
+		BackgroundTransparency: 1
 
---frame used for expanding leaderstats when frame is 'focused'
-FocusFrame = New "Frame", "FocusFrame"
-	Position: UDim2.new 0, 0, 0, 0
-	Size: UDim2.new 1, 0, 0, 100
-	BackgroundTransparency: 1
-	Active: true
-	Parent: MainFrame
+		--frame used for expanding leaderstats when frame is 'focused'
+		* New "Frame", "FocusFrame"
+			Position: UDim2.new 0, 0, 0, 0
+			Size: UDim2.new 1, 0, 0, 100
+			BackgroundTransparency: 1
+			Active: true
 
--- HEADER
-HeaderFrame = New "Frame", "Header"
-	BackgroundTransparency: 1
-	Position: UDim2.new 0, 0, 0, 0
-	Size: UDim2.new 1, 0, 0.07, 0
-	Parent: MainFrame
+		-- HEADER
+		* New "Frame", "Header"
+			BackgroundTransparency: 1
+			Position: UDim2.new 0, 0, 0, 0
+			Size: UDim2.new 1, 0, 0.07, 0
 
-	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94692054"
+			* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94692054"
+
+			* New "ImageButton", "MaximizeButton"
+				Active: true
+				BackgroundTransparency: 1
+				Position: UDim2.new 0, 0, 0, 0
+				Size: UDim2.new 1, 0, 1, 0
+
+			* New "TextLabel", "PlayerName"
+				BackgroundTransparency: 1
+				Position: UDim2.new 0, 0, 0.01, 0
+				Size: UDim2.new 0.98, 0, 0.38, 0
+				Font: "ArialBold"
+				Text: LocalPlayer.Name
+				FontSize: "Size24"
+				--TextScaled: true
+				TextColor3: Color3.new 1, 1, 1
+				TextStrokeColor3: Color3.new 0, 0, 0
+				TextStrokeTransparency: 0
+				TextXAlignment: "Right"
+				TextYAlignment: "Center"
+
+			* New "TextLabel", "PlayerScore"
+				BackgroundTransparency: 1
+				Position: UDim2.new 0, 0, 0.4, 0
+				Size: UDim2.new 0.98, 0, 0, 30
+				Font: "ArialBold"
+				Text: ""
+				FontSize: "Size24"
+				TextYAlignment: "Top"
+				-- TextScaled: true
+				TextColor3: Color3.new 1, 1, 1
+				TextStrokeTransparency: 1
+				TextXAlignment: "Right"
+
+{
+	LeaderBoardFrame: MainFrame
+	MainFrame:
+		:FocusFrame
+		Header: HeaderFrame
+		HeaderFrame:
+			:MaximizeButton
+			PlayerName: HeaderName
+			PlayerScore: HeaderScore
+		:BottomShiftFrame
+} = ScreenGui
 
 HeaderFrameHeight = HeaderFrame.Size.Y.Scale
-MaximizeButton = New "ImageButton", "MaximizeButton"
-	Active: true
-	BackgroundTransparency: 1
-	Position: UDim2.new 0, 0, 0, 0
-	Size: UDim2.new 1, 0, 1, 0
-	Parent: HeaderFrame
-
-HeaderName = New "TextLabel", "PlayerName"
-	BackgroundTransparency: 1
-	Position: UDim2.new 0, 0, 0.01, 0
-	Size: UDim2.new 0.98, 0, 0.38, 0
-	Parent: HeaderFrame
-	Font: "ArialBold"
-	Text: LocalPlayer.Name
-	FontSize: "Size24"
-	--TextScaled: true
-	TextColor3: Color3.new 1, 1, 1
-	TextStrokeColor3: Color3.new 0, 0, 0
-	TextStrokeTransparency: 0
-	TextXAlignment: "Right"
-	TextYAlignment: "Center"
-
-HeaderScore = New "TextLabel", "PlayerScore"
-	BackgroundTransparency: 1
-	Position: UDim2.new 0, 0, 0.4, 0
-	Size: UDim2.new 0.98, 0, 0, 30
-	Parent: HeaderFrame
-	Font: "ArialBold"
-	Text: ""
-	FontSize: "Size24"
-	TextYAlignment: "Top"
-	-- TextScaled: true
-	TextColor3: Color3.new 1, 1, 1
-	TextStrokeTransparency: 1
-	TextXAlignment: "Right"
 
 -- BOTTOM
 --used for shifting bottom frame for mouse over effects
@@ -386,29 +393,35 @@ BottomShiftFrame = New "Frame", "BottomShiftFrame"
 	Size: UDim2.new 1, 0, 1, 0
 	Parent: MainFrame
 
-BottomFrame = New "Frame", "Bottom"
-	BackgroundTransparency: 1
-	Position: UDim2.new 0, 0, 0.07, 0
-	Size: UDim2.new 1, 0, 0.03, 0
-	Parent: BottomShiftFrame
+	* New "Frame", "Bottom"
+		BackgroundTransparency: 1
+		Position: UDim2.new 0, 0, 0.07, 0
+		Size: UDim2.new 1, 0, 0.03, 0
+		Parent: BottomShiftFrame
 
-	* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94754966"
+		* MakeBackgroundGuiObj "http://www.roblox.com/asset/?id=94754966"
 
-ExtendButton = New "ImageButton", "bigbutton"
-	Active: true
-	BackgroundTransparency: 1
-	Position: UDim2.new 0, 0, 0, 0
-	Size: UDim2.new 1, 0, 1.5, 0
-	ZIndex: 3
-	Parent: BottomFrame
+		* New "ImageButton", "bigbutton"
+			Active: true
+			BackgroundTransparency: 1
+			Position: UDim2.new 0, 0, 0, 0
+			Size: UDim2.new 1, 0, 1.5, 0
+			ZIndex: 3
 
-ExtendTab = New "ImageButton", "extendTab"
-	Active: true
-	BackgroundTransparency: 1
-	Image: "http://www.roblox.com/asset/?id=94692731"
-	Position: UDim2.new 0.608, 0, 0.3, 0
-	Size: UDim2.new 0.3, 0, 0.7, 0
-	Parent: BottomFrame
+		* New "ImageButton", "extendTab"
+			Active: true
+			BackgroundTransparency: 1
+			Image: "http://www.roblox.com/asset/?id=94692731"
+			Position: UDim2.new 0.608, 0, 0.3, 0
+			Size: UDim2.new 0.3, 0, 0.7, 0
+
+{
+	Bottom: BottomFrame
+	Bottom:
+		bigbutton: ExtendButton
+		extendTab: ExtendTab
+} = BottomShiftFrame
+
 
 TopClipFrame = New "Frame", "ListFrame"
 	BackgroundTransparency: 1
@@ -417,32 +430,37 @@ TopClipFrame = New "Frame", "ListFrame"
 	Parent: MainFrame
 	ClipsDescendants: true
 
-BottomClipFrame = New "Frame", "BottomFrame"
-	BackgroundTransparency: 1
-	Position: UDim2.new 0, 0, -0.8, 0
-	Size: UDim2.new 1, 0, 1, 0
-	Parent: TopClipFrame
-	ClipsDescendants: true
+	* New "Frame", "BottomFrame"
+		BackgroundTransparency: 1
+		Position: UDim2.new 0, 0, -0.8, 0
+		Size: UDim2.new 1, 0, 1, 0
+		ClipsDescendants: true
 
-ScrollBarFrame = New "Frame", "ScrollBarFrame"
-	BackgroundTransparency: 1
-	Position: UDim2.new 0.987, 0, 0.8, 0
-	Size: UDim2.new 0.01, 0, 0.2, 0
-	Parent: BottomClipFrame
+		* New "Frame", "ScrollBarFrame"
+			BackgroundTransparency: 1
+			Position: UDim2.new 0.987, 0, 0.8, 0
+			Size: UDim2.new 0.01, 0, 0.2, 0
 
-ScrollBar = New "Frame", "ScrollBar"
-	BackgroundTransparency: 0
-	BackgroundColor3: Color3.new 0.2, 0.2, 0.2
-	Position: UDim2.new 0, 0, 0, 0
-	Size: UDim2.new 1, 0, 0.5, 0
-	ZIndex: 5
-	Parent: ScrollBarFrame
+			* New "Frame", "ScrollBar"
+				BackgroundTransparency: 0
+				BackgroundColor3: Color3.new 0.2, 0.2, 0.2
+				Position: UDim2.new 0, 0, 0, 0
+				Size: UDim2.new 1, 0, 0.5, 0
+				ZIndex: 5
 
-ListFrame = New "Frame", "SubFrame"
-	BackgroundTransparency: 1
-	Position: UDim2.new 0, 0, 0.8, 0
-	Size: UDim2.new 1, 0, 1, 0
-	Parent: BottomClipFrame
+		* New "Frame", "SubFrame"
+			BackgroundTransparency: 1
+			Position: UDim2.new 0, 0, 0.8, 0
+			Size: UDim2.new 1, 0, 1, 0
+
+{
+	BottomFrame: BottomClipFrame
+	BottomClipFrame:
+		:ScrollBarFrame
+		ScrollBarFrame:
+			:ScrollBar
+		SubFrame: ListFrame
+} = TopClipFrame
 
 PopUpClipFrame = New "Frame", "PopUpFrame",
 	BackgroundTransparency: 1
@@ -461,10 +479,10 @@ PopUpPanelTemplate = New "Frame", "Panel"
 	Parent: PopUpClipFrame
 
 StatTitles = New "Frame", "StatTitles",
-	BackgroundTransparency: 1,
-	Position: UDim2.new 0, 0, 1, -10,
-	Size: UDim2.new 1, 0, 0, 0,
-	Parent: HeaderFrame,
+	BackgroundTransparency: 1
+	Position: UDim2.new 0, 0, 1, -10
+	Size: UDim2.new 1, 0, 0, 0
+	Parent: HeaderFrame
 
 IsMinimized = Instance.new "BoolValue"
 IsMaximized = Instance.new "BoolValue"
@@ -1209,15 +1227,13 @@ OnFriendRefuseButtonSelect = ->
 PlayerSortFunction = (a, b) ->
 	-- prevents flipping out leaderboard
 	if a["Score"] == b["Score"]
-		return a["Player"].Name\upper! < b["Player"].Name\upper!
-
-	if not a["Score"]
-		return false
-
-	if not b["Score"]
-		return true
-
-	a["Score"] < b["Score"]
+		a["Player"].Name\upper! < b["Player"].Name\upper!
+	elseif not a["Score"]
+		false
+	elseif not b["Score"]
+		true
+	else
+		a["Score"] < b["Score"]
 
 ---------------------------------
 -- Stat Handling
@@ -2626,13 +2642,12 @@ TeamSortFunc = (a, b) ->
 	team team entry to sum the scores of
 --]]
 AddTeamScores = (team) ->
-	for j = 1, #ScoreNames
-		i = ScoreNames[j]
+	for i in *ScoreNames
 		tscore = 0
 		for _, j in ipairs team["MyPlayers"]
 			tval = j["Player"]\FindFirstChild "leaderstats" and j["Player"].leaderstats\FindFirstChild i["Name"]
 			if tval and not tval\IsA "StringValue"
-				tscore += GetScoreValue (j["Player"].leaderstats)[i["Name"]]
+				tscore += GetScoreValue j["Player"].leaderstats[i["Name"]]
 
 		if team["Frame"]\FindFirstChild i["Name"]
 			--team['Frame'][i['Name'] ].Size = UDim2.new(1 - (ScrollBarFrame.Size.X.Scale * 2),- ((j-1) * SpacingPerStat),1,0)
@@ -2781,71 +2796,74 @@ InsertTeamFrame = (nteam) ->
 
 	AddingFrameLock = true
 	--for _,i in pairs TeamFrames
-	nentry = {}
-	nentry["MyTeam"] = nteam
-	nentry["MyPlayers"] = {}
-	nentry["Frame"] = MiddleTemplate\Clone!
-	WaitForChild(WaitForChild(nentry["Frame"], "TitleFrame"), "Title").Text = nteam.Name
-	nentry["Frame"].TitleFrame.Title.Font = "ArialBold"
-	nentry["Frame"].TitleFrame.Title.FontSize = "Size18"
-	nentry["Frame"].TitleFrame.Position = UDim2.new(
-		nentry["Frame"].TitleFrame.Position.X.Scale,
-		nentry["Frame"].TitleFrame.Position.X.Offset,
-		0.1,
-		0
-	)
-	nentry["Frame"].TitleFrame.Size = UDim2.new(
-		nentry["Frame"].TitleFrame.Size.X.Scale,
-		nentry["Frame"].TitleFrame.Size.X.Offset,
-		0.8,
-		0
-	)
-	nentry["Frame"].Position = UDim2.new(1, 0, (#MiddleFrames * nentry["Frame"].Size.Y.Scale), 0)
-	WaitForChild(nentry["Frame"], "ClickListener").MouseButton1Down\connect (nx, ny) ->
-		StartDrag nentry, nx, ny
 
-	nentry["Frame"].ClickListener.BackgroundColor3 = nteam.TeamColor.Color
-	nentry["Frame"].ClickListener.BackgroundTransparency = 0.7
-	nentry["Frame"].ClickListener.AutoButtonColor = false
-	AddId += 1
-	nentry["ID"] = AddId
-	nentry["AutoHide"] = false
-	if nteam\FindFirstChild "AutoHide"
-		nentry["AutoHide"] = true
-
-	if nteam\FindFirstChild "TeamScore"
-		TeamChildAdded nentry, nteam.TeamScore
-
-	nteam.ChildAdded\connect (nchild) -> TeamChildAdded nentry, nchild
-	nteam.ChildRemoved\connect (nchild) -> TeamChildRemoved nentry, nchild
-	nteam.Changed\connect (prop) -> TeamChanged nentry, prop
-
-	for _, i in pairs PlayerFrames
-		if not i["Player"].Neutral and i["Player"].TeamColor == nteam.TeamColor
-			AddPlayerToTeam nentry, i
-
-	nentry["IsHidden"] = false
-	if not nentry["AutoHide"] or #nentry["MyPlayers"] > 0
-		nentry["Frame"].Parent = ListFrame
-		nentry["Frame"]\TweenPosition(
-			UDim2.new(0.5, 0, (#MiddleFrames * nentry["Frame"].Size.Y.Scale), 0),
-			"Out",
-			"Linear",
-			BASE_TWEEN,
-			true
+	with n = nentry["Frame"]
+		nentry = {}
+		nentry["MyTeam"] = nteam
+		nentry["MyPlayers"] = {}
+		nentry["Frame"] = MiddleTemplate\Clone!
+		WaitForChild(WaitForChild(nentry["Frame"], "TitleFrame"), "Title").Text = nteam.Name
+		.TitleFrame.Title.Font = "ArialBold"
+		.TitleFrame.Title.FontSize = "Size18"
+		.TitleFrame.Position = UDim2.new(
+			.TitleFrame.Position.X.Scale,
+			.TitleFrame.Position.X.Offset,
+			0.1,
+			0
 		)
-		AddMiddleBGFrame!
-	else
-		nentry["IsHidden"] = true
-		nentry["Frame"].Parent = nil
+		.TitleFrame.Size = UDim2.new(
+			.TitleFrame.Size.X.Scale,
+			.TitleFrame.Size.X.Offset,
+			0.8,
+			0
+		)
+		.Position = UDim2.new(1, 0, (#MiddleFrames * .Size.Y.Scale), 0)
+		WaitForChild(n, "ClickListener").MouseButton1Down\connect (nx, ny) ->
+			StartDrag nentry, nx, ny
 
-	table.insert TeamFrames, nentry
-	UpdateMinimize!
-	BaseUpdate!
-	if #TeamFrames == 1 and not NeutralTeam
-		AddNeutralTeam!
+		.ClickListener.BackgroundColor3 = nteam.TeamColor.Color
+		.ClickListener.BackgroundTransparency = 0.7
+		.ClickListener.AutoButtonColor = false
+		AddId += 1
+		nentry["ID"] = AddId
+		nentry["AutoHide"] = false
 
-	AddingFrameLock = false
+		if nteam\FindFirstChild "AutoHide"
+			nentry["AutoHide"] = true
+
+		if nteam\FindFirstChild "TeamScore"
+			TeamChildAdded nentry, nteam.TeamScore
+
+		nteam.ChildAdded\connect (nchild) -> TeamChildAdded nentry, nchild
+		nteam.ChildRemoved\connect (nchild) -> TeamChildRemoved nentry, nchild
+		nteam.Changed\connect (prop) -> TeamChanged nentry, prop
+
+		for _, i in pairs PlayerFrames
+			if not i["Player"].Neutral and i["Player"].TeamColor == nteam.TeamColor
+				AddPlayerToTeam nentry, i
+
+		nentry["IsHidden"] = false
+		if not nentry["AutoHide"] or #nentry["MyPlayers"] > 0
+			.Parent = ListFrame
+			nentry["Frame"]\TweenPosition(
+				UDim2.new(0.5, 0, (#MiddleFrames * .Size.Y.Scale), 0),
+				"Out",
+				"Linear",
+				BASE_TWEEN,
+				true
+			)
+			AddMiddleBGFrame!
+		else
+			nentry["IsHidden"] = true
+			.Parent = nil
+
+		table.insert TeamFrames, nentry
+		UpdateMinimize!
+		BaseUpdate!
+		if #TeamFrames == 1 and not NeutralTeam
+			AddNeutralTeam!
+
+		AddingFrameLock = false
 
 TeamAdded = (nteam) -> InsertTeamFrame nteam
 TeamRemoved = (nteam) -> RemoveTeamFrame nteam

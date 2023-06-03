@@ -3,7 +3,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -1710,9 +1710,9 @@ if LoadLibrary
 			spinnerImage = New "ImageLabel", "Spinner#{spinnerNum}"
 				Size: UDim2.new 0, 16, 0, 16
 				Position: UDim2.new(
-					0.5 + 0.3 * math.cos(math.rad(45 * spinnerNum)),
+					0.5 + 0.3 * math.cos(math.rad 45 * spinnerNum),
 					-8,
-					0.5 + 0.3 * math.sin(math.rad(45 * spinnerNum)),
+					0.5 + 0.3 * math.sin(math.rad 45 * spinnerNum),
 					-8
 				)
 				BackgroundTransparency: 1
