@@ -9,7 +9,7 @@ return if game.CoreGui.Version < 3
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
