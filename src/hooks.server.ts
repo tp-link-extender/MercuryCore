@@ -8,7 +8,8 @@ import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { client } from "$lib/server/redis"
 import { redirect } from "@sveltejs/kit"
-import { magenta, red, yellow, green, blue, gray } from "picocolors"
+import pc from "picocolors"
+const { magenta, red, yellow, green, blue, gray } = pc
 
 const methodColours: { [k: string]: string } = {
 	GET: green("GET"),

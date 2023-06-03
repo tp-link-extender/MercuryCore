@@ -41,7 +41,7 @@ makePopupInvisible = ->
 
 makeFriend = (fromPlayer, toPlayer) ->
 	popup = script.Parent\FindFirstChild "Popup"
-	return if not popup? -- there is no popup!
+	return if popup == nil -- there is no popup!
 	return if popup.Visible -- currently popping something, abort!
 	return if friendRequestBlacklist[fromPlayer] -- previously cancelled friend request, we don't want it!
 
