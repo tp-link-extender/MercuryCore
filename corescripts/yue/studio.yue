@@ -3,16 +3,16 @@ print "[Mercury]: Loaded Studio corescript"
 
 with game\GetService "InsertService"
 	try
-		\SetFreeModelUrl "http://banland.xyz/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d"
+		\SetFreeModelUrl "http://banland.xyz/game/tools/insertasset?type=fm&q=%s&pg=%d&rs=%d"
 	try
-		\SetFreeDecalUrl "http://banland.xyz/Game/Tools/InsertAsset.ashx?type=fd&q=%s&pg=%d&rs=%d"
+		\SetFreeDecalUrl "http://banland.xyz/game/tools/insertasset?type=fd&q=%s&pg=%d&rs=%d"
 
 	game\GetService"ScriptInformationProvider"\SetAssetUrl "http://banland.xyz/Asset/"
-	\SetBaseSetsUrl "http://banland.xyz/Game/Tools/InsertAsset.ashx?nsets=10&type=base"
-	\SetUserSetsUrl "http://banland.xyz/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d"
-	\SetCollectionUrl "http://banland.xyz/Game/Tools/InsertAsset.ashx?sid=%d"
+	\SetBaseSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=10&type=base"
+	\SetUserSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
+	\SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d"
 	\SetAssetUrl "http://banland.xyz/Asset/?id=%d"
-	\SetAssetVersionUrl "http://www.roblox.com/Asset/?assetversionid=%d"
+	\SetAssetVersionUrl "http://banland.xyz/asset/?assetversionid=%d"
 	\SetTrustLevel 0
 
 with game\GetService "SocialService"
