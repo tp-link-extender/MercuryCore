@@ -5,7 +5,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -299,7 +299,7 @@ setCurrencyAmountAndType = (priceInRobux, priceInTix) ->
 		return false
 
 
-	if not currentCurrencyAmount?
+	if currentCurrencyAmount == nil
 		return false
 	true
 
@@ -357,7 +357,7 @@ updateAfterBalanceText = (playerBalance, notRightBc) ->
 	-- check to see if we have enough of the desired currency to allow a purchase, if not we need to prompt user to buy robux
 	if not notRightBc
 		if afterBalanceNumber < 0 and keyWord == "robux"
-			if not openBuyCurrencyWindowConnection?
+			if openBuyCurrencyWindowConnection == nil
 				openBuyCurrencyWindowConnection = purchaseDialog.BodyFrame.AfterBalanceButton.MouseButton1Click\connect openBuyCurrencyWindow
 
 			purchaseDialog.BodyFrame.AfterBalanceButton.Text = "You need " ..
@@ -400,7 +400,7 @@ canPurchaseItem = ->
 			currentProductInfo = game\GetService"MarketplaceService"\GetProductInfo currentAssetId
 
 
-	if not currentProductInfo? or not success
+	if currentProductInfo == nil or not success
 		descText = "In-game sales are temporarily disabled. Please try again later."
 		return true, nil, nil, true, descText
 

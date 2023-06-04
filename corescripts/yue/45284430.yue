@@ -3,7 +3,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -1400,8 +1400,8 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 
 		xOffset = yOffset = 0
 		if guiObjects[1]
-			yOffset = math.ceil math.floor(math.fmod(totalPixelsY, guiObjects[1].AbsoluteSize.X)) / 2
-			xOffset = math.ceil math.floor(math.fmod(totalPixelsX, guiObjects[1].AbsoluteSize.Y)) / 2
+			yOffset = math.ceil math.floor(math.fmod totalPixelsY, guiObjects[1].AbsoluteSize.X) / 2
+			xOffset = math.ceil math.floor(math.fmod totalPixelsX, guiObjects[1].AbsoluteSize.Y) / 2
 
 
 		for i, child in ipairs guiObjects
@@ -2369,14 +2369,8 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				* New "Frame", "SetPanel"
 					Active: true
 					BackgroundTransparency: 1
-					Position: if position
-						position
-					else
-						UDim2.new 0.2, 29, 0.1, 24
-					Size: if size
-						size
-					else
-						UDim2.new 0.6, -58, 0.64, 0
+					Position: position or UDim2.new 0.2, 29, 0.1, 24
+					Size: size or UDim2.new 0.6, -58, 0.64, 0
 					Style: Enum.FrameStyle.RobloxRound
 					ZIndex: 6
 					Parent: setGui
@@ -2466,10 +2460,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 		createSetButton = (text) ->
 			New "TextButton"
-				Text: if text
-					text
-				else
-					""
+				Text: text or ""
 				AutoButtonColor: false
 				BackgroundTransparency: 1
 				BackgroundColor3: Color3.new 1, 1, 1
@@ -2931,10 +2922,10 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 			if newUserData and #newUserData > 2
 				-- start at #3 to skip over My Decals and My Models for each account
 				for category = 3, #newUserData
-					if newUserData[category].Name == "High Scalability" -- we want high scalability parts to show first
-						table.insert userData, 1, newUserData[category]
+					table.insert userData, if newUserData[category].Name == "High Scalability" -- we want high scalability parts to show first
+						1, newUserData[category]
 					else
-						table.insert userData, newUserData[category]
+						newUserData[category]
 
 
 		if userData
@@ -2975,10 +2966,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 	local selectedButton
 
 	frame = New "Frame", "TerrainMaterialSelector"
-		Size: if size
-			size
-		else
-			UDim2.new 0, 245, 0, 230
+		Size: size or UDim2.new 0, 245, 0, 230
 		BorderSizePixel: 0
 		BackgroundColor3: Color3.new 0, 0, 0
 		Active: true
@@ -3186,15 +3174,8 @@ t.CreateLoadingFrame = (name, size, position) ->
 
 	loadingFrame = New "Frame", "LoadingFrame"
 		Style: Enum.FrameStyle.RobloxRound
-		Size: if size
-			size
-		else
-			UDim2.new 0, 300, 0, 160
-
-		Position: if position
-			position
-		else
-			UDim2.new 0.5, -150, 0.5, -80
+		Size: size or UDim2.new 0, 300, 0, 160
+		Position: position or UDim2.new 0.5, -150, 0.5, -80
 
 		* New "TextLabel", "loadingName"
 			BackgroundTransparency: 1
