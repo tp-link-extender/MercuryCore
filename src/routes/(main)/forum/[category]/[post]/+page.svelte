@@ -34,7 +34,7 @@
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 p-0 fs-6">
+		<ol class="breadcrumb border-0 m-0 p-0 text-base">
 			<li class="breadcrumb-item">
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
@@ -79,23 +79,23 @@
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
-			<div class="row mb-2 d-flex">
+			<div class="row mb-2 flex">
 				<div>
 					<button
 						name="action"
 						value={data.likes ? "unlike" : "like"}
 						aria-label={data.likes ? "Unlike" : "Like"}
 						class="btn btn-sm {data.likes
-							? 'btn-success'
+							? 'bg-emerald-600 hover:bg-emerald-800 text-white'
 							: 'btn-outline-success'}">
 						<i class="fa{data.likes ? '' : 'r'} fa-thumbs-up" />
 					</button>
 				</div>
 				<span
 					class="my-2 text-center {data.likes
-						? 'text-success fw-bold'
+						? 'text-emerald-500 font-bold'
 						: data.dislikes
-						? 'text-danger fw-bold'
+						? 'text-danger font-bold'
 						: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
@@ -115,18 +115,18 @@
 				</div>
 			</div>
 		</form>
-		<div class="p-3 text-decoration-none light-text w-100">
-			<span class="d-flex">
+		<div class="p-3 no-underline light-text w-100">
+			<span class="flex">
 				<a
 					href="/user/{data.author.number}"
-					class="user d-flex text-decoration-none light-text">
+					class="user flex no-underline light-text">
 					<span class="pfp bg-a2 rounded-circle">
 						<img
 							src="/api/avatar/{data.author.username}"
 							alt={data.author.username}
 							class="rounded-circle rounded-top-0" />
 					</span>
-					<span class="fw-bold ms-3">
+					<span class="font-bold ms-3">
 						{data.author.username}
 					</span>
 					<span class="ms-3">
@@ -152,7 +152,7 @@
 		<label for="content" class="form-label light-text mt-2">
 			Post a Reply
 		</label>
-		<fieldset class="col-lg-7 d-flex">
+		<fieldset class="col-lg-7 flex">
 			<textarea
 				bind:value={$form.content}
 				{...$constraints.content}
@@ -160,7 +160,9 @@
 				name="content"
 				placeholder="What are your thoughts?"
 				rows="4" />
-			<button type="submit" class="btn btn-success ms-3 mt-auto">
+			<button
+				type="submit"
+				class="btn bg-emerald-600 hover:bg-emerald-800 text-white ms-3 mt-auto">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -170,7 +172,7 @@
 		</fieldset>
 		<p
 			class="mb-3"
-			class:text-success={$page.status == 200}
+			class:text-emerald-500={$page.status == 200}
 			class:text-danger={$page.status >= 400 || $errors.status}>
 			{$errors.status || $message || ""}
 		</p>

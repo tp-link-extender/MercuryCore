@@ -22,7 +22,7 @@
 
 <div id="all" class="container">
 	<div class="card bg-darker pt-4">
-		<div class="d-flex px-4">
+		<div class="flex px-4">
 			<div id="image-background" class="me-4 rounded-circle bg-a">
 				<img
 					src="/api/avatar/{data.username}"
@@ -30,8 +30,8 @@
 					class="rounded-circle rounded-top-0" />
 			</div>
 			<div class="container">
-				<div class="d-flex mb-2">
-					<h1 class="h2 light-text d-inline">{data.username}</h1>
+				<div class="flex mb-2">
+					<h1 class="h2 light-text inline">{data.username}</h1>
 					<b
 						class="ms-auto"
 						style="color: {permissions[data.permissionLevel][0]}">
@@ -42,10 +42,10 @@
 						{permissions[data.permissionLevel][2]}
 					</b>
 				</div>
-				<div class="d-flex">
+				<div class="flex">
 					<a
 						href="/user/{data.number}/friends"
-						class="light-text text-center text-decoration-none">
+						class="light-text text-center no-underline">
 						Friends
 						<h2 class="h3 light-text">
 							{data.friendCount}
@@ -53,7 +53,7 @@
 					</a>
 					<a
 						href="/user/{data.number}/followers"
-						class="light-text text-center text-decoration-none ms-4">
+						class="light-text text-center no-underline ms-4">
 						Followers
 						<h2 class="h3 light-text">
 							{data.followerCount}
@@ -61,7 +61,7 @@
 					</a>
 					<a
 						href="/user/{data.number}/following"
-						class="light-text text-center text-decoration-none ms-4">
+						class="light-text text-center no-underline ms-4">
 						Following
 						<h2 class="h3 light-text">
 							{data.followingCount}
@@ -71,7 +71,7 @@
 					{#if data.username != user?.username}
 						<form
 							in:fade
-							class="align-self-center ms-auto me-2"
+							class="self-center ms-auto me-2"
 							method="POST"
 							use:enhance>
 							<button
@@ -86,8 +86,8 @@
 								class="btn {data.friends || data.outgoingRequest
 									? 'btn-danger'
 									: data.incomingRequest
-									? 'btn-info'
-									: 'btn-success'}">
+									? 'bg-cyan-600 hover:bg-cyan-800 text-white'
+									: 'bg-emerald-600 hover:bg-emerald-800 text-white'}">
 								{#if data.friends}
 									Unfriend
 								{:else if data.incomingRequest}
@@ -109,7 +109,7 @@
 						</form>
 						<form
 							in:fade
-							class="align-self-center"
+							class="self-center"
 							method="POST"
 							use:enhance>
 							<button
@@ -117,7 +117,7 @@
 								value={data.following ? "unfollow" : "follow"}
 								class="btn {data.following
 									? 'btn-danger'
-									: 'btn-primary'}">
+									: 'bg-blue-600 hover:bg-blue-800 text-white'}">
 								{#if data.following}
 									Unfollow
 								{:else}
@@ -127,7 +127,7 @@
 						</form>
 					{/if}
 				</div>
-				<div class="float-end mb-3">
+				<div class="float-right mb-3">
 					<Report user={data.username} url="/user/{data.number}" />
 				</div>
 			</div>
@@ -185,7 +185,7 @@
 												num,
 												total: data.places.length,
 											}}
-											class="card bg-darker shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
+											class="card bg-darker shadow-none placecard text-center light-text no-underline h6 m-0 w-100"
 											href="/place/{place.id}/{place.name}">
 											<div class="row">
 												<div class="col col-6">
@@ -202,15 +202,15 @@
 														{place.name}
 													</p>
 													<div class="mt-auto mb-1">
-														<div
-															class="float-start">
+														<div class="float-left">
 															<span>
 																<i
 																	class="fa fa-thumbs-up opacity-75" />
 																{place.ratio}%
 															</span>
 														</div>
-														<div class="float-end">
+														<div
+															class="float-right">
 															<span>
 																<i
 																	class="fa fa-user opacity-75" />
@@ -238,13 +238,13 @@
 					{#each data.groupsOwned as group, num}
 						<a
 							in:fade={{ num, total: data.groupsOwned.length }}
-							class="card bg-darker light-text text-decoration-none h6 my-2"
+							class="card bg-darker light-text no-underline h6 my-2"
 							href="/groups/{group.name}">
 							<div class="p-2">
-								<span class="float-start">
+								<span class="float-left">
 									{group.name}
 								</span>
-								<span class="float-end">
+								<span class="float-right">
 									<i class="fa fa-user opacity-75" />
 									{group.members}
 								</span>
@@ -261,13 +261,13 @@
 					{#each data.groups as group, num}
 						<a
 							in:fade={{ num, total: data.groups.length }}
-							class="card bg-darker light-text text-decoration-none h6 my-2"
+							class="card bg-darker light-text no-underline h6 my-2"
 							href="/groups/{group.name}">
 							<div class="p-2">
-								<span class="float-start">
+								<span class="float-left">
 									{group.name}
 								</span>
-								<span class="float-end">
+								<span class="float-right">
 									<i class="fa fa-user opacity-75" />
 									{group.members}
 								</span>
@@ -286,14 +286,14 @@
 							in:fade={{ num, total: data.posts.length, max: 9 }}
 							class="p-2 col-md-6 col-sm-12">
 							<div class="card bg-darker p-2 h-100">
-								<div id="user" class="d-flex mb-2">
+								<div id="user" class="flex mb-2">
 									<span class="pfp rounded-circle bg-a2">
 										<img
 											src="/api/avatar/{data.username}"
 											alt={data.username}
 											class="rounded-circle rounded-top-0" />
 									</span>
-									<span class="fw-bold ms-3 light-text">
+									<span class="font-bold ms-3 light-text">
 										{data.username}
 									</span>
 									<span

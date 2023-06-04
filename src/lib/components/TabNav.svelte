@@ -18,8 +18,8 @@
 </script>
 
 <ul
-	class="nav {vertical ? 'nav-vert-pills flex-column' : 'mb-4'} {tabs
-		? 'nav-tabs flex-column border-0 me-4'
+	class="nav {vertical ? 'nav-vert-pills flex-col' : 'mb-4'} {tabs
+		? 'nav-tabs flex-col border-0 me-4'
 		: 'nav-pills'}"
 	class:nav-justified={justify}
 	role="tablist">

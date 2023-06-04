@@ -69,13 +69,14 @@
 					</small>
 				</div>
 			</div>
-			<button class="btn btn-success my-3">
+			<button
+				class="btn bg-emerald-600 hover:bg-emerald-800 text-white my-3">
 				{$delayed ? "Working..." : "Post"}
 			</button>
 		</fieldset>
 	</form>
 	<p
-		class:text-success={$page.status == 200}
+		class:text-emerald-500={$page.status == 200}
 		class:text-danger={$page.status >= 400}>
 		{$message || ""}
 	</p>

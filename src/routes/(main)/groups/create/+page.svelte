@@ -36,7 +36,9 @@
 				</p>
 			</div>
 		</div>
-		<button type="submit" class="btn btn-success">
+		<button
+			type="submit"
+			class="btn bg-emerald-600 hover:bg-emerald-800 text-white">
 			{#if $delayed}
 				Working...
 			{:else}

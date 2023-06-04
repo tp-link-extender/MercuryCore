@@ -17,12 +17,12 @@
 
 <h1 class="light-text text-center">Friend requests ({data.number})</h1>
 
-<div class="container mt-5 d-grid">
+<div class="container mt-5 grid">
 	{#each data.users as user, num}
 		<div
 			in:fade={{ num, total: data.users.length, max: 12 }}
-			class="card bg-darker light-text h-100 w-100 d-flex flex-col">
-			<div class="d-flex flex-row">
+			class="card bg-darker light-text h-100 w-100 flex flex-col">
+			<div class="flex flex-row">
 				<a class="p-4 pe-2" href="/user/{user.number}">
 					<div class="image-background bg-a rounded-circle">
 						<img
@@ -32,7 +32,7 @@
 					</div>
 					<!-- {#if user.status}
 						<span
-							class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
+							class="absolute bottom-0 end-0 badge rounded-circle {statusColours[
 								user.status
 							]}">
 							<span class="visually-hidden">{user.status}</span>
@@ -42,20 +42,20 @@
 				<div class="h4 p-4">
 					<a
 						href="/user/{user.number}"
-						class="text-decoration-none light-text">
+						class="no-underline light-text">
 						{user.username}
 					</a>
 				</div>
 			</div>
 			<form
-				class="align-self-center row w-100 p-2 pt-0"
+				class="self-center row w-100 p-2 pt-0"
 				method="POST"
 				use:enhance
 				action="/user/{user.number}">
 				<button
 					name="action"
 					value="accept"
-					class="btn btn-info me-1 col">
+					class="btn bg-cyan-600 hover:bg-cyan-800 text-white me-1 col">
 					Accept
 				</button>
 				<button

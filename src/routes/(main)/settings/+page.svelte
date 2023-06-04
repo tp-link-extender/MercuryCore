@@ -36,7 +36,7 @@
 	<h1 class="light-text mb-4">Settings</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">User Profile</h4>
+		<h4 class="light-text font-normal mb-1">User Profile</h4>
 		<p class="mb-0 grey-text mb-4">Change your bio, site theme and more.</p>
 		<form class="col-lg-8" method="POST" action="?a=profile">
 			<fieldset>
@@ -89,7 +89,9 @@
 					</div>
 				</div>
 			</fieldset>
-			<button type="submit" class="btn btn-success">
+			<button
+				type="submit"
+				class="btn bg-emerald-600 hover:bg-emerald-800 text-white">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -98,14 +100,14 @@
 			</button>
 		</form>
 		<p
-			class:text-success={$page.status == 200}
+			class:text-emerald-500={$page.status == 200}
 			class:text-danger={$page.status >= 400}>
 			{$message || ""}
 		</p>
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">User Information</h4>
+		<h4 class="light-text font-normal mb-1">User Information</h4>
 		<p class="mb-0 grey-text mb-4">
 			Information about your account, you can change certain aspects of it
 			here.
@@ -148,7 +150,9 @@
 				 ">
 			A Discord account has not been linked.
 		</p>
-		<button type="submit" class="btn btn-primary">
+		<button
+			type="submit"
+			class="btn bg-blue-600 hover:bg-blue-800 text-white">
 			<i class="fa fa-link" />
 			Link Discord
 		</button>
@@ -159,14 +163,16 @@
 				 ">
 			You have not verified your email address.
 		</p>
-		<button type="submit" class="btn btn-primary mb-3">
+		<button
+			type="submit"
+			class="btn bg-blue-600 hover:bg-blue-800 text-white mb-3">
 			<i class="fa fa-envelope-circle-check" />
 			Verify Email
 		</button>
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="fw-normal light-text mb-3">Change Password</h4>
+		<h4 class="font-normal light-text mb-3">Change Password</h4>
 		<form use:enhance class="col-sm-8" method="POST" action="?a=password">
 			<fieldset>
 				<div class="form-group row gx-0 mb-2">
@@ -235,7 +241,9 @@
 					</div>
 				</div>
 			</fieldset>
-			<button type="submit" class="btn btn-success">
+			<button
+				type="submit"
+				class="btn bg-emerald-600 hover:bg-emerald-800 text-white">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -244,7 +252,7 @@
 			</button>
 		</form>
 		<p
-			class:text-success={$page.status == 200}
+			class:text-emerald-500={$page.status == 200}
 			class:text-danger={$page.status >= 400}>
 			{$message || ""}
 		</p>

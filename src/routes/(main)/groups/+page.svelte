@@ -40,7 +40,11 @@
 	<div class="row mb-5">
 		<h1 class="col-6 light-text">
 			Groups
-			<a href="/groups/create" class="btn btn-primary ms-4">Create</a>
+			<a
+				href="/groups/create"
+				class="btn bg-blue-600 hover:bg-blue-800 text-white ms-4">
+				Create
+			</a>
 		</h1>
 		<div class="col-4 ms-4">
 			<form use:enhance method="POST" action="/search" class="row">
@@ -55,7 +59,7 @@
 						aria-describedby="button-addon2" />
 					<input type="hidden" name="category" value="places" />
 					<button
-						class="btn btn-success"
+						class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
 						type="submit"
 						aria-label="Search"
 						id="button-addon2">
@@ -66,7 +70,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="container d-grid m-0">
+		<div class="container grid m-0">
 			{#each query ? searchedData : data.groups || [] as group, num (group.name)}
 				<Group {group} {num} total={data.groups.length} />
 			{/each}
@@ -84,7 +88,7 @@
 		background-color: var(--accent)
 		border-color: var(--accent2)
 
-	.d-grid
+	.grid
 		font-size: 0.9rem
 
 		grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr))

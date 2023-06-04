@@ -12,7 +12,7 @@
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 p-0 fs-6">
+		<ol class="breadcrumb border-0 m-0 p-0 text-base">
 			<li class="breadcrumb-item">
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
@@ -26,13 +26,17 @@
 		{data.name} - Forum
 		<a
 			href="/forum/create?category={data.name}"
-			class="btn btn-primary ms-4">
+			class="btn bg-blue-600 hover:bg-blue-800 text-white ms-4">
 			<i class="fa fa-file me-2" />
 			Create post
 		</a>
 	</h1>
 	{#each data.posts as post, num}
-		<ForumPost {post} {num} total={data.posts.length} categoryName={data.name}/>
+		<ForumPost
+			{post}
+			{num}
+			total={data.posts.length}
+			categoryName={data.name} />
 	{/each}
 </div>
 

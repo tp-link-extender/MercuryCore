@@ -5,7 +5,7 @@
 	export let data
 </script>
 
-<div id="bg" class="position-fixed w-100 h-100 pe-none" />
+<div id="bg" class="fixed w-100 h-100 pe-none" />
 
 <div id="all">
 	<!--

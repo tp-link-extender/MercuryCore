@@ -10,7 +10,7 @@
 
 <h1 class="light-text text-center">Inventory</h1>
 
-<div class="container mt-5 d-grid">
+<div class="container mt-5 grid">
 	{#each data.assets || [] as asset, num}
 		<Asset {asset} {num} total={(data.assets || []).length} />
 	{/each}

@@ -45,7 +45,7 @@
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Banners</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
@@ -60,7 +60,7 @@
 						<div class="row">
 							<label
 								for="bannerText"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 col-form-label light-text">
 								Banner text
 							</label>
 							<div class="col-md-8">
@@ -84,7 +84,7 @@
 						<div class="row">
 							<label
 								for="bannerColour"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 col-form-label light-text">
 								Banner colour
 							</label>
 							<div class="col-md-2">
@@ -106,7 +106,7 @@
 						<div class="row">
 							<label
 								for="bannerTextLight"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 col-form-label light-text">
 								Light text
 							</label>
 							<div class="col-md-2">
@@ -122,7 +122,7 @@
 						<button
 							name="action"
 							value="create"
-							class="btn btn-success mt-3">
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-3">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -133,7 +133,7 @@
 				</form>
 
 				<p
-					class:text-success={$page.status == 200}
+					class:text-emerald-500={$page.status == 200}
 					class:text-danger={$page.status >= 400}>
 					{$message || ""}
 				</p>
@@ -163,7 +163,7 @@
 										<button
 											name="action"
 											value="delete"
-											class="btn btn-sm btn-link text-decoration-none text-danger my-0">
+											class="btn btn-sm btn-link no-underline text-danger my-0">
 											<i class="fas fa-trash" />
 											Delete Banner
 										</button>
@@ -181,7 +181,7 @@
 											value={banner.id} />
 										<button
 											type="submit"
-											class="btn btn-sm btn-link text-decoration-none text-{banner.active
+											class="btn btn-sm btn-link no-underline text-{banner.active
 												? 'warning'
 												: 'success'} my-0">
 											<i
@@ -200,7 +200,7 @@
 											banner.id,
 											banner.body
 										)}
-										class="btn btn-sm btn-success my-0">
+										class="btn btn-sm bg-emerald-600 hover:bg-emerald-800 text-white my-0">
 										View Body
 									</button>
 								</td>
@@ -217,7 +217,7 @@
 								<td>
 									<a
 										href="/user/{banner.user.number}"
-										class="text-decoration-none">
+										class="no-underline">
 										{banner.user.username}
 									</a>
 								</td>
@@ -257,10 +257,10 @@
 					{$errors.bannerBody || ""}
 				</p>
 				{#if newBannerBody.trim() != $form.bannerBody?.trim()}
-					<div transition:fade class="d-grid gap-2">
+					<div transition:fade class="grid">
 						<button
 							value="updateBody"
-							class="btn btn-success"
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
 							name="action"
 							id="saveBannerBody">
 							{#if $delayed}
@@ -273,7 +273,7 @@
 				{/if}
 			</form>
 			<p
-				class:text-success={$page.status == 200}
+				class:text-emerald-500={$page.status == 200}
 				class:text-danger={$page.status >= 400}>
 				{$message || ""}
 			</p>

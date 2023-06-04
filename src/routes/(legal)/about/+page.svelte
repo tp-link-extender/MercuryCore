@@ -17,21 +17,23 @@
 <!-- Keeps the scrollY variable updated with the scrollY property of the window. -->
 <svelte:window bind:scrollY />
 <svelte:head>
-	<meta name="description" content="About Mercury: Endless possibilities. New features. Same nostalgia." />
+	<meta
+		name="description"
+		content="About Mercury: Endless possibilities. New features. Same nostalgia." />
 	<title>About - Mercury</title>
 </svelte:head>
 
-<div bind:this={top} id="top" class="position-relative top-0" />
+<div bind:this={top} id="top" class="relative top-0" />
 
 <div
 	id="info"
-	class="container d-flex flex-column justify-content-center align-items-center position-relative">
-	<h1 id="title" class="fw-bolder light-text">Mercury 2</h1>
+	class="container flex flex-col justify-center items-center relative">
+	<h1 id="title" class="font-bold light-text">Mercury 2</h1>
 	<p class="lead light-text text-center">
 		Endless possibilities. New features. Same nostalgia.
 	</p>
 	<h2 class="h5">
-		<span class="badge text-bg-secondary dark-text opacity-75 mb-3">
+		<span class="badge bg-white text-dark opacity-75 mb-3">
 			Closed Beta
 		</span>
 	</h2>
@@ -39,7 +41,7 @@
 
 <button
 	id="arrow"
-	class="btn position-absolute shadow-none start-50"
+	class="btn absolute shadow-none start-50"
 	aria-label="Scroll down"
 	on:click={downScroll}
 	on:keypress={downScroll}
@@ -48,7 +50,7 @@
 </button>
 <button
 	id="arrow2"
-	class="btn position-fixed mb-3"
+	class="btn fixed mb-3"
 	aria-label="Scroll up"
 	on:click={upScroll}
 	on:keypress={upScroll}
@@ -62,7 +64,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart>
 			<div class="w-100">
-				<h1 class="fw-bolder fw-light light-text w-100">
+				<h1 class="font-bold font-light light-text w-100">
 					Endless possibilities
 				</h1>
 				<h4 class="light-text w-100">
@@ -85,7 +87,7 @@
 	<ParallaxLayer offset={1} rate={2}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="fw-bolder fw-light light-text w-100">
+				<h1 class="font-bold font-light light-text w-100">
 					New features
 				</h1>
 				<h4 class="light-text w-100">
@@ -101,7 +103,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="fw-bolder fw-light light-text w-100">
+				<h1 class="font-bold font-light light-text w-100">
 					Same nostalgia.
 				</h1>
 				<h4 class="light-text w-100">
@@ -114,7 +116,7 @@
 	<ParallaxLayer offset={1} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="fw-bolder fw-light light-text w-100">
+				<h1 class="font-bold font-light light-text w-100">
 					Professional developers and community outreach.
 				</h1>
 				<h4 class="light-text w-100">
@@ -139,7 +141,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="fw-bolder fw-light light-text w-100">
+				<h1 class="font-bold font-light light-text w-100">
 					Why Mercury 2?
 				</h1>
 				<h4 class="light-text w-100">
@@ -156,8 +158,8 @@
 		<Pagepart fullwidth>
 			<div
 				id="info"
-				class="container d-flex flex-column justify-content-center align-items-center position-relative">
-				<h1 id="title" class="fw-bolder light-text">Mercury 2</h1>
+				class="container flex flex-col justify-center items-center relative">
+				<h1 id="title" class="font-bold light-text">Mercury 2</h1>
 				<p class="lead light-text text-center">
 					Endless possibilities. New features. Same nostalgia.
 				</p>
@@ -165,7 +167,7 @@
 					<a
 						type="button"
 						href="/register"
-						class="d-inline btn btn-sm btn-success text-decoration-none">
+						class="inline btn btn-sm bg-emerald-600 hover:bg-emerald-800 text-white no-underline">
 						Register <i class="fa fa-chevron-right" />
 					</a>
 				</b>

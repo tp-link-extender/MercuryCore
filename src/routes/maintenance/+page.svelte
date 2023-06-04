@@ -16,27 +16,27 @@
 	<title>Maintenance - Mercury</title>
 </svelte:head>
 
-<canvas id="gradient-canvas" class="w-100 h-100 position-fixed" />
+<canvas id="gradient-canvas" class="w-100 h-100 fixed" />
 
 <div
 	id="info"
-	class="container d-flex flex-column justify-content-center align-items-center position-relative">
+	class="container flex flex-col justify-center items-center relative">
 	<div
 		id="moon"
-		class="container d-flex flex-column justify-content-center align-items-center position-absolute">
+		class="container flex flex-col justify-center items-center absolute">
 		<Moon
 			item={{
 				name: "wrench",
 				camPos: [100, 20, 100],
 			}} />
 	</div>
-	<h1 id="title" class="fw-bolder text-white opacity-75">Mercury 2</h1>
+	<h1 id="title" class="font-bold text-white opacity-75">Mercury 2</h1>
 	<p class="h4 text-white opacity-75 text-center">
 		is currently undergoing maintenance. Check back later!
 	</p>
 	<a
 		href="https://status.banland.xyz"
-		class="text-decoration-none pt-3 fs-5 fw-bold accent-text">
+		class="no-underline pt-3 text-xl font-bold accent-text">
 		Status <i class="fa fa-chevron-right" />
 	</a>
 </div>

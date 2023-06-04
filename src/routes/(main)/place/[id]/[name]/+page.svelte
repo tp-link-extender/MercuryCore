@@ -100,7 +100,7 @@
 					<div class="carousel-item" class:active={!i}>
 						<img
 							{src}
-							class="d-block w-100"
+							class="block w-100"
 							alt="Placeholder place thumbnail" />
 					</div>
 				{/each}
@@ -138,7 +138,7 @@
 							<div
 								id="settings"
 								aria-label="Place settings"
-								class="col d-flex justify-content-end">
+								class="col flex justify-end">
 								<a
 									href="/place/{data.id}/{data.name}/settings"
 									class="btn btn-sm btn-outline-warning">
@@ -147,11 +147,11 @@
 							</div>
 						{/if}
 					</div>
-					<span class="light-text d-flex mb-2">
+					<span class="light-text flex mb-2">
 						<b>by</b>
 						<a
 							href="/user/{data.ownerUser?.number}"
-							class="user light-text text-decoration-none d-flex">
+							class="user light-text no-underline flex">
 							<span class="pfp bg-darker rounded-circle mx-1">
 								<img
 									src="/api/avatar/{data.ownerUser?.username}"
@@ -177,7 +177,7 @@
 							? "Online"
 							: "Offline"}
 					</span>
-					<span class="float-end">
+					<span class="float-right">
 						<Report
 							user={data.ownerUser?.username || ""}
 							url="/place/{data.id}/{data.name}" />
@@ -188,7 +188,7 @@
 				<button
 					on:click={placeLauncher}
 					id="play"
-					class="btn btn-lg btn-success mt-4 {data.serverPing >
+					class="btn btn-lg bg-emerald-600 hover:bg-emerald-800 text-white mt-4 {data.serverPing >
 					Date.now() / 1000 - 35
 						? ''
 						: 'disabled'}">
@@ -221,7 +221,7 @@
 
 						return () => {}
 					}}
-					class="align-self-center col mt-3 px-0 mb-2"
+					class="self-center col mt-3 px-0 mb-2"
 					method="POST"
 					action="?/like">
 					<input
@@ -229,7 +229,7 @@
 						name="privateTicket"
 						value={data.privateTicket} />
 					<div class="row mb-2">
-						<div class="col d-flex justify-content-start">
+						<div class="col flex justify-start">
 							<button
 								name="action"
 								value={data.likes ? "unlike" : "like"}
@@ -243,7 +243,7 @@
 										: 'r'} fa-thumbs-up" />
 							</button>
 						</div>
-						<div class="col d-flex justify-content-end">
+						<div class="col flex justify-end">
 							<button
 								name="action"
 								value={data.dislikes ? "undislike" : "dislike"}
@@ -285,14 +285,14 @@
 								data.likeCount} />
 					</div>
 					<div class="row">
-						<div class="col d-flex justify-content-start">
+						<div class="col flex justify-start">
 							<span class="light-text mx-2">
 								{data.likeCount} like{data.likeCount == 1
 									? ""
 									: "s"}
 							</span>
 						</div>
-						<div class="col d-flex justify-content-end">
+						<div class="col flex justify-end">
 							<span class="light-text mx-2">
 								{data.dislikeCount} dislike{data.dislikeCount ==
 								1
@@ -329,16 +329,16 @@
 				running. Below are two methods of hosting - we recommend using
 				Autopilot to get started easily.
 			</p>
-			<div class="d-flex align-items-start mb-3">
+			<div class="flex items-start mb-3">
 				<div class="bg-a me-3">
 					<TabNav bind:tabData={tabData2} vertical />
 					<!-- Prevents nested tabs from breaking -->
-					{((tabData2.num = 0), "") }
+					{((tabData2.num = 0), "")}
 				</div>
 				<Tab tabData={tabData2}>
 					<p class="light-text mb-1">
 						You can host your server by opening your map in <button
-							class="btn btn-primary p-1 btn-sm"
+							class="btn bg-blue-600 hover:bg-blue-800 text-white p-1 btn-sm"
 							on:click={() => {
 								launch("mercury-player:1+launchmode:ide")
 							}}>
@@ -373,7 +373,7 @@
 							placeholder="Map location"
 							aria-label="Map location" />
 						<button
-							class="btn btn-primary"
+							class="btn bg-blue-600 hover:bg-blue-800 text-white"
 							on:click={() => {
 								launch("mercury-player:1+launchmode:maps")
 							}}
@@ -382,7 +382,7 @@
 							Map Folder
 						</button>
 						<button
-							class="btn btn-success"
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
 							on:click={() => {
 								launch(
 									`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${
@@ -395,7 +395,7 @@
 							Begin Hosting
 						</button>
 						<button
-							class="btn btn-success dropdown-toggle"
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white dropdown-toggle"
 							type="button"
 							data-bs-toggle="dropdown"
 							aria-expanded="false" />
@@ -431,15 +431,13 @@
 						<button
 							on:click={placeLauncher}
 							id="join"
-							class="btn btn-sm btn-success">
+							class="btn btn-sm bg-emerald-600 hover:bg-emerald-800 text-white">
 							Join Server
 						</button>
 					</div>
 					<div class="col">
 						{#each data.gameSessions as { user }}
-							<a
-								href="/user/{user.number}"
-								class="text-decoration-none">
+							<a href="/user/{user.number}" class="no-underline">
 								<img
 									src="/api/avatar/{user.username}"
 									alt={user.username}
@@ -466,12 +464,12 @@
 </div>
 
 <Modal {modal}>
-	<div class="modal-body d-flex flex-column p-4">
+	<div class="modal-body flex flex-col p-4">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
 				id="wrapper"
-				class="text-center align-self-center mt-5 mb-4">
+				class="text-center self-center mt-5 mb-4">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
@@ -501,7 +499,7 @@
 				Install the Mercury client and start playing now!
 			</h1>
 			<a
-				class="btn btn-success"
+				class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
 				href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
 				Download 2013
 			</a>

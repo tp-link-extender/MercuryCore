@@ -30,7 +30,7 @@
 </script>
 
 {#if depth == $baseDepth && !topLevel}
-	<a href="/forum/{forumCategoryLower}/{postId}" class="text-decoration-none">
+	<a href="/forum/{forumCategoryLower}/{postId}" class="no-underline">
 		<i class="fa fa-arrow-left me-2" />
 		Parent post
 	</a>
@@ -39,7 +39,7 @@
 		<a
 			href="/forum/{forumCategoryLower}/{postId}/{reply.parentReplyId}?depth={depth -
 				1}"
-			class="text-decoration-none">
+			class="no-underline">
 			<i class="fa fa-arrow-up me-2" />
 			Parent reply
 		</a>
@@ -47,11 +47,11 @@
 {/if}
 
 {#if reply && reply.author}
-	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="d-flex">
-		<span class="d-flex flex-column">
+	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="flex">
+		<span class="flex flex-col">
 			<a
 				href="/user/{reply.author.number}"
-				class="user d-flex text-decoration-none pt-2">
+				class="user flex no-underline pt-2">
 				<span class="pfp bg-a2 rounded-circle">
 					<img
 						src="/api/avatar/{reply.author.username}"
@@ -82,15 +82,15 @@
 			</button>
 		{:else}
 			<div in:fade|global={{ num }} class="w-100">
-				<div class="d-flex w-100">
+				<div class="flex w-100">
 					<div class="w-100">
 						<a
 							href="/user/{reply.author.number}"
-							class="user userlink d-flex text-decoration-none pt-2 ms-3 {reply
+							class="user userlink flex no-underline pt-2 ms-3 {reply
 								.author.username == postAuthorName
 								? ''
 								: 'light-text'}">
-							<span class="fw-bold">
+							<span class="font-bold">
 								{reply.author.username}
 								{#if reply.author.username == postAuthorName}
 									<i class="fa fa-microphone ms-2" />
@@ -130,7 +130,7 @@
 
 									return () => {}
 								}}
-								class="d-inline me-2"
+								class="inline me-2"
 								method="POST"
 								action="?/like&depth={depth}">
 								<input
@@ -145,14 +145,14 @@
 									class="smallbutton p-0 btn btn-sm">
 									<i
 										class="fa{reply.likes
-											? ' text-success'
+											? ' text-emerald-500'
 											: 'r'} fa-thumbs-up" />
 								</button>
 								<span
 									class="my-1 text-center {reply.likes
-										? 'text-success fw-bold'
+										? 'text-emerald-500 font-bold'
 										: reply.dislikes
-										? 'text-danger fw-bold'
+										? 'text-danger font-bold'
 										: ''}">
 									{reply.likeCount - reply.dislikeCount}
 								</span>
@@ -211,7 +211,7 @@
 												rows="4" />
 											<button
 												type="submit"
-												class="btn btn-success">
+												class="btn bg-emerald-600 hover:bg-emerald-800 text-white">
 												<i
 													class="far fa-message me-2" />
 												Reply
@@ -234,7 +234,7 @@
 				{#if depth > $baseDepth + 8}
 					<a
 						href="/forum/{forumCategoryLower}/{postId}/{reply.id}?depth={depth}"
-						class="text-decoration-none">
+						class="no-underline">
 						<i class="fa fa-arrow-down me-2" />
 						More replies
 					</a>

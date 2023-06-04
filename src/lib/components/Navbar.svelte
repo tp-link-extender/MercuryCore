@@ -46,63 +46,77 @@
 				aria-label="Close" />
 		</div>
 
-		<div id="nav1" class="offcanvas-body px-4 py-1 d-flex">
-			<a id="nav-brand-1" class="navbar-brand light-text me-4 mt-1" href="/">Mercury</a>
+		<div id="nav1" class="offcanvas-body px-4 py-1 flex">
+			<a
+				id="nav-brand-1"
+				class="navbar-brand light-text me-4 mt-1"
+				href="/">
+				Mercury
+			</a>
 			{#if user}
-			<div class="row">
-				<div class="col-6">
-				<div class="navbar-nav">
-					<a class="btn mt-1 px-1 light-text nav-item" href="/">
-						Home
-					</a>
-					<a class="btn mt-1 px-1 light-text nav-item" href="/games">
-						Games
-					</a>
-					<a
-						class="btn mt-1 px-1 light-text nav-item"
-						href="/avatarshop">
-					    Catalog
-					</a>
-					<!-- <a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a> -->
-					<a class="btn mt-1 px-1 light-text nav-item" href="/forum">
-						Forum
-					</a>
-					{#if user?.permissionLevel >= 4}
-						<a
-							class="btn mt-1 px-1 light-text nav-item"
-							href="/admin">
-							Admin
-						</a>
-					{/if}
+				<div class="row">
+					<div class="col-6">
+						<div class="navbar-nav">
+							<a
+								class="btn mt-1 px-1 light-text nav-item"
+								href="/">
+								Home
+							</a>
+							<a
+								class="btn mt-1 px-1 light-text nav-item"
+								href="/games">
+								Games
+							</a>
+							<a
+								class="btn mt-1 px-1 light-text nav-item"
+								href="/avatarshop">
+								Catalog
+							</a>
+							<!-- <a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a> -->
+							<a
+								class="btn mt-1 px-1 light-text nav-item"
+								href="/forum">
+								Forum
+							</a>
+							{#if user?.permissionLevel >= 4}
+								<a
+									class="btn mt-1 px-1 light-text nav-item"
+									href="/admin">
+									Admin
+								</a>
+							{/if}
+						</div>
+					</div>
+					<div class="col-6 mobilenav">
+						<div id="nav2-1" class="navbar-nav w-100">
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/user/{user.number}">
+								Profile
+							</a>
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/inventory">
+								Inventory
+							</a>
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/requests">
+								Friends
+							</a>
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/avatar">
+								Avatar
+							</a>
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/develop">
+								Develop
+							</a>
+						</div>
+					</div>
 				</div>
-
-			</div>
-			<div class="col-6 mobilenav">
-				<div id="nav2-1" class="navbar-nav w-100">
-					<a
-						class="light-text mt-1 btn nav-item px-1"
-						href="/user/{user.number}">
-						Profile
-					</a>
-					<a
-						class="light-text mt-1 btn nav-item px-1"
-						href="/inventory">
-						Inventory
-					</a>
-					<a
-						class="light-text mt-1 btn nav-item px-1"
-						href="/requests">
-						Friends
-					</a>
-					<a class="light-text mt-1 btn nav-item px-1" href="/avatar">
-						Avatar
-					</a>
-					<a class="light-text mt-1 btn nav-item px-1" href="/develop">
-						Develop
-					</a>
-				</div>
-			</div>
-			</div>
 				<div id="search" class="navbar-nav ms-4 me-auto mt-1">
 					<form
 						use:enhance
@@ -123,7 +137,7 @@
 									search
 										? goto(`/search?q=${search}&c=users`)
 										: null}
-								class="btn btn-success py-0"
+								class="btn bg-emerald-600 hover:bg-emerald-800 text-white py-0"
 								type="submit"
 								title="Search">
 								<i class="fa fa-search" />
@@ -133,7 +147,7 @@
 							<div
 								transition:fade={{ duration: 150 }}
 								id="results"
-								class="position-absolute card bg-darker p-2 pe-0 mt-2">
+								class="absolute card bg-darker p-2 pe-0 mt-2">
 								<a
 									class="btn text-start light-text py-2"
 									href="/search?q={search}&c=users"
@@ -166,7 +180,7 @@
 							href="/notifications"
 							role="button"
 							aria-label="Notifications"
-							class="fw-bold nav-link me-1">
+							class="font-bold nav-link me-1">
 							<i class="fa fa-bell light-text" />
 						</a>
 					</li>
@@ -175,9 +189,9 @@
 							href="/transactions/your"
 							role="button"
 							aria-label="Transactions"
-							class="fw-bold nav-link text-success">
-							<i class="fa fa-gem me-1 text-success" />
-							<span class="h6 text-success">
+							class="font-bold nav-link text-emerald-500">
+							<i class="fa fa-gem me-1 text-emerald-500" />
+							<span class="h6 text-emerald-500">
 								{user.currency}
 							</span>
 						</a>
@@ -188,11 +202,11 @@
 							role="button"
 							data-bs-toggle="dropdown"
 							aria-expanded="false"
-							class="fw-bold nav-item mx-0 text-decoration-none px-0 mb-2">
+							class="font-bold nav-item mx-0 no-underline px-0 mb-2">
 							<a
 								id="user"
 								href="/user/{user.number}"
-								class="btn p-0 d-flex text-decoration-none light-text w-50">
+								class="btn p-0 no-underline light-text w-50">
 								<div
 									id="pfp"
 									class="mx-2 rounded-circle bg-background">
@@ -201,7 +215,7 @@
 										alt="You"
 										class="rounded-circle rounded-top-0" />
 								</div>
-								<p id="username" class="my-auto fs-6 me-2">
+								<p id="username" class="my-auto text-base me-2">
 									{user?.username}
 								</p>
 							</a>
@@ -249,7 +263,7 @@
 						<a
 							type="button"
 							href="/register"
-							class="btn btn-success my-2 my-sm-0">
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white my-2">
 							Register
 						</a>
 					</li>
@@ -386,6 +400,7 @@
 
 	#user
 		margin-top: 0.1rem !important
+		display: flex !important
 
 	.loggedin
 		padding: 0

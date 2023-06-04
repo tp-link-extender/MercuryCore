@@ -70,7 +70,7 @@
 						<option value="Decal">Decals</option>
 					</select>
 					<button
-						class="btn btn-success"
+						class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
 						type="submit"
 						aria-label="Search"
 						id="button-addon2">
@@ -93,14 +93,14 @@
 		<div class="col-xl-2 col-lg-3">
 			<h1 class="light-text h3">Filters</h1>
 			<p class="light-text mb-0">Sort by:</p>
-			<a href="/" class="text-decoration-none">Recently Updated</a>
+			<a href="/" class="no-underline">Recently Updated</a>
 			<br />
-			<a href="/" class="text-decoration-none">Bestselling</a>
+			<a href="/" class="no-underline">Bestselling</a>
 			<br />
 			<p class="light-text mb-0">Price:</p>
-			<a href="/" class="text-decoration-none">Price (low to high)</a>
+			<a href="/" class="no-underline">Price (low to high)</a>
 			<br />
-			<a href="/" class="text-decoration-none">Price (high to low)</a>
+			<a href="/" class="no-underline">Price (high to low)</a>
 			<br />
 		</div>
 		<div class="col-xl-9 col-lg-9">

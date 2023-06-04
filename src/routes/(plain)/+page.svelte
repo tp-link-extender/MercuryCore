@@ -16,26 +16,26 @@
 	<title>Mercury: Endless possibilities. New features. Same nostalgia.</title>
 </svelte:head>
 
-<canvas id="gradient-canvas" class="w-100 h-100 position-fixed" />
+<canvas id="gradient-canvas" class="w-100 h-100 fixed" />
 
 <div
 	id="info"
-	class="container d-flex flex-column justify-content-center align-items-center position-relative">
+	class="container flex flex-col justify-center items-center relative">
 	<div
 		id="moon"
-		class="container d-flex flex-column justify-content-center align-items-center position-absolute">
+		class="container flex flex-col justify-center items-center absolute">
 		<Moon />
 	</div>
-	<h1 id="title" class="fw-bolder text-white opacity-75">Mercury 2</h1>
+	<h1 id="title" class="font-bold text-white opacity-75">Mercury 2</h1>
 	<p class="lead text-white text-center">
 		Endless possibilities. New features. Same nostalgia.
 	</p>
-	<div class="d-inline mb-3">
+	<div class="inline mb-3">
 		<b>
 			<a
 				type="button"
 				href="/register"
-				class="d-inline btn btn-sm btn-success text-decoration-none">
+				class="inline btn btn-sm bg-emerald-600 hover:bg-emerald-800 text-white no-underline">
 				Register <i class="fa fa-chevron-right" />
 			</a>
 		</b>
@@ -43,19 +43,19 @@
 			<a
 				type="button"
 				href="/login"
-				class="d-inline btn btn-sm btn-primary text-decoration-none">
+				class="inline btn btn-sm bg-blue-600 hover:bg-blue-800 text-white no-underline">
 				Login <i class="fa fa-chevron-right" />
 			</a>
 		</b>
 	</div>
-	<a href="/about" class="text-decoration-none pt-3 fs-5">
+	<a href="/about" class="no-underline pt-3 text-xl">
 		About us <i class="fa fa-chevron-right" />
 	</a>
 </div>
-<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-absolute bottom-0">
-		<div class="position-absolute" />
-		<div class="position-absolute" />
+<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
+	<div class="w-100 absolute bottom-0">
+		<div class="absolute" />
+		<div class="absolute" />
 	</div>
 </div>
 

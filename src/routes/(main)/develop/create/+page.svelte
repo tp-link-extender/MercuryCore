@@ -29,7 +29,7 @@
 	<h6 class="text-center light-text mb-0">
 		<span class="h6 light-text text-center">
 			<i class="fas fa-caret-left" />
-			<a href="/develop" class="text-decoration-none">Back to Develop</a>
+			<a href="/develop" class="no-underline">Back to Develop</a>
 		</span>
 	</h6>
 </div>
@@ -137,7 +137,7 @@
 			</div>
 		</div>
 
-		<button class="btn btn-success">
+		<button class="btn bg-emerald-600 hover:bg-emerald-800 text-white">
 			{#if $delayed}
 				Working...
 			{:else}

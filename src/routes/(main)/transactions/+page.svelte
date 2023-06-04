@@ -10,7 +10,9 @@
 
 <h1 class="text-center light-text">
 	Transactions
-	<a href="/transactions/your" class="btn btn-primary ms-4">
+	<a
+		href="/transactions/your"
+		class="btn bg-blue-600 hover:bg-blue-800 text-white ms-4">
 		Your transactions
 	</a>
 </h1>
@@ -24,22 +26,22 @@
 				<td class="p-0">
 					<a
 						href="/user/{transaction.sender.number}"
-						class="d-flex text-decoration-none">
+						class="flex no-underline">
 						<div class="me-2 rounded-circle pfp bg-a">
 							<img
 								src="/api/avatar/{transaction.sender?.username}"
 								alt={transaction.sender.username}
 								class="rounded-circle rounded-top-0" />
 						</div>
-						<p class="light-text my-auto fs-6 text-truncate">
+						<p class="light-text my-auto text-base truncate">
 							{transaction.sender.username}
 						</p>
 					</a>
 				</td>
 
-				<td class="p-0 d-flex justify-content-center">
-					<div class="fs-6 currency">
-						<span class="text-success">
+				<td class="p-0 flex justify-center">
+					<div class="text-base currency">
+						<span class="text-emerald-500">
 							<i class="fa fa-gem" />
 							{transaction.amountSent}
 						</span>
@@ -52,9 +54,9 @@
 							{transaction.time.toLocaleString()}
 						</small>
 					</div>
-					<div class="fs-6 currency">
+					<div class="text-base currency">
 						<i class="fa fa-arrow-right me-1" />
-						<span class="text-success">
+						<span class="text-emerald-500">
 							<i class="fa fa-gem" />
 							{Math.round(
 								(1 - transaction.taxRate / 100) *
@@ -67,8 +69,8 @@
 				<td class="p-0">
 					<a
 						href="/user/{transaction.receiver.number}"
-						class="d-flex justify-content-end text-decoration-none">
-						<p class="light-text my-auto fs-6">
+						class="flex justify-end no-underline">
+						<p class="light-text my-auto text-base">
 							{transaction.receiver.username}
 						</p>
 						<div class="ms-2 rounded-circle pfp bg-a">

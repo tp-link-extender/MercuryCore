@@ -31,7 +31,7 @@
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Moderate User</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
@@ -135,7 +135,9 @@
 								</p>
 							</div>
 						</div>
-						<button type="submit" class="btn btn-success mt-3">
+						<button
+							type="submit"
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-3">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -145,7 +147,7 @@
 					</fieldset>
 				</form>
 				<p
-					class:text-success={$page.status == 200}
+					class:text-emerald-500={$page.status == 200}
 					class:text-danger={$page.status >= 400}>
 					{$message || ""}
 				</p>

@@ -42,7 +42,7 @@
 		class="sidebar bg-a me-2 p-1"
 		method="POST"
 		action="?/like&id={post.id}">
-		<div class="mb-2 d-flex flex-column">
+		<div class="mb-2 flex flex-col">
 			<div class="text-center">
 				<button
 					name="action"
@@ -50,16 +50,16 @@
 					aria-label={post.likes ? "Unlike" : "Like"}
 					disabled={likesDisabled}
 					class="btn btn-sm {post.likes
-						? 'btn-success'
+						? 'bg-emerald-600 hover:bg-emerald-800 text-white'
 						: 'btn-outline-success'}">
 					<i class="fa{post.likes ? '' : 'r'} fa-thumbs-up" />
 				</button>
 			</div>
 			<span
 				class="my-2 text-center {post.likes
-					? 'text-success fw-bold'
+					? 'text-emerald-500 font-bold'
 					: post.dislikes
-					? 'text-danger fw-bold'
+					? 'text-danger font-bold'
 					: ''}">
 				{post.likeCount - post.dislikeCount}
 			</span>
@@ -75,22 +75,22 @@
 					<i class="fa{post.dislikes ? '' : 'r'} fa-thumbs-down" />
 				</button>
 			</div>
-			<!-- <div id="replycount" class="d-flex">
+			<!-- <div id="replycount" class="flex">
 				<div class="mt-auto"><i class="far fa-message" /> {post._count.replies}</div>
 			</div> -->
 		</div>
 	</form>
-	<div class="d-flex flex-column w-100">
+	<div class="flex flex-col w-100">
 		<a
 			href="/user/{post.author.number}"
-			class="user d-flex light-text text-decoration-none m-2 pe-4 mb-0 w-100">
+			class="user flex light-text no-underline m-2 pe-4 mb-0 w-100">
 			<span class="pfp bg-a2 rounded-circle me-1">
 				<img
 					src="/api/avatar/{post.author.username}"
 					alt={post.author.username}
 					class="rounded-circle rounded-top-0" />
 			</span>
-			<span class="fw-bold ms-2">
+			<span class="font-bold ms-2">
 				{post.author.username}
 			</span>
 			<em class="ms-auto">
@@ -99,7 +99,7 @@
 		</a>
 		<a
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
-			class="p-3 pb-0 text-decoration-none light-text w-100">
+			class="p-3 pb-0 no-underline light-text w-100">
 			<h2 class="h4 mt-2">
 				{post.title}
 			</h2>

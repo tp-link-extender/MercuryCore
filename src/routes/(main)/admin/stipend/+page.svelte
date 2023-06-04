@@ -31,7 +31,7 @@
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Daily Stipend</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
@@ -62,7 +62,7 @@
 											: ''}valid" />
 									<span
 										class="input-group-text light-text bg-a1">
-										<i class="fa fa-gem text-success" />
+										<i class="fa fa-gem text-emerald-500" />
 									</span>
 								</div>
 							</div>
@@ -93,13 +93,15 @@
 							</div>
 						</div>
 						<br />
-						<button type="submit" class="btn btn-success">
+						<button
+							type="submit"
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white">
 							Submit
 						</button>
 					</fieldset>
 				</form>
 				<p
-					class:text-success={$page.status == 200}
+					class:text-emerald-500={$page.status == 200}
 					class:text-danger={$page.status >= 400}>
 					{$message || ""}
 				</p>

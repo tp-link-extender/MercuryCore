@@ -69,7 +69,7 @@
 					<p class="mb-5">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="text-decoration-none">
+							class="no-underline">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.
@@ -88,7 +88,10 @@
 							I understand
 						</label>
 					</div>
-					<button class="btn btn-primary {checked ? '' : 'disabled'}">
+					<button
+						class="btn bg-blue-600 hover:bg-blue-800 text-white {checked
+							? ''
+							: 'disabled'}">
 						Reactivate
 					</button>
 				</form>
@@ -97,7 +100,7 @@
 					<p class="mb-5">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="text-decoration-none">
+							class="no-underline">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.
@@ -109,7 +112,7 @@
 						)}
 					</p>
 					<button
-						class="btn btn-primary {data.timeEnds.getTime() <
+						class="btn bg-blue-600 hover:bg-blue-800 text-white {data.timeEnds.getTime() <
 						Date.now()
 							? ''
 							: 'disabled'}">

@@ -17,7 +17,7 @@
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb" class="mx-auto">
-		<ol class="breadcrumb border-0 m-0 p-0 fs-6">
+		<ol class="breadcrumb border-0 m-0 p-0 text-base">
 			<li class="breadcrumb-item">
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>

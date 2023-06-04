@@ -31,7 +31,7 @@
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Invites</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
@@ -46,7 +46,7 @@
 						<div class="row">
 							<label
 								for="enableInviteCustom"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 col-form-label light-text">
 								Enable custom invite key
 							</label>
 							<div class="col-md-2">
@@ -65,7 +65,7 @@
 							<div class="row" transition:fade>
 								<label
 									for="inviteCustom"
-									class="col-md-3 col-form-label text-md-right light-text">
+									class="col-md-3 col-form-label light-text">
 									Custom invite key
 								</label>
 								<div class="col-md-8">
@@ -92,7 +92,7 @@
 						<div class="row">
 							<label
 								for="enableInviteExpiry"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 col-form-label light-text">
 								Enable expiry
 							</label>
 							<div class="col-md-2">
@@ -111,7 +111,7 @@
 							<div class="row" transition:fade>
 								<label
 									for="inviteExpiry"
-									class="col-md-3 col-form-label text-md-right light-text">
+									class="col-md-3 col-form-label light-text">
 									Expiry date
 								</label>
 								<div class="col-md-8">
@@ -136,7 +136,7 @@
 						<div class="row">
 							<label
 								for="inviteUses"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 col-form-label light-text">
 								Uses
 							</label>
 							<div class="col-md-8">
@@ -157,7 +157,7 @@
 						<button
 							name="action"
 							value="create"
-							class="btn btn-success mt-3">
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-3">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -167,7 +167,7 @@
 					</fieldset>
 				</form>
 				<p
-					class:text-success={$page.status == 200}
+					class:text-emerald-500={$page.status == 200}
 					class:text-danger={$page.status >= 400}>
 					{$message || ""}
 				</p>
@@ -196,7 +196,7 @@
 										<button
 											name="action"
 											value="disable"
-											class="btn btn-sm btn-link text-decoration-none text-danger my-0">
+											class="btn btn-sm btn-link no-underline text-danger my-0">
 											<i class="fas fa-ban" />
 											Disable Invite
 										</button>

@@ -10,7 +10,15 @@
 
 	let modal = writable(false)
 	let bodyPart = ""
-	let tabData = TabData(data.url, ["Recent", "Heads", "Faces", "T-Shirts", "Shirts", "Pants", "Gear"])
+	let tabData = TabData(data.url, [
+		"Recent",
+		"Heads",
+		"Faces",
+		"T-Shirts",
+		"Shirts",
+		"Pants",
+		"Gear",
+	])
 
 	const bodyParts: { [k: string]: number } = {
 		Head: user?.bodyColours.Head,
@@ -117,7 +125,8 @@
 			<div class="card mb-3">
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
-						<button class="btn btn-primary w-100">
+						<button
+							class="btn bg-blue-500 hover:bg-blue-400 text-white w-100">
 							<i class="fa fa-rotate" />
 							Regenerate
 						</button>
@@ -148,7 +157,7 @@
 											`;background-color: #${
 												brickToHex[bodyParts[bodyPart]]
 											};`}
-										class="btn p-0 bodyPart position-absolute"
+										class="btn p-0 bodyPart absolute"
 										on:click={openColorPicker(bodyPart)}
 										on:keydown={openColorPicker(
 											bodyPart
@@ -172,7 +181,7 @@
 					aria-describedby="button-addon2" />
 				<input type="hidden" name="category" value="items" />
 				<button
-					class="btn btn-success"
+					class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
 					type="submit"
 					aria-label="Search"
 					id="button-addon2">
@@ -194,14 +203,14 @@
 				data-bs-dismiss="modal"
 				aria-label="Close" />
 		</div>
-		<div class="modal-body d-flex flex-column p-1 pb-5">
+		<div class="modal-body flex flex-col p-1 pb-5">
 			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
 					<form
 						use:enhance
 						method="POST"
 						action="?/paint&p={bodyPart}&c={colour}"
-						class="d-inline">
+						class="inline">
 						<button
 							class="btn colour my-1"
 							type="submit"

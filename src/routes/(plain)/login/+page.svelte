@@ -18,10 +18,10 @@
 	<title>Log in - Mercury</title>
 </svelte:head>
 
-<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-fixed bottom-0">
-		<div class="position-absolute" />
-		<div class="position-absolute" />
+<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
+	<div class="w-100 fixed bottom-0">
+		<div class="absolute" />
+		<div class="absolute" />
 	</div>
 </div>
 
@@ -31,7 +31,7 @@
 			<i class="fa fa-arrow-left me-2" />
 			Home
 		</a>
-		<h1 class="fw-bolder light-text mb-4">
+		<h1 class="font-bold light-text mb-4">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
@@ -64,7 +64,7 @@
 			<h2 class="light-text">Log into your account</h2>
 			<p class="light-text">
 				Don't yet have an account?
-				<a href="/register" class="text-decoration-none">Register</a>
+				<a href="/register" class="no-underline">Register</a>
 			</p>
 
 			<form use:enhance class="m-auto form-group mt-4" method="POST">
@@ -103,7 +103,8 @@
 							{$errors.password || ""}
 						</p>
 					</div>
-					<button class="container-fluid btn btn-primary mb-3">
+					<button
+						class="container-fluid btn bg-blue-600 hover:bg-blue-800 text-white mb-3">
 						{$delayed ? "Working..." : "Log in"}
 						<!-- $delayed is true if the form takes 
 							more than a few hundred ms to submit -->

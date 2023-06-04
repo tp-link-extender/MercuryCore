@@ -46,7 +46,7 @@
 	<h1 class="light-text mb-4">Configure {data.name}</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">Game View</h4>
+		<h4 class="light-text font-normal mb-1">Game View</h4>
 		<p class="mb-0 grey-text mb-4">
 			Change the title and description of your server.
 		</p>
@@ -114,7 +114,9 @@
 					</div>
 				</div>
 			</fieldset>
-			<button type="submit" class="btn btn-success mt-4">
+			<button
+				type="submit"
+				class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-4">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -122,7 +124,7 @@
 				{/if}
 			</button>
 			<p
-				class:text-success={$page.status == 200}
+				class:text-emerald-500={$page.status == 200}
 				class:text-danger={$page.status >= 400}>
 				{$message || ""}
 			</p>
@@ -130,7 +132,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">Network</h4>
+		<h4 class="light-text font-normal mb-1">Network</h4>
 		<p class="mb-0 grey-text mb-4">
 			Change the network configurations of your server.
 		</p>
@@ -149,7 +151,9 @@
 							value={data.serverTicket}
 							class="form-control valid"
 							disabled />
-						<button class="btn btn-primary" type="submit">
+						<button
+							class="btn bg-blue-600 hover:bg-blue-800 text-white"
+							type="submit">
 							<i class="fas fa-rotate" />
 							Regenerate
 						</button>
@@ -234,7 +238,9 @@
 				</div>
 				<hr class="grey-text" />
 			</fieldset>
-			<button type="submit" class="btn btn-success mt-2 mb-2">
+			<button
+				type="submit"
+				class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-2 mb-2">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -242,7 +248,7 @@
 				{/if}
 			</button>
 			<p
-				class:text-success={$page.status == 200}
+				class:text-emerald-500={$page.status == 200}
 				class:text-danger={$page.status >= 400}>
 				{$message || ""}
 			</p>
@@ -250,7 +256,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">Privacy</h4>
+		<h4 class="light-text font-normal mb-1">Privacy</h4>
 		<p class="mb-0 grey-text mb-4">
 			Enable private server to make your game only accessible to those
 			with the link.
@@ -283,13 +289,13 @@
 
 								setTimeout(() => (copiedSuccess = false), 4000)
 							}}
-							class="btn btn-info"
+							class="btn bg-cyan-600 hover:bg-cyan-800 text-white"
 							type="button"
 							id="button-addon2">
 							<i class="fas fa-paste" />
 						</button>
 						<button
-							class="btn btn-primary"
+							class="btn bg-blue-600 hover:bg-blue-800 text-white"
 							type="submit"
 							id="button-addon2">
 							<i class="fas fa-rotate" />
@@ -328,7 +334,9 @@
 							id="privateServer" />
 					</div>
 				</div>
-				<button type="submit" class="btn btn-success mt-4">
+				<button
+					type="submit"
+					class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-4">
 					{#if $delayed}
 						Working...
 					{:else}
@@ -336,7 +344,7 @@
 					{/if}
 				</button>
 				<p
-					class:text-success={$page.status == 200}
+					class:text-emerald-500={$page.status == 200}
 					class:text-danger={$page.status >= 400}>
 					{$message || ""}
 				</p>

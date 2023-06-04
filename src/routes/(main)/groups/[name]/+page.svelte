@@ -11,7 +11,7 @@
 </svelte:head>
 
 <div id="all" class="container">
-	<div class="d-flex px-4">
+	<div class="flex px-4">
 		<div class="container light-text">
 			<h1 class="light-text">{data.name}</h1>
 			<p class="light-text">
@@ -19,23 +19,22 @@
 				<a href="/user/{data.owner.number}">{data.owner.username}</a>
 			</p>
 			<br />
-			<div class="d-flex">
+			<div class="flex">
 				<a
 					href="/groups/{data.name}/members"
-					class="light-text text-center text-decoration-none ms-4">
+					class="light-text text-center no-underline ms-4">
 					Members
 					<h3 class="light-text">
 						{data.memberCount}
 					</h3>
 				</a>
-				<form
-					class="align-self-center ms-auto"
-					method="POST"
-					use:enhance>
+				<form class="self-center ms-auto" method="POST" use:enhance>
 					<button
 						name="action"
 						value={data.in ? "leave" : "join"}
-						class="btn {data.in ? 'btn-danger' : 'btn-success'}">
+						class="btn {data.in
+							? 'btn-danger'
+							: 'bg-emerald-600 hover:bg-emerald-800 text-white'}">
 						{#if data.in}
 							Leave
 						{:else}
@@ -66,8 +65,8 @@
 					<div class="p-2 col-md-6 col-sm-12">
 						<div class="card h-100">
 							<div class="card-body pb-0">
-								<div id="user" class="d-flex mb-2">
-									<span class="fw-bold ms-3 light-text">
+								<div id="user" class="flex mb-2">
+									<span class="font-bold ms-3 light-text">
 										{data.name}
 									</span>
 									<span

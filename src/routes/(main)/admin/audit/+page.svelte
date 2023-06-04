@@ -12,7 +12,7 @@
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Audit Logs</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>

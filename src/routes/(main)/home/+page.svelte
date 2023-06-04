@@ -87,10 +87,10 @@
 <div class="container">
 	<div class="row">
 		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
-			<h1 class="top d-flex px-2">
+			<h1 class="top flex px-2">
 				<a
 					href="/user/{user?.number}"
-					class="text-decoration-none light-text d-flex">
+					class="no-underline light-text flex">
 					<div class="bg-a rounded-circle">
 						<img
 							src="/api/avatar/{user?.username}"
@@ -119,7 +119,7 @@
 								? 'is-in'
 								: ''}valid" />
 						<button
-							class="btn btn-success"
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
 							type="submit"
 							aria-label="Send">
 							{#if $delayed}
@@ -131,7 +131,7 @@
 					</form>
 					<p
 						class="mb-3"
-						class:text-success={$page.status == 200}
+						class:text-emerald-500={$page.status == 200}
 						class:text-danger={$page.status >= 400 ||
 							$errors.status}>
 						{$errors.status || $message || ""}
@@ -142,10 +142,10 @@
 							in:fade|global={{ num, total: data.feed.length }}
 							class="card mb-2">
 							<div class="card-body pb-0 p-3">
-								<div class="d-flex mb-2 user d-inline">
+								<div class="flex mb-2 user inline">
 									<a
 										href="/user/{status.authorUser?.number}"
-										class="text-decoration-none d-flex align-items-center light-text">
+										class="no-underline flex items-center light-text">
 										<span
 											class="bg-background rounded-circle">
 											<img
@@ -156,7 +156,7 @@
 												class="rounded-circle rounded-top-0" />
 										</span>
 										<span
-											class="username mw-50 fw-bold ms-3">
+											class="username mw-50 font-bold ms-3">
 											{status.authorUser?.username}
 										</span>
 										<em class="small ms-3">
@@ -184,14 +184,14 @@
 			<div class="col2">
 				{#if data.friends.length > 0}
 					<h2 class="h4 light-text">Friends</h2>
-					<div class="home-row d-flex">
+					<div class="home-row flex">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
 							<a
 								in:fade={{ num, total: data.friends.length }}
-								class="px-2 mb-2 text-center light-text text-decoration-none"
+								class="px-2 mb-2 text-center light-text no-underline"
 								href="/user/{friend.number}">
-								<div class="position-relative mb-2">
+								<div class="relative mb-2">
 									<div
 										class="image-background bg-a rounded-circle">
 										<img
@@ -201,7 +201,7 @@
 									</div>
 									<!-- {#if friend.status}
 										<span
-											class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
+											class="absolute bottom-0 end-0 badge rounded-circle {statusColours[
 												friend.status
 											]}">
 											<span class="visually-hidden">
@@ -222,8 +222,8 @@
 			</div>
 			<div class="mt-5">
 				<h2 class="h4 light-text">Resume playing</h2>
-				<div class="home-row d-flex">
-					<div class="home-row d-flex">
+				<div class="home-row flex">
+					<div class="home-row flex">
 						{#each data.places || [] as place, num}
 							<div class="px-2 mb-2">
 								<div class="place">
@@ -249,7 +249,7 @@
 									<div class="card-body p-2">
 										<div class="mb-2 light-text">
 											<div
-												class="fw-bold text-center text-truncate">
+												class="font-bold text-center truncate">
 												{thing.title}
 											</div>
 											<div
@@ -258,7 +258,7 @@
 											</div>
 										</div>
 										<div
-											class="gradient position-absolute bottom-0 rounded-2" />
+											class="gradient absolute bottom-0 rounded-2" />
 										<p class="content mb-0 p-1">
 											{thing.content}
 										</p>

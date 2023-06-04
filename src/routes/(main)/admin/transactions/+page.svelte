@@ -13,7 +13,7 @@
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Transactions</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
@@ -36,7 +36,7 @@
 								<td class="p-0">
 									<a
 										href="/user/{transaction.sender.number}"
-										class="d-flex text-decoration-none">
+										class="flex no-underline">
 										<div
 											class="me-2 rounded-circle pfp bg-a">
 											<img
@@ -47,15 +47,15 @@
 												class="rounded-circle rounded-top-0" />
 										</div>
 										<p
-											class="light-text my-auto fs-6 text-truncate">
+											class="light-text my-auto text-base truncate">
 											{transaction.sender.username}
 										</p>
 									</a>
 								</td>
 
-								<td class="p-0 d-flex justify-content-center">
-									<div class="fs-6 currency">
-										<span class="text-success">
+								<td class="p-0 flex justify-center">
+									<div class="text-base currency">
+										<span class="text-emerald-500">
 											<i class="fa fa-gem" />
 											{transaction.amountSent}
 										</span>
@@ -68,9 +68,9 @@
 											{transaction.time.toLocaleString()}
 										</small>
 									</div>
-									<div class="fs-6 currency">
+									<div class="text-base currency">
 										<i class="fa fa-arrow-right me-1" />
-										<span class="text-success">
+										<span class="text-emerald-500">
 											<i class="fa fa-gem" />
 											{Math.round(
 												(1 -
@@ -85,8 +85,8 @@
 									<a
 										href="/user/{transaction.receiver
 											.number}"
-										class="d-flex justify-content-end text-decoration-none">
-										<p class="light-text my-auto fs-6">
+										class="flex justify-end no-underline">
+										<p class="light-text my-auto text-base">
 											{transaction.receiver.username}
 										</p>
 										<div

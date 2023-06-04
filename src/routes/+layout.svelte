@@ -66,7 +66,7 @@
 <slot />
 
 <!-- Toast notifications -->
-<div class="toast-container position-fixed bottom-0 end-0">
+<div class="toast-container fixed bottom-0 end-0">
 	{#each notifications as notification}
 		<div
 			class="toast show bg-darker light-text m-3"
@@ -76,7 +76,7 @@
 			<div class="toast-header bg-a light-text">
 				<a
 					href="/user/{notification.sender.number}"
-					class="d-flex align-items-center w-100 light-text text-decoration-none">
+					class="flex items-center w-100 light-text no-underline">
 					<div
 						class="image-background bg-background rounded-circle me-3">
 						<img
@@ -103,7 +103,7 @@
 			</div>
 			<a
 				href={notification.link}
-				class="toast-body bg-darker light-text text-decoration-none d-block">
+				class="toast-body bg-darker light-text no-underline block">
 				{notification.note}
 			</a>
 		</div>

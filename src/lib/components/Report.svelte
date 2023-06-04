@@ -5,7 +5,7 @@
 </script>
 
 <a
-	class="text-danger text-decoration-none ps-2 d-inline"
+	class="text-danger no-underline ps-2 inline"
 	href="/report?user={user}&url={url}">
 	<small>
 		{#if reverse}

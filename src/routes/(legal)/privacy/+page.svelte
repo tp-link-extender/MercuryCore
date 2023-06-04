@@ -14,7 +14,7 @@
 		not vulnerable to SQL injections or XSS attacks.
 		<br />
 		No personally identifying information such as location, device information,
-		network information, or IP addresses are collected by Mercury.
+		network information, or IP addresses are automatically collected by Mercury.
 	</p>
 	<h2 class="h4 light-text text-center mt-4">Children under the age of 13</h2>
 	<p>

@@ -17,7 +17,7 @@
 
 <main>
 	<div
-		class="container d-flex flex-column justify-content-center align-items-center light-text bg-a rounded-4">
+		class="container flex flex-col justify-center items-center light-text bg-a rounded-4">
 		<h1 class="light-text">Error {$page.status}</h1>
 		{$page.error?.message}
 	</div>

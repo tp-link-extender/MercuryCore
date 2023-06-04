@@ -16,7 +16,7 @@
 			class="category card bg-darker p-3 mb-3">
 			<div class="row">
 				<a
-					class="col-lg-9 col-md-7 row light-text text-decoration-none"
+					class="col-lg-9 col-md-7 row light-text no-underline"
 					href="/forum/{category.name.toLowerCase()}">
 					<div class="col-9">
 						<h2 class="h4">
@@ -35,17 +35,17 @@
 						<a
 							href="/forum/{category.name.toLowerCase()}/{category
 								.posts[0].id}"
-							class="light-text text-decoration-none">
+							class="light-text no-underline">
 							Last post:
 							<h3 class="h5">
 								{category.posts[0].title}
 							</h3>
 						</a>
-						<span class="d-flex">
+						<span class="flex">
 							by
 							<a
 								href="/user/{category.posts[0].author.number}"
-								class="light-text text-decoration-none d-flex">
+								class="light-text no-underline flex">
 								<span class="pfp bg-a2 rounded-circle mx-1">
 									<img
 										src="/api/avatar/{category.posts[0]

@@ -16,7 +16,7 @@
 
 <a
 	in:fade={{ num, total }}
-	class="card text-center light-text bg-darker text-decoration-none h6 rounded-4 m-0"
+	class="card text-center light-text bg-darker no-underline h6 rounded-4 m-0"
 	class:border-success={place.serverPing >=
 		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
@@ -26,7 +26,10 @@
 			Math.floor(Date.now() / 1000) - 35}>
 		<div class="col col-6">
 			<div id="shadow" class="overflow-hidden bg-black">
-				<img src="/place/{place.id}/{place.name}/icon" alt={place.name} class="w-100 h-100" />
+				<img
+					src="/place/{place.id}/{place.name}/icon"
+					alt={place.name}
+					class="w-100 h-100" />
 			</div>
 		</div>
 		<div class="col col-6 p-2 row">
@@ -34,13 +37,13 @@
 				{place.name}
 			</p>
 			<div class="mt-auto mb-1">
-				<div class="float-start">
+				<div class="float-left">
 					<span>
 						<i class="fa fa-thumbs-up opacity-75" />
 						{place.ratio}%
 					</span>
 				</div>
-				<div class="float-end">
+				<div class="float-right">
 					<span>
 						<i class="fa fa-user opacity-75" />
 						{place.gameSessions?.length}

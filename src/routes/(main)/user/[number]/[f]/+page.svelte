@@ -17,7 +17,7 @@
 
 <h1 class="light-text text-center">{titles[data.type]} ({data.number})</h1>
 
-<div class="container mt-5 d-grid">
+<div class="container mt-5 grid">
 	{#each data.users as user, num}
 		<UserCard {user} {num} total={data.users.length} />
 	{/each}

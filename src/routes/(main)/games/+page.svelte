@@ -39,7 +39,9 @@
 	<div class="row mb-5">
 		<h1 class="col light-text">
 			Games
-			<a href="/games/create" class="btn btn-primary ms-4">
+			<a
+				href="/games/create"
+				class="btn bg-blue-600 hover:bg-blue-800 text-white ms-4">
 				<i class="fas fa-plus" />
 				Create
 			</a>
@@ -58,7 +60,7 @@
 							aria-describedby="button-addon2" />
 						<input type="hidden" name="category" value="places" />
 						<button
-							class="btn btn-success"
+							class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
 							type="submit"
 							aria-label="Search"
 							id="button-addon2">
@@ -104,7 +106,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="container d-grid m-0">
+		<div class="container grid m-0">
 			{#each query ? searchedData : data.places || [] as place, num (place.id)}
 				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
@@ -122,7 +124,7 @@
 		background-color: var(--accent)
 		border-color: var(--accent2)
 
-	.d-grid
+	.grid
 		font-size: 0.9rem
 
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))

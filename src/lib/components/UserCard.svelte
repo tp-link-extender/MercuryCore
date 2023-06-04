@@ -18,7 +18,7 @@
 
 <a
 	in:fade={{ num, total, max: 12 }}
-	class="card light-text h-100 w-100 d-flex flex-row bg-darker"
+	class="card light-text h-100 w-100 flex flex-row bg-darker"
 	href="/user/{user.number}">
 	<div class="p-4">
 		<div class="image-background rounded-circle bg-a">
@@ -29,7 +29,7 @@
 		</div>
 		{#if user.status}
 			<span
-				class="position-absolute bottom-0 end-0 badge rounded-circle bg-a {statusColours[
+				class="absolute bottom-0 end-0 badge rounded-circle bg-a {statusColours[
 					user.status
 				]}">
 				<span class="visually-hidden">{user.status}</span>

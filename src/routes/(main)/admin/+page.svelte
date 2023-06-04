@@ -22,10 +22,10 @@
 				).json()
 			).data
 		)
-		return diskSpace = {
+		return (diskSpace = {
 			free: data[1],
 			size: data[2],
-		}
+		})
 	}
 
 	export let data
@@ -64,63 +64,63 @@
 					<div class="row">
 						<a
 							href="/admin/banners"
-							class="col-lg-3 p-1 text-decoration-none">
+							class="col-lg-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
 										<i class="fas fa-bullhorn" />
 									</h1>
-									<h5 class="fw-normal mt-3">Banners</h5>
+									<h5 class="font-normal mt-3">Banners</h5>
 								</div>
 							</div>
 						</a>
 
 						<a
 							href="/admin/accounts"
-							class="col-lg-3 p-1 text-decoration-none">
+							class="col-lg-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
 										<i class="far fa-user" />
 									</h1>
-									<h5 class="fw-normal mt-3">Accounts</h5>
+									<h5 class="font-normal mt-3">Accounts</h5>
 								</div>
 							</div>
 						</a>
 
 						<a
 							href="/admin/audit"
-							class="col-lg-3 p-1 text-decoration-none">
+							class="col-lg-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
 										<i class="fas fa-book" />
 									</h1>
-									<h5 class="fw-normal mt-3">Audit Logs</h5>
+									<h5 class="font-normal mt-3">Audit Logs</h5>
 								</div>
 							</div>
 						</a>
 
 						<a
 							href="/admin/invites"
-							class="col-lg-3 p-1 text-decoration-none">
+							class="col-lg-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
 										<i class="fas fa-key" />
 									</h1>
-									<h5 class="fw-normal mt-3">Invites</h5>
+									<h5 class="font-normal mt-3">Invites</h5>
 								</div>
 							</div>
 						</a>
 
-						<!-- <a href="#" class="col-lg-3 p-1 text-decoration-none" 
+						<!-- <a href="#" class="col-lg-3 p-1 no-underline" 
 							><div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
 										<i class="fas fa-dice" />
 									</h1>
-									<h5 class="fw-normal mt-3">Coin Flip</h5>
+									<h5 class="font-normal mt-3">Coin Flip</h5>
 								</div>
 							</div>
 						</a> -->
@@ -128,38 +128,38 @@
 				</Tab>
 			{/if}
 			<Tab {tabData}>
-				<div class="row g-3">
+				<div class="row">
 					<a
 						href="/admin/moderation"
-						class="col-lg-3 p-1 text-decoration-none">
+						class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>
 									<i class="fas fa-user-slash" />
 								</h1>
-								<h5 class="fw-normal mt-3">Moderate User</h5>
+								<h5 class="font-normal mt-3">Moderate User</h5>
 							</div>
 						</div>
 					</a>
 
-					<!-- <a href="#" class="col-lg-3 p-1 text-decoration-none"
+					<!-- <a href="#" class="col-lg-3 p-1 no-underline"
 						><div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>
 									<i class="far fa-flag" />
 								</h1>
-								<h5 class="fw-normal mt-3">Report Abuse</h5>
+								<h5 class="font-normal mt-3">Report Abuse</h5>
 							</div>
 						</div>
 						 </a> -->
 
-					<!-- <a href="#" class="col-lg-3 p-1 text-decoration-none"
+					<!-- <a href="#" class="col-lg-3 p-1 no-underline"
 						><div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>
 									<i class="fas fa-file-circle-check" />
 								</h1>
-								<h5 class="fw-normal mt-3">Asset Approval</h5>
+								<h5 class="font-normal mt-3">Asset Approval</h5>
 							</div>
 						</div>
 						</a> -->
@@ -167,17 +167,17 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<div class="row g-3">
+				<div class="row">
 					{#if user?.permissionLevel == 5}
 						<a
 							href="/admin/stipend"
-							class="col-lg-3 p-1 text-decoration-none">
+							class="col-lg-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
 										<i class="far fa-clock" />
 									</h1>
-									<h5 class="fw-normal mt-3">
+									<h5 class="font-normal mt-3">
 										Daily Stipend
 									</h5>
 								</div>
@@ -185,22 +185,22 @@
 						</a>
 					{/if}
 
-					<!-- <a href="#" class="col-lg-3 p-1 text-decoration-none"
+					<!-- <a href="#" class="col-lg-3 p-1 no-underline"
 						><div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1><i class="far fa-gem" /></h1>
-								<h5 class="fw-normal mt-3">Award Currency</h5>
+								<h5 class="font-normal mt-3">Award Currency</h5>
 							</div>
 						</div>
 						</a> -->
 					<!-- {#if user?.permissionLevel == 5 || user?.permissionLevel == 3}
-						<a href="#" class="col-lg-3 p-1 text-decoration-none"
+						<a href="#" class="col-lg-3 p-1 no-underline"
 							><div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
 										<i class="fas fa-file-circle-plus" />
 									</h1>
-									<h5 class="fw-normal mt-3">
+									<h5 class="font-normal mt-3">
 										Create New Asset
 									</h5>
 								</div>
@@ -210,13 +210,13 @@
 
 					<a
 						href="/admin/transactions"
-						class="col-lg-3 p-1 text-decoration-none">
+						class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>
 									<i class="fas fa-money-bill-transfer" />
 								</h1>
-								<h5 class="fw-normal mt-3">Transactions</h5>
+								<h5 class="font-normal mt-3">Transactions</h5>
 							</div>
 						</div>
 					</a>
@@ -224,7 +224,7 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<div class="row g-3">
+				<div class="row">
 					<div class="col-lg-7 col-md-7">
 						<div class="card bg-a3 text-black mb-3">
 							<div class="card-body bg-a rounded-1">
@@ -304,7 +304,7 @@
 									Users
 								</h3>
 								<span class="light-text">
-									<b class="text-primary">0 users</b>
+									<b class="text-blue-500">0 users</b>
 									are currently online
 								</span>
 							</div>
@@ -324,7 +324,7 @@
 								<br />
 								<span class="light-text">
 									<i
-										class="fas text-success fa-file-circle-check me-2" />
+										class="fas text-emerald-500 fa-file-circle-check me-2" />
 									<b class="light-text">0 assets</b>
 									have been approved
 								</span>

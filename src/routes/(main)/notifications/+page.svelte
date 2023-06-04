@@ -23,7 +23,7 @@
 <div class="container mt-5">
 	{#each data.notifications as notification}
 		<div class:bg-darker={notification.read} class="card mb-3 p-3">
-			<h2 class="light-text h5 d-flex align-items-center">
+			<h2 class="light-text h5 flex items-center">
 				<a
 					href="/user/{notification.sender.number}"
 					class="image-background {notification.read

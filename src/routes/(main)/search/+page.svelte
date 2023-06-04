@@ -29,13 +29,13 @@
 
 <div class="container-fluid mt-5">
 	{#if data.category == "users" && data.users}
-		<div class="grid d-grid">
+		<div class="grid grid">
 			{#each data.users as user, num}
 				<a
 					in:fade={{ num, total: data.users.length }}
-					class="px-2 mb-2 text-center light-text text-decoration-none"
+					class="px-2 mb-2 text-center light-text no-underline"
 					href="/user/{user.number}">
-					<div class="position-relative mb-2">
+					<div class="relative mb-2">
 						<div class="image-background bg-a rounded-circle">
 							<img
 								src="/api/avatar/{user.username}"
@@ -44,7 +44,7 @@
 						</div>
 						<!-- {#if user.status}
 							<span
-								class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
+								class="absolute bottom-0 end-0 badge rounded-circle {statusColours[
 									user.status
 								]}">
 								<span class="visually-hidden">
@@ -58,7 +58,7 @@
 			{/each}
 		</div>
 	{:else if data.category == "places" && data.places}
-		<div class="grid d-grid">
+		<div class="grid grid">
 			{#each data.places as place, num}
 				<div class="px-2 mb-2">
 					<div class="place">
@@ -68,7 +68,7 @@
 			{/each}
 		</div>
 	{:else if data.category == "assets" && data.assets}
-		<div class="grid d-grid">
+		<div class="grid grid">
 			{#each data.assets as asset, num}
 				<div class="px-2 mb-2">
 					<div class="place">
@@ -78,7 +78,7 @@
 			{/each}
 		</div>
 	{:else if data.category == "groups" && data.groups}
-		<div class="grid d-grid">
+		<div class="grid grid">
 			{#each data.groups as group, num}
 				<div class="px-2 mb-2">
 					<div class="place">
@@ -88,14 +88,20 @@
 			{/each}
 		</div>
 	{:else}
-		<div id="buttons" class="d-flex justify-content-center gap-3">
-			<a class="btn btn-primary" href="/search?q={data.query}&c=users">
+		<div id="buttons" class="flex justify-center">
+			<a
+				class="btn bg-blue-600 hover:bg-blue-800 text-white"
+				href="/search?q={data.query}&c=users">
 				Users
 			</a>
-			<a class="btn btn-primary" href="/search?q={data.query}&c=places">
+			<a
+				class="btn bg-blue-600 hover:bg-blue-800 text-white"
+				href="/search?q={data.query}&c=places">
 				Places
 			</a>
-			<a class="btn btn-primary" href="/search?q={data.query}&c=assets">
+			<a
+				class="btn bg-blue-600 hover:bg-blue-800 text-white"
+				href="/search?q={data.query}&c=assets">
 				Assets
 			</a>
 		</div>

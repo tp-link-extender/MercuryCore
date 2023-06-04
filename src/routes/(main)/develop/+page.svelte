@@ -22,44 +22,44 @@
 				<div class="row">
 					<a
 						href="/develop/create?asset=11"
-						class="col-lg-3 p-1 text-decoration-none">
+						class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">🧥</span>
-								<h2 class="fw-normal h5 mt-3">Shirts</h2>
+								<h2 class="font-normal h5 mt-3">Shirts</h2>
 							</div>
 						</div>
 					</a>
 
 					<a
 						href="/develop/create?asset=2"
-						class="col-lg-3 p-1 text-decoration-none">
+						class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">👕</span>
-								<h2 class="fw-normal h5 mt-3">T-Shirts</h2>
+								<h2 class="font-normal h5 mt-3">T-Shirts</h2>
 							</div>
 						</div>
 					</a>
 
 					<a
 						href="/develop/create?asset=12"
-						class="col-lg-3 p-1 text-decoration-none">
+						class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">👖</span>
-								<h2 class="fw-normal h5 mt-3">Pants</h2>
+								<h2 class="font-normal h5 mt-3">Pants</h2>
 							</div>
 						</div>
 					</a>
 
 					<a
 						href="/develop/create?asset=13"
-						class="col-lg-3 p-1 text-decoration-none">
+						class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">🖼️</span>
-								<h2 class="fw-normal h5 mt-3">Decals</h2>
+								<h2 class="font-normal h5 mt-3">Decals</h2>
 							</div>
 						</div>
 					</a>
@@ -67,11 +67,11 @@
 					{#if user?.permissionLevel == 5}
 						<a
 							href="/admin/stipend"
-							class="col-lg-3 p-1 text-decoration-none">
+							class="col-lg-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<span class="h1">🎩</span>
-									<h2 class="fw-normal h5 mt-3">Hats</h2>
+									<h2 class="font-normal h5 mt-3">Hats</h2>
 								</div>
 							</div>
 						</a>
@@ -79,14 +79,12 @@
 				</div>
 			</Tab>
 			<Tab {tabData}>
-				<div class="row g-3">
-					<a
-						href="/admin/banners"
-						class="col-lg-3 p-1 text-decoration-none">
+				<div class="row">
+					<a href="/admin/banners" class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">🧥</span>
-								<h2 class="fw-normal h5 mt-3">Shirts</h2>
+								<h2 class="font-normal h5 mt-3">Shirts</h2>
 								<small class="text-warning mb-0">
 									0 of this asset created and approved
 								</small>
@@ -94,13 +92,11 @@
 						</div>
 					</a>
 
-					<a
-						href="/admin/accounts"
-						class="col-lg-3 p-1 text-decoration-none">
+					<a href="/admin/accounts" class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">👕</span>
-								<h2 class="fw-normal h5 mt-3">T-Shirts</h2>
+								<h2 class="font-normal h5 mt-3">T-Shirts</h2>
 								<small class="text-warning mb-0">
 									0 of this asset created and approved
 								</small>
@@ -108,13 +104,11 @@
 						</div>
 					</a>
 
-					<a
-						href="/admin/audit"
-						class="col-lg-3 p-1 text-decoration-none">
+					<a href="/admin/audit" class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">👖</span>
-								<h2 class="fw-normal h5 mt-3">Pants</h2>
+								<h2 class="font-normal h5 mt-3">Pants</h2>
 								<small class="text-warning mb-0">
 									0 of this asset created and approved
 								</small>
@@ -122,13 +116,11 @@
 						</div>
 					</a>
 
-					<a
-						href="/admin/invites"
-						class="col-lg-3 p-1 text-decoration-none">
+					<a href="/admin/invites" class="col-lg-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">🖼️</span>
-								<h2 class="fw-normal h5 mt-3">Decals</h2>
+								<h2 class="font-normal h5 mt-3">Decals</h2>
 								<small class="text-warning mb-0">
 									0 of this asset created and approved
 								</small>
@@ -139,11 +131,11 @@
 					{#if user?.permissionLevel == 5}
 						<a
 							href="/admin/stipend"
-							class="col-lg-3 p-1 text-decoration-none">
+							class="col-lg-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<span class="h1">🎩</span>
-									<h2 class="fw-normal h5 mt-3">Hats</h2>
+									<h2 class="font-normal h5 mt-3">Hats</h2>
 									<small class="text-warning mb-0">
 										0 of this asset created and approved
 									</small>

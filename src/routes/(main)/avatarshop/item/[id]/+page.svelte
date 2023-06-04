@@ -53,14 +53,14 @@
 						<b>By</b>
 						<a
 							href="/user/{data.creator.number}"
-							class="text-decoration-none">
+							class="no-underline">
 							{data.creator.username}
 						</a>
 					</p>
 					<br />
 					<p class="light-text mt-2 mb-0">
 						{data.description}
-						<span class="float-end">
+						<span class="float-right">
 							<Report
 								user={data.creator.username}
 								url="/avatarshop/item/{data.id}" />
@@ -70,7 +70,7 @@
 			</div>
 			<form
 				use:enhance={likeEnhance}
-				class="align-self-center col px-0 mb-2"
+				class="self-center col px-0 mb-2"
 				method="POST">
 				<button
 					name="action"
@@ -80,7 +80,7 @@
 						? 'btn-secondary disabled'
 						: user?.currency < data.price
 						? 'btn-danger disabled'
-						: 'btn-success'}">
+						: 'bg-emerald-600 hover:bg-emerald-800 text-white'}">
 					{#if data.owned}
 						<i class="fa fa-gem" />
 						{data.price == 0 ? "Free" : data.price}
@@ -110,12 +110,12 @@
 					<p class="text-danger">{form.msg}</p>
 				{/if}
 				<div class="row mb-2 mt-3">
-					<div class="col d-flex justify-content-start">
+					<div class="col flex justify-start">
 						<button
 							name="action"
 							value={data.likes ? "unlike" : "like"}
 							class="btn btn-sm {data.likes
-								? 'btn-success'
+								? 'bg-emerald-600 hover:bg-emerald-800 text-white'
 								: 'btn-outline-success'}">
 							{#if data.likes}
 								<i class="fa fa-thumbs-up" />
@@ -124,7 +124,7 @@
 							{/if}
 						</button>
 					</div>
-					<div class="col d-flex justify-content-end">
+					<div class="col flex justify-end">
 						<button
 							name="action"
 							value={data.dislikes ? "undislike" : "dislike"}
@@ -162,14 +162,14 @@
 						aria-valuemax={data.dislikeCount + data.likeCount} />
 				</div>
 				<div class="row">
-					<div class="col d-flex justify-content-start">
+					<div class="col flex justify-start">
 						<span class="light-text mx-2">
 							{data.likeCount} like{data.likeCount == 1
 								? ""
 								: "s"}
 						</span>
 					</div>
-					<div class="col d-flex justify-content-end">
+					<div class="col flex justify-end">
 						<span class="light-text mx-2">
 							{data.dislikeCount} dislike{data.dislikeCount == 1
 								? ""
@@ -194,14 +194,14 @@
 			{#each data.owners as owner}
 				<a
 					href="/user/{owner.number}"
-					class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
+					class="flex no-underline py-2 col col-lg-3 col-md-4 col-sm-6">
 					<div class="me-3 rounded-circle pfp bg-a">
 						<img
 							src="/api/avatar/{owner?.username}"
 							alt={owner.username}
 							class="rounded-circle rounded-top-0" />
 					</div>
-					<p class="light-text my-auto h5 me-4 text-truncate">
+					<p class="light-text my-auto h5 me-4 truncate">
 						{owner.username}
 					</p>
 				</a>

@@ -18,10 +18,10 @@
 	<title>Register - Mercury</title>
 </svelte:head>
 
-<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-fixed bottom-0">
-		<div class="position-absolute" />
-		<div class="position-absolute" />
+<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
+	<div class="w-100 fixed bottom-0">
+		<div class="absolute" />
+		<div class="absolute" />
 	</div>
 </div>
 
@@ -31,7 +31,7 @@
 			<i class="fa fa-arrow-left me-2" />
 			Home
 		</a>
-		<h1 class="fw-bolder light-text mb-4">
+		<h1 class="font-bold light-text mb-4">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
@@ -63,7 +63,7 @@
 			<h2 class="light-text">Create a free account</h2>
 			<p class="light-text">
 				Already have an account?
-				<a href="/login" class="text-decoration-none">Log in</a>
+				<a href="/login" class="no-underline">Log in</a>
 			</p>
 
 			<form use:enhance class="m-auto form-group mt-4" method="POST">
@@ -159,7 +159,8 @@
 						</p>
 					</div>
 
-					<button class="container-fluid btn btn-primary mb-3">
+					<button
+						class="container-fluid btn bg-blue-600 hover:bg-blue-800 text-white mb-3">
 						{$delayed ? "Working..." : "Log in"}
 						<!-- $delayed is true if the form takes 
 							more than a few hundred ms to submit -->
@@ -168,13 +169,9 @@
 			</form>
 			<p>
 				By signing up, you agree to our
-				<a href="/terms" class="text-decoration-none">
-					Terms of Service
-				</a>
+				<a href="/terms" class="no-underline">Terms of Service</a>
 				and
-				<a href="/privacy" class="text-decoration-none">
-					Privacy policy
-				</a>
+				<a href="/privacy" class="no-underline">Privacy policy</a>
 				.
 			</p>
 		</div>
