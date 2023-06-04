@@ -1,4 +1,5 @@
 import { defineConfig, toEscapedSelector as e } from "unocss"
+import presetWind from "@unocss/preset-wind"
 
 let fa: { [k: string]: string }
 
@@ -156,7 +157,7 @@ export default defineConfig({
 		],
 	],
 
-	presets: [],
+	presets: [presetWind()],
 })
 
 fa = {
