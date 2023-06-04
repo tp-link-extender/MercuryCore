@@ -3,7 +3,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -241,10 +241,10 @@ presentDialogChoices = (talkingPart, dialogChoices) ->
 	return if not currentConversationDialog
 
 	currentConversationPartner = talkingPart
-	sortedDialogChoices = {}
-	for _, obj in pairs dialogChoices
-		if obj\IsA "DialogChoice"
-			table.insert sortedDialogChoices, obj
+
+	sortedDialogChoices = [obj \
+		for _, obj in pairs sortedDialogChoices \
+		when obj\IsA "DialogChoice"]
 
 	table.sort sortedDialogChoices, (a, b) -> a.Name < b.Name
 
@@ -341,13 +341,9 @@ newChoice = (numberText) ->
 			TextWrap: true
 			RobloxLocked: true
 
-	frame.MouseEnter\connect ->
-		highlightColor frame, currentTone!
-	frame.MouseLeave\connect ->
-		resetColor frame, currentTone!
-	frame.MouseButton1Click\connect ->
-		selectChoice frame
-
+	frame.MouseEnter\connect -> highlightColor frame, currentTone!
+	frame.MouseLeave\connect -> resetColor frame, currentTone!
+	frame.MouseButton1Click\connect -> selectChoice frame
 	frame
 
 initialize = (parent) ->

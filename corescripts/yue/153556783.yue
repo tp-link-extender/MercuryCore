@@ -7,7 +7,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -465,7 +465,7 @@ setupCameraControl = (parentFrame, refreshCharacterMoveFunc) ->
 
 			resetCameraRotateState!
 
-			if not lastPinchScale? -- first pinch move, just set up scale
+			if lastPinchScale == nil -- first pinch move, just set up scale
 				if inputObject == firstTouch
 					lastPinchScale = (inputObject.Position - secondTouch.Position).magnitude
 					firstTouch = inputObject
@@ -517,7 +517,7 @@ setupCameraControl = (parentFrame, refreshCharacterMoveFunc) ->
 			pinchGestureReceivedTouch inputObject
 
 
-		if not cameraTouch? and not usedByThumbstick
+		if cameraTouch == nil and not usedByThumbstick
 			cameraTouch = inputObject
 			lastPos = Vector2.new cameraTouch.Position.x, cameraTouch.Position.y
 			-- lastTick = tick!

@@ -3,7 +3,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -681,11 +681,8 @@ filterGear = (terms) ->
 splitByWhitespace = (text) ->
 	return if type(text) ~= "string"
 
-	terms = {}
-	for token in string.gmatch text, "[^%s]+"
-		if string.len(token) > 0
-			table.insert terms, token
-	terms
+	[token for token in string.gmatch text,
+		"[^%s]+" when string.len(token) > 0]
 
 showSearchGear = (searchTerms) ->
 	return if not backpack.Gear.Visible
@@ -699,7 +696,7 @@ showSearchGear = (searchTerms) ->
 	else
 		nil
 
-	if not searchTermTable?
+	if searchTermTable == nil
 		showEntireGrid!
 		return
 
@@ -809,7 +806,7 @@ if not backpack.Visible
 
 
 -- make sure that inventory is listening to gear reparenting
-if not characterChildAddedCon? and game.Players.LocalPlayer["Character"]
+if characterChildAddedCon == nil and game.Players.LocalPlayer["Character"]
 	setupCharacterConnections!
 
 if not backpackAddCon

@@ -5,7 +5,7 @@ t = {}
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -213,7 +213,7 @@ JsonReader.New = (s) =>
 JsonReader.Read ==>
 	@\SkipWhiteSpace!
 	peek = @\Peek!
-	return if not peek?
+	return if peek == nil
 		error string.format "Nil string: '%s'", @\All!
 	elseif peek == "{"
 		@\ReadObject!
@@ -261,7 +261,7 @@ JsonReader.ReadNumber ==>
 		peek = @\Peek!
 
 	result = tonumber result
-	if not result?
+	if result == nil
 		error string.format "Invalid number: '%s'", result
 	else
 		return result
@@ -451,10 +451,7 @@ t.SelectTerrainRegion = (regionToSelect, color, selectEmptyCells, selectionParen
 	-- container for all adornments, passed back to user
 	selectionContainer = New "Model", "SelectionContainer"
 		Archivable: false
-		Parent: if selectionParent
-			selectionParent
-		else
-			game.Workspace
+		Parent: selectiorParent or game.Workspace
 
 	local updateSelection -- function we return to allow user to update selection
 	local currentKeepAliveTag -- a tag that determines whether adorns should be destroyed
