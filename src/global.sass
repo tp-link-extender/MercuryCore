@@ -2,7 +2,9 @@
 // It's best to only put things in here that apply
 // to many pages, so bundle size is kept down.
 
-@use "./bootstrap.scss"
+@import "./variables.sass"
+@import "bootstrap/scss/bootstrap"
+@import "./bootswatch.sass"
 
 :root, html, body
 	overflow: overlay // Scrollbar is above content instead of beside
@@ -67,3 +69,19 @@ img[src^="/api/avatar"]
 	--bs-dropdown-bg: var(--darker)
 .table
 	--bs-table-border-color: var(--accent3)
+p, span
+	color: var(--light-text)
+
+.breadcrumb-item::before
+	--bs-breadcrumb-divider: "/"
+
+.breadcrumb
+	--bs-breadcrumb-item-active-color: #6c757d
+	--bs-breadcrumb-divider-color: #6c757d
+
+.form-control::placeholder
+	color: #6c757d
+	opacity: 1
+
+
+

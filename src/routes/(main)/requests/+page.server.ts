@@ -6,8 +6,6 @@ import { error } from "@sveltejs/kit"
 export async function load({ locals }) {
 	const { user } = await authorise(locals)
 
-	console.time("requests")
-
 	const userExists = await prisma.authUser.findUnique({
 		where: {
 			number: user.number,
@@ -19,7 +17,6 @@ export async function load({ locals }) {
 		user: userExists.username,
 	}
 
-	console.timeEnd("requests")
 	return {
 		users: prisma.authUser.findMany({
 			where: {
