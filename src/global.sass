@@ -40,8 +40,11 @@ input, select, textarea
 .valid
 	border-color: var(--accent2) !important
 
-a.light-text
+a.light-text, a > p
 	transition: 0.2s color
+
+a:hover p
+	color: var(--grey-text) !important
 
 img[src^="/api/avatar"]
 	aspect-ratio: 1 // Force square
@@ -153,7 +156,3 @@ p, span
 	--bs-btn-disabled-color: #fff
 	--bs-btn-disabled-bg: #3459e6
 	--bs-btn-disabled-border-color: #3459e6
-
-
-
-

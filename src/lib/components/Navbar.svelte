@@ -47,62 +47,76 @@
 		</div>
 
 		<div id="nav1" class="offcanvas-body px-4 py-1 d-flex">
-			<a id="nav-brand-1" class="navbar-brand light-text me-4 mt-1" href="/">Mercury</a>
+			<a
+				id="nav-brand-1"
+				class="navbar-brand light-text me-4 mt-1"
+				href="/">
+				Mercury
+			</a>
 			{#if user}
-			<div class="row">
-				<div class="col-6">
-				<div class="navbar-nav">
-					<a class="btn mt-1 px-1 light-text nav-item" href="/">
-						Home
-					</a>
-					<a class="btn mt-1 px-1 light-text nav-item" href="/games">
-						Games
-					</a>
-					<a
-						class="btn mt-1 px-1 light-text nav-item"
-						href="/avatarshop">
-					    Catalog
-					</a>
-					<!-- <a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a> -->
-					<a class="btn mt-1 px-1 light-text nav-item" href="/forum">
-						Forum
-					</a>
-					{#if user?.permissionLevel >= 4}
-						<a
-							class="btn mt-1 px-1 light-text nav-item"
-							href="/admin">
-							Admin
-						</a>
-					{/if}
+				<div class="row">
+					<div class="col-6">
+						<div class="navbar-nav">
+							<a
+								class="btn mt-1 px-1 light-text nav-item"
+								href="/">
+								Home
+							</a>
+							<a
+								class="btn mt-1 px-1 light-text nav-item"
+								href="/games">
+								Games
+							</a>
+							<a
+								class="btn mt-1 px-1 light-text nav-item"
+								href="/avatarshop">
+								Catalog
+							</a>
+							<!-- <a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a> -->
+							<a
+								class="btn mt-1 px-1 light-text nav-item"
+								href="/forum">
+								Forum
+							</a>
+							{#if user?.permissionLevel >= 4}
+								<a
+									class="btn mt-1 px-1 light-text nav-item"
+									href="/admin">
+									Admin
+								</a>
+							{/if}
+						</div>
+					</div>
+					<div class="col-6 mobilenav">
+						<div id="nav2-1" class="navbar-nav w-100">
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/user/{user.number}">
+								Profile
+							</a>
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/inventory">
+								Inventory
+							</a>
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/requests">
+								Friends
+							</a>
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/avatar">
+								Avatar
+							</a>
+							<a
+								class="light-text mt-1 btn nav-item px-1"
+								href="/develop">
+								Develop
+							</a>
+						</div>
+					</div>
 				</div>
-
-			</div>
-			<div class="col-6 mobilenav">
-				<div id="nav2-1" class="navbar-nav w-100">
-					<a
-						class="light-text mt-1 btn nav-item px-1"
-						href="/user/{user.number}">
-						Profile
-					</a>
-					<a
-						class="light-text mt-1 btn nav-item px-1"
-						href="/inventory">
-						Inventory
-					</a>
-					<a
-						class="light-text mt-1 btn nav-item px-1"
-						href="/requests">
-						Friends
-					</a>
-					<a class="light-text mt-1 btn nav-item px-1" href="/avatar">
-						Avatar
-					</a>
-					<a class="light-text mt-1 btn nav-item px-1" href="/develop">
-						Develop
-					</a>
-				</div>
-			</div>
-			</div>
 				<div id="search" class="navbar-nav ms-4 me-auto mt-1">
 					<form
 						use:enhance
@@ -175,79 +189,63 @@
 							href="/transactions/your"
 							role="button"
 							aria-label="Transactions"
-							class="fw-bold nav-link text-success">
+							class="nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
 							<span class="h6 text-success">
 								{user.currency}
 							</span>
 						</a>
 					</li>
-					<li class="dropdown">
+
+					<li class="dropdown2 dropdown-hover dropdown-end">
 						<a
 							href="/user/{user.number}"
-							role="button"
-							data-bs-toggle="dropdown"
-							aria-expanded="false"
-							class="fw-bold nav-item mx-0 text-decoration-none px-0 mb-2">
-							<a
-								id="user"
-								href="/user/{user.number}"
-								class="btn p-0 d-flex text-decoration-none light-text w-50">
-								<div
-									id="pfp"
-									class="mx-2 rounded-circle bg-background">
-									<img
-										src="/api/avatar/{user?.username}"
-										alt="You"
-										class="rounded-circle rounded-top-0" />
-								</div>
-								<p id="username" class="my-auto fs-6 me-2">
-									{user?.username}
-								</p>
-							</a>
+							class="btn p-0 d-flex">
+							<div
+								id="pfp"
+								class="mx-2 rounded-circle bg-background">
+								<img
+									src="/api/avatar/{user?.username}"
+									alt="You"
+									class="rounded-circle rounded-top-0" />
+							</div>
+							<p id="username" class="my-auto fs-6 me-2 light-text">
+								{user?.username}
+							</p>
 						</a>
-
-						<ul class="dropdown-menu dropdown-menu-end mt-2 mb-2">
-							<li>
-								<a
-									class="dropdown-item light-text"
-									href="/settings">
-									<i class="fa fa-gears me-2" />
-									Settings
-								</a>
-							</li>
-							<li>
-								<form
-									use:enhance
-									method="POST"
-									action="/api?/logout">
-									<button
-										type="submit"
-										class="dropdown-item text-danger">
-										<b>
+						<div class="dropdown-content pt-2">
+							<ul class="py-2 rounded-3">
+								<li>
+									<a
+										class="btn light-text py-2"
+										href="/settings">
+										<i class="fa fa-gears me-2" />
+										Settings
+									</a>
+								</li>
+								<li>
+									<form
+										use:enhance
+										method="POST"
+										action="/api?/logout">
+										<button class="btn text-danger py-2">
 											<i
 												class="fa fa-arrow-right-from-bracket me-2" />
-											Log out
-										</b>
-									</button>
-								</form>
-							</li>
-						</ul>
+											<b>Log out</b>
+										</button>
+									</form>
+								</li>
+							</ul>
+						</div>
 					</li>
 				</ul>
 			{:else}
 				<ul class="navbar-nav loggedin">
 					<li class="nav-item mt-1">
-						<a
-							type="button"
-							href="/login"
-							class="btn mb-1 light-text">
-							Log in
-						</a>
+						<a href="/login" class="btn mb-1 light-text">Log in</a>
 					</li>
 					<li class="nav-item mt-1">
 						<a
-							type="button"
 							href="/register"
 							class="btn btn-success my-2 my-sm-0">
 							Register
