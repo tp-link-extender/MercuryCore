@@ -22,7 +22,6 @@
 		<div class="card-body bg-a p-3 rounded-1">
 			<div class="text-center pb-3">
 				<img
-					class="w-85"
 					alt={asset.name}
 					src="https://clipground.com/images/clipart-traffic-cone-7.png" />
 			</div>
@@ -47,4 +46,7 @@
 		&:hover
 			.card-body
 				background: var(--darker) !important
+
+	img
+		width: 85%
 </style>
