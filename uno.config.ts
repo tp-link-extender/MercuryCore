@@ -25,6 +25,8 @@ export default defineConfig({
 					: "",
 		],
 	],
+
+	presets: [],
 })
 
 fa = {

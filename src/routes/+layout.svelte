@@ -6,7 +6,10 @@
 
 	import "uno.css"
 	import "/src/nprogress.sass"
+
+	import "$bootstrap"
 	import "/src/global.sass"
+
 	import "/src/fa/sass/fontawesome.sass"
 
 	export let data
