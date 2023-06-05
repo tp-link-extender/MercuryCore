@@ -114,9 +114,9 @@ if url?
 	game\GetService"BadgeService"\SetIsBadgeLegalUrl ""
 
 	with game\GetService "InsertService"
-		\SetBaseSetsUrl "#{url}/Game/Tools/InsertAsset.ashx?nsets=10&type=base"
-		\SetUserSetsUrl "#{url}/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d"
-		\SetCollectionUrl "#{url}/Game/Tools/InsertAsset.ashx?sid=%d"
+		\SetBaseSetsUrl "#{url}/game/tools/insertasset?nsets=10&type=base"
+		\SetUserSetsUrl "#{url}/game/tools/insertasset?nsets=20&type=user&userid=%d"
+		\SetCollectionUrl "#{url}/game/tools/insertasset?sid=%d"
 		\SetAssetUrl "#{url}/Asset/?id=%d"
 		\SetAssetVersionUrl "#{url}/Asset/?assetversionid=%d"
 
