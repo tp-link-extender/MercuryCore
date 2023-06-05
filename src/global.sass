@@ -2,77 +2,9 @@
 // It's best to only put things in here that apply
 // to many pages, so bundle size is kept down.
 
-@import "./variables.sass"
-
-// Configuration
-@import "bootstrap/scss/functions"
-@import "bootstrap/scss/variables"
-@import "bootstrap/scss/variables-dark"
-@import "bootstrap/scss/maps"
-@import "bootstrap/scss/mixins"
-@import "bootstrap/scss/utilities"
-
-// Layout & components
-@import "bootstrap/scss/root"
-@import "bootstrap/scss/reboot"
-// @import "bootstrap/scss/type"
-// @import "bootstrap/scss/images"
-@import "bootstrap/scss/containers"
-@import "bootstrap/scss/grid"
-@import "bootstrap/scss/tables"
-
-@import "bootstrap/scss/forms/labels"
-// @import "bootstrap/scss/forms/form-text"
-@import "bootstrap/scss/forms/form-control"
-@import "bootstrap/scss/forms/form-select"
-@import "bootstrap/scss/forms/form-check"
-// @import "bootstrap/scss/forms/form-range"
-// @import "bootstrap/scss/forms/floating-labels"
-@import "bootstrap/scss/forms/input-group"
-@import "bootstrap/scss/forms/validation"
-
-@import "bootstrap/scss/buttons"
-@import "bootstrap/scss/transitions"
-@import "bootstrap/scss/dropdown"
-// @import "bootstrap/scss/button-group"
-@import "bootstrap/scss/nav"
-@import "bootstrap/scss/navbar"
-@import "bootstrap/scss/card"
-@import "bootstrap/scss/accordion"
-@import "bootstrap/scss/breadcrumb"
-// @import "bootstrap/scss/pagination"
-@import "bootstrap/scss/badge"
-// @import "bootstrap/scss/alert"
-@import "bootstrap/scss/progress"
-// @import "bootstrap/scss/list-group"
-@import "bootstrap/scss/close"
-@import "bootstrap/scss/toasts"
-@import "bootstrap/scss/modal"
-// @import "bootstrap/scss/tooltip"
-// @import "bootstrap/scss/popover"
-@import "bootstrap/scss/carousel"
-// @import "bootstrap/scss/spinners"
-@import "bootstrap/scss/offcanvas"
-// @import "bootstrap/scss/placeholders"
-
-// Helpers
-// @import "bootstrap/scss/helpers/clearfix"
-@import "bootstrap/scss/helpers/color-bg"
-// @import "bootstrap/scss/helpers/colored-links"
-// @import "bootstrap/scss/helpers/focus-ring"
-// @import "bootstrap/scss/helpers/icon-link"
-// @import "bootstrap/scss/helpers/ratio"
-// @import "bootstrap/scss/helpers/position"
-// @import "bootstrap/scss/helpers/stacks"
-@import "bootstrap/scss/helpers/visually-hidden"
-// @import "bootstrap/scss/helpers/stretched-link"
-@import "bootstrap/scss/helpers/text-truncation"
-// @import "bootstrap/scss/helpers/vr"
-
-// Utilities
-@import "bootstrap/scss/utilities/api"
-
+// @import "./variables.sass"
 @import "./bootswatch.sass"
+@import "./daisyui/dropdown.sass"
 
 :root, html, body
 	overflow: overlay // Scrollbar is above content instead of beside
@@ -81,7 +13,7 @@
 
 	--mainaccent: #7531ff
 
-	font-family: $font-family-sans-serif
+	font-family: "SF UI Display Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
 
 .light-text
 	color: var(--light-text) !important
@@ -130,15 +62,31 @@ img[src^="/api/avatar"]
 			background: var(--accent3)
 
 // bootstrap variables
+:root
+	--bs-body-color: #495057
+	--bs-link-color-rgb: 52, 89, 230
+	--bs-link-hover-color-rgb: 42, 71, 184
+
 .card
 	--bs-card-bg: var(--accent)
+	--bs-card-spacer-y: 1rem
+	--bs-card-spacer-x: 1.5rem
+
+.btn
+	--bs-btn-padding-x: 1rem
+	--bs-btn-padding-y: 0.5rem
+	--bs-btn-font-size: .875rem
+
 .accordion
 	--bs-accordion-bg: var(--darker)
 	--bs-accordion-active-bg: var(--darker)
+
 .dropdown-menu
 	--bs-dropdown-bg: var(--darker)
+
 .table
 	--bs-table-border-color: var(--accent3)
+
 p, span
 	color: var(--light-text)
 
@@ -149,9 +97,63 @@ p, span
 	--bs-breadcrumb-item-active-color: #6c757d
 	--bs-breadcrumb-divider-color: #6c757d
 
-.form-control::placeholder
-	color: #6c757d
-	opacity: 1
+.navbar
+	--bs-navbar-nav-link-padding-x: .75rem
+
+.form-control
+	font-size: .875rem
+	padding: 0.5rem 1rem
+	&::placeholder
+		color: #6c757d
+		opacity: 1
+
+.form-select
+	padding: 0.5rem 3rem 0.5rem 1rem
+	background-position: right 1rem center
+
+.form-select-sm
+	padding-top: 0.25rem
+	padding-bottom: 0.25rem
+	padding-left: 0.5rem
+	font-size: .875rem
+	border-radius: var(--bs-border-radius-sm)
+
+
+.text-success
+	color: #2fb380
+
+.btn-success
+	--bs-btn-color: #fff
+	--bs-btn-bg: #238560
+	--bs-btn-border-color: #238560
+	--bs-btn-hover-color: #fff
+	--bs-btn-hover-bg: #1e7152
+	--bs-btn-hover-border-color: #1c6a4d
+	--bs-btn-focus-shadow-rgb: 68, 151, 120
+	--bs-btn-active-color: #fff
+	--bs-btn-active-bg: #1c6a4d
+	--bs-btn-active-border-color: #1a6448
+	--bs-btn-active-shadow: 0 1px 2px rgba(0, 0, 0, .05)
+	--bs-btn-disabled-color: #fff
+	--bs-btn-disabled-bg: #238560
+	--bs-btn-disabled-border-color: #238560
+
+.btn-primary
+	--bs-btn-color: #fff
+	--bs-btn-bg: #3459e6
+	--bs-btn-border-color: #3459e6
+	--bs-btn-hover-color: #fff
+	--bs-btn-hover-bg: #2c4cc4
+	--bs-btn-hover-border-color: #2a47b8
+	--bs-btn-focus-shadow-rgb: 82, 114, 234
+	--bs-btn-active-color: #fff
+	--bs-btn-active-bg: #2a47b8
+	--bs-btn-active-border-color: #2743ad
+	--bs-btn-active-shadow: 0 1px 2px rgba(0, 0, 0, .05)
+	--bs-btn-disabled-color: #fff
+	--bs-btn-disabled-bg: #3459e6
+	--bs-btn-disabled-border-color: #3459e6
+
 
 
 
