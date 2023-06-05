@@ -45,8 +45,8 @@ local updateCameraDropDownSelection
 local updateVideoCaptureDropDownSelection
 tweenTime = 0.2
 
-mouseLockLookScreenUrl = "http://www.roblox.com/asset?id=54071825"
-classicLookScreenUrl = "http://www.roblox.com/Asset?id=45915798"
+mouseLockLookScreenUrl = "http://banland.xyz/asset?id=54071825"
+classicLookScreenUrl = "http://banland.xyz/asset?id=45915798"
 
 hasGraphicsSlider = game\GetService"CoreGui".Version >= 5
 GraphicsQualityLevels = 10 -- how many levels we allow on graphics slider
@@ -378,17 +378,17 @@ createHelpDialog = (baseZIndex) ->
 	buttons[2] = {}
 	buttons[2].Text = "Move"
 	buttons[2].Function = ->
-		image.Image = "http://www.roblox.com/Asset?id=45915811"
+		image.Image = "http://banland.xyz/asset?id=45915811"
 
 	buttons[3] = {}
 	buttons[3].Text = "Gear"
 	buttons[3].Function = ->
-		image.Image = "http://www.roblox.com/Asset?id=45917596"
+		image.Image = "http://banland.xyz/asset?id=45917596"
 
 	buttons[4] = {}
 	buttons[4].Text = "Zoom"
 	buttons[4].Function = ->
-		image.Image = "http://www.roblox.com/Asset?id=45915825"
+		image.Image = "http://banland.xyz/asset?id=45915825"
 
 
 	CreateTextButtons buttonRow, buttons, UDim.new(0, 0), UDim.new 1, 0
@@ -1716,7 +1716,7 @@ if LoadLibrary
 					-8
 				)
 				BackgroundTransparency: 1
-				Image: "http://www.roblox.com/Asset?id=45880710"
+				Image: "http://banland.xyz/asset?id=45880710"
 				Parent: spinnerFrame
 
 			spinnerIcons[spinnerNum] = spinnerImage
@@ -1737,9 +1737,9 @@ if LoadLibrary
 
 					while pos < 8
 						spinnerIcons[pos + 1].Image = if pos == spinPos or pos == ((spinPos + 1) % 8)
-							"http://www.roblox.com/Asset?id=45880668"
+							"http://banland.xyz/asset?id=45880668"
 						else
-							"http://www.roblox.com/Asset?id=45880710"
+							"http://banland.xyz/asset?id=45880710"
 
 						pos += 1
 

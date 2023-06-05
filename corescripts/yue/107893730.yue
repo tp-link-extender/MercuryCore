@@ -59,7 +59,7 @@ smallScreenThreshold = 450
 
 -- user facing images
 assetUrls = {}
-assetUrl = (str) -> "http://www.roblox.com/Asset/?id=#{str}"
+assetUrl = (str) -> "http://banland.xyz/asset/?id=#{str}"
 errorImageUrl = assetUrl "42557901"
 table.insert assetUrls, errorImageUrl
 buyImageUrl = assetUrl "104651457"
@@ -648,7 +648,7 @@ startSpinner = ->
 			pos = 0
 
 			while pos < 8
-				spinnerIcons[pos + 1].Image = "http://www.roblox.com/Asset/?id=" ..
+				spinnerIcons[pos + 1].Image = "http://banland.xyz/asset/?id=" ..
 				if pos == spinPos or pos == (spinPos + 1) % 8
 					"45880668"
 				else
@@ -799,7 +799,7 @@ createSpinner = (size, position, parent) ->
 			)
 			BackgroundTransparency: 1
 			ZIndex: 10
-			Image: "http://www.roblox.com/Asset/?id=45880710"
+			Image: "http://banland.xyz/asset/?id=45880710"
 			Parent: spinnerFrame
 
 		spinnerIcons[spinnerNum] = spinnerImage
