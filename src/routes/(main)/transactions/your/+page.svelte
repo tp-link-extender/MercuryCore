@@ -41,18 +41,18 @@
 							<i class="fa fa-gem" />
 							{transaction.amountSent}
 						</span>
-						<i class="fa fa-arrow-right ms-1" />
+						<i class="fa fa-arrow-right light-text ms-1" />
 					</div>
-					<div>
+					<div class="light-text">
 						{transaction.taxRate}% tax
 						<br />
 						<small>
 							{transaction.time.toLocaleString()}
 						</small>
 					</div>
-					<div class="text-base currency">
-						<i class="fa fa-arrow-right me-1" />
-						<span class="text-emerald-500">
+					<div class="fs-6 currency">
+						<i class="fa fa-arrow-right light-text me-1" />
+						<span class="text-success">
 							<i class="fa fa-gem" />
 							{Math.round(
 								(1 - transaction.taxRate / 100) *
@@ -106,7 +106,6 @@
 		background: var(--darker)
 		.pfp
 			background: var(--background)
-
 
 	.pfp
 		width: 2.5rem
