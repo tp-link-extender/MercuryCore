@@ -23,11 +23,11 @@
 					<a
 						href="/user/{transaction.sender.number}"
 						class="flex no-underline">
-						<div class="me-2 rounded-circle pfp bg-a">
+						<div class="me-2 rounded-full pfp bg-a">
 							<img
 								src="/api/avatar/{transaction.sender?.username}"
 								alt={transaction.sender.username}
-								class="rounded-circle rounded-top-0" />
+								class="rounded-full rounded-top-0" />
 						</div>
 						<p class="light-text my-auto text-base truncate">
 							{transaction.sender.username}
@@ -52,7 +52,7 @@
 					</div>
 					<div class="fs-6 currency">
 						<i class="fa fa-arrow-right light-text me-1" />
-						<span class="text-success">
+						<span class="text-emerald-500">
 							<i class="fa fa-gem" />
 							{Math.round(
 								(1 - transaction.taxRate / 100) *
@@ -69,12 +69,12 @@
 						<p class="light-text my-auto text-base">
 							{transaction.receiver.username}
 						</p>
-						<div class="ms-2 rounded-circle pfp bg-a">
+						<div class="ms-2 rounded-full pfp bg-a">
 							<img
 								src="/api/avatar/{transaction.receiver
 									?.username}"
 								alt={transaction.receiver.username}
-								class="rounded-circle rounded-top-0" />
+								class="rounded-full rounded-top-0" />
 						</div>
 					</a>
 				</td>

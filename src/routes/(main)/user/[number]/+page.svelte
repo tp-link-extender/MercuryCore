@@ -23,11 +23,11 @@
 <div id="all" class="container">
 	<div class="card bg-darker pt-4">
 		<div class="flex px-4">
-			<div id="image-background" class="me-4 rounded-circle bg-a">
+			<div id="image-background" class="me-4 rounded-full bg-a">
 				<img
 					src="/api/avatar/{data.username}"
 					alt={data.username}
-					class="rounded-circle rounded-top-0" />
+					class="rounded-full rounded-top-0" />
 			</div>
 			<div class="container">
 				<div class="flex mb-2">
@@ -84,7 +84,7 @@
 									? "accept"
 									: "request"}
 								class="btn {data.friends || data.outgoingRequest
-									? 'btn-danger'
+									? 'bg-red-500'
 									: data.incomingRequest
 									? 'bg-cyan-600 hover:bg-cyan-800 text-white'
 									: 'bg-emerald-600 hover:bg-emerald-800 text-white'}">
@@ -102,7 +102,7 @@
 								<button
 									name="action"
 									value="decline"
-									class="btn btn-danger ms-2">
+									class="btn bg-red-500 ms-2">
 									Decline request
 								</button>
 							{/if}
@@ -116,7 +116,7 @@
 								name="action"
 								value={data.following ? "unfollow" : "follow"}
 								class="btn {data.following
-									? 'btn-danger'
+									? 'bg-red-500'
 									: 'bg-blue-600 hover:bg-blue-800 text-white'}">
 								{#if data.following}
 									Unfollow
@@ -133,8 +133,8 @@
 			</div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-6">
+	<div class="grid grid-cols-12 gap-6">
+		<div class="col-span-6">
 			{#if data.bio[0]}
 				<div class="mt-4">
 					<h2 class="h4 light-text">Bio</h2>
@@ -152,7 +152,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-6">
+		<div class="col-span-6">
 			{#if data.places.length > 0}
 				<div class="mt-4">
 					<h2 class="h4 light-text">Creations</h2>
@@ -187,8 +187,9 @@
 											}}
 											class="card bg-darker shadow-none placecard text-center light-text no-underline h6 m-0 w-100"
 											href="/place/{place.id}/{place.name}">
-											<div class="row">
-												<div class="col col-6">
+											<div
+												class="grid grid-cols-12 gap-6">
+												<div class="col col-span-6">
 													<div
 														class="overflow-hidden bg-black shadow">
 														<img
@@ -197,7 +198,8 @@
 															class="w-100 h-100" />
 													</div>
 												</div>
-												<div class="col col-6 p-2 row">
+												<div
+													class="col col-span-6 p-2 row">
 													<p class="mb-1 h5">
 														{place.name}
 													</p>
@@ -231,7 +233,7 @@
 				</div>
 			{/if}
 		</div>
-		<div class="col-6 mt-4">
+		<div class="col-span-6 mt-4">
 			{#if data.groupsOwned.length > 0}
 				<div class="mt-4">
 					<h2 class="h4 light-text">Groups owned</h2>
@@ -254,7 +256,7 @@
 				</div>
 			{/if}
 		</div>
-		<div class="col-6 mt-4">
+		<div class="col-span-6 mt-4">
 			{#if data.groups.length > 0}
 				<div class="mt-4">
 					<h2 class="h4 light-text">Groups in</h2>
@@ -280,18 +282,18 @@
 		{#if data.posts.length > 0}
 			<h2 class="h4 mt-5 light-text">Latest feed posts</h2>
 			<div id="feed" class="light-text p-3">
-				<div class="row">
+				<div class="grid grid-cols-12 gap-6">
 					{#each data.posts.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
-							class="p-2 col-md-6 col-sm-12">
+							class="p-2 md:col-span-6 sm:col-span-12">
 							<div class="card bg-darker p-2 h-100">
 								<div id="user" class="flex mb-2">
-									<span class="pfp rounded-circle bg-a2">
+									<span class="pfp rounded-full bg-a2">
 										<img
 											src="/api/avatar/{data.username}"
 											alt={data.username}
-											class="rounded-circle rounded-top-0" />
+											class="rounded-full rounded-top-0" />
 									</span>
 									<span class="font-bold ms-3 light-text">
 										{data.username}

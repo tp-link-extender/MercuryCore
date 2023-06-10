@@ -33,7 +33,7 @@
 						name="action"
 						value={data.in ? "leave" : "join"}
 						class="btn {data.in
-							? 'btn-danger'
+							? 'bg-red-500'
 							: 'bg-emerald-600 hover:bg-emerald-800 text-white'}">
 						{#if data.in}
 							Leave
@@ -48,9 +48,10 @@
 	{#if data.places.length > 0}
 		<div class="mt-4">
 			<h2 class="h4 light-text">Creations</h2>
-			<div class="row m-0 p-0">
+			<div class="grid grid-cols-12 gap-6 m-0 p-0">
 				{#each data.places as place, num}
-					<div class="col col-4 col-sm-3 col-md-2 text-center">
+					<div
+						class="col col-span-4 sm:col-span-3 md:col-span-2 text-center">
 						<Place {place} {num} total={data.places.length} />
 					</div>
 				{/each}
@@ -60,9 +61,9 @@
 	{#if data.feed.length > 0}
 		<h2 class="h4 mt-5 light-text">Latest feed posts</h2>
 		<div id="feed" class="light-text p-3">
-			<div class="row">
+			<div class="grid grid-cols-12 gap-6">
 				{#each data.feed.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status}
-					<div class="p-2 col-md-6 col-sm-12">
+					<div class="p-2 md:col-span-6 sm:col-span-12">
 						<div class="card h-100">
 							<div class="card-body pb-0">
 								<div id="user" class="flex mb-2">

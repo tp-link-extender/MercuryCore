@@ -35,21 +35,21 @@
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-4">
-		<div class="col-lg-2 col-md-3 mb-4">
+	<div class="grid grid-cols-12 gap-6 mt-4">
+		<div class="lg:col-span-2 md:col-span-3 mb-4">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="lg:col-span-10 md:col-span-9">
 			<Tab {tabData}>
 				<form use:enhance method="POST">
 					<fieldset>
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="enableInviteCustom"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Enable custom invite key
 							</label>
-							<div class="col-md-2">
+							<div class="md:col-span-2">
 								<input
 									bind:checked={$form.enableInviteCustom}
 									{...$constraints.enableInviteCustom}
@@ -62,13 +62,15 @@
 						</div>
 						<br />
 						{#if $form.enableInviteCustom}
-							<div class="row" transition:fade>
+							<div
+								class="grid grid-cols-12 gap-6"
+								transition:fade>
 								<label
 									for="inviteCustom"
-									class="col-md-3 col-form-label light-text">
+									class="md:col-span-3 col-form-label light-text">
 									Custom invite key
 								</label>
-								<div class="col-md-8">
+								<div class="md:col-span-8">
 									<input
 										bind:value={$form.inviteCustom}
 										{...$constraints.inviteCustom}
@@ -82,20 +84,20 @@
 										Instead of having a randomly generated
 										key, this allows you to set the key.
 									</small>
-									<p class="col-12 mb-3 text-danger">
+									<p class="col-span-12 mb-3 text-red-500">
 										{$errors.inviteCustom || ""}
 									</p>
 								</div>
 							</div>
 							<br />
 						{/if}
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="enableInviteExpiry"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Enable expiry
 							</label>
-							<div class="col-md-2">
+							<div class="md:col-span-2">
 								<input
 									bind:checked={$form.enableInviteExpiry}
 									{...$constraints.enableInviteExpiry}
@@ -108,13 +110,15 @@
 						</div>
 						<br />
 						{#if $form.enableInviteExpiry}
-							<div class="row" transition:fade>
+							<div
+								class="grid grid-cols-12 gap-6"
+								transition:fade>
 								<label
 									for="inviteExpiry"
-									class="col-md-3 col-form-label light-text">
+									class="md:col-span-3 col-form-label light-text">
 									Expiry date
 								</label>
-								<div class="col-md-8">
+								<div class="md:col-span-8">
 									<input
 										bind:value={$form.inviteExpiry}
 										{...$constraints.inviteExpiry}
@@ -126,20 +130,20 @@
 										class="form-control {$errors.inviteExpiry
 											? 'is-in'
 											: ''}valid" />
-									<p class="col-12 mb-3 text-danger">
+									<p class="col-span-12 mb-3 text-red-500">
 										{$errors.inviteExpiry || ""}
 									</p>
 								</div>
 							</div>
 							<br />
 						{/if}
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="inviteUses"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Uses
 							</label>
-							<div class="col-md-8">
+							<div class="md:col-span-8">
 								<input
 									bind:value={$form.inviteUses}
 									{...$constraints.inviteUses}
@@ -149,7 +153,7 @@
 									class="form-control {$errors.inviteUses
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 mb-3 text-danger">
+								<p class="col-span-12 mb-3 text-red-500">
 									{$errors.inviteUses || ""}
 								</p>
 							</div>
@@ -168,7 +172,7 @@
 				</form>
 				<p
 					class:text-emerald-500={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
+					class:text-red-500={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</Tab>
@@ -196,7 +200,7 @@
 										<button
 											name="action"
 											value="disable"
-											class="btn btn-sm btn-link no-underline text-danger my-0">
+											class="btn btn-sm btn-link no-underline text-red-500 my-0">
 											<i class="fas fa-ban" />
 											Disable Invite
 										</button>

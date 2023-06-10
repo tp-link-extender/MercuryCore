@@ -79,7 +79,7 @@
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
-			<div class="row mb-2 flex">
+			<div class="grid grid-cols-12 gap-6 mb-2 flex">
 				<div>
 					<button
 						name="action"
@@ -95,7 +95,7 @@
 					class="my-2 text-center {data.likes
 						? 'text-emerald-500 font-bold'
 						: data.dislikes
-						? 'text-danger font-bold'
+						? 'text-red-500 font-bold'
 						: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
@@ -105,7 +105,7 @@
 						value={data.dislikes ? "undislike" : "dislike"}
 						aria-label={data.dislikes ? "Undislike" : "Dislike"}
 						class="btn btn-sm {data.dislikes
-							? 'btn-danger'
+							? 'bg-red-500'
 							: 'btn-outline-danger'}">
 						<i
 							class="fa{data.dislikes
@@ -120,11 +120,11 @@
 				<a
 					href="/user/{data.author.number}"
 					class="user flex no-underline light-text">
-					<span class="pfp bg-a2 rounded-circle">
+					<span class="pfp bg-a2 rounded-full">
 						<img
 							src="/api/avatar/{data.author.username}"
 							alt={data.author.username}
-							class="rounded-circle rounded-top-0" />
+							class="rounded-full rounded-top-0" />
 					</span>
 					<span class="font-bold ms-3">
 						{data.author.username}
@@ -152,7 +152,7 @@
 		<label for="content" class="form-label light-text mt-2">
 			Post a Reply
 		</label>
-		<fieldset class="col-lg-7 flex">
+		<fieldset class="lg:col-span-7 flex">
 			<textarea
 				bind:value={$form.content}
 				{...$constraints.content}
@@ -173,7 +173,7 @@
 		<p
 			class="mb-3"
 			class:text-emerald-500={$page.status == 200}
-			class:text-danger={$page.status >= 400 || $errors.status}>
+			class:text-red-500={$page.status >= 400 || $errors.status}>
 			{$errors.status || $message || ""}
 		</p>
 	</form>

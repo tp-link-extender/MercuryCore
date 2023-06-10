@@ -3,7 +3,7 @@
 
 	const statusColours: { [k: string]: string } = {
 		Online: "bg-info",
-		Joined: "bg-success",
+		Joined: "bg-emerald-500",
 		Developing: "bg-warning",
 	}
 
@@ -21,15 +21,15 @@
 	class="card light-text h-100 w-100 flex flex-row bg-darker"
 	href="/user/{user.number}">
 	<div class="p-4">
-		<div class="image-background rounded-circle bg-a">
+		<div class="image-background rounded-full bg-a">
 			<img
 				src="/api/avatar/{user.username}"
 				alt={user.username}
-				class="h-100 rounded-circle rounded-top-0" />
+				class="h-100 rounded-full rounded-top-0" />
 		</div>
 		{#if user.status}
 			<span
-				class="absolute bottom-0 end-0 badge rounded-circle bg-a {statusColours[
+				class="absolute bottom-0 end-0 badge rounded-full bg-a {statusColours[
 					user.status
 				]}">
 				<span class="visually-hidden">{user.status}</span>

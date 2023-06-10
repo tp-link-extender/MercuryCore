@@ -14,11 +14,11 @@
 		<div
 			in:fade={{ num, total: data.categories.length }}
 			class="category card bg-darker p-3 mb-3">
-			<div class="row">
+			<div class="grid grid-cols-12 gap-6">
 				<a
-					class="col-lg-9 col-md-7 row light-text no-underline"
+					class="lg:col-span-9 md:col-span-7 row light-text no-underline"
 					href="/forum/{category.name.toLowerCase()}">
-					<div class="col-9">
+					<div class="col-span-9">
 						<h2 class="h4">
 							{category.name}
 						</h2>
@@ -30,7 +30,7 @@
 							: ""}
 					</h3>
 				</a>
-				<div class="col-lg-3 col-md-5 row">
+				<div class="lg:col-span-3 md:col-span-5 row">
 					{#if category.posts[0]}
 						<a
 							href="/forum/{category.name.toLowerCase()}/{category
@@ -46,12 +46,12 @@
 							<a
 								href="/user/{category.posts[0].author.number}"
 								class="light-text no-underline flex">
-								<span class="pfp bg-a2 rounded-circle mx-1">
+								<span class="pfp bg-a2 rounded-full mx-1">
 									<img
 										src="/api/avatar/{category.posts[0]
 											.author.username}"
 										alt={category.posts[0].author.username}
-										class="rounded-circle rounded-top-0" />
+										class="rounded-full rounded-top-0" />
 								</span>
 								{category.posts[0].author.username}
 							</a>

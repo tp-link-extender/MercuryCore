@@ -28,11 +28,11 @@
 					href="/user/{notification.sender.number}"
 					class="image-background {notification.read
 						? 'bg-a'
-						: 'bg-darker'} rounded-circle me-3">
+						: 'bg-darker'} rounded-full me-3">
 					<img
 						src="/api/avatar/{notification.sender.username}"
 						alt={notification.sender.username}
-						class="h-100 rounded-circle rounded-top-0" />
+						class="h-100 rounded-full rounded-top-0" />
 				</a>
 
 				{notificationNotes[notification.type]}

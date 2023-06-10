@@ -49,21 +49,21 @@
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-4">
-		<div class="col-lg-2 col-md-3 mb-4 pe-0">
+	<div class="grid grid-cols-12 gap-6 mt-4">
+		<div class="lg:col-span-2 md:col-span-3 mb-4 pe-0">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="lg:col-span-10 md:col-span-9">
 			<Tab {tabData}>
 				<form use:enhance method="POST">
 					<fieldset>
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="bannerText"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Banner text
 							</label>
-							<div class="col-md-8">
+							<div class="md:col-span-8">
 								<textarea
 									bind:value={$form.bannerBody}
 									{...$constraints.bannerBody}
@@ -75,19 +75,19 @@
 								<small class="light-text">
 									3-100 characters
 								</small>
-								<p class="col-12 mb-3 text-danger">
+								<p class="col-span-12 mb-3 text-red-500">
 									{$errors.bannerBody || ""}
 								</p>
 							</div>
 						</div>
 						<br />
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="bannerColour"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Banner colour
 							</label>
-							<div class="col-md-2">
+							<div class="md:col-span-2">
 								<input
 									bind:value={$form.bannerColour}
 									{...$constraints.bannerColour}
@@ -97,19 +97,19 @@
 									class="{$errors.bannerColour
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 mb-3 text-danger">
+								<p class="col-span-12 mb-3 text-red-500">
 									{$errors.bannerColour || ""}
 								</p>
 							</div>
 						</div>
 						<br />
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="bannerTextLight"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Light text
 							</label>
-							<div class="col-md-2">
+							<div class="md:col-span-2">
 								<input
 									bind:checked={$form.bannerTextLight}
 									value="true"
@@ -134,7 +134,7 @@
 
 				<p
 					class:text-emerald-500={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
+					class:text-red-500={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</Tab>
@@ -163,7 +163,7 @@
 										<button
 											name="action"
 											value="delete"
-											class="btn btn-sm btn-link no-underline text-danger my-0">
+											class="btn btn-sm btn-link no-underline text-red-500 my-0">
 											<i class="fas fa-trash" />
 											Delete Banner
 										</button>
@@ -253,7 +253,7 @@
 					class="form-control {$errors.bannerBody
 						? 'is-in'
 						: ''}valid mb-3" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-span-12 mb-3 text-red-500">
 					{$errors.bannerBody || ""}
 				</p>
 				{#if newBannerBody.trim() != $form.bannerBody?.trim()}
@@ -274,7 +274,7 @@
 			</form>
 			<p
 				class:text-emerald-500={$page.status == 200}
-				class:text-danger={$page.status >= 400}>
+				class:text-red-500={$page.status >= 400}>
 				{$message || ""}
 			</p>
 		</div>

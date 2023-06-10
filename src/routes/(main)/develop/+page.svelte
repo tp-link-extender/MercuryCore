@@ -13,16 +13,16 @@
 
 <div class="container py-2">
 	<h1 class="h1 mb-2 text-light">Develop</h1>
-	<div class="row">
-		<div class="col-lg-2 col-md-3 mb-4">
+	<div class="grid grid-cols-12 gap-6">
+		<div class="lg:col-span-2 md:col-span-3 mb-4">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="lg:col-span-10 md:col-span-9">
 			<Tab {tabData}>
-				<div class="row">
+				<div class="grid grid-cols-12 gap-6">
 					<a
 						href="/develop/create?asset=11"
-						class="col-lg-3 p-1 no-underline">
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">🧥</span>
@@ -33,7 +33,7 @@
 
 					<a
 						href="/develop/create?asset=2"
-						class="col-lg-3 p-1 no-underline">
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">👕</span>
@@ -44,7 +44,7 @@
 
 					<a
 						href="/develop/create?asset=12"
-						class="col-lg-3 p-1 no-underline">
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">👖</span>
@@ -55,7 +55,7 @@
 
 					<a
 						href="/develop/create?asset=13"
-						class="col-lg-3 p-1 no-underline">
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">🖼️</span>
@@ -67,7 +67,7 @@
 					{#if user?.permissionLevel == 5}
 						<a
 							href="/admin/stipend"
-							class="col-lg-3 p-1 no-underline">
+							class="lg:col-span-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<span class="h1">🎩</span>
@@ -79,8 +79,10 @@
 				</div>
 			</Tab>
 			<Tab {tabData}>
-				<div class="row">
-					<a href="/admin/banners" class="col-lg-3 p-1 no-underline">
+				<div class="grid grid-cols-12 gap-6">
+					<a
+						href="/admin/banners"
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">🧥</span>
@@ -92,7 +94,9 @@
 						</div>
 					</a>
 
-					<a href="/admin/accounts" class="col-lg-3 p-1 no-underline">
+					<a
+						href="/admin/accounts"
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">👕</span>
@@ -104,7 +108,9 @@
 						</div>
 					</a>
 
-					<a href="/admin/audit" class="col-lg-3 p-1 no-underline">
+					<a
+						href="/admin/audit"
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">👖</span>
@@ -116,7 +122,9 @@
 						</div>
 					</a>
 
-					<a href="/admin/invites" class="col-lg-3 p-1 no-underline">
+					<a
+						href="/admin/invites"
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<span class="h1">🖼️</span>
@@ -131,7 +139,7 @@
 					{#if user?.permissionLevel == 5}
 						<a
 							href="/admin/stipend"
-							class="col-lg-3 p-1 no-underline">
+							class="lg:col-span-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<span class="h1">🎩</span>

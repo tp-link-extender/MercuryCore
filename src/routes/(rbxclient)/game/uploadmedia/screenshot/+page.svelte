@@ -29,7 +29,7 @@
 		<li>Paste it to your favorite painting software</li>
 	</ul>
 	<hr class="divider-bottom" />
-	<button class="btn btn-sm btn-danger">
+	<button class="btn btn-sm bg-red-500">
 		<i class="fas fa-ban" />
 		Not interested
 	</button>

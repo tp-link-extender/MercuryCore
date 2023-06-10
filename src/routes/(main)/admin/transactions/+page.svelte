@@ -17,11 +17,11 @@
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-4">
-		<div class="col-lg-2 col-md-3 mb-4">
+	<div class="grid grid-cols-12 gap-6 mt-4">
+		<div class="lg:col-span-2 md:col-span-3 mb-4">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="lg:col-span-10 md:col-span-9">
 			<Tab {tabData}>
 				<div class="container">
 					<table class="table table-responsive m-auto">
@@ -37,14 +37,13 @@
 									<a
 										href="/user/{transaction.sender.number}"
 										class="flex no-underline">
-										<div
-											class="me-2 rounded-circle pfp bg-a">
+										<div class="me-2 rounded-full pfp bg-a">
 											<img
 												src="/api/avatar/{transaction
 													.sender?.username}"
 												alt={transaction.sender
 													.username}
-												class="rounded-circle rounded-top-0" />
+												class="rounded-full rounded-top-0" />
 										</div>
 										<p
 											class="light-text my-auto text-base truncate">
@@ -89,14 +88,13 @@
 										<p class="light-text my-auto text-base">
 											{transaction.receiver.username}
 										</p>
-										<div
-											class="ms-2 rounded-circle pfp bg-a">
+										<div class="ms-2 rounded-full pfp bg-a">
 											<img
 												src="/api/avatar/{transaction
 													.receiver?.username}"
 												alt={transaction.receiver
 													.username}
-												class="rounded-circle rounded-top-0" />
+												class="rounded-full rounded-top-0" />
 										</div>
 									</a>
 								</td>

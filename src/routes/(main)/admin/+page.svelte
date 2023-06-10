@@ -54,17 +54,17 @@
 			{permissions[user?.permissionLevel][2]}
 		</span>
 	</h2>
-	<div class="row">
-		<div class="col-lg-2 col-md-3 mb-4 pe-0">
+	<div class="grid grid-cols-12 gap-6">
+		<div class="lg:col-span-2 md:col-span-3 mb-4 pe-0">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="lg:col-span-10 md:col-span-9">
 			{#if user?.permissionLevel == 5}
 				<Tab {tabData}>
-					<div class="row">
+					<div class="grid grid-cols-12 gap-6">
 						<a
 							href="/admin/banners"
-							class="col-lg-3 p-1 no-underline">
+							class="lg:col-span-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -77,7 +77,7 @@
 
 						<a
 							href="/admin/accounts"
-							class="col-lg-3 p-1 no-underline">
+							class="lg:col-span-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -90,7 +90,7 @@
 
 						<a
 							href="/admin/audit"
-							class="col-lg-3 p-1 no-underline">
+							class="lg:col-span-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -103,7 +103,7 @@
 
 						<a
 							href="/admin/invites"
-							class="col-lg-3 p-1 no-underline">
+							class="lg:col-span-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -114,7 +114,7 @@
 							</div>
 						</a>
 
-						<!-- <a href="#" class="col-lg-3 p-1 no-underline" 
+						<!-- <a href="#" class="lg:col-span-3 p-1 no-underline" 
 							><div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -128,10 +128,10 @@
 				</Tab>
 			{/if}
 			<Tab {tabData}>
-				<div class="row">
+				<div class="grid grid-cols-12 gap-6">
 					<a
 						href="/admin/moderation"
-						class="col-lg-3 p-1 no-underline">
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>
@@ -142,7 +142,7 @@
 						</div>
 					</a>
 
-					<!-- <a href="#" class="col-lg-3 p-1 no-underline"
+					<!-- <a href="#" class="lg:col-span-3 p-1 no-underline"
 						><div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>
@@ -153,7 +153,7 @@
 						</div>
 						 </a> -->
 
-					<!-- <a href="#" class="col-lg-3 p-1 no-underline"
+					<!-- <a href="#" class="lg:col-span-3 p-1 no-underline"
 						><div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>
@@ -167,11 +167,11 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<div class="row">
+				<div class="grid grid-cols-12 gap-6">
 					{#if user?.permissionLevel == 5}
 						<a
 							href="/admin/stipend"
-							class="col-lg-3 p-1 no-underline">
+							class="lg:col-span-3 p-1 no-underline">
 							<div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -185,7 +185,7 @@
 						</a>
 					{/if}
 
-					<!-- <a href="#" class="col-lg-3 p-1 no-underline"
+					<!-- <a href="#" class="lg:col-span-3 p-1 no-underline"
 						><div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1><i class="far fa-gem" /></h1>
@@ -194,7 +194,7 @@
 						</div>
 						</a> -->
 					<!-- {#if user?.permissionLevel == 5 || user?.permissionLevel == 3}
-						<a href="#" class="col-lg-3 p-1 no-underline"
+						<a href="#" class="lg:col-span-3 p-1 no-underline"
 							><div class="px-0 card bg-a3 text-center light-text">
 								<div class="card-body bg-a rounded-1 p-4">
 									<h1>
@@ -210,7 +210,7 @@
 
 					<a
 						href="/admin/transactions"
-						class="col-lg-3 p-1 no-underline">
+						class="lg:col-span-3 p-1 no-underline">
 						<div class="px-0 card bg-a3 text-center light-text">
 							<div class="card-body bg-a rounded-1 p-4">
 								<h1>
@@ -224,8 +224,8 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<div class="row">
-					<div class="col-lg-7 col-md-7">
+				<div class="grid grid-cols-12 gap-6">
+					<div class="lg:col-span-7 md:col-span-7">
 						<div class="card bg-a3 text-black mb-3">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
@@ -246,7 +246,7 @@
 								</span>
 								<div class="progress bg-darker mt-2">
 									<div
-										class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+										class="progress-bar progress-bar-striped progress-bar-animated bg-emerald-500"
 										role="progressbar"
 										aria-valuenow={data.totalmem -
 											data.freemem}
@@ -296,7 +296,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-5 col-md-5">
+					<div class="lg:col-span-5 md:col-span-5">
 						<div class="card bg-a3 text-black mb-3">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
@@ -331,7 +331,7 @@
 								<br />
 								<span class="light-text">
 									<i
-										class="fas text-danger fa-file-circle-xmark me-2" />
+										class="fas text-red-500 fa-file-circle-xmark me-2" />
 									<b class="light-text">0 assets</b>
 									have been disapproved
 								</span>

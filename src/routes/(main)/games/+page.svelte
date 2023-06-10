@@ -36,7 +36,7 @@
 </svelte:head>
 
 <div class="container">
-	<div class="row mb-5">
+	<div class="grid grid-cols-12 gap-6 mb-5">
 		<h1 class="col light-text">
 			Games
 			<a
@@ -46,10 +46,14 @@
 				Create
 			</a>
 		</h1>
-		<div class="col-8">
-			<form use:enhance method="POST" action="/search" class="row">
-				<div class="col-5">
-					<div class="input-group">
+		<div class="col-span-8">
+			<form
+				use:enhance
+				method="POST"
+				action="/search"
+				class="grid grid-cols-12 gap-6">
+				<div class="col-span-5">
+					<div class="flex">
 						<input
 							bind:value={query}
 							type="text"
@@ -68,9 +72,9 @@
 						</button>
 					</div>
 				</div>
-				<div class="col-7 row">
+				<div class="col-span-7 row">
 					<div class="ms-3 col">
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="genre"
 								class="form-label light-text col mt-1">
@@ -105,7 +109,7 @@
 			</form>
 		</div>
 	</div>
-	<div class="row">
+	<div class="grid grid-cols-12 gap-6">
 		<div class="container grid m-0">
 			{#each query ? searchedData : data.places || [] as place, num (place.id)}
 				<PlaceCard {place} {num} total={data.places.length} />

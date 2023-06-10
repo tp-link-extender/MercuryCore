@@ -16,11 +16,11 @@
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-4">
-		<div class="col-lg-2 col-md-3 mb-4">
+	<div class="grid grid-cols-12 gap-6 mt-4">
+		<div class="lg:col-span-2 md:col-span-3 mb-4">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="lg:col-span-10 md:col-span-9">
 			<Tab {tabData} />
 		</div>
 	</div>

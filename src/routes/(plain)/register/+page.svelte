@@ -25,7 +25,7 @@
 	</div>
 </div>
 
-<div class="row">
+<div class="grid grid-cols-12 gap-6">
 	<div id="dark" class="col light-text">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0 shadow-none">
 			<i class="fa fa-arrow-left me-2" />
@@ -58,7 +58,7 @@
 		</div>
 	</div>
 
-	<div id="light" class="col col-12 col-lg-6 light-text">
+	<div id="light" class="col col-span-12 lg:col-span-6 light-text">
 		<div id="login" class="m-auto">
 			<h2 class="light-text">Create a free account</h2>
 			<p class="light-text">
@@ -80,7 +80,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="3-21 characters" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.username || ""}
 						</p>
 					</div>
@@ -98,7 +98,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="mercury@banland.xyz" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.email || ""}
 						</p>
 					</div>
@@ -116,7 +116,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Password" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.password || ""}
 						</p>
 					</div>
@@ -136,7 +136,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Confirm Password" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.cpassword || ""}
 						</p>
 					</div>
@@ -154,13 +154,13 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="mercurkey-12311121123" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.regkey || ""}
 						</p>
 					</div>
 
 					<button
-						class="container-fluid btn bg-blue-600 hover:bg-blue-800 text-white mb-3">
+						class="px-5 btn bg-blue-600 hover:bg-blue-800 text-white mb-3">
 						{$delayed ? "Working..." : "Log in"}
 						<!-- $delayed is true if the form takes 
 							more than a few hundred ms to submit -->

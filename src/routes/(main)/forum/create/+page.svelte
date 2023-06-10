@@ -28,11 +28,11 @@
 <div class="container mt-5 light-text">
 	<form use:enhance method="POST">
 		<fieldset>
-			<div class="row mb-3">
-				<label for="title" class="col-md-3 col-form-label">
+			<div class="grid grid-cols-12 gap-6 mb-3">
+				<label for="title" class="md:col-span-3 col-form-label">
 					Post title
 				</label>
-				<div class="col-md-9">
+				<div class="md:col-span-9">
 					<input
 						bind:value={$form.title}
 						{...$constraints.title}
@@ -43,16 +43,16 @@
 							? 'is-in'
 							: ''}valid" />
 
-					<small class="col-12 mb-3 text-danger">
+					<small class="col-span-12 mb-3 text-red-500">
 						{$errors.title || ""}
 					</small>
 				</div>
 			</div>
-			<div class="row mb-3">
-				<label for="content" class="col-md-3 col-form-label">
+			<div class="grid grid-cols-12 gap-6 mb-3">
+				<label for="content" class="md:col-span-3 col-form-label">
 					Post content
 				</label>
-				<div class="col-md-9">
+				<div class="md:col-span-9">
 					<textarea
 						bind:value={$form.content}
 						{...$constraints.content}
@@ -64,7 +64,7 @@
 							? 'is-in'
 							: ''}valid" />
 
-					<small class="col-12 mb-3 text-danger">
+					<small class="col-span-12 mb-3 text-red-500">
 						{$errors.content || ""}
 					</small>
 				</div>
@@ -77,7 +77,7 @@
 	</form>
 	<p
 		class:text-emerald-500={$page.status == 200}
-		class:text-danger={$page.status >= 400}>
+		class:text-red-500={$page.status >= 400}>
 		{$message || ""}
 	</p>
 	<br />

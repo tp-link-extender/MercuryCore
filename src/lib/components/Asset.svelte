@@ -17,7 +17,7 @@
 <a
 	in:fade={{ num, total }}
 	href="/"
-	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 px-2 mb-2 no-underline assetcard">
+	class="xl:col-span-2 lg:col-span-3 md:col-span-3 sm:col-span-4 col-span-6 px-2 mb-2 no-underline assetcard">
 	<div class="card bg-a3">
 		<div class="card-body bg-a p-3 rounded-1">
 			<div class="text-center pb-3">

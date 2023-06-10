@@ -6,7 +6,7 @@
 
 	// const statusColours: { [k: string]: string } = {
 	// 	Online: "bg-info",
-	// 	Joined: "bg-success",
+	// 	Joined: "bg-emerald-500",
 	// 	Developing: "bg-warning",
 	// }
 
@@ -27,7 +27,7 @@
 	</h1>
 {/if}
 
-<div class="container-fluid mt-5">
+<div class="px-5 mt-5">
 	{#if data.category == "users" && data.users}
 		<div class="grid grid">
 			{#each data.users as user, num}
@@ -36,15 +36,15 @@
 					class="px-2 mb-2 text-center light-text no-underline"
 					href="/user/{user.number}">
 					<div class="relative mb-2">
-						<div class="image-background bg-a rounded-circle">
+						<div class="image-background bg-a rounded-full">
 							<img
 								src="/api/avatar/{user.username}"
 								alt={user.username}
-								class="h-100 rounded-circle rounded-top-0" />
+								class="h-100 rounded-full rounded-top-0" />
 						</div>
 						<!-- {#if user.status}
 							<span
-								class="absolute bottom-0 end-0 badge rounded-circle {statusColours[
+								class="absolute bottom-0 end-0 badge rounded-full {statusColours[
 									user.status
 								]}">
 								<span class="visually-hidden">

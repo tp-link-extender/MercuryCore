@@ -35,22 +35,22 @@
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-4">
-		<div class="col-lg-2 col-md-3 mb-4">
+	<div class="grid grid-cols-12 gap-6 mt-4">
+		<div class="lg:col-span-2 md:col-span-3 mb-4">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="lg:col-span-10 md:col-span-9">
 			<Tab {tabData}>
 				<form use:enhance method="POST" action="?/updateStipend">
 					<fieldset>
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="dailyStipend"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Daily stipend
 							</label>
-							<div class="col-md-8">
-								<div class="input-group">
+							<div class="md:col-span-8">
+								<div class="flex">
 									<input
 										bind:value={$form.dailyStipend}
 										{...$constraints.dailyStipend}
@@ -60,22 +60,21 @@
 										class="form-control {$errors.dailyStipend
 											? 'is-in'
 											: ''}valid" />
-									<span
-										class="input-group-text light-text bg-a1">
+									<span class="flex-text light-text bg-a1">
 										<i class="fa fa-gem text-emerald-500" />
 									</span>
 								</div>
 							</div>
 						</div>
 						<br />
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="stipendTime"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Time between stipend
 							</label>
-							<div class="col-md-8">
-								<div class="input-group">
+							<div class="md:col-span-8">
+								<div class="flex">
 									<input
 										bind:value={$form.stipendTime}
 										{...$constraints.stipendTime}
@@ -85,8 +84,7 @@
 										class="form-control {$errors.stipendTime
 											? 'is-in'
 											: ''}valid" />
-									<span
-										class="input-group-text light-text bg-a1">
+									<span class="flex-text light-text bg-a1">
 										hours
 									</span>
 								</div>
@@ -102,7 +100,7 @@
 				</form>
 				<p
 					class:text-emerald-500={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
+					class:text-red-500={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</Tab>

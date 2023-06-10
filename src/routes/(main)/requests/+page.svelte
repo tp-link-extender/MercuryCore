@@ -4,7 +4,7 @@
 
 	// const statusColours: { [k: string]: string } = {
 	// 	Online: "bg-info",
-	// 	Joined: "bg-success",
+	// 	Joined: "bg-emerald-500",
 	// 	Developing: "bg-warning",
 	// }
 
@@ -24,15 +24,15 @@
 			class="card bg-darker light-text h-100 w-100 flex flex-col">
 			<div class="flex flex-row">
 				<a class="p-4 pe-2" href="/user/{user.number}">
-					<div class="image-background bg-a rounded-circle">
+					<div class="image-background bg-a rounded-full">
 						<img
 							src="/api/avatar/{user.username}"
 							alt={user.username}
-							class="h-100 rounded-circle rounded-top-0" />
+							class="h-100 rounded-full rounded-top-0" />
 					</div>
 					<!-- {#if user.status}
 						<span
-							class="absolute bottom-0 end-0 badge rounded-circle {statusColours[
+							class="absolute bottom-0 end-0 badge rounded-full {statusColours[
 								user.status
 							]}">
 							<span class="visually-hidden">{user.status}</span>
@@ -61,7 +61,7 @@
 				<button
 					name="action"
 					value="decline"
-					class="btn btn-danger ms-1 col">
+					class="btn bg-red-500 ms-1 col">
 					Decline
 				</button>
 			</form>

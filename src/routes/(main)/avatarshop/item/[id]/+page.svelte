@@ -43,7 +43,7 @@
 </svelte:head>
 
 <div class="container">
-	<div class="row">
+	<div class="grid grid-cols-12 gap-6">
 		<div class="carousel slide col-md mb-3" />
 		<div class="flex col-md">
 			<div class="card rounded-none mb-4">
@@ -79,7 +79,7 @@
 					class="btn btn-lg w-100 float-left {data.owned
 						? 'btn-secondary disabled'
 						: user?.currency < data.price
-						? 'btn-danger disabled'
+						? 'bg-red-500 disabled'
 						: 'bg-emerald-600 hover:bg-emerald-800 text-white'}">
 					{#if data.owned}
 						<i class="fa fa-gem" />
@@ -97,7 +97,7 @@
 					<button
 						name="action"
 						value="delete"
-						class="btn btn-sm w-100 float-right btn-danger">
+						class="btn btn-sm w-100 float-right bg-red-500">
 						[debug] delete from inventory
 					</button>
 				{:else if data.price != 0}
@@ -107,9 +107,9 @@
 					</p>
 				{/if}
 				{#if form?.msg}
-					<p class="text-danger">{form.msg}</p>
+					<p class="text-red-500">{form.msg}</p>
 				{/if}
-				<div class="row mb-2 mt-3">
+				<div class="grid grid-cols-12 gap-6 mb-2 mt-3">
 					<div class="col flex justify-start">
 						<button
 							name="action"
@@ -129,7 +129,7 @@
 							name="action"
 							value={data.dislikes ? "undislike" : "dislike"}
 							class="btn btn-sm {data.dislikes
-								? 'btn-danger'
+								? 'bg-red-500'
 								: 'btn-outline-danger'}">
 							{#if data.dislikes}
 								<i class="fa fa-thumbs-down" />
@@ -141,7 +141,7 @@
 				</div>
 				<div class="progress rounded-pill" style="height: 3px">
 					<div
-						class="progress-bar bg-success"
+						class="progress-bar bg-emerald-500"
 						role="progressbar"
 						aria-label="Likes"
 						style="width: {(data.likeCount /
@@ -151,7 +151,7 @@
 						aria-valuemin={0}
 						aria-valuemax={data.dislikeCount + data.likeCount} />
 					<div
-						class="progress-bar bg-danger"
+						class="progress-bar bg-red-500"
 						role="progressbar"
 						aria-label="Dislikes"
 						style="width: {(data.dislikeCount /
@@ -161,7 +161,7 @@
 						aria-valuemin={0}
 						aria-valuemax={data.dislikeCount + data.likeCount} />
 				</div>
-				<div class="row">
+				<div class="grid grid-cols-12 gap-6">
 					<div class="col flex justify-start">
 						<span class="light-text mx-2">
 							{data.likeCount} like{data.likeCount == 1
@@ -190,16 +190,16 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<div class="row">
+		<div class="grid grid-cols-12 gap-6">
 			{#each data.owners as owner}
 				<a
 					href="/user/{owner.number}"
-					class="flex no-underline py-2 col col-lg-3 col-md-4 col-sm-6">
-					<div class="me-3 rounded-circle pfp bg-a">
+					class="flex no-underline py-2 col lg:col-span-3 md:col-span-4 sm:col-span-6">
+					<div class="me-3 rounded-full pfp bg-a">
 						<img
 							src="/api/avatar/{owner?.username}"
 							alt={owner.username}
-							class="rounded-circle rounded-top-0" />
+							class="rounded-full rounded-top-0" />
 					</div>
 					<p class="light-text my-auto h5 me-4 truncate">
 						{owner.username}

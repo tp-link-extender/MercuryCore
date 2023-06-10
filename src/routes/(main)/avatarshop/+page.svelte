@@ -45,11 +45,17 @@
 </svelte:head>
 
 <div class="container">
-	<div class="row mb-3">
-		<h1 class="col-xl-4 col-lg-4 col-md-3 mb-0 light-text">Catalog</h1>
-		<div class="col-xl-8 col-lg-8 col-md-9 mt-2">
-			<form use:enhance method="POST" action="/search" class="row">
-				<div class="input-group">
+	<div class="grid grid-cols-12 gap-6 mb-3">
+		<h1 class="xl:col-span-4 lg:col-span-4 md:col-span-3 mb-0 light-text">
+			Catalog
+		</h1>
+		<div class="xl:col-span-8 lg:col-span-8 md:col-span-9 mt-2">
+			<form
+				use:enhance
+				method="POST"
+				action="/search"
+				class="grid grid-cols-12 gap-6">
+				<div class="flex">
 					<input
 						bind:value={query}
 						type="text"
@@ -80,17 +86,18 @@
 			</form>
 		</div>
 	</div>
-	<div class="row mb-3">
-		<h1 class="h4 col-xl-2 col-lg-4 col-md-3 mb-0 light-text">
+	<div class="grid grid-cols-12 gap-6 mb-3">
+		<h1
+			class="h4 xl:col-span-2 lg:col-span-4 md:col-span-3 mb-0 light-text">
 			Categories
 		</h1>
-		<div class="col-xl-10 col-lg-8 col-md-9">
+		<div class="xl:col-span-10 lg:col-span-8 md:col-span-9">
 			<TabNav bind:tabData justify />
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-xl-2 col-lg-3">
+	<div class="grid grid-cols-12 gap-6">
+		<div class="xl:col-span-2 lg:col-span-3">
 			<h1 class="light-text h3">Filters</h1>
 			<p class="light-text mb-0">Sort by:</p>
 			<a href="/" class="no-underline">Recently Updated</a>
@@ -103,9 +110,9 @@
 			<a href="/" class="no-underline">Price (high to low)</a>
 			<br />
 		</div>
-		<div class="col-xl-9 col-lg-9">
+		<div class="xl:col-span-9 lg:col-span-9">
 			<div class="container">
-				<div class="row">
+				<div class="grid grid-cols-12 gap-6">
 					{#each query ? searchedData : data.assets || [] as asset, num (asset.id)}
 						<Asset {asset} {num} total={data.assets.length} />
 					{/each}

@@ -120,8 +120,8 @@
 <div class="container">
 	<h1 class="text-white">Avatar</h1>
 	<p class="light-text">Avatar system in alpha.</p>
-	<div class="row mt-4">
-		<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+	<div class="grid grid-cols-12 gap-6 mt-4">
+		<div class="xl:col-span-3 lg:col-span-3 md:col-span-6 sm:col-span-12">
 			<div class="card mb-3">
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
@@ -131,7 +131,7 @@
 							Regenerate
 						</button>
 					</form>
-					<p class="text-danger">
+					<p class="text-red-500">
 						{form?.msg || ""}
 					</p>
 					<img
@@ -169,9 +169,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-xl-9 col-lg-9 col-md-12">
+		<div class="xl:col-span-9 lg:col-span-9 md:col-span-12">
 			<TabNav bind:tabData justify />
-			<!-- <div class="input-group">
+			<!-- <div class="flex">
 				<input
 					type="text"
 					name="query"

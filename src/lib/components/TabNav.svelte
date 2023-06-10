@@ -26,7 +26,7 @@
 	{#each tabData.tabs as tab, pos}
 		<li class="nav-item" data-sveltekit-preload-data="off">
 			<a
-				class:rounded-0={!tabs}
+				class:rounded-none={!tabs}
 				class="nav-link light-text {tabData.currentTab == tab
 					? 'disabled active'
 					: ''}"

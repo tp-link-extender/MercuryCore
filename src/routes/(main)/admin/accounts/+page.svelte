@@ -32,21 +32,21 @@
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-4">
-		<div class="col-lg-2 col-md-3 mb-4">
+	<div class="grid grid-cols-12 gap-6 mt-4">
+		<div class="lg:col-span-2 md:col-span-3 mb-4">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="lg:col-span-10 md:col-span-9">
 			<Tab {tabData}>
 				<form use:enhance method="POST" action="?/resetPassword">
 					<fieldset>
-						<div class="row light-text mb-3">
+						<div class="grid grid-cols-12 gap-6 light-text mb-3">
 							<label
 								for="username"
-								class="col-md-3 col-form-label">
+								class="md:col-span-3 col-form-label">
 								Username
 							</label>
-							<div class="col-md-8">
+							<div class="md:col-span-8">
 								<input
 									bind:value={$form.username}
 									{...$constraints.username}
@@ -55,18 +55,18 @@
 									class="form-control {$errors.username
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 mb-3 text-danger">
+								<p class="col-span-12 mb-3 text-red-500">
 									{$errors.username || ""}
 								</p>
 							</div>
 						</div>
-						<div class="row light-text mb-3">
+						<div class="grid grid-cols-12 gap-6 light-text mb-3">
 							<label
 								for="password"
-								class="col-md-3 col-form-label">
+								class="md:col-span-3 col-form-label">
 								New password
 							</label>
-							<div class="col-md-8">
+							<div class="md:col-span-8">
 								<input
 									bind:value={$form.password}
 									{...$constraints.password}
@@ -75,7 +75,7 @@
 									class="form-control {$errors.password
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 mb-3 text-danger">
+								<p class="col-span-12 mb-3 text-red-500">
 									{$errors.password || ""}
 								</p>
 							</div>
@@ -93,7 +93,7 @@
 				</form>
 				<p
 					class:text-emerald-500={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
+					class:text-red-500={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</Tab>

@@ -50,15 +50,15 @@
 		<p class="mb-0 grey-text mb-4">
 			Change the title and description of your server.
 		</p>
-		<form use:enhance class="col-lg-8" method="POST" action="?a=view">
+		<form use:enhance class="lg:col-span-8" method="POST" action="?a=view">
 			<fieldset>
-				<div class="row mb-2">
+				<div class="grid grid-cols-12 gap-6 mb-2">
 					<label
 						for="title"
-						class="col-md-3 col-form-label text-md-right">
+						class="md:col-span-3 col-form-label text-md-right">
 						Title
 					</label>
-					<div class="col-md-9">
+					<div class="md:col-span-9">
 						<input
 							bind:value={$form.title}
 							{...$constraints.title}
@@ -68,18 +68,18 @@
 							class="form-control {$errors.title
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.title || ""}
 						</p>
 					</div>
 				</div>
-				<div class="row mb-2">
+				<div class="grid grid-cols-12 gap-6 mb-2">
 					<label
 						for="icon"
-						class="col-md-3 col-form-label text-md-right">
+						class="md:col-span-3 col-form-label text-md-right">
 						Place Icon
 					</label>
-					<div class="col-md-5">
+					<div class="md:col-span-5">
 						<input
 							bind:value={$form.icon}
 							id="icon"
@@ -89,13 +89,13 @@
 							class="form-control {$errors.icon
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.icon || ""}
 						</p>
 					</div>
 				</div>
 				<hr class="grey-text" />
-				<div class="row">
+				<div class="grid grid-cols-12 gap-6">
 					<label for="description" class="form-label light-text">
 						Description
 					</label>
@@ -125,7 +125,7 @@
 			</button>
 			<p
 				class:text-emerald-500={$page.status == 200}
-				class:text-danger={$page.status >= 400}>
+				class:text-red-500={$page.status >= 400}>
 				{$message || ""}
 			</p>
 		</form>
@@ -136,15 +136,19 @@
 		<p class="mb-0 grey-text mb-4">
 			Change the network configurations of your server.
 		</p>
-		<form use:enhance method="POST" class="col-lg-8" action="?a=ticket">
-			<fieldset class="row mb-2">
+		<form
+			use:enhance
+			method="POST"
+			class="lg:col-span-8"
+			action="?a=ticket">
+			<fieldset class="grid grid-cols-12 gap-6 mb-2">
 				<label
 					for="ticket"
-					class="col-md-3 col-form-label text-md-right">
+					class="md:col-span-3 col-form-label text-md-right">
 					Server Ticket
 				</label>
-				<div class="col-md-9">
-					<div class="input-group">
+				<div class="md:col-span-9">
+					<div class="flex">
 						<input
 							id="ticket"
 							required
@@ -165,15 +169,19 @@
 				</div>
 			</fieldset>
 		</form>
-		<form use:enhance class="col-lg-8" method="POST" action="?a=network">
+		<form
+			use:enhance
+			class="lg:col-span-8"
+			method="POST"
+			action="?a=network">
 			<fieldset>
-				<div class="row mb-2">
+				<div class="grid grid-cols-12 gap-6 mb-2">
 					<label
 						for="serverIP"
-						class="col-md-3 col-form-label text-md-right">
+						class="md:col-span-3 col-form-label text-md-right">
 						Address
 					</label>
-					<div class="col-md-9">
+					<div class="md:col-span-9">
 						<input
 							bind:value={$form.serverIP}
 							{...$constraints.serverIP}
@@ -183,18 +191,18 @@
 							class="form-control {$errors.serverIP
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.serverIP || ""}
 						</p>
 					</div>
 				</div>
-				<div class="row mb-2">
+				<div class="grid grid-cols-12 gap-6 mb-2">
 					<label
 						for="serverPort"
-						class="col-md-3 col-form-label text-md-right">
+						class="md:col-span-3 col-form-label text-md-right">
 						Port
 					</label>
-					<div class="col-md-9">
+					<div class="md:col-span-9">
 						<input
 							bind:value={$form.serverPort}
 							{...$constraints.serverPort}
@@ -205,7 +213,7 @@
 							class="form-control {$errors.serverPort
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.serverPort || ""}
 						</p>
 						<small class="grey-text">
@@ -214,13 +222,13 @@
 						</small>
 					</div>
 				</div>
-				<div class="row mb-2">
+				<div class="grid grid-cols-12 gap-6 mb-2">
 					<label
 						for="maxPlayers"
-						class="col-md-3 col-form-label text-md-right">
+						class="md:col-span-3 col-form-label text-md-right">
 						Server Limit
 					</label>
-					<div class="col-md-9">
+					<div class="md:col-span-9">
 						<input
 							bind:value={$form.maxPlayers}
 							{...$constraints.maxPlayers}
@@ -231,7 +239,7 @@
 							class="form-control {$errors.maxPlayers
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.maxPlayers || ""}
 						</p>
 					</div>
@@ -249,7 +257,7 @@
 			</button>
 			<p
 				class:text-emerald-500={$page.status == 200}
-				class:text-danger={$page.status >= 400}>
+				class:text-red-500={$page.status >= 400}>
 				{$message || ""}
 			</p>
 		</form>
@@ -263,17 +271,17 @@
 		</p>
 		<form
 			use:enhance
-			class="col-lg-8"
+			class="lg:col-span-8"
 			method="POST"
 			action="?a=privatelink">
-			<fieldset class="row mb-2">
+			<fieldset class="grid grid-cols-12 gap-6 mb-2">
 				<label
 					for="privateLink"
-					class="col-md-3 col-form-label text-md-right">
+					class="md:col-span-3 col-form-label text-md-right">
 					Private Server Link
 				</label>
-				<div class="col-md-9">
-					<div class="input-group">
+				<div class="md:col-span-9">
+					<div class="flex">
 						<input
 							id="privateLink"
 							value={`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`}
@@ -317,15 +325,19 @@
 				</div>
 			</fieldset>
 		</form>
-		<form use:enhance class="col-lg-8" method="POST" action="?a=privacy">
+		<form
+			use:enhance
+			class="lg:col-span-8"
+			method="POST"
+			action="?a=privacy">
 			<fieldset>
-				<div class="row mb-2">
+				<div class="grid grid-cols-12 gap-6 mb-2">
 					<label
 						for="privacy"
-						class="col-md-3 col-form-label text-md-right">
+						class="md:col-span-3 col-form-label text-md-right">
 						Private Server
 					</label>
-					<div class="col-md-9">
+					<div class="md:col-span-9">
 						<input
 							bind:checked={$form.privateServer}
 							class="form-check-input"
@@ -345,7 +357,7 @@
 				</button>
 				<p
 					class:text-emerald-500={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
+					class:text-red-500={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</fieldset>

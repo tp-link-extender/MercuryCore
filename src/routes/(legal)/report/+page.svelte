@@ -32,13 +32,13 @@
 
 	<form use:enhance method="POST" class="mt-4">
 		<fieldset>
-			<div class="row">
+			<div class="grid grid-cols-12 gap-6">
 				<label
 					for="category"
-					class="col-md-3 col-form-label text-md-right">
+					class="md:col-span-3 col-form-label text-md-right">
 					Item category
 				</label>
-				<div class="col-md-8">
+				<div class="md:col-span-8">
 					<select
 						bind:value={$form.category}
 						{...$constraints.category}
@@ -66,17 +66,19 @@
 						<option value="Swearing">Swearing</option>
 						<option value="Threats">Threats</option>
 					</select>
-					<p class="col-12 mb-3 text-danger">
+					<p class="col-span-12 mb-3 text-red-500">
 						{$errors.category || ""}
 					</p>
 				</div>
 			</div>
 			<br />
-			<div class="row mb-3">
-				<label for="note" class="col-md-3 col-form-label text-md-right">
+			<div class="grid grid-cols-12 gap-6 mb-3">
+				<label
+					for="note"
+					class="md:col-span-3 col-form-label text-md-right">
 					Further information
 				</label>
-				<div class="col-md-8">
+				<div class="md:col-span-8">
 					<textarea
 						bind:value={$form.note}
 						{...$constraints.note}
@@ -85,7 +87,7 @@
 						placeholder="Up to 1000 characters"
 						class="form-control {$errors.note ? 'is-in' : ''}valid"
 						rows="5" />
-					<p class="col-12 mb-3 text-danger">
+					<p class="col-span-12 mb-3 text-red-500">
 						{$errors.note || ""}
 					</p>
 				</div>
@@ -103,7 +105,7 @@
 	</form>
 	<p
 		class:text-emerald-500={$page.status == 200}
-		class:text-danger={$page.status >= 400}>
+		class:text-red-500={$page.status >= 400}>
 		{$message || ""}
 	</p>
 </div>

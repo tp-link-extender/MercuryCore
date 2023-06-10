@@ -39,11 +39,11 @@
 	class="container mt-5 light-text"
 	enctype="multipart/form-data">
 	<fieldset>
-		<div class="row mb-3">
-			<label for="type" class="col-md-3 col-form-label light-text">
+		<div class="grid grid-cols-12 gap-6 mb-3">
+			<label for="type" class="md:col-span-3 col-form-label light-text">
 				Asset type
 			</label>
-			<div class="col-md-8">
+			<div class="md:col-span-8">
 				<select
 					bind:value={$form.type}
 					{...$constraints.type}
@@ -57,16 +57,16 @@
 						</option>
 					{/each}
 				</select>
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-span-12 mb-3 text-red-500">
 					{$errors.type || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
-			<label for="name" class="col-md-3 col-form-label light-text">
+		<div class="grid grid-cols-12 gap-6 mb-3">
+			<label for="name" class="md:col-span-3 col-form-label light-text">
 				Asset name
 			</label>
-			<div class="col-md-8">
+			<div class="md:col-span-8">
 				<input
 					bind:value={$form.name}
 					{...$constraints.name}
@@ -74,16 +74,18 @@
 					id="name"
 					placeholder="Make sure to make it accurate"
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-span-12 mb-3 text-red-500">
 					{$errors.name || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
-			<label for="description" class="col-md-3 col-form-label light-text">
+		<div class="grid grid-cols-12 gap-6 mb-3">
+			<label
+				for="description"
+				class="md:col-span-3 col-form-label light-text">
 				Asset description
 			</label>
-			<div class="col-md-8">
+			<div class="md:col-span-8">
 				<textarea
 					bind:value={$form.description}
 					{...$constraints.description}
@@ -93,16 +95,16 @@
 					class="form-control {$errors.description
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-span-12 mb-3 text-red-500">
 					{$errors.description || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
-			<label for="price" class="col-md-3 col-form-label light-text">
+		<div class="grid grid-cols-12 gap-6 mb-3">
+			<label for="price" class="md:col-span-3 col-form-label light-text">
 				Asset price
 			</label>
-			<div class="col-md-8">
+			<div class="md:col-span-8">
 				<input
 					bind:value={$form.price}
 					{...$constraints.price}
@@ -110,16 +112,16 @@
 					id="price"
 					type="number"
 					class="form-control {$errors.price ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-span-12 mb-3 text-red-500">
 					{$errors.price || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
-			<label for="asset" class="col-md-3 col-form-label light-text">
+		<div class="grid grid-cols-12 gap-6 mb-3">
+			<label for="asset" class="md:col-span-3 col-form-label light-text">
 				Asset
 			</label>
-			<div class="col-md-8">
+			<div class="md:col-span-8">
 				<input
 					bind:value={$form.asset}
 					{...$constraints.asset}
@@ -131,7 +133,7 @@
 				<small class="light-text">
 					Max image size: 20MB. Supported file types: .png, .jpg, .bmp
 				</small>
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-span-12 mb-3 text-red-500">
 					{$errors.asset || ""}
 				</p>
 			</div>

@@ -59,7 +59,7 @@
 				class="my-2 text-center {post.likes
 					? 'text-emerald-500 font-bold'
 					: post.dislikes
-					? 'text-danger font-bold'
+					? 'text-red-500 font-bold'
 					: ''}">
 				{post.likeCount - post.dislikeCount}
 			</span>
@@ -70,7 +70,7 @@
 					aria-label={post.dislikes ? "Undislike" : "Dislike"}
 					disabled={dislikesDisabled}
 					class="btn btn-sm {post.dislikes
-						? 'btn-danger'
+						? 'bg-red-500'
 						: 'btn-outline-danger'}">
 					<i class="fa{post.dislikes ? '' : 'r'} fa-thumbs-down" />
 				</button>
@@ -84,11 +84,11 @@
 		<a
 			href="/user/{post.author.number}"
 			class="user flex light-text no-underline m-2 pe-4 mb-0 w-100">
-			<span class="pfp bg-a2 rounded-circle me-1">
+			<span class="pfp bg-a2 rounded-full me-1">
 				<img
 					src="/api/avatar/{post.author.username}"
 					alt={post.author.username}
-					class="rounded-circle rounded-top-0" />
+					class="rounded-full rounded-top-0" />
 			</span>
 			<span class="font-bold ms-2">
 				{post.author.username}

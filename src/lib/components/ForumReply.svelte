@@ -52,11 +52,11 @@
 			<a
 				href="/user/{reply.author.number}"
 				class="user flex no-underline pt-2">
-				<span class="pfp bg-a2 rounded-circle">
+				<span class="pfp bg-a2 rounded-full">
 					<img
 						src="/api/avatar/{reply.author.username}"
 						alt={reply.author.username}
-						class="rounded-circle rounded-top-0" />
+						class="rounded-full rounded-top-0" />
 				</span>
 			</a>
 			<button
@@ -152,7 +152,7 @@
 									class="my-1 text-center {reply.likes
 										? 'text-emerald-500 font-bold'
 										: reply.dislikes
-										? 'text-danger font-bold'
+										? 'text-red-500 font-bold'
 										: ''}">
 									{reply.likeCount - reply.dislikeCount}
 								</span>
@@ -167,7 +167,7 @@
 									class="smallbutton p-0 btn btn-sm">
 									<i
 										class="fa{reply.dislikes
-											? ' text-danger'
+											? ' text-red-500'
 											: 'r'} fa-thumbs-down" />
 								</button>
 							</form>

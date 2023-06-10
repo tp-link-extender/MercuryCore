@@ -35,21 +35,21 @@
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-4">
-		<div class="col-lg-2 col-md-3 mb-4">
+	<div class="grid grid-cols-12 gap-6 mt-4">
+		<div class="lg:col-span-2 md:col-span-3 mb-4">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="lg:col-span-10 md:col-span-9">
 			<Tab {tabData}>
 				<form use:enhance method="POST" action="?/moderateUser">
 					<fieldset>
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="username"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Username
 							</label>
-							<div class="col-md-8">
+							<div class="md:col-span-8">
 								<input
 									bind:value={$form.username}
 									{...$constraints.username}
@@ -59,18 +59,18 @@
 									class="form-control {$errors.username
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 text-danger">
+								<p class="col-span-12 text-red-500">
 									{$errors.username || ""}
 								</p>
 							</div>
 						</div>
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="action"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Action
 							</label>
-							<div class="col-md-8">
+							<div class="md:col-span-8">
 								<select
 									bind:value={$form.action}
 									{...$constraints.action}
@@ -85,19 +85,21 @@
 									<option value="4">Account Deletion</option>
 									<option value="5">Unban</option>
 								</select>
-								<p class="col-12 text-danger">
+								<p class="col-span-12 text-red-500">
 									{$errors.action || ""}
 								</p>
 							</div>
 						</div>
 						{#if $form.action == 2}
-							<div class="row" transition:fade>
+							<div
+								class="grid grid-cols-12 gap-6"
+								transition:fade>
 								<label
 									for="banDate"
-									class="col-md-3 col-form-label light-text">
+									class="md:col-span-3 col-form-label light-text">
 									Ban until
 								</label>
-								<div class="col-md-8">
+								<div class="md:col-span-8">
 									<input
 										bind:value={$form.banDate}
 										{...$constraints.banDate}
@@ -109,19 +111,19 @@
 										class="form-control {$errors.banDate
 											? 'is-in'
 											: ''}valid" />
-									<p class="col-12 text-danger">
+									<p class="col-span-12 text-red-500">
 										{$errors.banDate || ""}
 									</p>
 								</div>
 							</div>
 						{/if}
-						<div class="row">
+						<div class="grid grid-cols-12 gap-6">
 							<label
 								for="reason"
-								class="col-md-3 col-form-label light-text">
+								class="md:col-span-3 col-form-label light-text">
 								Reason
 							</label>
-							<div class="col-md-8">
+							<div class="md:col-span-8">
 								<textarea
 									bind:value={$form.reason}
 									{...$constraints.reason}
@@ -130,7 +132,7 @@
 									class="form-control {$errors.reason
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 text-danger">
+								<p class="col-span-12 text-red-500">
 									{$errors.reason || ""}
 								</p>
 							</div>
@@ -148,7 +150,7 @@
 				</form>
 				<p
 					class:text-emerald-500={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
+					class:text-red-500={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</Tab>

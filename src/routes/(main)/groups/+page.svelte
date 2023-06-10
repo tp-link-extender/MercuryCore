@@ -37,8 +37,8 @@
 </svelte:head>
 
 <div class="container">
-	<div class="row mb-5">
-		<h1 class="col-6 light-text">
+	<div class="grid grid-cols-12 gap-6 mb-5">
+		<h1 class="col-span-6 light-text">
 			Groups
 			<a
 				href="/groups/create"
@@ -46,9 +46,13 @@
 				Create
 			</a>
 		</h1>
-		<div class="col-4 ms-4">
-			<form use:enhance method="POST" action="/search" class="row">
-				<div class="input-group">
+		<div class="col-span-4 ms-4">
+			<form
+				use:enhance
+				method="POST"
+				action="/search"
+				class="grid grid-cols-12 gap-6">
+				<div class="flex">
 					<input
 						bind:value={query}
 						type="text"
@@ -69,7 +73,7 @@
 			</form>
 		</div>
 	</div>
-	<div class="row">
+	<div class="grid grid-cols-12 gap-6">
 		<div class="container grid m-0">
 			{#each query ? searchedData : data.groups || [] as group, num (group.name)}
 				<Group {group} {num} total={data.groups.length} />

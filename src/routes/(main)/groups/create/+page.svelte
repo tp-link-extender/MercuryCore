@@ -19,11 +19,13 @@
 
 <form use:enhance method="POST" class="container mt-5 light-text">
 	<fieldset>
-		<div class="row mb-3">
-			<label for="name" class="col-md-3 col-form-label text-md-right">
+		<div class="grid grid-cols-12 gap-6 mb-3">
+			<label
+				for="name"
+				class="md:col-span-3 col-form-label text-md-right">
 				Group name
 			</label>
-			<div class="col-md-8">
+			<div class="md:col-span-8">
 				<input
 					bind:value={$form.name}
 					{...$constraints.name}
@@ -31,7 +33,7 @@
 					id="name"
 					placeholder="This cannot be changed. Choose wisely."
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-span-12 mb-3 text-red-500">
 					{$errors.name || ""}
 				</p>
 			</div>
@@ -48,7 +50,7 @@
 			{/if}
 		</button>
 	</fieldset>
-	<p class="col-12 mb-3 text-danger">
+	<p class="col-span-12 mb-3 text-red-500">
 		{other}
 	</p>
 </form>

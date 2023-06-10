@@ -7,7 +7,7 @@
 
 	// const statusColours: { [k: string]: string } = {
 	// 	Online: "bg-info",
-	// 	Joined: "bg-success",
+	// 	Joined: "bg-emerald-500",
 	// 	Developing: "bg-warning",
 	// }
 
@@ -85,17 +85,18 @@
 </svelte:head>
 
 <div class="container">
-	<div class="row">
-		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
+	<div class="grid grid-cols-12 gap-6">
+		<div
+			class="col col-span-12 xxl:col-span-6 xl:col-span-5 md:col-span-6 sm:col-span-12">
 			<h1 class="top flex px-2">
 				<a
 					href="/user/{user?.number}"
 					class="no-underline light-text flex">
-					<div class="bg-a rounded-circle">
+					<div class="bg-a rounded-full">
 						<img
 							src="/api/avatar/{user?.username}"
 							alt="You"
-							class="rounded-circle rounded-top-0" />
+							class="rounded-full rounded-top-0" />
 					</div>
 					<span class="my-auto ms-4">
 						{greets[Math.floor(Math.random() * greets.length)]}
@@ -108,7 +109,7 @@
 						Post your status - your friends and followers can view
 						how you're doing!
 					</p>
-					<form use:enhance method="POST" class="input-group">
+					<form use:enhance method="POST" class="flex">
 						<input
 							bind:value={$form.status}
 							{...$constraints.status}
@@ -132,7 +133,7 @@
 					<p
 						class="mb-3"
 						class:text-emerald-500={$page.status == 200}
-						class:text-danger={$page.status >= 400 ||
+						class:text-red-500={$page.status >= 400 ||
 							$errors.status}>
 						{$errors.status || $message || ""}
 					</p>
@@ -147,13 +148,13 @@
 										href="/user/{status.authorUser?.number}"
 										class="no-underline flex items-center light-text">
 										<span
-											class="bg-background rounded-circle">
+											class="bg-background rounded-full">
 											<img
 												src="/api/avatar/{status
 													.authorUser?.username}"
 												alt={status.authorUser
 													?.username}
-												class="rounded-circle rounded-top-0" />
+												class="rounded-full rounded-top-0" />
 										</span>
 										<span
 											class="username mw-50 font-bold ms-3">
@@ -180,7 +181,7 @@
 			</div>
 		</div>
 
-		<div class="col col-12 col-xxl-6 col-xl-7 col-md-6">
+		<div class="col col-span-12 xxl:col-span-6 xl:col-span-7 md:col-span-6">
 			<div class="col2">
 				{#if data.friends.length > 0}
 					<h2 class="h4 light-text">Friends</h2>
@@ -193,15 +194,15 @@
 								href="/user/{friend.number}">
 								<div class="relative mb-2">
 									<div
-										class="image-background bg-a rounded-circle">
+										class="image-background bg-a rounded-full">
 										<img
 											src="/api/avatar/{friend.username}"
 											alt={friend.username}
-											class="h-100 rounded-circle rounded-top-0" />
+											class="h-100 rounded-full rounded-top-0" />
 									</div>
 									<!-- {#if friend.status}
 										<span
-											class="absolute bottom-0 end-0 badge rounded-circle {statusColours[
+											class="absolute bottom-0 end-0 badge rounded-full {statusColours[
 												friend.status
 											]}">
 											<span class="visually-hidden">
@@ -237,14 +238,14 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-5 col-12">
+			<div class="mt-5 col-span-12">
 				<h2 class="h4 light-text">News</h2>
 				<div id="news" class="card bg-darker">
 					<div class="card-body row">
 						{#each news as thing, num}
 							<div
 								in:fade={{ num, total: news.length }}
-								class="p-1 col-xl-4 col-lg-6 col-12">
+								class="p-1 xl:col-span-4 lg:col-span-6 col-span-12">
 								<div class="card light-text h-100">
 									<div class="card-body p-2">
 										<div class="mb-2 light-text">
@@ -269,7 +270,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-5 col-6 col-md-8 col-lg-6 col-xl-4">
+			<div
+				class="mt-5 col-span-6 md:col-span-8 lg:col-span-6 xl:col-span-4">
 				<h2 class="h4 light-text">Random fact</h2>
 				<div
 					id="fact"

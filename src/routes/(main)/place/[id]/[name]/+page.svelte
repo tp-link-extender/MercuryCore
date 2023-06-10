@@ -82,8 +82,8 @@
 </svelte:head>
 
 <div class="container light-text">
-	<div class="row">
-		<div in:fade id="carousel" class="carousel slide col-md-8 mb-3">
+	<div class="grid grid-cols-12 gap-6">
+		<div in:fade id="carousel" class="carousel slide md:col-span-8 mb-3">
 			<div class="carousel-inner rounded-4">
 				<div class="carousel-indicators">
 					{#each images as _, i}
@@ -127,10 +127,10 @@
 			</div>
 		</div>
 
-		<div class="flex col-md-4">
+		<div class="flex md:col-span-4">
 			<div class="card rounded-none mb-4">
 				<div class="card-body">
-					<div class="row">
+					<div class="grid grid-cols-12 gap-6">
 						<div class="col">
 							<h2 class="light-text">{data.name}</h2>
 						</div>
@@ -152,11 +152,11 @@
 						<a
 							href="/user/{data.ownerUser?.number}"
 							class="user light-text no-underline flex">
-							<span class="pfp bg-darker rounded-circle mx-1">
+							<span class="pfp bg-darker rounded-full mx-1">
 								<img
 									src="/api/avatar/{data.ownerUser?.username}"
 									alt={data.ownerUser?.username}
-									class="rounded-circle rounded-top-0" />
+									class="rounded-full rounded-top-0" />
 							</span>
 							{data.ownerUser?.username}
 						</a>
@@ -184,7 +184,7 @@
 					</span>
 				</div>
 			</div>
-			<div id="buttons" class="row">
+			<div id="buttons" class="grid grid-cols-12 gap-6">
 				<button
 					on:click={placeLauncher}
 					id="play"
@@ -228,7 +228,7 @@
 						type="hidden"
 						name="privateTicket"
 						value={data.privateTicket} />
-					<div class="row mb-2">
+					<div class="grid grid-cols-12 gap-6 mb-2">
 						<div class="col flex justify-start">
 							<button
 								name="action"
@@ -262,7 +262,7 @@
 					</div>
 					<div class="progress rounded-pill" style="height: 3px">
 						<div
-							class="progress-bar bg-success"
+							class="progress-bar bg-emerald-500"
 							role="progressbar"
 							aria-label="Likes"
 							style="width: {(data.likeCount /
@@ -273,7 +273,7 @@
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 						<div
-							class="progress-bar bg-danger"
+							class="progress-bar bg-red-500"
 							role="progressbar"
 							aria-label="Dislikes"
 							style="width: {(data.dislikeCount /
@@ -284,7 +284,7 @@
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 					</div>
-					<div class="row">
+					<div class="grid grid-cols-12 gap-6">
 						<div class="col flex justify-start">
 							<span class="light-text mx-2">
 								{data.likeCount} like{data.likeCount == 1
@@ -364,7 +364,7 @@
 						<code>content\maps\CoolMap.rbxl</code>
 						.
 					</p>
-					<div class="input-group">
+					<div class="flex">
 						<input
 							type="text"
 							class="form-control valid"
@@ -422,8 +422,8 @@
 		<h4 class="light-text">Server List</h4>
 		<div class="card mb-2">
 			<div class="card-body">
-				<div class="row">
-					<div class="col col-2">
+				<div class="grid grid-cols-12 gap-6">
+					<div class="col col-span-2">
 						<p class="light-text mb-2">
 							Currently Playing: {data.gameSessions
 								.length}/{data.maxPlayers}
@@ -443,7 +443,7 @@
 									alt={user.username}
 									height="75"
 									width="75"
-									class="pfp bg-background rounded-circle rounded-top-0 m-1" />
+									class="pfp bg-background rounded-full rounded-top-0 m-1" />
 							</a>
 						{/each}
 					</div>
@@ -452,7 +452,7 @@
 		</div>
 	</Tab>
 	<hr />
-	<div class="row">
+	<div class="grid grid-cols-12 gap-6">
 		{#each statistics as [title, stat]}
 			<div class="col">
 				<p class="light-text text-center"><b>{title}</b></p>

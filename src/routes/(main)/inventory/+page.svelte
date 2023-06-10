@@ -10,19 +10,14 @@
 
 <h1 class="light-text text-center">Inventory</h1>
 
-<div class="container mt-5 grid">
+<div class="mx-auto grid grid-cols-12 gap-6">
 	{#each data.assets || [] as asset, num}
 		<Asset {asset} {num} total={(data.assets || []).length} />
 	{/each}
 </div>
 
 <style lang="sass">
-	.container
-		max-width: 100%
+	div
+		max-width: 70rem
 		font-size: 0.9rem
-
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
-		column-gap: 1rem
-		row-gap: 1rem
-		place-items: center
 </style>

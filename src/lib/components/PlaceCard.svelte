@@ -21,10 +21,10 @@
 		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
 	<div
-		class="row"
+		class="grid grid-cols-12 gap-6"
 		class:opacity-50={place.serverPing <
 			Math.floor(Date.now() / 1000) - 35}>
-		<div class="col col-6">
+		<div class="col col-span-6">
 			<div id="shadow" class="overflow-hidden bg-black">
 				<img
 					src="/place/{place.id}/{place.name}/icon"
@@ -32,7 +32,7 @@
 					class="w-100 h-100" />
 			</div>
 		</div>
-		<div class="col col-6 p-2 row">
+		<div class="col col-span-6 p-2 row">
 			<p class="mb-1">
 				{place.name}
 			</p>

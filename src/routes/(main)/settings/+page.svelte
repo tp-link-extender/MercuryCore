@@ -38,15 +38,15 @@
 	<Tab {tabData}>
 		<h4 class="light-text font-normal mb-1">User Profile</h4>
 		<p class="mb-0 grey-text mb-4">Change your bio, site theme and more.</p>
-		<form class="col-lg-8" method="POST" action="?a=profile">
+		<form class="lg:col-span-8" method="POST" action="?a=profile">
 			<fieldset>
-				<div class="row">
+				<div class="grid grid-cols-12 gap-6">
 					<label
 						for="theme"
-						class="col-md-3 col-form-label text-md-right">
+						class="md:col-span-3 col-form-label text-md-right">
 						Theme
 					</label>
-					<div class="col-md-8">
+					<div class="md:col-span-8">
 						<select
 							bind:value={$form.theme}
 							{...$constraints.theme}
@@ -60,13 +60,13 @@
 							<option value="storm">Storm</option>
 							<option value="solar">Solar</option>
 						</select>
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.theme || ""}
 						</p>
 					</div>
 				</div>
 				<hr class="grey-text" />
-				<div class="row">
+				<div class="grid grid-cols-12 gap-6">
 					<label for="bio" class="form-label light-text">Bio</label>
 					<div class="container">
 						<textarea
@@ -83,7 +83,7 @@
 							your profile and allow other users to know who you
 							are.
 						</small>
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.bio || ""}
 						</p>
 					</div>
@@ -101,7 +101,7 @@
 		</form>
 		<p
 			class:text-emerald-500={$page.status == 200}
-			class:text-danger={$page.status >= 400}>
+			class:text-red-500={$page.status >= 400}>
 			{$message || ""}
 		</p>
 	</Tab>
@@ -113,10 +113,12 @@
 			here.
 		</p>
 		<div class="form-group row">
-			<label for="name" class="col-md-3 col-form-label text-md-right">
+			<label
+				for="name"
+				class="md:col-span-3 col-form-label text-md-right">
 				Username
 			</label>
-			<div class="col-md-6">
+			<div class="md:col-span-6">
 				<input
 					type="text"
 					readonly
@@ -131,10 +133,12 @@
 		</div>
 		<hr class="grey-text" />
 		<div class="form-group row mb-5">
-			<label for="name" class="col-md-3 col-form-label text-md-right">
+			<label
+				for="name"
+				class="md:col-span-3 col-form-label text-md-right">
 				Email Address
 			</label>
-			<div class="col-md-6">
+			<div class="md:col-span-6">
 				<input
 					type="text"
 					readonly
@@ -173,13 +177,19 @@
 
 	<Tab {tabData}>
 		<h4 class="font-normal light-text mb-3">Change Password</h4>
-		<form use:enhance class="col-sm-8" method="POST" action="?a=password">
+		<form
+			use:enhance
+			class="sm:col-span-8"
+			method="POST"
+			action="?a=password">
 			<fieldset>
 				<div class="form-group row gx-0 mb-2">
-					<label for="password" class="col-sm-4 col-form-label pt-0">
+					<label
+						for="password"
+						class="sm:col-span-4 col-form-label pt-0">
 						Current Password
 					</label>
-					<div class="col-sm-10">
+					<div class="sm:col-span-10">
 						<input
 							bind:value={$form.cpassword}
 							{...$constraints.cpassword}
@@ -190,16 +200,18 @@
 								: ''}valid"
 							id="cpassword"
 							name="cpassword" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.cpassword || ""}
 						</p>
 					</div>
 				</div>
 				<div class="form-group row gx-0 mb-2">
-					<label for="npassword" class="col-sm-4 col-form-label pt-0">
+					<label
+						for="npassword"
+						class="sm:col-span-4 col-form-label pt-0">
 						New Password
 					</label>
-					<div class="col-sm-10">
+					<div class="sm:col-span-10">
 						<input
 							bind:value={$form.npassword}
 							{...$constraints.npassword}
@@ -213,7 +225,7 @@
 						<small class="grey-text">
 							Make sure your password is unique.
 						</small>
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.npassword || ""}
 						</p>
 					</div>
@@ -221,10 +233,10 @@
 				<div class="form-group row gx-0 mb-2">
 					<label
 						for="cnpassword"
-						class="col-sm-4 col-form-label pt-0">
+						class="sm:col-span-4 col-form-label pt-0">
 						Confirm New Password
 					</label>
-					<div class="col-sm-10">
+					<div class="sm:col-span-10">
 						<input
 							bind:value={$form.cnpassword}
 							{...$constraints.cnpassword}
@@ -235,7 +247,7 @@
 								: ''}valid"
 							id="cnpassword"
 							name="cnpassword" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-span-12 mb-3 text-red-500">
 							{$errors.cnpassword || ""}
 						</p>
 					</div>
@@ -253,7 +265,7 @@
 		</form>
 		<p
 			class:text-emerald-500={$page.status == 200}
-			class:text-danger={$page.status >= 400}>
+			class:text-red-500={$page.status >= 400}>
 			{$message || ""}
 		</p>
 	</Tab>

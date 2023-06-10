@@ -46,7 +46,7 @@
 				aria-label="Close" />
 		</div>
 
-		<div id="nav1" class="offcanvas-body px-4 py-1 d-flex">
+		<div id="nav1" class="offcanvas-body px-4 py-1">
 			<a
 				id="nav-brand-1"
 				class="navbar-brand light-text me-4 mt-1"
@@ -54,8 +54,8 @@
 				Mercury
 			</a>
 			{#if user}
-				<div class="row">
-					<div class="col-6">
+				<div class="grid grid-cols-2 lg:grid-cols-1 gap-6">
+					<div class="col-span-1">
 						<div class="navbar-nav">
 							<a
 								class="btn mt-1 px-1 light-text nav-item"
@@ -87,7 +87,7 @@
 							{/if}
 						</div>
 					</div>
-					<div class="col-6 mobilenav">
+					<div class="col-span-1 mobilenav">
 						<div id="nav2-1" class="navbar-nav w-100">
 							<a
 								class="light-text mt-1 btn nav-item px-1"
@@ -124,7 +124,7 @@
 						action="/search"
 						class="w-auto"
 						role="search">
-						<div class="input-group">
+						<div class="flex">
 							<input
 								bind:value={search}
 								class="form-control valid bg-background"
@@ -189,27 +189,27 @@
 							href="/transactions/your"
 							role="button"
 							aria-label="Transactions"
-							class="nav-link text-success">
-							<i class="fa fa-gem me-1 text-success" />
-							<span class="h6 text-success">
+							class="nav-link text-emerald-500">
+							<i class="fa fa-gem me-1 text-emerald-500" />
+							<span class="text-base text-emerald-500">
 								{user.currency}
 							</span>
 						</a>
 					</li>
 
 					<li class="dropdown2 dropdown-hover dropdown-end">
-						<a
-							href="/user/{user.number}"
-							class="btn p-0 d-flex">
+						<a href="/user/{user.number}" class="p-0 flex">
 							<div
 								id="pfp"
-								class="mx-2 rounded-circle bg-background">
+								class="mx-2 rounded-full bg-background">
 								<img
 									src="/api/avatar/{user?.username}"
 									alt="You"
-									class="rounded-circle rounded-top-0" />
+									class="rounded-full rounded-top-0" />
 							</div>
-							<p id="username" class="my-auto fs-6 me-2 light-text">
+							<p
+								id="username"
+								class="my-auto fs-6 me-2 light-text">
 								{user?.username}
 							</p>
 						</a>
@@ -228,7 +228,7 @@
 										use:enhance
 										method="POST"
 										action="/api?/logout">
-										<button class="btn text-danger py-2">
+										<button class="btn text-red-500 py-2">
 											<i
 												class="fa fa-arrow-right-from-bracket me-2" />
 											<b>Log out</b>
@@ -288,7 +288,7 @@
 	{#each data.banners as announcement (announcement.id)}
 		<div
 			transition:height|local
-			class="py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight
+			class="py-1 my-0 rounded-none text-center border-0 text-{announcement.textLight
 				? 'light'
 				: ''}"
 			role="alert"
@@ -329,10 +329,6 @@
 		#nav-brand-1
 			display: none
 
-		#user
-			margin-left: 0.5rem !important
-			margin-bottom: 1.5rem !important
-
 		#search
 			width: 100%
 			margin: 0 !important
@@ -365,7 +361,6 @@
 			background: none
 			min-height: fit-content !important
 			overflow-x: hidden
-	
 
 	#nav2
 		background: #0003
@@ -381,10 +376,6 @@
 				padding: 1.2rem 0.8rem !important
 			div
 				width: 100% !important
-
-	#user
-		margin-top: 0.1rem !important
-		display: flex !important
 
 	.loggedin
 		padding: 0
@@ -414,26 +405,11 @@
 		width: 2.4rem
 		height: 2.4rem
 
-	.dropdown-menu
-		border: none
-		z-index: 5
-
 	#results
 		z-index: 5
 		min-width: 25vw
 		a:hover
 			background: var(--accent2)
-
-	.input-group
-		width: 25vw
-		max-width: 30rem
-		font-size: 0.8rem
-		@media only screen and (max-width: 1199px)
-			width: 12rem
-		@media only screen and (max-width: 992px)
-			width: 100%
-		button, input
-			height: 2.3rem
 
 	.btn
 		box-shadow: none !important

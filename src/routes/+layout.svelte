@@ -79,11 +79,11 @@
 					href="/user/{notification.sender.number}"
 					class="flex items-center w-100 light-text no-underline">
 					<div
-						class="image-background bg-background rounded-circle me-3">
+						class="image-background bg-background rounded-full me-3">
 						<img
 							src="/api/avatar/{notification.sender.username}"
 							alt={notification.sender.username}
-							class="h-100 rounded-circle rounded-top-0" />
+							class="h-100 rounded-full rounded-top-0" />
 					</div>
 					<strong class="me-auto">
 						{notificationNotes[notification.type]}
