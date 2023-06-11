@@ -329,10 +329,6 @@
 		#nav-brand-1
 			display: none
 
-		#user
-			margin-left: 0.5rem !important
-			margin-bottom: 1.5rem !important
-
 		#search
 			width: 100%
 			margin: 0 !important
@@ -360,6 +356,7 @@
 			display: none
 
 	#nav1
+		// padding-top: 1px
 		background: #fff1
 		@media only screen and (max-width: 992px)
 			background: none
@@ -381,9 +378,6 @@
 				padding: 1.2rem 0.8rem !important
 			div
 				width: 100% !important
-
-	#user
-		margin-top: 0.1rem !important
 
 	.loggedin
 		padding: 0
@@ -412,10 +406,6 @@
 	#pfp, img
 		width: 2.4rem
 		height: 2.4rem
-
-	.dropdown-menu
-		border: none
-		z-index: 5
 
 	#results
 		z-index: 5
