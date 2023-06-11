@@ -156,78 +156,58 @@
 			{#if data.places.length > 0}
 				<div class="mt-4">
 					<h2 class="h4 light-text">Creations</h2>
-					<div class="accordion" id="accordion">
-						{#each data.places as place, num}
-							<div
-								in:fade={{ num, total: data.places.length }}
-								class="accordion-item rounded-2 my-2">
-								<div
-									class="accordion-header rounded-2"
-									id="heading{num}">
-									<button
-										class="accordion-button collapsed p-2 light-text rounded-3"
-										type="button"
-										data-bs-toggle="collapse"
-										data-bs-target="#collapse{num}"
-										aria-expanded="false"
-										aria-controls="collapse{num}">
-										{place.name}
-									</button>
-								</div>
-								<div
-									id="collapse{num}"
-									class="accordion-collapse collapse rounded-3"
-									aria-labelledby="heading{num}"
-									data-bs-parent="#accordion">
-									<div class="accordion-body rounded-3 p-0">
-										<a
-											in:fade={{
-												num,
-												total: data.places.length,
-											}}
-											class="card bg-darker shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
-											href="/place/{place.id}/{place.name}">
-											<div class="row">
-												<div class="col col-6">
-													<div
-														class="overflow-hidden bg-black shadow">
-														<img
-															src="/place/{place.id}/{place.name}/icon"
-															alt={place.name}
-															class="w-100 h-100" />
-													</div>
+					{#each data.places as place, num}
+						<div
+							class="d-collapse d-collapse light-text bg-darker mb-2 rounded-3">
+							<input type="radio" name="accordion" />
+							<div class="d-collapse-title p-2">
+								{place.name}
+							</div>
+							<div class="d-collapse-content">
+								<a
+									in:fade={{
+										num,
+										total: data.places.length,
+									}}
+									class="card bg-darker shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
+									href="/place/{place.id}/{place.name}">
+									<div class="row">
+										<div class="col col-6">
+											<div
+												class="overflow-hidden bg-black shadow">
+												<img
+													src="/place/{place.id}/{place.name}/icon"
+													alt={place.name}
+													class="w-100 h-100" />
+											</div>
+										</div>
+										<div class="col col-6 p-2 row">
+											<p class="mb-1 h5">
+												{place.name}
+											</p>
+											<div class="mt-auto mb-1">
+												<div class="float-start">
+													<span>
+														<i
+															class="fa fa-thumbs-up opacity-75" />
+														{place.ratio}%
+													</span>
 												</div>
-												<div class="col col-6 p-2 row">
-													<p class="mb-1 h5">
-														{place.name}
-													</p>
-													<div class="mt-auto mb-1">
-														<div
-															class="float-start">
-															<span>
-																<i
-																	class="fa fa-thumbs-up opacity-75" />
-																{place.ratio}%
-															</span>
-														</div>
-														<div class="float-end">
-															<span>
-																<i
-																	class="fa fa-user opacity-75" />
-																{place
-																	.gameSessions
-																	.length}
-															</span>
-														</div>
-													</div>
+												<div class="float-end">
+													<span>
+														<i
+															class="fa fa-user opacity-75" />
+														{place.gameSessions
+															.length}
+													</span>
 												</div>
 											</div>
-										</a>
+										</div>
 									</div>
-								</div>
+								</a>
 							</div>
-						{/each}
-					</div>
+						</div>
+					{/each}
 				</div>
 			{/if}
 		</div>
@@ -317,10 +297,8 @@
 	#all
 		max-width: 60rem
 
-	#image-background
+	#image-background, #image-background img
 		height: 7rem
-		img
-			height: 7rem
 
 	.placecard
 		transition: all 0.2s
@@ -342,16 +320,6 @@
 				width: 100%
 				height: 100%
 
-	.accordion
-		border: none
-		div, button
-			border: none
-			box-shadow: none
-
-	.accordion-body .bg-black
-		overflow: hidden
-		border-radius: 0 0 0 0.25rem !important
-
 	#user
 		align-items: center
 		.pfp img
@@ -359,4 +327,7 @@
 
 	#avatar
 		aspect-ratio: 3/4
+
+	input[type="radio"]
+		cursor: pointer
 </style>
