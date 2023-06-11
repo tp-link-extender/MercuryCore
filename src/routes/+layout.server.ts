@@ -39,7 +39,7 @@ export async function load({ request, locals }) {
 			"relativeId"
 		> & { link?: string })[] = notifications1
 
-		for (let i of notifications2) {
+		for (const i of notifications2) {
 			switch (i.type) {
 				case "AssetApproved":
 				case "FriendRequest":
@@ -49,7 +49,7 @@ export async function load({ request, locals }) {
 					break
 
 				case "ForumPostReply":
-				case "ForumReplyReply":
+				case "ForumReplyReply": {
 					const reply = await prisma.forumReply.findUnique({
 						where: {
 							id: i.relativeId,
@@ -64,9 +64,10 @@ export async function load({ request, locals }) {
 						reply.parentPost.id
 					}/${reply.id}?depth=1`
 					break
+				}
 
 				case "ForumMention":
-				case "ForumPost":
+				case "ForumPost": {
 					const post = await prisma.forumPost.findUnique({
 						where: {
 							id: i.relativeId,
@@ -78,6 +79,7 @@ export async function load({ request, locals }) {
 						post.id
 					}`
 					break
+				}
 
 				case "ItemPurchase":
 					i.link = `/avatarshop/item/${i.relativeId}`

@@ -3,7 +3,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -36,16 +36,14 @@ ScopedConnect = (parentInstance, instance, event, signalFunc, syncFunc, removeFu
 			--Entering the world, make sure we are connected/synced
 			if not eventConnection
 				eventConnection = instance[event]\connect signalFunc
-				if syncFunc
-					syncFunc!
+				syncFunc?!
 
 
 		else
 			--Probably leaving the world, so disconnect for now
 			if eventConnection
 				eventConnection\disconnect!
-				if removeFunc
-					removeFunc!
+				removeFunc?!
 
 
 	--Hook it up to ancestryChanged signal
@@ -127,8 +125,7 @@ setSliderPos = (newAbsPosX, slider, sliderPosition, bar, steps) ->
 
 cancelSlide = (areaSoak) ->
 	areaSoak.Visible = false
-	if areaSoakMouseMoveCon
-		areaSoakMouseMoveCon\disconnect!
+	areaSoakMouseMoveCon?\disconnect!
 
 
 t.CreateStyledMessageDialog = (title, message, style, buttons) ->
@@ -169,13 +166,13 @@ t.CreateStyledMessageDialog = (title, message, style, buttons) ->
 
 	if style == "error" or style == "Error"
 		styleImage.Size = UDim2.new 0, 71, 0, 71
-		styleImage.Image = "http://www.roblox.com/asset?id=42565285"
+		styleImage.Image = "http://banland.xyz/asset?id=42565285"
 	elseif style == "notify" or style == "Notify"
 		styleImage.Size = UDim2.new 0, 71, 0, 71
-		styleImage.Image = "http://www.roblox.com/asset?id=42604978"
+		styleImage.Image = "http://banland.xyz/asset?id=42604978"
 	elseif style == "confirm" or style == "Confirm"
 		styleImage.Size = UDim2.new 0, 74, 0, 76
-		styleImage.Image = "http://www.roblox.com/asset?id=42557901"
+		styleImage.Image = "http://banland.xyz/asset?id=42557901"
 	else
 		return t.CreateMessageDialog title, message, buttons
 
@@ -246,7 +243,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 
 		* New "ImageLabel", "Icon"
 			Active: false
-			Image: "http://www.roblox.com/asset/?id=45732894"
+			Image: "http://banland.xyz/asset/?id=45732894"
 			BackgroundTransparency: 1
 			Size: UDim2.new 0, 11, 0, 6
 			Position: UDim2.new 1, -11, 0.5, -2
@@ -282,10 +279,10 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 		BackgroundColor3: Color3.new 1, 1, 1
 		Font: Enum.Font.Arial
 		FontSize: Enum.FontSize.Size18
-		Size: if useScrollButtons
-			UDim2.new 1, -13, 0.8 / ((dropDownItemCount + 1) * 0.8), 0
+		Size: UDim2.new 1, if useScrollButtons
+			-13, 0.8 / ((dropDownItemCount + 1) * 0.8), 0
 		else
-			UDim2.new 1, 0, 0.8 / ((dropDownItemCount + 1) * 0.8), 0
+			0, 0.8 / ((dropDownItemCount + 1) * 0.8), 0
 
 		TextWrap: true
 		ZIndex: 2
@@ -312,9 +309,7 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 		if scrollDownButton
 			scrollDownButton.ZIndex = baseZIndex + 3
 
-
-		children = droppedDownMenu\GetChildren!
-		if children
+		if children = droppedDownMenu\GetChildren!
 			for _, child in ipairs children
 				if child.Name == "ChoiceButton"
 					child.ZIndex = baseZIndex + 2
@@ -355,10 +350,10 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 		areaSoak.Visible = not areaSoak.Visible
 		dropDownMenu.Visible = not dropDownSelected
 		droppedDownMenu.Visible = dropDownSelected
-		if dropDownSelected
-			setZIndex 4
+		setZIndex if dropDownSelected
+			4
 		else
-			setZIndex 2
+			2
 
 		if useScrollButtons
 			updateScroll!
@@ -421,10 +416,8 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 			Size: UDim2.new 0, 17, 0, 17
 			Position: UDim2.new 1, -11, (1 * 0.8) / ((dropDownItemCount + 1) * 0.8), 0
 
-		scrollUpButton.MouseButton1Click\connect ->
-			scrollMouseCount += 1
-		scrollUpButton.MouseLeave\connect ->
-			scrollMouseCount += 1
+		scrollUpButton.MouseButton1Click\connect -> scrollMouseCount += 1
+		scrollUpButton.MouseLeave\connect -> scrollMouseCount += 1
 		scrollUpButton.MouseButton1Down\connect ->
 			scrollMouseCount += 1
 
@@ -446,10 +439,8 @@ t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
 			Position: UDim2.new 1, -11, 1, -11
 			Parent: droppedDownMenu
 
-		scrollDownButton.MouseButton1Click\connect ->
-			scrollMouseCount += 1
-		scrollDownButton.MouseLeave\connect ->
-			scrollMouseCount += 1
+		scrollDownButton.MouseButton1Click\connect -> scrollMouseCount += 1
+		scrollDownButton.MouseLeave\connect -> scrollMouseCount += 1
 		scrollDownButton.MouseButton1Down\connect ->
 			scrollMouseCount += 1
 
@@ -582,25 +573,25 @@ layoutGuiObjectsHelper = (frame, guiObjects, settingsTable) ->
 	for _, child in ipairs guiObjects
 		if child\IsA"TextLabel" or child\IsA "TextButton"
 			isLabel = child\IsA "TextLabel"
-			if isLabel
-				pixelsRemaining -= settingsTable["TextLabelPositionPadY"]
+			pixelsRemaining -= if isLabel
+				settingsTable["TextLabelPositionPadY"]
 			else
-				pixelsRemaining -= settingsTable["TextButtonPositionPadY"]
+				settingsTable["TextButtonPositionPadY"]
 
 			child.Position = UDim2.new child.Position.X.Scale, child.Position.X.Offset, 0, totalPixels - pixelsRemaining
 			child.Size = UDim2.new child.Size.X.Scale, child.Size.X.Offset, 0, pixelsRemaining
 
 			if child.TextFits and child.TextBounds.Y < pixelsRemaining
 				child.Visible = true
-				if isLabel
-					child.Size = UDim2.new(
+				child.Size = if isLabel
+					UDim2.new(
 						child.Size.X.Scale,
 						child.Size.X.Offset,
 						0,
 						child.TextBounds.Y + settingsTable["TextLabelSizePadY"]
 					)
 				else
-					child.Size = UDim2.new(
+					UDim2.new(
 						child.Size.X.Scale,
 						child.Size.X.Offset,
 						0,
@@ -613,10 +604,10 @@ layoutGuiObjectsHelper = (frame, guiObjects, settingsTable) ->
 
 				pixelsRemaining -= child.AbsoluteSize.Y
 
-				if isLabel
-					pixelsRemaining -= settingsTable["TextLabelPositionPadY"]
+				pixelsRemaining -= if isLabel
+					settingsTable["TextLabelPositionPadY"]
 				else
-					pixelsRemaining -= settingsTable["TextButtonPositionPadY"]
+					settingsTable["TextButtonPositionPadY"]
 
 			else
 				child.Visible = false
@@ -640,7 +631,6 @@ t.LayoutGuiObjects = (frame, guiObjects, settingsTable) ->
 
 	if not settingsTable
 		settingsTable = {}
-
 
 	if not settingsTable["TextLabelSizePadY"]
 		settingsTable["TextLabelSizePadY"] = 0
@@ -673,7 +663,7 @@ t.LayoutGuiObjects = (frame, guiObjects, settingsTable) ->
 	frame.Changed\connect (prop) ->
 		if prop == "AbsoluteSize"
 			--Wait a heartbeat for it to sync in
-			recalculate nil
+			recalculate!
 
 
 	frame.AncestryChanged\connect recalculate
@@ -713,10 +703,10 @@ t.CreateSlider = (steps, width, position) ->
 		Text: ""
 		AutoButtonColor: false
 		BackgroundColor3: Color3.new 0, 0, 0
-		Size: if type(width) == "number"
-			UDim2.new 0, width, 0, 5
+		Size: UDim2.new 0, if type(width) == "number"
+			width, 0, 5
 		else
-			UDim2.new 0, 200, 0, 5
+			200, 0, 5
 
 		BorderColor3: Color3.new 95 / 255, 95 / 255, 95 / 255
 		ZIndex: 2
@@ -742,20 +732,16 @@ t.CreateSlider = (steps, width, position) ->
 
 	local areaSoakMouseMoveCon
 
-	areaSoak.MouseLeave\connect ->
-		if areaSoak.Visible
-			cancelSlide areaSoak
+	f = -> if areaSoak.Visible
+		cancelSlide areaSoak
 
-
-	areaSoak.MouseButton1Up\connect ->
-		if areaSoak.Visible
-			cancelSlide areaSoak
+	areaSoak.MouseLeave\connect f
+	areaSoak.MouseButton1Up\connect f
 
 
 	slider.MouseButton1Down\connect ->
 		areaSoak.Visible = true
-		if areaSoakMouseMoveCon
-			areaSoakMouseMoveCon\disconnect!
+		areaSoakMouseMoveCon?\disconnect!
 
 		areaSoakMouseMoveCon = areaSoak.MouseMoved\connect (x, _) ->
 			setSliderPos x, slider, sliderPosition, bar, steps
@@ -775,13 +761,11 @@ t.CreateSlider = (steps, width, position) ->
 		setSliderPos x, slider, sliderPosition, bar, steps
 
 
-	return sliderGui, sliderPosition, sliderSteps
+	sliderGui, sliderPosition, sliderSteps
 
 
 t.CreateTrueScrollingFrame = ->
-	local lowY, highY
-
-	local dragCon, upCon
+	local lowY, highY, dragCon, upCon
 
 	internalChange = false
 
@@ -792,29 +776,34 @@ t.CreateTrueScrollingFrame = ->
 		Size: UDim2.new 1, 0, 1, 0
 		ClipsDescendants: true
 
-	controlFrame = New "Frame", "ControlFrame"
-		BackgroundTransparency: 1
-		Size: UDim2.new 0, 18, 1, 0
-		Position: UDim2.new 1, -20, 0, 0
-		Parent: scrollingFrame
+		* New "Frame", "ControlFrame"
+			BackgroundTransparency: 1
+			Size: UDim2.new 0, 18, 1, 0
+			Position: UDim2.new 1, -20, 0, 0
 
-	scrollBottom = New "BoolValue", "ScrollBottom"
-		Value: false
-		Parent: controlFrame
+			* New "BoolValue", "ScrollBottom"
+				Value: false
 
-	scrollUp = New "BoolValue", "scrollUp"
-		Value: false
-		Parent: controlFrame
+			* New "BoolValue", "ScrollUp"
+				Value: false
 
-	scrollUpButton = New "TextButton", "ScrollUpButton"
-		Text: ""
-		AutoButtonColor: false
-		BackgroundColor3: Color3.new 0, 0, 0
-		BorderColor3: Color3.new 1, 1, 1
-		BackgroundTransparency: 0.5
-		Size: UDim2.new 0, 18, 0, 18
-		ZIndex: 2
-		Parent: controlFrame
+			* New "TextButton", "ScrollUpButton"
+				Text: ""
+				AutoButtonColor: false
+				BackgroundColor3: Color3.new 0, 0, 0
+				BorderColor3: Color3.new 1, 1, 1
+				BackgroundTransparency: 0.5
+				Size: UDim2.new 0, 18, 0, 18
+				ZIndex: 2
+
+	{
+		ControlFrame: controlFrame
+		ControlFrame:
+			ScrollBottom: scrollBottom
+			ScrollUp: scrollUpBool
+			ScrollUpButton: scrollUpButton
+	} = scrollingFrame
+
 
 	for i = 1, 6
 		New "Frame", "tri#{i}"
@@ -828,15 +817,15 @@ t.CreateTrueScrollingFrame = ->
 	scrollUpButton.MouseEnter\connect ->
 		scrollUpButton.BackgroundTransparency = 0.1
 		upChildren = scrollUpButton\GetChildren!
-		for i = 1, #upChildren
-			upChildren[i].BackgroundTransparency = 0.1
+		for i in *upChildren
+			i.BackgroundTransparency = 0.1
 
 
 	scrollUpButton.MouseLeave\connect ->
 		scrollUpButton.BackgroundTransparency = 0.5
 		upChildren = scrollUpButton\GetChildren!
-		for i = 1, #upChildren
-			upChildren[i].BackgroundTransparency = 0.5
+		for i in *upChildren
+			i.BackgroundTransparency = 0.5
 
 
 	scrollDownButton = scrollUpButton\clone!
@@ -849,15 +838,15 @@ t.CreateTrueScrollingFrame = ->
 	scrollDownButton.MouseEnter\connect ->
 		scrollDownButton.BackgroundTransparency = 0.1
 		downChildren = scrollDownButton\GetChildren!
-		for i = 1, #downChildren
-			downChildren[i].BackgroundTransparency = 0.1
+		for i in *downChildren
+			i.BackgroundTransparency = 0.1
 
 
 	scrollDownButton.MouseLeave\connect ->
 		scrollDownButton.BackgroundTransparency = 0.5
 		downChildren = scrollDownButton\GetChildren!
-		for i = 1, #downChildren
-			downChildren[i].BackgroundTransparency = 0.5
+		for i in *downChildren
+			i.BackgroundTransparency = 0.5
 
 
 	scrollDownButton.Parent = controlFrame
@@ -868,25 +857,30 @@ t.CreateTrueScrollingFrame = ->
 		Position: UDim2.new 0, 0, 0, 19
 		Parent: controlFrame
 
-	scrollbar = New "TextButton", "ScrollBar"
-		BackgroundColor3: Color3.new 0, 0, 0
-		BorderColor3: Color3.new 1, 1, 1
-		BackgroundTransparency: 0.5
-		AutoButtonColor: false
-		Text: ""
-		Active: true
-		ZIndex: 2
-		Size: UDim2.new 0, 18, 0.1, 0
-		Position: UDim2.new 0, 0, 0, 0
-		Parent: scrollTrack
+		* New "TextButton", "ScrollBar"
+			BackgroundColor3: Color3.new 0, 0, 0
+			BorderColor3: Color3.new 1, 1, 1
+			BackgroundTransparency: 0.5
+			AutoButtonColor: false
+			Text: ""
+			Active: true
+			ZIndex: 2
+			Size: UDim2.new 0, 18, 0.1, 0
+			Position: UDim2.new 0, 0, 0, 0
 
-	scrollNub = New "Frame", "ScrollNub"
-		BorderColor3: Color3.new 1, 1, 1
-		Size: UDim2.new 0, 10, 0, 0
-		Position: UDim2.new 0.5, -5, 0.5, 0
-		ZIndex: 2
-		BackgroundTransparency: 0.5
-		Parent: scrollbar
+			* New "Frame", "ScrollNub"
+				BorderColor3: Color3.new 1, 1, 1
+				Size: UDim2.new 0, 10, 0, 0
+				Position: UDim2.new 0.5, -5, 0.5, 0
+				ZIndex: 2
+				BackgroundTransparency: 0.5
+
+	{
+		ScrollBar: scrollbar
+		ScrollBar:
+			ScrollNub: scrollNub
+	} = scrollTrack
+
 
 	newNub = scrollNub\clone!
 	newNub.Position = UDim2.new 0.5, -5, 0.5, -2
@@ -897,15 +891,15 @@ t.CreateTrueScrollingFrame = ->
 	lastNub.Parent = scrollbar
 
 	scrollbar.MouseEnter\connect ->
-		scrollbar.BackgroundTransparency = 0.1
-		scrollNub.BackgroundTransparency = 0.1
-		newNub.BackgroundTransparency = 0.1
+		scrollbar.BackgroundTransparency = \
+		scrollNub.BackgroundTransparency = \
+		newNub.BackgroundTransparency = \
 		lastNub.BackgroundTransparency = 0.1
 
 	scrollbar.MouseLeave\connect ->
-		scrollbar.BackgroundTransparency = 0.5
-		scrollNub.BackgroundTransparency = 0.5
-		newNub.BackgroundTransparency = 0.5
+		scrollbar.BackgroundTransparency = \
+		scrollNub.BackgroundTransparency = \
+		newNub.BackgroundTransparency = \
 		lastNub.BackgroundTransparency = 0.5
 
 
@@ -922,31 +916,31 @@ t.CreateTrueScrollingFrame = ->
 
 		if y < scrollTrack.AbsolutePosition.y
 			scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, 0, 0
-			return (oldPos ~= scrollbar.Position)
+			return oldPos ~= scrollbar.Position
 
 
 		relativeSize = scrollbar.AbsoluteSize.Y / scrollTrack.AbsoluteSize.Y
 
 		if y > (scrollTrack.AbsolutePosition.y + scrollTrack.AbsoluteSize.y)
 			scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, 1 - relativeSize, 0
-			return (oldPos ~= scrollbar.Position)
+			return oldPos ~= scrollbar.Position
 
 		newScaleYPos = (y - scrollTrack.AbsolutePosition.y - offset) / scrollTrack.AbsoluteSize.y
 		if newScaleYPos + relativeSize > 1
 			newScaleYPos = 1 - relativeSize
 			scrollBottom.Value = true
-			scrollUp.Value = false
+			scrollUpBool.Value = false
 		elseif newScaleYPos <= 0
 			newScaleYPos = 0
-			scrollUp.Value = true
+			scrollUpBool.Value = true
 			scrollBottom.Value = false
 		else
-			scrollUp.Value = false
+			scrollUpBool.Value = false
 			scrollBottom.Value = false
 
 		scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, newScaleYPos, 0
 
-		return (oldPos ~= scrollbar.Position)
+		oldPos ~= scrollbar.Position
 
 
 	drillDownSetHighLow = (instance) ->
@@ -962,15 +956,15 @@ t.CreateTrueScrollingFrame = ->
 			highY = instance.AbsolutePosition.Y + instance.AbsoluteSize.Y
 
 		children = instance\GetChildren!
-		for i = 1, #children
-			drillDownSetHighLow children[i]
+		for i in *children
+			drillDownSetHighLow i
 
 
 	resetHighLow = ->
 		firstChildren = scrollingFrame\GetChildren!
 
-		for i = 1, #firstChildren
-			drillDownSetHighLow firstChildren[i]
+		for i in *firstChildren
+			drillDownSetHighLow i
 
 
 	recalculate = ->
@@ -991,17 +985,17 @@ t.CreateTrueScrollingFrame = ->
 		hiddenYAmount = (scrollingFrame.AbsoluteSize.Y - (highY - lowY)) * percentFrame
 
 		guiChildren = scrollingFrame\GetChildren!
-		for i = 1, #guiChildren
-			if guiChildren[i] ~= controlFrame
-				guiChildren[i].Position = UDim2.new(
-					guiChildren[i].Position.X.Scale,
-					guiChildren[i].Position.X.Offset,
+		for i in *guiChildren
+			if i ~= controlFrame
+				i.Position = UDim2.new(
+					i.Position.X.Scale,
+					i.Position.X.Offset,
 					0,
-					math.ceil(guiChildren[i].AbsolutePosition.Y) - math.ceil lowY + hiddenYAmount
+					math.ceil(i.AbsolutePosition.Y) - math.ceil lowY + hiddenYAmount
 				)
 
 
-		lowY = nil
+		lowY = \
 		highY = nil
 		resetHighLow!
 		internalChange = false
@@ -1012,8 +1006,8 @@ t.CreateTrueScrollingFrame = ->
 
 		totalYSpan = math.abs highY - lowY
 		if totalYSpan == 0
-			scrollbar.Visible = false
-			scrollDownButton.Visible = false
+			scrollbar.Visible = \
+			scrollDownButton.Visible = \
 			scrollUpButton.Visible = false
 
 			if dragCon
@@ -1086,8 +1080,7 @@ t.CreateTrueScrollingFrame = ->
 		if scrollUpButton.Active
 			scrollStamp = tick!
 			current = scrollStamp
-			local upCon
-			upCon = mouseDrag.MouseButton1Up\connect ->
+			local upCon = mouseDrag.MouseButton1Up\connect ->
 				scrollStamp = tick!
 				mouseDrag.Parent = nil
 				upCon\disconnect!
@@ -1129,7 +1122,6 @@ t.CreateTrueScrollingFrame = ->
 				doScrollDown!
 				break if mouseYPos and mouseYPos < (scrollbar.AbsolutePosition.y + scrollbar.AbsoluteSize.x)
 				break if not scrollDownButton.Active
-				
 
 				w = if tick! - t > 5
 					0
@@ -1152,11 +1144,11 @@ t.CreateTrueScrollingFrame = ->
 				upCon = nil
 
 			reentrancyGuardMouseScroll = false
-			dragCon = mouseDrag.MouseMoved\connect (x, y) ->
+			dragCon = mouseDrag.MouseMoved\connect (x2, y2) ->
 				return if reentrancyGuardMouseScroll
 
 				reentrancyGuardMouseScroll = true
-				if positionScrollBar x, y, mouseOffset
+				if positionScrollBar x2, y2, mouseOffset
 					recalculate!
 
 				reentrancyGuardMouseScroll = false
@@ -1174,11 +1166,8 @@ t.CreateTrueScrollingFrame = ->
 
 	scrollMouseCount = 0
 
-	scrollUpButton.MouseButton1Down\connect ->
-		scrollUp!
-
-	scrollDownButton.MouseButton1Down\connect ->
-		scrollDown!
+	scrollUpButton.MouseButton1Down\connect -> scrollUp!
+	scrollDownButton.MouseButton1Down\connect -> scrollDown!
 
 
 	scrollTick = ->
@@ -1274,7 +1263,7 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 	scrollStamp = 0
 
 	scrollDrag = New "ImageButton", "ScrollDrag"
-		Image: "http://www.roblox.com/asset/?id=61367186"
+		Image: "http://banland.xyz/asset/?id=61367186"
 		Size: UDim2.new 1, 0, 0, 16
 		BackgroundTransparency: 1
 		Active: true
@@ -1335,7 +1324,7 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 
 		totalPixelsX = frame.AbsoluteSize.X
 
-		xCounter = 0
+		xCounter = \
 		rowSizeCounter = 0
 		setRowSize = true
 
@@ -1411,8 +1400,8 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 
 		xOffset = yOffset = 0
 		if guiObjects[1]
-			yOffset = math.ceil math.floor(math.fmod(totalPixelsY, guiObjects[1].AbsoluteSize.X)) / 2
-			xOffset = math.ceil math.floor(math.fmod(totalPixelsX, guiObjects[1].AbsoluteSize.Y)) / 2
+			yOffset = math.ceil math.floor(math.fmod totalPixelsY, guiObjects[1].AbsoluteSize.X) / 2
+			xOffset = math.ceil math.floor(math.fmod totalPixelsX, guiObjects[1].AbsoluteSize.Y) / 2
 
 
 		for i, child in ipairs guiObjects
@@ -1603,12 +1592,12 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 		if scrollPosition < 1
 			scrollPosition = 1
 
-		recalculate nil
+		recalculate!
 
 
 	doScrollDown = ->
 		scrollPosition += rowSize
-		recalculate nil
+		recalculate!
 
 
 	scrollUp = (mouseYPos) ->
@@ -1702,7 +1691,7 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 
 
 				scrollPosition = newScrollPosition
-				recalculate nil
+				recalculate!
 
 			upCon = mouseDrag.MouseButton1Up\connect ->
 				scrollStamp = tick!
@@ -1717,18 +1706,10 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 
 	scrollMouseCount = 0
 
-	scrollUpButton.MouseButton1Down\connect ->
-		scrollUp!
-
-	scrollUpButton.MouseButton1Up\connect ->
-		scrollStamp = tick!
-
-
-	scrollDownButton.MouseButton1Up\connect ->
-		scrollStamp = tick!
-
-	scrollDownButton.MouseButton1Down\connect ->
-		scrollDown!
+	scrollUpButton.MouseButton1Down\connect -> scrollUp!
+	scrollUpButton.MouseButton1Up\connect -> scrollStamp = tick!
+	scrollDownButton.MouseButton1Up\connect -> scrollStamp = tick!
+	scrollDownButton.MouseButton1Down\connect -> scrollDown!
 
 
 	scrollbar.MouseButton1Up\connect ->
@@ -1741,22 +1722,18 @@ t.CreateScrollingFrame = (orderList, scrollStyle) ->
 			scrollUp y
 
 
-	frame.ChildAdded\connect ->
-		recalculate nil
-
-
-	frame.ChildRemoved\connect ->
-		recalculate nil
+	frame.ChildAdded\connect -> recalculate!
+	frame.ChildRemoved\connect -> recalculate!
 
 
 	frame.Changed\connect (prop) ->
 		if prop == "AbsoluteSize"
 			--Wait a heartbeat for it to sync in
-			recalculate nil
+			recalculate!
 
 
 	frame.AncestryChanged\connect ->
-		recalculate nil
+		recalculate!
 
 
 	return frame, scrollUpButton, scrollDownButton, recalculate, scrollbar
@@ -1898,7 +1875,6 @@ t.AutoTruncateTextObject = (textLabel) ->
 		fullLabel.Text = text
 		checkForResize!
 
-
 	textLabel, changeText
 
 
@@ -1944,8 +1920,6 @@ TransitionTutorialPages = (fromPage, toPage, transitionFrame, currentPageValue) 
 				if toPage
 					toPage.Visible = true
 					currentPageValue.Value = toPage
-
-
 	)
 
 
@@ -2059,13 +2033,14 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 			Size: UDim2.new 1, -55, 0, 22
 			Position: UDim2.new 0, 0, 0, 0
 
-	skipButton = New "ImageButton", "SkipButton"
-		AutoButtonColor: false
-		BackgroundTransparency: 1
-		Image: "rbxasset://textures/ui/closeButton.png"
-		Size: UDim2.new 0, 25, 0, 25
-		Position: UDim2.new 1, -25, 0, 0
-		Parent: frame
+		* New "ImageButton", "SkipButton"
+			AutoButtonColor: false
+			BackgroundTransparency: 1
+			Image: "rbxasset://textures/ui/closeButton.png"
+			Size: UDim2.new 0, 25, 0, 25
+			Position: UDim2.new 1, -25, 0, 0
+
+	{ SkipButton: skipButton } = frame
 
 	skipButton.MouseButton1Click\connect ->
 		skipTutorial!
@@ -2100,10 +2075,10 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 		Position: UDim2.new 0, 0, 0, 25
 		Parent: frame
 
-	innerFrame.Size = if giveDoneButton
-		UDim2.new 1, 0, 1, -75
+	innerFrame.Size = UDim2.new 1, 0, 1, if giveDoneButton
+		-75
 	else
-		UDim2.new 1, 0, 1, -22
+		-22
 
 
 	local parentConnection
@@ -2126,9 +2101,7 @@ CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
 						wait!
 						basicHandleResize!
 
-
 				basicHandleResize!
-
 
 		if prop == "Visible"
 			basicHandleResize!
@@ -2297,20 +2270,20 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 		BaseUrl = game\GetService"ContentProvider".BaseUrl\lower!
 
 		if useAssetVersionId
-			LargeThumbnailUrl = BaseUrl .. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=420&ht=420&assetversionid="
-			SmallThumbnailUrl = BaseUrl .. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&assetversionid="
+			LargeThumbnailUrl = BaseUrl .. "game/tools/thumbnailasset?fmt=png&wd=420&ht=420&assetversionid="
+			SmallThumbnailUrl = BaseUrl .. "game/tools/thumbnailasset?fmt=png&wd=75&ht=75&assetversionid="
 		else
-			LargeThumbnailUrl = BaseUrl .. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=420&ht=420&aid="
-			SmallThumbnailUrl = BaseUrl .. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&aid="
+			LargeThumbnailUrl = BaseUrl .. "game/tools/thumbnailasset?fmt=png&wd=420&ht=420&aid="
+			SmallThumbnailUrl = BaseUrl .. "game/tools/thumbnailasset?fmt=png&wd=75&ht=75&aid="
 
 
 		drillDownSetZIndex = (parent, index) ->
 			children = parent\GetChildren!
-			for i = 1, #children
-				if children[i]\IsA "GuiObject"
-					children[i].ZIndex = index
+			for i in *children
+				if i\IsA "GuiObject"
+					i.ZIndex = index
 
-				drillDownSetZIndex children[i], index
+				drillDownSetZIndex i, index
 
 
 		-- for terrain stamping
@@ -2381,14 +2354,8 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 				* New "Frame", "SetPanel"
 					Active: true
 					BackgroundTransparency: 1
-					Position: if position
-						position
-					else
-						UDim2.new 0.2, 29, 0.1, 24
-					Size: if size
-						size
-					else
-						UDim2.new 0.6, -58, 0.64, 0
+					Position: position or UDim2.new 0.2, 29, 0.1, 24
+					Size: size or UDim2.new 0.6, -58, 0.64, 0
 					Style: Enum.FrameStyle.RobloxRound
 					ZIndex: 6
 					Parent: setGui
@@ -2403,7 +2370,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 						* New "ImageLabel", "CancelImage"
 							BackgroundTransparency: 1
-							Image: "http://www.roblox.com/asset?id=54135717"
+							Image: "http://banland.xyz/asset?id=54135717"
 							Position: UDim2.new 0, -2, 0, -2
 							Size: UDim2.new 0, 16, 0, 16
 							ZIndex: 6
@@ -2478,10 +2445,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 		createSetButton = (text) ->
 			New "TextButton"
-				Text: if text
-					text
-				else
-					""
+				Text: text or ""
 				AutoButtonColor: false
 				BackgroundTransparency: 1
 				BackgroundColor3: Color3.new 1, 1, 1
@@ -2520,7 +2484,6 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 					numSkipped += 1
 				else
 					setButtons[i - numSkipped] = buildSetButton sets[i].Name, sets[i].CategoryId, sets[i].ImageAssetId, i - numSkipped, #sets
-
 
 			setButtons
 
@@ -2631,7 +2594,6 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 				selectTerrainShape terrainShapeMap[dropDownTextButton.Text]
 
-
 			dropDownTextButton
 
 
@@ -2657,7 +2619,7 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 		createDropDownMenuButton = (parent) ->
 			dropDownButton = New "ImageButton", "DropDownButton"
-				Image: "http://www.roblox.com/asset/?id=67581509"
+				Image: "http://banland.xyz/asset/?id=67581509"
 				BackgroundTransparency: 1
 				Size: UDim2.new 0, 16, 0, 16
 				Position: UDim2.new 1, -24, 0, 6
@@ -2697,8 +2659,8 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 		realignButtonGrid = (columns) ->
 			x = 0
 			y = 0
-			for i = 1, #insertButtons
-				insertButtons[i].Position = UDim2.new 0, buttonWidth * x, 0, buttonHeight * y
+			for i in *insertButtons
+				i.Position = UDim2.new 0, buttonWidth * x, 0, buttonHeight * y
 				x += 1
 				if x >= columns
 					x = 0
@@ -2706,10 +2668,14 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 
 		setInsertButtonImageBehavior = (insertFrame, visible, name, assetId) ->
+			return if not insertFrame.Button
+
 			if visible
 				insertFrame.AssetName.Value = name
 				insertFrame.AssetId.Value = assetId
 				newImageUrl = SmallThumbnailUrl .. assetId
+
+
 				if newImageUrl ~= insertFrame.Button.ButtonImage.Image
 					delay 0, ->
 						game\GetService"ContentProvider"\Preload SmallThumbnailUrl .. assetId
@@ -2723,12 +2689,10 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 						isWaterSelected = (name == "Water") and
 							(Data.Category[Data.CurrentCategory].SetName == "High Scalability")
 						waterGui.Visible = isWaterSelected
-						if isWaterSelected
-							objectSelected name, tonumber assetId, nil
+						objectSelected name, if isWaterSelected
+							tonumber assetId, nil
 						else
-							objectSelected name, tonumber assetId
-
-
+							tonumber assetId
 				)
 				insertFrame.Visible = true
 			else
@@ -2786,12 +2750,11 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 			contents = Data.Category[Data.CurrentCategory].Contents
 			if contents
 				-- remove our buttons and their connections
-				for i = 1, #insertButtons
-					insertButtons[i]\remove!
+				for i in *insertButtons
+					i\remove!
 
-				for i = 1, #insertButtonCons
-					if insertButtonCons[i]
-						insertButtonCons[i]\disconnect!
+				for i in *insertButtonCons
+					i?\disconnect!
 
 
 				insertButtonCons = {}
@@ -2846,12 +2809,12 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 		resetAllSetButtonSelection = ->
 			setButtons = setGui.SetPanel.Sets.SetsLists\GetChildren!
-			for i = 1, #setButtons
-				if setButtons[i]\IsA "TextButton"
-					setButtons[i].Selected = false
-					setButtons[i].BackgroundTransparency = 1
-					setButtons[i].TextColor3 = Color3.new 1, 1, 1
-					setButtons[i].BackgroundColor3 = Color3.new 1, 1, 1
+			for i in *setButtons
+				if i\IsA "TextButton"
+					i.Selected = false
+					i.BackgroundTransparency = 1
+					i.TextColor3 = Color3.new 1, 1, 1
+					i.BackgroundColor3 = Color3.new 1, 1, 1
 
 
 		populateSetsFrame = ->
@@ -2939,15 +2902,15 @@ t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position
 
 
 		userData = {}
-		for id = 1, #userIdsForSets
-			newUserData = game\GetService"InsertService"\GetUserSets userIdsForSets[id]
+		for id in *userIdsForSets
+			newUserData = game\GetService"InsertService"\GetUserSets id
 			if newUserData and #newUserData > 2
 				-- start at #3 to skip over My Decals and My Models for each account
 				for category = 3, #newUserData
-					if newUserData[category].Name == "High Scalability" -- we want high scalability parts to show first
-						table.insert userData, 1, newUserData[category]
+					table.insert userData, if newUserData[category].Name == "High Scalability" -- we want high scalability parts to show first
+						1, newUserData[category]
 					else
-						table.insert userData, newUserData[category]
+						newUserData[category]
 
 
 		if userData
@@ -2988,10 +2951,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 	local selectedButton
 
 	frame = New "Frame", "TerrainMaterialSelector"
-		Size: if size
-			size
-		else
-			UDim2.new 0, 245, 0, 230
+		Size: size or UDim2.new 0, 245, 0, 230
 		BorderSizePixel: 0
 		BackgroundColor3: Color3.new 0, 0, 0
 		Active: true
@@ -3077,7 +3037,7 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 	-- we so need a better way to do this
 	for _, v in pairs materialNames
 		materialToImageMap[v] = {}
-		materialToImageMap[v].Regular = "http://www.roblox.com/asset/?id=" ..
+		materialToImageMap[v].Regular = "http://banland.xyz/asset/?id=" ..
 			switch v
 				when "Grass" then "56563112"
 				when "Sand" then "62356652"
@@ -3099,18 +3059,18 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 				else "66887593" -- fill in the rest here!!
 
 
-	scrollFrame, scrollUp, scrollDown, recalculateScroll = t.CreateScrollingFrame nil, "grid"
+	scrollFrame, scrollUpB, scrollDownB, recalculateScroll = t.CreateScrollingFrame nil, "grid"
 	scrollFrame.Size = UDim2.new 0.85, 0, 1, 0
 	scrollFrame.Position = UDim2.new 0, 0, 0, 0
 	scrollFrame.Parent = frame
 
-	scrollUp.Parent = frame
-	scrollUp.Visible = true
-	scrollUp.Position = UDim2.new 1, -19, 0, 0
+	scrollUpB.Parent = frame
+	scrollUpB.Visible = true
+	scrollUpB.Position = UDim2.new 1, -19, 0, 0
 
-	scrollDown.Parent = frame
-	scrollDown.Visible = true
-	scrollDown.Position = UDim2.new 1, -19, 1, -17
+	scrollDownB.Parent = frame
+	scrollDownB.Visible = true
+	scrollDownB.Position = UDim2.new 1, -19, 1, -17
 
 	goToNewMaterial = (buttonWrap, materialName) ->
 		updateMaterialChoice materialName
@@ -3155,10 +3115,10 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 		buttonWrap
 
 
-	for i = 1, #materialNames
-		imageButton = createMaterialButton materialNames[i]
+	for i in *materialNames
+		imageButton = createMaterialButton i
 
-		if materialNames[i] == "Grass" -- always start with grass as the default
+		if i == "Grass" -- always start with grass as the default
 			selectedButton = imageButton
 			imageButton.BackgroundTransparency = 0
 
@@ -3172,17 +3132,17 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 
 		matName = getNameFromEnum newMaterialType
 		buttons = scrollFrame\GetChildren!
-		for i = 1, #buttons
-			if buttons[i].Name == "Plastic (blue)" and matName == "Plastic (blue)"
-				goToNewMaterial buttons[i], matName
+		for i in *buttons
+			if i.Name == "Plastic (blue)" and matName == "Plastic (blue)"
+				goToNewMaterial i, matName
 				return
 
-			if buttons[i].Name == "Plastic (red)" and matName == "Plastic (red)"
-				goToNewMaterial buttons[i], matName
+			if i.Name == "Plastic (red)" and matName == "Plastic (red)"
+				goToNewMaterial i, matName
 				return
 
-			if string.find buttons[i].Name, matName
-				goToNewMaterial buttons[i], matName
+			if string.find i.Name, matName
+				goToNewMaterial i, matName
 				return
 
 	frame.Changed\connect (prop) ->
@@ -3195,19 +3155,12 @@ t.CreateTerrainMaterialSelector = (size, position) ->
 
 
 t.CreateLoadingFrame = (name, size, position) ->
-	game\GetService"ContentProvider"\Preload "http://www.roblox.com/asset/?id=35238053"
+	game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=35238053"
 
 	loadingFrame = New "Frame", "LoadingFrame"
 		Style: Enum.FrameStyle.RobloxRound
-		Size: if size
-			size
-		else
-			UDim2.new 0, 300, 0, 160
-
-		Position: if position
-			position
-		else
-			UDim2.new 0.5, -150, 0.5, -80
+		Size: size or UDim2.new 0, 300, 0, 160
+		Position: position or UDim2.new 0.5, -150, 0.5, -80
 
 		* New "TextLabel", "loadingName"
 			BackgroundTransparency: 1
@@ -3228,7 +3181,7 @@ t.CreateLoadingFrame = (name, size, position) ->
 		Parent: loadingFrame
 
 	loadingGreenBar = New "ImageLabel", "LoadingGreenBar"
-		Image: "http://www.roblox.com/asset/?id=35238053"
+		Image: "http://banland.xyz/asset/?id=35238053"
 		Position: UDim2.new 0, 0, 0, 0
 		Size: UDim2.new 0, 0, 1, 0
 		Visible: false
@@ -3262,16 +3215,16 @@ t.CreateLoadingFrame = (name, size, position) ->
 
 
 	updateLoadingGuiPercent = (percent, tweenAction, tweenLength) ->
-		if percent and type percent ~= "number"
+		if percent and type(percent) ~= "number"
 			error "updateLoadingGuiPercent expects number as argument, got #{type percent} instead"
 
 
-		newSize = if percent < 0
-			UDim2.new 0, 0, 1, 0
+		newSize = UDim2.new if percent < 0
+			0, 0, 1, 0
 		elseif percent > 1
-			UDim2.new 1, 0, 1, 0
+			1, 0, 1, 0
 		else
-			UDim2.new percent, 0, 1, 0
+			percent, 0, 1, 0
 
 
 		if tweenAction
@@ -3481,10 +3434,10 @@ t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
 		else
 			UDim2.new 0, dragBar.AbsoluteSize.X, size.Y.Scale, size.Y.Offset
 	else
-		if scrollable
-			UDim2.new 0, 163, 0, 400
+		UDim2.new 0, if scrollable
+			163, 0, 400
 		else
-			UDim2.new 0, dragBar.AbsoluteSize.X, 0, 400
+			dragBar.AbsoluteSize.X, 0, 400
 
 	if position
 		widgetContainer.Position += UDim2.new 0, 0, 0, 20
@@ -3612,23 +3565,15 @@ t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
 			widgetContainer.Visible = not widgetContainer.Visible
 
 
-		if minimizeFrame.Visible
-			minimizeButton.Text = "+"
+		minimizeButton.Text = if minimizeFrame.Visible
+			"+"
 		else
-			minimizeButton.Text = "-"
+			"-"
 
+	minimizeBigButton.MouseButton1Click\connect -> switchMinimize!
+	minimizeButton.MouseButton1Click\connect -> switchMinimize!
 
-	minimizeBigButton.MouseButton1Click\connect ->
-		switchMinimize!
-
-	minimizeButton.MouseButton1Click\connect ->
-		switchMinimize!
-
-
-	if scrollable
-		dragBar, frame, helpFrame, closeEvent
-	else
-		dragBar, widgetContainer, helpFrame, closeEvent
+	dragBar, (if scrollable then frame else widgetContainer), helpFrame, closeEvent
 
 
 t.Help = (funcNameOrFunc) ->

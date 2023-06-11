@@ -6,6 +6,7 @@
 
 	import "uno.css"
 	import "/src/nprogress.sass"
+	import "$bootstrap"
 	import "/src/global.sass"
 	import "/src/fa/sass/fontawesome.sass"
 
@@ -58,8 +59,8 @@
 	{/if}
 	<script
 		defer
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
 		crossorigin="anonymous"></script>
 </svelte:head>
 

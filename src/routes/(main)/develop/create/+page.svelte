@@ -12,9 +12,9 @@
 
 	const assets: any = {
 		2: "T-Shirt",
-		11: "Shirts",
+		11: "Shirt",
 		12: "Pants",
-		13: "Decals",
+		13: "Decal",
 	}
 </script>
 
@@ -33,7 +33,11 @@
 		</span>
 	</h6>
 </div>
-<form use:enhance method="POST" class="container mt-5 light-text">
+<form
+	use:enhance
+	method="POST"
+	class="container mt-5 light-text"
+	enctype="multipart/form-data">
 	<fieldset>
 		<div class="row mb-3">
 			<label for="type" class="col-md-3 col-form-label light-text">

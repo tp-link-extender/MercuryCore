@@ -27,7 +27,6 @@ export const actions = {
 				},
 			})
 		} catch (e: any) {
-			console.log("Notification ID not found")
 			return fail(400)
 		}
 	},

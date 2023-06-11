@@ -124,8 +124,7 @@ deactivateBackpack = ->
 	active = false
 
 initHumanoidDiedConnections = ->
-	if humanoidDiedCon
-		humanoidDiedCon\disconnect!
+	humanoidDiedCon?\disconnect!
 
 	waitForProperty game.Players.LocalPlayer, "Character"
 	waitForChild game.Players.LocalPlayer.Character, "Humanoid"
@@ -182,7 +181,7 @@ showBackpack = ->
 		backpackOpenEvent\Fire currentTab
 		canToggle = true
 		readyForNextEvent = true
-		backpackButton.Image = "http://www.roblox.com/asset/?id=97644093"
+		backpackButton.Image = "http://banland.xyz/asset/?id=97644093"
 		backpackButton.Position = UDim2.new 0.5, -60, 1, -backpackSize.Y.Offset - 103
 
 toggleBackpack = ->
@@ -198,7 +197,7 @@ toggleBackpack = ->
 
 	if backpackIsOpen
 		with loadoutBackground
-			.Image = "http://www.roblox.com/asset/?id=97623721"
+			.Image = "http://banland.xyz/asset/?id=97623721"
 			.Position = UDim2.new -0.03, 0, -0.17, 0
 			.Size = UDim2.new 1.05, 0, 1.25, 0
 			.ZIndex = 2.0
@@ -208,16 +207,16 @@ toggleBackpack = ->
 		backpackButton.Position = UDim2.new 0.5, -60, 1, -44
 		loadoutBackground.Visible = false
 		backpackButton.Selected = false
-		backpackButton.Image = "http://www.roblox.com/asset/?id=97617958"
-		loadoutBackground.Image = "http://www.roblox.com/asset/?id=96536002"
+		backpackButton.Image = "http://banland.xyz/asset/?id=97617958"
+		loadoutBackground.Image = "http://banland.xyz/asset/?id=96536002"
 		loadoutBackground.Position = UDim2.new -0.1, 0, -0.1, 0
 		loadoutBackground.Size = UDim2.new 1.2, 0, 1.2, 0
 		hideBackpack!
 
 		clChildren = currentLoadout\GetChildren!
-		for i = 1, #clChildren
-			if clChildren[i] and clChildren[i]\IsA "Frame"
-				frame = clChildren[i]
+		for i in *clChildren
+			if i and i\IsA "Frame"
+				frame = i
 				if #frame\GetChildren! > 0
 					backpackButton.Position = UDim2.new 0.5, -60, 1, -108
 					backpackButton.Visible = true

@@ -5,15 +5,11 @@ import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
 
 export const load = async ({ params }) => {
-	console.time("group members")
-
 	const group = await prisma.group.findUnique({
 		where: {
 			name: params.name,
 		},
 	})
-
-	console.timeEnd("group members")
 
 	if (group) {
 		const query = {

@@ -48,7 +48,7 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	for (let post of category.posts as any) {
+	for (const post of category.posts as any) {
 		post["likeCount"] = await roQuery(
 			"forum",
 			"RETURN SIZE((:User) -[:likes]-> (:Post { name: $id }))",
@@ -97,9 +97,9 @@ export const actions = {
 	like: async ({ request, locals, url }) => {
 		const { user } = await authorise(locals)
 		const data = await formData(request)
-		const action = data.action
+		const { action } = data
 		const id = url.searchParams.get("id")
-		const replyId = data.replyId
+		const { replyId } = data
 
 		if (
 			(id &&
@@ -117,8 +117,6 @@ export const actions = {
 			user: user.username,
 			id: id || replyId,
 		}
-
-		console.log("Action:", action)
 
 		try {
 			switch (action) {

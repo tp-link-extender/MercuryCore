@@ -22,7 +22,7 @@
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="col-lg-10 col-md-9">
-			<Tab {tabData} pos={1}>
+			<Tab {tabData}>
 				<div class="container">
 					<table class="table table-responsive m-auto">
 						{#each data.transactions as transaction, num}

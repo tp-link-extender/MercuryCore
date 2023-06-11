@@ -18,6 +18,7 @@ banland.xyz {
 	rewrite /Asset/GetScriptState.ashx /asset/getscriptstate
 	rewrite /Game/Tools/InsertAsset.ashx /game/tools/insertasset
 	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
+	rewrite /UploadMedia/PostImage.aspx /game/uploadmedia/screenshot
 
 	reverse_proxy localhost:4443
 }

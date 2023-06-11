@@ -9,7 +9,7 @@
 
 	// type script mont
 	const likeEnhance = (e: any) => {
-		const action = e.data.get("action")
+		const action = e.formData.get("action")
 
 		if (action == "like") {
 			data.likes = true
@@ -185,11 +185,11 @@
 		<TabNav bind:tabData justify />
 	</div>
 
-	<Tab {tabData} pos={1}>
+	<Tab {tabData}>
 		<p class="light-text">{data.description}</p>
 	</Tab>
 
-	<Tab {tabData} pos={2}>
+	<Tab {tabData}>
 		<div class="row">
 			{#each data.owners as owner}
 				<a

@@ -18,20 +18,20 @@ message.archivable = false
 game\GetService"ScriptInformationProvider"\SetAssetUrl "http://banland.xyz/Asset/"
 game\GetService"ContentProvider"\SetThreadPool 16
 try
-	game\GetService"InsertService"\SetFreeModelUrl "http://www.roblox.com/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d"
+	game\GetService"InsertService"\SetFreeModelUrl "http://banland.xyz/game/tools/insertasset?type=fm&q=%s&pg=%d&rs=%d"
 -- Used for free model search (insert tool)
 try
-	game\GetService"InsertService"\SetFreeDecalUrl "http://www.roblox.com/Game/Tools/InsertAsset.ashx?type=fd&q=%s&pg=%d&rs=%d"
+	game\GetService"InsertService"\SetFreeDecalUrl "http://banland.xyz/game/tools/insertasset?type=fd&q=%s&pg=%d&rs=%d"
 -- Used for free decal search (insert tool)
 
 settings!.Diagnostics\LegacyScriptMode!
 
 with game\GetService "InsertService"
-	\SetBaseSetsUrl "http://www.roblox.com/Game/Tools/InsertAsset.ashx?nsets=10&type=base"
-	\SetUserSetsUrl "http://www.roblox.com/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d"
-	\SetCollectionUrl "http://www.roblox.com/Game/Tools/InsertAsset.ashx?sid=%d"
+	\SetBaseSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=10&type=base"
+	\SetUserSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
+	\SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d"
 	\SetAssetUrl "http://banland.xyz/Asset/?id=%d"
-	\SetAssetVersionUrl "http://www.roblox.com/Asset/?assetversionid=%d"
+	\SetAssetVersionUrl "http://banland.xyz/asset/?assetversionid=%d"
 
 with game\GetService "SocialService"
 	try
@@ -111,7 +111,7 @@ doVisit = ->
 
 	if false
 		message.Text = "Setting Ping"
-		visit\SetPing "http://banland.xyz/Game/ClientPresence.ashx?version=old&PlaceID=_PLACE_ID", 300
+		visit\SetPing "http://banland.xyz/game/clientpresence?version=old&PlaceID=_PLACE_ID", 300
 
 		message.Text = "Sending Stats"
 		game\HttpGet ""

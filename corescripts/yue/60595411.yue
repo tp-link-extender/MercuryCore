@@ -5,7 +5,7 @@ t = {}
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -106,11 +106,10 @@ JsonWriter.WriteString = (o) => @\Append "#{o}"
 JsonWriter.ParseString = (s) =>
 	@\Append '"'
 	@\Append string.gsub s, '[%z%c\\"/]', (n) ->
-		c = @backslashes[n]
-		if c
+		if c = @backslashes[n]
 			return c
 
-		return string.format "\\u%.4X", string.byte n
+		string.format "\\u%.4X", string.byte n
 
 	@\Append '"'
 
@@ -123,7 +122,7 @@ JsonWriter.IsArray = (t) =>
 			math.floor(k) == k
 
 			return true
-		return false
+		false
 
 	for k, _ in pairs t
 		if not isindex k
@@ -214,7 +213,7 @@ JsonReader.New = (s) =>
 JsonReader.Read ==>
 	@\SkipWhiteSpace!
 	peek = @\Peek!
-	return if not peek?
+	return if peek == nil
 		error string.format "Nil string: '%s'", @\All!
 	elseif peek == "{"
 		@\ReadObject!
@@ -262,7 +261,7 @@ JsonReader.ReadNumber ==>
 		peek = @\Peek!
 
 	result = tonumber result
-	if not result?
+	if result == nil
 		error string.format "Invalid number: '%s'", result
 	else
 		return result
@@ -452,10 +451,7 @@ t.SelectTerrainRegion = (regionToSelect, color, selectEmptyCells, selectionParen
 	-- container for all adornments, passed back to user
 	selectionContainer = New "Model", "SelectionContainer"
 		Archivable: false
-		Parent: if selectionParent
-			selectionParent
-		else
-			game.Workspace
+		Parent: selectiorParent or game.Workspace
 
 	local updateSelection -- function we return to allow user to update selection
 	local currentKeepAliveTag -- a tag that determines whether adorns should be destroyed
@@ -563,12 +559,12 @@ t.SelectTerrainRegion = (regionToSelect, color, selectEmptyCells, selectionParen
 
 
 						if not updated
-							selectionPart, selectionBox = createAdornment color
-							selectionPart.Size = Vector3.new 4, 4, 4
-							selectionPart.CFrame = CFrame.new cframePos
+							selectionPart2, selectionBox2 = createAdornment color
+							selectionPart2.Size = Vector3.new 4, 4, 4
+							selectionPart2.CFrame = CFrame.new cframePos
 							adornTable =
-								SelectionPart: selectionPart
-								SelectionBox: selectionBox
+								SelectionPart: selectionPart2
+								SelectionBox: selectionBox2
 								KeepAlive: currentKeepAliveTag
 
 							adornments[cellPos] = adornTable

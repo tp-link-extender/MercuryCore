@@ -1,4 +1,4 @@
-import { prisma, findPlaces, findItems, findGroups } from "$lib/server/prisma"
+import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
@@ -6,10 +6,8 @@ export const load = async ({ url }) => {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) throw error(400, "No query provided")
-	if (category && !["users", "places", "items", "groups"].includes(category))
+	if (category && !["users", "places", "assets", "groups"].includes(category))
 		throw error(400, "Invalid category")
-
-	console.log(`search for ${query} in ${category}`)
 
 	if (category == "users") {
 		const user = await prisma.authUser.findUnique({
@@ -65,9 +63,9 @@ export const load = async ({ url }) => {
 						},
 				  })
 				: null,
-		items:
-			category == "items"
-				? findItems({
+		assets:
+			category == "assets"
+				? prisma.asset.findMany({
 						where: {
 							name: {
 								contains: query,
@@ -101,8 +99,7 @@ export const load = async ({ url }) => {
 export const actions = {
 	default: async ({ request }) => {
 		const data = await formData(request)
-		const query = data.query
-		const category = data.category
+		const { query, category } = data
 		console.log(`searching for ${query} in ${category}`)
 
 		throw redirect(

@@ -3,7 +3,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -62,7 +62,7 @@ popupFrame = New "Frame", "Popup"
 		* New "ImageLabel", "Backing"
 			BackgroundTransparency: 1
 			Size: UDim2.new 1, 0, 1, 0
-			Image: "http://www.roblox.com/asset/?id=47574181"
+			Image: "http://banland.xyz/asset/?id=47574181"
 			ZIndex: 2
 
 :AcceptButton = popupFrame

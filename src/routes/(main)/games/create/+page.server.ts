@@ -38,8 +38,6 @@ export const actions = {
 			privateServer,
 		} = form.data
 
-		console.log("Place create", form.data)
-
 		const gameCount = await prisma.authUser.findUnique({
 			where: {
 				id: user.id,

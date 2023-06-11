@@ -3,7 +3,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -53,9 +53,9 @@ PlaneIntersection = (vectorPos) ->
 	startEndDot = normal\Dot endPos - startPos
 	cellPos = vectorPos
 	if startEndDot ~= 0
-		t = normal\Dot(p3 - startPos) / startEndDot
-		if t >= 0 and t <= 1
-			intersection = ((endPos - startPos) * t) + startPos
+		t1 = normal\Dot(p3 - startPos) / startEndDot
+		if t1 >= 0 and t1 <= 1
+			intersection = ((endPos - startPos) * t1) + startPos
 			cellPos = game.Workspace.Terrain\WorldToCell intersection
 			hit = true
 
@@ -94,8 +94,8 @@ rotatePartAndChildren = (part, rotCF, offsetFromOrigin) ->
 
 	-- recursively do the same to all children
 	partChildren = part\GetChildren!
-	for c = 1, #partChildren
-		rotatePartAndChildren partChildren[c], rotCF, offsetFromOrigin
+	for c in *partChildren
+		rotatePartAndChildren c, rotCF, offsetFromOrigin
 
 modelRotate = (model, yAngle) ->
 	rotCF = CFrame.Angles 0, yAngle, 0
@@ -161,8 +161,8 @@ findSeatsInModel = (parent, seatTable) ->
 		table.insert seatTable, parent
 
 	myChildren = parent\GetChildren!
-	for j = 1, #myChildren
-		findSeatsInModel myChildren[j], seatTable
+	for j in *myChildren
+		findSeatsInModel j, seatTable
 
 
 setSeatEnabledStatus = (model, isEnabled) ->
@@ -171,26 +171,25 @@ setSeatEnabledStatus = (model, isEnabled) ->
 
 	if isEnabled
 		-- remove any welds called "SeatWeld" in seats
-		for i = 1, #seatList
-			nextSeat = seatList[i]\FindFirstChild "SeatWeld"
+		for i in *seatList
+			nextSeat = i\FindFirstChild "SeatWeld"
 			while nextSeat
 				nextSeat\Remove!
-				nextSeat = seatList[i]\FindFirstChild "SeatWeld"
+				nextSeat = i\FindFirstChild "SeatWeld"
 
 
 	else
 		-- put a weld called "SeatWeld" in every seat
 		-- 		this tricks it into thinking there's already someone sitting there, and it won't make you sit XD
-		for i = 1, #seatList
+		for i in *seatList
 			New "Weld", "SeatWeld"
-				Parent: seatList[i]
+				Parent: i
 
 
 autoAlignToFace = (parts) ->
 	if aatf = parts\FindFirstChild "AutoAlignToFace"
-		aatf.Value
-	else
-		false
+		return aatf.Value
+	false
 
 
 getClosestAlignedWorldDirection = (aVector3InWorld) ->
@@ -372,25 +371,17 @@ getMouseTargetCFrame = (targetPart) -> with targetPart
 
 
 isBlocker = (part) -> -- returns whether or not we want to cancel the stamp because we're blocked by this part
-	if not part
-		return false
+	if (not part) or
+		(not part.Parent) or
+		part\FindFirstChild "Humanoid"
 
-	if not part.Parent
-		return false
-
-	if part\FindFirstChild "Humanoid"
-		return false
-
-	if part\FindFirstChild"RobloxStamper" or part\FindFirstChild "RobloxModel"
-		return true
-
-	if part\IsA"Part" and not part.CanCollide
-		return false
-
-	if part == game.Lighting
-		return false
-
-	isBlocker part.Parent
+		false
+	elseif part\FindFirstChild"RobloxStamper" or part\FindFirstChild "RobloxModel"
+		true
+	elseif (part\IsA"Part" and not part.CanCollide) or part == game.Lighting
+		false
+	else
+		isBlocker part.Parent
 
 -- helper function to determine if a character can be pushed upwards by a certain amount
 -- character is 5 studs tall, we'll check a 1.5 x 1.5 x 4.5 box around char, with center .5 studs below torsocenter
@@ -404,8 +395,8 @@ spaceAboveCharacter = (charTorso, newTorsoY, stampData) ->
 		100
 	)
 
-	for j = 1, #partsAboveChar
-		if partsAboveChar[j].CanCollide and not partsAboveChar[j]\IsDescendantOf stampData.CurrentParts
+	for j in *partsAboveChar
+		if j.CanCollide and not j\IsDescendantOf stampData.CurrentParts
 			return false
 
 	if clusterPartsInRegion(
@@ -463,9 +454,10 @@ findConfigAtMouseTarget = (Mouse, stampData) ->
 		return admissibleConfig, targetConfig
 
 
-	mouseHitInWorld = Vector3.new 0, 0, 0
-	if Mouse
-		mouseHitInWorld = Vector3.new Mouse.Hit.x, Mouse.Hit.y, Mouse.Hit.z
+	mouseHitInWorld = Vector3.new if Mouse
+		Mouse.Hit.x, Mouse.Hit.y, Mouse.Hit.z
+	else 
+		0, 0, 0
 
 	local cellPos
 
@@ -505,17 +497,17 @@ findConfigAtMouseTarget = (Mouse, stampData) ->
 	if Mouse
 		-- DON'T WANT THIS IN TERMS OF THE MODEL CFRAME! (.TargetSurface is in terms of the part CFrame, so this would break, right? [HotThoth])
 		-- (ideally, we would want to make the Mouse.TargetSurface a model-targetsurface instead, but for testing will be using the converse)
-		--targetVectorInWorld = targetCFrame\vectorToWorldSpace(Vector3.FromNormalId(Mouse.TargetSurface))
+		--targetVectorInWorld = targetCFrame\vectorToWorldSpace Vector3.FromNormalId Mouse.TargetSurface
 		targetVectorInWorld = targetPart.CFrame\vectorToWorldSpace Vector3.FromNormalId Mouse.TargetSurface -- better, but model cframe would be best
 		--[[if targetPart.Parent\IsA "Model"
 			hitFace = modelTargetSurface(targetPart.Parent, Mouse.Hit.p, game.Workspace.CurrentCamera.CoordinateFrame.p) -- best, if you get it right
 			WORLD_AXES = { Vector3.new(1, 0, 0), Vector3.new(0, 1, 0), Vector3.new(0, 0, 1) }
-			if hitFace > 0
-				targetVectorInWorld = targetCFrame\vectorToWorldSpace WORLD_AXES[hitFace]
+			targetVectorInWorld = if hitFace > 0
+				targetCFrame\vectorToWorldSpace WORLD_AXES[hitFace]
 			elseif hitFace < 0
-				targetVectorInWorld = targetCFrame\vectorToWorldSpace -WORLD_AXES[-hitFace]
+				targetCFrame\vectorToWorldSpace -WORLD_AXES[-hitFace]
 
-		end]]
+		]]
 
 
 	local targetRefPointInTarget, insertRefPointInInsert
@@ -613,8 +605,8 @@ saveTheWelds = (object, manualWeldTable, manualWeldParentTable) ->
 		table.insert manualWeldParentTable, object.Parent
 	else
 		children = object\GetChildren!
-		for i = 1, #children
-			saveTheWelds children[i], manualWeldTable, manualWeldParentTable
+		for i in *children
+			saveTheWelds i, manualWeldTable, manualWeldParentTable
 
 
 restoreTheWelds = (manualWeldTable, manualWeldParentTable) ->
@@ -711,7 +703,7 @@ t.GetStampModel = (assetId, terrainShape, useAssetVersionId) ->
 		if cellType == 3
 			New "SpecialMesh"
 				MeshType: "FileMesh"
-				MeshId: "http://www.roblox.com/asset?id=66832495"
+				MeshId: "http://banland.xyz/asset?id=66832495"
 				Scale: Vector3.new 2, 2, 2
 				Parent: newTerrainPiece
 
@@ -799,22 +791,22 @@ t.GetStampModel = (assetId, terrainShape, useAssetVersionId) ->
 				Parent: root
 
 
-	if terrainShape
-		if root.Name == "MegaClusterCube"
-			if terrainShape == 6 -- insert an autowedging tag
-				New "BoolValue", "AutoWedge"
-					Parent: root
-			else
-				clusterTag = root\FindFirstChild "ClusterMaterial"
-				root = if clusterTag
-					if clusterTag\IsA "Vector3Value"
-						setupFakeTerrainPart clusterTag.Value.X, terrainShape, clusterTag.Value.Z
-					else
-						setupFakeTerrainPart clusterTag.Value, terrainShape, 0
+	if terrainShape and
+		root.Name == "MegaClusterCube"
 
+		if terrainShape == 6 -- insert an autowedging tag
+			New "BoolValue", "AutoWedge"
+				Parent: root
+		else
+			clusterTag = root\FindFirstChild "ClusterMaterial"
+			root = if clusterTag
+				if clusterTag\IsA "Vector3Value"
+					setupFakeTerrainPart clusterTag.Value.X, terrainShape, clusterTag.Value.Z
 				else
-					setupFakeTerrainPart 1, terrainShape, 0
+					setupFakeTerrainPart clusterTag.Value, terrainShape, 0
 
+			else
+				setupFakeTerrainPart 1, terrainShape, 0
 
 	root
 
@@ -983,16 +975,16 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 			tempCFrame = CFrame.new HighScalabilityLine.Start, HighScalabilityLine.Start + line
 
 			-- then zero out whichever is the smaller component
-			yAxis = tempCFrame\vectorToWorldSpace(Vector3.new(0, 1, 0))
-			xAxis = tempCFrame\vectorToWorldSpace(Vector3.new(1, 0, 0))
+			yAxis = tempCFrame\vectorToWorldSpace Vector3.new 0, 1, 0
+			xAxis = tempCFrame\vectorToWorldSpace Vector3.new 1, 0, 0
 
 			xComp = xAxis\Dot line2
 			yComp = yAxis\Dot line2
 
-			if math.abs(yComp) > math.abs xComp
-				line2 -= xAxis * xComp
+			line2 -= if math.abs(yComp) > math.abs xComp
+				xAxis * xComp
 			else
-				line2 -= yAxis * yComp
+				yAxis * yComp
 
 
 			HighScalabilityLine.InternalLine = line2
@@ -1018,7 +1010,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		else
 			boxSize = tempCFrame\vectorToObjectSpace line + line2 + line3
 			HighScalabilityLine.AdornPart.Size = Vector3.new(4, 4, 4) +
-				Vector3.new(math.abs(boxSize.X), math.abs(boxSize.Y), math.abs(boxSize.Z))
+				Vector3.new(math.abs(boxSize.X), math.abs(boxSize.Y), math.abs boxSize.Z)
 			HighScalabilityLine.AdornPart.CFrame = tempCFrame + tempCFrame\vectorToWorldSpace boxSize / 2
 
 
@@ -1035,7 +1027,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 					HighScalabilityLine.Adorn.Parent = gui
 
 
-		if not gui? -- we are in studio
+		if gui == nil -- we are in studio
 			gui = game\GetService "CoreGui"
 			if (HighScalabilityLine.Dimensions == 1 and line.magnitude > 3) or HighScalabilityLine.Dimensions > 1 -- don't show if mouse hasn't moved enough
 				HighScalabilityLine.Adorn.Parent = gui
@@ -1068,14 +1060,13 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 		numRotations = 0 -- update this according to how many rotations you need to get it to target surface
 		if autoAlignToFace(stampData.CurrentParts) and targetSurface ~= 1 and targetSurface ~= 4 -- pre-rotate the flag or portrait so it's aligned correctly
-			numRotations = if targetSurface == 3
-				0 - gInitial90DegreeRotations + autoAlignToFace stampData.CurrentParts
-			elseif targetSurface == 0
-				2 - gInitial90DegreeRotations + autoAlignToFace stampData.CurrentParts
-			elseif targetSurface == 5
-				3 - gInitial90DegreeRotations + autoAlignToFace stampData.CurrentParts
-			elseif targetSurface == 2
-				1 - gInitial90DegreeRotations + autoAlignToFace stampData.CurrentParts
+			numRotations = (
+				switch targetSurface
+					when 3 then 0
+					when 0 then 2
+					when 5 then 3
+					when 2 then 1
+			)  - gInitial90DegreeRotations + autoAlignToFace stampData.CurrentParts
 
 
 		ry = math.pi / 2
@@ -1104,14 +1095,14 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 		-- don't drag into terrain
 		if clusterPartsInRegion minBB + insertBoundingBoxOverlapVector, maxBB - insertBoundingBoxOverlapVector
-			if lastTarget.CFrame
-				if stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
-					theClusterMaterial = stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
-					if theClusterMaterial\IsA "Vector3Value"
-						stampClusterMaterial = stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
-						if stampClusterMaterial
-							stampClusterMaterial = clusterMat
+			if lastTarget.CFrame and
+				stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
 
+				theClusterMaterial = stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
+				if theClusterMaterial\IsA "Vector3Value"
+					stampClusterMaterial = stampData.CurrentParts\FindFirstChild "ClusterMaterial", true
+					if stampClusterMaterial
+						stampClusterMaterial = clusterMat
 
 			return
 
@@ -1288,7 +1279,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		if game\FindFirstChild"Players" and
 			game.Players["LocalPlayer"] and
 			game.Players.LocalPlayer\FindFirstChild "PlayerGui"
-			
+
 			gui = game.Players.LocalPlayer.PlayerGui
 
 		return if not stampData["ErrorBox"]
@@ -1399,7 +1390,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		for _, script in pairs scripts
 			if not script.Disabled
 				script.Disabled = true
-				stampData.DisabledScripts[#stampData.DisabledScripts + 1] = script
+				stampData.DisabledScripts[] = script
 
 
 		for _, part in pairs parts
@@ -1502,8 +1493,8 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 		skipThisCell = false
 
-		for b = 1, #cellBlockingParts
-			if isBlocker cellBlockingParts[b]
+		for b in *cellBlockingParts
+			if isBlocker b
 				skipThisCell = true
 				break
 
@@ -1512,15 +1503,15 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 			-- pop players up above any set cells
 			alreadyPushedUp = {}
 			-- if no blocking model below, then see if stamping on top of a character
-			for b = 1, #cellBlockingParts
-				if cellBlockingParts[b].Parent and
-					not alreadyPushedUp[cellBlockingParts[b].Parent] and
-					cellBlockingParts[b].Parent\FindFirstChild "Humanoid" and
-					cellBlockingParts[b].Parent\FindFirstChild"Humanoid"\IsA "Humanoid"
+			for b in *cellBlockingParts
+				if b.Parent and
+					not alreadyPushedUp[b.Parent] and
+					b.Parent\FindFirstChild "Humanoid" and
+					b.Parent\FindFirstChild"Humanoid"\IsA "Humanoid"
 
 					-----------------------------------------------------------------------------------
-					blockingPersonTorso = cellBlockingParts[b].Parent\FindFirstChild "Torso"
-					alreadyPushedUp[cellBlockingParts[b].Parent] = true
+					blockingPersonTorso = b.Parent\FindFirstChild "Torso"
+					alreadyPushedUp[b.Parent] = true
 
 					if blockingPersonTorso
 						-- if so, let's push the person upwards so they pop on top of the stamped model/part (but only if there's space above them)
@@ -1543,14 +1534,16 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 			if checkHighScalabilityStamp -- check to see if cell is in region, if not we'll skip set
 				if allowedStampRegion
 					cellPos = cellCenterToWorld game.Workspace.Terrain, cellPos.X, cellPos.Y, cellPos.Z
-					if (cellPos.X + 2 > allowedStampRegion.CFrame.p.X + allowedStampRegion.Size.X / 2) or
-						(cellPos.X - 2 < allowedStampRegion.CFrame.p.X - allowedStampRegion.Size.X / 2) or
-						(cellPos.Y + 2 > allowedStampRegion.CFrame.p.Y + allowedStampRegion.Size.Y / 2) or
-						(cellPos.Y - 2 < allowedStampRegion.CFrame.p.Y - allowedStampRegion.Size.Y / 2) or
-						(cellPos.Z + 2 > allowedStampRegion.CFrame.p.Z + allowedStampRegion.Size.Z / 2) or
-						(cellPos.Z - 2 < allowedStampRegion.CFrame.p.Z - allowedStampRegion.Size.Z / 2)
+					with allowedStampRegion
+						if (cellPos.X + 2 > .CFrame.p.X + .Size.X / 2) or
+							(cellPos.X - 2 < .CFrame.p.X - .Size.X / 2) or
+							(cellPos.Y + 2 > .CFrame.p.Y + .Size.Y / 2) or
+							(cellPos.Y - 2 < .CFrame.p.Y - .Size.Y / 2) or
+							(cellPos.Z + 2 > .CFrame.p.Z + .Size.Z / 2) or
+							(cellPos.Z - 2 < .CFrame.p.Z - .Size.Z / 2)
 
-						canSetCell = false
+							canSetCell = false
+
 			return canSetCell
 
 		false
@@ -1621,20 +1614,20 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 					math.floor lines[i].Z + 0.5
 				) -- round to integers
 
-				if lines[i].X > 0
-					xInc[i] = 1
+				xInc[i] = if lines[i].X > 0
+					1
 				elseif lines[i].X < 0
-					xInc[i] = -1
+					-1
 
-				if lines[i].Y > 0
-					yInc[i] = 1
+				yInc[i] = if lines[i].Y > 0
+					1
 				elseif lines[i].Y < 0
-					yInc[i] = -1
+					-1
 
-				if lines[i].Z > 0
-					zInc[i] = 1
+				zInc[i] = if lines[i].Z > 0
+					1
 				elseif lines[i].Z < 0
-					zInc[i] = -1
+					-1
 
 
 				incrementVect[i] = Vector3.new xInc[i], yInc[i], zInc[i]
@@ -1767,15 +1760,12 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 			error "Error: RbxStamper.DoStamperMouseUp: Mouse is of type", Mouse.className, "should be of type Mouse"
 			return false
 
-
 		if not stampData.Dragger
 			error "Error: RbxStamper.DoStamperMouseUp: stampData.Dragger is nil"
 			return false
 
-
 		if not HighScalabilityLine
 			return false
-
 
 		local checkHighScalabilityStamp
 		if stampInModel
@@ -1834,23 +1824,23 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 				100
 			)
 
-			for b = 1, #blockingParts
-				if isBlocker blockingParts[b]
+			for b in *blockingParts
+				if isBlocker b
 					flashRedBox!
 					return false
 
 
 			alreadyPushedUp = {}
 			-- if no blocking model below, then see if stamping on top of a character
-			for b = 1, #blockingParts
-				if blockingParts[b].Parent and
-					not alreadyPushedUp[blockingParts[b].Parent] and
-					blockingParts[b].Parent\FindFirstChild"Humanoid" and
-					blockingParts[b].Parent\FindFirstChild"Humanoid"\IsA "Humanoid"
+			for b in *blockingParts
+				if b.Parent and
+					not alreadyPushedUp[b.Parent] and
+					b.Parent\FindFirstChild"Humanoid" and
+					b.Parent\FindFirstChild"Humanoid"\IsA "Humanoid"
 
 					---------------------------------------------------------------------------
-					blockingPersonTorso = blockingParts[b].Parent\FindFirstChild "Torso"
-					alreadyPushedUp[blockingParts[b].Parent] = true
+					blockingPersonTorso = b.Parent\FindFirstChild "Torso"
+					alreadyPushedUp[b.Parent] = true
 
 					if blockingPersonTorso
 						-- if so, let's push the person upwards so they pop on top of the stamped model/part (but only if there's space above them)
@@ -1873,13 +1863,14 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 
 		-- something will be stamped! so set the "StampedSomething" toggle to true
-		if game\FindFirstChild "Players"
-			if game.Players["LocalPlayer"]
-				if game.Players.LocalPlayer["Character"]
-					localChar = game.Players.LocalPlayer.Character
-					stampTracker = localChar\FindFirstChild "StampTracker"
-					if stampTracker and not stampTracker.Value
-						stampTracker.Value = true
+		if game\FindFirstChild"Players" and
+			game.Players["LocalPlayer"] and
+			game.Players.LocalPlayer["Character"]
+
+			localChar = game.Players.LocalPlayer.Character
+			stampTracker = localChar\FindFirstChild "StampTracker"
+			if stampTracker and not stampTracker.Value
+				stampTracker.Value = true
 
 
 		-- if we drew a line of mega parts, stamp them out
@@ -1986,7 +1977,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		getPlayer = ->
 			if game\FindFirstChild"Players" and
 				game.Players["LocalPlayer"]
-				
+
 				return game.Players.LocalPlayer
 
 
@@ -2073,11 +2064,11 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		setSeatEnabledStatus stampData.CurrentParts, true
 
 		with stampData
-			.TransparencyTable = nil
-			.ArchivableTable = nil
-			.MaterialTable = nil
-			.CanCollideTable = nil
-			.AnchoredTable = nil
+			.TransparencyTable = \
+			.ArchivableTable = \
+			.MaterialTable = \
+			.CanCollideTable = \
+			.AnchoredTable = \
 			.SurfaceTypeTable = nil
 
 		-- ...and tag all inserted models for subsequent origin identification
@@ -2105,8 +2096,8 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 
 		-- clear out more data
-		stampData.DisabledScripts = nil
-		stampData.Dragger = nil
+		stampData.DisabledScripts = \
+		stampData.Dragger = \
 		stampData.CurrentParts = nil
 
 		try
@@ -2144,9 +2135,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 		surfaceNormal = isPositive * modelCFrame\vectorToWorldSpace AXIS_VECTORS[whichSurface]
 
-		for i = 1, #parts
-			currPart = parts[i]
-
+		for currPart in *parts
 			-- now just need to find which surface of currPart most closely match surfaceNormal and then set that to Unjoinable
 			surfaceNormalInLocalCoords = currPart.CFrame\vectorToObjectSpace surfaceNormal
 			if math.abs(surfaceNormalInLocalCoords.X) > math.abs surfaceNormalInLocalCoords.Y
@@ -2186,17 +2175,14 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		if unjoinableTag
 			for unjoinableSurface in string.gmatch unjoinableTag.Value, "[^,]*"
 				if tonumber unjoinableSurface
-					if clone\IsA "Model"
-						prepareUnjoinableSurfaces clone\GetModelCFrame!, parts, tonumber unjoinableSurface
+					prepareUnjoinableSurfaces if clone\IsA "Model"
+						clone\GetModelCFrame!, parts, tonumber unjoinableSurface
 					else
-						prepareUnjoinableSurfaces clone.CFrame, parts, tonumber unjoinableSurface
+						clone.CFrame, parts, tonumber unjoinableSurface
 
 
 		stampData.ErrorBox = errorBox
-		clone.Parent = if stampInModel
-			stampInModel
-		else
-			game.Workspace
+		clone.Parent = stampInModel or game.Workspace
 
 		if clone\FindFirstChild "ClusterMaterial", true -- extract all info from vector
 			clusterMaterial = clone\FindFirstChild "ClusterMaterial", true
@@ -2211,10 +2197,10 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 			mouseTarget = Mouse.Target
 
 
-		if mouseTarget and not mouseTarget.Parent\FindFirstChild"RobloxModel"?
-			game.JointsService\SetJoinAfterMoveTarget mouseTarget
+		game.JointsService\SetJoinAfterMoveTarget if mouseTarget and not mouseTarget.Parent\FindFirstChild"RobloxModel"?
+			mouseTarget
 		else
-			game.JointsService\SetJoinAfterMoveTarget nil
+			nil
 
 		game.JointsService\ShowPermissibleJoints!
 
@@ -2225,7 +2211,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 		stampData.Dragger = Instance.new "Dragger"
 
 		--Begin a movement by faking a MouseDown signal
-		stampData.Dragger\MouseDown parts[1], Vector3.new 0, 0, 0, parts
+		stampData.Dragger\MouseDown parts[1], Vector3.new(0, 0, 0), parts
 		stampData.Dragger\MouseUp!
 
 		DoStamperMouseMove Mouse

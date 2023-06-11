@@ -5,7 +5,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -59,7 +59,7 @@ smallScreenThreshold = 450
 
 -- user facing images
 assetUrls = {}
-assetUrl = (str) -> "http://www.roblox.com/Asset/?id=#{str}"
+assetUrl = (str) -> "http://banland.xyz/asset/?id=#{str}"
 errorImageUrl = assetUrl "42557901"
 table.insert assetUrls, errorImageUrl
 buyImageUrl = assetUrl "104651457"
@@ -115,21 +115,22 @@ getRbxUtility = ->
 
 
 preloadAssets = ->
-	for i = 1, #assetUrls
-		game\GetService"ContentProvider"\Preload assetUrls[i]
+	for i in *assetUrls
+		game\GetService"ContentProvider"\Preload i
 
 
 ----------------------------- End Util Functions ---------------------------------------------
 
 -------------------------------- Accept/Decline Functions --------------------------------------
 removeCurrentPurchaseInfo = ->
-	currentAssetId = nil
-	currentCurrencyType = nil
-	currentCurrencyAmount = nil
-	currentEquipOnPurchase = nil
-	currentProductId = nil
-	currentProductInfo = nil
-	currentServerResponseTable = nil
+	currentAssetId \
+	= currentCurrencyType \
+	= currentCurrencyAmount \
+	= currentEquipOnPurchase \
+	= currentProductId \
+	= currentProductInfo \
+	= currentServerResponseTable \
+	= nil
 
 	checkingPlayerFunds = false
 
@@ -157,12 +158,12 @@ setButtonsVisible = (...) ->
 	argCount = select "#", ...
 
 	bodyFrameChildren = purchaseDialog.BodyFrame\GetChildren!
-	for i = 1, #bodyFrameChildren
-		if bodyFrameChildren[i]\IsA "GuiButton"
-			bodyFrameChildren[i].Visible = false
+	for i in *bodyFrameChildren
+		if i\IsA "GuiButton"
+			i.Visible = false
 			for j = 1, argCount
-				if bodyFrameChildren[i] == args[j]
-					bodyFrameChildren[i].Visible = true
+				if i == args[j]
+					i.Visible = true
 					break
 
 signalPromptEnded = (isSuccess) ->
@@ -270,12 +271,11 @@ updatePurchasePromptData = (_) ->
 
 	purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text = newItemDescription
 
+	purchaseDialog.BodyFrame.ItemPreview.Image = "#{baseUrl}thumbs/asset.ashx?assetid=" ..
 	if purchasingConsumable
-		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl ..
-			"thumbs/asset.ashx?assetid=#{currentProductInfo["IconImageAssetId"]}&x=100&y=100&format=png"
+		"#{currentProductInfo["IconImageAssetId"]}&x=100&y=100&format=png"
 	else
-		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl ..
-			"thumbs/asset.ashx?assetid=#{currentAssetId}&x=100&y=100&format=png"
+		"#{currentAssetId}&x=100&y=100&format=png"
 
 -- figure out what currency to use based on the currency you can actually sell the item in and what the script specified
 setCurrencyAmountAndType = (priceInRobux, priceInTix) ->
@@ -299,7 +299,7 @@ setCurrencyAmountAndType = (priceInRobux, priceInTix) ->
 		return false
 
 
-	if not currentCurrencyAmount?
+	if currentCurrencyAmount == nil
 		return false
 	true
 
@@ -357,7 +357,7 @@ updateAfterBalanceText = (playerBalance, notRightBc) ->
 	-- check to see if we have enough of the desired currency to allow a purchase, if not we need to prompt user to buy robux
 	if not notRightBc
 		if afterBalanceNumber < 0 and keyWord == "robux"
-			if not openBuyCurrencyWindowConnection?
+			if openBuyCurrencyWindowConnection == nil
 				openBuyCurrencyWindowConnection = purchaseDialog.BodyFrame.AfterBalanceButton.MouseButton1Click\connect openBuyCurrencyWindow
 
 			purchaseDialog.BodyFrame.AfterBalanceButton.Text = "You need " ..
@@ -400,7 +400,7 @@ canPurchaseItem = ->
 			currentProductInfo = game\GetService"MarketplaceService"\GetProductInfo currentAssetId
 
 
-	if not currentProductInfo? or not success
+	if currentProductInfo == nil or not success
 		descText = "In-game sales are temporarily disabled. Please try again later."
 		return true, nil, nil, true, descText
 
@@ -594,8 +594,7 @@ showPurchasePrompt = ->
 						doPlayerFundsCheck true
 
 				--HideFunction
-				->
-					.Visible = false
+				-> .Visible = false
 		)
 	else -- we failed in prompting a purchase, do a decline
 		doDeclinePurchase!
@@ -604,18 +603,15 @@ showPurchasePrompt = ->
 -- given an asset id, this function will grab that asset from the website, and return the first "Tool" object found inside it
 getToolAssetID = (assetID) ->
 	newTool = game\GetService"InsertService"\LoadAsset assetID
-	if not newTool
-		return nil
+	return if not newTool
 
 	if newTool\IsA "Tool"
 		return newTool
 
 	toolChildren = newTool\GetChildren!
-	for i = 1, #toolChildren
-		if toolChildren[i]\IsA "Tool"
-			return toolChildren[i]
-	nil
-
+	for i in *toolChildren
+		if i\IsA "Tool"
+			return i
 
 -- the user tried to purchase by clicking the purchase button, but something went wrong.
 -- let them know their account was not charged, and that they do not own the item yet.
@@ -652,7 +648,7 @@ startSpinner = ->
 			pos = 0
 
 			while pos < 8
-				spinnerIcons[pos + 1].Image = "http://www.roblox.com/Asset/?id=" ..
+				spinnerIcons[pos + 1].Image = "http://banland.xyz/asset/?id=" ..
 				if pos == spinPos or pos == (spinPos + 1) % 8
 					"45880668"
 				else
@@ -723,11 +719,12 @@ doAcceptPurchase = (_) ->
 	response = getRbxUtility!.DecodeJSON response
 
 	if response
-		if response["success"] == false
-			if response["status"] ~= "AlreadyOwned"
-				print "web return response of fail on purchase of", currentAssetId, currentProductId
-				purchaseFailed response["status"] == "EconomyDisabled"
-				return
+		if response["success"] == false and
+			response["status"] ~= "AlreadyOwned"
+
+			print "web return response of fail on purchase of", currentAssetId, currentProductId
+			purchaseFailed response["status"] == "EconomyDisabled"
+			return
 
 	else
 		print "web return response of non parsable JSON on purchase of", currentAssetId
@@ -737,8 +734,7 @@ doAcceptPurchase = (_) ->
 
 	-- check to see if this item was bought, and if we want to equip it (also need to make sure the asset type was gear)
 	if currentEquipOnPurchase and success and currentAssetId and tonumber(currentProductInfo["AssetTypeId"]) == 19
-		tool = getToolAssetID tonumber currentAssetId
-		if tool
+		if tool = getToolAssetID tonumber currentAssetId
 			tool.Parent = game.Players.LocalPlayer.Backpack
 
 
@@ -803,7 +799,7 @@ createSpinner = (size, position, parent) ->
 			)
 			BackgroundTransparency: 1
 			ZIndex: 10
-			Image: "http://www.roblox.com/Asset/?id=45880710"
+			Image: "http://banland.xyz/asset/?id=45880710"
 			Parent: spinnerFrame
 
 		spinnerIcons[spinnerNum] = spinnerImage
@@ -1054,9 +1050,9 @@ cutSizeInHalfRecursive = (_) ->
 	--[[changeSize instance,0.5
 
 	children = instance\GetChildren!
-	for i = 1, #children
-		cutSizeInHalfRecursive children[i]
-	end]]
+	for i in *children
+		cutSizeInHalfRecursive i
+	]]
 
 
 doubleSizeRecursive = (_) ->
@@ -1064,9 +1060,9 @@ doubleSizeRecursive = (_) ->
 	--[[changeSize instance,2
 
 	children = instance\GetChildren!
-	for i = 1, #children
-		doubleSizeRecursive children[i]
-	end]]
+	for i in *children
+		doubleSizeRecursive i
+	]]
 
 -- depending on screen size, we need to change the gui
 changeGuiToScreenSize = (smallScreen) ->
@@ -1134,16 +1130,13 @@ if enableBrowserWindowClosedEvent
 
 Game.CoreGui.RobloxGui.Changed\connect ->
 	nowIsSmallScreen = game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold
-	if nowIsSmallScreen and not isSmallScreen
-		changeGuiToScreenSize true
+	changeGuiToScreenSize if nowIsSmallScreen and not isSmallScreen
+		true
 	elseif not nowIsSmallScreen and isSmallScreen
-		changeGuiToScreenSize false
-
+		false
 
 	isSmallScreen = nowIsSmallScreen
 
-
-isSmallScreen = game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold
-if isSmallScreen
+if isSmallScreen = game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold
 	changeGuiToScreenSize true
 

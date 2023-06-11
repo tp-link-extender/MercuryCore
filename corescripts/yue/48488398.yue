@@ -41,7 +41,7 @@ makePopupInvisible = ->
 
 makeFriend = (fromPlayer, toPlayer) ->
 	popup = script.Parent\FindFirstChild "Popup"
-	return if not popup? -- there is no popup!
+	return if popup == nil -- there is no popup!
 	return if popup.Visible -- currently popping something, abort!
 	return if friendRequestBlacklist[fromPlayer] -- previously cancelled friend request, we don't want it!
 
@@ -158,8 +158,7 @@ if teleportEnabled
 		local clickCon
 		clickCon = popup.OKButton.MouseButton1Click\connect ->
 			game\GetService"TeleportService"\TeleportCancel!
-			if clickCon
-				clickCon\disconnect!
+			clickCon?\disconnect!
 			game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup"
 			popup\TweenSize(
 				UDim2.new(0, 0, 0, 0),

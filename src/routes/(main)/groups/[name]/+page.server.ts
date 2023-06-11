@@ -5,8 +5,6 @@ import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
-	console.time("group")
-
 	const group = await prisma.group.findUnique({
 		where: {
 			name: params.name,
@@ -33,7 +31,6 @@ export async function load({ locals, params }) {
 			group: group.name,
 		}
 
-		console.timeEnd("group")
 		return {
 			name: group.name,
 			owner: group.owner,
@@ -77,14 +74,12 @@ export const actions = {
 		if (!group) return fail(400, { msg: "User not found" })
 
 		const data = await formData(request)
-		const action = data.action
+		const { action } = data
 
 		const query = {
 			user: user.username,
 			group: group.name,
 		}
-
-		console.log("Action:", action)
 
 		try {
 			switch (action) {

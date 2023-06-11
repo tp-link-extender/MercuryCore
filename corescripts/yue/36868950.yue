@@ -7,7 +7,7 @@ return if not controlFrame
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -73,7 +73,7 @@ setUpListeners = (frameToListen) ->
 		killTip frameToListen
 
 createSettingsButtonTip = (parent) ->
-	if not parent?
+	if parent == nil
 		parent = bottomLeftControl\FindFirstChild "SettingsButton"
 
 
@@ -91,35 +91,35 @@ wait 5 -- make sure we are loaded in, won't need tool tips for first 5 seconds a
 
 bottomLeftChildren = bottomLeftControl\GetChildren!
 
-for i = 1, #bottomLeftChildren
-	if bottomLeftChildren[i].Name == "Exit"
+for i in *bottomLeftChildren
+	if i.Name == "Exit"
 
 		with exitTip = frameTip\clone!
 			.RobloxLocked = true
 			.Text = "Leave Place"
 			.Position = UDim2.new 0, 0, -1, 0
 			.Size = UDim2.new 1, 0, 1, 0
-			.Parent = bottomLeftChildren[i]
+			.Parent = i
 			setUpListeners exitTip
 
-	elseif bottomLeftChildren[i].Name == "SettingsButton"
-		createSettingsButtonTip bottomLeftChildren[i]
+	elseif i.Name == "SettingsButton"
+		createSettingsButtonTip i
 
 ---------------- set up Bottom Right Tool Tips -------------------------
 
 bottomRightChildren = bottomRightControl\GetChildren!
 
-for i = 1, #bottomRightChildren
-	if bottomRightChildren[i].Name\find"Camera"?
+for i in *bottomRightChildren
+	if i.Name\find"Camera"?
 		with cameraTip = frameTip\clone!
 			.RobloxLocked = true
 			.Text = "Camera View"
 
-			.Position = if bottomRightChildren[i].Name\find "Zoom"
+			.Position = if i.Name\find "Zoom"
 				UDim2.new -1, 0, -1.5
 			else
 				UDim2.new 0, 0, -1.5, 0
 
 			.Size = UDim2.new 2, 0, 1.25, 0
-			.Parent = bottomRightChildren[i]
+			.Parent = i
 			setUpListeners cameraTip

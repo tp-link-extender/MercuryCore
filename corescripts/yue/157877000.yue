@@ -3,7 +3,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -91,8 +91,8 @@ initializeDeveloperConsole = ->
 				Position: UDim2.new 0, 6, 0, 6
 				Size: UDim2.new 0.8, 0, 0.8, 0
 				Rotation: 135
-				Image: "http://www.roblox.com/Asset?id=151205813"
-		
+				Image: "http://banland.xyz/asset?id=151205813"
+
 		* New "TextButton", "LocalConsole"
 			BackgroundColor3: Color3.new 0, 0, 0
 			BackgroundTransparency: 0.6
@@ -248,7 +248,7 @@ initializeDeveloperConsole = ->
 				Position: UDim2.new 0, 3, 0, 3
 				Size: UDim2.new 0, 14, 0, 14
 				Rotation: 180
-				Image: "http://www.roblox.com/Asset?id=151205813"
+				Image: "http://banland.xyz/asset?id=151205813"
 
 		* New "ImageButton", "Up"
 			BackgroundColor3: Color3.new 0, 0, 0
@@ -260,7 +260,7 @@ initializeDeveloperConsole = ->
 				BackgroundTransparency: 1
 				Position: UDim2.new 0, 3, 0, 3
 				Size: UDim2.new 0, 14, 0, 14
-				Image: "http://www.roblox.com/Asset?id=151205813"
+				Image: "http://banland.xyz/asset?id=151205813"
 
 	Dev_ScrollArea = New "Frame", "ScrollArea"
 		Parent: Dev_ScrollBar
@@ -279,7 +279,7 @@ initializeDeveloperConsole = ->
 				Position: UDim2.new 0, 0, 0.5, -8
 				Rotation: 180
 				Size: UDim2.new 1, 0, 0, 16
-				Image: "http://www.roblox.com/Asset?id=151205881"
+				Image: "http://banland.xyz/asset?id=151205881"
 
 
 	Dev_TextBox = New "Frame", "TextBox"
@@ -308,7 +308,7 @@ initializeDeveloperConsole = ->
 			Position: UDim2.new 0, 0, 0, 0
 			Size: UDim2.new 1, 0, 1, 0
 			Rotation: 0
-			Image: "http://www.roblox.com/Asset?id=152093917"
+			Image: "http://banland.xyz/asset?id=152093917"
 
 	Dev_TitleBar = New "Frame", "TitleBar"
 		Parent: Dev_Container
@@ -328,7 +328,7 @@ initializeDeveloperConsole = ->
 				BackgroundTransparency: 1
 				Position: UDim2.new 0, 3, 0, 3
 				Size: UDim2.new 0, 14, 0, 14
-				Image: "http://www.roblox.com/Asset?id=151205852"
+				Image: "http://banland.xyz/asset?id=151205852"
 
 		* New "TextButton", "TextButton"
 			BackgroundColor3: Color3.new 0, 0, 0
@@ -349,12 +349,8 @@ initializeDeveloperConsole = ->
 			TextYAlignment: Enum.TextYAlignment.Top
 
 	---Saved Mouse Information
-	local previousMousePos
-	local pPos
-
-	local previousMousePosResize
-	local pSize
-
+	local previousMousePos, pPos
+	local previousMousePosResize, pSize
 	local previousMousePosScroll
 
 	-- local pScrollHandle
@@ -365,8 +361,13 @@ initializeDeveloperConsole = ->
 	scrollDownIsDown = false
 
 	clean = ->
-		previousMousePos = pPos = previousMousePosResize = nil
-		pSize = previousMousePosScroll = pOffset = nil
+		previousMousePos \
+		= pPos \
+		= previousMousePosResize \
+		= pSize \
+		= previousMousePosScroll \
+		= pOffset \
+		= nil
 		-- pScrollHandle = nil
 		scrollUpIsDown = scrollDownIsDown = false
 
@@ -519,8 +520,8 @@ initializeDeveloperConsole = ->
 
 		posOffset = 0
 
-		for i = 1, #childMessages
-			childMessages[i].Visible = false
+		for i in *childMessages
+			i.Visible = false
 
 		for i = 1, #messageList
 			local message
@@ -856,8 +857,8 @@ initializeDeveloperConsole = ->
 
 	history = game\GetService"LogService"\GetLogHistory!
 
-	for i = 1, #history
-		AddLocalMessage history[i].message, history[i].messageType, history[i].timestamp
+	for i in *history
+		AddLocalMessage i.message, i.messageType, i.timestamp
 
 	with game\GetService"LogService"
 		.MessageOut\connect (message, messageType) ->

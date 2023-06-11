@@ -3,7 +3,7 @@ $load $FILE
 
 -- Heliodex's basic New function (basically a simplified version of melt)
 New = (className, name, props) ->
-	if not props? -- no name was provided
+	if props == nil -- no name was provided
 		props = name
 		name = nil
 
@@ -45,8 +45,8 @@ local updateCameraDropDownSelection
 local updateVideoCaptureDropDownSelection
 tweenTime = 0.2
 
-mouseLockLookScreenUrl = "http://www.roblox.com/asset?id=54071825"
-classicLookScreenUrl = "http://www.roblox.com/Asset?id=45915798"
+mouseLockLookScreenUrl = "http://banland.xyz/asset?id=54071825"
+classicLookScreenUrl = "http://banland.xyz/asset?id=45915798"
 
 hasGraphicsSlider = game\GetService"CoreGui".Version >= 5
 GraphicsQualityLevels = 10 -- how many levels we allow on graphics slider
@@ -88,9 +88,9 @@ resumeGameFunction = (shield) ->
 	)
 	delay tweenTime, ->
 		shield.Visible = false
-		for i = 1, #centerDialogs
-			centerDialogs[i].Visible = false
-			game.GuiService\RemoveCenterDialog centerDialogs[i]
+		for i in *centerDialogs
+			i.Visible = false
+			game.GuiService\RemoveCenterDialog i
 
 		game.GuiService\RemoveCenterDialog shield
 		settingsButton.Active = true
@@ -106,9 +106,9 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 		lastMenuSelection = {}
 
 	containerChildren = container\GetChildren!
-	for i = 1, #containerChildren
-		if containerChildren[i].Name == menuName
-			containerChildren[i].Visible = true
+	for i in *containerChildren
+		if i.Name == menuName
+			i.Visible = true
 			currentMenuSelection =
 				container: container
 				name: menuName
@@ -117,7 +117,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 
 			-- selectedMenu = true
 			if size and position
-				containerChildren[i]\TweenSizeAndPosition(
+				i\TweenSizeAndPosition(
 					size,
 					position,
 					Enum.EasingDirection.InOut,
@@ -126,7 +126,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			elseif size
-				containerChildren[i]\TweenSizeAndPosition(
+				i\TweenSizeAndPosition(
 					size,
 					UDim2.new(0.5, -size.X.Offset / 2, 0.5, -size.Y.Offset / 2),
 					Enum.EasingDirection.InOut,
@@ -135,7 +135,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			else
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(0, 0, 0, 0),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -145,7 +145,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 
 		else
 			if moveDirection == "left"
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(-1, -525, 0, 0),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -153,7 +153,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			elseif moveDirection == "right"
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(1, 525, 0, 0),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -161,7 +161,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			elseif moveDirection == "up"
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(0, 0, -1, -400),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -169,7 +169,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 					true
 				)
 			elseif moveDirection == "down"
-				containerChildren[i]\TweenPosition(
+				i\TweenPosition(
 					UDim2.new(0, 0, 1, 400),
 					Enum.EasingDirection.InOut,
 					Enum.EasingStyle.Sine,
@@ -178,7 +178,7 @@ goToMenu = (container, menuName, moveDirection, size, position) ->
 				)
 
 			delay tweenTime, ->
-				containerChildren[i].Visible = false
+				i.Visible = false
 
 
 resetLocalCharacter = ->
@@ -279,9 +279,9 @@ recordVideoClick = (recordVideoButton, stopRecordButton) ->
 backToGame = (buttonClicked, shield, settingsButton) ->
 	buttonClicked.Parent.Parent.Parent.Parent.Visible = false
 	shield.Visible = false
-	for i = 1, #centerDialogs
-		game.GuiService\RemoveCenterDialog centerDialogs[i]
-		centerDialogs[i].Visible = false
+	for i in *centerDialogs
+		game.GuiService\RemoveCenterDialog i
+		i.Visible = false
 
 	centerDialogs = {}
 	game.GuiService\RemoveCenterDialog shield
@@ -378,17 +378,17 @@ createHelpDialog = (baseZIndex) ->
 	buttons[2] = {}
 	buttons[2].Text = "Move"
 	buttons[2].Function = ->
-		image.Image = "http://www.roblox.com/Asset?id=45915811"
+		image.Image = "http://banland.xyz/asset?id=45915811"
 
 	buttons[3] = {}
 	buttons[3].Text = "Gear"
 	buttons[3].Function = ->
-		image.Image = "http://www.roblox.com/Asset?id=45917596"
+		image.Image = "http://banland.xyz/asset?id=45917596"
 
 	buttons[4] = {}
 	buttons[4].Text = "Zoom"
 	buttons[4].Function = ->
-		image.Image = "http://www.roblox.com/Asset?id=45915825"
+		image.Image = "http://banland.xyz/asset?id=45915825"
 
 
 	CreateTextButtons buttonRow, buttons, UDim.new(0, 0), UDim.new 1, 0
@@ -912,12 +912,12 @@ createGameSettingsMenu = (baseZIndex, _) ->
 			isAutoGraphics = active
 			if active
 				autoGraphicsButton.Text = "X"
-				betterQualityText.ZIndex = 1
-				betterQualityShortcut.ZIndex = 1
-				fasterShortcut.ZIndex = 1
-				fasterText.ZIndex = 1
-				graphicsSlider.Bar.ZIndex = 1
-				graphicsSlider.Bar.Slider.ZIndex = 1
+				betterQualityText.ZIndex = \
+				betterQualityShortcut.ZIndex = \
+				fasterShortcut.ZIndex = \
+				fasterText.ZIndex = \
+				graphicsSlider.Bar.ZIndex = \
+				graphicsSlider.Bar.Slider.ZIndex = \
 				graphicsSetter.ZIndex = 1
 				graphicsSetter.Text = "Auto"
 			else
@@ -997,13 +997,13 @@ createGameSettingsMenu = (baseZIndex, _) ->
 
 
 		hideManualGraphics = ->
-			betterQualityText.ZIndex = 1
-			betterQualityShortcut.ZIndex = 1
-			fasterShortcut.ZIndex = 1
-			fasterText.ZIndex = 1
-			graphicsSlider.Bar.ZIndex = 1
-			graphicsSlider.Bar.Slider.ZIndex = 1
-			graphicsSetter.ZIndex = 1
+			betterQualityText.ZIndex \
+			= betterQualityShortcut.ZIndex \
+			= fasterShortcut.ZIndex \
+			= fasterText.ZIndex \
+			= graphicsSlider.Bar.ZIndex \
+			= graphicsSlider.Bar.Slider.ZIndex \
+			= graphicsSetter.ZIndex = 1
 
 
 		translateSavedQualityLevelToInt = (savedQualityLevel) ->
@@ -1487,9 +1487,9 @@ if LoadLibrary
 						)
 					elseif #lastMenuSelection > 0
 						if #centerDialogs > 0
-							for i = 1, #centerDialogs
-								game.GuiService\RemoveCenterDialog centerDialogs[i]
-								centerDialogs[i].Visible = false
+							for i in *centerDialogs
+								game.GuiService\RemoveCenterDialog i
+								i.Visible = false
 
 							centerDialogs = {}
 
@@ -1710,13 +1710,13 @@ if LoadLibrary
 			spinnerImage = New "ImageLabel", "Spinner#{spinnerNum}"
 				Size: UDim2.new 0, 16, 0, 16
 				Position: UDim2.new(
-					0.5 + 0.3 * math.cos(math.rad(45 * spinnerNum)),
+					0.5 + 0.3 * math.cos(math.rad 45 * spinnerNum),
 					-8,
-					0.5 + 0.3 * math.sin(math.rad(45 * spinnerNum)),
+					0.5 + 0.3 * math.sin(math.rad 45 * spinnerNum),
 					-8
 				)
 				BackgroundTransparency: 1
-				Image: "http://www.roblox.com/Asset?id=45880710"
+				Image: "http://banland.xyz/asset?id=45880710"
 				Parent: spinnerFrame
 
 			spinnerIcons[spinnerNum] = spinnerImage
@@ -1737,9 +1737,9 @@ if LoadLibrary
 
 					while pos < 8
 						spinnerIcons[pos + 1].Image = if pos == spinPos or pos == ((spinPos + 1) % 8)
-							"http://www.roblox.com/Asset?id=45880668"
+							"http://banland.xyz/asset?id=45880668"
 						else
-							"http://www.roblox.com/Asset?id=45880710"
+							"http://banland.xyz/asset?id=45880710"
 
 						pos += 1
 
