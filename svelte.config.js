@@ -20,6 +20,8 @@ export default {
 					  // the sass compiler slows the dev server to a crawl
 					  resolve("node_modules/bootstrap/dist/css/bootstrap.css"),
 		},
+
+		moduleExtensions: [".js", ".ts", ".civet"],
 	},
 
 	vitePlugin: {

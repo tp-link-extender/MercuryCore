@@ -16,7 +16,7 @@ export default defineConfig({
 		sveltekit(),
 		civet({
 			outputExtension: ".ts",
-			include: "**/*.js",
+			include: "**/*.civet",
 		}),
 	],
 
