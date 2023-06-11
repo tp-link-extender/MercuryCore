@@ -47,7 +47,7 @@ export const actions = {
 		})
 
 		switch (action) {
-			case "create": {
+			case "create":
 				const limit = ratelimit(
 					form,
 					"createBanner",
@@ -82,7 +82,7 @@ export const actions = {
 				})
 
 				return message(form, "Banner created successfully!")
-			}
+
 			case "show":
 			case "hide":
 				if (!id)
