@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import Report from "$lib/components/Report.svelte"
 	import Modal from "$lib/components/Modal.svelte"
 	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 	import { writable } from "svelte/store"
 
 	export let data
-	export let form
 	const { user } = data
 	let modal = writable(false)
 
@@ -22,40 +20,51 @@
 		<div class="carousel slide col-md mb-3" />
 		<div class="flex col-md">
 			<div class="card rounded-none mb-4">
-				<div class="card-body">
-					<h1 class="light-text">{data.name}</h1>
-					<p class="light-text mt-2 mb-0">
-						<b>By:</b>
-						<a
-							href="/user/{data.creator.number}"
-							class="text-decoration-none">
-							{data.creator.username}
-						</a>
-					</p>
-					<p class="light-text mt-2 mb-0">
-						<b>Type:</b> {data.type}  
-					</p>
-					<p class="light-text mt-2 mb-0">
-						<b>Sold:</b> {data.sold} 
-						<span class="float-end">
-							<Report
-								user={data.creator.username}
+				{#if data.creatorUser}
+					<!-- always true for now -->
+					<div class="card-body">
+						<h1 class="light-text">{data.name}</h1>
+						<p class="light-text d-flex mt-2 mb-0">
+							<b>by</b>
+							<a
+								href="/user/{data.creatorUser?.number}"
+								class="user light-text text-decoration-none">
+								<span class="pfp bg-darker rounded-circle ms-1">
+									<img
+										src="/api/avatar/{data.creatorUser
+											?.username}"
+										alt={data.creatorUser?.username}
+										class="rounded-circle rounded-top-0" />
+								</span>
+								{data.creatorUser?.username}
+							</a>
+						</p>
+						<p class="light-text mt-2 mb-0">
+							<b>Type</b>
+							{data.type}
+						</p>
+						<p class="light-text mt-2 mb-0">
+							<b>{data.sold}</b> sold
+							<span class="float-end">
+								<Report
+								user={data.creatorUser.username}
 								url="/avatarshop/item/{data.id}" />
-						</span>
-					</p>
-				</div>
+							</span>
+						</p>
+					</div>
+				{/if}
 			</div>
-				<button
-					name="action"
-					on:click={() => modal.set(true)}
-					id="buy"
-					value="buy"
-					class="btn btn-lg w-100 float-left mb-4 {data.owned
-						? 'btn-secondary disabled'
-						: user?.currency < data.price
-						? 'btn-danger disabled'
-						: 'btn-success'}">
-						<h4 class="mb-0">
+			<button
+				name="action"
+				on:click={() => modal.set(true)}
+				id="buy"
+				value="buy"
+				class="btn btn-sm rounded-3 w-100 float-left mb-4 {data.owned
+					? 'btn-secondary disabled'
+					: user?.currency < data.price
+					? 'btn-danger disabled'
+					: 'btn-success'}">
+				<h4 class="mb-0">
 					{#if data.owned}
 						<i class="fa fa-gem" />
 						{data.price == 0 ? "Free" : data.price}
@@ -67,22 +76,22 @@
 						Buy for <i class="fa fa-gem" />
 						{data.price}
 					{/if}
-					</h4>
+				</h4>
+			</button>
+			{#if data.owned}
+				<button
+					name="action"
+					value="delete"
+					class="btn btn-sm w-100 float-right btn-danger">
+					[debug] delete from inventory
 				</button>
-				{#if data.owned}
-					<button
-						name="action"
-						value="delete"
-						class="btn btn-sm w-100 float-right btn-danger">
-						[debug] delete from inventory
-					</button>
-				{:else if data.price != 0}
-					<p class="light-text" id="notify">
-						Funds will be deducted from your account immediately
-						upon pressing the buy button.
-					</p>
-				{/if}
-				<!-- {#if form?.msg}
+			{:else if data.price != 0}
+				<p class="light-text" id="notify">
+					Funds will be deducted from your account immediately upon
+					pressing the buy button.
+				</p>
+			{/if}
+			<!-- {#if form?.msg}
 					<p class="text-danger">{form.msg}</p>
 				{/if} -->
 		</div>
@@ -121,14 +130,14 @@
 
 <Modal {modal}>
 	<div class="modal-body d-flex flex-column p-4">
-			<h1 class="text-center h5 light-text">
-				"{data.name}" is ready to play! Have fun!
-			</h1>
-			<a
-				class="btn btn-success"
-				href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
-				Download 2013
-			</a>
+		<h1 class="text-center h5 light-text">
+			"{data.name}" is ready to play! Have fun!
+		</h1>
+		<a
+			class="btn btn-success"
+			href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
+			Download 2013
+		</a>
 	</div>
 </Modal>
 
@@ -157,10 +166,12 @@
 	#notify
 		pointer-events: none
 
-	.pfp
+	.pfp, .pfp img
 		width: 3.5rem
 		height: 3.5rem
-		img
-			width: 3.5rem
-			height: 3.5rem
+
+	.user
+		.pfp, img
+			width: 1.5rem
+			height: 1.5rem
 </style>
