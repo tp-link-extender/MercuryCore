@@ -58,7 +58,7 @@ export async function load({ url, locals, params }) {
 	})
 
 	if (getPlace) {
-		const { session, user } = await authorise(locals)
+		const { user } = await authorise(locals)
 
 		if (
 			user.number != getPlace.ownerUser?.number &&
@@ -86,20 +86,16 @@ export async function load({ url, locals, params }) {
 				query,
 				true
 			),
-			likes: session
-				? roQuery(
-						"places",
-						"MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r",
-						query
-				  )
-				: false,
-			dislikes: session
-				? roQuery(
-						"places",
-						"MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r",
-						query
-				  )
-				: false,
+			likes: roQuery(
+				"places",
+				"MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r",
+				query
+			),
+			dislikes: roQuery(
+				"places",
+				"MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r",
+				query
+			),
 		}
 	}
 
