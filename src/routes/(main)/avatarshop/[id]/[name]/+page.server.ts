@@ -1,17 +1,59 @@
-export function load() {
+import { authorise } from "$lib/server/lucia"
+import { prisma } from "$lib/server/prisma"
+import { error } from "@sveltejs/kit"
+
+export async function load({ locals, params }) {
+	if (!/^\d+$/.test(params.id))
+		throw error(400, `Invalid place id: ${params.id}`)
+	const id = parseInt(params.id)
+
+	const getAsset = await prisma.asset.findUnique({
+		where: { id },
+		select: {
+			id: true,
+			name: true,
+			price: true,
+			description: true,
+			type: true,
+
+			creatorUser: {
+				select: {
+					username: true,
+					number: true,
+				},
+			},
+			owners: {
+				select: {
+					username: true,
+					number: true,
+				},
+			},
+			_count: {
+				select: {
+					owners: true,
+				},
+			},
+		},
+	})
+
+	if (!getAsset) throw error(404, "Not found")
+
+	const { user } = await authorise(locals)
+
+	const assetOwned = await prisma.asset.findUnique({
+		where: { id },
+		select: {
+			owners: {
+				where: {
+					id: user.id,
+				},
+			},
+		},
+	})
+
 	return {
-		likes: true,
-		dislikes: false,
-		likeCount: 30,
-		dislikeCount: 2,
-        price: 0,
-		name: "Lebron",
-        description: "hello",
-		creator: { username: "hello", number: 2 },
-        id: "32r52353646hfg",
-        owned: false,
-		sold: 2,
-		type: "T-Shirt",
-        owners: []
+		...getAsset,
+		owned: (assetOwned?.owners || []).length > 0,
+		sold: getAsset._count.owners,
 	}
 }

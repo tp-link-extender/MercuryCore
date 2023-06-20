@@ -151,8 +151,8 @@
 						<b>by</b>
 						<a
 							href="/user/{data.ownerUser?.number}"
-							class="user light-text text-decoration-none d-flex">
-							<span class="pfp bg-darker rounded-circle mx-1">
+							class="user light-text text-decoration-none">
+							<span class="pfp bg-darker rounded-circle ms-1">
 								<img
 									src="/api/avatar/{data.ownerUser?.username}"
 									alt={data.ownerUser?.username}
