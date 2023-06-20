@@ -1,7 +1,7 @@
 import { prisma } from "$lib/server/prisma"
 
 export async function load({ request, locals }) {
-	const { user, session } = await locals.validateUser()
+	const { session, user } = await locals.validateUser()
 	// Not authorise function, as we don't want
 	// to redirect to login page if not logged in
 

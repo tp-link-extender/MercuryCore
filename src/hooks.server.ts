@@ -41,9 +41,9 @@ function pathnameColour(pathname: string) {
 // Requests for prerendered pages do not trigger this hook.
 export async function handle({ event, resolve }) {
 	event.locals = auth.handleRequest(event)
-	const { user, session } = await event.locals.validateUser()
+	const { session, user } = await event.locals.validateUser()
 	const { pathname, search } = event.url
-	const { method, body } = event.request
+	const { method } = event.request
 
 	// Fancy logging: time, user, method, and path
 	console.log(
