@@ -2,7 +2,12 @@ import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 // import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
-import { imageAsset, tShirt, tShirtThumbnail, thumbnail } from "$lib/server/imageAsset"
+import {
+	imageAsset,
+	tShirt,
+	tShirtThumbnail,
+	thumbnail,
+} from "$lib/server/imageAsset"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import fs from "fs"
 import { superValidate } from "sveltekit-superforms/server"
@@ -48,14 +53,15 @@ export const actions = {
 
 		const asset = formData.get("asset") as File
 
-		if (asset) {
-			if (asset.size > 20e6)
-				return formError(
-					form,
-					["asset"],
-					["Asset must be less than 20MB in size"]
-				)
-		} else return formError(form, ["asset"], ["You must upload an asset"])
+		if (!asset)
+			return formError(form, ["asset"], ["You must upload an asset"])
+
+		if (asset.size > 20e6)
+			return formError(
+				form,
+				["asset"],
+				["Asset must be less than 20MB in size"]
+			)
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
@@ -85,7 +91,6 @@ export const actions = {
 					["type"],
 					["Cannot upload this type of asset yet"]
 				)
-				break
 
 			case 12: // Pants
 				return formError(
@@ -93,22 +98,21 @@ export const actions = {
 					["type"],
 					["Cannot upload this type of asset yet"]
 				)
-				break
 
 			case 13: // Decal
-			try {
-				saveImages = await Promise.all([
-					imageAsset(asset),
-					thumbnail(asset),
-				])
-			} catch (e) {
-				console.log(e)
-				return formError(
-					form,
-					["asset"],
-					["Asset failed to upload"]
-				)
-			}
+				try {
+					saveImages = await Promise.all([
+						imageAsset(asset),
+						thumbnail(asset),
+					])
+				} catch (e) {
+					console.log(e)
+					return formError(
+						form,
+						["asset"],
+						["Asset failed to upload"]
+					)
+				}
 		}
 
 		const { id, imageAssetId }: { id: number; imageAssetId: any } =
