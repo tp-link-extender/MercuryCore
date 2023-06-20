@@ -90,7 +90,7 @@
 	</div>
 
 	<div class="row">
-		<div class="col-xl-2 col-lg-3">
+		<div class="col-xl-2 col-lg-3 mb-2">
 			<h1 class="light-text h3">Filters</h1>
 			<p class="light-text mb-0">Sort by:</p>
 			<div class="form-check">
