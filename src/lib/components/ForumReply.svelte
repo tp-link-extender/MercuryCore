@@ -90,7 +90,7 @@
 								.author.username == postAuthorName
 								? ''
 								: 'light-text'}">
-							<span class="fw-bold">
+							<span class="fw-bold" class:text-primary={reply.author.username == postAuthorName}>
 								{reply.author.username}
 								{#if reply.author.username == postAuthorName}
 									<i class="fa fa-microphone ms-2" />
@@ -297,6 +297,18 @@
 	.userlink
 		margin-top: 1px
 		transition: color 0.2s
+		// &:hover
+		// 	color: var(--accent3)
+
+		span
+			transition: color 0.2s
+			&:hover
+				color: var(--grey-text) !important
+
+		span.text-primary:hover
+			color: var(--accent-text) !important
+
+
 
 	.user
 		align-items: center 
