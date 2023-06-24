@@ -137,7 +137,6 @@
 						{$errors.status || $message || ""}
 					</p>
 					{#each data.feed.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
-						<!-- |global is not mentioned anywhere in the Svelte docs, yet it is exactly what is needed here. -->
 						<div
 							in:fade|global={{ num, total: data.feed.length }}
 							class="card mb-2">
@@ -188,7 +187,7 @@
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
 							<a
-								in:fade={{ num, total: data.friends.length }}
+								in:fade|global={{ num, total: data.friends.length }}
 								class="px-2 mb-2 text-center light-text text-decoration-none"
 								href="/user/{friend.number}">
 								<div class="position-relative mb-2">
@@ -243,7 +242,7 @@
 					<div class="card-body row">
 						{#each news as thing, num}
 							<div
-								in:fade={{ num, total: news.length }}
+								in:fade|global={{ num, total: news.length }}
 								class="p-1 col-xl-4 col-lg-6 col-12">
 								<div class="card light-text h-100">
 									<div class="card-body p-2">
