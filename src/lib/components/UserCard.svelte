@@ -17,7 +17,7 @@
 </script>
 
 <a
-	in:fade={{ num, total, max: 12 }}
+	in:fade|global={{ num, total, max: 12 }}
 	class="card light-text h-100 w-100 d-flex flex-row bg-darker"
 	href="/user/{user.number}">
 	<div class="p-4">
