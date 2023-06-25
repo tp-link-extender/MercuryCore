@@ -20,7 +20,7 @@
 <div class="container mt-5 d-grid">
 	{#each data.users as user, num}
 		<div
-			in:fade={{ num, total: data.users.length, max: 12 }}
+			in:fade|global={{ num, total: data.users.length, max: 12 }}
 			class="card bg-darker light-text h-100 w-100 d-flex flex-col">
 			<div class="d-flex flex-row">
 				<a class="p-4 pe-2" href="/user/{user.number}">

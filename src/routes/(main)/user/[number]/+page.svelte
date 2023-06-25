@@ -158,6 +158,10 @@
 					<h2 class="h4 light-text">Creations</h2>
 					{#each data.places as place, num}
 						<div
+							in:fade|global={{
+								num,
+								total: data.places.length,
+							}}
 							class="d-collapse d-collapse light-text bg-darker mb-2 rounded-3">
 							<input type="radio" name="accordion" />
 							<div class="d-collapse-title p-2">
@@ -165,10 +169,6 @@
 							</div>
 							<div class="d-collapse-content">
 								<a
-									in:fade={{
-										num,
-										total: data.places.length,
-									}}
 									class="card bg-darker shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
 									href="/place/{place.id}/{place.name}">
 									<div class="row">
