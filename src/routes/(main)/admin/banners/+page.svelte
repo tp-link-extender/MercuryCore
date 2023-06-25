@@ -116,7 +116,7 @@
 									type="checkbox"
 									name="bannerTextLight"
 									id="bannerTextLight"
-									class="valid form-check-input" />
+									class="form-check-input valid" />
 							</div>
 						</div>
 						<button

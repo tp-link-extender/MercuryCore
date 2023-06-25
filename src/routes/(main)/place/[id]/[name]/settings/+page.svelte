@@ -322,7 +322,7 @@
 					<div class="col-md-9">
 						<input
 							bind:checked={$form.privateServer}
-							class="form-check-input"
+							class="form-check-input valid"
 							name="privateServer"
 							type="checkbox"
 							id="privateServer" />
