@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
+	import AdminLink from "$lib/components/AdminLink.svelte"
 
 	const permissions = [
 		[], // index from 1
@@ -10,7 +11,27 @@
 		["crimson", "fa-scale-balanced", "Administrator"],
 	]
 
-	let diskSpace: any
+	const panel: { [k: string]: [string, string, string][] } = {
+		Moderation: [
+			["Moderate User", "/admin/moderation", "fas fa-user-slash"],
+			// ["Report Abuse", "#", "far fa-flag"],
+			// ["Asset Approval", "#", "fas fa-file-circle-check"],
+		],
+		Economy: [
+			// ["Award Currency", "#", "far fa-gem"],
+			// ["Create New Asset", "#", "fas fa-file-circle-plus"],
+			[
+				"Transactions",
+				"/admin/transactions",
+				"fas fa-money-bill-transfer",
+			],
+		],
+	}
+
+	let diskSpace: {
+		free: number
+		size: number
+	}
 	async function getDiskSpace() {
 		const data = JSON.parse(
 			(
@@ -22,14 +43,24 @@
 				).json()
 			).data
 		)
-		return diskSpace = {
+		return (diskSpace = {
 			free: data[1],
 			size: data[2],
-		}
+		})
 	}
 
 	export let data
 	const { user } = data
+
+	if (user?.permissionLevel == 5) {
+		panel.Economy.push(["Daily Stipend", "/admin/stipend", "far fa-clock"])
+		panel.Administration = [
+			["Banners", "/admin/banners", "fas fa-bullhorn"],
+			["Accounts", "/admin/accounts", "far fa-user"],
+			["Audit Logs", "/admin/audit", "fas fa-book"],
+			["Invites", "/admin/invites", "fas fa-key"],
+		]
+	}
 
 	const tabNames = ["Moderation", "Economy", "Statistics"]
 	let pos = 1
@@ -59,173 +90,24 @@
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="col-lg-10 col-md-9">
-			{#if user?.permissionLevel == 5}
+			{#each tabNames.slice(0, -1) as key}
 				<Tab {tabData}>
-					<div class="row">
-						<a
-							href="/admin/banners"
-							class="col-lg-3 p-1 text-decoration-none">
-							<div class="px-0 card bg-a3 text-center light-text">
-								<div class="card-body bg-a rounded-1 p-4">
-									<h1>
-										<i class="fas fa-bullhorn" />
-									</h1>
-									<h5 class="fw-normal mt-3">Banners</h5>
-								</div>
-							</div>
-						</a>
-
-						<a
-							href="/admin/accounts"
-							class="col-lg-3 p-1 text-decoration-none">
-							<div class="px-0 card bg-a3 text-center light-text">
-								<div class="card-body bg-a rounded-1 p-4">
-									<h1>
-										<i class="far fa-user" />
-									</h1>
-									<h5 class="fw-normal mt-3">Accounts</h5>
-								</div>
-							</div>
-						</a>
-
-						<a
-							href="/admin/audit"
-							class="col-lg-3 p-1 text-decoration-none">
-							<div class="px-0 card bg-a3 text-center light-text">
-								<div class="card-body bg-a rounded-1 p-4">
-									<h1>
-										<i class="fas fa-book" />
-									</h1>
-									<h5 class="fw-normal mt-3">Audit Logs</h5>
-								</div>
-							</div>
-						</a>
-
-						<a
-							href="/admin/invites"
-							class="col-lg-3 p-1 text-decoration-none">
-							<div class="px-0 card bg-a3 text-center light-text">
-								<div class="card-body bg-a rounded-1 p-4">
-									<h1>
-										<i class="fas fa-key" />
-									</h1>
-									<h5 class="fw-normal mt-3">Invites</h5>
-								</div>
-							</div>
-						</a>
-
-						<!-- <a href="#" class="col-lg-3 p-1 text-decoration-none" 
-							><div class="px-0 card bg-a3 text-center light-text">
-								<div class="card-body bg-a rounded-1 p-4">
-									<h1>
-										<i class="fas fa-dice" />
-									</h1>
-									<h5 class="fw-normal mt-3">Coin Flip</h5>
-								</div>
-							</div>
-						</a> -->
+					<div class="row g-3">
+						{#each panel[key] as i, num}
+							<AdminLink
+								href={i[1]}
+								iconClass={i[2]}
+								{num}
+								total={panel[key].length}
+								name={i[0]} />
+						{/each}
 					</div>
 				</Tab>
-			{/if}
-			<Tab {tabData}>
-				<div class="row g-3">
-					<a
-						href="/admin/moderation"
-						class="col-lg-3 p-1 text-decoration-none">
-						<div class="px-0 card bg-a3 text-center light-text">
-							<div class="card-body bg-a rounded-1 p-4">
-								<h1>
-									<i class="fas fa-user-slash" />
-								</h1>
-								<h5 class="fw-normal mt-3">Moderate User</h5>
-							</div>
-						</div>
-					</a>
-
-					<!-- <a href="#" class="col-lg-3 p-1 text-decoration-none"
-						><div class="px-0 card bg-a3 text-center light-text">
-							<div class="card-body bg-a rounded-1 p-4">
-								<h1>
-									<i class="far fa-flag" />
-								</h1>
-								<h5 class="fw-normal mt-3">Report Abuse</h5>
-							</div>
-						</div>
-						 </a> -->
-
-					<!-- <a href="#" class="col-lg-3 p-1 text-decoration-none"
-						><div class="px-0 card bg-a3 text-center light-text">
-							<div class="card-body bg-a rounded-1 p-4">
-								<h1>
-									<i class="fas fa-file-circle-check" />
-								</h1>
-								<h5 class="fw-normal mt-3">Asset Approval</h5>
-							</div>
-						</div>
-						</a> -->
-				</div>
-			</Tab>
+			{/each}
 
 			<Tab {tabData}>
-				<div class="row g-3">
-					{#if user?.permissionLevel == 5}
-						<a
-							href="/admin/stipend"
-							class="col-lg-3 p-1 text-decoration-none">
-							<div class="px-0 card bg-a3 text-center light-text">
-								<div class="card-body bg-a rounded-1 p-4">
-									<h1>
-										<i class="far fa-clock" />
-									</h1>
-									<h5 class="fw-normal mt-3">
-										Daily Stipend
-									</h5>
-								</div>
-							</div>
-						</a>
-					{/if}
-
-					<!-- <a href="#" class="col-lg-3 p-1 text-decoration-none"
-						><div class="px-0 card bg-a3 text-center light-text">
-							<div class="card-body bg-a rounded-1 p-4">
-								<h1><i class="far fa-gem" /></h1>
-								<h5 class="fw-normal mt-3">Award Currency</h5>
-							</div>
-						</div>
-						</a> -->
-					<!-- {#if user?.permissionLevel == 5 || user?.permissionLevel == 3}
-						<a href="#" class="col-lg-3 p-1 text-decoration-none"
-							><div class="px-0 card bg-a3 text-center light-text">
-								<div class="card-body bg-a rounded-1 p-4">
-									<h1>
-										<i class="fas fa-file-circle-plus" />
-									</h1>
-									<h5 class="fw-normal mt-3">
-										Create New Asset
-									</h5>
-								</div>
-							</div>
-							</a>
-					{/if} -->
-
-					<a
-						href="/admin/transactions"
-						class="col-lg-3 p-1 text-decoration-none">
-						<div class="px-0 card bg-a3 text-center light-text">
-							<div class="card-body bg-a rounded-1 p-4">
-								<h1>
-									<i class="fas fa-money-bill-transfer" />
-								</h1>
-								<h5 class="fw-normal mt-3">Transactions</h5>
-							</div>
-						</div>
-					</a>
-				</div>
-			</Tab>
-
-			<Tab {tabData}>
-				<div class="row g-3">
-					<div class="col-lg-7 col-md-7">
+				<div class="row g-3 pt-1">
+					<div class="col-lg-7 col-md-7 ps-1">
 						<div class="card bg-a3 text-black mb-3">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
@@ -296,7 +178,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-5 col-md-5">
+					<div class="col-lg-5 col-md-5 pe-1">
 						<div class="card bg-a3 text-black mb-3">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
@@ -354,11 +236,6 @@
 <style lang="sass">
 	h2
 		border-color: var(--accent3) !important
-
-	a .card-body
-		transition: background-color 0.2s
-		&:hover
-			background-color: var(--background) !important
 
 	.card
 		border-width: 2px

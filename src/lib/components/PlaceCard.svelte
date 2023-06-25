@@ -15,7 +15,7 @@
 </script>
 
 <a
-	in:fade={{ num, total }}
+	in:fade|global={{ num, total }}
 	class="card text-center light-text bg-darker text-decoration-none h6 rounded-4 m-0"
 	class:border-success={place.serverPing >=
 		Math.floor(Date.now() / 1000) - 35}

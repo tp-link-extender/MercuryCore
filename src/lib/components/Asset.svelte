@@ -15,8 +15,8 @@
 </script>
 
 <a
-	in:fade={{ num, total }}
-	href="/"
+	in:fade|global={{ num, total }}
+	href="/avatarshop/{asset.id}/{asset.name}"
 	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 px-2 mb-2 text-decoration-none assetcard">
 	<div class="card bg-a3">
 		<div class="card-body bg-a p-3 rounded-1">

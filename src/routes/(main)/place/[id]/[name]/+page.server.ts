@@ -57,53 +57,47 @@ export async function load({ url, locals, params }) {
 		},
 	})
 
-	if (getPlace) {
-		const { session, user } = await authorise(locals)
+	if (!getPlace) throw error(404, "Not found")
 
-		if (
-			user.number != getPlace.ownerUser?.number &&
-			getPlace.privateServer &&
-			privateServerCode != getPlace.privateTicket
-		)
-			throw error(404, "Not Found")
+	const { user } = await authorise(locals)
 
-		const query = {
-			user: user.username,
-			id,
-		}
+	if (
+		user.number != getPlace.ownerUser?.number &&
+		getPlace.privateServer &&
+		privateServerCode != getPlace.privateTicket
+	)
+		throw error(404, "Not Found")
 
-		return {
-			...getPlace,
-			likeCount: roQuery(
-				"places",
-				"RETURN SIZE((:User) -[:likes]-> (:Place { name: $id }))",
-				query,
-				true
-			),
-			dislikeCount: roQuery(
-				"places",
-				"RETURN SIZE((:User) -[:dislikes]-> (:Place { name: $id }))",
-				query,
-				true
-			),
-			likes: session
-				? roQuery(
-						"places",
-						"MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r",
-						query
-				  )
-				: false,
-			dislikes: session
-				? roQuery(
-						"places",
-						"MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r",
-						query
-				  )
-				: false,
-		}
+	const query = {
+		user: user.username,
+		id,
 	}
 
-	throw error(404, "Not found")
+	return {
+		...getPlace,
+		likeCount: roQuery(
+			"places",
+			"RETURN SIZE((:User) -[:likes]-> (:Place { name: $id }))",
+			query,
+			true
+		),
+		dislikeCount: roQuery(
+			"places",
+			"RETURN SIZE((:User) -[:dislikes]-> (:Place { name: $id }))",
+			query,
+			true
+		),
+		likes: roQuery(
+			"places",
+			"MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r",
+			query
+		),
+		dislikes: roQuery(
+			"places",
+			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r",
+			query
+		),
+	}
 }
 
 export const actions = {

@@ -3,7 +3,7 @@
 	import Place from "$lib/components/Place.svelte"
 
 	export let data
-	const { user } = data
+	// const { user } = data
 </script>
 
 <svelte:head>
@@ -15,8 +15,18 @@
 		<div class="container light-text">
 			<h1 class="light-text">{data.name}</h1>
 			<p class="light-text">
-				<b>By</b>
-				<a href="/user/{data.owner.number}">{data.owner.username}</a>
+				<b>by</b>
+				<a
+					href="/user/{data.owner?.number}"
+					class="user light-text text-decoration-none">
+					<span class="pfp bg-darker rounded-circle ms-1">
+						<img
+							src="/api/avatar/{data.owner?.username}"
+							alt={data.owner?.username}
+							class="rounded-circle rounded-top-0" />
+					</span>
+					{data.owner?.username}
+				</a>
 			</p>
 			<br />
 			<div class="d-flex">
@@ -90,4 +100,8 @@
 <style lang="sass">
 	#all
 		max-width: 60rem
+
+	.pfp, .pfp img
+		width: 1.5rem
+		height: 1.5rem
 </style>

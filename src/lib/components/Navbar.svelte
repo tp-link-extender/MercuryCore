@@ -287,7 +287,7 @@
 {#if data.banners && user}
 	{#each data.banners as announcement (announcement.id)}
 		<div
-			transition:height|local
+			transition:height
 			class="py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight
 				? 'light'
 				: ''}"

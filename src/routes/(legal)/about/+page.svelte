@@ -6,18 +6,16 @@
 	let first: HTMLElement
 	let scrollY: number
 
-	function downScroll() {
-		first.scrollIntoView({ behavior: "smooth" })
-	}
-	function upScroll() {
-		top.scrollIntoView({ behavior: "smooth" })
-	}
+	const downScroll = () => first.scrollIntoView({ behavior: "smooth" })
+	const upScroll = () => top.scrollIntoView({ behavior: "smooth" })
 </script>
 
 <!-- Keeps the scrollY variable updated with the scrollY property of the window. -->
 <svelte:window bind:scrollY />
 <svelte:head>
-	<meta name="description" content="About Mercury: Endless possibilities. New features. Same nostalgia." />
+	<meta
+		name="description"
+		content="About Mercury: Endless possibilities. New features. Same nostalgia." />
 	<title>About - Mercury</title>
 </svelte:head>
 

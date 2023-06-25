@@ -12,7 +12,7 @@
 	<h1 class="light-text mb-5">Forum</h1>
 	{#each data.categories as category, num}
 		<div
-			in:fade={{ num, total: data.categories.length }}
+			in:fade|global={{ num, total: data.categories.length }}
 			class="category card bg-darker p-3 mb-3">
 			<div class="row">
 				<a

@@ -5,13 +5,13 @@
 </script>
 
 <a
-	class="text-danger text-decoration-none ps-2 d-inline"
+	class="text-danger text-decoration-none ps-2"
 	href="/report?user={user}&url={url}">
 	<small>
 		{#if reverse}
 			<i class="far fa-flag me-1" />
 		{/if}
-		<span>Report abuse</span>
+		<span class="text-danger">Report abuse</span>
 		{#if !reverse}
 			<i class="far fa-flag" />
 		{/if}
