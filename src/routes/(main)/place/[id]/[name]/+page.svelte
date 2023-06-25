@@ -10,6 +10,15 @@
 	export let data
 	const { user } = data
 
+	data.gameSessions = [
+		{
+			user: {
+				username: "Heliodex",
+				number: 1,
+			},
+		},
+	]
+
 	const statistics = [
 		["Activity", "0 visits"],
 		["Creation", data.created.toLocaleDateString()],
@@ -333,7 +342,7 @@
 				<div class="bg-a me-3">
 					<TabNav bind:tabData={tabData2} vertical />
 					<!-- Prevents nested tabs from breaking -->
-					{((tabData2.num = 0), "") }
+					{((tabData2.num = 0), "")}
 				</div>
 				<Tab tabData={tabData2}>
 					<p class="light-text mb-1">
@@ -435,17 +444,19 @@
 							Join Server
 						</button>
 					</div>
-					<div class="col">
+					<div class="col d-flex">
 						{#each data.gameSessions as { user }}
 							<a
 								href="/user/{user.number}"
-								class="text-decoration-none">
-								<img
-									src="/api/avatar/{user.username}"
-									alt={user.username}
-									height="75"
-									width="75"
-									class="pfp bg-background rounded-circle rounded-top-0 m-1" />
+								class="gamesession text-decoration-none d-flex">
+								<span class="bg-background rounded-circle">
+									<img
+										src="/api/avatar/{user.username}"
+										alt={user.username}
+										height="75"
+										width="75"
+										class="rounded-circle rounded-top-0" />
+								</span>
 							</a>
 						{/each}
 					</div>
@@ -553,4 +564,9 @@
 		.pfp, .pfp img
 			width: 1.5rem
 			height: 1.5rem
+
+	.gamesession
+		span, img
+			width: 75px
+			height: 75px
 </style>

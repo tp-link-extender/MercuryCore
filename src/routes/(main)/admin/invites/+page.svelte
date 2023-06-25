@@ -174,8 +174,8 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<table class="table table-responsive">
-					<thead class="light-text">
+				<table class="table table-responsive shadow-none">
+					<thead>
 						<tr>
 							<th scope="col">Options</th>
 							<th scope="col">Invite</th>
@@ -184,7 +184,7 @@
 							<th scope="col">Creation Date</th>
 						</tr>
 					</thead>
-					<tbody class="light-text">
+					<tbody>
 						{#each data.invites as invite}
 							<tr>
 								<td>
@@ -226,4 +226,9 @@
 
 	input[type="number"]
 		width: 10rem
+
+	table
+		tr, td, th
+			color: var(--light-text) !important
+
 </style>

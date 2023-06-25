@@ -45,7 +45,7 @@ export async function load({ url, locals, params }) {
 						gt: Math.floor(Date.now() / 1000) - 35,
 					},
 				},
-				include: {
+				select: {
 					user: {
 						select: {
 							username: true,

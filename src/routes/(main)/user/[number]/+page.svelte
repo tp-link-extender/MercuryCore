@@ -146,7 +146,7 @@
 				<div class="card bg-darker card-body">
 					<img
 						id="avatar"
-						class="w-60 mx-auto"
+						class="mx-auto"
 						src="/api/avatar/{data.username}-body"
 						alt={data.username} />
 				</div>
