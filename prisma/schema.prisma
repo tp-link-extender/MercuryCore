@@ -18,21 +18,23 @@ datasource db {
 
 // A TextContent can be used for anything that needs an edit history.
 model TextContent {
-    id           String      @id @unique @default(cuid())
-    text         String
-    updated      DateTime    @default(now())
-    ForumPost    ForumPost?  @relation(fields: [forumPostId], references: [id])
-    forumPostId  String?
-    ForumReply   ForumReply? @relation(fields: [forumReplyId], references: [id])
-    forumReplyId String?
-    user         AuthUser?   @relation(fields: [userId], references: [id])
-    userId       String?
-    Place        Place?      @relation(fields: [placeId], references: [id])
-    placeId      Int?
-    Item         Item?       @relation(fields: [itemId], references: [id])
-    itemId       String?
-    Asset        Asset?      @relation(fields: [assetId], references: [id])
-    assetId      Int?
+    id             String        @id @unique @default(cuid())
+    text           String
+    updated        DateTime      @default(now())
+    ForumPost      ForumPost?    @relation(fields: [forumPostId], references: [id])
+    forumPostId    String?
+    ForumReply     ForumReply?   @relation(fields: [forumReplyId], references: [id])
+    forumReplyId   String?
+    assetComment   AssetComment? @relation(fields: [assetCommentId], references: [id])
+    assetCommentId String?
+    user           AuthUser?     @relation(fields: [userId], references: [id])
+    userId         String?
+    Place          Place?        @relation(fields: [placeId], references: [id])
+    placeId        Int?
+    Item           Item?         @relation(fields: [itemId], references: [id])
+    itemId         String?
+    Asset          Asset?        @relation(fields: [assetId], references: [id])
+    assetId        Int?
 }
 
 // Users & Groups
@@ -78,6 +80,7 @@ model AuthUser {
     Announcements     Announcements[]
     forumPosts        ForumPost[]
     forumReplies      ForumReply[]
+    assetComments     AssetComment[]
     reportsSent       Report[]        @relation("sent")
     reportsReceived   Report[]        @relation("received")
 
@@ -88,7 +91,7 @@ model AuthUser {
     notificationsReceived     Notification[]     @relation("received")
     assetsCreated             Asset[]            @relation("created")
     assetsOwned               Asset[]            @relation("owned")
-    assetsModerated            Asset[]            @relation("moderated")
+    assetsModerated           Asset[]            @relation("moderated")
 
     @@map("user")
 }
@@ -390,4 +393,21 @@ model Asset {
     imageAsset   Asset?  @relation("imageAsset", fields: [imageAssetId], references: [id])
     imageAssetId Int?
     parentAssets Asset[] @relation("imageAsset")
+
+    comments AssetComment[]
+}
+
+model AssetComment {
+    id       String        @id @unique
+    author   AuthUser      @relation(fields: [authorId], references: [id])
+    authorId String
+    posted   DateTime      @default(now())
+    content  TextContent[]
+
+    parentAsset   Asset          @relation(fields: [parentAssetId], references: [id])
+    parentAssetId Int
+    // A reply can be to a post or another reply
+    parentReply   AssetComment?  @relation("replies", fields: [parentReplyId], references: [id])
+    parentReplyId String?
+    replies       AssetComment[] @relation("replies")
 }
