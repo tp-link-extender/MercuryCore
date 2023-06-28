@@ -6,7 +6,6 @@
 	const repliesCollapsed = writable({})
 
 	export let data
-	const baseDepth = writable(data.baseDepth)
 	$: topReply = data.replies[0]
 	$: parentPost = topReply.parentPost
 </script>
@@ -49,8 +48,7 @@
 			forumCategory={data.forumCategory}
 			postId={data.postId}
 			postAuthorName={data.author}
-			{repliesCollapsed}
-			{baseDepth} />
+			{repliesCollapsed} />
 	{/each}
 </div>
 

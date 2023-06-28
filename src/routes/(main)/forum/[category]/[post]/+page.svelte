@@ -24,8 +24,6 @@
 	})
 
 	export const snapshot = { capture, restore }
-
-	const baseDepth = writable(data.baseDepth)
 </script>
 
 <svelte:head>
@@ -185,7 +183,6 @@
 			postId={data.id}
 			postAuthorName={data.author.username}
 			{repliesCollapsed}
-			{baseDepth}
 			topLevel />
 	{/each}
 </div>
