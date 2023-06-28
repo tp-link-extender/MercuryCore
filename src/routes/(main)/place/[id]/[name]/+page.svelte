@@ -521,9 +521,6 @@
 </Modal>
 
 <style lang="sass">
-	:target
-		display: block !important
-
 	@media only screen and (min-width: 576px)
 		.container
 			width: 60rem

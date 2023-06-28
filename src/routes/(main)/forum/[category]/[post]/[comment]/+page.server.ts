@@ -104,7 +104,6 @@ export async function load({ url, locals, params }) {
 
 	return {
 		replies,
-		baseDepth: parseInt(url.searchParams.get("depth") as string),
 		forumCategory: params.category,
 		postId: params.post,
 		author: post?.author.username,

@@ -7,8 +7,7 @@
 	// too many exports help
 	export let reply: any
 	export let num: number
-	export let baseDepth: Writable<number>
-	export let depth = $baseDepth
+	export let depth = 0
 	export let replyingTo: Writable<string>
 	export let postAuthorName: string
 	export let forumCategory: string
@@ -29,7 +28,7 @@
 	}
 </script>
 
-{#if depth == $baseDepth && !topLevel}
+{#if !topLevel}
 	<a href="/forum/{forumCategoryLower}/{postId}" class="text-decoration-none">
 		<i class="fa fa-arrow-left me-2" />
 		Parent post
@@ -37,8 +36,7 @@
 	{#if reply.parentReplyId}
 		<br />
 		<a
-			href="/forum/{forumCategoryLower}/{postId}/{reply.parentReplyId}?depth={depth -
-				1}"
+			href="/forum/{forumCategoryLower}/{postId}/{reply.parentReplyId}"
 			class="text-decoration-none">
 			<i class="fa fa-arrow-up me-2" />
 			Parent reply
@@ -90,7 +88,10 @@
 								.author.username == postAuthorName
 								? ''
 								: 'light-text'}">
-							<span class="fw-bold" class:text-primary={reply.author.username == postAuthorName}>
+							<span
+								class="fw-bold"
+								class:text-primary={reply.author.username ==
+									postAuthorName}>
 								{reply.author.username}
 								{#if reply.author.username == postAuthorName}
 									<i class="fa fa-microphone ms-2" />
@@ -132,7 +133,7 @@
 								}}
 								class="d-inline me-2"
 								method="POST"
-								action="?/like&depth={depth}">
+								action="?/like">
 								<input
 									type="hidden"
 									name="replyId"
@@ -231,9 +232,9 @@
 					</div>
 				</div>
 
-				{#if depth > $baseDepth + 8}
+				{#if depth > 8}
 					<a
-						href="/forum/{forumCategoryLower}/{postId}/{reply.id}?depth={depth}"
+						href="/forum/{forumCategoryLower}/{postId}/{reply.id}"
 						class="text-decoration-none">
 						<i class="fa fa-arrow-down me-2" />
 						More replies
@@ -251,7 +252,7 @@
 						{postAuthorName}
 						{repliesCollapsed}
 						depth={depth + 1}
-						{baseDepth} />
+						topLevel />
 				{/each}
 			</div>
 		{/if}
@@ -307,8 +308,6 @@
 
 		span.text-primary:hover
 			color: var(--accent-text) !important
-
-
 
 	.user
 		align-items: center 
