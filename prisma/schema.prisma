@@ -343,6 +343,8 @@ enum NotificationType {
     Follower
     ForumPostReply // When someone replies to a post you made
     ForumReplyReply // When someone replies to a reply you made
+    AssetComment
+    AssetCommentReply
     ForumMention
     ForumPost // Subscribing to a forum category
     ItemPurchase
@@ -394,7 +396,7 @@ model Asset {
     imageAssetId Int?
     parentAssets Asset[] @relation("imageAsset")
 
-    comments AssetComment[]
+    replies AssetComment[]
 }
 
 model AssetComment {
