@@ -48,8 +48,26 @@ export async function load({ request, locals }) {
 					i.link = `/user/${i.sender.number}`
 					break
 
+				case "AssetComment":
+				case "AssetCommentReply":
+					const comment = await prisma.assetComment.findUnique({
+						where: {
+							id: i.relativeId,
+						},
+						include: {
+							parentAsset: true,
+						},
+					})
+					if (!comment) break
+
+					i.link = "https://youtube.com/watch?v=Dx5i1t0mN78" // TODO
+					// `/avatarshop/${comment.parentAsset.id}/${
+					// 	comment.parentAsset.id
+					// }/${comment.id}`
+					break
+
 				case "ForumPostReply":
-				case "ForumReplyReply": {
+				case "ForumReplyReply":
 					const reply = await prisma.forumReply.findUnique({
 						where: {
 							id: i.relativeId,
@@ -62,12 +80,11 @@ export async function load({ request, locals }) {
 
 					i.link = `/forum/${reply.parentPost.forumCategoryName.toLowerCase()}/${
 						reply.parentPost.id
-					}/${reply.id}?depth=1`
+					}/${reply.id}`
 					break
-				}
 
 				case "ForumMention":
-				case "ForumPost": {
+				case "ForumPost":
 					const post = await prisma.forumPost.findUnique({
 						where: {
 							id: i.relativeId,
@@ -79,7 +96,6 @@ export async function load({ request, locals }) {
 						post.id
 					}`
 					break
-				}
 
 				case "ItemPurchase":
 					i.link = `/avatarshop/item/${i.relativeId}`

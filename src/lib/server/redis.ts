@@ -23,6 +23,7 @@ if (!building) {
 		groups: new Graph(client, "groups"), // Stores groups, members, etc
 		places: new Graph(client, "places"), // Stores likes and dislikes on places
 		forum: new Graph(client, "forum"), // Stores forum post and reply likes and dislikes
+		asset: new Graph(client, "asset"), // Stores asset comment likes and dislikes
 	}
 }
 

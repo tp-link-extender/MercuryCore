@@ -10,9 +10,14 @@
 	export let depth = 0
 	export let replyingTo: Writable<string>
 	export let postAuthorName: string
-	export let forumCategory: string
-	const forumCategoryLower = forumCategory.toLowerCase()
+	export let forumCategory = ""
 	export let postId: string
+	export let assetName = ""
+
+	const baseUrl = forumCategory
+		? `/forum/${forumCategory.toLowerCase()}/${postId}`
+		: `/avatarshop/${postId}/${assetName}`
+
 	export let repliesCollapsed: Writable<any>
 	export let topLevel = false
 	// Some have to be writables to allow them to keep state,
@@ -29,15 +34,19 @@
 </script>
 
 {#if !topLevel}
-	<a href="/forum/{forumCategoryLower}/{postId}" class="text-decoration-none">
+	<a
+		href="{baseUrl}{assetName ? '?tab=Comments' : ''}"
+		class="text-decoration-none">
 		<i class="fa fa-arrow-left me-2" />
-		Parent post
+		{#if assetName}
+			Back to asset
+		{:else}
+			Parent post
+		{/if}
 	</a>
 	{#if reply.parentReplyId}
 		<br />
-		<a
-			href="/forum/{forumCategoryLower}/{postId}/{reply.parentReplyId}"
-			class="text-decoration-none">
+		<a href="{baseUrl}/{reply.parentReplyId}" class="text-decoration-none">
 			<i class="fa fa-arrow-up me-2" />
 			Parent reply
 		</a>
@@ -72,7 +81,10 @@
 					<span class="grey-text">
 						{reply.author.username}
 						{#if reply.author.username == postAuthorName}
-							<i class="fa fa-microphone ms-1" />
+							<i
+								class="fa {assetName
+									? 'fa-hammer'
+									: 'fa-microphone'} ms-1" />
 						{/if}
 					</span>
 					- {reply.content[0].text}
@@ -89,12 +101,18 @@
 								? ''
 								: 'light-text'}">
 							<span
-								class="fw-bold"
-								class:text-primary={reply.author.username ==
-									postAuthorName}>
+								class="fw-bold {reply.author.username ==
+								postAuthorName
+									? assetName
+										? 'text-warning'
+										: 'text-primary'
+									: ''}">
 								{reply.author.username}
 								{#if reply.author.username == postAuthorName}
-									<i class="fa fa-microphone ms-2" />
+									<i
+										class="fa {assetName
+											? 'fa-hammer'
+											: 'fa-microphone'} ms-2" />
 								{/if}
 							</span>
 							<small class="light-text ps-4">
@@ -233,9 +251,7 @@
 				</div>
 
 				{#if depth > 8}
-					<a
-						href="/forum/{forumCategoryLower}/{postId}/{reply.id}"
-						class="text-decoration-none">
+					<a href="{baseUrl}/{reply.id}" class="text-decoration-none">
 						<i class="fa fa-arrow-down me-2" />
 						More replies
 					</a>
@@ -249,6 +265,7 @@
 						{replyingTo}
 						{forumCategory}
 						{postId}
+						{assetName}
 						{postAuthorName}
 						{repliesCollapsed}
 						depth={depth + 1}

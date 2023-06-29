@@ -1,11 +1,32 @@
 <script lang="ts">
+	import { page } from "$app/stores"
 	import Report from "$lib/components/Report.svelte"
 	import Modal from "$lib/components/Modal.svelte"
+	import ForumReply from "$lib/components/ForumReply.svelte"
 	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
+	import { superForm } from "sveltekit-superforms/client"
 	import { writable } from "svelte/store"
+
+	let replyingTo = writable("")
+	const repliesCollapsed = writable({})
 
 	export let data
 	const { user } = data
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+
+	export const snapshot = { capture, restore }
+
 	let modal = writable(false)
 
 	let tabData = TabData(data.url, ["Description", "Comments"])
@@ -20,39 +41,37 @@
 		<div class="carousel slide col-md mb-3" />
 		<div class="flex col-md">
 			<div class="card rounded-none mb-4">
-				{#if data.creatorUser}
-					<!-- always true for now -->
-					<div class="card-body">
-						<h1 class="light-text">{data.name}</h1>
-						<p class="light-text d-flex mt-2 mb-0">
-							<b>by</b>
-							<a
-								href="/user/{data.creatorUser?.number}"
-								class="user light-text text-decoration-none">
-								<span class="pfp bg-darker rounded-circle ms-1">
-									<img
-										src="/api/avatar/{data.creatorUser
-											?.username}"
-										alt={data.creatorUser?.username}
-										class="rounded-circle rounded-top-0" />
-								</span>
-								{data.creatorUser?.username}
-							</a>
-						</p>
-						<p class="light-text mt-2 mb-0">
-							<b>Type</b>
-							{data.type}
-						</p>
-						<p class="light-text mt-2 mb-0">
-							<b>{data.sold}</b> sold
-							<span class="float-end">
-								<Report
-								user={data.creatorUser.username}
-								url="/avatarshop/item/{data.id}" />
+				<div class="card-body">
+					<h1 class="light-text">{data.name}</h1>
+					<p class="light-text d-flex mt-2 mb-0">
+						<b>by</b>
+						<a
+							href="/user/{data.creatorUser?.number}"
+							class="user light-text text-decoration-none">
+							<span class="pfp bg-darker rounded-circle ms-1">
+								<img
+									src="/api/avatar/{data.creatorUser
+										?.username}"
+									alt={data.creatorUser?.username}
+									class="rounded-circle rounded-top-0" />
 							</span>
-						</p>
-					</div>
-				{/if}
+							{data.creatorUser?.username}
+						</a>
+					</p>
+					<p class="light-text mt-2 mb-0">
+						<b>Type</b>
+						{data.type}
+					</p>
+					<p class="light-text mt-2 mb-0">
+						<b>{data.sold}</b>
+						sold
+						<span class="float-end">
+							<Report
+								user={data.creatorUser?.username || ""}
+								url="/avatarshop/item/{data.id}" />
+						</span>
+					</p>
+				</div>
 			</div>
 			<button
 				name="action"
@@ -106,23 +125,45 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<div class="row">
-			{#each data.owners as owner}
-				<a
-					href="/user/{owner.number}"
-					class="d-flex text-decoration-none py-2 col col-lg-3 col-md-4 col-sm-6">
-					<div class="me-3 rounded-circle pfp bg-a">
-						<img
-							src="/api/avatar/{owner?.username}"
-							alt={owner.username}
-							class="rounded-circle rounded-top-0" />
-					</div>
-					<p class="light-text my-auto h5 me-4 text-truncate">
-						{owner.username}
-					</p>
-				</a>
-			{/each}
-		</div>
+		<form use:enhance class="p-1" method="POST" action="?/reply">
+			<label for="content" class="form-label light-text mt-2">
+				Post a Comment
+			</label>
+			<fieldset class="col-lg-7 d-flex">
+				<textarea
+					bind:value={$form.content}
+					{...$constraints.content}
+					class="form-control {$errors.content ? 'is-in' : ''}valid"
+					name="content"
+					placeholder="What are your thoughts?"
+					rows="4" />
+				<button type="submit" class="btn btn-success ms-3 mt-auto">
+					{#if $delayed}
+						Working...
+					{:else}
+						Comment
+					{/if}
+				</button>
+			</fieldset>
+			<p
+				class="mb-3"
+				class:text-success={$page.status == 200}
+				class:text-danger={$page.status >= 400}>
+				{$message || ""}
+			</p>
+		</form>
+
+		{#each data.replies as reply, num}
+			<ForumReply
+				{reply}
+				{num}
+				{replyingTo}
+				postId={data.id.toString()}
+				assetName={data.name}
+				postAuthorName={data.creatorUser?.username || ""}
+				{repliesCollapsed}
+				topLevel />
+		{/each}
 	</Tab>
 
 	<h1 class="h3 light-text">Recommended</h1>
@@ -142,9 +183,6 @@
 </Modal>
 
 <style lang="sass">
-	:target
-		display: block !important
-
 	@media only screen and (min-width: 576px)
 		.container
 			width: 60rem
