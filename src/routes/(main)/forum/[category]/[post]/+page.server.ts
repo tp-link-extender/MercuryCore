@@ -42,7 +42,7 @@ export async function load({ locals, params }) {
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
+		selectReplies.select.replies = structuredClone(selectReplies)
 
 	const forumPost = await prisma.forumPost.findUnique({
 		where: {
@@ -123,17 +123,12 @@ export async function load({ locals, params }) {
 
 		if (post.replies)
 			post.replies = await Promise.all(
-				post.replies.map(
-					async (reply: any) => await addLikes(reply, true)
-				)
+				post.replies.map((reply: any) => addLikes(reply, true))
 			)
 
 		return post
 	}
 
-	const replies: any = await Promise.all(
-		forumPost.replies.map(async reply => await addLikes(reply, true))
-	)
 	const post: typeof forumPost & {
 		likeCount: number
 		dislikeCount: number
@@ -144,7 +139,6 @@ export async function load({ locals, params }) {
 	return {
 		form: superValidate(schema),
 		...post,
-		...replies,
 		baseDepth: 0,
 	}
 }
