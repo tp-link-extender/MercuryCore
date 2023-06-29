@@ -4,7 +4,7 @@ import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
 
-export async function load({ url, locals, params }) {
+export async function load({ locals, params }) {
 	const post = await prisma.forumPost.findUnique({
 		where: {
 			id: params.post,
@@ -41,7 +41,7 @@ export async function load({ url, locals, params }) {
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
+		selectReplies.select.replies = structuredClone(selectReplies)
 
 	selectReplies.select.parentPost = {
 		select: {
@@ -91,19 +91,13 @@ export async function load({ url, locals, params }) {
 		))
 
 		if (reply.replies)
-			reply.replies = await Promise.all(
-				reply.replies.map(async (reply: any) => await addLikes(reply))
-			)
+			reply.replies = await Promise.all(reply.replies.map(addLikes))
 
 		return reply
 	}
 
-	const replies = await Promise.all(
-		[forumReplies].map(async reply => await addLikes(reply))
-	)
-
 	return {
-		replies,
+		replies: await Promise.all([forumReplies].map(addLikes)),
 		forumCategory: params.category,
 		postId: params.post,
 		author: post?.author.username,

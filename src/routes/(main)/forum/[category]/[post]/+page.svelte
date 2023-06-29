@@ -169,8 +169,8 @@
 		<p
 			class="mb-3"
 			class:text-success={$page.status == 200}
-			class:text-danger={$page.status >= 400 || $errors.status}>
-			{$errors.status || $message || ""}
+			class:text-danger={$page.status >= 400}>
+			{$message || ""}
 		</p>
 	</form>
 
