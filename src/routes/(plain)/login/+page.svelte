@@ -104,7 +104,11 @@
 						</p>
 					</div>
 					<button class="container-fluid btn btn-primary mb-3">
-						{$delayed ? "Working..." : "Log in"}
+						{#if $delayed}
+							Working...
+						{:else}
+							Log in
+						{/if}
 						<!-- $delayed is true if the form takes 
 							more than a few hundred ms to submit -->
 					</button>

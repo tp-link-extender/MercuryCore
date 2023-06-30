@@ -138,7 +138,6 @@
 										? goto(`/search?q=${search}&c=users`)
 										: null}
 								class="btn btn-success py-0"
-								type="submit"
 								title="Search">
 								<i class="fa fa-search" />
 							</button>

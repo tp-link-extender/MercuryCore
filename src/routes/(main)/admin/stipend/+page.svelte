@@ -93,8 +93,12 @@
 							</div>
 						</div>
 						<br />
-						<button type="submit" class="btn btn-success">
-							Submit
+						<button class="btn btn-success">
+							{#if $delayed}
+								Working...
+							{:else}
+								Save
+							{/if}
 						</button>
 					</fieldset>
 				</form>
