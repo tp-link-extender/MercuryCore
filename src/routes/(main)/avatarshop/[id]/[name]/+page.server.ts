@@ -127,9 +127,7 @@ export async function load({ locals, params }) {
 		))
 
 		if (asset.replies)
-			asset.replies = await Promise.all(
-				asset.replies.map(addLikes)
-			)
+			asset.replies = await Promise.all(asset.replies.map(addLikes))
 
 		return asset
 	}
@@ -141,15 +139,12 @@ export async function load({ locals, params }) {
 		dislikes: boolean
 	} = await addLikes(getAsset)
 
-	const x = {
+	return {
 		form: superValidate(schema),
 		...asset,
 		owned: (assetOwned?.owners || []).length > 0,
 		sold: getAsset._count.owners,
 	}
-
-	console.log(x)
-	return x
 }
 
 export const actions = {
@@ -161,7 +156,8 @@ export const actions = {
 		const limit = ratelimit(form, "assetComment", getClientAddress, 5)
 		// if (limit) return limit
 
-		const { content, replyId } = form.data
+		const { content } = form.data
+		const replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another comment
 
 		let receiverId
@@ -224,7 +220,7 @@ export const actions = {
 		const data = await formData(request)
 		const { action } = data
 		const id = url.searchParams.get("id")
-		const {replyId } = data
+		const replyId = url.searchParams.get("rid")
 
 		if (
 			(id &&

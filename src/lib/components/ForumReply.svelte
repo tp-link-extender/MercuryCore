@@ -151,12 +151,7 @@
 								}}
 								class="d-inline me-2"
 								method="POST"
-								action="?/like">
-								<input
-									type="hidden"
-									name="replyId"
-									value={reply.id} />
-
+								action="?/like&rid={reply.id}">
 								<button
 									name="action"
 									value={reply.likes ? "unlike" : "like"}
@@ -208,11 +203,7 @@
 										on:submit={() => replyingTo.set("")}
 										class="mb-4"
 										method="POST"
-										action="?/reply">
-										<input
-											type="hidden"
-											name="replyId"
-											value={reply.id} />
+										action="?/reply&rid={reply.id}">
 										<label
 											for="content"
 											class="form-label light-text mt-2">
@@ -229,7 +220,6 @@
 												placeholder="What are your thoughts?"
 												rows="4" />
 											<button
-												type="submit"
 												class="btn btn-success">
 												<i
 													class="far fa-message me-2" />

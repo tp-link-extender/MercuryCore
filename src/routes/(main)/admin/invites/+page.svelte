@@ -188,11 +188,7 @@
 						{#each data.invites as invite}
 							<tr>
 								<td>
-									<form use:enhance method="POST">
-										<input
-											type="hidden"
-											name="id"
-											value={invite.key} />
+									<form use:enhance method="POST" action="?id={invite.key}">
 										<button
 											name="action"
 											value="disable"
