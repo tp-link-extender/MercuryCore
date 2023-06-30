@@ -99,7 +99,7 @@ export const actions = {
 		const data = await formData(request)
 		const { action } = data
 		const id = url.searchParams.get("id")
-		const { replyId } = data
+		const replyId = url.searchParams.get("rid")
 
 		if (
 			(id &&

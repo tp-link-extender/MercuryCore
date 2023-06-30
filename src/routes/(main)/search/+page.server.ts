@@ -97,9 +97,11 @@ export const load = async ({ url }) => {
 }
 
 export const actions = {
-	default: async ({ request }) => {
+	default: async ({ url, request }) => {
 		const data = await formData(request)
-		const { query, category } = data
+		const { query } = data
+		const category = url.searchParams.get("c") || ""
+
 		console.log(`searching for ${query} in ${category}`)
 
 		throw redirect(

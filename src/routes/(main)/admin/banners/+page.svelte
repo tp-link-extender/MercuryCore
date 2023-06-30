@@ -26,7 +26,6 @@
 
 	let bannerId = ""
 	let newBannerBody = ""
-	let textarea: any
 
 	const viewBody = (id: any, body: any) => () => {
 		modal.set(true)
@@ -141,7 +140,7 @@
 
 			<Tab {tabData}>
 				<table class="table table-responsive">
-					<thead class="light-text">
+					<thead>
 						<tr>
 							<th scope="col">Options</th>
 							<th scope="col">Active</th>
@@ -151,15 +150,14 @@
 							<th scope="col">Creator</th>
 						</tr>
 					</thead>
-					<tbody class="light-text">
+					<tbody>
 						{#each data.banners as banner}
 							<tr>
 								<td>
-									<form use:enhance method="POST">
-										<input
-											type="hidden"
-											name="id"
-											value={banner.id} />
+									<form
+										use:enhance
+										method="POST"
+										action="?id={banner.id}">
 										<button
 											name="action"
 											value="delete"
@@ -168,19 +166,15 @@
 											Delete Banner
 										</button>
 									</form>
-									<form use:enhance method="POST">
-										<input
-											type="hidden"
+									<form
+										use:enhance
+										method="POST"
+										action="?id={banner.id}">
+										<button
 											name="action"
 											value={banner.active
 												? "hide"
-												: "show"} />
-										<input
-											type="hidden"
-											name="id"
-											value={banner.id} />
-										<button
-											type="submit"
+												: "show"}
 											class="btn btn-sm btn-link text-decoration-none text-{banner.active
 												? 'warning'
 												: 'success'} my-0">
@@ -225,6 +219,11 @@
 						{/each}
 					</tbody>
 				</table>
+				<p
+					class:text-success={$page.status == 200}
+					class:text-danger={$page.status >= 400}>
+					{$message || ""}
+				</p>
 			</Tab>
 		</div>
 	</div>
@@ -242,13 +241,11 @@
 				aria-label="Close" />
 		</div>
 		<div class="modal-body light-text">
-			<form use:enhance method="POST">
-				<input type="hidden" name="id" value={bannerId} />
+			<form use:enhance method="POST" action="?id={bannerId}">
 				<textarea
 					bind:value={$form.bannerBody}
 					{...$constraints.bannerBody}
 					name="bannerBody"
-					bind:this={textarea}
 					id="bannerBody"
 					class="form-control {$errors.bannerBody
 						? 'is-in'
@@ -260,8 +257,8 @@
 					<div transition:fade class="d-grid gap-2">
 						<button
 							value="updateBody"
-							class="btn btn-success"
 							name="action"
+							class="btn btn-success"
 							id="saveBannerBody">
 							{#if $delayed}
 								Working...
@@ -291,4 +288,7 @@
 
 	.btn-close
 		filter: invert(1) grayscale(100%) brightness(200%)
+
+	table, th, td, tbody, thead, tr
+		color: var(--light-text)
 </style>

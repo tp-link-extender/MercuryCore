@@ -48,7 +48,7 @@
 	<div class="row mb-3">
 		<h1 class="col-xl-4 col-lg-4 col-md-3 mb-0 light-text">Catalog</h1>
 		<div class="col-xl-8 col-lg-8 col-md-9 mt-2">
-			<form use:enhance method="POST" action="/search" class="row">
+			<form use:enhance method="POST" action="/search?c=assets" class="row">
 				<div class="input-group">
 					<input
 						bind:value={query}
@@ -58,7 +58,6 @@
 						placeholder="Search for an item"
 						aria-label="Search for an item"
 						aria-describedby="button-addon2" />
-					<input type="hidden" name="category" value="items" />
 					<select
 						class="form-select form-select-sm light-text ps-3"
 						placeholder="Type"
@@ -71,7 +70,6 @@
 					</select>
 					<button
 						class="btn btn-success"
-						type="submit"
 						aria-label="Search"
 						id="button-addon2">
 						<i class="fa fa-magnifying-glass" />

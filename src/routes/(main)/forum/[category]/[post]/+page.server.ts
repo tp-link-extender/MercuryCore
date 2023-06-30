@@ -144,7 +144,7 @@ export async function load({ locals, params }) {
 }
 
 export const actions = {
-	reply: async ({ request, locals, params, getClientAddress }) => {
+	reply: async ({ url, request, locals, params, getClientAddress }) => {
 		const { user } = await authorise(locals)
 
 		const form = await superValidate(request, schema)
@@ -152,7 +152,8 @@ export const actions = {
 		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
 		if (limit) return limit
 
-		const { content, replyId } = form.data
+		const { content } = form.data
+		const replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another comment
 
 		let replypost

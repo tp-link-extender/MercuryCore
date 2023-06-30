@@ -232,11 +232,7 @@
 					}}
 					class="align-self-center col mt-3 px-0 mb-2"
 					method="POST"
-					action="?/like">
-					<input
-						type="hidden"
-						name="privateTicket"
-						value={data.privateTicket} />
+					action="?/like&privateTicket={data.privateTicket}">
 					<div class="row mb-2">
 						<div class="col d-flex justify-content-start">
 							<button
