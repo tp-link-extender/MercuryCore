@@ -135,11 +135,11 @@
 								</p>
 							</div>
 						</div>
-						<button type="submit" class="btn btn-success mt-3">
+						<button class="btn btn-success mt-3">
 							{#if $delayed}
 								Working...
 							{:else}
-								Submit
+								Moderate
 							{/if}
 						</button>
 					</fieldset>

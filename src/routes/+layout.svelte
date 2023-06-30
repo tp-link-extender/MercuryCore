@@ -27,7 +27,7 @@
 		nprogress.done()
 	}
 
-	const notificationNotes = {
+	const notificationNotes: {[k: string]: string} = {
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",
@@ -97,7 +97,6 @@
 					method="POST"
 					action="/notifications?s={notification.id}">
 					<button
-						type="submit"
 						class="btn-close"
 						aria-label="Close" />
 				</form>

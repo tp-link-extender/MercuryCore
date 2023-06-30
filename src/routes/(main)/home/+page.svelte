@@ -120,7 +120,6 @@
 								: ''}valid" />
 						<button
 							class="btn btn-success"
-							type="submit"
 							aria-label="Send">
 							{#if $delayed}
 								...

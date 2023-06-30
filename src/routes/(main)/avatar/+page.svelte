@@ -170,10 +170,8 @@
 					placeholder="Search for an item"
 					aria-label="Search for an item"
 					aria-describedby="button-addon2" />
-				<input type="hidden" name="category" value="items" />
 				<button
 					class="btn btn-success"
-					type="submit"
 					aria-label="Search"
 					id="button-addon2">
 					<i class="fa fa-magnifying-glass" />
@@ -204,7 +202,6 @@
 						class="d-inline">
 						<button
 							class="btn colour my-1"
-							type="submit"
 							on:click={() => {
 								bodyParts[bodyPart] = colour
 								modal.set(false)

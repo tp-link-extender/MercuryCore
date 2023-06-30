@@ -114,7 +114,7 @@
 					</div>
 				</div>
 			</fieldset>
-			<button type="submit" class="btn btn-success mt-4">
+			<button class="btn btn-success mt-4">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -149,7 +149,7 @@
 							value={data.serverTicket}
 							class="form-control valid"
 							disabled />
-						<button class="btn btn-primary" type="submit">
+						<button class="btn btn-primary">
 							<i class="fas fa-rotate" />
 							Regenerate
 						</button>
@@ -234,7 +234,7 @@
 				</div>
 				<hr class="grey-text" />
 			</fieldset>
-			<button type="submit" class="btn btn-success mt-2 mb-2">
+			<button class="btn btn-success mt-2 mb-2">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -288,10 +288,7 @@
 							id="button-addon2">
 							<i class="fas fa-paste" />
 						</button>
-						<button
-							class="btn btn-primary"
-							type="submit"
-							id="button-addon2">
+						<button class="btn btn-primary" id="button-addon2">
 							<i class="fas fa-rotate" />
 							Regen
 						</button>
@@ -328,7 +325,7 @@
 							id="privateServer" />
 					</div>
 				</div>
-				<button type="submit" class="btn btn-success mt-4">
+				<button class="btn btn-success mt-4">
 					{#if $delayed}
 						Working...
 					{:else}

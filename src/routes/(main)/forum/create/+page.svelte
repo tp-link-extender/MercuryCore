@@ -70,7 +70,11 @@
 				</div>
 			</div>
 			<button class="btn btn-success my-3">
-				{$delayed ? "Working..." : "Post"}
+				{#if $delayed}
+					Working...
+				{:else}
+					Post
+				{/if}
 			</button>
 		</fieldset>
 	</form>
