@@ -16,6 +16,12 @@ datasource db {
 
 // Miscellaneous
 
+enum Visibility {
+    Visible
+    Deleted
+    Moderated
+}
+
 // A TextContent can be used for anything that needs an edit history.
 model TextContent {
     id             String        @id @unique @default(cuid())
@@ -71,8 +77,8 @@ model AuthUser {
     transactionsSent     Transaction[] @relation("sent")
     transactionsReceived Transaction[] @relation("received")
 
-    bodyColours Json @default("{\"Head\": 24,\"Torso\": 23,\"LeftArm\": 24,\"RightArm\": 24,\"LeftLeg\": 119,\"RightLeg\": 119}")
-    // {"Head": 24,"Torso": 23,"LeftArm": 24,"RightArm": 24,"LeftLeg": 119,"RightLeg": 119}
+    bodyColours Json @default("{\"Head\": 24, \"Torso\": 23, \"LeftArm\": 24, \"RightArm\": 24, \"LeftLeg\": 119, \"RightLeg\": 119}")
+    // {"Head": 24, "Torso": 23, "LeftArm": 24, "RightArm": 24, "LeftLeg": 119, "RightLeg": 119}
 
     theme             String?
     animationSettings String?
@@ -147,6 +153,8 @@ model Post {
     authorGroupname String?
     posted          DateTime  @default(now())
     content         String
+
+    visibility Visibility @default(Visible)
 }
 
 model Group {
@@ -251,6 +259,8 @@ model ForumPost {
     forumCategory     ForumCategory @relation(fields: [forumCategoryName], references: [name])
     forumCategoryName String
     replies           ForumReply[]
+
+    visibility Visibility @default(Visible)
 }
 
 model ForumReply {
@@ -266,6 +276,8 @@ model ForumReply {
     parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
     parentReplyId String?
     replies       ForumReply[] @relation("replies")
+
+    visibility Visibility @default(Visible)
 }
 
 // Reports
@@ -321,18 +333,21 @@ model ModerationAction {
 // Admin
 
 enum AuditActionType {
+    Account
+	Administration
+    Economy
+    Forum
     Moderation
     Invite
-    Account
 }
 
 model AuditLog {
-    id     Int             @id @unique @default(autoincrement())
+    id     String          @id @unique @default(cuid())
     action AuditActionType
     note   String
     user   AuthUser        @relation("actor", fields: [userId], references: [id])
     userId String
-    date   DateTime        @default(now())
+    time   DateTime        @default(now())
 }
 
 // Notifications
@@ -412,4 +427,6 @@ model AssetComment {
     parentReply   AssetComment?  @relation("replies", fields: [parentReplyId], references: [id])
     parentReplyId String?
     replies       AssetComment[] @relation("replies")
+
+    visibility Visibility @default(Visible)
 }

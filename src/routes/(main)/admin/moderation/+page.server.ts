@@ -29,7 +29,7 @@ export const actions = {
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
-		if (limit) return limit
+		// if (limit) return limit
 
 		const { username, action, banDate, reason } = form.data
 
@@ -53,6 +53,7 @@ export const actions = {
 				["username"],
 				["You cannot moderate staff members"]
 			)
+
 		if (getModeratee.id == user.id)
 			return formError(
 				form,
@@ -79,7 +80,10 @@ export const actions = {
 			// Unban
 			if (
 				!(await prisma.moderationAction.count({
-					where: { moderateeId: getModeratee.id, active: true },
+					where: {
+						moderateeId: getModeratee.id,
+						active: true,
+					},
 				}))
 			)
 				return formError(
@@ -112,6 +116,18 @@ export const actions = {
 				},
 			})
 
+			await prisma.auditLog.create({
+				data: {
+					action: "Moderation",
+					note: `Unban ${username}`,
+					user: {
+						connect: {
+							id: user.id,
+						},
+					},
+				},
+			})
+
 			return {
 				moderationsuccess: true,
 				msg: `${username} ${moderationMessage[action - 1]}`,
@@ -122,7 +138,10 @@ export const actions = {
 
 		if (
 			await prisma.moderationAction.count({
-				where: { moderateeId: getModeratee.id, active: true },
+				where: {
+					moderateeId: getModeratee.id,
+					active: true,
+				},
 			})
 		)
 			return formError(
@@ -159,6 +178,23 @@ export const actions = {
 					username: `[ Deleted User ${getModeratee.number} ]`,
 				},
 			})
+
+		await prisma.auditLog.create({
+			data: {
+				action: "Moderation",
+				note: [
+					`Warn ${username}`,
+					`Ban ${username}`,
+					`Terminate ${username}`,
+					`Delete ${username}'s account`,
+				][action - 1],
+				user: {
+					connect: {
+						id: user.id,
+					},
+				},
+			},
+		})
 
 		return message(form, `${username} ${moderationMessage[action - 1]}`)
 	},

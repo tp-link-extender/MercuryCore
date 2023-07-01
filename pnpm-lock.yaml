@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -24,10 +24,10 @@ dependencies:
     specifier: ^1.2.4
     version: 1.2.4(@sveltejs/kit@1.21.0)
   '@threlte/core':
-    specifier: 6.0.0-next.9
+    specifier: ^6.0.0-next.9
     version: 6.0.0-next.9
   '@threlte/extras':
-    specifier: 5.0.0-next.13
+    specifier: ^5.0.0-next.13
     version: 5.0.0-next.13(three@0.153.0)
   '@types/d3-interpolate':
     specifier: ^3.0.1
@@ -164,7 +164,7 @@ devDependencies:
     specifier: ^5.0.4
     version: 5.0.4(postcss@8.4.24)(sass@1.63.6)(svelte@4.0.0)(typescript@5.1.5)
   sveltekit-superforms:
-    specifier: 1.1.2
+    specifier: ^1.1.2
     version: 1.1.2(@sveltejs/kit@1.21.0)(svelte@4.0.0)(zod@3.21.4)
   tslib:
     specifier: ^2.6.0
