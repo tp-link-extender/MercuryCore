@@ -81,12 +81,24 @@ export const actions = {
 				)
 					return formError(form, ["inviteExpiry"], ["Invalid date"])
 
-				await prisma.regkey.create({
+				const createdKey = await prisma.regkey.create({
 					data: {
 						key: customInviteEnabled ? customInvite : undefined,
 						usesLeft: inviteUses,
 						expiry: inviteExpiryEnabled ? expiry : null,
 						creator: {
+							connect: {
+								id: user.id,
+							},
+						},
+					},
+				})
+
+				await prisma.auditLog.create({
+					data: {
+						action: "Administration",
+						note: `Created invite key ${createdKey.key}`,
+						user: {
 							connect: {
 								id: user.id,
 							},

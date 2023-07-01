@@ -81,6 +81,18 @@ export const actions = {
 					},
 				})
 
+				await prisma.auditLog.create({
+					data: {
+						action: "Administration",
+						note: `Create banner "${bannerText}"`,
+						user: {
+							connect: {
+								id: user.id,
+							},
+						},
+					},
+				})
+
 				return message(form, "Banner created successfully!")
 			}
 			case "show":
@@ -106,11 +118,24 @@ export const actions = {
 						status: 400,
 					})
 
-				await prisma.announcements.delete({
+				const deletedBanner = await prisma.announcements.delete({
 					where: {
 						id,
 					},
 				})
+
+				await prisma.auditLog.create({
+					data: {
+						action: "Administration",
+						note: `Delete banner "${deletedBanner.body}"`,
+						user: {
+							connect: {
+								id: user.id,
+							},
+						},
+					},
+				})
+
 				return
 			case "updateBody":
 				if (!bannerBody || !id)
