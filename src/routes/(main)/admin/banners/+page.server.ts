@@ -68,30 +68,32 @@ export const actions = {
 						status: 400,
 					})
 
-				await prisma.announcements.create({
-					data: {
-						body: bannerText,
-						bgColour: bannerColour,
-						textLight: bannerTextLight,
-						user: {
-							connect: {
-								id: user.id,
+				await Promise.all([
+					prisma.announcements.create({
+						data: {
+							body: bannerText,
+							bgColour: bannerColour,
+							textLight: bannerTextLight,
+							user: {
+								connect: {
+									id: user.id,
+								},
 							},
 						},
-					},
-				})
+					}),
 
-				await prisma.auditLog.create({
-					data: {
-						action: "Administration",
-						note: `Create banner "${bannerText}"`,
-						user: {
-							connect: {
-								id: user.id,
+					prisma.auditLog.create({
+						data: {
+							action: "Administration",
+							note: `Create banner "${bannerText}"`,
+							user: {
+								connect: {
+									id: user.id,
+								},
 							},
 						},
-					},
-				})
+					}),
+				])
 
 				return message(form, "Banner created successfully!")
 			}

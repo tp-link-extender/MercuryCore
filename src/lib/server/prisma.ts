@@ -102,7 +102,7 @@ export async function transaction(
 	sender: User,
 	receiver: User,
 	amountSent: number,
-	{ note, link }: { note: String | undefined; link: String | undefined },
+	{ note, link }: { note?: String; link?: String },
 	tx: any /* awful */ = prisma
 ) {
 	const sender2 = await tx.authUser.findUnique({

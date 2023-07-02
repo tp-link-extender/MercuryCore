@@ -5,7 +5,7 @@ import { roQuery } from "$lib/server/redis"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import { error } from "@sveltejs/kit"
-import { NotificationType } from "@prisma/client"
+import { NotificationType, Prisma } from "@prisma/client"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -17,7 +17,7 @@ const schema = z.object({
 
 export async function load({ locals, params }) {
 	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectReplies: any = {
+	const selectReplies = {
 		// odd type errors in "replies: selectReplies" if not any
 		select: {
 			id: true,
@@ -31,7 +31,7 @@ export async function load({ locals, params }) {
 			},
 			content: {
 				orderBy: {
-					updated: "desc",
+					updated: Prisma.SortOrder.desc,
 				},
 				select: {
 					text: true,
@@ -85,60 +85,63 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	async function addLikes(post: any, reply = false) {
+	async function addLikes(post2: typeof forumPost, reply = true) {
+		if (!post2) return
+
+		const post = post2 as typeof forumPost & {
+			likeCount: number
+			dislikeCount: number
+			likes: boolean
+			dislikes: boolean
+		}
+
 		const query = {
 			user: user.username,
 			id: post.id,
 		}
-		post["likeCount"] = await roQuery(
-			"forum",
-			`RETURN SIZE((:User) -[:likes]-> (:${
-				reply ? "Reply" : "Post"
-			} { name: $id }))`,
-			query,
-			true
-		)
-		post["dislikeCount"] = await roQuery(
-			"forum",
-			`RETURN SIZE((:User) -[:dislikes]-> (:${
-				reply ? "Reply" : "Post"
-			} { name: $id }))`,
-			query,
-			true
-		)
-		post["likes"] = !!(await roQuery(
-			"forum",
-			`MATCH (:User { name: $user }) -[r:likes]-> (:${
-				reply ? "Reply" : "Post"
-			} { name: $id }) RETURN r`,
-			query
-		))
-		post["dislikes"] = !!(await roQuery(
-			"forum",
-			`MATCH (:User { name: $user }) -[r:dislikes]-> (:${
-				reply ? "Reply" : "Post"
-			} { name: $id }) RETURN r`,
-			query
-		))
 
-		if (post.replies)
-			post.replies = await Promise.all(
-				post.replies.map((reply: any) => addLikes(reply, true))
-			)
+		const type = reply ? "Reply" : "Post"
+
+		const t = []
+		if (post.replies) for (const r of post.replies) t.push(addLikes(r))
+		;[post.likeCount, post.dislikeCount, post.likes, post.dislikes] =
+			await Promise.all([
+				roQuery(
+					"forum",
+					`RETURN SIZE((:User) -[:likes]-> (:${type} { name: $id }))`,
+					query,
+					true
+				),
+				roQuery(
+					"forum",
+					`RETURN SIZE((:User) -[:dislikes]-> (:${type} { name: $id }))`,
+					query,
+					true
+				),
+				roQuery(
+					"forum",
+					`MATCH (:User { name: $user }) -[r:likes]-> (:${type} { name: $id }) RETURN r`,
+					query
+				),
+				roQuery(
+					"forum",
+					`MATCH (:User { name: $user }) -[r:dislikes]-> (:${type} { name: $id }) RETURN r`,
+					query
+				),
+				...t,
+			])
+
+		post.likes = !!post.likes
+		post.dislikes = !!post.dislikes
+
+		if (!post.replies) return post
 
 		return post
 	}
 
-	const post: typeof forumPost & {
-		likeCount: number
-		dislikeCount: number
-		likes: boolean
-		dislikes: boolean
-	} = await addLikes(forumPost)
-
 	return {
 		form: superValidate(schema),
-		...post,
+		...(await addLikes(forumPost, false)),
 		baseDepth: 0,
 	}
 }
@@ -198,5 +201,5 @@ export const actions = {
 				},
 			})
 	},
-	like: categoryActions.like as any,
+	like: categoryActions.like,
 }
