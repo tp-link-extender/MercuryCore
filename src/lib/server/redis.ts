@@ -3,7 +3,12 @@
 
 import { building } from "$app/environment"
 import { error } from "@sveltejs/kit"
-import { createClient, Graph, type Graph as graphType, type RedisClientType } from "redis"
+import {
+	createClient,
+	Graph,
+	type Graph as graphType,
+	type RedisClientType,
+} from "redis"
 
 let client: RedisClientType
 let graphs: { [k: string]: graphType }

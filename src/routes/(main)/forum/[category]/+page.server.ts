@@ -115,7 +115,7 @@ export const actions = {
 
 		const query = {
 			user: user.username,
-			id: id || replyId,
+			id: id || replyId || "",
 		}
 
 		try {

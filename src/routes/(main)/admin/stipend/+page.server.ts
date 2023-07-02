@@ -41,16 +41,20 @@ export const actions = {
 		if (currentStipend == dailyStipend && currentStipendTime == stipendTime)
 			return message(form, "No changes were made")
 
-		await client.set("dailyStipend", dailyStipend)
-		await client.set("stipendTime", stipendTime)
+		await Promise.all([
+			client.set("dailyStipend", dailyStipend),
+			client.set("stipendTime", stipendTime),
+		])
 
 		let auditText = ""
 
 		if (currentStipend != dailyStipend)
 			auditText += `Change daily stipend from ${currentStipend} to ${dailyStipend}`
 
-		if (currentStipendTime != stipendTime)
-			auditText += ` and change stipend time from ${currentStipendTime} to ${stipendTime}`
+		if (currentStipendTime != stipendTime) {
+			if (auditText) auditText += ", "
+			auditText += `Change stipend time from ${currentStipendTime} to ${stipendTime}`
+		}
 
 		await prisma.auditLog.create({
 			data: {

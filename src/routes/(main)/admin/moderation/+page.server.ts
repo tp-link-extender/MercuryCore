@@ -107,26 +107,28 @@ export const actions = {
 					["You cannot unban a deleted user"]
 				)
 
-			await prisma.moderationAction.updateMany({
-				where: {
-					moderateeId: getModeratee.id,
-				},
-				data: {
-					active: false,
-				},
-			})
+			await Promise.all([
+				prisma.moderationAction.updateMany({
+					where: {
+						moderateeId: getModeratee.id,
+					},
+					data: {
+						active: false,
+					},
+				}),
 
-			await prisma.auditLog.create({
-				data: {
-					action: "Moderation",
-					note: `Unban ${username}`,
-					user: {
-						connect: {
-							id: user.id,
+				prisma.auditLog.create({
+					data: {
+						action: "Moderation",
+						note: `Unban ${username}`,
+						user: {
+							connect: {
+								id: user.id,
+							},
 						},
 					},
-				},
-			})
+				}),
+			])
 
 			return {
 				moderationsuccess: true,
