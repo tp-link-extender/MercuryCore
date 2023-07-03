@@ -1,12 +1,13 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { Query, roQuery } from "$lib/server/redis"
+import { Query } from "$lib/server/redis"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
-import { error } from "@sveltejs/kit"
-import { NotificationType } from "@prisma/client"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
+import addLikes from "$lib/server/addLikes"
+import { error } from "@sveltejs/kit"
+import { Prisma, NotificationType } from "@prisma/client"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
@@ -21,7 +22,7 @@ export async function load({ locals, params }) {
 	const id = parseInt(params.id)
 
 	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectComments: any = {
+	const selectComments = {
 		// odd type errors in "replies: selectComments" if not any
 		select: {
 			id: true,
@@ -35,7 +36,7 @@ export async function load({ locals, params }) {
 			},
 			content: {
 				orderBy: {
-					updated: "desc",
+					updated: Prisma.SortOrder.desc,
 				},
 				select: {
 					text: true,
@@ -98,63 +99,34 @@ export async function load({ locals, params }) {
 		},
 	})
 
-	async function addLikes(asset: any) {
-		const query = {
-			user: user.username,
-			id: asset.id,
-		}
-		asset["likeCount"] = await roQuery(
-			"asset",
-			"RETURN SIZE((:User) -[:likes]-> (:Comment { name: $id }))",
-			query,
-			true
-		)
-		asset["dislikeCount"] = await roQuery(
-			"asset",
-			"RETURN SIZE((:User) -[:dislikes]-> (:Comment { name: $id }))",
-			query,
-			true
-		)
-		asset["likes"] = !!(await roQuery(
-			"asset",
-			"MATCH (:User { name: $user }) -[r:likes]-> (:Comment { name: $id }) RETURN r",
-			query
-		))
-		asset["dislikes"] = !!(await roQuery(
-			"asset",
-			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Comment { name: $id }) RETURN r",
-			query
-		))
-
-		if (asset.replies)
-			asset.replies = await Promise.all(asset.replies.map(addLikes))
-
-		return asset
+	const fakeObject = {
+		id: "", // id not needed, as assets can't be voted on
+		replies: getAsset.replies,
 	}
 
-	const asset: typeof getAsset & {
-		likeCount: number
-		dislikeCount: number
-		likes: boolean
-		dislikes: boolean
-	} = await addLikes(getAsset)
+	await addLikes<typeof fakeObject>(
+		"asset",
+		"Comment",
+		fakeObject,
+		user.username
+	)
 
 	return {
 		form: superValidate(schema),
-		...asset,
+		...getAsset,
 		owned: (assetOwned?.owners || []).length > 0,
 		sold: getAsset._count.owners,
 	}
 }
 
 export const actions = {
-	reply: async ({ request, locals, params, getClientAddress }) => {
+	reply: async ({ url, request, locals, params, getClientAddress }) => {
 		const { user } = await authorise(locals)
 
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "assetComment", getClientAddress, 5)
-		// if (limit) return limit
+		if (limit) return limit
 
 		const { content } = form.data
 		const replyId = url.searchParams.get("rid")
@@ -162,13 +134,13 @@ export const actions = {
 
 		let receiverId
 		if (replyId) {
-			let assetcomment = await prisma.assetComment.findUnique({
+			const assetcomment = await prisma.assetComment.findUnique({
 				where: { id: replyId },
 			})
 			if (!assetcomment) throw error(404)
 			receiverId = assetcomment?.authorId || ""
 		} else {
-			let assetcomment = await prisma.asset.findUnique({
+			const assetcomment = await prisma.asset.findUnique({
 				where: { id: parseInt(params.id) },
 				select: {
 					creatorUser: {
