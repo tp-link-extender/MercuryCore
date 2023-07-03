@@ -1,4 +1,4 @@
-import { actions as postActions } from "../+page.server"
+import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import addLikes from "$lib/server/addLikes"
@@ -19,10 +19,14 @@ export async function load({ locals, params }) {
 
 	// Since prisma does not yet support recursive copying, we have to do it manually
 	const selectReplies = {
+		// where: {
+		// 	OR: [{ visibility: Visibility.Visible }, { authorId: user.id }],
+		// },
 		select: {
 			id: true,
 			posted: true,
 			parentReplyId: true,
+			visibility: true,
 			parentPost: {
 				select: {
 					forumCategoryName: true,
@@ -48,10 +52,8 @@ export async function load({ locals, params }) {
 			replies: {},
 		},
 	}
-	for (let i = 0; i < 9; i++) {
-		const replies = structuredClone(selectReplies)
-		selectReplies.select.replies = replies
-	}
+	for (let i = 0; i < 9; i++)
+		selectReplies.select.replies = structuredClone(selectReplies)
 
 	const forumReplies = await prisma.forumReply.findUnique({
 		where: {
@@ -79,4 +81,4 @@ export async function load({ locals, params }) {
 	}
 }
 
-export const actions = postActions
+export { actions }

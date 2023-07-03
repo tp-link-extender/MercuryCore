@@ -10,6 +10,7 @@
 	const repliesCollapsed = writable({})
 
 	export let data
+	const { user } = data
 	const {
 		form,
 		errors,
@@ -176,6 +177,7 @@
 
 	{#each data.replies as reply, num}
 		<ForumReply
+			{user}
 			{reply}
 			{num}
 			{replyingTo}
