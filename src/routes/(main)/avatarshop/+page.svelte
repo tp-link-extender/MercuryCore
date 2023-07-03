@@ -92,44 +92,44 @@
 			<h1 class="light-text h3">Filters</h1>
 			<p class="light-text mb-0">Sort by:</p>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="bestsellingRadio" id="bestsellingRadio">
+				<input class="form-check-input" type="radio" name="filter" id="bestsellingRadio">
 				<label class="form-check-label light-text" for="bestsellingRadio">
 					Bestselling
 				</label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="recentlyCreatedRadio" id="recentlyCreatedRadio">
+				<input class="form-check-input" type="radio" name="filter" id="recentlyCreatedRadio">
 				<label class="form-check-label light-text" for="recentlyCreatedRadio">
 					Recently Created
 				</label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="mercuryRadio" id="mercuryRadio">
+				<input class="form-check-input" type="radio" name="filter" id="mercuryRadio">
 				<label class="form-check-label light-text" for="mercuryRadio">
 					Mercury
 				</label>
 			</div>
 			<p class="light-text mb-0">Price:</p>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="defaultPriceRadio" id="defaultPriceRadio" checked>
+				<input class="form-check-input" type="radio" name="filter" id="defaultPriceRadio" checked>
 				<label class="form-check-label light-text" for="defaultPriceRadio">
 					Any price
 				</label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="customPriceRadio" id="customPriceRadio">
+				<input class="form-check-input" type="radio" name="filter" id="customPriceRadio">
 				<input class="form-control form-control-sm mb-2" type="number" min="0" max="999" placeholder="Minimum price" aria-label="Min price">
 				<input class="form-control form-control-sm mb-2" type="number" min="0" max="999" placeholder="Maximum price" aria-label="Max price">
 				<button class="btn btn-success btn-sm">Set</button>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="lowToHighPriceRadio" id="lowToHighPriceRadio">
+				<input class="form-check-input" type="radio" name="filter" id="lowToHighPriceRadio">
 				<label class="form-check-label light-text" for="lowToHighPriceRadioRadio">
 					Price (low to high)
 				</label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="highToLowPriceRadio" id="highToLowPricePriceRadio">
+				<input class="form-check-input" type="radio" name="filter" id="highToLowPricePriceRadio">
 				<label class="form-check-label light-text" for="highToLowPricePriceRadio">
 					Price (high to low)
 				</label>
