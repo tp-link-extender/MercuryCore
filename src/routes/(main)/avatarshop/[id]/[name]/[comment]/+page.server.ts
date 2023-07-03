@@ -1,11 +1,12 @@
 import { actions as postActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { roQuery } from "$lib/server/redis"
+import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
+import { Prisma } from "@prisma/client"
 
 export async function load({ locals, params }) {
-	const asset = await prisma.asset.findUnique({
+	const getAsset = await prisma.asset.findUnique({
 		where: {
 			id: parseInt(params.id),
 		},
@@ -14,14 +15,15 @@ export async function load({ locals, params }) {
 		},
 	})
 
-	if (!asset) throw error(404, "Asset not found")
+	if (!getAsset) throw error(404, "Asset not found")
 
 	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectComments: any = {
+	const selectComments = {
 		// odd type errors in "replies: selectComments" if not any
 		select: {
 			id: true,
 			posted: true,
+			parentAssetId: true,
 			parentReplyId: true,
 			author: {
 				select: {
@@ -31,7 +33,7 @@ export async function load({ locals, params }) {
 			},
 			content: {
 				orderBy: {
-					updated: "desc",
+					updated: Prisma.SortOrder.desc,
 				},
 				select: {
 					text: true,
@@ -55,45 +57,20 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	async function addLikes(asset: any) {
-		const query = {
-			user: user.username,
-			id: asset.id,
-		}
-		asset["likeCount"] = await roQuery(
-			"asset",
-			"RETURN SIZE((:User) -[:likes]-> (:Comment { name: $id }))",
-			query,
-			true
-		)
-		asset["dislikeCount"] = await roQuery(
-			"asset",
-			"RETURN SIZE((:User) -[:dislikes]-> (:Comment { name: $id }))",
-			query,
-			true
-		)
-		asset["likes"] = !!(await roQuery(
-			"asset",
-			"MATCH (:User { name: $user }) -[r:likes]-> (:Comment { name: $id }) RETURN r",
-			query
-		))
-		asset["dislikes"] = !!(await roQuery(
-			"asset",
-			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Comment { name: $id }) RETURN r",
-			query
-		))
+	const commentsWithLikes = await addLikes<typeof assetComments>(
+		"asset",
+		"Comment",
+		assetComments,
+		user.username
+	)
 
-		if (asset.replies)
-			asset.replies = await Promise.all(asset.replies.map(addLikes))
-
-		return asset
-	}
+	if (!commentsWithLikes) throw error(404, "Not found")
 
 	return {
-		replies: await Promise.all([assetComments].map(addLikes)),
+		replies: [commentsWithLikes],
 		assetId: params.id,
 		assetName: params.name,
-		creator: asset?.creatorUser?.username,
+		creator: getAsset?.creatorUser?.username,
 	}
 }
 

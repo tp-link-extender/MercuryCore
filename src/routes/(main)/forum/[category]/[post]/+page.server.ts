@@ -1,12 +1,12 @@
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { roQuery } from "$lib/server/redis"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
+import formError from "$lib/server/formError"
+import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
 import { NotificationType, Prisma } from "@prisma/client"
-import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
@@ -85,63 +85,19 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	async function addLikes(post2: typeof forumPost, reply = true) {
-		if (!post2) return
+	const postWithLikes = await addLikes<typeof forumPost>(
+		"forum",
+		"Post",
+		forumPost,
+		user.username,
+		"Reply"
+	)
 
-		const post = post2 as typeof forumPost & {
-			likeCount: number
-			dislikeCount: number
-			likes: boolean
-			dislikes: boolean
-		}
-
-		const query = {
-			user: user.username,
-			id: post.id,
-		}
-
-		const type = reply ? "Reply" : "Post"
-
-		const t = []
-		if (post.replies) for (const r of post.replies) t.push(addLikes(r))
-		;[post.likeCount, post.dislikeCount, post.likes, post.dislikes] =
-			await Promise.all([
-				roQuery(
-					"forum",
-					`RETURN SIZE((:User) -[:likes]-> (:${type} { name: $id }))`,
-					query,
-					true
-				),
-				roQuery(
-					"forum",
-					`RETURN SIZE((:User) -[:dislikes]-> (:${type} { name: $id }))`,
-					query,
-					true
-				),
-				roQuery(
-					"forum",
-					`MATCH (:User { name: $user }) -[r:likes]-> (:${type} { name: $id }) RETURN r`,
-					query
-				),
-				roQuery(
-					"forum",
-					`MATCH (:User { name: $user }) -[r:dislikes]-> (:${type} { name: $id }) RETURN r`,
-					query
-				),
-				...t,
-			])
-
-		post.likes = !!post.likes
-		post.dislikes = !!post.dislikes
-
-		if (!post.replies) return post
-
-		return post
-	}
+	if (!postWithLikes) throw error(404, "Not found")
 
 	return {
 		form: superValidate(schema),
-		...(await addLikes(forumPost, false)),
+		...postWithLikes,
 		baseDepth: 0,
 	}
 }
@@ -159,15 +115,14 @@ export const actions = {
 		const replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another comment
 
-		let replypost
-		if (replyId)
-			replypost = await prisma.forumReply.findUnique({
-				where: { id: replyId },
-			})
-		else
-			replypost = await prisma.forumPost.findUnique({
-				where: { id: params.post },
-			})
+		const replypost = replyId
+			? await prisma.forumReply.findUnique({
+					where: { id: replyId },
+			  })
+			: await prisma.forumPost.findUnique({
+					where: { id: params.post },
+			  })
+
 		if (!replypost) throw error(404)
 
 		const newReplyId = await id()
@@ -201,5 +156,5 @@ export const actions = {
 				},
 			})
 	},
-	like: categoryActions.like,
+	like: categoryActions.like as any,
 }
