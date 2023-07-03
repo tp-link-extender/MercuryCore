@@ -270,8 +270,8 @@ model ForumReply {
     posted   DateTime      @default(now())
     content  TextContent[]
 
-    parentPost    ForumPost    @relation(fields: [parentPostId], references: [id])
-    parentPostId  String
+    parentPost    ForumPost    @relation(fields: [topParentId], references: [id])
+    topParentId  String
     // A reply can be to a post or another reply
     parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
     parentReplyId String?
@@ -421,8 +421,8 @@ model AssetComment {
     posted   DateTime      @default(now())
     content  TextContent[]
 
-    parentAsset   Asset          @relation(fields: [parentAssetId], references: [id])
-    parentAssetId Int
+    parentAsset   Asset          @relation(fields: [topParentId], references: [id])
+    topParentId Int
     // A reply can be to a post or another reply
     parentReply   AssetComment?  @relation("replies", fields: [parentReplyId], references: [id])
     parentReplyId String?

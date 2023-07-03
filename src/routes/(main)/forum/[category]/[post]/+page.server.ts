@@ -85,19 +85,15 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	const postWithLikes = await addLikes<typeof forumPost>(
-		"forum",
-		"Post",
-		forumPost,
-		user.username,
-		"Reply"
-	)
-
-	if (!postWithLikes) throw error(404, "Not found")
-
 	return {
 		form: superValidate(schema),
-		...postWithLikes,
+		...(await addLikes<typeof forumPost>(
+			"forum",
+			"Post",
+			forumPost,
+			user.username,
+			"Reply"
+		)),
 		baseDepth: 0,
 	}
 }
@@ -136,7 +132,7 @@ export const actions = {
 						text: content,
 					},
 				},
-				parentPostId: params.post,
+				topParentId: params.post,
 				parentReplyId: replyId,
 			},
 		})

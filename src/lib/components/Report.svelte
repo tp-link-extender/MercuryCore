@@ -26,7 +26,7 @@
 		white-space: nowrap
 		width: 0
 		vertical-align: middle // not perfectly centered
-		margin-top: -0.2rem // there we go
+		margin-top: -0.1rem // there we go
 
 	a:hover
 		i

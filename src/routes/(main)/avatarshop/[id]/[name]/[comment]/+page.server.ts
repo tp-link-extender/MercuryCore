@@ -23,7 +23,6 @@ export async function load({ locals, params }) {
 		select: {
 			id: true,
 			posted: true,
-			parentAssetId: true,
 			parentReplyId: true,
 			author: {
 				select: {
@@ -63,8 +62,6 @@ export async function load({ locals, params }) {
 		assetComments,
 		user.username
 	)
-
-	if (!commentsWithLikes) throw error(404, "Not found")
 
 	return {
 		replies: [commentsWithLikes],
