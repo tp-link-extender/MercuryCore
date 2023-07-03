@@ -15,7 +15,7 @@
 		Moderation: [
 			["Moderate User", "/admin/moderation", "fas fa-user-slash"],
 			// ["Report Abuse", "#", "far fa-flag"],
-			// ["Asset Approval", "#", "fas fa-file-circle-check"],
+			["Asset Approval", "/admin/asset", "fas fa-file-circle-check"],
 		],
 		Economy: [
 			// ["Award Currency", "#", "far fa-gem"],
