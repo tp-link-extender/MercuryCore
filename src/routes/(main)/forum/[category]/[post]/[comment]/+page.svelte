@@ -6,6 +6,7 @@
 	const repliesCollapsed = writable({})
 
 	export let data
+	const { user } = data
 
 	$: topReply = data.replies[0]
 	$: parentPost = topReply.parentPost
@@ -43,6 +44,7 @@
 
 	{#each data.replies as reply, num}
 		<ForumReply
+			{user}
 			{reply}
 			{num}
 			{replyingTo}

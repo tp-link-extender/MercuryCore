@@ -1,4 +1,4 @@
-import { actions as postActions } from "../+page.server"
+import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import addLikes from "$lib/server/addLikes"
@@ -19,11 +19,14 @@ export async function load({ locals, params }) {
 
 	// Since prisma does not yet support recursive copying, we have to do it manually
 	const selectComments = {
-		// odd type errors in "replies: selectComments" if not any
+		// where: {
+		// 	OR: [{ visibility: Visibility.Visible }, { authorId: user.id }],
+		// },
 		select: {
 			id: true,
 			posted: true,
 			parentReplyId: true,
+			visibility: true,
 			author: {
 				select: {
 					username: true,
@@ -71,4 +74,4 @@ export async function load({ locals, params }) {
 	}
 }
 
-export const actions = postActions
+export { actions }

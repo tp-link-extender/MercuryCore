@@ -6,6 +6,8 @@
 	const repliesCollapsed = writable({})
 
 	export let data
+	const { user } = data
+
 	$: topReply = data.replies[0]
 </script>
 
@@ -34,6 +36,7 @@
 
 	{#each data.replies as reply, num}
 		<ForumReply
+			{user}
 			{reply}
 			{num}
 			{replyingTo}

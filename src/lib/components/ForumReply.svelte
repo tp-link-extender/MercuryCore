@@ -1,10 +1,16 @@
 <script lang="ts">
 	import Report from "./Report.svelte"
+	import Delete from "./Delete.svelte"
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 	import type { Writable } from "svelte/store"
 
 	// too many exports help
+	export let user: {
+		username: string
+		permissionLevel: number
+	}
+
 	export let reply: (
 		| import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
 		| import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
@@ -40,6 +46,8 @@
 			return collapsed
 		})
 	}
+
+	const hidden = reply.visibility != "Visible"
 </script>
 
 {#if !topLevel}
@@ -66,6 +74,7 @@
 	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="d-flex">
 		<span class="d-flex flex-column">
 			<a
+				class:hidden
 				href="/user/{reply.author.number}"
 				class="user d-flex text-decoration-none pt-2">
 				<span class="pfp bg-a2 rounded-circle">
@@ -105,6 +114,7 @@
 					<div class="w-100">
 						<a
 							href="/user/{reply.author.number}"
+							class:hidden
 							class="user userlink d-flex text-decoration-none pt-2 ms-3 {reply
 								.author.username == postAuthorName
 								? ''
@@ -128,7 +138,7 @@
 								{reply.posted.toLocaleString()}
 							</small>
 						</a>
-						<p class="my-2">
+						<p class:hidden class="my-2">
 							{reply.content[0].text}
 						</p>
 						{#if $replyingTo != reply.id}
@@ -158,6 +168,7 @@
 
 									return () => {}
 								}}
+								class:hidden
 								class="d-inline me-2"
 								method="POST"
 								action="?/like&rid={reply.id}">
@@ -196,14 +207,27 @@
 							</form>
 							<button
 								on:click={() => replyingTo.set(reply.id)}
+								class:hidden
 								class="p-0 btn btn-sm grey-text px-1">
 								<i class="far fa-message pe-2" />
 								Reply
 							</button>
-							<Report
-								user={reply.author.username}
-								url="/forum/{forumCategory}/{postId}/{reply.id}"
-								reverse />
+							{#if !hidden}
+								{#if reply.author.username == user.username}
+									<Delete id={reply.id} reverse />
+								{:else}
+									<Report
+										user={reply.author.username}
+										url="/forum/{forumCategory}/{postId}/{reply.id}"
+										reverse />
+									{#if user.permissionLevel >= 4}
+										<Delete
+											id={reply.id}
+											moderate
+											reverse />
+									{/if}
+								{/if}
+							{/if}
 						{:else}
 							<div class="mb-2 card reply bg-darker">
 								<div class="card-body p-3 pt-1 pb-0">
@@ -258,6 +282,7 @@
 				{#each reply.replies as reply2}
 					<!-- Get READY for some RECURSION!!! -->
 					<svelte:self
+						{user}
 						reply={reply2}
 						{num}
 						{replyingTo}
@@ -329,4 +354,7 @@
 	.pfp img
 		max-width: 1.5rem
 		width: 1.5rem
+
+	.hidden
+		opacity: 33%
 </style>

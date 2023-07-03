@@ -23,11 +23,14 @@ export async function load({ locals, params }) {
 
 	// Since prisma does not yet support recursive copying, we have to do it manually
 	const selectComments = {
-		// odd type errors in "replies: selectComments" if not any
+		// where: {
+		// 	OR: [{ visibility: Visibility.Visible }, { authorId: user.id }],
+		// },
 		select: {
 			id: true,
 			posted: true,
 			parentReplyId: true,
+			visibility: true,
 			author: {
 				select: {
 					username: true,
@@ -272,6 +275,62 @@ export const actions = {
 		} catch (e) {
 			console.error(e)
 			throw error(500, "Redis error 2")
+		}
+	},
+	delete: async ({ url, locals }) => {
+		const { user } = await authorise(locals)
+
+		const id = url.searchParams.get("id")
+		if (!id) throw error(400, "No comment id provided")
+
+		const comment = await prisma.assetComment.findUnique({
+			where: { id },
+			select: {
+				authorId: true,
+				visibility: true,
+			},
+		})
+
+		if (!comment) throw error(404, "Comment not found")
+
+		if (comment.authorId != user.id)
+			throw error(403, "You cannot delete someone else's comment")
+
+		if (comment.visibility != "Visible")
+			throw error(400, "Comment already deleted")
+
+		await prisma.assetComment.update({
+			where: { id },
+			data: {
+				visibility: "Deleted",
+				content: {
+					create: {
+						text: "[deleted]",
+					},
+				},
+			},
+		})
+	},
+	moderate: async ({ url, locals }) => {
+		await authorise(locals, 4)
+
+		const id = url.searchParams.get("id")
+		if (!id) throw error(400, "No comment id provided")
+
+		try {
+			await prisma.assetComment.update({
+				where: { id },
+				data: {
+					visibility: "Moderated",
+					content: {
+						create: {
+							text: "[removed]",
+						},
+					},
+				},
+			})
+		} catch (e) {
+			throw error(404, "Comment not found")
 		}
 	},
 }
