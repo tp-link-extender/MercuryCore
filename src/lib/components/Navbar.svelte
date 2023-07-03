@@ -6,9 +6,9 @@
 
 	let search = ""
 
-	const height = (_: any) => ({
+	const height = (_: HTMLElement) => ({
 		duration: 300,
-		css: (t: any) => `
+		css: (t: number) => `
 			height: ${2 * quadOut(t)}rem;
 			overflow: hidden;
 		`,
@@ -19,18 +19,20 @@
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark py-0">
-	<a class="navbar-brand light-text mx-4 mobile-brand" href="/">Mercury</a>
-	<button
-		class="navbar-toggler ms-auto my-1 me-3"
-		type="button"
-		title="Open sidebar"
-		data-bs-toggle="offcanvas"
-		data-bs-target="#offcanvasNavbar-expand-lg"
-		aria-controls="offcanvasNavbar-expand-lg">
-		<span
-			class="navbar-toggler-icon"
-			data-bs-target="#offcanvasNavbar-expand-lg" />
-	</button>
+	<div class="d-flex">
+		<button
+			class="navbar-toggler mx-2 my-1"
+			type="button"
+			title="Open sidebar"
+			data-bs-toggle="offcanvas"
+			data-bs-target="#offcanvasNavbar-expand-lg"
+			aria-controls="offcanvasNavbar-expand-lg">
+			<span
+				class="navbar-toggler-icon"
+				data-bs-target="#offcanvasNavbar-expand-lg" />
+		</button>
+		<a class="navbar-brand light-text mx-4 mt-1 mobile-brand" href="/">Mercury</a>
+	</div>
 	<div
 		class="offcanvas offcanvas-start border-0"
 		data-bs-hideresize="true"
@@ -197,9 +199,7 @@
 					</li>
 
 					<li class="dropdown2 dropdown-hover dropdown-end">
-						<a
-							href="/user/{user.number}"
-							class="btn p-0 d-flex">
+						<a href="/user/{user.number}" class="btn p-0 d-flex">
 							<div
 								id="pfp"
 								class="mx-2 rounded-circle bg-background">
@@ -208,7 +208,9 @@
 									alt="You"
 									class="rounded-circle rounded-top-0" />
 							</div>
-							<p id="username" class="my-auto fs-6 me-2 light-text">
+							<p
+								id="username"
+								class="my-auto fs-6 me-2 light-text">
 								{user?.username}
 							</p>
 						</a>
@@ -301,7 +303,7 @@
 	.mobile-brand
 		display: none
 
-	@media only screen and (max-width: 992px)
+	@media only screen and (max-width: 991px)
 		.offcanvas-header
 			background: var(--accent)
 		.offcanvas
@@ -344,7 +346,7 @@
 		.mobilenav
 			display: block
 
-	@media only screen and (min-width: 992px)
+	@media only screen and (min-width: 991px)
 		.loggedin
 			margin-left: auto
 
@@ -357,7 +359,7 @@
 	#nav1
 		// padding-top: 1px
 		background: #fff1
-		@media only screen and (max-width: 992px)
+		@media only screen and (max-width: 991px)
 			background: none
 			min-height: fit-content !important
 			overflow-x: hidden
@@ -366,7 +368,7 @@
 	#nav2
 		background: #0003
 		z-index: 1
-		@media only screen and (max-width: 992px)
+		@media only screen and (max-width: 991px)
 			background: none !important
 			min-height: 36vh !important
 			flex-direction: column
@@ -418,7 +420,7 @@
 		font-size: 0.8rem
 		@media only screen and (max-width: 1199px)
 			width: 12rem
-		@media only screen and (max-width: 992px)
+		@media only screen and (max-width: 991px)
 			width: 100%
 		button, input
 			height: 2.3rem
