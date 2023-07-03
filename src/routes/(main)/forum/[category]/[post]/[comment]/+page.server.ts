@@ -71,8 +71,6 @@ export async function load({ locals, params }) {
 		user.username
 	)
 
-	if (!repliesWithLikes) throw error(404, "Not found")
-
 	return {
 		replies: [repliesWithLikes],
 		forumCategory: params.category,

@@ -8,7 +8,7 @@
 	export let data
 
 	$: topReply = data.replies[0]
-	$: parentPost = topReply?.parentPost
+	$: parentPost = topReply.parentPost
 </script>
 
 <svelte:head>
@@ -23,35 +23,33 @@
 			</li>
 			<li class="breadcrumb-item">
 				<a
-					href="/forum/{parentPost?.forumCategoryName}"
+					href="/forum/{parentPost.forumCategoryName}"
 					class="accent-text">
-					{parentPost?.forumCategoryName}
+					{parentPost.forumCategoryName}
 				</a>
 			</li>
 			<li class="breadcrumb-item">
 				<a
-					href="/forum/{parentPost?.forumCategoryName}/{parentPost?.id}"
+					href="/forum/{parentPost.forumCategoryName}/{parentPost.id}"
 					class="accent-text">
-					{parentPost?.title}
+					{parentPost.title}
 				</a>
 			</li>
 			<li class="breadcrumb-item active" aria-current="page">
-				{topReply?.content[0].text}
+				{topReply.content[0].text}
 			</li>
 		</ol>
 	</nav>
 
 	{#each data.replies as reply, num}
-		{#if reply}
-			<ForumReply
-				{reply}
-				{num}
-				{replyingTo}
-				forumCategory={data.forumCategory}
-				postId={data.postId}
-				postAuthorName={data.author}
-				{repliesCollapsed} />
-		{/if}
+		<ForumReply
+			{reply}
+			{num}
+			{replyingTo}
+			forumCategory={data.forumCategory}
+			postId={data.postId}
+			postAuthorName={data.author}
+			{repliesCollapsed} />
 	{/each}
 </div>
 

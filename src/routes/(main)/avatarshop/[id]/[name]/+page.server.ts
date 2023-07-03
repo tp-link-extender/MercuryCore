@@ -99,21 +99,18 @@ export async function load({ locals, params }) {
 		},
 	})
 
-	const fakeObject = {
-		id: "", // id not needed, as assets can't be voted on
-		replies: getAsset.replies,
-	}
-
-	await addLikes<typeof fakeObject>(
-		"asset",
-		"Comment",
-		fakeObject,
-		user.username
-	)
+	// id not needed for querying likes, as assets can't be voted on
+	getAsset.id = 0
 
 	return {
 		form: superValidate(schema),
-		...getAsset,
+		...(await addLikes<typeof getAsset>(
+			"asset",
+			"Comment",
+			getAsset,
+			user.username
+		)),
+		id, // Add back the id
 		owned: (assetOwned?.owners || []).length > 0,
 		sold: getAsset._count.owners,
 	}
@@ -165,7 +162,7 @@ export const actions = {
 						text: content,
 					},
 				},
-				parentAssetId: parseInt(params.id),
+				topParentId: parseInt(params.id),
 				parentReplyId: replyId,
 			},
 		})

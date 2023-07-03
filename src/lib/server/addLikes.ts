@@ -15,12 +15,12 @@ import { roQuery } from "$lib/server/redis"
  */
 async function addLikes<
 	ItemType extends {
-		id: string
+		id: string | number
 		replies: NextType
 		[k: string]: any
 	},
 	NextType extends {
-		id: string
+		id: string | number
 		replies: NextType
 		[k: string]: any
 	}[] = ItemType["replies"]
@@ -31,13 +31,17 @@ async function addLikes<
 	username: string,
 	nextType: string = type
 ) {
-	if (!item) return
-
 	const item2 = item as ItemType & {
 		likeCount: number
 		dislikeCount: number
 		likes: boolean
 		dislikes: boolean
+		replies: {
+			likeCount: number
+			dislikeCount: number
+			likes: boolean
+			dislikes: boolean
+		}[]
 	}
 
 	const query = { user: username, id: item2.id }

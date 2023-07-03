@@ -5,12 +5,16 @@
 	import type { Writable } from "svelte/store"
 
 	// too many exports help
-	export let reply:
+	export let reply: (
 		| import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
-		| Exclude<
-				import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"],
-				undefined
-		  >[number]
+		| import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
+	) & {
+		likeCount: number
+		dislikeCount: number
+		likes: boolean
+		dislikes: boolean
+	}
+
 	export let num: number
 	export let depth = 0
 	export let replyingTo: Writable<string>
