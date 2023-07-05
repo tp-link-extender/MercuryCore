@@ -1,11 +1,5 @@
 <script lang="ts">
-	import { enhance, deserialize } from "$app/forms"
-	import fade from "$lib/fade"
-	import Modal from "$lib/components/Modal.svelte"
-	import Report from "$lib/components/Report.svelte"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 	import customProtocolCheck from "custom-protocol-check"
-	import { writable } from "svelte/store"
 
 	export let data
 	const { user } = data

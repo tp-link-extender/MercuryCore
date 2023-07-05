@@ -14,7 +14,7 @@ export async function load({ locals }) {
 
 export const actions = {
 	default: async () =>
-		// This function takes like 700ms to run, and 
+		// This function takes like 700ms to run, and
 		// streaming promises still takes a good while
 		{
 			const { free, size } = await checkDiskSpace(os.homedir())

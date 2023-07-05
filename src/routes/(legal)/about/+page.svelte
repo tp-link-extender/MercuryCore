@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Pagepart from "$lib/components/Pagepart.svelte"
 	import { Parallax, ParallaxLayer } from "svelte-parallax"
 
 	let top: HTMLElement

@@ -8,7 +8,6 @@ export async function GET({ url, setHeaders }) {
 	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
 
 	if (fs.existsSync(`data/assets/${ID}`)) {
-
 		const file = fs.readFileSync(`data/assets/${ID}`, "utf-8")
 
 		setHeaders({

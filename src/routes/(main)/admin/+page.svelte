@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-	import AdminLink from "$lib/components/AdminLink.svelte"
-
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],
@@ -33,7 +30,7 @@
 		size: number
 	}
 	async function getDiskSpace() {
-		const data = JSON.parse(
+		const jsonData = JSON.parse(
 			(
 				await (
 					await fetch("admin", {
@@ -44,8 +41,8 @@
 			).data
 		)
 		return (diskSpace = {
-			free: data[1],
-			size: data[2],
+			free: jsonData[1],
+			size: jsonData[2],
 		})
 	}
 
@@ -63,11 +60,7 @@
 	}
 
 	const tabNames = ["Moderation", "Economy", "Statistics"]
-	let pos = 1
-	if (user?.permissionLevel == 5) {
-		tabNames.unshift("Administration")
-		pos = 0
-	}
+	if (user?.permissionLevel == 5) tabNames.unshift("Administration")
 
 	let tabData = TabData(data.url, tabNames)
 </script>

@@ -1,8 +1,4 @@
 <script lang="ts">
-	import { enhance, deserialize } from "$app/forms"
-	import Asset from "$lib/components/Asset.svelte"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-
 	let query = ""
 
 	let searchedData: any[] = []
@@ -48,7 +44,11 @@
 	<div class="row mb-3">
 		<h1 class="col-xl-4 col-lg-4 col-md-3 mb-0 light-text">Catalog</h1>
 		<div class="col-xl-8 col-lg-8 col-md-9 mt-2">
-			<form use:enhance method="POST" action="/search?c=assets" class="row">
+			<form
+				use:enhance
+				method="POST"
+				action="/search?c=assets"
+				class="row">
 				<div class="input-group">
 					<input
 						bind:value={query}
@@ -92,45 +92,96 @@
 			<h1 class="light-text h3">Filters</h1>
 			<p class="light-text mb-0">Sort by:</p>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="filter" id="bestsellingRadio">
-				<label class="form-check-label light-text" for="bestsellingRadio">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="bestsellingRadio" />
+				<label
+					class="form-check-label light-text"
+					for="bestsellingRadio">
 					Bestselling
 				</label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="filter" id="recentlyCreatedRadio">
-				<label class="form-check-label light-text" for="recentlyCreatedRadio">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="recentlyCreatedRadio" />
+				<label
+					class="form-check-label light-text"
+					for="recentlyCreatedRadio">
 					Recently Created
 				</label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="filter" id="mercuryRadio">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="mercuryRadio" />
 				<label class="form-check-label light-text" for="mercuryRadio">
 					Mercury
 				</label>
 			</div>
 			<p class="light-text mb-0">Price:</p>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="filter" id="defaultPriceRadio" checked>
-				<label class="form-check-label light-text" for="defaultPriceRadio">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="defaultPriceRadio"
+					checked />
+				<label
+					class="form-check-label light-text"
+					for="defaultPriceRadio">
 					Any price
 				</label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="filter" id="customPriceRadio">
-				<input class="form-control form-control-sm mb-2" type="number" min="0" max="999" placeholder="Minimum price" aria-label="Min price">
-				<input class="form-control form-control-sm mb-2" type="number" min="0" max="999" placeholder="Maximum price" aria-label="Max price">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="customPriceRadio" />
+				<input
+					class="form-control form-control-sm mb-2"
+					type="number"
+					min="0"
+					max="999"
+					placeholder="Minimum price"
+					aria-label="Min price" />
+				<input
+					class="form-control form-control-sm mb-2"
+					type="number"
+					min="0"
+					max="999"
+					placeholder="Maximum price"
+					aria-label="Max price" />
 				<button class="btn btn-success btn-sm">Set</button>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="filter" id="lowToHighPriceRadio">
-				<label class="form-check-label light-text" for="lowToHighPriceRadioRadio">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="lowToHighPriceRadio" />
+				<label
+					class="form-check-label light-text"
+					for="lowToHighPriceRadioRadio">
 					Price (low to high)
 				</label>
 			</div>
 			<div class="form-check">
-				<input class="form-check-input" type="radio" name="filter" id="highToLowPricePriceRadio">
-				<label class="form-check-label light-text" for="highToLowPricePriceRadio">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="highToLowPricePriceRadio" />
+				<label
+					class="form-check-label light-text"
+					for="highToLowPricePriceRadio">
 					Price (high to low)
 				</label>
 			</div>

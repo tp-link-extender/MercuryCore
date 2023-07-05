@@ -1,8 +1,6 @@
 <script lang="ts">
-	import fade from "$lib/fade"
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	export let data
 	const {
@@ -188,7 +186,10 @@
 						{#each data.invites as invite}
 							<tr>
 								<td>
-									<form use:enhance method="POST" action="?id={invite.key}">
+									<form
+										use:enhance
+										method="POST"
+										action="?id={invite.key}">
 										<button
 											name="action"
 											value="disable"

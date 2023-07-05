@@ -2,8 +2,6 @@
 	// An avatar shop item component, used in the
 	// avatar shop and inventory pages.
 
-	import fade from "$lib/fade"
-
 	export let asset: {
 		id: string
 		name: string

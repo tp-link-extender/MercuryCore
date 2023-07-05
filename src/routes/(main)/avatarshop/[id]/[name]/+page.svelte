@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import Report from "$lib/components/Report.svelte"
-	import Modal from "$lib/components/Modal.svelte"
-	import ForumReply from "$lib/components/ForumReply.svelte"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 	import { superForm } from "sveltekit-superforms/client"
-	import { writable } from "svelte/store"
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})

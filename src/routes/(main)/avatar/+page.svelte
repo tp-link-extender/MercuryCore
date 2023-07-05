@@ -1,16 +1,19 @@
 <script lang="ts">
-	import Modal from "$lib/components/Modal.svelte"
-	import { writable } from "svelte/store"
-	import { enhance } from "$app/forms"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-
 	export let data
 	export let form
 	const { user } = data
 
 	let modal = writable(false)
 	let bodyPart = ""
-	let tabData = TabData(data.url, ["Recent", "Heads", "Faces", "T-Shirts", "Shirts", "Pants", "Gear"])
+	let tabData = TabData(data.url, [
+		"Recent",
+		"Heads",
+		"Faces",
+		"T-Shirts",
+		"Shirts",
+		"Pants",
+		"Gear",
+	])
 
 	const bodyParts: { [k: string]: number } = {
 		Head: user?.bodyColours.Head,

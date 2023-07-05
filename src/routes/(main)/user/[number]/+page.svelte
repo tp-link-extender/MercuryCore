@@ -1,8 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import Report from "$lib/components/Report.svelte"
-	import fade from "$lib/fade"
-
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],

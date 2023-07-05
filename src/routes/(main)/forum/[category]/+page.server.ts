@@ -58,7 +58,7 @@ export async function load({ locals, params }) {
 		"forum",
 		"Post",
 		fakeObject,
-		user.username,
+		user.username
 	)
 
 	return category

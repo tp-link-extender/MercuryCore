@@ -1,6 +1,4 @@
 <script lang="ts">
-	import fade from "$lib/fade"
-
 	const statusColours: { [k: string]: string } = {
 		Online: "bg-info",
 		Joined: "bg-success",

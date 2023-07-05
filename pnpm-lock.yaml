@@ -163,6 +163,9 @@ devDependencies:
   svelte-preprocess:
     specifier: ^5.0.4
     version: 5.0.4(postcss@8.4.24)(sass@1.63.6)(svelte@4.0.0)(typescript@5.1.5)
+  sveltekit-autoimport:
+    specifier: ^1.7.0
+    version: 1.7.0
   sveltekit-superforms:
     specifier: ^1.1.2
     version: 1.1.2(@sveltejs/kit@1.21.0)(svelte@4.0.0)(zod@3.21.4)
@@ -836,6 +839,14 @@ packages:
       resolve: 1.22.2
       rollup: 3.25.3
     dev: false
+
+  /@rollup/pluginutils@4.2.1:
+    resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
+    engines: {node: '>= 8.0.0'}
+    dependencies:
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+    dev: true
 
   /@rollup/pluginutils@5.0.2(rollup@3.25.3):
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
@@ -2507,6 +2518,13 @@ packages:
     resolution: {integrity: sha512-zI8gT2AOpxTPIxYzToEdgoht+GOflrduZiHPsOEmg4/2pThOyCW3o3lXh+Uwh20tJ9QoXwQe9/Omn6PlUG6efw==}
     dev: false
 
+  /magic-string@0.26.7:
+    resolution: {integrity: sha512-hX9XH3ziStPoPhJxLq1syWuZMxbDvGNbVchfrdCtanC7D13888bMFow61x8axrx+GfHLtVeAx2kxL7tTGRl+Ow==}
+    engines: {node: '>=12'}
+    dependencies:
+      sourcemap-codec: 1.4.8
+    dev: true
+
   /magic-string@0.27.0:
     resolution: {integrity: sha512-8UnnX2PeRAPZuN12svgR9j7M1uWMovg/CEnIwIG0LFkXSJJe4PdfUGiTGl8V9bsBHFUtfVINcSyYxd7q+kx9fA==}
     engines: {node: '>=12'}
@@ -3215,6 +3233,11 @@ packages:
     dev: false
     optional: true
 
+  /sourcemap-codec@1.4.8:
+    resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
+    deprecated: Please use @jridgewell/sourcemap-codec instead
+    dev: true
+
   /statuses@1.5.0:
     resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
     engines: {node: '>= 0.6'}
@@ -3380,6 +3403,11 @@ packages:
       typescript: 5.1.5
     dev: true
 
+  /svelte@3.59.2:
+    resolution: {integrity: sha512-vzSyuGr3eEoAtT/A6bmajosJZIUWySzY2CzB3w2pgPvnkUjGqlDnsNnA0PMO+mMAhuyMul6C2uuZzY6ELSkzyA==}
+    engines: {node: '>= 8'}
+    dev: true
+
   /svelte@4.0.0:
     resolution: {integrity: sha512-+yCYu3AEUu9n91dnQNGIbnVp8EmNQtuF/YImW4+FTXRHard7NMo+yTsWzggPAbj3fUEJ1FBJLkql/jkp6YB5pg==}
     engines: {node: '>=16'}
@@ -3397,6 +3425,15 @@ packages:
       locate-character: 3.0.0
       magic-string: 0.30.0
       periscopic: 3.1.0
+
+  /sveltekit-autoimport@1.7.0:
+    resolution: {integrity: sha512-oqXpdxr7BTpl8xRvfajysSVCFet0BnF259bNMD8c5uhfKKh4/DAXZP4ElnhcTkuEoVfaj2AxFEewBoQlWPqH0g==}
+    dependencies:
+      '@rollup/pluginutils': 4.2.1
+      estree-walker: 2.0.2
+      magic-string: 0.26.7
+      svelte: 3.59.2
+    dev: true
 
   /sveltekit-superforms@1.1.2(@sveltejs/kit@1.21.0)(svelte@4.0.0)(zod@3.21.4):
     resolution: {integrity: sha512-oWW3+Phcs/CkUKGEx0IsCr6Dw3a22/MVs4Tvi8k/jh66pqwP/jOZu3/dT367pkbIh5T7NK20yrnbHu8nm2E7pQ==}

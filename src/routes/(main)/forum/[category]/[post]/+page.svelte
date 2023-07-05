@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { enhance as enhance2 } from "$app/forms"
-	import ForumReply from "$lib/components/ForumReply.svelte"
-	import Report from "$lib/components/Report.svelte"
-	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
 	let replyingTo = writable("")

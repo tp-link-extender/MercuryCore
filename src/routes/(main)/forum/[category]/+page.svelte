@@ -1,6 +1,4 @@
 <script lang="ts">
-	import ForumPost from "$lib/components/ForumPost.svelte"
-
 	export let data
 	// Forum
 	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}
@@ -32,7 +30,11 @@
 		</a>
 	</h1>
 	{#each data.posts as post, num}
-		<ForumPost {post} {num} total={data.posts.length} categoryName={data.name}/>
+		<ForumPost
+			{post}
+			{num}
+			total={data.posts.length}
+			categoryName={data.name} />
 	{/each}
 </div>
 

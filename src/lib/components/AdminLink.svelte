@@ -1,6 +1,4 @@
 <script lang="ts">
-	import fade from "$lib/fade"
-
 	export let num: number
 	export let total: number
 	export let href: string
