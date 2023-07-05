@@ -1,11 +1,7 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-
 	export let id: string
 	export let reverse = false
 	export let moderate = false
-
-	console.log(id)
 
 	const text = moderate ? "moderate" : "delete"
 	const colour = moderate ? "text-info" : "text-warning"

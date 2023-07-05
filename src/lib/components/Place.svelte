@@ -1,8 +1,6 @@
 <script lang="ts">
 	// Link to a place used on the homepage or on a user's profile.
 
-	import fade from "$lib/fade"
-
 	export let place: {
 		id: number
 		name: string

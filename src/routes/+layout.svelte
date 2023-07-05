@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { dev } from "$app/environment"
 	import { navigating } from "$app/stores"
-	import { enhance } from "$app/forms"
 	import nprogress from "nprogress"
 
 	import "uno.css"
@@ -27,7 +26,7 @@
 		nprogress.done()
 	}
 
-	const notificationNotes: {[k: string]: string} = {
+	const notificationNotes: { [k: string]: string } = {
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",
@@ -96,9 +95,7 @@
 					use:enhance
 					method="POST"
 					action="/notifications?s={notification.id}">
-					<button
-						class="btn-close"
-						aria-label="Close" />
+					<button class="btn-close" aria-label="Close" />
 				</form>
 			</div>
 			<a

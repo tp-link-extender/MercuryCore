@@ -1,8 +1,3 @@
-import Tab from "./Tab.svelte"
-import TabNav from "./TabNav.svelte"
-
-export { Tab, TabNav }
-
 /**
  * Creates an object to provide data to the TabNav and Tab components.
  * @param url The current URL, usually obtained by `data.url`
@@ -13,7 +8,7 @@ export { Tab, TabNav }
  * @example
  * let tabData = TabData(url, ["tab1", "tab2"], ["fa fa-1", "fa fa-2"])
  */
-export const TabData = (
+export default (
 	url: string,
 	tabs: string[],
 	icons?: string[],

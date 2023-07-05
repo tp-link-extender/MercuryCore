@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-
 	export let data
 
 	let tabData = TabData(data.url, ["Audit Logs"])

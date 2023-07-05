@@ -3,8 +3,6 @@
 	// this page will be rendered instead.
 
 	import { page } from "$app/stores"
-	import Navbar from "$lib/components/Navbar.svelte"
-	import Footer from "$lib/components/Footer.svelte"
 
 	export let data: import("./$types").LayoutData
 </script>

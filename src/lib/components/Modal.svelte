@@ -1,5 +1,4 @@
 <script lang="ts">
-	import fade from "$lib/fade"
 	import { fly } from "svelte/transition"
 	import type { Writable } from "svelte/store"
 

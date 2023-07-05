@@ -1,7 +1,4 @@
 <script lang="ts">
-	import ForumReply from "$lib/components/ForumReply.svelte"
-	import { writable } from "svelte/store"
-
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-	import fade from "$lib/fade"
 
 	export let data
 	const {

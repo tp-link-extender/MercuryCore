@@ -1,8 +1,6 @@
 <script lang="ts">
 	// Link to a place used on Games page.
 
-	import fade from "$lib/fade"
-
 	export let place: {
 		id: number
 		name: string
@@ -26,7 +24,10 @@
 			Math.floor(Date.now() / 1000) - 35}>
 		<div class="col col-6">
 			<div id="shadow" class="overflow-hidden bg-black">
-				<img src="/place/{place.id}/{place.name}/icon" alt={place.name} class="w-100 h-100" />
+				<img
+					src="/place/{place.id}/{place.name}/icon"
+					alt={place.name}
+					class="w-100 h-100" />
 			</div>
 		</div>
 		<div class="col col-6 p-2 row">

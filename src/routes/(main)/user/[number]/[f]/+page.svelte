@@ -1,6 +1,5 @@
 <script lang="ts">
 	// The friends, followers, and following pages for a user.
-	import UserCard from "$lib/components/UserCard.svelte"
 
 	export let data
 

@@ -1,8 +1,5 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import fade from "$lib/fade"
-	import Place from "$lib/components/Place.svelte"
-	import Report from "$lib/components/Report.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
 	// const statusColours: { [k: string]: string } = {
@@ -118,9 +115,7 @@
 							class="form-control light-text {$errors.status
 								? 'is-in'
 								: ''}valid" />
-						<button
-							class="btn btn-success"
-							aria-label="Send">
+						<button class="btn btn-success" aria-label="Send">
 							{#if $delayed}
 								...
 							{:else}
@@ -186,7 +181,10 @@
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
 							<a
-								in:fade|global={{ num, total: data.friends.length }}
+								in:fade|global={{
+									num,
+									total: data.friends.length,
+								}}
 								class="px-2 mb-2 text-center light-text text-decoration-none"
 								href="/user/{friend.number}">
 								<div class="position-relative mb-2">

@@ -1,8 +1,4 @@
 <script lang="ts">
-	import Report from "./Report.svelte"
-	import Delete from "./Delete.svelte"
-	import { enhance } from "$app/forms"
-	import fade from "$lib/fade"
 	import type { Writable } from "svelte/store"
 
 	// too many exports help

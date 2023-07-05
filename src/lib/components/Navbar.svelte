@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
-	import { fade } from "svelte/transition"
 	import { quadOut } from "svelte/easing"
 
 	let search = ""
@@ -31,7 +29,9 @@
 				class="navbar-toggler-icon"
 				data-bs-target="#offcanvasNavbar-expand-lg" />
 		</button>
-		<a class="navbar-brand light-text mx-4 mt-1 mobile-brand" href="/">Mercury</a>
+		<a class="navbar-brand light-text mx-4 mt-1 mobile-brand" href="/">
+			Mercury
+		</a>
 	</div>
 	<div
 		class="offcanvas offcanvas-start border-0"

@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { enhance, deserialize } from "$app/forms"
-	import PlaceCard from "$lib/components/PlaceCard.svelte"
-
 	let query = ""
 
 	let searchedData: any[] = []
@@ -45,7 +42,11 @@
 			</a>
 		</h1>
 		<div class="col-8">
-			<form use:enhance method="POST" action="/search?c=places" class="row">
+			<form
+				use:enhance
+				method="POST"
+				action="/search?c=places"
+				class="row">
 				<div class="col-5">
 					<div class="input-group">
 						<input
