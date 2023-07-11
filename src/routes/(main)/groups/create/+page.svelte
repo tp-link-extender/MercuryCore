@@ -36,7 +36,7 @@
 				</p>
 			</div>
 		</div>
-		<button type="submit" class="btn btn-success">
+		<button class="btn btn-success">
 			{#if $delayed}
 				Working...
 			{:else}

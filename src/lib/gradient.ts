@@ -419,11 +419,11 @@ class MiniGl {
 							n.attributes.uv.update(),
 								n.attributes.uvNorm.update(),
 								n.attributes.index.update()
-								// _miniGl.debug("Geometry.setTopology", {
-								// 	uv: n.attributes.uv,
-								// 	uvNorm: n.attributes.uvNorm,
-								// 	index: n.attributes.index,
-								// })
+							// _miniGl.debug("Geometry.setTopology", {
+							// 	uv: n.attributes.uv,
+							// 	uvNorm: n.attributes.uvNorm,
+							// 	index: n.attributes.index,
+							// })
 						}
 						setSize(width = 1, height = 1, orientation = "xz") {
 							const geometry = this
@@ -467,9 +467,9 @@ class MiniGl {
 								}
 							}
 							geometry.attributes.position.update()
-								// _miniGl.debug("Geometry.setSize", {
-								// 	position: geometry.attributes.position,
-								// })
+							// _miniGl.debug("Geometry.setSize", {
+							// 	position: geometry.attributes.position,
+							// })
 						}
 					},
 				},
@@ -498,9 +498,9 @@ class MiniGl {
 									})
 								}),
 								_miniGl.meshes.push(mesh)
-								// _miniGl.debug("Mesh.constructor", {
-								// 	mesh: mesh,
-								// })
+							// _miniGl.debug("Mesh.constructor", {
+							// 	mesh: mesh,
+							// })
 						}
 						draw() {
 							context.useProgram(this.material.program),
@@ -612,14 +612,14 @@ class MiniGl {
 			this.gl.viewport(0, 0, e, t),
 			(this.commonUniforms.rs.value = [e, t]),
 			(this.commonUniforms.aspectRatio.value = e / t)
-			// this.debug("MiniGL.setSize", {
-			// 	width: e,
-			// 	height: t,
-			// })
+		// this.debug("MiniGL.setSize", {
+		// 	width: e,
+		// 	height: t,
+		// })
 	}
 	// left, right, top, bottom, near, far
 	setOrthographicCamera(e = 0, t = 0, n = 0, i = -2e3, s = 2e3) {
-		;(this.commonUniforms.pm.value = [
+		this.commonUniforms.pm.value = [
 			2 / this.width,
 			0,
 			0,
@@ -636,8 +636,8 @@ class MiniGl {
 			t,
 			n,
 			1,
-		])
-			// this.debug("setOrthographicCamera", this.commonUniforms.pm.value)
+		]
+		// this.debug("setOrthographicCamera", this.commonUniforms.pm.value)
 	}
 	render() {
 		this.gl.clearColor(0, 0, 0, 0),

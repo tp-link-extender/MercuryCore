@@ -1,9 +1,4 @@
 <script lang="ts">
-	import fade from "$lib/fade"
-	import Place from "$lib/components/Place.svelte"
-	import Asset from "$lib/components/Asset.svelte"
-	import Group from "$lib/components/Group.svelte"
-
 	// const statusColours: { [k: string]: string } = {
 	// 	Online: "bg-info",
 	// 	Joined: "bg-success",

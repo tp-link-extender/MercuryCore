@@ -1,6 +1,4 @@
 <script lang="ts">
-	import ForumPost from "$lib/components/ForumPost.svelte"
-
 	export let data
 	// Forum
 	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}
@@ -12,7 +10,7 @@
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 p-0 fs-6">
+		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
 			<li class="breadcrumb-item">
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
@@ -32,7 +30,11 @@
 		</a>
 	</h1>
 	{#each data.posts as post, num}
-		<ForumPost {post} {num} total={data.posts.length} categoryName={data.name}/>
+		<ForumPost
+			{post}
+			{num}
+			total={data.posts.length}
+			categoryName={data.name} />
 	{/each}
 </div>
 

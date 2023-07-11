@@ -1,9 +1,5 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import Place from "$lib/components/Place.svelte"
-
 	export let data
-	// const { user } = data
 </script>
 
 <svelte:head>

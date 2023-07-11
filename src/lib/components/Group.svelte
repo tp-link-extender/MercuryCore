@@ -2,8 +2,6 @@
 	// Component for a group, used on the
 	// groups page and on a user's profile.
 
-	import fade from "$lib/fade"
-
 	export let group: {
 		name: string
 		members: number

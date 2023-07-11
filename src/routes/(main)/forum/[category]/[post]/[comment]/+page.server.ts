@@ -1,10 +1,11 @@
-import { actions as postActions } from "../+page.server"
+import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { roQuery } from "$lib/server/redis"
+import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
+import { Prisma } from "@prisma/client"
 
-export async function load({ url, locals, params }) {
+export async function load({ locals, params }) {
 	const post = await prisma.forumPost.findUnique({
 		where: {
 			id: params.post,
@@ -17,11 +18,22 @@ export async function load({ url, locals, params }) {
 	if (!post) throw error(404, "Post not found")
 
 	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectReplies: any = {
+	const selectReplies = {
+		// where: {
+		// 	OR: [{ visibility: Visibility.Visible }, { authorId: user.id }],
+		// },
 		select: {
 			id: true,
 			posted: true,
 			parentReplyId: true,
+			visibility: true,
+			parentPost: {
+				select: {
+					forumCategoryName: true,
+					title: true,
+					id: true,
+				},
+			},
 			author: {
 				select: {
 					username: true,
@@ -29,11 +41,11 @@ export async function load({ url, locals, params }) {
 				},
 			},
 			content: {
-				orderBy: {
-					updated: "desc",
-				},
 				select: {
 					text: true,
+				},
+				orderBy: {
+					updated: Prisma.SortOrder.desc,
 				},
 				take: 1,
 			},
@@ -41,15 +53,7 @@ export async function load({ url, locals, params }) {
 		},
 	}
 	for (let i = 0; i < 9; i++)
-		selectReplies.select.replies = JSON.parse(JSON.stringify(selectReplies))
-
-	selectReplies.select.parentPost = {
-		select: {
-			forumCategoryName: true,
-			title: true,
-			id: true,
-		},
-	}
+		selectReplies.select.replies = structuredClone(selectReplies)
 
 	const forumReplies = await prisma.forumReply.findUnique({
 		where: {
@@ -62,53 +66,19 @@ export async function load({ url, locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	async function addLikes(reply: any) {
-		const query = {
-			user: user.username,
-			id: reply.id,
-		}
-		reply["likeCount"] = await roQuery(
-			"forum",
-			`RETURN SIZE((:User) -[:likes]-> (:Reply { name: $id }))`,
-			query,
-			true
-		)
-		reply["dislikeCount"] = await roQuery(
-			"forum",
-			`RETURN SIZE((:User) -[:dislikes]-> (:Reply { name: $id }))`,
-			query,
-			true
-		)
-		reply["likes"] = !!(await roQuery(
-			"forum",
-			`MATCH (:User { name: $user }) -[r:likes]-> (:Reply { name: $id }) RETURN r`,
-			query
-		))
-		reply["dislikes"] = !!(await roQuery(
-			"forum",
-			`MATCH (:User { name: $user }) -[r:dislikes]-> (:Reply { name: $id }) RETURN r`,
-			query
-		))
-
-		if (reply.replies)
-			reply.replies = await Promise.all(
-				reply.replies.map(async (reply: any) => await addLikes(reply))
-			)
-
-		return reply
-	}
-
-	const replies = await Promise.all(
-		[forumReplies].map(async reply => await addLikes(reply))
+	const repliesWithLikes = await addLikes<typeof forumReplies>(
+		"forum",
+		"Reply",
+		forumReplies,
+		user.username
 	)
 
 	return {
-		replies,
-		baseDepth: parseInt(url.searchParams.get("depth") as string),
+		replies: [repliesWithLikes],
 		forumCategory: params.category,
 		postId: params.post,
 		author: post?.author.username,
 	}
 }
 
-export const actions = postActions
+export { actions }

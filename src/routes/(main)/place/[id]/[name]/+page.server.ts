@@ -45,7 +45,7 @@ export async function load({ url, locals, params }) {
 						gt: Math.floor(Date.now() / 1000) - 35,
 					},
 				},
-				include: {
+				select: {
 					user: {
 						select: {
 							username: true,
@@ -101,14 +101,15 @@ export async function load({ url, locals, params }) {
 }
 
 export const actions = {
-	like: async ({ request, locals, params }) => {
+	like: async ({ url, request, locals, params }) => {
 		if (!/^\d+$/.test(params.id))
 			throw error(400, `Invalid place id: ${params.id}`)
 		const id = parseInt(params.id)
 
 		const { user } = await authorise(locals)
 		const data = await formData(request)
-		const { action, privateTicket } = data
+		const { action } = data
+		const privateTicket = url.searchParams.get("privateTicket")
 
 		const place = await prisma.place.findUnique({
 			where: {

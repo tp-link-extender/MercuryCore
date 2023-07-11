@@ -1,8 +1,4 @@
 <script lang="ts">
-	import { enhance, deserialize } from "$app/forms"
-	import Group from "$lib/components/Group.svelte"
-	import { onMount } from "svelte"
-
 	let query = ""
 
 	let searchedData: any[] = []
@@ -43,7 +39,11 @@
 			<a href="/groups/create" class="btn btn-primary ms-4">Create</a>
 		</h1>
 		<div class="col-4 ms-4">
-			<form use:enhance method="POST" action="/search" class="row">
+			<form
+				use:enhance
+				method="POST"
+				action="/search?c=groups"
+				class="row">
 				<div class="input-group">
 					<input
 						bind:value={query}
@@ -53,10 +53,8 @@
 						placeholder="Search for a group"
 						aria-label="Search for a group"
 						aria-describedby="button-addon2" />
-					<input type="hidden" name="category" value="places" />
 					<button
 						class="btn btn-success"
-						type="submit"
 						aria-label="Search"
 						id="button-addon2">
 						<i class="fa fa-magnifying-glass" />

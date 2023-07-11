@@ -1,7 +1,4 @@
 <script lang="ts">
-	import fade from "$lib/fade"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-
 	export let data
 
 	let tabData = TabData(data.url, ["Transactions"])
@@ -59,9 +56,10 @@
 											<i class="fa fa-gem" />
 											{transaction.amountSent}
 										</span>
-										<i class="fa fa-arrow-right ms-1" />
+										<i
+											class="fa fa-arrow-right ms-1 light-text" />
 									</div>
-									<div>
+									<div class="light-text">
 										{transaction.taxRate}% tax
 										<br />
 										<small>
@@ -69,7 +67,8 @@
 										</small>
 									</div>
 									<div class="fs-6 currency">
-										<i class="fa fa-arrow-right me-1" />
+										<i
+											class="fa fa-arrow-right me-1 light-text" />
 										<span class="text-success">
 											<i class="fa fa-gem" />
 											{Math.round(
@@ -128,6 +127,7 @@
 <style lang="sass">
 	.currency
 		margin-top: 0.5rem
+
 	.pfp
 		width: 2.5rem
 		height: 2.5rem

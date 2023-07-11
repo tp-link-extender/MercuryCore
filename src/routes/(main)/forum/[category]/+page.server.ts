@@ -1,7 +1,8 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { Query, roQuery } from "$lib/server/redis"
+import { Query } from "$lib/server/redis"
 import formData from "$lib/server/formData"
+import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
@@ -48,49 +49,19 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	for (const post of category.posts as any) {
-		post["likeCount"] = await roQuery(
-			"forum",
-			"RETURN SIZE((:User) -[:likes]-> (:Post { name: $id }))",
-			{
-				id: post.id,
-			},
-			true
-		)
-		post["dislikeCount"] = await roQuery(
-			"forum",
-			"RETURN SIZE((:User) -[:dislikes]-> (:Post { name: $id }))",
-			{
-				id: post.id,
-			},
-			true
-		)
-		post["likes"] = !!(await roQuery(
-			"forum",
-			"MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id }) RETURN r",
-			{
-				user: user.username,
-				id: post.id,
-			}
-		))
-		post["dislikes"] = !!(await roQuery(
-			"forum",
-			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id }) RETURN r",
-			{
-				user: user.username,
-				id: post.id,
-			}
-		))
+	const fakeObject = {
+		id: "", // id not needed
+		replies: category.posts,
 	}
 
-	return category as typeof category & {
-		posts: {
-			likeCount: number
-			dislikeCount: number
-			likes: boolean
-			dislikes: boolean
-		}[]
-	}
+	await addLikes<typeof fakeObject>(
+		"forum",
+		"Post",
+		fakeObject,
+		user.username
+	)
+
+	return category
 }
 
 export const actions = {
@@ -99,7 +70,7 @@ export const actions = {
 		const data = await formData(request)
 		const { action } = data
 		const id = url.searchParams.get("id")
-		const { replyId } = data
+		const replyId = url.searchParams.get("rid")
 
 		if (
 			(id &&
@@ -115,7 +86,7 @@ export const actions = {
 
 		const query = {
 			user: user.username,
-			id: id || replyId,
+			id: id || replyId || "",
 		}
 
 		try {

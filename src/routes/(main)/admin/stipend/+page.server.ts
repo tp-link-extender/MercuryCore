@@ -1,4 +1,5 @@
 import { authorise } from "$lib/server/lucia"
+import { prisma } from "$lib/server/prisma"
 import { client } from "$lib/server/redis"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
@@ -23,19 +24,49 @@ export async function load({ locals }) {
 
 export const actions = {
 	updateStipend: async ({ request, locals, getClientAddress }) => {
-		await authorise(locals, 5)
+		const { user } = await authorise(locals, 5)
 
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
 		if (limit) return limit
 
+		const currentStipend = Number((await client.get("dailyStipend")) || 10)
+		const currentStipendTime = Number(
+			(await client.get("stipendTime")) || 12
+		)
+
 		const { dailyStipend, stipendTime } = form.data
 
-		console.log(stipendTime)
+		if (currentStipend == dailyStipend && currentStipendTime == stipendTime)
+			return message(form, "No changes were made")
 
-		await client.set("dailyStipend", dailyStipend)
-		await client.set("stipendTime", stipendTime)
+		await Promise.all([
+			client.set("dailyStipend", dailyStipend),
+			client.set("stipendTime", stipendTime),
+		])
+
+		let auditText = ""
+
+		if (currentStipend != dailyStipend)
+			auditText += `Change daily stipend from ${currentStipend} to ${dailyStipend}`
+
+		if (currentStipendTime != stipendTime) {
+			if (auditText) auditText += ", "
+			auditText += `Change stipend time from ${currentStipendTime} to ${stipendTime}`
+		}
+
+		await prisma.auditLog.create({
+			data: {
+				action: "Account",
+				note: auditText,
+				user: {
+					connect: {
+						id: user.id,
+					},
+				},
+			},
+		})
 
 		return message(form, "Economy updated successfully!")
 	},
