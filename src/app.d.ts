@@ -26,21 +26,49 @@ declare namespace Lucia {
 	}
 }
 
-/// <reference types="@sveltejs/kit" />
-declare namespace App {
-	interface Locals {
-		setSession: (session: Session | null) => void
-		validate: () => Promise<Session | null>
-		validateUser: () => Promise<
-			| {
-					user: null
-					session: null
-			  }
-			| {
-					user: User
-					session: Session
-			  }
-		>
-		getCookie: () => Cookie | null
+declare global {
+	namespace App {
+		interface Locals {
+			setSession: (session: Session | null) => void
+			validate: () => Promise<Session | null>
+			validateUser: () => Promise<
+				| {
+						user: null
+						session: null
+				  }
+				| {
+						user: User
+						session: Session
+				  }
+			>
+			getCookie: () => Cookie | null
+		}
 	}
+	// sveltekit-autoimport types
+	declare const fade: typeof import("$lib/fade").default
+
+	declare const AdminLink: typeof import("$lib/components/AdminLink.svelte").default
+	declare const Asset: typeof import("$lib/components/Asset.svelte").default
+	declare const Delete: typeof import("$lib/components/Delete.svelte").default
+	declare const Footer: typeof import("$lib/components/Footer.svelte").default
+	declare const ForumPost: typeof import("$lib/components/ForumPost.svelte").default
+	declare const ForumReply: typeof import("$lib/components/ForumReply.svelte").default
+	declare const Group: typeof import("$lib/components/Group.svelte").default
+	declare const Modal: typeof import("$lib/components/Modal.svelte").default
+	declare const Moon: typeof import("$lib/components/Moon.svelte").default
+	declare const Navbar: typeof import("$lib/components/Navbar.svelte").default
+	declare const Pagepart: typeof import("$lib/components/Pagepart.svelte").default
+	declare const Place: typeof import("$lib/components/Place.svelte").default
+	declare const PlaceCard: typeof import("$lib/components/PlaceCard.svelte").default
+	declare const Report: typeof import("$lib/components/Report.svelte").default
+	declare const Tab: typeof import("$lib/components/Tab.svelte").default
+	declare const TabNav: typeof import("$lib/components/TabNav.svelte").default
+	declare const TabData: typeof import("$lib/components/TabData").default
+	declare const UserCard: typeof import("$lib/components/UserCard.svelte").default
+
+	declare const { onMount }: typeof import("svelte")
+	declare const { writable }: typeof import("svelte/store")
+	declare const { enhance, deserialize }: typeof import("$app/forms")
 }
+
+export {}

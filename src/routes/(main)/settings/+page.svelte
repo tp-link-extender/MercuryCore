@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	export let data
 	const { user } = data
@@ -89,7 +88,7 @@
 					</div>
 				</div>
 			</fieldset>
-			<button type="submit" class="btn btn-success">
+			<button class="btn btn-success">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -148,7 +147,7 @@
 				 ">
 			A Discord account has not been linked.
 		</p>
-		<button type="submit" class="btn btn-primary">
+		<button class="btn btn-primary">
 			<i class="fa fa-link" />
 			Link Discord
 		</button>
@@ -159,7 +158,7 @@
 				 ">
 			You have not verified your email address.
 		</p>
-		<button type="submit" class="btn btn-primary mb-3">
+		<button class="btn btn-primary mb-3">
 			<i class="fa fa-envelope-circle-check" />
 			Verify Email
 		</button>
@@ -235,7 +234,7 @@
 					</div>
 				</div>
 			</fieldset>
-			<button type="submit" class="btn btn-success">
+			<button class="btn btn-success">
 				{#if $delayed}
 					Working...
 				{:else}

@@ -209,10 +209,7 @@ export const actions = {
 					},
 				})
 
-				return {
-					privatesuccess: true,
-					privateServer,
-				}
+				return message(form, "Privacy settings updated successfully!")
 			}
 
 			case "privatelink":

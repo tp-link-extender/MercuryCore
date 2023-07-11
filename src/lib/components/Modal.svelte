@@ -1,5 +1,4 @@
 <script lang="ts">
-	import fade from "$lib/fade"
 	import { fly } from "svelte/transition"
 	import type { Writable } from "svelte/store"
 
@@ -14,6 +13,8 @@
 		transition:fly={{ y: -50, duration: 300 }}>
 		<div
 			id="fade"
+			role="button"
+			tabindex="0"
 			transition:fade={{ duration: 300 }}
 			on:click={close}
 			on:keypress={close}

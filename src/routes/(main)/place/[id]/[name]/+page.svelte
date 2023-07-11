@@ -1,14 +1,17 @@
 <script lang="ts">
-	import { enhance, deserialize } from "$app/forms"
-	import fade from "$lib/fade"
-	import Modal from "$lib/components/Modal.svelte"
-	import Report from "$lib/components/Report.svelte"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 	import customProtocolCheck from "custom-protocol-check"
-	import { writable } from "svelte/store"
 
 	export let data
 	const { user } = data
+
+	data.gameSessions = [
+		{
+			user: {
+				username: "Heliodex",
+				number: 1,
+			},
+		},
+	]
 
 	const statistics = [
 		["Activity", "0 visits"],
@@ -223,11 +226,7 @@
 					}}
 					class="align-self-center col mt-3 px-0 mb-2"
 					method="POST"
-					action="?/like">
-					<input
-						type="hidden"
-						name="privateTicket"
-						value={data.privateTicket} />
+					action="?/like&privateTicket={data.privateTicket}">
 					<div class="row mb-2">
 						<div class="col d-flex justify-content-start">
 							<button
@@ -333,7 +332,7 @@
 				<div class="bg-a me-3">
 					<TabNav bind:tabData={tabData2} vertical />
 					<!-- Prevents nested tabs from breaking -->
-					{((tabData2.num = 0), "") }
+					{((tabData2.num = 0), "")}
 				</div>
 				<Tab tabData={tabData2}>
 					<p class="light-text mb-1">
@@ -435,17 +434,19 @@
 							Join Server
 						</button>
 					</div>
-					<div class="col">
+					<div class="col d-flex">
 						{#each data.gameSessions as { user }}
 							<a
 								href="/user/{user.number}"
-								class="text-decoration-none">
-								<img
-									src="/api/avatar/{user.username}"
-									alt={user.username}
-									height="75"
-									width="75"
-									class="pfp bg-background rounded-circle rounded-top-0 m-1" />
+								class="gamesession text-decoration-none d-flex">
+								<span class="bg-background rounded-circle">
+									<img
+										src="/api/avatar/{user.username}"
+										alt={user.username}
+										height="75"
+										width="75"
+										class="rounded-circle rounded-top-0" />
+								</span>
 							</a>
 						{/each}
 					</div>
@@ -510,9 +511,6 @@
 </Modal>
 
 <style lang="sass">
-	:target
-		display: block !important
-
 	@media only screen and (min-width: 576px)
 		.container
 			width: 60rem
@@ -553,4 +551,9 @@
 		.pfp, .pfp img
 			width: 1.5rem
 			height: 1.5rem
+
+	.gamesession
+		span, img
+			width: 75px
+			height: 75px
 </style>

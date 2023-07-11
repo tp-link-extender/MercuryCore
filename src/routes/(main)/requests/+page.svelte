@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import fade from "$lib/fade"
-
 	// const statusColours: { [k: string]: string } = {
 	// 	Online: "bg-info",
 	// 	Joined: "bg-success",

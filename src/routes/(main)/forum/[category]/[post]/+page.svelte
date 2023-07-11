@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { enhance as enhance2 } from "$app/forms"
-	import ForumReply from "$lib/components/ForumReply.svelte"
-	import Report from "$lib/components/Report.svelte"
-	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 
 	export let data
+	const { user } = data
 	const {
 		form,
 		errors,
@@ -24,8 +22,6 @@
 	})
 
 	export const snapshot = { capture, restore }
-
-	const baseDepth = writable(data.baseDepth)
 </script>
 
 <svelte:head>
@@ -34,7 +30,7 @@
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 p-0 fs-6">
+		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
 			<li class="breadcrumb-item">
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
@@ -160,7 +156,7 @@
 				name="content"
 				placeholder="What are your thoughts?"
 				rows="4" />
-			<button type="submit" class="btn btn-success ms-3 mt-auto">
+			<button class="btn btn-success ms-3 mt-auto">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -171,13 +167,14 @@
 		<p
 			class="mb-3"
 			class:text-success={$page.status == 200}
-			class:text-danger={$page.status >= 400 || $errors.status}>
-			{$errors.status || $message || ""}
+			class:text-danger={$page.status >= 400}>
+			{$message || ""}
 		</p>
 	</form>
 
 	{#each data.replies as reply, num}
 		<ForumReply
+			{user}
 			{reply}
 			{num}
 			{replyingTo}
@@ -185,7 +182,6 @@
 			postId={data.id}
 			postAuthorName={data.author.username}
 			{repliesCollapsed}
-			{baseDepth}
 			topLevel />
 	{/each}
 </div>

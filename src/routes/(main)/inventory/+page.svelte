@@ -1,6 +1,4 @@
 <script lang="ts">
-	import Asset from "$lib/components/Asset.svelte"
-
 	export let data
 </script>
 

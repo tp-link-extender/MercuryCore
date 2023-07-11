@@ -1,8 +1,6 @@
 <script lang="ts">
-	import fade from "$lib/fade"
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	export let data
 	const {
@@ -135,11 +133,11 @@
 								</p>
 							</div>
 						</div>
-						<button type="submit" class="btn btn-success mt-3">
+						<button class="btn btn-success mt-3">
 							{#if $delayed}
 								Working...
 							{:else}
-								Submit
+								Moderate
 							{/if}
 						</button>
 					</fieldset>

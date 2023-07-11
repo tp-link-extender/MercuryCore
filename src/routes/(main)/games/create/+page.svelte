@@ -121,7 +121,7 @@
 				<input
 					bind:checked={$form.privateServer}
 					{...$constraints.privateServer}
-					class="form-check-input"
+					class="form-check-input valid"
 					type="checkbox"
 					name="privateServer"
 					id="privateServer" />
@@ -130,7 +130,7 @@
 				</p>
 			</div>
 		</div>
-		<button type="submit" class="btn btn-success">
+		<button class="btn btn-success">
 			{#if $delayed}
 				Working...
 			{:else}

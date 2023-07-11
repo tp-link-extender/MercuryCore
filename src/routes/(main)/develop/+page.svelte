@@ -1,7 +1,4 @@
 <script lang="ts">
-	import AdminLink from "$lib/components/AdminLink.svelte"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-
 	const assetTypes = [
 		["Shirts", "🧥", "11"],
 		["T-Shirts", "👕", "2"],
@@ -11,9 +8,8 @@
 
 	export let data
 	const { user } = data
-	
-	if (user?.permissionLevel == 5)
-		assetTypes.push(["Hats", "🎩", ""])
+
+	if (user?.permissionLevel == 5) assetTypes.push(["Hats", "🎩", ""])
 
 	let tabData = TabData(data.url, ["Create", "Creations"])
 </script>

@@ -1,8 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import Report from "$lib/components/Report.svelte"
-	import fade from "$lib/fade"
-
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],
@@ -146,7 +142,7 @@
 				<div class="card bg-darker card-body">
 					<img
 						id="avatar"
-						class="w-60 mx-auto"
+						class="mx-auto"
 						src="/api/avatar/{data.username}-body"
 						alt={data.username} />
 				</div>

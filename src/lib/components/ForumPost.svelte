@@ -1,9 +1,5 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import fade from "$lib/fade"
-	import type { PageData } from "../../routes/(main)/forum/[category]/$types"
-
-	export let post: PageData["posts"][0]
+	export let post: import("../../routes/(main)/forum/[category]/$types").PageData["posts"][number]
 	export let num: number
 	export let total: number
 	export let categoryName: string

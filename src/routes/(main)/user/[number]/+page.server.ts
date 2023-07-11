@@ -72,7 +72,6 @@ export async function load({ locals, params }) {
 			},
 		})
 
-
 		return {
 			...userExists,
 			places: places as Promise<
