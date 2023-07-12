@@ -124,7 +124,9 @@
 					{/if}
 				</div>
 				<div class="float-end mb-3">
-					<Report user={data.username} url="/user/{data.number}" />
+					<ReportButton
+						user={data.username}
+						url="/user/{data.number}" />
 				</div>
 			</div>
 		</div>

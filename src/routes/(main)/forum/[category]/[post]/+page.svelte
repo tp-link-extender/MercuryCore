@@ -130,7 +130,7 @@
 					</span>
 				</a>
 				<span class="ms-auto">
-					<Report
+					<ReportButton
 						user={data.author.username}
 						url="/forum/{data.forumCategory.name}/{data.id}" />
 				</span>

@@ -181,7 +181,7 @@
 							: "Offline"}
 					</span>
 					<span class="float-end">
-						<Report
+						<ReportButton
 							user={data.ownerUser?.username || ""}
 							url="/place/{data.id}/{data.name}" />
 					</span>

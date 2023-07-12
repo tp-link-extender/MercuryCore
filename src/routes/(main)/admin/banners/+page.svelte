@@ -35,7 +35,7 @@
 </script>
 
 <svelte:head>
-	<title>Admin - Mercury</title>
+	<title>Banners - Admin - Mercury</title>
 </svelte:head>
 
 <div class="container py-4">

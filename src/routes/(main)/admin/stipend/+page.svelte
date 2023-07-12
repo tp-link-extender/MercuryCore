@@ -25,7 +25,7 @@
 </script>
 
 <svelte:head>
-	<title>Admin - Mercury</title>
+	<title>Daily Stipend - Admin - Mercury</title>
 </svelte:head>
 
 <div class="container py-4">

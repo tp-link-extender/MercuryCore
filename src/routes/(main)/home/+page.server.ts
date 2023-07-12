@@ -15,7 +15,10 @@ export async function load({ locals }) {
 	// (main)/+layout.server.ts will handle most redirects for logged-out users,
 	// but sometimes errors for this page.
 
+	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
+
 	return {
+		greet: greets[Math.floor(Math.random() * greets.length)],
 		form: superValidate(schema),
 		places: findPlaces({
 			where: {

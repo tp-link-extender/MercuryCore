@@ -1,3 +1,6 @@
+<script context="module" lang="ts">
+</script>
+
 <script lang="ts">
 	import type { Writable } from "svelte/store"
 
@@ -210,14 +213,14 @@
 							</button>
 							{#if !hidden}
 								{#if reply.author.username == user.username}
-									<Delete id={reply.id} reverse />
+									<DeleteButton id={reply.id} reverse />
 								{:else}
-									<Report
+									<ReportButton
 										user={reply.author.username}
 										url="/forum/{forumCategory}/{postId}/{reply.id}"
 										reverse />
 									{#if user.permissionLevel >= 4}
-										<Delete
+										<DeleteButton
 											id={reply.id}
 											moderate
 											reverse />
