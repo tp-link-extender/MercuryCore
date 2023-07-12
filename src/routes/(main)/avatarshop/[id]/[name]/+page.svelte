@@ -61,7 +61,7 @@
 						<b>{data.sold}</b>
 						sold
 						<span class="float-end">
-							<Report
+							<ReportButton
 								user={data.creatorUser?.username || ""}
 								url="/avatarshop/item/{data.id}" />
 						</span>

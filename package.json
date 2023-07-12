@@ -12,7 +12,7 @@
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
-		"@sveltejs/kit": "^1.22.2",
+		"@sveltejs/kit": "^1.22.3",
 		"@sveltejs/vite-plugin-svelte": "^2.4.2",
 		"@types/crypto-js": "^4.1.1",
 		"@types/koa": "^2.13.6",

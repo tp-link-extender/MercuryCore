@@ -3,7 +3,7 @@
 	// avatar shop and inventory pages.
 
 	export let asset: {
-		id: string
+		id: number
 		name: string
 		price: number
 		// ratio?: string | number

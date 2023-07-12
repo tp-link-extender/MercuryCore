@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
+	import { browser } from "$app/environment"
 	import { superForm } from "sveltekit-superforms/client"
 
 	// const statusColours: { [k: string]: string } = {
@@ -24,8 +25,6 @@
 		taintedMessage: false,
 	})
 	export const snapshot = { capture, restore }
-
-	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
 
 	const news = [
 		{
@@ -95,7 +94,7 @@
 							class="rounded-circle rounded-top-0" />
 					</div>
 					<span class="my-auto ms-4">
-						{greets[Math.floor(Math.random() * greets.length)]}
+						{data.greet}
 					</span>
 				</a>
 			</h1>
@@ -157,7 +156,7 @@
 										</em>
 									</a>
 									<span class="ms-auto">
-										<Report
+										<ReportButton
 											user={status.authorUser?.username ||
 												""}
 											url="status:{status.id}" />

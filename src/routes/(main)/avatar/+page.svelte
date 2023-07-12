@@ -202,13 +202,13 @@
 						use:enhance
 						method="POST"
 						action="?/paint&p={bodyPart}&c={colour}"
+						on:submit={() => {
+							bodyParts[bodyPart] = colour
+							modal.set(false)
+						}}
 						class="d-inline">
 						<button
 							class="btn colour my-1"
-							on:click={() => {
-								bodyParts[bodyPart] = colour
-								modal.set(false)
-							}}
 							style="background-color: #{brickToHex[colour]};" />
 					</form>
 				{/each}
