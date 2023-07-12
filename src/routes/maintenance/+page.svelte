@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Gradient from "$lib/gradient"
+	import { Gradient } from "stripe-gradient"
 
 	// Gradient must run upon page being loaded,
 	// and cannot be rendered on serverside.
