@@ -46,6 +46,7 @@ Instructions:
 -   Run `npm i -g pnpm` to install pnpm
 -   Run `pnpm i` to install all dependencies
 -   Run `pnpm build avatar` to build the avatar renderer, so that user images will work correctly
+-   Run `pnpm bootstrap` to compile Bootstrap's SCSS files. This results in the development server being much faster, as it does not have to wait for the Sass compiler
     -   If you are using PowerShell on windows, you may encounter an execution policy error when running pnpm. Run the command `set-executionpolicy remotesigned` in an administrator PowerShell to fix this.
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
