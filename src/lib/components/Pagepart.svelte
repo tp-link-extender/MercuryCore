@@ -32,8 +32,8 @@
 <style lang="stylus">
 	#b
 		padding 15vh
-		@media (max-width 768px)
-			padding 1vh	
+		+-lg()
+			padding 1vh
 
 	.half
 		width 50vw

@@ -285,6 +285,11 @@
 	.btn-close
 		filter invert(1) grayscale(100%) brightness(200%)
 
-	table, th, td, tbody, thead, tr
+	table
+	th
+	td
+	tbody
+	thead
+	tr
 		color var(--light-text)
 </style>

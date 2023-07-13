@@ -61,9 +61,7 @@
 </div>
 
 <style lang="stylus">
-	@media (min-width 576px)
-		.container
-			width 50rem
+	containerMinWidth()
 
 	a
 		color var(--mainaccent)

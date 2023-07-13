@@ -21,7 +21,7 @@
 		padding-bottom 5vh
 		padding-top 5vh //10vh
 		flex 1 0 auto
-		@media (max-width 991px)
+		+-lg()
 			padding-top 1vh
 
 	#all

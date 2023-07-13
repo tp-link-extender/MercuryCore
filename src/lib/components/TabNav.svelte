@@ -59,7 +59,8 @@
 	<style lang="stylus">
 		.nav-tabs
 			min-width 7rem
-			.nav-item.show .nav-link, .nav-link.active 
+			.nav-item.show .nav-link
+			.nav-link.active
 				color white
 				background-color rgb(13, 109, 252)
 				border-color var(--bs-nav-tabs-link-active-border-color)

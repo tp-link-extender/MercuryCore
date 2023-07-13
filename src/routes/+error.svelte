@@ -28,7 +28,7 @@
 		padding-bottom 32vh
 		padding-top 31vh
 		flex 1 0 auto
-		@media (max-width 768px) and (orientation portrait)
+		+-md()
 			padding-bottom 25vh
 
 		div

@@ -53,7 +53,5 @@
 </div>
 
 <style lang="stylus">
-	@media (min-width 576px)
-		.container
-			width 70rem
+	containerMinWidth(70rem)
 </style>

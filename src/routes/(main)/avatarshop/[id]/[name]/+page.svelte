@@ -179,9 +179,7 @@
 </Modal>
 
 <style lang="stylus">
-	@media (min-width 576px)
-		.container
-			width 60rem
+	containerMinWidth(60rem)
 
 	#notify
 		font-size 0.8rem
@@ -200,12 +198,14 @@
 	#notify
 		pointer-events none
 
-	.pfp, .pfp img
+	.pfp
+	.pfp img
 		width 3.5rem
 		height 3.5rem
 
 	.user
-		.pfp, img
+		.pfp
+		img
 			width 1.5rem
 			height 1.5rem
 </style>

@@ -135,7 +135,7 @@
 		background linear-gradient(#0000, var(--darker))
 
 	.user
-		align-items center 
+		align-items center
 		.pfp img
 			max-width 2rem
 			width 2rem

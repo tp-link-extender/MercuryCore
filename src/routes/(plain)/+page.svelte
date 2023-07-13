@@ -92,7 +92,7 @@
 		margin-bottom min(22rem, 60vh)
 
 	#gradient-canvas
-		@media (prefers-color-scheme light)
+		+lightTheme()
 			--gradient-color-1 #5551ff
 			--gradient-color-2 #5599ff
 			--gradient-color-3 #55c3ff

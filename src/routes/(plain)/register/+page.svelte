@@ -165,7 +165,7 @@
 						{:else}
 							Register
 						{/if}
-						<!-- $delayed is true if the form takes 
+						<!-- $delayed is true if the form takes
 							more than a few hundred ms to submit -->
 					</button>
 				</fieldset>
@@ -188,7 +188,7 @@
 <style lang="stylus">
 	@import "../loginregister"
 
-	@media (min-width 992px)
+	+lg()
 		.col
 			padding-top 11vh
 

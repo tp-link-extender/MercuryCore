@@ -303,7 +303,7 @@
 	.mobile-brand
 		display none
 
-	@media (max-width 991px)
+	+-lg()
 		.offcanvas-header
 			background var(--accent)
 		.offcanvas
@@ -346,29 +346,28 @@
 		.mobilenav
 			display block
 
-	@media (min-width 991px)
+	+lg()
 		.loggedin
 			margin-left auto
 
 		#nav2-1
 			display none
-		
+
 		.mobilenav
 			display none
 
 	#nav1
 		// padding-top 1px
 		background #fff1
-		@media (max-width 991px)
+		+-lg()
 			background none
 			min-height fit-content !important
 			overflow-x hidden
-	
 
 	#nav2
 		background #0003
 		z-index 1
-		@media (max-width 991px)
+		+-lg()
 			background none !important
 			min-height 36vh !important
 			flex-direction column
@@ -404,7 +403,8 @@
 	.offcanvas
 		box-shadow none !important
 
-	#pfp, img
+	#pfp
+	img
 		width 2.4rem
 		height 2.4rem
 
@@ -418,11 +418,13 @@
 		width 25vw
 		max-width 30rem
 		font-size 0.8rem
-		@media (max-width 1199px)
+		+-xl()
 			width 12rem
-		@media (max-width 991px)
+		+-lg()
 			width 100%
-		button, input
+
+		button
+		input
 			height 2.3rem
 
 	.btn

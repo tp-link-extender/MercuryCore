@@ -130,13 +130,13 @@
 <style lang="stylus">
 	.btn-close
 		filter invert(1) grayscale(100%) brightness(200%)
-		@media (prefers-color-scheme light)
+		+lightTheme()
 			filter none
 
 	.toast
 		min-width 25rem
 		--bs-toast-box-shadow 0 0 2rem #fff1
-		@media (prefers-color-scheme light)
+		+lightTheme()
 			--bs-toast-box-shadow 0 0 2rem #0001
 
 	.toast-body

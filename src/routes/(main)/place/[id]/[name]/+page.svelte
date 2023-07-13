@@ -511,9 +511,7 @@
 </Modal>
 
 <style lang="stylus">
-	@media (min-width 576px)
-		.container
-			width 60rem
+	containerMinWidth(60rem)
 
 	#buttons
 		margin auto
@@ -548,12 +546,14 @@
 			transform rotate(360deg)
 
 	.user
-		.pfp, .pfp img
+		.pfp
+		.pfp img
 			width 1.5rem
 			height 1.5rem
 
 	.gamesession
-		span, img
+		span
+		img
 			width 75px
 			height 75px
 </style>

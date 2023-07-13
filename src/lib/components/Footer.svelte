@@ -76,13 +76,14 @@
 	.clicked
 		i
 			animation heart 2s
-		i, span
+		i
+		span
 			color #f4b !important
 
 	footer
 		flex-shrink 0
 		padding 1vh
-		a 
+		a
 			text-decoration none
 			&:hover
 				text-decoration underline
