@@ -186,23 +186,23 @@
 	{/each}
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
+<style lang="stylus">
+	@media (min-width 576px)
 		.container
-			width: 70rem
+			width 70rem
 
 	.sidebar
-		width: 2.5rem
+		width 2.5rem
 
 	.post
-		border-color: var(--accent2)
+		border-color var(--accent2)
 
 	p
-		word-break: break-word
+		word-break break-word
 
 	.user
-		align-items: center 
+		align-items center 
 		.pfp img
-			max-width: 2rem
-			width: 2rem
+			max-width 2rem
+			width 2rem
 </style>

@@ -66,27 +66,27 @@
 	{/each}
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.container
-		max-width: 100%
-		font-size: 0.9rem
+		max-width 100%
+		font-size 0.9rem
 
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
-		column-gap: 1rem
-		row-gap: 1rem
-		place-items: center
+		grid-template-columns repeat(auto-fit, minmax(16rem, 1fr))
+		column-gap 1rem
+		row-gap 1rem
+		place-items center
 
 	.card
-		max-width: 25rem
-		text-decoration: none
+		max-width 25rem
+		text-decoration none
 		div
-			word-break: break-all
+			word-break break-all
 
 	// .badge
-	// 	padding: 0.75rem
+	// 	padding 0.75rem
 	.image-background
-		min-width: 6rem
+		min-width 6rem
 		img
-			width: 6rem
-			height: 6rem !important
+			width 6rem
+			height 6rem !important
 </style>

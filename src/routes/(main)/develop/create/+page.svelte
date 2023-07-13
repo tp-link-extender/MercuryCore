@@ -148,11 +148,11 @@
 	</fieldset>
 </form>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
+<style lang="stylus">
+	@media (min-width 576px)
 		.container
-			width: 50rem
+			width 50rem
 
 	input[type="number"]
-		width: 9rem
+		width 9rem
 </style>

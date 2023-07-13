@@ -510,50 +510,50 @@
 	</div>
 </Modal>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
+<style lang="stylus">
+	@media (min-width 576px)
 		.container
-			width: 60rem
+			width 60rem
 
 	#buttons
-		margin: auto
-		display: flex
-		flex-direction: column
+		margin auto
+		display flex
+		flex-direction column
 
 	#play img
-		height: 2rem
+		height 2rem
 
 	#settings
-		position: absolute
-		margin: 3px 0px 0px -10px
+		position absolute
+		margin 3px 0px 0px -10px
 
 	.dropdown-menu
-		border-color: var(--accent2)
-		z-index: 5
+		border-color var(--accent2)
+		z-index 5
 
 	#wrapper
-		width: 128px
-		height: 128px
-		transform: translateX(-64px)
+		width 128px
+		height 128px
+		transform translateX(-64px)
 		img
-			box-sizing: border-box
-			position: absolute
+			box-sizing border-box
+			position absolute
 
 	#outer
-		transform: rotate(0)
-		animation: moon 1.5s 0s infinite linear
+		transform rotate(0)
+		animation moon 1.5s 0s infinite linear
 
 	@keyframes moon
 		100%
-			transform: rotate(360deg)
+			transform rotate(360deg)
 
 	.user
 		.pfp, .pfp img
-			width: 1.5rem
-			height: 1.5rem
+			width 1.5rem
+			height 1.5rem
 
 	.gamesession
 		span, img
-			width: 75px
-			height: 75px
+			width 75px
+			height 75px
 </style>

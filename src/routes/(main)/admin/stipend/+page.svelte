@@ -111,10 +111,10 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.input-group-text
-		border-color: var(--accent3)
+		border-color var(--accent3)
 
 	.input-group
-		max-width: 12rem
+		max-width 12rem
 </style>

@@ -60,11 +60,11 @@
 	<em>Last updated 25 January 2023</em>
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
+<style lang="stylus">
+	@media (min-width 576px)
 		.container
-			width: 50rem
+			width 50rem
 
 	a
-		color: var(--mainaccent)
+		color var(--mainaccent)
 </style>

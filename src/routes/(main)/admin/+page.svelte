@@ -226,11 +226,11 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	h2
-		border-color: var(--accent3) !important
+		border-color var(--accent3) !important
 
 	.card
-		border-width: 2px
-		border-color: var(--accent3)
+		border-width 2px
+		border-color var(--accent3)
 </style>

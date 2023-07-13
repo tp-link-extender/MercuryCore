@@ -56,32 +56,32 @@
 </ul>
 
 {#if tabs}
-	<style lang="sass">
+	<style lang="stylus">
 		.nav-tabs
-			min-width: 7rem
+			min-width 7rem
 			.nav-item.show .nav-link, .nav-link.active 
-				color: white
-				background-color: rgb(13, 109, 252)
-				border-color: var(--bs-nav-tabs-link-active-border-color)
-				border-radius: 0.375rem
+				color white
+				background-color rgb(13, 109, 252)
+				border-color var(--bs-nav-tabs-link-active-border-color)
+				border-radius 0.375rem
 
 			.active
-				border: 1px solid
+				border 1px solid
 
 		.nav-link
-			margin-bottom: calc(0 * var(--bs-nav-tabs-border-width))
-			background: 0 0
-			border: var(--bs-nav-tabs-border-width) solid transparent
-			border-radius: 0.375rem
-			color: var(--light-text)
+			margin-bottom calc(0 * var(--bs-nav-tabs-border-width))
+			background 0 0
+			border var(--bs-nav-tabs-border-width) solid transparent
+			border-radius 0.375rem
+			color var(--light-text)
 	</style>
 {:else}
-	<style lang="sass">
+	<style lang="stylus">
 		.nav-pills .active
-			background: transparent !important
-			border-style: solid
-			border-width: 0px 0px 2px 0px
-			color: var(--light-text)
-			border-colour: rgb(52, 89, 230)
+			background transparent !important
+			border-style solid
+			border-width 0px 0px 2px 0px
+			color var(--light-text)
+			border-colour rgb(52, 89, 230)
 	</style>
 {/if}

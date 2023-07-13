@@ -276,64 +276,64 @@
 	</div>
 </div>
 
-<style lang="sass">
-	@media only screen and (max-width: 768px)
+<style lang="stylus">
+	@media (max-width 768px)
 		#feed
-			max-height: 50vh
+			max-height 50vh
 	.top
-		width: 100vw
+		width 100vw
 		img
-			width: 6rem
-			min-width: 6rem
+			width 6rem
+			min-width 6rem
 
 	h1
-		margin: auto 2rem
+		margin auto 2rem
 
 	.col2
-		margin-top: 7rem
+		margin-top 7rem
 
 	.username
-		overflow: hidden
-		text-overflow: ellipsis
-		white-space: nowrap
+		overflow hidden
+		text-overflow ellipsis
+		white-space nowrap
 
 	.small
-		font-size: 0.9rem
+		font-size 0.9rem
 
 	.friendname
-		max-width: 7rem
-		max-height: 3rem
+		max-width 7rem
+		max-height 3rem
 
 	.date
-		min-width: 5rem
+		min-width 5rem
 	.gradient
-		left: 0
-		right: 0
-		height: 8rem
-		background: linear-gradient(0deg, var(--accent) 10%, rgba(0,0,0,0) 100%)
+		left 0
+		right 0
+		height 8rem
+		background linear-gradient(0deg, var(--accent) 10%, rgba(0,0,0,0) 100%)
 	.content
-		max-height: 5rem
-		overflow: hidden
+		max-height 5rem
+		overflow hidden
 
 	#feed, #news
-		overflow-x: hidden
+		overflow-x hidden
 
 	.user
-		align-items: center
+		align-items center
 		img
-			width: 2rem !important
-			min-width: 2rem !important
+			width 2rem !important
+			min-width 2rem !important
 
 	.home-row
-		overflow-x: auto
+		overflow-x auto
 
 		// .badge
-		// 	padding: 0.75rem
+		// 	padding 0.75rem
 		.place
-			width: 8rem
-			margin: auto
+			width 8rem
+			margin auto
 		.image-background
-			width: 7rem
-			height: 7rem
-			margin: auto
+			width 7rem
+			height 7rem
+			margin auto
 </style>

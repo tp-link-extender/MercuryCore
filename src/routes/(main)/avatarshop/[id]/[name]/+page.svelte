@@ -178,34 +178,34 @@
 	</div>
 </Modal>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
+<style lang="stylus">
+	@media (min-width 576px)
 		.container
-			width: 60rem
+			width 60rem
 
 	#notify
-		font-size: 0.8rem
-		opacity: 0
-		height: 0
-		transform: translateY(-1.5rem)
-		transition: all 0.2s ease-out
+		font-size 0.8rem
+		opacity 0
+		height 0
+		transform translateY(-1.5rem)
+		transition all 0.2s ease-out
 
 	#buy
-		z-index: 5
+		z-index 5
 		&:hover ~ #notify
-			opacity: 1
-			height: 1.5rem
-			transform: none
+			opacity 1
+			height 1.5rem
+			transform none
 
 	#notify
-		pointer-events: none
+		pointer-events none
 
 	.pfp, .pfp img
-		width: 3.5rem
-		height: 3.5rem
+		width 3.5rem
+		height 3.5rem
 
 	.user
 		.pfp, img
-			width: 1.5rem
-			height: 1.5rem
+			width 1.5rem
+			height 1.5rem
 </style>
