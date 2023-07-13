@@ -7,8 +7,9 @@ $load $FILE
 -- Super Util
 --------------------
 
+assetid = "http://banland.xyz/asset/?id="
+
 --[[ ADMINS =
-{
 	aceswayuphigh: 1
 	adamintygum: 1
 	afackler11: 1
@@ -52,7 +53,7 @@ $load $FILE
 	iltalumi: 1
 	inventx: 1
 	jackssmirkingrevenge: 1
-	jeditkacheff: 'http://banland.xyz/asset/?id=134032333'
+	jeditkacheff: assetid .. "134032333"
 	kbux: 1
 	keith: 1
 	limon: 1
@@ -90,14 +91,14 @@ $load $FILE
 	screenme: 1
 	scubasomething: 1
 	seanthornton: 1
-	shedletsky: 'http://banland.xyz/asset/?id=105897927'
+	shedletsky: assetid .. "105897927"
 	sickenedmonkey: 1
 	slingshotjunkie: 1
 	smeaferblox: 1
 	soggoth: 1
 	solarcrane: 1
 	sooraya: 1
-	sorcus: 'http://banland.xyz/asset/?id=113059239'
+	sorcus: assetid .. "113059239"
 	squidcod: 1
 	stickmasterluke: 1
 	stuball: 1
@@ -120,17 +121,17 @@ $load $FILE
 	yumyumcheerios: 1
 	zeuxcg: 1
 	zodiaczak: 1
-	['erik.cassel'] = 1,
-	['david.baszucki'] = 1,
-	['matt dusek'] = 1,
-} --]]
+	['erik.cassel']: 1
+	['david.baszucki']: 1
+	['matt dusek']: 1
+--]]
 
 ADMINS =
 	taskmanager: 1
 	Heliodex: 1
-	multako: "http://banland.xyz/asset/?id=6923328292"
+	multako: assetid .. "6923328292"
 	mercury: 1
-	pizzaboxer: "http://banland.xyz/asset/?id=6917566633"
+	pizzaboxer: assetid .. "6917566633"
 
 Images =
 	bottomDark: "94691904"
@@ -192,8 +193,8 @@ MakeBackgroundGuiObj = (imgName) ->
 	New "ImageLabel", "Background"
 		BackgroundTransparency: 1
 		Image: imgName
-		Position: UDim2.new(0, 0, 0, 0)
-		Size: UDim2.new(1, 0, 1, 0)
+		Position: UDim2.new 0, 0, 0, 0
+		Size: UDim2.new 1, 0, 1, 0
 
 --[[ turns 255 integer color value to a color3 --]]
 Color3I = (r, g, b) ->
@@ -203,15 +204,15 @@ Color3I = (r, g, b) ->
 --[[
 	Gets correct icon for builder's club status to display by name
 	@Args:
-	membershipType		Enum of membership status
+	membershipType Enum of membership status
 	@Return: 			string of image asset
 --]]
 getMembershipTypeIcon = (membershipType, playerName) ->
-	if ADMINS[string.lower(playerName)] ~= nil
-		if ADMINS[string.lower(playerName)] == 1
-			"http://banland.xyz/asset/?id=6923330951"
+	if ADMINS[string.lower playerName]?
+		if ADMINS[string.lower playerName] == 1
+			assetid .. "6923330951"
 		else
-			ADMINS[string.lower(playerName)]
+			ADMINS[string.lower playerName]
 
 	elseif membershipType == Enum.MembershipType.None
 		""
@@ -229,11 +230,11 @@ getFriendStatusIcon = (friendStatus) ->
 	if friendStatus == Enum.FriendStatus.Unknown or friendStatus == Enum.FriendStatus.NotFriend
 		""
 	elseif friendStatus == Enum.FriendStatus.Friend
-		"http://banland.xyz/asset/?id=99749771"
+		assetid .. "99749771"
 	elseif friendStatus == Enum.FriendStatus.FriendRequestSent
-		"http://banland.xyz/asset/?id=99776888"
+		assetid .. "99776888"
 	elseif friendStatus == Enum.FriendStatus.FriendRequestReceived
-		"http://banland.xyz/asset/?id=99776838"
+		assetid .. "99776838"
 	else
 		error "Unknown FriendStatus: #{friendStatus}"
 
@@ -250,36 +251,36 @@ getFriendStatusIcon = (friendStatus) ->
 MakePopupButton = (nparent, ntext, index, last) ->
 	tobj = New "ImageButton", "ReportButton"
 		BackgroundTransparency: 1
-		Position: UDim2.new(0, 0, 1 * index, 0)
-		Size: UDim2.new(1, 0, 1, 0)
+		Position: UDim2.new 0, 0, 1 * index, 0
+		Size: UDim2.new 1, 0, 1, 0
 		ZIndex: 7
 		Parent: nparent
 
 		* New "TextLabel", "ButtonText"
 			BackgroundTransparency: 1
-			Position: UDim2.new(0.07, 0, 0.07, 0)
-			Size: UDim2.new(0.86, 0, 0.86, 0)
+			Position: UDim2.new 0.07, 0, 0.07, 0
+			Size: UDim2.new 0.86, 0, 0.86, 0
 			Font: "ArialBold"
 			Text: ntext
 			FontSize: "Size14"
 			TextScaled: true
-			TextColor3: Color3.new(1, 1, 1)
+			TextColor3: Color3.new 1, 1, 1
 			TextStrokeTransparency: 1
 			ZIndex: 7
 
 	if index == 0
-		tobj.Image = "http://banland.xyz/asset/?id=97108784"
+		tobj.Image = assetid .. "97108784"
 	elseif last
 		if index % 2 == 1
-			tobj.Image = "http://banland.xyz/asset/?id=" .. Images["LightPopupBottom"]
+			tobj.Image = assetid .. Images["LightPopupBottom"]
 		else
-			tobj.Image = "http://banland.xyz/asset/?id=" .. Images["DarkPopupBottom"]
+			tobj.Image = assetid .. Images["DarkPopupBottom"]
 
 	else
 		if index % 2 == 1
-			tobj.Image = "http://banland.xyz/asset/?id=97112126"
+			tobj.Image = assetid .. "97112126"
 		else
-			tobj.Image = "http://banland.xyz/asset/?id=97109338"
+			tobj.Image = assetid .. "97109338"
 
 	return tobj
 
@@ -313,21 +314,21 @@ LocalPlayer = Players.LocalPlayer
 Mouse = LocalPlayer\GetMouse!
 
 ScreenGui = New "Frame", "PlayerListScreen"
-	Size: UDim2.new(1, 0, 1, 0)
+	Size: UDim2.new 1, 0, 1, 0
 	BackgroundTransparency: 1
 	Parent: script.Parent
 
 MainFrame = New "Frame", "LeaderBoardFrame"
-	Position: UDim2.new(1, -150, 0.005, 0)
-	Size: UDim2.new(0, 150, 0, 800)
+	Position: UDim2.new 1, -150, 0.005, 0
+	Size: UDim2.new 0, 150, 0, 800
 	BackgroundTransparency: 1
 	Parent: ScreenGui
 
 
 --frame used for expanding leaderstats when frame is 'focused'
 FocusFrame = New "Frame", "FocusFrame"
-	Position: UDim2.new(0, 0, 0, 0)
-	Size: UDim2.new(1, 0, 0, 100)
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 0, 100
 	BackgroundTransparency: 1
 	Active: true
 	Parent: MainFrame
@@ -336,46 +337,46 @@ FocusFrame = New "Frame", "FocusFrame"
 -- HEADER
 HeaderFrame = New "Frame", "Header"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, 0, 0)
-	Size: UDim2.new(1, 0, 0.07, 0)
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 0.07, 0
 	Parent: MainFrame
 
-	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=94692054"
+	* MakeBackgroundGuiObj assetid .. "94692054"
 
 HeaderFrameHeight = HeaderFrame.Size.Y.Scale
 MaximizeButton = New "ImageButton", "MaximizeButton"
 	Active: true
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, 0, 0)
-	Size: UDim2.new(1, 0, 1, 0)
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 1, 0
 	Parent: HeaderFrame
 
 HeaderName = New "TextLabel", "PlayerName"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, 0.01, 0)
-	Size: UDim2.new(0.98, 0, 0.38, 0)
+	Position: UDim2.new 0, 0, 0.01, 0
+	Size: UDim2.new 0.98, 0, 0.38, 0
 	Parent: HeaderFrame
 	Font: "ArialBold"
 	Text: LocalPlayer.Name
 	FontSize: "Size24"
-	--TextScaled = true,
-	TextColor3: Color3.new(1, 1, 1)
-	TextStrokeColor3: Color3.new(0, 0, 0)
+	--TextScaled: true
+	TextColor3: Color3.new 1, 1, 1
+	TextStrokeColor3: Color3.new 0, 0, 0
 	TextStrokeTransparency: 0
 	TextXAlignment: "Right"
 	TextYAlignment: "Center"
 
 HeaderScore = New "TextLabel", "PlayerScore"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, 0.4, 0)
-	Size: UDim2.new(0.98, 0, 0, 30)
+	Position: UDim2.new 0, 0, 0.4, 0
+	Size: UDim2.new 0.98, 0, 0, 30
 	Parent: HeaderFrame
 	Font: "ArialBold"
 	Text: ""
 	FontSize: "Size24"
 	TextYAlignment: "Top"
-	--TextScaled = true,
-	TextColor3: Color3.new(1, 1, 1)
+	-- TextScaled: true
+	TextColor3: Color3.new 1, 1, 1
 	TextStrokeTransparency: 1
 	TextXAlignment: "Right"
 
@@ -383,73 +384,73 @@ HeaderScore = New "TextLabel", "PlayerScore"
 --used for shifting bottom frame for mouse over effects
 BottomShiftFrame = New "Frame", "BottomShiftFrame"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, HeaderFrameHeight, 0)
-	Size: UDim2.new(1, 0, 1, 0)
+	Position: UDim2.new 0, 0, HeaderFrameHeight, 0
+	Size: UDim2.new 1, 0, 1, 0
 	Parent: MainFrame
 
 BottomFrame = New "Frame", "Bottom"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, 0.07, 0)
-	Size: UDim2.new(1, 0, 0.03, 0)
+	Position: UDim2.new 0, 0, 0.07, 0
+	Size: UDim2.new 1, 0, 0.03, 0
 	Parent: BottomShiftFrame
 
-	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=94754966"
+	* MakeBackgroundGuiObj assetid .. "94754966"
 
 ExtendButton = New "ImageButton", "bigbutton"
 	Active: true
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, 0, 0)
-	Size: UDim2.new(1, 0, 1.5, 0)
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 1.5, 0
 	ZIndex: 3
 	Parent: BottomFrame
 
 ExtendTab = New "ImageButton", "extendTab"
 	Active: true
 	BackgroundTransparency: 1
-	Image: "http://banland.xyz/asset/?id=94692731"
-	Position: UDim2.new(0.608, 0, 0.3, 0)
-	Size: UDim2.new(0.3, 0, 0.7, 0)
+	Image: assetid .. "94692731"
+	Position: UDim2.new 0.608, 0, 0.3, 0
+	Size: UDim2.new 0.3, 0, 0.7, 0
 	Parent: BottomFrame
 
 TopClipFrame = New "Frame", "ListFrame"
 	BackgroundTransparency: 1
-	Position: UDim2.new(-1, 0, 0.07, 0)
-	Size: UDim2.new(2, 0, 1, 0)
+	Position: UDim2.new -1, 0, 0.07, 0
+	Size: UDim2.new 2, 0, 1, 0
 	Parent: MainFrame
 	ClipsDescendants: true
 
 BottomClipFrame = New "Frame", "BottomFrame"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, -0.8, 0)
-	Size: UDim2.new(1, 0, 1, 0)
+	Position: UDim2.new 0, 0, -0.8, 0
+	Size: UDim2.new 1, 0, 1, 0
 	Parent: TopClipFrame
 	ClipsDescendants: true
 
 ScrollBarFrame = New "Frame", "ScrollBarFrame"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0.987, 0, 0.8, 0)
-	Size: UDim2.new(0.01, 0, 0.2, 0)
+	Position: UDim2.new 0.987, 0, 0.8, 0
+	Size: UDim2.new 0.01, 0, 0.2, 0
 	Parent: BottomClipFrame
 
 ScrollBar = New "Frame", "ScrollBar"
 	BackgroundTransparency: 0
-	BackgroundColor3: Color3.new(0.2, 0.2, 0.2)
-	Position: UDim2.new(0, 0, 0, 0)
-	Size: UDim2.new(1, 0, 0.5, 0)
+	BackgroundColor3: Color3.new 0.2, 0.2, 0.2
+	Position: UDim2.new 0, 0, 0, 0
+	Size: UDim2.new 1, 0, 0.5, 0
 	ZIndex: 5
 	Parent: ScrollBarFrame
 
 ListFrame = New "Frame", "SubFrame"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, 0.8, 0)
-	Size: UDim2.new(1, 0, 1, 0)
+	Position: UDim2.new 0, 0, 0.8, 0
+	Size: UDim2.new 1, 0, 1, 0
 	Parent: BottomClipFrame
 
 PopUpClipFrame = New "Frame", "PopUpFrame"
 	BackgroundTransparency: 1
 	SizeConstraint: "RelativeXX"
-	Position: MainFrame.Position + UDim2.new(0, -150, 0, 0)
-	Size: UDim2.new(0, 150, 0, 800)
+	Position: MainFrame.Position + UDim2.new 0, -150, 0, 0
+	Size: UDim2.new 0, 150, 0, 800
 	Parent: MainFrame
 	ClipsDescendants: true
 	ZIndex: 7
@@ -457,15 +458,15 @@ PopUpClipFrame = New "Frame", "PopUpFrame"
 PopUpPanel = nil
 PopUpPanelTemplate = New "Frame", "Panel"
 	BackgroundTransparency: 1
-	Position: UDim2.new(1, 0, 0, 0)
-	Size: UDim2.new(1, 0, 0.032, 0)
+	Position: UDim2.new 1, 0, 0, 0
+	Size: UDim2.new 1, 0, 0.032, 0
 	Parent: PopUpClipFrame
 
 
 StatTitles = New "Frame", "StatTitles"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0, 0, 1, -10)
-	Size: UDim2.new(1, 0, 0, 0)
+	Position: UDim2.new 0, 0, 1, -10
+	Size: UDim2.new 1, 0, 0, 0
 	Parent: HeaderFrame
 
 
@@ -476,14 +477,14 @@ AreNamesExpanded = Instance.new "BoolValue"
 
 MiddleTemplate = New "Frame", "MidTemplate"
 	BackgroundTransparency: 1
-	Position: UDim2.new(100, 0, 0.07, 0)
-	Size: UDim2.new(0.5, 0, 0.025, 0), --UDim2.new(1, 0, .03, 0)
+	Position: UDim2.new 100, 0, 0.07, 0
+	Size: UDim2.new 0.5, 0, 0.025, 0, --UDim2.new 1, 0, 0.03, 0
 
 	* New "ImageLabel", "BCLabel"
 		Active: true
 		BackgroundTransparency: 1
-		Position: UDim2.new(0.005, 5, 0.20, 0)
-		Size: UDim2.new(0, 16, 0, 16)
+		Position: UDim2.new 0.005, 5, 0.20, 0
+		Size: UDim2.new 0, 16, 0, 16
 		SizeConstraint: "RelativeYY"
 		Image: ""
 		ZIndex: 3
@@ -491,8 +492,8 @@ MiddleTemplate = New "Frame", "MidTemplate"
 	* New "ImageLabel", "FriendLabel"
 		Active: true
 		BackgroundTransparency: 1
-		Position: UDim2.new(0.005, 5, 0.15, 0)
-		Size: UDim2.new(0, 16, 0, 16)
+		Position: UDim2.new 0.005, 5, 0.15, 0
+		Size: UDim2.new 0, 16, 0, 16
 		SizeConstraint: "RelativeYY"
 		Image: ""
 		ZIndex: 3
@@ -500,22 +501,23 @@ MiddleTemplate = New "Frame", "MidTemplate"
 	* New "ImageButton", "ClickListener"
 		Active: true
 		BackgroundTransparency: 1
-		Position: UDim2.new(0.005, 1, 0, 0)
-		Size: UDim2.new(0.96, 0, 1, 0)
+		Position: UDim2.new 0.005, 1, 0, 0
+		Size: UDim2.new 0.96, 0, 1, 0
 		ZIndex: 3
 
 	* New "Frame", "TitleFrame"
 		BackgroundTransparency: 1
-		Position: UDim2.new(0.01, 0, 0, 0)
-		Size: UDim2.new(0, 140, 1, 0)
+		Position: UDim2.new 0.01, 0, 0, 0
+		Size: UDim2.new 0, 140, 1, 0
 		ClipsDescendants: true
+
 		* New "TextLabel", "Title"
 			BackgroundTransparency: 1
-			Position: UDim2.new(0, 5, 0, 0)
-			Size: UDim2.new(100, 0, 1, 0)
+			Position: UDim2.new 0, 5, 0, 0
+			Size: UDim2.new 100, 0, 1, 0
 			Font: "Arial"
 			FontSize: "Size14"
-			TextColor3: Color3.new(1, 1, 1)
+			TextColor3: Color3.new 1, 1, 1
 			TextXAlignment: "Left"
 			TextYAlignment: "Center"
 			ZIndex: 3
@@ -523,12 +525,12 @@ MiddleTemplate = New "Frame", "MidTemplate"
 
 	* New "TextLabel", "PlayerScore"
 		BackgroundTransparency: 1
-		Position: UDim2.new(0, 0, 0, 0)
-		Size: UDim2.new(1, 0, 1, 0)
+		Position: UDim2.new 0, 0, 0, 0
+		Size: UDim2.new 1, 0, 1, 0
 		Font: "ArialBold"
 		Text: ""
 		FontSize: "Size14"
-		TextColor3: Color3.new(1, 1, 1)
+		TextColor3: Color3.new 1, 1, 1
 		TextXAlignment: "Right"
 		TextYAlignment: "Center"
 		ZIndex: 3
@@ -541,9 +543,9 @@ MiddleTemplate = New "Frame", "MidTemplate"
 MiddleBGTemplate = New "Frame", "MidBGTemplate"
 	BackgroundTransparency: 1
 	Position: UDim2.new 100, 0, 0.07, 0
-	Size: UDim2.new 0.5, 0, 0.025, 0 --UDim2.new(1, 0, .03, 0)
+	Size: UDim2.new 0.5, 0, 0.025, 0 --UDim2.new 1, 0, 0.03, 0
 
-	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=94692025"
+	* MakeBackgroundGuiObj assetid .. "94692025"
 
 
 -- REPORT ABUSE OBJECTS
@@ -553,37 +555,37 @@ ReportAbuseShield = New "TextButton", "ReportAbuseShield"
 	AutoButtonColor: false
 	Active: true
 	Visible: true
-	Size: UDim2.new(1, 0, 1, 0)
-	BackgroundColor3: Color3I(51, 51, 51)
-	BorderColor3: Color3I(27, 42, 53)
+	Size: UDim2.new 1, 0, 1, 0
+	BackgroundColor3: Color3I 51, 51, 51
+	BorderColor3: Color3I 27, 42, 53
 	BackgroundTransparency: 1
 
 ReportAbuseFrame = New "Frame", "Settings"
-	Position: UDim2.new(0.5, -250, 0.5, -200)
-	Size: UDim2.new(0, 500, 0, 400)
+	Position: UDim2.new 0.5, -250, 0.5, -200
+	Size: UDim2.new 0, 500, 0, 400
 	BackgroundTransparency: 1
 	Active: true
 	Parent: ReportAbuseShield
 
 AbuseSettingsFrame = New "Frame", "ReportAbuseStyle"
-	Size: UDim2.new(1, 0, 1, 0)
+	Size: UDim2.new 1, 0, 1, 0
 	Active: true
 	BackgroundTransparency: 1
 
-	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=96488767" -- 96480351"
+	* MakeBackgroundGuiObj assetid .. "96488767" -- 96480351"
 
 	* New "TextLabel", "Title"
 		Text: "Report Abuse"
-		TextColor3: Color3I(221, 221, 221)
-		Position: UDim2.new(0.5, 0, 0, 30)
+		TextColor3: Color3I 221, 221, 221
+		Position: UDim2.new 0.5, 0, 0, 30
 		Font: Enum.Font.ArialBold
 		FontSize: Enum.FontSize.Size36
 
 	* New "TextLabel", "Description"
-		Text: "This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action."
-		TextColor3: Color3I(221, 221, 221)
-		Position: UDim2.new(0.01, 0, 0, 55)
-		Size: UDim2.new(0.99, 0, 0, 40)
+		Text: "This will send a complete report to a moderator. The moderator will review the chat log and take appropriate action."
+		TextColor3: Color3I 221, 221, 221
+		Position: UDim2.new 0.01, 0, 0, 55
+		Size: UDim2.new 0.99, 0, 0, 40
 		BackgroundTransparency: 1
 		Font: Enum.Font.Arial
 		FontSize: Enum.FontSize.Size18
@@ -596,18 +598,18 @@ AbuseSettingsFrame = New "Frame", "ReportAbuseStyle"
 		Font: Enum.Font.Arial
 		BackgroundTransparency: 1
 		FontSize: Enum.FontSize.Size18
-		Position: UDim2.new(0.025, 0, 0, 140)
-		Size: UDim2.new(0.4, 0, 0, 36)
-		TextColor3: Color3I(255, 255, 255)
+		Position: UDim2.new 0.025, 0, 0, 140
+		Size: UDim2.new 0.4, 0, 0, 36
+		TextColor3: Color3I 255, 255, 255
 		TextXAlignment: Enum.TextXAlignment.Left
 
 	* New "TextLabel", "ShortDescriptionLabel"
 		Text: "Short Description: (optional)"
 		Font: Enum.Font.Arial
 		FontSize: Enum.FontSize.Size18
-		Position: UDim2.new(0.025, 0, 0, 180)
-		Size: UDim2.new(0.95, 0, 0, 36)
-		TextColor3: Color3I(255, 255, 255)
+		Position: UDim2.new 0.025, 0, 0, 180
+		Size: UDim2.new 0.95, 0, 0, 36
+		TextColor3: Color3I 255, 255, 255
 		TextXAlignment: Enum.TextXAlignment.Left
 		BackgroundTransparency: 1
 
@@ -616,9 +618,9 @@ AbuseSettingsFrame = New "Frame", "ReportAbuseStyle"
 		BackgroundTransparency: 1
 		Font: Enum.Font.Arial
 		FontSize: Enum.FontSize.Size18
-		Position: UDim2.new(0.025, 0, 0, 100)
-		Size: UDim2.new(0.95, 0, 0, 36)
-		TextColor3: Color3I(255, 255, 255)
+		Position: UDim2.new 0.025, 0, 0, 100
+		Size: UDim2.new 0.95, 0, 0, 36
+		TextColor3: Color3I 255, 255, 255
 		TextXAlignment: Enum.TextXAlignment.Left
 
 
@@ -629,9 +631,9 @@ AbusePlayerLabel = New "TextLabel", "PlayerLabel"
 	BackgroundTransparency: 1
 	Font: Enum.Font.ArialBold
 	FontSize: Enum.FontSize.Size18
-	Position: UDim2.new(0.025, 0, 0, 100)
-	Size: UDim2.new(0.95, 0, 0, 36)
-	TextColor3: Color3I(255, 255, 255)
+	Position: UDim2.new 0.025, 0, 0, 100
+	Size: UDim2.new 0.95, 0, 0, 36
+	TextColor3: Color3I 255, 255, 255
 	TextXAlignment: Enum.TextXAlignment.Right
 	Parent: AbuseSettingsFrame
 
@@ -639,73 +641,73 @@ AbusePlayerLabel = New "TextLabel", "PlayerLabel"
 SubmitReportButton = New "ImageButton", "SubmitReportBtn"
 	Active: false
 	BackgroundTransparency: 1
-	Position: UDim2.new(0.5, -200, 1, -80)
-	Size: UDim2.new(0, 150, 0, 50)
+	Position: UDim2.new 0.5, -200, 1, -80
+	Size: UDim2.new 0, 150, 0, 50
 	AutoButtonColor: false
-	Image: "http://banland.xyz/asset/?id=96502438", -- 96501119"
+	Image: assetid .. "96502438" -- 96501119"
 	Parent: AbuseSettingsFrame
 
 
 CancelReportButton = New "ImageButton", "CancelBtn"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0.5, 50, 1, -80)
-	Size: UDim2.new(0, 150, 0, 50)
+	Position: UDim2.new 0.5, 50, 1, -80
+	Size: UDim2.new 0, 150, 0, 50
 	AutoButtonColor: true
-	Image: "http://banland.xyz/asset/?id=96500683"
+	Image: assetid .. "96500683"
 	Parent: AbuseSettingsFrame
 
 
 AbuseDescriptionWrapper = New "Frame", "AbuseDescriptionWrapper"
-	Position: UDim2.new(0.025, 0, 0, 220)
-	Size: UDim2.new(0.95, 0, 1, -310)
-	BackgroundColor3: Color3I(0, 0, 0)
+	Position: UDim2.new 0.025, 0, 0, 220
+	Size: UDim2.new 0.95, 0, 1, -310
+	BackgroundColor3: Color3I 0, 0, 0
 	BorderSizePixel: 0
 	Parent: AbuseSettingsFrame
 
 
 local AbuseDescriptionBox
 
-OriginalAbuseDescriptionBox = New "TextBox", "TextBox"
+OriginalAbuseDescriptionBox = New "TextBox"
 	Text: ""
 	ClearTextOnFocus: false
 	Font: Enum.Font.Arial
 	FontSize: Enum.FontSize.Size18
-	Position: UDim2.new(0, 3, 0, 3)
-	Size: UDim2.new(1, -6, 1, -6)
-	TextColor3: Color3I(255, 255, 255)
+	Position: UDim2.new 0, 3, 0, 3
+	Size: UDim2.new 1, -6, 1, -6
+	TextColor3: Color3I 255, 255, 255
 	TextXAlignment: Enum.TextXAlignment.Left
 	TextYAlignment: Enum.TextYAlignment.Top
 	TextWrap: true
-	BackgroundColor3: Color3I(0, 0, 0)
+	BackgroundColor3: Color3I 0, 0, 0
 	BorderSizePixel: 0
 
 
 CalmingAbuseBox = New "Frame", "AbuseFeedbackBox"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0.25, 0, 0.300000012, 0)
-	Size: UDim2.new(0.5, 0, 0.370000005, 0)
+	Position: UDim2.new 0.25, 0, 0.3, 0
+	Size: UDim2.new 0.5, 0, 0.37, 0
 
-	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=96506233"
+	* MakeBackgroundGuiObj assetid .. "96506233"
 
 	* New "TextLabel", "Header"
-		Position: UDim2.new(0, 10, 0.05, 0)
-		Size: UDim2.new(1, -30, 0.15, 0)
+		Position: UDim2.new 0, 10, 0.05, 0
+		Size: UDim2.new 1, -30, 0.15, 0
 		TextScaled: true
 		BackgroundTransparency: 1
 		TextXAlignment: Enum.TextXAlignment.Center
 		TextYAlignment: Enum.TextYAlignment.Top
 		Text: "Thanks for your report!"
-		TextColor3: Color3.new(1, 1, 1)
+		TextColor3: Color3.new 1, 1, 1
 		FontSize: Enum.FontSize.Size48
 		Font: "ArialBold"
 
 	* New "TextLabel", "content"
-		Position: UDim2.new(0, 10, 0.20, 0)
-		Size: UDim2.new(1, -30, 0.40, 0)
+		Position: UDim2.new 0, 10, 0.20, 0
+		Size: UDim2.new 1, -30, 0.40, 0
 		TextScaled: true
 		BackgroundTransparency: 1
-		TextColor3: Color3.new(1, 1, 1)
-		Text: "Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats"
+		TextColor3: Color3.new 1, 1, 1
+		Text: "Our moderators will review the chat logs and determine what happened. The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats"
 		TextWrapped: true
 		TextYAlignment: Enum.TextYAlignment.Top
 		FontSize: Enum.FontSize.Size24
@@ -713,24 +715,24 @@ CalmingAbuseBox = New "Frame", "AbuseFeedbackBox"
 
 	* New "ImageButton", "OkButton"
 		BackgroundTransparency: 1
-		Position: UDim2.new(0.5, -75, 1, -80)
-		Size: UDim2.new(0, 150, 0, 50)
+		Position: UDim2.new 0.5, -75, 1, -80
+		Size: UDim2.new 0, 150, 0, 50
 		AutoButtonColor: true
-		Image: "http://banland.xyz/asset/?id=96507959"
+		Image: assetid .. "96507959"
 
 NormalAbuseBox = New "Frame", "AbuseFeedbackBox"
 	BackgroundTransparency: 1
-	Position: UDim2.new(0.25, 0, 0.300000012, 0)
-	Size: UDim2.new(0.5, 0, 0.370000005, 0)
+	Position: UDim2.new 0.25, 0, 0.3, 0
+	Size: UDim2.new 0.5, 0, 0.37, 0
 
-	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=96506233"
+	* MakeBackgroundGuiObj assetid .. "96506233"
 
 	* New "TextLabel", "Header"
-		Position: UDim2.new(0, 10, 0.05, 0)
-		Size: UDim2.new(1, -30, 0.15, 0)
+		Position: UDim2.new 0, 10, 0.05, 0
+		Size: UDim2.new 1, -30, 0.15, 0
 		TextScaled: true
 		BackgroundTransparency: 1
-		TextColor3: Color3.new(1, 1, 1)
+		TextColor3: Color3.new 1, 1, 1
 		TextXAlignment: Enum.TextXAlignment.Center
 		TextYAlignment: Enum.TextYAlignment.Top
 		Text: "Thanks for your report!"
@@ -738,11 +740,11 @@ NormalAbuseBox = New "Frame", "AbuseFeedbackBox"
 		Font: "ArialBold"
 
 	* New "TextLabel", "content"
-		Position: UDim2.new(0, 10, 0.20, 0)
-		Size: UDim2.new(1, -30, 0.15, 0)
+		Position: UDim2.new 0, 10, 0.20, 0
+		Size: UDim2.new 1, -30, 0.15, 0
 		TextScaled: true
 		BackgroundTransparency: 1
-		TextColor3: Color3.new(1, 1, 1)
+		TextColor3: Color3.new 1, 1, 1
 		Text: "Our moderators will review the chat logs and determine what happened."
 		TextWrapped: true
 		TextYAlignment: Enum.TextYAlignment.Top
@@ -751,55 +753,55 @@ NormalAbuseBox = New "Frame", "AbuseFeedbackBox"
 
 	* New "ImageButton", "OkButton"
 		BackgroundTransparency: 1
-		Position: UDim2.new(0.5, -75, 1, -80)
-		Size: UDim2.new(0, 150, 0, 50)
+		Position: UDim2.new 0.5, -75, 1, -80
+		Size: UDim2.new 0, 150, 0, 50
 		AutoButtonColor: true
-		Image: "http://banland.xyz/asset/?id=96507959"
+		Image: assetid .. "96507959"
 
-BigButton = Instance.new "ImageButton"
-BigButton.Size = UDim2.new 1, 0, 1, 0
-BigButton.BackgroundTransparency = 1
-BigButton.ZIndex = 8
-BigButton.Visible = false
---BigButton.Active=false
-BigButton.Parent = ScreenGui
+BigButton = New "ImageButton"
+	Size: UDim2.new 1, 0, 1, 0
+	BackgroundTransparency: 1
+	ZIndex: 8
+	Visible: false
+	--Active: false
+	Parent: ScreenGui
 
 debugFrame = New "Frame", "debugframe"
-	--Position = UDim2.new(0, 0, 0, 0),
-	--Size = UDim2.new(0, 150, 0, 800),--0.99000001
-	--BackgroundTransparency = 1,
+	--Position: UDim2.new(0, 0, 0, 0)
+	--Size: UDim2.new(0, 150, 0, 800)--0.99000001
+	--BackgroundTransparency: 1
 	BackgroundTransparency: 1
-	Position: UDim2.new(0.25, 0, 0.300000012, 0)
-	Size: UDim2.new(0.5, 0, 0.370000005, 0)
+	Position: UDim2.new 0.25, 0, 0.3, 0
+	Size: UDim2.new 0.5, 0, 0.37, 0
 
-	* MakeBackgroundGuiObj "http://banland.xyz/asset/?id=96506233"
+	* MakeBackgroundGuiObj assetid .. "96506233"
 
 debugplayers = New "TextLabel"
 	BackgroundTransparency: 0.8
-	Position: UDim2.new(0, 0, 0.01, 0)
-	Size: UDim2.new(1, 0, 0.5, 0)
+	Position: UDim2.new 0, 0, 0.01, 0
+	Size: UDim2.new 1, 0, 0.5, 0
 	Parent: debugFrame
 	Font: "ArialBold"
 	Text: "--"
 	FontSize: "Size14"
 	TextWrapped: true
-	TextColor3: Color3.new(1, 1, 1)
-	TextStrokeColor3: Color3.new(0, 0, 0)
+	TextColor3: Color3.new 1, 1, 1
+	TextStrokeColor3: Color3.new 0, 0, 0
 	TextStrokeTransparency: 0
 	TextXAlignment: "Right"
 	TextYAlignment: "Center"
 
 debugOutput = New "TextLabel"
 	BackgroundTransparency: 0.8
-	Position: UDim2.new(0, 0, 0.5, 0)
-	Size: UDim2.new(1, 0, 0.5, 0)
+	Position: UDim2.new 0, 0, 0.5, 0
+	Size: UDim2.new 1, 0, 0.5, 0
 	Parent: debugFrame
 	Font: "ArialBold"
 	Text: "--"
 	FontSize: "Size14"
 	TextWrapped: true
-	TextColor3: Color3.new(1, 1, 1)
-	TextStrokeColor3: Color3.new(0, 0, 0)
+	TextColor3: Color3.new 1, 1, 1
+	TextStrokeColor3: Color3.new 0, 0, 0
 	TextStrokeTransparency: 0
 	TextXAlignment: "Right"
 	TextYAlignment: "Center"
@@ -822,7 +824,7 @@ RbxGui = assert LoadLibrary "RbxGui"
 DefaultEntriesOnScreen = 8
 
 for _, i in pairs Images
-	Game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=" .. i
+	Game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=#{i}"
 
 
 -- ordered array of 'score data', each entry has:
@@ -849,7 +851,7 @@ PlayerFrames = {}
 -- ID (int to prevent flipping out of leaderboard, fun times)
 TeamFrames = {}
 -- one special entry from teamFrames, for unaffiliated players, only shown if players non - empty
-NeutralTeam = nil
+local NeutralTeam
 
 -- final 'to be displayed' list of frames
 MiddleFrames = {}
@@ -879,16 +881,16 @@ RightEdgeSpace = -0.04
 
 DefaultBottomClipPos = BottomClipFrame.Position.Y.Scale
 
-SelectedPlayerEntry = nil
-SelectedPlayer = nil
+local SelectedPlayerEntry
+local SelectedPlayer
 
 -- locks(semaphores) for stopping race conditions
-AddingFrameLock = false
-AddingStatLock = false
-BaseUpdateLock = false
-WaitForClickLock = false
-InPopupWaitForClick = false
-PlayerChangedLock = false
+AddingFrameLock = \
+AddingStatLock = \
+BaseUpdateLock = \
+WaitForClickLock = \
+InPopupWaitForClick = \
+PlayerChangedLock = \
 NeutralTeamLock = false
 
 ScrollWheelConnections = {}
@@ -903,25 +905,24 @@ DidMinimizeDrag = false
 
 -- report abuse objects
 local AbuseName
-Abuses = {
-	"Bad Words or Threats",
-	"Bad Username",
-	"Talking about Dating",
-	"Account Trading or Sharing",
-	"Asking Personal Questions",
-	"Rude or Mean Behavior",
-	"False Reporting Me",
-}
+Abuses =
+	* "Bad Words or Threats"
+	* "Bad Username"
+	* "Talking about Dating"
+	* "Account Trading or Sharing"
+	* "Asking Personal Questions"
+	* "Rude or Mean Behavior"
+	* "False Reporting Me"
+
 local UpdateAbuseFunction
 local AbuseDropDown
 
-PrivilegeLevel = {
+PrivilegeLevel =
 	Owner: 255
 	Admin: 240
 	Member: 128
 	Visitor: 10
 	Banned: 0
-}
 
 IsPersonalServer = not not game.Workspace\FindFirstChild "PSVariable"
 
@@ -960,43 +961,43 @@ local HighlightMyRank, CloseAbuseDialog, Tabify, UnTabify, BaseUpdate, \
 -------------------------------
 -- GetTotalEntries = ->
 -- 	return math.min #MiddleFrameBackgrounds, DefaultEntriesOnScreen
---
+
 -- GetEntryListLength = ->
 -- 	numEnts = #PlayerFrames + #TeamFrames
 -- 	if NeutralTeam
 -- 		numEnts += 1
--- 	-- 	return numEnts
---
+-- 	numEnts
+
 AreAllEntriesOnScreen = ->
-	return #MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale <= 1 + DefaultBottomClipPos
+	#MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale <= 1 + DefaultBottomClipPos
 
 
 -- GetLengthOfVisbleScroll = ->
 -- 	return 1 + DefaultBottomClipPos
 --
 GetMaxScroll = ->
-	return DefaultBottomClipPos * -1
+	DefaultBottomClipPos * -1
 
 -- can be optimized by caching when this varible changes
 GetMinScroll = ->
 	if AreAllEntriesOnScreen!
-		return GetMaxScroll!
+		GetMaxScroll!
 	else
-		return (GetMaxScroll! - (#MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale)) + (1 + DefaultBottomClipPos)
+		(GetMaxScroll! - (#MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale)) + (1 + DefaultBottomClipPos)
 
 
 AbsoluteToPercent = (x, y) ->
-	return Vector2.new(x, y) / ScreenGui.AbsoluteSize
+	Vector2.new(x, y) / ScreenGui.AbsoluteSize
 
 --[[
 	tweens property of element from starta to enda over length of time
 	Warning: should be put in a Spawn call
 	@Args:
-	element		textobject to tween transparency on
+	element textobject to tween transparency on
 	propName
-	starta		alpha to start tweening
-	enda		alpha to end tweening on
-	length		how many seconds to spend tweening
+	starta alpha to start tweening
+	enda alpha to end tweening on
+	length how many seconds to spend tweening
 --]]
 TweenProperty = (obj, propName, inita, enda, length) ->
 	startTime = tick!
@@ -1011,13 +1012,12 @@ TweenProperty = (obj, propName, inita, enda, length) ->
 	replace with some sort of global input catching A.S.A. FREAKING P.
 	creates a fullsize gui element to catch next mouse up event (completeing a click)
 	@Args:
-	frameParent		Object to parent fullscreen gui to
-	polledFunction	function to call on mouse moved events in this gui
-	exitFunction	function to call when click event is fired
+	frameParent	 Object to parent fullscreen gui to
+	polledFunction function to call on mouse moved events in this gui
+	exitFunction function to call when click event is fired
 --]]
 WaitForClick = (frameParent, polledFunction, exitFunction) ->
-	if WaitForClickLock
-		return
+	return if WaitForClickLock
 
 	WaitForClickLock = true
 	local connection, connection2
@@ -1057,28 +1057,28 @@ WaitForClick = (frameParent, polledFunction, exitFunction) ->
 	Note: these privilege levels seem completely arbitrary, but no documentation exists
 	this is all from the old player list, really weird
 	@Args:
-	rank	Integer rank value for player
-	@Return		Normalized integer value for rank?
+	rank Integer rank value for player
+	@Return	 Normalized integer value for rank?
 --]]
 -- GetPrivilegeType = (rank) ->
 -- 	if rank <= PrivilegeLevel["Banned"]
--- 		return PrivilegeLevel["Banned"]
+-- 		PrivilegeLevel["Banned"]
 -- 	elseif rank <= PrivilegeLevel["Visitor"]
--- 		return PrivilegeLevel["Visitor"]
+-- 		PrivilegeLevel["Visitor"]
 -- 	elseif rank <= PrivilegeLevel["Member"]
--- 		return PrivilegeLevel["Member"]
+-- 		PrivilegeLevel["Member"]
 -- 	elseif rank <= PrivilegeLevel["Admin"]
--- 		return PrivilegeLevel["Admin"]
+-- 		PrivilegeLevel["Admin"]
 -- 	else
--- 		return PrivilegeLevel["Owner"]
--- 	--
+-- 		PrivilegeLevel["Owner"]
+
 --[[
 	gives a player a new privilage rank
 	Note: Very odd that I have to use loops with this instead of directly setting the rank
 	but no documentation for personal server service exists
 	@Args:
-	player		player to change rank of
-	nrank		new integer rank to give player
+	player player to change rank of
+	nrank new integer rank to give player
 --]]
 SetPrivilegeRank = (player, nrank) ->
 	while player.PersonalServerRank < nrank
@@ -1102,23 +1102,23 @@ OnPrivilegeLevelSelect = (player, nlevel, BanPlayerButton, VisitorButton, Member
 --[[
 	Highlights current rank of this player in the popup menu
 	@Args:
-	player		Player to check for rank on
+	player Player to check for rank on
 --]]
 HighlightMyRank = (player, BanPlayerButton, VisitorButton, MemberButton, AdminButton) ->
-	BanPlayerButton.Image = "http://banland.xyz/asset/?id=" .. Images["LightPopupMid"]
-	VisitorButton.Image = "http://banland.xyz/asset/?id=" .. Images["DarkPopupMid"]
-	MemberButton.Image = "http://banland.xyz/asset/?id=" .. Images["LightPopupMid"]
-	AdminButton.Image = "http://banland.xyz/asset/?id=" .. Images["DarkPopupBottom"]
+	BanPlayerButton.Image = assetid .. Images["LightPopupMid"]
+	VisitorButton.Image = assetid .. Images["DarkPopupMid"]
+	MemberButton.Image = assetid .. Images["LightPopupMid"]
+	AdminButton.Image = assetid .. Images["DarkPopupBottom"]
 
 	rank = player.PersonalServerRank
 	if rank <= PrivilegeLevel["Banned"]
-		BanPlayerButton.Image = "http://banland.xyz/asset/?id=" .. Images["LightBluePopupMid"]
+		BanPlayerButton.Image = assetid .. Images["LightBluePopupMid"]
 	elseif rank <= PrivilegeLevel["Visitor"]
-		VisitorButton.Image = "http://banland.xyz/asset/?id=" .. Images["DarkBluePopupMid"]
+		VisitorButton.Image = assetid .. Images["DarkBluePopupMid"]
 	elseif rank <= PrivilegeLevel["Member"]
-		MemberButton.Image = "http://banland.xyz/asset/?id=" .. Images["LightBluePopupMid"]
+		MemberButton.Image = assetid .. Images["LightBluePopupMid"]
 	elseif rank <= PrivilegeLevel["Admin"]
-		AdminButton.Image = "http://banland.xyz/asset/?id=" .. Images["DarkBluePopupBottom"]
+		AdminButton.Image = assetid .. Images["DarkBluePopupBottom"]
 
 
 --------------------------
@@ -1140,7 +1140,6 @@ OnSubmitAbuse = ->
 
 		else
 			CloseAbuseDialog!
-
 
 
 ClosePopUpPanel = ->
@@ -1174,7 +1173,7 @@ OpenAbuseDialog = ->
 CloseAbuseDialog = ->
 	AbuseName = nil
 	SubmitReportButton.Active = false
-	SubmitReportButton.Image = "http://banland.xyz/asset/?id=96502438" -- 96501119',
+	SubmitReportButton.Image = assetid .. "96502438" -- 96501119',
 	AbuseDescriptionBox\Destroy!
 	CalmingAbuseBox.Parent = nil
 	NormalAbuseBox.Parent = nil
@@ -1190,7 +1189,7 @@ InitReportAbuse = ->
 		AbuseName = abuseText
 		if AbuseName and SelectedPlayer
 			SubmitReportButton.Active = true
-			SubmitReportButton.Image = "http://banland.xyz/asset/?id=96501119"
+			SubmitReportButton.Image = assetid .. "96501119"
 
 
 	AbuseDropDown, _ = RbxGui.CreateDropDownMenu Abuses, UpdateAbuseFunction, true
@@ -1212,19 +1211,20 @@ InitReportAbuse = ->
 --[[
 	gets enum val of friend status, uses pcall for some reason?(from old playerlist)
 	@Args:
-	player	player object to check if friends with
+	player player object to check if friends with
 	@Return: enum of friend status
 --]]
 GetFriendStatus = (player) ->
 	if player == game.Players.LocalPlayer
-		return Enum.FriendStatus.NotFriend	else
-		local success, result = try
-			return game.Players.LocalPlayer\GetFriendStatus player
+		Enum.FriendStatus.NotFriend
+	else
+		success, result = try
+			game.Players.LocalPlayer\GetFriendStatus player
 
 		if success
-			return result
+			result
 		else
-			return Enum.FriendStatus.NotFriend
+			Enum.FriendStatus.NotFriend
 
 
 --[[
@@ -1242,9 +1242,9 @@ OnFriendButtonSelect = ->
 
 		LocalPlayer\RequestFriendship SelectedPlayer
 
-	--PersonalServerPanel\TweenPosition(UDim2.new(1,0,0,0), "Out", "Quad", .5,true)
+	--PersonalServerPanel\TweenPosition UDim2.new(1,0,0,0), "Out", "Quad", 0.5,true
 	ClosePopUpPanel!
-	--PopUpPanel\TweenPosition(UDim2.new(1,0,0,0), "Out", "Linear", BASE_TWEEN,true)
+	--PopUpPanel\TweenPosition UDim2.new(1,0,0,0), "Out", "Linear", BASE_TWEEN,true
 
 
 OnFriendRefuseButtonSelect = ->
@@ -1261,16 +1261,13 @@ OnFriendRefuseButtonSelect = ->
 PlayerSortFunction = (a, b) ->
 	-- prevents flipping out leaderboard
 	if a["Score"] == b["Score"]
-		return a["Player"].Name\upper! < b["Player"].Name\upper!
-
-	if not a["Score"]
-		return false
-
-	if not b["Score"]
-		return true
-
-	return a["Score"] < b["Score"]
-
+		a["Player"].Name\upper! < b["Player"].Name\upper!
+	elseif not a["Score"]
+		false
+	elseif not b["Score"]
+		true
+	else
+		a["Score"] < b["Score"]
 
 ---------------------------------
 -- Stat Handling
@@ -1301,27 +1298,26 @@ StatSort = (a, b) ->
 --[[
 	doing WAAY too much here, for optimization update only your team
 	@Args:
-	playerEntry		Entry of player who had a stat change
-	property		Name of stat changed
+	playerEntry Entry of player who had a stat change
+	property Name of stat changed
 --]]
 StatChanged = (_, _) -> --playerEntry, property)
 	-- if playerEntry['MyTeam']
 	-- UpdateSingleTeam playerEntry['MyTeam']
 	-- else
 	BaseUpdate!
-	--
 
 CreateStatTitle = (statName) ->
-	ntitle = MiddleTemplate\FindFirstChild("PlayerScore")\Clone!
-	ntitle.Name = statName
-	ntitle.Text = statName
-	-- ntitle
-	if IsMaximized.Value
-		ntitle.TextTransparency = 0
-	else
-		ntitle.TextTransparency = 1
+	with MiddleTemplate\FindFirstChild"PlayerScore"\Clone!
+		.Name = statName
+		.Text = statName
+		-- ntitle
+		.TextTransparency = if IsMaximized.Value
+			0
+		else
+			1
 
-	ntitle.Parent = StatTitles
+		.Parent = StatTitles
 
 
 --[[
@@ -1331,8 +1327,8 @@ CreateStatTitle = (statName) ->
 	if stat is a string value, crashes the leaderboard
 	Note: change crash to a 'tabify' leaderboard later
 	@Args:
-	nchild			new child value to leaderstats
-	playerEntry		entry this stat was added to
+	nchild new child value to leaderstats
+	playerEntry entry this stat was added to
 --]]
 StatAdded = (nchild, playerEntry) ->
 	-- dont re - add a leaderstat I alreday have
@@ -1394,7 +1390,7 @@ DoesStatExist = (statName, exception) ->
 			--print 'player:' .. playerf['Player'].Name ..' has stat'
 			return true
 
-	return false
+	false
 
 
 --[[
@@ -1403,8 +1399,8 @@ DoesStatExist = (statName, exception) ->
 	then calls statchanged (to resize frame)
 	if playerEntry==localplayer, will remove from scorenames
 	@Args:
-	nchild			___value to be removed
-	playerEntry		entry of player value is being removed from
+	nchild ___value to be removed
+	playerEntry entry of player value is being removed from
 --]]
 StatRemoved = (nchild, playerEntry) ->
 	while AddingStatLock
@@ -1440,58 +1436,55 @@ RemoveAllStats = (playerEntry) ->
 
 GetScoreValue = (score) ->
 	if score\IsA"DoubleConstrainedValue" or score\IsA "IntConstrainedValue"
-		return score.ConstrainedValue
+		score.ConstrainedValue
 	elseif score\IsA "BoolValue"
 		if score.Value
-			return 1
+			1
 		else
-			return 0
+			0
 	else
-		return score.Value
+		score.Value
 
 --[[
 
 --]]
 MakeScoreEntry = (entry, scoreval, panel) ->
-	if not panel\FindFirstChild "PlayerScore"
-		return
+	return if not panel\FindFirstChild "PlayerScore"
 
 	nscoretxt = panel\FindFirstChild"PlayerScore"\Clone!
-	thisScore = nil
+	local thisScore
 	--here lies the resting place of a once great and terrible bug
 	--may its treachery never be forgoten, lest its survivors fall for it again
 	--RIP the leaderstat bug, oct 2012-nov 2012
 	wait!
 	if entry["Player"]\FindFirstChild"leaderstats" and entry["Player"].leaderstats\FindFirstChild scoreval["Name"]
-		thisScore = entry["Player"]\FindFirstChild("leaderstats")\FindFirstChild scoreval["Name"]
+		thisScore = entry["Player"]\FindFirstChild"leaderstats"\FindFirstChild scoreval["Name"]
 	else
 		return
 
-	if not entry["Player"].Parent
-		return
+	return if not entry["Player"].Parent
 
 	nscoretxt.Name = scoreval["Name"]
-	nscoretxt.Text = "#{GetScoreValue(thisScore)}"
+	nscoretxt.Text = "#{GetScoreValue thisScore}"
 	if scoreval["Name"] == ScoreNames[1]["Name"]
 		debugprint "changing score"
 		entry["Score"] = GetScoreValue thisScore
 		if entry["Player"] == LocalPlayer
-			HeaderScore.Text = "#{GetScoreValue(thisScore)}"
+			HeaderScore.Text = "#{GetScoreValue thisScore}"
 
 
 	thisScore.Changed\connect ->
-		if not thisScore.Parent
-			return
+		return if not thisScore.Parent
 
 		if scoreval["Name"] == ScoreNames[1]["Name"]
 			entry["Score"] = GetScoreValue thisScore
 			if entry["Player"] == LocalPlayer
-				HeaderScore.Text = "#{GetScoreValue(thisScore)}"
+				HeaderScore.Text = "#{GetScoreValue thisScore}"
 
-		nscoretxt.Text = "#{GetScoreValue(thisScore)}"
+		nscoretxt.Text = "#{GetScoreValue thisScore}"
 		BaseUpdate!
 
-	return nscoretxt
+	nscoretxt
 
 
 RecreateScoreColumns = (ptable) ->
@@ -1518,7 +1511,7 @@ RecreateScoreColumns = (ptable) ->
 				-- make an entry for this object
 				nentry = MakeScoreEntry entry, scoreval, panel
 				if nentry
-					debugprint "adding " .. nentry.Name .. " to " .. entry["Player"].Name
+					debugprint "adding #{nentry.Name} to #{entry["Player"].Name}"
 					nentry.Parent = panel
 					-- add score to team
 					if entry["MyTeam"] and
@@ -1526,7 +1519,7 @@ RecreateScoreColumns = (ptable) ->
 						not entry["MyTeam"]["Frame"]\FindFirstChild scoreval["Name"]
 
 						ntitle = nentry\Clone!
-						--ntitle.TextXAlignment  = 'Right'
+						--ntitle.TextXAlignment = "Right"
 						ntitle.Parent = entry["MyTeam"]["Frame"]
 
 
@@ -1576,7 +1569,7 @@ ToggleMinimize = ->
 
 ToggleMaximize = ->
 	IsMaximized.Value = not IsMaximized.Value
-	RecreateScoreColumns(PlayerFrames) --done to re-position stat names NOTE: optimize-able
+	RecreateScoreColumns PlayerFrames --done to re-position stat names NOTE: optimize-able
 
 
 Tabify = ->
@@ -1597,7 +1590,7 @@ Tabify = ->
 UnTabify = ->
 	if IsTabified.Value
 		IsTabified.Value = false
-		ScreenGui\TweenPosition(UDim2.new(0, 0, 0, 0), "Out", "Linear", BASE_TWEEN * 1.2, true)
+		ScreenGui\TweenPosition UDim2.new(0, 0, 0, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
 
 
 --[[
@@ -1623,10 +1616,10 @@ UpdateMinimize = ->
 			MainFrame\TweenSizeAndPosition NormalBounds, NormalPosition, "Out", "Linear", BASE_TWEEN * 1.2, true
 
 		--(#MiddleFrameBackgrounds*MiddleBGTemplate.Size.Y.Scale)
-		BottomClipFrame\TweenPosition(UDim2.new(0, 0, -1, 0), "Out", "Linear", BASE_TWEEN * 1.2, true)
-		BottomFrame\TweenPosition(UDim2.new(0, 0, 0, 0), "Out", "Linear", BASE_TWEEN * 1.2, true)
+		BottomClipFrame\TweenPosition UDim2.new(0, 0, -1, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
+		BottomFrame\TweenPosition UDim2.new(0, 0, 0, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
 		FocusFrame.Size = UDim2.new 1, 0, HeaderFrameHeight, 0
-		ExtendTab.Image = "http://banland.xyz/asset/?id=94692731"
+		ExtendTab.Image = assetid .. "94692731"
 	else
 		if not IsMaximized.Value
 			MainFrame\TweenSizeAndPosition NormalBounds, NormalPosition, "Out", "Linear", BASE_TWEEN * 1.2, true
@@ -1636,10 +1629,10 @@ UpdateMinimize = ->
 		UpdateScrollPosition!
 
 		BottomClipFrame.Position = UDim2.new 0, 0, DefaultBottomClipPos, 0
-		bottomPositon = (DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale)
+		bottomPositon = DefaultBottomClipPos + BottomClipFrame.Size.Y.Scale
 		BottomFrame.Position = UDim2.new 0, 0, bottomPositon, 0
 		FocusFrame.Size = UDim2.new 1, 0, bottomPositon + HeaderFrameHeight, 0
-		ExtendTab.Image = "http://banland.xyz/asset/?id=94825585"
+		ExtendTab.Image = assetid .. "94825585"
 
 
 --[[
@@ -1657,7 +1650,6 @@ UpdateMaximize = ->
 				BASE_TWEEN,
 				true
 			)
-
 
 		if IsMinimized.Value
 			ToggleMinimize!
@@ -1680,13 +1672,13 @@ UpdateMaximize = ->
 			BASE_TWEEN * 1.2,
 			true
 		)
-		HeaderFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["LargeHeader"]
-		BottomFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["LargeBottom"]
+		HeaderFrame.Background.Image = assetid .. Images["LargeHeader"]
+		BottomFrame.Background.Image = assetid .. Images["LargeBottom"]
 		for index, i in ipairs MiddleFrameBackgrounds
-			if (index % 2) ~= 1
-				i.Background.Image = "http://banland.xyz/asset/?id=" .. Images["LargeDark"]
+			i.Background.Image = assetid .. if index % 2 ~= 1
+				Images["LargeDark"]
 			else
-				i.Background.Image = "http://banland.xyz/asset/?id=" .. Images["LargeLight"]
+				Images["LargeLight"]
 
 		for _, i in ipairs MiddleFrames
 			if i\FindFirstChild "ClickListener"
@@ -1705,17 +1697,27 @@ UpdateMaximize = ->
 
 
 		for _, entry in ipairs PlayerFrames
-			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new 0.38, 0, entry["Frame"].TitleFrame.Size.Y.Scale, 0
+			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+				0.38,
+				0,
+				entry["Frame"].TitleFrame.Size.Y.Scale,
+				0
+			)
 
 
 		for _, entry in ipairs TeamFrames
-			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new 0.38, 0, entry["Frame"].TitleFrame.Size.Y.Scale, 0
+			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+				0.38,
+				0,
+				entry["Frame"].TitleFrame.Size.Y.Scale,
+				0
+			)
 
 	else
 		if not IsMinimized.Value
 			MainFrame\TweenSizeAndPosition NormalBounds, NormalPosition, "Out", "Linear", BASE_TWEEN * 1.2, true
 
-		HeaderScore\TweenPosition(UDim2.new(0, 0, 0.4, 0), "Out", "Linear", BASE_TWEEN * 1.2, true)
+		HeaderScore\TweenPosition UDim2.new(0, 0, 0.4, 0), "Out", "Linear", BASE_TWEEN * 1.2, true
 		HeaderName\TweenPosition(
 			UDim2.new(0, 0, HeaderName.Position.Y.Scale, 0),
 			"Out",
@@ -1723,21 +1725,21 @@ UpdateMaximize = ->
 			BASE_TWEEN * 1.2,
 			true
 		)
-		HeaderFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["NormalHeader"]
-		BottomFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["NormalBottom"]
+		HeaderFrame.Background.Image = assetid .. Images["NormalHeader"]
+		BottomFrame.Background.Image = assetid .. Images["NormalBottom"]
 		for index, i in ipairs MiddleFrameBackgrounds
-			if index % 2 ~= 1
-				i.Background.Image = "http://banland.xyz/asset/?id=" .. Images["midDark"]
+			i.Background.Image = "http://banland.xyz/asset/?id=" .. if index % 2 ~= 1
+				Images["midDark"]
 			else
-				i.Background.Image = "http://banland.xyz/asset/?id=" .. Images["midLight"]
+				Images["midLight"]
+
 
 		for _, i in ipairs MiddleFrames
 			if i\FindFirstChild "ClickListener"
 				i.ClickListener.Size = UDim2.new 0.96, 0, i.ClickListener.Size.Y.Scale, 0
-				for j = 1, #ScoreNames, 1
-					scoreval = ScoreNames[j]
+				for scoreval in *ScoreNames
 					if i\FindFirstChild(scoreval["Name"]) and scoreval["XOffset"]
-						--print 'updateing stat position: ' .. scoreval['Name']
+						-- print "updateing stat position: #{scoreval["Name"]}"
 						i[scoreval["Name"]]\TweenPosition(
 							UDim2.new(RightEdgeSpace, -scoreval["XOffset"], 0, 0),
 							"Out",
@@ -1747,13 +1749,21 @@ UpdateMaximize = ->
 						)
 
 
-		
 		for _, entry in ipairs TeamFrames
-			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new 0, BaseScreenXSize * 0.9, entry["Frame"].TitleFrame.Size.Y.Scale, 0
+			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+				0,
+				BaseScreenXSize * 0.9,
+				entry["Frame"].TitleFrame.Size.Y.Scale,
+				0
+			)
 
 		for _, entry in ipairs PlayerFrames
-			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new 0, BaseScreenXSize * 0.9, entry["Frame"].TitleFrame.Size.Y.Scale, 0
-
+			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+				0,
+				BaseScreenXSize * 0.9,
+				entry["Frame"].TitleFrame.Size.Y.Scale,
+				0
+			)
 
 
 ExpandNames = ->
@@ -1819,15 +1829,14 @@ UpdateStatNames = ->
 OnScrollWheelMove = (direction) ->
 	if not (IsTabified.Value or IsMinimized.Value or InPopupWaitForClick)
 		StartFrame = ListFrame.Position
-		newFrameY = math.max(math.min(StartFrame.Y.Scale + direction, GetMaxScroll!), GetMinScroll!)
+		newFrameY = math.max math.min(StartFrame.Y.Scale + direction, GetMaxScroll!), GetMinScroll!
 
 		ListFrame.Position = UDim2.new StartFrame.X.Scale, StartFrame.X.Offset, newFrameY, StartFrame.Y.Offset
 		UpdateScrollPosition!
 
 
 AttachScrollWheel = ->
-	if ScrollWheelConnections
-		return
+	return if ScrollWheelConnections
 
 	ScrollWheelConnections = {}
 	table.insert(
@@ -1857,7 +1866,6 @@ FocusFrame.MouseEnter\connect ->
 FocusFrame.MouseLeave\connect ->
 	--if not (IsMaximized.Value or IsMinimized.Value)
 	DetachScrollWheel!
-	--
 
 ------------------------
 -- Scroll Bar functions
@@ -1878,7 +1886,7 @@ UpdateScrollBarVisibility = ->
 --]]
 UpdateScrollBarSize = ->
 	entryListSize = #MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale
-	shownAreaSize = (BottomClipFrame.Position.Y.Scale + 1)
+	shownAreaSize = BottomClipFrame.Position.Y.Scale + 1
 	ScrollBar.Size = UDim2.new 1, 0, shownAreaSize / entryListSize, 0
 
 --[[
@@ -1994,7 +2002,6 @@ InitMovingPanel = (entry, player) ->
 
 	PopUpPanel\TweenPosition UDim2.new(0, 0, 0, 0), "Out", "Linear", BASE_TWEEN, true
 	Delay 0, ->
-		local tconnection
 		tconnection = Mouse.Button1Down\connect ->
 			tconnection\disconnect!
 			ClosePopUpPanel!
@@ -2006,7 +2013,10 @@ InitMovingPanel = (entry, player) ->
 	-- sometimes garbage is the only option.
 	Spawn ->
 		while InPopupWaitForClick
-			PopUpClipFrame.Position = UDim2.new 0, myFrame.AbsolutePosition.X - PopUpClipFrame.Size.X.Offset, 0, myFrame.AbsolutePosition.Y
+			PopUpClipFrame.Position = UDim2.new(
+				0, myFrame.AbsolutePosition.X - PopUpClipFrame.Size.X.Offset,
+				0, myFrame.AbsolutePosition.Y
+			)
 			wait!
 
 
@@ -2049,12 +2059,12 @@ StartDrag = (entry, startx, starty) ->
 			startY = AbsoluteToPercent(nx, ny).Y
 
 		nowY = AbsoluteToPercent(nx, ny).Y
-		debugprint("drag dist:" .. Vector2.new(startx - nx, starty - ny).magnitude)
+		debugprint "drag dist: #{Vector2.new(startx - nx, starty - ny).magnitude}"
 		if Vector2.new(startx - nx, starty - ny).magnitude > MOUSE_DRAG_DISTANCE
 			openPanel = false
 
 
-		newFrameY = math.max(math.min(StartFrame.Y.Scale + (nowY - startY), GetMaxScroll!), GetMinScroll!)
+		newFrameY = math.max math.min(StartFrame.Y.Scale + (nowY - startY), GetMaxScroll!), GetMinScroll!
 		ListFrame.Position = UDim2.new StartFrame.X.Scale, StartFrame.X.Offset, newFrameY, StartFrame.Y.Offset
 		UpdateScrollPosition!
 
@@ -2067,14 +2077,14 @@ StartMinimizeDrag = ->
 		debugprint "Got Click2"
 		dragExit = ->
 			--debugprint "undone click2"
-			if tick! - startTime < 0.25 then --was click
+			if tick! - startTime < 0.25 --was click
 				ToggleMinimize!
 			else --was drag
 				DidMinimizeDrag = true
 				if IsMinimized.Value
 					ToggleMinimize!
 
-						-- stopDrag = true
+			-- stopDrag = true
 
 		local startY
 		StartFrame = DefaultBottomClipPos
@@ -2084,7 +2094,6 @@ StartMinimizeDrag = ->
 					startY = AbsoluteToPercent(nx, ny).Y
 
 				nowY = AbsoluteToPercent(nx, ny).Y
-				local newFrameY
 				newFrameY = math.min(
 					math.max(StartFrame + (nowY - startY), -1),
 					-1 + (#MiddleFrameBackgrounds * MiddleBGTemplate.Size.Y.Scale)
@@ -2111,8 +2120,7 @@ IsMaximized.Changed\connect UpdateMaximize
 IsMinimized.Changed\connect UpdateMinimize
 
 ExtendButton.MouseButton1Down\connect ->
-	if (time! - LastClick < ButtonCooldown) or InPopupWaitForClick
-		return
+	return if (time! - LastClick < ButtonCooldown) or InPopupWaitForClick
 
 	LastClick = time!
 	if IsTabified.Value
@@ -2122,8 +2130,7 @@ ExtendButton.MouseButton1Down\connect ->
 
 
 MaximizeButton.MouseButton1Click\connect ->
-	if (time! - LastClick < ButtonCooldown) or InPopupWaitForClick
-		return
+	return if (time! - LastClick < ButtonCooldown) or InPopupWaitForClick
 
 	LastClick = time!
 	if IsTabified.Value
@@ -2136,8 +2143,7 @@ MaximizeButton.MouseButton1Click\connect ->
 
 
 MaximizeButton.MouseButton2Click\connect ->
-	if (time! - LastClick < ButtonCooldown) or InPopupWaitForClick
-		return
+	return if (time! - LastClick < ButtonCooldown) or InPopupWaitForClick
 
 	LastClick = time!
 	if IsTabified.Value
@@ -2159,18 +2165,19 @@ MaximizeButton.MouseButton2Click\connect ->
 --]]
 AddMiddleBGFrame = ->
 	nBGFrame = MiddleBGTemplate\Clone!
-	nBGFrame.Position = UDim2.new(0.5, 0, (#MiddleFrameBackgrounds * nBGFrame.Size.Y.Scale), 0)
-	if (#MiddleFrameBackgrounds + 1) % 2 ~= 1
+	nBGFrame.Position = UDim2.new 0.5, 0, (#MiddleFrameBackgrounds * nBGFrame.Size.Y.Scale), 0
+	nBGFrame.Background.Image = assetid .. if (#MiddleFrameBackgrounds + 1) % 2 ~= 1
 		if IsMaximized.Value
-			nBGFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["LargeDark"]
+			Images["LargeDark"]
 		else
-			nBGFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["midDark"]
+			Images["midDark"]
 
 	else
 		if IsMaximized.Value
-			nBGFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["LargeLight"]
+			Images["LargeLight"]
 		else
-			nBGFrame.Background.Image = "http://banland.xyz/asset/?id=" .. Images["midLight"]
+			Images["midLight"]
+
 
 	nBGFrame.Parent = ListFrame
 	table.insert MiddleFrameBackgrounds, nBGFrame
@@ -2234,7 +2241,7 @@ ScreenGui.Changed\connect UpdateHeaderNameSize
 	called only when the leaderstats object is added to a given player entry
 	removes old stats, adds any existing stats, and sets up listeners for new stats
 	@Args:
-	playerEntry		A reference to the ENTRY(table) of the player who had leaderstats added
+	playerEntry A reference to the ENTRY(table) of the player who had leaderstats added
 --]]
 LeaderstatsAdded = (playerEntry) ->
 	--RemoveAllStats playerEntry
@@ -2252,12 +2259,12 @@ LeaderstatsAdded = (playerEntry) ->
 	called when leaderstats object is removed from play in player entry
 	Note: may not be needed, might be able to just rely on leaderstats added
 	@Args:
-	oldLeaderstats	leaderstats object to be removed
-	playerEntry		A reference to the ENTRY(table) of the player
+	oldLeaderstats leaderstats object to be removed
+	playerEntry A reference to the ENTRY(table) of the player
 --]]
 LeaderstatsRemoved = (_, playerEntry) ->
 	while AddingFrameLock
-		debugprint "waiting to insert " .. playerEntry["Player"].Name
+		debugprint "waiting to insert #{playerEntry["Player"].Name}"
 		wait 1 / 30
 
 	AddingFrameLock = true
@@ -2299,11 +2306,11 @@ PlayerListModeUpdate = ->
 	inits their player frame and player entry, assigns them to a team if possible,
 	and hooks up their leaderstats
 	@Args:
-	nplayer		new player object to insert
+	nplayer new player object to insert
 --]]
 InsertPlayerFrame = (nplayer) ->
 	while AddingFrameLock
-		debugprint "waiting to insert " .. nplayer.Name
+		debugprint "waiting to insert #{nplayer.Name}"
 		wait 1 / 30
 
 	AddingFrameLock = true
@@ -2311,7 +2318,7 @@ InsertPlayerFrame = (nplayer) ->
 	nFrame = MiddleTemplate\Clone!
 	WaitForChild(WaitForChild(nFrame, "TitleFrame"), "Title").Text = nplayer.Name
 
-	nFrame.Position = UDim2.new(1, 0, (#MiddleFrames * nFrame.Size.Y.Scale), 0)
+	nFrame.Position = UDim2.new 1, 0, (#MiddleFrames * nFrame.Size.Y.Scale), 0
 
 	nfriendstatus = GetFriendStatus nplayer
 
@@ -2332,19 +2339,19 @@ InsertPlayerFrame = (nplayer) ->
 		nFrame.TitleFrame.Title.Font = "ArialBold"
 		nFrame.PlayerScore.Font = "ArialBold"
 		ChangeHeaderName nplayer.Name
-		dropShadow = nFrame.TitleFrame.Title\Clone!
-		dropShadow.TextColor3 = Color3.new 0, 0, 0
-		dropShadow.TextTransparency = 0
-		dropShadow.ZIndex = 2
-		dropShadow.Position = nFrame.TitleFrame.Title.Position + UDim2.new 0, 1, 0, 1
-		dropShadow.Name = "DropShadow"
-		dropShadow.Parent = nFrame.TitleFrame
+		with nFrame.TitleFrame.Title\Clone!
+			.TextColor3 = Color3.new 0, 0, 0
+			.TextTransparency = 0
+			.ZIndex = 2
+			.Position = nFrame.TitleFrame.Title.Position + UDim2.new 0, 1, 0, 1
+			.Name = "DropShadow"
+			.Parent = nFrame.TitleFrame
 		-- else
-		-- 	--Delay(2, function () OnFriendshipChanged(nplayer,LocalPlayer\GetFriendStatus(nplayer))
+			-- Delay 2, -> OnFriendshipChanged nplayer,LocalPlayer\GetFriendStatus nplayer
 	nFrame.TitleFrame.Title.Font = "ArialBold"
 
 	nFrame.Parent = ListFrame
-	nFrame\TweenPosition(UDim2.new(0.5, 0, (#MiddleFrames * nFrame.Size.Y.Scale), 0), "Out", "Linear", BASE_TWEEN, true)
+	nFrame\TweenPosition UDim2.new(0.5, 0, (#MiddleFrames * nFrame.Size.Y.Scale), 0), "Out", "Linear", BASE_TWEEN, true
 	UpdateMinimize!
 	nentry = {}
 	nentry["Frame"] = nFrame
@@ -2440,7 +2447,6 @@ RemovePlayerFrame = (tplayer) ->
 				RemovePlayerFromTeam tteam, j
 
 
-
 	RemoveMiddleBGFrame!
 	UpdateMinimize!
 	BaseUpdate!
@@ -2457,8 +2463,8 @@ Players.ChildRemoved\connect RemovePlayerFrame
 	turns a list of team entries with sub lists of players into a single ordered
 	list, in the correct order,and of the correct length
 	@Args:
-	tframes		the team entries to unroll
-	outframes	the list to unroll these entries into
+	tframes the team entries to unroll
+	outframes the list to unroll these entries into
 --]]
 UnrollTeams = (tframes, outframes) ->
 	numEntries = 0
@@ -2479,7 +2485,7 @@ UnrollTeams = (tframes, outframes) ->
 			numEntries += 1
 			outframes[numEntries] = val["Frame"]
 
-		-- clear any additional entries from outframes
+	-- clear any additional entries from outframes
 	for i = numEntries + 1, #outframes, 1
 		outframes[i] = nil
 
@@ -2497,22 +2503,21 @@ TeamSortFunc = (a, b) ->
 	if not b["TeamScore"]
 		return true
 
-	return a["TeamScore"] < b["TeamScore"]
+	a["TeamScore"] < b["TeamScore"]
 
 
 --[[
 	adds up all the score of this team's players to form the team score
 	@Args:
-	team		team entry to sum the scores of
+	team team entry to sum the scores of
 --]]
 AddTeamScores = (team) ->
-	for k = 1, #ScoreNames
-		i = ScoreNames[k]
+	for i in *ScoreNames
 		tscore = 0
 		for _, j in ipairs team["MyPlayers"]
 			tval = j["Player"]\FindFirstChild"leaderstats" and j["Player"].leaderstats\FindFirstChild i["Name"]
 			if tval and not tval\IsA "StringValue"
-				tscore += GetScoreValue((j["Player"].leaderstats)[i["Name"]])
+				tscore += GetScoreValue j["Player"].leaderstats[i["Name"]]
 
 		if team["Frame"]\FindFirstChild i["Name"]
 			--team['Frame'][i['Name'] ].Size = UDim2.new(1 - (ScrollBarFrame.Size.X.Scale * 2),- ((j-1) * SpacingPerStat),1,0)
@@ -2525,7 +2530,7 @@ AddTeamScores = (team) ->
 	consider adding lock with wait for performance
 	sorts each of the team's player lists induvidually, adds up the team scores.
 	@Args:
-	tentries		table of team entries
+	tentries table of team entries
 --]]
 SortTeams = (tentries) ->
 	for _, val in ipairs tentries
@@ -2675,27 +2680,21 @@ PlayerChanged = (entry, property) ->
 
 OnFriendshipChanged = (player, friendStatus) ->
 	Delay 0.5, ->
-		debugprint(
-			"friend status changed for:" ..
-				player.Name ..
-				" " ..
-				"#{friendStatus}" ..
-				" vs " ..
-				"#{GetFriendStatus(player)}"
-		)
+		debugprint "friend status changed for: #{player.Name} #{friendStatus} vs #{GetFriendStatus player}"
+
 		for _, entry in ipairs PlayerFrames
 			if entry["Player"] == player
 				nicon = getFriendStatusIcon friendStatus
 				if nicon == "" and entry["Frame"].FriendLabel.Image ~= ""
-					entry["Frame"].TitleFrame.Title.Position = entry["Frame"].TitleFrame.Title.Position - UDim2.new 0, 17, 0, 0
+					entry["Frame"].TitleFrame.Title.Position = entry["Frame"].TitleFrame.Title.Position -
+						UDim2.new 0, 17, 0, 0
 				elseif nicon ~= "" and entry["Frame"].FriendLabel.Image == ""
-					entry["Frame"].TitleFrame.Title.Position = entry["Frame"].TitleFrame.Title.Position + UDim2.new 0, 17, 0, 0
-					debugprint "confirmed status:" .. player.Name
+					entry["Frame"].TitleFrame.Title.Position = entry["Frame"].TitleFrame.Title.Position +
+						UDim2.new 0, 17, 0, 0
+					debugprint "confirmed status: #{player.Name}"
 
 				entry["Frame"].FriendLabel.Image = nicon
 				return
-
-
 
 LocalPlayer.FriendStatusChanged\connect OnFriendshipChanged
 
@@ -2717,17 +2716,19 @@ AddNeutralTeam = ->
 	nentry["MyTeam"] = defaultTeam
 	nentry["MyPlayers"] = {}
 	nentry["Frame"] = MiddleTemplate\Clone!
-	WaitForChild(WaitForChild(nentry["Frame"], "TitleFrame"), "Title").Text = defaultTeam.Name
-	nentry["Frame"].TitleFrame.Position = UDim2.new nentry["Frame"].TitleFrame.Position.X.Scale, nentry["Frame"].TitleFrame.Position.X.Offset, 0.1, 0
-	nentry["Frame"].TitleFrame.Size = UDim2.new nentry["Frame"].TitleFrame.Size.X.Scale, nentry["Frame"].TitleFrame.Size.X.Offset, 0.8, 0
-	nentry["Frame"].TitleFrame.Title.Font = "ArialBold"
-	nentry["Frame"].Position = UDim2.new(1, 0, (#MiddleFrames * nentry["Frame"].Size.Y.Scale), 0)
-	WaitForChild(nentry["Frame"], "ClickListener").MouseButton1Down\connect (nx, ny) ->
-		StartDrag nentry, nx, ny
+	with n = nentry["Frame"]
+		WaitForChild(WaitForChild(n, "TitleFrame"), "Title").Text = defaultTeam.Name
+		.TitleFrame.Position = UDim2.new n.TitleFrame.Position.X.Scale, n.TitleFrame.Position.X.Offset, 0.1, 0
+		.TitleFrame.Size = UDim2.new n.TitleFrame.Size.X.Scale, n.TitleFrame.Size.X.Offset, 0.8, 0
+		.TitleFrame.Title.Font = "ArialBold"
+		.Position = UDim2.new(1, 0, (#MiddleFrames * n.Size.Y.Scale), 0)
+		WaitForChild(n, "ClickListener").MouseButton1Down\connect (nx, ny) ->
+			StartDrag nentry, nx, ny
 
-	nentry["Frame"].ClickListener.BackgroundColor3 = Color3.new 1, 1, 1
-	nentry["Frame"].ClickListener.BackgroundTransparency = 0.7
-	nentry["Frame"].ClickListener.AutoButtonColor = false
+		.ClickListener.BackgroundColor3 = Color3.new 1, 1, 1
+		.ClickListener.BackgroundTransparency = 0.7
+		.ClickListener.AutoButtonColor = false
+
 	nentry["AutoHide"] = true
 	nentry["IsHidden"] = true
 	for _, i in pairs PlayerFrames
@@ -2795,8 +2796,7 @@ TeamChanged = (entry, property) ->
 
 		for _, i in pairs TeamFrames
 			if i["MyTeam"].TeamColor == entry["MyTeam"]
-				RemoveTeamFrame(entry["MyTeam"]) --NO DUPLICATE TEAMS!
-
+				RemoveTeamFrame entry["MyTeam"] --NO DUPLICATE TEAMS!
 
 		entry["MyPlayers"] = {}
 
@@ -2805,13 +2805,12 @@ TeamChanged = (entry, property) ->
 
 		BaseUpdate!
 
-
 --[[
 	creates team entry and frame for this team, sets up listeners for this team
 	adds any players intended for this team,Creates neutral team if this is the first team added
 	Note: might be best to break this into multiple functions to simplify
 	@Args:
-	nteam	new team object added
+	nteam new team object added
 --]]
 InsertTeamFrame = (nteam) ->
 	while AddingFrameLock
@@ -2820,69 +2819,74 @@ InsertTeamFrame = (nteam) ->
 
 	AddingFrameLock = true
 	--for _,i in pairs TeamFrames
+
 	nentry = {}
-	nentry["MyTeam"] = nteam
-	nentry["MyPlayers"] = {}
-	nentry["Frame"] = MiddleTemplate\Clone!
-	WaitForChild(WaitForChild(nentry["Frame"], "TitleFrame"), "Title").Text = nteam.Name
-	nentry["Frame"].TitleFrame.Title.Font = "ArialBold"
-	nentry["Frame"].TitleFrame.Title.FontSize = "Size18"
-	nentry["Frame"].TitleFrame.Position = UDim2.new nentry["Frame"].TitleFrame.Position.X.Scale, nentry["Frame"].TitleFrame.Position.X.Offset, 0.1, 0
-	nentry["Frame"].TitleFrame.Size = UDim2.new nentry["Frame"].TitleFrame.Size.X.Scale, nentry["Frame"].TitleFrame.Size.X.Offset, 0.8, 0
-	nentry["Frame"].Position = UDim2.new(1, 0, (#MiddleFrames * nentry["Frame"].Size.Y.Scale), 0)
-	WaitForChild(nentry["Frame"], "ClickListener").MouseButton1Down\connect (nx, ny) ->
-		StartDrag nentry, nx, ny
-
-	nentry["Frame"].ClickListener.BackgroundColor3 = nteam.TeamColor.Color
-	nentry["Frame"].ClickListener.BackgroundTransparency = 0.7
-	nentry["Frame"].ClickListener.AutoButtonColor = false
-	AddId += 1
-	nentry["ID"] = AddId
-	nentry["AutoHide"] = false
-	if nteam\FindFirstChild "AutoHide"
-		nentry["AutoHide"] = true
-
-	if nteam\FindFirstChild "TeamScore"
-		TeamChildAdded nentry, nteam.TeamScore
-
-
-	nteam.ChildAdded\connect (nchild) ->
-		TeamChildAdded nentry, nchild
-
-	nteam.ChildRemoved\connect (nchild) ->
-		TeamChildRemoved nentry, nchild
-
-	nteam.Changed\connect (prop) ->
-		TeamChanged nentry, prop
-
-
-	for _, i in pairs PlayerFrames
-		if not i["Player"].Neutral and i["Player"].TeamColor == nteam.TeamColor
-			AddPlayerToTeam nentry, i
-
-	nentry["IsHidden"] = false
-	if not nentry["AutoHide"] or #nentry["MyPlayers"] > 0
-		nentry["Frame"].Parent = ListFrame
-		nentry["Frame"]\TweenPosition(
-			UDim2.new(0.5, 0, (#MiddleFrames * nentry["Frame"].Size.Y.Scale), 0),
-			"Out",
-			"Linear",
-			BASE_TWEEN,
-			true
+	with n = nentry["Frame"]
+		nentry["MyTeam"] = nteam
+		nentry["MyPlayers"] = {}
+		nentry["Frame"] = MiddleTemplate\Clone!
+		WaitForChild(WaitForChild(nentry["Frame"], "TitleFrame"), "Title").Text = nteam.Name
+		.TitleFrame.Title.Font = "ArialBold"
+		.TitleFrame.Title.FontSize = "Size18"
+		.TitleFrame.Position = UDim2.new(
+			.TitleFrame.Position.X.Scale,
+			.TitleFrame.Position.X.Offset,
+			0.1,
+			0
 		)
-		AddMiddleBGFrame!
-	else
-		nentry["IsHidden"] = true
-		nentry["Frame"].Parent = nil
+		.TitleFrame.Size = UDim2.new(
+			.TitleFrame.Size.X.Scale,
+			.TitleFrame.Size.X.Offset,
+			0.8,
+			0
+		)
+		.Position = UDim2.new(1, 0, (#MiddleFrames * .Size.Y.Scale), 0)
+		WaitForChild(n, "ClickListener").MouseButton1Down\connect (nx, ny) ->
+			StartDrag nentry, nx, ny
 
+		.ClickListener.BackgroundColor3 = nteam.TeamColor.Color
+		.ClickListener.BackgroundTransparency = 0.7
+		.ClickListener.AutoButtonColor = false
+		AddId += 1
+		nentry["ID"] = AddId
+		nentry["AutoHide"] = false
 
-	table.insert TeamFrames, nentry
-	UpdateMinimize!
-	BaseUpdate!
-	if #TeamFrames == 1 and not NeutralTeam
-		AddNeutralTeam!
+		if nteam\FindFirstChild "AutoHide"
+			nentry["AutoHide"] = true
 
-	AddingFrameLock = false
+		if nteam\FindFirstChild "TeamScore"
+			TeamChildAdded nentry, nteam.TeamScore
+
+		nteam.ChildAdded\connect (nchild) -> TeamChildAdded nentry, nchild
+		nteam.ChildRemoved\connect (nchild) -> TeamChildRemoved nentry, nchild
+		nteam.Changed\connect (prop) -> TeamChanged nentry, prop
+
+		for _, i in pairs PlayerFrames
+			if not i["Player"].Neutral and i["Player"].TeamColor == nteam.TeamColor
+				AddPlayerToTeam nentry, i
+
+		nentry["IsHidden"] = false
+		if not nentry["AutoHide"] or #nentry["MyPlayers"] > 0
+			.Parent = ListFrame
+			n\TweenPosition(
+				UDim2.new(0.5, 0, (#MiddleFrames * .Size.Y.Scale), 0),
+				"Out",
+				"Linear",
+				BASE_TWEEN,
+				true
+			)
+			AddMiddleBGFrame!
+		else
+			nentry["IsHidden"] = true
+			.Parent = nil
+
+		table.insert TeamFrames, nentry
+		UpdateMinimize!
+		BaseUpdate!
+		if #TeamFrames == 1 and not NeutralTeam
+			AddNeutralTeam!
+
+		AddingFrameLock = false
 
 --[[
 	removes team from team list
@@ -2944,7 +2948,7 @@ BaseUpdate = ->
 		TeamListModeUpdate!
 
 	for i, key in ipairs MiddleFrames
-		if key.Parent ~= nil
+		if key.Parent?
 			key\TweenPosition(
 				UDim2.new(0.5, 0, ((#MiddleFrames - i) * key.Size.Y.Scale), 0),
 				"Out",
@@ -2974,7 +2978,7 @@ LastTabTime = time!
 game.GuiService.KeyPressed\connect (key) ->
 	if key == "\t"
 		debugprint "caught tab key"
-		local modalCheck, isModal = try
+		modalCheck, isModal = try
 			return game.GuiService.IsModalDialog
 
 		if modalCheck == false or (modalCheck and isModal == false)
@@ -3034,7 +3038,7 @@ debugPlayerAdd = (p) ->
 
 
 try
-	coreGuiChanged(Enum.CoreGuiType.PlayerList, Game.StarterGui\GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList))
+	coreGuiChanged Enum.CoreGuiType.PlayerList, Game.StarterGui\GetCoreGuiEnabled Enum.CoreGuiType.PlayerList
 	Game.StarterGui.CoreGuiChangedSignal\connect coreGuiChanged
 
 
@@ -3073,7 +3077,7 @@ if LocalPlayer.Name == "newplayerlistisbad" or LocalPlayer.Name == "imtotallyadm
 		while true
 			str_players = ""
 			for _, i in pairs game.Players\GetPlayers!
-				str_players = str_players .. " " .. i.Name
+				str_players ..= " #{i.Name}"
 
 			debugplayers.Text = str_players
 			wait 0.5
