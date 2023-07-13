@@ -54,7 +54,7 @@
 
 <style lang="stylus">
 	.card
-		max-width 22rem
+		width 22rem
 	a
 		transition all 0.2s
 		&:hover

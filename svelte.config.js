@@ -37,7 +37,7 @@ export default {
 					? resolve("src/bootstrap.sass")
 					: // Using the css version in development, because
 					  // the sass compiler slows the dev server to a crawl
-					  resolve("node_modules/bootstrap/dist/css/bootstrap.css"),
+					  resolve("src/bootstrap.css"),
 		},
 	},
 
