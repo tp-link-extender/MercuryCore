@@ -47,14 +47,14 @@
 	{/each}
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
+<style lang="stylus">
+	@media (min-width 576px)
 		.container
-			width: 50rem
+			width 50rem
 
 	.image-background
-		max-width: 3rem
-		min-height: 3rem
+		max-width 3rem
+		min-height 3rem
 		img
-			width: 3rem
+			width 3rem
 </style>

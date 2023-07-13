@@ -274,17 +274,17 @@
 	</Modal>
 {/if}
 
-<style lang="sass">
+<style lang="stylus">
 	input[type="color"]
-		height: 2.5rem
+		height 2.5rem
 
 	input[type="checkbox"]
-		height: 1.5rem
-		width: 1.5rem
+		height 1.5rem
+		width 1.5rem
 
 	.btn-close
-		filter: invert(1) grayscale(100%) brightness(200%)
+		filter invert(1) grayscale(100%) brightness(200%)
 
 	table, th, td, tbody, thead, tr
-		color: var(--light-text)
+		color var(--light-text)
 </style>

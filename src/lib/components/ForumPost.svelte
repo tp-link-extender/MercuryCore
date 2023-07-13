@@ -108,35 +108,35 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.sidebar
-		z-index: 1
-		// min-width: 3rem
+		z-index 1
+		// min-width 3rem
 
 	// #replycount
-	// 	justify-content: center
+	// 	justify-content center
 
 	.post
-		height: 10rem
-		overflow: hidden
-		word-break: break-word
+		height 10rem
+		overflow hidden
+		word-break break-word
 
-		border-color: var(--accent2)
-		transition: all 0.3s ease-out
+		border-color var(--accent2)
+		transition all 0.3s ease-out
 		&:hover
-			background: var(--background)
-			border-color: var(--accent3)
+			background var(--background)
+			border-color var(--accent3)
 
 	.gradient
-		position: absolute
-		bottom: 0
-		left: 0
-		height: 5rem !important
-		background: linear-gradient(#0000, var(--darker))
+		position absolute
+		bottom 0
+		left 0
+		height 5rem !important
+		background linear-gradient(#0000, var(--darker))
 
 	.user
-		align-items: center 
+		align-items center 
 		.pfp img
-			max-width: 2rem
-			width: 2rem
+			max-width 2rem
+			width 2rem
 </style>

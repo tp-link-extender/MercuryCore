@@ -25,13 +25,13 @@
 	</div>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	.card
-		width: 11rem
-		height: 11rem
-		border: none
+		width 11rem
+		height 11rem
+		border none
 	a
-		transition: all 0.2s
+		transition all 0.2s
 		&:hover
-			transition: all 0.2s
+			transition all 0.2s
 </style>

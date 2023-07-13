@@ -61,16 +61,16 @@
 	{/each}
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
+<style lang="stylus">
+	@media (min-width 576px)
 		.container
-			width: 70rem
+			width 70rem
 
 	.category
-		border-color: var(--accent2)
-		transition: all 0.3s ease-out
+		border-color var(--accent2)
+		transition all 0.3s ease-out
 
 	.pfp, .pfp img
-		width: 1.5rem
-		height: 1.5rem
+		width 1.5rem
+		height 1.5rem
 </style>

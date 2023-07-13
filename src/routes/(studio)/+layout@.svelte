@@ -16,25 +16,25 @@
 	</footer>
 </main>
 
-<style lang="sass">
-	@use "./vars.sass"
+<style lang="stylus">
+	@import "vars"
 
 	main
-		z-index: 1
+		z-index 1
 
 	:root
-		background-color: vars.$background
-		color: vars.$light-text
-		font-family: SFUIBold
+		background-color background
+		color light-text
+		font-family SFUIBold
 
 	footer
-		text-align: center
+		text-align center
 
 	a
-		color: vars.$grey-text
-		text-decoration: none
-		transition: all 1s ease-in-out
-		margin: 0 3px
+		color grey-text
+		text-decoration none
+		transition all 1s ease-in-out
+		margin 0 3px
 		&:hover
-			color: vars.$accent3
+			color accent3
 </style>

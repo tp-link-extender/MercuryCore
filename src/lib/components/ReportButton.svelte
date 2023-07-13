@@ -18,19 +18,19 @@
 	</small>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	span
-		transition: all 0.2s
-		display: inline-block
-		overflow: hidden
-		white-space: nowrap
-		width: 0
-		vertical-align: middle // not perfectly centered
-		margin-top: -0.1rem // there we go
+		transition all 0.2s
+		display inline-block
+		overflow hidden
+		white-space nowrap
+		width 0
+		vertical-align middle // not perfectly centered
+		margin-top -0.1rem // there we go
 
 	a:hover
 		i
-			font-weight: 900
+			font-weight 900
 		span
-			width: 5.2rem
+			width 5.2rem
 </style>

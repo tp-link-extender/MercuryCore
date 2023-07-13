@@ -95,21 +95,21 @@
 	</table>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.currency
-		margin-top: 0.5rem
+		margin-top 0.5rem
 
 	// Change colour of every 2nd row
 	tr:nth-child(2n)
-		background: var(--darker)
+		background var(--darker)
 		.pfp
-			background: var(--background)
+			background var(--background)
 
 	.pfp
-		width: 2.5rem
-		height: 2.5rem
+		width 2.5rem
+		height 2.5rem
 
 	img
-		width: 2.5rem
-		height: 2.5rem
+		width 2.5rem
+		height 2.5rem
 </style>

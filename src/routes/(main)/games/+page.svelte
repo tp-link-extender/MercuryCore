@@ -116,16 +116,16 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	input, select
-		background-color: var(--accent)
-		border-color: var(--accent2)
+		background-color var(--accent)
+		border-color var(--accent2)
 
 	.d-grid
-		font-size: 0.9rem
+		font-size 0.9rem
 
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
-		column-gap: 0.7rem
-		row-gap: 0.7rem
-		place-items: center
+		grid-template-columns repeat(auto-fit, minmax(16rem, 1fr))
+		column-gap 0.7rem
+		row-gap 0.7rem
+		place-items center
 </style>

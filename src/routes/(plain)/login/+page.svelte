@@ -118,12 +118,16 @@
 	</div>
 </div>
 
-<style lang="sass">
-	@use "../loginregister.sass"
+<style lang="stylus">
+	@import "../loginregister"
+
+	@media (min-width 992px)
+		.col
+			padding-top 20vh
 
 	@keyframes waves
 		0%
-			margin-left: 0
+			margin-left 0
 		100%
-			margin-left: -1600px
+			margin-left -1600px
 </style>

@@ -14,13 +14,13 @@
 	{/each}
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.container
-		max-width: 100%
-		font-size: 0.9rem
+		max-width 100%
+		font-size 0.9rem
 
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
-		column-gap: 1rem
-		row-gap: 1rem
-		place-items: center
+		grid-template-columns repeat(auto-fit, minmax(16rem, 1fr))
+		column-gap 1rem
+		row-gap 1rem
+		place-items center
 </style>

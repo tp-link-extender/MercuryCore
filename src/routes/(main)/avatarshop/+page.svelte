@@ -203,11 +203,11 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	input, select
-		background-color: var(--accent)
-		border-color: var(--accent2)
+		background-color var(--accent)
+		border-color var(--accent2)
 
 	select
-		max-width: 9rem
+		max-width 9rem
 </style>
