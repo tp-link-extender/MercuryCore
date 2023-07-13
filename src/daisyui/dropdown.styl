@@ -42,7 +42,9 @@
 // 	bottom 0%
 // 	top auto
 
-.dropdown2.dropdown-open .dropdown-content, .dropdown2:not(.dropdown-hover):focus .dropdown-content, .dropdown2:focus-within .dropdown-content
+.dropdown2.dropdown-open .dropdown-content
+.dropdown2:not(.dropdown-hover):focus .dropdown-content
+.dropdown2:focus-within .dropdown-content
 	visibility visible
 	opacity 1
 
@@ -50,7 +52,7 @@
 	.dropdown2.dropdown-hover:hover .dropdown-content
 		visibility visible
 		opacity 1
-	
+
 .dropdown2:is(details) summary::-webkit-details-marker
 	display none
 
@@ -62,14 +64,15 @@
 .dropdown-content
 	z-index 1000
 	padding-left 0.5rem
-	
+
 	ul
 		list-style none
 		width 10rem
 		padding-left 0
 		background var(--darker)
 
-	a, .btn
+	a
+	.btn
 		width 100%
 		padding-left 0
 		padding-right 3rem
@@ -78,4 +81,3 @@
 		padding 0px
 		&:hover
 			background var(--bs-blue)
-

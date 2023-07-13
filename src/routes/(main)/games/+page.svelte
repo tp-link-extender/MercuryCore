@@ -117,7 +117,8 @@
 </div>
 
 <style lang="stylus">
-	input, select
+	input
+	select
 		background-color var(--accent)
 		border-color var(--accent2)
 

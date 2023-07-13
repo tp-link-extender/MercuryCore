@@ -187,9 +187,7 @@
 </div>
 
 <style lang="stylus">
-	@media (min-width 576px)
-		.container
-			width 70rem
+	containerMinWidth(70rem)
 
 	.sidebar
 		width 2.5rem
@@ -201,7 +199,7 @@
 		word-break break-word
 
 	.user
-		align-items center 
+		align-items center
 		.pfp img
 			max-width 2rem
 			width 2rem

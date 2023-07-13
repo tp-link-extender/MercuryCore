@@ -62,15 +62,14 @@
 </div>
 
 <style lang="stylus">
-	@media (min-width 576px)
-		.container
-			width 70rem
+	containerMinWidth(70rem)
 
 	.category
 		border-color var(--accent2)
 		transition all 0.3s ease-out
 
-	.pfp, .pfp img
+	.pfp
+	.pfp img
 		width 1.5rem
 		height 1.5rem
 </style>

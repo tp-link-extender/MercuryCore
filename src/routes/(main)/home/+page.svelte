@@ -277,9 +277,10 @@
 </div>
 
 <style lang="stylus">
-	@media (max-width 768px)
+	+-md()
 		#feed
 			max-height 50vh
+
 	.top
 		width 100vw
 		img
@@ -315,7 +316,8 @@
 		max-height 5rem
 		overflow hidden
 
-	#feed, #news
+	#feed
+	#news
 		overflow-x hidden
 
 	.user

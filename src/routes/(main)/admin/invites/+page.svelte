@@ -225,6 +225,8 @@
 		width 10rem
 
 	table
-		tr, td, th
+		tr
+		td
+		th
 			color var(--light-text) !important
 </style>

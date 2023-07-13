@@ -48,9 +48,7 @@
 </div>
 
 <style lang="stylus">
-	@media (min-width 576px)
-		.container
-			width 50rem
+	containerMinWidth()
 
 	.image-background
 		max-width 3rem

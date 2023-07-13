@@ -7,7 +7,11 @@ export default {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
 	preprocess: [
-		preprocess(),
+		preprocess({
+			stylus: {
+				prependData: '@import "src/variables.styl"',
+			},
+		}),
 		autoImport({
 			components: ["./src/lib/components"],
 			module: {

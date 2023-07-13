@@ -299,7 +299,8 @@
 {/if}
 
 <style lang="stylus">
-	.collapseBar, .expandBar
+	.collapseBar
+	.expandBar
 		transition all 0.2s ease-out
 
 	.collapseBar
@@ -349,7 +350,7 @@
 			color var(--accent-text) !important
 
 	.user
-		align-items center 
+		align-items center
 	.pfp img
 		max-width 1.5rem
 		width 1.5rem
