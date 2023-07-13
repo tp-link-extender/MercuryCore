@@ -44,8 +44,6 @@
 	{/each}
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 70rem
+<style lang="stylus">
+	containerMinWidth(70rem)
 </style>

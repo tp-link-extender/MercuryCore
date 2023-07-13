@@ -3,7 +3,7 @@
 	// avatar shop and inventory pages.
 
 	export let asset: {
-		id: string
+		id: number
 		name: string
 		price: number
 		// ratio?: string | number
@@ -34,17 +34,17 @@
 	</div>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	.card
-		border-width: 2px
+		border-width 2px
 
 	.assetcard
 		.card-body
-			transition: 0.3s
+			transition 0.3s
 		&:hover
 			.card-body
-				background: var(--darker) !important
+				background var(--darker) !important
 
 	img
-		width: 85%
+		width 85%
 </style>

@@ -24,7 +24,7 @@
 </script>
 
 <svelte:head>
-	<title>Admin - Mercury</title>
+	<title>Moderate User - Admin - Mercury</title>
 </svelte:head>
 
 <div class="container py-4">

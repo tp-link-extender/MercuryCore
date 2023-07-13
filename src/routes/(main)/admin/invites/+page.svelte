@@ -24,7 +24,7 @@
 </script>
 
 <svelte:head>
-	<title>Admin - Mercury</title>
+	<title>Invites - Admin - Mercury</title>
 </svelte:head>
 
 <div class="container py-4">
@@ -216,16 +216,17 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	input[type="checkbox"]
-		height: 1.5rem
-		width: 1.5rem
+		height 1.5rem
+		width 1.5rem
 
 	input[type="number"]
-		width: 10rem
+		width 10rem
 
 	table
-		tr, td, th
-			color: var(--light-text) !important
-
+		tr
+		td
+		th
+			color var(--light-text) !important
 </style>

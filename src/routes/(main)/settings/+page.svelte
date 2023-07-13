@@ -250,11 +250,11 @@
 	</Tab>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.nav-link
-		border-radius: 0
-		color: var(--light-text)
+		border-radius 0
+		color var(--light-text)
 
 	.form-control
-		color: var(--light-text)
+		color var(--light-text)
 </style>

@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>Admin - Mercury</title>
+	<title>Asset Approval - Admin - Mercury</title>
 </svelte:head>
 
 <div class="container py-4">
@@ -35,7 +35,7 @@
 							</div>
 							<p class="m-0">testdecal</p>
 							<p class="m-0">
-								by: <a href="#" class="text-decoration-none">
+								by: <a href="/" class="text-decoration-none">
 									task
 								</a>
 							</p>

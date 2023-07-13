@@ -1,5 +1,5 @@
 import { prisma } from "$lib/server/prisma"
-import { error } from "@sveltejs/kit"
+import { error, redirect } from "@sveltejs/kit"
 import fs from "fs"
 
 export async function GET({ params }) {
@@ -17,9 +17,7 @@ export async function GET({ params }) {
 	if (!getPlace) throw error(404, "Not found")
 
 	if (!fs.existsSync(filename))
-		return new Response(
-			fs.readFileSync(`static/place/placeholderIcon${1 + (id % 3)}.png`)
-		)
+		throw redirect(302, `/place/placeholderIcon${1 + (id % 3)}.webp`)
 
 	return new Response(fs.readFileSync(filename))
 }

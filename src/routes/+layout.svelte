@@ -4,10 +4,11 @@
 	import nprogress from "nprogress"
 
 	import "uno.css"
-	import "/src/nprogress.sass"
+	import "/src/nprogress.styl"
 	import "$bootstrap"
-	import "/src/global.sass"
-	import "/src/fa/sass/fontawesome.sass"
+	import "/src/bootswatch.styl"
+	import "/src/global.styl"
+	import "/src/fa/sass/fontawesome.styl"
 
 	export let data
 	const { user } = data
@@ -109,40 +110,41 @@
 
 <!-- Theme files contain CSS variables that are used throughout the app. -->
 {#if user?.theme == "darken"}
-	<style lang="sass">
-		@use "../themes/darken.sass"
+	<style lang="stylus">
+		@import "../themes/darken"
 	</style>
 {:else if user?.theme == "storm"}
-	<style lang="sass">
-		@use "../themes/storm.sass"
+	<style lang="stylus">
+		@import "../themes/storm"
 	</style>
 {:else if user?.theme == "solar"}
-	<style lang="sass">
-		@use "../themes/solar.sass"
+	<style lang="stylus">
+		@import "../themes/solar"
 	</style>
 {:else}
-	<style lang="sass">
-		@use "../themes/standard.sass"
+	<style lang="stylus">
+		@import "../themes/standard"
 	</style>
 {/if}
 
-<style lang="sass">
+<style lang="stylus">
 	.btn-close
-		filter: invert(1) grayscale(100%) brightness(200%)
-		@media (prefers-color-scheme: light)
-			filter: none
+		filter invert(1) grayscale(100%) brightness(200%)
+		+lightTheme()
+			filter none
 
 	.toast
-		min-width: 25rem
-		--bs-toast-box-shadow: 0 0 2rem #fff1
-		@media (prefers-color-scheme: light)
-			--bs-toast-box-shadow: 0 0 2rem #0001
+		min-width 25rem
+		--bs-toast-box-shadow 0 0 2rem #fff1
+		+lightTheme()
+			--bs-toast-box-shadow 0 0 2rem #0001
+
 	.toast-body
-		min-height: 4rem
+		min-height 4rem
 
 	.image-background
-		max-width: 1.6rem
-		min-height: 1.6rem
+		max-width 1.6rem
+		min-height 1.6rem
 		img
-			width: 1.6rem
+			width 1.6rem
 </style>

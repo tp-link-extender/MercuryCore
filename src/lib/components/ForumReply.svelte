@@ -1,3 +1,6 @@
+<script context="module" lang="ts">
+</script>
+
 <script lang="ts">
 	import type { Writable } from "svelte/store"
 
@@ -210,14 +213,14 @@
 							</button>
 							{#if !hidden}
 								{#if reply.author.username == user.username}
-									<Delete id={reply.id} reverse />
+									<DeleteButton id={reply.id} reverse />
 								{:else}
-									<Report
+									<ReportButton
 										user={reply.author.username}
 										url="/forum/{forumCategory}/{postId}/{reply.id}"
 										reverse />
 									{#if user.permissionLevel >= 4}
-										<Delete
+										<DeleteButton
 											id={reply.id}
 											moderate
 											reverse />
@@ -295,62 +298,63 @@
 	</div>
 {/if}
 
-<style lang="sass">
-	.collapseBar, .expandBar
-		transition: all 0.2s ease-out
+<style lang="stylus">
+	.collapseBar
+	.expandBar
+		transition all 0.2s ease-out
 
 	.collapseBar
-		width: auto
-		border-left: 9px solid var(--background) !important
-		border-right: 13px solid var(--background) !important
+		width auto
+		border-left 9px solid var(--background) !important
+		border-right 13px solid var(--background) !important
 		&:hover
-			background: var(--grey-text) !important
+			background var(--grey-text) !important
 
 	.expandBar
-		border: none
-		background: none
+		border none
+		background none
 
-		color: var(--accent3)
+		color var(--accent3)
 		&:hover
-			color: var(--grey-text)
+			color var(--grey-text)
 
 		small
-			max-width: 10rem
-			text-overflow: ellipsis
+			max-width 10rem
+			text-overflow ellipsis
 
 	.card
-		max-width: 75%
+		max-width 75%
 
 	.reply
-		border-color: var(--accent2)
+		border-color var(--accent2)
 
 	.smallbutton
-		width: 1.5rem
-		height: 1.5rem
+		width 1.5rem
+		height 1.5rem
 
 	p
-		word-break: break-word
+		word-break break-word
 
 	.userlink
-		margin-top: 1px
-		transition: color 0.2s
+		margin-top 1px
+		transition color 0.2s
 		// &:hover
-		// 	color: var(--accent3)
+		// 	color var(--accent3)
 
 		span
-			transition: color 0.2s
+			transition color 0.2s
 			&:hover
-				color: var(--grey-text) !important
+				color var(--grey-text) !important
 
 		span.text-primary:hover
-			color: var(--accent-text) !important
+			color var(--accent-text) !important
 
 	.user
-		align-items: center 
+		align-items center
 	.pfp img
-		max-width: 1.5rem
-		width: 1.5rem
+		max-width 1.5rem
+		width 1.5rem
 
 	.hidden
-		opacity: 33%
+		opacity 33%
 </style>

@@ -26,6 +26,7 @@ The following extensions are recommended:
 -   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 -   [Prisma](https://marketplace.visualstudio.com/items?itemName=Prisma.prisma)
 -   [Sass (.sass only)](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented)
+-   [stylus](https://marketplace.visualstudio.com/items?itemName=sysoev.language-stylus)
 -   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 
 # Editing the website
@@ -45,6 +46,7 @@ Instructions:
 -   Run `npm i -g pnpm` to install pnpm
 -   Run `pnpm i` to install all dependencies
 -   Run `pnpm build avatar` to build the avatar renderer, so that user images will work correctly
+-   Run `pnpm bootstrap` to compile Bootstrap's SCSS files. This results in the development server being much faster, as it does not have to wait for the Sass compiler
     -   If you are using PowerShell on windows, you may encounter an execution policy error when running pnpm. Run the command `set-executionpolicy remotesigned` in an administrator PowerShell to fix this.
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
@@ -102,7 +104,7 @@ Mercury's frontent is built with [Svelte](https://svelte.dev), a UI framework th
 
 The site uses [TypeScript](https://typescriptlang.org) throughout, a language that adds type extensions ontop of Javascript. An IDE that supports intellisense is recommended to make development easier.
 
-Styling is done in [Sass](https://sass-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
+Styling is done in [Stylus](https://stylus-lang.com) and [Sass](https://sass-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
 
 The [PostgreSQL](https://postgresql.org) relational database is managed by [Prisma](https://prisma.io), which allows for complete type safety and intellisense, and makes it easier to query data. The schema for the database is stored in /prisma/schema.prisma.
 

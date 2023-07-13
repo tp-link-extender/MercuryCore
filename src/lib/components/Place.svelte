@@ -34,23 +34,23 @@
 	</span>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	a
-		transition: all 0.2s
+		transition all 0.2s
 		&:hover
-			transition: all 0.2s
+			transition all 0.2s
 			#shadow::after
-				box-shadow: inset 0 0 4rem 0 #fff2
+				box-shadow inset 0 0 4rem 0 #fff2
 
 	#shadow
-		aspect-ratio: 1
-		position: relative
+		aspect-ratio 1
+		position relative
 		&::after
-			transition: all 0.3s
-			content: ""
-			position: absolute
-			top: 0
-			left: 0
-			width: 100%
-			height: 100%
+			transition all 0.3s
+			content ""
+			position absolute
+			top 0
+			left 0
+			width 100%
+			height 100%
 </style>

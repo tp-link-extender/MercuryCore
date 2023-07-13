@@ -299,132 +299,134 @@
 	{/each}
 {/if}
 
-<style lang="sass">
+<style lang="stylus">
 	.mobile-brand
-		display: none
+		display none
 
-	@media only screen and (max-width: 991px)
+	+-lg()
 		.offcanvas-header
-			background: var(--accent)
+			background var(--accent)
 		.offcanvas
-			background: var(--background)
+			background var(--background)
 		.offcanvas-body
-			background: var(--background)
-			min-height: 100vh
-			flex-direction: column-reverse
-			justify-content: start
-			padding-top: 1rem !important
+			background var(--background)
+			min-height 100vh
+			flex-direction column-reverse
+			justify-content start
+			padding-top 1rem !important
 
 			a
-				margin-bottom: 1rem
-				width: 100%
-				text-align: start
+				margin-bottom 1rem
+				width 100%
+				text-align start
 
 		.loggedin
-			margin-bottom: 1rem
-			order: 1
+			margin-bottom 1rem
+			order 1
 
 		.mobile-brand
-			display: block
+			display block
 
 		#nav-brand-1
-			display: none
+			display none
 
 		#search
-			width: 100%
-			margin: 0 !important
+			width 100%
+			margin 0 !important
 			form
-				margin: 1rem !important
+				margin 1rem !important
 
 		#nav2-1
-			display: block
-			overflow-x: none
+			display block
+			overflow-x none
 
 		#nav2
-			display: none
+			display none
 
 		.mobilenav
-			display: block
+			display block
 
-	@media only screen and (min-width: 991px)
+	+lg()
 		.loggedin
-			margin-left: auto
+			margin-left auto
 
 		#nav2-1
-			display: none
-		
+			display none
+
 		.mobilenav
-			display: none
+			display none
 
 	#nav1
-		// padding-top: 1px
-		background: #fff1
-		@media only screen and (max-width: 991px)
-			background: none
-			min-height: fit-content !important
-			overflow-x: hidden
-	
+		// padding-top 1px
+		background #fff1
+		+-lg()
+			background none
+			min-height fit-content !important
+			overflow-x hidden
 
 	#nav2
-		background: #0003
-		z-index: 1
-		@media only screen and (max-width: 991px)
-			background: none !important
-			min-height: 36vh !important
-			flex-direction: column
-			margin-left: auto
+		background #0003
+		z-index 1
+		+-lg()
+			background none !important
+			min-height 36vh !important
+			flex-direction column
+			margin-left auto
 
 			a
-				text-align: left
-				padding: 1.2rem 0.8rem !important
+				text-align left
+				padding 1.2rem 0.8rem !important
 			div
-				width: 100% !important
+				width 100% !important
 
 	.loggedin
-		padding: 0
+		padding 0
 
 	#username
-		max-width: 10rem
-		min-width: 1rem
-		white-space: nowrap
+		max-width 10rem
+		min-width 1rem
+		white-space nowrap
 
 	.offcanvas-title
-		text-decoration: none
+		text-decoration none
 
 	nav
-		z-index: 9
-		max-height: 10vh
+		z-index 9
+		max-height 10vh
 
 	.navbar-nav
 		a
-			border: none
+			border none
 			&:hover
-				color: var(--grey-text) !important
+				color var(--grey-text) !important
 
 	.offcanvas
-		box-shadow: none !important
+		box-shadow none !important
 
-	#pfp, img
-		width: 2.4rem
-		height: 2.4rem
+	#pfp
+	img
+		width 2.4rem
+		height 2.4rem
 
 	#results
-		z-index: 5
-		min-width: 25vw
+		z-index 5
+		min-width 25vw
 		a:hover
-			background: var(--accent2)
+			background var(--accent2)
 
 	.input-group
-		width: 25vw
-		max-width: 30rem
-		font-size: 0.8rem
-		@media only screen and (max-width: 1199px)
-			width: 12rem
-		@media only screen and (max-width: 991px)
-			width: 100%
-		button, input
-			height: 2.3rem
+		width 25vw
+		max-width 30rem
+		font-size 0.8rem
+		+-xl()
+			width 12rem
+		+-lg()
+			width 100%
+
+		button
+		input
+			height 2.3rem
 
 	.btn
-		box-shadow: none !important
+		box-shadow none !important
 </style>
