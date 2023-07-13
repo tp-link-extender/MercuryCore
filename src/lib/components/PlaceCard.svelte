@@ -23,7 +23,7 @@
 		class:opacity-50={place.serverPing <
 			Math.floor(Date.now() / 1000) - 35}>
 		<div class="col col-6">
-			<div id="shadow" class="overflow-hidden bg-black">
+			<div class="shadow overflow-hidden bg-black h-100">
 				<img
 					src="/place/{place.id}/{place.name}/icon"
 					alt={place.name}
@@ -54,16 +54,32 @@
 
 <style lang="stylus">
 	.card
-		width 22rem
+		width 19.5rem
+		+-lg()
+			width 20.5rem
+		+-md()
+			width 25rem
+
+	img
+		// make sure the image is the same size while loading
+		// as the image that will be loaded
+		aspect-ratio 1
+		width 100%
+		height 100%
+		object-fit cover
+
+	p
+		height 8rem
+		transition all 0.3s
+
 	a
 		transition all 0.2s
 		&:hover
 			transition all 0.2s
-			#shadow::after
+			.shadow::after
 				box-shadow inset 0 0 4rem 0 #fff2
 
-	#shadow
-		aspect-ratio 1
+	.shadow
 		position relative
 		border-radius 1rem 0 0 1rem
 		&::after
