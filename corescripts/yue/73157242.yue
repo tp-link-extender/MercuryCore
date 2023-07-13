@@ -83,7 +83,7 @@ GetTerrainForMouse = (mouse) ->
 	cell
 
 -- setup helper functions
-insertBoundingBoxOverlapVector = Vector3.new 0.3, 0.3, 0.3 -- we can still stamp if our character extrudes into the target stamping space by .3 or fewer units
+insertBoundingBoxOverlapVector = Vector3.new 0.3, 0.3, 0.3 -- we can still stamp if our character extrudes into the target stamping space by 0.3 or fewer units
 
 -- rotates a model by yAngle radians about the global y-axis
 rotatePartAndChildren = (part, rotCF, offsetFromOrigin) ->
@@ -384,7 +384,7 @@ isBlocker = (part) -> -- returns whether or not we want to cancel the stamp beca
 		isBlocker part.Parent
 
 -- helper function to determine if a character can be pushed upwards by a certain amount
--- character is 5 studs tall, we'll check a 1.5 x 1.5 x 4.5 box around char, with center .5 studs below torsocenter
+-- character is 5 studs tall, we'll check a 1.5 x 1.5 x 4.5 box around char, with center 0.5 studs below torsocenter
 spaceAboveCharacter = (charTorso, newTorsoY, stampData) ->
 	partsAboveChar = game.Workspace\FindPartsInRegion3(
 		Region3.new(
@@ -456,7 +456,7 @@ findConfigAtMouseTarget = (Mouse, stampData) ->
 
 	mouseHitInWorld = Vector3.new if Mouse
 		Mouse.Hit.x, Mouse.Hit.y, Mouse.Hit.z
-	else 
+	else
 		0, 0, 0
 
 	local cellPos
@@ -1255,7 +1255,7 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 				DoStamperMouseMove Mouse
 
 		elseif key == "c" -- try to expand our high scalability dragger dimension
-			with HighScalabilityLine 
+			with HighScalabilityLine
 				if .InternalLine and
 					.InternalLine.magnitude > 0 and
 					.Dimensions < 3
@@ -1269,8 +1269,8 @@ t.SetupStamperDragger = (modelToStamp, Mouse, StampInModel, AllowedStampRegion, 
 
 	resetHighScalabilityLine = ->
 		if HighScalabilityLine
-			HighScalabilityLine.Start = nil
-			HighScalabilityLine.End = nil
+			HighScalabilityLine.Start = \
+			HighScalabilityLine.End = \
 			HighScalabilityLine.InternalLine = nil
 			HighScalabilityLine.NewHint = true
 

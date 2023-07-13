@@ -218,7 +218,7 @@ while true
 
 			if delta ~= 0
 				coroutine.resume coroutine.create(billboardHealthChange), delta
-			--delta *= .01
+			--delta *= 0.01
 		--health += delta * s * Humanoid.MaxHealth
 
 		health = Humanoid.Health + delta * s
