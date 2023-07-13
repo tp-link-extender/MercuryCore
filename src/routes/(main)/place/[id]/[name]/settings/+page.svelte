@@ -340,21 +340,21 @@
 	</Tab>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	hr
-		color: var(--accent)
+		color var(--accent)
 
 	.nav-link
-		border-radius: 0
-		color: var(--light-text)
+		border-radius 0
+		color var(--light-text)
 
 	.form-control
-		color: var(--light-text)
+		color var(--light-text)
 
 	input[type="checkbox"]
-		height: 1.5rem
-		width: 1.5rem
+		height 1.5rem
+		width 1.5rem
 
 	input[type="number"]
-		width: 10rem
+		width 10rem
 </style>

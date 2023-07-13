@@ -29,22 +29,20 @@
 	{/if}
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	#b
-		padding: 15vh
-
-	@media only screen and (max-width: 768px)
-		#b
-			padding: 1vh	
+		padding 15vh
+		+-lg()
+			padding 1vh
 
 	.half
-		width: 50vw
+		width 50vw
 	.full
-		padding: 0
-		margin: 0
+		padding 0
+		margin 0
 
 	#right
-		margin-left: 50vw
+		margin-left 50vw
 	#left
-		margin-left: 0
+		margin-left 0
 </style>

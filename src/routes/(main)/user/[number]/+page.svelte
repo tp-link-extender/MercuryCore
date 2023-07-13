@@ -124,7 +124,9 @@
 					{/if}
 				</div>
 				<div class="float-end mb-3">
-					<Report user={data.username} url="/user/{data.number}" />
+					<ReportButton
+						user={data.username}
+						url="/user/{data.number}" />
 				</div>
 			</div>
 		</div>
@@ -289,41 +291,41 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	#all
-		max-width: 60rem
+		max-width 60rem
 
 	#image-background, #image-background img
-		height: 7rem
+		height 7rem
 
 	.placecard
-		transition: all 0.2s
-		border: none
+		transition all 0.2s
+		border none
 		&:hover
-			transition: all 0.2s
+			transition all 0.2s
 			.shadow::after
-				box-shadow: inset 0 0 4rem 0 #fff2
+				box-shadow inset 0 0 4rem 0 #fff2
 
 		.shadow
-			aspect-ratio: 1
-			position: relative
+			aspect-ratio 1
+			position relative
 			&::after
-				transition: all 0.3s
-				content: ""
-				position: absolute
-				top: 0
-				left: 0
-				width: 100%
-				height: 100%
+				transition all 0.3s
+				content ""
+				position absolute
+				top 0
+				left 0
+				width 100%
+				height 100%
 
 	#user
-		align-items: center
+		align-items center
 		.pfp img
-			width: 2rem
+			width 2rem
 
 	#avatar
-		aspect-ratio: 3/4
+		aspect-ratio 3/4
 
 	input[type="radio"]
-		cursor: pointer
+		cursor pointer
 </style>

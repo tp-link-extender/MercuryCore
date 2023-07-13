@@ -39,19 +39,19 @@
 	</p>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	.card
-		max-width: 25rem
-		text-decoration: none
+		max-width 25rem
+		text-decoration none
 		p
-			width: fit-content
-			word-break: break-all
+			width fit-content
+			word-break break-all
 
 		.badge
-			padding: 0.75rem
+			padding 0.75rem
 		.image-background
-			min-width: 6rem
+			min-width 6rem
 			img
-				width: 6rem
-				height: 6rem !important
+				width 6rem
+				height 6rem !important
 </style>

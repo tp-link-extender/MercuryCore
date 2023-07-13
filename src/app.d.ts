@@ -41,15 +41,16 @@ declare global {
 						session: Session
 				  }
 			>
-			getCookie: () => Cookie | null
 		}
 	}
+
 	// sveltekit-autoimport types
+
 	declare const fade: typeof import("$lib/fade").default
 
 	declare const AdminLink: typeof import("$lib/components/AdminLink.svelte").default
 	declare const Asset: typeof import("$lib/components/Asset.svelte").default
-	declare const Delete: typeof import("$lib/components/Delete.svelte").default
+	declare const DeleteButton: typeof import("$lib/components/DeleteButton.svelte").default
 	declare const Footer: typeof import("$lib/components/Footer.svelte").default
 	declare const ForumPost: typeof import("$lib/components/ForumPost.svelte").default
 	declare const ForumReply: typeof import("$lib/components/ForumReply.svelte").default
@@ -60,7 +61,7 @@ declare global {
 	declare const Pagepart: typeof import("$lib/components/Pagepart.svelte").default
 	declare const Place: typeof import("$lib/components/Place.svelte").default
 	declare const PlaceCard: typeof import("$lib/components/PlaceCard.svelte").default
-	declare const Report: typeof import("$lib/components/Report.svelte").default
+	declare const ReportButton: typeof import("$lib/components/ReportButton.svelte").default
 	declare const Tab: typeof import("$lib/components/Tab.svelte").default
 	declare const TabNav: typeof import("$lib/components/TabNav.svelte").default
 	declare const TabData: typeof import("$lib/components/TabData").default

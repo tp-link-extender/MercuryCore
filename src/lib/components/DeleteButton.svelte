@@ -42,24 +42,24 @@
 	{/if}
 </form>
 
-<style lang="sass">
+<style lang="stylus">
 	small
-		font-size: 0.9rem
+		font-size 0.9rem
 
 	span
-		transition: all 0.2s
-		display: inline-block
-		overflow: hidden
-		white-space: nowrap
-		width: 0
-		vertical-align: middle // not perfectly centered
-		margin-top: -0.1rem // there we go
+		transition all 0.2s
+		display inline-block
+		overflow hidden
+		white-space nowrap
+		width 0
+		vertical-align middle // not perfectly centered
+		margin-top -0.1rem // there we go
 
 	button:hover
 		i
-			font-weight: 900
+			font-weight 900
 		.delete
-			width: 2.5rem
+			width 2.5rem
 		.moderate
-			width: 3.7rem
+			width 3.7rem
 </style>

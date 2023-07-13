@@ -202,13 +202,13 @@
 						use:enhance
 						method="POST"
 						action="?/paint&p={bodyPart}&c={colour}"
+						on:submit={() => {
+							bodyParts[bodyPart] = colour
+							modal.set(false)
+						}}
 						class="d-inline">
 						<button
 							class="btn colour my-1"
-							on:click={() => {
-								bodyParts[bodyPart] = colour
-								modal.set(false)
-							}}
 							style="background-color: #{brickToHex[colour]};" />
 					</form>
 				{/each}
@@ -217,62 +217,56 @@
 	</Modal>
 {/if}
 
-<style lang="sass">
-	.card 
-		background: var(--accent)
+<style lang="stylus">
+	.card
+		background var(--accent)
 
 	.bodyPart
-		border-radius: 3px
+		border-radius 3px
 		&:first-child // Head
-			border-radius: 12px
-	
+			border-radius 12px
+
 	.colour
-		margin-left: 2px
-		margin-right: 2px
-		transition: filter 0.2s ease-out
+		margin-left 2px
+		margin-right 2px
+		transition filter 0.2s ease-out
 		&:hover
-			filter: brightness(50%)
+			filter brightness(50%)
 
 	#colourPicker
-		max-width: 27rem
+		max-width 27rem
 
 	button.colour
-		height: 2.5rem
-		width: 2.5rem
+		height 2.5rem
+		width 2.5rem
 
 	img
-		aspect-ratio: 3/4 !important
+		aspect-ratio 3/4 !important
 
 	.btn-close
-		filter: invert(1) grayscale(100%) brightness(200%)
-	
+		filter invert(1) grayscale(100%) brightness(200%)
+
 	.parts
-		position: relative 
-		margin: 11px 0px 0px 36px
+		position relative
+		margin 11px 0px 0px 36px
 
-	@media (max-width: 576px)
-		.parts
-			position: relative 
-			margin: 11px 4px 0px 7px
-	
-	@media (min-width: 576px)
-		.parts
-			position: relative 
-			margin: 11px 4px 0px 7px
+		+-sm()
+			position relative
+			margin 11px 4px 0px 7px
 
-	@media (min-width: 768px)
-		.parts
-			position: relative 
-			margin: 11px 4px 0px 9px
+		+sm()
+			position relative
+			margin 11px 4px 0px 7px
 
-	@media (min-width: 992px)
-		.parts
-			position: relative 
-			margin: 11px 4px 0px -8px
-	
-	@media (min-width: 1200px)
-		.parts
-			position: relative
-			margin: 11px 0px 0px 7px
+		+md()
+			position relative
+			margin 11px 4px 0px 9px
 
+		+lg()
+			position relative
+			margin 11px 4px 0px -8px
+
+		+xl()
+			position relative
+			margin 11px 0px 0px 7px
 </style>

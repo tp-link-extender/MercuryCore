@@ -1,0 +1,29 @@
+sm()
+	@media (min-width 576px) {block}
+md()
+	@media (min-width 768px) {block}
+lg()
+	@media (min-width 992px) {block}
+xl()
+	@media (min-width 1200px) {block}
+xxl()
+	@media (min-width 1400px) {block}
+
+-sm()
+	@media (max-width 575px) {block}
+-md()
+	@media (max-width 767px) {block}
+-lg()
+	@media (max-width 991px) {block}
+-xl()
+	@media (max-width 1199px) {block}
+-xxl()
+	@media (max-width 1399px) {block}
+
+lightTheme()
+	@media (prefers-color-scheme light) {block}
+
+containerMinWidth(w = 50rem)
+	@media (min-width 576px)
+		.container
+			width w

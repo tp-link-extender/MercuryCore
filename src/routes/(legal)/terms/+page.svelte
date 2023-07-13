@@ -165,11 +165,9 @@
 	</div>
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	containerMinWidth()
 
 	a
-		color: var(--mainaccent)
+		color var(--mainaccent)
 </style>

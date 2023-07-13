@@ -93,11 +93,12 @@
 	{/if}
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	#all
-		max-width: 60rem
+		max-width 60rem
 
-	.pfp, .pfp img
-		width: 1.5rem
-		height: 1.5rem
+	.pfp
+	.pfp img
+		width 1.5rem
+		height 1.5rem
 </style>

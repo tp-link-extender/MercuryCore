@@ -61,7 +61,14 @@ export async function load({ locals, params }) {
 		user.username
 	)
 
-	return category
+	return category as typeof category & {
+		posts: {
+			likeCount: number
+			dislikeCount: number
+			likes: boolean
+			dislikes: boolean
+		}[]
+	}
 }
 
 export const actions = {

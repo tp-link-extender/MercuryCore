@@ -23,15 +23,15 @@
 
 <Footer />
 
-<style lang="sass">
+<style lang="stylus">
 	main
-		padding-bottom: 32vh
-		padding-top: 31vh
-		flex: 1 0 auto
-		@media only screen and (max-width: 768px) and (orientation: portrait)
-			padding-bottom: 25vh
+		padding-bottom 32vh
+		padding-top 31vh
+		flex 1 0 auto
+		+-md()
+			padding-bottom 25vh
 
 		div
-			width: fit-content
-			padding: 2rem 5rem
+			width fit-content
+			padding 2rem 5rem
 </style>

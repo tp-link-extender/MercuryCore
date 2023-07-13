@@ -97,17 +97,19 @@
 	{/if}
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.grid
-		grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))
-		grid-gap: 0 1rem
+		grid-template-columns repeat(auto-fill, minmax(8rem, 1fr))
+		grid-gap 0 1rem
 
 	// .badge
-	// 	padding: 0.75rem
+	// 	padding 0.75rem
 	.place
-		width: 8rem
-		margin: auto
-	.image-background, img
-		width: 7rem
-		margin: auto
+		width 8rem
+		margin auto
+
+	.image-background
+	img
+		width 7rem
+		margin auto
 </style>

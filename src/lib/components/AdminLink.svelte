@@ -26,13 +26,13 @@
 	</div>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	a .card-body
-		transition: background-color 0.2s
+		transition background-color 0.2s
 		&:hover
-			background-color: var(--background) !important
+			background-color var(--background) !important
 
 	.card
-		border-width: 2px
-		border-color: var(--accent3)
+		border-width 2px
+		border-color var(--accent3)
 </style>

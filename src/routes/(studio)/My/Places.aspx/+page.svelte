@@ -23,51 +23,51 @@
 	{/each}
 </div>
 
-<style lang="sass">
-	@use "../../vars.sass"
+<style lang="stylus">
+	@import "../../vars"
 
 	a
-		text-align: center
-		text-decoration: none
-		border-radius: 0.5rem
-		overflow: hidden
-		margin: none
-		width: 10rem
-		display: inline-block
-		margin: 0.5rem
-		color: vars.$light-text
+		text-align center
+		text-decoration none
+		border-radius 0.5rem
+		overflow hidden
+		margin none
+		width 10rem
+		display inline-block
+		margin 0.5rem
+		color light-text
 
 	fa
-		font-family: faSolid
-		color: vars.$grey-text
-		line-height: 1
+		font-family faSolid
+		color grey-text
+		line-height 1
 	.thumbs-up::before
-		content: "\f164"
+		content "\f164"
 	.user::before
-		content: "\f007"
+		content "\f007"
 
 	.text
-		background-color: vars.$darker
-		padding: 0.7rem
-		margin-top: -0.5rem
-		padding-bottom: 1.8rem
+		background-color darker
+		padding 0.7rem
+		margin-top -0.5rem
+		padding-bottom 1.8rem
 	p
-		margin: 0
-		margin-bottom: 0.5rem
+		margin 0
+		margin-bottom 0.5rem
 
 	.float-end
-		float: right
+		float right
 	.float-start
-		float: left
+		float left
 
 	img
-		width: 10rem
-		height: 10rem
+		width 10rem
+		height 10rem
 
 	h1
-		text-align: center
+		text-align center
 
 	#all
-		width: fit-content
-		text-align: center
+		width fit-content
+		text-align center
 </style>

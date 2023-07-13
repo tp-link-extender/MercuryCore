@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Gradient from "$lib/gradient"
+	import { Gradient } from "stripe-gradient"
 
 	// Gradient must run upon page being loaded,
 	// and cannot be rendered on serverside.
@@ -57,49 +57,49 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	#wavep // rpcs3 momnt
 		div
-			transition: all 1s ease-in-out 0s
+			transition all 1s ease-in-out 0s
 			div
-				background: url("/landing/wave.svg") repeat-x
-				top: -198px
-				width: 6144px
-				height: 198px
-				animation: 11s cubic-bezier(0.36, 0.45, 0.63, 0.53) 0s infinite normal none running waves
-				transform: translate3d(0px,0px,0px)
+				background url("/landing/wave.svg") repeat-x
+				top -198px
+				width 6144px
+				height 198px
+				animation 11s cubic-bezier(0.36, 0.45, 0.63, 0.53) 0s infinite normal none running waves
+				transform translate3d(0px,0px,0px)
 				@keyframes waves
 					0%
-						margin-left: 0
+						margin-left 0
 					100%
-						margin-left: -1600px
+						margin-left -1600px
 
 			div:nth-of-type(2)
-				animation: 11s cubic-bezier(0.4, 0.2, 0.2, 0.2) -0.124s infinite normal none running waves, 11s ease -1.24s infinite normal none running swell
-				top: -174px
+				animation 11s cubic-bezier(0.4, 0.2, 0.2, 0.2) -0.124s infinite normal none running waves, 11s ease -1.24s infinite normal none running swell
+				top -174px
 
 	#info
-		z-index: 3
-		height: 60vh
-		padding-top: 35vh
+		z-index 3
+		height 60vh
+		padding-top 35vh
 		a
-			margin: 0
+			margin 0
 
 		#title
-			font-size: 4rem
+			font-size 4rem
 
 	#moon
-		margin-bottom: min(22rem, 60vh)
+		margin-bottom min(22rem, 60vh)
 
 	#gradient-canvas
-		@media (prefers-color-scheme: light)
-			--gradient-color-1: #5551ff
-			--gradient-color-2: #5599ff
-			--gradient-color-3: #55c3ff
-			--gradient-color-4: #af79e6
+		+lightTheme()
+			--gradient-color-1 #5551ff
+			--gradient-color-2 #5599ff
+			--gradient-color-3 #55c3ff
+			--gradient-color-4 #af79e6
 
-		--gradient-color-1: #161a92
-		--gradient-color-2: #2b0574
-		--gradient-color-3: #6c2fb9
-		--gradient-color-4: #060e25
+		--gradient-color-1 #161a92
+		--gradient-color-2 #2b0574
+		--gradient-color-3 #6c2fb9
+		--gradient-color-4 #060e25
 </style>

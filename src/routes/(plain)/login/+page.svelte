@@ -109,7 +109,7 @@
 						{:else}
 							Log in
 						{/if}
-						<!-- $delayed is true if the form takes 
+						<!-- $delayed is true if the form takes
 							more than a few hundred ms to submit -->
 					</button>
 				</fieldset>
@@ -118,12 +118,16 @@
 	</div>
 </div>
 
-<style lang="sass">
-	@use "../loginregister.sass"
+<style lang="stylus">
+	@import "../loginregister"
+
+	+lg()
+		.col
+			padding-top 20vh
 
 	@keyframes waves
 		0%
-			margin-left: 0
+			margin-left 0
 		100%
-			margin-left: -1600px
+			margin-left -1600px
 </style>

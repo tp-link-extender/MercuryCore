@@ -171,29 +171,29 @@
 	</ParallaxLayer>
 </Parallax>
 
-<style lang="sass">
+<style lang="stylus">
 	#info
-		height: 70vh
+		height 70vh
 
 	#top
-		scroll-snap-align: end
+		scroll-snap-align end
 	#first
-		scroll-snap-align: start
+		scroll-snap-align start
 
 	#title
-		font-size: 4rem
+		font-size 4rem
 	#arrow
-		font-size: 3rem
-		margin-top: 5vh
-		transform: translateX(-50%)
-		z-index: 3
+		font-size 3rem
+		margin-top 5vh
+		transform translateX(-50%)
+		z-index 3
 
 	#arrow2
-		font-size: 2rem
-		right: 0
-		bottom: 0
-		z-index: 3
+		font-size 2rem
+		right 0
+		bottom 0
+		z-index 3
 
 	h1, h4
-		text-align: center
+		text-align center
 </style>

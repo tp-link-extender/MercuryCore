@@ -52,26 +52,26 @@
 	</div>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	.card
-		max-width: 22rem
+		width 22rem
 	a
-		transition: all 0.2s
+		transition all 0.2s
 		&:hover
-			transition: all 0.2s
+			transition all 0.2s
 			#shadow::after
-				box-shadow: inset 0 0 4rem 0 #fff2
+				box-shadow inset 0 0 4rem 0 #fff2
 
 	#shadow
-		aspect-ratio: 1
-		position: relative
-		border-radius: 1rem 0 0 1rem
+		aspect-ratio 1
+		position relative
+		border-radius 1rem 0 0 1rem
 		&::after
-			transition: all 0.3s
-			content: ""
-			position: absolute
-			top: 0
-			left: 0
-			width: 100%
-			height: 100%
+			transition all 0.3s
+			content ""
+			position absolute
+			top 0
+			left 0
+			width 100%
+			height 100%
 </style>

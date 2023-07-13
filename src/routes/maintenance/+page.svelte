@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Gradient from "$lib/gradient"
+	import { Gradient } from "stripe-gradient"
 
 	// Gradient must run upon page being loaded,
 	// and cannot be rendered on serverside.
@@ -39,21 +39,21 @@
 	</a>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	#title
-		font-size: 4rem
+		font-size 4rem
 
 	#info
-		z-index: 3
-		height: 60vh
-		padding-top: 40vh
+		z-index 3
+		height 60vh
+		padding-top 40vh
 
 	#moon
-		margin-bottom: min(15rem, 40vh)
+		margin-bottom min(15rem, 40vh)
 
 	#gradient-canvas
-		--gradient-color-1: #555
-		--gradient-color-2: #333340
-		--gradient-color-3: #222240
-		--gradient-color-4: #222228
+		--gradient-color-1 #555
+		--gradient-color-2 #333340
+		--gradient-color-3 #222240
+		--gradient-color-4 #222228
 </style>
