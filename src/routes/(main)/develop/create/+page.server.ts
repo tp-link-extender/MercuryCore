@@ -158,7 +158,8 @@ export const actions = {
 				},
 			})
 
-		for (const save of saveImages) save(imageAssetId)
+		saveImages[0](imageAssetId)
+		saveImages[1](id)
 		graphicAsset(assets[assetType], imageAssetId, id)
 	},
 }

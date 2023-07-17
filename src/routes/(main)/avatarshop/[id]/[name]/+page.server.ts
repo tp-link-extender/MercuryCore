@@ -18,7 +18,7 @@ const schema = z.object({
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id))
-		throw error(400, `Invalid place id: ${params.id}`)
+		throw error(400, `Invalid asset id: ${params.id}`)
 	const id = parseInt(params.id)
 
 	// Since prisma does not yet support recursive copying, we have to do it manually
