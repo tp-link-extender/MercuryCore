@@ -21,7 +21,7 @@
 			<div class="text-center pb-3">
 				<img
 					alt={asset.name}
-					src="https://clipground.com/images/clipart-traffic-cone-7.png" />
+					src="/avatarshop/{asset.id}/{asset.name}/icon" />
 			</div>
 			<p class="m-0">
 				{asset.name}
