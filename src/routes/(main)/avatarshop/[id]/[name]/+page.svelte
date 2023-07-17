@@ -116,7 +116,13 @@
 	</div>
 
 	<Tab {tabData}>
-		<p class="light-text">{data.description}</p>
+		<p class="light-text">
+			{#if data.description[0]}
+				{data.description[0].text}
+			{:else}
+				<em>No description available</em>
+			{/if}
+		</p>
 	</Tab>
 
 	<Tab {tabData}>

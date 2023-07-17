@@ -58,7 +58,15 @@ export async function load({ locals, params }) {
 			id: true,
 			name: true,
 			price: true,
-			description: true,
+			description: {
+				orderBy: {
+					updated: "desc",
+				},
+				select: {
+					text: true,
+				},
+				take: 1,
+			},
 			type: true,
 
 			replies: {

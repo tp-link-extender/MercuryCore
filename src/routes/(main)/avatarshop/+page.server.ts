@@ -6,6 +6,7 @@ export const load = () => ({
 			name: true,
 			price: true,
 			id: true,
+            type: true,
 		},
 	}),
 })
@@ -27,6 +28,7 @@ export const actions = {
 					name: true,
 					price: true,
 					id: true,
+                    type: true,
 				},
 			}),
 		}
