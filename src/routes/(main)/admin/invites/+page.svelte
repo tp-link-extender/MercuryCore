@@ -23,9 +23,7 @@
 	let tabData = TabData(data.url, ["Create Invite Key", "Invites"])
 </script>
 
-<svelte:head>
-	<title>Invites - Admin - Mercury</title>
-</svelte:head>
+<Head title="Invites - Admin" />
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Invites</h1>

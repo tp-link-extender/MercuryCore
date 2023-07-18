@@ -32,9 +32,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{moderationAction[data.type]} - Mercury</title>
-</svelte:head>
+<Head title={moderationAction[data.type]} />
 
 <div class="container mt-5">
 	<div class="card">

@@ -7,9 +7,7 @@
 	export let data: import("./$types").LayoutData
 </script>
 
-<svelte:head>
-	<title>Error {$page.status} - Mercury</title>
-</svelte:head>
+<Head title="Error {$page.status}" />
 
 <Navbar {data} />
 

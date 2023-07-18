@@ -6,13 +6,10 @@
 	onMount(() => new Gradient().initGradient("#gradient-canvas"))
 </script>
 
-<svelte:head>
-	<meta
-		name="description"
-		content="Mercury: Endless possibilities. New features. Same nostalgia." />
-	<meta property="og:image" content="/mercury.gif" />
-	<title>Mercury: Endless possibilities. New features. Same nostalgia.</title>
-</svelte:head>
+<Head
+	title="Mercury: Endless possibilities. New features. Same nostalgia."
+	description="Mercury: Endless possibilities. New features. Same nostalgia."
+	ogImage="/mercury.gif" />
 
 <canvas id="gradient-canvas" class="w-100 h-100 position-fixed" />
 

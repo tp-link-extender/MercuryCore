@@ -24,9 +24,7 @@
 	let tabData = TabData(data.url, ["Daily Stipend"])
 </script>
 
-<svelte:head>
-	<title>Daily Stipend - Admin - Mercury</title>
-</svelte:head>
+<Head title="Daily Stipend - Admin" />
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Daily Stipend</h1>

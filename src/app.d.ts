@@ -55,6 +55,7 @@ declare global {
 	declare const ForumPost: typeof import("$lib/components/ForumPost.svelte").default
 	declare const ForumReply: typeof import("$lib/components/ForumReply.svelte").default
 	declare const Group: typeof import("$lib/components/Group.svelte").default
+	declare const Head: typeof import("$lib/components/Head.svelte").default
 	declare const Modal: typeof import("$lib/components/Modal.svelte").default
 	declare const Moon: typeof import("$lib/components/Moon.svelte").default
 	declare const Navbar: typeof import("$lib/components/Navbar.svelte").default

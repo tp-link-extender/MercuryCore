@@ -8,9 +8,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Friend requests - Mercury</title>
-</svelte:head>
+<Head title="Friend requests" />
 
 <h1 class="light-text text-center">Friend requests ({data.number})</h1>
 

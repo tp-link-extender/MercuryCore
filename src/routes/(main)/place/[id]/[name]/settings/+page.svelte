@@ -36,9 +36,7 @@
 	)
 </script>
 
-<svelte:head>
-	<title>{data.name} Settings - Mercury</title>
-</svelte:head>
+<Head title="{data.name} Settings" />
 
 <div class="container mt-4 light-text">
 	<h1 class="light-text mb-4">Configure {data.name}</h1>

@@ -9,14 +9,12 @@
 	const upScroll = () => top.scrollIntoView({ behavior: "smooth" })
 </script>
 
+<Head
+	title="About"
+	description="About Mercury: Endless possibilities. New features. Same nostalgia." />
+
 <!-- Keeps the scrollY variable updated with the scrollY property of the window. -->
 <svelte:window bind:scrollY />
-<svelte:head>
-	<meta
-		name="description"
-		content="About Mercury: Endless possibilities. New features. Same nostalgia." />
-	<title>About - Mercury</title>
-</svelte:head>
 
 <div bind:this={top} id="top" class="position-relative top-0" />
 

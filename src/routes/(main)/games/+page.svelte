@@ -28,9 +28,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Discover - Mercury</title>
-</svelte:head>
+<Head title="Discover" />
 
 <div class="container">
 	<div class="row mb-5">

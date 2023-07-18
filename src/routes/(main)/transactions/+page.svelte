@@ -2,9 +2,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Transactions - Mercury</title>
-</svelte:head>
+<Head title="Transactions" />
 
 <h1 class="text-center light-text">
 	Transactions

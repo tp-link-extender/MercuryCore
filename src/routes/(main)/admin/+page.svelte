@@ -65,9 +65,7 @@
 	let tabData = TabData(data.url, tabNames)
 </script>
 
-<svelte:head>
-	<title>Admin - Mercury</title>
-</svelte:head>
+<Head title="Admin" />
 
 <div class="container py-4">
 	<h1 class="h2 light-text">Admin Panel</h1>

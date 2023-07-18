@@ -76,9 +76,7 @@
 	]
 </script>
 
-<svelte:head>
-	<title>Home - Mercury</title>
-</svelte:head>
+<Head title="Home" />
 
 <div class="container">
 	<div class="row">

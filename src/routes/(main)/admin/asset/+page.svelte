@@ -4,9 +4,7 @@
 	let tabData = TabData(data.url, ["Asset Queue"])
 </script>
 
-<svelte:head>
-	<title>Asset Approval - Admin - Mercury</title>
-</svelte:head>
+<Head title="Asset Approval - Admin" />
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Asset Approval</h1>
