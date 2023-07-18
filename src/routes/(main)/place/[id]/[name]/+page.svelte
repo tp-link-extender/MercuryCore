@@ -80,9 +80,7 @@
 	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
 </script>
 
-<svelte:head>
-	<title>{data.name} - Mercury</title>
-</svelte:head>
+<Head title={data.name} />
 
 <div class="container light-text">
 	<div class="row">

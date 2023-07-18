@@ -2,9 +2,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>{data.name} - Mercury</title>
-</svelte:head>
+<Head title={data.name} />
 
 <div id="all" class="container">
 	<div class="d-flex px-4">

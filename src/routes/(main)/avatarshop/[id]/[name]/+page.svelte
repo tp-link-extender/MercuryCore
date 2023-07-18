@@ -27,9 +27,7 @@
 	let tabData = TabData(data.url, ["Description", "Comments"])
 </script>
 
-<svelte:head>
-	<title>{data.name} - Mercury</title>
-</svelte:head>
+<Head title={data.name} />
 
 <div class="container">
 	<div class="row">

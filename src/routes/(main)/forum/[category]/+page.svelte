@@ -4,9 +4,7 @@
 	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}
 </script>
 
-<svelte:head>
-	<title>{data.name} forum - Mercury</title>
-</svelte:head>
+<Head title="{data.name} - Forum" />
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb">

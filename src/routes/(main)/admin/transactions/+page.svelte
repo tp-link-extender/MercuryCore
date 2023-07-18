@@ -4,9 +4,7 @@
 	let tabData = TabData(data.url, ["Transactions"])
 </script>
 
-<svelte:head>
-	<title>Transactions - Admin - Mercury</title>
-</svelte:head>
+<Head title="Transactions - Admin" />
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Transactions</h1>

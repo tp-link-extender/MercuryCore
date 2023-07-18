@@ -2,9 +2,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Forum - Mercury</title>
-</svelte:head>
+<Head title="Forum" />
 
 <div class="container light-text">
 	<h1 class="light-text mb-5">Forum</h1>

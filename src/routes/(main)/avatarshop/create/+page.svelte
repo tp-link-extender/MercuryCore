@@ -11,9 +11,7 @@
 	$: other = ($errors as any).other || ""
 </script>
 
-<svelte:head>
-	<title>Create an avatar item - Mercury</title>
-</svelte:head>
+<Head title="Create an avatar item" />
 
 <h1 class="text-center light-text">Create an avatar item</h1>
 

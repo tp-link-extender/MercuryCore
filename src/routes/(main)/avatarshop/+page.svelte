@@ -41,9 +41,7 @@
 		a.type == tabTypes[tabData.currentTab]
 </script>
 
-<svelte:head>
-	<title>Catalog - Mercury</title>
-</svelte:head>
+<Head title="Catalog" />
 
 <div class="container">
 	<div class="row mb-3">

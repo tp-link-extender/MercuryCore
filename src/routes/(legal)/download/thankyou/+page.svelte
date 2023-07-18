@@ -1,6 +1,4 @@
-<svelte:head>
-	<title>Thank You - Mercury</title>
-</svelte:head>
+<Head title="Thank You" />
 
 <h1 class="text-center light-text">Welcome to Mercury</h1>
 

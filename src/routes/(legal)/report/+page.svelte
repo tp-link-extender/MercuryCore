@@ -19,9 +19,7 @@
 	export const snapshot = { capture, restore }
 </script>
 
-<svelte:head>
-	<title>Report {data.reportee} - Mercury</title>
-</svelte:head>
+<Head title="Report {data.reportee}" />
 
 <h1 class="text-center light-text">Report</h1>
 

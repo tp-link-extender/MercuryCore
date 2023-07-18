@@ -28,9 +28,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Groups - Mercury</title>
-</svelte:head>
+<Head title="Groups" />
 
 <div class="container">
 	<div class="row mb-5">
