@@ -20,8 +20,8 @@
 		<div class="card-body bg-a p-3 rounded-1">
 			<div class="text-center pb-3">
 				<img
-					alt={asset.name}
-					src="/avatarshop/{asset.id}/{asset.name}/icon" />
+					src="/avatarshop/{asset.id}/{asset.name}/icon"
+					alt={asset.name} />
 			</div>
 			<p class="m-0">
 				{asset.name}
