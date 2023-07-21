@@ -23,9 +23,9 @@
 	]
 
 	const images = [
-		"/place/placeholderImage1.png",
-		"/place/placeholderImage2.png",
-		"/place/placeholderImage3.png",
+		"/place/placeholderImage1.webp",
+		"/place/placeholderImage2.webp",
+		"/place/placeholderImage3.webp",
 	]
 
 	// Place Launcher
