@@ -5,6 +5,7 @@
 		"dev": "vite dev",
 		"build": "vite build && vite build avatar",
 		"bootstrap": "sass src/bootstrap.sass src/bootstrap.css --no-source-map",
+		"format": "prettier -w --plugin prettier-plugin-svelte ./src",
 		"avatar": "vite build avatar",
 		"prod": "prisma migrate deploy && pnpm i && prisma generate && vite build && vite build avatar",
 		"package": "svelte-kit package",

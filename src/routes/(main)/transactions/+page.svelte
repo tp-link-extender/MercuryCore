@@ -54,7 +54,7 @@
 							<i class="fa fa-gem" />
 							{Math.round(
 								(1 - transaction.taxRate / 100) *
-									transaction.amountSent
+									transaction.amountSent,
 							)}
 						</span>
 					</div>

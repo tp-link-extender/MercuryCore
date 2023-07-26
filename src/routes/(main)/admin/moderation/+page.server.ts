@@ -51,14 +51,14 @@ export const actions = {
 			return formError(
 				form,
 				["username"],
-				["You cannot moderate staff members"]
+				["You cannot moderate staff members"],
 			)
 
 		if (getModeratee.id == user.id)
 			return formError(
 				form,
 				["username"],
-				["You cannot moderate yourself"]
+				["You cannot moderate yourself"],
 			)
 
 		const moderationMessage = [
@@ -89,7 +89,7 @@ export const actions = {
 				return formError(
 					form,
 					["action"],
-					["You cannot unban a user that has not been moderated yet"]
+					["You cannot unban a user that has not been moderated yet"],
 				)
 
 			if (
@@ -104,7 +104,7 @@ export const actions = {
 				return formError(
 					form,
 					["action"],
-					["You cannot unban a deleted user"]
+					["You cannot unban a deleted user"],
 				)
 
 			await Promise.all([
@@ -149,7 +149,7 @@ export const actions = {
 			return formError(
 				form,
 				["username"],
-				["User has already been moderated"]
+				["User has already been moderated"],
 			)
 
 		await prisma.moderationAction.create({

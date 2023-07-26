@@ -13,7 +13,7 @@ export async function GET({ url, setHeaders }) {
 		setHeaders({
 			"Content-Type": "binary/octet-stream",
 			"Content-Disposition": `attachment; filename="${md5(
-				file
+				file,
 			).toString()}"`,
 		})
 
@@ -29,13 +29,13 @@ export async function GET({ url, setHeaders }) {
 				: ID == "20573078"
 				? "corescripts/20573078.xml"
 				: `corescripts/processed/${ID}.lua`,
-			"utf-8"
+			"utf-8",
 		)
 
 		setHeaders({
 			"Content-Type": "binary/octet-stream",
 			"Content-Disposition": `attachment; filename="${md5(
-				file
+				file,
 			).toString()}"`,
 		})
 
@@ -51,7 +51,7 @@ export async function GET({ url, setHeaders }) {
 	} catch {
 		throw redirect(
 			302,
-			`https://assetdelivery.roblox.com/v1/asset?id=${ID}`
+			`https://assetdelivery.roblox.com/v1/asset?id=${ID}`,
 		)
 	}
 }

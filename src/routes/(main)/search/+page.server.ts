@@ -106,7 +106,7 @@ export const actions = {
 
 		throw redirect(
 			302,
-			`/search?q=${query}${category ? `&c=${category}` : ""}`
+			`/search?q=${query}${category ? `&c=${category}` : ""}`,
 		)
 	},
 }

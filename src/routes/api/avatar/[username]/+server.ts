@@ -28,6 +28,6 @@ export async function GET({ params }) {
 		else await render(username, user.bodyColours)
 
 	return new Response(
-		fs.readFileSync(`data/avatars/${username}${bodyShot}.webp`)
+		fs.readFileSync(`data/avatars/${username}${bodyShot}.webp`),
 	)
 }

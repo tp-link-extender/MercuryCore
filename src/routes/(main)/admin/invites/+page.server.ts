@@ -56,7 +56,7 @@ export const actions = {
 					form,
 					"createInvite",
 					getClientAddress,
-					30
+					30,
 				)
 				if (limit) return limit
 
@@ -108,7 +108,7 @@ export const actions = {
 
 				return message(
 					form,
-					"Invite created successfully! Check the Invites tab for your new key."
+					"Invite created successfully! Check the Invites tab for your new key.",
 				)
 			}
 			case "disable":

@@ -1,5 +1,6 @@
 // The following and members pages for a group.
 
+import cql from "$lib/cyphertag"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
@@ -24,13 +25,12 @@ export const load = async ({ params }) => {
 						in: (
 							await roQuery(
 								"groups",
-								`
+								cql`
 									MATCH (u:User) -[r:in]-> (:Group { name: $group })
-									RETURN u.name AS name
-								`,
+									RETURN u.name AS name`,
 								query,
 								false,
-								true
+								true,
 							)
 						).map((i: any) => i.name),
 					},
@@ -42,9 +42,9 @@ export const load = async ({ params }) => {
 			}),
 			number: roQuery(
 				"groups",
-				"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
+				cql`RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))`,
 				query,
-				true
+				true,
 			),
 		}
 	}

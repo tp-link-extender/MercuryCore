@@ -85,7 +85,7 @@ export async function GET({ url }) {
 				.replaceAll("_USER_NAME", userName)
 				.replaceAll("_MEMBERSHIP_TYPE", MembershipType)
 				.replaceAll("_CHAR_APPEARANCE", charApp)
-				.replaceAll("_PING_URL", pingUrl)
-		)
+				.replaceAll("_PING_URL", pingUrl),
+		),
 	)
 }

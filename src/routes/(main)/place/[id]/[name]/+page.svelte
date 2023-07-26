@@ -47,7 +47,7 @@
 				success = true
 				console.log("URI found, launching")
 			},
-			5000
+			5000,
 		)
 	}
 
@@ -70,8 +70,8 @@
 		if (joinScriptData.status == 200) {
 			launch(
 				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
-					joinScriptData.data.joinScriptUrl
-				)}+gameinfo:test`
+					joinScriptData.data.joinScriptUrl,
+				)}+gameinfo:test`,
 			)
 		}
 	}
@@ -384,7 +384,7 @@
 								launch(
 									`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${
 										data.serverTicket
-									}&autopilot=${btoa(filepath)}`
+									}&autopilot=${btoa(filepath)}`,
 								)
 							}}
 							type="button">
@@ -404,7 +404,7 @@
 										launch(
 											`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
 												data.serverTicket
-											}&autopilot=${btoa(filepath)}`
+											}&autopilot=${btoa(filepath)}`,
 										)
 									}}
 									type="button">

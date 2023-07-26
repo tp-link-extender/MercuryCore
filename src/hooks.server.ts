@@ -52,7 +52,7 @@ export async function handle({ event, resolve }) {
 			? blue(user.username) + " ".repeat(21 - user.username.length)
 			: yellow("Logged-out user      "),
 		(methodColours[method] || method) + " ".repeat(7 - method.length),
-		pathnameColour(decodeURI(pathname) + search)
+		pathnameColour(decodeURI(pathname) + search),
 	)
 
 	if (!session) return await resolve(event)
@@ -116,6 +116,6 @@ export const handleError = async ({ event, error }) => {
 			user
 				? blue(user.username) + " ".repeat(21 - user.username.length)
 				: yellow("Logged-out user      "),
-			red(error as string)
+			red(error as string),
 		)
 }

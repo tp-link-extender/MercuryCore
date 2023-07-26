@@ -12,7 +12,7 @@ export default (
 	url: string,
 	tabs: string[],
 	icons?: string[],
-	name = "tab"
+	name = "tab",
 ) => ({
 	name,
 	tabs,
