@@ -32,7 +32,7 @@
 	let tabData = TabData(
 		data.url,
 		["View", "Network", "Privacy"],
-		["far fa-eye", "fas fa-network-wired", "fas fa-eye-low-vision"]
+		["far fa-eye", "fas fa-network-wired", "fas fa-eye-low-vision"],
 	)
 </script>
 
@@ -272,7 +272,7 @@
 						<button
 							on:click={() => {
 								navigator.clipboard.writeText(
-									`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`
+									`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`,
 								)
 
 								copiedSuccess = true

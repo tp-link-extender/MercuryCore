@@ -71,7 +71,7 @@ export async function authorise(
 			  }
 		>
 	},
-	level?: number
+	level?: number,
 ) {
 	const { session, user } = await validateUser()
 	if (!session) throw redirect(302, "/login")

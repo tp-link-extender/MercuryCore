@@ -1,3 +1,4 @@
+import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
@@ -42,15 +43,14 @@ export async function load({ locals }) {
 					in: (
 						await roQuery(
 							"friends",
-							`
+							cql`
 								MATCH (:User { name: $user }) -[r:friends]- (u:User)
-								RETURN u.name as name
-							`,
+								RETURN u.name as name`,
 							{
 								user: user.username,
 							},
 							false,
-							true
+							true,
 						)
 					).map((i: any) => i.name),
 				},

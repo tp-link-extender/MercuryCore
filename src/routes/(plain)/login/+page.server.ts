@@ -28,7 +28,7 @@ export const actions = {
 			const user = await auth.useKey(
 				"username",
 				username.toLowerCase(),
-				password
+				password,
 			)
 			locals.setSession(await auth.createSession(user.userId))
 		} catch {
@@ -38,7 +38,7 @@ export const actions = {
 				[
 					"Incorrect username or password",
 					"Incorrect username or password",
-				]
+				],
 			)
 		}
 

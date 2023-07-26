@@ -57,7 +57,7 @@ export { client }
 export const Query = (
 	graph: keyof typeof graphs,
 	query: string,
-	params: { [k: string]: string | number }
+	params: { [k: string]: string | number },
 ) => graphs[graph].query(query, { params })
 
 /**
@@ -65,13 +65,13 @@ export const Query = (
  * @param graph The name of the graph to query, eg. friends, groups, etc.
  * @param query A query to execute, in Cypher.
  * @param params Parameters to pass to the query.
- * @param res Whether to immediately extract the result from the query. Useful when doing "RETURN {query}" rather than returning a variable from a previous statement.
+ * @param res Whether to immediately extract the result from the query. Useful when doing cql`RETURN {query}` rather than returning a variable from a previous statement.
  * @param arr Whether to return an array of results, otherwise returns the first result.
  * @returns the result of the query.
  * @example
  *	friendCount: roQuery(
  *		"friends",
- *		"RETURN SIZE((:User) -[:friends]- (:User { name: $user }))",
+ *		cql`RETURN SIZE((:User) -[:friends]- (:User { name: $user }))`,
  *		{
  *			user: "Heliodex",
  *		},
@@ -83,12 +83,12 @@ export async function roQuery(
 	query: string,
 	params: { [k: string]: string | number },
 	res = false,
-	arr = false
+	arr = false,
 ) {
 	// this is a stupid bug. previously just returning the result of a roQuery as "data" or whatever, then using .data, would break randomly
 	const c = () =>
 		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(
-			Math.random() * 52
+			Math.random() * 52,
 		)
 	const rand = Array(5).fill(0).map(c).join("")
 	let result: any
@@ -98,7 +98,7 @@ export async function roQuery(
 			(
 				await graphs[graph].roQuery(
 					res ? `${query} as ${rand}` : query,
-					{ params }
+					{ params },
 				)
 			).data || []
 		if (!arr) result = result[0]

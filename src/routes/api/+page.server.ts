@@ -7,7 +7,7 @@ import { error, redirect } from "@sveltejs/kit"
 export function load() {
 	throw error(
 		451,
-		Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii")
+		Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"),
 	)
 }
 

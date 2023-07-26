@@ -186,7 +186,7 @@
 										type="button"
 										on:click={viewBody(
 											banner.id,
-											banner.body
+											banner.body,
 										)}
 										class="btn btn-sm btn-success my-0">
 										View Body

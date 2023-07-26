@@ -1,3 +1,4 @@
+import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query } from "$lib/server/redis"
@@ -119,7 +120,7 @@ export async function load({ locals, params }) {
 			"asset",
 			"Comment",
 			getAsset,
-			user.username
+			user.username,
 		)),
 		id, // Add back the id
 		owned: (assetOwned?.owners || []).length > 0,
@@ -224,59 +225,53 @@ export const actions = {
 				case "like":
 					await Query(
 						"asset",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:dislikes]-> (:Comment { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"asset",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:Comment { name: $id })
-							MERGE (u) -[:likes]-> (p)
-						`,
-						query
+							MERGE (u) -[:likes]-> (p)`,
+						query,
 					)
 					break
 				case "unlike":
 					await Query(
 						"asset",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:likes]-> (:Comment { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 				case "dislike":
 					await Query(
 						"asset",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:likes]-> (:Comment { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"asset",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:Comment { name: $id })
-							MERGE (u) -[:dislikes]-> (p)
-						`,
-						query
+							MERGE (u) -[:dislikes]-> (p)`,
+						query,
 					)
 					break
 				case "undislike":
 					await Query(
 						"asset",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:dislikes]-> (:Comment { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 			}

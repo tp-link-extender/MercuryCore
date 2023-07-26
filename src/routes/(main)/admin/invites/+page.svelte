@@ -202,7 +202,7 @@
 								<td>{invite.creator?.username}</td>
 								<td>
 									{new Date(
-										invite.creation
+										invite.creation,
 									).toLocaleDateString()}
 								</td>
 							</tr>

@@ -70,7 +70,7 @@ export async function load({ locals, params }) {
 		"forum",
 		"Reply",
 		forumReplies,
-		user.username
+		user.username,
 	)
 
 	return {

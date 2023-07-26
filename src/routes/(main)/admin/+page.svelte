@@ -38,7 +38,7 @@
 						method: "POST",
 					})
 				).json()
-			).data
+			).data,
 		)
 		return (diskSpace = {
 			free: jsonData[1],
@@ -114,7 +114,7 @@
 								<span class="light-text">
 									{Math.round(
 										(data.totalmem - data.freemem) /
-											1024 ** 2
+											1024 ** 2,
 									)} MB is being used
 								</span>
 								<div class="progress bg-darker mt-2">
@@ -149,7 +149,7 @@
 									</h3>
 									<span class="light-text">
 										{Math.round(
-											(disk.size - disk.free) / 1024 ** 2
+											(disk.size - disk.free) / 1024 ** 2,
 										)} MB is being used
 									</span>
 									<div class="progress bg-darker mt-2">

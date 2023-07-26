@@ -33,7 +33,7 @@ export const actions = {
 
 		const currentStipend = Number((await client.get("dailyStipend")) || 10)
 		const currentStipendTime = Number(
-			(await client.get("stipendTime")) || 12
+			(await client.get("stipendTime")) || 12,
 		)
 
 		const { dailyStipend, stipendTime } = form.data

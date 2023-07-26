@@ -38,7 +38,7 @@ export const actions = {
 			await auth.updateKeyPassword(
 				"username",
 				username.toLowerCase(),
-				password
+				password,
 			)
 		} catch {
 			return message(form, "Invalid credentials", {
