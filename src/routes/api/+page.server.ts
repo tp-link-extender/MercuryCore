@@ -16,7 +16,7 @@ export const actions = {
 		const { session } = await authorise(locals)
 
 		await auth.invalidateSession(session.sessionId) // invalidate session
-		locals.setSession(null) // remove cookie
+		locals.auth.setSession(null) // remove cookie
 		throw redirect(302, "/login")
 	},
 }

@@ -30,7 +30,12 @@ export const actions = {
 				username.toLowerCase(),
 				password,
 			)
-			locals.setSession(await auth.createSession(user.userId))
+			locals.auth.setSession(
+				await auth.createSession({
+					userId: user.userId,
+					attributes: {},
+				}),
+			)
 		} catch {
 			return formError(
 				form,

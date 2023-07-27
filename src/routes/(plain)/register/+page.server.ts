@@ -95,7 +95,7 @@ export const actions = {
 				)
 
 			const user = await auth.createUser({
-				primaryKey: {
+				key: {
 					providerId: "username",
 					providerUserId: username.toLowerCase(),
 					password,
@@ -111,8 +111,11 @@ export const actions = {
 				} as any,
 			})
 
-			const session = await auth.createSession(user.id)
-			locals.setSession(session)
+			const session = await auth.createSession({
+				userId: user.id,
+				attributes: {},
+			})
+			locals.auth.setSession(session)
 
 			await prisma.regkey.update({
 				where: {
