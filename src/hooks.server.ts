@@ -40,8 +40,9 @@ function pathnameColour(pathname: string) {
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
 export async function handle({ event, resolve }) {
-	event.locals = auth.handleRequest(event)
-	const { session, user } = await event.locals.validateUser()
+	event.locals.auth = auth.handleRequest(event)
+	const session = await event.locals.auth.validate()
+	const user = session?.user
 	const { pathname, search } = event.url
 	const { method } = event.request
 
@@ -55,7 +56,7 @@ export async function handle({ event, resolve }) {
 		pathnameColour(decodeURI(pathname) + search),
 	)
 
-	if (!session) return await resolve(event)
+	if (!session || !user) return await resolve(event)
 
 	if (
 		!["/moderation", "/terms"].includes(pathname) &&
@@ -106,7 +107,8 @@ export async function handle({ event, resolve }) {
 }
 
 export const handleError = async ({ event, error }) => {
-	const { user } = await event.locals.validateUser()
+	const session = await event.locals.auth.validate()
+	const user = session?.user
 
 	// Fancy error logging: time, user, and error
 	if (dev) console.error(error)
