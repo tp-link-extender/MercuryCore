@@ -67,7 +67,7 @@ export async function authorise(
 	const session = await auth.validate()
 	const user = session?.user
 
-	if (!session) throw redirect(302, "/login")
+	if (!session || !user) throw redirect(302, "/login")
 	if (level && user.permissionLevel < level)
 		throw error(403, "You do not have permission to view this page.")
 	return { session, user }

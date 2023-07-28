@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { browser } from "$app/environment"
 	import { superForm } from "sveltekit-superforms/client"
 
 	// const statusColours: { [k: string]: string } = {
@@ -65,15 +64,7 @@
 		{ time: new Date(), title: "Mercury is now love!", content: "Yes" },
 	]
 
-	const facts = [
-		`You joined mercury on ${user?.accountCreated
-			.toLocaleString()
-			.substring(0, 10)}!`,
-		// Add "st", "nd", "rd", "th" to number
-		`You are the ${user?.number}${
-			["st", "nd", "rd"][(user?.number % 10) - 1] || "th"
-		} user to join Mercury!`,
-	]
+
 </script>
 
 <Head title="Home" />
@@ -92,7 +83,7 @@
 							class="rounded-circle rounded-top-0" />
 					</div>
 					<span class="my-auto ms-4">
-						{data.greet}
+						{data.stuff.greet}
 					</span>
 				</a>
 			</h1>
@@ -267,7 +258,7 @@
 				<div
 					id="fact"
 					class="card bg-darker card-body light-text h5 pb-4">
-					{facts[Math.floor(Math.random() * facts.length)]}
+					{data.stuff.fact}
 				</div>
 			</div>
 		</div>
