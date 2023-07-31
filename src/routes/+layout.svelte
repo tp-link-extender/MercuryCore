@@ -108,7 +108,7 @@
 	{/each}
 </div>
 
-<!-- Theme files contain CSS variables that are used throughout the app. -->
+<!-- Theme files contain CSS variables that are used throughout the site. -->
 {#if user?.theme == "darken"}
 	<style lang="stylus">
 		@import "../themes/darken"

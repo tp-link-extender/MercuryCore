@@ -14,10 +14,10 @@
 	let tabData = TabData(data.url, ["Create", "Creations"])
 </script>
 
-<Head title="Develop" />
+<Head title="Create" />
 
 <div class="container py-2">
-	<h1 class="h1 mb-2 text-light">Develop</h1>
+	<h1 class="h1 mb-2 text-light">Create</h1>
 	<div class="row">
 		<div class="col-lg-2 col-md-3 mb-4">
 			<TabNav bind:tabData tabs />

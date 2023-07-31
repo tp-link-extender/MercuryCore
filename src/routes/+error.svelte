@@ -25,7 +25,7 @@
 <main>
 	<div
 		class="container d-flex flex-column justify-content-center align-items-center light-text bg-a rounded-4">
-		<img src="{errors[status] || 'm!'}.svg" alt="Error {status}" />
+		<img src="/{errors[status] || 'm!'}.svg" alt="Error {status}" />
 		<h1 class="mt-3">
 			<a
 				href="https://http.cat/images/{status}.jpg"
@@ -50,6 +50,9 @@
 		padding-bottom 25vh
 		padding-top 25vh
 		flex 1 0 auto
+		+-lg()
+			padding-top 23vh
+			padding-bottom 22vh
 		+-md()
 			padding-top 20vh
 			padding-bottom 20vh

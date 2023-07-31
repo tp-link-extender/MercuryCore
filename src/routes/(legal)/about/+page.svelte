@@ -13,9 +13,6 @@
 	title="About"
 	description="About Mercury: Endless possibilities. New features. Same nostalgia." />
 
-<!-- Keeps the scrollY variable updated with the scrollY property of the window. -->
-<svelte:window bind:scrollY />
-
 <div bind:this={top} id="top" class="position-relative top-0" />
 
 <div
@@ -190,7 +187,7 @@
 		font-size 2rem
 		right 0
 		bottom 0
-		z-index 3
+		z-index 10
 
 	h1, h4
 		text-align center

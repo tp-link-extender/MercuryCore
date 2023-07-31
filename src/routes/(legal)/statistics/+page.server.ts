@@ -1,6 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
+import cql from "$lib/cyphertag"
 
 export async function load({ locals }) {
 	await authorise(locals)
