@@ -34,9 +34,7 @@
 	let tabData = TabData(data.url, ["Create Banner", "Banner List"])
 </script>
 
-<svelte:head>
-	<title>Banners - Admin - Mercury</title>
-</svelte:head>
+<Head title="Banners - Admin" />
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Banners</h1>
@@ -188,7 +186,7 @@
 										type="button"
 										on:click={viewBody(
 											banner.id,
-											banner.body
+											banner.body,
 										)}
 										class="btn btn-sm btn-success my-0">
 										View Body

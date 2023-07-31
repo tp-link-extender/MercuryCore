@@ -99,7 +99,7 @@ export async function load({ locals, params }) {
 			"Post",
 			forumPost,
 			user.username,
-			"Reply"
+			"Reply",
 		)),
 		baseDepth: 0,
 	}

@@ -154,7 +154,7 @@
 										class="btn p-0 bodyPart position-absolute"
 										on:click={openColorPicker(bodyPart)}
 										on:keydown={openColorPicker(
-											bodyPart
+											bodyPart,
 										)} />
 								{/each}
 							</div>

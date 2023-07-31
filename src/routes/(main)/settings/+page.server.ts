@@ -35,7 +35,7 @@ export const load = async ({ locals }) => {
 				cpassword: z.string().min(1),
 				npassword: z.string().min(1),
 				cnpassword: z.string().min(1),
-			})
+			}),
 		),
 	}
 }
@@ -56,7 +56,7 @@ export const actions = {
 					z.object({
 						theme: z.enum(["standard", "darken", "storm", "solar"]),
 						bio: z.string().max(1000),
-					})
+					}),
 				)
 				if (!form.valid) return formError(form)
 				const { bio, theme } = form.data
@@ -85,7 +85,7 @@ export const actions = {
 						cpassword: z.string().min(1),
 						npassword: z.string().min(1),
 						cnpassword: z.string().min(1),
-					})
+					}),
 				)
 				if (!form.valid) return formError(form)
 
@@ -95,27 +95,27 @@ export const actions = {
 					return formError(
 						form,
 						["cnpassword"],
-						["Passwords do not match"]
+						["Passwords do not match"],
 					)
 
 				try {
 					await auth.useKey(
 						"username",
 						user.username.toLowerCase(),
-						cpassword
+						cpassword,
 					)
 				} catch {
 					return formError(
 						form,
 						["cpassword"],
-						["Incorrect username or password"]
+						["Incorrect username or password"],
 					)
 				}
 
 				await auth.updateKeyPassword(
 					"username",
 					user.username.toLowerCase(),
-					npassword
+					npassword,
 				)
 
 				form.data.cpassword = ""

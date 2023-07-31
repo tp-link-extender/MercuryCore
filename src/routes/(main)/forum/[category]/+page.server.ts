@@ -1,3 +1,4 @@
+import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query } from "$lib/server/redis"
@@ -58,7 +59,7 @@ export async function load({ locals, params }) {
 		"forum",
 		"Post",
 		fakeObject,
-		user.username
+		user.username,
 	)
 
 	return category as typeof category & {
@@ -101,67 +102,61 @@ export const actions = {
 				case "like":
 					await Query(
 						"forum",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:dislikes]-> (:${
 								replyId ? "Reply" : "Post"
 							} { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"forum",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:${replyId ? "Reply" : "Post"} { name: $id })
-							MERGE (u) -[:likes]-> (p)
-						`,
-						query
+							MERGE (u) -[:likes]-> (p)`,
+						query,
 					)
 					break
 				case "unlike":
 					await Query(
 						"forum",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:likes]-> (:${
 								replyId ? "Reply" : "Post"
 							} { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 				case "dislike":
 					await Query(
 						"forum",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:likes]-> (:${
 								replyId ? "Reply" : "Post"
 							} { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"forum",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:${replyId ? "Reply" : "Post"} { name: $id })
-							MERGE (u) -[:dislikes]-> (p)
-						`,
-						query
+							MERGE (u) -[:dislikes]-> (p)`,
+						query,
 					)
 					break
 				case "undislike":
 					await Query(
 						"forum",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:dislikes]-> (:${
 								replyId ? "Reply" : "Post"
 							} { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 			}

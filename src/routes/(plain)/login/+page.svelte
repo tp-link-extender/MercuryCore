@@ -13,10 +13,7 @@
 	export const snapshot = { capture, restore }
 </script>
 
-<svelte:head>
-	<meta name="description" content="Log into your Mercury account." />
-	<title>Log in - Mercury</title>
-</svelte:head>
+<Head title="Log in" description="Log into your Mercury account." />
 
 <div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
 	<div class="w-100 position-fixed bottom-0">

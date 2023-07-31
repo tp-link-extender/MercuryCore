@@ -83,6 +83,8 @@
 	footer
 		flex-shrink 0
 		padding 1vh
+		+-lg()
+			padding-bottom 5rem
 		a
 			text-decoration none
 			&:hover

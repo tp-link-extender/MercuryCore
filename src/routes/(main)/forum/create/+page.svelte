@@ -19,9 +19,7 @@
 	export const snapshot = { capture, restore }
 </script>
 
-<svelte:head>
-	<title>Create a post in {data.category.name} - Mercury</title>
-</svelte:head>
+<Head title="Create a post in {data.category.name}" />
 
 <h1 class="text-center light-text">Create a post in {data.category.name}</h1>
 

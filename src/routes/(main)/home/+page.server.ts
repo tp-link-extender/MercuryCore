@@ -1,3 +1,4 @@
+import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
@@ -17,8 +18,21 @@ export async function load({ locals }) {
 
 	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
 
+	const facts = [
+		`You joined mercury on ${user?.accountCreated
+			.toLocaleString()
+			.substring(0, 10)}!`,
+		// Add "st", "nd", "rd", "th" to number
+		`You are the ${user?.number}${
+			["st", "nd", "rd"][(user?.number % 10) - 1] || "th"
+		} user to join Mercury!`,
+	]
+
 	return {
-		greet: greets[Math.floor(Math.random() * greets.length)],
+		stuff: {
+			greet: greets[Math.floor(Math.random() * greets.length)],
+			fact: facts[Math.floor(Math.random() * facts.length)],
+		},
 		form: superValidate(schema),
 		places: findPlaces({
 			where: {
@@ -42,15 +56,14 @@ export async function load({ locals }) {
 					in: (
 						await roQuery(
 							"friends",
-							`
+							cql`
 								MATCH (:User { name: $user }) -[r:friends]- (u:User)
-								RETURN u.name as name
-							`,
+								RETURN u.name as name`,
 							{
 								user: user.username,
 							},
 							false,
-							true
+							true,
 						)
 					).map((i: any) => i.name),
 				},

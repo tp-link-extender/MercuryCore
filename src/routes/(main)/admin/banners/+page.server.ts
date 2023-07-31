@@ -52,7 +52,7 @@ export const actions = {
 					form,
 					"createBanner",
 					getClientAddress,
-					30
+					30,
 				)
 				if (limit) return limit
 

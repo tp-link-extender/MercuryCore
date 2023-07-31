@@ -32,13 +32,11 @@
 	let tabData = TabData(
 		data.url,
 		["View", "Network", "Privacy"],
-		["far fa-eye", "fas fa-network-wired", "fas fa-eye-low-vision"]
+		["far fa-eye", "fas fa-network-wired", "fas fa-eye-low-vision"],
 	)
 </script>
 
-<svelte:head>
-	<title>{data.name} Settings - Mercury</title>
-</svelte:head>
+<Head title="{data.name} Settings" />
 
 <div class="container mt-4 light-text">
 	<h1 class="light-text mb-4">Configure {data.name}</h1>
@@ -274,7 +272,7 @@
 						<button
 							on:click={() => {
 								navigator.clipboard.writeText(
-									`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`
+									`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`,
 								)
 
 								copiedSuccess = true

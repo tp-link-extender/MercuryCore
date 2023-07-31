@@ -15,6 +15,6 @@ export function GET({ url, setHeaders }) {
 	return new Response(
 		charApp +
 			";http://banland.xyz/asset/?id=20573078;" +
-			"http://banland.xyz/asset?id=2"
+			"http://banland.xyz/asset?id=2",
 	)
 }

@@ -27,18 +27,21 @@
 
 	export let data
 
-	let tabData = TabData(data.url, [
-		"Hats",
-		"T-Shirts",
-		"Shirts",
-		"Pants",
-		"Decals",
-	])
+	const tabTypes: { [k: string]: number } = {
+		"T-Shirts": 2,
+		Shirts: 11,
+		Hats: 8,
+		Pants: 12,
+		Decals: 13,
+	}
+
+	let tabData = TabData(data.url, Object.keys(tabTypes))
+
+	const assetFilter = (a: { type: number }) =>
+		a.type == tabTypes[tabData.currentTab]
 </script>
 
-<svelte:head>
-	<title>Catalog - Mercury</title>
-</svelte:head>
+<Head title="Catalog" />
 
 <div class="container">
 	<div class="row mb-3">
@@ -189,10 +192,10 @@
 		<div class="col-xl-9 col-lg-9">
 			<div class="container">
 				<div class="row">
-					{#each query ? searchedData : data.assets || [] as asset, num (asset.id)}
+					{#each (query ? searchedData : data.assets || []).filter(assetFilter) as asset, num (asset.id)}
 						<Asset {asset} {num} total={data.assets.length} />
 					{/each}
-					{#if query && searchedData.length == 0}
+					{#if query && searchedData.filter(assetFilter).length == 0}
 						<h2 class="h5 light-text mt-5">
 							No items found with search term {query}
 						</h2>

@@ -2,9 +2,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Statistics - Mercury</title>
-</svelte:head>
+<Head title="Statistics" />
 
 <h1 class="text-center light-text">Statistics</h1>
 

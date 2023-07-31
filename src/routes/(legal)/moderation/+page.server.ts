@@ -16,7 +16,7 @@ export async function load({ locals }) {
 	if (!userModeration[0])
 		throw error(
 			404,
-			"Your ID has been sent to the Mercury Servers for moderation. Thank you!"
+			"Your ID has been sent to the Mercury Servers for moderation. Thank you!",
 		)
 
 	return userModeration[0]
@@ -36,7 +36,7 @@ export const actions = {
 		if (!userModeration[0])
 			throw error(
 				404,
-				"Your ID has been sent to the Mercury Servers for moderation. Thank you!"
+				"Your ID has been sent to the Mercury Servers for moderation. Thank you!",
 			)
 
 		if (userModeration[0].timeEnds.getTime() > Date.now()) throw fail(400)
