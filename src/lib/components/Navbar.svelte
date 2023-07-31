@@ -14,112 +14,56 @@
 
 	export let data: import("../../routes/$types").LayoutData
 	const { user } = data
+
+	const nav1 = [
+		// ["Home", "/", "fa-house-chimney"],
+		["Games", "/games", "fa-mountain-sun"],
+		["Catalog", "/avatarshop", "fa-book-open-cover"],
+		// ["Groups", "/groups", "fa-people-group"],
+		["Create", "/develop", "fa-plus"],
+		["Forum", "/forum", "fa-messages"],
+	]
+
+	const usernav = [
+		["fa-user-group", "Friends", "/requests"],
+		["fa-box-open-full", "Inventory", "/inventory"],
+		["fa-user-pen", "Avatar", "/avatar"],
+		["fa-gears", "Settings", "/settings"],
+	]
+
+	if (user && user.permissionLevel >= 4)
+		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
+
+	const searchCategories = [
+		["Users", "users"],
+		["Places", "places"],
+		["Catalog", "assets"],
+		// ["Groups", "groups"],
+	]
 </script>
 
-<nav class="navbar navbar-expand-lg navbar-dark py-0">
-	<div class="d-flex">
-		<button
-			class="navbar-toggler mx-2 my-1"
-			type="button"
-			title="Open sidebar"
-			data-bs-toggle="offcanvas"
-			data-bs-target="#offcanvasNavbar-expand-lg"
-			aria-controls="offcanvasNavbar-expand-lg">
-			<span
-				class="navbar-toggler-icon"
-				data-bs-target="#offcanvasNavbar-expand-lg" />
-		</button>
-		<a class="navbar-brand light-text mx-4 mt-1 mobile-brand" href="/">
-			Mercury
-		</a>
-	</div>
-	<div
-		class="offcanvas offcanvas-start border-0"
-		data-bs-hideresize="true"
-		tabindex="-1"
-		id="offcanvasNavbar-expand-lg"
-		aria-labelledby="offcanvasNavbar-expand-lg">
-		<div class="offcanvas-header">
-			<a href="/" class="offcanvas-title light-text h5">Mercury</a>
-			<button
-				type="button"
-				class="btn-close btn-close-white text-reset me-1"
-				data-bs-dismiss="offcanvas"
-				aria-label="Close" />
-		</div>
-
-		<div id="nav1" class="offcanvas-body px-4 py-1 d-flex">
-			<a
-				id="nav-brand-1"
-				class="navbar-brand light-text me-4 mt-1"
-				href="/">
-				Mercury
+<nav class="navbar navbar-expand py-0">
+	<div class="w-100 border-0" tabindex="-1">
+		<div id="nav1" class="py-1 d-flex">
+			<a class="navbar-brand light-text mt-1 me-0" href="/">
+				<img class="me-2" src="/favicon.svg" alt="Mercury logo" />
+				<span class="me-4">Mercury</span>
 			</a>
 			{#if user}
-				<div class="row">
+				<div id="topnav" class="row me-2">
 					<div class="col-6">
 						<div class="navbar-nav">
-							<a
-								class="btn mt-1 px-1 light-text nav-item"
-								href="/">
-								Home
-							</a>
-							<a
-								class="btn mt-1 px-1 light-text nav-item"
-								href="/games">
-								Games
-							</a>
-							<a
-								class="btn mt-1 px-1 light-text nav-item"
-								href="/avatarshop">
-								Catalog
-							</a>
-							<!-- <a class="btn mt-1 px-1 light-text nav-item" href="/groups">Groups</a> -->
-							<a
-								class="btn mt-1 px-1 light-text nav-item"
-								href="/forum">
-								Forum
-							</a>
-							{#if user?.permissionLevel >= 4}
+							{#each nav1 as [title, href]}
 								<a
 									class="btn mt-1 px-1 light-text nav-item"
-									href="/admin">
-									Admin
+									{href}>
+									{title}
 								</a>
-							{/if}
-						</div>
-					</div>
-					<div class="col-6 mobilenav">
-						<div id="nav2-1" class="navbar-nav w-100">
-							<a
-								class="light-text mt-1 btn nav-item px-1"
-								href="/user/{user.number}">
-								Profile
-							</a>
-							<a
-								class="light-text mt-1 btn nav-item px-1"
-								href="/inventory">
-								Inventory
-							</a>
-							<a
-								class="light-text mt-1 btn nav-item px-1"
-								href="/requests">
-								Friends
-							</a>
-							<a
-								class="light-text mt-1 btn nav-item px-1"
-								href="/avatar">
-								Avatar
-							</a>
-							<a
-								class="light-text mt-1 btn nav-item px-1"
-								href="/develop">
-								Develop
-							</a>
+							{/each}
 						</div>
 					</div>
 				</div>
-				<div id="search" class="navbar-nav ms-4 me-auto mt-1">
+				<div id="search" class="navbar-nav mx-auto mt-1">
 					<form
 						use:enhance
 						method="POST"
@@ -148,35 +92,22 @@
 							<div
 								transition:fade={{ duration: 150 }}
 								id="results"
-								class="position-absolute card bg-darker p-2 pe-0 mt-2">
-								<a
-									class="btn text-start light-text py-2"
-									href="/search?q={search}&c=users"
-									title="Search Users">
-									Search <b>{search}</b>
-									in Users
-								</a>
-								<a
-									class="btn text-start light-text py-2"
-									href="/search?q={search}&c=places"
-									title="Search Places">
-									Search <b>{search}</b>
-									in Places
-								</a>
-								<a
-									class="btn text-start light-text py-2"
-									href="/search?q={search}&c=assets"
-									title="Search Catalog">
-									Search <b>{search}</b>
-									in Catalog
-								</a>
-								<!-- <a class="btn text-start light-text py-2" href="/search?q={search}&c=groups" title="Search Groups">Search <b>{search}</b> in Groups</a> -->
+								class="position-absolute d-flex flex-column bg-darker p-2 mt-2 rounded-3">
+								{#each searchCategories as [name, category]}
+									<a
+										class="btn text-start light-text py-2"
+										href="/search?q={search}&c={category}"
+										title="Search {name}">
+										Search <b>{search}</b>
+										in {name}
+									</a>
+								{/each}
 							</div>
 						{/if}
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
-					<li class="ms-3 pt-1">
+					<li id="notificationstop" class="pt-1">
 						<a
 							href="/notifications"
 							role="button"
@@ -185,7 +116,7 @@
 							<i class="fa fa-bell light-text" />
 						</a>
 					</li>
-					<li class="me-2 pt-1">
+					<li id="transactionsbutton" class="pt-1">
 						<a
 							href="/transactions/your"
 							role="button"
@@ -215,21 +146,24 @@
 							</p>
 						</a>
 						<div class="dropdown-content pt-2">
-							<ul class="py-2 rounded-3">
-								<li>
-									<a
-										class="btn light-text py-2"
-										href="/settings">
-										<i class="fa fa-gears me-2" />
-										Settings
-									</a>
-								</li>
-								<li>
+							<ul class="p-2 rounded-3">
+								{#each usernav as [icon, title, href]}
+									<li class="rounded-2">
+										<a
+											class="btn light-text ps-3 pe-0 text-start"
+											{href}>
+											<i class="fa {icon} me-2" />
+											{title}
+										</a>
+									</li>
+								{/each}
+								<li class="rounded-2">
 									<form
 										use:enhance
 										method="POST"
 										action="/api?/logout">
-										<button class="btn text-danger py-2">
+										<button
+											class="btn text-danger ps-3 pe-0 text-start">
 											<i
 												class="fa fa-arrow-right-from-bracket me-2" />
 											<b>Log out</b>
@@ -255,33 +189,6 @@
 				</ul>
 			{/if}
 		</div>
-		{#if user}
-			<nav id="nav2" class="navbar navbar-dark px-4 py-0 w-100">
-				<div id="nav2-2" class="navbar-nav w-50">
-					<a
-						class="light-text btn nav-item m-0 py-1"
-						href="/user/{user.number}">
-						Profile
-					</a>
-					<a
-						class="light-text btn nav-item m-0 py-1"
-						href="/inventory">
-						Inventory
-					</a>
-					<a
-						class="light-text btn nav-item m-0 py-1"
-						href="/requests">
-						Friends
-					</a>
-					<a class="light-text btn nav-item m-0 py-1" href="/avatar">
-						Avatar
-					</a>
-					<a class="light-text btn nav-item m-0 py-1" href="/develop">
-						Develop
-					</a>
-				</div>
-			</nav>
-		{/if}
 	</div>
 </nav>
 
@@ -299,85 +206,104 @@
 	{/each}
 {/if}
 
+{#if user}
+	<nav id="bottomnav" class="position-fixed bottom-0 bg-darker w-100">
+		<div class="d-flex flex-row justify-content-evenly mx-auto">
+			{#each nav1 as [title, href, icon]}
+				<a {href} class="btn light-text nav-item d-flex flex-column">
+					<i class="fa {icon} mb-1" />
+					{title}
+				</a>
+			{/each}
+			<a
+				href="/notifications"
+				id="notificationsbottom"
+				class="btn light-text nav-item flex-column">
+				<i class="fa fa-bell mb-1" />
+				Notifications
+			</a>
+		</div>
+	</nav>
+{/if}
+
 <style lang="stylus">
-	.mobile-brand
-		display none
+	.loggedin
+		margin-left auto
 
-	+-lg()
-		.offcanvas-header
-			background var(--accent)
-		.offcanvas
-			background var(--background)
-		.offcanvas-body
-			background var(--background)
-			min-height 100vh
-			flex-direction column-reverse
-			justify-content start
-			padding-top 1rem !important
+	nav
+		z-index 9
 
-			a
-				margin-bottom 1rem
-				width 100%
-				text-align start
+	#bottomnav
+		border-top 1px solid var(--accent)
+		height 4rem
 
-		.loggedin
-			margin-bottom 1rem
-			order 1
+		box-shadow 0 0 1rem 0.2rem black
+		+lightTheme()
+			box-shadow 0 0 1rem 0.2rem white
 
-		.mobile-brand
-			display block
-
-		#nav-brand-1
-			display none
-
-		#search
-			width 100%
-			margin 0 !important
-			form
-				margin 1rem !important
-
-		#nav2-1
-			display block
-			overflow-x none
-
-		#nav2
-			display none
-
-		.mobilenav
-			display block
-
+		div
+			width 50%
+		a
+			font-size 1rem
+			padding-left 0.5rem
+			padding-right 0.5rem
+		i
+			font-size 1.5rem
+	
 	+lg()
-		.loggedin
-			margin-left auto
-
-		#nav2-1
+		#bottomnav
+		#notificationsbottom
 			display none
-
-		.mobilenav
+	+-lg()
+		#topnav
+		#notificationstop
 			display none
+		#notificationsbottom
+			display flex
+
+
+	+sm()
+		#nav1
+			padding-left 1rem
+			padding-right 1rem
+		.navbar-brand
+			img
+				display none
+	+-sm()
+		#nav1
+			padding-left 0.5rem
+			padding-right 0.5rem
+		#username
+			display none
+		.navbar-brand
+			img
+				margin-top -0.5rem
+				width 2rem
+				height 2rem
+			span
+				display none
+
+		#bottomnav
+			height 3.5rem
+			div
+				width 100%
+			a
+				font-size 0.9rem	
+				padding-left 0.2rem
+				padding-right 0.2rem
+			i
+				font-size 1.2rem
+
+		#transactionsbutton
+			width 5rem
 
 	#nav1
-		// padding-top 1px
 		background #fff1
-		+-lg()
-			background none
-			min-height fit-content !important
-			overflow-x hidden
+		+lightTheme()
+			background #0003
 
-	#nav2
-		background #0003
-		z-index 1
-		+-lg()
-			background none !important
-			min-height 36vh !important
-			flex-direction column
-			margin-left auto
-
-			a
-				text-align left
-				padding 1.2rem 0.8rem !important
-			div
-				width 100% !important
+	.dropdown-content li:hover
+		background var(--accent)
 
 	.loggedin
 		padding 0
@@ -387,21 +313,16 @@
 		min-width 1rem
 		white-space nowrap
 
-	.offcanvas-title
-		text-decoration none
-
-	nav
+	#topnav
 		z-index 9
 		max-height 10vh
 
+	#bottomnav
 	.navbar-nav
 		a
 			border none
 			&:hover
 				color var(--grey-text) !important
-
-	.offcanvas
-		box-shadow none !important
 
 	#pfp
 	img
@@ -417,16 +338,16 @@
 	.input-group
 		width 25vw
 		max-width 30rem
-		font-size 0.8rem
 		+-xl()
-			width 12rem
+			width 20rem
 		+-lg()
+			width 26rem
+		+-md()
+			width 15rem
+		+-sm()
 			width 100%
 
 		button
 		input
 			height 2.3rem
-
-	.btn
-		box-shadow none !important
 </style>
