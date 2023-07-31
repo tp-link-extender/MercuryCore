@@ -1,7 +1,4 @@
-<svelte:head>
-	<meta name="description" content="Mercury's Privacy Policy" />
-	<title>Privacy Policy - Mercury</title>
-</svelte:head>
+<Head title="Privacy Policy" description="Mercury's Privacy Policy" />
 
 <h1 class="text-center light-text">Privacy Policy</h1>
 

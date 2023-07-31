@@ -107,9 +107,7 @@ model AuthKey {
     id              String   @id @unique
     hashed_password String?
     user_id         String
-    primary_key     Boolean
     auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
-    expires         BigInt?
 
     @@index([user_id])
     @@map("key")

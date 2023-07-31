@@ -17,9 +17,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Notifications - Mercury</title>
-</svelte:head>
+<Head title="Notifications" />
 
 <h1 class="text-center light-text">Notifications</h1>
 

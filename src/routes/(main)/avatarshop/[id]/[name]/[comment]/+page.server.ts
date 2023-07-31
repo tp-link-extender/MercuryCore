@@ -63,7 +63,7 @@ export async function load({ locals, params }) {
 		"asset",
 		"Comment",
 		assetComments,
-		user.username
+		user.username,
 	)
 
 	return {

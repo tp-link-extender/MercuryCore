@@ -2,9 +2,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Members of {data.name} - Mercury</title>
-</svelte:head>
+<Head title="Members of {data.name}" />
 
 <h1 class="light-text text-center">Members of {data.name} ({data.number})</h1>
 

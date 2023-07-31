@@ -1,3 +1,4 @@
+import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
@@ -77,25 +78,25 @@ export async function load({ url, locals, params }) {
 		...getPlace,
 		likeCount: roQuery(
 			"places",
-			"RETURN SIZE((:User) -[:likes]-> (:Place { name: $id }))",
+			cql`RETURN SIZE((:User) -[:likes]-> (:Place { name: $id }))`,
 			query,
-			true
+			true,
 		),
 		dislikeCount: roQuery(
 			"places",
-			"RETURN SIZE((:User) -[:dislikes]-> (:Place { name: $id }))",
+			cql`RETURN SIZE((:User) -[:dislikes]-> (:Place { name: $id }))`,
 			query,
-			true
+			true,
 		),
 		likes: roQuery(
 			"places",
-			"MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r",
-			query
+			cql`MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r`,
+			query,
 		),
 		dislikes: roQuery(
 			"places",
-			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r",
-			query
+			cql`MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r`,
+			query,
 		),
 	}
 }
@@ -132,59 +133,53 @@ export const actions = {
 				case "like":
 					await Query(
 						"places",
-						`
+						cql`
 							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"places",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:Place { name: $id })
-							MERGE (u) -[:likes]-> (p)
-						`,
-						query
+							MERGE (u) -[:likes]-> (p)`,
+						query,
 					)
 					break
 				case "unlike":
 					await Query(
 						"places",
-						`
+						cql`
 							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 				case "dislike":
 					await Query(
 						"places",
-						`
+						cql`
 							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"places",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:Place { name: $id })
-							MERGE (u) -[:dislikes]-> (p)
-						`,
-						query
+							MERGE (u) -[:dislikes]-> (p)`,
+						query,
 					)
 					break
 				case "undislike":
 					await Query(
 						"places",
-						`
+						cql`
 							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 			}

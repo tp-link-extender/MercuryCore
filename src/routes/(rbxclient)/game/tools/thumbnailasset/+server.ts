@@ -23,7 +23,7 @@ export async function GET({ url }) {
 	if (cache) throw redirect(302, cache)
 
 	const thumb = await fetch(
-		`https://thumbnails.roblox.com/v1/assets?${params}`
+		`https://thumbnails.roblox.com/v1/assets?${params}`,
 	)
 
 	if (thumb.status == 200) {
@@ -32,7 +32,7 @@ export async function GET({ url }) {
 		await client.hSet(
 			"thumbnailAsset",
 			assetId.toString(),
-			thumbnail.data[0].imageUrl
+			thumbnail.data[0].imageUrl,
 		)
 
 		throw redirect(302, thumbnail.data[0].imageUrl)

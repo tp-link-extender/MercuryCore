@@ -1,6 +1,7 @@
 // This function requires juggling complex types between several files!
 // You'll probably receieve type errors when using it.
 
+import cql from "$lib/cyphertag"
 import { roQuery } from "$lib/server/redis"
 
 /**
@@ -23,13 +24,13 @@ async function addLikes<
 		id: string | number
 		replies: NextType
 		[k: string]: any
-	}[] = ItemType["replies"]
+	}[] = ItemType["replies"],
 >(
 	graphName: string,
 	type: string,
 	item: ItemType,
 	username: string,
-	nextType: string = type
+	nextType: string = type,
 ) {
 	const item2 = item as ItemType & {
 		likeCount: number
@@ -61,25 +62,25 @@ async function addLikes<
 		await Promise.all([
 			roQuery(
 				graphName,
-				`RETURN SIZE((:User) -[:likes]-> (:${type} { name: $id }))`,
+				cql`RETURN SIZE((:User) -[:likes]-> (:${type} { name: $id }))`,
 				query,
-				true
+				true,
 			),
 			roQuery(
 				graphName,
-				`RETURN SIZE((:User) -[:dislikes]-> (:${type} { name: $id }))`,
+				cql`RETURN SIZE((:User) -[:dislikes]-> (:${type} { name: $id }))`,
 				query,
-				true
+				true,
 			),
 			roQuery(
 				graphName,
-				`MATCH (:User { name: $user }) -[r:likes]-> (:${type} { name: $id }) RETURN r`,
-				query
+				cql`MATCH (:User { name: $user }) -[r:likes]-> (:${type} { name: $id }) RETURN r`,
+				query,
 			),
 			roQuery(
 				graphName,
-				`MATCH (:User { name: $user }) -[r:dislikes]-> (:${type} { name: $id }) RETURN r`,
-				query
+				cql`MATCH (:User { name: $user }) -[r:dislikes]-> (:${type} { name: $id }) RETURN r`,
+				query,
 			),
 			t,
 		])

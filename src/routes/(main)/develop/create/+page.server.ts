@@ -60,7 +60,7 @@ export const actions = {
 			return formError(
 				form,
 				["asset"],
-				["Asset must be less than 20MB in size"]
+				["Asset must be less than 20MB in size"],
 			)
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
@@ -80,7 +80,7 @@ export const actions = {
 					return formError(
 						form,
 						["asset"],
-						["Asset failed to upload"]
+						["Asset failed to upload"],
 					)
 				}
 				break
@@ -89,14 +89,14 @@ export const actions = {
 				return formError(
 					form,
 					["type"],
-					["Cannot upload this type of asset yet"]
+					["Cannot upload this type of asset yet"],
 				)
 
 			case 12: // Pants
 				return formError(
 					form,
 					["type"],
-					["Cannot upload this type of asset yet"]
+					["Cannot upload this type of asset yet"],
 				)
 
 			case 13: // Decal
@@ -110,7 +110,7 @@ export const actions = {
 					return formError(
 						form,
 						["asset"],
-						["Asset failed to upload"]
+						["Asset failed to upload"],
 					)
 				}
 		}
@@ -158,7 +158,8 @@ export const actions = {
 				},
 			})
 
-		for (const save of saveImages) save(imageAssetId)
+		saveImages[0](imageAssetId)
+		saveImages[1](id)
 		graphicAsset(assets[assetType], imageAssetId, id)
 	},
 }

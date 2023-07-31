@@ -22,7 +22,7 @@ if (!building) {
 export default async function (
 	username: string,
 	avatar: any,
-	bodyShot = false
+	bodyShot = false,
 ) {
 	console.time(`${bodyShot ? "Body" : "Head"}shot render for ${username}`)
 	const browser = await puppeteer.launch({ headless: "new" })
@@ -31,10 +31,10 @@ export default async function (
 	await page.goto(
 		`http://localhost:${port}?c=${JSON.stringify(avatar)}${
 			bodyShot ? "&f" : ""
-		}`
+		}`,
 	)
 	await page.setViewport(
-		bodyShot ? { width: 300, height: 400 } : { width: 150, height: 150 }
+		bodyShot ? { width: 300, height: 400 } : { width: 150, height: 150 },
 	)
 
 	await page.waitForSelector("canvas")

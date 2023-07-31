@@ -1,5 +1,6 @@
 // The friends, followers, and following pages for a user.
 
+import cql from "$lib/cyphertag"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
@@ -19,9 +20,9 @@ const usersQueries = {
 }
 
 const numberQueries = {
-	friends: "RETURN SIZE((:User { name: $user }) -[:friends]- (:User))",
-	followers: "RETURN SIZE((:User { name: $user }) <-[:follows]- (:User))",
-	following: "RETURN SIZE((:User { name: $user }) -[:follows]-> (:User))",
+	friends: cql`RETURN SIZE((:User { name: $user }) -[:friends]- (:User))`,
+	followers: cql`RETURN SIZE((:User { name: $user }) <-[:follows]- (:User))`,
+	following: cql`RETURN SIZE((:User { name: $user }) -[:follows]-> (:User))`,
 }
 
 export const load = async ({ params }) => {
@@ -54,7 +55,7 @@ export const load = async ({ params }) => {
 								usersQueries[type],
 								query,
 								false,
-								true
+								true,
 							)
 						).map((i: any) => i.name),
 					},

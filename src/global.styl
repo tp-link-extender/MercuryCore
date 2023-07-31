@@ -3,20 +3,28 @@
 // to many pages, so bundle size is kept down.
 
 // @import "./variables.styl"
+@import "./daisyui/carousel.styl"
 @import "./daisyui/collapse.styl"
 @import "./daisyui/dropdown.styl"
 
 :root
 html
 body
-	overflow overlay // Scrollbar is above content instead of beside
-	overflow-x hidden
+main
 	background var(--background)
 
 	--mainaccent #7531ff
 
 	font-family "SF UI Display Regular", -apple-system, BlinkMacSystemFont,
 		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
+
+main
+	overflow hidden
+
+body
+	display flex
+	flex-direction column
+	min-height 100vh
 
 .light-text
 	color var(--light-text) !important
@@ -26,6 +34,10 @@ body
 // 	color var(--dark-text) !important
 .accent-text
 	color #9551ff !important
+a.accent-text
+	transition 0.2s color
+	&:hover
+		color #7531ff !important
 
 .bg-background
 	background var(--background) !important
@@ -60,18 +72,23 @@ img[src^="/api/avatar"]
 	background var(--mainaccent)
 
 ::-webkit-scrollbar
-	position fixed
-	width 0.5rem
-	height 0.5rem
+	width 0.8rem
+	height 0.8rem
 
 	&-track
 	&-corner
-		background none
-	&-thumb
-		border-radius 0.2rem
 		background var(--accent)
+
+	&-thumb
+		border-radius 1rem
+		background var(--background)
+		border 0.15rem solid var(--accent)
+		width 0.5rem
+		
 		&:hover
 			background var(--accent3)
+		&:active
+			background var(--accent2)
 
 // bootstrap variables
 :root

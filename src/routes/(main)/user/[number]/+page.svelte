@@ -12,9 +12,7 @@
 	const { user } = data
 </script>
 
-<svelte:head>
-	<title>{data.username} - Mercury</title>
-</svelte:head>
+<Head title={data.username} />
 
 <div id="all" class="container">
 	<div class="card bg-darker pt-4">

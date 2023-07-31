@@ -8,9 +8,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Search for {data.query} - Mercury</title>
-</svelte:head>
+<Head title="Search for {data.query}" />
 
 {#if data.category}
 	<h1 class="text-center light-text">

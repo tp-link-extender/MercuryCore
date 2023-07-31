@@ -1,7 +1,4 @@
-<svelte:head>
-	<meta name="description" content="Mercury's Terms of Service" />
-	<title>Terms of Service - Mercury</title>
-</svelte:head>
+<Head title="Terms of Service" description="Mercury's Terms of Service" />
 
 <h1 class="text-center light-text">Terms of Service</h1>
 

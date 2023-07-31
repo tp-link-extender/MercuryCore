@@ -17,9 +17,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Develop - Mercury</title>
-</svelte:head>
+<Head title="Develop" />
 
 <div class="container py-2">
 	<h1 class="light-text mb-0 text-center">

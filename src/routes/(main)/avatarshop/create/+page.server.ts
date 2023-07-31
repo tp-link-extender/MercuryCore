@@ -69,7 +69,7 @@ export const actions = {
 						note: `Created item ${name}`,
 						link: `/avatarshop/item/${created.id}`,
 					},
-					tx
+					tx,
 				)
 				return created
 			})

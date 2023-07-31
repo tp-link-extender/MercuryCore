@@ -1,3 +1,4 @@
+import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
@@ -44,14 +45,14 @@ export async function load({ locals, params }) {
 			feed: group.posts,
 			memberCount: roQuery(
 				"groups",
-				"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
+				cql`RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))`,
 				query,
-				true
+				true,
 			),
 			in: roQuery(
 				"groups",
-				"MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r",
-				query2
+				cql`MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r`,
+				query2,
 			),
 		}
 	}
@@ -86,22 +87,20 @@ export const actions = {
 				case "join":
 					await Query(
 						"groups",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (g:Group { name: $group })
-							MERGE (u) -[:in]-> (g)
-						`,
-						query
+							MERGE (u) -[:in]-> (g)`,
+						query,
 					)
 					break
 				case "leave":
 					await Query(
 						"groups",
-						`
+						cql`
 							MATCH (u:User { name: $user }) -[r:in]-> (g:Group { name: $group })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 			}

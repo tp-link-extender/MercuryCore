@@ -1,6 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
+import cql from "$lib/cyphertag"
 
 export async function load({ locals }) {
 	await authorise(locals)
@@ -13,15 +14,15 @@ export async function load({ locals }) {
 		transactions: prisma.transaction.count(),
 		friendships: roQuery(
 			"friends",
-			"RETURN SIZE((:User) -[:friends]- (:User))",
+			cql`RETURN SIZE((:User) -[:friends]- (:User))`,
 			{},
-			true
+			true,
 		),
 		followerships: roQuery(
 			"friends",
-			"RETURN SIZE((:User) -[:follows]-> (:User))",
+			cql`RETURN SIZE((:User) -[:follows]-> (:User))`,
 			{},
-			true
+			true,
 		),
 		statusPosts: prisma.post.count(),
 		forumPosts: prisma.forumPost.count(),

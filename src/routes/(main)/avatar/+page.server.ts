@@ -49,7 +49,7 @@ export const actions = {
 			avatar: `${await render(
 				user.username,
 				currentBodyColour,
-				true
+				true,
 			)}?r=${Math.random()}`,
 		}
 	},
@@ -64,7 +64,7 @@ export const actions = {
 			avatar: `${await render(
 				user.username,
 				user.bodyColours,
-				true
+				true,
 			)}?r=${Math.random()}`,
 		}
 	},

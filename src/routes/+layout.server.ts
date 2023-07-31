@@ -1,12 +1,13 @@
 import { prisma } from "$lib/server/prisma"
 
 export async function load({ request, locals }) {
-	const { session, user } = await locals.validateUser()
+	const session = await locals.auth.validate()
+	const user = session?.user
 	// Not authorise function, as we don't want
 	// to redirect to login page if not logged in
 
 	let notifications
-	if (session) {
+	if (session && user) {
 		const notifications1 = await prisma.notification.findMany({
 			take: 40,
 			orderBy: {

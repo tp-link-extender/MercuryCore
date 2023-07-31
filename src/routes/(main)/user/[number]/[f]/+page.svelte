@@ -10,9 +10,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{titles[data.type]} - Mercury</title>
-</svelte:head>
+<Head title={titles[data.type]} />
 
 <h1 class="light-text text-center">{titles[data.type]} ({data.number})</h1>
 

@@ -1,6 +1,7 @@
 // A collection of functions useful for Prisma, as well
 // as only needing to initialise PrismaClient once.
 
+import cql from "$lib/cyphertag"
 import { building } from "$app/environment"
 import { PrismaClient } from "@prisma/client"
 import type { Prisma } from "@prisma/client"
@@ -37,15 +38,15 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 		const [likes, total] = await Promise.all([
 			roQuery(
 				"places",
-				"RETURN SIZE((:User) -[:likes]-> (:Place { name: $place }))",
+				cql`RETURN SIZE((:User) -[:likes]-> (:Place { name: $place }))`,
 				query,
-				true
+				true,
 			),
 			roQuery(
 				"places",
-				"RETURN SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place }))",
+				cql`RETURN SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place }))`,
 				query,
-				true
+				true,
 			),
 		])
 		const ratio = Math.floor((likes / total) * 100)
@@ -75,11 +76,11 @@ export async function findGroups(query: Prisma.GroupFindManyArgs = {}) {
 	for (const group of groups as typeof groups & { members: any }[])
 		group["members"] = await roQuery(
 			"groups",
-			"RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))",
+			cql`RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))`,
 			{
 				group: group.name,
 			},
-			true
+			true,
 		)
 
 	return groups as typeof groups & { members: any }[]
@@ -103,7 +104,7 @@ export async function transaction(
 	receiver: User,
 	amountSent: number,
 	{ note, link }: { note?: String; link?: String },
-	tx: any /* awful */ = prisma
+	tx: any /* awful */ = prisma,
 ) {
 	const sender2 = await tx.authUser.findUnique({
 		where: sender,
@@ -116,7 +117,7 @@ export async function transaction(
 		throw new Error(
 			`Insufficient funds: You need ${
 				amountSent - sender2.currency
-			} more to buy this`
+			} more to buy this`,
 		)
 	// const receiver2 = await prisma.authUser.findUnique({
 	// 	where: receiver,

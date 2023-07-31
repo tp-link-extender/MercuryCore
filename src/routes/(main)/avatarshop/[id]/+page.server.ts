@@ -3,7 +3,7 @@ import { error, redirect } from "@sveltejs/kit"
 
 export async function load({ params }) {
 	if (!params.id || !/^\d+$/.test(params.id))
-		throw error(400, `Invalid place id: ${params.id}`)
+		throw error(400, `Invalid asset id: ${params.id}`)
 
 	const asset = await prisma.asset.findUnique({
 		where: {

@@ -9,9 +9,7 @@
 	$: parentPost = topReply.parentPost
 </script>
 
-<svelte:head>
-	<title>Replies to forum post - Mercury</title>
-</svelte:head>
+<Head title="Replies to forum post" />
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb" class="mx-auto">

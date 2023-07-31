@@ -24,9 +24,7 @@
 	export const snapshot = { capture, restore }
 </script>
 
-<svelte:head>
-	<title>{data.title} - Mercury</title>
-</svelte:head>
+<Head title={data.title} />
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb">

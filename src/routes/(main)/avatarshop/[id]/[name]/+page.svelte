@@ -27,14 +27,14 @@
 	let tabData = TabData(data.url, ["Description", "Comments"])
 </script>
 
-<svelte:head>
-	<title>{data.name} - Mercury</title>
-</svelte:head>
+<Head title={data.name} />
 
 <div class="container">
-	<div class="row">
-		<div class="carousel slide col-md mb-3" />
-		<div class="flex col-md">
+	<div class="d-flex flex-row">
+		<div in:fade class="image me-3 mb-3">
+			<img src="/avatarshop/{data.id}/{data.name}/icon" alt={data.name} />
+		</div>
+		<span class="w-100">
 			<div class="card rounded-none mb-4">
 				<div class="card-body">
 					<h1 class="light-text">{data.name}</h1>
@@ -108,7 +108,7 @@
 			<!-- {#if form?.msg}
 					<p class="text-danger">{form.msg}</p>
 				{/if} -->
-		</div>
+		</span>
 	</div>
 
 	<div class="bg-a">
@@ -116,7 +116,13 @@
 	</div>
 
 	<Tab {tabData}>
-		<p class="light-text">{data.description}</p>
+		<p class="light-text">
+			{#if data.description[0]}
+				{data.description[0].text}
+			{:else}
+				<em>No description available</em>
+			{/if}
+		</p>
 	</Tab>
 
 	<Tab {tabData}>
@@ -180,6 +186,25 @@
 
 <style lang="stylus">
 	containerMinWidth(60rem)
+
+	.image
+		background var(--accent1)
+		background-image:
+			linear-gradient(45deg,
+				var(--darker) 25%, transparent 25%,
+				transparent 75%, var(--darker) 75%
+			),
+			linear-gradient(45deg,
+				var(--darker) 25%, transparent 25%,
+				transparent 75%, var(--darker) 75%
+			)
+		background-size 20px 20px
+		background-position 0 0, 10px 10px
+
+		height 20rem
+		width 20rem
+		img
+			height 20rem
 
 	#notify
 		font-size 0.8rem

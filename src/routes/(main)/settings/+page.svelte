@@ -27,9 +27,7 @@
 	let tabData = TabData(data.url, ["Profile", "Account", "Security"])
 </script>
 
-<svelte:head>
-	<title>Settings - Mercury</title>
-</svelte:head>
+<Head title="Settings" />
 
 <div class="container mt-4 light-text">
 	<h1 class="light-text mb-4">Settings</h1>

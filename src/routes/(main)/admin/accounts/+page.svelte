@@ -21,9 +21,7 @@
 	let tabData = TabData(data.url, ["Reset User Password"])
 </script>
 
-<svelte:head>
-	<title>Accounts - Admin - Mercury</title>
-</svelte:head>
+<Head title="Accounts - Admin" />
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Accounts</h1>

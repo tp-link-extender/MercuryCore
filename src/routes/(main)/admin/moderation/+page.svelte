@@ -23,9 +23,7 @@
 	let tabData = TabData(data.url, ["Moderate User"])
 </script>
 
-<svelte:head>
-	<title>Moderate User - Admin - Mercury</title>
-</svelte:head>
+<Head title="Moderate User - Admin" />
 
 <div class="container py-4">
 	<h1 class="light-text mb-0">Admin - Moderate User</h1>

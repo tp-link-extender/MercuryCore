@@ -2,9 +2,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Transactions - Mercury</title>
-</svelte:head>
+<Head title="Transactions" />
 
 <h1 class="text-center light-text">
 	Transactions
@@ -56,7 +54,7 @@
 							<i class="fa fa-gem" />
 							{Math.round(
 								(1 - transaction.taxRate / 100) *
-									transaction.amountSent
+									transaction.amountSent,
 							)}
 						</span>
 					</div>

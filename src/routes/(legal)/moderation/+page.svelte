@@ -20,10 +20,10 @@
 		if (diffInDays >= 1) return diffInDays + " day(s)"
 		else {
 			const diffInHours = Math.floor(
-				diffInMilliseconds / (60 * 60 * 1000)
+				diffInMilliseconds / (60 * 60 * 1000),
 			)
 			const diffInMinutes = Math.floor(
-				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000)
+				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000),
 			)
 			if (diffInHours >= 1)
 				return diffInHours + " hour(s) " + diffInMinutes + " minute(s)"
@@ -32,9 +32,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{moderationAction[data.type]} - Mercury</title>
-</svelte:head>
+<Head title={moderationAction[data.type]} />
 
 <div class="container mt-5">
 	<div class="card">
@@ -44,7 +42,7 @@
 				"Ban"
 					? `ned for ${formatDateDifference(
 							Date.now(),
-							data.timeEnds.getTime()
+							data.timeEnds.getTime(),
 					  )}`
 					: ""}
 			</h1>
@@ -103,7 +101,7 @@
 					<p>
 						You may re-activate your account after your ban ends in {formatDateDifference(
 							Date.now(),
-							data.timeEnds.getTime()
+							data.timeEnds.getTime(),
 						)}
 					</p>
 					<button
