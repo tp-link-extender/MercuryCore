@@ -4,15 +4,6 @@
 	export let data
 	const { user } = data
 
-	data.gameSessions = [
-		{
-			user: {
-				username: "Heliodex",
-				number: 1,
-			},
-		},
-	]
-
 	const statistics = [
 		["Activity", "0 visits"],
 		["Creation", data.created.toLocaleDateString()],
@@ -22,11 +13,21 @@
 		["Now Playing", data.gameSessions.length],
 	]
 
+	let carousel: HTMLElement
+
 	const images = [
 		"/place/placeholderImage1.webp",
 		"/place/placeholderImage2.webp",
 		"/place/placeholderImage3.webp",
 	]
+
+	const scroll = async (e: MouseEvent) =>
+		document
+			.getElementById(
+				new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
+			)
+			// (false) prevents page scrolling to top of element
+			?.scrollIntoView(false)
 
 	// Place Launcher
 
@@ -84,47 +85,36 @@
 
 <div class="container light-text">
 	<div class="row">
-		<div in:fade id="carousel" class="carousel slide col-md-8 mb-3">
-			<div class="carousel-inner rounded-4">
-				<div class="carousel-indicators">
-					{#each images as _, i}
-						<button
-							type="button"
-							data-bs-target="#carousel"
-							data-bs-slide-to={i}
-							aria-label="Slide {i + 1}"
-							class:active={!i}
-							aria-current={!i} />
-					{/each}
-				</div>
+		<div class="col-md-8 mb-3">
+			<div in:fade bind:this={carousel} class="carousel rounded-4">
 				{#each images as src, i}
-					<div class="carousel-item" class:active={!i}>
+					<div
+						id="slide{i + 1}"
+						class="carousel-item position-relative w-100"
+						class:active={!i}>
 						<img
 							{src}
 							class="d-block w-100"
 							alt="Placeholder place thumbnail" />
+						<div
+							class="position-absolute d-flex justify-content-between carouselbuttons">
+							<a
+								href="#slide{i < 1 ? images.length : i}"
+								class="btn rounded-pill bg-background"
+								on:click|preventDefault={scroll}>
+								❮
+							</a>
+							<a
+								href="#slide{i == images.length - 1
+									? 1
+									: i + 2}"
+								class="btn rounded-pill bg-background"
+								on:click|preventDefault={scroll}>
+								❯
+							</a>
+						</div>
 					</div>
 				{/each}
-				<button
-					class="carousel-control-prev"
-					type="button"
-					data-bs-target="#carousel"
-					data-bs-slide="prev">
-					<span
-						class="carousel-control-prev-icon"
-						aria-hidden="true" />
-					<span class="visually-hidden">Previous</span>
-				</button>
-				<button
-					class="carousel-control-next"
-					type="button"
-					data-bs-target="#carousel"
-					data-bs-slide="next">
-					<span
-						class="carousel-control-next-icon"
-						aria-hidden="true" />
-					<span class="visually-hidden">Next</span>
-				</button>
 			</div>
 		</div>
 
@@ -515,6 +505,13 @@
 		margin auto
 		display flex
 		flex-direction column
+
+
+	.carouselbuttons
+		transform translateY(-50%)
+		left 1.25rem
+		right 1.25rem
+		top: 50%
 
 	#play img
 		height 2rem
