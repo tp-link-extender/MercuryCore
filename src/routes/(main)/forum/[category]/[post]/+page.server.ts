@@ -6,7 +6,7 @@ import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
-import { NotificationType, Visibility, Prisma } from "@prisma/client"
+import { NotificationType, Prisma } from "@prisma/client"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
