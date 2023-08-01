@@ -10,7 +10,7 @@ declare global {
 		}
 	}
 	namespace Lucia {
-		type Auth = import("$lib/server/lucia").Auth
+		type Auth = typeof import("$lib/server/lucia").auth
 		type DatabaseUserAttributes = {
 			// id is defined in Lucia
 			number: number
