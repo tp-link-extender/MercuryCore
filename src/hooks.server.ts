@@ -89,7 +89,7 @@ export async function handle({ event, resolve }) {
 						Number((await client.get("stipendTime")) || 12)) >
 			0
 		)
-	) {
+	)
 		await prisma.authUser.update({
 			where: {
 				id: user.id,
@@ -101,7 +101,6 @@ export async function handle({ event, resolve }) {
 				},
 			},
 		})
-	}
 
 	return await resolve(event)
 }
