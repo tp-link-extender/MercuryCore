@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { Parallax, ParallaxLayer } from "svelte-parallax"
 
-	let top: HTMLElement
-	let first: HTMLElement
-	let scrollY: number
+	let top: HTMLElement, first: HTMLElement, scrollY: number
 
-	const downScroll = () => first.scrollIntoView({ behavior: "smooth" })
-	const upScroll = () => top.scrollIntoView({ behavior: "smooth" })
+	const downScroll = () => first.scrollIntoView({ behavior: "smooth" }),
+		upScroll = () => top.scrollIntoView({ behavior: "smooth" })
 </script>
 
 <Head

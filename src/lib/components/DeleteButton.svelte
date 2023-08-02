@@ -3,8 +3,8 @@
 	export let reverse = false
 	export let moderate = false
 
-	const text = moderate ? "moderate" : "delete"
-	const colour = moderate ? "text-info" : "text-warning"
+	const text = moderate ? "moderate" : "delete",
+		colour = moderate ? "text-info" : "text-warning"
 
 	let clicked = false
 </script>

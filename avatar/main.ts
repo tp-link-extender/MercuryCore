@@ -84,17 +84,16 @@ let bodyShot = false
 if (params.c) bodyColours = JSON.parse(params.c)
 if (params.f == "") bodyShot = true
 
-const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(
-	bodyShot ? 65 : 30,
-	bodyShot ? 3 / 4 : 1
-)
-const objLoader = new OBJLoader()
-
-const renderer = new THREE.WebGLRenderer({
-	alpha: true,
-	antialias: true,
-})
+const scene = new THREE.Scene(),
+	camera = new THREE.PerspectiveCamera(
+		bodyShot ? 65 : 30,
+		bodyShot ? 3 / 4 : 1,
+	),
+	objLoader = new OBJLoader(),
+	renderer = new THREE.WebGLRenderer({
+		alpha: true,
+		antialias: true,
+	})
 
 if (bodyShot) renderer.setSize(300, 400)
 else renderer.setSize(150, 150)
@@ -121,7 +120,7 @@ objLoader.load("./head.obj", (root: any) => {
 			root,
 			new THREE.Vector3(0, 0.06, 1),
 			new THREE.Euler(0, 0, 0),
-			new THREE.Vector3(1.25, 1.25, 1)
+			new THREE.Vector3(1.25, 1.25, 1),
 		),
 		new THREE.MeshBasicMaterial({
 			map: new THREE.TextureLoader().load("./smile.webp"),
@@ -129,7 +128,7 @@ objLoader.load("./head.obj", (root: any) => {
 			color: 0xff0000,
 			polygonOffset: true,
 			polygonOffsetFactor: -4,
-		})
+		}),
 	)
 	decalMesh.position.set(0, 1.5, 0)
 

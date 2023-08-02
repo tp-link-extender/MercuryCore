@@ -9,20 +9,20 @@
 	// }
 
 	export let data
-	const { user } = data
+	const { user } = data,
+		{
+			form,
+			errors,
+			message,
+			constraints,
+			enhance,
+			delayed,
+			capture,
+			restore,
+		} = superForm(data.form, {
+			taintedMessage: false,
+		})
 
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
 	export const snapshot = { capture, restore }
 
 	const news = [
@@ -63,8 +63,6 @@
 		},
 		{ time: new Date(), title: "Mercury is now love!", content: "Yes" },
 	]
-
-
 </script>
 
 <Head title="Home" />

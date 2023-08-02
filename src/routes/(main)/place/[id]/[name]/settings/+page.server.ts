@@ -64,26 +64,25 @@ export const actions = {
 	default: async ({ request, locals, params, url }) => {
 		if (!/^\d+$/.test(params.id || ""))
 			throw error(400, `Invalid game id: ${params.id}`)
-		const id = parseInt(params.id || "")
-		const { user } = await authorise(locals)
-
-		const getPlace = await prisma.place.findUnique({
-			where: {
-				id,
-			},
-			include: {
-				ownerUser: true,
-				description: {
-					orderBy: {
-						updated: "desc",
-					},
-					select: {
-						text: true,
-					},
-					take: 1,
+		const id = parseInt(params.id || ""),
+			{ user } = await authorise(locals),
+			getPlace = await prisma.place.findUnique({
+				where: {
+					id,
 				},
-			},
-		})
+				include: {
+					ownerUser: true,
+					description: {
+						orderBy: {
+							updated: "desc",
+						},
+						select: {
+							text: true,
+						},
+						take: 1,
+					},
+				},
+			})
 
 		if (user.id != getPlace?.ownerUser?.id && user.permissionLevel < 4)
 			throw error(403, "You do not have permission to update this page.")

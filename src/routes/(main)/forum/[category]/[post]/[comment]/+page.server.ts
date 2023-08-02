@@ -64,14 +64,13 @@ export async function load({ locals, params }) {
 
 	if (!forumReplies) throw error(404, "Reply not found")
 
-	const { user } = await authorise(locals)
-
-	const repliesWithLikes = await addLikes<typeof forumReplies>(
-		"forum",
-		"Reply",
-		forumReplies,
-		user.username,
-	)
+	const { user } = await authorise(locals),
+		repliesWithLikes = await addLikes<typeof forumReplies>(
+			"forum",
+			"Reply",
+			forumReplies,
+			user.username,
+		)
 
 	return {
 		replies: [repliesWithLikes],

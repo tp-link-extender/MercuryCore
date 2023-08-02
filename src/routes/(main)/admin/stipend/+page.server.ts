@@ -24,19 +24,18 @@ export async function load({ locals }) {
 
 export const actions = {
 	updateStipend: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 5)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals, 5),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+
 		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
 		if (limit) return limit
 
-		const currentStipend = Number((await client.get("dailyStipend")) || 10)
-		const currentStipendTime = Number(
-			(await client.get("stipendTime")) || 12,
-		)
-
-		const { dailyStipend, stipendTime } = form.data
+		const currentStipend = Number((await client.get("dailyStipend")) || 10),
+			currentStipendTime = Number(
+				(await client.get("stipendTime")) || 12,
+			),
+			{ dailyStipend, stipendTime } = form.data
 
 		if (currentStipend == dailyStipend && currentStipendTime == stipendTime)
 			return message(form, "No changes were made")

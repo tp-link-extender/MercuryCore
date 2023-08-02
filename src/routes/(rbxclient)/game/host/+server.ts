@@ -13,10 +13,10 @@ export async function GET({ url }) {
 		where: { serverTicket: ticket },
 	})
 
-	let port = 53640
-	let baseUrl = "..."
-	// let serverId = "..."
-	let serverPresenceUrl = "..."
+	let port = 53640,
+		baseUrl = "...",
+		// serverId = "...",
+		serverPresenceUrl = "..."
 
 	if (placeData) {
 		port = placeData.serverPort

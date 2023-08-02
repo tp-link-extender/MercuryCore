@@ -27,8 +27,8 @@ const schema = z.object({
 export async function load({ locals, url }) {
 	await authorise(locals)
 
-	const reportee = url.searchParams.get("user")
-	const reportedUrl = url.searchParams.get("url")
+	const reportee = url.searchParams.get("user"),
+		reportedUrl = url.searchParams.get("url")
 
 	if (!reportee || !reportedUrl)
 		throw error(400, "Missing user or url parameters")
@@ -47,11 +47,10 @@ export const actions = {
 		const limit = ratelimit(form, "report", getClientAddress, 120)
 		if (limit) return limit
 
-		const { user } = await authorise(locals)
-
-		const { category, note } = form.data
-		const username = url.searchParams.get("user")
-		const userUrl = url.searchParams.get("user")
+		const { user } = await authorise(locals),
+			{ category, note } = form.data,
+			username = url.searchParams.get("user"),
+			userUrl = url.searchParams.get("user")
 
 		if (!username || !userUrl) throw error(400, "Missing fields")
 

@@ -11,9 +11,8 @@ export const load = () =>
 
 export const actions = {
 	default: async ({ locals, url }) => {
-		const { user } = await authorise(locals)
-
-		const id = url.searchParams.get("s")
+		const { user } = await authorise(locals),
+			id = url.searchParams.get("s")
 		if (!id) return fail(400)
 
 		try {

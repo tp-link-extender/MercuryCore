@@ -20,17 +20,16 @@ export async function load({ locals, params }) {
 			},
 		},
 	})
+
 	if (group) {
-		const { user } = await authorise(locals)
-
-		const query = {
-			group: group.name,
-		}
-
-		const query2 = {
-			user: user.username,
-			group: group.name,
-		}
+		const { user } = await authorise(locals),
+			query = {
+				group: group.name,
+			},
+			query2 = {
+				user: user.username,
+				group: group.name,
+			}
 
 		return {
 			name: group.name,
@@ -62,25 +61,24 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	default: async ({ request, locals, params }) => {
-		const { user } = await authorise(locals)
+		const { user } = await authorise(locals),
+			group = await prisma.group.findUnique({
+				where: {
+					name: params.name,
+				},
+				select: {
+					name: true,
+				},
+			})
 
-		const group = await prisma.group.findUnique({
-			where: {
-				name: params.name,
-			},
-			select: {
-				name: true,
-			},
-		})
 		if (!group) return fail(400, { msg: "User not found" })
 
-		const data = await formData(request)
-		const { action } = data
-
-		const query = {
-			user: user.username,
-			group: group.name,
-		}
+		const data = await formData(request),
+			{ action } = data,
+			query = {
+				user: user.username,
+				group: group.name,
+			}
 
 		try {
 			switch (action) {

@@ -14,10 +14,10 @@ const brickColours = [
 
 export const actions = {
 	paint: async ({ locals, url }) => {
-		const { user } = await authorise(locals)
+		const { user } = await authorise(locals),
+			bodyPartQuery = url.searchParams.get("p"),
+			bodyColour = url.searchParams.get("c")
 
-		const bodyPartQuery = url.searchParams.get("p")
-		const bodyColour = url.searchParams.get("c")
 		if (
 			!bodyPartQuery ||
 			!bodyColour ||
@@ -33,9 +33,9 @@ export const actions = {
 		)
 			return fail(400)
 
-		const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
+		const bodyPart = bodyPartQuery as keyof typeof user.bodyColours,
+			currentBodyColour = user.bodyColours
 
-		const currentBodyColour = user.bodyColours
 		currentBodyColour[bodyPart] = parseInt(bodyColour)
 
 		await prisma.authUser.update({

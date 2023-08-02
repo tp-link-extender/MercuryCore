@@ -9,8 +9,8 @@
  * const { text } = data
  */
 export default async function (request: Request) {
-	const entries = Object.fromEntries((await request.formData()).entries())
-	const data: { [k: string]: string } = {}
+	const entries = Object.fromEntries((await request.formData()).entries()),
+		data: { [k: string]: string } = {}
 	for (let entry in entries) data[entry] = (entries[entry] as string).trim()
 
 	return data

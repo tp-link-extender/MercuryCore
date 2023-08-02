@@ -34,17 +34,15 @@ export const actions = {
 	default: async ({ url, request, locals, getClientAddress }) => {
 		await authorise(locals, 5)
 
-		const { user } = await authorise(locals)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
-		const { action, bannerText, bannerColour, bannerBody } = form.data
-		const id = url.searchParams.get("id")
-
-		const bannerActiveCount = await prisma.announcements.findMany({
-			where: { active: true },
-		})
+		const { action, bannerText, bannerColour, bannerBody } = form.data,
+			id = url.searchParams.get("id"),
+			bannerActiveCount = await prisma.announcements.findMany({
+				where: { active: true },
+			})
 
 		switch (action) {
 			case "create": {
