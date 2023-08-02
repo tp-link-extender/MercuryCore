@@ -228,7 +228,6 @@
 				type="button"
 				class="btn-close"
 				on:click={() => modal.set(false)}
-				data-bs-dismiss="modal"
 				aria-label="Close" />
 		</div>
 		<div class="modal-body light-text">

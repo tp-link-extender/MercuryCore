@@ -148,11 +148,7 @@
 						</a>
 					</span>
 					<p class="light-text mb-0">
-						Gears: <i
-							class="far fa-circle-xmark"
-							data-bs-toggle="tooltip"
-							data-bs-placement="bottom"
-							data-bs-title="Tooltip on top" />
+						Gears: <i class="far fa-circle-xmark" />
 					</p>
 					<span
 						class="badge text-bg-{data.serverPing >
@@ -376,27 +372,31 @@
 							<i class="fas fa-wifi" />
 							Begin Hosting
 						</button>
-						<button
-							class="btn btn-success dropdown-toggle"
-							type="button"
-							data-bs-toggle="dropdown"
-							aria-expanded="false" />
-						<ul class="dropdown-menu dropdown-menu-end">
-							<li>
-								<button
-									class="dropdown-item light-text"
-									on:click={() => {
-										launch(
-											`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
-												data.serverTicket
-											}&autopilot=${btoa(filepath)}`
-										)
-									}}
-									type="button">
-									Begin Hosting (no Studio tools)
-								</button>
-							</li>
-						</ul>
+
+						<div class="dropdown2 dropdown-hover dropdown-end">
+							<button
+								class="btn btn-success dropdown-toggle"
+								type="button" />
+							<div class="dropdown-content pt-2">
+								<ul class="p-2 rounded-3">
+									<li class="rounded-2">
+										<button
+											class="btn light-text ps-3 pe-0 text-start"
+											on:click={() =>
+												launch(
+													`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
+														data.serverTicket
+													}&autopilot=${btoa(
+														filepath
+													)}`
+												)}
+											type="button">
+											Begin Hosting (no Studio tools)
+										</button>
+									</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 				</Tab>
 			</div>
@@ -501,7 +501,6 @@
 		display flex
 		flex-direction column
 
-
 	.carouselbuttons
 		transform translateY(-50%)
 		left 1.25rem
@@ -515,9 +514,8 @@
 		position absolute
 		margin 3px 0px 0px -10px
 
-	.dropdown-menu
-		border-color var(--accent2)
-		z-index 5
+	.dropdown-toggle
+		border-radius 0 0.375rem 0.375rem 0
 
 	#wrapper
 		width 128px
