@@ -122,7 +122,7 @@
 	.d-grid
 		font-size 0.9rem
 
-		grid-template-columns repeat(auto-fit, minmax(16rem, 1fr))
+		grid-template-columns repeat(auto-fit, minmax(19rem, 1fr))
 		column-gap 0.7rem
 		row-gap 0.7rem
 		place-items center
