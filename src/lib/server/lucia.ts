@@ -1,34 +1,31 @@
 // Initialising Lucia, the authentication library
 
 import { dev } from "$app/environment"
-import { prisma } from "$lib/server/prisma"
+import { client } from "$lib/server/redis"
+import { PrismaClient } from "@prisma/client"
 import { redirect, error } from "@sveltejs/kit"
-import { createClient } from "redis"
-import { lucia } from "lucia"
-import type { Session, User } from "lucia"
+import { lucia, type Session } from "lucia"
 import { sveltekit } from "lucia/middleware"
-import { prisma as prismaAdapter } from "@lucia-auth/adapter-prisma"
-import { redis as redisAdapter } from "@lucia-auth/adapter-session-redis"
+import { prisma } from "@lucia-auth/adapter-prisma"
+import { redis } from "@lucia-auth/adapter-session-redis"
 
-const prismaClient = prisma
-const redisClient = createClient({ url: "redis://localhost:6479" })
-redisClient.connect()
-
+// As of v2, Lucia now shits itself if it doesn't have
+// access to the database clients during build time
 export const auth = lucia({
 	middleware: sveltekit(),
 	adapter: {
-		user: prismaAdapter(prismaClient, {
+		user: prisma(new PrismaClient(), {
 			user: "authUser",
 			key: "authKey",
 			session: "authKey", // fuck you
 		}),
-		session: redisAdapter(redisClient),
+		session: redis(client),
 	},
 	env: dev ? "DEV" : "PROD",
 	getUserAttributes: data => ({
-		// This is the data that will be available after calling getUser()
-		// in a +page.svelte or +layout.svelte file, or authorise() in a
-		// +page.server.ts or +layout.server.ts file.
+		// This is the data that will be available in data.user
+		// in a +page.svelte or +layout.svelte file, or authorise()
+		// in a +page.server.ts or +layout.server.ts file.
 		id: data.id,
 		number: data.number,
 		bio: data.bio,
@@ -43,8 +40,6 @@ export const auth = lucia({
 		// Types for this are defined in src/app.d.ts.
 	}),
 })
-
-export type Auth = typeof auth
 
 /**
  * Authorises a user and returns their session and user data, or redirects them to the login page.
