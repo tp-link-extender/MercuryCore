@@ -252,13 +252,13 @@
 		#bottomnav
 		#notificationsbottom
 			display none
+
 	+-lg()
 		#topnav
 		#notificationstop
 			display none
 		#notificationsbottom
 			display flex
-
 
 	+sm()
 		#nav1
@@ -267,6 +267,7 @@
 		.navbar-brand
 			img
 				display none
+
 	+-sm()
 		#nav1
 			padding-left 0.5rem
@@ -300,9 +301,6 @@
 		+lightTheme()
 			background #0003
 
-	.dropdown-content li:hover
-		background var(--accent)
-
 	.loggedin
 		padding 0
 
@@ -319,8 +317,6 @@
 	.navbar-nav
 		a
 			border none
-			&:hover
-				color var(--grey-text) !important
 
 	#pfp
 	img
@@ -334,8 +330,12 @@
 			background var(--accent2)
 
 	.input-group
-		width 25vw
-		max-width 30rem
+		width 35vw
+		max-width 35rem
+		+xl()
+			position absolute
+			left 50%
+			transform translateX(-50%)
 		+-xl()
 			width 20rem
 		+-lg()
