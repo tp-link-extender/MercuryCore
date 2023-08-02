@@ -6,24 +6,23 @@ import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 export const load = async ({ locals }) => {
-	const { user } = await authorise(locals)
-
-	const getUser = await prisma.authUser.findUnique({
-		where: {
-			id: user.id,
-		},
-		include: {
-			bio: {
-				orderBy: {
-					updated: "desc",
-				},
-				select: {
-					text: true,
-				},
-				take: 1,
+	const { user } = await authorise(locals),
+		getUser = await prisma.authUser.findUnique({
+			where: {
+				id: user.id,
 			},
-		},
-	})
+			include: {
+				bio: {
+					orderBy: {
+						updated: "desc",
+					},
+					select: {
+						text: true,
+					},
+					take: 1,
+				},
+			},
+		})
 
 	return {
 		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
@@ -42,9 +41,8 @@ export const load = async ({ locals }) => {
 
 export const actions = {
 	default: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals)
-
-		const action = url.searchParams.get("a")
+		const { user } = await authorise(locals),
+			action = url.searchParams.get("a")
 
 		console.log(action)
 

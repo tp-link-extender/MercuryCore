@@ -48,12 +48,11 @@ export async function load({ locals, params }) {
 
 	if (!category) throw error(404, "Not found")
 
-	const { user } = await authorise(locals)
-
-	const fakeObject = {
-		id: "", // id not needed
-		replies: category.posts,
-	}
+	const { user } = await authorise(locals),
+		fakeObject = {
+			id: "", // id not needed
+			replies: category.posts,
+		}
 
 	await addLikes<typeof fakeObject>(
 		"forum",
@@ -74,11 +73,11 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	like: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const { action } = data
-		const id = url.searchParams.get("id")
-		const replyId = url.searchParams.get("rid")
+		const { user } = await authorise(locals),
+			data = await formData(request),
+			{ action } = data,
+			id = url.searchParams.get("id"),
+			replyId = url.searchParams.get("rid")
 
 		if (
 			(id &&

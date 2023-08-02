@@ -2,39 +2,34 @@
 	import customProtocolCheck from "custom-protocol-check"
 
 	export let data
-	const { user } = data
-
-	const statistics = [
-		["Activity", "0 visits"],
-		["Creation", data.created.toLocaleDateString()],
-		["Updated", data.updated.toLocaleDateString()],
-		["Genre", "Horror"],
-		["Server Limit", data.maxPlayers],
-		["Now Playing", data.gameSessions.length],
-	]
-
-	let carousel: HTMLElement
-
-	const images = [
-		"/place/placeholderImage1.webp",
-		"/place/placeholderImage2.webp",
-		"/place/placeholderImage3.webp",
-	]
-
-	const scroll = async (e: MouseEvent) =>
-		document
-			.getElementById(
-				new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
-			)
-			// (false) prevents page scrolling to top of element
-			?.scrollIntoView(false)
+	const { user } = data,
+		statistics = [
+			["Activity", "0 visits"],
+			["Creation", data.created.toLocaleDateString()],
+			["Updated", data.updated.toLocaleDateString()],
+			["Genre", "Horror"],
+			["Server Limit", data.maxPlayers],
+			["Now Playing", data.gameSessions.length],
+		],
+		images = [
+			"/place/placeholderImage1.webp",
+			"/place/placeholderImage2.webp",
+			"/place/placeholderImage3.webp",
+		],
+		scroll = async (e: MouseEvent) =>
+			document
+				.getElementById(
+					new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
+				)
+				// (false) prevents page scrolling to top of element
+				?.scrollIntoView(false)
 
 	// Place Launcher
 
-	let modal = writable(false)
-	let installed = true
-	let success = false
-	let filepath = ""
+	let modal = writable(false),
+		installed = true,
+		success = false,
+		filepath = ""
 
 	function launch(joinscripturl: string) {
 		success = false
@@ -48,7 +43,7 @@
 				success = true
 				console.log("URI found, launching")
 			},
-			5000,
+			5000
 		)
 	}
 
@@ -63,22 +58,22 @@
 		formdata.append("privateTicket", data.privateTicket)
 
 		const response = await fetch(`/place/${data.id}/${data.name}?/join`, {
-			method: "POST",
-			body: formdata,
-		})
-		const joinScriptData: any = deserialize(await response.text())
+				method: "POST",
+				body: formdata,
+			}),
+			joinScriptData: any = deserialize(await response.text())
 
 		if (joinScriptData.status == 200) {
 			launch(
 				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
-					joinScriptData.data.joinScriptUrl,
-				)}+gameinfo:test`,
+					joinScriptData.data.joinScriptUrl
+				)}+gameinfo:test`
 			)
 		}
 	}
 
-	let tabData = TabData(data.url, ["Description", "Game"])
-	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
+	let tabData = TabData(data.url, ["Description", "Game"]),
+		tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
 </script>
 
 <Head title={data.name} />
@@ -86,7 +81,7 @@
 <div class="container light-text">
 	<div class="row">
 		<div class="col-md-8 mb-3">
-			<div in:fade bind:this={carousel} class="carousel rounded-4">
+			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
 					<div
 						id="slide{i + 1}"
@@ -374,7 +369,7 @@
 								launch(
 									`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${
 										data.serverTicket
-									}&autopilot=${btoa(filepath)}`,
+									}&autopilot=${btoa(filepath)}`
 								)
 							}}
 							type="button">
@@ -394,7 +389,7 @@
 										launch(
 											`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
 												data.serverTicket
-											}&autopilot=${btoa(filepath)}`,
+											}&autopilot=${btoa(filepath)}`
 										)
 									}}
 									type="button">

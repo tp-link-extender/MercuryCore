@@ -57,14 +57,13 @@ export async function load({ locals, params }) {
 
 	if (!assetComments) throw error(404, "Comment not found")
 
-	const { user } = await authorise(locals)
-
-	const commentsWithLikes = await addLikes<typeof assetComments>(
-		"asset",
-		"Comment",
-		assetComments,
-		user.username,
-	)
+	const { user } = await authorise(locals),
+		commentsWithLikes = await addLikes<typeof assetComments>(
+			"asset",
+			"Comment",
+			assetComments,
+			user.username,
+		)
 
 	return {
 		replies: [commentsWithLikes],

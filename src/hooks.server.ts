@@ -9,12 +9,12 @@ import { prisma } from "$lib/server/prisma"
 import { client } from "$lib/server/redis"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
-const { magenta, red, yellow, green, blue, gray } = pc
 
-const methodColours: { [k: string]: string } = {
-	GET: green("GET"),
-	POST: yellow("POST"),
-}
+const { magenta, red, yellow, green, blue, gray } = pc,
+	methodColours: { [k: string]: string } = {
+		GET: green("GET"),
+		POST: yellow("POST"),
+	}
 
 function pathnameColour(pathname: string) {
 	if (pathname.startsWith("/api")) return green(pathname)
@@ -41,10 +41,10 @@ function pathnameColour(pathname: string) {
 // Requests for prerendered pages do not trigger this hook.
 export async function handle({ event, resolve }) {
 	event.locals.auth = auth.handleRequest(event)
-	const session = await event.locals.auth.validate()
-	const user = session?.user
-	const { pathname, search } = event.url
-	const { method } = event.request
+	const session = await event.locals.auth.validate(),
+		user = session?.user,
+		{ pathname, search } = event.url,
+		{ method } = event.request
 
 	// Fancy logging: time, user, method, and path
 	console.log(
@@ -107,8 +107,8 @@ export async function handle({ event, resolve }) {
 }
 
 export const handleError = async ({ event, error }) => {
-	const session = await event.locals.auth.validate()
-	const user = session?.user
+	const session = await event.locals.auth.validate(),
+		user = session?.user
 
 	// Fancy error logging: time, user, and error
 	if (dev) console.error(error)

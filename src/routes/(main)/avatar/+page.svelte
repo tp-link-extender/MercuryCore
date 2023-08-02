@@ -3,17 +3,17 @@
 	export let form
 	const { user } = data
 
-	let modal = writable(false)
-	let bodyPart = ""
-	let tabData = TabData(data.url, [
-		"Recent",
-		"Heads",
-		"Faces",
-		"T-Shirts",
-		"Shirts",
-		"Pants",
-		"Gear",
-	])
+	let modal = writable(false),
+		bodyPart = "",
+		tabData = TabData(data.url, [
+			"Recent",
+			"Heads",
+			"Faces",
+			"T-Shirts",
+			"Shirts",
+			"Pants",
+			"Gear",
+		])
 
 	const bodyParts: { [k: string]: number } = {
 		Head: user?.bodyColours.Head,

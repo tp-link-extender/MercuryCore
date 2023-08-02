@@ -13,33 +13,31 @@
 	})
 
 	export let data: import("../../routes/$types").LayoutData
-	const { user } = data
 
-	const nav1 = [
-		// ["Home", "/", "fa-house-chimney"],
-		["Games", "/games", "fa-mountain-sun"],
-		["Catalog", "/avatarshop", "fa-book-open-cover"],
-		// ["Groups", "/groups", "fa-people-group"],
-		["Create", "/develop", "fa-plus"],
-		["Forum", "/forum", "fa-messages"],
-	]
-
-	const usernav = [
-		["fa-user-group", "Friends", "/requests"],
-		["fa-box-open-full", "Inventory", "/inventory"],
-		["fa-user-pen", "Avatar", "/avatar"],
-		["fa-gears", "Settings", "/settings"],
-	]
+	const { user } = data,
+		nav1 = [
+			// ["Home", "/", "fa-house-chimney"],
+			["Games", "/games", "fa-mountain-sun"],
+			["Catalog", "/avatarshop", "fa-book-open-cover"],
+			// ["Groups", "/groups", "fa-people-group"],
+			["Create", "/develop", "fa-plus"],
+			["Forum", "/forum", "fa-messages"],
+		],
+		usernav = [
+			["fa-user-group", "Friends", "/requests"],
+			["fa-box-open-full", "Inventory", "/inventory"],
+			["fa-user-pen", "Avatar", "/avatar"],
+			["fa-gears", "Settings", "/settings"],
+		],
+		searchCategories = [
+			["Users", "users"],
+			["Places", "places"],
+			["Catalog", "assets"],
+			// ["Groups", "groups"],
+		]
 
 	if (user && user.permissionLevel >= 4)
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
-
-	const searchCategories = [
-		["Users", "users"],
-		["Places", "places"],
-		["Catalog", "assets"],
-		// ["Groups", "groups"],
-	]
 </script>
 
 <nav class="navbar navbar-expand py-0">

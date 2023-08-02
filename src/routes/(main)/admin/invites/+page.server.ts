@@ -35,20 +35,19 @@ export const actions = {
 	default: async ({ url, request, locals, getClientAddress }) => {
 		await authorise(locals, 5)
 
-		const { user } = await authorise(locals)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const {
-			action,
-			enableInviteCustom,
-			inviteCustom,
-			enableInviteExpiry,
-			inviteExpiry,
-			inviteUses,
-		} = form.data
-		const id = url.searchParams.get("id")
+				action,
+				enableInviteCustom,
+				inviteCustom,
+				enableInviteExpiry,
+				inviteExpiry,
+				inviteUses,
+			} = form.data,
+			id = url.searchParams.get("id")
 
 		switch (action) {
 			case "create": {
@@ -60,9 +59,9 @@ export const actions = {
 				)
 				if (limit) return limit
 
-				const customInviteEnabled = !!enableInviteCustom
-				const customInvite = inviteCustom
-				const inviteExpiryEnabled = !!enableInviteExpiry
+				const customInviteEnabled = !!enableInviteCustom,
+					customInvite = inviteCustom,
+					inviteExpiryEnabled = !!enableInviteExpiry
 
 				if (
 					!inviteUses ||

@@ -3,23 +3,23 @@
 	import { enhance as enhance2 } from "$app/forms"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let replyingTo = writable("")
-	const repliesCollapsed = writable({})
-
 	export let data
-	const { user } = data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+
+	let replyingTo = writable("")
+	const repliesCollapsed = writable({}),
+		{ user } = data,
+		{
+			form,
+			errors,
+			message,
+			constraints,
+			enhance,
+			delayed,
+			capture,
+			restore,
+		} = superForm(data.form, {
+			taintedMessage: false,
+		})
 
 	export const snapshot = { capture, restore }
 </script>

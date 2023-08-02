@@ -33,23 +33,23 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 	// Add like/dislike ratio to each place
 	for (const place of places as typeof places & { ratio: number | "--" }[]) {
 		const query = {
-			place: place.id,
-		}
-		const [likes, total] = await Promise.all([
-			roQuery(
-				"places",
-				cql`RETURN SIZE((:User) -[:likes]-> (:Place { name: $place }))`,
-				query,
-				true,
-			),
-			roQuery(
-				"places",
-				cql`RETURN SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place }))`,
-				query,
-				true,
-			),
-		])
-		const ratio = Math.floor((likes / total) * 100)
+				place: place.id,
+			},
+			[likes, total] = await Promise.all([
+				roQuery(
+					"places",
+					cql`RETURN SIZE((:User) -[:likes]-> (:Place { name: $place }))`,
+					query,
+					true,
+				),
+				roQuery(
+					"places",
+					cql`RETURN SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place }))`,
+					query,
+					true,
+				),
+			]),
+			ratio = Math.floor((likes / total) * 100)
 
 		place["ratio"] = isNaN(ratio) ? "--" : ratio
 	}
@@ -124,8 +124,8 @@ export async function transaction(
 	// })
 	// if (!receiver2) throw new Error("Receiver not found")
 
-	const taxRate = Number((await client.get("taxRate")) || 30)
-	const finalAmount = Math.round(amountSent * (1 - taxRate / 100))
+	const taxRate = Number((await client.get("taxRate")) || 30),
+		finalAmount = Math.round(amountSent * (1 - taxRate / 100))
 
 	await tx.authUser.update({
 		where: sender,

@@ -4,34 +4,31 @@
 
 	export let data
 	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+			form,
+			errors,
+			message,
+			constraints,
+			enhance,
+			delayed,
+			capture,
+			restore,
+		} = superForm(data.form, {
+			taintedMessage: false,
+		}),
+		viewBody = (id: any, body: any) => () => {
+			modal.set(true)
+
+			bannerId = id
+			$form.bannerBody = body.trim()
+			newBannerBody = body.trim()
+		}
 
 	export const snapshot = { capture, restore }
 
-	let modal = writable(false)
-
-	let bannerId = ""
-	let newBannerBody = ""
-
-	const viewBody = (id: any, body: any) => () => {
-		modal.set(true)
-
-		bannerId = id
-		$form.bannerBody = body.trim()
-		newBannerBody = body.trim()
-	}
-
-	let tabData = TabData(data.url, ["Create Banner", "Banner List"])
+	let modal = writable(false),
+		bannerId = "",
+		newBannerBody = "",
+		tabData = TabData(data.url, ["Create Banner", "Banner List"])
 </script>
 
 <Head title="Banners - Admin" />
@@ -186,7 +183,7 @@
 										type="button"
 										on:click={viewBody(
 											banner.id,
-											banner.body,
+											banner.body
 										)}
 										class="btn btn-sm btn-success my-0">
 										View Body
