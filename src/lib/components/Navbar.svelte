@@ -2,15 +2,23 @@
 	import { goto } from "$app/navigation"
 	import { quadOut } from "svelte/easing"
 
-	let search = ""
+	let search = "",
+		searchCompleted = true,
+		currentSearchFocus = -1
+
+	$: if (search == "") {
+		searchCompleted = true
+		currentSearchFocus = -1
+	}
 
 	const height = (_: HTMLElement) => ({
-		duration: 300,
-		css: (t: number) => `
-			height: ${2 * quadOut(t)}rem;
-			overflow: hidden;
-		`,
-	})
+			duration: 300,
+			css: (t: number) => `
+				height: ${2 * quadOut(t)}rem;
+				overflow: hidden;
+			`,
+		}),
+		searchResults: HTMLElement[] = []
 
 	export let data: import("../../routes/$types").LayoutData
 
@@ -71,37 +79,93 @@
 						<div class="input-group">
 							<input
 								bind:value={search}
+								on:keydown={e => {
+									switch (e.key) {
+										case "Enter":
+											if (
+												!searchCompleted &&
+												currentSearchFocus >= 0
+											) {
+												e.preventDefault()
+												searchResults[
+													currentSearchFocus
+												].click()
+											}
+
+											searchCompleted = true
+											currentSearchFocus = -1
+											break
+										case "ArrowDown":
+										case "ArrowUp":
+											e.preventDefault()
+
+											// Focus first result
+											const prevSearchFocus =
+												currentSearchFocus
+
+											currentSearchFocus +=
+												e.key == "ArrowDown" ? 1 : -1
+
+											currentSearchFocus =
+												currentSearchFocus >=
+												searchCategories.length
+													? 0
+													: currentSearchFocus < 0
+													? searchCategories.length -
+													  1
+													: currentSearchFocus
+
+											searchResults[
+												currentSearchFocus
+											]?.classList.add("pseudofocus")
+											searchResults[
+												prevSearchFocus
+											]?.classList.remove("pseudofocus")
+
+											break
+										case "Escape":
+											search = ""
+											break
+										default:
+											searchCompleted = false
+									}
+								}}
 								class="form-control valid bg-background"
 								name="query"
 								type="search"
 								placeholder="Search"
-								aria-label="Search" />
+								aria-label="Search"
+								autocomplete="off" />
 							<button
-								on:click|preventDefault={() =>
+								on:click|preventDefault={() => {
 									search
 										? goto(`/search?q=${search}&c=users`)
-										: null}
-								class="btn btn-success py-0"
+										: null
+
+									searchCompleted = true
+								}}
+								class="btn btn-success py-0 rounded-end-2"
 								title="Search">
 								<i class="fa fa-search" />
 							</button>
+							{#if search && !searchCompleted}
+								<div
+									transition:fade={{ duration: 150 }}
+									id="results"
+									class="position-absolute d-flex flex-column bg-darker p-2 mt-5 rounded-3">
+									{#each searchCategories as [name, category], num}
+										<a
+											bind:this={searchResults[num]}
+											class="btn text-start light-text py-2"
+											href="/search?q={search}&c={category}"
+											title="Search {name}">
+											Search <b>{search}</b>
+											in {name}
+										</a>
+									{/each}
+								</div>
+							{/if}
 						</div>
-						{#if search}
-							<div
-								transition:fade={{ duration: 150 }}
-								id="results"
-								class="position-absolute d-flex flex-column bg-darker p-2 mt-2 rounded-3">
-								{#each searchCategories as [name, category]}
-									<a
-										class="btn text-start light-text py-2"
-										href="/search?q={search}&c={category}"
-										title="Search {name}">
-										Search <b>{search}</b>
-										in {name}
-									</a>
-								{/each}
-							</div>
-						{/if}
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
@@ -137,8 +201,7 @@
 									alt="You"
 									class="rounded-circle rounded-top-0" />
 							</div>
-							<p
-								class="my-auto fs-6 light-text">
+							<p class="my-auto fs-6 light-text">
 								{user?.username}
 							</p>
 						</a>
@@ -330,7 +393,11 @@
 		z-index 5
 		min-width 25vw
 		a:hover
-			background var(--accent2)
+			background var(--accent)
+
+		:global(.pseudofocus)
+			color var(--grey-text) !important
+			background var(--accent)
 
 	.input-group
 		width 35vw
