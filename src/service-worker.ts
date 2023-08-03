@@ -4,13 +4,12 @@
 import { build, files, prerendered, version } from "$service-worker"
 
 // Create a unique cache name for this deployment
-const CACHE = `cache-${version}`
-
-const ASSETS = [
-	...build, // the app itself
-	...files, // everything in `static`
-	...prerendered, // pages that have been prerendered (empty in dev)
-]
+const CACHE = `cache-${version}`,
+	ASSETS = [
+		...build, // the app itself
+		...files, // everything in `static`
+		...prerendered, // pages that have been prerendered (empty in dev)
+	]
 
 self.addEventListener("install", event =>
 	// Create a new cache and add all files to it
@@ -35,8 +34,8 @@ self.addEventListener("fetch", event => {
 
 	// cannot be an anonymous function for some reason
 	async function respond() {
-		const url = new URL(event.request.url)
-		const cache = await caches.open(CACHE)
+		const url = new URL(event.request.url),
+			cache = await caches.open(CACHE)
 
 		// `build`/`files` can always be served from the cache
 		// buggy atm so disabled

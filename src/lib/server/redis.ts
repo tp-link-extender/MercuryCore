@@ -10,8 +10,8 @@ import {
 	type RedisClientType,
 } from "redis"
 
-let client: RedisClientType
-let graphs: { [k: string]: graphType }
+let client: RedisClientType,
+	graphs: { [k: string]: graphType }
 
 if (!building) {
 	client = createClient({ url: "redis://localhost:6479" })

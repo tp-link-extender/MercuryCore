@@ -13,33 +13,31 @@
 	})
 
 	export let data: import("../../routes/$types").LayoutData
-	const { user } = data
 
-	const nav1 = [
-		// ["Home", "/", "fa-house-chimney"],
-		["Games", "/games", "fa-mountain-sun"],
-		["Catalog", "/avatarshop", "fa-book-open-cover"],
-		// ["Groups", "/groups", "fa-people-group"],
-		["Create", "/develop", "fa-plus"],
-		["Forum", "/forum", "fa-messages"],
-	]
-
-	const usernav = [
-		["fa-user-group", "Friends", "/requests"],
-		["fa-box-open-full", "Inventory", "/inventory"],
-		["fa-user-pen", "Avatar", "/avatar"],
-		["fa-gears", "Settings", "/settings"],
-	]
+	const { user } = data,
+		nav1 = [
+			// ["Home", "/", "fa-house-chimney"],
+			["Games", "/games", "fa-mountain-sun"],
+			["Catalog", "/avatarshop", "fa-book-open-cover"],
+			// ["Groups", "/groups", "fa-people-group"],
+			["Create", "/develop", "fa-plus"],
+			["Forum", "/forum", "fa-messages"],
+		],
+		usernav = [
+			["fa-user-group", "Friends", "/requests"],
+			["fa-box-open-full", "Inventory", "/inventory"],
+			["fa-user-pen", "Avatar", "/avatar"],
+			["fa-gears", "Settings", "/settings"],
+		],
+		searchCategories = [
+			["Users", "users"],
+			["Places", "places"],
+			["Catalog", "assets"],
+			// ["Groups", "groups"],
+		]
 
 	if (user && user.permissionLevel >= 4)
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
-
-	const searchCategories = [
-		["Users", "users"],
-		["Places", "places"],
-		["Catalog", "assets"],
-		// ["Groups", "groups"],
-	]
 </script>
 
 <nav class="navbar navbar-expand py-0">
@@ -254,13 +252,13 @@
 		#bottomnav
 		#notificationsbottom
 			display none
+
 	+-lg()
 		#topnav
 		#notificationstop
 			display none
 		#notificationsbottom
 			display flex
-
 
 	+sm()
 		#nav1
@@ -269,6 +267,7 @@
 		.navbar-brand
 			img
 				display none
+
 	+-sm()
 		#nav1
 			padding-left 0.5rem
@@ -302,9 +301,6 @@
 		+lightTheme()
 			background #0003
 
-	.dropdown-content li:hover
-		background var(--accent)
-
 	.loggedin
 		padding 0
 
@@ -321,8 +317,6 @@
 	.navbar-nav
 		a
 			border none
-			&:hover
-				color var(--grey-text) !important
 
 	#pfp
 	img
@@ -336,8 +330,12 @@
 			background var(--accent2)
 
 	.input-group
-		width 25vw
-		max-width 30rem
+		width 35vw
+		max-width 35rem
+		+xl()
+			position absolute
+			left 50%
+			transform translateX(-50%)
 		+-xl()
 			width 20rem
 		+-lg()

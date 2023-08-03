@@ -33,21 +33,20 @@ async function addLikes<
 	nextType: string = type,
 ) {
 	const item2 = item as ItemType & {
-		likeCount: number
-		dislikeCount: number
-		likes: boolean
-		dislikes: boolean
-		replies: {
 			likeCount: number
 			dislikeCount: number
 			likes: boolean
 			dislikes: boolean
-		}[]
-	}
+			replies: {
+				likeCount: number
+				dislikeCount: number
+				likes: boolean
+				dislikes: boolean
+			}[]
+		},
+		query = { user: username, id: item2.id },
+		t = []
 
-	const query = { user: username, id: item2.id }
-
-	const t = []
 	if (item2.replies)
 		for (const i of item2.replies)
 			t.push(addLikes<NextType[number]>(graphName, nextType, i, username))

@@ -9,69 +9,67 @@ import { NotificationType } from "@prisma/client"
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
 		throw error(400, `Invalid user id: ${params.number}`)
-	const number = parseInt(params.number)
 
-	const userExists = await prisma.authUser.findUnique({
-		where: {
-			number,
-		},
-		select: {
-			id: true,
-			username: true,
-			number: true,
-			permissionLevel: true,
-			posts: {
-				orderBy: {
-					posted: "desc",
-				},
-				select: {
-					posted: true,
-					content: true,
-				},
-				take: 40,
-			},
-			bio: {
-				orderBy: {
-					updated: "desc",
-				},
-				select: {
-					text: true,
-				},
-				take: 1,
-			},
-		},
-	})
-	if (userExists) {
-		const { user } = await authorise(locals)
-
-		const query = {
-			user1: user.username,
-			user2: userExists.username,
-		}
-		const query2 = {
-			user: userExists.username,
-		}
-
-		const places = findPlaces({
+	const number = parseInt(params.number),
+		userExists = await prisma.authUser.findUnique({
 			where: {
-				ownerUsername: userExists.username,
-				privateServer: user.id == userExists.id ? undefined : false,
+				number,
 			},
 			select: {
 				id: true,
-				name: true,
-				gameSessions: {
-					where: {
-						ping: {
-							gt: Math.floor(Date.now() / 1000) - 35,
-						},
+				username: true,
+				number: true,
+				permissionLevel: true,
+				posts: {
+					orderBy: {
+						posted: "desc",
 					},
 					select: {
-						valid: true,
+						posted: true,
+						content: true,
 					},
+					take: 40,
+				},
+				bio: {
+					orderBy: {
+						updated: "desc",
+					},
+					select: {
+						text: true,
+					},
+					take: 1,
 				},
 			},
 		})
+	if (userExists) {
+		const { user } = await authorise(locals),
+			query = {
+				user1: user.username,
+				user2: userExists.username,
+			},
+			query2 = {
+				user: userExists.username,
+			},
+			places = findPlaces({
+				where: {
+					ownerUsername: userExists.username,
+					privateServer: user.id == userExists.id ? undefined : false,
+				},
+				select: {
+					id: true,
+					name: true,
+					gameSessions: {
+						where: {
+							ping: {
+								gt: Math.floor(Date.now() / 1000) - 35,
+							},
+						},
+						select: {
+							valid: true,
+						},
+					},
+				},
+			})
 
 		return {
 			...userExists,
@@ -157,27 +155,25 @@ export const actions = {
 
 		if (!/^\d+$/.test(params.number))
 			return fail(400, { msg: `Invalid user id: ${params.number}` })
-		const number = parseInt(params.number)
-
-		const userExists = await prisma.authUser.findUnique({
-			where: {
-				number,
-			},
-		})
+		const number = parseInt(params.number),
+			userExists = await prisma.authUser.findUnique({
+				where: {
+					number,
+				},
+			})
 		if (
 			!userExists ||
 			user.id == userExists.id // You can't friend/follow yourself
 		)
 			return fail(401)
 
-		const data = await formData(request)
-		const { action } = data
-
-		const user2Exists = await prisma.authUser.findUnique({
-			where: {
-				username: userExists?.username,
-			},
-		})
+		const data = await formData(request),
+			{ action } = data,
+			user2Exists = await prisma.authUser.findUnique({
+				where: {
+					username: userExists?.username,
+				},
+			})
 		if (!user2Exists) return fail(400, { msg: "User not found" })
 
 		const query = {

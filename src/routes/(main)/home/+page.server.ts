@@ -12,21 +12,20 @@ const schema = z.object({
 })
 
 export async function load({ locals }) {
-	const { user } = await authorise(locals)
-	// (main)/+layout.server.ts will handle most redirects for logged-out users,
-	// but sometimes errors for this page.
+	const { user } = await authorise(locals),
+		// (main)/+layout.server.ts will handle most redirects for logged-out users,
+		// but sometimes errors for this page.
 
-	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
-
-	const facts = [
-		`You joined mercury on ${user?.accountCreated
-			.toLocaleString()
-			.substring(0, 10)}!`,
-		// Add "st", "nd", "rd", "th" to number
-		`You are the ${user?.number}${
-			["st", "nd", "rd"][(user?.number % 10) - 1] || "th"
-		} user to join Mercury!`,
-	]
+		greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`],
+		facts = [
+			`You joined mercury on ${user?.accountCreated
+				.toLocaleString()
+				.substring(0, 10)}!`,
+			// Add "st", "nd", "rd", "th" to number
+			`You are the ${user?.number}${
+				["st", "nd", "rd"][(user?.number % 10) - 1] || "th"
+			} user to join Mercury!`,
+		]
 
 	return {
 		stuff: {

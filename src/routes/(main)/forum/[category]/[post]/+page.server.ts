@@ -107,24 +107,24 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	reply: async ({ url, request, locals, params, getClientAddress }) => {
-		const { user } = await authorise(locals)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+
 		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
 		if (limit) return limit
 
-		const { content } = form.data
-		const replyId = url.searchParams.get("rid")
-		// If there is a replyId, it is a reply to another comment
+		const { content } = form.data,
+			replyId = url.searchParams.get("rid"),
+			// If there is a replyId, it is a reply to another comment
 
-		const replypost = replyId
-			? await prisma.forumReply.findUnique({
-					where: { id: replyId },
-			  })
-			: await prisma.forumPost.findUnique({
-					where: { id: params.post },
-			  })
+			replypost = replyId
+				? await prisma.forumReply.findUnique({
+						where: { id: replyId },
+				  })
+				: await prisma.forumPost.findUnique({
+						where: { id: params.post },
+				  })
 
 		if (!replypost) throw error(404)
 
@@ -160,9 +160,8 @@ export const actions = {
 			})
 	},
 	delete: async ({ url, locals }) => {
-		const { user } = await authorise(locals)
-
-		const id = url.searchParams.get("id")
+		const { user } = await authorise(locals),
+			id = url.searchParams.get("id")
 		if (!id) throw error(400, "No reply id provided")
 
 		const reply = await prisma.forumReply.findUnique({

@@ -42,23 +42,21 @@
 // 	bottom 0%
 // 	top auto
 
-.dropdown2.dropdown-open .dropdown-content
-.dropdown2:not(.dropdown-hover):focus .dropdown-content
-.dropdown2:focus-within .dropdown-content
-	visibility visible
-	opacity 1
+.dropdown2
+	&.dropdown-open .dropdown-content
+	&:not(.dropdown-hover):focus .dropdown-content
+	&:focus-within .dropdown-content
+	&.dropdown-hover:hover .dropdown-content
+		visibility visible
+		opacity 1
 
-.dropdown2.dropdown-hover:hover .dropdown-content
-	visibility visible
-	opacity 1
+	&:is(details) summary::-webkit-details-marker
+		display none
 
-.dropdown2:is(details) summary::-webkit-details-marker
-	display none
+	// Other styles
 
-// Other styles
-
-.dropdown2 details
-	width 10rem
+	// details
+	// 	width 10rem
 
 .dropdown-content
 	z-index 1000
@@ -71,12 +69,16 @@
 		background var(--darker)
 
 	a
-	.btn
+	button
 		width 100%
 		padding-left 0
 		padding-right 3rem
+		border none
+		&:hover
+			color var(--grey-text) !important
 
 	li
 		padding 0px
+		transition background 0.2s
 		&:hover
-			background var(--bs-blue)
+			background var(--accent)

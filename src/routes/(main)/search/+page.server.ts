@@ -3,8 +3,9 @@ import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
 export const load = async ({ url }) => {
-	const query = url.searchParams.get("q") || ""
-	const category = url.searchParams.get("c")?.toLowerCase() || ""
+	const query = url.searchParams.get("q") || "",
+		category = url.searchParams.get("c")?.toLowerCase() || ""
+
 	if (!query) throw error(400, "No query provided")
 	if (category && !["users", "places", "assets", "groups"].includes(category))
 		throw error(400, "Invalid category")
@@ -98,9 +99,9 @@ export const load = async ({ url }) => {
 
 export const actions = {
 	default: async ({ url, request }) => {
-		const data = await formData(request)
-		const { query } = data
-		const category = url.searchParams.get("c") || ""
+		const data = await formData(request),
+			{ query } = data,
+			category = url.searchParams.get("c") || ""
 
 		console.log(`searching for ${query} in ${category}`)
 

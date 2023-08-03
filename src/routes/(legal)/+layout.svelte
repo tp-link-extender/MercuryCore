@@ -18,6 +18,10 @@
 
 <style lang="stylus">
 	main
+		// Prevent content from going behind gradient
+		z-index 1
+		background none
+
 		padding-bottom 5vh
 		padding-top 5vh//10vh
 		+-lg()

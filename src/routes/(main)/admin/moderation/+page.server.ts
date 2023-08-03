@@ -24,16 +24,14 @@ export async function load({ locals }) {
 
 export const actions = {
 	moderateUser: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 4)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals, 4),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
 		// if (limit) return limit
 
-		const { username, action, banDate, reason } = form.data
-
-		const date = banDate ? new Date(banDate) : null
+		const { username, action, banDate, reason } = form.data,
+			date = banDate ? new Date(banDate) : null
 
 		if (action == 2 && (date?.getTime() || 0) < new Date().getTime())
 			return formError(form, ["banDate"], ["Invalid date"])
@@ -62,19 +60,18 @@ export const actions = {
 			)
 
 		const moderationMessage = [
-			"has been warned",
-			`has been banned until ${date?.toLocaleDateString()}`,
-			"has been terminated",
-			"has been deleted",
-			"has been unbanned",
-		]
-
-		const moderationActions = [
-			"Warning",
-			"Ban",
-			"Termination",
-			"AccountDeleted",
-		]
+				"has been warned",
+				`has been banned until ${date?.toLocaleDateString()}`,
+				"has been terminated",
+				"has been deleted",
+				"has been unbanned",
+			],
+			moderationActions = [
+				"Warning",
+				"Ban",
+				"Termination",
+				"AccountDeleted",
+			]
 
 		if (action == 5) {
 			// Unban

@@ -4,8 +4,8 @@
 	export let total: number
 	export let categoryName: string
 
-	let likesDisabled = false
-	let dislikesDisabled = false
+	let likesDisabled = false,
+		dislikesDisabled = false
 </script>
 
 <div in:fade|global={{ num, total }} class="post card bg-darker mb-3 flex-row">

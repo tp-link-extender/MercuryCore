@@ -8,55 +8,54 @@ import { error, fail } from "@sveltejs/kit"
 export async function load({ url, locals, params }) {
 	if (!/^\d+$/.test(params.id))
 		throw error(400, `Invalid place id: ${params.id}`)
-	const id = parseInt(params.id)
 
-	const privateServerCode = url.searchParams.get("privateServer")
+	const id = parseInt(params.id),
+		privateServerCode = url.searchParams.get("privateServer"),
+		getPlace = await prisma.place.findUnique({
+			where: { id },
+			select: {
+				id: true,
+				name: true,
+				serverPing: true,
+				serverTicket: true,
+				privateServer: true,
+				privateTicket: true,
+				created: true,
+				updated: true,
+				maxPlayers: true,
 
-	const getPlace = await prisma.place.findUnique({
-		where: { id },
-		select: {
-			id: true,
-			name: true,
-			serverPing: true,
-			serverTicket: true,
-			privateServer: true,
-			privateTicket: true,
-			created: true,
-			updated: true,
-			maxPlayers: true,
-
-			ownerUser: {
-				select: {
-					username: true,
-					number: true,
-				},
-			},
-			description: {
-				orderBy: {
-					updated: "desc",
-				},
-				select: {
-					text: true,
-				},
-				take: 1,
-			},
-			gameSessions: {
-				where: {
-					ping: {
-						gt: Math.floor(Date.now() / 1000) - 35,
+				ownerUser: {
+					select: {
+						username: true,
+						number: true,
 					},
 				},
-				select: {
-					user: {
-						select: {
-							username: true,
-							number: true,
+				description: {
+					orderBy: {
+						updated: "desc",
+					},
+					select: {
+						text: true,
+					},
+					take: 1,
+				},
+				gameSessions: {
+					where: {
+						ping: {
+							gt: Math.floor(Date.now() / 1000) - 35,
+						},
+					},
+					select: {
+						user: {
+							select: {
+								username: true,
+								number: true,
+							},
 						},
 					},
 				},
 			},
-		},
-	})
+		})
 
 	if (!getPlace) throw error(404, "Not found")
 
@@ -105,18 +104,18 @@ export const actions = {
 	like: async ({ url, request, locals, params }) => {
 		if (!/^\d+$/.test(params.id))
 			throw error(400, `Invalid place id: ${params.id}`)
-		const id = parseInt(params.id)
 
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const { action } = data
-		const privateTicket = url.searchParams.get("privateTicket")
+		const id = parseInt(params.id),
+			{ user } = await authorise(locals),
+			data = await formData(request),
+			{ action } = data,
+			privateTicket = url.searchParams.get("privateTicket"),
+			place = await prisma.place.findUnique({
+				where: {
+					id,
+				},
+			})
 
-		const place = await prisma.place.findUnique({
-			where: {
-				id,
-			},
-		})
 		if (
 			!place ||
 			(place.privateServer && privateTicket != place.privateTicket)
@@ -190,12 +189,10 @@ export const actions = {
 	},
 
 	join: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-
-		const data = await formData(request)
-
-		const requestType = data.request
-		const serverId = parseInt(data.serverId)
+		const { user } = await authorise(locals),
+			data = await formData(request),
+			requestType = data.request,
+			serverId = parseInt(data.serverId)
 
 		if (!requestType || !serverId)
 			return fail(400, { message: "Invalid Request" })
@@ -228,22 +225,21 @@ export const actions = {
 		})
 
 		const session = await prisma.gameSessions.create({
-			// create valid session
-			data: {
-				place: {
-					connect: {
-						id: serverId,
+				// create valid session
+				data: {
+					place: {
+						connect: {
+							id: serverId,
+						},
+					},
+					user: {
+						connect: {
+							id: user.id,
+						},
 					},
 				},
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
-			},
-		})
-
-		const joinScriptUrl = `https://banland.xyz/game/join?ticket=${session.ticket}`
+			}),
+			joinScriptUrl = `https://banland.xyz/game/join?ticket=${session.ticket}`
 
 		return { joinScriptUrl }
 	},

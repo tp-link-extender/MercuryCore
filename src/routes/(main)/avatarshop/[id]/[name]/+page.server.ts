@@ -98,18 +98,17 @@ export async function load({ locals, params }) {
 
 	if (!getAsset || !getAsset.creatorUser) throw error(404, "Not found")
 
-	const { user } = await authorise(locals)
-
-	const assetOwned = await prisma.asset.findUnique({
-		where: { id },
-		select: {
-			owners: {
-				where: {
-					id: user.id,
+	const { user } = await authorise(locals),
+		assetOwned = await prisma.asset.findUnique({
+			where: { id },
+			select: {
+				owners: {
+					where: {
+						id: user.id,
+					},
 				},
 			},
-		},
-	})
+		})
 
 	// id not needed for querying likes, as assets can't be voted on
 	getAsset.id = 0
@@ -130,15 +129,15 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	reply: async ({ url, request, locals, params, getClientAddress }) => {
-		const { user } = await authorise(locals)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+
 		const limit = ratelimit(form, "assetComment", getClientAddress, 5)
 		if (limit) return limit
 
-		const { content } = form.data
-		const replyId = url.searchParams.get("rid")
+		const { content } = form.data,
+			replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another comment
 
 		let receiverId
@@ -197,11 +196,11 @@ export const actions = {
 			})
 	},
 	like: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const { action } = data
-		const id = url.searchParams.get("id")
-		const replyId = url.searchParams.get("rid")
+		const { user } = await authorise(locals),
+			data = await formData(request),
+			{ action } = data,
+			id = url.searchParams.get("id"),
+			replyId = url.searchParams.get("rid")
 
 		if (
 			(id &&
@@ -211,9 +210,8 @@ export const actions = {
 					},
 				}))) ||
 			!replyId
-		) {
+		)
 			throw error(404)
-		}
 
 		const query = {
 			user: user.username,
@@ -281,9 +279,9 @@ export const actions = {
 		}
 	},
 	delete: async ({ url, locals }) => {
-		const { user } = await authorise(locals)
+		const { user } = await authorise(locals),
+			id = url.searchParams.get("id")
 
-		const id = url.searchParams.get("id")
 		if (!id) throw error(400, "No comment id provided")
 
 		const comment = await prisma.assetComment.findUnique({
