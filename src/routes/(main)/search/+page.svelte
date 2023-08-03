@@ -40,9 +40,6 @@
 								class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
 									user.status
 								]}">
-								<span class="visually-hidden">
-									{user.status}
-								</span>
 							</span>
 						{/if} -->
 					</div>

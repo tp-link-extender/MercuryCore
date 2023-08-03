@@ -186,9 +186,6 @@
 											class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
 												friend.status
 											]}">
-											<span class="visually-hidden">
-												{friend.status}
-											</span>
 										</span>
 									{/if} -->
 								</div>

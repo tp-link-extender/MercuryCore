@@ -25,14 +25,13 @@
 				alt={user.username}
 				class="h-100 rounded-circle rounded-top-0" />
 		</div>
-		{#if user.status}
+		<!-- {#if user.status}
 			<span
 				class="position-absolute bottom-0 end-0 badge rounded-circle bg-a {statusColours[
 					user.status
 				]}">
-				<span class="visually-hidden">{user.status}</span>
 			</span>
-		{/if}
+		{/if} -->
 	</div>
 	<p class="h4 p-4">
 		{user.username}
@@ -47,8 +46,8 @@
 			width fit-content
 			word-break break-all
 
-		.badge
-			padding 0.75rem
+		// .badge
+		// 	padding 0.75rem
 		.image-background
 			min-width 6rem
 			img

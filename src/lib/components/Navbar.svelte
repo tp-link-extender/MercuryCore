@@ -43,7 +43,7 @@
 <nav class="navbar navbar-expand py-0">
 	<div class="w-100 border-0" tabindex="-1">
 		<div id="nav1" class="py-1 d-flex">
-			<a class="navbar-brand light-text mt-1 me-0" href="/">
+			<a class="navbar-brand light-text me-0" href="/">
 				<img class="me-2" src="/favicon.svg" alt="Mercury logo" />
 				<span class="me-4">Mercury</span>
 			</a>
@@ -61,7 +61,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="search" class="navbar-nav mx-auto mt-1">
+				<div class="navbar-nav mx-auto">
 					<form
 						use:enhance
 						method="POST"
@@ -138,8 +138,7 @@
 									class="rounded-circle rounded-top-0" />
 							</div>
 							<p
-								id="username"
-								class="my-auto fs-6 me-2 light-text">
+								class="my-auto fs-6 light-text">
 								{user?.username}
 							</p>
 						</a>
@@ -272,7 +271,7 @@
 		#nav1
 			padding-left 0.5rem
 			padding-right 0.5rem
-		#username
+		.dropdown2 p
 			display none
 		.navbar-brand
 			img
@@ -304,10 +303,14 @@
 	.loggedin
 		padding 0
 
-	#username
-		max-width 10rem
-		min-width 1rem
-		white-space nowrap
+	.dropdown2
+		margin-top 2px
+		p
+			max-width 6rem
+			min-width 1rem
+			// ellipsis
+			overflow hidden
+			text-overflow ellipsis
 
 	#topnav
 		z-index 9
@@ -332,16 +335,18 @@
 	.input-group
 		width 35vw
 		max-width 35rem
+		margin-top 2px
+
 		+xl()
 			position absolute
 			left 50%
 			transform translateX(-50%)
 		+-xl()
-			width 20rem
+			width 19rem
 		+-lg()
-			width 26rem
+			width 25rem
 		+-md()
-			width 15rem
+			width 13rem
 		+-sm()
 			width 100%
 
