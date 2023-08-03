@@ -310,6 +310,10 @@
 		i
 			font-size 1.5rem
 	
+	+lightTheme()
+		.navbar-brand img
+			filter invert(1)
+
 	+lg()
 		#bottomnav
 		#notificationsbottom
@@ -338,9 +342,10 @@
 			display none
 		.navbar-brand
 			img
-				margin-top -0.5rem
+				margin-top -0.2rem
 				width 2rem
 				height 2rem
+
 			span
 				display none
 
@@ -385,7 +390,7 @@
 			border none
 
 	#pfp
-	img
+	#pfp img
 		width 2.4rem
 		height 2.4rem
 

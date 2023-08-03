@@ -14,7 +14,7 @@ export async function load({ locals }) {
 
 	if (!userModeration[0])
 		throw error(
-			404,
+			454,
 			"Your ID has been sent to the Mercury Servers for moderation. Thank you!",
 		)
 
