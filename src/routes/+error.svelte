@@ -4,16 +4,15 @@
 
 	import { page } from "$app/stores"
 
-	const status = $page.status
-
-	const errors: { [k: number]: string } = {
-		401: "mStop",
-		403: "mStop",
-		404: "mQuestion",
-		409: "mDouble",
-		410: "mGone",
-		451: "mBurn",
-	}
+	const status = $page.status,
+		errors: { [k: number]: string } = {
+			401: "mStop",
+			403: "mStop",
+			404: "mQuestion",
+			409: "mDouble",
+			410: "mGone",
+			451: "mBurn",
+		}
 
 	export let data: import("./$types").LayoutData
 </script>

@@ -2,39 +2,34 @@
 	import customProtocolCheck from "custom-protocol-check"
 
 	export let data
-	const { user } = data
-
-	const statistics = [
-		["Activity", "0 visits"],
-		["Creation", data.created.toLocaleDateString()],
-		["Updated", data.updated.toLocaleDateString()],
-		["Genre", "Horror"],
-		["Server Limit", data.maxPlayers],
-		["Now Playing", data.gameSessions.length],
-	]
-
-	let carousel: HTMLElement
-
-	const images = [
-		"/place/placeholderImage1.webp",
-		"/place/placeholderImage2.webp",
-		"/place/placeholderImage3.webp",
-	]
-
-	const scroll = async (e: MouseEvent) =>
-		document
-			.getElementById(
-				new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
-			)
-			// (false) prevents page scrolling to top of element
-			?.scrollIntoView(false)
+	const { user } = data,
+		statistics = [
+			["Activity", "0 visits"],
+			["Creation", data.created.toLocaleDateString()],
+			["Updated", data.updated.toLocaleDateString()],
+			["Genre", "Horror"],
+			["Server Limit", data.maxPlayers],
+			["Now Playing", data.gameSessions.length],
+		],
+		images = [
+			"/place/placeholderImage1.webp",
+			"/place/placeholderImage2.webp",
+			"/place/placeholderImage3.webp",
+		],
+		scroll = async (e: MouseEvent) =>
+			document
+				.getElementById(
+					new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
+				)
+				// (false) prevents page scrolling to top of element
+				?.scrollIntoView(false)
 
 	// Place Launcher
 
-	let modal = writable(false)
-	let installed = true
-	let success = false
-	let filepath = ""
+	let modal = writable(false),
+		installed = true,
+		success = false,
+		filepath = ""
 
 	function launch(joinscripturl: string) {
 		success = false
@@ -48,7 +43,7 @@
 				success = true
 				console.log("URI found, launching")
 			},
-			5000,
+			5000
 		)
 	}
 
@@ -63,22 +58,22 @@
 		formdata.append("privateTicket", data.privateTicket)
 
 		const response = await fetch(`/place/${data.id}/${data.name}?/join`, {
-			method: "POST",
-			body: formdata,
-		})
-		const joinScriptData: any = deserialize(await response.text())
+				method: "POST",
+				body: formdata,
+			}),
+			joinScriptData: any = deserialize(await response.text())
 
 		if (joinScriptData.status == 200) {
 			launch(
 				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
-					joinScriptData.data.joinScriptUrl,
-				)}+gameinfo:test`,
+					joinScriptData.data.joinScriptUrl
+				)}+gameinfo:test`
 			)
 		}
 	}
 
-	let tabData = TabData(data.url, ["Description", "Game"])
-	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
+	let tabData = TabData(data.url, ["Description", "Game"]),
+		tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
 </script>
 
 <Head title={data.name} />
@@ -86,7 +81,7 @@
 <div class="container light-text">
 	<div class="row">
 		<div class="col-md-8 mb-3">
-			<div in:fade bind:this={carousel} class="carousel rounded-4">
+			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
 					<div
 						id="slide{i + 1}"
@@ -153,11 +148,7 @@
 						</a>
 					</span>
 					<p class="light-text mb-0">
-						Gears: <i
-							class="far fa-circle-xmark"
-							data-bs-toggle="tooltip"
-							data-bs-placement="bottom"
-							data-bs-title="Tooltip on top" />
+						Gears: <i class="far fa-circle-xmark" />
 					</p>
 					<span
 						class="badge text-bg-{data.serverPing >
@@ -374,34 +365,38 @@
 								launch(
 									`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${
 										data.serverTicket
-									}&autopilot=${btoa(filepath)}`,
+									}&autopilot=${btoa(filepath)}`
 								)
 							}}
 							type="button">
 							<i class="fas fa-wifi" />
 							Begin Hosting
 						</button>
-						<button
-							class="btn btn-success dropdown-toggle"
-							type="button"
-							data-bs-toggle="dropdown"
-							aria-expanded="false" />
-						<ul class="dropdown-menu dropdown-menu-end">
-							<li>
-								<button
-									class="dropdown-item light-text"
-									on:click={() => {
-										launch(
-											`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
-												data.serverTicket
-											}&autopilot=${btoa(filepath)}`,
-										)
-									}}
-									type="button">
-									Begin Hosting (no Studio tools)
-								</button>
-							</li>
-						</ul>
+
+						<div class="dropdown2 dropdown-hover dropdown-end">
+							<button
+								class="btn btn-success dropdown-toggle"
+								type="button" />
+							<div class="dropdown-content pt-2">
+								<ul class="p-2 rounded-3">
+									<li class="rounded-2">
+										<button
+											class="btn light-text ps-3 pe-0 text-start"
+											on:click={() =>
+												launch(
+													`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
+														data.serverTicket
+													}&autopilot=${btoa(
+														filepath
+													)}`
+												)}
+											type="button">
+											Begin Hosting (no Studio tools)
+										</button>
+									</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 				</Tab>
 			</div>
@@ -506,7 +501,6 @@
 		display flex
 		flex-direction column
 
-
 	.carouselbuttons
 		transform translateY(-50%)
 		left 1.25rem
@@ -520,9 +514,8 @@
 		position absolute
 		margin 3px 0px 0px -10px
 
-	.dropdown-menu
-		border-color var(--accent2)
-		z-index 5
+	.dropdown-toggle
+		border-radius 0 0.375rem 0.375rem 0
 
 	#wrapper
 		width 128px

@@ -5,13 +5,12 @@ import { roQuery } from "$lib/server/redis"
 import { error } from "@sveltejs/kit"
 
 export async function load({ locals }) {
-	const { user } = await authorise(locals)
-
-	const userExists = await prisma.authUser.findUnique({
-		where: {
-			number: user.number,
-		},
-	})
+	const { user } = await authorise(locals),
+		userExists = await prisma.authUser.findUnique({
+			where: {
+				number: user.number,
+			},
+		})
 	if (!userExists) throw error(401)
 
 	const query = {

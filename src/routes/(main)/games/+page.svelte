@@ -1,7 +1,6 @@
 <script lang="ts">
-	let query = ""
-
-	let searchedData: any[] = []
+	let query = "",
+		searchedData: any[] = []
 
 	// Run function whenever query changes
 	$: query &&
@@ -10,11 +9,11 @@
 			formdata.append("query", query)
 
 			const response = await fetch("/games", {
-				method: "POST",
-				body: formdata,
-			})
+					method: "POST",
+					body: formdata,
+				}),
+				result: any = deserialize(await response.text())
 
-			const result: any = deserialize(await response.text())
 			searchedData = result.data.places
 		})()
 

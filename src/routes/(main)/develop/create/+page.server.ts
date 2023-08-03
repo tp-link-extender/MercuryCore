@@ -39,19 +39,17 @@ export const load = async ({ request, locals }) => {
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals)
-
-		const formData = await request.formData()
-		const form = await superValidate(formData, schema)
+		const { user } = await authorise(locals),
+			formData = await request.formData(),
+			form = await superValidate(formData, schema)
 		if (!form.valid) return formError(form)
 
 		// const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
 		// if (limit) return limit
 
-		const { type, name, description, price } = form.data
-		const assetType = parseInt(type)
-
-		const asset = formData.get("asset") as File
+		const { type, name, description, price } = form.data,
+			assetType = parseInt(type),
+			asset = formData.get("asset") as File
 
 		if (!asset)
 			return formError(form, ["asset"], ["You must upload an asset"])

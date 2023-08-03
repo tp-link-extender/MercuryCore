@@ -3,9 +3,9 @@
 
 import { message } from "sveltekit-superforms/server"
 
-const ratelimitTimewindow = new Map<string, number>()
-const ratelimitRequests = new Map<string, number>()
-const existingTimeouts = new Map<string, any>()
+const ratelimitTimewindow = new Map<string, number>(),
+	ratelimitRequests = new Map<string, number>(),
+	existingTimeouts = new Map<string, any>()
 
 /** Ratelimit a function by a category.
  * @param form The superForm object sent by the client.
@@ -25,9 +25,9 @@ export default function (
 	timeWindow: number,
 	maxRequests = 1,
 ) {
-	const id = getClientAddress() + category
+	const id = getClientAddress() + category,
+		currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 
-	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 	if (currentTimewindow > Date.now() + timeWindow * 1000)
 		return message(form, "Too many requests", { status: 429 })
 

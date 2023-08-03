@@ -2,29 +2,28 @@
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let replyingTo = writable("")
-	const repliesCollapsed = writable({})
-
 	export let data
-	const { user } = data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+
+	let replyingTo = writable("")
+	const repliesCollapsed = writable({}),
+		{ user } = data,
+		{
+			form,
+			errors,
+			message,
+			constraints,
+			enhance,
+			delayed,
+			capture,
+			restore,
+		} = superForm(data.form, {
+			taintedMessage: false,
+		})
 
 	export const snapshot = { capture, restore }
 
-	let modal = writable(false)
-
-	let tabData = TabData(data.url, ["Description", "Comments"])
+	let modal = writable(false),
+		tabData = TabData(data.url, ["Description", "Comments"])
 </script>
 
 <Head title={data.name} />
