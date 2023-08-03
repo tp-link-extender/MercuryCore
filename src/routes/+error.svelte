@@ -11,6 +11,7 @@
 			404: "mQuestion",
 			409: "mDouble",
 			410: "mGone",
+			454: "mTick",
 			451: "mBurn",
 		}
 
@@ -24,7 +25,10 @@
 <main>
 	<div
 		class="container d-flex flex-column justify-content-center align-items-center light-text bg-a rounded-4">
-		<img src="/{errors[status] || 'm!'}.svg" alt="Error {status}" />
+		
+		<div class="errimg light" style="background-image: url(/light/{errors[status] || 'm!'}.svg)" />
+		<div class="errimg dark" style="background-image: url(/dark/{errors[status] || 'm!'}.svg)" />
+
 		<h1 class="mt-3">
 			<a
 				href="https://http.cat/images/{status}.jpg"
@@ -42,8 +46,24 @@
 <Footer />
 
 <style lang="stylus">
-	img
+	.errimg
 		height 6rem
+
+		background-size contain
+		background-repeat no-repeat
+		background-position center
+
+		&.light
+			display block
+		&.dark
+			display none
+
+		+lightTheme()
+			&.light
+				display none
+			&.dark
+				display block
+
 
 	main
 		padding-bottom 25vh
