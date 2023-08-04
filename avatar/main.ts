@@ -98,8 +98,8 @@ const scene = new THREE.Scene(),
 if (bodyShot) renderer.setSize(300, 400)
 else renderer.setSize(150, 150)
 
-scene.add(new THREE.AmbientLight(0x808080, 1))
-const spotlight = new THREE.SpotLight(0xffffff, 1)
+scene.add(new THREE.AmbientLight(0x808080, 3))
+const spotlight = new THREE.SpotLight(0xffffff, 350)
 spotlight.position.set(2, 10, 5)
 spotlight.lookAt(0, 0, 0)
 scene.add(spotlight)

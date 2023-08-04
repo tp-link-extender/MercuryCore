@@ -459,14 +459,14 @@
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
-					width="128"
-					height="128" />
+					width={128}
+					height={128} />
 				<img
 					src="/outerlogo.svg"
 					alt="Mercury logo outer part (circle around M)"
 					id="outer"
-					width="128"
-					height="128"
+					width={128}
+					height={128}
 					style={installed
 						? ""
 						: "animation: none; --rotation: 0deg"} />
@@ -521,6 +521,10 @@
 		width 128px
 		height 128px
 		transform translateX(-64px)
+
+		+lightTheme()
+			filter invert(1)
+
 		img
 			box-sizing border-box
 			position absolute
