@@ -2,27 +2,522 @@ import { defineConfig, toEscapedSelector as e } from "unocss"
 
 let fa: { [k: string]: string }
 
+const i = (a: number | string) => `${a} !important`,
+	bsNums = ["0", "0.25rem", "0.5rem", "1rem", "1.5rem", "3rem"],
+	bsFonts = [
+		"0",
+		"calc(1.375rem + 1.5vw)",
+		"calc(1.325rem + 0.9vw)",
+		"calc(1.3rem + 0.6vw)",
+		"calc(1.275rem + 0.3vw)",
+		"1.25rem",
+		"1rem",
+	],
+	bsWeights = {
+		lighter: "lighter",
+		light: 400,
+		normal: 400,
+		medium: 500,
+		semibold: 600,
+		bold: 700,
+		bolder: "bolder",
+	},
+	bslhs = {
+		1: "1",
+		sm: "1.25",
+		base: "1.5",
+		lg: "2",
+	},
+	bsRounds = {
+		"": "var(--bs-border-radius)",
+		"-0": "0",
+		"-1": "var(--bs-border-radius-sm)",
+		"-2": "var(--bs-border-radius)",
+		"-3": "var(--bs-border-radius-lg)",
+		"-4": "var(--bs-border-radius-xl)",
+		"-5": "var(--bs-border-radius-xxl)",
+		"-circle": "50%",
+		"-pill": "50rem",
+	}
+
 export default defineConfig({
 	rules: [
 		// Fontawesome
-		[/^fa-([\.\d]+)x$/, ([_, n]) => ({ "font-size": `${n}em` })],
-
+		[/^fa-([\.\d]+)x$/, ([, n]) => ({ "font-size": `${n}em` })],
 		[
 			/^fa-rotate-([\.\d]+)$/,
-			([_, n]) => ({
+			([, n]) => ({
 				transform: `rotate(${n}deg)`,
 				"-webkit-transform": `rotate(${n}deg)`,
 			}),
 		],
-
 		[
 			/^fa-([a-zA-Z0-9-]+)$/,
-			([_, c], { rawSelector }) =>
+			([, c], { rawSelector }) =>
 				fa[c]
 					? `${e(rawSelector)}:before{content: "\\${
 							fa[c]
 					  }" !important}`
 					: "",
+		],
+
+		// Bootstrap API
+		// align
+		[
+			/^align-(baseline|top|middle|bottom|text-top|text-bottom)$/,
+			([, a]) => ({ "vertical-align": a }),
+		],
+
+		// float
+		[
+			/^float-(start|end|none)$/,
+			([, a]) => {
+				if (a == "start") return { float: "left" }
+				if (a == "end") return { float: "right" }
+				return { float: i(a) }
+			},
+		],
+
+		// object-fit
+		[
+			/^object-fit-(contain|cover|fill|scale|none)$/,
+			([, a]) => {
+				if (a == "scale") return { "object-fit": "scale-down" }
+				return { "object-fit": i(a) }
+			},
+		],
+
+		// opacity
+		[/^opacity-(\d+)$/, ([, n]) => ({ opacity: i(parseInt(n) / 100) })],
+
+		// overflow
+		[
+			/^overflow-(visible|hidden|scroll|auto)$/,
+			([, a]) => ({ overflow: i(a) }),
+		],
+
+		// overflow x and y
+		[
+			/^overflow-(x|y)-(visible|hidden|scroll|auto)$/,
+			([, xy, a]) => ({ [`overflow-${xy}`]: i(a) }),
+		],
+
+		// display
+		[
+			/^d-(inline|block|inline-block|flex|inline-flex|table|table-cell|table-row|flow-root|grid|inline-grid|none)$/,
+			([, a]) => ({ display: i(a) }),
+		],
+
+		// focus-ring-{colour}
+		// [
+		// 	/^focus-ring-(primary|secondary|success|danger|warning|info|light|dark)$/,
+		// 	([, a]) => ({
+		// 		"--bs-focus-ring-color": `RGBA(var(--bs-${a}-rgb), var(--bs-focus-ring-opacity))`,
+		// 	}),
+		// ],
+
+		// position
+		[
+			/^position-(static|relative|absolute|fixed|sticky)$/,
+			([, a]) => ({ position: i(a) }),
+		],
+
+		// top, bottom, start, end
+		[
+			/^(top|bottom|start|end)-(\d+)$/,
+			([, a, b]) => {
+				if (a == "start") return { left: i(`${b}%`) }
+				if (a == "end") return { right: i(`${b}%`) }
+				return { [a]: i(`${b}%`) }
+			},
+		],
+
+		// border-\d
+		[
+			/^border-(\d+)$/,
+			([, n]) => {
+				if (n == "0") return { border: i(0) }
+				return { "border-width": i(`${n}px`) }
+			},
+		],
+
+		// border-top bottom start end-0
+		[
+			/^border-(top|bottom|start|end)-0$/,
+			([, a]) => {
+				if (a == "start") return { "border-left": i(0) }
+				if (a == "end") return { "border-right": i(0) }
+				return { [`border-${a}`]: i(0) }
+			},
+		],
+
+		// border-top bottom start end
+		[
+			/^border-(top|bottom|start|end)$/,
+			([, a]) => {
+				const v = i(
+					"var(--bs-border-width) var(--bs-border-style) var(--bs-border-color)",
+				)
+				if (a == "start") return { "border-left": v }
+				if (a == "end") return { "border-right": v }
+				return { [`border-${a}`]: v }
+			},
+		],
+
+		// border-{colour}
+		[
+			/^border-(primary|secondary|success|danger|warning|info|light|dark|black|white)$/,
+			([, a]) => ({
+				"--bs-border-opacity": i(1),
+				"border-color": i(
+					`RGBA(var(--bs-${a}-rgb), var(--bs-border-opacity))`,
+				),
+			}),
+		],
+
+		// border-{colour}-subtle
+		[
+			/^border-(primary|secondary|success|danger|warning|info|light|dark)-subtle$/,
+			([, a]) => ({
+				"border-color": i(`var(--bs-${a}-border-subtle)`),
+			}),
+		],
+
+		// border-opacity-\d
+		[
+			/^border-opacity-(\d+)$/,
+			([, n]) => ({
+				"--bs-border-opacity": parseInt(n) / 100,
+			}),
+		],
+
+		// w-\d+/auto and h-\d+/auto
+		[
+			/^(w|h)-(\d+|auto)$/,
+			([, a, b]) => {
+				const key = a == "w" ? "width" : "height"
+				if (b == "auto") return { [key]: i("auto") }
+				return { [key]: i(`${b}%`) }
+			},
+		],
+
+		// flex-row/column/row-reverse/column-reverse
+		[
+			/^flex-(row|column|row-reverse|column-reverse)$/,
+			([, a]) => ({ "flex-direction": i(a) }),
+		],
+
+		// flex-grow/shrink-\d
+		[/^flex-(grow|shrink)-(\d+)$/, ([, a, n]) => ({ [`flex-${a}`]: i(n) })],
+
+		// flex-wrap/wrap-reverse/nowrap
+		[
+			/^flex-(wrap|wrap-reverse|nowrap)$/,
+			([, a]) => ({ "flex-wrap": i(a) }),
+		],
+
+		// justify-content-start/end/center/between/around/evenly
+		[
+			/^justify-content-(start|end|center|between|around|evenly)$/,
+			([, a]) => {
+				if (a == "start" || a == "end")
+					return { "justify-content": i(`flex-${a}`) }
+				if (a == "between" || a == "around" || a == "evenly")
+					return { "justify-content": i(`space-${a}`) }
+				return { "justify-content": i(a) }
+			},
+		],
+
+		// align-items-start/end/center/baseline/stretch
+		[
+			/^align-items-(start|end|center|baseline|stretch)$/,
+			([, a]) => {
+				if (a == "start" || a == "end")
+					return { "align-items": i(`flex-${a}`) }
+				return { "align-items": i(a) }
+			},
+		],
+
+		// align-content-start/end/center/between/around/stretch
+		[
+			/^align-content-(start|end|center|between|around|stretch)$/,
+			([, a]) => {
+				if (a == "start" || a == "end")
+					return { "align-content": i(`flex-${a}`) }
+				if (a == "between" || a == "around")
+					return { "align-content": i(`space-${a}`) }
+				return { "align-content": i(a) }
+			},
+		],
+
+		// align-self-auto/start/end/center/baseline/stretch
+		[
+			/^align-self-(auto|start|end|center|baseline|stretch)$/,
+			([, a]) => {
+				if (a == "start" || a == "end")
+					return { "align-self": i(`flex-${a}`) }
+				return { "align-self": i(a) }
+			},
+		],
+
+		//order-first/\d/last
+		[
+			/^order-(first|\d|last)$/,
+			([, a]) => {
+				if (a == "first") return { order: i(-1) }
+				if (a == "last") return { order: i(10) }
+				return { order: i(a) }
+			},
+		],
+
+		// (m/p)(x/y/t/b/s/e)?-(\d/auto)
+		[
+			/^(m|p)(x|y|t|b|s|e)?-(\d+|auto)$/,
+			([, mp, xy, n]) => {
+				const key = mp == "m" ? "margin" : "padding"
+				const dir =
+					xy == "x"
+						? [`${key}-left`, `${key}-right`]
+						: xy == "y"
+						? [`${key}-top`, `${key}-bottom`]
+						: xy == "t"
+						? [`${key}-top`]
+						: xy == "b"
+						? [`${key}-bottom`]
+						: xy == "s"
+						? [`${key}-left`]
+						: xy == "e"
+						? [`${key}-right`]
+						: [key]
+
+				const o = {}
+
+				if (n == "auto") for (const d of dir) o[d] = i("auto")
+				else for (const d of dir) o[d] = i(bsNums[n])
+
+				return o
+			},
+		],
+
+		// gap-1-5
+		[
+			/^(gap|row-gap|column-gap)-(\d)$/,
+			([, g, n]) => ({
+				[`${g}`]: i(`${bsNums[n]}rem`),
+			}),
+		],
+
+		// fs-1-6
+		[
+			/^fs-(\d)$/,
+			([, n]) => ({
+				"font-size": i(bsFonts[n]),
+			}),
+		],
+
+		// fst-italic/normal
+		[
+			/^fst-(italic|normal)$/,
+			([, a]) => ({
+				"font-style": i(a),
+			}),
+		],
+
+		// fw-lighter/light/normal/medium/semibold/bold/bolder
+		[
+			/^fw-(lighter|light|normal|medium|semibold|bold|bolder)$/,
+			([, a]) => ({
+				"font-weight": i(bsWeights[a]),
+			}),
+		],
+
+		// lh-1/sm/base/lg
+		[
+			/^lh-(1|sm|base|lg)$/,
+			([, a]) => ({
+				"line-height": i(bslhs[a]),
+			}),
+		],
+
+		// text-start/end/center
+		[
+			/^text-(start|end|center)$/,
+			([, a]) => {
+				if (a == "start") return { "text-align": i("left") }
+				if (a == "end") return { "text-align": i("right") }
+				return { "text-align": i(a) }
+			},
+		],
+
+		// text-decoration-none/underline/line-through
+		[
+			/^text-decoration-(none|underline|line-through)$/,
+			([, a]) => ({
+				"text-decoration": i(a),
+			}),
+		],
+
+		// text-lowercase/uppercase/capitalize
+		[
+			/^text-(lowercase|uppercase|capitalize)$/,
+			([, a]) => ({
+				"text-transform": i(a),
+			}),
+		],
+
+		// text-{colour}
+		[
+			// /^text-(primary|secondary|success|danger|warning|info|light|dark|white|body|muted)$/,
+			/^text-(primary|secondary|success|danger|warning|info|light|dark|white|body|muted)$/,
+			([, a]) => {
+				const o = {
+					"--bs-text-opacity": 1,
+				}
+
+				if (a == "body")
+					o["color"] = i(
+						"RGBA(var(--bs-body-color-rgb), var(--bs-text-opacity))",
+					)
+				else if (a == "muted")
+					o["color"] = i("var(--bs-secondary-color)")
+				else
+					o["color"] = i(
+						`RGBA(var(--bs-${a}-rgb), var(--bs-text-opacity))`,
+					)
+
+				return o
+			},
+		],
+
+		// text-black-\d+/white-\d+
+		[
+			/^text-(black|white)-(\d+)$/,
+			([, a, n]) => ({
+				"--bs-text-opacity": 1,
+				[`--bs-${a}-color`]: i(
+					`RGBA(${a == "black" ? "0,0,0" : "255,255,255"}, ${
+						parseInt(n) / 100
+					})`,
+				),
+			}),
+		],
+
+		//text-body-secondary/tertiary/emphasis
+		[
+			/^text-body-(secondary|tertiary|emphasis)$/,
+			([, a]) => ({
+				"--bs-text-opacity": 1,
+				color: i(`var(--bs-${a}-color)`),
+			}),
+		],
+
+		// text-opacity-\d+
+		[
+			/^text-opacity-(\d+)$/,
+			([, n]) => ({
+				"--bs-text-opacity": parseInt(n) / 100,
+			}),
+		],
+
+		// text-{colour}-emphasis
+		[
+			/^text-(primary|secondary|success|danger|warning|info|light|dark)-emphasis$/,
+			([, a]) => ({
+				color: i(`var(--bs-${a}-text-emphasis)`),
+			}),
+		],
+
+		// link-opacity-\d+, link-opacity-\d+:hover
+		[
+			/^link-opacity-(\d+)$/,
+			([, n], { rawSelector }) =>
+				`${e(rawSelector)},${e(rawSelector)}:hover
+					{--bs-link-opacity: ${parseInt(n) / 100}}`,
+		],
+
+		// link-offset-\d+, link-offset-\d+:hover
+		[
+			/^link-offset-(\d+)$/,
+			([, n], { rawSelector }) =>
+				`${e(rawSelector)},${e(rawSelector)}:hover
+					{text-underline-offset: ${parseInt(n) / 100}em !important}`,
+		],
+
+		// cba doing link-offset -underline -opacity
+
+		// bg-{colour}
+		[
+			/^bg-(primary|secondary|success|danger|warning|info|light|dark|white|body)$/,
+			([, a]) => ({
+				"--bs-bg-opacity": 1,
+				"background-color": i(
+					`RGBA(var(--bs-${a}-rgb), var(--bs-bg-opacity))`,
+				),
+			}),
+		],
+
+		// bg-{colour}-subtle
+		[
+			/^bg-(primary|secondary|success|danger|warning|info|light|dark)-subtle$/,
+			([, a]) => ({
+				"background-color": i(`var(--bs-${a}-bg-subtle)`),
+			}),
+		],
+
+		// bg-opacity-\d+
+		[
+			/^bg-opacity-(\d+)$/,
+			([, n]) => ({
+				"--bs-bg-opacity": i(parseInt(n) / 100),
+			}),
+		],
+
+		// rounded(-top|-end|-bottom|-start)(a-z0-5-)
+		[
+			/^rounded(-(top|end|bottom|start))?([a-z0-5-]+)?$/,
+			([, a, , v]) => {
+				const o = {}
+
+				if (!v) v = ""
+
+				if (a == "-top" || a == "-start")
+					o["border-top-left-radius"] = i(bsRounds[v])
+				if (a == "-top" || a == "-end")
+					o["border-top-right-radius"] = i(bsRounds[v])
+				if (a == "-bottom" || a == "-start")
+					o["border-bottom-left-radius"] = i(bsRounds[v])
+				if (a == "-end" || a == "-bottom")
+					o["border-bottom-right-radius"] = i(bsRounds[v])
+
+				if (!a) o["border-radius"] = i(bsRounds[v])
+
+				return o
+			},
+		],
+
+		// user-select-none/all/auto
+		[
+			/^user-select-(none|all|auto)$/,
+			([, a]) => ({
+				"user-select": i(a),
+			}),
+		],
+
+		// pe-none/auto
+		[
+			/^pe-(none|auto)$/,
+			([, a]) => ({
+				"pointer-events": i(a),
+			}),
+		],
+
+		// z-\d+ and z-n\d+
+		[
+			/^z-(n\d+|\d+)$/,
+			([, a]) => {
+				if (a[0] == "n") return { "z-index": i(-a.slice(1)) }
+				return { "z-index": i(a) }
+			},
 		],
 	],
 

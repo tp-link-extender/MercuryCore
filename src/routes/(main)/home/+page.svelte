@@ -121,7 +121,7 @@
 							in:fade|global={{ num, total: data.feed.length }}
 							class="card mb-2">
 							<div class="card-body pb-0 p-3">
-								<div class="d-flex mb-2 user d-inline">
+								<div class="d-flex mb-2 user">
 									<a
 										href="/user/{status.authorUser?.number}"
 										class="text-decoration-none d-flex align-items-center light-text">
