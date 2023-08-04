@@ -2,15 +2,23 @@
 	import { goto } from "$app/navigation"
 	import { quadOut } from "svelte/easing"
 
-	let search = ""
+	let search = "",
+		searchCompleted = true,
+		currentSearchFocus = -1
+
+	$: if (search == "") {
+		searchCompleted = true
+		currentSearchFocus = -1
+	}
 
 	const height = (_: HTMLElement) => ({
-		duration: 300,
-		css: (t: number) => `
-			height: ${2 * quadOut(t)}rem;
-			overflow: hidden;
-		`,
-	})
+			duration: 300,
+			css: (t: number) => `
+				height: ${2 * quadOut(t)}rem;
+				overflow: hidden;
+			`,
+		}),
+		searchResults: HTMLElement[] = []
 
 	export let data: import("../../routes/$types").LayoutData
 
@@ -43,7 +51,7 @@
 <nav class="navbar navbar-expand py-0">
 	<div class="w-100 border-0" tabindex="-1">
 		<div id="nav1" class="py-1 d-flex">
-			<a class="navbar-brand light-text mt-1 me-0" href="/">
+			<a class="navbar-brand light-text me-0" href="/">
 				<img class="me-2" src="/favicon.svg" alt="Mercury logo" />
 				<span class="me-4">Mercury</span>
 			</a>
@@ -61,7 +69,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="search" class="navbar-nav mx-auto mt-1">
+				<div class="navbar-nav mx-auto">
 					<form
 						use:enhance
 						method="POST"
@@ -71,37 +79,93 @@
 						<div class="input-group">
 							<input
 								bind:value={search}
+								on:keydown={e => {
+									switch (e.key) {
+										case "Enter":
+											if (
+												!searchCompleted &&
+												currentSearchFocus >= 0
+											) {
+												e.preventDefault()
+												searchResults[
+													currentSearchFocus
+												].click()
+											}
+
+											searchCompleted = true
+											currentSearchFocus = -1
+											break
+										case "ArrowDown":
+										case "ArrowUp":
+											e.preventDefault()
+
+											// Focus first result
+											const prevSearchFocus =
+												currentSearchFocus
+
+											currentSearchFocus +=
+												e.key == "ArrowDown" ? 1 : -1
+
+											currentSearchFocus =
+												currentSearchFocus >=
+												searchCategories.length
+													? 0
+													: currentSearchFocus < 0
+													? searchCategories.length -
+													  1
+													: currentSearchFocus
+
+											searchResults[
+												currentSearchFocus
+											]?.classList.add("pseudofocus")
+											searchResults[
+												prevSearchFocus
+											]?.classList.remove("pseudofocus")
+
+											break
+										case "Escape":
+											search = ""
+											break
+										default:
+											searchCompleted = false
+									}
+								}}
 								class="form-control valid bg-background"
 								name="query"
 								type="search"
 								placeholder="Search"
-								aria-label="Search" />
+								aria-label="Search"
+								autocomplete="off" />
 							<button
-								on:click|preventDefault={() =>
+								on:click|preventDefault={() => {
 									search
 										? goto(`/search?q=${search}&c=users`)
-										: null}
-								class="btn btn-success py-0"
+										: null
+
+									searchCompleted = true
+								}}
+								class="btn btn-success py-0 rounded-end-2"
 								title="Search">
 								<i class="fa fa-search" />
 							</button>
+							{#if search && !searchCompleted}
+								<div
+									transition:fade={{ duration: 150 }}
+									id="results"
+									class="position-absolute d-flex flex-column bg-darker p-2 mt-5 rounded-3">
+									{#each searchCategories as [name, category], num}
+										<a
+											bind:this={searchResults[num]}
+											class="btn text-start light-text py-2"
+											href="/search?q={search}&c={category}"
+											title="Search {name}">
+											Search <b>{search}</b>
+											in {name}
+										</a>
+									{/each}
+								</div>
+							{/if}
 						</div>
-						{#if search}
-							<div
-								transition:fade={{ duration: 150 }}
-								id="results"
-								class="position-absolute d-flex flex-column bg-darker p-2 mt-2 rounded-3">
-								{#each searchCategories as [name, category]}
-									<a
-										class="btn text-start light-text py-2"
-										href="/search?q={search}&c={category}"
-										title="Search {name}">
-										Search <b>{search}</b>
-										in {name}
-									</a>
-								{/each}
-							</div>
-						{/if}
 					</form>
 				</div>
 				<ul class="navbar-nav loggedin m-0">
@@ -137,9 +201,7 @@
 									alt="You"
 									class="rounded-circle rounded-top-0" />
 							</div>
-							<p
-								id="username"
-								class="my-auto fs-6 me-2 light-text">
+							<p class="my-auto fs-6 light-text">
 								{user?.username}
 							</p>
 						</a>
@@ -248,6 +310,10 @@
 		i
 			font-size 1.5rem
 	
+	+lightTheme()
+		.navbar-brand img
+			filter invert(1)
+
 	+lg()
 		#bottomnav
 		#notificationsbottom
@@ -272,13 +338,14 @@
 		#nav1
 			padding-left 0.5rem
 			padding-right 0.5rem
-		#username
+		.dropdown2 p
 			display none
 		.navbar-brand
 			img
-				margin-top -0.5rem
+				margin-top -0.2rem
 				width 2rem
 				height 2rem
+
 			span
 				display none
 
@@ -304,10 +371,14 @@
 	.loggedin
 		padding 0
 
-	#username
-		max-width 10rem
-		min-width 1rem
-		white-space nowrap
+	.dropdown2
+		margin-top 2px
+		p
+			max-width 6rem
+			min-width 1rem
+			// ellipsis
+			overflow hidden
+			text-overflow ellipsis
 
 	#topnav
 		z-index 9
@@ -319,7 +390,7 @@
 			border none
 
 	#pfp
-	img
+	#pfp img
 		width 2.4rem
 		height 2.4rem
 
@@ -327,21 +398,27 @@
 		z-index 5
 		min-width 25vw
 		a:hover
-			background var(--accent2)
+			background var(--accent)
+
+		:global(.pseudofocus)
+			color var(--grey-text) !important
+			background var(--accent)
 
 	.input-group
 		width 35vw
 		max-width 35rem
+		margin-top 2px
+
 		+xl()
 			position absolute
 			left 50%
 			transform translateX(-50%)
 		+-xl()
-			width 20rem
+			width 19rem
 		+-lg()
-			width 26rem
+			width 25rem
 		+-md()
-			width 15rem
+			width 13rem
 		+-sm()
 			width 100%
 
