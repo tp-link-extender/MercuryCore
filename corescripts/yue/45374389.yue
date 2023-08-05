@@ -1,0 +1,17 @@
+import "macros" as { $ }
+$load $FILE
+
+t = {}
+
+t.Foo = -> print "foo"
+t.Bar = -> print "bar"
+
+t.Help = (funcNameOrFunc) ->
+	--input argument can be a string or a function. Should return a description (of arguments and expected side effects)
+	switch funcNameOrFunc
+		when "Foo", t.Foo
+			"Function Foo. Arguments: None. Side effect: prints foo"
+		when "Bar", t.Bar
+			"Function Bar. Arguments: None. Side effect: prints bar"
+
+t

@@ -1,60 +1,113 @@
-import type { Actions, PageServerLoad } from "./$types"
-import { prisma, findPlaces, findItems } from "$lib/server/prisma"
+import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
+import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
-export const load: PageServerLoad = async ({ url }) => {
-	const query = url.searchParams.get("q") || ""
-	const category = url.searchParams.get("c")?.toLowerCase() || ""
+export const load = async ({ url }) => {
+	const query = url.searchParams.get("q") || "",
+		category = url.searchParams.get("c")?.toLowerCase() || ""
+
 	if (!query) throw error(400, "No query provided")
-	if (!["users", "places", "items"].includes(category)) throw error(400, "Invalid category")
+	if (category && !["users", "places", "assets", "groups"].includes(category))
+		throw error(400, "Invalid category")
+
+	if (category == "users") {
+		const user = await prisma.authUser.findUnique({
+			where: {
+				username: query,
+			},
+		})
+		if (user) throw redirect(302, `/user/${user.number}`)
+	}
 
 	return {
 		query,
 		category,
-		users: prisma.user.findMany({
-			where: {
-				displayname: {
-					contains: query,
-					mode: "insensitive",
-				},
-			},
-		}),
-		places: findPlaces({
-			where: {
-				name: {
-					contains: query,
-					mode: "insensitive",
-				},
-			},
-		}),
-		items: findItems({
-			where: {
-				name: {
-					contains: query,
-					mode: "insensitive",
-				},
-			},
-		}),
+		users:
+			category == "users"
+				? prisma.authUser.findMany({
+						where: {
+							username: {
+								contains: query,
+								mode: "insensitive",
+							},
+						},
+						select: {
+							number: true,
+							username: true,
+							status: true,
+						},
+				  })
+				: null,
+		places:
+			category == "places"
+				? findPlaces({
+						where: {
+							name: {
+								contains: query,
+								mode: "insensitive",
+							},
+							privateServer: false,
+						},
+						select: {
+							gameSessions: {
+								where: {
+									ping: {
+										gt: Math.floor(Date.now() / 1000) - 35,
+									},
+								},
+								select: {
+									valid: true,
+								},
+							},
+							id: true,
+							name: true,
+						},
+				  })
+				: null,
+		assets:
+			category == "assets"
+				? prisma.asset.findMany({
+						where: {
+							name: {
+								contains: query,
+								mode: "insensitive",
+							},
+						},
+						select: {
+							id: true,
+							name: true,
+							price: true,
+						},
+				  })
+				: null,
+		groups:
+			category == "groups"
+				? findGroups({
+						where: {
+							name: {
+								contains: query,
+								mode: "insensitive",
+							},
+						},
+						select: {
+							name: true,
+						},
+				  })
+				: null,
 	}
 }
 
-export const actions: Actions = {
-	default: async ({ request }) => {
-		const data = await request.formData()
-		const query = data.get("query")?.toString() || ""
-		const category = data.get("category")?.toString() || ""
-		console.log(query)
+export const actions = {
+	default: async ({ url, request }) => {
+		const data = await formData(request),
+			{ query } = data,
+			category = url.searchParams.get("c") || ""
 
-		const user = await prisma.user.findUnique({
-			where: {
-				username: query,
-			},
-			select: {
-				number: true,
-			},
-		})
-		if (user && category == "users") throw redirect(302, `/user/${user.number}`)
+		console.log(`searching for ${query} in ${category}`)
 
-		throw redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
+		throw redirect(
+			302,
+			`/search?q=${query}${category ? `&c=${category}` : ""}`,
+		)
 	},
 }

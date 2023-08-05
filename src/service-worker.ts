@@ -1,94 +1,59 @@
+// The service worker script, adding some offline functionality to Mercury.
+// This is the same service worker script found at https://kit.svelte.dev/docs/service-workers.
+/// <reference types="@sveltejs/kit" />
 import { build, files, prerendered, version } from "$service-worker"
 
-// Generate unique ID for new cache
-const cacheId = `cache${version}`
+// Create a unique cache name for this deployment
+const CACHE = `cache-${version}`,
+	ASSETS = [
+		...build, // the app itself
+		...files, // everything in `static`
+		...prerendered, // pages that have been prerendered (empty in dev)
+	]
 
-// Build files + /static files + prerendered pages
-const cachePayloadArr = [...build, ...files, ...prerendered]
-const cachePayloadSet = new Set(cachePayloadArr)
+self.addEventListener("install", event =>
+	// Create a new cache and add all files to it
 
-self.addEventListener("install", event => {
 	event.waitUntil(
-		caches
-			.open(cacheId)
-			.then(cache => cache.addAll(cachePayloadArr))
-			.then(() => self.skipWaiting())
-	)
-})
+		async () => await (await caches.open(CACHE)).addAll(ASSETS),
+	),
+)
 
-self.addEventListener("activate", event => {
-	event.waitUntil(
-		caches.keys().then(async keys => {
-			for (const key of keys) {
-				if (key !== cacheId) await caches.delete(key)
-			}
+self.addEventListener("activate", event =>
+	// Remove previous cached data from disk
 
-			self.clients.claim()
-		})
-	)
-})
+	event.waitUntil(async () => {
+		for (const key of await caches.keys())
+			if (key != CACHE) await caches.delete(key)
+	}),
+)
 
-// prettier-ignore
-self.addEventListener('fetch', (event) => {
-	if (
-		event.request.method !== 'GET' || 
-		event.request.headers.has('range')
-	) return
+self.addEventListener("fetch", event => {
+	// ignore POST requests etc
+	if (event.request.method != "GET") return
 
-	const { 
-		isHttp, 
-		isLocal, 
-		isStaticAsset, 
-		isUncached 
-	} = checks(event)
+	// cannot be an anonymous function for some reason
+	async function respond() {
+		const url = new URL(event.request.url),
+			cache = await caches.open(CACHE)
 
-	if (isHttp && isLocal && !isUncached) {
-		event.respondWith(
-			(async () => {
-				const cachedAsset =
-					isStaticAsset && 
-					(await caches.match(event.request))
+		// `build`/`files` can always be served from the cache
+		// buggy atm so disabled
+		// if (ASSETS.includes(url.pathname)) return cache.match(event.request)
 
-				return cachedAsset || fetchAndCache(event.request)
-			})()
-		)
+		// for everything else, try the network first, but
+		// fall back to the cache if we're offline
+		try {
+			const response = await fetch(event.request)
+
+			if (response.status == 200)
+				cache.put(event.request, response.clone())
+
+			return response
+		} catch {
+			return cache.match(event.request)
+		}
 	}
+
+	event.respondWith(respond())
 })
-
-function checks(event) {
-	const url = new URL(event.request.url)
-
-	// Omit data urls, etc...
-	const isHttp = url.protocol.startsWith("http")
-
-	// Is the resource within the scope of the app?
-	const isLocal = url.hostname === self.location.hostname && url.port === self.location.port
-
-	const isStaticAsset = url.host === self.location.host && cachePayloadSet.has(url.pathname)
-
-	// Was the resource cached on install?
-	const isUncached = event.request.cache === "only-if-cached" && !isStaticAsset
-
-	return {
-		isHttp,
-		isLocal,
-		isStaticAsset,
-		isUncached,
-	}
-}
-
-async function fetchAndCache(request) {
-	const cache = await caches.open(`offline${version}`)
-
-	try {
-		const response = await fetch(request)
-		cache.put(request, response.clone())
-
-		return response
-	} catch (err) {
-		const response = await cache.match(request)
-		if (response) return response
-
-		throw err
-	}
-}

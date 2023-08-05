@@ -1,73 +1,88 @@
-import type { Actions, PageServerLoad } from "./$types"
+import cql from "$lib/cyphertag"
+import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
 import { roQuery } from "$lib/server/redis"
-import { fail, redirect } from "@sveltejs/kit"
+import ratelimit from "$lib/server/ratelimit"
+import formError from "$lib/server/formError"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
 
-export const load: PageServerLoad = async ({ locals }) => {
-	console.time("home")
-	const session = await locals.validateUser()
-	if (!session.session) throw redirect(302, "/login")
-	// (main)/+layout.server.ts will handle most redirects for logged-out users except for this one
+const schema = z.object({
+	status: z.string().min(1).max(1000),
+})
 
-	async function Friends() {
-		const friendsQuery = await roQuery(
-			`
-			MATCH (:User { name: $user }) -[r:friends]- (u:User)
-			RETURN u.name as name
-			`,
-			{
-				params: {
-					user: session.user.username,
-				},
-			},
-			false,
-			true
-		)
+export async function load({ locals }) {
+	const { user } = await authorise(locals),
+		// (main)/+layout.server.ts will handle most redirects for logged-out users,
+		// but sometimes errors for this page.
 
-		let friends: any[] = []
+		greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`],
+		facts = [
+			`You joined mercury on ${user?.accountCreated
+				.toLocaleString()
+				.substring(0, 10)}!`,
+			// Add "st", "nd", "rd", "th" to number
+			`You are the ${user?.number}${
+				["st", "nd", "rd"][(user?.number % 10) - 1] || "th"
+			} user to join Mercury!`,
+		]
 
-		for (let i of friendsQuery || ([] as any)) {
-			if (i.name)
-				friends.push(
-					await prisma.user.findUnique({
-						where: {
-							username: i.name,
-						},
-						select: {
-							number: true,
-							username: true,
-							displayname: true,
-							image: true,
-							status: true,
-						},
-					})
-				)
-		}
-
-		return friends
-	}
-
-	console.timeEnd("home")
 	return {
+		stuff: {
+			greet: greets[Math.floor(Math.random() * greets.length)],
+			fact: facts[Math.floor(Math.random() * facts.length)],
+		},
+		form: superValidate(schema),
 		places: findPlaces({
+			where: {
+				privateServer: false,
+			},
 			select: {
 				name: true,
-				slug: true,
-				image: true,
-			},
-		}),
-		friends: Friends(),
-		feed: prisma.post.findMany({
-			select: {
-				author: {
-					select: {
-						number: true,
-						displayname: true,
-						image: true,
+				id: true,
+				gameSessions: {
+					where: {
+						ping: {
+							gt: Math.floor(Date.now() / 1000) - 35,
+						},
 					},
 				},
-				posted: true,
+			},
+		}),
+		friends: prisma.authUser.findMany({
+			where: {
+				username: {
+					in: (
+						await roQuery(
+							"friends",
+							cql`
+								MATCH (:User { name: $user }) -[r:friends]- (u:User)
+								RETURN u.name as name`,
+							{
+								user: user.username,
+							},
+							false,
+							true,
+						)
+					).map((i: any) => i.name),
+				},
+			},
+			select: {
+				username: true,
+				number: true,
+			},
+		}),
+		feed: prisma.post.findMany({
+			select: {
+				id: true,
 				content: true,
+				posted: true,
+				authorUser: {
+					select: {
+						username: true,
+						number: true,
+					},
+				},
 			},
 			orderBy: {
 				posted: "desc",
@@ -77,23 +92,23 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 }
 
-export const actions: Actions = {
-	default: async ({ request, locals }) => {
-		const session = await locals.validateUser()
-		if (!session.session) throw redirect(302, "/login")
+export const actions = {
+	default: async ({ request, locals, getClientAddress }) => {
+		const form = await superValidate(request, schema)
+		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "statusPost", getClientAddress, 30)
+		if (limit) return limit
 
-		const data = await request.formData()
-		const status = data.get("status")?.toString() || ""
-		if (status.length <= 0) return fail(400, { msg: "Invalid status" })
+		const { user } = await authorise(locals)
 
 		await prisma.post.create({
 			data: {
-				author: {
+				authorUser: {
 					connect: {
-						username: session.user.username,
+						username: user.username,
 					},
 				},
-				content: status,
+				content: form.data.status,
 			},
 		})
 	},

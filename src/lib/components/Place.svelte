@@ -1,10 +1,25 @@
 <script lang="ts">
-	export let place: any
+	// Link to a place used on the homepage or on a user's profile.
+
+	export let place: {
+		id: number
+		name: string
+		ratio: string | number
+		gameSessions?: any[]
+	}
+	export let num: number
+	export let total: number
 </script>
 
-<a class="rounded-3 text-center light-text text-decoration-none h6" href="/place/{place.slug}">
+<a
+	in:fade|global={{ num, total }}
+	class="rounded-3 text-center light-text text-decoration-none h6"
+	href="/place/{place.id}/{place.name}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
-		<img src={place.image} alt={place.name} class="w-100 h-100" />
+		<img
+			src="/place/{place.id}/{place.name}/icon"
+			alt={place.name}
+			class="w-100 h-100" />
 	</div>
 	<p class="mb-1">
 		{place.name}
@@ -14,28 +29,28 @@
 		{place.ratio}%
 	</span>
 	<span class="float-end me-1">
-		<i class="fa fa-user opacity-75" /> 12
+		<i class="fa fa-user opacity-75" />
+		{place.gameSessions?.length}
 	</span>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	a
-		transition: all 0.2s
+		transition all 0.2s
 		&:hover
-			transition: all 0.2s
-			text-shadow: 0 0 5px var(--light-text)
+			transition all 0.2s
 			#shadow::after
-				box-shadow: inset 0 0 4rem 0 #fff2
+				box-shadow inset 0 0 4rem 0 #fff2
 
 	#shadow
-		aspect-ratio: 1
-		position: relative
+		aspect-ratio 1
+		position relative
 		&::after
-			transition: all 0.3s
-			content: ""
-			position: absolute
-			top: 0
-			left: 0
-			width: 100%
-			height: 100%
+			transition all 0.3s
+			content ""
+			position absolute
+			top 0
+			left 0
+			width 100%
+			height 100%
 </style>

@@ -1,6 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
+<!--
+	This is a fallback error page that is only used if something errors in one of the root layout files, or if an error occurs while rendering an error page.
+	Normally, a page will find the nearest +error.svelte page to use as an error page.
+-->
 <html lang="en">
-	<!-- This is a fallback error page that is only used if something errors in one of the root layout files, or if an error occurs while rendering an error page. Normally, a page will find the nearest +error.svelte page to use as an error page. -->
 	<head>
 		<meta charset="utf-8" />
 		<title>%sveltekit.error.message%</title>
@@ -57,6 +60,6 @@
 			</div>
 		</div>
 		<br />
-		<a href="/"> go home? </a>
+		<a href="/">go home?</a>
 	</body>
 </html>

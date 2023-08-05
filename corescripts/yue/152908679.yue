@@ -1,0 +1,247 @@
+import "macros" as { $ }
+$load $FILE
+
+-- ContextActionTouch.lua
+-- Created by Ben Tkacheff
+-- this script controls ui and firing of lua functions that are bound in ContextActionService for touch inputs
+-- Essentially a user can bind a lua function to a key code, input type (mousebutton1 etc.) and this
+
+-- Heliodex's basic New function (basically a simplified version of melt)
+New = (className, name, props) ->
+	if props == nil -- no name was provided
+		props = name
+		name = nil
+
+	obj = Instance.new className
+	obj.Name = name if name
+	local parent
+
+	for k, v in pairs props
+		if type(k) == "string"
+			if k == "Parent"
+				parent = v
+			else
+				obj[k] = v
+
+		elseif type(k) == "number" and type(v) == "userdata"
+			v.Parent = obj
+
+	obj.Parent = parent
+	obj
+--
+
+-- Variables
+contextActionService = Game\GetService "ContextActionService"
+isTouchDevice = Game\GetService"UserInputService".TouchEnabled
+functionTable = {}
+buttonVector = {}
+local buttonScreenGui
+local buttonFrame
+
+ContextDownImage = "http://www.banland.xyz/asset/?id=97166756"
+ContextUpImage = "http://www.banland.xyz/asset/?id=97166444"
+
+oldTouches = {}
+
+buttonPositionTable =
+	* UDim2.new 0, 123, 0, 70
+	* UDim2.new 0, 30, 0, 60
+	* UDim2.new 0, 180, 0, 160
+	* UDim2.new 0, 85, 0, -25
+	* UDim2.new 0, 185, 0, -25
+	* UDim2.new 0, 185, 0, 260
+	* UDim2.new 0, 216, 0, 65
+
+maxButtons = #buttonPositionTable
+
+-- Preload images
+with Game\GetService"ContentProvider"
+	\Preload ContextDownImage
+	\Preload ContextUpImage
+
+wait! until Game.Players
+wait! until Game.Players.LocalPlayer
+
+createContextActionGui = ->
+	if not buttonScreenGui and isTouchDevice
+		buttonScreenGui = New "ScreenGui", "ContextActionGui"
+			* New "Frame", "ContextButtonFrame"
+				BackgroundTransparency: 1
+				Size: UDim2.new 0.3, 0, 0.5, 0
+				Position: UDim2.new 0.7, 0, 0.5, 0
+
+-- functions
+-- setButtonSizeAndPosition = (object) ->
+-- 	buttonSize = 55
+-- 	xOffset = 10
+-- 	yOffset = 95
+
+-- 	-- todo: better way to determine mobile sized screens
+-- 	onSmallScreen = game.CoreGui.RobloxGui.AbsoluteSize.X < 600
+-- 	if not onSmallScreen
+-- 		buttonSize = 85
+-- 		xOffset = 40
+
+-- 	object.Size = UDim2.new 0, buttonSize, 0, buttonSize
+
+contextButtonDown = (button, inputObject, actionName) ->
+	if inputObject.UserInputType == Enum.UserInputType.Touch
+		button.Image = ContextDownImage
+		contextActionService\CallFunction actionName, Enum.UserInputState.Begin
+
+contextButtonMoved = (button, inputObject, actionName) ->
+	if inputObject.UserInputType == Enum.UserInputType.Touch
+		button.Image = ContextDownImage
+		contextActionService\CallFunction actionName, Enum.UserInputState.Change
+
+contextButtonUp = (button, inputObject, actionName) ->
+	button.Image = ContextUpImage
+	if inputObject.UserInputType == Enum.UserInputType.Touch and
+		inputObject.UserInputState == Enum.UserInputState.End
+
+		contextActionService\CallFunction actionName, Enum.UserInputState.End, inputObject
+
+isSmallScreenDevice = ->
+	Game\GetService"GuiService"\GetScreenResolution!.y <= 320
+
+createNewButton = (actionName, functionInfoTable) ->
+	contextButton = New "ImageButton", "ContextActionButton"
+		BackgroundTransparency: 1
+		Size: UDim2.new if isSmallScreenDevice!
+			0, 90, 0, 90
+		else
+			0, 70, 0, 70
+		Active: true
+		Image: ContextUpImage
+		Parent: buttonFrame
+
+	local currentButtonTouch
+
+	Game\GetService"UserInputService".InputEnded\connect (inputObject) ->
+		oldTouches[inputObject] = nil
+
+	contextButton.InputBegan\connect (inputObject) ->
+		return if oldTouches[inputObject]
+
+		if inputObject.UserInputState == Enum.UserInputState.Begin and not currentButtonTouch?
+			currentButtonTouch = inputObject
+			contextButtonDown contextButton, inputObject, actionName
+
+	contextButton.InputChanged\connect (inputObject) ->
+		return if oldTouches[inputObject] or
+			currentButtonTouch ~= inputObject
+
+		contextButtonMoved contextButton, inputObject, actionName
+
+	contextButton.InputEnded\connect (inputObject) ->
+		return if oldTouches[inputObject] or
+			currentButtonTouch ~= inputObject
+
+		currentButtonTouch = nil
+		oldTouches[inputObject] = true
+		contextButtonUp contextButton, inputObject, actionName
+
+	actionIcon = New "ImageLabel", "ActionIcon"
+		Position: UDim2.new 0.175, 0, 0.175, 0
+		Size: UDim2.new 0.65, 0, 0.65, 0
+		BackgroundTransparency: 1
+
+	if functionInfoTable["image"] and type(functionInfoTable["image"]) == "string"
+		actionIcon.Image = functionInfoTable["image"]
+
+	actionIcon.Parent = contextButton
+
+	actionTitle = New "TextLabel", "ActionTitle"
+		Size: UDim2.new 1, 0, 1, 0
+		BackgroundTransparency: 1
+		Font: Enum.Font.SourceSansBold
+		TextColor3: Color3.new 1, 1, 1
+		TextStrokeTransparency: 0
+		FontSize: Enum.FontSize.Size18
+		TextWrapped: true
+		Text: ""
+
+	if functionInfoTable["title"] and type(functionInfoTable["title"]) == "string"
+		actionTitle.Text = functionInfoTable["title"]
+
+	actionTitle.Parent = contextButton
+
+	contextButton
+
+createButton = (actionName, functionInfoTable) ->
+	button = createNewButton actionName, functionInfoTable
+
+	local position
+	for i = 1, #buttonVector
+		if buttonVector[i] == "empty"
+			position = i
+			break
+
+	if not position
+		position = #buttonVector + 1
+
+	-- todo: let user know we have too many buttons already?
+	return if position > maxButtons
+
+	buttonVector[position] = button
+	functionTable[actionName]["button"] = button
+
+	button.Position = buttonPositionTable[position]
+	button.Parent = buttonFrame
+
+	if buttonScreenGui and not buttonScreenGui.Parent?
+		buttonScreenGui.Parent = Game.Players.LocalPlayer.PlayerGui
+
+removeAction = (actionName) ->
+	return if not functionTable[actionName]
+
+	actionButton = functionTable[actionName]["button"]
+
+	if actionButton
+		actionButton.Parent = nil
+
+		for i in *buttonVector
+			if i == actionButton
+				i = "empty"
+				break
+
+		actionButton\Destroy!
+
+	functionTable[actionName] = nil
+
+addAction = (actionName, createTouchButton, functionInfoTable) ->
+	if functionTable[actionName]
+		removeAction actionName
+
+	functionTable[actionName] = { functionInfoTable }
+	if createTouchButton and isTouchDevice
+		createContextActionGui!
+		createButton actionName, functionInfoTable
+
+-- Connections
+contextActionService.BoundActionChanged\connect (actionName, changeName, changeTable) ->
+	if functionTable[actionName] and changeTable
+		if button = functionTable[actionName]["button"]
+			if changeName == "image"
+				button.ActionIcon.Image = changeTable[changeName]
+			elseif changeName == "title"
+				button.ActionTitle.Text = changeTable[changeName]
+			-- elseif changeName == "description"
+			-- 	-- todo: add description to menu
+			elseif changeName == "position"
+				button.Position = changeTable[changeName]
+
+contextActionService.BoundActionAdded\connect (actionName, createTouchButton, functionInfoTable) ->
+	addAction actionName, createTouchButton, functionInfoTable
+
+contextActionService.BoundActionRemoved\connect (actionName, _) ->
+	removeAction actionName
+
+contextActionService.GetActionButtonEvent\connect (actionName) ->
+	if functionTable[actionName]
+		contextActionService\FireActionButtonFoundSignal actionName, functionTable[actionName]["button"]
+
+-- make sure any bound data before we setup connections is handled
+boundActions = contextActionService\GetAllBoundActionInfo!
+for actionName, actionData in pairs boundActions
+	addAction actionName, actionData["createTouchButton"], actionData

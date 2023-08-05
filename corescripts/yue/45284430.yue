@@ -1,0 +1,3636 @@
+import "macros" as { $ }
+$load $FILE
+
+-- Heliodex's basic New function (basically a simplified version of melt)
+New = (className, name, props) ->
+	if props == nil -- no name was provided
+		props = name
+		name = nil
+
+	obj = Instance.new className
+	obj.Name = name if name
+	local parent
+
+	for k, v in pairs props
+		if type(k) == "string"
+			if k == "Parent"
+				parent = v
+			else
+				obj[k] = v
+
+		elseif type(k) == "number" and type(v) == "userdata"
+			v.Parent = obj
+
+	obj.Parent = parent
+	obj
+--
+
+t = {}
+
+ScopedConnect = (parentInstance, instance, event, signalFunc, syncFunc, removeFunc) ->
+	local eventConnection
+
+	--Connection on parentInstance is scoped by parentInstance (when destroyed, it goes away)
+	tryConnect = ->
+		if game\IsAncestorOf parentInstance
+			--Entering the world, make sure we are connected/synced
+			if not eventConnection
+				eventConnection = instance[event]\connect signalFunc
+				syncFunc?!
+
+
+		else
+			--Probably leaving the world, so disconnect for now
+			if eventConnection
+				eventConnection\disconnect!
+				removeFunc?!
+
+
+	--Hook it up to ancestryChanged signal
+	connection = parentInstance.AncestryChanged\connect tryConnect
+
+	--Now connect us if we're already in the world
+	tryConnect!
+
+	connection
+
+
+getScreenGuiAncestor = (instance) ->
+	localInstance = instance
+	while localInstance and not localInstance\IsA "ScreenGui"
+		localInstance = localInstance.Parent
+
+	localInstance
+
+
+CreateButtons = (frame, buttons, yPos, ySize) ->
+	buttonNum = 1
+	buttonObjs = {}
+	for _, obj in ipairs buttons
+		button = New "TextButton", "Button#{buttonNum}"
+			Font: Enum.Font.Arial
+			FontSize: Enum.FontSize.Size18
+			AutoButtonColor: true
+			Modal: true
+			Style: if obj["Style"]
+				obj.Style
+			else
+				Enum.ButtonStyle.RobloxButton
+
+			Text: obj.Text
+			TextColor3: Color3.new 1, 1, 1
+			Parent: frame
+
+		button.MouseButton1Click\connect obj.Function
+		buttonObjs[buttonNum] = button
+
+		buttonNum += 1
+
+	numButtons = buttonNum - 1
+
+	if numButtons == 1
+		frame.Button1.Position = UDim2.new 0.35, 0, yPos.Scale, yPos.Offset
+		frame.Button1.Size = UDim2.new 0.4, 0, ySize.Scale, ySize.Offset
+	elseif numButtons == 2
+		frame.Button1.Position = UDim2.new 0.1, 0, yPos.Scale, yPos.Offset
+		frame.Button1.Size = UDim2.new 0.8 / 3, 0, ySize.Scale, ySize.Offset
+
+		frame.Button2.Position = UDim2.new 0.55, 0, yPos.Scale, yPos.Offset
+		frame.Button2.Size = UDim2.new 0.35, 0, ySize.Scale, ySize.Offset
+	elseif numButtons >= 3
+		spacing = 0.1 / numButtons
+		buttonSize = 0.9 / numButtons
+
+		buttonNum = 1
+		while buttonNum <= numButtons
+			buttonObjs[buttonNum].Position = UDim2.new spacing * buttonNum + (buttonNum - 1) * buttonSize, 0, yPos.Scale, yPos.Offset
+			buttonObjs[buttonNum].Size = UDim2.new buttonSize, 0, ySize.Scale, ySize.Offset
+			buttonNum += 1
+
+
+setSliderPos = (newAbsPosX, slider, sliderPosition, bar, steps) ->
+	newStep = steps - 1 --otherwise we really get one more step than we want
+	relativePosX = math.min 1, math.max(0, (newAbsPosX - bar.AbsolutePosition.X) / bar.AbsoluteSize.X)
+	wholeNum, remainder = math.modf relativePosX * newStep
+	if remainder > 0.5
+		wholeNum += 1
+
+	relativePosX = wholeNum / newStep
+
+	result = math.ceil relativePosX * newStep
+	if sliderPosition.Value ~= (result + 1) --only update if we moved a step
+		sliderPosition.Value = result + 1
+		slider.Position = UDim2.new relativePosX, -slider.AbsoluteSize.X / 2, slider.Position.Y.Scale, slider.Position.Y.Offset
+
+
+cancelSlide = (areaSoak) ->
+	areaSoak.Visible = false
+	areaSoakMouseMoveCon?\disconnect!
+
+
+t.CreateStyledMessageDialog = (title, message, style, buttons) ->
+	frame = New "Frame", "MessageDialog"
+		Size: UDim2.new 0.5, 0, 0, 165
+		Position: UDim2.new 0.25, 0, 0.5, -72.5
+		Active: true
+		Style: Enum.FrameStyle.RobloxRound
+
+		* New "TextLabel", "Title"
+			Text: title
+			TextStrokeTransparency: 0
+			BackgroundTransparency: 1
+			TextColor3: Color3.new 221 / 255, 221 / 255, 221 / 255
+			Position: UDim2.new 0, 80, 0, 0
+			Size: UDim2.new 1, -80, 0, 40
+			Font: Enum.Font.ArialBold
+			FontSize: Enum.FontSize.Size36
+			TextXAlignment: Enum.TextXAlignment.Center
+			TextYAlignment: Enum.TextYAlignment.Center
+
+		* New "TextLabel", "Message"
+			Text: message
+			TextStrokeTransparency: 0
+			TextColor3: Color3.new 221 / 255, 221 / 255, 221 / 255
+			Position: UDim2.new 0.025, 80, 0, 45
+			Size: UDim2.new 0.95, -80, 0, 55
+			BackgroundTransparency: 1
+			Font: Enum.Font.Arial
+			FontSize: Enum.FontSize.Size18
+			TextWrap: true
+			TextXAlignment: Enum.TextXAlignment.Left
+			TextYAlignment: Enum.TextYAlignment.Top
+
+	styleImage = New "ImageLabel", "StyleImage"
+		BackgroundTransparency: 1
+		Position: UDim2.new 0, 5, 0, 15
+
+	if style == "error" or style == "Error"
+		styleImage.Size = UDim2.new 0, 71, 0, 71
+		styleImage.Image = "http://banland.xyz/asset?id=42565285"
+	elseif style == "notify" or style == "Notify"
+		styleImage.Size = UDim2.new 0, 71, 0, 71
+		styleImage.Image = "http://banland.xyz/asset?id=42604978"
+	elseif style == "confirm" or style == "Confirm"
+		styleImage.Size = UDim2.new 0, 74, 0, 76
+		styleImage.Image = "http://banland.xyz/asset?id=42557901"
+	else
+		return t.CreateMessageDialog title, message, buttons
+
+	styleImage.Parent = frame
+
+	CreateButtons frame, buttons, UDim.new(0, 105), UDim.new 0, 40
+
+	frame
+
+
+t.CreateMessageDialog = (title, message, buttons) ->
+	frame = New "Frame", "MessageDialog"
+		Size: UDim2.new 0.5, 0, 0.5, 0
+		Position: UDim2.new 0.25, 0, 0.25, 0
+		Active: true
+		Style: Enum.FrameStyle.RobloxRound
+
+		* New "TextLabel", "Title"
+			Text: title
+			BackgroundTransparency: 1
+			TextColor3: Color3.new 221 / 255, 221 / 255, 221 / 255
+			Position: UDim2.new 0, 0, 0, 0
+			Size: UDim2.new 1, 0, 0.15, 0
+			Font: Enum.Font.ArialBold
+			FontSize: Enum.FontSize.Size36
+			TextXAlignment: Enum.TextXAlignment.Center
+			TextYAlignment: Enum.TextYAlignment.Center
+
+		* New "TextLabel", "Message"
+			Text: message
+			TextColor3: Color3.new 221 / 255, 221 / 255, 221 / 255
+			Position: UDim2.new 0.025, 0, 0.175, 0
+			Size: UDim2.new 0.95, 0, 0.55, 0
+			BackgroundTransparency: 1
+			Font: Enum.Font.Arial
+			FontSize: Enum.FontSize.Size18
+			TextWrap: true
+			TextXAlignment: Enum.TextXAlignment.Left
+			TextYAlignment: Enum.TextYAlignment.Top
+
+	CreateButtons frame, buttons, UDim.new(0.8, 0), UDim.new 0.15, 0
+
+	frame
+
+
+t.CreateDropDownMenu = (items, onSelect, forRoblox) ->
+	width = UDim.new 0, 100
+	height = UDim.new 0, 32
+
+	frame = New "Frame", "DropDownMenu"
+		BackgroundTransparency: 1
+		Size: UDim2.new width, height
+
+	dropDownMenu = New "TextButton", "DropDownMenuButton"
+		TextWrap: true
+		TextColor3: Color3.new 1, 1, 1
+		Text: "Choose One"
+		Font: Enum.Font.ArialBold
+		FontSize: Enum.FontSize.Size18
+		TextXAlignment: Enum.TextXAlignment.Left
+		TextYAlignment: Enum.TextYAlignment.Center
+		BackgroundTransparency: 1
+		AutoButtonColor: true
+		Style: Enum.ButtonStyle.RobloxButton
+		Size: UDim2.new 1, 0, 1, 0
+		Parent: frame
+		ZIndex: 2
+
+		* New "ImageLabel", "Icon"
+			Active: false
+			Image: "http://banland.xyz/asset/?id=45732894"
+			BackgroundTransparency: 1
+			Size: UDim2.new 0, 11, 0, 6
+			Position: UDim2.new 1, -11, 0.5, -2
+			ZIndex: 2
+
+	itemCount = #items
+	dropDownItemCount = #items
+	useScrollButtons = false
+	if dropDownItemCount > 6
+		useScrollButtons = true
+		dropDownItemCount = 6
+
+
+	droppedDownMenu = New "TextButton", "List"
+		Text: ""
+		BackgroundTransparency: 1
+		--AutoButtonColor: true
+		Style: Enum.ButtonStyle.RobloxButton
+		Visible: false
+		Active: true --Blocks clicks
+		Position: UDim2.new 0, 0, 0, 0
+		Size: UDim2.new 1, 0, (1 + dropDownItemCount) * 0.8, 0
+		Parent: frame
+		ZIndex: 2
+
+	choiceButton = New "TextButton", "ChoiceButton"
+		BackgroundTransparency: 1
+		BorderSizePixel: 0
+		Text: "ReplaceMe"
+		TextColor3: Color3.new 1, 1, 1
+		TextXAlignment: Enum.TextXAlignment.Left
+		TextYAlignment: Enum.TextYAlignment.Center
+		BackgroundColor3: Color3.new 1, 1, 1
+		Font: Enum.Font.Arial
+		FontSize: Enum.FontSize.Size18
+		Size: UDim2.new 1, if useScrollButtons
+			-13, 0.8 / ((dropDownItemCount + 1) * 0.8), 0
+		else
+			0, 0.8 / ((dropDownItemCount + 1) * 0.8), 0
+
+		TextWrap: true
+		ZIndex: 2
+
+	areaSoak = New "TextButton", "AreaSoak"
+		Text: ""
+		BackgroundTransparency: 1
+		Active: true
+		Size: UDim2.new 1, 0, 1, 0
+		Visible: false
+		ZIndex: 3
+
+	dropDownSelected = false
+
+	local scrollUpButton
+	local scrollDownButton
+	scrollMouseCount = 0
+
+	setZIndex = (baseZIndex) ->
+		droppedDownMenu.ZIndex = baseZIndex + 1
+		if scrollUpButton
+			scrollUpButton.ZIndex = baseZIndex + 3
+
+		if scrollDownButton
+			scrollDownButton.ZIndex = baseZIndex + 3
+
+		if children = droppedDownMenu\GetChildren!
+			for _, child in ipairs children
+				if child.Name == "ChoiceButton"
+					child.ZIndex = baseZIndex + 2
+				elseif child.Name == "ClickCaptureButton"
+					child.ZIndex = baseZIndex
+
+
+	scrollBarPosition = 1
+	updateScroll = ->
+		if scrollUpButton
+			scrollUpButton.Active = scrollBarPosition > 1
+
+		if scrollDownButton
+			scrollDownButton.Active = scrollBarPosition + dropDownItemCount <= itemCount
+
+
+		children = droppedDownMenu\GetChildren!
+		return if not children
+
+		childNum = 1
+		for _, obj in ipairs children
+			if obj.Name == "ChoiceButton"
+				if childNum < scrollBarPosition or childNum >= scrollBarPosition + dropDownItemCount
+					obj.Visible = false
+				else
+					obj.Position = UDim2.new 0, 0, ((childNum - scrollBarPosition + 1) * 0.8) / ((dropDownItemCount + 1) * 0.8), 0
+					obj.Visible = true
+
+				obj.TextColor3 = Color3.new 1, 1, 1
+				obj.BackgroundTransparency = 1
+
+				childNum += 1
+
+
+	toggleVisibility = ->
+		dropDownSelected = not dropDownSelected
+
+		areaSoak.Visible = not areaSoak.Visible
+		dropDownMenu.Visible = not dropDownSelected
+		droppedDownMenu.Visible = dropDownSelected
+		setZIndex if dropDownSelected
+			4
+		else
+			2
+
+		if useScrollButtons
+			updateScroll!
+
+
+	droppedDownMenu.MouseButton1Click\connect toggleVisibility
+
+	updateSelection = (text) ->
+		foundItem = false
+		children = droppedDownMenu\GetChildren!
+		childNum = 1
+		if children
+			for _, obj in ipairs children
+				if obj.Name == "ChoiceButton"
+					if obj.Text == text
+						obj.Font = Enum.Font.ArialBold
+						foundItem = true
+						scrollBarPosition = childNum
+					else
+						obj.Font = Enum.Font.Arial
+
+					childNum += 1
+
+
+		if not text
+			dropDownMenu.Text = "Choose One"
+			scrollBarPosition = 1
+		else
+			if not foundItem
+				error "Invalid Selection Update -- " .. text
+
+
+			if scrollBarPosition + dropDownItemCount > itemCount + 1
+				scrollBarPosition = itemCount - dropDownItemCount + 1
+
+
+			dropDownMenu.Text = text
+
+
+	scrollDown = ->
+		if scrollBarPosition + dropDownItemCount <= itemCount
+			scrollBarPosition += 1
+			updateScroll!
+			return true
+		false
+
+	scrollUp = ->
+		if scrollBarPosition > 1
+			scrollBarPosition -= 1
+			updateScroll!
+			return true
+		false
+
+
+	if useScrollButtons
+		--Make some scroll buttons
+		scrollUpButton = New "ImageButton", "ScrollUpButton"
+			BackgroundTransparency: 1
+			Image: "rbxasset://textures/ui/scrollbuttonUp.png"
+			Size: UDim2.new 0, 17, 0, 17
+			Position: UDim2.new 1, -11, (1 * 0.8) / ((dropDownItemCount + 1) * 0.8), 0
+
+		scrollUpButton.MouseButton1Click\connect -> scrollMouseCount += 1
+		scrollUpButton.MouseLeave\connect -> scrollMouseCount += 1
+		scrollUpButton.MouseButton1Down\connect ->
+			scrollMouseCount += 1
+
+			scrollUp!
+			val = scrollMouseCount
+			wait 0.5
+			while val == scrollMouseCount
+				break if scrollUp! == false
+
+				wait 0.1
+
+
+		scrollUpButton.Parent = droppedDownMenu
+
+		scrollDownButton = New "ImageButton", "ScrollDownButton"
+			BackgroundTransparency: 1
+			Image: "rbxasset://textures/ui/scrollbuttonDown.png"
+			Size: UDim2.new 0, 17, 0, 17
+			Position: UDim2.new 1, -11, 1, -11
+			Parent: droppedDownMenu
+
+		scrollDownButton.MouseButton1Click\connect -> scrollMouseCount += 1
+		scrollDownButton.MouseLeave\connect -> scrollMouseCount += 1
+		scrollDownButton.MouseButton1Down\connect ->
+			scrollMouseCount += 1
+
+			scrollDown!
+			val = scrollMouseCount
+			wait 0.5
+			while val == scrollMouseCount
+				break if scrollDown! == false
+
+				wait 0.1
+
+		New "ImageLabel", "ScrollBar"
+			Image: "rbxasset://textures/ui/scrollbar.png"
+			BackgroundTransparency: 1
+			Size: UDim2.new 0, 18, (dropDownItemCount * 0.8) / ((dropDownItemCount + 1) * 0.8), -17 - 11 - 4
+			Position: UDim2.new 1, -11, (1 * 0.8) / ((dropDownItemCount + 1) * 0.8), 17 + 2
+			Parent: droppedDownMenu
+
+
+	for _, item in ipairs items
+		-- needed to maintain local scope for items in event listeners below
+		button = choiceButton\clone!
+		if forRoblox
+			button.RobloxLocked = true
+
+		button.Text = item
+		button.Parent = droppedDownMenu
+		button.MouseButton1Click\connect ->
+			--Remove Highlight
+			button.TextColor3 = Color3.new 1, 1, 1
+			button.BackgroundTransparency = 1
+
+			updateSelection item
+			onSelect item
+
+			toggleVisibility!
+
+		button.MouseEnter\connect ->
+			--Add Highlight
+			button.TextColor3 = Color3.new 0, 0, 0
+			button.BackgroundTransparency = 0
+
+
+		button.MouseLeave\connect ->
+			--Remove Highlight
+			button.TextColor3 = Color3.new 1, 1, 1
+			button.BackgroundTransparency = 1
+
+
+	--This does the initial layout of the buttons
+	updateScroll!
+
+	frame.AncestryChanged\connect (_, parent) ->
+		areaSoak.Parent = if parent == nil
+			 nil
+		else
+			getScreenGuiAncestor frame
+
+
+	dropDownMenu.MouseButton1Click\connect toggleVisibility
+	areaSoak.MouseButton1Click\connect toggleVisibility
+	return frame, updateSelection
+
+
+t.CreatePropertyDropDownMenu = (instance, property, enum) ->
+	items = enum\GetEnumItems!
+	names = {}
+	nameToItem = {}
+	for i, obj in ipairs items
+		names[i] = obj.Name
+		nameToItem[obj.Name] = obj
+
+
+	local frame, updateSelection
+	frame, updateSelection = t.CreateDropDownMenu names, (text) ->
+		instance[property] = nameToItem[text]
+
+
+	ScopedConnect(frame, instance, "Changed"
+		(prop) ->
+			if prop == property
+				updateSelection instance[property].Name
+		->
+			updateSelection instance[property].Name
+	)
+
+	frame
+
+
+t.GetFontHeight = (font, fontSize) ->
+	if font == nil or fontSize == nil
+		error "Font and FontSize must be non-nil"
+
+
+	if font == Enum.Font.Legacy
+		switch fontSize
+			when Enum.FontSize.Size8 then 12
+			when Enum.FontSize.Size9 then 14
+			when Enum.FontSize.Size10 then 15
+			when Enum.FontSize.Size11 then 17
+			when Enum.FontSize.Size12 then 18
+			when Enum.FontSize.Size14 then 21
+			when Enum.FontSize.Size18 then 27
+			when Enum.FontSize.Size24 then 36
+			when Enum.FontSize.Size36 then 54
+			when Enum.FontSize.Size48 then 72
+			else error "Unknown FontSize"
+
+	elseif font == Enum.Font.Arial or font == Enum.Font.ArialBold
+		switch fontSize
+			when Enum.FontSize.Size8 then 8
+			when Enum.FontSize.Size9 then 9
+			when Enum.FontSize.Size10 then 10
+			when Enum.FontSize.Size11 then 11
+			when Enum.FontSize.Size12 then 12
+			when Enum.FontSize.Size14 then 14
+			when Enum.FontSize.Size18 then 18
+			when Enum.FontSize.Size24 then 24
+			when Enum.FontSize.Size36 then 36
+			when Enum.FontSize.Size48 then 48
+			else error "Unknown FontSize"
+
+	else
+		error "Unknown Font " .. font
+
+
+layoutGuiObjectsHelper = (frame, guiObjects, settingsTable) ->
+	totalPixels = frame.AbsoluteSize.Y
+	pixelsRemaining = frame.AbsoluteSize.Y
+	for _, child in ipairs guiObjects
+		if child\IsA"TextLabel" or child\IsA "TextButton"
+			isLabel = child\IsA "TextLabel"
+			pixelsRemaining -= if isLabel
+				settingsTable["TextLabelPositionPadY"]
+			else
+				settingsTable["TextButtonPositionPadY"]
+
+			child.Position = UDim2.new child.Position.X.Scale, child.Position.X.Offset, 0, totalPixels - pixelsRemaining
+			child.Size = UDim2.new child.Size.X.Scale, child.Size.X.Offset, 0, pixelsRemaining
+
+			if child.TextFits and child.TextBounds.Y < pixelsRemaining
+				child.Visible = true
+				child.Size = if isLabel
+					UDim2.new(
+						child.Size.X.Scale,
+						child.Size.X.Offset,
+						0,
+						child.TextBounds.Y + settingsTable["TextLabelSizePadY"]
+					)
+				else
+					UDim2.new(
+						child.Size.X.Scale,
+						child.Size.X.Offset,
+						0,
+						child.TextBounds.Y + settingsTable["TextButtonSizePadY"]
+					)
+
+
+				while not child.TextFits
+					child.Size = UDim2.new child.Size.X.Scale, child.Size.X.Offset, 0, child.AbsoluteSize.Y + 1
+
+				pixelsRemaining -= child.AbsoluteSize.Y
+
+				pixelsRemaining -= if isLabel
+					settingsTable["TextLabelPositionPadY"]
+				else
+					settingsTable["TextButtonPositionPadY"]
+
+			else
+				child.Visible = false
+				pixelsRemaining = -1
+
+		else
+			--GuiObject
+			child.Position = UDim2.new child.Position.X.Scale, child.Position.X.Offset, 0, totalPixels - pixelsRemaining
+			pixelsRemaining -= child.AbsoluteSize.Y
+			child.Visible = (pixelsRemaining >= 0)
+
+
+t.LayoutGuiObjects = (frame, guiObjects, settingsTable) ->
+	if not frame\IsA "GuiObject"
+		error "Frame must be a GuiObject"
+
+	for _, child in ipairs guiObjects
+		if not child\IsA "GuiObject"
+			error "All elements that are layed out must be of type GuiObject"
+
+
+	if not settingsTable
+		settingsTable = {}
+
+	if not settingsTable["TextLabelSizePadY"]
+		settingsTable["TextLabelSizePadY"] = 0
+
+	if not settingsTable["TextLabelPositionPadY"]
+		settingsTable["TextLabelPositionPadY"] = 0
+
+	if not settingsTable["TextButtonSizePadY"]
+		settingsTable["TextButtonSizePadY"] = 12
+
+	if not settingsTable["TextButtonPositionPadY"]
+		settingsTable["TextButtonPositionPadY"] = 2
+
+
+	--Wrapper frame takes care of styled objects
+	wrapperFrame = New "Frame", "WrapperFrame"
+		BackgroundTransparency: 1
+		Size: UDim2.new 1, 0, 1, 0
+		Parent: frame
+
+	for _, child in ipairs guiObjects
+		child.Parent = wrapperFrame
+
+
+	recalculate = ->
+		wait!
+		layoutGuiObjectsHelper wrapperFrame, guiObjects, settingsTable
+
+
+	frame.Changed\connect (prop) ->
+		if prop == "AbsoluteSize"
+			--Wait a heartbeat for it to sync in
+			recalculate!
+
+
+	frame.AncestryChanged\connect recalculate
+
+	layoutGuiObjectsHelper wrapperFrame, guiObjects, settingsTable
+
+
+t.CreateSlider = (steps, width, position) ->
+	sliderGui = New "Frame", "SliderGui"
+		Size: UDim2.new 1, 0, 1, 0
+		BackgroundTransparency: 1
+
+	sliderSteps = New "IntValue", "SliderSteps"
+		Value: steps
+		Parent: sliderGui
+
+	areaSoak = New "TextButton", "AreaSoak"
+		Text: ""
+		BackgroundTransparency: 1
+		Active: false
+		Size: UDim2.new 1, 0, 1, 0
+		Visible: false
+		ZIndex: 4
+
+	sliderGui.AncestryChanged\connect (_, parent) ->
+		areaSoak.Parent = if parent == nil
+			nil
+		else
+			getScreenGuiAncestor sliderGui
+
+
+	sliderPosition = New "IntValue", "SliderPosition"
+		Value: 0
+		Parent: sliderGui
+
+	bar = New "TextButton", "Bar"
+		Text: ""
+		AutoButtonColor: false
+		BackgroundColor3: Color3.new 0, 0, 0
+		Size: UDim2.new 0, if type(width) == "number"
+			width, 0, 5
+		else
+			200, 0, 5
+
+		BorderColor3: Color3.new 95 / 255, 95 / 255, 95 / 255
+		ZIndex: 2
+		Parent: sliderGui
+
+	if position["X"] and
+		position["X"]["Scale"] and
+		position["X"]["Offset"] and
+		position["Y"] and
+		position["Y"]["Scale"] and
+		position["Y"]["Offset"]
+
+		bar.Position = position
+
+
+	slider = New "ImageButton", "Slider"
+		BackgroundTransparency: 1
+		Image: "rbxasset://textures/ui/Slider.png"
+		Position: UDim2.new 0, 0, 0.5, -10
+		Size: UDim2.new 0, 20, 0, 20
+		ZIndex: 3
+		Parent: bar
+
+	local areaSoakMouseMoveCon
+
+	f = -> if areaSoak.Visible
+		cancelSlide areaSoak
+
+	areaSoak.MouseLeave\connect f
+	areaSoak.MouseButton1Up\connect f
+
+
+	slider.MouseButton1Down\connect ->
+		areaSoak.Visible = true
+		areaSoakMouseMoveCon?\disconnect!
+
+		areaSoakMouseMoveCon = areaSoak.MouseMoved\connect (x, _) ->
+			setSliderPos x, slider, sliderPosition, bar, steps
+
+
+	slider.MouseButton1Up\connect ->
+		cancelSlide areaSoak
+
+
+	sliderPosition.Changed\connect (_) ->
+		sliderPosition.Value = math.min steps, math.max 1, sliderPosition.Value
+		relativePosX = (sliderPosition.Value - 1) / (steps - 1)
+		slider.Position = UDim2.new relativePosX, -slider.AbsoluteSize.X / 2, slider.Position.Y.Scale, slider.Position.Y.Offset
+
+
+	bar.MouseButton1Down\connect (x, _) ->
+		setSliderPos x, slider, sliderPosition, bar, steps
+
+
+	sliderGui, sliderPosition, sliderSteps
+
+
+t.CreateTrueScrollingFrame = ->
+	local lowY, highY, dragCon, upCon
+
+	internalChange = false
+
+	descendantsChangeConMap = {}
+
+	scrollingFrame = New "Frame", "ScrollingFrame"
+		Active: true
+		Size: UDim2.new 1, 0, 1, 0
+		ClipsDescendants: true
+
+		* New "Frame", "ControlFrame"
+			BackgroundTransparency: 1
+			Size: UDim2.new 0, 18, 1, 0
+			Position: UDim2.new 1, -20, 0, 0
+
+			* New "BoolValue", "ScrollBottom"
+				Value: false
+
+			* New "BoolValue", "ScrollUp"
+				Value: false
+
+			* New "TextButton", "ScrollUpButton"
+				Text: ""
+				AutoButtonColor: false
+				BackgroundColor3: Color3.new 0, 0, 0
+				BorderColor3: Color3.new 1, 1, 1
+				BackgroundTransparency: 0.5
+				Size: UDim2.new 0, 18, 0, 18
+				ZIndex: 2
+
+	{
+		ControlFrame: controlFrame
+		ControlFrame:
+			ScrollBottom: scrollBottom
+			ScrollUp: scrollUpBool
+			ScrollUpButton: scrollUpButton
+	} = scrollingFrame
+
+
+	for i = 1, 6
+		New "Frame", "tri#{i}"
+			BorderColor3: Color3.new 1, 1, 1
+			ZIndex: 3
+			BackgroundTransparency: 0.5
+			Size: UDim2.new 0, 12 - ((i - 1) * 2), 0, 0
+			Position: UDim2.new 0, 3 + (i - 1), 0.5, 2 - (i - 1)
+			Parent: scrollUpButton
+
+	scrollUpButton.MouseEnter\connect ->
+		scrollUpButton.BackgroundTransparency = 0.1
+		upChildren = scrollUpButton\GetChildren!
+		for i in *upChildren
+			i.BackgroundTransparency = 0.1
+
+
+	scrollUpButton.MouseLeave\connect ->
+		scrollUpButton.BackgroundTransparency = 0.5
+		upChildren = scrollUpButton\GetChildren!
+		for i in *upChildren
+			i.BackgroundTransparency = 0.5
+
+
+	scrollDownButton = scrollUpButton\clone!
+	scrollDownButton.Name = "ScrollDownButton"
+	scrollDownButton.Position = UDim2.new 0, 0, 1, -18
+	downChildren = scrollDownButton\GetChildren!
+	for i = 1, #downChildren
+		downChildren[i].Position = UDim2.new 0, 3 + (i - 1), 0.5, -2 + (i - 1)
+
+	scrollDownButton.MouseEnter\connect ->
+		scrollDownButton.BackgroundTransparency = 0.1
+		downChildren = scrollDownButton\GetChildren!
+		for i in *downChildren
+			i.BackgroundTransparency = 0.1
+
+
+	scrollDownButton.MouseLeave\connect ->
+		scrollDownButton.BackgroundTransparency = 0.5
+		downChildren = scrollDownButton\GetChildren!
+		for i in *downChildren
+			i.BackgroundTransparency = 0.5
+
+
+	scrollDownButton.Parent = controlFrame
+
+	scrollTrack = New "Frame", "ScrollTrack"
+		BackgroundTransparency: 1
+		Size: UDim2.new 0, 18, 1, -38
+		Position: UDim2.new 0, 0, 0, 19
+		Parent: controlFrame
+
+		* New "TextButton", "ScrollBar"
+			BackgroundColor3: Color3.new 0, 0, 0
+			BorderColor3: Color3.new 1, 1, 1
+			BackgroundTransparency: 0.5
+			AutoButtonColor: false
+			Text: ""
+			Active: true
+			ZIndex: 2
+			Size: UDim2.new 0, 18, 0.1, 0
+			Position: UDim2.new 0, 0, 0, 0
+
+			* New "Frame", "ScrollNub"
+				BorderColor3: Color3.new 1, 1, 1
+				Size: UDim2.new 0, 10, 0, 0
+				Position: UDim2.new 0.5, -5, 0.5, 0
+				ZIndex: 2
+				BackgroundTransparency: 0.5
+
+	{
+		ScrollBar: scrollbar
+		ScrollBar:
+			ScrollNub: scrollNub
+	} = scrollTrack
+
+
+	newNub = scrollNub\clone!
+	newNub.Position = UDim2.new 0.5, -5, 0.5, -2
+	newNub.Parent = scrollbar
+
+	lastNub = scrollNub\clone!
+	lastNub.Position = UDim2.new 0.5, -5, 0.5, 2
+	lastNub.Parent = scrollbar
+
+	scrollbar.MouseEnter\connect ->
+		scrollbar.BackgroundTransparency = \
+		scrollNub.BackgroundTransparency = \
+		newNub.BackgroundTransparency = \
+		lastNub.BackgroundTransparency = 0.1
+
+	scrollbar.MouseLeave\connect ->
+		scrollbar.BackgroundTransparency = \
+		scrollNub.BackgroundTransparency = \
+		newNub.BackgroundTransparency = \
+		lastNub.BackgroundTransparency = 0.5
+
+
+	mouseDrag = New "ImageButton", "mouseDrag"
+		Active: false
+		Size: UDim2.new 1.5, 0, 1.5, 0
+		AutoButtonColor: false
+		BackgroundTransparency: 1
+		Position: UDim2.new -0.25, 0, -0.25, 0
+		ZIndex: 10
+
+	positionScrollBar = (_, y, offset) ->
+		oldPos = scrollbar.Position
+
+		if y < scrollTrack.AbsolutePosition.y
+			scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, 0, 0
+			return oldPos ~= scrollbar.Position
+
+
+		relativeSize = scrollbar.AbsoluteSize.Y / scrollTrack.AbsoluteSize.Y
+
+		if y > (scrollTrack.AbsolutePosition.y + scrollTrack.AbsoluteSize.y)
+			scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, 1 - relativeSize, 0
+			return oldPos ~= scrollbar.Position
+
+		newScaleYPos = (y - scrollTrack.AbsolutePosition.y - offset) / scrollTrack.AbsoluteSize.y
+		if newScaleYPos + relativeSize > 1
+			newScaleYPos = 1 - relativeSize
+			scrollBottom.Value = true
+			scrollUpBool.Value = false
+		elseif newScaleYPos <= 0
+			newScaleYPos = 0
+			scrollUpBool.Value = true
+			scrollBottom.Value = false
+		else
+			scrollUpBool.Value = false
+			scrollBottom.Value = false
+
+		scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, newScaleYPos, 0
+
+		oldPos ~= scrollbar.Position
+
+
+	drillDownSetHighLow = (instance) ->
+		return if not instance or not instance\IsA "GuiObject"
+		return if instance == controlFrame
+		return if instance\IsDescendantOf controlFrame
+		return if not instance.Visible
+
+		if (lowY and lowY > instance.AbsolutePosition.Y) or not lowY
+			lowY = instance.AbsolutePosition.Y
+
+		if (highY and highY < (instance.AbsolutePosition.Y + instance.AbsoluteSize.Y)) or not highY
+			highY = instance.AbsolutePosition.Y + instance.AbsoluteSize.Y
+
+		children = instance\GetChildren!
+		for i in *children
+			drillDownSetHighLow i
+
+
+	resetHighLow = ->
+		firstChildren = scrollingFrame\GetChildren!
+
+		for i in *firstChildren
+			drillDownSetHighLow i
+
+
+	recalculate = ->
+		internalChange = true
+
+		percentFrame = 0
+		if scrollbar.Position.Y.Scale > 0
+			percentFrame = if scrollbar.Visible
+				scrollbar.Position.Y.Scale / ((scrollTrack.AbsoluteSize.Y - scrollbar.AbsoluteSize.Y) / scrollTrack.AbsoluteSize.Y)
+			else
+				0
+
+
+		if percentFrame > 0.99
+			percentFrame = 1
+
+
+		hiddenYAmount = (scrollingFrame.AbsoluteSize.Y - (highY - lowY)) * percentFrame
+
+		guiChildren = scrollingFrame\GetChildren!
+		for i in *guiChildren
+			if i ~= controlFrame
+				i.Position = UDim2.new(
+					i.Position.X.Scale,
+					i.Position.X.Offset,
+					0,
+					math.ceil(i.AbsolutePosition.Y) - math.ceil lowY + hiddenYAmount
+				)
+
+
+		lowY = \
+		highY = nil
+		resetHighLow!
+		internalChange = false
+
+
+	setSliderSizeAndPosition = ->
+		return if not highY or not lowY
+
+		totalYSpan = math.abs highY - lowY
+		if totalYSpan == 0
+			scrollbar.Visible = \
+			scrollDownButton.Visible = \
+			scrollUpButton.Visible = false
+
+			if dragCon
+				dragCon\disconnect!
+				dragCon = nil
+
+			if upCon
+				upCon\disconnect!
+				upCon = nil
+
+			return
+
+
+		percentShown = scrollingFrame.AbsoluteSize.Y / totalYSpan
+		if percentShown >= 1
+			scrollbar.Visible = false
+			scrollDownButton.Visible = false
+			scrollUpButton.Visible = false
+			recalculate!
+		else
+			scrollbar.Visible = true
+			scrollDownButton.Visible = true
+			scrollUpButton.Visible = true
+
+			scrollbar.Size = UDim2.new scrollbar.Size.X.Scale, scrollbar.Size.X.Offset, percentShown, 0
+
+
+		percentPosition = (scrollingFrame.AbsolutePosition.Y - lowY) / totalYSpan
+		scrollbar.Position = UDim2.new(
+			scrollbar.Position.X.Scale,
+			scrollbar.Position.X.Offset,
+			percentPosition,
+			-scrollbar.AbsoluteSize.X / 2
+		)
+
+		if scrollbar.AbsolutePosition.y < scrollTrack.AbsolutePosition.y
+			scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, 0, 0
+
+
+		if (scrollbar.AbsolutePosition.y + scrollbar.AbsoluteSize.Y) > (scrollTrack.AbsolutePosition.y + scrollTrack.AbsoluteSize.y)
+
+			relativeSize = scrollbar.AbsoluteSize.Y / scrollTrack.AbsoluteSize.Y
+			scrollbar.Position = UDim2.new scrollbar.Position.X.Scale, scrollbar.Position.X.Offset, 1 - relativeSize, 0
+
+
+	buttonScrollAmountPixels = 7
+	reentrancyGuardScrollUp = false
+	doScrollUp = ->
+		return if reentrancyGuardScrollUp
+
+		reentrancyGuardScrollUp = true
+		if positionScrollBar 0, scrollbar.AbsolutePosition.Y - buttonScrollAmountPixels, 0
+			recalculate!
+
+		reentrancyGuardScrollUp = false
+
+
+	reentrancyGuardScrollDown = false
+	doScrollDown = ->
+		return if reentrancyGuardScrollDown
+
+		reentrancyGuardScrollDown = true
+		if positionScrollBar 0, scrollbar.AbsolutePosition.Y + buttonScrollAmountPixels, 0
+			recalculate!
+
+		reentrancyGuardScrollDown = false
+
+
+	scrollUp = (mouseYPos) ->
+		if scrollUpButton.Active
+			scrollStamp = tick!
+			current = scrollStamp
+			local upCon = mouseDrag.MouseButton1Up\connect ->
+				scrollStamp = tick!
+				mouseDrag.Parent = nil
+				upCon\disconnect!
+
+			mouseDrag.Parent = getScreenGuiAncestor scrollbar
+			doScrollUp!
+			wait 0.2
+			t = tick!
+			w = 0.1
+			while scrollStamp == current
+				doScrollUp!
+				break if mouseYPos and mouseYPos > scrollbar.AbsolutePosition.y
+				break if not scrollUpButton.Active
+
+				w = if tick! - t > 5
+					0
+				elseif tick! - t > 2
+					0.06
+
+				wait w
+
+
+	scrollDown = (mouseYPos) ->
+		if scrollDownButton.Active
+			scrollStamp = tick!
+			current = scrollStamp
+			local downCon
+			downCon = mouseDrag.MouseButton1Up\connect ->
+				scrollStamp = tick!
+				mouseDrag.Parent = nil
+				downCon\disconnect!
+
+			mouseDrag.Parent = getScreenGuiAncestor scrollbar
+			doScrollDown!
+			wait 0.2
+			t = tick!
+			w = 0.1
+			while scrollStamp == current
+				doScrollDown!
+				break if mouseYPos and mouseYPos < (scrollbar.AbsolutePosition.y + scrollbar.AbsoluteSize.x)
+				break if not scrollDownButton.Active
+
+				w = if tick! - t > 5
+					0
+				elseif tick! - t > 2
+					0.06
+
+				wait w
+
+
+	scrollbar.MouseButton1Down\connect (_, y) ->
+		if scrollbar.Active
+			scrollStamp = tick!
+			mouseOffset = y - scrollbar.AbsolutePosition.y
+			if dragCon
+				dragCon\disconnect!
+				dragCon = nil
+
+			if upCon
+				upCon\disconnect!
+				upCon = nil
+
+			reentrancyGuardMouseScroll = false
+			dragCon = mouseDrag.MouseMoved\connect (x2, y2) ->
+				return if reentrancyGuardMouseScroll
+
+				reentrancyGuardMouseScroll = true
+				if positionScrollBar x2, y2, mouseOffset
+					recalculate!
+
+				reentrancyGuardMouseScroll = false
+
+			upCon = mouseDrag.MouseButton1Up\connect ->
+				scrollStamp = tick!
+				mouseDrag.Parent = nil
+				dragCon\disconnect!
+				dragCon = nil
+				upCon\disconnect!
+				global drag = nil
+
+			mouseDrag.Parent = getScreenGuiAncestor scrollbar
+
+
+	scrollMouseCount = 0
+
+	scrollUpButton.MouseButton1Down\connect -> scrollUp!
+	scrollDownButton.MouseButton1Down\connect -> scrollDown!
+
+
+	scrollTick = ->
+		global scrollStamp = tick!
+
+
+	scrollUpButton.MouseButton1Up\connect scrollTick
+	scrollDownButton.MouseButton1Up\connect scrollTick
+	scrollbar.MouseButton1Up\connect scrollTick
+
+	-- heightCheck = (instance) ->
+	-- 	if (highY and (instance.AbsolutePosition.Y + instance.AbsoluteSize.Y) > highY) or not highY
+	-- 		highY = instance.AbsolutePosition.Y + instance.AbsoluteSize.Y
+	-- 	end
+	-- 	setSliderSizeAndPosition!
+	-- end
+
+	highLowRecheck = ->
+		oldLowY = lowY
+		oldHighY = highY
+		lowY = nil
+		highY = nil
+		resetHighLow!
+
+		if (lowY ~= oldLowY) or (highY ~= oldHighY)
+			setSliderSizeAndPosition!
+
+
+	descendantChanged = (this, prop) ->
+		return if internalChange
+		return if not this.Visible
+
+
+		if prop == "Size" or prop == "Position"
+			wait!
+			highLowRecheck!
+
+
+	scrollingFrame.DescendantAdded\connect (instance) ->
+		return if not instance\IsA "GuiObject"
+
+		if instance.Visible
+			wait! -- wait a heartbeat for sizes to reconfig
+			highLowRecheck!
+
+
+		descendantsChangeConMap[instance] = instance.Changed\connect (prop) ->
+			descendantChanged instance, prop
+
+
+	scrollingFrame.DescendantRemoving\connect (instance) ->
+		return if not instance\IsA "GuiObject"
+
+		if descendantsChangeConMap[instance]
+			descendantsChangeConMap[instance]\disconnect!
+			descendantsChangeConMap[instance] = nil
+
+		wait! -- wait a heartbeat for sizes to reconfig
+		highLowRecheck!
+
+
+	scrollingFrame.Changed\connect (prop) ->
+		if prop == "AbsoluteSize"
+			return if not highY or not lowY
+
+			highLowRecheck!
+			setSliderSizeAndPosition!
+
+
+	scrollingFrame, controlFrame
+
+
+t.CreateScrollingFrame = (orderList, scrollStyle) ->
+	frame = New "Frame", "ScrollingFrame"
+		BackgroundTransparency: 1
+		Size: UDim2.new 1, 0, 1, 0
+
+	scrollUpButton = New "ImageButton", "ScrollUpButton"
+		BackgroundTransparency: 1
+		Image: "rbxasset://textures/ui/scrollbuttonUp.png"
+		Size: UDim2.new 0, 17, 0, 17
+
+	scrollDownButton = New "ImageButton", "ScrollDownButton"
+		BackgroundTransparency: 1
+		Image: "rbxasset://textures/ui/scrollbuttonDown.png"
+		Size: UDim2.new 0, 17, 0, 17
+
+	scrollbar = New "ImageButton", "ScrollBar"
+		Image: "rbxasset://textures/ui/scrollbar.png"
+		BackgroundTransparency: 1
+		Size: UDim2.new 0, 18, 0, 150
+
+	scrollStamp = 0
+
+	scrollDrag = New "ImageButton", "ScrollDrag"
+		Image: "http://banland.xyz/asset/?id=61367186"
+		Size: UDim2.new 1, 0, 0, 16
+		BackgroundTransparency: 1
+		Active: true
+		Parent: scrollbar
+
+	mouseDrag = New "ImageButton", "mouseDrag"
+		Active: false
+		Size: UDim2.new 1.5, 0, 1.5, 0
+		AutoButtonColor: false
+		BackgroundTransparency: 1
+		Position: UDim2.new -0.25, 0, -0.25, 0
+		ZIndex: 10
+
+	style = "simple"
+	if scrollStyle and "#{scrollStyle}"
+		style = scrollStyle
+
+
+	scrollPosition = 1
+	rowSize = 0
+	howManyDisplayed = 0
+
+	layoutGridScrollBar = ->
+		howManyDisplayed = 0
+		guiObjects = {}
+		if orderList
+			for _, child in ipairs orderList
+				if child.Parent == frame
+					table.insert guiObjects, child
+
+
+		else
+			children = frame\GetChildren!
+			if children
+				for _, child in ipairs children
+					if child\IsA "GuiObject"
+						table.insert guiObjects, child
+
+
+		if #guiObjects == 0
+			scrollUpButton.Active = false
+			scrollDownButton.Active = false
+			scrollDrag.Active = false
+			scrollPosition = 1
+			return
+
+
+		if scrollPosition > #guiObjects
+			scrollPosition = #guiObjects
+
+
+		if scrollPosition < 1
+			scrollPosition = 1
+
+
+		totalPixelsY = frame.AbsoluteSize.Y
+		pixelsRemainingY = frame.AbsoluteSize.Y
+
+		totalPixelsX = frame.AbsoluteSize.X
+
+		xCounter = \
+		rowSizeCounter = 0
+		setRowSize = true
+
+		pixelsBelowScrollbar = 0
+		pos = #guiObjects
+
+		currentRowY = 0
+
+		pos = scrollPosition
+		--count up from current scroll position to fill out grid
+		while pos <= #guiObjects and pixelsBelowScrollbar < totalPixelsY
+			xCounter += guiObjects[pos].AbsoluteSize.X
+			--previous pos was the end of a row
+			if xCounter >= totalPixelsX
+				pixelsBelowScrollbar += currentRowY
+				currentRowY = 0
+				xCounter = guiObjects[pos].AbsoluteSize.X
+
+			if guiObjects[pos].AbsoluteSize.Y > currentRowY
+				currentRowY = guiObjects[pos].AbsoluteSize.Y
+
+			pos += 1
+
+		--Count wherever current row left off
+		pixelsBelowScrollbar += currentRowY
+		currentRowY = 0
+
+		pos = scrollPosition - 1
+		xCounter = 0
+
+		--objects with varying X,Y dimensions can rarely cause minor errors
+		--rechecking every new scrollPosition is necessary to avoid 100% of errors
+
+		--count backwards from current scrollPosition to see if we can add more rows
+		while pixelsBelowScrollbar + currentRowY < totalPixelsY and pos >= 1
+			xCounter += guiObjects[pos].AbsoluteSize.X
+			rowSizeCounter += 1
+			if xCounter >= totalPixelsX
+				rowSize = rowSizeCounter - 1
+				rowSizeCounter = 0
+				xCounter = guiObjects[pos].AbsoluteSize.X
+				if pixelsBelowScrollbar + currentRowY <= totalPixelsY
+					--It fits, so back up our scroll position
+					pixelsBelowScrollbar += currentRowY
+					if scrollPosition <= rowSize
+						scrollPosition = 1
+						break
+					else
+						scrollPosition -= rowSize
+
+					currentRowY = 0
+				else
+					break
+
+
+			if guiObjects[pos].AbsoluteSize.Y > currentRowY
+				currentRowY = guiObjects[pos].AbsoluteSize.Y
+
+
+			pos -= 1
+
+
+		--Do check last time if pos = 0
+		if (pos == 0) and (pixelsBelowScrollbar + currentRowY <= totalPixelsY)
+			scrollPosition = 1
+
+
+		xCounter = 0
+		--pos = scrollPosition
+		rowSizeCounter = 0
+		setRowSize = true
+		lastChildSize = 0
+
+		xOffset = yOffset = 0
+		if guiObjects[1]
+			yOffset = math.ceil math.floor(math.fmod totalPixelsY, guiObjects[1].AbsoluteSize.X) / 2
+			xOffset = math.ceil math.floor(math.fmod totalPixelsX, guiObjects[1].AbsoluteSize.Y) / 2
+
+
+		for i, child in ipairs guiObjects
+			if i < scrollPosition
+				--print "Hiding " .. child.Name
+				child.Visible = false
+			else
+				if pixelsRemainingY < 0
+					--print "Out of Space " .. child.Name
+					child.Visible = false
+				else
+					--print "Laying out " .. child.Name
+					--GuiObject
+					if setRowSize
+						rowSizeCounter += 1
+
+					if xCounter + child.AbsoluteSize.X >= totalPixelsX
+						if setRowSize
+							rowSize = rowSizeCounter - 1
+							setRowSize = false
+
+						xCounter = 0
+						pixelsRemainingY -= child.AbsoluteSize.Y
+
+					child.Position = UDim2.new(
+						child.Position.X.Scale,
+						xCounter + xOffset,
+						0,
+						totalPixelsY - pixelsRemainingY + yOffset
+					)
+					xCounter += child.AbsoluteSize.X
+					child.Visible = ((pixelsRemainingY - child.AbsoluteSize.Y) >= 0)
+					if child.Visible
+						howManyDisplayed += 1
+
+					lastChildSize = child.AbsoluteSize
+
+
+		scrollUpButton.Active = (scrollPosition > 1)
+		if lastChildSize == 0
+			scrollDownButton.Active = false
+		else
+			scrollDownButton.Active = ((pixelsRemainingY - lastChildSize.Y) < 0)
+
+		scrollDrag.Active = #guiObjects > howManyDisplayed
+		scrollDrag.Visible = scrollDrag.Active
+
+
+	layoutSimpleScrollBar = ->
+		guiObjects = {}
+		howManyDisplayed = 0
+
+		if orderList
+			for _, child in ipairs orderList
+				if child.Parent == frame
+					table.insert guiObjects, child
+
+
+		else
+			children = frame\GetChildren!
+			if children
+				for _, child in ipairs children
+					if child\IsA "GuiObject"
+						table.insert guiObjects, child
+
+
+		if #guiObjects == 0
+			scrollUpButton.Active = false
+			scrollDownButton.Active = false
+			scrollDrag.Active = false
+			scrollPosition = 1
+			return
+
+
+		if scrollPosition > #guiObjects
+			scrollPosition = #guiObjects
+
+
+		totalPixels = frame.AbsoluteSize.Y
+		pixelsRemaining = frame.AbsoluteSize.Y
+
+		pixelsBelowScrollbar = 0
+		pos = #guiObjects
+		while pixelsBelowScrollbar < totalPixels and pos >= 1
+			if pos >= scrollPosition
+				pixelsBelowScrollbar += guiObjects[pos].AbsoluteSize.Y
+			else
+				if pixelsBelowScrollbar + guiObjects[pos].AbsoluteSize.Y <= totalPixels
+					--It fits, so back up our scroll position
+					pixelsBelowScrollbar += guiObjects[pos].AbsoluteSize.Y
+					if scrollPosition <= 1
+						scrollPosition = 1
+						break
+					else
+						--local ("Backing up ScrollPosition from -- " ..scrollPosition)
+						scrollPosition -= 1
+
+				else
+					break
+
+
+			pos -= 1
+
+
+		pos = scrollPosition
+		for i, child in ipairs guiObjects
+			if i < scrollPosition
+				--print "Hiding " .. child.Name
+				child.Visible = false
+			else
+				if pixelsRemaining < 0
+					--print "Out of Space " .. child.Name
+					child.Visible = false
+				else
+					--print "Laying out " .. child.Name
+					--GuiObject
+					child.Position = UDim2.new child.Position.X.Scale, child.Position.X.Offset, 0, totalPixels - pixelsRemaining
+					pixelsRemaining -= child.AbsoluteSize.Y
+					if pixelsRemaining >= 0
+						child.Visible = true
+						howManyDisplayed += 1
+					else
+						child.Visible = false
+
+
+		scrollUpButton.Active = (scrollPosition > 1)
+		scrollDownButton.Active = (pixelsRemaining < 0)
+		scrollDrag.Active = #guiObjects > howManyDisplayed
+		scrollDrag.Visible = scrollDrag.Active
+
+
+	moveDragger = ->
+		guiObjects = 0
+		children = frame\GetChildren!
+		if children
+			for _, child in ipairs children
+				if child\IsA "GuiObject"
+					guiObjects += 1
+
+
+		return if not scrollDrag.Parent
+
+		dragSizeY = scrollDrag.Parent.AbsoluteSize.y * (1 / (guiObjects - howManyDisplayed + 1))
+		if dragSizeY < 16
+			dragSizeY = 16
+
+		scrollDrag.Size = UDim2.new scrollDrag.Size.X.Scale, scrollDrag.Size.X.Offset, scrollDrag.Size.Y.Scale, dragSizeY
+
+		relativeYPos = (scrollPosition - 1) / (guiObjects - howManyDisplayed)
+		relativeYPos = if relativeYPos > 1
+			1
+		elseif relativeYPos < 0
+			0
+
+		absYPos = 0
+
+		if relativeYPos ~= 0
+			absYPos = (relativeYPos * scrollbar.AbsoluteSize.y) - (relativeYPos * scrollDrag.AbsoluteSize.y)
+
+
+		scrollDrag.Position = UDim2.new scrollDrag.Position.X.Scale, scrollDrag.Position.X.Offset, scrollDrag.Position.Y.Scale, absYPos
+
+
+	reentrancyGuard = false
+	recalculate = ->
+		return if reentrancyGuard
+		reentrancyGuard = true
+		wait!
+		local success, err
+		if style == "grid"
+			success, err = try
+				layoutGridScrollBar!
+
+		elseif style == "simple"
+			success, err = try
+				layoutSimpleScrollBar!
+
+
+		if not success
+			print err
+
+		moveDragger!
+		reentrancyGuard = false
+
+
+	doScrollUp = ->
+		scrollPosition -= rowSize
+		if scrollPosition < 1
+			scrollPosition = 1
+
+		recalculate!
+
+
+	doScrollDown = ->
+		scrollPosition += rowSize
+		recalculate!
+
+
+	scrollUp = (mouseYPos) ->
+		if scrollUpButton.Active
+			scrollStamp = tick!
+			current = scrollStamp
+			local upCon
+			upCon = mouseDrag.MouseButton1Up\connect ->
+				scrollStamp = tick!
+				mouseDrag.Parent = nil
+				upCon\disconnect!
+
+			mouseDrag.Parent = getScreenGuiAncestor scrollbar
+			doScrollUp!
+			wait 0.2
+			t = tick!
+			w = 0.1
+			while scrollStamp == current
+				doScrollUp!
+				break if mouseYPos and mouseYPos > scrollDrag.AbsolutePosition.y
+				break if not scrollUpButton.Active
+				w = if tick! - t > 5
+					0
+				elseif tick! - t > 2
+					0.06
+
+				wait w
+
+
+	scrollDown = (mouseYPos) ->
+		if scrollDownButton.Active
+			scrollStamp = tick!
+			current = scrollStamp
+			local downCon
+			downCon = mouseDrag.MouseButton1Up\connect ->
+				scrollStamp = tick!
+				mouseDrag.Parent = nil
+				downCon\disconnect!
+
+			mouseDrag.Parent = getScreenGuiAncestor scrollbar
+			doScrollDown!
+			wait 0.2
+			t = tick!
+			w = 0.1
+			while scrollStamp == current
+				doScrollDown!
+				break if mouseYPos and mouseYPos < (scrollDrag.AbsolutePosition.y + scrollDrag.AbsoluteSize.x)
+				break if not scrollDownButton.Active
+				w = if tick! - t > 5
+					0
+				elseif tick! - t > 2
+					0.06
+
+				wait w
+
+
+	-- y = 0
+	scrollDrag.MouseButton1Down\connect (_, y) ->
+		if scrollDrag.Active
+			scrollStamp = tick!
+			mouseOffset = y - scrollDrag.AbsolutePosition.y
+			local dragCon, upCon
+			dragCon = mouseDrag.MouseMoved\connect (_, y) ->
+				barAbsPos = scrollbar.AbsolutePosition.y
+				barAbsSize = scrollbar.AbsoluteSize.y
+
+				dragAbsSize = scrollDrag.AbsoluteSize.y
+				barAbsOne = barAbsPos + barAbsSize - dragAbsSize
+				y -= mouseOffset
+				y = y < barAbsPos and barAbsPos or y > barAbsOne and barAbsOne or y
+				y -= barAbsPos
+
+				guiObjects = 0
+				children = frame\GetChildren!
+				if children
+					for _, child in ipairs children
+						if child\IsA "GuiObject"
+							guiObjects += 1
+
+
+				doublePercent = y / (barAbsSize - dragAbsSize)
+				rowDiff = rowSize
+				totalScrollCount = guiObjects - (howManyDisplayed - 1)
+				newScrollPosition = math.floor((doublePercent * totalScrollCount) + 0.5) + rowDiff
+				if newScrollPosition < scrollPosition
+					rowDiff = -rowDiff
+
+
+				if newScrollPosition < 1
+					newScrollPosition = 1
+
+
+				scrollPosition = newScrollPosition
+				recalculate!
+
+			upCon = mouseDrag.MouseButton1Up\connect ->
+				scrollStamp = tick!
+				mouseDrag.Parent = nil
+				dragCon\disconnect!
+				dragCon = nil
+				upCon\disconnect!
+				global drag = nil
+
+			mouseDrag.Parent = getScreenGuiAncestor scrollbar
+
+
+	scrollMouseCount = 0
+
+	scrollUpButton.MouseButton1Down\connect -> scrollUp!
+	scrollUpButton.MouseButton1Up\connect -> scrollStamp = tick!
+	scrollDownButton.MouseButton1Up\connect -> scrollStamp = tick!
+	scrollDownButton.MouseButton1Down\connect -> scrollDown!
+
+
+	scrollbar.MouseButton1Up\connect ->
+		scrollStamp = tick!
+
+	scrollbar.MouseButton1Down\connect (_, y) ->
+		if y > (scrollDrag.AbsoluteSize.y + scrollDrag.AbsolutePosition.y)
+			scrollDown y
+		elseif y < scrollDrag.AbsolutePosition.y
+			scrollUp y
+
+
+	frame.ChildAdded\connect -> recalculate!
+	frame.ChildRemoved\connect -> recalculate!
+
+
+	frame.Changed\connect (prop) ->
+		if prop == "AbsoluteSize"
+			--Wait a heartbeat for it to sync in
+			recalculate!
+
+
+	frame.AncestryChanged\connect ->
+		recalculate!
+
+
+	return frame, scrollUpButton, scrollDownButton, recalculate, scrollbar
+
+binaryGrow = (min, max, fits) ->
+	if min > max
+		return min
+
+	biggestLegal = min
+
+	while min <= max
+		mid = min + math.floor (max - min) / 2
+		if fits mid and (biggestLegal == nil or biggestLegal < mid)
+			biggestLegal = mid
+
+			--Try growing
+			min = mid + 1
+		else
+			--Doesn't fit, shrink
+			max = mid - 1
+
+	biggestLegal
+
+
+binaryShrink = (min, max, fits) ->
+	if min > max
+		return min
+
+	smallestLegal = max
+
+	while min <= max
+		mid = min + math.floor (max - min) / 2
+		if fits mid and (smallestLegal == nil or smallestLegal > mid)
+			smallestLegal = mid
+
+			--It fits, shrink
+			max = mid - 1
+		else
+			--Doesn't fit, grow
+			min = mid + 1
+
+	smallestLegal
+
+
+getGuiOwner = (instance) ->
+	while instance?
+		if instance\IsA"ScreenGui" or instance\IsA "BillboardGui"
+			return instance
+
+		instance = instance.Parent
+
+	nil
+
+
+t.AutoTruncateTextObject = (textLabel) ->
+	text = textLabel.Text
+
+	fullLabel = textLabel\Clone!
+	with fullLabel
+		.Name = "Full" .. textLabel.Name
+		.BorderSizePixel = 0
+		.BackgroundTransparency = 0
+		.Text = text
+		.TextXAlignment = Enum.TextXAlignment.Center
+		.Position = UDim2.new 0, -3, 0, 0
+		.Size = UDim2.new 0, 100, 1, 0
+		.Visible = false
+		.Parent = textLabel
+
+	local shortText, mouseEnterConnection, mouseLeaveConnection
+
+	checkForResize = ->
+		return if getGuiOwner(textLabel) == nil
+
+		textLabel.Text = text
+		if textLabel.TextFits
+			--Tear down the rollover if it is active
+			if mouseEnterConnection
+				mouseEnterConnection\disconnect!
+				mouseEnterConnection = nil
+
+			if mouseLeaveConnection
+				mouseLeaveConnection\disconnect!
+				mouseLeaveConnection = nil
+
+		else
+			len = string.len text
+			textLabel.Text = text .. "~"
+
+			--Shrink the text
+			textSize = binaryGrow 0, len, (pos) ->
+				textLabel.Text = if pos == 0
+					"~"
+				else
+					string.sub(text, 1, pos) .. "~"
+
+				textLabel.TextFits
+
+			shortText = string.sub(text, 1, textSize) .. "~"
+			textLabel.Text = shortText
+
+			--Make sure the fullLabel fits
+			if not fullLabel.TextFits
+				--Already too small, grow it really bit to start
+				fullLabel.Size = UDim2.new 0, 10000, 1, 0
+
+
+			--Okay, now try to binary shrink it back down
+			fullLabelSize = binaryShrink textLabel.AbsoluteSize.X, fullLabel.AbsoluteSize.X, (size) ->
+				fullLabel.Size = UDim2.new 0, size, 1, 0
+				fullLabel.TextFits
+
+			fullLabel.Size = UDim2.new 0, fullLabelSize + 6, 1, 0
+
+			--Now setup the rollover effects, if they are currently off
+			if mouseEnterConnection == nil
+				mouseEnterConnection = textLabel.MouseEnter\connect ->
+					fullLabel.ZIndex = textLabel.ZIndex + 1
+					fullLabel.Visible = true
+					--textLabel.Text = ""
+
+
+			if mouseLeaveConnection == nil
+				mouseLeaveConnection = textLabel.MouseLeave\connect ->
+					fullLabel.Visible = false
+					--textLabel.Text = shortText
+
+
+	textLabel.AncestryChanged\connect checkForResize
+	textLabel.Changed\connect (prop) ->
+		if prop == "AbsoluteSize"
+			checkForResize!
+
+
+	checkForResize!
+
+	changeText = (newText) ->
+		text = newText
+		fullLabel.Text = text
+		checkForResize!
+
+	textLabel, changeText
+
+
+TransitionTutorialPages = (fromPage, toPage, transitionFrame, currentPageValue) ->
+	if fromPage
+		fromPage.Visible = false
+		if transitionFrame.Visible == false
+			transitionFrame.Size = fromPage.Size
+			transitionFrame.Position = fromPage.Position
+
+	else
+		if transitionFrame.Visible == false
+			transitionFrame.Size = UDim2.new 0, 50, 0, 50
+			transitionFrame.Position = UDim2.new 0.5, -25, 0.5, -25
+
+
+	transitionFrame.Visible = true
+	currentPageValue.Value = nil
+
+	local newSize, newPosition
+	if toPage
+		--Make it visible so it resizes
+		toPage.Visible = true
+
+		newSize = toPage.Size
+		newPosition = toPage.Position
+
+		toPage.Visible = false
+	else
+		newSize = UDim2.new 0, 50, 0, 50
+		newPosition = UDim2.new 0.5, -25, 0.5, -25
+
+	transitionFrame\TweenSizeAndPosition(
+		newSize,
+		newPosition,
+		Enum.EasingDirection.InOut,
+		Enum.EasingStyle.Quad,
+		0.3,
+		true,
+		(state) ->
+			if state == Enum.TweenStatus.Completed
+				transitionFrame.Visible = false
+				if toPage
+					toPage.Visible = true
+					currentPageValue.Value = toPage
+	)
+
+
+t.CreateTutorial = (name, tutorialKey, createButtons) ->
+	frame = New "Frame", "Tutorial-#{name}"
+		BackgroundTransparency: 1
+		Size: UDim2.new 0.6, 0, 0.6, 0
+		Position: UDim2.new 0.2, 0, 0.2, 0
+
+		* New "BoolValue", "Buttons"
+			Value: createButtons
+
+	transitionFrame = New "Frame", "TransitionFrame"
+		Style: Enum.FrameStyle.RobloxRound
+		Size: UDim2.new 0.6, 0, 0.6, 0
+		Position: UDim2.new 0.2, 0, 0.2, 0
+		Visible: false
+		Parent: frame
+
+	currentPageValue = New "ObjectValue", "CurrentTutorialPage"
+		Value: nil
+		Parent: frame
+
+	pages = New "Frame", "Pages"
+		BackgroundTransparency: 1
+		Size: UDim2.new 1, 0, 1, 0
+		Parent: frame
+
+	getVisiblePageAndHideOthers = ->
+		local visiblePage
+		children = pages\GetChildren!
+		if children
+			for _, child in ipairs children
+				if child.Visible
+					if visiblePage
+						child.Visible = false
+					else
+						visiblePage = child
+
+		visiblePage
+
+
+	showTutorial = (alwaysShow) ->
+		if alwaysShow or UserSettings!.GameSettings\GetTutorialState tutorialKey == false
+			print "Showing tutorial-", tutorialKey
+			currentTutorialPage = getVisiblePageAndHideOthers!
+
+			firstPage = pages\FindFirstChild "TutorialPage1"
+			if firstPage
+				TransitionTutorialPages currentTutorialPage, firstPage, transitionFrame, currentPageValue
+			else
+				error "Could not find TutorialPage1"
+
+
+	dismissTutorial = ->
+		currentTutorialPage = getVisiblePageAndHideOthers!
+
+		if currentTutorialPage
+			TransitionTutorialPages currentTutorialPage, nil, transitionFrame, currentPageValue
+
+
+		UserSettings!.GameSettings\SetTutorialState tutorialKey, true
+
+
+	gotoPage = (pageNum) ->
+		page = pages\FindFirstChild "TutorialPage" .. pageNum
+		currentTutorialPage = getVisiblePageAndHideOthers!
+		TransitionTutorialPages currentTutorialPage, page, transitionFrame, currentPageValue
+
+
+	frame, showTutorial, dismissTutorial, gotoPage
+
+
+CreateBasicTutorialPage = (name, handleResize, skipTutorial, giveDoneButton) ->
+	frame = New "Frame", "TutorialPage"
+		Style: Enum.FrameStyle.RobloxRound
+		Size: UDim2.new 0.6, 0, 0.6, 0
+		Position: UDim2.new 0.2, 0, 0.2, 0
+		Visible: false
+
+		* New "TextButton", "NextButton"
+			Text: "Next"
+			TextColor3: Color3.new 1, 1, 1
+			Font: Enum.Font.Arial
+			FontSize: Enum.FontSize.Size18
+			Style: Enum.ButtonStyle.RobloxButtonDefault
+			Size: UDim2.new 0, 80, 0, 32
+			Position: UDim2.new 0.5, 5, 1, -32
+			Active: false
+			Visible: false
+
+		* New "TextButton", "PrevButton"
+			Text: "Previous"
+			TextColor3: Color3.new 1, 1, 1
+			Font: Enum.Font.Arial
+			FontSize: Enum.FontSize.Size18
+			Style: Enum.ButtonStyle.RobloxButton
+			Size: UDim2.new 0, 80, 0, 32
+			Position: UDim2.new 0.5, -85, 1, -32
+			Active: false
+			Visible: false
+
+		* New "TextLabel", "Header"
+			Text: name
+			BackgroundTransparency: 1
+			FontSize: Enum.FontSize.Size24
+			Font: Enum.Font.ArialBold
+			TextColor3: Color3.new 1, 1, 1
+			TextXAlignment: Enum.TextXAlignment.Center
+			TextWrap: true
+			Size: UDim2.new 1, -55, 0, 22
+			Position: UDim2.new 0, 0, 0, 0
+
+		* New "ImageButton", "SkipButton"
+			AutoButtonColor: false
+			BackgroundTransparency: 1
+			Image: "rbxasset://textures/ui/closeButton.png"
+			Size: UDim2.new 0, 25, 0, 25
+			Position: UDim2.new 1, -25, 0, 0
+
+	{ SkipButton: skipButton } = frame
+
+	skipButton.MouseButton1Click\connect ->
+		skipTutorial!
+
+	skipButton.MouseEnter\connect ->
+		skipButton.Image = "rbxasset://textures/ui/closeButton_dn.png"
+
+	skipButton.MouseLeave\connect ->
+		skipButton.Image = "rbxasset://textures/ui/closeButton.png"
+
+
+	if giveDoneButton
+		doneButton = New "TextButton", "DoneButton"
+			Style: Enum.ButtonStyle.RobloxButtonDefault
+			Text: "Done"
+			TextColor3: Color3.new 1, 1, 1
+			Font: Enum.Font.ArialBold
+			FontSize: Enum.FontSize.Size18
+			Size: UDim2.new 0, 100, 0, 50
+			Position: UDim2.new 0.5, -50, 1, -50
+
+		if skipTutorial
+			doneButton.MouseButton1Click\connect ->
+				skipTutorial!
+
+
+		doneButton.Parent = frame
+
+
+	innerFrame = New "Frame", "ContentFrame"
+		BackgroundTransparency: 1
+		Position: UDim2.new 0, 0, 0, 25
+		Parent: frame
+
+	innerFrame.Size = UDim2.new 1, 0, 1, if giveDoneButton
+		-75
+	else
+		-22
+
+
+	local parentConnection
+
+	basicHandleResize = ->
+		if frame.Visible and frame.Parent
+			maxSize = math.min frame.Parent.AbsoluteSize.X, frame.Parent.AbsoluteSize.Y
+			handleResize 200, maxSize
+
+
+	frame.Changed\connect (prop) ->
+		if prop == "Parent"
+			if parentConnection?
+				parentConnection\disconnect!
+				parentConnection = nil
+
+			if frame.Parent and frame.Parent\IsA "GuiObject"
+				parentConnection = frame.Parent.Changed\connect (parentProp) ->
+					if parentProp == "AbsoluteSize"
+						wait!
+						basicHandleResize!
+
+				basicHandleResize!
+
+		if prop == "Visible"
+			basicHandleResize!
+
+
+	frame, innerFrame
+
+
+t.CreateTextTutorialPage = (name, text, skipTutorialFunc) ->
+	local frame
+	local contentFrame
+
+	textLabel = New "TextLabel"
+		BackgroundTransparency: 1
+		TextColor3: Color3.new 1, 1, 1
+		Text: text
+		TextWrap: true
+		TextXAlignment: Enum.TextXAlignment.Left
+		TextYAlignment: Enum.TextYAlignment.Center
+		Font: Enum.Font.Arial
+		FontSize: Enum.FontSize.Size14
+		Size: UDim2.new 1, 0, 1, 0
+
+	handleResize = (minSize, maxSize) ->
+		size = binaryShrink minSize, maxSize, (size) ->
+			frame.Size = UDim2.new 0, size, 0, size
+			textLabel.TextFits
+
+		frame.Size = UDim2.new 0, size, 0, size
+		frame.Position = UDim2.new 0.5, -size / 2, 0.5, -size / 2
+
+
+	frame, contentFrame = CreateBasicTutorialPage name, handleResize, skipTutorialFunc
+	textLabel.Parent = contentFrame
+
+	frame
+
+
+t.CreateImageTutorialPage = (name, imageAsset, x, y, skipTutorialFunc, giveDoneButton) ->
+	local frame
+	local contentFrame
+
+	imageLabel = New "ImageLabel"
+		BackgroundTransparency: 1
+		Image: imageAsset
+		Size: UDim2.new 0, x, 0, y
+		Position: UDim2.new 0.5, -x / 2, 0.5, -y / 2
+
+	handleResize = (minSize, maxSize) ->
+		size = binaryShrink minSize, maxSize, (size) ->
+			size >= x and size >= y
+
+		if size >= x and size >= y
+			imageLabel.Size = UDim2.new 0, x, 0, y
+			imageLabel.Position = UDim2.new 0.5, -x / 2, 0.5, -y / 2
+		else
+			if x > y
+				--X is limiter, so
+				imageLabel.Size = UDim2.new 1, 0, y / x, 0
+				imageLabel.Position = UDim2.new 0, 0, 0.5 - (y / x) / 2, 0
+			else
+				--Y is limiter
+				imageLabel.Size = UDim2.new x / y, 0, 1, 0
+				imageLabel.Position = UDim2.new 0.5 - (x / y) / 2, 0, 0, 0
+
+
+		size += 50
+		frame.Size = UDim2.new 0, size, 0, size
+		frame.Position = UDim2.new 0.5, -size / 2, 0.5, -size / 2
+
+
+	frame, contentFrame = CreateBasicTutorialPage name, handleResize, skipTutorialFunc, giveDoneButton
+	imageLabel.Parent = contentFrame
+
+	frame
+
+
+t.AddTutorialPage = (tutorial, tutorialPage) ->
+	transitionFrame = tutorial.TransitionFrame
+	currentPageValue = tutorial.CurrentTutorialPage
+
+	if not tutorial.Buttons.Value
+		tutorialPage.NextButton.Parent = nil
+		tutorialPage.PrevButton.Parent = nil
+
+
+	children = tutorial.Pages\GetChildren!
+	if children and #children > 0
+		tutorialPage.Name = "TutorialPage#{#children + 1}"
+		previousPage = children[#children]
+		if not previousPage\IsA "GuiObject"
+			error "All elements under Pages must be GuiObjects"
+
+
+		if tutorial.Buttons.Value
+			if previousPage.NextButton.Active
+				error "NextButton already Active on previousPage, please only add pages with RbxGui.AddTutorialPage function"
+
+			previousPage.NextButton.MouseButton1Click\connect ->
+				TransitionTutorialPages previousPage, tutorialPage, transitionFrame, currentPageValue
+
+			previousPage.NextButton.Active = true
+			previousPage.NextButton.Visible = true
+
+			if tutorialPage.PrevButton.Active
+				error "PrevButton already Active on tutorialPage, please only add pages with RbxGui.AddTutorialPage function"
+
+			tutorialPage.PrevButton.MouseButton1Click\connect ->
+				TransitionTutorialPages tutorialPage, previousPage, transitionFrame, currentPageValue
+
+			tutorialPage.PrevButton.Active = true
+			tutorialPage.PrevButton.Visible = true
+
+
+		tutorialPage.Parent = tutorial.Pages
+	else
+		--First child
+		tutorialPage.Name = "TutorialPage1"
+		tutorialPage.Parent = tutorial.Pages
+
+
+t.CreateSetPanel = (userIdsForSets, objectSelected, dialogClosed, size, position, showAdminCategories, useAssetVersionId) ->
+		if not userIdsForSets
+			error "CreateSetPanel: userIdsForSets (first arg) is nil, should be a table of number ids"
+
+		if type(userIdsForSets) ~= "table" and type(userIdsForSets) ~= "userdata"
+			error "CreateSetPanel: userIdsForSets (first arg) is of type #{type userIdsForSets}, should be of type table or userdata"
+
+		if not objectSelected
+			error "CreateSetPanel: objectSelected (second arg) is nil, should be a callback function!"
+
+		if type(objectSelected) ~= "function"
+			error "CreateSetPanel: objectSelected (second arg) is of type #{type objectSelected}, should be of type function!"
+
+		if dialogClosed and type(dialogClosed) ~= "function"
+			error "CreateSetPanel: dialogClosed (third arg) is of type #{type dialogClosed}, should be of type function!"
+
+
+		if showAdminCategories == nil -- by default, don't show beta sets
+			showAdminCategories = false
+
+
+		arrayPosition = 1
+		insertButtons = {}
+		insertButtonCons = {}
+		local contents
+		local setGui
+
+		-- used for water selections
+		waterForceDirection = "NegX"
+		waterForce = "None"
+		local waterGui, waterTypeChangedEvent
+
+		Data = {}
+		Data.CurrentCategory = nil
+		Data.Category = {}
+		SetCache = {}
+
+		local userCategoryButtons
+
+		buttonWidth = 64
+		buttonHeight = buttonWidth
+
+		local SmallThumbnailUrl
+		local LargeThumbnailUrl
+		BaseUrl = game\GetService"ContentProvider".BaseUrl\lower!
+
+		if useAssetVersionId
+			LargeThumbnailUrl = BaseUrl .. "game/tools/thumbnailasset?fmt=png&wd=420&ht=420&assetversionid="
+			SmallThumbnailUrl = BaseUrl .. "game/tools/thumbnailasset?fmt=png&wd=75&ht=75&assetversionid="
+		else
+			LargeThumbnailUrl = BaseUrl .. "game/tools/thumbnailasset?fmt=png&wd=420&ht=420&aid="
+			SmallThumbnailUrl = BaseUrl .. "game/tools/thumbnailasset?fmt=png&wd=75&ht=75&aid="
+
+
+		drillDownSetZIndex = (parent, index) ->
+			children = parent\GetChildren!
+			for i in *children
+				if i\IsA "GuiObject"
+					i.ZIndex = index
+
+				drillDownSetZIndex i, index
+
+
+		-- for terrain stamping
+		local currTerrainDropDownFrame
+		terrainShapes = { "Block", "Vertical Ramp", "Corner Wedge", "Inverse Corner Wedge", "Horizontal Ramp", "Auto-Wedge" }
+		terrainShapeMap = {}
+		for i = 1, #terrainShapes
+			terrainShapeMap[terrainShapes[i]] = i - 1
+
+		terrainShapeMap[terrainShapes[#terrainShapes]] = 6
+
+		createWaterGui = ->
+			waterForceDirections = { "NegX", "X", "NegY", "Y", "NegZ", "Z" }
+			waterForces = { "None", "Small", "Medium", "Strong", "Max" }
+
+			waterFrame = New "Frame", "WaterFrame"
+				Style: Enum.FrameStyle.RobloxSquare
+				Size: UDim2.new 0, 150, 0, 110
+				Visible: false
+
+			waterForceLabel = New "TextLabel", "WaterForceLabel"
+				BackgroundTransparency: 1
+				Size: UDim2.new 1, 0, 0, 12
+				Font: Enum.Font.ArialBold
+				FontSize: Enum.FontSize.Size12
+				TextColor3: Color3.new 1, 1, 1
+				TextXAlignment: Enum.TextXAlignment.Left
+				Text: "Water Force"
+				Parent: waterFrame
+
+			waterForceDirLabel = waterForceLabel\Clone!
+			waterForceDirLabel.Name = "WaterForceDirectionLabel"
+			waterForceDirLabel.Text = "Water Force Direction"
+			waterForceDirLabel.Position = UDim2.new 0, 0, 0, 50
+			waterForceDirLabel.Parent = waterFrame
+
+			waterTypeChangedEvent = New "BindableEvent", "WaterTypeChangedEvent"
+				Parent: waterFrame
+
+			waterForceDirectionSelectedFunc = (newForceDirection) ->
+				waterForceDirection = newForceDirection
+				waterTypeChangedEvent\Fire { waterForce, waterForceDirection }
+
+			waterForceSelectedFunc = (newForce) ->
+				waterForce = newForce
+				waterTypeChangedEvent\Fire { waterForce, waterForceDirection }
+
+
+			waterForceDirectionDropDown, forceWaterDirectionSelection = t.CreateDropDownMenu waterForceDirections, waterForceDirectionSelectedFunc
+			waterForceDirectionDropDown.Size = UDim2.new 1, 0, 0, 25
+			waterForceDirectionDropDown.Position = UDim2.new 0, 0, 1, 3
+			forceWaterDirectionSelection "NegX"
+			waterForceDirectionDropDown.Parent = waterForceDirLabel
+
+			waterForceDropDown, forceWaterForceSelection = t.CreateDropDownMenu waterForces, waterForceSelectedFunc
+			forceWaterForceSelection "None"
+			waterForceDropDown.Size = UDim2.new 1, 0, 0, 25
+			waterForceDropDown.Position = UDim2.new 0, 0, 1, 3
+			waterForceDropDown.Parent = waterForceLabel
+
+			waterFrame, waterTypeChangedEvent
+
+
+		-- Helper Function that contructs gui elements
+		createSetGui = ->
+			setGui = New "ScreenGui", "SetGui"
+
+				* New "Frame", "SetPanel"
+					Active: true
+					BackgroundTransparency: 1
+					Position: position or UDim2.new 0.2, 29, 0.1, 24
+					Size: size or UDim2.new 0.6, -58, 0.64, 0
+					Style: Enum.FrameStyle.RobloxRound
+					ZIndex: 6
+					Parent: setGui
+
+					* New "TextButton", "CancelButton"
+						Position: UDim2.new 1, -32, 0, -2
+						Size: UDim2.new 0, 34, 0, 34
+						Style: Enum.ButtonStyle.RobloxButtonDefault
+						ZIndex: 6
+						Text: ""
+						Modal: true
+
+						* New "ImageLabel", "CancelImage"
+							BackgroundTransparency: 1
+							Image: "http://banland.xyz/asset?id=54135717"
+							Position: UDim2.new 0, -2, 0, -2
+							Size: UDim2.new 0, 16, 0, 16
+							ZIndex: 6
+
+					* New "Frame", "ItemPreview"
+						BackgroundTransparency: 1
+						Position: UDim2.new 0.8, 5, 0.085, 0
+						Size: UDim2.new 0.21, 0, 0.9, 0
+						ZIndex: 6
+
+						* New "ImageLabel", "LargePreview"
+							BackgroundTransparency: 1
+							Image: ""
+							Size: UDim2.new 1, 0, 0, 170
+							ZIndex: 6
+
+						* New "Frame", "TextPanel"
+							BackgroundTransparency: 1
+							Position: UDim2.new 0, 0, 0.45, 0
+							Size: UDim2.new 1, 0, 0.55, 0
+							ZIndex: 6
+
+							* New "TextLabel", "RolloverText"
+								BackgroundTransparency: 1
+								Size: UDim2.new 1, 0, 0, 48
+								ZIndex: 6
+								Font: Enum.Font.ArialBold
+								FontSize: Enum.FontSize.Size24
+								Text: ""
+								TextColor3: Color3.new 1, 1, 1
+								TextWrap: true
+								TextXAlignment: Enum.TextXAlignment.Left
+								TextYAlignment: Enum.TextYAlignment.Top
+
+					* New "Frame", "Sets"
+						BackgroundTransparency: 1
+						Position: UDim2.new 0, 0, 0, 5
+						Size: UDim2.new 0.23, 0, 1, -5
+						ZIndex: 6
+
+						* New "TextLabel", "SetsHeader"
+							BackgroundTransparency: 1
+							Size: UDim2.new 0, 47, 0, 24
+							ZIndex: 6
+							Font: Enum.Font.ArialBold
+							FontSize: Enum.FontSize.Size24
+							Text: "Sets"
+							TextColor3: Color3.new 1, 1, 1
+							TextXAlignment: Enum.TextXAlignment.Left
+							TextYAlignment: Enum.TextYAlignment.Top
+
+						* New "Frame", "Line"
+							BackgroundColor3: Color3.new 1, 1, 1
+							BackgroundTransparency: 0.7
+							BorderSizePixel: 0
+							Position: UDim2.new 1, -3, 0.06, 0
+							Size: UDim2.new 0, 3, 0.9, 0
+							ZIndex: 6
+
+			setsLists, controlFrame = t.CreateTrueScrollingFrame!
+			with setsLists
+				.Size = UDim2.new 1, -6, 0.94, 0
+				.Position = UDim2.new 0, 0, 0.06, 0
+				.BackgroundTransparency = 1
+				.Name = "SetsLists"
+				.ZIndex = 6
+				.Parent = setGui.SetPanel.Sets
+			drillDownSetZIndex controlFrame, 7
+
+			setGui
+
+
+		createSetButton = (text) ->
+			New "TextButton"
+				Text: text or ""
+				AutoButtonColor: false
+				BackgroundTransparency: 1
+				BackgroundColor3: Color3.new 1, 1, 1
+				BorderSizePixel: 0
+				Size: UDim2.new 1, -5, 0, 18
+				ZIndex: 6
+				Visible: false
+				Font: Enum.Font.Arial
+				FontSize: Enum.FontSize.Size18
+				TextColor3: Color3.new 1, 1, 1
+				TextXAlignment: Enum.TextXAlignment.Left
+
+
+		buildSetButton = (name, setId, _, _, _) ->
+			button = createSetButton name
+			button.Text = name
+			button.Name = "SetButton"
+			button.Visible = true
+
+			New "IntValue", "SetId"
+				Value: setId
+				Parent: button
+
+			New "StringValue", "SetName"
+				Value: name
+				Parent: button
+
+			button
+
+
+		processCategory = (sets) ->
+			setButtons = {}
+			numSkipped = 0
+			for i = 1, #sets
+				if not showAdminCategories and sets[i].Name == "Beta"
+					numSkipped += 1
+				else
+					setButtons[i - numSkipped] = buildSetButton sets[i].Name, sets[i].CategoryId, sets[i].ImageAssetId, i - numSkipped, #sets
+
+			setButtons
+
+
+		handleResize = ->
+			wait! -- neccessary to insure heartbeat happened
+
+			itemPreview = setGui.SetPanel.ItemPreview
+
+			itemPreview.LargePreview.Size = UDim2.new 1, 0, 0, itemPreview.AbsoluteSize.X
+			itemPreview.LargePreview.Position = UDim2.new 0.5, -itemPreview.LargePreview.AbsoluteSize.X / 2, 0, 0
+			itemPreview.TextPanel.Position = UDim2.new 0, 0, 0, itemPreview.LargePreview.AbsoluteSize.Y
+			itemPreview.TextPanel.Size = UDim2.new 1, 0, 0, itemPreview.AbsoluteSize.Y - itemPreview.LargePreview.AbsoluteSize.Y
+
+
+		makeInsertAssetButton = ->
+			insertAssetButtonExample = New "Frame", "InsertAssetButtonExample"
+				Position: UDim2.new 0, 128, 0, 64
+				Size: UDim2.new 0, 64, 0, 64
+				BackgroundTransparency: 1
+				ZIndex: 6
+				Visible: false
+
+				* New "IntValue", "AssetId"
+					Value: 0
+
+				* New "StringValue", "AssetName"
+					Value: ""
+
+			button = New "TextButton", "Button"
+				Text: ""
+				Style: Enum.ButtonStyle.RobloxButton
+				Position: UDim2.new 0.025, 0, 0.025, 0
+				Size: UDim2.new 0.95, 0, 0.95, 0
+				ZIndex: 6
+				Parent: insertAssetButtonExample
+
+			buttonImage = New "ImageLabel", "ButtonImage"
+				Image: ""
+				Position: UDim2.new 0, -7, 0, -7
+				Size: UDim2.new 1, 14, 1, 14
+				BackgroundTransparency: 1
+				ZIndex: 7
+				Parent: button
+
+			with buttonImage\clone!
+				.Name = "ConfigIcon"
+				.Visible = false
+				.Position = UDim2.new 1, -23, 1, -24
+				.Size = UDim2.new 0, 16, 0, 16
+				.Image = ""
+				.ZIndex = 6
+				.Parent = insertAssetButtonExample
+
+			insertAssetButtonExample
+
+
+		showLargePreview = (insertButton) ->
+			if insertButton\FindFirstChild "AssetId"
+				delay 0, ->
+					game\GetService"ContentProvider"\Preload LargeThumbnailUrl ..
+						"#{insertButton.AssetId.Value}"
+
+					setGui.SetPanel.ItemPreview.LargePreview.Image = "LargeThumbnailUrl#{insertButton.AssetId.Value}"
+
+
+			if insertButton\FindFirstChild "AssetName"
+				setGui.SetPanel.ItemPreview.TextPanel.RolloverText.Text = insertButton.AssetName.Value
+
+
+		selectTerrainShape = (shape) ->
+			if currTerrainDropDownFrame
+				objectSelected(
+					"#{currTerrainDropDownFrame.AssetName.Value}",
+					tonumber(currTerrainDropDownFrame.AssetId.Value),
+					shape
+				)
+
+
+		createTerrainTypeButton = (name, parent) ->
+			dropDownTextButton = New "TextButton", "#{name}Button"
+				Font: Enum.Font.ArialBold
+				FontSize: Enum.FontSize.Size14
+				BorderSizePixel: 0
+				TextColor3: Color3.new 1, 1, 1
+				Text: name
+				TextXAlignment: Enum.TextXAlignment.Left
+				BackgroundTransparency: 1
+				ZIndex: parent.ZIndex + 1
+				Size: UDim2.new 0, parent.Size.X.Offset - 2, 0, 16
+				Position: UDim2.new 0, 1, 0, 0
+
+			dropDownTextButton.MouseEnter\connect ->
+				dropDownTextButton.BackgroundTransparency = 0
+				dropDownTextButton.TextColor3 = Color3.new 0, 0, 0
+
+
+			dropDownTextButton.MouseLeave\connect ->
+				dropDownTextButton.BackgroundTransparency = 1
+				dropDownTextButton.TextColor3 = Color3.new 1, 1, 1
+
+
+			dropDownTextButton.MouseButton1Click\connect ->
+				dropDownTextButton.BackgroundTransparency = 1
+				dropDownTextButton.TextColor3 = Color3.new 1, 1, 1
+				if dropDownTextButton.Parent and dropDownTextButton.Parent\IsA "GuiObject"
+					dropDownTextButton.Parent.Visible = false
+
+				selectTerrainShape terrainShapeMap[dropDownTextButton.Text]
+
+			dropDownTextButton
+
+
+		createTerrainDropDownMenu = (zIndex) ->
+			dropDown = New "Frame", "TerrainDropDown"
+				BackgroundColor3: Color3.new 0, 0, 0
+				BorderColor3: Color3.new 1, 0, 0
+				Size: UDim2.new 0, 200, 0, 0
+				Visible: false
+				ZIndex: zIndex
+				Parent: setGui
+
+			for i = 1, #terrainShapes
+				shapeButton = createTerrainTypeButton terrainShapes[i], dropDown
+				shapeButton.Position = UDim2.new 0, 1, 0, (i - 1) * shapeButton.Size.Y.Offset
+				shapeButton.Parent = dropDown
+				dropDown.Size = UDim2.new 0, 200, 0, dropDown.Size.Y.Offset + shapeButton.Size.Y.Offset
+
+
+			dropDown.MouseLeave\connect ->
+				dropDown.Visible = false
+
+
+		createDropDownMenuButton = (parent) ->
+			dropDownButton = New "ImageButton", "DropDownButton"
+				Image: "http://banland.xyz/asset/?id=67581509"
+				BackgroundTransparency: 1
+				Size: UDim2.new 0, 16, 0, 16
+				Position: UDim2.new 1, -24, 0, 6
+				ZIndex: parent.ZIndex + 2
+				Parent: parent
+
+			if not setGui\FindFirstChild "TerrainDropDown"
+				createTerrainDropDownMenu 8
+
+
+			dropDownButton.MouseButton1Click\connect ->
+				setGui.TerrainDropDown.Visible = true
+				setGui.TerrainDropDown.Position = UDim2.new 0, parent.AbsolutePosition.X, 0, parent.AbsolutePosition.Y
+				currTerrainDropDownFrame = parent
+
+
+		buildInsertButton = ->
+			insertButton = makeInsertAssetButton!
+			insertButton.Name = "InsertAssetButton"
+			insertButton.Visible = true
+
+			if Data.Category[Data.CurrentCategory].SetName == "High Scalability"
+				createDropDownMenuButton insertButton
+
+
+			local lastEnter
+			mouseEnterCon = insertButton.MouseEnter\connect ->
+				lastEnter = insertButton
+				delay 0.1, ->
+					if lastEnter == insertButton
+						showLargePreview insertButton
+
+
+			insertButton, mouseEnterCon
+
+
+		realignButtonGrid = (columns) ->
+			x = 0
+			y = 0
+			for i in *insertButtons
+				i.Position = UDim2.new 0, buttonWidth * x, 0, buttonHeight * y
+				x += 1
+				if x >= columns
+					x = 0
+					y += 1
+
+
+		setInsertButtonImageBehavior = (insertFrame, visible, name, assetId) ->
+			return if not insertFrame.Button
+
+			if visible
+				insertFrame.AssetName.Value = name
+				insertFrame.AssetId.Value = assetId
+				newImageUrl = SmallThumbnailUrl .. assetId
+
+
+				if newImageUrl ~= insertFrame.Button.ButtonImage.Image
+					delay 0, ->
+						game\GetService"ContentProvider"\Preload SmallThumbnailUrl .. assetId
+						insertFrame.Button.ButtonImage.Image = SmallThumbnailUrl .. assetId
+
+
+				table.insert(
+					insertButtonCons,
+					insertFrame.Button.MouseButton1Click\connect ->
+						-- special case for water, show water selection gui
+						isWaterSelected = (name == "Water") and
+							(Data.Category[Data.CurrentCategory].SetName == "High Scalability")
+						waterGui.Visible = isWaterSelected
+						objectSelected name, if isWaterSelected
+							tonumber assetId, nil
+						else
+							tonumber assetId
+				)
+				insertFrame.Visible = true
+			else
+				insertFrame.Visible = false
+
+
+		loadSectionOfItems = (setGui, rows, columns) ->
+			pageSize = rows * columns
+
+			return if arrayPosition > #contents
+
+			origArrayPos = arrayPosition
+
+			for _ = 1, pageSize + 1
+				break if arrayPosition >= #contents + 1
+
+				local buttonCon
+				insertButtons[arrayPosition], buttonCon = buildInsertButton!
+				table.insert insertButtonCons, buttonCon
+				insertButtons[arrayPosition].Parent = setGui.SetPanel.ItemsFrame
+				arrayPosition += 1
+
+			realignButtonGrid columns
+
+			-- indexCopy = origArrayPos
+			for index = origArrayPos, arrayPosition
+				if insertButtons[index]
+					if contents[index]
+						-- we don't want water to have a drop down button
+						if (contents[index].Name == "Water") and
+							(Data.Category[Data.CurrentCategory].SetName == "High Scalability")
+
+							insertButtons[index]\FindFirstChild("DropDownButton", true)\Destroy!
+
+
+						local assetId
+						assetId = if useAssetVersionId
+							contents[index].AssetVersionId
+						else
+							contents[index].AssetId
+
+						setInsertButtonImageBehavior insertButtons[index], true, contents[index].Name, assetId
+					else break
+
+				else break
+				-- indexCopy = index
+
+
+		setSetIndex = ->
+			Data.Category[Data.CurrentCategory].Index = 0
+
+			rows = 7
+			columns = math.floor setGui.SetPanel.ItemsFrame.AbsoluteSize.X / buttonWidth
+
+			contents = Data.Category[Data.CurrentCategory].Contents
+			if contents
+				-- remove our buttons and their connections
+				for i in *insertButtons
+					i\remove!
+
+				for i in *insertButtonCons
+					i?\disconnect!
+
+
+				insertButtonCons = {}
+				insertButtons = {}
+
+				arrayPosition = 1
+				loadSectionOfItems setGui, rows, columns
+
+
+		selectSet = (button, setName, setId, _) ->
+			if button and Data.Category[Data.CurrentCategory]?
+				if button ~= Data.Category[Data.CurrentCategory].Button
+					Data.Category[Data.CurrentCategory].Button = button
+
+					if SetCache[setId] == nil
+						SetCache[setId] = game\GetService"InsertService"\GetCollection setId
+
+					Data.Category[Data.CurrentCategory].Contents = SetCache[setId]
+
+					Data.Category[Data.CurrentCategory].SetName = setName
+					Data.Category[Data.CurrentCategory].SetId = setId
+
+				setSetIndex!
+
+
+		selectCategoryPage = (buttons, _) ->
+			if buttons ~= Data.CurrentCategory
+				if Data.CurrentCategory
+					for _, button in pairs Data.CurrentCategory
+						button.Visible = false
+
+
+				Data.CurrentCategory = buttons
+				if Data.Category[Data.CurrentCategory] == nil
+					Data.Category[Data.CurrentCategory] = {}
+					if #buttons > 0
+						selectSet buttons[1], buttons[1].SetName.Value, buttons[1].SetId.Value, 0
+
+				else
+					Data.Category[Data.CurrentCategory].Button = nil
+					selectSet(
+						Data.Category[Data.CurrentCategory].ButtonFrame,
+						Data.Category[Data.CurrentCategory].SetName,
+						Data.Category[Data.CurrentCategory].SetId,
+						Data.Category[Data.CurrentCategory].Index
+					)
+
+
+		selectCategory = (category) ->
+			selectCategoryPage category, 0
+
+
+		resetAllSetButtonSelection = ->
+			setButtons = setGui.SetPanel.Sets.SetsLists\GetChildren!
+			for i in *setButtons
+				if i\IsA "TextButton"
+					i.Selected = false
+					i.BackgroundTransparency = 1
+					i.TextColor3 = Color3.new 1, 1, 1
+					i.BackgroundColor3 = Color3.new 1, 1, 1
+
+
+		populateSetsFrame = ->
+			currRow = 0
+			for i = 1, #userCategoryButtons
+				button = userCategoryButtons[i]
+				button.Visible = true
+				button.Position = UDim2.new 0, 5, 0, currRow * button.Size.Y.Offset
+				button.Parent = setGui.SetPanel.Sets.SetsLists
+
+				if i == 1 -- we will have this selected by default, so show it
+					button.Selected = true
+					button.BackgroundColor3 = Color3.new 0, 204 / 255, 0
+					button.TextColor3 = Color3.new 0, 0, 0
+					button.BackgroundTransparency = 0
+
+
+				button.MouseEnter\connect ->
+					if not button.Selected
+						button.BackgroundTransparency = 0
+						button.TextColor3 = Color3.new 0, 0, 0
+
+
+				button.MouseLeave\connect ->
+					if not button.Selected
+						button.BackgroundTransparency = 1
+						button.TextColor3 = Color3.new 1, 1, 1
+
+
+				button.MouseButton1Click\connect ->
+					resetAllSetButtonSelection!
+					button.Selected = not button.Selected
+					button.BackgroundColor3 = Color3.new 0, 204 / 255, 0
+					button.TextColor3 = Color3.new 0, 0, 0
+					button.BackgroundTransparency = 0
+					selectSet button, button.Text, userCategoryButtons[i].SetId.Value, 0
+
+
+				currRow += 1
+
+
+			buttons = setGui.SetPanel.Sets.SetsLists\GetChildren!
+
+			-- set first category as loaded for default
+			if buttons
+				for i = 1, #buttons
+					if buttons[i]\IsA "TextButton"
+						selectSet buttons[i], buttons[i].Text, userCategoryButtons[i].SetId.Value, 0
+						selectCategory userCategoryButtons
+						break
+
+
+		setGui = createSetGui!
+		waterGui, waterTypeChangedEvent = createWaterGui!
+		waterGui.Position = UDim2.new 0, 55, 0, 0
+		waterGui.Parent = setGui
+		setGui.Changed\connect (prop) -> -- this resizes the preview image to always be the right size
+			if prop == "AbsoluteSize"
+				handleResize!
+				setSetIndex!
+
+
+		scrollFrame, controlFrame = t.CreateTrueScrollingFrame!
+		with scrollFrame
+			.Size = UDim2.new 0.54, 0, 0.85, 0
+			.Position = UDim2.new 0.24, 0, 0.085, 0
+			.Name = "ItemsFrame"
+			.ZIndex = 6
+			.Parent = setGui.SetPanel
+			.BackgroundTransparency = 1
+
+		drillDownSetZIndex controlFrame, 7
+
+		controlFrame.Parent = setGui.SetPanel
+		controlFrame.Position = UDim2.new 0.76, 5, 0, 0
+
+		debounce = false
+		controlFrame.ScrollBottom.Changed\connect (_) ->
+			if controlFrame.ScrollBottom.Value == true
+				return if debounce
+
+				debounce = true
+				loadSectionOfItems setGui, rows, columns
+				debounce = false
+
+
+		userData = {}
+		for id in *userIdsForSets
+			newUserData = game\GetService"InsertService"\GetUserSets id
+			if newUserData and #newUserData > 2
+				-- start at #3 to skip over My Decals and My Models for each account
+				for category = 3, #newUserData
+					table.insert userData, if newUserData[category].Name == "High Scalability" -- we want high scalability parts to show first
+						1, newUserData[category]
+					else
+						newUserData[category]
+
+
+		if userData
+			userCategoryButtons = processCategory userData
+
+
+		global rows = math.floor setGui.SetPanel.ItemsFrame.AbsoluteSize.Y / buttonHeight
+		global columns = math.floor setGui.SetPanel.ItemsFrame.AbsoluteSize.X / buttonWidth
+
+		populateSetsFrame!
+
+		--[[insertPanelCloseCon = ]]
+		setGui.SetPanel.CancelButton.MouseButton1Click\connect ->
+			setGui.SetPanel.Visible = false
+			dialogClosed?!
+
+
+		setVisibilityFunction = (visible) ->
+			setGui.SetPanel.Visible = if visible
+				true
+			else
+				false
+
+
+		getVisibilityFunction = ->
+			if setGui and setGui\FindFirstChild "SetPanel"
+				return setGui.SetPanel.Visible
+			false
+
+
+		setGui, setVisibilityFunction, getVisibilityFunction, waterTypeChangedEvent
+
+
+t.CreateTerrainMaterialSelector = (size, position) ->
+	terrainMaterialSelectionChanged = Instance.new "BindableEvent"
+	terrainMaterialSelectionChanged.Name = "TerrainMaterialSelectionChanged"
+
+	local selectedButton
+
+	frame = New "Frame", "TerrainMaterialSelector"
+		Size: size or UDim2.new 0, 245, 0, 230
+		BorderSizePixel: 0
+		BackgroundColor3: Color3.new 0, 0, 0
+		Active: true
+
+	if position
+		frame.Position = position
+
+	terrainMaterialSelectionChanged.Parent = frame
+
+	-- waterEnabled = true -- todo: turn this on when water is ready
+
+	materialToImageMap = {}
+	materialNames =
+		* "Grass"
+		* "Sand"
+		* "Brick"
+		* "Granite"
+		* "Asphalt"
+		* "Iron"
+		* "Aluminum"
+		* "Gold"
+		* "Plank"
+		* "Log"
+		* "Gravel"
+		* "Cinder Block"
+		* "Stone Wall"
+		* "Concrete"
+		* "Plastic (red)"
+		* "Plastic (blue)"
+		* "Water"
+
+	currentMaterial = 1
+
+	getEnumFromName = (choice) ->
+		switch choice
+			when "Grass" then 1
+			when "Sand" then 2
+			when "Erase" then 0
+			when "Brick" then 3
+			when "Granite" then 4
+			when "Asphalt" then 5
+			when "Iron" then 6
+			when "Aluminum" then 7
+			when "Gold" then 8
+			when "Plank" then 9
+			when "Log" then 10
+			when "Gravel" then 11
+			when "Cinder Block" then 12
+			when "Stone Wall" then 13
+			when "Concrete" then 14
+			when "Plastic (red)" then 15
+			when "Plastic (blue)" then 16
+			when "Water" then 17
+
+
+	getNameFromEnum = (choice) ->
+		switch choice
+			when Enum.CellMaterial.Grass, 1 then "Grass"
+			when Enum.CellMaterial.Sand, 2 then "Sand"
+			when Enum.CellMaterial.Empty, 0 then "Erase"
+			when Enum.CellMaterial.Brick, 3 then "Brick"
+			when Enum.CellMaterial.Granite, 4 then "Granite"
+			when Enum.CellMaterial.Asphalt, 5 then "Asphalt"
+			when Enum.CellMaterial.Iron, 6 then "Iron"
+			when Enum.CellMaterial.Aluminum, 7 then "Aluminum"
+			when Enum.CellMaterial.Gold, 8 then "Gold"
+			when Enum.CellMaterial.WoodPlank, 9 then "Plank"
+			when Enum.CellMaterial.WoodLog, 10 then "Log"
+			when Enum.CellMaterial.Gravel, 11 then "Gravel"
+			when Enum.CellMaterial.CinderBlock, 12 then "Cinder Block"
+			when Enum.CellMaterial.MossyStone, 13 then "Stone Wall"
+			when Enum.CellMaterial.Cement, 14 then "Concrete"
+			when Enum.CellMaterial.RedPlastic, 15 then "Plastic (red)"
+			when Enum.CellMaterial.BluePlastic, 16 then "Plastic (blue)"
+			when Enum.CellMaterial.Water, 17 then "Water"
+
+
+	updateMaterialChoice = (choice) ->
+		currentMaterial = getEnumFromName choice
+		terrainMaterialSelectionChanged\Fire currentMaterial
+
+
+	-- we so need a better way to do this
+	for _, v in pairs materialNames
+		materialToImageMap[v] = {}
+		materialToImageMap[v].Regular = "http://banland.xyz/asset/?id=" ..
+			switch v
+				when "Grass" then "56563112"
+				when "Sand" then "62356652"
+				when "Brick" then "65961537"
+				when "Granite" then "67532153"
+				when "Asphalt" then "67532038"
+				when "Iron" then "67532093"
+				when "Aluminum" then "67531995"
+				when "Gold" then "67532118"
+				when "Plastic (red)" then "67531848"
+				when "Plastic (blue)" then "67531924"
+				when "Plank" then "67532015"
+				when "Log" then "67532051"
+				when "Gravel" then "67532206"
+				when "Cinder Block" then "67532103"
+				when "Stone Wall" then "67531804"
+				when "Concrete" then "67532059"
+				when "Water" then "81407474"
+				else "66887593" -- fill in the rest here!!
+
+
+	scrollFrame, scrollUpB, scrollDownB, recalculateScroll = t.CreateScrollingFrame nil, "grid"
+	scrollFrame.Size = UDim2.new 0.85, 0, 1, 0
+	scrollFrame.Position = UDim2.new 0, 0, 0, 0
+	scrollFrame.Parent = frame
+
+	scrollUpB.Parent = frame
+	scrollUpB.Visible = true
+	scrollUpB.Position = UDim2.new 1, -19, 0, 0
+
+	scrollDownB.Parent = frame
+	scrollDownB.Visible = true
+	scrollDownB.Position = UDim2.new 1, -19, 1, -17
+
+	goToNewMaterial = (buttonWrap, materialName) ->
+		updateMaterialChoice materialName
+		buttonWrap.BackgroundTransparency = 0
+		selectedButton.BackgroundTransparency = 1
+		selectedButton = buttonWrap
+
+
+	createMaterialButton = (name) ->
+		buttonWrap = New "TextButton", "#{name}"
+			Text: ""
+			Size: UDim2.new 0, 32, 0, 32
+			BackgroundColor3: Color3.new 1, 1, 1
+			BorderSizePixel: 0
+			BackgroundTransparency: 1
+			AutoButtonColor: false
+
+			* New "NumberValue", "EnumType"
+				Value: 0
+
+		imageButton = New "ImageButton", "#{name}"
+			AutoButtonColor: false
+			BackgroundTransparency: 1
+			Size: UDim2.new 0, 30, 0, 30
+			Position: UDim2.new 0, 1, 0, 1
+			Parent: buttonWrap
+			Image: materialToImageMap[name].Regular
+
+
+		imageButton.MouseEnter\connect ->
+			buttonWrap.BackgroundTransparency = 0
+
+		imageButton.MouseLeave\connect ->
+			if selectedButton ~= buttonWrap
+				buttonWrap.BackgroundTransparency = 1
+
+
+		imageButton.MouseButton1Click\connect ->
+			if selectedButton ~= buttonWrap
+				goToNewMaterial buttonWrap, "#{name}"
+
+		buttonWrap
+
+
+	for i in *materialNames
+		imageButton = createMaterialButton i
+
+		if i == "Grass" -- always start with grass as the default
+			selectedButton = imageButton
+			imageButton.BackgroundTransparency = 0
+
+
+		imageButton.Parent = scrollFrame
+
+
+	forceTerrainMaterialSelection = (newMaterialType) ->
+		return if not newMaterialType
+		return if currentMaterial == newMaterialType
+
+		matName = getNameFromEnum newMaterialType
+		buttons = scrollFrame\GetChildren!
+		for i in *buttons
+			if i.Name == "Plastic (blue)" and matName == "Plastic (blue)"
+				goToNewMaterial i, matName
+				return
+
+			if i.Name == "Plastic (red)" and matName == "Plastic (red)"
+				goToNewMaterial i, matName
+				return
+
+			if string.find i.Name, matName
+				goToNewMaterial i, matName
+				return
+
+	frame.Changed\connect (prop) ->
+		if prop == "AbsoluteSize"
+			recalculateScroll!
+
+
+	recalculateScroll!
+	frame, terrainMaterialSelectionChanged, forceTerrainMaterialSelection
+
+
+t.CreateLoadingFrame = (name, size, position) ->
+	game\GetService"ContentProvider"\Preload "http://banland.xyz/asset/?id=35238053"
+
+	loadingFrame = New "Frame", "LoadingFrame"
+		Style: Enum.FrameStyle.RobloxRound
+		Size: size or UDim2.new 0, 300, 0, 160
+		Position: position or UDim2.new 0.5, -150, 0.5, -80
+
+		* New "TextLabel", "loadingName"
+			BackgroundTransparency: 1
+			Size: UDim2.new 1, 0, 0, 18
+			Position: UDim2.new 0, 0, 0, 2
+			Font: Enum.Font.Arial
+			Text: name
+			TextColor3: Color3.new 1, 1, 1
+			TextStrokeTransparency: 1
+			FontSize: Enum.FontSize.Size18
+
+
+	loadingBar = New "Frame", "LoadingBar"
+		BackgroundColor3: Color3.new 0, 0, 0
+		BorderColor3: Color3.new 79 / 255, 79 / 255, 79 / 255
+		Position: UDim2.new 0, 0, 0, 41
+		Size: UDim2.new 1, 0, 0, 30
+		Parent: loadingFrame
+
+	loadingGreenBar = New "ImageLabel", "LoadingGreenBar"
+		Image: "http://banland.xyz/asset/?id=35238053"
+		Position: UDim2.new 0, 0, 0, 0
+		Size: UDim2.new 0, 0, 1, 0
+		Visible: false
+		Parent: loadingBar
+
+	loadingPercent = New "TextLabel", "LoadingPercent"
+		BackgroundTransparency: 1
+		Position: UDim2.new 0, 0, 1, 0
+		Size: UDim2.new 1, 0, 0, 14
+		Font: Enum.Font.Arial
+		Text: "0%"
+		FontSize: Enum.FontSize.Size14
+		TextColor3: Color3.new 1, 1, 1
+		Parent: loadingBar
+
+	cancelButton = New "TextButton", "CancelButton"
+		Position: UDim2.new 0.5, -60, 1, -40
+		Size: UDim2.new 0, 120, 0, 40
+		Font: Enum.Font.Arial
+		FontSize: Enum.FontSize.Size18
+		TextColor3: Color3.new 1, 1, 1
+		Text: "Cancel"
+		Style: Enum.ButtonStyle.RobloxButton
+		Parent: loadingFrame
+
+	cancelButtonClicked = New "BindableEvent", "CancelButtonClicked"
+		Parent: cancelButton
+
+	cancelButton.MouseButton1Click\connect ->
+		cancelButtonClicked\Fire!
+
+
+	updateLoadingGuiPercent = (percent, tweenAction, tweenLength) ->
+		if percent and type(percent) ~= "number"
+			error "updateLoadingGuiPercent expects number as argument, got #{type percent} instead"
+
+
+		newSize = UDim2.new if percent < 0
+			0, 0, 1, 0
+		elseif percent > 1
+			1, 0, 1, 0
+		else
+			percent, 0, 1, 0
+
+
+		if tweenAction
+			if not tweenLength
+				error "updateLoadingGuiPercent is set to tween new percentage, but got no tween time length! Please pass this in as third argument"
+
+
+			if newSize.X.Scale > 0
+				loadingGreenBar.Visible = true
+				loadingGreenBar\TweenSize newSize, Enum.EasingDirection.Out, Enum.EasingStyle.Quad, tweenLength, true
+			else
+				loadingGreenBar\TweenSize(
+					newSize,
+					Enum.EasingDirection.Out,
+					Enum.EasingStyle.Quad,
+					tweenLength,
+					true,
+					->
+						if newSize.X.Scale < 0
+							loadingGreenBar.Visible = false
+
+
+				)
+
+		else
+			loadingGreenBar.Size = newSize
+			loadingGreenBar.Visible = (newSize.X.Scale > 0)
+
+
+	loadingGreenBar.Changed\connect (prop) ->
+		if prop == "Size"
+			loadingPercent.Text = "#{math.ceil loadingGreenBar.Size.X.Scale * 100}%"
+
+
+	loadingFrame, updateLoadingGuiPercent, cancelButtonClicked
+
+
+t.CreatePluginFrame = (name, size, position, scrollable, parent) ->
+	createMenuButton = (size, position, text, fontsize, name, parent) ->
+		button = New "TextButton", name,
+			AutoButtonColor: false
+			BackgroundTransparency: 1
+			Position: position
+			Size: size
+			Font: Enum.Font.ArialBold
+			FontSize: fontsize
+			Text: text
+			TextColor3: Color3.new 1, 1, 1
+			BorderSizePixel: 0
+			BackgroundColor3: Color3.new 20 / 255, 20 / 255, 20 / 255
+
+		button.MouseEnter\connect ->
+			return if button.Selected
+			button.BackgroundTransparency = 0
+
+		button.MouseLeave\connect ->
+			return if button.Selected
+			button.BackgroundTransparency = 1
+
+		button.Parent = parent
+		button
+
+
+	dragBar = New "Frame", "#{name}" .. "DragBar"
+		BackgroundColor3: Color3.new 39 / 255, 39 / 255, 39 / 255
+		BorderColor3: Color3.new 0, 0, 0
+		Size: if size
+			UDim2.new(size.X.Scale, size.X.Offset, 0, 20) + UDim2.new 0, 20, 0, 0
+		else
+			UDim2.new 0, 183, 0, 20
+
+		Active: true
+		Draggable: true
+		--Visible: false
+
+	if position
+		dragBar.Position = position
+	dragBar.MouseEnter\connect ->
+		dragBar.BackgroundColor3 = Color3.new 49 / 255, 49 / 255, 49 / 255
+
+	dragBar.MouseLeave\connect ->
+		dragBar.BackgroundColor3 = Color3.new 39 / 255, 39 / 255, 39 / 255
+
+	dragBar.Parent = parent
+
+	-- plugin name label
+	New "TextLabel", "BarNameLabel"
+		Text: " #{name}"
+		TextColor3: Color3.new 1, 1, 1
+		TextStrokeTransparency: 0
+		Size: UDim2.new 1, 0, 1, 0
+		Font: Enum.Font.ArialBold
+		FontSize: Enum.FontSize.Size18
+		TextXAlignment: Enum.TextXAlignment.Left
+		BackgroundTransparency: 1
+		Parent: dragBar
+
+	-- close button
+	closeButton = createMenuButton(
+		UDim2.new(0, 15, 0, 17),
+		UDim2.new(1, -16, 0.5, -8),
+		"X",
+		Enum.FontSize.Size14,
+		"CloseButton",
+		dragBar
+	)
+	closeEvent = New "BindableEvent", "CloseEvent"
+		Parent: closeButton
+	closeButton.MouseButton1Click\connect ->
+		closeEvent\Fire!
+		closeButton.BackgroundTransparency = 1
+
+
+	-- help button
+	helpButton = createMenuButton(
+		UDim2.new(0, 15, 0, 17),
+		UDim2.new(1, -51, 0.5, -8),
+		"?",
+		Enum.FontSize.Size14,
+		"HelpButton",
+		dragBar
+	)
+	helpFrame = New "Frame", "HelpFrame"
+		BackgroundColor3: Color3.new 0, 0, 0
+		Size: UDim2.new 0, 300, 0, 552
+		Position: UDim2.new 1, 5, 0, 0
+		Active: true
+		BorderSizePixel: 0
+		Visible: false
+		Parent: dragBar
+
+	helpButton.MouseButton1Click\connect ->
+		helpFrame.Visible = not helpFrame.Visible
+		if helpFrame.Visible
+			helpButton.Selected = true
+			helpButton.BackgroundTransparency = 0
+			screenGui = getScreenGuiAncestor helpFrame
+			if screenGui
+				if helpFrame.AbsolutePosition.X + helpFrame.AbsoluteSize.X > screenGui.AbsoluteSize.X --position on left hand side
+					helpFrame.Position = UDim2.new 0, -5 - helpFrame.AbsoluteSize.X, 0, 0
+				else -- position on right hand side
+					helpFrame.Position = UDim2.new 1, 5, 0, 0
+
+			else
+				helpFrame.Position = UDim2.new 1, 5, 0, 0
+
+		else
+			helpButton.Selected = false
+			helpButton.BackgroundTransparency = 1
+
+
+	minimizeButton = createMenuButton(
+		UDim2.new(0, 16, 0, 17),
+		UDim2.new(1, -34, 0.5, -8),
+		"-",
+		Enum.FontSize.Size14,
+		"MinimizeButton",
+		dragBar
+	)
+	minimizeButton.TextYAlignment = Enum.TextYAlignment.Top
+
+	minimizeFrame = New "Frame", "MinimizeFrame"
+		BackgroundColor3: Color3.new 73 / 255, 73 / 255, 73 / 255
+		BorderColor3: Color3.new 0, 0, 0
+		Position: UDim2.new 0, 0, 1, 0
+		Size: if size
+			UDim2.new(size.X.Scale, size.X.Offset, 0, 50) + UDim2.new 0, 20, 0, 0
+		else
+			UDim2.new 0, 183, 0, 50
+		Visible: false
+		Parent: dragBar
+
+	minimizeBigButton = New "TextButton", "MinimizeButton"
+		Position: UDim2.new 0.5, -50, 0.5, -20
+		Size: UDim2.new 0, 100, 0, 40
+		Style: Enum.ButtonStyle.RobloxButton
+		Font: Enum.Font.ArialBold
+		FontSize: Enum.FontSize.Size18
+		TextColor3: Color3.new 1, 1, 1
+		Text: "Show"
+		Parent: minimizeFrame
+
+	separatingLine = New "Frame", "SeparatingLine"
+		BackgroundColor3: Color3.new 115 / 255, 115 / 255, 115 / 255
+		BorderSizePixel: 0
+		Position: UDim2.new 1, -18, 0.5, -7
+		Size: UDim2.new 0, 1, 0, 14
+		Parent: dragBar
+
+	otherSeparatingLine = separatingLine\clone!
+	otherSeparatingLine.Position = UDim2.new 1, -35, 0.5, -7
+	otherSeparatingLine.Parent = dragBar
+
+	widgetContainer = New "Frame", "WidgetContainer"
+		BackgroundTransparency: 1
+		Position: UDim2.new 0, 0, 1, 0
+		BorderColor3: Color3.new 0, 0, 0
+	if not scrollable
+		widgetContainer.BackgroundTransparency = 0
+		widgetContainer.BackgroundColor3 = Color3.new 72 / 255, 72 / 255, 72 / 255
+
+	widgetContainer.Parent = dragBar
+
+	widgetContainer.Size = if size
+		if scrollable
+			size
+		else
+			UDim2.new 0, dragBar.AbsoluteSize.X, size.Y.Scale, size.Y.Offset
+	else
+		UDim2.new 0, if scrollable
+			163, 0, 400
+		else
+			dragBar.AbsoluteSize.X, 0, 400
+
+	if position
+		widgetContainer.Position += UDim2.new 0, 0, 0, 20
+
+
+	local frame, control, verticalDragger
+	if scrollable
+		--frame for widgets
+		frame, control = t.CreateTrueScrollingFrame!
+		with frame
+			.Size = UDim2.new 1, 0, 1, 0
+			.BackgroundColor3 = Color3.new 72 / 255, 72 / 255, 72 / 255
+			.BorderColor3 = Color3.new 0, 0, 0
+			.Active = true
+			.Parent = widgetContainer
+		with control
+			.Parent = dragBar
+			.BackgroundColor3 = Color3.new 72 / 255, 72 / 255, 72 / 255
+			.BorderSizePixel = 0
+			.BackgroundTransparency = 0
+			.Position = UDim2.new 1, -21, 1, 1
+			.Size = UDim2.new 0, 21, if size
+				size.Y.Scale, size.Y.Offset
+			else
+				0, 400
+
+		control\FindFirstChild"ScrollDownButton".Position = UDim2.new 0, 0, 1, -20
+
+		New "Frame", "FakeLine"
+			BorderSizePixel: 0
+			BackgroundColor3: Color3.new 0, 0, 0
+			Size: UDim2.new 0, 1, 1, 1
+			Position: UDim2.new 1, 0, 0, 0
+			Parent: control
+
+		verticalDragger = New "TextButton", "VerticalDragger"
+			ZIndex: 2
+			AutoButtonColor: false
+			BackgroundColor3: Color3.new 50 / 255, 50 / 255, 50 / 255
+			BorderColor3: Color3.new 0, 0, 0
+			Size: UDim2.new 1, 20, 0, 20
+			Position: UDim2.new 0, 0, 1, 0
+			Active: true
+			Text: ""
+			Parent: widgetContainer
+
+		scrubFrame = New "Frame", "ScrubFrame"
+			BackgroundColor3: Color3.new 1, 1, 1
+			BorderSizePixel: 0
+			Position: UDim2.new 0.5, -5, 0.5, 0
+			Size: UDim2.new 0, 10, 0, 1
+			ZIndex: 5
+			Parent: verticalDragger
+
+		scrubTwo = scrubFrame\clone!
+		scrubTwo.Position = UDim2.new 0.5, -5, 0.5, -2
+		scrubTwo.Parent = verticalDragger
+		scrubThree = scrubFrame\clone!
+		scrubThree.Position = UDim2.new 0.5, -5, 0.5, 2
+		scrubThree.Parent = verticalDragger
+
+		areaSoak = New "TextButton", "AreaSoak"
+			Size: UDim2.new 1, 0, 1, 0
+			BackgroundTransparency: 1
+			BorderSizePixel: 0
+			Text: ""
+			ZIndex: 10
+			Visible: false
+			Active: true
+			Parent: getScreenGuiAncestor parent
+
+		draggingVertical = false
+		local startYPos
+		verticalDragger.MouseEnter\connect ->
+			verticalDragger.BackgroundColor3 = Color3.new 60 / 255, 60 / 255, 60 / 255
+
+		verticalDragger.MouseLeave\connect ->
+			verticalDragger.BackgroundColor3 = Color3.new 50 / 255, 50 / 255, 50 / 255
+
+		verticalDragger.MouseButton1Down\connect (_, y) ->
+			draggingVertical = true
+			areaSoak.Visible = true
+			startYPos = y
+
+		areaSoak.MouseButton1Up\connect ->
+			draggingVertical = false
+			areaSoak.Visible = false
+
+		areaSoak.MouseMoved\connect (_, y) ->
+			return if not draggingVertical
+
+			yDelta = y - startYPos
+			return if not control.ScrollDownButton.Visible and yDelta > 0
+
+			if (widgetContainer.Size.Y.Offset + yDelta) < 150
+				widgetContainer.Size = UDim2.new(
+					widgetContainer.Size.X.Scale,
+					widgetContainer.Size.X.Offset,
+					widgetContainer.Size.Y.Scale,
+					150
+				)
+				control.Size = UDim2.new 0, 21, 0, 150
+				return
+
+
+			startYPos = y
+
+			if widgetContainer.Size.Y.Offset + yDelta >= 0
+				widgetContainer.Size = UDim2.new(
+					widgetContainer.Size.X.Scale,
+					widgetContainer.Size.X.Offset,
+					widgetContainer.Size.Y.Scale,
+					widgetContainer.Size.Y.Offset + yDelta
+				)
+				control.Size = UDim2.new 0, 21, 0, control.Size.Y.Offset + yDelta
+
+
+	switchMinimize = ->
+		minimizeFrame.Visible = not minimizeFrame.Visible
+		if scrollable
+			frame.Visible = not frame.Visible
+			verticalDragger.Visible = not verticalDragger.Visible
+			control.Visible = not control.Visible
+		else
+			widgetContainer.Visible = not widgetContainer.Visible
+
+
+		minimizeButton.Text = if minimizeFrame.Visible
+			"+"
+		else
+			"-"
+
+	minimizeBigButton.MouseButton1Click\connect -> switchMinimize!
+	minimizeButton.MouseButton1Click\connect -> switchMinimize!
+
+	dragBar, (if scrollable then frame else widgetContainer), helpFrame, closeEvent
+
+
+t.Help = (funcNameOrFunc) ->
+	--input argument can be a string or a function. Should return a description (of arguments and expected side effects)
+	if funcNameOrFunc == "CreatePropertyDropDownMenu" or funcNameOrFunc == t.CreatePropertyDropDownMenu
+		"Function CreatePropertyDropDownMenu. " ..
+			"Arguments: (instance, propertyName, enumType). " ..
+			"Side effect: returns a container with a drop-down-box that is linked to the 'property' field of 'instance' which is of type 'enumType'"
+
+	elseif funcNameOrFunc == "CreateDropDownMenu" or funcNameOrFunc == t.CreateDropDownMenu
+		"Function CreateDropDownMenu. " ..
+			"Arguments: (items, onItemSelected). " ..
+			"Side effect: Returns 2 results, a container to the gui object and a 'updateSelection' function for external updating. The container is a drop-down-box created around a list of items"
+
+	elseif funcNameOrFunc == "CreateMessageDialog" or funcNameOrFunc == t.CreateMessageDialog
+		"Function CreateMessageDialog. " ..
+			"Arguments: (title, message, buttons). " ..
+			"Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in. 'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button"
+
+	elseif funcNameOrFunc == "CreateStyledMessageDialog" or funcNameOrFunc == t.CreateStyledMessageDialog
+		"Function CreateStyledMessageDialog. " ..
+			"Arguments: (title, message, style, buttons). " ..
+			"Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in. 'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button, 'style' is a string, either Error, Notify or Confirm"
+
+	elseif funcNameOrFunc == "GetFontHeight" or funcNameOrFunc == t.GetFontHeight
+		"Function GetFontHeight. " ..
+			"Arguments: (font, fontSize). " ..
+			"Side effect: returns the size in pixels of the given font + fontSize"
+
+	elseif funcNameOrFunc == "CreateScrollingFrame" or funcNameOrFunc == t.CreateScrollingFrame
+		"Function CreateScrollingFrame. " ..
+			"Arguments: (orderList, style) " ..
+			"Side effect: returns 4 objects, (scrollFrame, scrollUpButton, scrollDownButton, recalculateFunction). 'scrollFrame' can be filled with GuiObjects. It will lay them out and allow scrollUpButton/scrollDownButton to interact with them. Orderlist is optional (and specifies the order to layout the children. Without orderlist, it uses the children order. style is also optional, and allows for a 'grid' styling if style is passed 'grid' as a string. recalculateFunction can be called when a relayout is needed (when orderList changes)"
+
+	elseif funcNameOrFunc == "CreateTrueScrollingFrame" or funcNameOrFunc == t.CreateTrueScrollingFrame
+		"Function CreateTrueScrollingFrame. " ..
+			"Arguments: (nil) " ..
+			"Side effect: returns 2 objects, (scrollFrame, controlFrame). 'scrollFrame' can be filled with GuiObjects, and they will be clipped if not inside the frame's bounds. controlFrame has children scrollup and scrolldown, as well as a slider. controlFrame can be parented to any guiobject and it will readjust itself to fit."
+
+	elseif funcNameOrFunc == "AutoTruncateTextObject" or funcNameOrFunc == t.AutoTruncateTextObject
+		"Function AutoTruncateTextObject. " ..
+			"Arguments: (textLabel) " ..
+			"Side effect: returns 2 objects, (textLabel, changeText). The 'textLabel' input is modified to automatically truncate text (with ellipsis), if it gets too small to fit. 'changeText' is a function that can be used to change the text, it takes 1 string as an argument"
+
+	elseif funcNameOrFunc == "CreateSlider" or funcNameOrFunc == t.CreateSlider
+		"Function CreateSlider. " ..
+			"Arguments: (steps, width, position) " ..
+			"Side effect: returns 2 objects, (sliderGui, sliderPosition). The 'steps' argument specifies how many different positions the slider can hold along the bar. 'width' specifies in pixels how wide the bar should be (modifiable afterwards if desired). 'position' argument should be a UDim2 for slider positioning. 'sliderPosition' is an IntValue whose current .Value specifies the specific step the slider is currently on."
+
+	elseif funcNameOrFunc == "CreateLoadingFrame" or funcNameOrFunc == t.CreateLoadingFrame
+		"Function CreateLoadingFrame. " ..
+			"Arguments: (name, size, position) " ..
+			"Side effect: Creates a gui that can be manipulated to show progress for a particular action. Name appears above the loading bar, and size and position are udim2 values (both size and position are optional arguments). Returns 3 arguments, the first being the gui created. The second being updateLoadingGuiPercent, which is a bindable function. This function takes one argument (two optionally), which should be a number between 0 and 1, representing the percentage the loading gui should be at. The second argument to this function is a boolean value that if set to true will tween the current percentage value to the new percentage value, therefore our third argument is how long this tween should take. Our third returned argument is a BindableEvent, that when fired means that someone clicked the cancel button on the dialog."
+
+	elseif funcNameOrFunc == "CreateTerrainMaterialSelector" or funcNameOrFunc == t.CreateTerrainMaterialSelector
+		"Function CreateTerrainMaterialSelector. " ..
+			"Arguments: (size, position) " ..
+			"Side effect: Size and position are UDim2 values that specifies the selector's size and position. Both size and position are optional arguments. This method returns 3 objects (terrainSelectorGui, terrainSelected, forceTerrainSelection). terrainSelectorGui is just the gui object that we generate with this function, parent it as you like. TerrainSelected is a BindableEvent that is fired whenever a new terrain type is selected in the gui. ForceTerrainSelection is a function that takes an argument of Enum.CellMaterial and will force the gui to show that material as currently selected."
+
+t

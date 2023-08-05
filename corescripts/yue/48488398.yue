@@ -1,0 +1,295 @@
+import "macros" as { $ }
+$load $FILE
+
+waitForProperty = (instance, property) ->
+	until instance[property]
+		instance.Changed\wait!
+
+waitForChild = (instance, name) ->
+	until instance\FindFirstChild name
+		instance.ChildAdded\wait!
+
+waitForProperty game.Players, "LocalPlayer"
+waitForChild script.Parent, "Popup"
+waitForChild script.Parent.Popup, "AcceptButton"
+script.Parent.Popup.AcceptButton.Modal = true
+
+localPlayer = game.Players.LocalPlayer
+local teleportUI
+
+friendRequestBlacklist = {}
+
+teleportEnabled = true
+
+showOneButton = ->
+	with popup = script.Parent\FindFirstChild "Popup"
+		if popup
+			.OKButton.Visible = true
+			.DeclineButton.Visible = false
+			.AcceptButton.Visible = false
+
+showTwoButtons = ->
+	with popup = script.Parent\FindFirstChild "Popup"
+		if popup
+			.OKButton.Visible = false
+			.DeclineButton.Visible = true
+			.AcceptButton.Visible = true
+
+makePopupInvisible = ->
+	if script.Parent.Popup
+		script.Parent.Popup.Visible = false
+
+makeFriend = (fromPlayer, toPlayer) ->
+	popup = script.Parent\FindFirstChild "Popup"
+	return if popup == nil -- there is no popup!
+	return if popup.Visible -- currently popping something, abort!
+	return if friendRequestBlacklist[fromPlayer] -- previously cancelled friend request, we don't want it!
+
+	with popup
+		.PopupText.Text = "Accept Friend Request from #{fromPlayer.Name}?"
+		.PopupImage.Image = "http://www.roblox.com/thumbs/avatar.ashx?userId=#{fromPlayer.userId}&x=352&y=352"
+
+		showTwoButtons!
+		.Visible = true
+		.AcceptButton.Text = "Accept"
+		.DeclineButton.Text = "Decline"
+		\TweenSize UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true
+
+	local yesCon, noCon
+
+	yesCon = popup.AcceptButton.MouseButton1Click\connect ->
+		popup.Visible = false
+		toPlayer\RequestFriendship fromPlayer
+
+		yesCon?\disconnect!
+		noCon?\disconnect!
+
+		popup\TweenSize(
+			UDim2.new(0, 0, 0, 0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quart,
+			1,
+			true,
+			makePopupInvisible!
+		)
+
+	noCon = popup.DeclineButton.MouseButton1Click\connect ->
+		popup.Visible = false
+		toPlayer\RevokeFriendship fromPlayer
+		friendRequestBlacklist[fromPlayer] = true
+		print "pop up blacklist"
+
+		yesCon?\disconnect!
+		noCon?\disconnect!
+
+		popup\TweenSize(
+			UDim2.new(0, 0, 0, 0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quart,
+			1,
+			true,
+			makePopupInvisible!
+		)
+
+game.Players.FriendRequestEvent\connect (fromPlayer, toPlayer, event) ->
+	-- if this doesn't involve me, then do nothing
+	return if fromPlayer ~= localPlayer and toPlayer ~= localPlayer
+
+	if fromPlayer == localPlayer
+		if event == Enum.FriendRequestEvent.Accept
+			game\GetService"GuiService"\SendNotification(
+				"You are Friends",
+				"With #{toPlayer.Name}!",
+				"http://www.roblox.com/thumbs/avatar.ashx?userId=#{toPlayer.userId}&x=48&y=48",
+				5,
+				->
+			)
+	elseif toPlayer == localPlayer
+		if event == Enum.FriendRequestEvent.Issue
+			return if friendRequestBlacklist[fromPlayer]
+			-- previously cancelled friend request, we don't want it!
+			game\GetService"GuiService"\SendNotification(
+				"Friend Request",
+				"From #{fromPlayer.Name}",
+				"http://www.roblox.com/thumbs/avatar.ashx?userId=#{fromPlayer.userId}&x=48&y=48",
+				8,
+				-> makeFriend fromPlayer, toPlayer
+			)
+		elseif event == Enum.FriendRequestEvent.Accept
+			game\GetService"GuiService"\SendNotification(
+				"You are Friends",
+				"With #{fromPlayer.Name}!",
+				"http://www.roblox.com/thumbs/avatar.ashx?userId=#{fromPlayer.userId}&x=48&y=48",
+				5,
+				->
+			)
+
+showTeleportUI = (message, timer) ->
+
+	teleportUI?\Remove!
+	waitForChild localPlayer, "PlayerGui"
+
+	with Instance.new "Message"
+		.Text = message
+		.Parent = localPlayer.PlayerGui
+		if timer > 0
+			wait timer
+			\Remove!
+
+onTeleport = (teleportState, _, _) ->
+	if game\GetService"TeleportService".CustomizedTeleportUI == false
+		showTeleportUI switch teleportState
+			when Enum.TeleportState.Started
+				"Teleport started...", 0
+			when Enum.TeleportState.WaitingForServer
+				"Requesting server...", 0
+			when Enum.TeleportState.InProgress
+				"Teleporting...", 0
+			when Enum.TeleportState.Failed
+				"Teleport failed. Insufficient privileges or target place does not exist.", 3
+
+if teleportEnabled
+	localPlayer.OnTeleport\connect onTeleport
+
+	game\GetService"TeleportService".ErrorCallback = (message) ->
+		popup = script.Parent\FindFirstChild "Popup"
+		showOneButton!
+		popup.PopupText.Text = message
+		local clickCon
+		clickCon = popup.OKButton.MouseButton1Click\connect ->
+			game\GetService"TeleportService"\TeleportCancel!
+			clickCon?\disconnect!
+			game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup"
+			popup\TweenSize(
+				UDim2.new(0, 0, 0, 0),
+				Enum.EasingDirection.Out,
+				Enum.EasingStyle.Quart,
+				1,
+				true,
+				makePopupInvisible!
+			)
+		game.GuiService\AddCenterDialog(
+			script.Parent\FindFirstChild "Popup",
+			Enum.CenterDialogType.QuitDialog,
+			--ShowFunction
+			->
+				showOneButton!
+				script.Parent\FindFirstChild"Popup".Visible = true
+				popup\TweenSize UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true
+			--HideFunction
+			->
+				popup\TweenSize(
+					UDim2.new(0, 0, 0, 0),
+					Enum.EasingDirection.Out,
+					Enum.EasingStyle.Quart,
+					1,
+					true,
+					makePopupInvisible!
+				)
+		)
+	game\GetService"TeleportService".ConfirmationCallback = (message, placeId, spawnName) ->
+		popup = script.Parent\FindFirstChild "Popup"
+		popup.PopupText.Text = message
+		popup.PopupImage.Image = ""
+
+		local yesCon, noCon
+
+		killCons = ->
+			yesCon?\disconnect!
+			noCon?\disconnect!
+
+			game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup"
+			popup\TweenSize(
+				UDim2.new(0, 0, 0, 0),
+				Enum.EasingDirection.Out,
+				Enum.EasingStyle.Quart,
+				1,
+				true,
+				makePopupInvisible!
+			)
+
+		yesCon = popup.AcceptButton.MouseButton1Click\connect ->
+			killCons!
+			success, err = try
+				game\GetService"TeleportService"\TeleportImpl placeId, spawnName
+			if not success
+				showOneButton!
+				popup.PopupText.Text = err
+				clickCon = popup.OKButton.MouseButton1Click\connect ->
+					clickCon?\disconnect!
+					game.GuiService\RemoveCenterDialog script.Parent\FindFirstChild "Popup"
+					popup\TweenSize(
+						UDim2.new(0, 0, 0, 0),
+						Enum.EasingDirection.Out,
+						Enum.EasingStyle.Quart,
+						1,
+						true,
+						makePopupInvisible!
+					)
+				game.GuiService\AddCenterDialog(
+					script.Parent\FindFirstChild "Popup",
+					Enum.CenterDialogType.QuitDialog,
+					--ShowFunction
+					->
+						showOneButton!
+						script.Parent\FindFirstChild"Popup".Visible = true
+						popup\TweenSize(
+							UDim2.new(0, 330, 0, 350),
+							Enum.EasingDirection.Out,
+							Enum.EasingStyle.Quart,
+							1,
+							true
+						)
+					--HideFunction
+					->
+						popup\TweenSize(
+							UDim2.new(0, 0, 0, 0),
+							Enum.EasingDirection.Out,
+							Enum.EasingStyle.Quart,
+							1,
+							true,
+							makePopupInvisible!
+						)
+				)
+
+		noCon = popup.DeclineButton.MouseButton1Click\connect ->
+			killCons!
+			try
+				game\GetService"TeleportService"\TeleportCancel!
+
+		centerDialogSuccess = try
+			game.GuiService\AddCenterDialog(
+				script.Parent\FindFirstChild "Popup",
+				Enum.CenterDialogType.QuitDialog,
+				--ShowFunction
+				->
+					showTwoButtons!
+					popup.AcceptButton.Text = "Leave"
+					popup.DeclineButton.Text = "Stay"
+					script.Parent\FindFirstChild"Popup".Visible = true
+					popup\TweenSize(
+						UDim2.new(0, 330, 0, 350),
+						Enum.EasingDirection.Out,
+						Enum.EasingStyle.Quart,
+						1,
+						true
+					)
+				--HideFunction
+				->
+					popup\TweenSize(
+						UDim2.new(0, 0, 0, 0),
+						Enum.EasingDirection.Out,
+						Enum.EasingStyle.Quart,
+						1,
+						true,
+						makePopupInvisible!
+					)
+			)
+
+		if centerDialogSuccess == false
+			script.Parent\FindFirstChild"Popup".Visible = true
+			popup.AcceptButton.Text = "Leave"
+			popup.DeclineButton.Text = "Stay"
+			popup\TweenSize UDim2.new(0, 330, 0, 350), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 1, true
+
+		true

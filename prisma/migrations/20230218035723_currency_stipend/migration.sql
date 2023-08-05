@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "user" ADD COLUMN     "currencyCollected" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

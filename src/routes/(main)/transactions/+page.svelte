@@ -1,25 +1,113 @@
-<svelte:head>
-	<title>Transactions - Mercury</title>
-</svelte:head>
+<script lang="ts">
+	export let data
+</script>
 
-<h1 class="text-center light-text">Transactions</h1>
+<Head title="Transactions" />
+
+<h1 class="text-center light-text">
+	Transactions
+	<a href="/transactions/your" class="btn btn-primary ms-4">
+		Your transactions
+	</a>
+</h1>
 
 <div class="container mt-5">
-	<p class="light-text">
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Laoreet non curabitur gravida arcu ac tortor. Tellus molestie nunc non blandit. Metus vulputate eu scelerisque felis imperdiet proin fermentum. Facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui. Posuere urna nec tincidunt praesent semper feugiat nibh. Fermentum leo vel orci porta non pulvinar neque laoreet. Massa vitae tortor condimentum lacinia. Sit amet nulla facilisi morbi tempus iaculis urna id volutpat. Nunc lobortis mattis aliquam faucibus. Ullamcorper eget nulla facilisi etiam. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec.<br />
-		<br />
-		Et odio pellentesque diam volutpat. Adipiscing bibendum est ultricies integer quis auctor. Dui sapien eget mi proin sed libero. Integer vitae justo eget magna fermentum iaculis eu. Est velit egestas dui id ornare arcu. Sed vulputate odio ut enim blandit. Elit sed vulputate mi sit amet mauris commodo quis. Magnis dis parturient montes nascetur. Sed viverra ipsum nunc aliquet bibendum enim. Tristique et egestas quis ipsum. Eget aliquet nibh praesent tristique magna sit amet purus gravida. Cum sociis natoque penatibus et magnis dis parturient montes. Enim lobortis scelerisque fermentum dui faucibus in ornare. Vitae congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque. Vitae purus faucibus ornare suspendisse sed nisi. Amet justo donec enim diam vulputate ut pharetra. Adipiscing tristique risus nec feugiat in fermentum. Viverra maecenas accumsan lacus vel facilisis volutpat. Orci a scelerisque purus semper eget duis at.<br />
-		<br />
-		Orci porta non pulvinar neque laoreet suspendisse interdum consectetur. Tristique magna sit amet purus gravida quis blandit. Mauris nunc congue nisi vitae suscipit tellus mauris. Maecenas accumsan lacus vel facilisis volutpat est velit. Leo integer malesuada nunc vel risus commodo viverra. Dignissim enim sit amet venenatis urna cursus eget. Amet justo donec enim diam vulputate ut pharetra sit amet. Ridiculus mus mauris vitae ultricies leo integer. Senectus et netus et malesuada fames ac turpis egestas. Eget mauris pharetra et ultrices neque ornare aenean euismod. Nulla at volutpat diam ut venenatis tellus. Ullamcorper velit sed ullamcorper morbi tincidunt ornare massa. Enim ut tellus elementum sagittis. Eget aliquet nibh praesent tristique magna sit.<br />
-		<br />
-		Vestibulum morbi blandit cursus risus at. Urna nunc id cursus metus aliquam eleifend mi in nulla. Nibh venenatis cras sed felis. Adipiscing enim eu turpis egestas pretium aenean pharetra magna ac. Sodales ut etiam sit amet nisl purus. Tortor posuere ac ut consequat semper viverra nam libero justo. Mauris sit amet massa vitae tortor condimentum. Faucibus turpis in eu mi bibendum neque. Dictum varius duis at consectetur lorem donec massa sapien faucibus. Iaculis urna id volutpat lacus laoreet. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique senectus.<br />
-		<br />
-		Ut tortor pretium viverra suspendisse potenti. Ac ut consequat semper viverra. Enim sit amet venenatis urna cursus eget. Egestas maecenas pharetra convallis posuere morbi leo. Magna sit amet purus gravida. Nunc lobortis mattis aliquam faucibus purus in. Velit ut tortor pretium viverra. Auctor elit sed vulputate mi. Elementum facilisis leo vel fringilla est ullamcorper eget nulla. Eget gravida cum sociis natoque penatibus et.
-	</p>
+	<table class="table m-auto">
+		{#each data.transactions as transaction, num}
+			<tr
+				in:fade={{ num, total: data.transactions.length, max: 12 }}
+				class="light-text">
+				<td class="p-0">
+					<a
+						href="/user/{transaction.sender.number}"
+						class="d-flex text-decoration-none">
+						<div class="me-2 rounded-circle pfp bg-a">
+							<img
+								src="/api/avatar/{transaction.sender?.username}"
+								alt={transaction.sender.username}
+								class="rounded-circle rounded-top-0" />
+						</div>
+						<p class="light-text my-auto fs-6 text-truncate">
+							{transaction.sender.username}
+						</p>
+					</a>
+				</td>
+
+				<td class="p-0 d-flex justify-content-center">
+					<div class="fs-6 currency">
+						<span class="text-success">
+							<i class="fa fa-gem" />
+							{transaction.amountSent}
+						</span>
+						<i class="fa fa-arrow-right ms-1" />
+					</div>
+					<div>
+						{transaction.taxRate}% tax
+						<br />
+						<small>
+							{transaction.time.toLocaleString()}
+						</small>
+					</div>
+					<div class="fs-6 currency">
+						<i class="fa fa-arrow-right me-1" />
+						<span class="text-success">
+							<i class="fa fa-gem" />
+							{Math.round(
+								(1 - transaction.taxRate / 100) *
+									transaction.amountSent,
+							)}
+						</span>
+					</div>
+				</td>
+
+				<td class="p-0">
+					<a
+						href="/user/{transaction.receiver.number}"
+						class="d-flex justify-content-end text-decoration-none">
+						<p class="light-text my-auto fs-6">
+							{transaction.receiver.username}
+						</p>
+						<div class="ms-2 rounded-circle pfp bg-a">
+							<img
+								src="/api/avatar/{transaction.receiver
+									?.username}"
+								alt={transaction.receiver.username}
+								class="rounded-circle rounded-top-0" />
+						</div>
+					</a>
+				</td>
+
+				<td class="p-0">
+					{#if transaction.note && transaction.link}
+						<a href={transaction.link} class="light-text">
+							{transaction.note}
+						</a>
+					{:else if transaction.note}
+						<p>
+							{transaction.note}
+						</p>
+					{:else}
+						<em>No transaction note</em>
+					{/if}
+				</td>
+			</tr>
+		{/each}
+	</table>
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	.currency
+		margin-top 0.5rem
+
+	// Change colour of every 2nd row
+	tr:nth-child(2n)
+		background var(--darker)
+
+	.pfp
+		width 2.5rem
+		height 2.5rem
+
+	img
+		width 2.5rem
+		height 2.5rem
 </style>

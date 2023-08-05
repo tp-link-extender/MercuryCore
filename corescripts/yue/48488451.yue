@@ -1,0 +1,90 @@
+import "macros" as { $ }
+$load $FILE
+
+-- Heliodex's basic New function (basically a simplified version of melt)
+New = (className, name, props) ->
+	if props == nil -- no name was provided
+		props = name
+		name = nil
+
+	obj = Instance.new className
+	obj.Name = name if name
+	local parent
+
+	for k, v in pairs props
+		if type(k) == "string"
+			if k == "Parent"
+				parent = v
+			else
+				obj[k] = v
+
+		elseif type(k) == "number" and type(v) == "userdata"
+			v.Parent = obj
+
+	obj.Parent = parent
+	obj
+--
+
+popupFrame = New "Frame", "Popup"
+	Position: UDim2.new 0.5, -165, 0.5, -175
+	Size: UDim2.new 0, 330, 0, 350
+	Style: Enum.FrameStyle.RobloxRound
+	ZIndex: 4
+	Visible: false
+	Parent: script.Parent
+
+	* New "TextLabel", "PopupText"
+		Size: UDim2.new 1, 0, 0.8, 0
+		Font: Enum.Font.ArialBold
+		FontSize: Enum.FontSize.Size36
+		BackgroundTransparency: 1
+		Text: "Hello I'm a popup"
+		TextColor3: Color3.new 248 / 255, 248 / 255, 248 / 255
+		TextWrap: true
+		ZIndex: 5
+
+	* New "TextButton", "AcceptButton"
+		Position: UDim2.new 0, 20, 0, 270
+		Size: UDim2.new 0, 100, 0, 50
+		Font: Enum.Font.ArialBold
+		FontSize: Enum.FontSize.Size24
+		Style: Enum.ButtonStyle.RobloxButton
+		TextColor3: Color3.new 248 / 255, 248 / 255, 248 / 255
+		Text: "Yes"
+		ZIndex: 5
+
+	* New "ImageLabel", "PopupImage"
+		BackgroundTransparency: 1
+		Position: UDim2.new 0.5, -140, 0, 0
+		Size: UDim2.new 0, 280, 0, 280
+		ZIndex: 3
+
+		* New "ImageLabel", "Backing"
+			BackgroundTransparency: 1
+			Size: UDim2.new 1, 0, 1, 0
+			Image: "http://banland.xyz/asset/?id=47574181"
+			ZIndex: 2
+
+:AcceptButton = popupFrame
+
+with popupFrame\clone!
+	.Name = "Darken"
+	.Size = UDim2.new 1, 16, 1, 16
+	.Position = UDim2.new 0, -8, 0, -8
+	.ZIndex = 1
+	.Parent = popupFrame
+
+with AcceptButton\clone!
+	.Name = "DeclineButton"
+	.Position = UDim2.new 1, -120, 0, 270
+	.Text = "No"
+	.Parent = popupFrame
+
+with AcceptButton\clone!
+	.Name = "OKButton"
+	.Text = "OK"
+	.Position = UDim2.new 0.5, -50, 0, 270
+	.Visible = false
+	.Parent = popupFrame
+
+script\remove!

@@ -1,153 +1,428 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import { getUser } from "@lucia-auth/sveltekit/client"
+	import { goto } from "$app/navigation"
+	import { quadOut } from "svelte/easing"
 
-	const user = getUser()
+	let search = "",
+		searchCompleted = true,
+		currentSearchFocus = -1
+
+	$: if (search == "") {
+		searchCompleted = true
+		currentSearchFocus = -1
+	}
+
+	const height = (_: HTMLElement) => ({
+			duration: 300,
+			css: (t: number) => `
+				height: ${2 * quadOut(t)}rem;
+				overflow: hidden;
+			`,
+		}),
+		searchResults: HTMLElement[] = []
+
+	export let data: import("../../routes/$types").LayoutData
+
+	const { user } = data,
+		nav1 = [
+			// ["Home", "/", "fa-house-chimney"],
+			["Games", "/games", "fa-mountain-sun"],
+			["Catalog", "/avatarshop", "fa-book-open-cover"],
+			// ["Groups", "/groups", "fa-people-group"],
+			["Create", "/develop", "fa-plus"],
+			["Forum", "/forum", "fa-messages"],
+		],
+		usernav = [
+			["fa-user-group", "Friends", "/requests"],
+			["fa-box-open-full", "Inventory", "/inventory"],
+			["fa-user-pen", "Avatar", "/avatar"],
+			["fa-gears", "Settings", "/settings"],
+		],
+		searchCategories = [
+			["Users", "users"],
+			["Places", "places"],
+			["Catalog", "assets"],
+			// ["Groups", "groups"],
+		]
+
+	if (user && user.permissionLevel >= 4)
+		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 </script>
 
-<nav class="navbar navbar-expand-md navbar-dark position-fixed w-100 px-4 py-1">
-	<div class="container">
-		<a class="navbar-brand light-text me-5" href="/">Mercury</a>
-		<button class="navbar-toggler" type="button" title="Open sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar-expand-md" aria-controls="offcanvasNavbar-expand-md">
-			<span class="navbar-toggler-icon" data-bs-target="#offcanvasNavbar-expand-md" />
-		</button>
-		<div class="offcanvas offcanvas-start border-0 text-bg-dark" data-bs-hideresize="true" tabindex="-1" id="offcanvasNavbar-expand-md" aria-labelledby="offcanvasNavbar-expand-md">
-			<div class="offcanvas-header">
-				<a href="/" class="offcanvas-title light-text h5">Mercury</a>
-				<button type="button" class="btn-close btn-close-white text-reset me-1" data-bs-dismiss="offcanvas" aria-label="Close" />
-			</div>
-			<div class="offcanvas-body d-flex">
-				{#if $user}
-					<ul class="navbar-nav">
-						<li class="nav-item">
-							<a href="/games" class="nav-link mt-1 shadow-none mr-0 light-text">Games</a>
-						</li>
-						<li class="nav-item">
-							<a href="/avatarshop" class="nav-link mt-1 shadow-none mr-0 light-text">Avatar Shop</a>
-						</li>
-					</ul>
-					<ul class="navbar-nav loggedin">
-						<li class="nav-item">
-							<form use:enhance method="POST" action="/search" class="input-group my-1" role="search">
-								<input class="form-control valid" name="query" type="search" placeholder="Search" aria-label="Search" />
-								<button class="btn btn-success py-0" type="submit" title="Search"><i class="fa fa-search" /></button>
-								<select class="btn btn-info dropdown-toggle-split px-1" name="category">
-									<option value="users">Users</option>
-									<option value="places">Places</option>
-									<option value="items">Items</option>
-								</select>
-							</form>
-						</li>
-						<li class="nav-item">
-							<a id="rocks" href="/transactions" class="fw-bold nav-link mt-1 text-success shadow-none">
-								<i class="fa fa-gem me-1" />
-								<span class="h6 text-success">
-									{$user.currency}
-								</span>
-							</a>
-						</li>
-						<li class="dropdown ms-2">
-							<a href="/user/{$user.number}" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex text-decoration-none mb-1">
-								<div id="pfp" class="mx-2 rounded-circle">
-									<img src={$user?.image} alt="You" class="rounded-circle rounded-top-0" />
-								</div>
-								<p class="light-text my-auto fs-6 me-4">
-									{$user?.displayname}
-									<i class="fa fa-ellipsis-vertical ms-2" />
-								</p>
-							</a>
+<nav class="navbar navbar-expand py-0">
+	<div class="w-100 border-0" tabindex="-1">
+		<div id="nav1" class="py-1 d-flex">
+			<a class="navbar-brand light-text me-0" href="/">
+				<img class="me-2" src="/favicon.svg" alt="Mercury logo" />
+				<span class="me-4">Mercury</span>
+			</a>
+			{#if user}
+				<div id="topnav" class="row me-2">
+					<div class="col-6">
+						<div class="navbar-nav">
+							{#each nav1 as [title, href]}
+								<a
+									class="btn mt-1 px-1 light-text nav-item"
+									{href}>
+									{title}
+								</a>
+							{/each}
+						</div>
+					</div>
+				</div>
+				<div class="navbar-nav mx-auto">
+					<form
+						use:enhance
+						method="POST"
+						action="/search"
+						class="w-auto"
+						role="search">
+						<div class="input-group">
+							<input
+								bind:value={search}
+								on:keydown={e => {
+									switch (e.key) {
+										case "Enter":
+											if (
+												!searchCompleted &&
+												currentSearchFocus >= 0
+											) {
+												e.preventDefault()
+												searchResults[
+													currentSearchFocus
+												].click()
+											}
 
-							<ul class="dropdown-menu mt-2">
-								<li><h6 class="dropdown-header">ACCOUNT</h6></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-address-card me-2" /> Profile</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-box-open me-2" /> Inventory</a></li>
-								<li><a class="dropdown-item light-text" href="/requests"><i class="fa fa-user-plus me-2" /> Friend requests</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-user-pen me-2" /> Avatar</a></li>
-								<li><a class="dropdown-item light-text" href="/user/{$user.number}"><i class="fa fa-users me-2" /> My Groups</a></li>
-								<li><hr class="dropdown-divider" /></li>
-								<li><a class="dropdown-item light-text" href="/user/settings"><i class="fa fa-gears me-2" /> Settings</a></li>
-								<li>
-									<form use:enhance method="POST" action="/logout">
-										<button type="submit" class="dropdown-item text-light text-bg-danger"><b><i class="fa fa-arrow-right-from-bracket me-2" /> Log out</b></button>
+											searchCompleted = true
+											currentSearchFocus = -1
+											break
+										case "ArrowDown":
+										case "ArrowUp":
+											e.preventDefault()
+
+											// Focus first result
+											const prevSearchFocus =
+												currentSearchFocus
+
+											currentSearchFocus +=
+												e.key == "ArrowDown" ? 1 : -1
+
+											currentSearchFocus =
+												currentSearchFocus >=
+												searchCategories.length
+													? 0
+													: currentSearchFocus < 0
+													? searchCategories.length -
+													  1
+													: currentSearchFocus
+
+											searchResults[
+												currentSearchFocus
+											]?.classList.add("pseudofocus")
+											searchResults[
+												prevSearchFocus
+											]?.classList.remove("pseudofocus")
+
+											break
+										case "Escape":
+											search = ""
+											break
+										default:
+											searchCompleted = false
+									}
+								}}
+								class="form-control valid bg-background"
+								name="query"
+								type="search"
+								placeholder="Search"
+								aria-label="Search"
+								autocomplete="off" />
+							<button
+								on:click|preventDefault={() => {
+									search
+										? goto(`/search?q=${search}&c=users`)
+										: null
+
+									searchCompleted = true
+								}}
+								class="btn btn-success py-0 rounded-end-2"
+								title="Search">
+								<i class="fa fa-search" />
+							</button>
+							{#if search && !searchCompleted}
+								<div
+									transition:fade={{ duration: 150 }}
+									id="results"
+									class="position-absolute d-flex flex-column bg-darker p-2 mt-5 rounded-3">
+									{#each searchCategories as [name, category], num}
+										<a
+											bind:this={searchResults[num]}
+											class="btn text-start light-text py-2"
+											href="/search?q={search}&c={category}"
+											title="Search {name}">
+											Search <b>{search}</b>
+											in {name}
+										</a>
+									{/each}
+								</div>
+							{/if}
+						</div>
+					</form>
+				</div>
+				<ul class="navbar-nav loggedin m-0">
+					<li id="notificationstop" class="pt-1">
+						<a
+							href="/notifications"
+							role="button"
+							aria-label="Notifications"
+							class="fw-bold nav-link me-1">
+							<i class="fa fa-bell light-text" />
+						</a>
+					</li>
+					<li id="transactionsbutton" class="pt-1">
+						<a
+							href="/transactions/your"
+							role="button"
+							aria-label="Transactions"
+							class="nav-link text-success">
+							<i class="fa fa-gem me-1 text-success" />
+							<span class="h6 text-success">
+								{user.currency}
+							</span>
+						</a>
+					</li>
+
+					<li class="dropdown2 dropdown-hover dropdown-end">
+						<a href="/user/{user.number}" class="btn p-0 d-flex">
+							<div
+								id="pfp"
+								class="mx-2 rounded-circle bg-background">
+								<img
+									src="/api/avatar/{user?.username}"
+									alt="You"
+									class="rounded-circle rounded-top-0" />
+							</div>
+							<p class="my-auto fs-6 light-text">
+								{user?.username}
+							</p>
+						</a>
+						<div class="dropdown-content pt-2">
+							<ul class="p-2 rounded-3">
+								{#each usernav as [icon, title, href]}
+									<li class="rounded-2">
+										<a
+											class="btn light-text ps-3 pe-0 text-start"
+											{href}>
+											<i class="fa {icon} me-2" />
+											{title}
+										</a>
+									</li>
+								{/each}
+								<li class="rounded-2">
+									<form
+										use:enhance
+										method="POST"
+										action="/api?/logout">
+										<button
+											class="btn text-danger ps-3 pe-0 text-start">
+											<i
+												class="fa fa-arrow-right-from-bracket me-2" />
+											<b>Log out</b>
+										</button>
 									</form>
 								</li>
 							</ul>
-						</li>
-					</ul>
-				{:else}
-					<ul class="navbar-nav loggedin">
-						<li class="nav-item">
-							<a type="button" href="/login" class="btn mb-1 light-text">Log in</a>
-						</li>
-						<li class="nav-item">
-							<a type="button" href="/register" class="btn btn-success my-2 my-sm-0">Register</a>
-						</li>
-					</ul>
-				{/if}
-			</div>
+						</div>
+					</li>
+				</ul>
+			{:else}
+				<ul class="navbar-nav loggedin">
+					<li class="nav-item mt-1">
+						<a href="/login" class="btn mb-1 light-text">Log in</a>
+					</li>
+					<li class="nav-item mt-1">
+						<a
+							href="/register"
+							class="btn btn-success my-2 my-sm-0">
+							Register
+						</a>
+					</li>
+				</ul>
+			{/if}
 		</div>
 	</div>
 </nav>
 
-<style lang="sass">
-	@media only screen and (max-width: 767px)
-		.offcanvas-header
-			background: var(--accent2)
-		.offcanvas-body
-			background: var(--accent)
-			min-height: 100vh
-			flex-direction: column-reverse
-			justify-content: start
-			
-			a
-				margin-bottom: 1rem
-				width: 100%
-				text-align: start
+{#if data.banners && user}
+	{#each data.banners as announcement (announcement.id)}
+		<div
+			transition:height
+			class="py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight
+				? 'light'
+				: ''}"
+			role="alert"
+			style="background: {announcement.bgColour}">
+			{announcement.body}
+		</div>
+	{/each}
+{/if}
 
-			.loggedin
-				margin-bottom: 2rem
+{#if user}
+	<nav id="bottomnav" class="position-fixed bottom-0 bg-darker w-100">
+		<div class="d-flex flex-row justify-content-evenly mx-auto">
+			{#each nav1 as [title, href, icon]}
+				<a {href} class="btn light-text nav-item d-flex flex-column">
+					<i class="fa {icon} mb-1" />
+					{title}
+				</a>
+			{/each}
+			<a
+				href="/notifications"
+				id="notificationsbottom"
+				class="btn light-text nav-item flex-column">
+				<i class="fa fa-bell mb-1" />
+				Notifications
+			</a>
+		</div>
+	</nav>
+{/if}
 
-	@media only screen and (min-width: 768px)
-		.loggedin
-			margin-left: auto
-
+<style lang="stylus">
 	.loggedin
-		padding: 0
-
-
-	.offcanvas-title
-		text-decoration: none
+		margin-left auto
 
 	nav
-		z-index: 9
-		max-height: 10vh
-		backdrop-filter: blur(8px)
-		-webkit-backdrop-filter: blur(8px)
-		border-bottom: 1px solid #fff1
-		background: #0003
-		
-	.offcanvas
-		box-shadow: none !important	
+		z-index 9
 
-	a
-		margin-right: 0.5rem
+	#bottomnav
+		border-top 1px solid var(--accent)
+		height 4rem
+
+		box-shadow 0 0 1rem 0.2rem black
+		+lightTheme()
+			box-shadow 0 0 1rem 0.2rem white
+
+		div
+			width 50%
+		a
+			font-size 1rem
+			padding-left 0.5rem
+			padding-right 0.5rem
+		i
+			font-size 1.5rem
+	
+	+lightTheme()
+		.navbar-brand img
+			filter invert(1)
+
+	+lg()
+		#bottomnav
+		#notificationsbottom
+			display none
+
+	+-lg()
+		#topnav
+		#notificationstop
+			display none
+		#notificationsbottom
+			display flex
+
+	+sm()
+		#nav1
+			padding-left 1rem
+			padding-right 1rem
+		.navbar-brand
+			img
+				display none
+
+	+-sm()
+		#nav1
+			padding-left 0.5rem
+			padding-right 0.5rem
+		.dropdown2 p
+			display none
+		.navbar-brand
+			img
+				margin-top -0.2rem
+				width 2rem
+				height 2rem
+
+			span
+				display none
+
+		#bottomnav
+			height 3.5rem
+			div
+				width 100%
+			a
+				font-size 0.9rem	
+				padding-left 0.2rem
+				padding-right 0.2rem
+			i
+				font-size 1.2rem
+
+		#transactionsbutton
+			width 5rem
+
+	#nav1
+		background #fff1
+		+lightTheme()
+			background #0003
+
+	.loggedin
+		padding 0
+
+	.dropdown2
+		margin-top 2px
+		p
+			max-width 6rem
+			min-width 1rem
+			// ellipsis
+			overflow hidden
+			text-overflow ellipsis
+
+	#topnav
+		z-index 9
+		max-height 10vh
+
+	#bottomnav
+	.navbar-nav
+		a
+			border none
 
 	#pfp
-		background: var(--accent)
-		width: 2.5rem
-		height: 2.5rem
+	#pfp img
+		width 2.4rem
+		height 2.4rem
 
-	img
-		width: 2.5rem
-		height: 2.5rem
+	#results
+		z-index 5
+		min-width 25vw
+		a:hover
+			background var(--accent)
 
-	.dropdown-menu
-		background: var(--darker)
-		border: none
+		:global(.pseudofocus)
+			color var(--grey-text) !important
+			background var(--accent)
 
 	.input-group
-		min-width: 15rem
-		font-size: 0.8rem
-		button, input
-			height: 2.3rem
+		width 35vw
+		max-width 35rem
+		margin-top 2px
+
+		+xl()
+			position absolute
+			left 50%
+			transform translateX(-50%)
+		+-xl()
+			width 19rem
+		+-lg()
+			width 25rem
+		+-md()
+			width 13rem
+		+-sm()
+			width 100%
+
+		button
+		input
+			height 2.3rem
 </style>
