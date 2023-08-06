@@ -42,6 +42,7 @@
 			() => {
 				success = true
 				console.log("URI found, launching")
+				setTimeout(() => modal.set(false), 16000)
 			},
 			5000
 		)
@@ -63,13 +64,12 @@
 			}),
 			joinScriptData: any = deserialize(await response.text())
 
-		if (joinScriptData.status == 200) {
+		if (joinScriptData.status == 200)
 			launch(
 				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
 					joinScriptData.data.joinScriptUrl
 				)}+gameinfo:test`
 			)
-		}
 	}
 
 	let tabData = TabData(data.url, ["Description", "Game"]),
@@ -170,10 +170,8 @@
 				<button
 					on:click={placeLauncher}
 					id="play"
-					class="btn btn-lg btn-success mt-4 {data.serverPing >
-					Date.now() / 1000 - 35
-						? ''
-						: 'disabled'}">
+					class:disabled={data.serverPing < Date.now() / 1000 - 35}
+					class="btn btn-lg btn-success mt-4">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
 
