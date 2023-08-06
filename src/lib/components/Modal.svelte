@@ -17,7 +17,7 @@
 			transition:fade|global={{ duration: 300 }}
 			on:click={close}
 			on:keypress={close}
-			class="fade vh-100 vw-100 position-fixed top-0 bg-black" />
+			class="fade vh-100 vw-100 position-fixed top-0" />
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<slot />
@@ -29,6 +29,7 @@
 <style lang="stylus">
 	.fade
 		opacity 0.5
+		background black
 
 	.modal-content
 		background var(--background)
