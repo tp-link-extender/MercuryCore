@@ -72,9 +72,11 @@
 		style="padding-top: {infoPadding}vh">
 		<div
 			id="moon"
-			class="position-absolute"
+			class="position-absolute w-100"
 			style="opacity: {canvasOpacity}">
-			<Moon />
+			<Canvas>
+				<Moon />
+			</Canvas>
 		</div>
 		<div
 			id="infotext"
@@ -212,5 +214,6 @@
 		font-size 4rem
 
 	#moon
+		height: 20vh
 		margin-bottom min(22rem, 60vh)
 </style>
