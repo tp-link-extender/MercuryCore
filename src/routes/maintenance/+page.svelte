@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Canvas } from "@threlte/core"
 	import { Gradient } from "stripe-gradient"
 
 	// Gradient must run upon page being loaded,
@@ -18,12 +19,14 @@
 	class="container d-flex flex-column justify-content-center align-items-center position-relative">
 	<div
 		id="moon"
-		class="container d-flex flex-column justify-content-center align-items-center position-absolute">
-		<Moon
-			item={{
-				name: "wrench",
-				camPos: [100, 20, 100],
-			}} />
+		class="container position-absolute">
+		<Canvas>
+			<Moon
+				item={{
+					name: "wrench",
+					camPos: [100, 20, 100],
+				}} />
+		</Canvas>
 	</div>
 	<h1 id="title" class="fw-bolder text-white opacity-75">Mercury 2</h1>
 	<p class="h4 text-white opacity-75 text-center">
@@ -46,6 +49,7 @@
 		padding-top 40vh
 
 	#moon
+		height: 20vh
 		margin-bottom min(15rem, 40vh)
 
 	#gradient-canvas
