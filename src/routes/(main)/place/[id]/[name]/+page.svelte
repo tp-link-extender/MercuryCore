@@ -400,6 +400,7 @@
 			</div>
 		{/if}
 		<h4 class="light-text">Server List</h4>
+		{#if data.serverPing > Date.now() / 1000 - 35}
 		<div class="card mb-2">
 			<div class="card-body">
 				<div class="row">
@@ -434,6 +435,9 @@
 				</div>
 			</div>
 		</div>
+		{:else}
+		This server is offline.
+		{/if}
 	</Tab>
 	<hr />
 	<div class="row">
