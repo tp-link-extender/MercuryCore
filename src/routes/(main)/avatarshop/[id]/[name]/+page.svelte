@@ -147,13 +147,7 @@
 	</div>
 
 	<Tab {tabData}>
-		<p class="light-text">
-			{#if data.description[0]}
-				{data.description[0].text}
-			{:else}
-				<em>No description available</em>
-			{/if}
-		</p>
+
 	</Tab>
 
 	<Tab {tabData}>
@@ -198,8 +192,6 @@
 				topLevel />
 		{/each}
 	</Tab>
-
-	<h1 class="h3 light-text">Recommended</h1>
 </div>
 
 <Modal {modal}>
