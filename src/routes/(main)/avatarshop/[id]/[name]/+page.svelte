@@ -26,6 +26,7 @@
 		tabData = TabData(data.url, ["Recommended", "Comments"])
 
 	const types: any = {
+		1: "Image",
 		2: "T-Shirt",
 		11: "Shirt",
 		12: "Pants",
