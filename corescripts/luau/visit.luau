@@ -122,7 +122,7 @@ function doVisit()
 	end)
 end
 
-success, err = pcall(doVisit)
+local success, err = pcall(doVisit)
 
 if not addedBuildTools then
 	local playerName = Instance.new "StringValue"

@@ -2,6 +2,10 @@ print "[Mercury]: Loaded Host corescript"
 -- Start Game Script Arguments
 local placeId, sleeptime, access, url, killID, deathID, timeout, injectScriptAssetID, servicesUrl, libraryRegistrationScriptAssetID
 
+local InsertService = game:GetService "InsertService"
+local BadgeService = game:GetService "BadgeService"
+local FriendService = game:GetService "FriendService"
+
 -- StartGame --
 pcall(function()
 	game:GetService("ScriptContext"):AddStarterScript(injectScriptAssetID)
@@ -112,48 +116,48 @@ if url ~= nil then
 	end)
 	-- pcall(function() game:GetService("Players"):SetChatFilterUrl(url .. "/Game/ChatFilter.ashx") end)
 
-	-- game:GetService("BadgeService"):SetPlaceId(placeId)
+	-- BadgeService:SetPlaceId(placeId)
 	if access ~= nil then
-		game:GetService("BadgeService"):SetAwardBadgeUrl(
+		BadgeService:SetAwardBadgeUrl(
 			url
 				.. "/Game/Badge/AwardBadge.ashx?UserID=%d&BadgeID=%d&PlaceID=%d&"
 				.. access
 		)
-		game:GetService("BadgeService"):SetHasBadgeUrl(
+		BadgeService:SetHasBadgeUrl(
 			url .. "/Game/Badge/HasBadge.ashx?UserID=%d&BadgeID=%d&" .. access
 		)
-		game:GetService("BadgeService"):SetIsBadgeDisabledUrl(
+		BadgeService:SetIsBadgeDisabledUrl(
 			url
 				.. "/Game/Badge/IsBadgeDisabled.ashx?BadgeID=%d&PlaceID=%d&"
 				.. access
 		)
 
-		game:GetService("FriendService"):SetMakeFriendUrl(
+		FriendService:SetMakeFriendUrl(
 			servicesUrl
 				.. "/Friend/CreateFriend?firstUserId=%d&secondUserId=%d&"
 				.. access
 		)
-		game:GetService("FriendService"):SetBreakFriendUrl(
+		FriendService:SetBreakFriendUrl(
 			servicesUrl
 				.. "/Friend/BreakFriend?firstUserId=%d&secondUserId=%d&"
 				.. access
 		)
-		game:GetService("FriendService"):SetGetFriendsUrl(
+		FriendService:SetGetFriendsUrl(
 			servicesUrl .. "/Friend/AreFriends?userId=%d&" .. access
 		)
 	end
-	game:GetService("BadgeService"):SetIsBadgeLegalUrl ""
-	game:GetService("InsertService")
+	BadgeService:SetIsBadgeLegalUrl ""
+	InsertService
 		:SetBaseSetsUrl(
 			url .. "/Game/Tools/InsertAsset.ashx?nsets=10&type=base"
 		)
-	game:GetService("InsertService"):SetUserSetsUrl(
+	InsertService:SetUserSetsUrl(
 		url .. "/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d"
 	)
-	game:GetService("InsertService")
+	InsertService
 		:SetCollectionUrl(url .. "/Game/Tools/InsertAsset.ashx?sid=%d")
-	game:GetService("InsertService"):SetAssetUrl(url .. "/Asset/?id=%d")
-	game:GetService("InsertService")
+	InsertService:SetAssetUrl(url .. "/Asset/?id=%d")
+	InsertService
 		:SetAssetVersionUrl(url .. "/Asset/?assetversionid=%d")
 
 	pcall(function()

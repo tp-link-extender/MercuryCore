@@ -1,12 +1,15 @@
 print "[Mercury]: Loaded corescript 107893730"
 -- this script creates the gui and sends the web requests for in game purchase prompts
 
+local MarketplaceService = game:GetService "MarketplaceService"
+
 -- wait for important items to appear
 while not Game do
 	wait(0.1)
 end
-while not game:GetService "MarketplaceService" do
+while not MarketplaceService do
 	wait(0.1)
+	MarketplaceService = game:GetService "MarketplaceService"
 end
 while not game:FindFirstChild "CoreGui" do
 	wait(0.1)
@@ -138,7 +141,7 @@ function closePurchasePrompt()
 	)
 end
 
-function userPurchaseActionsEnded(isSuccess)
+function userPurchaseActionsEnded(isSuccess: boolean)
 	checkingPlayerFunds = false
 
 	if isSuccess then -- show the user we bought the item successfully, when they close this dialog we will call signalPromptEnded
@@ -527,7 +530,7 @@ end
 
 ---------------------------------------------- Currency Functions ---------------------------------------------
 -- enums have no implicit conversion to numbers in lua, has to have a function to do this
-function currencyEnumToInt(currencyEnum)
+function currencyEnumToInt(currencyEnum: Enum.CurrencyType)
 	if
 		currencyEnum == Enum.CurrencyType.Robux
 		or currencyEnum == Enum.CurrencyType.Default

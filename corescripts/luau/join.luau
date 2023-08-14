@@ -88,7 +88,7 @@ pcall(function()
 	Players:SetChatStyle(Enum.ChatStyle.ClassicAndBubble)
 end)
 
-local waitingForCharacter = false
+waitingForCharacter = false
 pcall(function()
 	if settings().Network.MtuOverride == 0 then
 		settings().Network.MtuOverride = 1400
@@ -96,7 +96,7 @@ pcall(function()
 end)
 
 -- functions ---------------------------------------
-function setMessage(message)
+function setMessage(message: string)
 	-- todo: animated "..."
 	game:SetMessage(message)
 end
@@ -241,7 +241,7 @@ local success, err = pcall(function()
 	connectionFailed = Client.ConnectionFailed:connect(onConnectionFailed)
 	Client.Ticket = ""
 
-	playerConnectSucces, player = pcall(function()
+	local playerConnectSuccess, player = pcall(function()
 		return Client:PlayerConnect(
 			_USER_ID,
 			"_SERVER_ADDRESS",
@@ -250,7 +250,7 @@ local success, err = pcall(function()
 			threadSleepTime
 		)
 	end)
-	if not playerConnectSucces then
+	if not playerConnectSuccess then
 		--Old player connection scheme
 		player = Players:CreateLocalPlayer(_USER_ID)
 		Client:Connect("_SERVER_ADDRESS", _SERVER_PORT, 0, threadSleepTime)

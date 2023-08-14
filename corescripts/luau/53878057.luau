@@ -22,6 +22,8 @@ local backpackEnabled = true
 
 local robloxGui = game:GetService("CoreGui"):FindFirstChild "RobloxGui"
 assert(robloxGui)
+local GuiService = game:GetService "GuiService"
+
 local controlFrame = waitForChild(robloxGui, "ControlFrame")
 local backpackButton = waitForChild(controlFrame, "BackpackButton")
 local backpack = waitForChild(robloxGui, "Backpack")
@@ -133,14 +135,14 @@ end
 
 function registerNumberKeys()
 	for i = 0, 9 do
-		game:GetService("GuiService"):AddKey(tostring(i))
+		GuiService:AddKey(tostring(i))
 	end
 end
 
 function unregisterNumberKeys()
 	pcall(function()
 		for i = 0, 9 do
-			game:GetService("GuiService"):RemoveKey(tostring(i))
+			GuiService:RemoveKey(tostring(i))
 		end
 	end)
 end
@@ -1227,6 +1229,7 @@ characterChildAddedCon = player.Character.ChildAdded:connect(function(child)
 end)
 
 waitForChild(player.Character, "Humanoid")
+local humanoidDiedCon
 humanoidDiedCon = player.Character.Humanoid.Died:connect(function()
 	if humanoidDiedCon then
 		humanoidDiedCon:disconnect()
@@ -1348,7 +1351,7 @@ guiBackpack.SwapSlot.Changed:connect(function()
 	end
 end)
 
-game:GetService("GuiService").KeyPressed:connect(function(key)
+GuiService.KeyPressed:connect(function(key)
 	if characterInWorkspace() then
 		activateGear(key)
 	end
