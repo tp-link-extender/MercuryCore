@@ -1,4 +1,7 @@
 print "[Mercury]: Loaded corescript 48488398"
+
+local TeleportService = TeleportService
+
 function waitForProperty(instance, property)
 	while not instance[property] do
 		instance.Changed:wait()
@@ -183,7 +186,7 @@ function showTeleportUI(message, timer)
 end
 
 function onTeleport(teleportState, _, _)
-	if game:GetService("TeleportService").CustomizedTeleportUI == false then
+	if TeleportService.CustomizedTeleportUI == false then
 		if teleportState == Enum.TeleportState.Started then
 			showTeleportUI("Teleport started...", 0)
 		elseif teleportState == Enum.TeleportState.WaitingForServer then
@@ -202,13 +205,13 @@ end
 if teleportEnabled then
 	localPlayer.OnTeleport:connect(onTeleport)
 
-	game:GetService("TeleportService").ErrorCallback = function(message)
+	TeleportService.ErrorCallback = function(message)
 		local popup = script.Parent:FindFirstChild "Popup"
 		showOneButton()
 		popup.PopupText.Text = message
 		local clickCon
 		clickCon = popup.OKButton.MouseButton1Click:connect(function()
-			game:GetService("TeleportService"):TeleportCancel()
+			TeleportService:TeleportCancel()
 			if clickCon then
 				clickCon:disconnect()
 			end
@@ -252,11 +255,7 @@ if teleportEnabled then
 			end
 		)
 	end
-	game:GetService("TeleportService").ConfirmationCallback = function(
-		message,
-		placeId,
-		spawnName
-	)
+	TeleportService.ConfirmationCallback = function(message, placeId, spawnName)
 		local popup = script.Parent:FindFirstChild "Popup"
 		popup.PopupText.Text = message
 		popup.PopupImage.Image = ""
@@ -286,8 +285,7 @@ if teleportEnabled then
 		yesCon = popup.AcceptButton.MouseButton1Click:connect(function()
 			killCons()
 			local success, err = pcall(function()
-				game:GetService("TeleportService")
-					:TeleportImpl(placeId, spawnName)
+				TeleportService:TeleportImpl(placeId, spawnName)
 			end)
 			if not success then
 				showOneButton()
@@ -342,7 +340,7 @@ if teleportEnabled then
 		noCon = popup.DeclineButton.MouseButton1Click:connect(function()
 			killCons()
 			pcall(function()
-				game:GetService("TeleportService"):TeleportCancel()
+				TeleportService:TeleportCancel()
 			end)
 		end)
 

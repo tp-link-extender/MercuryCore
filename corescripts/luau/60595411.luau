@@ -520,16 +520,16 @@ t.SelectTerrainRegion = function(
 	assert(regionToSelect)
 	assert(color)
 
-	if not type(regionToSelect) == "Region3" then
+	if type(regionToSelect) ~= "Region3" then
 		error(
-			"regionToSelect (first arg), should be of type Region3, but is type",
-			type(regionToSelect)
+			"regionToSelect (first arg), should be of type Region3, but is type "
+				.. type(regionToSelect)
 		)
 	end
-	if not type(color) == "BrickColor" then
+	if type(color) ~= "BrickColor" then
 		error(
-			"color (second arg), should be of type BrickColor, but is type",
-			type(color)
+			"color (second arg), should be of type BrickColor, but is type "
+				.. type(color)
 		)
 	end
 
@@ -581,7 +581,7 @@ t.SelectTerrainRegion = function(
 	-- end
 
 	-- helper function that creates the basis for a selection box
-	function createAdornment(theColor)
+	local function createAdornment(theColor)
 		local selectionPartClone
 		local selectionBoxClone
 

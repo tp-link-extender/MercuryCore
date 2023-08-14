@@ -1,6 +1,7 @@
 print "[Mercury]: Loaded corescript 157877000"
 --Include
-local Create = assert(LoadLibrary "RbxUtility").Create
+local Create: (instance: string) -> ({ [string]: any }) -> Instance =
+	assert(LoadLibrary "RbxUtility").Create
 
 -- A Few Script Globals
 local gui

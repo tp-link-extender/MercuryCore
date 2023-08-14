@@ -6,6 +6,9 @@ if game.CoreGui.Version < 3 then
 	return
 end -- peace out if we aren't using the right client
 
+local ContentProvider = game:GetService "ContentProvider"
+local UserInputService = game:GetService "UserInputService"
+
 local gui = script.Parent
 
 -- A couple of necessary functions
@@ -23,7 +26,7 @@ end
 local function IsTouchDevice()
 	local touchEnabled = false
 	pcall(function()
-		touchEnabled = Game:GetService("UserInputService").TouchEnabled
+		touchEnabled = UserInputService.TouchEnabled
 	end)
 	return touchEnabled
 end
@@ -334,8 +337,7 @@ closeButton.Modal = true
 local XImage = Instance.new "ImageLabel"
 XImage.RobloxLocked = true
 XImage.Name = "XImage"
-game:GetService("ContentProvider")
-	:Preload "http://banland.xyz/asset/?id=75547445"
+ContentProvider:Preload "http://banland.xyz/asset/?id=75547445"
 XImage.Image = "http://banland.xyz/asset/?id=75547445" --TODO: move to rbxasset
 XImage.BackgroundTransparency = 1
 XImage.Position = UDim2.new(-0.25, -1, -0.25, -1)
@@ -767,8 +769,7 @@ CharacterPane.Parent = Wardrobe
 
 --CharacterPane Children
 local FaceFrame = makeCharFrame("FacesFrame", CharacterPane)
-game:GetService("ContentProvider")
-	:Preload "http://banland.xyz/asset/?id=75460621"
+ContentProvider:Preload "http://banland.xyz/asset/?id=75460621"
 makeZone(
 	"FaceZone",
 	"http://banland.xyz/asset/?id=75460621",
@@ -799,8 +800,7 @@ makeStyledButton(
 )
 
 local HatsFrame = makeCharFrame("HatsFrame", CharacterPane)
-game:GetService("ContentProvider")
-	:Preload "http://banland.xyz/asset/?id=75457888"
+ContentProvider:Preload "http://banland.xyz/asset/?id=75457888"
 local HatsZone = makeZone(
 	"HatsZone",
 	"http://banland.xyz/asset/?id=75457888",
@@ -831,8 +831,7 @@ makeStyledButton(
 )
 
 local PantsFrame = makeCharFrame("PantsFrame", CharacterPane)
-game:GetService("ContentProvider")
-	:Preload "http://banland.xyz/asset/?id=75457920"
+ContentProvider:Preload "http://banland.xyz/asset/?id=75457920"
 makeZone(
 	"PantsZone",
 	"http://banland.xyz/asset/?id=75457920",
@@ -927,8 +926,7 @@ makeTextLabel(
 )
 
 local TShirtFrame = makeCharFrame("T-ShirtsFrame", CharacterPane)
-game:GetService("ContentProvider")
-	:Preload "http://banland.xyz/asset/?id=75460642"
+ContentProvider:Preload "http://banland.xyz/asset/?id=75460642"
 makeZone(
 	"TShirtZone",
 	"http://banland.xyz/asset/?id=75460642",
@@ -959,8 +957,7 @@ makeStyledButton(
 )
 
 local ColorFrame = makeCharFrame("ColorFrame", CharacterPane)
-game:GetService("ContentProvider")
-	:Preload "http://banland.xyz/asset/?id=76049888"
+ContentProvider:Preload "http://banland.xyz/asset/?id=76049888"
 local ColorZone = makeZone(
 	"ColorZone",
 	"http://banland.xyz/asset/?id=76049888",

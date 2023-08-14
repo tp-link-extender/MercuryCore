@@ -4,6 +4,8 @@ if game.CoreGui.Version < 7 then
 	return
 end -- peace out if we aren't using the right client
 
+local GuiService = game:GetService "GuiService"
+
 -- basic functions
 local function waitForChild(instance, name)
 	while not instance:FindFirstChild(name) do
@@ -395,12 +397,12 @@ function coreGuiChanged(coreGuiType, enabled)
 
 		if disabledByDeveloper then
 			pcall(function()
-				game:GetService("GuiService"):RemoveKey(tilde)
-				game:GetService("GuiService"):RemoveKey(backquote)
+				GuiService:RemoveKey(tilde)
+				GuiService:RemoveKey(backquote)
 			end)
 		else
-			game:GetService("GuiService"):AddKey(tilde)
-			game:GetService("GuiService"):AddKey(backquote)
+			GuiService:AddKey(tilde)
+			GuiService:AddKey(backquote)
 		end
 
 		resetSearch()
@@ -460,9 +462,9 @@ screen.Changed:connect(function(prop)
 end)
 
 -- GuiService key setup
-game:GetService("GuiService"):AddKey(tilde)
-game:GetService("GuiService"):AddKey(backquote)
-game:GetService("GuiService").KeyPressed:connect(function(key)
+GuiService:AddKey(tilde)
+GuiService:AddKey(backquote)
+GuiService.KeyPressed:connect(function(key)
 	if not active or disabledByDeveloper then
 		return
 	end

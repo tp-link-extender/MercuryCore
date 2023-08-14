@@ -787,7 +787,7 @@ t.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
 	frame.Changed:connect(function(prop)
 		if prop == "AbsoluteSize" then
 			--Wait a heartbeat for it to sync in
-			recalculate(nil)
+			recalculate()
 		end
 	end)
 	frame.AncestryChanged:connect(recalculate)
@@ -1914,12 +1914,12 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		if scrollPosition < 1 then
 			scrollPosition = 1
 		end
-		recalculate(nil)
+		recalculate()
 	end
 
 	local doScrollDown = function()
 		scrollPosition += rowSize
-		recalculate(nil)
+		recalculate()
 	end
 
 	local scrollUp = function(mouseYPos)
@@ -2036,7 +2036,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 				end
 
 				scrollPosition = newScrollPosition
-				recalculate(nil)
+				recalculate()
 			end)
 			upCon = mouseDrag.MouseButton1Up:connect(function()
 				scrollStamp = tick()
@@ -2078,21 +2078,21 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 	end)
 
 	frame.ChildAdded:connect(function()
-		recalculate(nil)
+		recalculate()
 	end)
 
 	frame.ChildRemoved:connect(function()
-		recalculate(nil)
+		recalculate()
 	end)
 
 	frame.Changed:connect(function(prop)
 		if prop == "AbsoluteSize" then
 			--Wait a heartbeat for it to sync in
-			recalculate(nil)
+			recalculate()
 		end
 	end)
 	frame.AncestryChanged:connect(function()
-		recalculate(nil)
+		recalculate()
 	end)
 
 	return frame, scrollUpButton, scrollDownButton, recalculate, scrollbar
@@ -4017,12 +4017,12 @@ t.CreateLoadingFrame = function(name, size, position)
 		cancelButtonClicked:Fire()
 	end)
 
-	local updateLoadingGuiPercent = function(percent, tweenAction, tweenLength)
+	local updateLoadingGuiPercent = function(percent: number, tweenAction, tweenLength)
 		if percent and type(percent) ~= "number" then
 			error(
-				"updateLoadingGuiPercent expects number as argument, got",
-				type(percent),
-				"instead"
+				"updateLoadingGuiPercent expects number as argument, got "
+					.. type(percent)
+					.. " instead"
 			)
 		end
 

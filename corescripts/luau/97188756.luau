@@ -1690,7 +1690,7 @@ function Input:OnMouseScroll()
 	if Chat:CheckIfInBounds(Input.Speed) then
 		return
 	end
-	Chat:ScrollQueue()
+	-- Chat:ScrollQueue()
 end
 
 function Input:ApplySpeed(value)

@@ -1639,7 +1639,7 @@ if LoadLibrary then
 				end
 			)
 
-			function localPlayerChange()
+			local function localPlayerChange()
 				gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
 				if game.Players.LocalPlayer then
 					settings().Rendering.EnableFRM = true

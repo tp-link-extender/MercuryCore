@@ -1,4 +1,7 @@
 print "[Mercury]: Loaded corescript 73157242"
+
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+
 local t = {}
 
 -- function waitForChild(instance, name)
@@ -1106,7 +1109,7 @@ t.SetupStamperDragger = function(
 	local function DoHighScalabilityRegionSelect()
 		local megaCube = stampData.CurrentParts:FindFirstChild "MegaClusterCube"
 		if not megaCube then
-			if not stampData.CurrentParts.Name == "MegaClusterCube" then
+			if stampData.CurrentParts.Name ~= "MegaClusterCube" then
 				return
 			else
 				megaCube = stampData.CurrentParts
@@ -1253,9 +1256,9 @@ t.SetupStamperDragger = function(
 		end
 		if not Mouse:IsA "Mouse" then
 			error(
-				"Error: RbxStamper.DoStamperMouseMove: Mouse is of type",
-				Mouse.className,
-				"should be of type Mouse"
+				"Error: RbxStamper.DoStamperMouseMove: Mouse is of type "
+					.. Mouse.className
+					.. " should be of type Mouse"
 			)
 			return
 		end
@@ -2229,8 +2232,7 @@ t.SetupStamperDragger = function(
 		if cellSet then
 			stampData.CurrentParts.Parent = nil
 			pcall(function()
-				game:GetService("ChangeHistoryService")
-					:SetWaypoint "StamperMulti"
+				ChangeHistoryService:SetWaypoint "StamperMulti"
 			end)
 		end
 
@@ -2529,8 +2531,7 @@ t.SetupStamperDragger = function(
 
 					-- Mark for undo.  It has to happen here or the selection display will come back also.
 					pcall(function()
-						game:GetService("ChangeHistoryService")
-							:SetWaypoint "StamperSingle"
+						ChangeHistoryService:SetWaypoint "StamperSingle"
 					end)
 					return true
 				end
@@ -2688,7 +2689,7 @@ t.SetupStamperDragger = function(
 		stampData.CurrentParts = nil
 
 		pcall(function()
-			game:GetService("ChangeHistoryService"):SetWaypoint "StampedObject"
+			ChangeHistoryService:SetWaypoint "StampedObject"
 		end)
 		return true
 	end
