@@ -1,5 +1,6 @@
+print "[Mercury]: Loaded corescript 152908679"
+
 -- ContextActionTouch.lua
--- 2014, created by Ben Tkacheff
 -- this script controls ui and firing of lua functions that are bound in ContextActionService for touch inputs
 -- Essentially a user can bind a lua function to a key code, input type (mousebutton1 etc.) and this
 
@@ -8,8 +9,8 @@ local contextActionService = Game:GetService "ContextActionService"
 local isTouchDevice = Game:GetService("UserInputService").TouchEnabled
 local functionTable = {}
 local buttonVector = {}
-local buttonScreenGui = nil
-local buttonFrame = nil
+local buttonScreenGui
+local buttonFrame
 
 local ContextDownImage = "http://www.banland.xyz/asset/?id=97166756"
 local ContextUpImage = "http://www.banland.xyz/asset/?id=97166444"
@@ -72,14 +73,22 @@ end
 function contextButtonDown(button, inputObject, actionName)
 	if inputObject.UserInputType == Enum.UserInputType.Touch then
 		button.Image = ContextDownImage
-		contextActionService:CallFunction(actionName, Enum.UserInputState.Begin, inputObject)
+		contextActionService:CallFunction(
+			actionName,
+			Enum.UserInputState.Begin,
+			inputObject
+		)
 	end
 end
 
 function contextButtonMoved(button, inputObject, actionName)
 	if inputObject.UserInputType == Enum.UserInputType.Touch then
 		button.Image = ContextDownImage
-		contextActionService:CallFunction(actionName, Enum.UserInputState.Change, inputObject)
+		contextActionService:CallFunction(
+			actionName,
+			Enum.UserInputState.Change,
+			inputObject
+		)
 	end
 end
 
@@ -89,7 +98,11 @@ function contextButtonUp(button, inputObject, actionName)
 		inputObject.UserInputType == Enum.UserInputType.Touch
 		and inputObject.UserInputState == Enum.UserInputState.End
 	then
-		contextActionService:CallFunction(actionName, Enum.UserInputState.End, inputObject)
+		contextActionService:CallFunction(
+			actionName,
+			Enum.UserInputState.End,
+			inputObject
+		)
 	end
 end
 
@@ -109,7 +122,7 @@ function createNewButton(actionName, functionInfoTable)
 	contextButton.Image = ContextUpImage
 	contextButton.Parent = buttonFrame
 
-	local currentButtonTouch = nil
+	local currentButtonTouch
 
 	Game:GetService("UserInputService").InputEnded:connect(function(inputObject)
 		oldTouches[inputObject] = nil
@@ -119,7 +132,10 @@ function createNewButton(actionName, functionInfoTable)
 			return
 		end
 
-		if inputObject.UserInputState == Enum.UserInputState.Begin and currentButtonTouch == nil then
+		if
+			inputObject.UserInputState == Enum.UserInputState.Begin
+			and currentButtonTouch == nil
+		then
 			currentButtonTouch = inputObject
 			contextButtonDown(contextButton, inputObject, actionName)
 		end
@@ -152,7 +168,10 @@ function createNewButton(actionName, functionInfoTable)
 	actionIcon.Position = UDim2.new(0.175, 0, 0.175, 0)
 	actionIcon.Size = UDim2.new(0.65, 0, 0.65, 0)
 	actionIcon.BackgroundTransparency = 1
-	if functionInfoTable["image"] and type(functionInfoTable["image"]) == "string" then
+	if
+		functionInfoTable["image"]
+		and type(functionInfoTable["image"]) == "string"
+	then
 		actionIcon.Image = functionInfoTable["image"]
 	end
 	actionIcon.Parent = contextButton
@@ -167,7 +186,10 @@ function createNewButton(actionName, functionInfoTable)
 	actionTitle.FontSize = Enum.FontSize.Size18
 	actionTitle.TextWrapped = true
 	actionTitle.Text = ""
-	if functionInfoTable["title"] and type(functionInfoTable["title"]) == "string" then
+	if
+		functionInfoTable["title"]
+		and type(functionInfoTable["title"]) == "string"
+	then
 		actionTitle.Text = functionInfoTable["title"]
 	end
 	actionTitle.Parent = contextButton
@@ -178,7 +200,7 @@ end
 function createButton(actionName, functionInfoTable)
 	local button = createNewButton(actionName, functionInfoTable)
 
-	local position = nil
+	local position
 	for i = 1, #buttonVector do
 		if buttonVector[i] == "empty" then
 			position = i
@@ -240,26 +262,30 @@ function addAction(actionName, createTouchButton, functionInfoTable)
 end
 
 -- Connections
-contextActionService.BoundActionChanged:connect(function(actionName, changeName, changeTable)
-	if functionTable[actionName] and changeTable then
-		local button = functionTable[actionName]["button"]
-		if button then
-			if changeName == "image" then
-				button.ActionIcon.Image = changeTable[changeName]
-			elseif changeName == "title" then
-				button.ActionTitle.Text = changeTable[changeName]
-			-- elseif changeName == "description" then
-			-- 	-- todo: add description to menu
-			elseif changeName == "position" then
-				button.Position = changeTable[changeName]
+contextActionService.BoundActionChanged:connect(
+	function(actionName, changeName, changeTable)
+		if functionTable[actionName] and changeTable then
+			local button = functionTable[actionName]["button"]
+			if button then
+				if changeName == "image" then
+					button.ActionIcon.Image = changeTable[changeName]
+				elseif changeName == "title" then
+					button.ActionTitle.Text = changeTable[changeName]
+				-- elseif changeName == "description" then
+				-- 	-- todo: add description to menu
+				elseif changeName == "position" then
+					button.Position = changeTable[changeName]
+				end
 			end
 		end
 	end
-end)
+)
 
-contextActionService.BoundActionAdded:connect(function(actionName, createTouchButton, functionInfoTable)
-	addAction(actionName, createTouchButton, functionInfoTable)
-end)
+contextActionService.BoundActionAdded:connect(
+	function(actionName, createTouchButton, functionInfoTable)
+		addAction(actionName, createTouchButton, functionInfoTable)
+	end
+)
 
 contextActionService.BoundActionRemoved:connect(function(actionName, _)
 	removeAction(actionName)
@@ -267,7 +293,10 @@ end)
 
 contextActionService.GetActionButtonEvent:connect(function(actionName)
 	if functionTable[actionName] then
-		contextActionService:FireActionButtonFoundSignal(actionName, functionTable[actionName]["button"])
+		contextActionService:FireActionButtonFoundSignal(
+			actionName,
+			functionTable[actionName]["button"]
+		)
 	end
 end)
 

@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 73157242"
 local t = {}
 
 -- function waitForChild(instance, name)
@@ -16,8 +17,11 @@ local t = {}
 function PlaneIntersection(vectorPos)
 	local hit = false
 	local currCamera = game.Workspace.CurrentCamera
-	local startPos =
-		Vector3.new(currCamera.CoordinateFrame.p.X, currCamera.CoordinateFrame.p.Y, currCamera.CoordinateFrame.p.Z)
+	local startPos = Vector3.new(
+		currCamera.CoordinateFrame.p.X,
+		currCamera.CoordinateFrame.p.Y,
+		currCamera.CoordinateFrame.p.Z
+	)
 	local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
 	local normal = Vector3.new(0, 1, 0)
 	local p3 = Vector3.new(0, 0, 0)
@@ -46,12 +50,16 @@ end
 function GetTerrainForMouse(mouse)
 	-- There was no target, so all it could be is a plane intersection.
 	-- Check for a plane intersection.  If there isn't one then nothing will get hit.
-	local cell = game.Workspace.Terrain:WorldToCellPreferSolid(Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z))
-	local planeLoc = nil
+	local cell = game.Workspace.Terrain:WorldToCellPreferSolid(
+		Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z)
+	)
+	local planeLoc
 	-- If nothing was hit, do the plane intersection.
 	if 0 == game.Workspace.Terrain:GetCell(cell.X, cell.Y, cell.Z).Value then
 		cell = nil
-		planeLoc, hit = PlaneIntersection(Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z))
+		planeLoc, hit = PlaneIntersection(
+			Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z)
+		)
 		if hit then
 			cell = planeLoc
 		end
@@ -66,7 +74,8 @@ local insertBoundingBoxOverlapVector = Vector3.new(0.3, 0.3, 0.3) -- we can stil
 local function rotatePartAndChildren(part, rotCF, offsetFromOrigin)
 	-- rotate this thing, if it's a part
 	if part:IsA "BasePart" then
-		part.CFrame = (rotCF * (part.CFrame - offsetFromOrigin)) + offsetFromOrigin
+		part.CFrame = (rotCF * (part.CFrame - offsetFromOrigin))
+			+ offsetFromOrigin
 	end
 
 	-- recursively do the same to all children
@@ -195,9 +204,15 @@ local function getClosestAlignedWorldDirection(aVector3InWorld)
 	local xDir = Vector3.new(1, 0, 0)
 	local yDir = Vector3.new(0, 1, 0)
 	local zDir = Vector3.new(0, 0, 1)
-	local xDot = aVector3InWorld.x * xDir.x + aVector3InWorld.y * xDir.y + aVector3InWorld.z * xDir.z
-	local yDot = aVector3InWorld.x * yDir.x + aVector3InWorld.y * yDir.y + aVector3InWorld.z * yDir.z
-	local zDot = aVector3InWorld.x * zDir.x + aVector3InWorld.y * zDir.y + aVector3InWorld.z * zDir.z
+	local xDot = aVector3InWorld.x * xDir.x
+		+ aVector3InWorld.y * xDir.y
+		+ aVector3InWorld.z * xDir.z
+	local yDot = aVector3InWorld.x * yDir.x
+		+ aVector3InWorld.y * yDir.y
+		+ aVector3InWorld.z * yDir.z
+	local zDot = aVector3InWorld.x * zDir.x
+		+ aVector3InWorld.y * zDir.y
+		+ aVector3InWorld.z * zDir.z
 
 	if math.abs(xDot) > math.abs(yDot) and math.abs(xDot) > math.abs(zDot) then
 		if xDot > 0 then
@@ -205,7 +220,9 @@ local function getClosestAlignedWorldDirection(aVector3InWorld)
 		else
 			return 3
 		end
-	elseif math.abs(yDot) > math.abs(xDot) and math.abs(yDot) > math.abs(zDot) then
+	elseif
+		math.abs(yDot) > math.abs(xDot) and math.abs(yDot) > math.abs(zDot)
+	then
 		if yDot > 0 then
 			return 1
 		else
@@ -221,11 +238,13 @@ local function getClosestAlignedWorldDirection(aVector3InWorld)
 end
 
 local function positionPartsAtCFrame3(aCFrame, currentParts)
-	local insertCFrame = nil
+	local insertCFrame
 	if not currentParts then
 		return currentParts
 	end
-	if currentParts and (currentParts:IsA "Model" or currentParts:IsA "Tool") then
+	if
+		currentParts and (currentParts:IsA "Model" or currentParts:IsA "Tool")
+	then
 		insertCFrame = currentParts:GetModelCFrame()
 		currentParts:TranslateBy(aCFrame.p - insertCFrame.p)
 	else
@@ -246,8 +265,8 @@ local function modelTargetSurface(partOrModel, rayStart, rayEnd)
 		return 0
 	end
 
-	local modelCFrame = nil
-	local modelSize = nil
+	local modelCFrame
+	local modelSize
 	if partOrModel:IsA "Model" then
 		modelCFrame = partOrModel:GetModelCFrame()
 		modelSize = partOrModel:GetModelSize()
@@ -274,9 +293,21 @@ local function modelTargetSurface(partOrModel, rayStart, rayEnd)
 	end
 
 	-- find which surface the transformed mouse ray hits (using modelSize):
-	local xHitTime = calcRayHitTime(mouseRayStart.X, mouseSlope.X, modelSize.X / 2 * xPositive)
-	local yHitTime = calcRayHitTime(mouseRayStart.Y, mouseSlope.Y, modelSize.Y / 2 * yPositive)
-	local zHitTime = calcRayHitTime(mouseRayStart.Z, mouseSlope.Z, modelSize.Z / 2 * zPositive)
+	local xHitTime = calcRayHitTime(
+		mouseRayStart.X,
+		mouseSlope.X,
+		modelSize.X / 2 * xPositive
+	)
+	local yHitTime = calcRayHitTime(
+		mouseRayStart.Y,
+		mouseSlope.Y,
+		modelSize.Y / 2 * yPositive
+	)
+	local zHitTime = calcRayHitTime(
+		mouseRayStart.Z,
+		mouseSlope.Z,
+		modelSize.Z / 2 * zPositive
+	)
 
 	local hitFace = 0
 
@@ -326,8 +357,11 @@ local function getBoundingBox2(partOrModel)
 		local justify = justifyValue.Value
 		local two = Vector3.new(2, 2, 2)
 		local actualBox = maxVec - minVec - Vector3.new(0.01, 0.01, 0.01)
-		local containingGridBox =
-			Vector3.new(4 * math.ceil(actualBox.x / 4), 4 * math.ceil(actualBox.y / 4), 4 * math.ceil(actualBox.z / 4))
+		local containingGridBox = Vector3.new(
+			4 * math.ceil(actualBox.x / 4),
+			4 * math.ceil(actualBox.y / 4),
+			4 * math.ceil(actualBox.z / 4)
+		)
 		local adjustment = containingGridBox - actualBox
 		minVec = minVec - 0.5 * adjustment * justify
 		maxVec = maxVec + 0.5 * adjustment * (two - justify)
@@ -341,19 +375,41 @@ local function getBoundingBoxInWorldCoordinates(partOrModel)
 	local maxVec = Vector3.new(-math.huge, -math.huge, -math.huge)
 
 	if partOrModel:IsA "BasePart" and not partOrModel:IsA "Terrain" then
-		local vec1 = partOrModel.CFrame:pointToWorldSpace(-0.5 * partOrModel.Size)
-		local vec2 = partOrModel.CFrame:pointToWorldSpace(0.5 * partOrModel.Size)
-		minVec = Vector3.new(math.min(vec1.X, vec2.X), math.min(vec1.Y, vec2.Y), math.min(vec1.Z, vec2.Z))
-		maxVec = Vector3.new(math.max(vec1.X, vec2.X), math.max(vec1.Y, vec2.Y), math.max(vec1.Z, vec2.Z))
+		local vec1 =
+			partOrModel.CFrame:pointToWorldSpace(-0.5 * partOrModel.Size)
+		local vec2 =
+			partOrModel.CFrame:pointToWorldSpace(0.5 * partOrModel.Size)
+		minVec = Vector3.new(
+			math.min(vec1.X, vec2.X),
+			math.min(vec1.Y, vec2.Y),
+			math.min(vec1.Z, vec2.Z)
+		)
+		maxVec = Vector3.new(
+			math.max(vec1.X, vec2.X),
+			math.max(vec1.Y, vec2.Y),
+			math.max(vec1.Z, vec2.Z)
+		)
 	elseif not partOrModel:IsA "Terrain" then
 		-- we shouldn't have to deal with this case
 		--minVec = Vector3.new(-2, -2, -2)
 		--maxVec = Vector3.new(2, 2, 2)
 		-- else
-		local vec1 = partOrModel:GetModelCFrame():pointToWorldSpace(-0.5 * partOrModel:GetModelSize())
-		local vec2 = partOrModel:GetModelCFrame():pointToWorldSpace(0.5 * partOrModel:GetModelSize())
-		minVec = Vector3.new(math.min(vec1.X, vec2.X), math.min(vec1.Y, vec2.Y), math.min(vec1.Z, vec2.Z))
-		maxVec = Vector3.new(math.max(vec1.X, vec2.X), math.max(vec1.Y, vec2.Y), math.max(vec1.Z, vec2.Z))
+		local vec1 = partOrModel
+			:GetModelCFrame()
+			:pointToWorldSpace(-0.5 * partOrModel:GetModelSize())
+		local vec2 = partOrModel
+			:GetModelCFrame()
+			:pointToWorldSpace(0.5 * partOrModel:GetModelSize())
+		minVec = Vector3.new(
+			math.min(vec1.X, vec2.X),
+			math.min(vec1.Y, vec2.Y),
+			math.min(vec1.Z, vec2.Z)
+		)
+		maxVec = Vector3.new(
+			math.max(vec1.X, vec2.X),
+			math.max(vec1.Y, vec2.Y),
+			math.max(vec1.Z, vec2.Z)
+		)
 	end
 
 	return minVec, maxVec
@@ -389,7 +445,9 @@ local function isBlocker(part) -- returns whether or not we want to cancel the s
 	if part:FindFirstChild "Humanoid" then
 		return false
 	end
-	if part:FindFirstChild "RobloxStamper" or part:FindFirstChild "RobloxModel" then
+	if
+		part:FindFirstChild "RobloxStamper" or part:FindFirstChild "RobloxModel"
+	then
 		return true
 	end
 	if part:IsA "Part" and not part.CanCollide then
@@ -406,23 +464,30 @@ end
 local function spaceAboveCharacter(charTorso, newTorsoY, stampData)
 	local partsAboveChar = game.Workspace:FindPartsInRegion3(
 		Region3.new(
-			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z) - Vector3.new(0.75, 2.75, 0.75),
-			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z) + Vector3.new(0.75, 1.75, 0.75)
+			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
+				- Vector3.new(0.75, 2.75, 0.75),
+			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
+				+ Vector3.new(0.75, 1.75, 0.75)
 		),
 		charTorso.Parent,
 		100
 	)
 
 	for j = 1, #partsAboveChar do
-		if partsAboveChar[j].CanCollide and not partsAboveChar[j]:IsDescendantOf(stampData.CurrentParts) then
+		if
+			partsAboveChar[j].CanCollide
+			and not partsAboveChar[j]:IsDescendantOf(stampData.CurrentParts)
+		then
 			return false
 		end
 	end
 
 	if
 		clusterPartsInRegion(
-			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z) - Vector3.new(0.75, 2.75, 0.75),
-			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z) + Vector3.new(0.75, 1.75, 0.75)
+			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
+				- Vector3.new(0.75, 2.75, 0.75),
+			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
+				+ Vector3.new(0.75, 1.75, 0.75)
 		)
 	then
 		return false
@@ -457,7 +522,9 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 	local diagBB = maxBB - minBB
 
 	local insertCFrame
-	if stampData.CurrentParts:IsA "Model" or stampData.CurrentParts:IsA "Tool" then
+	if
+		stampData.CurrentParts:IsA "Model" or stampData.CurrentParts:IsA "Tool"
+	then
 		insertCFrame = stampData.CurrentParts:GetModelCFrame()
 	else
 		insertCFrame = stampData.CurrentParts.CFrame
@@ -472,7 +539,7 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 	end
 
 	local hitPlane = false
-	local targetPart = nil
+	local targetPart
 	local success = pcall(function()
 		targetPart = Mouse.Target
 	end)
@@ -486,7 +553,7 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 		mouseHitInWorld = Vector3.new(Mouse.Hit.x, Mouse.Hit.y, Mouse.Hit.z)
 	end
 
-	local cellPos = nil
+	local cellPos
 
 	-- Nothing was hit, so check for the default plane.
 	if nil == targetPart then
@@ -499,7 +566,11 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 			hitPlane = true
 			-- Take into account error that will occur.
 			cellPos = Vector3.new(cellPos.X - 1, cellPos.Y, cellPos.Z)
-			mouseHitInWorld = game.Workspace.Terrain:CellCenterToWorld(cellPos.x, cellPos.y, cellPos.z)
+			mouseHitInWorld = game.Workspace.Terrain:CellCenterToWorld(
+				cellPos.x,
+				cellPos.y,
+				cellPos.z
+			)
 		end
 	end
 
@@ -517,7 +588,13 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 			cellID = cellPos
 		end
 
-		targetCFrame = CFrame.new(game.Workspace.Terrain:CellCenterToWorld(cellID.x, cellID.y, cellID.z))
+		targetCFrame = CFrame.new(
+			game.Workspace.Terrain:CellCenterToWorld(
+				cellID.x,
+				cellID.y,
+				cellID.z
+			)
+		)
 	end
 
 	local mouseHitInTarget = targetCFrame:pointToObjectSpace(mouseHitInWorld)
@@ -526,7 +603,9 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 		-- DON'T WANT THIS IN TERMS OF THE MODEL CFRAME!  (.TargetSurface is in terms of the part CFrame, so this would break, right?  [HotThoth])
 		--   (ideally, we would want to make the Mouse.TargetSurface a model-targetsurface instead, but for testing will be using the converse)
 		--targetVectorInWorld = targetCFrame:vectorToWorldSpace(Vector3.FromNormalId(Mouse.TargetSurface))
-		targetVectorInWorld = targetPart.CFrame:vectorToWorldSpace(Vector3.FromNormalId(Mouse.TargetSurface)) -- better, but model cframe would be best
+		targetVectorInWorld = targetPart.CFrame:vectorToWorldSpace(
+			Vector3.FromNormalId(Mouse.TargetSurface)
+		) -- better, but model cframe would be best
 		--[[if targetPart.Parent:IsA("Model") then
 			local hitFace = modelTargetSurface(targetPart.Parent, Mouse.Hit.p, game.Workspace.CurrentCamera.CoordinateFrame.p)  -- best, if you get it right
 			local WORLD_AXES = {Vector3.new(1, 0, 0), Vector3.new(0, 1, 0), Vector3.new(0, 0, 1)}
@@ -542,33 +621,47 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 	local clampToSurface
 
 	if getClosestAlignedWorldDirection(targetVectorInWorld) == 0 then
-		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(1, -1, 1))
-		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
+		targetRefPointInTarget =
+			targetCFrame:vectorToObjectSpace(Vector3.new(1, -1, 1))
+		insertRefPointInInsert =
+			insertCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
 		clampToSurface = Vector3.new(0, 1, 1)
 	elseif getClosestAlignedWorldDirection(targetVectorInWorld) == 3 then
-		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(-1, -1, -1))
-		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(1, -1, -1))
+		targetRefPointInTarget =
+			targetCFrame:vectorToObjectSpace(Vector3.new(-1, -1, -1))
+		insertRefPointInInsert =
+			insertCFrame:vectorToObjectSpace(Vector3.new(1, -1, -1))
 		clampToSurface = Vector3.new(0, 1, 1)
 	elseif getClosestAlignedWorldDirection(targetVectorInWorld) == 1 then
-		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(-1, 1, 1))
-		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
+		targetRefPointInTarget =
+			targetCFrame:vectorToObjectSpace(Vector3.new(-1, 1, 1))
+		insertRefPointInInsert =
+			insertCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
 		clampToSurface = Vector3.new(1, 0, 1)
 	elseif getClosestAlignedWorldDirection(targetVectorInWorld) == 4 then
-		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
-		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(-1, 1, 1))
+		targetRefPointInTarget =
+			targetCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
+		insertRefPointInInsert =
+			insertCFrame:vectorToObjectSpace(Vector3.new(-1, 1, 1))
 		clampToSurface = Vector3.new(1, 0, 1)
 	elseif getClosestAlignedWorldDirection(targetVectorInWorld) == 2 then
-		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
-		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(-1, -1, -1))
+		targetRefPointInTarget =
+			targetCFrame:vectorToObjectSpace(Vector3.new(-1, -1, 1))
+		insertRefPointInInsert =
+			insertCFrame:vectorToObjectSpace(Vector3.new(-1, -1, -1))
 		clampToSurface = Vector3.new(1, 1, 0)
 	else
-		targetRefPointInTarget = targetCFrame:vectorToObjectSpace(Vector3.new(1, -1, -1))
-		insertRefPointInInsert = insertCFrame:vectorToObjectSpace(Vector3.new(1, -1, 1))
+		targetRefPointInTarget =
+			targetCFrame:vectorToObjectSpace(Vector3.new(1, -1, -1))
+		insertRefPointInInsert =
+			insertCFrame:vectorToObjectSpace(Vector3.new(1, -1, 1))
 		clampToSurface = Vector3.new(1, 1, 0)
 	end
 
-	targetRefPointInTarget = targetRefPointInTarget * (0.5 * diagBBTarget) + 0.5 * (maxBBTarget + minBBTarget)
-	insertRefPointInInsert = insertRefPointInInsert * (0.5 * diagBB) + 0.5 * (maxBB + minBB)
+	targetRefPointInTarget = targetRefPointInTarget * (0.5 * diagBBTarget)
+		+ 0.5 * (maxBBTarget + minBBTarget)
+	insertRefPointInInsert = insertRefPointInInsert * (0.5 * diagBB)
+		+ 0.5 * (maxBB + minBB)
 
 	-- To Do: For cases that are not aligned to the world grid, account for the minimal rotation
 	-- needed to bring the Insert part(s) into alignment with the Target Part
@@ -583,11 +676,14 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 	deltaClamped = deltaClamped * clampToSurface
 	local targetTouchInTarget = deltaClamped + targetRefPointInTarget
 
-	local TargetTouchRelToWorld = targetCFrame:pointToWorldSpace(targetTouchInTarget)
-	local InsertTouchInWorld = insertCFrame:vectorToWorldSpace(insertRefPointInInsert)
+	local TargetTouchRelToWorld =
+		targetCFrame:pointToWorldSpace(targetTouchInTarget)
+	local InsertTouchInWorld =
+		insertCFrame:vectorToWorldSpace(insertRefPointInInsert)
 	local posInsertOriginInWorld = TargetTouchRelToWorld - InsertTouchInWorld
 
-	local _, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22 = insertCFrame:components()
+	local _, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22 =
+		insertCFrame:components()
 	targetConfig = CFrame.new(
 		posInsertOriginInWorld.x,
 		posInsertOriginInWorld.y,
@@ -604,7 +700,9 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 	)
 	admissibleConfig = true
 
-	return admissibleConfig, targetConfig, getClosestAlignedWorldDirection(targetVectorInWorld)
+	return admissibleConfig,
+		targetConfig,
+		getClosestAlignedWorldDirection(targetVectorInWorld)
 end
 
 local function truncateToCircleEighth(bigValue, littleValue)
@@ -624,7 +722,8 @@ local function truncateToCircleEighth(bigValue, littleValue)
 
 	if frac > 0.382683432 then
 		-- between 22.5 and 45 degrees, so truncate to 45-degree tilt
-		return 0.707106781 * hypotenuse * bigSign, 0.707106781 * hypotenuse * littleSign
+		return 0.707106781 * hypotenuse * bigSign,
+			0.707106781 * hypotenuse * littleSign
 	else
 		-- between 0 and 22.5 degrees, so truncate to 0-degree tilt
 		return hypotenuse * bigSign, 0
@@ -733,7 +832,7 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	end
 
 	local function setupFakeTerrainPart(cellMat, cellType, cellOrient)
-		local newTerrainPiece = nil
+		local newTerrainPiece
 		if cellType == 1 or cellType == 4 then
 			newTerrainPiece = Instance.new "WedgePart"
 			newTerrainPiece.formFactor = "Custom"
@@ -759,12 +858,14 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 		if cellType == 2 or cellType == 3 then
 			flipped = 0
 		end
-		newTerrainPiece.CFrame = CFrame.Angles(0, math.pi / 2 * cellOrient + flipped, sideways)
+		newTerrainPiece.CFrame =
+			CFrame.Angles(0, math.pi / 2 * cellOrient + flipped, sideways)
 
 		if cellType == 3 then
 			local inverseCornerWedgeMesh = Instance.new "SpecialMesh"
 			inverseCornerWedgeMesh.MeshType = "FileMesh"
-			inverseCornerWedgeMesh.MeshId = "http://www.roblox.com/asset?id=66832495"
+			inverseCornerWedgeMesh.MeshId =
+				"http://banland.xyz/asset?id=66832495"
 			inverseCornerWedgeMesh.Scale = Vector3.new(2, 2, 2)
 			inverseCornerWedgeMesh.Parent = newTerrainPiece
 		end
@@ -869,9 +970,17 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 				local clusterTag = root:FindFirstChild "ClusterMaterial"
 				if clusterTag then
 					if clusterTag:IsA "Vector3Value" then
-						root = setupFakeTerrainPart(clusterTag.Value.X, terrainShape, clusterTag.Value.Z)
+						root = setupFakeTerrainPart(
+							clusterTag.Value.X,
+							terrainShape,
+							clusterTag.Value.Z
+						)
 					else
-						root = setupFakeTerrainPart(clusterTag.Value, terrainShape, 0)
+						root = setupFakeTerrainPart(
+							clusterTag.Value,
+							terrainShape,
+							0
+						)
 					end
 				else
 					root = setupFakeTerrainPart(1, terrainShape, 0)
@@ -883,7 +992,13 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	return root
 end
 
-t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStampRegion, StampFailedFunc)
+t.SetupStamperDragger = function(
+	modelToStamp,
+	Mouse,
+	StampInModel,
+	AllowedStampRegion,
+	StampFailedFunc
+)
 	if not modelToStamp then
 		error "SetupStamperDragger: modelToStamp (first arg) is nil!  Should be a stamper model"
 		return nil
@@ -901,9 +1016,9 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		return nil
 	end
 
-	local stampInModel = nil
-	local allowedStampRegion = nil
-	local stampFailedFunc = nil
+	local stampInModel
+	local allowedStampRegion
+	local stampFailedFunc
 	if StampInModel then
 		if not StampInModel:IsA "Model" then
 			error "SetupStamperDragger: StampInModel (optional third arg) is not of type 'Model'"
@@ -920,8 +1035,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 	-- Init all state variables
 	local gInitial90DegreeRotations = 0
-	local stampData = nil
-	local mouseTarget = nil
+	local stampData
+	local mouseTarget
 
 	local errorBox = Instance.new "SelectionBox"
 	errorBox.Color = BrickColor.new "Bright red"
@@ -961,7 +1076,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 	local stampUpLock = false
 	local unstampableSurface = false
 	local mouseCons = {}
-	local keyCon = nil
+	local keyCon
 
 	local stamped = Instance.new "BoolValue"
 	stamped.Archivable = false
@@ -1001,7 +1116,7 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 
 		HighScalabilityLine.End = megaCube.CFrame.p
-		local line = nil
+		local line
 		local line2 = Vector3.new(0, 0, 0)
 		local line3 = Vector3.new(0, 0, 0)
 
@@ -1050,7 +1165,10 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			-- take out any component of line2 along line1, so you get perpendicular to line1 component
 			line2 = line2 - line.unit * line.unit:Dot(line2)
 
-			tempCFrame = CFrame.new(HighScalabilityLine.Start, HighScalabilityLine.Start + line)
+			tempCFrame = CFrame.new(
+				HighScalabilityLine.Start,
+				HighScalabilityLine.Start + line
+			)
 
 			-- then zero out whichever is the smaller component
 			local yAxis = tempCFrame:vectorToWorldSpace(Vector3.new(0, 1, 0))
@@ -1079,22 +1197,34 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 
 		-- resize the "line" graphic to be the correct size and orientation
-		tempCFrame = CFrame.new(HighScalabilityLine.Start, HighScalabilityLine.Start + line)
+		tempCFrame = CFrame.new(
+			HighScalabilityLine.Start,
+			HighScalabilityLine.Start + line
+		)
 
 		if HighScalabilityLine.Dimensions == 1 then -- faster calculation for line
-			HighScalabilityLine.AdornPart.Size = Vector3.new(4, 4, line.magnitude + 4)
+			HighScalabilityLine.AdornPart.Size =
+				Vector3.new(4, 4, line.magnitude + 4)
 			HighScalabilityLine.AdornPart.CFrame = tempCFrame
-				+ tempCFrame:vectorToWorldSpace(Vector3.new(2, 2, 2) - HighScalabilityLine.AdornPart.Size / 2)
+				+ tempCFrame:vectorToWorldSpace(
+					Vector3.new(2, 2, 2)
+						- HighScalabilityLine.AdornPart.Size / 2
+				)
 		else
 			local boxSize = tempCFrame:vectorToObjectSpace(line + line2 + line3)
 			HighScalabilityLine.AdornPart.Size = Vector3.new(4, 4, 4)
-				+ Vector3.new(math.abs(boxSize.X), math.abs(boxSize.Y), math.abs(boxSize.Z))
-			HighScalabilityLine.AdornPart.CFrame = tempCFrame + tempCFrame:vectorToWorldSpace(boxSize / 2)
+				+ Vector3.new(
+					math.abs(boxSize.X),
+					math.abs(boxSize.Y),
+					math.abs(boxSize.Z)
+				)
+			HighScalabilityLine.AdornPart.CFrame = tempCFrame
+				+ tempCFrame:vectorToWorldSpace(boxSize / 2)
 		end
 
 		-- make player able to see this ish
 
-		local gui = nil
+		local gui
 		if game.Players["LocalPlayer"] then
 			gui = game.Players.LocalPlayer:FindFirstChild "PlayerGui"
 			if gui and gui:IsA "PlayerGui" then
@@ -1109,7 +1239,10 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 		if gui == nil then -- we are in studio
 			gui = game:GetService "CoreGui"
-			if (HighScalabilityLine.Dimensions == 1 and line.magnitude > 3) or HighScalabilityLine.Dimensions > 1 then -- don't show if mouse hasn't moved enough
+			if
+				(HighScalabilityLine.Dimensions == 1 and line.magnitude > 3)
+				or HighScalabilityLine.Dimensions > 1
+			then -- don't show if mouse hasn't moved enough
 				HighScalabilityLine.Adorn.Parent = gui
 			end
 		end
@@ -1121,7 +1254,11 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			return
 		end
 		if not Mouse:IsA "Mouse" then
-			error("Error: RbxStamper.DoStamperMouseMove: Mouse is of type", Mouse.className, "should be of type Mouse")
+			error(
+				"Error: RbxStamper.DoStamperMouseMove: Mouse is of type",
+				Mouse.className,
+				"should be of type Mouse"
+			)
 			return
 		end
 
@@ -1139,40 +1276,60 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 		-- don't move with dragger - will move in one step on mouse down
 		-- draw ghost at acceptable positions
-		configFound, targetCFrame, targetSurface = findConfigAtMouseTarget(Mouse, stampData)
+		configFound, targetCFrame, targetSurface =
+			findConfigAtMouseTarget(Mouse, stampData)
 		if not configFound then
 			error "RbxStamper.DoStamperMouseMove No configFound, returning"
 			return
 		end
 
 		local numRotations = 0 -- update this according to how many rotations you need to get it to target surface
-		if autoAlignToFace(stampData.CurrentParts) and targetSurface ~= 1 and targetSurface ~= 4 then -- pre-rotate the flag or portrait so it's aligned correctly
+		if
+			autoAlignToFace(stampData.CurrentParts)
+			and targetSurface ~= 1
+			and targetSurface ~= 4
+		then -- pre-rotate the flag or portrait so it's aligned correctly
 			if targetSurface == 3 then
-				numRotations = 0 - gInitial90DegreeRotations + autoAlignToFace(stampData.CurrentParts)
+				numRotations = 0
+					- gInitial90DegreeRotations
+					+ autoAlignToFace(stampData.CurrentParts)
 			elseif targetSurface == 0 then
-				numRotations = 2 - gInitial90DegreeRotations + autoAlignToFace(stampData.CurrentParts)
+				numRotations = 2
+					- gInitial90DegreeRotations
+					+ autoAlignToFace(stampData.CurrentParts)
 			elseif targetSurface == 5 then
-				numRotations = 3 - gInitial90DegreeRotations + autoAlignToFace(stampData.CurrentParts)
+				numRotations = 3
+					- gInitial90DegreeRotations
+					+ autoAlignToFace(stampData.CurrentParts)
 			elseif targetSurface == 2 then
-				numRotations = 1 - gInitial90DegreeRotations + autoAlignToFace(stampData.CurrentParts)
+				numRotations = 1
+					- gInitial90DegreeRotations
+					+ autoAlignToFace(stampData.CurrentParts)
 			end
 		end
 
 		local ry = math.pi / 2
 		gInitial90DegreeRotations = gInitial90DegreeRotations + numRotations
-		if stampData.CurrentParts:IsA "Model" or stampData.CurrentParts:IsA "Tool" then
+		if
+			stampData.CurrentParts:IsA "Model"
+			or stampData.CurrentParts:IsA "Tool"
+		then
 			--stampData.CurrentParts:Rotate(0, ry*numRotations, 0)
 			modelRotate(stampData.CurrentParts, ry * numRotations)
 		else
-			stampData.CurrentParts.CFrame = CFrame.fromEulerAnglesXYZ(0, ry * numRotations, 0)
-				* stampData.CurrentParts.CFrame
+			stampData.CurrentParts.CFrame = CFrame.fromEulerAnglesXYZ(
+				0,
+				ry * numRotations,
+				0
+			) * stampData.CurrentParts.CFrame
 		end
 
 		-- CODE TO CHECK FOR DRAGGING GHOST PART INTO A COLLIDING STATE
-		local minBB, maxBB = getBoundingBoxInWorldCoordinates(stampData.CurrentParts)
+		local minBB, maxBB =
+			getBoundingBoxInWorldCoordinates(stampData.CurrentParts)
 
 		-- need to offset by distance to be dragged
-		local currModelCFrame = nil
+		local currModelCFrame
 		if stampData.CurrentParts:IsA "Model" then
 			currModelCFrame = stampData.CurrentParts:GetModelCFrame()
 		else
@@ -1183,12 +1340,30 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		maxBB = maxBB + targetCFrame.p - currModelCFrame.p
 
 		-- don't drag into terrain
-		if clusterPartsInRegion(minBB + insertBoundingBoxOverlapVector, maxBB - insertBoundingBoxOverlapVector) then
+		if
+			clusterPartsInRegion(
+				minBB + insertBoundingBoxOverlapVector,
+				maxBB - insertBoundingBoxOverlapVector
+			)
+		then
 			if lastTarget.CFrame then
-				if stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) then
-					local theClusterMaterial = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+				if
+					stampData.CurrentParts:FindFirstChild(
+						"ClusterMaterial",
+						true
+					)
+				then
+					local theClusterMaterial =
+						stampData.CurrentParts:FindFirstChild(
+							"ClusterMaterial",
+							true
+						)
 					if theClusterMaterial:IsA "Vector3Value" then
-						local stampClusterMaterial = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+						local stampClusterMaterial =
+							stampData.CurrentParts:FindFirstChild(
+								"ClusterMaterial",
+								true
+							)
 						if stampClusterMaterial then
 							stampClusterMaterial = clusterMat
 						end
@@ -1200,10 +1375,15 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 		-- if we are stamping a terrain part, make sure it goes on the grid! Otherwise preview block could be placed off grid, but stamped on grid
 		if isMegaClusterPart() then
-			local cellToStamp = game.Workspace.Terrain:WorldToCell(targetCFrame.p)
-			local newCFramePosition =
-				game.Workspace.Terrain:CellCenterToWorld(cellToStamp.X, cellToStamp.Y, cellToStamp.Z)
-			local _, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22 = targetCFrame:components()
+			local cellToStamp =
+				game.Workspace.Terrain:WorldToCell(targetCFrame.p)
+			local newCFramePosition = game.Workspace.Terrain:CellCenterToWorld(
+				cellToStamp.X,
+				cellToStamp.Y,
+				cellToStamp.Z
+			)
+			local _, _, _, R00, R01, R02, R10, R11, R12, R20, R21, R22 =
+				targetCFrame:components()
 			targetCFrame = CFrame.new(
 				newCFramePosition.X,
 				newCFramePosition.Y,
@@ -1223,7 +1403,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
 		lastTarget.CFrame = targetCFrame -- successful positioning, so update 'dat cframe
 		if stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) then
-			local clusterMat = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+			local clusterMat =
+				stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
 			if clusterMat:IsA "Vector3Value" then
 				lastTarget.TerrainOrientation = clusterMat.Value.Z
 			end
@@ -1236,13 +1417,17 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 				modelInfo = Mouse.Target.Parent:FindFirstChild "RobloxModel"
 			end
 
-			local myModelInfo = stampData.CurrentParts:FindFirstChild "UnstampableFaces"
+			local myModelInfo =
+				stampData.CurrentParts:FindFirstChild "UnstampableFaces"
 
 			--if (modelInfo and modelInfo.Parent:FindFirstChild("UnstampableFaces")) or (modelInfo and myModelInfo) then  -- need better targetSurface calcs
 			if true then
 				local breakingFaces = ""
 				local myBreakingFaces = ""
-				if modelInfo and modelInfo.Parent:FindFirstChild "UnstampableFaces" then
+				if
+					modelInfo
+					and modelInfo.Parent:FindFirstChild "UnstampableFaces"
+				then
 					breakingFaces = modelInfo.Parent.UnstampableFaces.Value
 				end
 				if myModelInfo then
@@ -1296,7 +1481,12 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		-- most common mouse inactive error occurs here, so check mouse active one more time in a pcall
 		if
 			not pcall(function()
-				if Mouse and Mouse.Target and Mouse.Target.Parent:FindFirstChild "RobloxModel" == nil then
+				if
+					Mouse
+					and Mouse.Target
+					and Mouse.Target.Parent:FindFirstChild "RobloxModel"
+						== nil
+				then
 					return
 				else
 					return
@@ -1309,7 +1499,11 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			return
 		end
 
-		if Mouse and Mouse.Target and Mouse.Target.Parent:FindFirstChild "RobloxModel" == nil then
+		if
+			Mouse
+			and Mouse.Target
+			and Mouse.Target.Parent:FindFirstChild "RobloxModel" == nil
+		then
 			game.JointsService:SetJoinAfterMoveTarget(Mouse.Target)
 		else
 			game.JointsService:SetJoinAfterMoveTarget(nil)
@@ -1317,7 +1511,11 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		game.JointsService:ShowPermissibleJoints()
 
 		-- here we allow for a line of high-scalability parts
-		if isMegaClusterPart() and HighScalabilityLine and HighScalabilityLine.Start then
+		if
+			isMegaClusterPart()
+			and HighScalabilityLine
+			and HighScalabilityLine.Start
+		then
 			DoHighScalabilityRegionSelect()
 		end
 	end
@@ -1332,23 +1530,35 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			gInitial90DegreeRotations = gInitial90DegreeRotations + 1
 
 			-- Update orientation value if this is a fake terrain part
-			local clusterValues = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+			local clusterValues =
+				stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
 			if clusterValues and clusterValues:IsA "Vector3Value" then
-				clusterValues.Value =
-					Vector3.new(clusterValues.Value.X, clusterValues.Value.Y, (clusterValues.Value.Z + 1) % 4)
+				clusterValues.Value = Vector3.new(
+					clusterValues.Value.X,
+					clusterValues.Value.Y,
+					(clusterValues.Value.Z + 1) % 4
+				)
 			end
 
 			-- Rotate the parts or all the parts in the model
 			local ry = math.pi / 2
-			if stampData.CurrentParts:IsA "Model" or stampData.CurrentParts:IsA "Tool" then
+			if
+				stampData.CurrentParts:IsA "Model"
+				or stampData.CurrentParts:IsA "Tool"
+			then
 				--stampData.CurrentParts:Rotate(0, ry, 0)
 				modelRotate(stampData.CurrentParts, ry)
 			else
-				stampData.CurrentParts.CFrame = CFrame.fromEulerAnglesXYZ(0, ry, 0) * stampData.CurrentParts.CFrame
+				stampData.CurrentParts.CFrame = CFrame.fromEulerAnglesXYZ(
+					0,
+					ry,
+					0
+				) * stampData.CurrentParts.CFrame
 			end
 
 			-- After rotating, update the position
-			configFound, targetCFrame = findConfigAtMouseTarget(Mouse, stampData)
+			configFound, targetCFrame =
+				findConfigAtMouseTarget(Mouse, stampData)
 			if configFound then
 				positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
 
@@ -1361,17 +1571,22 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 				and HighScalabilityLine.InternalLine.magnitude > 0
 				and HighScalabilityLine.Dimensions < 3
 			then
-				HighScalabilityLine.MorePoints[HighScalabilityLine.Dimensions] = HighScalabilityLine.End
-				HighScalabilityLine.MoreLines[HighScalabilityLine.Dimensions] = HighScalabilityLine.InternalLine
-				HighScalabilityLine.Dimensions = HighScalabilityLine.Dimensions + 1
+				HighScalabilityLine.MorePoints[HighScalabilityLine.Dimensions] =
+					HighScalabilityLine.End
+				HighScalabilityLine.MoreLines[HighScalabilityLine.Dimensions] =
+					HighScalabilityLine.InternalLine
+				HighScalabilityLine.Dimensions = HighScalabilityLine.Dimensions
+					+ 1
 				HighScalabilityLine.NewHint = true
 			end
 		end
 	end
 
-	keyCon = Mouse.KeyDown:connect(function(key) -- init key connection (keeping code close to func)
-		setupKeyListener(key, Mouse)
-	end)
+	keyCon = Mouse.KeyDown:connect(
+		function(key) -- init key connection (keeping code close to func)
+			setupKeyListener(key, Mouse)
+		end
+	)
 
 	local function resetHighScalabilityLine()
 		if HighScalabilityLine then
@@ -1426,7 +1641,11 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			return
 		end
 		if not Mouse:IsA "Mouse" then
-			error("Error: RbxStamper.DoStamperMouseDown: Mouse is of type", Mouse.className, "should be of type Mouse")
+			error(
+				"Error: RbxStamper.DoStamperMouseDown: Mouse is of type",
+				Mouse.className,
+				"should be of type Mouse"
+			)
 			return
 		end
 		if not stampData then
@@ -1435,17 +1654,29 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 		if isMegaClusterPart() then
 			if Mouse and HighScalabilityLine then
-				local megaCube = stampData.CurrentParts:FindFirstChild("MegaClusterCube", true)
+				local megaCube = stampData.CurrentParts:FindFirstChild(
+					"MegaClusterCube",
+					true
+				)
 				local terrain = game.Workspace.Terrain
 				if megaCube then
 					HighScalabilityLine.Dimensions = 1
 					local tempCell = terrain:WorldToCell(megaCube.CFrame.p)
-					HighScalabilityLine.Start = terrain:CellCenterToWorld(tempCell.X, tempCell.Y, tempCell.Z)
+					HighScalabilityLine.Start = terrain:CellCenterToWorld(
+						tempCell.X,
+						tempCell.Y,
+						tempCell.Z
+					)
 					return
 				else
 					HighScalabilityLine.Dimensions = 1
-					local tempCell = terrain:WorldToCell(stampData.CurrentParts.CFrame.p)
-					HighScalabilityLine.Start = terrain:CellCenterToWorld(tempCell.X, tempCell.Y, tempCell.Z)
+					local tempCell =
+						terrain:WorldToCell(stampData.CurrentParts.CFrame.p)
+					HighScalabilityLine.Start = terrain:CellCenterToWorld(
+						tempCell.X,
+						tempCell.Y,
+						tempCell.Z
+					)
 					return
 				end
 			end
@@ -1509,12 +1740,14 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		for _, script in pairs(scripts) do
 			if not script.Disabled then
 				script.Disabled = true
-				stampData.DisabledScripts[#stampData.DisabledScripts + 1] = script
+				stampData.DisabledScripts[#stampData.DisabledScripts + 1] =
+					script
 			end
 		end
 		for _, part in pairs(parts) do
 			stampData.TransparencyTable[part] = part.Transparency
-			part.Transparency = gStaticTrans + (1 - gStaticTrans) * part.Transparency
+			part.Transparency = gStaticTrans
+				+ (1 - gStaticTrans) * part.Transparency
 			stampData.MaterialTable[part] = part.Material
 			part.Material = Enum.Material.Plastic
 			stampData.CanCollideTable[part] = part.CanCollide
@@ -1539,16 +1772,30 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 					and part:IsA "BasePart"
 					and part.Transparency > gDesiredTrans
 				do
-					local newTrans = 1 - (((currTime - begTime) / transFadeInTime) * (gStaticTrans - gDesiredTrans))
-					if stampData["TransparencyTable"] and stampData.TransparencyTable[part] then
-						part.Transparency = newTrans + (1 - newTrans) * stampData.TransparencyTable[part]
+					local newTrans = 1
+						- (
+							((currTime - begTime) / transFadeInTime)
+							* (gStaticTrans - gDesiredTrans)
+						)
+					if
+						stampData["TransparencyTable"]
+						and stampData.TransparencyTable[part]
+					then
+						part.Transparency = newTrans
+							+ (1 - newTrans)
+								* stampData.TransparencyTable[part]
 					end
 					wait(0.03)
 					currTime = tick()
 				end
 				if part and part:IsA "BasePart" then
-					if stampData["TransparencyTable"] and stampData.TransparencyTable[part] then
-						part.Transparency = gDesiredTrans + (1 - gDesiredTrans) * stampData.TransparencyTable[part]
+					if
+						stampData["TransparencyTable"]
+						and stampData.TransparencyTable[part]
+					then
+						part.Transparency = gDesiredTrans
+							+ (1 - gDesiredTrans)
+								* stampData.TransparencyTable[part]
 					end
 				end
 			end)
@@ -1556,7 +1803,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 		for _, decal in pairs(decals) do
 			stampData.DecalTransparencyTable[decal] = decal.Transparency
-			decal.Transparency = gDesiredTrans + (1 - gDesiredTrans) * decal.Transparency
+			decal.Transparency = gDesiredTrans
+				+ (1 - gDesiredTrans) * decal.Transparency
 		end
 
 		-- disable all seats
@@ -1571,11 +1819,18 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			gInitial90DegreeRotations = 0
 		else -- pre-rotate if necessary
 			local ry = gInitial90DegreeRotations * math.pi / 2
-			if stampData.CurrentParts:IsA "Model" or stampData.CurrentParts:IsA "Tool" then
+			if
+				stampData.CurrentParts:IsA "Model"
+				or stampData.CurrentParts:IsA "Tool"
+			then
 				--stampData.CurrentParts:Rotate(0, ry, 0)
 				modelRotate(stampData.CurrentParts, ry)
 			else
-				stampData.CurrentParts.CFrame = CFrame.fromEulerAnglesXYZ(0, ry, 0) * stampData.CurrentParts.CFrame
+				stampData.CurrentParts.CFrame = CFrame.fromEulerAnglesXYZ(
+					0,
+					ry,
+					0
+				) * stampData.CurrentParts.CFrame
 			end
 		end
 
@@ -1583,7 +1838,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		--  rotations we expect since then [either that or we need to store the just-stamped clusterMaterial.Value.Z somewhere].  This should fix the terrain rotation
 		--  issue (fingers crossed) [HotThoth]
 
-		local clusterMaterial = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+		local clusterMaterial =
+			stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
 		if clusterMaterial and clusterMaterial:IsA "Vector3Value" then
 			clusterMaterial.Value = Vector3.new(
 				clusterMaterial.Value.X,
@@ -1593,9 +1849,11 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 
 		-- After rotating, update the position
-		local configFound, targetCFrame = findConfigAtMouseTarget(Mouse, stampData)
+		local configFound, targetCFrame =
+			findConfigAtMouseTarget(Mouse, stampData)
 		if configFound then
-			stampData.CurrentParts = positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
+			stampData.CurrentParts =
+				positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
 		end
 
 		-- to show joints during the mouse move
@@ -1604,13 +1862,25 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		return clone, parts
 	end
 
-	local function checkTerrainBlockCollisions(cellPos, checkHighScalabilityStamp)
+	local function checkTerrainBlockCollisions(
+		cellPos,
+		checkHighScalabilityStamp
+	)
 		local cellCenterToWorld = game.Workspace.Terrain.CellCenterToWorld
-		local cellCenter = cellCenterToWorld(game.Workspace.Terrain, cellPos.X, cellPos.Y, cellPos.Z)
+		local cellCenter = cellCenterToWorld(
+			game.Workspace.Terrain,
+			cellPos.X,
+			cellPos.Y,
+			cellPos.Z
+		)
 		local cellBlockingParts = game.Workspace:FindPartsInRegion3(
 			Region3.new(
-				cellCenter - Vector3.new(2, 2, 2) + insertBoundingBoxOverlapVector,
-				cellCenter + Vector3.new(2, 2, 2) - insertBoundingBoxOverlapVector
+				cellCenter
+					- Vector3.new(2, 2, 2)
+					+ insertBoundingBoxOverlapVector,
+				cellCenter
+					+ Vector3.new(2, 2, 2)
+					- insertBoundingBoxOverlapVector
 			),
 			stampData.CurrentParts,
 			100
@@ -1634,18 +1904,31 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 					cellBlockingParts[b].Parent
 					and not alreadyPushedUp[cellBlockingParts[b].Parent]
 					and cellBlockingParts[b].Parent:FindFirstChild "Humanoid"
-					and cellBlockingParts[b].Parent:FindFirstChild("Humanoid"):IsA "Humanoid"
+					and cellBlockingParts[b].Parent
+						:FindFirstChild("Humanoid")
+						:IsA "Humanoid"
 				then
 					-----------------------------------------------------------------------------------
-					local blockingPersonTorso = cellBlockingParts[b].Parent:FindFirstChild "Torso"
+					local blockingPersonTorso =
+						cellBlockingParts[b].Parent:FindFirstChild "Torso"
 					alreadyPushedUp[cellBlockingParts[b].Parent] = true
 
 					if blockingPersonTorso then
 						-- if so, let's push the person upwards so they pop on top of the stamped model/part (but only if there's space above them)
 						local newY = cellCenter.Y + 5
-						if spaceAboveCharacter(blockingPersonTorso, newY, stampData) then
+						if
+							spaceAboveCharacter(
+								blockingPersonTorso,
+								newY,
+								stampData
+							)
+						then
 							blockingPersonTorso.CFrame = blockingPersonTorso.CFrame
-								+ Vector3.new(0, newY - blockingPersonTorso.CFrame.p.Y, 0)
+								+ Vector3.new(
+									0,
+									newY - blockingPersonTorso.CFrame.p.Y,
+									0
+								)
 						else
 							-- if no space, we just skip this one
 							skipThisCell = true
@@ -1662,14 +1945,27 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 			if checkHighScalabilityStamp then -- check to see if cell is in region, if not we'll skip set
 				if allowedStampRegion then
-					local cellPos = cellCenterToWorld(game.Workspace.Terrain, cellPos.X, cellPos.Y, cellPos.Z)
+					local cellPos = cellCenterToWorld(
+						game.Workspace.Terrain,
+						cellPos.X,
+						cellPos.Y,
+						cellPos.Z
+					)
 					if
-						(cellPos.X + 2 > allowedStampRegion.CFrame.p.X + allowedStampRegion.Size.X / 2)
+						(
+							cellPos.X + 2
+							> allowedStampRegion.CFrame.p.X
+								+ allowedStampRegion.Size.X / 2
+						)
 						or (cellPos.X - 2 < allowedStampRegion.CFrame.p.X - allowedStampRegion.Size.X / 2)
 						or (cellPos.Y + 2 > allowedStampRegion.CFrame.p.Y + allowedStampRegion.Size.Y / 2)
 						or (cellPos.Y - 2 < allowedStampRegion.CFrame.p.Y - allowedStampRegion.Size.Y / 2)
 						or (cellPos.Z + 2 > allowedStampRegion.CFrame.p.Z + allowedStampRegion.Size.Z / 2)
-						or (cellPos.Z - 2 < allowedStampRegion.CFrame.p.Z - allowedStampRegion.Size.Z / 2)
+						or (
+							cellPos.Z - 2
+							< allowedStampRegion.CFrame.p.Z
+								- allowedStampRegion.Size.Z / 2
+						)
 					then
 						canSetCell = false
 					end
@@ -1700,7 +1996,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 
 		if stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) then
-			clusterMaterial = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+			clusterMaterial =
+				stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
 			if clusterMaterial:IsA "Vector3Value" then
 				clusterType = clusterMaterial.Value.Y
 				clusterOrientation = clusterMaterial.Value.Z
@@ -1713,17 +2010,29 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		if
 			HighScalabilityLine.Adorn.Parent
 			and HighScalabilityLine.Start
-			and ((HighScalabilityLine.Dimensions > 1) or (line and line.magnitude > 0))
+			and (
+				(HighScalabilityLine.Dimensions > 1)
+				or (line and line.magnitude > 0)
+			)
 		then
-			local startCell = game.Workspace.Terrain:WorldToCell(HighScalabilityLine.Start)
+			local startCell =
+				game.Workspace.Terrain:WorldToCell(HighScalabilityLine.Start)
 			local xInc = { 0, 0, 0 }
 			local yInc = { 0, 0, 0 }
 			local zInc = { 0, 0, 0 }
 
 			local incrementVect = { nil, nil, nil }
-			local stepVect = { Vector3.new(0, 0, 0), Vector3.new(0, 0, 0), Vector3.new(0, 0, 0) }
+			local stepVect = {
+				Vector3.new(0, 0, 0),
+				Vector3.new(0, 0, 0),
+				Vector3.new(0, 0, 0),
+			}
 
-			local worldAxes = { Vector3.new(1, 0, 0), Vector3.new(0, 1, 0), Vector3.new(0, 0, 1) }
+			local worldAxes = {
+				Vector3.new(1, 0, 0),
+				Vector3.new(0, 1, 0),
+				Vector3.new(0, 0, 1),
+			}
 
 			local lines = {}
 			if HighScalabilityLine.Dimensions > 1 then
@@ -1772,8 +2081,13 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 				lines[3] = Vector3.new(0, 0, 0)
 			end
 
-			local waterForceTag = stampData.CurrentParts:FindFirstChild("WaterForceTag", true)
-			local waterForceDirectionTag = stampData.CurrentParts:FindFirstChild("WaterForceDirectionTag", true)
+			local waterForceTag =
+				stampData.CurrentParts:FindFirstChild("WaterForceTag", true)
+			local waterForceDirectionTag =
+				stampData.CurrentParts:FindFirstChild(
+					"WaterForceDirectionTag",
+					true
+				)
 
 			while stepVect[3].magnitude * 4 <= lines[3].magnitude do
 				local outerStepVectIndex = 1
@@ -1783,8 +2097,12 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 						local innerStepVectIndex = 1
 						while innerStepVectIndex < 4 do
 							stepVect[1] = Vector3.new(0, 0, 0)
-							while stepVect[1].magnitude * 4 <= lines[1].magnitude do
-								local stepVectSum = stepVect[1] + stepVect[2] + stepVect[3]
+							while
+								stepVect[1].magnitude * 4 <= lines[1].magnitude
+							do
+								local stepVectSum = stepVect[1]
+									+ stepVect[2]
+									+ stepVect[3]
 								local cellPos = Vector3int16.new(
 									startCell.X + stepVectSum.X,
 									startCell.Y + stepVectSum.Y,
@@ -1800,7 +2118,10 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 								then
 									-- check if overlaps player or part
 									local okToStampTerrainBlock =
-										checkTerrainBlockCollisions(cellPos, checkHighScalabilityStamp)
+										checkTerrainBlockCollisions(
+											cellPos,
+											checkHighScalabilityStamp
+										)
 
 									if okToStampTerrainBlock then
 										if waterForceTag then
@@ -1827,8 +2148,16 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 										if autoWedgeClusterParts then
 											game.Workspace.Terrain:AutowedgeCells(
 												Region3int16.new(
-													Vector3int16.new(cellPos.x - 1, cellPos.y - 1, cellPos.z - 1),
-													Vector3int16.new(cellPos.x + 1, cellPos.y + 1, cellPos.z + 1)
+													Vector3int16.new(
+														cellPos.x - 1,
+														cellPos.y - 1,
+														cellPos.z - 1
+													),
+													Vector3int16.new(
+														cellPos.x + 1,
+														cellPos.y + 1,
+														cellPos.z + 1
+													)
 												)
 											)
 										end
@@ -1839,33 +2168,48 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 							if incrementVect[2] then
 								while
 									innerStepVectIndex < 4
-									and worldAxes[innerStepVectIndex]:Dot(incrementVect[2]) == 0
+									and worldAxes[innerStepVectIndex]:Dot(
+											incrementVect[2]
+										)
+										== 0
 								do
 									innerStepVectIndex = innerStepVectIndex + 1
 								end
 								if innerStepVectIndex < 4 then
 									stepVect[2] = stepVect[2]
 										+ worldAxes[innerStepVectIndex]
-											* worldAxes[innerStepVectIndex]:Dot(incrementVect[2])
+											* worldAxes[innerStepVectIndex]:Dot(
+												incrementVect[2]
+											)
 								end
 								innerStepVectIndex = innerStepVectIndex + 1
 							else
 								stepVect[2] = Vector3.new(1, 0, 0)
 								innerStepVectIndex = 4 -- skip all remaining loops
 							end
-							if stepVect[2].magnitude * 4 > lines[2].magnitude then
+							if
+								stepVect[2].magnitude * 4 > lines[2].magnitude
+							then
 								innerStepVectIndex = 4
 							end
 						end
 					end
 					if incrementVect[3] then
-						while outerStepVectIndex < 4 and worldAxes[outerStepVectIndex]:Dot(incrementVect[3]) == 0 do
+						while
+							outerStepVectIndex < 4
+							and worldAxes[outerStepVectIndex]:Dot(
+									incrementVect[3]
+								)
+								== 0
+						do
 							outerStepVectIndex = outerStepVectIndex + 1
 						end
 						if outerStepVectIndex < 4 then
 							stepVect[3] = stepVect[3]
 								+ worldAxes[outerStepVectIndex]
-									* worldAxes[outerStepVectIndex]:Dot(incrementVect[3])
+									* worldAxes[outerStepVectIndex]:Dot(
+										incrementVect[3]
+									)
 						end
 						outerStepVectIndex = outerStepVectIndex + 1
 					else -- skip all remaining loops
@@ -1887,7 +2231,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		if cellSet then
 			stampData.CurrentParts.Parent = nil
 			pcall(function()
-				game:GetService("ChangeHistoryService"):SetWaypoint "StamperMulti"
+				game:GetService("ChangeHistoryService")
+					:SetWaypoint "StamperMulti"
 			end)
 		end
 
@@ -1900,7 +2245,11 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			return false
 		end
 		if not Mouse:IsA "Mouse" then
-			error("Error: RbxStamper.DoStamperMouseUp: Mouse is of type", Mouse.className, "should be of type Mouse")
+			error(
+				"Error: RbxStamper.DoStamperMouseUp: Mouse is of type",
+				Mouse.className,
+				"should be of type Mouse"
+			)
 			return false
 		end
 
@@ -1913,9 +2262,9 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			return false
 		end
 
-		local checkHighScalabilityStamp = nil
+		local checkHighScalabilityStamp
 		if stampInModel then
-			local canStamp = nil
+			local canStamp
 			local isHSLPart = isMegaClusterPart()
 
 			if
@@ -1928,7 +2277,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 				canStamp = true
 				checkHighScalabilityStamp = true
 			else
-				canStamp, checkHighScalabilityStamp = t.CanEditRegion(stampData.CurrentParts, allowedStampRegion)
+				canStamp, checkHighScalabilityStamp =
+					t.CanEditRegion(stampData.CurrentParts, allowedStampRegion)
 			end
 
 			if not canStamp then
@@ -1946,7 +2296,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 
 		-- recheck if we can stamp, as we just moved part
-		canStamp, checkHighScalabilityStamp = t.CanEditRegion(stampData.CurrentParts, allowedStampRegion)
+		canStamp, checkHighScalabilityStamp =
+			t.CanEditRegion(stampData.CurrentParts, allowedStampRegion)
 		if not canStamp then
 			if stampFailedFunc then
 				stampFailedFunc()
@@ -1956,7 +2307,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 		-- Prevent part from being stamped on top of a player
 
-		local minBB, maxBB = getBoundingBoxInWorldCoordinates(stampData.CurrentParts)
+		local minBB, maxBB =
+			getBoundingBoxInWorldCoordinates(stampData.CurrentParts)
 
 		-- HotThoth's note:  Now that above CurrentParts positioning has been commented out, to be truly correct, we would need to use the
 		--                     value of configFound from the previous onStamperMouseMove call which moved the CurrentParts
@@ -1964,13 +2316,21 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		configFound, targetCFrame = findConfigAtMouseTarget(Mouse, stampData)
 
 		if configFound and not HighScalabilityLine.Adorn.Parent then
-			if clusterPartsInRegion(minBB + insertBoundingBoxOverlapVector, maxBB - insertBoundingBoxOverlapVector) then
+			if
+				clusterPartsInRegion(
+					minBB + insertBoundingBoxOverlapVector,
+					maxBB - insertBoundingBoxOverlapVector
+				)
+			then
 				flashRedBox()
 				return false
 			end
 
 			local blockingParts = game.Workspace:FindPartsInRegion3(
-				Region3.new(minBB + insertBoundingBoxOverlapVector, maxBB - insertBoundingBoxOverlapVector),
+				Region3.new(
+					minBB + insertBoundingBoxOverlapVector,
+					maxBB - insertBoundingBoxOverlapVector
+				),
 				stampData.CurrentParts,
 				100
 			)
@@ -1989,18 +2349,31 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 					blockingParts[b].Parent
 					and not alreadyPushedUp[blockingParts[b].Parent]
 					and blockingParts[b].Parent:FindFirstChild "Humanoid"
-					and blockingParts[b].Parent:FindFirstChild("Humanoid"):IsA "Humanoid"
+					and blockingParts[b].Parent
+						:FindFirstChild("Humanoid")
+						:IsA "Humanoid"
 				then
 					---------------------------------------------------------------------------
-					local blockingPersonTorso = blockingParts[b].Parent:FindFirstChild "Torso"
+					local blockingPersonTorso =
+						blockingParts[b].Parent:FindFirstChild "Torso"
 					alreadyPushedUp[blockingParts[b].Parent] = true
 
 					if blockingPersonTorso then
 						-- if so, let's push the person upwards so they pop on top of the stamped model/part (but only if there's space above them)
 						local newY = maxBB.Y + 3
-						if spaceAboveCharacter(blockingPersonTorso, newY, stampData) then
+						if
+							spaceAboveCharacter(
+								blockingPersonTorso,
+								newY,
+								stampData
+							)
+						then
 							blockingPersonTorso.CFrame = blockingPersonTorso.CFrame
-								+ Vector3.new(0, newY - blockingPersonTorso.CFrame.p.Y, 0)
+								+ Vector3.new(
+									0,
+									newY - blockingPersonTorso.CFrame.p.Y,
+									0
+								)
 						else
 							-- if no space, we just error
 							flashRedBox()
@@ -2010,7 +2383,12 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 					---------------------------------------------------------------------------
 				end
 			end
-		elseif (not configFound) and not (HighScalabilityLine.Start and HighScalabilityLine.Adorn.Parent) then -- if no config then only stamp if it's a real HSL!
+		elseif
+			not configFound
+			and not (
+				HighScalabilityLine.Start and HighScalabilityLine.Adorn.Parent
+			)
+		then -- if no config then only stamp if it's a real HSL!
 			resetHighScalabilityLine()
 			return false
 		end
@@ -2029,8 +2407,15 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 
 		-- if we drew a line of mega parts, stamp them out
-		if HighScalabilityLine.Start and HighScalabilityLine.Adorn.Parent and isMegaClusterPart() then
-			if ResolveMegaClusterStamp(checkHighScalabilityStamp) or checkHighScalabilityStamp then
+		if
+			HighScalabilityLine.Start
+			and HighScalabilityLine.Adorn.Parent
+			and isMegaClusterPart()
+		then
+			if
+				ResolveMegaClusterStamp(checkHighScalabilityStamp)
+				or checkHighScalabilityStamp
+			then
 				-- kill the ghost part
 				stampData.CurrentParts.Parent = nil
 				return true
@@ -2050,7 +2435,9 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 			local cellPos
 			if stampData.CurrentParts:IsA "Model" then
-				cellPos = cluster:WorldToCell(stampData.CurrentParts:GetModelCFrame().p)
+				cellPos = cluster:WorldToCell(
+					stampData.CurrentParts:GetModelCFrame().p
+				)
 			else
 				cellPos = cluster:WorldToCell(stampData.CurrentParts.CFrame.p)
 			end
@@ -2059,9 +2446,17 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			local cMin = game.Workspace.Terrain.MaxExtents.Min
 
 			if checkTerrainBlockCollisions(cellPos, false) then
-				local clusterValues = stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
-				local waterForceTag = stampData.CurrentParts:FindFirstChild("WaterForceTag", true)
-				local waterForceDirectionTag = stampData.CurrentParts:FindFirstChild("WaterForceDirectionTag", true)
+				local clusterValues = stampData.CurrentParts:FindFirstChild(
+					"ClusterMaterial",
+					true
+				)
+				local waterForceTag =
+					stampData.CurrentParts:FindFirstChild("WaterForceTag", true)
+				local waterForceDirectionTag =
+					stampData.CurrentParts:FindFirstChild(
+						"WaterForceDirectionTag",
+						true
+					)
 
 				if
 					cellPos.X >= cMin.X
@@ -2098,7 +2493,14 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 							clusterValues.Value.Z
 						)
 					else
-						cluster:SetCell(cellPos.X, cellPos.Y, cellPos.Z, clusterValues.Value, 0, 0)
+						cluster:SetCell(
+							cellPos.X,
+							cellPos.Y,
+							cellPos.Z,
+							clusterValues.Value,
+							0,
+							0
+						)
 					end
 
 					local autoWedgeClusterParts = false
@@ -2110,8 +2512,16 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 					if autoWedgeClusterParts then
 						game.Workspace.Terrain:AutowedgeCells(
 							Region3int16.new(
-								Vector3int16.new(cellPos.x - 1, cellPos.y - 1, cellPos.z - 1),
-								Vector3int16.new(cellPos.x + 1, cellPos.y + 1, cellPos.z + 1)
+								Vector3int16.new(
+									cellPos.x - 1,
+									cellPos.y - 1,
+									cellPos.z - 1
+								),
+								Vector3int16.new(
+									cellPos.x + 1,
+									cellPos.y + 1,
+									cellPos.z + 1
+								)
 							)
 						)
 					end
@@ -2121,7 +2531,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 					-- Mark for undo.  It has to happen here or the selection display will come back also.
 					pcall(function()
-						game:GetService("ChangeHistoryService"):SetWaypoint "StamperSingle"
+						game:GetService("ChangeHistoryService")
+							:SetWaypoint "StamperSingle"
 					end)
 					return true
 				end
@@ -2142,12 +2553,19 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 		end
 
 		-- Post process: after positioning the part or model, restore transparency, material, anchored and collide states and create joints
-		if stampData.CurrentParts:IsA "Model" or stampData.CurrentParts:IsA "Tool" then
+		if
+			stampData.CurrentParts:IsA "Model"
+			or stampData.CurrentParts:IsA "Tool"
+		then
 			if stampData.CurrentParts:IsA "Model" then
 				-- Tyler's magical hack-code for allowing/preserving clones of both Surface and Manual Welds...  just don't ask X<
 				local manualWeldTable = {}
 				local manualWeldParentTable = {}
-				saveTheWelds(stampData.CurrentParts, manualWeldTable, manualWeldParentTable)
+				saveTheWelds(
+					stampData.CurrentParts,
+					manualWeldTable,
+					manualWeldParentTable
+				)
 				stampData.CurrentParts:BreakJoints()
 				stampData.CurrentParts:MakeJoints()
 				restoreTheWelds(manualWeldTable, manualWeldParentTable)
@@ -2155,7 +2573,8 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 
 			-- if it's a model, we also want to fill in the playerID and playerName tags, if it has those (e.g. for the friend-only door)
 			playerIdTag = stampData.CurrentParts:FindFirstChild "PlayerIdTag"
-			playerNameTag = stampData.CurrentParts:FindFirstChild "PlayerNameTag"
+			playerNameTag =
+				stampData.CurrentParts:FindFirstChild "PlayerNameTag"
 			if playerIdTag ~= nil then
 				tempPlayerValue = getPlayer()
 				if tempPlayerValue ~= nil then
@@ -2163,7 +2582,10 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 				end
 			end
 			if playerNameTag ~= nil then
-				if game:FindFirstChild "Players" and game.Players["LocalPlayer"] then
+				if
+					game:FindFirstChild "Players"
+					and game.Players["LocalPlayer"]
+				then
 					tempPlayerValue = game.Players.LocalPlayer
 					if tempPlayerValue ~= nil then
 						playerNameTag.Value = tempPlayerValue.Name
@@ -2177,7 +2599,9 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 				stringTag.Name = "RobloxModel"
 				stringTag.Parent = stampData.CurrentParts
 
-				if stampData.CurrentParts:FindFirstChild "RobloxStamper" == nil then
+				if
+					stampData.CurrentParts:FindFirstChild "RobloxStamper" == nil
+				then
 					local stringTag2 = Instance.new "BoolValue"
 					stringTag2.Name = "RobloxStamper"
 					stringTag2.Parent = stampData.CurrentParts
@@ -2289,21 +2713,30 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 	end
 
 	local function prepareUnjoinableSurfaces(modelCFrame, parts, whichSurface)
-		local AXIS_VECTORS = { Vector3.new(1, 0, 0), Vector3.new(0, 1, 0), Vector3.new(0, 0, 1) } -- maybe last one is negative?  TODO: check this!
+		local AXIS_VECTORS =
+			{ Vector3.new(1, 0, 0), Vector3.new(0, 1, 0), Vector3.new(0, 0, 1) } -- maybe last one is negative?  TODO: check this!
 		local isPositive = 1
 		if whichSurface < 0 then
 			isPositive = isPositive * -1
 			whichSurface = whichSurface * -1
 		end
-		local surfaceNormal = isPositive * modelCFrame:vectorToWorldSpace(AXIS_VECTORS[whichSurface])
+		local surfaceNormal = isPositive
+			* modelCFrame:vectorToWorldSpace(AXIS_VECTORS[whichSurface])
 
 		for i = 1, #parts do
 			local currPart = parts[i]
 
 			-- now just need to find which surface of currPart most closely match surfaceNormal and then set that to Unjoinable
-			local surfaceNormalInLocalCoords = currPart.CFrame:vectorToObjectSpace(surfaceNormal)
-			if math.abs(surfaceNormalInLocalCoords.X) > math.abs(surfaceNormalInLocalCoords.Y) then
-				if math.abs(surfaceNormalInLocalCoords.X) > math.abs(surfaceNormalInLocalCoords.Z) then
+			local surfaceNormalInLocalCoords =
+				currPart.CFrame:vectorToObjectSpace(surfaceNormal)
+			if
+				math.abs(surfaceNormalInLocalCoords.X)
+				> math.abs(surfaceNormalInLocalCoords.Y)
+			then
+				if
+					math.abs(surfaceNormalInLocalCoords.X)
+					> math.abs(surfaceNormalInLocalCoords.Z)
+				then
 					if surfaceNormalInLocalCoords.X > 0 then
 						currPart.RightSurface = "Unjoinable"
 					else
@@ -2317,7 +2750,10 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 					end
 				end
 			else
-				if math.abs(surfaceNormalInLocalCoords.Y) > math.abs(surfaceNormalInLocalCoords.Z) then
+				if
+					math.abs(surfaceNormalInLocalCoords.Y)
+					> math.abs(surfaceNormalInLocalCoords.Z)
+				then
 					if surfaceNormalInLocalCoords.Y > 0 then
 						currPart.TopSurface = "Unjoinable"
 					else
@@ -2347,9 +2783,17 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			for unjoinableSurface in string.gmatch(unjoinableTag.Value, "[^,]*") do
 				if tonumber(unjoinableSurface) then
 					if clone:IsA "Model" then
-						prepareUnjoinableSurfaces(clone:GetModelCFrame(), parts, tonumber(unjoinableSurface))
+						prepareUnjoinableSurfaces(
+							clone:GetModelCFrame(),
+							parts,
+							tonumber(unjoinableSurface)
+						)
 					else
-						prepareUnjoinableSurfaces(clone.CFrame, parts, tonumber(unjoinableSurface))
+						prepareUnjoinableSurfaces(
+							clone.CFrame,
+							parts,
+							tonumber(unjoinableSurface)
+						)
 					end
 				end
 			end
@@ -2377,7 +2821,10 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 			mouseTarget = Mouse.Target
 		end)
 
-		if mouseTarget and mouseTarget.Parent:FindFirstChild "RobloxModel" == nil then
+		if
+			mouseTarget
+			and mouseTarget.Parent:FindFirstChild "RobloxModel" == nil
+		then
 			game.JointsService:SetJoinAfterMoveTarget(mouseTarget)
 		else
 			game.JointsService:SetJoinAfterMoveTarget(nil)
@@ -2436,7 +2883,10 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 	local function resetStamperState(newModelToStamp)
 		-- if we have a new model, swap it out
 		if newModelToStamp then
-			if not newModelToStamp:IsA "Model" and not newModelToStamp:IsA "BasePart" then
+			if
+				not newModelToStamp:IsA "Model"
+				and not newModelToStamp:IsA "BasePart"
+			then
 				error "resetStamperState: newModelToStamp (first arg) is not nil, but not a model or part!"
 			end
 			modelToStamp = newModelToStamp
@@ -2455,19 +2905,21 @@ t.SetupStamperDragger = function(modelToStamp, Mouse, StampInModel, AllowedStamp
 	control.Stamped = stamped -- BoolValue that fires when user stamps
 	control.Paused = false
 
-	control.LoadNewModel =
-		function(newStampModel) -- allows us to specify a new stamper model to be used with this stamper
-			if newStampModel and not newStampModel:IsA "Model" and not newStampModel:IsA "BasePart" then
-				error "Control.LoadNewModel: newStampModel (first arg) is not a Model or Part!"
-				return nil
-			end
-			resetStamperState(newStampModel)
+	control.LoadNewModel = function(newStampModel) -- allows us to specify a new stamper model to be used with this stamper
+		if
+			newStampModel
+			and not newStampModel:IsA "Model"
+			and not newStampModel:IsA "BasePart"
+		then
+			error "Control.LoadNewModel: newStampModel (first arg) is not a Model or Part!"
+			return nil
 		end
+		resetStamperState(newStampModel)
+	end
 
-	control.ReloadModel =
-		function() -- will automatically set stamper to get a new model of current model and start stamping with new model
-			resetStamperState()
-		end
+	control.ReloadModel = function() -- will automatically set stamper to get a new model of current model and start stamping with new model
+		resetStamperState()
+	end
 
 	control.Pause = function() -- temporarily stops stamping, use resume to start up again
 		if not control.Paused then
@@ -2533,10 +2985,16 @@ end
 
 t.Help = function(funcNameOrFunc)
 	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
-	if funcNameOrFunc == "GetStampModel" or funcNameOrFunc == t.GetStampModel then
+	if
+		funcNameOrFunc == "GetStampModel"
+		or funcNameOrFunc == t.GetStampModel
+	then
 		return "Function GetStampModel.  Arguments: assetId, useAssetVersionId.  assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId.  Side effect: returns a model of the assetId, or a string with error message if something fails"
 	end
-	if funcNameOrFunc == "SetupStamperDragger" or funcNameOrFunc == t.SetupStamperDragger then
+	if
+		funcNameOrFunc == "SetupStamperDragger"
+		or funcNameOrFunc == t.SetupStamperDragger
+	then
 		return "Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4.  Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action."
 	end
 end

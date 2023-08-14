@@ -1,6 +1,7 @@
+print "[Mercury]: Loaded corescript 153556783"
+
 -- This is responsible for all touch controls we show (as of this writing, only on iOS)
 -- this includes character move thumbsticks, and buttons for jump, use of items, camera, etc.
--- Written by Ben Tkacheff, 2013
 
 -- obligatory stuff to make sure we don't access nil data
 while not Game do
@@ -51,13 +52,13 @@ if isSmallScreenDevice() then
 	jumpButtonSize = 70
 end
 local oldJumpTouches = {}
-local currentJumpTouch = nil
+local currentJumpTouch
 
 local CameraRotateSensitivity = 0.007
 local CameraRotateDeadZone = CameraRotateSensitivity * 16
 local CameraZoomSensitivity = 0.03
 local PinchZoomDelay = 0.2
-local cameraTouch = nil
+local cameraTouch
 
 -- make sure all of our images are good to go
 Game:GetService("ContentProvider"):Preload(touchControlsSheet)
@@ -88,14 +89,20 @@ function rotatePointAboutLocation(pointToRotate, pointToRotateAbout, radians)
 	local transformedPoint = pointToRotate
 
 	-- translate point back to origin:
-	transformedPoint = Vector2.new(transformedPoint.x - pointToRotateAbout.x, transformedPoint.y - pointToRotateAbout.y)
+	transformedPoint = Vector2.new(
+		transformedPoint.x - pointToRotateAbout.x,
+		transformedPoint.y - pointToRotateAbout.y
+	)
 
 	-- rotate point
-	local xNew = transformedPoint.x * cosAnglePercent - transformedPoint.y * sinAnglePercent
-	local yNew = transformedPoint.x * sinAnglePercent + transformedPoint.y * cosAnglePercent
+	local xNew = transformedPoint.x * cosAnglePercent
+		- transformedPoint.y * sinAnglePercent
+	local yNew = transformedPoint.x * sinAnglePercent
+		+ transformedPoint.y * cosAnglePercent
 
 	-- translate point back:
-	transformedPoint = Vector2.new(xNew + pointToRotateAbout.x, yNew + pointToRotateAbout.y)
+	transformedPoint =
+		Vector2.new(xNew + pointToRotateAbout.x, yNew + pointToRotateAbout.y)
 
 	return transformedPoint
 end
@@ -104,12 +111,17 @@ function dotProduct(v1, v2)
 	return ((v1.x * v2.x) + (v1.y * v2.y))
 end
 
-function stationaryThumbstickTouchMove(thumbstickFrame, thumbstickOuter, touchLocation)
+function stationaryThumbstickTouchMove(
+	thumbstickFrame,
+	thumbstickOuter,
+	touchLocation
+)
 	local thumbstickOuterCenterPosition = Vector2.new(
 		thumbstickOuter.Position.X.Offset + thumbstickOuter.AbsoluteSize.x / 2,
 		thumbstickOuter.Position.Y.Offset + thumbstickOuter.AbsoluteSize.y / 2
 	)
-	local centerDiff = DistanceBetweenTwoPoints(touchLocation, thumbstickOuterCenterPosition)
+	local centerDiff =
+		DistanceBetweenTwoPoints(touchLocation, thumbstickOuterCenterPosition)
 
 	-- thumbstick is moving outside our region, need to cap its distance
 	if centerDiff > (thumbstickSize / 2) then
@@ -125,10 +137,15 @@ function stationaryThumbstickTouchMove(thumbstickFrame, thumbstickOuter, touchLo
 			normal = Vector2.new(normal.x, 0)
 		end
 
-		local newThumbstickInnerPosition = thumbstickOuterCenterPosition + (normal * (thumbstickSize / 2))
-		thumbstickFrame.Position = transformFromCenterToTopLeft(newThumbstickInnerPosition, thumbstickFrame)
+		local newThumbstickInnerPosition = thumbstickOuterCenterPosition
+			+ (normal * (thumbstickSize / 2))
+		thumbstickFrame.Position = transformFromCenterToTopLeft(
+			newThumbstickInnerPosition,
+			thumbstickFrame
+		)
 	else
-		thumbstickFrame.Position = transformFromCenterToTopLeft(touchLocation, thumbstickFrame)
+		thumbstickFrame.Position =
+			transformFromCenterToTopLeft(touchLocation, thumbstickFrame)
 	end
 
 	return Vector2.new(
@@ -137,44 +154,69 @@ function stationaryThumbstickTouchMove(thumbstickFrame, thumbstickOuter, touchLo
 	)
 end
 
-function followThumbstickTouchMove(thumbstickFrame, thumbstickOuter, touchLocation)
+function followThumbstickTouchMove(
+	thumbstickFrame,
+	thumbstickOuter,
+	touchLocation
+)
 	local thumbstickOuterCenter = Vector2.new(
 		thumbstickOuter.Position.X.Offset + thumbstickOuter.AbsoluteSize.x / 2,
 		thumbstickOuter.Position.Y.Offset + thumbstickOuter.AbsoluteSize.y / 2
 	)
 
 	-- thumbstick is moving outside our region, need to position outer thumbstick texture carefully (to make look and feel like actual joystick controller)
-	if DistanceBetweenTwoPoints(touchLocation, thumbstickOuterCenter) > thumbstickSize / 2 then
+	if
+		DistanceBetweenTwoPoints(touchLocation, thumbstickOuterCenter)
+		> thumbstickSize / 2
+	then
 		local thumbstickInnerCenter = Vector2.new(
-			thumbstickFrame.Position.X.Offset + thumbstickFrame.AbsoluteSize.x / 2,
-			thumbstickFrame.Position.Y.Offset + thumbstickFrame.AbsoluteSize.y / 2
+			thumbstickFrame.Position.X.Offset
+				+ thumbstickFrame.AbsoluteSize.x / 2,
+			thumbstickFrame.Position.Y.Offset
+				+ thumbstickFrame.AbsoluteSize.y / 2
 		)
-		local movementVectorUnit =
-			Vector2.new(touchLocation.x - thumbstickInnerCenter.x, touchLocation.y - thumbstickInnerCenter.y).unit
+		local movementVectorUnit = Vector2.new(
+			touchLocation.x - thumbstickInnerCenter.x,
+			touchLocation.y - thumbstickInnerCenter.y
+		).unit
 
 		local outerToInnerVectorCurrent = Vector2.new(
 			thumbstickInnerCenter.x - thumbstickOuterCenter.x,
 			thumbstickInnerCenter.y - thumbstickOuterCenter.y
 		)
 		local outerToInnerVectorCurrentUnit = outerToInnerVectorCurrent.unit
-		local movementVector =
-			Vector2.new(touchLocation.x - thumbstickInnerCenter.x, touchLocation.y - thumbstickInnerCenter.y)
+		local movementVector = Vector2.new(
+			touchLocation.x - thumbstickInnerCenter.x,
+			touchLocation.y - thumbstickInnerCenter.y
+		)
 
 		-- First, find the angle between the new thumbstick movement vector,
 		-- and the vector between thumbstick inner and thumbstick outer.
 		-- We will use this to pivot thumbstick outer around thumbstick inner, gives a nice joystick feel
-		local crossOuterToInnerWithMovement = (outerToInnerVectorCurrentUnit.x * movementVectorUnit.y)
-			- (outerToInnerVectorCurrentUnit.y * movementVectorUnit.x)
-		local angle =
-			math.atan2(crossOuterToInnerWithMovement, dotProduct(outerToInnerVectorCurrentUnit, movementVectorUnit))
-		local anglePercent = angle * math.min(movementVector.magnitude / outerToInnerVectorCurrent.magnitude, 1.0)
+		local crossOuterToInnerWithMovement = (
+			outerToInnerVectorCurrentUnit.x * movementVectorUnit.y
+		) - (outerToInnerVectorCurrentUnit.y * movementVectorUnit.x)
+		local angle = math.atan2(
+			crossOuterToInnerWithMovement,
+			dotProduct(outerToInnerVectorCurrentUnit, movementVectorUnit)
+		)
+		local anglePercent = angle
+			* math.min(
+				movementVector.magnitude / outerToInnerVectorCurrent.magnitude,
+				1.0
+			)
 
 		-- If angle is significant, rotate about the inner thumbsticks current center
 		if math.abs(anglePercent) > 0.00001 then
-			local outerThumbCenter =
-				rotatePointAboutLocation(thumbstickOuterCenter, thumbstickInnerCenter, anglePercent)
-			thumbstickOuter.Position =
-				transformFromCenterToTopLeft(Vector2.new(outerThumbCenter.x, outerThumbCenter.y), thumbstickOuter)
+			local outerThumbCenter = rotatePointAboutLocation(
+				thumbstickOuterCenter,
+				thumbstickInnerCenter,
+				anglePercent
+			)
+			thumbstickOuter.Position = transformFromCenterToTopLeft(
+				Vector2.new(outerThumbCenter.x, outerThumbCenter.y),
+				thumbstickOuter
+			)
 		end
 
 		-- now just translate outer thumbstick to make sure it stays nears inner thumbstick
@@ -186,13 +228,27 @@ function followThumbstickTouchMove(thumbstickFrame, thumbstickOuter, touchLocati
 		)
 	end
 
-	thumbstickFrame.Position = transformFromCenterToTopLeft(touchLocation, thumbstickFrame)
+	thumbstickFrame.Position =
+		transformFromCenterToTopLeft(touchLocation, thumbstickFrame)
 
 	-- a bit of error checking to make sure thumbsticks stay close to eachother
-	local thumbstickFramePosition = Vector2.new(thumbstickFrame.Position.X.Offset, thumbstickFrame.Position.Y.Offset)
-	local thumbstickOuterPosition = Vector2.new(thumbstickOuter.Position.X.Offset, thumbstickOuter.Position.Y.Offset)
-	if DistanceBetweenTwoPoints(thumbstickFramePosition, thumbstickOuterPosition) > thumbstickSize / 2 then
-		local vectorWithLength = (thumbstickOuterPosition - thumbstickFramePosition).unit * thumbstickSize / 2
+	local thumbstickFramePosition = Vector2.new(
+		thumbstickFrame.Position.X.Offset,
+		thumbstickFrame.Position.Y.Offset
+	)
+	local thumbstickOuterPosition = Vector2.new(
+		thumbstickOuter.Position.X.Offset,
+		thumbstickOuter.Position.Y.Offset
+	)
+	if
+		DistanceBetweenTwoPoints(
+			thumbstickFramePosition,
+			thumbstickOuterPosition
+		) > thumbstickSize / 2
+	then
+		local vectorWithLength = (
+			thumbstickOuterPosition - thumbstickFramePosition
+		).unit * thumbstickSize / 2
 		thumbstickOuter.Position = UDim2.new(
 			0,
 			thumbstickFramePosition.x + vectorWithLength.x,
@@ -208,10 +264,17 @@ function followThumbstickTouchMove(thumbstickFrame, thumbstickOuter, touchLocati
 end
 
 function movementOutsideDeadZone(movementVector)
-	return ((math.abs(movementVector.x) > ThumbstickDeadZone) or (math.abs(movementVector.y) > ThumbstickDeadZone))
+	return (
+		(math.abs(movementVector.x) > ThumbstickDeadZone)
+		or (math.abs(movementVector.y) > ThumbstickDeadZone)
+	)
 end
 
-function constructThumbstick(defaultThumbstickPos, updateFunction, stationaryThumbstick)
+function constructThumbstick(
+	defaultThumbstickPos,
+	updateFunction,
+	stationaryThumbstick
+)
 	local thumbstickFrame = Instance.new "Frame"
 	thumbstickFrame.Name = "ThumbstickFrame"
 	thumbstickFrame.Active = true
@@ -235,7 +298,8 @@ function constructThumbstick(defaultThumbstickPos, updateFunction, stationaryThu
 	innerThumbstick.ImageRectOffset = Vector2.new(220, 0)
 	innerThumbstick.ImageRectSize = Vector2.new(111, 111)
 	innerThumbstick.BackgroundTransparency = 1
-	innerThumbstick.Size = UDim2.new(0, thumbstickSize / 2, 0, thumbstickSize / 2)
+	innerThumbstick.Size =
+		UDim2.new(0, thumbstickSize / 2, 0, thumbstickSize / 2)
 	innerThumbstick.Position = UDim2.new(
 		0,
 		thumbstickFrame.Size.X.Offset / 2 - thumbstickSize / 4,
@@ -245,9 +309,9 @@ function constructThumbstick(defaultThumbstickPos, updateFunction, stationaryThu
 	innerThumbstick.Parent = thumbstickFrame
 	innerThumbstick.ZIndex = 2
 
-	local thumbstickTouch = nil
-	local userInputServiceTouchMovedCon = nil
-	local userInputSeviceTouchEndedCon = nil
+	local thumbstickTouch
+	local userInputServiceTouchMovedCon
+	local userInputSeviceTouchEndedCon
 
 	local startInputTracking = function(inputObject)
 		if thumbstickTouch then
@@ -266,52 +330,68 @@ function constructThumbstick(defaultThumbstickPos, updateFunction, stationaryThu
 		thumbstickTouch = inputObject
 		table.insert(thumbstickTouches, thumbstickTouch)
 
-		thumbstickFrame.Position = transformFromCenterToTopLeft(thumbstickTouch.Position, thumbstickFrame)
+		thumbstickFrame.Position = transformFromCenterToTopLeft(
+			thumbstickTouch.Position,
+			thumbstickFrame
+		)
 		outerThumbstick.Position = thumbstickFrame.Position
 
-		userInputServiceTouchMovedCon = userInputService.TouchMoved:connect(function(movedInput)
-			if movedInput == thumbstickTouch then
-				local movementVector = nil
-				if stationaryThumbstick then
-					movementVector = stationaryThumbstickTouchMove(
-						thumbstickFrame,
-						outerThumbstick,
-						Vector2.new(movedInput.Position.x, movedInput.Position.y)
-					)
-				else
-					movementVector = followThumbstickTouchMove(
-						thumbstickFrame,
-						outerThumbstick,
-						Vector2.new(movedInput.Position.x, movedInput.Position.y)
-					)
-				end
+		userInputServiceTouchMovedCon = userInputService.TouchMoved:connect(
+			function(movedInput)
+				if movedInput == thumbstickTouch then
+					local movementVector
+					if stationaryThumbstick then
+						movementVector = stationaryThumbstickTouchMove(
+							thumbstickFrame,
+							outerThumbstick,
+							Vector2.new(
+								movedInput.Position.x,
+								movedInput.Position.y
+							)
+						)
+					else
+						movementVector = followThumbstickTouchMove(
+							thumbstickFrame,
+							outerThumbstick,
+							Vector2.new(
+								movedInput.Position.x,
+								movedInput.Position.y
+							)
+						)
+					end
 
-				if updateFunction then
-					updateFunction(movementVector, outerThumbstick.Size.X.Offset / 2)
-				end
-			end
-		end)
-		userInputSeviceTouchEndedCon = userInputService.TouchEnded:connect(function(endedInput)
-			if endedInput == thumbstickTouch then
-				if updateFunction then
-					updateFunction(Vector2.new(0, 0), 1)
-				end
-
-				userInputSeviceTouchEndedCon:disconnect()
-				userInputServiceTouchMovedCon:disconnect()
-
-				thumbstickFrame.Position = defaultThumbstickPos
-				outerThumbstick.Position = defaultThumbstickPos
-
-				for i, object in pairs(thumbstickTouches) do
-					if object == thumbstickTouch then
-						table.remove(thumbstickTouches, i)
-						break
+					if updateFunction then
+						updateFunction(
+							movementVector,
+							outerThumbstick.Size.X.Offset / 2
+						)
 					end
 				end
-				thumbstickTouch = nil
 			end
-		end)
+		)
+		userInputSeviceTouchEndedCon = userInputService.TouchEnded:connect(
+			function(endedInput)
+				if endedInput == thumbstickTouch then
+					if updateFunction then
+						updateFunction(Vector2.new(0, 0), 1)
+					end
+
+					userInputSeviceTouchEndedCon:disconnect()
+					userInputServiceTouchMovedCon:disconnect()
+
+					thumbstickFrame.Position = defaultThumbstickPos
+					outerThumbstick.Position = defaultThumbstickPos
+
+					for i, object in pairs(thumbstickTouches) do
+						if object == thumbstickTouch then
+							table.remove(thumbstickTouches, i)
+							break
+						end
+					end
+					thumbstickTouch = nil
+				end
+			end
+		)
 	end
 
 	userInputService.Changed:connect(function(prop)
@@ -335,28 +415,43 @@ function setupCharacterMovement(parentFrame)
 				lastMaxMovement = maxMovement
 				-- sometimes rounding error will not allow us to go max speed at some
 				-- thumbstick angles, fix this with a bit of fudging near 100% throttle
-				if movementVector.magnitude / maxMovement > ThumbstickMaxPercentGive then
+				if
+					movementVector.magnitude / maxMovement
+					> ThumbstickMaxPercentGive
+				then
 					maxMovement = movementVector.magnitude - 1
 				end
 				moveCharacterFunc(localPlayer, movementVector, maxMovement)
 			else
 				lastMovementVector = Vector2.new(0, 0)
 				lastMaxMovement = 1
-				moveCharacterFunc(localPlayer, lastMovementVector, lastMaxMovement)
+				moveCharacterFunc(
+					localPlayer,
+					lastMovementVector,
+					lastMaxMovement
+				)
 			end
 		end
 	end
 
-	local thumbstickPos = UDim2.new(0, thumbstickSize / 2, 1, -thumbstickSize * 1.75)
+	local thumbstickPos =
+		UDim2.new(0, thumbstickSize / 2, 1, -thumbstickSize * 1.75)
 	if isSmallScreenDevice() then
-		thumbstickPos = UDim2.new(0, (thumbstickSize / 2) - 10, 1, -thumbstickSize - 20)
+		thumbstickPos =
+			UDim2.new(0, (thumbstickSize / 2) - 10, 1, -thumbstickSize - 20)
 	end
-	local characterThumbstick = constructThumbstick(thumbstickPos, moveCharacterFunction, false)
+	local characterThumbstick =
+		constructThumbstick(thumbstickPos, moveCharacterFunction, false)
 	characterThumbstick.Name = "CharacterThumbstick"
 	characterThumbstick.Parent = parentFrame
 
 	local refreshCharacterMovement = function()
-		if localPlayer and moveCharacterFunc and lastMovementVector and lastMaxMovement then
+		if
+			localPlayer
+			and moveCharacterFunc
+			and lastMovementVector
+			and lastMaxMovement
+		then
 			moveCharacterFunc(localPlayer, lastMovementVector, lastMaxMovement)
 		end
 	end
@@ -372,9 +467,11 @@ function setupJumpButton(parentFrame)
 	jumpButton.ImageRectSize = Vector2.new(174, 174)
 	jumpButton.Size = UDim2.new(0, jumpButtonSize, 0, jumpButtonSize)
 	if isSmallScreenDevice() then
-		jumpButton.Position = UDim2.new(1, -(jumpButtonSize * 2.25), 1, -jumpButtonSize - 20)
+		jumpButton.Position =
+			UDim2.new(1, -(jumpButtonSize * 2.25), 1, -jumpButtonSize - 20)
 	else
-		jumpButton.Position = UDim2.new(1, -(jumpButtonSize * 2.75), 1, -jumpButtonSize - 120)
+		jumpButton.Position =
+			UDim2.new(1, -(jumpButtonSize * 2.75), 1, -jumpButtonSize - 120)
 	end
 
 	local playerJumpFunc = localPlayer.JumpCharacter
@@ -464,16 +561,16 @@ function isTouchUsedByThumbstick(touch)
 end
 
 function setupCameraControl(parentFrame, refreshCharacterMoveFunc)
-	local lastPos = nil
+	local lastPos
 	local hasRotatedCamera = false
 	local rotateCameraFunc = userInputService.RotateCamera
 
 	local pinchTime = -1
 	local shouldPinch = false
-	local lastPinchScale = nil
+	local lastPinchScale
 	local zoomCameraFunc = userInputService.ZoomCamera
 	local pinchTouches = {}
-	local pinchFrame = nil
+	local pinchFrame
 
 	local resetCameraRotateState = function()
 		cameraTouch = nil
@@ -509,35 +606,48 @@ function setupCameraControl(parentFrame, refreshCharacterMoveFunc)
 
 			if lastPinchScale == nil then -- first pinch move, just set up scale
 				if inputObject == firstTouch then
-					lastPinchScale = (inputObject.Position - secondTouch.Position).magnitude
+					lastPinchScale = (
+						inputObject.Position - secondTouch.Position
+					).magnitude
 					firstTouch = inputObject
 				elseif inputObject == secondTouch then
-					lastPinchScale = (inputObject.Position - firstTouch.Position).magnitude
+					lastPinchScale = (
+						inputObject.Position - firstTouch.Position
+					).magnitude
 					secondTouch = inputObject
 				end
 			else -- we are now actually pinching, do comparison to last pinch size
 				local newPinchDistance = 0
 				if inputObject == firstTouch then
-					newPinchDistance = (inputObject.Position - secondTouch.Position).magnitude
+					newPinchDistance = (
+						inputObject.Position - secondTouch.Position
+					).magnitude
 					firstTouch = inputObject
 				elseif inputObject == secondTouch then
-					newPinchDistance = (inputObject.Position - firstTouch.Position).magnitude
+					newPinchDistance = (
+						inputObject.Position - firstTouch.Position
+					).magnitude
 					secondTouch = inputObject
 				end
 				if newPinchDistance ~= 0 then
 					local pinchDiff = newPinchDistance - lastPinchScale
 					if pinchDiff ~= 0 then
-						zoomCameraFunc(userInputService, (pinchDiff * CameraZoomSensitivity))
+						zoomCameraFunc(
+							userInputService,
+							(pinchDiff * CameraZoomSensitivity)
+						)
 					end
 					lastPinchScale = newPinchDistance
 				end
 			end
 		end)
-		pinchFrame.InputEnded:connect(function(inputObject) -- pinch is over, destroy all
-			if inputObject == firstTouch or inputObject == secondTouch then
-				resetPinchState()
+		pinchFrame.InputEnded:connect(
+			function(inputObject) -- pinch is over, destroy all
+				if inputObject == firstTouch or inputObject == secondTouch then
+					resetPinchState()
+				end
 			end
-		end)
+		)
 	end
 
 	local pinchGestureReceivedTouch = function(inputObject)
@@ -572,7 +682,8 @@ function setupCameraControl(parentFrame, refreshCharacterMoveFunc)
 
 		if cameraTouch == nil and not usedByThumbstick then
 			cameraTouch = inputObject
-			lastPos = Vector2.new(cameraTouch.Position.x, cameraTouch.Position.y)
+			lastPos =
+				Vector2.new(cameraTouch.Position.x, cameraTouch.Position.y)
 			-- lastTick = tick()
 		end
 	end)
@@ -584,11 +695,15 @@ function setupCameraControl(parentFrame, refreshCharacterMoveFunc)
 			return
 		end
 
-		local newPos = Vector2.new(cameraTouch.Position.x, cameraTouch.Position.y)
+		local newPos =
+			Vector2.new(cameraTouch.Position.x, cameraTouch.Position.y)
 		local touchDiff = (lastPos - newPos) * CameraRotateSensitivity
 
 		-- first time rotating outside deadzone, just setup for next changed event
-		if not hasRotatedCamera and (touchDiff.magnitude > CameraRotateDeadZone) then
+		if
+			not hasRotatedCamera
+			and (touchDiff.magnitude > CameraRotateDeadZone)
+		then
 			hasRotatedCamera = true
 			lastPos = newPos
 		end
@@ -630,7 +745,10 @@ function setupTouchControls()
 		end
 
 		-- kill camera pan if the touch is used by some user controls
-		if inputObject == cameraTouch and inputObject.UserInputState == Enum.UserInputState.Begin then
+		if
+			inputObject == cameraTouch
+			and inputObject.UserInputState == Enum.UserInputState.Begin
+		then
 			cameraTouch = nil
 		end
 	end)

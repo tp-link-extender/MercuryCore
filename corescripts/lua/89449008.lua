@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 89449008"
 -- A couple of necessary functions
 local function waitForChild(instance, name)
 	assert(instance)
@@ -48,9 +49,9 @@ local browsingMenu = false
 local mouseEnterCons = {}
 local mouseClickCons = {}
 
-local characterChildAddedCon = nil
-local characterChildRemovedCon = nil
-local backpackAddCon = nil
+local characterChildAddedCon
+local characterChildRemovedCon
+local backpackAddCon
 
 local playerBackpack = waitForChild(player, "Backpack")
 
@@ -68,16 +69,19 @@ local gearButton = waitForChild(grid, "GearButton")
 
 local swapSlot = waitForChild(script.Parent, "SwapSlot")
 
-local backpackManager = waitForChild(script.Parent, "CoreScripts/BackpackScripts/BackpackManager")
+local backpackManager =
+	waitForChild(script.Parent, "CoreScripts/BackpackScripts/BackpackManager")
 local backpackOpenEvent = waitForChild(backpackManager, "BackpackOpenEvent")
 local backpackCloseEvent = waitForChild(backpackManager, "BackpackCloseEvent")
 local tabClickedEvent = waitForChild(backpackManager, "TabClickedEvent")
 local resizeEvent = waitForChild(backpackManager, "ResizeEvent")
-local searchRequestedEvent = waitForChild(backpackManager, "SearchRequestedEvent")
+local searchRequestedEvent =
+	waitForChild(backpackManager, "SearchRequestedEvent")
 local tellBackpackReadyFunc = waitForChild(backpackManager, "BackpackReady")
 
 -- creating scroll bar early as to make sure items get placed correctly
-local scrollFrame, scrollUp, scrollDown, recalculateScroll = RbxGui.CreateScrollingFrame(nil, "grid", Vector2.new(6, 6))
+local scrollFrame, scrollUp, scrollDown, recalculateScroll =
+	RbxGui.CreateScrollingFrame(nil, "grid", Vector2.new(6, 6))
 
 scrollFrame.Position = UDim2.new(0, 0, 0, 30)
 scrollFrame.Size = UDim2.new(1, 0, 1, -30)
@@ -97,7 +101,8 @@ scrollDown.Position = UDim2.new(0, 0, 1, -17)
 scrollUp.Parent = scroller
 scrollDown.Parent = scroller
 
-local scrollFrameLoadout, scrollUpLoadout, scrollDownLoadout, recalculateScrollLoadout = RbxGui.CreateScrollingFrame()
+local scrollFrameLoadout, scrollUpLoadout, scrollDownLoadout, recalculateScrollLoadout =
+	RbxGui.CreateScrollingFrame()
 
 scrollFrameLoadout.Position = UDim2.new(0, 0, 0, 0)
 scrollFrameLoadout.Size = UDim2.new(1, 0, 1, 0)
@@ -171,7 +176,8 @@ function resize()
 
 	waitForChild(gearPreview, "GearImage")
 	gearPreview.GearImage.Size = UDim2.new(0, size, 0, size)
-	gearPreview.GearImage.Position = UDim2.new(0, gearPreview.AbsoluteSize.X / 2 - size / 2, 0.75, -size)
+	gearPreview.GearImage.Position =
+		UDim2.new(0, gearPreview.AbsoluteSize.X / 2 - size / 2, 0.75, -size)
 
 	resizeGrid()
 end
@@ -203,9 +209,9 @@ function addToGrid(child)
 			end
 		end
 	end)
-	local ancestryCon = nil
+	local ancestryCon
 	ancestryCon = child.AncestryChanged:connect(function(_, _)
-		local thisObject = nil
+		local thisObject
 		for _, v in pairs(backpackItems) do
 			if v == child then
 				thisObject = v
@@ -215,7 +221,10 @@ function addToGrid(child)
 
 		waitForProperty(player, "Character")
 		waitForChild(player, "Backpack")
-		if child.Parent ~= player.Backpack and child.Parent ~= player.Character then
+		if
+			child.Parent ~= player.Backpack
+			and child.Parent ~= player.Character
+		then
 			if ancestryCon then
 				ancestryCon:disconnect()
 			end
@@ -264,7 +273,7 @@ function previewGear(button)
 end
 
 function findEmptySlot()
-	local smallestNum = nil
+	local smallestNum
 	local loadout = currentLoadout:GetChildren()
 	for i = 1, #loadout do
 		if loadout[i]:IsA "Frame" and #loadout[i]:GetChildren() <= 0 then
@@ -286,16 +295,22 @@ end
 function checkForSwap(button, x, y)
 	local loadoutChildren = currentLoadout:GetChildren()
 	for i = 1, #loadoutChildren do
-		if loadoutChildren[i]:IsA "Frame" and string.find(loadoutChildren[i].Name, "Slot") then
+		if
+			loadoutChildren[i]:IsA "Frame"
+			and string.find(loadoutChildren[i].Name, "Slot")
+		then
 			if
 				x >= loadoutChildren[i].AbsolutePosition.x
-				and x <= (loadoutChildren[i].AbsolutePosition.x + loadoutChildren[i].AbsoluteSize.x)
+				and x
+					<= (loadoutChildren[i].AbsolutePosition.x + loadoutChildren[i].AbsoluteSize.x)
 			then
 				if
 					y >= loadoutChildren[i].AbsolutePosition.y
-					and y <= (loadoutChildren[i].AbsolutePosition.y + loadoutChildren[i].AbsoluteSize.y)
+					and y
+						<= (loadoutChildren[i].AbsolutePosition.y + loadoutChildren[i].AbsoluteSize.y)
 				then
-					local slot = tonumber(string.sub(loadoutChildren[i].Name, 5))
+					local slot =
+						tonumber(string.sub(loadoutChildren[i].Name, 5))
 					swapGearSlot(slot, button)
 					return true
 				end
@@ -328,7 +343,7 @@ function resizeGrid()
 					unequipMenu.Parent = buttonClone
 				end
 
-				local beginPos = nil
+				local beginPos
 				buttonClone.DragBegin:connect(function(value)
 					waitForChild(buttonClone, "Background")
 					buttonClone["Background"].ZIndex = 10
@@ -358,22 +373,29 @@ function resizeGrid()
 					end
 				end)
 				local clickTime = tick()
-				mouseEnterCons[buttonClone] = buttonClone.MouseEnter:connect(function()
-					previewGear(buttonClone)
-				end)
-				mouseClickCons[buttonClone] = buttonClone.MouseButton1Click:connect(function()
-					local newClickTime = tick()
-					if buttonClone.Active and (newClickTime - clickTime) < 0.5 then
-						local slot = findEmptySlot()
-						if slot then
-							buttonClone.ZIndex = 1
-							swapGearSlot(slot, buttonClone)
-						end
-					else
-						buttonClick(buttonClone)
+				mouseEnterCons[buttonClone] = buttonClone.MouseEnter:connect(
+					function()
+						previewGear(buttonClone)
 					end
-					clickTime = newClickTime
-				end)
+				)
+				mouseClickCons[buttonClone] = buttonClone.MouseButton1Click:connect(
+					function()
+						local newClickTime = tick()
+						if
+							buttonClone.Active
+							and (newClickTime - clickTime) < 0.5
+						then
+							local slot = findEmptySlot()
+							if slot then
+								buttonClone.ZIndex = 1
+								swapGearSlot(slot, buttonClone)
+							end
+						else
+							buttonClick(buttonClone)
+						end
+						clickTime = newClickTime
+					end
+				)
 			end
 		end
 	end
@@ -405,7 +427,10 @@ function inLoadout(gear)
 		if children[i]:IsA "Frame" then
 			local button = children[i]:GetChildren()
 			if #button > 0 then
-				if button[1].GearReference.Value and button[1].GearReference.Value == gear then
+				if
+					button[1].GearReference.Value
+					and button[1].GearReference.Value == gear
+				then
 					return true
 				end
 			end
@@ -417,7 +442,7 @@ end
 function updateGridActive()
 	for _, v in pairs(backpackItems) do
 		if buttons[v] then
-			local gear = nil
+			local gear
 			local gearRef = buttons[v]:FindFirstChild "GearReference"
 
 			if gearRef then
@@ -435,9 +460,12 @@ end
 
 function centerGear(loadoutChildren)
 	local gearButtons = {}
-	local lastSlotAdd = nil
+	local lastSlotAdd
 	for i = 1, #loadoutChildren do
-		if loadoutChildren[i]:IsA "Frame" and #loadoutChildren[i]:GetChildren() > 0 then
+		if
+			loadoutChildren[i]:IsA "Frame"
+			and #loadoutChildren[i]:GetChildren() > 0
+		then
 			if loadoutChildren[i].Name == "Slot0" then
 				lastSlotAdd = loadoutChildren[i]
 			else
@@ -502,8 +530,13 @@ function loadoutCheck(child, selectState)
 	end
 	for _, v in pairs(backpackItems) do
 		if buttons[v] then
-			if child:FindFirstChild "GearReference" and buttons[v]:FindFirstChild "GearReference" then
-				if buttons[v].GearReference.Value == child.GearReference.Value then
+			if
+				child:FindFirstChild "GearReference"
+				and buttons[v]:FindFirstChild "GearReference"
+			then
+				if
+					buttons[v].GearReference.Value == child.GearReference.Value
+				then
 					buttons[v].Active = selectState
 					break
 				end
@@ -569,7 +602,10 @@ local UnequipGearMenuClick = function(element, menu)
 		for i = 1, #loadoutChildren do
 			if loadoutChildren[i]:IsA "Frame" then
 				local button = loadoutChildren[i]:GetChildren()
-				if button[1] and button[1].GearReference.Value == gearToUnequip then
+				if
+					button[1]
+					and button[1].GearReference.Value == gearToUnequip
+				then
 					slot = button[1].SlotNumber.Text
 					break
 				end
@@ -583,9 +619,11 @@ function setupCharacterConnections()
 	if backpackAddCon then
 		backpackAddCon:disconnect()
 	end
-	backpackAddCon = game.Players.LocalPlayer.Backpack.ChildAdded:connect(function(child)
-		addToGrid(child)
-	end)
+	backpackAddCon = game.Players.LocalPlayer.Backpack.ChildAdded:connect(
+		function(child)
+			addToGrid(child)
+		end
+	)
 
 	-- make sure we get all the children
 	local backpackChildren = game.Players.LocalPlayer.Backpack:GetChildren()
@@ -596,17 +634,21 @@ function setupCharacterConnections()
 	if characterChildAddedCon then
 		characterChildAddedCon:disconnect()
 	end
-	characterChildAddedCon = game.Players.LocalPlayer.Character.ChildAdded:connect(function(child)
-		addToGrid(child)
-		updateGridActive()
-	end)
+	characterChildAddedCon = game.Players.LocalPlayer.Character.ChildAdded:connect(
+		function(child)
+			addToGrid(child)
+			updateGridActive()
+		end
+	)
 
 	if characterChildRemovedCon then
 		characterChildRemovedCon:disconnect()
 	end
-	characterChildRemovedCon = game.Players.LocalPlayer.Character.ChildRemoved:connect(function(_)
-		updateGridActive()
-	end)
+	characterChildRemovedCon = game.Players.LocalPlayer.Character.ChildRemoved:connect(
+		function(_)
+			updateGridActive()
+		end
+	)
 
 	wait()
 	centerGear(currentLoadout:GetChildren())
@@ -826,7 +868,10 @@ function getGearContextMenu()
 end
 
 function coreGuiChanged(coreGuiType, enabled)
-	if coreGuiType == Enum.CoreGuiType.Backpack or coreGuiType == Enum.CoreGuiType.All then
+	if
+		coreGuiType == Enum.CoreGuiType.Backpack
+		or coreGuiType == Enum.CoreGuiType.All
+	then
 		if not enabled then
 			backpack.Gear.Visible = false
 		end
@@ -860,12 +905,18 @@ currentLoadout.ChildRemoved:connect(function(child)
 end)
 
 currentLoadout.DescendantAdded:connect(function(descendant)
-	if not backpack.Visible and (descendant:IsA "ImageButton" or descendant:IsA "TextButton") then
+	if
+		not backpack.Visible
+		and (descendant:IsA "ImageButton" or descendant:IsA "TextButton")
+	then
 		centerGear(currentLoadout:GetChildren())
 	end
 end)
 currentLoadout.DescendantRemoving:connect(function(descendant)
-	if not backpack.Visible and (descendant:IsA "ImageButton" or descendant:IsA "TextButton") then
+	if
+		not backpack.Visible
+		and (descendant:IsA "ImageButton" or descendant:IsA "TextButton")
+	then
 		wait()
 		centerGear(currentLoadout:GetChildren())
 	end
@@ -892,9 +943,11 @@ player.ChildAdded:connect(function(child)
 		if backpackAddCon then
 			backpackAddCon:disconnect()
 		end
-		backpackAddCon = game.Players.LocalPlayer.Backpack.ChildAdded:connect(function(child)
-			addToGrid(child)
-		end)
+		backpackAddCon = game.Players.LocalPlayer.Backpack.ChildAdded:connect(
+			function(child)
+				addToGrid(child)
+			end
+		)
 	end
 end)
 
@@ -906,7 +959,10 @@ end)
 
 local loadoutChildren = currentLoadout:GetChildren()
 for i = 1, #loadoutChildren do
-	if loadoutChildren[i]:IsA "Frame" and string.find(loadoutChildren[i].Name, "Slot") then
+	if
+		loadoutChildren[i]:IsA "Frame"
+		and string.find(loadoutChildren[i].Name, "Slot")
+	then
 		loadoutChildren[i].ChildRemoved:connect(function()
 			updateGridActive()
 		end)
@@ -918,7 +974,10 @@ end
 ------------------------- End Lifelong Connections -----------------------
 
 pcall(function()
-	coreGuiChanged(Enum.CoreGuiType.Backpack, Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack))
+	coreGuiChanged(
+		Enum.CoreGuiType.Backpack,
+		Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+	)
 	Game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
@@ -939,9 +998,11 @@ if characterChildAddedCon == nil and game.Players.LocalPlayer["Character"] then
 	setupCharacterConnections()
 end
 if not backpackAddCon then
-	backpackAddCon = game.Players.LocalPlayer.Backpack.ChildAdded:connect(function(child)
-		addToGrid(child)
-	end)
+	backpackAddCon = game.Players.LocalPlayer.Backpack.ChildAdded:connect(
+		function(child)
+			addToGrid(child)
+		end
+	)
 end
 
 backpackOpenEvent.Event:connect(backpackOpenHandler)

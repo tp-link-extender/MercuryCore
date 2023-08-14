@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 53878047"
 -- This script creates almost all gui elements found in the backpack (warning: there are a lot!)
 -- TODO: automate this process
 
@@ -49,7 +50,7 @@ CurrentLoadout.Parent = gui
 local CLBackground = Instance.new "ImageLabel"
 CLBackground.Name = "Background"
 CLBackground.Size = UDim2.new(1.2, 0, 1.2, 0)
-CLBackground.Image = "http://www.roblox.com/asset/?id=96536002"
+CLBackground.Image = "http://banland.xyz/asset/?id=96536002"
 CLBackground.BackgroundTransparency = 1
 CLBackground.Position = UDim2.new(-0.1, 0, -0.1, 0)
 CLBackground.ZIndex = 0.0
@@ -59,7 +60,7 @@ CLBackground.Visible = false
 local BackgroundUp = Instance.new "ImageLabel"
 BackgroundUp.Size = UDim2.new(1, 0, 0.025, 1)
 BackgroundUp.Position = UDim2.new(0, 0, 0, 0)
-BackgroundUp.Image = "http://www.roblox.com/asset/?id=97662207"
+BackgroundUp.Image = "http://banland.xyz/asset/?id=97662207"
 BackgroundUp.BackgroundTransparency = 1
 BackgroundUp.Parent = CLBackground
 
@@ -73,7 +74,7 @@ BackpackButton.RobloxLocked = true
 BackpackButton.Visible = false
 BackpackButton.Name = "BackpackButton"
 BackpackButton.BackgroundTransparency = 1
-BackpackButton.Image = "http://www.roblox.com/asset/?id=97617958"
+BackpackButton.Image = "http://banland.xyz/asset/?id=97617958"
 BackpackButton.Position = UDim2.new(0.5, -60, 1, -108)
 BackpackButton.Size = UDim2.new(0, 120, 0, 18)
 waitForChild(gui, "ControlFrame")
@@ -106,7 +107,12 @@ for i = 0, NumSlots do
 
 	if gui.AbsoluteSize.Y <= 320 then
 		slotFrame.Position = UDim2.new(0, (i - 1) * 60, 0, -50)
-		print("Well got here", slotFrame, slotFrame.Position.X.Scale, slotFrame.Position.X.Offset)
+		print(
+			"Well got here",
+			slotFrame,
+			slotFrame.Position.X.Scale,
+			slotFrame.Position.X.Offset
+		)
 	end
 	if gui.AbsoluteSize.Y <= 320 and i == 0 then
 		slotFrame:Destroy()
@@ -127,14 +133,14 @@ TempSlot.ZIndex = 3.0
 local slotBackground = Instance.new "ImageLabel"
 slotBackground.Name = "Background"
 slotBackground.BackgroundTransparency = 1
-slotBackground.Image = "http://www.roblox.com/asset/?id=97613075"
+slotBackground.Image = "http://banland.xyz/asset/?id=97613075"
 slotBackground.Size = UDim2.new(1, 0, 1, 0)
 slotBackground.Parent = TempSlot
 
 local HighLight = Instance.new "ImageLabel"
 HighLight.Name = "Highlight"
 HighLight.BackgroundTransparency = 1
-HighLight.Image = "http://www.roblox.com/asset/?id=97643886"
+HighLight.Image = "http://banland.xyz/asset/?id=97643886"
 HighLight.Size = UDim2.new(1, 0, 1, 0)
 --HighLight.Parent = TempSlot
 HighLight.Visible = false
@@ -328,8 +334,9 @@ closeButton.Modal = true
 local XImage = Instance.new "ImageLabel"
 XImage.RobloxLocked = true
 XImage.Name = "XImage"
-game:GetService("ContentProvider"):Preload "http://www.roblox.com/asset/?id=75547445"
-XImage.Image = "http://www.roblox.com/asset/?id=75547445" --TODO: move to rbxasset
+game:GetService("ContentProvider")
+	:Preload "http://banland.xyz/asset/?id=75547445"
+XImage.Image = "http://banland.xyz/asset/?id=75547445" --TODO: move to rbxasset
 XImage.BackgroundTransparency = 1
 XImage.Position = UDim2.new(-0.25, -1, -0.25, -1)
 XImage.Size = UDim2.new(1.5, 2, 1.5, 2)
@@ -431,7 +438,7 @@ GearButton.Parent = GearGrid
 local slotBackground = Instance.new "ImageLabel"
 slotBackground.Name = "Background"
 slotBackground.BackgroundTransparency = 1
-slotBackground.Image = "http://www.roblox.com/asset/?id=97613075"
+slotBackground.Image = "http://banland.xyz/asset/?id=97613075"
 slotBackground.Size = UDim2.new(1, 0, 1, 0)
 slotBackground.Parent = GearButton
 
@@ -760,31 +767,43 @@ CharacterPane.Parent = Wardrobe
 
 --CharacterPane Children
 local FaceFrame = makeCharFrame("FacesFrame", CharacterPane)
-game:GetService("ContentProvider"):Preload "http://www.roblox.com/asset/?id=75460621"
+game:GetService("ContentProvider")
+	:Preload "http://banland.xyz/asset/?id=75460621"
 makeZone(
 	"FaceZone",
-	"http://www.roblox.com/asset/?id=75460621",
+	"http://banland.xyz/asset/?id=75460621",
 	UDim2.new(0, 157, 0, 137),
 	UDim2.new(0.5, -78, 0.5, -68),
 	FaceFrame
 )
-makeStyledButton("Face", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.5, -135), FaceFrame)
+makeStyledButton(
+	"Face",
+	UDim2.new(0, 64, 0, 64),
+	UDim2.new(0.5, -32, 0.5, -135),
+	FaceFrame
+)
 
 local HeadFrame = makeCharFrame("HeadsFrame", CharacterPane)
 makeZone(
 	"FaceZone",
-	"http://www.roblox.com/asset/?id=75460621",
+	"http://banland.xyz/asset/?id=75460621",
 	UDim2.new(0, 157, 0, 137),
 	UDim2.new(0.5, -78, 0.5, -68),
 	HeadFrame
 )
-makeStyledButton("Head", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.5, -135), HeadFrame)
+makeStyledButton(
+	"Head",
+	UDim2.new(0, 64, 0, 64),
+	UDim2.new(0.5, -32, 0.5, -135),
+	HeadFrame
+)
 
 local HatsFrame = makeCharFrame("HatsFrame", CharacterPane)
-game:GetService("ContentProvider"):Preload "http://www.roblox.com/asset/?id=75457888"
+game:GetService("ContentProvider")
+	:Preload "http://banland.xyz/asset/?id=75457888"
 local HatsZone = makeZone(
 	"HatsZone",
-	"http://www.roblox.com/asset/?id=75457888",
+	"http://banland.xyz/asset/?id=75457888",
 	UDim2.new(0, 186, 0, 184),
 	UDim2.new(0.5, -93, 0.5, -100),
 	HatsFrame
@@ -812,10 +831,11 @@ makeStyledButton(
 )
 
 local PantsFrame = makeCharFrame("PantsFrame", CharacterPane)
-game:GetService("ContentProvider"):Preload "http://www.roblox.com/asset/?id=75457920"
+game:GetService("ContentProvider")
+	:Preload "http://banland.xyz/asset/?id=75457920"
 makeZone(
 	"PantsZone",
-	"http://www.roblox.com/asset/?id=75457920",
+	"http://banland.xyz/asset/?id=75457920",
 	UDim2.new(0, 121, 0, 99),
 	UDim2.new(0.5, -60, 0.5, -100),
 	PantsFrame
@@ -860,7 +880,12 @@ local leftLegButton = makeStyledButton(
 	MeshFrame,
 	Enum.ButtonStyle.RobloxButton
 )
-makeTextLabel("LeftLegLabel", "Left Leg", UDim2.new(0.5, -16, 0, -25), leftLegButton)
+makeTextLabel(
+	"LeftLegLabel",
+	"Left Leg",
+	UDim2.new(0.5, -16, 0, -25),
+	leftLegButton
+)
 local rightLegButton = makeStyledButton(
 	"RightLegMeshButton",
 	UDim2.new(0, 64, 0, 64),
@@ -868,7 +893,12 @@ local rightLegButton = makeStyledButton(
 	MeshFrame,
 	Enum.ButtonStyle.RobloxButton
 )
-makeTextLabel("RightLegLabel", "Right Leg", UDim2.new(0.5, -16, 0, -25), rightLegButton)
+makeTextLabel(
+	"RightLegLabel",
+	"Right Leg",
+	UDim2.new(0.5, -16, 0, -25),
+	rightLegButton
+)
 local rightArmButton = makeStyledButton(
 	"RightArmMeshButton",
 	UDim2.new(0, 64, 0, 64),
@@ -876,7 +906,12 @@ local rightArmButton = makeStyledButton(
 	MeshFrame,
 	Enum.ButtonStyle.RobloxButton
 )
-makeTextLabel("RightArmLabel", "Right Arm", UDim2.new(0.5, -16, 0, -25), rightArmButton)
+makeTextLabel(
+	"RightArmLabel",
+	"Right Arm",
+	UDim2.new(0.5, -16, 0, -25),
+	rightArmButton
+)
 local leftArmButton = makeStyledButton(
 	"LeftArmMeshButton",
 	UDim2.new(0, 64, 0, 64),
@@ -884,46 +919,96 @@ local leftArmButton = makeStyledButton(
 	MeshFrame,
 	Enum.ButtonStyle.RobloxButton
 )
-makeTextLabel("LeftArmLabel", "Left Arm", UDim2.new(0.5, -16, 0, -25), leftArmButton)
+makeTextLabel(
+	"LeftArmLabel",
+	"Left Arm",
+	UDim2.new(0.5, -16, 0, -25),
+	leftArmButton
+)
 
 local TShirtFrame = makeCharFrame("T-ShirtsFrame", CharacterPane)
-game:GetService("ContentProvider"):Preload "http://www.roblox.com/asset/?id=75460642"
+game:GetService("ContentProvider")
+	:Preload "http://banland.xyz/asset/?id=75460642"
 makeZone(
 	"TShirtZone",
-	"http://www.roblox.com/asset/?id=75460642",
+	"http://banland.xyz/asset/?id=75460642",
 	UDim2.new(0, 121, 0, 154),
 	UDim2.new(0.5, -60, 0.5, -100),
 	TShirtFrame
 )
-makeStyledButton("TShirtButton", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.5, -64), TShirtFrame)
+makeStyledButton(
+	"TShirtButton",
+	UDim2.new(0, 64, 0, 64),
+	UDim2.new(0.5, -32, 0.5, -64),
+	TShirtFrame
+)
 
 local ShirtFrame = makeCharFrame("ShirtsFrame", CharacterPane)
 makeZone(
 	"ShirtZone",
-	"http://www.roblox.com/asset/?id=75460642",
+	"http://banland.xyz/asset/?id=75460642",
 	UDim2.new(0, 121, 0, 154),
 	UDim2.new(0.5, -60, 0.5, -100),
 	ShirtFrame
 )
-makeStyledButton("ShirtButton", UDim2.new(0, 64, 0, 64), UDim2.new(0.5, -32, 0.5, -64), ShirtFrame)
+makeStyledButton(
+	"ShirtButton",
+	UDim2.new(0, 64, 0, 64),
+	UDim2.new(0.5, -32, 0.5, -64),
+	ShirtFrame
+)
 
 local ColorFrame = makeCharFrame("ColorFrame", CharacterPane)
-game:GetService("ContentProvider"):Preload "http://www.roblox.com/asset/?id=76049888"
+game:GetService("ContentProvider")
+	:Preload "http://banland.xyz/asset/?id=76049888"
 local ColorZone = makeZone(
 	"ColorZone",
-	"http://www.roblox.com/asset/?id=76049888",
+	"http://banland.xyz/asset/?id=76049888",
 	UDim2.new(0, 120, 0, 150),
 	UDim2.new(0.5, -60, 0.5, -100),
 	ColorFrame
 )
-makeStyledButton("Head", UDim2.new(0.26, 0, 0.19, 0), UDim2.new(0.37, 0, 0.02, 0), ColorZone).AutoButtonColor = false
-makeStyledButton("LeftArm", UDim2.new(0.19, 0, 0.36, 0), UDim2.new(0.78, 0, 0.26, 0), ColorZone).AutoButtonColor = false
-makeStyledButton("RightArm", UDim2.new(0.19, 0, 0.36, 0), UDim2.new(0.025, 0, 0.26, 0), ColorZone).AutoButtonColor =
+makeStyledButton(
+	"Head",
+	UDim2.new(0.26, 0, 0.19, 0),
+	UDim2.new(0.37, 0, 0.02, 0),
+	ColorZone
+).AutoButtonColor =
 	false
-makeStyledButton("Torso", UDim2.new(0.43, 0, 0.36, 0), UDim2.new(0.28, 0, 0.26, 0), ColorZone).AutoButtonColor = false
-makeStyledButton("RightLeg", UDim2.new(0.19, 0, 0.31, 0), UDim2.new(0.275, 0, 0.67, 0), ColorZone).AutoButtonColor =
+makeStyledButton(
+	"LeftArm",
+	UDim2.new(0.19, 0, 0.36, 0),
+	UDim2.new(0.78, 0, 0.26, 0),
+	ColorZone
+).AutoButtonColor =
 	false
-makeStyledButton("LeftLeg", UDim2.new(0.19, 0, 0.31, 0), UDim2.new(0.525, 0, 0.67, 0), ColorZone).AutoButtonColor =
+makeStyledButton(
+	"RightArm",
+	UDim2.new(0.19, 0, 0.36, 0),
+	UDim2.new(0.025, 0, 0.26, 0),
+	ColorZone
+).AutoButtonColor =
+	false
+makeStyledButton(
+	"Torso",
+	UDim2.new(0.43, 0, 0.36, 0),
+	UDim2.new(0.28, 0, 0.26, 0),
+	ColorZone
+).AutoButtonColor =
+	false
+makeStyledButton(
+	"RightLeg",
+	UDim2.new(0.19, 0, 0.31, 0),
+	UDim2.new(0.275, 0, 0.67, 0),
+	ColorZone
+).AutoButtonColor =
+	false
+makeStyledButton(
+	"LeftLeg",
+	UDim2.new(0.19, 0, 0.31, 0),
+	UDim2.new(0.525, 0, 0.67, 0),
+	ColorZone
+).AutoButtonColor =
 	false
 
 -- Character Panel label (shows what category we are currently browsing)

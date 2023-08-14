@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 38037565"
 local damageGuiWidth = 5.0
 local damageGuiHeight = 5.0
 
@@ -133,9 +134,17 @@ while true do
 			if regen then
 				delta = delta + regen.Value.X
 				if regen.Value.Y >= 0 then
-					regen.Value = Vector3.new(regen.Value.X + regen.Value.Z, regen.Value.Y - s, regen.Value.Z) -- maybe have 3rd parameter be an increaser/decreaser?
+					regen.Value = Vector3.new(
+						regen.Value.X + regen.Value.Z,
+						regen.Value.Y - s,
+						regen.Value.Z
+					) -- maybe have 3rd parameter be an increaser/decreaser?
 				elseif regen.Value.Y == -1 then
-					regen.Value = Vector3.new(regen.Value.X + regen.Value.Z, -1, regen.Value.Z)
+					regen.Value = Vector3.new(
+						regen.Value.X + regen.Value.Z,
+						-1,
+						regen.Value.Z
+					)
 				else
 					regen:remove()
 				end -- infinity is -1
@@ -143,9 +152,17 @@ while true do
 			if poison then
 				delta = delta - poison.Value.X
 				if poison.Value.Y >= 0 then
-					poison.Value = Vector3.new(poison.Value.X + poison.Value.Z, poison.Value.Y - s, poison.Value.Z)
+					poison.Value = Vector3.new(
+						poison.Value.X + poison.Value.Z,
+						poison.Value.Y - s,
+						poison.Value.Z
+					)
 				elseif poison.Value.Y == -1 then
-					poison.Value = Vector3.new(poison.Value.X + poison.Value.Z, -1, poison.Value.Z)
+					poison.Value = Vector3.new(
+						poison.Value.X + poison.Value.Z,
+						-1,
+						poison.Value.Z
+					)
 				else
 					poison:remove()
 				end -- infinity is -1
@@ -155,7 +172,8 @@ while true do
 				--print("IN ICE")
 				delta = delta - ice.Value.X
 				if ice.Value.Y >= 0 then
-					ice.Value = Vector3.new(ice.Value.X, ice.Value.Y - s, ice.Value.Z)
+					ice.Value =
+						Vector3.new(ice.Value.X, ice.Value.Y - s, ice.Value.Z)
 				else
 					ice:remove()
 				end
@@ -166,7 +184,11 @@ while true do
 				fireEffect.Parent = Figure.Torso
 				delta = delta - fire.Value.X
 				if fire.Value.Y >= 0 then
-					fire.Value = Vector3.new(fire.Value.X, fire.Value.Y - s, fire.Value.Z)
+					fire.Value = Vector3.new(
+						fire.Value.X,
+						fire.Value.Y - s,
+						fire.Value.Z
+					)
 				else
 					fire:remove()
 					fireEffect.Enabled = false
@@ -178,7 +200,9 @@ while true do
 				if stun.Value > 0 then
 					Torso.Anchored = true
 					currentChildren = script.Parent:GetChildren()
-					backpackTools = game.Players:GetPlayerFromCharacter(script.Parent).Backpack:GetChildren()
+					backpackTools = game.Players
+						:GetPlayerFromCharacter(script.Parent).Backpack
+						:GetChildren()
 					for i = 1, #currentChildren do
 						if currentChildren[i].className == "Tool" then
 							inCharTag:Clone().Parent = currentChildren[i]
@@ -187,20 +211,25 @@ while true do
 						end
 					end
 					for i = 1, #backpackTools do
-						if backpackTools[i]:FindFirstChild "RobloxBuildTool" == nil then
+						if
+							backpackTools[i]:FindFirstChild "RobloxBuildTool"
+							== nil
+						then
 							hider:Clone().Parent = backpackTools[i]
 							backpackTools[i].Parent = game.Lighting
 						end
 					end
 					wait(0.2)
 					for i = 1, #backpackTools do
-						backpackTools[i].Parent = game.Players:GetPlayerFromCharacter(script.Parent).Backpack
+						backpackTools[i].Parent =
+							game.Players:GetPlayerFromCharacter(script.Parent).Backpack
 					end
 					stun.Value = stun.Value - s
 				else
 					Torso.Anchored = false
 					for i = 1, #backpackTools do
-						local rbTool = backpackTools[i]:FindFirstChild "RobloxBuildTool"
+						local rbTool =
+							backpackTools[i]:FindFirstChild "RobloxBuildTool"
 						if rbTool then
 							rbTool:Remove()
 						end
@@ -208,12 +237,16 @@ while true do
 					end
 					wait(0.2)
 					for i = 1, #backpackTools do
-						local wasInChar = backpackTools[i]:FindFirstChild "InCharTag"
+						local wasInChar =
+							backpackTools[i]:FindFirstChild "InCharTag"
 						if wasInChar then
 							wasInChar:Remove()
 							backpackTools[i].Parent = script.Parent
 						else
-							backpackTools[i].Parent = game.Players:GetPlayerFromCharacter(script.Parent).Backpack
+							backpackTools[i].Parent =
+								game.Players:GetPlayerFromCharacter(
+									script.Parent
+								).Backpack
 						end
 					end
 					stun:Remove()
