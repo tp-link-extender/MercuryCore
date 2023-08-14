@@ -23,50 +23,84 @@
 	export const snapshot = { capture, restore }
 
 	let modal = writable(false),
-		tabData = TabData(data.url, ["Description", "Comments"])
+		tabData = TabData(data.url, ["Recommended", "Comments"])
+
+	const types: any = {
+		1: "Image",
+		2: "T-Shirt",
+		11: "Shirt",
+		12: "Pants",
+		13: "Decal",
+	}
 </script>
 
 <Head title={data.name} />
 
 <div class="container">
-	<div class="d-flex flex-row">
-		<div in:fade class="image me-3 mb-3">
-			<img src="/avatarshop/{data.id}/{data.name}/icon" alt={data.name} />
+	<div class="row">
+		<div class="col">
+			<img
+				class="image me-3 mb-3"
+				src="/avatarshop/{data.id}/{data.name}/icon"
+				alt={data.name} />
 		</div>
-		<span class="w-100">
-			<div class="card rounded-none mb-4">
-				<div class="card-body">
-					<h1 class="light-text">{data.name}</h1>
-					<p class="light-text d-flex mt-2 mb-0">
-						<b>by</b>
-						<a
-							href="/user/{data.creatorUser?.number}"
-							class="user light-text text-decoration-none">
-							<span class="pfp bg-darker rounded-circle ms-1">
-								<img
-									src="/api/avatar/{data.creatorUser
-										?.username}"
-									alt={data.creatorUser?.username}
-									class="rounded-circle rounded-top-0" />
-							</span>
-							{data.creatorUser?.username}
-						</a>
+		<div class="col light-text">
+			<h1 class="mb-0">{data.name}</h1>
+			<strong>by:</strong>
+			<a
+				href="/user/{data.creatorUser?.number}"
+				class="user light-text text-decoration-none">
+				<span class="pfp bg-darker rounded-circle ms-1">
+					<img
+						src="/api/avatar/{data.creatorUser?.username}"
+						alt={data.creatorUser?.username}
+						class="rounded-circle rounded-top-0" />
+				</span>
+				{data.creatorUser?.username}
+			</a>
+			<p class="mt-2">
+				{#if data.description[0]}
+					{data.description[0].text}
+				{:else}
+					<em>No description available</em>
+				{/if}
+			</p>
+
+			<hr />
+			<div class="row mb-2">
+				<div class="col-md-4">
+					<p class="mb-2">
+						<strong>Sold:</strong>
+						{data.sold}
+						<br />
 					</p>
-					<p class="light-text mt-2 mb-0">
-						<b>Type</b>
-						{data.type}
-					</p>
-					<p class="light-text mt-2 mb-0">
-						<b>{data.sold}</b>
-						sold
-						<span class="float-end">
-							<ReportButton
-								user={data.creatorUser?.username || ""}
-								url="/avatarshop/item/{data.id}" />
-						</span>
+					<p>
+						<strong>Type:</strong>
+						{types[data.type]}
 					</p>
 				</div>
+				<div class="col d-flex flex-row-reverse">
+					<div class="card">
+						<div class="card-body">
+							<p class="light-text mb-1 text-center">
+								Price: <span class="text-success">
+									<i class="far fa-gem" />
+									{data.price}
+								</span>
+							</p>
+							<button class="btn btn-success">
+								<strong class="h5">
+									{data.price > 0 ? "Buy Now" : "Get"}
+								</strong>
+							</button>
+						</div>
+					</div>
+				</div>
 			</div>
+		</div>
+	</div>
+	<!-- <span class="w-100">
+
 			<button
 				name="action"
 				on:click={() => modal.set(true)}
@@ -103,25 +137,18 @@
 					Funds will be deducted from your account immediately upon
 					pressing the buy button.
 				</p>
-			{/if}
-			<!-- {#if form?.msg}
+			{/if} -->
+	<!-- {#if form?.msg}
 					<p class="text-danger">{form.msg}</p>
 				{/if} -->
-		</span>
-	</div>
+	<!-- </span> -->
 
 	<div class="bg-a">
 		<TabNav bind:tabData justify />
 	</div>
 
 	<Tab {tabData}>
-		<p class="light-text">
-			{#if data.description[0]}
-				{data.description[0].text}
-			{:else}
-				<em>No description available</em>
-			{/if}
-		</p>
+
 	</Tab>
 
 	<Tab {tabData}>
@@ -166,8 +193,6 @@
 				topLevel />
 		{/each}
 	</Tab>
-
-	<h1 class="h3 light-text">Recommended</h1>
 </div>
 
 <Modal {modal}>
@@ -200,10 +225,12 @@
 		background-size 20px 20px
 		background-position 0 0, 10px 10px
 
-		height 20rem
-		width 20rem
-		img
-			height 20rem
+		height 25rem
+		width 25rem
+
+		+-sm()
+			height 15rem
+			width 15rem
 
 	#notify
 		font-size 0.8rem
