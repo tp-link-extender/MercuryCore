@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 36868950"
 local controlFrame = script.Parent:FindFirstChild "ControlFrame"
 
 if not controlFrame then
@@ -34,9 +35,14 @@ function setUpListeners(frameToListen)
 			frameToListen.inside.Value = true
 			wait(1.2)
 			if frameToListen.inside.Value then
-				while frameToListen.inside.Value and frameToListen.BackgroundTransparency > 0 do
-					frameToListen.BackgroundTransparency = frameToListen.BackgroundTransparency - fadeSpeed
-					frameToListen.TextTransparency = frameToListen.TextTransparency - fadeSpeed
+				while
+					frameToListen.inside.Value
+					and frameToListen.BackgroundTransparency > 0
+				do
+					frameToListen.BackgroundTransparency = frameToListen.BackgroundTransparency
+						- fadeSpeed
+					frameToListen.TextTransparency = frameToListen.TextTransparency
+						- fadeSpeed
 					wait()
 				end
 			end

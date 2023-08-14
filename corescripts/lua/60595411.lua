@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 60595411"
 local t = {}
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -273,7 +274,13 @@ end
 function JsonReader:TestReservedWord(t)
 	for _, v in ipairs(t) do
 		if self:Next() ~= v then
-			error(string.format("Error reading '%s': %s", table.concat(t), self:All()))
+			error(
+				string.format(
+					"Error reading '%s': %s",
+					table.concat(t),
+					self:All()
+				)
+			)
 		end
 	end
 end
@@ -333,7 +340,9 @@ function JsonReader:ReadBlockComment()
 			done = true
 		end
 		if not done and ch == "/" and self:Peek() == "*" then
-			error(string.format("Invalid comment: %s, '/*' illegal.", self:All()))
+			error(
+				string.format("Invalid comment: %s, '/*' illegal.", self:All())
+			)
 		end
 	end
 	self:Next()
@@ -363,7 +372,13 @@ function JsonReader:ReadArray()
 		if not done then
 			local ch = self:Next()
 			if ch ~= "," then
-				error(string.format("Invalid array: '%s' due to: '%s'", self:All(), ch))
+				error(
+					string.format(
+						"Invalid array: '%s' due to: '%s'",
+						self:All(),
+						ch
+					)
+				)
 			end
 		end
 	end
@@ -386,7 +401,13 @@ function JsonReader:ReadObject()
 		self:SkipWhiteSpace()
 		local ch = self:Next()
 		if ch ~= ":" then
-			error(string.format("Invalid object: '%s' due to: '%s'", self:All(), ch))
+			error(
+				string.format(
+					"Invalid object: '%s' due to: '%s'",
+					self:All(),
+					ch
+				)
+			)
 		end
 		self:SkipWhiteSpace()
 		local val = self:Read()
@@ -398,7 +419,13 @@ function JsonReader:ReadObject()
 		if not done then
 			ch = self:Next()
 			if ch ~= "," then
-				error(string.format("Invalid array: '%s' near: '%s'", self:All(), ch))
+				error(
+					string.format(
+						"Invalid array: '%s' near: '%s'",
+						self:All(),
+						ch
+					)
+				)
 			end
 		end
 	end
@@ -479,7 +506,12 @@ t.MakeWedge = function(x, y, z, _)
 	return game:GetService("Terrain"):AutoWedgeCell(x, y, z)
 end
 
-t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, selectionParent)
+t.SelectTerrainRegion = function(
+	regionToSelect,
+	color,
+	selectEmptyCells,
+	selectionParent
+)
 	local terrain = game.Workspace:FindFirstChild "Terrain"
 	if not terrain then
 		return
@@ -489,10 +521,16 @@ t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, select
 	assert(color)
 
 	if not type(regionToSelect) == "Region3" then
-		error("regionToSelect (first arg), should be of type Region3, but is type", type(regionToSelect))
+		error(
+			"regionToSelect (first arg), should be of type Region3, but is type",
+			type(regionToSelect)
+		)
 	end
 	if not type(color) == "BrickColor" then
-		error("color (second arg), should be of type BrickColor, but is type", type(color))
+		error(
+			"color (second arg), should be of type BrickColor, but is type",
+			type(color)
+		)
 	end
 
 	-- frequently used terrain calls (speeds up call, no lookup necessary)
@@ -511,10 +549,10 @@ t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, select
 		selectionContainer.Parent = game.Workspace
 	end
 
-	local updateSelection = nil -- function we return to allow user to update selection
-	local currentKeepAliveTag = nil -- a tag that determines whether adorns should be destroyed
+	local updateSelection -- function we return to allow user to update selection
+	local currentKeepAliveTag -- a tag that determines whether adorns should be destroyed
 	local aliveCounter = 0 -- helper for currentKeepAliveTag
-	local lastRegion = nil -- used to stop updates that do nothing
+	local lastRegion -- used to stop updates that do nothing
 	local adornments = {} -- contains all adornments
 	local reusableAdorns = {}
 
@@ -544,8 +582,8 @@ t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, select
 
 	-- helper function that creates the basis for a selection box
 	function createAdornment(theColor)
-		local selectionPartClone = nil
-		local selectionBoxClone = nil
+		local selectionPartClone
+		local selectionBoxClone
 
 		if #reusableAdorns > 0 then
 			selectionPartClone = reusableAdorns[1]["part"]
@@ -580,7 +618,10 @@ t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, select
 		for cellPos, adornTable in pairs(adornments) do
 			if adornTable.KeepAlive ~= currentKeepAliveTag then -- old news, we should get rid of this
 				adornTable.SelectionBox.Visible = false
-				table.insert(reusableAdorns, { part = adornTable.SelectionPart, box = adornTable.SelectionBox })
+				table.insert(reusableAdorns, {
+					part = adornTable.SelectionPart,
+					box = adornTable.SelectionBox,
+				})
 				adornments[cellPos] = nil
 			end
 		end
@@ -597,8 +638,12 @@ t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, select
 
 	-- finds full cells in region and adorns each cell with a box, with the argument color
 	function adornFullCellsInRegion(region, color)
-		local regionBegin = region.CFrame.p - (region.Size / 2) + Vector3.new(2, 2, 2)
-		local regionEnd = region.CFrame.p + (region.Size / 2) - Vector3.new(2, 2, 2)
+		local regionBegin = region.CFrame.p
+			- (region.Size / 2)
+			+ Vector3.new(2, 2, 2)
+		local regionEnd = region.CFrame.p
+			+ (region.Size / 2)
+			- Vector3.new(2, 2, 2)
 
 		local cellPosBegin = WorldToCellPreferSolid(terrain, regionBegin)
 		local cellPosEnd = WorldToCellPreferSolid(terrain, regionEnd)
@@ -626,7 +671,8 @@ t.SelectTerrainRegion = function(regionToSelect, color, selectEmptyCells, select
 						end
 
 						if not updated then
-							local selectionPart, selectionBox = createAdornment(color)
+							local selectionPart, selectionBox =
+								createAdornment(color)
 							selectionPart.Size = Vector3.new(4, 4, 4)
 							selectionPart.CFrame = CFrame.new(cframePos)
 							local adornTable = {
@@ -735,7 +781,11 @@ function t.CreateSignal()
 			error("connect must be called with `:`, not `.`", 2)
 		end
 		if type(func) ~= "function" then
-			error("Argument #1 of connect must be a function, got a " .. type(func), 2)
+			error(
+				"Argument #1 of connect must be a function, got a "
+					.. type(func),
+				2
+			)
 		end
 		local cn = mBindableEvent.Event:connect(func)
 		mAllCns[cn] = true
@@ -890,10 +940,10 @@ local function Create_PrivImpl(objectType)
 
 		--make the object to mutate
 		local obj = Instance.new(objectType)
-		local parent = nil
+		local parent
 
 		--stored constructor function to be called after other initialization
-		local ctor = nil
+		local ctor
 
 		for k, v in pairs(dat) do
 			--add property
@@ -909,7 +959,11 @@ local function Create_PrivImpl(objectType)
 			--add child
 			elseif type(k) == "number" then
 				if type(v) ~= "userdata" then
-					error("Bad entry in Create body: Numeric keys must be paired with children, got a: " .. type(v), 2)
+					error(
+						"Bad entry in Create body: Numeric keys must be paired with children, got a: "
+							.. type(v),
+						2
+					)
 				end
 				v.Parent = obj
 
@@ -936,11 +990,21 @@ local function Create_PrivImpl(objectType)
 					)
 				elseif ctor then
 					--ctor already exists, only one allowed
-					error("Bad entry in Create body: Only one constructor function is allowed", 2)
+					error(
+						"Bad entry in Create body: Only one constructor function is allowed",
+						2
+					)
 				end
 				ctor = v
 			else
-				error("Bad entry (" .. tostring(k) .. " => " .. tostring(v) .. ") in Create body", 2)
+				error(
+					"Bad entry ("
+						.. tostring(k)
+						.. " => "
+						.. tostring(v)
+						.. ") in Create body",
+					2
+				)
 			end
 		end
 
@@ -1000,7 +1064,10 @@ t.Help = function(funcNameOrFunc)
 			.. "parameter is provided, if not sets cell x, y, z to be whatever material it previously was. "
 			.. "Returns true if made a wedge, false if the cell remains a block "
 	end
-	if funcNameOrFunc == "SelectTerrainRegion" or funcNameOrFunc == t.SelectTerrainRegion then
+	if
+		funcNameOrFunc == "SelectTerrainRegion"
+		or funcNameOrFunc == t.SelectTerrainRegion
+	then
 		return "Function SelectTerrainRegion. "
 			.. "Arguments: (regionToSelect, color, selectEmptyCells, selectionParent). "
 			.. "Description: Selects all terrain via a series of selection boxes within the regionToSelect "

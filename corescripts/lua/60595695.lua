@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 60595695"
 -- Library Registration Script
 -- This script is used to register RbxLua libraries on game servers, so game scripts have
 -- access to all of the libraries (otherwise only local scripts do)

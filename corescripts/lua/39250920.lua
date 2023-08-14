@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 39250920"
 function waitForProperty(instance, name)
 	while not instance[name] do
 		instance.Changed:wait()
@@ -33,7 +34,7 @@ local reenableDialogScript
 local dialogMap = {}
 local dialogConnections = {}
 
-local gui = nil
+local gui
 waitForChild(game, "CoreGui")
 waitForChild(game.CoreGui, "RobloxGui")
 if game.CoreGui.RobloxGui:FindFirstChild "ControlFrame" then
@@ -102,31 +103,39 @@ end
 function styleMainFrame(tone)
 	if tone == Enum.DialogTone.Neutral then
 		mainFrame.Style = Enum.FrameStyle.ChatBlue
-		mainFrame.Tail.Image = "rbxasset://textures/chatBubble_botBlue_tailRight.png"
+		mainFrame.Tail.Image =
+			"rbxasset://textures/chatBubble_botBlue_tailRight.png"
 	elseif tone == Enum.DialogTone.Friendly then
 		mainFrame.Style = Enum.FrameStyle.ChatGreen
-		mainFrame.Tail.Image = "rbxasset://textures/chatBubble_botGreen_tailRight.png"
+		mainFrame.Tail.Image =
+			"rbxasset://textures/chatBubble_botGreen_tailRight.png"
 	elseif tone == Enum.DialogTone.Enemy then
 		mainFrame.Style = Enum.FrameStyle.ChatRed
-		mainFrame.Tail.Image = "rbxasset://textures/chatBubble_botRed_tailRight.png"
+		mainFrame.Tail.Image =
+			"rbxasset://textures/chatBubble_botRed_tailRight.png"
 	end
 
 	styleChoices(tone)
 end
 function setChatNotificationTone(gui, purpose, tone)
 	if tone == Enum.DialogTone.Neutral then
-		gui.Image.Image = "rbxasset://textures/chatBubble_botBlue_notify_bkg.png"
+		gui.Image.Image =
+			"rbxasset://textures/chatBubble_botBlue_notify_bkg.png"
 	elseif tone == Enum.DialogTone.Friendly then
-		gui.Image.Image = "rbxasset://textures/chatBubble_botGreen_notify_bkg.png"
+		gui.Image.Image =
+			"rbxasset://textures/chatBubble_botGreen_notify_bkg.png"
 	elseif tone == Enum.DialogTone.Enemy then
 		gui.Image.Image = "rbxasset://textures/chatBubble_botRed_notify_bkg.png"
 	end
 	if purpose == Enum.DialogPurpose.Quest then
-		gui.Image.Button.Image = "rbxasset://textures/chatBubble_bot_notify_bang.png"
+		gui.Image.Button.Image =
+			"rbxasset://textures/chatBubble_bot_notify_bang.png"
 	elseif purpose == Enum.DialogPurpose.Help then
-		gui.Image.Button.Image = "rbxasset://textures/chatBubble_bot_notify_question.png"
+		gui.Image.Button.Image =
+			"rbxasset://textures/chatBubble_bot_notify_question.png"
 	elseif purpose == Enum.DialogPurpose.Shop then
-		gui.Image.Button.Image = "rbxasset://textures/chatBubble_bot_notify_money.png"
+		gui.Image.Button.Image =
+			"rbxasset://textures/chatBubble_bot_notify_money.png"
 	end
 end
 
@@ -243,7 +252,11 @@ function selectChoice(choice)
 	--First hide the Gui
 	mainFrame.Visible = false
 	if choice == lastChoice then
-		game.Chat:Chat(game.Players.LocalPlayer.Character, "Goodbye!", getChatColor(currentTone()))
+		game.Chat:Chat(
+			game.Players.LocalPlayer.Character,
+			"Goodbye!",
+			getChatColor(currentTone())
+		)
 
 		normalEndDialog()
 	else
@@ -255,7 +268,10 @@ function selectChoice(choice)
 			getChatColor(currentTone())
 		)
 		wait(1)
-		currentConversationDialog:SignalDialogChoiceSelected(player, dialogChoice)
+		currentConversationDialog:SignalDialogChoiceSelected(
+			player,
+			dialogChoice
+		)
 		game.Chat:Chat(
 			currentConversationPartner,
 			sanitizeMessage(dialogChoice.ResponseDialog),
@@ -263,7 +279,10 @@ function selectChoice(choice)
 		)
 
 		variableDelay(dialogChoice.ResponseDialog)
-		presentDialogChoices(currentConversationPartner, dialogChoice:GetChildren())
+		presentDialogChoices(
+			currentConversationPartner,
+			dialogChoice:GetChildren()
+		)
 	end
 end
 
@@ -381,7 +400,8 @@ function presentDialogChoices(talkingPart, dialogChoices)
 			--3 lines is the maximum, set it to that temporarily
 			choices[pos].Size = UDim2.new(1, 0, 0, 24 * 3)
 			choices[pos].UserPrompt.Text = obj.UserDialog
-			local height = math.ceil(choices[pos].UserPrompt.TextBounds.Y / 24) * 24
+			local height = math.ceil(choices[pos].UserPrompt.TextBounds.Y / 24)
+				* 24
 
 			choices[pos].Position = UDim2.new(0, 0, 0, yPosition)
 			choices[pos].Size = UDim2.new(1, 0, 0, height)
@@ -417,7 +437,11 @@ function doDialog(dialog)
 	end
 
 	currentConversationDialog = dialog
-	game.Chat:Chat(dialog.Parent, dialog.InitialPrompt, getChatColor(dialog.Tone))
+	game.Chat:Chat(
+		dialog.Parent,
+		dialog.InitialPrompt,
+		getChatColor(dialog.Tone)
+	)
 	variableDelay(dialog.InitialPrompt)
 
 	presentDialogChoices(dialog.Parent, dialog:GetChildren())
@@ -440,8 +464,9 @@ function checkForLeaveArea()
 		if
 			currentConversationDialog.Parent
 			and (
-				player:DistanceFromCharacter(currentConversationDialog.Parent.Position)
-				>= currentConversationDialog.ConversationDistance
+				player:DistanceFromCharacter(
+					currentConversationDialog.Parent.Position
+				) >= currentConversationDialog.ConversationDistance
 			)
 		then
 			wanderDialog()
@@ -452,7 +477,10 @@ end
 
 function startDialog(dialog)
 	if dialog.Parent and dialog.Parent:IsA "BasePart" then
-		if player:DistanceFromCharacter(dialog.Parent.Position) >= dialog.ConversationDistance then
+		if
+			player:DistanceFromCharacter(dialog.Parent.Position)
+			>= dialog.ConversationDistance
+		then
 			showMessage(tooFarAwayMessage, tooFarAwaySize)
 			return
 		end
@@ -502,12 +530,17 @@ function addDialog(dialog)
 					removeDialog(dialog)
 					addDialog(dialog)
 				elseif prop == "InUse" then
-					chatGui.Enabled = not currentConversationDialog and not dialog.InUse
+					chatGui.Enabled = not currentConversationDialog
+						and not dialog.InUse
 					if dialog == currentConversationDialog then
 						timeoutDialog()
 					end
 				elseif prop == "Tone" or prop == "Purpose" then
-					setChatNotificationTone(chatGui, dialog.Purpose, dialog.Tone)
+					setChatNotificationTone(
+						chatGui,
+						dialog.Purpose,
+						dialog.Tone
+					)
 				end
 			end)
 		else -- still need to listen to parent changes even if current parent is not a BasePart

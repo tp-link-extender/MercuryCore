@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 97188756"
 --[[
 	//FileName: ChatScript.LUA
 	//Written by: Sorcus
@@ -95,7 +96,10 @@ do
 		return function(t)
 			local e = { [EnumName] = enumName }
 			for i, name in pairs(t) do
-				local item = setmetatable({ Name = name, Value = i, Enum = e, [EnumName] = enumName }, item_mt)
+				local item = setmetatable(
+					{ Name = name, Value = i, Enum = e, [EnumName] = enumName },
+					item_mt
+				)
 				e[i] = item
 				e[name] = item
 				e[item] = item
@@ -184,7 +188,12 @@ local Chat = {
 		["Use the Chat menu to talk to me."] = { "/sc 0", true },
 		["I can only see menu chats."] = { "/sc 1", true },
 		["Hello"] = {
-			["Hi"] = { "/sc 2_0", true, ["Hi there!"] = true, ["Hi everyone"] = true },
+			["Hi"] = {
+				"/sc 2_0",
+				true,
+				["Hi there!"] = true,
+				["Hi everyone"] = true,
+			},
 			["Howdy"] = { "/sc 2_1", true, ["Howdy partner!"] = true },
 			["Greetings"] = {
 				"/sc 2_2",
@@ -277,7 +286,13 @@ local Chat = {
 				["Goodluck!"] = true,
 				["Ta-ta for now!"] = true,
 			},
-			["Peace"] = { "/sc 3_6", true, ["Peace out!"] = true, ["Peace dudes!"] = true, ["Rest in pieces!"] = true },
+			["Peace"] = {
+				"/sc 3_6",
+				true,
+				["Peace out!"] = true,
+				["Peace dudes!"] = true,
+				["Rest in pieces!"] = true,
+			},
 			["Silly"] = {
 				"/sc 3_7",
 				true,
@@ -319,7 +334,13 @@ local Chat = {
 				["No, thank you"] = true,
 				["Thanx"] = true,
 			},
-			["No problem"] = { "/sc 4_4", true, ["Don't worry"] = true, ["That's ok"] = true, ["np"] = true },
+			["No problem"] = {
+				"/sc 4_4",
+				true,
+				["Don't worry"] = true,
+				["That's ok"] = true,
+				["np"] = true,
+			},
 			["You are ..."] = {
 				"/sc 4_5",
 				true,
@@ -462,7 +483,12 @@ local Chat = {
 			["Animals"] = {
 				"/sc 6_3",
 				true,
-				["Cats"] = { ["Lion"] = true, ["Tiger"] = true, ["Leopard"] = true, ["Cheetah"] = true },
+				["Cats"] = {
+					["Lion"] = true,
+					["Tiger"] = true,
+					["Leopard"] = true,
+					["Cheetah"] = true,
+				},
 				["Dogs"] = {
 					["Wolves"] = true,
 					["Beagle"] = true,
@@ -474,8 +500,17 @@ local Chat = {
 					["Terrier"] = true,
 					["Retriever"] = true,
 				},
-				["Horses"] = { ["Ponies"] = true, ["Stallions"] = true, ["Pwnyz"] = true },
-				["Reptiles"] = { ["Dinosaurs"] = true, ["Lizards"] = true, ["Snakes"] = true, ["Turtles!"] = true },
+				["Horses"] = {
+					["Ponies"] = true,
+					["Stallions"] = true,
+					["Pwnyz"] = true,
+				},
+				["Reptiles"] = {
+					["Dinosaurs"] = true,
+					["Lizards"] = true,
+					["Snakes"] = true,
+					["Turtles!"] = true,
+				},
 				["Hamster"] = true,
 				["Monkey"] = true,
 				["Bears"] = true,
@@ -545,7 +580,11 @@ local Chat = {
 				["Volleyball"] = true,
 				["Tennis"] = true,
 				["Sports team practice"] = true,
-				["Watersports"] = { ["Surfing"] = true, ["Swimming"] = true, ["Water Polo"] = true },
+				["Watersports"] = {
+					["Surfing"] = true,
+					["Swimming"] = true,
+					["Water Polo"] = true,
+				},
 				["Winter sports"] = {
 					["Skiing"] = true,
 					["Snowboarding"] = true,
@@ -599,7 +638,10 @@ local Chat = {
 					["Coding"] = true,
 					["Hacking"] = true,
 				},
-				["The Internet"] = { ["lol. teh internets!"] = true, ["Watching vids"] = true },
+				["The Internet"] = {
+					["lol. teh internets!"] = true,
+					["Watching vids"] = true,
+				},
 				["Dance"] = true,
 				["Gymnastics"] = true,
 				["Listening to music"] = true,
@@ -759,7 +801,10 @@ local Chat = {
 			},
 			["Boy"] = { "/sc 6_12", true },
 			["Girl"] = { "/sc 6_13", true },
-			["I don't want to say boy or girl. Don't ask."] = { "/sc 6_14", true },
+			["I don't want to say boy or girl. Don't ask."] = {
+				"/sc 6_14",
+				true,
+			},
 			[1] = "/sc 6",
 		},
 		["Game"] = {
@@ -905,9 +950,13 @@ function Chat:EnableScrolling(toggle)
 				Camera.CameraType = "Scriptable"
 				-- Get relative position of camera and keep to it
 				Spawn(function()
-					local currentRelativePos = Camera.CoordinateFrame.p - torso.Position
+					local currentRelativePos = Camera.CoordinateFrame.p
+						- torso.Position
 					while Chat.MouseOnFrame do
-						Camera.CoordinateFrame = CFrame.new(torso.Position + currentRelativePos, head.Position)
+						Camera.CoordinateFrame = CFrame.new(
+							torso.Position + currentRelativePos,
+							head.Position
+						)
 						wait(0.015)
 					end
 				end)
@@ -962,23 +1011,30 @@ function Chat:UpdateQueue(field, diff)
 	for i = #self.MessageQueue, 1, -1 do
 		if self.MessageQueue[i] then
 			for _, label in pairs(self.MessageQueue[i]) do
-				if label and type(label) ~= "table" and type(label) ~= "number" then
+				if
+					label
+					and type(label) ~= "table"
+					and type(label) ~= "number"
+				then
 					if label:IsA "TextLabel" or label:IsA "TextButton" then
 						if diff then
-							label.Position = label.Position - UDim2.new(0, 0, diff, 0)
+							label.Position = label.Position
+								- UDim2.new(0, 0, diff, 0)
 						else
 							if field == self.MessageQueue[i] then
 								label.Position = UDim2.new(
 									self.Configuration.XScale,
 									0,
-									label.Position.Y.Scale - field["Message"].Size.Y.Scale,
+									label.Position.Y.Scale
+										- field["Message"].Size.Y.Scale,
 									0
 								)
 								-- Just to show up popping effect for the latest message in chat
 								Spawn(function()
 									wait(0.05)
 									while label.TextTransparency >= 0 do
-										label.TextTransparency = label.TextTransparency - 0.2
+										label.TextTransparency = label.TextTransparency
+											- 0.2
 										wait(0.03)
 									end
 									if label == field["Message"] then
@@ -991,7 +1047,8 @@ function Chat:UpdateQueue(field, diff)
 								label.Position = UDim2.new(
 									self.Configuration.XScale,
 									0,
-									label.Position.Y.Scale - field["Message"].Size.Y.Scale,
+									label.Position.Y.Scale
+										- field["Message"].Size.Y.Scale,
 									0
 								)
 							end
@@ -1045,7 +1102,12 @@ function Chat:ComputeSpaceString(pLabel)
 	local nString = " "
 	if not self.TempSpaceLabel then
 		self.TempSpaceLabel = Gui.Create "TextButton" {
-			Size = UDim2.new(0, pLabel.AbsoluteSize.X, 0, pLabel.AbsoluteSize.Y),
+			Size = UDim2.new(
+				0,
+				pLabel.AbsoluteSize.X,
+				0,
+				pLabel.AbsoluteSize.Y
+			),
 			FontSize = self.Configuration.FontSize,
 			Parent = self.RenderFrame,
 			BackgroundTransparency = 1,
@@ -1239,7 +1301,8 @@ function Chat:CreateMessage(cPlayer, message)
 	-- This will give beautiful multilines as well
 	local heightField = mLabel.TextBounds.Y
 
-	mLabel.Size = UDim2.new(1, 0, heightField / self.RenderFrame.AbsoluteSize.Y, 0)
+	mLabel.Size =
+		UDim2.new(1, 0, heightField / self.RenderFrame.AbsoluteSize.Y, 0)
 	pLabel.Size = mLabel.Size
 
 	local queueField = {}
@@ -1314,7 +1377,8 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 			count = count + 1
 
 			if type(list[msg]) == "table" then
-				text_List[rootButton][chatText] = Chat:CreateSafeChatOptions(list[msg], chatText)
+				text_List[rootButton][chatText] =
+					Chat:CreateSafeChatOptions(list[msg], chatText)
 				-- else
 				-- 	--table.insert(text_List[chatText], true)
 			end
@@ -1354,13 +1418,14 @@ function Chat:CreateSafeChatGui()
 			Size = UDim2.new(0, 44, 0, 31),
 			Position = UDim2.new(0, 1, 0.35, 0),
 			BackgroundTransparency = 1,
-			Image = "http://www.roblox.com/asset/?id=97080365",
+			Image = "http://banland.xyz/asset/?id=97080365",
 		},
 	}
 
 	self.SafeChatButton = self.SafeChatFrame.SafeChatButton
 	-- safe chat button is the root of this tree
-	self.SafeChatTree[self.SafeChatButton] = Chat:CreateSafeChatOptions(self.SafeChat_List, self.SafeChatButton)
+	self.SafeChatTree[self.SafeChatButton] =
+		Chat:CreateSafeChatOptions(self.SafeChat_List, self.SafeChatButton)
 
 	self.SafeChatButton.MouseButton1Click:connect(function()
 		Chat:ToggleSafeChatMenu(self.SafeChatButton)
@@ -1400,7 +1465,7 @@ function Chat:CreateTouchButton()
 			Size = UDim2.new(1, 0, 1, 0),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,
-			Image = "http://www.roblox.com/asset/?id=97078724",
+			Image = "http://banland.xyz/asset/?id=97078724",
 		},
 	}
 	self.TapToChatLabel = self.ChatTouchFrame.ChatLabel
@@ -1505,7 +1570,7 @@ function Chat:CreateGui()
 
 		Gui.Create "ImageLabel" {
 			Name = "Background",
-			Image = "http://www.roblox.com/asset/?id=97120937", --96551212';
+			Image = "http://banland.xyz/asset/?id=97120937", --96551212';
 			Size = UDim2.new(1.3, 0, 1.64, 0),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,
@@ -1680,9 +1745,16 @@ function Chat:PlayerChatted(...)
 
 	if PlayersService.ClassicChat then
 		if
-			not (string.sub(message, 1, 3) == "/e " or string.sub(message, 1, 7) == "/emote ")
+			not (
+					string.sub(message, 1, 3) == "/e "
+					or string.sub(message, 1, 7) == "/emote "
+				)
 				and (forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu)
-			or (Player.ChatMode == Enum.ChatMode.Menu and string.sub(message, 1, 3) == "/sc")
+			or (Player.ChatMode == Enum.ChatMode.Menu and string.sub(
+				message,
+				1,
+				3
+			) == "/sc")
 			or (Chat:FindMessageInSafeChat(message, self.SafeChat_List))
 		then
 			Chat:UpdateChat(player, message)
@@ -1701,7 +1773,8 @@ function Chat:CullThread()
 					field["SpawnTime"]
 					and field["Player"]
 					and field["Message"]
-					and tick() - field["SpawnTime"] > self.Configuration.LifeTime
+					and tick() - field["SpawnTime"]
+						> self.Configuration.LifeTime
 				then
 					field["Player"].Visible = false
 					field["Message"].Visible = false
@@ -1724,7 +1797,10 @@ function Chat:LockAllFields(gui)
 end
 
 function Chat:CoreGuiChanged(coreGuiType, enabled)
-	if coreGuiType == Enum.CoreGuiType.Chat or coreGuiType == Enum.CoreGuiType.All then
+	if
+		coreGuiType == Enum.CoreGuiType.Chat
+		or coreGuiType == Enum.CoreGuiType.All
+	then
 		if self.Frame then
 			self.Frame.Visible = enabled
 		end
@@ -1746,10 +1822,15 @@ function Chat:Initialize()
 	Chat:CreateGui()
 
 	pcall(function()
-		Chat:CoreGuiChanged(Enum.CoreGuiType.Chat, Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat))
-		Game.StarterGui.CoreGuiChangedSignal:connect(function(coreGuiType, enabled)
-			Chat:CoreGuiChanged(coreGuiType, enabled)
-		end)
+		Chat:CoreGuiChanged(
+			Enum.CoreGuiType.Chat,
+			Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
+		)
+		Game.StarterGui.CoreGuiChangedSignal:connect(
+			function(coreGuiType, enabled)
+				Chat:CoreGuiChanged(coreGuiType, enabled)
+			end
+		)
 	end)
 
 	self.EventListener = PlayersService.PlayerChatted:connect(function(...)

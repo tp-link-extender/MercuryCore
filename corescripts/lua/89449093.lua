@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 89449093"
 -- This script manages context switches in the backpack (Gear to Wardrobe, etc.) and player state changes.  Also manages global functions across different tabs (currently only search)
 if game.CoreGui.Version < 7 then
 	return
@@ -45,7 +46,8 @@ if game.CoreGui.Version >= 8 then
 	wardrobeButton = backpack.Tabs.WardrobeButton
 end
 waitForChild(backpack.Parent, "ControlFrame")
-local backpackButton = waitForChild(backpack.Parent.ControlFrame, "BackpackButton")
+local backpackButton =
+	waitForChild(backpack.Parent.ControlFrame, "BackpackButton")
 local currentTab = "gear"
 
 local searchFrame = waitForChild(backpack, "SearchFrame")
@@ -64,7 +66,7 @@ local backpackIsOpen = false
 local active = true
 local disabledByDeveloper = false
 
-local humanoidDiedCon = nil
+local humanoidDiedCon
 
 local guiTweenSpeed = 0.25 -- how quickly we open/close the backpack
 
@@ -97,7 +99,10 @@ function createPublicFunction(funcName, invokeFunc)
 	assert(funcName, "funcName is nil")
 	assert(tostring(funcName), "funcName is not a string")
 	assert(invokeFunc, "invokeFunc is nil")
-	assert(type(invokeFunc) == "function", "invokeFunc should be of type 'function'")
+	assert(
+		type(invokeFunc) == "function",
+		"invokeFunc should be of type 'function'"
+	)
 
 	local newFunction = Instance.new "BindableFunction"
 	newFunction.Name = tostring(funcName)
@@ -128,7 +133,9 @@ function initHumanoidDiedConnections()
 	end
 	waitForProperty(game.Players.LocalPlayer, "Character")
 	waitForChild(game.Players.LocalPlayer.Character, "Humanoid")
-	humanoidDiedCon = game.Players.LocalPlayer.Character.Humanoid.Died:connect(deactivateBackpack)
+	humanoidDiedCon = game.Players.LocalPlayer.Character.Humanoid.Died:connect(
+		deactivateBackpack
+	)
 end
 
 function activateBackpack()
@@ -171,18 +178,28 @@ local hideBackpack = function()
 end
 
 function showBackpack()
-	game.GuiService:AddCenterDialog(backpack, Enum.CenterDialogType.PlayerInitiatedDialog, function()
-		backpack.Visible = true
-		backpackButton.Selected = true
-	end, function()
-		backpack.Visible = false
-		backpackButton.Selected = false
-	end)
+	game.GuiService:AddCenterDialog(
+		backpack,
+		Enum.CenterDialogType.PlayerInitiatedDialog,
+		function()
+			backpack.Visible = true
+			backpackButton.Selected = true
+		end,
+		function()
+			backpack.Visible = false
+			backpackButton.Selected = false
+		end
+	)
 	backpack.Visible = true
 	backpackButton.Selected = true
 	backpack:TweenSizeAndPosition(
 		backpackSize,
-		UDim2.new(0.5, -backpackSize.X.Offset / 2, 1, -backpackSize.Y.Offset - 88),
+		UDim2.new(
+			0.5,
+			-backpackSize.X.Offset / 2,
+			1,
+			-backpackSize.Y.Offset - 88
+		),
 		Enum.EasingDirection.Out,
 		Enum.EasingStyle.Quad,
 		guiTweenSpeed,
@@ -194,8 +211,9 @@ function showBackpack()
 		backpackOpenEvent:Fire(currentTab)
 		canToggle = true
 		readyForNextEvent = true
-		backpackButton.Image = "http://www.roblox.com/asset/?id=97644093"
-		backpackButton.Position = UDim2.new(0.5, -60, 1, -backpackSize.Y.Offset - 103)
+		backpackButton.Image = "http://banland.xyz/asset/?id=97644093"
+		backpackButton.Position =
+			UDim2.new(0.5, -60, 1, -backpackSize.Y.Offset - 103)
 	end)
 end
 
@@ -218,7 +236,7 @@ function toggleBackpack()
 	backpackIsOpen = not backpackIsOpen
 
 	if backpackIsOpen then
-		loadoutBackground.Image = "http://www.roblox.com/asset/?id=97623721"
+		loadoutBackground.Image = "http://banland.xyz/asset/?id=97623721"
 		loadoutBackground.Position = UDim2.new(-0.03, 0, -0.17, 0)
 		loadoutBackground.Size = UDim2.new(1.05, 0, 1.25, 0)
 		loadoutBackground.ZIndex = 2.0
@@ -228,8 +246,8 @@ function toggleBackpack()
 		backpackButton.Position = UDim2.new(0.5, -60, 1, -44)
 		loadoutBackground.Visible = false
 		backpackButton.Selected = false
-		backpackButton.Image = "http://www.roblox.com/asset/?id=97617958"
-		loadoutBackground.Image = "http://www.roblox.com/asset/?id=96536002"
+		backpackButton.Image = "http://banland.xyz/asset/?id=97617958"
+		loadoutBackground.Image = "http://banland.xyz/asset/?id=96536002"
 		loadoutBackground.Position = UDim2.new(-0.1, 0, -0.1, 0)
 		loadoutBackground.Size = UDim2.new(1.2, 0, 1.2, 0)
 		hideBackpack()
@@ -368,7 +386,10 @@ local backpackReady = function()
 end
 
 function coreGuiChanged(coreGuiType, enabled)
-	if coreGuiType == Enum.CoreGuiType.Backpack or coreGuiType == Enum.CoreGuiType.All then
+	if
+		coreGuiType == Enum.CoreGuiType.Backpack
+		or coreGuiType == Enum.CoreGuiType.All
+	then
 		active = enabled
 		disabledByDeveloper = not enabled
 
@@ -401,7 +422,10 @@ createPublicFunction("BackpackReady", backpackReady)
 ------------------------ Connections/Script Main -------------------------------------------
 
 pcall(function()
-	coreGuiChanged(Enum.CoreGuiType.Backpack, Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack))
+	coreGuiChanged(
+		Enum.CoreGuiType.Backpack,
+		Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+	)
 	Game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 

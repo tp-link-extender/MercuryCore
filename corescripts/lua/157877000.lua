@@ -1,3 +1,4 @@
+print "[Mercury]: Loaded corescript 157877000"
 --Include
 local Create = assert(LoadLibrary "RbxUtility").Create
 
@@ -257,7 +258,7 @@ function initializeDeveloperConsole()
 		Position = UDim2.new(0, 0, 0.5, -8),
 		Rotation = 180,
 		Size = UDim2.new(1, 0, 0, 16),
-		Image = "http://www.roblox.com/Asset?id=151205881",
+		Image = "http://banland.xyz/Asset?id=151205881",
 	}
 
 	local Dev_DownButton = Create "ImageButton" {
@@ -276,7 +277,7 @@ function initializeDeveloperConsole()
 		Position = UDim2.new(0, 3, 0, 3),
 		Size = UDim2.new(0, 14, 0, 14),
 		Rotation = 180,
-		Image = "http://www.roblox.com/Asset?id=151205813",
+		Image = "http://banland.xyz/Asset?id=151205813",
 	}
 
 	local Dev_UpButton = Create "ImageButton" {
@@ -294,7 +295,7 @@ function initializeDeveloperConsole()
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, 3, 0, 3),
 		Size = UDim2.new(0, 14, 0, 14),
-		Image = "http://www.roblox.com/Asset?id=151205813",
+		Image = "http://banland.xyz/Asset?id=151205813",
 	}
 
 	local Dev_TextBox = Create "Frame" {
@@ -331,7 +332,7 @@ function initializeDeveloperConsole()
 		Position = UDim2.new(0, 0, 0, 0),
 		Size = UDim2.new(1, 0, 1, 0),
 		Rotation = 0,
-		Image = "http://www.roblox.com/Asset?id=152093917",
+		Image = "http://banland.xyz/Asset?id=152093917",
 	}
 
 	local Dev_ResizeButton = Create "ImageButton" {
@@ -350,7 +351,7 @@ function initializeDeveloperConsole()
 		Position = UDim2.new(0, 6, 0, 6),
 		Size = UDim2.new(0.8, 0, 0.8, 0),
 		Rotation = 135,
-		Image = "http://www.roblox.com/Asset?id=151205813",
+		Image = "http://banland.xyz/Asset?id=151205813",
 	}
 
 	Create "TextButton" {
@@ -405,7 +406,7 @@ function initializeDeveloperConsole()
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, 3, 0, 3),
 		Size = UDim2.new(0, 14, 0, 14),
-		Image = "http://www.roblox.com/Asset?id=151205852",
+		Image = "http://banland.xyz/Asset?id=151205852",
 	}
 
 	Create "TextButton" {
@@ -433,17 +434,17 @@ function initializeDeveloperConsole()
 	}
 
 	---Saved Mouse Information
-	local previousMousePos = nil
-	local pPos = nil
+	local previousMousePos
+	local pPos
 
-	local previousMousePosResize = nil
-	local pSize = nil
+	local previousMousePosResize
+	local pSize
 
-	local previousMousePosScroll = nil
+	local previousMousePosScroll
 
-	local pScrollHandle = nil
+	local pScrollHandle
 
-	local pOffset = nil
+	local pOffset
 
 	local scrollUpIsDown = false
 	local scrollDownIsDown = false
@@ -467,7 +468,8 @@ function initializeDeveloperConsole()
 		end
 
 		local delta = Vector2.new(x, y) - previousMousePos
-		Dev_Container.Position = UDim2.new(0, pPos.X + delta.X, 0, pPos.Y + delta.Y)
+		Dev_Container.Position =
+			UDim2.new(0, pPos.X + delta.X, 0, pPos.Y + delta.Y)
 	end
 
 	Dev_TitleBar.TextButton.MouseButton1Down:connect(function(x, y)
@@ -486,8 +488,12 @@ function initializeDeveloperConsole()
 		end
 
 		local delta = Vector2.new(x, y) - previousMousePosResize
-		Dev_Container.Size =
-			UDim2.new(0, math.max(pSize.X + delta.X, minimumSize.X), 0, math.max(pSize.Y + delta.Y, minimumSize.Y))
+		Dev_Container.Size = UDim2.new(
+			0,
+			math.max(pSize.X + delta.X, minimumSize.X),
+			0,
+			math.max(pSize.Y + delta.Y, minimumSize.Y)
+		)
 	end
 	Dev_Container.Body.ResizeButton.MouseButton1Down:connect(function(x, y)
 		previousMousePosResize = Vector2.new(x, y)
@@ -526,10 +532,14 @@ function initializeDeveloperConsole()
 			local x = frameNumber / 5
 			local smoothStep = x * x * (3 - (2 * x))
 			Dev_OptionsButton.ImageLabel.Rotation = smoothStep * 5 * 9
-			Dev_OptionsBar.Position = UDim2.new(0, (smoothStep * 5 * 50) - 250, 0, 4)
+			Dev_OptionsBar.Position =
+				UDim2.new(0, (smoothStep * 5 * 50) - 250, 0, 4)
 
 			wait()
-			if (frameNumber <= 0 and optionsHidden) or (frameNumber >= 5 and not optionsHidden) then
+			if
+				(frameNumber <= 0 and optionsHidden)
+				or (frameNumber >= 5 and not optionsHidden)
+			then
 				animating = false
 			end
 		until not animating
@@ -591,15 +601,23 @@ function initializeDeveloperConsole()
 			end
 
 			if
-				(outputToggleOn or messageList[i].Type ~= Enum.MessageType.MessageOutput)
+				(
+					outputToggleOn
+					or messageList[i].Type ~= Enum.MessageType.MessageOutput
+				)
 				and (infoToggleOn or messageList[i].Type ~= Enum.MessageType.MessageInfo)
 				and (warningToggleOn or messageList[i].Type ~= Enum.MessageType.MessageWarning)
-				and (errorToggleOn or messageList[i].Type ~= Enum.MessageType.MessageError)
+				and (
+					errorToggleOn
+					or messageList[i].Type ~= Enum.MessageType.MessageError
+				)
 			then
 				message.TextWrapped = wordWrapToggleOn
 				message.Size = UDim2.new(0.98, 0, 0, 2000)
 				message.Parent = Dev_Container
-				message.Text = messageList[i].Time .. " -- " .. messageList[i].Message
+				message.Text = messageList[i].Time
+					.. " -- "
+					.. messageList[i].Message
 
 				message.Size = UDim2.new(0.98, 0, 0, message.TextBounds.Y)
 				message.Position = UDim2.new(0, 5, 0, posOffset)
@@ -609,7 +627,10 @@ function initializeDeveloperConsole()
 				if movePosition then
 					if
 						(currentConsole == LOCAL_CONSOLE and localOffset > 0)
-						or (currentConsole == SERVER_CONSOLE and serverOffset > 0)
+						or (
+							currentConsole == SERVER_CONSOLE
+							and serverOffset > 0
+						)
 					then
 						changeOffset(message.TextBounds.Y)
 					end
@@ -621,7 +642,9 @@ function initializeDeveloperConsole()
 					message.TextColor3 = Color3.new(1, 0, 0)
 				elseif messageList[i].Type == Enum.MessageType.MessageInfo then
 					message.TextColor3 = Color3.new(0.4, 0.5, 1)
-				elseif messageList[i].Type == Enum.MessageType.MessageWarning then
+				elseif
+					messageList[i].Type == Enum.MessageType.MessageWarning
+				then
 					message.TextColor3 = Color3.new(1, 0.6, 0.4)
 				else
 					message.TextColor3 = Color3.new(1, 1, 1)
@@ -708,10 +731,16 @@ function initializeDeveloperConsole()
 
 		local delta = (Vector2.new(x, y) - previousMousePosScroll).Y
 
-		local backRatio = 1 - (Dev_Container.Body.TextBox.AbsoluteSize.Y / Dev_TextHolder.AbsoluteSize.Y)
+		local backRatio = 1
+			- (
+				Dev_Container.Body.TextBox.AbsoluteSize.Y
+				/ Dev_TextHolder.AbsoluteSize.Y
+			)
 
-		local movementSize = Dev_ScrollArea.AbsoluteSize.Y - Dev_ScrollArea.Handle.AbsoluteSize.Y
-		local normalDelta = math.max(math.min(delta, movementSize), 0 - movementSize)
+		local movementSize = Dev_ScrollArea.AbsoluteSize.Y
+			- Dev_ScrollArea.Handle.AbsoluteSize.Y
+		local normalDelta =
+			math.max(math.min(delta, movementSize), 0 - movementSize)
 		local normalRatio = normalDelta / movementSize
 
 		local textMovementSize = (backRatio * Dev_TextHolder.AbsoluteSize.Y)
@@ -741,7 +770,12 @@ function initializeDeveloperConsole()
 	local function existsInsideContainer(container, x, y)
 		local pos = container.AbsolutePosition
 		local size = container.AbsoluteSize
-		if x < pos.X or x > pos.X + size.X or y < pos.y or y > pos.y + size.y then
+		if
+			x < pos.X
+			or x > pos.X + size.X
+			or y < pos.y
+			or y > pos.y + size.y
+		then
 			return false
 		end
 		return true
@@ -750,21 +784,30 @@ function initializeDeveloperConsole()
 	--Refresh Dev-Console Message Positions
 	function repositionList()
 		if currentConsole == LOCAL_CONSOLE then
-			localOffset = math.min(math.max(localOffset, 0), textHolderSize - Dev_Container.Body.TextBox.AbsoluteSize.Y)
+			localOffset = math.min(
+				math.max(localOffset, 0),
+				textHolderSize - Dev_Container.Body.TextBox.AbsoluteSize.Y
+			)
 			Dev_TextHolder.Size = UDim2.new(1, 0, 0, textHolderSize)
 		elseif currentConsole == SERVER_CONSOLE then
-			serverOffset =
-				math.min(math.max(serverOffset, 0), textHolderSize - Dev_Container.Body.TextBox.AbsoluteSize.Y)
+			serverOffset = math.min(
+				math.max(serverOffset, 0),
+				textHolderSize - Dev_Container.Body.TextBox.AbsoluteSize.Y
+			)
 			Dev_TextHolder.Size = UDim2.new(1, 0, 0, textHolderSize)
 		end
 
-		local ratio = Dev_Container.Body.TextBox.AbsoluteSize.Y / Dev_TextHolder.AbsoluteSize.Y
+		local ratio = Dev_Container.Body.TextBox.AbsoluteSize.Y
+			/ Dev_TextHolder.AbsoluteSize.Y
 
 		if ratio >= 1 then
 			Dev_Container.Body.ScrollBar.Visible = false
 			Dev_Container.Body.TextBox.Size = UDim2.new(1, -4, 1, -28)
 
-			if currentConsole == LOCAL_CONSOLE or currentConsole == SERVER_CONSOLE then
+			if
+				currentConsole == LOCAL_CONSOLE
+				or currentConsole == SERVER_CONSOLE
+			then
 				Dev_TextHolder.Position = UDim2.new(0, 0, 1, 0 - textHolderSize)
 			end
 		else
@@ -782,7 +825,8 @@ function initializeDeveloperConsole()
 
 			local topRatio = math.max(0, backRatio - offsetRatio)
 
-			local scrollHandleSize = math.max(Dev_ScrollArea.AbsoluteSize.Y * ratio, 21)
+			local scrollHandleSize =
+				math.max(Dev_ScrollArea.AbsoluteSize.Y * ratio, 21)
 
 			local scrollRatio = scrollHandleSize / Dev_ScrollArea.AbsoluteSize.Y
 			local ratioConversion = (1 - scrollRatio) / (1 - ratio)
@@ -798,9 +842,11 @@ function initializeDeveloperConsole()
 			Dev_ScrollArea.Handle.Position = UDim2.new(0, 0, 0, sPos)
 
 			if currentConsole == LOCAL_CONSOLE then
-				Dev_TextHolder.Position = UDim2.new(0, 0, 1, 0 - textHolderSize + localOffset)
+				Dev_TextHolder.Position =
+					UDim2.new(0, 0, 1, 0 - textHolderSize + localOffset)
 			elseif currentConsole == SERVER_CONSOLE then
-				Dev_TextHolder.Position = UDim2.new(0, 0, 1, 0 - textHolderSize + serverOffset)
+				Dev_TextHolder.Position =
+					UDim2.new(0, 0, 1, 0 - textHolderSize + serverOffset)
 			end
 		end
 	end
@@ -862,15 +908,19 @@ function initializeDeveloperConsole()
 
 	Dev_OptionsBar.WordWrapToggleButton.MouseButton1Down:connect(function(_, _)
 		wordWrapToggleOn = not wordWrapToggleOn
-		Dev_OptionsBar.WordWrapToggleButton.CheckFrame.Visible = wordWrapToggleOn
+		Dev_OptionsBar.WordWrapToggleButton.CheckFrame.Visible =
+			wordWrapToggleOn
 		refreshTextHolder()
 		repositionList()
 	end)
 
 	---Dev-Console Message Functionality
 	function AddLocalMessage(str, messageType, timeStamp)
-		localMessageList[#localMessageList + 1] =
-			{ Message = str, Time = ConvertTimeStamp(timeStamp), Type = messageType }
+		localMessageList[#localMessageList + 1] = {
+			Message = str,
+			Time = ConvertTimeStamp(timeStamp),
+			Type = messageType,
+		}
 		while #localMessageList > MAX_LIST_SIZE do
 			table.remove(localMessageList, 1)
 		end
@@ -881,8 +931,11 @@ function initializeDeveloperConsole()
 	end
 
 	function AddServerMessage(str, messageType, timeStamp)
-		serverMessageList[#serverMessageList + 1] =
-			{ Message = str, Time = ConvertTimeStamp(timeStamp), Type = messageType }
+		serverMessageList[#serverMessageList + 1] = {
+			Message = str,
+			Time = ConvertTimeStamp(timeStamp),
+			Type = messageType,
+		}
 		while #serverMessageList > MAX_LIST_SIZE do
 			table.remove(serverMessageList, 1)
 		end
@@ -904,7 +957,9 @@ function initializeDeveloperConsole()
 			localConsole.BackgroundTransparency = 0.6
 			serverConsole.BackgroundTransparency = 0.8
 
-			if game:FindFirstChild "Players" and game.Players["LocalPlayer"] then
+			if
+				game:FindFirstChild "Players" and game.Players["LocalPlayer"]
+			then
 				local mouse = game.Players.LocalPlayer:GetMouse()
 				refreshConsolePosition(mouse.X, mouse.Y)
 				refreshConsoleSize(mouse.X, mouse.Y)
@@ -938,7 +993,9 @@ function initializeDeveloperConsole()
 			serverConsole.BackgroundTransparency = 0.6
 			localConsole.BackgroundTransparency = 0.8
 
-			if game:FindFirstChild "Players" and game.Players["LocalPlayer"] then
+			if
+				game:FindFirstChild "Players" and game.Players["LocalPlayer"]
+			then
 				local mouse = game.Players.LocalPlayer:GetMouse()
 				refreshConsolePosition(mouse.X, mouse.Y)
 				refreshConsoleSize(mouse.X, mouse.Y)
@@ -978,7 +1035,9 @@ function initializeDeveloperConsole()
 			if not Dev_Container.Visible then
 				return
 			end
-			if existsInsideContainer(Dev_Container, LocalMouse.X, LocalMouse.Y) then
+			if
+				existsInsideContainer(Dev_Container, LocalMouse.X, LocalMouse.Y)
+			then
 				changeOffset(10)
 			end
 		end)
@@ -987,7 +1046,9 @@ function initializeDeveloperConsole()
 			if not Dev_Container.Visible then
 				return
 			end
-			if existsInsideContainer(Dev_Container, LocalMouse.X, LocalMouse.Y) then
+			if
+				existsInsideContainer(Dev_Container, LocalMouse.X, LocalMouse.Y)
+			then
 				changeOffset(-10)
 			end
 		end)
@@ -1002,12 +1063,17 @@ function initializeDeveloperConsole()
 	local history = game:GetService("LogService"):GetLogHistory()
 
 	for i = 1, #history do
-		AddLocalMessage(history[i].message, history[i].messageType, history[i].timestamp)
+		AddLocalMessage(
+			history[i].message,
+			history[i].messageType,
+			history[i].timestamp
+		)
 	end
 
-	game:GetService("LogService").MessageOut:connect(function(message, messageType)
-		AddLocalMessage(message, messageType, os.time())
-	end)
+	game:GetService("LogService").MessageOut
+		:connect(function(message, messageType)
+			AddLocalMessage(message, messageType, os.time())
+		end)
 
 	game:GetService("LogService").ServerMessageOut:connect(AddServerMessage)
 end
