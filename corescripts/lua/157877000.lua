@@ -524,9 +524,9 @@ function initializeDeveloperConsole()
 
 		repeat
 			if optionsHidden then
-				frameNumber = frameNumber - 1
+				frameNumber -= 1
 			else
-				frameNumber = frameNumber + 1
+				frameNumber += 1
 			end
 
 			local x = frameNumber / 5
@@ -554,9 +554,9 @@ function initializeDeveloperConsole()
 
 	function changeOffset(value)
 		if currentConsole == LOCAL_CONSOLE then
-			localOffset = localOffset + value
+			localOffset += value
 		elseif currentConsole == SERVER_CONSOLE then
-			serverOffset = serverOffset + value
+			serverOffset += value
 		end
 
 		repositionList()
@@ -622,7 +622,7 @@ function initializeDeveloperConsole()
 				message.Size = UDim2.new(0.98, 0, 0, message.TextBounds.Y)
 				message.Position = UDim2.new(0, 5, 0, posOffset)
 				message.Parent = Dev_TextHolder
-				posOffset = posOffset + message.TextBounds.Y
+				posOffset += message.TextBounds.Y
 
 				if movePosition then
 					if
@@ -680,12 +680,12 @@ function initializeDeveloperConsole()
 		end
 		scrollUpIsDown = true
 		wait(0.6)
-		inside = inside + 1
+		inside += 1
 		while scrollUpIsDown and inside < 2 do
 			wait()
 			changeOffset(12)
 		end
-		inside = inside - 1
+		inside -= 1
 	end
 
 	function holdingDownButton()
@@ -694,12 +694,12 @@ function initializeDeveloperConsole()
 		end
 		scrollDownIsDown = true
 		wait(0.6)
-		inside = inside + 1
+		inside += 1
 		while scrollDownIsDown and inside < 2 do
 			wait()
 			changeOffset(-12)
 		end
-		inside = inside - 1
+		inside -= 1
 	end
 
 	Dev_Container.Body.ScrollBar.Up.MouseButton1Click:connect(function()
@@ -864,10 +864,10 @@ function initializeDeveloperConsole()
 
 		local hour = math.floor(dayTime / 3600)
 
-		dayTime = dayTime - (hour * 3600)
+		dayTime -= (hour * 3600)
 		local minute = math.floor(dayTime / 60)
 
-		dayTime = dayTime - (minute * 60)
+		dayTime -= (minute * 60)
 
 		local h = numberWithZero(hour)
 		local m = numberWithZero(minute)
@@ -957,9 +957,7 @@ function initializeDeveloperConsole()
 			localConsole.BackgroundTransparency = 0.6
 			serverConsole.BackgroundTransparency = 0.8
 
-			if
-				game:FindFirstChild "Players" and game.Players["LocalPlayer"]
-			then
+			if game:FindFirstChild "Players" and game.Players.LocalPlayer then
 				local mouse = game.Players.LocalPlayer:GetMouse()
 				refreshConsolePosition(mouse.X, mouse.Y)
 				refreshConsoleSize(mouse.X, mouse.Y)
@@ -993,9 +991,7 @@ function initializeDeveloperConsole()
 			serverConsole.BackgroundTransparency = 0.6
 			localConsole.BackgroundTransparency = 0.8
 
-			if
-				game:FindFirstChild "Players" and game.Players["LocalPlayer"]
-			then
+			if game:FindFirstChild "Players" and game.Players.LocalPlayer then
 				local mouse = game.Players.LocalPlayer:GetMouse()
 				refreshConsolePosition(mouse.X, mouse.Y)
 				refreshConsoleSize(mouse.X, mouse.Y)
@@ -1012,7 +1008,7 @@ function initializeDeveloperConsole()
 		clean()
 	end)
 
-	if game:FindFirstChild "Players" and game.Players["LocalPlayer"] then
+	if game:FindFirstChild "Players" and game.Players.LocalPlayer then
 		local LocalMouse = game.Players.LocalPlayer:GetMouse()
 		LocalMouse.Move:connect(function()
 			if not Dev_Container.Visible then

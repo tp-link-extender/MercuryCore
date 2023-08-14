@@ -8,7 +8,7 @@ local sc = game:GetService "ScriptContext"
 local tries = 0
 
 while not sc and tries < 3 do
-	tries = tries + 1
+	tries += 1
 	sc = game:GetService "ScriptContext"
 	wait(0.2)
 end

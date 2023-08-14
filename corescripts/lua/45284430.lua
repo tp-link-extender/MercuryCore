@@ -59,7 +59,7 @@ local function CreateButtons(frame, buttons, yPos, ySize)
 		button.FontSize = Enum.FontSize.Size18
 		button.AutoButtonColor = true
 		button.Modal = true
-		if obj["Style"] then
+		if obj.Style then
 			button.Style = obj.Style
 		else
 			button.Style = Enum.ButtonStyle.RobloxButton
@@ -70,7 +70,7 @@ local function CreateButtons(frame, buttons, yPos, ySize)
 		button.Parent = frame
 		buttonObjs[buttonNum] = button
 
-		buttonNum = buttonNum + 1
+		buttonNum += 1
 	end
 	local numButtons = buttonNum - 1
 
@@ -97,7 +97,7 @@ local function CreateButtons(frame, buttons, yPos, ySize)
 			)
 			buttonObjs[buttonNum].Size =
 				UDim2.new(buttonSize, 0, ySize.Scale, ySize.Offset)
-			buttonNum = buttonNum + 1
+			buttonNum += 1
 		end
 	end
 end
@@ -110,7 +110,7 @@ local function setSliderPos(newAbsPosX, slider, sliderPosition, bar, steps)
 	)
 	local wholeNum, remainder = math.modf(relativePosX * newStep)
 	if remainder > 0.5 then
-		wholeNum = wholeNum + 1
+		wholeNum += 1
 	end
 	relativePosX = wholeNum / newStep
 
@@ -382,7 +382,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 				obj.TextColor3 = Color3.new(1, 1, 1)
 				obj.BackgroundTransparency = 1
 
-				childNum = childNum + 1
+				childNum += 1
 			end
 		end
 	end
@@ -417,7 +417,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 					else
 						obj.Font = Enum.Font.Arial
 					end
-					childNum = childNum + 1
+					childNum += 1
 				end
 			end
 		end
@@ -439,7 +439,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 
 	local function scrollDown()
 		if scrollBarPosition + dropDownItemCount <= itemCount then
-			scrollBarPosition = scrollBarPosition + 1
+			scrollBarPosition += 1
 			updateScroll()
 			return true
 		end
@@ -447,7 +447,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	end
 	local function scrollUp()
 		if scrollBarPosition > 1 then
-			scrollBarPosition = scrollBarPosition - 1
+			scrollBarPosition -= 1
 			updateScroll()
 			return true
 		end
@@ -464,13 +464,13 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 		scrollUpButton.Position =
 			UDim2.new(1, -11, (1 * 0.8) / ((dropDownItemCount + 1) * 0.8), 0)
 		scrollUpButton.MouseButton1Click:connect(function()
-			scrollMouseCount = scrollMouseCount + 1
+			scrollMouseCount += 1
 		end)
 		scrollUpButton.MouseLeave:connect(function()
-			scrollMouseCount = scrollMouseCount + 1
+			scrollMouseCount += 1
 		end)
 		scrollUpButton.MouseButton1Down:connect(function()
-			scrollMouseCount = scrollMouseCount + 1
+			scrollMouseCount += 1
 
 			scrollUp()
 			local val = scrollMouseCount
@@ -493,13 +493,13 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 		scrollDownButton.Position = UDim2.new(1, -11, 1, -11)
 		scrollDownButton.Parent = droppedDownMenu
 		scrollDownButton.MouseButton1Click:connect(function()
-			scrollMouseCount = scrollMouseCount + 1
+			scrollMouseCount += 1
 		end)
 		scrollDownButton.MouseLeave:connect(function()
-			scrollMouseCount = scrollMouseCount + 1
+			scrollMouseCount += 1
 		end)
 		scrollDownButton.MouseButton1Down:connect(function()
-			scrollMouseCount = scrollMouseCount + 1
+			scrollMouseCount += 1
 
 			scrollDown()
 			local val = scrollMouseCount
@@ -670,10 +670,10 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 			local isLabel = child:IsA "TextLabel"
 			if isLabel then
 				pixelsRemaining = pixelsRemaining
-					- settingsTable["TextLabelPositionPadY"]
+					- settingsTable.TextLabelPositionPadY
 			else
 				pixelsRemaining = pixelsRemaining
-					- settingsTable["TextButtonPositionPadY"]
+					- settingsTable.TextButtonPositionPadY
 			end
 			child.Position = UDim2.new(
 				child.Position.X.Scale,
@@ -695,14 +695,14 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 						child.Size.X.Scale,
 						child.Size.X.Offset,
 						0,
-						child.TextBounds.Y + settingsTable["TextLabelSizePadY"]
+						child.TextBounds.Y + settingsTable.TextLabelSizePadY
 					)
 				else
 					child.Size = UDim2.new(
 						child.Size.X.Scale,
 						child.Size.X.Offset,
 						0,
-						child.TextBounds.Y + settingsTable["TextButtonSizePadY"]
+						child.TextBounds.Y + settingsTable.TextButtonSizePadY
 					)
 				end
 
@@ -714,14 +714,14 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 						child.AbsoluteSize.Y + 1
 					)
 				end
-				pixelsRemaining = pixelsRemaining - child.AbsoluteSize.Y
+				pixelsRemaining -= child.AbsoluteSize.Y
 
 				if isLabel then
 					pixelsRemaining = pixelsRemaining
-						- settingsTable["TextLabelPositionPadY"]
+						- settingsTable.TextLabelPositionPadY
 				else
 					pixelsRemaining = pixelsRemaining
-						- settingsTable["TextButtonPositionPadY"]
+						- settingsTable.TextButtonPositionPadY
 				end
 			else
 				child.Visible = false
@@ -735,7 +735,7 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 				0,
 				totalPixels - pixelsRemaining
 			)
-			pixelsRemaining = pixelsRemaining - child.AbsoluteSize.Y
+			pixelsRemaining -= child.AbsoluteSize.Y
 			child.Visible = (pixelsRemaining >= 0)
 		end
 	end
@@ -755,17 +755,17 @@ t.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
 		settingsTable = {}
 	end
 
-	if not settingsTable["TextLabelSizePadY"] then
-		settingsTable["TextLabelSizePadY"] = 0
+	if not settingsTable.TextLabelSizePadY then
+		settingsTable.TextLabelSizePadY = 0
 	end
-	if not settingsTable["TextLabelPositionPadY"] then
-		settingsTable["TextLabelPositionPadY"] = 0
+	if not settingsTable.TextLabelPositionPadY then
+		settingsTable.TextLabelPositionPadY = 0
 	end
-	if not settingsTable["TextButtonSizePadY"] then
-		settingsTable["TextButtonSizePadY"] = 12
+	if not settingsTable.TextButtonSizePadY then
+		settingsTable.TextButtonSizePadY = 12
 	end
-	if not settingsTable["TextButtonPositionPadY"] then
-		settingsTable["TextButtonPositionPadY"] = 2
+	if not settingsTable.TextButtonPositionPadY then
+		settingsTable.TextButtonPositionPadY = 2
 	end
 
 	--Wrapper frame takes care of styled objects
@@ -843,12 +843,12 @@ t.CreateSlider = function(steps, width, position)
 	bar.Parent = sliderGui
 
 	if
-		position["X"]
-		and position["X"]["Scale"]
-		and position["X"]["Offset"]
-		and position["Y"]
-		and position["Y"]["Scale"]
-		and position["Y"]["Offset"]
+		position.X
+		and position.X.Scale
+		and position.X.Offset
+		and position.Y
+		and position.Y.Scale
+		and position.Y.Offset
 	then
 		bar.Position = position
 	end
@@ -1609,20 +1609,20 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		pos = scrollPosition
 		--count up from current scroll position to fill out grid
 		while pos <= #guiObjects and pixelsBelowScrollbar < totalPixelsY do
-			xCounter = xCounter + guiObjects[pos].AbsoluteSize.X
+			xCounter += guiObjects[pos].AbsoluteSize.X
 			--previous pos was the end of a row
 			if xCounter >= totalPixelsX then
-				pixelsBelowScrollbar = pixelsBelowScrollbar + currentRowY
+				pixelsBelowScrollbar += currentRowY
 				currentRowY = 0
 				xCounter = guiObjects[pos].AbsoluteSize.X
 			end
 			if guiObjects[pos].AbsoluteSize.Y > currentRowY then
 				currentRowY = guiObjects[pos].AbsoluteSize.Y
 			end
-			pos = pos + 1
+			pos += 1
 		end
 		--Count wherever current row left off
-		pixelsBelowScrollbar = pixelsBelowScrollbar + currentRowY
+		pixelsBelowScrollbar += currentRowY
 		currentRowY = 0
 
 		pos = scrollPosition - 1
@@ -1633,20 +1633,20 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 
 		--count backwards from current scrollPosition to see if we can add more rows
 		while pixelsBelowScrollbar + currentRowY < totalPixelsY and pos >= 1 do
-			xCounter = xCounter + guiObjects[pos].AbsoluteSize.X
-			rowSizeCounter = rowSizeCounter + 1
+			xCounter += guiObjects[pos].AbsoluteSize.X
+			rowSizeCounter += 1
 			if xCounter >= totalPixelsX then
 				rowSize = rowSizeCounter - 1
 				rowSizeCounter = 0
 				xCounter = guiObjects[pos].AbsoluteSize.X
 				if pixelsBelowScrollbar + currentRowY <= totalPixelsY then
 					--It fits, so back up our scroll position
-					pixelsBelowScrollbar = pixelsBelowScrollbar + currentRowY
+					pixelsBelowScrollbar += currentRowY
 					if scrollPosition <= rowSize then
 						scrollPosition = 1
 						break
 					else
-						scrollPosition = scrollPosition - rowSize
+						scrollPosition -= rowSize
 					end
 					currentRowY = 0
 				else
@@ -1658,7 +1658,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 				currentRowY = guiObjects[pos].AbsoluteSize.Y
 			end
 
-			pos = pos - 1
+			pos -= 1
 		end
 
 		--Do check last time if pos = 0
@@ -1700,7 +1700,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 					--print("Laying out " .. child.Name)
 					--GuiObject
 					if setRowSize then
-						rowSizeCounter = rowSizeCounter + 1
+						rowSizeCounter += 1
 					end
 					if xCounter + child.AbsoluteSize.X >= totalPixelsX then
 						if setRowSize then
@@ -1717,12 +1717,12 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 						0,
 						totalPixelsY - pixelsRemainingY + yOffset
 					)
-					xCounter = xCounter + child.AbsoluteSize.X
+					xCounter += child.AbsoluteSize.X
 					child.Visible = (
 						(pixelsRemainingY - child.AbsoluteSize.Y) >= 0
 					)
 					if child.Visible then
-						howManyDisplayed = howManyDisplayed + 1
+						howManyDisplayed += 1
 					end
 					lastChildSize = child.AbsoluteSize
 				end
@@ -1793,13 +1793,13 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 						break
 					else
 						--local ("Backing up ScrollPosition from -- " ..scrollPosition)
-						scrollPosition = scrollPosition - 1
+						scrollPosition -= 1
 					end
 				else
 					break
 				end
 			end
-			pos = pos - 1
+			pos -= 1
 		end
 
 		pos = scrollPosition
@@ -1820,10 +1820,10 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 						0,
 						totalPixels - pixelsRemaining
 					)
-					pixelsRemaining = pixelsRemaining - child.AbsoluteSize.Y
+					pixelsRemaining -= child.AbsoluteSize.Y
 					if pixelsRemaining >= 0 then
 						child.Visible = true
-						howManyDisplayed = howManyDisplayed + 1
+						howManyDisplayed += 1
 					else
 						child.Visible = false
 					end
@@ -1842,7 +1842,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		if children then
 			for _, child in ipairs(children) do
 				if child:IsA "GuiObject" then
-					guiObjects = guiObjects + 1
+					guiObjects += 1
 				end
 			end
 		end
@@ -1892,7 +1892,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		end
 		reentrancyGuard = true
 		wait()
-		local success, err = nil
+		local success, err
 		if style == "grid" then
 			success, err = pcall(function()
 				layoutGridScrollBar()
@@ -1910,7 +1910,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 	end
 
 	local doScrollUp = function()
-		scrollPosition = scrollPosition - rowSize
+		scrollPosition -= rowSize
 		if scrollPosition < 1 then
 			scrollPosition = 1
 		end
@@ -1918,7 +1918,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 	end
 
 	local doScrollDown = function()
-		scrollPosition = scrollPosition + rowSize
+		scrollPosition += rowSize
 		recalculate(nil)
 	end
 
@@ -2005,18 +2005,18 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 
 				local dragAbsSize = scrollDrag.AbsoluteSize.y
 				local barAbsOne = barAbsPos + barAbsSize - dragAbsSize
-				y = y - mouseOffset
+				y -= mouseOffset
 				y = y < barAbsPos and barAbsPos
 					or y > barAbsOne and barAbsOne
 					or y
-				y = y - barAbsPos
+				y -= barAbsPos
 
 				local guiObjects = 0
 				local children = frame:GetChildren()
 				if children then
 					for _, child in ipairs(children) do
 						if child:IsA "GuiObject" then
-							guiObjects = guiObjects + 1
+							guiObjects += 1
 						end
 					end
 				end
@@ -2609,7 +2609,7 @@ t.CreateImageTutorialPage = function(
 				imageLabel.Position = UDim2.new(0.5 - (x / y) / 2, 0, 0, 0)
 			end
 		end
-		size = size + 50
+		size += 50
 		frame.Size = UDim2.new(0, size, 0, size)
 		frame.Position = UDim2.new(0.5, -size / 2, 0.5, -size / 2)
 	end
@@ -2733,7 +2733,7 @@ t.CreateSetPanel = function(
 	-- used for water selections
 	local waterForceDirection = "NegX"
 	local waterForce = "None"
-	local waterGui, waterTypeChangedEvent = nil
+	local waterGui, waterTypeChangedEvent
 
 	local Data = {}
 	Data.CurrentCategory = nil
@@ -3023,7 +3023,7 @@ t.CreateSetPanel = function(
 		local numSkipped = 0
 		for i = 1, #sets do
 			if not showAdminCategories and sets[i].Name == "Beta" then
-				numSkipped = numSkipped + 1
+				numSkipped += 1
 			else
 				setButtons[i - numSkipped] = buildSetButton(
 					sets[i].Name,
@@ -3254,10 +3254,10 @@ t.CreateSetPanel = function(
 		for i = 1, #insertButtons do
 			insertButtons[i].Position =
 				UDim2.new(0, buttonWidth * x, 0, buttonHeight * y)
-			x = x + 1
+			x += 1
 			if x >= columns then
 				x = 0
-				y = y + 1
+				y += 1
 			end
 		end
 	end
@@ -3321,7 +3321,7 @@ t.CreateSetPanel = function(
 			insertButtons[arrayPosition], buttonCon = buildInsertButton()
 			table.insert(insertButtonCons, buttonCon)
 			insertButtons[arrayPosition].Parent = setGui.SetPanel.ItemsFrame
-			arrayPosition = arrayPosition + 1
+			arrayPosition += 1
 		end
 		realignButtonGrid(columns)
 
@@ -3495,7 +3495,7 @@ t.CreateSetPanel = function(
 				)
 			end)
 
-			currRow = currRow + 1
+			currRow += 1
 		end
 
 		local buttons = setGui.SetPanel.Sets.SetsLists:GetChildren()
@@ -4293,7 +4293,7 @@ t.CreatePluginFrame = function(name, size, position, scrollable, parent)
 		widgetContainer.Position = position + UDim2.new(0, 0, 0, 20)
 	end
 
-	local frame, control, verticalDragger = nil
+	local frame, control, verticalDragger
 	if scrollable then
 		--frame for widgets
 		frame, control = t.CreateTrueScrollingFrame()

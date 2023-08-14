@@ -19,9 +19,7 @@ else
 	gui = script.Parent
 end
 
-local helpButton
-local updateCameraDropDownSelection
-local updateVideoCaptureDropDownSelection
+local helpButton, updateCameraDropDownSelection, updateVideoCaptureDropDownSelection
 local tweenTime = 0.2
 
 local mouseLockLookScreenUrl = "http://banland.xyz/asset?id=54071825"
@@ -233,7 +231,7 @@ local function CreateTextButtons(frame, buttons, yPos, ySize)
 		button.Parent = frame
 		buttonObjs[buttonNum] = button
 
-		buttonNum = buttonNum + 1
+		buttonNum += 1
 	end
 
 	toggleSelection(buttonObjs[1])
@@ -263,7 +261,7 @@ local function CreateTextButtons(frame, buttons, yPos, ySize)
 			)
 			buttonObjs[buttonNum].Size =
 				UDim2.new(buttonSize, 0, ySize.Scale, ySize.Offset)
-			buttonNum = buttonNum + 1
+			buttonNum += 1
 		end
 	end
 end
@@ -306,7 +304,7 @@ function setDisabledState(guiObject)
 		guiObject.TextTransparency = 0.9
 		guiObject.Active = false
 	else
-		if guiObject["ClassName"] then
+		if guiObject.ClassName then
 			print(
 				"setDisabledState() got object of unsupported type.  object type is ",
 				guiObject.ClassName
@@ -807,9 +805,7 @@ local function createGameMainMenu(baseZIndex, shield)
 		gameSettingsButton.ZIndex = baseZIndex + 4
 		gameSettingsButton.Parent = gameMainMenuFrame
 		gameSettingsButton.MouseButton1Click:connect(function()
-			if
-				game:FindFirstChild "Players" and game.Players["LocalPlayer"]
-			then
+			if game:FindFirstChild "Players" and game.Players.LocalPlayer then
 				local loadingGui =
 					game.Players.LocalPlayer:FindFirstChild "PlayerLoadingGui"
 				if loadingGui then
@@ -1266,7 +1262,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 				if (graphicsLevel.Value + 1) > GraphicsQualityLevels then
 					return
 				end
-				graphicsLevel.Value = graphicsLevel.Value + 1
+				graphicsLevel.Value += 1
 				graphicsSetter.Text = tostring(graphicsLevel.Value)
 				setGraphicsQualityLevel(graphicsLevel.Value)
 
@@ -1281,7 +1277,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 				if (graphicsLevel.Value - 1) <= 0 then
 					return
 				end
-				graphicsLevel.Value = graphicsLevel.Value - 1
+				graphicsLevel.Value -= 1
 				graphicsSetter.Text = tostring(graphicsLevel.Value)
 				setGraphicsQualityLevel(graphicsLevel.Value)
 
@@ -1451,7 +1447,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 		local videoNames = {}
 		local videoNameToItem = {}
 		videoNames[1] = "Just Save to Disk"
-		videoNameToItem[videoNames[1]] = Enum.UploadSetting["Never"]
+		videoNameToItem[videoNames[1]] = Enum.UploadSetting.Never
 		videoNames[2] = "Upload to YouTube"
 		videoNameToItem[videoNames[2]] = Enum.UploadSetting["Ask me first"]
 
@@ -1474,7 +1470,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 		syncVideoCaptureSetting = function()
 			if
 				UserSettings().GameSettings.VideoUploadPromptBehavior
-				== Enum.UploadSetting["Never"]
+				== Enum.UploadSetting.Never
 			then
 				updateVideoCaptureDropDownSelection(videoNames[1])
 			elseif
@@ -1972,7 +1968,7 @@ if LoadLibrary then
 			errorBoxButtons[buttonOffset].Function = function()
 				saveLocal()
 			end
-			buttonOffset = buttonOffset + 1
+			buttonOffset += 1
 		end
 		errorBoxButtons[buttonOffset] = {}
 		errorBoxButtons[buttonOffset].Text = "Keep Playing"
@@ -2036,7 +2032,7 @@ if LoadLibrary then
 			spinnerImage.Parent = spinnerFrame
 
 			spinnerIcons[spinnerNum] = spinnerImage
-			spinnerNum = spinnerNum + 1
+			spinnerNum += 1
 		end
 
 		save = function()
@@ -2060,7 +2056,7 @@ if LoadLibrary then
 								"http://banland.xyz/Asset?id=45880710"
 						end
 
-						pos = pos + 1
+						pos += 1
 					end
 					spinPos = (spinPos + 1) % 8
 					wait(0.2)
@@ -2260,7 +2256,7 @@ if LoadLibrary then
 					if player:IsA "Player" and player ~= localPlayer then
 						playerNames[pos] = player.Name
 						nameToPlayer[player.Name] = player
-						pos = pos + 1
+						pos += 1
 					end
 				end
 			end

@@ -9,8 +9,7 @@ local contextActionService = Game:GetService "ContextActionService"
 local isTouchDevice = Game:GetService("UserInputService").TouchEnabled
 local functionTable = {}
 local buttonVector = {}
-local buttonScreenGui
-local buttonFrame
+local buttonScreenGui, buttonFrame
 
 local ContextDownImage = "http://www.banland.xyz/asset/?id=97166756"
 local ContextUpImage = "http://www.banland.xyz/asset/?id=97166444"
@@ -169,10 +168,10 @@ function createNewButton(actionName, functionInfoTable)
 	actionIcon.Size = UDim2.new(0.65, 0, 0.65, 0)
 	actionIcon.BackgroundTransparency = 1
 	if
-		functionInfoTable["image"]
-		and type(functionInfoTable["image"]) == "string"
+		functionInfoTable.image
+		and type(functionInfoTable.image) == "string"
 	then
-		actionIcon.Image = functionInfoTable["image"]
+		actionIcon.Image = functionInfoTable.image
 	end
 	actionIcon.Parent = contextButton
 
@@ -187,10 +186,10 @@ function createNewButton(actionName, functionInfoTable)
 	actionTitle.TextWrapped = true
 	actionTitle.Text = ""
 	if
-		functionInfoTable["title"]
-		and type(functionInfoTable["title"]) == "string"
+		functionInfoTable.title
+		and type(functionInfoTable.title) == "string"
 	then
-		actionTitle.Text = functionInfoTable["title"]
+		actionTitle.Text = functionInfoTable.title
 	end
 	actionTitle.Parent = contextButton
 
@@ -303,5 +302,5 @@ end)
 -- make sure any bound data before we setup connections is handled
 local boundActions = contextActionService:GetAllBoundActionInfo()
 for actionName, actionData in pairs(boundActions) do
-	addAction(actionName, actionData["createTouchButton"], actionData)
+	addAction(actionName, actionData.createTouchButton, actionData)
 end

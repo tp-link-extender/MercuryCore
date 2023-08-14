@@ -28,8 +28,7 @@ inCharTag.Name = "InCharTag"
 local hider = Instance.new "BoolValue"
 hider.Name = "RobloxBuildTool"
 
-local currentChildren
-local backpackTools
+local currentChildren, backpackTools
 
 if config == nil then
 	config = Instance.new "Configuration"
@@ -132,7 +131,7 @@ while true do
 			local fire = config:FindFirstChild "Fire"
 			local stun = config:FindFirstChild "Stun"
 			if regen then
-				delta = delta + regen.Value.X
+				delta += regen.Value.X
 				if regen.Value.Y >= 0 then
 					regen.Value = Vector3.new(
 						regen.Value.X + regen.Value.Z,
@@ -150,7 +149,7 @@ while true do
 				end -- infinity is -1
 			end
 			if poison then
-				delta = delta - poison.Value.X
+				delta -= poison.Value.X
 				if poison.Value.Y >= 0 then
 					poison.Value = Vector3.new(
 						poison.Value.X + poison.Value.Z,
@@ -170,7 +169,7 @@ while true do
 
 			if ice then
 				--print("IN ICE")
-				delta = delta - ice.Value.X
+				delta -= ice.Value.X
 				if ice.Value.Y >= 0 then
 					ice.Value =
 						Vector3.new(ice.Value.X, ice.Value.Y - s, ice.Value.Z)
@@ -182,7 +181,7 @@ while true do
 			if fire then
 				fireEffect.Enabled = true
 				fireEffect.Parent = Figure.Torso
-				delta = delta - fire.Value.X
+				delta -= fire.Value.X
 				if fire.Value.Y >= 0 then
 					fire.Value = Vector3.new(
 						fire.Value.X,
@@ -224,7 +223,7 @@ while true do
 						backpackTools[i].Parent =
 							game.Players:GetPlayerFromCharacter(script.Parent).Backpack
 					end
-					stun.Value = stun.Value - s
+					stun.Value -= s
 				else
 					Torso.Anchored = false
 					for i = 1, #backpackTools do
@@ -256,9 +255,9 @@ while true do
 			if delta ~= 0 then
 				coroutine.resume(coroutine.create(billboardHealthChange), delta)
 			end
-			--delta = delta * .01
+			--delta *= .01
 		end
-		--health = health + delta * s * Humanoid.MaxHealth
+		--health += delta * s * Humanoid.MaxHealth
 
 		health = Humanoid.Health + delta * s
 		if health * 1.01 < Humanoid.MaxHealth then

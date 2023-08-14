@@ -181,8 +181,8 @@ settings().Diagnostics.LuaRamLimit = 0
 --settings().Network.SendRate = 35
 --settings().Network.PhysicsSend = 0  -- 1==RoundRobin
 
---shared["__time"] = 0
---game:GetService("RunService").Stepped:connect(function (time) shared["__time"] = time end)
+--shared.__time = 0
+--game:GetService("RunService").Stepped:connect(function (time) shared.__time = time end)
 
 if placeId ~= nil and killID ~= nil and deathID ~= nil and url ~= nil then
 	-- listen for the death of a Player

@@ -406,7 +406,7 @@ function constructThumbstick(
 end
 
 function setupCharacterMovement(parentFrame)
-	local lastMovementVector, lastMaxMovement = nil
+	local lastMovementVector, lastMaxMovement
 	local moveCharacterFunc = localPlayer.MoveCharacter
 	local moveCharacterFunction = function(movementVector, maxMovement)
 		if localPlayer then
