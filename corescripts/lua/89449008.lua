@@ -49,9 +49,7 @@ local browsingMenu = false
 local mouseEnterCons = {}
 local mouseClickCons = {}
 
-local characterChildAddedCon
-local characterChildRemovedCon
-local backpackAddCon
+local characterChildAddedCon, characterChildRemovedCon, backpackAddCon
 
 local playerBackpack = waitForChild(player, "Backpack")
 
@@ -346,13 +344,13 @@ function resizeGrid()
 				local beginPos
 				buttonClone.DragBegin:connect(function(value)
 					waitForChild(buttonClone, "Background")
-					buttonClone["Background"].ZIndex = 10
+					buttonClone.Background.ZIndex = 10
 					buttonClone.ZIndex = 10
 					beginPos = value
 				end)
 				buttonClone.DragStopped:connect(function(x, y)
 					waitForChild(buttonClone, "Background")
-					buttonClone["Background"].ZIndex = 1
+					buttonClone.Background.ZIndex = 1
 					buttonClone.ZIndex = 2
 					if beginPos ~= buttonClone.Position then
 						if not checkForSwap(buttonClone, x, y) then
@@ -994,7 +992,7 @@ if not backpack.Visible then
 end
 
 -- make sure that inventory is listening to gear reparenting
-if characterChildAddedCon == nil and game.Players.LocalPlayer["Character"] then
+if characterChildAddedCon == nil and game.Players.LocalPlayer.Character then
 	setupCharacterConnections()
 end
 if not backpackAddCon then

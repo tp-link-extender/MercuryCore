@@ -200,7 +200,7 @@ function StringReader:Peek()
 end
 
 function StringReader:Next()
-	self.i = self.i + 1
+	self.i += 1
 	if self.i <= #self.s then
 		return string.sub(self.s, self.i, self.i)
 	end
@@ -629,7 +629,7 @@ t.SelectTerrainRegion = function(
 
 	-- helper function to update tag
 	function incrementAliveCounter()
-		aliveCounter = aliveCounter + 1
+		aliveCounter += 1
 		if aliveCounter > 1000000 then
 			aliveCounter = 0
 		end

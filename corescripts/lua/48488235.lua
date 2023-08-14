@@ -275,10 +275,10 @@ function MakePopupButton(nparent, ntext, index, last)
 	elseif last then
 		if index % 2 == 1 then
 			tobj.Image = "http://banland.xyz/asset/?id="
-				.. Images["LightPopupBottom"]
+				.. Images.LightPopupBottom
 		else
 			tobj.Image = "http://banland.xyz/asset/?id="
-				.. Images["DarkPopupBottom"]
+				.. Images.DarkPopupBottom
 		end
 	else
 		if index % 2 == 1 then
@@ -936,8 +936,7 @@ local RightEdgeSpace = -0.04
 
 local DefaultBottomClipPos = BottomClipFrame.Position.Y.Scale
 
-local SelectedPlayerEntry
-local SelectedPlayer
+local SelectedPlayerEntry, SelectedPlayer
 
 -- locks(semaphores) for stopping race conditions
 local AddingFrameLock = false
@@ -969,8 +968,7 @@ local Abuses = {
 	"Rude or Mean Behavior",
 	"False Reporting Me",
 }
-local UpdateAbuseFunction
-local AbuseDropDown
+local UpdateAbuseFunction, AbuseDropDown
 
 local PrivilegeLevel = {
 	Owner = 255,
@@ -997,7 +995,7 @@ end)
 -- function GetEntryListLength()
 -- 	local numEnts = #PlayerFrames + #TeamFrames
 -- 	if NeutralTeam then
--- 		numEnts = numEnts + 1
+-- 		numEnts += 1
 -- 	end
 -- 	return numEnts
 -- end
@@ -1105,16 +1103,16 @@ end
 	@Return		Normalized integer value for rank?
 --]]
 -- function GetPrivilegeType(rank)
--- 	if rank <= PrivilegeLevel["Banned"] then
--- 		return PrivilegeLevel["Banned"]
--- 	elseif rank <= PrivilegeLevel["Visitor"] then
--- 		return PrivilegeLevel["Visitor"]
--- 	elseif rank <= PrivilegeLevel["Member"] then
--- 		return PrivilegeLevel["Member"]
--- 	elseif rank <= PrivilegeLevel["Admin"] then
--- 		return PrivilegeLevel["Admin"]
+-- 	if rank <= PrivilegeLevel.Banned then
+-- 		return PrivilegeLevel.Banned
+-- 	elseif rank <= PrivilegeLevel.Visitor then
+-- 		return PrivilegeLevel.Visitor
+-- 	elseif rank <= PrivilegeLevel.Member then
+-- 		return PrivilegeLevel.Member
+-- 	elseif rank <= PrivilegeLevel.Admin then
+-- 		return PrivilegeLevel.Admin
 -- 	else
--- 		return PrivilegeLevel["Owner"]
+-- 		return PrivilegeLevel.Owner
 -- 	end
 -- end
 
@@ -1172,27 +1170,25 @@ function HighlightMyRank(
 	AdminButton
 )
 	BanPlayerButton.Image = "http://banland.xyz/asset/?id="
-		.. Images["LightPopupMid"]
-	VisitorButton.Image = "http://banland.xyz/asset/?id="
-		.. Images["DarkPopupMid"]
-	MemberButton.Image = "http://banland.xyz/asset/?id="
-		.. Images["LightPopupMid"]
+		.. Images.LightPopupMid
+	VisitorButton.Image = "http://banland.xyz/asset/?id=" .. Images.DarkPopupMid
+	MemberButton.Image = "http://banland.xyz/asset/?id=" .. Images.LightPopupMid
 	AdminButton.Image = "http://banland.xyz/asset/?id="
-		.. Images["DarkPopupBottom"]
+		.. Images.DarkPopupBottom
 
 	local rank = player.PersonalServerRank
-	if rank <= PrivilegeLevel["Banned"] then
+	if rank <= PrivilegeLevel.Banned then
 		BanPlayerButton.Image = "http://banland.xyz/asset/?id="
-			.. Images["LightBluePopupMid"]
-	elseif rank <= PrivilegeLevel["Visitor"] then
+			.. Images.LightBluePopupMid
+	elseif rank <= PrivilegeLevel.Visitor then
 		VisitorButton.Image = "http://banland.xyz/asset/?id="
-			.. Images["DarkBluePopupMid"]
-	elseif rank <= PrivilegeLevel["Member"] then
+			.. Images.DarkBluePopupMid
+	elseif rank <= PrivilegeLevel.Member then
 		MemberButton.Image = "http://banland.xyz/asset/?id="
-			.. Images["LightBluePopupMid"]
-	elseif rank <= PrivilegeLevel["Admin"] then
+			.. Images.LightBluePopupMid
+	elseif rank <= PrivilegeLevel.Admin then
 		AdminButton.Image = "http://banland.xyz/asset/?id="
-			.. Images["DarkBluePopupBottom"]
+			.. Images.DarkBluePopupBottom
 	end
 end
 
@@ -1351,16 +1347,16 @@ end
 --]]
 function PlayerSortFunction(a, b)
 	-- prevents flipping out leaderboard
-	if a["Score"] == b["Score"] then
-		return a["Player"].Name:upper() < b["Player"].Name:upper()
+	if a.Score == b.Score then
+		return a.Player.Name:upper() < b.Player.Name:upper()
 	end
-	if not a["Score"] then
+	if not a.Score then
 		return false
 	end
-	if not b["Score"] then
+	if not b.Score then
 		return true
 	end
-	return a["Score"] < b["Score"]
+	return a.Score < b.Score
 end
 
 ---------------------------------
@@ -1431,27 +1427,27 @@ function StatAdded(nchild, playerEntry)
 	else
 		local haveScore = false
 		for _, i in pairs(ScoreNames) do
-			if i["Name"] == nchild.Name then
+			if i.Name == nchild.Name then
 				haveScore = true
 			end
 		end
 		if not haveScore then
 			local nstat = {}
-			nstat["Name"] = nchild.Name
-			nstat["Priority"] = 0
+			nstat.Name = nchild.Name
+			nstat.Priority = 0
 			if nchild:FindFirstChild "Priority" then
-				nstat["Priority"] = nchild.Priority
+				nstat.Priority = nchild.Priority
 			end
-			nstat["IsPrimary"] = false
+			nstat.IsPrimary = false
 			if nchild:FindFirstChild "IsPrimary" then
-				nstat["IsPrimary"] = true
+				nstat.IsPrimary = true
 			end
 			nstat.AddId = AddId
-			AddId = AddId + 1
+			AddId += 1
 			table.insert(ScoreNames, nstat)
 			table.sort(ScoreNames, StatSort)
-			if not StatTitles:FindFirstChild(nstat["Name"]) then
-				CreateStatTitle(nstat["Name"])
+			if not StatTitles:FindFirstChild(nstat.Name) then
+				CreateStatTitle(nstat.Name)
 			end
 			UpdateMaximize()
 		end
@@ -1466,9 +1462,9 @@ end
 function DoesStatExist(statName, exception)
 	for _, playerf in pairs(PlayerFrames) do
 		if
-			playerf["Player"] ~= exception
-			and playerf["Player"]:FindFirstChild "leaderstats"
-			and playerf["Player"].leaderstats:FindFirstChild(statName)
+			playerf.Player ~= exception
+			and playerf.Player:FindFirstChild "leaderstats"
+			and playerf.Player.leaderstats:FindFirstChild(statName)
 		then
 			--print('player:' .. playerf['Player'].Name ..' has stat')
 			return true
@@ -1492,20 +1488,20 @@ function StatRemoved(nchild, playerEntry)
 		wait(1 / 30)
 	end
 	AddingStatLock = true
-	if playerEntry["Frame"]:FindFirstChild(nchild.Name) then
+	if playerEntry.Frame:FindFirstChild(nchild.Name) then
 		debugprint "Destroyed frame!"
-		playerEntry["Frame"][nchild.Name].Parent = nil
+		playerEntry.Frame[nchild.Name].Parent = nil
 	end
-	if not DoesStatExist(nchild.Name, playerEntry["Player"]) then
+	if not DoesStatExist(nchild.Name, playerEntry.Player) then
 		for i, val in ipairs(ScoreNames) do
-			if val["Name"] == nchild.Name then
+			if val.Name == nchild.Name then
 				table.remove(ScoreNames, i)
 				if StatTitles:FindFirstChild(nchild.Name) then
 					StatTitles[nchild.Name]:Destroy()
 				end
 				for _, teamf in pairs(TeamFrames) do
-					if teamf["Frame"]:FindFirstChild(nchild.Name) then
-						teamf["Frame"][nchild.Name]:Destroy()
+					if teamf.Frame:FindFirstChild(nchild.Name) then
+						teamf.Frame[nchild.Name]:Destroy()
 					end
 				end
 			end
@@ -1553,26 +1549,26 @@ function MakeScoreEntry(entry, scoreval, panel)
 	--RIP the leaderstat bug, oct 2012-nov 2012
 	wait()
 	if
-		entry["Player"]:FindFirstChild "leaderstats"
-		and entry["Player"].leaderstats:FindFirstChild(scoreval["Name"])
+		entry.Player:FindFirstChild "leaderstats"
+		and entry.Player.leaderstats:FindFirstChild(scoreval.Name)
 	then
-		thisScore = entry["Player"]
+		thisScore = entry.Player
 			:FindFirstChild("leaderstats")
-			:FindFirstChild(scoreval["Name"])
+			:FindFirstChild(scoreval.Name)
 	else
 		return
 	end
 
-	if not entry["Player"].Parent then
+	if not entry.Player.Parent then
 		return
 	end
 
-	nscoretxt.Name = scoreval["Name"]
+	nscoretxt.Name = scoreval.Name
 	nscoretxt.Text = tostring(GetScoreValue(thisScore))
-	if scoreval["Name"] == ScoreNames[1]["Name"] then
+	if scoreval.Name == ScoreNames[1]["Name"] then
 		debugprint "changing score"
-		entry["Score"] = GetScoreValue(thisScore)
-		if entry["Player"] == LocalPlayer then
+		entry.Score = GetScoreValue(thisScore)
+		if entry.Player == LocalPlayer then
 			HeaderScore.Text = tostring(GetScoreValue(thisScore))
 		end
 	end
@@ -1581,9 +1577,9 @@ function MakeScoreEntry(entry, scoreval, panel)
 		if not thisScore.Parent then
 			return
 		end
-		if scoreval["Name"] == ScoreNames[1]["Name"] then
-			entry["Score"] = GetScoreValue(thisScore)
-			if entry["Player"] == LocalPlayer then
+		if scoreval.Name == ScoreNames[1]["Name"] then
+			entry.Score = GetScoreValue(thisScore)
+			if entry.Player == LocalPlayer then
 				HeaderScore.Text = tostring(GetScoreValue(thisScore))
 			end
 		end
@@ -1623,50 +1619,41 @@ function RecreateScoreColumns(ptable)
 		MaxSizeColumn = 0
 		-- for each entry in this player table
 		for _, entry in ipairs(ptable) do
-			local panel = entry["Frame"]
-			local tplayer = entry["Player"]
+			local panel = entry.Frame
+			local tplayer = entry.Player
 			-- if this panel does not have an element named after this stat
-			if not panel:FindFirstChild(scoreval["Name"]) then
+			if not panel:FindFirstChild(scoreval.Name) then
 				-- make an entry for this object
 				local nentry = MakeScoreEntry(entry, scoreval, panel)
 				if nentry then
 					debugprint(
-						"adding "
-							.. nentry.Name
-							.. " to "
-							.. entry["Player"].Name
+						"adding " .. nentry.Name .. " to " .. entry.Player.Name
 					)
 					nentry.Parent = panel
 					-- add score to team
 					if
-						entry["MyTeam"]
-						and entry["MyTeam"] ~= NeutralTeam
-						and not entry["MyTeam"]["Frame"]:FindFirstChild(
-							scoreval["Name"]
-						)
+						entry.MyTeam
+						and entry.MyTeam ~= NeutralTeam
+						and not entry.MyTeam.Frame:FindFirstChild(scoreval.Name)
 					then
 						local ntitle = nentry:Clone()
 						--ntitle.TextXAlignment  = 'Right'
-						ntitle.Parent = entry["MyTeam"]["Frame"]
+						ntitle.Parent = entry.MyTeam.Frame
 					end
 				end
 			end
-			scoreval["XOffset"] = Xoffset
+			scoreval.XOffset = Xoffset
 
-			if panel:FindFirstChild(scoreval["Name"]) then
-				MaxSizeColumn = math.max(
-					MaxSizeColumn,
-					panel[scoreval["Name"]].TextBounds.X
-				)
+			if panel:FindFirstChild(scoreval.Name) then
+				MaxSizeColumn =
+					math.max(MaxSizeColumn, panel[scoreval.Name].TextBounds.X)
 			end
 		end
 
 		if AreNamesExpanded.Value then
-			MaxSizeColumn = math.max(
-				MaxSizeColumn,
-				StatTitles[scoreval["Name"]].TextBounds.X
-			)
-			StatTitles[scoreval["Name"]]:TweenPosition(
+			MaxSizeColumn =
+				math.max(MaxSizeColumn, StatTitles[scoreval.Name].TextBounds.X)
+			StatTitles[scoreval.Name]:TweenPosition(
 				UDim2.new(RightEdgeSpace, -Xoffset, 0, 0),
 				"Out",
 				"Linear",
@@ -1674,7 +1661,7 @@ function RecreateScoreColumns(ptable)
 				true
 			)
 		else
-			StatTitles[scoreval["Name"]]:TweenPosition(
+			StatTitles[scoreval.Name]:TweenPosition(
 				UDim2.new((0.4 + ((0.6 / #ScoreNames) * (j - 1))) - 1, 0, 0, 0),
 				"Out",
 				"Linear",
@@ -1682,8 +1669,8 @@ function RecreateScoreColumns(ptable)
 				true
 			)
 		end
-		scoreval["ColumnSize"] = MaxSizeColumn
-		Xoffset = Xoffset + SpacingPerStat + MaxSizeColumn
+		scoreval.ColumnSize = MaxSizeColumn
+		Xoffset += SpacingPerStat + MaxSizeColumn
 		maxXOffset = math.max(Xoffset, maxXOffset)
 	end
 	NormalBounds =
@@ -1829,7 +1816,7 @@ function UpdateMaximize()
 	if IsMaximized.Value then
 		for j = 1, #ScoreNames, 1 do
 			local scoreval = ScoreNames[j]
-			StatTitles[scoreval["Name"]]:TweenPosition(
+			StatTitles[scoreval.Name]:TweenPosition(
 				UDim2.new(0.4 + ((0.6 / #ScoreNames) * (j - 1)) - 1, 0, 0, 0),
 				"Out",
 				"Linear",
@@ -1872,16 +1859,16 @@ function UpdateMaximize()
 			true
 		)
 		HeaderFrame.Background.Image = "http://banland.xyz/asset/?id="
-			.. Images["LargeHeader"]
+			.. Images.LargeHeader
 		BottomFrame.Background.Image = "http://banland.xyz/asset/?id="
-			.. Images["LargeBottom"]
+			.. Images.LargeBottom
 		for index, i in ipairs(MiddleFrameBackgrounds) do
 			if (index % 2) ~= 1 then
 				i.Background.Image = "http://banland.xyz/asset/?id="
-					.. Images["LargeDark"]
+					.. Images.LargeDark
 			else
 				i.Background.Image = "http://banland.xyz/asset/?id="
-					.. Images["LargeLight"]
+					.. Images.LargeLight
 			end
 		end
 		for _, i in ipairs(MiddleFrames) do
@@ -1891,8 +1878,8 @@ function UpdateMaximize()
 			end
 			for j = 1, #ScoreNames, 1 do
 				local scoreval = ScoreNames[j]
-				if i:FindFirstChild(scoreval["Name"]) then
-					i[scoreval["Name"]]:TweenPosition(
+				if i:FindFirstChild(scoreval.Name) then
+					i[scoreval.Name]:TweenPosition(
 						UDim2.new(
 							0.4 + ((0.6 / #ScoreNames) * (j - 1)) - 1,
 							0,
@@ -1908,13 +1895,13 @@ function UpdateMaximize()
 			end
 		end
 		for _, entry in ipairs(PlayerFrames) do
-			WaitForChild(entry["Frame"], "TitleFrame").Size =
-				UDim2.new(0.38, 0, entry["Frame"].TitleFrame.Size.Y.Scale, 0)
+			WaitForChild(entry.Frame, "TitleFrame").Size =
+				UDim2.new(0.38, 0, entry.Frame.TitleFrame.Size.Y.Scale, 0)
 		end
 
 		for _, entry in ipairs(TeamFrames) do
-			WaitForChild(entry["Frame"], "TitleFrame").Size =
-				UDim2.new(0.38, 0, entry["Frame"].TitleFrame.Size.Y.Scale, 0)
+			WaitForChild(entry.Frame, "TitleFrame").Size =
+				UDim2.new(0.38, 0, entry.Frame.TitleFrame.Size.Y.Scale, 0)
 		end
 	else
 		if not IsMinimized.Value then
@@ -1942,16 +1929,16 @@ function UpdateMaximize()
 			true
 		)
 		HeaderFrame.Background.Image = "http://banland.xyz/asset/?id="
-			.. Images["NormalHeader"]
+			.. Images.NormalHeader
 		BottomFrame.Background.Image = "http://banland.xyz/asset/?id="
-			.. Images["NormalBottom"]
+			.. Images.NormalBottom
 		for index, i in ipairs(MiddleFrameBackgrounds) do
 			if index % 2 ~= 1 then
 				i.Background.Image = "http://banland.xyz/asset/?id="
-					.. Images["midDark"]
+					.. Images.midDark
 			else
 				i.Background.Image = "http://banland.xyz/asset/?id="
-					.. Images["midLight"]
+					.. Images.midLight
 			end
 		end
 		for _, i in ipairs(MiddleFrames) do
@@ -1960,18 +1947,10 @@ function UpdateMaximize()
 					UDim2.new(0.96, 0, i.ClickListener.Size.Y.Scale, 0)
 				for j = 1, #ScoreNames, 1 do
 					local scoreval = ScoreNames[j]
-					if
-						i:FindFirstChild(scoreval["Name"])
-						and scoreval["XOffset"]
-					then
+					if i:FindFirstChild(scoreval.Name) and scoreval.XOffset then
 						--print('updateing stat position: ' .. scoreval['Name'])
-						i[scoreval["Name"]]:TweenPosition(
-							UDim2.new(
-								RightEdgeSpace,
-								-scoreval["XOffset"],
-								0,
-								0
-							),
+						i[scoreval.Name]:TweenPosition(
+							UDim2.new(RightEdgeSpace, -scoreval.XOffset, 0, 0),
 							"Out",
 							"Linear",
 							BASE_TWEEN,
@@ -1983,18 +1962,18 @@ function UpdateMaximize()
 		end
 
 		for _, entry in ipairs(TeamFrames) do
-			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+			WaitForChild(entry.Frame, "TitleFrame").Size = UDim2.new(
 				0,
 				BaseScreenXSize * 0.9,
-				entry["Frame"].TitleFrame.Size.Y.Scale,
+				entry.Frame.TitleFrame.Size.Y.Scale,
 				0
 			)
 		end
 		for _, entry in ipairs(PlayerFrames) do
-			WaitForChild(entry["Frame"], "TitleFrame").Size = UDim2.new(
+			WaitForChild(entry.Frame, "TitleFrame").Size = UDim2.new(
 				0,
 				BaseScreenXSize * 0.9,
-				entry["Frame"].TitleFrame.Size.Y.Scale,
+				entry.Frame.TitleFrame.Size.Y.Scale,
 				0
 			)
 		end
@@ -2219,15 +2198,15 @@ end
 function StartDrag(entry, startx, starty)
 	local openPanel = true
 	--[[local draggedFrame = ]]
-	WaitForChild(entry["Frame"], "ClickListener")
+	WaitForChild(entry.Frame, "ClickListener")
 	local function dragExit()
 		-- stopDrag = true
 
 		if
-			entry["Player"]
+			entry.Player
 			and SelectedPlayer
 			and openPanel
-			and entry["Player"] ~= LocalPlayer
+			and entry.Player ~= LocalPlayer
 			and SelectedPlayer.userId > 1
 			and LocalPlayer.userId > 1
 		then
@@ -2389,18 +2368,18 @@ function AddMiddleBGFrame()
 	if (#MiddleFrameBackgrounds + 1) % 2 ~= 1 then
 		if IsMaximized.Value then
 			nBGFrame.Background.Image = "http://banland.xyz/asset/?id="
-				.. Images["LargeDark"]
+				.. Images.LargeDark
 		else
 			nBGFrame.Background.Image = "http://banland.xyz/asset/?id="
-				.. Images["midDark"]
+				.. Images.midDark
 		end
 	else
 		if IsMaximized.Value then
 			nBGFrame.Background.Image = "http://banland.xyz/asset/?id="
-				.. Images["LargeLight"]
+				.. Images.LargeLight
 		else
 			nBGFrame.Background.Image = "http://banland.xyz/asset/?id="
-				.. Images["midLight"]
+				.. Images.midLight
 		end
 	end
 	nBGFrame.Parent = ListFrame
@@ -2465,7 +2444,7 @@ function UpdateHeaderNameSize()
 			wait(1 / 30)
 		end
 		while tHeader.TextBounds.x - NormalBounds.X.Offset > 1 do
-			fSize = fSize - 1
+			fSize -= 1
 			tHeader.FontSize = FONT_SIZES[fSize]
 			wait(0.2)
 		end
@@ -2483,7 +2462,7 @@ ScreenGui.Changed:connect(UpdateHeaderNameSize)
 --]]
 function LeaderstatsAdded(playerEntry)
 	--RemoveAllStats(playerEntry)
-	local nplayer = playerEntry["Player"]
+	local nplayer = playerEntry.Player
 	for _, i in pairs(nplayer.leaderstats:GetChildren()) do
 		StatAdded(i, playerEntry)
 	end
@@ -2503,7 +2482,7 @@ end
 --]]
 function LeaderstatsRemoved(_, playerEntry)
 	while AddingFrameLock do
-		debugprint("waiting to insert " .. playerEntry["Player"].Name)
+		debugprint("waiting to insert " .. playerEntry.Player.Name)
 		wait(1 / 30)
 	end
 	AddingFrameLock = true
@@ -2513,7 +2492,7 @@ end
 
 function ClosePopUpPanel()
 	if SelectedPlayerEntry then
-		local tframe = SelectedPlayerEntry["Frame"]
+		local tframe = SelectedPlayerEntry.Frame
 		Spawn(function()
 			TweenProperty(tframe, "BackgroundTransparency", 0.5, 1, BASE_TWEEN)
 		end)
@@ -2547,7 +2526,7 @@ function InitMovingPanel(entry, player)
 	local friendStatus = GetFriendStatus(player)
 	debugprint(tostring(friendStatus))
 	local showRankMenu = IsPersonalServer
-		and LocalPlayer.PersonalServerRank >= PrivilegeLevel["Admin"]
+		and LocalPlayer.PersonalServerRank >= PrivilegeLevel.Admin
 		and LocalPlayer.PersonalServerRank
 			> SelectedPlayer.PersonalServerRank
 
@@ -2578,7 +2557,7 @@ function InitMovingPanel(entry, player)
 		local FriendRefuseButton =
 			MakePopupButton(PopUpPanel, "Decline Friend", 2, not showRankMenu)
 		FriendRefuseButton.MouseButton1Click:connect(OnFriendRefuseButtonSelect)
-		nextIndex = nextIndex + 1
+		nextIndex += 1
 	end
 
 	if showRankMenu then
@@ -2593,7 +2572,7 @@ function InitMovingPanel(entry, player)
 		BanPlayerButton.MouseButton1Click:connect(function()
 			OnPrivilegeLevelSelect(
 				player,
-				PrivilegeLevel["Banned"],
+				PrivilegeLevel.Banned,
 				BanPlayerButton,
 				VisitorButton,
 				MemberButton,
@@ -2603,7 +2582,7 @@ function InitMovingPanel(entry, player)
 		VisitorButton.MouseButton1Click:connect(function()
 			OnPrivilegeLevelSelect(
 				player,
-				PrivilegeLevel["Visitor"],
+				PrivilegeLevel.Visitor,
 				BanPlayerButton,
 				VisitorButton,
 				MemberButton,
@@ -2613,7 +2592,7 @@ function InitMovingPanel(entry, player)
 		MemberButton.MouseButton1Click:connect(function()
 			OnPrivilegeLevelSelect(
 				player,
-				PrivilegeLevel["Member"],
+				PrivilegeLevel.Member,
 				BanPlayerButton,
 				VisitorButton,
 				MemberButton,
@@ -2623,7 +2602,7 @@ function InitMovingPanel(entry, player)
 		AdminButton.MouseButton1Click:connect(function()
 			OnPrivilegeLevelSelect(
 				player,
-				PrivilegeLevel["Admin"],
+				PrivilegeLevel.Admin,
 				BanPlayerButton,
 				VisitorButton,
 				MemberButton,
@@ -2655,7 +2634,7 @@ function InitMovingPanel(entry, player)
 		end)
 	end)
 
-	local myFrame = entry["Frame"]
+	local myFrame = entry.Frame
 	-- THIS IS GARBAGE.
 	-- if I parent to frame to auto update position, it gets clipped
 	-- sometimes garbage is the only option.
@@ -2681,19 +2660,19 @@ end
 function OnPlayerEntrySelect(entry, startx, starty)
 	if not InPopupWaitForClick then
 		SelectedPlayerEntry = entry
-		SelectedPlayer = entry["Player"]
+		SelectedPlayer = entry.Player
 
 		StartDrag(entry, startx, starty)
 	end
 end
 
 function ActivatePlayerEntryPanel(entry)
-	entry["Frame"].BackgroundColor3 = Color3.new(0, 1, 1)
+	entry.Frame.BackgroundColor3 = Color3.new(0, 1, 1)
 	Spawn(function()
-		TweenProperty(entry["Frame"], "BackgroundTransparency", 1, 0.5, 0.5)
+		TweenProperty(entry.Frame, "BackgroundTransparency", 1, 0.5, 0.5)
 	end)
 	InPopupWaitForClick = true
-	InitMovingPanel(entry, entry["Player"])
+	InitMovingPanel(entry, entry.Player)
 end
 
 --[[
@@ -2704,7 +2683,7 @@ function PlayerListModeUpdate()
 	RecreateScoreColumns(PlayerFrames)
 	table.sort(PlayerFrames, PlayerSortFunction)
 	for i, val in ipairs(PlayerFrames) do
-		MiddleFrames[i] = val["Frame"]
+		MiddleFrames[i] = val.Frame
 	end
 	for i = #PlayerFrames + 1, #MiddleFrames, 1 do
 		MiddleFrames[i] = nil
@@ -2779,14 +2758,14 @@ function InsertPlayerFrame(nplayer)
 	)
 	UpdateMinimize()
 	local nentry = {}
-	nentry["Frame"] = nFrame
-	nentry["Player"] = nplayer
-	nentry["ID"] = AddId
-	AddId = AddId + 1
+	nentry.Frame = nFrame
+	nentry.Player = nplayer
+	nentry.ID = AddId
+	AddId += 1
 	table.insert(PlayerFrames, nentry)
 	if #TeamFrames ~= 0 then
 		if nplayer.Neutral then
-			nentry["MyTeam"] = nil
+			nentry.MyTeam = nil
 			if not NeutralTeam then
 				AddNeutralTeam()
 			else
@@ -2795,20 +2774,20 @@ function InsertPlayerFrame(nplayer)
 		else
 			local addedToTeam = false
 			for _, tval in ipairs(TeamFrames) do
-				if tval["MyTeam"].TeamColor == nplayer.TeamColor then
+				if tval.MyTeam.TeamColor == nplayer.TeamColor then
 					AddPlayerToTeam(tval, nentry)
-					nentry["MyTeam"] = tval
+					nentry.MyTeam = tval
 					addedToTeam = true
 				end
 			end
 			if not addedToTeam then
-				nentry["MyTeam"] = nil
+				nentry.MyTeam = nil
 				if not NeutralTeam then
 					AddNeutralTeam()
 				else
 					AddPlayerToTeam(NeutralTeam, nentry)
 				end
-				nentry["MyTeam"] = NeutralTeam
+				nentry.MyTeam = NeutralTeam
 			end
 		end
 	end
@@ -2862,18 +2841,18 @@ function RemovePlayerFrame(tplayer)
 
 	local tteam
 	for i, key in ipairs(PlayerFrames) do
-		if tplayer == key["Player"] then
-			if PopUpClipFrame.Parent == key["Frame"] then
+		if tplayer == key.Player then
+			if PopUpClipFrame.Parent == key.Frame then
 				PopUpClipFrame.Parent = nil
 			end
-			key["Frame"]:Destroy()
-			tteam = key["MyTeam"]
+			key.Frame:Destroy()
+			tteam = key.MyTeam
 			table.remove(PlayerFrames, i)
 		end
 	end
 	if tteam then
-		for j, tentry in ipairs(tteam["MyPlayers"]) do
-			if tentry["Player"] == tplayer then
+		for j, tentry in ipairs(tteam.MyPlayers) do
+			if tentry.Player == tplayer then
 				RemovePlayerFromTeam(tteam, j)
 			end
 		end
@@ -2899,22 +2878,22 @@ Players.ChildRemoved:connect(RemovePlayerFrame)
 --]]
 function UnrollTeams(tframes, outframes)
 	local numEntries = 0
-	if NeutralTeam and not NeutralTeam["IsHidden"] then
-		for _, val in ipairs(NeutralTeam["MyPlayers"]) do
-			numEntries = numEntries + 1
-			outframes[numEntries] = val["Frame"]
+	if NeutralTeam and not NeutralTeam.IsHidden then
+		for _, val in ipairs(NeutralTeam.MyPlayers) do
+			numEntries += 1
+			outframes[numEntries] = val.Frame
 		end
-		numEntries = numEntries + 1
-		outframes[numEntries] = NeutralTeam["Frame"]
+		numEntries += 1
+		outframes[numEntries] = NeutralTeam.Frame
 	end
 	for _, val in ipairs(tframes) do
-		if not val["IsHidden"] then
+		if not val.IsHidden then
 			for _, pval in ipairs(val.MyPlayers) do
-				numEntries = numEntries + 1
-				outframes[numEntries] = pval["Frame"]
+				numEntries += 1
+				outframes[numEntries] = pval.Frame
 			end
-			numEntries = numEntries + 1
-			outframes[numEntries] = val["Frame"]
+			numEntries += 1
+			outframes[numEntries] = val.Frame
 		end
 	end
 	-- clear any additional entries from outframes
@@ -2926,16 +2905,16 @@ end
 	uses lua's table.sort to sort the teams
 --]]
 function TeamSortFunc(a, b)
-	if a["TeamScore"] == b["TeamScore"] then
-		return a["ID"] < b["ID"]
+	if a.TeamScore == b.TeamScore then
+		return a.ID < b.ID
 	end
-	if not a["TeamScore"] then
+	if not a.TeamScore then
 		return false
 	end
-	if not b["TeamScore"] then
+	if not b.TeamScore then
 		return true
 	end
-	return a["TeamScore"] < b["TeamScore"]
+	return a.TeamScore < b.TeamScore
 end
 --[[
 	consider adding lock with wait for performance
@@ -2945,7 +2924,7 @@ end
 --]]
 function SortTeams(tentries)
 	for _, val in ipairs(tentries) do
-		table.sort(val["MyPlayers"], PlayerSortFunction)
+		table.sort(val.MyPlayers, PlayerSortFunction)
 		AddTeamScores(val)
 	end
 	table.sort(tentries, TeamSortFunc)
@@ -2972,17 +2951,21 @@ function AddTeamScores(team)
 	for j = 1, #ScoreNames, 1 do
 		local i = ScoreNames[j]
 		local tscore = 0
-		for _, j in ipairs(team["MyPlayers"]) do
-			local tval = j["Player"]:FindFirstChild "leaderstats"
-				and j["Player"].leaderstats:FindFirstChild(i["Name"])
+		for _, j in ipairs(team.MyPlayers) do
+			local tval = j.Player:FindFirstChild "leaderstats"
+				and j.Player.leaderstats:FindFirstChild(i.Name)
 			if tval and not tval:IsA "StringValue" then
-				tscore = tscore
-					+ GetScoreValue((j["Player"].leaderstats)[i["Name"]])
+				tscore += GetScoreValue((j.Player.leaderstats)[i.Name])
 			end
 		end
-		if team["Frame"]:FindFirstChild(i["Name"]) then
-			--team['Frame'][i['Name'] ].Size = UDim2.new(1 - (ScrollBarFrame.Size.X.Scale * 2),- ((j-1) * SpacingPerStat),1,0)
-			team["Frame"][i["Name"]].Text = tostring(tscore)
+		if team.Frame:FindFirstChild(i.Name) then
+			-- team.Frame[i.Name].Size = UDim2.new(
+			-- 	1 - (ScrollBarFrame.Size.X.Scale * 2),
+			-- 	-((j - 1) * SpacingPerStat),
+			-- 	1,
+			-- 	0
+			-- )
+			team.Frame[i.Name].Text = tostring(tscore)
 		end
 	end
 	UpdateMinimize()
@@ -2994,16 +2977,16 @@ end
 	entry	Player entry
 --]]
 function FindRemovePlayerFromTeam(entry)
-	if entry["MyTeam"] then
-		for j, oldEntry in ipairs(entry["MyTeam"]["MyPlayers"]) do
-			if oldEntry["Player"] == entry["Player"] then
-				RemovePlayerFromTeam(entry["MyTeam"], j)
+	if entry.MyTeam then
+		for j, oldEntry in ipairs(entry.MyTeam.MyPlayers) do
+			if oldEntry.Player == entry.Player then
+				RemovePlayerFromTeam(entry.MyTeam, j)
 				return
 			end
 		end
 	elseif NeutralTeam then
-		for j, oldEntry in ipairs(NeutralTeam["MyPlayers"]) do
-			if oldEntry["Player"] == entry["Player"] then
+		for j, oldEntry in ipairs(NeutralTeam.MyPlayers) do
+			if oldEntry.Player == entry.Player then
 				RemovePlayerFromTeam(NeutralTeam, j)
 				return
 			end
@@ -3017,9 +3000,9 @@ end
 	index			index of player in 'MyPlayers' list to remove
 --]]
 function RemovePlayerFromTeam(teamEntry, index)
-	table.remove(teamEntry["MyPlayers"], index)
-	--if teamEntry['AutoHide'] and #teamEntry['MyPlayers'] == 0 then
-	if teamEntry == NeutralTeam and #teamEntry["MyPlayers"] == 0 then
+	table.remove(teamEntry.MyPlayers, index)
+	--if teamEntry.AutoHide and #teamEntry.MyPlayers == 0 then
+	if teamEntry == NeutralTeam and #teamEntry.MyPlayers == 0 then
 		RemoveNeutralTeam()
 	end
 end
@@ -3032,13 +3015,13 @@ end
 --]]
 function AddPlayerToTeam(teamEntry, entry)
 	FindRemovePlayerFromTeam(entry)
-	table.insert(teamEntry["MyPlayers"], entry)
-	entry["MyTeam"] = teamEntry
-	if teamEntry["IsHidden"] then
-		teamEntry["Frame"].Parent = ListFrame
+	table.insert(teamEntry.MyPlayers, entry)
+	entry.MyTeam = teamEntry
+	if teamEntry.IsHidden then
+		teamEntry.Frame.Parent = ListFrame
 		AddMiddleBGFrame()
 	end
-	teamEntry["IsHidden"] = false
+	teamEntry.IsHidden = false
 end
 
 function SetPlayerToTeam(entry)
@@ -3047,15 +3030,15 @@ function SetPlayerToTeam(entry)
 	local setToTeam = false
 	for _, tframe in ipairs(TeamFrames) do
 		-- add my entry on the new team
-		if tframe["MyTeam"].TeamColor == entry["Player"].TeamColor then
+		if tframe.MyTeam.TeamColor == entry.Player.TeamColor then
 			AddPlayerToTeam(tframe, entry)
 			setToTeam = true
 		end
 	end
 	-- if player was set to an invalid team, then set it back to neutral
 	if not setToTeam and #(game.Teams:GetTeams()) > 0 then
-		debugprint(entry["Player"].Name .. "could not find team")
-		entry["MyTeam"] = nil
+		debugprint(entry.Player.Name .. "could not find team")
+		entry.MyTeam = nil
 		if not NeutralTeam then
 			AddNeutralTeam()
 		else
@@ -3080,44 +3063,43 @@ function PlayerChanged(entry, property)
 	PlayerChangedLock = true
 	if property == "Neutral" then
 		-- if player changing to neutral
-		if entry["Player"].Neutral and #(game.Teams:GetTeams()) > 0 then
-			debugprint(entry["Player"].Name .. "setting to neutral")
+		if entry.Player.Neutral and #(game.Teams:GetTeams()) > 0 then
+			debugprint(entry.Player.Name .. "setting to neutral")
 			FindRemovePlayerFromTeam(entry)
-			entry["MyTeam"] = nil
+			entry.MyTeam = nil
 			if not NeutralTeam then
-				debugprint(entry["Player"].Name .. "creating neutral team")
+				debugprint(entry.Player.Name .. "creating neutral team")
 				AddNeutralTeam()
 			else
-				debugprint(entry["Player"].Name .. "adding to neutral team")
+				debugprint(entry.Player.Name .. "adding to neutral team")
 				AddPlayerToTeam(NeutralTeam, entry)
 			end
 		elseif #(game.Teams:GetTeams()) > 0 then -- else player switching to a team, or a weird edgecase
-			debugprint(entry["Player"].Name .. "has been set non-neutral")
+			debugprint(entry.Player.Name .. "has been set non-neutral")
 			SetPlayerToTeam(entry)
 		end
 		BaseUpdate()
 	elseif
 		property == "TeamColor"
-		and not entry["Player"].Neutral
-		and entry["Player"] ~= entry["MyTeam"]
+		and not entry.Player.Neutral
+		and entry.Player ~= entry.MyTeam
 	then
-		debugprint(entry["Player"].Name .. "setting to new team")
+		debugprint(entry.Player.Name .. "setting to new team")
 		SetPlayerToTeam(entry)
 		BaseUpdate()
 	elseif property == "Name" or property == "MembershipType" then
-		entry["Frame"]:FindFirstChild("BCLabel").Image = getMembershipTypeIcon(
-			entry["Player"].MembershipType,
-			entry["Player"].Name
+		entry.Frame:FindFirstChild("BCLabel").Image = getMembershipTypeIcon(
+			entry.Player.MembershipType,
+			entry.Player.Name
 		)
-		entry["Frame"].Name = entry["Player"].Name
-		entry["Frame"].TitleFrame.Title.Text = entry["Player"].Name
-		if entry["Frame"].BCLabel.Image ~= "" then
-			entry["Frame"].TitleFrame.Title.Position =
-				UDim2.new(0.01, 30, 0.1, 0)
+		entry.Frame.Name = entry.Player.Name
+		entry.Frame.TitleFrame.Title.Text = entry.Player.Name
+		if entry.Frame.BCLabel.Image ~= "" then
+			entry.Frame.TitleFrame.Title.Position = UDim2.new(0.01, 30, 0.1, 0)
 		end
-		if entry["Player"] == LocalPlayer then
-			entry["Frame"].TitleFrame.DropShadow.Text = entry["Player"].Name
-			ChangeHeaderName(entry["Player"].Name)
+		if entry.Player == LocalPlayer then
+			entry.Frame.TitleFrame.DropShadow.Text = entry.Player.Name
+			ChangeHeaderName(entry.Player.Name)
 		end
 		BaseUpdate()
 	end
@@ -3135,19 +3117,17 @@ function OnFriendshipChanged(player, friendStatus)
 				.. tostring(GetFriendStatus(player))
 		)
 		for _, entry in ipairs(PlayerFrames) do
-			if entry["Player"] == player then
+			if entry.Player == player then
 				local nicon = getFriendStatusIcon(friendStatus)
-				if nicon == "" and entry["Frame"].FriendLabel.Image ~= "" then
-					entry["Frame"].TitleFrame.Title.Position = entry["Frame"].TitleFrame.Title.Position
+				if nicon == "" and entry.Frame.FriendLabel.Image ~= "" then
+					entry.Frame.TitleFrame.Title.Position = entry.Frame.TitleFrame.Title.Position
 						- UDim2.new(0, 17, 0, 0)
-				elseif
-					nicon ~= "" and entry["Frame"].FriendLabel.Image == ""
-				then
-					entry["Frame"].TitleFrame.Title.Position = entry["Frame"].TitleFrame.Title.Position
+				elseif nicon ~= "" and entry.Frame.FriendLabel.Image == "" then
+					entry.Frame.TitleFrame.Title.Position = entry.Frame.TitleFrame.Title.Position
 						+ UDim2.new(0, 17, 0, 0)
 					debugprint("confirmed status:" .. player.Name)
 				end
-				entry["Frame"].FriendLabel.Image = nicon
+				entry.Frame.FriendLabel.Image = nicon
 				return
 			end
 		end
@@ -3171,42 +3151,42 @@ function AddNeutralTeam()
 	defaultTeam.TeamColor = BrickColor.new "White"
 	defaultTeam.Name = "Neutral"
 	local nentry = {}
-	nentry["MyTeam"] = defaultTeam
-	nentry["MyPlayers"] = {}
-	nentry["Frame"] = MiddleTemplate:Clone()
-	WaitForChild(WaitForChild(nentry["Frame"], "TitleFrame"), "Title").Text =
+	nentry.MyTeam = defaultTeam
+	nentry.MyPlayers = {}
+	nentry.Frame = MiddleTemplate:Clone()
+	WaitForChild(WaitForChild(nentry.Frame, "TitleFrame"), "Title").Text =
 		defaultTeam.Name
-	nentry["Frame"].TitleFrame.Position = UDim2.new(
-		nentry["Frame"].TitleFrame.Position.X.Scale,
-		nentry["Frame"].TitleFrame.Position.X.Offset,
+	nentry.Frame.TitleFrame.Position = UDim2.new(
+		nentry.Frame.TitleFrame.Position.X.Scale,
+		nentry.Frame.TitleFrame.Position.X.Offset,
 		0.1,
 		0
 	)
-	nentry["Frame"].TitleFrame.Size = UDim2.new(
-		nentry["Frame"].TitleFrame.Size.X.Scale,
-		nentry["Frame"].TitleFrame.Size.X.Offset,
+	nentry.Frame.TitleFrame.Size = UDim2.new(
+		nentry.Frame.TitleFrame.Size.X.Scale,
+		nentry.Frame.TitleFrame.Size.X.Offset,
 		0.8,
 		0
 	)
-	nentry["Frame"].TitleFrame.Title.Font = "ArialBold"
-	nentry["Frame"].Position =
-		UDim2.new(1, 0, (#MiddleFrames * nentry["Frame"].Size.Y.Scale), 0)
-	WaitForChild(nentry["Frame"], "ClickListener").MouseButton1Down:connect(
+	nentry.Frame.TitleFrame.Title.Font = "ArialBold"
+	nentry.Frame.Position =
+		UDim2.new(1, 0, (#MiddleFrames * nentry.Frame.Size.Y.Scale), 0)
+	WaitForChild(nentry.Frame, "ClickListener").MouseButton1Down:connect(
 		function(nx, ny)
 			StartDrag(nentry, nx, ny)
 		end
 	)
-	nentry["Frame"].ClickListener.BackgroundColor3 = Color3.new(1, 1, 1)
-	nentry["Frame"].ClickListener.BackgroundTransparency = 0.7
-	nentry["Frame"].ClickListener.AutoButtonColor = false
-	nentry["AutoHide"] = true
-	nentry["IsHidden"] = true
+	nentry.Frame.ClickListener.BackgroundColor3 = Color3.new(1, 1, 1)
+	nentry.Frame.ClickListener.BackgroundTransparency = 0.7
+	nentry.Frame.ClickListener.AutoButtonColor = false
+	nentry.AutoHide = true
+	nentry.IsHidden = true
 	for _, i in pairs(PlayerFrames) do
-		if i["Player"].Neutral or not i["MyTeam"] then
+		if i.Player.Neutral or not i.MyTeam then
 			AddPlayerToTeam(nentry, i)
 		end
 	end
-	if #nentry["MyPlayers"] > 0 then
+	if #nentry.MyPlayers > 0 then
 		NeutralTeam = nentry
 		UpdateMinimize()
 		BaseUpdate()
@@ -3220,7 +3200,7 @@ function RemoveNeutralTeam()
 		wait()
 	end
 	NeutralTeamLock = true
-	NeutralTeam["Frame"]:Destroy()
+	NeutralTeam.Frame:Destroy()
 	NeutralTeam = nil
 	RemoveMiddleBGFrame()
 	NeutralTeamLock = false
@@ -3230,8 +3210,8 @@ end
 
 --]]
 function TeamScoreChanged(entry, nscore)
-	WaitForChild(entry["Frame"], "PlayerScore").Text = tostring(nscore)
-	entry["TeamScore"] = nscore
+	WaitForChild(entry.Frame, "PlayerScore").Text = tostring(nscore)
+	entry.TeamScore = nscore
 end
 --[[
 	called when child added to a team, used for autohide functionality
@@ -3239,11 +3219,10 @@ end
 --]]
 function TeamChildAdded(entry, nchild)
 	if nchild.Name == "AutoHide" then
-		entry["AutoHide"] = true
+		entry.AutoHide = true
 	elseif nchild.Name == "TeamScore" then
-		WaitForChild(entry["Frame"], "PlayerScore").Text =
-			tostring(nchild.Value)
-		entry["TeamScore"] = nchild.Value
+		WaitForChild(entry.Frame, "PlayerScore").Text = tostring(nchild.Value)
+		entry.TeamScore = nchild.Value
 		nchild.Changed:connect(function()
 			TeamScoreChanged(entry, nchild.Value)
 		end)
@@ -3255,28 +3234,28 @@ end
 --]]
 function TeamChildRemoved(entry, nchild)
 	if nchild.Name == "AutoHide" then
-		entry["AutoHide"] = false
+		entry.AutoHide = false
 	elseif nchild.Name == "TeamScore" then
-		WaitForChild(entry["Frame"], "PlayerScore").Text = ""
-		entry["TeamScore"] = nil
+		WaitForChild(entry.Frame, "PlayerScore").Text = ""
+		entry.TeamScore = nil
 	end
 end
 
 function TeamChanged(entry, property)
 	if property == "Name" then
-		WaitForChild(WaitForChild(entry["Frame"], "TitleFrame"), "Title").Text =
-			entry["MyTeam"].Name
+		WaitForChild(WaitForChild(entry.Frame, "TitleFrame"), "Title").Text =
+			entry.MyTeam.Name
 	elseif property == "TeamColor" then
-		entry["Frame"].ClickListener.BackgroundColor3 =
-			entry["MyTeam"].TeamColor.Color
+		entry.Frame.ClickListener.BackgroundColor3 =
+			entry.MyTeam.TeamColor.Color
 
 		for _, i in pairs(TeamFrames) do
-			if i["MyTeam"].TeamColor == entry["MyTeam"] then
-				RemoveTeamFrame(entry["MyTeam"]) --NO DUPLICATE TEAMS!
+			if i.MyTeam.TeamColor == entry.MyTeam then
+				RemoveTeamFrame(entry.MyTeam) --NO DUPLICATE TEAMS!
 			end
 		end
 
-		entry["MyPlayers"] = {}
+		entry.MyPlayers = {}
 
 		for _, i in pairs(PlayerFrames) do
 			SetPlayerToTeam(i)
@@ -3300,40 +3279,40 @@ function InsertTeamFrame(nteam)
 	AddingFrameLock = true
 	--for _,i in pairs(TeamFrames) do
 	local nentry = {}
-	nentry["MyTeam"] = nteam
-	nentry["MyPlayers"] = {}
-	nentry["Frame"] = MiddleTemplate:Clone()
-	WaitForChild(WaitForChild(nentry["Frame"], "TitleFrame"), "Title").Text =
+	nentry.MyTeam = nteam
+	nentry.MyPlayers = {}
+	nentry.Frame = MiddleTemplate:Clone()
+	WaitForChild(WaitForChild(nentry.Frame, "TitleFrame"), "Title").Text =
 		nteam.Name
-	nentry["Frame"].TitleFrame.Title.Font = "ArialBold"
-	nentry["Frame"].TitleFrame.Title.FontSize = "Size18"
-	nentry["Frame"].TitleFrame.Position = UDim2.new(
-		nentry["Frame"].TitleFrame.Position.X.Scale,
-		nentry["Frame"].TitleFrame.Position.X.Offset,
+	nentry.Frame.TitleFrame.Title.Font = "ArialBold"
+	nentry.Frame.TitleFrame.Title.FontSize = "Size18"
+	nentry.Frame.TitleFrame.Position = UDim2.new(
+		nentry.Frame.TitleFrame.Position.X.Scale,
+		nentry.Frame.TitleFrame.Position.X.Offset,
 		0.1,
 		0
 	)
-	nentry["Frame"].TitleFrame.Size = UDim2.new(
-		nentry["Frame"].TitleFrame.Size.X.Scale,
-		nentry["Frame"].TitleFrame.Size.X.Offset,
+	nentry.Frame.TitleFrame.Size = UDim2.new(
+		nentry.Frame.TitleFrame.Size.X.Scale,
+		nentry.Frame.TitleFrame.Size.X.Offset,
 		0.8,
 		0
 	)
-	nentry["Frame"].Position =
-		UDim2.new(1, 0, (#MiddleFrames * nentry["Frame"].Size.Y.Scale), 0)
-	WaitForChild(nentry["Frame"], "ClickListener").MouseButton1Down:connect(
+	nentry.Frame.Position =
+		UDim2.new(1, 0, (#MiddleFrames * nentry.Frame.Size.Y.Scale), 0)
+	WaitForChild(nentry.Frame, "ClickListener").MouseButton1Down:connect(
 		function(nx, ny)
 			StartDrag(nentry, nx, ny)
 		end
 	)
-	nentry["Frame"].ClickListener.BackgroundColor3 = nteam.TeamColor.Color
-	nentry["Frame"].ClickListener.BackgroundTransparency = 0.7
-	nentry["Frame"].ClickListener.AutoButtonColor = false
-	AddId = AddId + 1
-	nentry["ID"] = AddId
-	nentry["AutoHide"] = false
+	nentry.Frame.ClickListener.BackgroundColor3 = nteam.TeamColor.Color
+	nentry.Frame.ClickListener.BackgroundTransparency = 0.7
+	nentry.Frame.ClickListener.AutoButtonColor = false
+	AddId += 1
+	nentry.ID = AddId
+	nentry.AutoHide = false
 	if nteam:FindFirstChild "AutoHide" then
-		nentry["AutoHide"] = true
+		nentry.AutoHide = true
 	end
 	if nteam:FindFirstChild "TeamScore" then
 		TeamChildAdded(nentry, nteam.TeamScore)
@@ -3350,18 +3329,15 @@ function InsertTeamFrame(nteam)
 	end)
 
 	for _, i in pairs(PlayerFrames) do
-		if
-			not i["Player"].Neutral
-			and i["Player"].TeamColor == nteam.TeamColor
-		then
+		if not i.Player.Neutral and i.Player.TeamColor == nteam.TeamColor then
 			AddPlayerToTeam(nentry, i)
 		end
 	end
-	nentry["IsHidden"] = false
-	if not nentry["AutoHide"] or #nentry["MyPlayers"] > 0 then
-		nentry["Frame"].Parent = ListFrame
-		nentry["Frame"]:TweenPosition(
-			UDim2.new(0.5, 0, (#MiddleFrames * nentry["Frame"].Size.Y.Scale), 0),
+	nentry.IsHidden = false
+	if not nentry.AutoHide or #nentry.MyPlayers > 0 then
+		nentry.Frame.Parent = ListFrame
+		nentry.Frame:TweenPosition(
+			UDim2.new(0.5, 0, (#MiddleFrames * nentry.Frame.Size.Y.Scale), 0),
 			"Out",
 			"Linear",
 			BASE_TWEEN,
@@ -3369,8 +3345,8 @@ function InsertTeamFrame(nteam)
 		)
 		AddMiddleBGFrame()
 	else
-		nentry["IsHidden"] = true
-		nentry["Frame"].Parent = nil
+		nentry.IsHidden = true
+		nentry.Frame.Parent = nil
 	end
 
 	table.insert(TeamFrames, nentry)
@@ -3396,9 +3372,9 @@ function RemoveTeamFrame(nteam)
 	-- end
 	local myEntry
 	for i, key in ipairs(TeamFrames) do
-		if nteam == key["MyTeam"] then
+		if nteam == key.MyTeam then
 			myEntry = key
-			key["Frame"]:Destroy()
+			key.Frame:Destroy()
 			table.remove(TeamFrames, i)
 		end
 	end
@@ -3408,7 +3384,7 @@ function RemoveTeamFrame(nteam)
 			RemoveNeutralTeam()
 		end
 	end
-	for i, key in ipairs(myEntry["MyPlayers"]) do
+	for i, key in ipairs(myEntry.MyPlayers) do
 		RemovePlayerFromTeam(myEntry, i)
 		PlayerChanged(key, "TeamColor")
 	end

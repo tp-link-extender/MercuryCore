@@ -145,7 +145,7 @@ function userPurchaseActionsEnded(isSuccess)
 		local newPurchasedSucceededText = string.gsub(
 			purchaseSucceededText,
 			"itemName",
-			tostring(currentProductInfo["Name"])
+			tostring(currentProductInfo.Name)
 		)
 		purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text =
 			newPurchasedSucceededText
@@ -181,26 +181,26 @@ function updatePurchasePromptData(_)
 
 	-- id to use when we request a purchase
 	if not currentProductId then
-		currentProductId = currentProductInfo["ProductId"]
+		currentProductId = currentProductInfo.ProductId
 	end
 
 	if isFreeItem() then
 		newItemDescription = string.gsub(
 			freeItemPurchaseText,
 			"itemName",
-			tostring(currentProductInfo["Name"])
+			tostring(currentProductInfo.Name)
 		)
 		newItemDescription = string.gsub(
 			newItemDescription,
 			"assetType",
-			tostring(assetTypeToString(currentProductInfo["AssetTypeId"]))
+			tostring(assetTypeToString(currentProductInfo.AssetTypeId))
 		)
 		setHeaderText(takeHeaderText)
 	else -- otherwise item costs something, so different prompt
 		newItemDescription = string.gsub(
 			productPurchaseText,
 			"itemName",
-			tostring(currentProductInfo["Name"])
+			tostring(currentProductInfo.Name)
 		)
 		newItemDescription = string.gsub(
 			newItemDescription,
@@ -221,7 +221,7 @@ function updatePurchasePromptData(_)
 	if purchasingConsumable then
 		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl
 			.. "thumbs/asset.ashx?assetid="
-			.. tostring(currentProductInfo["IconImageAssetId"])
+			.. tostring(currentProductInfo.IconImageAssetId)
 			.. "&x=100&y=100&format=png"
 	else
 		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl
@@ -244,7 +244,7 @@ function doPlayerFundsCheck(checkIndefinitely)
 			do
 				wait(1 / 10)
 				canPurchase, insufficientFunds = canPurchaseItem()
-				retries = retries - 1
+				retries -= 1
 			end
 		end
 		if canPurchase and not insufficientFunds then
@@ -372,7 +372,7 @@ end
 function purchaseFailed(inGamePurchasesDisabled)
 	local name = "Item"
 	if currentProductInfo then
-		name = currentProductInfo["Name"]
+		name = currentProductInfo.Name
 	end
 
 	local newPurchasedFailedText =
@@ -467,14 +467,14 @@ function doAcceptPurchase(_)
 	response = getRbxUtility().DecodeJSON(response)
 
 	if response then
-		if response["success"] == false then
-			if response["status"] ~= "AlreadyOwned" then
+		if response.success == false then
+			if response.status ~= "AlreadyOwned" then
 				print(
 					"web return response of fail on purchase of",
 					currentAssetId,
 					currentProductId
 				)
-				purchaseFailed((response["status"] == "EconomyDisabled"))
+				purchaseFailed((response.status == "EconomyDisabled"))
 				return
 			end
 		end
@@ -492,7 +492,7 @@ function doAcceptPurchase(_)
 		currentEquipOnPurchase
 		and success
 		and currentAssetId
-		and tonumber(currentProductInfo["AssetTypeId"]) == 19
+		and tonumber(currentProductInfo.AssetTypeId) == 19
 	then
 		local tool = getToolAssetID(tonumber(currentAssetId))
 		if tool then
@@ -501,7 +501,7 @@ function doAcceptPurchase(_)
 	end
 
 	if purchasingConsumable then
-		if not response["receipt"] then
+		if not response.receipt then
 			print(
 				"tried to buy productId, but no receipt returned. productId was",
 				currentProductId
@@ -510,7 +510,7 @@ function doAcceptPurchase(_)
 			return
 		end
 		Game:GetService("MarketplaceService"):SignalClientPurchaseSuccess(
-			tostring(response["receipt"]),
+			tostring(response.receipt),
 			game.Players.LocalPlayer.userId,
 			currentProductId
 		)
@@ -746,8 +746,8 @@ end
 function isFreeItem()
 	-- if both of these are true, then the item is free, just prompt user if they want to take one
 	return currentProductInfo
-		and currentProductInfo["IsForSale"] == true
-		and currentProductInfo["IsPublicDomain"] == true
+		and currentProductInfo.IsForSale == true
+		and currentProductInfo.IsPublicDomain == true
 end
 ---------------------------------------------- End Currency Functions ---------------------------------------------
 
@@ -847,8 +847,8 @@ function canPurchaseItem()
 	end
 
 	if
-		currentProductInfo["IsForSale"] == false
-		and currentProductInfo["IsPublicDomain"] == false
+		currentProductInfo.IsForSale == false
+		and currentProductInfo.IsPublicDomain == false
 	then
 		descText = "This item is no longer for sale."
 		return true, nil, nil, true, descText
@@ -857,8 +857,8 @@ function canPurchaseItem()
 	-- now we start talking money, making sure we are going to be able to purchase this
 	if
 		not setCurrencyAmountAndType(
-			tonumber(currentProductInfo["PriceInRobux"]),
-			tonumber(currentProductInfo["PriceInTickets"])
+			tonumber(currentProductInfo.PriceInRobux),
+			tonumber(currentProductInfo.PriceInTickets)
 		)
 	then
 		descText =
@@ -873,7 +873,7 @@ function canPurchaseItem()
 	end
 
 	if
-		tonumber(currentProductInfo["MinimumMembershipLevel"])
+		tonumber(currentProductInfo.MinimumMembershipLevel)
 		> membershipTypeToNumber(game.Players.LocalPlayer.MembershipType)
 	then
 		notRightBc = true
@@ -887,7 +887,7 @@ function canPurchaseItem()
 		return true, insufficientFunds, notRightBc, false
 	end
 
-	if currentProductInfo["ContentRatingTypeId"] == 1 then
+	if currentProductInfo.ContentRatingTypeId == 1 then
 		if game.Players.LocalPlayer:GetUnder13() then
 			descText =
 				"Your account is under 13 so purchase of this item is not allowed."
@@ -897,13 +897,13 @@ function canPurchaseItem()
 
 	if
 		(
-			currentProductInfo["IsLimited"] == true
-			or currentProductInfo["IsLimitedUnique"] == true
+			currentProductInfo.IsLimited == true
+			or currentProductInfo.IsLimitedUnique == true
 		)
 		and (
-			currentProductInfo["Remaining"] == ""
-			or currentProductInfo["Remaining"] == 0
-			or currentProductInfo["Remaining"] == nil
+			currentProductInfo.Remaining == ""
+			or currentProductInfo.Remaining == 0
+			or currentProductInfo.Remaining == nil
 		)
 	then
 		descText =
@@ -960,7 +960,7 @@ function startSpinner()
 						"http://banland.xyz/Asset/?id=45880710"
 				end
 
-				pos = pos + 1
+				pos += 1
 			end
 			spinPos = (spinPos + 1) % 8
 			wait(1 / 15)
@@ -1019,7 +1019,7 @@ function createSpinner(size, position, parent)
 		spinnerImage.Parent = spinnerFrame
 
 		spinnerIcons[spinnerNum] = spinnerImage
-		spinnerNum = spinnerNum + 1
+		spinnerNum += 1
 	end
 end
 
@@ -1351,7 +1351,7 @@ function userPurchaseProductActionsEnded(userIsClosingDialog)
 		if currentServerResponseTable then
 			local isPurchased = false
 			if
-				tostring(currentServerResponseTable["isValid"]):lower()
+				tostring(currentServerResponseTable.isValid):lower()
 				== "true"
 			then
 				isPurchased = true
@@ -1359,8 +1359,8 @@ function userPurchaseProductActionsEnded(userIsClosingDialog)
 
 			Game:GetService("MarketplaceService")
 				:SignalPromptProductPurchaseFinished(
-					tonumber(currentServerResponseTable["playerId"]),
-					tonumber(currentServerResponseTable["productId"]),
+					tonumber(currentServerResponseTable.playerId),
+					tonumber(currentServerResponseTable.productId),
 					isPurchased
 				)
 		else
@@ -1371,7 +1371,7 @@ function userPurchaseProductActionsEnded(userIsClosingDialog)
 		local newPurchasedSucceededText = string.gsub(
 			purchaseSucceededText,
 			"itemName",
-			tostring(currentProductInfo["Name"])
+			tostring(currentProductInfo.Name)
 		)
 		purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text =
 			newPurchasedSucceededText
@@ -1388,8 +1388,8 @@ function doProcessServerPurchaseResponse(serverResponseTable)
 	end
 
 	if
-		serverResponseTable["playerId"]
-		and tonumber(serverResponseTable["playerId"])
+		serverResponseTable.playerId
+		and tonumber(serverResponseTable.playerId)
 			== game.Players.LocalPlayer.userId
 	then
 		currentServerResponseTable = serverResponseTable

@@ -921,12 +921,12 @@ local function GetNameValue(pName)
 		local cValue = string.byte(string.sub(pName, index, index))
 		local reverseIndex = #pName - index + 1
 		if #pName % 2 == 1 then
-			reverseIndex = reverseIndex - 1
+			reverseIndex -= 1
 		end
 		if reverseIndex % 4 >= 2 then
 			cValue = -cValue
 		end
-		value = value + cValue
+		value += cValue
 	end
 	return value % 8
 end
@@ -994,9 +994,9 @@ end
 -- 				local next = self.MessageQueue[i].Next
 -- 				local previous = self.MessageQueue[i].Previous
 -- 				if label and label:IsA('TextLabel') or label:IsA('TextButton') then
--- 					if value > 0 and previous and previous['Message'] then
+-- 					if value > 0 and previous and previous.Message then
 -- 						label.Position = previous['Message'].Position
--- 					elseif value < 1 and next['Message'] then
+-- 					elseif value < 1 and next.Message then
 -- 						label.Position = previous['Message'].Position
 -- 					end
 -- 				end
@@ -1026,7 +1026,7 @@ function Chat:UpdateQueue(field, diff)
 									self.Configuration.XScale,
 									0,
 									label.Position.Y.Scale
-										- field["Message"].Size.Y.Scale,
+										- field.Message.Size.Y.Scale,
 									0
 								)
 								-- Just to show up popping effect for the latest message in chat
@@ -1037,7 +1037,7 @@ function Chat:UpdateQueue(field, diff)
 											- 0.2
 										wait(0.03)
 									end
-									if label == field["Message"] then
+									if label == field.Message then
 										label.TextStrokeTransparency = 0.8
 									else
 										label.TextStrokeTransparency = 1
@@ -1048,7 +1048,7 @@ function Chat:UpdateQueue(field, diff)
 									self.Configuration.XScale,
 									0,
 									label.Position.Y.Scale
-										- field["Message"].Size.Y.Scale,
+										- field.Message.Size.Y.Scale,
 									0
 								)
 							end
@@ -1141,7 +1141,7 @@ function Chat:UpdateChat(cPlayer, message)
 		Chat.MessageThread = coroutine.create(function()
 			for i = 1, #Chat.Messages_List do
 				local field = Chat.Messages_List[i]
-				Chat:CreateMessage(field["Player"], field["Message"])
+				Chat:CreateMessage(field.Player, field.Message)
 			end
 			Chat.Messages_List = {}
 		end)
@@ -1306,9 +1306,9 @@ function Chat:CreateMessage(cPlayer, message)
 	pLabel.Size = mLabel.Size
 
 	local queueField = {}
-	queueField["Player"] = pLabel
-	queueField["Message"] = mLabel
-	queueField["SpawnTime"] = tick() -- Used for identifying when to make the message invisible
+	queueField.Player = pLabel
+	queueField.Message = mLabel
+	queueField.SpawnTime = tick() -- Used for identifying when to make the message invisible
 
 	table.insert(self.MessageQueue, 1, queueField)
 	Chat:UpdateQueue(queueField)
@@ -1317,7 +1317,7 @@ end
 function Chat:ScreenSizeChanged()
 	wait()
 	while self.Frame.AbsoluteSize.Y > 120 do
-		self.Frame.Size = self.Frame.Size - UDim2.new(0, 0, 0.005, 0)
+		self.Frame.Size -= UDim2.new(0, 0, 0.005, 0)
 	end
 	Chat:RecalculateSpacing()
 end
@@ -1374,7 +1374,7 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 				),
 			}
 
-			count = count + 1
+			count += 1
 
 			if type(list[msg]) == "table" then
 				text_List[rootButton][chatText] =
@@ -1438,7 +1438,7 @@ function Chat:FocusOnChatBar()
 	end
 
 	self.GotFocus = true
-	if self.Frame["Background"] then
+	if self.Frame.Background then
 		self.Frame.Background.Visible = false
 	end
 	self.ChatBar:CaptureFocus()
@@ -1675,12 +1675,12 @@ function Input:OnMouseScroll()
 		while Input.Speed ~= 0 do
 			if Input.Speed > 1 then
 				while Input.Speed > 0 do
-					Input.Speed = Input.Speed - 1
+					Input.Speed -= 1
 					wait(0.25)
 				end
 			elseif Input.Speed < 0 then
 				while Input.Speed < 0 do
-					Input.Speed = Input.Speed + 1
+					Input.Speed += 1
 					wait(0.25)
 				end
 			end
@@ -1694,7 +1694,7 @@ function Input:OnMouseScroll()
 end
 
 function Input:ApplySpeed(value)
-	Input.Speed = Input.Speed + value
+	Input.Speed += value
 	if not self.Simulating then
 		Input:OnMouseScroll()
 	end
@@ -1770,14 +1770,14 @@ function Chat:CullThread()
 		if #self.MessageQueue > 0 then
 			for _, field in pairs(self.MessageQueue) do
 				if
-					field["SpawnTime"]
-					and field["Player"]
-					and field["Message"]
-					and tick() - field["SpawnTime"]
+					field.SpawnTime
+					and field.Player
+					and field.Message
+					and tick() - field.SpawnTime
 						> self.Configuration.LifeTime
 				then
-					field["Player"].Visible = false
-					field["Message"].Visible = false
+					field.Player.Visible = false
+					field.Message.Visible = false
 				end
 			end
 		end

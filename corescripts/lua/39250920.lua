@@ -15,9 +15,7 @@ local mainFrame
 local choices = {}
 local lastChoice
 local choiceMap = {}
-local currentConversationDialog
-local currentConversationPartner
-local currentAbortDialogScript
+local currentConversationDialog, currentConversationPartner, currentAbortDialogScript
 
 local tooFarAwayMessage = "You are too far away to chat!"
 local tooFarAwaySize = 300
@@ -26,11 +24,7 @@ local characterWanderedOffSize = 350
 local conversationTimedOut = "Chat ended because you didn't reply"
 local conversationTimedOutSize = 350
 
-local player
-local chatNotificationGui
-local messageDialog
-local timeoutScript
-local reenableDialogScript
+local player, chatNotificationGui, messageDialog, timeoutScript, reenableDialogScript
 local dialogMap = {}
 local dialogConnections = {}
 
@@ -409,8 +403,8 @@ function presentDialogChoices(talkingPart, dialogChoices)
 
 			choiceMap[choices[pos]] = obj
 
-			yPosition = yPosition + height
-			pos = pos + 1
+			yPosition += height
+			pos += 1
 		end
 	end
 

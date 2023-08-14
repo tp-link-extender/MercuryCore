@@ -363,8 +363,8 @@ local function getBoundingBox2(partOrModel)
 			4 * math.ceil(actualBox.z / 4)
 		)
 		local adjustment = containingGridBox - actualBox
-		minVec = minVec - 0.5 * adjustment * justify
-		maxVec = maxVec + 0.5 * adjustment * (two - justify)
+		minVec -= 0.5 * adjustment * justify
+		maxVec += 0.5 * adjustment * (two - justify)
 	end
 
 	return minVec, maxVec
@@ -510,7 +510,7 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 		error "findConfigAtMouseTarget: stampData is nil"
 		return nil
 	end
-	if not stampData["CurrentParts"] then
+	if not stampData.CurrentParts then
 		return nil
 	end
 
@@ -658,10 +658,8 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 		clampToSurface = Vector3.new(1, 1, 0)
 	end
 
-	targetRefPointInTarget = targetRefPointInTarget * (0.5 * diagBBTarget)
-		+ 0.5 * (maxBBTarget + minBBTarget)
-	insertRefPointInInsert = insertRefPointInInsert * (0.5 * diagBB)
-		+ 0.5 * (maxBB + minBB)
+	targetRefPointInTarget *= (0.5 * diagBBTarget) + 0.5 * (maxBBTarget + minBBTarget)
+	insertRefPointInInsert *= (0.5 * diagBB) + 0.5 * (maxBB + minBB)
 
 	-- To Do: For cases that are not aligned to the world grid, account for the minimal rotation
 	-- needed to bring the Insert part(s) into alignment with the Target Part
@@ -673,7 +671,7 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 		grid * math.modf(delta.y / grid),
 		grid * math.modf(delta.z / grid)
 	)
-	deltaClamped = deltaClamped * clampToSurface
+	deltaClamped *= clampToSurface
 	local targetTouchInTarget = deltaClamped + targetRefPointInTarget
 
 	local TargetTouchRelToWorld =
@@ -903,7 +901,7 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	while loading and totalTime < maxWait do
 		lastGameTime = tick()
 		wait(1)
-		totalTime = totalTime + tick() - lastGameTime
+		totalTime += tick() - lastGameTime
 	end
 	loading = false
 
@@ -1163,7 +1161,7 @@ t.SetupStamperDragger = function(
 			line2 = HighScalabilityLine.End - HighScalabilityLine.MorePoints[1]
 
 			-- take out any component of line2 along line1, so you get perpendicular to line1 component
-			line2 = line2 - line.unit * line.unit:Dot(line2)
+			line2 -= line.unit * line.unit:Dot(line2)
 
 			tempCFrame = CFrame.new(
 				HighScalabilityLine.Start,
@@ -1178,9 +1176,9 @@ t.SetupStamperDragger = function(
 			local yComp = yAxis:Dot(line2)
 
 			if math.abs(yComp) > math.abs(xComp) then
-				line2 = line2 - xAxis * xComp
+				line2 -= xAxis * xComp
 			else
-				line2 = line2 - yAxis * yComp
+				line2 -= yAxis * yComp
 			end
 
 			HighScalabilityLine.InternalLine = line2
@@ -1190,8 +1188,8 @@ t.SetupStamperDragger = function(
 			line3 = HighScalabilityLine.End - HighScalabilityLine.MorePoints[2]
 
 			-- zero out all components of previous lines
-			line3 = line3 - line.unit * line.unit:Dot(line3)
-			line3 = line3 - line2.unit * line2.unit:Dot(line3)
+			line3 -= line.unit * line.unit:Dot(line3)
+			line3 -= line2.unit * line2.unit:Dot(line3)
 
 			HighScalabilityLine.InternalLine = line3
 		end
@@ -1225,7 +1223,7 @@ t.SetupStamperDragger = function(
 		-- make player able to see this ish
 
 		local gui
-		if game.Players["LocalPlayer"] then
+		if game.Players.LocalPlayer then
 			gui = game.Players.LocalPlayer:FindFirstChild "PlayerGui"
 			if gui and gui:IsA "PlayerGui" then
 				if
@@ -1309,7 +1307,7 @@ t.SetupStamperDragger = function(
 		end
 
 		local ry = math.pi / 2
-		gInitial90DegreeRotations = gInitial90DegreeRotations + numRotations
+		gInitial90DegreeRotations += numRotations
 		if
 			stampData.CurrentParts:IsA "Model"
 			or stampData.CurrentParts:IsA "Tool"
@@ -1336,8 +1334,8 @@ t.SetupStamperDragger = function(
 			currModelCFrame = stampData.CurrentParts.CFrame
 		end
 
-		minBB = minBB + targetCFrame.p - currModelCFrame.p
-		maxBB = maxBB + targetCFrame.p - currModelCFrame.p
+		minBB += targetCFrame.p - currModelCFrame.p
+		maxBB += targetCFrame.p - currModelCFrame.p
 
 		-- don't drag into terrain
 		if
@@ -1521,13 +1519,13 @@ t.SetupStamperDragger = function(
 	end
 
 	local function setupKeyListener(key, Mouse)
-		if control and control["Paused"] then
+		if control and control.Paused then
 			return
 		end -- don't do this if we have no stamp
 
 		key = string.lower(key)
 		if key == "r" and not autoAlignToFace(stampData.CurrentParts) then -- rotate the model
-			gInitial90DegreeRotations = gInitial90DegreeRotations + 1
+			gInitial90DegreeRotations += 1
 
 			-- Update orientation value if this is a fake terrain part
 			local clusterValues =
@@ -1600,13 +1598,13 @@ t.SetupStamperDragger = function(
 	local function flashRedBox()
 		local gui = game.CoreGui
 		if game:FindFirstChild "Players" then
-			if game.Players["LocalPlayer"] then
+			if game.Players.LocalPlayer then
 				if game.Players.LocalPlayer:FindFirstChild "PlayerGui" then
 					gui = game.Players.LocalPlayer.PlayerGui
 				end
 			end
 		end
-		if not stampData["ErrorBox"] then
+		if not stampData.ErrorBox then
 			return
 		end
 
@@ -1619,16 +1617,16 @@ t.SetupStamperDragger = function(
 
 		delay(0, function()
 			for _ = 1, 3 do
-				if stampData["ErrorBox"] then
+				if stampData.ErrorBox then
 					stampData.ErrorBox.Visible = true
 				end
 				wait(0.13)
-				if stampData["ErrorBox"] then
+				if stampData.ErrorBox then
 					stampData.ErrorBox.Visible = false
 				end
 				wait(0.13)
 			end
-			if stampData["ErrorBox"] then
+			if stampData.ErrorBox then
 				stampData.ErrorBox.Adornee = nil
 				stampData.ErrorBox.Parent = Tool
 			end
@@ -1778,7 +1776,7 @@ t.SetupStamperDragger = function(
 							* (gStaticTrans - gDesiredTrans)
 						)
 					if
-						stampData["TransparencyTable"]
+						stampData.TransparencyTable
 						and stampData.TransparencyTable[part]
 					then
 						part.Transparency = newTrans
@@ -1790,7 +1788,7 @@ t.SetupStamperDragger = function(
 				end
 				if part and part:IsA "BasePart" then
 					if
-						stampData["TransparencyTable"]
+						stampData.TransparencyTable
 						and stampData.TransparencyTable[part]
 					then
 						part.Transparency = gDesiredTrans
@@ -2163,7 +2161,7 @@ t.SetupStamperDragger = function(
 										end
 									end
 								end
-								stepVect[1] = stepVect[1] + incrementVect[1]
+								stepVect[1] += incrementVect[1]
 							end
 							if incrementVect[2] then
 								while
@@ -2173,7 +2171,7 @@ t.SetupStamperDragger = function(
 										)
 										== 0
 								do
-									innerStepVectIndex = innerStepVectIndex + 1
+									innerStepVectIndex += 1
 								end
 								if innerStepVectIndex < 4 then
 									stepVect[2] = stepVect[2]
@@ -2182,7 +2180,7 @@ t.SetupStamperDragger = function(
 												incrementVect[2]
 											)
 								end
-								innerStepVectIndex = innerStepVectIndex + 1
+								innerStepVectIndex += 1
 							else
 								stepVect[2] = Vector3.new(1, 0, 0)
 								innerStepVectIndex = 4 -- skip all remaining loops
@@ -2202,7 +2200,7 @@ t.SetupStamperDragger = function(
 								)
 								== 0
 						do
-							outerStepVectIndex = outerStepVectIndex + 1
+							outerStepVectIndex += 1
 						end
 						if outerStepVectIndex < 4 then
 							stepVect[3] = stepVect[3]
@@ -2211,7 +2209,7 @@ t.SetupStamperDragger = function(
 										incrementVect[3]
 									)
 						end
-						outerStepVectIndex = outerStepVectIndex + 1
+						outerStepVectIndex += 1
 					else -- skip all remaining loops
 						stepVect[3] = Vector3.new(1, 0, 0)
 						outerStepVectIndex = 4
@@ -2395,8 +2393,8 @@ t.SetupStamperDragger = function(
 
 		-- something will be stamped!  so set the "StampedSomething" toggle to true
 		if game:FindFirstChild "Players" then
-			if game.Players["LocalPlayer"] then
-				if game.Players.LocalPlayer["Character"] then
+			if game.Players.LocalPlayer then
+				if game.Players.LocalPlayer.Character then
 					local localChar = game.Players.LocalPlayer.Character
 					local stampTracker = localChar:FindFirstChild "StampTracker"
 					if stampTracker and not stampTracker.Value then
@@ -2545,7 +2543,7 @@ t.SetupStamperDragger = function(
 
 		local function getPlayer()
 			if game:FindFirstChild "Players" then
-				if game.Players["LocalPlayer"] then
+				if game.Players.LocalPlayer then
 					return game.Players.LocalPlayer
 				end
 			end
@@ -2584,7 +2582,7 @@ t.SetupStamperDragger = function(
 			if playerNameTag ~= nil then
 				if
 					game:FindFirstChild "Players"
-					and game.Players["LocalPlayer"]
+					and game.Players.LocalPlayer
 				then
 					tempPlayerValue = game.Players.LocalPlayer
 					if tempPlayerValue ~= nil then
@@ -2717,8 +2715,8 @@ t.SetupStamperDragger = function(
 			{ Vector3.new(1, 0, 0), Vector3.new(0, 1, 0), Vector3.new(0, 0, 1) } -- maybe last one is negative?  TODO: check this!
 		local isPositive = 1
 		if whichSurface < 0 then
-			isPositive = isPositive * -1
-			whichSurface = whichSurface * -1
+			isPositive *= -1
+			whichSurface *= -1
 		end
 		local surfaceNormal = isPositive
 			* modelCFrame:vectorToWorldSpace(AXIS_VECTORS[whichSurface])
@@ -2967,14 +2965,14 @@ t.SetupStamperDragger = function(
 			errorBox:Destroy()
 		end
 		if stampData then
-			if stampData["Dragger"] then
+			if stampData.Dragger then
 				stampData.Dragger:Destroy()
 			end
 			if stampData.CurrentParts then
 				stampData.CurrentParts:Destroy()
 			end
 		end
-		if control and control["Stamped"] then
+		if control and control.Stamped then
 			control.Stamped:Destroy()
 		end
 		control = nil

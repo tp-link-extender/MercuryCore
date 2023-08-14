@@ -221,7 +221,7 @@ function toggleBackpack()
 	if not game.Players.LocalPlayer then
 		return
 	end
-	if not game.Players.LocalPlayer["Character"] then
+	if not game.Players.LocalPlayer.Character then
 		return
 	end
 	if not canToggle then
@@ -477,7 +477,7 @@ backpackButton.MouseButton1Click:connect(function()
 	toggleBackpack()
 end)
 
-if game.Players.LocalPlayer["Character"] then
+if game.Players.LocalPlayer.Character then
 	activateBackpack()
 end
 

@@ -42,15 +42,15 @@ end
 
 local function moveHealthBar(pGui)
 	waitForChild(pGui, "HealthGUI")
-	waitForChild(pGui["HealthGUI"], "tray")
-	local tray = pGui["HealthGUI"]["tray"]
+	waitForChild(pGui.HealthGUI, "tray")
+	local tray = pGui.HealthGUI.tray
 	tray.Position = UDim2.new(0.5, -85, 1, -26)
 end
 
 local function setHealthBarVisible(pGui, visible)
 	waitForChild(pGui, "HealthGUI")
-	waitForChild(pGui["HealthGUI"], "tray")
-	local tray = pGui["HealthGUI"]["tray"]
+	waitForChild(pGui.HealthGUI, "tray")
+	local tray = pGui.HealthGUI.tray
 	tray.Visible = visible
 end
 
@@ -92,8 +92,7 @@ if robloxGui.AbsoluteSize.Y <= 320 then
 	maxNumLoadoutItems = 4
 end
 
-local characterChildAddedCon
-local backpackChildCon
+local characterChildAddedCon, backpackChildCon
 
 local debounce = false
 
@@ -147,8 +146,8 @@ function unregisterNumberKeys()
 end
 
 function characterInWorkspace()
-	if game.Players["LocalPlayer"] then
-		if game.Players.LocalPlayer["Character"] then
+	if game.Players.LocalPlayer then
+		if game.Players.LocalPlayer.Character then
 			if game.Players.LocalPlayer.Character ~= nil then
 				if game.Players.LocalPlayer.Character.Parent ~= nil then
 					return true
@@ -751,7 +750,7 @@ local addingPlayerChild = function(
 	gearClone.MouseEnter:connect(function()
 		if
 			gearClone.GearReference
-			and gearClone.GearReference.Value["ToolTip"]
+			and gearClone.GearReference.Value.ToolTip
 			and gearClone.GearReference.Value.ToolTip ~= ""
 		then
 			showToolTip(gearClone, gearClone.GearReference.Value.ToolTip)
@@ -761,7 +760,7 @@ local addingPlayerChild = function(
 	gearClone.MouseLeave:connect(function()
 		if
 			gearClone.GearReference
-			and gearClone.GearReference.Value["ToolTip"]
+			and gearClone.GearReference.Value.ToolTip
 			and gearClone.GearReference.Value.ToolTip ~= ""
 		then
 			hideToolTip(gearClone, gearClone.GearReference.Value.ToolTip)
