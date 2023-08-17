@@ -11,8 +11,8 @@ local functionTable = {}
 local buttonVector = {}
 local buttonScreenGui, buttonFrame
 
-local ContextDownImage = "http://www.banland.xyz/asset/?id=97166756"
-local ContextUpImage = "http://www.banland.xyz/asset/?id=97166444"
+local ContextDownImage = "http://banland.xyz/asset/?id=97166756"
+local ContextUpImage = "http://banland.xyz/asset/?id=97166444"
 
 local oldTouches = {}
 

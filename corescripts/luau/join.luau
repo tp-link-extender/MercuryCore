@@ -10,6 +10,8 @@ local Players = game:GetService "Players"
 local Client = game:GetService "NetworkClient"
 local Visit = game:GetService "Visit"
 
+local player, connectionFailed
+
 -- MultiplayerSharedScript.lua inserted here ------ Prepended to Join.lua --
 
 pcall(function()
@@ -154,7 +156,7 @@ function requestCharacter(replicator)
 end
 
 -- called when the client connection is established
-function onConnectionAccepted(url, replicator)
+function onConnectionAccepted(_, replicator)
 	connectResolved = true
 
 	local waitingForMarker = true
@@ -241,7 +243,8 @@ local success, err = pcall(function()
 	connectionFailed = Client.ConnectionFailed:connect(onConnectionFailed)
 	Client.Ticket = ""
 
-	local playerConnectSuccess, player = pcall(function()
+	local playerConnectSuccess
+	playerConnectSuccess, player = pcall(function()
 		return Client:PlayerConnect(
 			_USER_ID,
 			"_SERVER_ADDRESS",
