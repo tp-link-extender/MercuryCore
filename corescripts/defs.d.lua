@@ -9463,8 +9463,8 @@ declare class DataModel extends ServiceProvider
 	function SetFastStringForTesting(self, name: string, newValue: string): string
 	function SetFlagVersion(self, name: string, version: number): nil
 	function SetIsLoaded(self, value: boolean, placeSizeInBytes: number?): nil
-	function SetPlaceId(self, placeId: number, idk: boolean): nil
-	function SetPlaceID(self, placeId: number, idk: boolean): nil
+	function SetPlaceId(self, placeId: number, idk: boolean?): nil
+	function SetPlaceID(self, placeId: number, idk: boolean?): nil
 	function SetUniverseId(self, universeId: number): nil
 	function Shutdown(self): nil
 

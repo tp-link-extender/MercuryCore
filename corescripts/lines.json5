@@ -1,6 +1,7 @@
 {
 	rules: [
 		"remove_spaces",
+		"remove_compound_assignment",
 		"group_local_assignment",
 		// "compute_expression",
 		"remove_unused_if_branch",
@@ -9,5 +10,9 @@
 		// "remove_method_definition",
 		"remove_function_call_parens",
 		"filter_after_early_return",
+		{
+			rule: "rename_variables",
+			globals: ["$default", "$roblox"],
+		},
 	],
 }
