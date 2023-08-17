@@ -11,13 +11,13 @@ local GamePassService = game:GetService "GamePassService"
 local Visit = game:GetService "Visit"
 local ScriptContext = game:GetService "ScriptContext"
 
+local player
+
 -- Prepended to Edit.lua and Visit.lua and Studio.lua and PlaySolo.lua--
 
-do
-	pcall(function()
-		return game:SetPlaceID(_PLACE_ID)
-	end)
-end
+pcall(function()
+	return game:SetPlaceID(_PLACE_ID)
+end)
 
 local message = Instance.new "Message"
 
