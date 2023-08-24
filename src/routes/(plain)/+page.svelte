@@ -86,7 +86,7 @@
 			<p class="lead text-white text-center">
 				Endless possibilities. New features. Same nostalgia.
 			</p>
-			<div class="d-inline mb-3">
+			<div class="d-inline mb-4">
 				<b>
 					<a
 						type="button"
@@ -104,7 +104,7 @@
 					</a>
 				</b>
 			</div>
-			<a href="/about" class="text-decoration-none pt-3 fs-5">
+			<a href="/about" class="text-decoration-none pt-4 fs-5">
 				About us <i class="fa fa-chevron-right" />
 			</a>
 		</div>

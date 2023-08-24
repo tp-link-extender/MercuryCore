@@ -5,11 +5,11 @@
 <Head title="Forum" />
 
 <div class="container light-text">
-	<h1 class="light-text mb-5">Forum</h1>
+	<h1 class="light-text mb-12">Forum</h1>
 	{#each data.categories as category, num}
 		<div
 			in:fade|global={{ num, total: data.categories.length }}
-			class="category card bg-darker p-3 mb-3">
+			class="category card bg-darker p-4 mb-4">
 			<div class="row">
 				<a
 					class="col-lg-9 col-md-7 row light-text text-decoration-none"

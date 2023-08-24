@@ -43,7 +43,7 @@
 <Head title="Catalog" />
 
 <div class="container">
-	<div class="row mb-3">
+	<div class="row mb-4">
 		<h1 class="col-xl-4 col-lg-4 col-md-3 mb-0 light-text">Catalog</h1>
 		<div class="col-xl-8 col-lg-8 col-md-9 mt-2">
 			<form
@@ -61,7 +61,7 @@
 						aria-label="Search for an item"
 						aria-describedby="button-addon2" />
 					<select
-						class="form-select form-select-sm light-text ps-3"
+						class="form-select form-select-sm light-text ps-4"
 						placeholder="Type"
 						aria-label="Type">
 						<option value="Shirt">Shirts</option>
@@ -80,7 +80,7 @@
 			</form>
 		</div>
 	</div>
-	<div class="row mb-3">
+	<div class="row mb-4">
 		<h1 class="h4 col-xl-2 col-lg-4 col-md-3 mb-0 light-text">
 			Categories
 		</h1>
@@ -195,7 +195,7 @@
 						<Asset {asset} {num} total={data.assets.length} />
 					{/each}
 					{#if query && searchedData.filter(assetFilter).length == 0}
-						<h2 class="h5 light-text mt-5">
+						<h2 class="h5 light-text mt-12">
 							No items found with search term {query}
 						</h2>
 					{/if}

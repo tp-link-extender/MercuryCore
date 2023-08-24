@@ -25,11 +25,15 @@
 <main>
 	<div
 		class="container d-flex flex-column justify-content-center align-items-center light-text bg-a rounded-4">
-		
-		<div class="errimg light" style="background-image: url(/light/{errors[status] || 'm!'}.svg)" />
-		<div class="errimg dark" style="background-image: url(/dark/{errors[status] || 'm!'}.svg)" />
+		<div
+			class="errimg light"
+			style="background-image: url(/light/{errors[status] ||
+				'm!'}.svg)" />
+		<div
+			class="errimg dark"
+			style="background-image: url(/dark/{errors[status] || 'm!'}.svg)" />
 
-		<h1 class="mt-3">
+		<h1 class="mt-4">
 			<a
 				href="https://http.cat/images/{status}.jpg"
 				target="_blank"

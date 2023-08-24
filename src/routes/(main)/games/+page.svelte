@@ -30,10 +30,10 @@
 <Head title="Discover" />
 
 <div class="container">
-	<div class="row mb-5">
+	<div class="row mb-12">
 		<h1 class="col light-text">
 			Games
-			<a href="/games/create" class="btn btn-primary ms-4">
+			<a href="/games/create" class="btn btn-primary ms-6">
 				<i class="fas fa-plus" />
 				Create
 			</a>
@@ -63,7 +63,7 @@
 					</div>
 				</div>
 				<div class="col-7 row">
-					<div class="ms-3 col">
+					<div class="ms-4 col">
 						<div class="row">
 							<label
 								for="genre"
@@ -81,7 +81,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="ms-3 col">
+					<div class="ms-4 col">
 						<div class="form-check light-text mt-1">
 							<input
 								class="form-check-input"
@@ -105,7 +105,7 @@
 				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
-				<h2 class="h5 light-text mt-5">
+				<h2 class="h5 light-text mt-12">
 					No games found with search term {query}
 				</h2>
 			{/if}

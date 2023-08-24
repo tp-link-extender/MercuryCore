@@ -15,9 +15,9 @@
 
 <h1 class="text-center light-text">Create a place</h1>
 
-<form use:enhance method="POST" class="container mt-5 light-text">
+<form use:enhance method="POST" class="container mt-12 light-text">
 	<fieldset>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="name" class="col-md-3 col-form-label">Place name</label>
 			<div class="col-md-8">
 				<input
@@ -27,12 +27,12 @@
 					id="name"
 					placeholder="Make sure to make it accurate"
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.name || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="description" class="col-md-3 col-form-label">
 				Description
 			</label>
@@ -46,12 +46,12 @@
 					class="form-control {$errors.description
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.description || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="serverIP" class="col-md-3 col-form-label">
 				Server IP
 			</label>
@@ -66,12 +66,12 @@
 					class="form-control {$errors.serverIP
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.serverIP || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="serverPort" class="col-md-3 col-form-label">
 				Server Port
 			</label>
@@ -86,12 +86,12 @@
 					class="form-control {$errors.serverPort
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.serverPort || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="maxPlayers" class="col-md-3 col-form-label">
 				Player Limit
 			</label>
@@ -106,12 +106,12 @@
 					class="form-control {$errors.maxPlayers
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.maxPlayers || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row mb-6">
 			<label for="privateServer" class="col-md-3 col-form-label">
 				Private Server
 			</label>
@@ -123,7 +123,7 @@
 					type="checkbox"
 					name="privateServer"
 					id="privateServer" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.privateServer || ""}
 				</p>
 			</div>
@@ -138,7 +138,7 @@
 			{/if}
 		</button>
 	</fieldset>
-	<p class="col-12 mb-3 text-danger">
+	<p class="col-12 mb-4 text-danger">
 		{other}
 	</p>
 </form>

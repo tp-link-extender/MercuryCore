@@ -53,7 +53,7 @@
 		<div id="nav1" class="py-1 d-flex">
 			<a class="navbar-brand light-text me-0" href="/">
 				<img class="me-2" src="/favicon.svg" alt="Mercury logo" />
-				<span class="me-4">Mercury</span>
+				<span class="me-6">Mercury</span>
 			</a>
 			{#if user}
 				<div id="topnav" class="row me-2">
@@ -152,7 +152,7 @@
 								<div
 									transition:fade={{ duration: 150 }}
 									id="results"
-									class="position-absolute d-flex flex-column bg-darker p-2 mt-5 rounded-3">
+									class="position-absolute d-flex flex-column bg-darker p-2 mt-12 rounded-3">
 									{#each searchCategories as [name, category], num}
 										<a
 											bind:this={searchResults[num]}
@@ -210,7 +210,7 @@
 								{#each usernav as [icon, title, href]}
 									<li class="rounded-2">
 										<a
-											class="btn light-text ps-3 pe-0 text-start"
+											class="btn light-text ps-4 pe-0 text-start"
 											{href}>
 											<i class="fa {icon} me-2" />
 											{title}
@@ -223,7 +223,7 @@
 										method="POST"
 										action="/api?/logout">
 										<button
-											class="btn text-danger ps-3 pe-0 text-start">
+											class="btn text-danger ps-4 pe-0 text-start">
 											<i
 												class="fa fa-arrow-right-from-bracket me-2" />
 											<b>Log out</b>

@@ -15,9 +15,9 @@
 <Head title={data.username} />
 
 <div id="all" class="container">
-	<div class="card bg-darker pt-4">
-		<div class="d-flex px-4">
-			<div id="image-background" class="me-4 rounded-circle bg-a">
+	<div class="card bg-darker pt-6">
+		<div class="d-flex px-6">
+			<div id="image-background" class="me-6 rounded-circle bg-a">
 				<img
 					src="/api/avatar/{data.username}"
 					alt={data.username}
@@ -47,7 +47,7 @@
 					</a>
 					<a
 						href="/user/{data.number}/followers"
-						class="light-text text-center text-decoration-none ms-4">
+						class="light-text text-center text-decoration-none ms-6">
 						Followers
 						<h2 class="h3 light-text">
 							{data.followerCount}
@@ -55,7 +55,7 @@
 					</a>
 					<a
 						href="/user/{data.number}/following"
-						class="light-text text-center text-decoration-none ms-4">
+						class="light-text text-center text-decoration-none ms-6">
 						Following
 						<h2 class="h3 light-text">
 							{data.followingCount}
@@ -121,7 +121,7 @@
 						</form>
 					{/if}
 				</div>
-				<div class="float-end mb-3">
+				<div class="float-end mb-4">
 					<ReportButton
 						user={data.username}
 						url="/user/{data.number}" />
@@ -132,12 +132,12 @@
 	<div class="row">
 		<div class="col-6">
 			{#if data.bio[0]}
-				<div class="mt-4">
+				<div class="mt-6">
 					<h2 class="h4 light-text">Bio</h2>
 					<p class="light-text ms-2">{data.bio[0].text}</p>
 				</div>
 			{/if}
-			<div class="mt-4">
+			<div class="mt-6">
 				<h2 class="h4 light-text">Avatar</h2>
 				<div class="card bg-darker card-body">
 					<img
@@ -150,7 +150,7 @@
 		</div>
 		<div class="col-6">
 			{#if data.places.length > 0}
-				<div class="mt-4">
+				<div class="mt-6">
 					<h2 class="h4 light-text">Creations</h2>
 					{#each data.places as place, num}
 						<div
@@ -207,9 +207,9 @@
 				</div>
 			{/if}
 		</div>
-		<div class="col-6 mt-4">
+		<div class="col-6 mt-6">
 			{#if data.groupsOwned.length > 0}
-				<div class="mt-4">
+				<div class="mt-6">
 					<h2 class="h4 light-text">Groups owned</h2>
 					{#each data.groupsOwned as group, num}
 						<a
@@ -230,9 +230,9 @@
 				</div>
 			{/if}
 		</div>
-		<div class="col-6 mt-4">
+		<div class="col-6 mt-6">
 			{#if data.groups.length > 0}
-				<div class="mt-4">
+				<div class="mt-6">
 					<h2 class="h4 light-text">Groups in</h2>
 					{#each data.groups as group, num}
 						<a
@@ -254,8 +254,8 @@
 			{/if}
 		</div>
 		{#if data.posts.length > 0}
-			<h2 class="h4 mt-5 light-text">Latest feed posts</h2>
-			<div id="feed" class="light-text p-3">
+			<h2 class="h4 mt-12 light-text">Latest feed posts</h2>
+			<div id="feed" class="light-text p-4">
 				<div class="row">
 					{#each data.posts.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
 						<div
@@ -269,7 +269,7 @@
 											alt={data.username}
 											class="rounded-circle rounded-top-0" />
 									</span>
-									<span class="fw-bold ms-3 light-text">
+									<span class="fw-bold ms-4 light-text">
 										{data.username}
 									</span>
 									<span
