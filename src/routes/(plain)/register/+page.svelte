@@ -28,7 +28,7 @@
 			<i class="fa fa-arrow-left me-2" />
 			Home
 		</a>
-		<h1 class="fw-bolder light-text mb-6">
+		<h1 class="font-black light-text mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 

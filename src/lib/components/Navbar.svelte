@@ -174,7 +174,7 @@
 							href="/notifications"
 							role="button"
 							aria-label="Notifications"
-							class="fw-bold nav-link me-1">
+							class="font-bold nav-link me-1">
 							<i class="fa fa-bell light-text" />
 						</a>
 					</li>

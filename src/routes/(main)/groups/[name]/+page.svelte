@@ -71,11 +71,11 @@
 						<div class="card h-100">
 							<div class="card-body pb-0">
 								<div id="user" class="d-flex mb-2">
-									<span class="fw-bold ms-4 light-text">
+									<span class="font-bold ms-4 light-text">
 										{data.name}
 									</span>
 									<span
-										class="ms-auto fw-italic light-text text-end">
+										class="ms-auto italic light-text text-end">
 										{status.posted.toLocaleString()}
 									</span>
 								</div>

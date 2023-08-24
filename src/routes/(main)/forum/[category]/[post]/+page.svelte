@@ -87,9 +87,9 @@
 				</div>
 				<span
 					class="my-2 text-center {data.likes
-						? 'text-success fw-bold'
+						? 'text-success font-bold'
 						: data.dislikes
-						? 'text-danger fw-bold'
+						? 'text-danger font-bold'
 						: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
@@ -120,7 +120,7 @@
 							alt={data.author.username}
 							class="rounded-circle rounded-top-0" />
 					</span>
-					<span class="fw-bold ms-4">
+					<span class="font-bold ms-4">
 						{data.author.username}
 					</span>
 					<span class="ms-4">

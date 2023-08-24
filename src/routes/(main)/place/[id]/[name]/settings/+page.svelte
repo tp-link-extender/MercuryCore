@@ -42,7 +42,7 @@
 	<h1 class="light-text mb-6">Configure {data.name}</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">Game View</h4>
+		<h4 class="light-text font-normal mb-1">Game View</h4>
 		<p class="mb-0 grey-text mb-6">
 			Change the title and description of your server.
 		</p>
@@ -126,7 +126,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">Network</h4>
+		<h4 class="light-text font-normal mb-1">Network</h4>
 		<p class="mb-0 grey-text mb-6">
 			Change the network configurations of your server.
 		</p>
@@ -246,7 +246,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">Privacy</h4>
+		<h4 class="light-text font-normal mb-1">Privacy</h4>
 		<p class="mb-0 grey-text mb-6">
 			Enable private server to make your game only accessible to those
 			with the link.

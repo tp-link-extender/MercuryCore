@@ -53,9 +53,9 @@
 			</div>
 			<span
 				class="my-2 text-center {post.likes
-					? 'text-success fw-bold'
+					? 'text-success font-bold'
 					: post.dislikes
-					? 'text-danger fw-bold'
+					? 'text-danger font-bold'
 					: ''}">
 				{post.likeCount - post.dislikeCount}
 			</span>
@@ -86,7 +86,7 @@
 					alt={post.author.username}
 					class="rounded-circle rounded-top-0" />
 			</span>
-			<span class="fw-bold ms-2">
+			<span class="font-bold ms-2">
 				{post.author.username}
 			</span>
 			<em class="ms-auto">
