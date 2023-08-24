@@ -269,11 +269,11 @@
 											alt={data.username}
 											class="rounded-circle rounded-top-0" />
 									</span>
-									<span class="fw-bold ms-4 light-text">
+									<span class="font-bold ms-4 light-text">
 										{data.username}
 									</span>
 									<span
-										class="ms-auto fw-italic light-text text-end">
+										class="ms-auto italic light-text text-end">
 										{status.posted.toLocaleString()}
 									</span>
 								</div>

@@ -33,7 +33,7 @@
 	<h1 class="light-text mb-6">Settings</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">User Profile</h4>
+		<h4 class="light-text font-normal mb-1">User Profile</h4>
 		<p class="mb-0 grey-text mb-6">Change your bio, site theme and more.</p>
 		<form class="col-lg-8" method="POST" action="?a=profile">
 			<fieldset>
@@ -102,7 +102,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">User Information</h4>
+		<h4 class="light-text font-normal mb-1">User Information</h4>
 		<p class="mb-0 grey-text mb-6">
 			Information about your account, you can change certain aspects of it
 			here.
@@ -163,7 +163,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="fw-normal light-text mb-4">Change Password</h4>
+		<h4 class="font-normal light-text mb-4">Change Password</h4>
 		<form use:enhance class="col-sm-8" method="POST" action="?a=password">
 			<fieldset>
 				<div class="form-group row gx-0 mb-2">

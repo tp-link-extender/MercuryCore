@@ -119,7 +119,7 @@
 								? ''
 								: 'light-text'}">
 							<span
-								class="fw-bold {reply.author.username ==
+								class="font-bold {reply.author.username ==
 								postAuthorName
 									? assetName
 										? 'text-warning'
@@ -183,9 +183,9 @@
 								</button>
 								<span
 									class="my-1 text-center {reply.likes
-										? 'text-success fw-bold'
+										? 'text-success font-bold'
 										: reply.dislikes
-										? 'text-danger fw-bold'
+										? 'text-danger font-bold'
 										: ''}">
 									{reply.likeCount - reply.dislikeCount}
 								</span>

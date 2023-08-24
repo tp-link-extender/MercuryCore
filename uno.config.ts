@@ -3,7 +3,6 @@ import { defineConfig, toEscapedSelector as e } from "unocss"
 let fa: { [k: string]: string }
 
 const i = (a: number | string) => `${a} !important`,
-	bsNums = ["0", "0.25rem", "0.5rem", "1rem", "1.5rem", "3rem"],
 	bsFonts = [
 		"0",
 		"calc(1.375rem + 1.5vw)",
@@ -14,20 +13,22 @@ const i = (a: number | string) => `${a} !important`,
 		"1rem",
 	],
 	bsWeights = {
-		lighter: "lighter",
-		light: 400,
+		thin: 100,
+		extralight: 200,
+		light: 300,
 		normal: 400,
 		medium: 500,
 		semibold: 600,
 		bold: 700,
-		bolder: "bolder",
+		extrabold: 800,
+		black: 900,
 	},
-	bslhs = {
-		1: "1",
-		sm: "1.25",
-		base: "1.5",
-		lg: "2",
-	},
+	// bslhs = {
+	// 	1: "1",
+	// 	sm: "1.25",
+	// 	base: "1.5",
+	// 	lg: "2",
+	// },
 	bsRounds = {
 		"": "var(--bs-border-radius)",
 		"-0": "0",
@@ -325,19 +326,19 @@ export default defineConfig({
 
 		// fw-lighter/light/normal/medium/semibold/bold/bolder
 		[
-			/^fw-(lighter|light|normal|medium|semibold|bold|bolder)$/,
+			/^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)$/,
 			([, a]) => ({
 				"font-weight": i(bsWeights[a]),
 			}),
 		],
 
 		// lh-1/sm/base/lg
-		[
-			/^lh-(1|sm|base|lg)$/,
-			([, a]) => ({
-				"line-height": i(bslhs[a]),
-			}),
-		],
+		// [
+		// 	/^lh-(1|sm|base|lg)$/,
+		// 	([, a]) => ({
+		// 		"line-height": i(bslhs[a]),
+		// 	}),
+		// ],
 
 		// text-start/end/center
 		[

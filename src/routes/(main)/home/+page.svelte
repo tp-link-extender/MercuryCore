@@ -135,7 +135,7 @@
 												class="rounded-circle rounded-top-0" />
 										</span>
 										<span
-											class="username mw-50 fw-bold ms-4">
+											class="username mw-50 font-bold ms-4">
 											{status.authorUser?.username}
 										</span>
 										<em class="small ms-4">
@@ -228,11 +228,11 @@
 									<div class="card-body p-2">
 										<div class="mb-2 light-text">
 											<div
-												class="fw-bold text-center text-truncate">
+												class="font-bold text-center text-truncate">
 												{thing.title}
 											</div>
 											<div
-												class="date ms-auto fw-italic text-center">
+												class="date ms-auto italic text-center">
 												{thing.time.toLocaleString()}
 											</div>
 										</div>
