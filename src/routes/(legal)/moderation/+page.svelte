@@ -20,10 +20,10 @@
 		if (diffInDays >= 1) return diffInDays + " day(s)"
 		else {
 			const diffInHours = Math.floor(
-				diffInMilliseconds / (60 * 60 * 1000),
+				diffInMilliseconds / (60 * 60 * 1000)
 			)
 			const diffInMinutes = Math.floor(
-				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000),
+				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000)
 			)
 			if (diffInHours >= 1)
 				return diffInHours + " hour(s) " + diffInMinutes + " minute(s)"
@@ -34,7 +34,7 @@
 
 <Head title={moderationAction[data.type]} />
 
-<div class="container mt-5">
+<div class="container mt-12">
 	<div class="card">
 		<div class="card-body light-text">
 			<h1>
@@ -42,7 +42,7 @@
 				"Ban"
 					? `ned for ${formatDateDifference(
 							Date.now(),
-							data.timeEnds.getTime(),
+							data.timeEnds.getTime()
 					  )}`
 					: ""}
 			</h1>
@@ -62,7 +62,7 @@
 
 			{#if moderationAction[data.type] == "Warning"}
 				<form method="POST" use:enhance>
-					<p class="mb-5">
+					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
 							class="text-decoration-none">
@@ -90,7 +90,7 @@
 				</form>
 			{:else if moderationAction[data.type] == "Ban"}
 				<form method="POST" use:enhance>
-					<p class="mb-5">
+					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
 							class="text-decoration-none">
@@ -101,7 +101,7 @@
 					<p>
 						You may re-activate your account after your ban ends in {formatDateDifference(
 							Date.now(),
-							data.timeEnds.getTime(),
+							data.timeEnds.getTime()
 						)}
 					</p>
 					<button

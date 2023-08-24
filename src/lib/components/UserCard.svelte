@@ -18,7 +18,7 @@
 	in:fade|global={{ num, total, max: 12 }}
 	class="card light-text h-100 w-100 d-flex flex-row bg-darker"
 	href="/user/{user.number}">
-	<div class="p-4">
+	<div class="p-6">
 		<div class="image-background rounded-circle bg-a">
 			<img
 				src="/api/avatar/{user.username}"
@@ -33,7 +33,7 @@
 			</span>
 		{/if} -->
 	</div>
-	<p class="h4 p-4">
+	<p class="h4 p-6">
 		{user.username}
 	</p>
 </a>

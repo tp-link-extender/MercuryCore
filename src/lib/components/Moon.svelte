@@ -41,7 +41,7 @@
 		enableZoom={false} />
 </T.PerspectiveCamera>
 
-<T.DirectionalLight color="white" position={[15, 45, 20]}  intensity={3}/>
+<T.DirectionalLight color="white" position={[15, 45, 20]} intensity={3}/>
 <T.HemisphereLight skyColor="white" groundColor="#7531ff" intensity={2} />
 
 <GLTF url="/landing/{item.name}.glb" />

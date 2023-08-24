@@ -21,7 +21,7 @@
 		Endless possibilities. New features. Same nostalgia.
 	</p>
 	<h2 class="h5">
-		<span class="badge text-bg-secondary dark-text opacity-75 mb-3">
+		<span class="badge text-bg-secondary dark-text opacity-75 mb-4">
 			Closed Beta
 		</span>
 	</h2>
@@ -38,7 +38,7 @@
 </button>
 <button
 	id="arrow2"
-	class="btn position-fixed mb-3"
+	class="btn position-fixed mb-4"
 	aria-label="Scroll up"
 	on:click={upScroll}
 	on:keypress={upScroll}

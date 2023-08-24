@@ -22,20 +22,19 @@
 		<div class="col-xl-9 col-lg-9">
 			<div class="container">
 				<div class="row">
-
-						{#each data.assets || [] as asset, num}
-							<Asset
-								{asset}
-								{num}
-								total={(data.assets || []).length} />
-						{/each}
+					{#each data.assets || [] as asset, num}
+						<Asset
+							{asset}
+							{num}
+							total={(data.assets || []).length} />
+					{/each}
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<!-- <div class="container mt-5 d-grid">
+<!-- <div class="container mt-12 d-grid">
 	{#each data.assets || [] as asset, num}
 		<Asset {asset} {num} total={(data.assets || []).length} />
 	{/each}

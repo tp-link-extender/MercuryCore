@@ -86,14 +86,14 @@
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Collapse reply"
-				class="collapseBar bg-a2 p-0 border-0 h-100 mt-3" />
+				class="collapseBar bg-a2 p-0 border-0 h-100 mt-4" />
 		</span>
 
 		{#if $repliesCollapsed?.[reply.id]}
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Expand reply"
-				class="expandBar m-2 ms-3 p-0 mt-0">
+				class="expandBar m-2 ms-4 p-0 mt-0">
 				<small>
 					<span class="grey-text">
 						{reply.author.username}
@@ -114,7 +114,7 @@
 						<a
 							href="/user/{reply.author.number}"
 							class:hidden
-							class="user userlink d-flex text-decoration-none pt-2 ms-3 {reply
+							class="user userlink d-flex text-decoration-none pt-2 ms-4 {reply
 								.author.username == postAuthorName
 								? ''
 								: 'light-text'}">
@@ -133,7 +133,7 @@
 											: 'fa-microphone'} ms-2" />
 								{/if}
 							</span>
-							<small class="light-text ps-4">
+							<small class="light-text ps-6">
 								{reply.posted.toLocaleString()}
 							</small>
 						</a>
@@ -229,11 +229,11 @@
 							{/if}
 						{:else}
 							<div class="mb-2 card reply bg-darker">
-								<div class="card-body p-3 pt-1 pb-0">
+								<div class="card-body p-4 pt-1 pb-0">
 									<form
 										use:enhance
 										on:submit={() => replyingTo.set("")}
-										class="mb-4"
+										class="mb-6"
 										method="POST"
 										action="?/reply&rid={reply.id}">
 										<label

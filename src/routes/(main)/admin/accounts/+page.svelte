@@ -23,21 +23,21 @@
 
 <Head title="Accounts - Admin" />
 
-<div class="container py-4">
+<div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Accounts</h1>
 	<a href="/admin" class="text-decoration-none">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-4">
-		<div class="col-lg-2 col-md-3 mb-4">
+	<div class="row mt-6">
+		<div class="col-lg-2 col-md-3 mb-6">
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
 				<form use:enhance method="POST" action="?/resetPassword">
 					<fieldset>
-						<div class="row light-text mb-3">
+						<div class="row light-text mb-4">
 							<label
 								for="username"
 								class="col-md-3 col-form-label">
@@ -52,12 +52,12 @@
 									class="form-control {$errors.username
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 mb-3 text-danger">
+								<p class="col-12 mb-4 text-danger">
 									{$errors.username || ""}
 								</p>
 							</div>
 						</div>
-						<div class="row light-text mb-3">
+						<div class="row light-text mb-4">
 							<label
 								for="password"
 								class="col-md-3 col-form-label">
@@ -72,7 +72,7 @@
 									class="form-control {$errors.password
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 mb-3 text-danger">
+								<p class="col-12 mb-4 text-danger">
 									{$errors.password || ""}
 								</p>
 							</div>

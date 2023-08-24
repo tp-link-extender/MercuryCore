@@ -29,12 +29,12 @@
 
 <Head title="Settings" />
 
-<div class="container mt-4 light-text">
-	<h1 class="light-text mb-4">Settings</h1>
+<div class="container mt-6 light-text">
+	<h1 class="light-text mb-6">Settings</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
 		<h4 class="light-text fw-normal mb-1">User Profile</h4>
-		<p class="mb-0 grey-text mb-4">Change your bio, site theme and more.</p>
+		<p class="mb-0 grey-text mb-6">Change your bio, site theme and more.</p>
 		<form class="col-lg-8" method="POST" action="?a=profile">
 			<fieldset>
 				<div class="row">
@@ -57,7 +57,7 @@
 							<option value="storm">Storm</option>
 							<option value="solar">Solar</option>
 						</select>
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.theme || ""}
 						</p>
 					</div>
@@ -80,7 +80,7 @@
 							your profile and allow other users to know who you
 							are.
 						</small>
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.bio || ""}
 						</p>
 					</div>
@@ -103,7 +103,7 @@
 
 	<Tab {tabData}>
 		<h4 class="light-text fw-normal mb-1">User Information</h4>
-		<p class="mb-0 grey-text mb-4">
+		<p class="mb-0 grey-text mb-6">
 			Information about your account, you can change certain aspects of it
 			here.
 		</p>
@@ -125,7 +125,7 @@
 			</small>
 		</div>
 		<hr class="grey-text" />
-		<div class="form-group row mb-5">
+		<div class="form-group row mb-12">
 			<label for="name" class="col-md-3 col-form-label text-md-right">
 				Email Address
 			</label>
@@ -156,14 +156,14 @@
 				 ">
 			You have not verified your email address.
 		</p>
-		<button class="btn btn-primary mb-3">
+		<button class="btn btn-primary mb-4">
 			<i class="fa fa-envelope-circle-check" />
 			Verify Email
 		</button>
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="fw-normal light-text mb-3">Change Password</h4>
+		<h4 class="fw-normal light-text mb-4">Change Password</h4>
 		<form use:enhance class="col-sm-8" method="POST" action="?a=password">
 			<fieldset>
 				<div class="form-group row gx-0 mb-2">
@@ -181,7 +181,7 @@
 								: ''}valid"
 							id="cpassword"
 							name="cpassword" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.cpassword || ""}
 						</p>
 					</div>
@@ -204,7 +204,7 @@
 						<small class="grey-text">
 							Make sure your password is unique.
 						</small>
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.npassword || ""}
 						</p>
 					</div>
@@ -226,7 +226,7 @@
 								: ''}valid"
 							id="cnpassword"
 							name="cnpassword" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.cnpassword || ""}
 						</p>
 					</div>

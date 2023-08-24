@@ -1,5 +1,5 @@
 <script lang="ts">
-	// The component that controls the 3D object  on the landing page.
+	// The component that controls the 3D object on the landing page.
 
 	import { T } from "@threlte/core"
 	import { interactivity } from "@threlte/extras"

@@ -293,7 +293,7 @@ export default defineConfig({
 				const o = {}
 
 				if (n == "auto") for (const d of dir) o[d] = i("auto")
-				else for (const d of dir) o[d] = i(bsNums[n])
+				else for (const d of dir) o[d] = i(`${parseFloat(n) * 0.25}rem`)
 
 				return o
 			},
@@ -303,7 +303,7 @@ export default defineConfig({
 		[
 			/^(gap|row-gap|column-gap)-(\d)$/,
 			([, g, n]) => ({
-				[`${g}`]: i(`${bsNums[n]}rem`),
+				[g]: i(`${parseFloat(n) * 0.25}rem`),
 			}),
 		],
 
@@ -316,12 +316,12 @@ export default defineConfig({
 		],
 
 		// fst-italic/normal
-		[
-			/^fst-(italic|normal)$/,
-			([, a]) => ({
-				"font-style": i(a),
-			}),
-		],
+		// [
+		// 	/^fst-(italic|normal)$/,
+		// 	([, a]) => ({
+		// 		"font-style": i(a),
+		// 	}),
+		// ],
 
 		// fw-lighter/light/normal/medium/semibold/bold/bolder
 		[

@@ -2,7 +2,7 @@
 
 <h1 class="text-center light-text">Terms of Service</h1>
 
-<div class="container mt-5">
+<div class="container mt-12">
 	<div class="light-text">
 		<p>
 			This Terms of Service Agreement (“agreement”) is an agreement made
@@ -71,7 +71,7 @@
 				By accessing Mercury, you agree that you will not commit any of
 				the following acts:
 
-				<ol type="a" class="my-3">
+				<ol type="a" class="my-4">
 					<li>
 						Using Mercury for any illegal purpose under applicable
 						law.
