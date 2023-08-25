@@ -72,20 +72,15 @@ export default defineConfig({
 		// float
 		[
 			/^float-(start|end|none)$/,
-			([, a]) => {
-				if (a == "start") return { float: "left" }
-				if (a == "end") return { float: "right" }
-				return { float: i(a) }
-			},
+			([, a]) => ({
+				float: i(a == "start" ? "left" : a == "end" ? "right" : a),
+			}),
 		],
 
 		// object-fit
 		[
 			/^object-fit-(contain|cover|fill|scale|none)$/,
-			([, a]) => {
-				if (a == "scale") return { "object-fit": "scale-down" }
-				return { "object-fit": i(a) }
-			},
+			([, a]) => ({ "object-fit": i(a == "scale" ? "scale-down" : a) }),
 		],
 
 		// opacity
@@ -126,43 +121,42 @@ export default defineConfig({
 		// top, bottom, start, end
 		[
 			/^(top|bottom|start|end)-(\d+)$/,
-			([, a, b]) => {
-				if (a == "start") return { left: i(`${b}%`) }
-				if (a == "end") return { right: i(`${b}%`) }
-				return { [a]: i(`${b}%`) }
-			},
+			([, a, b]) => ({
+				[a == "start" ? "left" : a == "end" ? "right" : a]: i(`${b}%`),
+			}),
 		],
 
 		// border-\d
 		[
 			/^border-(\d+)$/,
-			([, n]) => {
-				if (n == "0") return { border: i(0) }
-				return { "border-width": i(`${n}px`) }
-			},
+			([, n]) =>
+				n == "0" ? { border: i(0) } : { "border-width": i(`${n}px`) },
 		],
 
 		// border-top bottom start end-0
 		[
 			/^border-(top|bottom|start|end)-0$/,
-			([, a]) => {
-				if (a == "start") return { "border-left": i(0) }
-				if (a == "end") return { "border-right": i(0) }
-				return { [`border-${a}`]: i(0) }
-			},
+			([, a]) => ({
+				[a == "start"
+					? "border-left"
+					: a == "end"
+					? "border-right"
+					: `border-${a}`]: i(0),
+			}),
 		],
 
 		// border-top bottom start end
 		[
 			/^border-(top|bottom|start|end)$/,
-			([, a]) => {
-				const v = i(
+			([, a]) => ({
+				[a == "start"
+					? "border-left"
+					: a == "end"
+					? "border-right"
+					: `border-${a}`]: i(
 					"var(--bs-border-width) var(--bs-border-style) var(--bs-border-color)",
-				)
-				if (a == "start") return { "border-left": v }
-				if (a == "end") return { "border-right": v }
-				return { [`border-${a}`]: v }
-			},
+				),
+			}),
 		],
 
 		// border-{colour}
@@ -195,11 +189,11 @@ export default defineConfig({
 		// w-\d+/auto and h-\d+/auto
 		[
 			/^(w|h)-(\d+|auto)$/,
-			([, a, b]) => {
-				const key = a == "w" ? "width" : "height"
-				if (b == "auto") return { [key]: i("auto") }
-				return { [key]: i(`${b}%`) }
-			},
+			([, a, b]) => ({
+				[a == "w" ? "width" : "height"]: i(
+					b == "auto" ? "auto" : `${b}%`,
+				),
+			}),
 		],
 
 		// flex-row/column/row-reverse/column-reverse
@@ -220,81 +214,76 @@ export default defineConfig({
 		// justify-content-start/end/center/between/around/evenly
 		[
 			/^justify-content-(start|end|center|between|around|evenly)$/,
-			([, a]) => {
-				if (a == "start" || a == "end")
-					return { "justify-content": i(`flex-${a}`) }
-				if (a == "between" || a == "around" || a == "evenly")
-					return { "justify-content": i(`space-${a}`) }
-				return { "justify-content": i(a) }
-			},
+			([, a]) => ({
+				"justify-content": i(
+					a == "start" || a == "end"
+						? `flex-${a}`
+						: a == "between" || a == "around" || a == "evenly"
+						? `space-${a}`
+						: a,
+				),
+			}),
 		],
 
 		// align-items-start/end/center/baseline/stretch
 		[
 			/^align-items-(start|end|center|baseline|stretch)$/,
-			([, a]) => {
-				if (a == "start" || a == "end")
-					return { "align-items": i(`flex-${a}`) }
-				return { "align-items": i(a) }
-			},
+			([, a]) => ({
+				"align-items": i(a == "start" || a == "end" ? `flex-${a}` : a),
+			}),
 		],
 
 		// align-content-start/end/center/between/around/stretch
 		[
 			/^align-content-(start|end|center|between|around|stretch)$/,
-			([, a]) => {
-				if (a == "start" || a == "end")
-					return { "align-content": i(`flex-${a}`) }
-				if (a == "between" || a == "around")
-					return { "align-content": i(`space-${a}`) }
-				return { "align-content": i(a) }
-			},
+			([, a]) => ({
+				"align-content": i(
+					a == "start" || a == "end"
+						? `flex-${a}`
+						: a == "between" || a == "around"
+						? `space-${a}`
+						: a,
+				),
+			}),
 		],
 
 		// align-self-auto/start/end/center/baseline/stretch
 		[
 			/^align-self-(auto|start|end|center|baseline|stretch)$/,
-			([, a]) => {
-				if (a == "start" || a == "end")
-					return { "align-self": i(`flex-${a}`) }
-				return { "align-self": i(a) }
-			},
+			([, a]) => ({
+				"align-self": i(a == "start" || a == "end" ? `flex-${a}` : a),
+			}),
 		],
 
 		//order-first/\d/last
 		[
 			/^order-(first|\d|last)$/,
-			([, a]) => {
-				if (a == "first") return { order: i(-1) }
-				if (a == "last") return { order: i(10) }
-				return { order: i(a) }
-			},
+			([, a]) => ({ order: i(a == "first" ? -1 : a == "last" ? 10 : a) }),
 		],
 
 		// (m/p)(x/y/t/b/s/e)?-(\d/auto)
 		[
 			/^(m|p)(x|y|t|b|s|e)?-(\d+|auto)$/,
 			([, mp, xy, n]) => {
-				const key = mp == "m" ? "margin" : "padding"
-				const dir =
-					xy == "x"
-						? [`${key}-left`, `${key}-right`]
-						: xy == "y"
-						? [`${key}-top`, `${key}-bottom`]
-						: xy == "t"
-						? [`${key}-top`]
-						: xy == "b"
-						? [`${key}-bottom`]
-						: xy == "s"
-						? [`${key}-left`]
-						: xy == "e"
-						? [`${key}-right`]
-						: [key]
+				const key = mp == "m" ? "margin" : "padding",
+					o = {}
 
-				const o = {}
-
-				if (n == "auto") for (const d of dir) o[d] = i("auto")
-				else for (const d of dir) o[d] = i(`${parseFloat(n) * 0.25}rem`)
+				for (const d of xy == "x"
+					? [`${key}-left`, `${key}-right`]
+					: xy == "y"
+					? [`${key}-top`, `${key}-bottom`]
+					: xy == "t"
+					? [`${key}-top`]
+					: xy == "b"
+					? [`${key}-bottom`]
+					: xy == "s"
+					? [`${key}-left`]
+					: xy == "e"
+					? [`${key}-right`]
+					: [key])
+					o[d] = i(
+						n == "auto" ? "auto" : `${parseFloat(n) * 0.25}rem`,
+					)
 
 				return o
 			},
@@ -343,11 +332,11 @@ export default defineConfig({
 		// text-start/end/center
 		[
 			/^text-(start|end|center)$/,
-			([, a]) => {
-				if (a == "start") return { "text-align": i("left") }
-				if (a == "end") return { "text-align": i("right") }
-				return { "text-align": i(a) }
-			},
+			([, a]) => ({
+				"text-align": i(
+					a == "start" ? "left" : a == "end" ? "right" : a,
+				),
+			}),
 		],
 
 		// text-decoration-none/underline/line-through
@@ -375,16 +364,13 @@ export default defineConfig({
 					"--bs-text-opacity": 1,
 				}
 
-				if (a == "body")
-					o["color"] = i(
-						"RGBA(var(--bs-body-color-rgb), var(--bs-text-opacity))",
-					)
-				else if (a == "muted")
-					o["color"] = i("var(--bs-secondary-color)")
-				else
-					o["color"] = i(
-						`RGBA(var(--bs-${a}-rgb), var(--bs-text-opacity))`,
-					)
+				o["color"] = i(
+					a == "body"
+						? "RGBA(var(--bs-body-color-rgb), var(--bs-text-opacity))"
+						: a == "muted"
+						? "var(--bs-secondary-color)"
+						: `RGBA(var(--bs-${a}-rgb), var(--bs-text-opacity))`,
+				)
 
 				return o
 			},
@@ -515,10 +501,7 @@ export default defineConfig({
 		// z-\d+ and z-n\d+
 		[
 			/^z-(n\d+|\d+)$/,
-			([, a]) => {
-				if (a[0] == "n") return { "z-index": i(-a.slice(1)) }
-				return { "z-index": i(a) }
-			},
+			([, a]) => ({ "z-index": i(a[0] == "n" ? -a.slice(1) : a) }),
 		],
 	],
 
