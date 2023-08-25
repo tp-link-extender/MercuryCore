@@ -14,28 +14,22 @@ const { magenta, red, yellow, green, blue, gray } = pc,
 	methodColours: { [k: string]: string } = {
 		GET: green("GET"),
 		POST: yellow("POST"),
-	}
-
-function pathnameColour(pathname: string) {
-	if (pathname.startsWith("/api")) return green(pathname)
-
-	if (
-		pathname.startsWith("/download") ||
-		pathname.startsWith("/moderation") ||
-		pathname.startsWith("/report") ||
-		pathname.startsWith("/statistics")
-	)
-		return yellow(pathname)
-
-	if (pathname.startsWith("/register") || pathname.startsWith("/login"))
-		return blue(pathname)
-
-	if (pathname.match(/^\/place\/\d+\/.*\/icon$/)) return magenta(pathname)
-
-	if (pathname.startsWith("/admin")) return red(pathname)
-
-	return pathname
-}
+	},
+	pathnameColour = (pathname: string) =>
+		pathname.startsWith("/api")
+			? green(pathname)
+			: pathname.startsWith("/download") ||
+			  pathname.startsWith("/moderation") ||
+			  pathname.startsWith("/report") ||
+			  pathname.startsWith("/statistics")
+			? yellow(pathname)
+			: pathname.startsWith("/register") || pathname.startsWith("/login")
+			? blue(pathname)
+			: pathname.match(/^\/place\/\d+\/.*\/icon$/)
+			? magenta(pathname)
+			: pathname.startsWith("/admin")
+			? red(pathname)
+			: pathname
 
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
@@ -110,13 +104,14 @@ export const handleError = async ({ event, error }) => {
 		user = session?.user
 
 	// Fancy error logging: time, user, and error
-	if (dev) console.error(error)
-	else
-		console.error(
-			gray(new Date().toLocaleString()) + " ",
-			user
-				? blue(user.username) + " ".repeat(21 - user.username.length)
-				: yellow("Logged-out user      "),
-			red(error as string),
-		)
+	console.error(
+		dev
+			? error
+			: (gray(new Date().toLocaleString()) + " ",
+			  user
+					? blue(user.username) +
+					  " ".repeat(21 - user.username.length)
+					: yellow("Logged-out user      "),
+			  red(error as string)),
+	)
 }
