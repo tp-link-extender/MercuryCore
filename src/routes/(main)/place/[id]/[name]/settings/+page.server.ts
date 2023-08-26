@@ -17,7 +17,7 @@ const schema = z.object({
 		.string()
 		.max(100)
 		.regex(
-			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/,
 		)
 		.optional(),
 	serverPort: z.number().int().min(1024).max(65535).optional(),
@@ -64,26 +64,25 @@ export const actions = {
 	default: async ({ request, locals, params, url }) => {
 		if (!/^\d+$/.test(params.id || ""))
 			throw error(400, `Invalid game id: ${params.id}`)
-		const id = parseInt(params.id || "")
-		const { user } = await authorise(locals)
-
-		const getPlace = await prisma.place.findUnique({
-			where: {
-				id,
-			},
-			include: {
-				ownerUser: true,
-				description: {
-					orderBy: {
-						updated: "desc",
-					},
-					select: {
-						text: true,
-					},
-					take: 1,
+		const id = parseInt(params.id || ""),
+			{ user } = await authorise(locals),
+			getPlace = await prisma.place.findUnique({
+				where: {
+					id,
 				},
-			},
-		})
+				include: {
+					ownerUser: true,
+					description: {
+						orderBy: {
+							updated: "desc",
+						},
+						select: {
+							text: true,
+						},
+						take: 1,
+					},
+				},
+			})
 
 		if (user.id != getPlace?.ownerUser?.id && user.permissionLevel < 4)
 			throw error(403, "You do not have permission to update this page.")
@@ -100,7 +99,7 @@ export const actions = {
 						title: z.string().max(100),
 						icon: z.any(),
 						description: z.string().max(1000),
-					})
+					}),
 				)
 				if (!form.valid) return formError(form)
 
@@ -111,7 +110,7 @@ export const actions = {
 						return formError(
 							form,
 							["icon"],
-							["Icon must be less than 1MB in size"]
+							["Icon must be less than 1MB in size"],
 						)
 
 					if (!fs.existsSync("data/icons")) fs.mkdirSync("data/icons")
@@ -119,7 +118,11 @@ export const actions = {
 						.resize(270, 270)
 						.toFile(`data/icons/${id}.webp`)
 						.catch(() =>
-							formError(form, ["icon"], ["Icon failed to upload"])
+							formError(
+								form,
+								["icon"],
+								["Icon failed to upload"],
+							),
 						)
 				}
 
@@ -154,7 +157,7 @@ export const actions = {
 
 				return message(
 					await superValidate(request, schema),
-					"Successfully regenerated server ticket"
+					"Successfully regenerated server ticket",
 				)
 
 			case "network": {
@@ -165,11 +168,11 @@ export const actions = {
 							.string()
 							.max(100)
 							.regex(
-								/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+								/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/,
 							),
 						serverPort: z.number().int().min(1024).max(65535),
 						maxPlayers: z.number().int().min(1).max(100),
-					})
+					}),
 				)
 				if (!form.valid) return formError(form)
 
@@ -194,7 +197,7 @@ export const actions = {
 					request,
 					z.object({
 						privateServer: z.boolean(),
-					})
+					}),
 				)
 				if (!form.valid) return formError(form)
 
@@ -209,10 +212,7 @@ export const actions = {
 					},
 				})
 
-				return {
-					privatesuccess: true,
-					privateServer,
-				}
+				return message(form, "Privacy settings updated successfully!")
 			}
 
 			case "privatelink":
@@ -227,7 +227,7 @@ export const actions = {
 
 				return message(
 					await superValidate(request, schema),
-					"Successfully regenerated private link"
+					"Successfully regenerated private link",
 				)
 		}
 	},

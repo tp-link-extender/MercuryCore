@@ -1,8 +1,6 @@
 <script lang="ts">
-	import fade from "$lib/fade"
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	export let data
 	const {
@@ -25,18 +23,16 @@
 	let tabData = TabData(data.url, ["Moderate User"])
 </script>
 
-<svelte:head>
-	<title>Admin - Mercury</title>
-</svelte:head>
+<Head title="Moderate User - Admin" />
 
-<div class="container py-4">
+<div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Moderate User</h1>
 	<a href="/admin" class="no-underline">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="grid grid-cols-12 gap-6 mt-4">
-		<div class="lg:col-span-2 md:col-span-3 mb-4">
+	<div class="row mt-6">
+		<div class="col-lg-2 col-md-3 mb-6">
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="lg:col-span-10 md:col-span-9">
@@ -137,13 +133,11 @@
 								</p>
 							</div>
 						</div>
-						<button
-							type="submit"
-							class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-3">
+						<button class="btn btn-success mt-4">
 							{#if $delayed}
 								Working...
 							{:else}
-								Submit
+								Moderate
 							{/if}
 						</button>
 					</fieldset>

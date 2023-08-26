@@ -7,7 +7,6 @@ import { z } from "zod"
 
 const schema = z.object({
 	action: z.enum(["create", "disable"]),
-	id: z.string().optional(),
 	enableInviteCustom: z.boolean().optional(),
 	inviteCustom: z.string().min(3).max(50).optional(),
 	enableInviteExpiry: z.boolean().optional(),
@@ -33,23 +32,22 @@ export async function load({ locals }) {
 }
 
 export const actions = {
-	default: async ({ request, locals, getClientAddress }) => {
+	default: async ({ url, request, locals, getClientAddress }) => {
 		await authorise(locals, 5)
 
-		const { user } = await authorise(locals)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const {
-			action,
-			id,
-			enableInviteCustom,
-			inviteCustom,
-			enableInviteExpiry,
-			inviteExpiry,
-			inviteUses,
-		} = form.data
+				action,
+				enableInviteCustom,
+				inviteCustom,
+				enableInviteExpiry,
+				inviteExpiry,
+				inviteUses,
+			} = form.data,
+			id = url.searchParams.get("id")
 
 		switch (action) {
 			case "create": {
@@ -57,13 +55,13 @@ export const actions = {
 					form,
 					"createInvite",
 					getClientAddress,
-					30
+					30,
 				)
 				if (limit) return limit
 
-				const customInviteEnabled = !!enableInviteCustom
-				const customInvite = inviteCustom
-				const inviteExpiryEnabled = !!enableInviteExpiry
+				const customInviteEnabled = !!enableInviteCustom,
+					customInvite = inviteCustom,
+					inviteExpiryEnabled = !!enableInviteExpiry
 
 				if (
 					!inviteUses ||
@@ -82,7 +80,7 @@ export const actions = {
 				)
 					return formError(form, ["inviteExpiry"], ["Invalid date"])
 
-				await prisma.regkey.create({
+				const createdKey = await prisma.regkey.create({
 					data: {
 						key: customInviteEnabled ? customInvite : undefined,
 						usesLeft: inviteUses,
@@ -95,9 +93,21 @@ export const actions = {
 					},
 				})
 
+				await prisma.auditLog.create({
+					data: {
+						action: "Administration",
+						note: `Created invite key ${createdKey.key}`,
+						user: {
+							connect: {
+								id: user.id,
+							},
+						},
+					},
+				})
+
 				return message(
 					form,
-					"Invite created successfully! Check the Invites tab for your new key."
+					"Invite created successfully! Check the Invites tab for your new key.",
 				)
 			}
 			case "disable":

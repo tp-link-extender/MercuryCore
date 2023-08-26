@@ -1,11 +1,14 @@
 <script lang="ts">
 	export let data
+
 	const notificationNotes = {
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",
 		ForumPostReply: "Reply to your post",
 		ForumReplyReply: "Reply to your reply",
+		AssetComment: "Comment on your asset",
+		AssetCommentReply: "Reply to your comment",
 		ForumMention: "Mention",
 		ForumPost: "New forum post",
 		ItemPurchase: "Item purchased",
@@ -14,21 +17,19 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Notifications - Mercury</title>
-</svelte:head>
+<Head title="Notifications" />
 
 <h1 class="text-center light-text">Notifications</h1>
 
-<div class="container mt-5">
+<div class="container mt-12">
 	{#each data.notifications as notification}
-		<div class:bg-darker={notification.read} class="card mb-3 p-3">
-			<h2 class="light-text h5 flex items-center">
+		<div class:bg-darker={notification.read} class="card mb-4 p-4">
+			<h2 class="light-text h5 d-flex align-items-center">
 				<a
 					href="/user/{notification.sender.number}"
 					class="image-background {notification.read
 						? 'bg-a'
-						: 'bg-darker'} rounded-full me-3">
+						: 'bg-darker'} rounded-circle me-4">
 					<img
 						src="/api/avatar/{notification.sender.username}"
 						alt={notification.sender.username}
@@ -44,14 +45,12 @@
 	{/each}
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	containerMinWidth()
 
 	.image-background
-		max-width: 3rem
-		min-height: 3rem
+		max-width 3rem
+		min-height 3rem
 		img
-			width: 3rem
+			width 3rem
 </style>

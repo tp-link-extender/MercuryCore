@@ -1,6 +1,6 @@
 # Mercury website
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](https://forthebadge.com) 
+[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](https://forthebadge.com)
 ![mercury-2](https://github.com/tp-link-extender/mercuryv2/assets/51055281/2a820bc4-f38d-43f4-a5f2-78b0077aece9)
 
 Contents:
@@ -19,6 +19,7 @@ We recommend using [Visual Studio Code](https://code.visualstudio.com) as your e
 The following extensions are recommended:
 
 -   [Caddyfile Support](https://marketplace.visualstudio.com/items?itemName=matthewpi.caddyfile-support)
+-   [Cypher Query Language Tools for Neoj](https://marketplace.visualstudio.com/items?itemName=AnthonyJGatlin.vscode-cypher-query-language-tools)
 -   [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 -   [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
 -   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
@@ -26,6 +27,7 @@ The following extensions are recommended:
 -   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 -   [Prisma](https://marketplace.visualstudio.com/items?itemName=Prisma.prisma)
 -   [Sass (.sass only)](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented)
+-   [stylus](https://marketplace.visualstudio.com/items?itemName=sysoev.language-stylus)
 -   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 
 # Editing the website
@@ -45,6 +47,7 @@ Instructions:
 -   Run `npm i -g pnpm` to install pnpm
 -   Run `pnpm i` to install all dependencies
 -   Run `pnpm build avatar` to build the avatar renderer, so that user images will work correctly
+-   Run `pnpm bootstrap` to compile Bootstrap's SCSS files. This results in the development server being much faster, as it does not have to wait for the Sass compiler
     -   If you are using PowerShell on windows, you may encounter an execution policy error when running pnpm. Run the command `set-executionpolicy remotesigned` in an administrator PowerShell to fix this.
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
@@ -102,7 +105,7 @@ Mercury's frontent is built with [Svelte](https://svelte.dev), a UI framework th
 
 The site uses [TypeScript](https://typescriptlang.org) throughout, a language that adds type extensions ontop of Javascript. An IDE that supports intellisense is recommended to make development easier.
 
-Styling is done in [Sass](https://sass-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
+Styling is done in [Stylus](https://stylus-lang.com) and [Sass](https://sass-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
 
 The [PostgreSQL](https://postgresql.org) relational database is managed by [Prisma](https://prisma.io), which allows for complete type safety and intellisense, and makes it easier to query data. The schema for the database is stored in /prisma/schema.prisma.
 

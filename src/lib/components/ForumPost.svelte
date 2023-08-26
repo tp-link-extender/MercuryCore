@@ -1,18 +1,14 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import fade from "$lib/fade"
-	import type { PageData } from "../../routes/(main)/forum/[category]/$types"
-
-	export let post: PageData["posts"][0]
+	export let post: import("../../routes/(main)/forum/[category]/$types").PageData["posts"][number]
 	export let num: number
 	export let total: number
 	export let categoryName: string
 
-	let likesDisabled = false
-	let dislikesDisabled = false
+	let likesDisabled = false,
+		dislikesDisabled = false
 </script>
 
-<div in:fade|global={{ num, total }} class="post card bg-darker mb-3 flex-row">
+<div in:fade|global={{ num, total }} class="post card bg-darker mb-4 flex-row">
 	<form
 		use:enhance={({ formData }) => {
 			const action = formData.get("action")
@@ -57,9 +53,9 @@
 			</div>
 			<span
 				class="my-2 text-center {post.likes
-					? 'text-emerald-500 font-bold'
+					? 'text-success font-bold'
 					: post.dislikes
-					? 'text-red-500 font-bold'
+					? 'text-danger font-bold'
 					: ''}">
 				{post.likeCount - post.dislikeCount}
 			</span>
@@ -83,8 +79,8 @@
 	<div class="flex flex-col w-100">
 		<a
 			href="/user/{post.author.number}"
-			class="user flex light-text no-underline m-2 pe-4 mb-0 w-100">
-			<span class="pfp bg-a2 rounded-full me-1">
+			class="user d-flex light-text text-decoration-none m-2 pe-6 mb-0 w-100">
+			<span class="pfp bg-a2 rounded-circle me-1">
 				<img
 					src="/api/avatar/{post.author.username}"
 					alt={post.author.username}
@@ -99,7 +95,7 @@
 		</a>
 		<a
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
-			class="p-3 pb-0 no-underline light-text w-100">
+			class="p-4 pb-0 text-decoration-none light-text w-100">
 			<h2 class="h4 mt-2">
 				{post.title}
 			</h2>
@@ -112,35 +108,35 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.sidebar
-		z-index: 1
-		// min-width: 3rem
+		z-index 1
+		// min-width 3rem
 
 	// #replycount
-	// 	justify-content: center
+	// 	justify-content center
 
 	.post
-		height: 10rem
-		overflow: hidden
-		word-break: break-word
+		height 10rem
+		overflow hidden
+		word-break break-word
 
-		border-color: var(--accent2)
-		transition: all 0.3s ease-out
+		border-color var(--accent2)
+		transition all 0.3s ease-out
 		&:hover
-			background: var(--background)
-			border-color: var(--accent3)
+			background var(--background)
+			border-color var(--accent3)
 
 	.gradient
-		position: absolute
-		bottom: 0
-		left: 0
-		height: 5rem !important
-		background: linear-gradient(#0000, var(--darker))
+		position absolute
+		bottom 0
+		left 0
+		height 5rem !important
+		background linear-gradient(#0000, var(--darker))
 
 	.user
-		align-items: center 
+		align-items center
 		.pfp img
-			max-width: 2rem
-			width: 2rem
+			max-width 2rem
+			width 2rem
 </style>

@@ -1,11 +1,6 @@
 <script lang="ts">
-	import { enhance, deserialize } from "$app/forms"
-	import Group from "$lib/components/Group.svelte"
-	import { onMount } from "svelte"
-
-	let query = ""
-
-	let searchedData: any[] = []
+	let query = "",
+		searchedData: any[] = []
 
 	// Run function whenever query changes
 	$: query &&
@@ -14,11 +9,11 @@
 			formdata.append("query", query)
 
 			const response = await fetch("/groups", {
-				method: "POST",
-				body: formdata,
-			})
+					method: "POST",
+					body: formdata,
+				}),
+				result: any = deserialize(await response.text())
 
-			const result: any = deserialize(await response.text())
 			searchedData = result.data.places
 		})()
 
@@ -32,27 +27,21 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Groups - Mercury</title>
-</svelte:head>
+<Head title="Groups" />
 
 <div class="container">
-	<div class="grid grid-cols-12 gap-6 mb-5">
-		<h1 class="col-span-6 light-text">
+	<div class="row mb-12">
+		<h1 class="col-6 light-text">
 			Groups
-			<a
-				href="/groups/create"
-				class="btn bg-blue-600 hover:bg-blue-800 text-white ms-4">
-				Create
-			</a>
+			<a href="/groups/create" class="btn btn-primary ms-6">Create</a>
 		</h1>
-		<div class="col-span-4 ms-4">
+		<div class="col-4 ms-6">
 			<form
 				use:enhance
 				method="POST"
-				action="/search"
-				class="grid grid-cols-12 gap-6">
-				<div class="flex">
+				action="/search?c=groups"
+				class="row">
+				<div class="input-group">
 					<input
 						bind:value={query}
 						type="text"
@@ -61,10 +50,8 @@
 						placeholder="Search for a group"
 						aria-label="Search for a group"
 						aria-describedby="button-addon2" />
-					<input type="hidden" name="category" value="places" />
 					<button
-						class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
-						type="submit"
+						class="btn btn-success"
 						aria-label="Search"
 						id="button-addon2">
 						<i class="fa fa-magnifying-glass" />
@@ -79,7 +66,7 @@
 				<Group {group} {num} total={data.groups.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
-				<h2 class="h5 light-text mt-5">
+				<h2 class="h5 light-text mt-12">
 					No groups found with search term {query}
 				</h2>
 			{/if}
@@ -87,16 +74,16 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	input
-		background-color: var(--accent)
-		border-color: var(--accent2)
+		background-color var(--accent)
+		border-color var(--accent2)
 
-	.grid
-		font-size: 0.9rem
+	.d-grid
+		font-size 0.9rem
 
-		grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr))
-		column-gap: 0.7rem
-		row-gap: 0.7rem
-		place-items: center
+		grid-template-columns repeat(auto-fit, minmax(11rem, 1fr))
+		column-gap 0.7rem
+		row-gap 0.7rem
+		place-items center
 </style>

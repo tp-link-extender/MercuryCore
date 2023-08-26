@@ -15,8 +15,8 @@ export function SignData(data: string, assetId?: number) {
 	if (assetId) data = `--rbxassetid%${assetId}%\n${data}`
 	else data = `\n${data}`
 
-	const sign = crypto.createSign("SHA1")
-	const key = fs.readFileSync("./keys/PrivateKey.pem")
+	const sign = crypto.createSign("SHA1"),
+		key = fs.readFileSync("./keys/PrivateKey.pem")
 
 	sign.write(data)
 	sign.end()

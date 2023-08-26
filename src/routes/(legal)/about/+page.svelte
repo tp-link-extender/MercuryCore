@@ -1,39 +1,27 @@
 <script lang="ts">
-	import Pagepart from "$lib/components/Pagepart.svelte"
 	import { Parallax, ParallaxLayer } from "svelte-parallax"
 
-	let top: HTMLElement
-	let first: HTMLElement
-	let scrollY: number
+	let top: HTMLElement, first: HTMLElement, scrollY: number
 
-	function downScroll() {
-		first.scrollIntoView({ behavior: "smooth" })
-	}
-	function upScroll() {
-		top.scrollIntoView({ behavior: "smooth" })
-	}
+	const downScroll = () => first.scrollIntoView({ behavior: "smooth" }),
+		upScroll = () => top.scrollIntoView({ behavior: "smooth" })
 </script>
 
-<!-- Keeps the scrollY variable updated with the scrollY property of the window. -->
-<svelte:window bind:scrollY />
-<svelte:head>
-	<meta
-		name="description"
-		content="About Mercury: Endless possibilities. New features. Same nostalgia." />
-	<title>About - Mercury</title>
-</svelte:head>
+<Head
+	title="About"
+	description="About Mercury: Endless possibilities. New features. Same nostalgia." />
 
 <div bind:this={top} id="top" class="relative top-0" />
 
 <div
 	id="info"
-	class="container flex flex-col justify-center items-center relative">
-	<h1 id="title" class="font-bold light-text">Mercury 2</h1>
+	class="container d-flex flex-column justify-content-center align-items-center position-relative">
+	<h1 id="title" class="font-black light-text">Mercury 2</h1>
 	<p class="lead light-text text-center">
 		Endless possibilities. New features. Same nostalgia.
 	</p>
 	<h2 class="h5">
-		<span class="badge bg-white text-dark opacity-75 mb-3">
+		<span class="badge text-bg-secondary dark-text opacity-75 mb-4">
 			Closed Beta
 		</span>
 	</h2>
@@ -50,7 +38,7 @@
 </button>
 <button
 	id="arrow2"
-	class="btn fixed mb-3"
+	class="btn position-fixed mb-4"
 	aria-label="Scroll up"
 	on:click={upScroll}
 	on:keypress={upScroll}
@@ -64,7 +52,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart>
 			<div class="w-100">
-				<h1 class="font-bold font-light light-text w-100">
+				<h1 class="font-black light-text w-100">
 					Endless possibilities
 				</h1>
 				<h4 class="light-text w-100">
@@ -87,7 +75,7 @@
 	<ParallaxLayer offset={1} rate={2}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-bold font-light light-text w-100">
+				<h1 class="font-black light-text w-100">
 					New features
 				</h1>
 				<h4 class="light-text w-100">
@@ -103,7 +91,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-bold font-light light-text w-100">
+				<h1 class="font-black light-text w-100">
 					Same nostalgia.
 				</h1>
 				<h4 class="light-text w-100">
@@ -116,7 +104,7 @@
 	<ParallaxLayer offset={1} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-bold font-light light-text w-100">
+				<h1 class="font-black light-text w-100">
 					Professional developers and community outreach.
 				</h1>
 				<h4 class="light-text w-100">
@@ -141,7 +129,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-bold font-light light-text w-100">
+				<h1 class="font-black light-text w-100">
 					Why Mercury 2?
 				</h1>
 				<h4 class="light-text w-100">
@@ -158,8 +146,8 @@
 		<Pagepart fullwidth>
 			<div
 				id="info"
-				class="container flex flex-col justify-center items-center relative">
-				<h1 id="title" class="font-bold light-text">Mercury 2</h1>
+				class="container d-flex flex-column justify-content-center align-items-center position-relative">
+				<h1 id="title" class="font-black light-text">Mercury 2</h1>
 				<p class="lead light-text text-center">
 					Endless possibilities. New features. Same nostalgia.
 				</p>
@@ -176,29 +164,29 @@
 	</ParallaxLayer>
 </Parallax>
 
-<style lang="sass">
+<style lang="stylus">
 	#info
-		height: 70vh
+		height 70vh
 
 	#top
-		scroll-snap-align: end
+		scroll-snap-align end
 	#first
-		scroll-snap-align: start
+		scroll-snap-align start
 
 	#title
-		font-size: 4rem
+		font-size 4rem
 	#arrow
-		font-size: 3rem
-		margin-top: 5vh
-		transform: translateX(-50%)
-		z-index: 3
+		font-size 3rem
+		margin-top 5vh
+		transform translateX(-50%)
+		z-index 3
 
 	#arrow2
-		font-size: 2rem
-		right: 0
-		bottom: 0
-		z-index: 3
+		font-size 2rem
+		right 0
+		bottom 0
+		z-index 10
 
 	h1, h4
-		text-align: center
+		text-align center
 </style>

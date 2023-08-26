@@ -34,15 +34,14 @@ export const load = () => ({
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
-		const { name, price, category } = form.data
+		const { name, price, category } = form.data,
+			itemId = await id()
 
 		let item
-		const itemId = await id()
 		try {
 			item = await prisma.$transaction(async tx => {
 				const created = await tx.item.create({
@@ -69,7 +68,7 @@ export const actions = {
 						note: `Created item ${name}`,
 						link: `/avatarshop/item/${created.id}`,
 					},
-					tx
+					tx,
 				)
 				return created
 			})

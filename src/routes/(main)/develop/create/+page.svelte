@@ -2,7 +2,6 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-
 	const { form, errors, constraints, enhance, delayed, capture, restore } =
 		superForm(data.form, {
 			taintedMessage: false,
@@ -18,9 +17,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Develop - Mercury</title>
-</svelte:head>
+<Head title="Develop" />
 
 <div class="container py-2">
 	<h1 class="light-text mb-0 text-center">
@@ -36,11 +33,11 @@
 <form
 	use:enhance
 	method="POST"
-	class="container mt-5 light-text"
+	class="container mt-12 light-text"
 	enctype="multipart/form-data">
 	<fieldset>
-		<div class="grid grid-cols-12 gap-6 mb-3">
-			<label for="type" class="md:col-span-3 col-form-label light-text">
+		<div class="row mb-4">
+			<label for="type" class="col-md-3 col-form-label light-text">
 				Asset type
 			</label>
 			<div class="md:col-span-8">
@@ -57,13 +54,13 @@
 						</option>
 					{/each}
 				</select>
-				<p class="col-span-12 mb-3 text-red-500">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.type || ""}
 				</p>
 			</div>
 		</div>
-		<div class="grid grid-cols-12 gap-6 mb-3">
-			<label for="name" class="md:col-span-3 col-form-label light-text">
+		<div class="row mb-4">
+			<label for="name" class="col-md-3 col-form-label light-text">
 				Asset name
 			</label>
 			<div class="md:col-span-8">
@@ -74,15 +71,13 @@
 					id="name"
 					placeholder="Make sure to make it accurate"
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-span-12 mb-3 text-red-500">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.name || ""}
 				</p>
 			</div>
 		</div>
-		<div class="grid grid-cols-12 gap-6 mb-3">
-			<label
-				for="description"
-				class="md:col-span-3 col-form-label light-text">
+		<div class="row mb-4">
+			<label for="description" class="col-md-3 col-form-label light-text">
 				Asset description
 			</label>
 			<div class="md:col-span-8">
@@ -95,13 +90,13 @@
 					class="form-control {$errors.description
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-span-12 mb-3 text-red-500">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.description || ""}
 				</p>
 			</div>
 		</div>
-		<div class="grid grid-cols-12 gap-6 mb-3">
-			<label for="price" class="md:col-span-3 col-form-label light-text">
+		<div class="row mb-4">
+			<label for="price" class="col-md-3 col-form-label light-text">
 				Asset price
 			</label>
 			<div class="md:col-span-8">
@@ -112,13 +107,13 @@
 					id="price"
 					type="number"
 					class="form-control {$errors.price ? 'is-in' : ''}valid" />
-				<p class="col-span-12 mb-3 text-red-500">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.price || ""}
 				</p>
 			</div>
 		</div>
-		<div class="grid grid-cols-12 gap-6 mb-3">
-			<label for="asset" class="md:col-span-3 col-form-label light-text">
+		<div class="row mb-4">
+			<label for="asset" class="col-md-3 col-form-label light-text">
 				Asset
 			</label>
 			<div class="md:col-span-8">
@@ -133,7 +128,7 @@
 				<small class="light-text">
 					Max image size: 20MB. Supported file types: .png, .jpg, .bmp
 				</small>
-				<p class="col-span-12 mb-3 text-red-500">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.asset || ""}
 				</p>
 			</div>
@@ -151,11 +146,9 @@
 	</fieldset>
 </form>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	containerMinWidth()
 
 	input[type="number"]
-		width: 9rem
+		width 9rem
 </style>

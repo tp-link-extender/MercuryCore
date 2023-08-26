@@ -1,10 +1,6 @@
 <script lang="ts">
-	import { enhance, deserialize } from "$app/forms"
-	import PlaceCard from "$lib/components/PlaceCard.svelte"
-
-	let query = ""
-
-	let searchedData: any[] = []
+	let query = "",
+		searchedData: any[] = []
 
 	// Run function whenever query changes
 	$: query &&
@@ -13,11 +9,11 @@
 			formdata.append("query", query)
 
 			const response = await fetch("/games", {
-				method: "POST",
-				body: formdata,
-			})
+					method: "POST",
+					body: formdata,
+				}),
+				result: any = deserialize(await response.text())
 
-			const result: any = deserialize(await response.text())
 			searchedData = result.data.places
 		})()
 
@@ -31,29 +27,25 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Discover - Mercury</title>
-</svelte:head>
+<Head title="Discover" />
 
 <div class="container">
-	<div class="grid grid-cols-12 gap-6 mb-5">
+	<div class="row mb-12">
 		<h1 class="col light-text">
 			Games
-			<a
-				href="/games/create"
-				class="btn bg-blue-600 hover:bg-blue-800 text-white ms-4">
+			<a href="/games/create" class="btn btn-primary ms-6">
 				<i class="fas fa-plus" />
 				Create
 			</a>
 		</h1>
-		<div class="col-span-8">
+		<div class="col-8">
 			<form
 				use:enhance
 				method="POST"
-				action="/search"
-				class="grid grid-cols-12 gap-6">
-				<div class="col-span-5">
-					<div class="flex">
+				action="/search?c=places"
+				class="row">
+				<div class="col-5">
+					<div class="input-group">
 						<input
 							bind:value={query}
 							type="text"
@@ -62,19 +54,17 @@
 							placeholder="Search for a game"
 							aria-label="Search for a game"
 							aria-describedby="button-addon2" />
-						<input type="hidden" name="category" value="places" />
 						<button
-							class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
-							type="submit"
+							class="btn btn-success"
 							aria-label="Search"
 							id="button-addon2">
 							<i class="fa fa-magnifying-glass" />
 						</button>
 					</div>
 				</div>
-				<div class="col-span-7 row">
-					<div class="ms-3 col">
-						<div class="grid grid-cols-12 gap-6">
+				<div class="col-7 row">
+					<div class="ms-4 col">
+						<div class="row">
 							<label
 								for="genre"
 								class="form-label light-text col mt-1">
@@ -91,7 +81,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="ms-3 col">
+					<div class="ms-4 col">
 						<div class="form-check light-text mt-1">
 							<input
 								class="form-check-input"
@@ -115,7 +105,7 @@
 				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
-				<h2 class="h5 light-text mt-5">
+				<h2 class="h5 light-text mt-12">
 					No games found with search term {query}
 				</h2>
 			{/if}
@@ -123,16 +113,17 @@
 	</div>
 </div>
 
-<style lang="sass">
-	input, select
-		background-color: var(--accent)
-		border-color: var(--accent2)
+<style lang="stylus">
+	input
+	select
+		background-color var(--accent)
+		border-color var(--accent2)
 
-	.grid
-		font-size: 0.9rem
+	.d-grid
+		font-size 0.9rem
 
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
-		column-gap: 0.7rem
-		row-gap: 0.7rem
-		place-items: center
+		grid-template-columns repeat(auto-fit, minmax(19rem, 1fr))
+		column-gap 0.7rem
+		row-gap 0.7rem
+		place-items center
 </style>

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-	import fade from "$lib/fade"
 
 	export let data
 	const {
@@ -38,16 +36,14 @@
 	)
 </script>
 
-<svelte:head>
-	<title>{data.name} Settings - Mercury</title>
-</svelte:head>
+<Head title="{data.name} Settings" />
 
-<div class="container mt-4 light-text">
-	<h1 class="light-text mb-4">Configure {data.name}</h1>
+<div class="container mt-6 light-text">
+	<h1 class="light-text mb-6">Configure {data.name}</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
 		<h4 class="light-text font-normal mb-1">Game View</h4>
-		<p class="mb-0 grey-text mb-4">
+		<p class="mb-0 grey-text mb-6">
 			Change the title and description of your server.
 		</p>
 		<form use:enhance class="lg:col-span-8" method="POST" action="?a=view">
@@ -68,7 +64,7 @@
 							class="form-control {$errors.title
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.title || ""}
 						</p>
 					</div>
@@ -89,7 +85,7 @@
 							class="form-control {$errors.icon
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.icon || ""}
 						</p>
 					</div>
@@ -114,9 +110,7 @@
 					</div>
 				</div>
 			</fieldset>
-			<button
-				type="submit"
-				class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-4">
+			<button class="btn btn-success mt-6">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -133,7 +127,7 @@
 
 	<Tab {tabData}>
 		<h4 class="light-text font-normal mb-1">Network</h4>
-		<p class="mb-0 grey-text mb-4">
+		<p class="mb-0 grey-text mb-6">
 			Change the network configurations of your server.
 		</p>
 		<form
@@ -155,9 +149,7 @@
 							value={data.serverTicket}
 							class="form-control valid"
 							disabled />
-						<button
-							class="btn bg-blue-600 hover:bg-blue-800 text-white"
-							type="submit">
+						<button class="btn btn-primary">
 							<i class="fas fa-rotate" />
 							Regenerate
 						</button>
@@ -191,7 +183,7 @@
 							class="form-control {$errors.serverIP
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.serverIP || ""}
 						</p>
 					</div>
@@ -213,7 +205,7 @@
 							class="form-control {$errors.serverPort
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.serverPort || ""}
 						</p>
 						<small class="grey-text">
@@ -239,16 +231,14 @@
 							class="form-control {$errors.maxPlayers
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.maxPlayers || ""}
 						</p>
 					</div>
 				</div>
 				<hr class="grey-text" />
 			</fieldset>
-			<button
-				type="submit"
-				class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-2 mb-2">
+			<button class="btn btn-success mt-2 mb-2">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -265,7 +255,7 @@
 
 	<Tab {tabData}>
 		<h4 class="light-text font-normal mb-1">Privacy</h4>
-		<p class="mb-0 grey-text mb-4">
+		<p class="mb-0 grey-text mb-6">
 			Enable private server to make your game only accessible to those
 			with the link.
 		</p>
@@ -302,10 +292,7 @@
 							id="button-addon2">
 							<i class="fas fa-paste" />
 						</button>
-						<button
-							class="btn bg-blue-600 hover:bg-blue-800 text-white"
-							type="submit"
-							id="button-addon2">
+						<button class="btn btn-primary" id="button-addon2">
 							<i class="fas fa-rotate" />
 							Regen
 						</button>
@@ -340,15 +327,13 @@
 					<div class="md:col-span-9">
 						<input
 							bind:checked={$form.privateServer}
-							class="form-check-input"
+							class="form-check-input valid"
 							name="privateServer"
 							type="checkbox"
 							id="privateServer" />
 					</div>
 				</div>
-				<button
-					type="submit"
-					class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-4">
+				<button class="btn btn-success mt-6">
 					{#if $delayed}
 						Working...
 					{:else}
@@ -365,21 +350,21 @@
 	</Tab>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	hr
-		color: var(--accent)
+		color var(--accent)
 
 	.nav-link
-		border-radius: 0
-		color: var(--light-text)
+		border-radius 0
+		color var(--light-text)
 
 	.form-control
-		color: var(--light-text)
+		color var(--light-text)
 
 	input[type="checkbox"]
-		height: 1.5rem
-		width: 1.5rem
+		height 1.5rem
+		width 1.5rem
 
 	input[type="number"]
-		width: 10rem
+		width 10rem
 </style>

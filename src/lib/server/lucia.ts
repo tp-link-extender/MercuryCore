@@ -1,35 +1,31 @@
 // Initialising Lucia, the authentication library
 
 import { dev } from "$app/environment"
-import { prisma } from "$lib/server/prisma"
+import { client } from "$lib/server/redis"
+import { PrismaClient } from "@prisma/client"
 import { redirect, error } from "@sveltejs/kit"
-import { createClient } from "redis"
-import lucia from "lucia-auth"
-import type { Session, User } from "lucia-auth"
-import { sveltekit } from "lucia-auth/middleware"
-import prismaAdapter from "@lucia-auth/adapter-prisma"
-import redisAdapter from "@lucia-auth/adapter-session-redis"
+import { lucia, type Session } from "lucia"
+import { sveltekit } from "lucia/middleware"
+import { prisma } from "@lucia-auth/adapter-prisma"
+import { redis } from "@lucia-auth/adapter-session-redis"
 
-const prismaClient = prisma
-const session = createClient({ url: "redis://localhost:6479" })
-const userSession = createClient({ url: "redis://localhost:6479" })
-session.connect()
-userSession.connect()
-
+// As of v2, Lucia now shits itself if it doesn't have
+// access to the database clients during build time
 export const auth = lucia({
 	middleware: sveltekit(),
 	adapter: {
-		user: prismaAdapter(prismaClient as any),
-		session: redisAdapter({
-			session,
-			userSession,
+		user: prisma(new PrismaClient(), {
+			user: "authUser",
+			key: "authKey",
+			session: "authKey", // fuck you
 		}),
+		session: redis(client),
 	},
 	env: dev ? "DEV" : "PROD",
-	transformDatabaseUser: data => ({
-		// This is the data that will be available after calling getUser()
-		// in a +page.svelte or +layout.svelte file, or authorise() in a
-		// +page.server.ts or +layout.server.ts file.
+	getUserAttributes: data => ({
+		// This is the data that will be available in data.user
+		// in a +page.svelte or +layout.svelte file, or authorise()
+		// in a +page.server.ts or +layout.server.ts file.
 		id: data.id,
 		number: data.number,
 		bio: data.bio,
@@ -43,14 +39,11 @@ export const auth = lucia({
 		theme: data.theme,
 		// Types for this are defined in src/app.d.ts.
 	}),
-	generateCustomUserId: () => crypto.randomUUID(),
 })
-
-export type Auth = typeof auth
 
 /**
  * Authorises a user and returns their session and user data, or redirects them to the login page.
- * @param locals the locals object, containing the validateUser function that returns data about the user.
+ * @param locals the locals object, containing the validate function that returns data about the user.
  * @param level The permission level that is required.
  * @returns An object containing the session and user data. If the authorisation fails, it will throw a redirect to /login.
  * @example
@@ -58,23 +51,18 @@ export type Auth = typeof auth
  */
 export async function authorise(
 	{
-		validateUser,
+		auth,
 	}: {
-		validateUser: () => Promise<
-			| {
-					session: Session
-					user: User
-			  }
-			| {
-					session: null
-					user: null
-			  }
-		>
+		auth: {
+			validate: () => Promise<Session | null>
+		}
 	},
-	level?: number
+	level?: number,
 ) {
-	const { session, user } = await validateUser()
-	if (!session) throw redirect(302, "/login")
+	const session = await auth.validate(),
+		user = session?.user
+
+	if (!session || !user) throw redirect(302, "/login")
 	if (level && user.permissionLevel < level)
 		throw error(403, "You do not have permission to view this page.")
 	return { session, user }

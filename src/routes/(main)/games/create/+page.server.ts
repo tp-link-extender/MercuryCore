@@ -11,7 +11,7 @@ const schema = z.object({
 	serverIP: z
 		.string()
 		.regex(
-			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/,
 		),
 	serverPort: z.number().int().min(25565).max(65535).default(53640),
 	maxPlayers: z.number().int().min(1).max(99).default(10),
@@ -24,9 +24,8 @@ export const load = () => ({
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const {
@@ -51,7 +50,7 @@ export const actions = {
 			return formError(
 				form,
 				["other"],
-				["You may only have 2 places at most"]
+				["You may only have 2 places at most"],
 			)
 
 		let place: any
@@ -81,7 +80,7 @@ export const actions = {
 						note: `Created place ${name}`,
 						link: `/place/${place.id}`,
 					},
-					tx
+					tx,
 				)
 			})
 		} catch (e: any) {

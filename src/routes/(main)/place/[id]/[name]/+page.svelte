@@ -1,36 +1,35 @@
 <script lang="ts">
-	import { enhance, deserialize } from "$app/forms"
-	import fade from "$lib/fade"
-	import Modal from "$lib/components/Modal.svelte"
-	import Report from "$lib/components/Report.svelte"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 	import customProtocolCheck from "custom-protocol-check"
-	import { writable } from "svelte/store"
 
 	export let data
-	const { user } = data
-
-	const statistics = [
-		["Activity", "0 visits"],
-		["Creation", data.created.toLocaleDateString()],
-		["Updated", data.updated.toLocaleDateString()],
-		["Genre", "Horror"],
-		["Server Limit", data.maxPlayers],
-		["Now Playing", data.gameSessions.length],
-	]
-
-	const images = [
-		"/place/placeholderImage1.png",
-		"/place/placeholderImage2.png",
-		"/place/placeholderImage3.png",
-	]
+	const { user } = data,
+		statistics = [
+			["Activity", "0 visits"],
+			["Creation", data.created.toLocaleDateString()],
+			["Updated", data.updated.toLocaleDateString()],
+			["Genre", "Horror"],
+			["Server Limit", data.maxPlayers],
+			["Now Playing", data.gameSessions.length],
+		],
+		images = [
+			"/place/placeholderImage1.webp",
+			"/place/placeholderImage2.webp",
+			"/place/placeholderImage3.webp",
+		],
+		scroll = async (e: MouseEvent) =>
+			document
+				.getElementById(
+					new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
+				)
+				// (false) prevents page scrolling to top of element
+				?.scrollIntoView(false)
 
 	// Place Launcher
 
-	let modal = writable(false)
-	let installed = true
-	let success = false
-	let filepath = ""
+	let modal = writable(false),
+		installed = true,
+		success = false,
+		filepath = ""
 
 	function launch(joinscripturl: string) {
 		success = false
@@ -43,6 +42,7 @@
 			() => {
 				success = true
 				console.log("URI found, launching")
+				setTimeout(() => modal.set(false), 16000)
 			},
 			5000
 		)
@@ -59,76 +59,62 @@
 		formdata.append("privateTicket", data.privateTicket)
 
 		const response = await fetch(`/place/${data.id}/${data.name}?/join`, {
-			method: "POST",
-			body: formdata,
-		})
-		const joinScriptData: any = deserialize(await response.text())
+				method: "POST",
+				body: formdata,
+			}),
+			joinScriptData: any = deserialize(await response.text())
 
-		if (joinScriptData.status == 200) {
+		if (joinScriptData.status == 200)
 			launch(
 				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
 					joinScriptData.data.joinScriptUrl
 				)}+gameinfo:test`
 			)
-		}
 	}
 
-	let tabData = TabData(data.url, ["Description", "Game"])
-	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
+	let tabData = TabData(data.url, ["Description", "Game"]),
+		tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
 </script>
 
-<svelte:head>
-	<title>{data.name} - Mercury</title>
-</svelte:head>
+<Head title={data.name} />
 
 <div class="container light-text">
-	<div class="grid grid-cols-12 gap-6">
-		<div in:fade id="carousel" class="carousel slide md:col-span-8 mb-3">
-			<div class="carousel-inner rounded-4">
-				<div class="carousel-indicators">
-					{#each images as _, i}
-						<button
-							type="button"
-							data-bs-target="#carousel"
-							data-bs-slide-to={i}
-							aria-label="Slide {i + 1}"
-							class:active={!i}
-							aria-current={!i} />
-					{/each}
-				</div>
+	<div class="row">
+		<div class="col-md-8 mb-4">
+			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
-					<div class="carousel-item" class:active={!i}>
+					<div
+						id="slide{i + 1}"
+						class="carousel-item position-relative w-100"
+						class:active={!i}>
 						<img
 							{src}
 							class="block w-100"
 							alt="Placeholder place thumbnail" />
+						<div
+							class="position-absolute d-flex justify-content-between carouselbuttons">
+							<a
+								href="#slide{i < 1 ? images.length : i}"
+								class="btn rounded-pill bg-background"
+								on:click|preventDefault={scroll}>
+								❮
+							</a>
+							<a
+								href="#slide{i == images.length - 1
+									? 1
+									: i + 2}"
+								class="btn rounded-pill bg-background"
+								on:click|preventDefault={scroll}>
+								❯
+							</a>
+						</div>
 					</div>
 				{/each}
-				<button
-					class="carousel-control-prev"
-					type="button"
-					data-bs-target="#carousel"
-					data-bs-slide="prev">
-					<span
-						class="carousel-control-prev-icon"
-						aria-hidden="true" />
-					<span class="visually-hidden">Previous</span>
-				</button>
-				<button
-					class="carousel-control-next"
-					type="button"
-					data-bs-target="#carousel"
-					data-bs-slide="next">
-					<span
-						class="carousel-control-next-icon"
-						aria-hidden="true" />
-					<span class="visually-hidden">Next</span>
-				</button>
 			</div>
 		</div>
 
-		<div class="flex md:col-span-4">
-			<div class="card rounded-none mb-4">
+		<div class="flex col-md-4">
+			<div class="card rounded-none mb-6">
 				<div class="card-body">
 					<div class="grid grid-cols-12 gap-6">
 						<div class="col">
@@ -151,8 +137,8 @@
 						<b>by</b>
 						<a
 							href="/user/{data.ownerUser?.number}"
-							class="user light-text no-underline flex">
-							<span class="pfp bg-darker rounded-full mx-1">
+							class="user light-text text-decoration-none">
+							<span class="pfp bg-darker rounded-circle ms-1">
 								<img
 									src="/api/avatar/{data.ownerUser?.username}"
 									alt={data.ownerUser?.username}
@@ -162,11 +148,7 @@
 						</a>
 					</span>
 					<p class="light-text mb-0">
-						Gears: <i
-							class="far fa-circle-xmark"
-							data-bs-toggle="tooltip"
-							data-bs-placement="bottom"
-							data-bs-title="Tooltip on top" />
+						Gears: <i class="far fa-circle-xmark" />
 					</p>
 					<span
 						class="badge text-bg-{data.serverPing >
@@ -177,8 +159,8 @@
 							? "Online"
 							: "Offline"}
 					</span>
-					<span class="float-right">
-						<Report
+					<span class="float-end">
+						<ReportButton
 							user={data.ownerUser?.username || ""}
 							url="/place/{data.id}/{data.name}" />
 					</span>
@@ -188,10 +170,8 @@
 				<button
 					on:click={placeLauncher}
 					id="play"
-					class="btn btn-lg bg-emerald-600 hover:bg-emerald-800 text-white mt-4 {data.serverPing >
-					Date.now() / 1000 - 35
-						? ''
-						: 'disabled'}">
+					class:disabled={data.serverPing < Date.now() / 1000 - 35}
+					class="btn btn-lg btn-success mt-6">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
 
@@ -221,15 +201,11 @@
 
 						return () => {}
 					}}
-					class="self-center col mt-3 px-0 mb-2"
+					class="align-self-center col mt-4 px-0 mb-2"
 					method="POST"
-					action="?/like">
-					<input
-						type="hidden"
-						name="privateTicket"
-						value={data.privateTicket} />
-					<div class="grid grid-cols-12 gap-6 mb-2">
-						<div class="col flex justify-start">
+					action="?/like&privateTicket={data.privateTicket}">
+					<div class="row mb-2">
+						<div class="col d-flex justify-content-start">
 							<button
 								name="action"
 								value={data.likes ? "unlike" : "like"}
@@ -329,8 +305,8 @@
 				running. Below are two methods of hosting - we recommend using
 				Autopilot to get started easily.
 			</p>
-			<div class="flex items-start mb-3">
-				<div class="bg-a me-3">
+			<div class="d-flex align-items-start mb-4">
+				<div class="bg-a me-4">
 					<TabNav bind:tabData={tabData2} vertical />
 					<!-- Prevents nested tabs from breaking -->
 					{((tabData2.num = 0), "")}
@@ -394,62 +370,74 @@
 							<i class="fas fa-wifi" />
 							Begin Hosting
 						</button>
-						<button
-							class="btn bg-emerald-600 hover:bg-emerald-800 text-white dropdown-toggle"
-							type="button"
-							data-bs-toggle="dropdown"
-							aria-expanded="false" />
-						<ul class="dropdown-menu dropdown-menu-end">
-							<li>
-								<button
-									class="dropdown-item light-text"
-									on:click={() => {
-										launch(
-											`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
-												data.serverTicket
-											}&autopilot=${btoa(filepath)}`
-										)
-									}}
-									type="button">
-									Begin Hosting (no Studio tools)
-								</button>
-							</li>
-						</ul>
+
+						<div class="dropdown2 dropdown-hover dropdown-end">
+							<button
+								class="btn btn-success dropdown-toggle"
+								type="button" />
+							<div class="dropdown-content pt-2">
+								<ul class="p-2 rounded-3">
+									<li class="rounded-2">
+										<button
+											class="btn light-text ps-4 pe-0 text-start"
+											on:click={() =>
+												launch(
+													`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
+														data.serverTicket
+													}&autopilot=${btoa(
+														filepath
+													)}`
+												)}
+											type="button">
+											Begin Hosting (no Studio tools)
+										</button>
+									</li>
+								</ul>
+							</div>
+						</div>
 					</div>
 				</Tab>
 			</div>
 		{/if}
 		<h4 class="light-text">Server List</h4>
-		<div class="card mb-2">
-			<div class="card-body">
-				<div class="grid grid-cols-12 gap-6">
-					<div class="col col-span-2">
-						<p class="light-text mb-2">
-							Currently Playing: {data.gameSessions
-								.length}/{data.maxPlayers}
-						</p>
-						<button
-							on:click={placeLauncher}
-							id="join"
-							class="btn btn-sm bg-emerald-600 hover:bg-emerald-800 text-white">
-							Join Server
-						</button>
-					</div>
-					<div class="col">
-						{#each data.gameSessions as { user }}
-							<a href="/user/{user.number}" class="no-underline">
-								<img
-									src="/api/avatar/{user.username}"
-									alt={user.username}
-									height="75"
-									width="75"
-									class="pfp bg-background rounded-full rounded-top-0 m-1" />
-							</a>
-						{/each}
+		{#if data.serverPing > Date.now() / 1000 - 35}
+			<div class="card mb-2">
+				<div class="card-body">
+					<div class="row">
+						<div class="col col-2">
+							<p class="light-text mb-2">
+								Currently Playing: {data.gameSessions
+									.length}/{data.maxPlayers}
+							</p>
+							<button
+								on:click={placeLauncher}
+								id="join"
+								class="btn btn-sm btn-success">
+								Join Server
+							</button>
+						</div>
+						<div class="col d-flex">
+							{#each data.gameSessions as { user }}
+								<a
+									href="/user/{user.number}"
+									class="gamesession text-decoration-none d-flex">
+									<span class="bg-background rounded-circle">
+										<img
+											src="/api/avatar/{user.username}"
+											alt={user.username}
+											height="75"
+											width="75"
+											class="rounded-circle rounded-top-0" />
+									</span>
+								</a>
+							{/each}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		{:else}
+			This server is offline.
+		{/if}
 	</Tab>
 	<hr />
 	<div class="grid grid-cols-12 gap-6">
@@ -464,23 +452,23 @@
 </div>
 
 <Modal {modal}>
-	<div class="modal-body flex flex-col p-4">
+	<div class="modal-body d-flex flex-column p-6">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
 				id="wrapper"
-				class="text-center self-center mt-5 mb-4">
+				class="text-center align-self-center mt-12 mb-6">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
-					width="128"
-					height="128" />
+					width={128}
+					height={128} />
 				<img
 					src="/outerlogo.svg"
 					alt="Mercury logo outer part (circle around M)"
 					id="outer"
-					width="128"
-					height="128"
+					width={128}
+					height={128}
 					style={installed
 						? ""
 						: "animation: none; --rotation: 0deg"} />
@@ -495,7 +483,7 @@
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
 			</h1>
 		{:else}
-			<h1 class="text-center h5 light-text mb-3">
+			<h1 class="text-center h5 light-text mb-4">
 				Install the Mercury client and start playing now!
 			</h1>
 			<a
@@ -507,48 +495,59 @@
 	</div>
 </Modal>
 
-<style lang="sass">
-	:target
-		display: block !important
-
-	@media only screen and (min-width: 576px)
-		.container
-			width: 60rem
+<style lang="stylus">
+	containerMinWidth(60rem)
 
 	#buttons
-		margin: auto
-		display: flex
-		flex-direction: column
+		margin auto
+		display flex
+		flex-direction column
+
+	.carouselbuttons
+		transform translateY(-50%)
+		left 1.25rem
+		right 1.25rem
+		top: 50%
 
 	#play img
-		height: 2rem
+		height 2rem
 
 	#settings
-		position: absolute
-		margin: 3px 0px 0px -10px
+		position absolute
+		margin 3px 0px 0px -10px
 
-	.dropdown-menu
-		border-color: var(--accent2)
-		z-index: 5
+	.dropdown-toggle
+		border-radius 0 0.375rem 0.375rem 0
 
 	#wrapper
-		width: 128px
-		height: 128px
-		transform: translateX(-64px)
+		width 128px
+		height 128px
+		transform translateX(-64px)
+
+		+lightTheme()
+			filter invert(1)
+
 		img
-			box-sizing: border-box
-			position: absolute
+			box-sizing border-box
+			position absolute
 
 	#outer
-		transform: rotate(0)
-		animation: moon 1.5s 0s infinite linear
+		transform rotate(0)
+		animation moon 1.5s 0s infinite linear
 
 	@keyframes moon
 		100%
-			transform: rotate(360deg)
+			transform rotate(360deg)
 
 	.user
-		.pfp, .pfp img
-			width: 1.5rem
-			height: 1.5rem
+		.pfp
+		.pfp img
+			width 1.5rem
+			height 1.5rem
+
+	.gamesession
+		span
+		img
+			width 75px
+			height 75px
 </style>

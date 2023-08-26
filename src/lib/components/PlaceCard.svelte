@@ -1,8 +1,6 @@
 <script lang="ts">
 	// Link to a place used on Games page.
 
-	import fade from "$lib/fade"
-
 	export let place: {
 		id: number
 		name: string
@@ -15,8 +13,8 @@
 </script>
 
 <a
-	in:fade={{ num, total }}
-	class="card text-center light-text bg-darker no-underline h6 rounded-4 m-0"
+	in:fade|global={{ num, total }}
+	class="card text-center light-text bg-darker text-decoration-none h6 rounded-4 m-0"
 	class:border-success={place.serverPing >=
 		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
@@ -24,8 +22,8 @@
 		class="grid grid-cols-12 gap-6"
 		class:opacity-50={place.serverPing <
 			Math.floor(Date.now() / 1000) - 35}>
-		<div class="col col-span-6">
-			<div id="shadow" class="overflow-hidden bg-black">
+		<div class="col col-6">
+			<div class="shadow overflow-hidden bg-black h-100">
 				<img
 					src="/place/{place.id}/{place.name}/icon"
 					alt={place.name}
@@ -54,26 +52,42 @@
 	</div>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	.card
-		max-width: 22rem
-	a
-		transition: all 0.2s
-		&:hover
-			transition: all 0.2s
-			#shadow::after
-				box-shadow: inset 0 0 4rem 0 #fff2
+		width 19.5rem
+		+-lg()
+			width 20.5rem
+		+-md()
+			width 25rem
 
-	#shadow
-		aspect-ratio: 1
-		position: relative
-		border-radius: 1rem 0 0 1rem
+	img
+		// make sure the image is the same size while loading
+		// as the image that will be loaded
+		aspect-ratio 1
+		width 100%
+		height 100%
+		object-fit cover
+
+	p
+		height 8rem
+		transition all 0.3s
+
+	a
+		transition all 0.2s
+		&:hover
+			transition all 0.2s
+			.shadow::after
+				box-shadow inset 0 0 4rem 0 #fff2
+
+	.shadow
+		position relative
+		border-radius 1rem 0 0 1rem
 		&::after
-			transition: all 0.3s
-			content: ""
-			position: absolute
-			top: 0
-			left: 0
-			width: 100%
-			height: 100%
+			transition all 0.3s
+			content ""
+			position absolute
+			top 0
+			left 0
+			width 100%
+			height 100%
 </style>

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import fade from "$lib/fade"
-
 	const statusColours: { [k: string]: string } = {
 		Online: "bg-info",
 		Joined: "bg-emerald-500",
@@ -17,43 +15,42 @@
 </script>
 
 <a
-	in:fade={{ num, total, max: 12 }}
-	class="card light-text h-100 w-100 flex flex-row bg-darker"
+	in:fade|global={{ num, total, max: 12 }}
+	class="card light-text h-100 w-100 d-flex flex-row bg-darker"
 	href="/user/{user.number}">
-	<div class="p-4">
-		<div class="image-background rounded-full bg-a">
+	<div class="p-6">
+		<div class="image-background rounded-circle bg-a">
 			<img
 				src="/api/avatar/{user.username}"
 				alt={user.username}
 				class="h-100 rounded-full rounded-top-0" />
 		</div>
-		{#if user.status}
+		<!-- {#if user.status}
 			<span
 				class="absolute bottom-0 end-0 badge rounded-full bg-a {statusColours[
 					user.status
 				]}">
-				<span class="visually-hidden">{user.status}</span>
 			</span>
-		{/if}
+		{/if} -->
 	</div>
-	<p class="h4 p-4">
+	<p class="h4 p-6">
 		{user.username}
 	</p>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	.card
-		max-width: 25rem
-		text-decoration: none
+		max-width 25rem
+		text-decoration none
 		p
-			width: fit-content
-			word-break: break-all
+			width fit-content
+			word-break break-all
 
-		.badge
-			padding: 0.75rem
+		// .badge
+		// 	padding 0.75rem
 		.image-background
-			min-width: 6rem
+			min-width 6rem
 			img
-				width: 6rem
-				height: 6rem !important
+				width 6rem
+				height 6rem !important
 </style>

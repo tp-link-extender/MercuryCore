@@ -1,9 +1,4 @@
 <script lang="ts">
-	import fade from "$lib/fade"
-	import Place from "$lib/components/Place.svelte"
-	import Asset from "$lib/components/Asset.svelte"
-	import Group from "$lib/components/Group.svelte"
-
 	// const statusColours: { [k: string]: string } = {
 	// 	Online: "bg-info",
 	// 	Joined: "bg-emerald-500",
@@ -13,9 +8,7 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Search for {data.query} - Mercury</title>
-</svelte:head>
+<Head title="Search for {data.query}" />
 
 {#if data.category}
 	<h1 class="text-center light-text">
@@ -27,7 +20,7 @@
 	</h1>
 {/if}
 
-<div class="px-5 mt-5">
+<div class="container-fluid mt-12">
 	{#if data.category == "users" && data.users}
 		<div class="grid grid">
 			{#each data.users as user, num}
@@ -47,9 +40,6 @@
 								class="absolute bottom-0 end-0 badge rounded-full {statusColours[
 									user.status
 								]}">
-								<span class="visually-hidden">
-									{user.status}
-								</span>
 							</span>
 						{/if} -->
 					</div>
@@ -88,10 +78,8 @@
 			{/each}
 		</div>
 	{:else}
-		<div id="buttons" class="flex justify-center">
-			<a
-				class="btn bg-blue-600 hover:bg-blue-800 text-white"
-				href="/search?q={data.query}&c=users">
+		<div id="buttons" class="d-flex justify-content-center gap-4">
+			<a class="btn btn-primary" href="/search?q={data.query}&c=users">
 				Users
 			</a>
 			<a
@@ -108,17 +96,19 @@
 	{/if}
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.grid
-		grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))
-		grid-gap: 0 1rem
+		grid-template-columns repeat(auto-fill, minmax(8rem, 1fr))
+		grid-gap 0 1rem
 
 	// .badge
-	// 	padding: 0.75rem
+	// 	padding 0.75rem
 	.place
-		width: 8rem
-		margin: auto
-	.image-background, img
-		width: 7rem
-		margin: auto
+		width 8rem
+		margin auto
+
+	.image-background
+	img
+		width 7rem
+		margin auto
 </style>

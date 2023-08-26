@@ -1,7 +1,9 @@
+import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { Query, roQuery } from "$lib/server/redis"
+import { Query } from "$lib/server/redis"
 import formData from "$lib/server/formData"
+import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
@@ -46,42 +48,18 @@ export async function load({ locals, params }) {
 
 	if (!category) throw error(404, "Not found")
 
-	const { user } = await authorise(locals)
+	const { user } = await authorise(locals),
+		fakeObject = {
+			id: "", // id not needed
+			replies: category.posts,
+		}
 
-	for (const post of category.posts as any) {
-		post["likeCount"] = await roQuery(
-			"forum",
-			"RETURN SIZE((:User) -[:likes]-> (:Post { name: $id }))",
-			{
-				id: post.id,
-			},
-			true
-		)
-		post["dislikeCount"] = await roQuery(
-			"forum",
-			"RETURN SIZE((:User) -[:dislikes]-> (:Post { name: $id }))",
-			{
-				id: post.id,
-			},
-			true
-		)
-		post["likes"] = !!(await roQuery(
-			"forum",
-			"MATCH (:User { name: $user }) -[r:likes]-> (:Post { name: $id }) RETURN r",
-			{
-				user: user.username,
-				id: post.id,
-			}
-		))
-		post["dislikes"] = !!(await roQuery(
-			"forum",
-			"MATCH (:User { name: $user }) -[r:dislikes]-> (:Post { name: $id }) RETURN r",
-			{
-				user: user.username,
-				id: post.id,
-			}
-		))
-	}
+	await addLikes<typeof fakeObject>(
+		"forum",
+		"Post",
+		fakeObject,
+		user.username,
+	)
 
 	return category as typeof category & {
 		posts: {
@@ -95,11 +73,11 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	like: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const { action } = data
-		const id = url.searchParams.get("id")
-		const { replyId } = data
+		const { user } = await authorise(locals),
+			data = await formData(request),
+			{ action } = data,
+			id = url.searchParams.get("id"),
+			replyId = url.searchParams.get("rid")
 
 		if (
 			(id &&
@@ -115,7 +93,7 @@ export const actions = {
 
 		const query = {
 			user: user.username,
-			id: id || replyId,
+			id: id || replyId || "",
 		}
 
 		try {
@@ -123,67 +101,61 @@ export const actions = {
 				case "like":
 					await Query(
 						"forum",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:dislikes]-> (:${
 								replyId ? "Reply" : "Post"
 							} { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"forum",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:${replyId ? "Reply" : "Post"} { name: $id })
-							MERGE (u) -[:likes]-> (p)
-						`,
-						query
+							MERGE (u) -[:likes]-> (p)`,
+						query,
 					)
 					break
 				case "unlike":
 					await Query(
 						"forum",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:likes]-> (:${
 								replyId ? "Reply" : "Post"
 							} { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 				case "dislike":
 					await Query(
 						"forum",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:likes]-> (:${
 								replyId ? "Reply" : "Post"
 							} { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"forum",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:${replyId ? "Reply" : "Post"} { name: $id })
-							MERGE (u) -[:dislikes]-> (p)
-						`,
-						query
+							MERGE (u) -[:dislikes]-> (p)`,
+						query,
 					)
 					break
 				case "undislike":
 					await Query(
 						"forum",
-						`
+						cql`
 							MATCH (:User { name: $user }) -[r:dislikes]-> (:${
 								replyId ? "Reply" : "Post"
 							} { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 			}

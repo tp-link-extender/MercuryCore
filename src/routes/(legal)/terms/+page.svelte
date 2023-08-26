@@ -1,11 +1,8 @@
-<svelte:head>
-	<meta name="description" content="Mercury's Terms of Service" />
-	<title>Terms of Service - Mercury</title>
-</svelte:head>
+<Head title="Terms of Service" description="Mercury's Terms of Service" />
 
 <h1 class="text-center light-text">Terms of Service</h1>
 
-<div class="container mt-5">
+<div class="container mt-12">
 	<div class="light-text">
 		<p>
 			This Terms of Service Agreement (“agreement”) is an agreement made
@@ -19,14 +16,14 @@
 			Mercury website, the Mercury client, and any parts or copies of
 			them.
 		</p>
-		<p class="fw-bold">
+		<p class="font-bold">
 			Any services provided by Mercury are made available “as is” without
 			warranty of any kind, express or implied, including but not limited
 			to any warranties of merchantability, fitness for a particular
 			purpose and noninfringement. Mercury does not and cannot guarantee
 			the results you may obtain by using Mercury.
 		</p>
-		<p class="fw-bold">
+		<p class="font-bold">
 			In no event will Mercury be liable for any claim, damages or other
 			liability, whether in an action of contract, tort or otherwise,
 			arising from, out of, or in connection with the software or the use
@@ -74,7 +71,7 @@
 				By accessing Mercury, you agree that you will not commit any of
 				the following acts:
 
-				<ol type="a" class="my-3">
+				<ol type="a" class="my-4">
 					<li>
 						Using Mercury for any illegal purpose under applicable
 						law.
@@ -165,11 +162,9 @@
 	</div>
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	containerMinWidth()
 
 	a
-		color: var(--mainaccent)
+		color var(--mainaccent)
 </style>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	export let data
 	const { user } = data
@@ -28,17 +27,15 @@
 	let tabData = TabData(data.url, ["Profile", "Account", "Security"])
 </script>
 
-<svelte:head>
-	<title>Settings - Mercury</title>
-</svelte:head>
+<Head title="Settings" />
 
-<div class="container mt-4 light-text">
-	<h1 class="light-text mb-4">Settings</h1>
+<div class="container mt-6 light-text">
+	<h1 class="light-text mb-6">Settings</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
 		<h4 class="light-text font-normal mb-1">User Profile</h4>
-		<p class="mb-0 grey-text mb-4">Change your bio, site theme and more.</p>
-		<form class="lg:col-span-8" method="POST" action="?a=profile">
+		<p class="mb-0 grey-text mb-6">Change your bio, site theme and more.</p>
+		<form class="col-lg-8" method="POST" action="?a=profile">
 			<fieldset>
 				<div class="grid grid-cols-12 gap-6">
 					<label
@@ -60,7 +57,7 @@
 							<option value="storm">Storm</option>
 							<option value="solar">Solar</option>
 						</select>
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.theme || ""}
 						</p>
 					</div>
@@ -83,15 +80,13 @@
 							your profile and allow other users to know who you
 							are.
 						</small>
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.bio || ""}
 						</p>
 					</div>
 				</div>
 			</fieldset>
-			<button
-				type="submit"
-				class="btn bg-emerald-600 hover:bg-emerald-800 text-white">
+			<button class="btn btn-success">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -108,7 +103,7 @@
 
 	<Tab {tabData}>
 		<h4 class="light-text font-normal mb-1">User Information</h4>
-		<p class="mb-0 grey-text mb-4">
+		<p class="mb-0 grey-text mb-6">
 			Information about your account, you can change certain aspects of it
 			here.
 		</p>
@@ -132,10 +127,8 @@
 			</small>
 		</div>
 		<hr class="grey-text" />
-		<div class="form-group row mb-5">
-			<label
-				for="name"
-				class="md:col-span-3 col-form-label text-md-right">
+		<div class="form-group row mb-12">
+			<label for="name" class="col-md-3 col-form-label text-md-right">
 				Email Address
 			</label>
 			<div class="md:col-span-6">
@@ -154,9 +147,7 @@
 				 ">
 			A Discord account has not been linked.
 		</p>
-		<button
-			type="submit"
-			class="btn bg-blue-600 hover:bg-blue-800 text-white">
+		<button class="btn btn-primary">
 			<i class="fa fa-link" />
 			Link Discord
 		</button>
@@ -167,21 +158,15 @@
 				 ">
 			You have not verified your email address.
 		</p>
-		<button
-			type="submit"
-			class="btn bg-blue-600 hover:bg-blue-800 text-white mb-3">
+		<button class="btn btn-primary mb-4">
 			<i class="fa fa-envelope-circle-check" />
 			Verify Email
 		</button>
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="font-normal light-text mb-3">Change Password</h4>
-		<form
-			use:enhance
-			class="sm:col-span-8"
-			method="POST"
-			action="?a=password">
+		<h4 class="font-normal light-text mb-4">Change Password</h4>
+		<form use:enhance class="col-sm-8" method="POST" action="?a=password">
 			<fieldset>
 				<div class="form-group row gx-0 mb-2">
 					<label
@@ -200,7 +185,7 @@
 								: ''}valid"
 							id="cpassword"
 							name="cpassword" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.cpassword || ""}
 						</p>
 					</div>
@@ -225,7 +210,7 @@
 						<small class="grey-text">
 							Make sure your password is unique.
 						</small>
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.npassword || ""}
 						</p>
 					</div>
@@ -247,15 +232,13 @@
 								: ''}valid"
 							id="cnpassword"
 							name="cnpassword" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.cnpassword || ""}
 						</p>
 					</div>
 				</div>
 			</fieldset>
-			<button
-				type="submit"
-				class="btn bg-emerald-600 hover:bg-emerald-800 text-white">
+			<button class="btn btn-success">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -271,11 +254,11 @@
 	</Tab>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.nav-link
-		border-radius: 0
-		color: var(--light-text)
+		border-radius 0
+		color var(--light-text)
 
 	.form-control
-		color: var(--light-text)
+		color var(--light-text)
 </style>

@@ -1,8 +1,5 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import fade from "$lib/fade"
-	import Place from "$lib/components/Place.svelte"
-	import Report from "$lib/components/Report.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
 	// const statusColours: { [k: string]: string } = {
@@ -12,23 +9,21 @@
 	// }
 
 	export let data
-	const { user } = data
+	const { user } = data,
+		{
+			form,
+			errors,
+			message,
+			constraints,
+			enhance,
+			delayed,
+			capture,
+			restore,
+		} = superForm(data.form, {
+			taintedMessage: false,
+		})
 
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
 	export const snapshot = { capture, restore }
-
-	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
 
 	const news = [
 		{
@@ -68,21 +63,9 @@
 		},
 		{ time: new Date(), title: "Mercury is now love!", content: "Yes" },
 	]
-
-	const facts = [
-		`You joined mercury on ${user?.accountCreated
-			.toLocaleString()
-			.substring(0, 10)}!`,
-		// Add "st", "nd", "rd", "th" to number
-		`You are the ${user?.number}${
-			["st", "nd", "rd"][(user?.number % 10) - 1] || "th"
-		} user to join Mercury!`,
-	]
 </script>
 
-<svelte:head>
-	<title>Home - Mercury</title>
-</svelte:head>
+<Head title="Home" />
 
 <div class="container">
 	<div class="grid grid-cols-12 gap-6">
@@ -98,12 +81,12 @@
 							alt="You"
 							class="rounded-full rounded-top-0" />
 					</div>
-					<span class="my-auto ms-4">
-						{greets[Math.floor(Math.random() * greets.length)]}
+					<span class="my-auto ms-6">
+						{data.stuff.greet}
 					</span>
 				</a>
 			</h1>
-			<div id="feed" class="card mt-4 bg-darker">
+			<div id="feed" class="card mt-6 bg-darker">
 				<div class="card-body light-text">
 					<p>
 						Post your status - your friends and followers can view
@@ -119,10 +102,7 @@
 							class="form-control light-text {$errors.status
 								? 'is-in'
 								: ''}valid" />
-						<button
-							class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
-							type="submit"
-							aria-label="Send">
+						<button class="btn btn-success" aria-label="Send">
 							{#if $delayed}
 								...
 							{:else}
@@ -131,19 +111,18 @@
 						</button>
 					</form>
 					<p
-						class="mb-3"
-						class:text-emerald-500={$page.status == 200}
-						class:text-red-500={$page.status >= 400 ||
+						class="mb-4"
+						class:text-success={$page.status == 200}
+						class:text-danger={$page.status >= 400 ||
 							$errors.status}>
 						{$errors.status || $message || ""}
 					</p>
 					{#each data.feed.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
-						<!-- |global is not mentioned anywhere in the Svelte docs, yet it is exactly what is needed here. -->
 						<div
 							in:fade|global={{ num, total: data.feed.length }}
 							class="card mb-2">
-							<div class="card-body pb-0 p-3">
-								<div class="flex mb-2 user inline">
+							<div class="card-body pb-0 p-4">
+								<div class="d-flex mb-2 user">
 									<a
 										href="/user/{status.authorUser?.number}"
 										class="no-underline flex items-center light-text">
@@ -157,15 +136,15 @@
 												class="rounded-full rounded-top-0" />
 										</span>
 										<span
-											class="username mw-50 font-bold ms-3">
+											class="username mw-50 font-bold ms-4">
 											{status.authorUser?.username}
 										</span>
-										<em class="small ms-3">
+										<em class="small ms-4">
 											{status.posted.toLocaleString()}
 										</em>
 									</a>
 									<span class="ms-auto">
-										<Report
+										<ReportButton
 											user={status.authorUser?.username ||
 												""}
 											url="status:{status.id}" />
@@ -189,8 +168,11 @@
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
 							<a
-								in:fade={{ num, total: data.friends.length }}
-								class="px-2 mb-2 text-center light-text no-underline"
+								in:fade|global={{
+									num,
+									total: data.friends.length,
+								}}
+								class="px-2 mb-2 text-center light-text text-decoration-none"
 								href="/user/{friend.number}">
 								<div class="relative mb-2">
 									<div
@@ -205,9 +187,6 @@
 											class="absolute bottom-0 end-0 badge rounded-full {statusColours[
 												friend.status
 											]}">
-											<span class="visually-hidden">
-												{friend.status}
-											</span>
 										</span>
 									{/if} -->
 								</div>
@@ -221,7 +200,7 @@
 					</div>
 				{/if}
 			</div>
-			<div class="mt-5">
+			<div class="mt-12">
 				<h2 class="h4 light-text">Resume playing</h2>
 				<div class="home-row flex">
 					<div class="home-row flex">
@@ -238,23 +217,23 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-5 col-span-12">
+			<div class="mt-12 col-12">
 				<h2 class="h4 light-text">News</h2>
 				<div id="news" class="card bg-darker">
 					<div class="card-body row">
 						{#each news as thing, num}
 							<div
-								in:fade={{ num, total: news.length }}
-								class="p-1 xl:col-span-4 lg:col-span-6 col-span-12">
+								in:fade|global={{ num, total: news.length }}
+								class="p-1 col-xl-4 col-lg-6 col-12">
 								<div class="card light-text h-100">
 									<div class="card-body p-2">
 										<div class="mb-2 light-text">
 											<div
-												class="font-bold text-center truncate">
+												class="font-bold text-center text-truncate">
 												{thing.title}
 											</div>
 											<div
-												class="date ms-auto fw-italic text-center">
+												class="date ms-auto italic text-center">
 												{thing.time.toLocaleString()}
 											</div>
 										</div>
@@ -270,77 +249,78 @@
 					</div>
 				</div>
 			</div>
-			<div
-				class="mt-5 col-span-6 md:col-span-8 lg:col-span-6 xl:col-span-4">
+			<div class="mt-12 col-6 col-md-8 col-lg-6 col-xl-4">
 				<h2 class="h4 light-text">Random fact</h2>
 				<div
 					id="fact"
-					class="card bg-darker card-body light-text h5 pb-4">
-					{facts[Math.floor(Math.random() * facts.length)]}
+					class="card bg-darker card-body light-text h5 pb-6">
+					{data.stuff.fact}
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<style lang="sass">
-	@media only screen and (max-width: 768px)
+<style lang="stylus">
+	+-md()
 		#feed
-			max-height: 50vh
+			max-height 50vh
+
 	.top
-		width: 100vw
+		width 100vw
 		img
-			width: 6rem
-			min-width: 6rem
+			width 6rem
+			min-width 6rem
 
 	h1
-		margin: auto 2rem
+		margin auto 2rem
 
 	.col2
-		margin-top: 7rem
+		margin-top 7rem
 
 	.username
-		overflow: hidden
-		text-overflow: ellipsis
-		white-space: nowrap
+		overflow hidden
+		text-overflow ellipsis
+		white-space nowrap
 
 	.small
-		font-size: 0.9rem
+		font-size 0.9rem
 
 	.friendname
-		max-width: 7rem
-		max-height: 3rem
+		max-width 7rem
+		max-height 3rem
 
 	.date
-		min-width: 5rem
+		min-width 5rem
 	.gradient
-		left: 0
-		right: 0
-		height: 8rem
-		background: linear-gradient(0deg, var(--accent) 10%, rgba(0,0,0,0) 100%)
+		left 0
+		right 0
+		height 8rem
+		background linear-gradient(0deg, var(--accent) 10%, rgba(0,0,0,0) 100%)
 	.content
-		max-height: 5rem
-		overflow: hidden
+		max-height 5rem
+		overflow hidden
 
-	#feed, #news
-		overflow-x: hidden
+	#feed
+	#news
+		overflow-x hidden
 
 	.user
-		align-items: center
+		align-items center
 		img
-			width: 2rem !important
-			min-width: 2rem !important
+			width 2rem !important
+			min-width 2rem !important
 
 	.home-row
-		overflow-x: auto
+		overflow-x auto
 
 		// .badge
-		// 	padding: 0.75rem
+		// 	padding 0.75rem
 		.place
-			width: 8rem
-			margin: auto
+			width 8rem
+			margin auto
 		.image-background
-			width: 7rem
-			height: 7rem
-			margin: auto
+			width 7rem
+			height 7rem
+			margin auto
 </style>

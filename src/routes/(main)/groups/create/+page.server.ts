@@ -15,9 +15,8 @@ export const load = () => ({
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { name } = form.data
@@ -29,15 +28,15 @@ export const actions = {
 				[
 					Buffer.from(
 						"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
-						"base64"
+						"base64",
 					).toString("ascii"),
-				]
+				],
 			)
 		if (name == "wisely")
 			return formError(
 				form,
 				["name"],
-				["GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"]
+				["GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"],
 			)
 
 		if (
@@ -50,7 +49,7 @@ export const actions = {
 			return formError(
 				form,
 				["name"],
-				["A group with this name already exists"]
+				["A group with this name already exists"],
 			)
 
 		try {
@@ -60,7 +59,7 @@ export const actions = {
 					{ number: 1 },
 					10,
 					{ note: `Created group ${name}`, link: `/groups/${name}` },
-					tx
+					tx,
 				)
 
 				await tx.group.create({

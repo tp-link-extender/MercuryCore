@@ -2,10 +2,8 @@
 	// An avatar shop item component, used in the
 	// avatar shop and inventory pages.
 
-	import fade from "$lib/fade"
-
 	export let asset: {
-		id: string
+		id: number
 		name: string
 		price: number
 		// ratio?: string | number
@@ -15,15 +13,15 @@
 </script>
 
 <a
-	in:fade={{ num, total }}
-	href="/"
-	class="xl:col-span-2 lg:col-span-3 md:col-span-3 sm:col-span-4 col-span-6 px-2 mb-2 no-underline assetcard">
+	in:fade|global={{ num, total }}
+	href="/avatarshop/{asset.id}/{asset.name}"
+	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 px-2 mb-2 text-decoration-none assetcard">
 	<div class="card bg-a3">
-		<div class="card-body bg-a p-3 rounded-1">
-			<div class="text-center pb-3">
+		<div class="card-body bg-a p-4 rounded-1">
+			<div class="text-center pb-4">
 				<img
-					alt={asset.name}
-					src="https://clipground.com/images/clipart-traffic-cone-7.png" />
+					src="/avatarshop/{asset.id}/{asset.name}/icon"
+					alt={asset.name} />
 			</div>
 			<p class="m-0">
 				{asset.name}
@@ -36,17 +34,17 @@
 	</div>
 </a>
 
-<style lang="sass">
+<style lang="stylus">
 	.card
-		border-width: 2px
+		border-width 2px
 
 	.assetcard
 		.card-body
-			transition: 0.3s
+			transition 0.3s
 		&:hover
 			.card-body
-				background: var(--darker) !important
+				background var(--darker) !important
 
 	img
-		width: 85%
+		width 85%
 </style>

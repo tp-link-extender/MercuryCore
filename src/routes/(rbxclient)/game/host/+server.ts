@@ -13,10 +13,10 @@ export async function GET({ url }) {
 		where: { serverTicket: ticket },
 	})
 
-	let port = 53640
-	let baseUrl = "..."
-	// let serverId = "..."
-	let serverPresenceUrl = "..."
+	let port = 53640,
+		baseUrl = "...",
+		// serverId = "...",
+		serverPresenceUrl = "..."
 
 	if (placeData) {
 		port = placeData.serverPort
@@ -40,7 +40,7 @@ export async function GET({ url }) {
 				.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())
 				.replaceAll("_MAP_LOCATION", mapLocation || "null")
 				.replaceAll("_SERVER_PORT", port.toString())
-				.replaceAll("_SERVER_PRESENCE_URL", serverPresenceUrl)
-		)
+				.replaceAll("_SERVER_PRESENCE_URL", serverPresenceUrl),
+		),
 	)
 }

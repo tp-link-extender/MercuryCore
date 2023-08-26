@@ -1,10 +1,8 @@
-<svelte:head>
-	<title>Thank You - Mercury</title>
-</svelte:head>
+<Head title="Thank You" />
 
 <h1 class="text-center light-text">Welcome to Mercury</h1>
 
-<div class="container mt-5">
+<div class="container mt-12">
 	<div class="light-text">
 		<h2 class="h4 light-text text-center">
 			Thank you for downloading our client. To get started, head over to
@@ -14,8 +12,6 @@
 	</div>
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	containerMinWidth()
 </style>

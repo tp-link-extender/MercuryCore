@@ -11,19 +11,15 @@
 	$: other = ($errors as any).other || ""
 </script>
 
-<svelte:head>
-	<title>Create an avatar item - Mercury</title>
-</svelte:head>
+<Head title="Create an avatar item" />
 
 <h1 class="text-center light-text">Create an avatar item</h1>
 
-<form use:enhance method="POST" class="container mt-5 light-text">
+<form use:enhance method="POST" class="container mt-12 light-text">
 	<fieldset>
-		<div class="grid grid-cols-12 gap-6 mb-3">
-			<label for="name" class="md:col-span-3 col-form-label">
-				Item name
-			</label>
-			<div class="md:col-span-8">
+		<div class="row mb-4">
+			<label for="name" class="col-md-3 col-form-label">Item name</label>
+			<div class="col-md-8">
 				<input
 					bind:value={$form.name}
 					{...$constraints.name}
@@ -31,13 +27,13 @@
 					id="name"
 					placeholder="Make sure it is descriptive"
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-span-12 mb-3 text-red-500">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.name || ""}
 				</p>
 			</div>
 		</div>
-		<div class="grid grid-cols-12 gap-6 mb-3">
-			<label for="price" class="md:col-span-3 col-form-label">
+		<div class="row mb-4">
+			<label for="price" class="col-md-3 col-form-label">
 				Item price
 			</label>
 			<div class="md:col-span-8">
@@ -48,13 +44,13 @@
 					name="price"
 					id="price"
 					class="form-control {$errors.price ? 'is-in' : ''}valid" />
-				<p class="col-span-12 mb-3 text-red-500">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.price || ""}
 				</p>
 			</div>
 		</div>
-		<div class="grid grid-cols-12 gap-6 mb-4">
-			<label for="category" class="md:col-span-3 col-form-label">
+		<div class="row mb-6">
+			<label for="category" class="col-md-3 col-form-label">
 				Item category
 			</label>
 			<div class="md:col-span-8">
@@ -79,14 +75,12 @@
 					<option value="Back">Back</option>
 					<option value="Shoulder">Shoulder</option>
 				</select>
-				<p class="col-span-12 mb-3 text-red-500">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.category || ""}
 				</p>
 			</div>
 		</div>
-		<button
-			type="submit"
-			class="btn bg-emerald-600 hover:bg-emerald-800 text-white">
+		<button class="btn btn-success">
 			{#if $delayed}
 				Working...
 			{:else}
@@ -96,13 +90,11 @@
 			{/if}
 		</button>
 	</fieldset>
-	<p class="col-span-12 mb-3 text-red-500">
+	<p class="col-12 mb-4 text-danger">
 		{other}
 	</p>
 </form>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	containerMinWidth()
 </style>

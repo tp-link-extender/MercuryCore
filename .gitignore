@@ -13,4 +13,5 @@ node_modules
 /data
 /keys
 /setup
-/corescripts/**/*.lua
+/corescripts/processed/*.lua
+src/bootstrap.css

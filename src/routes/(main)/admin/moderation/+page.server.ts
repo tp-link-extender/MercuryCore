@@ -24,16 +24,14 @@ export async function load({ locals }) {
 
 export const actions = {
 	moderateUser: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 4)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals, 4),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
-		if (limit) return limit
+		// if (limit) return limit
 
-		const { username, action, banDate, reason } = form.data
-
-		const date = banDate ? new Date(banDate) : null
+		const { username, action, banDate, reason } = form.data,
+			date = banDate ? new Date(banDate) : null
 
 		if (action == 2 && (date?.getTime() || 0) < new Date().getTime())
 			return formError(form, ["banDate"], ["Invalid date"])
@@ -51,41 +49,44 @@ export const actions = {
 			return formError(
 				form,
 				["username"],
-				["You cannot moderate staff members"]
+				["You cannot moderate staff members"],
 			)
+
 		if (getModeratee.id == user.id)
 			return formError(
 				form,
 				["username"],
-				["You cannot moderate yourself"]
+				["You cannot moderate yourself"],
 			)
 
 		const moderationMessage = [
-			"has been warned",
-			`has been banned until ${date?.toLocaleDateString()}`,
-			"has been terminated",
-			"has been deleted",
-			"has been unbanned",
-		]
-
-		const moderationActions = [
-			"Warning",
-			"Ban",
-			"Termination",
-			"AccountDeleted",
-		]
+				"has been warned",
+				`has been banned until ${date?.toLocaleDateString()}`,
+				"has been terminated",
+				"has been deleted",
+				"has been unbanned",
+			],
+			moderationActions = [
+				"Warning",
+				"Ban",
+				"Termination",
+				"AccountDeleted",
+			]
 
 		if (action == 5) {
 			// Unban
 			if (
 				!(await prisma.moderationAction.count({
-					where: { moderateeId: getModeratee.id, active: true },
+					where: {
+						moderateeId: getModeratee.id,
+						active: true,
+					},
 				}))
 			)
 				return formError(
 					form,
 					["action"],
-					["You cannot unban a user that has not been moderated yet"]
+					["You cannot unban a user that has not been moderated yet"],
 				)
 
 			if (
@@ -100,17 +101,31 @@ export const actions = {
 				return formError(
 					form,
 					["action"],
-					["You cannot unban a deleted user"]
+					["You cannot unban a deleted user"],
 				)
 
-			await prisma.moderationAction.updateMany({
-				where: {
-					moderateeId: getModeratee.id,
-				},
-				data: {
-					active: false,
-				},
-			})
+			await Promise.all([
+				prisma.moderationAction.updateMany({
+					where: {
+						moderateeId: getModeratee.id,
+					},
+					data: {
+						active: false,
+					},
+				}),
+
+				prisma.auditLog.create({
+					data: {
+						action: "Moderation",
+						note: `Unban ${username}`,
+						user: {
+							connect: {
+								id: user.id,
+							},
+						},
+					},
+				}),
+			])
 
 			return {
 				moderationsuccess: true,
@@ -122,13 +137,16 @@ export const actions = {
 
 		if (
 			await prisma.moderationAction.count({
-				where: { moderateeId: getModeratee.id, active: true },
+				where: {
+					moderateeId: getModeratee.id,
+					active: true,
+				},
 			})
 		)
 			return formError(
 				form,
 				["username"],
-				["User has already been moderated"]
+				["User has already been moderated"],
 			)
 
 		await prisma.moderationAction.create({
@@ -159,6 +177,23 @@ export const actions = {
 					username: `[ Deleted User ${getModeratee.number} ]`,
 				},
 			})
+
+		await prisma.auditLog.create({
+			data: {
+				action: "Moderation",
+				note: [
+					`Warn ${username}`,
+					`Ban ${username}`,
+					`Terminate ${username}`,
+					`Delete ${username}'s account`,
+				][action - 1],
+				user: {
+					connect: {
+						id: user.id,
+					},
+				},
+			},
+		})
 
 		return message(form, `${username} ${moderationMessage[action - 1]}`)
 	},

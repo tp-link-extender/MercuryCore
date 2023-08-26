@@ -35,7 +35,7 @@ export const actions = {
 			return formError(
 				form,
 				["cpassword"],
-				["The specified passwords do not match"]
+				["The specified passwords do not match"],
 			)
 
 		try {
@@ -55,7 +55,7 @@ export const actions = {
 				return formError(
 					form,
 					["username"],
-					["This username is already in use"]
+					["This username is already in use"],
 				)
 
 			if (
@@ -73,7 +73,7 @@ export const actions = {
 				return formError(
 					form,
 					["email"],
-					["This email is already being used"]
+					["This email is already being used"],
 				)
 
 			const regkeyCheck = await prisma.regkey.findUnique({
@@ -85,17 +85,17 @@ export const actions = {
 				return formError(
 					form,
 					["regkey"],
-					["Registration key is invalid"]
+					["Registration key is invalid"],
 				)
 			if (regkeyCheck.usesLeft < 1)
 				return formError(
 					form,
 					["regkey"],
-					["This registration key has ran out of uses"]
+					["This registration key has ran out of uses"],
 				)
 
 			const user = await auth.createUser({
-				primaryKey: {
+				key: {
 					providerId: "username",
 					providerUserId: username.toLowerCase(),
 					password,
@@ -111,8 +111,11 @@ export const actions = {
 				} as any,
 			})
 
-			const session = await auth.createSession(user.id)
-			locals.setSession(session)
+			const session = await auth.createSession({
+				userId: user.id,
+				attributes: {},
+			})
+			locals.auth.setSession(session)
 
 			await prisma.regkey.update({
 				where: {
@@ -130,7 +133,7 @@ export const actions = {
 				return formError(
 					form,
 					["username"],
-					["This username is already in use"]
+					["This username is already in use"],
 				)
 
 			console.error("Registration error:", error)

@@ -13,10 +13,7 @@
 	export const snapshot = { capture, restore }
 </script>
 
-<svelte:head>
-	<meta name="description" content="Log into your Mercury account." />
-	<title>Log in - Mercury</title>
-</svelte:head>
+<Head title="Log in" description="Log into your Mercury account." />
 
 <div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
 	<div class="w-100 fixed bottom-0">
@@ -31,18 +28,18 @@
 			<i class="fa fa-arrow-left me-2" />
 			Home
 		</a>
-		<h1 class="font-bold light-text mb-4">
+		<h1 class="font-black light-text mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
-		<div class="ms-3 mt-3 w-100">
+		<div class="ms-4 mt-4 w-100">
 			<h2 class="h4 light-text">Endless possibilities</h2>
 			<p class="light-text opacity-75 more">
 				Create or play your favourite games and customise your character
 				with items on our catalog.
 			</p>
 		</div>
-		<div class="ms-3 mt-3 w-100">
+		<div class="ms-4 mt-4 w-100">
 			<h2 class="h4 light-text">New features</h2>
 			<p class="light-text opacity-75 more">
 				In addition to full client usability, additional features such
@@ -50,7 +47,7 @@
 				your experience better.
 			</p>
 		</div>
-		<div class="ms-3 mt-3 w-100">
+		<div class="ms-4 mt-4 w-100">
 			<h2 class="h4 light-text">Same nostalgia</h2>
 			<p class="light-text opacity-75 more">
 				All of our clients will remain as vanilla as possible, to make
@@ -67,10 +64,10 @@
 				<a href="/register" class="no-underline">Register</a>
 			</p>
 
-			<form use:enhance class="m-auto form-group mt-4" method="POST">
+			<form use:enhance class="m-auto form-group mt-6" method="POST">
 				<fieldset>
 					<label for="username" class="form-label">Username</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.username}
 							{...$constraints.username}
@@ -81,13 +78,13 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Username" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.username || ""}
 						</p>
 					</div>
 
 					<label for="password" class="form-label">Password</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.password}
 							{...$constraints.password}
@@ -99,14 +96,17 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Password" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.password || ""}
 						</p>
 					</div>
-					<button
-						class="px-5 btn bg-blue-600 hover:bg-blue-800 text-white mb-3">
-						{$delayed ? "Working..." : "Log in"}
-						<!-- $delayed is true if the form takes 
+					<button class="container-fluid btn btn-primary mb-4">
+						{#if $delayed}
+							Working...
+						{:else}
+							Log in
+						{/if}
+						<!-- $delayed is true if the form takes
 							more than a few hundred ms to submit -->
 					</button>
 				</fieldset>
@@ -115,12 +115,16 @@
 	</div>
 </div>
 
-<style lang="sass">
-	@use "../loginregister.sass"
+<style lang="stylus">
+	@import "../loginregister"
+
+	+lg()
+		.col
+			padding-top 20vh
 
 	@keyframes waves
 		0%
-			margin-left: 0
+			margin-left 0
 		100%
-			margin-left: -1600px
+			margin-left -1600px
 </style>

@@ -1,8 +1,6 @@
 <script lang="ts">
-	import fade from "$lib/fade"
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
 
 	export let data
 	const {
@@ -25,18 +23,16 @@
 	let tabData = TabData(data.url, ["Create Invite Key", "Invites"])
 </script>
 
-<svelte:head>
-	<title>Admin - Mercury</title>
-</svelte:head>
+<Head title="Invites - Admin" />
 
-<div class="container py-4">
+<div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Invites</h1>
 	<a href="/admin" class="no-underline">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="grid grid-cols-12 gap-6 mt-4">
-		<div class="lg:col-span-2 md:col-span-3 mb-4">
+	<div class="row mt-6">
+		<div class="col-lg-2 col-md-3 mb-6">
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="lg:col-span-10 md:col-span-9">
@@ -84,7 +80,7 @@
 										Instead of having a randomly generated
 										key, this allows you to set the key.
 									</small>
-									<p class="col-span-12 mb-3 text-red-500">
+									<p class="col-12 mb-4 text-danger">
 										{$errors.inviteCustom || ""}
 									</p>
 								</div>
@@ -130,7 +126,7 @@
 										class="form-control {$errors.inviteExpiry
 											? 'is-in'
 											: ''}valid" />
-									<p class="col-span-12 mb-3 text-red-500">
+									<p class="col-12 mb-4 text-danger">
 										{$errors.inviteExpiry || ""}
 									</p>
 								</div>
@@ -153,7 +149,7 @@
 									class="form-control {$errors.inviteUses
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-span-12 mb-3 text-red-500">
+								<p class="col-12 mb-4 text-danger">
 									{$errors.inviteUses || ""}
 								</p>
 							</div>
@@ -161,7 +157,7 @@
 						<button
 							name="action"
 							value="create"
-							class="btn bg-emerald-600 hover:bg-emerald-800 text-white mt-3">
+							class="btn btn-success mt-4">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -178,8 +174,8 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<table class="table table-responsive">
-					<thead class="light-text">
+				<table class="table table-responsive shadow-none">
+					<thead>
 						<tr>
 							<th scope="col">Options</th>
 							<th scope="col">Invite</th>
@@ -188,15 +184,14 @@
 							<th scope="col">Creation Date</th>
 						</tr>
 					</thead>
-					<tbody class="light-text">
+					<tbody>
 						{#each data.invites as invite}
 							<tr>
 								<td>
-									<form use:enhance method="POST">
-										<input
-											type="hidden"
-											name="id"
-											value={invite.key} />
+									<form
+										use:enhance
+										method="POST"
+										action="?id={invite.key}">
 										<button
 											name="action"
 											value="disable"
@@ -223,11 +218,17 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	input[type="checkbox"]
-		height: 1.5rem
-		width: 1.5rem
+		height 1.5rem
+		width 1.5rem
 
 	input[type="number"]
-		width: 10rem
+		width 10rem
+
+	table
+		tr
+		td
+		th
+			color var(--light-text) !important
 </style>

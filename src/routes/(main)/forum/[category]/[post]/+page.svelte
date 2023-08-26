@@ -1,40 +1,34 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { enhance as enhance2 } from "$app/forms"
-	import ForumReply from "$lib/components/ForumReply.svelte"
-	import Report from "$lib/components/Report.svelte"
-	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let replyingTo = writable("")
-	const repliesCollapsed = writable({})
-
 	export let data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+
+	let replyingTo = writable("")
+	const repliesCollapsed = writable({}),
+		{ user } = data,
+		{
+			form,
+			errors,
+			message,
+			constraints,
+			enhance,
+			delayed,
+			capture,
+			restore,
+		} = superForm(data.form, {
+			taintedMessage: false,
+		})
 
 	export const snapshot = { capture, restore }
-
-	const baseDepth = writable(data.baseDepth)
 </script>
 
-<svelte:head>
-	<title>{data.title} - Mercury</title>
-</svelte:head>
+<Head title={data.title} />
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 p-0 text-base">
+		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
 			<li class="breadcrumb-item">
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
@@ -93,9 +87,9 @@
 				</div>
 				<span
 					class="my-2 text-center {data.likes
-						? 'text-emerald-500 font-bold'
+						? 'text-success font-bold'
 						: data.dislikes
-						? 'text-red-500 font-bold'
+						? 'text-danger font-bold'
 						: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
@@ -115,8 +109,8 @@
 				</div>
 			</div>
 		</form>
-		<div class="p-3 no-underline light-text w-100">
-			<span class="flex">
+		<div class="p-4 text-decoration-none light-text w-100">
+			<span class="d-flex">
 				<a
 					href="/user/{data.author.number}"
 					class="user flex no-underline light-text">
@@ -126,15 +120,15 @@
 							alt={data.author.username}
 							class="rounded-full rounded-top-0" />
 					</span>
-					<span class="font-bold ms-3">
+					<span class="font-bold ms-4">
 						{data.author.username}
 					</span>
-					<span class="ms-3">
+					<span class="ms-4">
 						{data.posted.toLocaleString()}
 					</span>
 				</a>
 				<span class="ms-auto">
-					<Report
+					<ReportButton
 						user={data.author.username}
 						url="/forum/{data.forumCategory.name}/{data.id}" />
 				</span>
@@ -148,7 +142,7 @@
 		</div>
 	</div>
 
-	<form use:enhance class="mt-2 mb-4 p-1 row" method="POST" action="?/reply">
+	<form use:enhance class="mt-2 mb-6 p-1 row" method="POST" action="?/reply">
 		<label for="content" class="form-label light-text mt-2">
 			Post a Reply
 		</label>
@@ -160,9 +154,7 @@
 				name="content"
 				placeholder="What are your thoughts?"
 				rows="4" />
-			<button
-				type="submit"
-				class="btn bg-emerald-600 hover:bg-emerald-800 text-white ms-3 mt-auto">
+			<button class="btn btn-success ms-4 mt-auto">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -171,15 +163,16 @@
 			</button>
 		</fieldset>
 		<p
-			class="mb-3"
-			class:text-emerald-500={$page.status == 200}
-			class:text-red-500={$page.status >= 400 || $errors.status}>
-			{$errors.status || $message || ""}
+			class="mb-4"
+			class:text-success={$page.status == 200}
+			class:text-danger={$page.status >= 400}>
+			{$message || ""}
 		</p>
 	</form>
 
 	{#each data.replies as reply, num}
 		<ForumReply
+			{user}
 			{reply}
 			{num}
 			{replyingTo}
@@ -187,28 +180,25 @@
 			postId={data.id}
 			postAuthorName={data.author.username}
 			{repliesCollapsed}
-			{baseDepth}
 			topLevel />
 	{/each}
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 70rem
+<style lang="stylus">
+	containerMinWidth(70rem)
 
 	.sidebar
-		width: 2.5rem
+		width 2.5rem
 
 	.post
-		border-color: var(--accent2)
+		border-color var(--accent2)
 
 	p
-		word-break: break-word
+		word-break break-word
 
 	.user
-		align-items: center 
+		align-items center
 		.pfp img
-			max-width: 2rem
-			width: 2rem
+			max-width 2rem
+			width 2rem
 </style>

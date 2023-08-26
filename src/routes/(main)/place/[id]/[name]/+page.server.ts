@@ -1,3 +1,4 @@
+import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { Query, roQuery } from "$lib/server/redis"
@@ -7,120 +8,114 @@ import { error, fail } from "@sveltejs/kit"
 export async function load({ url, locals, params }) {
 	if (!/^\d+$/.test(params.id))
 		throw error(400, `Invalid place id: ${params.id}`)
-	const id = parseInt(params.id)
 
-	const privateServerCode = url.searchParams.get("privateServer")
+	const id = parseInt(params.id),
+		privateServerCode = url.searchParams.get("privateServer"),
+		getPlace = await prisma.place.findUnique({
+			where: { id },
+			select: {
+				id: true,
+				name: true,
+				serverPing: true,
+				serverTicket: true,
+				privateServer: true,
+				privateTicket: true,
+				created: true,
+				updated: true,
+				maxPlayers: true,
 
-	const getPlace = await prisma.place.findUnique({
-		where: { id },
-		select: {
-			id: true,
-			name: true,
-			serverPing: true,
-			serverTicket: true,
-			privateServer: true,
-			privateTicket: true,
-			created: true,
-			updated: true,
-			maxPlayers: true,
-
-			ownerUser: {
-				select: {
-					username: true,
-					number: true,
-				},
-			},
-			description: {
-				orderBy: {
-					updated: "desc",
-				},
-				select: {
-					text: true,
-				},
-				take: 1,
-			},
-			gameSessions: {
-				where: {
-					ping: {
-						gt: Math.floor(Date.now() / 1000) - 35,
+				ownerUser: {
+					select: {
+						username: true,
+						number: true,
 					},
 				},
-				include: {
-					user: {
-						select: {
-							username: true,
-							number: true,
+				description: {
+					orderBy: {
+						updated: "desc",
+					},
+					select: {
+						text: true,
+					},
+					take: 1,
+				},
+				gameSessions: {
+					where: {
+						ping: {
+							gt: Math.floor(Date.now() / 1000) - 35,
+						},
+					},
+					select: {
+						user: {
+							select: {
+								username: true,
+								number: true,
+							},
 						},
 					},
 				},
 			},
-		},
-	})
+		})
 
-	if (getPlace) {
-		const { session, user } = await authorise(locals)
+	if (!getPlace) throw error(404, "Not found")
 
-		if (
-			user.number != getPlace.ownerUser?.number &&
-			getPlace.privateServer &&
-			privateServerCode != getPlace.privateTicket
-		)
-			throw error(404, "Not Found")
+	const { user } = await authorise(locals)
 
-		const query = {
-			user: user.username,
-			id,
-		}
+	if (
+		user.number != getPlace.ownerUser?.number &&
+		getPlace.privateServer &&
+		privateServerCode != getPlace.privateTicket
+	)
+		throw error(404, "Not Found")
 
-		return {
-			...getPlace,
-			likeCount: roQuery(
-				"places",
-				"RETURN SIZE((:User) -[:likes]-> (:Place { name: $id }))",
-				query,
-				true
-			),
-			dislikeCount: roQuery(
-				"places",
-				"RETURN SIZE((:User) -[:dislikes]-> (:Place { name: $id }))",
-				query,
-				true
-			),
-			likes: session
-				? roQuery(
-						"places",
-						"MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r",
-						query
-				  )
-				: false,
-			dislikes: session
-				? roQuery(
-						"places",
-						"MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r",
-						query
-				  )
-				: false,
-		}
+	const query = {
+		user: user.username,
+		id,
 	}
 
-	throw error(404, "Not found")
+	return {
+		...getPlace,
+		likeCount: roQuery(
+			"places",
+			cql`RETURN SIZE((:User) -[:likes]-> (:Place { name: $id }))`,
+			query,
+			true,
+		),
+		dislikeCount: roQuery(
+			"places",
+			cql`RETURN SIZE((:User) -[:dislikes]-> (:Place { name: $id }))`,
+			query,
+			true,
+		),
+		likes: roQuery(
+			"places",
+			cql`MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r`,
+			query,
+		),
+		dislikes: roQuery(
+			"places",
+			cql`MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r`,
+			query,
+		),
+	}
 }
 
 export const actions = {
-	like: async ({ request, locals, params }) => {
+	like: async ({ url, request, locals, params }) => {
 		if (!/^\d+$/.test(params.id))
 			throw error(400, `Invalid place id: ${params.id}`)
-		const id = parseInt(params.id)
 
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const { action, privateTicket } = data
+		const id = parseInt(params.id),
+			{ user } = await authorise(locals),
+			data = await formData(request),
+			{ action } = data,
+			privateTicket = url.searchParams.get("privateTicket"),
+			place = await prisma.place.findUnique({
+				where: {
+					id,
+				},
+			})
 
-		const place = await prisma.place.findUnique({
-			where: {
-				id,
-			},
-		})
 		if (
 			!place ||
 			(place.privateServer && privateTicket != place.privateTicket)
@@ -137,59 +132,53 @@ export const actions = {
 				case "like":
 					await Query(
 						"places",
-						`
+						cql`
 							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"places",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:Place { name: $id })
-							MERGE (u) -[:likes]-> (p)
-						`,
-						query
+							MERGE (u) -[:likes]-> (p)`,
+						query,
 					)
 					break
 				case "unlike":
 					await Query(
 						"places",
-						`
+						cql`
 							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 				case "dislike":
 					await Query(
 						"places",
-						`
+						cql`
 							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					await Query(
 						"places",
-						`
+						cql`
 							MERGE (u:User { name: $user })
 							MERGE (p:Place { name: $id })
-							MERGE (u) -[:dislikes]-> (p)
-						`,
-						query
+							MERGE (u) -[:dislikes]-> (p)`,
+						query,
 					)
 					break
 				case "undislike":
 					await Query(
 						"places",
-						`
+						cql`
 							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $id })
-							DELETE r
-						`,
-						query
+							DELETE r`,
+						query,
 					)
 					break
 			}
@@ -200,12 +189,10 @@ export const actions = {
 	},
 
 	join: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-
-		const data = await formData(request)
-
-		const requestType = data.request
-		const serverId = parseInt(data.serverId)
+		const { user } = await authorise(locals),
+			data = await formData(request),
+			requestType = data.request,
+			serverId = parseInt(data.serverId)
 
 		if (!requestType || !serverId)
 			return fail(400, { message: "Invalid Request" })
@@ -238,22 +225,21 @@ export const actions = {
 		})
 
 		const session = await prisma.gameSessions.create({
-			// create valid session
-			data: {
-				place: {
-					connect: {
-						id: serverId,
+				// create valid session
+				data: {
+					place: {
+						connect: {
+							id: serverId,
+						},
+					},
+					user: {
+						connect: {
+							id: user.id,
+						},
 					},
 				},
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
-			},
-		})
-
-		const joinScriptUrl = `https://banland.xyz/game/join?ticket=${session.ticket}`
+			}),
+			joinScriptUrl = `https://banland.xyz/game/join?ticket=${session.ticket}`
 
 		return { joinScriptUrl }
 	},

@@ -16,23 +16,31 @@ datasource db {
 
 // Miscellaneous
 
+enum Visibility {
+    Visible
+    Deleted
+    Moderated
+}
+
 // A TextContent can be used for anything that needs an edit history.
 model TextContent {
-    id           String      @id @unique @default(cuid())
-    text         String
-    updated      DateTime    @default(now())
-    ForumPost    ForumPost?  @relation(fields: [forumPostId], references: [id])
-    forumPostId  String?
-    ForumReply   ForumReply? @relation(fields: [forumReplyId], references: [id])
-    forumReplyId String?
-    user         AuthUser?   @relation(fields: [userId], references: [id])
-    userId       String?
-    Place        Place?      @relation(fields: [placeId], references: [id])
-    placeId      Int?
-    Item         Item?       @relation(fields: [itemId], references: [id])
-    itemId       String?
-    Asset        Asset?      @relation(fields: [assetId], references: [id])
-    assetId      Int?
+    id             String        @id @unique @default(cuid())
+    text           String
+    updated        DateTime      @default(now())
+    ForumPost      ForumPost?    @relation(fields: [forumPostId], references: [id])
+    forumPostId    String?
+    ForumReply     ForumReply?   @relation(fields: [forumReplyId], references: [id])
+    forumReplyId   String?
+    assetComment   AssetComment? @relation(fields: [assetCommentId], references: [id])
+    assetCommentId String?
+    user           AuthUser?     @relation(fields: [userId], references: [id])
+    userId         String?
+    Place          Place?        @relation(fields: [placeId], references: [id])
+    placeId        Int?
+    Item           Item?         @relation(fields: [itemId], references: [id])
+    itemId         String?
+    Asset          Asset?        @relation(fields: [assetId], references: [id])
+    assetId        Int?
 }
 
 // Users & Groups
@@ -69,8 +77,8 @@ model AuthUser {
     transactionsSent     Transaction[] @relation("sent")
     transactionsReceived Transaction[] @relation("received")
 
-    bodyColours Json @default("{\"Head\": 24,\"Torso\": 23,\"LeftArm\": 24,\"RightArm\": 24,\"LeftLeg\": 119,\"RightLeg\": 119}")
-    // {"Head": 24,"Torso": 23,"LeftArm": 24,"RightArm": 24,"LeftLeg": 119,"RightLeg": 119}
+    bodyColours Json @default("{\"Head\": 24, \"Torso\": 23, \"LeftArm\": 24, \"RightArm\": 24, \"LeftLeg\": 119, \"RightLeg\": 119}")
+    // {"Head": 24, "Torso": 23, "LeftArm": 24, "RightArm": 24, "LeftLeg": 119, "RightLeg": 119}
 
     theme             String?
     animationSettings String?
@@ -78,6 +86,7 @@ model AuthUser {
     Announcements     Announcements[]
     forumPosts        ForumPost[]
     forumReplies      ForumReply[]
+    assetComments     AssetComment[]
     reportsSent       Report[]        @relation("sent")
     reportsReceived   Report[]        @relation("received")
 
@@ -88,7 +97,7 @@ model AuthUser {
     notificationsReceived     Notification[]     @relation("received")
     assetsCreated             Asset[]            @relation("created")
     assetsOwned               Asset[]            @relation("owned")
-    assetsModerated            Asset[]            @relation("moderated")
+    assetsModerated           Asset[]            @relation("moderated")
 
     @@map("user")
 }
@@ -98,9 +107,7 @@ model AuthKey {
     id              String   @id @unique
     hashed_password String?
     user_id         String
-    primary_key     Boolean
     auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
-    expires         BigInt?
 
     @@index([user_id])
     @@map("key")
@@ -144,6 +151,8 @@ model Post {
     authorGroupname String?
     posted          DateTime  @default(now())
     content         String
+
+    visibility Visibility @default(Visible)
 }
 
 model Group {
@@ -248,6 +257,8 @@ model ForumPost {
     forumCategory     ForumCategory @relation(fields: [forumCategoryName], references: [name])
     forumCategoryName String
     replies           ForumReply[]
+
+    visibility Visibility @default(Visible)
 }
 
 model ForumReply {
@@ -257,12 +268,14 @@ model ForumReply {
     posted   DateTime      @default(now())
     content  TextContent[]
 
-    parentPost    ForumPost    @relation(fields: [parentPostId], references: [id])
-    parentPostId  String
+    parentPost    ForumPost    @relation(fields: [topParentId], references: [id])
+    topParentId  String
     // A reply can be to a post or another reply
     parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
     parentReplyId String?
     replies       ForumReply[] @relation("replies")
+
+    visibility Visibility @default(Visible)
 }
 
 // Reports
@@ -318,18 +331,21 @@ model ModerationAction {
 // Admin
 
 enum AuditActionType {
+    Account
+	Administration
+    Economy
+    Forum
     Moderation
     Invite
-    Account
 }
 
 model AuditLog {
-    id     Int             @id @unique @default(autoincrement())
+    id     String          @id @unique @default(cuid())
     action AuditActionType
     note   String
     user   AuthUser        @relation("actor", fields: [userId], references: [id])
     userId String
-    date   DateTime        @default(now())
+    time   DateTime        @default(now())
 }
 
 // Notifications
@@ -340,6 +356,8 @@ enum NotificationType {
     Follower
     ForumPostReply // When someone replies to a post you made
     ForumReplyReply // When someone replies to a reply you made
+    AssetComment
+    AssetCommentReply
     ForumMention
     ForumPost // Subscribing to a forum category
     ItemPurchase
@@ -390,4 +408,23 @@ model Asset {
     imageAsset   Asset?  @relation("imageAsset", fields: [imageAssetId], references: [id])
     imageAssetId Int?
     parentAssets Asset[] @relation("imageAsset")
+
+    replies AssetComment[]
+}
+
+model AssetComment {
+    id       String        @id @unique
+    author   AuthUser      @relation(fields: [authorId], references: [id])
+    authorId String
+    posted   DateTime      @default(now())
+    content  TextContent[]
+
+    parentAsset   Asset          @relation(fields: [topParentId], references: [id])
+    topParentId Int
+    // A reply can be to a post or another reply
+    parentReply   AssetComment?  @relation("replies", fields: [parentReplyId], references: [id])
+    parentReplyId String?
+    replies       AssetComment[] @relation("replies")
+
+    visibility Visibility @default(Visible)
 }

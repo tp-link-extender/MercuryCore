@@ -1,23 +1,17 @@
 <script lang="ts">
-	import fade from "$lib/fade"
-
 	export let data
 </script>
 
-<svelte:head>
-	<title>Transactions - Mercury</title>
-</svelte:head>
+<Head title="Transactions" />
 
 <h1 class="text-center light-text">
 	Transactions
-	<a
-		href="/transactions/your"
-		class="btn bg-blue-600 hover:bg-blue-800 text-white ms-4">
+	<a href="/transactions/your" class="btn btn-primary ms-6">
 		Your transactions
 	</a>
 </h1>
 
-<div class="container mt-5">
+<div class="container mt-12">
 	<table class="table m-auto">
 		{#each data.transactions as transaction, num}
 			<tr
@@ -101,19 +95,19 @@
 	</table>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.currency
-		margin-top: 0.5rem
+		margin-top 0.5rem
 
 	// Change colour of every 2nd row
 	tr:nth-child(2n)
-		background: var(--darker)
+		background var(--darker)
 
 	.pfp
-		width: 2.5rem
-		height: 2.5rem
+		width 2.5rem
+		height 2.5rem
 
 	img
-		width: 2.5rem
-		height: 2.5rem
+		width 2.5rem
+		height 2.5rem
 </style>

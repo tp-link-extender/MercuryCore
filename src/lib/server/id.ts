@@ -3,7 +3,7 @@ import { client } from "./redis"
 
 const nanoid = customAlphabet(
 	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~",
-	5
+	5,
 )
 
 /**

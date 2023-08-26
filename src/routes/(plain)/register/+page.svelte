@@ -13,10 +13,7 @@
 	export const snapshot = { capture, restore }
 </script>
 
-<svelte:head>
-	<meta name="description" content="Create a Mercury account." />
-	<title>Register - Mercury</title>
-</svelte:head>
+<Head title="Register" description="Create a Mercury account." />
 
 <div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
 	<div class="w-100 fixed bottom-0">
@@ -31,25 +28,25 @@
 			<i class="fa fa-arrow-left me-2" />
 			Home
 		</a>
-		<h1 class="font-bold light-text mb-4">
+		<h1 class="font-black light-text mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
-		<div class="ms-3 mt-3 w-100">
+		<div class="ms-4 mt-4 w-100">
 			<h2 class="h4 light-text">Original username</h2>
 			<p class="light-text opacity-75 more">
 				Make sure it is appropriate and between 3-21 characters.
 				Underscores are allowed.
 			</p>
 		</div>
-		<div class="ms-3 mt-3 w-100">
+		<div class="ms-4 mt-4 w-100">
 			<h2 class="h4 light-text">Valid email</h2>
 			<p class="light-text opacity-75 more">
 				Mercury requires a valid email so you can reset your password at
 				any time.
 			</p>
 		</div>
-		<div class="ms-3 mt-3 w-100">
+		<div class="ms-4 mt-4 w-100">
 			<h2 class="h4 light-text">Secure password</h2>
 			<p class="light-text opacity-75 more">
 				Make sure your password has a mix of letters, numbers, and
@@ -66,10 +63,10 @@
 				<a href="/login" class="no-underline">Log in</a>
 			</p>
 
-			<form use:enhance class="m-auto form-group mt-4" method="POST">
+			<form use:enhance class="m-auto form-group mt-6" method="POST">
 				<fieldset>
 					<label for="username" class="form-label">Username</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.username}
 							{...$constraints.username}
@@ -80,13 +77,13 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="3-21 characters" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.username || ""}
 						</p>
 					</div>
 
 					<label for="email" class="form-label">Email Address</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.email}
 							{...$constraints.email}
@@ -98,13 +95,13 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="mercury@banland.xyz" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.email || ""}
 						</p>
 					</div>
 
 					<label for="password" class="form-label">Password</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.password}
 							{...$constraints.password}
@@ -116,7 +113,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Password" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.password || ""}
 						</p>
 					</div>
@@ -124,7 +121,7 @@
 					<label for="cpassword" class="form-label">
 						Confirm Password
 					</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.cpassword}
 							{...$constraints.cpassword}
@@ -136,7 +133,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Confirm Password" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.cpassword || ""}
 						</p>
 					</div>
@@ -144,7 +141,7 @@
 					<label for="regkey" class="form-label">
 						Registration Key
 					</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.regkey}
 							{...$constraints.regkey}
@@ -154,15 +151,18 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="mercurkey-12311121123" />
-						<p class="col-span-12 mb-3 text-red-500">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.regkey || ""}
 						</p>
 					</div>
 
-					<button
-						class="px-5 btn bg-blue-600 hover:bg-blue-800 text-white mb-3">
-						{$delayed ? "Working..." : "Log in"}
-						<!-- $delayed is true if the form takes 
+					<button class="container-fluid btn btn-primary mb-4">
+						{#if $delayed}
+							Working...
+						{:else}
+							Register
+						{/if}
+						<!-- $delayed is true if the form takes
 							more than a few hundred ms to submit -->
 					</button>
 				</fieldset>
@@ -178,16 +178,16 @@
 	</div>
 </div>
 
-<style lang="sass">
-	@use "../loginregister.sass"
+<style lang="stylus">
+	@import "../loginregister"
+
+	+lg()
+		.col
+			padding-top 11vh
 
 	@keyframes waves
 		0%
-			margin-left: -1600px
+			margin-left -1600px
 		100%
-			margin-left: 0
-
-	@media only screen and (min-width: 992px)
-		.col
-			padding-top: 11vh
+			margin-left 0
 </style>

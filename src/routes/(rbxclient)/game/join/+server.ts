@@ -16,15 +16,15 @@ export async function GET({ url }) {
 		throw error(400, "Invalid Request")
 	} //else joinMethod = "Ticket"
 
-	let serverAddress = "localhost"
-	let serverPort = 53640
-	let userName = "Player"
-	let userId = 0
-	let placeId = -1
-	let creatorId = 0
-	let MembershipType = "None"
-	let charApp = "http://banland.xyz/asset/characterfetch?userID=0"
-	let pingUrl = ""
+	let serverAddress = "localhost",
+		serverPort = 53640,
+		userName = "Player",
+		userId = 0,
+		placeId = -1,
+		creatorId = 0,
+		MembershipType = "None",
+		charApp = "http://banland.xyz/asset/characterfetch?userID=0",
+		pingUrl = ""
 
 	// if ((joinMethod = "Ticket")) {
 	const gameSession = (
@@ -85,7 +85,7 @@ export async function GET({ url }) {
 				.replaceAll("_USER_NAME", userName)
 				.replaceAll("_MEMBERSHIP_TYPE", MembershipType)
 				.replaceAll("_CHAR_APPEARANCE", charApp)
-				.replaceAll("_PING_URL", pingUrl)
-		)
+				.replaceAll("_PING_URL", pingUrl),
+		),
 	)
 }

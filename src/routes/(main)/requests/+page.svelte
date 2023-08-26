@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import fade from "$lib/fade"
-
 	// const statusColours: { [k: string]: string } = {
 	// 	Online: "bg-info",
 	// 	Joined: "bg-emerald-500",
@@ -11,20 +8,18 @@
 	export let data
 </script>
 
-<svelte:head>
-	<title>Friend requests - Mercury</title>
-</svelte:head>
+<Head title="Friend requests" />
 
 <h1 class="light-text text-center">Friend requests ({data.number})</h1>
 
-<div class="container mt-5 grid">
+<div class="container mt-12 d-grid">
 	{#each data.users as user, num}
 		<div
-			in:fade={{ num, total: data.users.length, max: 12 }}
-			class="card bg-darker light-text h-100 w-100 flex flex-col">
-			<div class="flex flex-row">
-				<a class="p-4 pe-2" href="/user/{user.number}">
-					<div class="image-background bg-a rounded-full">
+			in:fade|global={{ num, total: data.users.length, max: 12 }}
+			class="card bg-darker light-text h-100 w-100 d-flex flex-col">
+			<div class="d-flex flex-row">
+				<a class="p-6 pe-2" href="/user/{user.number}">
+					<div class="image-background bg-a rounded-circle">
 						<img
 							src="/api/avatar/{user.username}"
 							alt={user.username}
@@ -35,11 +30,10 @@
 							class="absolute bottom-0 end-0 badge rounded-full {statusColours[
 								user.status
 							]}">
-							<span class="visually-hidden">{user.status}</span>
 						</span>
 					{/if} -->
 				</a>
-				<div class="h4 p-4">
+				<div class="h4 p-6">
 					<a
 						href="/user/{user.number}"
 						class="no-underline light-text">
@@ -69,27 +63,27 @@
 	{/each}
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.container
-		max-width: 100%
-		font-size: 0.9rem
+		max-width 100%
+		font-size 0.9rem
 
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
-		column-gap: 1rem
-		row-gap: 1rem
-		place-items: center
+		grid-template-columns repeat(auto-fit, minmax(16rem, 1fr))
+		column-gap 1rem
+		row-gap 1rem
+		place-items center
 
 	.card
-		max-width: 25rem
-		text-decoration: none
+		max-width 25rem
+		text-decoration none
 		div
-			word-break: break-all
+			word-break break-all
 
 	// .badge
-	// 	padding: 0.75rem
+	// 	padding 0.75rem
 	.image-background
-		min-width: 6rem
+		min-width 6rem
 		img
-			width: 6rem
-			height: 6rem !important
+			width 6rem
+			height 6rem !important
 </style>

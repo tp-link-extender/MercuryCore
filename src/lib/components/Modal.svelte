@@ -1,5 +1,4 @@
 <script lang="ts">
-	import fade from "$lib/fade"
 	import { fly } from "svelte/transition"
 	import type { Writable } from "svelte/store"
 
@@ -11,13 +10,14 @@
 	<div
 		class="modal block"
 		tabindex="-1"
-		transition:fly={{ y: -50, duration: 300 }}>
+		transition:fly|global={{ y: -50, duration: 300 }}>
 		<div
-			id="fade"
-			transition:fade={{ duration: 300 }}
+			role="button"
+			tabindex="0"
+			transition:fade|global={{ duration: 300 }}
 			on:click={close}
 			on:keypress={close}
-			class="vh-100 vw-100 fixed top-0 bg-black" />
+			class="fade vh-100 vw-100 position-fixed top-0" />
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<slot />
@@ -26,11 +26,12 @@
 	</div>
 {/if}
 
-<style lang="sass">
-	#fade
-		opacity: 0.5
+<style lang="stylus">
+	.fade
+		opacity 0.5
+		background black
 
 	.modal-content
-		background: var(--background)
-		--bs-modal-border-color: var(--accent2)
+		background var(--background)
+		--bs-modal-border-color var(--accent2)
 </style>

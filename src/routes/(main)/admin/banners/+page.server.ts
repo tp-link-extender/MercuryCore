@@ -7,7 +7,6 @@ import { z } from "zod"
 
 const schema = z.object({
 	action: z.enum(["create", "show", "hide", "delete", "updateBody"]),
-	id: z.string().optional(),
 	bannerText: z.string().min(3).max(100).optional(),
 	bannerColour: z.string().optional(),
 	bannerTextLight: z.boolean().optional(),
@@ -32,19 +31,18 @@ export async function load({ locals }) {
 }
 
 export const actions = {
-	default: async ({ request, locals, getClientAddress }) => {
+	default: async ({ url, request, locals, getClientAddress }) => {
 		await authorise(locals, 5)
 
-		const { user } = await authorise(locals)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
-		const { action, id, bannerText, bannerColour, bannerBody } = form.data
-
-		const bannerActiveCount = await prisma.announcements.findMany({
-			where: { active: true },
-		})
+		const { action, bannerText, bannerColour, bannerBody } = form.data,
+			id = url.searchParams.get("id"),
+			bannerActiveCount = await prisma.announcements.findMany({
+				where: { active: true },
+			})
 
 		switch (action) {
 			case "create": {
@@ -52,7 +50,7 @@ export const actions = {
 					form,
 					"createBanner",
 					getClientAddress,
-					30
+					30,
 				)
 				if (limit) return limit
 
@@ -68,18 +66,32 @@ export const actions = {
 						status: 400,
 					})
 
-				await prisma.announcements.create({
-					data: {
-						body: bannerText,
-						bgColour: bannerColour,
-						textLight: bannerTextLight,
-						user: {
-							connect: {
-								id: user.id,
+				await Promise.all([
+					prisma.announcements.create({
+						data: {
+							body: bannerText,
+							bgColour: bannerColour,
+							textLight: bannerTextLight,
+							user: {
+								connect: {
+									id: user.id,
+								},
 							},
 						},
-					},
-				})
+					}),
+
+					prisma.auditLog.create({
+						data: {
+							action: "Administration",
+							note: `Create banner "${bannerText}"`,
+							user: {
+								connect: {
+									id: user.id,
+								},
+							},
+						},
+					}),
+				])
 
 				return message(form, "Banner created successfully!")
 			}
@@ -106,11 +118,24 @@ export const actions = {
 						status: 400,
 					})
 
-				await prisma.announcements.delete({
+				const deletedBanner = await prisma.announcements.delete({
 					where: {
 						id,
 					},
 				})
+
+				await prisma.auditLog.create({
+					data: {
+						action: "Administration",
+						note: `Delete banner "${deletedBanner.body}"`,
+						user: {
+							connect: {
+								id: user.id,
+							},
+						},
+					},
+				})
+
 				return
 			case "updateBody":
 				if (!bannerBody || !id)

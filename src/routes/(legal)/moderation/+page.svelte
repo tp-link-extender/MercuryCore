@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-
 	export let data
 
 	let checked = false
@@ -13,9 +11,9 @@
 	}
 
 	function formatDateDifference(date1: number, date2: number) {
-		const diffInMilliseconds = Math.round(date2 - date1)
-		const millisecondsPerDay = 24 * 60 * 60 * 1000
-		const diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay)
+		const diffInMilliseconds = Math.round(date2 - date1),
+			millisecondsPerDay = 24 * 60 * 60 * 1000,
+			diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay)
 
 		if (diffInMilliseconds < 0) return "0 minute(s)"
 
@@ -34,11 +32,9 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{moderationAction[data.type]} - Mercury</title>
-</svelte:head>
+<Head title={moderationAction[data.type]} />
 
-<div class="container mt-5">
+<div class="container mt-12">
 	<div class="card">
 		<div class="card-body light-text">
 			<h1>
@@ -66,7 +62,7 @@
 
 			{#if moderationAction[data.type] == "Warning"}
 				<form method="POST" use:enhance>
-					<p class="mb-5">
+					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
 							class="no-underline">
@@ -97,7 +93,7 @@
 				</form>
 			{:else if moderationAction[data.type] == "Ban"}
 				<form method="POST" use:enhance>
-					<p class="mb-5">
+					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
 							class="no-underline">
@@ -131,8 +127,6 @@
 	</div>
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	containerMinWidth()
 </style>

@@ -19,17 +19,15 @@
 	export const snapshot = { capture, restore }
 </script>
 
-<svelte:head>
-	<title>Create a post in {data.category.name} - Mercury</title>
-</svelte:head>
+<Head title="Create a post in {data.category.name}" />
 
 <h1 class="text-center light-text">Create a post in {data.category.name}</h1>
 
-<div class="container mt-5 light-text">
+<div class="container mt-12 light-text">
 	<form use:enhance method="POST">
 		<fieldset>
-			<div class="grid grid-cols-12 gap-6 mb-3">
-				<label for="title" class="md:col-span-3 col-form-label">
+			<div class="row mb-4">
+				<label for="title" class="col-md-3 col-form-label">
 					Post title
 				</label>
 				<div class="md:col-span-9">
@@ -43,13 +41,13 @@
 							? 'is-in'
 							: ''}valid" />
 
-					<small class="col-span-12 mb-3 text-red-500">
+					<small class="col-12 mb-4 text-danger">
 						{$errors.title || ""}
 					</small>
 				</div>
 			</div>
-			<div class="grid grid-cols-12 gap-6 mb-3">
-				<label for="content" class="md:col-span-3 col-form-label">
+			<div class="row mb-4">
+				<label for="content" class="col-md-3 col-form-label">
 					Post content
 				</label>
 				<div class="md:col-span-9">
@@ -64,14 +62,17 @@
 							? 'is-in'
 							: ''}valid" />
 
-					<small class="col-span-12 mb-3 text-red-500">
+					<small class="col-12 mb-4 text-danger">
 						{$errors.content || ""}
 					</small>
 				</div>
 			</div>
-			<button
-				class="btn bg-emerald-600 hover:bg-emerald-800 text-white my-3">
-				{$delayed ? "Working..." : "Post"}
+			<button class="btn btn-success my-4">
+				{#if $delayed}
+					Working...
+				{:else}
+					Post
+				{/if}
 			</button>
 		</fieldset>
 	</form>
@@ -83,8 +84,6 @@
 	<br />
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	containerMinWidth()
 </style>

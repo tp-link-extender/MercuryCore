@@ -31,14 +31,14 @@ const strings = {
 export const graphicAsset = (
 	type: keyof typeof strings,
 	imageAssetId: string | number,
-	graphicAssetId: string | number
+	graphicAssetId: string | number,
 ) => {
 	const asset = fs
 		.readFileSync(
 			`xml/graphicAsset${
 				type == "Face" || type == "Decal" ? "Image" : "Other"
 			}.xml`,
-			"utf-8"
+			"utf-8",
 		)
 		.replaceAll("_CLASS", strings[type].class)
 		.replaceAll("_CONTENT_NAME", strings[type].contentName)

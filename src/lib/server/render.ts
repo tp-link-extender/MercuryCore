@@ -7,10 +7,10 @@ import puppeteer from "puppeteer"
 import serve from "koa-static"
 import Koa from "koa"
 
-let app
 let port: number
+
 if (!building) {
-	app = new Koa()
+	const app = new Koa()
 	app.use(serve("./avatar/dist"))
 
 	port = Math.floor(Math.random() * 100) + 3001
@@ -22,19 +22,19 @@ if (!building) {
 export default async function (
 	username: string,
 	avatar: any,
-	bodyShot = false
+	bodyShot = false,
 ) {
 	console.time(`${bodyShot ? "Body" : "Head"}shot render for ${username}`)
-	const browser = await puppeteer.launch({ headless: "new" })
-	const page = await browser.newPage()
+	const browser = await puppeteer.launch({ headless: "new" }),
+		page = await browser.newPage()
 
 	await page.goto(
 		`http://localhost:${port}?c=${JSON.stringify(avatar)}${
 			bodyShot ? "&f" : ""
-		}`
+		}`,
 	)
 	await page.setViewport(
-		bodyShot ? { width: 300, height: 400 } : { width: 150, height: 150 }
+		bodyShot ? { width: 300, height: 400 } : { width: 150, height: 150 },
 	)
 
 	await page.waitForSelector("canvas")

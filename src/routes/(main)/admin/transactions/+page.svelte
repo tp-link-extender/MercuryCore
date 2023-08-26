@@ -1,24 +1,19 @@
 <script lang="ts">
-	import fade from "$lib/fade"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-
 	export let data
 
 	let tabData = TabData(data.url, ["Transactions"])
 </script>
 
-<svelte:head>
-	<title>Admin - Mercury</title>
-</svelte:head>
+<Head title="Transactions - Admin" />
 
-<div class="container py-4">
+<div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Transactions</h1>
 	<a href="/admin" class="no-underline">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="grid grid-cols-12 gap-6 mt-4">
-		<div class="lg:col-span-2 md:col-span-3 mb-4">
+	<div class="row mt-6">
+		<div class="col-lg-2 col-md-3 mb-6">
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="lg:col-span-10 md:col-span-9">
@@ -58,18 +53,20 @@
 											<i class="fa fa-gem" />
 											{transaction.amountSent}
 										</span>
-										<i class="fa fa-arrow-right ms-1" />
+										<i
+											class="fa fa-arrow-right ms-1 light-text" />
 									</div>
-									<div>
+									<div class="light-text">
 										{transaction.taxRate}% tax
 										<br />
 										<small>
 											{transaction.time.toLocaleString()}
 										</small>
 									</div>
-									<div class="text-base currency">
-										<i class="fa fa-arrow-right me-1" />
-										<span class="text-emerald-500">
+									<div class="fs-6 currency">
+										<i
+											class="fa fa-arrow-right me-1 light-text" />
+										<span class="text-success">
 											<i class="fa fa-gem" />
 											{Math.round(
 												(1 -
@@ -123,17 +120,18 @@
 	</div>
 </div>
 
-<style lang="sass">
+<style lang="stylus">
 	.currency
-		margin-top: 0.5rem
+		margin-top 0.5rem
+
 	.pfp
-		width: 2.5rem
-		height: 2.5rem
+		width 2.5rem
+		height 2.5rem
 
 	img
-		width: 2.5rem
-		height: 2.5rem
+		width 2.5rem
+		height 2.5rem
 
 	tr:nth-child(2n)
-		background: var(--darker)
+		background var(--darker)
 </style>

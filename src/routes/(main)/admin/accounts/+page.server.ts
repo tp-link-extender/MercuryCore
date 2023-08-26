@@ -1,4 +1,5 @@
 import { auth, authorise } from "$lib/server/lucia"
+import { prisma } from "$lib/server/prisma"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -24,10 +25,10 @@ export async function load({ locals }) {
 
 export const actions = {
 	resetPassword: async ({ request, locals, getClientAddress }) => {
-		await authorise(locals, 5)
-
-		const form = await superValidate(request, schema)
+		const { user } = await authorise(locals, 5),
+			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
+
 		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
 		if (limit) return limit
 
@@ -37,13 +38,25 @@ export const actions = {
 			await auth.updateKeyPassword(
 				"username",
 				username.toLowerCase(),
-				password
+				password,
 			)
 		} catch {
 			return message(form, "Invalid credentials", {
 				status: 400,
 			})
 		}
+
+		await prisma.auditLog.create({
+			data: {
+				action: "Account",
+				note: `Change account password for ${username}`,
+				user: {
+					connect: {
+						id: user.id,
+					},
+				},
+			},
+		})
 
 		return message(form, "Password changed successfully!")
 	},

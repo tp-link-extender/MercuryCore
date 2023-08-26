@@ -235,6 +235,12 @@ globals:
         type: number
       - required: false
         type: number
+
+  Enum.UploadSetting.Never:
+    struct: EnumItem
+  Enum.PriorityMethod.Ask me first:
+    struct: EnumItem
+
   Enum.PriorityMethod.AccumulatedError:
     struct: EnumItem
   Enum.PhysicsSendMethod.ErrorComputation2:
@@ -5586,6 +5592,10 @@ globals:
   math.sign:
     args:
       - type: number
+  math.nan:
+    property: read-only
+  math.inf:
+    property: read-only
   module:
     removed: true
   os.execute:
@@ -6939,6 +6949,9 @@ structs:
       args:
         - required: false
           type: any
+    SetMessageBrickCount:
+      method: true
+      args: []
     GetService:
       args:
         - type:

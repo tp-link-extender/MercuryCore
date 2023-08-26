@@ -1,11 +1,6 @@
 <script lang="ts">
-	import { enhance, deserialize } from "$app/forms"
-	import Asset from "$lib/components/Asset.svelte"
-	import { Tab, TabNav, TabData } from "$lib/components/Tabs"
-
-	let query = ""
-
-	let searchedData: any[] = []
+	let query = "",
+		searchedData: any[] = []
 
 	// Run function whenever query changes
 	$: query &&
@@ -14,11 +9,11 @@
 			formdata.append("query", query)
 
 			const response = await fetch("/avatarshop", {
-				method: "POST",
-				body: formdata,
-			})
+					method: "POST",
+					body: formdata,
+				}),
+				result: any = deserialize(await response.text())
 
-			const result: any = deserialize(await response.text())
 			searchedData = result.data.places
 		})()
 
@@ -31,31 +26,32 @@
 
 	export let data
 
-	let tabData = TabData(data.url, [
-		"Hats",
-		"T-Shirts",
-		"Shirts",
-		"Pants",
-		"Decals",
-	])
+	const tabTypes: { [k: string]: number } = {
+		"T-Shirts": 2,
+		Shirts: 11,
+		Hats: 8,
+		Pants: 12,
+		Decals: 13,
+	}
+
+	let tabData = TabData(data.url, Object.keys(tabTypes))
+
+	const assetFilter = (a: { type: number }) =>
+		a.type == tabTypes[tabData.currentTab]
 </script>
 
-<svelte:head>
-	<title>Catalog - Mercury</title>
-</svelte:head>
+<Head title="Catalog" />
 
 <div class="container">
-	<div class="grid grid-cols-12 gap-6 mb-3">
-		<h1 class="xl:col-span-4 lg:col-span-4 md:col-span-3 mb-0 light-text">
-			Catalog
-		</h1>
-		<div class="xl:col-span-8 lg:col-span-8 md:col-span-9 mt-2">
+	<div class="row mb-4">
+		<h1 class="col-xl-4 col-lg-4 col-md-3 mb-0 light-text">Catalog</h1>
+		<div class="col-xl-8 col-lg-8 col-md-9 mt-2">
 			<form
 				use:enhance
 				method="POST"
-				action="/search"
-				class="grid grid-cols-12 gap-6">
-				<div class="flex">
+				action="/search?c=assets"
+				class="row">
+				<div class="input-group">
 					<input
 						bind:value={query}
 						type="text"
@@ -64,9 +60,8 @@
 						placeholder="Search for an item"
 						aria-label="Search for an item"
 						aria-describedby="button-addon2" />
-					<input type="hidden" name="category" value="items" />
 					<select
-						class="form-select form-select-sm light-text ps-3"
+						class="form-select form-select-sm light-text ps-4"
 						placeholder="Type"
 						aria-label="Type">
 						<option value="Shirt">Shirts</option>
@@ -76,8 +71,7 @@
 						<option value="Decal">Decals</option>
 					</select>
 					<button
-						class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
-						type="submit"
+						class="btn btn-success"
 						aria-label="Search"
 						id="button-addon2">
 						<i class="fa fa-magnifying-glass" />
@@ -86,9 +80,8 @@
 			</form>
 		</div>
 	</div>
-	<div class="grid grid-cols-12 gap-6 mb-3">
-		<h1
-			class="h4 xl:col-span-2 lg:col-span-4 md:col-span-3 mb-0 light-text">
+	<div class="row mb-4">
+		<h1 class="h4 col-xl-2 col-lg-4 col-md-3 mb-0 light-text">
 			Categories
 		</h1>
 		<div class="xl:col-span-10 lg:col-span-8 md:col-span-9">
@@ -96,28 +89,113 @@
 		</div>
 	</div>
 
-	<div class="grid grid-cols-12 gap-6">
-		<div class="xl:col-span-2 lg:col-span-3">
+	<div class="row">
+		<div class="col-xl-2 col-lg-3 mb-2">
 			<h1 class="light-text h3">Filters</h1>
 			<p class="light-text mb-0">Sort by:</p>
-			<a href="/" class="no-underline">Recently Updated</a>
-			<br />
-			<a href="/" class="no-underline">Bestselling</a>
-			<br />
+			<div class="form-check">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="bestsellingRadio" />
+				<label
+					class="form-check-label light-text"
+					for="bestsellingRadio">
+					Bestselling
+				</label>
+			</div>
+			<div class="form-check">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="recentlyCreatedRadio" />
+				<label
+					class="form-check-label light-text"
+					for="recentlyCreatedRadio">
+					Recently Created
+				</label>
+			</div>
+			<div class="form-check">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="mercuryRadio" />
+				<label class="form-check-label light-text" for="mercuryRadio">
+					Mercury
+				</label>
+			</div>
 			<p class="light-text mb-0">Price:</p>
-			<a href="/" class="no-underline">Price (low to high)</a>
-			<br />
-			<a href="/" class="no-underline">Price (high to low)</a>
-			<br />
+			<div class="form-check">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="defaultPriceRadio"
+					checked />
+				<label
+					class="form-check-label light-text"
+					for="defaultPriceRadio">
+					Any price
+				</label>
+			</div>
+			<div class="form-check">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="customPriceRadio" />
+				<input
+					class="form-control form-control-sm mb-2"
+					type="number"
+					min="0"
+					max="999"
+					placeholder="Minimum price"
+					aria-label="Min price" />
+				<input
+					class="form-control form-control-sm mb-2"
+					type="number"
+					min="0"
+					max="999"
+					placeholder="Maximum price"
+					aria-label="Max price" />
+				<button class="btn btn-success btn-sm">Set</button>
+			</div>
+			<div class="form-check">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="lowToHighPriceRadio" />
+				<label
+					class="form-check-label light-text"
+					for="lowToHighPriceRadioRadio">
+					Price (low to high)
+				</label>
+			</div>
+			<div class="form-check">
+				<input
+					class="form-check-input"
+					type="radio"
+					name="filter"
+					id="highToLowPricePriceRadio" />
+				<label
+					class="form-check-label light-text"
+					for="highToLowPricePriceRadio">
+					Price (high to low)
+				</label>
+			</div>
 		</div>
 		<div class="xl:col-span-9 lg:col-span-9">
 			<div class="container">
-				<div class="grid grid-cols-12 gap-6">
-					{#each query ? searchedData : data.assets || [] as asset, num (asset.id)}
+				<div class="row">
+					{#each (query ? searchedData : data.assets || []).filter(assetFilter) as asset, num (asset.id)}
 						<Asset {asset} {num} total={data.assets.length} />
 					{/each}
-					{#if query && searchedData.length == 0}
-						<h2 class="h5 light-text mt-5">
+					{#if query && searchedData.filter(assetFilter).length == 0}
+						<h2 class="h5 light-text mt-12">
 							No items found with search term {query}
 						</h2>
 					{/if}
@@ -127,11 +205,12 @@
 	</div>
 </div>
 
-<style lang="sass">
-	input, select
-		background-color: var(--accent)
-		border-color: var(--accent2)
+<style lang="stylus">
+	input
+	select
+		background-color var(--accent)
+		border-color var(--accent2)
 
 	select
-		max-width: 9rem
+		max-width 9rem
 </style>

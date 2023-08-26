@@ -1,20 +1,16 @@
 <script lang="ts">
-	import fade from "$lib/fade"
-
 	export let data
 </script>
 
-<svelte:head>
-	<title>Forum - Mercury</title>
-</svelte:head>
+<Head title="Forum" />
 
 <div class="container light-text">
-	<h1 class="light-text mb-5">Forum</h1>
+	<h1 class="light-text mb-12">Forum</h1>
 	{#each data.categories as category, num}
 		<div
-			in:fade={{ num, total: data.categories.length }}
-			class="category card bg-darker p-3 mb-3">
-			<div class="grid grid-cols-12 gap-6">
+			in:fade|global={{ num, total: data.categories.length }}
+			class="category card bg-darker p-4 mb-4">
+			<div class="row">
 				<a
 					class="lg:col-span-9 md:col-span-7 row light-text no-underline"
 					href="/forum/{category.name.toLowerCase()}">
@@ -63,16 +59,15 @@
 	{/each}
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 70rem
+<style lang="stylus">
+	containerMinWidth(70rem)
 
 	.category
-		border-color: var(--accent2)
-		transition: all 0.3s ease-out
+		border-color var(--accent2)
+		transition all 0.3s ease-out
 
-	.pfp, .pfp img
-		width: 1.5rem
-		height: 1.5rem
+	.pfp
+	.pfp img
+		width 1.5rem
+		height 1.5rem
 </style>

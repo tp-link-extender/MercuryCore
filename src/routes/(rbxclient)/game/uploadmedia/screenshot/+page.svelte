@@ -8,7 +8,7 @@
 	}
 </script>
 
-<div class="app container py-4 light-text">
+<div class="app container py-6 light-text">
 	<img
 		width="100"
 		height="100"
@@ -18,9 +18,7 @@
 	<p>Hey, you just took a screenshot in Mercury! You could:</p>
 	<ul>
 		<li>
-			Open <button
-				on:click={openPictures}
-				class="btn btn-sm bg-blue-600 hover:bg-blue-800 text-white">
+			Open <button on:click={openPictures} class="btn btn-sm btn-primary">
 				<i class="far fa-folder-open" />
 				My Pictures
 			</button>
@@ -29,7 +27,7 @@
 		<li>Paste it to your favorite painting software</li>
 	</ul>
 	<hr class="divider-bottom" />
-	<button class="btn btn-sm bg-red-500">
+	<button class="btn btn-sm btn-danger">
 		<i class="fas fa-ban" />
 		Not interested
 	</button>

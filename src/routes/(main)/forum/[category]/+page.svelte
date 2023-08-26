@@ -1,18 +1,14 @@
 <script lang="ts">
-	import ForumPost from "$lib/components/ForumPost.svelte"
-
 	export let data
 	// Forum
 	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}
 </script>
 
-<svelte:head>
-	<title>{data.name} forum - Mercury</title>
-</svelte:head>
+<Head title="{data.name} - Forum" />
 
 <div class="container light-text">
 	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 p-0 text-base">
+		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
 			<li class="breadcrumb-item">
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
@@ -22,11 +18,11 @@
 		</ol>
 	</nav>
 
-	<h1 class="light-text mb-5">
+	<h1 class="light-text mb-12">
 		{data.name} - Forum
 		<a
 			href="/forum/create?category={data.name}"
-			class="btn bg-blue-600 hover:bg-blue-800 text-white ms-4">
+			class="btn btn-primary ms-6">
 			<i class="fa fa-file me-2" />
 			Create post
 		</a>
@@ -40,8 +36,6 @@
 	{/each}
 </div>
 
-<style lang="sass">
-	@media only screen and (min-width: 576px)
-		.container
-			width: 50rem
+<style lang="stylus">
+	containerMinWidth()
 </style>
