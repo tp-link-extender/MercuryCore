@@ -1,6 +1,3 @@
-<script context="module" lang="ts">
-</script>
-
 <script lang="ts">
 	import type { Writable } from "svelte/store"
 
@@ -46,7 +43,7 @@
 		})
 	}
 
-	const hidden = reply.visibility != "Visible"
+	$: hidden = reply.visibility != "Visible"
 </script>
 
 {#if !topLevel}

@@ -236,16 +236,10 @@
 		height 0
 		transform translateY(-1.5rem)
 		transition all 0.2s ease-out
+		pointer-events none
 
 	#buy
 		z-index 5
-		&:hover ~ #notify
-			opacity 1
-			height 1.5rem
-			transform none
-
-	#notify
-		pointer-events none
 
 	.pfp
 	.pfp img

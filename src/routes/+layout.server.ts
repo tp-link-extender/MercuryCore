@@ -61,10 +61,7 @@ export async function load({ request, locals }) {
 					})
 					if (!comment) break
 
-					i.link = "https://youtube.com/watch?v=Dx5i1t0mN78" // TODO
-					// `/avatarshop/${comment.parentAsset.id}/${
-					// 	comment.parentAsset.id
-					// }/${comment.id}`
+					i.link = `/avatarshop/${comment.parentAsset.id}/${comment.parentAsset.id}/${comment.id}`
 					break
 
 				case "ForumPostReply":
