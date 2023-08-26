@@ -21,7 +21,7 @@
 
 <h1 class="text-center light-text">Notifications</h1>
 
-<div class="container mt-12">
+<div class="w-50rem mx-a mt-12">
 	{#each data.notifications as notification}
 		<div class:bg-darker={notification.read} class="card mb-4 p-4">
 			<h2 class="light-text h5 d-flex align-items-center">
@@ -33,7 +33,7 @@
 					<img
 						src="/api/avatar/{notification.sender.username}"
 						alt={notification.sender.username}
-						class="h-100 rounded-full rounded-top-0" />
+						class="h-100 rounded-full rounded-t-0" />
 				</a>
 
 				{notificationNotes[notification.type]}
@@ -46,8 +46,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth()
-
 	.image-background
 		max-width 3rem
 		min-height 3rem

@@ -12,7 +12,7 @@
 
 <h1 class="light-text text-center">Friend requests ({data.number})</h1>
 
-<div class="container mt-12 d-grid">
+<div class="container mt-12 grid">
 	{#each data.users as user, num}
 		<div
 			in:fade|global={{ num, total: data.users.length, max: 12 }}
@@ -23,7 +23,7 @@
 						<img
 							src="/api/avatar/{user.username}"
 							alt={user.username}
-							class="h-100 rounded-full rounded-top-0" />
+							class="h-100 rounded-full rounded-t-0" />
 					</div>
 					<!-- {#if user.status}
 						<span

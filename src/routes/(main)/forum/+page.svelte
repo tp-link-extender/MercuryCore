@@ -4,7 +4,7 @@
 
 <Head title="Forum" />
 
-<div class="container light-text">
+<div class="w-70rem mx-a light-text">
 	<h1 class="light-text mb-12">Forum</h1>
 	{#each data.categories as category, num}
 		<div
@@ -47,7 +47,7 @@
 										src="/api/avatar/{category.posts[0]
 											.author.username}"
 										alt={category.posts[0].author.username}
-										class="rounded-full rounded-top-0" />
+										class="rounded-full rounded-t-0" />
 								</span>
 								{category.posts[0].author.username}
 							</a>
@@ -60,8 +60,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth(70rem)
-
 	.category
 		border-color var(--accent2)
 		transition all 0.3s ease-out

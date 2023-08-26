@@ -34,7 +34,7 @@
 
 <Head title={moderationAction[data.type]} />
 
-<div class="container mt-12">
+<div class="w-50rem mx-a mt-12">
 	<div class="card">
 		<div class="card-body light-text">
 			<h1>
@@ -126,7 +126,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

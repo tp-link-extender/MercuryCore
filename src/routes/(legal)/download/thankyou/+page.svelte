@@ -2,7 +2,7 @@
 
 <h1 class="text-center light-text">Welcome to Mercury</h1>
 
-<div class="container mt-12">
+<div class="w-50rem mx-a mt-12">
 	<div class="light-text">
 		<h2 class="h4 light-text text-center">
 			Thank you for downloading our client. To get started, head over to
@@ -11,7 +11,3 @@
 		</h2>
 	</div>
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

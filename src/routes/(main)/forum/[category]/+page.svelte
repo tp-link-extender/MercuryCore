@@ -6,7 +6,7 @@
 
 <Head title="{data.name} - Forum" />
 
-<div class="container light-text">
+<div class="light-text w-50rem mx-a">
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
 			<li class="breadcrumb-item">
@@ -35,7 +35,3 @@
 			categoryName={data.name} />
 	{/each}
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

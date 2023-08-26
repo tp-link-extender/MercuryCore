@@ -15,7 +15,7 @@
 
 <h1 class="text-center light-text">Create a place</h1>
 
-<form use:enhance method="POST" class="container mt-12 light-text">
+<form use:enhance method="POST" class="w-50rem mx-a mt-12 light-text">
 	<fieldset>
 		<div class="row mb-4">
 			<label for="name" class="col-md-3 col-form-label">Place name</label>
@@ -144,8 +144,6 @@
 </form>
 
 <style lang="stylus">
-	containerMinWidth()
-
 	input
 		&[type="checkbox"]
 			height 1.5rem

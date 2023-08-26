@@ -36,7 +36,7 @@
 
 <Head title={data.name} />
 
-<div class="container">
+<div class="w-60rem mx-a">
 	<div class="row">
 		<div class="col">
 			<img
@@ -54,7 +54,7 @@
 					<img
 						src="/api/avatar/{data.creatorUser?.username}"
 						alt={data.creatorUser?.username}
-						class="rounded-circle rounded-top-0" />
+						class="rounded-circle rounded-t-0" />
 				</span>
 				{data.creatorUser?.username}
 			</a>
@@ -207,8 +207,6 @@
 </Modal>
 
 <style lang="stylus">
-	containerMinWidth(60rem)
-
 	.image
 		background var(--accent1)
 		background-image:

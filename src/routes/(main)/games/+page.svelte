@@ -119,7 +119,7 @@
 		background-color var(--accent)
 		border-color var(--accent2)
 
-	.d-grid
+	.grid
 		font-size 0.9rem
 
 		grid-template-columns repeat(auto-fit, minmax(19rem, 1fr))

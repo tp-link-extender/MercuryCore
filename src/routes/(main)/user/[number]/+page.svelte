@@ -21,7 +21,7 @@
 				<img
 					src="/api/avatar/{data.username}"
 					alt={data.username}
-					class="rounded-full rounded-top-0" />
+					class="rounded-full rounded-t-0" />
 			</div>
 			<div class="container">
 				<div class="flex mb-2">
@@ -267,7 +267,7 @@
 										<img
 											src="/api/avatar/{data.username}"
 											alt={data.username}
-											class="rounded-full rounded-top-0" />
+											class="rounded-full rounded-t-0" />
 									</span>
 									<span class="font-bold ms-4 light-text">
 										{data.username}

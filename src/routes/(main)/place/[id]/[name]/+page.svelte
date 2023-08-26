@@ -78,7 +78,7 @@
 
 <Head title={data.name} />
 
-<div class="container light-text">
+<div class="w-70rem mx-a light-text">
 	<div class="row">
 		<div class="col-md-8 mb-4">
 			<div in:fade class="carousel rounded-4">
@@ -142,7 +142,7 @@
 								<img
 									src="/api/avatar/{data.ownerUser?.username}"
 									alt={data.ownerUser?.username}
-									class="rounded-full rounded-top-0" />
+									class="rounded-full rounded-t-0" />
 							</span>
 							{data.ownerUser?.username}
 						</a>
@@ -427,7 +427,7 @@
 											alt={user.username}
 											height="75"
 											width="75"
-											class="rounded-circle rounded-top-0" />
+											class="rounded-circle rounded-t-0" />
 									</span>
 								</a>
 							{/each}
@@ -496,8 +496,6 @@
 </Modal>
 
 <style lang="stylus">
-	containerMinWidth(60rem)
-
 	#buttons
 		margin auto
 		display flex

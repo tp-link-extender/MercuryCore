@@ -15,7 +15,7 @@
 
 <h1 class="text-center light-text">Create an avatar item</h1>
 
-<form use:enhance method="POST" class="container mt-12 light-text">
+<form use:enhance method="POST" class="w-50rem mx-a mt-12 light-text">
 	<fieldset>
 		<div class="row mb-4">
 			<label for="name" class="col-md-3 col-form-label">Item name</label>
@@ -94,7 +94,3 @@
 		{other}
 	</p>
 </form>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

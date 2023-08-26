@@ -67,7 +67,7 @@
 
 <Head title="Home" />
 
-<div class="container">
+<div class="max-w-320 mx-a px-4">
 	<div class="grid grid-cols-12 gap-6">
 		<div
 			class="col col-span-12 xxl:col-span-6 xl:col-span-5 md:col-span-6 sm:col-span-12">
@@ -79,7 +79,7 @@
 						<img
 							src="/api/avatar/{user?.username}"
 							alt="You"
-							class="rounded-full rounded-top-0" />
+							class="rounded-full rounded-t-0" />
 					</div>
 					<span class="my-auto ms-6">
 						{data.stuff.greet}
@@ -133,7 +133,7 @@
 													.authorUser?.username}"
 												alt={status.authorUser
 													?.username}
-												class="rounded-full rounded-top-0" />
+												class="rounded-full rounded-t-0" />
 										</span>
 										<span
 											class="username mw-50 font-bold ms-4">
@@ -180,7 +180,7 @@
 										<img
 											src="/api/avatar/{friend.username}"
 											alt={friend.username}
-											class="h-100 rounded-full rounded-top-0" />
+											class="h-100 rounded-full rounded-t-0" />
 									</div>
 									<!-- {#if friend.status}
 										<span

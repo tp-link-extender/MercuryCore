@@ -19,7 +19,7 @@
 
 <Head title="Develop" />
 
-<div class="container py-2">
+<div class="w-50rem mx-a py-2">
 	<h1 class="light-text mb-0 text-center">
 		Develop - Create <br />
 	</h1>
@@ -33,7 +33,7 @@
 <form
 	use:enhance
 	method="POST"
-	class="container mt-12 light-text"
+	class="w-50rem mx-a mt-12 light-text"
 	enctype="multipart/form-data">
 	<fieldset>
 		<div class="row mb-4">
@@ -147,8 +147,6 @@
 </form>
 
 <style lang="stylus">
-	containerMinWidth()
-
 	input[type="number"]
 		width 9rem
 </style>

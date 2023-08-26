@@ -23,7 +23,7 @@
 
 <h1 class="text-center light-text">Create a post in {data.category.name}</h1>
 
-<div class="container mt-12 light-text">
+<div class="w-50rem mx-a mt-12 light-text">
 	<form use:enhance method="POST">
 		<fieldset>
 			<div class="row mb-4">
@@ -83,7 +83,3 @@
 	</p>
 	<br />
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

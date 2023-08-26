@@ -26,7 +26,7 @@
 
 <Head title={data.title} />
 
-<div class="container light-text">
+<div class="w-70rem mx-a light-text">
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
 			<li class="breadcrumb-item">
@@ -118,7 +118,7 @@
 						<img
 							src="/api/avatar/{data.author.username}"
 							alt={data.author.username}
-							class="rounded-full rounded-top-0" />
+							class="rounded-full rounded-t-0" />
 					</span>
 					<span class="font-bold ms-4">
 						{data.author.username}
@@ -185,8 +185,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth(70rem)
-
 	.sidebar
 		width 2.5rem
 

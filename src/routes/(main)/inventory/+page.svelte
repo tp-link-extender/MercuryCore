@@ -34,7 +34,7 @@
 	</div>
 </div>
 
-<!-- <div class="container mt-12 d-grid">
+<!-- <div class="container mt-12 grid">
 	{#each data.assets || [] as asset, num}
 		<Asset {asset} {num} total={(data.assets || []).length} />
 	{/each}

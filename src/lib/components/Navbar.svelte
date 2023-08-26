@@ -199,7 +199,7 @@
 								<img
 									src="/api/avatar/{user?.username}"
 									alt="You"
-									class="rounded-full rounded-top-0" />
+									class="rounded-full rounded-t-0" />
 							</div>
 							<p class="my-auto fs-6 light-text">
 								{user?.username}

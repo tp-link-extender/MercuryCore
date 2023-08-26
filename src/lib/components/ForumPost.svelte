@@ -84,7 +84,7 @@
 				<img
 					src="/api/avatar/{post.author.username}"
 					alt={post.author.username}
-					class="rounded-full rounded-top-0" />
+					class="rounded-full rounded-t-0" />
 			</span>
 			<span class="font-bold ms-2">
 				{post.author.username}

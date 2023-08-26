@@ -77,7 +77,7 @@
 					<img
 						src="/api/avatar/{reply.author.username}"
 						alt={reply.author.username}
-						class="rounded-full rounded-top-0" />
+						class="rounded-full rounded-t-0" />
 				</span>
 			</a>
 			<button

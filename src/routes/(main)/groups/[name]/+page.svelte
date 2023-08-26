@@ -17,7 +17,7 @@
 						<img
 							src="/api/avatar/{data.owner?.username}"
 							alt={data.owner?.username}
-							class="rounded-circle rounded-top-0" />
+							class="rounded-circle rounded-t-0" />
 					</span>
 					{data.owner?.username}
 				</a>

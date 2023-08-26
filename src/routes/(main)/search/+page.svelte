@@ -33,7 +33,7 @@
 							<img
 								src="/api/avatar/{user.username}"
 								alt={user.username}
-								class="h-100 rounded-full rounded-top-0" />
+								class="h-100 rounded-full rounded-t-0" />
 						</div>
 						<!-- {#if user.status}
 							<span

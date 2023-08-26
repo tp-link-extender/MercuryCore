@@ -23,7 +23,7 @@
 
 <h1 class="text-center light-text">Report</h1>
 
-<div class="container mt-6 light-text">
+<div class="w-50rem mx-a mt-6 light-text">
 	<h2 class="light-text h5">
 		Tell us how you think {data.reportee} is breaking the rules.
 	</h2>
@@ -103,7 +103,3 @@
 		{$message || ""}
 	</p>
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

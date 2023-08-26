@@ -6,7 +6,7 @@
 
 <h1 class="text-center light-text">Statistics</h1>
 
-<div class="container mt-12 light-text h5">
+<div class="w-50rem mx-a mt-12 light-text h5">
 	<h2 class="light-text mb-4">Total number of:</h2>
 	<table>
 		<tr>
@@ -73,7 +73,3 @@
 		</tr>
 	</table>
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

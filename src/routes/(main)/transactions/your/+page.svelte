@@ -23,7 +23,7 @@
 							<img
 								src="/api/avatar/{transaction.sender?.username}"
 								alt={transaction.sender.username}
-								class="rounded-full rounded-top-0" />
+								class="rounded-full rounded-t-0" />
 						</div>
 						<p class="light-text my-auto text-base truncate">
 							{transaction.sender.username}
@@ -70,7 +70,7 @@
 								src="/api/avatar/{transaction.receiver
 									?.username}"
 								alt={transaction.receiver.username}
-								class="rounded-full rounded-top-0" />
+								class="rounded-full rounded-t-0" />
 						</div>
 					</a>
 				</td>

@@ -2,7 +2,7 @@
 
 <h1 class="text-center light-text">Privacy Policy</h1>
 
-<div class="container mt-12 light-text">
+<div class="w-50rem mx-a mt-12 light-text">
 	<h2 class="h4 light-text text-center">Security</h2>
 	<p>
 		Passwords are salted and hashed securely using SCrypt.
@@ -58,8 +58,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth()
-
 	a
 		color var(--mainaccent)
 </style>
