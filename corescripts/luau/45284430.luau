@@ -1,4 +1,6 @@
+-- RbxGui
 print "[Mercury]: Loaded corescript 45284430"
+
 local t = {}
 
 local function ScopedConnect(
@@ -4017,7 +4019,11 @@ t.CreateLoadingFrame = function(name, size, position)
 		cancelButtonClicked:Fire()
 	end)
 
-	local updateLoadingGuiPercent = function(percent: number, tweenAction, tweenLength)
+	local updateLoadingGuiPercent = function(
+		percent: number,
+		tweenAction,
+		tweenLength
+	)
 		if percent and type(percent) ~= "number" then
 			error(
 				"updateLoadingGuiPercent expects number as argument, got "

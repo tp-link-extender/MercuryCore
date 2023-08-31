@@ -1,4 +1,6 @@
+-- CoreGui.RobloxGui.CoreScripts/ChatScript
 print "[Mercury]: Loaded corescript 97188756"
+
 --[[
 	//FileName: ChatScript.LUA
 	//Written by: Sorcus

@@ -25,6 +25,11 @@ globals:
   _CHAR_APPEARANCE:
     args: []
 
+  assert:
+    args:
+      - type: any
+      - required: false
+        type: string
   ypcall:
     args:
       - type: function

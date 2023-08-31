@@ -1,4 +1,6 @@
+-- CoreGui.RobloxGui.CoreScripts/MainBotChatScript
 print "[Mercury]: Loaded corescript 39250920"
+
 function waitForProperty(instance, name)
 	while not instance[name] do
 		instance.Changed:wait()
