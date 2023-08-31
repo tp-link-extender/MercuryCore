@@ -1,7 +1,7 @@
 -- CoreGui.RobloxGui.CoreScripts/NotificationScript
 print "[Mercury]: Loaded corescript 48488398"
 
-local TeleportService = TeleportService
+local TeleportService = game:GetService "TeleportService"
 
 function waitForProperty(instance, property)
 	while not instance[property] do
