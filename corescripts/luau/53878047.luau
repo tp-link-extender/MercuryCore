@@ -1,4 +1,6 @@
+-- CoreGui.RobloxGui.CoreScripts/BackpackScripts/BackpackBuild
 print "[Mercury]: Loaded corescript 53878047"
+
 -- This script creates almost all gui elements found in the backpack (warning: there are a lot!)
 -- TODO: automate this process
 

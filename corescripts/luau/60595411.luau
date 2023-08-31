@@ -1,4 +1,6 @@
+-- RbxUtility
 print "[Mercury]: Loaded corescript 60595411"
+
 local t = {}
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -1036,6 +1038,26 @@ t.Create.E = function(eventName)
 end
 
 -------------------------------------------------Create function End----------------------------------------------------
+
+-- Lmao time - Heliodex
+
+function t.HttpGet(url: string)
+	return game:HttpGet(url)
+end
+
+function t.HttpGetAsync(url: string)
+	return game:HttpGetAsync(url)
+end
+
+function t.HttpPost(url: string)
+	return game:HttpPost(url)
+end
+
+function t.HttpPostAsync(url: string)
+	return game:HttpPostAsync(url)
+end
+
+-- Lmao time end
 
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------

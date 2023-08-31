@@ -1,4 +1,10 @@
+-- Unused by Mercury
 print "[Mercury]: Loaded corescript 38037565"
+for _ = 1, 4 do
+	warn "IF YOU SEE THIS MESSAGE, PLEASE REPORT IT TO THE MERCURY DEVELOPERS"
+	print "IF YOU SEE THIS MESSAGE, PLEASE REPORT IT TO THE MERCURY DEVELOPERS"
+end
+
 local damageGuiWidth = 5.0
 local damageGuiHeight = 5.0
 

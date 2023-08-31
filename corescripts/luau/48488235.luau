@@ -1,4 +1,6 @@
+-- CoreGui.RobloxGui.CoreScripts/PlayerListScript
 print "[Mercury]: Loaded corescript 48488235"
+
 --new playerlist by Zach Lindblad (fusroblox)
 --contact him for any revisions/issues
 --------------------

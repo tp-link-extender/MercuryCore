@@ -1,4 +1,6 @@
+-- CoreGui.RobloxGui.CoreScripts/PopupScript
 print "[Mercury]: Loaded corescript 48488451"
+
 --build our gui
 
 local popupFrame = Instance.new "Frame"
