@@ -40,7 +40,7 @@
 	<div class="row">
 		<div class="col">
 			<img
-				class="image me-3 mb-3"
+				class="image me-4 mb-4"
 				src="/avatarshop/{data.id}/{data.name}/icon"
 				alt={data.name} />
 		</div>
@@ -106,7 +106,7 @@
 				on:click={() => modal.set(true)}
 				id="buy"
 				value="buy"
-				class="btn btn-sm rounded-3 w-100 float-left mb-4 {data.owned
+				class="btn btn-sm rounded-3 w-100 float-left mb-6 {data.owned
 					? 'btn-secondary disabled'
 					: user?.currency < data.price
 					? 'btn-danger disabled'
@@ -147,9 +147,7 @@
 		<TabNav bind:tabData justify />
 	</div>
 
-	<Tab {tabData}>
-
-	</Tab>
+	<Tab {tabData} />
 
 	<Tab {tabData}>
 		<form use:enhance class="p-1" method="POST" action="?/reply">
@@ -164,7 +162,7 @@
 					name="content"
 					placeholder="What are your thoughts?"
 					rows="4" />
-				<button class="btn btn-success ms-3 mt-auto">
+				<button class="btn btn-success ms-4 mt-auto">
 					{#if $delayed}
 						Working...
 					{:else}
@@ -173,7 +171,7 @@
 				</button>
 			</fieldset>
 			<p
-				class="mb-3"
+				class="mb-4"
 				class:text-success={$page.status == 200}
 				class:text-danger={$page.status >= 400}>
 				{$message || ""}
@@ -196,7 +194,7 @@
 </div>
 
 <Modal {modal}>
-	<div class="modal-body d-flex flex-column p-4">
+	<div class="modal-body d-flex flex-column p-6">
 		<h1 class="text-center h5 light-text">
 			"{data.name}" is ready to play! Have fun!
 		</h1>
@@ -238,16 +236,10 @@
 		height 0
 		transform translateY(-1.5rem)
 		transition all 0.2s ease-out
+		pointer-events none
 
 	#buy
 		z-index 5
-		&:hover ~ #notify
-			opacity 1
-			height 1.5rem
-			transform none
-
-	#notify
-		pointer-events none
 
 	.pfp
 	.pfp img

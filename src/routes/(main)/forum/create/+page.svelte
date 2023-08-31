@@ -23,10 +23,10 @@
 
 <h1 class="text-center light-text">Create a post in {data.category.name}</h1>
 
-<div class="container mt-5 light-text">
+<div class="container mt-12 light-text">
 	<form use:enhance method="POST">
 		<fieldset>
-			<div class="row mb-3">
+			<div class="row mb-4">
 				<label for="title" class="col-md-3 col-form-label">
 					Post title
 				</label>
@@ -41,12 +41,12 @@
 							? 'is-in'
 							: ''}valid" />
 
-					<small class="col-12 mb-3 text-danger">
+					<small class="col-12 mb-4 text-danger">
 						{$errors.title || ""}
 					</small>
 				</div>
 			</div>
-			<div class="row mb-3">
+			<div class="row mb-4">
 				<label for="content" class="col-md-3 col-form-label">
 					Post content
 				</label>
@@ -62,12 +62,12 @@
 							? 'is-in'
 							: ''}valid" />
 
-					<small class="col-12 mb-3 text-danger">
+					<small class="col-12 mb-4 text-danger">
 						{$errors.content || ""}
 					</small>
 				</div>
 			</div>
-			<button class="btn btn-success my-3">
+			<button class="btn btn-success my-4">
 				{#if $delayed}
 					Working...
 				{:else}

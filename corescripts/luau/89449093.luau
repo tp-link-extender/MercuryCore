@@ -1,4 +1,6 @@
+-- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
 print "[Mercury]: Loaded corescript 89449093"
+
 -- This script manages context switches in the backpack (Gear to Wardrobe, etc.) and player state changes.  Also manages global functions across different tabs (currently only search)
 if game.CoreGui.Version < 7 then
 	return

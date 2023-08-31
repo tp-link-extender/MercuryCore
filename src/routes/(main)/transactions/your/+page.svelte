@@ -6,10 +6,10 @@
 
 <h1 class="text-center light-text">
 	Your transactions
-	<!-- <a href="/transactions" class="btn btn-primary ms-4">All transactions</a> -->
+	<!-- <a href="/transactions" class="btn btn-primary ms-6">All transactions</a> -->
 </h1>
 
-<div class="container mt-5">
+<div class="container mt-12">
 	<table class="table m-auto">
 		{#each data.transactions as transaction, num}
 			<tr
@@ -52,7 +52,7 @@
 							<i class="fa fa-gem" />
 							{Math.round(
 								(1 - transaction.taxRate / 100) *
-									transaction.amountSent,
+									transaction.amountSent
 							)}
 						</span>
 					</div>

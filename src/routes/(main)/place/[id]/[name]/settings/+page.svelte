@@ -32,18 +32,18 @@
 	let tabData = TabData(
 		data.url,
 		["View", "Network", "Privacy"],
-		["far fa-eye", "fas fa-network-wired", "fas fa-eye-low-vision"],
+		["far fa-eye", "fas fa-network-wired", "fas fa-eye-low-vision"]
 	)
 </script>
 
 <Head title="{data.name} Settings" />
 
-<div class="container mt-4 light-text">
-	<h1 class="light-text mb-4">Configure {data.name}</h1>
+<div class="container mt-6 light-text">
+	<h1 class="light-text mb-6">Configure {data.name}</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">Game View</h4>
-		<p class="mb-0 grey-text mb-4">
+		<h4 class="light-text font-normal mb-1">Game View</h4>
+		<p class="mb-0 grey-text mb-6">
 			Change the title and description of your server.
 		</p>
 		<form use:enhance class="col-lg-8" method="POST" action="?a=view">
@@ -64,7 +64,7 @@
 							class="form-control {$errors.title
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.title || ""}
 						</p>
 					</div>
@@ -85,7 +85,7 @@
 							class="form-control {$errors.icon
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.icon || ""}
 						</p>
 					</div>
@@ -110,7 +110,7 @@
 					</div>
 				</div>
 			</fieldset>
-			<button class="btn btn-success mt-4">
+			<button class="btn btn-success mt-6">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -126,8 +126,8 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">Network</h4>
-		<p class="mb-0 grey-text mb-4">
+		<h4 class="light-text font-normal mb-1">Network</h4>
+		<p class="mb-0 grey-text mb-6">
 			Change the network configurations of your server.
 		</p>
 		<form use:enhance method="POST" class="col-lg-8" action="?a=ticket">
@@ -175,7 +175,7 @@
 							class="form-control {$errors.serverIP
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.serverIP || ""}
 						</p>
 					</div>
@@ -197,7 +197,7 @@
 							class="form-control {$errors.serverPort
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.serverPort || ""}
 						</p>
 						<small class="grey-text">
@@ -223,7 +223,7 @@
 							class="form-control {$errors.maxPlayers
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.maxPlayers || ""}
 						</p>
 					</div>
@@ -246,8 +246,8 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text fw-normal mb-1">Privacy</h4>
-		<p class="mb-0 grey-text mb-4">
+		<h4 class="light-text font-normal mb-1">Privacy</h4>
+		<p class="mb-0 grey-text mb-6">
 			Enable private server to make your game only accessible to those
 			with the link.
 		</p>
@@ -272,7 +272,7 @@
 						<button
 							on:click={() => {
 								navigator.clipboard.writeText(
-									`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`,
+									`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`
 								)
 
 								copiedSuccess = true
@@ -321,7 +321,7 @@
 							id="privateServer" />
 					</div>
 				</div>
-				<button class="btn btn-success mt-4">
+				<button class="btn btn-success mt-6">
 					{#if $delayed}
 						Working...
 					{:else}

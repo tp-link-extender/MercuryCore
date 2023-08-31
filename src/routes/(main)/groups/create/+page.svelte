@@ -15,9 +15,9 @@
 
 <h1 class="text-center light-text">Create a group</h1>
 
-<form use:enhance method="POST" class="container mt-5 light-text">
+<form use:enhance method="POST" class="container mt-12 light-text">
 	<fieldset>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="name" class="col-md-3 col-form-label text-md-right">
 				Group name
 			</label>
@@ -29,7 +29,7 @@
 					id="name"
 					placeholder="This cannot be changed. Choose wisely."
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.name || ""}
 				</p>
 			</div>
@@ -44,7 +44,7 @@
 			{/if}
 		</button>
 	</fieldset>
-	<p class="col-12 mb-3 text-danger">
+	<p class="col-12 mb-4 text-danger">
 		{other}
 	</p>
 </form>

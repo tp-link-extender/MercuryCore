@@ -5,7 +5,7 @@
 <Head title={data.name} />
 
 <div id="all" class="container">
-	<div class="d-flex px-4">
+	<div class="d-flex px-6">
 		<div class="container light-text">
 			<h1 class="light-text">{data.name}</h1>
 			<p class="light-text">
@@ -26,7 +26,7 @@
 			<div class="d-flex">
 				<a
 					href="/groups/{data.name}/members"
-					class="light-text text-center text-decoration-none ms-4">
+					class="light-text text-center text-decoration-none ms-6">
 					Members
 					<h3 class="light-text">
 						{data.memberCount}
@@ -51,7 +51,7 @@
 		</div>
 	</div>
 	{#if data.places.length > 0}
-		<div class="mt-4">
+		<div class="mt-6">
 			<h2 class="h4 light-text">Creations</h2>
 			<div class="row m-0 p-0">
 				{#each data.places as place, num}
@@ -63,19 +63,19 @@
 		</div>
 	{/if}
 	{#if data.feed.length > 0}
-		<h2 class="h4 mt-5 light-text">Latest feed posts</h2>
-		<div id="feed" class="light-text p-3">
+		<h2 class="h4 mt-12 light-text">Latest feed posts</h2>
+		<div id="feed" class="light-text p-4">
 			<div class="row">
 				{#each data.feed.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status}
 					<div class="p-2 col-md-6 col-sm-12">
 						<div class="card h-100">
 							<div class="card-body pb-0">
 								<div id="user" class="d-flex mb-2">
-									<span class="fw-bold ms-3 light-text">
+									<span class="font-bold ms-4 light-text">
 										{data.name}
 									</span>
 									<span
-										class="ms-auto fw-italic light-text text-end">
+										class="ms-auto italic light-text text-end">
 										{status.posted.toLocaleString()}
 									</span>
 								</div>

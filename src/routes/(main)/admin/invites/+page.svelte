@@ -25,14 +25,14 @@
 
 <Head title="Invites - Admin" />
 
-<div class="container py-4">
+<div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Invites</h1>
 	<a href="/admin" class="text-decoration-none">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-4">
-		<div class="col-lg-2 col-md-3 mb-4">
+	<div class="row mt-6">
+		<div class="col-lg-2 col-md-3 mb-6">
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="col-lg-10 col-md-9">
@@ -78,7 +78,7 @@
 										Instead of having a randomly generated
 										key, this allows you to set the key.
 									</small>
-									<p class="col-12 mb-3 text-danger">
+									<p class="col-12 mb-4 text-danger">
 										{$errors.inviteCustom || ""}
 									</p>
 								</div>
@@ -122,7 +122,7 @@
 										class="form-control {$errors.inviteExpiry
 											? 'is-in'
 											: ''}valid" />
-									<p class="col-12 mb-3 text-danger">
+									<p class="col-12 mb-4 text-danger">
 										{$errors.inviteExpiry || ""}
 									</p>
 								</div>
@@ -145,7 +145,7 @@
 									class="form-control {$errors.inviteUses
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 mb-3 text-danger">
+								<p class="col-12 mb-4 text-danger">
 									{$errors.inviteUses || ""}
 								</p>
 							</div>
@@ -153,7 +153,7 @@
 						<button
 							name="action"
 							value="create"
-							class="btn btn-success mt-3">
+							class="btn btn-success mt-4">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -202,7 +202,7 @@
 								<td>{invite.creator?.username}</td>
 								<td>
 									{new Date(
-										invite.creation,
+										invite.creation
 									).toLocaleDateString()}
 								</td>
 							</tr>

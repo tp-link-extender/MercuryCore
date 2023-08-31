@@ -82,11 +82,11 @@
 			id="infotext"
 			class="d-flex flex-column justify-content-center align-items-center position-relative"
 			style="margin-top: {infoTextMargin}vh">
-			<h1 class="fw-bolder text-white opacity-75">Mercury 2</h1>
+			<h1 class="font-black text-white opacity-75">Mercury 2</h1>
 			<p class="lead text-white text-center">
 				Endless possibilities. New features. Same nostalgia.
 			</p>
-			<div class="d-inline mb-3">
+			<div class="d-inline mb-4">
 				<b>
 					<a
 						type="button"
@@ -104,7 +104,7 @@
 					</a>
 				</b>
 			</div>
-			<a href="/about" class="text-decoration-none pt-3 fs-5">
+			<a href="/about" class="text-decoration-none pt-4 fs-5">
 				About us <i class="fa fa-chevron-right" />
 			</a>
 		</div>
@@ -114,24 +114,24 @@
 		id="cubesMoved"
 		class="pe-none position-absolute top-50 start-50 text-center w-100">
 		{#if completed}
-			<h1 in:fade class="pe-none text-white opacity-75 fw-bolder">
+			<h1 in:fade class="pe-none text-white opacity-75 font-black">
 				lmao%
 			</h1>
 		{:else}
-			<h1 in:fade class="pe-none text-white opacity-75 fw-bolder">
+			<h1 in:fade class="pe-none text-white opacity-75 font-black">
 				{cubePercentage}%
 			</h1>
 			{#if cubePercentage2 > 0}
-				<h1 in:fade class="pe-none text-danger opacity-75 fw-bolder">
+				<h1 in:fade class="pe-none text-danger opacity-75 font-black">
 					{cubePercentage2}%
 				</h1>
 			{/if}
 			{#if cubePercentage >= 60 && cubePercentage < 80}
-				<h2 class="pe-none text-white opacity-75 fw-bolder">
+				<h2 class="pe-none text-white opacity-75 font-black">
 					zoom out
 				</h2>
 			{:else if cubePercentage == 100 && cubePercentage2 < 2}
-				<h2 class="pe-none text-danger opacity-75 fw-bolder">
+				<h2 class="pe-none text-danger opacity-75 font-black">
 					click the cubes
 				</h2>
 			{/if}

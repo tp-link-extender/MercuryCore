@@ -17,9 +17,7 @@
 <div
 	id="info"
 	class="container d-flex flex-column justify-content-center align-items-center position-relative">
-	<div
-		id="moon"
-		class="container position-absolute">
+	<div id="moon" class="container position-absolute">
 		<Canvas>
 			<Moon
 				item={{
@@ -28,13 +26,13 @@
 				}} />
 		</Canvas>
 	</div>
-	<h1 id="title" class="fw-bolder text-white opacity-75">Mercury 2</h1>
+	<h1 id="title" class="font-black text-white opacity-75">Mercury 2</h1>
 	<p class="h4 text-white opacity-75 text-center">
 		is currently undergoing maintenance. Check back later!
 	</p>
 	<a
 		href="https://status.banland.xyz"
-		class="text-decoration-none pt-3 fs-5 fw-bold accent-text">
+		class="text-decoration-none pt-4 fs-5 font-bold accent-text">
 		Status <i class="fa fa-chevron-right" />
 	</a>
 </div>

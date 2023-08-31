@@ -80,12 +80,12 @@
 							alt="You"
 							class="rounded-circle rounded-top-0" />
 					</div>
-					<span class="my-auto ms-4">
+					<span class="my-auto ms-6">
 						{data.stuff.greet}
 					</span>
 				</a>
 			</h1>
-			<div id="feed" class="card mt-4 bg-darker">
+			<div id="feed" class="card mt-6 bg-darker">
 				<div class="card-body light-text">
 					<p>
 						Post your status - your friends and followers can view
@@ -110,7 +110,7 @@
 						</button>
 					</form>
 					<p
-						class="mb-3"
+						class="mb-4"
 						class:text-success={$page.status == 200}
 						class:text-danger={$page.status >= 400 ||
 							$errors.status}>
@@ -120,7 +120,7 @@
 						<div
 							in:fade|global={{ num, total: data.feed.length }}
 							class="card mb-2">
-							<div class="card-body pb-0 p-3">
+							<div class="card-body pb-0 p-4">
 								<div class="d-flex mb-2 user">
 									<a
 										href="/user/{status.authorUser?.number}"
@@ -135,10 +135,10 @@
 												class="rounded-circle rounded-top-0" />
 										</span>
 										<span
-											class="username mw-50 fw-bold ms-3">
+											class="username mw-50 font-bold ms-4">
 											{status.authorUser?.username}
 										</span>
-										<em class="small ms-3">
+										<em class="small ms-4">
 											{status.posted.toLocaleString()}
 										</em>
 									</a>
@@ -199,7 +199,7 @@
 					</div>
 				{/if}
 			</div>
-			<div class="mt-5">
+			<div class="mt-12">
 				<h2 class="h4 light-text">Resume playing</h2>
 				<div class="home-row d-flex">
 					<div class="home-row d-flex">
@@ -216,7 +216,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-5 col-12">
+			<div class="mt-12 col-12">
 				<h2 class="h4 light-text">News</h2>
 				<div id="news" class="card bg-darker">
 					<div class="card-body row">
@@ -228,11 +228,11 @@
 									<div class="card-body p-2">
 										<div class="mb-2 light-text">
 											<div
-												class="fw-bold text-center text-truncate">
+												class="font-bold text-center text-truncate">
 												{thing.title}
 											</div>
 											<div
-												class="date ms-auto fw-italic text-center">
+												class="date ms-auto italic text-center">
 												{thing.time.toLocaleString()}
 											</div>
 										</div>
@@ -248,11 +248,11 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-5 col-6 col-md-8 col-lg-6 col-xl-4">
+			<div class="mt-12 col-6 col-md-8 col-lg-6 col-xl-4">
 				<h2 class="h4 light-text">Random fact</h2>
 				<div
 					id="fact"
-					class="card bg-darker card-body light-text h5 pb-4">
+					class="card bg-darker card-body light-text h5 pb-6">
 					{data.stuff.fact}
 				</div>
 			</div>

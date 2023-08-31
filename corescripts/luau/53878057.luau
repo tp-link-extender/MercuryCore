@@ -1,4 +1,6 @@
+-- CoreGui.RobloxGui.CurrentLoadout.CoreScripts/BackpackScript
 print "[Mercury]: Loaded corescript 53878057"
+
 if game.CoreGui.Version < 3 then
 	return
 end -- peace out if we aren't using the right client

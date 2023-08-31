@@ -17,8 +17,8 @@
 	href="/avatarshop/{asset.id}/{asset.name}"
 	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 px-2 mb-2 text-decoration-none assetcard">
 	<div class="card bg-a3">
-		<div class="card-body bg-a p-3 rounded-1">
-			<div class="text-center pb-3">
+		<div class="card-body bg-a p-4 rounded-1">
+			<div class="text-center pb-4">
 				<img
 					src="/avatarshop/{asset.id}/{asset.name}/icon"
 					alt={asset.name} />

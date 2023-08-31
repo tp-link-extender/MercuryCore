@@ -1,4 +1,6 @@
+-- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (1?)
 print "[Mercury]: Loaded corescript 89449008"
+
 -- A couple of necessary functions
 local function waitForChild(instance, name)
 	assert(instance)

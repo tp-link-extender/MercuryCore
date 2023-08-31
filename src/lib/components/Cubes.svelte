@@ -1,5 +1,5 @@
 <script lang="ts">
-	// The component that controls the 3D object  on the landing page.
+	// The component that controls the 3D object on the landing page.
 
 	import { T } from "@threlte/core"
 	import { interactivity } from "@threlte/extras"
@@ -16,8 +16,8 @@
 	position={[1, 1, 1]}
 	on:create={e => e.ref.lookAt(0, 0, 0)} />
 
-<T.AmbientLight color="white" intensity={0.1} />
-<T.DirectionalLight color="white" position={[2, 5, 1]} />
+<T.AmbientLight color="white" intensity={0.2} />
+<T.DirectionalLight color="white" position={[2, 5, 1]} intensity={3.5} />
 
 {#each columns as i}
 	{#each rows as j}

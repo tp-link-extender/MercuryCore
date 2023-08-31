@@ -87,9 +87,9 @@
 				</div>
 				<span
 					class="my-2 text-center {data.likes
-						? 'text-success fw-bold'
+						? 'text-success font-bold'
 						: data.dislikes
-						? 'text-danger fw-bold'
+						? 'text-danger font-bold'
 						: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
@@ -109,7 +109,7 @@
 				</div>
 			</div>
 		</form>
-		<div class="p-3 text-decoration-none light-text w-100">
+		<div class="p-4 text-decoration-none light-text w-100">
 			<span class="d-flex">
 				<a
 					href="/user/{data.author.number}"
@@ -120,10 +120,10 @@
 							alt={data.author.username}
 							class="rounded-circle rounded-top-0" />
 					</span>
-					<span class="fw-bold ms-3">
+					<span class="font-bold ms-4">
 						{data.author.username}
 					</span>
-					<span class="ms-3">
+					<span class="ms-4">
 						{data.posted.toLocaleString()}
 					</span>
 				</a>
@@ -142,7 +142,7 @@
 		</div>
 	</div>
 
-	<form use:enhance class="mt-2 mb-4 p-1 row" method="POST" action="?/reply">
+	<form use:enhance class="mt-2 mb-6 p-1 row" method="POST" action="?/reply">
 		<label for="content" class="form-label light-text mt-2">
 			Post a Reply
 		</label>
@@ -154,7 +154,7 @@
 				name="content"
 				placeholder="What are your thoughts?"
 				rows="4" />
-			<button class="btn btn-success ms-3 mt-auto">
+			<button class="btn btn-success ms-4 mt-auto">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -163,7 +163,7 @@
 			</button>
 		</fieldset>
 		<p
-			class="mb-3"
+			class="mb-4"
 			class:text-success={$page.status == 200}
 			class:text-danger={$page.status >= 400}>
 			{$message || ""}

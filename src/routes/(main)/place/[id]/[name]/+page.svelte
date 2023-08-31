@@ -80,7 +80,7 @@
 
 <div class="container light-text">
 	<div class="row">
-		<div class="col-md-8 mb-3">
+		<div class="col-md-8 mb-4">
 			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
 					<div
@@ -114,7 +114,7 @@
 		</div>
 
 		<div class="flex col-md-4">
-			<div class="card rounded-none mb-4">
+			<div class="card rounded-none mb-6">
 				<div class="card-body">
 					<div class="row">
 						<div class="col">
@@ -171,7 +171,7 @@
 					on:click={placeLauncher}
 					id="play"
 					class:disabled={data.serverPing < Date.now() / 1000 - 35}
-					class="btn btn-lg btn-success mt-4">
+					class="btn btn-lg btn-success mt-6">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
 
@@ -201,7 +201,7 @@
 
 						return () => {}
 					}}
-					class="align-self-center col mt-3 px-0 mb-2"
+					class="align-self-center col mt-4 px-0 mb-2"
 					method="POST"
 					action="?/like&privateTicket={data.privateTicket}">
 					<div class="row mb-2">
@@ -305,8 +305,8 @@
 				running. Below are two methods of hosting - we recommend using
 				Autopilot to get started easily.
 			</p>
-			<div class="d-flex align-items-start mb-3">
-				<div class="bg-a me-3">
+			<div class="d-flex align-items-start mb-4">
+				<div class="bg-a me-4">
 					<TabNav bind:tabData={tabData2} vertical />
 					<!-- Prevents nested tabs from breaking -->
 					{((tabData2.num = 0), "")}
@@ -379,7 +379,7 @@
 								<ul class="p-2 rounded-3">
 									<li class="rounded-2">
 										<button
-											class="btn light-text ps-3 pe-0 text-start"
+											class="btn light-text ps-4 pe-0 text-start"
 											on:click={() =>
 												launch(
 													`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
@@ -401,42 +401,42 @@
 		{/if}
 		<h4 class="light-text">Server List</h4>
 		{#if data.serverPing > Date.now() / 1000 - 35}
-		<div class="card mb-2">
-			<div class="card-body">
-				<div class="row">
-					<div class="col col-2">
-						<p class="light-text mb-2">
-							Currently Playing: {data.gameSessions
-								.length}/{data.maxPlayers}
-						</p>
-						<button
-							on:click={placeLauncher}
-							id="join"
-							class="btn btn-sm btn-success">
-							Join Server
-						</button>
-					</div>
-					<div class="col d-flex">
-						{#each data.gameSessions as { user }}
-							<a
-								href="/user/{user.number}"
-								class="gamesession text-decoration-none d-flex">
-								<span class="bg-background rounded-circle">
-									<img
-										src="/api/avatar/{user.username}"
-										alt={user.username}
-										height="75"
-										width="75"
-										class="rounded-circle rounded-top-0" />
-								</span>
-							</a>
-						{/each}
+			<div class="card mb-2">
+				<div class="card-body">
+					<div class="row">
+						<div class="col col-2">
+							<p class="light-text mb-2">
+								Currently Playing: {data.gameSessions
+									.length}/{data.maxPlayers}
+							</p>
+							<button
+								on:click={placeLauncher}
+								id="join"
+								class="btn btn-sm btn-success">
+								Join Server
+							</button>
+						</div>
+						<div class="col d-flex">
+							{#each data.gameSessions as { user }}
+								<a
+									href="/user/{user.number}"
+									class="gamesession text-decoration-none d-flex">
+									<span class="bg-background rounded-circle">
+										<img
+											src="/api/avatar/{user.username}"
+											alt={user.username}
+											height="75"
+											width="75"
+											class="rounded-circle rounded-top-0" />
+									</span>
+								</a>
+							{/each}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 		{:else}
-		This server is offline.
+			This server is offline.
 		{/if}
 	</Tab>
 	<hr />
@@ -452,12 +452,12 @@
 </div>
 
 <Modal {modal}>
-	<div class="modal-body d-flex flex-column p-4">
+	<div class="modal-body d-flex flex-column p-6">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
 				id="wrapper"
-				class="text-center align-self-center mt-5 mb-4">
+				class="text-center align-self-center mt-12 mb-6">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
@@ -483,7 +483,7 @@
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
 			</h1>
 		{:else}
-			<h1 class="text-center h5 light-text mb-3">
+			<h1 class="text-center h5 light-text mb-4">
 				Install the Mercury client and start playing now!
 			</h1>
 			<a

@@ -8,7 +8,7 @@
 		dislikesDisabled = false
 </script>
 
-<div in:fade|global={{ num, total }} class="post card bg-darker mb-3 flex-row">
+<div in:fade|global={{ num, total }} class="post card bg-darker mb-4 flex-row">
 	<form
 		use:enhance={({ formData }) => {
 			const action = formData.get("action")
@@ -53,9 +53,9 @@
 			</div>
 			<span
 				class="my-2 text-center {post.likes
-					? 'text-success fw-bold'
+					? 'text-success font-bold'
 					: post.dislikes
-					? 'text-danger fw-bold'
+					? 'text-danger font-bold'
 					: ''}">
 				{post.likeCount - post.dislikeCount}
 			</span>
@@ -79,14 +79,14 @@
 	<div class="d-flex flex-column w-100">
 		<a
 			href="/user/{post.author.number}"
-			class="user d-flex light-text text-decoration-none m-2 pe-4 mb-0 w-100">
+			class="user d-flex light-text text-decoration-none m-2 pe-6 mb-0 w-100">
 			<span class="pfp bg-a2 rounded-circle me-1">
 				<img
 					src="/api/avatar/{post.author.username}"
 					alt={post.author.username}
 					class="rounded-circle rounded-top-0" />
 			</span>
-			<span class="fw-bold ms-2">
+			<span class="font-bold ms-2">
 				{post.author.username}
 			</span>
 			<em class="ms-auto">
@@ -95,7 +95,7 @@
 		</a>
 		<a
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
-			class="p-3 pb-0 text-decoration-none light-text w-100">
+			class="p-4 pb-0 text-decoration-none light-text w-100">
 			<h2 class="h4 mt-2">
 				{post.title}
 			</h2>
