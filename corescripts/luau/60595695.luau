@@ -16,6 +16,7 @@ while not sc and tries < 3 do
 end
 
 if sc then
+	sc:RegisterLibrary("Libraries/RbxFusion", "10000001")
 	sc:RegisterLibrary("Libraries/RbxGui", "45284430")
 	sc:RegisterLibrary("Libraries/RbxGear", "45374389")
 	-- if game.PlaceId == deepakTestingPlace then
