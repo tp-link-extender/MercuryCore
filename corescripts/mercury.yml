@@ -24,6 +24,10 @@ globals:
     args: []
   _CHAR_APPEARANCE:
     args: []
+  _SERVER:
+    args: []
+  _CLIENT:
+    args: []
 
   assert:
     args:
@@ -5022,7 +5026,6 @@ globals:
           - AnimationController
           - AnimationRigData
           - Animator
-          - Atmosphere
           - Attachment
           - Bone
           - Backpack
@@ -5099,7 +5102,6 @@ globals:
           - FlyweightService
           - CSGDictionaryService
           - NonReplicatedCSGDictionaryService
-          - Folder
           - ForceField
           - FunctionalTest
           - GetTextBoundsParams
@@ -5192,8 +5194,6 @@ globals:
           - ColorCorrectionEffect
           - DepthOfFieldEffect
           - SunRaysEffect
-          - ProximityPrompt
-          - ProximityPromptService
           - ReflectionMetadata
           - ReflectionMetadataCallbacks
           - ReflectionMetadataClasses
@@ -5240,18 +5240,6 @@ globals:
           - TrackerStreamAnimation
           - Trail
           - Tween
-          - UIAspectRatioConstraint
-          - UISizeConstraint
-          - UITextSizeConstraint
-          - UICorner
-          - UIGradient
-          - UIGridLayout
-          - UIListLayout
-          - UIPageLayout
-          - UITableLayout
-          - UIPadding
-          - UIScale
-          - UIStroke
           - BinaryStringValue
           - BoolValue
           - BrickColorValue
@@ -5623,7 +5611,7 @@ globals:
     struct: Plugin
   require:
     args:
-      - type: number
+      - type: any
   script:
     struct: Script
   settings:
@@ -5636,6 +5624,8 @@ globals:
   Spawn:
     args:
       - type: function
+      - required: false
+        type: "..."
   LoadLibrary:
     args:
       - type: string
@@ -7043,7 +7033,6 @@ structs:
             - UserStorageService
             - LocalizationService
             - LodDataService
-            - LogService
             - LoginService
             - LuaWebService
             - LuauScriptAnalyzerService
@@ -7472,13 +7461,6 @@ structs:
     Value:
       property: read-only
   Event:
-    Connect:
-      args:
-        - type: function
-      method: true
-    Wait:
-      args: []
-      method: true
     connect:
       args:
         - type: function

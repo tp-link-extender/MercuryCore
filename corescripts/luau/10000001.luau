@@ -1610,7 +1610,7 @@ do
 	Cleanup.kind = "Cleanup"
 	Cleanup.stage = "observer"
 
-	function Cleanup:apply(userTask, applyTo, cleanupTasks)
+	function Cleanup:apply(userTask, _, cleanupTasks)
 		table.insert(cleanupTasks, userTask)
 	end
 
@@ -1731,7 +1731,7 @@ do
 			for oldInstance in pairs(oldParented) do
 				oldInstance.Parent = nil
 			end
-			for oldState, disconnect in pairs(oldDisconnects) do
+			for _, disconnect in pairs(oldDisconnects) do
 				disconnect()
 			end
 		end
@@ -1920,7 +1920,7 @@ do
 			)
 		end
 
-		Spawn(function(...)
+		Spawn(function()
 			error(errorString:gsub("\n", "\n    "), 0)
 		end, ...)
 	end
@@ -3162,7 +3162,7 @@ do
 	__DARKLUA_BUNDLE_MODULES.S = Spring
 end
 do
-	local function doNothing(...) end
+	local function doNothing() end
 
 	__DARKLUA_BUNDLE_MODULES.T = doNothing
 end
