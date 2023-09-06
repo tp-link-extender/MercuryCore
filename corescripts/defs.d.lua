@@ -6832,21 +6832,6 @@ end
 declare class LodDataService extends Instance
 end
 
-declare class LogService extends Instance
-	HttpResultOut: RBXScriptSignal<{ [any]: any }>
-	MessageOut: RBXScriptSignal<string, EnumMessageType>
-	OnHttpResultApproved: RBXScriptSignal<boolean>
-	ServerHttpResultOut: RBXScriptSignal<{ [any]: any }>
-	ServerMessageOut: RBXScriptSignal<string, EnumMessageType, number>
-	function ClearOutput(self): nil
-	function ExecuteScript(self, source: string): nil
-	function GetHttpResultHistory(self): { any }
-	function GetLogHistory(self): { any }
-	function RequestHttpResultApproved(self): nil
-	function RequestServerHttpResult(self): nil
-	function RequestServerOutput(self): nil
-end
-
 declare class LoginService extends Instance
 	LoginFailed: RBXScriptSignal<string>
 	LoginSucceeded: RBXScriptSignal<string>
@@ -8504,7 +8489,6 @@ declare class ServiceProvider extends Instance
 	LiveScriptingService: LiveScriptingService
 	LocalStorageService: LocalStorageService
 	LodDataService: LodDataService
-	LogService: LogService
 	LoginService: LoginService
 	LuaWebService: LuaWebService
 	LuauScriptAnalyzerService: LuauScriptAnalyzerService
@@ -8706,7 +8690,6 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "LiveScriptingService"): LiveScriptingService
 	function GetService(self, service: "LocalStorageService"): LocalStorageService
 	function GetService(self, service: "LodDataService"): LodDataService
-	function GetService(self, service: "LogService"): LogService
 	function GetService(self, service: "LoginService"): LoginService
 	function GetService(self, service: "LuaWebService"): LuaWebService
 	function GetService(self, service: "LuauScriptAnalyzerService"): LuauScriptAnalyzerService
@@ -10284,6 +10267,9 @@ declare _SERVER_PORT: number
 declare _SERVER_PRESENCE_URL: string
 
 declare _GUEST_NUMBER: number
+
+declare _SERVER: boolean
+declare _CLIENT: boolean
 
 declare game: DataModel
 declare Game: DataModel
