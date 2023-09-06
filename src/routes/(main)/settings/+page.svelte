@@ -33,17 +33,17 @@
 	<h1 class="light-text mb-6">Settings</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h4 class="light-text font-normal mb-1">User Profile</h4>
-		<p class="mb-0 grey-text mb-6">Change your bio, site theme and more.</p>
+		<h4 class="light-text fw-normal mb-1">User Profile</h4>
+		<p class="mb-0 grey-text mb-4">Change your bio, site theme and more.</p>
 		<form class="col-lg-8" method="POST" action="?a=profile">
 			<fieldset>
-				<div class="grid grid-cols-12 gap-6">
+				<div class="row">
 					<label
 						for="theme"
-						class="md:col-span-3 col-form-label text-md-right">
+						class="col-md-3 col-form-label text-md-right">
 						Theme
 					</label>
-					<div class="md:col-span-8">
+					<div class="col-md-8">
 						<select
 							bind:value={$form.theme}
 							{...$constraints.theme}
@@ -57,13 +57,13 @@
 							<option value="storm">Storm</option>
 							<option value="solar">Solar</option>
 						</select>
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.theme || ""}
 						</p>
 					</div>
 				</div>
 				<hr class="grey-text" />
-				<div class="grid grid-cols-12 gap-6">
+				<div class="row">
 					<label for="bio" class="form-label light-text">Bio</label>
 					<div class="container">
 						<textarea
@@ -80,13 +80,13 @@
 							your profile and allow other users to know who you
 							are.
 						</small>
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.bio || ""}
 						</p>
 					</div>
 				</div>
 			</fieldset>
-			<button class="btn btn-success">
+			<button type="submit" class="btn btn-success">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -95,25 +95,23 @@
 			</button>
 		</form>
 		<p
-			class:text-emerald-500={$page.status == 200}
-			class:text-red-500={$page.status >= 400}>
+			class:text-success={$page.status == 200}
+			class:text-danger={$page.status >= 400}>
 			{$message || ""}
 		</p>
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text font-normal mb-1">User Information</h4>
-		<p class="mb-0 grey-text mb-6">
+		<h4 class="light-text fw-normal mb-1">User Information</h4>
+		<p class="mb-0 grey-text mb-4">
 			Information about your account, you can change certain aspects of it
 			here.
 		</p>
 		<div class="form-group row">
-			<label
-				for="name"
-				class="md:col-span-3 col-form-label text-md-right">
+			<label for="name" class="col-md-3 col-form-label text-md-right">
 				Username
 			</label>
-			<div class="md:col-span-6">
+			<div class="col-md-6">
 				<input
 					type="text"
 					readonly
@@ -127,11 +125,11 @@
 			</small>
 		</div>
 		<hr class="grey-text" />
-		<div class="form-group row mb-12">
+		<div class="form-group row mb-5">
 			<label for="name" class="col-md-3 col-form-label text-md-right">
 				Email Address
 			</label>
-			<div class="md:col-span-6">
+			<div class="col-md-6">
 				<input
 					type="text"
 					readonly
@@ -147,7 +145,7 @@
 				 ">
 			A Discord account has not been linked.
 		</p>
-		<button class="btn btn-primary">
+		<button type="submit" class="btn btn-primary">
 			<i class="fa fa-link" />
 			Link Discord
 		</button>
@@ -158,23 +156,21 @@
 				 ">
 			You have not verified your email address.
 		</p>
-		<button class="btn btn-primary mb-4">
+		<button type="submit" class="btn btn-primary mb-3">
 			<i class="fa fa-envelope-circle-check" />
 			Verify Email
 		</button>
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="font-normal light-text mb-4">Change Password</h4>
+		<h4 class="fw-normal light-text mb-3">Change Password</h4>
 		<form use:enhance class="col-sm-8" method="POST" action="?a=password">
 			<fieldset>
 				<div class="form-group row gx-0 mb-2">
-					<label
-						for="password"
-						class="sm:col-span-4 col-form-label pt-0">
+					<label for="password" class="col-sm-4 col-form-label pt-0">
 						Current Password
 					</label>
-					<div class="sm:col-span-10">
+					<div class="col-sm-10">
 						<input
 							bind:value={$form.cpassword}
 							{...$constraints.cpassword}
@@ -185,18 +181,16 @@
 								: ''}valid"
 							id="cpassword"
 							name="cpassword" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.cpassword || ""}
 						</p>
 					</div>
 				</div>
 				<div class="form-group row gx-0 mb-2">
-					<label
-						for="npassword"
-						class="sm:col-span-4 col-form-label pt-0">
+					<label for="npassword" class="col-sm-4 col-form-label pt-0">
 						New Password
 					</label>
-					<div class="sm:col-span-10">
+					<div class="col-sm-10">
 						<input
 							bind:value={$form.npassword}
 							{...$constraints.npassword}
@@ -210,7 +204,7 @@
 						<small class="grey-text">
 							Make sure your password is unique.
 						</small>
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.npassword || ""}
 						</p>
 					</div>
@@ -218,10 +212,10 @@
 				<div class="form-group row gx-0 mb-2">
 					<label
 						for="cnpassword"
-						class="sm:col-span-4 col-form-label pt-0">
+						class="col-sm-4 col-form-label pt-0">
 						Confirm New Password
 					</label>
-					<div class="sm:col-span-10">
+					<div class="col-sm-10">
 						<input
 							bind:value={$form.cnpassword}
 							{...$constraints.cnpassword}
@@ -232,13 +226,13 @@
 								: ''}valid"
 							id="cnpassword"
 							name="cnpassword" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.cnpassword || ""}
 						</p>
 					</div>
 				</div>
 			</fieldset>
-			<button class="btn btn-success">
+			<button type="submit" class="btn btn-success">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -247,8 +241,8 @@
 			</button>
 		</form>
 		<p
-			class:text-emerald-500={$page.status == 200}
-			class:text-red-500={$page.status >= 400}>
+			class:text-success={$page.status == 200}
+			class:text-danger={$page.status >= 400}>
 			{$message || ""}
 		</p>
 	</Tab>

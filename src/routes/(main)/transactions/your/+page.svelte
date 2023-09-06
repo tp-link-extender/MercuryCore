@@ -6,7 +6,7 @@
 
 <h1 class="text-center light-text">
 	Your transactions
-	<!-- <a href="/transactions" class="btn btn-primary ms-6">All transactions</a> -->
+	<!-- <a href="/transactions" class="btn btn-primary ms-4">All transactions</a> -->
 </h1>
 
 <div class="container mt-12">
@@ -18,22 +18,22 @@
 				<td class="p-0">
 					<a
 						href="/user/{transaction.sender.number}"
-						class="flex no-underline">
-						<div class="me-2 rounded-full pfp bg-a">
+						class="d-flex text-decoration-none">
+						<div class="me-2 rounded-circle pfp bg-a">
 							<img
 								src="/api/avatar/{transaction.sender?.username}"
 								alt={transaction.sender.username}
-								class="rounded-full rounded-t-0" />
+								class="rounded-full rounded-top-0" />
 						</div>
-						<p class="light-text my-auto text-base truncate">
+						<p class="light-text my-auto fs-6 text-truncate">
 							{transaction.sender.username}
 						</p>
 					</a>
 				</td>
 
-				<td class="p-0 flex justify-center">
-					<div class="text-base currency">
-						<span class="text-emerald-500">
+				<td class="p-0 d-flex justify-content-center">
+					<div class="fs-6 currency">
+						<span class="text-success">
 							<i class="fa fa-gem" />
 							{transaction.amountSent}
 						</span>
@@ -47,8 +47,8 @@
 						</small>
 					</div>
 					<div class="fs-6 currency">
-						<i class="fa fa-arrow-right light-text me-1" />
-						<span class="text-emerald-500">
+						<i class="fa fa-arrow-right me-1" />
+						<span class="text-success">
 							<i class="fa fa-gem" />
 							{Math.round(
 								(1 - transaction.taxRate / 100) *
@@ -61,16 +61,16 @@
 				<td class="p-0">
 					<a
 						href="/user/{transaction.receiver.number}"
-						class="flex justify-end no-underline">
-						<p class="light-text my-auto text-base">
+						class="d-flex justify-content-end text-decoration-none">
+						<p class="light-text my-auto fs-6">
 							{transaction.receiver.username}
 						</p>
-						<div class="ms-2 rounded-full pfp bg-a">
+						<div class="ms-2 rounded-circle pfp bg-a">
 							<img
 								src="/api/avatar/{transaction.receiver
 									?.username}"
 								alt={transaction.receiver.username}
-								class="rounded-full rounded-t-0" />
+								class="rounded-full rounded-top-0" />
 						</div>
 					</a>
 				</td>

@@ -18,15 +18,15 @@
 </script>
 
 <ul
-	class="nav {vertical ? 'nav-vert-pills flex-column' : 'mb-6'} {tabs
-		? 'nav-tabs flex-column border-0 me-6'
+	class="nav {vertical ? 'nav-vert-pills flex-column' : 'mb-4'} {tabs
+		? 'nav-tabs flex-column border-0 me-4'
 		: 'nav-pills'}"
 	class:nav-justified={justify}
 	role="tablist">
 	{#each tabData.tabs as tab, pos}
 		<li class="nav-item" data-sveltekit-preload-data="off">
 			<a
-				class:rounded-none={!tabs}
+				class:rounded-0={!tabs}
 				class="nav-link light-text {tabData.currentTab == tab
 					? 'disabled active'
 					: ''}"

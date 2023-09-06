@@ -23,14 +23,14 @@
 
 <h1 class="text-center light-text">Create a post in {data.category.name}</h1>
 
-<div class="w-50rem mx-a mt-12 light-text">
+<div class="container mt-12 light-text">
 	<form use:enhance method="POST">
 		<fieldset>
-			<div class="row mb-4">
+			<div class="row mb-3">
 				<label for="title" class="col-md-3 col-form-label">
 					Post title
 				</label>
-				<div class="md:col-span-9">
+				<div class="col-md-9">
 					<input
 						bind:value={$form.title}
 						{...$constraints.title}
@@ -41,16 +41,16 @@
 							? 'is-in'
 							: ''}valid" />
 
-					<small class="col-12 mb-4 text-danger">
+					<small class="col-12 mb-3 text-danger">
 						{$errors.title || ""}
 					</small>
 				</div>
 			</div>
-			<div class="row mb-4">
+			<div class="row mb-3">
 				<label for="content" class="col-md-3 col-form-label">
 					Post content
 				</label>
-				<div class="md:col-span-9">
+				<div class="col-md-9">
 					<textarea
 						bind:value={$form.content}
 						{...$constraints.content}
@@ -62,24 +62,24 @@
 							? 'is-in'
 							: ''}valid" />
 
-					<small class="col-12 mb-4 text-danger">
+					<small class="col-12 mb-3 text-danger">
 						{$errors.content || ""}
 					</small>
 				</div>
 			</div>
-			<button class="btn btn-success my-4">
-				{#if $delayed}
-					Working...
-				{:else}
-					Post
-				{/if}
+			<button class="btn btn-success my-3">
+				{$delayed ? "Working..." : "Post"}
 			</button>
 		</fieldset>
 	</form>
 	<p
-		class:text-emerald-500={$page.status == 200}
-		class:text-red-500={$page.status >= 400}>
+		class:text-success={$page.status == 200}
+		class:text-danger={$page.status >= 400}>
 		{$message || ""}
 	</p>
 	<br />
 </div>
+
+<style lang="stylus">
+	containerMinWidth()
+</style>

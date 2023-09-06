@@ -4,7 +4,7 @@
 
 	// const statusColours: { [k: string]: string } = {
 	// 	Online: "bg-info",
-	// 	Joined: "bg-emerald-500",
+	// 	Joined: "bg-success",
 	// 	Developing: "bg-warning",
 	// }
 
@@ -67,19 +67,19 @@
 
 <Head title="Home" />
 
-<div class="max-w-320 mx-a px-4">
+<div class="container">
 	<div class="grid grid-cols-12 gap-6">
 		<div
 			class="col col-span-12 xxl:col-span-6 xl:col-span-5 md:col-span-6 sm:col-span-12">
 			<h1 class="top flex px-2">
 				<a
 					href="/user/{user?.number}"
-					class="no-underline light-text flex">
-					<div class="bg-a rounded-full">
+					class="text-decoration-none light-text d-flex">
+					<div class="bg-a rounded-circle">
 						<img
 							src="/api/avatar/{user?.username}"
 							alt="You"
-							class="rounded-full rounded-t-0" />
+							class="rounded-full rounded-top-0" />
 					</div>
 					<span class="my-auto ms-6">
 						{data.stuff.greet}
@@ -92,7 +92,7 @@
 						Post your status - your friends and followers can view
 						how you're doing!
 					</p>
-					<form use:enhance method="POST" class="flex">
+					<form use:enhance method="POST" class="input-group">
 						<input
 							bind:value={$form.status}
 							{...$constraints.status}
@@ -102,7 +102,10 @@
 							class="form-control light-text {$errors.status
 								? 'is-in'
 								: ''}valid" />
-						<button class="btn btn-success" aria-label="Send">
+						<button
+							class="btn btn-success"
+							type="submit"
+							aria-label="Send">
 							{#if $delayed}
 								...
 							{:else}
@@ -111,7 +114,7 @@
 						</button>
 					</form>
 					<p
-						class="mb-4"
+						class="mb-3"
 						class:text-success={$page.status == 200}
 						class:text-danger={$page.status >= 400 ||
 							$errors.status}>
@@ -121,22 +124,22 @@
 						<div
 							in:fade|global={{ num, total: data.feed.length }}
 							class="card mb-2">
-							<div class="card-body pb-0 p-4">
-								<div class="d-flex mb-2 user">
+							<div class="card-body pb-0 p-3">
+								<div class="d-flex mb-2 user d-inline">
 									<a
 										href="/user/{status.authorUser?.number}"
-										class="no-underline flex items-center light-text">
+										class="text-decoration-none d-flex align-items-center light-text">
 										<span
-											class="bg-background rounded-full">
+											class="bg-background rounded-circle">
 											<img
 												src="/api/avatar/{status
 													.authorUser?.username}"
 												alt={status.authorUser
 													?.username}
-												class="rounded-full rounded-t-0" />
+												class="rounded-full rounded-top-0" />
 										</span>
 										<span
-											class="username mw-50 font-bold ms-4">
+											class="username mw-50 fw-bold ms-3">
 											{status.authorUser?.username}
 										</span>
 										<em class="small ms-4">
@@ -160,31 +163,28 @@
 			</div>
 		</div>
 
-		<div class="col col-span-12 xxl:col-span-6 xl:col-span-7 md:col-span-6">
+		<div class="col col-12 col-xxl-6 col-xl-7 col-md-6">
 			<div class="col2">
 				{#if data.friends.length > 0}
 					<h2 class="h4 light-text">Friends</h2>
-					<div class="home-row flex">
+					<div class="home-row d-flex">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
 							<a
-								in:fade|global={{
-									num,
-									total: data.friends.length,
-								}}
+								in:fade={{ num, total: data.friends.length }}
 								class="px-2 mb-2 text-center light-text text-decoration-none"
 								href="/user/{friend.number}">
-								<div class="relative mb-2">
+								<div class="position-relative mb-2">
 									<div
-										class="image-background bg-a rounded-full">
+										class="image-background bg-a rounded-circle">
 										<img
 											src="/api/avatar/{friend.username}"
 											alt={friend.username}
-											class="h-100 rounded-full rounded-t-0" />
+											class="h-100 rounded-full rounded-top-0" />
 									</div>
 									<!-- {#if friend.status}
 										<span
-											class="absolute bottom-0 end-0 badge rounded-full {statusColours[
+											class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
 												friend.status
 											]}">
 										</span>
@@ -202,8 +202,8 @@
 			</div>
 			<div class="mt-12">
 				<h2 class="h4 light-text">Resume playing</h2>
-				<div class="home-row flex">
-					<div class="home-row flex">
+				<div class="home-row d-flex">
+					<div class="home-row d-flex">
 						{#each data.places || [] as place, num}
 							<div class="px-2 mb-2">
 								<div class="place">
@@ -217,19 +217,19 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-12 col-12">
+			<div class="mt-5 col-12">
 				<h2 class="h4 light-text">News</h2>
 				<div id="news" class="card bg-darker">
 					<div class="card-body row">
 						{#each news as thing, num}
 							<div
-								in:fade|global={{ num, total: news.length }}
+								in:fade={{ num, total: news.length }}
 								class="p-1 col-xl-4 col-lg-6 col-12">
 								<div class="card light-text h-100">
 									<div class="card-body p-2">
 										<div class="mb-2 light-text">
 											<div
-												class="font-bold text-center text-truncate">
+												class="fw-bold text-center text-truncate">
 												{thing.title}
 											</div>
 											<div
@@ -238,7 +238,7 @@
 											</div>
 										</div>
 										<div
-											class="gradient absolute bottom-0 rounded-2" />
+											class="gradient position-absolute bottom-0 rounded-2" />
 										<p class="content mb-0 p-1">
 											{thing.content}
 										</p>
@@ -249,7 +249,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-12 col-6 col-md-8 col-lg-6 col-xl-4">
+			<div class="mt-5 col-6 col-md-8 col-lg-6 col-xl-4">
 				<h2 class="h4 light-text">Random fact</h2>
 				<div
 					id="fact"

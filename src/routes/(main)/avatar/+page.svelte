@@ -2,17 +2,9 @@
 	export let data, form
 	const { user } = data
 
-	let modal = writable(false),
-		bodyPart = "",
-		tabData = TabData(data.url, [
-			"Recent",
-			"Heads",
-			"Faces",
-			"T-Shirts",
-			"Shirts",
-			"Pants",
-			"Gear",
-		])
+	let modal = writable(false)
+	let bodyPart = ""
+	let tabData = TabData(data.url, ["Recent", "Heads", "Faces", "T-Shirts", "Shirts", "Pants", "Gear"])
 
 	const bodyParts: { [k: string]: number } = {
 			Head: user?.bodyColours.Head,
@@ -110,18 +102,17 @@
 <div class="container">
 	<h1 class="text-white">Avatar</h1>
 	<p class="light-text">Avatar system in alpha.</p>
-	<div class="row mt-6">
+	<div class="row mt-4">
 		<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
-			<div class="card mb-4">
+			<div class="card mb-3">
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
-						<button
-							class="btn bg-blue-500 hover:bg-blue-400 text-white w-100">
+						<button class="btn btn-primary w-100">
 							<i class="fa fa-rotate" />
 							Regenerate
 						</button>
 					</form>
-					<p class="text-red-500">
+					<p class="text-danger">
 						{form?.msg || ""}
 					</p>
 					<img
@@ -147,7 +138,7 @@
 											`;background-color: #${
 												brickToHex[bodyParts[bodyPart]]
 											};`}
-										class="btn p-0 bodyPart absolute"
+										class="btn p-0 bodyPart position-absolute"
 										on:click={openColorPicker(bodyPart)}
 										on:keydown={openColorPicker(
 											bodyPart
@@ -159,9 +150,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="xl:col-span-9 lg:col-span-9 md:col-span-12">
+		<div class="col-xl-9 col-lg-9 col-md-12">
 			<TabNav bind:tabData justify />
-			<!-- <div class="flex">
+			<!-- <div class="input-group">
 				<input
 					type="text"
 					name="query"
@@ -171,6 +162,7 @@
 					aria-describedby="button-addon2" />
 				<button
 					class="btn btn-success"
+					type="submit"
 					aria-label="Search"
 					id="button-addon2">
 					<i class="fa fa-magnifying-glass" />
@@ -190,17 +182,13 @@
 				on:click={() => modal.set(false)}
 				aria-label="Close" />
 		</div>
-		<div class="modal-body d-flex flex-column p-1 pb-12">
+		<div class="modal-body d-flex flex-column p-1 pb-5">
 			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
 					<form
 						use:enhance
 						method="POST"
 						action="?/paint&p={bodyPart}&c={colour}"
-						on:submit={() => {
-							bodyParts[bodyPart] = colour
-							modal.set(false)
-						}}
 						class="d-inline">
 						<button
 							class="btn colour my-1"

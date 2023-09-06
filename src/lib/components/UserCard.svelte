@@ -1,7 +1,7 @@
 <script lang="ts">
 	const statusColours: { [k: string]: string } = {
 		Online: "bg-info",
-		Joined: "bg-emerald-500",
+		Joined: "bg-success",
 		Developing: "bg-warning",
 	}
 
@@ -15,19 +15,19 @@
 </script>
 
 <a
-	in:fade|global={{ num, total, max: 12 }}
+	in:fade={{ num, total, max: 12 }}
 	class="card light-text h-100 w-100 d-flex flex-row bg-darker"
 	href="/user/{user.number}">
-	<div class="p-6">
+	<div class="p-4">
 		<div class="image-background rounded-circle bg-a">
 			<img
 				src="/api/avatar/{user.username}"
 				alt={user.username}
-				class="h-100 rounded-full rounded-t-0" />
+				class="h-100 rounded-full rounded-top-0" />
 		</div>
 		<!-- {#if user.status}
 			<span
-				class="absolute bottom-0 end-0 badge rounded-full bg-a {statusColours[
+				class="position-absolute bottom-0 end-0 badge rounded-circle bg-a {statusColours[
 					user.status
 				]}">
 			</span>

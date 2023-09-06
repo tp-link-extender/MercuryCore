@@ -8,15 +8,15 @@
 
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Transactions</h1>
-	<a href="/admin" class="no-underline">
+	<a href="/admin" class="text-decoration-none">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6">
+	<div class="row mt-4">
+		<div class="col-lg-2 col-md-3 mb-4">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="lg:col-span-10 md:col-span-9">
+		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
 				<div class="container">
 					<table class="table table-responsive m-auto">
@@ -31,25 +31,26 @@
 								<td class="p-0">
 									<a
 										href="/user/{transaction.sender.number}"
-										class="flex no-underline">
-										<div class="me-2 rounded-full pfp bg-a">
+										class="d-flex text-decoration-none">
+										<div
+											class="me-2 rounded-circle pfp bg-a">
 											<img
 												src="/api/avatar/{transaction
 													.sender?.username}"
 												alt={transaction.sender
 													.username}
-												class="rounded-full rounded-t-0" />
+												class="rounded-full rounded-top-0" />
 										</div>
 										<p
-											class="light-text my-auto text-base truncate">
+											class="light-text my-auto fs-6 text-truncate">
 											{transaction.sender.username}
 										</p>
 									</a>
 								</td>
 
-								<td class="p-0 flex justify-center">
-									<div class="text-base currency">
-										<span class="text-emerald-500">
+								<td class="p-0 d-flex justify-content-center">
+									<div class="fs-6 currency">
+										<span class="text-success">
 											<i class="fa fa-gem" />
 											{transaction.amountSent}
 										</span>
@@ -64,8 +65,7 @@
 										</small>
 									</div>
 									<div class="fs-6 currency">
-										<i
-											class="fa fa-arrow-right me-1 light-text" />
+										<i class="fa fa-arrow-right me-1" />
 										<span class="text-success">
 											<i class="fa fa-gem" />
 											{Math.round(
@@ -81,17 +81,18 @@
 									<a
 										href="/user/{transaction.receiver
 											.number}"
-										class="flex justify-end no-underline">
-										<p class="light-text my-auto text-base">
+										class="d-flex justify-content-end text-decoration-none">
+										<p class="light-text my-auto fs-6">
 											{transaction.receiver.username}
 										</p>
-										<div class="ms-2 rounded-full pfp bg-a">
+										<div
+											class="ms-2 rounded-circle pfp bg-a">
 											<img
 												src="/api/avatar/{transaction
 													.receiver?.username}"
 												alt={transaction.receiver
 													.username}
-												class="rounded-full rounded-t-0" />
+												class="rounded-full rounded-top-0" />
 										</div>
 									</a>
 								</td>

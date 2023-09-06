@@ -2,7 +2,7 @@
 
 <h1 class="text-center light-text">Privacy Policy</h1>
 
-<div class="w-50rem mx-a mt-12 light-text">
+<div class="container mt-12 light-text">
 	<h2 class="h4 light-text text-center">Security</h2>
 	<p>
 		Passwords are salted and hashed securely using SCrypt.
@@ -11,7 +11,7 @@
 		not vulnerable to SQL injections or XSS attacks.
 		<br />
 		No personally identifying information such as location, device information,
-		network information, or IP addresses are automatically collected by Mercury.
+		network information, or IP addresses are collected by Mercury.
 	</p>
 	<h2 class="h4 light-text text-center mt-6">Children under the age of 13</h2>
 	<p>
@@ -58,6 +58,8 @@
 </div>
 
 <style lang="stylus">
+	containerMinWidth()
+
 	a
 		color var(--mainaccent)
 </style>

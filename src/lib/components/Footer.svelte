@@ -1,11 +1,7 @@
-<script lang="ts">
-	let clicked = false
-</script>
-
 <footer class="position-relative text-center">
 	<br />
 	<p class="grey-text mb-2">
-		<a href="/" class="text-decoration-none accent-text me-1">Mercury</a>
+		<a href="/" class="text-decoration-none accent-text">Mercury</a>
 		2022-{new Date().getFullYear()}
 		<button
 			on:mousedown={() => (clicked = !clicked)}
@@ -27,7 +23,7 @@
 </footer>
 
 <noscript>
-	<div id="nojs" class="fixed bottom-0 block vw-100">
+	<div id="nojs" class="position-fixed bottom-0 d-block vw-100">
 		<p class="light-text text-center">
 			Javascript is disabled. You may have a diminished experience while
 			using Mercury.

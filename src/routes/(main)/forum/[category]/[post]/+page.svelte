@@ -26,9 +26,9 @@
 
 <Head title={data.title} />
 
-<div class="w-70rem mx-a light-text">
+<div class="container light-text">
 	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
+		<ol class="breadcrumb border-0 m-0 p-0 fs-6">
 			<li class="breadcrumb-item">
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
@@ -73,23 +73,23 @@
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
-			<div class="grid grid-cols-12 gap-6 mb-2 flex">
+			<div class="row mb-2 d-flex">
 				<div>
 					<button
 						name="action"
 						value={data.likes ? "unlike" : "like"}
 						aria-label={data.likes ? "Unlike" : "Like"}
 						class="btn btn-sm {data.likes
-							? 'bg-emerald-600 hover:bg-emerald-800 text-white'
+							? 'btn-success'
 							: 'btn-outline-success'}">
 						<i class="fa{data.likes ? '' : 'r'} fa-thumbs-up" />
 					</button>
 				</div>
 				<span
 					class="my-2 text-center {data.likes
-						? 'text-success font-bold'
+						? 'text-success fw-bold'
 						: data.dislikes
-						? 'text-danger font-bold'
+						? 'text-danger fw-bold'
 						: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
@@ -99,7 +99,7 @@
 						value={data.dislikes ? "undislike" : "dislike"}
 						aria-label={data.dislikes ? "Undislike" : "Dislike"}
 						class="btn btn-sm {data.dislikes
-							? 'bg-red-500'
+							? 'btn-danger'
 							: 'btn-outline-danger'}">
 						<i
 							class="fa{data.dislikes
@@ -109,18 +109,18 @@
 				</div>
 			</div>
 		</form>
-		<div class="p-4 text-decoration-none light-text w-100">
+		<div class="p-3 text-decoration-none light-text w-100">
 			<span class="d-flex">
 				<a
 					href="/user/{data.author.number}"
-					class="user flex no-underline light-text">
-					<span class="pfp bg-a2 rounded-full">
+					class="user d-flex text-decoration-none light-text">
+					<span class="pfp bg-a2 rounded-circle">
 						<img
 							src="/api/avatar/{data.author.username}"
 							alt={data.author.username}
-							class="rounded-full rounded-t-0" />
+							class="rounded-full rounded-top-0" />
 					</span>
-					<span class="font-bold ms-4">
+					<span class="fw-bold ms-3">
 						{data.author.username}
 					</span>
 					<span class="ms-4">
@@ -146,7 +146,7 @@
 		<label for="content" class="form-label light-text mt-2">
 			Post a Reply
 		</label>
-		<fieldset class="lg:col-span-7 flex">
+		<fieldset class="col-lg-7 d-flex">
 			<textarea
 				bind:value={$form.content}
 				{...$constraints.content}
@@ -154,7 +154,7 @@
 				name="content"
 				placeholder="What are your thoughts?"
 				rows="4" />
-			<button class="btn btn-success ms-4 mt-auto">
+			<button type="submit" class="btn btn-success ms-3 mt-auto">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -163,10 +163,10 @@
 			</button>
 		</fieldset>
 		<p
-			class="mb-4"
+			class="mb-3"
 			class:text-success={$page.status == 200}
-			class:text-danger={$page.status >= 400}>
-			{$message || ""}
+			class:text-danger={$page.status >= 400 || $errors.status}>
+			{$errors.status || $message || ""}
 		</p>
 	</form>
 
@@ -185,6 +185,8 @@
 </div>
 
 <style lang="stylus">
+	containerMinWidth(70rem)
+
 	.sidebar
 		width 2.5rem
 

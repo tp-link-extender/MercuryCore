@@ -46,10 +46,8 @@
 	$: hidden = reply.visibility != "Visible"
 </script>
 
-{#if !topLevel}
-	<a
-		href="{baseUrl}{assetName ? '?tab=Comments' : ''}"
-		class="text-decoration-none">
+{#if depth == $baseDepth && !topLevel}
+	<a href="/forum/{forumCategoryLower}/{postId}" class="text-decoration-none">
 		<i class="fa fa-arrow-left me-2" />
 		{#if assetName}
 			Back to asset
@@ -59,7 +57,10 @@
 	</a>
 	{#if reply.parentReplyId}
 		<br />
-		<a href="{baseUrl}/{reply.parentReplyId}" class="text-decoration-none">
+		<a
+			href="/forum/{forumCategoryLower}/{postId}/{reply.parentReplyId}?depth={depth -
+				1}"
+			class="text-decoration-none">
 			<i class="fa fa-arrow-up me-2" />
 			Parent reply
 		</a>
@@ -67,17 +68,17 @@
 {/if}
 
 {#if reply && reply.author}
-	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="flex">
-		<span class="flex flex-col">
+	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="d-flex">
+		<span class="d-flex flex-column">
 			<a
 				class:hidden
 				href="/user/{reply.author.number}"
-				class="user flex no-underline pt-2">
-				<span class="pfp bg-a2 rounded-full">
+				class="user d-flex text-decoration-none pt-2">
+				<span class="pfp bg-a2 rounded-circle">
 					<img
 						src="/api/avatar/{reply.author.username}"
 						alt={reply.author.username}
-						class="rounded-full rounded-t-0" />
+						class="rounded-full rounded-top-0" />
 				</span>
 			</a>
 			<button
@@ -106,22 +107,15 @@
 			</button>
 		{:else}
 			<div in:fade|global={{ num }} class="w-100">
-				<div class="flex w-100">
+				<div class="d-flex w-100">
 					<div class="w-100">
 						<a
 							href="/user/{reply.author.number}"
-							class:hidden
-							class="user userlink d-flex text-decoration-none pt-2 ms-4 {reply
+							class="user userlink d-flex text-decoration-none pt-2 ms-3 {reply
 								.author.username == postAuthorName
 								? ''
 								: 'light-text'}">
-							<span
-								class="font-bold {reply.author.username ==
-								postAuthorName
-									? assetName
-										? 'text-warning'
-										: 'text-primary'
-									: ''}">
+							<span class="fw-bold">
 								{reply.author.username}
 								{#if reply.author.username == postAuthorName}
 									<i
@@ -164,7 +158,6 @@
 
 									return () => {}
 								}}
-								class:hidden
 								class="d-inline me-2"
 								method="POST"
 								action="?/like&rid={reply.id}">
@@ -175,14 +168,14 @@
 									class="smallbutton p-0 btn btn-sm">
 									<i
 										class="fa{reply.likes
-											? ' text-emerald-500'
+											? ' text-success'
 											: 'r'} fa-thumbs-up" />
 								</button>
 								<span
 									class="my-1 text-center {reply.likes
-										? 'text-success font-bold'
+										? 'text-success fw-bold'
 										: reply.dislikes
-										? 'text-danger font-bold'
+										? 'text-danger fw-bold'
 										: ''}">
 									{reply.likeCount - reply.dislikeCount}
 								</span>
@@ -197,7 +190,7 @@
 									class="smallbutton p-0 btn btn-sm">
 									<i
 										class="fa{reply.dislikes
-											? ' text-red-500'
+											? ' text-danger'
 											: 'r'} fa-thumbs-down" />
 								</button>
 							</form>
@@ -248,7 +241,9 @@
 												name="content"
 												placeholder="What are your thoughts?"
 												rows="4" />
-											<button class="btn btn-success">
+											<button
+												type="submit"
+												class="btn btn-success">
 												<i
 													class="far fa-message me-2" />
 												Reply
@@ -268,8 +263,10 @@
 					</div>
 				</div>
 
-				{#if depth > 8}
-					<a href="{baseUrl}/{reply.id}" class="text-decoration-none">
+				{#if depth > $baseDepth + 8}
+					<a
+						href="/forum/{forumCategoryLower}/{postId}/{reply.id}?depth={depth}"
+						class="text-decoration-none">
 						<i class="fa fa-arrow-down me-2" />
 						More replies
 					</a>

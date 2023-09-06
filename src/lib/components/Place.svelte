@@ -12,7 +12,7 @@
 </script>
 
 <a
-	in:fade|global={{ num, total }}
+	in:fade={{ num, total }}
 	class="rounded-3 text-center light-text text-decoration-none h6"
 	href="/place/{place.id}/{place.name}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
@@ -24,11 +24,11 @@
 	<p class="mb-1">
 		{place.name}
 	</p>
-	<span class="float-left ms-1">
+	<span class="float-start ms-1">
 		<i class="fa fa-thumbs-up opacity-75" />
 		{place.ratio}%
 	</span>
-	<span class="float-right me-1">
+	<span class="float-end me-1">
 		<i class="fa fa-user opacity-75" />
 		{place.gameSessions?.length}
 	</span>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	// const statusColours: { [k: string]: string } = {
 	// 	Online: "bg-info",
-	// 	Joined: "bg-emerald-500",
+	// 	Joined: "bg-success",
 	// 	Developing: "bg-warning",
 	// }
 
@@ -20,24 +20,24 @@
 	</h1>
 {/if}
 
-<div class="container-fluid mt-12">
+<div class="container-fluid mt-5">
 	{#if data.category == "users" && data.users}
-		<div class="grid grid">
+		<div class="grid d-grid">
 			{#each data.users as user, num}
 				<a
 					in:fade={{ num, total: data.users.length }}
-					class="px-2 mb-2 text-center light-text no-underline"
+					class="px-2 mb-2 text-center light-text text-decoration-none"
 					href="/user/{user.number}">
-					<div class="relative mb-2">
-						<div class="image-background bg-a rounded-full">
+					<div class="position-relative mb-2">
+						<div class="image-background bg-a rounded-circle">
 							<img
 								src="/api/avatar/{user.username}"
 								alt={user.username}
-								class="h-100 rounded-full rounded-t-0" />
+								class="h-100 rounded-full rounded-top-0" />
 						</div>
 						<!-- {#if user.status}
 							<span
-								class="absolute bottom-0 end-0 badge rounded-full {statusColours[
+								class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
 									user.status
 								]}">
 							</span>
@@ -48,7 +48,7 @@
 			{/each}
 		</div>
 	{:else if data.category == "places" && data.places}
-		<div class="grid grid">
+		<div class="grid d-grid">
 			{#each data.places as place, num}
 				<div class="px-2 mb-2">
 					<div class="place">
@@ -58,7 +58,7 @@
 			{/each}
 		</div>
 	{:else if data.category == "assets" && data.assets}
-		<div class="grid grid">
+		<div class="grid d-grid">
 			{#each data.assets as asset, num}
 				<div class="px-2 mb-2">
 					<div class="place">
@@ -68,7 +68,7 @@
 			{/each}
 		</div>
 	{:else if data.category == "groups" && data.groups}
-		<div class="grid grid">
+		<div class="grid d-grid">
 			{#each data.groups as group, num}
 				<div class="px-2 mb-2">
 					<div class="place">
@@ -78,18 +78,14 @@
 			{/each}
 		</div>
 	{:else}
-		<div id="buttons" class="d-flex justify-content-center gap-4">
+		<div id="buttons" class="d-flex justify-content-center gap-3">
 			<a class="btn btn-primary" href="/search?q={data.query}&c=users">
 				Users
 			</a>
-			<a
-				class="btn bg-blue-600 hover:bg-blue-800 text-white"
-				href="/search?q={data.query}&c=places">
+			<a class="btn btn-primary" href="/search?q={data.query}&c=places">
 				Places
 			</a>
-			<a
-				class="btn bg-blue-600 hover:bg-blue-800 text-white"
-				href="/search?q={data.query}&c=assets">
+			<a class="btn btn-primary" href="/search?q={data.query}&c=assets">
 				Assets
 			</a>
 		</div>

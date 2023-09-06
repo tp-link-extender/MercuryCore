@@ -15,20 +15,20 @@
 
 <Head title="Log in" description="Log into your Mercury account." />
 
-<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
-	<div class="w-100 fixed bottom-0">
-		<div class="absolute" />
-		<div class="absolute" />
+<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
+	<div class="w-100 position-fixed bottom-0">
+		<div class="position-absolute" />
+		<div class="position-absolute" />
 	</div>
 </div>
 
-<div class="grid grid-cols-12 gap-6">
+<div class="row">
 	<div id="dark" class="col light-text">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0 shadow-none">
 			<i class="fa fa-arrow-left me-2" />
 			Home
 		</a>
-		<h1 class="font-black light-text mb-6">
+		<h1 class="fw-bolder light-text mb-4">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
@@ -56,12 +56,12 @@
 		</div>
 	</div>
 
-	<div id="light" class="col col-span-12 lg:col-span-6 light-text">
+	<div id="light" class="col col-12 col-lg-6 light-text">
 		<div id="login" class="m-auto">
 			<h2 class="light-text">Log into your account</h2>
 			<p class="light-text">
 				Don't yet have an account?
-				<a href="/register" class="no-underline">Register</a>
+				<a href="/register" class="text-decoration-none">Register</a>
 			</p>
 
 			<form use:enhance class="m-auto form-group mt-6" method="POST">
@@ -78,7 +78,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Username" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.username || ""}
 						</p>
 					</div>
@@ -96,17 +96,13 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Password" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.password || ""}
 						</p>
 					</div>
-					<button class="container-fluid btn btn-primary mb-4">
-						{#if $delayed}
-							Working...
-						{:else}
-							Log in
-						{/if}
-						<!-- $delayed is true if the form takes
+					<button class="container-fluid btn btn-primary mb-3">
+						{$delayed ? "Working..." : "Log in"}
+						<!-- $delayed is true if the form takes 
 							more than a few hundred ms to submit -->
 					</button>
 				</fieldset>

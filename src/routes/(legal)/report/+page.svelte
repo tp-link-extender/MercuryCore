@@ -23,20 +23,20 @@
 
 <h1 class="text-center light-text">Report</h1>
 
-<div class="w-50rem mx-a mt-6 light-text">
+<div class="container mt-6 light-text">
 	<h2 class="light-text h5">
 		Tell us how you think {data.reportee} is breaking the rules.
 	</h2>
 
 	<form use:enhance method="POST" class="mt-6">
 		<fieldset>
-			<div class="grid grid-cols-12 gap-6">
+			<div class="row">
 				<label
 					for="category"
-					class="md:col-span-3 col-form-label text-md-right">
+					class="col-md-3 col-form-label text-md-right">
 					Item category
 				</label>
-				<div class="md:col-span-8">
+				<div class="col-md-8">
 					<select
 						bind:value={$form.category}
 						{...$constraints.category}
@@ -64,17 +64,17 @@
 						<option value="Swearing">Swearing</option>
 						<option value="Threats">Threats</option>
 					</select>
-					<p class="col-12 mb-4 text-danger">
+					<p class="col-12 mb-3 text-danger">
 						{$errors.category || ""}
 					</p>
 				</div>
 			</div>
 			<br />
-			<div class="row mb-4">
+			<div class="row mb-3">
 				<label for="note" class="col-md-3 col-form-label text-md-right">
 					Further information
 				</label>
-				<div class="md:col-span-8">
+				<div class="col-md-8">
 					<textarea
 						bind:value={$form.note}
 						{...$constraints.note}
@@ -83,12 +83,12 @@
 						placeholder="Up to 1000 characters"
 						class="form-control {$errors.note ? 'is-in' : ''}valid"
 						rows="5" />
-					<p class="col-12 mb-4 text-danger">
+					<p class="col-12 mb-3 text-danger">
 						{$errors.note || ""}
 					</p>
 				</div>
 			</div>
-			<button class="btn btn-success">
+			<button type="submit" class="btn btn-success">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -98,8 +98,12 @@
 		</fieldset>
 	</form>
 	<p
-		class:text-emerald-500={$page.status == 200}
-		class:text-red-500={$page.status >= 400}>
+		class:text-success={$page.status == 200}
+		class:text-danger={$page.status >= 400}>
 		{$message || ""}
 	</p>
 </div>
+
+<style lang="stylus">
+	containerMinWidth()
+</style>

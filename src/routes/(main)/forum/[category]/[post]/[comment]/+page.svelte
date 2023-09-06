@@ -11,9 +11,9 @@
 
 <Head title="Replies to forum post" />
 
-<div class="w-70rem mx-a light-text">
+<div class="container light-text">
 	<nav aria-label="breadcrumb" class="mx-auto">
-		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
+		<ol class="breadcrumb border-0 m-0 p-0 fs-6">
 			<li class="breadcrumb-item">
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
@@ -49,3 +49,7 @@
 			{repliesCollapsed} />
 	{/each}
 </div>
+
+<style lang="stylus">
+	containerMinWidth(70rem)
+</style>

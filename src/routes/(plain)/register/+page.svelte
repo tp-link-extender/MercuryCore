@@ -15,20 +15,20 @@
 
 <Head title="Register" description="Create a Mercury account." />
 
-<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
-	<div class="w-100 fixed bottom-0">
-		<div class="absolute" />
-		<div class="absolute" />
+<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
+	<div class="w-100 position-fixed bottom-0">
+		<div class="position-absolute" />
+		<div class="position-absolute" />
 	</div>
 </div>
 
-<div class="grid grid-cols-12 gap-6">
+<div class="row">
 	<div id="dark" class="col light-text">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0 shadow-none">
 			<i class="fa fa-arrow-left me-2" />
 			Home
 		</a>
-		<h1 class="font-black light-text mb-6">
+		<h1 class="fw-bolder light-text mb-4">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
@@ -55,12 +55,12 @@
 		</div>
 	</div>
 
-	<div id="light" class="col col-span-12 lg:col-span-6 light-text">
+	<div id="light" class="col col-12 col-lg-6 light-text">
 		<div id="login" class="m-auto">
 			<h2 class="light-text">Create a free account</h2>
 			<p class="light-text">
 				Already have an account?
-				<a href="/login" class="no-underline">Log in</a>
+				<a href="/login" class="text-decoration-none">Log in</a>
 			</p>
 
 			<form use:enhance class="m-auto form-group mt-6" method="POST">
@@ -77,7 +77,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="3-21 characters" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.username || ""}
 						</p>
 					</div>
@@ -95,7 +95,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="mercury@banland.xyz" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.email || ""}
 						</p>
 					</div>
@@ -113,7 +113,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Password" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.password || ""}
 						</p>
 					</div>
@@ -133,7 +133,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Confirm Password" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.cpassword || ""}
 						</p>
 					</div>
@@ -151,27 +151,27 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="mercurkey-12311121123" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.regkey || ""}
 						</p>
 					</div>
 
-					<button class="container-fluid btn btn-primary mb-4">
-						{#if $delayed}
-							Working...
-						{:else}
-							Register
-						{/if}
-						<!-- $delayed is true if the form takes
+					<button class="container-fluid btn btn-primary mb-3">
+						{$delayed ? "Working..." : "Log in"}
+						<!-- $delayed is true if the form takes 
 							more than a few hundred ms to submit -->
 					</button>
 				</fieldset>
 			</form>
 			<p>
 				By signing up, you agree to our
-				<a href="/terms" class="no-underline">Terms of Service</a>
+				<a href="/terms" class="text-decoration-none">
+					Terms of Service
+				</a>
 				and
-				<a href="/privacy" class="no-underline">Privacy policy</a>
+				<a href="/privacy" class="text-decoration-none">
+					Privacy policy
+				</a>
 				.
 			</p>
 		</div>

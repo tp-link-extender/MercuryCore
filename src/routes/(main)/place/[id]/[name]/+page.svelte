@@ -78,10 +78,21 @@
 
 <Head title={data.name} />
 
-<div class="w-70rem mx-a light-text">
+<div class="container light-text">
 	<div class="row">
-		<div class="col-md-8 mb-4">
-			<div in:fade class="carousel rounded-4">
+		<div in:fade id="carousel" class="carousel slide col-md-8 mb-3">
+			<div class="carousel-inner rounded-4">
+				<div class="carousel-indicators">
+					{#each images as _, i}
+						<button
+							type="button"
+							data-bs-target="#carousel"
+							data-bs-slide-to={i}
+							aria-label="Slide {i + 1}"
+							class:active={!i}
+							aria-current={!i} />
+					{/each}
+				</div>
 				{#each images as src, i}
 					<div
 						id="slide{i + 1}"
@@ -89,7 +100,7 @@
 						class:active={!i}>
 						<img
 							{src}
-							class="block w-100"
+							class="d-block w-100"
 							alt="Placeholder place thumbnail" />
 						<div
 							class="position-absolute d-flex justify-content-between carouselbuttons">
@@ -114,9 +125,9 @@
 		</div>
 
 		<div class="flex col-md-4">
-			<div class="card rounded-none mb-6">
+			<div class="card rounded-none mb-4">
 				<div class="card-body">
-					<div class="grid grid-cols-12 gap-6">
+					<div class="row">
 						<div class="col">
 							<h2 class="light-text">{data.name}</h2>
 						</div>
@@ -124,7 +135,7 @@
 							<div
 								id="settings"
 								aria-label="Place settings"
-								class="col flex justify-end">
+								class="col d-flex justify-content-end">
 								<a
 									href="/place/{data.id}/{data.name}/settings"
 									class="btn btn-sm btn-outline-warning">
@@ -133,16 +144,16 @@
 							</div>
 						{/if}
 					</div>
-					<span class="light-text flex mb-2">
+					<span class="light-text d-flex mb-2">
 						<b>by</b>
 						<a
 							href="/user/{data.ownerUser?.number}"
-							class="user light-text text-decoration-none">
-							<span class="pfp bg-darker rounded-circle ms-1">
+							class="user light-text text-decoration-none d-flex">
+							<span class="pfp bg-darker rounded-circle mx-1">
 								<img
 									src="/api/avatar/{data.ownerUser?.username}"
 									alt={data.ownerUser?.username}
-									class="rounded-full rounded-t-0" />
+									class="rounded-full rounded-top-0" />
 							</span>
 							{data.ownerUser?.username}
 						</a>
@@ -160,18 +171,20 @@
 							: "Offline"}
 					</span>
 					<span class="float-end">
-						<ReportButton
+						<Report
 							user={data.ownerUser?.username || ""}
 							url="/place/{data.id}/{data.name}" />
 					</span>
 				</div>
 			</div>
-			<div id="buttons" class="grid grid-cols-12 gap-6">
+			<div id="buttons" class="row">
 				<button
 					on:click={placeLauncher}
 					id="play"
-					class:disabled={data.serverPing < Date.now() / 1000 - 35}
-					class="btn btn-lg btn-success mt-6">
+					class="btn btn-lg btn-success mt-4 {data.serverPing >
+					Date.now() / 1000 - 35
+						? ''
+						: 'disabled'}">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
 
@@ -201,11 +214,15 @@
 
 						return () => {}
 					}}
-					class="align-self-center col mt-4 px-0 mb-2"
+					class="align-self-center col mt-3 px-0 mb-2"
 					method="POST"
-					action="?/like&privateTicket={data.privateTicket}">
+					action="?/like">
+					<input
+						type="hidden"
+						name="privateTicket"
+						value={data.privateTicket} />
 					<div class="row mb-2">
-						<div class="col d-flex justify-content-start">
+						<div class="col flex justify-start">
 							<button
 								name="action"
 								value={data.likes ? "unlike" : "like"}
@@ -219,7 +236,7 @@
 										: 'r'} fa-thumbs-up" />
 							</button>
 						</div>
-						<div class="col flex justify-end">
+						<div class="col d-flex justify-content-end">
 							<button
 								name="action"
 								value={data.dislikes ? "undislike" : "dislike"}
@@ -238,7 +255,7 @@
 					</div>
 					<div class="progress rounded-pill" style="height: 3px">
 						<div
-							class="progress-bar bg-emerald-500"
+							class="progress-bar bg-success"
 							role="progressbar"
 							aria-label="Likes"
 							style="width: {(data.likeCount /
@@ -249,7 +266,7 @@
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 						<div
-							class="progress-bar bg-red-500"
+							class="progress-bar bg-danger"
 							role="progressbar"
 							aria-label="Dislikes"
 							style="width: {(data.dislikeCount /
@@ -260,15 +277,15 @@
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 					</div>
-					<div class="grid grid-cols-12 gap-6">
-						<div class="col flex justify-start">
+					<div class="row">
+						<div class="col d-flex justify-content-start">
 							<span class="light-text mx-2">
 								{data.likeCount} like{data.likeCount == 1
 									? ""
 									: "s"}
 							</span>
 						</div>
-						<div class="col flex justify-end">
+						<div class="col d-flex justify-content-end">
 							<span class="light-text mx-2">
 								{data.dislikeCount} dislike{data.dislikeCount ==
 								1
@@ -305,16 +322,16 @@
 				running. Below are two methods of hosting - we recommend using
 				Autopilot to get started easily.
 			</p>
-			<div class="d-flex align-items-start mb-4">
-				<div class="bg-a me-4">
+			<div class="d-flex align-items-start mb-3">
+				<div class="bg-a me-3">
 					<TabNav bind:tabData={tabData2} vertical />
 					<!-- Prevents nested tabs from breaking -->
-					{((tabData2.num = 0), "")}
+					{((tabData2.num = 0), "") }
 				</div>
 				<Tab tabData={tabData2}>
 					<p class="light-text mb-1">
 						You can host your server by opening your map in <button
-							class="btn bg-blue-600 hover:bg-blue-800 text-white p-1 btn-sm"
+							class="btn btn-primary p-1 btn-sm"
 							on:click={() => {
 								launch("mercury-player:1+launchmode:ide")
 							}}>
@@ -340,7 +357,7 @@
 						<code>content\maps\CoolMap.rbxl</code>
 						.
 					</p>
-					<div class="flex">
+					<div class="input-group">
 						<input
 							type="text"
 							class="form-control valid"
@@ -349,7 +366,7 @@
 							placeholder="Map location"
 							aria-label="Map location" />
 						<button
-							class="btn bg-blue-600 hover:bg-blue-800 text-white"
+							class="btn btn-primary"
 							on:click={() => {
 								launch("mercury-player:1+launchmode:maps")
 							}}
@@ -358,7 +375,7 @@
 							Map Folder
 						</button>
 						<button
-							class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
+							class="btn btn-success"
 							on:click={() => {
 								launch(
 									`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${
@@ -370,31 +387,27 @@
 							<i class="fas fa-wifi" />
 							Begin Hosting
 						</button>
-
-						<div class="dropdown2 dropdown-hover dropdown-end">
-							<button
-								class="btn btn-success dropdown-toggle"
-								type="button" />
-							<div class="dropdown-content pt-2">
-								<ul class="p-2 rounded-3">
-									<li class="rounded-2">
-										<button
-											class="btn light-text ps-4 pe-0 text-start"
-											on:click={() =>
-												launch(
-													`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
-														data.serverTicket
-													}&autopilot=${btoa(
-														filepath
-													)}`
-												)}
-											type="button">
-											Begin Hosting (no Studio tools)
-										</button>
-									</li>
-								</ul>
-							</div>
-						</div>
+						<button
+							class="btn btn-success dropdown-toggle"
+							type="button"
+							data-bs-toggle="dropdown"
+							aria-expanded="false" />
+						<ul class="dropdown-menu dropdown-menu-end">
+							<li>
+								<button
+									class="dropdown-item light-text"
+									on:click={() => {
+										launch(
+											`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
+												data.serverTicket
+											}&autopilot=${btoa(filepath)}`
+										)
+									}}
+									type="button">
+									Begin Hosting (no Studio tools)
+								</button>
+							</li>
+						</ul>
 					</div>
 				</Tab>
 			</div>
@@ -427,7 +440,7 @@
 											alt={user.username}
 											height="75"
 											width="75"
-											class="rounded-circle rounded-t-0" />
+											class="rounded-circle rounded-top-0" />
 									</span>
 								</a>
 							{/each}
@@ -440,7 +453,7 @@
 		{/if}
 	</Tab>
 	<hr />
-	<div class="grid grid-cols-12 gap-6">
+	<div class="row">
 		{#each statistics as [title, stat]}
 			<div class="col">
 				<p class="light-text text-center"><b>{title}</b></p>
@@ -452,12 +465,12 @@
 </div>
 
 <Modal {modal}>
-	<div class="modal-body d-flex flex-column p-6">
+	<div class="modal-body d-flex flex-column p-4">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
 				id="wrapper"
-				class="text-center align-self-center mt-12 mb-6">
+				class="text-center align-self-center mt-5 mb-4">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
@@ -487,7 +500,7 @@
 				Install the Mercury client and start playing now!
 			</h1>
 			<a
-				class="btn bg-emerald-600 hover:bg-emerald-800 text-white"
+				class="btn btn-success"
 				href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
 				Download 2013
 			</a>
@@ -496,6 +509,8 @@
 </Modal>
 
 <style lang="stylus">
+	containerMinWidth(60rem)
+
 	#buttons
 		margin auto
 		display flex

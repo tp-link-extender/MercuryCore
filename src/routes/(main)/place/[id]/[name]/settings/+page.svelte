@@ -42,19 +42,19 @@
 	<h1 class="light-text mb-6">Configure {data.name}</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h4 class="light-text font-normal mb-1">Game View</h4>
-		<p class="mb-0 grey-text mb-6">
+		<h4 class="light-text fw-normal mb-1">Game View</h4>
+		<p class="mb-0 grey-text mb-4">
 			Change the title and description of your server.
 		</p>
-		<form use:enhance class="lg:col-span-8" method="POST" action="?a=view">
+		<form use:enhance class="col-lg-8" method="POST" action="?a=view">
 			<fieldset>
-				<div class="grid grid-cols-12 gap-6 mb-2">
+				<div class="row mb-2">
 					<label
 						for="title"
-						class="md:col-span-3 col-form-label text-md-right">
+						class="col-md-3 col-form-label text-md-right">
 						Title
 					</label>
-					<div class="md:col-span-9">
+					<div class="col-md-9">
 						<input
 							bind:value={$form.title}
 							{...$constraints.title}
@@ -64,18 +64,18 @@
 							class="form-control {$errors.title
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.title || ""}
 						</p>
 					</div>
 				</div>
-				<div class="grid grid-cols-12 gap-6 mb-2">
+				<div class="row mb-2">
 					<label
 						for="icon"
-						class="md:col-span-3 col-form-label text-md-right">
+						class="col-md-3 col-form-label text-md-right">
 						Place Icon
 					</label>
-					<div class="md:col-span-5">
+					<div class="col-md-5">
 						<input
 							bind:value={$form.icon}
 							id="icon"
@@ -85,13 +85,13 @@
 							class="form-control {$errors.icon
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.icon || ""}
 						</p>
 					</div>
 				</div>
 				<hr class="grey-text" />
-				<div class="grid grid-cols-12 gap-6">
+				<div class="row">
 					<label for="description" class="form-label light-text">
 						Description
 					</label>
@@ -110,7 +110,7 @@
 					</div>
 				</div>
 			</fieldset>
-			<button class="btn btn-success mt-6">
+			<button type="submit" class="btn btn-success mt-4">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -118,38 +118,34 @@
 				{/if}
 			</button>
 			<p
-				class:text-emerald-500={$page.status == 200}
-				class:text-red-500={$page.status >= 400}>
+				class:text-success={$page.status == 200}
+				class:text-danger={$page.status >= 400}>
 				{$message || ""}
 			</p>
 		</form>
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text font-normal mb-1">Network</h4>
-		<p class="mb-0 grey-text mb-6">
+		<h4 class="light-text fw-normal mb-1">Network</h4>
+		<p class="mb-0 grey-text mb-4">
 			Change the network configurations of your server.
 		</p>
-		<form
-			use:enhance
-			method="POST"
-			class="lg:col-span-8"
-			action="?a=ticket">
-			<fieldset class="grid grid-cols-12 gap-6 mb-2">
+		<form use:enhance method="POST" class="col-lg-8" action="?a=ticket">
+			<fieldset class="row mb-2">
 				<label
 					for="ticket"
-					class="md:col-span-3 col-form-label text-md-right">
+					class="col-md-3 col-form-label text-md-right">
 					Server Ticket
 				</label>
-				<div class="md:col-span-9">
-					<div class="flex">
+				<div class="col-md-9">
+					<div class="input-group">
 						<input
 							id="ticket"
 							required
 							value={data.serverTicket}
 							class="form-control valid"
 							disabled />
-						<button class="btn btn-primary">
+						<button class="btn btn-primary" type="submit">
 							<i class="fas fa-rotate" />
 							Regenerate
 						</button>
@@ -161,19 +157,15 @@
 				</div>
 			</fieldset>
 		</form>
-		<form
-			use:enhance
-			class="lg:col-span-8"
-			method="POST"
-			action="?a=network">
+		<form use:enhance class="col-lg-8" method="POST" action="?a=network">
 			<fieldset>
-				<div class="grid grid-cols-12 gap-6 mb-2">
+				<div class="row mb-2">
 					<label
 						for="serverIP"
-						class="md:col-span-3 col-form-label text-md-right">
+						class="col-md-3 col-form-label text-md-right">
 						Address
 					</label>
-					<div class="md:col-span-9">
+					<div class="col-md-9">
 						<input
 							bind:value={$form.serverIP}
 							{...$constraints.serverIP}
@@ -183,18 +175,18 @@
 							class="form-control {$errors.serverIP
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.serverIP || ""}
 						</p>
 					</div>
 				</div>
-				<div class="grid grid-cols-12 gap-6 mb-2">
+				<div class="row mb-2">
 					<label
 						for="serverPort"
-						class="md:col-span-3 col-form-label text-md-right">
+						class="col-md-3 col-form-label text-md-right">
 						Port
 					</label>
-					<div class="md:col-span-9">
+					<div class="col-md-9">
 						<input
 							bind:value={$form.serverPort}
 							{...$constraints.serverPort}
@@ -205,7 +197,7 @@
 							class="form-control {$errors.serverPort
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.serverPort || ""}
 						</p>
 						<small class="grey-text">
@@ -214,13 +206,13 @@
 						</small>
 					</div>
 				</div>
-				<div class="grid grid-cols-12 gap-6 mb-2">
+				<div class="row mb-2">
 					<label
 						for="maxPlayers"
-						class="md:col-span-3 col-form-label text-md-right">
+						class="col-md-3 col-form-label text-md-right">
 						Server Limit
 					</label>
-					<div class="md:col-span-9">
+					<div class="col-md-9">
 						<input
 							bind:value={$form.maxPlayers}
 							{...$constraints.maxPlayers}
@@ -231,14 +223,14 @@
 							class="form-control {$errors.maxPlayers
 								? 'is-in'
 								: ''}valid" />
-						<p class="col-12 mb-4 text-danger">
+						<p class="col-12 mb-3 text-danger">
 							{$errors.maxPlayers || ""}
 						</p>
 					</div>
 				</div>
 				<hr class="grey-text" />
 			</fieldset>
-			<button class="btn btn-success mt-2 mb-2">
+			<button type="submit" class="btn btn-success mt-2 mb-2">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -246,32 +238,32 @@
 				{/if}
 			</button>
 			<p
-				class:text-emerald-500={$page.status == 200}
-				class:text-red-500={$page.status >= 400}>
+				class:text-success={$page.status == 200}
+				class:text-danger={$page.status >= 400}>
 				{$message || ""}
 			</p>
 		</form>
 	</Tab>
 
 	<Tab {tabData}>
-		<h4 class="light-text font-normal mb-1">Privacy</h4>
-		<p class="mb-0 grey-text mb-6">
+		<h4 class="light-text fw-normal mb-1">Privacy</h4>
+		<p class="mb-0 grey-text mb-4">
 			Enable private server to make your game only accessible to those
 			with the link.
 		</p>
 		<form
 			use:enhance
-			class="lg:col-span-8"
+			class="col-lg-8"
 			method="POST"
 			action="?a=privatelink">
-			<fieldset class="grid grid-cols-12 gap-6 mb-2">
+			<fieldset class="row mb-2">
 				<label
 					for="privateLink"
-					class="md:col-span-3 col-form-label text-md-right">
+					class="col-md-3 col-form-label text-md-right">
 					Private Server Link
 				</label>
-				<div class="md:col-span-9">
-					<div class="flex">
+				<div class="col-md-9">
+					<div class="input-group">
 						<input
 							id="privateLink"
 							value={`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`}
@@ -287,12 +279,15 @@
 
 								setTimeout(() => (copiedSuccess = false), 4000)
 							}}
-							class="btn bg-cyan-600 hover:bg-cyan-800 text-white"
+							class="btn btn-info"
 							type="button"
 							id="button-addon2">
 							<i class="fas fa-paste" />
 						</button>
-						<button class="btn btn-primary" id="button-addon2">
+						<button
+							class="btn btn-primary"
+							type="submit"
+							id="button-addon2">
 							<i class="fas fa-rotate" />
 							Regen
 						</button>
@@ -312,19 +307,15 @@
 				</div>
 			</fieldset>
 		</form>
-		<form
-			use:enhance
-			class="lg:col-span-8"
-			method="POST"
-			action="?a=privacy">
+		<form use:enhance class="col-lg-8" method="POST" action="?a=privacy">
 			<fieldset>
-				<div class="grid grid-cols-12 gap-6 mb-2">
+				<div class="row mb-2">
 					<label
 						for="privacy"
-						class="md:col-span-3 col-form-label text-md-right">
+						class="col-md-3 col-form-label text-md-right">
 						Private Server
 					</label>
-					<div class="md:col-span-9">
+					<div class="col-md-9">
 						<input
 							bind:checked={$form.privateServer}
 							class="form-check-input valid"
@@ -333,7 +324,7 @@
 							id="privateServer" />
 					</div>
 				</div>
-				<button class="btn btn-success mt-6">
+				<button type="submit" class="btn btn-success mt-4">
 					{#if $delayed}
 						Working...
 					{:else}
@@ -341,8 +332,8 @@
 					{/if}
 				</button>
 				<p
-					class:text-emerald-500={$page.status == 200}
-					class:text-red-500={$page.status >= 400}>
+					class:text-success={$page.status == 200}
+					class:text-danger={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</fieldset>

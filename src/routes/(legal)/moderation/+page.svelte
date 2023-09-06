@@ -34,7 +34,7 @@
 
 <Head title={moderationAction[data.type]} />
 
-<div class="w-50rem mx-a mt-12">
+<div class="container mt-12">
 	<div class="card">
 		<div class="card-body light-text">
 			<h1>
@@ -65,7 +65,7 @@
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="no-underline">
+							class="text-decoration-none">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.
@@ -84,10 +84,7 @@
 							I understand
 						</label>
 					</div>
-					<button
-						class="btn bg-blue-600 hover:bg-blue-800 text-white {checked
-							? ''
-							: 'disabled'}">
+					<button class="btn btn-primary {checked ? '' : 'disabled'}">
 						Reactivate
 					</button>
 				</form>
@@ -96,7 +93,7 @@
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="no-underline">
+							class="text-decoration-none">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.
@@ -108,7 +105,7 @@
 						)}
 					</p>
 					<button
-						class="btn bg-blue-600 hover:bg-blue-800 text-white {data.timeEnds.getTime() <
+						class="btn btn-primary {data.timeEnds.getTime() <
 						Date.now()
 							? ''
 							: 'disabled'}">
@@ -126,3 +123,7 @@
 		</div>
 	</div>
 </div>
+
+<style lang="stylus">
+	containerMinWidth()
+</style>

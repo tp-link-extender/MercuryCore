@@ -15,13 +15,13 @@
 
 <h1 class="text-center light-text">Create a group</h1>
 
-<form use:enhance method="POST" class="w-50rem mx-a mt-12 light-text">
+<form use:enhance method="POST" class="container mt-12 light-text">
 	<fieldset>
-		<div class="row mb-4">
+		<div class="row mb-3">
 			<label for="name" class="col-md-3 col-form-label text-md-right">
 				Group name
 			</label>
-			<div class="md:col-span-8">
+			<div class="col-md-8">
 				<input
 					bind:value={$form.name}
 					{...$constraints.name}
@@ -29,12 +29,12 @@
 					id="name"
 					placeholder="This cannot be changed. Choose wisely."
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.name || ""}
 				</p>
 			</div>
 		</div>
-		<button class="btn btn-success">
+		<button type="submit" class="btn btn-success">
 			{#if $delayed}
 				Working...
 			{:else}
@@ -44,7 +44,11 @@
 			{/if}
 		</button>
 	</fieldset>
-	<p class="col-12 mb-4 text-danger">
+	<p class="col-12 mb-3 text-danger">
 		{other}
 	</p>
 </form>
+
+<style lang="stylus">
+	containerMinWidth()
+</style>

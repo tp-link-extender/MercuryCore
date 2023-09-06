@@ -62,7 +62,7 @@
 <slot />
 
 <!-- Toast notifications -->
-<div class="toast-container fixed bottom-0 end-0">
+<div class="toast-container position-fixed bottom-0 end-0">
 	{#each notifications as notification}
 		<div
 			class="toast show bg-darker light-text m-4"
@@ -72,13 +72,13 @@
 			<div class="toast-header bg-a light-text">
 				<a
 					href="/user/{notification.sender.number}"
-					class="flex items-center w-100 light-text no-underline">
+					class="d-flex align-items-center w-100 light-text text-decoration-none">
 					<div
-						class="image-background bg-background rounded-circle me-4">
+						class="image-background bg-background rounded-circle me-3">
 						<img
 							src="/api/avatar/{notification.sender.username}"
 							alt={notification.sender.username}
-							class="h-100 rounded-full rounded-t-0" />
+							class="h-100 rounded-full rounded-top-0" />
 					</div>
 					<strong class="me-auto">
 						{notificationNotes[notification.type]}
@@ -96,7 +96,7 @@
 			</div>
 			<a
 				href={notification.link}
-				class="toast-body bg-darker light-text no-underline block">
+				class="toast-body bg-darker light-text text-decoration-none d-block">
 				{notification.note}
 			</a>
 		</div>

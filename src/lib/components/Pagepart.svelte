@@ -21,7 +21,7 @@
 		<div
 			in:fly={{ y: -100, duration: 500 }}
 			id="b"
-			class="flex flex-row items-center min-vh-100">
+			class="d-flex flex-row align-items-center min-vh-100">
 			<slot />
 		</div>
 	{:else}

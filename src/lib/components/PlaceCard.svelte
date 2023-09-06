@@ -13,35 +13,32 @@
 </script>
 
 <a
-	in:fade|global={{ num, total }}
+	in:fade={{ num, total }}
 	class="card text-center light-text bg-darker text-decoration-none h6 rounded-4 m-0"
 	class:border-success={place.serverPing >=
 		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
 	<div
-		class="grid grid-cols-12 gap-6"
+		class="row"
 		class:opacity-50={place.serverPing <
 			Math.floor(Date.now() / 1000) - 35}>
 		<div class="col col-6">
-			<div class="shadow overflow-hidden bg-black h-100">
-				<img
-					src="/place/{place.id}/{place.name}/icon"
-					alt={place.name}
-					class="w-100 h-100" />
+			<div id="shadow" class="overflow-hidden bg-black">
+				<img src="/place/{place.id}/{place.name}/icon" alt={place.name} class="w-100 h-100" />
 			</div>
 		</div>
-		<div class="col col-span-6 p-2 row">
+		<div class="col col-6 p-2 row">
 			<p class="mb-1">
 				{place.name}
 			</p>
 			<div class="mt-auto mb-1">
-				<div class="float-left">
+				<div class="float-start">
 					<span>
 						<i class="fa fa-thumbs-up opacity-75" />
 						{place.ratio}%
 					</span>
 				</div>
-				<div class="float-right">
+				<div class="float-end">
 					<span>
 						<i class="fa fa-user opacity-75" />
 						{place.gameSessions?.length}

@@ -35,25 +35,25 @@
 
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Banners</h1>
-	<a href="/admin" class="no-underline">
+	<a href="/admin" class="text-decoration-none">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6 pe-0">
+	<div class="row mt-4">
+		<div class="col-lg-2 col-md-3 mb-4 pe-0">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="lg:col-span-10 md:col-span-9">
+		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
 				<form use:enhance method="POST">
 					<fieldset>
-						<div class="grid grid-cols-12 gap-6">
+						<div class="row">
 							<label
 								for="bannerText"
-								class="md:col-span-3 col-form-label light-text">
+								class="col-md-3 col-form-label text-md-right light-text">
 								Banner text
 							</label>
-							<div class="md:col-span-8">
+							<div class="col-md-8">
 								<textarea
 									bind:value={$form.bannerBody}
 									{...$constraints.bannerBody}
@@ -65,19 +65,19 @@
 								<small class="light-text">
 									3-100 characters
 								</small>
-								<p class="col-12 mb-4 text-danger">
+								<p class="col-12 mb-3 text-danger">
 									{$errors.bannerBody || ""}
 								</p>
 							</div>
 						</div>
 						<br />
-						<div class="grid grid-cols-12 gap-6">
+						<div class="row">
 							<label
 								for="bannerColour"
-								class="md:col-span-3 col-form-label light-text">
+								class="col-md-3 col-form-label text-md-right light-text">
 								Banner colour
 							</label>
-							<div class="md:col-span-2">
+							<div class="col-md-2">
 								<input
 									bind:value={$form.bannerColour}
 									{...$constraints.bannerColour}
@@ -87,19 +87,19 @@
 									class="{$errors.bannerColour
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 mb-4 text-danger">
+								<p class="col-12 mb-3 text-danger">
 									{$errors.bannerColour || ""}
 								</p>
 							</div>
 						</div>
 						<br />
-						<div class="grid grid-cols-12 gap-6">
+						<div class="row">
 							<label
 								for="bannerTextLight"
-								class="md:col-span-3 col-form-label light-text">
+								class="col-md-3 col-form-label text-md-right light-text">
 								Light text
 							</label>
-							<div class="md:col-span-2">
+							<div class="col-md-2">
 								<input
 									bind:checked={$form.bannerTextLight}
 									value="true"
@@ -112,7 +112,7 @@
 						<button
 							name="action"
 							value="create"
-							class="btn btn-success mt-4">
+							class="btn btn-success mt-3">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -123,8 +123,8 @@
 				</form>
 
 				<p
-					class:text-emerald-500={$page.status == 200}
-					class:text-red-500={$page.status >= 400}>
+					class:text-success={$page.status == 200}
+					class:text-danger={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</Tab>
@@ -152,7 +152,7 @@
 										<button
 											name="action"
 											value="delete"
-											class="btn btn-sm btn-link no-underline text-red-500 my-0">
+											class="btn btn-sm btn-link text-decoration-none text-danger my-0">
 											<i class="fas fa-trash" />
 											Delete Banner
 										</button>
@@ -165,7 +165,13 @@
 											name="action"
 											value={banner.active
 												? "hide"
-												: "show"}
+												: "show"} />
+										<input
+											type="hidden"
+											name="id"
+											value={banner.id} />
+										<button
+											type="submit"
 											class="btn btn-sm btn-link text-decoration-none text-{banner.active
 												? 'warning'
 												: 'success'} my-0">
@@ -185,7 +191,7 @@
 											banner.id,
 											banner.body
 										)}
-										class="btn btn-sm bg-emerald-600 hover:bg-emerald-800 text-white my-0">
+										class="btn btn-sm btn-success my-0">
 										View Body
 									</button>
 								</td>
@@ -202,7 +208,7 @@
 								<td>
 									<a
 										href="/user/{banner.user.number}"
-										class="no-underline">
+										class="text-decoration-none">
 										{banner.user.username}
 									</a>
 								</td>
@@ -239,14 +245,15 @@
 					id="bannerBody"
 					class="form-control {$errors.bannerBody
 						? 'is-in'
-						: ''}valid mb-4" />
-				<p class="col-12 mb-4 text-danger">
+						: ''}valid mb-3" />
+				<p class="col-12 mb-3 text-danger">
 					{$errors.bannerBody || ""}
 				</p>
 				{#if newBannerBody.trim() != $form.bannerBody?.trim()}
-					<div transition:fade class="grid">
+					<div transition:fade class="d-grid gap-2">
 						<button
 							value="updateBody"
+							class="btn btn-success"
 							name="action"
 							class="btn btn-success"
 							id="saveBannerBody">
@@ -260,8 +267,8 @@
 				{/if}
 			</form>
 			<p
-				class:text-emerald-500={$page.status == 200}
-				class:text-red-500={$page.status >= 400}>
+				class:text-success={$page.status == 200}
+				class:text-danger={$page.status >= 400}>
 				{$message || ""}
 			</p>
 		</div>

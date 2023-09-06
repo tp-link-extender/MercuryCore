@@ -30,20 +30,16 @@
 <Head title="Discover" />
 
 <div class="container">
-	<div class="row mb-12">
+	<div class="row mb-5">
 		<h1 class="col light-text">
 			Games
-			<a href="/games/create" class="btn btn-primary ms-6">
+			<a href="/games/create" class="btn btn-primary ms-4">
 				<i class="fas fa-plus" />
 				Create
 			</a>
 		</h1>
 		<div class="col-8">
-			<form
-				use:enhance
-				method="POST"
-				action="/search?c=places"
-				class="row">
+			<form use:enhance method="POST" action="/search" class="row">
 				<div class="col-5">
 					<div class="input-group">
 						<input
@@ -56,6 +52,7 @@
 							aria-describedby="button-addon2" />
 						<button
 							class="btn btn-success"
+							type="submit"
 							aria-label="Search"
 							id="button-addon2">
 							<i class="fa fa-magnifying-glass" />
@@ -63,7 +60,7 @@
 					</div>
 				</div>
 				<div class="col-7 row">
-					<div class="ms-4 col">
+					<div class="ms-3 col">
 						<div class="row">
 							<label
 								for="genre"
@@ -99,8 +96,8 @@
 			</form>
 		</div>
 	</div>
-	<div class="grid grid-cols-12 gap-6">
-		<div class="container grid m-0">
+	<div class="row">
+		<div class="container d-grid m-0">
 			{#each query ? searchedData : data.places || [] as place, num (place.id)}
 				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
@@ -119,7 +116,7 @@
 		background-color var(--accent)
 		border-color var(--accent2)
 
-	.grid
+	.d-grid
 		font-size 0.9rem
 
 		grid-template-columns repeat(auto-fit, minmax(19rem, 1fr))

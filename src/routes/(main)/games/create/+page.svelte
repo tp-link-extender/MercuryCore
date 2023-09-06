@@ -15,9 +15,9 @@
 
 <h1 class="text-center light-text">Create a place</h1>
 
-<form use:enhance method="POST" class="w-50rem mx-a mt-12 light-text">
+<form use:enhance method="POST" class="container mt-12 light-text">
 	<fieldset>
-		<div class="row mb-4">
+		<div class="row mb-3">
 			<label for="name" class="col-md-3 col-form-label">Place name</label>
 			<div class="col-md-8">
 				<input
@@ -27,16 +27,16 @@
 					id="name"
 					placeholder="Make sure to make it accurate"
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.name || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row mb-3">
 			<label for="description" class="col-md-3 col-form-label">
 				Description
 			</label>
-			<div class="md:col-span-8">
+			<div class="col-md-8">
 				<textarea
 					bind:value={$form.description}
 					{...$constraints.description}
@@ -46,16 +46,16 @@
 					class="form-control {$errors.description
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.description || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row mb-3">
 			<label for="serverIP" class="col-md-3 col-form-label">
 				Server IP
 			</label>
-			<div class="md:col-span-8">
+			<div class="col-md-8">
 				<input
 					bind:value={$form.serverIP}
 					{...$constraints.serverIP}
@@ -66,16 +66,16 @@
 					class="form-control {$errors.serverIP
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.serverIP || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row mb-3">
 			<label for="serverPort" class="col-md-3 col-form-label">
 				Server Port
 			</label>
-			<div class="md:col-span-8">
+			<div class="col-md-8">
 				<input
 					bind:value={$form.serverPort}
 					{...$constraints.serverPort}
@@ -86,16 +86,16 @@
 					class="form-control {$errors.serverPort
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.serverPort || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row mb-3">
 			<label for="maxPlayers" class="col-md-3 col-form-label">
 				Player Limit
 			</label>
-			<div class="md:col-span-8">
+			<div class="col-md-8">
 				<input
 					bind:value={$form.maxPlayers}
 					{...$constraints.maxPlayers}
@@ -106,16 +106,16 @@
 					class="form-control {$errors.maxPlayers
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.maxPlayers || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-6">
+		<div class="row mb-4">
 			<label for="privateServer" class="col-md-3 col-form-label">
 				Private Server
 			</label>
-			<div class="md:col-span-8">
+			<div class="col-md-8">
 				<input
 					bind:checked={$form.privateServer}
 					{...$constraints.privateServer}
@@ -123,12 +123,12 @@
 					type="checkbox"
 					name="privateServer"
 					id="privateServer" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.privateServer || ""}
 				</p>
 			</div>
 		</div>
-		<button class="btn btn-success">
+		<button type="submit" class="btn btn-success">
 			{#if $delayed}
 				Working...
 			{:else}
@@ -138,12 +138,14 @@
 			{/if}
 		</button>
 	</fieldset>
-	<p class="col-12 mb-4 text-danger">
+	<p class="col-12 mb-3 text-danger">
 		{other}
 	</p>
 </form>
 
 <style lang="stylus">
+	containerMinWidth()
+
 	input
 		&[type="checkbox"]
 			height 1.5rem

@@ -9,11 +9,11 @@
 			<div class="text">
 				<p>yeah game</p>
 				<div>
-					<div class="float-left">
+					<div class="float-start">
 						<fa class="thumbs-up" />
 						50%
 					</div>
-					<div class="float-right">
+					<div class="float-end">
 						<fa class="user" />
 						12
 					</div>
@@ -56,9 +56,9 @@
 		margin-bottom 0.5rem
 
 	.float-end
-		float right
+		float: right
 	.float-start
-		float left
+		float: left
 
 	img
 		width 10rem

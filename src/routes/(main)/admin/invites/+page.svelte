@@ -27,25 +27,25 @@
 
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Invites</h1>
-	<a href="/admin" class="no-underline">
+	<a href="/admin" class="text-decoration-none">
 		<i class="fas fa-caret-left" />
 		Back to panel
 	</a>
-	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6">
+	<div class="row mt-4">
+		<div class="col-lg-2 col-md-3 mb-4">
 			<TabNav bind:tabData tabs />
 		</div>
-		<div class="lg:col-span-10 md:col-span-9">
+		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
 				<form use:enhance method="POST">
 					<fieldset>
-						<div class="grid grid-cols-12 gap-6">
+						<div class="row">
 							<label
 								for="enableInviteCustom"
-								class="md:col-span-3 col-form-label light-text">
+								class="col-md-3 col-form-label text-md-right light-text">
 								Enable custom invite key
 							</label>
-							<div class="md:col-span-2">
+							<div class="col-md-2">
 								<input
 									bind:checked={$form.enableInviteCustom}
 									{...$constraints.enableInviteCustom}
@@ -58,15 +58,13 @@
 						</div>
 						<br />
 						{#if $form.enableInviteCustom}
-							<div
-								class="grid grid-cols-12 gap-6"
-								transition:fade>
+							<div class="row" transition:fade>
 								<label
 									for="inviteCustom"
-									class="md:col-span-3 col-form-label light-text">
+									class="col-md-3 col-form-label text-md-right light-text">
 									Custom invite key
 								</label>
-								<div class="md:col-span-8">
+								<div class="col-md-8">
 									<input
 										bind:value={$form.inviteCustom}
 										{...$constraints.inviteCustom}
@@ -80,20 +78,20 @@
 										Instead of having a randomly generated
 										key, this allows you to set the key.
 									</small>
-									<p class="col-12 mb-4 text-danger">
+									<p class="col-12 mb-3 text-danger">
 										{$errors.inviteCustom || ""}
 									</p>
 								</div>
 							</div>
 							<br />
 						{/if}
-						<div class="grid grid-cols-12 gap-6">
+						<div class="row">
 							<label
 								for="enableInviteExpiry"
-								class="md:col-span-3 col-form-label light-text">
+								class="col-md-3 col-form-label text-md-right light-text">
 								Enable expiry
 							</label>
-							<div class="md:col-span-2">
+							<div class="col-md-2">
 								<input
 									bind:checked={$form.enableInviteExpiry}
 									{...$constraints.enableInviteExpiry}
@@ -106,15 +104,13 @@
 						</div>
 						<br />
 						{#if $form.enableInviteExpiry}
-							<div
-								class="grid grid-cols-12 gap-6"
-								transition:fade>
+							<div class="row" transition:fade>
 								<label
 									for="inviteExpiry"
-									class="md:col-span-3 col-form-label light-text">
+									class="col-md-3 col-form-label text-md-right light-text">
 									Expiry date
 								</label>
-								<div class="md:col-span-8">
+								<div class="col-md-8">
 									<input
 										bind:value={$form.inviteExpiry}
 										{...$constraints.inviteExpiry}
@@ -126,20 +122,20 @@
 										class="form-control {$errors.inviteExpiry
 											? 'is-in'
 											: ''}valid" />
-									<p class="col-12 mb-4 text-danger">
+									<p class="col-12 mb-3 text-danger">
 										{$errors.inviteExpiry || ""}
 									</p>
 								</div>
 							</div>
 							<br />
 						{/if}
-						<div class="grid grid-cols-12 gap-6">
+						<div class="row">
 							<label
 								for="inviteUses"
-								class="md:col-span-3 col-form-label light-text">
+								class="col-md-3 col-form-label text-md-right light-text">
 								Uses
 							</label>
-							<div class="md:col-span-8">
+							<div class="col-md-8">
 								<input
 									bind:value={$form.inviteUses}
 									{...$constraints.inviteUses}
@@ -149,7 +145,7 @@
 									class="form-control {$errors.inviteUses
 										? 'is-in'
 										: ''}valid" />
-								<p class="col-12 mb-4 text-danger">
+								<p class="col-12 mb-3 text-danger">
 									{$errors.inviteUses || ""}
 								</p>
 							</div>
@@ -157,7 +153,7 @@
 						<button
 							name="action"
 							value="create"
-							class="btn btn-success mt-4">
+							class="btn btn-success mt-3">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -167,8 +163,8 @@
 					</fieldset>
 				</form>
 				<p
-					class:text-emerald-500={$page.status == 200}
-					class:text-red-500={$page.status >= 400}>
+					class:text-success={$page.status == 200}
+					class:text-danger={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</Tab>
@@ -195,7 +191,7 @@
 										<button
 											name="action"
 											value="disable"
-											class="btn btn-sm btn-link no-underline text-red-500 my-0">
+											class="btn btn-sm btn-link text-decoration-none text-danger my-0">
 											<i class="fas fa-ban" />
 											Disable Invite
 										</button>

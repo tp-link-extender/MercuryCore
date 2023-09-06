@@ -15,9 +15,9 @@
 
 <h1 class="text-center light-text">Create an avatar item</h1>
 
-<form use:enhance method="POST" class="w-50rem mx-a mt-12 light-text">
+<form use:enhance method="POST" class="container mt-12 light-text">
 	<fieldset>
-		<div class="row mb-4">
+		<div class="row mb-3">
 			<label for="name" class="col-md-3 col-form-label">Item name</label>
 			<div class="col-md-8">
 				<input
@@ -27,16 +27,16 @@
 					id="name"
 					placeholder="Make sure it is descriptive"
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.name || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row mb-3">
 			<label for="price" class="col-md-3 col-form-label">
 				Item price
 			</label>
-			<div class="md:col-span-8">
+			<div class="col-md-8">
 				<input
 					bind:value={$form.price}
 					{...$constraints.price}
@@ -44,16 +44,16 @@
 					name="price"
 					id="price"
 					class="form-control {$errors.price ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.price || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-6">
+		<div class="row mb-4">
 			<label for="category" class="col-md-3 col-form-label">
 				Item category
 			</label>
-			<div class="md:col-span-8">
+			<div class="col-md-8">
 				<select
 					bind:value={$form.category}
 					{...$constraints.category}
@@ -75,12 +75,12 @@
 					<option value="Back">Back</option>
 					<option value="Shoulder">Shoulder</option>
 				</select>
-				<p class="col-12 mb-4 text-danger">
+				<p class="col-12 mb-3 text-danger">
 					{$errors.category || ""}
 				</p>
 			</div>
 		</div>
-		<button class="btn btn-success">
+		<button type="submit" class="btn btn-success">
 			{#if $delayed}
 				Working...
 			{:else}
@@ -90,7 +90,11 @@
 			{/if}
 		</button>
 	</fieldset>
-	<p class="col-12 mb-4 text-danger">
+	<p class="col-12 mb-3 text-danger">
 		{other}
 	</p>
 </form>
+
+<style lang="stylus">
+	containerMinWidth()
+</style>
