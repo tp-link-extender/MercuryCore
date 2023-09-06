@@ -1,4 +1,6 @@
+-- CoreGui.RobloxGui.CoreScripts/Settings
 print "[Mercury]: Loaded corescript 46295863"
+
 local function waitForChild(instance, name)
 	while not instance:FindFirstChild(name) do
 		instance.ChildAdded:wait()

@@ -1,4 +1,6 @@
+-- RbxGear (unused)
 print "[Mercury]: Loaded corescript 45374389"
+
 local t = {}
 
 t.Foo = function()

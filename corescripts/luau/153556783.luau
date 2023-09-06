@@ -1,4 +1,12 @@
+-- CoreGui.RobloxGui.CoreScripts/TouchControls
+-- Unused by Mercury
 print "[Mercury]: Loaded corescript 153556783"
+for _ = 1, 4 do
+	pcall(function() 
+		warn "IF YOU SEE THIS MESSAGE, PLEASE REPORT IT TO THE MERCURY DEVELOPERS"
+	end)
+	print "IF YOU SEE THIS MESSAGE, PLEASE REPORT IT TO THE MERCURY DEVELOPERS"
+end
 
 -- This is responsible for all touch controls we show (as of this writing, only on iOS)
 -- this includes character move thumbsticks, and buttons for jump, use of items, camera, etc.

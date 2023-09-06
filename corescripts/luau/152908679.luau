@@ -1,4 +1,12 @@
+-- CoreGui.RobloxGui.CoreScripts/ContextActionTouch
+-- Unused by Mercury
 print "[Mercury]: Loaded corescript 152908679"
+for _ = 1, 4 do
+	pcall(function()
+		warn "IF YOU SEE THIS MESSAGE, PLEASE REPORT IT TO THE MERCURY DEVELOPERS"
+	end)
+	print "IF YOU SEE THIS MESSAGE, PLEASE REPORT IT TO THE MERCURY DEVELOPERS"
+end
 
 -- ContextActionTouch.lua
 -- this script controls ui and firing of lua functions that are bound in ContextActionService for touch inputs

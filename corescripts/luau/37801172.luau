@@ -1,4 +1,6 @@
+-- Script Context.StarterScript
 print "[Mercury]: Loaded corescript 37801172"
+
 local scriptContext = game:GetService "ScriptContext"
 
 -- Creates all neccessary scripts for the gui on initial load, everything except build tools
