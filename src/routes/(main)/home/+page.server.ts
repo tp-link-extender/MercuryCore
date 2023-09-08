@@ -1,63 +1,115 @@
-import type { PageServerLoad } from "./$types"
-import { error, redirect } from "@sveltejs/kit"
-import { PrismaClient } from "@prisma/client"
-import { createClient, Graph } from "redis"
+import cql from "$lib/cyphertag"
+import { authorise } from "$lib/server/lucia"
+import { prisma, findPlaces } from "$lib/server/prisma"
+import { roQuery } from "$lib/server/redis"
+import ratelimit from "$lib/server/ratelimit"
+import formError from "$lib/server/formError"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
 
-const prisma = new PrismaClient()
+const schema = z.object({
+	status: z.string().min(1).max(1000),
+})
 
-export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validateUser()
-	if (!session.session) throw redirect(302, "/login")
+export async function load({ locals }) {
+	const { user } = await authorise(locals),
+		// (main)/+layout.server.ts will handle most redirects for logged-out users,
+		// but sometimes errors for this page.
 
-	const client = createClient({ url: "redis://localhost:6479" })
+		greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`],
+		facts = [
+			`You joined mercury on ${user?.accountCreated
+				.toLocaleString()
+				.substring(0, 10)}!`,
+			// Add "st", "nd", "rd", "th" to number
+			`You are the ${user?.number}${
+				["st", "nd", "rd"][(user?.number % 10) - 1] || "th"
+			} user to join Mercury!`,
+		]
 
-	client.on("error", e => {
-		console.log("Redis error", e)
-		throw error(500, "Redis error")
-	})
-	await client.connect()
-	const graph = new Graph(client, "friends")
-
-	const friendsQuery = await graph.roQuery(
-		`
-		MATCH (:User { name: $user1 }) -[r:friends]-> (u:User)
-		RETURN u.name as name
-		`,
-		{
-			params: {
-				user1: session.user.username,
+	return {
+		stuff: {
+			greet: greets[Math.floor(Math.random() * greets.length)],
+			fact: facts[Math.floor(Math.random() * facts.length)],
+		},
+		form: superValidate(schema),
+		places: findPlaces({
+			where: {
+				privateServer: false,
 			},
-		}
-	)
-
-	let friends: any[] = []
-
-	for (let i of friendsQuery.data || ([] as any)) {
-		if (i.name)
-			friends.push(
-				await prisma.user.findUnique({
+			select: {
+				name: true,
+				id: true,
+				gameSessions: {
 					where: {
-						username: i?.name,
+						ping: {
+							gt: Math.floor(Date.now() / 1000) - 35,
+						},
 					},
+				},
+			},
+		}),
+		friends: prisma.authUser.findMany({
+			where: {
+				username: {
+					in: (
+						await roQuery(
+							"friends",
+							cql`
+								MATCH (:User { name: $user }) -[r:friends]- (u:User)
+								RETURN u.name as name`,
+							{
+								user: user.username,
+							},
+							false,
+							true,
+						)
+					).map((i: any) => i.name),
+				},
+			},
+			select: {
+				username: true,
+				number: true,
+			},
+		}),
+		feed: prisma.post.findMany({
+			select: {
+				id: true,
+				content: true,
+				posted: true,
+				authorUser: {
 					select: {
 						username: true,
-						displayname: true,
-						image: true,
-						status: true,
+						number: true,
 					},
-				})
-			)
+				},
+			},
+			orderBy: {
+				posted: "desc",
+			},
+			take: 40,
+		}),
 	}
+}
 
-	const getPlaces = await prisma.place.findMany({
-		select: {
-			name: true,
-			slug: true,
-			image: true,
-		},
-	})
-	return {
-		places: getPlaces || [],
-		friends: friends,
-	}
+export const actions = {
+	default: async ({ request, locals, getClientAddress }) => {
+		const form = await superValidate(request, schema)
+		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "statusPost", getClientAddress, 30)
+		if (limit) return limit
+
+		const { user } = await authorise(locals)
+
+		await prisma.post.create({
+			data: {
+				authorUser: {
+					connect: {
+						username: user.username,
+					},
+				},
+				content: form.data.status,
+			},
+		})
+	},
 }

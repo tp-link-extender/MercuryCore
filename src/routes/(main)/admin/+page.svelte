@@ -1,24 +1,234 @@
-<svelte:head>
-	<title>Privacy Policy - Mercury</title>
-</svelte:head>
+<script lang="ts">
+	const permissions = [
+		[], // index from 1
+		["white", "fa-user", "User"],
+		["aqua", "fa-check", "Verified"],
+		["violet", "fa-hammer", "Catalog Manager"],
+		["orange", "fa-shield-alt", "Moderator"],
+		["crimson", "fa-scale-balanced", "Administrator"],
+	]
 
-<h1 class="text-center light-text">Admin panel</h1>
+	const panel: { [k: string]: [string, string, string][] } = {
+		Moderation: [
+			["Moderate User", "/admin/moderation", "fas fa-user-slash"],
+			// ["Report Abuse", "#", "far fa-flag"],
+			["Asset Approval", "/admin/asset", "fas fa-file-circle-check"],
+		],
+		Economy: [
+			// ["Award Currency", "#", "far fa-gem"],
+			// ["Create New Asset", "#", "fas fa-file-circle-plus"],
+			[
+				"Transactions",
+				"/admin/transactions",
+				"fas fa-money-bill-transfer",
+			],
+		],
+	}
 
-<div class="container mt-5">
-	<p class="light-text">
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Laoreet non curabitur gravida arcu ac tortor. Tellus molestie nunc non blandit. Metus vulputate eu scelerisque felis imperdiet proin fermentum. Facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui. Posuere urna nec tincidunt praesent semper feugiat nibh. Fermentum leo vel orci porta non pulvinar neque laoreet. Massa vitae tortor condimentum lacinia. Sit amet nulla facilisi morbi tempus iaculis urna id volutpat. Nunc lobortis mattis aliquam faucibus. Ullamcorper eget nulla facilisi etiam. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec.<br />
-		<br />
-		Et odio pellentesque diam volutpat. Adipiscing bibendum est ultricies integer quis auctor. Dui sapien eget mi proin sed libero. Integer vitae justo eget magna fermentum iaculis eu. Est velit egestas dui id ornare arcu. Sed vulputate odio ut enim blandit. Elit sed vulputate mi sit amet mauris commodo quis. Magnis dis parturient montes nascetur. Sed viverra ipsum nunc aliquet bibendum enim. Tristique et egestas quis ipsum. Eget aliquet nibh praesent tristique magna sit amet purus gravida. Cum sociis natoque penatibus et magnis dis parturient montes. Enim lobortis scelerisque fermentum dui faucibus in ornare. Vitae congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque. Vitae purus faucibus ornare suspendisse sed nisi. Amet justo donec enim diam vulputate ut pharetra. Adipiscing tristique risus nec feugiat in fermentum. Viverra maecenas accumsan lacus vel facilisis volutpat. Orci a scelerisque purus semper eget duis at.<br />
-		<br />
-		Orci porta non pulvinar neque laoreet suspendisse interdum consectetur. Tristique magna sit amet purus gravida quis blandit. Mauris nunc congue nisi vitae suscipit tellus mauris. Maecenas accumsan lacus vel facilisis volutpat est velit. Leo integer malesuada nunc vel risus commodo viverra. Dignissim enim sit amet venenatis urna cursus eget. Amet justo donec enim diam vulputate ut pharetra sit amet. Ridiculus mus mauris vitae ultricies leo integer. Senectus et netus et malesuada fames ac turpis egestas. Eget mauris pharetra et ultrices neque ornare aenean euismod. Nulla at volutpat diam ut venenatis tellus. Ullamcorper velit sed ullamcorper morbi tincidunt ornare massa. Enim ut tellus elementum sagittis. Eget aliquet nibh praesent tristique magna sit.<br />
-		<br />
-		Vestibulum morbi blandit cursus risus at. Urna nunc id cursus metus aliquam eleifend mi in nulla. Nibh venenatis cras sed felis. Adipiscing enim eu turpis egestas pretium aenean pharetra magna ac. Sodales ut etiam sit amet nisl purus. Tortor posuere ac ut consequat semper viverra nam libero justo. Mauris sit amet massa vitae tortor condimentum. Faucibus turpis in eu mi bibendum neque. Dictum varius duis at consectetur lorem donec massa sapien faucibus. Iaculis urna id volutpat lacus laoreet. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique senectus.<br />
-		<br />
-		Ut tortor pretium viverra suspendisse potenti. Ac ut consequat semper viverra. Enim sit amet venenatis urna cursus eget. Egestas maecenas pharetra convallis posuere morbi leo. Magna sit amet purus gravida. Nunc lobortis mattis aliquam faucibus purus in. Velit ut tortor pretium viverra. Auctor elit sed vulputate mi. Elementum facilisis leo vel fringilla est ullamcorper eget nulla. Eget gravida cum sociis natoque penatibus et.
-	</p>
+	let diskSpace: {
+		free: number
+		size: number
+	}
+	async function getDiskSpace() {
+		const jsonData = JSON.parse(
+			(
+				await (
+					await fetch("admin", {
+						body: "",
+						method: "POST",
+					})
+				).json()
+			).data
+		)
+		return (diskSpace = {
+			free: jsonData[1],
+			size: jsonData[2],
+		})
+	}
+
+	export let data
+	const { user } = data
+
+	if (user?.permissionLevel == 5) {
+		panel.Economy.push(["Daily Stipend", "/admin/stipend", "far fa-clock"])
+		panel.Administration = [
+			["Banners", "/admin/banners", "fas fa-bullhorn"],
+			["Accounts", "/admin/accounts", "far fa-user"],
+			["Audit Logs", "/admin/audit", "fas fa-book"],
+			["Invites", "/admin/invites", "fas fa-key"],
+		]
+	}
+
+	const tabNames = ["Moderation", "Economy", "Statistics"]
+	if (user?.permissionLevel == 5) tabNames.unshift("Administration")
+
+	let tabData = TabData(data.url, tabNames)
+</script>
+
+<Head title="Admin" />
+
+<div class="container py-6">
+	<h1 class="h2 light-text">Admin Panel</h1>
+	<h2 class="h4 mb-6 border-bottom border-2 pb-4 light-text">
+		Your permission level is: <span
+			style="color: {permissions[user?.permissionLevel][0]}">
+			<i class="fa {permissions[user?.permissionLevel][1]} me-1" />
+			{permissions[user?.permissionLevel][2]}
+		</span>
+	</h2>
+	<div class="row">
+		<div class="col-lg-2 col-md-3 mb-6 pe-0">
+			<TabNav bind:tabData tabs />
+		</div>
+		<div class="col-lg-10 col-md-9">
+			{#each tabNames.slice(0, -1) as key}
+				<Tab {tabData}>
+					<div class="row g-3">
+						{#each panel[key] as i, num}
+							<AdminLink
+								href={i[1]}
+								iconClass={i[2]}
+								{num}
+								total={panel[key].length}
+								name={i[0]} />
+						{/each}
+					</div>
+				</Tab>
+			{/each}
+
+			<Tab {tabData}>
+				<div class="row g-3 pt-1">
+					<div class="col-lg-7 col-md-7 ps-1">
+						<div class="card bg-a3 text-black mb-4">
+							<div class="card-body bg-a rounded-1">
+								<h3 class="light-text">
+									<i class="fas fa-memory" />
+									{(
+										(data.totalmem - data.freemem) /
+										1024 ** 3
+									).toFixed(2)} / {(
+										data.totalmem /
+										1024 ** 3
+									).toFixed(2)} GB
+								</h3>
+								<span class="light-text">
+									{Math.round(
+										(data.totalmem - data.freemem) /
+											1024 ** 2
+									)} MB is being used
+								</span>
+								<div class="progress bg-darker mt-2">
+									<div
+										class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+										role="progressbar"
+										aria-valuenow={data.totalmem -
+											data.freemem}
+										aria-valuemin={0}
+										aria-valuemax={data.totalmem}
+										style="width: {((data.totalmem -
+											data.freemem) /
+											data.totalmem) *
+											100}%;" />
+								</div>
+							</div>
+						</div>
+						<div class="card bg-a3 text-black mb-4">
+							<div class="card-body bg-a rounded-1">
+								{#await diskSpace || getDiskSpace()}
+									<h3 class="light-text">Loading...</h3>
+								{:then disk}
+									<h3 class="light-text">
+										<i class="fas fa-hard-drive me-2" />
+										{(
+											(disk.size - disk.free) /
+											1024 ** 3
+										).toFixed(2)} / {(
+											disk.size /
+											1024 ** 3
+										).toFixed(2)} GB
+									</h3>
+									<span class="light-text">
+										{Math.round(
+											(disk.size - disk.free) / 1024 ** 2
+										)} MB is being used
+									</span>
+									<div class="progress bg-darker mt-2">
+										<div
+											class="progress-bar progress-bar-striped progress-bar-animated"
+											role="progressbar"
+											aria-valuenow={disk.size -
+												disk.free}
+											aria-valuemin={0}
+											aria-valuemax={disk.size}
+											style="width: {((disk.size -
+												disk.free) /
+												disk.size) *
+												100}%;" />
+									</div>
+								{/await}
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-5 col-md-5 pe-1">
+						<div class="card bg-a3 text-black mb-4">
+							<div class="card-body bg-a rounded-1">
+								<h3 class="light-text">
+									<i class="far fa-user me-2" />
+									Users
+								</h3>
+								<span class="light-text">
+									<b class="text-primary">0 users</b>
+									are currently online
+								</span>
+							</div>
+						</div>
+						<div class="card bg-a3 text-black mb-4">
+							<div class="card-body bg-a rounded-1">
+								<h3 class="light-text">
+									<i class="far fa-file me-2" />
+									Assets
+								</h3>
+								<span class="light-text">
+									<i
+										class="fas text-warning fa-file-circle-minus me-2" />
+									<b class="light-text">0 assets</b>
+									are currently pending
+								</span>
+								<br />
+								<span class="light-text">
+									<i
+										class="fas text-success fa-file-circle-check me-2" />
+									<b class="light-text">0 assets</b>
+									have been approved
+								</span>
+								<br />
+								<span class="light-text">
+									<i
+										class="fas text-danger fa-file-circle-xmark me-2" />
+									<b class="light-text">0 assets</b>
+									have been disapproved
+								</span>
+								<br />
+								<span class="light-text">
+									<i
+										class="fas text-info fa-folder-closed me-2" />
+									<b class="light-text">0 assets</b>
+									in total
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</Tab>
+		</div>
+	</div>
 </div>
 
-<style lang="sass">
-	.container
-		width: 50rem
+<style lang="stylus">
+	h2
+		border-color var(--accent3) !important
+
+	.card
+		border-width 2px
+		border-color var(--accent3)
 </style>

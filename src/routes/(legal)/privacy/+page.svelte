@@ -1,24 +1,65 @@
-<svelte:head>
-	<title>Privacy Policy - Mercury</title>
-</svelte:head>
+<Head title="Privacy Policy" description="Mercury's Privacy Policy" />
 
 <h1 class="text-center light-text">Privacy Policy</h1>
 
-<div class="container mt-5">
-	<p class="light-text">
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Laoreet non curabitur gravida arcu ac tortor. Tellus molestie nunc non blandit. Metus vulputate eu scelerisque felis imperdiet proin fermentum. Facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui. Posuere urna nec tincidunt praesent semper feugiat nibh. Fermentum leo vel orci porta non pulvinar neque laoreet. Massa vitae tortor condimentum lacinia. Sit amet nulla facilisi morbi tempus iaculis urna id volutpat. Nunc lobortis mattis aliquam faucibus. Ullamcorper eget nulla facilisi etiam. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec.<br />
+<div class="container mt-12 light-text">
+	<h2 class="h4 light-text text-center">Security</h2>
+	<p>
+		Passwords are salted and hashed securely using SCrypt.
 		<br />
-		Et odio pellentesque diam volutpat. Adipiscing bibendum est ultricies integer quis auctor. Dui sapien eget mi proin sed libero. Integer vitae justo eget magna fermentum iaculis eu. Est velit egestas dui id ornare arcu. Sed vulputate odio ut enim blandit. Elit sed vulputate mi sit amet mauris commodo quis. Magnis dis parturient montes nascetur. Sed viverra ipsum nunc aliquet bibendum enim. Tristique et egestas quis ipsum. Eget aliquet nibh praesent tristique magna sit amet purus gravida. Cum sociis natoque penatibus et magnis dis parturient montes. Enim lobortis scelerisque fermentum dui faucibus in ornare. Vitae congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque. Vitae purus faucibus ornare suspendisse sed nisi. Amet justo donec enim diam vulputate ut pharetra. Adipiscing tristique risus nec feugiat in fermentum. Viverra maecenas accumsan lacus vel facilisis volutpat. Orci a scelerisque purus semper eget duis at.<br />
+		Due to the web frameworks and databases used for development, Mercury is
+		not vulnerable to SQL injections or XSS attacks.
 		<br />
-		Orci porta non pulvinar neque laoreet suspendisse interdum consectetur. Tristique magna sit amet purus gravida quis blandit. Mauris nunc congue nisi vitae suscipit tellus mauris. Maecenas accumsan lacus vel facilisis volutpat est velit. Leo integer malesuada nunc vel risus commodo viverra. Dignissim enim sit amet venenatis urna cursus eget. Amet justo donec enim diam vulputate ut pharetra sit amet. Ridiculus mus mauris vitae ultricies leo integer. Senectus et netus et malesuada fames ac turpis egestas. Eget mauris pharetra et ultrices neque ornare aenean euismod. Nulla at volutpat diam ut venenatis tellus. Ullamcorper velit sed ullamcorper morbi tincidunt ornare massa. Enim ut tellus elementum sagittis. Eget aliquet nibh praesent tristique magna sit.<br />
-		<br />
-		Vestibulum morbi blandit cursus risus at. Urna nunc id cursus metus aliquam eleifend mi in nulla. Nibh venenatis cras sed felis. Adipiscing enim eu turpis egestas pretium aenean pharetra magna ac. Sodales ut etiam sit amet nisl purus. Tortor posuere ac ut consequat semper viverra nam libero justo. Mauris sit amet massa vitae tortor condimentum. Faucibus turpis in eu mi bibendum neque. Dictum varius duis at consectetur lorem donec massa sapien faucibus. Iaculis urna id volutpat lacus laoreet. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique senectus.<br />
-		<br />
-		Ut tortor pretium viverra suspendisse potenti. Ac ut consequat semper viverra. Enim sit amet venenatis urna cursus eget. Egestas maecenas pharetra convallis posuere morbi leo. Magna sit amet purus gravida. Nunc lobortis mattis aliquam faucibus purus in. Velit ut tortor pretium viverra. Auctor elit sed vulputate mi. Elementum facilisis leo vel fringilla est ullamcorper eget nulla. Eget gravida cum sociis natoque penatibus et.
+		No personally identifying information such as location, device information,
+		network information, or IP addresses are collected by Mercury.
 	</p>
+	<h2 class="h4 light-text text-center mt-6">Children under the age of 13</h2>
+	<p>
+		We do not knowingly collect personally identifiable information from
+		children under 13 years of age without parental consent. In the case we
+		discover that a child under the age of 13 has provided us with personal
+		information without obtaining appropriate parental consent, we will
+		delete this from our servers as soon as possible. If you are a parent or
+		guardian and you are aware that your child has provided us with personal
+		information without obtaining parental consent, please contact us so
+		that we will be able to complete the necessary actions to remove their
+		data.
+	</p>
+	<h2 class="h4 light-text text-center mt-6">Third parties</h2>
+	<p>
+		We do not allow any third party to collect personal information from our
+		users. We do not work with any third parties and we do not give our
+		users' data to any third parties.
+	</p>
+	<h2 class="h4 light-text text-center mt-6">Data protection</h2>
+	<p>
+		Under the General Data Protection Regulation (in the EU), Data
+		Protection Act (in the UK), or California Consumer Privacy Act (in
+		California), you remain in control of your data. If for any reason you
+		would like to retrieve or request deletion of your personal data, please
+		contact our support team at <a href="mailto:support@banland.xyz">
+			support@banland.xyz
+		</a>
+		.
+	</p>
+	<p>
+		Please check this privacy policy regularly. We may update it at any time
+		without notice. You must agree to any changes if you continue to use
+		Mercury after the privacy policy has been updated.
+	</p>
+	<p>
+		If you have any questions, suggestions, or if you want more information,
+		please contact our support team at <a href="mailto:support@banland.xyz">
+			support@banland.xyz
+		</a>
+		.
+	</p>
+	<em>Last updated 25 January 2023</em>
 </div>
 
-<style lang="sass">
-	.container
-		width: 50rem
+<style lang="stylus">
+	containerMinWidth()
+
+	a
+		color var(--mainaccent)
 </style>

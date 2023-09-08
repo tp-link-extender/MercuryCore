@@ -1,101 +1,143 @@
-import type { Actions } from "./$types"
-import { redirect, fail } from "@sveltejs/kit"
 import { auth } from "$lib/server/lucia"
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
+import { prisma } from "$lib/server/prisma"
+import formError from "$lib/server/formError"
+import { redirect, fail } from "@sveltejs/kit"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
 
-export const actions: Actions = {
+const schema = z.object({
+	username: z
+		.string()
+		.min(3)
+		.max(21)
+		.regex(/^[A-Za-z0-9_]+$/),
+	email: z.string().email(),
+	password: z.string().min(1).max(6969),
+	cpassword: z.string().min(1).max(6969),
+	regkey: z.string().min(1).max(6969),
+})
+
+export const load = () => ({
+	form: superValidate(schema),
+})
+
+export const actions = {
 	default: async ({ request, locals }) => {
-		const data = await request.formData()
-		const username = data.get("username")?.toString() || ""
-		const email = data.get("email")?.toString().toLowerCase() || ""
-		const password = data.get("password")?.toString() || ""
-		const cpassword = data.get("cpassword")?.toString() || ""
-		const regkey = data.get("regkey")?.toString().split("-") || ""
+		const form = await superValidate(request, schema)
+		if (!form.valid) return formError(form)
 
-		const easyChecks = [
-			[username.length < 3, "Username must be more than 3 characters", "username"],
-			[username.length > 30, "Username must be less than 30 characters", "username"],
-			[!username.match(/^[A-Za-z0-9_]+$/), "Username must be alphanumeric (A-Z, 0-9, _)", "username"],
-			[password.length < 1, "Password must be at least 1 character", "password"],
-			[password.length > 6969, "Password must be less than 6969 characters", "password"],
-			[cpassword != password, "The specified password does not match", "cpassword"],
-		]
+		let { username, email, password, cpassword, regkey } = form.data
 
-		for (const [condition, msg, area] of easyChecks) {
-			if (condition) {
-				return fail(400, { msg, area })
-			}
-		}
+		email = email.toLowerCase() || ""
+		regkey = regkey.split("-")[1] || ""
 
-		// Since each user's page is a route, we need to make sure it doesn't clash with existing routes
-		const lowercaseUsername = username.toLowerCase()
-		for (let i in import.meta.glob("/src/routes/**")) {
-			let t = i.substring(19)
-			t = t.substring(0, t.indexOf("/"))
-
-			if (t.toLowerCase() == lowercaseUsername) return fail(400, { area: "username", msg: "Username is unavailable" })
-		}
+		if (cpassword != password)
+			return formError(
+				form,
+				["cpassword"],
+				["The specified passwords do not match"],
+			)
 
 		try {
-			// todo: dry
+			if (
+				(
+					await prisma.authUser.findMany({
+						where: {
+							username: {
+								equals: username,
+								// Insensitive search cannot be used on findUnique for some reason
+								mode: "insensitive",
+							},
+						},
+					})
+				)[0]
+			)
+				return formError(
+					form,
+					["username"],
+					["This username is already in use"],
+				)
 
 			if (
-				await prisma.user.findUnique({
-					where: {
-						username: lowercaseUsername,
-					},
-				})
+				(
+					await prisma.authUser.findMany({
+						where: {
+							email: {
+								equals: email,
+								mode: "insensitive",
+							},
+						},
+					})
+				)[0]
 			)
-				return fail(400, { area: "username", msg: "User already exists" })
+				return formError(
+					form,
+					["email"],
+					["This email is already being used"],
+				)
 
-			if (
-				await prisma.user.findUnique({
-					where: {
-						email: email.toLowerCase(),
-					},
-				})
-			)
-				return fail(400, { area: "email", msg: "Email is already being used" })
-
-			const CheckRegkey = await prisma.regkey.findUnique({
+			const regkeyCheck = await prisma.regkey.findUnique({
 				where: {
-					key: regkey[1],
+					key: regkey,
 				},
 			})
+			if (!regkeyCheck)
+				return formError(
+					form,
+					["regkey"],
+					["Registration key is invalid"],
+				)
+			if (regkeyCheck.usesLeft < 1)
+				return formError(
+					form,
+					["regkey"],
+					["This registration key has ran out of uses"],
+				)
 
-			if (!CheckRegkey) return fail(400, { area: "regkey", msg: "Registration key is invalid" })
-			if (CheckRegkey.usesLeft < 1) return fail(400, { area: "regkey", msg: "This registration key has ran out of uses" })
-
-			const user = await auth.createUser("username", username, {
-				password,
+			const user = await auth.createUser({
+				key: {
+					providerId: "username",
+					providerUserId: username.toLowerCase(),
+					password,
+				},
 				attributes: {
-					username: lowercaseUsername,
+					username,
 					email,
-					displayname: username,
 					usedRegkey: {
 						connect: {
-							key: regkey[1],
-						}
+							key: regkey,
+						},
 					},
-					image: "https://tr.rbxcdn.com/54d17964492b5e0af66797942fcce26c/150/150/AvatarHeadshot/Png",
-				},
+				} as any,
 			})
 
-			const session = await auth.createSession(user.userId)
-			locals.setSession(session)
+			const session = await auth.createSession({
+				userId: user.id,
+				attributes: {},
+			})
+			locals.auth.setSession(session)
 
 			await prisma.regkey.update({
-				where: { key: regkey[1] },
-				data: { usesLeft: { decrement: 1 } },
+				where: {
+					key: regkey,
+				},
+				data: {
+					usesLeft: {
+						decrement: 1,
+					},
+				},
 			})
 		} catch (e) {
 			const error = e as Error
-			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
-				return fail(400, { area: "username", msg: "User already exists" })
-			}
-			console.error(error)
-			return fail(500, { area: "unexp", msg: "An unexpected error occurred" })
+			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID")
+				return formError(
+					form,
+					["username"],
+					["This username is already in use"],
+				)
+
+			console.error("Registration error:", error)
+			return fail(500) // idk
 		}
 
 		throw redirect(302, "/home")

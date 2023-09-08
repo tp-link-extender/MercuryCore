@@ -1,26 +1,24 @@
 <script lang="ts">
-	import Navbar from "$lib/components/Navbar.svelte"
-	import Footer from "$lib/components/Footer.svelte"
+	export let data
 </script>
 
-<div id="all">
-	<Navbar />
-	
-	<main>
-		<slot />
-	</main>
-	
-	<Footer />
-</div>
+<!--
+	Data from the root layout must be passed into the
+	Navbar component, as it cannot be accessed directly.
+-->
+<Navbar {data} />
 
-<style lang="sass">
+<main>
+	<slot />
+</main>
+
+<Footer />
+
+<style lang="stylus">
 	main
-		padding-bottom: 5vh
-		padding-top: 10vh
-		flex: 1 0 auto
-		
-	#all
-		display: flex
-		flex-direction: column
-		height: 100vh
+		padding-bottom 5vh
+		padding-top 5vh //10vh
+		flex 1 0 auto
+		+-lg()
+			padding-top 2.5vh
 </style>
