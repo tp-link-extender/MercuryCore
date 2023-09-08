@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 /build
+/avatar/dist
 /.svelte-kit
 /package
 .env
@@ -10,3 +11,7 @@ node_modules
 /yes
 .vscode
 /data
+/keys
+/setup
+/corescripts/processed/*.lua
+src/bootstrap.css

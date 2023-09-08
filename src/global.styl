@@ -1,0 +1,270 @@
+// Styles that will be applied to every page.
+// It's best to only put things in here that apply
+// to many pages, so bundle size is kept down.
+
+// @import "./variables.styl"
+@import "./daisyui/carousel.styl"
+@import "./daisyui/collapse.styl"
+@import "./daisyui/dropdown.styl"
+
+:root
+html
+body
+main
+	background var(--background)
+
+	--mainaccent #7531ff
+
+	font-family "SF UI Display Regular", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
+
+main
+	overflow hidden
+
+body
+	display flex
+	flex-direction column
+	min-height 100vh
+
+.light-text
+	color var(--light-text) !important
+.grey-text
+	color var(--grey-text) !important
+// .dark-text
+// 	color var(--dark-text) !important
+.accent-text
+	color #9551ff !important
+a.accent-text
+	transition 0.2s color
+	&:hover
+		color #7531ff !important
+
+.bg-background
+	background var(--background) !important
+.bg-darker
+	background var(--darker) !important
+.bg-a
+	background var(--accent) !important
+
+for i in 1 .. 3
+	.bg-a{i}
+		background var(--accent + i) !important
+
+input
+select
+textarea
+	background-color var(--accent) !important
+	color var(--light-text) !important
+.valid
+	border-color var(--accent2) !important
+
+a.light-text
+a > p
+	transition 0.2s color
+
+a:hover p
+	color var(--grey-text) !important
+
+img[src^="/api/avatar"]
+	aspect-ratio 1 // Force square
+
+::selection
+	background var(--mainaccent)
+
+::-webkit-scrollbar
+	width 0.8rem
+	height 0.8rem
+
+	&-track
+	&-corner
+		background var(--accent)
+
+	&-thumb
+		border-radius 1rem
+		background var(--background)
+		border 0.15rem solid var(--accent)
+		width 0.5rem
+		
+		&:hover
+			background var(--accent3)
+		&:active
+			background var(--accent2)
+
+// bootstrap variables
+:root
+	--bs-body-color #495057
+	--bs-link-color-rgb 52, 89, 230
+	--bs-link-hover-color-rgb 42, 71, 184
+
+.card
+	--bs-card-bg var(--accent)
+	--bs-card-spacer-y 1rem
+	--bs-card-spacer-x 1.5rem
+
+.btn
+	--bs-btn-padding-x 1rem
+	--bs-btn-padding-y 0.5rem
+	--bs-btn-font-size 0.875rem
+
+.dropdown-menu
+	--bs-dropdown-bg var(--darker)
+
+.table
+	--bs-table-border-color var(--accent3)
+
+p
+span
+	color var(--light-text)
+
+.breadcrumb-item::before
+	--bs-breadcrumb-divider "/"
+
+.breadcrumb
+	--bs-breadcrumb-item-active-color #6c757d
+	--bs-breadcrumb-divider-color #6c757d
+
+.navbar
+	--bs-navbar-nav-link-padding-x 0.75rem
+
+.form-control
+	font-size 0.875rem
+	padding 0.5rem 1rem
+	&::placeholder
+		color #6c757d
+		opacity 1
+
+.form-select
+	padding 0.5rem 3rem 0.5rem 1rem
+	background-position right 1rem center
+
+.form-select-sm
+	padding-top 0.25rem
+	padding-bottom 0.25rem
+	padding-left 0.5rem
+	font-size 0.875rem
+	border-radius var(--bs-border-radius-sm)
+
+.btn-success
+	--bs-btn-bg #238560
+	--bs-btn-border-color #238560
+	--bs-btn-hover-bg #1e7152
+	--bs-btn-hover-border-color #1c6a4d
+	--bs-btn-focus-shadow-rgb 68, 151, 120
+	--bs-btn-active-bg #1c6a4d
+	--bs-btn-active-border-color #1a6448
+	--bs-btn-disabled-bg #238560
+	--bs-btn-disabled-border-color #238560
+
+.btn-primary
+	--bs-btn-bg #3459e6
+	--bs-btn-border-color #3459e6
+	--bs-btn-hover-bg #2c4cc4
+	--bs-btn-hover-border-color #2a47b8
+	--bs-btn-focus-shadow-rgb 82, 114, 234
+	--bs-btn-active-bg #2a47b8
+	--bs-btn-active-border-color #2743ad
+	--bs-btn-disabled-bg #3459e6
+	--bs-btn-disabled-border-color #3459e6
+
+.btn-info
+	--bs-btn-bg #287bb5
+	--bs-btn-border-color #287bb5
+	--bs-btn-hover-bg #22699a
+	--bs-btn-hover-border-color #206291
+	--bs-btn-focus-shadow-rgb 72, 143, 192
+	--bs-btn-active-bg #206291
+	--bs-btn-active-border-color #1e5c88
+	--bs-btn-disabled-bg #287bb5
+	--bs-btn-disabled-border-color #287bb5
+
+.btn-success
+.btn-primary
+.btn-info
+	--bs-btn-active-shadow 0 1px 2px rgba(0, 0, 0, 0.05)
+	--bs-btn-active-color #fff
+	--bs-btn-disabled-color #fff
+	--bs-btn-color #fff
+	--bs-btn-hover-color #fff
+
+.btn-sm
+	padding 0.25rem 0.5rem
+
+// bootsrap compatibility stuff
+
+.shadow
+	box-shadow 0 0.5rem 1rem RGBA(0, 0, 0, 0.15) !important
+
+// .shadow-sm
+// 	box-shadow 0 0.125rem 0.25rem RGBA(0, 0, 0, 0.075) !important
+
+// .shadow-lg
+// 	box-shadow 0 1rem 3rem RGBA(0, 0, 0, 0.175) !important
+
+.shadow-none
+	box-shadow none !important
+
+// .translate-middle
+// 	transform translate(-50%, -50%) !important
+
+// .translate-middle-x
+// 	transform translateX(-50%) !important
+
+// .translate-middle-y
+// 	transform translateY(-50%) !important
+
+// .border
+// 	border var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important
+
+.mw-100
+	max-width 100% !important
+
+.vw-100
+	width 100vw !important
+
+.min-vw-100
+	min-width 100vw !important
+
+.mh-100
+	max-height 100% !important
+
+.vh-100
+	height 100vh !important
+
+.min-vh-100
+	min-height 100vh !important
+
+// .flex-fill
+// 	flex 1 1 auto !important
+
+// .font-monospace
+// 	font-family var(--bs-font-monospace) !important
+
+// .text-wrap
+// 	white-space normal !important
+
+// .text-nowrap
+// 	white-space nowrap !important
+
+// .text-break
+// 	word-wrap break-word !important
+// 	word-break break-word !important
+
+// .text-reset
+// 	--bs-text-opacity 1
+// 	color inherit !important
+
+// .bg-transparent
+// 	--bs-bg-opacity 1
+// 	background-color transparent !important
+
+// .bg-gradient
+// 	background-image var(--bs-gradient) !important
+
+// .visible
+// 	visibility visible !important
+
+// .invisible
+// 	visibility hidden !important
+
+.italic
+	font-style italic !important

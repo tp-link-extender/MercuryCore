@@ -1,31 +1,32 @@
 <script lang="ts">
-	import Navbar from "$lib/components/Navbar.svelte"
-	import Footer from "$lib/components/Footer.svelte"
+	export let data
 </script>
 
-<div id="bg" class="position-fixed w-100 h-100 z-n1" />
+<div id="bg" class="position-fixed w-100 h-100 pe-none" />
 
-<div id="all">
-	<Navbar />
-	
-	<main>
-		<slot />
-	</main>
-	
-	<Footer />
-</div>
+<!--
+	Data from the root layout must be passed into the
+	Navbar component, as it cannot be accessed directly.
+-->
+<Navbar {data} />
 
-<style lang="sass">
+<main>
+	<slot />
+</main>
+
+<Footer />
+
+<style lang="stylus">
 	main
-		padding-bottom: 5vh
-		padding-top: 10vh
-		flex: 1 0 auto
-		
-	#all
-		display: flex
-		flex-direction: column
-		height: 100vh
+		// Prevent content from going behind gradient
+		z-index 1
+		background none
+
+		padding-bottom 5vh
+		padding-top 5vh//10vh
+		+-lg()
+			padding-top 2.5vh
 
 	#bg
-		background: linear-gradient(-20deg, #0000 50%, var(--mainaccent) 250%)
+		background linear-gradient(-20deg, #0000 50%, var(--mainaccent) 250%)
 </style>

@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "GameSessions" ALTER COLUMN "ping" SET DATA TYPE BIGINT;
+
+-- AlterTable
+ALTER TABLE "Place" ALTER COLUMN "serverPing" SET DATA TYPE BIGINT;

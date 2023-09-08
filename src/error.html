@@ -1,0 +1,65 @@
+<!doctype html>
+<!--
+	This is a fallback error page that is only used if something errors in one of the root layout files, or if an error occurs while rendering an error page.
+	Normally, a page will find the nearest +error.svelte page to use as an error page.
+-->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>%sveltekit.error.message%</title>
+
+		<style>
+			body {
+				font-family: sans-serif;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				background: #100f0e;
+				color: #f6f4f3;
+				overflow: hidden;
+				height: 100vh;
+			}
+
+			.error {
+				display: flex;
+				align-items: center;
+				max-width: 32rem;
+				margin: 0 1rem;
+			}
+
+			.status {
+				font-weight: 200;
+				font-size: 3rem;
+				line-height: 1;
+				position: relative;
+				top: -0.05rem;
+			}
+
+			.message {
+				border-left: 1px solid #ccc;
+				padding-left: 1rem;
+				margin-left: 1rem;
+				min-height: 2.5rem;
+				display: flex;
+				align-items: center;
+			}
+
+			.message h1 {
+				font-weight: 400;
+				font-size: 1em;
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="error">
+			<span class="status">%sveltekit.status%</span>
+			<div class="message">
+				<h1>%sveltekit.error.message% :(</h1>
+			</div>
+		</div>
+		<br />
+		<a href="/">go home?</a>
+	</body>
+</html>
