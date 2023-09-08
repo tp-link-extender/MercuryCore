@@ -32,6 +32,7 @@ do
 		mistypedSpringDamping = "The damping ratio for a spring must be a number. (got a %s)",
 		mistypedSpringSpeed = "The speed of a spring must be a number. (got a %s)",
 		mistypedTweenInfo = "The tween info of a tween must be a TweenInfo. (got a %s)",
+		noTaskScheduler = "Fusion is not connected to an external task scheduler.",
 		springTypeMismatch = "The type '%s' doesn't match the spring's type '%s'.",
 		stateGetWasRemoved = [[`StateObject:get()` has been replaced by `use()` and `peek()` - see discussion #217 on GitHub.]],
 		strictReadError = "'%s' is not a valid member of '%s'.",
@@ -84,6 +85,64 @@ do
 end
 do
 	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local External = {}
+	local updateStepCallbacks = {}
+	local currentScheduler = nil
+	local lastUpdateStep = 0
+
+	function External.setExternalScheduler(newScheduler)
+		local oldScheduler = currentScheduler
+
+		if oldScheduler ~= nil then
+			oldScheduler.stopScheduler()
+		end
+
+		currentScheduler = newScheduler
+
+		if newScheduler ~= nil then
+			newScheduler.startScheduler()
+		end
+
+		return oldScheduler
+	end
+	function External.doTaskImmediate(resume)
+		if currentScheduler == nil then
+			logError "noTaskScheduler"
+		else
+			currentScheduler.doTaskImmediate(resume)
+		end
+	end
+	function External.doTaskDeferred(resume)
+		if currentScheduler == nil then
+			logError "noTaskScheduler"
+		else
+			currentScheduler.doTaskDeferred(resume)
+		end
+	end
+	function External.bindToUpdateStep(callback)
+		local uniqueIdentifier = {}
+
+		updateStepCallbacks[uniqueIdentifier] = callback
+
+		return function()
+			updateStepCallbacks[uniqueIdentifier] = nil
+		end
+	end
+	function External.performUpdateStep(now)
+		lastUpdateStep = now
+
+		for _, callback in pairs(updateStepCallbacks) do
+			callback(now)
+		end
+	end
+	function External.lastUpdateStep()
+		return lastUpdateStep
+	end
+
+	__DARKLUA_BUNDLE_MODULES.e = External
+end
+do
+	local logError = __DARKLUA_BUNDLE_MODULES.d
 
 	local function restrictRead(tableName, strictTable)
 		local metatable = getmetatable(strictTable)
@@ -101,57 +160,140 @@ do
 		return strictTable
 	end
 
-	__DARKLUA_BUNDLE_MODULES.e = restrictRead
+	__DARKLUA_BUNDLE_MODULES.f = restrictRead
 end
 do
-	local Oklab = {}
+	local RunService = game:GetService "RunService"
+	local External = __DARKLUA_BUNDLE_MODULES.e
+	local MercuryExternal = {}
 
-	function Oklab.to(rgb)
-		local l = rgb.r * 0.4122214708
-			+ rgb.g * 0.5363325363
-			+ rgb.b * 0.0514459929
-		local m = rgb.r * 0.2119034982
-			+ rgb.g * 0.6806995451
-			+ rgb.b * 0.1073969566
-		local s = rgb.r * 0.0883024619
-			+ rgb.g * 0.2817188376
-			+ rgb.b * 0.6299787005
-		local lRoot = l ^ 0.3333333333333333
-		local mRoot = m ^ 0.3333333333333333
-		local sRoot = s ^ 0.3333333333333333
-
-		return Vector3.new(
-			lRoot * 0.2104542553 + mRoot * 0.793617785 - sRoot * 0.0040720468,
-			lRoot * 1.9779984951 - mRoot * 2.428592205 + sRoot * 0.4505937099,
-			lRoot * 0.0259040371 + mRoot * 0.7827717662 - sRoot * 0.808675766
-		)
+	function MercuryExternal.doTaskImmediate(resume)
+		Spawn(resume)
 	end
-	function Oklab.from(lab, unclamped)
-		local lRoot = lab.X + lab.Y * 0.3963377774 + lab.Z * 0.2158037573
-		local mRoot = lab.X - lab.Y * 0.1055613458 - lab.Z * 0.0638541728
-		local sRoot = lab.X - lab.Y * 0.0894841775 - lab.Z * 1.291485548
-		local l = lRoot ^ 3
-		local m = mRoot ^ 3
-		local s = sRoot ^ 3
-		local red = l * 4.0767416621 - m * 3.3077115913 + s * 0.2309699292
-		local green = l * -1.2684380046 + m * 2.6097574011 - s * 0.3413193965
-		local blue = l * -4.196086299999999E-3
-			- m * 0.7034186147
-			+ s * 1.707614701
+	function MercuryExternal.doTaskDeferred(resume)
+		coroutine.resume(coroutine.create(resume))
+	end
 
-		if not unclamped then
-			red = math.max(0, math.min(red, 1))
-			green = math.max(0, math.min(green, 1))
-			blue = math.max(0, math.min(blue, 1))
+	local function performUpdateStep()
+		External.performUpdateStep(time())
+	end
+
+	local stopSchedulerFunc = nil
+
+	function MercuryExternal.startScheduler()
+		if stopSchedulerFunc ~= nil then
+			return
 		end
 
-		return Color3.new(red, green, blue)
+		local conn = RunService.RenderStepped:connect(performUpdateStep)
+
+		stopSchedulerFunc = function()
+			conn:disconnect()
+		end
+	end
+	function MercuryExternal.stopScheduler()
+		if stopSchedulerFunc ~= nil then
+			stopSchedulerFunc()
+
+			stopSchedulerFunc = nil
+		end
 	end
 
-	__DARKLUA_BUNDLE_MODULES.f = Oklab
+	__DARKLUA_BUNDLE_MODULES.g = MercuryExternal
 end
 do
-	__DARKLUA_BUNDLE_MODULES.g = function(value)
+	__DARKLUA_BUNDLE_MODULES.h = {
+		BillboardGui = { Active = true },
+		Frame = {
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderColor3 = Color3.new(0, 0, 0),
+			BorderSizePixel = 0,
+		},
+		TextLabel = {
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderColor3 = Color3.new(0, 0, 0),
+			BorderSizePixel = 0,
+			Font = Enum.Font.SourceSans,
+			Text = "",
+			TextColor3 = Color3.new(0, 0, 0),
+			FontSize = Enum.FontSize.Size14,
+		},
+		TextButton = {
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderColor3 = Color3.new(0, 0, 0),
+			BorderSizePixel = 0,
+			AutoButtonColor = false,
+			Font = Enum.Font.SourceSans,
+			Text = "",
+			TextColor3 = Color3.new(0, 0, 0),
+			FontSize = Enum.FontSize.Size14,
+		},
+		TextBox = {
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderColor3 = Color3.new(0, 0, 0),
+			BorderSizePixel = 0,
+			ClearTextOnFocus = false,
+			Font = Enum.Font.SourceSans,
+			Text = "",
+			TextColor3 = Color3.new(0, 0, 0),
+			FontSize = Enum.FontSize.Size14,
+		},
+		ImageLabel = {
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderColor3 = Color3.new(0, 0, 0),
+			BorderSizePixel = 0,
+		},
+		ImageButton = {
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderColor3 = Color3.new(0, 0, 0),
+			BorderSizePixel = 0,
+			AutoButtonColor = false,
+		},
+		SpawnLocation = { Duration = 0 },
+		Part = {
+			Anchored = true,
+			Size = Vector3.new(1, 1, 1),
+			FrontSurface = Enum.SurfaceType.Smooth,
+			BackSurface = Enum.SurfaceType.Smooth,
+			LeftSurface = Enum.SurfaceType.Smooth,
+			RightSurface = Enum.SurfaceType.Smooth,
+			TopSurface = Enum.SurfaceType.Smooth,
+			BottomSurface = Enum.SurfaceType.Smooth,
+		},
+		TrussPart = {
+			Anchored = true,
+			Size = Vector3.new(2, 2, 2),
+			FrontSurface = Enum.SurfaceType.Smooth,
+			BackSurface = Enum.SurfaceType.Smooth,
+			LeftSurface = Enum.SurfaceType.Smooth,
+			RightSurface = Enum.SurfaceType.Smooth,
+			TopSurface = Enum.SurfaceType.Smooth,
+			BottomSurface = Enum.SurfaceType.Smooth,
+		},
+		CornerWedgePart = {
+			Anchored = true,
+			Size = Vector3.new(1, 1, 1),
+			FrontSurface = Enum.SurfaceType.Smooth,
+			BackSurface = Enum.SurfaceType.Smooth,
+			LeftSurface = Enum.SurfaceType.Smooth,
+			RightSurface = Enum.SurfaceType.Smooth,
+			TopSurface = Enum.SurfaceType.Smooth,
+			BottomSurface = Enum.SurfaceType.Smooth,
+		},
+		VehicleSeat = {
+			Anchored = true,
+			Size = Vector3.new(1, 1, 1),
+			FrontSurface = Enum.SurfaceType.Smooth,
+			BackSurface = Enum.SurfaceType.Smooth,
+			LeftSurface = Enum.SurfaceType.Smooth,
+			RightSurface = Enum.SurfaceType.Smooth,
+			TopSurface = Enum.SurfaceType.Smooth,
+			BottomSurface = Enum.SurfaceType.Smooth,
+		},
+	}
+end
+do
+	__DARKLUA_BUNDLE_MODULES.i = function(value)
 		local basicType = type(value)
 
 		if
@@ -354,8 +496,1626 @@ do
 	end
 end
 do
-	local Oklab = __DARKLUA_BUNDLE_MODULES.f
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
+
+	local function cleanupOne(task)
+		local taskType = typeof(task)
+
+		if taskType == "Instance" then
+			task:Destroy()
+		elseif taskType == "RBXScriptConnection" then
+			task:disconnect()
+		elseif taskType == "function" then
+			task()
+		elseif taskType == "table" then
+			if type(task.destroy) == "function" then
+				task:destroy()
+			elseif type(task.Destroy) == "function" then
+				task:Destroy()
+			elseif task[1] ~= nil then
+				for _, subtask in ipairs(task) do
+					cleanupOne(subtask)
+				end
+			end
+		end
+	end
+	local function cleanup(...)
+		for index = 1, select("#", ...) do
+			cleanupOne(select(index, ...))
+		end
+	end
+
+	__DARKLUA_BUNDLE_MODULES.j = cleanup
+end
+do
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
+
+	local function xtypeof(x)
+		local typeString = typeof(x)
+
+		if typeString == "table" and type(x.type) == "string" then
+			return x.type
+		else
+			return typeString
+		end
+	end
+
+	__DARKLUA_BUNDLE_MODULES.k = xtypeof
+end
+do
+	local External = __DARKLUA_BUNDLE_MODULES.e
+	local class = {}
+	local CLASS_METATABLE = { __index = class }
+	local strongRefs = {}
+
+	function class:update()
+		for _, callback in pairs(self._changeListeners) do
+			External.doTaskImmediate(callback)
+		end
+
+		return false
+	end
+	function class:onChange(callback)
+		local uniqueIdentifier = {}
+
+		self._numChangeListeners = self._numChangeListeners + 1
+		self._changeListeners[uniqueIdentifier] = callback
+		strongRefs[self] = true
+
+		local disconnected = false
+
+		return function()
+			if disconnected then
+				return
+			end
+
+			disconnected = true
+			self._changeListeners[uniqueIdentifier] = nil
+			self._numChangeListeners = self._numChangeListeners - 1
+
+			if self._numChangeListeners == 0 then
+				strongRefs[self] = nil
+			end
+		end
+	end
+	function class:onBind(callback)
+		External.doTaskImmediate(callback)
+
+		return self:onChange(callback)
+	end
+
+	local function Observer(watchedState)
+		local self = setmetatable({
+			type = "State",
+			kind = "Observer",
+			dependencySet = { [watchedState] = true },
+			dependentSet = {},
+			_changeListeners = {},
+			_numChangeListeners = 0,
+		}, CLASS_METATABLE)
+
+		watchedState.dependentSet[self] = true
+
+		return self
+	end
+
+	__DARKLUA_BUNDLE_MODULES.l = Observer
+end
+do
+	local function isState(target)
+		return type(target) == "table" and type(target._peek) == "function"
+	end
+
+	__DARKLUA_BUNDLE_MODULES.m = isState
+end
+do
+	local isState = __DARKLUA_BUNDLE_MODULES.m
+
+	local function peek(target)
+		if isState(target) then
+			return (target):_peek()
+		end
+
+		return target
+	end
+
+	__DARKLUA_BUNDLE_MODULES.n = peek
+end
+do
+	local External = __DARKLUA_BUNDLE_MODULES.e
+	local cleanup = __DARKLUA_BUNDLE_MODULES.j
+	local xtypeof = __DARKLUA_BUNDLE_MODULES.k
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local Observer = __DARKLUA_BUNDLE_MODULES.l
+	local peek = __DARKLUA_BUNDLE_MODULES.n
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
+
+	local function setProperty_unsafe(instance, property, value)
+		(instance)[property] = value
+	end
+	local function testPropertyAssignable(instance, property)
+		(instance)[property] = (instance)[property]
+	end
+	local function setProperty(instance, property, value)
+		if not pcall(setProperty_unsafe, instance, property, value) then
+			if not pcall(testPropertyAssignable, instance, property) then
+				if instance == nil then
+					logError(
+						"setPropertyNilRef",
+						nil,
+						property,
+						tostring(value)
+					)
+				else
+					logError(
+						"cannotAssignProperty",
+						nil,
+						instance.ClassName,
+						property
+					)
+				end
+			else
+				local givenType = typeof(value)
+				local expectedType = typeof((instance)[property])
+
+				logError(
+					"invalidPropertyType",
+					nil,
+					instance.ClassName,
+					property,
+					expectedType,
+					givenType
+				)
+			end
+		end
+	end
+	local function bindProperty(instance, property, value, cleanupTasks)
+		if xtypeof(value) == "State" then
+			local willUpdate = false
+
+			local function updateLater()
+				if not willUpdate then
+					willUpdate = true
+
+					External.doTaskDeferred(function()
+						willUpdate = false
+
+						setProperty(instance, property, peek(value))
+					end)
+				end
+			end
+
+			setProperty(instance, property, peek(value))
+			table.insert(cleanupTasks, Observer(value):onChange(updateLater))
+		else
+			setProperty(instance, property, value)
+		end
+	end
+	local function applyInstanceProps(props, applyTo)
+		local specialKeys = {
+			self = {},
+			descendants = {},
+			ancestor = {},
+			observer = {},
+		}
+		local cleanupTasks = {}
+
+		for key, value in pairs(props) do
+			local keyType = xtypeof(key)
+
+			if keyType == "string" then
+				if key ~= "Parent" then
+					bindProperty(applyTo, key, value, cleanupTasks)
+				end
+			elseif keyType == "SpecialKey" then
+				local stage = (key).stage
+				local keys = specialKeys[stage]
+
+				if keys == nil then
+					logError("unrecognisedPropertyStage", nil, stage)
+				else
+					keys[key] = value
+				end
+			else
+				logError("unrecognisedPropertyKey", nil, xtypeof(key))
+			end
+		end
+		for key, value in pairs(specialKeys.self) do
+			key:apply(value, applyTo, cleanupTasks)
+		end
+		for key, value in pairs(specialKeys.descendants) do
+			key:apply(value, applyTo, cleanupTasks)
+		end
+
+		if props.Parent ~= nil then
+			bindProperty(applyTo, "Parent", props.Parent, cleanupTasks)
+		end
+
+		for key, value in pairs(specialKeys.ancestor) do
+			key:apply(value, applyTo, cleanupTasks)
+		end
+		for key, value in pairs(specialKeys.observer) do
+			key:apply(value, applyTo, cleanupTasks)
+		end
+
+		if applyTo.Parent then
+			game.DescendantRemoving:connect(function(descendant)
+				if descendant == applyTo then
+					cleanup(cleanupTasks)
+				end
+			end)
+		end
+	end
+
+	__DARKLUA_BUNDLE_MODULES.o = applyInstanceProps
+end
+do
+	local defaultProps = __DARKLUA_BUNDLE_MODULES.h
+	local applyInstanceProps = __DARKLUA_BUNDLE_MODULES.o
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+
+	local function New(className)
+		return function(props)
+			local ok, instance = pcall(Instance.new, className)
+
+			if not ok then
+				logError("cannotCreateClass", nil, className)
+			end
+
+			local classDefaults = defaultProps[className]
+
+			if classDefaults ~= nil then
+				for defaultProp, defaultValue in pairs(classDefaults) do
+					instance[defaultProp] = defaultValue
+				end
+			end
+
+			applyInstanceProps(props, instance)
+
+			return instance
+		end
+	end
+
+	__DARKLUA_BUNDLE_MODULES.p = New
+end
+do
+	local applyInstanceProps = __DARKLUA_BUNDLE_MODULES.o
+
+	local function Hydrate(target)
+		return function(props)
+			applyInstanceProps(props, target)
+
+			return target
+		end
+	end
+
+	__DARKLUA_BUNDLE_MODULES.q = Hydrate
+end
+do
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local xtypeof = __DARKLUA_BUNDLE_MODULES.k
+	local Ref = {}
+
+	Ref.type = "SpecialKey"
+	Ref.kind = "Ref"
+	Ref.stage = "observer"
+
+	function Ref:apply(refState, applyTo, cleanupTasks)
+		if xtypeof(refState) ~= "State" or refState.kind ~= "Value" then
+			logError "invalidRefType"
+		else
+			refState:set(applyTo)
+			table.insert(cleanupTasks, function()
+				refState:set(nil)
+			end)
+		end
+	end
+
+	__DARKLUA_BUNDLE_MODULES.r = Ref
+end
+do
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local xtypeof = __DARKLUA_BUNDLE_MODULES.k
+
+	local function Out(propertyName)
+		local outKey = {}
+
+		outKey.type = "SpecialKey"
+		outKey.kind = "Out"
+		outKey.stage = "observer"
+
+		function outKey:apply(outState, applyTo, cleanupTasks)
+			local ok, event = pcall(function()
+				return applyTo.Changed
+			end)
+
+			if not ok then
+				logError(
+					"invalidOutProperty",
+					nil,
+					applyTo.ClassName,
+					propertyName
+				)
+			elseif xtypeof(outState) ~= "State" or outState.kind ~= "Value" then
+				logError "invalidOutType"
+			else
+				outState:set((applyTo)[propertyName])
+				table.insert(
+					cleanupTasks,
+					event:connect(function(prop)
+						if prop == propertyName then
+							outState:set((applyTo)[propertyName])
+						end
+					end)
+				)
+				table.insert(cleanupTasks, function()
+					outState:set(nil)
+				end)
+			end
+		end
+
+		return outKey
+	end
+
+	__DARKLUA_BUNDLE_MODULES.s = Out
+end
+do
+	local Cleanup = {}
+
+	Cleanup.type = "SpecialKey"
+	Cleanup.kind = "Cleanup"
+	Cleanup.stage = "observer"
+
+	function Cleanup:apply(userTask, _, cleanupTasks)
+		table.insert(cleanupTasks, userTask)
+	end
+
+	__DARKLUA_BUNDLE_MODULES.t = Cleanup
+end
+do
+	local messages = __DARKLUA_BUNDLE_MODULES.c
+
+	local function logWarn(messageID, ...)
+		local formatString
+
+		if messages[messageID] ~= nil then
+			formatString = messages[messageID]
+		else
+			messageID = "unknownMessage"
+			formatString = messages[messageID]
+		end
+
+		warn(
+			string.format(
+				"[Fusion] " .. formatString .. "\n(ID: " .. messageID .. ")",
+				...
+			)
+		)
+	end
+
+	__DARKLUA_BUNDLE_MODULES.u = logWarn
+end
+do
+	local External = __DARKLUA_BUNDLE_MODULES.e
+	local logWarn = __DARKLUA_BUNDLE_MODULES.u
+	local Observer = __DARKLUA_BUNDLE_MODULES.l
+	local peek = __DARKLUA_BUNDLE_MODULES.n
+	local isState = __DARKLUA_BUNDLE_MODULES.m
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
+	local EXPERIMENTAL_AUTO_NAMING = false
+	local Children = {}
+
+	Children.type = "SpecialKey"
+	Children.kind = "Children"
+	Children.stage = "descendants"
+
+	function Children:apply(propValue, applyTo, cleanupTasks)
+		local newParented = {}
+		local oldParented = {}
+		local newDisconnects = {}
+		local oldDisconnects = {}
+		local updateQueued = false
+		local queueUpdate
+
+		local function updateChildren()
+			if not updateQueued then
+				return
+			end
+
+			updateQueued = false
+			oldParented, newParented = newParented, oldParented
+			oldDisconnects, newDisconnects = newDisconnects, oldDisconnects
+
+			for i, _ in pairs(newParented) do
+				newParented[i] = nil
+			end
+			for i, _ in pairs(newDisconnects) do
+				newDisconnects[i] = nil
+			end
+
+			local function processChild(child, autoName)
+				local childType = typeof(child)
+
+				if childType == "Instance" then
+					newParented[child] = true
+
+					if oldParented[child] == nil then
+						child.Parent = applyTo
+					else
+						oldParented[child] = nil
+					end
+					if EXPERIMENTAL_AUTO_NAMING and autoName ~= nil then
+						child.Name = autoName
+					end
+				elseif isState(child) then
+					local value = peek(child)
+
+					if value ~= nil then
+						processChild(value, autoName)
+					end
+
+					local disconnect = oldDisconnects[child]
+
+					if disconnect == nil then
+						disconnect = Observer(child):onChange(queueUpdate)
+					else
+						oldDisconnects[child] = nil
+					end
+
+					newDisconnects[child] = disconnect
+				elseif childType == "table" then
+					for key, subChild in pairs(child) do
+						local keyType = typeof(key)
+						local subAutoName = nil
+
+						if keyType == "string" then
+							subAutoName = key
+						elseif keyType == "number" and autoName ~= nil then
+							subAutoName = autoName .. "_" .. key
+						end
+
+						processChild(subChild, subAutoName)
+					end
+				else
+					logWarn("unrecognisedChildType", childType)
+				end
+			end
+
+			if propValue ~= nil then
+				processChild(propValue)
+			end
+
+			for oldInstance in pairs(oldParented) do
+				oldInstance.Parent = nil
+			end
+			for _, disconnect in pairs(oldDisconnects) do
+				disconnect()
+			end
+		end
+
+		queueUpdate = function()
+			if not updateQueued then
+				updateQueued = true
+
+				External.doTaskDeferred(updateChildren)
+			end
+		end
+
+		table.insert(cleanupTasks, function()
+			propValue = nil
+			updateQueued = true
+
+			updateChildren()
+		end)
+
+		updateQueued = true
+
+		updateChildren()
+	end
+
+	__DARKLUA_BUNDLE_MODULES.v = Children
+end
+do
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
+
+	local function getProperty_unsafe(instance, property)
+		return (instance)[property]
+	end
+	local function OnEvent(eventName)
+		local eventKey = {}
+
+		eventKey.type = "SpecialKey"
+		eventKey.kind = "OnEvent"
+		eventKey.stage = "observer"
+
+		function eventKey:apply(callback, applyTo, cleanupTasks)
+			local ok, event = pcall(getProperty_unsafe, applyTo, eventName)
+
+			if not ok or typeof(event) ~= "RBXScriptSignal" then
+				logError(
+					"cannotConnectEvent",
+					nil,
+					applyTo.ClassName,
+					eventName
+				)
+			elseif typeof(callback) ~= "function" then
+				logError("invalidEventHandler", nil, eventName)
+			else
+				table.insert(cleanupTasks, event:connect(callback))
+			end
+		end
+
+		return eventKey
+	end
+
+	__DARKLUA_BUNDLE_MODULES.w = OnEvent
+end
+do
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
+
+	local function OnChange(propertyName)
+		local changeKey = {}
+
+		changeKey.type = "SpecialKey"
+		changeKey.kind = "OnChange"
+		changeKey.stage = "observer"
+
+		function changeKey:apply(callback, applyTo, cleanupTasks)
+			local ok, event = pcall(function()
+				return applyTo.Changed
+			end)
+
+			if not ok then
+				logError(
+					"cannotConnectChange",
+					nil,
+					applyTo.ClassName,
+					propertyName
+				)
+			elseif typeof(callback) ~= "function" then
+				logError("invalidChangeHandler", nil, propertyName)
+			else
+				table.insert(
+					cleanupTasks,
+					event:connect(function(prop)
+						if prop == propertyName then
+							callback((applyTo)[propertyName])
+						end
+					end)
+				)
+			end
+		end
+
+		return changeKey
+	end
+
+	__DARKLUA_BUNDLE_MODULES.x = OnChange
+end
+do
+	local function updateAll(root)
+		local counters = {}
+		local flags = {}
+		local queue = {}
+		local queueSize = 0
+		local queuePos = 1
+
+		for object in pairs(root.dependentSet) do
+			queueSize = queueSize + 1
+			queue[queueSize] = object
+			flags[object] = true
+		end
+
+		while queuePos <= queueSize do
+			local next = queue[queuePos]
+			local counter = counters[next]
+
+			counters[next] = (function()
+				if counter == nil then
+					return 1
+				else
+					return counter + 1
+				end
+			end)()
+
+			if next.dependentSet ~= nil then
+				for object in pairs(next.dependentSet) do
+					queueSize = queueSize + 1
+					queue[queueSize] = object
+				end
+			end
+
+			queuePos = queuePos + 1
+		end
+
+		queuePos = 1
+
+		while queuePos <= queueSize do
+			local next = queue[queuePos]
+			local counter = counters[next] - 1
+
+			counters[next] = counter
+
+			if
+				counter == 0
+				and flags[next]
+				and next:update()
+				and next.dependentSet ~= nil
+			then
+				for object in pairs(next.dependentSet) do
+					flags[object] = true
+				end
+			end
+
+			queuePos = queuePos + 1
+		end
+	end
+
+	__DARKLUA_BUNDLE_MODULES.y = updateAll
+end
+do
+	local function isSimilar(a, b)
+		if type(a) == "table" then
+			return false
+		end
+
+		return a == b
+	end
+
+	__DARKLUA_BUNDLE_MODULES.z = isSimilar
+end
+do
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local updateAll = __DARKLUA_BUNDLE_MODULES.y
+	local isSimilar = __DARKLUA_BUNDLE_MODULES.z
+	local class = {}
+	local CLASS_METATABLE = { __index = class }
+	local WEAK_KEYS_METATABLE = {
+		__mode = "k",
+	}
+
+	function class:set(newValue, force)
+		local oldValue = self._value
+
+		if force or not isSimilar(oldValue, newValue) then
+			self._value = newValue
+
+			updateAll(self)
+		end
+	end
+	function class:_peek()
+		return self._value
+	end
+	function class:get()
+		logError "stateGetWasRemoved"
+	end
+
+	local function Value(initialValue)
+		local self = setmetatable({
+			type = "State",
+			kind = "Value",
+			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
+			_value = initialValue,
+		}, CLASS_METATABLE)
+
+		return self
+	end
+
+	__DARKLUA_BUNDLE_MODULES.A = Value
+end
+do
+	local messages = __DARKLUA_BUNDLE_MODULES.c
+
+	local function logErrorNonFatal(messageID, errObj, ...)
+		local formatString
+
+		if messages[messageID] ~= nil then
+			formatString = messages[messageID]
+		else
+			messageID = "unknownMessage"
+			formatString = messages[messageID]
+		end
+
+		local errorString
+
+		if errObj == nil then
+			errorString = string.format(
+				"[Fusion] " .. formatString .. "\n(ID: " .. messageID .. ")",
+				...
+			)
+		else
+			formatString =
+				formatString:gsub("ERROR_MESSAGE", tostring(errObj.message))
+			errorString = string.format(
+				"[Fusion] "
+					.. formatString
+					.. "\n(ID: "
+					.. messageID
+					.. ")\n---- Stack trace ----\n"
+					.. tostring(errObj.trace),
+				...
+			)
+		end
+
+		coroutine.wrap(function()
+			error(errorString:gsub("\n", "\n    "), 0)
+		end)()
+	end
+
+	__DARKLUA_BUNDLE_MODULES.B = logErrorNonFatal
+end
+do
+	local function parseError(err)
+		local trace = "Traceback not available"
+
+		if debug and debug.traceback then
+			trace = debug.traceback(nil, 2)
+		end
+
+		return {
+			type = "Error",
+			raw = err,
+			message = err:gsub("^.+:%d+:%s*", ""),
+			trace = trace,
+		}
+	end
+
+	__DARKLUA_BUNDLE_MODULES.C = parseError
+end
+do
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
+
+	local function needsDestruction(x)
+		return typeof(x) == "Instance"
+	end
+
+	__DARKLUA_BUNDLE_MODULES.D = needsDestruction
+end
+do
+	local isState = __DARKLUA_BUNDLE_MODULES.m
+
+	local function makeUseCallback(dependencySet)
+		local function use(target)
+			if isState(target) then
+				dependencySet[target] = true
+
+				return (target):_peek()
+			end
+
+			return target
+		end
+
+		return use
+	end
+
+	__DARKLUA_BUNDLE_MODULES.E = makeUseCallback
+end
+do
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.B
+	local logWarn = __DARKLUA_BUNDLE_MODULES.u
+	local parseError = __DARKLUA_BUNDLE_MODULES.C
+	local isSimilar = __DARKLUA_BUNDLE_MODULES.z
+	local needsDestruction = __DARKLUA_BUNDLE_MODULES.D
+	local makeUseCallback = __DARKLUA_BUNDLE_MODULES.E
+	local class = {}
+	local CLASS_METATABLE = { __index = class }
+	local WEAK_KEYS_METATABLE = {
+		__mode = "k",
+	}
+
+	function class:update()
+		for dependency in pairs(self.dependencySet) do
+			dependency.dependentSet[self] = nil
+		end
+
+		self._oldDependencySet, self.dependencySet =
+			self.dependencySet, self._oldDependencySet
+
+		for i, _ in pairs(self.dependencySet) do
+			self.dependencySet[i] = nil
+		end
+
+		local use = makeUseCallback(self.dependencySet)
+		local ok, newValue, newMetaValue = pcall(self._processor, use)
+
+		if ok then
+			if self._destructor == nil and needsDestruction(newValue) then
+				logWarn "destructorNeededComputed"
+			end
+			if newMetaValue ~= nil then
+				logWarn "multiReturnComputed"
+			end
+
+			local oldValue = self._value
+			local similar = isSimilar(oldValue, newValue)
+
+			if self._destructor ~= nil then
+				self._destructor(oldValue)
+			end
+
+			self._value = newValue
+
+			for dependency in pairs(self.dependencySet) do
+				dependency.dependentSet[self] = true
+			end
+
+			return not similar
+		else
+			logErrorNonFatal("computedCallbackError", parseError(newValue))
+
+			self._oldDependencySet, self.dependencySet =
+				self.dependencySet, self._oldDependencySet
+
+			for dependency in pairs(self.dependencySet) do
+				dependency.dependentSet[self] = true
+			end
+
+			return false
+		end
+	end
+	function class:_peek()
+		return self._value
+	end
+	function class:get()
+		logError "stateGetWasRemoved"
+	end
+
+	local function Computed(processor, destructor)
+		local dependencySet = {}
+		local self = setmetatable({
+			type = "State",
+			kind = "Computed",
+			dependencySet = dependencySet,
+			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
+			_oldDependencySet = {},
+			_processor = processor,
+			_destructor = destructor,
+			_value = nil,
+		}, CLASS_METATABLE)
+
+		self:update()
+
+		return self
+	end
+
+	__DARKLUA_BUNDLE_MODULES.F = Computed
+end
+do
+	local parseError = __DARKLUA_BUNDLE_MODULES.C
+	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.B
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local logWarn = __DARKLUA_BUNDLE_MODULES.u
+	local cleanup = __DARKLUA_BUNDLE_MODULES.j
+	local needsDestruction = __DARKLUA_BUNDLE_MODULES.D
+	local peek = __DARKLUA_BUNDLE_MODULES.n
+	local makeUseCallback = __DARKLUA_BUNDLE_MODULES.E
+	local isState = __DARKLUA_BUNDLE_MODULES.m
+	local class = {}
+	local CLASS_METATABLE = { __index = class }
+	local WEAK_KEYS_METATABLE = {
+		__mode = "k",
+	}
+
+	function class:update()
+		local inputIsState = self._inputIsState
+		local newInputTable = peek(self._inputTable)
+		local oldInputTable = self._oldInputTable
+		local keyIOMap = self._keyIOMap
+		local meta = self._meta
+		local didChange = false
+
+		for dependency in pairs(self.dependencySet) do
+			dependency.dependentSet[self] = nil
+		end
+
+		self._oldDependencySet, self.dependencySet =
+			self.dependencySet, self._oldDependencySet
+
+		for i, _ in pairs(self.dependencySet) do
+			self.dependencySet[i] = nil
+		end
+
+		if inputIsState then
+			self._inputTable.dependentSet[self] = true
+			self.dependencySet[self._inputTable] = true
+		end
+
+		self._oldOutputTable, self._outputTable =
+			self._outputTable, self._oldOutputTable
+
+		local oldOutputTable = self._oldOutputTable
+		local newOutputTable = self._outputTable
+
+		for i, _ in pairs(newOutputTable) do
+			newOutputTable[i] = nil
+		end
+		for newInKey, newInValue in pairs(newInputTable) do
+			local keyData = self._keyData[newInKey]
+
+			if keyData == nil then
+				keyData = {
+					dependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
+					oldDependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
+					dependencyValues = setmetatable({}, WEAK_KEYS_METATABLE),
+				}
+				self._keyData[newInKey] = keyData
+			end
+
+			local shouldRecalculate = oldInputTable[newInKey] ~= newInValue
+
+			if shouldRecalculate == false then
+				for dependency, oldValue in pairs(keyData.dependencyValues) do
+					if oldValue ~= peek(dependency) then
+						shouldRecalculate = true
+
+						break
+					end
+				end
+			end
+			if shouldRecalculate then
+				keyData.oldDependencySet, keyData.dependencySet =
+					keyData.dependencySet, keyData.oldDependencySet
+
+				for i, _ in pairs(keyData.dependencySet) do
+					keyData.dependencySet[i] = nil
+				end
+
+				local use = makeUseCallback(keyData.dependencySet)
+				local processOK, newOutKey, newOutValue, newMetaValue =
+					pcall(self._processor, use, newInKey, newInValue)
+
+				if processOK then
+					if
+						self._destructor == nil
+						and (
+							needsDestruction(newOutKey)
+							or needsDestruction(newOutValue)
+							or needsDestruction(newMetaValue)
+						)
+					then
+						logWarn "destructorNeededForPairs"
+					end
+					if newOutputTable[newOutKey] ~= nil then
+						local previousNewKey, previousNewValue
+
+						for inKey, outKey in pairs(keyIOMap) do
+							if outKey == newOutKey then
+								previousNewValue = newInputTable[inKey]
+
+								if previousNewValue ~= nil then
+									previousNewKey = inKey
+
+									break
+								end
+							end
+						end
+
+						if previousNewKey ~= nil then
+							logError(
+								"forPairsKeyCollision",
+								nil,
+								tostring(newOutKey),
+								tostring(previousNewKey),
+								tostring(previousNewValue),
+								tostring(newInKey),
+								tostring(newInValue)
+							)
+						end
+					end
+
+					local oldOutValue = oldOutputTable[newOutKey]
+
+					if oldOutValue ~= newOutValue then
+						local oldMetaValue = meta[newOutKey]
+
+						if oldOutValue ~= nil then
+							local destructOK, err = pcall(
+								self._destructor or cleanup,
+								newOutKey,
+								oldOutValue,
+								oldMetaValue
+							)
+
+							if not destructOK then
+								logErrorNonFatal(
+									"forPairsDestructorError",
+									parseError(err)
+								)
+							end
+						end
+
+						oldOutputTable[newOutKey] = nil
+					end
+
+					oldInputTable[newInKey] = newInValue
+					keyIOMap[newInKey] = newOutKey
+					meta[newOutKey] = newMetaValue
+					newOutputTable[newOutKey] = newOutValue
+					didChange = true
+				else
+					keyData.oldDependencySet, keyData.dependencySet =
+						keyData.dependencySet, keyData.oldDependencySet
+
+					logErrorNonFatal(
+						"forPairsProcessorError",
+						parseError(newOutKey)
+					)
+				end
+			else
+				local storedOutKey = keyIOMap[newInKey]
+
+				if newOutputTable[storedOutKey] ~= nil then
+					local previousNewKey, previousNewValue
+
+					for inKey, outKey in pairs(keyIOMap) do
+						if storedOutKey == outKey then
+							previousNewValue = newInputTable[inKey]
+
+							if previousNewValue ~= nil then
+								previousNewKey = inKey
+
+								break
+							end
+						end
+					end
+
+					if previousNewKey ~= nil then
+						logError(
+							"forPairsKeyCollision",
+							nil,
+							tostring(storedOutKey),
+							tostring(previousNewKey),
+							tostring(previousNewValue),
+							tostring(newInKey),
+							tostring(newInValue)
+						)
+					end
+				end
+
+				newOutputTable[storedOutKey] = oldOutputTable[storedOutKey]
+			end
+
+			for dependency in pairs(keyData.dependencySet) do
+				keyData.dependencyValues[dependency] = peek(dependency)
+				self.dependencySet[dependency] = true
+				dependency.dependentSet[self] = true
+			end
+		end
+		for oldOutKey, oldOutValue in pairs(oldOutputTable) do
+			if newOutputTable[oldOutKey] ~= oldOutValue then
+				local oldMetaValue = meta[oldOutKey]
+
+				if oldOutValue ~= nil then
+					local destructOK, err = pcall(
+						self._destructor or cleanup,
+						oldOutKey,
+						oldOutValue,
+						oldMetaValue
+					)
+
+					if not destructOK then
+						logErrorNonFatal(
+							"forPairsDestructorError",
+							parseError(err)
+						)
+					end
+				end
+				if newOutputTable[oldOutKey] == nil then
+					meta[oldOutKey] = nil
+					self._keyData[oldOutKey] = nil
+				end
+
+				didChange = true
+			end
+		end
+		for key in pairs(oldInputTable) do
+			if newInputTable[key] == nil then
+				oldInputTable[key] = nil
+				keyIOMap[key] = nil
+			end
+		end
+
+		return didChange
+	end
+	function class:_peek()
+		return self._outputTable
+	end
+	function class:get()
+		logError "stateGetWasRemoved"
+	end
+
+	local function ForPairs(inputTable, processor, destructor)
+		local inputIsState = isState(inputTable)
+		local self = setmetatable({
+			type = "State",
+			kind = "ForPairs",
+			dependencySet = {},
+			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
+			_oldDependencySet = {},
+			_processor = processor,
+			_destructor = destructor,
+			_inputIsState = inputIsState,
+			_inputTable = inputTable,
+			_oldInputTable = {},
+			_outputTable = {},
+			_oldOutputTable = {},
+			_keyIOMap = {},
+			_keyData = {},
+			_meta = {},
+		}, CLASS_METATABLE)
+
+		self:update()
+
+		return self
+	end
+
+	__DARKLUA_BUNDLE_MODULES.G = ForPairs
+end
+do
+	local parseError = __DARKLUA_BUNDLE_MODULES.C
+	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.B
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local logWarn = __DARKLUA_BUNDLE_MODULES.u
+	local cleanup = __DARKLUA_BUNDLE_MODULES.j
+	local needsDestruction = __DARKLUA_BUNDLE_MODULES.D
+	local peek = __DARKLUA_BUNDLE_MODULES.n
+	local makeUseCallback = __DARKLUA_BUNDLE_MODULES.E
+	local isState = __DARKLUA_BUNDLE_MODULES.m
+	local class = {}
+	local CLASS_METATABLE = { __index = class }
+	local WEAK_KEYS_METATABLE = {
+		__mode = "k",
+	}
+
+	function class:update()
+		local inputIsState = self._inputIsState
+		local newInputTable = peek(self._inputTable)
+		local oldInputTable = self._oldInputTable
+		local outputTable = self._outputTable
+		local keyOIMap = self._keyOIMap
+		local keyIOMap = self._keyIOMap
+		local meta = self._meta
+		local didChange = false
+
+		for dependency in pairs(self.dependencySet) do
+			dependency.dependentSet[self] = nil
+		end
+
+		self._oldDependencySet, self.dependencySet =
+			self.dependencySet, self._oldDependencySet
+
+		for i, _ in pairs(self.dependencySet) do
+			self.dependencySet[i] = nil
+		end
+
+		if inputIsState then
+			self._inputTable.dependentSet[self] = true
+			self.dependencySet[self._inputTable] = true
+		end
+
+		for newInKey, value in pairs(newInputTable) do
+			local keyData = self._keyData[newInKey]
+
+			if keyData == nil then
+				keyData = {
+					dependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
+					oldDependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
+					dependencyValues = setmetatable({}, WEAK_KEYS_METATABLE),
+				}
+				self._keyData[newInKey] = keyData
+			end
+
+			local shouldRecalculate = oldInputTable[newInKey] == nil
+
+			if shouldRecalculate == false then
+				for dependency, oldValue in pairs(keyData.dependencyValues) do
+					if oldValue ~= peek(dependency) then
+						shouldRecalculate = true
+
+						break
+					end
+				end
+			end
+			if shouldRecalculate then
+				keyData.oldDependencySet, keyData.dependencySet =
+					keyData.dependencySet, keyData.oldDependencySet
+
+				for i, _ in pairs(keyData.dependencySet) do
+					keyData.dependencySet[i] = nil
+				end
+
+				local use = makeUseCallback(keyData.dependencySet)
+				local processOK, newOutKey, newMetaValue =
+					pcall(self._processor, use, newInKey)
+
+				if processOK then
+					if
+						self._destructor == nil
+						and (
+							needsDestruction(newOutKey)
+							or needsDestruction(newMetaValue)
+						)
+					then
+						logWarn "destructorNeededForKeys"
+					end
+
+					local oldInKey = keyOIMap[newOutKey]
+					local oldOutKey = keyIOMap[newInKey]
+
+					if
+						oldInKey ~= newInKey
+						and newInputTable[oldInKey] ~= nil
+					then
+						logError(
+							"forKeysKeyCollision",
+							nil,
+							tostring(newOutKey),
+							tostring(oldInKey),
+							tostring(newOutKey)
+						)
+					end
+					if
+						oldOutKey ~= newOutKey
+						and keyOIMap[oldOutKey] == newInKey
+					then
+						local oldMetaValue = meta[oldOutKey]
+						local destructOK, err = pcall(
+							self._destructor or cleanup,
+							oldOutKey,
+							oldMetaValue
+						)
+
+						if not destructOK then
+							logErrorNonFatal(
+								"forKeysDestructorError",
+								parseError(err)
+							)
+						end
+
+						keyOIMap[oldOutKey] = nil
+						outputTable[oldOutKey] = nil
+						meta[oldOutKey] = nil
+					end
+
+					oldInputTable[newInKey] = value
+					meta[newOutKey] = newMetaValue
+					keyOIMap[newOutKey] = newInKey
+					keyIOMap[newInKey] = newOutKey
+					outputTable[newOutKey] = value
+					didChange = true
+				else
+					keyData.oldDependencySet, keyData.dependencySet =
+						keyData.dependencySet, keyData.oldDependencySet
+
+					logErrorNonFatal(
+						"forKeysProcessorError",
+						parseError(newOutKey)
+					)
+				end
+			end
+
+			for dependency in pairs(keyData.dependencySet) do
+				keyData.dependencyValues[dependency] = peek(dependency)
+				self.dependencySet[dependency] = true
+				dependency.dependentSet[self] = true
+			end
+		end
+		for outputKey, inputKey in pairs(keyOIMap) do
+			if newInputTable[inputKey] == nil then
+				local oldMetaValue = meta[outputKey]
+				local destructOK, err =
+					pcall(self._destructor or cleanup, outputKey, oldMetaValue)
+
+				if not destructOK then
+					logErrorNonFatal("forKeysDestructorError", parseError(err))
+				end
+
+				oldInputTable[inputKey] = nil
+				meta[outputKey] = nil
+				keyOIMap[outputKey] = nil
+				keyIOMap[inputKey] = nil
+				outputTable[outputKey] = nil
+				self._keyData[inputKey] = nil
+				didChange = true
+			end
+		end
+
+		return didChange
+	end
+	function class:_peek()
+		return self._outputTable
+	end
+	function class:get()
+		logError "stateGetWasRemoved"
+	end
+
+	local function ForKeys(inputTable, processor, destructor)
+		local inputIsState = isState(inputTable)
+		local self = setmetatable({
+			type = "State",
+			kind = "ForKeys",
+			dependencySet = {},
+			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
+			_oldDependencySet = {},
+			_processor = processor,
+			_destructor = destructor,
+			_inputIsState = inputIsState,
+			_inputTable = inputTable,
+			_oldInputTable = {},
+			_outputTable = {},
+			_keyOIMap = {},
+			_keyIOMap = {},
+			_keyData = {},
+			_meta = {},
+		}, CLASS_METATABLE)
+
+		self:update()
+
+		return self
+	end
+
+	__DARKLUA_BUNDLE_MODULES.H = ForKeys
+end
+do
+	local parseError = __DARKLUA_BUNDLE_MODULES.C
+	local logError = __DARKLUA_BUNDLE_MODULES.d
+	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.B
+	local logWarn = __DARKLUA_BUNDLE_MODULES.u
+	local cleanup = __DARKLUA_BUNDLE_MODULES.j
+	local needsDestruction = __DARKLUA_BUNDLE_MODULES.D
+	local peek = __DARKLUA_BUNDLE_MODULES.n
+	local makeUseCallback = __DARKLUA_BUNDLE_MODULES.E
+	local isState = __DARKLUA_BUNDLE_MODULES.m
+	local class = {}
+	local CLASS_METATABLE = { __index = class }
+	local WEAK_KEYS_METATABLE = {
+		__mode = "k",
+	}
+
+	function class:update()
+		local inputIsState = self._inputIsState
+		local inputTable = peek(self._inputTable)
+		local outputValues = {}
+		local didChange = false
+
+		self._oldValueCache, self._valueCache =
+			self._valueCache, self._oldValueCache
+
+		local newValueCache = self._valueCache
+		local oldValueCache = self._oldValueCache
+
+		for i, _ in pairs(newValueCache) do
+			newValueCache[i] = nil
+		end
+		for dependency in pairs(self.dependencySet) do
+			dependency.dependentSet[self] = nil
+		end
+
+		self._oldDependencySet, self.dependencySet =
+			self.dependencySet, self._oldDependencySet
+
+		for i, _ in pairs(self.dependencySet) do
+			self.dependencySet[i] = nil
+		end
+
+		if inputIsState then
+			self._inputTable.dependentSet[self] = true
+			self.dependencySet[self._inputTable] = true
+		end
+
+		for inKey, inValue in pairs(inputTable) do
+			local oldCachedValues = oldValueCache[inValue]
+			local shouldRecalculate = oldCachedValues == nil
+			local value, valueData, meta
+
+			if type(oldCachedValues) == "table" and #oldCachedValues > 0 then
+				local valueInfo =
+					table.remove(oldCachedValues, #oldCachedValues)
+
+				value = valueInfo.value
+				valueData = valueInfo.valueData
+				meta = valueInfo.meta
+
+				if #oldCachedValues <= 0 then
+					oldValueCache[inValue] = nil
+				end
+			elseif oldCachedValues ~= nil then
+				oldValueCache[inValue] = nil
+				shouldRecalculate = true
+			end
+			if valueData == nil then
+				valueData = {
+					dependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
+					oldDependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
+					dependencyValues = setmetatable({}, WEAK_KEYS_METATABLE),
+				}
+			end
+			if shouldRecalculate == false then
+				for dependency, oldValue in pairs(valueData.dependencyValues) do
+					if oldValue ~= peek(dependency) then
+						shouldRecalculate = true
+
+						break
+					end
+				end
+			end
+			if shouldRecalculate then
+				valueData.oldDependencySet, valueData.dependencySet =
+					valueData.dependencySet, valueData.oldDependencySet
+
+				for i, _ in pairs(valueData.dependencySet) do
+					valueData.dependencySet[i] = nil
+				end
+
+				local use = makeUseCallback(valueData.dependencySet)
+				local processOK, newOutValue, newMetaValue =
+					pcall(self._processor, use, inValue)
+
+				if processOK then
+					if
+						self._destructor == nil
+						and (
+							needsDestruction(newOutValue)
+							or needsDestruction(newMetaValue)
+						)
+					then
+						logWarn "destructorNeededForValues"
+					end
+					if value ~= nil then
+						local destructOK, err =
+							pcall(self._destructor or cleanup, value, meta)
+
+						if not destructOK then
+							logErrorNonFatal(
+								"forValuesDestructorError",
+								parseError(err)
+							)
+						end
+					end
+
+					value = newOutValue
+					meta = newMetaValue
+					didChange = true
+				else
+					valueData.oldDependencySet, valueData.dependencySet =
+						valueData.dependencySet, valueData.oldDependencySet
+
+					logErrorNonFatal(
+						"forValuesProcessorError",
+						parseError(newOutValue)
+					)
+				end
+			end
+
+			local newCachedValues = newValueCache[inValue]
+
+			if newCachedValues == nil then
+				newCachedValues = {}
+				newValueCache[inValue] = newCachedValues
+			end
+
+			table.insert(newCachedValues, {
+				value = value,
+				valueData = valueData,
+				meta = meta,
+			})
+
+			outputValues[inKey] = value
+
+			for dependency in pairs(valueData.dependencySet) do
+				valueData.dependencyValues[dependency] = peek(dependency)
+				self.dependencySet[dependency] = true
+				dependency.dependentSet[self] = true
+			end
+		end
+		for _oldInValue, oldCachedValueInfo in pairs(oldValueCache) do
+			for _, valueInfo in ipairs(oldCachedValueInfo) do
+				local oldValue = valueInfo.value
+				local oldMetaValue = valueInfo.meta
+				local destructOK, err =
+					pcall(self._destructor or cleanup, oldValue, oldMetaValue)
+
+				if not destructOK then
+					logErrorNonFatal(
+						"forValuesDestructorError",
+						parseError(err)
+					)
+				end
+
+				didChange = true
+			end
+			for i, _ in pairs(oldCachedValueInfo) do
+				oldCachedValueInfo[i] = nil
+			end
+		end
+
+		self._outputTable = outputValues
+
+		return didChange
+	end
+	function class:_peek()
+		return self._outputTable
+	end
+	function class:get()
+		logError "stateGetWasRemoved"
+	end
+
+	local function ForValues(inputTable, processor, destructor)
+		local inputIsState = isState(inputTable)
+		local self = setmetatable({
+			type = "State",
+			kind = "ForValues",
+			dependencySet = {},
+			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
+			_oldDependencySet = {},
+			_processor = processor,
+			_destructor = destructor,
+			_inputIsState = inputIsState,
+			_inputTable = inputTable,
+			_outputTable = {},
+			_valueCache = {},
+			_oldValueCache = {},
+		}, CLASS_METATABLE)
+
+		self:update()
+
+		return self
+	end
+
+	__DARKLUA_BUNDLE_MODULES.I = ForValues
+end
+do
+	local Oklab = {}
+
+	function Oklab.to(rgb)
+		local l = rgb.r * 0.4122214708
+			+ rgb.g * 0.5363325363
+			+ rgb.b * 0.0514459929
+		local m = rgb.r * 0.2119034982
+			+ rgb.g * 0.6806995451
+			+ rgb.b * 0.1073969566
+		local s = rgb.r * 0.0883024619
+			+ rgb.g * 0.2817188376
+			+ rgb.b * 0.6299787005
+		local lRoot = l ^ 0.3333333333333333
+		local mRoot = m ^ 0.3333333333333333
+		local sRoot = s ^ 0.3333333333333333
+
+		return Vector3.new(
+			lRoot * 0.2104542553 + mRoot * 0.793617785 - sRoot * 0.0040720468,
+			lRoot * 1.9779984951 - mRoot * 2.428592205 + sRoot * 0.4505937099,
+			lRoot * 0.0259040371 + mRoot * 0.7827717662 - sRoot * 0.808675766
+		)
+	end
+	function Oklab.from(lab, unclamped)
+		local lRoot = lab.X + lab.Y * 0.3963377774 + lab.Z * 0.2158037573
+		local mRoot = lab.X - lab.Y * 0.1055613458 - lab.Z * 0.0638541728
+		local sRoot = lab.X - lab.Y * 0.0894841775 - lab.Z * 1.291485548
+		local l = lRoot ^ 3
+		local m = mRoot ^ 3
+		local s = sRoot ^ 3
+		local red = l * 4.0767416621 - m * 3.3077115913 + s * 0.2309699292
+		local green = l * -1.2684380046 + m * 2.6097574011 - s * 0.3413193965
+		local blue = l * -4.196086299999999E-3
+			- m * 0.7034186147
+			+ s * 1.707614701
+
+		if not unclamped then
+			red = math.max(0, math.min(red, 1))
+			green = math.max(0, math.min(green, 1))
+			blue = math.max(0, math.min(blue, 1))
+		end
+
+		return Color3.new(red, green, blue)
+	end
+
+	__DARKLUA_BUNDLE_MODULES.J = Oklab
+end
+do
+	local Oklab = __DARKLUA_BUNDLE_MODULES.J
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
 
 	local function lerpType(from, to, ratio)
 		local typeString = typeof(from)
@@ -428,7 +2188,7 @@ do
 		return to
 	end
 
-	__DARKLUA_BUNDLE_MODULES.h = lerpType
+	__DARKLUA_BUNDLE_MODULES.K = lerpType
 end
 do
 	local pow = math.pow
@@ -771,10 +2531,10 @@ do
 
 		return easing.Bounce.In((t * 2) - 1, b + c / 2, c / 2)
 	end
-	__DARKLUA_BUNDLE_MODULES.i = easing
+	__DARKLUA_BUNDLE_MODULES.L = easing
 end
 do
-	local easing = __DARKLUA_BUNDLE_MODULES.i
+	local easing = __DARKLUA_BUNDLE_MODULES.L
 
 	local function getTweenRatio(tweenInfo, currentTime)
 		local delay = tweenInfo.DelayTime
@@ -810,73 +2570,13 @@ do
 		return easing[easeStyle][easeDirection](tweenProgress, 0, 1)
 	end
 
-	__DARKLUA_BUNDLE_MODULES.j = getTweenRatio
+	__DARKLUA_BUNDLE_MODULES.M = getTweenRatio
 end
 do
-	local function updateAll(root)
-		local counters = {}
-		local flags = {}
-		local queue = {}
-		local queueSize = 0
-		local queuePos = 1
-
-		for object in pairs(root.dependentSet) do
-			queueSize = queueSize + 1
-			queue[queueSize] = object
-			flags[object] = true
-		end
-
-		while queuePos <= queueSize do
-			local next = queue[queuePos]
-			local counter = counters[next]
-
-			counters[next] = (function()
-				if counter == nil then
-					return 1
-				else
-					return counter + 1
-				end
-			end)()
-
-			if next.dependentSet ~= nil then
-				for object in pairs(next.dependentSet) do
-					queueSize = queueSize + 1
-					queue[queueSize] = object
-				end
-			end
-
-			queuePos = queuePos + 1
-		end
-
-		queuePos = 1
-
-		while queuePos <= queueSize do
-			local next = queue[queuePos]
-			local counter = counters[next] - 1
-
-			counters[next] = counter
-
-			if
-				counter == 0
-				and flags[next]
-				and next:update()
-				and next.dependentSet ~= nil
-			then
-				for object in pairs(next.dependentSet) do
-					flags[object] = true
-				end
-			end
-
-			queuePos = queuePos + 1
-		end
-	end
-
-	__DARKLUA_BUNDLE_MODULES.k = updateAll
-end
-do
-	local lerpType = __DARKLUA_BUNDLE_MODULES.h
-	local getTweenRatio = __DARKLUA_BUNDLE_MODULES.j
-	local updateAll = __DARKLUA_BUNDLE_MODULES.k
+	local External = __DARKLUA_BUNDLE_MODULES.e
+	local lerpType = __DARKLUA_BUNDLE_MODULES.K
+	local getTweenRatio = __DARKLUA_BUNDLE_MODULES.M
+	local updateAll = __DARKLUA_BUNDLE_MODULES.y
 	local TweenScheduler = {}
 	local WEAK_KEYS_METATABLE = {
 		__mode = "k",
@@ -891,9 +2591,8 @@ do
 	function TweenScheduler.remove(tween)
 		allTweens[tween] = nil
 	end
-	function TweenScheduler.updateAllTweens()
-		local now = time()
 
+	local function updateAllTweens(now)
 		for tween in pairs(allTweens) do
 			local currentTime = now - tween._currentTweenStartTime
 
@@ -925,1836 +2624,18 @@ do
 		end
 	end
 
-	__DARKLUA_BUNDLE_MODULES.l = TweenScheduler
+	External.bindToUpdateStep(updateAllTweens)
+
+	__DARKLUA_BUNDLE_MODULES.N = TweenScheduler
 end
 do
-	local Oklab = __DARKLUA_BUNDLE_MODULES.f
-
-	local function packType(numbers, typeString)
-		if typeString == "number" then
-			return numbers[1]
-		elseif typeString == "CFrame" then
-			return CFrame.new(numbers[1], numbers[2], numbers[3])
-				* CFrame.fromAxisAngle(
-					Vector3.new(numbers[4], numbers[5], numbers[6]).Unit,
-					numbers[7]
-				)
-		elseif typeString == "Color3" then
-			return Oklab.from(
-				Vector3.new(numbers[1], numbers[2], numbers[3]),
-				false
-			)
-		elseif typeString == "ColorSequenceKeypoint" then
-			return ColorSequenceKeypoint.new(
-				numbers[4],
-				Oklab.from(
-					Vector3.new(numbers[1], numbers[2], numbers[3]),
-					false
-				)
-			)
-		elseif typeString == "DateTime" then
-			return DateTime.fromUnixTimestampMillis(numbers[1])
-		elseif typeString == "NumberRange" then
-			return NumberRange.new(numbers[1], numbers[2])
-		elseif typeString == "NumberSequenceKeypoint" then
-			return NumberSequenceKeypoint.new(
-				numbers[2],
-				numbers[1],
-				numbers[3]
-			)
-		elseif typeString == "PhysicalProperties" then
-			return PhysicalProperties.new(
-				numbers[1],
-				numbers[2],
-				numbers[3],
-				numbers[4],
-				numbers[5]
-			)
-		elseif typeString == "Ray" then
-			return Ray.new(
-				Vector3.new(numbers[1], numbers[2], numbers[3]),
-				Vector3.new(numbers[4], numbers[5], numbers[6])
-			)
-		elseif typeString == "Rect" then
-			return Rect.new(numbers[1], numbers[2], numbers[3], numbers[4])
-		elseif typeString == "Region3" then
-			local position = Vector3.new(numbers[1], numbers[2], numbers[3])
-			local halfSize =
-				Vector3.new(numbers[4] / 2, numbers[5] / 2, numbers[6] / 2)
-
-			return Region3.new(position - halfSize, position + halfSize)
-		elseif typeString == "Region3int16" then
-			return Region3int16.new(
-				Vector3int16.new(numbers[1], numbers[2], numbers[3]),
-				Vector3int16.new(numbers[4], numbers[5], numbers[6])
-			)
-		elseif typeString == "UDim" then
-			return UDim.new(numbers[1], numbers[2])
-		elseif typeString == "UDim2" then
-			return UDim2.new(numbers[1], numbers[2], numbers[3], numbers[4])
-		elseif typeString == "Vector2" then
-			return Vector2.new(numbers[1], numbers[2])
-		elseif typeString == "Vector2int16" then
-			return Vector2int16.new(numbers[1], numbers[2])
-		elseif typeString == "Vector3" then
-			return Vector3.new(numbers[1], numbers[2], numbers[3])
-		elseif typeString == "Vector3int16" then
-			return Vector3int16.new(numbers[1], numbers[2], numbers[3])
-		else
-			return nil
-		end
-	end
-
-	__DARKLUA_BUNDLE_MODULES.m = packType
-end
-do
-	local function springCoefficients(time, damping, speed)
-		if time == 0 or speed == 0 then
-			return 1, 0, 0, 1
-		end
-
-		local posPos, posVel, velPos, velVel
-
-		if damping > 1 then
-			local scaledTime = time * speed
-			local alpha = math.sqrt(damping ^ 2 - 1)
-			local scaledInvAlpha = -0.5 / alpha
-			local z1 = -alpha - damping
-			local z2 = 1 / z1
-			local expZ1 = math.exp(scaledTime * z1)
-			local expZ2 = math.exp(scaledTime * z2)
-
-			posPos = (expZ2 * z1 - expZ1 * z2) * scaledInvAlpha
-			posVel = (expZ1 - expZ2) * scaledInvAlpha / speed
-			velPos = (expZ2 - expZ1) * scaledInvAlpha * speed
-			velVel = (expZ1 * z1 - expZ2 * z2) * scaledInvAlpha
-		elseif damping == 1 then
-			local scaledTime = time * speed
-			local expTerm = math.exp(-scaledTime)
-
-			posPos = expTerm * (1 + scaledTime)
-			posVel = expTerm * time
-			velPos = expTerm * (-scaledTime * speed)
-			velVel = expTerm * (1 - scaledTime)
-		else
-			local scaledTime = time * speed
-			local alpha = math.sqrt(1 - damping ^ 2)
-			local invAlpha = 1 / alpha
-			local alphaTime = alpha * scaledTime
-			local expTerm = math.exp(-scaledTime * damping)
-			local sinTerm = expTerm * math.sin(alphaTime)
-			local cosTerm = expTerm * math.cos(alphaTime)
-			local sinInvAlpha = sinTerm * invAlpha
-			local sinInvAlphaDamp = sinInvAlpha * damping
-
-			posPos = sinInvAlphaDamp + cosTerm
-			posVel = sinInvAlpha
-			velPos = -(sinInvAlphaDamp * damping + sinTerm * alpha)
-			velVel = cosTerm - sinInvAlphaDamp
-		end
-
-		return posPos, posVel, velPos, velVel
-	end
-
-	__DARKLUA_BUNDLE_MODULES.n = springCoefficients
-end
-do
-	local packType = __DARKLUA_BUNDLE_MODULES.m
-	local springCoefficients = __DARKLUA_BUNDLE_MODULES.n
-	local updateAll = __DARKLUA_BUNDLE_MODULES.k
-	local SpringScheduler = {}
-	local EPSILON = 0.0001
-	local activeSprings = {}
-	local lastUpdateTime = time()
-
-	function SpringScheduler.add(spring)
-		spring._lastSchedule = lastUpdateTime
-		spring._startDisplacements = {}
-		spring._startVelocities = {}
-
-		for index, goal in ipairs(spring._springGoals) do
-			spring._startDisplacements[index] = spring._springPositions[index]
-				- goal
-			spring._startVelocities[index] = spring._springVelocities[index]
-		end
-
-		activeSprings[spring] = true
-	end
-	function SpringScheduler.remove(spring)
-		activeSprings[spring] = nil
-	end
-	function SpringScheduler.updateAllSprings()
-		local springsToSleep = {}
-
-		lastUpdateTime = time()
-
-		for spring in pairs(activeSprings) do
-			local posPos, posVel, velPos, velVel = springCoefficients(
-				lastUpdateTime - spring._lastSchedule,
-				spring._currentDamping,
-				spring._currentSpeed
-			)
-			local positions = spring._springPositions
-			local velocities = spring._springVelocities
-			local startDisplacements = spring._startDisplacements
-			local startVelocities = spring._startVelocities
-			local isMoving = false
-
-			for index, goal in ipairs(spring._springGoals) do
-				local oldDisplacement = startDisplacements[index]
-				local oldVelocity = startVelocities[index]
-				local newDisplacement = oldDisplacement * posPos
-					+ oldVelocity * posVel
-				local newVelocity = oldDisplacement * velPos
-					+ oldVelocity * velVel
-
-				if
-					math.abs(newDisplacement) > EPSILON
-					or math.abs(newVelocity) > EPSILON
-				then
-					isMoving = true
-				end
-
-				positions[index] = newDisplacement + goal
-				velocities[index] = newVelocity
-			end
-
-			if not isMoving then
-				springsToSleep[spring] = true
-			end
-		end
-		for spring in pairs(activeSprings) do
-			spring._currentValue =
-				packType(spring._springPositions, spring._currentType)
-
-			updateAll(spring)
-		end
-		for spring in pairs(springsToSleep) do
-			activeSprings[spring] = nil
-			spring._currentValue =
-				packType(spring._springGoals, spring._currentType)
-		end
-	end
-
-	__DARKLUA_BUNDLE_MODULES.o = SpringScheduler
-end
-do
-	local RunService = game:GetService "RunService"
-	local TweenScheduler = __DARKLUA_BUNDLE_MODULES.l
-	local SpringScheduler = __DARKLUA_BUNDLE_MODULES.o
-
-	local function bindScheduler()
-		RunService.RenderStepped:connect(TweenScheduler.updateAllTweens)
-		RunService.RenderStepped:connect(SpringScheduler.updateAllSprings)
-	end
-
-	__DARKLUA_BUNDLE_MODULES.p = bindScheduler
-end
-do
-	__DARKLUA_BUNDLE_MODULES.q = {
-		BillboardGui = { Active = true },
-		Frame = {
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BorderColor3 = Color3.new(0, 0, 0),
-			BorderSizePixel = 0,
-		},
-		TextLabel = {
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BorderColor3 = Color3.new(0, 0, 0),
-			BorderSizePixel = 0,
-			Font = Enum.Font.SourceSans,
-			Text = "",
-			TextColor3 = Color3.new(0, 0, 0),
-			FontSize = Enum.FontSize.Size14,
-		},
-		TextButton = {
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BorderColor3 = Color3.new(0, 0, 0),
-			BorderSizePixel = 0,
-			AutoButtonColor = false,
-			Font = Enum.Font.SourceSans,
-			Text = "",
-			TextColor3 = Color3.new(0, 0, 0),
-			FontSize = Enum.FontSize.Size14,
-		},
-		TextBox = {
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BorderColor3 = Color3.new(0, 0, 0),
-			BorderSizePixel = 0,
-			ClearTextOnFocus = false,
-			Font = Enum.Font.SourceSans,
-			Text = "",
-			TextColor3 = Color3.new(0, 0, 0),
-			FontSize = Enum.FontSize.Size14,
-		},
-		ImageLabel = {
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BorderColor3 = Color3.new(0, 0, 0),
-			BorderSizePixel = 0,
-		},
-		ImageButton = {
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BorderColor3 = Color3.new(0, 0, 0),
-			BorderSizePixel = 0,
-			AutoButtonColor = false,
-		},
-		SpawnLocation = { Duration = 0 },
-		Part = {
-			Anchored = true,
-			Size = Vector3.new(1, 1, 1),
-			FrontSurface = Enum.SurfaceType.Smooth,
-			BackSurface = Enum.SurfaceType.Smooth,
-			LeftSurface = Enum.SurfaceType.Smooth,
-			RightSurface = Enum.SurfaceType.Smooth,
-			TopSurface = Enum.SurfaceType.Smooth,
-			BottomSurface = Enum.SurfaceType.Smooth,
-		},
-		TrussPart = {
-			Anchored = true,
-			Size = Vector3.new(2, 2, 2),
-			FrontSurface = Enum.SurfaceType.Smooth,
-			BackSurface = Enum.SurfaceType.Smooth,
-			LeftSurface = Enum.SurfaceType.Smooth,
-			RightSurface = Enum.SurfaceType.Smooth,
-			TopSurface = Enum.SurfaceType.Smooth,
-			BottomSurface = Enum.SurfaceType.Smooth,
-		},
-		CornerWedgePart = {
-			Anchored = true,
-			Size = Vector3.new(1, 1, 1),
-			FrontSurface = Enum.SurfaceType.Smooth,
-			BackSurface = Enum.SurfaceType.Smooth,
-			LeftSurface = Enum.SurfaceType.Smooth,
-			RightSurface = Enum.SurfaceType.Smooth,
-			TopSurface = Enum.SurfaceType.Smooth,
-			BottomSurface = Enum.SurfaceType.Smooth,
-		},
-		VehicleSeat = {
-			Anchored = true,
-			Size = Vector3.new(1, 1, 1),
-			FrontSurface = Enum.SurfaceType.Smooth,
-			BackSurface = Enum.SurfaceType.Smooth,
-			LeftSurface = Enum.SurfaceType.Smooth,
-			RightSurface = Enum.SurfaceType.Smooth,
-			TopSurface = Enum.SurfaceType.Smooth,
-			BottomSurface = Enum.SurfaceType.Smooth,
-		},
-	}
-end
-do
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
-
-	local function cleanupOne(task)
-		local taskType = typeof(task)
-
-		if taskType == "Instance" then
-			task:Destroy()
-		elseif taskType == "RBXScriptConnection" then
-			task:disconnect()
-		elseif taskType == "function" then
-			task()
-		elseif taskType == "table" then
-			if type(task.destroy) == "function" then
-				task:destroy()
-			elseif type(task.Destroy) == "function" then
-				task:Destroy()
-			elseif task[1] ~= nil then
-				for _, subtask in ipairs(task) do
-					cleanupOne(subtask)
-				end
-			end
-		end
-	end
-	local function cleanup(...)
-		for index = 1, select("#", ...) do
-			cleanupOne(select(index, ...))
-		end
-	end
-
-	__DARKLUA_BUNDLE_MODULES.r = cleanup
-end
-do
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
-
-	local function xtypeof(x)
-		local typeString = typeof(x)
-
-		if typeString == "table" and type(x.type) == "string" then
-			return x.type
-		else
-			return typeString
-		end
-	end
-
-	__DARKLUA_BUNDLE_MODULES.s = xtypeof
-end
-do
-	local class = {}
-	local CLASS_METATABLE = { __index = class }
-	local strongRefs = {}
-
-	function class:update()
-		for _, callback in pairs(self._changeListeners) do
-			Spawn(callback)
-		end
-
-		return false
-	end
-	function class:onChange(callback)
-		local uniqueIdentifier = {}
-
-		self._numChangeListeners = self._numChangeListeners + 1
-		self._changeListeners[uniqueIdentifier] = callback
-		strongRefs[self] = true
-
-		local disconnected = false
-
-		return function()
-			if disconnected then
-				return
-			end
-
-			disconnected = true
-			self._changeListeners[uniqueIdentifier] = nil
-			self._numChangeListeners = self._numChangeListeners - 1
-
-			if self._numChangeListeners == 0 then
-				strongRefs[self] = nil
-			end
-		end
-	end
-	function class:onBind(callback)
-		Spawn(callback)
-
-		return self:onChange(callback)
-	end
-
-	local function Observer(watchedState)
-		local self = setmetatable({
-			type = "State",
-			kind = "Observer",
-			dependencySet = { [watchedState] = true },
-			dependentSet = {},
-			_changeListeners = {},
-			_numChangeListeners = 0,
-		}, CLASS_METATABLE)
-
-		watchedState.dependentSet[self] = true
-
-		return self
-	end
-
-	__DARKLUA_BUNDLE_MODULES.t = Observer
-end
-do
-	local function isState(target)
-		return type(target) == "table" and type(target._peek) == "function"
-	end
-
-	__DARKLUA_BUNDLE_MODULES.u = isState
-end
-do
-	local isState = __DARKLUA_BUNDLE_MODULES.u
-
-	local function peek(target)
-		if isState(target) then
-			return (target):_peek()
-		end
-
-		return target
-	end
-
-	__DARKLUA_BUNDLE_MODULES.v = peek
-end
-do
-	local cleanup = __DARKLUA_BUNDLE_MODULES.r
-	local xtypeof = __DARKLUA_BUNDLE_MODULES.s
+	local External = __DARKLUA_BUNDLE_MODULES.e
+	local TweenScheduler = __DARKLUA_BUNDLE_MODULES.N
 	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local Observer = __DARKLUA_BUNDLE_MODULES.t
-	local peek = __DARKLUA_BUNDLE_MODULES.v
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
-
-	local function setProperty_unsafe(instance, property, value)
-		(instance)[property] = value
-	end
-	local function testPropertyAssignable(instance, property)
-		(instance)[property] = (instance)[property]
-	end
-	local function setProperty(instance, property, value)
-		if not pcall(setProperty_unsafe, instance, property, value) then
-			if not pcall(testPropertyAssignable, instance, property) then
-				if instance == nil then
-					logError(
-						"setPropertyNilRef",
-						nil,
-						property,
-						tostring(value)
-					)
-				else
-					logError(
-						"cannotAssignProperty",
-						nil,
-						instance.ClassName,
-						property
-					)
-				end
-			else
-				local givenType = typeof(value)
-				local expectedType = typeof((instance)[property])
-
-				logError(
-					"invalidPropertyType",
-					nil,
-					instance.ClassName,
-					property,
-					expectedType,
-					givenType
-				)
-			end
-		end
-	end
-	local function bindProperty(instance, property, value, cleanupTasks)
-		if xtypeof(value) == "State" then
-			local willUpdate = false
-
-			local function updateLater()
-				if not willUpdate then
-					willUpdate = true
-
-					coroutine.resume(coroutine.create(function()
-						willUpdate = false
-
-						setProperty(instance, property, peek(value))
-					end))
-				end
-			end
-
-			setProperty(instance, property, peek(value))
-			table.insert(cleanupTasks, Observer(value):onChange(updateLater))
-		else
-			setProperty(instance, property, value)
-		end
-	end
-	local function applyInstanceProps(props, applyTo)
-		local specialKeys = {
-			self = {},
-			descendants = {},
-			ancestor = {},
-			observer = {},
-		}
-		local cleanupTasks = {}
-
-		for key, value in pairs(props) do
-			local keyType = xtypeof(key)
-
-			if keyType == "string" then
-				if key ~= "Parent" then
-					bindProperty(applyTo, key, value, cleanupTasks)
-				end
-			elseif keyType == "SpecialKey" then
-				local stage = (key).stage
-				local keys = specialKeys[stage]
-
-				if keys == nil then
-					logError("unrecognisedPropertyStage", nil, stage)
-				else
-					keys[key] = value
-				end
-			else
-				logError("unrecognisedPropertyKey", nil, xtypeof(key))
-			end
-		end
-		for key, value in pairs(specialKeys.self) do
-			key:apply(value, applyTo, cleanupTasks)
-		end
-		for key, value in pairs(specialKeys.descendants) do
-			key:apply(value, applyTo, cleanupTasks)
-		end
-
-		if props.Parent ~= nil then
-			bindProperty(applyTo, "Parent", props.Parent, cleanupTasks)
-		end
-
-		for key, value in pairs(specialKeys.ancestor) do
-			key:apply(value, applyTo, cleanupTasks)
-		end
-		for key, value in pairs(specialKeys.observer) do
-			key:apply(value, applyTo, cleanupTasks)
-		end
-
-		if applyTo.Parent then
-			game.DescendantRemoving:connect(function(descendant)
-				if descendant == applyTo then
-					cleanup(cleanupTasks)
-				end
-			end)
-		end
-	end
-
-	__DARKLUA_BUNDLE_MODULES.w = applyInstanceProps
-end
-do
-	local defaultProps = __DARKLUA_BUNDLE_MODULES.q
-	local applyInstanceProps = __DARKLUA_BUNDLE_MODULES.w
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-
-	local function New(className)
-		return function(props)
-			local ok, instance = pcall(Instance.new, className)
-
-			if not ok then
-				logError("cannotCreateClass", nil, className)
-			end
-
-			local classDefaults = defaultProps[className]
-
-			if classDefaults ~= nil then
-				for defaultProp, defaultValue in pairs(classDefaults) do
-					instance[defaultProp] = defaultValue
-				end
-			end
-
-			applyInstanceProps(props, instance)
-
-			return instance
-		end
-	end
-
-	__DARKLUA_BUNDLE_MODULES.x = New
-end
-do
-	local applyInstanceProps = __DARKLUA_BUNDLE_MODULES.w
-
-	local function Hydrate(target)
-		return function(props)
-			applyInstanceProps(props, target)
-
-			return target
-		end
-	end
-
-	__DARKLUA_BUNDLE_MODULES.y = Hydrate
-end
-do
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local xtypeof = __DARKLUA_BUNDLE_MODULES.s
-	local Ref = {}
-
-	Ref.type = "SpecialKey"
-	Ref.kind = "Ref"
-	Ref.stage = "observer"
-
-	function Ref:apply(refState, applyTo, cleanupTasks)
-		if xtypeof(refState) ~= "State" or refState.kind ~= "Value" then
-			logError "invalidRefType"
-		else
-			refState:set(applyTo)
-			table.insert(cleanupTasks, function()
-				refState:set(nil)
-			end)
-		end
-	end
-
-	__DARKLUA_BUNDLE_MODULES.z = Ref
-end
-do
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local xtypeof = __DARKLUA_BUNDLE_MODULES.s
-
-	local function Out(propertyName)
-		local outKey = {}
-
-		outKey.type = "SpecialKey"
-		outKey.kind = "Out"
-		outKey.stage = "observer"
-
-		function outKey:apply(outState, applyTo, cleanupTasks)
-			local ok, event = pcall(function()
-				return applyTo.Changed
-			end)
-
-			if not ok then
-				logError(
-					"invalidOutProperty",
-					nil,
-					applyTo.ClassName,
-					propertyName
-				)
-			elseif xtypeof(outState) ~= "State" or outState.kind ~= "Value" then
-				logError "invalidOutType"
-			else
-				outState:set((applyTo)[propertyName])
-				table.insert(
-					cleanupTasks,
-					event:connect(function(prop)
-						if prop == propertyName then
-							outState:set((applyTo)[propertyName])
-						end
-					end)
-				)
-				table.insert(cleanupTasks, function()
-					outState:set(nil)
-				end)
-			end
-		end
-
-		return outKey
-	end
-
-	__DARKLUA_BUNDLE_MODULES.A = Out
-end
-do
-	local Cleanup = {}
-
-	Cleanup.type = "SpecialKey"
-	Cleanup.kind = "Cleanup"
-	Cleanup.stage = "observer"
-
-	function Cleanup:apply(userTask, _, cleanupTasks)
-		table.insert(cleanupTasks, userTask)
-	end
-
-	__DARKLUA_BUNDLE_MODULES.B = Cleanup
-end
-do
-	local messages = __DARKLUA_BUNDLE_MODULES.c
-
-	local function logWarn(messageID, ...)
-		local formatString
-
-		if messages[messageID] ~= nil then
-			formatString = messages[messageID]
-		else
-			messageID = "unknownMessage"
-			formatString = messages[messageID]
-		end
-
-		warn(
-			string.format(
-				"[Fusion] " .. formatString .. "\n(ID: " .. messageID .. ")",
-				...
-			)
-		)
-	end
-
-	__DARKLUA_BUNDLE_MODULES.C = logWarn
-end
-do
-	local logWarn = __DARKLUA_BUNDLE_MODULES.C
-	local Observer = __DARKLUA_BUNDLE_MODULES.t
-	local peek = __DARKLUA_BUNDLE_MODULES.v
-	local isState = __DARKLUA_BUNDLE_MODULES.u
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
-	local EXPERIMENTAL_AUTO_NAMING = false
-	local Children = {}
-
-	Children.type = "SpecialKey"
-	Children.kind = "Children"
-	Children.stage = "descendants"
-
-	function Children:apply(propValue, applyTo, cleanupTasks)
-		local newParented = {}
-		local oldParented = {}
-		local newDisconnects = {}
-		local oldDisconnects = {}
-		local updateQueued = false
-		local queueUpdate
-
-		local function updateChildren()
-			if not updateQueued then
-				return
-			end
-
-			updateQueued = false
-			oldParented, newParented = newParented, oldParented
-			oldDisconnects, newDisconnects = newDisconnects, oldDisconnects
-
-			for i, _ in pairs(newParented) do
-				newParented[i] = nil
-			end
-			for i, _ in pairs(newDisconnects) do
-				newDisconnects[i] = nil
-			end
-
-			local function processChild(child, autoName)
-				local childType = typeof(child)
-
-				if childType == "Instance" then
-					newParented[child] = true
-
-					if oldParented[child] == nil then
-						child.Parent = applyTo
-					else
-						oldParented[child] = nil
-					end
-					if EXPERIMENTAL_AUTO_NAMING and autoName ~= nil then
-						child.Name = autoName
-					end
-				elseif isState(child) then
-					local value = peek(child)
-
-					if value ~= nil then
-						processChild(value, autoName)
-					end
-
-					local disconnect = oldDisconnects[child]
-
-					if disconnect == nil then
-						disconnect = Observer(child):onChange(queueUpdate)
-					else
-						oldDisconnects[child] = nil
-					end
-
-					newDisconnects[child] = disconnect
-				elseif childType == "table" then
-					for key, subChild in pairs(child) do
-						local keyType = typeof(key)
-						local subAutoName = nil
-
-						if keyType == "string" then
-							subAutoName = key
-						elseif keyType == "number" and autoName ~= nil then
-							subAutoName = autoName .. "_" .. key
-						end
-
-						processChild(subChild, subAutoName)
-					end
-				else
-					logWarn("unrecognisedChildType", childType)
-				end
-			end
-
-			if propValue ~= nil then
-				processChild(propValue)
-			end
-
-			for oldInstance in pairs(oldParented) do
-				oldInstance.Parent = nil
-			end
-			for _, disconnect in pairs(oldDisconnects) do
-				disconnect()
-			end
-		end
-
-		queueUpdate = function()
-			if not updateQueued then
-				updateQueued = true
-
-				coroutine.resume(coroutine.create(updateChildren))
-			end
-		end
-
-		table.insert(cleanupTasks, function()
-			propValue = nil
-			updateQueued = true
-
-			updateChildren()
-		end)
-
-		updateQueued = true
-
-		updateChildren()
-	end
-
-	__DARKLUA_BUNDLE_MODULES.D = Children
-end
-do
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
-
-	local function getProperty_unsafe(instance, property)
-		return (instance)[property]
-	end
-	local function OnEvent(eventName)
-		local eventKey = {}
-
-		eventKey.type = "SpecialKey"
-		eventKey.kind = "OnEvent"
-		eventKey.stage = "observer"
-
-		function eventKey:apply(callback, applyTo, cleanupTasks)
-			local ok, event = pcall(getProperty_unsafe, applyTo, eventName)
-
-			if not ok or typeof(event) ~= "RBXScriptSignal" then
-				logError(
-					"cannotConnectEvent",
-					nil,
-					applyTo.ClassName,
-					eventName
-				)
-			elseif typeof(callback) ~= "function" then
-				logError("invalidEventHandler", nil, eventName)
-			else
-				table.insert(cleanupTasks, event:connect(callback))
-			end
-		end
-
-		return eventKey
-	end
-
-	__DARKLUA_BUNDLE_MODULES.E = OnEvent
-end
-do
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
-
-	local function OnChange(propertyName)
-		local changeKey = {}
-
-		changeKey.type = "SpecialKey"
-		changeKey.kind = "OnChange"
-		changeKey.stage = "observer"
-
-		function changeKey:apply(callback, applyTo, cleanupTasks)
-			local ok, event = pcall(function()
-				return applyTo.Changed
-			end)
-
-			if not ok then
-				logError(
-					"cannotConnectChange",
-					nil,
-					applyTo.ClassName,
-					propertyName
-				)
-			elseif typeof(callback) ~= "function" then
-				logError("invalidChangeHandler", nil, propertyName)
-			else
-				table.insert(
-					cleanupTasks,
-					event:connect(function(prop)
-						if prop == propertyName then
-							callback((applyTo)[propertyName])
-						end
-					end)
-				)
-			end
-		end
-
-		return changeKey
-	end
-
-	__DARKLUA_BUNDLE_MODULES.F = OnChange
-end
-do
-	local function isSimilar(a, b)
-		if type(a) == "table" then
-			return false
-		end
-
-		return a == b
-	end
-
-	__DARKLUA_BUNDLE_MODULES.G = isSimilar
-end
-do
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local updateAll = __DARKLUA_BUNDLE_MODULES.k
-	local isSimilar = __DARKLUA_BUNDLE_MODULES.G
-	local class = {}
-	local CLASS_METATABLE = { __index = class }
-	local WEAK_KEYS_METATABLE = {
-		__mode = "k",
-	}
-
-	function class:set(newValue, force)
-		local oldValue = self._value
-
-		if force or not isSimilar(oldValue, newValue) then
-			self._value = newValue
-
-			updateAll(self)
-		end
-	end
-	function class:_peek()
-		return self._value
-	end
-	function class:get()
-		logError "stateGetWasRemoved"
-	end
-
-	local function Value(initialValue)
-		local self = setmetatable({
-			type = "State",
-			kind = "Value",
-			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
-			_value = initialValue,
-		}, CLASS_METATABLE)
-
-		return self
-	end
-
-	__DARKLUA_BUNDLE_MODULES.H = Value
-end
-do
-	local messages = __DARKLUA_BUNDLE_MODULES.c
-
-	local function logErrorNonFatal(messageID, errObj, ...)
-		local formatString
-
-		if messages[messageID] ~= nil then
-			formatString = messages[messageID]
-		else
-			messageID = "unknownMessage"
-			formatString = messages[messageID]
-		end
-
-		local errorString
-
-		if errObj == nil then
-			errorString = string.format(
-				"[Fusion] " .. formatString .. "\n(ID: " .. messageID .. ")",
-				...
-			)
-		else
-			formatString =
-				formatString:gsub("ERROR_MESSAGE", tostring(errObj.message))
-			errorString = string.format(
-				"[Fusion] "
-					.. formatString
-					.. "\n(ID: "
-					.. messageID
-					.. ")\n---- Stack trace ----\n"
-					.. tostring(errObj.trace),
-				...
-			)
-		end
-
-		Spawn(function()
-			error(errorString:gsub("\n", "\n    "), 0)
-		end, ...)
-	end
-
-	__DARKLUA_BUNDLE_MODULES.I = logErrorNonFatal
-end
-do
-	local function parseError(err)
-		local trace = "Traceback not available"
-
-		if debug and debug.traceback then
-			trace = debug.traceback(nil, 2)
-		end
-
-		return {
-			type = "Error",
-			raw = err,
-			message = err:gsub("^.+:%d+:%s*", ""),
-			trace = trace,
-		}
-	end
-
-	__DARKLUA_BUNDLE_MODULES.J = parseError
-end
-do
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
-
-	local function needsDestruction(x)
-		return typeof(x) == "Instance"
-	end
-
-	__DARKLUA_BUNDLE_MODULES.K = needsDestruction
-end
-do
-	local isState = __DARKLUA_BUNDLE_MODULES.u
-
-	local function makeUseCallback(dependencySet)
-		local function use(target)
-			if isState(target) then
-				dependencySet[target] = true
-
-				return (target):_peek()
-			end
-
-			return target
-		end
-
-		return use
-	end
-
-	__DARKLUA_BUNDLE_MODULES.L = makeUseCallback
-end
-do
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.I
-	local logWarn = __DARKLUA_BUNDLE_MODULES.C
-	local parseError = __DARKLUA_BUNDLE_MODULES.J
-	local isSimilar = __DARKLUA_BUNDLE_MODULES.G
-	local needsDestruction = __DARKLUA_BUNDLE_MODULES.K
-	local makeUseCallback = __DARKLUA_BUNDLE_MODULES.L
-	local class = {}
-	local CLASS_METATABLE = { __index = class }
-	local WEAK_KEYS_METATABLE = {
-		__mode = "k",
-	}
-
-	function class:update()
-		for dependency in pairs(self.dependencySet) do
-			dependency.dependentSet[self] = nil
-		end
-
-		self._oldDependencySet, self.dependencySet =
-			self.dependencySet, self._oldDependencySet
-
-		for i, _ in pairs(self.dependencySet) do
-			self.dependencySet[i] = nil
-		end
-
-		local use = makeUseCallback(self.dependencySet)
-		local ok, newValue, newMetaValue = pcall(self._processor, use)
-
-		if ok then
-			if self._destructor == nil and needsDestruction(newValue) then
-				logWarn "destructorNeededComputed"
-			end
-			if newMetaValue ~= nil then
-				logWarn "multiReturnComputed"
-			end
-
-			local oldValue = self._value
-			local similar = isSimilar(oldValue, newValue)
-
-			if self._destructor ~= nil then
-				self._destructor(oldValue)
-			end
-
-			self._value = newValue
-
-			for dependency in pairs(self.dependencySet) do
-				dependency.dependentSet[self] = true
-			end
-
-			return not similar
-		else
-			logErrorNonFatal("computedCallbackError", parseError(newValue))
-
-			self._oldDependencySet, self.dependencySet =
-				self.dependencySet, self._oldDependencySet
-
-			for dependency in pairs(self.dependencySet) do
-				dependency.dependentSet[self] = true
-			end
-
-			return false
-		end
-	end
-	function class:_peek()
-		return self._value
-	end
-	function class:get()
-		logError "stateGetWasRemoved"
-	end
-
-	local function Computed(processor, destructor)
-		local dependencySet = {}
-		local self = setmetatable({
-			type = "State",
-			kind = "Computed",
-			dependencySet = dependencySet,
-			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
-			_oldDependencySet = {},
-			_processor = processor,
-			_destructor = destructor,
-			_value = nil,
-		}, CLASS_METATABLE)
-
-		self:update()
-
-		return self
-	end
-
-	__DARKLUA_BUNDLE_MODULES.M = Computed
-end
-do
-	local parseError = __DARKLUA_BUNDLE_MODULES.J
-	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.I
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local logWarn = __DARKLUA_BUNDLE_MODULES.C
-	local cleanup = __DARKLUA_BUNDLE_MODULES.r
-	local needsDestruction = __DARKLUA_BUNDLE_MODULES.K
-	local peek = __DARKLUA_BUNDLE_MODULES.v
-	local makeUseCallback = __DARKLUA_BUNDLE_MODULES.L
-	local isState = __DARKLUA_BUNDLE_MODULES.u
-	local class = {}
-	local CLASS_METATABLE = { __index = class }
-	local WEAK_KEYS_METATABLE = {
-		__mode = "k",
-	}
-
-	function class:update()
-		local inputIsState = self._inputIsState
-		local newInputTable = peek(self._inputTable)
-		local oldInputTable = self._oldInputTable
-		local keyIOMap = self._keyIOMap
-		local meta = self._meta
-		local didChange = false
-
-		for dependency in pairs(self.dependencySet) do
-			dependency.dependentSet[self] = nil
-		end
-
-		self._oldDependencySet, self.dependencySet =
-			self.dependencySet, self._oldDependencySet
-
-		for i, _ in pairs(self.dependencySet) do
-			self.dependencySet[i] = nil
-		end
-
-		if inputIsState then
-			self._inputTable.dependentSet[self] = true
-			self.dependencySet[self._inputTable] = true
-		end
-
-		self._oldOutputTable, self._outputTable =
-			self._outputTable, self._oldOutputTable
-
-		local oldOutputTable = self._oldOutputTable
-		local newOutputTable = self._outputTable
-
-		for i, _ in pairs(newOutputTable) do
-			newOutputTable[i] = nil
-		end
-		for newInKey, newInValue in pairs(newInputTable) do
-			local keyData = self._keyData[newInKey]
-
-			if keyData == nil then
-				keyData = {
-					dependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
-					oldDependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
-					dependencyValues = setmetatable({}, WEAK_KEYS_METATABLE),
-				}
-				self._keyData[newInKey] = keyData
-			end
-
-			local shouldRecalculate = oldInputTable[newInKey] ~= newInValue
-
-			if shouldRecalculate == false then
-				for dependency, oldValue in pairs(keyData.dependencyValues) do
-					if oldValue ~= peek(dependency) then
-						shouldRecalculate = true
-
-						break
-					end
-				end
-			end
-			if shouldRecalculate then
-				keyData.oldDependencySet, keyData.dependencySet =
-					keyData.dependencySet, keyData.oldDependencySet
-
-				for i, _ in pairs(keyData.dependencySet) do
-					keyData.dependencySet[i] = nil
-				end
-
-				local use = makeUseCallback(keyData.dependencySet)
-				local processOK, newOutKey, newOutValue, newMetaValue =
-					pcall(self._processor, use, newInKey, newInValue)
-
-				if processOK then
-					if
-						self._destructor == nil
-						and (
-							needsDestruction(newOutKey)
-							or needsDestruction(newOutValue)
-							or needsDestruction(newMetaValue)
-						)
-					then
-						logWarn "destructorNeededForPairs"
-					end
-					if newOutputTable[newOutKey] ~= nil then
-						local previousNewKey, previousNewValue
-
-						for inKey, outKey in pairs(keyIOMap) do
-							if outKey == newOutKey then
-								previousNewValue = newInputTable[inKey]
-
-								if previousNewValue ~= nil then
-									previousNewKey = inKey
-
-									break
-								end
-							end
-						end
-
-						if previousNewKey ~= nil then
-							logError(
-								"forPairsKeyCollision",
-								nil,
-								tostring(newOutKey),
-								tostring(previousNewKey),
-								tostring(previousNewValue),
-								tostring(newInKey),
-								tostring(newInValue)
-							)
-						end
-					end
-
-					local oldOutValue = oldOutputTable[newOutKey]
-
-					if oldOutValue ~= newOutValue then
-						local oldMetaValue = meta[newOutKey]
-
-						if oldOutValue ~= nil then
-							local destructOK, err = pcall(
-								self._destructor or cleanup,
-								newOutKey,
-								oldOutValue,
-								oldMetaValue
-							)
-
-							if not destructOK then
-								logErrorNonFatal(
-									"forPairsDestructorError",
-									parseError(err)
-								)
-							end
-						end
-
-						oldOutputTable[newOutKey] = nil
-					end
-
-					oldInputTable[newInKey] = newInValue
-					keyIOMap[newInKey] = newOutKey
-					meta[newOutKey] = newMetaValue
-					newOutputTable[newOutKey] = newOutValue
-					didChange = true
-				else
-					keyData.oldDependencySet, keyData.dependencySet =
-						keyData.dependencySet, keyData.oldDependencySet
-
-					logErrorNonFatal(
-						"forPairsProcessorError",
-						parseError(newOutKey)
-					)
-				end
-			else
-				local storedOutKey = keyIOMap[newInKey]
-
-				if newOutputTable[storedOutKey] ~= nil then
-					local previousNewKey, previousNewValue
-
-					for inKey, outKey in pairs(keyIOMap) do
-						if storedOutKey == outKey then
-							previousNewValue = newInputTable[inKey]
-
-							if previousNewValue ~= nil then
-								previousNewKey = inKey
-
-								break
-							end
-						end
-					end
-
-					if previousNewKey ~= nil then
-						logError(
-							"forPairsKeyCollision",
-							nil,
-							tostring(storedOutKey),
-							tostring(previousNewKey),
-							tostring(previousNewValue),
-							tostring(newInKey),
-							tostring(newInValue)
-						)
-					end
-				end
-
-				newOutputTable[storedOutKey] = oldOutputTable[storedOutKey]
-			end
-
-			for dependency in pairs(keyData.dependencySet) do
-				keyData.dependencyValues[dependency] = peek(dependency)
-				self.dependencySet[dependency] = true
-				dependency.dependentSet[self] = true
-			end
-		end
-		for oldOutKey, oldOutValue in pairs(oldOutputTable) do
-			if newOutputTable[oldOutKey] ~= oldOutValue then
-				local oldMetaValue = meta[oldOutKey]
-
-				if oldOutValue ~= nil then
-					local destructOK, err = pcall(
-						self._destructor or cleanup,
-						oldOutKey,
-						oldOutValue,
-						oldMetaValue
-					)
-
-					if not destructOK then
-						logErrorNonFatal(
-							"forPairsDestructorError",
-							parseError(err)
-						)
-					end
-				end
-				if newOutputTable[oldOutKey] == nil then
-					meta[oldOutKey] = nil
-					self._keyData[oldOutKey] = nil
-				end
-
-				didChange = true
-			end
-		end
-		for key in pairs(oldInputTable) do
-			if newInputTable[key] == nil then
-				oldInputTable[key] = nil
-				keyIOMap[key] = nil
-			end
-		end
-
-		return didChange
-	end
-	function class:_peek()
-		return self._outputTable
-	end
-	function class:get()
-		logError "stateGetWasRemoved"
-	end
-
-	local function ForPairs(inputTable, processor, destructor)
-		local inputIsState = isState(inputTable)
-		local self = setmetatable({
-			type = "State",
-			kind = "ForPairs",
-			dependencySet = {},
-			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
-			_oldDependencySet = {},
-			_processor = processor,
-			_destructor = destructor,
-			_inputIsState = inputIsState,
-			_inputTable = inputTable,
-			_oldInputTable = {},
-			_outputTable = {},
-			_oldOutputTable = {},
-			_keyIOMap = {},
-			_keyData = {},
-			_meta = {},
-		}, CLASS_METATABLE)
-
-		self:update()
-
-		return self
-	end
-
-	__DARKLUA_BUNDLE_MODULES.N = ForPairs
-end
-do
-	local parseError = __DARKLUA_BUNDLE_MODULES.J
-	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.I
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local logWarn = __DARKLUA_BUNDLE_MODULES.C
-	local cleanup = __DARKLUA_BUNDLE_MODULES.r
-	local needsDestruction = __DARKLUA_BUNDLE_MODULES.K
-	local peek = __DARKLUA_BUNDLE_MODULES.v
-	local makeUseCallback = __DARKLUA_BUNDLE_MODULES.L
-	local isState = __DARKLUA_BUNDLE_MODULES.u
-	local class = {}
-	local CLASS_METATABLE = { __index = class }
-	local WEAK_KEYS_METATABLE = {
-		__mode = "k",
-	}
-
-	function class:update()
-		local inputIsState = self._inputIsState
-		local newInputTable = peek(self._inputTable)
-		local oldInputTable = self._oldInputTable
-		local outputTable = self._outputTable
-		local keyOIMap = self._keyOIMap
-		local keyIOMap = self._keyIOMap
-		local meta = self._meta
-		local didChange = false
-
-		for dependency in pairs(self.dependencySet) do
-			dependency.dependentSet[self] = nil
-		end
-
-		self._oldDependencySet, self.dependencySet =
-			self.dependencySet, self._oldDependencySet
-
-		for i, _ in pairs(self.dependencySet) do
-			self.dependencySet[i] = nil
-		end
-
-		if inputIsState then
-			self._inputTable.dependentSet[self] = true
-			self.dependencySet[self._inputTable] = true
-		end
-
-		for newInKey, value in pairs(newInputTable) do
-			local keyData = self._keyData[newInKey]
-
-			if keyData == nil then
-				keyData = {
-					dependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
-					oldDependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
-					dependencyValues = setmetatable({}, WEAK_KEYS_METATABLE),
-				}
-				self._keyData[newInKey] = keyData
-			end
-
-			local shouldRecalculate = oldInputTable[newInKey] == nil
-
-			if shouldRecalculate == false then
-				for dependency, oldValue in pairs(keyData.dependencyValues) do
-					if oldValue ~= peek(dependency) then
-						shouldRecalculate = true
-
-						break
-					end
-				end
-			end
-			if shouldRecalculate then
-				keyData.oldDependencySet, keyData.dependencySet =
-					keyData.dependencySet, keyData.oldDependencySet
-
-				for i, _ in pairs(keyData.dependencySet) do
-					keyData.dependencySet[i] = nil
-				end
-
-				local use = makeUseCallback(keyData.dependencySet)
-				local processOK, newOutKey, newMetaValue =
-					pcall(self._processor, use, newInKey)
-
-				if processOK then
-					if
-						self._destructor == nil
-						and (
-							needsDestruction(newOutKey)
-							or needsDestruction(newMetaValue)
-						)
-					then
-						logWarn "destructorNeededForKeys"
-					end
-
-					local oldInKey = keyOIMap[newOutKey]
-					local oldOutKey = keyIOMap[newInKey]
-
-					if
-						oldInKey ~= newInKey
-						and newInputTable[oldInKey] ~= nil
-					then
-						logError(
-							"forKeysKeyCollision",
-							nil,
-							tostring(newOutKey),
-							tostring(oldInKey),
-							tostring(newOutKey)
-						)
-					end
-					if
-						oldOutKey ~= newOutKey
-						and keyOIMap[oldOutKey] == newInKey
-					then
-						local oldMetaValue = meta[oldOutKey]
-						local destructOK, err = pcall(
-							self._destructor or cleanup,
-							oldOutKey,
-							oldMetaValue
-						)
-
-						if not destructOK then
-							logErrorNonFatal(
-								"forKeysDestructorError",
-								parseError(err)
-							)
-						end
-
-						keyOIMap[oldOutKey] = nil
-						outputTable[oldOutKey] = nil
-						meta[oldOutKey] = nil
-					end
-
-					oldInputTable[newInKey] = value
-					meta[newOutKey] = newMetaValue
-					keyOIMap[newOutKey] = newInKey
-					keyIOMap[newInKey] = newOutKey
-					outputTable[newOutKey] = value
-					didChange = true
-				else
-					keyData.oldDependencySet, keyData.dependencySet =
-						keyData.dependencySet, keyData.oldDependencySet
-
-					logErrorNonFatal(
-						"forKeysProcessorError",
-						parseError(newOutKey)
-					)
-				end
-			end
-
-			for dependency in pairs(keyData.dependencySet) do
-				keyData.dependencyValues[dependency] = peek(dependency)
-				self.dependencySet[dependency] = true
-				dependency.dependentSet[self] = true
-			end
-		end
-		for outputKey, inputKey in pairs(keyOIMap) do
-			if newInputTable[inputKey] == nil then
-				local oldMetaValue = meta[outputKey]
-				local destructOK, err =
-					pcall(self._destructor or cleanup, outputKey, oldMetaValue)
-
-				if not destructOK then
-					logErrorNonFatal("forKeysDestructorError", parseError(err))
-				end
-
-				oldInputTable[inputKey] = nil
-				meta[outputKey] = nil
-				keyOIMap[outputKey] = nil
-				keyIOMap[inputKey] = nil
-				outputTable[outputKey] = nil
-				self._keyData[inputKey] = nil
-				didChange = true
-			end
-		end
-
-		return didChange
-	end
-	function class:_peek()
-		return self._outputTable
-	end
-	function class:get()
-		logError "stateGetWasRemoved"
-	end
-
-	local function ForKeys(inputTable, processor, destructor)
-		local inputIsState = isState(inputTable)
-		local self = setmetatable({
-			type = "State",
-			kind = "ForKeys",
-			dependencySet = {},
-			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
-			_oldDependencySet = {},
-			_processor = processor,
-			_destructor = destructor,
-			_inputIsState = inputIsState,
-			_inputTable = inputTable,
-			_oldInputTable = {},
-			_outputTable = {},
-			_keyOIMap = {},
-			_keyIOMap = {},
-			_keyData = {},
-			_meta = {},
-		}, CLASS_METATABLE)
-
-		self:update()
-
-		return self
-	end
-
-	__DARKLUA_BUNDLE_MODULES.O = ForKeys
-end
-do
-	local parseError = __DARKLUA_BUNDLE_MODULES.J
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.I
-	local logWarn = __DARKLUA_BUNDLE_MODULES.C
-	local cleanup = __DARKLUA_BUNDLE_MODULES.r
-	local needsDestruction = __DARKLUA_BUNDLE_MODULES.K
-	local peek = __DARKLUA_BUNDLE_MODULES.v
-	local makeUseCallback = __DARKLUA_BUNDLE_MODULES.L
-	local isState = __DARKLUA_BUNDLE_MODULES.u
-	local class = {}
-	local CLASS_METATABLE = { __index = class }
-	local WEAK_KEYS_METATABLE = {
-		__mode = "k",
-	}
-
-	function class:update()
-		local inputIsState = self._inputIsState
-		local inputTable = peek(self._inputTable)
-		local outputValues = {}
-		local didChange = false
-
-		self._oldValueCache, self._valueCache =
-			self._valueCache, self._oldValueCache
-
-		local newValueCache = self._valueCache
-		local oldValueCache = self._oldValueCache
-
-		for i, _ in pairs(newValueCache) do
-			newValueCache[i] = nil
-		end
-		for dependency in pairs(self.dependencySet) do
-			dependency.dependentSet[self] = nil
-		end
-
-		self._oldDependencySet, self.dependencySet =
-			self.dependencySet, self._oldDependencySet
-
-		for i, _ in pairs(self.dependencySet) do
-			self.dependencySet[i] = nil
-		end
-
-		if inputIsState then
-			self._inputTable.dependentSet[self] = true
-			self.dependencySet[self._inputTable] = true
-		end
-
-		for inKey, inValue in pairs(inputTable) do
-			local oldCachedValues = oldValueCache[inValue]
-			local shouldRecalculate = oldCachedValues == nil
-			local value, valueData, meta
-
-			if type(oldCachedValues) == "table" and #oldCachedValues > 0 then
-				local valueInfo =
-					table.remove(oldCachedValues, #oldCachedValues)
-
-				value = valueInfo.value
-				valueData = valueInfo.valueData
-				meta = valueInfo.meta
-
-				if #oldCachedValues <= 0 then
-					oldValueCache[inValue] = nil
-				end
-			elseif oldCachedValues ~= nil then
-				oldValueCache[inValue] = nil
-				shouldRecalculate = true
-			end
-			if valueData == nil then
-				valueData = {
-					dependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
-					oldDependencySet = setmetatable({}, WEAK_KEYS_METATABLE),
-					dependencyValues = setmetatable({}, WEAK_KEYS_METATABLE),
-				}
-			end
-			if shouldRecalculate == false then
-				for dependency, oldValue in pairs(valueData.dependencyValues) do
-					if oldValue ~= peek(dependency) then
-						shouldRecalculate = true
-
-						break
-					end
-				end
-			end
-			if shouldRecalculate then
-				valueData.oldDependencySet, valueData.dependencySet =
-					valueData.dependencySet, valueData.oldDependencySet
-
-				for i, _ in pairs(valueData.dependencySet) do
-					valueData.dependencySet[i] = nil
-				end
-
-				local use = makeUseCallback(valueData.dependencySet)
-				local processOK, newOutValue, newMetaValue =
-					pcall(self._processor, use, inValue)
-
-				if processOK then
-					if
-						self._destructor == nil
-						and (
-							needsDestruction(newOutValue)
-							or needsDestruction(newMetaValue)
-						)
-					then
-						logWarn "destructorNeededForValues"
-					end
-					if value ~= nil then
-						local destructOK, err =
-							pcall(self._destructor or cleanup, value, meta)
-
-						if not destructOK then
-							logErrorNonFatal(
-								"forValuesDestructorError",
-								parseError(err)
-							)
-						end
-					end
-
-					value = newOutValue
-					meta = newMetaValue
-					didChange = true
-				else
-					valueData.oldDependencySet, valueData.dependencySet =
-						valueData.dependencySet, valueData.oldDependencySet
-
-					logErrorNonFatal(
-						"forValuesProcessorError",
-						parseError(newOutValue)
-					)
-				end
-			end
-
-			local newCachedValues = newValueCache[inValue]
-
-			if newCachedValues == nil then
-				newCachedValues = {}
-				newValueCache[inValue] = newCachedValues
-			end
-
-			table.insert(newCachedValues, {
-				value = value,
-				valueData = valueData,
-				meta = meta,
-			})
-
-			outputValues[inKey] = value
-
-			for dependency in pairs(valueData.dependencySet) do
-				valueData.dependencyValues[dependency] = peek(dependency)
-				self.dependencySet[dependency] = true
-				dependency.dependentSet[self] = true
-			end
-		end
-		for _oldInValue, oldCachedValueInfo in pairs(oldValueCache) do
-			for _, valueInfo in ipairs(oldCachedValueInfo) do
-				local oldValue = valueInfo.value
-				local oldMetaValue = valueInfo.meta
-				local destructOK, err =
-					pcall(self._destructor or cleanup, oldValue, oldMetaValue)
-
-				if not destructOK then
-					logErrorNonFatal(
-						"forValuesDestructorError",
-						parseError(err)
-					)
-				end
-
-				didChange = true
-			end
-			for i, _ in pairs(oldCachedValueInfo) do
-				oldCachedValueInfo[i] = nil
-			end
-		end
-
-		self._outputTable = outputValues
-
-		return didChange
-	end
-	function class:_peek()
-		return self._outputTable
-	end
-	function class:get()
-		logError "stateGetWasRemoved"
-	end
-
-	local function ForValues(inputTable, processor, destructor)
-		local inputIsState = isState(inputTable)
-		local self = setmetatable({
-			type = "State",
-			kind = "ForValues",
-			dependencySet = {},
-			dependentSet = setmetatable({}, WEAK_KEYS_METATABLE),
-			_oldDependencySet = {},
-			_processor = processor,
-			_destructor = destructor,
-			_inputIsState = inputIsState,
-			_inputTable = inputTable,
-			_outputTable = {},
-			_valueCache = {},
-			_oldValueCache = {},
-		}, CLASS_METATABLE)
-
-		self:update()
-
-		return self
-	end
-
-	__DARKLUA_BUNDLE_MODULES.P = ForValues
-end
-do
-	local TweenScheduler = __DARKLUA_BUNDLE_MODULES.l
-	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.I
-	local xtypeof = __DARKLUA_BUNDLE_MODULES.s
-	local peek = __DARKLUA_BUNDLE_MODULES.v
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
+	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.B
+	local xtypeof = __DARKLUA_BUNDLE_MODULES.k
+	local peek = __DARKLUA_BUNDLE_MODULES.n
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
 	local class = {}
 	local CLASS_METATABLE = { __index = class }
 	local WEAK_KEYS_METATABLE = {
@@ -2778,7 +2659,7 @@ do
 
 		self._prevValue = self._currentValue
 		self._nextValue = goalValue
-		self._currentTweenStartTime = time()
+		self._currentTweenStartTime = External.lastUpdateStep()
 		self._currentTweenInfo = tweenInfo
 
 		local tweenDuration = tweenInfo.DelayTime + tweenInfo.Time
@@ -2843,10 +2724,10 @@ do
 		return self
 	end
 
-	__DARKLUA_BUNDLE_MODULES.Q = Tween
+	__DARKLUA_BUNDLE_MODULES.O = Tween
 end
 do
-	local Oklab = __DARKLUA_BUNDLE_MODULES.f
+	local Oklab = __DARKLUA_BUNDLE_MODULES.J
 
 	local function unpackType(value, typeString)
 		if typeString == "number" then
@@ -2976,17 +2857,232 @@ do
 		end
 	end
 
-	__DARKLUA_BUNDLE_MODULES.R = unpackType
+	__DARKLUA_BUNDLE_MODULES.P = unpackType
+end
+do
+	local Oklab = __DARKLUA_BUNDLE_MODULES.J
+
+	local function packType(numbers, typeString)
+		if typeString == "number" then
+			return numbers[1]
+		elseif typeString == "CFrame" then
+			return CFrame.new(numbers[1], numbers[2], numbers[3])
+				* CFrame.fromAxisAngle(
+					Vector3.new(numbers[4], numbers[5], numbers[6]).Unit,
+					numbers[7]
+				)
+		elseif typeString == "Color3" then
+			return Oklab.from(
+				Vector3.new(numbers[1], numbers[2], numbers[3]),
+				false
+			)
+		elseif typeString == "ColorSequenceKeypoint" then
+			return ColorSequenceKeypoint.new(
+				numbers[4],
+				Oklab.from(
+					Vector3.new(numbers[1], numbers[2], numbers[3]),
+					false
+				)
+			)
+		elseif typeString == "DateTime" then
+			return DateTime.fromUnixTimestampMillis(numbers[1])
+		elseif typeString == "NumberRange" then
+			return NumberRange.new(numbers[1], numbers[2])
+		elseif typeString == "NumberSequenceKeypoint" then
+			return NumberSequenceKeypoint.new(
+				numbers[2],
+				numbers[1],
+				numbers[3]
+			)
+		elseif typeString == "PhysicalProperties" then
+			return PhysicalProperties.new(
+				numbers[1],
+				numbers[2],
+				numbers[3],
+				numbers[4],
+				numbers[5]
+			)
+		elseif typeString == "Ray" then
+			return Ray.new(
+				Vector3.new(numbers[1], numbers[2], numbers[3]),
+				Vector3.new(numbers[4], numbers[5], numbers[6])
+			)
+		elseif typeString == "Rect" then
+			return Rect.new(numbers[1], numbers[2], numbers[3], numbers[4])
+		elseif typeString == "Region3" then
+			local position = Vector3.new(numbers[1], numbers[2], numbers[3])
+			local halfSize =
+				Vector3.new(numbers[4] / 2, numbers[5] / 2, numbers[6] / 2)
+
+			return Region3.new(position - halfSize, position + halfSize)
+		elseif typeString == "Region3int16" then
+			return Region3int16.new(
+				Vector3int16.new(numbers[1], numbers[2], numbers[3]),
+				Vector3int16.new(numbers[4], numbers[5], numbers[6])
+			)
+		elseif typeString == "UDim" then
+			return UDim.new(numbers[1], numbers[2])
+		elseif typeString == "UDim2" then
+			return UDim2.new(numbers[1], numbers[2], numbers[3], numbers[4])
+		elseif typeString == "Vector2" then
+			return Vector2.new(numbers[1], numbers[2])
+		elseif typeString == "Vector2int16" then
+			return Vector2int16.new(numbers[1], numbers[2])
+		elseif typeString == "Vector3" then
+			return Vector3.new(numbers[1], numbers[2], numbers[3])
+		elseif typeString == "Vector3int16" then
+			return Vector3int16.new(numbers[1], numbers[2], numbers[3])
+		else
+			return nil
+		end
+	end
+
+	__DARKLUA_BUNDLE_MODULES.Q = packType
+end
+do
+	local function springCoefficients(time, damping, speed)
+		if time == 0 or speed == 0 then
+			return 1, 0, 0, 1
+		end
+
+		local posPos, posVel, velPos, velVel
+
+		if damping > 1 then
+			local scaledTime = time * speed
+			local alpha = math.sqrt(damping ^ 2 - 1)
+			local scaledInvAlpha = -0.5 / alpha
+			local z1 = -alpha - damping
+			local z2 = 1 / z1
+			local expZ1 = math.exp(scaledTime * z1)
+			local expZ2 = math.exp(scaledTime * z2)
+
+			posPos = (expZ2 * z1 - expZ1 * z2) * scaledInvAlpha
+			posVel = (expZ1 - expZ2) * scaledInvAlpha / speed
+			velPos = (expZ2 - expZ1) * scaledInvAlpha * speed
+			velVel = (expZ1 * z1 - expZ2 * z2) * scaledInvAlpha
+		elseif damping == 1 then
+			local scaledTime = time * speed
+			local expTerm = math.exp(-scaledTime)
+
+			posPos = expTerm * (1 + scaledTime)
+			posVel = expTerm * time
+			velPos = expTerm * (-scaledTime * speed)
+			velVel = expTerm * (1 - scaledTime)
+		else
+			local scaledTime = time * speed
+			local alpha = math.sqrt(1 - damping ^ 2)
+			local invAlpha = 1 / alpha
+			local alphaTime = alpha * scaledTime
+			local expTerm = math.exp(-scaledTime * damping)
+			local sinTerm = expTerm * math.sin(alphaTime)
+			local cosTerm = expTerm * math.cos(alphaTime)
+			local sinInvAlpha = sinTerm * invAlpha
+			local sinInvAlphaDamp = sinInvAlpha * damping
+
+			posPos = sinInvAlphaDamp + cosTerm
+			posVel = sinInvAlpha
+			velPos = -(sinInvAlphaDamp * damping + sinTerm * alpha)
+			velVel = cosTerm - sinInvAlphaDamp
+		end
+
+		return posPos, posVel, velPos, velVel
+	end
+
+	__DARKLUA_BUNDLE_MODULES.R = springCoefficients
+end
+do
+	local External = __DARKLUA_BUNDLE_MODULES.e
+	local packType = __DARKLUA_BUNDLE_MODULES.Q
+	local springCoefficients = __DARKLUA_BUNDLE_MODULES.R
+	local updateAll = __DARKLUA_BUNDLE_MODULES.y
+	local SpringScheduler = {}
+	local EPSILON = 0.0001
+	local activeSprings = {}
+	local lastUpdateTime = External.lastUpdateStep()
+
+	function SpringScheduler.add(spring)
+		spring._lastSchedule = lastUpdateTime
+		spring._startDisplacements = {}
+		spring._startVelocities = {}
+
+		for index, goal in ipairs(spring._springGoals) do
+			spring._startDisplacements[index] = spring._springPositions[index]
+				- goal
+			spring._startVelocities[index] = spring._springVelocities[index]
+		end
+
+		activeSprings[spring] = true
+	end
+	function SpringScheduler.remove(spring)
+		activeSprings[spring] = nil
+	end
+
+	local function updateAllSprings(now)
+		local springsToSleep = {}
+
+		lastUpdateTime = now
+
+		for spring in pairs(activeSprings) do
+			local posPos, posVel, velPos, velVel = springCoefficients(
+				lastUpdateTime - spring._lastSchedule,
+				spring._currentDamping,
+				spring._currentSpeed
+			)
+			local positions = spring._springPositions
+			local velocities = spring._springVelocities
+			local startDisplacements = spring._startDisplacements
+			local startVelocities = spring._startVelocities
+			local isMoving = false
+
+			for index, goal in ipairs(spring._springGoals) do
+				local oldDisplacement = startDisplacements[index]
+				local oldVelocity = startVelocities[index]
+				local newDisplacement = oldDisplacement * posPos
+					+ oldVelocity * posVel
+				local newVelocity = oldDisplacement * velPos
+					+ oldVelocity * velVel
+
+				if
+					math.abs(newDisplacement) > EPSILON
+					or math.abs(newVelocity) > EPSILON
+				then
+					isMoving = true
+				end
+
+				positions[index] = newDisplacement + goal
+				velocities[index] = newVelocity
+			end
+
+			if not isMoving then
+				springsToSleep[spring] = true
+			end
+		end
+		for spring in pairs(activeSprings) do
+			spring._currentValue =
+				packType(spring._springPositions, spring._currentType)
+
+			updateAll(spring)
+		end
+		for spring in pairs(springsToSleep) do
+			activeSprings[spring] = nil
+			spring._currentValue =
+				packType(spring._springGoals, spring._currentType)
+		end
+	end
+
+	External.bindToUpdateStep(updateAllSprings)
+
+	__DARKLUA_BUNDLE_MODULES.S = SpringScheduler
 end
 do
 	local logError = __DARKLUA_BUNDLE_MODULES.d
-	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.I
-	local unpackType = __DARKLUA_BUNDLE_MODULES.R
-	local SpringScheduler = __DARKLUA_BUNDLE_MODULES.o
-	local updateAll = __DARKLUA_BUNDLE_MODULES.k
-	local xtypeof = __DARKLUA_BUNDLE_MODULES.s
-	local peek = __DARKLUA_BUNDLE_MODULES.v
-	local typeof = __DARKLUA_BUNDLE_MODULES.g
+	local logErrorNonFatal = __DARKLUA_BUNDLE_MODULES.B
+	local unpackType = __DARKLUA_BUNDLE_MODULES.P
+	local SpringScheduler = __DARKLUA_BUNDLE_MODULES.S
+	local updateAll = __DARKLUA_BUNDLE_MODULES.y
+	local xtypeof = __DARKLUA_BUNDLE_MODULES.k
+	local peek = __DARKLUA_BUNDLE_MODULES.n
+	local typeof = __DARKLUA_BUNDLE_MODULES.i
 	local class = {}
 	local CLASS_METATABLE = { __index = class }
 	local WEAK_KEYS_METATABLE = {
@@ -3159,12 +3255,12 @@ do
 		return self
 	end
 
-	__DARKLUA_BUNDLE_MODULES.S = Spring
+	__DARKLUA_BUNDLE_MODULES.T = Spring
 end
 do
 	local function doNothing() end
 
-	__DARKLUA_BUNDLE_MODULES.T = doNothing
+	__DARKLUA_BUNDLE_MODULES.U = doNothing
 end
 do
 	local logError = __DARKLUA_BUNDLE_MODULES.d
@@ -3274,43 +3370,48 @@ do
 		return proxy
 	end
 
-	__DARKLUA_BUNDLE_MODULES.U = TweenInfo
+	__DARKLUA_BUNDLE_MODULES.V = TweenInfo
 end
 
-local restrictRead = __DARKLUA_BUNDLE_MODULES.e
-local bindScheduler = __DARKLUA_BUNDLE_MODULES.p
+local External = __DARKLUA_BUNDLE_MODULES.e
+local restrictRead = __DARKLUA_BUNDLE_MODULES.f
+
+do
+	local MercuryExternal = __DARKLUA_BUNDLE_MODULES.g
+
+	External.setExternalScheduler(MercuryExternal)
+end
+
 local Fusion = restrictRead("Fusion", {
 	version = {
 		major = 0,
 		minor = 3,
 		isRelease = false,
 	},
-	New = __DARKLUA_BUNDLE_MODULES.x,
-	Hydrate = __DARKLUA_BUNDLE_MODULES.y,
-	Ref = __DARKLUA_BUNDLE_MODULES.z,
-	Out = __DARKLUA_BUNDLE_MODULES.A,
-	Cleanup = __DARKLUA_BUNDLE_MODULES.B,
-	Children = __DARKLUA_BUNDLE_MODULES.D,
-	OnEvent = __DARKLUA_BUNDLE_MODULES.E,
-	OnChange = __DARKLUA_BUNDLE_MODULES.F,
-	Value = __DARKLUA_BUNDLE_MODULES.H,
-	Computed = __DARKLUA_BUNDLE_MODULES.M,
-	ForPairs = __DARKLUA_BUNDLE_MODULES.N,
-	ForKeys = __DARKLUA_BUNDLE_MODULES.O,
-	ForValues = __DARKLUA_BUNDLE_MODULES.P,
-	Observer = __DARKLUA_BUNDLE_MODULES.t,
-	Tween = __DARKLUA_BUNDLE_MODULES.Q,
-	Spring = __DARKLUA_BUNDLE_MODULES.S,
-	cleanup = __DARKLUA_BUNDLE_MODULES.r,
-	doNothing = __DARKLUA_BUNDLE_MODULES.T,
-	peek = __DARKLUA_BUNDLE_MODULES.v,
-	typeof = __DARKLUA_BUNDLE_MODULES.g,
-	TweenInfo = __DARKLUA_BUNDLE_MODULES.U,
+	New = __DARKLUA_BUNDLE_MODULES.p,
+	Hydrate = __DARKLUA_BUNDLE_MODULES.q,
+	Ref = __DARKLUA_BUNDLE_MODULES.r,
+	Out = __DARKLUA_BUNDLE_MODULES.s,
+	Cleanup = __DARKLUA_BUNDLE_MODULES.t,
+	Children = __DARKLUA_BUNDLE_MODULES.v,
+	OnEvent = __DARKLUA_BUNDLE_MODULES.w,
+	OnChange = __DARKLUA_BUNDLE_MODULES.x,
+	Value = __DARKLUA_BUNDLE_MODULES.A,
+	Computed = __DARKLUA_BUNDLE_MODULES.F,
+	ForPairs = __DARKLUA_BUNDLE_MODULES.G,
+	ForKeys = __DARKLUA_BUNDLE_MODULES.H,
+	ForValues = __DARKLUA_BUNDLE_MODULES.I,
+	Observer = __DARKLUA_BUNDLE_MODULES.l,
+	Tween = __DARKLUA_BUNDLE_MODULES.O,
+	Spring = __DARKLUA_BUNDLE_MODULES.T,
+	cleanup = __DARKLUA_BUNDLE_MODULES.j,
+	doNothing = __DARKLUA_BUNDLE_MODULES.U,
+	peek = __DARKLUA_BUNDLE_MODULES.n,
+	typeof = __DARKLUA_BUNDLE_MODULES.i,
+	TweenInfo = __DARKLUA_BUNDLE_MODULES.V,
 	Help = function()
 		return "See https://elttob.uk/Fusion/0.3/ for more information."
 	end,
 })
-
-bindScheduler()
 
 return Fusion
