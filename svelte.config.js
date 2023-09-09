@@ -1,4 +1,4 @@
-import adapter from "svelte-adapter-bun"
+import adapter from "@bun-community/sveltekit-adapter-bun"
 import preprocess from "svelte-preprocess"
 import autoImport from "sveltekit-autoimport"
 import { resolve } from "path"
