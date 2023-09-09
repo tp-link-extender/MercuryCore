@@ -113,7 +113,16 @@ export async function load({ locals, params }) {
 	// id not needed for querying likes, as assets can't be voted on
 	getAsset.id = 0
 
+	const noTexts = [
+		"Cancel",
+		"No thanks",
+		"I've reconsidered",
+		"Not really",
+		"Nevermind",
+	]
+
 	return {
+		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		form: superValidate(schema),
 		...(await addLikes<typeof getAsset>(
 			"asset",
