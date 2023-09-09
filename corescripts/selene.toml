@@ -1,4 +1,0 @@
-std = "mercury"
-
-[lints]
-multiple_statements = "allow"
