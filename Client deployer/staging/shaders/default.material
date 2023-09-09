@@ -1,0 +1,3535 @@
+vertex_program DefaultVPParams null
+{
+    default_params
+    {
+        param_named_auto CameraPosition camera_position
+        param_named_auto ViewProjection viewproj_matrix
+
+        param_named_auto Lamp0Dir light_direction 0
+        param_named_auto Lamp1Dir light_direction 1
+        param_named_auto Lamp0Color light_diffuse_colour 0
+        param_named_auto Lamp1Color light_diffuse_colour 1
+        param_named_auto AmbientColor ambient_light_colour
+
+        param_named_auto FogColor fog_colour
+        param_named_auto FogParams fog_params
+
+        param_named_auto FadeDistance light_custom 0 0
+
+        param_named_auto LightConfig0 light_custom 0 1
+        param_named_auto LightConfig1 light_custom 0 2
+        
+
+        param_named_auto WorldMatrixArray world_matrix_array_3x4
+
+        param_named_auto DebugColor surface_ambient_colour
+    }
+
+    column_major_matrices false
+}
+
+fragment_program DefaultFPParams null
+{
+    default_params
+    {
+        param_named_auto CameraPosition camera_position
+
+        param_named_auto Lamp0Dir light_direction 0
+        param_named_auto Lamp1Dir light_direction 1
+        param_named_auto Lamp0Color light_diffuse_colour 0
+        param_named_auto Lamp1Color light_diffuse_colour 1
+        param_named_auto AmbientColor ambient_light_colour
+        
+        param_named_auto FogColor fog_colour
+        param_named_auto FogParams fog_params
+
+        param_named_auto FadeDistance light_custom 0 0
+
+        param_named_auto LightConfig2 light_custom 0 3
+        param_named_auto LightConfig3 light_custom 0 4
+        param_named_auto LightBorder light_custom 0 5
+        
+        param_named_auto OutlineBrightness light_custom 0 6
+
+		param_named StudsMap int 0
+        param_named LightMap int 1
+        param_named LightMapLookup int 2
+		param_named DiffuseMap int 3
+        param_named NormalMap int 4
+        param_named EnvironmentMap int 5
+        param_named NoiseMap int 6
+        param_named SpecularMap int 6
+        param_named NormalDetailMap int 7
+    }
+
+    column_major_matrices false
+}
+
+vertex_program DefaultStaticVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+}
+
+vertex_program DefaultStaticHQVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+	preprocessor_defines PIN_HQ
+}
+
+vertex_program DefaultSkinnedVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+    preprocessor_defines PIN_SKINNED
+}
+
+vertex_program DefaultSkinnedHQVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+	preprocessor_defines PIN_SKINNED PIN_HQ
+}
+
+vertex_program DefaultStaticDebugVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+    preprocessor_defines PIN_DEBUG
+}
+
+vertex_program DefaultStaticHQDebugVP hlsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+	preprocessor_defines PIN_HQ PIN_DEBUG
+}
+
+vertex_program DefaultSkinnedDebugVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+    preprocessor_defines PIN_SKINNED PIN_DEBUG
+}
+
+vertex_program DefaultSkinnedHQDebugVP hlsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+	preprocessor_defines PIN_SKINNED PIN_HQ PIN_DEBUG
+}
+
+fragment_program DefaultFP rsl: DefaultFPParams
+{
+	source default.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+}
+
+fragment_program DefaultHQFP rsl: DefaultFPParams
+{
+	source default.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+    preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultGBufferFP hlsl: DefaultFPParams
+{
+	source default.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+vertex_program DefaultStaticReflectionVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+	preprocessor_defines PIN_REFLECTION
+}
+
+vertex_program DefaultSkinnedReflectionVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+    preprocessor_defines PIN_SKINNED PIN_REFLECTION
+}
+
+vertex_program DefaultStaticSurfaceHQVPHLSL hlsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+	preprocessor_defines PIN_SURFACE PIN_HQ
+}
+
+vertex_program DefaultStaticSurfaceHQVPGLSL glsl: DefaultVPParams
+{
+	source autogen/default_DefaultVS_PIN_SURFACE_PIN_HQ.glsl
+}
+
+vertex_program DefaultStaticSurfaceHQVP unified
+{
+    delegate DefaultStaticSurfaceHQVPHLSL
+    delegate DefaultStaticSurfaceHQVPGLSL
+}
+
+vertex_program DefaultSkinnedSurfaceHQVPHLSL hlsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+	preprocessor_defines PIN_SKINNED PIN_SURFACE PIN_HQ
+}
+
+vertex_program DefaultSkinnedSurfaceHQVPGLSL glsl: DefaultVPParams
+{
+    source autogen/default_DefaultVS_PIN_SKINNED_PIN_SURFACE_PIN_HQ.glsl
+}
+
+vertex_program DefaultSkinnedSurfaceHQVP unified
+{
+    delegate DefaultSkinnedSurfaceHQVPHLSL
+    delegate DefaultSkinnedSurfaceHQVPGLSL
+}
+
+fragment_program DefaultPlasticFP rsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+}
+
+fragment_program DefaultPlasticHQFP rsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultGBufferPlasticFP hlsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultPlasticReflectionFP rsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+	preprocessor_defines PIN_REFLECTION
+}
+
+fragment_program DefaultPlasticReflectionHQFP rsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_REFLECTION PIN_HQ
+}
+
+fragment_program DefaultGBufferPlasticReflectionFP hlsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_REFLECTION PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultWoodHQFPHLSL hlsl: DefaultFPParams
+{
+	source wood.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultWoodHQFPGLSL glsl: DefaultFPParams
+{
+	source autogen/wood_DefaultPS_PIN_HQ.glsl
+}
+
+fragment_program DefaultWoodHQFP unified
+{
+	delegate DefaultWoodHQFPHLSL
+	delegate DefaultWoodHQFPGLSL
+}
+
+fragment_program DefaultGBufferWoodFP hlsl: DefaultFPParams
+{
+	source wood.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultSlateHQFPHLSL hlsl: DefaultFPParams
+{
+	source slate.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultSlateHQFPGLSL glsl: DefaultFPParams
+{
+	source autogen/slate_DefaultPS_PIN_HQ.glsl
+}
+
+fragment_program DefaultSlateHQFP unified
+{
+	delegate DefaultSlateHQFPHLSL
+	delegate DefaultSlateHQFPGLSL
+}
+
+fragment_program DefaultGBufferSlateFP hlsl: DefaultFPParams
+{
+	source slate.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultConcreteHQFPHLSL hlsl: DefaultFPParams
+{
+	source concrete.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultConcreteHQFPGLSL glsl: DefaultFPParams
+{
+	source autogen/concrete_DefaultPS_PIN_HQ.glsl
+}
+
+fragment_program DefaultConcreteHQFP unified
+{
+	delegate DefaultConcreteHQFPHLSL
+	delegate DefaultConcreteHQFPGLSL
+}
+
+fragment_program DefaultGBufferConcreteFP hlsl: DefaultFPParams
+{
+	source concrete.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultRustHQFPHLSL hlsl: DefaultFPParams
+{
+	source rust.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultRustHQFPGLSL glsl: DefaultFPParams
+{
+	source autogen/rust_DefaultPS_PIN_HQ.glsl
+}
+
+fragment_program DefaultRustHQFP unified
+{
+	delegate DefaultRustHQFPHLSL
+	delegate DefaultRustHQFPGLSL
+}
+
+fragment_program DefaultGBufferRustFP hlsl: DefaultFPParams
+{
+	source rust.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultDiamondplateHQFPHLSL hlsl: DefaultFPParams
+{
+	source diamondplate.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultDiamondplateHQFPGLSL glsl: DefaultFPParams
+{
+	source autogen/diamondplate_DefaultPS_PIN_HQ.glsl
+}
+
+fragment_program DefaultDiamondplateHQFP unified
+{
+	delegate DefaultDiamondplateHQFPHLSL
+	delegate DefaultDiamondplateHQFPGLSL
+}
+
+fragment_program DefaultGBufferDiamondplateFP hlsl: DefaultFPParams
+{
+	source diamondplate.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultAluminumHQFPHLSL hlsl: DefaultFPParams
+{
+	source aluminum.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultAluminumHQFPGLSL glsl: DefaultFPParams
+{
+	source autogen/aluminum_DefaultPS_PIN_HQ.glsl
+}
+
+fragment_program DefaultAluminumHQFP unified
+{
+	delegate DefaultAluminumHQFPHLSL
+	delegate DefaultAluminumHQFPGLSL
+}
+
+fragment_program DefaultGBufferAluminumFP hlsl: DefaultFPParams
+{
+	source aluminum.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultGrassHQFPHLSL hlsl: DefaultFPParams
+{
+	source grass.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultGrassHQFPGLSL glsl: DefaultFPParams
+{
+	source autogen/grass_DefaultPS_PIN_HQ.glsl
+}
+
+fragment_program DefaultGrassHQFP unified
+{
+	delegate DefaultGrassHQFPHLSL
+	delegate DefaultGrassHQFPGLSL
+}
+
+fragment_program DefaultGBufferGrassFP hlsl: DefaultFPParams
+{
+	source grass.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultIceHQFPHLSL hlsl: DefaultFPParams
+{
+	source ice.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ
+}
+
+fragment_program DefaultIceHQFPGLSL glsl: DefaultFPParams
+{
+	source autogen/ice_DefaultPS_PIN_HQ.glsl
+}
+
+fragment_program DefaultIceHQFP unified
+{
+	delegate DefaultIceHQFPHLSL
+	delegate DefaultIceHQFPGLSL
+}
+
+fragment_program DefaultGBufferIceFP hlsl: DefaultFPParams
+{
+	source ice.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_HQ PIN_GBUFFER
+}
+
+abstract pass DefaultPassFFP
+{
+    texture_unit DiffuseMap
+    {
+        texture textures/SurfacesDefault.png
+        filtering trilinear
+    }
+}
+
+abstract pass DefaultPassShaders
+{
+    texture_unit StudsMap
+    {
+        tex_address_mode wrap clamp
+        texture textures/unified_studs.dds
+        filtering trilinear
+    }
+
+    texture_unit LightMap
+    {
+        texture LightGrid
+        filtering trilinear
+        tex_address_mode wrap
+    }
+
+    texture_unit LightMapLookup
+    {
+        texture LightGridLookup
+        filtering none
+        tex_address_mode wrap
+    }
+
+    texture_unit DiffuseMap
+    {
+        texture textures/SurfacesDefault.png
+        filtering trilinear
+    }
+}
+
+material DefaultStatic
+{
+	technique ffp
+	{
+        lod_index 2
+
+		pass: DefaultPassFFP
+		{
+			max_lights 2
+
+			ambient vertexcolour
+			diffuse vertexcolour
+			specular 0.9 0.9 0.9 50
+		}
+	}
+
+	technique lod
+	{
+        lod_index 1
+
+		pass: DefaultPassShaders
+		{
+			vertex_program_ref DefaultStaticVP
+			{
+			}
+
+			fragment_program_ref DefaultFP
+			{
+			}
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultPassShaders
+		{
+			vertex_program_ref DefaultStaticHQVP
+			{
+			}
+
+			fragment_program_ref DefaultHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultPassShaders
+		{
+			vertex_program_ref DefaultStaticHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinned
+{
+	technique ffp
+	{
+        lod_index 2
+
+		pass: DefaultPassFFP
+		{
+			max_lights 2
+
+			ambient vertexcolour
+			diffuse vertexcolour
+			specular 0.9 0.9 0.9 50
+		}
+	}
+
+	technique lod
+	{
+        lod_index 1
+
+		pass: DefaultPassShaders
+		{
+			vertex_program_ref DefaultSkinnedVP
+			{
+			}
+
+			fragment_program_ref DefaultFP
+			{
+			}
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultPassShaders
+		{
+			vertex_program_ref DefaultSkinnedHQVP
+			{
+			}
+
+			fragment_program_ref DefaultHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultPassShaders
+		{
+			vertex_program_ref DefaultSkinnedHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedAlphaKill: DefaultSkinned
+{
+	technique ffp
+	{
+		pass
+		{
+            alpha_rejection greater_equal 64
+        }
+    }
+
+	technique lod
+    {
+        pass
+        {
+            alpha_rejection greater_equal 64
+        }
+    }
+
+	technique default
+    {
+        pass
+        {
+            alpha_rejection greater_equal 64
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+            alpha_rejection greater_equal 64
+        }
+    }
+}
+
+material DefaultStaticTransparent: DefaultStatic
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedTransparent: DefaultSkinned
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+abstract pass DefaultDecalPass
+{
+    scene_blend alpha_blend
+    depth_bias 4 0.5
+    depth_write off
+}
+
+material DefaultStaticDecal: DefaultStatic
+{
+	technique ffp
+	{
+        pass: DefaultDecalPass
+		{
+            transparent_sorting off
+        }
+    }
+
+	technique lod
+	{
+        pass: DefaultDecalPass
+		{
+            transparent_sorting off
+        }
+    }
+
+	technique default
+	{
+        pass: DefaultDecalPass
+		{
+            transparent_sorting off
+        }
+    }
+
+	technique gbuffer
+	{
+        pass: DefaultDecalPass
+		{
+            transparent_sorting off
+        }
+    }
+}
+
+material DefaultSkinnedDecal: DefaultSkinned
+{
+	technique ffp
+	{
+        pass: DefaultDecalPass
+		{
+            transparent_sorting off
+        }
+    }
+
+	technique lod
+	{
+        pass: DefaultDecalPass
+		{
+            transparent_sorting off
+        }
+    }
+
+	technique default
+	{
+        pass: DefaultDecalPass
+		{
+            transparent_sorting off
+        }
+    }
+
+	technique gbuffer
+	{
+        pass: DefaultDecalPass
+		{
+            transparent_sorting off
+        }
+    }
+}
+
+material DefaultStaticDecalTransparent: DefaultStaticDecal
+{
+	technique ffp
+	{
+        pass
+		{
+            transparent_sorting on
+        }
+    }
+
+	technique lod
+	{
+        pass
+		{
+            transparent_sorting on
+        }
+    }
+
+	technique default
+	{
+        pass
+        {
+            transparent_sorting on
+        }
+    }
+
+	technique gbuffer
+	{
+        pass
+		{
+            transparent_sorting on
+        }
+    }
+}
+
+material DefaultSkinnedDecalTransparent: DefaultSkinnedDecal
+{
+	technique ffp
+	{
+        pass
+		{
+            transparent_sorting on
+        }
+    }
+
+	technique lod
+	{
+        pass
+		{
+            transparent_sorting on
+        }
+    }
+
+	technique default
+	{
+        pass
+        {
+            transparent_sorting on
+        }
+    }
+
+	technique gbuffer
+	{
+        pass
+		{
+            transparent_sorting on
+        }
+    }
+}
+
+material DefaultStaticDebug: DefaultStatic
+{
+    technique ffp
+    {
+        pass
+        {
+			ambient 1 1 1
+			diffuse 1 1 1
+			specular 0 0 0 1
+        }
+    }
+
+    technique lod
+    {
+        pass
+        {
+			vertex_program_ref DefaultStaticDebugVP
+			{
+			}
+        }
+    }
+
+    technique default
+    {
+        scheme Unused
+    }
+
+    technique gbuffer
+    {
+        pass
+        {
+            vertex_program_ref DefaultStaticHQDebugVP
+            {
+            }
+        }
+    }
+}
+
+material DefaultSkinnedDebug: DefaultSkinned
+{
+    technique ffp
+    {
+        pass
+        {
+			ambient 1 1 1
+			diffuse 1 1 1
+			specular 0 0 0 1
+        }
+    }
+
+    technique lod
+    {
+        pass
+        {
+			vertex_program_ref DefaultSkinnedDebugVP
+			{
+			}
+        }
+    }
+
+    technique default
+    {
+        scheme Unused
+    }
+
+    technique gbuffer
+    {
+        pass
+        {
+            vertex_program_ref DefaultSkinnedHQDebugVP
+            {
+            }
+        }
+    }
+}
+
+abstract pass DefaultMaterialsSplitPassFFP
+{
+	max_lights 2
+
+	ambient vertexcolour
+	diffuse vertexcolour
+
+    texture_unit StudsMap
+    {
+        tex_address_mode wrap clamp
+        texture textures/unified_studs.dds
+        filtering trilinear
+        
+        tex_coord_set 1
+        colour_op alpha_blend
+        alpha_op_ex source1 src_current src_texture
+    }
+}
+
+abstract pass DefaultMaterialSplitPassShaders
+{
+    texture_unit StudsMap
+    {
+        tex_address_mode wrap clamp
+        texture textures/unified_studs.dds
+        filtering trilinear
+    }
+
+    texture_unit LightMap
+    {
+        texture LightGrid
+        filtering trilinear
+        tex_address_mode wrap
+    }
+
+    texture_unit LightMapLookup
+    {
+        texture LightGridLookup
+        filtering none
+        tex_address_mode wrap
+    }
+
+    texture_unit DiffuseMap
+    {
+        texture textures/SurfacesDefault.png
+        filtering trilinear
+    }
+    
+    texture_unit NormalMap
+    {
+    	filtering trilinear
+    }
+
+	texture_unit EnvironmentMap
+	{
+        filtering trilinear
+        tex_address_mode clamp
+	}
+
+    texture_unit NoiseMap
+    {
+        filtering trilinear
+    }
+}
+
+abstract pass DefaultMaterialStaticLODPass: DefaultMaterialSplitPassShaders
+{
+	vertex_program_ref DefaultStaticVP
+	{
+	}
+
+	fragment_program_ref DefaultPlasticFP
+	{
+	}
+}
+
+abstract pass DefaultMaterialSkinnedLODPass: DefaultMaterialSplitPassShaders
+{
+	vertex_program_ref DefaultSkinnedVP
+	{
+	}
+
+	fragment_program_ref DefaultPlasticFP
+	{
+	}
+}
+
+abstract pass DefaultPlasticPassShaders: DefaultMaterialSplitPassShaders
+{
+}
+
+material DefaultStaticPlastic
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.75 0.75 0.75 81
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialStaticLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultPlasticPassShaders
+		{
+			vertex_program_ref DefaultStaticHQVP
+			{
+			}
+
+			fragment_program_ref DefaultPlasticHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultPlasticPassShaders
+		{
+			vertex_program_ref DefaultStaticHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferPlasticFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedPlastic
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.75 0.75 0.75 81
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialSkinnedLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultPlasticPassShaders
+		{
+			vertex_program_ref DefaultSkinnedHQVP
+			{
+			}
+
+			fragment_program_ref DefaultPlasticHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultPlasticPassShaders
+		{
+			vertex_program_ref DefaultSkinnedHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferPlasticFP
+			{
+			}
+		}
+	}
+}
+
+abstract pass DefaultPlasticReflectionPassFFP: DefaultMaterialsSplitPassFFP
+{
+	texture_unit EnvironmentMap
+	{
+		texture sky/skyspheremap.jpg
+        filtering trilinear
+
+        env_map spherical
+
+        colour_op_ex blend_manual src_texture src_current 1.0
+	}
+}
+
+abstract pass DefaultPlasticReflectionPassShaders: DefaultMaterialSplitPassShaders
+{
+	texture_unit EnvironmentMap
+	{
+		texture textures/penvr.dds cubic
+        filtering trilinear
+	}
+}
+
+material DefaultStaticPlasticReflection
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultPlasticReflectionPassFFP
+		{
+			specular 0.75 0.75 0.75 81
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultPlasticReflectionPassShaders
+		{
+			vertex_program_ref DefaultStaticReflectionVP
+			{
+			}
+
+			fragment_program_ref DefaultPlasticReflectionFP
+			{
+			}
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultPlasticReflectionPassShaders
+		{
+			vertex_program_ref DefaultStaticHQVP
+			{
+			}
+
+			fragment_program_ref DefaultPlasticReflectionHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultPlasticReflectionPassShaders
+		{
+			vertex_program_ref DefaultStaticHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferPlasticReflectionFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedPlasticReflection
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultPlasticReflectionPassFFP
+		{
+			specular 0.75 0.75 0.75 81
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultPlasticReflectionPassShaders
+		{
+			vertex_program_ref DefaultSkinnedReflectionVP
+			{
+			}
+			
+			fragment_program_ref DefaultPlasticReflectionFP
+			{
+			}
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultPlasticReflectionPassShaders
+		{
+			vertex_program_ref DefaultSkinnedHQVP
+			{
+			}
+
+			fragment_program_ref DefaultPlasticReflectionHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultPlasticReflectionPassShaders
+		{
+			vertex_program_ref DefaultSkinnedHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferPlasticReflectionFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultStaticSmoothPlastic: DefaultStaticPlastic
+{
+}
+
+material DefaultSkinnedSmoothPlastic: DefaultSkinnedPlastic
+{
+}
+
+material DefaultStaticSmoothPlasticReflection: DefaultStaticPlasticReflection
+{
+}
+
+material DefaultSkinnedSmoothPlasticReflection: DefaultSkinnedPlasticReflection
+{
+}
+
+abstract pass DefaultWoodPassShaders: DefaultMaterialSplitPassShaders
+{
+	texture_unit NormalMap
+	{
+		texture textures/HorizLines_normal.dds
+	}
+
+    texture_unit NoiseMap
+    {
+		texture textures/noiseL8_32x32x32.dds 3d
+    }
+}
+
+material DefaultStaticWood
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.2696 0.2696 0.2696 4
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialStaticLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultWoodPassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultWoodHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultWoodPassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferWoodFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedWood
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.2696 0.2696 0.2696 4
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialSkinnedLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultWoodPassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultWoodHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultWoodPassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferWoodFP
+			{
+			}
+		}
+	}
+}
+
+abstract pass DefaultSlatePassShaders: DefaultMaterialSplitPassShaders
+{
+	texture_unit NormalMap
+	{
+		texture textures/SlateTile.dds
+	}
+
+	texture_unit NoiseMap
+	{
+		texture textures/vol_ice_cracked2.dds 3d
+	}
+}
+
+material DefaultStaticSlate
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.1 0.1 0.1 40
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialStaticLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultSlatePassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultSlateHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultSlatePassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferSlateFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedSlate
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.1 0.1 0.1 40
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialSkinnedLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultSlatePassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultSlateHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultSlatePassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferSlateFP
+			{
+			}
+		}
+	}
+}
+
+abstract pass DefaultConcretePassShaders: DefaultMaterialSplitPassShaders
+{
+	texture_unit DiffuseMap
+	{
+		texture textures/ConcreteFallback.dds
+	}
+}
+
+material DefaultStaticConcrete
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.19 0.19 0.19 14
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialStaticLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultConcretePassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultConcreteHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultConcretePassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferConcreteFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedConcrete
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.19 0.19 0.19 14
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialSkinnedLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultConcretePassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultConcreteHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultConcretePassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferConcreteFP
+			{
+			}
+		}
+	}
+}
+
+abstract pass DefaultRustPassShaders: DefaultMaterialSplitPassShaders
+{
+	texture_unit DiffuseMap
+	{
+		texture textures/RustGradient.png
+		tex_address_mode clamp
+	}
+
+	texture_unit NormalMap
+	{
+		texture textures/Sand_Normal.dds
+	}
+
+    texture_unit NoiseMap
+    {
+		texture textures/noiseL8_32x32x32.dds 3d
+    }
+}
+
+material DefaultStaticRust
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.12 0.12 0.12 70
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialStaticLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultRustPassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultRustHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultRustPassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferRustFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedRust
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.12 0.12 0.12 70
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialSkinnedLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultRustPassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultRustHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultRustPassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferRustFP
+			{
+			}
+		}
+	}
+}
+
+abstract pass DefaultDiamondplatePassShaders: DefaultMaterialSplitPassShaders
+{
+	texture_unit NormalMap
+	{
+		texture textures/DPlate_Normal.dds
+	}
+}
+
+material DefaultStaticDiamondplate
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.9 0.9 0.9 25
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialStaticLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultDiamondplatePassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultDiamondplateHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultDiamondplatePassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferDiamondplateFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedDiamondplate
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.9 0.9 0.9 25
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialSkinnedLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultDiamondplatePassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultDiamondplateHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultDiamondplatePassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferDiamondplateFP
+			{
+			}
+		}
+	}
+}
+
+abstract pass DefaultAluminumPassShaders: DefaultMaterialSplitPassShaders
+{
+	texture_unit NormalMap
+	{
+		texture textures/Crinkled_Normal.dds
+	}
+
+	texture_unit EnvironmentMap
+	{
+		texture textures/penv.dds cubic
+    }
+}
+
+material DefaultStaticAluminum
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.9 0.9 0.9 25
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialStaticLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultAluminumPassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultAluminumHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultAluminumPassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferAluminumFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedAluminum
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.9 0.9 0.9 25
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialSkinnedLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultAluminumPassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultAluminumHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultAluminumPassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferAluminumFP
+			{
+			}
+		}
+	}
+}
+
+abstract pass DefaultGrassPassShaders: DefaultMaterialSplitPassShaders
+{
+	texture_unit DiffuseMap
+	{
+		texture textures/Grass_Texture.jpg
+	}
+
+	texture_unit NormalMap
+	{
+		texture textures/dirt.jpg
+	}
+
+    texture_unit NoiseMap
+    {
+		texture textures/noiseL8_32x32x32.dds 3d
+    }
+}
+
+material DefaultStaticGrass
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.1 0.1 0.1 50
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialStaticLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultGrassPassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGrassHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultGrassPassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferGrassFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedGrass
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.1 0.1 0.1 50
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialSkinnedLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultGrassPassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGrassHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultGrassPassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferGrassFP
+			{
+			}
+		}
+	}
+}
+
+abstract pass DefaultIcePassShaders: DefaultMaterialSplitPassShaders
+{
+	texture_unit NormalMap
+	{
+		texture textures/Sand_Normal.dds
+	}
+
+	texture_unit EnvironmentMap
+	{
+		texture textures/penv.dds cubic
+    }
+
+	texture_unit NoiseMap
+	{
+		texture textures/vol_ice_cracked2.dds 3d
+	}
+}
+
+material DefaultStaticIce
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.4 0.4 0.4 25
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialStaticLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultIcePassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultIceHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultIcePassShaders
+		{
+			vertex_program_ref DefaultStaticSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferIceFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultSkinnedIce
+{
+	technique ffp
+	{
+		lod_index 2
+
+		pass: DefaultMaterialsSplitPassFFP
+		{
+			specular 0.4 0.4 0.4 25
+		}
+	}
+
+	technique lod
+	{
+		lod_index 1
+
+		pass: DefaultMaterialSkinnedLODPass
+		{
+		}
+	}
+
+	technique default
+	{
+        lod_index 0
+
+		pass: DefaultIcePassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultIceHQFP
+			{
+			}
+		}
+	}
+
+	technique gbuffer
+	{
+        scheme MRT
+
+		pass: DefaultIcePassShaders
+		{
+			vertex_program_ref DefaultSkinnedSurfaceHQVP
+			{
+			}
+
+			fragment_program_ref DefaultGBufferIceFP
+			{
+			}
+		}
+	}
+}
+
+material DefaultStaticMarble: DefaultStaticPlastic
+{
+}
+
+material DefaultSkinnedMarble: DefaultSkinnedPlastic
+{
+}
+
+material DefaultStaticGranite: DefaultStaticPlastic
+{
+}
+
+material DefaultSkinnedGranite: DefaultSkinnedPlastic
+{
+}
+
+material DefaultStaticPebble: DefaultStaticPlastic
+{
+}
+
+material DefaultSkinnedPebble: DefaultSkinnedPlastic
+{
+}
+
+material DefaultStaticBrick: DefaultStaticPlastic
+{
+}
+
+material DefaultSkinnedBrick: DefaultSkinnedPlastic
+{
+}
+
+material DefaultStaticSand: DefaultStaticPlastic
+{
+}
+
+material DefaultSkinnedSand: DefaultSkinnedPlastic
+{
+}
+
+material DefaultStaticFabric: DefaultStaticPlastic
+{
+}
+
+material DefaultSkinnedFabric: DefaultSkinnedPlastic
+{
+}
+
+material DefaultStaticPlasticTransparent: DefaultStaticPlastic
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedPlasticTransparent: DefaultSkinnedPlastic
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticPlasticReflectionTransparent: DefaultStaticPlasticReflection
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedPlasticReflectionTransparent: DefaultSkinnedPlasticReflection
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticSmoothPlasticTransparent: DefaultStaticPlasticTransparent
+{
+}
+
+material DefaultSkinnedSmoothPlasticTransparent: DefaultSkinnedPlasticTransparent
+{
+}
+
+material DefaultStaticSmoothPlasticReflectionTransparent: DefaultStaticPlasticReflectionTransparent
+{
+}
+
+material DefaultSkinnedSmoothPlasticReflectionTransparent: DefaultSkinnedPlasticReflectionTransparent
+{
+}
+
+material DefaultStaticWoodTransparent: DefaultStaticWood
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedWoodTransparent: DefaultSkinnedWood
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticSlateTransparent: DefaultStaticSlate
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedSlateTransparent: DefaultSkinnedSlate
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticConcreteTransparent: DefaultStaticConcrete
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedConcreteTransparent: DefaultSkinnedConcrete
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticRustTransparent: DefaultStaticRust
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedRustTransparent: DefaultSkinnedRust
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticDiamondplateTransparent: DefaultStaticDiamondplate
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedDiamondplateTransparent: DefaultSkinnedDiamondplate
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticAluminumTransparent: DefaultStaticAluminum
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedAluminumTransparent: DefaultSkinnedAluminum
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticGrassTransparent: DefaultStaticGrass
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedGrassTransparent: DefaultSkinnedGrass
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticIceTransparent: DefaultStaticIce
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultSkinnedIceTransparent: DefaultSkinnedIce
+{
+	technique ffp
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique lod
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique default
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+	technique gbuffer
+	{
+		pass
+		{
+			scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material DefaultStaticMarbleTransparent: DefaultStaticPlasticTransparent
+{
+}
+
+material DefaultSkinnedMarbleTransparent: DefaultSkinnedPlasticTransparent
+{
+}
+
+material DefaultStaticGraniteTransparent: DefaultStaticPlasticTransparent
+{
+}
+
+material DefaultSkinnedGraniteTransparent: DefaultSkinnedPlasticTransparent
+{
+}
+
+material DefaultStaticPebbleTransparent: DefaultStaticPlasticTransparent
+{
+}
+
+material DefaultSkinnedPebbleTransparent: DefaultSkinnedPlasticTransparent
+{
+}
+
+material DefaultStaticBrickTransparent: DefaultStaticPlasticTransparent
+{
+}
+
+material DefaultSkinnedBrickTransparent: DefaultSkinnedPlasticTransparent
+{
+}
+
+material DefaultStaticSandTransparent: DefaultStaticPlasticTransparent
+{
+}
+
+material DefaultSkinnedSandTransparent: DefaultSkinnedPlasticTransparent
+{
+}
+
+material DefaultStaticFabricTransparent: DefaultStaticPlasticTransparent
+{
+}
+
+material DefaultSkinnedFabricTransparent: DefaultSkinnedPlasticTransparent
+{
+}
+
+vertex_program DefaultNewStaticSurfaceHQVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+	preprocessor_defines PIN_NEW PIN_SURFACE PIN_HQ
+}
+
+vertex_program DefaultNewSkinnedSurfaceHQVP rsl: DefaultVPParams
+{
+	source default.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+	preprocessor_defines PIN_NEW PIN_SKINNED PIN_SURFACE PIN_HQ
+}
+
+fragment_program DefaultNewPlasticFP rsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW
+}
+
+fragment_program DefaultNewPlasticHQFP rsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewPlasticGBufferFP hlsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewPlasticReflectionFP rsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_REFLECTION
+}
+
+fragment_program DefaultNewPlasticReflectionHQFP rsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_REFLECTION PIN_HQ
+}
+
+fragment_program DefaultNewPlasticReflectionGBufferFP hlsl: DefaultFPParams
+{
+	source plastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_REFLECTION PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewSmoothPlasticFP rsl: DefaultFPParams
+{
+	source smoothplastic.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW
+}
+
+fragment_program DefaultNewSmoothPlasticHQFP rsl: DefaultFPParams
+{
+	source smoothplastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewSmoothPlasticGBufferFP hlsl: DefaultFPParams
+{
+	source smoothplastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewSmoothPlasticReflectionFP rsl: DefaultFPParams
+{
+	source smoothplastic.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_REFLECTION
+}
+
+fragment_program DefaultNewSmoothPlasticReflectionHQFP rsl: DefaultFPParams
+{
+	source smoothplastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_REFLECTION PIN_HQ
+}
+
+fragment_program DefaultNewSmoothPlasticReflectionGBufferFP hlsl: DefaultFPParams
+{
+	source smoothplastic.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_REFLECTION PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewWoodHQFP rsl: DefaultFPParams
+{
+	source wood.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewWoodGBufferFP hlsl: DefaultFPParams
+{
+	source wood.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewMarbleHQFP rsl: DefaultFPParams
+{
+	source marble.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewMarbleGBufferFP hlsl: DefaultFPParams
+{
+	source marble.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewSlateHQFP rsl: DefaultFPParams
+{
+	source slate.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewSlateGBufferFP hlsl: DefaultFPParams
+{
+	source slate.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewGraniteHQFP rsl: DefaultFPParams
+{
+	source granite.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewGraniteGBufferFP hlsl: DefaultFPParams
+{
+	source granite.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewConcreteHQFP rsl: DefaultFPParams
+{
+	source concrete.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewConcreteGBufferFP hlsl: DefaultFPParams
+{
+	source concrete.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewPebbleHQFP rsl: DefaultFPParams
+{
+	source pebble.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewPebbleGBufferFP hlsl: DefaultFPParams
+{
+	source pebble.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewBrickHQFP rsl: DefaultFPParams
+{
+	source brick.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewBrickGBufferFP hlsl: DefaultFPParams
+{
+	source brick.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewRustHQFP rsl: DefaultFPParams
+{
+	source rust.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewRustGBufferFP hlsl: DefaultFPParams
+{
+	source rust.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewDiamondplateHQFP rsl: DefaultFPParams
+{
+	source diamondplate.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewDiamondplateGBufferFP hlsl: DefaultFPParams
+{
+	source diamondplate.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewAluminumHQFP rsl: DefaultFPParams
+{
+	source aluminum.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewAluminumGBufferFP hlsl: DefaultFPParams
+{
+	source aluminum.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewGrassHQFP rsl: DefaultFPParams
+{
+	source grass.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewGrassGBufferFP hlsl: DefaultFPParams
+{
+	source grass.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewSandHQFP rsl: DefaultFPParams
+{
+	source sand.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewSandGBufferFP hlsl: DefaultFPParams
+{
+	source sand.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewFabricHQFP rsl: DefaultFPParams
+{
+	source fabric.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewFabricGBufferFP hlsl: DefaultFPParams
+{
+	source fabric.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
+
+fragment_program DefaultNewIceHQFP rsl: DefaultFPParams
+{
+	source ice.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ
+}
+
+fragment_program DefaultNewIceGBufferFP hlsl: DefaultFPParams
+{
+	source ice.hlsl
+	target ps_2_a
+	entry_point DefaultPS
+	preprocessor_defines PIN_NEW PIN_HQ PIN_GBUFFER
+}
