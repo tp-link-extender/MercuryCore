@@ -96,7 +96,7 @@ export async function handle({ event, resolve }) {
 			},
 		})
 
-	return await resolve(event)
+	return resolve(event)
 }
 
 export const handleError = async ({ event, error }) => {
