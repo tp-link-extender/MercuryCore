@@ -57,16 +57,12 @@
 			</a>
 			{#if user}
 				<div id="topnav" class="row me-2">
-					<div class="col-6">
-						<div class="navbar-nav">
-							{#each nav1 as [title, href]}
-								<a
-									class="btn mt-1 px-1 light-text nav-item"
-									{href}>
-									{title}
-								</a>
-							{/each}
-						</div>
+					<div class="navbar-nav ms-3">
+						{#each nav1 as [title, href]}
+							<a class="btn mt-1 px-1 light-text nav-item" {href}>
+								{title}
+							</a>
+						{/each}
 					</div>
 				</div>
 				<div class="navbar-nav mx-auto">
@@ -178,14 +174,14 @@
 							<i class="fa fa-bell light-text" />
 						</a>
 					</li>
-					<li id="transactionsbutton" class="pt-1">
+					<li id="transactionsbutton" class="my-auto">
 						<a
 							href="/transactions/your"
 							role="button"
 							aria-label="Transactions"
 							class="nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
-							<span class="h6 text-success">
+							<span class="fs-6 text-success">
 								{user.currency}
 							</span>
 						</a>

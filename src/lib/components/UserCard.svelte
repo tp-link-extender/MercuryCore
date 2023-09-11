@@ -33,7 +33,7 @@
 			</span>
 		{/if} -->
 	</div>
-	<p class="h4 p-6">
+	<p class="fs-4 p-6">
 		{user.username}
 	</p>
 </a>

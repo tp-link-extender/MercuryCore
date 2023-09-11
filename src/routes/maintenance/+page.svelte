@@ -27,7 +27,7 @@
 		</Canvas>
 	</div>
 	<h1 id="title" class="font-black text-white opacity-75">Mercury 2</h1>
-	<p class="h4 text-white opacity-75 text-center">
+	<p class="fs-4 text-white opacity-75 text-center">
 		is currently undergoing maintenance. Check back later!
 	</p>
 	<a

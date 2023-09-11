@@ -133,7 +133,7 @@
 						url="/forum/{data.forumCategory.name}/{data.id}" />
 				</span>
 			</span>
-			<h2 class="h4 mt-2">
+			<h2 class="fs-4 mt-2">
 				{data.title}
 			</h2>
 			<p>
