@@ -36,6 +36,7 @@
 
 <style lang="stylus">
 	a
+		line-height 1.2
 		transition all 0.2s
 		&:hover
 			transition all 0.2s
