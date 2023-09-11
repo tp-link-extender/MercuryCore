@@ -37,8 +37,6 @@ model TextContent {
     userId         String?
     Place          Place?        @relation(fields: [placeId], references: [id])
     placeId        Int?
-    Item           Item?         @relation(fields: [itemId], references: [id])
-    itemId         String?
     Asset          Asset?        @relation(fields: [assetId], references: [id])
     assetId        Int?
 }
@@ -71,9 +69,6 @@ model AuthUser {
     groupsOwned          Group[]
     places               Place[]
     posts                Post[]
-    itemsCreated         Item[]
-    itemsOwned           Item[]        @relation("owns")
-    itemsWorn            Item[]        @relation("wears")
     transactionsSent     Transaction[] @relation("sent")
     transactionsReceived Transaction[] @relation("received")
 
@@ -211,20 +206,6 @@ enum ItemCategory {
     Shoulder
 }
 
-model Item {
-    name        String
-    id          String        @id @unique
-    price       Int
-    description TextContent[]
-    category    ItemCategory
-    creator     AuthUser      @relation(fields: [creatorName], references: [username])
-    creatorName String
-    owners      AuthUser[]    @relation("owns")
-    wearers     AuthUser[]    @relation("wears")
-    mesh        String
-    texture     String
-}
-
 model Transaction {
     id           String   @id @unique @default(cuid())
     sender       AuthUser @relation("sent", fields: [senderName], references: [username])
@@ -269,7 +250,7 @@ model ForumReply {
     content  TextContent[]
 
     parentPost    ForumPost    @relation(fields: [topParentId], references: [id])
-    topParentId  String
+    topParentId   String
     // A reply can be to a post or another reply
     parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
     parentReplyId String?
@@ -332,7 +313,7 @@ model ModerationAction {
 
 enum AuditActionType {
     Account
-	Administration
+    Administration
     Economy
     Forum
     Moderation
@@ -420,7 +401,7 @@ model AssetComment {
     content  TextContent[]
 
     parentAsset   Asset          @relation(fields: [topParentId], references: [id])
-    topParentId Int
+    topParentId   Int
     // A reply can be to a post or another reply
     parentReply   AssetComment?  @relation("replies", fields: [parentReplyId], references: [id])
     parentReplyId String?

@@ -113,36 +113,39 @@ export async function transaction(
 		},
 	})
 	if (!sender2) throw new Error("Sender not found")
-	if (sender2.currency < amountSent)
-		throw new Error(
-			`Insufficient funds: You need ${
-				amountSent - sender2.currency
-			} more to buy this`,
-		)
-	// const receiver2 = await prisma.authUser.findUnique({
-	// 	where: receiver,
-	// })
-	// if (!receiver2) throw new Error("Receiver not found")
+	const taxRate = Number((await client.get("taxRate")) || 30)
 
-	const taxRate = Number((await client.get("taxRate")) || 30),
-		finalAmount = Math.round(amountSent * (1 - taxRate / 100))
+	if (amountSent > 0) {
+		if (sender2.currency < amountSent)
+			throw new Error(
+				`Insufficient funds: You need ${
+					amountSent - sender2.currency
+				} more to buy this`,
+			)
+		// const receiver2 = await prisma.authUser.findUnique({
+		// 	where: receiver,
+		// })
+		// if (!receiver2) throw new Error("Receiver not found")
 
-	await tx.authUser.update({
-		where: sender,
-		data: {
-			currency: {
-				decrement: amountSent,
+		const finalAmount = Math.round(amountSent * (1 - taxRate / 100))
+
+		await tx.authUser.update({
+			where: sender,
+			data: {
+				currency: {
+					decrement: amountSent,
+				},
 			},
-		},
-	})
-	await tx.authUser.update({
-		where: receiver,
-		data: {
-			currency: {
-				increment: finalAmount,
+		})
+		await tx.authUser.update({
+			where: receiver,
+			data: {
+				currency: {
+					increment: finalAmount,
+				},
 			},
-		},
-	})
+		})
+	}
 
 	await tx.transaction.create({
 		data: {
