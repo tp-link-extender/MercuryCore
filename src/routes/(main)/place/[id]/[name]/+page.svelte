@@ -371,10 +371,8 @@
 							Begin Hosting
 						</button>
 
-						<div class="dropdown2 dropdown-hover dropdown-end">
-							<button
-								class="btn btn-success dropdown-toggle"
-								type="button" />
+						<div class="dropdown dropdown-hover dropdown-end">
+							<div class="btn btn-success dropdown-toggle" />
 							<div class="dropdown-content pt-2">
 								<ul class="p-2 rounded-3">
 									<li class="rounded-2">
@@ -471,7 +469,7 @@
 					height={128}
 					style={installed
 						? ""
-						: "animation: none; --rotation: 0deg"} />
+						: "animation: none --rotation: 0deg"} />
 			</div>
 		{/key}
 		{#if success}
@@ -507,7 +505,7 @@
 		transform translateY(-50%)
 		left 1.25rem
 		right 1.25rem
-		top: 50%
+		top 50%
 
 	#play img
 		height 2rem
@@ -518,6 +516,13 @@
 
 	.dropdown-toggle
 		border-radius 0 0.375rem 0.375rem 0
+		&::after 
+			display inline-block
+			vertical-align 0.255rem
+			content ""
+			border-top 0.3rem solid
+			border-right 0.3rem solid transparent
+			border-left 0.3rem solid transparent
 
 	#wrapper
 		width 128px

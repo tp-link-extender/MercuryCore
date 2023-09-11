@@ -187,7 +187,7 @@
 						</a>
 					</li>
 
-					<li class="dropdown2 dropdown-hover dropdown-end">
+					<li class="dropdown dropdown-hover dropdown-end">
 						<a href="/user/{user.number}" class="btn p-0 d-flex">
 							<div
 								id="pfp"
@@ -334,7 +334,7 @@
 		#nav1
 			padding-left 0.5rem
 			padding-right 0.5rem
-		.dropdown2 p
+		.dropdown p
 			display none
 		.navbar-brand
 			img
@@ -367,7 +367,7 @@
 	.loggedin
 		padding 0
 
-	.dropdown2
+	.dropdown
 		margin-top 2px
 		p
 			max-width 6rem

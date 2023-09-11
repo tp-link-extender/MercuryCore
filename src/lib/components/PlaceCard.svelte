@@ -73,6 +73,7 @@
 		transition all 0.3s
 
 	a
+		line-height 1.2
 		transition all 0.2s
 		&:hover
 			transition all 0.2s
