@@ -223,7 +223,7 @@
 {#if $modal}
 	<Modal {modal}>
 		<div class="modal-header">
-			<h1 class="h4 light-text">Banner #{bannerId}</h1>
+			<h1 class="fs-4 light-text">Banner #{bannerId}</h1>
 			<button
 				type="button"
 				class="btn-close"

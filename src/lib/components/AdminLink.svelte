@@ -14,11 +14,11 @@
 	<div class="px-0 card bg-a3 text-center light-text">
 		<div class="card-body bg-a rounded-1 p-6">
 			{#if emoji}
-				<span class="h1">{emoji}</span>
+				<span class="fs-1">{emoji}</span>
 			{:else}
-				<i class="h1 {iconClass}" />
+				<i class="fs-1 {iconClass}" />
 			{/if}
-			<h4 class="h5 mt-4">
+			<h4 class="fs-5 mt-4">
 				{name}
 			</h4>
 			<slot />

@@ -182,7 +182,7 @@
 {#if $modal}
 	<Modal {modal}>
 		<div class="modal-header">
-			<h1 class="h4 light-text">Choose a {bodyPart} color</h1>
+			<h1 class="fs-4 light-text">Choose a {bodyPart} color</h1>
 			<button
 				type="button"
 				class="btn-close"

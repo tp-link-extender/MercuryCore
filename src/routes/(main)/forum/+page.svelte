@@ -15,12 +15,12 @@
 					class="col-lg-9 col-md-7 row light-text text-decoration-none"
 					href="/forum/{category.name.toLowerCase()}">
 					<div class="col-9">
-						<h2 class="h4">
+						<h2 class="fs-4">
 							{category.name}
 						</h2>
 						{category.description}
 					</div>
-					<h3 class="col h5">
+					<h3 class="col fs-5">
 						{category._count.posts} post{category._count.posts > 1
 							? "s"
 							: ""}
@@ -33,7 +33,7 @@
 								.posts[0].id}"
 							class="light-text text-decoration-none">
 							Last post:
-							<h3 class="h5">
+							<h3 class="fs-5">
 								{category.posts[0].title}
 							</h3>
 						</a>

@@ -96,7 +96,7 @@
 		<a
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
 			class="p-4 pb-0 text-decoration-none light-text w-100">
-			<h2 class="h4 mt-2">
+			<h2 class="fs-4 mt-2">
 				{post.title}
 			</h2>
 

@@ -22,10 +22,9 @@
 
 	export const snapshot = { capture, restore }
 
-	let modal = writable(false),
-		tabData = TabData(data.url, ["Recommended", "Comments"])
+	let tabData = TabData(data.url, ["Recommended", "Comments"])
 
-	const types: any = {
+	const types: { [k: number]: string } = {
 		1: "Image",
 		2: "T-Shirt",
 		11: "Shirt",
@@ -72,7 +71,6 @@
 					<p class="mb-2">
 						<strong>Sold:</strong>
 						{data.sold}
-						<br />
 					</p>
 					<p>
 						<strong>Type:</strong>
@@ -82,17 +80,23 @@
 				<div class="col d-flex flex-row-reverse">
 					<div class="card">
 						<div class="card-body">
-							<p class="light-text mb-1 text-center">
+							<p class="light-text text-center mb-0">
 								Price: <span class="text-success">
 									<i class="far fa-gem" />
 									{data.price}
 								</span>
 							</p>
-							<label for="buy" class="btn btn-success">
-								<strong class="h5">
-									{data.price > 0 ? "Buy Now" : "Get"}
-								</strong>
-							</label>
+							{#if !data.owned}
+								<label for="buy" class="btn btn-success mt-1">
+									<strong class="fs-5">
+										{data.price > 0 ? "Buy Now" : "Get"}
+									</strong>
+								</label>
+							{:else}
+								<span class="btn btn-secondary mt-1 disabled">
+									<strong class="fs-5">Owned</strong>
+								</span>
+							{/if}
 						</div>
 					</div>
 				</div>
@@ -150,21 +154,8 @@
 	</Tab>
 </div>
 
-<Modal {modal}>
-	<div class="modal-body d-flex flex-column p-6">
-		<h1 class="text-center h5 light-text">
-			"{data.name}" is ready to play! Have fun!
-		</h1>
-		<a
-			class="btn btn-success"
-			href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
-			Download 2013
-		</a>
-	</div>
-</Modal>
-
 <input type="checkbox" id="buy" class="modal-toggle" />
-<div class="modal">
+<div class="modal2">
 	<div class="modal-box w-30">
 		<h3 class="text-lg font-bold light-text">Purchase {data.name}</h3>
 		<p class="pb-4">

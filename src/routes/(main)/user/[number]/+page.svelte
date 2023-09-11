@@ -25,7 +25,7 @@
 			</div>
 			<div class="container">
 				<div class="d-flex mb-2">
-					<h1 class="h2 light-text d-inline">{data.username}</h1>
+					<h1 class="fs-2 light-text d-inline">{data.username}</h1>
 					<b
 						class="ms-auto"
 						style="color: {permissions[data.permissionLevel][0]}">
@@ -41,7 +41,7 @@
 						href="/user/{data.number}/friends"
 						class="light-text text-center text-decoration-none">
 						Friends
-						<h2 class="h3 light-text">
+						<h2 class="fs-3 light-text">
 							{data.friendCount}
 						</h2>
 					</a>
@@ -49,7 +49,7 @@
 						href="/user/{data.number}/followers"
 						class="light-text text-center text-decoration-none ms-6">
 						Followers
-						<h2 class="h3 light-text">
+						<h2 class="fs-3 light-text">
 							{data.followerCount}
 						</h2>
 					</a>
@@ -57,7 +57,7 @@
 						href="/user/{data.number}/following"
 						class="light-text text-center text-decoration-none ms-6">
 						Following
-						<h2 class="h3 light-text">
+						<h2 class="fs-3 light-text">
 							{data.followingCount}
 						</h2>
 					</a>
@@ -133,12 +133,12 @@
 		<div class="col-6">
 			{#if data.bio[0]}
 				<div class="mt-6">
-					<h2 class="h4 light-text">Bio</h2>
+					<h2 class="fs-4 light-text">Bio</h2>
 					<p class="light-text ms-2">{data.bio[0].text}</p>
 				</div>
 			{/if}
 			<div class="mt-6">
-				<h2 class="h4 light-text">Avatar</h2>
+				<h2 class="fs-4 light-text">Avatar</h2>
 				<div class="card bg-darker card-body">
 					<img
 						id="avatar"
@@ -151,7 +151,7 @@
 		<div class="col-6">
 			{#if data.places.length > 0}
 				<div class="mt-6">
-					<h2 class="h4 light-text">Creations</h2>
+					<h2 class="fs-4 light-text">Creations</h2>
 					{#each data.places as place, num}
 						<div
 							in:fade|global={{
@@ -165,7 +165,7 @@
 							</div>
 							<div class="d-collapse-content">
 								<a
-									class="card bg-darker shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
+									class="card bg-darker shadow-none placecard text-center light-text text-decoration-none fs-6 m-0 w-100"
 									href="/place/{place.id}/{place.name}">
 									<div class="row">
 										<div class="col col-6">
@@ -178,7 +178,7 @@
 											</div>
 										</div>
 										<div class="col col-6 p-2 row">
-											<p class="mb-1 h5">
+											<p class="mb-1 fs-5">
 												{place.name}
 											</p>
 											<div class="mt-auto mb-1">
@@ -210,11 +210,11 @@
 		<div class="col-6 mt-6">
 			{#if data.groupsOwned.length > 0}
 				<div class="mt-6">
-					<h2 class="h4 light-text">Groups owned</h2>
+					<h2 class="fs-4 light-text">Groups owned</h2>
 					{#each data.groupsOwned as group, num}
 						<a
 							in:fade={{ num, total: data.groupsOwned.length }}
-							class="card bg-darker light-text text-decoration-none h6 my-2"
+							class="card bg-darker light-text text-decoration-none fs-6 my-2"
 							href="/groups/{group.name}">
 							<div class="p-2">
 								<span class="float-start">
@@ -233,11 +233,11 @@
 		<div class="col-6 mt-6">
 			{#if data.groups.length > 0}
 				<div class="mt-6">
-					<h2 class="h4 light-text">Groups in</h2>
+					<h2 class="fs-4 light-text">Groups in</h2>
 					{#each data.groups as group, num}
 						<a
 							in:fade={{ num, total: data.groups.length }}
-							class="card bg-darker light-text text-decoration-none h6 my-2"
+							class="card bg-darker light-text text-decoration-none fs-6 my-2"
 							href="/groups/{group.name}">
 							<div class="p-2">
 								<span class="float-start">
@@ -254,7 +254,7 @@
 			{/if}
 		</div>
 		{#if data.posts.length > 0}
-			<h2 class="h4 mt-12 light-text">Latest feed posts</h2>
+			<h2 class="fs-4 mt-12 light-text">Latest feed posts</h2>
 			<div id="feed" class="light-text p-4">
 				<div class="row">
 					{#each data.posts.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}

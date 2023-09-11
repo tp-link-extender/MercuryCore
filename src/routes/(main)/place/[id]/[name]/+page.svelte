@@ -292,7 +292,7 @@
 
 	<Tab {tabData}>
 		{#if user?.permissionLevel == 5 || data.ownerUser?.number == user?.number}
-			<h1 class="h4 light-text">Hosting on Mercury</h1>
+			<h1 class="fs-4 light-text">Hosting on Mercury</h1>
 			<p class="light-text">
 				To begin hosting your map for everybody to play, you need to
 				make sure that you are forwarding the port you wish to run the
@@ -475,15 +475,15 @@
 			</div>
 		{/key}
 		{#if success}
-			<h1 class="text-center h5 light-text">
+			<h1 class="text-center fs-5 light-text">
 				"{data.name}" is ready to play! Have fun!
 			</h1>
 		{:else if installed}
-			<h1 class="text-center h5 light-text">
+			<h1 class="text-center fs-5 light-text">
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
 			</h1>
 		{:else}
-			<h1 class="text-center h5 light-text mb-4">
+			<h1 class="text-center fs-5 light-text mb-4">
 				Install the Mercury client and start playing now!
 			</h1>
 			<a

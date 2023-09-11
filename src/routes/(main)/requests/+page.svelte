@@ -33,7 +33,7 @@
 						</span>
 					{/if} -->
 				</a>
-				<div class="h4 p-6">
+				<div class="fs-4 p-6">
 					<a
 						href="/user/{user.number}"
 						class="text-decoration-none light-text">

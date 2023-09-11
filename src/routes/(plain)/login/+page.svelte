@@ -33,14 +33,14 @@
 		</h1>
 
 		<div class="ms-4 mt-4 w-100">
-			<h2 class="h4 light-text">Endless possibilities</h2>
+			<h2 class="fs-4 light-text">Endless possibilities</h2>
 			<p class="light-text opacity-75 more">
 				Create or play your favourite games and customise your character
 				with items on our catalog.
 			</p>
 		</div>
 		<div class="ms-4 mt-4 w-100">
-			<h2 class="h4 light-text">New features</h2>
+			<h2 class="fs-4 light-text">New features</h2>
 			<p class="light-text opacity-75 more">
 				In addition to full client usability, additional features such
 				as security fixes, QoL fixes and an easy to use website make
@@ -48,7 +48,7 @@
 			</p>
 		</div>
 		<div class="ms-4 mt-4 w-100">
-			<h2 class="h4 light-text">Same nostalgia</h2>
+			<h2 class="fs-4 light-text">Same nostalgia</h2>
 			<p class="light-text opacity-75 more">
 				All of our clients will remain as vanilla as possible, to make
 				sure it's exactly as you remember it.

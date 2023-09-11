@@ -15,7 +15,7 @@
 		Search for "{data.query}" in {data.category}
 	</h1>
 {:else}
-	<h1 class="text-center light-text h2">
+	<h1 class="text-center light-text fs-2">
 		Choose a category to search for "{data.query}"
 	</h1>
 {/if}
