@@ -1,6 +1,6 @@
 import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { prisma, transaction } from "$lib/server/prisma"
 import { Query } from "$lib/server/redis"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
@@ -114,15 +114,23 @@ export async function load({ locals, params }) {
 	getAsset.id = 0
 
 	const noTexts = [
-		"Cancel",
-		"No thanks",
-		"I've reconsidered",
-		"Not really",
-		"Nevermind",
-	]
+			"Cancel",
+			"No thanks",
+			"I've reconsidered",
+			"Not really",
+			"Nevermind",
+		],
+		failTexts = [
+			"Bruh",
+			"Okay",
+			"Aight",
+			"Rip",
+			"Aw man...",
+		]
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
+		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
 		form: superValidate(schema),
 		...(await addLikes<typeof getAsset>(
 			"asset",
@@ -204,7 +212,7 @@ export const actions = {
 				},
 			})
 	},
-	like: async ({ request, locals, url }) => {
+	like: async ({ url, request, locals }) => {
 		const { user } = await authorise(locals),
 			data = await formData(request),
 			{ action } = data,
@@ -285,6 +293,122 @@ export const actions = {
 		} catch (e) {
 			console.error(e)
 			throw error(500, "Redis error 2")
+		}
+	},
+	buy: async ({ url, locals, params }) => {
+		const { user } = await authorise(locals),
+			action = url.searchParams.get("a"),
+			id = parseInt(params.id)
+
+		console.log(action)
+
+		if (
+			!(await prisma.asset.findUnique({
+				where: {
+					id,
+				},
+			}))
+		)
+			throw error(404)
+
+		console.log("Action:", action)
+
+		switch (action) {
+			case "buy": {
+				const asset = await prisma.asset.findUnique({
+					where: {
+						id,
+					},
+					include: {
+						creatorUser: true,
+						// creatorGroup: true,
+						owners: {
+							where: {
+								id: user.id,
+							},
+						},
+					},
+				})
+				if (!asset) throw error(404, "Not found")
+				if ((asset.owners || []).length > 0)
+					throw error(400, "You already own this item")
+
+				try {
+					await transaction(
+						{ id: user.id },
+						{ id: asset.creatorUser?.id },
+						asset.price,
+						{
+							note: `Purchased asset ${asset.name}`,
+							link: `/avatarshop/${params.id}/${asset.name}`,
+						},
+					)
+				} catch (e: any) {
+					console.log(e.message)
+					throw error(400, e.message)
+				}
+
+				await Promise.all([
+					prisma.authUser.update({
+						where: {
+							id: user.id,
+						},
+						data: {
+							assetsOwned: {
+								connect: {
+									id,
+								},
+							},
+						},
+					}),
+					user.id == asset.creatorUser?.id
+						? null
+						: prisma.notification.create({
+								data: {
+									type: NotificationType.ItemPurchase,
+									senderId: user.id,
+									receiverId: asset.creatorUser?.id || "",
+									note: `${user.username} just purchased your item: ${asset.name}`,
+									relativeId: params.id,
+								},
+						  }),
+				])
+
+				break
+			}
+			case "delete": {
+				const asset = await prisma.asset.findUnique({
+					where: {
+						id,
+					},
+					include: {
+						creatorUser: true,
+						owners: {
+							where: {
+								id: user.id,
+							},
+						},
+					},
+				})
+				if (!asset) throw error(404, "Not found")
+				if ((asset?.owners || []).length < 1)
+					throw error(400, "You don't own this item")
+
+				await prisma.authUser.update({
+					where: {
+						id: user.id,
+					},
+					data: {
+						assetsOwned: {
+							disconnect: {
+								id,
+							},
+						},
+					},
+				})
+
+				break
+			}
 		}
 	},
 	delete: async ({ url, locals }) => {

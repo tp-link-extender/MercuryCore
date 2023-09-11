@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
+	import { isPowerOfTwo } from "three/src/math/MathUtils.js"
 
 	export let data
 
@@ -156,26 +157,42 @@
 
 <input type="checkbox" id="buy" class="modal-toggle" />
 <div class="modal2">
-	<div class="modal-box w-30">
-		<h3 class="text-lg font-bold light-text">Purchase {data.name}</h3>
-		<p class="pb-4">
-			Would you like to {data.price > 0 ? "purchase" : "get"}
-			{data.name} for
-			{#if data.price > 0}
-				<i class="far fa-gem" />
-				{data.price}
-			{:else}
-				<strong>FREE</strong>
-			{/if}
-			?
-		</p>
+	<div class="modal-box">
+		{#if data.user.currency > data.price}
+			<h3 class="text-lg font-bold light-text">Purchase {data.name}</h3>
+			<p class="pb-4">
+				Would you like to {data.price > 0 ? "buy" : "get"}
+				{data.name} for
+				{#if data.price > 0}
+					<i class="far fa-gem" />
+					{data.price}
+				{:else}
+					<strong>FREE</strong>
+				{/if}
+				?
+			</p>
 
-		<a
-			href="/api/avatarshop/{data.id}/{data.name}/buy"
-			class="btn btn-success">
-			{data.price > 0 ? "Buy Now" : "Get"}
-		</a>
-		<label for="buy" class="btn btn-dark ms-2">{data.noText}</label>
+			<form method="POST" action="?/buy&a=buy" class="d-inline">
+				<button class="btn btn-success">
+					{data.price > 0 ? "Buy Now" : "Get"}
+				</button>
+			</form>
+			<label for="buy" class="btn btn-dark ms-2">{data.noText}</label>
+		{:else}
+			<h3 class="text-lg font-bold light-text">Insufficient funds</h3>
+			<span>
+				You don't have enough <i class="fa fa-gem" />
+				s to buy this item.
+			</span>
+			<p >
+				You'll need <strong>
+					{data.price - data.user.currency}
+				</strong> more.
+
+			</p>
+
+			<label for="buy" class="btn btn-danger">{data.failText}</label>
+		{/if}
 	</div>
 	<label class="modal-backdrop" for="buy">Close</label>
 </div>
@@ -214,6 +231,9 @@
 
 	#buy
 		z-index 5
+
+	.modal-box
+		min-width 30rem
 
 	.pfp
 	.pfp img
