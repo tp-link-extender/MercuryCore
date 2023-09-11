@@ -450,12 +450,12 @@
 </div>
 
 <Modal {modal}>
-	<div class="modal-body d-flex flex-column p-6">
+	<div class="d-flex flex-column px-6">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
 				id="wrapper"
-				class="text-center align-self-center mt-12 mb-6">
+				class=" align-self-center mt-4 mb-6">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
@@ -527,7 +527,6 @@
 	#wrapper
 		width 128px
 		height 128px
-		transform translateX(-64px)
 
 		+lightTheme()
 			filter invert(1)
