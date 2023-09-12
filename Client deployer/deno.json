@@ -1,0 +1,6 @@
+{
+	"tasks": {
+		"run": "deno run --allow-read --allow-write --allow-run --allow-env index.ts",
+		"headless": "deno run --allow-read --allow-write --allow-run --allow-env index.ts h"
+	}
+}

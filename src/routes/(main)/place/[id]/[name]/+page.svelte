@@ -245,7 +245,7 @@
 								(data.dislikeCount + data.likeCount || 1)) *
 								100}%"
 							aria-valuenow={data.likeCount}
-							aria-valuemin={0}
+							aria-valuemin="0"
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 						<div
@@ -256,7 +256,7 @@
 								(data.dislikeCount + data.likeCount || 1)) *
 								100}%"
 							aria-valuenow={data.dislikeCount}
-							aria-valuemin={0}
+							aria-valuemin="0"
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 					</div>
@@ -292,7 +292,7 @@
 
 	<Tab {tabData}>
 		{#if user?.permissionLevel == 5 || data.ownerUser?.number == user?.number}
-			<h1 class="h4 light-text">Hosting on Mercury</h1>
+			<h1 class="fs-4 light-text">Hosting on Mercury</h1>
 			<p class="light-text">
 				To begin hosting your map for everybody to play, you need to
 				make sure that you are forwarding the port you wish to run the
@@ -371,10 +371,8 @@
 							Begin Hosting
 						</button>
 
-						<div class="dropdown2 dropdown-hover dropdown-end">
-							<button
-								class="btn btn-success dropdown-toggle"
-								type="button" />
+						<div class="dropdown dropdown-hover dropdown-end">
+							<div class="btn btn-success dropdown-toggle" />
 							<div class="dropdown-content pt-2">
 								<ul class="p-2 rounded-3">
 									<li class="rounded-2">
@@ -452,38 +450,38 @@
 </div>
 
 <Modal {modal}>
-	<div class="modal-body d-flex flex-column p-6">
+	<div class="d-flex flex-column px-6">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
 				id="wrapper"
-				class="text-center align-self-center mt-12 mb-6">
+				class=" align-self-center mt-4 mb-6">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
-					width={128}
-					height={128} />
+					width="128"
+					height="128" />
 				<img
 					src="/outerlogo.svg"
 					alt="Mercury logo outer part (circle around M)"
 					id="outer"
-					width={128}
-					height={128}
+					width="128"
+					height="128"
 					style={installed
 						? ""
-						: "animation: none; --rotation: 0deg"} />
+						: "animation: none --rotation: 0deg"} />
 			</div>
 		{/key}
 		{#if success}
-			<h1 class="text-center h5 light-text">
+			<h1 class="text-center fs-5 light-text">
 				"{data.name}" is ready to play! Have fun!
 			</h1>
 		{:else if installed}
-			<h1 class="text-center h5 light-text">
+			<h1 class="text-center fs-5 light-text">
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
 			</h1>
 		{:else}
-			<h1 class="text-center h5 light-text mb-4">
+			<h1 class="text-center fs-5 light-text mb-4">
 				Install the Mercury client and start playing now!
 			</h1>
 			<a
@@ -507,7 +505,7 @@
 		transform translateY(-50%)
 		left 1.25rem
 		right 1.25rem
-		top: 50%
+		top 50%
 
 	#play img
 		height 2rem
@@ -518,11 +516,17 @@
 
 	.dropdown-toggle
 		border-radius 0 0.375rem 0.375rem 0
+		&::after 
+			display inline-block
+			vertical-align 0.255rem
+			content ""
+			border-top 0.3rem solid
+			border-right 0.3rem solid transparent
+			border-left 0.3rem solid transparent
 
 	#wrapper
 		width 128px
 		height 128px
-		transform translateX(-64px)
 
 		+lightTheme()
 			filter invert(1)

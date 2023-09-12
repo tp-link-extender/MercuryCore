@@ -1,0 +1,259 @@
+vertex_program AdornVPParams null
+{
+    default_params
+    {
+        param_named_auto WorldViewProjection worldviewproj_matrix
+        param_named_auto World world_matrix
+        param_named_auto InvWorldView inverse_worldview_matrix
+
+        param_named_auto Lamp0Dir light_direction 0
+        param_named_auto Lamp1Dir light_direction 1
+        param_named_auto Lamp0Color light_diffuse_colour 0
+        param_named_auto Lamp1Color light_diffuse_colour 1
+        param_named_auto AmbientColor ambient_light_colour
+
+        param_named_auto FogColor fog_colour
+        param_named_auto FogParams fog_params
+    }
+
+    column_major_matrices false
+}
+
+fragment_program AdornFPParams null
+{
+    default_params
+    {
+        param_named_auto FogColor fog_colour
+        param_named_auto FogParams fog_params
+    }
+
+    column_major_matrices false
+}
+
+vertex_program AdornVP rsl: AdornVPParams
+{
+	source adorn.hlsl
+	target vs_2_0
+	entry_point AdornVS
+}
+
+vertex_program AdornSelfLitVP rsl: AdornVPParams
+{
+	source adorn.hlsl
+	target vs_2_0
+	entry_point AdornSelfLitVS
+}
+
+vertex_program AdornSelfLitHighlightVP rsl: AdornVPParams
+{
+	source adorn.hlsl
+	target vs_2_0
+	entry_point AdornSelfLitHighlightVS
+}
+
+vertex_program AdornLightingVP rsl: AdornVPParams
+{
+	source adorn.hlsl
+	target vs_2_0
+	entry_point AdornVS
+	preprocessor_defines PIN_LIGHTING
+}
+
+fragment_program AdornFP rsl: AdornFPParams
+{
+	source adorn.hlsl
+	target ps_2_0
+	entry_point AdornPS
+}
+
+abstract pass AdornPassFFP
+{
+    lighting off
+
+    specular 0 0 0 10
+
+    texture_unit DiffuseMap
+    {
+        texture textures/SurfacesDefault.png
+    }
+}
+
+abstract pass AdornPassShaders
+{
+    texture_unit DiffuseMap
+    {
+        texture textures/SurfacesDefault.png
+    }
+
+    vertex_program_ref AdornVP
+    {
+    }
+
+    fragment_program_ref AdornFP
+    {
+    }
+}
+
+material AdornTextured
+{
+    technique ffp
+    {
+        pass: AdornPassFFP
+        {
+        }
+    }
+
+    technique default
+    {
+        pass: AdornPassShaders
+        {
+        }
+    }
+}
+
+material AdornTexturedLighting
+{
+    technique ffp
+    {
+        pass: AdornPassFFP
+        {
+            lighting on
+        }
+    }
+
+    technique default
+    {
+        pass: AdornPassShaders
+        {
+            vertex_program_ref AdornLightingVP
+            {
+            }
+        }
+    }
+}
+
+material AdornTexturedTransparent: AdornTextured
+{
+    technique ffp
+    {
+        pass
+        {
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+    technique default
+    {
+        pass
+        {
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material AdornTexturedLightingTransparent: AdornTexturedLighting
+{
+    technique ffp
+    {
+        pass
+        {
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+    technique default
+    {
+        pass
+        {
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+}
+
+material AdornSelfLit
+{
+    technique default
+    {
+        pass: AdornPassShaders
+        {
+            vertex_program_ref AdornSelfLitVP
+            {
+            }
+        }
+    }
+
+    technique ffp
+    {
+        pass: AdornPassFFP
+        {
+            lighting on
+        }
+    }
+}
+
+material AdornSelfLitTransparent: AdornSelfLit
+{
+    technique default
+    {
+        pass
+        {
+			scene_blend alpha_blend 
+            depth_write off
+        }
+    }
+
+    technique ffp
+    {
+        pass
+        {
+			scene_blend alpha_blend 
+            depth_write off
+        }
+    }
+}
+
+material AdornSelfLitHighlight
+{
+    technique default
+    {
+        pass: AdornPassShaders
+        {
+            vertex_program_ref AdornSelfLitHighlightVP
+            {
+            }
+        }
+    }
+    
+    technique ffp
+    {
+        pass: AdornPassFFP
+        {
+            lighting on
+        }
+    }
+}
+
+material AdornSelfLitHighlightTransparent: AdornSelfLitHighlight
+{
+    technique default
+    {
+        pass
+        {
+			scene_blend alpha_blend 
+            depth_write off
+        }
+    }
+
+    technique ffp
+    {
+        pass
+        {
+			scene_blend alpha_blend 
+            depth_write off
+        }
+    }
+}

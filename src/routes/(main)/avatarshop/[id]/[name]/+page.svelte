@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
+	import { isPowerOfTwo } from "three/src/math/MathUtils.js"
 
 	export let data
 
@@ -22,10 +23,9 @@
 
 	export const snapshot = { capture, restore }
 
-	let modal = writable(false),
-		tabData = TabData(data.url, ["Recommended", "Comments"])
+	let tabData = TabData(data.url, ["Recommended", "Comments"])
 
-	const types: any = {
+	const types: { [k: number]: string } = {
 		1: "Image",
 		2: "T-Shirt",
 		11: "Shirt",
@@ -72,7 +72,6 @@
 					<p class="mb-2">
 						<strong>Sold:</strong>
 						{data.sold}
-						<br />
 					</p>
 					<p>
 						<strong>Type:</strong>
@@ -82,66 +81,29 @@
 				<div class="col d-flex flex-row-reverse">
 					<div class="card">
 						<div class="card-body">
-							<p class="light-text mb-1 text-center">
+							<p class="light-text text-center mb-0">
 								Price: <span class="text-success">
 									<i class="far fa-gem" />
 									{data.price}
 								</span>
 							</p>
-							<button class="btn btn-success">
-								<strong class="h5">
-									{data.price > 0 ? "Buy Now" : "Get"}
-								</strong>
-							</button>
+							{#if !data.owned}
+								<label for="buy" class="btn btn-success mt-1">
+									<strong class="fs-5">
+										{data.price > 0 ? "Buy Now" : "Get"}
+									</strong>
+								</label>
+							{:else}
+								<span class="btn btn-secondary mt-1 disabled">
+									<strong class="fs-5">Owned</strong>
+								</span>
+							{/if}
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- <span class="w-100">
-
-			<button
-				name="action"
-				on:click={() => modal.set(true)}
-				id="buy"
-				value="buy"
-				class="btn btn-sm rounded-3 w-100 float-left mb-6 {data.owned
-					? 'btn-secondary disabled'
-					: user?.currency < data.price
-					? 'btn-danger disabled'
-					: 'btn-success'}">
-				<h4 class="mb-0">
-					{#if data.owned}
-						<i class="fa fa-gem" />
-						{data.price == 0 ? "Free" : data.price}
-						<i class="fa fa-check" />
-						Owned
-					{:else if data.price == 0}
-						Get
-					{:else}
-						Buy for <i class="fa fa-gem" />
-						{data.price}
-					{/if}
-				</h4>
-			</button>
-			{#if data.owned}
-				<button
-					name="action"
-					value="delete"
-					class="btn btn-sm w-100 float-right btn-danger">
-					[debug] delete from inventory
-				</button>
-			{:else if data.price != 0}
-				<p class="light-text" id="notify">
-					Funds will be deducted from your account immediately upon
-					pressing the buy button.
-				</p>
-			{/if} -->
-	<!-- {#if form?.msg}
-					<p class="text-danger">{form.msg}</p>
-				{/if} -->
-	<!-- </span> -->
 
 	<div class="bg-a">
 		<TabNav bind:tabData justify />
@@ -193,18 +155,47 @@
 	</Tab>
 </div>
 
-<Modal {modal}>
-	<div class="modal-body d-flex flex-column p-6">
-		<h1 class="text-center h5 light-text">
-			"{data.name}" is ready to play! Have fun!
-		</h1>
-		<a
-			class="btn btn-success"
-			href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
-			Download 2013
-		</a>
+<input type="checkbox" id="buy" class="modal-toggle" />
+<div class="modal2">
+	<div class="modal-box">
+		{#if data.user.currency > data.price}
+			<h3 class="text-lg font-bold light-text">Purchase {data.name}</h3>
+			<p class="pb-4">
+				Would you like to {data.price > 0 ? "buy" : "get"}
+				{data.name} for
+				{#if data.price > 0}
+					<i class="far fa-gem" />
+					{data.price}
+				{:else}
+					<strong>FREE</strong>
+				{/if}
+				?
+			</p>
+
+			<form method="POST" action="?/buy&a=buy" class="d-inline">
+				<button class="btn btn-success">
+					{data.price > 0 ? "Buy Now" : "Get"}
+				</button>
+			</form>
+			<label for="buy" class="btn btn-dark ms-2">{data.noText}</label>
+		{:else}
+			<h3 class="text-lg font-bold light-text">Insufficient funds</h3>
+			<span>
+				You don't have enough <i class="fa fa-gem" />
+				s to buy this item.
+			</span>
+			<p >
+				You'll need <strong>
+					{data.price - data.user.currency}
+				</strong> more.
+
+			</p>
+
+			<label for="buy" class="btn btn-danger">{data.failText}</label>
+		{/if}
 	</div>
-</Modal>
+	<label class="modal-backdrop" for="buy">Close</label>
+</div>
 
 <style lang="stylus">
 	containerMinWidth(60rem)
@@ -240,6 +231,9 @@
 
 	#buy
 		z-index 5
+
+	.modal-box
+		min-width 30rem
 
 	.pfp
 	.pfp img

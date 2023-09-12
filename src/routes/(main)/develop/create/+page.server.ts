@@ -16,7 +16,7 @@ import { z } from "zod"
 const schema = z.object({
 	type: z.enum(["2", "11", "12", "13"]),
 	name: z.string().min(3).max(50),
-	description: z.string().min(1).max(1000),
+	description: z.string().max(1000).optional(),
 	price: z.number().int().min(0).max(999),
 	asset: z.any(),
 })
@@ -130,7 +130,7 @@ export const actions = {
 					name,
 					description: {
 						create: {
-							text: description,
+							text: description || "",
 						},
 					},
 					type: assetType,

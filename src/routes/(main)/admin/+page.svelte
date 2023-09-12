@@ -68,8 +68,8 @@
 <Head title="Admin" />
 
 <div class="container py-6">
-	<h1 class="h2 light-text">Admin Panel</h1>
-	<h2 class="h4 mb-6 border-bottom border-2 pb-4 light-text">
+	<h1 class="fs-2 light-text">Admin Panel</h1>
+	<h2 class="fs-4 mb-6 border-bottom border-2 pb-4 light-text">
 		Your permission level is: <span
 			style="color: {permissions[user?.permissionLevel][0]}">
 			<i class="fa {permissions[user?.permissionLevel][1]} me-1" />
@@ -123,7 +123,7 @@
 										role="progressbar"
 										aria-valuenow={data.totalmem -
 											data.freemem}
-										aria-valuemin={0}
+										aria-valuemin="0"
 										aria-valuemax={data.totalmem}
 										style="width: {((data.totalmem -
 											data.freemem) /
@@ -158,7 +158,7 @@
 											role="progressbar"
 											aria-valuenow={disk.size -
 												disk.free}
-											aria-valuemin={0}
+											aria-valuemin="0"
 											aria-valuemax={disk.size}
 											style="width: {((disk.size -
 												disk.free) /

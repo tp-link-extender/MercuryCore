@@ -14,7 +14,7 @@
 
 <a
 	in:fade|global={{ num, total }}
-	class="card text-center light-text bg-darker text-decoration-none h6 rounded-4 m-0"
+	class="card text-center light-text bg-darker text-decoration-none fs-6 rounded-4 m-0"
 	class:border-success={place.serverPing >=
 		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
@@ -73,6 +73,7 @@
 		transition all 0.3s
 
 	a
+		line-height 1.2
 		transition all 0.2s
 		&:hover
 			transition all 0.2s

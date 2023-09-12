@@ -24,7 +24,7 @@
 		Develop - Create <br />
 	</h1>
 	<h6 class="text-center light-text mb-0">
-		<span class="h6 light-text text-center">
+		<span class="fs-6 light-text text-center">
 			<i class="fas fa-caret-left" />
 			<a href="/develop" class="text-decoration-none">Back to Develop</a>
 		</span>
@@ -86,7 +86,7 @@
 					{...$constraints.description}
 					name="description"
 					id="description"
-					placeholder="1-1000 characters"
+					placeholder="Up to 1000 characters"
 					class="form-control {$errors.description
 						? 'is-in'
 						: ''}valid" />

@@ -243,7 +243,7 @@
 												bind:value={content}
 												class="form-control valid mb-2"
 												required
-												minlength="5"
+												minlength="1"
 												maxlength="1000"
 												name="content"
 												placeholder="What are your thoughts?"

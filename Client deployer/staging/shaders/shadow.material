@@ -1,0 +1,113 @@
+vertex_program ShadowExtrudeVPParams null
+{
+    default_params
+    {
+        param_named_auto ViewProjection viewproj_matrix
+
+        param_named_auto Lamp0Dir light_direction 0
+        param_named_auto ShadowExtrusionDistance shadow_extrusion_distance 0
+
+        param_named_auto WorldMatrixArray world_matrix_array_3x4
+    }
+
+    column_major_matrices false
+}
+
+vertex_program ShadowExtrudeVP rsl: ShadowExtrudeVPParams
+{
+	source shadowextrude.hlsl
+	target vs_2_0
+	entry_point DefaultVS
+}
+
+fragment_program ShadowExtrudeFP rsl
+{
+	source shadowextrude.hlsl
+	target ps_2_0
+	entry_point DefaultPS
+}
+
+vertex_program ShadowQuadVP rsl
+{
+	source shadowquad.hlsl
+	target vs_1_1
+	entry_point QuadVS
+}
+
+fragment_program ShadowQuadFP rsl
+{
+	source shadowquad.hlsl
+	target ps_2_0
+	entry_point QuadPS
+}
+
+material ShadowExtrude
+{
+    technique ffp
+    {
+        pass
+        {
+            depth_write off
+
+            vertex_program_ref ShadowExtrudeVP
+            {
+            }
+        }
+    }
+
+    technique default
+    {
+        pass
+        {
+            depth_write off
+
+            vertex_program_ref ShadowExtrudeVP
+            {
+            }
+
+            fragment_program_ref ShadowExtrudeFP
+            {
+            }
+        }
+    }
+}
+
+material ShadowQuad
+{
+    technique default
+    {
+        pass
+        {
+            depth_check off
+            cull_hardware none
+
+            scene_blend modulate
+
+            vertex_program_ref ShadowQuadVP
+            {
+            }
+
+            fragment_program_ref ShadowQuadFP
+            {
+            }
+        }
+    }
+    
+    technique ffp
+    {
+        pass
+        {
+            depth_check off
+            cull_hardware none
+
+            scene_blend modulate
+
+            lighting off
+
+            texture_unit
+            {
+                colour_op_ex source1 src_manual src_current 1 1 1
+            }
+       }
+    }
+}

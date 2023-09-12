@@ -100,10 +100,10 @@
 							bind:value={$form.description}
 							{...$constraints.description}
 							required
-							placeholder="Maximum 1000 characters"
+							placeholder="Up to 1000 characters"
 							id="description"
 							name="description"
-							rows={3}
+							rows="3"
 							class="form-control light-text mb-1 bg-a {$errors.description
 								? 'is-in'
 								: ''}valid" />

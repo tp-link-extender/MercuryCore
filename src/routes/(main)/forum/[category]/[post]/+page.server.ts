@@ -1,5 +1,7 @@
+import cql from "$lib/cyphertag"
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
+import { Query } from "$lib/server/redis"
 import { prisma } from "$lib/server/prisma"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
@@ -11,7 +13,7 @@ import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({
-	content: z.string().min(5).max(1000),
+	content: z.string().min(1).max(1000),
 	replyId: z.string().optional(),
 })
 
@@ -158,6 +160,15 @@ export const actions = {
 					relativeId: newReplyId,
 				},
 			})
+
+		await Query(
+			"forum",
+			cql`
+				MERGE (u:User { name: $user })
+				MERGE (p:Reply { name: $id })
+				MERGE (u) -[:likes]-> (p)`,
+			{id: newReplyId, user: user.username},
+		)
 	},
 	delete: async ({ url, locals }) => {
 		const { user } = await authorise(locals),

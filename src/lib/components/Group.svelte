@@ -12,7 +12,7 @@
 
 <a
 	in:fade={{ num, total }}
-	class="card text-center light-text bg-darker text-decoration-none h6 rounded-4 m-0"
+	class="card text-center light-text bg-darker text-decoration-none fs-6 rounded-4 m-0"
 	href="/groups/{group.name}">
 	<div class="p-4 d-flex flex-column h-100">
 		{group.name}

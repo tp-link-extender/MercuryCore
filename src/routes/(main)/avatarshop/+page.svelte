@@ -81,9 +81,9 @@
 		</div>
 	</div>
 	<div class="row mb-4">
-		<h1 class="h4 col-xl-2 col-lg-4 col-md-3 mb-0 light-text">
+		<h2 class="fs-4 col-xl-2 col-lg-4 col-md-3 mb-0 light-text">
 			Categories
-		</h1>
+		</h2>
 		<div class="col-xl-10 col-lg-8 col-md-9">
 			<TabNav bind:tabData justify />
 		</div>
@@ -91,7 +91,7 @@
 
 	<div class="row">
 		<div class="col-xl-2 col-lg-3 mb-2">
-			<h1 class="light-text h3">Filters</h1>
+			<h2 class="light-text fs-3">Filters</h2>
 			<p class="light-text mb-0">Sort by:</p>
 			<div class="form-check">
 				<input
@@ -195,7 +195,7 @@
 						<Asset {asset} {num} total={data.assets.length} />
 					{/each}
 					{#if query && searchedData.filter(assetFilter).length == 0}
-						<h2 class="h5 light-text mt-12">
+						<h2 class="fs-5 light-text mt-12">
 							No items found with search term {query}
 						</h2>
 					{/if}

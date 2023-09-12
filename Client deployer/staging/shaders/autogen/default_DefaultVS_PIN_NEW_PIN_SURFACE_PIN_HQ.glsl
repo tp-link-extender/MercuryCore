@@ -1,0 +1,56 @@
+varying vec3 xlv_TEXCOORD6;
+varying vec4 xlv_TEXCOORD4;
+varying vec4 xlv_TEXCOORD3;
+varying vec4 xlv_TEXCOORD2;
+varying vec4 xlv_COLOR0;
+varying vec4 xlv_TEXCOORD1;
+varying vec4 xlv_TEXCOORD0;
+attribute vec4 uv4;
+attribute vec3 uv3;
+attribute vec4 secondary_colour;
+attribute vec4 colour;
+attribute vec2 uv1;
+attribute vec2 uv0;
+attribute vec3 normal;
+attribute vec4 vertex;
+uniform vec2 SurfaceTiling;
+uniform vec3 FadeDistance;
+uniform vec4 LightConfig1;
+uniform vec4 LightConfig0;
+uniform vec4 FogParams;
+uniform mat4 ViewProjection;
+uniform vec3 CameraPosition;
+void main ()
+{
+  vec4 tmpvar_1;
+  vec4 tmpvar_2;
+  vec4 tmpvar_3;
+  tmpvar_3.w = 1.0;
+  tmpvar_3.xyz = vertex.xyz;
+  vec4 tmpvar_4;
+  tmpvar_4 = (ViewProjection * tmpvar_3);
+  tmpvar_1.xy = (uv0 * SurfaceTiling);
+  tmpvar_2.xy = uv1;
+  vec4 tmpvar_5;
+  tmpvar_5.xyz = (((vertex.xyz + (normal * 6.0)).yxz * LightConfig0.xyz) + LightConfig1.xyz);
+  tmpvar_5.w = ((FogParams.z - tmpvar_4.w) * FogParams.w);
+  vec4 tmpvar_6;
+  tmpvar_6.xyz = (CameraPosition - vertex.xyz);
+  tmpvar_6.w = (tmpvar_4.w * FadeDistance.y);
+  vec4 tmpvar_7;
+  tmpvar_7 = ((uv4 * FadeDistance.z) + (0.5 * tmpvar_6.w));
+  tmpvar_1.zw = tmpvar_7.xy;
+  tmpvar_2.zw = tmpvar_7.zw;
+  vec4 tmpvar_8;
+  tmpvar_8.xyz = normal;
+  tmpvar_8.w = secondary_colour.z;
+  gl_Position = tmpvar_4;
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD1 = tmpvar_2;
+  xlv_COLOR0 = colour;
+  xlv_TEXCOORD2 = tmpvar_5;
+  xlv_TEXCOORD3 = tmpvar_6;
+  xlv_TEXCOORD4 = tmpvar_8;
+  xlv_TEXCOORD6 = uv3;
+}
+

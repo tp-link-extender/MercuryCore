@@ -1,0 +1,54 @@
+varying vec4 xlv_TEXCOORD4;
+varying vec4 xlv_TEXCOORD3;
+varying vec4 xlv_TEXCOORD2;
+varying vec4 xlv_COLOR0;
+varying vec4 xlv_TEXCOORD1;
+varying vec4 xlv_TEXCOORD0;
+uniform sampler2D DiffuseMap;
+uniform sampler3D LightMap;
+uniform sampler2D StudsMap;
+uniform vec2 OutlineBrightness;
+uniform vec4 LightBorder;
+uniform vec4 LightConfig3;
+uniform vec4 LightConfig2;
+uniform vec3 FogColor;
+uniform vec3 AmbientColor;
+uniform vec3 Lamp1Color;
+uniform vec3 Lamp0Color;
+uniform vec3 Lamp0Dir;
+void main ()
+{
+  vec4 oColor0_1;
+  vec4 albedo_2;
+  vec4 tmpvar_3;
+  tmpvar_3 = texture2D (StudsMap, xlv_TEXCOORD1.xy);
+  vec4 tmpvar_4;
+  tmpvar_4.xyz = mix ((xlv_COLOR0.xyz + ((texture2D (DiffuseMap, (xlv_TEXCOORD0.xy * 0.18)).xyz - 0.5) * clamp ((1.0 - xlv_TEXCOORD3.w), 0.0, 1.0))), tmpvar_3.xyz, tmpvar_3.www);
+  tmpvar_4.w = xlv_COLOR0.w;
+  albedo_2.w = tmpvar_4.w;
+  vec3 tmpvar_5;
+  tmpvar_5 = normalize(xlv_TEXCOORD4.xyz);
+  float tmpvar_6;
+  tmpvar_6 = dot (tmpvar_5, -(Lamp0Dir));
+  vec3 tmpvar_7;
+  tmpvar_7 = abs((xlv_TEXCOORD2.xyz - LightConfig2.xyz));
+  vec3 t_8;
+  t_8.x = float((tmpvar_7.x >= LightConfig3.x));
+  t_8.y = float((tmpvar_7.y >= LightConfig3.y));
+  t_8.z = float((tmpvar_7.z >= LightConfig3.z));
+  float tmpvar_9;
+  tmpvar_9 = clamp (dot (t_8, vec3(1.0, 1.0, 1.0)), 0.0, 1.0);
+  vec4 tmpvar_10;
+  tmpvar_10 = mix (texture3D (LightMap, (xlv_TEXCOORD2.yzx - (xlv_TEXCOORD2.yzx * tmpvar_9))), LightBorder, vec4(tmpvar_9));
+  albedo_2.xyz = tmpvar_4.xyz;
+  oColor0_1.xyz = ((((AmbientColor + (((clamp (tmpvar_6, 0.0, 1.0) * Lamp0Color) + (max (-(tmpvar_6), 0.0) * Lamp1Color)) * tmpvar_10.w)) + tmpvar_10.xyz) * tmpvar_4.xyz) + (Lamp0Color * (((float((tmpvar_6 >= 0.0)) * 0.19) * tmpvar_10.w) * pow (clamp (dot (tmpvar_5, normalize((-(Lamp0Dir) + normalize(xlv_TEXCOORD3.xyz)))), 0.0, 1.0), 14.0))));
+  oColor0_1.w = albedo_2.w;
+  vec2 tmpvar_11;
+  tmpvar_11 = min (xlv_TEXCOORD0.wz, xlv_TEXCOORD1.wz);
+  float tmpvar_12;
+  tmpvar_12 = (min (tmpvar_11.x, tmpvar_11.y) / xlv_TEXCOORD3.w);
+  oColor0_1.xyz = (oColor0_1.xyz * clamp (((clamp (((xlv_TEXCOORD3.w * OutlineBrightness.x) + OutlineBrightness.y), 0.0, 1.0) * (1.5 - tmpvar_12)) + tmpvar_12), 0.0, 1.0));
+  oColor0_1.xyz = mix (FogColor, oColor0_1.xyz, vec3(clamp (xlv_TEXCOORD2.w, 0.0, 1.0)));
+  gl_FragData[0] = oColor0_1;
+}
+

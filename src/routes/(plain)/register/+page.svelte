@@ -33,21 +33,21 @@
 		</h1>
 
 		<div class="ms-4 mt-4 w-100">
-			<h2 class="h4 light-text">Original username</h2>
+			<h2 class="fs-4 light-text">Original username</h2>
 			<p class="light-text opacity-75 more">
 				Make sure it is appropriate and between 3-21 characters.
 				Underscores are allowed.
 			</p>
 		</div>
 		<div class="ms-4 mt-4 w-100">
-			<h2 class="h4 light-text">Valid email</h2>
+			<h2 class="fs-4 light-text">Valid email</h2>
 			<p class="light-text opacity-75 more">
 				Mercury requires a valid email so you can reset your password at
 				any time.
 			</p>
 		</div>
 		<div class="ms-4 mt-4 w-100">
-			<h2 class="h4 light-text">Secure password</h2>
+			<h2 class="fs-4 light-text">Secure password</h2>
 			<p class="light-text opacity-75 more">
 				Make sure your password has a mix of letters, numbers, and
 				symbols to protect against hackers.

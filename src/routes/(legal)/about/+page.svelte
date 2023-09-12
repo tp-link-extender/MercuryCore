@@ -20,7 +20,7 @@
 	<p class="lead light-text text-center">
 		Endless possibilities. New features. Same nostalgia.
 	</p>
-	<h2 class="h5">
+	<h2 class="fs-5">
 		<span class="badge text-bg-secondary dark-text opacity-75 mb-4">
 			Closed Beta
 		</span>
@@ -48,8 +48,8 @@
 
 <div bind:this={first} id="first" />
 
-<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
-	<ParallaxLayer offset={0} rate={0}>
+<Parallax sections="2" config={{ stiffness: 1, damping: 1 }}>
+	<ParallaxLayer offset="0" rate="0">
 		<Pagepart>
 			<div class="w-100">
 				<h1 class="font-black light-text w-100">
@@ -64,7 +64,7 @@
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
-	<ParallaxLayer offset={0} rate={-2}>
+	<ParallaxLayer offset="0" rate={-2}>
 		<Pagepart right>
 			<img
 				class="w-100"
@@ -72,12 +72,10 @@
 				alt="Devices playing Mercury" />
 		</Pagepart>
 	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={2}>
+	<ParallaxLayer offset="1" rate="2">
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-black light-text w-100">
-					New features
-				</h1>
+				<h1 class="font-black light-text w-100">New features</h1>
 				<h4 class="light-text w-100">
 					Mercury 2 has an even better website experience - easy to
 					use and even more feature-packed than the previous website.
@@ -87,13 +85,11 @@
 	</ParallaxLayer>
 </Parallax>
 
-<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
-	<ParallaxLayer offset={0} rate={0}>
+<Parallax sections="2" config={{ stiffness: 1, damping: 1 }}>
+	<ParallaxLayer offset="0" rate="0">
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-black light-text w-100">
-					Same nostalgia.
-				</h1>
+				<h1 class="font-black light-text w-100">Same nostalgia.</h1>
 				<h4 class="light-text w-100">
 					We ensure the clients are as vanilla as possible so that you
 					remember the client as it was back then.
@@ -101,7 +97,7 @@
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={0}>
+	<ParallaxLayer offset="1" rate="0">
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="font-black light-text w-100">
@@ -125,13 +121,11 @@
 	</ParallaxLayer>
 </Parallax>
 
-<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
-	<ParallaxLayer offset={0} rate={0}>
+<Parallax sections="2" config={{ stiffness: 1, damping: 1 }}>
+	<ParallaxLayer offset="0" rate="0">
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-black light-text w-100">
-					Why Mercury 2?
-				</h1>
+				<h1 class="font-black light-text w-100">Why Mercury 2?</h1>
 				<h4 class="light-text w-100">
 					Mercury 2 provides a simple yet elegant website, with an
 					unique client and a forum, so you can communicate with your
@@ -142,7 +136,7 @@
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={0}>
+	<ParallaxLayer offset="1" rate="0">
 		<Pagepart fullwidth>
 			<div
 				id="info"
