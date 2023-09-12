@@ -27,12 +27,14 @@
 		nprogress.done()
 	}
 
-	const notificationNotes: { [k: string]: string } = {
+	const notificationNotes = {
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",
 		ForumPostReply: "Reply to your post",
 		ForumReplyReply: "Reply to your reply",
+		AssetComment: "Comment on your asset",
+		AssetCommentReply: "Reply to your comment",
 		ForumMention: "Mention",
 		ForumPost: "New forum post",
 		ItemPurchase: "Item purchased",
