@@ -13,7 +13,7 @@ import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({
-	content: z.string().min(5).max(1000),
+	content: z.string().min(1).max(1000),
 	replyId: z.string().optional(),
 })
 
@@ -120,13 +120,7 @@ export async function load({ locals, params }) {
 			"Not really",
 			"Nevermind",
 		],
-		failTexts = [
-			"Bruh",
-			"Okay",
-			"Aight",
-			"Rip",
-			"Aw man...",
-		]
+		failTexts = ["Bruh", "Okay", "Aight", "Rip", "Aw man..."]
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
@@ -211,6 +205,15 @@ export const actions = {
 					relativeId: newReplyId,
 				},
 			})
+
+		await Query(
+			"forum",
+			cql`
+				MERGE (u:User { name: $user })
+				MERGE (p:Comment { name: $id })
+				MERGE (u) -[:likes]-> (p)`,
+			{ id: newReplyId, user: user.username },
+		)
 	},
 	like: async ({ url, request, locals }) => {
 		const { user } = await authorise(locals),

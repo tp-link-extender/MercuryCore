@@ -245,7 +245,7 @@
 								(data.dislikeCount + data.likeCount || 1)) *
 								100}%"
 							aria-valuenow={data.likeCount}
-							aria-valuemin={0}
+							aria-valuemin="0"
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 						<div
@@ -256,7 +256,7 @@
 								(data.dislikeCount + data.likeCount || 1)) *
 								100}%"
 							aria-valuenow={data.dislikeCount}
-							aria-valuemin={0}
+							aria-valuemin="0"
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 					</div>
@@ -459,14 +459,14 @@
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
-					width={128}
-					height={128} />
+					width="128"
+					height="128" />
 				<img
 					src="/outerlogo.svg"
 					alt="Mercury logo outer part (circle around M)"
 					id="outer"
-					width={128}
-					height={128}
+					width="128"
+					height="128"
 					style={installed
 						? ""
 						: "animation: none --rotation: 0deg"} />
