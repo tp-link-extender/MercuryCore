@@ -14,7 +14,7 @@
 		transition:fly|global={{ y: -50, duration: 300 }}>
 		<div
 			role="button"
-			tabindex={0}
+			tabindex="0"
 			transition:fade|global={{ duration: 200 }}
 			on:click={close}
 			on:keypress={close}

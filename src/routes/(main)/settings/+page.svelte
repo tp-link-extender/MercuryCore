@@ -74,7 +74,7 @@
 								: ''}valid"
 							id="bio"
 							name="bio"
-							rows={3} />
+							rows="3" />
 						<small class="grey-text pb-2">
 							Maximum 1000 characters, your bio will appear on
 							your profile and allow other users to know who you

@@ -35,13 +35,13 @@
 	<OrbitControls
 		autoRotate
 		autoRotateSpeed={Math.random() > 0.5 ? 10 : -10}
-		rotateSpeed={0.1}
+		rotateSpeed="0.1"
 		enablePan={false}
-		panSpeed={0.1}
+		panSpeed="0.1"
 		enableZoom={false} />
 </T.PerspectiveCamera>
 
-<T.DirectionalLight color="white" position={[15, 45, 20]} intensity={3}/>
-<T.HemisphereLight skyColor="white" groundColor="#7531ff" intensity={2} />
+<T.DirectionalLight color="white" position={[15, 45, 20]} intensity="3" />
+<T.HemisphereLight skyColor="white" groundColor="#7531ff" intensity="2" />
 
 <GLTF url="/landing/{item.name}.glb" />
