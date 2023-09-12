@@ -48,8 +48,8 @@
 
 <div bind:this={first} id="first" />
 
-<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
-	<ParallaxLayer offset={0} rate={0}>
+<Parallax sections="2" config={{ stiffness: 1, damping: 1 }}>
+	<ParallaxLayer offset="0" rate="0">
 		<Pagepart>
 			<div class="w-100">
 				<h1 class="font-black light-text w-100">
@@ -64,7 +64,7 @@
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
-	<ParallaxLayer offset={0} rate={-2}>
+	<ParallaxLayer offset="0" rate={-2}>
 		<Pagepart right>
 			<img
 				class="w-100"
@@ -72,7 +72,7 @@
 				alt="Devices playing Mercury" />
 		</Pagepart>
 	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={2}>
+	<ParallaxLayer offset="1" rate="2">
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="font-black light-text w-100">New features</h1>
@@ -85,8 +85,8 @@
 	</ParallaxLayer>
 </Parallax>
 
-<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
-	<ParallaxLayer offset={0} rate={0}>
+<Parallax sections="2" config={{ stiffness: 1, damping: 1 }}>
+	<ParallaxLayer offset="0" rate="0">
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="font-black light-text w-100">Same nostalgia.</h1>
@@ -97,7 +97,7 @@
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={0}>
+	<ParallaxLayer offset="1" rate="0">
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="font-black light-text w-100">
@@ -121,8 +121,8 @@
 	</ParallaxLayer>
 </Parallax>
 
-<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
-	<ParallaxLayer offset={0} rate={0}>
+<Parallax sections="2" config={{ stiffness: 1, damping: 1 }}>
+	<ParallaxLayer offset="0" rate="0">
 		<Pagepart fullwidth>
 			<div class="w-100">
 				<h1 class="font-black light-text w-100">Why Mercury 2?</h1>
@@ -136,7 +136,7 @@
 			</div>
 		</Pagepart>
 	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={0}>
+	<ParallaxLayer offset="1" rate="0">
 		<Pagepart fullwidth>
 			<div
 				id="info"
