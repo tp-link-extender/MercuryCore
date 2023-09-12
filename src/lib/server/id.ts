@@ -10,7 +10,7 @@ const nanoid = customAlphabet(
  * Generates a guaranteed unique ID.
  * @returns A unique 5-character ID.
  * @example
- * const postId = id()
+ * const postId = await id()
  */
 export default async function () {
 	let id = nanoid()

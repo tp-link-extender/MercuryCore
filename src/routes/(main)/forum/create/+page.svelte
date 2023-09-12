@@ -57,7 +57,7 @@
 						rows="6"
 						name="content"
 						id="content"
-						placeholder="50-3000 characters"
+						placeholder="Up to 3000 characters"
 						class="form-control {$errors.content
 							? 'is-in'
 							: ''}valid" />

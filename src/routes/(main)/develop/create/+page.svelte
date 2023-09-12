@@ -86,7 +86,7 @@
 					{...$constraints.description}
 					name="description"
 					id="description"
-					placeholder="1-1000 characters"
+					placeholder="Up to 1000 characters"
 					class="form-control {$errors.description
 						? 'is-in'
 						: ''}valid" />
