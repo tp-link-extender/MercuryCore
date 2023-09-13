@@ -1,4 +1,5 @@
 <script lang="ts">
+	// lel, anything for intellisense
 	export let post: import("../../routes/(main)/forum/[category]/$types").PageData["posts"][number]
 	export let num: number
 	export let total: number
@@ -77,25 +78,15 @@
 		</div>
 	</form>
 	<div class="d-flex flex-column w-100">
-		<a
-			href="/user/{post.author.number}"
-			class="user d-flex light-text text-decoration-none m-2 pe-6 mb-0 w-100">
-			<span class="pfp bg-a2 rounded-circle me-1">
-				<img
-					src="/api/avatar/{post.author.username}"
-					alt={post.author.username}
-					class="rounded-circle rounded-top-0" />
-			</span>
-			<span class="font-bold ms-2">
-				{post.author.username}
-			</span>
-			<em class="ms-auto">
+		<div class="d-flex pt-2 ps-4">
+			<User user={post.author} full />
+			<em class="light-text ps-4 align-self-center">
 				{post.posted.toLocaleString()}
 			</em>
-		</a>
+		</div>
 		<a
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
-			class="p-4 pb-0 text-decoration-none light-text w-100">
+			class="px-4 pt-2 text-decoration-none light-text w-100">
 			<h2 class="fs-4 mt-2">
 				{post.title}
 			</h2>
@@ -133,10 +124,4 @@
 		left 0
 		height 5rem !important
 		background linear-gradient(#0000, var(--darker))
-
-	.user
-		align-items center
-		.pfp img
-			max-width 2rem
-			width 2rem
 </style>

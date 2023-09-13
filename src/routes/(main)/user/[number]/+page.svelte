@@ -17,13 +17,8 @@
 <div id="all" class="container">
 	<div class="card bg-darker pt-6">
 		<div class="d-flex px-6">
-			<div id="image-background" class="me-6 rounded-circle bg-a">
-				<img
-					src="/api/avatar/{data.username}"
-					alt={data.username}
-					class="rounded-circle rounded-top-0" />
-			</div>
-			<div class="container">
+			<User user={data} size="7rem" colour="accent"  image/>
+			<div class="w-100 ps-8">
 				<div class="d-flex mb-2">
 					<h1 class="fs-2 light-text d-inline">{data.username}</h1>
 					<b
@@ -292,9 +287,6 @@
 <style lang="stylus">
 	#all
 		max-width 60rem
-
-	#image-background, #image-background img
-		height 7rem
 
 	.placecard
 		transition all 0.2s

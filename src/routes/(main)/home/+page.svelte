@@ -166,35 +166,18 @@
 					<div class="home-row d-flex">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
-							<a
+							<span
+								class="px-2"
 								in:fade|global={{
 									num,
 									total: data.friends.length,
-								}}
-								class="px-2 mb-2 text-center light-text text-decoration-none"
-								href="/user/{friend.number}">
-								<div class="position-relative mb-2">
-									<div
-										class="image-background bg-a rounded-circle">
-										<img
-											src="/api/avatar/{friend.username}"
-											alt={friend.username}
-											class="h-100 rounded-circle rounded-top-0" />
-									</div>
-									<!-- {#if friend.status}
-										<span
-											class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
-												friend.status
-											]}">
-										</span>
-									{/if} -->
-								</div>
-								<p
-									class="friendname username"
-									class:small={friend.username.length > 15}>
-									{friend.username}
-								</p>
-							</a>
+								}}>
+								<User
+									user={friend}
+									size="7rem"
+									colour="accent"
+									bottom />
+							</span>
 						{/each}
 					</div>
 				{/if}
@@ -317,9 +300,5 @@
 		// 	padding 0.75rem
 		.place
 			width 8rem
-			margin auto
-		.image-background
-			width 7rem
-			height 7rem
 			margin auto
 </style>
