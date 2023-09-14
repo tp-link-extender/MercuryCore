@@ -37,20 +37,13 @@
 								{category.posts[0].title}
 							</h3>
 						</a>
-						<span class="d-flex">
+						<span class="d-flex gap-2">
 							by
-							<a
-								href="/user/{category.posts[0].author.number}"
-								class="light-text text-decoration-none d-flex">
-								<span class="pfp bg-a2 rounded-circle mx-1">
-									<img
-										src="/api/avatar/{category.posts[0]
-											.author.username}"
-										alt={category.posts[0].author.username}
-										class="rounded-circle rounded-top-0" />
-								</span>
-								{category.posts[0].author.username}
-							</a>
+							<User
+								user={category.posts[0].author}
+								full
+								thin
+								size="1.5rem" />
 						</span>
 					{/if}
 				</div>
@@ -65,9 +58,4 @@
 	.category
 		border-color var(--accent2)
 		transition all 0.3s ease-out
-
-	.pfp
-	.pfp img
-		width 1.5rem
-		height 1.5rem
 </style>

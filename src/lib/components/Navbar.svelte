@@ -187,20 +187,13 @@
 						</a>
 					</li>
 
-					<li class="dropdown dropdown-hover dropdown-end">
-						<a href="/user/{user.number}" class="btn p-0 d-flex">
-							<div
-								id="pfp"
-								class="mx-2 rounded-circle bg-background">
-								<img
-									src="/api/avatar/{user?.username}"
-									alt="You"
-									class="rounded-circle rounded-top-0" />
-							</div>
-							<p class="my-auto fs-6 light-text">
-								{user?.username}
-							</p>
-						</a>
+					<li class="dropdown dropdown-hover dropdown-end ps-2">
+						<User
+							{user}
+							full
+							thin
+							colour="background"
+							size="2.4rem" />
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								{#each usernav as [icon, title, href]}
@@ -231,16 +224,13 @@
 					</li>
 				</ul>
 			{:else}
-				<ul class="navbar-nav d-flex w-100 justify-content-end align-items-center">
+				<ul
+					class="navbar-nav d-flex w-100 justify-content-end align-items-center">
 					<li class="nav-item">
 						<a href="/login" class="btn mb-1 light-text">Log in</a>
 					</li>
 					<li class="nav-item">
-						<a
-							href="/register"
-							class="btn btn-success">
-							Register
-						</a>
+						<a href="/register" class="btn btn-success">Register</a>
 					</li>
 				</ul>
 			{/if}

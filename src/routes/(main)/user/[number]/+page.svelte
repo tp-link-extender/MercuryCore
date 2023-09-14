@@ -258,17 +258,9 @@
 							class="p-2 col-md-6 col-sm-12">
 							<div class="card bg-darker p-2 h-100">
 								<div id="user" class="d-flex mb-2">
-									<span class="pfp rounded-circle bg-a2">
-										<img
-											src="/api/avatar/{data.username}"
-											alt={data.username}
-											class="rounded-circle rounded-top-0" />
-									</span>
-									<span class="font-bold ms-4 light-text">
-										{data.username}
-									</span>
+									<User user={data} size="2rem" full image colour="accent"/>
 									<span
-										class="ms-auto italic light-text text-end">
+										class="italic light-text flex-end">
 										{status.posted.toLocaleString()}
 									</span>
 								</div>

@@ -15,6 +15,7 @@
 		number: number
 	}
 	export let full = false
+	export let thin = false
 	export let image = false
 	export let bottom = false
 	export let size = "2rem"
@@ -33,6 +34,11 @@
 			class="rounded-circle rounded-top-0"
 			{style} />
 	</span>
+	{#if full}
+		<span class="username {thin ? 'ps-2 fs-6' : 'font-bold ps-4'}">
+			{user.username}
+		</span>
+	{/if}
 {:else}
 	<a
 		href="/user/{user.number}"
@@ -49,13 +55,13 @@
 				{style} />
 		</span>
 		{#if full}
-			<span class="username font-bold ps-4">
+			<span class="username {thin ? 'ps-2 fs-6' : 'font-bold ps-4'}">
 				{user.username}
 			</span>
 		{:else if bottom}
 			<span
 				class="username bottom pt-2"
-				class:small={user.username.length > 15}
+				class:small={user.username?.length || 0 > 15}
 				style="max-width: {size}">
 				{user.username}
 			</span>
