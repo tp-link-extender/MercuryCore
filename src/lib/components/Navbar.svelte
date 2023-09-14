@@ -164,7 +164,7 @@
 						</div>
 					</form>
 				</div>
-				<ul class="navbar-nav loggedin m-0">
+				<ul class="navbar-nav m-0">
 					<li id="notificationstop" class="pt-1">
 						<a
 							href="/notifications"
@@ -231,14 +231,14 @@
 					</li>
 				</ul>
 			{:else}
-				<ul class="navbar-nav loggedin">
-					<li class="nav-item mt-1">
+				<ul class="navbar-nav d-flex w-100 justify-content-end align-items-center">
+					<li class="nav-item">
 						<a href="/login" class="btn mb-1 light-text">Log in</a>
 					</li>
-					<li class="nav-item mt-1">
+					<li class="nav-item">
 						<a
 							href="/register"
-							class="btn btn-success my-2 my-sm-0">
+							class="btn btn-success">
 							Register
 						</a>
 					</li>
@@ -283,9 +283,6 @@
 {/if}
 
 <style lang="stylus">
-	.loggedin
-		margin-left auto
-
 	nav
 		z-index 9
 
@@ -363,9 +360,6 @@
 		background #fff1
 		+lightTheme()
 			background #0003
-
-	.loggedin
-		padding 0
 
 	.dropdown
 		margin-top 2px

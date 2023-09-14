@@ -12,8 +12,8 @@
 <T.OrthographicCamera
 	makeDefault
 	zoom="50"
-	args={[, , , , -50, 50]}
-	position={[1, 1, 1]}
+	args={[, , , , -500, 500]}
+	position={[100, 100, 100]}
 	on:create={e => e.ref.lookAt(0, 0, 0)} />
 
 <T.AmbientLight color="white" intensity="0.2" />
