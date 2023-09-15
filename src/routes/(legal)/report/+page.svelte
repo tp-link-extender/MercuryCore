@@ -23,12 +23,12 @@
 
 <h1 class="text-center light-text">Report</h1>
 
-<div class="container mt-4 light-text">
-	<h2 class="light-text h5">
+<div class="container mt-6 light-text">
+	<h2 class="light-text fs-5">
 		Tell us how you think {data.reportee} is breaking the rules.
 	</h2>
 
-	<form use:enhance method="POST" class="mt-4">
+	<form use:enhance method="POST" class="mt-6">
 		<fieldset>
 			<div class="row">
 				<label
@@ -64,13 +64,13 @@
 						<option value="Swearing">Swearing</option>
 						<option value="Threats">Threats</option>
 					</select>
-					<p class="col-12 mb-3 text-danger">
+					<p class="col-12 mb-4 text-danger">
 						{$errors.category || ""}
 					</p>
 				</div>
 			</div>
 			<br />
-			<div class="row mb-3">
+			<div class="row mb-4">
 				<label for="note" class="col-md-3 col-form-label text-md-right">
 					Further information
 				</label>
@@ -83,7 +83,7 @@
 						placeholder="Up to 1000 characters"
 						class="form-control {$errors.note ? 'is-in' : ''}valid"
 						rows="5" />
-					<p class="col-12 mb-3 text-danger">
+					<p class="col-12 mb-4 text-danger">
 						{$errors.note || ""}
 					</p>
 				</div>

@@ -1,0 +1,247 @@
+vertex_program UIVPParams null
+{
+    default_params
+    {
+        param_named_auto WorldViewProjection worldviewproj_matrix
+
+        param_named_auto FogColor fog_colour
+        param_named_auto FogParams fog_params
+    }
+
+    column_major_matrices false
+}
+
+fragment_program UIFPParams null
+{
+    default_params
+    {
+        param_named_auto FogColor fog_colour
+        param_named_auto FogParams fog_params
+    }
+
+    column_major_matrices false
+}
+
+vertex_program UIVP rsl: UIVPParams
+{
+	source ui.hlsl
+	target vs_1_1
+	entry_point UIVS
+}
+
+vertex_program UIFogVP rsl: UIVPParams
+{
+	source ui.hlsl
+	target vs_1_1
+	entry_point UIFogVS
+}
+
+fragment_program UIFontFP rsl: UIFPParams
+{
+	source ui.hlsl
+	target ps_2_0
+	entry_point UIFontPS
+}
+
+fragment_program UITextureFP rsl: UIFPParams
+{
+	source ui.hlsl
+	target ps_2_0
+	entry_point UITexturePS
+}
+
+fragment_program UIColorFP rsl: UIFPParams
+{
+	source ui.hlsl
+	target ps_2_0
+	entry_point UIColorPS
+}
+
+abstract pass UIPassFFP
+{
+    lighting off
+
+    depth_write off
+    scene_blend alpha_blend
+
+    texture_unit
+    {
+        texture textures/SurfacesDefault.png
+        tex_address_mode clamp
+    }
+}
+
+abstract pass UIPassShaders
+{
+    depth_write off
+    scene_blend alpha_blend
+
+    texture_unit
+    {
+        texture textures/SurfacesDefault.png
+        tex_address_mode clamp
+    }
+}
+
+material UIFontWorld
+{
+    technique ffp
+    {
+        pass: UIPassFFP
+        {
+            texture_unit
+            {
+                colour_op_ex blend_texture_alpha src_diffuse src_current
+                alpha_op_ex modulate src_texture src_diffuse
+            }
+        }
+    }
+
+    technique default
+    {
+        pass: UIPassFFP
+        {
+            vertex_program_ref UIFogVP
+            {
+            }
+
+            fragment_program_ref UIFontFP
+            {
+            }
+        }
+    }
+}
+
+material UIFontScreen: UIFontWorld
+{
+    technique ffp
+    {
+        pass
+        {
+            depth_check off
+            cull_hardware none
+            fog_override true
+        }
+    }
+
+    technique default
+    {
+        pass
+        {
+            depth_check off
+            cull_hardware none
+            fog_override true
+
+            vertex_program_ref UIVP
+            {
+            }
+        }
+    }
+}
+
+material UITextureWorld
+{
+    technique ffp
+    {
+        pass: UIPassFFP
+        {
+            texture_unit
+            {
+                colour_op_ex source1 src_texture src_current
+                alpha_op_ex modulate src_texture src_diffuse
+            }
+        }
+    }
+
+    technique default
+    {
+        pass: UIPassFFP
+        {
+            vertex_program_ref UIFogVP
+            {
+            }
+
+            fragment_program_ref UITextureFP
+            {
+            }
+        }
+    }
+}
+
+material UITextureScreen: UITextureWorld
+{
+    technique ffp
+    {
+        pass
+        {
+            depth_check off
+            cull_hardware none
+            fog_override true
+        }
+    }
+
+    technique default
+    {
+        pass
+        {
+            depth_check off
+            cull_hardware none
+            fog_override true
+
+            vertex_program_ref UIVP
+            {
+            }
+        }
+    }
+}
+
+material UIColorWorld
+{
+    technique ffp
+    {
+        pass: UIPassFFP
+        {
+        }
+    }
+
+    technique default
+    {
+        pass: UIPassFFP
+        {
+            vertex_program_ref UIFogVP
+            {
+            }
+
+            fragment_program_ref UIColorFP
+            {
+            }
+        }
+    }
+}
+
+material UIColorScreen: UIColorWorld
+{
+    technique ffp
+    {
+        pass
+        {
+            depth_check off
+            cull_hardware none
+            fog_override true
+        }
+    }
+
+    technique default
+    {
+        pass
+        {
+            depth_check off
+            cull_hardware none
+            fog_override true
+
+            vertex_program_ref UIVP
+            {
+            }
+        }
+    }
+}

@@ -24,7 +24,7 @@
 		Develop - Create <br />
 	</h1>
 	<h6 class="text-center light-text mb-0">
-		<span class="h6 light-text text-center">
+		<span class="fs-6 light-text text-center">
 			<i class="fas fa-caret-left" />
 			<a href="/develop" class="text-decoration-none">Back to Develop</a>
 		</span>
@@ -33,10 +33,10 @@
 <form
 	use:enhance
 	method="POST"
-	class="container mt-5 light-text"
+	class="container mt-12 light-text"
 	enctype="multipart/form-data">
 	<fieldset>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="type" class="col-md-3 col-form-label light-text">
 				Asset type
 			</label>
@@ -54,12 +54,12 @@
 						</option>
 					{/each}
 				</select>
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.type || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="name" class="col-md-3 col-form-label light-text">
 				Asset name
 			</label>
@@ -71,12 +71,12 @@
 					id="name"
 					placeholder="Make sure to make it accurate"
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.name || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="description" class="col-md-3 col-form-label light-text">
 				Asset description
 			</label>
@@ -86,16 +86,16 @@
 					{...$constraints.description}
 					name="description"
 					id="description"
-					placeholder="1-1000 characters"
+					placeholder="Up to 1000 characters"
 					class="form-control {$errors.description
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.description || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="price" class="col-md-3 col-form-label light-text">
 				Asset price
 			</label>
@@ -107,12 +107,12 @@
 					id="price"
 					type="number"
 					class="form-control {$errors.price ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.price || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-3">
+		<div class="row mb-4">
 			<label for="asset" class="col-md-3 col-form-label light-text">
 				Asset
 			</label>
@@ -128,7 +128,7 @@
 				<small class="light-text">
 					Max image size: 20MB. Supported file types: .png, .jpg, .bmp
 				</small>
-				<p class="col-12 mb-3 text-danger">
+				<p class="col-12 mb-4 text-danger">
 					{$errors.asset || ""}
 				</p>
 			</div>

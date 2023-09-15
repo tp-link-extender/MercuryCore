@@ -38,7 +38,7 @@
 						method: "POST",
 					})
 				).json()
-			).data,
+			).data
 		)
 		return (diskSpace = {
 			free: jsonData[1],
@@ -67,9 +67,9 @@
 
 <Head title="Admin" />
 
-<div class="container py-4">
-	<h1 class="h2 light-text">Admin Panel</h1>
-	<h2 class="h4 mb-4 border-bottom border-2 pb-3 light-text">
+<div class="container py-6">
+	<h1 class="fs-2 light-text">Admin Panel</h1>
+	<h2 class="fs-4 mb-6 border-bottom border-2 pb-4 light-text">
 		Your permission level is: <span
 			style="color: {permissions[user?.permissionLevel][0]}">
 			<i class="fa {permissions[user?.permissionLevel][1]} me-1" />
@@ -77,7 +77,7 @@
 		</span>
 	</h2>
 	<div class="row">
-		<div class="col-lg-2 col-md-3 mb-4 pe-0">
+		<div class="col-lg-2 col-md-3 mb-6 pe-0">
 			<TabNav bind:tabData tabs />
 		</div>
 		<div class="col-lg-10 col-md-9">
@@ -99,7 +99,7 @@
 			<Tab {tabData}>
 				<div class="row g-3 pt-1">
 					<div class="col-lg-7 col-md-7 ps-1">
-						<div class="card bg-a3 text-black mb-3">
+						<div class="card bg-a3 text-black mb-4">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
 									<i class="fas fa-memory" />
@@ -114,7 +114,7 @@
 								<span class="light-text">
 									{Math.round(
 										(data.totalmem - data.freemem) /
-											1024 ** 2,
+											1024 ** 2
 									)} MB is being used
 								</span>
 								<div class="progress bg-darker mt-2">
@@ -123,7 +123,7 @@
 										role="progressbar"
 										aria-valuenow={data.totalmem -
 											data.freemem}
-										aria-valuemin={0}
+										aria-valuemin="0"
 										aria-valuemax={data.totalmem}
 										style="width: {((data.totalmem -
 											data.freemem) /
@@ -132,7 +132,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="card bg-a3 text-black mb-3">
+						<div class="card bg-a3 text-black mb-4">
 							<div class="card-body bg-a rounded-1">
 								{#await diskSpace || getDiskSpace()}
 									<h3 class="light-text">Loading...</h3>
@@ -149,7 +149,7 @@
 									</h3>
 									<span class="light-text">
 										{Math.round(
-											(disk.size - disk.free) / 1024 ** 2,
+											(disk.size - disk.free) / 1024 ** 2
 										)} MB is being used
 									</span>
 									<div class="progress bg-darker mt-2">
@@ -158,7 +158,7 @@
 											role="progressbar"
 											aria-valuenow={disk.size -
 												disk.free}
-											aria-valuemin={0}
+											aria-valuemin="0"
 											aria-valuemax={disk.size}
 											style="width: {((disk.size -
 												disk.free) /
@@ -170,7 +170,7 @@
 						</div>
 					</div>
 					<div class="col-lg-5 col-md-5 pe-1">
-						<div class="card bg-a3 text-black mb-3">
+						<div class="card bg-a3 text-black mb-4">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
 									<i class="far fa-user me-2" />
@@ -182,7 +182,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="card bg-a3 text-black mb-3">
+						<div class="card bg-a3 text-black mb-4">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
 									<i class="far fa-file me-2" />

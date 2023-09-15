@@ -8,7 +8,7 @@
 	}
 </script>
 
-<div class="app container py-4 light-text">
+<div class="app container py-6 light-text">
 	<img
 		width="100"
 		height="100"

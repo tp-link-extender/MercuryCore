@@ -27,12 +27,14 @@
 		nprogress.done()
 	}
 
-	const notificationNotes: { [k: string]: string } = {
+	const notificationNotes = {
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",
 		ForumPostReply: "Reply to your post",
 		ForumReplyReply: "Reply to your reply",
+		AssetComment: "Comment on your asset",
+		AssetCommentReply: "Reply to your comment",
 		ForumMention: "Mention",
 		ForumPost: "New forum post",
 		ItemPurchase: "Item purchased",
@@ -65,7 +67,7 @@
 <div class="toast-container position-fixed bottom-0 end-0">
 	{#each notifications as notification}
 		<div
-			class="toast show bg-darker light-text m-3"
+			class="toast show bg-darker light-text m-4"
 			role="alert"
 			aria-live="assertive"
 			aria-atomic="true">
@@ -74,7 +76,7 @@
 					href="/user/{notification.sender.number}"
 					class="d-flex align-items-center w-100 light-text text-decoration-none">
 					<div
-						class="image-background bg-background rounded-circle me-3">
+						class="image-background bg-background rounded-circle me-4">
 						<img
 							src="/api/avatar/{notification.sender.username}"
 							alt={notification.sender.username}

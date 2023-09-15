@@ -28,26 +28,26 @@
 			<i class="fa fa-arrow-left me-2" />
 			Home
 		</a>
-		<h1 class="fw-bolder light-text mb-4">
+		<h1 class="font-black light-text mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
-		<div class="ms-3 mt-3 w-100">
-			<h2 class="h4 light-text">Original username</h2>
+		<div class="ms-4 mt-4 w-100">
+			<h2 class="fs-4 light-text">Original username</h2>
 			<p class="light-text opacity-75 more">
 				Make sure it is appropriate and between 3-21 characters.
 				Underscores are allowed.
 			</p>
 		</div>
-		<div class="ms-3 mt-3 w-100">
-			<h2 class="h4 light-text">Valid email</h2>
+		<div class="ms-4 mt-4 w-100">
+			<h2 class="fs-4 light-text">Valid email</h2>
 			<p class="light-text opacity-75 more">
 				Mercury requires a valid email so you can reset your password at
 				any time.
 			</p>
 		</div>
-		<div class="ms-3 mt-3 w-100">
-			<h2 class="h4 light-text">Secure password</h2>
+		<div class="ms-4 mt-4 w-100">
+			<h2 class="fs-4 light-text">Secure password</h2>
 			<p class="light-text opacity-75 more">
 				Make sure your password has a mix of letters, numbers, and
 				symbols to protect against hackers.
@@ -63,10 +63,10 @@
 				<a href="/login" class="text-decoration-none">Log in</a>
 			</p>
 
-			<form use:enhance class="m-auto form-group mt-4" method="POST">
+			<form use:enhance class="m-auto form-group mt-6" method="POST">
 				<fieldset>
 					<label for="username" class="form-label">Username</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.username}
 							{...$constraints.username}
@@ -77,13 +77,13 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="3-21 characters" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.username || ""}
 						</p>
 					</div>
 
 					<label for="email" class="form-label">Email Address</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.email}
 							{...$constraints.email}
@@ -95,13 +95,13 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="mercury@banland.xyz" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.email || ""}
 						</p>
 					</div>
 
 					<label for="password" class="form-label">Password</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.password}
 							{...$constraints.password}
@@ -113,7 +113,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Password" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.password || ""}
 						</p>
 					</div>
@@ -121,7 +121,7 @@
 					<label for="cpassword" class="form-label">
 						Confirm Password
 					</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.cpassword}
 							{...$constraints.cpassword}
@@ -133,7 +133,7 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="Confirm Password" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.cpassword || ""}
 						</p>
 					</div>
@@ -141,7 +141,7 @@
 					<label for="regkey" class="form-label">
 						Registration Key
 					</label>
-					<div class="mb-4">
+					<div class="mb-6">
 						<input
 							bind:value={$form.regkey}
 							{...$constraints.regkey}
@@ -151,12 +151,12 @@
 								? 'is-in'
 								: ''}valid"
 							placeholder="mercurkey-12311121123" />
-						<p class="col-12 mb-3 text-danger">
+						<p class="col-12 mb-4 text-danger">
 							{$errors.regkey || ""}
 						</p>
 					</div>
 
-					<button class="container-fluid btn btn-primary mb-3">
+					<button class="container-fluid btn btn-primary mb-4">
 						{#if $delayed}
 							Working...
 						{:else}

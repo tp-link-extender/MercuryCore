@@ -21,15 +21,15 @@
 
 <h1 class="text-center light-text">Notifications</h1>
 
-<div class="container mt-5">
+<div class="container mt-12">
 	{#each data.notifications as notification}
-		<div class:bg-darker={notification.read} class="card mb-3 p-3">
-			<h2 class="light-text h5 d-flex align-items-center">
+		<div class:bg-darker={notification.read} class="card mb-4 p-4">
+			<h2 class="light-text fs-5 d-flex align-items-center">
 				<a
 					href="/user/{notification.sender.number}"
 					class="image-background {notification.read
 						? 'bg-a'
-						: 'bg-darker'} rounded-circle me-3">
+						: 'bg-darker'} rounded-circle me-4">
 					<img
 						src="/api/avatar/{notification.sender.username}"
 						alt={notification.sender.username}

@@ -41,7 +41,7 @@ export const actions = {
 				form,
 				["username", "password"],
 				[
-					"Incorrect username or password",
+					" ",
 					"Incorrect username or password",
 				],
 			)

@@ -15,28 +15,6 @@
 		infoPadding = 30
 		infoTextMargin = 0
 	})
-
-	const range = (n: number) =>
-			Array.from({ length: n }, (_, index) => -Math.floor(n / 2) + index),
-		columns = range(37),
-		rows = range(19)
-
-	let cubesMoved = 0,
-		cubesClicked = 0,
-		completed = false
-
-	$: cubePercentage = Math.floor(
-		(cubesMoved / (columns.length * rows.length)) * 100
-	)
-	$: cubePercentage2 = Math.min(
-		Math.floor((cubesClicked / (columns.length * rows.length)) * 200),
-		100
-	)
-
-	$: if (cubePercentage >= 100 && cubePercentage2 >= 100) {
-		completed = true
-		window.open("https://youtube.com/watch?v=cvh0nX08nRw", "_blank")
-	}
 </script>
 
 <Head
@@ -52,90 +30,48 @@
 	style="opacity: {canvasOpacity}" />
 
 <div
-	id="cubes"
-	class="position-absolute h-100 w-100"
-	style="opacity: {canvasOpacity}">
-	<Canvas>
-		<Cubes
-			{columns}
-			{rows}
-			on:moved={() => cubesMoved++}
-			on:clicked={() => cubesClicked++} />
-	</Canvas>
-</div>
-
-{#if cubePercentage < 20}
+	id="info"
+	class="container d-flex justify-content-center align-items-center"
+	style="padding-top: {infoPadding}vh">
 	<div
-		out:fade
-		id="info"
-		class="container d-flex justify-content-center align-items-center"
-		style="padding-top: {infoPadding}vh">
-		<div
-			id="moon"
-			class="position-absolute"
-			style="opacity: {canvasOpacity}">
+		id="moon"
+		class="position-absolute w-100"
+		style="opacity: {canvasOpacity}">
+		<Canvas>
 			<Moon />
-		</div>
-		<div
-			id="infotext"
-			class="d-flex flex-column justify-content-center align-items-center position-relative"
-			style="margin-top: {infoTextMargin}vh">
-			<h1 class="fw-bolder text-white opacity-75">Mercury 2</h1>
-			<p class="lead text-white text-center">
-				Endless possibilities. New features. Same nostalgia.
-			</p>
-			<div class="d-inline mb-3">
-				<b>
-					<a
-						type="button"
-						href="/register"
-						class="d-inline btn btn-sm btn-success text-decoration-none">
-						Register <i class="fa fa-chevron-right" />
-					</a>
-				</b>
-				<b>
-					<a
-						type="button"
-						href="/login"
-						class="d-inline btn btn-sm btn-primary text-decoration-none">
-						Login <i class="fa fa-chevron-right" />
-					</a>
-				</b>
-			</div>
-			<a href="/about" class="text-decoration-none pt-3 fs-5">
-				About us <i class="fa fa-chevron-right" />
-			</a>
-		</div>
+		</Canvas>
 	</div>
-{:else}
 	<div
-		id="cubesMoved"
-		class="pe-none position-absolute top-50 start-50 text-center w-100">
-		{#if completed}
-			<h1 in:fade class="pe-none text-white opacity-75 fw-bolder">
-				lmao%
-			</h1>
-		{:else}
-			<h1 in:fade class="pe-none text-white opacity-75 fw-bolder">
-				{cubePercentage}%
-			</h1>
-			{#if cubePercentage2 > 0}
-				<h1 in:fade class="pe-none text-danger opacity-75 fw-bolder">
-					{cubePercentage2}%
-				</h1>
-			{/if}
-			{#if cubePercentage >= 60 && cubePercentage < 80}
-				<h2 class="pe-none text-white opacity-75 fw-bolder">
-					zoom out
-				</h2>
-			{:else if cubePercentage == 100 && cubePercentage2 < 2}
-				<h2 class="pe-none text-danger opacity-75 fw-bolder">
-					click the cubes
-				</h2>
-			{/if}
-		{/if}
+		id="infotext"
+		class="d-flex flex-column justify-content-center align-items-center position-relative"
+		style="margin-top: {infoTextMargin}vh">
+		<h1 class="font-black text-white opacity-75">Mercury 2</h1>
+		<p class="lead text-white text-center">
+			Endless possibilities. New features. Same nostalgia.
+		</p>
+		<div class="d-inline mb-4">
+			<b>
+				<a
+					type="button"
+					href="/register"
+					class="d-inline btn btn-sm btn-success text-decoration-none">
+					Register <i class="fa fa-chevron-right" />
+				</a>
+			</b>
+			<b>
+				<a
+					type="button"
+					href="/login"
+					class="d-inline btn btn-sm btn-primary text-decoration-none">
+					Login <i class="fa fa-chevron-right" />
+				</a>
+			</b>
+		</div>
+		<a href="/about" class="text-decoration-none pt-4 fs-5">
+			About us <i class="fa fa-chevron-right" />
+		</a>
 	</div>
-{/if}
+</div>
 
 <div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
 	<div class="w-100 position-absolute bottom-0">
@@ -160,11 +96,7 @@
 
 	canvas
 	#moon
-	#cubes
 		transition opacity 0.75s ease-in
-
-	#cubesMoved
-		transform translate(-50%, -50%)
 
 	#gradientbg
 		background linear-gradient(
@@ -212,5 +144,6 @@
 		font-size 4rem
 
 	#moon
+		height: 20vh
 		margin-bottom min(22rem, 60vh)
 </style>

@@ -5,22 +5,22 @@
 <Head title="Forum" />
 
 <div class="container light-text">
-	<h1 class="light-text mb-5">Forum</h1>
+	<h1 class="light-text mb-12">Forum</h1>
 	{#each data.categories as category, num}
 		<div
 			in:fade|global={{ num, total: data.categories.length }}
-			class="category card bg-darker p-3 mb-3">
+			class="category card bg-darker p-4 mb-4">
 			<div class="row">
 				<a
 					class="col-lg-9 col-md-7 row light-text text-decoration-none"
 					href="/forum/{category.name.toLowerCase()}">
 					<div class="col-9">
-						<h2 class="h4">
+						<h2 class="fs-4">
 							{category.name}
 						</h2>
 						{category.description}
 					</div>
-					<h3 class="col h5">
+					<h3 class="col fs-5">
 						{category._count.posts} post{category._count.posts > 1
 							? "s"
 							: ""}
@@ -33,24 +33,17 @@
 								.posts[0].id}"
 							class="light-text text-decoration-none">
 							Last post:
-							<h3 class="h5">
+							<h3 class="fs-5">
 								{category.posts[0].title}
 							</h3>
 						</a>
-						<span class="d-flex">
+						<span class="d-flex gap-2">
 							by
-							<a
-								href="/user/{category.posts[0].author.number}"
-								class="light-text text-decoration-none d-flex">
-								<span class="pfp bg-a2 rounded-circle mx-1">
-									<img
-										src="/api/avatar/{category.posts[0]
-											.author.username}"
-										alt={category.posts[0].author.username}
-										class="rounded-circle rounded-top-0" />
-								</span>
-								{category.posts[0].author.username}
-							</a>
+							<User
+								user={category.posts[0].author}
+								full
+								thin
+								size="1.5rem" />
 						</span>
 					{/if}
 				</div>
@@ -65,9 +58,4 @@
 	.category
 		border-color var(--accent2)
 		transition all 0.3s ease-out
-
-	.pfp
-	.pfp img
-		width 1.5rem
-		height 1.5rem
 </style>

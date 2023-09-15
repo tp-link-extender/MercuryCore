@@ -53,20 +53,16 @@
 		<div id="nav1" class="py-1 d-flex">
 			<a class="navbar-brand light-text me-0" href="/">
 				<img class="me-2" src="/favicon.svg" alt="Mercury logo" />
-				<span class="me-4">Mercury</span>
+				<span class="me-6">Mercury</span>
 			</a>
 			{#if user}
 				<div id="topnav" class="row me-2">
-					<div class="col-6">
-						<div class="navbar-nav">
-							{#each nav1 as [title, href]}
-								<a
-									class="btn mt-1 px-1 light-text nav-item"
-									{href}>
-									{title}
-								</a>
-							{/each}
-						</div>
+					<div class="navbar-nav ms-3">
+						{#each nav1 as [title, href]}
+							<a class="btn mt-1 px-1 light-text nav-item" {href}>
+								{title}
+							</a>
+						{/each}
 					</div>
 				</div>
 				<div class="navbar-nav mx-auto">
@@ -152,7 +148,7 @@
 								<div
 									transition:fade={{ duration: 150 }}
 									id="results"
-									class="position-absolute d-flex flex-column bg-darker p-2 mt-5 rounded-3">
+									class="position-absolute d-flex flex-column bg-darker p-2 mt-12 rounded-3">
 									{#each searchCategories as [name, category], num}
 										<a
 											bind:this={searchResults[num]}
@@ -168,49 +164,37 @@
 						</div>
 					</form>
 				</div>
-				<ul class="navbar-nav loggedin m-0">
+				<ul class="navbar-nav m-0">
 					<li id="notificationstop" class="pt-1">
 						<a
 							href="/notifications"
 							role="button"
 							aria-label="Notifications"
-							class="fw-bold nav-link me-1">
+							class="font-bold nav-link me-1">
 							<i class="fa fa-bell light-text" />
 						</a>
 					</li>
-					<li id="transactionsbutton" class="pt-1">
+					<li id="transactionsbutton" class="my-auto">
 						<a
 							href="/transactions/your"
 							role="button"
 							aria-label="Transactions"
 							class="nav-link text-success">
 							<i class="fa fa-gem me-1 text-success" />
-							<span class="h6 text-success">
+							<span class="fs-6 text-success">
 								{user.currency}
 							</span>
 						</a>
 					</li>
 
-					<li class="dropdown2 dropdown-hover dropdown-end">
-						<a href="/user/{user.number}" class="btn p-0 d-flex">
-							<div
-								id="pfp"
-								class="mx-2 rounded-circle bg-background">
-								<img
-									src="/api/avatar/{user?.username}"
-									alt="You"
-									class="rounded-circle rounded-top-0" />
-							</div>
-							<p class="my-auto fs-6 light-text">
-								{user?.username}
-							</p>
-						</a>
+					<li class="dropdown dropdown-hover dropdown-end ps-2">
+						<User {user} full thin bg="background" size="2.4rem" />
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								{#each usernav as [icon, title, href]}
 									<li class="rounded-2">
 										<a
-											class="btn light-text ps-3 pe-0 text-start"
+											class="btn light-text ps-4 pe-0 text-start"
 											{href}>
 											<i class="fa {icon} me-2" />
 											{title}
@@ -223,7 +207,7 @@
 										method="POST"
 										action="/api?/logout">
 										<button
-											class="btn text-danger ps-3 pe-0 text-start">
+											class="btn text-danger ps-4 pe-0 text-start">
 											<i
 												class="fa fa-arrow-right-from-bracket me-2" />
 											<b>Log out</b>
@@ -235,16 +219,13 @@
 					</li>
 				</ul>
 			{:else}
-				<ul class="navbar-nav loggedin">
-					<li class="nav-item mt-1">
+				<ul
+					class="navbar-nav d-flex w-100 justify-content-end align-items-center">
+					<li class="nav-item">
 						<a href="/login" class="btn mb-1 light-text">Log in</a>
 					</li>
-					<li class="nav-item mt-1">
-						<a
-							href="/register"
-							class="btn btn-success my-2 my-sm-0">
-							Register
-						</a>
+					<li class="nav-item">
+						<a href="/register" class="btn btn-success">Register</a>
 					</li>
 				</ul>
 			{/if}
@@ -287,9 +268,6 @@
 {/if}
 
 <style lang="stylus">
-	.loggedin
-		margin-left auto
-
 	nav
 		z-index 9
 
@@ -338,8 +316,6 @@
 		#nav1
 			padding-left 0.5rem
 			padding-right 0.5rem
-		.dropdown2 p
-			display none
 		.navbar-brand
 			img
 				margin-top -0.2rem
@@ -368,17 +344,8 @@
 		+lightTheme()
 			background #0003
 
-	.loggedin
-		padding 0
-
-	.dropdown2
+	.dropdown
 		margin-top 2px
-		p
-			max-width 6rem
-			min-width 1rem
-			// ellipsis
-			overflow hidden
-			text-overflow ellipsis
 
 	#topnav
 		z-index 9
@@ -388,11 +355,6 @@
 	.navbar-nav
 		a
 			border none
-
-	#pfp
-	#pfp img
-		width 2.4rem
-		height 2.4rem
 
 	#results
 		z-index 5

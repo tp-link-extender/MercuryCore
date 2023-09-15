@@ -42,6 +42,7 @@
 			() => {
 				success = true
 				console.log("URI found, launching")
+				setTimeout(() => modal.set(false), 16000)
 			},
 			5000
 		)
@@ -63,24 +64,44 @@
 			}),
 			joinScriptData: any = deserialize(await response.text())
 
-		if (joinScriptData.status == 200) {
+		if (joinScriptData.status == 200)
 			launch(
 				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
 					joinScriptData.data.joinScriptUrl
 				)}+gameinfo:test`
 			)
-		}
 	}
 
 	let tabData = TabData(data.url, ["Description", "Game"]),
 		tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
+
+	data.gameSessions = [
+		{
+			user: {
+				number: 1,
+				username: "Heliodex",
+			},
+		},
+		{
+			user: {
+				number: 1,
+				username: "Heliodex",
+			},
+		},
+		{
+			user: {
+				number: 1,
+				username: "Heliodex",
+			},
+		},
+	]
 </script>
 
 <Head title={data.name} />
 
 <div class="container light-text">
 	<div class="row">
-		<div class="col-md-8 mb-3">
+		<div class="col-md-8 mb-4">
 			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
 					<div
@@ -114,7 +135,7 @@
 		</div>
 
 		<div class="flex col-md-4">
-			<div class="card rounded-none mb-4">
+			<div class="card rounded-none mb-6">
 				<div class="card-body">
 					<div class="row">
 						<div class="col">
@@ -133,19 +154,16 @@
 							</div>
 						{/if}
 					</div>
-					<span class="light-text d-flex mb-2">
-						<b>by</b>
-						<a
-							href="/user/{data.ownerUser?.number}"
-							class="user light-text text-decoration-none">
-							<span class="pfp bg-darker rounded-circle ms-1">
-								<img
-									src="/api/avatar/{data.ownerUser?.username}"
-									alt={data.ownerUser?.username}
-									class="rounded-circle rounded-top-0" />
-							</span>
-							{data.ownerUser?.username}
-						</a>
+					<span class="light-text d-flex pb-2">
+						<b class="pe-2">by</b>
+						{#if data.ownerUser}
+							<User
+								user={data.ownerUser}
+								size="1.5rem"
+								bg="darker"
+								full
+								thin />
+						{/if}
 					</span>
 					<p class="light-text mb-0">
 						Gears: <i class="far fa-circle-xmark" />
@@ -170,10 +188,8 @@
 				<button
 					on:click={placeLauncher}
 					id="play"
-					class="btn btn-lg btn-success mt-4 {data.serverPing >
-					Date.now() / 1000 - 35
-						? ''
-						: 'disabled'}">
+					class:disabled={data.serverPing < Date.now() / 1000 - 35}
+					class="btn btn-lg btn-success mt-6">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
 
@@ -203,7 +219,7 @@
 
 						return () => {}
 					}}
-					class="align-self-center col mt-3 px-0 mb-2"
+					class="align-self-center col mt-4 px-0 mb-2"
 					method="POST"
 					action="?/like&privateTicket={data.privateTicket}">
 					<div class="row mb-2">
@@ -294,7 +310,7 @@
 
 	<Tab {tabData}>
 		{#if user?.permissionLevel == 5 || data.ownerUser?.number == user?.number}
-			<h1 class="h4 light-text">Hosting on Mercury</h1>
+			<h1 class="fs-4 light-text">Hosting on Mercury</h1>
 			<p class="light-text">
 				To begin hosting your map for everybody to play, you need to
 				make sure that you are forwarding the port you wish to run the
@@ -307,8 +323,8 @@
 				running. Below are two methods of hosting - we recommend using
 				Autopilot to get started easily.
 			</p>
-			<div class="d-flex align-items-start mb-3">
-				<div class="bg-a me-3">
+			<div class="d-flex align-items-start mb-4">
+				<div class="bg-a me-4">
 					<TabNav bind:tabData={tabData2} vertical />
 					<!-- Prevents nested tabs from breaking -->
 					{((tabData2.num = 0), "")}
@@ -373,15 +389,13 @@
 							Begin Hosting
 						</button>
 
-						<div class="dropdown2 dropdown-hover dropdown-end">
-							<button
-								class="btn btn-success dropdown-toggle"
-								type="button" />
+						<div class="dropdown dropdown-hover dropdown-end">
+							<div class="btn btn-success dropdown-toggle" />
 							<div class="dropdown-content pt-2">
 								<ul class="p-2 rounded-3">
 									<li class="rounded-2">
 										<button
-											class="btn light-text ps-3 pe-0 text-start"
+											class="btn light-text ps-4 pe-0 text-start"
 											on:click={() =>
 												launch(
 													`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
@@ -402,6 +416,7 @@
 			</div>
 		{/if}
 		<h4 class="light-text">Server List</h4>
+		<!-- {#if data.serverPing > Date.now() / 1000 - 35} -->
 		<div class="card mb-2">
 			<div class="card-body">
 				<div class="row">
@@ -417,25 +432,17 @@
 							Join Server
 						</button>
 					</div>
-					<div class="col d-flex">
+					<div class="col d-flex gap-3">
 						{#each data.gameSessions as { user }}
-							<a
-								href="/user/{user.number}"
-								class="gamesession text-decoration-none d-flex">
-								<span class="bg-background rounded-circle">
-									<img
-										src="/api/avatar/{user.username}"
-										alt={user.username}
-										height="75"
-										width="75"
-										class="rounded-circle rounded-top-0" />
-								</span>
-							</a>
+							<User user={user} size="4.5rem" bg="darker" />
 						{/each}
 					</div>
 				</div>
 			</div>
 		</div>
+		<!-- {:else}
+			This server is offline.
+		{/if} -->
 	</Tab>
 	<hr />
 	<div class="row">
@@ -450,38 +457,38 @@
 </div>
 
 <Modal {modal}>
-	<div class="modal-body d-flex flex-column p-4">
+	<div class="d-flex flex-column px-6">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
 				id="wrapper"
-				class="text-center align-self-center mt-5 mb-4">
+				class=" align-self-center mt-4 mb-6">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
-					width={128}
-					height={128} />
+					width="128"
+					height="128" />
 				<img
 					src="/outerlogo.svg"
 					alt="Mercury logo outer part (circle around M)"
 					id="outer"
-					width={128}
-					height={128}
+					width="128"
+					height="128"
 					style={installed
 						? ""
-						: "animation: none; --rotation: 0deg"} />
+						: "animation: none --rotation: 0deg"} />
 			</div>
 		{/key}
 		{#if success}
-			<h1 class="text-center h5 light-text">
+			<h1 class="text-center fs-5 light-text">
 				"{data.name}" is ready to play! Have fun!
 			</h1>
 		{:else if installed}
-			<h1 class="text-center h5 light-text">
+			<h1 class="text-center fs-5 light-text">
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
 			</h1>
 		{:else}
-			<h1 class="text-center h5 light-text mb-3">
+			<h1 class="text-center fs-5 light-text mb-4">
 				Install the Mercury client and start playing now!
 			</h1>
 			<a
@@ -505,7 +512,7 @@
 		transform translateY(-50%)
 		left 1.25rem
 		right 1.25rem
-		top: 50%
+		top 50%
 
 	#play img
 		height 2rem
@@ -516,11 +523,17 @@
 
 	.dropdown-toggle
 		border-radius 0 0.375rem 0.375rem 0
+		&::after 
+			display inline-block
+			vertical-align 0.255rem
+			content ""
+			border-top 0.3rem solid
+			border-right 0.3rem solid transparent
+			border-left 0.3rem solid transparent
 
 	#wrapper
 		width 128px
 		height 128px
-		transform translateX(-64px)
 
 		+lightTheme()
 			filter invert(1)
@@ -536,16 +549,4 @@
 	@keyframes moon
 		100%
 			transform rotate(360deg)
-
-	.user
-		.pfp
-		.pfp img
-			width 1.5rem
-			height 1.5rem
-
-	.gamesession
-		span
-		img
-			width 75px
-			height 75px
 </style>

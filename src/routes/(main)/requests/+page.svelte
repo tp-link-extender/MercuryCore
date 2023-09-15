@@ -12,13 +12,13 @@
 
 <h1 class="light-text text-center">Friend requests ({data.number})</h1>
 
-<div class="container mt-5 d-grid">
+<div class="container mt-12 d-grid">
 	{#each data.users as user, num}
 		<div
 			in:fade|global={{ num, total: data.users.length, max: 12 }}
 			class="card bg-darker light-text h-100 w-100 d-flex flex-col">
 			<div class="d-flex flex-row">
-				<a class="p-4 pe-2" href="/user/{user.number}">
+				<a class="p-6 pe-2" href="/user/{user.number}">
 					<div class="image-background bg-a rounded-circle">
 						<img
 							src="/api/avatar/{user.username}"
@@ -33,7 +33,7 @@
 						</span>
 					{/if} -->
 				</a>
-				<div class="h4 p-4">
+				<div class="fs-4 p-6">
 					<a
 						href="/user/{user.number}"
 						class="text-decoration-none light-text">

@@ -7,13 +7,13 @@
 <a
 	class="text-danger text-decoration-none ps-2"
 	href="/report?user={user}&url={url}">
-	<small>
+	<small class="d-inline-flex align-items-center">
 		{#if reverse}
-			<i class="far fa-flag me-1" />
+			<i class="far fa-flag pe-2" />
 		{/if}
 		<span class="text-danger">Report abuse</span>
 		{#if !reverse}
-			<i class="far fa-flag" />
+			<i class="far fa-flag ps-2" />
 		{/if}
 	</small>
 </a>
@@ -25,8 +25,6 @@
 		overflow hidden
 		white-space nowrap
 		width 0
-		vertical-align middle // not perfectly centered
-		margin-top -0.1rem // there we go
 
 	a:hover
 		i

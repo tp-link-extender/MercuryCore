@@ -1,4 +1,5 @@
 <script lang="ts">
+	// lel, anything for intellisense
 	export let post: import("../../routes/(main)/forum/[category]/$types").PageData["posts"][number]
 	export let num: number
 	export let total: number
@@ -8,7 +9,7 @@
 		dislikesDisabled = false
 </script>
 
-<div in:fade|global={{ num, total }} class="post card bg-darker mb-3 flex-row">
+<div in:fade|global={{ num, total }} class="post card bg-darker mb-4 flex-row">
 	<form
 		use:enhance={({ formData }) => {
 			const action = formData.get("action")
@@ -53,9 +54,9 @@
 			</div>
 			<span
 				class="my-2 text-center {post.likes
-					? 'text-success fw-bold'
+					? 'text-success font-bold'
 					: post.dislikes
-					? 'text-danger fw-bold'
+					? 'text-danger font-bold'
 					: ''}">
 				{post.likeCount - post.dislikeCount}
 			</span>
@@ -77,26 +78,16 @@
 		</div>
 	</form>
 	<div class="d-flex flex-column w-100">
-		<a
-			href="/user/{post.author.number}"
-			class="user d-flex light-text text-decoration-none m-2 pe-4 mb-0 w-100">
-			<span class="pfp bg-a2 rounded-circle me-1">
-				<img
-					src="/api/avatar/{post.author.username}"
-					alt={post.author.username}
-					class="rounded-circle rounded-top-0" />
-			</span>
-			<span class="fw-bold ms-2">
-				{post.author.username}
-			</span>
-			<em class="ms-auto">
+		<div class="d-flex pt-2 ps-4">
+			<User user={post.author} full />
+			<em class="light-text ps-4 align-self-center">
 				{post.posted.toLocaleString()}
 			</em>
-		</a>
+		</div>
 		<a
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
-			class="p-3 pb-0 text-decoration-none light-text w-100">
-			<h2 class="h4 mt-2">
+			class="px-4 pt-2 text-decoration-none light-text w-100">
+			<h2 class="fs-4 mt-2">
 				{post.title}
 			</h2>
 
@@ -133,10 +124,4 @@
 		left 0
 		height 5rem !important
 		background linear-gradient(#0000, var(--darker))
-
-	.user
-		align-items center
-		.pfp img
-			max-width 2rem
-			width 2rem
 </style>

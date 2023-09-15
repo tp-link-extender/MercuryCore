@@ -110,9 +110,9 @@
 <div class="container">
 	<h1 class="text-white">Avatar</h1>
 	<p class="light-text">Avatar system in alpha.</p>
-	<div class="row mt-4">
+	<div class="row mt-6">
 		<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
-			<div class="card mb-3">
+			<div class="card mb-4">
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
 						<button class="btn btn-primary w-100">
@@ -182,14 +182,14 @@
 {#if $modal}
 	<Modal {modal}>
 		<div class="modal-header">
-			<h1 class="h4 light-text">Choose a {bodyPart} color</h1>
+			<h1 class="fs-4 light-text">Choose a {bodyPart} color</h1>
 			<button
 				type="button"
 				class="btn-close"
 				on:click={() => modal.set(false)}
 				aria-label="Close" />
 		</div>
-		<div class="modal-body d-flex flex-column p-1 pb-5">
+		<div class="modal-body d-flex flex-column p-1 pb-12">
 			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
 					<form

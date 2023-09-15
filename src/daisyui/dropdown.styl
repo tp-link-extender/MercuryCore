@@ -1,15 +1,15 @@
-.dropdown2
+.dropdown
 	position relative
 	display inline-block
 
-.dropdown2 > *:focus
+.dropdown > *:focus
 	outline 2px solid transparent
 	outline-offset 2px
 
-.dropdown2 .dropdown-content
+.dropdown .dropdown-content
 	position absolute
 
-.dropdown2:is(:not(details)) .dropdown-content
+.dropdown:is(:not(details)) .dropdown-content
 	visibility hidden
 	opacity 0
 
@@ -42,7 +42,7 @@
 // 	bottom 0%
 // 	top auto
 
-.dropdown2
+.dropdown
 	&.dropdown-open .dropdown-content
 	&:not(.dropdown-hover):focus .dropdown-content
 	&:focus-within .dropdown-content

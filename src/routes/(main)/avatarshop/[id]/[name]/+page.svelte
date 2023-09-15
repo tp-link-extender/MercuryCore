@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
+	import { isPowerOfTwo } from "three/src/math/MathUtils.js"
 
 	export let data
 
@@ -22,107 +23,93 @@
 
 	export const snapshot = { capture, restore }
 
-	let modal = writable(false),
-		tabData = TabData(data.url, ["Description", "Comments"])
+	let tabData = TabData(data.url, ["Recommended", "Comments"])
+
+	const types: { [k: number]: string } = {
+		1: "Image",
+		2: "T-Shirt",
+		11: "Shirt",
+		12: "Pants",
+		13: "Decal",
+	}
 </script>
 
 <Head title={data.name} />
 
 <div class="container">
-	<div class="d-flex flex-row">
-		<div in:fade class="image me-3 mb-3">
-			<img src="/avatarshop/{data.id}/{data.name}/icon" alt={data.name} />
+	<div class="row">
+		<div class="col">
+			<img
+				class="image me-4 mb-4"
+				src="/avatarshop/{data.id}/{data.name}/icon"
+				alt={data.name} />
 		</div>
-		<span class="w-100">
-			<div class="card rounded-none mb-4">
-				<div class="card-body">
-					<h1 class="light-text">{data.name}</h1>
-					<p class="light-text d-flex mt-2 mb-0">
-						<b>by</b>
-						<a
-							href="/user/{data.creatorUser?.number}"
-							class="user light-text text-decoration-none">
-							<span class="pfp bg-darker rounded-circle ms-1">
-								<img
-									src="/api/avatar/{data.creatorUser
-										?.username}"
-									alt={data.creatorUser?.username}
-									class="rounded-circle rounded-top-0" />
-							</span>
-							{data.creatorUser?.username}
-						</a>
+		<div class="col light-text">
+			<h1 class="mb-0">{data.name}</h1>
+			<div class="d-flex">
+				<strong class="pe-2">by:</strong>
+
+				{#if data.creatorUser}
+					<User
+						user={data.creatorUser}
+						size="1.5rem"
+						full
+						thin
+						bg="accent" />
+				{/if}
+			</div>
+			<p class="mt-2">
+				{#if data.description[0]}
+					{data.description[0].text}
+				{:else}
+					<em>No description available</em>
+				{/if}
+			</p>
+
+			<hr />
+			<div class="row mb-2">
+				<div class="col-md-4">
+					<p class="mb-2">
+						<strong>Sold:</strong>
+						{data.sold}
 					</p>
-					<p class="light-text mt-2 mb-0">
-						<b>Type</b>
-						{data.type}
-					</p>
-					<p class="light-text mt-2 mb-0">
-						<b>{data.sold}</b>
-						sold
-						<span class="float-end">
-							<ReportButton
-								user={data.creatorUser?.username || ""}
-								url="/avatarshop/item/{data.id}" />
-						</span>
+					<p>
+						<strong>Type:</strong>
+						{types[data.type]}
 					</p>
 				</div>
+				<div class="col d-flex flex-row-reverse">
+					<div class="card">
+						<div class="card-body">
+							<p class="light-text text-center mb-0">
+								Price: <span class="text-success">
+									<i class="far fa-gem" />
+									{data.price}
+								</span>
+							</p>
+							{#if !data.owned}
+								<label for="buy" class="btn btn-success mt-1">
+									<strong class="fs-5">
+										{data.price > 0 ? "Buy Now" : "Get"}
+									</strong>
+								</label>
+							{:else}
+								<span class="btn btn-secondary mt-1 disabled">
+									<strong class="fs-5">Owned</strong>
+								</span>
+							{/if}
+						</div>
+					</div>
+				</div>
 			</div>
-			<button
-				name="action"
-				on:click={() => modal.set(true)}
-				id="buy"
-				value="buy"
-				class="btn btn-sm rounded-3 w-100 float-left mb-4 {data.owned
-					? 'btn-secondary disabled'
-					: user?.currency < data.price
-					? 'btn-danger disabled'
-					: 'btn-success'}">
-				<h4 class="mb-0">
-					{#if data.owned}
-						<i class="fa fa-gem" />
-						{data.price == 0 ? "Free" : data.price}
-						<i class="fa fa-check" />
-						Owned
-					{:else if data.price == 0}
-						Get
-					{:else}
-						Buy for <i class="fa fa-gem" />
-						{data.price}
-					{/if}
-				</h4>
-			</button>
-			{#if data.owned}
-				<button
-					name="action"
-					value="delete"
-					class="btn btn-sm w-100 float-right btn-danger">
-					[debug] delete from inventory
-				</button>
-			{:else if data.price != 0}
-				<p class="light-text" id="notify">
-					Funds will be deducted from your account immediately upon
-					pressing the buy button.
-				</p>
-			{/if}
-			<!-- {#if form?.msg}
-					<p class="text-danger">{form.msg}</p>
-				{/if} -->
-		</span>
+		</div>
 	</div>
 
 	<div class="bg-a">
 		<TabNav bind:tabData justify />
 	</div>
 
-	<Tab {tabData}>
-		<p class="light-text">
-			{#if data.description[0]}
-				{data.description[0].text}
-			{:else}
-				<em>No description available</em>
-			{/if}
-		</p>
-	</Tab>
+	<Tab {tabData} />
 
 	<Tab {tabData}>
 		<form use:enhance class="p-1" method="POST" action="?/reply">
@@ -137,7 +124,7 @@
 					name="content"
 					placeholder="What are your thoughts?"
 					rows="4" />
-				<button class="btn btn-success ms-3 mt-auto">
+				<button class="btn btn-success ms-4 mt-auto">
 					{#if $delayed}
 						Working...
 					{:else}
@@ -146,7 +133,7 @@
 				</button>
 			</fieldset>
 			<p
-				class="mb-3"
+				class="mb-4"
 				class:text-success={$page.status == 200}
 				class:text-danger={$page.status >= 400}>
 				{$message || ""}
@@ -166,22 +153,49 @@
 				topLevel />
 		{/each}
 	</Tab>
-
-	<h1 class="h3 light-text">Recommended</h1>
 </div>
 
-<Modal {modal}>
-	<div class="modal-body d-flex flex-column p-4">
-		<h1 class="text-center h5 light-text">
-			"{data.name}" is ready to play! Have fun!
-		</h1>
-		<a
-			class="btn btn-success"
-			href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
-			Download 2013
-		</a>
+<input type="checkbox" id="buy" class="modal-toggle" />
+<div class="modal2">
+	<div class="modal-box">
+		{#if data.user.currency > data.price}
+			<h3 class="text-lg font-bold light-text">Purchase {data.name}</h3>
+			<p class="pb-4">
+				Would you like to {data.price > 0 ? "buy" : "get"}
+				{data.name} for
+				{#if data.price > 0}
+					<i class="far fa-gem" />
+					{data.price}
+				{:else}
+					<strong>FREE</strong>
+				{/if}
+				?
+			</p>
+
+			<form method="POST" action="?/buy&a=buy" class="d-inline">
+				<button class="btn btn-success">
+					{data.price > 0 ? "Buy Now" : "Get"}
+				</button>
+			</form>
+			<label for="buy" class="btn btn-dark ms-2">{data.noText}</label>
+		{:else}
+			<h3 class="text-lg font-bold light-text">Insufficient funds</h3>
+			<span>
+				You don't have enough <i class="fa fa-gem" />
+				s to buy this item.
+			</span>
+			<p>
+				You'll need <strong>
+					{data.price - data.user.currency}
+				</strong>
+				more.
+			</p>
+
+			<label for="buy" class="btn btn-danger">{data.failText}</label>
+		{/if}
 	</div>
-</Modal>
+	<label class="modal-backdrop" for="buy">Close</label>
+</div>
 
 <style lang="stylus">
 	containerMinWidth(60rem)
@@ -200,10 +214,12 @@
 		background-size 20px 20px
 		background-position 0 0, 10px 10px
 
-		height 20rem
-		width 20rem
-		img
-			height 20rem
+		height 25rem
+		width 25rem
+
+		+-sm()
+			height 15rem
+			width 15rem
 
 	#notify
 		font-size 0.8rem
@@ -211,25 +227,11 @@
 		height 0
 		transform translateY(-1.5rem)
 		transition all 0.2s ease-out
+		pointer-events none
 
 	#buy
 		z-index 5
-		&:hover ~ #notify
-			opacity 1
-			height 1.5rem
-			transform none
 
-	#notify
-		pointer-events none
-
-	.pfp
-	.pfp img
-		width 3.5rem
-		height 3.5rem
-
-	.user
-		.pfp
-		img
-			width 1.5rem
-			height 1.5rem
+	.modal-box
+		min-width 30rem
 </style>

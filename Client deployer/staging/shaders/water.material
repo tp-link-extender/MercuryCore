@@ -1,0 +1,212 @@
+
+vertex_program water_vs null
+{
+    default_params
+    {
+		param_named_auto World            world_matrix
+		param_named_auto ViewProjection   viewproj_matrix
+		param_named_auto CameraPosition   camera_position
+		
+		param_named_auto Lamp0Dir     light_direction 0
+		param_named_auto Lamp0Color   light_diffuse_colour 0
+		
+		param_named_auto FogColor       fog_colour
+        param_named_auto FogParams      fog_params
+
+		param_named_auto AmbientColor ambient_light_colour
+        param_named_auto LightConfig0 light_custom 0 1
+        param_named_auto LightConfig1 light_custom 0 2
+		
+		param_named_auto FadeDistance light_custom 0 0
+    }
+
+}
+
+vertex_program water_vs_HQ rsl : water_vs
+{
+	source water.hlsl
+	target vs_3_0
+	entry_point water_vs
+	preprocessor_defines PIN_HQ
+}
+
+vertex_program water_vs_LQ rsl : water_vs
+{
+	source water.hlsl
+	target vs_3_0
+	entry_point water_vs
+}
+
+
+fragment_program water_ps null
+{
+	default_params
+    {
+		param_named_auto CameraPosition     camera_position
+		param_named_auto Lamp0Dir     light_direction 0
+		param_named_auto Lamp0Color   light_diffuse_colour 0
+		param_named nmAnimLerp float4 1 0 0 0
+		
+	    param_named_auto FogColor fog_colour
+        param_named_auto FogParams fog_params
+		param_named WaterColor float4  0 0.31 0.43 1
+		
+		param_named_auto AmbientColor ambient_light_colour
+        param_named_auto LightConfig2 light_custom 0 3
+        param_named_auto LightConfig3 light_custom 0 4
+        param_named_auto LightBorder light_custom 0 5
+	
+		param_named_auto FadeDistance light_custom 0 0
+
+		param_named NormalMap1      int 0
+		param_named NormalMap2      int 1
+		param_named EnvMap          int 2
+		param_named LightMap        int 3
+        param_named LightMapLookup  int 4
+	}
+}
+
+fragment_program water_ps_HQ rsl : water_ps
+{
+	source water.hlsl 
+	target ps_3_0
+	entry_point water_ps
+	preprocessor_defines PIN_HQ
+}
+
+
+fragment_program water_ps_LQ rsl : water_ps
+{
+	source water.hlsl 
+	target ps_3_0
+	entry_point water_ps
+}
+
+abstract pass WaterPass
+{
+	cull_hardware none
+
+    depth_bias -1 -0.5
+
+	texture_unit NormalMap1
+	{
+		filtering trilinear
+	}
+	
+	texture_unit NormalMap2
+	{
+		filtering trilinear
+	}
+	
+	texture_unit EnvMap 
+	{
+		filtering trilinear
+	}
+	
+	texture_unit LightMap
+	{
+		texture LightGrid
+		filtering trilinear
+		tex_address_mode wrap
+	}
+
+	texture_unit LightMapLookup
+	{
+		texture LightGridLookup
+		filtering none
+		tex_address_mode wrap
+	}
+}
+
+material MegaClusterWater
+{
+	technique default
+	{
+		lod_index 0
+		
+		pass : WaterPass
+		{
+			vertex_program_ref water_vs_HQ
+			{
+			}
+	
+			fragment_program_ref water_ps_HQ
+			{
+			}
+		}
+	}
+	
+	technique lod
+	{
+		lod_index 1
+		
+		pass : WaterPass
+		{
+			vertex_program_ref water_vs_LQ
+			{
+			}
+	
+			fragment_program_ref water_ps_LQ
+			{
+			}
+		}
+	}
+
+	technique ffp
+	{
+        gpu_vendor_rule exclude imagination_technologies
+
+		lod_index 2
+
+		pass
+		{
+			ambient 0.5 0.5 0.5
+			diffuse 1.0 1.0 1.0
+			specular 0.4 0.4 0.4 25 // keep this in line with ice
+			
+			cull_hardware none
+			cull_software none
+			depth_bias -1 -0.5
+
+			// mimic current wood shader limitation
+			max_lights 2
+
+			texture_unit
+			{
+				texture textures/water_Subsurface.dds
+				tex_coord_set 0
+				colour_op_ex source1 src_texture src_texture
+			}
+				
+			texture_unit
+			{
+				texture textures/water_Wave.dds
+				tex_coord_set 0
+				filtering trilinear
+				colour_op_ex blend_texture_alpha src_texture src_current 
+			}
+
+			texture_unit
+			{
+				texture textures/water_Subsurface.dds
+				tex_coord_set 1
+				filtering trilinear
+				colour_op_ex blend_texture_alpha src_current src_texture
+			}
+				
+			texture_unit
+			{
+				colour_op_ex modulate src_current src_diffuse
+			}	
+			texture_unit
+			{
+				scroll_anim 0 0.75
+			}
+			
+			texture_unit
+			{
+				scroll_anim 0 1
+			}
+		}
+	}
+}

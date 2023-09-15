@@ -4,9 +4,23 @@ version: "3"
 # https://docs.docker.com/compose/
 
 services:
-    surreal:
-        image: surrealdb/surrealdb:nightly
+    redis:
+        container_name: redisgraph
+        image: redislabs/redisgraph
         ports:
-            - 8000:8000
-        restart: on-failure
-        command: start -p root
+            - 6479:6379
+        restart: unless-stopped
+        volumes:
+            - ./data/redis:/data
+
+    postgres:
+        container_name: postgres
+        image: postgres
+        ports:
+            - 5532:5432
+        restart: unless-stopped
+        volumes:
+            - ./data/postgres:/var/lib/postgresql/data
+
+        environment:
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Loaded from .env file

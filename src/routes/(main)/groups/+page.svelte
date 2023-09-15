@@ -30,12 +30,12 @@
 <Head title="Groups" />
 
 <div class="container">
-	<div class="row mb-5">
+	<div class="row mb-12">
 		<h1 class="col-6 light-text">
 			Groups
-			<a href="/groups/create" class="btn btn-primary ms-4">Create</a>
+			<a href="/groups/create" class="btn btn-primary ms-6">Create</a>
 		</h1>
-		<div class="col-4 ms-4">
+		<div class="col-4 ms-6">
 			<form
 				use:enhance
 				method="POST"
@@ -66,7 +66,7 @@
 				<Group {group} {num} total={data.groups.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
-				<h2 class="h5 light-text mt-5">
+				<h2 class="fs-5 light-text mt-12">
 					No groups found with search term {query}
 				</h2>
 			{/if}

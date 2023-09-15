@@ -35,7 +35,8 @@
 		opacity.set(1)
 		dispatch("moved")
 	}}
-	on:pointerdown={() => {
+	on:pointerdown={(e) => {
+		e.stopPropagation()
 		if (!clickable || $scale != -j || clicked.get(`${i},${j}`) == "clicked") return
 		clicked.set(`${i},${j}`, "clicked")
 		colour.set("red")

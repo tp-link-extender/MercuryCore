@@ -15,12 +15,12 @@
 		Search for "{data.query}" in {data.category}
 	</h1>
 {:else}
-	<h1 class="text-center light-text h2">
+	<h1 class="text-center light-text fs-2">
 		Choose a category to search for "{data.query}"
 	</h1>
 {/if}
 
-<div class="container-fluid mt-5">
+<div class="container-fluid mt-12">
 	{#if data.category == "users" && data.users}
 		<div class="grid d-grid">
 			{#each data.users as user, num}
@@ -78,7 +78,7 @@
 			{/each}
 		</div>
 	{:else}
-		<div id="buttons" class="d-flex justify-content-center gap-3">
+		<div id="buttons" class="d-flex justify-content-center gap-4">
 			<a class="btn btn-primary" href="/search?q={data.query}&c=users">
 				Users
 			</a>

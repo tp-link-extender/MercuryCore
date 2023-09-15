@@ -18,11 +18,11 @@
 		</ol>
 	</nav>
 
-	<h1 class="light-text mb-5">
+	<h1 class="light-text mb-12">
 		{data.name} - Forum
 		<a
 			href="/forum/create?category={data.name}"
-			class="btn btn-primary ms-4">
+			class="btn btn-primary ms-6">
 			<i class="fa fa-file me-2" />
 			Create post
 		</a>
