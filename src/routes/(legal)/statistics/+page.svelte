@@ -76,4 +76,7 @@
 
 <style lang="stylus">
 	containerMinWidth()
+
+	td
+		padding 0
 </style>

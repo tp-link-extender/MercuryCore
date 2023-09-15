@@ -68,18 +68,8 @@
 
 {#if reply && reply.author}
 	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="d-flex">
-		<span class="d-flex flex-column">
-			<a
-				class:hidden
-				href="/user/{reply.author.number}"
-				class="user d-flex text-decoration-none pt-2">
-				<span class="pfp bg-a2 rounded-circle">
-					<img
-						src="/api/avatar/{reply.author.username}"
-						alt={reply.author.username}
-						class="rounded-circle rounded-top-0" />
-				</span>
-			</a>
+		<span class="d-flex flex-column pt-2">
+			<User user={reply.author} thin size="1.5rem" />
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Collapse reply"
@@ -348,9 +338,6 @@
 
 	.user
 		align-items center
-	.pfp img
-		max-width 1.5rem
-		width 1.5rem
 
 	.hidden
 		opacity 33%

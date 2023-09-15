@@ -46,18 +46,18 @@
 		</div>
 		<div class="col light-text">
 			<h1 class="mb-0">{data.name}</h1>
-			<strong>by:</strong>
-			<a
-				href="/user/{data.creatorUser?.number}"
-				class="user light-text text-decoration-none">
-				<span class="pfp bg-darker rounded-circle ms-1">
-					<img
-						src="/api/avatar/{data.creatorUser?.username}"
-						alt={data.creatorUser?.username}
-						class="rounded-circle rounded-top-0" />
-				</span>
-				{data.creatorUser?.username}
-			</a>
+			<div class="d-flex">
+				<strong class="pe-2">by:</strong>
+
+				{#if data.creatorUser}
+					<User
+						user={data.creatorUser}
+						size="1.5rem"
+						full
+						thin
+						bg="accent" />
+				{/if}
+			</div>
 			<p class="mt-2">
 				{#if data.description[0]}
 					{data.description[0].text}
@@ -184,11 +184,11 @@
 				You don't have enough <i class="fa fa-gem" />
 				s to buy this item.
 			</span>
-			<p >
+			<p>
 				You'll need <strong>
 					{data.price - data.user.currency}
-				</strong> more.
-
+				</strong>
+				more.
 			</p>
 
 			<label for="buy" class="btn btn-danger">{data.failText}</label>
@@ -234,15 +234,4 @@
 
 	.modal-box
 		min-width 30rem
-
-	.pfp
-	.pfp img
-		width 3.5rem
-		height 3.5rem
-
-	.user
-		.pfp
-		img
-			width 1.5rem
-			height 1.5rem
 </style>

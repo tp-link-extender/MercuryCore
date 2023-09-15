@@ -183,10 +183,4 @@
 
 	p
 		word-break break-word
-
-	.user
-		align-items center
-		.pfp img
-			max-width 2rem
-			width 2rem
 </style>

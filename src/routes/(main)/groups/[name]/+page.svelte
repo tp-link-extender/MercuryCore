@@ -5,35 +5,24 @@
 <Head title={data.name} />
 
 <div id="all" class="container">
-	<div class="d-flex px-6">
+	<div class="px-6">
 		<div class="container light-text">
-			<h1 class="light-text">{data.name}</h1>
-			<p class="light-text">
-				<b>by</b>
-				<a
-					href="/user/{data.owner?.number}"
-					class="user light-text text-decoration-none">
-					<span class="pfp bg-darker rounded-circle ms-1">
-						<img
-							src="/api/avatar/{data.owner?.username}"
-							alt={data.owner?.username}
-							class="rounded-circle rounded-top-0" />
-					</span>
-					{data.owner?.username}
-				</a>
+			<h1>{data.name}</h1>
+			<p class="d-flex">
+				<b class="pe-2">by</b>
+				<User user={data.owner} full thin bg="accent" size="1.5rem" />
 			</p>
-			<br />
-			<div class="d-flex">
+			<div class="d-flex pt-6 justify-content-between">
 				<a
 					href="/groups/{data.name}/members"
-					class="light-text text-center text-decoration-none ms-6">
+					class="light-text text-center text-decoration-none ps-6">
 					Members
 					<h3 class="light-text">
 						{data.memberCount}
 					</h3>
 				</a>
 				<form
-					class="align-self-center ms-auto"
+					class="align-self-center"
 					method="POST"
 					use:enhance>
 					<button
@@ -51,7 +40,7 @@
 		</div>
 	</div>
 	{#if data.places.length > 0}
-		<div class="mt-6">
+		<div class="pt-6">
 			<h2 class="fs-4 light-text">Creations</h2>
 			<div class="row m-0 p-0">
 				{#each data.places as place, num}
@@ -63,7 +52,7 @@
 		</div>
 	{/if}
 	{#if data.feed.length > 0}
-		<h2 class="fs-4 mt-12 light-text">Latest feed posts</h2>
+		<h2 class="fs-4 pt-12 light-text">Latest feed posts</h2>
 		<div id="feed" class="light-text p-4">
 			<div class="row">
 				{#each data.feed.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status}
@@ -94,9 +83,4 @@
 <style lang="stylus">
 	#all
 		max-width 60rem
-
-	.pfp
-	.pfp img
-		width 1.5rem
-		height 1.5rem
 </style>

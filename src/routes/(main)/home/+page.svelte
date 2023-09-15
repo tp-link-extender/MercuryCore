@@ -74,7 +74,7 @@
 				<a
 					href="/user/{user?.number}"
 					class="text-decoration-none light-text d-flex">
-					<User {user} size="6rem" colour="accent" image />
+					<User {user} size="6rem" bg="accent" image />
 					<span class="my-auto ms-6">
 						{data.stuff.greet}
 					</span>
@@ -127,7 +127,7 @@
 												user={status.authorUser}
 												size="2rem"
 												full
-												colour="darker" />
+												bg="darker" />
 										</div>
 										<span class="report align-self-center">
 											<em
@@ -167,7 +167,7 @@
 								<User
 									user={friend}
 									size="7rem"
-									colour="accent"
+									bg="accent"
 									bottom />
 							</span>
 						{/each}

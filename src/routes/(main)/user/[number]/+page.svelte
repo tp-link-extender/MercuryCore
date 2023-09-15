@@ -17,7 +17,7 @@
 <div id="all" class="container">
 	<div class="card bg-darker pt-6">
 		<div class="d-flex px-6">
-			<User user={data} size="7rem" colour="accent"  image/>
+			<User user={data} size="7rem" bg="accent" image />
 			<div class="w-100 ps-8">
 				<div class="d-flex mb-2">
 					<h1 class="fs-2 light-text d-inline">{data.username}</h1>
@@ -250,17 +250,23 @@
 		</div>
 		{#if data.posts.length > 0}
 			<h2 class="fs-4 mt-12 light-text">Latest feed posts</h2>
-			<div id="feed" class="light-text p-4">
+			<div id="feed" class="light-text px-4">
 				<div class="row">
 					{#each data.posts.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
 							class="p-2 col-md-6 col-sm-12">
-							<div class="card bg-darker p-2 h-100">
-								<div id="user" class="d-flex mb-2">
-									<User user={data} size="2rem" full image colour="accent"/>
-									<span
-										class="italic light-text flex-end">
+							<div class="card bg-darker p-3 h-100">
+								<div
+									id="user"
+									class="d-flex pb-2 justify-content-between">
+									<User
+										user={data}
+										size="2rem"
+										full
+										image
+										bg="accent" />
+									<span class="italic light-text flex-end">
 										{status.posted.toLocaleString()}
 									</span>
 								</div>
@@ -299,11 +305,6 @@
 				left 0
 				width 100%
 				height 100%
-
-	#user
-		align-items center
-		.pfp img
-			width 2rem
 
 	#avatar
 		aspect-ratio 3/4

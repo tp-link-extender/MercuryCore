@@ -188,12 +188,7 @@
 					</li>
 
 					<li class="dropdown dropdown-hover dropdown-end ps-2">
-						<User
-							{user}
-							full
-							thin
-							colour="background"
-							size="2.4rem" />
+						<User {user} full thin bg="background" size="2.4rem" />
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								{#each usernav as [icon, title, href]}
@@ -321,8 +316,6 @@
 		#nav1
 			padding-left 0.5rem
 			padding-right 0.5rem
-		.dropdown p
-			display none
 		.navbar-brand
 			img
 				margin-top -0.2rem
@@ -353,12 +346,6 @@
 
 	.dropdown
 		margin-top 2px
-		p
-			max-width 6rem
-			min-width 1rem
-			// ellipsis
-			overflow hidden
-			text-overflow ellipsis
 
 	#topnav
 		z-index 9
@@ -368,11 +355,6 @@
 	.navbar-nav
 		a
 			border none
-
-	#pfp
-	#pfp img
-		width 2.4rem
-		height 2.4rem
 
 	#results
 		z-index 5
