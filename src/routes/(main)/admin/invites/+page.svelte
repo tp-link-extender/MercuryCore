@@ -170,7 +170,7 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<table class="table table-responsive shadow-none">
+				<table class="w-100">
 					<thead>
 						<tr>
 							<th scope="col">Options</th>

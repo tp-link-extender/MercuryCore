@@ -6,8 +6,7 @@ import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({
-	action: z.enum(["create", "show", "hide", "delete", "updateBody"]),
-	bannerText: z.string().min(3).max(100).optional(),
+	bannerText: z.string().max(100).optional(),
 	bannerColour: z.string().optional(),
 	bannerTextLight: z.boolean().optional(),
 	bannerBody: z.string().optional(),
@@ -38,8 +37,10 @@ export const actions = {
 			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
-		const { action, bannerText, bannerColour, bannerBody } = form.data,
+		const { bannerText, bannerColour, bannerBody, bannerTextLight } =
+				form.data,
 			id = url.searchParams.get("id"),
+			action = url.searchParams.get("a"),
 			bannerActiveCount = await prisma.announcements.findMany({
 				where: { active: true },
 			})
@@ -59,8 +60,6 @@ export const actions = {
 						status: 400,
 					})
 
-				const bannerTextLight = !!form.data.bannerTextLight
-
 				if (bannerActiveCount && bannerActiveCount.length > 2)
 					return message(form, "Too many active banners", {
 						status: 400,
@@ -71,7 +70,7 @@ export const actions = {
 						data: {
 							body: bannerText,
 							bgColour: bannerColour,
-							textLight: bannerTextLight,
+							textLight: !!bannerTextLight,
 							user: {
 								connect: {
 									id: user.id,
@@ -143,12 +142,28 @@ export const actions = {
 						status: 400,
 					})
 
+
 				await prisma.announcements.update({
 					where: {
 						id,
 					},
 					data: {
 						body: bannerBody,
+					},
+				})
+				return
+			case "updateTextLight":
+				if (bannerTextLight == null || !id)
+					return message(form, "Missing fields", {
+						status: 400,
+					})
+
+				await prisma.announcements.update({
+					where: {
+						id,
+					},
+					data: {
+						textLight: bannerTextLight,
 					},
 				})
 				return

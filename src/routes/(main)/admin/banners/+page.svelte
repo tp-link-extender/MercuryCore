@@ -1,8 +1,20 @@
 <script lang="ts">
+	import { invalidate } from "$app/navigation"
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
+
+	let modal = writable(false),
+		bannerData = {
+			id: "",
+			bgColour: "",
+			textLight: false,
+			body: "",
+		},
+		tabData = TabData(data.url, ["Create Banner", "Banner List"]),
+		textLightForms: { [k: string]: HTMLFormElement } = {}
+
 	const {
 			form,
 			errors,
@@ -15,20 +27,15 @@
 		} = superForm(data.form, {
 			taintedMessage: false,
 		}),
-		viewBody = (id: any, body: any) => () => {
+		viewBody = (newBannerData: typeof bannerData) => () => {
 			modal.set(true)
 
-			bannerId = id
-			$form.bannerBody = body.trim()
-			newBannerBody = body.trim()
+			newBannerData.body = newBannerData.body.trim()
+			$form.bannerBody = newBannerData.body
+			bannerData = newBannerData
 		}
 
 	export const snapshot = { capture, restore }
-
-	let modal = writable(false),
-		bannerId = "",
-		newBannerBody = "",
-		tabData = TabData(data.url, ["Create Banner", "Banner List"])
 </script>
 
 <Head title="Banners - Admin" />
@@ -45,7 +52,7 @@
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
-				<form use:enhance method="POST">
+				<form use:enhance method="POST" action="?a=create">
 					<fieldset>
 						<div class="row">
 							<label
@@ -109,10 +116,7 @@
 									class="form-check-input valid" />
 							</div>
 						</div>
-						<button
-							name="action"
-							value="create"
-							class="btn btn-success mt-4">
+						<button class="btn btn-success mt-4">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -130,7 +134,7 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<table class="table table-responsive">
+				<table class="w-100 light-text">
 					<thead>
 						<tr>
 							<th scope="col">Options</th>
@@ -148,11 +152,9 @@
 									<form
 										use:enhance
 										method="POST"
-										action="?id={banner.id}">
+										action="?id={banner.id}&a=delete">
 										<button
-											name="action"
-											value="delete"
-											class="btn btn-sm btn-link text-decoration-none text-danger my-0">
+											class="btn btn-sm btn-link text-decoration-none text-danger">
 											<i class="fas fa-trash" />
 											Delete Banner
 										</button>
@@ -160,15 +162,13 @@
 									<form
 										use:enhance
 										method="POST"
-										action="?id={banner.id}">
+										action="?id={banner.id}&a={banner.active
+											? 'hide'
+											: 'show'}">
 										<button
-											name="action"
-											value={banner.active
-												? "hide"
-												: "show"}
 											class="btn btn-sm btn-link text-decoration-none text-{banner.active
 												? 'warning'
-												: 'success'} my-0">
+												: 'success'}">
 											<i
 												class="fas {banner.active
 													? 'fa-eye-slash'
@@ -182,10 +182,9 @@
 									<button
 										type="button"
 										on:click={viewBody(
-											banner.id,
-											banner.body
+											banner
 										)}
-										class="btn btn-sm btn-success my-0">
+										class="btn btn-sm btn-success">
 										View Body
 									</button>
 								</td>
@@ -196,15 +195,37 @@
 										disabled
 										class="valid" />
 								</td>
-								<td>
+								<td class="d-flex align-items-center">
+									<form
+										use:enhance
+										bind:this={textLightForms[banner.id]}
+										method="POST"
+										class="px-2"
+										action="?id={banner.id}&a=updateTextLight">
+										<input
+											on:change={async () => {
+												textLightForms[
+													banner.id
+												].requestSubmit()
+												await invalidate(
+													window.location.href
+												)
+											}}
+											checked={banner.textLight}
+											type="checkbox"
+											name="bannerTextLight"
+											value="true"
+											id="bannerTextLight"
+											class="form-check-input valid" />
+									</form>
 									{banner.textLight ? "Light" : "Dark"}
 								</td>
 								<td>
-									<a
-										href="/user/{banner.user.number}"
-										class="text-decoration-none">
-										{banner.user.username}
-									</a>
+									<User
+										user={banner.user}
+										full
+										thin
+										bg="accent" />
 								</td>
 							</tr>
 						{/each}
@@ -222,49 +243,43 @@
 
 {#if $modal}
 	<Modal {modal}>
-		<div class="modal-header">
-			<h1 class="fs-4 light-text">Banner #{bannerId}</h1>
+		<div class="d-flex">
+			<h1 class="fs-4 pe-4 light-text">Banner #{bannerData.id}</h1>
 			<button
 				type="button"
 				class="btn-close"
 				on:click={() => modal.set(false)}
 				aria-label="Close" />
 		</div>
-		<div class="modal-body light-text">
-			<form use:enhance method="POST" action="?id={bannerId}">
-				<textarea
-					bind:value={$form.bannerBody}
-					{...$constraints.bannerBody}
-					name="bannerBody"
-					id="bannerBody"
-					class="form-control {$errors.bannerBody
-						? 'is-in'
-						: ''}valid mb-4" />
-				<p class="col-12 mb-4 text-danger">
-					{$errors.bannerBody || ""}
-				</p>
-				{#if newBannerBody.trim() != $form.bannerBody?.trim()}
-					<div transition:fade class="d-grid gap-2">
-						<button
-							value="updateBody"
-							name="action"
-							class="btn btn-success"
-							id="saveBannerBody">
-							{#if $delayed}
-								Working...
-							{:else}
-								Save changes
-							{/if}
-						</button>
-					</div>
-				{/if}
-			</form>
-			<p
-				class:text-success={$page.status == 200}
-				class:text-danger={$page.status >= 400}>
-				{$message || ""}
+		<form use:enhance method="POST" action="?id={bannerData.id}&a=updateBody">
+			<textarea
+				bind:value={$form.bannerBody}
+				{...$constraints.bannerBody}
+				name="bannerBody"
+				id="bannerBody"
+				rows="1"
+				class="form-control {$errors.bannerBody
+					? 'is-in'
+					: ''}valid mb-4 text-{bannerData.textLight ? "light" : "dark"}"
+				style="background: {bannerData.bgColour} !important" />
+			<p class="col-12 mb-4 text-danger">
+				{$errors.bannerBody || ""}
 			</p>
-		</div>
+			{#if $form.bannerBody?.trim() && bannerData.body.trim() != $form.bannerBody?.trim()}
+				<div transition:fade class="d-grid gap-2">
+					<button
+						on:click={() => modal.set(false)}
+						class="btn btn-success"
+						id="saveBannerBody">
+						{#if $delayed}
+							Working...
+						{:else}
+							Save changes
+						{/if}
+					</button>
+				</div>
+			{/if}
+		</form>
 	</Modal>
 {/if}
 
@@ -278,12 +293,10 @@
 
 	.btn-close
 		filter invert(1) grayscale(100%) brightness(200%)
+	+lightTheme()
+		.btn-close
+			filter none
 
-	table
-	th
 	td
-	tbody
-	thead
-	tr
-		color var(--light-text)
+		height: 4.8rem
 </style>
