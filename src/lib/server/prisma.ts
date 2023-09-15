@@ -110,13 +110,26 @@ export async function transaction(
 		where: sender,
 		select: {
 			currency: true,
+			number: true,
 		},
 	})
 	if (!sender2) throw new Error("Sender not found")
-	const taxRate = Number((await client.get("taxRate")) || 30)
+
+	const receiver2 = await tx.authUser.findUnique({
+		where: receiver,
+		select: {
+			currency: true,
+			number: true,
+		},
+	})
+	if (!receiver2) throw new Error("Receiver not found")
+
+	const senderAdmin = sender2.number == 1,
+		receiverAdmin = receiver2.number == 1,
+		taxRate = Number((await client.get("taxRate")) || 30)
 
 	if (amountSent > 0) {
-		if (sender2.currency < amountSent)
+		if (!senderAdmin && sender2.currency < amountSent)
 			throw new Error(
 				`Insufficient funds: You need ${
 					amountSent - sender2.currency
@@ -129,22 +142,24 @@ export async function transaction(
 
 		const finalAmount = Math.round(amountSent * (1 - taxRate / 100))
 
-		await tx.authUser.update({
-			where: sender,
-			data: {
-				currency: {
-					decrement: amountSent,
+		if (!senderAdmin)
+			await tx.authUser.update({
+				where: sender,
+				data: {
+					currency: {
+						decrement: amountSent,
+					},
 				},
-			},
-		})
-		await tx.authUser.update({
-			where: receiver,
-			data: {
-				currency: {
-					increment: finalAmount,
+			})
+		if (!receiverAdmin)
+			await tx.authUser.update({
+				where: receiver,
+				data: {
+					currency: {
+						increment: finalAmount,
+					},
 				},
-			},
-		})
+			})
 	}
 
 	await tx.transaction.create({

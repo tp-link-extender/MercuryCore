@@ -5,24 +5,34 @@ import { redirect, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
-const schema = z.object({
-	username: z
-		.string()
-		.min(3)
-		.max(21)
-		.regex(/^[A-Za-z0-9_]+$/),
-	email: z.string().email(),
-	password: z.string().min(1).max(6969),
-	cpassword: z.string().min(1).max(6969),
-	regkey: z.string().min(1).max(6969),
-})
+const schemaInitial = z.object({
+		username: z
+			.string()
+			.min(3)
+			.max(21)
+			.regex(/^[A-Za-z0-9_]+$/),
+		password: z.string().min(1).max(6969),
+		cpassword: z.string().min(1).max(6969),
+	}),
+	schema = z.object({
+		username: z
+			.string()
+			.min(3)
+			.max(21)
+			.regex(/^[A-Za-z0-9_]+$/),
+		email: z.string().email(),
+		password: z.string().min(1).max(6969),
+		cpassword: z.string().min(1).max(6969),
+		regkey: z.string().min(1).max(6969),
+	})
 
-export const load = () => ({
+export const load = async () => ({
 	form: superValidate(schema),
+	users: (await prisma.authUser.count()) > 0,
 })
 
 export const actions = {
-	default: async ({ request, locals }) => {
+	register: async ({ request, locals }) => {
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
@@ -34,8 +44,8 @@ export const actions = {
 		if (cpassword != password)
 			return formError(
 				form,
-				["cpassword"],
-				["The specified passwords do not match"],
+				["password", "cpassword"],
+				[" ", "The specified passwords do not match"],
 			)
 
 		try {
@@ -95,26 +105,26 @@ export const actions = {
 				)
 
 			const user = await auth.createUser({
-				key: {
-					providerId: "username",
-					providerUserId: username.toLowerCase(),
-					password,
-				},
-				attributes: {
-					username,
-					email,
-					usedRegkey: {
-						connect: {
-							key: regkey,
-						},
+					key: {
+						providerId: "username",
+						providerUserId: username.toLowerCase(),
+						password,
 					},
-				} as any,
-			})
+					attributes: {
+						username,
+						email,
+						usedRegkey: {
+							connect: {
+								key: regkey,
+							},
+						},
+					} as any,
+				}),
+				session = await auth.createSession({
+					userId: user.id,
+					attributes: {},
+				})
 
-			const session = await auth.createSession({
-				userId: user.id,
-				attributes: {},
-			})
 			locals.auth.setSession(session)
 
 			await prisma.regkey.update({
@@ -127,6 +137,69 @@ export const actions = {
 					},
 				},
 			})
+		} catch (e) {
+			const error = e as Error
+			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID")
+				return formError(
+					form,
+					["username"],
+					["This username is already in use"],
+				)
+
+			console.error("Registration error:", error)
+			return fail(500) // idk
+		}
+
+		throw redirect(302, "/home")
+	},
+	initialAccount: async ({ request, locals }) => {
+		// This is the initial account creation, which is
+		// only allowed if there are no existing users.
+
+		const form = await superValidate(request, schemaInitial)
+		if (!form.valid) return formError(form)
+
+		let { username, password, cpassword } = form.data
+
+		if (cpassword != password)
+			return formError(
+				form,
+				["password", "cpassword"],
+				[" ", "The specified passwords do not match"],
+			)
+
+		try {
+			if ((await prisma.authUser.count()) > 0)
+				return formError(
+					form,
+					["username"],
+					["There's already an account registered"],
+				)
+
+			const user = await auth.createUser({
+					key: {
+						providerId: "username",
+						providerUserId: username.toLowerCase(),
+						password,
+					},
+					attributes: {
+						username,
+						email: "",
+						permissionLevel: 5,
+						usedRegkey: {
+							create: {
+								key: "",
+								usesLeft: 0,
+							},
+						},
+					} as any,
+				}),
+				session = await auth.createSession({
+					userId: user.id,
+					attributes: {},
+				})
+
+			locals.auth.setSession(session)
 		} catch (e) {
 			const error = e as Error
 			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID")

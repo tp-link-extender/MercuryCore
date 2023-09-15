@@ -1,4 +1,5 @@
 import { auth } from "$lib/server/lucia"
+import { prisma } from "$lib/server/prisma"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -13,8 +14,9 @@ const schema = z.object({
 	password: z.string().min(1).max(6969),
 })
 
-export const load = () => ({
+export const load = async () => ({
 	form: superValidate(schema),
+	users: (await prisma.authUser.count()) > 0,
 })
 
 export const actions = {
@@ -40,10 +42,7 @@ export const actions = {
 			return formError(
 				form,
 				["username", "password"],
-				[
-					" ",
-					"Incorrect username or password",
-				],
+				[" ", "Incorrect username or password"],
 			)
 		}
 
