@@ -49,29 +49,30 @@ export async function load({ locals }) {
 				},
 			},
 		}),
-		friends: prisma.authUser.findMany({
-			where: {
-				username: {
-					in: (
-						await roQuery(
-							"friends",
-							cql`
-								MATCH (:User { name: $user }) -[r:friends]- (u:User)
-								RETURN u.name as name`,
-							{
-								user: user.username,
-							},
-							false,
-							true,
-						)
-					).map((i: any) => i.name),
-				},
-			},
-			select: {
-				username: true,
-				number: true,
-			},
-		}),
+		friends: [],
+		//  prisma.authUser.findMany({
+		// 	where: {
+		// 		username: {
+		// 			in: (
+		// 				await roQuery(
+		// 					"friends",
+		// 					cql`
+		// 						MATCH (:User { name: $user }) -[r:friends]- (u:User)
+		// 						RETURN u.name as name`,
+		// 					{
+		// 						user: user.username,
+		// 					},
+		// 					false,
+		// 					true,
+		// 				)
+		// 			).map((i: any) => i.name),
+		// 		},
+		// 	},
+		// 	select: {
+		// 		username: true,
+		// 		number: true,
+		// 	},
+		// }),
 		feed: prisma.post.findMany({
 			select: {
 				id: true,

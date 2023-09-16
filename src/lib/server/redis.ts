@@ -10,8 +10,7 @@ import {
 	type RedisClientType,
 } from "redis"
 
-let client: RedisClientType,
-	graphs: { [k: string]: graphType }
+let client: RedisClientType, graphs: { [k: string]: graphType }
 
 if (!building) {
 	client = createClient({ url: "redis://localhost:6479" })
@@ -87,10 +86,10 @@ export async function roQuery(
 ) {
 	// this is a stupid bug. previously just returning the result of a roQuery as "data" or whatever, then using .data, would break randomly
 	const c = () =>
-		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(
-			Math.random() * 52,
-		)
-	const rand = Array(5).fill(0).map(c).join("")
+			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(
+				Math.random() * 52,
+			),
+		rand = Array(5).fill(0).map(c).join("")
 	let result: any
 
 	try {

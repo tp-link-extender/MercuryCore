@@ -1,30 +1,28 @@
 // The friends, followers, and following pages for a user.
 
-import cql from "$lib/cyphertag"
+import surql from "$lib/surrealtag"
 import { prisma } from "$lib/server/prisma"
-import { roQuery } from "$lib/server/redis"
+import { squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 const types = ["friends", "followers", "following"],
-	usersQueries = {
-		friends: `
-			MATCH (:User { name: $user }) -[:friends]- (u:User)
-			RETURN u.name AS name`,
-		followers: `
-			MATCH (:User { name: $user }) <-[:follows]- (u:User)
-			RETURN u.name AS name`,
-		following: `
-			MATCH (:User { name: $user }) -[:follows]-> (u:User)
-			RETURN u.name AS name`,
+	usersQueries: { [k: string]: (id: string) => string } = {
+		friends: id =>
+			surql`SELECT number, username FROM
+				user:${id}->friends->user OR user:${id}<-friends<-user`,
+		followers: id =>
+			surql`SELECT number, username FROM user:${id}<-follows<-user`,
+		following: id =>
+			surql`SELECT number, username FROM user:${id}->follows->user`,
+	},
+	numberQueries: { [k: string]: (id: string) => string } = {
+		friends: id =>
+			surql`count(user:${id}->friends->user) + count(user:${id}<-friends<-user)`,
+		followers: id => surql`count(user:${id}<-follows<-user)`,
+		following: id => surql`count(user:${id}->follows->user)`,
 	}
 
-const numberQueries = {
-	friends: cql`RETURN SIZE((:User { name: $user }) -[:friends]- (:User))`,
-	followers: cql`RETURN SIZE((:User { name: $user }) <-[:follows]- (:User))`,
-	following: cql`RETURN SIZE((:User { name: $user }) -[:follows]-> (:User))`,
-}
-
-export const load = async ({ params }) => {
+export async function load({ params }) {
 	if (!/^\d+$/.test(params.number))
 		throw error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
@@ -38,36 +36,18 @@ export const load = async ({ params }) => {
 			},
 		})
 
-	if (user) {
-		const query = {
-			user: user.username,
-		}
+	if (!user) throw error(404, "Not found")
 
-		return {
-			type,
-			username: user.username,
-			users: prisma.authUser.findMany({
-				where: {
-					username: {
-						in: (
-							await roQuery(
-								"friends",
-								usersQueries[type],
-								query,
-								false,
-								true,
-							)
-						).map((i: any) => i.name),
-					},
-				},
-				select: {
-					username: true,
-					number: true,
-				},
-			}),
-			number: roQuery("friends", numberQueries[type], query, true),
-		}
+	return {
+		type,
+		username: user.username,
+		users: squery(usersQueries[type](user.id)) as Promise<
+			{
+				number: number
+				username: string
+			}[]
+		>,
+		// number: roQuery("friends", numberQueries[type], query, true),
+		number: squery(numberQueries[type](user.id)) as Promise<number>,
 	}
-
-	throw error(404, `Not found`)
 }

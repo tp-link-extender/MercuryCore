@@ -24,3 +24,17 @@ services:
 
         environment:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Loaded from .env file
+
+    surreal:
+        image: surrealdb/surrealdb:nightly
+        ports:
+            - 8000:8000
+        restart: unless-stopped
+        volumes:
+            - ./data/surreal:/database.db
+        command:
+            - start
+            - --log=trace
+            - --user=root
+            - --pass=root
+            - file:database.db

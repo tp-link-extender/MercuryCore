@@ -1,7 +1,7 @@
-import cql from "$lib/cyphertag"
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
-import { Query, roQuery } from "$lib/server/redis"
+import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 import { NotificationType } from "@prisma/client"
@@ -76,22 +76,23 @@ export async function load({ locals, params }) {
 			places: places as Promise<
 				Awaited<typeof places> & { gameSessions: any[] }[]
 			>,
-			groups: findGroups({
-				where: {
-					OR: await roQuery(
-						"groups",
-						cql`
-							MATCH (:User { name: $user }) -[:in]-> (u:Group)
-							RETURN u.name AS name`,
-						query2,
-						false,
-						true,
-					),
-				},
-				select: {
-					name: true,
-				},
-			}),
+			groups: [],
+			// findGroups({
+			// 	where: {
+			// 		OR: await roQuery(
+			// 			"groups",
+			// 			cql`
+			// 				MATCH (:User { name: $user }) -[:in]-> (u:Group)
+			// 				RETURN u.name AS name`,
+			// 			query2,
+			// 			false,
+			// 			true,
+			// 		),
+			// 	},
+			// 	select: {
+			// 		name: true,
+			// 	},
+			// }),
 			groupsOwned: findGroups({
 				where: {
 					ownerUsername: userExists.username,
@@ -100,48 +101,31 @@ export async function load({ locals, params }) {
 					name: true,
 				},
 			}),
-			friendCount: roQuery(
-				"friends",
-				cql`RETURN SIZE((:User) -[:friends]- (:User { name: $user }))`,
-				query2,
-				true,
+			friendCount: squery(
+				surql`count(user:${userExists.id}->friends->user)
+					+ count(user:${userExists.id}<-friends<-user)`,
 			),
-			followerCount: roQuery(
-				"friends",
-				cql`RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))`,
-				query2,
-				true,
+			followerCount: squery(
+				surql`count(user:${userExists.id}<-follows<-user)`,
 			),
-			followingCount: roQuery(
-				"friends",
-				cql`RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))`,
-				query2,
-				true,
+			followingCount: squery(
+				surql`count(user:${userExists.id}->follows->user)`,
 			),
-			friends: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r`,
-				query,
+			friends: squery(
+				surql`user:${userExists.id} ∈ user:${user.id}->friends->user
+					OR user:${user.id} ∈ user:${userExists.id}->friends->user`,
 			),
-			following: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r`,
-				query,
+			following: squery(
+				surql`user:${userExists.id} ∈ user:${user.id}->follows->user`,
 			),
-			follower: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r`,
-				query,
+			follower: squery(
+				surql`user:${userExists.id} ∈ user:${user.id}<-follows<-user`,
 			),
-			incomingRequest: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r`,
-				query,
+			incomingRequest: squery(
+				surql`user:${user.id} ∈ user:${userExists.id}->request->user`,
 			),
-			outgoingRequest: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r`,
-				query,
+			outgoingRequest: squery(
+				surql`user:${userExists.id} ∈ user:${user.id}->request->user`,
 			),
 		}
 	}
@@ -176,24 +160,17 @@ export const actions = {
 			})
 		if (!user2Exists) return fail(400, { msg: "User not found" })
 
-		const query = {
-			user1: user.username,
-			user2: userExists.username,
-		}
-
-		async function accept() {
-			await Promise.all([
-				Query(
-					"friends",
-					cql`
-						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-						DELETE r
-						MERGE (u1)
-						MERGE (u2)
-						MERGE (u1) <-[:friends]- (u2)`,
-					query,
-					// The direction of the [:friends] relationship matches the direction of the previous [:request] relationship
+		const accept = () =>
+			Promise.all([
+				squery(
+					// The direction of the ->friends relationship matches
+					// the direction of the previous ->request relationship.
+					surql`
+						DELETE user:${userExists.id}->request WHERE out=user:${user.id};
+						RELATE user:${user.id}->friends->user:${userExists.id}
+							SET time = time::now()`,
 				),
+
 				prisma.notification.create({
 					data: {
 						type: NotificationType.NewFriend,
@@ -204,19 +181,17 @@ export const actions = {
 					},
 				}),
 			])
-		}
 
 		try {
 			switch (action) {
 				case "follow":
 					await Promise.all([
-						Query(
-							"friends",
-							cql`
-								MERGE (u1:User { name: $user1 })
-								MERGE (u2:User { name: $user2 })
-								MERGE (u1) -[:follows]-> (u2)`,
-							query,
+						squery(
+							surql`
+								IF user:${userExists.id} ∉ user:${user.id}->follows->user THEN
+									RELATE user:${user.id}->follows->user:${userExists.id}
+										SET time = time::now()
+								END`,
 						),
 						prisma.notification.create({
 							data: {
@@ -231,12 +206,8 @@ export const actions = {
 					break
 				case "unfollow":
 					await Promise.all([
-						Query(
-							"friends",
-							cql`
-								MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
-								DELETE r`,
-							query,
+						squery(
+							surql`DELETE user:${user.id}->follows WHERE out=user:${userExists.id}`,
 						),
 						prisma.notification.deleteMany({
 							where: {
@@ -250,12 +221,8 @@ export const actions = {
 					break
 				case "unfriend":
 					await Promise.all([
-						Query(
-							"friends",
-							cql`
-								MATCH (u1:User { name: $user1 }) -[r:friends]- (u2:User { name: $user2 })
-								DELETE r`,
-							query,
+						squery(
+							surql`DELETE user:${user.id}->friends WHERE out=user:${userExists.id}`,
 						),
 						prisma.notification.deleteMany({
 							where: {
@@ -269,32 +236,25 @@ export const actions = {
 					break
 				case "request":
 					if (
-						!(await roQuery(
-							"friends",
-							cql`MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r`,
-							query,
-						))
+						!(
+							// Make sure users are not already friends
+							(await squery(
+								surql`user:${user.id} ∈ user:${userExists.id}->friends->user
+								OR user:${userExists.id} ∈ user:${user.id}->friends->user`,
+							))
+						)
 					)
 						if (
-							await roQuery(
-								"friends",
-								cql`MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r`,
-								query,
+							// If there is already an incoming request, accept it instead
+							await squery(
+								surql`user:${user.id} ∈ user:${userExists.id}->request->user`,
 							)
 						)
-							// Make sure users are not already friends
-							// If there is already an incoming request, accept it instead
 							await accept()
 						else
 							await Promise.all([
-								Query(
-									"friends",
-									cql`
-												MERGE (u1:User { name: $user1 })
-												MERGE (u2:User { name: $user2 })
-												MERGE (u1) -[:request]-> (u2)`,
-									query,
-								),
+								squery(surql`RELATE user:${user.id}->request->user:${userExists.id}
+									SET time = time::now()`),
 								prisma.notification.create({
 									data: {
 										type: NotificationType.FriendRequest,
@@ -309,12 +269,8 @@ export const actions = {
 					break
 				case "cancel":
 					await Promise.all([
-						Query(
-							"friends",
-							cql`
-								MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
-								DELETE r`,
-							query,
+						squery(
+							surql`DELETE user:${user.id}->request WHERE out=user:${userExists.id}`,
 						),
 						prisma.notification.deleteMany({
 							where: {
@@ -327,20 +283,14 @@ export const actions = {
 					])
 					break
 				case "decline":
-					await Query(
-						"friends",
-						cql`
-							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-							DELETE r`,
-						query,
+					await squery(
+						surql`DELETE user:${userExists.id}->request WHERE out=user:${user.id}`,
 					)
 					break
 				case "accept":
 					if (
-						await roQuery(
-							"friends",
-							cql`MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r`,
-							query,
+						await squery(
+							surql`user:${user.id} ∈ user:${userExists.id}->request->user`,
 						)
 					)
 						// Make sure an incoming request exists before accepting

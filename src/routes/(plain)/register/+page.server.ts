@@ -1,5 +1,6 @@
 import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
+import surreal from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -127,6 +128,18 @@ export const actions = {
 
 			locals.auth.setSession(session)
 
+			const getUser = await prisma.authUser.findUnique({
+				where: {
+					id: user.id,
+				},
+			})
+
+			await surreal.create(`user:${getUser?.id}`, {
+				username,
+				number: getUser?.number,
+				email,
+			})
+
 			await prisma.regkey.update({
 				where: {
 					key: regkey,
@@ -200,6 +213,18 @@ export const actions = {
 				})
 
 			locals.auth.setSession(session)
+
+			const getUser = await prisma.authUser.findUnique({
+				where: {
+					id: user.id,
+				},
+			})
+
+			await surreal.create(`user:${getUser?.id}`, {
+				username,
+				number: getUser?.number,
+				email: "",
+			})
 		} catch (e) {
 			const error = e as Error
 			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID")
