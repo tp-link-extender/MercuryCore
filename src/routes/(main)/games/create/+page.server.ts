@@ -1,5 +1,7 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -72,16 +74,40 @@ export const actions = {
 					},
 				})
 
-				await transaction(
-					{ id: user.id },
-					{ number: 1 },
-					10,
-					{
-						note: `Created place ${name}`,
-						link: `/place/${place.id}`,
-					},
-					tx,
-				)
+				await Promise.all([
+					transaction(
+						{ id: user.id },
+						{ number: 1 },
+						10,
+						{
+							note: `Created place ${name}`,
+							link: `/place/${place.id}`,
+						},
+						tx,
+					),
+					squery(
+						surql`
+							LET $place = CREATE place CONTENT {
+								id: (UPDATE ONLY stuff:increment SET place += 1).place,
+								name: $name,
+								serverIP: $serverIP,
+								serverPort: $serverPort,
+								privateServer: $privateServer,
+								maxPlayers: $maxPlayers,
+								created: time::now(),
+								updated: time::now(),
+								deleted: false,
+							};
+							RELATE user:${user.id}->owns->$place;`,
+						{
+							name,
+							serverIP,
+							serverPort,
+							privateServer,
+							maxPlayers,
+						},
+					),
+				])
 			})
 		} catch (e: any) {
 			return formError(form, ["other"], [e.message])

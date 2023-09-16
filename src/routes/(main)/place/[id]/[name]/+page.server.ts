@@ -1,7 +1,7 @@
-import cql from "$lib/cyphertag"
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { Query, roQuery } from "$lib/server/redis"
+import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
@@ -10,6 +10,7 @@ export async function load({ url, locals, params }) {
 		throw error(400, `Invalid place id: ${params.id}`)
 
 	const id = parseInt(params.id),
+		sid = id.toString(),
 		privateServerCode = url.searchParams.get("privateServer"),
 		getPlace = await prisma.place.findUnique({
 			where: { id },
@@ -68,35 +69,12 @@ export async function load({ url, locals, params }) {
 	)
 		throw error(404, "Not Found")
 
-	const query = {
-		user: user.username,
-		id,
-	}
-
 	return {
 		...getPlace,
-		likeCount: roQuery(
-			"places",
-			cql`RETURN SIZE((:User) -[:likes]-> (:Place { name: $id }))`,
-			query,
-			true,
-		),
-		dislikeCount: roQuery(
-			"places",
-			cql`RETURN SIZE((:User) -[:dislikes]-> (:Place { name: $id }))`,
-			query,
-			true,
-		),
-		likes: roQuery(
-			"places",
-			cql`MATCH (:User { name: $user }) -[r:likes]-> (:Place { name: $id }) RETURN r`,
-			query,
-		),
-		dislikes: roQuery(
-			"places",
-			cql`MATCH (:User { name: $user }) -[r:dislikes]-> (:Place { name: $id }) RETURN r`,
-			query,
-		),
+		likeCount: squery(surql`count(place:${sid}<-likes<-user)`),
+		dislikeCount: squery(surql`count(place:${sid}<-dislikes<-user)`),
+		likes: squery(surql`user:${user.id} ∈ place:${sid}<-likes<-user`),
+		dislikes: squery(surql`user:${user.id} ∈ place:${sid}<-dislikes<-user`),
 	}
 }
 
@@ -106,6 +84,7 @@ export const actions = {
 			throw error(400, `Invalid place id: ${params.id}`)
 
 		const id = parseInt(params.id),
+			sid = id.toString(),
 			{ user } = await authorise(locals),
 			data = await formData(request),
 			{ action } = data,
@@ -120,65 +99,32 @@ export const actions = {
 			!place ||
 			(place.privateServer && privateTicket != place.privateTicket)
 		)
-			return fail(404, { msg: "Not found" })
-
-		const query = {
-			user: user.username,
-			id,
-		}
+			throw error(404, "Not found")
 
 		try {
 			switch (action) {
 				case "like":
-					await Query(
-						"places",
-						cql`
-							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $id })
-							DELETE r`,
-						query,
-					)
-					await Query(
-						"places",
-						cql`
-							MERGE (u:User { name: $user })
-							MERGE (p:Place { name: $id })
-							MERGE (u) -[:likes]-> (p)`,
-						query,
-					)
+					await squery(surql`
+						DELETE user:${user.id}->dislikes WHERE out=place:${sid};
+						RELATE user:${user.id}->likes->place:${sid}
+							SET time = time::now()
+					`)
 					break
 				case "unlike":
-					await Query(
-						"places",
-						cql`
-							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $id })
-							DELETE r`,
-						query,
+					await squery(
+						surql`DELETE user:${user.id}->likes WHERE out=place:${sid}`,
 					)
 					break
 				case "dislike":
-					await Query(
-						"places",
-						cql`
-							MATCH (u:User { name: $user }) -[r:likes]-> (p:Place { name: $id })
-							DELETE r`,
-						query,
-					)
-					await Query(
-						"places",
-						cql`
-							MERGE (u:User { name: $user })
-							MERGE (p:Place { name: $id })
-							MERGE (u) -[:dislikes]-> (p)`,
-						query,
-					)
+					await squery(surql`
+						DELETE user:${user.id}->likes WHERE out=place:${sid};
+						RELATE user:${user.id}->dislikes->place:${sid}
+							SET time = time::now()
+					`)
 					break
 				case "undislike":
-					await Query(
-						"places",
-						cql`
-							MATCH (u:User { name: $user }) -[r:dislikes]-> (p:Place { name: $id })
-							DELETE r`,
-						query,
+					await squery(
+						surql`DELETE user:${user.id}->dislikes WHERE out=place:${sid}`,
 					)
 					break
 			}
