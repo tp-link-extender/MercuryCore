@@ -30,7 +30,7 @@ export const load = async ({ locals }) => {
 		form: superValidate(
 			z.object({
 				theme: z.enum(["standard", "darken", "storm", "solar"]),
-				bio: z.string().max(1000),
+				bio: z.string().max(1000).optional(),
 				cpassword: z.string().min(1),
 				npassword: z.string().min(1),
 				cnpassword: z.string().min(1),

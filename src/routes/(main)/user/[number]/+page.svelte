@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Interactions from "./Interactions.svelte"
+
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],
@@ -17,124 +19,93 @@
 <Head title={data.username} />
 
 <div id="all" class="container">
-	<div class="card bg-darker pt-6">
-		<div class="d-flex px-6">
-			<User user={data} size="7rem" bg="accent" image />
-			<div class="w-100 ps-8">
-				<div class="d-flex mb-2">
-					<h1 class="fs-2 light-text d-inline">{data.username}</h1>
-					<b
-						class="ms-auto"
-						style="color: {permissions[data.permissionLevel][0]}">
-						<i
-							class="fa {permissions[
+	<div id="infocard" class="card bg-darker">
+		<div class="d-flex">
+			<span class="display-lg pe-6">
+				<User user={data} size="7rem" bg="accent" image />
+			</span>
+			<span class="display-sm pe-4">
+				<User user={data} size="6rem" bg="accent" image />
+			</span>
+			<div class="w-100">
+				<div class="d-flex mb-2 justify-content-between">
+					<div class="d-flex align-items-center">
+						<h1 class="fs-2 light-text d-inline pe-4 mb-0">
+							{data.username}
+						</h1>
+						{#if data.follower}
+							<span class="grey-text bg-a px-2 rounded">
+								Follows you
+							</span>
+						{/if}
+					</div>
+					<div class="d-flex align-self-start">
+						<b
+							style="color: {permissions[
 								data.permissionLevel
-							][1]} me-1" />
-						{permissions[data.permissionLevel][2]}
-					</b>
+							][0]}">
+							<i
+								class="fa {permissions[
+									data.permissionLevel
+								][1]} pe-1" />
+							{permissions[data.permissionLevel][2]}
+						</b>
+					</div>
 				</div>
-				<div class="d-flex">
-					<a
-						href="/user/{data.number}/friends"
-						class="light-text text-center text-decoration-none">
-						Friends
-						<h2 class="fs-3 light-text">
-							{data.friendCount}
-						</h2>
-					</a>
-					<a
-						href="/user/{data.number}/followers"
-						class="light-text text-center text-decoration-none ms-6">
-						Followers
-						<h2 class="fs-3 light-text">
-							{data.followerCount}
-						</h2>
-					</a>
-					<a
-						href="/user/{data.number}/following"
-						class="light-text text-center text-decoration-none ms-6">
-						Following
-						<h2 class="fs-3 light-text">
-							{data.followingCount}
-						</h2>
-					</a>
+				<div id="interactions" class="d-flex justify-content-between">
+					<div class="d-flex gap-6">
+						<a
+							href="/user/{data.number}/friends"
+							class="light-text text-center text-decoration-none">
+							Friends
+							<h2 class="fs-3 light-text">
+								{data.friendCount}
+							</h2>
+						</a>
+						<a
+							href="/user/{data.number}/followers"
+							class="light-text text-center text-decoration-none">
+							Followers
+							<h2 class="fs-3 light-text">
+								{data.followerCount}
+							</h2>
+						</a>
+						<a
+							href="/user/{data.number}/following"
+							class="light-text text-center text-decoration-none">
+							Following
+							<h2 class="fs-3 light-text">
+								{data.followingCount}
+							</h2>
+						</a>
+					</div>
 
-					{#if data.username != user?.username}
-						<form
-							in:fade
-							class="align-self-center ms-auto me-2"
-							method="POST"
-							use:enhance>
-							<button
-								name="action"
-								value={data.friends
-									? "unfriend"
-									: data.outgoingRequest
-									? "cancel"
-									: data.incomingRequest
-									? "accept"
-									: "request"}
-								class="btn {data.friends || data.outgoingRequest
-									? 'btn-danger'
-									: data.incomingRequest
-									? 'btn-info'
-									: 'btn-success'}">
-								{#if data.friends}
-									Unfriend
-								{:else if data.incomingRequest}
-									Accept request
-								{:else if data.outgoingRequest}
-									Cancel request
-								{:else}
-									Send friend request
-								{/if}
-							</button>
-							{#if data.incomingRequest}
-								<button
-									name="action"
-									value="decline"
-									class="btn btn-danger ms-2">
-									Decline request
-								</button>
-							{/if}
-						</form>
-						<form
-							in:fade
-							class="align-self-center"
-							method="POST"
-							use:enhance>
-							<button
-								name="action"
-								value={data.following ? "unfollow" : "follow"}
-								class="btn {data.following
-									? 'btn-danger'
-									: 'btn-primary'}">
-								{#if data.following}
-									Unfollow
-								{:else}
-									Follow
-								{/if}
-							</button>
-						</form>
-					{/if}
+					<span class="display-lg">
+						<Interactions {data} />
+					</span>
 				</div>
-				<div class="float-end mb-4">
+				<div class="float-end display-lg">
 					<ReportButton
 						user={data.username}
 						url="/user/{data.number}" />
 				</div>
 			</div>
 		</div>
+		<span
+			class="display-sm d-flex justify-content-between align-items-end pt-2">
+			<Interactions {data} />
+			<ReportButton user={data.username} url="/user/{data.number}" />
+		</span>
 	</div>
 	<div class="row">
 		<div class="col-6">
 			{#if data.bio[0]}
-				<div class="mt-6">
+				<div class="pt-6">
 					<h2 class="fs-4 light-text">Bio</h2>
-					<p class="light-text ms-2">{data.bio[0].text}</p>
+					<p class="light-text ps-2">{data.bio[0].text}</p>
 				</div>
 			{/if}
-			<div class="mt-6">
+			<div class="pt-6">
 				<h2 class="fs-4 light-text">Avatar</h2>
 				<div class="card bg-darker card-body">
 					<img
@@ -147,7 +118,7 @@
 		</div>
 		<div class="col-6">
 			{#if data.places.length > 0}
-				<div class="mt-6">
+				<div class="pt-6">
 					<h2 class="fs-4 light-text">Creations</h2>
 					{#each data.places as place, num}
 						<div
@@ -155,7 +126,7 @@
 								num,
 								total: data.places.length,
 							}}
-							class="d-collapse d-collapse light-text bg-darker mb-2 rounded-3">
+							class="d-collapse d-collapse light-text bg-darker pb-2 rounded-3">
 							<input type="radio" name="accordion" />
 							<div class="d-collapse-title p-2">
 								{place.name}
@@ -204,9 +175,9 @@
 				</div>
 			{/if}
 		</div>
-		<div class="col-6 mt-6">
-			{#if data.groupsOwned.length > 0}
-				<div class="mt-6">
+		{#if data.groupsOwned.length > 0}
+			<div class="col-6 pt-6">
+				<div class="pt-6">
 					<h2 class="fs-4 light-text">Groups owned</h2>
 					{#each data.groupsOwned as group, num}
 						<a
@@ -225,13 +196,13 @@
 						</a>
 					{/each}
 				</div>
-			{/if}
-		</div>
-		<div class="col-6 mt-6">
-			{#if data.groups.length > 0}
-				<div class="mt-6">
+			</div>
+		{/if}
+		{#if data.groups.length > 0}
+			<div class="col-6 pt-6">
+				<div class="pt-6">
 					<h2 class="fs-4 light-text">Groups in</h2>
-					{#each data.groups as group, num}
+					<!-- {#each data.groups as group, num}
 						<a
 							in:fade={{ num, total: data.groups.length }}
 							class="card bg-darker light-text text-decoration-none fs-6 my-2"
@@ -246,12 +217,12 @@
 								</span>
 							</div>
 						</a>
-					{/each}
+					{/each} -->
 				</div>
-			{/if}
-		</div>
+			</div>
+		{/if}
 		{#if data.posts.length > 0}
-			<h2 class="fs-4 mt-12 light-text">Latest feed posts</h2>
+			<h2 class="fs-4 pt-6 light-text">Latest feed posts</h2>
 			<div id="feed" class="light-text px-4">
 				<div class="row">
 					{#each data.posts.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
@@ -287,6 +258,20 @@
 <style lang="stylus">
 	#all
 		max-width 60rem
+
+	+lg()
+		#infocard
+			padding 1.5rem
+		.display-sm
+			display none !important
+	+-lg()
+		#infocard
+			padding 1rem
+		.display-lg
+			display none !important
+		#interactions
+			flex-direction column
+			align-items left
 
 	.placecard
 		transition all 0.2s
