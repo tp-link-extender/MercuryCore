@@ -416,33 +416,33 @@
 			</div>
 		{/if}
 		<h4 class="light-text">Server List</h4>
-		<!-- {#if data.serverPing > Date.now() / 1000 - 35} -->
-		<div class="card mb-2">
-			<div class="card-body">
-				<div class="row">
-					<div class="col col-2">
-						<p class="light-text mb-2">
-							Currently Playing: {data.gameSessions
-								.length}/{data.maxPlayers}
-						</p>
-						<button
-							on:click={placeLauncher}
-							id="join"
-							class="btn btn-sm btn-success">
-							Join Server
-						</button>
-					</div>
-					<div class="col d-flex gap-3">
-						{#each data.gameSessions as { user }}
-							<User user={user} size="4.5rem" bg="darker" />
-						{/each}
+		{#if data.serverPing > Date.now() / 1000 - 35}
+			<div class="card mb-2">
+				<div class="card-body">
+					<div class="row">
+						<div class="col col-2">
+							<p class="light-text mb-2">
+								Currently Playing: {data.gameSessions
+									.length}/{data.maxPlayers}
+							</p>
+							<button
+								on:click={placeLauncher}
+								id="join"
+								class="btn btn-sm btn-success">
+								Join Server
+							</button>
+						</div>
+						<div class="col d-flex gap-3">
+							{#each data.gameSessions as { user }}
+								<User {user} size="4.5rem" bg="darker" />
+							{/each}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<!-- {:else}
+		{:else}
 			This server is offline.
-		{/if} -->
+		{/if}
 	</Tab>
 	<hr />
 	<div class="row">

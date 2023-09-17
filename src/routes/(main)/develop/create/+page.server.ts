@@ -1,5 +1,7 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 // import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
@@ -9,26 +11,26 @@ import {
 	thumbnail,
 } from "$lib/server/imageAsset"
 import { graphicAsset } from "$lib/server/xmlAsset"
+import { redirect } from "@sveltejs/kit"
 import fs from "fs"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({
-	type: z.enum(["2", "11", "12", "13"]),
-	name: z.string().min(3).max(50),
-	description: z.string().max(1000).optional(),
-	price: z.number().int().min(0).max(999),
-	asset: z.any(),
-})
+		type: z.enum(["2", "11", "12", "13"]),
+		name: z.string().min(3).max(50),
+		description: z.string().max(1000).optional(),
+		price: z.number().int().min(0).max(999),
+		asset: z.any(),
+	}),
+	assets: { [k: number]: any } = {
+		2: "T-Shirt",
+		11: "Shirt",
+		12: "Pants",
+		13: "Decal",
+	}
 
-const assets: any = {
-	2: "T-Shirt",
-	11: "Shirt",
-	12: "Pants",
-	13: "Decal",
-}
-
-export const load = async ({ request, locals }) => {
+export async function load({ request, locals }) {
 	await authorise(locals, 5)
 
 	return {
@@ -156,8 +158,43 @@ export const actions = {
 				},
 			})
 
+		await squery(
+			surql`
+				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
+				LET $imageAsset = CREATE asset CONTENT {
+					id: $id,
+					name: $name,
+					type: 1,
+					price: 0,
+					created: time::now(),
+					updated: time::now(),
+				};
+				RELATE user:${user.id}->owns->$imageAsset;
+				RELATE user:${user.id}->created->$imageAsset;
+
+				LET $id2 = (UPDATE ONLY stuff:increment SET asset += 1).asset;
+				LET $asset = CREATE asset CONTENT {
+					id: $id2,
+					name: $name,
+					type: $assetType,
+					price: $price,
+					created: time::now(),
+					updated: time::now(),
+				};
+				RELATE user:${user.id}->owns->$asset;
+				RELATE user:${user.id}->created->$asset;
+				RELATE $asset->imageAsset->$imageAsset`,
+			{
+				name,
+				assetType,
+				price,
+			},
+		)
+
 		saveImages[0](imageAssetId)
 		saveImages[1](id)
 		graphicAsset(assets[assetType], imageAssetId, id)
+
+		throw redirect(302, `/avatarshop/${id}/${name}`)
 	},
 }

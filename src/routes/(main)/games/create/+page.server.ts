@@ -87,9 +87,17 @@ export const actions = {
 					),
 					squery(
 						surql`
+							LET $textContent = CREATE textContent CONTENT {
+								text: $description,
+								updated: time::now(),
+							};
+							RELATE user:${user.id}->wrote->$textContent;
+
+							LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
 							LET $place = CREATE place CONTENT {
-								id: (UPDATE ONLY stuff:increment SET place += 1).place,
+								id: $id,
 								name: $name,
+								description: [$textContent],
 								serverIP: $serverIP,
 								serverPort: $serverPort,
 								privateServer: $privateServer,
@@ -98,9 +106,10 @@ export const actions = {
 								updated: time::now(),
 								deleted: false,
 							};
-							RELATE user:${user.id}->owns->$place;`,
+							RELATE user:${user.id}->owns->$place`,
 						{
 							name,
+							description,
 							serverIP,
 							serverPort,
 							privateServer,

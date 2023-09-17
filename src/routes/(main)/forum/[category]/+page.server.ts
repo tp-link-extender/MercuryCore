@@ -1,10 +1,9 @@
-import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { Query } from "$lib/server/redis"
 import formData from "$lib/server/formData"
 import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
+import { likeSwitch } from "$lib/server/like.js"
 
 export async function load({ locals, params }) {
 	const category = (
@@ -91,77 +90,11 @@ export const actions = {
 		)
 			throw error(404)
 
-		const query = {
-			user: user.username,
-			id: id || replyId || "",
-		}
-
-		try {
-			switch (action) {
-				case "like":
-					await Query(
-						"forum",
-						cql`
-							MATCH (:User { name: $user }) -[r:dislikes]-> (:${
-								replyId ? "Reply" : "Post"
-							} { name: $id })
-							DELETE r`,
-						query,
-					)
-					await Query(
-						"forum",
-						cql`
-							MERGE (u:User { name: $user })
-							MERGE (p:${replyId ? "Reply" : "Post"} { name: $id })
-							MERGE (u) -[:likes]-> (p)`,
-						query,
-					)
-					break
-				case "unlike":
-					await Query(
-						"forum",
-						cql`
-							MATCH (:User { name: $user }) -[r:likes]-> (:${
-								replyId ? "Reply" : "Post"
-							} { name: $id })
-							DELETE r`,
-						query,
-					)
-					break
-				case "dislike":
-					await Query(
-						"forum",
-						cql`
-							MATCH (:User { name: $user }) -[r:likes]-> (:${
-								replyId ? "Reply" : "Post"
-							} { name: $id })
-							DELETE r`,
-						query,
-					)
-					await Query(
-						"forum",
-						cql`
-							MERGE (u:User { name: $user })
-							MERGE (p:${replyId ? "Reply" : "Post"} { name: $id })
-							MERGE (u) -[:dislikes]-> (p)`,
-						query,
-					)
-					break
-				case "undislike":
-					await Query(
-						"forum",
-						cql`
-							MATCH (:User { name: $user }) -[r:dislikes]-> (:${
-								replyId ? "Reply" : "Post"
-							} { name: $id })
-							DELETE r`,
-						query,
-					)
-					break
-			}
-		} catch (e) {
-			console.error(e)
-			throw error(500, "Redis error 2")
-		}
+		await likeSwitch(
+			action,
+			user.username,
+			replyId ? "reply" : "post",
+			id || replyId || "",
+		)
 	},
 }

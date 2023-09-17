@@ -21,9 +21,9 @@
 						{category.description}
 					</div>
 					<h3 class="col fs-5">
-						{category._count.posts} post{category._count.posts > 1
-							? "s"
-							: ""}
+						{category._count.posts} post{category._count.posts == 1
+							? ""
+							: "s"}
 					</h3>
 				</a>
 				<div class="col-lg-3 col-md-5 row">

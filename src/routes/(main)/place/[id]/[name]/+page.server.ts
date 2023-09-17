@@ -3,6 +3,7 @@ import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
+import { likeSwitch } from "$lib/server/like"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ url, locals, params }) {
@@ -71,10 +72,18 @@ export async function load({ url, locals, params }) {
 
 	return {
 		...getPlace,
-		likeCount: squery(surql`count(place:${sid}<-likes<-user)`),
-		dislikeCount: squery(surql`count(place:${sid}<-dislikes<-user)`),
-		likes: squery(surql`user:${user.id} ∈ place:${sid}<-likes<-user`),
-		dislikes: squery(surql`user:${user.id} ∈ place:${sid}<-dislikes<-user`),
+		likeCount: squery(
+			surql`count((SELECT * FROM place:${sid}<-likes).in)`,
+		) as Promise<number>,
+		dislikeCount: squery(
+			surql`count((SELECT * FROM place:${sid}<-dislikes).in)`,
+		) as Promise<number>,
+		likes: !!(await squery(
+			surql`user:${user.id} ∈ (SELECT * FROM place:${sid}<-likes).in`,
+		)),
+		dislikes: !!(await squery(
+			surql`user:${user.id} ∈ (SELECT * FROM place:${sid}<-dislikes).in`,
+		)),
 	}
 }
 
@@ -84,7 +93,6 @@ export const actions = {
 			throw error(400, `Invalid place id: ${params.id}`)
 
 		const id = parseInt(params.id),
-			sid = id.toString(),
 			{ user } = await authorise(locals),
 			data = await formData(request),
 			{ action } = data,
@@ -101,37 +109,7 @@ export const actions = {
 		)
 			throw error(404, "Not found")
 
-		try {
-			switch (action) {
-				case "like":
-					await squery(surql`
-						DELETE user:${user.id}->dislikes WHERE out=place:${sid};
-						RELATE user:${user.id}->likes->place:${sid}
-							SET time = time::now()
-					`)
-					break
-				case "unlike":
-					await squery(
-						surql`DELETE user:${user.id}->likes WHERE out=place:${sid}`,
-					)
-					break
-				case "dislike":
-					await squery(surql`
-						DELETE user:${user.id}->likes WHERE out=place:${sid};
-						RELATE user:${user.id}->dislikes->place:${sid}
-							SET time = time::now()
-					`)
-					break
-				case "undislike":
-					await squery(
-						surql`DELETE user:${user.id}->dislikes WHERE out=place:${sid}`,
-					)
-					break
-			}
-		} catch (e) {
-			console.error(e)
-			throw error(500, "Redis error 2")
-		}
+		await likeSwitch(action, user.id, "place", id.toString())
 	},
 
 	join: async ({ request, locals }) => {
