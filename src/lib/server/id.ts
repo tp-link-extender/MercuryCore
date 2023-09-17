@@ -2,7 +2,8 @@ import { customAlphabet } from "nanoid"
 import { client } from "./redis"
 
 const nanoid = customAlphabet(
-	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~",
+	// Certain characters like ., ~, and - don't play nicely at all with SurrealDB Ids
+	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_",
 	5,
 )
 

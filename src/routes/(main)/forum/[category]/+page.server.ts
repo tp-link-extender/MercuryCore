@@ -1,7 +1,8 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
+import { multiSquery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
-import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
 import { likeSwitch } from "$lib/server/like.js"
 
@@ -14,59 +15,33 @@ export async function load({ locals, params }) {
 					mode: "insensitive",
 				},
 			},
-			select: {
-				name: true,
-
-				posts: {
-					select: {
-						id: true,
-						title: true,
-						posted: true,
-
-						author: {
-							select: {
-								username: true,
-								number: true,
-							},
-						},
-						content: {
-							orderBy: {
-								updated: "desc",
-							},
-							select: {
-								text: true,
-							},
-							take: 1,
-						},
-						// _count: true,
-					},
-				},
-			},
 		})
 	)[0]
 
 	if (!category) throw error(404, "Not found")
 
 	const { user } = await authorise(locals),
-		fakeObject = {
-			id: "", // id not needed
-			replies: category.posts,
-		}
+		posts = (
+			await multiSquery(
+				surql`
+					LET $posts = (SELECT * FROM (SELECT * FROM forumCategory:Category<-in).in);
 
-	await addLikes<typeof fakeObject>(
-		"forum",
-		"Post",
-		fakeObject,
-		user.username,
-	)
+					RETURN function($posts, ($posts<-posted[0]<-user[0])) {
+						const [posts, users] = arguments
+						for (const i in posts) {
+							posts[i].author = users[i]
+						}
+						return posts
+					}
+				`,
+			)
+		)?.[1]
 
-	return category as typeof category & {
-		posts: {
-			likeCount: number
-			dislikeCount: number
-			likes: boolean
-			dislikes: boolean
-		}[]
+	// console.log(posts)
+
+	return {
+		...category,
+		posts,
 	}
 }
 

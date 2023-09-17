@@ -7,6 +7,8 @@
 
 	let likesDisabled = false,
 		dislikesDisabled = false
+
+	post.id = post.id.split(":")[1]
 </script>
 
 <div in:fade|global={{ num, total }} class="post card bg-darker mb-4 flex-row">
@@ -93,7 +95,7 @@
 
 			<div class="mb-0">
 				<div class="gradient w-100 h-75" />
-				{post.content[0].text}
+				{post.content[0][0].text}
 			</div>
 		</a>
 	</div>

@@ -37,4 +37,5 @@ services:
             - --log=trace
             - --user=root
             - --pass=root
+            - --allow-scripting
             - file:database.db
