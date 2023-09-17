@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { multiSquery } from "$lib/server/surreal"
+import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeSwitch } from "$lib/server/like.js"
@@ -21,27 +21,42 @@ export async function load({ locals, params }) {
 	if (!category) throw error(404, "Not found")
 
 	const { user } = await authorise(locals),
-		posts = (
-			await multiSquery(
-				surql`
-					LET $posts = (SELECT * FROM (SELECT * FROM forumCategory:Category<-in).in);
+		posts = await squery(
+			surql`
+                SELECT
+                    *,
+                    content[0] as content,
+                    (SELECT number, username FROM <-posted<-user)[0] as author,
+                    count(SELECT * FROM <-likes<-user) as likeCount,
+                    count(SELECT * FROM <-dislikes<-user) as dislikeCount,
+                    (user:6e91egpq2xofosr ∈ (SELECT * FROM <-likes<-user).id) as likes,
+                    (user:6e91egpq2xofosr ∈ (SELECT * FROM <-dislikes<-user).id) as dislikes
 
-					RETURN function($posts, ($posts<-posted[0]<-user[0])) {
-						const [posts, users] = arguments
-						for (const i in posts) {
-							posts[i].author = users[i]
-						}
-						return posts
-					}
-				`,
-			)
-		)?.[1]
-
-	// console.log(posts)
+				FROM (SELECT * FROM forumCategory:${category.name}<-in).in
+			`,
+		)
 
 	return {
 		...category,
-		posts,
+		posts: posts as {
+			author: {
+				number: number
+				username: string
+			}
+			content: {
+				id: string
+				text?: string
+				updated: string
+			}[]
+			dislikeCount: number
+			dislikes: boolean
+			id: string
+			likeCount: number
+			likes: boolean
+			posted: string
+			title: string
+			visibility: string
+		}[],
 	}
 }
 
@@ -67,8 +82,8 @@ export const actions = {
 
 		await likeSwitch(
 			action,
-			user.username,
-			replyId ? "reply" : "post",
+			user.id,
+			replyId ? "forumReply" : "forumPost",
 			id || replyId || "",
 		)
 	},

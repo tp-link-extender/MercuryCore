@@ -7,8 +7,6 @@
 
 	let likesDisabled = false,
 		dislikesDisabled = false
-
-	post.id = post.id.split(":")[1]
 </script>
 
 <div in:fade|global={{ num, total }} class="post card bg-darker mb-4 flex-row">
@@ -40,7 +38,7 @@
 		}}
 		class="sidebar bg-a me-2 p-1"
 		method="POST"
-		action="?/like&id={post.id}">
+		action="?/like&id={post.id.split(':')[1]}">
 		<div class="mb-2 d-flex flex-column">
 			<div class="text-center">
 				<button
@@ -83,11 +81,11 @@
 		<div class="d-flex pt-2 ps-4">
 			<User user={post.author} full />
 			<em class="light-text ps-4 align-self-center">
-				{post.posted.toLocaleString()}
+				{new Date(post.posted).toLocaleString()}
 			</em>
 		</div>
 		<a
-			href="/forum/{categoryName.toLowerCase()}/{post.id}"
+			href="/forum/{categoryName.toLowerCase()}/{post.id.split(':')[1]}"
 			class="px-4 pt-2 text-decoration-none light-text w-100">
 			<h2 class="fs-4 mt-2">
 				{post.title}
@@ -95,7 +93,7 @@
 
 			<div class="mb-0">
 				<div class="gradient w-100 h-75" />
-				{post.content[0][0].text}
+				{post.content[0].text}
 			</div>
 		</a>
 	</div>

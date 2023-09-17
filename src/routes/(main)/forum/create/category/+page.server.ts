@@ -31,6 +31,9 @@ export const actions = {
 
 		const { name, description } = form.data
 
+		if (name.toLowerCase() == "create")
+			return formError(form, ["name"], ["Can't park there mate"])
+
 		await Promise.all([
 			prisma.forumCategory.create({
 				data: {
@@ -38,13 +41,10 @@ export const actions = {
 					description,
 				},
 			}),
-			surreal.create(
-				`forumCategory:${name}`,
-				{
-					name,
-					description,
-				}
-			),
+			surreal.create(`forumCategory:${name}`, {
+				name,
+				description,
+			}),
 		])
 
 		throw redirect(302, `/forum/${name}`)
