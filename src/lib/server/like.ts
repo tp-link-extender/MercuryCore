@@ -2,48 +2,55 @@ import surql from "$lib/surrealtag"
 import { squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
-export const like = (userId: string, thing: string, thingId: string) =>
-		squery(surql`
-			DELETE user:${userId}->dislikes WHERE out=${thing}:${thingId};
-			IF user:${userId} ∉ (SELECT * FROM ${thing}:${thingId}<-likes).in THEN
-				RELATE user:${userId}->likes->${thing}:${thingId}
-					SET time = time::now()
-			END`),
-	unlike = (userId: string, thing: string, thingId: string) =>
+export const like = (userId: string, thing: string) =>
 		squery(
-			surql`DELETE user:${userId}->likes WHERE out=${thing}:${thingId}`,
+			surql`
+			DELETE $user->dislikes WHERE $thing;
+			IF $user ∉ (SELECT * FROM $thing<-likes).in THEN
+				RELATE $user->likes->$thing
+					SET time = time::now()
+			END`,
+			{ thing, user: `user:${userId}` },
 		),
-	dislike = (userId: string, thing: string, thingId: string) =>
-		squery(surql`
-			DELETE user:${userId}->likes WHERE out=${thing}:${thingId};
-			IF user:${userId} ∉ (SELECT * FROM ${thing}:${thingId}<-dislikes).in THEN
-				RELATE user:${userId}->dislikes->${thing}:${thingId}
-					SET time = time::now()
-			END`),
-	undislike = (userId: string, thing: string, thingId: string) =>
+	unlike = (userId: string, thing: string) =>
+		squery(surql`DELETE $user->likes WHERE $thing`, {
+			thing,
+			user: `user:${userId}`,
+		}),
+	dislike = (userId: string, thing: string) =>
 		squery(
-			surql`DELETE user:${userId}->dislikes WHERE out=${thing}:${thingId}`,
-		)
+			surql`
+			DELETE $user->likes WHERE $thing;
+			IF $user ∉ (SELECT * FROM $thing<-dislikes).in THEN
+				RELATE $user->dislikes->$thing
+					SET time = time::now()
+			END`,
+			{ thing, user: `user:${userId}` },
+		),
+	undislike = (userId: string, thing: string) =>
+		squery(surql`DELETE $user->dislikes WHERE $thing`, {
+			thing,
+			user: `user:${userId}`,
+		})
 
 export async function likeSwitch(
 	action: string,
 	userId: string,
 	thing: string,
-	thingId: string,
 ) {
 	try {
 		switch (action) {
 			case "like":
-				await like(userId, thing, thingId)
+				await like(userId, thing)
 				break
 			case "unlike":
-				await unlike(userId, thing, thingId)
+				await unlike(userId, thing)
 				break
 			case "dislike":
-				await dislike(userId, thing, thingId)
+				await dislike(userId, thing)
 				break
 			case "undislike":
-				await undislike(userId, thing, thingId)
+				await undislike(userId, thing)
 		}
 	} catch (e) {
 		console.error(e)

@@ -72,17 +72,20 @@ export async function load({ url, locals, params }) {
 
 	return {
 		...getPlace,
-		likeCount: squery(
-			surql`count((SELECT * FROM place:${sid}<-likes).in)`,
-		) as Promise<number>,
+		likeCount: squery(surql`count((SELECT * FROM $placeId<-likes).in)`, {
+			placeId: `place:${sid}`,
+		}) as Promise<number>,
 		dislikeCount: squery(
-			surql`count((SELECT * FROM place:${sid}<-dislikes).in)`,
+			surql`count((SELECT * FROM $placeId<-dislikes).in)`,
+			{ placeId: `place:${sid}` },
 		) as Promise<number>,
 		likes: !!(await squery(
-			surql`user:${user.id} ∈ (SELECT * FROM place:${sid}<-likes).in`,
+			surql`user:${user.id} ∈ (SELECT * FROM $placeId<-likes).in`,
+			{ placeId: `place:${sid}` },
 		)),
 		dislikes: !!(await squery(
-			surql`user:${user.id} ∈ (SELECT * FROM place:${sid}<-dislikes).in`,
+			surql`user:${user.id} ∈ (SELECT * FROM $placeId<-dislikes).in`,
+			{ placeId: `place:${sid}` },
 		)),
 	}
 }
@@ -109,7 +112,7 @@ export const actions = {
 		)
 			throw error(404, "Not found")
 
-		await likeSwitch(action, user.id, "place", id.toString())
+		await likeSwitch(action, user.id, `place:${id.toString()}`)
 	},
 
 	join: async ({ request, locals }) => {

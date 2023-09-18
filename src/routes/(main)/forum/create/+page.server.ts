@@ -106,7 +106,7 @@ export const actions = {
 			},
 		)
 
-		await like(user.id, "forumPost", post.id)
+		await like(user.id, `forumPost:${post.id}`)
 
 		throw redirect(302, `/forum/${category}/${post.id}`)
 	},

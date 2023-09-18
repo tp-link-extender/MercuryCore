@@ -29,11 +29,14 @@ export async function load({ locals, params }) {
                     (SELECT number, username FROM <-posted<-user)[0] as author,
                     count(SELECT * FROM <-likes<-user) as likeCount,
                     count(SELECT * FROM <-dislikes<-user) as dislikeCount,
-                    (user:6e91egpq2xofosr ∈ (SELECT * FROM <-likes<-user).id) as likes,
-                    (user:6e91egpq2xofosr ∈ (SELECT * FROM <-dislikes<-user).id) as dislikes
+                    ($user ∈ (SELECT * FROM <-likes<-user).id) as likes,
+                    ($user ∈ (SELECT * FROM <-dislikes<-user).id) as dislikes
 
-				FROM (SELECT * FROM forumCategory:${category.name}<-in).in
-			`,
+				FROM (SELECT * FROM $forumCategory<-in).in`,
+			{
+				user: `user:${user.id}`,
+				forumCategory: `forumCategory:${category.name}`,
+			},
 		)
 
 	return {
@@ -83,8 +86,7 @@ export const actions = {
 		await likeSwitch(
 			action,
 			user.id,
-			replyId ? "forumReply" : "forumPost",
-			id || replyId || "",
+			`${replyId ? "forumReply" : "forumPost"}:${id || replyId}`,
 		)
 	},
 }
