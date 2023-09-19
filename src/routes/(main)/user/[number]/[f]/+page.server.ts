@@ -6,20 +6,15 @@ import { squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 const types = ["friends", "followers", "following"],
-	usersQueries: { [k: string]: (id: string) => string } = {
-		friends: id =>
-			surql`SELECT number, username FROM
-				user:${id}->friends->user OR user:${id}<-friends<-user`,
-		followers: id =>
-			surql`SELECT number, username FROM user:${id}<-follows<-user`,
-		following: id =>
-			surql`SELECT number, username FROM user:${id}->follows->user`,
+	usersQueries = {
+		friends: surql`SELECT number, username FROM $user->friends->user OR $user<-friends<-user`,
+		followers: surql`SELECT number, username FROM $user<-follows<-user`,
+		following: surql`SELECT number, username FROM $user->follows->user`,
 	},
-	numberQueries: { [k: string]: (id: string) => string } = {
-		friends: id =>
-			surql`count(user:${id}->friends->user) + count(user:${id}<-friends<-user)`,
-		followers: id => surql`count(user:${id}<-follows<-user)`,
-		following: id => surql`count(user:${id}->follows->user)`,
+	numberQueries = {
+		friends: surql`count($user->friends->user) + count($user<-friends<-user)`,
+		followers: surql`count($user<-follows<-user)`,
+		following: surql`count($user->follows->user)`,
 	}
 
 export async function load({ params }) {
@@ -29,7 +24,7 @@ export async function load({ params }) {
 
 	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
 
-	const type = params.f as "friends" | "followers" | "following",
+	const type = params.f as keyof typeof usersQueries,
 		user = await prisma.authUser.findUnique({
 			where: {
 				number,
@@ -41,13 +36,17 @@ export async function load({ params }) {
 	return {
 		type,
 		username: user.username,
-		users: squery(usersQueries[type](user.id)) as Promise<
+		users: squery(usersQueries[type], {
+			user: `user:${user.id}`,
+		}) as Promise<
 			{
 				number: number
 				username: string
 			}[]
 		>,
 		// number: roQuery("friends", numberQueries[type], query, true),
-		number: squery(numberQueries[type](user.id)) as Promise<number>,
+		number: squery(numberQueries[type], {
+			user: `user:${user.id}`,
+		}) as Promise<number>,
 	}
 }

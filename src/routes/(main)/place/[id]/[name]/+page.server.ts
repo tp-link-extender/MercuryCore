@@ -4,7 +4,7 @@ import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { likeSwitch } from "$lib/server/like"
-import { error, fail } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 
 export async function load({ url, locals, params }) {
 	if (!/^\d+$/.test(params.id))
@@ -70,22 +70,28 @@ export async function load({ url, locals, params }) {
 	)
 		throw error(404, "Not Found")
 
+	const query = {
+		user: `user:${user.id}`,
+		place: `place:${sid}`,
+	}
+
 	return {
 		...getPlace,
-		likeCount: squery(surql`count((SELECT * FROM $placeId<-likes).in)`, {
-			placeId: `place:${sid}`,
-		}) as Promise<number>,
+		likeCount: squery(
+			surql`count((SELECT * FROM $place<-likes).in)`,
+			query,
+		) as Promise<number>,
 		dislikeCount: squery(
-			surql`count((SELECT * FROM $placeId<-dislikes).in)`,
-			{ placeId: `place:${sid}` },
+			surql`count((SELECT * FROM $place<-dislikes).in)`,
+			query,
 		) as Promise<number>,
 		likes: !!(await squery(
-			surql`user:${user.id} ∈ (SELECT * FROM $placeId<-likes).in`,
-			{ placeId: `place:${sid}` },
+			surql`$user ∈ (SELECT * FROM $place<-likes).in`,
+			query,
 		)),
 		dislikes: !!(await squery(
-			surql`user:${user.id} ∈ (SELECT * FROM $placeId<-dislikes).in`,
-			{ placeId: `place:${sid}` },
+			surql`$user ∈ (SELECT * FROM $place<-dislikes).in`,
+			query,
 		)),
 	}
 }
@@ -121,19 +127,16 @@ export const actions = {
 			requestType = data.request,
 			serverId = parseInt(data.serverId)
 
-		if (!requestType || !serverId)
-			return fail(400, { message: "Invalid Request" })
+		if (!requestType || !serverId) return error(400, "Invalid Request")
 		if (requestType != "RequestGame")
-			return fail(400, {
-				message: "Invalid Request (request type invalid)",
-			})
+			return error(400, "Invalid Request (request type invalid)")
 
 		const place = await prisma.place.findUnique({
 			where: {
 				id: serverId,
 			},
 		})
-		if (!place) return fail(404, { message: "Place not found" })
+		if (!place) return error(404, "Place not found")
 
 		const userModeration = await prisma.moderationAction.findMany({
 			where: {
@@ -143,31 +146,38 @@ export const actions = {
 		})
 
 		if (userModeration[0])
-			return fail(400, { message: "You cannot currently play games" })
+			return error(403, "You cannot currently play games")
 
-		await prisma.gameSessions.updateMany({
-			// invalidate all game sessions
-			where: { userId: user.id },
-			data: { valid: false },
+		// invalidate all game sessions
+		await squery(surql`
+			UPDATE (SELECT * FROM $user->playing)
+				SET valid = false
+		`, {
+			user: `user:${user.id}`,
 		})
 
-		const session = await prisma.gameSessions.create({
-				// create valid session
-				data: {
-					place: {
-						connect: {
-							id: serverId,
-						},
-					},
-					user: {
-						connect: {
-							id: user.id,
-						},
-					},
-				},
-			}),
-			joinScriptUrl = `https://banland.xyz/game/join?ticket=${session.ticket}`
+		// create valid session
+		const session = (await squery(
+			surql`
+				RELATE $user->playing->$place
+					CONTENT {
+						ping: 0,
+						valid: true,
+					}`,
+			{
+				user: `user:${user.id}`,
+				place: `place:${serverId}`,
+			},
+		)) as {
+			id: string
+			in: string
+			out: string
+			ping: number
+			valid: boolean
+		}
 
-		return { joinScriptUrl }
+		return {
+			joinScriptUrl: `https://banland.xyz/game/join?ticket=${session.id}`,
+		}
 	},
 }

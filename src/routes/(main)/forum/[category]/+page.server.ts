@@ -4,7 +4,7 @@ import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
-import { likeSwitch } from "$lib/server/like.js"
+import { likeSwitch } from "$lib/server/like"
 
 export async function load({ locals, params }) {
 	const category = (

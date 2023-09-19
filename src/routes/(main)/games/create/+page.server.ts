@@ -91,7 +91,7 @@ export const actions = {
 								text: $description,
 								updated: time::now(),
 							};
-							RELATE user:${user.id}->wrote->$textContent;
+							RELATE $user->wrote->$textContent;
 
 							LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
 							LET $place = CREATE place CONTENT {
@@ -101,13 +101,16 @@ export const actions = {
 								serverIP: $serverIP,
 								serverPort: $serverPort,
 								privateServer: $privateServer,
+								serverTicket: rand::guid(),
+								privateTicket: rand::guid(),
 								maxPlayers: $maxPlayers,
 								created: time::now(),
 								updated: time::now(),
 								deleted: false,
 							};
-							RELATE user:${user.id}->owns->$place`,
+							RELATE $user->owns->$place`,
 						{
+							user: `user:${user.id}`,
 							name,
 							description,
 							serverIP,

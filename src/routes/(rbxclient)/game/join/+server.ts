@@ -1,11 +1,14 @@
+import surql from "$lib/surrealtag"
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 import { prisma } from "$lib/server/prisma"
+import surreal, { squery } from "$lib/server/surreal"
 import fs from "fs"
 
 export async function GET({ url }) {
-	const clientTicket = url.searchParams.get("ticket")
-	const privateServer = url.searchParams.get("privateServer") as string
+	const clientTicket = url.searchParams.get("ticket"),
+		privateServer = url.searchParams.get("privateServer") as string,
+		playingId = `playing:${clientTicket}`
 
 	let isStudioJoin = false
 	// let joinMethod = "Studio"
@@ -27,29 +30,43 @@ export async function GET({ url }) {
 		pingUrl = ""
 
 	// if ((joinMethod = "Ticket")) {
-	const gameSession = (
-		await prisma.gameSessions.findMany({
-			where: { ticket: clientTicket, valid: true },
-			include: {
-				user: true,
-				place: {
-					include: {
-						ownerUser: true,
-						ownerGroup: true,
-					},
-				},
-			},
-		})
-	)[0]
+	const gameSession = (await squery(
+		surql`
+			SELECT
+				(SELECT
+					serverIP,
+					serverPort,
+					id,
+					(SELECT number FROM <-owns<-user)[0] AS ownerUser
+				FROM ->place)[0] AS place,
+				(SELECT
+					username,
+					number,
+					permissionLevel
+				FROM <-user)[0] AS user
+			FROM $playingId
+		`,
+		{ playingId },
+	)) as {
+		place: {
+			id: string
+			ownerUser: {
+				number: number
+			}
+			serverIP: string
+			serverPort: number
+		}
+		user: {
+			number: number
+			permissionLevel: number
+			username: string
+		}
+	}
+
 	if (!gameSession) throw error(400, "Invalid Game Session")
 
-	await prisma.gameSessions.update({
-		where: {
-			ticket: clientTicket,
-		},
-		data: {
-			valid: false,
-		},
+	await surreal.update(`playing:${clientTicket}`, {
+		valid: false,
 	})
 
 	if (privateServer) {
@@ -64,7 +81,7 @@ export async function GET({ url }) {
 	serverPort = gameSession.place.serverPort
 	userName = gameSession.user.username
 	userId = gameSession.user.number
-	placeId = gameSession.place.id
+	placeId = parseInt(gameSession.place.id.split(":")[1])
 	creatorId = gameSession.place.ownerUser?.number || 0
 	charApp = `http://banland.xyz/asset/characterfetch?userID=${userId}`
 	pingUrl = `http://banland.xyz/game/clientpresence?ticket=${clientTicket}`
