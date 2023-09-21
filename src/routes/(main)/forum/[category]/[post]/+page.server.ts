@@ -1,7 +1,7 @@
-import cql from "$lib/cyphertag"
+import surql from "$lib/surrealtag"
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { Query } from "$lib/server/redis"
+import { squery } from "$lib/server/surreal"
 import { prisma } from "$lib/server/prisma"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
@@ -11,6 +11,7 @@ import { error } from "@sveltejs/kit"
 import { NotificationType, Prisma } from "@prisma/client"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import { like } from "$lib/server/like"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -52,57 +53,92 @@ export async function load({ locals, params }) {
 		selectReplies.select.replies = structuredClone(selectReplies)
 
 	const forumPost = await prisma.forumPost.findUnique({
-		where: {
-			id: params.post,
-		},
-		select: {
-			id: true,
-			title: true,
-			posted: true,
+			where: {
+				id: params.post,
+			},
+			select: {
+				id: true,
+				title: true,
+				posted: true,
+				author: {
+					select: {
+						username: true,
+						number: true,
+					},
+				},
+				forumCategory: {
+					select: {
+						name: true,
+					},
+				},
+				replies: {
+					...selectReplies,
+					where: {
+						// OR: [
+						// 	{ visibility: Visibility.Visible },
+						// 	{ authorId: user.id },
+						// ],
+						parentReplyId: null,
+					},
+				},
+				content: {
+					orderBy: {
+						updated: "desc",
+					},
+					select: {
+						text: true,
+					},
+					take: 1,
+				},
+			},
+		}),
+		forumPost2 = (
+			await squery(
+				surql`
+				SELECT
+					*,
+					content[0] as content,
+					(SELECT number, username FROM <-posted<-user)[0] as author,
+					count(SELECT * FROM <-likes<-user) as likeCount,
+					count(SELECT * FROM <-dislikes<-user) as dislikeCount,
+					($user ∈ (SELECT * FROM <-likes<-user).id) as likes,
+					($user ∈ (SELECT * FROM <-dislikes<-user).id) as dislikes,
+					(SELECT name FROM ->in->forumCategory)[0] as forumCategory
+
+				FROM $forumPost`,
+				{
+					forumPost: `forumPost:${params.post}`,
+					user: `user:${user.id}`,
+				},
+			)
+		) as {
 			author: {
-				select: {
-					username: true,
-					number: true,
-				},
-			},
-			forumCategory: {
-				select: {
-					name: true,
-				},
-			},
-			replies: {
-				...selectReplies,
-				where: {
-					// OR: [
-					// 	{ visibility: Visibility.Visible },
-					// 	{ authorId: user.id },
-					// ],
-					parentReplyId: null,
-				},
-			},
+				number: number
+				username: string
+			}
 			content: {
-				orderBy: {
-					updated: "desc",
-				},
-				select: {
-					text: true,
-				},
-				take: 1,
-			},
-		},
-	})
+				id: string
+				text: string
+				updated: string
+			}[]
+			forumCategory: {
+				name: string
+			}
+			dislikeCount: number
+			dislikes: boolean
+			id: string
+			likeCount: number
+			likes: boolean
+			posted: string
+			title: string
+			visibility: string
+		}[]
 
 	if (!forumPost) throw error(404, "Not found")
 
 	return {
 		form: superValidate(schema),
-		...(await addLikes<typeof forumPost>(
-			"forum",
-			"Post",
-			forumPost,
-			user.username,
-			"Reply",
-		)),
+		...forumPost2[0],
 		baseDepth: 0,
 	}
 }
@@ -161,14 +197,7 @@ export const actions = {
 				},
 			})
 
-		await Query(
-			"forum",
-			cql`
-				MERGE (u:User { name: $user })
-				MERGE (p:Reply { name: $id })
-				MERGE (u) -[:likes]-> (p)`,
-			{id: newReplyId, user: user.username},
-		)
+		await like(user.id, `forumReply:${newReplyId}`)
 	},
 	delete: async ({ url, locals }) => {
 		const { user } = await authorise(locals),

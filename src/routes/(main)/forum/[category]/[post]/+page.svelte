@@ -72,7 +72,7 @@
 			}}
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
-			action="?/like&id={data.id}">
+			action="?/like&id={data.id.split(":")[1]}">
 			<div class="row mb-2 d-flex">
 				<div>
 					<button
@@ -158,7 +158,7 @@
 		</p>
 	</form>
 
-	{#each data.replies as reply, num}
+	{#each data.replies || [] as reply, num}
 		<ForumReply
 			{user}
 			{reply}
