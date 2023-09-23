@@ -1,4 +1,6 @@
+import surql from "$lib/surrealtag"
 import { prisma } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 
 export async function load({ request, locals }) {
 	const session = await locals.auth.validate(),
@@ -106,17 +108,23 @@ export async function load({ request, locals }) {
 	}
 
 	return {
-		banners: prisma.announcements.findMany({
-			where: {
-				active: true,
-			},
-			select: {
-				id: true,
-				body: true,
-				bgColour: true,
-				textLight: true,
-			},
-		}),
+		banners: squery(surql`
+			SELECT
+				body,
+				bgColour,
+				textLight,
+				string::split(type::string(id), ":")[1] AS id
+			OMIT deleted
+			FROM banner
+			WHERE deleted = false AND active = true
+		`) as Promise<
+			{
+				bgColour: string
+				body: string
+				id: string
+				textLight: boolean
+			}[]
+		>,
 		user,
 		notifications: notifications || [],
 		url: request.url,

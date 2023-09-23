@@ -234,15 +234,14 @@
 </nav>
 
 {#if data.banners && user}
-	{#each data.banners as announcement (announcement.id)}
+	{#each data.banners as banner (banner.id)}
 		<div
 			transition:height
-			class="py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight
-				? 'light'
-				: ''}"
+			class="py-1 my-0 rounded-0 text-center border-0"
+			class:text-light={banner.textLight}
 			role="alert"
-			style="background: {announcement.bgColour}">
-			{announcement.body}
+			style="background: {banner.bgColour}">
+			{banner.body}
 		</div>
 	{/each}
 {/if}

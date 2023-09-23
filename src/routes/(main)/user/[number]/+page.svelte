@@ -12,8 +12,6 @@
 
 	export let data
 	const { user } = data
-
-	console.log(data.followerCount)
 </script>
 
 <Head title={data.username} />

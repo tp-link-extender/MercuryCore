@@ -1,5 +1,7 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
+import surreal, { squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -18,14 +20,29 @@ export async function load({ locals }) {
 
 	return {
 		form: superValidate(schema),
-		banners: prisma.announcements.findMany({
-			include: {
-				user: true,
-			},
-			orderBy: {
-				id: "asc",
-			},
-		}),
+		banners: squery(surql`
+            SELECT
+                *,
+                string::split(type::string(id), ":")[1] AS id,
+                (SELECT
+                    creator.number,
+                    creator.username
+                FROM $parent)[0].creator AS creator
+			OMIT deleted
+            FROM banner WHERE deleted = false
+		`) as Promise<
+			{
+				id: string
+				active: boolean
+				bgColour: string
+				body: string
+				creator: {
+					number: number
+					username: string
+				}
+				textLight: boolean
+			}[]
+		>,
 	}
 }
 
@@ -41,9 +58,14 @@ export const actions = {
 				form.data,
 			id = url.searchParams.get("id"),
 			action = url.searchParams.get("a"),
-			bannerActiveCount = await prisma.announcements.findMany({
-				where: { active: true },
-			})
+			bannerActiveCount = (await squery(surql`
+				count(
+					SELECT * FROM banner
+					WHERE active = true AND deleted = false
+				)
+			`)) as number
+
+		console.log(bannerActiveCount)
 
 		switch (action) {
 			case "create": {
@@ -60,23 +82,19 @@ export const actions = {
 						status: 400,
 					})
 
-				if (bannerActiveCount && bannerActiveCount.length > 2)
+				if (bannerActiveCount >= 3)
 					return message(form, "Too many active banners", {
 						status: 400,
 					})
 
 				await Promise.all([
-					prisma.announcements.create({
-						data: {
-							body: bannerText,
-							bgColour: bannerColour,
-							textLight: !!bannerTextLight,
-							user: {
-								connect: {
-									id: user.id,
-								},
-							},
-						},
+					surreal.create("banner", {
+						active: true,
+						deleted: false,
+						body: bannerText,
+						bgColour: bannerColour,
+						textLight: !!bannerTextLight,
+						creator: `user:${user.id}`,
 					}),
 
 					prisma.auditLog.create({
@@ -101,13 +119,13 @@ export const actions = {
 						status: 400,
 					})
 
-				await prisma.announcements.update({
-					where: {
-						id,
-					},
-					data: {
-						active: action == "show",
-					},
+				if (action == "show" && bannerActiveCount >= 3)
+					return message(form, "Too many active banners", {
+						status: 400,
+					})
+
+				await surreal.merge(`banner:${id}`, {
+					active: action == "show",
 				})
 
 				return
@@ -117,11 +135,19 @@ export const actions = {
 						status: 400,
 					})
 
-				const deletedBanner = await prisma.announcements.delete({
-					where: {
-						id,
-					},
-				})
+				const deletedBanner = (
+					await surreal.merge(`banner:${id}`, {
+						deleted: true,
+					})
+				)[0] as {
+					active: boolean
+					bgColour: string
+					body: string
+					creator: string
+					deleted: boolean
+					id: string
+					textLight: boolean
+				}
 
 				await prisma.auditLog.create({
 					data: {
@@ -142,15 +168,10 @@ export const actions = {
 						status: 400,
 					})
 
-
-				await prisma.announcements.update({
-					where: {
-						id,
-					},
-					data: {
-						body: bannerBody,
-					},
+				await surreal.merge(`banner:${id}`, {
+					body: bannerBody,
 				})
+
 				return
 			case "updateTextLight":
 				if (bannerTextLight == null || !id)
@@ -158,14 +179,10 @@ export const actions = {
 						status: 400,
 					})
 
-				await prisma.announcements.update({
-					where: {
-						id,
-					},
-					data: {
-						textLight: bannerTextLight,
-					},
+				await surreal.merge(`banner:${id}`, {
+					textLight: bannerTextLight,
 				})
+
 				return
 		}
 	},

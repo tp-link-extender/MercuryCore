@@ -155,7 +155,7 @@
 										action="?id={banner.id}&a=delete">
 										<button
 											class="btn btn-sm btn-link text-decoration-none text-danger">
-											<i class="fas fa-trash" />
+											<i class="fas fa-trash pe-1" />
 											Delete Banner
 										</button>
 									</form>
@@ -222,7 +222,7 @@
 								</td>
 								<td>
 									<User
-										user={banner.user}
+										user={banner.creator}
 										full
 										thin
 										bg="accent" />

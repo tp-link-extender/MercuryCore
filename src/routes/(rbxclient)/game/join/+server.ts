@@ -65,7 +65,7 @@ export async function GET({ url }) {
 
 	if (!gameSession) throw error(400, "Invalid Game Session")
 
-	await surreal.update(`playing:${clientTicket}`, {
+	await surreal.merge(`playing:${clientTicket}`, {
 		valid: false,
 	})
 

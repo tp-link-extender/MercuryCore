@@ -8,7 +8,7 @@ export async function GET({ url, request, setHeaders }) {
 	if (request.headers.get("user-agent") != "Roblox/WinInet")
 		throw error(400, "Invalid Request")
 
-	surreal.update(`playing:${ticket}`, {
+	surreal.merge(`playing:${ticket}`, {
 		ping: Math.floor(Date.now() / 1000),
 	})
 
