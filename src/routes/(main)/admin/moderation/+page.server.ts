@@ -131,10 +131,7 @@ export const actions = {
 				),
 			])
 
-			return {
-				moderationsuccess: true,
-				msg: `${username} ${moderationMessage[action - 1]}`,
-			}
+			return message(form, `${username} ${moderationMessage[action - 1]}`)
 		}
 
 		const moderationAction = moderationActions[action - 1]
@@ -191,12 +188,13 @@ export const actions = {
 					time: time::now()
 				}`,
 			{
-				note: [
-					`Warn ${username}`,
-					`Ban ${username}`,
-					`Terminate ${username}`,
-					`Delete ${username}'s account`,
-				][action - 1],
+				note:
+					[
+						`Warn ${username}`,
+						`Ban ${username}`,
+						`Terminate ${username}`,
+						`Delete ${username}'s account`,
+					][action - 1] + `: ${reason}`,
 				user: `user:${user.id}`,
 			},
 		)

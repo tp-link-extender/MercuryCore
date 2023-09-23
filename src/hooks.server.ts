@@ -53,7 +53,8 @@ export async function handle({ event, resolve }) {
 	if (!session || !user) return await resolve(event)
 
 	if (
-		!["/moderation", "/terms"].includes(pathname) &&
+		!["/moderation", "/terms", "/privacy", "/api"].includes(pathname) &&
+		!pathname.startsWith("/api/avatar") &&
 		(
 			await prisma.moderationAction.findMany({
 				where: {
