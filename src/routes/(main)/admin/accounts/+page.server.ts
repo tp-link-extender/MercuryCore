@@ -1,5 +1,6 @@
+import surql from "$lib/surrealtag"
 import { auth, authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -46,17 +47,19 @@ export const actions = {
 			})
 		}
 
-		await prisma.auditLog.create({
-			data: {
-				action: "Account",
+		await squery(
+			surql`
+				CREATE auditLog CONTENT {
+					action: "Account",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
+			{
 				note: `Change account password for ${username}`,
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
+				user: `user:${user.id}`,
 			},
-		})
+		)
 
 		return message(form, "Password changed successfully!")
 	},

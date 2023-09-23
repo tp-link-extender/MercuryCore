@@ -1,6 +1,8 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import { prisma } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -93,17 +95,19 @@ export const actions = {
 					},
 				})
 
-				await prisma.auditLog.create({
-					data: {
-						action: "Administration",
-						note: `Created invite key ${createdKey.key}`,
-						user: {
-							connect: {
-								id: user.id,
-							},
-						},
+				await squery(
+					surql`
+						CREATE auditLog CONTENT {
+							action: "Administration",
+							note: $note,
+							user: $user,
+							time: time::now()
+						}`,
+					{
+						note: `Create invite key ${createdKey.key}`,
+						user: `user:${user.id}`,
 					},
-				})
+				)
 
 				return message(
 					form,
@@ -116,14 +120,40 @@ export const actions = {
 						status: 400,
 					})
 
-				await prisma.regkey.update({
+				const key = await prisma.regkey.findUnique({
 					where: {
 						key: id,
 					},
-					data: {
-						usesLeft: 0,
-					},
 				})
+
+				if (key && key.usesLeft == 0)
+					return message(form, "Invite key is already disabled", {
+						status: 400,
+					})
+
+				await Promise.all([
+					prisma.regkey.update({
+						where: {
+							key: id,
+						},
+						data: {
+							usesLeft: 0,
+						},
+					}),
+					squery(
+						surql`
+							CREATE auditLog CONTENT {
+								action: "Administration",
+								note: $note,
+								user: $user,
+								time: time::now()
+							}`,
+						{
+							note: `Disable invite key ${id}`,
+							user: `user:${user.id}`,
+						},
+					),
+				])
 
 				return
 		}

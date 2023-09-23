@@ -1,6 +1,8 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import { prisma } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import type { ModerationActionType } from "@prisma/client"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -114,17 +116,19 @@ export const actions = {
 					},
 				}),
 
-				prisma.auditLog.create({
-					data: {
-						action: "Moderation",
+				squery(
+					surql`
+						CREATE auditLog CONTENT {
+							action: "Moderation",
+							note: $note,
+							user: $user,
+							time: time::now()
+						}`,
+					{
 						note: `Unban ${username}`,
-						user: {
-							connect: {
-								id: user.id,
-							},
-						},
+						user: `user:${user.id}`,
 					},
-				}),
+				),
 			])
 
 			return {
@@ -178,22 +182,24 @@ export const actions = {
 				},
 			})
 
-		await prisma.auditLog.create({
-			data: {
-				action: "Moderation",
+		await squery(
+			surql`
+				CREATE auditLog CONTENT {
+					action: "Moderation",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
+			{
 				note: [
 					`Warn ${username}`,
 					`Ban ${username}`,
 					`Terminate ${username}`,
 					`Delete ${username}'s account`,
 				][action - 1],
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
+				user: `user:${user.id}`,
 			},
-		})
+		)
 
 		return message(form, `${username} ${moderationMessage[action - 1]}`)
 	},

@@ -1,5 +1,6 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import { client } from "$lib/server/redis"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
@@ -55,17 +56,19 @@ export const actions = {
 			auditText += `Change stipend time from ${currentStipendTime} to ${stipendTime}`
 		}
 
-		await prisma.auditLog.create({
-			data: {
-				action: "Account",
+		await squery(
+			surql`
+				CREATE auditLog CONTENT {
+					action: "Account",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
+			{
 				note: auditText,
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
+				user: `user:${user.id}`,
 			},
-		})
+		)
 
 		return message(form, "Economy updated successfully!")
 	},
