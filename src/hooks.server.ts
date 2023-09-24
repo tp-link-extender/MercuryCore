@@ -6,7 +6,7 @@
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { client } from "$lib/server/redis"
+import surreal from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
 
@@ -75,15 +75,13 @@ export async function handle({ event, resolve }) {
 		},
 	})
 
+	const economy = (await surreal.select("stuff:economy"))[0],
+		dailyStipend = (economy?.dailyStipend as number) || 10
+
 	if (
-		!(
-			user.currencyCollected.getTime() -
-				(new Date().getTime() -
-					1000 *
-						3600 *
-						Number((await client.get("stipendTime")) || 12)) >
-			0
-		)
+		user.currencyCollected.getTime() -
+			(new Date().getTime() - 3600_000 * dailyStipend) <
+		0
 	)
 		await prisma.authUser.update({
 			where: {
@@ -92,7 +90,7 @@ export async function handle({ event, resolve }) {
 			data: {
 				currencyCollected: new Date(),
 				currency: {
-					increment: Number((await client.get("dailyStipend")) || 10),
+					increment: dailyStipend,
 				},
 			},
 		})

@@ -1,7 +1,7 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import { roQuery } from "$lib/server/redis"
-import cql from "$lib/cyphertag"
+import { squery } from "$lib/server/surreal"
 
 export async function load({ locals }) {
 	await authorise(locals)
@@ -12,18 +12,8 @@ export async function load({ locals }) {
 		groups: prisma.group.count(),
 		assets: prisma.asset.count(),
 		transactions: prisma.transaction.count(),
-		friendships: roQuery(
-			"friends",
-			cql`RETURN SIZE((:User) -[:friends]- (:User))`,
-			{},
-			true,
-		),
-		followerships: roQuery(
-			"friends",
-			cql`RETURN SIZE((:User) -[:follows]-> (:User))`,
-			{},
-			true,
-		),
+		friendships: squery(surql`count(SELECT * FROM friends)`),
+		followerships: squery(surql`count(SELECT * FROM follows)`),
 		statusPosts: prisma.post.count(),
 		forumPosts: prisma.forumPost.count(),
 		forumReplies: prisma.forumReply.count(),

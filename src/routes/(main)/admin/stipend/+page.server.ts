@@ -1,7 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
-import { client } from "$lib/server/redis"
+import surreal, { squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -16,10 +15,12 @@ export async function load({ locals }) {
 	// Make sure a user is an administrator before loading the page.
 	await authorise(locals, 5)
 
+	const economy = (await surreal.select("stuff:economy"))[0]
+
 	return {
 		form: superValidate(schema),
-		dailyStipend: Number((await client.get("dailyStipend")) || 10),
-		stipendTime: Number((await client.get("stipendTime")) || 12),
+		dailyStipend: (economy?.dailyStipend as number) || 10,
+		stipendTime: (economy?.stipendTime as number) || 10,
 	}
 }
 
@@ -29,22 +30,21 @@ export const actions = {
 			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
-		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
+		const limit = ratelimit(form, "economy", getClientAddress, 30)
 		if (limit) return limit
 
-		const currentStipend = Number((await client.get("dailyStipend")) || 10),
-			currentStipendTime = Number(
-				(await client.get("stipendTime")) || 12,
-			),
+		const economy = (await surreal.select("stuff:economy"))[0],
+			currentStipend = economy?.dailyStipend || 10,
+			currentStipendTime = economy?.stipendTime || 12,
 			{ dailyStipend, stipendTime } = form.data
 
 		if (currentStipend == dailyStipend && currentStipendTime == stipendTime)
 			return message(form, "No changes were made")
 
-		await Promise.all([
-			client.set("dailyStipend", dailyStipend),
-			client.set("stipendTime", stipendTime),
-		])
+		await surreal.merge("stuff:economy", {
+			dailyStipend,
+			stipendTime,
+		})
 
 		let auditText = ""
 

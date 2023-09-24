@@ -5,7 +5,7 @@ import cql from "$lib/cyphertag"
 import { building } from "$app/environment"
 import { PrismaClient } from "@prisma/client"
 import type { Prisma } from "@prisma/client"
-import { client, roQuery } from "./redis"
+import { roQuery } from "./redis"
 
 let prisma: PrismaClient
 
@@ -126,7 +126,9 @@ export async function transaction(
 
 	const senderAdmin = sender2.number == 1,
 		receiverAdmin = receiver2.number == 1,
-		taxRate = Number((await client.get("taxRate")) || 30)
+		taxRate =
+			// ((await surreal.select("stuff:economy"))[0]?.taxRate as number) ||
+			30
 
 	if (amountSent > 0) {
 		if (!senderAdmin && sender2.currency < amountSent)
