@@ -43,7 +43,7 @@
 			{reply}
 			{num}
 			{replyingTo}
-			forumCategory={data.forumCategory}
+			categoryName={data.forumCategory}
 			postId={data.postId}
 			postAuthorName={data.author}
 			{repliesCollapsed} />

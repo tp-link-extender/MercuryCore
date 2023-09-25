@@ -6,9 +6,8 @@ import { prisma } from "$lib/server/prisma"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
-import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
-import { NotificationType, Prisma } from "@prisma/client"
+import { NotificationType } from "@prisma/client"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import { like } from "$lib/server/like"
@@ -19,99 +18,24 @@ const schema = z.object({
 })
 
 export async function load({ locals, params }) {
-	const { user } = await authorise(locals)
-
-	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectReplies = {
-		// where: {
-		// 	OR: [{ visibility: Visibility.Visible }, { authorId: user.id }],
-		// },
-		select: {
-			id: true,
-			posted: true,
-			parentReplyId: true,
-			visibility: true,
-			author: {
-				select: {
-					username: true,
-					number: true,
-				},
-			},
-			content: {
-				orderBy: {
-					updated: Prisma.SortOrder.desc,
-				},
-				select: {
-					text: true,
-				},
-				take: 1,
-			},
-			replies: {},
-		},
-	}
-	for (let i = 0; i < 9; i++)
-		selectReplies.select.replies = structuredClone(selectReplies)
-
-	const forumPost = await prisma.forumPost.findUnique({
-			where: {
-				id: params.post,
-			},
-			select: {
-				id: true,
-				title: true,
-				posted: true,
-				author: {
-					select: {
-						username: true,
-						number: true,
-					},
-				},
-				forumCategory: {
-					select: {
-						name: true,
-					},
-				},
-				replies: {
-					...selectReplies,
-					where: {
-						// OR: [
-						// 	{ visibility: Visibility.Visible },
-						// 	{ authorId: user.id },
-						// ],
-						parentReplyId: null,
-					},
-				},
-				content: {
-					orderBy: {
-						updated: "desc",
-					},
-					select: {
-						text: true,
-					},
-					take: 1,
-				},
-			},
-		}),
-		forumPost2 = (
-			await squery(
-				surql`
+	const { user } = await authorise(locals),
+		forumPost = (await squery(
+			surql`
 				SELECT
 					*,
 					content[0] as content,
 					(SELECT number, username FROM <-posted<-user)[0] as author,
-					count(SELECT * FROM <-likes<-user) as likeCount,
-					count(SELECT * FROM <-dislikes<-user) as dislikeCount,
-					($user ∈ (SELECT * FROM <-likes<-user).id) as likes,
-					($user ∈ (SELECT * FROM <-dislikes<-user).id) as dislikes,
-					(SELECT name FROM ->in->forumCategory)[0] as forumCategory
-
+					count(<-likes<-user) as likeCount,
+					count(<-dislikes<-user) as dislikeCount,
+					($user ∈ <-likes<-user.id) as likes,
+					($user ∈ <-dislikes<-user.id) as dislikes,
+					(->in->forumCategory)[0].name as categoryName
 				FROM $forumPost`,
-				{
-					forumPost: `forumPost:${params.post}`,
-					user: `user:${user.id}`,
-				},
-			)
-		) as {
+			{
+				forumPost: `forumPost:${params.post}`,
+				user: `user:${user.id}`,
+			},
+		)) as {
 			author: {
 				number: number
 				username: string
@@ -121,9 +45,7 @@ export async function load({ locals, params }) {
 				text: string
 				updated: string
 			}[]
-			forumCategory: {
-				name: string
-			}
+			categoryName: string
 			dislikeCount: number
 			dislikes: boolean
 			id: string
@@ -134,11 +56,11 @@ export async function load({ locals, params }) {
 			visibility: string
 		}[]
 
-	if (!forumPost) throw error(404, "Not found")
+	if (!forumPost[0]) throw error(404, "Not found")
 
 	return {
 		form: superValidate(schema),
-		...forumPost2[0],
+		...forumPost[0],
 		baseDepth: 0,
 	}
 }

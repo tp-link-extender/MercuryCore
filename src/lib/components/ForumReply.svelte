@@ -21,12 +21,12 @@
 	export let depth = 0
 	export let replyingTo: Writable<string>
 	export let postAuthorName: string
-	export let forumCategory = ""
+	export let categoryName = ""
 	export let postId: string
 	export let assetName = ""
 
-	const baseUrl = forumCategory
-		? `/forum/${forumCategory.toLowerCase()}/${postId}`
+	const baseUrl = categoryName
+		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/avatarshop/${postId}/${assetName}`
 
 	export let repliesCollapsed: Writable<any>
@@ -204,7 +204,7 @@
 								{:else}
 									<ReportButton
 										user={reply.author.username}
-										url="/forum/{forumCategory}/{postId}/{reply.id}"
+										url="/forum/{categoryName}/{postId}/{reply.id}"
 										reverse />
 									{#if user.permissionLevel >= 4}
 										<DeleteButton
@@ -272,7 +272,7 @@
 						reply={reply2}
 						{num}
 						{replyingTo}
-						{forumCategory}
+						{categoryName}
 						{postId}
 						{assetName}
 						{postAuthorName}

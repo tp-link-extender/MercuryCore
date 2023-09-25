@@ -33,8 +33,8 @@
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
 			<li class="breadcrumb-item">
-				<a href="/forum/{data.forumCategory.name}" class="accent-text">
-					{data.forumCategory.name}
+				<a href="/forum/{data.categoryName}" class="accent-text">
+					{data.categoryName}
 				</a>
 			</li>
 			<li class="breadcrumb-item active" aria-current="page">
@@ -72,7 +72,7 @@
 			}}
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
-			action="?/like&id={data.id.split(":")[1]}">
+			action="?/like&id={data.id.split(':')[1]}">
 			<div class="row mb-2 d-flex">
 				<div>
 					<button
@@ -113,19 +113,19 @@
 			<span class="d-flex">
 				<User user={data.author} full />
 				<em class="ps-4 align-self-center">
-					{data.posted.toLocaleString()}
+					{new Date(data.posted).toLocaleString()}
 				</em>
 				<span class="ms-auto">
 					<ReportButton
 						user={data.author.username}
-						url="/forum/{data.forumCategory.name}/{data.id}" />
+						url="/forum/{data.categoryName}/{data.id}" />
 				</span>
 			</span>
 			<h2 class="fs-4 mt-2">
 				{data.title}
 			</h2>
 			<p>
-				{data.content[0].text}
+				{data.content[0].text || ""}
 			</p>
 		</div>
 	</div>
@@ -164,7 +164,7 @@
 			{reply}
 			{num}
 			{replyingTo}
-			forumCategory={data.forumCategory.name}
+			categoryName={data.categoryName}
 			postId={data.id}
 			postAuthorName={data.author.username}
 			{repliesCollapsed}
