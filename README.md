@@ -1,16 +1,16 @@
-# Mercury website
+# Mercury monorepo
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](https://forthebadge.com)
-![mercury-2](https://github.com/tp-link-extender/mercuryv2/assets/51055281/2a820bc4-f38d-43f4-a5f2-78b0077aece9)
+![Logo banner](./.github/assets/banner.png)
 
 Contents:
 
--   [Mercury website](#mercury-website)
--   [Recommended development setup](#recommended-development-setup)
--   [Editing the website](#editing-the-website)
--   [Hosting the website](#hosting-the-website)
--   [Mercury's stack](#mercurys-stack)
-    -   [Route structure](#route-structure)
+- [Mercury monorepo](#mercury-monorepo)
+- [Recommended development setup](#recommended-development-setup)
+- [Editing the website](#editing-the-website)
+- [Hosting the website](#hosting-the-website)
+- [Mercury's stack](#mercurys-stack)
+	- [Route structure](#route-structure)
+- [Deploying new client versions](#deploying-new-client-versions)
 
 # Recommended development setup
 
@@ -124,3 +124,9 @@ See the [SvelteKit Routing docs](https://kit.svelte.dev/docs/routing) for more i
 The markup for pages is enhanced with HTMLx templating, which adds extra features such as adding variables, reactivity, and logic blocks such as {#if} and {#each}.
 
 Take a look at the [Svelte docs](https://svelte.dev/docs), or the incredibly helpful [Svelte tutorial](https://learn.svelte.dev), for more information.
+
+# Deploying new client versions
+
+To deploy a new version of the client, you'll need Deno. Don't ask why
+
+Edit files in the /Client deployer/staging directory. Navigate to /Client deployer and run `deno task run` to start the deployer. You can also run `deno task headless` to skip any interactivity and randomly generate a version hash.
