@@ -21,7 +21,7 @@ export const actions = {
 
 		const { name } = form.data
 
-		if (name == "create")
+		if (name.toLowerCase() == "create")
 			return formError(
 				form,
 				["name"],
@@ -32,7 +32,15 @@ export const actions = {
 					).toString("ascii"),
 				],
 			)
-		if (name == "wisely")
+
+		if (name.toLowerCase() == "changed")
+			return formError(
+				form,
+				["name"],
+				["Dickhead"],
+			)
+
+		if (name.toLowerCase() == "wisely")
 			return formError(
 				form,
 				["name"],

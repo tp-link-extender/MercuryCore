@@ -90,17 +90,20 @@ export const actions = {
 					text: $content,
 					updated: time::now(),
 				};
-				RELATE user:${user.id}->wrote->$textContent;
+				RELATE $user->wrote->$textContent;
 
-				LET $post = CREATE forumPost:${postId} CONTENT {
+				LET $post = CREATE $postId CONTENT {
 					title: $title,
 					posted: time::now(),
 					visibility: "Visible",
 					content: [$textContent],
 				};
-				RELATE $post->in->forumCategory:${category};
-				RELATE user:${user.id}->posted->$post`,
+				RELATE $post->in->$category;
+				RELATE $user->posted->$post`,
 			{
+				user: `user:${user.id}`,
+				postId: `forumPost:${postId}`,
+				category: `forumCategory:${category}`,
 				title,
 				content,
 			},

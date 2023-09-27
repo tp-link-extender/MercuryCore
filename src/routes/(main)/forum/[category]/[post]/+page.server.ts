@@ -29,7 +29,8 @@ export async function load({ locals, params }) {
 					count(<-dislikes<-user) as dislikeCount,
 					($user ∈ <-likes<-user.id) as likes,
 					($user ∈ <-dislikes<-user.id) as dislikes,
-					(->in->forumCategory)[0].name as categoryName
+					(->in->forumCategory)[0].name as categoryName,
+					[] as replies
 				FROM $forumPost`,
 			{
 				forumPost: `forumPost:${params.post}`,
@@ -45,6 +46,7 @@ export async function load({ locals, params }) {
 				text: string
 				updated: string
 			}[]
+			replies: []
 			categoryName: string
 			dislikeCount: number
 			dislikes: boolean
@@ -89,6 +91,28 @@ export const actions = {
 		if (!replypost) throw error(404)
 
 		const newReplyId = await id()
+
+		await squery(
+			surql`
+				LET $textContent = CREATE textContent CONTENT {
+					text: "test delete l8r",
+					updated: time::now(),
+				};
+				RELATE $user->wrote->$textContent;
+
+				LET $reply = CREATE $forumReply CONTENT {
+					posted: time::now(),
+					visibility: "Visible",
+					content: [$textContent],
+				};
+				RELATE $reply->replyToPost->$post;
+				RELATE $user->posted->$reply`,
+			{
+				user: `user:${user.id}`,
+				forumReply: `forumReply:${newReplyId}`,
+				post: `forumPost:${params.post}`,
+			},
+		)
 
 		await prisma.forumReply.create({
 			data: {

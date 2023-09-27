@@ -158,7 +158,7 @@
 		</p>
 	</form>
 
-	{#each data.replies || [] as reply, num}
+	{#each data.replies as reply, num}
 		<ForumReply
 			{user}
 			{reply}
