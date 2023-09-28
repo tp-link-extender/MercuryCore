@@ -127,7 +127,7 @@ print "[Mercury]: Loaded corescript 48488235"
 
 local ADMINS = {
 	taskmanager = 1,
-	Heliodex = 1,
+	heliodex = 1,
 	multako = "http://banland.xyz/asset/?id=6923328292",
 	mercury = 1,
 	pizzaboxer = "http://banland.xyz/asset/?id=6917566633",
@@ -183,7 +183,7 @@ end
 	imgName		asset name of image to fill background
 	@Return:	background gui object
 --]]
-function MakeBackgroundGuiObj(imgName)
+local function MakeBackgroundGuiObj(imgName)
 	return Obj.Create "ImageLabel" {
 		Name = "Background",
 		BackgroundTransparency = 1,
@@ -193,7 +193,7 @@ function MakeBackgroundGuiObj(imgName)
 	}
 end
 --[[ turns 255 integer color value to a color3 --]]
-function Color3I(r, g, b)
+local function Color3I(r, g, b)
 	return Color3.new(r / 255, g / 255, b / 255)
 end
 
@@ -203,13 +203,12 @@ end
 	membershipType		Enum of membership status
 	@Return: 			string of image asset
 --]]
-function getMembershipTypeIcon(membershipType, playerName)
+local function getMembershipTypeIcon(membershipType, playerName)
 	if ADMINS[string.lower(playerName)] ~= nil then
 		if ADMINS[string.lower(playerName)] == 1 then
 			return "http://banland.xyz/asset/?id=6923330951"
-		else
-			return ADMINS[string.lower(playerName)]
 		end
+		return ADMINS[string.lower(playerName)]
 	elseif membershipType == Enum.MembershipType.None then
 		return ""
 	elseif membershipType == Enum.MembershipType.BuildersClub then
@@ -299,7 +298,7 @@ end
 	child		name of child object to look for
 	@Return: object waited for
 --]]
-function WaitForChild(parent, child)
+local function WaitForChild(parent, child)
 	while not parent:FindFirstChild(child) do
 		wait()
 		debugprint(" child " .. parent.Name .. " waiting for " .. child)
@@ -1002,7 +1001,7 @@ end)
 -- 	return numEnts
 -- end
 
-function AreAllEntriesOnScreen()
+local function AreAllEntriesOnScreen()
 	return #MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale
 		<= 1 + DefaultBottomClipPos
 end
@@ -1011,24 +1010,25 @@ end
 -- 	return 1 + DefaultBottomClipPos
 -- end
 
-function GetMaxScroll()
+local function GetMaxScroll()
 	return DefaultBottomClipPos * -1
 end
+
 -- can be optimized by caching when this varible changes
-function GetMinScroll()
+local function GetMinScroll()
 	if AreAllEntriesOnScreen() then
 		return GetMaxScroll()
-	else
-		return (
-			GetMaxScroll()
-			- (#MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale)
-		) + (1 + DefaultBottomClipPos)
 	end
+	return (
+		GetMaxScroll()
+		- (#MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale)
+	) + (1 + DefaultBottomClipPos)
 end
 
-function AbsoluteToPercent(x, y)
+local function AbsoluteToPercent(x, y)
 	return Vector2.new(x, y) / ScreenGui.AbsoluteSize
 end
+
 --[[
 	tweens property of element from starta to enda over length of time
 	Warning: should be put in a Spawn call
@@ -1039,7 +1039,7 @@ end
 	enda		alpha to end tweening on
 	length		how many seconds to spend tweening
 --]]
-function TweenProperty(obj, propName, inita, enda, length)
+local function TweenProperty(obj, propName, inita, enda, length)
 	local startTime = tick()
 	while tick() - startTime < length do
 		obj[propName] = ((enda - inita) * ((tick() - startTime) / length))
@@ -1048,6 +1048,7 @@ function TweenProperty(obj, propName, inita, enda, length)
 	end
 	obj[propName] = enda
 end
+
 --[[
 	UGLY UGLY HACK FUNCTION
 	replace with some sort of global input catching A.S.A. FREAKING P.
@@ -1057,8 +1058,7 @@ end
 	polledFunction	function to call on mouse moved events in this gui
 	exitFunction	function to call when click event is fired
 --]]
-
-function WaitForClick(frameParent, polledFunction, exitFunction)
+local function WaitForClick(frameParent, polledFunction, exitFunction)
 	if WaitForClickLock then
 		return
 	end
@@ -1227,7 +1227,7 @@ end
 --[[
 	opens the abuse dialog, initialises text to display selectedplayer
 --]]
-function OpenAbuseDialog()
+local function OpenAbuseDialog()
 	debugprint "adding report dialog"
 	AbusePlayerLabel.Text = SelectedPlayer.Name
 	--AbuseDescriptionBox.Text = ""
@@ -1260,7 +1260,7 @@ end
 --[[
 	creates dropdownbox, registers all listeners for abuse dialog
 --]]
-function InitReportAbuse()
+local function InitReportAbuse()
 	UpdateAbuseFunction = function(abuseText)
 		AbuseName = abuseText
 		if AbuseName and SelectedPlayer then
@@ -1297,16 +1297,14 @@ end
 local function GetFriendStatus(player)
 	if player == game.Players.LocalPlayer then
 		return Enum.FriendStatus.NotFriend
-	else
-		local success, result = pcall(function()
-			return game.Players.LocalPlayer:GetFriendStatus(player)
-		end)
-		if success then
-			return result
-		else
-			return Enum.FriendStatus.NotFriend
-		end
 	end
+	local success, result = pcall(function()
+		return game.Players.LocalPlayer:GetFriendStatus(player)
+	end)
+	if success then
+		return result
+	end
+	return Enum.FriendStatus.NotFriend
 end
 
 --[[
@@ -1460,8 +1458,9 @@ function StatAdded(nchild, playerEntry)
 		StatChanged(playerEntry, property)
 	end)
 end
+
 --returns whether any of the existing players has this stat
-function DoesStatExist(statName, exception)
+local function DoesStatExist(statName, exception)
 	for _, playerf in pairs(PlayerFrames) do
 		if
 			playerf.Player ~= exception
@@ -1530,12 +1529,10 @@ function GetScoreValue(score)
 	elseif score:IsA "BoolValue" then
 		if score.Value then
 			return 1
-		else
-			return 0
 		end
-	else
-		return score.Value
+		return 0
 	end
+	return score.Value
 end
 --[[
 

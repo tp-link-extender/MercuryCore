@@ -136,9 +136,8 @@ function JsonWriter:IsArray(t)
 	for k, _ in pairs(t) do
 		if not isindex(k) then
 			return false, "{", "}"
-		else
-			count = math.max(count, k)
 		end
+		count = math.max(count, k)
 	end
 	return true, "[", "]", count
 end
@@ -253,9 +252,8 @@ function JsonReader:Read()
 	elseif peek == "/" then
 		self:ReadComment()
 		return self:Read()
-	else
-		return nil
 	end
+	return nil
 end
 
 function JsonReader:ReadTrue()

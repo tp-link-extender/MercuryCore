@@ -1092,8 +1092,6 @@ function Chat:CheckIfInBounds(value)
 		and Chat.MessageQueue[1]["Player"].Position.Y.Scale < 0
 	then
 		return true
-	else
-		return false
 	end
 	return false
 end

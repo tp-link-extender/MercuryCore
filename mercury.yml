@@ -7029,6 +7029,7 @@ structs:
             - LanguageService
             - Lighting
             - LocalStorageService
+            - LogService
             - AppStorageService
             - UserStorageService
             - LocalizationService

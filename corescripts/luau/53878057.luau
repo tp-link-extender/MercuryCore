@@ -658,12 +658,12 @@ function resolveDrag(gearClone, x, y)
 	then
 		reorganizeLoadout(gearClone, false)
 		return false
-	else
-		if dragBeginPos then
-			gearClone.Position = dragBeginPos
-		end
-		return -1
 	end
+
+	if dragBeginPos then
+		gearClone.Position = dragBeginPos
+	end
+	return -1
 end
 
 function unequipAllItems(dontEquipThis)

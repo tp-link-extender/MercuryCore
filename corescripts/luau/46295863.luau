@@ -62,7 +62,7 @@ local function robloxLock(instance)
 	end
 end
 
-function resumeGameFunction(shield)
+local function resumeGameFunction(shield)
 	shield.Settings:TweenPosition(
 		UDim2.new(0.5, -262, -0.5, -200),
 		Enum.EasingDirection.InOut,
@@ -83,7 +83,7 @@ function resumeGameFunction(shield)
 	end)
 end
 
-function goToMenu(container, menuName, moveDirection, size, position)
+local function goToMenu(container, menuName, moveDirection, size, position)
 	if type(menuName) ~= "string" then
 		return
 	end
@@ -172,7 +172,7 @@ function goToMenu(container, menuName, moveDirection, size, position)
 	end
 end
 
-function resetLocalCharacter()
+local function resetLocalCharacter()
 	local player = game.Players.LocalPlayer
 	if player then
 		if player.Character and player.Character:FindFirstChild "Humanoid" then
@@ -268,7 +268,7 @@ local function CreateTextButtons(frame, buttons, yPos, ySize)
 	end
 end
 
-function setRecordGui(recording, stopRecordButton, recordVideoButton)
+local function setRecordGui(recording, stopRecordButton, recordVideoButton)
 	if recording then
 		stopRecordButton.Visible = true
 		recordVideoButton.Text = "Stop Recording"
@@ -278,12 +278,12 @@ function setRecordGui(recording, stopRecordButton, recordVideoButton)
 	end
 end
 
-function recordVideoClick(recordVideoButton, stopRecordButton)
+local function recordVideoClick(recordVideoButton, stopRecordButton)
 	recordingVideo = not recordingVideo
 	setRecordGui(recordingVideo, stopRecordButton, recordVideoButton)
 end
 
-function backToGame(buttonClicked, shield, settingsButton)
+local function backToGame(buttonClicked, shield, settingsButton2)
 	buttonClicked.Parent.Parent.Parent.Parent.Visible = false
 	shield.Visible = false
 	for i = 1, #centerDialogs do
@@ -292,10 +292,10 @@ function backToGame(buttonClicked, shield, settingsButton)
 	end
 	centerDialogs = {}
 	game.GuiService:RemoveCenterDialog(shield)
-	settingsButton.Active = true
+	settingsButton2.Active = true
 end
 
-function setDisabledState(guiObject)
+local function setDisabledState(guiObject)
 	if not guiObject then
 		return
 	end
@@ -796,7 +796,7 @@ local function createGameMainMenu(baseZIndex, shield)
 		game:FindFirstChild "LoadingGuiService"
 		and #game.LoadingGuiService:GetChildren() > 0
 	then
-		local gameSettingsButton = createTextButton(
+		gameSettingsButton = createTextButton(
 			"Game Instructions",
 			Enum.ButtonStyle.RobloxButton,
 			Enum.FontSize.Size24,
@@ -1112,49 +1112,29 @@ local function createGameSettingsMenu(baseZIndex, _)
 		end
 
 		local function translateSavedQualityLevelToInt(savedQualityLevel)
-			if savedQualityLevel == Enum.SavedQualitySetting.Automatic then
-				return 0
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel1
-			then
+			local sqs = Enum.SavedQualitySetting
+			if savedQualityLevel == sqs.QualityLevel1 then
 				return 1
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel2
-			then
+			elseif savedQualityLevel == sqs.QualityLevel2 then
 				return 2
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel3
-			then
+			elseif savedQualityLevel == sqs.QualityLevel3 then
 				return 3
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel4
-			then
+			elseif savedQualityLevel == sqs.QualityLevel4 then
 				return 4
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel5
-			then
+			elseif savedQualityLevel == sqs.QualityLevel5 then
 				return 5
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel6
-			then
+			elseif savedQualityLevel == sqs.QualityLevel6 then
 				return 6
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel7
-			then
+			elseif savedQualityLevel == sqs.QualityLevel7 then
 				return 7
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel8
-			then
+			elseif savedQualityLevel == sqs.QualityLevel8 then
 				return 8
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel9
-			then
+			elseif savedQualityLevel == sqs.QualityLevel9 then
 				return 9
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel10
-			then
+			elseif savedQualityLevel == sqs.QualityLevel10 then
 				return 10
 			end
+			return 0
 		end
 
 		local function enableGraphicsWidget()

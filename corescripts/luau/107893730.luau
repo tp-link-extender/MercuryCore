@@ -615,9 +615,8 @@ end
 function currencyTypeToString(currencyType)
 	if currencyType == Enum.CurrencyType.Tix then
 		return "Tix"
-	else
-		return "R$"
 	end
+	return "R$"
 end
 
 -- figure out what currency to use based on the currency you can actually sell the item in and what the script specified
