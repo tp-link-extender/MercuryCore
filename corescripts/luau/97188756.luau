@@ -1533,7 +1533,7 @@ function Chat:CreateChatBar()
 
 		-- Engine has code to offset the entire world, so if we do it by -20 pixels nothing gets in our chat's way
 		--GuiService:SetGlobalSizeOffsetPixel(0, -20)
-		local success, error = pcall(function()
+		local success = pcall(function()
 			GuiService:SetGlobalGuiInset(0, 0, 0, 20)
 		end)
 		if not success then
