@@ -118,6 +118,11 @@
 				<div class="pt-6">
 					<h2 class="fs-4 light-text">Creations</h2>
 					{#each data.places as place, num}
+						{@const ratio = Math.floor(
+							(place.likeCount /
+								(place.likeCount + place.dislikeCount)) *
+								100
+						)}
 						<div
 							in:fade|global={{
 								num,
@@ -151,15 +156,16 @@
 													<span>
 														<i
 															class="fa fa-thumbs-up opacity-75" />
-														{place.ratio}%
+														{isNaN(ratio)
+															? "--"
+															: ratio}%
 													</span>
 												</div>
 												<div class="float-end">
 													<span>
 														<i
 															class="fa fa-user opacity-75" />
-														{place.gameSessions
-															.length}
+														{place.playerCount}
 													</span>
 												</div>
 											</div>

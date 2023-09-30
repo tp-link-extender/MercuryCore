@@ -1,9 +1,9 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
+import { prisma, findGroups } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
-import { error, fail } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 import { NotificationType } from "@prisma/client"
 
 export async function load({ locals, params }) {
@@ -26,14 +26,29 @@ export async function load({ locals, params }) {
 					FROM ->posted->statusPost
 					LIMIT 40) AS posts,
 
+					(SELECT
+						string::split(type::string(id), ":")[1] AS id,
+						name,
+						count(
+							SELECT * FROM <-playing
+							WHERE valid = true
+								AND ping > time::now() - 35s
+						) AS playerCount,
+
+						count(<-likes) AS likeCount,
+						count(<-dislikes) AS dislikeCount
+
+					FROM ->owns->place) AS places,
+
 					count(->friends->user)
 						+ count(<-friends<-user) AS friendCount,
 					count(<-follows<-user) AS followerCount,
 					count(->follows->user) AS followingCount,
+
 					$user ∈ ->friends->user
 						OR $user ∈ <-friends<-user AS friends,
-					$user ∈ <-follows<-user AS following,
-					$user ∈ ->follows->user AS follower,
+					$user ∈ ->follows->user AS following,
+					$user ∈ <-follows<-user AS follower,
 					$user ∈ ->request->user AS incomingRequest,
 					$user ∈ <-request<-user AS outgoingRequest
 
@@ -44,22 +59,27 @@ export async function load({ locals, params }) {
 				user: `user:${user.id}`,
 			},
 		)) as {
-			bio: {
-				id: string
-				text: string
-				updated: string
-			}
+			bio: any
 			follower: boolean
 			followerCount: number
 			following: boolean
 			followingCount: number
 			friendCount: number
 			friends: boolean
-			id: string
+			// id: string
 			incomingRequest: boolean
 			number: number
 			outgoingRequest: boolean
 			permissionLevel: number
+			places: {
+				dislikeCount: number
+				dislikes: boolean
+				id: string
+				likeCount: number
+				likes: boolean
+				name: string
+				playerCount: number
+			}[]
 			posts: {
 				content: {
 					id: string
@@ -77,32 +97,8 @@ export async function load({ locals, params }) {
 
 	if (!user2) throw error(404, "Not found")
 
-	const places = findPlaces({
-		where: {
-			ownerUsername: user2.username,
-			privateServer: user.id == user2.id ? undefined : false,
-		},
-		select: {
-			id: true,
-			name: true,
-			gameSessions: {
-				where: {
-					ping: {
-						gt: Math.floor(Date.now() / 1000) - 35,
-					},
-				},
-				select: {
-					valid: true,
-				},
-			},
-		},
-	})
-
 	return {
 		...user2,
-		places: places as Promise<
-			Awaited<typeof places> & { gameSessions: any[] }[]
-		>,
 		groups: [],
 		// findGroups({
 		// 	where: {
