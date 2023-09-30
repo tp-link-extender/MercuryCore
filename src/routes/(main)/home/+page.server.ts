@@ -1,5 +1,7 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma, findPlaces } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -47,47 +49,58 @@ export async function load({ locals }) {
 				},
 			},
 		}),
-		friends: [],
-		//  prisma.authUser.findMany({
-		// 	where: {
-		// 		username: {
-		// 			in: (
-		// 				await roQuery(
-		// 					"friends",
-		// 					cql`
-		// 						MATCH (:User { name: $user }) -[r:friends]- (u:User)
-		// 						RETURN u.name as name`,
-		// 					{
-		// 						user: user.username,
-		// 					},
-		// 					false,
-		// 					true,
-		// 				)
-		// 			).map((i: any) => i.name),
+		friends: squery(
+			surql`
+				SELECT number, username
+				FROM $user->friends->user OR $user<-friends<-user`,
+			{
+				user: `user:${user.id}`,
+			},
+		) as Promise<
+			{
+				number: number
+				username: string
+			}[]
+		>,
+		feed: squery(surql`
+			SELECT
+				*,
+				content[0] AS content,
+				(SELECT number, username FROM <-posted<-user)[0] as authorUser
+			FROM statusPost
+			LIMIT 40`) as Promise<
+			{
+				authorUser: {
+					number: number
+					username: string
+				}
+				content: {
+					id: string
+					text: string
+					updated: string
+				}[]
+				id: string
+				posted: string
+				visibility: string
+			}[]
+		>,
+		// prisma.post.findMany({
+		// 	select: {
+		// 		id: true,
+		// 		content: true,
+		// 		posted: true,
+		// 		authorUser: {
+		// 			select: {
+		// 				username: true,
+		// 				number: true,
+		// 			},
 		// 		},
 		// 	},
-		// 	select: {
-		// 		username: true,
-		// 		number: true,
+		// 	orderBy: {
+		// 		posted: "desc",
 		// 	},
+		// 	take: 40,
 		// }),
-		feed: prisma.post.findMany({
-			select: {
-				id: true,
-				content: true,
-				posted: true,
-				authorUser: {
-					select: {
-						username: true,
-						number: true,
-					},
-				},
-			},
-			orderBy: {
-				posted: "desc",
-			},
-			take: 40,
-		}),
 	}
 }
 
@@ -100,15 +113,24 @@ export const actions = {
 
 		const { user } = await authorise(locals)
 
-		await prisma.post.create({
-			data: {
-				authorUser: {
-					connect: {
-						username: user.username,
-					},
-				},
+		await squery(
+			surql`
+			LET $textContent = CREATE textContent CONTENT {
+				text: $content,
+				updated: time::now(),
+			};
+			RELATE $user->wrote->$textContent;
+
+			LET $status = CREATE statusPost CONTENT {
+				posted: time::now(),
+				visibility: "Visible",
+				content: [$textContent],
+			};
+			RELATE $user->posted->$status`,
+			{
 				content: form.data.status,
+				user: `user:${user.id}`,
 			},
-		})
+		)
 	},
 }

@@ -127,16 +127,16 @@ export const actions = {
 			requestType = data.request,
 			serverId = parseInt(data.serverId)
 
-		if (!requestType || !serverId) return error(400, "Invalid Request")
+		if (!requestType || !serverId) throw error(400, "Invalid Request")
 		if (requestType != "RequestGame")
-			return error(400, "Invalid Request (request type invalid)")
+			throw error(400, "Invalid Request (request type invalid)")
 
 		const place = await prisma.place.findUnique({
 			where: {
 				id: serverId,
 			},
 		})
-		if (!place) return error(404, "Place not found")
+		if (!place) throw error(404, "Place not found")
 
 		const userModeration = await prisma.moderationAction.findMany({
 			where: {
@@ -146,15 +146,18 @@ export const actions = {
 		})
 
 		if (userModeration[0])
-			return error(403, "You cannot currently play games")
+			throw error(403, "You cannot currently play games")
 
 		// invalidate all game sessions
-		await squery(surql`
-			UPDATE (SELECT * FROM $user->playing)
-				SET valid = false
-		`, {
-			user: `user:${user.id}`,
-		})
+		await squery(
+			surql`
+				UPDATE (SELECT * FROM $user->playing)
+					SET valid = false
+			`,
+			{
+				user: `user:${user.id}`,
+			},
+		)
 
 		// create valid session
 		const session = (await squery(

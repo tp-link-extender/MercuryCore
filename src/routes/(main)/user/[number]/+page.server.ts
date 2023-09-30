@@ -11,119 +11,124 @@ export async function load({ locals, params }) {
 		throw error(400, `Invalid user id: ${params.number}`)
 
 	const number = parseInt(params.number),
-		userExists = await prisma.authUser.findUnique({
-			where: {
+		{ user } = await authorise(locals),
+		userExists = (await squery(
+			surql`
+				SELECT
+					id,
+					username,
+					number,
+					permissionLevel,
+					bio[0] AS bio,
+					(SELECT
+						*,
+						content[0] AS content
+					FROM ->posted->statusPost
+					LIMIT 40) AS posts,
+
+					count(->friends->user)
+						+ count(<-friends<-user) AS friendCount,
+					count(<-follows<-user) AS followerCount,
+					count(->follows->user) AS followingCount,
+					$user ∈ ->friends->user
+						OR $user ∈ <-friends<-user AS friends,
+					$user ∈ <-follows<-user AS following,
+					$user ∈ ->follows->user AS follower,
+					$user ∈ ->request->user AS incomingRequest,
+					$user ∈ <-request<-user AS outgoingRequest
+
+				FROM user
+				WHERE number = $number`,
+			{
 				number,
+				user: `user:${user.id}`,
+			},
+		)) as {
+			bio: {
+				id: string
+				text: string
+				updated: string
+			}
+			follower: boolean
+			followerCount: number
+			following: boolean
+			followingCount: number
+			friendCount: number
+			friends: boolean
+			id: string
+			incomingRequest: boolean
+			number: number
+			outgoingRequest: boolean
+			permissionLevel: number
+			posts: {
+				content: {
+					id: string
+					text: string
+					updated: string
+				}[]
+				id: string
+				posted: string
+				visibility: string
+			}[]
+			username: string
+		}[]
+
+	const user2 = userExists[0]
+
+	if (!user2) throw error(404, "Not found")
+
+	const places = findPlaces({
+		where: {
+			ownerUsername: user2.username,
+			privateServer: user.id == user2.id ? undefined : false,
+		},
+		select: {
+			id: true,
+			name: true,
+			gameSessions: {
+				where: {
+					ping: {
+						gt: Math.floor(Date.now() / 1000) - 35,
+					},
+				},
+				select: {
+					valid: true,
+				},
+			},
+		},
+	})
+
+	return {
+		...user2,
+		places: places as Promise<
+			Awaited<typeof places> & { gameSessions: any[] }[]
+		>,
+		groups: [],
+		// findGroups({
+		// 	where: {
+		// 		OR: await roQuery(
+		// 			"groups",
+		// 			cql`
+		// 				MATCH (:User { name: $user }) -[:in]-> (u:Group)
+		// 				RETURN u.name AS name`,
+		// 			query2,
+		// 			false,
+		// 			true,
+		// 		),
+		// 	},
+		// 	select: {
+		// 		name: true,
+		// 	},
+		// }),
+		groupsOwned: findGroups({
+			where: {
+				ownerUsername: user2.username,
 			},
 			select: {
-				id: true,
-				username: true,
-				number: true,
-				permissionLevel: true,
-				posts: {
-					orderBy: {
-						posted: "desc",
-					},
-					select: {
-						posted: true,
-						content: true,
-					},
-					take: 40,
-				},
-				bio: {
-					orderBy: {
-						updated: "desc",
-					},
-					select: {
-						text: true,
-					},
-					take: 1,
-				},
+				name: true,
 			},
-		})
-	if (userExists) {
-		const { user } = await authorise(locals),
-			query = {
-				user: `user:${user.id}`,
-				user2: `user:${userExists.id}`,
-			},
-			places = findPlaces({
-				where: {
-					ownerUsername: userExists.username,
-					privateServer: user.id == userExists.id ? undefined : false,
-				},
-				select: {
-					id: true,
-					name: true,
-					gameSessions: {
-						where: {
-							ping: {
-								gt: Math.floor(Date.now() / 1000) - 35,
-							},
-						},
-						select: {
-							valid: true,
-						},
-					},
-				},
-			})
-
-		return {
-			...userExists,
-			places: places as Promise<
-				Awaited<typeof places> & { gameSessions: any[] }[]
-			>,
-			groups: [],
-			// findGroups({
-			// 	where: {
-			// 		OR: await roQuery(
-			// 			"groups",
-			// 			cql`
-			// 				MATCH (:User { name: $user }) -[:in]-> (u:Group)
-			// 				RETURN u.name AS name`,
-			// 			query2,
-			// 			false,
-			// 			true,
-			// 		),
-			// 	},
-			// 	select: {
-			// 		name: true,
-			// 	},
-			// }),
-			groupsOwned: findGroups({
-				where: {
-					ownerUsername: userExists.username,
-				},
-				select: {
-					name: true,
-				},
-			}),
-			friendCount: squery(
-				surql`count($user2->friends->user)
-					+ count($user2<-friends<-user)`,
-				query,
-			),
-			followerCount: squery(surql`count($user2<-follows<-user)`, query),
-			followingCount: squery(surql`count($user2->follows->user)`, query),
-			friends: squery(
-				surql`$user2 ∈ $user->friends->user
-					OR $user ∈ $user2->friends->user`,
-				query,
-			),
-			following: squery(surql`$user2 ∈ $user->follows->user`, query),
-			follower: squery(surql`$user2 ∈ $user<-follows<-user`, query),
-			incomingRequest: squery(
-				surql`$user ∈ $user2->request->user`,
-				query,
-			),
-			outgoingRequest: squery(
-				surql`$user2 ∈ $user->request->user`,
-				query,
-			),
-		}
+		}),
 	}
-
-	throw error(404, "Not found")
 }
 
 export const actions = {
@@ -131,17 +136,17 @@ export const actions = {
 		const { user } = await authorise(locals)
 
 		if (!/^\d+$/.test(params.number))
-			return fail(400, { msg: `Invalid user id: ${params.number}` })
+			throw error(400, `Invalid user id: ${params.number}`)
 		const number = parseInt(params.number),
 			userExists = await prisma.authUser.findUnique({
 				where: {
 					number,
 				},
 			})
-		if (!userExists) return error(404, "User not found")
+		if (!userExists) throw error(404, "User not found")
 		if (user.id == userExists.id)
 			// You can't friend/follow yourself
-			return error(400, "You can't friend/follow yourself")
+			throw error(400, "You can't friend/follow yourself")
 
 		const data = await formData(request),
 			{ action } = data,
@@ -150,7 +155,7 @@ export const actions = {
 					username: userExists?.username,
 				},
 			})
-		if (!user2Exists) return error(400, "User not found")
+		if (!user2Exists) throw error(400, "User not found")
 
 		const query = {
 				user: `user:${user.id}`,
@@ -162,9 +167,9 @@ export const actions = {
 						// The direction of the ->friends relationship matches
 						// the direction of the previous ->request relationship.
 						surql`
-						DELETE $user2->request WHERE out=$user;
-						RELATE $user2->friends->$user
-							SET time = time::now()`,
+							DELETE $user2->request WHERE out=$user;
+							RELATE $user2->friends->$user
+								SET time = time::now()`,
 						query,
 					),
 
@@ -242,7 +247,7 @@ export const actions = {
 							// Make sure users are not already friends
 							(await squery(
 								surql`$user ∈ $user2->friends->user
-								OR $user2 ∈ $user->friends->user`,
+									OR $user2 ∈ $user->friends->user`,
 								query,
 							))
 						)
@@ -258,8 +263,9 @@ export const actions = {
 						else
 							await Promise.all([
 								squery(
-									surql`RELATE $user->request->$user2
-									SET time = time::now()`,
+									surql`
+										RELATE $user->request->$user2
+											SET time = time::now()`,
 									query,
 								),
 								prisma.notification.create({
@@ -272,7 +278,7 @@ export const actions = {
 									},
 								}),
 							])
-					else return fail(400)
+					else throw error(400, "Already friends")
 					break
 				case "cancel":
 					await Promise.all([
@@ -305,8 +311,7 @@ export const actions = {
 					)
 						// Make sure an incoming request exists before accepting
 						await accept()
-					else return fail(400)
-					break
+					else throw error(400, "No friend request to accept")
 			}
 		} catch (e) {
 			console.error(e)

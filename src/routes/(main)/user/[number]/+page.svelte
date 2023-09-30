@@ -11,7 +11,6 @@
 	]
 
 	export let data
-	const { user } = data
 </script>
 
 <Head title={data.username} />
@@ -97,10 +96,10 @@
 	</div>
 	<div class="row">
 		<div class="col-6">
-			{#if data.bio[0]}
+			{#if data.bio}
 				<div class="pt-6">
 					<h2 class="fs-4 light-text">Bio</h2>
-					<p class="light-text ps-2">{data.bio[0].text}</p>
+					<p class="light-text ps-2">{data.bio}</p>
 				</div>
 			{/if}
 			<div class="pt-6">
@@ -223,7 +222,7 @@
 			<h2 class="fs-4 pt-6 light-text">Latest feed posts</h2>
 			<div id="feed" class="light-text px-4">
 				<div class="row">
-					{#each data.posts.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
+					{#each data.posts.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
 							class="p-2 col-md-6 col-sm-12">
@@ -238,11 +237,13 @@
 										image
 										bg="accent" />
 									<span class="italic light-text flex-end">
-										{status.posted.toLocaleString()}
+										{new Date(
+											status.posted
+										).toLocaleString()}
 									</span>
 								</div>
 								<p class="text-start mb-0">
-									{status.content}
+									{status.content[0].text}
 								</p>
 							</div>
 						</div>

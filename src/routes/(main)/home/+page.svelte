@@ -111,7 +111,7 @@
 							$errors.status}>
 						{$errors.status || $message || ""}
 					</p>
-					{#each data.feed.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
+					{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
 						{#if status.authorUser}
 							<div
 								in:fade|global={{
@@ -132,7 +132,7 @@
 										<span class="report align-self-center">
 											<em
 												class="small light-text timestamp">
-												{status.posted.toLocaleString()}
+												{new Date(status.posted).toLocaleString()}
 											</em>
 											<ReportButton
 												user={status.authorUser
@@ -141,7 +141,7 @@
 										</span>
 									</div>
 									<p class="text-start">
-										{status.content}
+										{status.content[0].text}
 									</p>
 								</div>
 							</div>

@@ -139,6 +139,7 @@ export const actions = {
 				number: getUser?.number,
 				email,
 				permissionLevel: 1,
+				bio: [],
 			})
 
 			await prisma.regkey.update({
@@ -226,6 +227,7 @@ export const actions = {
 				number: getUser?.number,
 				email: "",
 				permissionLevel: 5,
+				bio: [],
 			})
 		} catch (e) {
 			const error = e as Error
