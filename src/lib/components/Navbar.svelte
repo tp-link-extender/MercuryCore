@@ -52,7 +52,7 @@
 	<div class="w-100 border-0" tabindex="-1">
 		<div id="nav1" class="py-1 d-flex">
 			<a class="navbar-brand light-text me-0" href="/">
-				<img class="me-2" src="/favicon.svg" alt="Mercury logo" />
+				<img class="me-2" src="/icon.svg" alt="Mercury logo" />
 				<span class="me-6">Mercury</span>
 			</a>
 			{#if user}
