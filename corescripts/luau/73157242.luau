@@ -57,11 +57,10 @@ function GetTerrainForMouse(mouse)
 	local cell = game.Workspace.Terrain:WorldToCellPreferSolid(
 		Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z)
 	)
-	local planeLoc
 	-- If nothing was hit, do the plane intersection.
 	if 0 == game.Workspace.Terrain:GetCell(cell.X, cell.Y, cell.Z).Value then
 		cell = nil
-		planeLoc, hit = PlaneIntersection(
+		local planeLoc, hit = PlaneIntersection(
 			Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z)
 		)
 		if hit then
@@ -110,8 +109,10 @@ local function collectParts(object, baseParts, scripts, decals)
 	end
 end
 
+local cluster
+
 local function clusterPartsInRegion(startVector, endVector)
-	local cluster = game.Workspace:FindFirstChild "Terrain"
+	cluster = game.Workspace:FindFirstChild "Terrain"
 
 	local startCell = cluster:WorldToCell(startVector)
 	local endCell = cluster:WorldToCell(endVector)
@@ -1009,6 +1010,8 @@ t.SetupStamperDragger = function(
 		return nil
 	end
 
+	local configFound, targetCFrame, targetSurface
+
 	local stampInModel
 	local allowedStampRegion
 	local stampFailedFunc
@@ -1486,9 +1489,9 @@ t.SetupStamperDragger = function(
 				end
 			end)
 		then
-			error "Error: RbxStamper.DoStamperMouseMove Mouse is nil on second check"
 			game.JointsService:ClearJoinAfterMoveJoints()
 			Mouse = nil
+			error "Error: RbxStamper.DoStamperMouseMove Mouse is nil on second check"
 			return
 		end
 
@@ -1842,7 +1845,7 @@ t.SetupStamperDragger = function(
 		end
 
 		-- After rotating, update the position
-		local configFound, targetCFrame =
+		configFound, targetCFrame =
 			findConfigAtMouseTarget(Mouse, stampData)
 		if configFound then
 			stampData.CurrentParts =
@@ -1973,7 +1976,7 @@ t.SetupStamperDragger = function(
 	local function ResolveMegaClusterStamp(checkHighScalabilityStamp)
 		local cellSet = false
 
-		local cluster = game.Workspace.Terrain
+		cluster = game.Workspace.Terrain
 
 		local line = HighScalabilityLine.InternalLine
 		local cMax = game.Workspace.Terrain.MaxExtents.Max
@@ -2418,7 +2421,7 @@ t.SetupStamperDragger = function(
 		HighScalabilityLine.Start = nil
 		HighScalabilityLine.Adorn.Parent = nil
 
-		local cluster = game.Workspace.Terrain
+		cluster = game.Workspace.Terrain
 
 		-- if target point is in cluster, just use cluster:SetCell
 		if isMegaClusterPart() then
@@ -2563,9 +2566,11 @@ t.SetupStamperDragger = function(
 			end
 
 			-- if it's a model, we also want to fill in the playerID and playerName tags, if it has those (e.g. for the friend-only door)
-			playerIdTag = stampData.CurrentParts:FindFirstChild "PlayerIdTag"
-			playerNameTag =
+			local playerIdTag = stampData.CurrentParts:FindFirstChild "PlayerIdTag"
+			local playerNameTag =
 				stampData.CurrentParts:FindFirstChild "PlayerNameTag"
+
+			local tempPlayerValue
 			if playerIdTag ~= nil then
 				tempPlayerValue = getPlayer()
 				if tempPlayerValue ~= nil then
@@ -2763,7 +2768,7 @@ t.SetupStamperDragger = function(
 	end
 
 	local function resumeStamper()
-		clone, parts = prepareModel(modelToStamp)
+		local clone, parts = prepareModel(modelToStamp)
 
 		if not clone or not parts then
 			return
@@ -2799,7 +2804,7 @@ t.SetupStamperDragger = function(
 		end
 
 		if clone:FindFirstChild("ClusterMaterial", true) then -- extract all info from vector
-			clusterMaterial = clone:FindFirstChild("ClusterMaterial", true)
+			local clusterMaterial = clone:FindFirstChild("ClusterMaterial", true)
 			if clusterMaterial:IsA "Vector3Value" then
 				cellInfo.Material = clusterMaterial.Value.X
 				cellInfo.clusterType = clusterMaterial.Value.Y

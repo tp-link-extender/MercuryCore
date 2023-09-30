@@ -13,216 +13,13 @@ local function waitForProperty(instance, property)
 	end
 end
 
-local RbxGui
-
--- WE'RE HERE
--- WE'RE QUEER
--- WE F*CK SH*T UP
-
---#region Fusion types
---[[
-	Stores common public-facing type information for Fusion APIs.
-]]
-
-type Set<T> = { [T]: any }
--- A unique symbolic value.
-type Symbol = {
-	type: "Symbol",
-	name: string,
-}
-
--- Types that can be expressed as vectors of numbers, and so can be animated.
-type Animatable =
-	number
-	| CFrame
-	| Color3
-	| ColorSequenceKeypoint
-	| DateTime
-	| NumberRange
-	| NumberSequenceKeypoint
-	| PhysicalProperties
-	| Ray
-	| Rect
-	| Region3
-	| Region3int16
-	| UDim
-	| UDim2
-	| Vector2
-	| Vector2int16
-	| Vector3
-	| Vector3int16
-
--- A task which can be accepted for cleanup.
-type Task =
-	Instance
-	| RBXScriptConnection
-	| () -> () | { destroy: (any) -> () } | { Destroy: (any) -> () } | { Task }
-
--- Script-readable version information.
-type Version = {
-	major: number,
-	minor: number,
-	isRelease: boolean,
-}
---[[
-	Generic reactive graph types
-]]
-
--- A graph object which can have dependents.
-type Dependency = {
-	dependentSet: Set<Dependent>,
-}
-
--- A graph object which can have dependencies.
-type Dependent = {
-	update: (Dependent) -> boolean,
-	dependencySet: Set<Dependency>,
-}
-
--- An object which stores a piece of reactive state.
-type StateObject<T> = Dependency & {
-	type: "State",
-	kind: string,
-}
-
--- Either a constant value of type T, or a state object containing type T.
-type CanBeState<T> = StateObject<T> | T
-
--- Function signature for use callbacks.
-type Use = <T>(target: CanBeState<T>) -> T
-
---[[
-	Specific reactive graph types
-]]
-
--- A state object whose value can be set at any time by the user.
-type Value<T> = StateObject<T> & {
-	kind: "State",
-	set: (Value<T>, newValue: any, force: boolean?) -> (),
-}
-
--- A state object whose value is derived from other objects using a callback.
-type Computed<T> = StateObject<T> & Dependent & {
-	kind: "Computed",
-}
-
--- A state object whose value is derived from other objects using a callback.
-type ForPairs<KO, VO> = StateObject<{ [KO]: VO }> & Dependent & {
-	kind: "ForPairs",
-}
--- A state object whose value is derived from other objects using a callback.
-type ForKeys<KO, V> = StateObject<{ [KO]: V }> & Dependent & {
-	kind: "ForKeys",
-}
--- A state object whose value is derived from other objects using a callback.
-type ForValues<K, VO> = StateObject<{ [K]: VO }> & Dependent & {
-	kind: "ForKeys",
-}
-
--- A state object which follows another state object using tweens.
-type Tween<T> = StateObject<T> & Dependent & {
-	kind: "Tween",
-}
-
--- A state object which follows another state object using spring simulation.
-type Spring<T> = StateObject<T> & Dependent & {
-	kind: "Spring",
-	setPosition: (Spring<T>, newPosition: Animatable) -> (),
-	setVelocity: (Spring<T>, newVelocity: Animatable) -> (),
-	addVelocity: (Spring<T>, deltaVelocity: Animatable) -> (),
-}
-
--- An object which can listen for updates on another state object.
-type Observer = Dependent & {
-	kind: "Observer",
-	onChange: (Observer, callback: () -> ()) -> () -> (),
-}
-
---[[
-	Instance related types
-]]
-
--- Denotes children instances in an instance or component's property table.
-type SpecialKey = {
-	type: "SpecialKey",
-	kind: string,
-	stage: "self" | "descendants" | "ancestor" | "observer",
-	apply: (
-		SpecialKey,
-		value: any,
-		applyTo: Instance,
-		cleanupTasks: { Task }
-	) -> (),
-}
-
--- A collection of instances that may be parented to another instance.
-type Children = Instance | StateObject<Children> | { [any]: Children }
-
--- A table that defines an instance's properties, handlers and children.
-type PropertyTable = { [string | SpecialKey]: any }
-
-type Fusion = {
-	version: Version,
-
-	New: (className: string) -> (propertyTable: PropertyTable) -> Instance,
-	Hydrate: (
-		target: Instance
-	) -> (propertyTable: PropertyTable) -> Instance,
-	Ref: SpecialKey,
-	Cleanup: SpecialKey,
-	Children: SpecialKey,
-	Out: (propertyName: string) -> SpecialKey,
-	OnEvent: (eventName: string) -> SpecialKey,
-	OnChange: (propertyName: string) -> SpecialKey,
-
-	Value: <T>(initialValue: T) -> Value<T>,
-	Computed: <T>(callback: (Use) -> T, destructor: (T) -> ()?) -> Computed<T>,
-	ForPairs: <KI, VI, KO, VO, M>(
-		inputTable: CanBeState<{ [KI]: VI }>,
-		processor: (Use, KI, VI) -> (KO, VO, M?),
-		destructor: (KO, VO, M?) -> ()?
-	) -> ForPairs<KO, VO>,
-	ForKeys: <KI, KO, M>(
-		inputTable: CanBeState<{ [KI]: any }>,
-		processor: (Use, KI) -> (KO, M?),
-		destructor: (KO, M?) -> ()?
-	) -> ForKeys<KO, any>,
-	ForValues: <VI, VO, M>(
-		inputTable: CanBeState<{ [any]: VI }>,
-		processor: (Use, VI) -> (VO, M?),
-		destructor: (VO, M?) -> ()?
-	) -> ForValues<any, VO>,
-	Observer: (watchedState: StateObject<any>) -> Observer,
-
-	Tween: <T>(goalState: StateObject<T>, tweenInfo: TweenInfo?) -> Tween<T>,
-	Spring: <T>(
-		goalState: StateObject<T>,
-		speed: CanBeState<number>?,
-		damping: CanBeState<number>?
-	) -> Spring<T>,
-
-	cleanup: (...any) -> (),
-	doNothing: (...any) -> (),
-	peek: Use,
-}
-
---#endregion
-
-local Fusion = (LoadLibrary "RbxFusion") :: Fusion
-
-local New = Fusion.New
-local Children = Fusion.Children
-local OnEvent = Fusion.OnEvent
-local Hydrate = Fusion.Hydrate
-
 -- A Few Script Globals
-local gui
-if script.Parent:FindFirstChild "ControlFrame" then
-	gui = script.Parent:FindFirstChild "ControlFrame"
-else
-	gui = script.Parent
+local gui = script.Parent
+if gui:FindFirstChild "ControlFrame" then
+	gui = gui.ControlFrame
 end
 
+local RbxGui
 local helpButton, updateCameraDropDownSelection, updateVideoCaptureDropDownSelection
 local tweenTime = 0.2
 
@@ -378,10 +175,12 @@ end
 
 local function resetLocalCharacter()
 	local player = game.Players.LocalPlayer
-	if player then
-		if player.Character and player.Character:FindFirstChild "Humanoid" then
-			player.Character.Humanoid.Health = 0
-		end
+	if
+		player
+		and player.Character
+		and player.Character:FindFirstChild "Humanoid"
+	then
+		player.Character.Humanoid.Health = 0
 	end
 end
 
@@ -392,15 +191,15 @@ local function createTextButton(
 	buttonSize,
 	buttonPosition
 )
-	return New "TextButton" {
-		Font = Enum.Font.Arial,
-		FontSize = fontSize,
-		Size = buttonSize,
-		Position = buttonPosition,
-		Style = style,
-		TextColor3 = Color3.new(1, 1, 1),
-		Text = text,
-	}
+	local newTextButton = Instance.new "TextButton"
+	newTextButton.Font = Enum.Font.Arial
+	newTextButton.FontSize = fontSize
+	newTextButton.Size = buttonSize
+	newTextButton.Position = buttonPosition
+	newTextButton.Style = style
+	newTextButton.TextColor3 = Color3.new(1, 1, 1)
+	newTextButton.Text = text
+	return newTextButton
 end
 
 local function CreateTextButtons(frame, buttons, yPos, ySize)
@@ -422,23 +221,19 @@ local function CreateTextButtons(frame, buttons, yPos, ySize)
 	end
 
 	for _, obj in ipairs(buttons) do
-		local button
-		button = New "TextButton" {
-			Name = "Button" .. buttonNum,
-			Font = Enum.Font.Arial,
-			FontSize = Enum.FontSize.Size18,
-			AutoButtonColor = true,
-			Style = Enum.ButtonStyle.RobloxButton,
-			Text = obj.Text,
-			TextColor3 = Color3.new(1, 1, 1),
-			Parent = frame,
-
-			[OnEvent "MouseButton1Click"] = function()
-				toggleSelection(button)
-				obj.Function()
-			end,
-		}
-
+		local button = Instance.new "TextButton"
+		button.Name = "Button" .. buttonNum
+		button.Font = Enum.Font.Arial
+		button.FontSize = Enum.FontSize.Size18
+		button.AutoButtonColor = true
+		button.Style = Enum.ButtonStyle.RobloxButton
+		button.Text = obj.Text
+		button.TextColor3 = Color3.new(1, 1, 1)
+		button.MouseButton1Click:connect(function()
+			toggleSelection(button)
+			obj.Function()
+		end)
+		button.Parent = frame
 		buttonObjs[buttonNum] = button
 
 		buttonNum += 1
@@ -538,72 +333,59 @@ local function createHelpDialog(baseZIndex)
 		end
 	end
 
-	local shield = New "Frame" {
-		Name = "HelpDialogShield",
-		Active = true,
-		Visible = false,
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundColor3 = Color3I(51, 51, 51),
-		BorderColor3 = Color3I(27, 42, 53),
-		BackgroundTransparency = 0.4,
-		ZIndex = baseZIndex + 1,
-	}
+	local shield = Instance.new "Frame"
+	shield.Name = "HelpDialogShield"
+	shield.Active = true
+	shield.Visible = false
+	shield.Size = UDim2.new(1, 0, 1, 0)
+	shield.BackgroundColor3 = Color3I(51, 51, 51)
+	shield.BorderColor3 = Color3I(27, 42, 53)
+	shield.BackgroundTransparency = 0.4
+	shield.ZIndex = baseZIndex + 1
 
-	local helpDialog = New "Frame" {
-		Name = "HelpDialog",
-		Style = Enum.FrameStyle.RobloxRound,
-		Position = UDim2.new(0.2, 0, 0.2, 0),
-		Size = UDim2.new(0.6, 0, 0.6, 0),
-		Active = true,
-		Parent = shield,
+	local helpDialog = Instance.new "Frame"
+	helpDialog.Name = "HelpDialog"
+	helpDialog.Style = Enum.FrameStyle.RobloxRound
+	helpDialog.Position = UDim2.new(0.2, 0, 0.2, 0)
+	helpDialog.Size = UDim2.new(0.6, 0, 0.6, 0)
+	helpDialog.Active = true
+	helpDialog.Parent = shield
 
-		[Children] = {
-			New "TextLabel" {
-				Name = "Title",
-				Text = "Keyboard & Mouse Controls",
-				Font = Enum.Font.ArialBold,
-				FontSize = Enum.FontSize.Size36,
-				Position = UDim2.new(0, 0, 0.025, 0),
-				Size = UDim2.new(1, 0, 0, 40),
-				TextColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 1,
-			},
-		},
-	}
+	local titleLabel = Instance.new "TextLabel"
+	titleLabel.Name = "Title"
+	titleLabel.Text = "Keyboard & Mouse Controls"
+	titleLabel.Font = Enum.Font.ArialBold
+	titleLabel.FontSize = Enum.FontSize.Size36
+	titleLabel.Position = UDim2.new(0, 0, 0.025, 0)
+	titleLabel.Size = UDim2.new(1, 0, 0, 40)
+	titleLabel.TextColor3 = Color3.new(1, 1, 1)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Parent = helpDialog
 
-	local buttonRow = New "Frame" {
-		Name = "Buttons",
-		Position = UDim2.new(0.1, 0, 0.07, 40),
-		Size = UDim2.new(0.8, 0, 0, 45),
-		BackgroundTransparency = 1,
-		Parent = helpDialog,
-	}
+	local buttonRow = Instance.new "Frame"
+	buttonRow.Name = "Buttons"
+	buttonRow.Position = UDim2.new(0.1, 0, 0.07, 40)
+	buttonRow.Size = UDim2.new(0.8, 0, 0, 45)
+	buttonRow.BackgroundTransparency = 1
+	buttonRow.Parent = helpDialog
 
-	local imageFrame = New "Frame" {
-		Name = "ImageFrame",
-		Position = UDim2.new(0.05, 0, 0.075, 80),
-		Size = UDim2.new(0.9, 0, 0.9, -120),
-		BackgroundTransparency = 1,
-		Parent = helpDialog,
-	}
+	local imageFrame = Instance.new "Frame"
+	imageFrame.Name = "ImageFrame"
+	imageFrame.Position = UDim2.new(0.05, 0, 0.075, 80)
+	imageFrame.Size = UDim2.new(0.9, 0, 0.9, -120)
+	imageFrame.BackgroundTransparency = 1
+	imageFrame.Parent = helpDialog
 
-	local layoutFrame = New "Frame" {
-		Name = "LayoutFrame",
-		Position = UDim2.new(0.5, 0, 0, 0),
-		Size = UDim2.new(1.5, 0, 1, 0),
-		BackgroundTransparency = 1,
-		SizeConstraint = Enum.SizeConstraint.RelativeYY,
-		Parent = imageFrame,
-	}
+	local layoutFrame = Instance.new "Frame"
+	layoutFrame.Name = "LayoutFrame"
+	layoutFrame.Position = UDim2.new(0.5, 0, 0, 0)
+	layoutFrame.Size = UDim2.new(1.5, 0, 1, 0)
+	layoutFrame.BackgroundTransparency = 1
+	layoutFrame.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	layoutFrame.Parent = imageFrame
 
-	local image = New "ImageLabel" {
-		Name = "Image",
-		Position = UDim2.new(-0.5, 0, 0, 0),
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = 1,
-		Parent = layoutFrame,
-	}
-
+	local image = Instance.new "ImageLabel"
+	image.Name = "Image"
 	if
 		UserSettings().GameSettings.ControlMode
 		== Enum.ControlMode["Mouse Lock Switch"]
@@ -612,6 +394,10 @@ local function createHelpDialog(baseZIndex)
 	else
 		image.Image = classicLookScreenUrl
 	end
+	image.Position = UDim2.new(-0.5, 0, 0, 0)
+	image.Size = UDim2.new(1, 0, 1, 0)
+	image.BackgroundTransparency = 1
+	image.Parent = layoutFrame
 
 	local buttons = {}
 	buttons[1] = {}
@@ -683,37 +469,34 @@ local function createHelpDialog(baseZIndex)
 		)
 	end)
 
-	New "TextButton" {
-		Name = "OkBtn",
-		Text = "OK",
-		Modal = true,
-		Size = UDim2.new(0.3, 0, 0, 45),
-		Position = UDim2.new(0.35, 0, 0.975, -50),
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size18,
-		BackgroundTransparency = 1,
-		TextColor3 = Color3.new(1, 1, 1),
-		Style = Enum.ButtonStyle.RobloxButtonDefault,
-		Parent = helpDialog,
-
-		[OnEvent "MouseButton1Click"] = function()
-			shield.Visible = false
-			game.GuiService:RemoveCenterDialog(shield)
-		end,
-	}
+	local okBtn = Instance.new "TextButton"
+	okBtn.Name = "OkBtn"
+	okBtn.Text = "OK"
+	okBtn.Modal = true
+	okBtn.Size = UDim2.new(0.3, 0, 0, 45)
+	okBtn.Position = UDim2.new(0.35, 0, 0.975, -50)
+	okBtn.Font = Enum.Font.Arial
+	okBtn.FontSize = Enum.FontSize.Size18
+	okBtn.BackgroundTransparency = 1
+	okBtn.TextColor3 = Color3.new(1, 1, 1)
+	okBtn.Style = Enum.ButtonStyle.RobloxButtonDefault
+	okBtn.MouseButton1Click:connect(function()
+		shield.Visible = false
+		game.GuiService:RemoveCenterDialog(shield)
+	end)
+	okBtn.Parent = helpDialog
 
 	robloxLock(shield)
 	return shield
 end
 
 local function createLeaveConfirmationMenu(baseZIndex, shield)
-	local frame = New "Frame" {
-		Name = "LeaveConfirmationMenu",
-		BackgroundTransparency = 1,
-		Size = UDim2.new(1, 0, 1, 0),
-		Position = UDim2.new(0, 0, 2, 400),
-		ZIndex = baseZIndex + 4,
-	}
+	local frame = Instance.new "Frame"
+	frame.Name = "LeaveConfirmationMenu"
+	frame.BackgroundTransparency = 1
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.Position = UDim2.new(0, 0, 2, 400)
+	frame.ZIndex = baseZIndex + 4
 
 	local yesButton = createTextButton(
 		"Leave",
@@ -754,148 +537,129 @@ local function createLeaveConfirmationMenu(baseZIndex, shield)
 		)
 	end)
 
-	New "TextLabel" {
-		Name = "LeaveText",
-		Text = "Leave this game?",
-		Size = UDim2.new(1, 0, 0.8, 0),
-		TextWrap = true,
-		TextColor3 = Color3.new(1, 1, 1),
-		Font = Enum.Font.ArialBold,
-		FontSize = Enum.FontSize.Size36,
-		BackgroundTransparency = 1,
-		ZIndex = baseZIndex + 4,
-		Parent = frame,
-	}
+	local leaveText = Instance.new "TextLabel"
+	leaveText.Name = "LeaveText"
+	leaveText.Text = "Leave this game?"
+	leaveText.Size = UDim2.new(1, 0, 0.8, 0)
+	leaveText.TextWrap = true
+	leaveText.TextColor3 = Color3.new(1, 1, 1)
+	leaveText.Font = Enum.Font.ArialBold
+	leaveText.FontSize = Enum.FontSize.Size36
+	leaveText.BackgroundTransparency = 1
+	leaveText.ZIndex = baseZIndex + 4
+	leaveText.Parent = frame
 
 	return frame
 end
 
 local function createResetConfirmationMenu(baseZIndex, shield)
-	return New "Frame" {
-		Name = "ResetConfirmationMenu",
-		BackgroundTransparency = 1,
-		Size = UDim2.new(1, 0, 1, 0),
-		Position = UDim2.new(0, 0, 2, 400),
-		ZIndex = baseZIndex + 4,
+	local frame = Instance.new "Frame"
+	frame.Name = "ResetConfirmationMenu"
+	frame.BackgroundTransparency = 1
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.Position = UDim2.new(0, 0, 2, 400)
+	frame.ZIndex = baseZIndex + 4
 
-		[Children] = {
-			New "TextLabel" {
-				Name = "ResetCharacterText",
-				Text = "Are you sure you want to reset your character?",
-				Size = UDim2.new(1, 0, 0.8, 0),
-				TextWrap = true,
-				TextColor3 = Color3.new(1, 1, 1),
-				Font = Enum.Font.ArialBold,
-				FontSize = Enum.FontSize.Size36,
-				BackgroundTransparency = 1,
-				ZIndex = baseZIndex + 4,
-			},
+	local yesButton = createTextButton(
+		"Reset",
+		Enum.ButtonStyle.RobloxButtonDefault,
+		Enum.FontSize.Size24,
+		UDim2.new(0, 128, 0, 50),
+		UDim2.new(0, 313, 0, 299)
+	)
+	yesButton.Name = "YesButton"
+	yesButton.ZIndex = baseZIndex + 4
+	yesButton.Parent = frame
+	yesButton.Modal = true
+	yesButton.MouseButton1Click:connect(function()
+		resumeGameFunction(shield)
+		resetLocalCharacter()
+	end)
 
-			New "TextLabel" {
-				Name = "FineResetCharacterText",
-				Text = "You will be put back on a spawn point",
-				Size = UDim2.new(0, 303, 0, 18),
-				TextWrap = true,
-				TextColor3 = Color3.new(1, 1, 1),
-				Font = Enum.Font.ArialBold,
-				FontSize = Enum.FontSize.Size18,
-				BackgroundTransparency = 1,
-				ZIndex = baseZIndex + 4,
-				Position = UDim2.new(0, 109, 0, 215),
-			},
+	local noButton = createTextButton(
+		"Cancel",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size24,
+		UDim2.new(0, 128, 0, 50),
+		UDim2.new(0, 90, 0, 299)
+	)
+	noButton.Name = "NoButton"
+	noButton.Parent = frame
+	noButton.ZIndex = baseZIndex + 4
+	noButton.MouseButton1Click:connect(function()
+		goToMenu(
+			shield.Settings.SettingsStyle,
+			"GameMainMenu",
+			"down",
+			UDim2.new(0, 525, 0, 430)
+		)
+		shield.Settings:TweenSize(
+			UDim2.new(0, 525, 0, 430),
+			Enum.EasingDirection.InOut,
+			Enum.EasingStyle.Sine,
+			tweenTime,
+			true
+		)
+	end)
 
-			Hydrate(
-				createTextButton(
-					"Reset",
-					Enum.ButtonStyle.RobloxButtonDefault,
-					Enum.FontSize.Size24,
-					UDim2.new(0, 128, 0, 50),
-					UDim2.new(0, 313, 0, 299)
-				)
-			) {
-				Name = "YesButton",
-				ZIndex = baseZIndex + 4,
-				Modal = true,
+	local resetCharacterText = Instance.new "TextLabel"
+	resetCharacterText.Name = "ResetCharacterText"
+	resetCharacterText.Text = "Are you sure you want to reset your character?"
+	resetCharacterText.Size = UDim2.new(1, 0, 0.8, 0)
+	resetCharacterText.TextWrap = true
+	resetCharacterText.TextColor3 = Color3.new(1, 1, 1)
+	resetCharacterText.Font = Enum.Font.ArialBold
+	resetCharacterText.FontSize = Enum.FontSize.Size36
+	resetCharacterText.BackgroundTransparency = 1
+	resetCharacterText.ZIndex = baseZIndex + 4
+	resetCharacterText.Parent = frame
 
-				[OnEvent "MouseButton1Click"] = function()
-					resumeGameFunction(shield)
-					resetLocalCharacter()
-				end,
-			},
+	local fineResetCharacterText = resetCharacterText:Clone()
+	fineResetCharacterText.Name = "FineResetCharacterText"
+	fineResetCharacterText.Text = "You will be put back on a spawn point"
+	fineResetCharacterText.Size = UDim2.new(0, 303, 0, 18)
+	fineResetCharacterText.Position = UDim2.new(0, 109, 0, 215)
+	fineResetCharacterText.FontSize = Enum.FontSize.Size18
+	fineResetCharacterText.Parent = frame
 
-			Hydrate(
-				createTextButton(
-					"Cancel",
-					Enum.ButtonStyle.RobloxButton,
-					Enum.FontSize.Size24,
-					UDim2.new(0, 128, 0, 50),
-					UDim2.new(0, 90, 0, 299)
-				)
-			) {
-				Name = "NoButton",
-				ZIndex = baseZIndex + 4,
-
-				[OnEvent "MouseButton1Click"] = function()
-					goToMenu(
-						shield.Settings.SettingsStyle,
-						"GameMainMenu",
-						"down",
-						UDim2.new(0, 525, 0, 430)
-					)
-					shield.Settings:TweenSize(
-						UDim2.new(0, 525, 0, 430),
-						Enum.EasingDirection.InOut,
-						Enum.EasingStyle.Sine,
-						tweenTime,
-						true
-					)
-				end,
-			},
-		},
-	}
+	return frame
 end
 
 local settingsFrame
 
 local function createGameMainMenu(baseZIndex, shield)
-	local gameMainMenuFrame = New "Frame" {
-		Name = "GameMainMenu",
-		BackgroundTransparency = 1,
-		Size = UDim2.new(1, 0, 1, 0),
-		ZIndex = baseZIndex + 4,
-		Parent = settingsFrame,
-
-		[Children] = {
-			New "TextLabel" {
-				Name = "Title",
-				Text = "Game Menu",
-				BackgroundTransparency = 1,
-				TextStrokeTransparency = 0,
-				Font = Enum.Font.ArialBold,
-				FontSize = Enum.FontSize.Size36,
-				Size = UDim2.new(1, 0, 0, 36),
-				Position = UDim2.new(0, 0, 0, 4),
-				TextColor3 = Color3.new(1, 1, 1),
-				ZIndex = baseZIndex + 4,
-			},
-		},
-	}
+	local gameMainMenuFrame = Instance.new "Frame"
+	gameMainMenuFrame.Name = "GameMainMenu"
+	gameMainMenuFrame.BackgroundTransparency = 1
+	gameMainMenuFrame.Size = UDim2.new(1, 0, 1, 0)
+	gameMainMenuFrame.ZIndex = baseZIndex + 4
+	gameMainMenuFrame.Parent = settingsFrame
 
 	-- GameMainMenu Children
 
-	local robloxHelpButton = Hydrate(
-		createTextButton(
-			"Help",
-			Enum.ButtonStyle.RobloxButton,
-			Enum.FontSize.Size18,
-			UDim2.new(0, 164, 0, 50),
-			UDim2.new(0, 82, 0, 256)
-		)
-	) {
-		Name = "HelpButton",
-		ZIndex = baseZIndex + 4,
-		Parent = gameMainMenuFrame,
-	}
+	local gameMainMenuTitle = Instance.new "TextLabel"
+	gameMainMenuTitle.Name = "Title"
+	gameMainMenuTitle.Text = "Game Menu"
+	gameMainMenuTitle.BackgroundTransparency = 1
+	gameMainMenuTitle.TextStrokeTransparency = 0
+	gameMainMenuTitle.Font = Enum.Font.ArialBold
+	gameMainMenuTitle.FontSize = Enum.FontSize.Size36
+	gameMainMenuTitle.Size = UDim2.new(1, 0, 0, 36)
+	gameMainMenuTitle.Position = UDim2.new(0, 0, 0, 4)
+	gameMainMenuTitle.TextColor3 = Color3.new(1, 1, 1)
+	gameMainMenuTitle.ZIndex = baseZIndex + 4
+	gameMainMenuTitle.Parent = gameMainMenuFrame
+
+	local robloxHelpButton = createTextButton(
+		"Help",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size18,
+		UDim2.new(0, 164, 0, 50),
+		UDim2.new(0, 82, 0, 256)
+	)
+	robloxHelpButton.Name = "HelpButton"
+	robloxHelpButton.ZIndex = baseZIndex + 4
+	robloxHelpButton.Parent = gameMainMenuFrame
 	helpButton = robloxHelpButton
 
 	local helpDialog = createHelpDialog(baseZIndex)
@@ -919,189 +683,155 @@ local function createGameMainMenu(baseZIndex, shield)
 	end)
 	helpButton.Active = true
 
-	local helpShortcut = New "TextLabel" {
-		Name = "HelpShortcutText",
-		Text = "F1",
-		Visible = false,
-		BackgroundTransparency = 1,
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size12,
-		Position = UDim2.new(0, 85, 0, 0),
-		Size = UDim2.new(0, 30, 0, 30),
-		TextColor3 = Color3.new(0, 1, 0),
-		ZIndex = baseZIndex + 4,
-		Parent = robloxHelpButton,
-	}
+	local helpShortcut = Instance.new "TextLabel"
+	helpShortcut.Name = "HelpShortcutText"
+	helpShortcut.Text = "F1"
+	helpShortcut.Visible = false
+	helpShortcut.BackgroundTransparency = 1
+	helpShortcut.Font = Enum.Font.Arial
+	helpShortcut.FontSize = Enum.FontSize.Size12
+	helpShortcut.Position = UDim2.new(0, 85, 0, 0)
+	helpShortcut.Size = UDim2.new(0, 30, 0, 30)
+	helpShortcut.TextColor3 = Color3.new(0, 1, 0)
+	helpShortcut.ZIndex = baseZIndex + 4
+	helpShortcut.Parent = robloxHelpButton
 
-	local screenshotButton = Hydrate(
-		createTextButton(
-			"Screenshot",
-			Enum.ButtonStyle.RobloxButton,
-			Enum.FontSize.Size18,
-			UDim2.new(0, 168, 0, 50),
-			UDim2.new(0, 254, 0, 256)
-		)
-	) {
-		Name = "ScreenshotButton",
-		ZIndex = baseZIndex + 4,
-		Parent = gameMainMenuFrame,
-		Visible = not macClient,
-	}
+	local screenshotButton = createTextButton(
+		"Screenshot",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size18,
+		UDim2.new(0, 168, 0, 50),
+		UDim2.new(0, 254, 0, 256)
+	)
+	screenshotButton.Name = "ScreenshotButton"
+	screenshotButton.ZIndex = baseZIndex + 4
+	screenshotButton.Parent = gameMainMenuFrame
+	screenshotButton.Visible = not macClient
 	screenshotButton:SetVerb "Screenshot"
 
-	Hydrate(helpShortcut:clone()) {
-		Name = "ScreenshotShortcutText",
-		Text = "PrintSc",
-		Position = UDim2.new(0, 118, 0, 0),
-		Visible = true,
-		Parent = screenshotButton,
-	}
+	local screenshotShortcut = helpShortcut:clone()
+	screenshotShortcut.Name = "ScreenshotShortcutText"
+	screenshotShortcut.Text = "PrintSc"
+	screenshotShortcut.Position = UDim2.new(0, 118, 0, 0)
+	screenshotShortcut.Visible = true
+	screenshotShortcut.Parent = screenshotButton
 
-	local recordVideoButton = Hydrate(
-		createTextButton(
-			"Record Video",
-			Enum.ButtonStyle.RobloxButton,
-			Enum.FontSize.Size18,
-			UDim2.new(0, 168, 0, 50),
-			UDim2.new(0, 254, 0, 306)
-		)
-	) {
-		Name = "RecordVideoButton",
-		ZIndex = baseZIndex + 4,
-		Parent = gameMainMenuFrame,
-		Visible = not macClient,
-
-		[Children] = {
-			Hydrate(helpShortcut:clone()) {
-				Visible = hasGraphicsSlider,
-				Name = "RecordVideoShortcutText",
-				Text = "F12",
-				Position = UDim2.new(0, 120, 0, 0),
-			},
-		},
-	}
+	local recordVideoButton = createTextButton(
+		"Record Video",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size18,
+		UDim2.new(0, 168, 0, 50),
+		UDim2.new(0, 254, 0, 306)
+	)
+	recordVideoButton.Name = "RecordVideoButton"
+	recordVideoButton.ZIndex = baseZIndex + 4
+	recordVideoButton.Parent = gameMainMenuFrame
+	recordVideoButton.Visible = not macClient
 	recordVideoButton:SetVerb "RecordToggle"
 
-	local stopRecordButton
-	stopRecordButton = New "ImageButton" {
-		Name = "StopRecordButton",
-		BackgroundTransparency = 1,
-		Image = "rbxasset://textures/ui/RecordStop.png",
-		Size = UDim2.new(0, 59, 0, 27),
-		Parent = gui,
-		Visible = false,
+	local recordVideoShortcut = helpShortcut:clone()
+	recordVideoShortcut.Visible = hasGraphicsSlider
+	recordVideoShortcut.Name = "RecordVideoShortcutText"
+	recordVideoShortcut.Text = "F12"
+	recordVideoShortcut.Position = UDim2.new(0, 120, 0, 0)
+	recordVideoShortcut.Parent = recordVideoButton
 
-		[OnEvent "MouseButton1Click"] = function()
-			recordVideoClick(recordVideoButton, stopRecordButton)
-		end,
-	}
+	local stopRecordButton = Instance.new "ImageButton"
+	stopRecordButton.Name = "StopRecordButton"
+	stopRecordButton.BackgroundTransparency = 1
+	stopRecordButton.Image = "rbxasset://textures/ui/RecordStop.png"
+	stopRecordButton.Size = UDim2.new(0, 59, 0, 27)
 	stopRecordButton:SetVerb "RecordToggle"
 
-	Hydrate(
-		createTextButton(
-			"Report Abuse",
-			Enum.ButtonStyle.RobloxButton,
-			Enum.FontSize.Size18,
-			UDim2.new(0, 164, 0, 50),
-			UDim2.new(0, 82, 0, 306)
-		)
-	) {
-		Name = "ReportAbuseButton",
-		ZIndex = baseZIndex + 4,
-		Parent = gameMainMenuFrame,
-	}
+	stopRecordButton.MouseButton1Click:connect(function()
+		recordVideoClick(recordVideoButton, stopRecordButton)
+	end)
+	stopRecordButton.Visible = false
+	stopRecordButton.Parent = gui
 
-	Hydrate(
-		createTextButton(
-			"Leave Game",
-			Enum.ButtonStyle.RobloxButton,
-			Enum.FontSize.Size24,
-			UDim2.new(0, 340, 0, 50),
-			UDim2.new(0, 82, 0, 358)
-		)
-	) {
-		Name = "LeaveGameButton",
-		ZIndex = baseZIndex + 4,
-		Parent = gameMainMenuFrame,
-	}
+	local reportAbuseButton = createTextButton(
+		"Report Abuse",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size18,
+		UDim2.new(0, 164, 0, 50),
+		UDim2.new(0, 82, 0, 306)
+	)
+	reportAbuseButton.Name = "ReportAbuseButton"
+	reportAbuseButton.ZIndex = baseZIndex + 4
+	reportAbuseButton.Parent = gameMainMenuFrame
 
-	Hydrate(
-		createTextButton(
-			"Resume Game",
-			Enum.ButtonStyle.RobloxButtonDefault,
-			Enum.FontSize.Size24,
-			UDim2.new(0, 340, 0, 50),
-			UDim2.new(0, 82, 0, 54)
-		)
-	) {
-		Name = "resumeGameButton",
-		ZIndex = baseZIndex + 4,
-		Parent = gameMainMenuFrame,
-		Modal = true,
+	local leaveGameButton = createTextButton(
+		"Leave Game",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size24,
+		UDim2.new(0, 340, 0, 50),
+		UDim2.new(0, 82, 0, 358)
+	)
+	leaveGameButton.Name = "LeaveGameButton"
+	leaveGameButton.ZIndex = baseZIndex + 4
+	leaveGameButton.Parent = gameMainMenuFrame
 
-		[OnEvent "MouseButton1Click"] = function()
-			resumeGameFunction(shield)
-		end,
-	}
+	local resumeGameButton = createTextButton(
+		"Resume Game",
+		Enum.ButtonStyle.RobloxButtonDefault,
+		Enum.FontSize.Size24,
+		UDim2.new(0, 340, 0, 50),
+		UDim2.new(0, 82, 0, 54)
+	)
+	resumeGameButton.Name = "resumeGameButton"
+	resumeGameButton.ZIndex = baseZIndex + 4
+	resumeGameButton.Parent = gameMainMenuFrame
+	resumeGameButton.Modal = true
+	resumeGameButton.MouseButton1Click:connect(function()
+		resumeGameFunction(shield)
+	end)
 
-	Hydrate(
-		createTextButton(
-			"Game Settings",
-			Enum.ButtonStyle.RobloxButton,
-			Enum.FontSize.Size24,
-			UDim2.new(0, 340, 0, 50),
-			UDim2.new(0, 82, 0, 156)
-		)
-	) {
-		Name = "SettingsButton",
-		ZIndex = baseZIndex + 4,
-		Parent = gameMainMenuFrame,
-	}
+	local gameSettingsButton = createTextButton(
+		"Game Settings",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size24,
+		UDim2.new(0, 340, 0, 50),
+		UDim2.new(0, 82, 0, 156)
+	)
+	gameSettingsButton.Name = "SettingsButton"
+	gameSettingsButton.ZIndex = baseZIndex + 4
+	gameSettingsButton.Parent = gameMainMenuFrame
 
 	if
 		game:FindFirstChild "LoadingGuiService"
 		and #game.LoadingGuiService:GetChildren() > 0
 	then
-		Hydrate(
-			createTextButton(
-				"Game Instructions",
-				Enum.ButtonStyle.RobloxButton,
-				Enum.FontSize.Size24,
-				UDim2.new(0, 340, 0, 50),
-				UDim2.new(0, 82, 0, 207)
-			)
-		) {
-			Name = "GameInstructions",
-			ZIndex = baseZIndex + 4,
-			Parent = gameMainMenuFrame,
-
-			[OnEvent "MouseButton1Click"] = function()
-				if
-					game:FindFirstChild "Players" and game.Players.LocalPlayer
-				then
-					local loadingGui =
-						game.Players.LocalPlayer:FindFirstChild "PlayerLoadingGui"
-					if loadingGui then
-						loadingGui.Visible = true
-					end
-				end
-			end,
-		}
-	end
-
-	Hydrate(
-		createTextButton(
-			"Reset Character",
+		gameSettingsButton = createTextButton(
+			"Game Instructions",
 			Enum.ButtonStyle.RobloxButton,
 			Enum.FontSize.Size24,
 			UDim2.new(0, 340, 0, 50),
-			UDim2.new(0, 82, 0, 105)
+			UDim2.new(0, 82, 0, 207)
 		)
-	) {
-		Name = "ResetButton",
-		ZIndex = baseZIndex + 4,
-		Parent = gameMainMenuFrame,
-	}
+		gameSettingsButton.Name = "GameInstructions"
+		gameSettingsButton.ZIndex = baseZIndex + 4
+		gameSettingsButton.Parent = gameMainMenuFrame
+		gameSettingsButton.MouseButton1Click:connect(function()
+			if game:FindFirstChild "Players" and game.Players.LocalPlayer then
+				local loadingGui =
+					game.Players.LocalPlayer:FindFirstChild "PlayerLoadingGui"
+				if loadingGui then
+					loadingGui.Visible = true
+				end
+			end
+		end)
+	end
+
+	local resetButton = createTextButton(
+		"Reset Character",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size24,
+		UDim2.new(0, 340, 0, 50),
+		UDim2.new(0, 82, 0, 105)
+	)
+	resetButton.Name = "ResetButton"
+	resetButton.ZIndex = baseZIndex + 4
+	resetButton.Parent = gameMainMenuFrame
 
 	return gameMainMenuFrame
 end
@@ -1109,153 +839,139 @@ end
 local mouseLockLabel, syncVideoCaptureSetting
 
 local function createGameSettingsMenu(baseZIndex, _)
-	local gameSettingsMenuFrame = New "Frame" {
-		Name = "GameSettingsMenu",
-		BackgroundTransparency = 1,
-		Size = UDim2.new(1, 0, 1, 0),
-		ZIndex = baseZIndex + 4,
+	local gameSettingsMenuFrame = Instance.new "Frame"
+	gameSettingsMenuFrame.Name = "GameSettingsMenu"
+	gameSettingsMenuFrame.BackgroundTransparency = 1
+	gameSettingsMenuFrame.Size = UDim2.new(1, 0, 1, 0)
+	gameSettingsMenuFrame.ZIndex = baseZIndex + 4
 
-		[Children] = {
-			New "TextLabel" {
-				Name = "Title",
-				Text = "Settings",
-				Size = UDim2.new(1, 0, 0, 48),
-				Position = UDim2.new(0, 9, 0, -9),
-				Font = Enum.Font.ArialBold,
-				FontSize = Enum.FontSize.Size36,
-				TextColor3 = Color3.new(1, 1, 1),
-				ZIndex = baseZIndex + 4,
-				BackgroundTransparency = 1,
-			},
+	local title = Instance.new "TextLabel"
+	title.Name = "Title"
+	title.Text = "Settings"
+	title.Size = UDim2.new(1, 0, 0, 48)
+	title.Position = UDim2.new(0, 9, 0, -9)
+	title.Font = Enum.Font.ArialBold
+	title.FontSize = Enum.FontSize.Size36
+	title.TextColor3 = Color3.new(1, 1, 1)
+	title.ZIndex = baseZIndex + 4
+	title.BackgroundTransparency = 1
+	title.Parent = gameSettingsMenuFrame
 
-			New "TextLabel" {
-				Name = "FullscreenText",
-				Text = "Fullscreen Mode",
-				Size = UDim2.new(0, 124, 0, 18),
-				Position = UDim2.new(0, 62, 0, 145),
-				Font = Enum.Font.Arial,
-				FontSize = Enum.FontSize.Size18,
-				TextColor3 = Color3.new(1, 1, 1),
-				ZIndex = baseZIndex + 4,
-				BackgroundTransparency = 1,
-			},
-		},
-	}
+	local fullscreenText = Instance.new "TextLabel"
+	fullscreenText.Name = "FullscreenText"
+	fullscreenText.Text = "Fullscreen Mode"
+	fullscreenText.Size = UDim2.new(0, 124, 0, 18)
+	fullscreenText.Position = UDim2.new(0, 62, 0, 145)
+	fullscreenText.Font = Enum.Font.Arial
+	fullscreenText.FontSize = Enum.FontSize.Size18
+	fullscreenText.TextColor3 = Color3.new(1, 1, 1)
+	fullscreenText.ZIndex = baseZIndex + 4
+	fullscreenText.BackgroundTransparency = 1
+	fullscreenText.Parent = gameSettingsMenuFrame
 
-	local fullscreenShortcut = New "TextLabel" {
-		Visible = hasGraphicsSlider,
-		Name = "FullscreenShortcutText",
-		Text = "F11",
-		BackgroundTransparency = 1,
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size12,
-		Position = UDim2.new(0, 186, 0, 141),
-		Size = UDim2.new(0, 30, 0, 30),
-		TextColor3 = Color3.new(0, 1, 0),
-		ZIndex = baseZIndex + 4,
-		Parent = gameSettingsMenuFrame,
-	}
-	local studioText = New "TextLabel" {
-		Visible = false,
-		Name = "StudioText",
-		Text = "Studio Mode",
-		Size = UDim2.new(0, 95, 0, 18),
-		Position = UDim2.new(0, 62, 0, 179),
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size18,
-		TextColor3 = Color3.new(1, 1, 1),
-		ZIndex = baseZIndex + 4,
-		BackgroundTransparency = 1,
-		Parent = gameSettingsMenuFrame,
-	}
+	local fullscreenShortcut = Instance.new "TextLabel"
+	fullscreenShortcut.Visible = hasGraphicsSlider
+	fullscreenShortcut.Name = "FullscreenShortcutText"
+	fullscreenShortcut.Text = "F11"
+	fullscreenShortcut.BackgroundTransparency = 1
+	fullscreenShortcut.Font = Enum.Font.Arial
+	fullscreenShortcut.FontSize = Enum.FontSize.Size12
+	fullscreenShortcut.Position = UDim2.new(0, 186, 0, 141)
+	fullscreenShortcut.Size = UDim2.new(0, 30, 0, 30)
+	fullscreenShortcut.TextColor3 = Color3.new(0, 1, 0)
+	fullscreenShortcut.ZIndex = baseZIndex + 4
+	fullscreenShortcut.Parent = gameSettingsMenuFrame
 
-	local studioShortcut = Hydrate(fullscreenShortcut:clone()) {
-		Name = "StudioShortcutText",
-		Visible = false, -- TODO: turn back on when f2 hack is fixed
-		Text = "F2",
-		Position = UDim2.new(0, 154, 0, 175),
-		Parent = gameSettingsMenuFrame,
-	}
+	local studioText = Instance.new "TextLabel"
+	studioText.Visible = false
+	studioText.Name = "StudioText"
+	studioText.Text = "Studio Mode"
+	studioText.Size = UDim2.new(0, 95, 0, 18)
+	studioText.Position = UDim2.new(0, 62, 0, 179)
+	studioText.Font = Enum.Font.Arial
+	studioText.FontSize = Enum.FontSize.Size18
+	studioText.TextColor3 = Color3.new(1, 1, 1)
+	studioText.ZIndex = baseZIndex + 4
+	studioText.BackgroundTransparency = 1
+	studioText.Parent = gameSettingsMenuFrame
+
+	local studioShortcut = fullscreenShortcut:clone()
+	studioShortcut.Name = "StudioShortcutText"
+	studioShortcut.Visible = false -- TODO: turn back on when f2 hack is fixed
+	studioShortcut.Text = "F2"
+	studioShortcut.Position = UDim2.new(0, 154, 0, 175)
+	studioShortcut.Parent = gameSettingsMenuFrame
 
 	local studioCheckbox
 
 	if hasGraphicsSlider then
-		local qualityText = New "TextLabel" {
-			Name = "QualityText",
-			Text = "Graphics Quality",
-			Size = UDim2.new(0, 128, 0, 18),
-			Position = UDim2.new(0, 30, 0, 239),
-			Font = Enum.Font.Arial,
-			FontSize = Enum.FontSize.Size18,
-			TextColor3 = Color3.new(1, 1, 1),
-			ZIndex = baseZIndex + 4,
-			BackgroundTransparency = 1,
-			Parent = gameSettingsMenuFrame,
-			Visible = not inStudioMode,
-		}
+		local qualityText = Instance.new "TextLabel"
+		qualityText.Name = "QualityText"
+		qualityText.Text = "Graphics Quality"
+		qualityText.Size = UDim2.new(0, 128, 0, 18)
+		qualityText.Position = UDim2.new(0, 30, 0, 239)
+		qualityText.Font = Enum.Font.Arial
+		qualityText.FontSize = Enum.FontSize.Size18
+		qualityText.TextColor3 = Color3.new(1, 1, 1)
+		qualityText.ZIndex = baseZIndex + 4
+		qualityText.BackgroundTransparency = 1
+		qualityText.Parent = gameSettingsMenuFrame
+		qualityText.Visible = not inStudioMode
 
-		local autoText = Hydrate(qualityText:clone()) {
-			Name = "AutoText",
-			Text = "Auto",
-			Position = UDim2.new(0, 183, 0, 214),
-			TextColor3 = Color3.new(128 / 255, 128 / 255, 128 / 255),
-			Size = UDim2.new(0, 34, 0, 18),
-			Parent = gameSettingsMenuFrame,
-			Visible = not inStudioMode,
-		}
+		local autoText = qualityText:clone()
+		autoText.Name = "AutoText"
+		autoText.Text = "Auto"
+		autoText.Position = UDim2.new(0, 183, 0, 214)
+		autoText.TextColor3 = Color3.new(128 / 255, 128 / 255, 128 / 255)
+		autoText.Size = UDim2.new(0, 34, 0, 18)
+		autoText.Parent = gameSettingsMenuFrame
+		autoText.Visible = not inStudioMode
 
-		local fasterText = Hydrate(autoText:clone()) {
-			Name = "FasterText",
-			Text = "Faster",
-			Position = UDim2.new(0, 185, 0, 274),
-			TextColor3 = Color3.new(95, 95, 95),
-			FontSize = Enum.FontSize.Size14,
-			Parent = gameSettingsMenuFrame,
-			Visible = not inStudioMode,
-		}
+		local fasterText = autoText:clone()
+		fasterText.Name = "FasterText"
+		fasterText.Text = "Faster"
+		fasterText.Position = UDim2.new(0, 185, 0, 274)
+		fasterText.TextColor3 = Color3.new(95, 95, 95)
+		fasterText.FontSize = Enum.FontSize.Size14
+		fasterText.Parent = gameSettingsMenuFrame
+		fasterText.Visible = not inStudioMode
 
-		local fasterShortcut = Hydrate(fullscreenShortcut:clone()) {
-			Name = "FasterShortcutText",
-			Text = "F10 + Shift",
-			Position = UDim2.new(0, 185, 0, 283),
-			Parent = gameSettingsMenuFrame,
-			Visible = not inStudioMode,
-		}
+		local fasterShortcut = fullscreenShortcut:clone()
+		fasterShortcut.Name = "FasterShortcutText"
+		fasterShortcut.Text = "F10 + Shift"
+		fasterShortcut.Position = UDim2.new(0, 185, 0, 283)
+		fasterShortcut.Parent = gameSettingsMenuFrame
+		fasterShortcut.Visible = not inStudioMode
 
-		local betterQualityText = Hydrate(autoText:clone()) {
-			Name = "BetterQualityText",
-			Text = "Better Quality",
-			TextWrap = true,
-			Size = UDim2.new(0, 41, 0, 28),
-			Position = UDim2.new(0, 390, 0, 269),
-			TextColor3 = Color3.new(95, 95, 95),
-			FontSize = Enum.FontSize.Size14,
-			Parent = gameSettingsMenuFrame,
-			Visible = not inStudioMode,
-		}
+		local betterQualityText = autoText:clone()
+		betterQualityText.Name = "BetterQualityText"
+		betterQualityText.Text = "Better Quality"
+		betterQualityText.TextWrap = true
+		betterQualityText.Size = UDim2.new(0, 41, 0, 28)
+		betterQualityText.Position = UDim2.new(0, 390, 0, 269)
+		betterQualityText.TextColor3 = Color3.new(95, 95, 95)
+		betterQualityText.FontSize = Enum.FontSize.Size14
+		betterQualityText.Parent = gameSettingsMenuFrame
+		betterQualityText.Visible = not inStudioMode
 
-		local betterQualityShortcut = Hydrate(fullscreenShortcut:clone()) {
-			Name = "BetterQualityShortcut",
-			Text = "F10",
-			Position = UDim2.new(0, 394, 0, 288),
-			Parent = gameSettingsMenuFrame,
-			Visible = not inStudioMode,
-		}
+		local betterQualityShortcut = fullscreenShortcut:clone()
+		betterQualityShortcut.Name = "BetterQualityShortcut"
+		betterQualityShortcut.Text = "F10"
+		betterQualityShortcut.Position = UDim2.new(0, 394, 0, 288)
+		betterQualityShortcut.Parent = gameSettingsMenuFrame
+		betterQualityShortcut.Visible = not inStudioMode
 
-		local autoGraphicsButton = Hydrate(
-			createTextButton(
-				"X",
-				Enum.ButtonStyle.RobloxButton,
-				Enum.FontSize.Size18,
-				UDim2.new(0, 25, 0, 25),
-				UDim2.new(0, 187, 0, 239)
-			)
-		) {
-			Name = "AutoGraphicsButton",
-			ZIndex = baseZIndex + 4,
-			Parent = gameSettingsMenuFrame,
-			Visible = not inStudioMode,
-		}
+		local autoGraphicsButton = createTextButton(
+			"X",
+			Enum.ButtonStyle.RobloxButton,
+			Enum.FontSize.Size18,
+			UDim2.new(0, 25, 0, 25),
+			UDim2.new(0, 187, 0, 239)
+		)
+		autoGraphicsButton.Name = "AutoGraphicsButton"
+		autoGraphicsButton.ZIndex = baseZIndex + 4
+		autoGraphicsButton.Parent = gameSettingsMenuFrame
+		autoGraphicsButton.Visible = not inStudioMode
 
 		local graphicsSlider, graphicsLevel = RbxGui.CreateSlider(
 			GraphicsQualityLevels,
@@ -1269,21 +985,21 @@ local function createGameSettingsMenu(baseZIndex, _)
 		graphicsLevel.Value =
 			math.floor((settings().Rendering:GetMaxQualityLevel() - 1) / 2)
 
-		local graphicsSetter = New "TextBox" {
-			Name = "GraphicsSetter",
-			BackgroundColor3 = Color3.new(0, 0, 0),
-			BorderColor3 = Color3.new(128 / 255, 128 / 255, 128 / 255),
-			Size = UDim2.new(0, 50, 0, 25),
-			Position = UDim2.new(0, 450, 0, 269),
-			TextColor3 = Color3.new(1, 1, 1),
-			Font = Enum.Font.Arial,
-			FontSize = Enum.FontSize.Size18,
-			Text = "Auto",
-			ZIndex = 1,
-			TextWrap = true,
-			Parent = gameSettingsMenuFrame,
-			Visible = not inStudioMode,
-		}
+		local graphicsSetter = Instance.new "TextBox"
+		graphicsSetter.Name = "GraphicsSetter"
+		graphicsSetter.BackgroundColor3 = Color3.new(0, 0, 0)
+		graphicsSetter.BorderColor3 =
+			Color3.new(128 / 255, 128 / 255, 128 / 255)
+		graphicsSetter.Size = UDim2.new(0, 50, 0, 25)
+		graphicsSetter.Position = UDim2.new(0, 450, 0, 269)
+		graphicsSetter.TextColor3 = Color3.new(1, 1, 1)
+		graphicsSetter.Font = Enum.Font.Arial
+		graphicsSetter.FontSize = Enum.FontSize.Size18
+		graphicsSetter.Text = "Auto"
+		graphicsSetter.ZIndex = 1
+		graphicsSetter.TextWrap = true
+		graphicsSetter.Parent = gameSettingsMenuFrame
+		graphicsSetter.Visible = not inStudioMode
 
 		local isAutoGraphics = true
 		if not inStudioMode then
@@ -1704,19 +1420,18 @@ local function createGameSettingsMenu(baseZIndex, _)
 	syncVideoCaptureSetting = nil
 
 	if not macClient then
-		New "TextLabel" {
-			Name = "VideoCaptureLabel",
-			Text = "After Capturing Video",
-			Font = Enum.Font.Arial,
-			FontSize = Enum.FontSize.Size18,
-			Position = UDim2.new(0, 32, 0, 100),
-			Size = UDim2.new(0, 164, 0, 18),
-			BackgroundTransparency = 1,
-			TextColor3 = Color3I(255, 255, 255),
-			TextXAlignment = Enum.TextXAlignment.Left,
-			ZIndex = baseZIndex + 4,
-			Parent = gameSettingsMenuFrame,
-		}
+		local videoCaptureLabel = Instance.new "TextLabel"
+		videoCaptureLabel.Name = "VideoCaptureLabel"
+		videoCaptureLabel.Text = "After Capturing Video"
+		videoCaptureLabel.Font = Enum.Font.Arial
+		videoCaptureLabel.FontSize = Enum.FontSize.Size18
+		videoCaptureLabel.Position = UDim2.new(0, 32, 0, 100)
+		videoCaptureLabel.Size = UDim2.new(0, 164, 0, 18)
+		videoCaptureLabel.BackgroundTransparency = 1
+		videoCaptureLabel.TextColor3 = Color3I(255, 255, 255)
+		videoCaptureLabel.TextXAlignment = Enum.TextXAlignment.Left
+		videoCaptureLabel.ZIndex = baseZIndex + 4
+		videoCaptureLabel.Parent = gameSettingsMenuFrame
 
 		local videoNames = {}
 		local videoNameToItem = {}
@@ -1761,19 +1476,18 @@ local function createGameSettingsMenu(baseZIndex, _)
 		end
 	end
 
-	New "TextLabel" {
-		Name = "CameraLabel",
-		Text = "Character & Camera Controls",
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size18,
-		Position = UDim2.new(0, 31, 0, 58),
-		Size = UDim2.new(0, 224, 0, 18),
-		TextColor3 = Color3I(255, 255, 255),
-		TextXAlignment = Enum.TextXAlignment.Left,
-		BackgroundTransparency = 1,
-		ZIndex = baseZIndex + 4,
-		Parent = gameSettingsMenuFrame,
-	}
+	local cameraLabel = Instance.new "TextLabel"
+	cameraLabel.Name = "CameraLabel"
+	cameraLabel.Text = "Character & Camera Controls"
+	cameraLabel.Font = Enum.Font.Arial
+	cameraLabel.FontSize = Enum.FontSize.Size18
+	cameraLabel.Position = UDim2.new(0, 31, 0, 58)
+	cameraLabel.Size = UDim2.new(0, 224, 0, 18)
+	cameraLabel.TextColor3 = Color3I(255, 255, 255)
+	cameraLabel.TextXAlignment = Enum.TextXAlignment.Left
+	cameraLabel.BackgroundTransparency = 1
+	cameraLabel.ZIndex = baseZIndex + 4
+	cameraLabel.Parent = gameSettingsMenuFrame
 
 	mouseLockLabel =
 		game.CoreGui.RobloxGui:FindFirstChild("MouseLockLabel", true)
@@ -1816,9 +1530,9 @@ local function createGameSettingsMenu(baseZIndex, _)
 	return gameSettingsMenuFrame
 end
 
--- if not LoadLibrary then
--- 	return
--- end
+if not LoadLibrary then
+	return
+end
 
 RbxGui = LoadLibrary "RbxGui"
 
@@ -1829,49 +1543,44 @@ if UserSettings then
 		settingsButton = gui.BottomLeftControl:FindFirstChild "SettingsButton"
 
 		if settingsButton == nil then
-			settingsButton = New "ImageButton" {
-				Name = "SettingsButton",
-				Image = "rbxasset://textures/ui/SettingsButton.png",
-				BackgroundTransparency = 1,
-				Active = false,
-				Size = UDim2.new(0, 54, 0, 46),
-				Position = UDim2.new(0, 2, 0, 50),
-				Parent = gui.BottomLeftControl,
-			}
+			settingsButton = Instance.new "ImageButton"
+			settingsButton.Name = "SettingsButton"
+			settingsButton.Image = "rbxasset://textures/ui/SettingsButton.png"
+			settingsButton.BackgroundTransparency = 1
+			settingsButton.Active = false
+			settingsButton.Size = UDim2.new(0, 54, 0, 46)
+			settingsButton.Position = UDim2.new(0, 2, 0, 50)
+			settingsButton.Parent = gui.BottomLeftControl
 		end
 
-		local shield = New "TextButton" {
-			Text = "",
-			Name = "UserSettingsShield",
-			Active = true,
-			AutoButtonColor = false,
-			Visible = false,
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundColor3 = Color3I(51, 51, 51),
-			BorderColor3 = Color3I(27, 42, 53),
-			BackgroundTransparency = 0.4,
-			ZIndex = baseZIndex + 2,
-		}
-
+		local shield = Instance.new "TextButton"
+		shield.Text = ""
+		shield.Name = "UserSettingsShield"
+		shield.Active = true
+		shield.AutoButtonColor = false
+		shield.Visible = false
+		shield.Size = UDim2.new(1, 0, 1, 0)
+		shield.BackgroundColor3 = Color3I(51, 51, 51)
+		shield.BorderColor3 = Color3I(27, 42, 53)
+		shield.BackgroundTransparency = 0.4
+		shield.ZIndex = baseZIndex + 2
 		mainShield = shield
 
-		local frame = New "Frame" {
-			Name = "Settings",
-			Position = UDim2.new(0.5, -262, -0.5, -200),
-			Size = UDim2.new(0, 525, 0, 430),
-			BackgroundTransparency = 1,
-			Active = true,
-			Parent = shield,
-		}
+		local frame = Instance.new "Frame"
+		frame.Name = "Settings"
+		frame.Position = UDim2.new(0.5, -262, -0.5, -200)
+		frame.Size = UDim2.new(0, 525, 0, 430)
+		frame.BackgroundTransparency = 1
+		frame.Active = true
+		frame.Parent = shield
 
-		settingsFrame = New "Frame" {
-			Name = "SettingsStyle",
-			Size = UDim2.new(1, 0, 1, 0),
-			Style = Enum.FrameStyle.RobloxRound,
-			Active = true,
-			ZIndex = baseZIndex + 3,
-			Parent = frame,
-		}
+		settingsFrame = Instance.new "Frame"
+		settingsFrame.Name = "SettingsStyle"
+		settingsFrame.Size = UDim2.new(1, 0, 1, 0)
+		settingsFrame.Style = Enum.FrameStyle.RobloxRound
+		settingsFrame.Active = true
+		settingsFrame.ZIndex = baseZIndex + 3
+		settingsFrame.Parent = frame
 
 		local gameMainMenu = createGameMainMenu(baseZIndex, shield)
 		gameMainMenu.Parent = settingsFrame
@@ -2184,18 +1893,17 @@ if UserSettings then
 end --UserSettings call
 
 local createSaveDialogs = function()
-	local shield = New "TextButton" {
-		Text = "",
-		AutoButtonColor = false,
-		Name = "SaveDialogShield",
-		Active = true,
-		Visible = false,
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundColor3 = Color3I(51, 51, 51),
-		BorderColor3 = Color3I(27, 42, 53),
-		BackgroundTransparency = 0.4,
-		ZIndex = baseZIndex + 1,
-	}
+	local shield = Instance.new "TextButton"
+	shield.Text = ""
+	shield.AutoButtonColor = false
+	shield.Name = "SaveDialogShield"
+	shield.Active = true
+	shield.Visible = false
+	shield.Size = UDim2.new(1, 0, 1, 0)
+	shield.BackgroundColor3 = Color3I(51, 51, 51)
+	shield.BorderColor3 = Color3I(27, 42, 53)
+	shield.BackgroundTransparency = 0.4
+	shield.ZIndex = baseZIndex + 1
 
 	local clearAndResetDialog
 	local save
@@ -2261,51 +1969,48 @@ local createSaveDialogs = function()
 	errorDialogMessageBox.Visible = false
 	errorDialogMessageBox.Parent = shield
 
-	local spinnerDialog = New "Frame" {
-		Name = "SpinnerDialog",
-		Style = Enum.FrameStyle.RobloxRound,
-		Size = UDim2.new(0, 350, 0, 150),
-		Position = UDim2.new(0.5, -175, 0.5, -75),
-		Visible = false,
-		Active = true,
-		Parent = shield,
+	local spinnerDialog = Instance.new "Frame"
+	spinnerDialog.Name = "SpinnerDialog"
+	spinnerDialog.Style = Enum.FrameStyle.RobloxRound
+	spinnerDialog.Size = UDim2.new(0, 350, 0, 150)
+	spinnerDialog.Position = UDim2.new(0.5, -175, 0.5, -75)
+	spinnerDialog.Visible = false
+	spinnerDialog.Active = true
+	spinnerDialog.Parent = shield
 
-		[Children] = {
-			New "TextLabel" {
-				Name = "WaitingLabel",
-				Text = "Saving to Mercury...",
-				Font = Enum.Font.ArialBold,
-				FontSize = Enum.FontSize.Size18,
-				Position = UDim2.new(0.5, 25, 0.5, 0),
-				TextColor3 = Color3.new(1, 1, 1),
-			},
-		},
-	}
+	local waitingLabel = Instance.new "TextLabel"
+	waitingLabel.Name = "WaitingLabel"
+	waitingLabel.Text = "Saving to Mercury..."
+	waitingLabel.Font = Enum.Font.ArialBold
+	waitingLabel.FontSize = Enum.FontSize.Size18
+	waitingLabel.Position = UDim2.new(0.5, 25, 0.5, 0)
+	waitingLabel.TextColor3 = Color3.new(1, 1, 1)
+	waitingLabel.Parent = spinnerDialog
 
-	local spinnerFrame = New "Frame" {
-		Name = "Spinner",
-		Size = UDim2.new(0, 80, 0, 80),
-		Position = UDim2.new(0.5, -150, 0.5, -40),
-		BackgroundTransparency = 1,
-		Parent = spinnerDialog,
-	}
+	local spinnerFrame = Instance.new "Frame"
+	spinnerFrame.Name = "Spinner"
+	spinnerFrame.Size = UDim2.new(0, 80, 0, 80)
+	spinnerFrame.Position = UDim2.new(0.5, -150, 0.5, -40)
+	spinnerFrame.BackgroundTransparency = 1
+	spinnerFrame.Parent = spinnerDialog
 
 	local spinnerIcons = {}
 	local spinnerNum = 1
 	while spinnerNum <= 8 do
-		spinnerIcons[spinnerNum] = New "ImageLabel" {
-			Name = "Spinner" .. spinnerNum,
-			Size = UDim2.new(0, 16, 0, 16),
-			Position = UDim2.new(
-				0.5 + 0.3 * math.cos(math.rad(45 * spinnerNum)),
-				-8,
-				0.5 + 0.3 * math.sin(math.rad(45 * spinnerNum)),
-				-8
-			),
-			BackgroundTransparency = 1,
-			Image = "http://banland.xyz/Asset?id=45880710",
-			Parent = spinnerFrame,
-		}
+		local spinnerImage = Instance.new "ImageLabel"
+		spinnerImage.Name = "Spinner" .. spinnerNum
+		spinnerImage.Size = UDim2.new(0, 16, 0, 16)
+		spinnerImage.Position = UDim2.new(
+			0.5 + 0.3 * math.cos(math.rad(45 * spinnerNum)),
+			-8,
+			0.5 + 0.3 * math.sin(math.rad(45 * spinnerNum)),
+			-8
+		)
+		spinnerImage.BackgroundTransparency = 1
+		spinnerImage.Image = "http://banland.xyz/Asset?id=45880710"
+		spinnerImage.Parent = spinnerFrame
+
+		spinnerIcons[spinnerNum] = spinnerImage
 		spinnerNum += 1
 	end
 
@@ -2411,18 +2116,17 @@ local createReportAbuseDialog = function()
 	reportAbuseButton =
 		gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu.ReportAbuseButton
 
-	local shield = New "TextButton" {
-		Name = "ReportAbuseShield",
-		Text = "",
-		AutoButtonColor = false,
-		Active = true,
-		Visible = false,
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundColor3 = Color3I(51, 51, 51),
-		BorderColor3 = Color3I(27, 42, 53),
-		BackgroundTransparency = 0.4,
-		ZIndex = baseZIndex + 1,
-	}
+	local shield = Instance.new "TextButton"
+	shield.Name = "ReportAbuseShield"
+	shield.Text = ""
+	shield.AutoButtonColor = false
+	shield.Active = true
+	shield.Visible = false
+	shield.Size = UDim2.new(1, 0, 1, 0)
+	shield.BackgroundColor3 = Color3I(51, 51, 51)
+	shield.BorderColor3 = Color3I(27, 42, 53)
+	shield.BackgroundTransparency = 0.4
+	shield.ZIndex = baseZIndex + 1
 
 	local closeAndResetDialog
 
@@ -2433,124 +2137,84 @@ local createReportAbuseDialog = function()
 	messageBoxButtons[1].Function = function()
 		closeAndResetDialog()
 	end
+	local calmingMessageBox = RbxGui.CreateMessageDialog(
+		"Thanks for your report!",
+		"Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
+		messageBoxButtons
+	)
+	calmingMessageBox.Visible = false
+	calmingMessageBox.Parent = shield
 
-	local calmingMessageBox = Hydrate(
-		RbxGui.CreateMessageDialog(
-			"Thanks for your report!",
-			"Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
-			messageBoxButtons
-		)
-	) {
-		Visible = false,
-		Parent = shield,
-	}
+	local recordedMessageBox = RbxGui.CreateMessageDialog(
+		"Thanks for your report!",
+		"We've recorded your report for evaluation.",
+		messageBoxButtons
+	)
+	recordedMessageBox.Visible = false
+	recordedMessageBox.Parent = shield
 
-	local recordedMessageBox = Hydrate(
-		RbxGui.CreateMessageDialog(
-			"Thanks for your report!",
-			"We've recorded your report for evaluation.",
-			messageBoxButtons
-		)
-	) {
-		Visible = false,
-		Parent = shield,
-	}
+	local normalMessageBox = RbxGui.CreateMessageDialog(
+		"Thanks for your report!",
+		"Our moderators will review the chat logs and determine what happened.",
+		messageBoxButtons
+	)
+	normalMessageBox.Visible = false
+	normalMessageBox.Parent = shield
 
-	local normalMessageBox = Hydrate(
-		RbxGui.CreateMessageDialog(
-			"Thanks for your report!",
-			"Our moderators will review the chat logs and determine what happened.",
-			messageBoxButtons
-		)
-	) {
-		Visible = false,
-		Parent = shield,
-	}
+	local frame = Instance.new "Frame"
+	frame.Name = "Settings"
+	frame.Position = UDim2.new(0.5, -250, 0.5, -200)
+	frame.Size = UDim2.new(0, 500, 0, 400)
+	frame.BackgroundTransparency = 1
+	frame.Active = true
+	frame.Parent = shield
 
-	local frame = New "Frame" {
-		Name = "Settings",
-		Position = UDim2.new(0.5, -250, 0.5, -200),
-		Size = UDim2.new(0, 500, 0, 400),
-		BackgroundTransparency = 1,
-		Active = true,
-		Parent = shield,
-	}
+	local settingsFrame = Instance.new "Frame"
+	settingsFrame.Name = "ReportAbuseStyle"
+	settingsFrame.Size = UDim2.new(1, 0, 1, 0)
+	settingsFrame.Style = Enum.FrameStyle.RobloxRound
+	settingsFrame.Active = true
+	settingsFrame.ZIndex = baseZIndex + 1
+	settingsFrame.Parent = frame
 
-	settingsFrame = New "Frame" {
-		Name = "ReportAbuseStyle",
-		Size = UDim2.new(1, 0, 1, 0),
-		Style = Enum.FrameStyle.RobloxRound,
-		Active = true,
-		ZIndex = baseZIndex + 1,
-		Parent = frame,
+	local title = Instance.new "TextLabel"
+	title.Name = "Title"
+	title.Text = "Report Abuse"
+	title.TextColor3 = Color3I(221, 221, 221)
+	title.Position = UDim2.new(0.5, 0, 0, 30)
+	title.Font = Enum.Font.ArialBold
+	title.FontSize = Enum.FontSize.Size36
+	title.ZIndex = baseZIndex + 2
+	title.Parent = settingsFrame
 
-		[Children] = {
-			New "TextLabel" {
-				Name = "Title",
-				Text = "Report Abuse",
-				TextColor3 = Color3I(221, 221, 221),
-				Position = UDim2.new(0.5, 0, 0, 30),
-				Font = Enum.Font.ArialBold,
-				FontSize = Enum.FontSize.Size36,
-				ZIndex = baseZIndex + 2,
-			},
+	local description = Instance.new "TextLabel"
+	description.Name = "Description"
+	description.Text =
+		"This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action."
+	description.TextColor3 = Color3I(221, 221, 221)
+	description.Position = UDim2.new(0, 0, 0, 55)
+	description.Size = UDim2.new(1, 0, 0, 40)
+	description.BackgroundTransparency = 1
+	description.Font = Enum.Font.Arial
+	description.FontSize = Enum.FontSize.Size18
+	description.TextWrap = true
+	description.ZIndex = baseZIndex + 2
+	description.TextXAlignment = Enum.TextXAlignment.Left
+	description.TextYAlignment = Enum.TextYAlignment.Top
+	description.Parent = settingsFrame
 
-			New "TextLabel" {
-				Name = "Description",
-				Text = "This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action.",
-				TextColor3 = Color3I(221, 221, 221),
-				Position = UDim2.new(0, 0, 0, 55),
-				Size = UDim2.new(1, 0, 0, 40),
-				BackgroundTransparency = 1,
-				Font = Enum.Font.Arial,
-				FontSize = Enum.FontSize.Size18,
-				TextWrap = true,
-				ZIndex = baseZIndex + 2,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				TextYAlignment = Enum.TextYAlignment.Top,
-			},
-
-			New "TextLabel" {
-				Name = "PlayerLabel",
-				Text = "Which player?",
-				BackgroundTransparency = 1,
-				Font = Enum.Font.Arial,
-				FontSize = Enum.FontSize.Size18,
-				Position = UDim2.new(0.025, 0, 0, 100),
-				Size = UDim2.new(0.4, 0, 0, 36),
-				TextColor3 = Color3I(255, 255, 255),
-				TextXAlignment = Enum.TextXAlignment.Left,
-				ZIndex = baseZIndex + 2,
-			},
-
-			New "TextLabel" {
-				Name = "AbuseLabel",
-				Text = "Type of Abuse:",
-				Font = Enum.Font.Arial,
-				BackgroundTransparency = 1,
-				FontSize = Enum.FontSize.Size18,
-				Position = UDim2.new(0.025, 0, 0, 140),
-				Size = UDim2.new(0.4, 0, 0, 36),
-				TextColor3 = Color3I(255, 255, 255),
-				TextXAlignment = Enum.TextXAlignment.Left,
-				ZIndex = baseZIndex + 2,
-			},
-
-			New "TextLabel" {
-				Name = "ShortDescriptionLabel",
-				Text = "Short Description: (optional)",
-				Font = Enum.Font.Arial,
-				FontSize = Enum.FontSize.Size18,
-				Position = UDim2.new(0.025, 0, 0, 180),
-				Size = UDim2.new(0.95, 0, 0, 36),
-				TextColor3 = Color3I(255, 255, 255),
-				TextXAlignment = Enum.TextXAlignment.Left,
-				BackgroundTransparency = 1,
-				ZIndex = baseZIndex + 2,
-				Parent = settingsFrame,
-			},
-		},
-	}
+	local playerLabel = Instance.new "TextLabel"
+	playerLabel.Name = "PlayerLabel"
+	playerLabel.Text = "Which player?"
+	playerLabel.BackgroundTransparency = 1
+	playerLabel.Font = Enum.Font.Arial
+	playerLabel.FontSize = Enum.FontSize.Size18
+	playerLabel.Position = UDim2.new(0.025, 0, 0, 100)
+	playerLabel.Size = UDim2.new(0.4, 0, 0, 36)
+	playerLabel.TextColor3 = Color3I(255, 255, 255)
+	playerLabel.TextXAlignment = Enum.TextXAlignment.Left
+	playerLabel.ZIndex = baseZIndex + 2
+	playerLabel.Parent = settingsFrame
 
 	local abusingPlayer
 	local abuse
@@ -2582,14 +2246,26 @@ local createReportAbuseDialog = function()
 				end
 			end
 		)
+		playerDropDown.Name = "PlayersComboBox"
+		playerDropDown.ZIndex = baseZIndex + 2
+		playerDropDown.Position = UDim2.new(0.425, 0, 0, 102)
+		playerDropDown.Size = UDim2.new(0.55, 0, 0, 32)
 
-		return Hydrate(playerDropDown) {
-			Name = "PlayersComboBox",
-			ZIndex = baseZIndex + 2,
-			Position = UDim2.new(0.425, 0, 0, 102),
-			Size = UDim2.new(0.55, 0, 0, 32),
-		}
+		return playerDropDown
 	end
+
+	local abuseLabel = Instance.new "TextLabel"
+	abuseLabel.Name = "AbuseLabel"
+	abuseLabel.Text = "Type of Abuse:"
+	abuseLabel.Font = Enum.Font.Arial
+	abuseLabel.BackgroundTransparency = 1
+	abuseLabel.FontSize = Enum.FontSize.Size18
+	abuseLabel.Position = UDim2.new(0.025, 0, 0, 140)
+	abuseLabel.Size = UDim2.new(0.4, 0, 0, 36)
+	abuseLabel.TextColor3 = Color3I(255, 255, 255)
+	abuseLabel.TextXAlignment = Enum.TextXAlignment.Left
+	abuseLabel.ZIndex = baseZIndex + 2
+	abuseLabel.Parent = settingsFrame
 
 	local abuses = {
 		"Swearing",
@@ -2618,85 +2294,94 @@ local createReportAbuseDialog = function()
 	abuseDropDown.Size = UDim2.new(0.55, 0, 0, 32)
 	abuseDropDown.Parent = settingsFrame
 
-	local shortDescriptionWrapper = New "Frame" {
-		Name = "ShortDescriptionWrapper",
-		Position = UDim2.new(0.025, 0, 0, 220),
-		Size = UDim2.new(0.95, 0, 1, -310),
-		BackgroundColor3 = Color3I(0, 0, 0),
-		BorderSizePixel = 0,
-		ZIndex = baseZIndex + 2,
-		Parent = settingsFrame,
-	}
+	local shortDescriptionLabel = Instance.new "TextLabel"
+	shortDescriptionLabel.Name = "ShortDescriptionLabel"
+	shortDescriptionLabel.Text = "Short Description: (optional)"
+	shortDescriptionLabel.Font = Enum.Font.Arial
+	shortDescriptionLabel.FontSize = Enum.FontSize.Size18
+	shortDescriptionLabel.Position = UDim2.new(0.025, 0, 0, 180)
+	shortDescriptionLabel.Size = UDim2.new(0.95, 0, 0, 36)
+	shortDescriptionLabel.TextColor3 = Color3I(255, 255, 255)
+	shortDescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+	shortDescriptionLabel.BackgroundTransparency = 1
+	shortDescriptionLabel.ZIndex = baseZIndex + 2
+	shortDescriptionLabel.Parent = settingsFrame
 
-	local shortDescriptionBox = New "TextBox" {
-		Name = "TextBox",
-		Text = "",
-		ClearTextOnFocus = false,
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size18,
-		Position = UDim2.new(0, 3, 0, 3),
-		Size = UDim2.new(1, -6, 1, -6),
-		TextColor3 = Color3I(255, 255, 255),
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextYAlignment = Enum.TextYAlignment.Top,
-		TextWrap = true,
-		BackgroundColor3 = Color3I(0, 0, 0),
-		BorderSizePixel = 0,
-		ZIndex = baseZIndex + 2,
-		Parent = shortDescriptionWrapper,
-	}
+	local shortDescriptionWrapper = Instance.new "Frame"
+	shortDescriptionWrapper.Name = "ShortDescriptionWrapper"
+	shortDescriptionWrapper.Position = UDim2.new(0.025, 0, 0, 220)
+	shortDescriptionWrapper.Size = UDim2.new(0.95, 0, 1, -310)
+	shortDescriptionWrapper.BackgroundColor3 = Color3I(0, 0, 0)
+	shortDescriptionWrapper.BorderSizePixel = 0
+	shortDescriptionWrapper.ZIndex = baseZIndex + 2
+	shortDescriptionWrapper.Parent = settingsFrame
 
-	submitReportButton = New "TextButton" {
-		Name = "SubmitReportBtn",
-		Active = false,
-		Modal = true,
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size18,
-		Position = UDim2.new(0.1, 0, 1, -80),
-		Size = UDim2.new(0.35, 0, 0, 50),
-		AutoButtonColor = true,
-		Style = Enum.ButtonStyle.RobloxButtonDefault,
-		Text = "Submit Report",
-		TextColor3 = Color3I(255, 255, 255),
-		ZIndex = baseZIndex + 2,
-		Parent = settingsFrame,
+	local shortDescriptionBox = Instance.new "TextBox"
+	shortDescriptionBox.Name = "TextBox"
+	shortDescriptionBox.Text = ""
+	shortDescriptionBox.ClearTextOnFocus = false
+	shortDescriptionBox.Font = Enum.Font.Arial
+	shortDescriptionBox.FontSize = Enum.FontSize.Size18
+	shortDescriptionBox.Position = UDim2.new(0, 3, 0, 3)
+	shortDescriptionBox.Size = UDim2.new(1, -6, 1, -6)
+	shortDescriptionBox.TextColor3 = Color3I(255, 255, 255)
+	shortDescriptionBox.TextXAlignment = Enum.TextXAlignment.Left
+	shortDescriptionBox.TextYAlignment = Enum.TextYAlignment.Top
+	shortDescriptionBox.TextWrap = true
+	shortDescriptionBox.BackgroundColor3 = Color3I(0, 0, 0)
+	shortDescriptionBox.BorderSizePixel = 0
+	shortDescriptionBox.ZIndex = baseZIndex + 2
+	shortDescriptionBox.Parent = shortDescriptionWrapper
 
-		[OnEvent "MouseButton1Click"] = function()
-			if submitReportButton.Active then
-				if abuse and abusingPlayer then
-					frame.Visible = false
-					game.Players:ReportAbuse(
-						abusingPlayer,
-						abuse,
-						shortDescriptionBox.Text
-					)
-					if abuse == "Cheating/Exploiting" then
-						recordedMessageBox.Visible = true
-					elseif abuse == "Bullying" or abuse == "Swearing" then
-						calmingMessageBox.Visible = true
-					else
-						normalMessageBox.Visible = true
-					end
+	submitReportButton = Instance.new "TextButton"
+	submitReportButton.Name = "SubmitReportBtn"
+	submitReportButton.Active = false
+	submitReportButton.Modal = true
+	submitReportButton.Font = Enum.Font.Arial
+	submitReportButton.FontSize = Enum.FontSize.Size18
+	submitReportButton.Position = UDim2.new(0.1, 0, 1, -80)
+	submitReportButton.Size = UDim2.new(0.35, 0, 0, 50)
+	submitReportButton.AutoButtonColor = true
+	submitReportButton.Style = Enum.ButtonStyle.RobloxButtonDefault
+	submitReportButton.Text = "Submit Report"
+	submitReportButton.TextColor3 = Color3I(255, 255, 255)
+	submitReportButton.ZIndex = baseZIndex + 2
+	submitReportButton.Parent = settingsFrame
+
+	submitReportButton.MouseButton1Click:connect(function()
+		if submitReportButton.Active then
+			if abuse and abusingPlayer then
+				frame.Visible = false
+				game.Players:ReportAbuse(
+					abusingPlayer,
+					abuse,
+					shortDescriptionBox.Text
+				)
+				if abuse == "Cheating/Exploiting" then
+					recordedMessageBox.Visible = true
+				elseif abuse == "Bullying" or abuse == "Swearing" then
+					calmingMessageBox.Visible = true
 				else
-					closeAndResetDialog()
+					normalMessageBox.Visible = true
 				end
+			else
+				closeAndResetDialog()
 			end
-		end,
-	}
+		end
+	end)
 
-	local cancelButton = New "TextButton" {
-		Name = "CancelBtn",
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size18,
-		Position = UDim2.new(0.55, 0, 1, -80),
-		Size = UDim2.new(0.35, 0, 0, 50),
-		AutoButtonColor = true,
-		Style = Enum.ButtonStyle.RobloxButtonDefault,
-		Text = "Cancel",
-		TextColor3 = Color3I(255, 255, 255),
-		ZIndex = baseZIndex + 2,
-		Parent = settingsFrame,
-	}
+	local cancelButton = Instance.new "TextButton"
+	cancelButton.Name = "CancelBtn"
+	cancelButton.Font = Enum.Font.Arial
+	cancelButton.FontSize = Enum.FontSize.Size18
+	cancelButton.Position = UDim2.new(0.55, 0, 1, -80)
+	cancelButton.Size = UDim2.new(0.35, 0, 0, 50)
+	cancelButton.AutoButtonColor = true
+	cancelButton.Style = Enum.ButtonStyle.RobloxButtonDefault
+	cancelButton.Text = "Cancel"
+	cancelButton.TextColor3 = Color3I(255, 255, 255)
+	cancelButton.ZIndex = baseZIndex + 2
+	cancelButton.Parent = settingsFrame
 
 	closeAndResetDialog = function()
 		--Delete old player combo box
@@ -2747,47 +2432,44 @@ local createReportAbuseDialog = function()
 end
 
 --[=[
-local createChatBar = function()
+local function createChatBar()
 	--Only show a chat bar if we are a NetworkClient
 	waitForChild(game, "NetworkClient")
 
 	waitForChild(game, "Players")
 	waitForProperty(game.Players, "LocalPlayer")
 
-	local chatBar = New "Frame" {
-		Name = "ChatBar",
-		Size = UDim2.new(1, 0, 0, 22),
-		Position = UDim2.new(0, 0, 1, 0),
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BorderSizePixel = 0,
-	}
+	local chatBar = Instance.new "Frame"
+	chatBar.Name = "ChatBar"
+	chatBar.Size = UDim2.new(1, 0, 0, 22)
+	chatBar.Position = UDim2.new(0, 0, 1, 0)
+	chatBar.BackgroundColor3 = Color3.new(0, 0, 0)
+	chatBar.BorderSizePixel = 0
 
-	local chatBox = New "TextBox" {
-		Text = "",
-		Visible = false,
-		Size = UDim2.new(1, -4, 1, 0),
-		Position = UDim2.new(0, 2, 0, 0),
-		TextXAlignment = Enum.TextXAlignment.Left,
-		Font = Enum.Font.Arial,
-		ClearTextOnFocus = false,
-		FontSize = Enum.FontSize.Size14,
-		TextColor3 = Color3.new(1, 1, 1),
-		BackgroundTransparency = 1,
-		Parent = chatBar,
-	}
+	local chatBox = Instance.new "TextBox"
+	chatBox.Text = ""
+	chatBox.Visible = false
+	chatBox.Size = UDim2.new(1, -4, 1, 0)
+	chatBox.Position = UDim2.new(0, 2, 0, 0)
+	chatBox.TextXAlignment = Enum.TextXAlignment.Left
+	chatBox.Font = Enum.Font.Arial
+	chatBox.ClearTextOnFocus = false
+	chatBox.FontSize = Enum.FontSize.Size14
+	chatBox.TextColor3 = Color3.new(1, 1, 1)
+	chatBox.BackgroundTransparency = 1
+	--chatBox.Parent = chatBar
 
-	local chatButton = New "TextButton" {
-		Size = UDim2.new(1, -4, 1, 0),
-		Position = UDim2.new(0, 2, 0, 0),
-		AutoButtonColor = false,
-		Text = 'To chat click here or press "/" key',
-		TextXAlignment = Enum.TextXAlignment.Left,
-		Font = Enum.Font.Arial,
-		FontSize = Enum.FontSize.Size14,
-		TextColor3 = Color3.new(1, 1, 1),
-		BackgroundTransparency = 1,
-		Parent = chatBar,
-	}
+	local chatButton = Instance.new "TextButton"
+	chatButton.Size = UDim2.new(1, -4, 1, 0)
+	chatButton.Position = UDim2.new(0, 2, 0, 0)
+	chatButton.AutoButtonColor = false
+	chatButton.Text = 'To chat click here or press "/" key'
+	chatButton.TextXAlignment = Enum.TextXAlignment.Left
+	chatButton.Font = Enum.Font.Arial
+	chatButton.FontSize = Enum.FontSize.Size14
+	chatButton.TextColor3 = Color3.new(1, 1, 1)
+	chatButton.BackgroundTransparency = 1
+	--chatButton.Parent = chatBar
 
 	local activateChat = function()
 		if chatBox.Visible then
@@ -2921,6 +2603,7 @@ if success and luaChat then
 end
 ]]
 
+--[[
 local BurningManPlaceID = 41324860
 -- TODO: remove click to walk completely if testing shows we don't need it
 -- Removes click to walk option from Burning Man
@@ -2940,3 +2623,4 @@ delay(0, function()
 		end)
 	end
 end)
+]]

@@ -1,8 +1,6 @@
 -- RbxUtility
 print "[Mercury]: Loaded corescript 60595411"
 
-local t = {}
-
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
@@ -473,6 +471,8 @@ function Null()
 end
 -------------------- End JSON Parser ------------------------
 
+local t = {}
+
 t.DecodeJSON = function(jsonString)
 	pcall(function()
 		warn "RbxUtility.DecodeJSON is deprecated, please use Game:GetService('HttpService'):JSONDecode() instead."
@@ -614,7 +614,7 @@ t.SelectTerrainRegion = function(
 	end
 
 	-- iterates through all current adornments and deletes any that don't have latest tag
-	function cleanUpAdornments()
+	local function cleanUpAdornments()
 		for cellPos, adornTable in pairs(adornments) do
 			if adornTable.KeepAlive ~= currentKeepAliveTag then -- old news, we should get rid of this
 				adornTable.SelectionBox.Visible = false
@@ -628,7 +628,7 @@ t.SelectTerrainRegion = function(
 	end
 
 	-- helper function to update tag
-	function incrementAliveCounter()
+	local function incrementAliveCounter()
 		aliveCounter += 1
 		if aliveCounter > 1000000 then
 			aliveCounter = 0
@@ -637,7 +637,7 @@ t.SelectTerrainRegion = function(
 	end
 
 	-- finds full cells in region and adorns each cell with a box, with the argument color
-	function adornFullCellsInRegion(region, color)
+	local function adornFullCellsInRegion(region, color)
 		local regionBegin = region.CFrame.p
 			- (region.Size / 2)
 			+ Vector3.new(2, 2, 2)
@@ -1036,26 +1036,6 @@ t.Create.E = function(eventName)
 end
 
 -------------------------------------------------Create function End----------------------------------------------------
-
--- Lmao time - Heliodex
-
-function t.HttpGet(url: string)
-	return game:HttpGet(url)
-end
-
-function t.HttpGetAsync(url: string)
-	return game:HttpGetAsync(url)
-end
-
-function t.HttpPost(url: string)
-	return game:HttpPost(url)
-end
-
-function t.HttpPostAsync(url: string)
-	return game:HttpPostAsync(url)
-end
-
--- Lmao time end
 
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
