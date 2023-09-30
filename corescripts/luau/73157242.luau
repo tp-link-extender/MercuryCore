@@ -350,7 +350,7 @@ local function getBoundingBox2(partOrModel)
 		minVec = -maxVec
 	end
 
-	-- Adjust bounding box to reflect what the model or part author wants in  terms of justification
+	-- Adjust bounding box to reflect what the model or part author wants in terms of justification
 	local justifyValue = partOrModel:FindFirstChild "Justification"
 	if justifyValue ~= nil then
 		-- find the multiple of 4 that contains the model

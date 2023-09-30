@@ -36,7 +36,8 @@
 				{style} />
 		</span>
 		{#if full}
-			<span class="username {thin ? 'ps-2 fs-6' : 'font-bold ps-4'}">
+			<span
+				class="username {thin ? 'ps-2 fs-6' : 'font-bold ps-4'}">
 				{user.username}
 			</span>
 		{/if}
@@ -63,7 +64,7 @@
 			</span>
 		{:else if bottom}
 			<span
-				class="username bottom pt-2"
+				class="username bottom pt-2 text-center"
 				class:small={user.username?.length || 0 > 15}
 				style="max-width: {size}">
 				{user.username}

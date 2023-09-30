@@ -1777,7 +1777,7 @@
         <Item class="ReflectionMetadataMember">
           <Properties>
             <string name="Name">GetModelCFrame</string>
-            <string name="summary">Returns a CFrame that has position of the centroid of all Parts in the Model.  The rotation matrix is either the rotation matrix of the user-defined PrimaryPart, or if not specified then  a part in the Model chosen by the engine.</string>
+            <string name="summary">Returns a CFrame that has position of the centroid of all Parts in the Model.  The rotation matrix is either the rotation matrix of the user-defined PrimaryPart, or if not specified then a part in the Model chosen by the engine.</string>
           </Properties>
         </Item>
         <Item class="ReflectionMetadataMember">
