@@ -1,6 +1,7 @@
 import surql from "$lib/surrealtag"
 import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
+import { addUserData } from "$lib/server/lucia"
 
 export async function load({ request, locals }) {
 	const session = await locals.auth.validate(),
@@ -125,7 +126,7 @@ export async function load({ request, locals }) {
 				textLight: boolean
 			}[]
 		>,
-		user,
+		user: user ? addUserData(user) : null,
 		notifications: notifications || [],
 		url: request.url,
 	}

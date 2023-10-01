@@ -34,11 +34,7 @@ export const actions = {
 			)
 
 		if (name.toLowerCase() == "changed")
-			return formError(
-				form,
-				["name"],
-				["Dickhead"],
-			)
+			return formError(form, ["name"], ["Dickhead"])
 
 		if (name.toLowerCase() == "wisely")
 			return formError(
@@ -62,13 +58,10 @@ export const actions = {
 
 		try {
 			await prisma.$transaction(async tx => {
-				await transaction(
-					{ id: user.id },
-					{ number: 1 },
-					10,
-					{ note: `Created group ${name}`, link: `/groups/${name}` },
-					tx,
-				)
+				await transaction({ id: user.id }, { number: 1 }, 10, {
+					note: `Created group ${name}`,
+					link: `/groups/${name}`,
+				})
 
 				await tx.group.create({
 					data: {

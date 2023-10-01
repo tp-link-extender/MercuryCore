@@ -75,16 +75,10 @@ export const actions = {
 				})
 
 				await Promise.all([
-					transaction(
-						{ id: user.id },
-						{ number: 1 },
-						10,
-						{
-							note: `Created place ${name}`,
-							link: `/place/${place.id}`,
-						},
-						tx,
-					),
+					transaction({ id: user.id }, { number: 1 }, 10, {
+						note: `Created place ${name}`,
+						link: `/place/${place.id}`,
+					}),
 					squery(
 						surql`
 							LET $textContent = CREATE textContent CONTENT {

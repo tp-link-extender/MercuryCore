@@ -2,6 +2,8 @@
 // as only needing to initialise PrismaClient once.
 
 import cql from "$lib/cyphertag"
+import surql from "$lib/surrealtag"
+import { squery } from "$lib/server/surreal"
 import { building } from "$app/environment"
 import { PrismaClient } from "@prisma/client"
 import type { Prisma } from "@prisma/client"
@@ -86,96 +88,106 @@ export async function findGroups(query: Prisma.GroupFindManyArgs = {}) {
 	return groups as typeof groups & { members: any }[]
 }
 
-type User = {
-	id?: string
-	number?: number
-	username?: string
-}
+const failed = "The query was not executed due to a failed transaction"
 /**
  * Transfers currency from one user to another, and creates a transaction in the database.
- * @param sender An object containing the id, number or username of the user sending the currency.
- * @param receiver An object containing the id, number or username of the user receiving the currency.
+ * @param sender An object containing the id or number of the user sending the currency.
+ * @param receiver An object containing the id or number of the user receiving the currency.
  * @param amountSent The amount of currency to send.
  * @param notelink An object containing a note for the transaction, as well as a link to what the transaction was for if possible.
- * @param tx A prisma transaction object, if it needs to be rolled back when an error occurs.
  */
 export async function transaction(
-	sender: User,
-	receiver: User,
+	sender: { id?: string; number?: 1 },
+	receiver: { id?: string; number?: 1 },
 	amountSent: number,
 	{ note, link }: { note?: String; link?: String },
-	tx: any /* awful */ = prisma,
 ) {
-	const sender2 = await tx.authUser.findUnique({
-		where: sender,
-		select: {
-			currency: true,
-			number: true,
-		},
-	})
-	if (!sender2) throw new Error("Sender not found")
+	// TODO: ADD A CALLBACK OR SOMETHING
+	// so we know when (if) the transaction succeeds
 
-	const receiver2 = await tx.authUser.findUnique({
-		where: receiver,
-		select: {
-			currency: true,
-			number: true,
-		},
-	})
-	if (!receiver2) throw new Error("Receiver not found")
 
-	const senderAdmin = sender2.number == 1,
-		receiverAdmin = receiver2.number == 1,
-		taxRate =
-			// ((await surreal.select("stuff:economy"))[0]?.taxRate as number) ||
-			30
+	const query = (await squery(
+		surql`
+			BEGIN TRANSACTION; # lmfao
 
-	if (amountSent > 0) {
-		if (!senderAdmin && sender2.currency < amountSent)
-			throw new Error(
-				`Insufficient funds: You need ${
-					amountSent - sender2.currency
-				} more to buy this`,
-			)
-		// const receiver2 = await prisma.authUser.findUnique({
-		// 	where: receiver,
-		// })
-		// if (!receiver2) throw new Error("Receiver not found")
+			LET $taxRate = stuff:economy.taxRate OR 30;
 
-		const finalAmount = Math.round(amountSent * (1 - taxRate / 100))
+			LET $sender = (SELECT
+				id,
+				currency,
+				number
+			FROM user WHERE number = $senderNumber OR id = $senderId)[0];
+			IF !$sender {
+				THROW "Sender not found"
+			};
 
-		if (!senderAdmin)
-			await tx.authUser.update({
-				where: sender,
-				data: {
-					currency: {
-						decrement: amountSent,
-					},
-				},
-			})
-		if (!receiverAdmin)
-			await tx.authUser.update({
-				where: receiver,
-				data: {
-					currency: {
-						increment: finalAmount,
-					},
-				},
-			})
-	}
+			LET $receiver = (SELECT
+				id,
+				currency,
+				number
+			FROM user WHERE number = $receiverNumber OR id = $receiverId)[0];
+			IF !$receiver {
+				THROW "Receiver not found"
+			};
 
-	await tx.transaction.create({
-		data: {
-			sender: {
-				connect: sender,
-			},
-			receiver: {
-				connect: receiver,
-			},
+			LET $senderAdmin = $sender.number == 1;
+			LET $receiverAdmin = $receiver.number == 1;
+
+			IF $amountSent > 0 {
+				IF /*!$senderAdmin AND*/ $sender.currency < $amountSent {
+					THROW string::join(" ", "Insufficient funds: You need", $amountSent - $sender.currency, "more to buy this")
+				};
+
+				LET $finalAmount = math::round($amountSent * (1 - $taxRate / 100));
+
+				UPDATE $sender SET currency -= 
+					IF $senderAdmin THEN
+						0
+					ELSE
+						$amountSent
+					END;
+
+				UPDATE $receiver SET currency += 
+					IF $receiverAdmin THEN
+						0
+					ELSE
+						$finalAmount
+					END;
+			};
+
+			RELATE $sender->transaction->$receiver CONTENT {
+				amountSent: $amountSent,
+				taxRate: $taxRate,
+				note: $note,
+				link: $link,
+				time: time::now(),
+			};
+
+			COMMIT TRANSACTION`,
+		{
+			...(sender?.number
+				? { senderNumber: sender.number }
+				: { senderId: sender.id }),
+			...(receiver?.number
+				? { receiverNumber: receiver.number }
+				: { receiverId: receiver.id }),
 			amountSent,
-			taxRate,
 			note,
 			link,
 		},
-	})
+	)) as
+		| string[]
+		| {
+				amountSent: number
+				taxRate: number
+				note: string
+				link: string
+				time: string
+		  }[]
+
+	for (const result of query)
+		if (result == failed)
+			for (const result2 of query)
+				if (typeof result2 == "string" && result2 != failed)
+					throw result2.match(/"An error occured: (.*)"/)?.[1]
 }

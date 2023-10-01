@@ -15,14 +15,11 @@ export async function load({ locals, params }) {
 		userExists = (await squery(
 			surql`
 				SELECT
-					id,
 					username,
 					number,
 					permissionLevel,
 					bio[0] AS bio,
-					(SELECT
-						*,
-						content[0] AS content
+					(SELECT *, content[0] AS content
 					FROM ->posted->statusPost
 					LIMIT 40) AS posts,
 
@@ -59,14 +56,17 @@ export async function load({ locals, params }) {
 				user: `user:${user.id}`,
 			},
 		)) as {
-			bio: any
+			bio: {
+				id: string
+				text: string
+				updated: string
+			}
 			follower: boolean
 			followerCount: number
 			following: boolean
 			followingCount: number
 			friendCount: number
 			friends: boolean
-			// id: string
 			incomingRequest: boolean
 			number: number
 			outgoingRequest: boolean
@@ -91,9 +91,8 @@ export async function load({ locals, params }) {
 				visibility: string
 			}[]
 			username: string
-		}[]
-
-	const user2 = userExists[0]
+		}[],
+		user2 = userExists[0]
 
 	if (!user2) throw error(404, "Not found")
 

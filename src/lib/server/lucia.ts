@@ -1,10 +1,12 @@
 // Initialising Lucia, the authentication library
 
+import surql from "$lib/surrealtag"
 import { dev } from "$app/environment"
 import { client } from "$lib/server/redis"
+import { squery } from "$lib/server/surreal"
 import { PrismaClient } from "@prisma/client"
 import { redirect, error } from "@sveltejs/kit"
-import { lucia, type Session } from "lucia"
+import { lucia, type Session, type User } from "lucia"
 import { sveltekit } from "lucia/middleware"
 import { prisma } from "@lucia-auth/adapter-prisma"
 import { redis } from "@lucia-auth/adapter-session-redis"
@@ -41,6 +43,31 @@ export const auth = lucia({
 	}),
 })
 
+export async function addUserData(user: User) {
+	const surrealUser = (await squery(
+		surql`
+			SELECT
+				*,
+				bio[0].text,
+				string::split(type::string(id), ":")[1] AS id
+			FROM user WHERE number = $number`,
+		user,
+	)) as {
+		bio: string
+		currency: number
+		email: string
+		id: string
+		number: number
+		permissionLevel: number
+		username: string
+	}[]
+
+	return {
+		...user,
+		...surrealUser[0],
+	}
+}
+
 /**
  * Authorises a user and returns their session and user data, or redirects them to the login page.
  * @param locals the locals object, containing the validate function that returns data about the user.
@@ -65,5 +92,9 @@ export async function authorise(
 	if (!session || !user) throw redirect(302, "/login")
 	if (level && user.permissionLevel < level)
 		throw error(403, "You do not have permission to view this page.")
-	return { session, user }
+
+	return {
+		session,
+		user: await addUserData(user),
+	}
 }
