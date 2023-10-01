@@ -176,7 +176,7 @@
 					</li>
 					<li id="transactionsbutton" class="my-auto">
 						<a
-							href="/transactions/your"
+							href="/transactions"
 							role="button"
 							aria-label="Transactions"
 							class="nav-link text-success">

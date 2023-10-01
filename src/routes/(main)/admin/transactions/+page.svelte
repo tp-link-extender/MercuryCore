@@ -53,7 +53,7 @@
 										{transaction.taxRate}% tax
 									{/if}
 									<small>
-										{transaction.time.toLocaleString()}
+										{new Date(transaction.time).toLocaleString()}
 									</small>
 								</div>
 								{#if value}

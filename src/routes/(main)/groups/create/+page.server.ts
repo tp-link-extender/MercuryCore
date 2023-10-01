@@ -57,22 +57,20 @@ export const actions = {
 			)
 
 		try {
-			await prisma.$transaction(async tx => {
-				await transaction({ id: user.id }, { number: 1 }, 10, {
-					note: `Created group ${name}`,
-					link: `/groups/${name}`,
-				})
-
-				await tx.group.create({
-					data: {
-						name,
-						ownerUsername: user.username,
-					},
-				})
+			await transaction({ id: user.id }, { number: 1 }, 10, {
+				note: `Created group ${name}`,
+				link: `/groups/${name}`,
 			})
 		} catch (e: any) {
 			return formError(form, ["other"], [e.message])
 		}
+
+		await prisma.group.create({
+			data: {
+				name,
+				ownerUsername: user.username,
+			},
+		})
 
 		throw redirect(302, `/groups/${name}`)
 	},

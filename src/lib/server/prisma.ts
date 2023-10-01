@@ -3,7 +3,7 @@
 
 import cql from "$lib/cyphertag"
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { multiSquery } from "$lib/server/surreal"
 import { building } from "$app/environment"
 import { PrismaClient } from "@prisma/client"
 import type { Prisma } from "@prisma/client"
@@ -97,16 +97,12 @@ const failed = "The query was not executed due to a failed transaction"
  * @param notelink An object containing a note for the transaction, as well as a link to what the transaction was for if possible.
  */
 export async function transaction(
-	sender: { id?: string; number?: 1 },
-	receiver: { id?: string; number?: 1 },
+	sender: { id?: string; number?: number },
+	receiver: { id?: string; number?: number },
 	amountSent: number,
 	{ note, link }: { note?: String; link?: String },
 ) {
-	// TODO: ADD A CALLBACK OR SOMETHING
-	// so we know when (if) the transaction succeeds
-
-
-	const query = (await squery(
+	const query = (await multiSquery(
 		surql`
 			BEGIN TRANSACTION; # lmfao
 
@@ -134,7 +130,7 @@ export async function transaction(
 			LET $receiverAdmin = $receiver.number == 1;
 
 			IF $amountSent > 0 {
-				IF /*!$senderAdmin AND*/ $sender.currency < $amountSent {
+				IF !$senderAdmin AND $sender.currency < $amountSent {
 					THROW string::join(" ", "Insufficient funds: You need", $amountSent - $sender.currency, "more to buy this")
 				};
 
@@ -185,9 +181,14 @@ export async function transaction(
 				time: string
 		  }[]
 
-	for (const result of query)
+	for (const result of query) {
 		if (result == failed)
 			for (const result2 of query)
-				if (typeof result2 == "string" && result2 != failed)
-					throw result2.match(/"An error occured: (.*)"/)?.[1]
+				if (typeof result2 == "string" && result2 != failed){
+					console.log(
+						"fail",
+						result2.match(/An error occurred: (.+)/),
+					)
+					throw new Error(result2.match(/An error occurred: (.*)/)?.[1])}
+	}
 }

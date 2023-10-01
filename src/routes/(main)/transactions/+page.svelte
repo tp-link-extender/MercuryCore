@@ -2,13 +2,10 @@
 	export let data
 </script>
 
-<Head title="Transactions" />
+<Head title="Your transactions" />
 
 <h1 class="text-center light-text">
-	Transactions
-	<a href="/transactions/your" class="btn btn-primary ms-6">
-		Your transactions
-	</a>
+	Your transactions
 </h1>
 
 <div class="container mt-12">
@@ -42,7 +39,7 @@
 							{transaction.taxRate}% tax
 						{/if}
 						<small>
-							{transaction.time.toLocaleString()}
+							{new Date(transaction.time).toLocaleString()}
 						</small>
 					</div>
 					{#if value}
