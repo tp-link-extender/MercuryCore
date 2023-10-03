@@ -7,15 +7,8 @@
 		permissionLevel: number
 	}
 
-	export let reply: (
-		| import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
-		| import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
-	) & {
-		likeCount: number
-		dislikeCount: number
-		likes: boolean
-		dislikes: boolean
-	}
+	export let reply: import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
+	// | import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
 
 	export let num: number
 	export let depth = 0
@@ -121,7 +114,7 @@
 								{/if}
 							</span>
 							<small class="light-text ps-6">
-								{reply.posted.toLocaleString()}
+								{new Date(reply.posted).toLocaleString()}
 							</small>
 						</a>
 						<p class:hidden class="my-2">

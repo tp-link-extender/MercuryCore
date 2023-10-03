@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import surreal, { squery } from "$lib/server/surreal"
 import { prisma } from "$lib/server/prisma"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
@@ -17,6 +17,65 @@ const schema = z.object({
 	replyId: z.string().optional(),
 })
 
+type Replies = {
+	author: {
+		number: number
+		username: string
+	}
+	content: {
+		id: string
+		text: string
+		updated: string
+	}[]
+	dislikeCount: number
+	dislikes: boolean
+	id: string
+	likeCount: number
+	likes: boolean
+	parentPostId: string
+	parentReplyId: null
+	posted: string
+	replies: Replies
+	visibility: string
+}[]
+
+const SELECTFROM = () =>
+	surql`
+				SELECT
+					*,
+					content[0] AS content,
+					string::split(type::string(id), ":")[1] AS id,
+					string::split(type::string($parent.id), ":")[1] AS parentPostId,
+					NONE as parentReplyId,
+					(SELECT number, username FROM <-posted<-user)[0] as author,
+					
+					count(<-likes) as likeCount,
+					count(<-dislikes) as dislikeCount,
+					($user ∈ <-likes<-user.id) as likes,
+					($user ∈ <-dislikes<-user.id) as dislikes,
+
+					# again #
+				FROM
+	`
+
+function SELECTREPLIES() {
+	let rep = surql`
+				(${SELECTFROM()} <-replyToPost<-forumReply
+				# Make sure it's not a reply to another reply
+				WHERE !->replyToReply) as replies
+	`
+
+	for (let i = 0; i < 9; i++)
+		rep = rep.replace(
+			/# again #/g,
+			surql`
+				(${SELECTFROM()} <-replyToReply<-forumReply) AS replies
+			`,
+		)
+
+	return rep
+}
+
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals),
 		forumPost = (await squery(
@@ -30,7 +89,9 @@ export async function load({ locals, params }) {
 					($user ∈ <-likes<-user.id) as likes,
 					($user ∈ <-dislikes<-user.id) as dislikes,
 					(->in->forumCategory)[0].name as categoryName,
-					[] as replies
+
+					${SELECTREPLIES()}
+
 				FROM $forumPost`,
 			{
 				forumPost: `forumPost:${params.post}`,
@@ -41,19 +102,19 @@ export async function load({ locals, params }) {
 				number: number
 				username: string
 			}
-			content: {
-				id: string
-				text: string
-				updated: string
-			}[]
-			replies: []
 			categoryName: string
+			content: Array<{
+				id: string
+				text: any
+				updated: string
+			}>
 			dislikeCount: number
 			dislikes: boolean
 			id: string
 			likeCount: number
 			likes: boolean
 			posted: string
+			replies: Replies
 			title: string
 			visibility: string
 		}[]
@@ -80,22 +141,22 @@ export const actions = {
 			replyId = url.searchParams.get("rid"),
 			// If there is a replyId, it is a reply to another comment
 
+			query = surql`
+				
+			`,
 			replypost = replyId
-				? await prisma.forumReply.findUnique({
-						where: { id: replyId },
-				  })
-				: await prisma.forumPost.findUnique({
-						where: { id: params.post },
-				  })
+				? (await surreal.select(`forumReply:${replyId}`))[0]
+				: (await surreal.select(`forumPost:${params.post}`))[0]
 
-		if (!replypost) throw error(404)
+		if (!replypost)
+			throw error(404, `${replyId ? "Reply" : "Post"} not found`)
 
 		const newReplyId = await id()
 
 		await squery(
 			surql`
 				LET $textContent = CREATE textContent CONTENT {
-					text: "test delete l8r",
+					text: $content,
 					updated: time::now(),
 				};
 				RELATE $user->wrote->$textContent;
@@ -106,42 +167,42 @@ export const actions = {
 					content: [$textContent],
 				};
 				RELATE $reply->replyToPost->$post;
+				IF $replyId {
+					RELATE $reply->replyToReply->$replyId;
+				};
 				RELATE $user->posted->$reply`,
 			{
+				content,
 				user: `user:${user.id}`,
 				forumReply: `forumReply:${newReplyId}`,
 				post: `forumPost:${params.post}`,
+				replyId: replyId ? `forumReply:${replyId}` : undefined,
 			},
 		)
 
-		await prisma.forumReply.create({
-			data: {
-				id: newReplyId,
-				authorId: user.id,
-				content: {
-					create: {
-						text: content,
-					},
-				},
-				topParentId: params.post,
-				parentReplyId: replyId,
-			},
-		})
-
 		if (user.id != replypost.authorId)
-			await prisma.notification.create({
-				data: {
-					type: replyId
-						? NotificationType.ForumReplyReply
-						: NotificationType.ForumPostReply,
-					senderId: user.id,
-					receiverId: replypost.authorId,
-					note: `${user.username} replied to your ${
-						replyId ? "reply" : "post"
-					}: ${content}`,
-					relativeId: newReplyId,
+			// await prisma.notification.create({
+			// 	data: {
+			// 		type: replyId
+			// 			? NotificationType.ForumReplyReply
+			// 			: NotificationType.ForumPostReply,
+			// 		senderId: user.id,
+			// 		receiverId: replypost.authorId,
+			// 		note: `${user.username} replied to your ${
+			// 			replyId ? "reply" : "post"
+			// 		}: ${content}`,
+			// 		relativeId: newReplyId,
+			// 	},
+			// })
+			await squery(
+				surql`
+					LET $notification = CREATE notification CONTENT {
+						type: $type
+					}`,
+				{
+					type: replyId ? "ForumReplyReply" : "ForumPostReply",
 				},
-			})
+			)
 
 		await like(user.id, `forumReply:${newReplyId}`)
 	},
@@ -166,17 +227,21 @@ export const actions = {
 		if (reply.visibility != "Visible")
 			throw error(400, "Reply already deleted")
 
-		await prisma.forumReply.update({
-			where: { id },
-			data: {
-				visibility: "Deleted",
-				content: {
-					create: {
-						text: "[deleted]",
-					},
-				},
+		await squery(
+			surql`
+				LET $reply = SELECT <-posted AS poster FROM $forumReply;
+				LET $textContent = CREATE textContent CONTENT {
+					text: "[deleted]",
+					updated: time::now(),
+				};
+				RELATE $reply.poster->wrote->$textContent;
+
+				UPDATE $forumReply SET content += $textContent;
+				UPDATE $forumReply SET visibility = "Deleted"`,
+			{
+				forumReply: `forumReply:${id}`,
 			},
-		})
+		)
 	},
 	moderate: async ({ url, locals }) => {
 		await authorise(locals, 4)
@@ -184,21 +249,25 @@ export const actions = {
 		const id = url.searchParams.get("id")
 		if (!id) throw error(400, "No reply id provided")
 
-		try {
-			await prisma.forumReply.update({
-				where: { id },
-				data: {
-					visibility: "Moderated",
-					content: {
-						create: {
-							text: "[removed]",
-						},
-					},
-				},
-			})
-		} catch (e) {
-			throw error(404, "Reply not found")
-		}
+		const findReply = (await surreal.select(`forumReply:${id}`))[0]
+
+		if (!findReply) throw error(404, "Reply not found")
+
+		await squery(
+			surql`
+				LET $reply = SELECT <-posted AS poster FROM $forumReply;
+				LET $textContent = CREATE textContent CONTENT {
+					text: "[removed]",
+					updated: time::now(),
+				};
+				RELATE $reply.poster->wrote->$textContent;
+
+				UPDATE $forumReply SET content += $textContent;
+				UPDATE $forumReply SET visibility = "Moderated"`,
+			{
+				forumReply: `forumReply:${id}`,
+			},
+		)
 	},
 	like: categoryActions.like as any,
 }
