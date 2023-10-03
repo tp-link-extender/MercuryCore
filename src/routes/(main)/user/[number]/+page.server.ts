@@ -37,13 +37,11 @@ export async function load({ locals, params }) {
 
 					FROM ->owns->place) AS places,
 
-					count(->friends->user)
-						+ count(<-friends<-user) AS friendCount,
-					count(<-follows<-user) AS followerCount,
-					count(->follows->user) AS followingCount,
+					count(<->friends) AS friendCount,
+					count(<-follows) AS followerCount,
+					count(->follows) AS followingCount,
 
-					$user ∈ ->friends->user
-						OR $user ∈ <-friends<-user AS friends,
+					$user ∈ <->friends->user AS friends,
 					$user ∈ ->follows->user AS following,
 					$user ∈ <-follows<-user AS follower,
 					$user ∈ ->request->user AS incomingRequest,

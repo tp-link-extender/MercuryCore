@@ -1,4 +1,6 @@
-import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
+import surql from "$lib/surrealtag"
+import { prisma, findGroups } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
@@ -40,29 +42,32 @@ export const load = async ({ url }) => {
 				: null,
 		places:
 			category == "places"
-				? findPlaces({
-						where: {
-							name: {
-								contains: query,
-								mode: "insensitive",
-							},
-							privateServer: false,
-						},
-						select: {
-							gameSessions: {
-								where: {
-									ping: {
-										gt: Math.floor(Date.now() / 1000) - 35,
-									},
-								},
-								select: {
-									valid: true,
-								},
-							},
-							id: true,
-							name: true,
-						},
-				  })
+				? (squery(
+						surql`
+							SELECT
+								string::split(type::string(id), ":")[1] AS id,
+								name,
+								serverPing,
+								count(
+									SELECT * FROM <-playing
+									WHERE valid = true
+										AND ping > time::now() - 35s
+								) AS playerCount,
+								count(<-likes) AS likeCount,
+								count(<-dislikes) AS dislikeCount
+							FROM place
+							WHERE !privateServer
+								AND !deleted
+								AND string::lowercase($query) ∈ string::lowercase(name)`,
+						{ query },
+				  ) as Promise<
+						{
+							id: string
+							name: string
+							playerCount: number
+							serverPing: number
+						}[]
+				  >)
 				: null,
 		assets:
 			category == "assets"

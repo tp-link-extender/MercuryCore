@@ -102,6 +102,7 @@ export const actions = {
 						privateServer: $privateServer,
 						serverTicket: rand::guid(),
 						privateTicket: rand::guid(),
+						serverPing: 0,
 						maxPlayers: $maxPlayers,
 						created: time::now(),
 						updated: time::now(),
