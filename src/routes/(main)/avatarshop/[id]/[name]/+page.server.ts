@@ -1,6 +1,8 @@
 import cql from "$lib/cyphertag"
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma, transaction } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import { Query } from "$lib/server/redis"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
@@ -190,13 +192,19 @@ export const actions = {
 		})
 
 		if (user.id != receiverId)
-			await prisma.notification.create({
-				data: {
-					type: replyId
-						? NotificationType.AssetCommentReply
-						: NotificationType.AssetComment,
-					senderId: user.id,
-					receiverId,
+			await squery(
+				surql`
+					RELATE $sender->notification->$receiver CONTENT {
+						type: $type,
+						time: time::now(),
+						note: $note,
+						relativeId: $relativeId,
+						read: false,
+					}`,
+				{
+					type: replyId ? "AssetCommentReply" : "AssetComment",
+					sender: `user:${user.id}`,
+					receiver: `user:${receiverId}`,
 					note: `${user.username} ${
 						replyId
 							? "replied to your comment"
@@ -204,7 +212,7 @@ export const actions = {
 					}: ${content}`,
 					relativeId: newReplyId,
 				},
-			})
+			)
 
 		await Query(
 			"forum",
@@ -366,15 +374,23 @@ export const actions = {
 					}),
 					user.id == asset.creatorUser?.id
 						? null
-						: prisma.notification.create({
-								data: {
-									type: NotificationType.ItemPurchase,
-									senderId: user.id,
-									receiverId: asset.creatorUser?.id || "",
+						: squery(
+								surql`
+									RELATE $sender->notification->$receiver CONTENT {
+										type: $type,
+										time: time::now(),
+										note: $note,
+										relativeId: $relativeId,
+										read: false,
+									}`,
+								{
+									type: "ItemPurchase",
+									sender: `user:${user.id}`,
+									receiver: `user:${asset.creatorUser?.id}`,
 									note: `${user.username} just purchased your item: ${asset.name}`,
 									relativeId: params.id,
 								},
-						  }),
+						  ),
 				])
 
 				break
