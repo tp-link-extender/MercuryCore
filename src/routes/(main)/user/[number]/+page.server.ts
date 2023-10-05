@@ -155,84 +155,74 @@ export const actions = {
 				user2: `user:${userExists.id}`,
 			},
 			accept = () =>
-				Promise.all([
-					squery(
-						// The direction of the ->friends relationship matches
-						// the direction of the previous ->request relationship.
-						surql`
-							DELETE $user2->request WHERE out=$user;
-							RELATE $user2->friends->$user
-								SET time = time::now()`,
-						query,
-					),
-
-					prisma.notification.create({
-						data: {
-							type: NotificationType.NewFriend,
-							senderId: user.id,
-							receiverId: userExists?.id || "", // won't be null
-							note: `${user.username} is now friends with you!`,
-							relativeId: user.id,
-						},
-					}),
-				])
+				squery(
+					// The direction of the ->friends relationship matches
+					// the direction of the previous ->request relationship.
+					surql`
+						DELETE $user2->request WHERE out = $user;
+						RELATE $user2->friends->$user
+							SET time = time::now();
+						DELETE $user->notification WHERE in = $user
+							AND out = $user2 
+							AND type = $type
+							AND read = false`,
+					{
+						type: "NewFriend",
+						...query,
+					},
+				)
 
 		try {
 			switch (action) {
 				case "follow":
-					await Promise.all([
-						squery(
-							surql`
-								IF $user2 ∉ $user->follows->user THEN
-									RELATE $user->follows->$user2
-										SET time = time::now()
-								END`,
-							query,
-						),
-						prisma.notification.create({
-							data: {
-								type: NotificationType.Follower,
-								senderId: user.id,
-								receiverId: userExists?.id || "",
-								note: `${user.username} is now following you!`,
-								relativeId: user.id,
-							},
-						}),
-					])
+					await squery(
+						surql`
+							IF $user2 ∉ $user->follows->user {
+								RELATE $user->follows->$user2
+									SET time = time::now()
+							};
+							RELATE $user->notification->$user2 CONTENT {
+								type: $type,
+								time: time::now(),
+								note: $note,
+								relativeId: $relativeId,
+								read: false,
+							}`,
+						{
+							type: "Follower",
+							...query,
+							note: `${user.username} is now following you!`,
+							relativeId: user.id,
+						},
+					)
 					break
 				case "unfollow":
-					await Promise.all([
-						squery(
-							surql`DELETE $user->follows WHERE out=$user2`,
-							query,
-						),
-						prisma.notification.deleteMany({
-							where: {
-								type: NotificationType.Follower,
-								senderId: user.id,
-								receiverId: userExists?.id || "",
-								read: false,
-							},
-						}),
-					])
+					squery(
+						surql`
+							DELETE $user->follows WHERE out = $user2;
+							DELETE $user->notification WHERE in = $user
+								AND out = $user2 
+								AND type = $type
+								AND read = false`,
+						{
+							type: "Follower",
+							...query,
+						},
+					)
 					break
 				case "unfriend":
-					await Promise.all([
-						squery(
-							surql`
-								DELETE $user->friends WHERE out=$user2;
-								DELETE $user2->friends WHERE out=$user`,
-							query,
-						),
-						prisma.notification.deleteMany({
-							where: {
-								type: NotificationType.NewFriend,
-								senderId: user.id,
-								receiverId: userExists?.id || "",
-								read: false,
-							},
-						}),
-					])
+					await squery(
+						surql`
+							DELETE $user->friends WHERE out = $user2;
+							DELETE $user->notification WHERE in = $user
+								AND out = $user2 
+								AND type = $type
+								AND read = false`,
+						{
+							type: "NewFriend",
+							...query,
+						},
+					)
 					break
 				case "request":
 					if (
@@ -254,44 +244,43 @@ export const actions = {
 						)
 							await accept()
 						else
-							await Promise.all([
-								squery(
-									surql`
-										RELATE $user->request->$user2
-											SET time = time::now()`,
-									query,
-								),
-								prisma.notification.create({
-									data: {
-										type: NotificationType.FriendRequest,
-										senderId: user.id,
-										receiverId: userExists?.id || "",
-										note: `${user.username} has sent you a friend request.`,
-										relativeId: user.id,
-									},
-								}),
-							])
+							await squery(
+								surql`
+									RELATE $user->request->$user2
+										SET time = time::now();
+									RELATE $user->notification->$user2 CONTENT {
+										type: $type,
+										time: time::now(),
+										note: $note,
+										relativeId: $relativeId,
+										read: false,
+									}`,
+								{
+									type: "FriendRequest",
+									...query,
+									note: `${user.username} has sent you a friend request.`,
+									relativeId: user.id,
+								},
+							)
 					else throw error(400, "Already friends")
 					break
 				case "cancel":
-					await Promise.all([
-						squery(
-							surql`DELETE $user->request WHERE out=$user2`,
-							query,
-						),
-						prisma.notification.deleteMany({
-							where: {
-								type: NotificationType.FriendRequest,
-								senderId: user.id,
-								receiverId: userExists?.id || "",
-								read: false,
-							},
-						}),
-					])
+					squery(
+						surql`
+							DELETE $user->request WHERE out = $user2;
+							DELETE $user->notification WHERE in = $user
+								AND out = $user2 
+								AND type = $type
+								AND read = false`,
+						{
+							type: "FriendRequest",
+							...query,
+						},
+					)
 					break
 				case "decline":
 					await squery(
-						surql`DELETE $user2->request WHERE out=$user`,
+						surql`DELETE $user2->request WHERE out = $user`,
 						query,
 					)
 					break

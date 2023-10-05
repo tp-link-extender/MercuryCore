@@ -136,10 +136,6 @@ export const actions = {
 		const { content } = form.data,
 			replyId = url.searchParams.get("rid"),
 			// If there is a replyId, it is a reply to another comment
-
-			query = surql`
-				
-			`,
 			replypost = replyId
 				? (await surreal.select(`forumReply:${replyId}`))[0]
 				: (await surreal.select(`forumPost:${params.post}`))[0]
@@ -177,27 +173,23 @@ export const actions = {
 		)
 
 		if (user.id != replypost.authorId)
-			// await prisma.notification.create({
-			// 	data: {
-			// 		type: replyId
-			// 			? NotificationType.ForumReplyReply
-			// 			: NotificationType.ForumPostReply,
-			// 		senderId: user.id,
-			// 		receiverId: replypost.authorId,
-			// 		note: `${user.username} replied to your ${
-			// 			replyId ? "reply" : "post"
-			// 		}: ${content}`,
-			// 		relativeId: newReplyId,
-			// 	},
-			// })
 			await squery(
 				surql`
-					LET $notification = CREATE notification CONTENT {
+					RELATE $sender->notification->$receiver CONTENT {
 						type: $type,
 						time: time::now(),
+						note: $note,
+						relativeId: $relativeId,
+						read: false,
 					}`,
 				{
 					type: replyId ? "ForumReplyReply" : "ForumPostReply",
+					sender: `user:${user.id}`,
+					receiver: `user:${replypost.authorId}`,
+					note: `${user.username} replied to your ${
+						replyId ? "reply" : "post"
+					}: ${content}`,
+					relativeId: newReplyId,
 				},
 			)
 
