@@ -1,7 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
-import { squery } from "$lib/server/surreal"
+import surreal, { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeSwitch } from "$lib/server/like"
@@ -65,21 +64,15 @@ export const actions = {
 			replyId = url.searchParams.get("rid")
 
 		if (
-			(id &&
-				!(await prisma.forumPost.findUnique({
-					where: { id },
-				}))) ||
-			(replyId &&
-				!(await prisma.forumReply.findUnique({
-					where: { id: replyId },
-				})))
+			(id && !(await surreal.select(`forumPost:${id}`))[0]) ||
+			(replyId && !(await surreal.select(`forumReply:${replyId}`))[0])
 		)
 			throw error(404)
 
 		await likeSwitch(
 			action,
 			user.id,
-			`${replyId ? "forumReply" : "forumPost"}:${id || replyId}`,
+			`forum${replyId ? "Reply" : "Post"}:${id || replyId}`,
 		)
 	},
 }
