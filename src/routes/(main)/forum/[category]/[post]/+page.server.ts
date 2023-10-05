@@ -135,10 +135,23 @@ export const actions = {
 
 		const { content } = form.data,
 			replyId = url.searchParams.get("rid"),
-			// If there is a replyId, it is a reply to another comment
-			replypost = replyId
-				? (await surreal.select(`forumReply:${replyId}`))[0]
-				: (await surreal.select(`forumPost:${params.post}`))[0]
+			replypost = (
+				(await squery(
+					surql`
+						SELECT 
+							string::split(type::string(
+								<-posted[0]<-user[0].id), ":")[1] AS authorId
+						FROM $replypostId
+						WHERE visibility = "Visible"`,
+					{
+						replypostId: replyId
+							? `forumReply:${replyId}`
+							: `forumPost:${params.post}`,
+					},
+				)) as {
+					authorId: string
+				}[]
+			)[0]
 
 		if (!replypost)
 			throw error(404, `${replyId ? "Reply" : "Post"} not found`)
