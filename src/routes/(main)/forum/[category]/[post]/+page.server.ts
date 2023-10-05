@@ -7,7 +7,6 @@ import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
-import { NotificationType } from "@prisma/client"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import { like } from "$lib/server/like"
@@ -41,39 +40,35 @@ type Replies = {
 
 const SELECTFROM = () =>
 	surql`
-				SELECT
-					*,
-					content[0] AS content,
-					string::split(type::string(id), ":")[1] AS id,
-					string::split(type::string($parent.id), ":")[1] AS parentPostId,
-					NONE as parentReplyId,
-					(SELECT number, username FROM <-posted<-user)[0] as author,
-					
-					count(<-likes) as likeCount,
-					count(<-dislikes) as dislikeCount,
-					($user ∈ <-likes<-user.id) as likes,
-					($user ∈ <-dislikes<-user.id) as dislikes,
+		SELECT
+			*,
+			content[0] AS content,
+			string::split(type::string(id), ":")[1] AS id,
+			string::split(type::string($parent.id), ":")[1] AS parentPostId,
+			NONE as parentReplyId,
+			(SELECT number, username FROM <-posted<-user)[0] as author,
+			
+			count(<-likes) as likeCount,
+			count(<-dislikes) as dislikeCount,
+			($user ∈ <-likes<-user.id) as likes,
+			($user ∈ <-dislikes<-user.id) as dislikes,
 
-					# again #
-				FROM
-	`
+			# again #
+		FROM`
 
 function SELECTREPLIES() {
 	let rep = surql`
-				(${SELECTFROM()} <-replyToPost<-forumReply
-				# Make sure it's not a reply to another reply
-				WHERE !->replyToReply) as replies
-	`
+		(${SELECTFROM()} <-replyToPost<-forumReply
+		# Make sure it's not a reply to another reply
+		WHERE !->replyToReply) as replies`
 
 	for (let i = 0; i < 9; i++)
 		rep = rep.replace(
 			/# again #/g,
-			surql`
-				(${SELECTFROM()} <-replyToReply<-forumReply) AS replies
-			`,
+			surql`(${SELECTFROM()} <-replyToReply<-forumReply) AS replies`,
 		)
 
-	return rep
+	return rep.replace(/# again #/g, "[] AS replies")
 }
 
 export async function load({ locals, params }) {
@@ -82,6 +77,7 @@ export async function load({ locals, params }) {
 			surql`
 				SELECT
 					*,
+					string::split(type::string(id), ":")[1] AS id,
 					content[0] as content,
 					(SELECT number, username FROM <-posted<-user)[0] as author,
 					count(<-likes) as likeCount,
@@ -197,7 +193,8 @@ export const actions = {
 			await squery(
 				surql`
 					LET $notification = CREATE notification CONTENT {
-						type: $type
+						type: $type,
+						time: time::now(),
 					}`,
 				{
 					type: replyId ? "ForumReplyReply" : "ForumPostReply",
