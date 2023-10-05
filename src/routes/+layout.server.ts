@@ -11,29 +11,35 @@ export async function load({ request, locals }) {
 
 	let notifications
 	if (session && user) {
-		const notifications1 = await prisma.notification.findMany({
-			take: 40,
-			orderBy: {
-				time: "desc",
+		const notifications1 = (await squery(
+			surql`
+				SELECT
+					*,
+					(SELECT
+						number,
+						username
+					FROM <-user)[0] AS sender
+				FROM notification
+				WHERE out = $user`,
+			{
+				user: `user:${user.id}`,
 			},
-			where: {
-				receiverId: user.id,
-			},
-			select: {
-				id: true,
-				read: true,
-				type: true,
-				note: true,
-				time: true,
-				relativeId: true,
-				sender: {
-					select: {
-						number: true,
-						username: true,
-					},
-				},
-			},
-		})
+		)) as {
+			id: string
+			in: string
+			note: string
+			out: string
+			read: boolean
+			relativeId: string
+			sender: {
+				number: number
+				username: string
+			}
+			time: string
+			type: string
+		}[]
+
+		console.log(user.id)
 
 		// Make type relativeId optional so we can delete it later
 		type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
@@ -44,6 +50,7 @@ export async function load({ request, locals }) {
 		> & { link?: string })[] = notifications1
 
 		for (const i of notifications2) {
+			console.log(i.type, i.relativeId)
 			switch (i.type) {
 				case "AssetApproved":
 				case "FriendRequest":
@@ -69,17 +76,30 @@ export async function load({ request, locals }) {
 
 				case "ForumPostReply":
 				case "ForumReplyReply":
-					const reply = await prisma.forumReply.findUnique({
-						where: {
-							id: i.relativeId,
-						},
-						include: {
-							parentPost: true,
-						},
-					})
+					const reply = (
+						(await squery(
+							surql`
+							SELECT
+								string::split(type::string(id), ":")[1] AS id,
+								(SELECT
+									string::split(type::string(id), ":")[1] AS id,
+									(->in->forumCategory)[0].name as categoryName
+								FROM ->replyToPost[0]->forumPost)[0] AS parentPost
+							FROM $reply`,
+							{
+								reply: `forumReply:${i.relativeId}`,
+							},
+						)) as {
+							id: string
+							parentPost: {
+								categoryName: string
+								id: string
+							}
+						}[]
+					)[0]
 					if (!reply) break
 
-					i.link = `/forum/${reply.parentPost.forumCategoryName.toLowerCase()}/${
+					i.link = `/forum/${reply.parentPost.categoryName.toLowerCase()}/${
 						reply.parentPost.id
 					}/${reply.id}`
 					break
@@ -117,8 +137,7 @@ export async function load({ request, locals }) {
 				string::split(type::string(id), ":")[1] AS id
 			OMIT deleted
 			FROM banner
-			WHERE deleted = false AND active = true
-		`) as Promise<
+			WHERE deleted = false AND active = true`) as Promise<
 			{
 				bgColour: string
 				body: string

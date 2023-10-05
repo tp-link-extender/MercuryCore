@@ -27,7 +27,7 @@
 		nprogress.done()
 	}
 
-	const notificationNotes = {
+	const notificationNotes: { [k: string]: string } = {
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",
@@ -74,19 +74,17 @@
 			<div class="toast-header bg-a light-text">
 				<a
 					href="/user/{notification.sender.number}"
-					class="d-flex align-items-center w-100 light-text text-decoration-none">
-					<div
-						class="image-background bg-background rounded-circle me-4">
-						<img
-							src="/api/avatar/{notification.sender.username}"
-							alt={notification.sender.username}
-							class="h-100 rounded-circle rounded-top-0" />
-					</div>
-					<strong class="me-auto">
+					class="d-flex gap-3 align-items-center w-100 light-text text-decoration-none">
+					<User
+						user={notification.sender}
+						size="1.6rem"
+						bg="background"
+						image />
+					<strong>
 						{notificationNotes[notification.type]}
 					</strong>
-					<small class="text-body-secondary">
-						{notification.time.toLocaleString()}
+					<small class="grey-text">
+						{new Date(notification.time).toLocaleString()}
 					</small>
 				</a>
 				<form
@@ -138,10 +136,4 @@
 
 	.toast-body
 		min-height 4rem
-
-	.image-background
-		max-width 1.6rem
-		min-height 1.6rem
-		img
-			width 1.6rem
 </style>
