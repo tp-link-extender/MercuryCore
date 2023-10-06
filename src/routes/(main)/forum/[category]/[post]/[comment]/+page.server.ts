@@ -120,13 +120,11 @@ export async function load({ locals, params }) {
 
 	if (!forumReplies[0]) throw error(404, "Reply not found")
 
-	console.log(forumReplies)
-
 	return {
 		replies: forumReplies,
 		forumCategory: params.category,
 		postId: params.post,
-		author: post?.author.username,
+		author: post.author.username,
 	}
 }
 

@@ -2,12 +2,12 @@ import surql from "$lib/surrealtag"
 import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
-import { fail } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 
 export const load = async ({ locals }) => {
 	const { user } = await authorise(locals)
 
-	console.log(await squery(
+	await squery(
 		surql`
 			UPDATE notification
 			SET read = true
@@ -15,27 +15,28 @@ export const load = async ({ locals }) => {
 		{
 			user: `user:${user.id}`,
 		},
-	))
+	)
 }
 
 export const actions = {
 	default: async ({ locals, url }) => {
 		const { user } = await authorise(locals),
 			id = url.searchParams.get("s")
-		if (!id) return fail(400)
+		if (!id) throw error(400)
 
 		try {
-			await prisma.notification.updateMany({
-				where: {
-					id,
-					receiverId: user.id,
+			await squery(
+				surql`
+					IF $notification.* {
+						UPDATE $notification
+						SET read = true
+					}`,
+				{
+					notification: `notification:${id}`,
 				},
-				data: {
-					read: true,
-				},
-			})
+			)
 		} catch (e: any) {
-			return fail(400)
+			throw error(400)
 		}
 	},
 }

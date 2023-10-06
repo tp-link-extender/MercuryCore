@@ -15,12 +15,14 @@ export async function load({ request, locals }) {
 			surql`
 				SELECT
 					*,
+					string::split(type::string(id), ":")[1] AS id,
 					(SELECT
 						number,
 						username
 					FROM <-user)[0] AS sender
 				FROM notification
-				WHERE out = $user`,
+				WHERE out = $user
+				ORDER BY time DESC`,
 			{
 				user: `user:${user.id}`,
 			},
@@ -39,8 +41,6 @@ export async function load({ request, locals }) {
 			type: string
 		}[]
 
-		console.log(user.id)
-
 		// Make type relativeId optional so we can delete it later
 		type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 		// i told myself i would never write types like this
@@ -50,7 +50,6 @@ export async function load({ request, locals }) {
 		> & { link?: string })[] = notifications1
 
 		for (const i of notifications2) {
-			console.log(i.type, i.relativeId)
 			switch (i.type) {
 				case "AssetApproved":
 				case "FriendRequest":
