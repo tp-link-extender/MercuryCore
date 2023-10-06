@@ -4,7 +4,6 @@ import { prisma, findGroups } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
-import { NotificationType } from "@prisma/client"
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
@@ -41,7 +40,7 @@ export async function load({ locals, params }) {
 					count(<-follows) AS followerCount,
 					count(->follows) AS followingCount,
 
-					$user ∈ <->friends->user AS friends,
+					$user ∈ <->friends<->user AS friends,
 					$user ∈ ->follows->user AS following,
 					$user ∈ <-follows<-user AS follower,
 					$user ∈ ->request->user AS incomingRequest,
@@ -162,13 +161,18 @@ export const actions = {
 						DELETE $user2->request WHERE out = $user;
 						RELATE $user2->friends->$user
 							SET time = time::now();
-						DELETE $user->notification WHERE in = $user
-							AND out = $user2 
-							AND type = $type
-							AND read = false`,
+						RELATE $user->notification->$user2 CONTENT {
+							type: $type,
+							time: time::now(),
+							note: $note,
+							relativeId: $relativeId,
+							read: false,
+						}`,
 					{
 						type: "NewFriend",
 						...query,
+						note: `${user.username} is now friends with you!`,
+						relativeId: user.id,
 					},
 				)
 
@@ -297,7 +301,7 @@ export const actions = {
 			}
 		} catch (e) {
 			console.error(e)
-			throw error(500, "Redis error 2")
+			throw e
 		}
 	},
 }

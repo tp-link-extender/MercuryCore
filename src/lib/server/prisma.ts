@@ -184,11 +184,9 @@ export async function transaction(
 	for (const result of query) {
 		if (result == failed)
 			for (const result2 of query)
-				if (typeof result2 == "string" && result2 != failed){
-					console.log(
-						"fail",
-						result2.match(/An error occurred: (.+)/),
+				if (typeof result2 == "string" && result2 != failed)
+					throw new Error(
+						result2.match(/An error occurred: (.*)/)?.[1],
 					)
-					throw new Error(result2.match(/An error occurred: (.*)/)?.[1])}
 	}
 }

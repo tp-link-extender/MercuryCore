@@ -81,13 +81,11 @@ model AuthUser {
     forumPosts        ForumPost[]
     forumReplies      ForumReply[]
     assetComments     AssetComment[]
-    reportsSent       Report[]        @relation("sent")
-    reportsReceived   Report[]        @relation("received")
+    reportsSent       Report[]       @relation("sent")
+    reportsReceived   Report[]       @relation("received")
 
     moderationActionsGiven    ModerationAction[] @relation("given")
     moderationActionsReceived ModerationAction[] @relation("received")
-    notificationsSent         Notification[]     @relation("sent")
-    notificationsReceived     Notification[]     @relation("received")
     assetsCreated             Asset[]            @relation("created")
     assetsOwned               Asset[]            @relation("owned")
     assetsModerated           Asset[]            @relation("moderated")
@@ -295,37 +293,6 @@ model ModerationAction {
     note        String
     type        ModerationActionType
     active      Boolean              @default(true)
-}
-
-// Notifications
-
-enum NotificationType {
-    AssetApproved
-    FriendRequest
-    Follower
-    ForumPostReply // When someone replies to a post you made
-    ForumReplyReply // When someone replies to a reply you made
-    AssetComment
-    AssetCommentReply
-    ForumMention
-    ForumPost // Subscribing to a forum category
-    ItemPurchase
-    Message
-    NewFriend
-}
-
-model Notification {
-    id   String           @id @unique @default(cuid())
-    type NotificationType
-
-    time       DateTime @default(now())
-    sender     AuthUser @relation("sent", fields: [senderId], references: [id])
-    senderId   String
-    receiver   AuthUser @relation("received", fields: [receiverId], references: [id])
-    receiverId String
-    read       Boolean  @default(false)
-    note       String
-    relativeId String // The id of whatever the notification concerns
 }
 
 // Assets
