@@ -1,10 +1,9 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
-import type { ModerationActionType } from "@prisma/client"
 import formError from "$lib/server/formError"
+import { error } from "@sveltejs/kit"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 
@@ -38,11 +37,22 @@ export const actions = {
 		if (action == 2 && (date?.getTime() || 0) < new Date().getTime())
 			return formError(form, ["banDate"], ["Invalid date"])
 
-		const getModeratee = await prisma.authUser.findUnique({
-			where: {
-				username,
-			},
-		})
+		const getModeratee = (
+			(await squery(
+				surql`
+					SELECT
+						string::split(type::string(id), ":")[1] AS id,
+						number,
+						permissionLevel 
+					FROM user
+					WHERE username = $username`,
+				{ username },
+			)) as {
+				id: string
+				number: number
+				permissionLevel: number
+			}[]
+		)[0]
 
 		if (!getModeratee)
 			return formError(form, ["username"], ["User does not exist"])
@@ -62,28 +72,37 @@ export const actions = {
 			)
 
 		const moderationMessage = [
-				"has been warned",
-				`has been banned until ${date?.toLocaleDateString()}`,
-				"has been terminated",
-				"has been deleted",
-				"has been unbanned",
+				"warned",
+				`banned until ${date?.toLocaleDateString()}`,
+				"terminated",
+				"deleted",
 			],
 			moderationActions = [
 				"Warning",
 				"Ban",
 				"Termination",
 				"AccountDeleted",
-			]
+			],
+			query = {
+				moderator: `user:${user.id}`,
+				moderatee: `user:${getModeratee.id}`,
+			}
+
+		console.log(query)
 
 		if (action == 5) {
 			// Unban
 			if (
-				!(await prisma.moderationAction.count({
-					where: {
-						moderateeId: getModeratee.id,
-						active: true,
-					},
-				}))
+				!(
+					(await squery(
+						surql`
+							SELECT * FROM moderation
+							WHERE in = $moderator
+								AND out = $moderatee
+								AND active = true`,
+						query,
+					)) as [{}]
+				)[0]
 			)
 				return formError(
 					form,
@@ -92,13 +111,17 @@ export const actions = {
 				)
 
 			if (
-				await prisma.moderationAction.count({
-					where: {
-						moderateeId: getModeratee.id,
-						active: true,
-						type: "AccountDeleted",
-					},
-				})
+				(
+					(await squery(
+						surql`
+							SELECT * FROM moderation
+							WHERE in = $moderator
+								AND out = $moderatee
+								AND active = true
+								AND type = "AccountDeleted"`,
+						query,
+					)) as [{}]
+				)[0]
 			)
 				return formError(
 					form,
@@ -106,43 +129,37 @@ export const actions = {
 					["You cannot unban a deleted user"],
 				)
 
-			await Promise.all([
-				prisma.moderationAction.updateMany({
-					where: {
-						moderateeId: getModeratee.id,
-					},
-					data: {
-						active: false,
-					},
-				}),
+			await squery(
+				surql`
+					UPDATE moderation SET active = false
+					WHERE out = $moderatee;
+					CREATE auditLog CONTENT {
+						action: "Moderation",
+						note: $note,
+						user: $moderator,
+						time: time::now(),
+					}`,
+				{
+					note: `Unban ${username}`,
+					...query,
+				},
+			)
 
-				squery(
-					surql`
-						CREATE auditLog CONTENT {
-							action: "Moderation",
-							note: $note,
-							user: $user,
-							time: time::now()
-						}`,
-					{
-						note: `Unban ${username}`,
-						user: `user:${user.id}`,
-					},
-				),
-			])
-
-			return message(form, `${username} ${moderationMessage[action - 1]}`)
+			return message(form, `${username} has been unbanned`)
 		}
 
 		const moderationAction = moderationActions[action - 1]
 
 		if (
-			await prisma.moderationAction.count({
-				where: {
-					moderateeId: getModeratee.id,
-					active: true,
-				},
-			})
+			(
+				(await squery(
+					surql`
+						SELECT * FROM moderation
+						WHERE out = $moderatee
+							AND active = true`,
+					query,
+				)) as [{}]
+			)[0]
 		)
 			return formError(
 				form,
@@ -150,42 +167,20 @@ export const actions = {
 				["User has already been moderated"],
 			)
 
-		await prisma.moderationAction.create({
-			data: {
-				moderator: {
-					connect: {
-						id: user.id,
-					},
-				},
-				moderatee: {
-					connect: {
-						username,
-					},
-				},
-				timeEnds: date || new Date(),
-				note: reason,
-				type: moderationAction as ModerationActionType,
-			},
-		})
-
-		if (action == 4)
-			// Delete Account
-			await prisma.authUser.update({
-				where: {
-					username,
-				},
-				data: {
-					username: `[ Deleted User ${getModeratee.number} ]`,
-				},
-			})
-
 		await squery(
 			surql`
+				RELATE $moderator->moderation->$moderatee CONTENT {
+					note: $reason,
+					type: $moderationAction,
+					time: time::now(),
+					timeEnds: $timeEnds,
+					active: true,
+				};
 				CREATE auditLog CONTENT {
 					action: "Moderation",
 					note: $note,
-					user: $user,
-					time: time::now()
+					user: $moderator,
+					time: time::now(),
 				}`,
 			{
 				note:
@@ -195,10 +190,16 @@ export const actions = {
 						`Terminate ${username}`,
 						`Delete ${username}'s account`,
 					][action - 1] + `: ${reason}`,
-				user: `user:${user.id}`,
+				reason,
+				moderationAction,
+				timeEnds: date || new Date(),
+				...query,
 			},
 		)
 
-		return message(form, `${username} ${moderationMessage[action - 1]}`)
+		return message(
+			form,
+			`${username} has been ${moderationMessage[action - 1]}`,
+		)
 	},
 }

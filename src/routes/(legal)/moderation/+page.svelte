@@ -18,17 +18,16 @@
 		if (diffInMilliseconds < 0) return "0 minute(s)"
 
 		if (diffInDays >= 1) return diffInDays + " day(s)"
-		else {
-			const diffInHours = Math.floor(
-				diffInMilliseconds / (60 * 60 * 1000)
-			)
-			const diffInMinutes = Math.floor(
+
+		const diffInHours = Math.floor(diffInMilliseconds / (60 * 60 * 1000)),
+			diffInMinutes = Math.floor(
 				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000)
 			)
-			if (diffInHours >= 1)
-				return diffInHours + " hour(s) " + diffInMinutes + " minute(s)"
-			else return diffInMinutes + " minute(s)"
-		}
+		if (diffInHours >= 1)
+			// return diffInHours + " hour(s) " + diffInMinutes + " minute(s)"
+			return `${diffInHours} hour(s) ${diffInMinutes} minute(s)`
+
+		return `${diffInMinutes} minute(s)`
 	}
 </script>
 
@@ -42,7 +41,7 @@
 				"Ban"
 					? `ned for ${formatDateDifference(
 							Date.now(),
-							data.timeEnds.getTime()
+							new Date(data.timeEnds).getTime()
 					  )}`
 					: ""}
 			</h1>
@@ -53,7 +52,7 @@
 			</p>
 
 			<p>
-				Reviewed: <code>{data.time}</code>
+				Reviewed: <code>{new Date(data.time)}</code>
 			</p>
 
 			<p>
@@ -71,7 +70,7 @@
 						to prevent further action to be taken on your account.
 					</p>
 					<p>
-						You may re-activate your account by agreeing to our
+						You may reactivate your account by agreeing to our
 						Terms of Service.
 					</p>
 					<div class="form-check mb-2">
@@ -99,21 +98,22 @@
 						to prevent further action to be taken on your account.
 					</p>
 					<p>
-						You may re-activate your account after your ban ends in {formatDateDifference(
+						You may reactivate your account after your ban ends in {formatDateDifference(
 							Date.now(),
-							data.timeEnds.getTime()
+							new Date(data.timeEnds).getTime()
 						)}
 					</p>
 					<button
-						class="btn btn-primary {data.timeEnds.getTime() <
-						Date.now()
+						class="btn btn-primary {new Date(
+							data.timeEnds
+						).getTime() < Date.now()
 							? ''
 							: 'disabled'}">
 						Reactivate
 					</button>
 				</form>
 			{:else if moderationAction[data.type] == "Termination"}
-				<p>You may not re-activate your account.</p>
+				<p>You may not reactivate your account.</p>
 			{:else}
 				<p>
 					Your account has been deleted, but you may create another in

@@ -3,6 +3,8 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
+import surql from "$lib/surrealtag"
+import { squery } from "$lib/server/surreal"
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
@@ -52,17 +54,21 @@ export async function handle({ event, resolve }) {
 
 	if (!session || !user) return await resolve(event)
 
+	const moderation = (
+		(await squery(
+			surql`
+				SELECT *
+				FROM moderation
+				WHERE out = $user
+					AND active = true`,
+			{ user: `user:${user.id}` },
+		)) as {}[]
+	)[0]
+
 	if (
 		!["/moderation", "/terms", "/privacy", "/api"].includes(pathname) &&
 		!pathname.startsWith("/api/avatar") &&
-		(
-			await prisma.moderationAction.findMany({
-				where: {
-					moderateeId: user.id,
-					active: true,
-				},
-			})
-		)[0]
+		moderation
 	)
 		throw redirect(302, "/moderation")
 
