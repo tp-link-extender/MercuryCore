@@ -138,22 +138,30 @@ export const actions = {
 		})
 		if (!place) throw error(404, "Place not found")
 
-		const userModeration = await prisma.moderationAction.findMany({
-			where: {
-				moderateeId: user.id,
-				active: true,
-			},
-		})
-
-		if (userModeration[0])
+		if (
+			(
+				(await squery(
+					surql`
+						SELECT *
+						FROM moderation
+						WHERE out = $user
+							AND active = true`,
+					{ user: `user:${user.id}` },
+				)) as {
+					type: string
+					note: string
+					time: string
+					timeEnds: string
+				}[]
+			)[0]
+		)
 			throw error(403, "You cannot currently play games")
 
 		// invalidate all game sessions
 		await squery(
 			surql`
 				UPDATE (SELECT * FROM $user->playing)
-					SET valid = false
-			`,
+					SET valid = false`,
 			{
 				user: `user:${user.id}`,
 			},
