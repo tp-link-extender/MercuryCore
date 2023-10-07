@@ -19,9 +19,11 @@ export async function load({ locals, params }) {
 					number,
 					permissionLevel,
 					bio[0] AS bio,
-					(SELECT *, content[0] AS content
-					FROM ->posted->statusPost
-					LIMIT 40) AS posts,
+					(SELECT
+						*,
+						(SELECT text, updated FROM $parent.content
+						ORDER BY updated DESC) AS content
+					FROM ->posted->statusPost LIMIT 40) AS posts,
 
 					(SELECT
 						string::split(type::string(id), ":")[1] AS id,

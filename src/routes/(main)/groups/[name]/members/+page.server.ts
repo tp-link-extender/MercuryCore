@@ -1,4 +1,4 @@
-// The following and members pages for a group.
+// The member page for a group.
 
 import surql from "$lib/surrealtag"
 import { squery } from "$lib/server/surreal"

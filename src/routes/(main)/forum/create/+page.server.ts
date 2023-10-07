@@ -96,7 +96,7 @@ export const actions = {
 					title: $title,
 					posted: time::now(),
 					visibility: "Visible",
-					content: [$textContent],
+					content: $textContent,
 				};
 				RELATE $post->in->$category;
 				RELATE $user->posted->$post`,

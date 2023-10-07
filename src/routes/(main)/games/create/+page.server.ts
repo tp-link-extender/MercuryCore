@@ -96,7 +96,7 @@ export const actions = {
 					LET $place = CREATE place CONTENT {
 						id: $id,
 						name: $name,
-						description: [$textContent],
+						description: $textContent,
 						serverIP: $serverIP,
 						serverPort: $serverPort,
 						privateServer: $privateServer,

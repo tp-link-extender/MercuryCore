@@ -1,9 +1,6 @@
-import cql from "$lib/cyphertag"
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
-import { Query } from "$lib/server/redis"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
