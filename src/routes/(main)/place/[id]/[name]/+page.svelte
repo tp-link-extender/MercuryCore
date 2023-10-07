@@ -5,11 +5,11 @@
 	const { user } = data,
 		statistics = [
 			["Activity", "0 visits"],
-			["Creation", data.created.toLocaleDateString()],
-			["Updated", data.updated.toLocaleDateString()],
+			["Creation", new Date(data.created).toLocaleDateString()],
+			["Updated", new Date(data.updated).toLocaleDateString()],
 			["Genre", "Horror"],
 			["Server Limit", data.maxPlayers],
-			["Now Playing", data.gameSessions.length],
+			["Now Playing", data.players.length],
 		],
 		images = [
 			"/place/placeholderImage1.webp",
@@ -74,27 +74,6 @@
 
 	let tabData = TabData(data.url, ["Description", "Game"]),
 		tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
-
-	data.gameSessions = [
-		{
-			user: {
-				number: 1,
-				username: "Heliodex",
-			},
-		},
-		{
-			user: {
-				number: 1,
-				username: "Heliodex",
-			},
-		},
-		{
-			user: {
-				number: 1,
-				username: "Heliodex",
-			},
-		},
-	]
 </script>
 
 <Head title={data.name} />
@@ -417,29 +396,29 @@
 		{/if}
 		<h4 class="light-text">Server List</h4>
 		{#if data.serverPing > Date.now() / 1000 - 35}
-			<div class="card mb-2">
-				<div class="card-body">
-					<div class="row">
-						<div class="col col-2">
-							<p class="light-text mb-2">
-								Currently Playing: {data.gameSessions
-									.length}/{data.maxPlayers}
-							</p>
-							<button
-								on:click={placeLauncher}
-								id="join"
-								class="btn btn-sm btn-success">
-								Join Server
-							</button>
-						</div>
-						<div class="col d-flex gap-3">
-							{#each data.gameSessions as { user }}
-								<User {user} size="4.5rem" bg="darker" />
-							{/each}
-						</div>
+		<div class="card mb-2">
+			<div class="card-body">
+				<div class="row">
+					<div class="col col-2">
+						<p class="light-text mb-2">
+							Currently Playing: {data.players
+								.length}/{data.maxPlayers}
+						</p>
+						<button
+							on:click={placeLauncher}
+							id="join"
+							class="btn btn-sm btn-success">
+							Join Server
+						</button>
+					</div>
+					<div class="col d-flex gap-3">
+						{#each data.players as user}
+							<User {user} size="4.5rem" bg="darker" />
+						{/each}
 					</div>
 				</div>
 			</div>
+		</div>
 		{:else}
 			This server is offline.
 		{/if}

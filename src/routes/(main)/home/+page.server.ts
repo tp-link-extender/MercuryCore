@@ -46,7 +46,7 @@ export async function load({ locals }) {
 				serverPing,
 				count(
 					SELECT * FROM <-playing
-					WHERE valid = true
+					WHERE valid
 						AND ping > time::now() - 35s
 				) AS playerCount,
 				count(<-likes) AS likeCount,

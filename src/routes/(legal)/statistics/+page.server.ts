@@ -1,29 +1,51 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
-import { squery } from "$lib/server/surreal"
+import { multiSquery } from "$lib/server/surreal"
 
 export async function load({ locals }) {
 	await authorise(locals)
 
+	const [
+		users,
+		places,
+		groups,
+		// assets,
+		transactions,
+		friendships,
+		followerships,
+		statusPosts,
+		forumPosts,
+		forumReplies,
+		,
+		avgCurrency,
+		totalCurrency,
+	] = (await multiSquery(surql`
+		count(SELECT * FROM user);
+		count(SELECT * FROM place);
+		count(SELECT * FROM group);
+		# prisma.asset.count(),
+		count(SELECT * FROM transaction);
+		count(SELECT * FROM friends);
+		count(SELECT * FROM follows);
+		count(SELECT * FROM statusPost);
+		count(SELECT * FROM forumPost);
+		count(SELECT * FROM forumReply);
+		LET $currency = (SELECT currency FROM user).currency;
+		math::mean($currency);
+		math::sum($currency)`)) as number[]
+
 	return {
-		users: prisma.authUser.count(),
-		places: prisma.place.count(),
-		groups: prisma.group.count(),
-		assets: prisma.asset.count(),
-		transactions: prisma.transaction.count(),
-		friendships: squery(surql`count(SELECT * FROM friends)`),
-		followerships: squery(surql`count(SELECT * FROM follows)`),
-		statusPosts: prisma.post.count(),
-		forumPosts: prisma.forumPost.count(),
-		forumReplies: prisma.forumReply.count(),
-		currency: prisma.authUser.aggregate({
-			_sum: {
-				currency: true,
-			},
-			_avg: {
-				currency: true,
-			},
-		}),
+		users,
+		places,
+		groups,
+		assets: 0,
+		transactions,
+		friendships,
+		followerships,
+		statusPosts,
+		forumPosts,
+		forumReplies,
+		avgCurrency,
+		totalCurrency,
 	}
 }
