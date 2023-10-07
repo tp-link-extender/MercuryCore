@@ -105,22 +105,31 @@ export async function load({ request, locals }) {
 
 				case "ForumMention":
 				case "ForumPost":
-					const post = await prisma.forumPost.findUnique({
-						where: {
-							id: i.relativeId,
-						},
-					})
+					const post = (
+						(await squery(
+							surql`
+								SELECT
+									(SELECT name
+									FROM ->in->forumCategory) AS category
+								FROM $forumPost`,
+							{
+								forumPost: `forumPost:${i.relativeId}`,
+							},
+						)) as {
+							category: {
+								name: string
+							}
+						}[]
+					)[0]
 					if (!post) break
 
-					i.link = `/forum/${post.forumCategoryName.toLowerCase()}/${
-						post.id
+					i.link = `/forum/${post.category.name.toLowerCase()}/${
+						i.relativeId
 					}`
 					break
 
 				case "ItemPurchase":
 					i.link = `/avatarshop/item/${i.relativeId}`
-					break
-				case "Message":
 			}
 			delete i.relativeId
 		}

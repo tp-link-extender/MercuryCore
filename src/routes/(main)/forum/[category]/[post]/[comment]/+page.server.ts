@@ -3,6 +3,7 @@ import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
+import { valid } from "$lib/server/id"
 import { error } from "@sveltejs/kit"
 
 type Replies = {
@@ -65,14 +66,22 @@ function SELECTREPLIES() {
 }
 
 export async function load({ locals, params }) {
-	const post = await prisma.forumPost.findUnique({
-		where: {
-			id: params.post,
-		},
-		select: {
-			author: true,
-		},
-	})
+	if (!valid(params.post)) throw error(400, "Invalid post id")
+	const post = (
+		(await squery(surql`
+			SELECT
+				(SELECT username
+				FROM <-posted<-user)[0] AS author
+			FROM $forumPost`, {
+			forumPost: `forumPost:${params.post}`,
+			})) as {
+			author: {
+				username: string
+			}
+		}[]
+	)[0]
+
+	console.log(post)
 
 	if (!post) throw error(404, "Post not found")
 

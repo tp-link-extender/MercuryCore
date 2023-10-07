@@ -72,6 +72,8 @@ function SELECTREPLIES() {
 }
 
 export async function load({ locals, params }) {
+	if (!valid(params.post)) throw error(400, "Invalid post id")
+
 	const { user } = await authorise(locals),
 		forumPost = (await squery(
 			surql`
@@ -86,7 +88,6 @@ export async function load({ locals, params }) {
 					(->in->forumCategory)[0].name as categoryName,
 
 					${SELECTREPLIES()}
-
 				FROM $forumPost`,
 			{
 				forumPost: `forumPost:${params.post}`,
@@ -212,7 +213,7 @@ export const actions = {
 			id = url.searchParams.get("id")
 		if (!id) throw error(400, "No reply id provided")
 		if (!valid(id)) throw error(400, "Invalid reply id")
-			// Prevents incorrect ids erroring the Surreal query as well
+		// Prevents incorrect ids erroring the Surreal query as well
 
 		const reply = (
 			(await squery(

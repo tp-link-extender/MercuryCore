@@ -2,7 +2,7 @@ import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
-// import ratelimit from "$lib/server/ratelimit"
+import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
 	imageAsset,
@@ -46,8 +46,8 @@ export const actions = {
 			form = await superValidate(formData, schema)
 		if (!form.valid) return formError(form)
 
-		// const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
-		// if (limit) return limit
+		const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
+		if (limit) return limit
 
 		const { type, name, description, price } = form.data,
 			assetType = parseInt(type),

@@ -1,5 +1,4 @@
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
 import surreal from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
@@ -34,18 +33,10 @@ export const actions = {
 		if (name.toLowerCase() == "create")
 			return formError(form, ["name"], ["Can't park there mate"])
 
-		await Promise.all([
-			prisma.forumCategory.create({
-				data: {
-					name,
-					description,
-				},
-			}),
-			surreal.create(`forumCategory:${name}`, {
-				name,
-				description,
-			}),
-		])
+		await surreal.create(`forumCategory:${name}`, {
+			name,
+			description,
+		})
 
 		throw redirect(302, `/forum/${name}`)
 	},

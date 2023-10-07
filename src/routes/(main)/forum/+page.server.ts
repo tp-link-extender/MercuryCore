@@ -1,34 +1,36 @@
-import { prisma } from "$lib/server/prisma"
+import surql from "$lib/surrealtag"
+import surreal, { squery } from "$lib/server/surreal"
 
 export const load = () => ({
-	categories: prisma.forumCategory.findMany({
-		include: {
-			_count: true,
-			posts: {
-				orderBy: {
-					posted: "desc",
-				},
-				take: 1,
-				select: {
-					id: true,
-					title: true,
-					author: {
-						select: {
-							username: true,
-							number: true,
-						},
-					},
-					content: {
-						orderBy: {
-							updated: "desc",
-						},
-						select: {
-							text: true,
-						},
-						take: 1,
-					},
-				},
-			},
-		},
-	}),
+	categories: squery(surql`
+		SELECT
+			name,
+			description,
+			(SELECT
+				string::split(type::string(id), ":")[1] AS id,
+				title,
+				posted,
+				(SELECT
+					number,
+					username
+				FROM <-posted<-user)[0] AS author
+			FROM <-in<-forumPost
+			ORDER BY posted DESC)[0] AS latestPost,
+			count(<-in) AS postCount
+		FROM forumCategory`) as Promise<
+		{
+			description: string
+			name: string
+			postCount: number
+			latestPost: {
+				author: {
+					number: number
+					username: string
+				}
+				id: string
+				posted: string
+				title: string
+			}
+		}[]
+	>,
 })

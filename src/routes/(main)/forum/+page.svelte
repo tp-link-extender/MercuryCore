@@ -21,26 +21,26 @@
 						{category.description}
 					</div>
 					<h3 class="col fs-5">
-						{category._count.posts} post{category._count.posts == 1
+						{category.postCount} post{category.postCount == 1
 							? ""
 							: "s"}
 					</h3>
 				</a>
 				<div class="col-lg-3 col-md-5 row">
-					{#if category.posts[0]}
+					{#if category.latestPost}
 						<a
 							href="/forum/{category.name.toLowerCase()}/{category
-								.posts[0].id}"
+								.latestPost.id}"
 							class="light-text text-decoration-none">
 							Last post:
 							<h3 class="fs-5">
-								{category.posts[0].title}
+								{category.latestPost.title}
 							</h3>
 						</a>
 						<span class="d-flex gap-2">
 							by
 							<User
-								user={category.posts[0].author}
+								user={category.latestPost.author}
 								full
 								thin
 								size="1.5rem" />
