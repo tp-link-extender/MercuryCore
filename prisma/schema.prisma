@@ -22,25 +22,6 @@ enum Visibility {
     Moderated
 }
 
-// A TextContent can be used for anything that needs an edit history.
-model TextContent {
-    id             String        @id @unique @default(cuid())
-    text           String
-    updated        DateTime      @default(now())
-    ForumPost      ForumPost?    @relation(fields: [forumPostId], references: [id])
-    forumPostId    String?
-    ForumReply     ForumReply?   @relation(fields: [forumReplyId], references: [id])
-    forumReplyId   String?
-    assetComment   AssetComment? @relation(fields: [assetCommentId], references: [id])
-    assetCommentId String?
-    user           AuthUser?     @relation(fields: [userId], references: [id])
-    userId         String?
-    Place          Place?        @relation(fields: [placeId], references: [id])
-    placeId        Int?
-    Asset          Asset?        @relation(fields: [assetId], references: [id])
-    assetId        Int?
-}
-
 // Users & Groups
 // ADMIN LEVELS:
 // 1: User
@@ -56,39 +37,24 @@ model AuthUser {
     number               Int           @unique @default(autoincrement())
     username             String        @unique
     email                String        @unique
-    usedRegkey           Regkey        @relation(fields: [regkeyKey], references: [key])
-    regkeyKey            String
-    createdRegkey        Regkey[]      @relation("creator")
     permissionLevel      Int           @default(1)
-    bio                  TextContent[]
     created              DateTime      @default(now())
     lastOnline           DateTime      @default(now())
     currencyCollected    DateTime      @default(now())
     status               String?
     currency             Int           @default(0)
-    groupsOwned          Group[]
     places               Place[]
-    posts                Post[]
-    transactionsSent     Transaction[] @relation("sent")
-    transactionsReceived Transaction[] @relation("received")
 
     bodyColours Json @default("{\"Head\": 24, \"Torso\": 23, \"LeftArm\": 24, \"RightArm\": 24, \"LeftLeg\": 119, \"RightLeg\": 119}")
     // {"Head": 24, "Torso": 23, "LeftArm": 24, "RightArm": 24, "LeftLeg": 119, "RightLeg": 119}
 
     theme             String?
     animationSettings String?
-    gameSessions      GameSessions[]
-    forumPosts        ForumPost[]
-    forumReplies      ForumReply[]
     assetComments     AssetComment[]
-    reportsSent       Report[]       @relation("sent")
-    reportsReceived   Report[]       @relation("received")
 
-    moderationActionsGiven    ModerationAction[] @relation("given")
-    moderationActionsReceived ModerationAction[] @relation("received")
-    assetsCreated             Asset[]            @relation("created")
-    assetsOwned               Asset[]            @relation("owned")
-    assetsModerated           Asset[]            @relation("moderated")
+    assetsCreated   Asset[] @relation("created")
+    assetsOwned     Asset[] @relation("owned")
+    assetsModerated Asset[] @relation("moderated")
 
     @@map("user")
 }
@@ -104,57 +70,14 @@ model AuthKey {
     @@map("key")
 }
 
-model GameSessions {
-    place   Place    @relation(references: [id], fields: [placeId], onDelete: Cascade)
-    placeId Int
-    user    AuthUser @relation(references: [id], fields: [userId], onDelete: Cascade)
-    userId  String
-    ticket  String   @id @unique @default(uuid())
-    ping    BigInt   @default(0)
-    valid   Boolean  @default(true)
-}
-
-model Regkey {
-    key       String     @unique @default(cuid())
-    usesLeft  Int        @default(1)
-    expiry    DateTime?
-    creation  DateTime   @default(now())
-    creator   AuthUser?  @relation("creator", fields: [creatorId], references: [id])
-    creatorId String?
-    users     AuthUser[]
-}
-
-model Post {
-    id              String    @id @unique @default(cuid())
-    authorUser      AuthUser? @relation(fields: [authorUsername], references: [username])
-    authorUsername  String?
-    authorGroup     Group?    @relation(fields: [authorGroupname], references: [name])
-    authorGroupname String?
-    posted          DateTime  @default(now())
-    content         String
-
-    visibility Visibility @default(Visible)
-}
-
-model Group {
-    name          String   @id @unique
-    owner         AuthUser @relation(fields: [ownerUsername], references: [username])
-    ownerUsername String
-    places        Place[]
-    posts         Post[]
-    assets        Asset[]
-}
-
 // Places
 
 model Place {
     id Int @id @unique @default(autoincrement())
 
-    name           String
-    ownerUser      AuthUser? @relation(fields: [ownerUsername], references: [username])
-    ownerUsername  String?
-    ownerGroup     Group?    @relation(fields: [ownerGroupname], references: [name])
-    ownerGroupname String?
+    name          String
+    ownerUser     AuthUser? @relation(fields: [ownerUsername], references: [username])
+    ownerUsername String?
 
     serverIP      String
     serverPort    Int
@@ -163,136 +86,11 @@ model Place {
     privateServer Boolean @default(false)
     privateTicket String  @unique @default(uuid())
 
-    description TextContent[]
-
     maxPlayers Int
 
     created      DateTime       @default(now())
     updated      DateTime       @default(now())
     deleted      Boolean        @default(false)
-    gameSessions GameSessions[]
-}
-
-// Items
-
-enum ItemCategory {
-    TShirt
-    Shirt
-    Pants
-    HeadShape
-    Hair
-    Face
-    Skirt
-    Dress
-    Hat
-    Headgear
-    Gear
-    Neck
-    Back
-    Shoulder
-}
-
-model Transaction {
-    id           String   @id @unique @default(cuid())
-    sender       AuthUser @relation("sent", fields: [senderName], references: [username])
-    senderName   String
-    receiver     AuthUser @relation("received", fields: [receiverName], references: [username])
-    receiverName String
-    amountSent   Int
-    taxRate      Float
-    time         DateTime @default(now())
-    note         String?
-    link         String?
-}
-
-// Forum
-
-model ForumCategory {
-    name        String      @id @unique
-    posts       ForumPost[]
-    description String
-}
-
-model ForumPost {
-    id       String        @id @unique
-    author   AuthUser      @relation(fields: [authorId], references: [id])
-    authorId String
-    posted   DateTime      @default(now())
-    title    String
-    content  TextContent[]
-
-    forumCategory     ForumCategory @relation(fields: [forumCategoryName], references: [name])
-    forumCategoryName String
-    replies           ForumReply[]
-
-    visibility Visibility @default(Visible)
-}
-
-model ForumReply {
-    id       String        @id @unique
-    author   AuthUser      @relation(fields: [authorId], references: [id])
-    authorId String
-    posted   DateTime      @default(now())
-    content  TextContent[]
-
-    parentPost    ForumPost    @relation(fields: [topParentId], references: [id])
-    topParentId   String
-    // A reply can be to a post or another reply
-    parentReply   ForumReply?  @relation("replies", fields: [parentReplyId], references: [id])
-    parentReplyId String?
-    replies       ForumReply[] @relation("replies")
-
-    visibility Visibility @default(Visible)
-}
-
-// Reports
-
-enum ReportCategory {
-    AccountTheft
-    Dating
-    Exploiting
-    Harassment
-    InappropriateContent
-    PersonalInformation
-    Scamming
-    Spam
-    Swearing
-    Threats
-    Under13
-}
-
-model Report {
-    id         String   @id @unique @default(cuid())
-    reporter   AuthUser @relation("sent", fields: [reporterId], references: [id])
-    reporterId String
-    reportee   AuthUser @relation("received", fields: [reporteeId], references: [id])
-    reporteeId String
-    time       DateTime @default(now())
-
-    note     String? // Note from the reporter
-    url      String
-    category ReportCategory
-    inGame   Boolean        @default(false)
-}
-
-enum ModerationActionType {
-    Warning
-    Ban
-    Termination
-    AccountDeleted
-}
-
-model ModerationAction {
-    id          String               @id @unique @default(cuid())
-    moderator   AuthUser             @relation("given", fields: [moderatorId], references: [id])
-    moderatorId String
-    moderatee   AuthUser             @relation("received", fields: [moderateeId], references: [id])
-    moderateeId String
-    time        DateTime             @default(now())
-    timeEnds    DateTime
-    note        String
-    type        ModerationActionType
-    active      Boolean              @default(true)
 }
 
 // Assets
@@ -306,20 +104,17 @@ enum ApprovalStatus {
 model Asset {
     id Int @id @unique @default(autoincrement())
 
-    creatorUser      AuthUser?  @relation("created", fields: [creatorUsername], references: [username])
-    creatorUsername  String?
-    creatorGroup     Group?     @relation(fields: [creatorGroupname], references: [name])
-    creatorGroupname String?
-    owners           AuthUser[] @relation("owned")
+    creatorUser     AuthUser?  @relation("created", fields: [creatorUsername], references: [username])
+    creatorUsername String?
+    owners          AuthUser[] @relation("owned")
 
     moderator         AuthUser?      @relation("moderated", fields: [moderatorUsername], references: [username])
     moderatorUsername String?
     approved          ApprovalStatus @default(Pending)
 
-    name        String
-    description TextContent[]
-    type        Int
-    price       Int
+    name  String
+    type  Int
+    price Int
 
     imageAsset   Asset?  @relation("imageAsset", fields: [imageAssetId], references: [id])
     imageAssetId Int?
@@ -329,11 +124,10 @@ model Asset {
 }
 
 model AssetComment {
-    id       String        @id @unique
-    author   AuthUser      @relation(fields: [authorId], references: [id])
+    id       String   @id @unique
+    author   AuthUser @relation(fields: [authorId], references: [id])
     authorId String
-    posted   DateTime      @default(now())
-    content  TextContent[]
+    posted   DateTime @default(now())
 
     parentAsset   Asset          @relation(fields: [topParentId], references: [id])
     topParentId   Int
