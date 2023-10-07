@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import { prisma, findGroups } from "$lib/server/prisma"
+import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
@@ -50,7 +50,7 @@ export const load = async ({ url }) => {
 								serverPing,
 								count(
 									SELECT * FROM <-playing
-									WHERE valid = true
+									WHERE valid
 										AND ping > time::now() - 35s
 								) AS playerCount,
 								count(<-likes) AS likeCount,
@@ -62,10 +62,12 @@ export const load = async ({ url }) => {
 						{ query },
 				  ) as Promise<
 						{
-							id: string
+							id: number
 							name: string
 							playerCount: number
 							serverPing: number
+							likeCount: number
+							dislikeCount: number
 						}[]
 				  >)
 				: null,
@@ -87,17 +89,20 @@ export const load = async ({ url }) => {
 				: null,
 		groups:
 			category == "groups"
-				? findGroups({
-						where: {
-							name: {
-								contains: query,
-								mode: "insensitive",
-							},
-						},
-						select: {
-							name: true,
-						},
-				  })
+				? (squery(
+						surql`
+							SELECT
+								name,
+								count(<-member) AS memberCount
+							FROM group
+							WHERE string::lowercase($query) ∈ string::lowercase(name)`,
+						{ query },
+				  ) as Promise<
+						{
+							name: string
+							memberCount: number
+						}[]
+				  >)
 				: null,
 	}
 }

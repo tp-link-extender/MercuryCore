@@ -193,7 +193,7 @@
 								</span>
 								<span class="float-end">
 									<i class="fa fa-user opacity-75" />
-									{group.members}
+									{group.memberCount}
 								</span>
 							</div>
 						</a>
@@ -205,7 +205,7 @@
 			<div class="col-6 pt-6">
 				<div class="pt-6">
 					<h2 class="fs-4 light-text">Groups in</h2>
-					<!-- {#each data.groups as group, num}
+					{#each data.groups as group, num}
 						<a
 							in:fade={{ num, total: data.groups.length }}
 							class="card bg-darker light-text text-decoration-none fs-6 my-2"
@@ -216,11 +216,11 @@
 								</span>
 								<span class="float-end">
 									<i class="fa fa-user opacity-75" />
-									{group.members}
+									{group.memberCount}
 								</span>
 							</div>
 						</a>
-					{/each} -->
+					{/each}
 				</div>
 			</div>
 		{/if}

@@ -21,10 +21,7 @@
 						{data.memberCount}
 					</h3>
 				</a>
-				<form
-					class="align-self-center"
-					method="POST"
-					use:enhance>
+				<form class="align-self-center" method="POST" use:enhance>
 					<button
 						name="action"
 						value={data.in ? "leave" : "join"}
@@ -55,7 +52,7 @@
 		<h2 class="fs-4 pt-12 light-text">Latest feed posts</h2>
 		<div id="feed" class="light-text p-4">
 			<div class="row">
-				{#each data.feed.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status}
+				{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status}
 					<div class="p-2 col-md-6 col-sm-12">
 						<div class="card h-100">
 							<div class="card-body pb-0">
