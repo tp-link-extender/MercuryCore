@@ -58,36 +58,6 @@ export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
 	return places as typeof places & { ratio: number | "--" }[]
 }
 
-/**
- * Finds avatar shoitems in the database, and adds a like/dislike ratio to each place. Required because group members are stored in RedisGraph, while the rest of the info for groups is stored in Postgres.
- * @param query The prisma query to execute.
- * @returns The result of the query, with the like/dislike ratio added to each place.
- * @example
- * const places = await findPlaces({
- * 	where: {
- * 		name: {
- * 			contains: search,
- * 		}
- * 	},
- * })
- */
-export async function findGroups(query: Prisma.GroupFindManyArgs = {}) {
-	const groups = await prisma.group.findMany(query)
-
-	// Add members to each group
-	for (const group of groups as typeof groups & { members: any }[])
-		group["members"] = await roQuery(
-			"groups",
-			cql`RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))`,
-			{
-				group: group.name,
-			},
-			true,
-		)
-
-	return groups as typeof groups & { members: any }[]
-}
-
 const failed = "The query was not executed due to a failed transaction"
 /**
  * Transfers currency from one user to another, and creates a transaction in the database.

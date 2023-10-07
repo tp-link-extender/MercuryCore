@@ -4,11 +4,11 @@
 
 <Head title="Members of {data.name}" />
 
-<h1 class="light-text text-center">Members of {data.name} ({data.number})</h1>
+<h1 class="light-text text-center">Members of {data.name} ({data.memberCount})</h1>
 
 <div class="container mt-12 d-grid">
-	{#each data.users as user, num}
-		<UserCard {user} {num} total={data.users.length} />
+	{#each data.members as user, num}
+		<UserCard {user} {num} total={data.members.length} />
 	{/each}
 </div>
 

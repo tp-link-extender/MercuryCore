@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma, findGroups } from "$lib/server/prisma"
+import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
@@ -14,6 +14,7 @@ export async function load({ locals, params }) {
 		userExists = (await squery(
 			surql`
 				SELECT
+					id,
 					username,
 					number,
 					permissionLevel,
@@ -27,7 +28,7 @@ export async function load({ locals, params }) {
 						name,
 						count(
 							SELECT * FROM <-playing
-							WHERE valid = true
+							WHERE valid
 								AND ping > time::now() - 35s
 						) AS playerCount,
 
@@ -44,7 +45,16 @@ export async function load({ locals, params }) {
 					$user ∈ ->follows->user AS following,
 					$user ∈ <-follows<-user AS follower,
 					$user ∈ ->request->user AS incomingRequest,
-					$user ∈ <-request<-user AS outgoingRequest
+					$user ∈ <-request<-user AS outgoingRequest,
+
+					(SELECT
+						name,
+						count(<-member) AS memberCount
+					FROM ->member->group) AS groups,
+					(SELECT
+						name,
+						count(<-member) AS memberCount
+					FROM ->owns->group) AS groupsOwned
 
 				FROM user
 				WHERE number = $number`,
@@ -64,16 +74,23 @@ export async function load({ locals, params }) {
 			followingCount: number
 			friendCount: number
 			friends: boolean
+			groups: {
+				memberCount: number
+				name: string
+			}[]
+			groupsOwned: {
+				memberCount: number
+				name: string
+			}[]
+			id: string
 			incomingRequest: boolean
 			number: number
 			outgoingRequest: boolean
 			permissionLevel: number
 			places: {
 				dislikeCount: number
-				dislikes: boolean
 				id: string
 				likeCount: number
-				likes: boolean
 				name: string
 				playerCount: number
 			}[]
@@ -93,34 +110,7 @@ export async function load({ locals, params }) {
 
 	if (!user2) throw error(404, "Not found")
 
-	return {
-		...user2,
-		groups: [],
-		// findGroups({
-		// 	where: {
-		// 		OR: await roQuery(
-		// 			"groups",
-		// 			cql`
-		// 				MATCH (:User { name: $user }) -[:in]-> (u:Group)
-		// 				RETURN u.name AS name`,
-		// 			query2,
-		// 			false,
-		// 			true,
-		// 		),
-		// 	},
-		// 	select: {
-		// 		name: true,
-		// 	},
-		// }),
-		groupsOwned: findGroups({
-			where: {
-				ownerUsername: user2.username,
-			},
-			select: {
-				name: true,
-			},
-		}),
-	}
+	return user2
 }
 
 export const actions = {

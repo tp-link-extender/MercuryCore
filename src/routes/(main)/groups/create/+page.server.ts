@@ -1,5 +1,7 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma, transaction } from "$lib/server/prisma"
+import { transaction } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -44,11 +46,14 @@ export const actions = {
 			)
 
 		if (
-			await prisma.group.findUnique({
-				where: {
-					name,
-				},
-			})
+			(
+				(await squery(
+					surql`
+						SELECT * FROM group WHERE string::lowercase(name)
+							= string::lowercase($name)`,
+					{ name },
+				)) as [{}]
+			)[0]
 		)
 			return formError(
 				form,
@@ -57,7 +62,7 @@ export const actions = {
 			)
 
 		try {
-			await transaction({ id: user.id }, { number: 1 }, 10, {
+			await transaction({ number: user.number }, { number: 1 }, 10, {
 				note: `Created group ${name}`,
 				link: `/groups/${name}`,
 			})
@@ -65,12 +70,21 @@ export const actions = {
 			return formError(form, ["other"], [e.message])
 		}
 
-		await prisma.group.create({
-			data: {
+		await squery(
+			surql`
+				LET $group = CREATE group CONTENT {
+					name: $name,
+					created: time::now(),
+				};
+				RELATE $user->owns->$group
+					SET time = time::now();
+				RELATE $user->member->$group
+					SET time = time::now()`,
+			{
 				name,
-				ownerUsername: user.username,
+				user: `user:${user.id}`,
 			},
-		})
+		)
 
 		throw redirect(302, `/groups/${name}`)
 	},
