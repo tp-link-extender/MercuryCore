@@ -16,27 +16,22 @@ const schema = z.object({
 })
 
 export async function load({ url }) {
-	const category = url.searchParams.get("category")
-	if (!category) throw error(400, "Missing category")
+	const categoryQuery = url.searchParams.get("category")
+	if (!categoryQuery) throw error(400, "Missing category")
 
-	const getCategory = (
-		await prisma.forumCategory.findMany({
-			where: {
-				name: {
-					equals: category,
-					mode: "insensitive",
-				},
-			},
-			select: {
-				name: true,
-			},
-		})
+	const category = (
+		(await squery(
+			surql`
+				SELECT name FROM forumCategory
+				WHERE string::lowercase(name) = string::lowercase($categoryQuery)`,
+			{ categoryQuery },
+		)) as { name: string }[]
 	)[0]
 
-	if (!getCategory) throw error(404, "Category not found")
+	if (!category) throw error(404, "Category not found")
 
 	return {
-		category: getCategory,
+		categoryName: category.name,
 		form: superValidate(schema),
 	}
 }
@@ -57,32 +52,19 @@ export const actions = {
 		if (
 			!category ||
 			!(
-				await prisma.forumCategory.findMany({
-					where: {
-						name: {
-							equals: category,
-							mode: "insensitive",
-						},
+				(await squery(
+					surql`
+						SELECT * FROM forumCategory
+						WHERE string::lowercase(name) = string::lowercase($category)`,
+					{
+						category,
 					},
-				})
+				)) as {}[]
 			)[0]
 		)
 			throw error(400, "Invalid category")
 
-		const postId = await id(),
-			post = await prisma.forumPost.create({
-				data: {
-					id: postId,
-					title,
-					content: {
-						create: {
-							text: content || "",
-						},
-					},
-					authorId: user.id,
-					forumCategoryName: category,
-				},
-			})
+		const postId = await id()
 
 		await squery(
 			surql`
@@ -109,8 +91,8 @@ export const actions = {
 			},
 		)
 
-		await like(user.id, `forumPost:${post.id}`)
+		await like(user.id, `forumPost:${postId}`)
 
-		throw redirect(302, `/forum/${category}/${post.id}`)
+		throw redirect(302, `/forum/${category}/${postId}`)
 	},
 }

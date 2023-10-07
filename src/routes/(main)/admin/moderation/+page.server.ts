@@ -28,7 +28,7 @@ export const actions = {
 			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
-		// if (limit) return limit
+		if (limit) return limit
 
 		const { username, action, banDate, reason } = form.data,
 			date = banDate ? new Date(banDate) : null

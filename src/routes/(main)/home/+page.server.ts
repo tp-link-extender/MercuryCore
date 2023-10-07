@@ -96,23 +96,6 @@ export async function load({ locals }) {
 				visibility: string
 			}[]
 		>,
-		// prisma.post.findMany({
-		// 	select: {
-		// 		id: true,
-		// 		content: true,
-		// 		posted: true,
-		// 		authorUser: {
-		// 			select: {
-		// 				username: true,
-		// 				number: true,
-		// 			},
-		// 		},
-		// 	},
-		// 	orderBy: {
-		// 		posted: "desc",
-		// 	},
-		// 	take: 40,
-		// }),
 	}
 }
 
