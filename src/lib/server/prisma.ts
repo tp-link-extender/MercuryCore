@@ -101,7 +101,7 @@ export async function transaction(
 
 			IF $amountSent > 0 {
 				IF !$senderAdmin AND $sender.currency < $amountSent {
-					THROW string::join(" ", "Insufficient funds: You need", $amountSent - $sender.currency, "more to buy this")
+					THROW string::concat("Insufficient funds: You need ", $amountSent - $sender.currency, " more to buy this")
 				};
 
 				LET $finalAmount = math::round($amountSent * (1 - $taxRate / 100));

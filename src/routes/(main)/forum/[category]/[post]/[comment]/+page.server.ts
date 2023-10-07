@@ -35,7 +35,8 @@ const SELECTFROM = () =>
 	surql`
 		SELECT
 			*,
-			content[0] AS content,
+			(SELECT text, updated FROM $parent.content
+			ORDER BY updated DESC) AS content,
 			string::split(type::string(id), ":")[1] AS id,
 			$forumPost as parentPost,
 			string::split(type::string($forumPost.id), ":")[1] AS parentPostId,
@@ -81,7 +82,8 @@ export async function load({ locals, params }) {
 		surql`
 			SELECT
 				*,
-				content[0] AS content,
+				(SELECT text, updated FROM $parent.content
+				ORDER BY updated DESC) AS content,
 				string::split(type::string(id), ":")[1] AS id,
 				$forumPost as parentPost,
 				string::split(type::string($forumPost.id), ":")[1] AS parentPostId,

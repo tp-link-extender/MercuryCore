@@ -13,7 +13,8 @@ export async function load({ locals, params }) {
                     *,
                     (SELECT
                         *,
-                        (SELECT text FROM content[0]) AS content,
+						(SELECT text, updated FROM $parent.content
+						ORDER BY updated DESC) AS content,
                         (SELECT number, username FROM <-posted<-user)[0] AS author,
                         count(<-likes<-user) AS likeCount,
                         count(<-dislikes<-user) AS dislikeCount,

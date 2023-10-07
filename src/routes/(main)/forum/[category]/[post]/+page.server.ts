@@ -2,8 +2,7 @@ import surql from "$lib/surrealtag"
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import surreal, { squery } from "$lib/server/surreal"
-import { prisma } from "$lib/server/prisma"
-import id from "$lib/server/id"
+import id, { valid } from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
@@ -42,7 +41,8 @@ const SELECTFROM = () =>
 	surql`
 		SELECT
 			*,
-			content[0] AS content,
+			(SELECT text, updated FROM $parent.content
+			ORDER BY updated DESC) AS content,
 			string::split(type::string(id), ":")[1] AS id,
 			string::split(type::string($parent.id), ":")[1] AS parentPostId,
 			NONE as parentReplyId,
@@ -78,7 +78,6 @@ export async function load({ locals, params }) {
 				SELECT
 					*,
 					string::split(type::string(id), ":")[1] AS id,
-					content[0] as content,
 					(SELECT number, username FROM <-posted<-user)[0] as author,
 					count(<-likes) as likeCount,
 					count(<-dislikes) as dislikeCount,
@@ -169,7 +168,7 @@ export const actions = {
 				LET $reply = CREATE $forumReply CONTENT {
 					posted: time::now(),
 					visibility: "Visible",
-					content: [$textContent],
+					content: $textContent,
 				};
 				RELATE $reply->replyToPost->$post;
 				IF $replyId {
@@ -212,14 +211,25 @@ export const actions = {
 		const { user } = await authorise(locals),
 			id = url.searchParams.get("id")
 		if (!id) throw error(400, "No reply id provided")
+		if (!valid(id)) throw error(400, "Invalid reply id")
+			// Prevents incorrect ids erroring the Surreal query as well
 
-		const reply = await prisma.forumReply.findUnique({
-			where: { id },
-			select: {
-				authorId: true,
-				visibility: true,
-			},
-		})
+		const reply = (
+			(await squery(
+				surql`
+					SELECT
+						string::split(type::string((
+							<-posted<-user.id)[0]), ":")[1] AS authorId,
+						visibility
+					FROM $forumReply`,
+				{
+					forumReply: `forumReply:${id}`,
+				},
+			)) as {
+				authorId: string
+				visibility: string
+			}[]
+		)[0]
 
 		if (!reply) throw error(404, "Reply not found")
 
@@ -231,12 +241,14 @@ export const actions = {
 
 		await squery(
 			surql`
-				LET $reply = SELECT <-posted AS poster FROM $forumReply;
+				LET $poster = (SELECT
+					<-posted<-user AS poster
+				FROM $forumReply)[0].poster;
 				LET $textContent = CREATE textContent CONTENT {
 					text: "[deleted]",
 					updated: time::now(),
 				};
-				RELATE $reply.poster->wrote->$textContent;
+				RELATE $poster->wrote->$textContent;
 
 				UPDATE $forumReply SET content += $textContent;
 				UPDATE $forumReply SET visibility = "Deleted"`,

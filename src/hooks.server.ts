@@ -105,7 +105,7 @@ export async function handle({ event, resolve }) {
 }
 
 export const handleError = async ({ event, error }) => {
-	const session = await event.locals.auth.validate(),
+	const session = await event.locals.auth?.validate(),
 		user = session?.user
 
 	// Fancy error logging: time, user, and error

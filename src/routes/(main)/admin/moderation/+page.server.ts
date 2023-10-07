@@ -3,7 +3,6 @@ import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import { squery } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
-import { error } from "@sveltejs/kit"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 

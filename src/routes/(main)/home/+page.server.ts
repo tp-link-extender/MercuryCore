@@ -76,7 +76,8 @@ export async function load({ locals }) {
 		feed: squery(surql`
 			SELECT
 				*,
-				content[0] AS content,
+				(SELECT text, updated FROM $parent.content
+				ORDER BY updated DESC) AS content,
 				(SELECT number, username FROM <-posted<-user)[0] as authorUser
 			FROM statusPost
 			LIMIT 40`) as Promise<
@@ -126,18 +127,18 @@ export const actions = {
 
 		await squery(
 			surql`
-			LET $textContent = CREATE textContent CONTENT {
-				text: $content,
-				updated: time::now(),
-			};
-			RELATE $user->wrote->$textContent;
+				LET $textContent = CREATE textContent CONTENT {
+					text: $content,
+					updated: time::now(),
+				};
+				RELATE $user->wrote->$textContent;
 
-			LET $status = CREATE statusPost CONTENT {
-				posted: time::now(),
-				visibility: "Visible",
-				content: [$textContent],
-			};
-			RELATE $user->posted->$status`,
+				LET $status = CREATE statusPost CONTENT {
+					posted: time::now(),
+					visibility: "Visible",
+					content: $textContent,
+				};
+				RELATE $user->posted->$status`,
 			{
 				content: form.data.status,
 				user: `user:${user.id}`,
