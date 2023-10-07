@@ -1,6 +1,7 @@
+import surql from "$lib/surrealtag"
 import { auth } from "$lib/server/lucia"
 import { prisma } from "$lib/server/prisma"
-import surreal from "$lib/server/surreal"
+import surreal, { squery } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -87,11 +88,12 @@ export const actions = {
 					["This email is already being used"],
 				)
 
-			const regkeyCheck = await prisma.regkey.findUnique({
-				where: {
-					key: regkey,
-				},
-			})
+			const regkeyCheck = (
+				(await surreal.select(`regKey:⟨${regkey}⟩`)) as {
+					usesLeft: number
+				}[]
+			)[0]
+
 			if (!regkeyCheck)
 				return formError(
 					form,
@@ -106,27 +108,23 @@ export const actions = {
 				)
 
 			const user = await auth.createUser({
-					key: {
-						providerId: "username",
-						providerUserId: username.toLowerCase(),
-						password,
-					},
-					attributes: {
-						username,
-						email,
-						usedRegkey: {
-							connect: {
-								key: regkey,
-							},
-						},
-					} as any,
-				}),
-				session = await auth.createSession({
+				key: {
+					providerId: "username",
+					providerUserId: username.toLowerCase(),
+					password,
+				},
+				attributes: {
+					username,
+					email,
+				} as any,
+			})
+
+			locals.auth.setSession(
+				await auth.createSession({
 					userId: user.id,
 					attributes: {},
-				})
-
-			locals.auth.setSession(session)
+				}),
+			)
 
 			const getUser = await prisma.authUser.findUnique({
 				where: {
@@ -134,24 +132,24 @@ export const actions = {
 				},
 			})
 
-			await surreal.create(`user:${getUser?.id}`, {
-				username,
-				number: getUser?.number,
-				email,
-				permissionLevel: 1,
-				bio: [],
-			})
-
-			await prisma.regkey.update({
-				where: {
-					key: regkey,
+			await squery(
+				surql`
+					CREATE $user CONTENT {
+						username: $username,
+						number: $number,
+						email: $email,
+						permissionLevel: 1,
+						bio: [],
+					};
+					RELATE $user->used->$key;
+					UPDATE $key SET usesLeft -= 1`,
+				{
+					user: `user:${getUser?.id}`,
+					username,
+					number: getUser?.number,
+					email,
 				},
-				data: {
-					usesLeft: {
-						decrement: 1,
-					},
-				},
-			})
+			)
 		} catch (e) {
 			const error = e as Error
 			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID")
@@ -192,29 +190,24 @@ export const actions = {
 				)
 
 			const user = await auth.createUser({
-					key: {
-						providerId: "username",
-						providerUserId: username.toLowerCase(),
-						password,
-					},
-					attributes: {
-						username,
-						email: "",
-						permissionLevel: 5,
-						usedRegkey: {
-							create: {
-								key: "",
-								usesLeft: 0,
-							},
-						},
-					} as any,
-				}),
-				session = await auth.createSession({
+				key: {
+					providerId: "username",
+					providerUserId: username.toLowerCase(),
+					password,
+				},
+				attributes: {
+					username,
+					email: "",
+					permissionLevel: 5,
+				} as any,
+			})
+
+			locals.auth.setSession(
+				await auth.createSession({
 					userId: user.id,
 					attributes: {},
-				})
-
-			locals.auth.setSession(session)
+				}),
+			)
 
 			const getUser = await prisma.authUser.findUnique({
 				where: {
