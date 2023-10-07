@@ -187,7 +187,7 @@
 									<form
 										use:enhance
 										method="POST"
-										action="?id={invite.key}">
+										action="?id={invite.id}">
 										<button
 											name="action"
 											value="disable"
@@ -197,13 +197,17 @@
 										</button>
 									</form>
 								</td>
-								<td>mercurkey-{invite.key}</td>
+								<td>mercurkey-{invite.id}</td>
 								<td>{invite.usesLeft}</td>
-								<td>{invite.creator?.username}</td>
 								<td>
-									{new Date(
-										invite.creation
-									).toLocaleDateString()}
+									{#if invite.creator}
+										<User user={invite.creator} full thin />
+									{:else}
+										<em>Nobody</em>
+									{/if}
+								</td>
+								<td>
+									{new Date(invite.created).toLocaleString()}
 								</td>
 							</tr>
 						{/each}

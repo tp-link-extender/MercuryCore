@@ -1,8 +1,7 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { prisma } from "$lib/server/prisma"
-import { squery } from "$lib/server/surreal"
+import surreal, { squery } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -22,14 +21,27 @@ export async function load({ locals }) {
 
 	return {
 		form: superValidate(schema),
-		invites: prisma.regkey.findMany({
-			include: {
-				creator: true,
-			},
-			orderBy: {
-				creation: "desc",
-			},
-		}),
+		invites: (await squery(
+			surql`
+				SELECT
+					*,
+					string::split(type::string(id), ":")[1] AS id,
+					(SELECT
+						number,
+						username
+					FROM <-created<-user)[0] AS creator
+				FROM regKey
+				ORDER BY creation DESC`,
+		)) as {
+			id: string
+			created: string
+			usesLeft: number
+			expiry: string
+			creator?: {
+				number: number
+				username: string
+			}
+		}[],
 	}
 }
 
@@ -82,30 +94,24 @@ export const actions = {
 				)
 					return formError(form, ["inviteExpiry"], ["Invalid date"])
 
-				const createdKey = await prisma.regkey.create({
-					data: {
-						key: customInviteEnabled ? customInvite : undefined,
-						usesLeft: inviteUses,
-						expiry: inviteExpiryEnabled ? expiry : null,
-						creator: {
-							connect: {
-								id: user.id,
-							},
-						},
-					},
-				})
-
 				await squery(
 					surql`
+						LET $key = CREATE regKey CONTENT {
+							usesLeft: $inviteUses,
+							expiry: $expiry,
+							created: time::now(),
+						};
+						RELATE $user->created->$key;
 						CREATE auditLog CONTENT {
 							action: "Administration",
-							note: $note,
+							note: string::concat("Created invite key ", string::split($key.id, ":")[1]),
 							user: $user,
 							time: time::now()
 						}`,
 					{
-						note: `Create invite key ${createdKey.key}`,
 						user: `user:${user.id}`,
+						inviteUses,
+						expiry,
 					},
 				)
 
@@ -120,42 +126,34 @@ export const actions = {
 						status: 400,
 					})
 
-				const key = await prisma.regkey.findUnique({
-					where: {
-						key: id,
-					},
-				})
+				const key = (
+					(await surreal.select(`regKey:⟨${id}⟩`)) as {
+						usesLeft: number
+					}[]
+				)[0]
 
 				if (key && key.usesLeft == 0)
 					return message(form, "Invite key is already disabled", {
 						status: 400,
 					})
 
-				await Promise.all([
-					prisma.regkey.update({
-						where: {
-							key: id,
-						},
-						data: {
-							usesLeft: 0,
-						},
-					}),
-					squery(
-						surql`
-							CREATE auditLog CONTENT {
-								action: "Administration",
-								note: $note,
-								user: $user,
-								time: time::now()
-							}`,
-						{
-							note: `Disable invite key ${id}`,
-							user: `user:${user.id}`,
-						},
-					),
-				])
+				await squery(
+					surql`
+						UPDATE $key SET usesLeft = 0;
+						CREATE auditLog CONTENT {
+							action: "Administration",
+							note: $note,
+							user: $user,
+							time: time::now()
+						}`,
+					{
+						note: `Disable invite key ${id}`,
+						user: `user:${user.id}`,
+						key: `regKey:⟨${id}⟩`,
+					},
+				)
 
-				return
+				return message(form, "Invite key disabled successfully")
 		}
 	},
 }
