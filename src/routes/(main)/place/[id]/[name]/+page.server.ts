@@ -18,6 +18,8 @@ export async function load({ url, locals, params }) {
 					SELECT
 						string::split(type::string(id), ":")[1] AS id,
 						name,
+						(SELECT text, updated FROM $parent.description
+						ORDER BY updated DESC)[0] AS description,
 						serverPing,
 						serverTicket,
 						privateServer,
@@ -35,7 +37,6 @@ export async function load({ url, locals, params }) {
 						FROM <-playing
 						WHERE valid
 							AND ping > time::now() - 35s) AS players,
-						description[0] AS description,
 
 						count((SELECT * FROM $parent<-likes).in) AS likeCount,
 						count((SELECT * FROM $parent<-dislikes).in) AS dislikeCount,
@@ -49,10 +50,9 @@ export async function load({ url, locals, params }) {
 			)) as {
 				created: string
 				description: {
-					id: string
 					text: string
 					updated: string
-				}[]
+				}
 				dislikeCount: number
 				dislikes: boolean
 				id: string

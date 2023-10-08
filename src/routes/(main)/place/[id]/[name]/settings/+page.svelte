@@ -21,7 +21,7 @@
 	let copiedSuccess = false
 
 	if (data.name) $form.title = data.name
-	if (data.description[0]) $form.description = data.description[0].text
+	if (data.description) $form.description = data.description.text
 
 	if (data.serverIP) $form.serverIP = data.serverIP
 	if (data.serverPort) $form.serverPort = data.serverPort
