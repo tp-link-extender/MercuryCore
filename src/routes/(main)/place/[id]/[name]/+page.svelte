@@ -284,7 +284,7 @@
 	</div>
 
 	<Tab {tabData}>
-		{data.description[0]?.text || ""}
+		{data.description.text || ""}
 	</Tab>
 
 	<Tab {tabData}>

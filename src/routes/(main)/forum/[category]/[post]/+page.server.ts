@@ -253,9 +253,7 @@ export const actions = {
 
 				UPDATE $forumReply SET content += $textContent;
 				UPDATE $forumReply SET visibility = "Deleted"`,
-			{
-				forumReply: `forumReply:${id}`,
-			},
+			{ forumReply: `forumReply:${id}` },
 		)
 	},
 	moderate: async ({ url, locals }) => {
@@ -270,18 +268,20 @@ export const actions = {
 
 		await squery(
 			surql`
-				LET $reply = SELECT <-posted AS poster FROM $forumReply;
+				BEGIN TRANSACTION;
+				LET $reply = SELECT (<-posted<-user)[0] AS poster
+					FROM $forumReply;
+				LET $poster = $reply.poster;
 				LET $textContent = CREATE textContent CONTENT {
 					text: "[removed]",
 					updated: time::now(),
 				};
-				RELATE $reply.poster->wrote->$textContent;
+				RELATE $poster->wrote->$textContent;
 
 				UPDATE $forumReply SET content += $textContent;
-				UPDATE $forumReply SET visibility = "Moderated"`,
-			{
-				forumReply: `forumReply:${id}`,
-			},
+				UPDATE $forumReply SET visibility = "Moderated";
+				COMMIT TRANSACTION`,
+			{ forumReply: `forumReply:${id}` },
 		)
 	},
 	like: categoryActions.like as any,
