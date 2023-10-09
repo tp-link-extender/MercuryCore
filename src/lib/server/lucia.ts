@@ -48,17 +48,22 @@ export async function addUserData(user: User) {
 		surql`
 			SELECT
 				*,
-				bio[0].text,
-				string::split(type::string(id), ":")[1] AS id
+				string::split(type::string(id), ":")[1] AS id,
+				(SELECT text, updated FROM $parent.bio
+				ORDER BY updated DESC) AS bio
 			FROM user WHERE number = $number`,
 		user,
 	)) as {
-		bio: string
+		bio: {
+			text: string
+			updated: string
+		}[]
 		currency: number
 		email: string
 		id: string
 		number: number
 		permissionLevel: number
+		theme: string
 		username: string
 	}[]
 
