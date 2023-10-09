@@ -15,8 +15,8 @@
 
 <form
 	use:enhance
-	class="col-lg-8"
 	method="POST"
+	class="col-lg-8"
 	action="?a=privatelink&tab=Privacy">
 	<fieldset class="row">
 		<label for="privateLink" class="col-md-3 col-form-label text-md-right">

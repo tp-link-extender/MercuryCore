@@ -14,11 +14,11 @@ export async function load({ locals, params }) {
 		userExists = (await squery(
 			surql`
 				SELECT
-					id,
 					username,
 					number,
 					permissionLevel,
-					bio[0] AS bio,
+					(SELECT text, updated FROM $parent.bio
+					ORDER BY updated DESC) AS bio,
 					(SELECT
 						*,
 						(SELECT text, updated FROM $parent.content
@@ -84,7 +84,6 @@ export async function load({ locals, params }) {
 				memberCount: number
 				name: string
 			}[]
-			id: string
 			incomingRequest: boolean
 			number: number
 			outgoingRequest: boolean

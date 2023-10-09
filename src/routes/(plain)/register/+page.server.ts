@@ -140,6 +140,7 @@ export const actions = {
 						email: $email,
 						permissionLevel: 1,
 						bio: [],
+						theme: "standard",
 					};
 					RELATE $user->used->$key;
 					UPDATE $key SET usesLeft -= 1`,
@@ -221,6 +222,7 @@ export const actions = {
 				email: "",
 				permissionLevel: 5,
 				bio: [],
+				theme: "standard",
 			})
 		} catch (e) {
 			const error = e as Error
