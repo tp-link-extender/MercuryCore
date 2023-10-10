@@ -141,6 +141,14 @@ export const actions = {
 						permissionLevel: 1,
 						bio: [],
 						theme: "standard",
+						bodyColours: {
+							Head: 24,
+							Torso: 23,
+							LeftArm: 24,
+							RightArm: 24,
+							LeftLeg: 119,
+							RightLeg: 119,
+						},
 					};
 					RELATE $user->used->$key;
 					UPDATE $key SET usesLeft -= 1`,
@@ -223,6 +231,14 @@ export const actions = {
 				permissionLevel: 5,
 				bio: [],
 				theme: "standard",
+				bodyColours: {
+					Head: 24,
+					Torso: 23,
+					LeftArm: 24,
+					RightArm: 24,
+					LeftLeg: 119,
+					RightLeg: 119,
+				},
 			})
 		} catch (e) {
 			const error = e as Error
