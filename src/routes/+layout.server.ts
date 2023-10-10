@@ -60,17 +60,29 @@ export async function load({ request, locals }) {
 
 				case "AssetComment":
 				case "AssetCommentReply":
-					const comment = await prisma.assetComment.findUnique({
-						where: {
-							id: i.relativeId,
-						},
-						include: {
-							parentAsset: true,
-						},
-					})
+					const comment = (
+						(await squery(
+							surql`
+								SELECT
+									*,
+									string::split(type::string(id), ":")[1] AS id,
+									(SELECT
+										string::split(type::string(id), ":")[1] AS id,
+										name
+									FROM ->replyToAsset->asset)[0] AS parentAsset
+								FROM $comment`,
+							{ comment: `assetComment:${i.relativeId}` },
+						)) as {
+							id: string
+							parentAsset: {
+								id: string
+								name: string
+							}
+						}[]
+					)[0]
 					if (!comment) break
 
-					i.link = `/avatarshop/${comment.parentAsset.id}/${comment.parentAsset.id}/${comment.id}`
+					i.link = `/avatarshop/${comment.parentAsset.id}/${comment.parentAsset.name}/${comment.id}`
 					break
 
 				case "ForumPostReply":

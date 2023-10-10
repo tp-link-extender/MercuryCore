@@ -1,4 +1,5 @@
-import { prisma } from "$lib/server/prisma"
+import surql from "$lib/surrealtag"
+import { squery } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import fs from "fs"
 
@@ -9,19 +10,25 @@ export async function GET({ params }) {
 	const id = parseInt(params.id)
 
 	if (
-		!(await prisma.asset.findUnique({
-			where: {
-				id,
-			},
-		}))
+		!(
+			(await squery(
+				surql`
+					SELECT
+						name, 
+						string::split(type::string(id), ":")[1] AS id
+					FROM $asset`,
+				{ asset: `asset:${params.id}` },
+			)) as {
+				id: number
+				name: string
+			}[]
+		)[0]
 	)
 		throw error(404, "Not found")
 
 	let file
 
-	const files = [`data/thumbnails/${id}.png`, `data/assets/${id}`]
-
-	for (const f of files)
+	for (const f of [`data/thumbnails/${id}.png`, `data/assets/${id}`])
 		try {
 			file = fs.readFileSync(f)
 			break

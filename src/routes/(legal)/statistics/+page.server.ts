@@ -9,7 +9,7 @@ export async function load({ locals }) {
 		users,
 		places,
 		groups,
-		// assets,
+		assets,
 		transactions,
 		friendships,
 		followerships,
@@ -23,7 +23,7 @@ export async function load({ locals }) {
 		count(SELECT * FROM user);
 		count(SELECT * FROM place);
 		count(SELECT * FROM group);
-		# prisma.asset.count(),
+		count(SELECT * FROM asset);
 		count(SELECT * FROM transaction);
 		count(SELECT * FROM friends);
 		count(SELECT * FROM follows);
@@ -38,7 +38,7 @@ export async function load({ locals }) {
 		users,
 		places,
 		groups,
-		assets: 0,
+		assets,
 		transactions,
 		friendships,
 		followerships,

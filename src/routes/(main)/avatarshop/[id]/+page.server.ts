@@ -1,15 +1,24 @@
-import { prisma } from "$lib/server/prisma"
+import surql from "$lib/surrealtag"
+import { squery } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function load({ params }) {
 	if (!params.id || !/^\d+$/.test(params.id))
 		throw error(400, `Invalid asset id: ${params.id}`)
 
-	const asset = await prisma.asset.findUnique({
-		where: {
-			id: parseInt(params.id),
-		},
-	})
+	const asset = (
+		(await squery(
+			surql`
+				SELECT
+					name, 
+					string::split(type::string(id), ":")[1] AS id
+				FROM $asset`,
+			{ asset: `asset:${params.id}` },
+		)) as {
+			id: number
+			name: string
+		}[]
+	)[0]
 
 	if (!asset) throw error(404, "Not found")
 

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	import { isPowerOfTwo } from "three/src/math/MathUtils.js"
 
 	export let data
 
@@ -49,9 +48,9 @@
 			<div class="d-flex">
 				<strong class="pe-2">by:</strong>
 
-				{#if data.creatorUser}
+				{#if data.creator}
 					<User
-						user={data.creatorUser}
+						user={data.creator}
 						size="1.5rem"
 						full
 						thin
@@ -148,7 +147,7 @@
 				{replyingTo}
 				postId={data.id.toString()}
 				assetName={data.name}
-				postAuthorName={data.creatorUser?.username || ""}
+				postAuthorName={data.creator.username || ""}
 				{repliesCollapsed}
 				topLevel />
 		{/each}
