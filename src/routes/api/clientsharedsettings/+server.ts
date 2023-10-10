@@ -4,6 +4,8 @@ export const GET = () =>
 	json({
 		FFlagUserHttpAPIVisible: "True",
 		FFlagModuleScriptsVisible: "True",
+		DFFlagAllowAllUsersToUseHttpService: "True",
+		DFFlagUserHttpAPIEnabled: "True",
 		FFlagSurfaceGuiVisible: "True",
 		FFlagCreateServerScriptServiceInStudio: "True",
 		FFlagCreateServerStorageInStudio: "True",
