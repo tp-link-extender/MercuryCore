@@ -1,13 +1,10 @@
 // A collection of functions useful for Prisma, as well
 // as only needing to initialise PrismaClient once.
 
-import cql from "$lib/cyphertag"
 import surql from "$lib/surrealtag"
 import { multiSquery } from "$lib/server/surreal"
 import { building } from "$app/environment"
 import { PrismaClient } from "@prisma/client"
-import type { Prisma } from "@prisma/client"
-import { roQuery } from "./redis"
 
 let prisma: PrismaClient
 
@@ -17,46 +14,6 @@ if (!building) {
 }
 
 export { prisma }
-
-/**
- * Finds places in the database, and adds a like/dislike ratio to each place. Required because likes and dislikes are stored in RedisGraph, while the rest of the info for places is stored in Postgres.
- * @param query The prisma query to execute.
- * @returns The result of the query, with the like/dislike ratio added to each place.
- * @example
- * const places = await findPlaces({
- * 	where: {
- * 		privateServer: false,
- * 	},
- * })
- */
-export async function findPlaces(query: Prisma.PlaceFindManyArgs = {}) {
-	const places = await prisma.place.findMany(query)
-
-	// Add like/dislike ratio to each place
-	for (const place of places as typeof places & { ratio: number | "--" }[]) {
-		const query = {
-				place: place.id,
-			},
-			[likes, total] = await Promise.all([
-				roQuery(
-					"places",
-					cql`RETURN SIZE((:User) -[:likes]-> (:Place { name: $place }))`,
-					query,
-					true,
-				),
-				roQuery(
-					"places",
-					cql`RETURN SIZE((:User) -[:likes|dislikes]-> (:Place { name: $place }))`,
-					query,
-					true,
-				),
-			]),
-			ratio = Math.floor((likes / total) * 100)
-
-		place["ratio"] = isNaN(ratio) ? "--" : ratio
-	}
-	return places as typeof places & { ratio: number | "--" }[]
-}
 
 const failed = "The query was not executed due to a failed transaction"
 /**

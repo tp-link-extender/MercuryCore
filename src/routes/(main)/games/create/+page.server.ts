@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma, transaction } from "$lib/server/prisma"
+import { transaction } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
@@ -31,24 +31,22 @@ export const actions = {
 		if (!form.valid) return formError(form)
 
 		const {
-			name,
-			description,
-			serverIP,
-			serverPort,
-			maxPlayers,
-			privateServer,
-		} = form.data
+				name,
+				description,
+				serverIP,
+				serverPort,
+				maxPlayers,
+				privateServer,
+			} = form.data,
+			gameCount = (
+				(await squery(
+					surql`SELECT count(->owns->place) FROM user`,
+				)) as {
+					count: number
+				}[]
+			)[0].count
 
-		const gameCount = await prisma.authUser.findUnique({
-			where: {
-				id: user.id,
-			},
-			select: {
-				_count: true,
-			},
-		})
-
-		if (gameCount && gameCount?._count.places >= 2)
+		if (gameCount >= 2)
 			return formError(
 				form,
 				["other"],
@@ -67,60 +65,42 @@ export const actions = {
 			return formError(form, ["other"], [e.message])
 		}
 
-		await Promise.all([
-			prisma.place.create({
-				data: {
-					id,
-					name,
-					description: {
-						create: {
-							text: description,
-						},
-					},
-					serverIP,
-					serverPort,
-					privateServer,
-					maxPlayers,
-					ownerUsername: user.username,
-				},
-			}),
-			squery(
-				surql`
-					LET $textContent = CREATE textContent CONTENT {
-						text: $description,
-						updated: time::now(),
-					};
-					RELATE $user->wrote->$textContent;
-	
-					LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
-					LET $place = CREATE place CONTENT {
-						id: $id,
-						name: $name,
-						description: $textContent,
-						serverIP: $serverIP,
-						serverPort: $serverPort,
-						privateServer: $privateServer,
-						serverTicket: rand::guid(),
-						privateTicket: rand::guid(),
-						serverPing: 0,
-						maxPlayers: $maxPlayers,
-						created: time::now(),
-						updated: time::now(),
-						deleted: false,
-					};
-					RELATE $user->owns->$place`,
-				{
-					user: `user:${user.id}`,
-					name,
-					description,
-					serverIP,
-					serverPort,
-					privateServer,
-					maxPlayers,
-				},
-			),
-		])
+		await squery(
+			surql`
+				LET $textContent = CREATE textContent CONTENT {
+					text: $description,
+					updated: time::now(),
+				};
+				RELATE $user->wrote->$textContent;
 
-		throw redirect(302, `/place/${id + 1}`)
+				LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
+				LET $place = CREATE place CONTENT {
+					id: $id,
+					name: $name,
+					description: $textContent,
+					serverIP: $serverIP,
+					serverPort: $serverPort,
+					privateServer: $privateServer,
+					serverTicket: rand::guid(),
+					privateTicket: rand::guid(),
+					serverPing: 0,
+					maxPlayers: $maxPlayers,
+					created: time::now(),
+					updated: time::now(),
+					deleted: false,
+				};
+				RELATE $user->owns->$place`,
+			{
+				user: `user:${user.id}`,
+				name,
+				description,
+				serverIP,
+				serverPort,
+				privateServer,
+				maxPlayers,
+			},
+		)
+
+		throw redirect(302, `/place/${id + 1}/${name}`)
 	},
 }

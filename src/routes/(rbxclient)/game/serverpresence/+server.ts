@@ -1,5 +1,6 @@
+import surql from "$lib/surrealtag"
 import { error } from "@sveltejs/kit"
-import { prisma } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 
 export async function GET({ url, request, setHeaders }) {
 	const ticket = url.searchParams.get("ticket") as string
@@ -8,10 +9,12 @@ export async function GET({ url, request, setHeaders }) {
 	if (request.headers.get("user-agent") != "Roblox/WinInet")
 		throw error(400, "Invalid Request")
 
-	await prisma.place.update({
-		where: { serverTicket: ticket },
-		data: { serverPing: Math.floor(Date.now() / 1000) },
-	})
+	await squery(
+		surql`
+			UPDATE place SET serverPing = time::nano() / 1000000000
+			WHERE serverTicket = $ticket`,
+		{ ticket },
+	)
 
 	setHeaders({
 		Pragma: "no-cache",
