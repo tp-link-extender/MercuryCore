@@ -1,6 +1,5 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
@@ -115,48 +114,11 @@ export const actions = {
 				}
 		}
 
-		const { id, imageAssetId }: { id: number; imageAssetId: any } =
-			await prisma.asset.create({
-				data: {
-					creatorUser: {
-						// cannot be creatorUsername
-						connect: {
-							id: user.id,
-						},
-					},
-					owners: {
-						connect: {
-							id: user.id,
-						},
-					},
-					name,
-					description: {
-						create: {
-							text: description || "",
-						},
-					},
-					type: assetType,
-					imageAsset: {
-						create: {
-							creatorUser: {
-								// cannot be creatorUsername
-								connect: {
-									id: user.id,
-								},
-							},
-							owners: {
-								connect: {
-									id: user.id,
-								},
-							},
-							name,
-							type: 1,
-							price: 0,
-						},
-					},
-					price,
-				},
-			})
+		const currentId = (await squery(
+				surql`stuff:increment.asset`,
+			)) as number,
+			imageAssetId = currentId + 1,
+			id = currentId + 2
 
 		await squery(
 			surql`
@@ -166,11 +128,18 @@ export const actions = {
 					name: $name,
 					type: 1,
 					price: 0,
+					description: [],
 					created: time::now(),
 					updated: time::now(),
 				};
-				RELATE user:${user.id}->owns->$imageAsset;
-				RELATE user:${user.id}->created->$imageAsset;
+				RELATE $user->owns->$imageAsset;
+				RELATE $user->created->$imageAsset;
+
+				LET $textContent = CREATE textContent CONTENT {
+					text: $description,
+					updated: time::now(),
+				};
+				RELATE $user->wrote->$textContent;
 
 				LET $id2 = (UPDATE ONLY stuff:increment SET asset += 1).asset;
 				LET $asset = CREATE asset CONTENT {
@@ -178,16 +147,19 @@ export const actions = {
 					name: $name,
 					type: $assetType,
 					price: $price,
+					description: $textContent,
 					created: time::now(),
 					updated: time::now(),
 				};
-				RELATE user:${user.id}->owns->$asset;
-				RELATE user:${user.id}->created->$asset;
+				RELATE $user->owns->$asset;
+				RELATE $user->created->$asset;
 				RELATE $asset->imageAsset->$imageAsset`,
 			{
 				name,
 				assetType,
 				price,
+				description,
+				user: `user:${user.id}`,
 			},
 		)
 

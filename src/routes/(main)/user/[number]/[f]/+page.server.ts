@@ -44,7 +44,6 @@ export async function load({ params }) {
 				username: string
 			}[]
 		>,
-		// number: roQuery("friends", numberQueries[type], query, true),
 		number: squery(numberQueries[type], {
 			user: `user:${user.id}`,
 		}) as Promise<number>,

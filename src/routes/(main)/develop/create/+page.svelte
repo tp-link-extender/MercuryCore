@@ -1,11 +1,20 @@
 <script lang="ts">
+	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const { form, errors, constraints, enhance, delayed, capture, restore } =
-		superForm(data.form, {
-			taintedMessage: false,
-		})
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
 
 	export const snapshot = { capture, restore }
 
@@ -133,6 +142,12 @@
 				</p>
 			</div>
 		</div>
+
+		<p
+			class:text-success={$page.status == 200}
+			class:text-danger={$page.status >= 400}>
+			{$message || ""}
+		</p>
 
 		<button class="btn btn-success">
 			{#if $delayed}

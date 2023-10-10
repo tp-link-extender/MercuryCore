@@ -5,7 +5,7 @@ import { error } from "@sveltejs/kit"
 export const like = (userId: string, thing: string) =>
 		squery(
 			surql`
-				DELETE $user->dislikes WHERE out=$thing;
+				DELETE $user->dislikes WHERE out = $thing;
 				IF $user ∉ (SELECT * FROM $thing<-likes).in THEN
 					RELATE $user->likes->$thing
 						SET time = time::now()
@@ -13,14 +13,14 @@ export const like = (userId: string, thing: string) =>
 			{ thing, user: `user:${userId}` },
 		),
 	unlike = (userId: string, thing: string) =>
-		squery(surql`DELETE $user->likes WHERE out=$thing`, {
+		squery(surql`DELETE $user->likes WHERE out = $thing`, {
 			thing,
 			user: `user:${userId}`,
 		}),
 	dislike = (userId: string, thing: string) =>
 		squery(
 			surql`
-				DELETE $user->likes WHERE out=$thing;
+				DELETE $user->likes WHERE out = $thing;
 				IF $user ∉ (SELECT * FROM $thing<-dislikes).in THEN
 					RELATE $user->dislikes->$thing
 						SET time = time::now()
@@ -28,7 +28,7 @@ export const like = (userId: string, thing: string) =>
 			{ thing, user: `user:${userId}` },
 		),
 	undislike = (userId: string, thing: string) =>
-		squery(surql`DELETE $user->dislikes WHERE out=$thing`, {
+		squery(surql`DELETE $user->dislikes WHERE out = $thing`, {
 			thing,
 			user: `user:${userId}`,
 		})

@@ -129,7 +129,7 @@
 						src={form?.avatar ||
 							`/api/avatar/${
 								user.username
-							}-body?r=${Math.random()}`} />
+							}-body`} />
 				</div>
 			</div>
 			<div class="card">
