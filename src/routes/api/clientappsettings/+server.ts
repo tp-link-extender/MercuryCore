@@ -25,6 +25,8 @@ export const GET = () =>
 		FFlagSSAOEnable: "True",
 
 		FFlagUserHttpAPIVisible: "True",
+		DFFlagAllowAllUsersToUseHttpService: "True",
+		DFFlagUserHttpAPIEnabled: "True",
 		FFlagModuleScriptsVisible: "True",
 		FFlagSurfaceGuiVisible: "True",
 		FFlagCreateServerScriptServiceInStudio: "True",
