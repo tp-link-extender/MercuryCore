@@ -1,119 +1,78 @@
-import cql from "$lib/cyphertag"
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma, transaction } from "$lib/server/prisma"
-import { squery } from "$lib/server/surreal"
-import { Query } from "$lib/server/redis"
-import id from "$lib/server/id"
+import { transaction } from "$lib/server/prisma"
+import surreal, { squery } from "$lib/server/surreal"
+import id, { valid } from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
-import addLikes from "$lib/server/addLikes"
 import { error } from "@sveltejs/kit"
-import { Prisma, NotificationType } from "@prisma/client"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import { like, likeSwitch } from "$lib/server/like"
+import { recurse, type Replies } from "./select"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
 	replyId: z.string().optional(),
 })
 
+const SELECTCOMMENTS = recurse(
+	from => surql`
+		(${from} <-replyToAsset<-assetComment
+		WHERE !->replyToComment) AS replies`,
+	// Make sure it's not a reply to another reply
+)
+
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id))
 		throw error(400, `Invalid asset id: ${params.id}`)
-	const id = parseInt(params.id),
-		// Since prisma does not yet support recursive copying, we have to do it manually
-		selectComments = {
-			// where: {
-			// 	OR: [{ visibility: Visibility.Visible }, { authorId: user.id }],
-			// },
-			select: {
-				id: true,
-				posted: true,
-				parentReplyId: true,
-				visibility: true,
-				author: {
-					select: {
-						username: true,
-						number: true,
-					},
-				},
-				content: {
-					orderBy: {
-						updated: Prisma.SortOrder.desc,
-					},
-					select: {
-						text: true,
-					},
-					take: 1,
-				},
-				replies: {},
-			},
-		}
-
-	for (let i = 0; i < 9; i++)
-		selectComments.select.replies = structuredClone(selectComments)
-
-	const getAsset = await prisma.asset.findUnique({
-		where: { id },
-		select: {
-			id: true,
-			name: true,
-			price: true,
-			description: {
-				orderBy: {
-					updated: "desc",
-				},
-				select: {
-					text: true,
-				},
-				take: 1,
-			},
-			type: true,
-
-			replies: {
-				where: {
-					parentReplyId: null,
-				},
-				...selectComments,
-			},
-			creatorUser: {
-				select: {
-					username: true,
-					number: true,
-				},
-			},
-			owners: {
-				select: {
-					username: true,
-					number: true,
-				},
-			},
-			_count: {
-				select: {
-					owners: true,
-				},
-			},
-		},
-	})
-
-	if (!getAsset || !getAsset.creatorUser) throw error(404, "Not found")
 
 	const { user } = await authorise(locals),
-		assetOwned = await prisma.asset.findUnique({
-			where: { id },
-			select: {
-				owners: {
-					where: {
-						id: user.id,
-					},
-				},
-			},
-		})
+		id = parseInt(params.id)
 
-	// id not needed for querying likes, as assets can't be voted on
-	getAsset.id = 0
+	const asset = (
+		(await squery(
+			surql`
+				SELECT
+					*,
+					string::split(type::string(id), ":")[1] AS id,
+					(SELECT number, username FROM <-created<-user)[0] AS creator,
+					count(<-owns<-user) AS sold,
+					($user ∈ <-owns<-user.id) AS owned,
+
+					(SELECT text, updated FROM $parent.description
+					ORDER BY updated DESC) AS description,
+
+					${SELECTCOMMENTS}
+				FROM $asset`,
+			{
+				asset: `asset:${id}`,
+				user: `user:${user.id}`,
+			},
+		)) as {
+			creator: {
+				number: number
+				username: string
+			}
+			description: {
+				id: string
+				text: any
+				updated: string
+			}[]
+			id: string
+			name: string
+			owned: boolean
+			posted: string
+			price: number
+			replies: Replies
+			sold: number
+			type: number
+			visibility: string
+		}[]
+	)[0]
+
+	if (!asset || !asset.creator) throw error(404, "Not found")
 
 	const noTexts = [
 			"Cancel",
@@ -128,15 +87,7 @@ export async function load({ locals, params }) {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
 		form: superValidate(schema),
-		...(await addLikes<typeof getAsset>(
-			"asset",
-			"Comment",
-			getAsset,
-			user.username,
-		)),
-		id, // Add back the id
-		owned: (assetOwned?.owners || []).length > 0,
-		sold: getAsset._count.owners,
+		...asset,
 	}
 }
 
@@ -153,43 +104,70 @@ export const actions = {
 			replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another comment
 
+		if (replyId && !valid(replyId)) throw error(400, "Invalid reply id")
+
 		let receiverId
 		if (replyId) {
-			const assetcomment = await prisma.assetComment.findUnique({
-				where: { id: replyId },
-			})
-			if (!assetcomment) throw error(404)
-			receiverId = assetcomment?.authorId || ""
+			const commentAuthor = (
+				(await squery(
+					surql`
+						SELECT
+							number,
+							username
+						FROM $comment<-posted<-user`,
+					{ comment: `assetComment:${replyId}` },
+				)) as {
+					id: string
+				}[]
+			)[0]
+			if (!commentAuthor) throw error(404)
+			receiverId = commentAuthor.id || ""
 		} else {
-			const assetcomment = await prisma.asset.findUnique({
-				where: { id: parseInt(params.id) },
-				select: {
-					creatorUser: {
-						select: {
-							id: true,
-						},
-					},
-				},
-			})
-			if (!assetcomment) throw error(404)
-			receiverId = assetcomment?.creatorUser?.id || ""
+			const commentAuthor = (
+				(await squery(
+					surql`
+						SELECT
+							string::split(type::string(id), ":")[1] AS id
+						FROM $asset<-created<-user`,
+					{ asset: `asset:${params.id}` },
+				)) as {
+					id: string
+				}[]
+			)[0]
+			if (!commentAuthor) throw error(404)
+			receiverId = commentAuthor.id || ""
 		}
+
+		console.log("aight")
 
 		const newReplyId = await id()
 
-		await prisma.assetComment.create({
-			data: {
-				id: newReplyId,
-				authorId: user.id,
-				content: {
-					create: {
-						text: content,
-					},
-				},
-				topParentId: parseInt(params.id),
-				parentReplyId: replyId,
+		await squery(
+			surql`
+				LET $textContent = CREATE textContent CONTENT {
+					text: $content,
+					updated: time::now(),
+				};
+				RELATE $user->wrote->$textContent;
+
+				LET $reply = CREATE $assetComment CONTENT {
+					posted: time::now(),
+					visibility: "Visible",
+					content: $textContent,
+				};
+				RELATE $reply->replyToAsset->$asset;
+				IF $replyId {
+					RELATE $reply->replyToComment->$replyId;
+				};
+				RELATE $user->posted->$reply`,
+			{
+				content,
+				user: `user:${user.id}`,
+				assetComment: `assetComment:${newReplyId}`,
+				asset: `asset:${params.id}`,
+				replyId: replyId ? `assetComment:${replyId}` : undefined,
 			},
-		})
+		)
 
 		if (user.id != receiverId)
 			await squery(
@@ -214,97 +192,28 @@ export const actions = {
 				},
 			)
 
-		await Query(
-			"forum",
-			cql`
-				MERGE (u:User { name: $user })
-				MERGE (p:Comment { name: $id })
-				MERGE (u) -[:likes]-> (p)`,
-			{ id: newReplyId, user: user.username },
-		)
+		await like(user.id, `assetComment:${newReplyId}`)
 	},
-	like: async ({ url, request, locals }) => {
+	like: async ({ request, locals, url }) => {
 		const { user } = await authorise(locals),
 			data = await formData(request),
 			{ action } = data,
 			id = url.searchParams.get("id"),
 			replyId = url.searchParams.get("rid")
 
+		if (replyId && !valid(replyId)) throw error(400, "Invalid reply id")
+
 		if (
-			(id &&
-				!(await prisma.asset.findUnique({
-					where: {
-						id: parseInt(id),
-					},
-				}))) ||
-			!replyId
+			(id && !(await surreal.select(`asset:${id}`))[0]) ||
+			(replyId && !(await surreal.select(`assetComment:${replyId}`))[0])
 		)
 			throw error(404)
 
-		const query = {
-			user: user.username,
-			id: id || replyId,
-		}
-
-		try {
-			switch (action) {
-				case "like":
-					await Query(
-						"asset",
-						cql`
-							MATCH (:User { name: $user }) -[r:dislikes]-> (:Comment { name: $id })
-							DELETE r`,
-						query,
-					)
-					await Query(
-						"asset",
-						cql`
-							MERGE (u:User { name: $user })
-							MERGE (p:Comment { name: $id })
-							MERGE (u) -[:likes]-> (p)`,
-						query,
-					)
-					break
-				case "unlike":
-					await Query(
-						"asset",
-						cql`
-							MATCH (:User { name: $user }) -[r:likes]-> (:Comment { name: $id })
-							DELETE r`,
-						query,
-					)
-					break
-				case "dislike":
-					await Query(
-						"asset",
-						cql`
-							MATCH (:User { name: $user }) -[r:likes]-> (:Comment { name: $id })
-							DELETE r`,
-						query,
-					)
-					await Query(
-						"asset",
-						cql`
-							MERGE (u:User { name: $user })
-							MERGE (p:Comment { name: $id })
-							MERGE (u) -[:dislikes]-> (p)`,
-						query,
-					)
-					break
-				case "undislike":
-					await Query(
-						"asset",
-						cql`
-							MATCH (:User { name: $user }) -[r:dislikes]-> (:Comment { name: $id })
-							DELETE r`,
-						query,
-					)
-					break
-			}
-		} catch (e) {
-			console.error(e)
-			throw error(500, "Redis error 2")
-		}
+		await likeSwitch(
+			action,
+			user.id,
+			`asset${replyId ? "Comment" : ""}:${id || replyId}`,
+		)
 	},
 	buy: async ({ url, locals, params }) => {
 		const { user } = await authorise(locals),
@@ -314,11 +223,11 @@ export const actions = {
 		console.log(action)
 
 		if (
-			!(await prisma.asset.findUnique({
-				where: {
-					id,
-				},
-			}))
+			!(
+				(await squery(surql`SELECT * FROM $asset`, {
+					asset: `asset:${id}`,
+				})) as {}[]
+			)[0]
 		)
 			throw error(404)
 
@@ -326,28 +235,38 @@ export const actions = {
 
 		switch (action) {
 			case "buy": {
-				const asset = await prisma.asset.findUnique({
-					where: {
-						id,
-					},
-					include: {
-						creatorUser: true,
-						// creatorGroup: true,
-						owners: {
-							where: {
-								id: user.id,
-							},
+				const asset = (
+					(await squery(
+						surql`
+							SELECT
+								*,
+								(SELECT
+									string::split(type::string(id), ":")[1] AS id,
+									username
+								FROM <-created<-user)[0] AS creator,
+								($user ∈ <-owns<-user.id) AS owned
+							FROM $asset`,
+						{
+							asset: `asset:${id}`,
+							user: `user:${user.id}`,
 						},
-					},
-				})
+					)) as {
+						creator: {
+							id: string
+							username: string
+						}
+						name: string
+						owned: boolean
+						price: number
+					}[]
+				)[0]
 				if (!asset) throw error(404, "Not found")
-				if ((asset.owners || []).length > 0)
-					throw error(400, "You already own this item")
+				if (asset.owned) throw error(400, "You already own this item")
 
 				try {
 					await transaction(
 						{ id: user.id },
-						{ id: asset.creatorUser?.id },
+						{ id: asset.creator.id },
 						asset.price,
 						{
 							note: `Purchased asset ${asset.name}`,
@@ -360,19 +279,11 @@ export const actions = {
 				}
 
 				await Promise.all([
-					prisma.authUser.update({
-						where: {
-							id: user.id,
-						},
-						data: {
-							assetsOwned: {
-								connect: {
-									id,
-								},
-							},
-						},
+					squery(surql`RELATE $user->owns->$asset`, {
+						user: `user:${user.id}`,
+						asset: `asset:${id}`,
 					}),
-					user.id == asset.creatorUser?.id
+					user.id == asset.creator.id
 						? null
 						: squery(
 								surql`
@@ -386,7 +297,7 @@ export const actions = {
 								{
 									type: "ItemPurchase",
 									sender: `user:${user.id}`,
-									receiver: `user:${asset.creatorUser?.id}`,
+									receiver: `user:${asset.creator.id}`,
 									note: `${user.username} just purchased your item: ${asset.name}`,
 									relativeId: params.id,
 								},
@@ -396,34 +307,26 @@ export const actions = {
 				break
 			}
 			case "delete": {
-				const asset = await prisma.asset.findUnique({
-					where: {
-						id,
-					},
-					include: {
-						creatorUser: true,
-						owners: {
-							where: {
-								id: user.id,
-							},
+				const asset = (
+					(await squery(
+						surql`
+							SELECT
+								($user ∈ <-owns<-user.id) AS owned
+							FROM $asset`,
+						{
+							asset: `asset:${id}`,
+							user: `user:${user.id}`,
 						},
-					},
-				})
+					)) as {
+						owned: boolean
+					}[]
+				)[0]
 				if (!asset) throw error(404, "Not found")
-				if ((asset?.owners || []).length < 1)
-					throw error(400, "You don't own this item")
+				if (asset.owned) throw error(400, "You don't own this item")
 
-				await prisma.authUser.update({
-					where: {
-						id: user.id,
-					},
-					data: {
-						assetsOwned: {
-							disconnect: {
-								id,
-							},
-						},
-					},
+				await squery(surql`DELETE $user->owns WHERE out = $asset`, {
+					user: `user:${user.id}`,
+					asset: `asset:${id}`,
 				})
 
 				break
@@ -433,16 +336,24 @@ export const actions = {
 	delete: async ({ url, locals }) => {
 		const { user } = await authorise(locals),
 			id = url.searchParams.get("id")
-
 		if (!id) throw error(400, "No comment id provided")
+		if (!valid(id)) throw error(400, "Invalid reply id")
+		// Prevents incorrect ids erroring the Surreal query as well
 
-		const comment = await prisma.assetComment.findUnique({
-			where: { id },
-			select: {
-				authorId: true,
-				visibility: true,
-			},
-		})
+		const comment = (
+			(await squery(
+				surql`
+					SELECT
+						string::split(type::string((
+							<-posted<-user.id)[0]), ":")[1] AS authorId,
+						visibility
+					FROM $assetComment`,
+				{ assetComment: `assetComment:${id}` },
+			)) as {
+				authorId: string
+				visibility: string
+			}[]
+		)[0]
 
 		if (!comment) throw error(404, "Comment not found")
 
@@ -452,38 +363,49 @@ export const actions = {
 		if (comment.visibility != "Visible")
 			throw error(400, "Comment already deleted")
 
-		await prisma.assetComment.update({
-			where: { id },
-			data: {
-				visibility: "Deleted",
-				content: {
-					create: {
-						text: "[deleted]",
-					},
-				},
-			},
-		})
+		await squery(
+			surql`
+				LET $poster = (SELECT
+					<-posted<-user AS poster
+				FROM $assetComment)[0].poster;
+				LET $textContent = CREATE textContent CONTENT {
+					text: "[deleted]",
+					updated: time::now(),
+				};
+				RELATE $poster->wrote->$textContent;
+
+				UPDATE $assetComment SET content += $textContent;
+				UPDATE $assetComment SET visibility = "Deleted"`,
+			{ assetComment: `assetComment:${id}` },
+		)
 	},
 	moderate: async ({ url, locals }) => {
 		await authorise(locals, 4)
 
 		const id = url.searchParams.get("id")
 		if (!id) throw error(400, "No comment id provided")
+		if (!valid(id)) throw error(400, "Invalid reply id")
 
-		try {
-			await prisma.assetComment.update({
-				where: { id },
-				data: {
-					visibility: "Moderated",
-					content: {
-						create: {
-							text: "[removed]",
-						},
-					},
-				},
-			})
-		} catch (e) {
-			throw error(404, "Comment not found")
-		}
+		const findComment = (await surreal.select(`assetComment:${id}`))[0]
+
+		if (!findComment) throw error(404, "Comment not found")
+
+		await squery(
+			surql`
+				BEGIN TRANSACTION;
+				LET $reply = SELECT (<-posted<-user)[0] AS poster
+					FROM $assetComment;
+				LET $poster = $reply.poster;
+				LET $textContent = CREATE textContent CONTENT {
+					text: "[removed]",
+					updated: time::now(),
+				};
+				RELATE $poster->wrote->$textContent;
+
+				UPDATE $assetComment SET content += $textContent;
+				UPDATE $assetComment SET visibility = "Moderated";
+				COMMIT TRANSACTION`,
+			{ assetComment: `assetComment:${id}` },
+		)
 	},
 }

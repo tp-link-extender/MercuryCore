@@ -7,8 +7,9 @@
 		permissionLevel: number
 	}
 
-	export let reply: import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
-	// | import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
+	export let reply:
+		| import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
+		| import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
 
 	export let num: number
 	export let depth = 0
