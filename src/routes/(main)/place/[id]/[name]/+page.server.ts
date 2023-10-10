@@ -82,7 +82,7 @@ export async function load({ url, locals, params }) {
 			getPlace.privateServer &&
 			privateServerCode != getPlace.privateTicket)
 	)
-		throw error(404, "Not Found")
+		throw error(404, "Place not found")
 
 	return getPlace
 }
@@ -110,7 +110,7 @@ export const actions = {
 		)
 			throw error(404, "Place not found")
 
-		await likeSwitch(action, user.id, `place:${id.toString()}`)
+		await likeSwitch(action, user.id, `place:${id}`)
 	},
 
 	join: async ({ request, locals }) => {

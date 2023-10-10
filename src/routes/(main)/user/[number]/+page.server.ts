@@ -1,6 +1,5 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
@@ -44,8 +43,8 @@ export async function load({ locals, params }) {
 					count(->follows) AS followingCount,
 
 					$user ∈ <->friends<->user AS friends,
-					$user ∈ ->follows->user AS following,
-					$user ∈ <-follows<-user AS follower,
+					$user ∈ <-follows<-user AS following,
+					$user ∈ ->follows->user AS follower,
 					$user ∈ ->request->user AS incomingRequest,
 					$user ∈ <-request<-user AS outgoingRequest,
 
@@ -121,28 +120,25 @@ export const actions = {
 		if (!/^\d+$/.test(params.number))
 			throw error(400, `Invalid user id: ${params.number}`)
 		const number = parseInt(params.number),
-			userExists = await prisma.authUser.findUnique({
-				where: {
-					number,
-				},
-			})
-		if (!userExists) throw error(404, "User not found")
-		if (user.id == userExists.id)
-			// You can't friend/follow yourself
+			user2 = (
+				(await squery(
+					surql`
+						SELECT  string::split(type::string(id), ":")[1] AS id
+						FROM user WHERE number = $number`,
+					{ number },
+				)) as {
+					id: string
+				}[]
+			)[0]
+		if (!user2) throw error(404, "User not found")
+		if (user.id == user2.id)
 			throw error(400, "You can't friend/follow yourself")
 
 		const data = await formData(request),
 			{ action } = data,
-			user2Exists = await prisma.authUser.findUnique({
-				where: {
-					username: userExists?.username,
-				},
-			})
-		if (!user2Exists) throw error(400, "User not found")
-
-		const query = {
+			query = {
 				user: `user:${user.id}`,
-				user2: `user:${userExists.id}`,
+				user2: `user:${user2.id}`,
 			},
 			accept = () =>
 				squery(
@@ -174,14 +170,14 @@ export const actions = {
 						surql`
 							IF $user2 ∉ $user->follows->user {
 								RELATE $user->follows->$user2
-									SET time = time::now()
-							};
-							RELATE $user->notification->$user2 CONTENT {
-								type: $type,
-								time: time::now(),
-								note: $note,
-								relativeId: $relativeId,
-								read: false,
+									SET time = time::now();
+								RELATE $user->notification->$user2 CONTENT {
+									type: $type,
+									time: time::now(),
+									note: $note,
+									relativeId: $relativeId,
+									read: false,
+								}
 							}`,
 						{
 							type: "Follower",
@@ -192,7 +188,7 @@ export const actions = {
 					)
 					break
 				case "unfollow":
-					squery(
+					await squery(
 						surql`
 							DELETE $user->follows WHERE out = $user2;
 							DELETE $user->notification WHERE in = $user
@@ -208,6 +204,7 @@ export const actions = {
 				case "unfriend":
 					await squery(
 						surql`
+							DELETE $user<-friends WHERE in = $user2;
 							DELETE $user->friends WHERE out = $user2;
 							DELETE $user->notification WHERE in = $user
 								AND out = $user2 
@@ -260,7 +257,7 @@ export const actions = {
 					else throw error(400, "Already friends")
 					break
 				case "cancel":
-					squery(
+					await squery(
 						surql`
 							DELETE $user->request WHERE out = $user2;
 							DELETE $user->notification WHERE in = $user

@@ -30,7 +30,7 @@ const schemaInitial = z.object({
 
 export const load = async () => ({
 	form: superValidate(schema),
-	users: (await prisma.authUser.count()) > 0,
+	users: ((await squery(surql`count(SELECT * FROM user)`)) as number) > 0,
 })
 
 export const actions = {
@@ -53,15 +53,10 @@ export const actions = {
 		try {
 			if (
 				(
-					await prisma.authUser.findMany({
-						where: {
-							username: {
-								equals: username,
-								// Insensitive search cannot be used on findUnique for some reason
-								mode: "insensitive",
-							},
-						},
-					})
+					(await squery(
+						surql`SELECT * FROM user WHERE username = $username`,
+						{ username },
+					)) as {}[]
 				)[0]
 			)
 				return formError(
@@ -72,20 +67,16 @@ export const actions = {
 
 			if (
 				(
-					await prisma.authUser.findMany({
-						where: {
-							email: {
-								equals: email,
-								mode: "insensitive",
-							},
-						},
-					})
+					(await squery(
+						surql`SELECT * FROM user WHERE email = $email`,
+						{ email },
+					)) as {}[]
 				)[0]
 			)
 				return formError(
 					form,
 					["email"],
-					["This email is already being used"],
+					["This email is already in use"],
 				)
 
 			const regkeyCheck = (
@@ -191,7 +182,9 @@ export const actions = {
 			)
 
 		try {
-			if ((await prisma.authUser.count()) > 0)
+			if (
+				((await squery(surql`count(SELECT * FROM user)`)) as number) > 0
+			)
 				return formError(
 					form,
 					["username"],

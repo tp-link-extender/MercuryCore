@@ -18,7 +18,7 @@ const schemas = {
 	}),
 }
 
-export const load = async ({ locals }) => ({
+export const load = () => ({
 	profileForm: superValidate(schemas.profile),
 	passwordForm: superValidate(schemas.password),
 })
@@ -30,11 +30,11 @@ export const actions = {
 
 		console.log(action)
 
-		let form
 		switch (action) {
 			case "profile": {
-				form = await superValidate(request, schemas.profile)
+				const form = await superValidate(request, schemas.profile)
 				if (!form.valid) return formError(form)
+
 				const { bio, theme } = form.data
 
 				await squery(
@@ -64,7 +64,7 @@ export const actions = {
 			}
 
 			case "password": {
-				form = await superValidate(request, schemas.password)
+				const form = await superValidate(request, schemas.password)
 				if (!form.valid) return formError(form)
 
 				const { cpassword, npassword, cnpassword } = form.data

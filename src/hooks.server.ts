@@ -7,7 +7,6 @@ import surql from "$lib/surrealtag"
 import { squery } from "$lib/server/surreal"
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
 import surreal from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
@@ -72,13 +71,8 @@ export async function handle({ event, resolve }) {
 	)
 		throw redirect(302, "/moderation")
 
-	await prisma.authUser.update({
-		where: {
-			id: user.id,
-		},
-		data: {
-			lastOnline: new Date(),
-		},
+	await squery(surql`UPDATE $user SET lastOnline = time::now()`, {
+		user: `user:${user.id}`,
 	})
 
 	const economy = (await surreal.select("stuff:economy"))[0],
@@ -89,17 +83,15 @@ export async function handle({ event, resolve }) {
 			(new Date().getTime() - 3600_000 * dailyStipend) <
 		0
 	)
-		await prisma.authUser.update({
-			where: {
-				id: user.id,
+		await squery(
+			surql`
+				UPDATE $user SET currencyCollected = time::now();
+				UPDATE $user SET currency += $dailyStipend`,
+			{
+				user: `user:${user.id}`,
+				dailyStipend,
 			},
-			data: {
-				currencyCollected: new Date(),
-				currency: {
-					increment: dailyStipend,
-				},
-			},
-		})
+		)
 
 	return resolve(event)
 }
