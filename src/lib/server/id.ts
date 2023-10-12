@@ -1,5 +1,6 @@
+import surql from "$lib/surrealtag"
+import { squery } from "$lib/server/surreal"
 import { customAlphabet } from "nanoid"
-import { client } from "./redis"
 
 const nanoid = customAlphabet(
 	// Certain characters like ., ~, and - don't play nicely
@@ -17,16 +18,20 @@ const nanoid = customAlphabet(
 export default async function () {
 	let id = nanoid()
 
-	while (await client.hExists("usedIds", id)) {
+	while (
+		(
+			(await squery(surql`SELECT $id AS id FROM stuff:ids`, { id })) as {
+				id: boolean
+			}[]
+		)[0].id
+	) {
 		id = nanoid()
 		console.log("id collision!")
 	}
-	await client.hSet("usedIds", id, 1)
+	await squery(surql`UPDATE stuff:ids SET $id = true`, { id })
 
 	return id
 }
-
-export const rollback = async (id: string) => await client.hDel("usedIds", id)
 
 /**
  * Checks whether an ID is valid, i.e. it is 5 characters long and uses only valid characters.
