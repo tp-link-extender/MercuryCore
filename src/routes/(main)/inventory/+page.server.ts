@@ -1,19 +1,24 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 
 export const load = async ({ locals }) => ({
-	assets: await prisma.asset.findMany({
-		where: {
-			owners: {
-				some: {
-					number: (await authorise(locals)).user.number,
-				},
-			},
-		},
-		select: {
-			name: true,
-			price: true,
-			id: true,
-		},
-	}),
+	assets: squery(
+		surql`
+			SELECT
+				string::split(type::string(id), ":")[1] AS id,
+				name,
+				price,
+				type,
+				<-owns<-user AS owners
+			FROM asset WHERE $user ∈ <-owns<-user`,
+		{ user: `user:${(await authorise(locals)).user.id}` },
+	) as Promise<
+		{
+			name: string
+			price: number
+			id: number
+			type: string
+		}[]
+	>,
 })

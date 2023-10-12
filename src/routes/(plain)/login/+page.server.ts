@@ -1,5 +1,6 @@
+import surql from "$lib/surrealtag"
 import { auth } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { squery } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -16,7 +17,7 @@ const schema = z.object({
 
 export const load = async () => ({
 	form: superValidate(schema),
-	users: (await prisma.authUser.count()) > 0,
+	users: ((await squery(surql`count(SELECT * FROM user)`)) as number) > 0,
 })
 
 export const actions = {

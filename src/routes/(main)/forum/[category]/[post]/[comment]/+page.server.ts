@@ -48,8 +48,8 @@ export async function load({ locals, params }) {
 				
 				count(<-likes) AS likeCount,
 				count(<-dislikes) AS dislikeCount,
-				($user ∈ <-likes<-user.id) AS likes,
-				($user ∈ <-dislikes<-user.id) AS dislikes,
+				$user ∈ <-likes<-user.id AS likes,
+				$user ∈ <-dislikes<-user.id AS dislikes,
 
 				(SELECT
 					title,

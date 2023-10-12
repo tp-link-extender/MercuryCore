@@ -2,7 +2,7 @@
 
 import surql from "$lib/surrealtag"
 
-exporttype Replies = {
+export type Replies = {
 	author: {
 		number: number
 		username: string
@@ -35,8 +35,8 @@ const SELECTFROM = surql`
 		
 		count(<-likes) AS likeCount,
 		count(<-dislikes) AS dislikeCount,
-		($user ∈ <-likes<-user.id) AS likes,
-		($user ∈ <-dislikes<-user.id) AS dislikes,
+		$user ∈ <-likes<-user.id AS likes,
+		$user ∈ <-dislikes<-user.id AS dislikes,
 
 		# again #
 	FROM`
