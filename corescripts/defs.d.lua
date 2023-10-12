@@ -7106,6 +7106,7 @@ end
 declare class NetworkServer extends NetworkPeer
 	function EncryptStringForPlayerId(self, toEncrypt: string, playerId: number): string
 	function SetIsPlayerAuthenticationRequired(self, value: boolean): nil
+	function Start(self): nil
 end
 
 declare class NetworkReplicator extends Instance
