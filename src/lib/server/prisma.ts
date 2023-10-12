@@ -3,17 +3,6 @@
 
 import surql from "$lib/surrealtag"
 import { multiSquery } from "$lib/server/surreal"
-import { building } from "$app/environment"
-import { PrismaClient } from "@prisma/client"
-
-let prisma: PrismaClient
-
-if (!building) {
-	prisma = new PrismaClient()
-	console.log("loaded prisma")
-}
-
-export { prisma }
 
 const failed = "The query was not executed due to a failed transaction"
 /**

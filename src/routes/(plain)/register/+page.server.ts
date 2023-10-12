@@ -1,6 +1,5 @@
 import surql from "$lib/surrealtag"
 import { auth } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
 import surreal, { squery } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect, fail } from "@sveltejs/kit"
@@ -107,6 +106,7 @@ export const actions = {
 				attributes: {
 					username,
 					email,
+					permissionLevel: 1,
 				} as any,
 			})
 
@@ -117,37 +117,13 @@ export const actions = {
 				}),
 			)
 
-			const getUser = await prisma.authUser.findUnique({
-				where: {
-					id: user.id,
-				},
-			})
-
 			await squery(
 				surql`
-					CREATE $user CONTENT {
-						username: $username,
-						number: $number,
-						email: $email,
-						permissionLevel: 1,
-						bio: [],
-						theme: "standard",
-						bodyColours: {
-							Head: 24,
-							Torso: 23,
-							LeftArm: 24,
-							RightArm: 24,
-							LeftLeg: 119,
-							RightLeg: 119,
-						},
-					};
 					RELATE $user->used->$key;
 					UPDATE $key SET usesLeft -= 1`,
 				{
-					user: `user:${getUser?.id}`,
-					username,
-					number: getUser?.number,
-					email,
+					user: `user:${user.id}`,
+					key: `regKey:⟨${regkey}⟩`,
 				},
 			)
 		} catch (e) {
@@ -210,29 +186,6 @@ export const actions = {
 					attributes: {},
 				}),
 			)
-
-			const getUser = await prisma.authUser.findUnique({
-				where: {
-					id: user.id,
-				},
-			})
-
-			await surreal.create(`user:${getUser?.id}`, {
-				username,
-				number: getUser?.number,
-				email: "",
-				permissionLevel: 5,
-				bio: [],
-				theme: "standard",
-				bodyColours: {
-					Head: 24,
-					Torso: 23,
-					LeftArm: 24,
-					RightArm: 24,
-					LeftLeg: 119,
-					RightLeg: 119,
-				},
-			})
 		} catch (e) {
 			const error = e as Error
 			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID")
