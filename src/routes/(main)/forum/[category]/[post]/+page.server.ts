@@ -16,8 +16,6 @@ const schema = z.object({
 	replyId: z.string().optional(),
 })
 
-
-
 const SELECTREPLIES = recurse(
 	from => surql`
 		(${from} <-replyToPost<-forumReply
@@ -38,8 +36,8 @@ export async function load({ locals, params }) {
 				(SELECT number, username FROM <-posted<-user)[0] AS author,
 				count(<-likes) AS likeCount,
 				count(<-dislikes) AS dislikeCount,
-				($user ∈ <-likes<-user.id) AS likes,
-				($user ∈ <-dislikes<-user.id) AS dislikes,
+				$user ∈ <-likes<-user.id AS likes,
+				$user ∈ <-dislikes<-user.id AS dislikes,
 				(->in->forumCategory)[0].name AS categoryName,
 
 				${SELECTREPLIES}

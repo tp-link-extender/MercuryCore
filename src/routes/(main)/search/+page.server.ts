@@ -25,85 +25,85 @@ export const load = async ({ url }) => {
 		query,
 		category,
 		users:
-			category == "users"
-				? prisma.authUser.findMany({
-						where: {
-							username: {
-								contains: query,
-								mode: "insensitive",
-							},
-						},
-						select: {
-							number: true,
-							username: true,
-							status: true,
-						},
-				  })
-				: null,
+			category == "users" &&
+			(squery(
+				surql`
+					SELECT
+						number,
+						username
+					FROM user
+					WHERE string::lowercase($query) ∈ string::lowercase(username)`,
+				{ query },
+			) as Promise<
+				{
+					number: number
+					username: string
+				}[]
+			>),
 		places:
-			category == "places"
-				? (squery(
-						surql`
-							SELECT
-								string::split(type::string(id), ":")[1] AS id,
-								name,
-								serverPing,
-								count(
-									SELECT * FROM <-playing
-									WHERE valid
-										AND ping > time::now() - 35s
-								) AS playerCount,
-								count(<-likes) AS likeCount,
-								count(<-dislikes) AS dislikeCount
-							FROM place
-							WHERE !privateServer
-								AND !deleted
-								AND string::lowercase($query) ∈ string::lowercase(name)`,
-						{ query },
-				  ) as Promise<
-						{
-							id: number
-							name: string
-							playerCount: number
-							serverPing: number
-							likeCount: number
-							dislikeCount: number
-						}[]
-				  >)
-				: null,
+			category == "places" &&
+			(squery(
+				surql`
+					SELECT
+						string::split(type::string(id), ":")[1] AS id,
+						name,
+						serverPing,
+						count(
+							SELECT * FROM <-playing
+							WHERE valid
+								AND ping > time::now() - 35s
+						) AS playerCount,
+						count(<-likes) AS likeCount,
+						count(<-dislikes) AS dislikeCount
+					FROM place
+					WHERE !privateServer
+						AND !deleted
+						AND string::lowercase($query) ∈ string::lowercase(name)`,
+				{ query },
+			) as Promise<
+				{
+					id: number
+					name: string
+					playerCount: number
+					serverPing: number
+					likeCount: number
+					dislikeCount: number
+				}[]
+			>),
 		assets:
-			category == "assets"
-				? prisma.asset.findMany({
-						where: {
-							name: {
-								contains: query,
-								mode: "insensitive",
-							},
-						},
-						select: {
-							id: true,
-							name: true,
-							price: true,
-						},
-				  })
-				: null,
+			category == "assets" &&
+			(squery(
+				surql`
+					SELECT
+						string::split(type::string(id), ":")[1] AS id,
+						name,
+						price
+					FROM asset
+					WHERE string::lowercase($query) ∈ string::lowercase(name)`,
+				{ query },
+			) as Promise<
+				{
+					id: number
+					name: string
+					price: number
+				}[]
+			>),
 		groups:
-			category == "groups"
-				? (squery(
-						surql`
-							SELECT
-								name,
-								count(<-member) AS memberCount
-							FROM group
-							WHERE string::lowercase($query) ∈ string::lowercase(name)`,
-						{ query },
-				  ) as Promise<
-						{
-							name: string
-							memberCount: number
-						}[]
-				  >)
-				: null,
+			category == "groups" &&
+			(squery(
+				surql`
+					SELECT
+						name,
+						count(<-member) AS memberCount
+					FROM group
+					WHERE string::lowercase($query) ∈ string::lowercase(name)`,
+				{ query },
+			) as Promise<
+				{
+					name: string
+					memberCount: number
+				}[]
+			>),
 	}
 }
 

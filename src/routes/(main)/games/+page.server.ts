@@ -44,9 +44,7 @@ export const actions = {
 				WHERE !privateServer
 					AND !deleted
 					AND string::lowercase($query) ∈ string::lowercase(name)`,
-			{
-				query: (await request.formData()).get("query") as string,
-			},
+			{ query: (await request.formData()).get("query") as string },
 		)) as Places,
 	}),
 }

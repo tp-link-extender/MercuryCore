@@ -16,7 +16,7 @@ export async function load({ locals, params }) {
 							username
 						FROM <-owns<-user)[0] AS owner,
 						count(<-member) AS memberCount,
-						($user ∈ <-member<-user.id) AS in,
+						$user ∈ <-member<-user.id AS in,
 						[] AS places,
 						[] AS feed
 					FROM group WHERE string::lowercase(name)

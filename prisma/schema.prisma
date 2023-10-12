@@ -43,18 +43,12 @@ model AuthUser {
     currencyCollected    DateTime      @default(now())
     status               String?
     currency             Int           @default(0)
-    places               Place[]
 
     bodyColours Json @default("{\"Head\": 24, \"Torso\": 23, \"LeftArm\": 24, \"RightArm\": 24, \"LeftLeg\": 119, \"RightLeg\": 119}")
     // {"Head": 24, "Torso": 23, "LeftArm": 24, "RightArm": 24, "LeftLeg": 119, "RightLeg": 119}
 
     theme             String?
     animationSettings String?
-    assetComments     AssetComment[]
-
-    assetsCreated   Asset[] @relation("created")
-    assetsOwned     Asset[] @relation("owned")
-    assetsModerated Asset[] @relation("moderated")
 
     @@map("user")
 }
@@ -68,73 +62,4 @@ model AuthKey {
 
     @@index([user_id])
     @@map("key")
-}
-
-// Places
-
-model Place {
-    id Int @id @unique @default(autoincrement())
-
-    name          String
-    ownerUser     AuthUser? @relation(fields: [ownerUsername], references: [username])
-    ownerUsername String?
-
-    serverIP      String
-    serverPort    Int
-    serverTicket  String  @unique @default(cuid())
-    serverPing    BigInt  @default(0)
-    privateServer Boolean @default(false)
-    privateTicket String  @unique @default(uuid())
-
-    maxPlayers Int
-
-    created      DateTime       @default(now())
-    updated      DateTime       @default(now())
-    deleted      Boolean        @default(false)
-}
-
-// Assets
-
-enum ApprovalStatus {
-    Pending
-    Approved
-    Rejected
-}
-
-model Asset {
-    id Int @id @unique @default(autoincrement())
-
-    creatorUser     AuthUser?  @relation("created", fields: [creatorUsername], references: [username])
-    creatorUsername String?
-    owners          AuthUser[] @relation("owned")
-
-    moderator         AuthUser?      @relation("moderated", fields: [moderatorUsername], references: [username])
-    moderatorUsername String?
-    approved          ApprovalStatus @default(Pending)
-
-    name  String
-    type  Int
-    price Int
-
-    imageAsset   Asset?  @relation("imageAsset", fields: [imageAssetId], references: [id])
-    imageAssetId Int?
-    parentAssets Asset[] @relation("imageAsset")
-
-    replies AssetComment[]
-}
-
-model AssetComment {
-    id       String   @id @unique
-    author   AuthUser @relation(fields: [authorId], references: [id])
-    authorId String
-    posted   DateTime @default(now())
-
-    parentAsset   Asset          @relation(fields: [topParentId], references: [id])
-    topParentId   Int
-    // A reply can be to a post or another reply
-    parentReply   AssetComment?  @relation("replies", fields: [parentReplyId], references: [id])
-    parentReplyId String?
-    replies       AssetComment[] @relation("replies")
-
-    visibility Visibility @default(Visible)
 }

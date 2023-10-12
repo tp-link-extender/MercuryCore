@@ -34,8 +34,8 @@ const SELECTFROM = surql`
 		
 		count(<-likes) AS likeCount,
 		count(<-dislikes) AS dislikeCount,
-		($user ∈ <-likes<-user.id) AS likes,
-		($user ∈ <-dislikes<-user.id) AS dislikes,
+		$user ∈ <-likes<-user.id AS likes,
+		$user ∈ <-dislikes<-user.id AS dislikes,
 
 		# again #
 	FROM`
@@ -46,7 +46,7 @@ export function recurse(query: (from: string) => string) {
 	for (let i = 0; i < 9; i++)
 		rep = rep.replace(
 			/# again #/g,
-			surql`(${SELECTFROM} <-replyToReply<-forumReply) AS replies`,
+			surql`(${SELECTFROM} <-replyToComment<-assetComment) AS replies`,
 		)
 
 	return rep.replace(/# again #/g, "[] AS replies")

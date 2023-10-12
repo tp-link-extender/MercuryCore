@@ -39,7 +39,7 @@ export async function load({ locals, params }) {
 					string::split(type::string(id), ":")[1] AS id,
 					(SELECT number, username FROM <-created<-user)[0] AS creator,
 					count(<-owns<-user) AS sold,
-					($user ∈ <-owns<-user.id) AS owned,
+					$user ∈ <-owns<-user.id AS owned,
 
 					(SELECT text, updated FROM $parent.description
 					ORDER BY updated DESC) AS description,
@@ -244,7 +244,7 @@ export const actions = {
 									string::split(type::string(id), ":")[1] AS id,
 									username
 								FROM <-created<-user)[0] AS creator,
-								($user ∈ <-owns<-user.id) AS owned
+								$user ∈ <-owns<-user.id AS owned
 							FROM $asset`,
 						{
 							asset: `asset:${id}`,
@@ -311,7 +311,7 @@ export const actions = {
 					(await squery(
 						surql`
 							SELECT
-								($user ∈ <-owns<-user.id) AS owned
+								$user ∈ <-owns<-user.id AS owned
 							FROM $asset`,
 						{
 							asset: `asset:${id}`,
