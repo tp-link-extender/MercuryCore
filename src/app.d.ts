@@ -13,23 +13,27 @@ declare global {
 		type Auth = typeof import("$lib/server/lucia").auth
 		type DatabaseUserAttributes = {
 			// id is defined in Lucia
-			number: number
-			bio: string
-			email: string
-			username: string
-			currency: number
-			currencyCollected: Date
-			permissionLevel: number
-			created: Date
+			bio: {
+				text: string
+				updated: string
+			}[]
 			bodyColours: {
 				Head: number
-				Torso: number
 				LeftArm: number
-				RightArm: number
 				LeftLeg: number
+				RightArm: number
 				RightLeg: number
+				Torso: number
 			}
+			currency: number
+			currencyCollected: string
+			created: string
+			email: string
+			lastOnline: string
+			number: number
+			permissionLevel: number
 			theme: string
+			username: string
 		}
 		type DatabaseSessionAttributes = {}
 	}

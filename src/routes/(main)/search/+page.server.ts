@@ -1,5 +1,4 @@
 import surql from "$lib/surrealtag"
-import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
@@ -13,12 +12,16 @@ export const load = async ({ url }) => {
 		throw error(400, "Invalid category")
 
 	if (category == "users") {
-		const user = await prisma.authUser.findUnique({
-			where: {
-				username: query,
-			},
-		})
-		if (user) throw redirect(302, `/user/${user.number}`)
+		const userExists = (
+			(await squery(
+				surql`
+					SELECT * FROM user
+					WHERE username = $query`,
+				{ query },
+			)) as { number: number }[]
+		)[0]
+
+		if (userExists) throw redirect(302, `/user/${userExists.number}`)
 	}
 
 	return {

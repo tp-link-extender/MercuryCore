@@ -1,38 +1,22 @@
 // Initialising Lucia, the authentication library
 
 import surql from "$lib/surrealtag"
-import { building, dev } from "$app/environment"
+import { dev } from "$app/environment"
 import { squery } from "$lib/server/surreal"
-import { PrismaClient } from "@prisma/client"
 import { redirect, error } from "@sveltejs/kit"
 import { lucia, type Session, type User } from "lucia"
-import { createClient, type RedisClientType } from "redis"
 import { sveltekit } from "lucia/middleware"
-import { prisma } from "@lucia-auth/adapter-prisma"
-import { redis } from "@lucia-auth/adapter-session-redis"
-
-let client: RedisClientType
-
-if (!building) {
-	client = createClient({
-		url: "redis://localhost:6479",
-	})
-	await client.connect()
-}
+import { adapter } from "./adapter-surreal"
 
 // As of v2, Lucia now shits itself if it doesn't have
 // access to the database clients during build time
 export const auth = lucia({
 	middleware: sveltekit(),
-	adapter: {
-		user: prisma((building ? null : new PrismaClient()) as PrismaClient, {
-			user: "authUser",
-			key: "authKey",
-			session: "authKey", // fuck you
-		}),
-		session: redis(client),
-	},
+	adapter: adapter(),
 	env: dev ? "DEV" : "PROD",
+	experimental: {
+		debugMode: true,
+	},
 	getUserAttributes: data => ({
 		// This is the data that will be available in data.user
 		// in a +page.svelte or +layout.svelte file, or authorise()

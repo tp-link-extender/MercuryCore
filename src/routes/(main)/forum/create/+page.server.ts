@@ -1,6 +1,5 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"

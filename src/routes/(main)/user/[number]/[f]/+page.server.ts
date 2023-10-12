@@ -1,7 +1,6 @@
 // The friends, followers, and following pages for a user.
 
 import surql from "$lib/surrealtag"
-import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
@@ -25,11 +24,17 @@ export async function load({ params }) {
 	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
 
 	const type = params.f as keyof typeof usersQueries,
-		user = await prisma.authUser.findUnique({
-			where: {
-				number,
-			},
-		})
+		user = (
+			(await squery(
+				surql`
+					SELECT id, username FROM user
+					WHERE number = $number`,
+				{ number },
+			)) as {
+				id: string
+				username: string
+			}[]
+		)[0]
 
 	if (!user) throw error(404, "Not found")
 
@@ -37,7 +42,7 @@ export async function load({ params }) {
 		type,
 		username: user.username,
 		users: squery(usersQueries[type], {
-			user: `user:${user.id}`,
+			user: user.id,
 		}) as Promise<
 			{
 				number: number
@@ -45,7 +50,7 @@ export async function load({ params }) {
 			}[]
 		>,
 		number: squery(numberQueries[type], {
-			user: `user:${user.id}`,
+			user: user.id,
 		}) as Promise<number>,
 	}
 }

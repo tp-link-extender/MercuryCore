@@ -1,5 +1,4 @@
 import surql from "$lib/surrealtag"
-import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
 import { error } from "@sveltejs/kit"

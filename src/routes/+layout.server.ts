@@ -1,5 +1,4 @@
 import surql from "$lib/surrealtag"
-import { prisma } from "$lib/server/prisma"
 import { squery } from "$lib/server/surreal"
 import { addUserData } from "$lib/server/lucia"
 
