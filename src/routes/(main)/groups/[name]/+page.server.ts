@@ -68,25 +68,20 @@ export const actions = {
 				group: group.id,
 			}
 
-		try {
-			switch (action) {
-				case "join":
-					await squery(
-						surql`
+		switch (action) {
+			case "join":
+				await squery(
+					surql`
 							RELATE $user->member->$group
 								SET time = time::now()`,
-						query,
-					)
-					break
-				case "leave":
-					await squery(
-						surql`DELETE $user->member WHERE out = $group`,
-						query,
-					)
-			}
-		} catch (e) {
-			console.error(e)
-			throw error(500, "Redis error 2")
+					query,
+				)
+				break
+			case "leave":
+				await squery(
+					surql`DELETE $user->member WHERE out = $group`,
+					query,
+				)
 		}
 	},
 }

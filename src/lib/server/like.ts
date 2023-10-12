@@ -38,22 +38,17 @@ export async function likeSwitch(
 	userId: string,
 	thing: string,
 ) {
-	try {
-		switch (action) {
-			case "like":
-				await like(userId, thing)
-				break
-			case "unlike":
-				await unlike(userId, thing)
-				break
-			case "dislike":
-				await dislike(userId, thing)
-				break
-			case "undislike":
-				await undislike(userId, thing)
-		}
-	} catch (e) {
-		console.error(e)
-		throw error(500, "Redis error 2")
+	switch (action) {
+		case "like":
+			await like(userId, thing)
+			break
+		case "unlike":
+			await unlike(userId, thing)
+			break
+		case "dislike":
+			await dislike(userId, thing)
+			break
+		case "undislike":
+			await undislike(userId, thing)
 	}
 }

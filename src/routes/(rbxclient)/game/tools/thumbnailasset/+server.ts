@@ -1,26 +1,32 @@
 // This should be moved to asset thumbnails for every asset on Mercury, but
 // for now we'll use it for the stamper tool (and other games which require it)
 
+import surql from "$lib/surrealtag"
+import surreal, { squery } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
-import { client } from "$lib/server/redis"
 
 export async function GET({ url }) {
 	const width = parseInt(url.searchParams.get("wd") as string),
 		height = parseInt(url.searchParams.get("ht") as string),
-		assetId = parseInt(url.searchParams.get("aid") as string)
+		assetId = parseInt(url.searchParams.get("aid") as string),
+		stringAssetId = assetId.toString()
 
 	if (!assetId || !width || !height) throw error(404, "Asset not found")
 
 	const params = new URLSearchParams({
-			assetIds: assetId.toString(),
+			assetIds: stringAssetId,
 			returnPolicy: "Placeholder",
 			size: `${width}x${height}`,
 			format: "Png",
 			isCircular: "false",
 		}),
-		cache = await client.hGet("thumbnailAsset", assetId.toString())
+		cache = (
+			(await squery(surql`SELECT * FROM $asset`, {
+				asset: `assetCache:${stringAssetId}`,
+			})) as { url: string }[]
+		)[0]
 
-	if (cache) throw redirect(302, cache)
+	if (cache) throw redirect(302, cache.url)
 
 	const thumb = await fetch(
 		`https://thumbnails.roblox.com/v1/assets?${params}`,
@@ -30,11 +36,9 @@ export async function GET({ url }) {
 
 	const thumbnail = JSON.parse(await thumb.text())
 
-	await client.hSet(
-		"thumbnailAsset",
-		assetId.toString(),
-		thumbnail.data[0].imageUrl,
-	)
+	await surreal.merge(`assetCache:${stringAssetId}`, {
+		url: thumbnail.data[0].imageUrl,
+	})
 
 	throw redirect(302, thumbnail.data[0].imageUrl)
 }
