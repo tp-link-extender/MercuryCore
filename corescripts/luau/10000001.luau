@@ -175,7 +175,7 @@ do
 	end
 
 	local function performUpdateStep()
-		External.performUpdateStep(time())
+		External.performUpdateStep(tick())
 	end
 
 	local stopSchedulerFunc = nil
