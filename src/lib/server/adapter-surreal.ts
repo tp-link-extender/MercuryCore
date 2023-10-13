@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import surreal, { query } from "$lib/server/surreal"
+import surreal, { query, squery } from "$lib/server/surreal"
 import type {
 	Adapter,
 	InitializeAdapter,
@@ -18,16 +18,14 @@ export const adapter = (
 	return LuciaError => {
 		return {
 			getUser: async userId =>
-				(
-					await query<UserSchema>(
-						surql`
-							SELECT
-								*,
-								meta::id(id) AS id
-							FROM $id`,
-						{ id: `${modelNames.user}:${userId}` },
-					)
-				)[0],
+				await squery<UserSchema>(
+					surql`
+						SELECT
+							*,
+							meta::id(id) AS id
+						FROM $id`,
+					{ id: `${modelNames.user}:${userId}` },
+				),
 			setUser: async (user, key) => {
 				// Can't create the user number in the MERGE step, or it would
 				// create two numbers (why?) and miss out all the odd ones
@@ -83,17 +81,15 @@ export const adapter = (
 				})
 			},
 			getSession: async sessionId =>
-				(
-					await query<SessionSchema>(
-						surql`
-							SELECT
-								*,
-								meta::id((<-hasSession<-user)[0]) AS user_id,
-								meta::id(id) AS id
-							FROM $sess`,
-						{ sess: `${modelNames.session}:${sessionId}` },
-					)
-				)[0],
+				await squery<SessionSchema>(
+					surql`
+						SELECT
+							*,
+							meta::id((<-hasSession<-user)[0]) AS user_id,
+							meta::id(id) AS id
+						FROM $sess`,
+					{ sess: `${modelNames.session}:${sessionId}` },
+				),
 			getSessionsByUserId: userId =>
 				query<SessionSchema>(
 					surql`
@@ -102,11 +98,9 @@ export const adapter = (
 					{ id: `${modelNames.session}:${userId}` },
 				),
 			setSession: async session => {
-				const userExists = (
-					await query(surql`SELECT true FROM $id`, {
-						id: `${modelNames.user}:${session.user_id}`,
-					})
-				)[0]
+				const userExists = await squery(surql`SELECT true FROM $id`, {
+					id: `${modelNames.user}:${session.user_id}`,
+				})
 
 				if (!userExists) throw new LuciaError("AUTH_INVALID_USER_ID")
 
@@ -149,17 +143,15 @@ export const adapter = (
 			},
 
 			getKey: async keyId =>
-				(
-					await query<KeySchema>(
-						surql`
+				await squery<KeySchema>(
+					surql`
 							SELECT
 								*,
 								meta::id((<-hasKey<-user)[0]) AS user_id,
 								meta::id(id) AS id
 							FROM $key`,
-						{ key: `${modelNames.key}:⟨${keyId}⟩` },
-					)
-				)[0],
+					{ key: `${modelNames.key}:⟨${keyId}⟩` },
+				),
 			getKeysByUserId: async userId => {
 				return await query<KeySchema>(
 					surql`
@@ -169,11 +161,9 @@ export const adapter = (
 				)
 			},
 			setKey: async key => {
-				const userExists = (
-					await query(surql`SELECT true FROM $id`, {
-						id: `${modelNames.user}:${key.user_id}`,
-					})
-				)[0]
+				const userExists = await squery(surql`SELECT true FROM $id`, {
+					id: `${modelNames.user}:${key.user_id}`,
+				})
 
 				if (!userExists) throw new LuciaError("AUTH_INVALID_USER_ID")
 

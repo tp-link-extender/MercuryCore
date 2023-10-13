@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import fs from "fs"
 
 export async function GET({ url }) {
@@ -10,14 +10,12 @@ export async function GET({ url }) {
 
 	if (!ticket) throw error(400, "Invalid Request")
 
-	const placeData = (
-		await query<{ serverPort: number }>(
-			surql`
-				SELECT serverPort FROM place
-				WHERE serverTicket = $ticket`,
-			{ ticket },
-		)
-	)[0]
+	const placeData = await squery<{ serverPort: number }>(
+		surql`
+			SELECT serverPort FROM place
+			WHERE serverTicket = $ticket`,
+		{ ticket },
+	)
 
 	if (!placeData) throw error(400, "Invalid Server Ticket")
 

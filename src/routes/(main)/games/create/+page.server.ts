@@ -39,10 +39,10 @@ export const actions = {
 				privateServer,
 			} = form.data,
 			gameCount = (
-				await query<{
+				await squery<{
 					count: number
 				}>(surql`SELECT count(->owns->place) FROM user`)
-			)[0].count
+			).count
 
 		if (gameCount >= 2)
 			return formError(
@@ -51,7 +51,9 @@ export const actions = {
 				["You may only have 2 places at most"],
 			)
 
-		const id = await squery<number>(surql`stuff:increment.place`)
+		const id = (await squery(
+			surql`stuff:increment.place`,
+		)) as unknown as number
 
 		try {
 			await transaction({ number: user.number }, { number: 1 }, 10, {

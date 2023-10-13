@@ -91,20 +91,18 @@ export const actions = {
 		if (replyId && !/^[0-9a-z]+$/.test(replyId))
 			throw error(400, "Invalid reply id")
 
-		const replypost = (
-			await query<{ authorId: string }>(
-				surql`
-					SELECT 
-						meta::id(<-posted[0]<-user[0].id) AS authorId
-					FROM $replypostId
-					WHERE visibility = "Visible"`,
-				{
-					replypostId: replyId
-						? `forumReply:${replyId}`
-						: `forumPost:${params.post}`,
-				},
-			)
-		)[0]
+		const replypost = await squery<{ authorId: string }>(
+			surql`
+				SELECT 
+					meta::id(<-posted[0]<-user[0].id) AS authorId
+				FROM $replypostId
+				WHERE visibility = "Visible"`,
+			{
+				replypostId: replyId
+					? `forumReply:${replyId}`
+					: `forumPost:${params.post}`,
+			},
+		)
 
 		if (!replypost)
 			throw error(404, `${replyId ? "Reply" : "Post"} not found`)
@@ -165,19 +163,17 @@ export const actions = {
 		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
 		// Prevents incorrect ids erroring the Surreal query as well
 
-		const reply = (
-			await query<{
-				authorId: string
-				visibility: string
-			}>(
-				surql`
-					SELECT
-						meta::id((-posted<-user.id)[0]) AS authorId
-						visibility
-					FROM $forumReply`,
-				{ forumReply: `forumReply:${id}` },
-			)
-		)[0]
+		const reply = await squery<{
+			authorId: string
+			visibility: string
+		}>(
+			surql`
+				SELECT
+					meta::id((-posted<-user.id)[0]) AS authorId
+					visibility
+				FROM $forumReply`,
+			{ forumReply: `forumReply:${id}` },
+		)
 
 		if (!reply) throw error(404, "Reply not found")
 

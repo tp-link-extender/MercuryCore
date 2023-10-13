@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
 import fs from "fs"
@@ -55,20 +55,18 @@ type Place = {
 }
 
 const placeQuery = async (id: string | number) =>
-	(
-		await query<Place>(
-			surql`
-				SELECT
-					*,
-					meta::id(id) AS id,
-					(SELECT number, username
-					FROM <-owns<-user)[0] AS owner,
-					(SELECT text, updated FROM $parent.description
-					ORDER BY updated DESC)[0] AS description
-				FROM $place`,
-			{ place: `place:${id}` },
-		)
-	)[0]
+	await squery<Place>(
+		surql`
+			SELECT
+				*,
+				meta::id(id) AS id,
+				(SELECT number, username
+				FROM <-owns<-user)[0] AS owner,
+				(SELECT text, updated FROM $parent.description
+				ORDER BY updated DESC)[0] AS description
+			FROM $place`,
+		{ place: `place:${id}` },
+	)
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id))

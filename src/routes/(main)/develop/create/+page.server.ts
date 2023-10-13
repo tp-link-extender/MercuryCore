@@ -114,7 +114,9 @@ export const actions = {
 				}
 		}
 
-		const currentId = await squery<number>(surql`stuff:increment.asset`),
+		const currentId = (await query(
+				surql`stuff:increment.asset`,
+			)) as unknown as number,
 			imageAssetId = currentId + 1,
 			id = currentId + 2
 

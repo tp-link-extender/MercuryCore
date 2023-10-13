@@ -17,14 +17,12 @@ export async function load({ url }) {
 	const categoryQuery = url.searchParams.get("category")
 	if (!categoryQuery) throw error(400, "Missing category")
 
-	const category = (
-		await query<{ name: string }>(
-			surql`
-				SELECT name FROM forumCategory
-				WHERE string::lowercase(name) = string::lowercase($categoryQuery)`,
-			{ categoryQuery },
-		)
-	)[0]
+	const category = await squery<{ name: string }>(
+		surql`
+			SELECT name FROM forumCategory
+			WHERE string::lowercase(name) = string::lowercase($categoryQuery)`,
+		{ categoryQuery },
+	)
 
 	if (!category) throw error(404, "Category not found")
 
@@ -49,16 +47,12 @@ export const actions = {
 
 		if (
 			!category ||
-			!(
-				await query(
-					surql`
+			!(await squery(
+				surql`
 						SELECT * FROM forumCategory
 						WHERE string::lowercase(name) = string::lowercase($category)`,
-					{
-						category,
-					},
-				)
-			)[0]
+				{ category },
+			))
 		)
 			throw error(400, "Invalid category")
 

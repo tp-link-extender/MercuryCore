@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { transaction } from "$lib/server/prisma"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -46,14 +46,12 @@ export const actions = {
 			)
 
 		if (
-			(
-				await query(
-					surql`
-						SELECT * FROM group WHERE string::lowercase(name)
-							= string::lowercase($name)`,
-					{ name },
-				)
-			)[0]
+			await squery(
+				surql`
+					SELECT * FROM group WHERE string::lowercase(name)
+						= string::lowercase($name)`,
+				{ name },
+			)
 		)
 			return formError(
 				form,

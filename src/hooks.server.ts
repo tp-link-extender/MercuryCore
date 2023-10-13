@@ -4,7 +4,7 @@
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import surql from "$lib/surrealtag"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
 import surreal from "$lib/server/surreal"
@@ -53,16 +53,14 @@ export async function handle({ event, resolve }) {
 
 	if (!session || !user) return await resolve(event)
 
-	const moderation = (
-		await query(
-			surql`
-				SELECT *
-				FROM moderation
-				WHERE out = $user
-					AND active = true`,
-			{ user: `user:${user.id}` },
-		)
-	)[0]
+	const moderation = await squery(
+		surql`
+			SELECT *
+			FROM moderation
+			WHERE out = $user
+				AND active = true`,
+		{ user: `user:${user.id}` },
+	)
 
 	if (
 		!["/moderation", "/terms", "/privacy", "/api"].includes(pathname) &&

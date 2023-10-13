@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import fs from "fs"
 
@@ -10,19 +10,17 @@ export async function GET({ params }) {
 	const id = parseInt(params.id)
 
 	if (
-		!(
-			await query<{
-				id: number
-				name: string
-			}>(
-				surql`
-					SELECT
-						name, 
-						meta::id(id) AS id
-					FROM $asset`,
-				{ asset: `asset:${params.id}` },
-			)
-		)[0]
+		!(await squery<{
+			id: number
+			name: string
+		}>(
+			surql`
+				SELECT
+					name, 
+					meta::id(id) AS id
+				FROM $asset`,
+			{ asset: `asset:${params.id}` },
+		))
 	)
 		throw error(404, "Not found")
 

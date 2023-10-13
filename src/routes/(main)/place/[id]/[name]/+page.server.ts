@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import surreal, { query, mquery } from "$lib/server/surreal"
+import surreal, { query, mquery, squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { likeSwitch } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
@@ -12,69 +12,67 @@ export async function load({ url, locals, params }) {
 	const { user } = await authorise(locals),
 		id = parseInt(params.id),
 		privateServerCode = url.searchParams.get("privateServer"),
-		getPlace = (
-			await query<{
-				created: string
-				description: {
-					text: string
-					updated: string
-				}
-				dislikeCount: number
-				dislikes: boolean
-				id: string
-				likeCount: number
-				likes: boolean
-				maxPlayers: number
-				name: string
-				ownerUser: {
-					number: number
-					username: string
-				}
-				players: {
-					number: number
-					username: string
-				}[]
-				privateServer: boolean
-				privateTicket: string
-				serverPing: number
-				serverTicket: string
+		getPlace = await squery<{
+			created: string
+			description: {
+				text: string
 				updated: string
-			}>(
-				surql`
-					SELECT
-						meta::id(id) AS id,
-						name,
-						(SELECT text, updated FROM $parent.description
-						ORDER BY updated DESC)[0] AS description,
-						serverPing,
-						serverTicket,
-						privateServer,
-						privateTicket,
-						created,
-						updated,
-						maxPlayers,
-						(SELECT
-							username,
-							number
-						FROM <-owns<-user)[0] AS ownerUser,
-						(SELECT
-							in.username AS username,
-							in.number AS number
-						FROM <-playing
-						WHERE valid
-							AND ping > time::now() - 35s) AS players,
+			}
+			dislikeCount: number
+			dislikes: boolean
+			id: string
+			likeCount: number
+			likes: boolean
+			maxPlayers: number
+			name: string
+			ownerUser: {
+				number: number
+				username: string
+			}
+			players: {
+				number: number
+				username: string
+			}[]
+			privateServer: boolean
+			privateTicket: string
+			serverPing: number
+			serverTicket: string
+			updated: string
+		}>(
+			surql`
+				SELECT
+					meta::id(id) AS id,
+					name,
+					(SELECT text, updated FROM $parent.description
+					ORDER BY updated DESC)[0] AS description,
+					serverPing,
+					serverTicket,
+					privateServer,
+					privateTicket,
+					created,
+					updated,
+					maxPlayers,
+					(SELECT
+						username,
+						number
+					FROM <-owns<-user)[0] AS ownerUser,
+					(SELECT
+						in.username AS username,
+						in.number AS number
+					FROM <-playing
+					WHERE valid
+						AND ping > time::now() - 35s) AS players,
 
-						count((SELECT * FROM $parent<-likes).in) AS likeCount,
-						count((SELECT * FROM $parent<-dislikes).in) AS dislikeCount,
-						$user ∈ (SELECT * FROM $parent<-likes).in AS likes,
-						$user ∈ (SELECT * FROM $parent<-dislikes).in AS dislikes
-					FROM $place`,
-				{
-					user: `user:${user.id}`,
-					place: `place:${id}`,
-				},
-			)
-		)[0]
+					count((SELECT * FROM $parent<-likes).in) AS likeCount,
+					count((SELECT * FROM $parent<-dislikes).in) AS dislikeCount,
+					$user ∈ (SELECT * FROM $parent<-likes).in AS likes,
+					$user ∈ (SELECT * FROM $parent<-dislikes).in AS dislikes
+				FROM $place`,
+			{
+				user: `user:${user.id}`,
+				place: `place:${id}`,
+			},
+		)
 
 	if (
 		!getPlace ||
@@ -127,21 +125,19 @@ export const actions = {
 			throw error(404, "Place not found")
 
 		if (
-			(
-				await query<{
-					type: string
-					note: string
-					time: string
-					timeEnds: string
-				}>(
-					surql`
-						SELECT *
-						FROM moderation
-						WHERE out = $user
-							AND active = true`,
-					{ user: `user:${user.id}` },
-				)
-			)[0]
+			await squery<{
+				type: string
+				note: string
+				time: string
+				timeEnds: string
+			}>(
+				surql`
+					SELECT *
+					FROM moderation
+					WHERE out = $user
+						AND active = true`,
+				{ user: `user:${user.id}` },
+			)
 		)
 			throw error(403, "You cannot currently play games")
 

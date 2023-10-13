@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { error } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
@@ -54,15 +54,13 @@ export const actions = {
 
 		if (!username || !userUrl) throw error(400, "Missing fields")
 
-		const reportee = (
-			await query<{ id: string }>(
-				surql`
-					SELECT id
-					FROM user
-					WHERE username = $username`,
-				{ username },
-			)
-		)[0]
+		const reportee = await squery<{ id: string }>(
+			surql`
+				SELECT id
+				FROM user
+				WHERE username = $username`,
+			{ username },
+		)
 
 		if (!reportee)
 			return message(form, "Invalid user", {

@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
@@ -12,14 +12,12 @@ export const load = async ({ url }) => {
 		throw error(400, "Invalid category")
 
 	if (category == "users") {
-		const userExists = (
-			await query<{ number: number }>(
-				surql`
-					SELECT * FROM user
-					WHERE username = $searchQ`,
-				{ searchQ },
-			)
-		)[0]
+		const userExists = await squery<{ number: number }>(
+			surql`
+				SELECT * FROM user
+				WHERE username = $searchQ`,
+			{ searchQ },
+		)
 
 		if (userExists) throw redirect(302, `/user/${userExists.number}`)
 	}

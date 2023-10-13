@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
-import surreal, { query } from "$lib/server/surreal"
+import surreal, { query, squery } from "$lib/server/surreal"
 import fs from "fs"
 
 export async function GET({ url }) {
@@ -15,51 +15,47 @@ export async function GET({ url }) {
 		throw error(400, "Invalid Request")
 	}
 
-	const gameSession = (
-		await query<{
-			place: {
-				id: string
-				ownerUser: {
-					number: number
-				}
-				serverIP: string
-				serverPort: number
-			}
-			user: {
+	const gameSession = await squery<{
+		place: {
+			id: string
+			ownerUser: {
 				number: number
-				permissionLevel: number
-				username: string
 			}
-		}>(
-			surql`
-				SELECT
-					(SELECT
-						meta::id(id) AS id,
-						serverIP,
-						serverPort,
-						(SELECT number FROM <-owns<-user)[0] AS ownerUser
-					FROM ->place)[0] AS place,
-					(SELECT
-						username,
-						number,
-						permissionLevel
-					FROM <-user)[0] AS user
-				FROM $playingId`,
-			{ playingId: `playing:${clientTicket}` },
-		)
-	)[0]
+			serverIP: string
+			serverPort: number
+		}
+		user: {
+			number: number
+			permissionLevel: number
+			username: string
+		}
+	}>(
+		surql`
+			SELECT
+				(SELECT
+					meta::id(id) AS id,
+					serverIP,
+					serverPort,
+					(SELECT number FROM <-owns<-user)[0] AS ownerUser
+				FROM ->place)[0] AS place,
+				(SELECT
+					username,
+					number,
+					permissionLevel
+				FROM <-user)[0] AS user
+			FROM $playingId`,
+		{ playingId: `playing:${clientTicket}` },
+	)
 
 	if (!gameSession) throw error(400, "Invalid Game Session")
 
 	if (privateServer) {
-		const privateSession = (
-			await query(
-				surql`
-					SELECT * FROM place
-					WHERE privateTicket = $privateServer`,
-				{ privateServer },
-			)
-		)[0]
+		const privateSession = await squery(
+			surql`
+				SELECT * FROM place
+				WHERE privateTicket = $privateServer`,
+			{ privateServer },
+		)
 
 		if (!privateSession) throw error(400, "Invalid Private Server")
 	}
