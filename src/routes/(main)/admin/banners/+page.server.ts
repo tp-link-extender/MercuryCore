@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { query, squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -19,7 +19,17 @@ export async function load({ locals }) {
 
 	return {
 		form: superValidate(schema),
-		banners: squery(surql`
+		banners: query<{
+			id: string
+			active: boolean
+			bgColour: string
+			body: string
+			creator: {
+				number: number
+				username: string
+			}
+			textLight: boolean
+		}>(surql`
 			SELECT
 				*,
 				meta::id(id) AS id,
@@ -29,19 +39,7 @@ export async function load({ locals }) {
 				FROM $parent)[0].creator AS creator
 			OMIT deleted
 			FROM banner WHERE deleted = false
-		`) as Promise<
-			{
-				id: string
-				active: boolean
-				bgColour: string
-				body: string
-				creator: {
-					number: number
-					username: string
-				}
-				textLight: boolean
-			}[]
-		>,
+		`),
 	}
 }
 
@@ -57,12 +55,12 @@ export const actions = {
 				form.data,
 			id = url.searchParams.get("id"),
 			action = url.searchParams.get("a"),
-			bannerActiveCount = (await squery(surql`
+			bannerActiveCount = await squery<number>(surql`
 				count(
 					SELECT * FROM banner
 					WHERE active = true AND deleted = false
 				)
-			`)) as number
+			`)
 
 		console.log(bannerActiveCount)
 
@@ -96,7 +94,7 @@ export const actions = {
 						creator: `user:${user.id}`,
 					}),
 
-					squery(
+					query(
 						surql`
 							CREATE auditLog CONTENT {
 								action: "Administration",
@@ -150,7 +148,7 @@ export const actions = {
 					textLight: boolean
 				}
 
-				await squery(
+				await query(
 					surql`
 						CREATE auditLog CONTENT {
 							action: "Administration",

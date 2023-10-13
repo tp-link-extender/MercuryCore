@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
@@ -18,12 +18,12 @@ export async function load({ url }) {
 	if (!categoryQuery) throw error(400, "Missing category")
 
 	const category = (
-		(await squery(
+		await query<{ name: string }>(
 			surql`
 				SELECT name FROM forumCategory
 				WHERE string::lowercase(name) = string::lowercase($categoryQuery)`,
 			{ categoryQuery },
-		)) as { name: string }[]
+		)
 	)[0]
 
 	if (!category) throw error(404, "Category not found")
@@ -50,21 +50,21 @@ export const actions = {
 		if (
 			!category ||
 			!(
-				(await squery(
+				await query(
 					surql`
 						SELECT * FROM forumCategory
 						WHERE string::lowercase(name) = string::lowercase($category)`,
 					{
 						category,
 					},
-				)) as {}[]
+				)
 			)[0]
 		)
 			throw error(400, "Invalid category")
 
-		const postId = (await squery(surql`fn::id()`)) as string
+		const postId = await squery<string>(surql`fn::id()`)
 
-		await squery(
+		await query(
 			surql`
 				LET $post = CREATE $postId CONTENT {
 					title: $title,

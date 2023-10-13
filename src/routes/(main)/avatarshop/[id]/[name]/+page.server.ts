@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { transaction } from "$lib/server/prisma"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { query, squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
@@ -31,25 +31,7 @@ export async function load({ locals, params }) {
 		id = parseInt(params.id)
 
 	const asset = (
-		(await squery(
-			surql`
-				SELECT
-					*,
-					meta::id(id) AS id,
-					(SELECT number, username FROM <-created<-user)[0] AS creator,
-					count(<-owns<-user) AS sold,
-					$user ∈ <-owns<-user.id AS owned,
-
-					(SELECT text, updated FROM $parent.description
-					ORDER BY updated DESC)[0] AS description,
-
-					${SELECTCOMMENTS}
-				FROM $asset`,
-			{
-				asset: `asset:${id}`,
-				user: `user:${user.id}`,
-			},
-		)) as {
+		await query<{
 			creator: {
 				number: number
 				username: string
@@ -68,7 +50,25 @@ export async function load({ locals, params }) {
 			sold: number
 			type: number
 			visibility: string
-		}[]
+		}>(
+			surql`
+				SELECT
+					*,
+					meta::id(id) AS id,
+					(SELECT number, username FROM <-created<-user)[0] AS creator,
+					count(<-owns<-user) AS sold,
+					$user ∈ <-owns<-user.id AS owned,
+
+					(SELECT text, updated FROM $parent.description
+					ORDER BY updated DESC)[0] AS description,
+
+					${SELECTCOMMENTS}
+				FROM $asset`,
+			{
+				asset: `asset:${id}`,
+				user: `user:${user.id}`,
+			},
+		)
 	)[0]
 
 	if (!asset || !asset.creator) throw error(404, "Not found")
@@ -109,30 +109,26 @@ export const actions = {
 		let receiverId
 		if (replyId) {
 			const commentAuthor = (
-				(await squery(
+				await query<{ id: string }>(
 					surql`
 						SELECT
 							number,
 							username
 						FROM $comment<-posted<-user`,
 					{ comment: `assetComment:${replyId}` },
-				)) as {
-					id: string
-				}[]
+				)
 			)[0]
 			if (!commentAuthor) throw error(404)
 			receiverId = commentAuthor.id || ""
 		} else {
 			const commentAuthor = (
-				(await squery(
+				await query<{ id: string }>(
 					surql`
 						SELECT
 							meta::id(id) AS id
 						FROM $asset<-created<-user`,
 					{ asset: `asset:${params.id}` },
-				)) as {
-					id: string
-				}[]
+				)
 			)[0]
 			if (!commentAuthor) throw error(404)
 			receiverId = commentAuthor.id || ""
@@ -140,9 +136,9 @@ export const actions = {
 
 		console.log("aight")
 
-		const newReplyId = (await squery(surql`fn::id()`)) as string
+		const newReplyId = await squery<string>(surql`fn::id()`)
 
-		await squery(
+		await query(
 			surql`
 				LET $reply = CREATE $assetComment CONTENT {
 					posted: time::now(),
@@ -167,7 +163,7 @@ export const actions = {
 		)
 
 		if (user.id != receiverId)
-			await squery(
+			await query(
 				surql`
 					RELATE $sender->notification->$receiver CONTENT {
 						type: $type,
@@ -222,9 +218,9 @@ export const actions = {
 
 		if (
 			!(
-				(await squery(surql`SELECT * FROM $asset`, {
+				await query(surql`SELECT * FROM $asset`, {
 					asset: `asset:${id}`,
-				})) as {}[]
+				})
 			)[0]
 		)
 			throw error(404)
@@ -234,7 +230,15 @@ export const actions = {
 		switch (action) {
 			case "buy": {
 				const asset = (
-					(await squery(
+					await query<{
+						creator: {
+							id: string
+							username: string
+						}
+						name: string
+						owned: boolean
+						price: number
+					}>(
 						surql`
 							SELECT
 								*,
@@ -248,15 +252,7 @@ export const actions = {
 							asset: `asset:${id}`,
 							user: `user:${user.id}`,
 						},
-					)) as {
-						creator: {
-							id: string
-							username: string
-						}
-						name: string
-						owned: boolean
-						price: number
-					}[]
+					)
 				)[0]
 				if (!asset) throw error(404, "Not found")
 				if (asset.owned) throw error(400, "You already own this item")
@@ -277,13 +273,13 @@ export const actions = {
 				}
 
 				await Promise.all([
-					squery(surql`RELATE $user->owns->$asset`, {
+					query(surql`RELATE $user->owns->$asset`, {
 						user: `user:${user.id}`,
 						asset: `asset:${id}`,
 					}),
 					user.id == asset.creator.id
 						? null
-						: squery(
+						: query(
 								surql`
 									RELATE $sender->notification->$receiver CONTENT {
 										type: $type,
@@ -306,7 +302,7 @@ export const actions = {
 			}
 			case "delete": {
 				const asset = (
-					(await squery(
+					await query<{ owned: boolean }>(
 						surql`
 							SELECT
 								$user ∈ <-owns<-user.id AS owned
@@ -315,14 +311,12 @@ export const actions = {
 							asset: `asset:${id}`,
 							user: `user:${user.id}`,
 						},
-					)) as {
-						owned: boolean
-					}[]
+					)
 				)[0]
 				if (!asset) throw error(404, "Not found")
 				if (asset.owned) throw error(400, "You don't own this item")
 
-				await squery(surql`DELETE $user->owns WHERE out = $asset`, {
+				await query(surql`DELETE $user->owns WHERE out = $asset`, {
 					user: `user:${user.id}`,
 					asset: `asset:${id}`,
 				})
@@ -339,17 +333,17 @@ export const actions = {
 		// Prevents incorrect ids erroring the Surreal query as well
 
 		const comment = (
-			(await squery(
+			await query<{
+				authorId: string
+				visibility: string
+			}>(
 				surql`
 					SELECT
 						meta::id((<-posted<-user.id)[0]) AS authorId,
 						visibility
 					FROM $assetComment`,
 				{ assetComment: `assetComment:${id}` },
-			)) as {
-				authorId: string
-				visibility: string
-			}[]
+			)
 		)[0]
 
 		if (!comment) throw error(404, "Comment not found")
@@ -360,7 +354,7 @@ export const actions = {
 		if (comment.visibility != "Visible")
 			throw error(400, "Comment already deleted")
 
-		await squery(
+		await query(
 			surql`
 				LET $poster = (SELECT
 					<-posted<-user AS poster
@@ -385,7 +379,7 @@ export const actions = {
 
 		if (!findComment) throw error(404, "Comment not found")
 
-		await squery(
+		await query(
 			surql`
 				BEGIN TRANSACTION;
 				LET $reply = SELECT (<-posted<-user)[0] AS poster

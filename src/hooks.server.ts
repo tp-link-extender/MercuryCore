@@ -4,7 +4,7 @@
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
 import surreal from "$lib/server/surreal"
@@ -54,14 +54,14 @@ export async function handle({ event, resolve }) {
 	if (!session || !user) return await resolve(event)
 
 	const moderation = (
-		(await squery(
+		await query(
 			surql`
 				SELECT *
 				FROM moderation
 				WHERE out = $user
 					AND active = true`,
 			{ user: `user:${user.id}` },
-		)) as {}[]
+		)
 	)[0]
 
 	if (
@@ -71,7 +71,7 @@ export async function handle({ event, resolve }) {
 	)
 		throw redirect(302, "/moderation")
 
-	await squery(surql`UPDATE $user SET lastOnline = time::now()`, {
+	await query(surql`UPDATE $user SET lastOnline = time::now()`, {
 		user: `user:${user.id}`,
 	})
 
@@ -83,7 +83,7 @@ export async function handle({ event, resolve }) {
 			(new Date().getTime() - 3600_000 * dailyStipend) <
 		0
 	)
-		await squery(
+		await query(
 			surql`
 				UPDATE $user SET currencyCollected = time::now();
 				UPDATE $user SET currency += $dailyStipend`,

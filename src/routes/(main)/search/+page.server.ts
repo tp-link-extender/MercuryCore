@@ -1,51 +1,56 @@
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
 export const load = async ({ url }) => {
-	const query = url.searchParams.get("q") || "",
+	const searchQ = url.searchParams.get("q") || "",
 		category = url.searchParams.get("c")?.toLowerCase() || ""
 
-	if (!query) throw error(400, "No query provided")
+	if (!searchQ) throw error(400, "No query provided")
 	if (category && !["users", "places", "assets", "groups"].includes(category))
 		throw error(400, "Invalid category")
 
 	if (category == "users") {
 		const userExists = (
-			(await squery(
+			await query<{ number: number }>(
 				surql`
 					SELECT * FROM user
-					WHERE username = $query`,
-				{ query },
-			)) as { number: number }[]
+					WHERE username = $searchQ`,
+				{ searchQ },
+			)
 		)[0]
 
 		if (userExists) throw redirect(302, `/user/${userExists.number}`)
 	}
 
 	return {
-		query,
+		searchQ,
 		category,
 		users:
 			category == "users" &&
-			(squery(
+			query<{
+				number: number
+				username: string
+			}>(
 				surql`
 					SELECT
 						number,
 						username
 					FROM user
-					WHERE string::lowercase($query) ∈ string::lowercase(username)`,
-				{ query },
-			) as Promise<
-				{
-					number: number
-					username: string
-				}[]
-			>),
+					WHERE string::lowercase($searchQ) ∈ string::lowercase(username)`,
+				{ searchQ },
+			),
 		places:
 			category == "places" &&
-			(squery(
+			query<{
+				id: number
+				name: string
+				playerCount: number
+				serverPing: number
+				likeCount: number
+				dislikeCount: number
+			}>(
 				surql`
 					SELECT
 						meta::id(id) AS id,
@@ -61,52 +66,39 @@ export const load = async ({ url }) => {
 					FROM place
 					WHERE !privateServer
 						AND !deleted
-						AND string::lowercase($query) ∈ string::lowercase(name)`,
-				{ query },
-			) as Promise<
-				{
-					id: number
-					name: string
-					playerCount: number
-					serverPing: number
-					likeCount: number
-					dislikeCount: number
-				}[]
-			>),
+						AND string::lowercase($searchQ) ∈ string::lowercase(name)`,
+				{ searchQ },
+			),
 		assets:
 			category == "assets" &&
-			(squery(
+			query<{
+				id: number
+				name: string
+				price: number
+			}>(
 				surql`
 					SELECT
 						meta::id(id) AS id,
 						name,
 						price
 					FROM asset
-					WHERE string::lowercase($query) ∈ string::lowercase(name)`,
-				{ query },
-			) as Promise<
-				{
-					id: number
-					name: string
-					price: number
-				}[]
-			>),
+					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)`,
+				{ searchQ },
+			),
 		groups:
 			category == "groups" &&
-			(squery(
+			query<{
+				name: string
+				memberCount: number
+			}>(
 				surql`
 					SELECT
 						name,
 						count(<-member) AS memberCount
 					FROM group
-					WHERE string::lowercase($query) ∈ string::lowercase(name)`,
-				{ query },
-			) as Promise<
-				{
-					name: string
-					memberCount: number
-				}[]
-			>),
+					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)`,
+				{ searchQ },
+			),
 	}
 }
 

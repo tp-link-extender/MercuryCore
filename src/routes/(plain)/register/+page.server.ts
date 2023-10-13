@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { auth } from "$lib/server/lucia"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { query, squery } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -29,7 +29,7 @@ const schemaInitial = z.object({
 
 export const load = async () => ({
 	form: superValidate(schema),
-	users: ((await squery(surql`count(SELECT * FROM user)`)) as number) > 0,
+	users: (await squery<number>(surql`count(SELECT * FROM user)`)) > 0,
 })
 
 export const actions = {
@@ -52,10 +52,10 @@ export const actions = {
 		try {
 			if (
 				(
-					(await squery(
+					await query(
 						surql`SELECT * FROM user WHERE username = $username`,
 						{ username },
-					)) as {}[]
+					)
 				)[0]
 			)
 				return formError(
@@ -66,10 +66,10 @@ export const actions = {
 
 			if (
 				(
-					(await squery(
+					await query(
 						surql`SELECT * FROM user WHERE email = $email`,
 						{ email },
-					)) as {}[]
+					)
 				)[0]
 			)
 				return formError(
@@ -118,7 +118,7 @@ export const actions = {
 				}),
 			)
 
-			await squery(
+			await query(
 				surql`
 					RELATE $user->used->$key;
 					UPDATE $key SET usesLeft -= 1`,
@@ -159,16 +159,14 @@ export const actions = {
 			)
 
 		try {
-			if (
-				((await squery(surql`count(SELECT * FROM user)`)) as number) > 0
-			)
+			if ((await squery<number>(surql`count(SELECT * FROM user)`)) > 0)
 				return formError(
 					form,
 					["username"],
 					["There's already an account registered"],
 				)
 
-			await squery(surql`UPDATE ONLY stuff:increment SET user = 0`)
+			await query(surql`UPDATE ONLY stuff:increment SET user = 0`)
 
 			const user = await auth.createUser({
 				key: {

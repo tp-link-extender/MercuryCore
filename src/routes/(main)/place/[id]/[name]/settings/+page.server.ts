@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
 import fs from "fs"
@@ -56,7 +56,7 @@ type Place = {
 
 const placeQuery = async (id: string | number) =>
 	(
-		(await squery(
+		await query<Place>(
 			surql`
 				SELECT
 					*,
@@ -67,7 +67,7 @@ const placeQuery = async (id: string | number) =>
 					ORDER BY updated DESC)[0] AS description
 				FROM $place`,
 			{ place: `place:${id}` },
-		)) as [Place]
+		)
 	)[0]
 
 export async function load({ locals, params }) {
@@ -137,7 +137,7 @@ export const actions = {
 
 				const { title, description } = form.data
 
-				await squery(
+				await query(
 					surql`
 						LET $og = SELECT
 							title,
@@ -164,7 +164,7 @@ export const actions = {
 			}
 
 			case "ticket":
-				await squery(
+				await query(
 					surql`UPDATE $place SET serverTicket = rand::guid()`,
 					{ place: `place:${id}` },
 				)
@@ -180,7 +180,7 @@ export const actions = {
 
 				const { serverIP, serverPort, maxPlayers } = form.data
 
-				await squery(
+				await query(
 					surql`
 						UPDATE $place MERGE {
 							serverIP: $serverIP,
@@ -204,7 +204,7 @@ export const actions = {
 
 				const { privateServer } = form.data
 
-				await squery(
+				await query(
 					surql`UPDATE $place SET privateServer = $privateServer`,
 					{
 						place: `place:${id}`,
@@ -216,7 +216,7 @@ export const actions = {
 			}
 
 			case "privatelink":
-				await squery(
+				await query(
 					surql`UPDATE $place SET privateTicket = rand::guid()`,
 					{ place: `place:${id}` },
 				)

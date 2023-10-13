@@ -1,8 +1,8 @@
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 
 export const like = (userId: string, thing: string) =>
-	squery(
+	query(
 		surql`
 			DELETE $user->dislikes WHERE out = $thing;
 			IF $user ∉ (SELECT * FROM $thing<-likes).in THEN
@@ -12,12 +12,12 @@ export const like = (userId: string, thing: string) =>
 		{ thing, user: `user:${userId}` },
 	)
 export const unlike = (userId: string, thing: string) =>
-	squery(surql`DELETE $user->likes WHERE out = $thing`, {
+	query(surql`DELETE $user->likes WHERE out = $thing`, {
 		thing,
 		user: `user:${userId}`,
 	})
 export const dislike = (userId: string, thing: string) =>
-	squery(
+	query(
 		surql`
 			DELETE $user->likes WHERE out = $thing;
 			IF $user ∉ (SELECT * FROM $thing<-dislikes).in THEN
@@ -27,7 +27,7 @@ export const dislike = (userId: string, thing: string) =>
 		{ thing, user: `user:${userId}` },
 	)
 export const undislike = (userId: string, thing: string) =>
-	squery(surql`DELETE $user->dislikes WHERE out = $thing`, {
+	query(surql`DELETE $user->dislikes WHERE out = $thing`, {
 		thing,
 		user: `user:${userId}`,
 	})

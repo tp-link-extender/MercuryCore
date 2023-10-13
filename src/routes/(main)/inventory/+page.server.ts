@@ -1,9 +1,14 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 
 export const load = async ({ locals }) => ({
-	assets: squery(
+	assets: query<{
+		name: string
+		price: number
+		id: number
+		type: string
+	}>(
 		surql`
 			SELECT
 				meta::id(id) AS id,
@@ -13,12 +18,5 @@ export const load = async ({ locals }) => ({
 				<-owns<-user AS owners
 			FROM asset WHERE $user ∈ <-owns<-user`,
 		{ user: `user:${(await authorise(locals)).user.id}` },
-	) as Promise<
-		{
-			name: string
-			price: number
-			id: number
-			type: string
-		}[]
-	>,
+	),
 })

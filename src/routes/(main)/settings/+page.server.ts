@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { multiSquery, squery } from "$lib/server/surreal"
+import { mquery, query } from "$lib/server/surreal"
 import { auth } from "$lib/server/lucia"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -37,7 +37,7 @@ export const actions = {
 
 				const { bio, theme } = form.data
 
-				await squery(
+				await query(
 					surql`
 						LET $og = SELECT
 							(SELECT text, updated FROM $parent.bio

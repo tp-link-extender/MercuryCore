@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function load({ params }) {
@@ -7,17 +7,17 @@ export async function load({ params }) {
 		throw error(400, `Invalid asset id: ${params.id}`)
 
 	const asset = (
-		(await squery(
+		await query<{
+			id: number
+			name: string
+		}>(
 			surql`
 				SELECT
 					name, 
 					meta::id(id) AS id
 				FROM $asset`,
 			{ asset: `asset:${params.id}` },
-		)) as {
-			id: number
-			name: string
-		}[]
+		)
 	)[0]
 
 	if (!asset) throw error(404, "Not found")

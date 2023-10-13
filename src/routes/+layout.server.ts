@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 
 export async function load({ request, locals }) {
 	const session = await locals.auth.validate(),
@@ -9,7 +9,20 @@ export async function load({ request, locals }) {
 
 	let notifications
 	if (session && user) {
-		const notifications1 = (await squery(
+		const notifications1 = await query<{
+			id: string
+			in: string
+			note: string
+			out: string
+			read: boolean
+			relativeId: string
+			sender: {
+				number: number
+				username: string
+			}
+			time: string
+			type: string
+		}>(
 			surql`
 				SELECT
 					*,
@@ -24,20 +37,7 @@ export async function load({ request, locals }) {
 			{
 				user: `user:${user.id}`,
 			},
-		)) as {
-			id: string
-			in: string
-			note: string
-			out: string
-			read: boolean
-			relativeId: string
-			sender: {
-				number: number
-				username: string
-			}
-			time: string
-			type: string
-		}[]
+		)
 
 		// Make type relativeId optional so we can delete it later
 		type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
@@ -59,7 +59,13 @@ export async function load({ request, locals }) {
 				case "AssetComment":
 				case "AssetCommentReply":
 					const comment = (
-						(await squery(
+						await query<{
+							id: string
+							parentAsset: {
+								id: string
+								name: string
+							}
+						}>(
 							surql`
 								SELECT
 									*,
@@ -70,13 +76,7 @@ export async function load({ request, locals }) {
 									FROM ->replyToAsset->asset)[0] AS parentAsset
 								FROM $comment`,
 							{ comment: `assetComment:${i.relativeId}` },
-						)) as {
-							id: string
-							parentAsset: {
-								id: string
-								name: string
-							}
-						}[]
+						)
 					)[0]
 					if (!comment) break
 
@@ -86,7 +86,13 @@ export async function load({ request, locals }) {
 				case "ForumPostReply":
 				case "ForumReplyReply":
 					const reply = (
-						(await squery(
+						await query<{
+							id: string
+							parentPost: {
+								categoryName: string
+								id: string
+							}
+						}>(
 							surql`
 							SELECT
 								meta::id(id) AS id,
@@ -98,13 +104,7 @@ export async function load({ request, locals }) {
 							{
 								reply: `forumReply:${i.relativeId}`,
 							},
-						)) as {
-							id: string
-							parentPost: {
-								categoryName: string
-								id: string
-							}
-						}[]
+						)
 					)[0]
 					if (!reply) break
 
@@ -116,7 +116,11 @@ export async function load({ request, locals }) {
 				case "ForumMention":
 				case "ForumPost":
 					const post = (
-						(await squery(
+						await query<{
+							category: {
+								name: string
+							}
+						}>(
 							surql`
 								SELECT
 									(SELECT name
@@ -125,11 +129,7 @@ export async function load({ request, locals }) {
 							{
 								forumPost: `forumPost:${i.relativeId}`,
 							},
-						)) as {
-							category: {
-								name: string
-							}
-						}[]
+						)
 					)[0]
 					if (!post) break
 
@@ -147,7 +147,12 @@ export async function load({ request, locals }) {
 	}
 
 	return {
-		banners: squery(surql`
+		banners: query<{
+			bgColour: string
+			body: string
+			id: string
+			textLight: boolean
+		}>(surql`
 			SELECT
 				body,
 				bgColour,
@@ -155,14 +160,7 @@ export async function load({ request, locals }) {
 				meta::id(id) AS id
 			OMIT deleted
 			FROM banner
-			WHERE deleted = false AND active = true`) as Promise<
-			{
-				bgColour: string
-				body: string
-				id: string
-				textLight: boolean
-			}[]
-		>,
+			WHERE deleted = false AND active = true`),
 		user,
 		notifications: notifications || [],
 		url: request.url,

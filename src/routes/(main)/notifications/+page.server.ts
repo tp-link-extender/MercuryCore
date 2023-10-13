@@ -1,12 +1,12 @@
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
 import { error } from "@sveltejs/kit"
 
 export const load = async ({ locals }) => {
 	const { user } = await authorise(locals)
 
-	await squery(
+	await query(
 		surql`
 			UPDATE notification
 			SET read = true
@@ -24,7 +24,7 @@ export const actions = {
 		if (!id) throw error(400)
 
 		try {
-			await squery(
+			await query(
 				surql`
 					IF $notification.* {
 						UPDATE $notification

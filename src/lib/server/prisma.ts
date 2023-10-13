@@ -2,7 +2,7 @@
 // as only needing to initialise PrismaClient once.
 
 import surql from "$lib/surrealtag"
-import { multiSquery } from "$lib/server/surreal"
+import { mquery } from "$lib/server/surreal"
 
 const failed = "The query was not executed due to a failed transaction"
 /**
@@ -18,7 +18,16 @@ export async function transaction(
 	amountSent: number,
 	{ note, link }: { note?: String; link?: String },
 ) {
-	const query = (await multiSquery(
+	const qResult = await mquery<
+		| string[]
+		| {
+				amountSent: number
+				taxRate: number
+				note: string
+				link: string
+				time: string
+		  }[]
+	>(
 		surql`
 			BEGIN TRANSACTION; # lmfao
 
@@ -87,19 +96,11 @@ export async function transaction(
 			note,
 			link,
 		},
-	)) as
-		| string[]
-		| {
-				amountSent: number
-				taxRate: number
-				note: string
-				link: string
-				time: string
-		  }[]
+	)
 
-	for (const result of query) {
+	for (const result of qResult) {
 		if (result == failed)
-			for (const result2 of query)
+			for (const result2 of qResult)
 				if (typeof result2 == "string" && result2 != failed)
 					throw new Error(
 						result2.match(/An error occurred: (.*)/)?.[1],

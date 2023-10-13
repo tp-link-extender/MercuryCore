@@ -33,15 +33,29 @@ await db.query(surql`
 	};
 `)
 
-export async function squery(query: string, params?: { [k: string]: any }) {
-	return (await db.query(query, params))[0].result
-}
+/**
+ * Executes a query in SurrealDB and returns its results.
+ * @param input The surql query to execute.
+ * @param params An array of variables to pass to SurrealDB.
+ * @returns The result of the first query given.
+ */
+export const query = async <T>(input: string, params?: { [k: string]: any }) =>
+	(await db.query(input, params))[0].result as T[]
 
-// I'll rename this later I promise
-export async function multiSquery(
-	query: string,
-	params?: { [k: string]: any },
-) {
-	const result = await db.query(query, params)
-	return result.map(v => v.result)
-}
+/**
+ * Executes a query in SurrealDB and returns the first item in its results.
+ * @param input The surql query to execute.
+ * @param params An array of variables to pass to SurrealDB.
+ * @returns The first item in the array returned by the first query.
+ */
+export const squery = async <T>(input: string, params?: { [k: string]: any }) =>
+	(await query<T>(input, params))[0]
+
+/**
+ * Executes multiple queries in SurrealDB and returns their results.
+ * @param input The surql query to execute.
+ * @param params An array of variables to pass to SurrealDB.
+ * @returns The result of all queries given.
+ */
+export const mquery = async <T>(input: string, params?: { [k: string]: any }) =>
+	(await db.query(input, params)).map(v => v.result) as T

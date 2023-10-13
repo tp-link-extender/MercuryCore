@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { query, mquery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { likeSwitch } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
@@ -13,7 +13,33 @@ export async function load({ url, locals, params }) {
 		id = parseInt(params.id),
 		privateServerCode = url.searchParams.get("privateServer"),
 		getPlace = (
-			(await squery(
+			await query<{
+				created: string
+				description: {
+					text: string
+					updated: string
+				}
+				dislikeCount: number
+				dislikes: boolean
+				id: string
+				likeCount: number
+				likes: boolean
+				maxPlayers: number
+				name: string
+				ownerUser: {
+					number: number
+					username: string
+				}
+				players: {
+					number: number
+					username: string
+				}[]
+				privateServer: boolean
+				privateTicket: string
+				serverPing: number
+				serverTicket: string
+				updated: string
+			}>(
 				surql`
 					SELECT
 						meta::id(id) AS id,
@@ -47,33 +73,7 @@ export async function load({ url, locals, params }) {
 					user: `user:${user.id}`,
 					place: `place:${id}`,
 				},
-			)) as {
-				created: string
-				description: {
-					text: string
-					updated: string
-				}
-				dislikeCount: number
-				dislikes: boolean
-				id: string
-				likeCount: number
-				likes: boolean
-				maxPlayers: number
-				name: string
-				ownerUser: {
-					number: number
-					username: string
-				}
-				players: {
-					number: number
-					username: string
-				}[]
-				privateServer: boolean
-				privateTicket: string
-				serverPing: number
-				serverTicket: string
-				updated: string
-			}[]
+			)
 		)[0]
 
 	if (
@@ -96,13 +96,13 @@ export const actions = {
 			{ user } = await authorise(locals),
 			data = await formData(request),
 			{ action } = data,
-			privateTicket = url.searchParams.get("privateTicket"),
-			place = (
-				(await surreal.select(`place:${id}`)) as {
-					privateServer: boolean
-					privateTicket: string
-				}[]
-			)[0]
+			privateTicket = url.searchParams.get("privateTicket")
+		const place = (
+			(await surreal.select(`place:${id}`)) as {
+				privateServer: boolean
+				privateTicket: string
+			}[]
+		)[0]
 
 		if (
 			!place ||
@@ -128,26 +128,34 @@ export const actions = {
 
 		if (
 			(
-				(await squery(
+				await query<{
+					type: string
+					note: string
+					time: string
+					timeEnds: string
+				}>(
 					surql`
 						SELECT *
 						FROM moderation
 						WHERE out = $user
 							AND active = true`,
 					{ user: `user:${user.id}` },
-				)) as {
-					type: string
-					note: string
-					time: string
-					timeEnds: string
-				}[]
+				)
 			)[0]
 		)
 			throw error(403, "You cannot currently play games")
 
 		// Invalidate all game sessions and create valid session
 		const session = (
-			(await squery(
+			await mquery<
+				{
+					id: string
+					in: string
+					out: string
+					ping: number
+					valid: boolean
+				}[]
+			>(
 				surql`
 					UPDATE (SELECT * FROM $user->playing) SET valid = false;
 					RELATE $user->playing->$place CONTENT {
@@ -158,17 +166,13 @@ export const actions = {
 					user: `user:${user.id}`,
 					place: `place:${serverId}`,
 				},
-			)) as {
-				id: string
-				in: string
-				out: string
-				ping: number
-				valid: boolean
-			}[]
+			)
 		)[1]
 
 		return {
-			joinScriptUrl: `https://banland.xyz/game/join?ticket=${session.id}`,
+			joinScriptUrl: `https://banland.xyz/game/join?ticket=${
+				session.id.split(":")[1]
+			}`,
 		}
 	},
 }

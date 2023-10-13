@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { query } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -21,7 +21,16 @@ export async function load({ locals }) {
 
 	return {
 		form: superValidate(schema),
-		invites: (await squery(
+		invites: await query<{
+			id: string
+			created: string
+			usesLeft: number
+			expiry: string
+			creator?: {
+				number: number
+				username: string
+			}
+		}>(
 			surql`
 				SELECT
 					*,
@@ -32,16 +41,7 @@ export async function load({ locals }) {
 					FROM <-created<-user)[0] AS creator
 				FROM regKey
 				ORDER BY creation DESC`,
-		)) as {
-			id: string
-			created: string
-			usesLeft: number
-			expiry: string
-			creator?: {
-				number: number
-				username: string
-			}
-		}[],
+		),
 	}
 }
 
@@ -94,7 +94,7 @@ export const actions = {
 				)
 					return formError(form, ["inviteExpiry"], ["Invalid date"])
 
-				await squery(
+				await query(
 					surql`
 						LET $key = CREATE regKey CONTENT {
 							usesLeft: $inviteUses,
@@ -137,7 +137,7 @@ export const actions = {
 						status: 400,
 					})
 
-				await squery(
+				await query(
 					surql`
 						UPDATE $key SET usesLeft = 0;
 						CREATE auditLog CONTENT {

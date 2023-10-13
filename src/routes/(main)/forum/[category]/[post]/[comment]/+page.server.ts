@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "../select"
 
@@ -13,25 +13,33 @@ export async function load({ locals, params }) {
 	if (!/^[0-9a-z]+$/.test(params.post)) throw error(400, "Invalid post id")
 
 	const post = (
-		(await squery(
+		await query<{
+			author: {
+				username: string
+			}
+		}>(
 			surql`
 				SELECT
 					(SELECT username
 					FROM <-posted<-user)[0] AS author
 				FROM $forumPost`,
 			{ forumPost: `forumPost:${params.post}` },
-		)) as {
-			author: {
-				username: string
-			}
-		}[]
+		)
 	)[0]
 
 	if (!post) throw error(404, "Post not found")
 
 	const { user } = await authorise(locals)
 
-	const forumReplies = (await squery(
+	const forumReplies = await query<
+		Replies[number] & {
+			parentPost: {
+				title: string
+				id: string
+				forumCategoryName: string
+			}
+		}
+	>(
 		surql`
 			SELECT
 				*,
@@ -62,14 +70,7 @@ export async function load({ locals, params }) {
 			forumPost: `forumPost:${params.post}`,
 			user: `user:${user.id}`,
 		},
-	)) as Replies &
-		{
-			parentPost: {
-				title: string
-				id: string
-				forumCategoryName: string
-			}
-		}[]
+	)
 
 	if (!forumReplies[0]) throw error(404, "Reply not found")
 

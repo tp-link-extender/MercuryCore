@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import render from "$lib/server/render"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { fail } from "@sveltejs/kit"
 
@@ -40,7 +40,7 @@ export const actions = {
 		currentColours[bodyPart] = parseInt(bodyColour)
 
 		await Promise.all([
-			squery(surql`UPDATE $user SET bodyColours = $currentColours`, {
+			query(surql`UPDATE $user SET bodyColours = $currentColours`, {
 				user: `user:${user.id}`,
 				currentColours,
 			}),

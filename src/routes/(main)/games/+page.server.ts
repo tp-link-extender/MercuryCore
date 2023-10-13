@@ -1,15 +1,15 @@
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 
-type Places = {
+type Place = {
 	id: string
 	name: string
 	playerCount: number
 	serverPing: number
-}[]
+}
 
 export const load = () => ({
-	places: squery(surql`
+	places: query<Place>(surql`
 		SELECT
 			meta::id(id) AS id,
 			name,
@@ -22,12 +22,12 @@ export const load = () => ({
 			count(<-likes) AS likeCount,
 			count(<-dislikes) AS dislikeCount
 		FROM place
-		WHERE !privateServer AND !deleted`) as Promise<Places>,
+		WHERE !privateServer AND !deleted`),
 })
 
 export const actions = {
 	default: async ({ request }) => ({
-		places: (await squery(
+		places: await query<Place>(
 			surql`
 				SELECT
 					meta::id(id) AS id,
@@ -45,6 +45,6 @@ export const actions = {
 					AND !deleted
 					AND string::lowercase($query) ∈ string::lowercase(name)`,
 			{ query: (await request.formData()).get("query") as string },
-		)) as Places,
+		),
 	}),
 }

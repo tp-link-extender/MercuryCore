@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "../select"
 
@@ -14,25 +14,33 @@ export async function load({ locals, params }) {
 		throw error(400, `Invalid asset id: ${params.id}`)
 
 	const asset = (
-		(await squery(
+		await query<{
+			creator: {
+				username: string
+			}
+		}>(
 			surql`
 				SELECT
 					(SELECT username
 					FROM <-created<-user)[0] AS creator
 				FROM $asset`,
 			{ asset: `asset:${params.id}` },
-		)) as {
-			creator: {
-				username: string
-			}
-		}[]
+		)
 	)[0]
 
 	if (!asset) throw error(404, "Asset not found")
 
 	const { user } = await authorise(locals)
 
-	const assetComments = (await squery(
+	const assetComments = await query<
+		Replies[number] & {
+			parentPost: {
+				title: string
+				id: string
+				forumCategoryName: string
+			}
+		}
+	>(
 		surql`
 			SELECT
 				*,
@@ -62,14 +70,7 @@ export async function load({ locals, params }) {
 			forumPost: `forumPost:${params.id}`,
 			user: `user:${user.id}`,
 		},
-	)) as Replies &
-		{
-			parentPost: {
-				title: string
-				id: string
-				forumCategoryName: string
-			}
-		}[]
+	)
 
 	if (!assetComments) throw error(404, "Comment not found")
 

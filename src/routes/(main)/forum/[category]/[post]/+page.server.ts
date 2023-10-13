@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { query, squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
@@ -27,25 +27,7 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	const forumPost = (await squery(
-		surql`
-			SELECT
-				*,
-				meta::id(id) AS id,
-				(SELECT number, username FROM <-posted<-user)[0] AS author,
-				count(<-likes) AS likeCount,
-				count(<-dislikes) AS dislikeCount,
-				$user ∈ <-likes<-user.id AS likes,
-				$user ∈ <-dislikes<-user.id AS dislikes,
-				(->in->forumCategory)[0].name AS categoryName,
-
-				${SELECTREPLIES}
-			FROM $forumPost`,
-		{
-			forumPost: `forumPost:${params.post}`,
-			user: `user:${user.id}`,
-		},
-	)) as {
+	const forumPost = await query<{
 		author: {
 			number: number
 			username: string
@@ -65,7 +47,25 @@ export async function load({ locals, params }) {
 		replies: Replies
 		title: string
 		visibility: string
-	}[]
+	}>(
+		surql`
+			SELECT
+				*,
+				meta::id(id) AS id,
+				(SELECT number, username FROM <-posted<-user)[0] AS author,
+				count(<-likes) AS likeCount,
+				count(<-dislikes) AS dislikeCount,
+				$user ∈ <-likes<-user.id AS likes,
+				$user ∈ <-dislikes<-user.id AS dislikes,
+				(->in->forumCategory)[0].name AS categoryName,
+
+				${SELECTREPLIES}
+			FROM $forumPost`,
+		{
+			forumPost: `forumPost:${params.post}`,
+			user: `user:${user.id}`,
+		},
+	)
 
 	if (!forumPost[0]) throw error(404, "Not found")
 
@@ -92,7 +92,7 @@ export const actions = {
 			throw error(400, "Invalid reply id")
 
 		const replypost = (
-			(await squery(
+			await query<{ authorId: string }>(
 				surql`
 					SELECT 
 						meta::id(<-posted[0]<-user[0].id) AS authorId
@@ -103,17 +103,15 @@ export const actions = {
 						? `forumReply:${replyId}`
 						: `forumPost:${params.post}`,
 				},
-			)) as {
-				authorId: string
-			}[]
+			)
 		)[0]
 
 		if (!replypost)
 			throw error(404, `${replyId ? "Reply" : "Post"} not found`)
 
-		const newReplyId = (await squery(surql`fn::id()`)) as string
+		const newReplyId = await squery<string>(surql`fn::id()`)
 
-		await squery(
+		await query(
 			surql`
 				LET $reply = CREATE $forumReply CONTENT {
 					posted: time::now(),
@@ -138,7 +136,7 @@ export const actions = {
 		)
 
 		if (user.id != replypost.authorId)
-			await squery(
+			await query(
 				surql`
 					RELATE $sender->notification->$receiver CONTENT {
 						type: $type,
@@ -168,17 +166,17 @@ export const actions = {
 		// Prevents incorrect ids erroring the Surreal query as well
 
 		const reply = (
-			(await squery(
+			await query<{
+				authorId: string
+				visibility: string
+			}>(
 				surql`
 					SELECT
 						meta::id((-posted<-user.id)[0]) AS authorId
 						visibility
 					FROM $forumReply`,
 				{ forumReply: `forumReply:${id}` },
-			)) as {
-				authorId: string
-				visibility: string
-			}[]
+			)
 		)[0]
 
 		if (!reply) throw error(404, "Reply not found")
@@ -189,7 +187,7 @@ export const actions = {
 		if (reply.visibility != "Visible")
 			throw error(400, "Reply already deleted")
 
-		await squery(
+		await query(
 			surql`
 				LET $poster = (SELECT
 					<-posted<-user AS poster
@@ -214,7 +212,7 @@ export const actions = {
 
 		if (!findReply) throw error(404, "Reply not found")
 
-		await squery(
+		await query(
 			surql`
 				BEGIN TRANSACTION;
 				LET $reply = SELECT (<-posted<-user)[0] AS poster

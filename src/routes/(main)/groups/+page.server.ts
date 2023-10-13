@@ -1,31 +1,29 @@
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 
-type Groups = {
+type Group = {
 	name: string
 	memberCount: number
-}[]
+}
 
 export const load = () => ({
-	groups: squery(surql`
+	groups: query<Group>(surql`
 		SELECT
 			name,
 			count(<-member) AS memberCount
-		FROM group`) as Promise<Groups>,
+		FROM group`),
 })
 
 export const actions = {
 	default: async ({ request }) => ({
-		places: (await squery(
+		places: await query<Group>(
 			surql`
 				SELECT
 					name,
 					count(<-member) AS memberCount
 				FROM group
 				WHERE string::lowercase($query) ∈ string::lowercase(name)`,
-			{
-				query: (await request.formData()).get("query") as string,
-			},
-		)) as Groups,
+			{ query: (await request.formData()).get("query") as string },
+		),
 	}),
 }

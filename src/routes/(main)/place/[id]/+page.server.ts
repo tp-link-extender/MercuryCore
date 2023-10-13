@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
@@ -8,7 +8,14 @@ export async function load({ locals, params }) {
 		throw error(400, `Invalid place id: ${params.id}`)
 
 	const place = (
-		(await squery(
+		await query<{
+			id: string
+			name: string
+			owner: {
+				id: string
+			}
+			privateServer: boolean
+		}>(
 			surql`
 				SELECT
 					name,
@@ -19,14 +26,7 @@ export async function load({ locals, params }) {
 					FROM <-owns<-user)[0] AS owner
 				FROM $place`,
 			{ place: `place:${params.id}` },
-		)) as {
-			id: string
-			name: string
-			owner: {
-				id: string
-			}
-			privateServer: boolean
-		}[]
+		)
 	)[0]
 
 	if (

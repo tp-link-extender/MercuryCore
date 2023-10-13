@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
 import { error, redirect } from "@sveltejs/kit"
 
@@ -7,19 +7,19 @@ import { error, redirect } from "@sveltejs/kit"
 export async function load({ locals }) {
 	const { user } = await authorise(locals),
 		userModeration = (
-			(await squery(
+			await query<{
+				type: string
+				note: string
+				time: string
+				timeEnds: string
+			}>(
 				surql`
 					SELECT *
 					FROM moderation
 					WHERE out = $user
 						AND active = true`,
 				{ user: `user:${user.id}` },
-			)) as {
-				type: string
-				note: string
-				time: string
-				timeEnds: string
-			}[]
+			)
 		)[0]
 
 	if (!userModeration)
@@ -35,17 +35,17 @@ export const actions = {
 	default: async ({ locals }) => {
 		const { user } = await authorise(locals),
 			userModeration = (
-				(await squery(
+				await query<{
+					type: string
+					timeEnds: string
+				}>(
 					surql`
 						SELECT *
 						FROM moderation
 						WHERE out = $user
 							AND active = true`,
 					{ user: `user:${user.id}` },
-				)) as {
-					type: string
-					timeEnds: string
-				}[]
+				)
 			)[0]
 
 		if (!userModeration)
@@ -63,7 +63,7 @@ export const actions = {
 		)
 			throw error(400, "You cannot reactivate your account")
 
-		await squery(
+		await query(
 			surql`
 				UPDATE moderation SET active = false
 				WHERE out = $user`,
