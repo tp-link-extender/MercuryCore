@@ -25,7 +25,7 @@ export async function load({ locals }) {
 			surql`
 				SELECT
 					*,
-					string::split(type::string(id), ":")[1] AS id,
+					meta::id(id) AS id,
 					(SELECT
 						number,
 						username

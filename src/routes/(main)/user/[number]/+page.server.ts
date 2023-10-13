@@ -25,7 +25,7 @@ export async function load({ locals, params }) {
 					FROM ->posted->statusPost LIMIT 40) AS posts,
 
 					(SELECT
-						string::split(type::string(id), ":")[1] AS id,
+						meta::id(id) AS id,
 						name,
 						count(
 							SELECT * FROM <-playing
@@ -123,7 +123,7 @@ export const actions = {
 			user2 = (
 				(await squery(
 					surql`
-						SELECT  string::split(type::string(id), ":")[1] AS id
+						SELECT meta::id(id) AS id
 						FROM user WHERE number = $number`,
 					{ number },
 				)) as {

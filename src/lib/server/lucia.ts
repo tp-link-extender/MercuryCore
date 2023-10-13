@@ -1,8 +1,6 @@
 // Initialising Lucia, the authentication library
 
-import surql from "$lib/surrealtag"
 import { dev } from "$app/environment"
-import { squery } from "$lib/server/surreal"
 import { redirect, error } from "@sveltejs/kit"
 import { lucia, type Session, type User } from "lucia"
 import { sveltekit } from "lucia/middleware"
@@ -14,9 +12,6 @@ export const auth = lucia({
 	middleware: sveltekit(),
 	adapter: adapter(),
 	env: dev ? "DEV" : "PROD",
-	experimental: {
-		debugMode: true,
-	},
 	getUserAttributes: data => ({
 		// This is the data that will be available in data.user
 		// in a +page.svelte or +layout.svelte file, or authorise()
@@ -35,36 +30,6 @@ export const auth = lucia({
 		// Types for this are defined in src/app.d.ts.
 	}),
 })
-
-export async function addUserData(user: User) {
-	const surrealUser = (await squery(
-		surql`
-			SELECT
-				*,
-				string::split(type::string(id), ":")[1] AS id,
-				(SELECT text, updated FROM $parent.bio
-				ORDER BY updated DESC) AS bio
-			FROM user WHERE number = $number`,
-		user,
-	)) as {
-		bio: {
-			text: string
-			updated: string
-		}[]
-		currency: number
-		email: string
-		id: string
-		number: number
-		permissionLevel: number
-		theme: string
-		username: string
-	}[]
-
-	return {
-		...user,
-		...surrealUser[0],
-	}
-}
 
 /**
  * Authorises a user and returns their session and user data, or redirects them to the login page.
@@ -93,6 +58,6 @@ export async function authorise(
 
 	return {
 		session,
-		user: await addUserData(user),
+		user,
 	}
 }

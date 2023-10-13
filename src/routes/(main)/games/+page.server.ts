@@ -11,7 +11,7 @@ type Places = {
 export const load = () => ({
 	places: squery(surql`
 		SELECT
-			string::split(type::string(id), ":")[1] AS id,
+			meta::id(id) AS id,
 			name,
 			serverPing,
 			count(
@@ -30,7 +30,7 @@ export const actions = {
 		places: (await squery(
 			surql`
 				SELECT
-					string::split(type::string(id), ":")[1] AS id,
+					meta::id(id) AS id,
 					name,
 					serverPing,
 					count(

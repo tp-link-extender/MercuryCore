@@ -79,7 +79,7 @@ export async function handle({ event, resolve }) {
 		dailyStipend = (economy?.dailyStipend as number) || 10
 
 	if (
-		user.currencyCollected.getTime() -
+		new Date(user.currencyCollected).getTime() -
 			(new Date().getTime() - 3600_000 * dailyStipend) <
 		0
 	)

@@ -1,6 +1,5 @@
 import surql from "$lib/surrealtag"
 import { squery } from "$lib/server/surreal"
-import { addUserData } from "$lib/server/lucia"
 
 export async function load({ request, locals }) {
 	const session = await locals.auth.validate(),
@@ -14,7 +13,7 @@ export async function load({ request, locals }) {
 			surql`
 				SELECT
 					*,
-					string::split(type::string(id), ":")[1] AS id,
+					meta::id(id) AS id,
 					(SELECT
 						number,
 						username
@@ -64,9 +63,9 @@ export async function load({ request, locals }) {
 							surql`
 								SELECT
 									*,
-									string::split(type::string(id), ":")[1] AS id,
+									meta::id(id) AS id,
 									(SELECT
-										string::split(type::string(id), ":")[1] AS id,
+										meta::id(id) AS id,
 										name
 									FROM ->replyToAsset->asset)[0] AS parentAsset
 								FROM $comment`,
@@ -90,9 +89,9 @@ export async function load({ request, locals }) {
 						(await squery(
 							surql`
 							SELECT
-								string::split(type::string(id), ":")[1] AS id,
+								meta::id(id) AS id,
 								(SELECT
-									string::split(type::string(id), ":")[1] AS id,
+									meta::id(id) AS id,
 									(->in->forumCategory)[0].name as categoryName
 								FROM ->replyToPost[0]->forumPost)[0] AS parentPost
 							FROM $reply`,
@@ -153,7 +152,7 @@ export async function load({ request, locals }) {
 				body,
 				bgColour,
 				textLight,
-				string::split(type::string(id), ":")[1] AS id
+				meta::id(id) AS id
 			OMIT deleted
 			FROM banner
 			WHERE deleted = false AND active = true`) as Promise<
@@ -164,7 +163,7 @@ export async function load({ request, locals }) {
 				textLight: boolean
 			}[]
 		>,
-		user: user ? addUserData(user) : null,
+		user,
 		notifications: notifications || [],
 		url: request.url,
 	}

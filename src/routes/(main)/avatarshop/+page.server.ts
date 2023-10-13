@@ -4,7 +4,7 @@ import { squery } from "$lib/server/surreal"
 export const load = async () => ({
 	assets: squery(surql`
 		SELECT
-			string::split(type::string(id), ":")[1] AS id,
+			meta::id(id) AS id,
 			name,
 			price,
 			type
@@ -23,7 +23,7 @@ export const actions = {
 		places: await squery(
 			surql`
 				SELECT
-					string::split(type::string(id), ":")[1] AS id,
+					meta::id(id) AS id,
 					name,
 					price,
 					type

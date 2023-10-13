@@ -20,15 +20,15 @@ export async function load({ locals }) {
 	return {
 		form: superValidate(schema),
 		banners: squery(surql`
-            SELECT
-                *,
-                string::split(type::string(id), ":")[1] AS id,
-                (SELECT
-                    creator.number,
-                    creator.username
-                FROM $parent)[0].creator AS creator
+			SELECT
+				*,
+				meta::id(id) AS id,
+				(SELECT
+					creator.number,
+					creator.username
+				FROM $parent)[0].creator AS creator
 			OMIT deleted
-            FROM banner WHERE deleted = false
+			FROM banner WHERE deleted = false
 		`) as Promise<
 			{
 				id: string

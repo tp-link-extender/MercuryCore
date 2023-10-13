@@ -36,7 +36,7 @@ export async function load({ locals, params }) {
 			surql`
 				SELECT
 					*,
-					string::split(type::string(id), ":")[1] AS id,
+					meta::id(id) AS id,
 					(SELECT number, username FROM <-created<-user)[0] AS creator,
 					count(<-owns<-user) AS sold,
 					$user ∈ <-owns<-user.id AS owned,
@@ -127,7 +127,7 @@ export const actions = {
 				(await squery(
 					surql`
 						SELECT
-							string::split(type::string(id), ":")[1] AS id
+							meta::id(id) AS id
 						FROM $asset<-created<-user`,
 					{ asset: `asset:${params.id}` },
 				)) as {
@@ -241,7 +241,7 @@ export const actions = {
 							SELECT
 								*,
 								(SELECT
-									string::split(type::string(id), ":")[1] AS id,
+									meta::id(id) AS id,
 									username
 								FROM <-created<-user)[0] AS creator,
 								$user ∈ <-owns<-user.id AS owned

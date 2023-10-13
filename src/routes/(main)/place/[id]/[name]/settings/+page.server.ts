@@ -60,7 +60,7 @@ const placeQuery = async (id: string | number) =>
 			surql`
 				SELECT
 					*,
-					string::split(type::string(id), ":")[1] AS id,
+					meta::id(id) AS id,
 					(SELECT number, username
 					FROM <-owns<-user)[0] AS owner,
 					(SELECT text, updated FROM $parent.description

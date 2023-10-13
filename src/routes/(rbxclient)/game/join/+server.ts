@@ -20,7 +20,7 @@ export async function GET({ url }) {
 			surql`
 				SELECT
 					(SELECT
-						string::split(type::string(id), ":")[1] AS id,
+						meta::id(id) AS id,
 						serverIP,
 						serverPort,
 						(SELECT number FROM <-owns<-user)[0] AS ownerUser
@@ -81,7 +81,10 @@ export async function GET({ url }) {
 				.replaceAll("_PLACE_ID", placeId.toString())
 				.replaceAll("_IS_STUDIO_JOIN", isStudioJoin.toString())
 				.replaceAll("_SERVER_ADDRESS", gameSession.place.serverIP)
-				.replaceAll("_SERVER_PORT", gameSession.place.serverPort.toString())
+				.replaceAll(
+					"_SERVER_PORT",
+					gameSession.place.serverPort.toString(),
+				)
 				.replaceAll("_CREATOR_ID", creatorId.toString())
 				.replaceAll("_USER_ID", userNumber.toString())
 				.replaceAll("_USER_NAME", gameSession.user.username)

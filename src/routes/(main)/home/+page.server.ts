@@ -41,7 +41,7 @@ export async function load({ locals }) {
 		form: superValidate(schema),
 		places: squery(surql`
 			SELECT
-				string::split(type::string(id), ":")[1] AS id,
+				meta::id(id) AS id,
 				name,
 				serverPing,
 				count(

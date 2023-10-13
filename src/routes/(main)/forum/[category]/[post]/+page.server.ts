@@ -32,7 +32,7 @@ export async function load({ locals, params }) {
 		surql`
 			SELECT
 				*,
-				string::split(type::string(id), ":")[1] AS id,
+				meta::id(id) AS id,
 				(SELECT number, username FROM <-posted<-user)[0] AS author,
 				count(<-likes) AS likeCount,
 				count(<-dislikes) AS dislikeCount,

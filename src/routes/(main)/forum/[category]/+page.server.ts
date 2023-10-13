@@ -9,19 +9,19 @@ export async function load({ locals, params }) {
 	const { user } = await authorise(locals),
 		category = (await squery(
 			surql`
-                SELECT
-                    *,
-                    (SELECT
-                        *,
+				SELECT
+					*,
+					(SELECT
+						*,
 						(SELECT text, updated FROM $parent.content
 						ORDER BY updated DESC) AS content,
-                        (SELECT number, username FROM <-posted<-user)[0] AS author,
-                        count(<-likes<-user) AS likeCount,
-                        count(<-dislikes<-user) AS dislikeCount,
-                        ($user ∈ <-likes<-user.id) AS likes,
-                        ($user ∈ <-dislikes<-user.id) AS dislikes
-                    FROM $parent<-in.in) AS posts
-                OMIT id
+						(SELECT number, username FROM <-posted<-user)[0] AS author,
+						count(<-likes<-user) AS likeCount,
+						count(<-dislikes<-user) AS dislikeCount,
+						($user ∈ <-likes<-user.id) AS likes,
+						($user ∈ <-dislikes<-user.id) AS dislikes
+					FROM $parent<-in.in) AS posts
+				OMIT id
 				FROM forumCategory
 				WHERE string::lowercase(name) = string::lowercase($category)`,
 			{
