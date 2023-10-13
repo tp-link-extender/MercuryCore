@@ -48,7 +48,7 @@ export const load = async ({ url }) => {
 			(squery(
 				surql`
 					SELECT
-						string::split(type::string(id), ":")[1] AS id,
+						meta::id(id) AS id,
 						name,
 						serverPing,
 						count(
@@ -78,7 +78,7 @@ export const load = async ({ url }) => {
 			(squery(
 				surql`
 					SELECT
-						string::split(type::string(id), ":")[1] AS id,
+						meta::id(id) AS id,
 						name,
 						price
 					FROM asset

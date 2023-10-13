@@ -16,7 +16,7 @@ export async function load({ url, locals, params }) {
 			(await squery(
 				surql`
 					SELECT
-						string::split(type::string(id), ":")[1] AS id,
+						meta::id(id) AS id,
 						name,
 						(SELECT text, updated FROM $parent.description
 						ORDER BY updated DESC)[0] AS description,
@@ -145,7 +145,7 @@ export const actions = {
 		)
 			throw error(403, "You cannot currently play games")
 
-		//  invalidate all game sessions and create valid session
+		// Invalidate all game sessions and create valid session
 		const session = (
 			(await squery(
 				surql`

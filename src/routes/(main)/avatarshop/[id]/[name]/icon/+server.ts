@@ -15,7 +15,7 @@ export async function GET({ params }) {
 				surql`
 					SELECT
 						name, 
-						string::split(type::string(id), ":")[1] AS id
+						meta::id(id) AS id
 					FROM $asset`,
 				{ asset: `asset:${params.id}` },
 			)) as {

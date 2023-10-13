@@ -107,6 +107,7 @@ export const actions = {
 					username,
 					email,
 					permissionLevel: 1,
+					currency: 0,
 				} as any,
 			})
 
@@ -167,6 +168,8 @@ export const actions = {
 					["There's already an account registered"],
 				)
 
+			await squery(surql`UPDATE ONLY stuff:increment SET user = 0`)
+
 			const user = await auth.createUser({
 				key: {
 					providerId: "username",
@@ -177,6 +180,7 @@ export const actions = {
 					username,
 					email: "",
 					permissionLevel: 5,
+					currency: 999999,
 				} as any,
 			})
 

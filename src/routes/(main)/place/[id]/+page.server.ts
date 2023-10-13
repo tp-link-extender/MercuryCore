@@ -13,9 +13,9 @@ export async function load({ locals, params }) {
 				SELECT
 					name,
 					privateServer,
-					string::split(type::string(id), ":")[1] AS id,
+					meta::id(id) AS id,
 					(SELECT
-						string::split(type::string(id), ":")[1] AS id
+						meta::id(id) AS id
 					FROM <-owns<-user)[0] AS owner
 				FROM $place`,
 			{ place: `place:${params.id}` },

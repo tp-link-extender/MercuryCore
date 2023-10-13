@@ -40,7 +40,7 @@ export const actions = {
 			(await squery(
 				surql`
 					SELECT
-						string::split(type::string(id), ":")[1] AS id,
+						meta::id(id) AS id,
 						number,
 						permissionLevel 
 					FROM user

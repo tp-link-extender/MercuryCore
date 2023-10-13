@@ -38,7 +38,7 @@ export async function load({ locals, params }) {
 				*,
 				(SELECT text, updated FROM $parent.content
 				ORDER BY updated DESC) AS content,
-				string::split(type::string(id), ":")[1] AS id,
+				meta::id(id) AS id,
 				$forumPost AS parentPost,
 				(IF ->replyToReply->forumReply.id THEN 
 					string::split(type::string(
@@ -53,7 +53,7 @@ export async function load({ locals, params }) {
 
 				(SELECT
 					title,
-					string::split(type::string(id), ":")[1] AS id,
+					meta::id(id) AS id,
 					->in[0]->forumCategory[0].name as forumCategoryName
 				FROM $forumPost)[0] AS parentPost,
 

@@ -7,7 +7,7 @@ export const load = () => ({
 			name,
 			description,
 			(SELECT
-				string::split(type::string(id), ":")[1] AS id,
+				meta::id(id) AS id,
 				title,
 				posted,
 				(SELECT
