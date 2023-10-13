@@ -52,7 +52,7 @@
 	<div class="w-100 border-0" tabindex="-1">
 		<div id="nav1" class="py-1 d-flex">
 			<a class="navbar-brand light-text me-0" href="/">
-				<img class="me-2" src="/favicon.svg" alt="Mercury logo" />
+				<img class="me-2" src="/icon.svg" alt="Mercury logo" />
 				<span class="me-6">Mercury</span>
 			</a>
 			{#if user}
@@ -164,7 +164,7 @@
 						</div>
 					</form>
 				</div>
-				<ul class="navbar-nav loggedin m-0">
+				<ul class="navbar-nav m-0">
 					<li id="notificationstop" class="pt-1">
 						<a
 							href="/notifications"
@@ -176,7 +176,7 @@
 					</li>
 					<li id="transactionsbutton" class="my-auto">
 						<a
-							href="/transactions/your"
+							href="/transactions"
 							role="button"
 							aria-label="Transactions"
 							class="nav-link text-success">
@@ -187,20 +187,8 @@
 						</a>
 					</li>
 
-					<li class="dropdown dropdown-hover dropdown-end">
-						<a href="/user/{user.number}" class="btn p-0 d-flex">
-							<div
-								id="pfp"
-								class="mx-2 rounded-circle bg-background">
-								<img
-									src="/api/avatar/{user?.username}"
-									alt="You"
-									class="rounded-circle rounded-top-0" />
-							</div>
-							<p class="my-auto fs-6 light-text">
-								{user?.username}
-							</p>
-						</a>
+					<li class="dropdown dropdown-hover dropdown-end ps-2">
+						<User {user} full thin bg="background" size="2.4rem" />
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								{#each usernav as [icon, title, href]}
@@ -231,16 +219,13 @@
 					</li>
 				</ul>
 			{:else}
-				<ul class="navbar-nav loggedin">
-					<li class="nav-item mt-1">
+				<ul
+					class="navbar-nav d-flex w-100 justify-content-end align-items-center">
+					<li class="nav-item">
 						<a href="/login" class="btn mb-1 light-text">Log in</a>
 					</li>
-					<li class="nav-item mt-1">
-						<a
-							href="/register"
-							class="btn btn-success my-2 my-sm-0">
-							Register
-						</a>
+					<li class="nav-item">
+						<a href="/register" class="btn btn-success">Register</a>
 					</li>
 				</ul>
 			{/if}
@@ -249,15 +234,14 @@
 </nav>
 
 {#if data.banners && user}
-	{#each data.banners as announcement (announcement.id)}
+	{#each data.banners as banner (banner.id)}
 		<div
 			transition:height
-			class="py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight
-				? 'light'
-				: ''}"
+			class="py-1 my-0 rounded-0 text-center border-0"
+			class:text-light={banner.textLight}
 			role="alert"
-			style="background: {announcement.bgColour}">
-			{announcement.body}
+			style="background: {banner.bgColour}">
+			{banner.body}
 		</div>
 	{/each}
 {/if}
@@ -283,9 +267,6 @@
 {/if}
 
 <style lang="stylus">
-	.loggedin
-		margin-left auto
-
 	nav
 		z-index 9
 
@@ -334,8 +315,6 @@
 		#nav1
 			padding-left 0.5rem
 			padding-right 0.5rem
-		.dropdown p
-			display none
 		.navbar-brand
 			img
 				margin-top -0.2rem
@@ -364,17 +343,8 @@
 		+lightTheme()
 			background #0003
 
-	.loggedin
-		padding 0
-
 	.dropdown
 		margin-top 2px
-		p
-			max-width 6rem
-			min-width 1rem
-			// ellipsis
-			overflow hidden
-			text-overflow ellipsis
 
 	#topnav
 		z-index 9
@@ -384,11 +354,6 @@
 	.navbar-nav
 		a
 			border none
-
-	#pfp
-	#pfp img
-		width 2.4rem
-		height 2.4rem
 
 	#results
 		z-index 5

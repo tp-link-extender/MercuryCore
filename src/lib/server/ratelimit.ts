@@ -5,7 +5,7 @@ import { message } from "sveltekit-superforms/server"
 
 const ratelimitTimewindow = new Map<string, number>(),
 	ratelimitRequests = new Map<string, number>(),
-	existingTimeouts = new Map<string, any>()
+	existingTimeouts = new Map<string, NodeJS.Timeout>()
 
 /** Ratelimit a function by a category.
  * @param form The superForm object sent by the client.

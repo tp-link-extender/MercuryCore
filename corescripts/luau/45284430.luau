@@ -4450,9 +4450,8 @@ t.CreatePluginFrame = function(name, size, position, scrollable, parent)
 
 	if scrollable then
 		return dragBar, frame, helpFrame, closeEvent
-	else
-		return dragBar, widgetContainer, helpFrame, closeEvent
 	end
+	return dragBar, widgetContainer, helpFrame, closeEvent
 end
 
 t.Help = function(funcNameOrFunc)

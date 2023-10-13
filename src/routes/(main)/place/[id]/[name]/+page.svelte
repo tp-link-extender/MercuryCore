@@ -5,11 +5,11 @@
 	const { user } = data,
 		statistics = [
 			["Activity", "0 visits"],
-			["Creation", data.created.toLocaleDateString()],
-			["Updated", data.updated.toLocaleDateString()],
+			["Creation", new Date(data.created).toLocaleDateString()],
+			["Updated", new Date(data.updated).toLocaleDateString()],
 			["Genre", "Horror"],
 			["Server Limit", data.maxPlayers],
-			["Now Playing", data.gameSessions.length],
+			["Now Playing", data.players.length],
 		],
 		images = [
 			"/place/placeholderImage1.webp",
@@ -133,19 +133,16 @@
 							</div>
 						{/if}
 					</div>
-					<span class="light-text d-flex mb-2">
-						<b>by</b>
-						<a
-							href="/user/{data.ownerUser?.number}"
-							class="user light-text text-decoration-none">
-							<span class="pfp bg-darker rounded-circle ms-1">
-								<img
-									src="/api/avatar/{data.ownerUser?.username}"
-									alt={data.ownerUser?.username}
-									class="rounded-circle rounded-top-0" />
-							</span>
-							{data.ownerUser?.username}
-						</a>
+					<span class="light-text d-flex pb-2">
+						<b class="pe-2">by</b>
+						{#if data.ownerUser}
+							<User
+								user={data.ownerUser}
+								size="1.5rem"
+								bg="darker"
+								full
+								thin />
+						{/if}
 					</span>
 					<p class="light-text mb-0">
 						Gears: <i class="far fa-circle-xmark" />
@@ -245,7 +242,7 @@
 								(data.dislikeCount + data.likeCount || 1)) *
 								100}%"
 							aria-valuenow={data.likeCount}
-							aria-valuemin="0"
+							aria-valuemin={0}
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 						<div
@@ -256,7 +253,7 @@
 								(data.dislikeCount + data.likeCount || 1)) *
 								100}%"
 							aria-valuenow={data.dislikeCount}
-							aria-valuemin="0"
+							aria-valuemin={0}
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 					</div>
@@ -287,7 +284,7 @@
 	</div>
 
 	<Tab {tabData}>
-		{data.description[0]?.text || ""}
+		{data.description.text || ""}
 	</Tab>
 
 	<Tab {tabData}>
@@ -399,40 +396,29 @@
 		{/if}
 		<h4 class="light-text">Server List</h4>
 		{#if data.serverPing > Date.now() / 1000 - 35}
-			<div class="card mb-2">
-				<div class="card-body">
-					<div class="row">
-						<div class="col col-2">
-							<p class="light-text mb-2">
-								Currently Playing: {data.gameSessions
-									.length}/{data.maxPlayers}
-							</p>
-							<button
-								on:click={placeLauncher}
-								id="join"
-								class="btn btn-sm btn-success">
-								Join Server
-							</button>
-						</div>
-						<div class="col d-flex">
-							{#each data.gameSessions as { user }}
-								<a
-									href="/user/{user.number}"
-									class="gamesession text-decoration-none d-flex">
-									<span class="bg-background rounded-circle">
-										<img
-											src="/api/avatar/{user.username}"
-											alt={user.username}
-											height="75"
-											width="75"
-											class="rounded-circle rounded-top-0" />
-									</span>
-								</a>
-							{/each}
-						</div>
+		<div class="card mb-2">
+			<div class="card-body">
+				<div class="row">
+					<div class="col col-2">
+						<p class="light-text mb-2">
+							Currently Playing: {data.players
+								.length}/{data.maxPlayers}
+						</p>
+						<button
+							on:click={placeLauncher}
+							id="join"
+							class="btn btn-sm btn-success">
+							Join Server
+						</button>
+					</div>
+					<div class="col d-flex gap-3">
+						{#each data.players as user}
+							<User {user} size="4.5rem" bg="darker" />
+						{/each}
 					</div>
 				</div>
 			</div>
+		</div>
 		{:else}
 			This server is offline.
 		{/if}
@@ -542,16 +528,4 @@
 	@keyframes moon
 		100%
 			transform rotate(360deg)
-
-	.user
-		.pfp
-		.pfp img
-			width 1.5rem
-			height 1.5rem
-
-	.gamesession
-		span
-		img
-			width 75px
-			height 75px
 </style>

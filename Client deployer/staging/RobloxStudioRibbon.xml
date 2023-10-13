@@ -125,7 +125,7 @@
                 <addaction name="motorRightAction" style="textundericon" text="Motor" tooltip="Put this on the side of a part and connect another part to create a motor joint." />
             </Group>
             <Group name="Simulation">
-                <!-- <addaction name="playSoloAction" style="textundericon" text="Player View" icon=":/RibbonBar/images/Studio Ribbon Icons/Home/Play-Solo.png" /> -->
+                <addaction name="playSoloAction" style="textundericon" text="Player View" icon=":/RibbonBar/images/Studio Ribbon Icons/Home/Play-Solo.png" />
                 <addaction name="simulationResetAction" style="textundericon" text="Reset" icon=":/RibbonBar/images/Studio Ribbon Icons/Home/Reset.png" width="36" height="36" />
                 <addaction name="simulationStopAction" style="textundericon" text="Stop" icon=":/RibbonBar/images/Studio Ribbon Icons/Home/stop-pause.png" width="36" height="36" />                
                 <addaction name="simulationRunAction" style="textundericon" text="Run" icon=":/RibbonBar/images/Studio Ribbon Icons/Home/Run.png" width="36" height="36" />
@@ -158,7 +158,7 @@
                 <addaction name="CylinderLargeAction" text="Cylinder" value="Cylinder" icon=":/RibbonBar/images/Studio Ribbon Icons/cylinder.png" width="32" height="32" />                
               </ActionGroup>
             </Group>
-            <Group name="Models" >
+            <!-- <Group name="Models" >
               <ActionGroup name="openToolBoxWithOptions" type="singleselect" style="textundericon" ischeckable="true">
                 <addaction name="setVehiclesAction" text="Vehicles" icon=":/RibbonBar/images/Studio 2.0 icons/32x32/vehicle.png" value="ide/clienttoolbox.aspx?searchset=vehicles" width="32" height="32" />
                 <addaction name="setNPCsAction" text="NPCs"  icon=":/RibbonBar/images/Studio 2.0 icons/32x32/npc.png" value="ide/clienttoolbox.aspx?searchset=NPC" width="32" height="32" />
@@ -168,7 +168,7 @@
                 <addaction name="setMyModelsAction" text="My Models" icon=":/RibbonBar/images/Studio 2.0 icons/32x32/model.png" value="ide/clienttoolbox.aspx?selectedset=getmymodels" requiresauthentication="true" width="32" height="32" />
                 <addaction name="setSearchAction" text="Search" icon=":/RibbonBar/images/Studio 2.0 icons/32x32/search_32.png" value="ide/clienttoolbox.aspx?search=true" width="32" height="32" />
               </ActionGroup>
-            </Group>
+            </Group> -->
             <Group name="Gameplay">
                 <MenuButton name="actionParticleEffects" style="textundericon" text="Effects" icon=":/RibbonBar/images/Studio 2.0 icons/32x32/bomb.png" width="32" height="32" >
                   <ActionGroup name="insertBasicObject" style="textbesideicon" ischeckable="false">

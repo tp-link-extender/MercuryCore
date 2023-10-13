@@ -1,152 +1,116 @@
-import cql from "$lib/cyphertag"
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
-import { Query, roQuery } from "$lib/server/redis"
+import { query, squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
-import { error, fail } from "@sveltejs/kit"
-import { NotificationType } from "@prisma/client"
+import { error } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
 		throw error(400, `Invalid user id: ${params.number}`)
 
 	const number = parseInt(params.number),
-		userExists = await prisma.authUser.findUnique({
-			where: {
+		{ user } = await authorise(locals),
+		userExists = await query<{
+			bio: {
+				id: string
+				text: string
+				updated: string
+			}
+			follower: boolean
+			followerCount: number
+			following: boolean
+			followingCount: number
+			friendCount: number
+			friends: boolean
+			groups: {
+				memberCount: number
+				name: string
+			}[]
+			groupsOwned: {
+				memberCount: number
+				name: string
+			}[]
+			incomingRequest: boolean
+			number: number
+			outgoingRequest: boolean
+			permissionLevel: number
+			places: {
+				dislikeCount: number
+				id: string
+				likeCount: number
+				name: string
+				playerCount: number
+			}[]
+			posts: {
+				content: {
+					id: string
+					text: string
+					updated: string
+				}[]
+				id: string
+				posted: string
+				visibility: string
+			}[]
+			username: string
+		}>(
+			surql`
+				SELECT
+					username,
+					number,
+					permissionLevel,
+					(SELECT text, updated FROM $parent.bio
+					ORDER BY updated DESC)[0] AS bio,
+					(SELECT
+						*,
+						(SELECT text, updated FROM $parent.content
+						ORDER BY updated DESC) AS content
+					FROM ->posted->statusPost LIMIT 40) AS posts,
+
+					(SELECT
+						meta::id(id) AS id,
+						name,
+						count(
+							SELECT * FROM <-playing
+							WHERE valid
+								AND ping > time::now() - 35s
+						) AS playerCount,
+
+						count(<-likes) AS likeCount,
+						count(<-dislikes) AS dislikeCount
+
+					FROM ->owns->place) AS places,
+
+					count(<->friends) AS friendCount,
+					count(<-follows) AS followerCount,
+					count(->follows) AS followingCount,
+
+					$user ∈ <->friends<->user AS friends,
+					$user ∈ <-follows<-user AS following,
+					$user ∈ ->follows->user AS follower,
+					$user ∈ ->request->user AS incomingRequest,
+					$user ∈ <-request<-user AS outgoingRequest,
+
+					(SELECT
+						name,
+						count(<-member) AS memberCount
+					FROM ->member->group) AS groups,
+					(SELECT
+						name,
+						count(<-member) AS memberCount
+					FROM ->owns->group) AS groupsOwned
+
+				FROM user
+				WHERE number = $number`,
+			{
 				number,
+				user: `user:${user.id}`,
 			},
-			select: {
-				id: true,
-				username: true,
-				number: true,
-				permissionLevel: true,
-				posts: {
-					orderBy: {
-						posted: "desc",
-					},
-					select: {
-						posted: true,
-						content: true,
-					},
-					take: 40,
-				},
-				bio: {
-					orderBy: {
-						updated: "desc",
-					},
-					select: {
-						text: true,
-					},
-					take: 1,
-				},
-			},
-		})
-	if (userExists) {
-		const { user } = await authorise(locals),
-			query = {
-				user1: user.username,
-				user2: userExists.username,
-			},
-			query2 = {
-				user: userExists.username,
-			},
-			places = findPlaces({
-				where: {
-					ownerUsername: userExists.username,
-					privateServer: user.id == userExists.id ? undefined : false,
-				},
-				select: {
-					id: true,
-					name: true,
-					gameSessions: {
-						where: {
-							ping: {
-								gt: Math.floor(Date.now() / 1000) - 35,
-							},
-						},
-						select: {
-							valid: true,
-						},
-					},
-				},
-			})
+		),
+		user2 = userExists[0]
 
-		return {
-			...userExists,
-			places: places as Promise<
-				Awaited<typeof places> & { gameSessions: any[] }[]
-			>,
-			groups: findGroups({
-				where: {
-					OR: await roQuery(
-						"groups",
-						cql`
-							MATCH (:User { name: $user }) -[:in]-> (u:Group)
-							RETURN u.name AS name`,
-						query2,
-						false,
-						true,
-					),
-				},
-				select: {
-					name: true,
-				},
-			}),
-			groupsOwned: findGroups({
-				where: {
-					ownerUsername: userExists.username,
-				},
-				select: {
-					name: true,
-				},
-			}),
-			friendCount: roQuery(
-				"friends",
-				cql`RETURN SIZE((:User) -[:friends]- (:User { name: $user }))`,
-				query2,
-				true,
-			),
-			followerCount: roQuery(
-				"friends",
-				cql`RETURN SIZE((:User) -[:follows]-> (:User { name: $user }))`,
-				query2,
-				true,
-			),
-			followingCount: roQuery(
-				"friends",
-				cql`RETURN SIZE((:User) <-[:follows]- (:User { name: $user }))`,
-				query2,
-				true,
-			),
-			friends: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r`,
-				query,
-			),
-			following: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) -[r:follows]-> (:User { name: $user2 }) RETURN r`,
-				query,
-			),
-			follower: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) <-[r:follows]- (:User { name: $user2 }) RETURN r`,
-				query,
-			),
-			incomingRequest: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r`,
-				query,
-			),
-			outgoingRequest: roQuery(
-				"friends",
-				cql`MATCH (:User { name: $user1 }) -[r:request]-> (:User { name: $user2 }) RETURN r`,
-				query,
-			),
-		}
-	}
+	if (!user2) throw error(404, "Not found")
 
-	throw error(404, "Not found")
+	return user2
 }
 
 export const actions = {
@@ -154,203 +118,176 @@ export const actions = {
 		const { user } = await authorise(locals)
 
 		if (!/^\d+$/.test(params.number))
-			return fail(400, { msg: `Invalid user id: ${params.number}` })
-		const number = parseInt(params.number),
-			userExists = await prisma.authUser.findUnique({
-				where: {
-					number,
-				},
-			})
-		if (
-			!userExists ||
-			user.id == userExists.id // You can't friend/follow yourself
+			throw error(400, `Invalid user id: ${params.number}`)
+		const number = parseInt(params.number)
+		const user2 = await squery<{
+			id: string
+		}>(
+			surql`
+				SELECT meta::id(id) AS id
+				FROM user WHERE number = $number`,
+			{ number },
 		)
-			return fail(401)
+		if (!user2) throw error(404, "User not found")
+		if (user.id == user2.id)
+			throw error(400, "You can't friend/follow yourself")
 
 		const data = await formData(request),
 			{ action } = data,
-			user2Exists = await prisma.authUser.findUnique({
-				where: {
-					username: userExists?.username,
-				},
-			})
-		if (!user2Exists) return fail(400, { msg: "User not found" })
-
-		const query = {
-			user1: user.username,
-			user2: userExists.username,
-		}
-
-		async function accept() {
-			await Promise.all([
-				Query(
-					"friends",
-					cql`
-						MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-						DELETE r
-						MERGE (u1)
-						MERGE (u2)
-						MERGE (u1) <-[:friends]- (u2)`,
-					query,
-					// The direction of the [:friends] relationship matches the direction of the previous [:request] relationship
-				),
-				prisma.notification.create({
-					data: {
-						type: NotificationType.NewFriend,
-						senderId: user.id,
-						receiverId: userExists?.id || "", // won't be null
+			qParams = {
+				user: `user:${user.id}`,
+				user2: `user:${user2.id}`,
+			},
+			accept = () =>
+				query(
+					// The direction of the ->friends relationship matches
+					// the direction of the previous ->request relationship.
+					surql`
+						DELETE $user2->request WHERE out = $user;
+						RELATE $user2->friends->$user
+							SET time = time::now();
+						RELATE $user->notification->$user2 CONTENT {
+							type: $type,
+							time: time::now(),
+							note: $note,
+							relativeId: $relativeId,
+							read: false,
+						}`,
+					{
+						type: "NewFriend",
+						...qParams,
 						note: `${user.username} is now friends with you!`,
 						relativeId: user.id,
 					},
-				}),
-			])
-		}
+				)
 
 		try {
 			switch (action) {
 				case "follow":
-					await Promise.all([
-						Query(
-							"friends",
-							cql`
-								MERGE (u1:User { name: $user1 })
-								MERGE (u2:User { name: $user2 })
-								MERGE (u1) -[:follows]-> (u2)`,
-							query,
-						),
-						prisma.notification.create({
-							data: {
-								type: NotificationType.Follower,
-								senderId: user.id,
-								receiverId: userExists?.id || "",
-								note: `${user.username} is now following you!`,
-								relativeId: user.id,
-							},
-						}),
-					])
+					await query(
+						surql`
+							IF $user2 ∉ $user->follows->user {
+								RELATE $user->follows->$user2
+									SET time = time::now();
+								RELATE $user->notification->$user2 CONTENT {
+									type: $type,
+									time: time::now(),
+									note: $note,
+									relativeId: $relativeId,
+									read: false,
+								}
+							}`,
+						{
+							type: "Follower",
+							...qParams,
+							note: `${user.username} is now following you!`,
+							relativeId: user.id,
+						},
+					)
 					break
 				case "unfollow":
-					await Promise.all([
-						Query(
-							"friends",
-							cql`
-								MATCH (u1:User { name: $user1 }) -[r:follows]-> (u2:User { name: $user2 })
-								DELETE r`,
-							query,
-						),
-						prisma.notification.deleteMany({
-							where: {
-								type: NotificationType.Follower,
-								senderId: user.id,
-								receiverId: userExists?.id || "",
-								read: false,
-							},
-						}),
-					])
+					await query(
+						surql`
+							DELETE $user->follows WHERE out = $user2;
+							DELETE $user->notification WHERE in = $user
+								AND out = $user2 
+								AND type = $type
+								AND read = false`,
+						{
+							type: "Follower",
+							...qParams,
+						},
+					)
 					break
 				case "unfriend":
-					await Promise.all([
-						Query(
-							"friends",
-							cql`
-								MATCH (u1:User { name: $user1 }) -[r:friends]- (u2:User { name: $user2 })
-								DELETE r`,
-							query,
-						),
-						prisma.notification.deleteMany({
-							where: {
-								type: NotificationType.NewFriend,
-								senderId: user.id,
-								receiverId: userExists?.id || "",
-								read: false,
-							},
-						}),
-					])
+					await query(
+						surql`
+							DELETE $user<-friends WHERE in = $user2;
+							DELETE $user->friends WHERE out = $user2;
+							DELETE $user->notification WHERE in = $user
+								AND out = $user2 
+								AND type = $type
+								AND read = false`,
+						{
+							type: "NewFriend",
+							...qParams,
+						},
+					)
 					break
 				case "request":
 					if (
-						!(await roQuery(
-							"friends",
-							cql`MATCH (:User { name: $user1 }) -[r:friends]- (:User { name: $user2 }) RETURN r`,
-							query,
-						))
+						!(
+							// Make sure users are not already friends
+							(await query(
+								surql`$user ∈ $user2->friends->user
+									OR $user2 ∈ $user->friends->user`,
+								qParams,
+							))
+						)
 					)
 						if (
-							await roQuery(
-								"friends",
-								cql`MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r`,
-								query,
+							// If there is already an incoming request, accept it instead
+							await query(
+								surql`$user ∈ $user2->request->user`,
+								qParams,
 							)
 						)
-							// Make sure users are not already friends
-							// If there is already an incoming request, accept it instead
 							await accept()
 						else
-							await Promise.all([
-								Query(
-									"friends",
-									cql`
-												MERGE (u1:User { name: $user1 })
-												MERGE (u2:User { name: $user2 })
-												MERGE (u1) -[:request]-> (u2)`,
-									query,
-								),
-								prisma.notification.create({
-									data: {
-										type: NotificationType.FriendRequest,
-										senderId: user.id,
-										receiverId: userExists?.id || "",
-										note: `${user.username} has sent you a friend request.`,
-										relativeId: user.id,
-									},
-								}),
-							])
-					else return fail(400)
+							await query(
+								surql`
+									RELATE $user->request->$user2
+										SET time = time::now();
+									RELATE $user->notification->$user2 CONTENT {
+										type: $type,
+										time: time::now(),
+										note: $note,
+										relativeId: $relativeId,
+										read: false,
+									}`,
+								{
+									type: "FriendRequest",
+									...qParams,
+									note: `${user.username} has sent you a friend request.`,
+									relativeId: user.id,
+								},
+							)
+					else throw error(400, "Already friends")
 					break
 				case "cancel":
-					await Promise.all([
-						Query(
-							"friends",
-							cql`
-								MATCH (u1:User { name: $user1 }) -[r:request]-> (u2:User { name: $user2 })
-								DELETE r`,
-							query,
-						),
-						prisma.notification.deleteMany({
-							where: {
-								type: NotificationType.FriendRequest,
-								senderId: user.id,
-								receiverId: userExists?.id || "",
-								read: false,
-							},
-						}),
-					])
+					await query(
+						surql`
+							DELETE $user->request WHERE out = $user2;
+							DELETE $user->notification WHERE in = $user
+								AND out = $user2 
+								AND type = $type
+								AND read = false`,
+						{
+							type: "FriendRequest",
+							...qParams,
+						},
+					)
 					break
 				case "decline":
-					await Query(
-						"friends",
-						cql`
-							MATCH (u1:User { name: $user1 }) <-[r:request]- (u2:User { name: $user2 })
-							DELETE r`,
-						query,
+					await query(
+						surql`DELETE $user2->request WHERE out = $user`,
+						qParams,
 					)
 					break
 				case "accept":
 					if (
-						await roQuery(
-							"friends",
-							cql`MATCH (:User { name: $user1 }) <-[r:request]- (:User { name: $user2 }) RETURN r`,
-							query,
+						await query(
+							surql`$user ∈ $user2->request->user`,
+							qParams,
 						)
 					)
 						// Make sure an incoming request exists before accepting
 						await accept()
-					else return fail(400)
-					break
+					else throw error(400, "No friend request to accept")
 			}
 		} catch (e) {
 			console.error(e)
-			throw error(500, "Redis error 2")
+			throw e
 		}
 	},
 }

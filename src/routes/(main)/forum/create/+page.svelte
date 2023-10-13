@@ -19,9 +19,9 @@
 	export const snapshot = { capture, restore }
 </script>
 
-<Head title="Create a post in {data.category.name}" />
+<Head title="Create a post in {data.categoryName}" />
 
-<h1 class="text-center light-text">Create a post in {data.category.name}</h1>
+<h1 class="text-center light-text">Create a post in {data.categoryName}</h1>
 
 <div class="container mt-12 light-text">
 	<form use:enhance method="POST">

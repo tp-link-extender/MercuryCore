@@ -14,13 +14,12 @@ local function waitForProperty(instance, property)
 end
 
 -- A Few Script Globals
-local gui
-if script.Parent:FindFirstChild "ControlFrame" then
-	gui = script.Parent:FindFirstChild "ControlFrame"
-else
-	gui = script.Parent
+local gui = script.Parent
+if gui:FindFirstChild "ControlFrame" then
+	gui = gui.ControlFrame
 end
 
+local RbxGui
 local helpButton, updateCameraDropDownSelection, updateVideoCaptureDropDownSelection
 local tweenTime = 0.2
 
@@ -62,7 +61,9 @@ local function robloxLock(instance)
 	end
 end
 
-function resumeGameFunction(shield)
+local settingsButton
+
+local function resumeGameFunction(shield)
 	shield.Settings:TweenPosition(
 		UDim2.new(0.5, -262, -0.5, -200),
 		Enum.EasingDirection.InOut,
@@ -83,7 +84,7 @@ function resumeGameFunction(shield)
 	end)
 end
 
-function goToMenu(container, menuName, moveDirection, size, position)
+local function goToMenu(container, menuName, moveDirection, size, position)
 	if type(menuName) ~= "string" then
 		return
 	end
@@ -172,12 +173,14 @@ function goToMenu(container, menuName, moveDirection, size, position)
 	end
 end
 
-function resetLocalCharacter()
+local function resetLocalCharacter()
 	local player = game.Players.LocalPlayer
-	if player then
-		if player.Character and player.Character:FindFirstChild "Humanoid" then
-			player.Character.Humanoid.Health = 0
-		end
+	if
+		player
+		and player.Character
+		and player.Character:FindFirstChild "Humanoid"
+	then
+		player.Character.Humanoid.Health = 0
 	end
 end
 
@@ -268,7 +271,7 @@ local function CreateTextButtons(frame, buttons, yPos, ySize)
 	end
 end
 
-function setRecordGui(recording, stopRecordButton, recordVideoButton)
+local function setRecordGui(recording, stopRecordButton, recordVideoButton)
 	if recording then
 		stopRecordButton.Visible = true
 		recordVideoButton.Text = "Stop Recording"
@@ -278,12 +281,12 @@ function setRecordGui(recording, stopRecordButton, recordVideoButton)
 	end
 end
 
-function recordVideoClick(recordVideoButton, stopRecordButton)
+local function recordVideoClick(recordVideoButton, stopRecordButton)
 	recordingVideo = not recordingVideo
 	setRecordGui(recordingVideo, stopRecordButton, recordVideoButton)
 end
 
-function backToGame(buttonClicked, shield, settingsButton)
+local function backToGame(buttonClicked, shield, settingsButton2)
 	buttonClicked.Parent.Parent.Parent.Parent.Visible = false
 	shield.Visible = false
 	for i = 1, #centerDialogs do
@@ -292,10 +295,10 @@ function backToGame(buttonClicked, shield, settingsButton)
 	end
 	centerDialogs = {}
 	game.GuiService:RemoveCenterDialog(shield)
-	settingsButton.Active = true
+	settingsButton2.Active = true
 end
 
-function setDisabledState(guiObject)
+local function setDisabledState(guiObject)
 	if not guiObject then
 		return
 	end
@@ -622,6 +625,8 @@ local function createResetConfirmationMenu(baseZIndex, shield)
 	return frame
 end
 
+local settingsFrame
+
 local function createGameMainMenu(baseZIndex, shield)
 	local gameMainMenuFrame = Instance.new "Frame"
 	gameMainMenuFrame.Name = "GameMainMenu"
@@ -796,7 +801,7 @@ local function createGameMainMenu(baseZIndex, shield)
 		game:FindFirstChild "LoadingGuiService"
 		and #game.LoadingGuiService:GetChildren() > 0
 	then
-		local gameSettingsButton = createTextButton(
+		gameSettingsButton = createTextButton(
 			"Game Instructions",
 			Enum.ButtonStyle.RobloxButton,
 			Enum.FontSize.Size24,
@@ -830,6 +835,8 @@ local function createGameMainMenu(baseZIndex, shield)
 
 	return gameMainMenuFrame
 end
+
+local mouseLockLabel, syncVideoCaptureSetting
 
 local function createGameSettingsMenu(baseZIndex, _)
 	local gameSettingsMenuFrame = Instance.new "Frame"
@@ -1112,49 +1119,29 @@ local function createGameSettingsMenu(baseZIndex, _)
 		end
 
 		local function translateSavedQualityLevelToInt(savedQualityLevel)
-			if savedQualityLevel == Enum.SavedQualitySetting.Automatic then
-				return 0
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel1
-			then
+			local sqs = Enum.SavedQualitySetting
+			if savedQualityLevel == sqs.QualityLevel1 then
 				return 1
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel2
-			then
+			elseif savedQualityLevel == sqs.QualityLevel2 then
 				return 2
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel3
-			then
+			elseif savedQualityLevel == sqs.QualityLevel3 then
 				return 3
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel4
-			then
+			elseif savedQualityLevel == sqs.QualityLevel4 then
 				return 4
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel5
-			then
+			elseif savedQualityLevel == sqs.QualityLevel5 then
 				return 5
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel6
-			then
+			elseif savedQualityLevel == sqs.QualityLevel6 then
 				return 6
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel7
-			then
+			elseif savedQualityLevel == sqs.QualityLevel7 then
 				return 7
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel8
-			then
+			elseif savedQualityLevel == sqs.QualityLevel8 then
 				return 8
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel9
-			then
+			elseif savedQualityLevel == sqs.QualityLevel9 then
 				return 9
-			elseif
-				savedQualityLevel == Enum.SavedQualitySetting.QualityLevel10
-			then
+			elseif savedQualityLevel == sqs.QualityLevel10 then
 				return 10
 			end
+			return 0
 		end
 
 		local function enableGraphicsWidget()
@@ -1461,6 +1448,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 					videoNameToItem[text]
 			end
 		)
+
 		videoCaptureDropDown.Name = "VideoCaptureField"
 		videoCaptureDropDown.ZIndex = baseZIndex + 4
 		videoCaptureDropDown.DropDownMenuButton.ZIndex = baseZIndex + 4
@@ -1501,7 +1489,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	cameraLabel.ZIndex = baseZIndex + 4
 	cameraLabel.Parent = gameSettingsMenuFrame
 
-	local mouseLockLabel =
+	mouseLockLabel =
 		game.CoreGui.RobloxGui:FindFirstChild("MouseLockLabel", true)
 
 	local enumItems = Enum.ControlMode:GetEnumItems()
@@ -1542,1113 +1530,1097 @@ local function createGameSettingsMenu(baseZIndex, _)
 	return gameSettingsMenuFrame
 end
 
-if LoadLibrary then
-	RbxGui = LoadLibrary "RbxGui"
-	local baseZIndex = 0
-	if UserSettings then
-		local createSettingsDialog = function()
-			waitForChild(gui, "BottomLeftControl")
-			settingsButton =
-				gui.BottomLeftControl:FindFirstChild "SettingsButton"
+if not LoadLibrary then
+	return
+end
 
-			if settingsButton == nil then
-				settingsButton = Instance.new "ImageButton"
-				settingsButton.Name = "SettingsButton"
-				settingsButton.Image =
-					"rbxasset://textures/ui/SettingsButton.png"
-				settingsButton.BackgroundTransparency = 1
-				settingsButton.Active = false
-				settingsButton.Size = UDim2.new(0, 54, 0, 46)
-				settingsButton.Position = UDim2.new(0, 2, 0, 50)
-				settingsButton.Parent = gui.BottomLeftControl
-			end
+RbxGui = LoadLibrary "RbxGui"
 
-			local shield = Instance.new "TextButton"
-			shield.Text = ""
-			shield.Name = "UserSettingsShield"
-			shield.Active = true
-			shield.AutoButtonColor = false
-			shield.Visible = false
-			shield.Size = UDim2.new(1, 0, 1, 0)
-			shield.BackgroundColor3 = Color3I(51, 51, 51)
-			shield.BorderColor3 = Color3I(27, 42, 53)
-			shield.BackgroundTransparency = 0.4
-			shield.ZIndex = baseZIndex + 2
-			mainShield = shield
+local baseZIndex = 0
+if UserSettings then
+	local createSettingsDialog = function()
+		waitForChild(gui, "BottomLeftControl")
+		settingsButton = gui.BottomLeftControl:FindFirstChild "SettingsButton"
 
-			local frame = Instance.new "Frame"
-			frame.Name = "Settings"
-			frame.Position = UDim2.new(0.5, -262, -0.5, -200)
-			frame.Size = UDim2.new(0, 525, 0, 430)
-			frame.BackgroundTransparency = 1
-			frame.Active = true
-			frame.Parent = shield
-
-			local settingsFrame = Instance.new "Frame"
-			settingsFrame.Name = "SettingsStyle"
-			settingsFrame.Size = UDim2.new(1, 0, 1, 0)
-			settingsFrame.Style = Enum.FrameStyle.RobloxRound
-			settingsFrame.Active = true
-			settingsFrame.ZIndex = baseZIndex + 3
-			settingsFrame.Parent = frame
-
-			local gameMainMenu = createGameMainMenu(baseZIndex, shield)
-			gameMainMenu.Parent = settingsFrame
-
-			gameMainMenu.ScreenshotButton.MouseButton1Click:connect(function()
-				backToGame(
-					gameMainMenu.ScreenshotButton,
-					shield,
-					settingsButton
-				)
-			end)
-
-			gameMainMenu.RecordVideoButton.MouseButton1Click:connect(function()
-				recordVideoClick(
-					gameMainMenu.RecordVideoButton,
-					gui.StopRecordButton
-				)
-				backToGame(
-					gameMainMenu.RecordVideoButton,
-					shield,
-					settingsButton
-				)
-			end)
-
-			if settings():FindFirstChild "Game Options" then
-				pcall(function()
-					settings()
-						:FindFirstChild("Game Options").VideoRecordingChangeRequest
-						:connect(function(recording)
-							recordingVideo = recording
-							setRecordGui(
-								recording,
-								gui.StopRecordButton,
-								gameMainMenu.RecordVideoButton
-							)
-						end)
-				end)
-			end
-
-			game.CoreGui.RobloxGui.Changed:connect(
-				function(prop) -- We have stopped recording when we resize
-					if prop == "AbsoluteSize" and recordingVideo then
-						recordVideoClick(
-							gameMainMenu.RecordVideoButton,
-							gui.StopRecordButton
-						)
-					end
-				end
-			)
-
-			local function localPlayerChange()
-				gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
-				if game.Players.LocalPlayer then
-					settings().Rendering.EnableFRM = true
-				elseif inStudioMode then
-					settings().Rendering.EnableFRM = false
-				end
-			end
-
-			gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
-			if game.Players.LocalPlayer ~= nil then
-				game.Players.LocalPlayer.Changed:connect(function()
-					localPlayerChange()
-				end)
-			else
-				delay(0, function()
-					waitForProperty(game.Players, "LocalPlayer")
-					gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
-					game.Players.LocalPlayer.Changed:connect(function()
-						localPlayerChange()
-					end)
-				end)
-			end
-
-			gameMainMenu.ReportAbuseButton.Visible =
-				game:FindFirstChild "NetworkClient"
-			if not gameMainMenu.ReportAbuseButton.Visible then
-				game.ChildAdded:connect(function(child)
-					if child:IsA "NetworkClient" then
-						gameMainMenu.ReportAbuseButton.Visible =
-							game:FindFirstChild "NetworkClient"
-					end
-				end)
-			end
-
-			gameMainMenu.ResetButton.MouseButton1Click:connect(function()
-				goToMenu(
-					settingsFrame,
-					"ResetConfirmationMenu",
-					"up",
-					UDim2.new(0, 525, 0, 370)
-				)
-			end)
-
-			gameMainMenu.LeaveGameButton.MouseButton1Click:connect(function()
-				goToMenu(
-					settingsFrame,
-					"LeaveConfirmationMenu",
-					"down",
-					UDim2.new(0, 525, 0, 300)
-				)
-			end)
-
-			if game.CoreGui.Version >= 4 then -- we can use escape!
-				game:GetService("GuiService").EscapeKeyPressed:connect(
-					function()
-						if currentMenuSelection == nil then
-							game.GuiService:AddCenterDialog(
-								shield,
-								Enum.CenterDialogType.ModalDialog,
-								--showFunction
-								function()
-									settingsButton.Active = false
-									updateCameraDropDownSelection(
-										UserSettings().GameSettings.ControlMode.Name
-									)
-
-									if syncVideoCaptureSetting then
-										syncVideoCaptureSetting()
-									end
-
-									goToMenu(
-										settingsFrame,
-										"GameMainMenu",
-										"right",
-										UDim2.new(0, 525, 0, 430)
-									)
-									shield.Visible = true
-									shield.Active = true
-									settingsFrame.Parent:TweenPosition(
-										UDim2.new(0.5, -262, 0.5, -200),
-										Enum.EasingDirection.InOut,
-										Enum.EasingStyle.Sine,
-										tweenTime,
-										true
-									)
-									settingsFrame.Parent:TweenSize(
-										UDim2.new(0, 525, 0, 430),
-										Enum.EasingDirection.InOut,
-										Enum.EasingStyle.Sine,
-										tweenTime,
-										true
-									)
-								end,
-								--hideFunction
-								function()
-									settingsFrame.Parent:TweenPosition(
-										UDim2.new(0.5, -262, -0.5, -200),
-										Enum.EasingDirection.InOut,
-										Enum.EasingStyle.Sine,
-										tweenTime,
-										true
-									)
-									settingsFrame.Parent:TweenSize(
-										UDim2.new(0, 525, 0, 430),
-										Enum.EasingDirection.InOut,
-										Enum.EasingStyle.Sine,
-										tweenTime,
-										true
-									)
-									shield.Visible = false
-									settingsButton.Active = true
-								end
-							)
-						elseif #lastMenuSelection > 0 then
-							if #centerDialogs > 0 then
-								for i = 1, #centerDialogs do
-									game.GuiService:RemoveCenterDialog(
-										centerDialogs[i]
-									)
-									centerDialogs[i].Visible = false
-								end
-								centerDialogs = {}
-							end
-
-							goToMenu(
-								lastMenuSelection[#lastMenuSelection]["container"],
-								lastMenuSelection[#lastMenuSelection]["name"],
-								lastMenuSelection[#lastMenuSelection]["direction"],
-								lastMenuSelection[#lastMenuSelection]["lastSize"]
-							)
-
-							table.remove(lastMenuSelection, #lastMenuSelection)
-							if #lastMenuSelection == 1 then -- apparently lua can't reduce count to 0... T_T
-								lastMenuSelection = {}
-							end
-						else
-							resumeGameFunction(shield)
-						end
-					end
-				)
-			end
-
-			local gameSettingsMenu = createGameSettingsMenu(baseZIndex, shield)
-			gameSettingsMenu.Visible = false
-			gameSettingsMenu.Parent = settingsFrame
-
-			gameMainMenu.SettingsButton.MouseButton1Click:connect(function()
-				goToMenu(
-					settingsFrame,
-					"GameSettingsMenu",
-					"left",
-					UDim2.new(0, 525, 0, 350)
-				)
-			end)
-
-			gameSettingsMenu.BackButton.MouseButton1Click:connect(function()
-				goToMenu(
-					settingsFrame,
-					"GameMainMenu",
-					"right",
-					UDim2.new(0, 525, 0, 430)
-				)
-			end)
-
-			local resetConfirmationWindow =
-				createResetConfirmationMenu(baseZIndex, shield)
-			resetConfirmationWindow.Visible = false
-			resetConfirmationWindow.Parent = settingsFrame
-
-			local leaveConfirmationWindow =
-				createLeaveConfirmationMenu(baseZIndex, shield)
-			leaveConfirmationWindow.Visible = false
-			leaveConfirmationWindow.Parent = settingsFrame
-
-			robloxLock(shield)
-
-			settingsButton.MouseButton1Click:connect(function()
-				game.GuiService:AddCenterDialog(
-					shield,
-					Enum.CenterDialogType.ModalDialog,
-					--showFunction
-					function()
-						settingsButton.Active = false
-						updateCameraDropDownSelection(
-							UserSettings().GameSettings.ControlMode.Name
-						)
-
-						if syncVideoCaptureSetting then
-							syncVideoCaptureSetting()
-						end
-
-						goToMenu(
-							settingsFrame,
-							"GameMainMenu",
-							"right",
-							UDim2.new(0, 525, 0, 430)
-						)
-						shield.Visible = true
-						settingsFrame.Parent:TweenPosition(
-							UDim2.new(0.5, -262, 0.5, -200),
-							Enum.EasingDirection.InOut,
-							Enum.EasingStyle.Sine,
-							tweenTime,
-							true
-						)
-						settingsFrame.Parent:TweenSize(
-							UDim2.new(0, 525, 0, 430),
-							Enum.EasingDirection.InOut,
-							Enum.EasingStyle.Sine,
-							tweenTime,
-							true
-						)
-					end,
-					--hideFunction
-					function()
-						settingsFrame.Parent:TweenPosition(
-							UDim2.new(0.5, -262, -0.5, -200),
-							Enum.EasingDirection.InOut,
-							Enum.EasingStyle.Sine,
-							tweenTime,
-							true
-						)
-						settingsFrame.Parent:TweenSize(
-							UDim2.new(0, 525, 0, 430),
-							Enum.EasingDirection.InOut,
-							Enum.EasingStyle.Sine,
-							tweenTime,
-							true
-						)
-						shield.Visible = false
-						settingsButton.Active = true
-					end
-				)
-			end)
-
-			return shield
+		if settingsButton == nil then
+			settingsButton = Instance.new "ImageButton"
+			settingsButton.Name = "SettingsButton"
+			settingsButton.Image = "rbxasset://textures/ui/SettingsButton.png"
+			settingsButton.BackgroundTransparency = 1
+			settingsButton.Active = false
+			settingsButton.Size = UDim2.new(0, 54, 0, 46)
+			settingsButton.Position = UDim2.new(0, 2, 0, 50)
+			settingsButton.Parent = gui.BottomLeftControl
 		end
 
-		delay(0, function()
-			createSettingsDialog().Parent = gui
-
-			gui.BottomLeftControl.SettingsButton.Active = true
-			gui.BottomLeftControl.SettingsButton.Position =
-				UDim2.new(0, 2, 0, -2)
-
-			if
-				mouseLockLabel
-				and UserSettings().GameSettings.ControlMode
-					== Enum.ControlMode["Mouse Lock Switch"]
-			then
-				mouseLockLabel.Visible = true
-			elseif mouseLockLabel then
-				mouseLockLabel.Visible = false
-			end
-
-			-- our script has loaded, get rid of older buttons now
-			local leaveGameButton = gui.BottomLeftControl:FindFirstChild "Exit"
-			if leaveGameButton then
-				leaveGameButton:Remove()
-			end
-
-			local topLeft = gui:FindFirstChild "TopLeftControl"
-			if topLeft then
-				leaveGameButton = topLeft:FindFirstChild "Exit"
-				if leaveGameButton then
-					leaveGameButton:Remove()
-				end
-
-				topLeft:Remove()
-			end
-		end)
-	end --UserSettings call
-
-	local createSaveDialogs = function()
 		local shield = Instance.new "TextButton"
 		shield.Text = ""
-		shield.AutoButtonColor = false
-		shield.Name = "SaveDialogShield"
+		shield.Name = "UserSettingsShield"
 		shield.Active = true
+		shield.AutoButtonColor = false
 		shield.Visible = false
 		shield.Size = UDim2.new(1, 0, 1, 0)
 		shield.BackgroundColor3 = Color3I(51, 51, 51)
 		shield.BorderColor3 = Color3I(27, 42, 53)
 		shield.BackgroundTransparency = 0.4
-		shield.ZIndex = baseZIndex + 1
-
-		local clearAndResetDialog
-		local save
-		local saveLocal
-		local dontSave
-		local cancel
-
-		local messageBoxButtons = {}
-		messageBoxButtons[1] = {}
-		messageBoxButtons[1].Text = "Save"
-		messageBoxButtons[1].Style = Enum.ButtonStyle.RobloxButtonDefault
-		messageBoxButtons[1].Function = function()
-			save()
-		end
-		messageBoxButtons[2] = {}
-		messageBoxButtons[2].Text = "Cancel"
-		messageBoxButtons[2].Function = function()
-			cancel()
-		end
-		messageBoxButtons[3] = {}
-		messageBoxButtons[3].Text = "Don't Save"
-		messageBoxButtons[3].Function = function()
-			dontSave()
-		end
-
-		local saveDialogMessageBox = RbxGui.CreateStyledMessageDialog(
-			"Unsaved Changes",
-			"Save your changes to Mercury before leaving?",
-			"Confirm",
-			messageBoxButtons
-		)
-		saveDialogMessageBox.Visible = true
-		saveDialogMessageBox.Parent = shield
-
-		local errorBoxButtons = {}
-
-		local buttonOffset = 1
-		if game.LocalSaveEnabled then
-			errorBoxButtons[buttonOffset] = {}
-			errorBoxButtons[buttonOffset].Text = "Save to Disk"
-			errorBoxButtons[buttonOffset].Function = function()
-				saveLocal()
-			end
-			buttonOffset += 1
-		end
-		errorBoxButtons[buttonOffset] = {}
-		errorBoxButtons[buttonOffset].Text = "Keep Playing"
-		errorBoxButtons[buttonOffset].Function = function()
-			cancel()
-		end
-		errorBoxButtons[buttonOffset + 1] = {}
-		errorBoxButtons[buttonOffset + 1].Text = "Don't Save"
-		errorBoxButtons[buttonOffset + 1].Function = function()
-			dontSave()
-		end
-
-		local errorDialogMessageBox = RbxGui.CreateStyledMessageDialog(
-			"Upload Failed",
-			"Sorry, we could not save your changes to Mercury.",
-			"Error",
-			errorBoxButtons
-		)
-		errorDialogMessageBox.Visible = false
-		errorDialogMessageBox.Parent = shield
-
-		local spinnerDialog = Instance.new "Frame"
-		spinnerDialog.Name = "SpinnerDialog"
-		spinnerDialog.Style = Enum.FrameStyle.RobloxRound
-		spinnerDialog.Size = UDim2.new(0, 350, 0, 150)
-		spinnerDialog.Position = UDim2.new(0.5, -175, 0.5, -75)
-		spinnerDialog.Visible = false
-		spinnerDialog.Active = true
-		spinnerDialog.Parent = shield
-
-		local waitingLabel = Instance.new "TextLabel"
-		waitingLabel.Name = "WaitingLabel"
-		waitingLabel.Text = "Saving to Mercury..."
-		waitingLabel.Font = Enum.Font.ArialBold
-		waitingLabel.FontSize = Enum.FontSize.Size18
-		waitingLabel.Position = UDim2.new(0.5, 25, 0.5, 0)
-		waitingLabel.TextColor3 = Color3.new(1, 1, 1)
-		waitingLabel.Parent = spinnerDialog
-
-		local spinnerFrame = Instance.new "Frame"
-		spinnerFrame.Name = "Spinner"
-		spinnerFrame.Size = UDim2.new(0, 80, 0, 80)
-		spinnerFrame.Position = UDim2.new(0.5, -150, 0.5, -40)
-		spinnerFrame.BackgroundTransparency = 1
-		spinnerFrame.Parent = spinnerDialog
-
-		local spinnerIcons = {}
-		local spinnerNum = 1
-		while spinnerNum <= 8 do
-			local spinnerImage = Instance.new "ImageLabel"
-			spinnerImage.Name = "Spinner" .. spinnerNum
-			spinnerImage.Size = UDim2.new(0, 16, 0, 16)
-			spinnerImage.Position = UDim2.new(
-				0.5 + 0.3 * math.cos(math.rad(45 * spinnerNum)),
-				-8,
-				0.5 + 0.3 * math.sin(math.rad(45 * spinnerNum)),
-				-8
-			)
-			spinnerImage.BackgroundTransparency = 1
-			spinnerImage.Image = "http://banland.xyz/Asset?id=45880710"
-			spinnerImage.Parent = spinnerFrame
-
-			spinnerIcons[spinnerNum] = spinnerImage
-			spinnerNum += 1
-		end
-
-		save = function()
-			saveDialogMessageBox.Visible = false
-
-			--Show the spinner dialog
-			spinnerDialog.Visible = true
-			local spin = true
-			--Make it spin
-			delay(0, function()
-				local spinPos = 0
-				while spin do
-					local pos = 0
-
-					while pos < 8 do
-						if pos == spinPos or pos == ((spinPos + 1) % 8) then
-							spinnerIcons[pos + 1].Image =
-								"http://banland.xyz/Asset?id=45880668"
-						else
-							spinnerIcons[pos + 1].Image =
-								"http://banland.xyz/Asset?id=45880710"
-						end
-
-						pos += 1
-					end
-					spinPos = (spinPos + 1) % 8
-					wait(0.2)
-				end
-			end)
-
-			--Do the save while the spinner is going, function will wait
-			local result = game:SaveToRoblox()
-			if not result then
-				--Try once more
-				result = game:SaveToRoblox()
-			end
-
-			--Hide the spinner dialog
-			spinnerDialog.Visible = false
-			--And cause the delay thread to stop
-			spin = false
-
-			--Now process the result
-			if result then
-				--Success, close
-				game:FinishShutdown(false)
-				clearAndResetDialog()
-			else
-				--Failure, show the second dialog prompt
-				errorDialogMessageBox.Visible = true
-			end
-		end
-
-		saveLocal = function()
-			errorDialogMessageBox.Visible = false
-			game:FinishShutdown(true)
-			clearAndResetDialog()
-		end
-
-		dontSave = function()
-			saveDialogMessageBox.Visible = false
-			errorDialogMessageBox.Visible = false
-			game:FinishShutdown(false)
-			clearAndResetDialog()
-		end
-		cancel = function()
-			saveDialogMessageBox.Visible = false
-			errorDialogMessageBox.Visible = false
-			clearAndResetDialog()
-		end
-
-		clearAndResetDialog = function()
-			saveDialogMessageBox.Visible = true
-			errorDialogMessageBox.Visible = false
-			spinnerDialog.Visible = false
-			shield.Visible = false
-			game.GuiService:RemoveCenterDialog(shield)
-		end
-
-		robloxLock(shield)
-		shield.Visible = false
-		return shield
-	end
-
-	local createReportAbuseDialog = function()
-		--Only show things if we are a NetworkClient
-		waitForChild(game, "NetworkClient")
-
-		waitForChild(game, "Players")
-		waitForProperty(game.Players, "LocalPlayer")
-		local localPlayer = game.Players.LocalPlayer
-
-		local reportAbuseButton
-		waitForChild(gui, "UserSettingsShield")
-		waitForChild(gui.UserSettingsShield, "Settings")
-		waitForChild(gui.UserSettingsShield.Settings, "SettingsStyle")
-		waitForChild(
-			gui.UserSettingsShield.Settings.SettingsStyle,
-			"GameMainMenu"
-		)
-		waitForChild(
-			gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu,
-			"ReportAbuseButton"
-		)
-		reportAbuseButton =
-			gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu.ReportAbuseButton
-
-		local shield = Instance.new "TextButton"
-		shield.Name = "ReportAbuseShield"
-		shield.Text = ""
-		shield.AutoButtonColor = false
-		shield.Active = true
-		shield.Visible = false
-		shield.Size = UDim2.new(1, 0, 1, 0)
-		shield.BackgroundColor3 = Color3I(51, 51, 51)
-		shield.BorderColor3 = Color3I(27, 42, 53)
-		shield.BackgroundTransparency = 0.4
-		shield.ZIndex = baseZIndex + 1
-
-		local closeAndResetDialog
-
-		local messageBoxButtons = {}
-		messageBoxButtons[1] = {}
-		messageBoxButtons[1].Text = "Ok"
-		messageBoxButtons[1].Modal = true
-		messageBoxButtons[1].Function = function()
-			closeAndResetDialog()
-		end
-		local calmingMessageBox = RbxGui.CreateMessageDialog(
-			"Thanks for your report!",
-			"Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
-			messageBoxButtons
-		)
-		calmingMessageBox.Visible = false
-		calmingMessageBox.Parent = shield
-
-		local recordedMessageBox = RbxGui.CreateMessageDialog(
-			"Thanks for your report!",
-			"We've recorded your report for evaluation.",
-			messageBoxButtons
-		)
-		recordedMessageBox.Visible = false
-		recordedMessageBox.Parent = shield
-
-		local normalMessageBox = RbxGui.CreateMessageDialog(
-			"Thanks for your report!",
-			"Our moderators will review the chat logs and determine what happened.",
-			messageBoxButtons
-		)
-		normalMessageBox.Visible = false
-		normalMessageBox.Parent = shield
+		shield.ZIndex = baseZIndex + 2
+		mainShield = shield
 
 		local frame = Instance.new "Frame"
 		frame.Name = "Settings"
-		frame.Position = UDim2.new(0.5, -250, 0.5, -200)
-		frame.Size = UDim2.new(0, 500, 0, 400)
+		frame.Position = UDim2.new(0.5, -262, -0.5, -200)
+		frame.Size = UDim2.new(0, 525, 0, 430)
 		frame.BackgroundTransparency = 1
 		frame.Active = true
 		frame.Parent = shield
 
-		local settingsFrame = Instance.new "Frame"
-		settingsFrame.Name = "ReportAbuseStyle"
+		settingsFrame = Instance.new "Frame"
+		settingsFrame.Name = "SettingsStyle"
 		settingsFrame.Size = UDim2.new(1, 0, 1, 0)
 		settingsFrame.Style = Enum.FrameStyle.RobloxRound
 		settingsFrame.Active = true
-		settingsFrame.ZIndex = baseZIndex + 1
+		settingsFrame.ZIndex = baseZIndex + 3
 		settingsFrame.Parent = frame
 
-		local title = Instance.new "TextLabel"
-		title.Name = "Title"
-		title.Text = "Report Abuse"
-		title.TextColor3 = Color3I(221, 221, 221)
-		title.Position = UDim2.new(0.5, 0, 0, 30)
-		title.Font = Enum.Font.ArialBold
-		title.FontSize = Enum.FontSize.Size36
-		title.ZIndex = baseZIndex + 2
-		title.Parent = settingsFrame
+		local gameMainMenu = createGameMainMenu(baseZIndex, shield)
+		gameMainMenu.Parent = settingsFrame
 
-		local description = Instance.new "TextLabel"
-		description.Name = "Description"
-		description.Text =
-			"This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action."
-		description.TextColor3 = Color3I(221, 221, 221)
-		description.Position = UDim2.new(0, 0, 0, 55)
-		description.Size = UDim2.new(1, 0, 0, 40)
-		description.BackgroundTransparency = 1
-		description.Font = Enum.Font.Arial
-		description.FontSize = Enum.FontSize.Size18
-		description.TextWrap = true
-		description.ZIndex = baseZIndex + 2
-		description.TextXAlignment = Enum.TextXAlignment.Left
-		description.TextYAlignment = Enum.TextYAlignment.Top
-		description.Parent = settingsFrame
-
-		local playerLabel = Instance.new "TextLabel"
-		playerLabel.Name = "PlayerLabel"
-		playerLabel.Text = "Which player?"
-		playerLabel.BackgroundTransparency = 1
-		playerLabel.Font = Enum.Font.Arial
-		playerLabel.FontSize = Enum.FontSize.Size18
-		playerLabel.Position = UDim2.new(0.025, 0, 0, 100)
-		playerLabel.Size = UDim2.new(0.4, 0, 0, 36)
-		playerLabel.TextColor3 = Color3I(255, 255, 255)
-		playerLabel.TextXAlignment = Enum.TextXAlignment.Left
-		playerLabel.ZIndex = baseZIndex + 2
-		playerLabel.Parent = settingsFrame
-
-		local abusingPlayer
-		local abuse
-		local submitReportButton
-
-		local updatePlayerSelection
-		local createPlayersDropDown = function()
-			local players = game:GetService "Players"
-			local playerNames = {}
-			local nameToPlayer = {}
-			local children = players:GetChildren()
-			local pos = 1
-			if children then
-				for _, player in ipairs(children) do
-					if player:IsA "Player" and player ~= localPlayer then
-						playerNames[pos] = player.Name
-						nameToPlayer[player.Name] = player
-						pos += 1
-					end
-				end
-			end
-			local playerDropDown
-			playerDropDown, updatePlayerSelection = RbxGui.CreateDropDownMenu(
-				playerNames,
-				function(playerName)
-					abusingPlayer = nameToPlayer[playerName]
-					if abuse and abusingPlayer then
-						submitReportButton.Active = true
-					end
-				end
-			)
-			playerDropDown.Name = "PlayersComboBox"
-			playerDropDown.ZIndex = baseZIndex + 2
-			playerDropDown.Position = UDim2.new(0.425, 0, 0, 102)
-			playerDropDown.Size = UDim2.new(0.55, 0, 0, 32)
-
-			return playerDropDown
-		end
-
-		local abuseLabel = Instance.new "TextLabel"
-		abuseLabel.Name = "AbuseLabel"
-		abuseLabel.Text = "Type of Abuse:"
-		abuseLabel.Font = Enum.Font.Arial
-		abuseLabel.BackgroundTransparency = 1
-		abuseLabel.FontSize = Enum.FontSize.Size18
-		abuseLabel.Position = UDim2.new(0.025, 0, 0, 140)
-		abuseLabel.Size = UDim2.new(0.4, 0, 0, 36)
-		abuseLabel.TextColor3 = Color3I(255, 255, 255)
-		abuseLabel.TextXAlignment = Enum.TextXAlignment.Left
-		abuseLabel.ZIndex = baseZIndex + 2
-		abuseLabel.Parent = settingsFrame
-
-		local abuses = {
-			"Swearing",
-			"Bullying",
-			"Scamming",
-			"Dating",
-			"Cheating/Exploiting",
-			"Personal Questions",
-			"Offsite Links",
-			"Bad Model or Script",
-			"Bad Username",
-		}
-		local abuseDropDown, updateAbuseSelection = RbxGui.CreateDropDownMenu(
-			abuses,
-			function(abuseText)
-				abuse = abuseText
-				if abuse and abusingPlayer then
-					submitReportButton.Active = true
-				end
-			end,
-			true
-		)
-		abuseDropDown.Name = "AbuseComboBox"
-		abuseDropDown.ZIndex = baseZIndex + 2
-		abuseDropDown.Position = UDim2.new(0.425, 0, 0, 142)
-		abuseDropDown.Size = UDim2.new(0.55, 0, 0, 32)
-		abuseDropDown.Parent = settingsFrame
-
-		local shortDescriptionLabel = Instance.new "TextLabel"
-		shortDescriptionLabel.Name = "ShortDescriptionLabel"
-		shortDescriptionLabel.Text = "Short Description: (optional)"
-		shortDescriptionLabel.Font = Enum.Font.Arial
-		shortDescriptionLabel.FontSize = Enum.FontSize.Size18
-		shortDescriptionLabel.Position = UDim2.new(0.025, 0, 0, 180)
-		shortDescriptionLabel.Size = UDim2.new(0.95, 0, 0, 36)
-		shortDescriptionLabel.TextColor3 = Color3I(255, 255, 255)
-		shortDescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
-		shortDescriptionLabel.BackgroundTransparency = 1
-		shortDescriptionLabel.ZIndex = baseZIndex + 2
-		shortDescriptionLabel.Parent = settingsFrame
-
-		local shortDescriptionWrapper = Instance.new "Frame"
-		shortDescriptionWrapper.Name = "ShortDescriptionWrapper"
-		shortDescriptionWrapper.Position = UDim2.new(0.025, 0, 0, 220)
-		shortDescriptionWrapper.Size = UDim2.new(0.95, 0, 1, -310)
-		shortDescriptionWrapper.BackgroundColor3 = Color3I(0, 0, 0)
-		shortDescriptionWrapper.BorderSizePixel = 0
-		shortDescriptionWrapper.ZIndex = baseZIndex + 2
-		shortDescriptionWrapper.Parent = settingsFrame
-
-		local shortDescriptionBox = Instance.new "TextBox"
-		shortDescriptionBox.Name = "TextBox"
-		shortDescriptionBox.Text = ""
-		shortDescriptionBox.ClearTextOnFocus = false
-		shortDescriptionBox.Font = Enum.Font.Arial
-		shortDescriptionBox.FontSize = Enum.FontSize.Size18
-		shortDescriptionBox.Position = UDim2.new(0, 3, 0, 3)
-		shortDescriptionBox.Size = UDim2.new(1, -6, 1, -6)
-		shortDescriptionBox.TextColor3 = Color3I(255, 255, 255)
-		shortDescriptionBox.TextXAlignment = Enum.TextXAlignment.Left
-		shortDescriptionBox.TextYAlignment = Enum.TextYAlignment.Top
-		shortDescriptionBox.TextWrap = true
-		shortDescriptionBox.BackgroundColor3 = Color3I(0, 0, 0)
-		shortDescriptionBox.BorderSizePixel = 0
-		shortDescriptionBox.ZIndex = baseZIndex + 2
-		shortDescriptionBox.Parent = shortDescriptionWrapper
-
-		submitReportButton = Instance.new "TextButton"
-		submitReportButton.Name = "SubmitReportBtn"
-		submitReportButton.Active = false
-		submitReportButton.Modal = true
-		submitReportButton.Font = Enum.Font.Arial
-		submitReportButton.FontSize = Enum.FontSize.Size18
-		submitReportButton.Position = UDim2.new(0.1, 0, 1, -80)
-		submitReportButton.Size = UDim2.new(0.35, 0, 0, 50)
-		submitReportButton.AutoButtonColor = true
-		submitReportButton.Style = Enum.ButtonStyle.RobloxButtonDefault
-		submitReportButton.Text = "Submit Report"
-		submitReportButton.TextColor3 = Color3I(255, 255, 255)
-		submitReportButton.ZIndex = baseZIndex + 2
-		submitReportButton.Parent = settingsFrame
-
-		submitReportButton.MouseButton1Click:connect(function()
-			if submitReportButton.Active then
-				if abuse and abusingPlayer then
-					frame.Visible = false
-					game.Players:ReportAbuse(
-						abusingPlayer,
-						abuse,
-						shortDescriptionBox.Text
-					)
-					if abuse == "Cheating/Exploiting" then
-						recordedMessageBox.Visible = true
-					elseif abuse == "Bullying" or abuse == "Swearing" then
-						calmingMessageBox.Visible = true
-					else
-						normalMessageBox.Visible = true
-					end
-				else
-					closeAndResetDialog()
-				end
-			end
+		gameMainMenu.ScreenshotButton.MouseButton1Click:connect(function()
+			backToGame(gameMainMenu.ScreenshotButton, shield, settingsButton)
 		end)
 
-		local cancelButton = Instance.new "TextButton"
-		cancelButton.Name = "CancelBtn"
-		cancelButton.Font = Enum.Font.Arial
-		cancelButton.FontSize = Enum.FontSize.Size18
-		cancelButton.Position = UDim2.new(0.55, 0, 1, -80)
-		cancelButton.Size = UDim2.new(0.35, 0, 0, 50)
-		cancelButton.AutoButtonColor = true
-		cancelButton.Style = Enum.ButtonStyle.RobloxButtonDefault
-		cancelButton.Text = "Cancel"
-		cancelButton.TextColor3 = Color3I(255, 255, 255)
-		cancelButton.ZIndex = baseZIndex + 2
-		cancelButton.Parent = settingsFrame
+		gameMainMenu.RecordVideoButton.MouseButton1Click:connect(function()
+			recordVideoClick(
+				gameMainMenu.RecordVideoButton,
+				gui.StopRecordButton
+			)
+			backToGame(gameMainMenu.RecordVideoButton, shield, settingsButton)
+		end)
 
-		closeAndResetDialog = function()
-			--Delete old player combo box
-			local oldComboBox = settingsFrame:FindFirstChild "PlayersComboBox"
-			if oldComboBox then
-				oldComboBox.Parent = nil
-			end
-
-			abusingPlayer = nil
-			updatePlayerSelection(nil)
-			abuse = nil
-			updateAbuseSelection(nil)
-			submitReportButton.Active = false
-			shortDescriptionBox.Text = ""
-			frame.Visible = true
-			calmingMessageBox.Visible = false
-			recordedMessageBox.Visible = false
-			normalMessageBox.Visible = false
-			shield.Visible = false
-			reportAbuseButton.Active = true
-			game.GuiService:RemoveCenterDialog(shield)
+		if settings():FindFirstChild "Game Options" then
+			pcall(function()
+				settings()
+					:FindFirstChild("Game Options").VideoRecordingChangeRequest
+					:connect(function(recording)
+						recordingVideo = recording
+						setRecordGui(
+							recording,
+							gui.StopRecordButton,
+							gameMainMenu.RecordVideoButton
+						)
+					end)
+			end)
 		end
 
-		cancelButton.MouseButton1Click:connect(closeAndResetDialog)
+		game.CoreGui.RobloxGui.Changed:connect(
+			function(prop) -- We have stopped recording when we resize
+				if prop == "AbsoluteSize" and recordingVideo then
+					recordVideoClick(
+						gameMainMenu.RecordVideoButton,
+						gui.StopRecordButton
+					)
+				end
+			end
+		)
 
-		reportAbuseButton.MouseButton1Click:connect(function()
-			createPlayersDropDown().Parent = settingsFrame
-			table.insert(centerDialogs, shield)
+		local function localPlayerChange()
+			gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
+			if game.Players.LocalPlayer then
+				settings().Rendering.EnableFRM = true
+			elseif inStudioMode then
+				settings().Rendering.EnableFRM = false
+			end
+		end
+
+		gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
+		if game.Players.LocalPlayer ~= nil then
+			game.Players.LocalPlayer.Changed:connect(function()
+				localPlayerChange()
+			end)
+		else
+			delay(0, function()
+				waitForProperty(game.Players, "LocalPlayer")
+				gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
+				game.Players.LocalPlayer.Changed:connect(function()
+					localPlayerChange()
+				end)
+			end)
+		end
+
+		gameMainMenu.ReportAbuseButton.Visible =
+			game:FindFirstChild "NetworkClient"
+		if not gameMainMenu.ReportAbuseButton.Visible then
+			game.ChildAdded:connect(function(child)
+				if child:IsA "NetworkClient" then
+					gameMainMenu.ReportAbuseButton.Visible =
+						game:FindFirstChild "NetworkClient"
+				end
+			end)
+		end
+
+		gameMainMenu.ResetButton.MouseButton1Click:connect(function()
+			goToMenu(
+				settingsFrame,
+				"ResetConfirmationMenu",
+				"up",
+				UDim2.new(0, 525, 0, 370)
+			)
+		end)
+
+		gameMainMenu.LeaveGameButton.MouseButton1Click:connect(function()
+			goToMenu(
+				settingsFrame,
+				"LeaveConfirmationMenu",
+				"down",
+				UDim2.new(0, 525, 0, 300)
+			)
+		end)
+
+		if game.CoreGui.Version >= 4 then -- we can use escape!
+			game:GetService("GuiService").EscapeKeyPressed:connect(function()
+				if currentMenuSelection == nil then
+					game.GuiService:AddCenterDialog(
+						shield,
+						Enum.CenterDialogType.ModalDialog,
+						--showFunction
+						function()
+							settingsButton.Active = false
+							updateCameraDropDownSelection(
+								UserSettings().GameSettings.ControlMode.Name
+							)
+
+							if syncVideoCaptureSetting then
+								syncVideoCaptureSetting()
+							end
+
+							goToMenu(
+								settingsFrame,
+								"GameMainMenu",
+								"right",
+								UDim2.new(0, 525, 0, 430)
+							)
+							shield.Visible = true
+							shield.Active = true
+							settingsFrame.Parent:TweenPosition(
+								UDim2.new(0.5, -262, 0.5, -200),
+								Enum.EasingDirection.InOut,
+								Enum.EasingStyle.Sine,
+								tweenTime,
+								true
+							)
+							settingsFrame.Parent:TweenSize(
+								UDim2.new(0, 525, 0, 430),
+								Enum.EasingDirection.InOut,
+								Enum.EasingStyle.Sine,
+								tweenTime,
+								true
+							)
+						end,
+						--hideFunction
+						function()
+							settingsFrame.Parent:TweenPosition(
+								UDim2.new(0.5, -262, -0.5, -200),
+								Enum.EasingDirection.InOut,
+								Enum.EasingStyle.Sine,
+								tweenTime,
+								true
+							)
+							settingsFrame.Parent:TweenSize(
+								UDim2.new(0, 525, 0, 430),
+								Enum.EasingDirection.InOut,
+								Enum.EasingStyle.Sine,
+								tweenTime,
+								true
+							)
+							shield.Visible = false
+							settingsButton.Active = true
+						end
+					)
+				elseif #lastMenuSelection > 0 then
+					if #centerDialogs > 0 then
+						for i = 1, #centerDialogs do
+							game.GuiService:RemoveCenterDialog(centerDialogs[i])
+							centerDialogs[i].Visible = false
+						end
+						centerDialogs = {}
+					end
+
+					goToMenu(
+						lastMenuSelection[#lastMenuSelection]["container"],
+						lastMenuSelection[#lastMenuSelection]["name"],
+						lastMenuSelection[#lastMenuSelection]["direction"],
+						lastMenuSelection[#lastMenuSelection]["lastSize"]
+					)
+
+					table.remove(lastMenuSelection, #lastMenuSelection)
+					if #lastMenuSelection == 1 then -- apparently lua can't reduce count to 0... T_T
+						lastMenuSelection = {}
+					end
+				else
+					resumeGameFunction(shield)
+				end
+			end)
+		end
+
+		local gameSettingsMenu = createGameSettingsMenu(baseZIndex, shield)
+		gameSettingsMenu.Visible = false
+		gameSettingsMenu.Parent = settingsFrame
+
+		gameMainMenu.SettingsButton.MouseButton1Click:connect(function()
+			goToMenu(
+				settingsFrame,
+				"GameSettingsMenu",
+				"left",
+				UDim2.new(0, 525, 0, 350)
+			)
+		end)
+
+		gameSettingsMenu.BackButton.MouseButton1Click:connect(function()
+			goToMenu(
+				settingsFrame,
+				"GameMainMenu",
+				"right",
+				UDim2.new(0, 525, 0, 430)
+			)
+		end)
+
+		local resetConfirmationWindow =
+			createResetConfirmationMenu(baseZIndex, shield)
+		resetConfirmationWindow.Visible = false
+		resetConfirmationWindow.Parent = settingsFrame
+
+		local leaveConfirmationWindow =
+			createLeaveConfirmationMenu(baseZIndex, shield)
+		leaveConfirmationWindow.Visible = false
+		leaveConfirmationWindow.Parent = settingsFrame
+
+		robloxLock(shield)
+
+		settingsButton.MouseButton1Click:connect(function()
 			game.GuiService:AddCenterDialog(
 				shield,
 				Enum.CenterDialogType.ModalDialog,
-				--ShowFunction
+				--showFunction
 				function()
-					reportAbuseButton.Active = false
+					settingsButton.Active = false
+					updateCameraDropDownSelection(
+						UserSettings().GameSettings.ControlMode.Name
+					)
+
+					if syncVideoCaptureSetting then
+						syncVideoCaptureSetting()
+					end
+
+					goToMenu(
+						settingsFrame,
+						"GameMainMenu",
+						"right",
+						UDim2.new(0, 525, 0, 430)
+					)
 					shield.Visible = true
-					mainShield.Visible = false
+					settingsFrame.Parent:TweenPosition(
+						UDim2.new(0.5, -262, 0.5, -200),
+						Enum.EasingDirection.InOut,
+						Enum.EasingStyle.Sine,
+						tweenTime,
+						true
+					)
+					settingsFrame.Parent:TweenSize(
+						UDim2.new(0, 525, 0, 430),
+						Enum.EasingDirection.InOut,
+						Enum.EasingStyle.Sine,
+						tweenTime,
+						true
+					)
 				end,
-				--HideFunction
+				--hideFunction
 				function()
-					reportAbuseButton.Active = true
+					settingsFrame.Parent:TweenPosition(
+						UDim2.new(0.5, -262, -0.5, -200),
+						Enum.EasingDirection.InOut,
+						Enum.EasingStyle.Sine,
+						tweenTime,
+						true
+					)
+					settingsFrame.Parent:TweenSize(
+						UDim2.new(0, 525, 0, 430),
+						Enum.EasingDirection.InOut,
+						Enum.EasingStyle.Sine,
+						tweenTime,
+						true
+					)
 					shield.Visible = false
+					settingsButton.Active = true
 				end
 			)
 		end)
 
-		robloxLock(shield)
 		return shield
 	end
 
-	-- local createChatBar = function()
-	-- 	--Only show a chat bar if we are a NetworkClient
-	-- 	waitForChild(game, "NetworkClient")
-
-	-- 	waitForChild(game, "Players")
-	-- 	waitForProperty(game.Players, "LocalPlayer")
-
-	-- 	local chatBar = Instance.new "Frame"
-	-- 	chatBar.Name = "ChatBar"
-	-- 	chatBar.Size = UDim2.new(1, 0, 0, 22)
-	-- 	chatBar.Position = UDim2.new(0, 0, 1, 0)
-	-- 	chatBar.BackgroundColor3 = Color3.new(0, 0, 0)
-	-- 	chatBar.BorderSizePixel = 0
-
-	-- 	local chatBox = Instance.new "TextBox"
-	-- 	chatBox.Text = ""
-	-- 	chatBox.Visible = false
-	-- 	chatBox.Size = UDim2.new(1, -4, 1, 0)
-	-- 	chatBox.Position = UDim2.new(0, 2, 0, 0)
-	-- 	chatBox.TextXAlignment = Enum.TextXAlignment.Left
-	-- 	chatBox.Font = Enum.Font.Arial
-	-- 	chatBox.ClearTextOnFocus = false
-	-- 	chatBox.FontSize = Enum.FontSize.Size14
-	-- 	chatBox.TextColor3 = Color3.new(1, 1, 1)
-	-- 	chatBox.BackgroundTransparency = 1
-	-- 	--chatBox.Parent = chatBar
-
-	-- 	local chatButton = Instance.new "TextButton"
-	-- 	chatButton.Size = UDim2.new(1, -4, 1, 0)
-	-- 	chatButton.Position = UDim2.new(0, 2, 0, 0)
-	-- 	chatButton.AutoButtonColor = false
-	-- 	chatButton.Text = 'To chat click here or press "/" key'
-	-- 	chatButton.TextXAlignment = Enum.TextXAlignment.Left
-	-- 	chatButton.Font = Enum.Font.Arial
-	-- 	chatButton.FontSize = Enum.FontSize.Size14
-	-- 	chatButton.TextColor3 = Color3.new(1, 1, 1)
-	-- 	chatButton.BackgroundTransparency = 1
-	-- 	--chatButton.Parent = chatBar
-
-	-- 	local activateChat = function()
-	-- 		if chatBox.Visible then
-	-- 			return
-	-- 		end
-	-- 		chatButton.Visible = false
-	-- 		chatBox.Text = ""
-	-- 		chatBox.Visible = true
-	-- 		chatBox:CaptureFocus()
-	-- 	end
-
-	-- 	chatButton.MouseButton1Click:connect(activateChat)
-
-	-- 	-- local hotKeyEnabled = true
-	-- 	local toggleHotKey = function(_)
-	-- 		-- hotKeyEnabled = value
-	-- 	end
-
-	-- 	-- local guiService = game:GetService "GuiService"
-	-- 	--[[local newChatMode = ]]pcall(function()
-	-- 		--guiService:AddSpecialKey(Enum.SpecialKey.ChatHotkey)
-	-- 		--guiService.SpecialKeyPressed:connect(function(key) if key == Enum.SpecialKey.ChatHotkey and hotKeyEnabled then activateChat() end end)
-	-- 	end)
-	-- 	-- if not newChatMode then
-	-- 		--guiService:AddKey("/")
-	-- 		--guiService.KeyPressed:connect(function(key) if key == "/" and hotKeyEnabled then activateChat() end end)
-	-- 	-- end
-
-	-- 	chatBox.FocusLost:connect(function(enterPressed)
-	-- 		if enterPressed then
-	-- 			if chatBox.Text ~= "" then
-	-- 				local str = chatBox.Text
-	-- 				if string.sub(str, 1, 1) == "%" then
-	-- 					game.Players:TeamChat(string.sub(str, 2))
-	-- 				else
-	-- 					game.Players:Chat(str)
-	-- 				end
-	-- 			end
-	-- 		end
-	-- 		chatBox.Text = ""
-	-- 		chatBox.Visible = false
-	-- 		chatButton.Visible = true
-	-- 	end)
-	-- 	robloxLock(chatBar)
-	-- 	return chatBar, toggleHotKey
-	-- end
-
-	--Spawn a thread for the Save dialogs
-	local isSaveDialogSupported = pcall(function()
-		-- local var = game.LocalSaveEnabled
-	end)
-	if isSaveDialogSupported then
-		delay(0, function()
-			local saveDialogs = createSaveDialogs()
-			saveDialogs.Parent = gui
-
-			game.RequestShutdown = function()
-				table.insert(centerDialogs, saveDialogs)
-				game.GuiService:AddCenterDialog(
-					saveDialogs,
-					Enum.CenterDialogType.QuitDialog,
-					--ShowFunction
-					function()
-						saveDialogs.Visible = true
-					end,
-					--HideFunction
-					function()
-						saveDialogs.Visible = false
-					end
-				)
-
-				return true
-			end
-		end)
-	end
-
-	--Spawn a thread for the Report Abuse dialogs
 	delay(0, function()
-		createReportAbuseDialog().Parent = gui
-		waitForChild(gui, "UserSettingsShield")
-		waitForChild(gui.UserSettingsShield, "Settings")
-		waitForChild(gui.UserSettingsShield.Settings, "SettingsStyle")
-		waitForChild(
-			gui.UserSettingsShield.Settings.SettingsStyle,
-			"GameMainMenu"
-		)
-		waitForChild(
-			gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu,
-			"ReportAbuseButton"
-		)
-		gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu.ReportAbuseButton.Active =
-			true
-	end)
+		createSettingsDialog().Parent = gui
 
-	--Spawn a thread for Chat Bar
-	--[[local success, luaChat = ]]
-	pcall(function()
-		return game.GuiService.UseLuaChat
-	end)
-	-- if success and luaChat then
+		gui.BottomLeftControl.SettingsButton.Active = true
+		gui.BottomLeftControl.SettingsButton.Position = UDim2.new(0, 2, 0, -2)
 
-	--[[delay(0,
-		function()
-			waitForChild(game, "Players")
-			waitForProperty(game.Players, "LocalPlayer")
+		if
+			mouseLockLabel
+			and UserSettings().GameSettings.ControlMode
+				== Enum.ControlMode["Mouse Lock Switch"]
+		then
+			mouseLockLabel.Visible = true
+		elseif mouseLockLabel then
+			mouseLockLabel.Visible = false
+		end
 
-			local advancedChatBarSupported = game.Players.LocalPlayer.ChatMode
-			local chatBar, toggleHotKey = createChatBar()
+		-- our script has loaded, get rid of older buttons now
+		local leaveGameButton = gui.BottomLeftControl:FindFirstChild "Exit"
+		if leaveGameButton then
+			leaveGameButton:Remove()
+		end
 
-			[if advancedChatBarSupported then
-				local function toggleChatBar(chatMode)
-					if chatMode == Enum.ChatMode.Menu then
-						chatBar.Parent = nil
-						game.GuiService:SetGlobalSizeOffsetPixel(0,0)
-						toggleHotKey(false)
-					elseif chatMode == Enum.ChatMode.TextAndMenu then
-						--chatBar.Parent = gui
-						--game.GuiService:SetGlobalSizeOffsetPixel(0,-22)
-						toggleHotKey(true)
-					end
-				end
-				game.Players.LocalPlayer.Changed:connect(
-					function(prop)
-						if prop == "ChatMode" then
-							toggleChatBar(game.Players.LocalPlayer.ChatMode)
-						end
-					end)
-				toggleChatBar(game.Players.LocalPlayer.ChatMode)
-			else
-				--chatBar.Parent = gui
-				--game.GuiService:SetGlobalSizeOffsetPixel(0,-22)
+		local topLeft = gui:FindFirstChild "TopLeftControl"
+		if topLeft then
+			leaveGameButton = topLeft:FindFirstChild "Exit"
+			if leaveGameButton then
+				leaveGameButton:Remove()
 			end
-		end)]]
-	-- end
 
-	local BurningManPlaceID = 41324860
-	-- TODO: remove click to walk completely if testing shows we don't need it
-	-- Removes click to walk option from Burning Man
-	delay(0, function()
-		waitForChild(game, "NetworkClient")
-		waitForChild(game, "Players")
-		waitForProperty(game.Players, "LocalPlayer")
-		waitForProperty(game.Players.LocalPlayer, "Character")
-		waitForChild(game.Players.LocalPlayer.Character, "Humanoid")
-		waitForProperty(game, "PlaceId")
-
-		if game.PlaceId == BurningManPlaceID then
-			game.Players.LocalPlayer.Character.Humanoid:SetClickToWalkEnabled(
-				false
-			)
-			game.Players.LocalPlayer.CharacterAdded:connect(function(character)
-				waitForChild(character, "Humanoid")
-				character.Humanoid:SetClickToWalkEnabled(false)
-			end)
+			topLeft:Remove()
 		end
 	end)
-end --LoadLibrary if
+end --UserSettings call
+
+local createSaveDialogs = function()
+	local shield = Instance.new "TextButton"
+	shield.Text = ""
+	shield.AutoButtonColor = false
+	shield.Name = "SaveDialogShield"
+	shield.Active = true
+	shield.Visible = false
+	shield.Size = UDim2.new(1, 0, 1, 0)
+	shield.BackgroundColor3 = Color3I(51, 51, 51)
+	shield.BorderColor3 = Color3I(27, 42, 53)
+	shield.BackgroundTransparency = 0.4
+	shield.ZIndex = baseZIndex + 1
+
+	local clearAndResetDialog
+	local save
+	local saveLocal
+	local dontSave
+	local cancel
+
+	local messageBoxButtons = {}
+	messageBoxButtons[1] = {}
+	messageBoxButtons[1].Text = "Save"
+	messageBoxButtons[1].Style = Enum.ButtonStyle.RobloxButtonDefault
+	messageBoxButtons[1].Function = function()
+		save()
+	end
+	messageBoxButtons[2] = {}
+	messageBoxButtons[2].Text = "Cancel"
+	messageBoxButtons[2].Function = function()
+		cancel()
+	end
+	messageBoxButtons[3] = {}
+	messageBoxButtons[3].Text = "Don't Save"
+	messageBoxButtons[3].Function = function()
+		dontSave()
+	end
+
+	local saveDialogMessageBox = RbxGui.CreateStyledMessageDialog(
+		"Unsaved Changes",
+		"Save your changes to Mercury before leaving?",
+		"Confirm",
+		messageBoxButtons
+	)
+	saveDialogMessageBox.Visible = true
+	saveDialogMessageBox.Parent = shield
+
+	local errorBoxButtons = {}
+
+	local buttonOffset = 1
+	if game.LocalSaveEnabled then
+		errorBoxButtons[buttonOffset] = {}
+		errorBoxButtons[buttonOffset].Text = "Save to Disk"
+		errorBoxButtons[buttonOffset].Function = function()
+			saveLocal()
+		end
+		buttonOffset += 1
+	end
+	errorBoxButtons[buttonOffset] = {}
+	errorBoxButtons[buttonOffset].Text = "Keep Playing"
+	errorBoxButtons[buttonOffset].Function = function()
+		cancel()
+	end
+	errorBoxButtons[buttonOffset + 1] = {}
+	errorBoxButtons[buttonOffset + 1].Text = "Don't Save"
+	errorBoxButtons[buttonOffset + 1].Function = function()
+		dontSave()
+	end
+
+	local errorDialogMessageBox = RbxGui.CreateStyledMessageDialog(
+		"Upload Failed",
+		"Sorry, we could not save your changes to Mercury.",
+		"Error",
+		errorBoxButtons
+	)
+	errorDialogMessageBox.Visible = false
+	errorDialogMessageBox.Parent = shield
+
+	local spinnerDialog = Instance.new "Frame"
+	spinnerDialog.Name = "SpinnerDialog"
+	spinnerDialog.Style = Enum.FrameStyle.RobloxRound
+	spinnerDialog.Size = UDim2.new(0, 350, 0, 150)
+	spinnerDialog.Position = UDim2.new(0.5, -175, 0.5, -75)
+	spinnerDialog.Visible = false
+	spinnerDialog.Active = true
+	spinnerDialog.Parent = shield
+
+	local waitingLabel = Instance.new "TextLabel"
+	waitingLabel.Name = "WaitingLabel"
+	waitingLabel.Text = "Saving to Mercury..."
+	waitingLabel.Font = Enum.Font.ArialBold
+	waitingLabel.FontSize = Enum.FontSize.Size18
+	waitingLabel.Position = UDim2.new(0.5, 25, 0.5, 0)
+	waitingLabel.TextColor3 = Color3.new(1, 1, 1)
+	waitingLabel.Parent = spinnerDialog
+
+	local spinnerFrame = Instance.new "Frame"
+	spinnerFrame.Name = "Spinner"
+	spinnerFrame.Size = UDim2.new(0, 80, 0, 80)
+	spinnerFrame.Position = UDim2.new(0.5, -150, 0.5, -40)
+	spinnerFrame.BackgroundTransparency = 1
+	spinnerFrame.Parent = spinnerDialog
+
+	local spinnerIcons = {}
+	local spinnerNum = 1
+	while spinnerNum <= 8 do
+		local spinnerImage = Instance.new "ImageLabel"
+		spinnerImage.Name = "Spinner" .. spinnerNum
+		spinnerImage.Size = UDim2.new(0, 16, 0, 16)
+		spinnerImage.Position = UDim2.new(
+			0.5 + 0.3 * math.cos(math.rad(45 * spinnerNum)),
+			-8,
+			0.5 + 0.3 * math.sin(math.rad(45 * spinnerNum)),
+			-8
+		)
+		spinnerImage.BackgroundTransparency = 1
+		spinnerImage.Image = "http://banland.xyz/Asset?id=45880710"
+		spinnerImage.Parent = spinnerFrame
+
+		spinnerIcons[spinnerNum] = spinnerImage
+		spinnerNum += 1
+	end
+
+	save = function()
+		saveDialogMessageBox.Visible = false
+
+		--Show the spinner dialog
+		spinnerDialog.Visible = true
+		local spin = true
+		--Make it spin
+		delay(0, function()
+			local spinPos = 0
+			while spin do
+				local pos = 0
+
+				while pos < 8 do
+					if pos == spinPos or pos == ((spinPos + 1) % 8) then
+						spinnerIcons[pos + 1].Image =
+							"http://banland.xyz/Asset?id=45880668"
+					else
+						spinnerIcons[pos + 1].Image =
+							"http://banland.xyz/Asset?id=45880710"
+					end
+
+					pos += 1
+				end
+				spinPos = (spinPos + 1) % 8
+				wait(0.2)
+			end
+		end)
+
+		--Do the save while the spinner is going, function will wait
+		local result = game:SaveToRoblox()
+		if not result then
+			--Try once more
+			result = game:SaveToRoblox()
+		end
+
+		--Hide the spinner dialog
+		spinnerDialog.Visible = false
+		--And cause the delay thread to stop
+		spin = false
+
+		--Now process the result
+		if result then
+			--Success, close
+			game:FinishShutdown(false)
+			clearAndResetDialog()
+		else
+			--Failure, show the second dialog prompt
+			errorDialogMessageBox.Visible = true
+		end
+	end
+
+	saveLocal = function()
+		errorDialogMessageBox.Visible = false
+		game:FinishShutdown(true)
+		clearAndResetDialog()
+	end
+
+	dontSave = function()
+		saveDialogMessageBox.Visible = false
+		errorDialogMessageBox.Visible = false
+		game:FinishShutdown(false)
+		clearAndResetDialog()
+	end
+	cancel = function()
+		saveDialogMessageBox.Visible = false
+		errorDialogMessageBox.Visible = false
+		clearAndResetDialog()
+	end
+
+	clearAndResetDialog = function()
+		saveDialogMessageBox.Visible = true
+		errorDialogMessageBox.Visible = false
+		spinnerDialog.Visible = false
+		shield.Visible = false
+		game.GuiService:RemoveCenterDialog(shield)
+	end
+
+	robloxLock(shield)
+	shield.Visible = false
+	return shield
+end
+
+local createReportAbuseDialog = function()
+	--Only show things if we are a NetworkClient
+	waitForChild(game, "NetworkClient")
+
+	waitForChild(game, "Players")
+	waitForProperty(game.Players, "LocalPlayer")
+	local localPlayer = game.Players.LocalPlayer
+
+	local reportAbuseButton
+	waitForChild(gui, "UserSettingsShield")
+	waitForChild(gui.UserSettingsShield, "Settings")
+	waitForChild(gui.UserSettingsShield.Settings, "SettingsStyle")
+	waitForChild(gui.UserSettingsShield.Settings.SettingsStyle, "GameMainMenu")
+	waitForChild(
+		gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu,
+		"ReportAbuseButton"
+	)
+	reportAbuseButton =
+		gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu.ReportAbuseButton
+
+	local shield = Instance.new "TextButton"
+	shield.Name = "ReportAbuseShield"
+	shield.Text = ""
+	shield.AutoButtonColor = false
+	shield.Active = true
+	shield.Visible = false
+	shield.Size = UDim2.new(1, 0, 1, 0)
+	shield.BackgroundColor3 = Color3I(51, 51, 51)
+	shield.BorderColor3 = Color3I(27, 42, 53)
+	shield.BackgroundTransparency = 0.4
+	shield.ZIndex = baseZIndex + 1
+
+	local closeAndResetDialog
+
+	local messageBoxButtons = {}
+	messageBoxButtons[1] = {}
+	messageBoxButtons[1].Text = "Ok"
+	messageBoxButtons[1].Modal = true
+	messageBoxButtons[1].Function = function()
+		closeAndResetDialog()
+	end
+	local calmingMessageBox = RbxGui.CreateMessageDialog(
+		"Thanks for your report!",
+		"Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
+		messageBoxButtons
+	)
+	calmingMessageBox.Visible = false
+	calmingMessageBox.Parent = shield
+
+	local recordedMessageBox = RbxGui.CreateMessageDialog(
+		"Thanks for your report!",
+		"We've recorded your report for evaluation.",
+		messageBoxButtons
+	)
+	recordedMessageBox.Visible = false
+	recordedMessageBox.Parent = shield
+
+	local normalMessageBox = RbxGui.CreateMessageDialog(
+		"Thanks for your report!",
+		"Our moderators will review the chat logs and determine what happened.",
+		messageBoxButtons
+	)
+	normalMessageBox.Visible = false
+	normalMessageBox.Parent = shield
+
+	local frame = Instance.new "Frame"
+	frame.Name = "Settings"
+	frame.Position = UDim2.new(0.5, -250, 0.5, -200)
+	frame.Size = UDim2.new(0, 500, 0, 400)
+	frame.BackgroundTransparency = 1
+	frame.Active = true
+	frame.Parent = shield
+
+	local settingsFrame = Instance.new "Frame"
+	settingsFrame.Name = "ReportAbuseStyle"
+	settingsFrame.Size = UDim2.new(1, 0, 1, 0)
+	settingsFrame.Style = Enum.FrameStyle.RobloxRound
+	settingsFrame.Active = true
+	settingsFrame.ZIndex = baseZIndex + 1
+	settingsFrame.Parent = frame
+
+	local title = Instance.new "TextLabel"
+	title.Name = "Title"
+	title.Text = "Report Abuse"
+	title.TextColor3 = Color3I(221, 221, 221)
+	title.Position = UDim2.new(0.5, 0, 0, 30)
+	title.Font = Enum.Font.ArialBold
+	title.FontSize = Enum.FontSize.Size36
+	title.ZIndex = baseZIndex + 2
+	title.Parent = settingsFrame
+
+	local description = Instance.new "TextLabel"
+	description.Name = "Description"
+	description.Text =
+		"This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action."
+	description.TextColor3 = Color3I(221, 221, 221)
+	description.Position = UDim2.new(0, 0, 0, 55)
+	description.Size = UDim2.new(1, 0, 0, 40)
+	description.BackgroundTransparency = 1
+	description.Font = Enum.Font.Arial
+	description.FontSize = Enum.FontSize.Size18
+	description.TextWrap = true
+	description.ZIndex = baseZIndex + 2
+	description.TextXAlignment = Enum.TextXAlignment.Left
+	description.TextYAlignment = Enum.TextYAlignment.Top
+	description.Parent = settingsFrame
+
+	local playerLabel = Instance.new "TextLabel"
+	playerLabel.Name = "PlayerLabel"
+	playerLabel.Text = "Which player?"
+	playerLabel.BackgroundTransparency = 1
+	playerLabel.Font = Enum.Font.Arial
+	playerLabel.FontSize = Enum.FontSize.Size18
+	playerLabel.Position = UDim2.new(0.025, 0, 0, 100)
+	playerLabel.Size = UDim2.new(0.4, 0, 0, 36)
+	playerLabel.TextColor3 = Color3I(255, 255, 255)
+	playerLabel.TextXAlignment = Enum.TextXAlignment.Left
+	playerLabel.ZIndex = baseZIndex + 2
+	playerLabel.Parent = settingsFrame
+
+	local abusingPlayer
+	local abuse
+	local submitReportButton
+
+	local updatePlayerSelection
+	local function createPlayersDropDown()
+		local players = game:GetService "Players"
+		local playerNames = {}
+		local nameToPlayer = {}
+		local children = players:GetChildren()
+		local pos = 1
+		if children then
+			for _, player in ipairs(children) do
+				if player:IsA "Player" and player ~= localPlayer then
+					playerNames[pos] = player.Name
+					nameToPlayer[player.Name] = player
+					pos += 1
+				end
+			end
+		end
+		local playerDropDown
+		playerDropDown, updatePlayerSelection = RbxGui.CreateDropDownMenu(
+			playerNames,
+			function(playerName)
+				abusingPlayer = nameToPlayer[playerName]
+				if abuse and abusingPlayer then
+					submitReportButton.Active = true
+				end
+			end
+		)
+		playerDropDown.Name = "PlayersComboBox"
+		playerDropDown.ZIndex = baseZIndex + 2
+		playerDropDown.Position = UDim2.new(0.425, 0, 0, 102)
+		playerDropDown.Size = UDim2.new(0.55, 0, 0, 32)
+
+		return playerDropDown
+	end
+
+	local abuseLabel = Instance.new "TextLabel"
+	abuseLabel.Name = "AbuseLabel"
+	abuseLabel.Text = "Type of Abuse:"
+	abuseLabel.Font = Enum.Font.Arial
+	abuseLabel.BackgroundTransparency = 1
+	abuseLabel.FontSize = Enum.FontSize.Size18
+	abuseLabel.Position = UDim2.new(0.025, 0, 0, 140)
+	abuseLabel.Size = UDim2.new(0.4, 0, 0, 36)
+	abuseLabel.TextColor3 = Color3I(255, 255, 255)
+	abuseLabel.TextXAlignment = Enum.TextXAlignment.Left
+	abuseLabel.ZIndex = baseZIndex + 2
+	abuseLabel.Parent = settingsFrame
+
+	local abuses = {
+		"Swearing",
+		"Bullying",
+		"Scamming",
+		"Dating",
+		"Cheating/Exploiting",
+		"Personal Questions",
+		"Offsite Links",
+		"Bad Model or Script",
+		"Bad Username",
+	}
+	local abuseDropDown, updateAbuseSelection = RbxGui.CreateDropDownMenu(
+		abuses,
+		function(abuseText)
+			abuse = abuseText
+			if abuse and abusingPlayer then
+				submitReportButton.Active = true
+			end
+		end,
+		true
+	)
+	abuseDropDown.Name = "AbuseComboBox"
+	abuseDropDown.ZIndex = baseZIndex + 2
+	abuseDropDown.Position = UDim2.new(0.425, 0, 0, 142)
+	abuseDropDown.Size = UDim2.new(0.55, 0, 0, 32)
+	abuseDropDown.Parent = settingsFrame
+
+	local shortDescriptionLabel = Instance.new "TextLabel"
+	shortDescriptionLabel.Name = "ShortDescriptionLabel"
+	shortDescriptionLabel.Text = "Short Description: (optional)"
+	shortDescriptionLabel.Font = Enum.Font.Arial
+	shortDescriptionLabel.FontSize = Enum.FontSize.Size18
+	shortDescriptionLabel.Position = UDim2.new(0.025, 0, 0, 180)
+	shortDescriptionLabel.Size = UDim2.new(0.95, 0, 0, 36)
+	shortDescriptionLabel.TextColor3 = Color3I(255, 255, 255)
+	shortDescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+	shortDescriptionLabel.BackgroundTransparency = 1
+	shortDescriptionLabel.ZIndex = baseZIndex + 2
+	shortDescriptionLabel.Parent = settingsFrame
+
+	local shortDescriptionWrapper = Instance.new "Frame"
+	shortDescriptionWrapper.Name = "ShortDescriptionWrapper"
+	shortDescriptionWrapper.Position = UDim2.new(0.025, 0, 0, 220)
+	shortDescriptionWrapper.Size = UDim2.new(0.95, 0, 1, -310)
+	shortDescriptionWrapper.BackgroundColor3 = Color3I(0, 0, 0)
+	shortDescriptionWrapper.BorderSizePixel = 0
+	shortDescriptionWrapper.ZIndex = baseZIndex + 2
+	shortDescriptionWrapper.Parent = settingsFrame
+
+	local shortDescriptionBox = Instance.new "TextBox"
+	shortDescriptionBox.Name = "TextBox"
+	shortDescriptionBox.Text = ""
+	shortDescriptionBox.ClearTextOnFocus = false
+	shortDescriptionBox.Font = Enum.Font.Arial
+	shortDescriptionBox.FontSize = Enum.FontSize.Size18
+	shortDescriptionBox.Position = UDim2.new(0, 3, 0, 3)
+	shortDescriptionBox.Size = UDim2.new(1, -6, 1, -6)
+	shortDescriptionBox.TextColor3 = Color3I(255, 255, 255)
+	shortDescriptionBox.TextXAlignment = Enum.TextXAlignment.Left
+	shortDescriptionBox.TextYAlignment = Enum.TextYAlignment.Top
+	shortDescriptionBox.TextWrap = true
+	shortDescriptionBox.BackgroundColor3 = Color3I(0, 0, 0)
+	shortDescriptionBox.BorderSizePixel = 0
+	shortDescriptionBox.ZIndex = baseZIndex + 2
+	shortDescriptionBox.Parent = shortDescriptionWrapper
+
+	submitReportButton = Instance.new "TextButton"
+	submitReportButton.Name = "SubmitReportBtn"
+	submitReportButton.Active = false
+	submitReportButton.Modal = true
+	submitReportButton.Font = Enum.Font.Arial
+	submitReportButton.FontSize = Enum.FontSize.Size18
+	submitReportButton.Position = UDim2.new(0.1, 0, 1, -80)
+	submitReportButton.Size = UDim2.new(0.35, 0, 0, 50)
+	submitReportButton.AutoButtonColor = true
+	submitReportButton.Style = Enum.ButtonStyle.RobloxButtonDefault
+	submitReportButton.Text = "Submit Report"
+	submitReportButton.TextColor3 = Color3I(255, 255, 255)
+	submitReportButton.ZIndex = baseZIndex + 2
+	submitReportButton.Parent = settingsFrame
+
+	submitReportButton.MouseButton1Click:connect(function()
+		if submitReportButton.Active then
+			if abuse and abusingPlayer then
+				frame.Visible = false
+				game.Players:ReportAbuse(
+					abusingPlayer,
+					abuse,
+					shortDescriptionBox.Text
+				)
+				if abuse == "Cheating/Exploiting" then
+					recordedMessageBox.Visible = true
+				elseif abuse == "Bullying" or abuse == "Swearing" then
+					calmingMessageBox.Visible = true
+				else
+					normalMessageBox.Visible = true
+				end
+			else
+				closeAndResetDialog()
+			end
+		end
+	end)
+
+	local cancelButton = Instance.new "TextButton"
+	cancelButton.Name = "CancelBtn"
+	cancelButton.Font = Enum.Font.Arial
+	cancelButton.FontSize = Enum.FontSize.Size18
+	cancelButton.Position = UDim2.new(0.55, 0, 1, -80)
+	cancelButton.Size = UDim2.new(0.35, 0, 0, 50)
+	cancelButton.AutoButtonColor = true
+	cancelButton.Style = Enum.ButtonStyle.RobloxButtonDefault
+	cancelButton.Text = "Cancel"
+	cancelButton.TextColor3 = Color3I(255, 255, 255)
+	cancelButton.ZIndex = baseZIndex + 2
+	cancelButton.Parent = settingsFrame
+
+	closeAndResetDialog = function()
+		--Delete old player combo box
+		local oldComboBox = settingsFrame:FindFirstChild "PlayersComboBox"
+		if oldComboBox then
+			oldComboBox.Parent = nil
+		end
+
+		abusingPlayer = nil
+		updatePlayerSelection(nil)
+		abuse = nil
+		updateAbuseSelection(nil)
+		submitReportButton.Active = false
+		shortDescriptionBox.Text = ""
+		frame.Visible = true
+		calmingMessageBox.Visible = false
+		recordedMessageBox.Visible = false
+		normalMessageBox.Visible = false
+		shield.Visible = false
+		reportAbuseButton.Active = true
+		game.GuiService:RemoveCenterDialog(shield)
+	end
+
+	cancelButton.MouseButton1Click:connect(closeAndResetDialog)
+
+	reportAbuseButton.MouseButton1Click:connect(function()
+		createPlayersDropDown().Parent = settingsFrame
+		table.insert(centerDialogs, shield)
+		game.GuiService:AddCenterDialog(
+			shield,
+			Enum.CenterDialogType.ModalDialog,
+			--ShowFunction
+			function()
+				reportAbuseButton.Active = false
+				shield.Visible = true
+				mainShield.Visible = false
+			end,
+			--HideFunction
+			function()
+				reportAbuseButton.Active = true
+				shield.Visible = false
+			end
+		)
+	end)
+
+	robloxLock(shield)
+	return shield
+end
+
+--[=[
+local function createChatBar()
+	--Only show a chat bar if we are a NetworkClient
+	waitForChild(game, "NetworkClient")
+
+	waitForChild(game, "Players")
+	waitForProperty(game.Players, "LocalPlayer")
+
+	local chatBar = Instance.new "Frame"
+	chatBar.Name = "ChatBar"
+	chatBar.Size = UDim2.new(1, 0, 0, 22)
+	chatBar.Position = UDim2.new(0, 0, 1, 0)
+	chatBar.BackgroundColor3 = Color3.new(0, 0, 0)
+	chatBar.BorderSizePixel = 0
+
+	local chatBox = Instance.new "TextBox"
+	chatBox.Text = ""
+	chatBox.Visible = false
+	chatBox.Size = UDim2.new(1, -4, 1, 0)
+	chatBox.Position = UDim2.new(0, 2, 0, 0)
+	chatBox.TextXAlignment = Enum.TextXAlignment.Left
+	chatBox.Font = Enum.Font.Arial
+	chatBox.ClearTextOnFocus = false
+	chatBox.FontSize = Enum.FontSize.Size14
+	chatBox.TextColor3 = Color3.new(1, 1, 1)
+	chatBox.BackgroundTransparency = 1
+	--chatBox.Parent = chatBar
+
+	local chatButton = Instance.new "TextButton"
+	chatButton.Size = UDim2.new(1, -4, 1, 0)
+	chatButton.Position = UDim2.new(0, 2, 0, 0)
+	chatButton.AutoButtonColor = false
+	chatButton.Text = 'To chat click here or press "/" key'
+	chatButton.TextXAlignment = Enum.TextXAlignment.Left
+	chatButton.Font = Enum.Font.Arial
+	chatButton.FontSize = Enum.FontSize.Size14
+	chatButton.TextColor3 = Color3.new(1, 1, 1)
+	chatButton.BackgroundTransparency = 1
+	--chatButton.Parent = chatBar
+
+	local activateChat = function()
+		if chatBox.Visible then
+			return
+		end
+		chatButton.Visible = false
+		chatBox.Text = ""
+		chatBox.Visible = true
+		chatBox:CaptureFocus()
+	end
+
+	chatButton.MouseButton1Click:connect(activateChat)
+
+	-- local hotKeyEnabled = true
+	local toggleHotKey = function(_)
+		-- hotKeyEnabled = value
+	end
+
+	-- local guiService = game:GetService "GuiService"
+	--[[local newChatMode = ]]
+	pcall(function()
+		--guiService:AddSpecialKey(Enum.SpecialKey.ChatHotkey)
+		--guiService.SpecialKeyPressed:connect(function(key) if key == Enum.SpecialKey.ChatHotkey and hotKeyEnabled then activateChat() end end)
+	end)
+	-- if not newChatMode then
+	--guiService:AddKey("/")
+	--guiService.KeyPressed:connect(function(key) if key == "/" and hotKeyEnabled then activateChat() end end)
+	-- end
+
+	chatBox.FocusLost:connect(function(enterPressed)
+		if enterPressed then
+			if chatBox.Text ~= "" then
+				local str = chatBox.Text
+				if string.sub(str, 1, 1) == "%" then
+					game.Players:TeamChat(string.sub(str, 2))
+				else
+					game.Players:Chat(str)
+				end
+			end
+		end
+		chatBox.Text = ""
+		chatBox.Visible = false
+		chatButton.Visible = true
+	end)
+	robloxLock(chatBar)
+	return chatBar, toggleHotKey
+end
+]=]
+
+--Spawn a thread for the Save dialogs
+local isSaveDialogSupported = pcall(function()
+	-- local var = game.LocalSaveEnabled
+end)
+if isSaveDialogSupported then
+	delay(0, function()
+		local saveDialogs = createSaveDialogs()
+		saveDialogs.Parent = gui
+
+		game.RequestShutdown = function()
+			table.insert(centerDialogs, saveDialogs)
+			game.GuiService:AddCenterDialog(
+				saveDialogs,
+				Enum.CenterDialogType.QuitDialog,
+				--ShowFunction
+				function()
+					saveDialogs.Visible = true
+				end,
+				--HideFunction
+				function()
+					saveDialogs.Visible = false
+				end
+			)
+
+			return true
+		end
+	end)
+end
+
+--Spawn a thread for the Report Abuse dialogs
+delay(0, function()
+	createReportAbuseDialog().Parent = gui
+	waitForChild(gui, "UserSettingsShield")
+	waitForChild(gui.UserSettingsShield, "Settings")
+	waitForChild(gui.UserSettingsShield.Settings, "SettingsStyle")
+	waitForChild(gui.UserSettingsShield.Settings.SettingsStyle, "GameMainMenu")
+	waitForChild(
+		gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu,
+		"ReportAbuseButton"
+	)
+	gui.UserSettingsShield.Settings.SettingsStyle.GameMainMenu.ReportAbuseButton.Active =
+		true
+end)
+
+--Spawn a thread for Chat Bar
+-- local success, luaChat = pcall(function()
+-- 	return game.GuiService.UseLuaChat
+-- end)
+
+--[[
+if success and luaChat then
+	delay(0, function()
+		waitForChild(game, "Players")
+		waitForProperty(game.Players, "LocalPlayer")
+
+		local advancedChatBarSupported = game.Players.LocalPlayer.ChatMode
+		local chatBar, toggleHotKey = createChatBar()
+
+		if advancedChatBarSupported then
+			local function toggleChatBar(chatMode)
+				if chatMode == Enum.ChatMode.Menu then
+					chatBar.Parent = nil
+					game.GuiService:SetGlobalSizeOffsetPixel(0, 0)
+					toggleHotKey(false)
+				elseif chatMode == Enum.ChatMode.TextAndMenu then
+					--chatBar.Parent = gui
+					--game.GuiService:SetGlobalSizeOffsetPixel(0,-22)
+					toggleHotKey(true)
+				end
+			end
+			game.Players.LocalPlayer.Changed:connect(function(prop)
+				if prop == "ChatMode" then
+					toggleChatBar(game.Players.LocalPlayer.ChatMode)
+				end
+			end)
+			toggleChatBar(game.Players.LocalPlayer.ChatMode)
+		else
+			--chatBar.Parent = gui
+			--game.GuiService:SetGlobalSizeOffsetPixel(0,-22)
+		end
+	end)
+end
+]]
+
+--[[
+local BurningManPlaceID = 41324860
+-- TODO: remove click to walk completely if testing shows we don't need it
+-- Removes click to walk option from Burning Man
+delay(0, function()
+	waitForChild(game, "NetworkClient")
+	waitForChild(game, "Players")
+	waitForProperty(game.Players, "LocalPlayer")
+	waitForProperty(game.Players.LocalPlayer, "Character")
+	waitForChild(game.Players.LocalPlayer.Character, "Humanoid")
+	waitForProperty(game, "PlaceId")
+
+	if game.PlaceId == BurningManPlaceID then
+		game.Players.LocalPlayer.Character.Humanoid:SetClickToWalkEnabled(false)
+		game.Players.LocalPlayer.CharacterAdded:connect(function(character)
+			waitForChild(character, "Humanoid")
+			character.Humanoid:SetClickToWalkEnabled(false)
+		end)
+	end
+end)
+]]

@@ -6,13 +6,12 @@ font-size-base = 1rem
 font-size-sm = font-size-base * 0.875
 border-radius = 0.375rem
 
-blue = #0d6efd
 grey-100 = #f8f9fa
 grey-300 = #dee2e6
 grey-600 = #6c757d
 grey-900 = #212529
 
-primary = blue
+primary = #0d6efd
 secondary = grey-600
 light = grey-100
 
@@ -45,9 +44,6 @@ box-shadow-lg = 0 1rem 3rem rgba(black, 0.175)
 		U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
 		U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD
 
-:root
-	color-scheme dark
-
 // Navbar
 
 .navbar
@@ -61,22 +57,6 @@ box-shadow-lg = 0 1rem 3rem rgba(black, 0.175)
 	.navbar-nav
 		.nav-link
 			border-radius border-radius
-
-.navbar-dark
-	.navbar-nav
-		.nav-link
-			&:hover
-				background-color rgba(255, 255, 255, 0.1)
-			&.active
-				background-color rgba(0, 0, 0, 0.5)
-
-.navbar-light
-	.navbar-nav
-		.nav-link
-			&:hover
-				background-color rgba(0, 0, 0, 0.03)
-			&.active
-				background-color rgba(0, 0, 0, 0.05)
 
 .navbar-nav
 	--bs-nav-link-padding-x 0.5rem

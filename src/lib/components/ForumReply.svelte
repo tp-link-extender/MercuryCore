@@ -7,26 +7,20 @@
 		permissionLevel: number
 	}
 
-	export let reply: (
+	export let reply:
 		| import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
 		| import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
-	) & {
-		likeCount: number
-		dislikeCount: number
-		likes: boolean
-		dislikes: boolean
-	}
 
 	export let num: number
 	export let depth = 0
 	export let replyingTo: Writable<string>
 	export let postAuthorName: string
-	export let forumCategory = ""
+	export let categoryName = ""
 	export let postId: string
 	export let assetName = ""
 
-	const baseUrl = forumCategory
-		? `/forum/${forumCategory.toLowerCase()}/${postId}`
+	const baseUrl = categoryName
+		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/avatarshop/${postId}/${assetName}`
 
 	export let repliesCollapsed: Writable<any>
@@ -68,18 +62,8 @@
 
 {#if reply && reply.author}
 	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="d-flex">
-		<span class="d-flex flex-column">
-			<a
-				class:hidden
-				href="/user/{reply.author.number}"
-				class="user d-flex text-decoration-none pt-2">
-				<span class="pfp bg-a2 rounded-circle">
-					<img
-						src="/api/avatar/{reply.author.username}"
-						alt={reply.author.username}
-						class="rounded-circle rounded-top-0" />
-				</span>
-			</a>
+		<span class="d-flex flex-column pt-2">
+			<User user={reply.author} thin size="1.5rem" />
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Collapse reply"
@@ -131,7 +115,7 @@
 								{/if}
 							</span>
 							<small class="light-text ps-6">
-								{reply.posted.toLocaleString()}
+								{new Date(reply.posted).toLocaleString()}
 							</small>
 						</a>
 						<p class:hidden class="my-2">
@@ -214,7 +198,7 @@
 								{:else}
 									<ReportButton
 										user={reply.author.username}
-										url="/forum/{forumCategory}/{postId}/{reply.id}"
+										url="/forum/{categoryName}/{postId}/{reply.id}"
 										reverse />
 									{#if user.permissionLevel >= 4}
 										<DeleteButton
@@ -282,7 +266,7 @@
 						reply={reply2}
 						{num}
 						{replyingTo}
-						{forumCategory}
+						{categoryName}
 						{postId}
 						{assetName}
 						{postAuthorName}
@@ -348,9 +332,6 @@
 
 	.user
 		align-items center
-	.pfp img
-		max-width 1.5rem
-		width 1.5rem
 
 	.hidden
 		opacity 33%

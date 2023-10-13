@@ -4,11 +4,11 @@ import md5 from "crypto-js/md5"
 import fs from "fs"
 
 export async function GET({ url, setHeaders }) {
-	const ID = url.searchParams.get("id")
-	if (!ID || !/^\d+$/.test(ID)) throw error(400, "Invalid Request")
+	const id = url.searchParams.get("id")
+	if (!id || !/^\d+$/.test(id)) throw error(400, "Invalid Request")
 
-	if (fs.existsSync(`data/assets/${ID}`)) {
-		const file = fs.readFileSync(`data/assets/${ID}`, "utf-8")
+	if (fs.existsSync(`data/assets/${id}`)) {
+		const file = fs.readFileSync(`data/assets/${id}`, "utf-8")
 
 		setHeaders({
 			"Content-Type": "binary/octet-stream",
@@ -17,18 +17,18 @@ export async function GET({ url, setHeaders }) {
 			).toString()}"`,
 		})
 
-		console.log(`served asset #${ID}`)
+		console.log(`served asset #${id}`)
 
-		return new Response(fs.readFileSync(`data/assets/${ID}`))
+		return new Response(fs.readFileSync(`data/assets/${id}`))
 	}
 
 	try {
 		const file = fs.readFileSync(
-			ID == "38037265"
+			id == "38037265"
 				? "corescripts/38037265.xml"
-				: ID == "20573078"
+				: id == "20573078"
 				? "corescripts/20573078.xml"
-				: `corescripts/processed/${ID}.lua`,
+				: `corescripts/processed/${id}.lua`,
 			"utf-8",
 		)
 
@@ -42,16 +42,16 @@ export async function GET({ url, setHeaders }) {
 		let file2 = file.replaceAll("roblox.com/asset", "banland.xyz/asset")
 
 		// Health corescript and shaggy lol
-		if (!["38037265", "20573078"].includes(ID))
-			file2 = SignData(file2, parseInt(ID))
+		if (!["38037265", "20573078"].includes(id))
+			file2 = SignData(file2, parseInt(id))
 
-		console.log("served corescript", ID)
+		console.log("served corescript", id)
 
 		return new Response(file2)
 	} catch {
 		throw redirect(
 			302,
-			`https://assetdelivery.roblox.com/v1/asset?id=${ID}`,
+			`https://assetdelivery.roblox.com/v1/asset?id=${id}`,
 		)
 	}
 }

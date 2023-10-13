@@ -4,6 +4,7 @@ print "[Mercury]: Loaded corescript 107893730"
 -- this script creates the gui and sends the web requests for in game purchase prompts
 
 local MarketplaceService = game:GetService "MarketplaceService"
+local GuiService = game:GetService "GuiService"
 
 -- wait for important items to appear
 while not Game do
@@ -164,14 +165,13 @@ end
 function signalPromptEnded(isSuccess)
 	closePurchasePrompt()
 	if purchasingConsumable then
-		game:GetService("MarketplaceService")
-			:SignalPromptProductPurchaseFinished(
-				game.Players.LocalPlayer.userId,
-				currentProductId,
-				isSuccess
-			)
+		MarketplaceService:SignalPromptProductPurchaseFinished(
+			game.Players.LocalPlayer.userId,
+			currentProductId,
+			isSuccess
+		)
 	else
-		game:GetService("MarketplaceService"):SignalPromptPurchaseFinished(
+		MarketplaceService:SignalPromptPurchaseFinished(
 			game.Players.LocalPlayer,
 			currentAssetId,
 			isSuccess
@@ -514,7 +514,7 @@ function doAcceptPurchase(_)
 			purchaseFailed()
 			return
 		end
-		Game:GetService("MarketplaceService"):SignalClientPurchaseSuccess(
+		MarketplaceService:SignalClientPurchaseSuccess(
 			tostring(response.receipt),
 			game.Players.LocalPlayer.userId,
 			currentProductId
@@ -533,14 +533,10 @@ end
 ---------------------------------------------- Currency Functions ---------------------------------------------
 -- enums have no implicit conversion to numbers in lua, has to have a function to do this
 function currencyEnumToInt(currencyEnum: Enum.CurrencyType)
-	if
-		currencyEnum == Enum.CurrencyType.Robux
-		or currencyEnum == Enum.CurrencyType.Default
-	then
-		return 1
-	elseif currencyEnum == Enum.CurrencyType.Tix then
+	if currencyEnum == Enum.CurrencyType.Tix then
 		return 2
 	end
+	return 1
 end
 
 -- oi, this is ugly
@@ -615,13 +611,12 @@ end
 function currencyTypeToString(currencyType)
 	if currencyType == Enum.CurrencyType.Tix then
 		return "Tix"
-	else
-		return "R$"
 	end
+	return "R$"
 end
 
 -- figure out what currency to use based on the currency you can actually sell the item in and what the script specified
-function setCurrencyAmountAndType(priceInRobux, priceInTix)
+local function setCurrencyAmountAndType(priceInRobux, priceInTix)
 	if
 		currentCurrencyType == Enum.CurrencyType.Default
 		or currentCurrencyType == Enum.CurrencyType.Robux
@@ -653,7 +648,7 @@ function setCurrencyAmountAndType(priceInRobux, priceInTix)
 end
 
 -- will get the player's balance of robux and tix, return in a table
-function getPlayerBalance()
+local function getPlayerBalance()
 	local playerBalance
 	local success, errorCode = ypcall(function()
 		playerBalance =
@@ -661,11 +656,11 @@ function getPlayerBalance()
 	end)
 	if not success then
 		print("Get player balance failed because", errorCode)
-		return nil
+		return
 	end
 
 	if playerBalance == "" then
-		return nil
+		return
 	end
 
 	playerBalance = getRbxUtility().DecodeJSON(playerBalance)
@@ -676,13 +671,13 @@ end
 -- should open an external default browser window to this url
 function openBuyCurrencyWindow()
 	checkingPlayerFunds = true
-	game:GetService("GuiService")
-		:OpenBrowserWindow(baseUrl .. "Upgrades/Robux.aspx")
+	GuiService:OpenBrowserWindow(baseUrl .. "Upgrades/Robux.aspx")
 end
 
 function openBCUpSellWindow()
-	Game:GetService("GuiService")
-		:OpenBrowserWindow(baseUrl .. "Upgrades/BuildersClubMemberships.aspx")
+	GuiService:OpenBrowserWindow(
+		baseUrl .. "Upgrades/BuildersClubMemberships.aspx"
+	)
 end
 
 -- set up the gui text at the bottom of the prompt (alerts user to how much money they will have left, or if they need to buy more to buy the item)
@@ -759,7 +754,7 @@ end
 ---------------------------------------------- Data Functions -----------------------------------------------------
 
 -- more enum to int fun!
-function membershipTypeToNumber(membership)
+local function membershipTypeToNumber(membership)
 	if membership == Enum.MembershipType.None then
 		return 0
 	elseif membership == Enum.MembershipType.BuildersClub then
@@ -796,8 +791,8 @@ function canPurchaseItem()
 		end
 	else
 		success = ypcall(function()
-			currentProductInfo = game:GetService("MarketplaceService")
-				:GetProductInfo(currentAssetId)
+			currentProductInfo =
+				MarketplaceService:GetProductInfo(currentAssetId)
 		end)
 	end
 
@@ -817,7 +812,7 @@ function canPurchaseItem()
 			return false
 		end
 
-		local success, errorCode = ypcall(function()
+		local success2, errorCode = ypcall(function()
 			playerOwnsAsset = game:HttpGetAsync(
 				getSecureApiBaseUrl()
 					.. "ownership/hasAsset?userId="
@@ -827,7 +822,7 @@ function canPurchaseItem()
 			)
 		end)
 
-		if not success then
+		if not success2 then
 			print("could not tell if player owns asset because", errorCode)
 			return false
 		end
@@ -1362,12 +1357,11 @@ function userPurchaseProductActionsEnded(userIsClosingDialog)
 				isPurchased = true
 			end
 
-			Game:GetService("MarketplaceService")
-				:SignalPromptProductPurchaseFinished(
-					tonumber(currentServerResponseTable.playerId),
-					tonumber(currentServerResponseTable.productId),
-					isPurchased
-				)
+			MarketplaceService:SignalPromptProductPurchaseFinished(
+				tonumber(currentServerResponseTable.playerId),
+				tonumber(currentServerResponseTable.productId),
+				isPurchased
+			)
 		else
 			print "Something went wrong, no currentServerResponseTable"
 		end
@@ -1407,23 +1401,26 @@ end
 ---------------------------------------------- Script Event start/initialization ----------------------------------------------
 preloadAssets()
 
-game:GetService("MarketplaceService").PromptProductPurchaseRequested
-	:connect(function(player, productId, equipIfPurchased, currencyType)
+MarketplaceService.PromptProductPurchaseRequested:connect(
+	function(player, productId, equipIfPurchased, currencyType)
 		doPurchasePrompt(player, nil, equipIfPurchased, currencyType, productId)
-	end)
+	end
+)
 
-Game:GetService("MarketplaceService").PromptPurchaseRequested
-	:connect(function(player, assetId, equipIfPurchased, currencyType)
+MarketplaceService.PromptPurchaseRequested:connect(
+	function(player, assetId, equipIfPurchased, currencyType)
 		doPurchasePrompt(player, assetId, equipIfPurchased, currencyType, nil)
-	end)
+	end
+)
 
-Game:GetService("MarketplaceService").ServerPurchaseVerification
-	:connect(function(serverResponseTable)
+MarketplaceService.ServerPurchaseVerification:connect(
+	function(serverResponseTable)
 		doProcessServerPurchaseResponse(serverResponseTable)
-	end)
+	end
+)
 
 if enableBrowserWindowClosedEvent then
-	Game:GetService("GuiService").BrowserWindowClosed:connect(function()
+	GuiService.BrowserWindowClosed:connect(function()
 		doPlayerFundsCheck(false)
 	end)
 end

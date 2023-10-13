@@ -13,23 +13,27 @@ declare global {
 		type Auth = typeof import("$lib/server/lucia").auth
 		type DatabaseUserAttributes = {
 			// id is defined in Lucia
-			number: number
-			bio: string
-			email: string
-			username: string
-			currency: number
-			currencyCollected: Date
-			permissionLevel: number
-			created: Date
+			bio: {
+				text: string
+				updated: string
+			}[]
 			bodyColours: {
 				Head: number
-				Torso: number
 				LeftArm: number
-				RightArm: number
 				LeftLeg: number
+				RightArm: number
 				RightLeg: number
+				Torso: number
 			}
+			currency: number
+			currencyCollected: string
+			created: string
+			email: string
+			lastOnline: string
+			number: number
+			permissionLevel: number
 			theme: string
+			username: string
 		}
 		type DatabaseSessionAttributes = {}
 	}
@@ -58,6 +62,7 @@ declare global {
 	declare const Tab: typeof import("$lib/components/Tab.svelte").default
 	declare const TabData: typeof import("$lib/components/TabData").default
 	declare const TabNav: typeof import("$lib/components/TabNav.svelte").default
+	declare const User: typeof import("$lib/components/User.svelte").default
 	declare const UserCard: typeof import("$lib/components/UserCard.svelte").default
 
 	declare const { onMount }: typeof import("svelte")

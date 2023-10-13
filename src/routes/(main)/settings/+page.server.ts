@@ -1,43 +1,27 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { mquery, query } from "$lib/server/surreal"
 import { auth } from "$lib/server/lucia"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 
-export const load = async ({ locals }) => {
-	const { user } = await authorise(locals),
-		getUser = await prisma.authUser.findUnique({
-			where: {
-				id: user.id,
-			},
-			include: {
-				bio: {
-					orderBy: {
-						updated: "desc",
-					},
-					select: {
-						text: true,
-					},
-					take: 1,
-				},
-			},
-		})
-
-	return {
-		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
-		theme: getUser?.theme,
-		form: superValidate(
-			z.object({
-				theme: z.enum(["standard", "darken", "storm", "solar"]),
-				bio: z.string().max(1000),
-				cpassword: z.string().min(1),
-				npassword: z.string().min(1),
-				cnpassword: z.string().min(1),
-			}),
-		),
-	}
+const schemas = {
+	profile: z.object({
+		theme: z.enum(["standard", "darken", "storm", "solar"]),
+		bio: z.string().max(1000).optional(),
+	}),
+	password: z.object({
+		cpassword: z.string().min(1),
+		npassword: z.string().min(1),
+		cnpassword: z.string().min(1),
+	}),
 }
+
+export const load = () => ({
+	profileForm: superValidate(schemas.profile),
+	passwordForm: superValidate(schemas.password),
+})
 
 export const actions = {
 	default: async ({ request, locals, url }) => {
@@ -46,45 +30,40 @@ export const actions = {
 
 		console.log(action)
 
-		let form
 		switch (action) {
 			case "profile": {
-				form = await superValidate(
-					request,
-					z.object({
-						theme: z.enum(["standard", "darken", "storm", "solar"]),
-						bio: z.string().max(1000),
-					}),
-				)
+				const form = await superValidate(request, schemas.profile)
 				if (!form.valid) return formError(form)
+
 				const { bio, theme } = form.data
 
-				await prisma.authUser.update({
-					where: {
-						number: user.number,
-					},
-					data: {
-						bio: {
-							create: {
-								text: bio,
-							},
-						},
+				await query(
+					surql`
+						LET $og = SELECT
+							(SELECT text, updated FROM $parent.bio
+							ORDER BY updated DESC)[0] AS bio
+						FROM $user;
+
+						UPDATE $user SET theme = $theme;
+
+						IF $og.bio.text != $bio {
+							UPDATE $user SET bio += {
+								text: $bio,
+								updated: time::now(),
+							}
+						}`,
+					{
+						user: `user:${user.id}`,
+						bio,
 						theme,
 					},
-				})
+				)
 
 				return message(form, "Profile updated successfully!")
 			}
 
 			case "password": {
-				form = await superValidate(
-					request,
-					z.object({
-						cpassword: z.string().min(1),
-						npassword: z.string().min(1),
-						cnpassword: z.string().min(1),
-					}),
-				)
+				const form = await superValidate(request, schemas.password)
 				if (!form.valid) return formError(form)
 
 				const { cpassword, npassword, cnpassword } = form.data
@@ -116,9 +95,11 @@ export const actions = {
 					npassword,
 				)
 
+				// Don't send the password back to the client
 				form.data.cpassword = ""
 				form.data.npassword = ""
 				form.data.cnpassword = ""
+
 				return message(form, "Password updated successfully!")
 			}
 		}

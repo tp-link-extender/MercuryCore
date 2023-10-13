@@ -27,7 +27,7 @@
 		</tr>
 		<tr>
 			<td><i class="fa fa-gem" /></td>
-			<td class="ps-6">{data.currency._sum.currency}</td>
+			<td class="ps-6">{data.totalCurrency}</td>
 		</tr>
 		<tr>
 			<td>Transactions</td>
@@ -61,7 +61,7 @@
 				<i class="fa fa-gem me-2" />
 				per user
 			</td>
-			<td class="ps-6">{data.currency._avg.currency?.toFixed(2)}</td>
+			<td class="ps-6">{data.avgCurrency?.toFixed(2)}</td>
 		</tr>
 		<tr>
 			<td>Friends per user</td>
@@ -76,4 +76,7 @@
 
 <style lang="stylus">
 	containerMinWidth()
+
+	td
+		padding 0
 </style>

@@ -33,8 +33,8 @@
 				<a href="/forum" class="accent-text">Forum</a>
 			</li>
 			<li class="breadcrumb-item">
-				<a href="/forum/{data.forumCategory.name}" class="accent-text">
-					{data.forumCategory.name}
+				<a href="/forum/{data.categoryName}" class="accent-text">
+					{data.categoryName}
 				</a>
 			</li>
 			<li class="breadcrumb-item active" aria-current="page">
@@ -111,33 +111,21 @@
 		</form>
 		<div class="p-4 text-decoration-none light-text w-100">
 			<span class="d-flex">
-				<a
-					href="/user/{data.author.number}"
-					class="user d-flex text-decoration-none light-text">
-					<span class="pfp bg-a2 rounded-circle">
-						<img
-							src="/api/avatar/{data.author.username}"
-							alt={data.author.username}
-							class="rounded-circle rounded-top-0" />
-					</span>
-					<span class="font-bold ms-4">
-						{data.author.username}
-					</span>
-					<span class="ms-4">
-						{data.posted.toLocaleString()}
-					</span>
-				</a>
+				<User user={data.author} full />
+				<em class="ps-4 align-self-center">
+					{new Date(data.posted).toLocaleString()}
+				</em>
 				<span class="ms-auto">
 					<ReportButton
 						user={data.author.username}
-						url="/forum/{data.forumCategory.name}/{data.id}" />
+						url="/forum/{data.categoryName}/{data.id}" />
 				</span>
 			</span>
 			<h2 class="fs-4 mt-2">
 				{data.title}
 			</h2>
 			<p>
-				{data.content[0].text}
+				{data.content[0].text || ""}
 			</p>
 		</div>
 	</div>
@@ -176,7 +164,7 @@
 			{reply}
 			{num}
 			{replyingTo}
-			forumCategory={data.forumCategory.name}
+			categoryName={data.categoryName}
 			postId={data.id}
 			postAuthorName={data.author.username}
 			{repliesCollapsed}
@@ -195,10 +183,4 @@
 
 	p
 		word-break break-word
-
-	.user
-		align-items center
-		.pfp img
-			max-width 2rem
-			width 2rem
 </style>
