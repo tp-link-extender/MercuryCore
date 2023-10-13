@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Parallax, ParallaxLayer } from "svelte-parallax"
 	import { Canvas } from "@threlte/core"
+	import Pagepart from "./Pagepart.svelte"
 
 	let top: HTMLElement, first: HTMLElement, scrollY: number
 

@@ -112,40 +112,39 @@
 						{$errors.status || $message || ""}
 					</p>
 					{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
-						{#if status.authorUser}
-							<div
-								in:fade|global={{
-									num,
-									total: data.feed.length,
-								}}
-								class="card mb-2">
-								<div class="card-body pb-0 p-3">
-									<div
-										class="statusheader d-flex mb-2 user justify-content-between">
-										<div class="d-flex align-items-center">
-											<User
-												user={status.authorUser}
-												size="2rem"
-												full
-												bg="darker" />
-										</div>
-										<span class="report align-self-center">
-											<em
-												class="small light-text timestamp">
-												{new Date(status.posted).toLocaleString()}
-											</em>
-											<ReportButton
-												user={status.authorUser
-													?.username || ""}
-												url="status:{status.id}" />
-										</span>
+						<div
+							in:fade|global={{
+								num,
+								total: data.feed.length,
+							}}
+							class="card mb-2">
+							<div class="card-body pb-0 p-3">
+								<div
+									class="statusheader d-flex mb-2 user justify-content-between">
+									<div class="d-flex align-items-center">
+										<User
+											user={status.authorUser}
+											size="2rem"
+											full
+											bg="darker" />
 									</div>
-									<p class="text-start">
-										{status.content[0].text}
-									</p>
+									<span class="report align-self-center">
+										<em class="small light-text timestamp">
+											{new Date(
+												status.posted
+											).toLocaleString()}
+										</em>
+										<ReportButton
+											user={status.authorUser?.username ||
+												""}
+											url="status:{status.id}" />
+									</span>
 								</div>
+								<p class="text-start">
+									{status.content[0].text}
+								</p>
 							</div>
-						{/if}
+						</div>
 					{/each}
 				</div>
 			</div>

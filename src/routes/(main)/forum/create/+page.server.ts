@@ -49,8 +49,8 @@ export const actions = {
 			!category ||
 			!(await squery(
 				surql`
-						SELECT * FROM forumCategory
-						WHERE string::lowercase(name) = string::lowercase($category)`,
+					SELECT * FROM forumCategory
+					WHERE string::lowercase(name) = string::lowercase($category)`,
 				{ category },
 			))
 		)
