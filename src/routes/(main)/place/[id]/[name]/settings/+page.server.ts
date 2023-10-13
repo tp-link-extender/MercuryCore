@@ -148,11 +148,10 @@ export const actions = {
 						UPDATE $place SET name = $title;
 
 						IF $og.description.text != $description {
-							LET $textContent = CREATE textContent CONTENT {
+							UPDATE $place SET description += {
 								text: $description,
 								updated: time::now(),
 							};
-							UPDATE $place SET description += $textContent;
 						}`,
 					{
 						place: `place:${id}`,

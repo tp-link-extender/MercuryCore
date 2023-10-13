@@ -66,17 +66,14 @@ export const actions = {
 
 		await squery(
 			surql`
-				LET $textContent = CREATE textContent CONTENT {
-					text: $content,
-					updated: time::now(),
-				};
-				RELATE $user->wrote->$textContent;
-
 				LET $post = CREATE $postId CONTENT {
 					title: $title,
 					posted: time::now(),
 					visibility: "Visible",
-					content: $textContent,
+					content: [{
+						text: $content,
+						updated: time::now(),
+					}],
 				};
 				RELATE $post->in->$category;
 				RELATE $user->posted->$post`,

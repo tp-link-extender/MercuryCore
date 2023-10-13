@@ -112,16 +112,13 @@ export const actions = {
 
 		await squery(
 			surql`
-				LET $textContent = CREATE textContent CONTENT {
-					text: $content,
-					updated: time::now(),
-				};
-				RELATE $user->wrote->$textContent;
-
 				LET $status = CREATE statusPost CONTENT {
 					posted: time::now(),
 					visibility: "Visible",
-					content: $textContent,
+					content: [{
+						text: $content,
+						updated: time::now(),
+					}],
 				};
 				RELATE $user->posted->$status`,
 			{

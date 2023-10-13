@@ -17,7 +17,7 @@ export async function load({ locals, params }) {
 					number,
 					permissionLevel,
 					(SELECT text, updated FROM $parent.bio
-					ORDER BY updated DESC) AS bio,
+					ORDER BY updated DESC)[0] AS bio,
 					(SELECT
 						*,
 						(SELECT text, updated FROM $parent.content

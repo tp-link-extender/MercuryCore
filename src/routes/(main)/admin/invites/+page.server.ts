@@ -104,7 +104,7 @@ export const actions = {
 						RELATE $user->created->$key;
 						CREATE auditLog CONTENT {
 							action: "Administration",
-							note: string::concat("Created invite key ", string::split($key.id, ":")[1]),
+							note: string::concat("Created invite key ", meta::id($key)),
 							user: $user,
 							time: time::now()
 						}`,

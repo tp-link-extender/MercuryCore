@@ -99,7 +99,7 @@
 			{#if data.bio}
 				<div class="pt-6">
 					<h2 class="fs-4 light-text">Bio</h2>
-					<p class="light-text ps-2">{data.bio}</p>
+					<p class="light-text ps-2">{data.bio.text}</p>
 				</div>
 			{/if}
 			<div class="pt-6">

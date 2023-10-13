@@ -40,8 +40,7 @@ export async function load({ locals, params }) {
 				meta::id(id) AS id,
 				$forumPost AS parentPost,
 				(IF ->replyToReply->forumReply.id THEN 
-					string::split(type::string(
-						->replyToReply[0]->forumReply[0].id), ":")[1]
+					meta::id(->replyToReply[0]->forumReply[0].id)
 				END) AS parentReplyId,
 				(SELECT number, username FROM <-posted<-user)[0] AS author,
 				

@@ -95,8 +95,7 @@ export const actions = {
 			(await squery(
 				surql`
 					SELECT 
-						string::split(type::string(
-							<-posted[0]<-user[0].id), ":")[1] AS authorId
+						meta::id(<-posted[0]<-user[0].id) AS authorId
 					FROM $replypostId
 					WHERE visibility = "Visible"`,
 				{
@@ -116,16 +115,13 @@ export const actions = {
 
 		await squery(
 			surql`
-				LET $textContent = CREATE textContent CONTENT {
-					text: $content,
-					updated: time::now(),
-				};
-				RELATE $user->wrote->$textContent;
-
 				LET $reply = CREATE $forumReply CONTENT {
 					posted: time::now(),
 					visibility: "Visible",
-					content: $textContent,
+					content: [{
+						text: $content,
+						updated: time::now(),
+					}],
 				};
 				RELATE $reply->replyToPost->$post;
 				IF $replyId {
@@ -175,8 +171,7 @@ export const actions = {
 			(await squery(
 				surql`
 					SELECT
-						string::split(type::string((
-							<-posted<-user.id)[0]), ":")[1] AS authorId,
+						meta::id((-posted<-user.id)[0]) AS authorId
 						visibility
 					FROM $forumReply`,
 				{ forumReply: `forumReply:${id}` },
@@ -199,13 +194,11 @@ export const actions = {
 				LET $poster = (SELECT
 					<-posted<-user AS poster
 				FROM $forumReply)[0].poster;
-				LET $textContent = CREATE textContent CONTENT {
+
+				UPDATE $forumReply SET content += [{
 					text: "[deleted]",
 					updated: time::now(),
-				};
-				RELATE $poster->wrote->$textContent;
-
-				UPDATE $forumReply SET content += $textContent;
+				}];
 				UPDATE $forumReply SET visibility = "Deleted"`,
 			{ forumReply: `forumReply:${id}` },
 		)
@@ -227,13 +220,11 @@ export const actions = {
 				LET $reply = SELECT (<-posted<-user)[0] AS poster
 					FROM $forumReply;
 				LET $poster = $reply.poster;
-				LET $textContent = CREATE textContent CONTENT {
+
+				UPDATE $forumReply SET content += {
 					text: "[removed]",
 					updated: time::now(),
 				};
-				RELATE $poster->wrote->$textContent;
-
-				UPDATE $forumReply SET content += $textContent;
 				UPDATE $forumReply SET visibility = "Moderated";
 				COMMIT TRANSACTION`,
 			{ forumReply: `forumReply:${id}` },

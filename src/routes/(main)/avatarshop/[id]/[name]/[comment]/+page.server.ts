@@ -40,8 +40,7 @@ export async function load({ locals, params }) {
 				ORDER BY updated DESC) AS content,
 				meta::id(id) AS id,
 				(IF ->replyToComment->assetComment.id THEN 
-					string::split(type::string(
-						->replyToComment[0]->assetComment[0].id), ":")[1]
+					meta::id(->replyToComment[0]->assetComment[0].id)
 				END) AS parentReplyId,
 				(SELECT number, username FROM <-posted<-user)[0] AS author,
 				
