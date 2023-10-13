@@ -1,26 +1,38 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { query, squery } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
 	if (!params.id || !/^\d+$/.test(params.id))
 		throw error(400, `Invalid place id: ${params.id}`)
 
-	const place = await prisma.place.findUnique({
-		where: {
-			id: parseInt(params.id),
-		},
-		include: {
-			ownerUser: true,
-		},
-	})
+	const place = await squery<{
+		id: string
+		name: string
+		owner: {
+			id: string
+		}
+		privateServer: boolean
+	}>(
+		surql`
+			SELECT
+				name,
+				privateServer,
+				meta::id(id) AS id,
+				(SELECT
+					meta::id(id) AS id
+				FROM <-owns<-user)[0] AS owner
+			FROM $place`,
+		{ place: `place:${params.id}` },
+	)
 
-	if (!place) throw error(404, "Not found")
 	if (
-		!place.privateServer ||
-		(await authorise(locals)).user.id == place.ownerUser?.id
+		place &&
+		(!place.privateServer ||
+			(await authorise(locals)).user.id == place.owner.id)
 	)
 		throw redirect(302, `/place/${params.id}/${place.name}`)
 
-	throw error(404, "Not found")
+	throw error(404, "Place not found")
 }

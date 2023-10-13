@@ -1,4 +1,5 @@
-import { prisma } from "$lib/server/prisma"
+import surql from "$lib/surrealtag"
+import { query, squery } from "$lib/server/surreal"
 
 export async function load({ request, locals }) {
 	const session = await locals.auth.validate(),
@@ -8,29 +9,35 @@ export async function load({ request, locals }) {
 
 	let notifications
 	if (session && user) {
-		const notifications1 = await prisma.notification.findMany({
-			take: 40,
-			orderBy: {
-				time: "desc",
+		const notifications1 = await query<{
+			id: string
+			in: string
+			note: string
+			out: string
+			read: boolean
+			relativeId: string
+			sender: {
+				number: number
+				username: string
+			}
+			time: string
+			type: string
+		}>(
+			surql`
+				SELECT
+					*,
+					meta::id(id) AS id,
+					(SELECT
+						number,
+						username
+					FROM <-user)[0] AS sender
+				FROM notification
+				WHERE out = $user
+				ORDER BY time DESC`,
+			{
+				user: `user:${user.id}`,
 			},
-			where: {
-				receiverId: user.id,
-			},
-			select: {
-				id: true,
-				read: true,
-				type: true,
-				note: true,
-				time: true,
-				relativeId: true,
-				sender: {
-					select: {
-						number: true,
-						username: true,
-					},
-				},
-			},
-		})
+		)
 
 		// Make type relativeId optional so we can delete it later
 		type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
@@ -51,54 +58,80 @@ export async function load({ request, locals }) {
 
 				case "AssetComment":
 				case "AssetCommentReply":
-					const comment = await prisma.assetComment.findUnique({
-						where: {
-							id: i.relativeId,
-						},
-						include: {
-							parentAsset: true,
-						},
-					})
+					const comment = await squery<{
+						id: string
+						parentAsset: {
+							id: string
+							name: string
+						}
+					}>(
+						surql`
+							SELECT
+								*,
+								meta::id(id) AS id,
+								(SELECT
+									meta::id(id) AS id,
+									name
+								FROM ->replyToAsset->asset)[0] AS parentAsset
+							FROM $comment`,
+						{ comment: `assetComment:${i.relativeId}` },
+					)
 					if (!comment) break
 
-					i.link = `/avatarshop/${comment.parentAsset.id}/${comment.parentAsset.id}/${comment.id}`
+					i.link = `/avatarshop/${comment.parentAsset.id}/${comment.parentAsset.name}/${comment.id}`
 					break
 
 				case "ForumPostReply":
 				case "ForumReplyReply":
-					const reply = await prisma.forumReply.findUnique({
-						where: {
-							id: i.relativeId,
-						},
-						include: {
-							parentPost: true,
-						},
-					})
+					const reply = await squery<{
+						id: string
+						parentPost: {
+							categoryName: string
+							id: string
+						}
+					}>(
+						surql`
+							SELECT
+								meta::id(id) AS id,
+								(SELECT
+									meta::id(id) AS id,
+									(->in->forumCategory)[0].name as categoryName
+								FROM ->replyToPost[0]->forumPost)[0] AS parentPost
+							FROM $reply`,
+						{ reply: `forumReply:${i.relativeId}` },
+					)
 					if (!reply) break
 
-					i.link = `/forum/${reply.parentPost.forumCategoryName.toLowerCase()}/${
+					i.link = `/forum/${reply.parentPost.categoryName.toLowerCase()}/${
 						reply.parentPost.id
 					}/${reply.id}`
 					break
 
 				case "ForumMention":
 				case "ForumPost":
-					const post = await prisma.forumPost.findUnique({
-						where: {
-							id: i.relativeId,
+					const post = await squery<{
+						category: {
+							name: string
+						}
+					}>(
+						surql`
+							SELECT
+								(SELECT name
+								FROM ->in->forumCategory) AS category
+							FROM $forumPost`,
+						{
+							forumPost: `forumPost:${i.relativeId}`,
 						},
-					})
+					)
 					if (!post) break
 
-					i.link = `/forum/${post.forumCategoryName.toLowerCase()}/${
-						post.id
+					i.link = `/forum/${post.category.name.toLowerCase()}/${
+						i.relativeId
 					}`
 					break
 
 				case "ItemPurchase":
 					i.link = `/avatarshop/item/${i.relativeId}`
-					break
-				case "Message":
 			}
 			delete i.relativeId
 		}
@@ -106,17 +139,20 @@ export async function load({ request, locals }) {
 	}
 
 	return {
-		banners: prisma.announcements.findMany({
-			where: {
-				active: true,
-			},
-			select: {
-				id: true,
-				body: true,
-				bgColour: true,
-				textLight: true,
-			},
-		}),
+		banners: query<{
+			bgColour: string
+			body: string
+			id: string
+			textLight: boolean
+		}>(surql`
+			SELECT
+				body,
+				bgColour,
+				textLight,
+				meta::id(id) AS id
+			OMIT deleted
+			FROM banner
+			WHERE deleted = false AND active = true`),
 		user,
 		notifications: notifications || [],
 		url: request.url,

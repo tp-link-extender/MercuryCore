@@ -1,8 +1,8 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { query, squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { error } from "@sveltejs/kit"
-import type { ReportCategory } from "@prisma/client"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -54,25 +54,35 @@ export const actions = {
 
 		if (!username || !userUrl) throw error(400, "Missing fields")
 
-		const reportee = await prisma.authUser.findUnique({
-			where: {
-				username,
-			},
-		})
+		const reportee = await squery<{ id: string }>(
+			surql`
+				SELECT id
+				FROM user
+				WHERE username = $username`,
+			{ username },
+		)
+
 		if (!reportee)
 			return message(form, "Invalid user", {
 				status: 400,
 			})
 
-		await prisma.report.create({
-			data: {
-				reporterId: user.id,
-				reporteeId: reportee.id,
-				note: (note as ReportCategory) || null,
-				url: userUrl,
+		await query(
+			surql`
+				RELATE $reporter->report->$reportee CONTENT {
+					time: time::now(),
+					note: $note,
+					url: userUrl,
+					category: $category,
+				}`,
+			{
+				reporter: `user:${user.id}`,
+				reportee: reportee.id,
+				note,
+				userUrl,
 				category,
 			},
-		})
+		)
 
 		return message(form, "Report sent successfully.")
 	},

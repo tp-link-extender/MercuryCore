@@ -1,36 +1,33 @@
-import { prisma } from "$lib/server/prisma"
+import surql from "$lib/surrealtag"
+import { query } from "$lib/server/surreal"
 
-export const load = () => ({
-	assets: prisma.asset.findMany({
-		select: {
-			name: true,
-			price: true,
-			id: true,
-			type: true,
-		},
-	}),
+export const load = async () => ({
+	assets: query<{
+		name: string
+		price: number
+		id: number
+		type: string
+	}>(surql`
+		SELECT
+			meta::id(id) AS id,
+			name,
+			price,
+			type
+		FROM asset`),
 })
 
 export const actions = {
-	default: async ({ request }) => {
-		const filter = (await request.formData()).get("query") as string
-		return {
-			places: await prisma.asset.findMany({
-				where: {
-					name: {
-						contains: filter,
-						mode: "insensitive",
-					},
-				},
-				// When returning from an action, remember to only select
-				// the data needed, as it will by sent directly to the client.
-				select: {
-					name: true,
-					price: true,
-					id: true,
-					type: true,
-				},
-			}),
-		}
-	},
+	default: async ({ request }) => ({
+		places: await query(
+			surql`
+				SELECT
+					meta::id(id) AS id,
+					name,
+					price,
+					type
+				FROM asset
+				WHERE string::lowercase($query) ∈ string::lowercase(name)`,
+			{ query: (await request.formData()).get("query") as string },
+		),
+	}),
 }

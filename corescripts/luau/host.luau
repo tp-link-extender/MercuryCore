@@ -5,12 +5,14 @@ local placeId, sleeptime, access, url, killID, deathID, timeout, injectScriptAss
 local InsertService = game:GetService "InsertService"
 local BadgeService = game:GetService "BadgeService"
 local FriendService = game:GetService "FriendService"
+local ScriptContext = game:GetService "ScriptContext"
+local RunService = game:GetService "RunService"
 
 -- StartGame --
 pcall(function()
-	game:GetService("ScriptContext"):AddStarterScript(injectScriptAssetID)
+	ScriptContext:AddStarterScript(injectScriptAssetID)
 end)
-game:GetService("RunService"):Run()
+RunService:Run()
 
 -- REQUIRES: StartGanmeSharedArgs.txt
 -- REQUIRES: MonitorGameStatus.txt
@@ -89,11 +91,10 @@ end)
 
 url = "_BASE_URL"
 
-local scriptContext = game:GetService "ScriptContext"
 pcall(function()
-	scriptContext:AddStarterScript(libraryRegistrationScriptAssetID)
+	ScriptContext:AddStarterScript(libraryRegistrationScriptAssetID)
 end)
-scriptContext.ScriptsDisabled = true
+ScriptContext.ScriptsDisabled = true
 
 -- game:SetPlaceID(nil, false)
 game:GetService("ChangeHistoryService"):SetEnabled(false)
@@ -274,14 +275,15 @@ ns:Start(_SERVER_PORT, sleeptime)
 game:GetService("Visit"):SetPing("_SERVER_PRESENCE_URL", 30)
 
 if timeout then
-	scriptContext:SetTimeout(timeout)
+	ScriptContext:SetTimeout(timeout)
 end
-scriptContext.ScriptsDisabled = false
+ScriptContext.ScriptsDisabled = false
 
 --delay(1, function()
 --	loadfile(url .. "/analytics/GamePerfMonitor.ashx")(game.JobId, placeId)
 --end)
 
+-- yimy stuff
 local reset = ";mc"
 game.Players.PlayerAdded:connect(function(player)
 	player.Chatted:connect(function(msg)

@@ -1,5 +1,7 @@
+import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { prisma, transaction } from "$lib/server/prisma"
+import { transaction } from "$lib/server/prisma"
+import { query, squery } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -21,7 +23,7 @@ export const actions = {
 
 		const { name } = form.data
 
-		if (name == "create")
+		if (name.toLowerCase() == "create")
 			return formError(
 				form,
 				["name"],
@@ -32,7 +34,11 @@ export const actions = {
 					).toString("ascii"),
 				],
 			)
-		if (name == "wisely")
+
+		if (name.toLowerCase() == "changed")
+			return formError(form, ["name"], ["Dickhead"])
+
+		if (name.toLowerCase() == "wisely")
 			return formError(
 				form,
 				["name"],
@@ -40,11 +46,12 @@ export const actions = {
 			)
 
 		if (
-			await prisma.group.findUnique({
-				where: {
-					name,
-				},
-			})
+			await squery(
+				surql`
+					SELECT * FROM group WHERE string::lowercase(name)
+						= string::lowercase($name)`,
+				{ name },
+			)
 		)
 			return formError(
 				form,
@@ -53,25 +60,29 @@ export const actions = {
 			)
 
 		try {
-			await prisma.$transaction(async tx => {
-				await transaction(
-					{ id: user.id },
-					{ number: 1 },
-					10,
-					{ note: `Created group ${name}`, link: `/groups/${name}` },
-					tx,
-				)
-
-				await tx.group.create({
-					data: {
-						name,
-						ownerUsername: user.username,
-					},
-				})
+			await transaction({ number: user.number }, { number: 1 }, 10, {
+				note: `Created group ${name}`,
+				link: `/groups/${name}`,
 			})
 		} catch (e: any) {
 			return formError(form, ["other"], [e.message])
 		}
+
+		await query(
+			surql`
+				LET $group = CREATE group CONTENT {
+					name: $name,
+					created: time::now(),
+				};
+				RELATE $user->owns->$group
+					SET time = time::now();
+				RELATE $user->member->$group
+					SET time = time::now()`,
+			{
+				name,
+				user: `user:${user.id}`,
+			},
+		)
 
 		throw redirect(302, `/groups/${name}`)
 	},

@@ -77,6 +77,9 @@ dependencies:
   stripe-gradient:
     specifier: ^1.0.1
     version: 1.0.1
+  surrealdb.js:
+    specifier: ^0.9.0
+    version: 0.9.0
   svelte-inview:
     specifier: ^4.0.1
     version: 4.0.1(svelte@4.2.0)
@@ -3342,7 +3345,17 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /svelte-check@3.5.1(postcss@8.4.31)(sass@1.66.1)(stylus@0.60.0)(svelte@4.2.0):
+  /surrealdb.js@0.9.0:
+    resolution: {integrity: sha512-JV1lSzeSF4GftfxSvrOd0fDAw0AwRTSTsn+smp4BzhVuvcfJH/2zceEMwsMLzQcUao386pq4xk5JKoieayFJqQ==}
+    dependencies:
+      unws: 0.2.4(ws@8.13.0)
+      ws: 8.13.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
+  /svelte-check@3.5.1(postcss@8.4.29)(sass@1.66.1)(stylus@0.60.0)(svelte@4.2.0):
     resolution: {integrity: sha512-+Zb4iHxAhdUtcUg/WJPRjlS1RJalIsWAe9Mz6G1zyznSs7dDkT7VUBdXc3q7Iwg49O/VrZgyJRvOJkjuBfKjFA==}
     hasBin: true
     peerDependencies:
@@ -3676,6 +3689,15 @@ packages:
       - rollup
       - supports-color
     dev: true
+
+  /unws@0.2.4(ws@8.13.0):
+    resolution: {integrity: sha512-/N1ajiqrSp0A/26/LBg7r10fOcPtGXCqJRJ61sijUFoGZMr6ESWGYn7i0cwr7fR7eEECY5HsitqtjGHDZLAu2w==}
+    engines: {node: '>=16.14.0'}
+    peerDependencies:
+      ws: '*'
+    dependencies:
+      ws: 8.13.0
+    dev: false
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}

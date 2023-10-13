@@ -1,6 +1,8 @@
 <script lang="ts">
+	export let data
+
 	let query = "",
-		searchedData: any[] = []
+		searchedData: typeof data.groups = []
 
 	// Run function whenever query changes
 	$: query &&
@@ -23,8 +25,6 @@
 		capture: () => query,
 		restore: v => (query = v),
 	}
-
-	export let data
 </script>
 
 <Head title="Groups" />

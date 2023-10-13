@@ -4,12 +4,17 @@
 	export let place: {
 		id: number
 		name: string
-		ratio: string | number
+		likeCount: number
+		dislikeCount: number
 		serverPing: number
-		gameSessions?: any[]
+		playerCount: number
 	}
 	export let num: number
 	export let total: number
+
+	const ratio = Math.floor(
+		(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
+	)
 </script>
 
 <a
@@ -38,13 +43,13 @@
 				<div class="float-start">
 					<span>
 						<i class="fa fa-thumbs-up opacity-75" />
-						{place.ratio}%
+						{isNaN(ratio) ? "--" : ratio}%
 					</span>
 				</div>
 				<div class="float-end">
 					<span>
 						<i class="fa fa-user opacity-75" />
-						{place.gameSessions?.length}
+						{place.playerCount}
 					</span>
 				</div>
 			</div>

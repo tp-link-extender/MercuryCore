@@ -7106,6 +7106,7 @@ end
 declare class NetworkServer extends NetworkPeer
 	function EncryptStringForPlayerId(self, toEncrypt: string, playerId: number): string
 	function SetIsPlayerAuthenticationRequired(self, value: boolean): nil
+	function Start(self): nil
 end
 
 declare class NetworkReplicator extends Instance
@@ -8605,6 +8606,7 @@ declare class ServiceProvider extends Instance
 	LoadingGuiService: any
 	ScriptInformationProvider: ScriptInformationProvider
 	JointsService: JointsService
+	LogService: any
 
 	function FindService(self, className: string): Instance
 	function GetService(self, service: "AnimationClipProvider"): AnimationClipProvider
@@ -8809,6 +8811,7 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "LoadingGuiService"): any
 	function GetService(self, service: "PersonalServerService"): PersonalServerService
 	function GetService(self, service: "Terrain"): Terrain
+	function GetService(self, service: "LogService"): any
 end
 
 declare class DataModel extends ServiceProvider

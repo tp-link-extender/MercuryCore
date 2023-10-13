@@ -1,6 +1,7 @@
+import surql from "$lib/surrealtag"
 import render from "$lib/server/render"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { query } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { fail } from "@sveltejs/kit"
 
@@ -34,21 +35,22 @@ export const actions = {
 			return fail(400)
 
 		const bodyPart = bodyPartQuery as keyof typeof user.bodyColours,
-			currentBodyColour = user.bodyColours
+			currentColours = user.bodyColours
 
-		currentBodyColour[bodyPart] = parseInt(bodyColour)
+		currentColours[bodyPart] = parseInt(bodyColour)
 
-		await prisma.authUser.update({
-			where: { id: user.id },
-			data: { bodyColours: currentBodyColour },
-		})
-
-		render(user.username, currentBodyColour)
+		await Promise.all([
+			query(surql`UPDATE $user SET bodyColours = $currentColours`, {
+				user: `user:${user.id}`,
+				currentColours,
+			}),
+			render(user.username, currentColours),
+		])
 
 		return {
 			avatar: `${await render(
 				user.username,
-				currentBodyColour,
+				currentColours,
 				true,
 			)}?r=${Math.random()}`,
 		}
@@ -57,7 +59,7 @@ export const actions = {
 	regen: async ({ locals, getClientAddress }) => {
 		const { user } = await authorise(locals)
 
-		if (ratelimit({}, "regen", getClientAddress, 1))
+		if (ratelimit({}, "regen", getClientAddress, 2))
 			return fail(429, { msg: "Too many requests" })
 
 		return {
