@@ -24,17 +24,15 @@ export async function load({ params }) {
 	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
 
 	const type = params.f as keyof typeof usersQueries,
-		user = (
-			await query<{
-				id: string
-				username: string
-			}>(
-				surql`
-					SELECT id, username FROM user
-					WHERE number = $number`,
-				{ number },
-			)
-		)[0]
+		user = await squery<{
+			id: string
+			username: string
+		}>(
+			surql`
+				SELECT id, username FROM user
+				WHERE number = $number`,
+			{ number },
+		)
 
 	if (!user) throw error(404, "Not found")
 
@@ -47,8 +45,8 @@ export async function load({ params }) {
 		}>(usersQueries[type], {
 			user: user.id,
 		}),
-		number: squery<number>(numberQueries[type], {
+		number: query(numberQueries[type], {
 			user: user.id,
-		}),
+		}) as unknown as number,
 	}
 }

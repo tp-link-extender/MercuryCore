@@ -30,46 +30,44 @@ export async function load({ locals, params }) {
 	const { user } = await authorise(locals),
 		id = parseInt(params.id)
 
-	const asset = (
-		await query<{
-			creator: {
-				number: number
-				username: string
-			}
-			description: {
-				id: string
-				text: any
-				updated: string
-			}
+	const asset = await squery<{
+		creator: {
+			number: number
+			username: string
+		}
+		description: {
 			id: string
-			name: string
-			owned: boolean
-			posted: string
-			price: number
-			replies: Replies
-			sold: number
-			type: number
-			visibility: string
-		}>(
-			surql`
-				SELECT
-					*,
-					meta::id(id) AS id,
-					(SELECT number, username FROM <-created<-user)[0] AS creator,
-					count(<-owns<-user) AS sold,
-					$user ∈ <-owns<-user.id AS owned,
+			text: any
+			updated: string
+		}
+		id: string
+		name: string
+		owned: boolean
+		posted: string
+		price: number
+		replies: Replies
+		sold: number
+		type: number
+		visibility: string
+	}>(
+		surql`
+			SELECT
+				*,
+				meta::id(id) AS id,
+				(SELECT number, username FROM <-created<-user)[0] AS creator,
+				count(<-owns<-user) AS sold,
+				$user ∈ <-owns<-user.id AS owned,
 
-					(SELECT text, updated FROM $parent.description
-					ORDER BY updated DESC)[0] AS description,
+				(SELECT text, updated FROM $parent.description
+				ORDER BY updated DESC)[0] AS description,
 
-					${SELECTCOMMENTS}
-				FROM $asset`,
-			{
-				asset: `asset:${id}`,
-				user: `user:${user.id}`,
-			},
-		)
-	)[0]
+				${SELECTCOMMENTS}
+			FROM $asset`,
+		{
+			asset: `asset:${id}`,
+			user: `user:${user.id}`,
+		},
+	)
 
 	if (!asset || !asset.creator) throw error(404, "Not found")
 
@@ -108,28 +106,24 @@ export const actions = {
 
 		let receiverId
 		if (replyId) {
-			const commentAuthor = (
-				await query<{ id: string }>(
-					surql`
-						SELECT
-							number,
-							username
-						FROM $comment<-posted<-user`,
-					{ comment: `assetComment:${replyId}` },
-				)
-			)[0]
+			const commentAuthor = await squery<{ id: string }>(
+				surql`
+					SELECT
+						number,
+						username
+					FROM $comment<-posted<-user`,
+				{ comment: `assetComment:${replyId}` },
+			)
 			if (!commentAuthor) throw error(404)
 			receiverId = commentAuthor.id || ""
 		} else {
-			const commentAuthor = (
-				await query<{ id: string }>(
-					surql`
-						SELECT
-							meta::id(id) AS id
-						FROM $asset<-created<-user`,
-					{ asset: `asset:${params.id}` },
-				)
-			)[0]
+			const commentAuthor = await squery<{ id: string }>(
+				surql`
+					SELECT
+						meta::id(id) AS id
+					FROM $asset<-created<-user`,
+				{ asset: `asset:${params.id}` },
+			)
 			if (!commentAuthor) throw error(404)
 			receiverId = commentAuthor.id || ""
 		}
@@ -217,11 +211,9 @@ export const actions = {
 		console.log(action)
 
 		if (
-			!(
-				await query(surql`SELECT * FROM $asset`, {
-					asset: `asset:${id}`,
-				})
-			)[0]
+			!(await squery(surql`SELECT * FROM $asset`, {
+				asset: `asset:${id}`,
+			}))
 		)
 			throw error(404)
 
@@ -229,31 +221,29 @@ export const actions = {
 
 		switch (action) {
 			case "buy": {
-				const asset = (
-					await query<{
-						creator: {
-							id: string
-							username: string
-						}
-						name: string
-						owned: boolean
-						price: number
-					}>(
-						surql`
-							SELECT
-								*,
-								(SELECT
-									meta::id(id) AS id,
-									username
-								FROM <-created<-user)[0] AS creator,
-								$user ∈ <-owns<-user.id AS owned
-							FROM $asset`,
-						{
-							asset: `asset:${id}`,
-							user: `user:${user.id}`,
-						},
-					)
-				)[0]
+				const asset = await squery<{
+					creator: {
+						id: string
+						username: string
+					}
+					name: string
+					owned: boolean
+					price: number
+				}>(
+					surql`
+						SELECT
+							*,
+							(SELECT
+								meta::id(id) AS id,
+								username
+							FROM <-created<-user)[0] AS creator,
+							$user ∈ <-owns<-user.id AS owned
+						FROM $asset`,
+					{
+						asset: `asset:${id}`,
+						user: `user:${user.id}`,
+					},
+				)
 				if (!asset) throw error(404, "Not found")
 				if (asset.owned) throw error(400, "You already own this item")
 
@@ -301,18 +291,16 @@ export const actions = {
 				break
 			}
 			case "delete": {
-				const asset = (
-					await query<{ owned: boolean }>(
-						surql`
-							SELECT
-								$user ∈ <-owns<-user.id AS owned
-							FROM $asset`,
-						{
-							asset: `asset:${id}`,
-							user: `user:${user.id}`,
-						},
-					)
-				)[0]
+				const asset = await squery<{ owned: boolean }>(
+					surql`
+						SELECT
+							$user ∈ <-owns<-user.id AS owned
+						FROM $asset`,
+					{
+						asset: `asset:${id}`,
+						user: `user:${user.id}`,
+					},
+				)
 				if (!asset) throw error(404, "Not found")
 				if (asset.owned) throw error(400, "You don't own this item")
 
@@ -332,19 +320,17 @@ export const actions = {
 		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
 		// Prevents incorrect ids erroring the Surreal query as well
 
-		const comment = (
-			await query<{
-				authorId: string
-				visibility: string
-			}>(
-				surql`
-					SELECT
-						meta::id((<-posted<-user.id)[0]) AS authorId,
-						visibility
-					FROM $assetComment`,
-				{ assetComment: `assetComment:${id}` },
-			)
-		)[0]
+		const comment = await squery<{
+			authorId: string
+			visibility: string
+		}>(
+			surql`
+				SELECT
+					meta::id((<-posted<-user.id)[0]) AS authorId,
+					visibility
+				FROM $assetComment`,
+			{ assetComment: `assetComment:${id}` },
+		)
 
 		if (!comment) throw error(404, "Comment not found")
 

@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 
 export async function load({ request, locals }) {
 	const session = await locals.auth.validate(),
@@ -58,26 +58,24 @@ export async function load({ request, locals }) {
 
 				case "AssetComment":
 				case "AssetCommentReply":
-					const comment = (
-						await query<{
+					const comment = await squery<{
+						id: string
+						parentAsset: {
 							id: string
-							parentAsset: {
-								id: string
-								name: string
-							}
-						}>(
-							surql`
-								SELECT
-									*,
+							name: string
+						}
+					}>(
+						surql`
+							SELECT
+								*,
+								meta::id(id) AS id,
+								(SELECT
 									meta::id(id) AS id,
-									(SELECT
-										meta::id(id) AS id,
-										name
-									FROM ->replyToAsset->asset)[0] AS parentAsset
-								FROM $comment`,
-							{ comment: `assetComment:${i.relativeId}` },
-						)
-					)[0]
+									name
+								FROM ->replyToAsset->asset)[0] AS parentAsset
+							FROM $comment`,
+						{ comment: `assetComment:${i.relativeId}` },
+					)
 					if (!comment) break
 
 					i.link = `/avatarshop/${comment.parentAsset.id}/${comment.parentAsset.name}/${comment.id}`
@@ -85,15 +83,14 @@ export async function load({ request, locals }) {
 
 				case "ForumPostReply":
 				case "ForumReplyReply":
-					const reply = (
-						await query<{
+					const reply = await squery<{
+						id: string
+						parentPost: {
+							categoryName: string
 							id: string
-							parentPost: {
-								categoryName: string
-								id: string
-							}
-						}>(
-							surql`
+						}
+					}>(
+						surql`
 							SELECT
 								meta::id(id) AS id,
 								(SELECT
@@ -101,11 +98,8 @@ export async function load({ request, locals }) {
 									(->in->forumCategory)[0].name as categoryName
 								FROM ->replyToPost[0]->forumPost)[0] AS parentPost
 							FROM $reply`,
-							{
-								reply: `forumReply:${i.relativeId}`,
-							},
-						)
-					)[0]
+						{ reply: `forumReply:${i.relativeId}` },
+					)
 					if (!reply) break
 
 					i.link = `/forum/${reply.parentPost.categoryName.toLowerCase()}/${
@@ -115,22 +109,20 @@ export async function load({ request, locals }) {
 
 				case "ForumMention":
 				case "ForumPost":
-					const post = (
-						await query<{
-							category: {
-								name: string
-							}
-						}>(
-							surql`
-								SELECT
-									(SELECT name
-									FROM ->in->forumCategory) AS category
-								FROM $forumPost`,
-							{
-								forumPost: `forumPost:${i.relativeId}`,
-							},
-						)
-					)[0]
+					const post = await squery<{
+						category: {
+							name: string
+						}
+					}>(
+						surql`
+							SELECT
+								(SELECT name
+								FROM ->in->forumCategory) AS category
+							FROM $forumPost`,
+						{
+							forumPost: `forumPost:${i.relativeId}`,
+						},
+					)
 					if (!post) break
 
 					i.link = `/forum/${post.category.name.toLowerCase()}/${

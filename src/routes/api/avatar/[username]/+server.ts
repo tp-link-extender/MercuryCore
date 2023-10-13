@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import render from "$lib/server/render"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import fs from "fs"
 import { error } from "@sveltejs/kit"
 
@@ -13,23 +13,21 @@ export async function GET({ params, setHeaders }) {
 		username = username.replace("-body", "")
 		bodyShot = "-body"
 	}
-	const user = (
-		await query<{
-			bodyColours: {
-				Head: number
-				Torso: number
-				LeftArm: number
-				RightArm: number
-				LeftLeg: number
-				RightLeg: number
-			}
-		}>(
-			surql`
-				SELECT bodyColours FROM user
-				WHERE username = $username`,
-			{ username },
-		)
-	)[0]
+	const user = await squery<{
+		bodyColours: {
+			Head: number
+			Torso: number
+			LeftArm: number
+			RightArm: number
+			LeftLeg: number
+			RightLeg: number
+		}
+	}>(
+		surql`
+			SELECT bodyColours FROM user
+			WHERE username = $username`,
+		{ username },
+	)
 
 	if (!user) throw error(404, "User not found")
 

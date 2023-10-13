@@ -1,28 +1,26 @@
 import surql from "$lib/surrealtag"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, setHeaders }) {
 	const id = url.searchParams.get("id")
 	if (!id || !/^\d+$/.test(id)) throw error(400, "Missing id parameter")
 
-	const getUser = (
-		await query<{
-			bodyColours: {
-				Head: number
-				Torso: number
-				LeftArm: number
-				RightArm: number
-				LeftLeg: number
-				RightLeg: number
-			}
-		}>(
-			surql`
-				SELECT bodyColours FROM user
-				WHERE number = $id`,
-			{ id: parseInt(id) },
-		)
-	)[0]
+	const getUser = await squery<{
+		bodyColours: {
+			Head: number
+			Torso: number
+			LeftArm: number
+			RightArm: number
+			LeftLeg: number
+			RightLeg: number
+		}
+	}>(
+		surql`
+			SELECT bodyColours FROM user
+			WHERE number = $id`,
+		{ id: parseInt(id) },
+	)
 
 	if (!getUser) throw error(404, "User Not Found")
 

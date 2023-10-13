@@ -1,26 +1,24 @@
 import surql from "$lib/surrealtag"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
 import { error, redirect } from "@sveltejs/kit"
 
 // Make sure a user has been moderated before loading the page.
 export async function load({ locals }) {
 	const { user } = await authorise(locals),
-		userModeration = (
-			await query<{
-				type: string
-				note: string
-				time: string
-				timeEnds: string
-			}>(
-				surql`
-					SELECT *
-					FROM moderation
-					WHERE out = $user
-						AND active = true`,
-				{ user: `user:${user.id}` },
-			)
-		)[0]
+		userModeration = await squery<{
+			type: string
+			note: string
+			time: string
+			timeEnds: string
+		}>(
+			surql`
+				SELECT *
+				FROM moderation
+				WHERE out = $user
+					AND active = true`,
+			{ user: `user:${user.id}` },
+		)
 
 	if (!userModeration)
 		throw error(
@@ -34,19 +32,17 @@ export async function load({ locals }) {
 export const actions = {
 	default: async ({ locals }) => {
 		const { user } = await authorise(locals),
-			userModeration = (
-				await query<{
-					type: string
-					timeEnds: string
-				}>(
-					surql`
-						SELECT *
-						FROM moderation
-						WHERE out = $user
-							AND active = true`,
-					{ user: `user:${user.id}` },
-				)
-			)[0]
+			userModeration = await squery<{
+				type: string
+				timeEnds: string
+			}>(
+				surql`
+					SELECT *
+					FROM moderation
+					WHERE out = $user
+						AND active = true`,
+				{ user: `user:${user.id}` },
+			)
 
 		if (!userModeration)
 			throw error(

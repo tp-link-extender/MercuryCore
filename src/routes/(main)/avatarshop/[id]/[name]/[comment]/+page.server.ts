@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "../select"
 
@@ -13,20 +13,18 @@ export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id))
 		throw error(400, `Invalid asset id: ${params.id}`)
 
-	const asset = (
-		await query<{
-			creator: {
-				username: string
-			}
-		}>(
-			surql`
-				SELECT
-					(SELECT username
-					FROM <-created<-user)[0] AS creator
-				FROM $asset`,
-			{ asset: `asset:${params.id}` },
-		)
-	)[0]
+	const asset = await squery<{
+		creator: {
+			username: string
+		}
+	}>(
+		surql`
+			SELECT
+				(SELECT username
+				FROM <-created<-user)[0] AS creator
+			FROM $asset`,
+		{ asset: `asset:${params.id}` },
+	)
 
 	if (!asset) throw error(404, "Asset not found")
 

@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 
@@ -120,16 +120,14 @@ export const actions = {
 		if (!/^\d+$/.test(params.number))
 			throw error(400, `Invalid user id: ${params.number}`)
 		const number = parseInt(params.number)
-		const user2 = (
-			await query<{
-				id: string
-			}>(
-				surql`
-					SELECT meta::id(id) AS id
-					FROM user WHERE number = $number`,
-				{ number },
-			)
-		)[0]
+		const user2 = await squery<{
+			id: string
+		}>(
+			surql`
+				SELECT meta::id(id) AS id
+				FROM user WHERE number = $number`,
+			{ number },
+		)
 		if (!user2) throw error(404, "User not found")
 		if (user.id == user2.id)
 			throw error(400, "You can't friend/follow yourself")

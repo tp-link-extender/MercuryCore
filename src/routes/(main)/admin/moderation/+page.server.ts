@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { query } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -36,22 +36,20 @@ export const actions = {
 		if (action == 2 && (date?.getTime() || 0) < new Date().getTime())
 			return formError(form, ["banDate"], ["Invalid date"])
 
-		const getModeratee = (
-			await query<{
-				id: string
-				number: number
-				permissionLevel: number
-			}>(
-				surql`
-					SELECT
-						meta::id(id) AS id,
-						number,
-						permissionLevel 
-					FROM user
-					WHERE username = $username`,
-				{ username },
-			)
-		)[0]
+		const getModeratee = await squery<{
+			id: string
+			number: number
+			permissionLevel: number
+		}>(
+			surql`
+				SELECT
+					meta::id(id) AS id,
+					number,
+					permissionLevel 
+				FROM user
+				WHERE username = $username`,
+			{ username },
+		)
 
 		if (!getModeratee)
 			return formError(form, ["username"], ["User does not exist"])
@@ -90,16 +88,14 @@ export const actions = {
 		if (action == 5) {
 			// Unban
 			if (
-				!(
-					await query(
-						surql`
-							SELECT * FROM moderation
-							WHERE in = $moderator
-								AND out = $moderatee
-								AND active = true`,
-						qParams,
-					)
-				)[0]
+				!(await squery(
+					surql`
+						SELECT * FROM moderation
+						WHERE in = $moderator
+							AND out = $moderatee
+							AND active = true`,
+					qParams,
+				))
 			)
 				return formError(
 					form,
@@ -108,17 +104,15 @@ export const actions = {
 				)
 
 			if (
-				(
-					await query(
-						surql`
-							SELECT * FROM moderation
-							WHERE in = $moderator
-								AND out = $moderatee
-								AND active = true
-								AND type = "AccountDeleted"`,
-						qParams,
-					)
-				)[0]
+				await squery(
+					surql`
+						SELECT * FROM moderation
+						WHERE in = $moderator
+							AND out = $moderatee
+							AND active = true
+							AND type = "AccountDeleted"`,
+					qParams,
+				)
 			)
 				return formError(
 					form,
@@ -148,15 +142,13 @@ export const actions = {
 		const moderationAction = moderationActions[action - 1]
 
 		if (
-			(
-				await query(
-					surql`
-						SELECT * FROM moderation
-						WHERE out = $moderatee
-							AND active = true`,
-					query,
-				)
-			)[0]
+			await squery(
+				surql`
+					SELECT * FROM moderation
+					WHERE out = $moderatee
+						AND active = true`,
+				query,
+			)
 		)
 			return formError(
 				form,
