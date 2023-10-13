@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { multiSquery } from "$lib/server/surreal"
+import { mquery } from "$lib/server/surreal"
 
 export async function load({ locals }) {
 	await authorise(locals)
@@ -19,7 +19,7 @@ export async function load({ locals }) {
 		,
 		avgCurrency,
 		totalCurrency,
-	] = (await multiSquery(surql`
+	] = await mquery<number[]>(surql`
 		count(SELECT * FROM user);
 		count(SELECT * FROM place);
 		count(SELECT * FROM group);
@@ -32,7 +32,7 @@ export async function load({ locals }) {
 		count(SELECT * FROM forumReply);
 		LET $currency = (SELECT currency FROM user).currency;
 		math::mean($currency);
-		math::sum($currency)`)) as number[]
+		math::sum($currency)`)
 
 	return {
 		users,

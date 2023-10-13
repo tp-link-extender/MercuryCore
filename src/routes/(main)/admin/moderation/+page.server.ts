@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -37,7 +37,11 @@ export const actions = {
 			return formError(form, ["banDate"], ["Invalid date"])
 
 		const getModeratee = (
-			(await squery(
+			await query<{
+				id: string
+				number: number
+				permissionLevel: number
+			}>(
 				surql`
 					SELECT
 						meta::id(id) AS id,
@@ -46,11 +50,7 @@ export const actions = {
 					FROM user
 					WHERE username = $username`,
 				{ username },
-			)) as {
-				id: string
-				number: number
-				permissionLevel: number
-			}[]
+			)
 		)[0]
 
 		if (!getModeratee)
@@ -71,36 +71,34 @@ export const actions = {
 			)
 
 		const moderationMessage = [
-				"warned",
-				`banned until ${date?.toLocaleDateString()}`,
-				"terminated",
-				"deleted",
-			],
-			moderationActions = [
-				"Warning",
-				"Ban",
-				"Termination",
-				"AccountDeleted",
-			],
-			query = {
-				moderator: `user:${user.id}`,
-				moderatee: `user:${getModeratee.id}`,
-			}
-
-		console.log(query)
+			"warned",
+			`banned until ${date?.toLocaleDateString()}`,
+			"terminated",
+			"deleted",
+		]
+		const moderationActions = [
+			"Warning",
+			"Ban",
+			"Termination",
+			"AccountDeleted",
+		]
+		const qParams = {
+			moderator: `user:${user.id}`,
+			moderatee: `user:${getModeratee.id}`,
+		}
 
 		if (action == 5) {
 			// Unban
 			if (
 				!(
-					(await squery(
+					await query(
 						surql`
 							SELECT * FROM moderation
 							WHERE in = $moderator
 								AND out = $moderatee
 								AND active = true`,
-						query,
-					)) as [{}]
+						qParams,
+					)
 				)[0]
 			)
 				return formError(
@@ -111,15 +109,15 @@ export const actions = {
 
 			if (
 				(
-					(await squery(
+					await query(
 						surql`
 							SELECT * FROM moderation
 							WHERE in = $moderator
 								AND out = $moderatee
 								AND active = true
 								AND type = "AccountDeleted"`,
-						query,
-					)) as [{}]
+						qParams,
+					)
 				)[0]
 			)
 				return formError(
@@ -128,7 +126,7 @@ export const actions = {
 					["You cannot unban a deleted user"],
 				)
 
-			await squery(
+			await query(
 				surql`
 					UPDATE moderation SET active = false
 					WHERE out = $moderatee;
@@ -151,13 +149,13 @@ export const actions = {
 
 		if (
 			(
-				(await squery(
+				await query(
 					surql`
 						SELECT * FROM moderation
 						WHERE out = $moderatee
 							AND active = true`,
 					query,
-				)) as [{}]
+				)
 			)[0]
 		)
 			return formError(
@@ -166,7 +164,7 @@ export const actions = {
 				["User has already been moderated"],
 			)
 
-		await squery(
+		await query(
 			surql`
 				RELATE $moderator->moderation->$moderatee CONTENT {
 					note: $reason,

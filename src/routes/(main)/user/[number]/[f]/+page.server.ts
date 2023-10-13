@@ -1,7 +1,7 @@
 // The friends, followers, and following pages for a user.
 
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 const types = ["friends", "followers", "following"],
@@ -25,15 +25,15 @@ export async function load({ params }) {
 
 	const type = params.f as keyof typeof usersQueries,
 		user = (
-			(await squery(
+			await query<{
+				id: string
+				username: string
+			}>(
 				surql`
 					SELECT id, username FROM user
 					WHERE number = $number`,
 				{ number },
-			)) as {
-				id: string
-				username: string
-			}[]
+			)
 		)[0]
 
 	if (!user) throw error(404, "Not found")
@@ -41,16 +41,14 @@ export async function load({ params }) {
 	return {
 		type,
 		username: user.username,
-		users: squery(usersQueries[type], {
+		users: query<{
+			number: number
+			username: string
+		}>(usersQueries[type], {
 			user: user.id,
-		}) as Promise<
-			{
-				number: number
-				username: string
-			}[]
-		>,
-		number: squery(numberQueries[type], {
+		}),
+		number: squery<number>(numberQueries[type], {
 			user: user.id,
-		}) as Promise<number>,
+		}),
 	}
 }

@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
@@ -114,13 +114,11 @@ export const actions = {
 				}
 		}
 
-		const currentId = (await squery(
-				surql`stuff:increment.asset`,
-			)) as number,
+		const currentId = await squery<number>(surql`stuff:increment.asset`),
 			imageAssetId = currentId + 1,
 			id = currentId + 2
 
-		await squery(
+		await query(
 			surql`
 				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
 				LET $imageAsset = CREATE asset CONTENT {

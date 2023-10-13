@@ -1,13 +1,23 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals),
 		group = (
-			(await squery(
+			await query<{
+				in: boolean
+				memberCount: number
+				name: string
+				owner: {
+					number: number
+					username: string
+				}
+				places: any[]
+				feed: any[]
+			}>(
 				surql`
 					SELECT
 						name,
@@ -25,17 +35,7 @@ export async function load({ locals, params }) {
 					user: `user:${user.id}`,
 					...params,
 				},
-			)) as {
-				in: boolean
-				memberCount: number
-				name: string
-				owner: {
-					number: number
-					username: string
-				}
-				places: any[]
-				feed: any[]
-			}[]
+			)
 		)[0]
 
 	if (!group) throw error(404, "Not found")
@@ -47,40 +47,40 @@ export const actions = {
 	default: async ({ request, locals, params }) => {
 		const { user } = await authorise(locals),
 			group = (
-				(await squery(
+				await query<{
+					id: string
+					name: string
+				}>(
 					surql`
 						SELECT id, name FROM group
 						WHERE string::lowercase(name)
 							= string::lowercase($name)`,
 					{ ...params },
-				)) as {
-					id: string
-					name: string
-				}[]
+				)
 			)[0]
 
 		if (!group) return fail(400, { msg: "User not found" })
 
 		const data = await formData(request),
-			{ action } = data,
-			query = {
-				user: `user:${user.id}`,
-				group: group.id,
-			}
+			{ action } = data
+		const qParams = {
+			user: `user:${user.id}`,
+			group: group.id,
+		}
 
 		switch (action) {
 			case "join":
-				await squery(
+				await query(
 					surql`
-							RELATE $user->member->$group
-								SET time = time::now()`,
-					query,
+						RELATE $user->member->$group
+							SET time = time::now()`,
+					qParams,
 				)
 				break
 			case "leave":
-				await squery(
+				await query(
 					surql`DELETE $user->member WHERE out = $group`,
-					query,
+					qParams,
 				)
 		}
 	},

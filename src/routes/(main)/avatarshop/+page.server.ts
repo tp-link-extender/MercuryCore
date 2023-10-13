@@ -1,26 +1,24 @@
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 
 export const load = async () => ({
-	assets: squery(surql`
+	assets: query<{
+		name: string
+		price: number
+		id: number
+		type: string
+	}>(surql`
 		SELECT
 			meta::id(id) AS id,
 			name,
 			price,
 			type
-		FROM asset`) as Promise<
-		{
-			name: string
-			price: number
-			id: number
-			type: string
-		}[]
-	>,
+		FROM asset`),
 })
 
 export const actions = {
 	default: async ({ request }) => ({
-		places: await squery(
+		places: await query(
 			surql`
 				SELECT
 					meta::id(id) AS id,

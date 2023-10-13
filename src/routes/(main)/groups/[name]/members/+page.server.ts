@@ -1,12 +1,19 @@
 // The member page for a group.
 
 import surql from "$lib/surrealtag"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export const load = async ({ params }) => {
 	const group = (
-		(await squery(
+		await query<{
+			memberCount: number
+			members: {
+				number: number
+				username: string
+			}[]
+			name: string
+		}>(
 			surql`
 			SELECT
 				name,
@@ -18,14 +25,7 @@ export const load = async ({ params }) => {
 			FROM group WHERE string::lowercase(name)
 				= string::lowercase($name)`,
 			params,
-		)) as {
-			memberCount: number
-			members: {
-				number: number
-				username: string
-			}[]
-			name: string
-		}[]
+		)
 	)[0]
 
 	if (!group) throw error(404, "Not found")

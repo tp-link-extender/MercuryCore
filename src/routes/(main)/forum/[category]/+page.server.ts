@@ -1,13 +1,33 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { query } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeSwitch } from "$lib/server/like"
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals),
-		category = (await squery(
+		category = await query<{
+			description: string
+			name: string
+			posts: {
+				author: {
+					number: number
+					username: string
+				}
+				content: {
+					text?: string
+				}[]
+				dislikeCount: number
+				dislikes: boolean
+				id: string
+				likeCount: number
+				likes: boolean
+				posted: string
+				title: string
+				visibility: string
+			}[]
+		}>(
 			surql`
 				SELECT
 					*,
@@ -29,27 +49,7 @@ export async function load({ locals, params }) {
 				...params,
 				user: `user:${user.id}`,
 			},
-		)) as {
-			description: string
-			name: string
-			posts: {
-				author: {
-					number: number
-					username: string
-				}
-				content: {
-					text?: string
-				}[]
-				dislikeCount: number
-				dislikes: boolean
-				id: string
-				likeCount: number
-				likes: boolean
-				posted: string
-				title: string
-				visibility: string
-			}[]
-		}[]
+		)
 
 	if (!(typeof category == "object" ? category : null)?.[0])
 		throw error(404, "Not found")

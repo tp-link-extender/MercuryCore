@@ -2,7 +2,7 @@
 // for now we'll use it for the stamper tool (and other games which require it)
 
 import surql from "$lib/surrealtag"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { query } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function GET({ url }) {
@@ -21,9 +21,9 @@ export async function GET({ url }) {
 			isCircular: "false",
 		}),
 		cache = (
-			(await squery(surql`SELECT * FROM $asset`, {
+			await query<{ url: string }>(surql`SELECT * FROM $asset`, {
 				asset: `assetCache:${stringAssetId}`,
-			})) as { url: string }[]
+			})
 		)[0]
 
 	if (cache) throw redirect(302, cache.url)

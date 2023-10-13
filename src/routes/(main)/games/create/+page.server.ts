@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { transaction } from "$lib/server/prisma"
-import { squery } from "$lib/server/surreal"
+import { query, squery } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -39,11 +39,9 @@ export const actions = {
 				privateServer,
 			} = form.data,
 			gameCount = (
-				(await squery(
-					surql`SELECT count(->owns->place) FROM user`,
-				)) as {
+				await query<{
 					count: number
-				}[]
+				}>(surql`SELECT count(->owns->place) FROM user`)
 			)[0].count
 
 		if (gameCount >= 2)
@@ -53,7 +51,7 @@ export const actions = {
 				["You may only have 2 places at most"],
 			)
 
-		const id = (await squery(surql`stuff:increment.place`)) as number
+		const id = await squery<number>(surql`stuff:increment.place`)
 
 		try {
 			await transaction({ number: user.number }, { number: 1 }, 10, {
@@ -65,7 +63,7 @@ export const actions = {
 			return formError(form, ["other"], [e.message])
 		}
 
-		await squery(
+		await query(
 			surql`
 				LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
 				LET $place = CREATE place CONTENT {

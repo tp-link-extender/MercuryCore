@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -39,7 +39,14 @@ export async function load({ locals }) {
 			fact: facts[Math.floor(Math.random() * facts.length)],
 		},
 		form: superValidate(schema),
-		places: squery(surql`
+		places: query<{
+			id: number
+			name: string
+			playerCount: number
+			serverPing: number
+			likeCount: number
+			dislikeCount: number
+		}>(surql`
 			SELECT
 				meta::id(id) AS id,
 				name,
@@ -52,52 +59,37 @@ export async function load({ locals }) {
 				count(<-likes) AS likeCount,
 				count(<-dislikes) AS dislikeCount
 			FROM place
-			WHERE !privateServer AND !deleted`) as Promise<
-			{
-				id: number
-				name: string
-				playerCount: number
-				serverPing: number
-				likeCount: number
-				dislikeCount: number
-			}[]
-		>,
-		friends: squery(
+			WHERE !privateServer AND !deleted`),
+		friends: query<{
+			number: number
+			username: string
+		}>(
 			surql`
 				SELECT number, username
 				FROM $user->friends->user OR $user<-friends<-user`,
-			{
-				user: `user:${user.id}`,
-			},
-		) as Promise<
-			{
+			{ user: `user:${user.id}` },
+		),
+		feed: query<{
+			authorUser: {
 				number: number
 				username: string
+			}
+			content: {
+				id: string
+				text: string
+				updated: string
 			}[]
-		>,
-		feed: squery(surql`
+			id: string
+			posted: string
+			visibility: string
+		}>(surql`
 			SELECT
 				*,
 				(SELECT text, updated FROM $parent.content
 				ORDER BY updated DESC) AS content,
 				(SELECT number, username FROM <-posted<-user)[0] as authorUser
 			FROM statusPost
-			LIMIT 40`) as Promise<
-			{
-				authorUser: {
-					number: number
-					username: string
-				}
-				content: {
-					id: string
-					text: string
-					updated: string
-				}[]
-				id: string
-				posted: string
-				visibility: string
-			}[]
-		>,
+			LIMIT 40`),
 	}
 }
 
@@ -110,7 +102,7 @@ export const actions = {
 
 		const { user } = await authorise(locals)
 
-		await squery(
+		await query(
 			surql`
 				LET $status = CREATE statusPost CONTENT {
 					posted: time::now(),

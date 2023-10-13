@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 
@@ -10,7 +10,49 @@ export async function load({ locals, params }) {
 
 	const number = parseInt(params.number),
 		{ user } = await authorise(locals),
-		userExists = (await squery(
+		userExists = await query<{
+			bio: {
+				id: string
+				text: string
+				updated: string
+			}
+			follower: boolean
+			followerCount: number
+			following: boolean
+			followingCount: number
+			friendCount: number
+			friends: boolean
+			groups: {
+				memberCount: number
+				name: string
+			}[]
+			groupsOwned: {
+				memberCount: number
+				name: string
+			}[]
+			incomingRequest: boolean
+			number: number
+			outgoingRequest: boolean
+			permissionLevel: number
+			places: {
+				dislikeCount: number
+				id: string
+				likeCount: number
+				name: string
+				playerCount: number
+			}[]
+			posts: {
+				content: {
+					id: string
+					text: string
+					updated: string
+				}[]
+				id: string
+				posted: string
+				visibility: string
+			}[]
+			username: string
+		}>(
 			surql`
 				SELECT
 					username,
@@ -63,49 +105,7 @@ export async function load({ locals, params }) {
 				number,
 				user: `user:${user.id}`,
 			},
-		)) as {
-			bio: {
-				id: string
-				text: string
-				updated: string
-			}
-			follower: boolean
-			followerCount: number
-			following: boolean
-			followingCount: number
-			friendCount: number
-			friends: boolean
-			groups: {
-				memberCount: number
-				name: string
-			}[]
-			groupsOwned: {
-				memberCount: number
-				name: string
-			}[]
-			incomingRequest: boolean
-			number: number
-			outgoingRequest: boolean
-			permissionLevel: number
-			places: {
-				dislikeCount: number
-				id: string
-				likeCount: number
-				name: string
-				playerCount: number
-			}[]
-			posts: {
-				content: {
-					id: string
-					text: string
-					updated: string
-				}[]
-				id: string
-				posted: string
-				visibility: string
-			}[]
-			username: string
-		}[],
+		),
 		user2 = userExists[0]
 
 	if (!user2) throw error(404, "Not found")
@@ -119,29 +119,29 @@ export const actions = {
 
 		if (!/^\d+$/.test(params.number))
 			throw error(400, `Invalid user id: ${params.number}`)
-		const number = parseInt(params.number),
-			user2 = (
-				(await squery(
-					surql`
-						SELECT meta::id(id) AS id
-						FROM user WHERE number = $number`,
-					{ number },
-				)) as {
-					id: string
-				}[]
-			)[0]
+		const number = parseInt(params.number)
+		const user2 = (
+			await query<{
+				id: string
+			}>(
+				surql`
+					SELECT meta::id(id) AS id
+					FROM user WHERE number = $number`,
+				{ number },
+			)
+		)[0]
 		if (!user2) throw error(404, "User not found")
 		if (user.id == user2.id)
 			throw error(400, "You can't friend/follow yourself")
 
 		const data = await formData(request),
 			{ action } = data,
-			query = {
+			qParams = {
 				user: `user:${user.id}`,
 				user2: `user:${user2.id}`,
 			},
 			accept = () =>
-				squery(
+				query(
 					// The direction of the ->friends relationship matches
 					// the direction of the previous ->request relationship.
 					surql`
@@ -157,7 +157,7 @@ export const actions = {
 						}`,
 					{
 						type: "NewFriend",
-						...query,
+						...qParams,
 						note: `${user.username} is now friends with you!`,
 						relativeId: user.id,
 					},
@@ -166,7 +166,7 @@ export const actions = {
 		try {
 			switch (action) {
 				case "follow":
-					await squery(
+					await query(
 						surql`
 							IF $user2 ∉ $user->follows->user {
 								RELATE $user->follows->$user2
@@ -181,14 +181,14 @@ export const actions = {
 							}`,
 						{
 							type: "Follower",
-							...query,
+							...qParams,
 							note: `${user.username} is now following you!`,
 							relativeId: user.id,
 						},
 					)
 					break
 				case "unfollow":
-					await squery(
+					await query(
 						surql`
 							DELETE $user->follows WHERE out = $user2;
 							DELETE $user->notification WHERE in = $user
@@ -197,12 +197,12 @@ export const actions = {
 								AND read = false`,
 						{
 							type: "Follower",
-							...query,
+							...qParams,
 						},
 					)
 					break
 				case "unfriend":
-					await squery(
+					await query(
 						surql`
 							DELETE $user<-friends WHERE in = $user2;
 							DELETE $user->friends WHERE out = $user2;
@@ -212,7 +212,7 @@ export const actions = {
 								AND read = false`,
 						{
 							type: "NewFriend",
-							...query,
+							...qParams,
 						},
 					)
 					break
@@ -220,23 +220,23 @@ export const actions = {
 					if (
 						!(
 							// Make sure users are not already friends
-							(await squery(
+							(await query(
 								surql`$user ∈ $user2->friends->user
 									OR $user2 ∈ $user->friends->user`,
-								query,
+								qParams,
 							))
 						)
 					)
 						if (
 							// If there is already an incoming request, accept it instead
-							await squery(
+							await query(
 								surql`$user ∈ $user2->request->user`,
-								query,
+								qParams,
 							)
 						)
 							await accept()
 						else
-							await squery(
+							await query(
 								surql`
 									RELATE $user->request->$user2
 										SET time = time::now();
@@ -249,7 +249,7 @@ export const actions = {
 									}`,
 								{
 									type: "FriendRequest",
-									...query,
+									...qParams,
 									note: `${user.username} has sent you a friend request.`,
 									relativeId: user.id,
 								},
@@ -257,7 +257,7 @@ export const actions = {
 					else throw error(400, "Already friends")
 					break
 				case "cancel":
-					await squery(
+					await query(
 						surql`
 							DELETE $user->request WHERE out = $user2;
 							DELETE $user->notification WHERE in = $user
@@ -266,21 +266,21 @@ export const actions = {
 								AND read = false`,
 						{
 							type: "FriendRequest",
-							...query,
+							...qParams,
 						},
 					)
 					break
 				case "decline":
-					await squery(
+					await query(
 						surql`DELETE $user2->request WHERE out = $user`,
-						query,
+						qParams,
 					)
 					break
 				case "accept":
 					if (
-						await squery(
+						await query(
 							surql`$user ∈ $user2->request->user`,
-							query,
+							qParams,
 						)
 					)
 						// Make sure an incoming request exists before accepting

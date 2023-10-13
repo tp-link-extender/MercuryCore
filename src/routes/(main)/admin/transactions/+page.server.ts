@@ -1,13 +1,30 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 
 // Make sure a user is an administrator before loading the page.
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	return {
-		transactions: squery(
+		transactions: query<{
+			amountSent: number
+			id: string
+			in: string
+			link: string
+			note: string
+			out: string
+			receiver: {
+				number: number
+				username: string
+			}
+			sender: {
+				number: number
+				username: string
+			}
+			taxRate: number
+			time: string
+		}>(
 			surql`
 			SELECT
 				*,
@@ -20,25 +37,6 @@ export async function load({ locals }) {
 					username
 				FROM out.*)[0] AS receiver
 			FROM transaction`,
-		) as Promise<
-			Array<{
-				amountSent: number
-				id: string
-				in: string
-				link: string
-				note: string
-				out: string
-				receiver: {
-					number: number
-					username: string
-				}
-				sender: {
-					number: number
-					username: string
-				}
-				taxRate: number
-				time: string
-			}>
-		>,
+		),
 	}
 }

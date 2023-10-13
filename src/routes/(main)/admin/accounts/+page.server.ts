@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { auth, authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -47,7 +47,7 @@ export const actions = {
 			})
 		}
 
-		await squery(
+		await query(
 			surql`
 				CREATE auditLog CONTENT {
 					action: "Account",

@@ -1,7 +1,7 @@
 import surql from "$lib/surrealtag"
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { query } from "$lib/server/surreal"
 import fs from "fs"
 
 export async function GET({ url }) {
@@ -16,7 +16,21 @@ export async function GET({ url }) {
 	}
 
 	const gameSession = (
-		(await squery(
+		await query<{
+			place: {
+				id: string
+				ownerUser: {
+					number: number
+				}
+				serverIP: string
+				serverPort: number
+			}
+			user: {
+				number: number
+				permissionLevel: number
+				username: string
+			}
+		}>(
 			surql`
 				SELECT
 					(SELECT
@@ -32,33 +46,19 @@ export async function GET({ url }) {
 					FROM <-user)[0] AS user
 				FROM $playingId`,
 			{ playingId: `playing:${clientTicket}` },
-		)) as {
-			place: {
-				id: string
-				ownerUser: {
-					number: number
-				}
-				serverIP: string
-				serverPort: number
-			}
-			user: {
-				number: number
-				permissionLevel: number
-				username: string
-			}
-		}[]
+		)
 	)[0]
 
 	if (!gameSession) throw error(400, "Invalid Game Session")
 
 	if (privateServer) {
 		const privateSession = (
-			(await squery(
+			await query(
 				surql`
 					SELECT * FROM place
 					WHERE privateTicket = $privateServer`,
 				{ privateServer },
-			)) as [{}]
+			)
 		)[0]
 
 		if (!privateSession) throw error(400, "Invalid Private Server")

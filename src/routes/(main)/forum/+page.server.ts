@@ -1,8 +1,21 @@
 import surql from "$lib/surrealtag"
-import surreal, { squery } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 
 export const load = () => ({
-	categories: squery(surql`
+	categories: query<{
+		description: string
+		name: string
+		postCount: number
+		latestPost: {
+			author: {
+				number: number
+				username: string
+			}
+			id: string
+			posted: string
+			title: string
+		}
+	}>(surql`
 		SELECT
 			name,
 			description,
@@ -17,20 +30,5 @@ export const load = () => ({
 			FROM <-in<-forumPost
 			ORDER BY posted DESC)[0] AS latestPost,
 			count(<-in) AS postCount
-		FROM forumCategory`) as Promise<
-		{
-			description: string
-			name: string
-			postCount: number
-			latestPost: {
-				author: {
-					number: number
-					username: string
-				}
-				id: string
-				posted: string
-				title: string
-			}
-		}[]
-	>,
+		FROM forumCategory`),
 })
