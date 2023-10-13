@@ -123,7 +123,7 @@
 										role="progressbar"
 										aria-valuenow={data.totalmem -
 											data.freemem}
-										aria-valuemin="0"
+										aria-valuemin={0}
 										aria-valuemax={data.totalmem}
 										style="width: {((data.totalmem -
 											data.freemem) /
@@ -158,7 +158,7 @@
 											role="progressbar"
 											aria-valuenow={disk.size -
 												disk.free}
-											aria-valuemin="0"
+											aria-valuemin={0}
 											aria-valuemax={disk.size}
 											style="width: {((disk.size -
 												disk.free) /

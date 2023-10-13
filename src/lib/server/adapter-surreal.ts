@@ -29,10 +29,11 @@ export const adapter = (
 					)) as [UserSchema]
 				)[0],
 			setUser: async (user, key) => {
+				// Can't create the user number in the MERGE step, or it would
+				// create two numbers (why?) and miss out all the odd ones
 				const createUser = surql`
 					LET $u = CREATE user CONTENT $user;
 					UPDATE $u MERGE {
-						number: (UPDATE ONLY stuff:increment SET user += 1).user,
 						theme: "standard",
 						created: time::now(),
 						bio: [],
@@ -44,7 +45,10 @@ export const adapter = (
 							LeftLeg: 119,
 							RightLeg: 119,
 						},
-					}`
+					};
+					UPDATE $u SET number =
+						(UPDATE ONLY stuff:increment
+						SET user += 1).user`
 
 				if (!key) {
 					await squery(createUser, { user })

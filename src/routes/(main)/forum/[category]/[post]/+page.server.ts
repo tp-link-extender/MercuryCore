@@ -2,7 +2,6 @@ import surql from "$lib/surrealtag"
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import surreal, { squery } from "$lib/server/surreal"
-import id, { valid } from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
@@ -24,7 +23,7 @@ const SELECTREPLIES = recurse(
 )
 
 export async function load({ locals, params }) {
-	if (!valid(params.post)) throw error(400, "Invalid post id")
+	if (!/^[0-9a-z]+$/.test(params.post)) throw error(400, "Invalid post id")
 
 	const { user } = await authorise(locals)
 
@@ -89,7 +88,8 @@ export const actions = {
 			replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another reply
 
-		if (replyId && !valid(replyId)) throw error(400, "Invalid reply id")
+		if (replyId && !/^[0-9a-z]+$/.test(replyId))
+			throw error(400, "Invalid reply id")
 
 		const replypost = (
 			(await squery(
@@ -112,7 +112,7 @@ export const actions = {
 		if (!replypost)
 			throw error(404, `${replyId ? "Reply" : "Post"} not found`)
 
-		const newReplyId = await id()
+		const newReplyId = (await squery(surql`fn::id()`)) as string
 
 		await squery(
 			surql`
@@ -168,7 +168,7 @@ export const actions = {
 		const { user } = await authorise(locals),
 			id = url.searchParams.get("id")
 		if (!id) throw error(400, "No reply id provided")
-		if (!valid(id)) throw error(400, "Invalid reply id")
+		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
 		// Prevents incorrect ids erroring the Surreal query as well
 
 		const reply = (
@@ -215,7 +215,7 @@ export const actions = {
 
 		const id = url.searchParams.get("id")
 		if (!id) throw error(400, "No reply id provided")
-		if (!valid(id)) throw error(400, "Invalid reply id")
+		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
 
 		const findReply = (await surreal.select(`forumReply:${id}`))[0]
 
