@@ -54,10 +54,12 @@ export async function load({ locals }) {
 			FROM place
 			WHERE !privateServer AND !deleted`) as Promise<
 			{
-				id: string
+				id: number
 				name: string
 				playerCount: number
 				serverPing: number
+				likeCount: number
+				dislikeCount: number
 			}[]
 		>,
 		friends: squery(

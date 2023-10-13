@@ -1,7 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { squery } from "$lib/server/surreal"
-import id from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
@@ -63,7 +62,7 @@ export const actions = {
 		)
 			throw error(400, "Invalid category")
 
-		const postId = await id()
+		const postId = (await squery(surql`fn::id()`)) as string
 
 		await squery(
 			surql`
@@ -84,7 +83,7 @@ export const actions = {
 			{
 				user: `user:${user.id}`,
 				postId: `forumPost:${postId}`,
-				category: `forumCategory:${category}`,
+				category: `forumCategory:⟨${category}⟩`,
 				title,
 				content,
 			},

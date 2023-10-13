@@ -33,7 +33,7 @@ export const actions = {
 		if (name.toLowerCase() == "create")
 			return formError(form, ["name"], ["Can't park there mate"])
 
-		await surreal.create(`forumCategory:${name}`, {
+		await surreal.create(`forumCategory:⟨${name}⟩`, {
 			name,
 			description,
 		})

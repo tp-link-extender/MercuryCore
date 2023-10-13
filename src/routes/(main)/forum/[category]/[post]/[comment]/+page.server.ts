@@ -2,7 +2,6 @@ import surql from "$lib/surrealtag"
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { squery } from "$lib/server/surreal"
-import { valid } from "$lib/server/id"
 import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "../select"
 
@@ -11,7 +10,7 @@ const SELECTREPLIES = recurse(
 )
 
 export async function load({ locals, params }) {
-	if (!valid(params.post)) throw error(400, "Invalid post id")
+	if (!/^[0-9a-z]+$/.test(params.post)) throw error(400, "Invalid post id")
 
 	const post = (
 		(await squery(

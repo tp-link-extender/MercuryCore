@@ -2,7 +2,7 @@
 
 import { dev } from "$app/environment"
 import { redirect, error } from "@sveltejs/kit"
-import { lucia, type Session, type User } from "lucia"
+import { lucia, type Session } from "lucia"
 import { sveltekit } from "lucia/middleware"
 import { adapter } from "./adapter-surreal"
 
@@ -43,9 +43,7 @@ export async function authorise(
 	{
 		auth,
 	}: {
-		auth: {
-			validate: () => Promise<Session | null>
-		}
+		auth: { validate: () => Promise<Session | null> }
 	},
 	level?: number,
 ) {

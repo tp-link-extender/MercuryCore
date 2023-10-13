@@ -2,7 +2,6 @@ import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { transaction } from "$lib/server/prisma"
 import surreal, { squery } from "$lib/server/surreal"
-import id, { valid } from "$lib/server/id"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
@@ -104,7 +103,8 @@ export const actions = {
 			replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another comment
 
-		if (replyId && !valid(replyId)) throw error(400, "Invalid reply id")
+		if (replyId && !/^[0-9a-z]+$/.test(replyId))
+			throw error(400, "Invalid reply id")
 
 		let receiverId
 		if (replyId) {
@@ -140,7 +140,7 @@ export const actions = {
 
 		console.log("aight")
 
-		const newReplyId = await id()
+		const newReplyId = (await squery(surql`fn::id()`)) as string
 
 		await squery(
 			surql`
@@ -201,7 +201,8 @@ export const actions = {
 			id = url.searchParams.get("id"),
 			replyId = url.searchParams.get("rid")
 
-		if (replyId && !valid(replyId)) throw error(400, "Invalid reply id")
+		if (replyId && !/^[0-9a-z]+$/.test(replyId))
+			throw error(400, "Invalid reply id")
 
 		if (
 			(id && !(await surreal.select(`asset:${id}`))[0]) ||
@@ -337,7 +338,7 @@ export const actions = {
 		const { user } = await authorise(locals),
 			id = url.searchParams.get("id")
 		if (!id) throw error(400, "No comment id provided")
-		if (!valid(id)) throw error(400, "Invalid reply id")
+		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
 		// Prevents incorrect ids erroring the Surreal query as well
 
 		const comment = (
@@ -384,7 +385,7 @@ export const actions = {
 
 		const id = url.searchParams.get("id")
 		if (!id) throw error(400, "No comment id provided")
-		if (!valid(id)) throw error(400, "Invalid reply id")
+		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
 
 		const findComment = (await surreal.select(`assetComment:${id}`))[0]
 
