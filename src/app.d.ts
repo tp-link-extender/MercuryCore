@@ -55,7 +55,6 @@ declare global {
 	declare const Modal: typeof import("$lib/components/Modal.svelte").default
 	declare const Moon: typeof import("$lib/components/Moon.svelte").default
 	declare const Navbar: typeof import("$lib/components/Navbar.svelte").default
-	declare const Pagepart: typeof import("$lib/components/Pagepart.svelte").default
 	declare const Place: typeof import("$lib/components/Place.svelte").default
 	declare const PlaceCard: typeof import("$lib/components/PlaceCard.svelte").default
 	declare const ReportButton: typeof import("$lib/components/ReportButton.svelte").default

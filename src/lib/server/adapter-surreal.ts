@@ -145,11 +145,11 @@ export const adapter = (
 			getKey: async keyId =>
 				await squery<KeySchema>(
 					surql`
-							SELECT
-								*,
-								meta::id((<-hasKey<-user)[0]) AS user_id,
-								meta::id(id) AS id
-							FROM $key`,
+						SELECT
+							*,
+							meta::id((<-hasKey<-user)[0]) AS user_id,
+							meta::id(id) AS id
+						FROM $key`,
 					{ key: `${modelNames.key}:⟨${keyId}⟩` },
 				),
 			getKeysByUserId: async userId => {
