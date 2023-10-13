@@ -38,7 +38,7 @@
 		}}
 		class="sidebar bg-a me-2 p-1"
 		method="POST"
-		action="?/like&id={post.id.split(':')[1]}">
+		action="?/like&id={post.id}">
 		<div class="mb-2 d-flex flex-column">
 			<div class="text-center">
 				<button
@@ -85,7 +85,7 @@
 			</em>
 		</div>
 		<a
-			href="/forum/{categoryName.toLowerCase()}/{post.id.split(':')[1]}"
+			href="/forum/{categoryName.toLowerCase()}/{post.id}"
 			class="px-4 pt-2 text-decoration-none light-text w-100">
 			<h2 class="fs-4 mt-2">
 				{post.title}

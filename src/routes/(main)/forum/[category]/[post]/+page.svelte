@@ -72,7 +72,7 @@
 			}}
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
-			action="?/like&id={data.id.split(':')[1]}">
+			action="?/like&id={data.id}">
 			<div class="row mb-2 d-flex">
 				<div>
 					<button

@@ -1,6 +1,6 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery } from "$lib/server/surreal"
+import { multiSquery, squery } from "$lib/server/surreal"
 import { auth } from "$lib/server/lucia"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -47,11 +47,10 @@ export const actions = {
 						UPDATE $user SET theme = $theme;
 
 						IF $og.bio.text != $bio {
-							LET $textContent = CREATE textContent CONTENT {
+							UPDATE $user SET bio += {
 								text: $bio,
 								updated: time::now(),
-							};
-							UPDATE $place SET bio += $textContent;
+							}
 						}`,
 					{
 						user: `user:${user.id}`,

@@ -26,8 +26,6 @@ await db.query(surql`
 	DEFINE INDEX numberI ON TABLE user COLUMNS number UNIQUE;
 	DEFINE INDEX emailI ON TABLE user COLUMNS email UNIQUE;
 
-	
-
 	DEFINE FUNCTION fn::id() {
 		RETURN function((UPDATE ONLY stuff:increment SET ids += 1).ids) {
 			return arguments[0].toString(36)

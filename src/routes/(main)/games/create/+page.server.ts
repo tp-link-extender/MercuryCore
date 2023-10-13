@@ -67,17 +67,14 @@ export const actions = {
 
 		await squery(
 			surql`
-				LET $textContent = CREATE textContent CONTENT {
-					text: $description,
-					updated: time::now(),
-				};
-				RELATE $user->wrote->$textContent;
-
 				LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
 				LET $place = CREATE place CONTENT {
 					id: $id,
 					name: $name,
-					description: $textContent,
+					description: [{
+						text: $description,
+						updated: time::now(),
+					}],
 					serverIP: $serverIP,
 					serverPort: $serverPort,
 					privateServer: $privateServer,

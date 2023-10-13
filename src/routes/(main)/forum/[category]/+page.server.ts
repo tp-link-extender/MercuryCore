@@ -13,6 +13,7 @@ export async function load({ locals, params }) {
 					*,
 					(SELECT
 						*,
+						meta::id(id) AS id,
 						(SELECT text, updated FROM $parent.content
 						ORDER BY updated DESC) AS content,
 						(SELECT number, username FROM <-posted<-user)[0] AS author,

@@ -41,7 +41,7 @@ export async function load({ locals, params }) {
 					$user ∈ <-owns<-user.id AS owned,
 
 					(SELECT text, updated FROM $parent.description
-					ORDER BY updated DESC) AS description,
+					ORDER BY updated DESC)[0] AS description,
 
 					${SELECTCOMMENTS}
 				FROM $asset`,
@@ -58,7 +58,7 @@ export async function load({ locals, params }) {
 				id: string
 				text: any
 				updated: string
-			}[]
+			}
 			id: string
 			name: string
 			owned: boolean
@@ -144,16 +144,13 @@ export const actions = {
 
 		await squery(
 			surql`
-				LET $textContent = CREATE textContent CONTENT {
-					text: $content,
-					updated: time::now(),
-				};
-				RELATE $user->wrote->$textContent;
-
 				LET $reply = CREATE $assetComment CONTENT {
 					posted: time::now(),
 					visibility: "Visible",
-					content: $textContent,
+					content: [{
+						text: $content,
+						updated: time::now(),
+					}],
 				};
 				RELATE $reply->replyToAsset->$asset;
 				IF $replyId {
@@ -345,8 +342,7 @@ export const actions = {
 			(await squery(
 				surql`
 					SELECT
-						string::split(type::string((
-							<-posted<-user.id)[0]), ":")[1] AS authorId,
+						meta::id((<-posted<-user.id)[0]) AS authorId,
 						visibility
 					FROM $assetComment`,
 				{ assetComment: `assetComment:${id}` },
@@ -369,13 +365,11 @@ export const actions = {
 				LET $poster = (SELECT
 					<-posted<-user AS poster
 				FROM $assetComment)[0].poster;
-				LET $textContent = CREATE textContent CONTENT {
+
+				UPDATE $assetComment SET content += {
 					text: "[deleted]",
 					updated: time::now(),
 				};
-				RELATE $poster->wrote->$textContent;
-
-				UPDATE $assetComment SET content += $textContent;
 				UPDATE $assetComment SET visibility = "Deleted"`,
 			{ assetComment: `assetComment:${id}` },
 		)
@@ -397,13 +391,11 @@ export const actions = {
 				LET $reply = SELECT (<-posted<-user)[0] AS poster
 					FROM $assetComment;
 				LET $poster = $reply.poster;
-				LET $textContent = CREATE textContent CONTENT {
+
+				UPDATE $assetComment SET content += {
 					text: "[removed]",
 					updated: time::now(),
 				};
-				RELATE $poster->wrote->$textContent;
-
-				UPDATE $assetComment SET content += $textContent;
 				UPDATE $assetComment SET visibility = "Moderated";
 				COMMIT TRANSACTION`,
 			{ assetComment: `assetComment:${id}` },

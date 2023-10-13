@@ -135,19 +135,16 @@ export const actions = {
 				RELATE $user->owns->$imageAsset;
 				RELATE $user->created->$imageAsset;
 
-				LET $textContent = CREATE textContent CONTENT {
-					text: $description,
-					updated: time::now(),
-				};
-				RELATE $user->wrote->$textContent;
-
 				LET $id2 = (UPDATE ONLY stuff:increment SET asset += 1).asset;
 				LET $asset = CREATE asset CONTENT {
 					id: $id2,
 					name: $name,
 					type: $assetType,
 					price: $price,
-					description: $textContent,
+					description: [{
+						text: $description,
+						updated: time::now(),
+					}],
 					created: time::now(),
 					updated: time::now(),
 				};

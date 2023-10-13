@@ -58,8 +58,8 @@
 				{/if}
 			</div>
 			<p class="mt-2">
-				{#if data.description[0]}
-					{data.description[0].text}
+				{#if data.description}
+					{data.description.text}
 				{:else}
 					<em>No description available</em>
 				{/if}
