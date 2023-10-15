@@ -34,7 +34,7 @@
 		usernav = [
 			["fa-user-group", "Friends", "/requests"],
 			["fa-box-open-full", "Inventory", "/inventory"],
-			["fa-user-pen", "Avatar", "/avatar"],
+			["fa-user-pen", "Character", "/character"],
 			["fa-gears", "Settings", "/settings"],
 		],
 		searchCategories = [

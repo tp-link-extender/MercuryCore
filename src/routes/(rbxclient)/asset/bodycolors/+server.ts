@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import { query, squery } from "$lib/server/surreal"
+import { squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, setHeaders }) {
@@ -22,7 +22,7 @@ export async function GET({ url, setHeaders }) {
 		{ id: parseInt(id) },
 	)
 
-	if (!getUser) throw error(404, "User Not Found")
+	if (!getUser) throw error(404, "User not found")
 
 	const colours = getUser.bodyColours
 

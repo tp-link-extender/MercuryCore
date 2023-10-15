@@ -3,34 +3,49 @@
 	// avatar shop and inventory pages.
 
 	export let asset: {
-		id: number
 		name: string
-		// ratio?: string | number
+		id: number
+		wearing: boolean
 	}
 	export let num: number
 	export let total: number
+	export let currentTab: string
 </script>
 
-<a
-	in:fade|global={{ num, total }}
-	href="/avatarshop/{asset.id}/{asset.name}"
-	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 px-2 mb-2 text-decoration-none assetcard">
-	<div class="card bg-a3">
-		<div class="card-body bg-a p-4 rounded-1">
-			<div class="text-center pb-4">
-				<img
-					src="/avatarshop/{asset.id}/{asset.name}/icon"
-					alt={asset.name} />
+<form
+	use:enhance
+	method="POST"
+	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 text-decoration-none p-0"
+	action="/character?/equip&tab={currentTab}&id={asset.id}&a={asset.wearing
+		? 'un'
+		: ''}equip">
+	<button in:fade|global={{ num, total }} class="assetcard px-2">
+		<div class="card bg-a3">
+			<div class="card-body bg-a p-4 rounded-1">
+				<div class="text-center pb-4">
+					<img
+						src="/avatarshop/{asset.id}/{asset.name}/icon"
+						alt={asset.name} />
+				</div>
+				{#if asset.wearing}
+					<span
+						class="badge text-bg-primary position-absolute translate-middle">
+						Wearing
+					</span>
+				{/if}
+				<p class="m-0">
+					{asset.name}
+				</p>
 			</div>
-            <span class="badge text-bg-primary position-absolute translate-middle">Wearing</span>
-			<p class="m-0">
-				{asset.name}
-			</p>
 		</div>
-	</div>
-</a>
+	</button>
+</form>
 
 <style lang="stylus">
+	button
+		background none
+		border none
+
 	.card
 		border-width 2px
 

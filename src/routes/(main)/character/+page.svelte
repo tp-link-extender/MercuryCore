@@ -16,7 +16,7 @@
 			const formdata = new FormData()
 			formdata.append("q", query)
 
-			const response = await fetch("/avatar?/search", {
+			const response = await fetch("/character?/search", {
 					method: "POST",
 					body: formdata,
 				}),
@@ -126,7 +126,10 @@
 	}
 
 	$: assets = (query && browser ? searchedData : data.assets || []).filter(
-		a => a.type == tabTypes[tabData.currentTab]
+		a =>
+			tabData.currentTab == "Recent"
+				? true
+				: a.type == tabTypes[tabData.currentTab]
 	)
 </script>
 
@@ -179,7 +182,7 @@
 			<TabNav bind:tabData justify />
 			<form
 				on:submit|preventDefault
-				action="/avatar?tab={tabData.currentTab}"
+				action="/character?tab={tabData.currentTab}"
 				class="row mb-4">
 				<input type="hidden" name="tab" value={tabData.currentTab} />
 				<div class="input-group">
@@ -201,7 +204,11 @@
 			</form>
 			<div class="row">
 				{#each assets || [] as asset, num}
-					<AvatarItem {asset} {num} total={(assets || []).length} />
+					<AvatarItem
+						{asset}
+						{num}
+						currentTab={tabData.currentTab}
+						total={(assets || []).length} />
 				{/each}
 				{#if query && assets.length == 0}
 					<h2 class="fs-5 light-text mt-12">
