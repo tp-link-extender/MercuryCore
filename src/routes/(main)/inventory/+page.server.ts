@@ -16,7 +16,8 @@ export const load = async ({ locals }) => ({
 				price,
 				type,
 				<-owns<-user AS owners
-			FROM asset WHERE $user ∈ <-owns<-user`,
+			FROM asset WHERE $user ∈ <-owns<-user
+				AND type ∈ [17, 18, 2, 11, 12, 19]`,
 		{ user: `user:${(await authorise(locals)).user.id}` },
 	),
 })

@@ -61,10 +61,12 @@ export const actions = {
 					type
 				FROM asset
 				WHERE $user ∈ <-owns<-user
-					AND string::lowercase($query) ∈ string::lowercase(name)`,
+					AND string::lowercase($query) ∈ string::lowercase(name)
+					AND type ∈ $allowedTypes`,
 			{
 				query: ((await request.formData()).get("q") as string).trim(),
 				user: `user:${(await authorise(locals)).user.id}`,
+				allowedTypes,
 			},
 		),
 	}),
