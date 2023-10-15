@@ -20,7 +20,7 @@
 	<h1 class="mb-2 light-text">Create</h1>
 	<div class="row">
 		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData tabs />
+			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>

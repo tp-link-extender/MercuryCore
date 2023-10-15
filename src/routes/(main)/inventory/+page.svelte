@@ -17,7 +17,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-lg-2 col-md-3">
-			<TabNav bind:tabData vertical tabs />
+			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-xl-9 col-lg-9">
 			<div class="container">

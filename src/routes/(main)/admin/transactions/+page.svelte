@@ -14,7 +14,7 @@
 	</a>
 	<div class="row mt-6">
 		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData tabs />
+			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
@@ -53,7 +53,9 @@
 										{transaction.taxRate}% tax
 									{/if}
 									<small>
-										{new Date(transaction.time).toLocaleString()}
+										{new Date(
+											transaction.time
+										).toLocaleString()}
 									</small>
 								</div>
 								{#if value}

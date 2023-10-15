@@ -279,9 +279,7 @@
 		</div>
 	</div>
 
-	<div class="bg-a">
-		<TabNav bind:tabData justify />
-	</div>
+	<TabNav bind:tabData justify />
 
 	<Tab {tabData}>
 		{data.description.text || ""}
@@ -303,11 +301,9 @@
 				Autopilot to get started easily.
 			</p>
 			<div class="d-flex align-items-start mb-4">
-				<div class="bg-a me-4">
-					<TabNav bind:tabData={tabData2} vertical />
-					<!-- Prevents nested tabs from breaking -->
-					{((tabData2.num = 0), "")}
-				</div>
+				<TabNav bind:tabData={tabData2} vertical />
+				<!-- Prevents nested tabs from breaking -->
+				{((tabData2.num = 0), "")}
 				<Tab tabData={tabData2}>
 					<p class="light-text mb-1">
 						You can host your server by opening your map in <button
@@ -396,29 +392,29 @@
 		{/if}
 		<h4 class="light-text">Server List</h4>
 		{#if data.serverPing > Date.now() / 1000 - 35}
-		<div class="card mb-2">
-			<div class="card-body">
-				<div class="row">
-					<div class="col col-2">
-						<p class="light-text mb-2">
-							Currently Playing: {data.players
-								.length}/{data.maxPlayers}
-						</p>
-						<button
-							on:click={placeLauncher}
-							id="join"
-							class="btn btn-sm btn-success">
-							Join Server
-						</button>
-					</div>
-					<div class="col d-flex gap-3">
-						{#each data.players as user}
-							<User {user} size="4.5rem" bg="darker" />
-						{/each}
+			<div class="card mb-2">
+				<div class="card-body">
+					<div class="row">
+						<div class="col col-2">
+							<p class="light-text mb-2">
+								Currently Playing: {data.players
+									.length}/{data.maxPlayers}
+							</p>
+							<button
+								on:click={placeLauncher}
+								id="join"
+								class="btn btn-sm btn-success">
+								Join Server
+							</button>
+						</div>
+						<div class="col d-flex gap-3">
+							{#each data.players as user}
+								<User {user} size="4.5rem" bg="darker" />
+							{/each}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 		{:else}
 			This server is offline.
 		{/if}
