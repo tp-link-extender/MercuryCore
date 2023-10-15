@@ -131,6 +131,7 @@ export const actions = {
 					description: [],
 					created: time::now(),
 					updated: time::now(),
+					visibility: "Pending",
 				};
 				RELATE $user->owns->$imageAsset;
 				RELATE $user->created->$imageAsset;
@@ -147,6 +148,7 @@ export const actions = {
 					}],
 					created: time::now(),
 					updated: time::now(),
+					visibility: "Pending",
 				};
 				RELATE $user->owns->$asset;
 				RELATE $user->created->$asset;

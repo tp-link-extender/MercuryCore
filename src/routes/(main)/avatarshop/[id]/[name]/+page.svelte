@@ -37,9 +37,9 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col pe-4 pb-4">
 			<img
-				class="image me-4 mb-4"
+				class="image"
 				src="/avatarshop/{data.id}/{data.name}/icon"
 				alt={data.name} />
 		</div>
