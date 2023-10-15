@@ -75,7 +75,7 @@ export const actions = {
 				await transaction(
 					{ id: user.id },
 					{ number: 1 },
-					10,
+					0,
 					{
 						note: `Created place ${name}`,
 						link: `/place/${place.id}`,

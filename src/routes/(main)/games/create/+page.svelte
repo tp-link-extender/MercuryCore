@@ -134,7 +134,7 @@
 			{:else}
 				Create (
 				<i class="fa fa-gem" />
-				10 )
+				Free )
 			{/if}
 		</button>
 	</fieldset>
