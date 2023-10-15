@@ -7,7 +7,7 @@ export const load = async ({ url }) => {
 	const searchQ = url.searchParams.get("q") || "",
 		category = url.searchParams.get("c")?.toLowerCase() || ""
 
-	if (!searchQ) throw error(400, "No query provided")
+	if (!searchQ) throw error(400, "Missing search query")
 	if (category && !["users", "places", "assets", "groups"].includes(category))
 		throw error(400, "Invalid category")
 

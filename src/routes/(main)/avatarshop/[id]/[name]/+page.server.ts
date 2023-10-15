@@ -316,7 +316,7 @@ export const actions = {
 	delete: async ({ url, locals }) => {
 		const { user } = await authorise(locals),
 			id = url.searchParams.get("id")
-		if (!id) throw error(400, "No comment id provided")
+		if (!id) throw error(400, "Missing comment id")
 		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
 		// Prevents incorrect ids erroring the Surreal query as well
 
@@ -358,7 +358,7 @@ export const actions = {
 		await authorise(locals, 4)
 
 		const id = url.searchParams.get("id")
-		if (!id) throw error(400, "No comment id provided")
+		if (!id) throw error(400, "Missing comment id")
 		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
 
 		const findComment = (await surreal.select(`assetComment:${id}`))[0]
