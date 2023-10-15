@@ -229,6 +229,7 @@ export const actions = {
 					name: string
 					owned: boolean
 					price: number
+					visibility: string
 				}>(
 					surql`
 						SELECT
@@ -246,6 +247,8 @@ export const actions = {
 				)
 				if (!asset) throw error(404, "Not found")
 				if (asset.owned) throw error(400, "You already own this item")
+				if (asset.visibility != "Visible")
+					throw error(400, "This item hasn't been approved yet")
 
 				try {
 					await transaction(

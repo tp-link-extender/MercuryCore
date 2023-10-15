@@ -94,9 +94,10 @@ export const actions = {
 				)
 					return formError(form, ["inviteExpiry"], ["Invalid date"])
 
-				await query(
+				const log = await query(
 					surql`
-						LET $key = CREATE regKey CONTENT {
+						BEGIN TRANSACTION;
+						LET $key = CREATE ${customInviteEnabled ? "$" : ""}regKey CONTENT {
 							usesLeft: $inviteUses,
 							expiry: $expiry,
 							created: time::now(),
@@ -104,16 +105,23 @@ export const actions = {
 						RELATE $user->created->$key;
 						CREATE auditLog CONTENT {
 							action: "Administration",
-							note: string::concat("Created invite key ", meta::id($key)),
+							note: string::concat("Created invite key ", meta::id($key[0].id)),
 							user: $user,
 							time: time::now()
-						}`,
+						};
+						COMMIT TRANSACTION;`,
 					{
 						user: `user:${user.id}`,
 						inviteUses,
 						expiry,
+						regKey: `regKey:⟨${customInvite}⟩`,
 					},
 				)
+
+				if (typeof log == "string")
+					return message(form, "This invite key already exists", {
+						status: 400,
+					})
 
 				return message(
 					form,

@@ -15,7 +15,7 @@
 	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6
 		text-decoration-none assetcard px-2">
 	<div class="card bg-a3">
-		<div class="card-body bg-a p-4 rounded-1 light-text">
+		<div class="card-body bg-a p-4 pb-3 rounded-1 light-text">
 			<div class="text-center pb-4">
 				<img
 					src="/avatarshop/{asset.id}/{asset.name}/icon"
@@ -31,10 +31,22 @@
 					full
 					bg="background" />
 			</span>
-            <div class="btn-group mt-2">
-				<button type="button" class="btn btn-sm btn-primary ms-0 mb-1">Approve</button>
-				<button type="button" class="btn btn-sm btn-danger me-0 mb-1">Deny</button>
-            </div>
+			<div class="btn-group mt-2">
+				<form
+					use:enhance
+					method="POST"
+					action="/admin/asset?id={asset.id}&a=approve"
+					class="d-inline">
+					<button class="btn btn-sm btn-primary mb-1">Approve</button>
+				</form>
+				<form
+					use:enhance
+					method="POST"
+					action="/admin/asset?id={asset.id}&a=approve"
+					class="d-inline">
+					<button class="btn btn-sm btn-danger mb-1">Deny</button>
+				</form>
+			</div>
 		</div>
 	</div>
 </label>

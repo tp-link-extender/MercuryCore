@@ -9,20 +9,22 @@ export async function GET({ params }) {
 
 	const id = parseInt(params.id)
 
-	if (
-		!(await squery<{
-			id: number
-			name: string
-		}>(
-			surql`
-				SELECT
-					name, 
-					meta::id(id) AS id
-				FROM $asset`,
-			{ asset: `asset:${params.id}` },
-		))
+	const asset = await squery<{
+		id: number
+		name: string
+		visibility: string
+	}>(
+		surql`
+			SELECT
+				meta::id(id) AS id,
+				name,
+				visibility
+			FROM $asset`,
+		{ asset: `asset:${params.id}` },
 	)
-		throw error(404, "Not found")
+
+	if (!asset) throw error(404, "Not found")
+	if (asset.visibility != "Public") throw redirect(302, `/m....png`)
 
 	let file
 
@@ -33,5 +35,5 @@ export async function GET({ params }) {
 		} catch (e) {}
 
 	if (file) return new Response(file)
-	else throw redirect(302, `/m....png`)
+	throw redirect(302, `/m....png`)
 }
