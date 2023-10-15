@@ -6,7 +6,7 @@ export const load = async () => ({
 		name: string
 		price: number
 		id: number
-		type: string
+		type: number
 	}>(surql`
 		SELECT
 			meta::id(id) AS id,
@@ -18,7 +18,7 @@ export const load = async () => ({
 
 export const actions = {
 	default: async ({ request }) => ({
-		places: await query(
+		assets: await query(
 			surql`
 				SELECT
 					meta::id(id) AS id,
@@ -27,7 +27,7 @@ export const actions = {
 					type
 				FROM asset
 				WHERE string::lowercase($query) ∈ string::lowercase(name)`,
-			{ query: (await request.formData()).get("query") as string },
+			{ query: (await request.formData()).get("q") as string },
 		),
 	}),
 }

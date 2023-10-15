@@ -1,12 +1,14 @@
 <script lang="ts">
+	export let data
+
 	let query = "",
-		searchedData: any[] = []
+		searchedData: typeof data.places = []
 
 	// Run function whenever query changes
 	$: query &&
 		(async () => {
 			const formdata = new FormData()
-			formdata.append("query", query)
+			formdata.append("q", query)
 
 			const response = await fetch("/games", {
 					method: "POST",
@@ -23,8 +25,6 @@
 		capture: () => query,
 		restore: v => (query = v),
 	}
-
-	export let data
 </script>
 
 <Head title="Discover" />

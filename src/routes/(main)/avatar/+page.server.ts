@@ -18,7 +18,7 @@ export const load = async ({ locals }) => ({
 		name: string
 		price: number
 		id: number
-		type: string
+		type: number
 	}>(
 		surql`
 			SELECT
@@ -32,8 +32,24 @@ export const load = async ({ locals }) => ({
 	),
 })
 
-
 export const actions = {
+	search: async ({ request, locals }) => ({
+		assets: await query(
+			surql`
+				SELECT
+					meta::id(id) AS id,
+					name,
+					price,
+					type
+				FROM asset
+				WHERE string::lowercase($query) ∈ string::lowercase(name)
+					AND $user ∈ <-owns<-user`,
+			{
+				query: (await request.formData()).get("query") as string,
+				user: `user:${(await authorise(locals)).user.id}`,
+			},
+		),
+	}),
 	paint: async ({ locals, url }) => {
 		const { user } = await authorise(locals),
 			bodyPartQuery = url.searchParams.get("p"),

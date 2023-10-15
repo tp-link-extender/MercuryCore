@@ -2,15 +2,34 @@
 	export let data, form
 	const { user } = data
 
-	let tabData = TabData(data.url, [
-		"Recent",
-		"Heads",
-		"Faces",
-		"T-Shirts",
-		"Shirts",
-		"Pants",
-		"Gear",
-	])
+	let query = "",
+		searchedData: typeof data.assets = []
+
+	// Run function whenever query changes
+	$: query &&
+		(async () => {
+			const formdata = new FormData()
+			formdata.append("q", query)
+
+			const response = await fetch("/avatar?/search", {
+					method: "POST",
+					body: formdata,
+				}),
+				result: any = deserialize(await response.text())
+
+			searchedData = result.data.assets
+		})()
+
+	const tabTypes: { [k: string]: number } = {
+		Recent: 0,
+		Heads: 17,
+		Faces: 18,
+		"T-Shirts": 2,
+		Shirts: 11,
+		Pants: 12,
+		Gear: 19,
+	}
+	let tabData = TabData(data.url, Object.keys(tabTypes))
 
 	const bodyParts: { [k: string]: number } = {
 		Head: user?.bodyColours.Head,
@@ -100,6 +119,10 @@
 		LeftLeg: `left: 3rem; top: 148px; height: 88px; width: 40px`,
 		RightLeg: `left: 96px; top: 148px; height: 88px; width: 40px`,
 	}
+
+	$: assets = (query ? searchedData : data.assets || []).filter(
+		a => a.type == tabTypes[tabData.currentTab]
+	)
 </script>
 
 <div class="container">
@@ -150,103 +173,32 @@
 		<div class="col-xl-9 col-lg-9 col-md-12">
 			<TabNav bind:tabData justify />
 			<form
-			use:enhance
-			method="POST"
-			action="/search?c=assets"
-			class="row mb-4">
-			<div class="input-group">
-				<input
-					type="text"
-					name="query"
-					class="form-control light-text valid"
-					placeholder="Search for an item"
-					aria-label="Search for an item"
-					aria-describedby="button-addon2" />
-				<button
-					class="btn btn-success"
-					aria-label="Search"
-					id="button-addon2">
-					<i class="fa fa-magnifying-glass" />
-				</button>
+				use:enhance
+				method="POST"
+				action="/search?c=assets"
+				class="row mb-4">
+				<div class="input-group">
+					<input
+						bind:value={query}
+						type="text"
+						name="query"
+						class="form-control light-text valid"
+						placeholder="Search for an item"
+						aria-label="Search for an item"
+						aria-describedby="button-addon2" />
+					<button
+						class="btn btn-success"
+						aria-label="Search"
+						id="button-addon2">
+						<i class="fa fa-magnifying-glass" />
+					</button>
+				</div>
+			</form>
+			<div class="row">
+				{#each assets || [] as asset, num}
+					<AvatarItem {asset} {num} total={(assets || []).length} />
+				{/each}
 			</div>
-		</form>
-			<Tab {tabData}>
-				<!-- Recent -->
-				<div class="row">
-					{#each data.assets || [] as asset, num}
-						<AvatarItem
-							{asset}
-							{num}
-							total={(data.assets || []).length} />
-					{/each}
-				</div>
-			</Tab>
-			<Tab {tabData}>
-				<!-- Heads -->
-				<div class="row">
-					{#each data.assets || [] as asset, num}
-						<AvatarItem
-							{asset}
-							{num}
-							total={(data.assets || []).length} />
-					{/each}
-				</div>
-			</Tab>
-			<Tab {tabData}>
-				<!-- Faces -->
-				<div class="row">
-					{#each data.assets || [] as asset, num}
-						<AvatarItem
-							{asset}
-							{num}
-							total={(data.assets || []).length} />
-					{/each}
-				</div>
-			</Tab>
-			<Tab {tabData}>
-				<!-- T-Shirts -->
-				<div class="row">
-					{#each data.assets || [] as asset, num}
-						<AvatarItem
-							{asset}
-							{num}
-							total={(data.assets || []).length} />
-					{/each}
-				</div>
-			</Tab>
-			<Tab {tabData}>
-				<!-- Shirts -->
-				<div class="row">
-					{#each data.assets || [] as asset, num}
-						<AvatarItem
-							{asset}
-							{num}
-							total={(data.assets || []).length} />
-					{/each}
-				</div>
-			</Tab>
-			<Tab {tabData}>
-				<!-- Pants -->
-				<div class="row">
-					{#each data.assets || [] as asset, num}
-						<AvatarItem
-							{asset}
-							{num}
-							total={(data.assets || []).length} />
-					{/each}
-				</div>
-			</Tab>
-			<Tab {tabData}>
-				<!-- Gear -->
-				<div class="row">
-					{#each data.assets || [] as asset, num}
-						<AvatarItem
-							{asset}
-							{num}
-							total={(data.assets || []).length} />
-					{/each}
-				</div>
-			</Tab>
 		</div>
 	</div>
 </div>
