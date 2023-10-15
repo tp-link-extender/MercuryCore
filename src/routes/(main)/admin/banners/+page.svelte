@@ -48,7 +48,7 @@
 	</a>
 	<div class="row mt-6">
 		<div class="col-lg-2 col-md-3 mb-6 pe-0">
-			<TabNav bind:tabData tabs />
+			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
@@ -181,9 +181,7 @@
 								<td>
 									<button
 										type="button"
-										on:click={viewBody(
-											banner
-										)}
+										on:click={viewBody(banner)}
 										class="btn btn-sm btn-success">
 										View Body
 									</button>
@@ -251,7 +249,10 @@
 				on:click={() => modal.set(false)}
 				aria-label="Close" />
 		</div>
-		<form use:enhance method="POST" action="?id={bannerData.id}&a=updateBody">
+		<form
+			use:enhance
+			method="POST"
+			action="?id={bannerData.id}&a=updateBody">
 			<textarea
 				bind:value={$form.bannerBody}
 				{...$constraints.bannerBody}
@@ -260,7 +261,9 @@
 				rows="1"
 				class="form-control {$errors.bannerBody
 					? 'is-in'
-					: ''}valid mb-4 text-{bannerData.textLight ? "light" : "dark"}"
+					: ''}valid mb-4 text-{bannerData.textLight
+					? 'light'
+					: 'dark'}"
 				style="background: {bannerData.bgColour} !important" />
 			<p class="col-12 mb-4 text-danger">
 				{$errors.bannerBody || ""}

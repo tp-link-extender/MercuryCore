@@ -78,7 +78,7 @@
 	</h2>
 	<div class="row">
 		<div class="col-lg-2 col-md-3 mb-6 pe-0">
-			<TabNav bind:tabData tabs />
+			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-lg-10 col-md-9">
 			{#each tabNames.slice(0, -1) as key}

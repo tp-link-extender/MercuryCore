@@ -51,7 +51,7 @@ export const actions = {
 				["You may only have 2 places at most"],
 			)
 
-		const id = (await squery(
+		const id = (await query(
 			surql`stuff:increment.place`,
 		)) as unknown as number
 

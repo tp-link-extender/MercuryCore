@@ -104,9 +104,7 @@
 		</div>
 	</div>
 
-	<div class="bg-a">
-		<TabNav bind:tabData justify />
-	</div>
+	<TabNav bind:tabData justify />
 
 	<Tab {tabData} />
 
@@ -171,10 +169,7 @@
 				?
 			</p>
 
-			<form
-				method="POST"
-				action="?/buy&a=buy"
-				class="d-inline">
+			<form method="POST" action="?/buy&a=buy" class="d-inline">
 				<button class="btn btn-success">
 					{data.price > 0 ? "Buy Now" : "Get"}
 				</button>
