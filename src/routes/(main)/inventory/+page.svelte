@@ -12,7 +12,7 @@
 
 <Head title="Inventory" />
 
-<h1 class="light-text text-center">Inventory</h1>
+<h1 class="light-text text-center mb-4">Inventory</h1>
 
 <div class="container">
 	<div class="row">
@@ -21,6 +21,27 @@
 		</div>
 		<div class="col-xl-9 col-lg-9">
 			<div class="container">
+				<form
+				use:enhance
+				method="POST"
+				action="/search?c=assets"
+				class="row mb-4">
+				<div class="input-group">
+					<input
+						type="text"
+						name="query"
+						class="form-control light-text valid"
+						placeholder="Search for an item"
+						aria-label="Search for an item"
+						aria-describedby="button-addon2" />
+					<button
+						class="btn btn-success"
+						aria-label="Search"
+						id="button-addon2">
+						<i class="fa fa-magnifying-glass" />
+					</button>
+				</div>
+			</form>
 				<div class="row">
 					{#each data.assets || [] as asset, num}
 						<Asset

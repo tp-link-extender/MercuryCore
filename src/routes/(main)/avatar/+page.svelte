@@ -104,7 +104,6 @@
 
 <div class="container">
 	<h1 class="text-white">Avatar</h1>
-	<p class="light-text">Avatar system in alpha.</p>
 	<div class="row mt-6">
 		<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
 			<div class="card mb-4">
@@ -150,7 +149,12 @@
 		</div>
 		<div class="col-xl-9 col-lg-9 col-md-12">
 			<TabNav bind:tabData justify />
-			<!-- <div class="input-group">
+			<form
+			use:enhance
+			method="POST"
+			action="/search?c=assets"
+			class="row mb-4">
+			<div class="input-group">
 				<input
 					type="text"
 					name="query"
@@ -164,7 +168,85 @@
 					id="button-addon2">
 					<i class="fa fa-magnifying-glass" />
 				</button>
-			</div> -->
+			</div>
+		</form>
+			<Tab {tabData}>
+				<!-- Recent -->
+				<div class="row">
+					{#each data.assets || [] as asset, num}
+						<AvatarItem
+							{asset}
+							{num}
+							total={(data.assets || []).length} />
+					{/each}
+				</div>
+			</Tab>
+			<Tab {tabData}>
+				<!-- Heads -->
+				<div class="row">
+					{#each data.assets || [] as asset, num}
+						<AvatarItem
+							{asset}
+							{num}
+							total={(data.assets || []).length} />
+					{/each}
+				</div>
+			</Tab>
+			<Tab {tabData}>
+				<!-- Faces -->
+				<div class="row">
+					{#each data.assets || [] as asset, num}
+						<AvatarItem
+							{asset}
+							{num}
+							total={(data.assets || []).length} />
+					{/each}
+				</div>
+			</Tab>
+			<Tab {tabData}>
+				<!-- T-Shirts -->
+				<div class="row">
+					{#each data.assets || [] as asset, num}
+						<AvatarItem
+							{asset}
+							{num}
+							total={(data.assets || []).length} />
+					{/each}
+				</div>
+			</Tab>
+			<Tab {tabData}>
+				<!-- Shirts -->
+				<div class="row">
+					{#each data.assets || [] as asset, num}
+						<AvatarItem
+							{asset}
+							{num}
+							total={(data.assets || []).length} />
+					{/each}
+				</div>
+			</Tab>
+			<Tab {tabData}>
+				<!-- Pants -->
+				<div class="row">
+					{#each data.assets || [] as asset, num}
+						<AvatarItem
+							{asset}
+							{num}
+							total={(data.assets || []).length} />
+					{/each}
+				</div>
+			</Tab>
+			<Tab {tabData}>
+				<!-- Gear -->
+				<div class="row">
+					{#each data.assets || [] as asset, num}
+						<AvatarItem
+							{asset}
+							{num}
+							total={(data.assets || []).length} />
+					{/each}
+				</div>
+			</Tab>
 		</div>
 	</div>
 </div>
