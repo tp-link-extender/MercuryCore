@@ -13,7 +13,7 @@ export const load = async () => ({
 			name,
 			price,
 			type
-		FROM asset`),
+		FROM asset WHERE visibility = "Visible"`),
 })
 
 export const actions = {

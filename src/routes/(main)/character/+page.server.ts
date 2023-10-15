@@ -139,11 +139,13 @@ export const actions = {
 		const asset = await squery<{
 			id: number
 			type: number
+			visibility: string
 		}>(
 			surql`
 				SELECT
 					meta::id(id) AS id,
-					type
+					type,
+					visibility
 				FROM $asset
 				WHERE $user ∈ <-owns<-user`,
 			{
@@ -155,6 +157,9 @@ export const actions = {
 		if (!asset) throw error(404, "Asset not found or not owned")
 
 		if (!allowedTypes.includes(asset.type))
+			throw error(400, "Can't equip this type of asset")
+
+		if (asset.visibility != "Visible")
 			throw error(400, "Can't equip this type of asset")
 
 		switch (action) {
