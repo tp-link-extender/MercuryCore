@@ -80,7 +80,8 @@ export const load = async ({ url }) => {
 						name,
 						price
 					FROM asset
-					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)`,
+					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)
+						AND type ∈ [17, 18, 2, 11, 12, 19]`,
 				{ searchQ },
 			),
 		groups:

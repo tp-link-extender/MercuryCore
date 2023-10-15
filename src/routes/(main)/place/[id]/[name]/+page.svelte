@@ -233,9 +233,9 @@
 							</button>
 						</div>
 					</div>
-					<div class="progress rounded-pill" style="height: 3px">
+					<div class="progress d-flex" style="height: 3px">
 						<div
-							class="progress-bar bg-success"
+							class="bg-success"
 							role="progressbar"
 							aria-label="Likes"
 							style="width: {(data.likeCount /
@@ -246,7 +246,7 @@
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 						<div
-							class="progress-bar bg-danger"
+							class="bg-danger"
 							role="progressbar"
 							aria-label="Dislikes"
 							style="width: {(data.dislikeCount /
