@@ -134,8 +134,8 @@
 								autocomplete="off" />
 							<button
 								on:click|preventDefault={() => {
-									search
-										? goto(`/search?q=${search}&c=users`)
+									search.trim()
+										? goto(`/search?q=${search.trim()}&c=users`)
 										: null
 
 									searchCompleted = true
@@ -144,7 +144,7 @@
 								title="Search">
 								<i class="fa fa-search" />
 							</button>
-							{#if search && !searchCompleted}
+							{#if search.trim() && !searchCompleted}
 								<div
 									transition:fade={{ duration: 150 }}
 									id="results"
@@ -153,7 +153,7 @@
 										<a
 											bind:this={searchResults[num]}
 											class="btn text-start light-text py-2"
-											href="/search?q={search}&c={category}"
+											href="/search?q={search.trim()}&c={category}"
 											title="Search {name}">
 											Search <b>{search}</b>
 											in {name}

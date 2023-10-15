@@ -1,13 +1,18 @@
 <script lang="ts">
+	import { browser } from "$app/environment"
+
 	export let data, form
 	const { user } = data
 
-	let query = "",
+	let query = data.query,
 		searchedData: typeof data.assets = []
 
 	// Run function whenever query changes
 	$: query &&
+		browser &&
 		(async () => {
+			if (query.trim().length < 1) return (searchedData = data.assets)
+
 			const formdata = new FormData()
 			formdata.append("q", query)
 
@@ -120,7 +125,7 @@
 		RightLeg: `left: 96px; top: 148px; height: 88px; width: 40px`,
 	}
 
-	$: assets = (query ? searchedData : data.assets || []).filter(
+	$: assets = (query && browser ? searchedData : data.assets || []).filter(
 		a => a.type == tabTypes[tabData.currentTab]
 	)
 </script>
@@ -173,15 +178,15 @@
 		<div class="col-xl-9 col-lg-9 col-md-12">
 			<TabNav bind:tabData justify />
 			<form
-				use:enhance
-				method="POST"
-				action="/search?c=assets"
+				on:submit|preventDefault
+				action="/avatar?tab={tabData.currentTab}"
 				class="row mb-4">
+				<input type="hidden" name="tab" value={tabData.currentTab} />
 				<div class="input-group">
 					<input
 						bind:value={query}
 						type="text"
-						name="query"
+						name="q"
 						class="form-control light-text valid"
 						placeholder="Search for an item"
 						aria-label="Search for an item"
@@ -198,6 +203,15 @@
 				{#each assets || [] as asset, num}
 					<AvatarItem {asset} {num} total={(assets || []).length} />
 				{/each}
+				{#if query && assets.length == 0}
+					<h2 class="fs-5 light-text mt-12">
+						{#if tabData.currentTab == "Recent"}
+							No recently worn items found with search term {query}
+						{:else}
+							No {tabData.currentTab} found with search term {query}
+						{/if}
+					</h2>
+				{/if}
 			</div>
 		</div>
 	</div>

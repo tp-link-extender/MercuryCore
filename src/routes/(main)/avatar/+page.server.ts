@@ -13,24 +13,37 @@ const brickColours = [
 	1028, 1029, 1030, 1031, 1032,
 ]
 
-export const load = async ({ locals }) => ({
-	assets: query<{
-		name: string
-		price: number
-		id: number
-		type: number
-	}>(
-		surql`
+export const load = async ({ locals, url }) => {
+	const searchQ = url.searchParams.get("q")?.trim()
+
+	return {
+		query: searchQ,
+		assets: query<{
+			name: string
+			price: number
+			id: number
+			type: number
+		}>(
+			surql`
 			SELECT
 				meta::id(id) AS id,
 				name,
 				price,
 				type,
 				<-owns<-user AS owners
-			FROM asset WHERE $user ∈ <-owns<-user`,
-		{ user: `user:${(await authorise(locals)).user.id}` },
-	),
-})
+			FROM asset WHERE $user ∈ <-owns<-user
+				${
+					searchQ
+						? surql`AND string::lowercase($query) ∈ string::lowercase(name)`
+						: ""
+				}`,
+			{
+				user: `user:${(await authorise(locals)).user.id}`,
+				query: searchQ,
+			},
+		),
+	}
+}
 
 export const actions = {
 	search: async ({ request, locals }) => ({
@@ -42,10 +55,10 @@ export const actions = {
 					price,
 					type
 				FROM asset
-				WHERE string::lowercase($query) ∈ string::lowercase(name)
-					AND $user ∈ <-owns<-user`,
+				WHERE $user ∈ <-owns<-user
+					AND string::lowercase($query) ∈ string::lowercase(name)`,
 			{
-				query: (await request.formData()).get("query") as string,
+				query: ((await request.formData()).get("q") as string).trim(),
 				user: `user:${(await authorise(locals)).user.id}`,
 			},
 		),
