@@ -7953,6 +7953,7 @@ end
 declare class PluginManager extends Instance
 	function ExportPlace(self, filePath: string?): nil
 	function ExportSelection(self, filePath: string?): nil
+	function CreatePlugin(self): Plugin
 end
 
 declare class PluginManagerInterface extends Instance
@@ -10278,4 +10279,5 @@ declare function loadfile(file: string): any
 declare function LoadLibrary(libraryName: string): { any }
 declare function settings(): GlobalSettings
 declare function UserSettings(): UserSettings
+declare function PluginManager(): PluginManager
 declare function ypcall(f: () -> any, ...: any): (boolean, any)

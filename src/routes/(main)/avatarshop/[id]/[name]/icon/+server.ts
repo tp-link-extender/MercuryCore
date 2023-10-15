@@ -1,5 +1,5 @@
 import surql from "$lib/surrealtag"
-import { query, squery } from "$lib/server/surreal"
+import { squery } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import fs from "fs"
 

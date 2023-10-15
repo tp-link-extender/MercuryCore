@@ -23,7 +23,7 @@ export const load = async ({ url }) => {
 	}
 
 	return {
-		searchQ,
+		query: searchQ,
 		category,
 		users:
 			category == "users" &&
