@@ -31,6 +31,10 @@
 					full
 					bg="background" />
 			</span>
+            <div class="btn-group mt-2">
+				<button type="button" class="btn btn-sm btn-primary ms-0 mb-1">Approve</button>
+				<button type="button" class="btn btn-sm btn-danger me-0 mb-1">Deny</button>
+            </div>
 		</div>
 	</div>
 </label>
@@ -41,7 +45,7 @@
 	class="modal-toggle"
 	bind:this={modal} />
 <div class="modal2 light-text">
-	<div class="modal-box d-flex flex-column p-4">
+	<div class="modal-box d-flex flex-column p-4 text-center">
 		<h2 class="fs-4">Asset {asset.name}</h2>
 		{#if asset.imageAsset}
 			<div class="text-center">
