@@ -1,12 +1,14 @@
 <script lang="ts">
+	export let data
+
 	let query = "",
-		searchedData: any[] = []
+		searchedData: typeof data.assets = []
 
 	// Run function whenever query changes
 	$: query &&
 		(async () => {
 			const formdata = new FormData()
-			formdata.append("query", query)
+			formdata.append("q", query)
 
 			const response = await fetch("/avatarshop", {
 					method: "POST",
@@ -14,7 +16,7 @@
 				}),
 				result: any = deserialize(await response.text())
 
-			searchedData = result.data.places
+			searchedData = result.data.assets
 		})()
 
 	// Snapshots allow form values on a page to be restored
@@ -23,8 +25,6 @@
 		capture: () => query,
 		restore: v => (query = v),
 	}
-
-	export let data
 
 	const tabTypes: { [k: string]: number } = {
 		"T-Shirts": 2,
@@ -36,8 +36,9 @@
 
 	let tabData = TabData(data.url, Object.keys(tabTypes))
 
-	const assetFilter = (a: { type: number }) =>
-		a.type == tabTypes[tabData.currentTab]
+	$: assets = (query ? searchedData : data.assets || []).filter(
+		a => a.type == tabTypes[tabData.currentTab]
+	)
 </script>
 
 <Head title="Catalog" />
@@ -191,10 +192,10 @@
 		<div class="col-xl-9 col-lg-9">
 			<div class="container">
 				<div class="row">
-					{#each (query ? searchedData : data.assets || []).filter(assetFilter) as asset, num (asset.id)}
+					{#each assets as asset, num (asset.id)}
 						<Asset {asset} {num} total={data.assets.length} />
 					{/each}
-					{#if query && searchedData.filter(assetFilter).length == 0}
+					{#if query && assets.length == 0}
 						<h2 class="fs-5 light-text mt-12">
 							No items found with search term {query}
 						</h2>

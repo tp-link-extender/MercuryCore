@@ -16,14 +16,14 @@ export const load = () => ({
 
 export const actions = {
 	default: async ({ request }) => ({
-		places: await query<Group>(
+		groups: await query<Group>(
 			surql`
 				SELECT
 					name,
 					count(<-member) AS memberCount
 				FROM group
 				WHERE string::lowercase($query) ∈ string::lowercase(name)`,
-			{ query: (await request.formData()).get("query") as string },
+			{ query: (await request.formData()).get("q") as string },
 		),
 	}),
 }

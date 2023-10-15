@@ -2,10 +2,12 @@ import surql from "$lib/surrealtag"
 import { query } from "$lib/server/surreal"
 
 type Place = {
-	id: string
+	id: number
 	name: string
 	playerCount: number
 	serverPing: number
+	likeCount: number
+	dislikeCount: number
 }
 
 export const load = () => ({
@@ -44,7 +46,7 @@ export const actions = {
 				WHERE !privateServer
 					AND !deleted
 					AND string::lowercase($query) ∈ string::lowercase(name)`,
-			{ query: (await request.formData()).get("query") as string },
+			{ query: (await request.formData()).get("q") as string },
 		),
 	}),
 }

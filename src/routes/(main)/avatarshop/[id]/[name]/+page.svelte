@@ -12,7 +12,7 @@
 			errors,
 			message,
 			constraints,
-			enhance,
+			enhance: enhance2,
 			delayed,
 			capture,
 			restore,
@@ -69,8 +69,8 @@
 			<div class="row mb-2">
 				<div class="col-md-4">
 					<p class="mb-2">
-						<strong>Sold:</strong>
-						{data.sold}
+						<strong>{data.sold}</strong>
+						sold
 					</p>
 					<p>
 						<strong>Type:</strong>
@@ -111,7 +111,7 @@
 	<Tab {tabData} />
 
 	<Tab {tabData}>
-		<form use:enhance class="p-1" method="POST" action="?/reply">
+		<form use:enhance2 class="p-1" method="POST" action="?/reply">
 			<label for="content" class="form-label light-text mt-2">
 				Post a Comment
 			</label>
@@ -157,7 +157,7 @@
 <input type="checkbox" id="buy" class="modal-toggle" />
 <div class="modal2">
 	<div class="modal-box">
-		{#if data.user.currency > data.price}
+		{#if data.user.currency >= data.price}
 			<h3 class="text-lg font-bold light-text">Purchase {data.name}</h3>
 			<p class="pb-4">
 				Would you like to {data.price > 0 ? "buy" : "get"}
@@ -171,7 +171,10 @@
 				?
 			</p>
 
-			<form method="POST" action="?/buy&a=buy" class="d-inline">
+			<form
+				method="POST"
+				action="?/buy&a=buy"
+				class="d-inline">
 				<button class="btn btn-success">
 					{data.price > 0 ? "Buy Now" : "Get"}
 				</button>

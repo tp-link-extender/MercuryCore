@@ -8,7 +8,7 @@
 	$: query &&
 		(async () => {
 			const formdata = new FormData()
-			formdata.append("query", query)
+			formdata.append("q", query)
 
 			const response = await fetch("/groups", {
 					method: "POST",
@@ -16,7 +16,7 @@
 				}),
 				result: any = deserialize(await response.text())
 
-			searchedData = result.data.places
+			searchedData = result.data.groups
 		})()
 
 	// Snapshots allow form values on a page to be restored

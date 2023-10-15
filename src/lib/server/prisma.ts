@@ -88,10 +88,10 @@ export async function transaction(
 		{
 			...(sender?.number
 				? { senderNumber: sender.number }
-				: { senderId: sender.id }),
+				: { senderId: `user:${sender.id}` }),
 			...(receiver?.number
 				? { receiverNumber: receiver.number }
-				: { receiverId: receiver.id }),
+				: { receiverId: `user:${receiver.id}` }),
 			amountSent,
 			note,
 			link,
