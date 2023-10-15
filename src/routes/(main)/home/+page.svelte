@@ -25,44 +25,6 @@
 
 	export const snapshot = { capture, restore }
 
-	const news = [
-		{
-			time: new Date(),
-			title: "Mercury is now life!",
-			content:
-				"Mercury is now live! We have a lot of features in store for you, so stay tuned!",
-		},
-		{ time: new Date(), title: "Mercury is now life!", content: "Yes" },
-		{
-			time: new Date(),
-			title: "Mercury is now life!",
-			content:
-				"Mercury is now live! We have a lot of features in store for you, so stay tuned!",
-		},
-		{
-			time: new Date(),
-			title: "Mercury now has Free Rocks",
-			content: "Click here for Free Rocks!",
-		},
-		{
-			time: new Date(),
-			title: "Mercury",
-			content: "Pls can i have invite ke",
-		},
-		{
-			time: new Date(),
-			title: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-			content:
-				"Mercury is now live! We have a lot of features in store for you, so stay tunedeoeeeeeeeeeeeeeeeeeeeeee! eeeeeeeeeeeeeeeeeeeeeeeeeee eeeee",
-		},
-		{
-			time: new Date(),
-			title: "Mercury is now life!",
-			content:
-				"Mercury is now live! We have a lot of features in store for you, so stay tuned!",
-		},
-		{ time: new Date(), title: "Mercury is now love!", content: "Yes" },
-	]
 </script>
 
 <Head title="Home" />
@@ -184,38 +146,6 @@
 										{place}
 										{num}
 										total={data.places.length} />
-								</div>
-							</div>
-						{/each}
-					</div>
-				</div>
-			</div>
-			<div class="mt-12 col-12">
-				<h2 class="fs-4 light-text">News</h2>
-				<div id="news" class="card bg-darker">
-					<div class="card-body row">
-						{#each news as thing, num}
-							<div
-								in:fade|global={{ num, total: news.length }}
-								class="p-1 col-xl-4 col-lg-6 col-12">
-								<div class="card light-text h-100">
-									<div class="card-body p-2">
-										<div class="mb-2 light-text">
-											<div
-												class="font-bold text-center text-truncate">
-												{thing.title}
-											</div>
-											<div
-												class="date ms-auto italic text-center">
-												{thing.time.toLocaleString()}
-											</div>
-										</div>
-										<div
-											class="gradient position-absolute bottom-0 rounded-2" />
-										<p class="content mb-0 p-1">
-											{thing.content}
-										</p>
-									</div>
 								</div>
 							</div>
 						{/each}
