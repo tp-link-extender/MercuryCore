@@ -19,15 +19,14 @@ We recommend using [Visual Studio Code](https://code.visualstudio.com) as your e
 The following extensions are recommended:
 
 -   [Caddyfile Support](https://marketplace.visualstudio.com/items?itemName=matthewpi.caddyfile-support)
--   [Cypher Query Language Tools for Neoj](https://marketplace.visualstudio.com/items?itemName=AnthonyJGatlin.vscode-cypher-query-language-tools)
 -   [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 -   [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
 -   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 -   [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
 -   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
--   [Prisma](https://marketplace.visualstudio.com/items?itemName=Prisma.prisma)
 -   [Sass (.sass only)](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented)
 -   [stylus](https://marketplace.visualstudio.com/items?itemName=sysoev.language-stylus)
+-   [SurrealQL](https://marketplace.visualstudio.com/items?itemName=surrealdb.surrealql)
 -   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 
 # Editing the website
@@ -107,9 +106,7 @@ The site uses [TypeScript](https://typescriptlang.org) throughout, a language th
 
 Styling is done in [Stylus](https://stylus-lang.com) and [Sass](https://sass-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
 
-The [PostgreSQL](https://postgresql.org) relational database is managed by [Prisma](https://prisma.io), which allows for complete type safety and intellisense, and makes it easier to query data. The schema for the database is stored in /prisma/schema.prisma.
-
-A [Redis](https://redis.io) database with the [RedisGraph](https://redis.com/modules/redis-graph) module is used to store a graph of data that is extremely relational, including likes, dislikes, friends, and followers. Redis also stores some of the site's global variables, such as the current site banner, tax rate, etc.
+[SurrealDB](https://surrealdb.com) is used as the database, a powerful multi-model database that easily allows for storing and querying the highly relational data used in Mercury.
 
 [Vite](https://vitejs.dev) brings the stack for the website together, giving an extremely fast and responsive development environment, as well as zero-downtime deployments.
 
