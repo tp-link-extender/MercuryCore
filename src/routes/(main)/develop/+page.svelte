@@ -12,6 +12,7 @@
 	if (user?.permissionLevel == 5) assetTypes.push(["Hats", "🎩", ""])
 
 	let tabData = TabData(data.url, ["Create", "Creations"])
+	let tabData2 = TabData(data.url, ["Shirts", "T-Shirts", "Pants", "Decals"])
 </script>
 
 <Head title="Create" />
@@ -38,18 +39,35 @@
 
 			<Tab {tabData}>
 				<div class="row">
-					{#each assetTypes as asset, num}
-						<AdminLink
-							href="/develop/create?asset={asset[2]}"
-							emoji={asset[1]}
-							{num}
-							total={assetTypes.length}
-							name={asset[0]}>
-							<small class="text-warning">
-								0 of this asset created and approved
-							</small>
-						</AdminLink>
-					{/each}
+					<TabNav bind:tabData={tabData2} justify />
+					<form
+						on:submit|preventDefault
+						action="/character?tab={tabData.currentTab}"
+						class="row mb-4">
+						<input
+							type="hidden"
+							name="tab"
+							value={tabData.currentTab} />
+						<div class="input-group">
+							<input
+								type="text"
+								name="q"
+								class="form-control light-text valid"
+								placeholder="Search for an item"
+								aria-label="Search for an item"
+								aria-describedby="button-addon2" />
+							<button
+								class="btn btn-success"
+								aria-label="Search"
+								id="button-addon2">
+								<i class="fa fa-magnifying-glass" />
+							</button>
+						</div>
+					</form>
+					<Tab tabData={tabData2} />
+					<Tab tabData={tabData2} />
+					<Tab tabData={tabData2} />
+					<Tab tabData={tabData2} />
 				</div>
 			</Tab>
 		</div>
