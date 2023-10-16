@@ -233,7 +233,7 @@
 							</button>
 						</div>
 					</div>
-					<div class="progress d-flex" style="height: 3px">
+					<div class="d-flex bg-a2" style="height: 3px">
 						<div
 							class="bg-success"
 							role="progressbar"

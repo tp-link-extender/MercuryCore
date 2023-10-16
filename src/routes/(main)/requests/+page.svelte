@@ -56,12 +56,4 @@
 		text-decoration none
 		div
 			word-break break-all
-
-	// .badge
-	// 	padding 0.75rem
-	.image-background
-		min-width 6rem
-		img
-			width 6rem
-			height 6rem !important
 </style>
