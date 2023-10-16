@@ -27,21 +27,12 @@
 <Head title={data.title} />
 
 <div class="container light-text">
-	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
-			<li class="breadcrumb-item">
-				<a href="/forum" class="accent-text">Forum</a>
-			</li>
-			<li class="breadcrumb-item">
-				<a href="/forum/{data.categoryName}" class="accent-text">
-					{data.categoryName}
-				</a>
-			</li>
-			<li class="breadcrumb-item active" aria-current="page">
-				{data.title}
-			</li>
-		</ol>
-	</nav>
+	<Breadcrumbs
+		path={[
+			["Forum", "/forum"],
+			[data.categoryName, `/forum/${data.categoryName}`],
+			[data.title, ""],
+		]} />
 
 	<div class="post card bg-darker flex-row">
 		<form
