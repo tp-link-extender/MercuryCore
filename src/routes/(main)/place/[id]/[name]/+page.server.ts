@@ -27,10 +27,12 @@ export async function load({ url, locals, params }) {
 			name: string
 			ownerUser: {
 				number: number
+			status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			players: {
 				number: number
+			status: "Playing" | "Online" | "Offline"
 				username: string
 			}[]
 			privateServer: boolean
@@ -54,10 +56,12 @@ export async function load({ url, locals, params }) {
 					maxPlayers,
 					(SELECT
 						username,
+						status,
 						number
 					FROM <-owns<-user)[0] AS ownerUser,
 					(SELECT
 						in.username AS username,
+						"Playing" AS status, # duh
 						in.number AS number
 					FROM <-playing
 					WHERE valid

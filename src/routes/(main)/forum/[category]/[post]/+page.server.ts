@@ -30,6 +30,7 @@ export async function load({ locals, params }) {
 	const forumPost = await query<{
 		author: {
 			number: number
+			status: "Playing" | "Online" | "Offline"
 			username: string
 		}
 		categoryName: string

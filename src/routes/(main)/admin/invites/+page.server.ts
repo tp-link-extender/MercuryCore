@@ -28,6 +28,7 @@ export async function load({ locals }) {
 			expiry: string
 			creator?: {
 				number: number
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 		}>(
@@ -37,6 +38,7 @@ export async function load({ locals }) {
 					meta::id(id) AS id,
 					(SELECT
 						number,
+						status,
 						username
 					FROM <-created<-user)[0] AS creator
 				FROM regKey

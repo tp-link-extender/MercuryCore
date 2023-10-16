@@ -43,6 +43,17 @@ export const adapter = (
 							LeftLeg: 119,
 							RightLeg: 119,
 						},
+						status: <future> {
+							(IF (SELECT * FROM ->playing
+								WHERE valid AND ping > time::now() - 35s
+							)[0] THEN
+								"Playing"
+							ELSE IF lastOnline > time::now() - 35s THEN
+								"Online"
+							ELSE
+								"Offline"
+							END)
+						}
 					};
 					UPDATE $u SET number =
 						(UPDATE ONLY stuff:increment

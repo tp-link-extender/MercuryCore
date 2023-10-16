@@ -1,60 +1,64 @@
 import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import surreal, { query } from "$lib/server/surreal"
+import surreal, { squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeSwitch } from "$lib/server/like"
 
 export async function load({ locals, params }) {
-	const { user } = await authorise(locals),
-		category = await query<{
-			description: string
-			name: string
-			posts: {
-				author: {
-					number: number
-					username: string
-				}
-				content: {
-					text?: string
-				}[]
-				dislikeCount: number
-				dislikes: boolean
-				id: string
-				likeCount: number
-				likes: boolean
-				posted: string
-				title: string
-				visibility: string
+	const { user } = await authorise(locals)
+	const category = await squery<{
+		description: string
+		name: string
+		posts: {
+			author: {
+				number: number
+				status: "Playing" | "Online" | "Offline"
+				username: string
+			}
+			content: {
+				text?: string
 			}[]
-		}>(
-			surql`
-				SELECT
+			dislikeCount: number
+			dislikes: boolean
+			id: string
+			likeCount: number
+			likes: boolean
+			posted: string
+			title: string
+			visibility: string
+		}[]
+	}>(
+		surql`
+			SELECT
+				*,
+				(SELECT
 					*,
+					meta::id(id) AS id,
+					(SELECT text, updated FROM $parent.content
+					ORDER BY updated DESC) AS content,
 					(SELECT
-						*,
-						meta::id(id) AS id,
-						(SELECT text, updated FROM $parent.content
-						ORDER BY updated DESC) AS content,
-						(SELECT number, username FROM <-posted<-user)[0] AS author,
-						count(<-likes<-user) AS likeCount,
-						count(<-dislikes<-user) AS dislikeCount,
-						($user ∈ <-likes<-user.id) AS likes,
-						($user ∈ <-dislikes<-user.id) AS dislikes
-					FROM $parent<-in.in) AS posts
-				OMIT id
-				FROM forumCategory
-				WHERE string::lowercase(name) = string::lowercase($category)`,
-			{
-				...params,
-				user: `user:${user.id}`,
-			},
-		)
+						number,
+						status,
+						username
+					FROM <-posted<-user)[0] AS author,
+					count(<-likes<-user) AS likeCount,
+					count(<-dislikes<-user) AS dislikeCount,
+					($user ∈ <-likes<-user.id) AS likes,
+					($user ∈ <-dislikes<-user.id) AS dislikes
+				FROM $parent<-in.in) AS posts
+			OMIT id
+			FROM forumCategory
+			WHERE string::lowercase(name) = string::lowercase($category)`,
+		{
+			...params,
+			user: `user:${user.id}`,
+		},
+	)
 
-	if (!(typeof category == "object" ? category : null)?.[0])
-		throw error(404, "Not found")
+	if (!category) throw error(404, "Not found")
 
-	return category[0]
+	return category
 }
 
 export const actions = {

@@ -6,9 +6,24 @@ import { error } from "@sveltejs/kit"
 
 const types = ["friends", "followers", "following"],
 	usersQueries = {
-		friends: surql`SELECT number, username FROM $user->friends->user OR $user<-friends<-user`,
-		followers: surql`SELECT number, username FROM $user<-follows<-user`,
-		following: surql`SELECT number, username FROM $user->follows->user`,
+		friends: surql`
+			SELECT
+				number,
+				status,
+				username
+			FROM $user->friends->user OR $user<-friends<-user`,
+		followers: surql`
+			SELECT
+				number,
+				status,
+				username
+			FROM $user<-follows<-user`,
+		following: surql`
+			SELECT
+				number,
+				status,
+				username
+			FROM $user->follows->user`,
 	},
 	numberQueries = {
 		friends: surql`count($user->friends->user) + count($user<-friends<-user)`,
@@ -41,6 +56,7 @@ export async function load({ params }) {
 		username: user.username,
 		users: query<{
 			number: number
+			status: "Playing" | "Online" | "Offline"
 			username: string
 		}>(usersQueries[type], {
 			user: user.id,

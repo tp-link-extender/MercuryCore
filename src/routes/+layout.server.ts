@@ -18,6 +18,7 @@ export async function load({ request, locals }) {
 			relativeId: string
 			sender: {
 				number: number
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			time: string
@@ -29,6 +30,7 @@ export async function load({ request, locals }) {
 					meta::id(id) AS id,
 					(SELECT
 						number,
+						status,
 						username
 					FROM <-user)[0] AS sender
 				FROM notification

@@ -8,11 +8,13 @@ export async function load({ locals }) {
 	return {
 		users: query<{
 			number: number
+			status: "Playing" | "Online" | "Offline"
 			username: string
 		}>(
 			surql`
 				SELECT
 					number,
+					status,
 					username
 				FROM user WHERE $user ∈ ->request->user`,
 			{ user: `user:${user.id}` },

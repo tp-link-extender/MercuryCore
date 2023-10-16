@@ -33,6 +33,7 @@ declare global {
 			number: number
 			permissionLevel: number
 			theme: string
+			status: "Playing" | "Online" | "Offline"
 			username: string
 		}
 		type DatabaseSessionAttributes = {}

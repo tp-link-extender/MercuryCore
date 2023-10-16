@@ -2,12 +2,6 @@
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
 
-	// const statusColours: { [k: string]: string } = {
-	// 	Online: "bg-info",
-	// 	Joined: "bg-success",
-	// 	Developing: "bg-warning",
-	// }
-
 	export let data
 	const { user } = data,
 		{
@@ -24,7 +18,6 @@
 		})
 
 	export const snapshot = { capture, restore }
-
 </script>
 
 <Head title="Home" />

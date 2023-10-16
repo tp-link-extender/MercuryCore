@@ -51,6 +51,7 @@ export async function load({ locals, params }) {
 				posted: string
 				visibility: string
 			}[]
+			status: "Playing" | "Online" | "Offline"
 			username: string
 		}>(
 			surql`
@@ -58,6 +59,7 @@ export async function load({ locals, params }) {
 					username,
 					number,
 					permissionLevel,
+					status,
 					(SELECT text, updated FROM $parent.bio
 					ORDER BY updated DESC)[0] AS bio,
 					(SELECT
