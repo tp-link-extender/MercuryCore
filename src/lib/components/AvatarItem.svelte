@@ -31,7 +31,7 @@
 					<div
 						class="top-0 end-0 pe-1 position-absolute
 						translate-middle">
-						<span class="badge text-bg-primary">Wearing</span>
+						<span class="badge bg-primary">Wearing</span>
 					</div>
 				{/if}
 				<p class="m-0">

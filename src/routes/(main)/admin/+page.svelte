@@ -225,6 +225,8 @@
 </div>
 
 <style lang="stylus">
+	containerMinWidth(85rem)
+
 	h2
 		border-color var(--accent3) !important
 
