@@ -60,7 +60,7 @@
 	<div class="modal-box d-flex flex-column p-4 text-center">
 		<h2 class="fs-4">Asset {asset.name}</h2>
 		{#if asset.imageAsset}
-			<div class="text-center">
+			<div class="text-center pb-2">
 				<h3 class="fs-5">Image asset</h3>
 				<img
 					class="image"
@@ -68,6 +68,8 @@
 						.name}/icon"
 					alt={asset.imageAsset.name} />
 			</div>
+
+			<button class="btn btn-lg btn-danger mt-3">Purge</button>
 		{/if}
 	</div>
 	<label class="modal-backdrop" for="modal{asset.id}">Close</label>
