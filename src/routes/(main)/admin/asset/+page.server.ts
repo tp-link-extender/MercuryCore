@@ -2,6 +2,7 @@ import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { squery, query } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import fs from "fs/promises"
 
 export const load = async ({ locals }) => ({
 	assets: query<{
@@ -93,8 +94,32 @@ export const actions = {
 					},
 				)
 				break
-			default:
-				throw error(400, "Invalid action")
+			case "purge":
+				const iaid = (
+					await squery<{ imageAssetId: number }>(
+						surql`
+							SELECT
+								meta::id((->imageAsset->asset.id)[0])
+									AS imageAssetId
+							FROM $asset`,
+						{ asset: `asset:${id}` },
+					)
+				).imageAssetId
+
+				await Promise.all([
+					query(
+						surql`
+							DELETE $asset;
+							DELETE $imageAsset`,
+						{
+							asset: `asset:${id}`,
+							imageAsset: `asset:${iaid}`,
+						},
+					),
+					fs.rm(`data/assets/${id}`),
+					fs.rm(`data/assets/${iaid}`),
+					fs.rm(`data/thumbnails/${id}.png`),
+				])
 		}
 	},
 }
