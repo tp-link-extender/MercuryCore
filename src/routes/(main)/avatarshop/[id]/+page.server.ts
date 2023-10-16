@@ -12,7 +12,7 @@ export async function load({ params }) {
 	}>(
 		surql`
 			SELECT
-				name, 
+				name,
 				meta::id(id) AS id
 			FROM $asset`,
 		{ asset: `asset:${params.id}` },

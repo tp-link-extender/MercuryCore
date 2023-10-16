@@ -67,7 +67,7 @@ export async function load({ locals }) {
 		}>(
 			surql`
 				SELECT
-					number, 
+					number,
 					status,
 					username
 				FROM $user->friends->user OR $user<-friends<-user`,

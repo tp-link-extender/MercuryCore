@@ -61,8 +61,8 @@ const placeQuery = async (id: string | number) =>
 			SELECT
 				*,
 				meta::id(id) AS id,
-				(SELECT 
-					number, 
+				(SELECT
+					number,
 					status,
 					username
 				FROM <-owns<-user)[0] AS owner,

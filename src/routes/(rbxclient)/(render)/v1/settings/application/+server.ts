@@ -3730,7 +3730,7 @@ export const GET = () =>
 				"CN,10000,US,10000,AU,10000,KR,10000,NZ,10000;189707",
 			DFStringWorkspaceMessageLink: "",
 			DFStringWorkspaceMessageText:
-				"We are in the process of disabling and removing the legacy solver.  Click here for more info...",
+				"We are in the process of disabling and removing the legacy solver. Click here for more info...",
 			EnableRemoteThemeCheckOnAndroidV3: "True",
 			FFlagAvatarEditorLightThemeFix2: "True",
 			FFlagCLI26858: "False",

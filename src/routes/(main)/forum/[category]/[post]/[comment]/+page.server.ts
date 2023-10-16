@@ -45,7 +45,7 @@ export async function load({ locals, params }) {
 				ORDER BY updated DESC) AS content,
 				meta::id(id) AS id,
 				$forumPost AS parentPost,
-				(IF ->replyToReply->forumReply.id THEN 
+				(IF ->replyToReply->forumReply.id THEN
 					meta::id(->replyToReply[0]->forumReply[0].id)
 				END) AS parentReplyId,
 				(SELECT number, username FROM <-posted<-user)[0] AS author,

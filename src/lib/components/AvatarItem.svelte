@@ -28,10 +28,11 @@
 						alt={asset.name} />
 				</div>
 				{#if asset.wearing}
-					<span
-						class="badge text-bg-primary position-absolute translate-middle">
-						Wearing
-					</span>
+					<div
+						class="top-0 end-0 pe-1 position-absolute
+						translate-middle">
+						<span class="badge text-bg-primary">Wearing</span>
+					</div>
 				{/if}
 				<p class="m-0">
 					{asset.name}
@@ -58,8 +59,4 @@
 
 	img
 		width 85%
-    
-    .badge
-		top 2% 
-		right 5%
 </style>

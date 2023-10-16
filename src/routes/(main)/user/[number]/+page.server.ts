@@ -192,7 +192,7 @@ export const actions = {
 						surql`
 							DELETE $user->follows WHERE out = $user2;
 							DELETE $user->notification WHERE in = $user
-								AND out = $user2 
+								AND out = $user2
 								AND type = $type
 								AND read = false`,
 						{
@@ -207,7 +207,7 @@ export const actions = {
 							DELETE $user<-friends WHERE in = $user2;
 							DELETE $user->friends WHERE out = $user2;
 							DELETE $user->notification WHERE in = $user
-								AND out = $user2 
+								AND out = $user2
 								AND type = $type
 								AND read = false`,
 						{
@@ -261,7 +261,7 @@ export const actions = {
 						surql`
 							DELETE $user->request WHERE out = $user2;
 							DELETE $user->notification WHERE in = $user
-								AND out = $user2 
+								AND out = $user2
 								AND type = $type
 								AND read = false`,
 						{

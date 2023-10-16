@@ -1,9 +1,10 @@
 import surql from "$lib/surrealtag"
+import { authorise } from "$lib/server/lucia"
 import { squery } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import fs from "fs"
 
-export async function GET({ params }) {
+export async function GET({ locals, params }) {
 	if (!/^\d+$/.test(params.id))
 		throw error(400, `Invalid asset id: ${params.id}`)
 
@@ -24,7 +25,10 @@ export async function GET({ params }) {
 	)
 
 	if (!asset) throw error(404, "Not found")
-	if (asset.visibility != "Public") throw redirect(302, `/m....png`)
+
+	const { user } = await authorise(locals)
+	if (asset.visibility != "Visible" && user.permissionLevel < 4)
+		throw redirect(302, `/m....png`)
 
 	let file
 

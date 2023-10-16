@@ -45,7 +45,7 @@ export const actions = {
 				SELECT
 					meta::id(id) AS id,
 					number,
-					permissionLevel 
+					permissionLevel
 				FROM user
 				WHERE username = $username`,
 			{ username },
