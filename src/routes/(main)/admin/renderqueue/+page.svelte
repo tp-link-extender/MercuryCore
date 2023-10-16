@@ -31,11 +31,6 @@
 
 								<br />
 								<span>
-									<i class="fas fa-clock text-primary me-1" />
-									Last Checked:
-								</span>
-								<br />
-								<span>
 									<i class="fas fa-image text-success me-1" />
 									Renders Completed:
 								</span>
