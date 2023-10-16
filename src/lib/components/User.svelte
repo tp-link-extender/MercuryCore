@@ -27,8 +27,6 @@
 	export let size = "2rem"
 	export let bg: keyof typeof transitionBackgrounds = "accent2"
 
-	console.log(user.status)
-
 	const style = `width: ${size}; max-width: ${size}; height: ${size};
 		min-height: ${size}; --status: ${statusColours[user.status]}`
 	const style2 = `background: var(--${bg})`
