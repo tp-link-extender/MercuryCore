@@ -111,15 +111,15 @@
 										1024 ** 3
 									).toFixed(2)} GB
 								</h3>
-								<span class="light-text">
+								<span class="light-text pb-2">
 									{Math.round(
 										(data.totalmem - data.freemem) /
 											1024 ** 2
 									)} MB is being used
 								</span>
-								<div class="progress bg-darker mt-2">
+								<div class="d-flex bg-darker rounded-2" style="height: 1rem">
 									<div
-										class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+										class="progress-bar-striped bg-success rounded-2"
 										role="progressbar"
 										aria-valuenow={data.totalmem -
 											data.freemem}
@@ -132,13 +132,13 @@
 								</div>
 							</div>
 						</div>
-						<div class="card bg-a3 text-black mb-4">
+						<div class="card bg-a3 text-black">
 							<div class="card-body bg-a rounded-1">
 								{#await diskSpace || getDiskSpace()}
 									<h3 class="light-text">Loading...</h3>
 								{:then disk}
 									<h3 class="light-text">
-										<i class="fas fa-hard-drive me-2" />
+										<i class="fas fa-hard-drive pe-2" />
 										{(
 											(disk.size - disk.free) /
 											1024 ** 3
@@ -147,14 +147,14 @@
 											1024 ** 3
 										).toFixed(2)} GB
 									</h3>
-									<span class="light-text">
+									<span class="light-text pb-2">
 										{Math.round(
 											(disk.size - disk.free) / 1024 ** 2
 										)} MB is being used
 									</span>
-									<div class="progress bg-darker mt-2">
+									<div class="d-flex bg-darker rounded-2" style="height: 1rem">
 										<div
-											class="progress-bar progress-bar-striped progress-bar-animated"
+											class="progress-bar-striped bg-primary rounded-2"
 											role="progressbar"
 											aria-valuenow={disk.size -
 												disk.free}
