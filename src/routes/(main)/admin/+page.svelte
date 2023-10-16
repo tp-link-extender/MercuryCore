@@ -13,6 +13,7 @@
 			["Moderate User", "/admin/moderation", "fas fa-user-slash"],
 			// ["Report Abuse", "#", "far fa-flag"],
 			["Asset Approval", "/admin/asset", "fas fa-file-circle-check"],
+			["Render Queue", "/admin/renderqueue", "fas fa-file-image"]
 		],
 		Economy: [
 			// ["Award Currency", "#", "far fa-gem"],
