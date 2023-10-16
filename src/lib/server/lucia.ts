@@ -21,6 +21,7 @@ export const auth = lucia({
 		bio: data.bio,
 		email: data.email,
 		username: data.username,
+		status: data.status,
 		currency: data.currency,
 		currencyCollected: data.currencyCollected,
 		permissionLevel: data.permissionLevel,

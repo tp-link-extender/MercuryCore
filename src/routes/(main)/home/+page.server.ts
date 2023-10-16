@@ -62,16 +62,21 @@ export async function load({ locals }) {
 			WHERE !privateServer AND !deleted`),
 		friends: query<{
 			number: number
+			status: "Playing" | "Online" | "Offline"
 			username: string
 		}>(
 			surql`
-				SELECT number, username
+				SELECT
+					number, 
+					status,
+					username
 				FROM $user->friends->user OR $user<-friends<-user`,
 			{ user: `user:${user.id}` },
 		),
 		feed: query<{
 			authorUser: {
 				number: number
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			content: {
@@ -87,7 +92,11 @@ export async function load({ locals }) {
 				*,
 				(SELECT text, updated FROM $parent.content
 				ORDER BY updated DESC) AS content,
-				(SELECT number, username FROM <-posted<-user)[0] as authorUser
+				(SELECT
+					number,
+					status,
+					username
+				FROM <-posted<-user)[0] as authorUser
 			FROM statusPost
 			LIMIT 40`),
 	}

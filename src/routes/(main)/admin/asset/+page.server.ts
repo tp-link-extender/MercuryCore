@@ -11,6 +11,7 @@ export const load = async ({ locals }) => ({
 		type: string
 		creator: {
 			number: number
+			status: "Playing" | "Online" | "Offline"
 			username: string
 		}
 		imageAsset?: {
@@ -24,7 +25,10 @@ export const load = async ({ locals }) => ({
 				name,
 				price,
 				type,
-				(SELECT number, username
+				(SELECT
+					number,
+					status,
+					username
 				FROM <-created<-user)[0] AS creator,
 				(SELECT meta::id(id) AS id, name
 				FROM ->imageAsset->asset)[0] AS imageAsset

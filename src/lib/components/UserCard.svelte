@@ -1,14 +1,8 @@
 <script lang="ts">
-	// const statusColours: { [k: string]: string } = {
-	// 	Online: "bg-info",
-	// 	Joined: "bg-success",
-	// 	Developing: "bg-warning",
-	// }
-
 	export let user: {
-		username: string
 		number: number
-		// status?: keyof typeof statusColours
+		status: "Playing" | "Online" | "Offline"
+		username: string
 	}
 	export let num: number
 	export let total: number

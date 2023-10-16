@@ -1,6 +1,11 @@
 <script lang="ts">
 	// User profile link component
 
+	const statusColours = {
+		Playing: "#238560",
+		Online: "#3459e6",
+		Offline: "#0000",
+	}
 	const transitionBackgrounds = {
 		darker: "background",
 		background: "accent",
@@ -11,8 +16,9 @@
 	}
 
 	export let user: {
-		username: string
 		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
 	}
 	export let full = false
 	export let thin = false
@@ -21,14 +27,16 @@
 	export let size = "2rem"
 	export let bg: keyof typeof transitionBackgrounds = "accent2"
 
-	const style = `width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}`
+	console.log(user.status)
+
+	const style = `width: ${size}; max-width: ${size}; height: ${size};
+		min-height: ${size}; --status: ${statusColours[user.status]}`
+	const style2 = `background: var(--${bg})`
 </script>
 
 {#if image}
 	<div class="d-flex" class:align-items-center={full}>
-		<span
-			class="rounded-circle overflow-hidden"
-			style="background: var(--{bg}); {style}">
+		<span class="rounded-circle overflow-hidden" style="{style};{style2}">
 			<img
 				src="/api/avatar/{user.username}"
 				alt={user.username}
@@ -36,8 +44,7 @@
 				{style} />
 		</span>
 		{#if full}
-			<span
-				class="username {thin ? 'ps-2 fs-6' : 'font-bold ps-4'}">
+			<span class="username {thin ? 'ps-2 fs-6' : 'font-bold ps-4'}">
 				{user.username}
 			</span>
 		{/if}
@@ -50,7 +57,7 @@
 		class:align-items-center={full}>
 		<span
 			class="pfp rounded-circle overflow-hidden"
-			style="background: var(--{bg}); {style};
+			style="{style};{style2};
 			--hover: var(--{transitionBackgrounds[bg]}">
 			<img
 				src="/api/avatar/{user.username}"
@@ -82,6 +89,9 @@
 				color var(--grey-text)
 			.pfp
 				background var(--hover) !important
+
+	span.rounded-circle
+		box-shadow inset 0 0 0rem 1.5px var(--status)
 
 	.bottom
 		overflow hidden

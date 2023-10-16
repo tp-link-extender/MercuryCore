@@ -33,6 +33,7 @@ export async function load({ locals, params }) {
 	const asset = await squery<{
 		creator: {
 			number: number
+			status: "Playing" | "Online" | "Offline"
 			username: string
 		}
 		description: {
@@ -54,7 +55,11 @@ export async function load({ locals, params }) {
 			SELECT
 				*,
 				meta::id(id) AS id,
-				(SELECT number, username FROM <-created<-user)[0] AS creator,
+				(SELECT
+					number,
+					status,
+					username
+				FROM <-created<-user)[0] AS creator,
 				count(<-owns<-user) AS sold,
 				$user ∈ <-owns<-user.id AS owned,
 

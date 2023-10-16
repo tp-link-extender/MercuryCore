@@ -5,6 +5,7 @@
 	export let user: {
 		username: string
 		permissionLevel: number
+		status: "Playing" | "Online" | "Offline"
 	}
 
 	export let reply:

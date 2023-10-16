@@ -29,11 +29,13 @@ export const load = async ({ url }) => {
 			category == "users" &&
 			query<{
 				number: number
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}>(
 				surql`
 					SELECT
 						number,
+						status,
 						username
 					FROM user
 					WHERE string::lowercase($searchQ) ∈ string::lowercase(username)`,

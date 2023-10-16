@@ -43,6 +43,7 @@ type Place = {
 	name: string
 	owner: {
 		number: number
+		status: "Playing" | "Online" | "Offline"
 		username: string
 	}
 	privateServer: boolean
@@ -60,7 +61,10 @@ const placeQuery = async (id: string | number) =>
 			SELECT
 				*,
 				meta::id(id) AS id,
-				(SELECT number, username
+				(SELECT 
+					number, 
+					status,
+					username
 				FROM <-owns<-user)[0] AS owner,
 				(SELECT text, updated FROM $parent.description
 				ORDER BY updated DESC)[0] AS description

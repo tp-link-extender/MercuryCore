@@ -12,6 +12,7 @@ export async function load({ locals, params }) {
 			name: string
 			owner: {
 				number: number
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			places: any[]
@@ -22,6 +23,7 @@ export async function load({ locals, params }) {
 					name,
 					(SELECT
 						number,
+						status,
 						username
 					FROM <-owns<-user)[0] AS owner,
 					count(<-member) AS memberCount,

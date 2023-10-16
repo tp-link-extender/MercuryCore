@@ -9,6 +9,7 @@ export const load = () => ({
 		latestPost: {
 			author: {
 				number: number
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			id: string
@@ -25,6 +26,7 @@ export const load = () => ({
 				posted,
 				(SELECT
 					number,
+					status,
 					username
 				FROM <-posted<-user)[0] AS author
 			FROM <-in<-forumPost

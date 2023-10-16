@@ -5,6 +5,7 @@ import surql from "$lib/surrealtag"
 export type Replies = {
 	author: {
 		number: number
+		status: "Playing" | "Online" | "Offline"
 		username: string
 	}
 	content: {
@@ -30,7 +31,11 @@ const SELECTFROM = surql`
 		ORDER BY updated DESC) AS content,
 		meta::id(id) AS id,
 		NONE AS parentReplyId,
-		(SELECT number, username FROM <-posted<-user)[0] AS author,
+		(SELECT
+			number,
+			status,
+			username
+		FROM <-posted<-user)[0] AS author,
 		
 		count(<-likes) AS likeCount,
 		count(<-dislikes) AS dislikeCount,

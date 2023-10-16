@@ -26,6 +26,7 @@ export async function load({ locals }) {
 			body: string
 			creator: {
 				number: number
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			textLight: boolean
@@ -35,6 +36,7 @@ export async function load({ locals }) {
 				meta::id(id) AS id,
 				(SELECT
 					creator.number,
+					creator.status,
 					creator.username
 				FROM $parent)[0].creator AS creator
 			OMIT deleted

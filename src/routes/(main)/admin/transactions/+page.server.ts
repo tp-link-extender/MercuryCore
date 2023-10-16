@@ -16,10 +16,12 @@ export async function load({ locals }) {
 			out: string
 			receiver: {
 				number: number
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			sender: {
 				number: number
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			taxRate: number
@@ -30,10 +32,12 @@ export async function load({ locals }) {
 				*,
 				(SELECT
 					number,
+					status,
 					username
 				FROM in.*)[0] AS sender,
 				(SELECT
 					number,
+					status,
 					username
 				FROM out.*)[0] AS receiver
 			FROM transaction`,

@@ -9,6 +9,7 @@ export const load = async ({ params }) => {
 		memberCount: number
 		members: {
 			number: number
+			status: "Playing" | "Online" | "Offline"
 			username: string
 		}[]
 		name: string
@@ -19,6 +20,7 @@ export const load = async ({ params }) => {
 				count(<-member) AS memberCount,
 				(SELECT
 					number,
+					status,
 					username
 				FROM <-member<-user) AS members
 			FROM group WHERE string::lowercase(name)
