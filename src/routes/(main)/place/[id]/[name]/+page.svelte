@@ -498,7 +498,7 @@
 
 	.dropdown-toggle
 		border-radius 0 0.375rem 0.375rem 0
-		&::after 
+		&::after
 			display inline-block
 			vertical-align 0.255rem
 			content ""

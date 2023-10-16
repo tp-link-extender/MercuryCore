@@ -94,7 +94,7 @@ export const actions = {
 
 		const replypost = await squery<{ authorId: string }>(
 			surql`
-				SELECT 
+				SELECT
 					meta::id(<-posted[0]<-user[0].id) AS authorId
 				FROM $replypostId
 				WHERE visibility = "Visible"`,

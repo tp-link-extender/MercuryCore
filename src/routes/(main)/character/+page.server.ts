@@ -154,33 +154,36 @@ export const actions = {
 			},
 		)
 
-		if (!asset) throw error(404, "Asset not found or not owned")
+		if (!asset) throw error(404, "Item not found or not owned")
 
 		if (!allowedTypes.includes(asset.type))
-			throw error(400, "Can't equip this type of asset")
+			throw error(400, "Can't equip this type of item")
 
 		if (asset.visibility != "Visible")
-			throw error(400, "Can't equip this type of asset")
+			throw error(400, "This item hasn't been approved yet")
 
 		switch (action) {
 			case "equip":
 				await query(
 					surql`
-						DELETE $user->recentlyWorn WHERE out = $asset;
+						IF $type = 2 {
+							# Unequip if there's already a t-shirt equipped
+							DELETE $user->wearing WHERE out.type = 2;
+						};
 						RELATE $user->wearing->$asset
+							SET time = time::now();
+						RELATE $user->recentlyWorn->$asset
 							SET time = time::now()`,
 					{
 						user: `user:${user.id}`,
 						asset: `asset:${id}`,
+						type: asset.type,
 					},
 				)
 				break
 			case "unequip":
 				await query(
-					surql`
-						DELETE $user->wearing WHERE out = $asset;
-						RELATE $user->recentlyWorn->$asset
-							SET time = time::now()`,
+					surql`DELETE $user->wearing WHERE out = $asset`,
 					{
 						user: `user:${user.id}`,
 						asset: `asset:${id}`,

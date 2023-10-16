@@ -61,14 +61,14 @@ export async function transaction(
 
 				LET $finalAmount = math::round($amountSent * (1 - $taxRate / 100));
 
-				UPDATE $sender SET currency -= 
+				UPDATE $sender SET currency -=
 					IF $senderAdmin THEN
 						0
 					ELSE
 						$amountSent
 					END;
 
-				UPDATE $receiver SET currency += 
+				UPDATE $receiver SET currency +=
 					IF $receiverAdmin THEN
 						0
 					ELSE
