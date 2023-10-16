@@ -148,7 +148,7 @@
 						Gears: <i class="far fa-circle-xmark" />
 					</p>
 					<span
-						class="badge text-bg-{data.serverPing >
+						class="badge bg-{data.serverPing >
 						Math.floor(Date.now() / 1000) - 35
 							? 'success'
 							: 'danger'} mb-1">
