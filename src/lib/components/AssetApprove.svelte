@@ -57,7 +57,9 @@
 	class="modal-toggle"
 	bind:this={modal} />
 <div class="modal2 light-text">
-	<div class="modal-box d-flex flex-column p-4 text-center">
+	<div
+		class="modal-box d-flex flex-column p-4 text-center"
+		style="width: 25rem">
 		<h2 class="fs-4">Asset {asset.name}</h2>
 		{#if asset.imageAsset}
 			<div class="text-center pb-2">
@@ -69,10 +71,49 @@
 					alt={asset.imageAsset.name} />
 			</div>
 
-			<button class="btn btn-lg btn-danger mt-3">Purge</button>
+			<label for="purge{asset.id}" class="btn btn-lg btn-danger mt-3">
+				Purge
+			</label>
 		{/if}
 	</div>
 	<label class="modal-backdrop" for="modal{asset.id}">Close</label>
+</div>
+
+<input
+	type="checkbox"
+	id="purge{asset.id}"
+	class="modal-toggle"
+	bind:this={modal} />
+<div class="modal2 light-text">
+	<div class="modal-box p-4" style="width: 30rem">
+		<h2 class="fs-4">Purge {asset.name}</h2>
+
+		<p>Are you sure you want to purge this asset?</p>
+		<p>
+			<strong>
+				This cannot be undone! It will permanently delete the asset, its
+				related image asset, and all thumbnails and data associated with
+				it.
+			</strong>
+		</p>
+
+		<form
+			use:enhance
+			method="POST"
+			action="/admin/asset?id={asset.id}&a=purge"
+			class="d-inline">
+			<button
+				class="btn btn-danger"
+				style="background: #930010;
+				border-color: #930010">
+				Yes, do as I say!
+			</button>
+		</form>
+		<label for="purge{asset.id}" class="btn btn-dark ms-2">
+			Misinput MISINPUT
+		</label>
+	</div>
+	<label class="modal-backdrop" for="purge{asset.id}">Close</label>
 </div>
 
 <style lang="stylus">
@@ -85,9 +126,6 @@
 			transition 0.3s
 			&:hover
 				background var(--darker) !important
-
-	.modal-box
-		width 25rem
 
 	.image
 		background var(--accent)
