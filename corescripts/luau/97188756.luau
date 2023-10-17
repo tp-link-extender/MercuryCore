@@ -164,7 +164,7 @@ local Chat = {
 		AdminMessageColor = Color3.new(1, 215 / 255, 0),
 		XScale = 0.025,
 		LifeTime = 45,
-		Position = UDim2.new(0, 2, 0.05, 0),
+		Position = UDim2.new(0, 2, 0.35, 0),
 		DefaultTweenSpeed = 0.15,
 	},
 
