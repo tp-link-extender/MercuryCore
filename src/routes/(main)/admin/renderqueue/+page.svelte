@@ -2,6 +2,8 @@
 	export let data
 
 	let tabData = TabData(data.url, ["Status", "Render Queue"])
+
+	const online = new Date(data.status).getTime() > Date.now() - 35 * 1000
 </script>
 
 <Head title="Render Queue - Admin" />
@@ -24,8 +26,11 @@
 							<div class="card-body">
 								<h2 class="fs-3 mb-0">Render Server</h2>
 								<small class="mb-3">
-									is <strong class="text-success">
-										online
+									is <strong
+										class="text-{online
+											? 'success'
+											: 'danger'}">
+										o{online ? "n" : "ff"}line
 									</strong>
 								</small>
 
@@ -58,7 +63,9 @@
 										<tr>
 											<th scope="col">Task ID</th>
 											<th scope="col">Render Type</th>
-											<th scope="col">User/Asset Requested</th>
+											<th scope="col">
+												User/Asset Requested
+											</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -74,28 +81,28 @@
 					</div>
 				</div>
 			</Tab>
-            <Tab {tabData}>
-                <table class="table w-100 light-text">
-                    <thead>
-                        <tr>
-                            <th scope="col">Task ID</th>
-                            <th scope="col">Render Type</th>
-                            <th scope="col">User/Asset Requested</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Time Completed</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="table-active">
-                            <th scope="row">1</th>
-                            <td>Avatar</td>
-                            <td>Heliodex</td>
-                            <td>Pending</td>
-                            <td>N/A</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </Tab>
+			<Tab {tabData}>
+				<table class="table w-100 light-text">
+					<thead>
+						<tr>
+							<th scope="col">Task ID</th>
+							<th scope="col">Render Type</th>
+							<th scope="col">User/Asset Requested</th>
+							<th scope="col">Status</th>
+							<th scope="col">Time Completed</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="table-active">
+							<th scope="row">1</th>
+							<td>Avatar</td>
+							<td>Heliodex</td>
+							<td>Pending</td>
+							<td>N/A</td>
+						</tr>
+					</tbody>
+				</table>
+			</Tab>
 		</div>
 	</div>
 </div>
