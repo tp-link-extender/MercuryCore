@@ -3,6 +3,7 @@
 
 	import { T } from "@threlte/core"
 	import { interactivity } from "@threlte/extras"
+	import Cube from "./Cube.svelte"
 
 	export let columns: number[], rows: number[]
 

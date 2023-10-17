@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ForumPost from "./ForumPost.svelte"
+
 	export let data
 	// Forum
 	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}

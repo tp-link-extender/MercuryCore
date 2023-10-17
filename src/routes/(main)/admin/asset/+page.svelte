@@ -1,4 +1,6 @@
 <script lang="ts">
+	import AssetApprove from "./AssetApprove.svelte"
+
 	export let data
 
 	let tabData = TabData(data.url, ["Asset Queue"])
