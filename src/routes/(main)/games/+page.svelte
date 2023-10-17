@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PlaceCard from "./PlaceCard.svelte"
+
 	export let data
 
 	let query = "",

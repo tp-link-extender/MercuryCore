@@ -45,14 +45,10 @@ declare global {
 
 	declare const AdminLink: typeof import("$lib/components/AdminLink.svelte").default
 	declare const Asset: typeof import("$lib/components/Asset.svelte").default
-	declare const AssetApprove: typeof import("$lib/components/AssetApprove.svelte").default
 	declare const AvatarItem: typeof import("$lib/components/AvatarItem.svelte").default
 	declare const Breadcrumbs: typeof import("$lib/components/Breadcrumbs.svelte").default
-	declare const Cube: typeof import("$lib/components/Cube.svelte").default
-	declare const Cubes: typeof import("$lib/components/Cubes.svelte").default
 	declare const DeleteButton: typeof import("$lib/components/DeleteButton.svelte").default
 	declare const Footer: typeof import("$lib/components/Footer.svelte").default
-	declare const ForumPost: typeof import("$lib/components/ForumPost.svelte").default
 	declare const ForumReply: typeof import("$lib/components/ForumReply.svelte").default
 	declare const Group: typeof import("$lib/components/Group.svelte").default
 	declare const Head: typeof import("$lib/components/Head.svelte").default
@@ -60,7 +56,6 @@ declare global {
 	declare const Moon: typeof import("$lib/components/Moon.svelte").default
 	declare const Navbar: typeof import("$lib/components/Navbar.svelte").default
 	declare const Place: typeof import("$lib/components/Place.svelte").default
-	declare const PlaceCard: typeof import("$lib/components/PlaceCard.svelte").default
 	declare const ReportButton: typeof import("$lib/components/ReportButton.svelte").default
 	declare const Tab: typeof import("$lib/components/Tab.svelte").default
 	declare const TabData: typeof import("$lib/components/TabData").default
