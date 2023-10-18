@@ -1,6 +1,7 @@
 import surql from "$lib/surrealtag"
 import { query, squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import "dotenv/config"
 
 export async function GET({ url, setHeaders }) {
 	const userNumber = url.searchParams.get("userID")
@@ -31,10 +32,10 @@ export async function GET({ url, setHeaders }) {
 
 	if (!user) throw error(404, "User not found")
 
-	let charApp = `http://banland.xyz/Asset/BodyColors.ashx?id=${userNumber}`
+	let charApp = `${process.env.RBX_ORIGIN}/Asset/BodyColors.ashx?id=${userNumber}`
 
 	for (const asset of user.wearing) {
-		charApp += `;http://banland.xyz/asset?id=${asset}`
+		charApp += `;${process.env.RBX_ORIGIN}/asset?id=${asset}`
 	}
 
 	setHeaders({
