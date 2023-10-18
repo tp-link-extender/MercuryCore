@@ -1,11 +1,12 @@
 import surql from "../surrealtag"
-import { query } from "./surreal"
+import { mquery } from "./surreal"
+import fs from "fs"
 import "dotenv/config"
 
 type Render = {
 	id: number
-	type: "Asset" | "Avatar"
-	status: "Pending" | "Rendering" | "Completed"
+	type: "Clothing" | "Avatar"
+	status: "Pending" | "Rendering" | "Completed" | "Error"
 	created: string
 	completed: string | null
 	user?: {
@@ -20,10 +21,10 @@ type Render = {
 }
 
 export default async function (
-	renderType: "Asset" | "Avatar",
+	renderType: "Clothing" | "Avatar",
 	relativeId: number,
 ) {
-	const renders = await query<Render>(
+	const renders = await mquery<Render[][]>(
 		surql`
 			LET $render = SELECT
 				meta::id(id) AS id,
@@ -31,6 +32,7 @@ export default async function (
 				status,
 				created,
 				completed,
+				relativeId,
 				IF $parent.type = "user" THEN
 					SELECT
 						number,
@@ -44,7 +46,7 @@ export default async function (
 						name
 					FROM asset WHERE id = $parent.relativeId
 				END AS asset
-			FROM renders
+			FROM render
 			WHERE status ∈ ["Pending", "Rendering"]
 				AND renderType = $renderType
 				AND relativeId = $assetId;
@@ -57,9 +59,48 @@ export default async function (
 			relativeId,
 		},
 	)
-	const render = renders[2]
+	const render = renders[2][0]
 
-	if (!render) return
+	if (render && render.status != "Error") return
+
+	// If the render doesn't exist or if the last one
+	// errored, create a new render
+
+	const newRender = await mquery<{ id: string }[]>(
+		surql`
+			LET $render = CREATE render CONTENT {
+				type: $renderType,
+				status: "Pending",
+				created: time::now(),
+				completed: NONE,
+				relativeId: $relativeId
+			};
+			RETURN meta::id($render)`,
+		{
+			renderType,
+			relativeId,
+		},
+	)
+	const renderId = newRender[1].id
+
+	// Tap in rcc
+
+	const xml = fs
+		.readFileSync(`xml/soap.xml`, "utf-8")
+		.replaceAll("_TASK_ID", renderId)
+		.replaceAll(
+			"_RENDER_SCRIPT",
+			fs.readFileSync(
+				`corescripts/processed/render${renderType}.lua`,
+				"utf-8",
+			),
+		)
+		.replaceAll("_BASE_URL", process.env.RCC_ORIGIN as string)
+		.replaceAll("_THUMBNAIL_KEY", process.env.RCC_KEY as string)
+		.replaceAll("_RENDER_TYPE", renderType)
+		.replaceAll("_ASSET_ID", relativeId.toString())
+
+	// Send the XML to RCCService
 
 	console.log(render)
 }
