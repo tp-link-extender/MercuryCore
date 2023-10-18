@@ -2,27 +2,27 @@
 	import customProtocolCheck from "custom-protocol-check"
 
 	export let data
-	const { user } = data,
-		statistics = [
-			["Activity", "0 visits"],
-			["Creation", new Date(data.created).toLocaleDateString()],
-			["Updated", new Date(data.updated).toLocaleDateString()],
-			["Genre", "Horror"],
-			["Server Limit", data.maxPlayers],
-			["Now Playing", data.players.length],
-		],
-		images = [
-			"/place/placeholderImage1.webp",
-			"/place/placeholderImage2.webp",
-			"/place/placeholderImage3.webp",
-		],
-		scroll = async (e: MouseEvent) =>
-			document
-				.getElementById(
-					new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
-				)
-				// (false) prevents page scrolling to top of element
-				?.scrollIntoView(false)
+	const { user } = data
+	const statistics = [
+		["Activity", "0 visits"],
+		["Creation", new Date(data.created).toLocaleDateString()],
+		["Updated", new Date(data.updated).toLocaleDateString()],
+		["Genre", "Horror"],
+		["Server Limit", data.maxPlayers],
+		["Now Playing", data.players.length],
+	]
+	const images = [
+		"/place/placeholderImage1.webp",
+		"/place/placeholderImage2.webp",
+		"/place/placeholderImage3.webp",
+	]
+	const scroll = async (e: MouseEvent) =>
+		document
+			.getElementById(
+				new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
+			)
+			// (false) prevents page scrolling to top of element
+			?.scrollIntoView(false)
 
 	// Place Launcher
 
@@ -31,7 +31,7 @@
 		success = false,
 		filepath = ""
 
-	function launch(joinscripturl: string) {
+	const launch = (joinscripturl: string) => () => {
 		success = false
 		customProtocolCheck(
 			joinscripturl,
@@ -47,6 +47,8 @@
 			5000
 		)
 	}
+
+	const hostTicket = `http://banland.xyz/Game/Host?ticket=${data.serverTicket}`
 
 	async function placeLauncher() {
 		installed = true
@@ -69,7 +71,7 @@
 				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
 					joinScriptData.data.joinScriptUrl
 				)}+gameinfo:test`
-			)
+			)()
 	}
 
 	let tabData = TabData(data.url, ["Description", "Game"]),
@@ -308,16 +310,16 @@
 					<p class="light-text mb-1">
 						You can host your server by opening your map in <button
 							class="btn btn-primary p-1 btn-sm"
-							on:click={() => {
-								launch("mercury-player:1+launchmode:ide")
-							}}>
+							on:click={launch(
+								"mercury-player:1+launchmode:ide"
+							)}>
 							<i class="fas fa-arrow-up-right-from-square" />
 							Studio
 						</button>
 						and then in the command bar, paste this in:
 					</p>
 					<code>
-						loadfile("http://banland.xyz/Game/Host?ticket={data.serverTicket}")()
+						loadfile("{hostTicket}")()
 					</code>
 				</Tab>
 				<Tab tabData={tabData2}>
@@ -343,22 +345,20 @@
 							aria-label="Map location" />
 						<button
 							class="btn btn-primary"
-							on:click={() => {
-								launch("mercury-player:1+launchmode:maps")
-							}}
+							on:click={launch(
+								"mercury-player:1+launchmode:maps"
+							)}
 							type="button">
 							<i class="fas fa-arrow-up-right-from-square" />
 							Map Folder
 						</button>
 						<button
 							class="btn btn-success"
-							on:click={() => {
-								launch(
-									`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${
-										data.serverTicket
-									}&autopilot=${btoa(filepath)}`
-								)
-							}}
+							on:click={launch(
+								`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${btoa(
+									filepath
+								)}`
+							)}
 							type="button">
 							<i class="fas fa-wifi" />
 							Begin Hosting
@@ -371,14 +371,11 @@
 									<li class="rounded-2">
 										<button
 											class="btn light-text ps-4 pe-0 text-start"
-											on:click={() =>
-												launch(
-													`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
-														data.serverTicket
-													}&autopilot=${btoa(
-														filepath
-													)}`
-												)}
+											on:click={launch(
+												`mercury-player:1+launchmode:build+script:${hostTicket}&autopilot=${btoa(
+													filepath
+												)}`
+											)}
 											type="button">
 											Begin Hosting (no Studio tools)
 										</button>
