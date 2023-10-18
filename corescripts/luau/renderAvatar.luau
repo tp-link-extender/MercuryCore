@@ -42,7 +42,7 @@ game:HttpPost(
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
 player.CharacterAppearance = baseUrl
-	.. "/Asset/CharacterFetch.ashx?userID="
+	.. "/asset/characterfetch?userID="
 	.. assetId
 	.. "&amp;serverId=-1&amp;t="
 	.. tick()
@@ -71,7 +71,7 @@ while true do
 				.. game.JobId,
 			result,
 			true,
-			"text/plain"
+			"text/json"
 		)
 	end)
 	if not ok then

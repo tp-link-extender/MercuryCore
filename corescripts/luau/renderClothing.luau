@@ -38,8 +38,7 @@ game:HttpPost(
 		.. game.JobId,
 	'{"Status": 1}',
 	true,
-	"text/json",
-	true
+	"text/json"
 )
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
@@ -71,7 +70,7 @@ while true do
 				.. game.JobId,
 			result,
 			true,
-			"text/plain"
+			"text/json"
 		)
 	end)
 	if not ok then
