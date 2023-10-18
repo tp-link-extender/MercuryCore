@@ -1,12 +1,16 @@
 -- Avatar v1.1.0
 -- This is the thumbnail script for R6 avatars. Straight up and down, with the right arm out if they have a gear.
 
-local baseUrl: string, thumbnailKey: string, renderType: string, assetId: number =
-	...
+local baseUrl = _BASE_URL
+local thumbnailKey = _THUMBNAIL_KEY
+local renderType = _RENDER_TYPE
+local assetId = _ASSET_ID
 
 local ThumbnailGenerator = game:GetService "ThumbnailGenerator"
 local ContentProvider = game:GetService "ContentProvider"
 local InsertService = game:GetService "InsertService"
+local HttpService = game:GetService "HttpService"
+local ScriptContext = game:GetService "ScriptContext"
 
 pcall(function()
 	ContentProvider:SetBaseUrl(baseUrl)
@@ -14,8 +18,10 @@ pcall(function()
 	InsertService:SetAssetVersionUrl(baseUrl .. "/Asset/?assetversionid=%d")
 end)
 
-game:GetService("HttpService").HttpEnabled = true
-game:GetService("ScriptContext").ScriptsDisabled = true
+HttpService.HttpEnabled = true
+ScriptContext.ScriptsDisabled = true
+
+print(baseUrl, thumbnailKey, renderType, assetId)
 
 print(
 	"["
@@ -50,10 +56,10 @@ if gear then
 	player.Character.Torso["Right Shoulder"].CurrentAngle = math.rad(90)
 end
 
-local click = ThumbnailGenerator:Click("PNG", 1024, 1024, true)
+local click = ThumbnailGenerator:Click("PNG", 420, 420, true)
 
 local result = '{"Status": 2, "Click": "' .. tostring(click) .. '"}'
-print result
+print(result)
 print("[" .. game.JobId .. "] Successfully rendered, moving on...")
 
 while true do

@@ -3,7 +3,7 @@ import "dotenv/config"
 
 export async function GET({ url, setHeaders }) {
 	const id = url.searchParams.get("id")
-	if (!id || !/^\d+$/.test(id)) throw error(400, "Missing assetId parameter")
+	if (!id || !/^\d+$/.test(id)) throw error(400, "Missing id parameter")
 
 	setHeaders({
 		Pragma: "no-cache",

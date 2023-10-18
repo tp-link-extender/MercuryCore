@@ -7,6 +7,7 @@ type Render = {
 	status: "Pending" | "Rendering" | "Completed" | "Error"
 	created: string
 	completed: string | null
+	relativeId: number
 	user?: {
 		number: number
 		status: "Playing" | "Online" | "Offline"

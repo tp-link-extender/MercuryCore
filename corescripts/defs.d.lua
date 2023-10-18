@@ -10258,6 +10258,10 @@ declare _CHAR_APPEARANCE: string
 declare _PING_URL: string
 
 declare _BASE_URL: string
+declare _THUMBNAIL_KEY: string
+declare _RENDER_TYPE: string
+declare _ASSET_ID: number
+
 declare _MAP_LOCATION_EXISTS: boolean
 declare _MAP_LOCATION: any
 declare _SERVER_PORT: number
