@@ -32,10 +32,10 @@ export async function GET({ url, setHeaders }) {
 
 	if (!user) throw error(404, "User not found")
 
-	let charApp = `${process.env.RBX_ORIGIN}/Asset/BodyColors.ashx?id=${userNumber}`
+	let charApp = `${process.env.RCC_ORIGIN}/Asset/BodyColors.ashx?id=${userNumber}`
 
 	for (const asset of user.wearing) {
-		charApp += `;${process.env.RBX_ORIGIN}/asset?id=${asset}`
+		charApp += `;${process.env.RCC_ORIGIN}/asset?id=${asset}`
 	}
 
 	setHeaders({
