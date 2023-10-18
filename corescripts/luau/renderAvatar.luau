@@ -30,7 +30,7 @@ game:HttpPost(
 	baseUrl
 		.. "/api/render/update?apiKey="
 		.. thumbnailKey
-		.. "&amp;RenderJobID="
+		.. "&amp;taskID="
 		.. game.JobId,
 	'{"Status": 1}',
 	true,
