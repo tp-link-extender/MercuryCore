@@ -18,9 +18,6 @@ end)
 
 game:GetService("HttpService").HttpEnabled = true
 game:GetService("ScriptContext").ScriptsDisabled = true
-
-print(baseUrl, thumbnailKey, renderType, assetId)
-
 print(
 	"["
 		.. game.JobId
@@ -42,7 +39,7 @@ game:HttpPost(
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
 player.CharacterAppearance = baseUrl
-	.. "/api/render/characterasset?id="
+	.. "/Asset/CharacterFetch.ashx?userID="
 	.. assetId
 player:LoadCharacter(false)
 
@@ -54,13 +51,9 @@ if gear then
 end
 
 local click = ThumbnailGenerator:Click("PNG", 1024, 1024, true)
-local clickObject = ThumbnailGenerator:Click("OBJ", 420, 420, true)
 
-local result = '{"Status": 2, "Click": "'
-	.. tostring(click)
-	.. '", "ClickObject": ['
-	.. tostring(clickObject)
-	.. "]}"
+local result = '{"Status": 2, "Click": "' .. tostring(click) .. '"}'
+print result
 print("[" .. game.JobId .. "] Successfully rendered, moving on...")
 
 while true do
@@ -69,7 +62,7 @@ while true do
 			baseUrl
 				.. "/api/render/update?apiKey="
 				.. thumbnailKey
-				.. "&amp;RenderJobID="
+				.. "&amp;taskID="
 				.. game.JobId,
 			result,
 			true,
