@@ -18,7 +18,7 @@ export const load = () => ({
 		},
 		{
 			id: 2,
-			type: "Asset",
+			type: "Clothing",
 			asset: {
 				id: 1,
 				name: "Test Asset",
