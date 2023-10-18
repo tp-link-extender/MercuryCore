@@ -12,6 +12,7 @@
 	]
 
 	export let data
+	export let form
 	const { user } = data
 </script>
 
@@ -123,6 +124,9 @@
 								<i class="fas fa-arrows-rotate" />
 								Re-render
 							</button>
+							<small class="text-danger d-block">
+								{form?.msg || ""}
+							</small>
 						</form>{/if}
 				</div>
 			</div>

@@ -8851,10 +8851,10 @@ declare class DataModel extends ServiceProvider
 	function GetObjectsAsync(self, url: Content): { Instance }
 	function GetObjectsList(self, urls: { any }): { any }
 	function GetPlaySessionId(self): string
-	function HttpGet(self, url: string, httpRequestType: EnumHttpRequestType?): string
-	function HttpGetAsync(self, url: string, httpRequestType: EnumHttpRequestType?): string
-	function HttpPost(self, url: string, data: string, contentType: string?, httpRequestType: EnumHttpRequestType?): string
-	function HttpPostAsync(self, url: string, data: string, contentType: string?, httpRequestType: EnumHttpRequestType?): string
+	function HttpGet(self, url: string, synchronous: boolean, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpGetAsync(self, url: string, synchronous: boolean, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpPost(self, url: string, data: string, synchronous: boolean, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpPostAsync(self, url: string, data: string, synchronous: boolean, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
 	function InsertObjectsAndJoinIfLegacyAsync(self, url: Content): { Instance }
 	function IsContentLoaded(self): boolean
 	function IsLoaded(self): boolean

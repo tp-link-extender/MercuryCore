@@ -4,20 +4,7 @@ import fs from "fs"
 import "dotenv/config"
 
 type Render = {
-	id: number
-	type: "Clothing" | "Avatar"
 	status: "Pending" | "Rendering" | "Completed" | "Error"
-	created: string
-	completed: string | null
-	user?: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
-	asset?: {
-		id: number
-		name: string
-	}
 }
 
 export default async function (
@@ -26,33 +13,13 @@ export default async function (
 ) {
 	const renders = await mquery<Render[][]>(
 		surql`
-			LET $render = SELECT
-				meta::id(id) AS id,
-				type,
-				status,
-				created,
-				completed,
-				relativeId,
-				IF $parent.type = "user" THEN
-					SELECT
-						number,
-						status,
-						username
-					FROM user WHERE number = $parent.relativeId
-				END AS user,
-				IF $parent.type = "asset" THEN
-					SELECT
-						meta::id(id) AS id,
-						name
-					FROM asset WHERE id = $parent.relativeId
-				END AS asset
-			FROM render
+			LET $render = SELECT status FROM render
 			WHERE status ∈ ["Pending", "Rendering"]
 				AND renderType = $renderType
 				AND relativeId = $assetId;
 			IF created + 1m < time::now() {
 				UPDATE $render SET status = "Error"
-			}
+			};
 			RETURN $render`,
 		{
 			renderType,
@@ -101,6 +68,15 @@ export default async function (
 		.replaceAll("_ASSET_ID", relativeId.toString())
 
 	// Send the XML to RCCService
+
+	await fetch("localhost:64989", {
+		method: "POST",
+		body: xml,
+		headers: {
+			"Content-Type": "text/xml; charset=utf-8",
+			SOAPAction: "http://roblox.com/OpenJobEx",
+		},
+	})
 
 	console.log(render)
 }

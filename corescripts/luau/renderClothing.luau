@@ -32,7 +32,7 @@ game:HttpPost(
 		.. "&amp;RenderJobID="
 		.. game.JobId,
 	'{"Status": 1}',
-	synchronous,
+	true,
 	"text/plain",
 	true
 )
@@ -70,8 +70,7 @@ while true do
 				.. game.JobId,
 			result,
 			true,
-			"text/plain",
-			true
+			"text/plain"
 		)
 	end)
 	if not ok then

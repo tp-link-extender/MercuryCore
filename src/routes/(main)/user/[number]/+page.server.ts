@@ -2,7 +2,9 @@ import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
 import { query, squery } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
-import { error } from "@sveltejs/kit"
+import { fail, error } from "@sveltejs/kit"
+import ratelimit from "$lib/server/ratelimit"
+import requestRender from "$lib/server/requestRender"
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
@@ -292,9 +294,18 @@ export const actions = {
 			throw e
 		}
 	},
-	rerender: async ({ locals }) => {
+	rerender: async ({ locals, getClientAddress }) => {
 		const { user } = await authorise(locals, 3)
 
-		
+		const limit = ratelimit({}, "rerender", getClientAddress, 60)
+		if (limit) return fail(429, { msg: "Too many requests" })
+
+		try {
+			await requestRender("Avatar", user.number)
+		} catch(e) {
+			console.error(e)
+			return fail(500, { msg: "Failed to request render" })
+		}
+		console.log("rerendering")
 	},
 }
