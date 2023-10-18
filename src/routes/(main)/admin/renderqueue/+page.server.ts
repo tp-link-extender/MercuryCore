@@ -41,6 +41,5 @@ export const load = () => ({
 					name
 				FROM asset WHERE id = $parent.relativeId
 			END[0] AS asset
-		FROM render
-	`),
+		FROM render ORDER BY created DESC`),
 })
