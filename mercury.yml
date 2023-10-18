@@ -29,6 +29,15 @@ globals:
   _CLIENT:
     args: []
 
+  _BASE_URL:
+    args: []
+  _THUMBNAIL_KEY:
+    args: []
+  _RENDER_TYPE:
+    args: []
+  _ASSET_ID:
+    args: []
+
   assert:
     args:
       - type: any
