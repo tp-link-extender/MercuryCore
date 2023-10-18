@@ -11,7 +11,7 @@
 	import "/src/fa/sass/fontawesome.styl"
 
 	export let data
-	const { user } = data
+	$: user = data.user
 
 	// Settings for nprogress, the loading bar shown
 	// at the top of the page when navigating
@@ -29,14 +29,13 @@
 
 	onMount(() => {
 		// Keep the user's online status up to date
-		setInterval(
-			() =>
+		setInterval(() => {
+			if (user)
 				fetch("/api?/statusping", {
 					method: "POST",
 					body: new FormData(),
-				}),
-			30e3
-		)
+				})
+		}, 30e3)
 	})
 
 	const notificationNotes: { [k: string]: string } = {

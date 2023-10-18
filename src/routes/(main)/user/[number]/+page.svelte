@@ -112,8 +112,17 @@
 						src="/api/avatar/{data.username}-body"
 						alt={data.username} />
 					{#if user?.permissionLevel > 2}
-						<button class="btn btn-sm btn-primary position-absolute end-5"><i class="fas fa-arrows-rotate"/> Re-render</button>
-					{/if}
+						<form
+							use:enhance
+							method="POST"
+							action="?/rerender"
+							in:fade
+							class="position-absolute end-0 pe-4">
+							<button class="btn btn-sm btn-primary">
+								<i class="fas fa-arrows-rotate" />
+								Re-render
+							</button>
+						</form>{/if}
 				</div>
 			</div>
 		</div>
