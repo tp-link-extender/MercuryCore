@@ -11,6 +11,7 @@
 	]
 
 	export let data
+	const { user } = data
 </script>
 
 <Head title={data.username} />
@@ -110,6 +111,9 @@
 						class="mx-auto"
 						src="/api/avatar/{data.username}-body"
 						alt={data.username} />
+					{#if user?.permissionLevel > 2}
+						<button class="btn btn-sm btn-primary position-absolute end-5"><i class="fas fa-arrows-rotate"/> Re-render</button>
+					{/if}
 				</div>
 			</div>
 		</div>
