@@ -7114,6 +7114,7 @@ structs:
             - TextChatService
             - TextService
             - ThirdPartyUserService
+            - ThumbnailGenerator
             - TimerService
             - ToastNotificationService
             - ToolboxService
@@ -7152,6 +7153,8 @@ structs:
       method: true
     HttpPost:
       args:
+        - required: false
+          type: any
         - required: false
           type: any
         - required: false
