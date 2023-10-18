@@ -298,7 +298,7 @@ export const actions = {
 		const { user } = await authorise(locals, 3)
 
 		const limit = ratelimit({}, "rerender", getClientAddress, 60)
-		if (limit) return fail(429, { msg: "Too many requests" })
+		// if (limit) return fail(429, { msg: "Too many requests" })
 
 		try {
 			await requestRender("Avatar", user.number)

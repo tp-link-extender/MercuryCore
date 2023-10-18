@@ -1,8 +1,10 @@
 -- Avatar v1.1.0
 -- This is the thumbnail script for R6 avatars. Straight up and down, with the right arm out if they have a gear.
 
-local baseUrl: string, thumbnailKey: string, renderType: string, assetId: number =
-	...
+local baseUrl: string = _BASE_URL
+local thumbnailKey: string = _THUMBNAIL_KEY
+local renderType: string = _RENDER_TYPE
+local assetId: number = _ASSET_ID
 
 local ThumbnailGenerator = game:GetService "ThumbnailGenerator"
 local ContentProvider = game:GetService "ContentProvider"
@@ -16,6 +18,8 @@ end)
 
 game:GetService("HttpService").HttpEnabled = true
 game:GetService("ScriptContext").ScriptsDisabled = true
+
+print(baseUrl, thumbnailKey, renderType, assetId)
 
 print(
 	"["
