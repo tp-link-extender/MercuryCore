@@ -21,7 +21,6 @@ end)
 HttpService.HttpEnabled = true
 ScriptContext.ScriptsDisabled = true
 
-print(baseUrl, thumbnailKey, renderType, assetId)
 
 print(
 	"["
