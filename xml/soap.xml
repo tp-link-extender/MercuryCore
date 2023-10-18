@@ -16,24 +16,6 @@
 					_RENDER_SCRIPT
 				</script>
 			</script>
-			<arguments>
-				<LuaValue>
-					<type>LUA_TSTRING</type>
-					<value>_BASE_URL</value>
-				</LuaValue>
-				<LuaValue>
-					<type>LUA_TSTRING</type>
-					<value>_THUMBNAIL_KEY</value>
-				</LuaValue>
-				<LuaValue>
-					<type>LUA_TSTRING</type>
-					<value>_RENDER_TYPE</value>
-				</LuaValue>
-				<LuaValue>
-					<type>LUA_TNUMBER</type>
-					<value>_ASSET_ID</value>
-				</LuaValue>
-			</arguments>
 		</OpenJobEx>
 	</soap:Body>
 </soap:Envelope>

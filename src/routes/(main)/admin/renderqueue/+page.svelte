@@ -27,11 +27,8 @@
 							<div class="card-body">
 								<h2 class="fs-3 mb-0">Render Server</h2>
 								<small class="mb-3">
-									is <strong
-										class="text-{online
-											? 'success'
-											: 'danger'}">
-										o{online ? "n" : "ff"}line
+									is <strong class="text-success">
+										active
 									</strong>
 								</small>
 

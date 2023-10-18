@@ -50,26 +50,25 @@ export default async function (
 	)
 	const renderId = newRender[1].id
 
+	console.log({ renderId })
 	// Tap in rcc
+
+	const script = fs
+		.readFileSync(`corescripts/processed/render${renderType}.lua`, "utf-8")
+		.replaceAll("_BASE_URL", `"${process.env.RCC_ORIGIN}"` as string)
+		.replaceAll("_THUMBNAIL_KEY", `"${process.env.RCC_KEY}"` as string)
+		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
+		.replaceAll("_ASSET_ID", relativeId.toString())
 
 	const xml = fs
 		.readFileSync(`xml/soap.xml`, "utf-8")
 		.replaceAll("_TASK_ID", renderId)
-		.replaceAll(
-			"_RENDER_SCRIPT",
-			fs.readFileSync(
-				`corescripts/processed/render${renderType}.lua`,
-				"utf-8",
-			),
-		)
-		.replaceAll("_BASE_URL", process.env.RCC_ORIGIN as string)
-		.replaceAll("_THUMBNAIL_KEY", process.env.RCC_KEY as string)
-		.replaceAll("_RENDER_TYPE", renderType)
-		.replaceAll("_ASSET_ID", relativeId.toString())
-
+		.replaceAll("_RENDER_SCRIPT", script)
+		
+	console.log(xml)
 	// Send the XML to RCCService
 
-	await fetch("localhost:64989", {
+	await fetch("http://localhost:64989", {
 		method: "POST",
 		body: xml,
 		headers: {
@@ -78,5 +77,5 @@ export default async function (
 		},
 	})
 
-	console.log(render)
+	console.log({ render })
 }
