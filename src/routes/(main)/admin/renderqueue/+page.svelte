@@ -3,7 +3,8 @@
 
 	let tabData = TabData(data.url, ["Status", "Render Queue"])
 
-	const online = new Date(data.status).getTime() > Date.now() - 35 * 1000
+	const online = new Date(data.status).getTime() > Date.now() - 35 * 1000,
+		current = data.queue[0]
 </script>
 
 <Head title="Render Queue - Admin" />
@@ -58,7 +59,8 @@
 						<div class="card light-text">
 							<div class="card-body">
 								<h2 class="fs-3">Currently Rendering</h2>
-								<table class="table w-100">
+								<table
+									class="p-5 w-100 bg-background rounded-2">
 									<thead>
 										<tr>
 											<th scope="col">Task ID</th>
@@ -69,10 +71,19 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr class="table-active">
-											<th scope="row">1</th>
-											<td>Avatar</td>
-											<td>Heliodex</td>
+										<tr>
+											<th scope="row">{current.id}</th>
+											<td>{current.type}</td>
+											{#if current.user}
+												<User
+													user={current.user}
+													full
+													thin />
+											{:else if current.asset}
+												<td>{current.asset.name}</td>
+											{:else}
+												<td>Unknown</td>
+											{/if}
 										</tr>
 									</tbody>
 								</table>
@@ -82,7 +93,7 @@
 				</div>
 			</Tab>
 			<Tab {tabData}>
-				<table class="table w-100 light-text">
+				<table id="rendertable" class="w-100 light-text">
 					<thead>
 						<tr>
 							<th scope="col">Task ID</th>
@@ -93,16 +104,36 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="table-active">
-							<th scope="row">1</th>
-							<td>Avatar</td>
-							<td>Heliodex</td>
-							<td>Pending</td>
-							<td>N/A</td>
-						</tr>
+						{#each data.queue as task}
+							<tr>
+								<th scope="row">{task.id}</th>
+								<td>{task.type}</td>
+								{#if task.user}
+									<td>
+										<User
+											user={task.user}
+											full
+											thin
+											size="1.5rem" />
+									</td>
+								{:else if task.asset}
+									<td>{task.asset.name}</td>
+								{:else}
+									<td>Unknown</td>
+								{/if}
+								<td>Pending</td>
+								<td>N/A</td>
+							</tr>
+						{/each}
 					</tbody>
 				</table>
 			</Tab>
 		</div>
 	</div>
 </div>
+
+<style lang="stylus">
+	// Change colour of every second row
+	#rendertable tbody tr:nth-child(2n-1)
+		background var(--darker)
+</style>

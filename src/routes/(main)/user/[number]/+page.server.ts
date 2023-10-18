@@ -116,7 +116,7 @@ export async function load({ locals, params }) {
 }
 
 export const actions = {
-	default: async ({ request, locals, params }) => {
+	interact: async ({ request, locals, params }) => {
 		const { user } = await authorise(locals)
 
 		if (!/^\d+$/.test(params.number))
@@ -291,5 +291,10 @@ export const actions = {
 			console.error(e)
 			throw e
 		}
+	},
+	rerender: async ({ locals }) => {
+		const { user } = await authorise(locals, 3)
+
+		
 	},
 }

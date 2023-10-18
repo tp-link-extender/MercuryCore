@@ -6,10 +6,11 @@
 {#if data.username != user?.username}
 	<div class="d-flex">
 		<form
-			in:fade
-			class="align-self-center pe-2 d-flex gap-2"
+			use:enhance
 			method="POST"
-			use:enhance>
+			action="?/interact"
+			in:fade
+			class="align-self-center pe-2 d-flex gap-2">
 			<button
 				name="action"
 				value={data.friends
