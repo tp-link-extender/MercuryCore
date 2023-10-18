@@ -68,7 +68,6 @@ export default async function (
 		.replaceAll("_TASK_ID", renderId)
 		.replaceAll("_RENDER_SCRIPT", script)
 
-	console.log(xml)
 	// Send the XML to RCCService
 
 	await fetch("http://localhost:64989", {
