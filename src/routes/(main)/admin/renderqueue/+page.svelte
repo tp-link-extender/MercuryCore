@@ -96,11 +96,12 @@
 				<table id="rendertable" class="w-100 light-text">
 					<thead>
 						<tr>
-							<th scope="col">Task ID</th>
-							<th scope="col">Render Type</th>
-							<th scope="col">User/Asset Requested</th>
+							<th scope="col">Task id</th>
+							<th scope="col">Render type</th>
+							<th scope="col">User/Asset requested</th>
 							<th scope="col">Status</th>
-							<th scope="col">Time Completed</th>
+							<th scope="col">Time started</th>
+							<th scope="col">Time completed</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -110,11 +111,7 @@
 								<td>{task.type}</td>
 								{#if task.user}
 									<td>
-										<User
-											user={task.user}
-											full
-											thin
-											size="1.5rem" />
+										<User user={task.user} full thin />
 									</td>
 								{:else if task.asset}
 									<td>{task.asset.name}</td>
@@ -122,6 +119,9 @@
 									<td>Unknown</td>
 								{/if}
 								<td>Pending</td>
+								<td>
+									{new Date(task.created).toLocaleString()}
+								</td>
 								<td>N/A</td>
 							</tr>
 						{/each}
@@ -134,6 +134,10 @@
 
 <style lang="stylus">
 	// Change colour of every second row
-	#rendertable tbody tr:nth-child(2n-1)
-		background var(--darker)
+	#rendertable 
+		tbody tr:nth-child(2n-1)
+			background var(--darker)
+
+		td
+			height 3rem
 </style>

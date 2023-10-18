@@ -32,9 +32,8 @@ game:HttpPost(
 		.. "&amp;RenderJobID="
 		.. game.JobId,
 	'{"Status": 1}',
-	synchronous,
-	"text/plain",
-	true
+	true,
+	"text/plain"
 )
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
