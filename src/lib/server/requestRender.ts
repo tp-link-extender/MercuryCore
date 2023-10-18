@@ -7,48 +7,51 @@ type Render = {
 	status: "Pending" | "Rendering" | "Completed" | "Error"
 }
 
+const selectRender = surql`
+	(SELECT status, created, id
+	FROM render WHERE status ∈ ["Pending", "Rendering"]
+		AND type = $renderType
+		AND relativeId = $relativeId)[0]`
+
 export default async function (
 	renderType: "Clothing" | "Avatar",
 	relativeId: number,
 ) {
-	const renders = await mquery<Render[][]>(
+	const renders = await mquery<Render[]>(
 		surql`
-			LET $render = SELECT status FROM render
-			WHERE status ∈ ["Pending", "Rendering"]
-				AND renderType = $renderType
-				AND relativeId = $assetId;
-			IF created + 1m < time::now() {
-				UPDATE $render SET status = "Error"
+			LET $render = ${selectRender};
+			IF $render AND $render.created + 1m < time::now() {
+				UPDATE $render.id SET status = "Error"
 			};
-			RETURN $render`,
+			RETURN ${selectRender}`,
 		{
 			renderType,
 			relativeId,
 		},
 	)
-	const render = renders[2][0]
+	const render = renders[2]
 
 	if (render && render.status != "Error") return
 
 	// If the render doesn't exist or if the last one
 	// errored, create a new render
 
-	const newRender = await mquery<{ id: string }[]>(
+	const newRender = await mquery<string[]>(
 		surql`
-			LET $render = CREATE render CONTENT {
+			LET $render = (CREATE render CONTENT {
 				type: $renderType,
 				status: "Pending",
 				created: time::now(),
 				completed: NONE,
 				relativeId: $relativeId
-			};
-			RETURN meta::id($render)`,
+			})[0];
+			RETURN meta::id($render.id)`,
 		{
 			renderType,
 			relativeId,
 		},
 	)
-	const renderId = newRender[1].id
+	const renderId = newRender[1]
 
 	console.log({ renderId })
 	// Tap in rcc
@@ -64,7 +67,7 @@ export default async function (
 		.readFileSync(`xml/soap.xml`, "utf-8")
 		.replaceAll("_TASK_ID", renderId)
 		.replaceAll("_RENDER_SCRIPT", script)
-		
+
 	console.log(xml)
 	// Send the XML to RCCService
 
@@ -76,6 +79,4 @@ export default async function (
 			SOAPAction: "http://roblox.com/OpenJobEx",
 		},
 	})
-
-	console.log({ render })
 }

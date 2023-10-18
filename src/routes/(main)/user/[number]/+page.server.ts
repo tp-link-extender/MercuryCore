@@ -306,6 +306,5 @@ export const actions = {
 			console.error(e)
 			return fail(500, { msg: "Failed to request render" })
 		}
-		console.log("rerendering")
 	},
 }

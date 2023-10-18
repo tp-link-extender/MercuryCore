@@ -115,7 +115,7 @@
 								{:else}
 									<td>Unknown</td>
 								{/if}
-								<td>Pending</td>
+								<td>{task.status}</td>
 								<td>
 									{new Date(task.created).toLocaleString()}
 								</td>
