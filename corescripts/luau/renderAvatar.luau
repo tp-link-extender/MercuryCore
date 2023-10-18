@@ -37,7 +37,7 @@ game:HttpPost(
 		.. game.JobId,
 	'{"Status": 1}',
 	true,
-	"text/plain"
+	"text/json"
 )
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)

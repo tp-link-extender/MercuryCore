@@ -38,7 +38,7 @@ game:HttpPost(
 		.. game.JobId,
 	'{"Status": 1}',
 	true,
-	"text/plain",
+	"text/json",
 	true
 )
 
