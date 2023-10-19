@@ -42,7 +42,7 @@ game:HttpPost(
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
 player.CharacterAppearance = baseUrl
-	.. "/api/render/characterasset?id="
+	.. "/Asset/CharacterFetch?userID="
 	.. assetId
 player:LoadCharacter(false)
 
