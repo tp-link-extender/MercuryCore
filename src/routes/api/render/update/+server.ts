@@ -16,7 +16,7 @@ type Render = {
 
 export async function POST({ request, url }) {
 	const apiKey = url.searchParams.get("apiKey")
-	if (!apiKey || apiKey != process.env.RCC_KEY) throw error(400, "yeat")
+	if (!apiKey || apiKey != process.env.RCC_KEY) throw error(400, "Stfu")
 
 	const id = url.searchParams.get("taskID")
 	if (!id || !/^[\d\w]+$/.test(id))
@@ -28,35 +28,26 @@ export async function POST({ request, url }) {
 
 	if (!task) throw error(404, "Task not found")
 
-	// Check if gzip-encoded
+	// Check if response is gzipped, and if so, gunzip it
 	const buffer = await request.arrayBuffer()
-	
-	if (buffer.byteLength < 2) {
-		throw error(400, "Bad Request")
-	}
 
-	const buffer2 = new Uint8Array(buffer)
+	if (buffer.byteLength < 2) throw error(400, "Request too short or empty")
 
-	const headerBytes = buffer2.slice(0, 2)
+	const buffer2 = new Uint8Array(buffer),
+		headerBytes = buffer2.slice(0, 2)
+	const json = JSON.parse(
+		headerBytes[0] == 0x1f && headerBytes[1] == 0x8b
+			? gunzipSync(buffer2).toString()
+			: new TextDecoder().decode(buffer2),
+	)
 
-	let json
-
-	if(headerBytes[0] == 0x1F && headerBytes[1] == 0x8B) {
-		const result = gunzipSync(buffer2)
-		json = JSON.parse(result.toString())
-	} else {
-		const enc = new TextDecoder()
-		json = JSON.parse(enc.decode(buffer2))
-	}
-	
 	const status: number = json.Status
 
-	if (status == 1) {
-		await query(
-			surql`UPDATE render SET status = "Rendering" WHERE taskID = $id`,
-			{ id },
-		)
-	} else if (status == 2) {
+	if (status == 1)
+		await query(surql`UPDATE $render SET status = "Rendering"`, {
+			render: `render:${id}`,
+		})
+	else if (status == 2) {
 		const base64: string = json.Click
 
 		// Convert base64 from RCCService to an image
@@ -68,11 +59,11 @@ export async function POST({ request, url }) {
 
 		await query(
 			surql`
-				UPDATE render MERGE {
+				UPDATE $render MERGE {
 					status: "Completed",
 					completed: time::now(),
-				} WHERE taskID = $id`,
-			{ id },
+				}`,
+			{ render: `render:${id}` },
 		)
 	}
 
