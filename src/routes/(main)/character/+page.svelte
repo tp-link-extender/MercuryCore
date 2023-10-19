@@ -17,13 +17,18 @@
 			formdata.append("q", query)
 
 			const response = await fetch("/character?/search", {
-					method: "POST",
-					body: formdata,
-				}),
-				result: any = deserialize(await response.text())
+				method: "POST",
+				body: formdata,
+			})
+			const result: any = deserialize(await response.text())
 
 			searchedData = result.data.assets
 		})()
+
+	export const snapshot = {
+		capture: () => query,
+		restore: v => (query = v),
+	}
 
 	const tabTypes: { [k: string]: number } = {
 		Recent: 0,

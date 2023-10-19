@@ -1,13 +1,47 @@
 <script lang="ts">
+	import { browser } from "$app/environment"
+
 	export let data
 
-	let tabData = TabData(data.url, [
-		"Hats",
-		"T-Shirts",
-		"Shirts",
-		"Pants",
-		"Decals",
-	])
+	let query = data.query,
+		searchedData: typeof data.assets = []
+
+	// Run function whenever query changes
+	$: query &&
+		browser &&
+		(async () => {
+			if (query.trim().length < 1) return (searchedData = data.assets)
+
+			const formdata = new FormData()
+			formdata.append("q", query)
+
+			const response = await fetch("/inventory", {
+				method: "POST",
+				body: formdata,
+			})
+			const result: any = deserialize(await response.text())
+
+			searchedData = result.data.assets
+		})()
+
+	export const snapshot = {
+		capture: () => query,
+		restore: v => (query = v),
+	}
+
+	const tabTypes: { [k: string]: number } = {
+		"T-Shirts": 2,
+		Shirts: 11,
+		Hats: 8,
+		Pants: 12,
+		Decals: 13,
+	}
+
+	let tabData = TabData(data.url, Object.keys(tabTypes))
+
+	$: assets = (query && browser ? searchedData : data.assets || []).filter(
+		a => a.type == tabTypes[tabData.currentTab]
+	)
 </script>
 
 <Head title="Inventory" />
@@ -22,44 +56,40 @@
 		<div class="col-xl-9 col-lg-9">
 			<div class="container">
 				<form
-				use:enhance
-				method="POST"
-				action="/search?c=assets"
-				class="row mb-4">
-				<div class="input-group">
-					<input
-						type="text"
-						name="query"
-						class="form-control light-text valid"
-						placeholder="Search for an item"
-						aria-label="Search for an item"
-						aria-describedby="button-addon2" />
-					<button
-						class="btn btn-success"
-						aria-label="Search"
-						id="button-addon2">
-						<i class="fa fa-magnifying-glass" />
-					</button>
-				</div>
-			</form>
+					on:submit|preventDefault
+					action="/inventory?tab={tabData.currentTab}"
+					class="row mb-4">
+					<div class="input-group">
+						<input
+							bind:value={query}
+							type="text"
+							name="q"
+							class="form-control light-text valid"
+							placeholder="Search for an item"
+							aria-label="Search for an item"
+							aria-describedby="button-addon2" />
+						<button
+							class="btn btn-success"
+							aria-label="Search"
+							id="button-addon2">
+							<i class="fa fa-magnifying-glass" />
+						</button>
+					</div>
+				</form>
 				<div class="row">
-					{#each data.assets || [] as asset, num}
-						<Asset
-							{asset}
-							{num}
-							total={(data.assets || []).length} />
+					{#each assets as asset, num}
+						<Asset {asset} {num} total={assets.length} />
 					{/each}
+					{#if query && assets.length == 0}
+						<h2 class="fs-5 light-text mt-12">
+							No items found with search term {query}
+						</h2>
+					{/if}
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
-<!-- <div class="container mt-12 d-grid">
-	{#each data.assets || [] as asset, num}
-		<Asset {asset} {num} total={(data.assets || []).length} />
-	{/each}
-</div> -->
 
 <style lang="stylus">
 

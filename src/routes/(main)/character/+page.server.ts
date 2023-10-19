@@ -14,6 +14,15 @@ const brickColours = [
 	1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027,
 	1028, 1029, 1030, 1031, 1032,
 ]
+const select = surql`
+	SELECT
+		meta::id(id) AS id,
+		name,
+		price,
+		type,
+		($user ∈ <-wearing<-user) AS wearing
+	FROM asset WHERE $user ∈ <-owns<-user
+		AND type ∈ [${allowedTypes.join(", ")}]`
 
 export const load = async ({ locals, url }) => {
 	const searchQ = url.searchParams.get("q")?.trim()
@@ -27,24 +36,14 @@ export const load = async ({ locals, url }) => {
 			type: number
 			wearing: boolean
 		}>(
-			surql`
-				SELECT
-					meta::id(id) AS id,
-					name,
-					price,
-					type,
-					($user ∈ <-wearing<-user) AS wearing
-				FROM asset WHERE $user ∈ <-owns<-user
-					AND type ∈ $allowedTypes
-				${
-					searchQ
-						? surql`AND string::lowercase($query) ∈ string::lowercase(name)`
-						: ""
-				}`,
+			surql`${select} ${
+				searchQ
+					? surql`AND string::lowercase($query) ∈ string::lowercase(name)`
+					: ""
+			}`,
 			{
 				user: `user:${(await authorise(locals)).user.id}`,
 				query: searchQ,
-				allowedTypes,
 			},
 		),
 	}
@@ -53,20 +52,11 @@ export const load = async ({ locals, url }) => {
 export const actions = {
 	search: async ({ request, locals }) => ({
 		assets: await query(
-			surql`
-				SELECT
-					meta::id(id) AS id,
-					name,
-					price,
-					type
-				FROM asset
-				WHERE $user ∈ <-owns<-user
-					AND string::lowercase($query) ∈ string::lowercase(name)
-					AND type ∈ $allowedTypes`,
+			surql`${select}
+				AND string::lowercase($query) ∈ string::lowercase(name)`,
 			{
 				query: ((await request.formData()).get("q") as string).trim(),
 				user: `user:${(await authorise(locals)).user.id}`,
-				allowedTypes,
 			},
 		),
 	}),
@@ -182,13 +172,10 @@ export const actions = {
 				)
 				break
 			case "unequip":
-				await query(
-					surql`DELETE $user->wearing WHERE out = $asset`,
-					{
-						user: `user:${user.id}`,
-						asset: `asset:${id}`,
-					},
-				)
+				await query(surql`DELETE $user->wearing WHERE out = $asset`, {
+					user: `user:${user.id}`,
+					asset: `asset:${id}`,
+				})
 		}
 	},
 }
