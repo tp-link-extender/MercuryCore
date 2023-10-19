@@ -11,16 +11,14 @@
 			formdata.append("q", query)
 
 			const response = await fetch("/avatarshop", {
-					method: "POST",
-					body: formdata,
-				}),
-				result: any = deserialize(await response.text())
+				method: "POST",
+				body: formdata,
+			})
+			const result: any = deserialize(await response.text())
 
 			searchedData = result.data.assets
 		})()
 
-	// Snapshots allow form values on a page to be restored
-	// if the user navigates away and then back again.
 	export const snapshot = {
 		capture: () => query,
 		restore: v => (query = v),

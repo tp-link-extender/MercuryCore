@@ -6,22 +6,20 @@ type Group = {
 	memberCount: number
 }
 
+const select = surql`
+	SELECT
+		name,
+		count(<-member) AS memberCount
+	FROM group`
+
 export const load = () => ({
-	groups: query<Group>(surql`
-		SELECT
-			name,
-			count(<-member) AS memberCount
-		FROM group`),
+	groups: query<Group>(select),
 })
 
 export const actions = {
 	default: async ({ request }) => ({
 		groups: await query<Group>(
-			surql`
-				SELECT
-					name,
-					count(<-member) AS memberCount
-				FROM group
+			surql`${select}
 				WHERE string::lowercase($query) ∈ string::lowercase(name)`,
 			{ query: (await request.formData()).get("q") as string },
 		),
