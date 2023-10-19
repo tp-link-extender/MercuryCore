@@ -10,5 +10,6 @@ export async function GET({ url, setHeaders }) {
 		"Cache-Control": "no-cache",
 	})
 
-	return new Response(`${process.env.RCC_ORIGIN}/api/render/character;${process.env.RCC_ORIGIN}/Asset?id=${id}`)
+	return new Response(`${process.env.RCC_ORIGIN}/api/render/character`)
+	// ${process.env.RCC_ORIGIN}/Asset?id=${id}
 }

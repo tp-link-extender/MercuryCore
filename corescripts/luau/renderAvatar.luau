@@ -42,10 +42,8 @@ game:HttpPost(
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
 player.CharacterAppearance = baseUrl
-	.. "/asset/characterfetch?userID="
+	.. "/api/render/characterasset?id="
 	.. assetId
-	.. "&amp;serverId=-1&amp;t="
-	.. tick()
 player:LoadCharacter(false)
 
 -- Raise up the character's arm if they have gear.
@@ -58,7 +56,6 @@ end
 local click = ThumbnailGenerator:Click("PNG", 420, 420, true)
 
 local result = '{"Status": 2, "Click": "' .. tostring(click) .. '"}'
-print(result)
 print("[" .. game.JobId .. "] Successfully rendered, moving on...")
 
 while true do

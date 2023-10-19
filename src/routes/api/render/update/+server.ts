@@ -3,6 +3,7 @@ import { query, squery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import fs from "fs"
 import "dotenv/config"
+import { gunzipSync } from "node:zlib"
 
 type Render = {
 	id: number
@@ -27,8 +28,28 @@ export async function POST({ request, url }) {
 
 	if (!task) throw error(404, "Task not found")
 
-	const json = await request.json(),
-		status: number = json.Status
+	// Check if gzip-encoded
+	const buffer = await request.arrayBuffer()
+	
+	if (buffer.byteLength < 2) {
+		throw error(400, "Bad Request")
+	}
+
+	const buffer2 = new Uint8Array(buffer)
+
+	const headerBytes = buffer2.slice(0, 2)
+
+	let json
+
+	if(headerBytes[0] == 0x1F && headerBytes[1] == 0x8B) {
+		const result = gunzipSync(buffer2)
+		json = JSON.parse(result.toString())
+	} else {
+		const enc = new TextDecoder()
+		json = JSON.parse(enc.decode(buffer2))
+	}
+	
+	const status: number = json.Status
 
 	if (status == 1) {
 		await query(
