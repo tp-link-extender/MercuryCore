@@ -57,7 +57,6 @@ end
 local click = ThumbnailGenerator:Click("PNG", 420, 420, true)
 
 local result = '{"Status": 2, "Click": "' .. tostring(click) .. '"}'
-print(result)
 print("[" .. game.JobId .. "] Successfully rendered, moving on...")
 
 while true do

@@ -20,7 +20,7 @@ export default async function (
 	const renders = await mquery<Render[]>(
 		surql`
 			LET $render = ${selectRender};
-			IF $render AND $render.created + 1m < time::now() {
+			IF $render AND $render.created + 1s < time::now() {
 				UPDATE $render.id SET status = "Error"
 			};
 			RETURN ${selectRender}`,
