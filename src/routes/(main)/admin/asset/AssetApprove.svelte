@@ -74,6 +74,10 @@
 			<label for="purge{asset.id}" class="btn btn-lg btn-danger mt-3">
 				Purge
 			</label>
+			
+			<label for="purge{asset.id}" class="btn btn-lg btn-primary mt-3">
+				Re-render
+			</label>
 		{/if}
 	</div>
 	<label class="modal-backdrop" for="modal{asset.id}">Close</label>
