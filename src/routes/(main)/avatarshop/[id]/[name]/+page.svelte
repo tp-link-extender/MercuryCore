@@ -31,6 +31,10 @@
 		12: "Pants",
 		13: "Decal",
 	}
+
+	const usernav = [
+			["fa-pencil", "Edit Asset", "/requests"]
+		]
 </script>
 
 <Head title={data.name} />
@@ -44,7 +48,43 @@
 				alt={data.name} />
 		</div>
 		<div class="col light-text">
-			<h1 class="mb-0">{data.name}</h1>
+			<div class="row">
+				<div class="col">
+					<h1 class="mb-0">{data.name}</h1>
+				</div>
+				<div class="col d-flex justify-content-end">
+					<li class="dropdown dropdown-hover dropdown-end ps-2 mt-2">
+						<i class="fas fa-ellipsis" />
+						<div class="dropdown-content pt-2">
+							<ul class="p-2 rounded-3">
+								{#each usernav as [icon, title, href]}
+									<li class="rounded-2">
+										<a
+											class="btn light-text ps-4 pe-0 text-start"
+											{href}>
+											<i class="fa {icon} me-2" />
+											{title}
+										</a>
+									</li>
+								{/each}
+								<li class="rounded-2">
+									<form
+										use:enhance
+										method="POST"
+										action="#">
+										<button
+											class="btn text-primary ps-4 pe-0 text-start">
+											<i
+												class="fas fa-arrows-rotate me-2" />
+											<b>Re-render</b>
+										</button>
+									</form>
+								</li>
+							</ul>
+						</div>
+					</li>
+				</div>
+			</div>
 			<div class="d-flex">
 				<strong class="pe-2">by:</strong>
 
