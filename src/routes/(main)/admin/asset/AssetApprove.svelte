@@ -2,7 +2,7 @@
 	// An avatar shop item component, used in the
 	// avatar shop and inventory pages.
 
-	export let asset: import("../../routes/(main)/admin/asset/$types").PageData["assets"][0]
+	export let asset: import("./$types").PageData["assets"][0]
 	export let num: number
 	export let total: number
 
@@ -12,8 +12,8 @@
 <label
 	in:fade|global={{ num, total }}
 	for="modal{asset.id}"
-	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6
-		text-decoration-none assetcard px-2">
+	class="assetcard col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6
+	text-decoration-none px-2">
 	<div class="card bg-a3">
 		<div class="card-body bg-a p-4 pb-3 rounded-1 light-text">
 			<div class="text-center pb-4">

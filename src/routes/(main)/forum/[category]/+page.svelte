@@ -15,14 +15,16 @@
 			[data.name, ""],
 		]} />
 
-	<h1 class="light-text mb-12">
+	<h1 class="light-text pb-8">
 		{data.name} - Forum
-		<a
-			href="/forum/create?category={data.name}"
-			class="btn btn-primary ms-6">
-			<i class="fa fa-file me-2" />
-			Create post
-		</a>
+		<span class="ps-6">
+			<a
+				href="/forum/create?category={data.name}"
+				class="btn btn-primary ">
+				<i class="fa fa-file pe-2" />
+				Create post
+			</a>
+		</span>
 	</h1>
 	{#each data.posts as post, num}
 		<ForumPost

@@ -30,13 +30,15 @@
 <Head title="Discover" />
 
 <div class="container">
-	<div class="row mb-12">
+	<div class="row pb-12">
 		<h1 class="col light-text">
 			Games
-			<a href="/games/create" class="btn btn-primary ms-6">
-				<i class="fas fa-plus" />
-				Create
-			</a>
+			<span class="ps-6">
+				<a href="/games/create" class="btn btn-primary">
+					<i class="fas fa-plus" />
+					Create
+				</a>
+			</span>
 		</h1>
 		<div class="col-8">
 			<form
@@ -63,11 +65,11 @@
 					</div>
 				</div>
 				<div class="col-7 row">
-					<div class="ms-4 col">
+					<div class="ps-4 col">
 						<div class="row">
 							<label
 								for="genre"
-								class="form-label light-text col mt-1">
+								class="form-label light-text col py-1">
 								Genre
 							</label>
 							<select
@@ -82,7 +84,7 @@
 						</div>
 					</div>
 					<div class="ms-4 col">
-						<div class="form-check light-text mt-1">
+						<div class="form-check light-text py-1">
 							<input
 								class="form-check-input"
 								type="checkbox"

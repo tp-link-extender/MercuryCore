@@ -51,13 +51,13 @@
 <nav class="navbar navbar-expand py-0">
 	<div class="w-100 border-0" tabindex="-1">
 		<div id="nav1" class="py-1 d-flex">
-			<a class="navbar-brand light-text me-0" href="/">
-				<img class="me-2" src="/icon.svg" alt="Mercury logo" />
-				<span class="me-6">Mercury</span>
+			<a class="navbar-brand light-text pe-2" href="/">
+				<img src="/icon.svg" alt="Mercury logo" />
+				<span>Mercury</span>
 			</a>
 			{#if user}
-				<div id="topnav" class="row me-2">
-					<div class="navbar-nav ms-3">
+				<div id="topnav" class="row pe-2">
+					<div class="navbar-nav ps-3">
 						{#each nav1 as [title, href]}
 							<a class="btn mt-1 px-1 light-text nav-item" {href}>
 								{title}
@@ -164,13 +164,13 @@
 						</div>
 					</form>
 				</div>
-				<ul class="navbar-nav m-0">
+				<ul class="navbar-nav">
 					<li id="notificationstop" class="pt-1">
 						<a
 							href="/notifications"
 							role="button"
 							aria-label="Notifications"
-							class="font-bold nav-link me-1">
+							class="font-bold nav-link pe-4">
 							<i class="fa fa-bell light-text" />
 						</a>
 					</li>
@@ -180,7 +180,7 @@
 							role="button"
 							aria-label="Transactions"
 							class="nav-link text-success">
-							<i class="fa fa-gem me-1 text-success" />
+							<i class="fa fa-gem pe-1 text-success" />
 							<span class="fs-6 text-success">
 								{user.currency}
 							</span>
@@ -196,7 +196,7 @@
 										<a
 											class="btn light-text ps-4 pe-0 text-start"
 											{href}>
-											<i class="fa {icon} me-2" />
+											<i class="fa {icon} pe-2" />
 											{title}
 										</a>
 									</li>
@@ -209,7 +209,7 @@
 										<button
 											class="btn text-danger ps-4 pe-0 text-start">
 											<i
-												class="fa fa-arrow-right-from-bracket me-2" />
+												class="fa fa-arrow-right-from-bracket pe-2" />
 											<b>Log out</b>
 										</button>
 									</form>
@@ -222,7 +222,7 @@
 				<ul
 					class="navbar-nav d-flex w-100 justify-content-end align-items-center">
 					<li class="nav-item">
-						<a href="/login" class="btn mb-1 light-text">Log in</a>
+						<a href="/login" class="btn pb-1 light-text">Log in</a>
 					</li>
 					<li class="nav-item">
 						<a href="/register" class="btn btn-success">Register</a>
@@ -237,7 +237,7 @@
 	{#each data.banners as banner (banner.id)}
 		<div
 			transition:height
-			class="py-1 my-0 rounded-0 text-center border-0"
+			class="py-1 text-center"
 			class:text-light={banner.textLight}
 			role="alert"
 			style="background: {banner.bgColour}">
@@ -251,7 +251,7 @@
 		<div class="d-flex flex-row justify-content-evenly mx-auto">
 			{#each nav1 as [title, href, icon]}
 				<a {href} class="btn light-text nav-item d-flex flex-column">
-					<i class="fa {icon} mb-1" />
+					<i class="fa {icon} pb-1" />
 					{title}
 				</a>
 			{/each}
@@ -259,7 +259,7 @@
 				href="/notifications"
 				id="notificationsbottom"
 				class="btn light-text nav-item flex-column">
-				<i class="fa fa-bell mb-1" />
+				<i class="fa fa-bell pb-1" />
 				Notifications
 			</a>
 		</div>
