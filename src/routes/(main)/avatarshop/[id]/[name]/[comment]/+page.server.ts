@@ -48,7 +48,7 @@ export async function load({ locals, params }) {
 					meta::id(->replyToComment[0]->assetComment[0].id)
 				END) AS parentReplyId,
 				(SELECT number, username FROM <-posted<-user)[0] AS author,
-				
+
 				count(<-likes) AS likeCount,
 				count(<-dislikes) AS dislikeCount,
 				$user ∈ <-likes<-user.id AS likes,

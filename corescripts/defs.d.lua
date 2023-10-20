@@ -6356,13 +6356,13 @@ declare class GuiService extends Instance
 	SpecialKeyPressed: RBXScriptSignal<EnumSpecialKey, string>
 	TouchControlsEnabled: boolean
 	UiMessageChanged: RBXScriptSignal<EnumUiMessageType, string>
-	
+
 	EscapeKeyPressed: RBXScriptSignal<>
 	BrowserWindowClosed: RBXScriptSignal<>
 	IsWindows: boolean
 	IsModalDialog: boolean
 	UseLuaChat: boolean
-	
+
 	function AddCenterDialog(self, dialog: Instance, centerDialogType: EnumCenterDialogType, showFunction: ((...any) -> ...any), hideFunction: ((...any) -> ...any)): nil
 	function AddKey(self, key: string): nil
 	function AddSelectionParent(self, selectionName: string, selectionParent: Instance): nil
