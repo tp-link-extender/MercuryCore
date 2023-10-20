@@ -69,7 +69,7 @@
 						<div class="row">
 							<label
 								for="genre"
-								class="form-label light-text col py-1">
+								class="light-text col py-1">
 								Genre
 							</label>
 							<select

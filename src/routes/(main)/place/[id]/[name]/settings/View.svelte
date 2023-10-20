@@ -4,27 +4,22 @@
 
 	export let data: import("./$types").PageData
 
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-	} = superForm(data.viewForm, {
-		taintedMessage: false,
-	})
+	const { form, errors, message, constraints, enhance, delayed } = superForm(
+		data.viewForm,
+		{
+			taintedMessage: false,
+		}
+	)
 
 	if (data.name && !$form.title) $form.title = data.name
-	if (data.description && !$form.description) $form.description = data.description.text
+	if (data.description && !$form.description)
+		$form.description = data.description.text
 </script>
 
 <form use:enhance method="POST" class="col-lg-8" action="?a=view&tab=View">
 	<fieldset class="pb-6">
 		<div class="row">
-			<label for="title" class="col-md-3 col-form-label text-md-right">
-				Title
-			</label>
+			<label for="title" class="col-md-3 text-md-right">Title</label>
 			<div class="col-md-9">
 				<input
 					bind:value={$form.title}
@@ -39,9 +34,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<label for="icon" class="col-md-3 col-form-label text-md-right">
-				Place Icon
-			</label>
+			<label for="icon" class="col-md-3 text-md-right">Place Icon</label>
 			<div class="col-md-5">
 				<input
 					bind:value={$form.icon}
@@ -57,9 +50,7 @@
 		</div>
 		<hr class="grey-text" />
 		<div class="row">
-			<label for="description" class="form-label light-text">
-				Description
-			</label>
+			<label for="description" class="light-text">Description</label>
 			<div class="container">
 				<textarea
 					bind:value={$form.description}

@@ -43,7 +43,7 @@
 						<div class="row">
 							<label
 								for="dailyStipend"
-								class="col-md-3 col-form-label light-text">
+								class="col-md-3 light-text">
 								Daily stipend
 							</label>
 							<div class="col-md-8">
@@ -68,7 +68,7 @@
 						<div class="row">
 							<label
 								for="stipendTime"
-								class="col-md-3 col-form-label light-text">
+								class="col-md-3 light-text">
 								Time between stipend
 							</label>
 							<div class="col-md-8">

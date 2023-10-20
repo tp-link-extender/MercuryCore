@@ -70,9 +70,7 @@
 					method="POST"
 					action="?/register">
 					<fieldset>
-						<label for="username" class="form-label">
-							Username
-						</label>
+						<label for="username">Username</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.username}
@@ -89,9 +87,7 @@
 							</p>
 						</div>
 
-						<label for="email" class="form-label">
-							Email Address
-						</label>
+						<label for="email">Email Address</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.email}
@@ -109,9 +105,7 @@
 							</p>
 						</div>
 
-						<label for="password" class="form-label">
-							Password
-						</label>
+						<label for="password">Password</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.password}
@@ -129,9 +123,7 @@
 							</p>
 						</div>
 
-						<label for="cpassword" class="form-label">
-							Confirm Password
-						</label>
+						<label for="cpassword">Confirm Password</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.cpassword}
@@ -149,9 +141,7 @@
 							</p>
 						</div>
 
-						<label for="regkey" class="form-label">
-							Registration Key
-						</label>
+						<label for="regkey">Registration Key</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.regkey}
@@ -217,9 +207,7 @@
 					method="POST"
 					action="?/initialAccount">
 					<fieldset>
-						<label for="username" class="form-label">
-							Username
-						</label>
+						<label for="username">Username</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.username}
@@ -236,9 +224,7 @@
 							</p>
 						</div>
 
-						<label for="password" class="form-label">
-							Password
-						</label>
+						<label for="password">Password</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.password}
@@ -256,9 +242,7 @@
 							</p>
 						</div>
 
-						<label for="cpassword" class="form-label">
-							Confirm Password
-						</label>
+						<label for="cpassword">Confirm Password</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.cpassword}

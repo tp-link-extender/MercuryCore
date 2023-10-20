@@ -18,9 +18,7 @@
 <form use:enhance method="POST" class="container pt-12 light-text">
 	<fieldset>
 		<div class="row mb-4">
-			<label for="name" class="col-md-3 col-form-label text-md-right">
-				Group name
-			</label>
+			<label for="name" class="col-md-3 text-md-right">Group name</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.name}

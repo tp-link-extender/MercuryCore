@@ -27,9 +27,7 @@
 	<form use:enhance method="POST">
 		<fieldset>
 			<div class="row pb-4">
-				<label for="name" class="col-md-3 col-form-label">
-					Category name
-				</label>
+				<label for="name" class="col-md-3">Category name</label>
 				<div class="col-md-9">
 					<input
 						bind:value={$form.name}
@@ -47,7 +45,7 @@
 				</div>
 			</div>
 			<div class="row pb-8">
-				<label for="description" class="col-md-3 col-form-label">
+				<label for="description" class="col-md-3">
 					Category description
 				</label>
 				<div class="col-md-9">

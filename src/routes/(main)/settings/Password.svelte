@@ -12,9 +12,7 @@
 
 <form use:enhance method="POST" class="col-sm-8" action="?a=password">
 	<fieldset class="pb-2">
-		<label for="password" class="col-sm-4 col-form-label">
-			Current Password
-		</label>
+		<label for="password" class="col-sm-4">Current Password</label>
 		<div class="col-sm-10">
 			<input
 				bind:value={$form.cpassword}
@@ -30,9 +28,7 @@
 				{$errors.cpassword || ""}
 			</p>
 		</div>
-		<label for="npassword" class="col-sm-4 col-form-label">
-			New Password
-		</label>
+		<label for="npassword" class="col-sm-4">New Password</label>
 		<div class="col-sm-10">
 			<input
 				bind:value={$form.npassword}
@@ -49,9 +45,7 @@
 				{$errors.npassword || ""}
 			</p>
 		</div>
-		<label for="cnpassword" class="col-sm-4 col-form-label">
-			Confirm New Password
-		</label>
+		<label for="cnpassword" class="col-sm-4">Confirm New Password</label>
 		<div class="col-sm-10">
 			<input
 				bind:value={$form.cnpassword}

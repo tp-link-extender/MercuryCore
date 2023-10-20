@@ -18,24 +18,25 @@
 <form use:enhance method="POST" class="container pt-12 light-text">
 	<fieldset>
 		<div class="row pb-2">
-			<label for="name" class="col-md-3 col-form-label">Place name</label>
-			<div class="col-md-8">
-				<input
-					bind:value={$form.name}
-					{...$constraints.name}
-					name="name"
-					id="name"
-					placeholder="Make sure to make it accurate"
-					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 pb-2 text-danger">
-					{$errors.name || ""}
-				</p>
-			</div>
+			<label for="name" class="col-md-3>Place name</label">
+				<div class="col-md-8">
+					<input
+						bind:value={$form.name}
+						{...$constraints.name}
+						name="name"
+						id="name"
+						placeholder="Make sure to make it accurate"
+						class="form-control {$errors.name
+							? 'is-in'
+							: ''}valid" />
+					<p class="col-12 pb-2 text-danger">
+						{$errors.name || ""}
+					</p>
+				</div>
+			</label>
 		</div>
 		<div class="row pb-2">
-			<label for="description" class="col-md-3 col-form-label">
-				Description
-			</label>
+			<label for="description" class="col-md-3">Description</label>
 			<div class="col-md-8">
 				<textarea
 					bind:value={$form.description}
@@ -52,9 +53,7 @@
 			</div>
 		</div>
 		<div class="row pb-2">
-			<label for="serverIP" class="col-md-3 col-form-label">
-				Server IP
-			</label>
+			<label for="serverIP" class="col-md-3">Server IP</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.serverIP}
@@ -72,9 +71,7 @@
 			</div>
 		</div>
 		<div class="row pb-2">
-			<label for="serverPort" class="col-md-3 col-form-label">
-				Server Port
-			</label>
+			<label for="serverPort" class="col-md-3">Server Port</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.serverPort}
@@ -92,9 +89,7 @@
 			</div>
 		</div>
 		<div class="row pb-2">
-			<label for="maxPlayers" class="col-md-3 col-form-label">
-				Player Limit
-			</label>
+			<label for="maxPlayers" class="col-md-3">Player Limit</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.maxPlayers}
@@ -112,9 +107,7 @@
 			</div>
 		</div>
 		<div class="row pb-6">
-			<label for="privateServer" class="col-md-3 col-form-label">
-				Private Server
-			</label>
+			<label for="privateServer" class="col-md-3">Private Server</label>
 			<div class="col-md-8">
 				<input
 					bind:checked={$form.privateServer}
