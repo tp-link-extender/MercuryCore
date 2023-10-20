@@ -1,6 +1,5 @@
-import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import surreal, { query, mquery, squery } from "$lib/server/surreal"
+import surreal, { mquery, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { likeSwitch } from "$lib/server/like"
 import { error } from "@sveltejs/kit"

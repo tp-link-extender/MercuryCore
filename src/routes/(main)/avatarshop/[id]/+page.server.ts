@@ -1,5 +1,4 @@
-import surql from "$lib/surrealtag"
-import { query, squery } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function load({ params }) {

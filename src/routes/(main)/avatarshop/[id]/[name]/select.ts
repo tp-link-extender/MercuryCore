@@ -1,6 +1,6 @@
 // Functions for selecting nested forum replies
 
-import surql from "$lib/surrealtag"
+import { surql } from "$lib/server/surreal"
 
 export type Replies = {
 	author: {

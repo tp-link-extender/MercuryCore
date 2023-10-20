@@ -1,6 +1,5 @@
-import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { squery, query } from "$lib/server/surreal"
+import { squery, query, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import fs from "fs/promises"
 

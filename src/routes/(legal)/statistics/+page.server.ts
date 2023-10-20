@@ -1,6 +1,5 @@
-import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { mquery } from "$lib/server/surreal"
+import { mquery, surql } from "$lib/server/surreal"
 
 export async function load({ locals }) {
 	await authorise(locals)

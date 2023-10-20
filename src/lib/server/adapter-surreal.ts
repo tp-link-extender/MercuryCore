@@ -1,5 +1,4 @@
-import surql from "$lib/surrealtag"
-import surreal, { query, squery } from "$lib/server/surreal"
+import surreal, { query, squery, surql } from "./surreal"
 import type {
 	Adapter,
 	InitializeAdapter,
@@ -17,8 +16,8 @@ export const adapter = (
 ): InitializeAdapter<Adapter> => {
 	return LuciaError => {
 		return {
-			getUser: async userId =>
-				await squery<UserSchema>(
+			getUser: userId =>
+				squery<UserSchema>(
 					surql`
 						SELECT
 							*,
@@ -91,8 +90,8 @@ export const adapter = (
 					partialUser,
 				})
 			},
-			getSession: async sessionId =>
-				await squery<SessionSchema>(
+			getSession: sessionId =>
+				squery<SessionSchema>(
 					surql`
 						SELECT
 							*,
@@ -153,8 +152,8 @@ export const adapter = (
 				)
 			},
 
-			getKey: async keyId =>
-				await squery<KeySchema>(
+			getKey: keyId =>
+				squery<KeySchema>(
 					surql`
 						SELECT
 							*,

@@ -1,5 +1,4 @@
-import surql from "$lib/surrealtag"
-import { query, squery } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 
 export async function load({ request, locals }) {
 	const session = await locals.auth.validate(),
@@ -133,7 +132,7 @@ export async function load({ request, locals }) {
 					break
 
 				case "ItemPurchase":
-					i.link = `/avatarshop/item/${i.relativeId}`
+					i.link = `/avatarshop/${i.relativeId}`
 			}
 			delete i.relativeId
 		}

@@ -1,7 +1,6 @@
-import surql from "$lib/surrealtag"
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import surreal, { query, squery } from "$lib/server/surreal"
+import surreal, { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"

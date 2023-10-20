@@ -53,7 +53,7 @@ export async function authorise(
 
 	if (!session || !user) throw redirect(302, "/login")
 	if (level && user.permissionLevel < level)
-		throw error(403, "You do not have permission to view this page.")
+		throw error(403, "You do not have permission to access this page.")
 
 	return {
 		session,

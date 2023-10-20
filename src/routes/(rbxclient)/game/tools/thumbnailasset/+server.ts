@@ -1,8 +1,7 @@
 // This should be moved to asset thumbnails for every asset on Mercury, but
 // for now we'll use it for the stamper tool (and other games which require it)
 
-import surql from "$lib/surrealtag"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function GET({ url }) {

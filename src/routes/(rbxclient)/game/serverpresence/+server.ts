@@ -1,6 +1,5 @@
-import surql from "$lib/surrealtag"
 import { error } from "@sveltejs/kit"
-import { query } from "$lib/server/surreal"
+import { query, surql } from "$lib/server/surreal"
 
 export async function GET({ url, request, setHeaders }) {
 	const ticket = url.searchParams.get("ticket") as string

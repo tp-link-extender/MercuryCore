@@ -1,6 +1,5 @@
-import surql from "$lib/surrealtag"
 import { auth } from "$lib/server/lucia"
-import { query } from "$lib/server/surreal"
+import { query, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"

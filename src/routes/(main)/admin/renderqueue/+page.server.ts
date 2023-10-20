@@ -1,5 +1,4 @@
-import surql from "$lib/surrealtag"
-import { query } from "$lib/server/surreal"
+import { query, surql } from "$lib/server/surreal"
 
 type Render = {
 	id: number

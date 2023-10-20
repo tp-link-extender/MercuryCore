@@ -1,6 +1,5 @@
-import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { query } from "$lib/server/surreal"
+import { query, surql } from "$lib/server/surreal"
 
 // Make sure a user is an administrator before loading the page.
 export async function load({ locals }) {
