@@ -75,14 +75,16 @@
 <slot />
 
 <!-- Toast notifications -->
-<div class="toast-container position-fixed bottom-0 end-0">
+<div
+	class="toasts position-fixed z-1 bottom-0 end-0 p-4
+	d-flex flex-column gap-4">
 	{#each notifications as notification}
 		<div
-			class="toast show bg-darker light-text m-4"
+			class="show bg-darker light-text rounded-2"
 			role="alert"
 			aria-live="assertive"
 			aria-atomic="true">
-			<div class="toast-header bg-a light-text">
+			<div class="d-flex bg-a light-text p-2 rounded-top-2">
 				<a
 					href="/user/{notification.sender.number}"
 					class="d-flex gap-3 align-items-center w-100 light-text text-decoration-none">
@@ -107,7 +109,8 @@
 			</div>
 			<a
 				href={notification.link}
-				class="toast-body bg-darker light-text text-decoration-none d-block">
+				class="body p-3 light-text text-decoration-none
+				d-block rounded-2">
 				{notification.note}
 			</a>
 		</div>
@@ -139,12 +142,12 @@
 		+lightTheme()
 			filter none
 
-	.toast
-		min-width 25rem
+	.toasts
+		width 25rem
 		--bs-toast-box-shadow 0 0 2rem #fff1
 		+lightTheme()
 			--bs-toast-box-shadow 0 0 2rem #0001
 
-	.toast-body
+	.body
 		min-height 4rem
 </style>
