@@ -25,14 +25,14 @@
 	role="tablist">
 	{#each tabData.tabs as tab, pos}
 		<li
-			class="nav-item {vertical && tabData.currentTab == tab
+			class="item {vertical && tabData.currentTab == tab
 				? 'activeTab'
-				: ''} {vertical ? "rounded-2" : "p-1"}"
+				: ''} {vertical ? 'rounded-2' : 'p-1'}"
 			class:active={!vertical && tabData.currentTab == tab}
 			style="border-bottom-color: {$colour}"
 			data-sveltekit-preload-data="off">
 			<a
-				class="nav-link {vertical
+				class="d-block tab text-decoration-none light-text {vertical
 					? ''
 					: 'p-3 py-1'} rounded-2 {tabData.currentTab == tab
 					? 'disabled active'
@@ -63,23 +63,23 @@
 	.nav
 		min-width 7rem
 
-	.active.nav-item
+	.active.item
 		border-bottom-width 2px
 		border-bottom-style solid
-	.activeTab.nav-item
+	.activeTab.item
 		background var(--accent2)
-		
 
-	.justified .nav-item
+
+	.justified .item
 		flex-basis 0
 		flex-grow 1
 		text-align center
 		width 100%
 
-	.nav-item
-	.nav-link
+	.item
+	.tab
 		transition background-color 0.2s
-	.nav-link
+	.tab
 		background 0 0
 		border-radius 0
 		border-width 0px 0px 2px !important
