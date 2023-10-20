@@ -36,10 +36,10 @@
 
 			return () => {}
 		}}
-		class="sidebar bg-a me-2 p-1"
+		class="sidebar bg-a p-1"
 		method="POST"
 		action="?/like&id={post.id}">
-		<div class="mb-2 d-flex flex-column">
+		<div class="d-flex flex-column">
 			<div class="text-center">
 				<button
 					name="action"
@@ -53,7 +53,7 @@
 				</button>
 			</div>
 			<span
-				class="my-2 text-center {post.likes
+				class="py-2 text-center {post.likes
 					? 'text-success font-bold'
 					: post.dislikes
 					? 'text-danger font-bold'
@@ -77,7 +77,7 @@
 			</div> -->
 		</div>
 	</form>
-	<div class="d-flex flex-column w-100">
+	<div class="ps-2 d-flex flex-column w-100">
 		<div class="d-flex pt-2 ps-4">
 			<User user={post.author} full />
 			<em class="light-text ps-4 align-self-center">
@@ -87,7 +87,7 @@
 		<a
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
 			class="px-4 pt-2 text-decoration-none light-text w-100">
-			<h2 class="fs-4 mt-2">
+			<h2 class="fs-4 pt-2">
 				{post.title}
 			</h2>
 

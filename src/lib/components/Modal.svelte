@@ -9,7 +9,7 @@
 {#if $modal}
 	<div
 		class="modal-static position-fixed w-100 h-100 z-10
-			justify-content-center align-items-center d-flex"
+		justify-content-center align-items-center d-flex"
 		tabindex="-1"
 		transition:fly|global={{ y: -50, duration: 300 }}>
 		<div
