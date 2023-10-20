@@ -36,7 +36,7 @@ const SELECTFROM = surql`
 			status,
 			username
 		FROM <-posted<-user)[0] AS author,
-		
+
 		count(<-likes) AS likeCount,
 		count(<-dislikes) AS dislikeCount,
 		$user ∈ <-likes<-user.id AS likes,

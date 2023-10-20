@@ -81,7 +81,7 @@
 						<Asset {asset} {num} total={assets.length} />
 					{/each}
 					{#if query && assets.length == 0}
-						<h2 class="fs-5 light-text mt-12">
+						<h2 class="fs-5 light-text pt-12">
 							No items found with search term {query}
 						</h2>
 					{/if}

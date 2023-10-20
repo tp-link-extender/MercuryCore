@@ -136,7 +136,7 @@
 
 	#infotext
 		transition margin-top 1s ease-in-out
-		
+
 	a
 		margin 0
 
