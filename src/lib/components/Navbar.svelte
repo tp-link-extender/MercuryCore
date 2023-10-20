@@ -56,7 +56,7 @@
 		</a>
 		{#if user}
 			<div id="topnav" class="row ps-6 pe-2">
-				<div class="d-flex flex-row gap-4 ps-3">
+				<div class="d-flex flex-row gap-4 ps-3" id="topnavitems">
 					{#each nav1 as [title, href]}
 						<a class="btn px-1 light-text border-0" {href}>
 							{title}
@@ -334,11 +334,14 @@
 			background #0003
 
 	.dropdown
-		margin-top 2px
+		margin-bottom 2px
 
 	#topnav
 		z-index 9
 		max-height 10vh
+
+	#topnavitems
+		margin-top 0.19rem
 
 	#results
 		z-index 5
