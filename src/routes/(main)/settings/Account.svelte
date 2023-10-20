@@ -4,9 +4,7 @@
 </script>
 
 <div class="form-group row">
-	<label for="name" class="col-md-3 col-form-label text-md-right">
-		Username
-	</label>
+	<label for="name" class="col-md-3 text-md-right">Username</label>
 	<div class="col-md-6">
 		<input
 			type="text"
@@ -22,9 +20,7 @@
 
 {#if user.email}
 	<div class="form-group row pb-6">
-		<label for="name" class="col-md-3 col-form-label text-md-right">
-			Email Address
-		</label>
+		<label for="name" class="col-md-3 text-md-right">Email Address</label>
 		<div class="col-md-6">
 			<input
 				type="text"

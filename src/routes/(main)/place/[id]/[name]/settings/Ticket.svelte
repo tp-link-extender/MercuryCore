@@ -11,9 +11,7 @@
 
 <form use:enhance method="POST" class="col-lg-8" action="?a=ticket&tab=Network">
 	<fieldset class="row pb-4">
-		<label for="ticket" class="col-md-3 col-form-label text-md-right">
-			Server Ticket
-		</label>
+		<label for="ticket" class="col-md-3 text-md-right">Server Ticket</label>
 		<div class="col-md-9">
 			<div class="input-group">
 				<input

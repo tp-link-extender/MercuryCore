@@ -42,7 +42,7 @@
 						<div class="row">
 							<label
 								for="enableInviteCustom"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 text-md-right light-text">
 								Enable custom invite key
 							</label>
 							<div class="col-md-2">
@@ -61,7 +61,7 @@
 							<div class="row" transition:fade>
 								<label
 									for="inviteCustom"
-									class="col-md-3 col-form-label text-md-right light-text">
+									class="col-md-3 text-md-right light-text">
 									Custom invite key
 								</label>
 								<div class="col-md-8">
@@ -88,7 +88,7 @@
 						<div class="row">
 							<label
 								for="enableInviteExpiry"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 text-md-right light-text">
 								Enable expiry
 							</label>
 							<div class="col-md-2">
@@ -107,7 +107,7 @@
 							<div class="row" transition:fade>
 								<label
 									for="inviteExpiry"
-									class="col-md-3 col-form-label text-md-right light-text">
+									class="col-md-3 text-md-right light-text">
 									Expiry date
 								</label>
 								<div class="col-md-8">
@@ -132,7 +132,7 @@
 						<div class="row">
 							<label
 								for="inviteUses"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 text-md-right light-text">
 								Uses
 							</label>
 							<div class="col-md-8">

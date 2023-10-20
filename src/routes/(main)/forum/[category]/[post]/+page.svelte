@@ -121,10 +121,8 @@
 		</div>
 	</div>
 
-	<form use:enhance class="mt-2 mb-6 p-1 row" method="POST" action="?/reply">
-		<label for="content" class="form-label light-text mt-2">
-			Post a Reply
-		</label>
+	<form use:enhance class="py-2 mb-6 p-1 row" method="POST" action="?/reply">
+		<label for="content" class="light-text py-2">Post a Reply</label>
 		<fieldset class="col-lg-7 d-flex">
 			<textarea
 				bind:value={$form.content}

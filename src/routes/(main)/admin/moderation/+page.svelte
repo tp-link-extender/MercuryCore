@@ -40,9 +40,7 @@
 				<form use:enhance method="POST" action="?/moderateUser">
 					<fieldset>
 						<div class="row">
-							<label
-								for="username"
-								class="col-md-3 col-form-label light-text">
+							<label for="username" class="col-md-3 light-text">
 								Username
 							</label>
 							<div class="col-md-8">
@@ -61,9 +59,7 @@
 							</div>
 						</div>
 						<div class="row">
-							<label
-								for="action"
-								class="col-md-3 col-form-label light-text">
+							<label for="action" class="col-md-3 light-text">
 								Action
 							</label>
 							<div class="col-md-8">
@@ -90,7 +86,7 @@
 							<div class="row" transition:fade>
 								<label
 									for="banDate"
-									class="col-md-3 col-form-label light-text">
+									class="col-md-3 light-text">
 									Ban until
 								</label>
 								<div class="col-md-8">
@@ -112,9 +108,7 @@
 							</div>
 						{/if}
 						<div class="row">
-							<label
-								for="reason"
-								class="col-md-3 col-form-label light-text">
+							<label for="reason" class="col-md-3 light-text">
 								Reason
 							</label>
 							<div class="col-md-8">

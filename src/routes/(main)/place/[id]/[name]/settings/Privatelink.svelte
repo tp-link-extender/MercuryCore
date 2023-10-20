@@ -19,7 +19,7 @@
 	class="col-lg-8"
 	action="?a=privatelink&tab=Privacy">
 	<fieldset class="row">
-		<label for="privateLink" class="col-md-3 col-form-label text-md-right">
+		<label for="privateLink" class="col-md-3 text-md-right">
 			Private Server Link
 		</label>
 		<div class="col-md-9">

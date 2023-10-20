@@ -33,7 +33,7 @@
 			data-sveltekit-preload-data="off">
 			<a
 				class="d-block tab text-decoration-none light-text {vertical
-					? ''
+					? 'p-4 py-2'
 					: 'p-3 py-1'} rounded-2 {tabData.currentTab == tab
 					? 'disabled active'
 					: ''}"

@@ -32,9 +32,7 @@
 		13: "Decal",
 	}
 
-	const usernav = [
-			["fa-pencil", "Edit Asset", "/requests"]
-		]
+	const usernav = [["fa-pencil", "Edit Asset", "/requests"]]
 </script>
 
 <Head title={data.name} />
@@ -68,10 +66,7 @@
 									</li>
 								{/each}
 								<li class="rounded-2">
-									<form
-										use:enhance
-										method="POST"
-										action="#">
+									<form use:enhance method="POST" action="#">
 										<button
 											class="btn text-primary ps-4 pe-0 text-start">
 											<i
@@ -149,10 +144,8 @@
 	<Tab {tabData} />
 
 	<Tab {tabData}>
-		<form use:enhance2 class="p-1" method="POST" action="?/reply">
-			<label for="content" class="form-label light-text mt-2">
-				Post a Comment
-			</label>
+		<form use:enhance2 class="py-2" method="POST" action="?/reply">
+			<label for="content" class="light-text py-2">Post a Comment</label>
 			<fieldset class="col-lg-7 d-flex">
 				<textarea
 					bind:value={$form.content}

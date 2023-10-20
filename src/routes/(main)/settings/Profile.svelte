@@ -17,9 +17,7 @@
 <form use:enhance method="POST" class="col-lg-8" action="?a=profile">
 	<fieldset class="pb-2">
 		<div class="row">
-			<label for="theme" class="col-md-3 col-form-label text-md-right">
-				Theme
-			</label>
+			<label for="theme" class="col-md-3 text-md-right">Theme</label>
 			<div class="col-md-8">
 				<select
 					bind:value={$form.theme}
@@ -39,7 +37,7 @@
 		</div>
 		<hr class="grey-text" />
 		<div class="row">
-			<label for="bio" class="form-label light-text">Bio</label>
+			<label for="bio" class="light-text">Bio</label>
 			<div class="container">
 				<textarea
 					bind:value={$form.bio}

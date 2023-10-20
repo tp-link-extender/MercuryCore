@@ -220,7 +220,7 @@
 										action="?/reply&rid={reply.id}">
 										<label
 											for="content"
-											class="form-label light-text mt-2">
+											class="light-text py-2">
 											Post a Reply
 										</label>
 										<fieldset>

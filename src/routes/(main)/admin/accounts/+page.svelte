@@ -38,9 +38,7 @@
 				<form use:enhance method="POST" action="?/resetPassword">
 					<fieldset>
 						<div class="row light-text mb-4">
-							<label
-								for="username"
-								class="col-md-3 col-form-label">
+							<label for="username" class="col-md-3">
 								Username
 							</label>
 							<div class="col-md-8">
@@ -58,9 +56,7 @@
 							</div>
 						</div>
 						<div class="row light-text mb-4">
-							<label
-								for="password"
-								class="col-md-3 col-form-label">
+							<label for="password" class="col-md-3">
 								New password
 							</label>
 							<div class="col-md-8">

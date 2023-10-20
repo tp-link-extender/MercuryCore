@@ -71,9 +71,7 @@
 
 				<form use:enhance class="m-auto form-group mt-6" method="POST">
 					<fieldset>
-						<label for="username" class="form-label">
-							Username
-						</label>
+						<label for="username">Username</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.username}
@@ -90,9 +88,7 @@
 							</p>
 						</div>
 
-						<label for="password" class="form-label">
-							Password
-						</label>
+						<label for="password">Password</label>
 						<div class="mb-6">
 							<input
 								bind:value={$form.password}

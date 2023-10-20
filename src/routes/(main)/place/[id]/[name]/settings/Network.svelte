@@ -21,9 +21,7 @@
 	action="?a=network&tab=Network">
 	<fieldset class="pb-6">
 		<div class="row">
-			<label for="serverIP" class="col-md-3 col-form-label text-md-right">
-				Address
-			</label>
+			<label for="serverIP" class="col-md-3 text-md-right">Address</label>
 			<div class="col-md-9">
 				<input
 					bind:value={$form.serverIP}
@@ -40,11 +38,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<label
-				for="serverPort"
-				class="col-md-3 col-form-label text-md-right">
-				Port
-			</label>
+			<label for="serverPort" class="col-md-3 text-md-right">Port</label>
 			<div class="col-md-9">
 				<input
 					bind:value={$form.serverPort}
@@ -65,9 +59,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<label
-				for="maxPlayers"
-				class="col-md-3 col-form-label text-md-right">
+			<label for="maxPlayers" class="col-md-3 text-md-right">
 				Server Limit
 			</label>
 			<div class="col-md-9">

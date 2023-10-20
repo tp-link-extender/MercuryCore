@@ -46,9 +46,7 @@
 	enctype="multipart/form-data">
 	<fieldset>
 		<div class="row mb-4">
-			<label for="type" class="col-md-3 col-form-label light-text">
-				Asset type
-			</label>
+			<label for="type" class="col-md-3 light-text">Asset type</label>
 			<div class="col-md-8">
 				<select
 					bind:value={$form.type}
@@ -69,9 +67,7 @@
 			</div>
 		</div>
 		<div class="row mb-4">
-			<label for="name" class="col-md-3 col-form-label light-text">
-				Asset name
-			</label>
+			<label for="name" class="col-md-3 light-text">Asset name</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.name}
@@ -86,7 +82,7 @@
 			</div>
 		</div>
 		<div class="row mb-4">
-			<label for="description" class="col-md-3 col-form-label light-text">
+			<label for="description" class="col-md-3 light-text">
 				Asset description
 			</label>
 			<div class="col-md-8">
@@ -105,9 +101,7 @@
 			</div>
 		</div>
 		<div class="row mb-4">
-			<label for="price" class="col-md-3 col-form-label light-text">
-				Asset price
-			</label>
+			<label for="price" class="col-md-3 light-text">Asset price</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.price}
@@ -122,9 +116,7 @@
 			</div>
 		</div>
 		<div class="row mb-4">
-			<label for="asset" class="col-md-3 col-form-label light-text">
-				Asset
-			</label>
+			<label for="asset" class="col-md-3 light-text">Asset</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.asset}

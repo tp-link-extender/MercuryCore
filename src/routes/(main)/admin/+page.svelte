@@ -84,7 +84,7 @@
 		<div class="col-lg-10 col-md-9">
 			{#each tabNames.slice(0, -1) as key}
 				<Tab {tabData}>
-					<div class="row g-3">
+					<div class="row">
 						{#each panel[key] as i, num}
 							<AdminLink
 								href={i[1]}
@@ -98,7 +98,7 @@
 			{/each}
 
 			<Tab {tabData}>
-				<div class="row g-3 pt-1">
+				<div class="row pt-1">
 					<div class="col-lg-7 col-md-7 ps-1">
 						<div class="card bg-a3 text-black mb-4">
 							<div class="card-body bg-a rounded-1">
@@ -170,7 +170,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-5 col-md-5 pe-1">
+					<div class="col-lg-5 col-md-5">
 						<div class="card bg-a3 text-black mb-4">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">

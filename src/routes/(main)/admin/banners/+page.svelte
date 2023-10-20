@@ -57,7 +57,7 @@
 						<div class="row">
 							<label
 								for="bannerText"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 text-md-right light-text">
 								Banner text
 							</label>
 							<div class="col-md-8">
@@ -81,7 +81,7 @@
 						<div class="row">
 							<label
 								for="bannerColour"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 text-md-right light-text">
 								Banner colour
 							</label>
 							<div class="col-md-2">
@@ -103,7 +103,7 @@
 						<div class="row">
 							<label
 								for="bannerTextLight"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 text-md-right light-text">
 								Light text
 							</label>
 							<div class="col-md-2">
