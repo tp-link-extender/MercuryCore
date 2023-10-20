@@ -1,5 +1,4 @@
-import surql from "$lib/surrealtag"
-import { query } from "$lib/server/surreal"
+import { query, surql } from "./surreal"
 
 export const like = (userId: string, thing: string) =>
 	query(
@@ -32,22 +31,15 @@ export const undislike = (userId: string, thing: string) =>
 		user: `user:${userId}`,
 	})
 
-export async function likeSwitch(
-	action: string,
-	userId: string,
-	thing: string,
-) {
+export function likeSwitch(action: string, userId: string, thing: string) {
 	switch (action) {
 		case "like":
-			await like(userId, thing)
-			break
+			return like(userId, thing)
 		case "unlike":
-			await unlike(userId, thing)
-			break
+			return unlike(userId, thing)
 		case "dislike":
-			await dislike(userId, thing)
-			break
+			return dislike(userId, thing)
 		case "undislike":
-			await undislike(userId, thing)
+			return undislike(userId, thing)
 	}
 }

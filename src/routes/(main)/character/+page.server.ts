@@ -1,7 +1,6 @@
-import surql from "$lib/surrealtag"
 import render from "$lib/server/render"
 import { authorise } from "$lib/server/lucia"
-import { query, squery } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { fail, error } from "@sveltejs/kit"
 

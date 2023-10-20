@@ -1,7 +1,6 @@
-import surql from "$lib/surrealtag"
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { query, squery } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "../select"
 

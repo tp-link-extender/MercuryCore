@@ -1,7 +1,6 @@
 // The friends, followers, and following pages for a user.
 
-import surql from "$lib/surrealtag"
-import { query, squery } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 const types = ["friends", "followers", "following"],

@@ -1,5 +1,4 @@
-import surql from "../surrealtag"
-import { mquery } from "./surreal"
+import { mquery, surql } from "./surreal"
 import fs from "fs"
 import "dotenv/config"
 

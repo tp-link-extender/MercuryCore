@@ -1,6 +1,5 @@
-import surql from "$lib/surrealtag"
 import { authorise } from "$lib/server/lucia"
-import { query } from "$lib/server/surreal"
+import { query, surql } from "$lib/server/surreal"
 
 const select = surql`
 	SELECT

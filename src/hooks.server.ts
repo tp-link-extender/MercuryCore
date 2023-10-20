@@ -3,8 +3,7 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import surql from "$lib/surrealtag"
-import { query, squery } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
 import surreal from "$lib/server/surreal"

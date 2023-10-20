@@ -1,7 +1,6 @@
-import surql from "$lib/surrealtag"
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
-import surreal, { squery } from "$lib/server/surreal"
+import surreal, { squery, surql } from "$lib/server/surreal"
 import fs from "fs"
 
 export async function GET({ url }) {

@@ -1,6 +1,5 @@
-import surql from "$lib/surrealtag"
 import { auth, authorise } from "$lib/server/lucia"
-import { query } from "$lib/server/surreal"
+import { query, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
