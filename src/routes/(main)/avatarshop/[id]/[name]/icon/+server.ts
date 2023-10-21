@@ -26,8 +26,10 @@ export async function GET({ locals, params }) {
 	if (!asset) throw error(404, "Not found")
 
 	const { user } = await authorise(locals)
+	if (asset.visibility == "Moderated")
+		throw redirect(302, `/mercurx.svg`)
 	if (asset.visibility != "Visible" && user.permissionLevel < 4)
-		throw redirect(302, `/m....png`)
+		throw redirect(302, `/light/mQuestion.svg`)
 
 	let file
 

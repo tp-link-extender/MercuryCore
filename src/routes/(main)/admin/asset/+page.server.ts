@@ -1,6 +1,8 @@
 import { authorise } from "$lib/server/lucia"
+import ratelimit from "$lib/server/ratelimit"
+import requestRender from "$lib/server/requestRender"
 import { squery, query, surql } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 import fs from "fs/promises"
 
 export const load = async ({ locals }) => ({
@@ -39,7 +41,7 @@ export const load = async ({ locals }) => ({
 })
 
 export const actions = {
-	default: async ({ locals, url }) => {
+	default: async ({ locals, url, getClientAddress }) => {
 		const { user } = await authorise(locals, 3),
 			id = url.searchParams.get("id"),
 			action = url.searchParams.get("a")
@@ -81,6 +83,8 @@ export const actions = {
 				await squery(
 					surql`
 						UPDATE $asset SET visibility = "Moderated";
+						UPDATE $asset->imageAsset->asset
+							SET visibility = "Moderated";
 						CREATE auditLog CONTENT {
 							action: "Moderation",
 							note: $note,
@@ -92,6 +96,19 @@ export const actions = {
 						note: `Moderate asset ${asset.name} (id ${id})`,
 					},
 				)
+				break
+			case "rerender":
+				await authorise(locals, 3)
+
+				const limit = ratelimit({}, "rerender", getClientAddress, 60)
+				if (limit) return fail(429, { msg: "Too many requests" })
+
+				try {
+					await requestRender("Clothing", parseInt(id))
+				} catch (e) {
+					console.error(e)
+					return fail(500, { msg: "Failed to request render" })
+				}
 				break
 			case "purge":
 				const iaid = (
@@ -109,10 +126,17 @@ export const actions = {
 					query(
 						surql`
 							DELETE $asset;
-							DELETE $imageAsset`,
+							DELETE $imageAsset;
+							CREATE auditLog CONTENT {
+								action: "Moderation",
+								note: $note,
+								user: $user,
+								time: time::now()
+							}`,
 						{
-							asset: `asset:${id}`,
+							...qParams,
 							imageAsset: `asset:${iaid}`,
+							note: `Purge asset ${asset.name} (id ${id})`,
 						},
 					),
 					fs.rm(`data/assets/${id}`),
