@@ -42,7 +42,7 @@
 				<form
 					use:enhance
 					method="POST"
-					action="/admin/asset?id={asset.id}&a=approve"
+					action="/admin/asset?id={asset.id}&a=deny"
 					class="d-inline">
 					<button class="btn btn-sm btn-danger mb-1">Deny</button>
 				</form>
@@ -62,7 +62,7 @@
 		style="width: 25rem">
 		<h2 class="fs-4">Asset {asset.name}</h2>
 		{#if asset.imageAsset}
-			<div class="text-center pb-2">
+			<div class="text-center pb-3">
 				<h3 class="fs-5">Image asset</h3>
 				<img
 					class="image"
@@ -71,13 +71,16 @@
 					alt={asset.imageAsset.name} />
 			</div>
 
-			<label for="purge{asset.id}" class="btn btn-lg btn-danger mt-3">
+			<label for="purge{asset.id}" class="btn btn-lg btn-danger">
 				Purge
 			</label>
-
-			<label for="purge{asset.id}" class="btn btn-lg btn-primary mt-3">
-				Re-render
-			</label>
+			<form
+				use:enhance
+				method="POST"
+				action="/admin/asset?id={asset.id}&a=rerender"
+				class="w-100 pt-3">
+				<button class="btn btn-lg btn-primary w-100">Re-render</button>
+			</form>
 		{/if}
 	</div>
 	<label class="modal-backdrop" for="modal{asset.id}">Close</label>

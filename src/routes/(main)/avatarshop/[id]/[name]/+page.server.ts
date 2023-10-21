@@ -3,11 +3,12 @@ import surreal, { query, squery, transaction, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
-import { error } from "@sveltejs/kit"
+import { error, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import { like, likeSwitch } from "$lib/server/like"
 import { recurse, type Replies } from "./select"
+import requestRender from "$lib/server/requestRender"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -108,30 +109,18 @@ export const actions = {
 			throw error(400, "Invalid reply id")
 
 		let receiverId
-		if (replyId) {
-			const commentAuthor = await squery<{ id: string }>(
-				surql`
-					SELECT
-						number,
-						username
-					FROM $comment<-posted<-user`,
-				{ comment: `assetComment:${replyId}` },
-			)
-			if (!commentAuthor) throw error(404)
-			receiverId = commentAuthor.id || ""
-		} else {
-			const commentAuthor = await squery<{ id: string }>(
-				surql`
-					SELECT
-						meta::id(id) AS id
-					FROM $asset<-created<-user`,
-				{ asset: `asset:${params.id}` },
-			)
-			if (!commentAuthor) throw error(404)
-			receiverId = commentAuthor.id || ""
-		}
+		const commentAuthor = await squery<{ id: string }>(
+			surql`SELECT meta::id(id) AS id FROM ` + replyId
+				? surql`$comment<-posted<-user`
+				: surql`$asset<-created<-user`,
+			{
+				comment: `assetComment:${replyId}`,
+				asset: `asset:${params.id}`,
+			},
+		)
 
-		console.log("aight")
+		if (!commentAuthor) throw error(404)
+		receiverId = commentAuthor.id || ""
 
 		const newReplyId = await squery<string>(surql`fn::id()`)
 
@@ -159,30 +148,32 @@ export const actions = {
 			},
 		)
 
-		if (user.id != receiverId)
-			await query(
-				surql`
-					RELATE $sender->notification->$receiver CONTENT {
-						type: $type,
-						time: time::now(),
-						note: $note,
-						relativeId: $relativeId,
-						read: false,
-					}`,
-				{
-					type: replyId ? "AssetCommentReply" : "AssetComment",
-					sender: `user:${user.id}`,
-					receiver: `user:${receiverId}`,
-					note: `${user.username} ${
-						replyId
-							? "replied to your comment"
-							: "commented on your asset"
-					}: ${content}`,
-					relativeId: newReplyId,
-				},
-			)
+		await Promise.all([
+			(user.id != receiverId || !replyId) &&
+				query(
+					surql`
+						RELATE $sender->notification->$receiver CONTENT {
+							type: $type,
+							time: time::now(),
+							note: $note,
+							relativeId: $relativeId,
+							read: false,
+						}`,
+					{
+						type: replyId ? "AssetCommentReply" : "AssetComment",
+						sender: `user:${user.id}`,
+						receiver: `user:${receiverId}`,
+						note: `${user.username} ${
+							replyId
+								? "replied to your comment"
+								: "commented on your asset"
+						}: ${content}`,
+						relativeId: newReplyId,
+					},
+				),
 
-		await like(user.id, `assetComment:${newReplyId}`)
+			like(user.id, `assetComment:${newReplyId}`),
+		])
 	},
 	like: async ({ request, locals, url }) => {
 		const { user } = await authorise(locals),
@@ -373,7 +364,6 @@ export const actions = {
 
 		await query(
 			surql`
-				BEGIN TRANSACTION;
 				LET $reply = SELECT (<-posted<-user)[0] AS poster
 					FROM $assetComment;
 				LET $poster = $reply.poster;
@@ -382,9 +372,21 @@ export const actions = {
 					text: "[removed]",
 					updated: time::now(),
 				};
-				UPDATE $assetComment SET visibility = "Moderated";
-				COMMIT TRANSACTION`,
+				UPDATE $assetComment SET visibility = "Moderated"`,
 			{ assetComment: `assetComment:${id}` },
 		)
+	},
+	rerender: async ({ locals, params, getClientAddress }) => {
+		await authorise(locals, 3)
+
+		const limit = ratelimit({}, "rerender", getClientAddress, 60)
+		if (limit) return fail(429, { msg: "Too many requests" })
+
+		try {
+			await requestRender("Clothing", parseInt(params.id))
+		} catch (e) {
+			console.error(e)
+			return fail(500, { msg: "Failed to request render" })
+		}
 	},
 }

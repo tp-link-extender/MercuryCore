@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-	
+
 	export let data
 
 	let replyingTo = writable("")
@@ -66,16 +66,19 @@
 									</li>
 								{/each}
 								{#if data.user.permissionLevel > 2}
-								<li class="rounded-2">
-									<form use:enhance method="POST" action="#">
-										<button
-											class="btn text-primary ps-4 pe-0 text-start">
-											<i
-												class="fas fa-arrows-rotate me-2" />
-											<b>Re-render</b>
-										</button>
-									</form>
-								</li>
+									<li class="rounded-2">
+										<form
+											use:enhance
+											method="POST"
+											action="?/rerender">
+											<button
+												class="btn text-primary ps-4 pe-0 text-start">
+												<i
+													class="fas fa-arrows-rotate me-2" />
+												<b>Re-render</b>
+											</button>
+										</form>
+									</li>
 								{/if}
 							</ul>
 						</div>
