@@ -31,8 +31,7 @@ export async function GET({ params, setHeaders }) {
 	if (!user) throw error(404, "User not found")
 
 	if (!fs.existsSync(`data/avatars/${username}${bodyShot}.webp`))
-		if (bodyShot) await render(username, user.bodyColours, true)
-		else await render(username, user.bodyColours)
+		await render(username, user.bodyColours, !!bodyShot)
 
 	setHeaders({
 		"Cache-Control": "max-age=5",
