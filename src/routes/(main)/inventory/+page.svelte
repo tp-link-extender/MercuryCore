@@ -76,7 +76,7 @@
 						</button>
 					</div>
 				</form>
-				<div class="row">
+				<div class="row px-1">
 					{#each assets as asset, num}
 						<Asset {asset} {num} total={assets.length} />
 					{/each}

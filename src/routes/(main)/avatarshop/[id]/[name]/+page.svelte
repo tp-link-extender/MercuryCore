@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
+	import { enhance } from "$app/forms" // idky
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data

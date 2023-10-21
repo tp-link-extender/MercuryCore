@@ -208,7 +208,7 @@
 					</button>
 				</div>
 			</form>
-			<div class="row">
+			<div class="row px-1">
 				{#each assets || [] as asset, num}
 					<AvatarItem
 						{asset}
@@ -264,6 +264,8 @@
 <style lang="stylus">
 	.card
 		background var(--accent)
+		border-width 1px
+		border-color var(--accent2)
 
 	.bodyPart
 		border-radius 3px

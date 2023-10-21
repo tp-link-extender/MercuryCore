@@ -48,7 +48,7 @@
 		border none
 
 	.card
-		border-width 2px
+		border-width 1px
 
 	.assetcard
 		.card-body

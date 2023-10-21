@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
+	import Status from "./Status.svelte"
 
 	export let data
 	const { user } = data,
@@ -25,7 +26,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
-			<h1 class="top d-flex px-2">
+			<h1 class="top d-flex px-2 pb-6">
 				<a
 					href="/user/{user?.number}"
 					class="text-decoration-none light-text d-flex">
@@ -35,8 +36,7 @@
 					</span>
 				</a>
 			</h1>
-			<div id="feed" class="card mt-6 bg-darker">
-				<div class="card-body light-text">
+			<div id="feed" class="card p-4 bg-darker">
 					<p>
 						Post your status - your friends and followers can view
 						how you're doing!
@@ -60,53 +60,28 @@
 						</button>
 					</form>
 					<p
-						class="mb-4"
+					class="mb-0 pb-3"
 						class:text-success={$page.status == 200}
 						class:text-danger={$page.status >= 400 ||
 							$errors.status}>
 						{$errors.status || $message || ""}
 					</p>
-					{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
-						<div
-							in:fade|global={{
-								num,
-								total: data.feed.length,
-							}}
-							class="card mb-2">
-							<div class="card-body pb-0 p-3">
-								<div
-									class="statusheader d-flex mb-2 user justify-content-between">
-									<div class="d-flex align-items-center">
-										<User
-											user={status.authorUser}
-											size="2rem"
-											full
-											bg="darker" />
-									</div>
-									<span class="report align-self-center">
-										<em class="small light-text timestamp">
-											{new Date(
-												status.posted
-											).toLocaleString()}
-										</em>
-										<ReportButton
-											user={status.authorUser?.username ||
-												""}
-											url="status:{status.id}" />
-									</span>
-								</div>
-								<p class="text-start">
-									{status.content[0].text}
-								</p>
+					<div class="d-flex flex-column gap-3">
+						{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
+							<div
+								in:fade|global={{
+									num,
+									total: data.feed.length,
+								}}>
+								<Status {status} />
 							</div>
-						</div>
-					{/each}
-				</div>
+						{/each}
+					</div>
 			</div>
 		</div>
 
 		<div class="col col-12 col-xxl-6 col-xl-7 col-md-6">
-			<div class="col2 mt-28">
+			<div class="col2 pt-28">
 				{#if data.friends.length > 0}
 					<h2 class="fs-4 light-text">Friends</h2>
 					<div class="home-row d-flex">
@@ -128,7 +103,7 @@
 					</div>
 				{/if}
 			</div>
-			<div class="mt-12">
+			<div class="pt-12">
 				<h2 class="fs-4 light-text">Resume playing</h2>
 				<div class="home-row d-flex">
 					<div class="home-row d-flex">
@@ -145,7 +120,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-12 col-6 col-md-8 col-lg-6 col-xl-4">
+			<div class="pt-12 col-6 col-md-8 col-lg-6 col-xl-4">
 				<h2 class="fs-4 light-text">Random fact</h2>
 				<div
 					id="fact"
@@ -163,17 +138,6 @@
 			max-height 50vh
 		.col2
 			margin-top 3rem !important
-
-	+-lg()
-		.statusheader
-			flex-direction column
-		.report
-			width 100%
-			padding-top 0.5rem
-			display flex
-			justify-content space-between
-			em
-				margin 0
 
 	.top
 		width 100vw
