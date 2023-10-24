@@ -35,13 +35,6 @@
 								alt={user.username}
 								class="h-100 rounded-circle rounded-top-0" />
 						</div>
-						<!-- {#if user.status}
-							<span
-								class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
-									user.status
-								]}">
-							</span>
-						{/if} -->
 					</div>
 					{user.username}
 				</a>

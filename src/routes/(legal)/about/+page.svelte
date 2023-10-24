@@ -61,7 +61,8 @@
 				Endless possibilities. New features. Same nostalgia.
 			</p>
 			<h2 class="fs-5">
-				<span class="badge bg-secondary text-light opacity-75 mb-4">
+				<span class="p-2 py-1 rounded-3 font-bold fs-6
+				bg-secondary text-light opacity-75">
 					Closed Beta
 				</span>
 			</h2>

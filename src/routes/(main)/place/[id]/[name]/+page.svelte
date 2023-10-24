@@ -149,15 +149,15 @@
 					<p class="light-text mb-0">
 						Gears: <i class="far fa-circle-xmark" />
 					</p>
-					<span
-						class="badge bg-{data.serverPing >
+					<small
+						class="text-light rounded-2 bg-{data.serverPing >
 						Math.floor(Date.now() / 1000) - 35
 							? 'success'
-							: 'danger'} mb-1">
+							: 'danger'} p-2 py-1">
 						{data.serverPing > Date.now() / 1000 - 35
 							? "Online"
 							: "Offline"}
-					</span>
+					</small>
 					<span class="float-end">
 						<ReportButton
 							user={data.ownerUser?.username || ""}
@@ -200,10 +200,10 @@
 
 						return () => {}
 					}}
-					class="align-self-center col mt-4 px-0 mb-2"
+					class="align-self-center col pt-4 px-0 pb-2"
 					method="POST"
 					action="?/like&privateTicket={data.privateTicket}">
-					<div class="row mb-2">
+					<div class="row pb-2">
 						<div class="col d-flex justify-content-start">
 							<button
 								name="action"
@@ -261,14 +261,14 @@
 					</div>
 					<div class="row">
 						<div class="col d-flex justify-content-start">
-							<span class="light-text mx-2">
+							<span class="light-text px-2">
 								{data.likeCount} like{data.likeCount == 1
 									? ""
 									: "s"}
 							</span>
 						</div>
 						<div class="col d-flex justify-content-end">
-							<span class="light-text mx-2">
+							<span class="light-text px-2">
 								{data.dislikeCount} dislike{data.dislikeCount ==
 								1
 									? ""
@@ -307,7 +307,7 @@
 				<!-- Prevents nested tabs from breaking -->
 				{((tabData2.num = 0), "")}
 				<Tab tabData={tabData2}>
-					<p class="light-text mb-1">
+					<p class="light-text">
 						You can host your server by opening your map in <button
 							class="btn btn-primary p-1 btn-sm"
 							on:click={launch(
@@ -389,7 +389,7 @@
 		{/if}
 		<h4 class="light-text">Server List</h4>
 		{#if data.serverPing > Date.now() / 1000 - 35}
-			<div class="card mb-2">
+			<div class="card pb-2">
 				<div class="card-body">
 					<div class="row">
 						<div class="col col-2">
@@ -429,12 +429,12 @@
 </div>
 
 <Modal {modal}>
-	<div class="d-flex flex-column px-6">
+	<div class="d-flex flex-column px-6 pt-6">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
 				id="wrapper"
-				class=" align-self-center mt-4 mb-6">
+				class="align-self-center">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
@@ -452,15 +452,15 @@
 			</div>
 		{/key}
 		{#if success}
-			<h1 class="text-center fs-5 light-text">
+			<h1 class="text-center fs-5 light-text pt-6">
 				"{data.name}" is ready to play! Have fun!
 			</h1>
 		{:else if installed}
-			<h1 class="text-center fs-5 light-text">
+			<h1 class="text-center fs-5 light-text pt-6">
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
 			</h1>
 		{:else}
-			<h1 class="text-center fs-5 light-text mb-4">
+			<h1 class="text-center fs-5 light-text pt-6">
 				Install the Mercury client and start playing now!
 			</h1>
 			<a
