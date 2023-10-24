@@ -175,8 +175,6 @@
 	.home-row
 		overflow-x auto
 
-		// .badge
-		// 	padding 0.75rem
 		.place
 			width 8rem
 			margin auto
