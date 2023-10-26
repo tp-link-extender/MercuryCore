@@ -126,7 +126,7 @@
 				Working...
 			{:else}
 				Create (
-				<i class="fa fa-gem" />
+				<fa class="fa-gem" />
 				10 )
 			{/if}
 		</button>

@@ -4,9 +4,7 @@
 
 <Head title="Your transactions" />
 
-<h1 class="text-center light-text">
-	Your transactions
-</h1>
+<h1 class="text-center light-text">Your transactions</h1>
 
 <div class="container mt-12">
 	<table class="w-100 m-auto">
@@ -27,11 +25,11 @@
 				<td class="d-flex justify-content-center gap-3">
 					<div class="fs-6 pt-2">
 						<span class="text-success">
-							<i class="fa fa-gem" />
+							<fa class="fa-gem" />
 							{transaction.amountSent}
 						</span>
 						{#if value}
-							<i class="fa fa-arrow-right-1" />
+							<fa class="fa-arrow-right-1" />
 						{/if}
 					</div>
 					<div class="d-flex flex-column justify-content-center">
@@ -44,9 +42,9 @@
 					</div>
 					{#if value}
 						<div class="fs-6 pt-2">
-							<i class="fa fa-arrow-right me-1" />
+							<fa class="fa-arrow-right me-1" />
 							<span class="text-success">
-								<i class="fa fa-gem" />
+								<fa class="fa-gem" />
 								{Math.round(
 									(1 - transaction.taxRate / 100) *
 										transaction.amountSent

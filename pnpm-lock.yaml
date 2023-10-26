@@ -124,6 +124,9 @@ devDependencies:
   '@unocss/extractor-svelte':
     specifier: ^0.57.1
     version: 0.57.1
+  '@unocss/preset-tagify':
+    specifier: ^0.57.1
+    version: 0.57.1
   prettier:
     specifier: ^3.0.3
     version: 3.0.3

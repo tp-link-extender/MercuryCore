@@ -26,7 +26,7 @@
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Accounts</h1>
 	<a href="/admin" class="text-decoration-none">
-		<i class="fas fa-caret-left" />
+		<fa class="fa-caret-left" />
 		Back to panel
 	</a>
 	<div class="row mt-6">

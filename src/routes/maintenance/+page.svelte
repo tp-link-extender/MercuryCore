@@ -33,7 +33,7 @@
 	<a
 		href="https://status.banland.xyz"
 		class="text-decoration-none pt-4 fs-5 font-bold accent-text">
-		Status <i class="fa fa-chevron-right" />
+		Status <fa class="fa-chevron-right" />
 	</a>
 </div>
 

@@ -1,45 +1,40 @@
 import { defineConfig, toEscapedSelector as e } from "unocss"
+import presetTagify from "@unocss/preset-tagify"
 
 let fa: { [k: string]: string }
 
-const i = (a: number | string) => `${a} !important`,
-	bsFonts = [
-		"0",
-		"calc(1.375rem + 1.5vw)",
-		"calc(1.325rem + 0.9vw)",
-		"calc(1.3rem + 0.6vw)",
-		"calc(1.275rem + 0.3vw)",
-		"1.25rem",
-		"1rem",
-	],
-	bsWeights = {
-		thin: 100,
-		extralight: 200,
-		light: 300,
-		normal: 400,
-		medium: 500,
-		semibold: 600,
-		bold: 700,
-		extrabold: 800,
-		black: 900,
-	},
-	// bslhs = {
-	// 	1: "1",
-	// 	sm: "1.25",
-	// 	base: "1.5",
-	// 	lg: "2",
-	// },
-	bsRounds = {
-		"": "var(--bs-border-radius)",
-		"-0": "0",
-		"-1": "var(--bs-border-radius-sm)",
-		"-2": "var(--bs-border-radius)",
-		"-3": "var(--bs-border-radius-lg)",
-		"-4": "var(--bs-border-radius-xl)",
-		"-5": "var(--bs-border-radius-xxl)",
-		"-circle": "50%",
-		"-pill": "50rem",
-	}
+const i = (a: number | string) => `${a} !important`
+const bsFonts = [
+	"0",
+	"calc(1.375rem + 1.5vw)",
+	"calc(1.325rem + 0.9vw)",
+	"calc(1.3rem + 0.6vw)",
+	"calc(1.275rem + 0.3vw)",
+	"1.25rem",
+	"1rem",
+]
+const bsWeights = {
+	thin: 100,
+	extralight: 200,
+	light: 300,
+	normal: 400,
+	medium: 500,
+	semibold: 600,
+	bold: 700,
+	extrabold: 800,
+	black: 900,
+}
+const bsRounds = {
+	"": "var(--bs-border-radius)",
+	"-0": "0",
+	"-1": "var(--bs-border-radius-sm)",
+	"-2": "var(--bs-border-radius)",
+	"-3": "var(--bs-border-radius-lg)",
+	"-4": "var(--bs-border-radius-xl)",
+	"-5": "var(--bs-border-radius-xxl)",
+	"-circle": "50%",
+	"-pill": "50rem",
+}
 
 export default defineConfig({
 	rules: [
@@ -503,9 +498,31 @@ export default defineConfig({
 			/^z-(n\d+|\d+)$/,
 			([, a]) => ({ "z-index": i(a[0] == "n" ? -a.slice(1) : a) }),
 		],
+
+		[
+			/^fa[s]?$/,
+			() => ({
+				"font-family": '"Font Awesome 6"',
+				"font-weight": 900,
+				"-moz-osx-font-smoothing": "grayscale",
+				"-webkit-font-smoothing": "antialiased",
+				display: "inline-block",
+				"font-style": "normal",
+				"font-variant": "normal",
+				"line-height": "1",
+				"text-rendering": "auto",
+			}),
+		],
+		[
+			/^far$/,
+			() => ({
+				"font-family": '"Font Awesome 6"',
+				"font-weight": 400,
+			}),
+		],
 	],
 
-	presets: [],
+	presets: [presetTagify()],
 })
 
 fa = {

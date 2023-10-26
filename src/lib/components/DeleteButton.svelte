@@ -25,13 +25,13 @@
 		<button on:click={() => (clicked = true)} class="btn p-0 ps-2 {colour}">
 			<small>
 				{#if reverse}
-					<i class="far {moderate ? 'fa-gavel' : 'fa-trash'} pe-2" />
+					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pe-2" />
 				{/if}
 				<span class="{text} {colour}">
 					{text.charAt(0).toUpperCase() + text.slice(1)}
 				</span>
 				{#if !reverse}
-					<i class="far {moderate ? 'fa-gavel' : 'fa-trash'} ps-2" />
+					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} ps-2" />
 				{/if}
 			</small>
 		</button>
@@ -52,7 +52,7 @@
 		margin-top -0.1rem // there we go
 
 	button:hover
-		i
+		far
 			font-weight 900
 		.delete
 			width 2.5rem

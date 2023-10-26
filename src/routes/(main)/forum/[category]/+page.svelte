@@ -20,8 +20,8 @@
 		<span class="ps-6">
 			<a
 				href="/forum/create?category={data.name}"
-				class="btn btn-primary ">
-				<i class="fa fa-file pe-2" />
+				class="btn btn-primary">
+				<fa class="fa-file pe-2" />
 				Create post
 			</a>
 		</span>

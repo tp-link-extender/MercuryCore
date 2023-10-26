@@ -28,7 +28,7 @@
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Invites</h1>
 	<a href="/admin" class="text-decoration-none">
-		<i class="fas fa-caret-left" />
+		<fa class="fa-caret-left" />
 		Back to panel
 	</a>
 	<div class="row mt-6">
@@ -192,7 +192,7 @@
 											name="action"
 											value="disable"
 											class="btn btn-sm btn-link text-decoration-none text-danger my-0">
-											<i class="fas fa-ban" />
+											<fa class="fa-ban" />
 											Disable Invite
 										</button>
 									</form>

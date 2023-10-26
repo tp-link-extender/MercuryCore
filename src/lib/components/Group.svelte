@@ -18,7 +18,7 @@
 		{group.name}
 		<div class="mt-auto mb-1 float-end">
 			<span class="float-end">
-				<i class="fa fa-user opacity-75" />
+				<fa class="fa-user opacity-75" />
 				{group.memberCount}
 			</span>
 		</div>

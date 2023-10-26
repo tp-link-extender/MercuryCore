@@ -45,7 +45,7 @@
 	<a
 		href="{baseUrl}{assetName ? '?tab=Comments' : ''}"
 		class="text-decoration-none">
-		<i class="fa fa-arrow-left me-2" />
+		<fa class="fa-arrow-left me-2" />
 		{#if assetName}
 			Back to asset
 		{:else}
@@ -55,7 +55,7 @@
 	{#if reply.parentReplyId}
 		<br />
 		<a href="{baseUrl}/{reply.parentReplyId}" class="text-decoration-none">
-			<i class="fa fa-arrow-up me-2" />
+			<fa class="fa-arrow-up me-2" />
 			Parent reply
 		</a>
 	{/if}
@@ -190,7 +190,7 @@
 								on:click={() => replyingTo.set(reply.id)}
 								class:hidden
 								class="p-0 btn btn-sm grey-text px-1">
-								<i class="far fa-message pe-2" />
+								<far class="fa-message pe-2" />
 								Reply
 							</button>
 							{#if !hidden}
@@ -242,7 +242,7 @@
 												on:click={() =>
 													replyingTo.set("")}
 												class="btn btn-dark grey-text ms-1">
-												<i class="fa fa-cancel me-2" />
+												<fa class="fa-cancel me-2" />
 												Cancel
 											</button>
 										</fieldset>
@@ -255,7 +255,7 @@
 
 				{#if depth > 8}
 					<a href="{baseUrl}/{reply.id}" class="text-decoration-none">
-						<i class="fa fa-arrow-down me-2" />
+						<fa class="fa-arrow-down me-2" />
 						More replies
 					</a>
 				{/if}

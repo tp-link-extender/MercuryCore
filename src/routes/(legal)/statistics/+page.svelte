@@ -26,7 +26,7 @@
 			<td class="ps-6">{data.assets}</td>
 		</tr>
 		<tr>
-			<td><i class="fa fa-gem" /></td>
+			<td><fa class="fa-gem" /></td>
 			<td class="ps-6">{data.totalCurrency}</td>
 		</tr>
 		<tr>
@@ -58,7 +58,7 @@
 	<table>
 		<tr>
 			<td>
-				<i class="fa fa-gem me-2" />
+				<fa class="fa-gem me-2" />
 				per user
 			</td>
 			<td class="ps-6">{data.avgCurrency?.toFixed(2)}</td>
