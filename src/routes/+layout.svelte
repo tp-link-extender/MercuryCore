@@ -27,16 +27,16 @@
 		nprogress.done()
 	}
 
-	onMount(() => {
-		// Keep the user's online status up to date
+	onMount(() =>
 		setInterval(() => {
+			// Keep the user's online status up to date
 			if (user)
 				fetch("/api?/statusping", {
 					method: "POST",
 					body: new FormData(),
 				})
 		}, 30e3)
-	})
+	)
 
 	const notificationNotes: { [k: string]: string } = {
 		AssetApproved: "Asset approval",

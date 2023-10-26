@@ -12,7 +12,7 @@
 			class="heart border-0 p-0 grey-text cursor-pointer"
 			class:clicked>
 			<span class="grey-text">made with</span>
-			<i class="fa fa-heart" />
+			<fa class="fa-heart" />
 		</button>
 	</p>
 	<a class="light-text" href="/about">About</a>
@@ -38,7 +38,7 @@
 <style lang="stylus">
 	.heart
 		background transparent
-		i
+		fa
 			transition 0.2s
 		span
 			transition all 0.3s
@@ -54,7 +54,7 @@
 				width 4.6rem
 				margin-left 0.2rem
 
-	.heart:not(.clicked) i:hover
+	.heart:not(.clicked) fa:hover
 		color var(--light-text) !important
 
 	@keyframes heart
@@ -74,9 +74,9 @@
 			rotate 0
 
 	.clicked
-		i
+		fa
 			animation heart 2s
-		i
+		fa
 		span
 			color #f4b !important
 

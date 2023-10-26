@@ -73,7 +73,7 @@
 				</button>
 			</div>
 			<!-- <div id="replycount" class="d-flex">
-				<div class="mt-auto"><i class="far fa-message" /> {post._count.replies}</div>
+				<div class="mt-auto"><far class="fa-message" /> {post._count.replies}</div>
 			</div> -->
 		</div>
 	</form>

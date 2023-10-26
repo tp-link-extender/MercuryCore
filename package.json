@@ -29,6 +29,7 @@
 		"@types/uuid": "^9.0.6",
 		"@unocss/core": "^0.57.1",
 		"@unocss/extractor-svelte": "^0.57.1",
+		"@unocss/preset-tagify": "^0.57.1",
 		"prettier": "^3.0.3",
 		"prettier-plugin-svelte": "^3.0.3",
 		"sass": "^1.69.4",

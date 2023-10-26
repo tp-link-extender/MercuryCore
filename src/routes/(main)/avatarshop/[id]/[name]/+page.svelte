@@ -53,7 +53,7 @@
 				</div>
 				<div class="col d-flex justify-content-end">
 					<li class="dropdown dropdown-hover dropdown-end ps-2 mt-2">
-						<i class="fas fa-ellipsis" />
+						<fa class="fa-ellipsis" />
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								{#each usernav as [icon, title, href]}
@@ -61,7 +61,7 @@
 										<a
 											class="btn light-text ps-4 pe-0 text-start"
 											{href}>
-											<i class="fa {icon} me-2" />
+											<fa class="{icon} me-2" />
 											{title}
 										</a>
 									</li>
@@ -75,7 +75,7 @@
 											<button
 												class="btn text-primary ps-4 pe-0 text-start">
 												<i
-													class="fas fa-arrows-rotate me-2" />
+													class="fa fa-arrows-rotate me-2" />
 												<b>Re-render</b>
 											</button>
 										</form>
@@ -123,7 +123,7 @@
 						<div class="card-body">
 							<p class="light-text text-center mb-0">
 								Price: <span class="text-success">
-									<i class="far fa-gem" />
+									<far class="fa-gem" />
 									{data.price}
 								</span>
 							</p>
@@ -200,7 +200,7 @@
 				Would you like to {data.price > 0 ? "buy" : "get"}
 				{data.name} for
 				{#if data.price > 0}
-					<i class="far fa-gem" />
+					<far class="fa-gem" />
 					{data.price}
 				{:else}
 					<strong>FREE</strong>
@@ -217,7 +217,7 @@
 		{:else}
 			<h3 class="text-lg font-bold light-text">Insufficient funds</h3>
 			<span>
-				You don't have enough <i class="fa fa-gem" />
+				You don't have enough <fa class="fa-gem" />
 				s to buy this item.
 			</span>
 			<p>

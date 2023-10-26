@@ -30,11 +30,11 @@
 		{place.name}
 	</p>
 	<span class="float-start ms-1">
-		<i class="fa fa-thumbs-up opacity-75" />
+		<fa class="fa-thumbs-up opacity-75" />
 		{isNaN(ratio) ? "--" : ratio}%
 	</span>
 	<span class="float-end me-1">
-		<i class="fa fa-user opacity-75" />
+		<fa class="fa-user opacity-75" />
 		{place.playerCount}
 	</span>
 </a>

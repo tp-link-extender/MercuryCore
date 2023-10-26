@@ -12,7 +12,7 @@
 	let tabData = TabData(
 		data.url,
 		["View", "Network", "Privacy"],
-		["far fa-eye", "fas fa-network-wired", "fas fa-eye-low-vision"]
+		["far fa-eye", "fa fa-network-wired", "fa fa-eye-low-vision"]
 	)
 </script>
 

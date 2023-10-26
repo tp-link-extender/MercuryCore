@@ -22,27 +22,27 @@
 
 	export let data: import("../../routes/$types").LayoutData
 
-	const { user } = data,
-		nav1 = [
-			// ["Home", "/", "fa-house-chimney"],
-			["Games", "/games", "fa-mountain-sun"],
-			["Catalog", "/avatarshop", "fa-book-open-cover"],
-			// ["Groups", "/groups", "fa-people-group"],
-			["Create", "/develop", "fa-plus"],
-			["Forum", "/forum", "fa-messages"],
-		],
-		usernav = [
-			["fa-user-group", "Friends", "/requests"],
-			["fa-box-open-full", "Inventory", "/inventory"],
-			["fa-user-pen", "Character", "/character"],
-			["fa-gears", "Settings", "/settings"],
-		],
-		searchCategories = [
-			["Users", "users"],
-			["Places", "places"],
-			["Catalog", "assets"],
-			// ["Groups", "groups"],
-		]
+	const { user } = data
+	const nav1 = [
+		// ["Home", "/", "fa-house-chimney"],
+		["Games", "/games", "fa-mountain-sun"],
+		["Catalog", "/avatarshop", "fa-book-open-cover"],
+		// ["Groups", "/groups", "fa-people-group"],
+		["Create", "/develop", "fa-plus"],
+		["Forum", "/forum", "fa-messages"],
+	]
+	const usernav = [
+		["fa-user-group", "Friends", "/requests"],
+		["fa-box-open-full", "Inventory", "/inventory"],
+		["fa-user-pen", "Character", "/character"],
+		["fa-gears", "Settings", "/settings"],
+	]
+	const searchCategories = [
+		["Users", "users"],
+		["Places", "places"],
+		["Catalog", "assets"],
+		// ["Groups", "groups"],
+	]
 
 	if (user && user.permissionLevel >= 4)
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
@@ -135,7 +135,7 @@
 							}}
 							class="btn btn-success py-0 rounded-end-2"
 							title="Search">
-							<i class="fa fa-search" />
+							<fa class="fa-search" />
 						</button>
 						{#if search.trim() && !searchCompleted}
 							<div
@@ -164,7 +164,7 @@
 					role="button"
 					aria-label="Notifications"
 					class="font-bold pe-4">
-					<i class="fa fa-bell light-text" />
+					<fa class="fa-bell light-text" />
 				</a>
 				<a
 					id="transactionsbutton"
@@ -173,7 +173,7 @@
 					aria-label="Transactions"
 					class="text-success d-flex align-items-center
 					text-decoration-none">
-					<i class="fa fa-gem pe-2 text-success" />
+					<fa class="fa-gem pe-2 text-success" />
 					<span class="fs-6 text-success">
 						{user.currency}
 					</span>
@@ -187,7 +187,7 @@
 									<a
 										class="btn light-text ps-4 pe-0 text-start"
 										{href}>
-										<i class="fa {icon} pe-2" />
+										<fa class="{icon} pe-2" />
 										{title}
 									</a>
 								</li>
@@ -237,7 +237,7 @@
 		<div class="d-flex justify-content-evenly mx-auto">
 			{#each nav1 as [title, href, icon]}
 				<a {href} class="btn light-text border-0 d-flex flex-column">
-					<i class="fa {icon} pb-1" />
+					<fa class="{icon} pb-1" />
 					{title}
 				</a>
 			{/each}
@@ -245,7 +245,7 @@
 				href="/notifications"
 				id="notificationsbottom"
 				class="btn light-text border-0 flex-column">
-				<i class="fa fa-bell pb-1" />
+				<fa class="fa-bell pb-1" />
 				Notifications
 			</a>
 		</div>
@@ -284,7 +284,7 @@
 			font-size 1rem
 			padding-left 0.5rem
 			padding-right 0.5rem
-		i
+		fa
 			font-size 1.5rem
 
 	+lightTheme()
@@ -316,13 +316,14 @@
 
 		#bottomnav
 			height 3.5rem
+			
 			div
 				width 100%
 			a
 				font-size 0.9rem	
 				padding-left 0.2rem
 				padding-right 0.2rem
-			i
+			fa
 				font-size 1.2rem
 
 		#transactionsbutton

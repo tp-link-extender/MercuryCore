@@ -9,7 +9,7 @@
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Transactions</h1>
 	<a href="/admin" class="text-decoration-none">
-		<i class="fas fa-caret-left" />
+		<fa class="fa-caret-left" />
 		Back to panel
 	</a>
 	<div class="row mt-6">
@@ -40,11 +40,11 @@
 							<td class="d-flex justify-content-center gap-3">
 								<div class="fs-6 pt-2">
 									<span class="text-success">
-										<i class="fa fa-gem" />
+										<fa class="fa-gem" />
 										{transaction.amountSent}
 									</span>
 									{#if value}
-										<i class="fa fa-arrow-right-1" />
+										<fa class="fa-arrow-right-1" />
 									{/if}
 								</div>
 								<div
@@ -60,9 +60,9 @@
 								</div>
 								{#if value}
 									<div class="fs-6 pt-2">
-										<i class="fa fa-arrow-right me-1" />
+										<fa class="fa-arrow-right me-1" />
 										<span class="text-success">
-											<i class="fa fa-gem" />
+											<fa class="fa-gem" />
 											{Math.round(
 												(1 -
 													transaction.taxRate / 100) *

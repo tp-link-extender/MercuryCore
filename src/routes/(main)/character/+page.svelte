@@ -141,13 +141,14 @@
 <div class="container">
 	<h1 class="text-white">Avatar</h1>
 	<div class="row mt-6">
-		<div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex flex-column
+		<div
+			class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex flex-column
 		gap-4">
 			<div class="card">
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
 						<button class="btn btn-primary w-100">
-							<i class="fa fa-rotate" />
+							<fa class="fa-rotate" />
 							Regenerate
 						</button>
 					</form>
@@ -204,7 +205,7 @@
 						class="btn btn-success"
 						aria-label="Search"
 						id="button-addon2">
-						<i class="fa fa-magnifying-glass" />
+						<fa class="fa-magnifying-glass" />
 					</button>
 				</div>
 			</form>

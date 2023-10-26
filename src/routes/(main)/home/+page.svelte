@@ -37,46 +37,45 @@
 				</a>
 			</h1>
 			<div id="feed" class="card p-4 bg-darker">
-					<p>
-						Post your status - your friends and followers can view
-						how you're doing!
-					</p>
-					<form use:enhance method="POST" class="input-group">
-						<input
-							bind:value={$form.status}
-							{...$constraints.status}
-							placeholder="Post status"
-							name="status"
-							aria-label="Post Status"
-							class="form-control light-text {$errors.status
-								? 'is-in'
-								: ''}valid" />
-						<button class="btn btn-success" aria-label="Send">
-							{#if $delayed}
-								...
-							{:else}
-								<i class="fa fa-paper-plane-top" />
-							{/if}
-						</button>
-					</form>
-					<p
+				<p>
+					Post your status - your friends and followers can view how
+					you're doing!
+				</p>
+				<form use:enhance method="POST" class="input-group">
+					<input
+						bind:value={$form.status}
+						{...$constraints.status}
+						placeholder="Post status"
+						name="status"
+						aria-label="Post Status"
+						class="form-control light-text {$errors.status
+							? 'is-in'
+							: ''}valid" />
+					<button class="btn btn-success" aria-label="Send">
+						{#if $delayed}
+							...
+						{:else}
+							<fa class="fa-paper-plane-top" />
+						{/if}
+					</button>
+				</form>
+				<p
 					class="mb-0 pb-3"
-						class:text-success={$page.status == 200}
-						class:text-danger={$page.status >= 400 ||
-							$errors.status}>
-						{$errors.status || $message || ""}
-					</p>
-					<div class="d-flex flex-column gap-3">
-						{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
-							<div
-								in:fade|global={{
-									num,
-									total: data.feed.length,
-								}}>
-								<Status {status} />
-							</div>
-						{/each}
-					</div>
+					class:text-success={$page.status == 200}
+					class:text-danger={$page.status >= 400 || $errors.status}>
+					{$errors.status || $message || ""}
+				</p>
+				<div class="d-flex flex-column gap-3">
+					{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
+						<div
+							in:fade|global={{
+								num,
+								total: data.feed.length,
+							}}>
+							<Status {status} />
+						</div>
+					{/each}
+				</div>
 			</div>
 		</div>
 

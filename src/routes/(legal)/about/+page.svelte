@@ -61,7 +61,8 @@
 				Endless possibilities. New features. Same nostalgia.
 			</p>
 			<h2 class="fs-5">
-				<span class="p-2 py-1 rounded-3 font-bold fs-6
+				<span
+					class="p-2 py-1 rounded-3 font-bold fs-6
 				bg-secondary text-light opacity-75">
 					Closed Beta
 				</span>
@@ -107,7 +108,7 @@
 			on:click={downScroll}
 			on:keypress={downScroll}
 			style="opacity: {(500 - scrollY) / 300}">
-			<i class="fa light-text fa-chevron-down" />
+			<fa class="light-text fa-chevron-down" />
 		</button>
 	</div>
 	<button
@@ -117,7 +118,7 @@
 		on:click={upScroll}
 		on:keypress={upScroll}
 		style="opacity: {(scrollY - 500) / 300}">
-		<i class="fa light-text fa-circle-chevron-up" />
+		<fa class="light-text fa-circle-chevron-up" />
 	</button>
 </Pagepart>
 
@@ -225,7 +226,7 @@
 						type="button"
 						href="/register"
 						class="d-inline btn btn-sm btn-success text-decoration-none">
-						Register <i class="fa fa-chevron-right" />
+						Register <fa class="fa-chevron-right" />
 					</a>
 				</b>
 			</div>

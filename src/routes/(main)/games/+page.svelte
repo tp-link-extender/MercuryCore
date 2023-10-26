@@ -35,7 +35,7 @@
 			Games
 			<span class="ps-6">
 				<a href="/games/create" class="btn btn-primary">
-					<i class="fas fa-plus" />
+					<fa class="fa-plus" />
 					Create
 				</a>
 			</span>
@@ -60,16 +60,14 @@
 							class="btn btn-success"
 							aria-label="Search"
 							id="button-addon2">
-							<i class="fa fa-magnifying-glass" />
+							<fa class="fa-magnifying-glass" />
 						</button>
 					</div>
 				</div>
 				<div class="col-7 row">
 					<div class="ps-4 col">
 						<div class="row">
-							<label
-								for="genre"
-								class="light-text col py-1">
+							<label for="genre" class="light-text col py-1">
 								Genre
 							</label>
 							<select

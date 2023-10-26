@@ -29,7 +29,7 @@
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Daily Stipend</h1>
 	<a href="/admin" class="text-decoration-none">
-		<i class="fas fa-caret-left" />
+		<fa class="fa-caret-left" />
 		Back to panel
 	</a>
 	<div class="row mt-6">
@@ -59,7 +59,7 @@
 											: ''}valid" />
 									<span
 										class="input-group-text light-text bg-a1">
-										<i class="fa fa-gem text-success" />
+										<fa class="fa-gem text-success" />
 									</span>
 								</div>
 							</div>
