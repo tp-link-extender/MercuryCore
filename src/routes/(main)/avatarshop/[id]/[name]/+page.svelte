@@ -53,7 +53,7 @@
 				</div>
 				<div class="col d-flex justify-content-end">
 					<li class="dropdown dropdown-hover dropdown-end ps-2 mt-2">
-						<fa class="fa-ellipsis" />
+						<fa fa-ellipsis />
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								{#each usernav as [icon, title, href]}
@@ -123,7 +123,7 @@
 						<div class="card-body">
 							<p class="light-text text-center mb-0">
 								Price: <span class="text-success">
-									<far class="fa-gem" />
+									<far fa-gem />
 									{data.price}
 								</span>
 							</p>
@@ -200,7 +200,7 @@
 				Would you like to {data.price > 0 ? "buy" : "get"}
 				{data.name} for
 				{#if data.price > 0}
-					<far class="fa-gem" />
+					<far fa-gem />
 					{data.price}
 				{:else}
 					<strong>FREE</strong>
@@ -217,8 +217,8 @@
 		{:else}
 			<h3 class="text-lg font-bold light-text">Insufficient funds</h3>
 			<span>
-				You don't have enough <fa class="fa-gem" />
-				s to buy this item.
+				You don't have enough <fa fa-gem />
+				 s to buy this item.
 			</span>
 			<p>
 				You'll need <strong>

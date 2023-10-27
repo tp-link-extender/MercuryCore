@@ -55,7 +55,7 @@
 						{#if $delayed}
 							...
 						{:else}
-							<fa class="fa-paper-plane-top" />
+							<fa fa-paper-plane-top />
 						{/if}
 					</button>
 				</form>

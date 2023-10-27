@@ -27,7 +27,7 @@
 				{asset.name}
 			</p>
 			<p class="m-0 text-success">
-				<far class="fa-gem" />
+				<far fa-gem />
 				{asset.price}
 			</p>
 		</div>

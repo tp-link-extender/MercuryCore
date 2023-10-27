@@ -135,7 +135,7 @@
 							}}
 							class="btn btn-success py-0 rounded-end-2"
 							title="Search">
-							<fa class="fa-search" />
+							<fa fa-search />
 						</button>
 						{#if search.trim() && !searchCompleted}
 							<div
@@ -164,7 +164,7 @@
 					role="button"
 					aria-label="Notifications"
 					class="font-bold pe-4">
-					<fa class="fa-bell light-text" />
+					<fa fa-bell class="light-text" />
 				</a>
 				<a
 					id="transactionsbutton"
@@ -173,7 +173,7 @@
 					aria-label="Transactions"
 					class="text-success d-flex align-items-center
 					text-decoration-none">
-					<fa class="fa-gem pe-2 text-success" />
+					<fa fa-gem class="pe-2 text-success" />
 					<span class="fs-6 text-success">
 						{user.currency}
 					</span>
@@ -245,7 +245,7 @@
 				href="/notifications"
 				id="notificationsbottom"
 				class="btn light-text border-0 flex-column">
-				<fa class="fa-bell pb-1" />
+				<fa fa-bell class="pb-1" />
 				Notifications
 			</a>
 		</div>

@@ -25,11 +25,11 @@
 				<td class="d-flex justify-content-center gap-3">
 					<div class="fs-6 pt-2">
 						<span class="text-success">
-							<fa class="fa-gem" />
+							<fa fa-gem />
 							{transaction.amountSent}
 						</span>
 						{#if value}
-							<fa class="fa-arrow-right-1" />
+							<fa fa-arrow-right-1 />
 						{/if}
 					</div>
 					<div class="d-flex flex-column justify-content-center">
@@ -42,9 +42,9 @@
 					</div>
 					{#if value}
 						<div class="fs-6 pt-2">
-							<fa class="fa-arrow-right me-1" />
+							<fa fa-arrow-right class="me-1" />
 							<span class="text-success">
-								<fa class="fa-gem" />
+								<fa fa-gem />
 								{Math.round(
 									(1 - transaction.taxRate / 100) *
 										transaction.amountSent

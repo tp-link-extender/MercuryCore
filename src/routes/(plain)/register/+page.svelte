@@ -25,7 +25,7 @@
 <div class="row">
 	<div id="dark" class="col light-text">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0 shadow-none">
-			<fa class="fa-arrow-left me-2" />
+			<fa fa-arrow-left class="me-2" />
 			Home
 		</a>
 		<h1 class="font-black light-text mb-6">
@@ -191,7 +191,7 @@
 					for all transactions that aren't sent to a specific user. It
 					will be initialised with a balance of
 					<span class="text-success">
-						<fa class="fa-gem" />
+						<fa fa-gem />
 						999999
 					</span>
 					, which will not increase or decrease when transactions are made

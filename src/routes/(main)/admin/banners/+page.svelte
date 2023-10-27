@@ -43,7 +43,7 @@
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Banners</h1>
 	<a href="/admin" class="text-decoration-none">
-		<fa class="fa-caret-left" />
+		<fa fa-caret-left />
 		Back to panel
 	</a>
 	<div class="row mt-6">
@@ -155,7 +155,7 @@
 										action="?id={banner.id}&a=delete">
 										<button
 											class="btn btn-sm btn-link text-decoration-none text-danger">
-											<fa class="fa-trash pe-1" />
+											<fa fa-trash class="pe-1" />
 											Delete Banner
 										</button>
 									</form>

@@ -34,7 +34,7 @@
 	</h1>
 	<h6 class="text-center light-text mb-0">
 		<span class="fs-6 light-text text-center">
-			<fa class="fa-caret-left" />
+			<fa fa-caret-left />
 			<a href="/develop" class="text-decoration-none">Back to Develop</a>
 		</span>
 	</h6>
@@ -145,9 +145,8 @@
 			{#if $delayed}
 				Working...
 			{:else}
-				Create (
-				<fa class="fa-gem" />
-				15 )
+				Create ( <fa fa-gem />
+				 15 )
 			{/if}
 		</button>
 	</fieldset>

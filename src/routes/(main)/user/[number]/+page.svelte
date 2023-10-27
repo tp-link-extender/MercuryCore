@@ -121,7 +121,7 @@
 							in:fade
 							class="position-absolute end-0 pe-4">
 							<button class="btn btn-sm btn-primary">
-								<fa class="fa-arrows-rotate" />
+								<fa fa-arrows-rotate />
 								Re-render
 							</button>
 							<small class="text-danger d-block">
@@ -161,7 +161,7 @@
 									{group.name}
 								</span>
 								<span class="float-end">
-									<fa class="fa-user opacity-75" />
+									<fa fa-user class="opacity-75" />
 									{group.memberCount}
 								</span>
 							</div>
@@ -184,7 +184,7 @@
 									{group.name}
 								</span>
 								<span class="float-end">
-									<fa class="fa-user opacity-75" />
+									<fa fa-user class="opacity-75" />
 									{group.memberCount}
 								</span>
 							</div>

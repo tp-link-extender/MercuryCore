@@ -148,8 +148,8 @@
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
 						<button class="btn btn-primary w-100">
-							<fa class="fa-rotate" />
-							Regenerate
+							<fa fa-rotate />
+							 Regenerate
 						</button>
 					</form>
 					<p class="text-danger">
@@ -205,7 +205,7 @@
 						class="btn btn-success"
 						aria-label="Search"
 						id="button-addon2">
-						<fa class="fa-magnifying-glass" />
+						<fa fa-magnifying-glass />
 					</button>
 				</div>
 			</form>

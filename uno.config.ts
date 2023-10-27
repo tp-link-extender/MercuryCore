@@ -1,4 +1,4 @@
-import { defineConfig, toEscapedSelector as e } from "unocss"
+import { defineConfig, toEscapedSelector as e, presetAttributify } from "unocss"
 import presetTagify from "@unocss/preset-tagify"
 
 let fa: { [k: string]: string }
@@ -522,7 +522,7 @@ export default defineConfig({
 		],
 	],
 
-	presets: [presetTagify()],
+	presets: [presetTagify(), presetAttributify()],
 })
 
 fa = {

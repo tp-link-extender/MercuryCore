@@ -125,9 +125,8 @@
 			{#if $delayed}
 				Working...
 			{:else}
-				Create (
-				<fa class="fa-gem" />
-				10 )
+				Create ( <fa fa-gem />
+				 10 )
 			{/if}
 		</button>
 	</fieldset>

@@ -36,14 +36,14 @@
 <h4>Discord Verification</h4>
 <p>A Discord account has not been linked.</p>
 <button class="btn btn-primary">
-	<fa class="fa-link" />
-	Link Discord
+	<fa fa-link />
+	 Link Discord
 </button>
 <hr class="grey-text" />
 
 <h4>Email Verification</h4>
 <p>You have not verified your email address.</p>
 <button class="btn btn-primary mb-4">
-	<fa class="fa-envelope-circle-check" />
-	Verify Email
+	<fa fa-envelope-circle-check />
+	 Verify Email
 </button>

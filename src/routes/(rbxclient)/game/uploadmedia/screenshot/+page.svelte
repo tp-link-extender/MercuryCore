@@ -19,7 +19,7 @@
 	<ul>
 		<li>
 			Open <button on:click={openPictures} class="btn btn-sm btn-primary">
-				<far class="fa-folder-open" />
+				<far fa-folder-open />
 				My Pictures
 			</button>
 			to check it out!
@@ -28,8 +28,8 @@
 	</ul>
 	<hr class="divider-bottom" />
 	<button class="btn btn-sm btn-danger">
-		<fa class="fa-ban" />
-		Not interested
+		<fa fa-ban />
+		 Not interested
 	</button>
 	<p class="text-light">Hey Kakarot, I think they found us</p>
 </div>
