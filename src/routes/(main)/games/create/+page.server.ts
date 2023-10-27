@@ -54,7 +54,7 @@ export const actions = {
 		)) as unknown as number
 
 		try {
-			await transaction({ number: user.number }, { number: 1 }, 10, {
+			await transaction({ number: user.number }, { number: 1 }, 0, {
 				note: `Created place ${name}`,
 				link: `/place/${id + 1}`,
 			})
