@@ -57,11 +57,10 @@ function GetTerrainForMouse(mouse)
 	local cell = game.Workspace.Terrain:WorldToCellPreferSolid(
 		Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z)
 	)
-	local planeLoc
 	-- If nothing was hit, do the plane intersection.
 	if 0 == game.Workspace.Terrain:GetCell(cell.X, cell.Y, cell.Z).Value then
 		cell = nil
-		planeLoc, hit = PlaneIntersection(
+		local planeLoc, hit = PlaneIntersection(
 			Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z)
 		)
 		if hit then
@@ -110,8 +109,10 @@ local function collectParts(object, baseParts, scripts, decals)
 	end
 end
 
+local cluster
+
 local function clusterPartsInRegion(startVector, endVector)
-	local cluster = game.Workspace:FindFirstChild "Terrain"
+	cluster = game.Workspace:FindFirstChild "Terrain"
 
 	local startCell = cluster:WorldToCell(startVector)
 	local endCell = cluster:WorldToCell(endVector)
@@ -199,9 +200,8 @@ local function autoAlignToFace(parts)
 	local aatf = parts:FindFirstChild "AutoAlignToFace"
 	if aatf then
 		return aatf.Value
-	else
-		return false
 	end
+	return false
 end
 
 local function getClosestAlignedWorldDirection(aVector3InWorld)
@@ -221,24 +221,20 @@ local function getClosestAlignedWorldDirection(aVector3InWorld)
 	if math.abs(xDot) > math.abs(yDot) and math.abs(xDot) > math.abs(zDot) then
 		if xDot > 0 then
 			return 0
-		else
-			return 3
 		end
+		return 3
 	elseif
 		math.abs(yDot) > math.abs(xDot) and math.abs(yDot) > math.abs(zDot)
 	then
 		if yDot > 0 then
 			return 1
-		else
-			return 4
 		end
-	else
-		if zDot > 0 then
-			return 2
-		else
-			return 5
-		end
+		return 4
 	end
+	if zDot > 0 then
+		return 2
+	end
+	return 5
 end
 
 local function positionPartsAtCFrame3(aCFrame, currentParts)
@@ -354,7 +350,7 @@ local function getBoundingBox2(partOrModel)
 		minVec = -maxVec
 	end
 
-	-- Adjust bounding box to reflect what the model or part author wants in  terms of justification
+	-- Adjust bounding box to reflect what the model or part author wants in terms of justification
 	local justifyValue = partOrModel:FindFirstChild "Justification"
 	if justifyValue ~= nil then
 		-- find the multiple of 4 that contains the model
@@ -422,21 +418,18 @@ end
 local function getTargetPartBoundingBox(targetPart)
 	if targetPart.Parent:FindFirstChild "RobloxModel" ~= nil then
 		return getBoundingBox2(targetPart.Parent)
-	else
-		return getBoundingBox2(targetPart)
 	end
+	return getBoundingBox2(targetPart)
 end
 
 local function getMouseTargetCFrame(targetPart)
 	if targetPart.Parent:FindFirstChild "RobloxModel" ~= nil then
 		if targetPart.Parent:IsA "Tool" then
 			return targetPart.Parent.Handle.CFrame
-		else
-			return targetPart.Parent:GetModelCFrame()
 		end
-	else
-		return targetPart.CFrame
+		return targetPart.Parent:GetModelCFrame()
 	end
+	return targetPart.CFrame
 end
 
 local function isBlocker(part) -- returns whether or not we want to cancel the stamp because we're blocked by this part
@@ -450,7 +443,8 @@ local function isBlocker(part) -- returns whether or not we want to cancel the s
 		return false
 	end
 	if
-		part:FindFirstChild "RobloxStamper" or part:FindFirstChild "RobloxModel"
+		part:FindFirstChild "RobloxStamper"
+		or part:FindFirstChild "RobloxModel"
 	then
 		return true
 	end
@@ -565,17 +559,16 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 		if nil == cellPos then
 			hitPlane = false
 			return admissibleConfig, targetConfig
-		else
-			targetPart = game.Workspace.Terrain
-			hitPlane = true
-			-- Take into account error that will occur.
-			cellPos = Vector3.new(cellPos.X - 1, cellPos.Y, cellPos.Z)
-			mouseHitInWorld = game.Workspace.Terrain:CellCenterToWorld(
-				cellPos.x,
-				cellPos.y,
-				cellPos.z
-			)
 		end
+		targetPart = game.Workspace.Terrain
+		hitPlane = true
+		-- Take into account error that will occur.
+		cellPos = Vector3.new(cellPos.X - 1, cellPos.Y, cellPos.Z)
+		mouseHitInWorld = game.Workspace.Terrain:CellCenterToWorld(
+			cellPos.x,
+			cellPos.y,
+			cellPos.z
+		)
 	end
 
 	-- test mouse hit location
@@ -828,9 +821,8 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 			return BrickColor.new "Really blue"
 		elseif terrainValue == 17 then
 			return BrickColor.new "Bright blue"
-		else
-			return BrickColor.new "Bright green"
 		end
+		return BrickColor.new "Bright green"
 	end
 
 	local function setupFakeTerrainPart(cellMat, cellType, cellOrient)
@@ -1017,6 +1009,8 @@ t.SetupStamperDragger = function(
 		error "SetupStamperDragger: Mouse (second arg) is not of type Mouse!"
 		return nil
 	end
+
+	local configFound, targetCFrame, targetSurface
 
 	local stampInModel
 	local allowedStampRegion
@@ -1495,9 +1489,9 @@ t.SetupStamperDragger = function(
 				end
 			end)
 		then
-			error "Error: RbxStamper.DoStamperMouseMove Mouse is nil on second check"
 			game.JointsService:ClearJoinAfterMoveJoints()
 			Mouse = nil
+			error "Error: RbxStamper.DoStamperMouseMove Mouse is nil on second check"
 			return
 		end
 
@@ -1851,7 +1845,7 @@ t.SetupStamperDragger = function(
 		end
 
 		-- After rotating, update the position
-		local configFound, targetCFrame =
+		configFound, targetCFrame =
 			findConfigAtMouseTarget(Mouse, stampData)
 		if configFound then
 			stampData.CurrentParts =
@@ -1982,7 +1976,7 @@ t.SetupStamperDragger = function(
 	local function ResolveMegaClusterStamp(checkHighScalabilityStamp)
 		local cellSet = false
 
-		local cluster = game.Workspace.Terrain
+		cluster = game.Workspace.Terrain
 
 		local line = HighScalabilityLine.InternalLine
 		local cMax = game.Workspace.Terrain.MaxExtents.Max
@@ -2427,7 +2421,7 @@ t.SetupStamperDragger = function(
 		HighScalabilityLine.Start = nil
 		HighScalabilityLine.Adorn.Parent = nil
 
-		local cluster = game.Workspace.Terrain
+		cluster = game.Workspace.Terrain
 
 		-- if target point is in cluster, just use cluster:SetCell
 		if isMegaClusterPart() then
@@ -2572,9 +2566,11 @@ t.SetupStamperDragger = function(
 			end
 
 			-- if it's a model, we also want to fill in the playerID and playerName tags, if it has those (e.g. for the friend-only door)
-			playerIdTag = stampData.CurrentParts:FindFirstChild "PlayerIdTag"
-			playerNameTag =
+			local playerIdTag = stampData.CurrentParts:FindFirstChild "PlayerIdTag"
+			local playerNameTag =
 				stampData.CurrentParts:FindFirstChild "PlayerNameTag"
+
+			local tempPlayerValue
 			if playerIdTag ~= nil then
 				tempPlayerValue = getPlayer()
 				if tempPlayerValue ~= nil then
@@ -2600,7 +2596,8 @@ t.SetupStamperDragger = function(
 				stringTag.Parent = stampData.CurrentParts
 
 				if
-					stampData.CurrentParts:FindFirstChild "RobloxStamper" == nil
+					stampData.CurrentParts:FindFirstChild "RobloxStamper"
+					== nil
 				then
 					local stringTag2 = Instance.new "BoolValue"
 					stringTag2.Name = "RobloxStamper"
@@ -2771,7 +2768,7 @@ t.SetupStamperDragger = function(
 	end
 
 	local function resumeStamper()
-		clone, parts = prepareModel(modelToStamp)
+		local clone, parts = prepareModel(modelToStamp)
 
 		if not clone or not parts then
 			return
@@ -2807,7 +2804,7 @@ t.SetupStamperDragger = function(
 		end
 
 		if clone:FindFirstChild("ClusterMaterial", true) then -- extract all info from vector
-			clusterMaterial = clone:FindFirstChild("ClusterMaterial", true)
+			local clusterMaterial = clone:FindFirstChild("ClusterMaterial", true)
 			if clusterMaterial:IsA "Vector3Value" then
 				cellInfo.Material = clusterMaterial.Value.X
 				cellInfo.clusterType = clusterMaterial.Value.Y

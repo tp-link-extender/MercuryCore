@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
-
-	// const statusColours: { [k: string]: string } = {
-	// 	Online: "bg-info",
-	// 	Joined: "bg-success",
-	// 	Developing: "bg-warning",
-	// }
+	import Status from "./Status.svelte"
 
 	export let data
 	const { user } = data,
@@ -24,45 +19,6 @@
 		})
 
 	export const snapshot = { capture, restore }
-
-	const news = [
-		{
-			time: new Date(),
-			title: "Mercury is now life!",
-			content:
-				"Mercury is now live! We have a lot of features in store for you, so stay tuned!",
-		},
-		{ time: new Date(), title: "Mercury is now life!", content: "Yes" },
-		{
-			time: new Date(),
-			title: "Mercury is now life!",
-			content:
-				"Mercury is now live! We have a lot of features in store for you, so stay tuned!",
-		},
-		{
-			time: new Date(),
-			title: "Mercury now has Free Rocks",
-			content: "Click here for Free Rocks!",
-		},
-		{
-			time: new Date(),
-			title: "Mercury",
-			content: "Pls can i have invite ke",
-		},
-		{
-			time: new Date(),
-			title: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-			content:
-				"Mercury is now live! We have a lot of features in store for you, so stay tunedeoeeeeeeeeeeeeeeeeeeeeee! eeeeeeeeeeeeeeeeeeeeeeeeeee eeeee",
-		},
-		{
-			time: new Date(),
-			title: "Mercury is now life!",
-			content:
-				"Mercury is now live! We have a lot of features in store for you, so stay tuned!",
-		},
-		{ time: new Date(), title: "Mercury is now love!", content: "Yes" },
-	]
 </script>
 
 <Head title="Home" />
@@ -70,89 +26,53 @@
 <div class="container">
 	<div class="row">
 		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
-			<h1 class="top d-flex px-2">
+			<h1 class="top d-flex px-2 pb-6">
 				<a
 					href="/user/{user?.number}"
 					class="text-decoration-none light-text d-flex">
-					<div class="bg-a rounded-circle">
-						<img
-							src="/api/avatar/{user?.username}"
-							alt="You"
-							class="rounded-circle rounded-top-0" />
-					</div>
+					<User {user} size="6rem" bg="accent" image />
 					<span class="my-auto ms-6">
 						{data.stuff.greet}
 					</span>
 				</a>
 			</h1>
-			<div id="feed" class="card mt-6 bg-darker">
-				<div class="card-body light-text">
-					<p>
-						Post your status - your friends and followers can view
-						how you're doing!
-					</p>
-					<form use:enhance method="POST" class="input-group">
-						<input
-							bind:value={$form.status}
-							{...$constraints.status}
-							placeholder="Post status"
-							name="status"
-							aria-label="Post Status"
-							class="form-control light-text {$errors.status
-								? 'is-in'
-								: ''}valid" />
-						<button class="btn btn-success" aria-label="Send">
-							{#if $delayed}
-								...
-							{:else}
-								<i class="fa fa-paper-plane-top" />
-							{/if}
-						</button>
-					</form>
-					<p
-						class="mb-4"
-						class:text-success={$page.status == 200}
-						class:text-danger={$page.status >= 400 ||
-							$errors.status}>
-						{$errors.status || $message || ""}
-					</p>
-					{#each data.feed.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
+			<div id="feed" class="card p-4 bg-darker">
+				<p>
+					Post your status - your friends and followers can view how
+					you're doing!
+				</p>
+				<form use:enhance method="POST" class="input-group">
+					<input
+						bind:value={$form.status}
+						{...$constraints.status}
+						placeholder="Post status"
+						name="status"
+						aria-label="Post Status"
+						class="form-control light-text {$errors.status
+							? 'is-in'
+							: ''}valid" />
+					<button class="btn btn-success" aria-label="Send">
+						{#if $delayed}
+							...
+						{:else}
+							<fa fa-paper-plane-top />
+						{/if}
+					</button>
+				</form>
+				<p
+					class="mb-0 pb-3"
+					class:text-success={$page.status == 200}
+					class:text-danger={$page.status >= 400 || $errors.status}>
+					{$errors.status || $message || ""}
+				</p>
+				<div class="d-flex flex-column gap-3">
+					{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
 						<div
-							in:fade|global={{ num, total: data.feed.length }}
-							class="card mb-2">
-							<div class="card-body pb-0 p-4">
-								<div class="d-flex mb-2 user">
-									<a
-										href="/user/{status.authorUser?.number}"
-										class="text-decoration-none d-flex align-items-center light-text">
-										<span
-											class="bg-background rounded-circle">
-											<img
-												src="/api/avatar/{status
-													.authorUser?.username}"
-												alt={status.authorUser
-													?.username}
-												class="rounded-circle rounded-top-0" />
-										</span>
-										<span
-											class="username mw-50 font-bold ms-4">
-											{status.authorUser?.username}
-										</span>
-										<em class="small ms-4">
-											{status.posted.toLocaleString()}
-										</em>
-									</a>
-									<span class="ms-auto">
-										<ReportButton
-											user={status.authorUser?.username ||
-												""}
-											url="status:{status.id}" />
-									</span>
-								</div>
-								<p class="text-start">
-									{status.content}
-								</p>
-							</div>
+							in:fade|global={{
+								num,
+								total: data.feed.length,
+							}}>
+							<Status {status} />
 						</div>
 					{/each}
 				</div>
@@ -160,46 +80,29 @@
 		</div>
 
 		<div class="col col-12 col-xxl-6 col-xl-7 col-md-6">
-			<div class="col2">
+			<div class="col2 pt-28">
 				{#if data.friends.length > 0}
 					<h2 class="fs-4 light-text">Friends</h2>
 					<div class="home-row d-flex">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
-							<a
+							<span
+								class="px-2"
 								in:fade|global={{
 									num,
 									total: data.friends.length,
-								}}
-								class="px-2 mb-2 text-center light-text text-decoration-none"
-								href="/user/{friend.number}">
-								<div class="position-relative mb-2">
-									<div
-										class="image-background bg-a rounded-circle">
-										<img
-											src="/api/avatar/{friend.username}"
-											alt={friend.username}
-											class="h-100 rounded-circle rounded-top-0" />
-									</div>
-									<!-- {#if friend.status}
-										<span
-											class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
-												friend.status
-											]}">
-										</span>
-									{/if} -->
-								</div>
-								<p
-									class="friendname username"
-									class:small={friend.username.length > 15}>
-									{friend.username}
-								</p>
-							</a>
+								}}>
+								<User
+									user={friend}
+									size="7rem"
+									bg="accent"
+									bottom />
+							</span>
 						{/each}
 					</div>
 				{/if}
 			</div>
-			<div class="mt-12">
+			<div class="pt-12">
 				<h2 class="fs-4 light-text">Resume playing</h2>
 				<div class="home-row d-flex">
 					<div class="home-row d-flex">
@@ -216,39 +119,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-12 col-12">
-				<h2 class="fs-4 light-text">News</h2>
-				<div id="news" class="card bg-darker">
-					<div class="card-body row">
-						{#each news as thing, num}
-							<div
-								in:fade|global={{ num, total: news.length }}
-								class="p-1 col-xl-4 col-lg-6 col-12">
-								<div class="card light-text h-100">
-									<div class="card-body p-2">
-										<div class="mb-2 light-text">
-											<div
-												class="font-bold text-center text-truncate">
-												{thing.title}
-											</div>
-											<div
-												class="date ms-auto italic text-center">
-												{thing.time.toLocaleString()}
-											</div>
-										</div>
-										<div
-											class="gradient position-absolute bottom-0 rounded-2" />
-										<p class="content mb-0 p-1">
-											{thing.content}
-										</p>
-									</div>
-								</div>
-							</div>
-						{/each}
-					</div>
-				</div>
-			</div>
-			<div class="mt-12 col-6 col-md-8 col-lg-6 col-xl-4">
+			<div class="pt-12 col-6 col-md-8 col-lg-6 col-xl-4">
 				<h2 class="fs-4 light-text">Random fact</h2>
 				<div
 					id="fact"
@@ -264,18 +135,14 @@
 	+-md()
 		#feed
 			max-height 50vh
+		.col2
+			margin-top 3rem !important
 
 	.top
 		width 100vw
-		img
-			width 6rem
-			min-width 6rem
 
 	h1
 		margin auto 2rem
-
-	.col2
-		margin-top 7rem
 
 	.username
 		overflow hidden
@@ -304,22 +171,10 @@
 	#news
 		overflow-x hidden
 
-	.user
-		align-items center
-		img
-			width 2rem !important
-			min-width 2rem !important
-
 	.home-row
 		overflow-x auto
 
-		// .badge
-		// 	padding 0.75rem
 		.place
 			width 8rem
-			margin auto
-		.image-background
-			width 7rem
-			height 7rem
 			margin auto
 </style>

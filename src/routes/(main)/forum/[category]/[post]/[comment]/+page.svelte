@@ -12,30 +12,19 @@
 <Head title="Replies to forum post" />
 
 <div class="container light-text">
-	<nav aria-label="breadcrumb" class="mx-auto">
-		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
-			<li class="breadcrumb-item">
-				<a href="/forum" class="accent-text">Forum</a>
-			</li>
-			<li class="breadcrumb-item">
-				<a
-					href="/forum/{parentPost.forumCategoryName}"
-					class="accent-text">
-					{parentPost.forumCategoryName}
-				</a>
-			</li>
-			<li class="breadcrumb-item">
-				<a
-					href="/forum/{parentPost.forumCategoryName}/{parentPost.id}"
-					class="accent-text">
-					{parentPost.title}
-				</a>
-			</li>
-			<li class="breadcrumb-item active" aria-current="page">
-				{topReply.content[0].text}
-			</li>
-		</ol>
-	</nav>
+	<Breadcrumbs
+		path={[
+			["Forum", "/forum"],
+			[
+				parentPost.forumCategoryName,
+				`/forum/${parentPost.forumCategoryName}`,
+			],
+			[
+				parentPost.title,
+				`/forum/${parentPost.forumCategoryName}/${parentPost.id}`,
+			],
+			[topReply.content[0].text, ""],
+		]} />
 
 	{#each data.replies as reply, num}
 		<ForumReply
@@ -43,7 +32,7 @@
 			{reply}
 			{num}
 			{replyingTo}
-			forumCategory={data.forumCategory}
+			categoryName={data.forumCategory}
 			postId={data.postId}
 			postAuthorName={data.author}
 			{repliesCollapsed} />

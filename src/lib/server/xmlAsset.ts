@@ -28,11 +28,11 @@ const strings = {
  * @example
  * graphicAsset("T-Shirt", imageAssetId, id)
  */
-export const graphicAsset = (
+export function graphicAsset(
 	type: keyof typeof strings,
 	imageAssetId: string | number,
 	graphicAssetId: string | number,
-) => {
+) {
 	const asset = fs
 		.readFileSync(
 			`xml/graphicAsset${

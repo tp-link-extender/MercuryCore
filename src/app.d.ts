@@ -3,6 +3,12 @@
 
 /// <reference types="lucia" />
 
+declare namespace svelteHTML {
+	import type { AttributifyAttributes } from "@unocss/preset-attributify"
+
+	type HTMLAttributes = AttributifyAttributes
+}
+
 declare global {
 	namespace App {
 		interface Locals {
@@ -13,23 +19,28 @@ declare global {
 		type Auth = typeof import("$lib/server/lucia").auth
 		type DatabaseUserAttributes = {
 			// id is defined in Lucia
-			number: number
-			bio: string
-			email: string
-			username: string
-			currency: number
-			currencyCollected: Date
-			permissionLevel: number
-			created: Date
+			bio: {
+				text: string
+				updated: string
+			}[]
 			bodyColours: {
 				Head: number
-				Torso: number
 				LeftArm: number
-				RightArm: number
 				LeftLeg: number
+				RightArm: number
 				RightLeg: number
+				Torso: number
 			}
+			currency: number
+			currencyCollected: string
+			created: string
+			email: string
+			lastOnline: string
+			number: number
+			permissionLevel: number
 			theme: string
+			status: "Playing" | "Online" | "Offline"
+			username: string
 		}
 		type DatabaseSessionAttributes = {}
 	}
@@ -40,24 +51,22 @@ declare global {
 
 	declare const AdminLink: typeof import("$lib/components/AdminLink.svelte").default
 	declare const Asset: typeof import("$lib/components/Asset.svelte").default
-	declare const Cube: typeof import("$lib/components/Cube.svelte").default
-	declare const Cubes: typeof import("$lib/components/Cubes.svelte").default
+	declare const AvatarItem: typeof import("$lib/components/AvatarItem.svelte").default
+	declare const Breadcrumbs: typeof import("$lib/components/Breadcrumbs.svelte").default
 	declare const DeleteButton: typeof import("$lib/components/DeleteButton.svelte").default
 	declare const Footer: typeof import("$lib/components/Footer.svelte").default
-	declare const ForumPost: typeof import("$lib/components/ForumPost.svelte").default
 	declare const ForumReply: typeof import("$lib/components/ForumReply.svelte").default
 	declare const Group: typeof import("$lib/components/Group.svelte").default
 	declare const Head: typeof import("$lib/components/Head.svelte").default
 	declare const Modal: typeof import("$lib/components/Modal.svelte").default
 	declare const Moon: typeof import("$lib/components/Moon.svelte").default
 	declare const Navbar: typeof import("$lib/components/Navbar.svelte").default
-	declare const Pagepart: typeof import("$lib/components/Pagepart.svelte").default
 	declare const Place: typeof import("$lib/components/Place.svelte").default
-	declare const PlaceCard: typeof import("$lib/components/PlaceCard.svelte").default
 	declare const ReportButton: typeof import("$lib/components/ReportButton.svelte").default
 	declare const Tab: typeof import("$lib/components/Tab.svelte").default
 	declare const TabData: typeof import("$lib/components/TabData").default
 	declare const TabNav: typeof import("$lib/components/TabNav.svelte").default
+	declare const User: typeof import("$lib/components/User.svelte").default
 	declare const UserCard: typeof import("$lib/components/UserCard.svelte").default
 
 	declare const { onMount }: typeof import("svelte")

@@ -25,7 +25,7 @@
 <div class="row">
 	<div id="dark" class="col light-text">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0 shadow-none">
-			<i class="fa fa-arrow-left me-2" />
+			<fa fa-arrow-left class="me-2" />
 			Home
 		</a>
 		<h1 class="font-black light-text mb-6">
@@ -56,61 +56,81 @@
 		</div>
 	</div>
 
-	<div id="light" class="col col-12 col-lg-6 light-text">
+	<div
+		id="light"
+		class="col{data.users ? '' : 'none'} col-12 col-lg-6 light-text">
 		<div id="login" class="m-auto">
-			<h2 class="light-text">Log into your account</h2>
-			<p class="light-text">
-				Don't yet have an account?
-				<a href="/register" class="text-decoration-none">Register</a>
-			</p>
+			{#if data.users}
+				<h2 class="light-text">Log into your account</h2>
+				<p class="light-text">
+					Don't yet have an account?
+					<a href="/register" class="text-decoration-none">
+						Register
+					</a>
+				</p>
 
-			<form use:enhance class="m-auto form-group mt-6" method="POST">
-				<fieldset>
-					<label for="username" class="form-label">Username</label>
-					<div class="mb-6">
-						<input
-							bind:value={$form.username}
-							{...$constraints.username}
-							id="username"
-							name="username"
-							autocomplete="username"
-							class="light-text form-control {$errors.username
-								? 'is-in'
-								: ''}valid"
-							placeholder="Username" />
-						<p class="col-12 mb-4 text-danger">
-							{$errors.username || ""}
-						</p>
-					</div>
+				<form use:enhance class="m-auto form-group mt-6" method="POST">
+					<fieldset>
+						<label for="username">Username</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.username}
+								{...$constraints.username}
+								id="username"
+								name="username"
+								autocomplete="username"
+								class="light-text form-control {$errors.username
+									? 'is-in'
+									: ''}valid"
+								placeholder="Username" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.username || ""}
+							</p>
+						</div>
 
-					<label for="password" class="form-label">Password</label>
-					<div class="mb-6">
-						<input
-							bind:value={$form.password}
-							{...$constraints.password}
-							type="password"
-							id="password"
-							name="password"
-							autocomplete="current-password"
-							class="light-text form-control {$errors.password
-								? 'is-in'
-								: ''}valid"
-							placeholder="Password" />
-						<p class="col-12 mb-4 text-danger">
-							{$errors.password || ""}
-						</p>
-					</div>
-					<button class="container-fluid btn btn-primary mb-4">
-						{#if $delayed}
-							Working...
-						{:else}
-							Log in
-						{/if}
-						<!-- $delayed is true if the form takes
+						<label for="password">Password</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.password}
+								{...$constraints.password}
+								type="password"
+								id="password"
+								name="password"
+								autocomplete="current-password"
+								class="light-text form-control {$errors.password
+									? 'is-in'
+									: ''}valid"
+								placeholder="Password" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.password || ""}
+							</p>
+						</div>
+						<button class="container-fluid btn btn-primary mb-4">
+							{#if $delayed}
+								Working...
+							{:else}
+								Log in
+							{/if}
+							<!-- $delayed is true if the form takes
 							more than a few hundred ms to submit -->
-					</button>
-				</fieldset>
-			</form>
+						</button>
+					</fieldset>
+				</form>
+			{:else}
+				<h2>There are no users registered in the database yet!</h2>
+				<p class="pt-4">
+					Perhaps you've just set up the Mercury 2 source code.
+					Perhaps you've already set it up, and something has gone
+					terribly wrong with your database.
+				</p>
+				<p class="pt-2">
+					If it's the former, head to the
+					<a href="/register" class="text-decoration-none">
+						Register
+					</a>
+					page to create the first user!
+				</p>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -121,6 +141,8 @@
 	+lg()
 		.col
 			padding-top 20vh
+		.colnone
+			padding-top 30vh
 
 	@keyframes waves
 		0%

@@ -29,12 +29,12 @@
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Daily Stipend</h1>
 	<a href="/admin" class="text-decoration-none">
-		<i class="fas fa-caret-left" />
+		<fa fa-caret-left />
 		Back to panel
 	</a>
 	<div class="row mt-6">
 		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData tabs />
+			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
@@ -43,7 +43,7 @@
 						<div class="row">
 							<label
 								for="dailyStipend"
-								class="col-md-3 col-form-label light-text">
+								class="col-md-3 light-text">
 								Daily stipend
 							</label>
 							<div class="col-md-8">
@@ -59,7 +59,7 @@
 											: ''}valid" />
 									<span
 										class="input-group-text light-text bg-a1">
-										<i class="fa fa-gem text-success" />
+										<fa fa-gem class="text-success" />
 									</span>
 								</div>
 							</div>
@@ -68,7 +68,7 @@
 						<div class="row">
 							<label
 								for="stipendTime"
-								class="col-md-3 col-form-label light-text">
+								class="col-md-3 light-text">
 								Time between stipend
 							</label>
 							<div class="col-md-8">

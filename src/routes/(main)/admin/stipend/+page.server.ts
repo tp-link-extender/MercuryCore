@@ -1,6 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
-import { client } from "$lib/server/redis"
+import surreal, { query, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -15,10 +14,12 @@ export async function load({ locals }) {
 	// Make sure a user is an administrator before loading the page.
 	await authorise(locals, 5)
 
+	const economy = (await surreal.select("stuff:economy"))[0]
+
 	return {
 		form: superValidate(schema),
-		dailyStipend: Number((await client.get("dailyStipend")) || 10),
-		stipendTime: Number((await client.get("stipendTime")) || 12),
+		dailyStipend: (economy?.dailyStipend as number) || 10,
+		stipendTime: (economy?.stipendTime as number) || 10,
 	}
 }
 
@@ -28,22 +29,21 @@ export const actions = {
 			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
-		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
+		const limit = ratelimit(form, "economy", getClientAddress, 30)
 		if (limit) return limit
 
-		const currentStipend = Number((await client.get("dailyStipend")) || 10),
-			currentStipendTime = Number(
-				(await client.get("stipendTime")) || 12,
-			),
+		const economy = (await surreal.select("stuff:economy"))[0],
+			currentStipend = economy?.dailyStipend || 10,
+			currentStipendTime = economy?.stipendTime || 12,
 			{ dailyStipend, stipendTime } = form.data
 
 		if (currentStipend == dailyStipend && currentStipendTime == stipendTime)
 			return message(form, "No changes were made")
 
-		await Promise.all([
-			client.set("dailyStipend", dailyStipend),
-			client.set("stipendTime", stipendTime),
-		])
+		await surreal.merge("stuff:economy", {
+			dailyStipend,
+			stipendTime,
+		})
 
 		let auditText = ""
 
@@ -55,17 +55,19 @@ export const actions = {
 			auditText += `Change stipend time from ${currentStipendTime} to ${stipendTime}`
 		}
 
-		await prisma.auditLog.create({
-			data: {
-				action: "Account",
+		await query(
+			surql`
+				CREATE auditLog CONTENT {
+					action: "Account",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
+			{
 				note: auditText,
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
+				user: `user:${user.id}`,
 			},
-		})
+		)
 
 		return message(form, "Economy updated successfully!")
 	},

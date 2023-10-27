@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
-// import ratelimit from "$lib/server/ratelimit"
+import { query, surql } from "$lib/server/surreal"
+import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
 	imageAsset,
@@ -9,26 +9,26 @@ import {
 	thumbnail,
 } from "$lib/server/imageAsset"
 import { graphicAsset } from "$lib/server/xmlAsset"
+import { redirect } from "@sveltejs/kit"
 import fs from "fs"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({
-	type: z.enum(["2", "11", "12", "13"]),
-	name: z.string().min(3).max(50),
-	description: z.string().max(1000).optional(),
-	price: z.number().int().min(0).max(999),
-	asset: z.any(),
-})
+		type: z.enum(["2", "11", "12", "13"]),
+		name: z.string().min(3).max(50),
+		description: z.string().max(1000).optional(),
+		price: z.number().int().min(0).max(999),
+		asset: z.any(),
+	}),
+	assets: { [k: number]: any } = {
+		2: "T-Shirt",
+		11: "Shirt",
+		12: "Pants",
+		13: "Decal",
+	}
 
-const assets: any = {
-	2: "T-Shirt",
-	11: "Shirt",
-	12: "Pants",
-	13: "Decal",
-}
-
-export const load = async ({ request, locals }) => {
+export async function load({ request, locals }) {
 	await authorise(locals, 5)
 
 	return {
@@ -44,8 +44,8 @@ export const actions = {
 			form = await superValidate(formData, schema)
 		if (!form.valid) return formError(form)
 
-		// const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
-		// if (limit) return limit
+		const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
+		if (limit) return limit
 
 		const { type, name, description, price } = form.data,
 			assetType = parseInt(type),
@@ -113,51 +113,58 @@ export const actions = {
 				}
 		}
 
-		const { id, imageAssetId }: { id: number; imageAssetId: any } =
-			await prisma.asset.create({
-				data: {
-					creatorUser: {
-						// cannot be creatorUsername
-						connect: {
-							id: user.id,
-						},
-					},
-					owners: {
-						connect: {
-							id: user.id,
-						},
-					},
-					name,
-					description: {
-						create: {
-							text: description || "",
-						},
-					},
-					type: assetType,
-					imageAsset: {
-						create: {
-							creatorUser: {
-								// cannot be creatorUsername
-								connect: {
-									id: user.id,
-								},
-							},
-							owners: {
-								connect: {
-									id: user.id,
-								},
-							},
-							name,
-							type: 1,
-							price: 0,
-						},
-					},
-					price,
-				},
-			})
+		const currentId = (await query(
+				surql`stuff:increment.asset`,
+			)) as unknown as number,
+			imageAssetId = currentId + 1,
+			id = currentId + 2
+
+		await query(
+			surql`
+				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
+				LET $imageAsset = CREATE asset CONTENT {
+					id: $id,
+					name: $name,
+					type: 1,
+					price: 0,
+					description: [],
+					created: time::now(),
+					updated: time::now(),
+					visibility: "Pending",
+				};
+				RELATE $user->owns->$imageAsset;
+				RELATE $user->created->$imageAsset;
+
+				LET $id2 = (UPDATE ONLY stuff:increment SET asset += 1).asset;
+				LET $asset = CREATE asset CONTENT {
+					id: $id2,
+					name: $name,
+					type: $assetType,
+					price: $price,
+					description: [{
+						text: $description,
+						updated: time::now(),
+					}],
+					created: time::now(),
+					updated: time::now(),
+					visibility: "Pending",
+				};
+				RELATE $user->owns->$asset;
+				RELATE $user->created->$asset;
+				RELATE $asset->imageAsset->$imageAsset`,
+			{
+				name,
+				assetType,
+				price,
+				description,
+				user: `user:${user.id}`,
+			},
+		)
 
 		saveImages[0](imageAssetId)
 		saveImages[1](id)
 		graphicAsset(assets[assetType], imageAssetId, id)
+
+		throw redirect(302, `/avatarshop/${id}/${name}`)
 	},
 }

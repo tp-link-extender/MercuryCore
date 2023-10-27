@@ -1,99 +1,104 @@
-import { prisma, findPlaces, findGroups } from "$lib/server/prisma"
+import { query, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
 export const load = async ({ url }) => {
-	const query = url.searchParams.get("q") || "",
+	const searchQ = url.searchParams.get("q") || "",
 		category = url.searchParams.get("c")?.toLowerCase() || ""
 
-	if (!query) throw error(400, "No query provided")
+	if (!searchQ) throw error(400, "Missing search query")
 	if (category && !["users", "places", "assets", "groups"].includes(category))
 		throw error(400, "Invalid category")
 
 	if (category == "users") {
-		const user = await prisma.authUser.findUnique({
-			where: {
-				username: query,
-			},
-		})
-		if (user) throw redirect(302, `/user/${user.number}`)
+		const userExists = await squery<{ number: number }>(
+			surql`
+				SELECT * FROM user
+				WHERE username = $searchQ`,
+			{ searchQ },
+		)
+
+		if (userExists) throw redirect(302, `/user/${userExists.number}`)
 	}
 
 	return {
-		query,
+		query: searchQ,
 		category,
 		users:
-			category == "users"
-				? prisma.authUser.findMany({
-						where: {
-							username: {
-								contains: query,
-								mode: "insensitive",
-							},
-						},
-						select: {
-							number: true,
-							username: true,
-							status: true,
-						},
-				  })
-				: null,
+			category == "users" &&
+			query<{
+				number: number
+				status: "Playing" | "Online" | "Offline"
+				username: string
+			}>(
+				surql`
+					SELECT
+						number,
+						status,
+						username
+					FROM user
+					WHERE string::lowercase($searchQ) ∈ string::lowercase(username)`,
+				{ searchQ },
+			),
 		places:
-			category == "places"
-				? findPlaces({
-						where: {
-							name: {
-								contains: query,
-								mode: "insensitive",
-							},
-							privateServer: false,
-						},
-						select: {
-							gameSessions: {
-								where: {
-									ping: {
-										gt: Math.floor(Date.now() / 1000) - 35,
-									},
-								},
-								select: {
-									valid: true,
-								},
-							},
-							id: true,
-							name: true,
-						},
-				  })
-				: null,
+			category == "places" &&
+			query<{
+				id: number
+				name: string
+				playerCount: number
+				serverPing: number
+				likeCount: number
+				dislikeCount: number
+			}>(
+				surql`
+					SELECT
+						meta::id(id) AS id,
+						name,
+						serverPing,
+						count(
+							SELECT * FROM <-playing
+							WHERE valid
+								AND ping > time::now() - 35s
+						) AS playerCount,
+						count(<-likes) AS likeCount,
+						count(<-dislikes) AS dislikeCount
+					FROM place
+					WHERE !privateServer
+						AND !deleted
+						AND string::lowercase($searchQ) ∈ string::lowercase(name)`,
+				{ searchQ },
+			),
 		assets:
-			category == "assets"
-				? prisma.asset.findMany({
-						where: {
-							name: {
-								contains: query,
-								mode: "insensitive",
-							},
-						},
-						select: {
-							id: true,
-							name: true,
-							price: true,
-						},
-				  })
-				: null,
+			category == "assets" &&
+			query<{
+				id: number
+				name: string
+				price: number
+			}>(
+				surql`
+					SELECT
+						meta::id(id) AS id,
+						name,
+						price
+					FROM asset
+					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)
+						AND type ∈ [17, 18, 2, 11, 12, 19]`,
+				{ searchQ },
+			),
 		groups:
-			category == "groups"
-				? findGroups({
-						where: {
-							name: {
-								contains: query,
-								mode: "insensitive",
-							},
-						},
-						select: {
-							name: true,
-						},
-				  })
-				: null,
+			category == "groups" &&
+			query<{
+				name: string
+				memberCount: number
+			}>(
+				surql`
+					SELECT
+						name,
+						count(<-member) AS memberCount
+					FROM group
+					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)`,
+				{ searchQ },
+			),
 	}
 }
 

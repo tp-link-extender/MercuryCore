@@ -15,12 +15,10 @@
 
 <h1 class="text-center light-text">Create a group</h1>
 
-<form use:enhance method="POST" class="container mt-12 light-text">
+<form use:enhance method="POST" class="container pt-12 light-text">
 	<fieldset>
 		<div class="row mb-4">
-			<label for="name" class="col-md-3 col-form-label text-md-right">
-				Group name
-			</label>
+			<label for="name" class="col-md-3 text-md-right">Group name</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.name}
@@ -38,9 +36,8 @@
 			{#if $delayed}
 				Working...
 			{:else}
-				Create (
-				<i class="fa fa-gem" />
-				10 )
+				Create ( <fa fa-gem />
+				 10 )
 			{/if}
 		</button>
 	</fieldset>

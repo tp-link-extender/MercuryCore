@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
+	import { enhance } from "$app/forms" // idky
 	import { superForm } from "sveltekit-superforms/client"
-	import { isPowerOfTwo } from "three/src/math/MathUtils.js"
 
 	export let data
 
@@ -13,7 +13,7 @@
 			errors,
 			message,
 			constraints,
-			enhance,
+			enhance: enhance2,
 			delayed,
 			capture,
 			restore,
@@ -32,35 +32,75 @@
 		12: "Pants",
 		13: "Decal",
 	}
+
+	const usernav = [["fa-pencil", "Edit Asset", "/requests"]]
 </script>
 
 <Head title={data.name} />
 
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col pe-4 pb-4">
 			<img
-				class="image me-4 mb-4"
+				class="image"
 				src="/avatarshop/{data.id}/{data.name}/icon"
 				alt={data.name} />
 		</div>
 		<div class="col light-text">
-			<h1 class="mb-0">{data.name}</h1>
-			<strong>by:</strong>
-			<a
-				href="/user/{data.creatorUser?.number}"
-				class="user light-text text-decoration-none">
-				<span class="pfp bg-darker rounded-circle ms-1">
-					<img
-						src="/api/avatar/{data.creatorUser?.username}"
-						alt={data.creatorUser?.username}
-						class="rounded-circle rounded-top-0" />
-				</span>
-				{data.creatorUser?.username}
-			</a>
+			<div class="row">
+				<div class="col">
+					<h1 class="mb-0">{data.name}</h1>
+				</div>
+				<div class="col d-flex justify-content-end">
+					<li class="dropdown dropdown-hover dropdown-end ps-2 mt-2">
+						<fa fa-ellipsis />
+						<div class="dropdown-content pt-2">
+							<ul class="p-2 rounded-3">
+								{#each usernav as [icon, title, href]}
+									<li class="rounded-2">
+										<a
+											class="btn light-text ps-4 pe-0 text-start"
+											{href}>
+											<fa class="{icon} me-2" />
+											{title}
+										</a>
+									</li>
+								{/each}
+								{#if data.user.permissionLevel > 2}
+									<li class="rounded-2">
+										<form
+											use:enhance
+											method="POST"
+											action="?/rerender">
+											<button
+												class="btn text-primary ps-4 pe-0 text-start">
+												<i
+													class="fa fa-arrows-rotate me-2" />
+												<b>Re-render</b>
+											</button>
+										</form>
+									</li>
+								{/if}
+							</ul>
+						</div>
+					</li>
+				</div>
+			</div>
+			<div class="d-flex">
+				<strong class="pe-2">by:</strong>
+
+				{#if data.creator}
+					<User
+						user={data.creator}
+						size="1.5rem"
+						full
+						thin
+						bg="accent" />
+				{/if}
+			</div>
 			<p class="mt-2">
-				{#if data.description[0]}
-					{data.description[0].text}
+				{#if data.description}
+					{data.description.text}
 				{:else}
 					<em>No description available</em>
 				{/if}
@@ -70,8 +110,8 @@
 			<div class="row mb-2">
 				<div class="col-md-4">
 					<p class="mb-2">
-						<strong>Sold:</strong>
-						{data.sold}
+						<strong>{data.sold}</strong>
+						sold
 					</p>
 					<p>
 						<strong>Type:</strong>
@@ -83,7 +123,7 @@
 						<div class="card-body">
 							<p class="light-text text-center mb-0">
 								Price: <span class="text-success">
-									<i class="far fa-gem" />
+									<far fa-gem />
 									{data.price}
 								</span>
 							</p>
@@ -105,17 +145,13 @@
 		</div>
 	</div>
 
-	<div class="bg-a">
-		<TabNav bind:tabData justify />
-	</div>
+	<TabNav bind:tabData justify />
 
 	<Tab {tabData} />
 
 	<Tab {tabData}>
-		<form use:enhance class="p-1" method="POST" action="?/reply">
-			<label for="content" class="form-label light-text mt-2">
-				Post a Comment
-			</label>
+		<form use:enhance2 class="py-2" method="POST" action="?/reply">
+			<label for="content" class="light-text py-2">Post a Comment</label>
 			<fieldset class="col-lg-7 d-flex">
 				<textarea
 					bind:value={$form.content}
@@ -148,7 +184,7 @@
 				{replyingTo}
 				postId={data.id.toString()}
 				assetName={data.name}
-				postAuthorName={data.creatorUser?.username || ""}
+				postAuthorName={data.creator.username || ""}
 				{repliesCollapsed}
 				topLevel />
 		{/each}
@@ -158,13 +194,13 @@
 <input type="checkbox" id="buy" class="modal-toggle" />
 <div class="modal2">
 	<div class="modal-box">
-		{#if data.user.currency > data.price}
+		{#if data.user.currency >= data.price}
 			<h3 class="text-lg font-bold light-text">Purchase {data.name}</h3>
 			<p class="pb-4">
 				Would you like to {data.price > 0 ? "buy" : "get"}
 				{data.name} for
 				{#if data.price > 0}
-					<i class="far fa-gem" />
+					<far fa-gem />
 					{data.price}
 				{:else}
 					<strong>FREE</strong>
@@ -181,14 +217,14 @@
 		{:else}
 			<h3 class="text-lg font-bold light-text">Insufficient funds</h3>
 			<span>
-				You don't have enough <i class="fa fa-gem" />
-				s to buy this item.
+				You don't have enough <fa fa-gem />
+				 s to buy this item.
 			</span>
-			<p >
+			<p>
 				You'll need <strong>
 					{data.price - data.user.currency}
-				</strong> more.
-
+				</strong>
+				more.
 			</p>
 
 			<label for="buy" class="btn btn-danger">{data.failText}</label>
@@ -234,15 +270,4 @@
 
 	.modal-box
 		min-width 30rem
-
-	.pfp
-	.pfp img
-		width 3.5rem
-		height 3.5rem
-
-	.user
-		.pfp
-		img
-			width 1.5rem
-			height 1.5rem
 </style>

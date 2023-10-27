@@ -304,23 +304,23 @@ InventoryButton.Active = true
 InventoryButton.ZIndex = 3
 InventoryButton.Parent = Tabs
 
-if game.CoreGui.Version >= 8 then
-	local WardrobeButton = Instance.new "TextButton"
-	WardrobeButton.RobloxLocked = true
-	WardrobeButton.Name = "WardrobeButton"
-	WardrobeButton.Size = UDim2.new(0, 90, 0, 30)
-	WardrobeButton.Position = UDim2.new(0, 77, 1, -31)
-	WardrobeButton.BackgroundColor3 = Color3.new(0, 0, 0)
-	WardrobeButton.BorderColor3 = Color3.new(1, 1, 1)
-	WardrobeButton.Font = Enum.Font.ArialBold
-	WardrobeButton.FontSize = Enum.FontSize.Size18
-	WardrobeButton.Text = "Wardrobe"
-	WardrobeButton.AutoButtonColor = false
-	WardrobeButton.TextColor3 = Color3.new(1, 1, 1)
-	WardrobeButton.Selected = false
-	WardrobeButton.Active = true
-	WardrobeButton.Parent = Tabs
-end
+-- if game.CoreGui.Version >= 8 then
+-- 	local WardrobeButton = Instance.new "TextButton"
+-- 	WardrobeButton.RobloxLocked = true
+-- 	WardrobeButton.Name = "WardrobeButton"
+-- 	WardrobeButton.Size = UDim2.new(0, 90, 0, 30)
+-- 	WardrobeButton.Position = UDim2.new(0, 77, 1, -31)
+-- 	WardrobeButton.BackgroundColor3 = Color3.new(0, 0, 0)
+-- 	WardrobeButton.BorderColor3 = Color3.new(1, 1, 1)
+-- 	WardrobeButton.Font = Enum.Font.ArialBold
+-- 	WardrobeButton.FontSize = Enum.FontSize.Size18
+-- 	WardrobeButton.Text = "Wardrobe"
+-- 	WardrobeButton.AutoButtonColor = false
+-- 	WardrobeButton.TextColor3 = Color3.new(1, 1, 1)
+-- 	WardrobeButton.Selected = false
+-- 	WardrobeButton.Active = true
+-- 	WardrobeButton.Parent = Tabs
+-- end
 
 local closeButton = Instance.new "TextButton"
 closeButton.RobloxLocked = true

@@ -1,110 +1,84 @@
-import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
-import { prisma, findPlaces } from "$lib/server/prisma"
-import { Query, roQuery } from "$lib/server/redis"
+import { query, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, fail } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
-	const group = await prisma.group.findUnique({
-		where: {
-			name: params.name,
-		},
-		include: {
-			owner: true,
-			posts: {
-				orderBy: {
-					posted: "desc",
-				},
-				take: 40,
-			},
-		},
-	})
-
-	if (group) {
-		const { user } = await authorise(locals),
-			query = {
-				group: group.name,
-			},
-			query2 = {
-				user: user.username,
-				group: group.name,
+	const { user } = await authorise(locals),
+		group = await squery<{
+			in: boolean
+			memberCount: number
+			name: string
+			owner: {
+				number: number
+				status: "Playing" | "Online" | "Offline"
+				username: string
 			}
+			places: any[]
+			feed: any[]
+		}>(
+			surql`
+				SELECT
+					name,
+					(SELECT
+						number,
+						status,
+						username
+					FROM <-owns<-user)[0] AS owner,
+					count(<-member) AS memberCount,
+					$user ∈ <-member<-user.id AS in,
+					[] AS places,
+					[] AS feed
+				FROM group WHERE string::lowercase(name)
+					= string::lowercase($name)`,
+			{
+				user: `user:${user.id}`,
+				...params,
+			},
+		)
 
-		return {
-			name: group.name,
-			owner: group.owner,
-			places: findPlaces({
-				where: {
-					ownerGroup: {
-						name: group.name,
-					},
-				},
-			}),
-			feed: group.posts,
-			memberCount: roQuery(
-				"groups",
-				cql`RETURN SIZE((:User) -[:in]-> (:Group { name: $group }))`,
-				query,
-				true,
-			),
-			in: roQuery(
-				"groups",
-				cql`MATCH (:User { name: $user }) -[r:in]-> (:Group { name: $group }) RETURN r`,
-				query2,
-			),
-		}
-	}
+	if (!group) throw error(404, "Not found")
 
-	throw error(404, "Not found")
+	return group
 }
 
 export const actions = {
 	default: async ({ request, locals, params }) => {
 		const { user } = await authorise(locals),
-			group = await prisma.group.findUnique({
-				where: {
-					name: params.name,
-				},
-				select: {
-					name: true,
-				},
-			})
+			group = await squery<{
+				id: string
+				name: string
+			}>(
+				surql`
+					SELECT id, name FROM group
+					WHERE string::lowercase(name)
+						= string::lowercase($name)`,
+				{ ...params },
+			)
 
 		if (!group) return fail(400, { msg: "User not found" })
 
 		const data = await formData(request),
-			{ action } = data,
-			query = {
-				user: user.username,
-				group: group.name,
-			}
+			{ action } = data
+		const qParams = {
+			user: `user:${user.id}`,
+			group: group.id,
+		}
 
-		try {
-			switch (action) {
-				case "join":
-					await Query(
-						"groups",
-						cql`
-							MERGE (u:User { name: $user })
-							MERGE (g:Group { name: $group })
-							MERGE (u) -[:in]-> (g)`,
-						query,
-					)
-					break
-				case "leave":
-					await Query(
-						"groups",
-						cql`
-							MATCH (u:User { name: $user }) -[r:in]-> (g:Group { name: $group })
-							DELETE r`,
-						query,
-					)
-					break
-			}
-		} catch (e) {
-			console.error(e)
-			throw error(500, "Redis error 2")
+		switch (action) {
+			case "join":
+				await query(
+					surql`
+						RELATE $user->member->$group
+							SET time = time::now()`,
+					qParams,
+				)
+				break
+			case "leave":
+				await query(
+					surql`DELETE $user->member WHERE out = $group`,
+					qParams,
+				)
 		}
 	},
 }

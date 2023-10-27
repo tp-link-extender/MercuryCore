@@ -1,27 +1,26 @@
-import { findGroups } from "$lib/server/prisma"
+import { query, surql } from "$lib/server/surreal"
+
+type Group = {
+	name: string
+	memberCount: number
+}
+
+const select = surql`
+	SELECT
+		name,
+		count(<-member) AS memberCount
+	FROM group`
 
 export const load = () => ({
-	groups: findGroups({
-		select: {
-			name: true,
-		},
-	}),
+	groups: query<Group>(select),
 })
 
 export const actions = {
 	default: async ({ request }) => ({
-		places: await findGroups({
-			where: {
-				name: {
-					contains: (await request.formData()).get("query") as string,
-					mode: "insensitive",
-				},
-			},
-			// When returning from an action, remember to only select
-			// the data needed, as it will by sent directly to the client.
-			select: {
-				name: true,
-			},
-		}),
+		groups: await query<Group>(
+			surql`${select}
+				WHERE string::lowercase($query) ∈ string::lowercase(name)`,
+			{ query: (await request.formData()).get("q") as string },
+		),
 	}),
 }

@@ -125,14 +125,14 @@ if game.CoreGui.Version >= 3 and game.PlaceId ~= 130815926 then --todo: remove p
 		screenGui.CurrentLoadout,
 		"CoreScripts/BackpackScripts/LoadoutScript"
 	)
-	if game.CoreGui.Version >= 8 then
-		-- Wardrobe script handles all character dressing operations
-		scriptContext:AddCoreScript(
-			-1,
-			Backpack,
-			"CoreScripts/BackpackScripts/BackpackWardrobe"
-		)
-	end
+	-- if game.CoreGui.Version >= 8 then
+	-- 	-- Wardrobe script handles all character dressing operations
+	-- 	scriptContext:AddCoreScript(
+	-- 		-1,
+	-- 		Backpack,
+	-- 		"CoreScripts/BackpackScripts/BackpackWardrobe"
+	-- 	)
+	-- end
 end
 
 local IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"

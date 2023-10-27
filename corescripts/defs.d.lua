@@ -6356,13 +6356,13 @@ declare class GuiService extends Instance
 	SpecialKeyPressed: RBXScriptSignal<EnumSpecialKey, string>
 	TouchControlsEnabled: boolean
 	UiMessageChanged: RBXScriptSignal<EnumUiMessageType, string>
-	
+
 	EscapeKeyPressed: RBXScriptSignal<>
 	BrowserWindowClosed: RBXScriptSignal<>
 	IsWindows: boolean
 	IsModalDialog: boolean
 	UseLuaChat: boolean
-	
+
 	function AddCenterDialog(self, dialog: Instance, centerDialogType: EnumCenterDialogType, showFunction: ((...any) -> ...any), hideFunction: ((...any) -> ...any)): nil
 	function AddKey(self, key: string): nil
 	function AddSelectionParent(self, selectionName: string, selectionParent: Instance): nil
@@ -7106,6 +7106,7 @@ end
 declare class NetworkServer extends NetworkPeer
 	function EncryptStringForPlayerId(self, toEncrypt: string, playerId: number): string
 	function SetIsPlayerAuthenticationRequired(self, value: boolean): nil
+	function Start(self): nil
 end
 
 declare class NetworkReplicator extends Instance
@@ -7952,6 +7953,7 @@ end
 declare class PluginManager extends Instance
 	function ExportPlace(self, filePath: string?): nil
 	function ExportSelection(self, filePath: string?): nil
+	function CreatePlugin(self): Plugin
 end
 
 declare class PluginManagerInterface extends Instance
@@ -8605,6 +8607,7 @@ declare class ServiceProvider extends Instance
 	LoadingGuiService: any
 	ScriptInformationProvider: ScriptInformationProvider
 	JointsService: JointsService
+	LogService: any
 
 	function FindService(self, className: string): Instance
 	function GetService(self, service: "AnimationClipProvider"): AnimationClipProvider
@@ -8809,6 +8812,7 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "LoadingGuiService"): any
 	function GetService(self, service: "PersonalServerService"): PersonalServerService
 	function GetService(self, service: "Terrain"): Terrain
+	function GetService(self, service: "LogService"): any
 end
 
 declare class DataModel extends ServiceProvider
@@ -8847,10 +8851,10 @@ declare class DataModel extends ServiceProvider
 	function GetObjectsAsync(self, url: Content): { Instance }
 	function GetObjectsList(self, urls: { any }): { any }
 	function GetPlaySessionId(self): string
-	function HttpGet(self, url: string, httpRequestType: EnumHttpRequestType?): string
-	function HttpGetAsync(self, url: string, httpRequestType: EnumHttpRequestType?): string
-	function HttpPost(self, url: string, data: string, contentType: string?, httpRequestType: EnumHttpRequestType?): string
-	function HttpPostAsync(self, url: string, data: string, contentType: string?, httpRequestType: EnumHttpRequestType?): string
+	function HttpGet(self, url: string, synchronous: boolean, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpGetAsync(self, url: string, synchronous: boolean, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpPost(self, url: string, data: string, synchronous: boolean, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpPostAsync(self, url: string, data: string, synchronous: boolean, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
 	function InsertObjectsAndJoinIfLegacyAsync(self, url: Content): { Instance }
 	function IsContentLoaded(self): boolean
 	function IsLoaded(self): boolean
@@ -10254,6 +10258,10 @@ declare _CHAR_APPEARANCE: string
 declare _PING_URL: string
 
 declare _BASE_URL: string
+declare _THUMBNAIL_KEY: string
+declare _RENDER_TYPE: string
+declare _ASSET_ID: number
+
 declare _MAP_LOCATION_EXISTS: boolean
 declare _MAP_LOCATION: any
 declare _SERVER_PORT: number
@@ -10275,4 +10283,5 @@ declare function loadfile(file: string): any
 declare function LoadLibrary(libraryName: string): { any }
 declare function settings(): GlobalSettings
 declare function UserSettings(): UserSettings
+declare function PluginManager(): PluginManager
 declare function ypcall(f: () -> any, ...: any): (boolean, any)
