@@ -35,8 +35,8 @@
 			Games
 			<span class="ps-6">
 				<a href="/games/create" class="btn btn-primary">
-					<fa class="fa-plus" />
-					Create
+					<fa fa-plus />
+					 Create
 				</a>
 			</span>
 		</h1>
@@ -60,7 +60,7 @@
 							class="btn btn-success"
 							aria-label="Search"
 							id="button-addon2">
-							<fa class="fa-magnifying-glass" />
+							<fa fa-magnifying-glass />
 						</button>
 					</div>
 				</div>

@@ -37,13 +37,13 @@
 					}}
 					class="btn btn-info"
 					type="button">
-					<fa class="fa-paste" />
+					<fa fa-paste />
 				</button>
 				<button
 					class="btn btn-{$message && $page.status == 200
 						? 'success'
 						: 'primary'}">
-					<fa class="fa-rotate" />
+					<fa fa-rotate />
 					{#if $delayed}
 						Working...
 					{:else}

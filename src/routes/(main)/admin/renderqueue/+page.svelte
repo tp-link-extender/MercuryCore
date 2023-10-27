@@ -12,7 +12,7 @@
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Render Queue</h1>
 	<a href="/admin" class="text-decoration-none">
-		<fa class="fa-caret-left" />
+		<fa fa-caret-left />
 		Back to panel
 	</a>
 	<div class="row mt-6">
@@ -34,7 +34,7 @@
 
 								<br />
 								<span>
-									<fa class="fa-image text-success me-1" />
+									<fa fa-image class="text-success me-1" />
 									Renders Completed:
 								</span>
 								<br />

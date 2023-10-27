@@ -12,7 +12,7 @@
 			class="heart border-0 p-0 grey-text cursor-pointer"
 			class:clicked>
 			<span class="grey-text">made with</span>
-			<fa class="fa-heart" />
+			<fa fa-heart />
 		</button>
 	</p>
 	<a class="light-text" href="/about">About</a>

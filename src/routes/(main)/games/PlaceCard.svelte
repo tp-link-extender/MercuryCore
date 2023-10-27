@@ -42,13 +42,13 @@
 			<div class="mt-auto mb-1">
 				<div class="float-start">
 					<span>
-						<fa class="fa-thumbs-up opacity-75" />
+						<fa fa-thumbs-up class="opacity-75" />
 						{isNaN(ratio) ? "--" : ratio}%
 					</span>
 				</div>
 				<div class="float-end">
 					<span>
-						<fa class="fa-user opacity-75" />
+						<fa fa-user class="opacity-75" />
 						{place.playerCount}
 					</span>
 				</div>

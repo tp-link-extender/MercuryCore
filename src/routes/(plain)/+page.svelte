@@ -55,7 +55,7 @@
 					type="button"
 					href="/register"
 					class="d-inline btn btn-sm btn-success text-decoration-none">
-					Register <fa class="fa-chevron-right" />
+					Register <fa fa-chevron-right />
 				</a>
 			</b>
 			<b>
@@ -63,12 +63,12 @@
 					type="button"
 					href="/login"
 					class="d-inline btn btn-sm btn-primary text-decoration-none">
-					Login <fa class="fa-chevron-right" />
+					Login <fa fa-chevron-right />
 				</a>
 			</b>
 		</div>
 		<a href="/about" class="text-decoration-none pt-4 fs-5">
-			About us <fa class="fa-chevron-right" />
+			About us <fa fa-chevron-right />
 		</a>
 	</div>
 </div>

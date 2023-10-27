@@ -103,7 +103,7 @@
 						<div class="card bg-a3 text-black mb-4">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
-									<fa class="fa-memory" />
+									<fa fa-memory />
 									{(
 										(data.totalmem - data.freemem) /
 										1024 ** 3
@@ -141,7 +141,7 @@
 									<h3 class="light-text">Loading...</h3>
 								{:then disk}
 									<h3 class="light-text">
-										<fa class="fa-hard-drive pe-2" />
+										<fa fa-hard-drive class="pe-2" />
 										{(
 											(disk.size - disk.free) /
 											1024 ** 3
@@ -178,7 +178,7 @@
 						<div class="card bg-a3 text-black mb-4">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
-									<far class="fa-user me-2" />
+									<far fa-user class="me-2" />
 									Users
 								</h3>
 								<span class="light-text">
@@ -190,7 +190,7 @@
 						<div class="card bg-a3 text-black mb-4">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
-									<far class="fa-file me-2" />
+									<far fa-file class="me-2" />
 									Assets
 								</h3>
 								<span class="light-text">

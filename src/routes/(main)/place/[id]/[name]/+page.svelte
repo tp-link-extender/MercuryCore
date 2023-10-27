@@ -130,7 +130,7 @@
 								<a
 									href="/place/{data.id}/{data.name}/settings"
 									class="btn btn-sm btn-outline-warning">
-									<fa class="fa-sliders" />
+									<fa fa-sliders />
 								</a>
 							</div>
 						{/if}
@@ -147,7 +147,7 @@
 						{/if}
 					</span>
 					<p class="light-text mb-0">
-						Gears: <far class="fa-circle-xmark" />
+						Gears: <far fa-circle-xmark />
 					</p>
 					<small
 						class="text-light rounded-2 bg-{data.serverPing >
@@ -313,7 +313,7 @@
 							on:click={launch(
 								"mercury-player:1+launchmode:ide"
 							)}>
-							<fa class="fa-arrow-up-right-from-square" />
+							<fa fa-arrow-up-right-from-square />
 							Studio
 						</button>
 						and then in the command bar, paste this in:
@@ -349,7 +349,7 @@
 								"mercury-player:1+launchmode:maps"
 							)}
 							type="button">
-							<fa class="fa-arrow-up-right-from-square" />
+							<fa fa-arrow-up-right-from-square />
 							Map Folder
 						</button>
 						<button
@@ -360,7 +360,7 @@
 								)}`
 							)}
 							type="button">
-							<fa class="fa-wifi" />
+							<fa fa-wifi />
 							Begin Hosting
 						</button>
 

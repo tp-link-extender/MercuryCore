@@ -52,7 +52,7 @@
 						class="btn btn-success"
 						aria-label="Search"
 						id="button-addon2">
-						<fa class="fa-magnifying-glass" />
+						<fa fa-magnifying-glass />
 					</button>
 				</div>
 			</form>

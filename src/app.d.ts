@@ -3,6 +3,12 @@
 
 /// <reference types="lucia" />
 
+declare namespace svelteHTML {
+	import type { AttributifyAttributes } from "@unocss/preset-attributify"
+
+	type HTMLAttributes = AttributifyAttributes
+}
+
 declare global {
 	namespace App {
 		interface Locals {

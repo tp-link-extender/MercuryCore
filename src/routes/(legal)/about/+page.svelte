@@ -103,22 +103,22 @@
 	<div id="arrowcontainer">
 		<button
 			id="arrow"
-			class="btn position-absolute shadow-none start-50"
+			class="btn position-absolute shadow-none start-50 light-text"
 			aria-label="Scroll down"
 			on:click={downScroll}
 			on:keypress={downScroll}
 			style="opacity: {(500 - scrollY) / 300}">
-			<fa class="light-text fa-chevron-down" />
+			<fa fa-chevron-down />
 		</button>
 	</div>
 	<button
 		id="arrow2"
-		class="btn position-fixed mb-4"
+		class="btn position-fixed pb-4 light-text"
 		aria-label="Scroll up"
 		on:click={upScroll}
 		on:keypress={upScroll}
 		style="opacity: {(scrollY - 500) / 300}">
-		<fa class="light-text fa-circle-chevron-up" />
+		<fa fa-circle-chevron-up />
 	</button>
 </Pagepart>
 
@@ -216,7 +216,8 @@
 		<Pagepart fullwidth>
 			<div
 				id="info"
-				class="container d-flex flex-column justify-content-center align-items-center position-relative">
+				class="container d-flex flex-column justify-content-center
+				align-items-center position-relative">
 				<h1 class="title font-black light-text">Mercury 2</h1>
 				<p class="lead light-text text-center">
 					Endless possibilities. New features. Same nostalgia.
@@ -226,7 +227,7 @@
 						type="button"
 						href="/register"
 						class="d-inline btn btn-sm btn-success text-decoration-none">
-						Register <fa class="fa-chevron-right" />
+						Register <fa fa-chevron-right />
 					</a>
 				</b>
 			</div>
