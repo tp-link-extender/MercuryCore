@@ -19,4 +19,8 @@ export const actions = {
 		locals.auth.setSession(null) // remove cookie
 		throw redirect(302, "/login")
 	},
+	statusping: () => {
+		// does nothing
+		// hooks.server.ts will update the user's status when pinged
+	},
 }

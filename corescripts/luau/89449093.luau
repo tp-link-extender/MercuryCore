@@ -45,10 +45,10 @@ waitForChild(backpack.Tabs, "InventoryButton")
 local inventoryButton = backpack.Tabs.InventoryButton
 
 local wardrobeButton
-if game.CoreGui.Version >= 8 then
-	waitForChild(backpack.Tabs, "WardrobeButton")
-	wardrobeButton = backpack.Tabs.WardrobeButton
-end
+-- if game.CoreGui.Version >= 8 then
+-- 	waitForChild(backpack.Tabs, "WardrobeButton")
+-- 	wardrobeButton = backpack.Tabs.WardrobeButton
+-- end
 waitForChild(backpack.Parent, "ControlFrame")
 local backpackButton =
 	waitForChild(backpack.Parent.ControlFrame, "BackpackButton")
@@ -443,17 +443,17 @@ inventoryButton.MouseLeave:connect(function()
 	mouseLeaveTab(inventoryButton)
 end)
 
-if game.CoreGui.Version >= 8 then
-	wardrobeButton.MouseButton1Click:connect(function()
-		newTabClicked "wardrobe"
-	end)
-	wardrobeButton.MouseEnter:connect(function()
-		mouseOverTab(wardrobeButton)
-	end)
-	wardrobeButton.MouseLeave:connect(function()
-		mouseLeaveTab(wardrobeButton)
-	end)
-end
+-- if game.CoreGui.Version >= 8 then
+-- 	wardrobeButton.MouseButton1Click:connect(function()
+-- 		newTabClicked "wardrobe"
+-- 	end)
+-- 	wardrobeButton.MouseEnter:connect(function()
+-- 		mouseOverTab(wardrobeButton)
+-- 	end)
+-- 	wardrobeButton.MouseLeave:connect(function()
+-- 		mouseLeaveTab(wardrobeButton)
+-- 	end)
+-- end
 
 closeButton.MouseButton1Click:connect(closeBackpack)
 

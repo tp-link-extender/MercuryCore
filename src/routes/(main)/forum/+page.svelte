@@ -4,12 +4,12 @@
 
 <Head title="Forum" />
 
-<div class="container light-text">
-	<h1 class="light-text mb-12">Forum</h1>
+<div class="container light-text d-flex flex-column gap-4">
+	<h1 class="light-text pb-6">Forum</h1>
 	{#each data.categories as category, num}
 		<div
 			in:fade|global={{ num, total: data.categories.length }}
-			class="category card bg-darker p-4 mb-4">
+			class="category card bg-darker p-4">
 			<div class="row">
 				<a
 					class="col-lg-9 col-md-7 row light-text text-decoration-none"
@@ -21,36 +21,29 @@
 						{category.description}
 					</div>
 					<h3 class="col fs-5">
-						{category._count.posts} post{category._count.posts > 1
-							? "s"
-							: ""}
+						{category.postCount} post{category.postCount == 1
+							? ""
+							: "s"}
 					</h3>
 				</a>
 				<div class="col-lg-3 col-md-5 row">
-					{#if category.posts[0]}
+					{#if category.latestPost}
 						<a
 							href="/forum/{category.name.toLowerCase()}/{category
-								.posts[0].id}"
+								.latestPost.id}"
 							class="light-text text-decoration-none">
 							Last post:
 							<h3 class="fs-5">
-								{category.posts[0].title}
+								{category.latestPost.title}
 							</h3>
 						</a>
-						<span class="d-flex">
+						<span class="d-flex gap-2">
 							by
-							<a
-								href="/user/{category.posts[0].author.number}"
-								class="light-text text-decoration-none d-flex">
-								<span class="pfp bg-a2 rounded-circle mx-1">
-									<img
-										src="/api/avatar/{category.posts[0]
-											.author.username}"
-										alt={category.posts[0].author.username}
-										class="rounded-circle rounded-top-0" />
-								</span>
-								{category.posts[0].author.username}
-							</a>
+							<User
+								user={category.latestPost.author}
+								full
+								thin
+								size="1.5rem" />
 						</span>
 					{/if}
 				</div>
@@ -65,9 +58,4 @@
 	.category
 		border-color var(--accent2)
 		transition all 0.3s ease-out
-
-	.pfp
-	.pfp img
-		width 1.5rem
-		height 1.5rem
 </style>

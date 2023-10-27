@@ -451,27 +451,27 @@ function initializeDeveloperConsole()
 
 	local previousMousePosScroll
 
-	local pScrollHandle
+	-- local pScrollHandle
 
 	local pOffset
 
 	local scrollUpIsDown = false
 	local scrollDownIsDown = false
 
-	function clean()
+	local function clean()
 		previousMousePos = nil
 		pPos = nil
 		previousMousePosResize = nil
 		pSize = nil
 		previousMousePosScroll = nil
-		pScrollHandle = nil
+		-- pScrollHandle = nil
 		pOffset = nil
 		scrollUpIsDown = false
 		scrollDownIsDown = false
 	end
 
 	---Handle Dev-Console Position
-	function refreshConsolePosition(x, y)
+	local function refreshConsolePosition(x, y)
 		if not previousMousePos then
 			return
 		end
@@ -491,7 +491,7 @@ function initializeDeveloperConsole()
 	end)
 
 	---Handle Dev-Console Size
-	function refreshConsoleSize(x, y)
+	local function refreshConsoleSize(x, y)
 		if not previousMousePosResize then
 			return
 		end
@@ -525,7 +525,7 @@ function initializeDeveloperConsole()
 	local optionsHidden = true
 	local animating = false
 	--Options
-	function startAnimation()
+	local function startAnimation()
 		if animating then
 			return
 		end
@@ -561,7 +561,7 @@ function initializeDeveloperConsole()
 
 	--Scroll Position
 
-	function changeOffset(value)
+	local function changeOffset(value)
 		if currentConsole == LOCAL_CONSOLE then
 			localOffset += value
 		elseif currentConsole == SERVER_CONSOLE then
@@ -572,7 +572,7 @@ function initializeDeveloperConsole()
 	end
 
 	--Refresh Dev-Console Text
-	function refreshTextHolderForReal()
+	local function refreshTextHolderForReal()
 		local childMessages = Dev_TextHolder:GetChildren()
 
 		local messageList
@@ -669,7 +669,7 @@ function initializeDeveloperConsole()
 	-- (Whenever for one reason or another a lot of output comes in, it can lag
 	--	This will make it behave better in a situation of a lot of output comming in)
 	local refreshQueued = false
-	function refreshTextHolder()
+	local function refreshTextHolder()
 		if refreshQueued then
 			return
 		end
@@ -683,7 +683,7 @@ function initializeDeveloperConsole()
 	--Handle Dev-Console Scrollbar
 
 	local inside = 0
-	function holdingUpButton()
+	local function holdingUpButton()
 		if scrollUpIsDown then
 			return
 		end
@@ -697,7 +697,7 @@ function initializeDeveloperConsole()
 		inside -= 1
 	end
 
-	function holdingDownButton()
+	local function holdingDownButton()
 		if scrollDownIsDown then
 			return
 		end
@@ -733,7 +733,7 @@ function initializeDeveloperConsole()
 		clean()
 	end)
 
-	function handleScroll(x, y)
+	local function handleScroll(x, y)
 		if not previousMousePosScroll then
 			return
 		end
@@ -764,7 +764,7 @@ function initializeDeveloperConsole()
 
 	Dev_ScrollArea.Handle.MouseButton1Down:connect(function(x, y)
 		previousMousePosScroll = Vector2.new(x, y)
-		pScrollHandle = Dev_ScrollArea.Handle.AbsolutePosition
+		-- pScrollHandle = Dev_ScrollArea.Handle.AbsolutePosition
 		if currentConsole == LOCAL_CONSOLE then
 			pOffset = localOffset
 		elseif currentConsole == SERVER_CONSOLE then
@@ -867,7 +867,7 @@ function initializeDeveloperConsole()
 
 	local str = "%s:%s:%s"
 
-	function ConvertTimeStamp(timeStamp)
+	local function ConvertTimeStamp(timeStamp)
 		local localTime = timeStamp - os.time() + math.floor(tick())
 		local dayTime = localTime % 86400
 
@@ -924,9 +924,9 @@ function initializeDeveloperConsole()
 	end)
 
 	---Dev-Console Message Functionality
-	function AddLocalMessage(str, messageType, timeStamp)
+	local function AddLocalMessage(messageStr, messageType, timeStamp)
 		localMessageList[#localMessageList + 1] = {
-			Message = str,
+			Message = messageStr,
 			Time = ConvertTimeStamp(timeStamp),
 			Type = messageType,
 		}
@@ -939,9 +939,9 @@ function initializeDeveloperConsole()
 		repositionList()
 	end
 
-	function AddServerMessage(str, messageType, timeStamp)
+	local function AddServerMessage(messageStr, messageType, timeStamp)
 		serverMessageList[#serverMessageList + 1] = {
-			Message = str,
+			Message = messageStr,
 			Time = ConvertTimeStamp(timeStamp),
 			Type = messageType,
 		}

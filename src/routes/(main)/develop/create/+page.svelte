@@ -1,11 +1,20 @@
 <script lang="ts">
+	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const { form, errors, constraints, enhance, delayed, capture, restore } =
-		superForm(data.form, {
-			taintedMessage: false,
-		})
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
 
 	export const snapshot = { capture, restore }
 
@@ -25,7 +34,7 @@
 	</h1>
 	<h6 class="text-center light-text mb-0">
 		<span class="fs-6 light-text text-center">
-			<i class="fas fa-caret-left" />
+			<fa fa-caret-left />
 			<a href="/develop" class="text-decoration-none">Back to Develop</a>
 		</span>
 	</h6>
@@ -37,9 +46,7 @@
 	enctype="multipart/form-data">
 	<fieldset>
 		<div class="row mb-4">
-			<label for="type" class="col-md-3 col-form-label light-text">
-				Asset type
-			</label>
+			<label for="type" class="col-md-3 light-text">Asset type</label>
 			<div class="col-md-8">
 				<select
 					bind:value={$form.type}
@@ -60,9 +67,7 @@
 			</div>
 		</div>
 		<div class="row mb-4">
-			<label for="name" class="col-md-3 col-form-label light-text">
-				Asset name
-			</label>
+			<label for="name" class="col-md-3 light-text">Asset name</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.name}
@@ -77,7 +82,7 @@
 			</div>
 		</div>
 		<div class="row mb-4">
-			<label for="description" class="col-md-3 col-form-label light-text">
+			<label for="description" class="col-md-3 light-text">
 				Asset description
 			</label>
 			<div class="col-md-8">
@@ -96,9 +101,7 @@
 			</div>
 		</div>
 		<div class="row mb-4">
-			<label for="price" class="col-md-3 col-form-label light-text">
-				Asset price
-			</label>
+			<label for="price" class="col-md-3 light-text">Asset price</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.price}
@@ -113,9 +116,7 @@
 			</div>
 		</div>
 		<div class="row mb-4">
-			<label for="asset" class="col-md-3 col-form-label light-text">
-				Asset
-			</label>
+			<label for="asset" class="col-md-3 light-text">Asset</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.asset}
@@ -134,13 +135,18 @@
 			</div>
 		</div>
 
+		<p
+			class:text-success={$page.status == 200}
+			class:text-danger={$page.status >= 400}>
+			{$message || ""}
+		</p>
+
 		<button class="btn btn-success">
 			{#if $delayed}
 				Working...
 			{:else}
-				Create (
-				<i class="fa fa-gem" />
-				15 )
+				Create ( <fa fa-gem />
+				 15 )
 			{/if}
 		</button>
 	</fieldset>

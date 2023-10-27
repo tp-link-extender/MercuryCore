@@ -5,28 +5,23 @@
 	export let user: {
 		username: string
 		permissionLevel: number
+		status: "Playing" | "Online" | "Offline"
 	}
 
-	export let reply: (
+	export let reply:
 		| import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
 		| import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
-	) & {
-		likeCount: number
-		dislikeCount: number
-		likes: boolean
-		dislikes: boolean
-	}
 
 	export let num: number
 	export let depth = 0
 	export let replyingTo: Writable<string>
 	export let postAuthorName: string
-	export let forumCategory = ""
+	export let categoryName = ""
 	export let postId: string
 	export let assetName = ""
 
-	const baseUrl = forumCategory
-		? `/forum/${forumCategory.toLowerCase()}/${postId}`
+	const baseUrl = categoryName
+		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/avatarshop/${postId}/${assetName}`
 
 	export let repliesCollapsed: Writable<any>
@@ -50,7 +45,7 @@
 	<a
 		href="{baseUrl}{assetName ? '?tab=Comments' : ''}"
 		class="text-decoration-none">
-		<i class="fa fa-arrow-left me-2" />
+		<fa fa-arrow-left class="me-2" />
 		{#if assetName}
 			Back to asset
 		{:else}
@@ -60,7 +55,7 @@
 	{#if reply.parentReplyId}
 		<br />
 		<a href="{baseUrl}/{reply.parentReplyId}" class="text-decoration-none">
-			<i class="fa fa-arrow-up me-2" />
+			<fa fa-arrow-up class="me-2" />
 			Parent reply
 		</a>
 	{/if}
@@ -68,18 +63,8 @@
 
 {#if reply && reply.author}
 	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="d-flex">
-		<span class="d-flex flex-column">
-			<a
-				class:hidden
-				href="/user/{reply.author.number}"
-				class="user d-flex text-decoration-none pt-2">
-				<span class="pfp bg-a2 rounded-circle">
-					<img
-						src="/api/avatar/{reply.author.username}"
-						alt={reply.author.username}
-						class="rounded-circle rounded-top-0" />
-				</span>
-			</a>
+		<span class="d-flex flex-column pt-2">
+			<User user={reply.author} thin size="1.5rem" />
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Collapse reply"
@@ -131,7 +116,7 @@
 								{/if}
 							</span>
 							<small class="light-text ps-6">
-								{reply.posted.toLocaleString()}
+								{new Date(reply.posted).toLocaleString()}
 							</small>
 						</a>
 						<p class:hidden class="my-2">
@@ -205,7 +190,7 @@
 								on:click={() => replyingTo.set(reply.id)}
 								class:hidden
 								class="p-0 btn btn-sm grey-text px-1">
-								<i class="far fa-message pe-2" />
+								<far fa-message class="pe-2" />
 								Reply
 							</button>
 							{#if !hidden}
@@ -214,7 +199,7 @@
 								{:else}
 									<ReportButton
 										user={reply.author.username}
-										url="/forum/{forumCategory}/{postId}/{reply.id}"
+										url="/forum/{categoryName}/{postId}/{reply.id}"
 										reverse />
 									{#if user.permissionLevel >= 4}
 										<DeleteButton
@@ -235,7 +220,7 @@
 										action="?/reply&rid={reply.id}">
 										<label
 											for="content"
-											class="form-label light-text mt-2">
+											class="light-text py-2">
 											Post a Reply
 										</label>
 										<fieldset>
@@ -257,7 +242,7 @@
 												on:click={() =>
 													replyingTo.set("")}
 												class="btn btn-dark grey-text ms-1">
-												<i class="fa fa-cancel me-2" />
+												<fa fa-cancel class="me-2" />
 												Cancel
 											</button>
 										</fieldset>
@@ -270,7 +255,7 @@
 
 				{#if depth > 8}
 					<a href="{baseUrl}/{reply.id}" class="text-decoration-none">
-						<i class="fa fa-arrow-down me-2" />
+						<fa fa-arrow-down class="me-2" />
 						More replies
 					</a>
 				{/if}
@@ -282,7 +267,7 @@
 						reply={reply2}
 						{num}
 						{replyingTo}
-						{forumCategory}
+						{categoryName}
 						{postId}
 						{assetName}
 						{postAuthorName}
@@ -348,9 +333,6 @@
 
 	.user
 		align-items center
-	.pfp img
-		max-width 1.5rem
-		width 1.5rem
 
 	.hidden
 		opacity 33%

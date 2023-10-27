@@ -12,8 +12,7 @@ import fs from "fs"
  * `)
  */
 export function SignData(data: string, assetId?: number) {
-	if (assetId) data = `--rbxassetid%${assetId}%\n${data}`
-	else data = `\n${data}`
+	data = assetId ? `--rbxassetid%${assetId}%\n${data}` : `\n${data}`
 
 	const sign = crypto.createSign("SHA1"),
 		key = fs.readFileSync("./keys/PrivateKey.pem")

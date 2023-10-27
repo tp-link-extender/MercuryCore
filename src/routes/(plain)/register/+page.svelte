@@ -25,7 +25,7 @@
 <div class="row">
 	<div id="dark" class="col light-text">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0 shadow-none">
-			<i class="fa fa-arrow-left me-2" />
+			<fa fa-arrow-left class="me-2" />
 			Home
 		</a>
 		<h1 class="font-black light-text mb-6">
@@ -57,127 +57,226 @@
 
 	<div id="light" class="col col-12 col-lg-6 light-text">
 		<div id="login" class="m-auto">
-			<h2 class="light-text">Create a free account</h2>
-			<p class="light-text">
-				Already have an account?
-				<a href="/login" class="text-decoration-none">Log in</a>
-			</p>
+			{#if data.users}
+				<h2>Create a free account</h2>
+				<p>
+					Already have an account?
+					<a href="/login" class="text-decoration-none">Log in</a>
+				</p>
 
-			<form use:enhance class="m-auto form-group mt-6" method="POST">
-				<fieldset>
-					<label for="username" class="form-label">Username</label>
-					<div class="mb-6">
-						<input
-							bind:value={$form.username}
-							{...$constraints.username}
-							id="username"
-							name="username"
-							autocomplete="username"
-							class="light-text form-control {$errors.username
-								? 'is-in'
-								: ''}valid"
-							placeholder="3-21 characters" />
-						<p class="col-12 mb-4 text-danger">
-							{$errors.username || ""}
-						</p>
-					</div>
+				<form
+					use:enhance
+					class="m-auto form-group mt-6"
+					method="POST"
+					action="?/register">
+					<fieldset>
+						<label for="username">Username</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.username}
+								{...$constraints.username}
+								id="username"
+								name="username"
+								autocomplete="username"
+								class="light-text form-control {$errors.username
+									? 'is-in'
+									: ''}valid"
+								placeholder="3-21 characters" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.username || ""}
+							</p>
+						</div>
 
-					<label for="email" class="form-label">Email Address</label>
-					<div class="mb-6">
-						<input
-							bind:value={$form.email}
-							{...$constraints.email}
-							type="email"
-							id="email"
-							name="email"
-							autocomplete="email"
-							class="light-text form-control {$errors.email
-								? 'is-in'
-								: ''}valid"
-							placeholder="mercury@banland.xyz" />
-						<p class="col-12 mb-4 text-danger">
-							{$errors.email || ""}
-						</p>
-					</div>
+						<label for="email">Email Address</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.email}
+								{...$constraints.email}
+								type="email"
+								id="email"
+								name="email"
+								autocomplete="email"
+								class="light-text form-control {$errors.email
+									? 'is-in'
+									: ''}valid"
+								placeholder="mercury@banland.xyz" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.email || ""}
+							</p>
+						</div>
 
-					<label for="password" class="form-label">Password</label>
-					<div class="mb-6">
-						<input
-							bind:value={$form.password}
-							{...$constraints.password}
-							type="password"
-							id="password"
-							name="password"
-							autocomplete="new-password"
-							class="light-text form-control {$errors.password
-								? 'is-in'
-								: ''}valid"
-							placeholder="Password" />
-						<p class="col-12 mb-4 text-danger">
-							{$errors.password || ""}
-						</p>
-					</div>
+						<label for="password">Password</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.password}
+								{...$constraints.password}
+								type="password"
+								id="password"
+								name="password"
+								autocomplete="new-password"
+								class="light-text form-control {$errors.password
+									? 'is-in'
+									: ''}valid"
+								placeholder="Password" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.password || ""}
+							</p>
+						</div>
 
-					<label for="cpassword" class="form-label">
-						Confirm Password
-					</label>
-					<div class="mb-6">
-						<input
-							bind:value={$form.cpassword}
-							{...$constraints.cpassword}
-							type="password"
-							id="cpassword"
-							name="cpassword"
-							autocomplete="new-password"
-							class="light-text form-control {$errors.cpassword
-								? 'is-in'
-								: ''}valid"
-							placeholder="Confirm Password" />
-						<p class="col-12 mb-4 text-danger">
-							{$errors.cpassword || ""}
-						</p>
-					</div>
+						<label for="cpassword">Confirm Password</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.cpassword}
+								{...$constraints.cpassword}
+								type="password"
+								id="cpassword"
+								name="cpassword"
+								autocomplete="new-password"
+								class="light-text form-control {$errors.cpassword
+									? 'is-in'
+									: ''}valid"
+								placeholder="Confirm Password" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.cpassword || ""}
+							</p>
+						</div>
 
-					<label for="regkey" class="form-label">
-						Registration Key
-					</label>
-					<div class="mb-6">
-						<input
-							bind:value={$form.regkey}
-							{...$constraints.regkey}
-							id="regkey"
-							name="regkey"
-							class="light-text form-control {$errors.regkey
-								? 'is-in'
-								: ''}valid"
-							placeholder="mercurkey-12311121123" />
-						<p class="col-12 mb-4 text-danger">
-							{$errors.regkey || ""}
-						</p>
-					</div>
+						<label for="regkey">Registration Key</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.regkey}
+								{...$constraints.regkey}
+								id="regkey"
+								name="regkey"
+								class="light-text form-control {$errors.regkey
+									? 'is-in'
+									: ''}valid"
+								placeholder="mercurkey-12311121123" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.regkey || ""}
+							</p>
+						</div>
 
-					<button class="container-fluid btn btn-primary mb-4">
-						{#if $delayed}
-							Working...
-						{:else}
-							Register
-						{/if}
-						<!-- $delayed is true if the form takes
+						<button class="container-fluid btn btn-primary mb-4">
+							{#if $delayed}
+								Working...
+							{:else}
+								Register
+							{/if}
+							<!-- $delayed is true if the form takes
 							more than a few hundred ms to submit -->
-					</button>
-				</fieldset>
-			</form>
-			<p>
-				By signing up, you agree to our
-				<a href="/terms" class="text-decoration-none">
-					Terms of Service
-				</a>
-				and
-				<a href="/privacy" class="text-decoration-none">
-					Privacy policy
-				</a>
-				.
-			</p>
+						</button>
+					</fieldset>
+				</form>
+				<p>
+					By signing up, you agree to our
+					<a href="/terms" class="text-decoration-none">
+						Terms of Service
+					</a>
+					and
+					<a href="/privacy" class="text-decoration-none">
+						Privacy policy
+					</a>
+					.
+				</p>
+			{:else}
+				<h2 class="light-text">Create the initial account</h2>
+
+				<p class="pt-2">
+					This will be the first user account on this Mercury
+					instance!
+				</p>
+				<p>
+					It will have all permissions, and will be the destination
+					for all transactions that aren't sent to a specific user. It
+					will be initialised with a balance of
+					<span class="text-success">
+						<fa fa-gem />
+						999999
+					</span>
+					, which will not increase or decrease when transactions are made
+					to or from the account.
+				</p>
+				<p>
+					Pick the username and password carefully, and good luck on
+					your journey with Mercury!
+				</p>
+				<form
+					use:enhance
+					class="m-auto form-group mt-6"
+					method="POST"
+					action="?/initialAccount">
+					<fieldset>
+						<label for="username">Username</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.username}
+								{...$constraints.username}
+								id="username"
+								name="username"
+								autocomplete="username"
+								class="light-text form-control {$errors.username
+									? 'is-in'
+									: ''}valid"
+								placeholder="3-21 characters" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.username || ""}
+							</p>
+						</div>
+
+						<label for="password">Password</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.password}
+								{...$constraints.password}
+								type="password"
+								id="password"
+								name="password"
+								autocomplete="new-password"
+								class="light-text form-control {$errors.password
+									? 'is-in'
+									: ''}valid"
+								placeholder="Password" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.password || ""}
+							</p>
+						</div>
+
+						<label for="cpassword">Confirm Password</label>
+						<div class="mb-6">
+							<input
+								bind:value={$form.cpassword}
+								{...$constraints.cpassword}
+								type="password"
+								id="cpassword"
+								name="cpassword"
+								autocomplete="new-password"
+								class="light-text form-control {$errors.cpassword
+									? 'is-in'
+									: ''}valid"
+								placeholder="Confirm Password" />
+							<p class="col-12 mb-4 text-danger">
+								{$errors.cpassword || ""}
+							</p>
+						</div>
+
+						<button class="container-fluid btn btn-primary mb-4">
+							{#if $delayed}
+								Working...
+							{:else}
+								Let's begin!
+							{/if}
+							<!-- $delayed is true if the form takes
+							more than a few hundred ms to submit -->
+						</button>
+					</fieldset>
+				</form>
+				<p>
+					If you want to create more users, head to the Admin panel
+					after logging in to create some registration keys, then head
+					back to this page.
+				</p>
+			{/if}
 		</div>
 	</div>
 </div>

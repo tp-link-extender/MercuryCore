@@ -26,21 +26,19 @@
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Accounts</h1>
 	<a href="/admin" class="text-decoration-none">
-		<i class="fas fa-caret-left" />
-		Back to panel
+		<fa fa-caret-left />
+		 Back to panel
 	</a>
 	<div class="row mt-6">
 		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData tabs />
+			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
 				<form use:enhance method="POST" action="?/resetPassword">
 					<fieldset>
 						<div class="row light-text mb-4">
-							<label
-								for="username"
-								class="col-md-3 col-form-label">
+							<label for="username" class="col-md-3">
 								Username
 							</label>
 							<div class="col-md-8">
@@ -58,9 +56,7 @@
 							</div>
 						</div>
 						<div class="row light-text mb-4">
-							<label
-								for="password"
-								class="col-md-3 col-form-label">
+							<label for="password" class="col-md-3">
 								New password
 							</label>
 							<div class="col-md-8">

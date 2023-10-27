@@ -1,59 +1,69 @@
+import { query, squery, surql } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
-import { fail, error, redirect } from "@sveltejs/kit"
-import { prisma } from "$lib/server/prisma"
+import { error, redirect } from "@sveltejs/kit"
 
 // Make sure a user has been moderated before loading the page.
 export async function load({ locals }) {
 	const { user } = await authorise(locals),
-		userModeration = await prisma.moderationAction.findMany({
-			where: {
-				moderateeId: user.id,
-				active: true,
-			},
-		})
+		userModeration = await squery<{
+			type: string
+			note: string
+			time: string
+			timeEnds: string
+		}>(
+			surql`
+				SELECT *
+				FROM moderation
+				WHERE out = $user
+					AND active = true`,
+			{ user: `user:${user.id}` },
+		)
 
-	if (!userModeration[0])
+	if (!userModeration)
 		throw error(
 			454,
 			"Your ID has been sent to the Mercury Servers for moderation. Thank you!",
 		)
 
-	return userModeration[0]
+	return userModeration
 }
 
 export const actions = {
 	default: async ({ locals }) => {
 		const { user } = await authorise(locals),
-			userModeration = await prisma.moderationAction.findMany({
-				where: {
-					moderateeId: user.id,
-					active: true,
-				},
-			})
+			userModeration = await squery<{
+				type: string
+				timeEnds: string
+			}>(
+				surql`
+					SELECT *
+					FROM moderation
+					WHERE out = $user
+						AND active = true`,
+				{ user: `user:${user.id}` },
+			)
 
-		if (!userModeration[0])
+		if (!userModeration)
 			throw error(
-				404,
+				454,
 				"Your ID has been sent to the Mercury Servers for moderation. Thank you!",
 			)
 
-		if (userModeration[0].timeEnds.getTime() > Date.now()) throw fail(400)
+		if (new Date(userModeration.timeEnds).getTime() > Date.now())
+			throw error(400, "Your moderation action has not yet ended")
 
 		if (
-			userModeration[0].type == "AccountDeleted" ||
-			userModeration[0].type == "Termination"
+			userModeration.type == "AccountDeleted" ||
+			userModeration.type == "Termination"
 		)
-			throw fail(400)
+			throw error(400, "You cannot reactivate your account")
 
-		await prisma.moderationAction.updateMany({
-			where: {
-				moderateeId: user.id,
-				active: true,
-			},
-			data: {
-				active: false,
-			},
-		})
+		await query(
+			surql`
+				UPDATE moderation SET active = false
+				WHERE out = $user`,
+			{ user: `user:${user.id}` },
+		)
 
 		throw redirect(302, "/home")
 	},

@@ -11,7 +11,7 @@
 	import "/src/fa/sass/fontawesome.styl"
 
 	export let data
-	const { user } = data
+	$: user = data.user
 
 	// Settings for nprogress, the loading bar shown
 	// at the top of the page when navigating
@@ -27,12 +27,25 @@
 		nprogress.done()
 	}
 
+	onMount(() =>
+		setInterval(() => {
+			// Keep the user's online status up to date
+			if (user)
+				fetch("/api?/statusping", {
+					method: "POST",
+					body: new FormData(),
+				})
+		}, 30e3)
+	)
+
 	const notificationNotes: { [k: string]: string } = {
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",
 		ForumPostReply: "Reply to your post",
 		ForumReplyReply: "Reply to your reply",
+		AssetComment: "Comment on your asset",
+		AssetCommentReply: "Reply to your comment",
 		ForumMention: "Mention",
 		ForumPost: "New forum post",
 		ItemPurchase: "Item purchased",
@@ -62,29 +75,29 @@
 <slot />
 
 <!-- Toast notifications -->
-<div class="toast-container position-fixed bottom-0 end-0">
+<div
+	class="toasts position-fixed z-1 bottom-0 end-0 p-4
+	d-flex flex-column gap-4">
 	{#each notifications as notification}
 		<div
-			class="toast show bg-darker light-text m-4"
+			class="show bg-darker light-text rounded-2"
 			role="alert"
 			aria-live="assertive"
 			aria-atomic="true">
-			<div class="toast-header bg-a light-text">
+			<div class="d-flex bg-a light-text p-2 rounded-top-2">
 				<a
 					href="/user/{notification.sender.number}"
-					class="d-flex align-items-center w-100 light-text text-decoration-none">
-					<div
-						class="image-background bg-background rounded-circle me-4">
-						<img
-							src="/api/avatar/{notification.sender.username}"
-							alt={notification.sender.username}
-							class="h-100 rounded-circle rounded-top-0" />
-					</div>
-					<strong class="me-auto">
+					class="d-flex gap-3 align-items-center w-100 light-text text-decoration-none">
+					<User
+						user={notification.sender}
+						size="1.6rem"
+						bg="background"
+						image />
+					<strong>
 						{notificationNotes[notification.type]}
 					</strong>
-					<small class="text-body-secondary">
-						{notification.time.toLocaleString()}
+					<small class="grey-text">
+						{new Date(notification.time).toLocaleString()}
 					</small>
 				</a>
 				<form
@@ -96,7 +109,8 @@
 			</div>
 			<a
 				href={notification.link}
-				class="toast-body bg-darker light-text text-decoration-none d-block">
+				class="body p-3 light-text text-decoration-none
+				d-block rounded-2">
 				{notification.note}
 			</a>
 		</div>
@@ -128,18 +142,12 @@
 		+lightTheme()
 			filter none
 
-	.toast
-		min-width 25rem
+	.toasts
+		width 25rem
 		--bs-toast-box-shadow 0 0 2rem #fff1
 		+lightTheme()
 			--bs-toast-box-shadow 0 0 2rem #0001
 
-	.toast-body
+	.body
 		min-height 4rem
-
-	.image-background
-		max-width 1.6rem
-		min-height 1.6rem
-		img
-			width 1.6rem
 </style>

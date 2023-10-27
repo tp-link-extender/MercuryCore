@@ -31,9 +31,7 @@
 	<form use:enhance method="POST" class="mt-6">
 		<fieldset>
 			<div class="row">
-				<label
-					for="category"
-					class="col-md-3 col-form-label text-md-right">
+				<label for="category" class="col-md-3 text-md-right">
 					Item category
 				</label>
 				<div class="col-md-8">
@@ -71,7 +69,7 @@
 			</div>
 			<br />
 			<div class="row mb-4">
-				<label for="note" class="col-md-3 col-form-label text-md-right">
+				<label for="note" class="col-md-3 text-md-right">
 					Further information
 				</label>
 				<div class="col-md-8">

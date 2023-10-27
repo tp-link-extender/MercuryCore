@@ -1,32 +1,44 @@
-import { prisma } from "$lib/server/prisma"
+import { authorise } from "$lib/server/lucia"
+import { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import fs from "fs"
 
-export async function GET({ params }) {
+export async function GET({ locals, params }) {
 	if (!/^\d+$/.test(params.id))
 		throw error(400, `Invalid asset id: ${params.id}`)
 
 	const id = parseInt(params.id)
 
-	if (
-		!(await prisma.asset.findUnique({
-			where: {
-				id,
-			},
-		}))
+	const asset = await squery<{
+		id: number
+		name: string
+		visibility: string
+	}>(
+		surql`
+			SELECT
+				meta::id(id) AS id,
+				name,
+				visibility
+			FROM $asset`,
+		{ asset: `asset:${params.id}` },
 	)
-		throw error(404, "Not found")
+
+	if (!asset) throw error(404, "Not found")
+
+	const { user } = await authorise(locals)
+	if (asset.visibility == "Moderated")
+		throw redirect(302, `/mercurx.svg`)
+	if (asset.visibility != "Visible" && user.permissionLevel < 4)
+		throw redirect(302, `/light/mQuestion.svg`)
 
 	let file
 
-	const files = [`data/thumbnails/${id}.png`, `data/assets/${id}`]
-
-	for (const f of files)
+	for (const f of [`data/thumbnails/${id}.png`, `data/assets/${id}`])
 		try {
 			file = fs.readFileSync(f)
 			break
 		} catch (e) {}
 
 	if (file) return new Response(file)
-	else throw redirect(302, `/m....png`)
+	throw redirect(302, `/m....png`)
 }

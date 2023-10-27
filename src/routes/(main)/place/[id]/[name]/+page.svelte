@@ -2,27 +2,27 @@
 	import customProtocolCheck from "custom-protocol-check"
 
 	export let data
-	const { user } = data,
-		statistics = [
-			["Activity", "0 visits"],
-			["Creation", data.created.toLocaleDateString()],
-			["Updated", data.updated.toLocaleDateString()],
-			["Genre", "Horror"],
-			["Server Limit", data.maxPlayers],
-			["Now Playing", data.gameSessions.length],
-		],
-		images = [
-			"/place/placeholderImage1.webp",
-			"/place/placeholderImage2.webp",
-			"/place/placeholderImage3.webp",
-		],
-		scroll = async (e: MouseEvent) =>
-			document
-				.getElementById(
-					new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
-				)
-				// (false) prevents page scrolling to top of element
-				?.scrollIntoView(false)
+	const { user } = data
+	const statistics = [
+		["Activity", "0 visits"],
+		["Creation", new Date(data.created).toLocaleDateString()],
+		["Updated", new Date(data.updated).toLocaleDateString()],
+		["Genre", "Horror"],
+		["Server Limit", data.maxPlayers],
+		["Now Playing", data.players.length],
+	]
+	const images = [
+		"/place/placeholderImage1.webp",
+		"/place/placeholderImage2.webp",
+		"/place/placeholderImage3.webp",
+	]
+	const scroll = async (e: MouseEvent) =>
+		document
+			.getElementById(
+				new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
+			)
+			// (false) prevents page scrolling to top of element
+			?.scrollIntoView(false)
 
 	// Place Launcher
 
@@ -31,7 +31,7 @@
 		success = false,
 		filepath = ""
 
-	function launch(joinscripturl: string) {
+	const launch = (joinscripturl: string) => () => {
 		success = false
 		customProtocolCheck(
 			joinscripturl,
@@ -47,6 +47,8 @@
 			5000
 		)
 	}
+
+	const hostTicket = `http://banland.xyz/Game/Host?ticket=${data.serverTicket}`
 
 	async function placeLauncher() {
 		installed = true
@@ -69,7 +71,7 @@
 				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
 					joinScriptData.data.joinScriptUrl
 				)}+gameinfo:test`
-			)
+			)()
 	}
 
 	let tabData = TabData(data.url, ["Description", "Game"]),
@@ -128,37 +130,34 @@
 								<a
 									href="/place/{data.id}/{data.name}/settings"
 									class="btn btn-sm btn-outline-warning">
-									<i class="fas fa-sliders" />
+									<fa fa-sliders />
 								</a>
 							</div>
 						{/if}
 					</div>
-					<span class="light-text d-flex mb-2">
-						<b>by</b>
-						<a
-							href="/user/{data.ownerUser?.number}"
-							class="user light-text text-decoration-none">
-							<span class="pfp bg-darker rounded-circle ms-1">
-								<img
-									src="/api/avatar/{data.ownerUser?.username}"
-									alt={data.ownerUser?.username}
-									class="rounded-circle rounded-top-0" />
-							</span>
-							{data.ownerUser?.username}
-						</a>
+					<span class="light-text d-flex pb-2">
+						<b class="pe-2">by</b>
+						{#if data.ownerUser}
+							<User
+								user={data.ownerUser}
+								size="1.5rem"
+								bg="darker"
+								full
+								thin />
+						{/if}
 					</span>
 					<p class="light-text mb-0">
-						Gears: <i class="far fa-circle-xmark" />
+						Gears: <far fa-circle-xmark />
 					</p>
-					<span
-						class="badge text-bg-{data.serverPing >
+					<small
+						class="text-light rounded-2 bg-{data.serverPing >
 						Math.floor(Date.now() / 1000) - 35
 							? 'success'
-							: 'danger'} mb-1">
+							: 'danger'} p-2 py-1">
 						{data.serverPing > Date.now() / 1000 - 35
 							? "Online"
 							: "Offline"}
-					</span>
+					</small>
 					<span class="float-end">
 						<ReportButton
 							user={data.ownerUser?.username || ""}
@@ -201,10 +200,10 @@
 
 						return () => {}
 					}}
-					class="align-self-center col mt-4 px-0 mb-2"
+					class="align-self-center col pt-4 px-0 pb-2"
 					method="POST"
 					action="?/like&privateTicket={data.privateTicket}">
-					<div class="row mb-2">
+					<div class="row pb-2">
 						<div class="col d-flex justify-content-start">
 							<button
 								name="action"
@@ -236,40 +235,40 @@
 							</button>
 						</div>
 					</div>
-					<div class="progress rounded-pill" style="height: 3px">
+					<div class="d-flex bg-a2" style="height: 3px">
 						<div
-							class="progress-bar bg-success"
+							class="bg-success"
 							role="progressbar"
 							aria-label="Likes"
 							style="width: {(data.likeCount /
 								(data.dislikeCount + data.likeCount || 1)) *
 								100}%"
 							aria-valuenow={data.likeCount}
-							aria-valuemin="0"
+							aria-valuemin={0}
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 						<div
-							class="progress-bar bg-danger"
+							class="bg-danger"
 							role="progressbar"
 							aria-label="Dislikes"
 							style="width: {(data.dislikeCount /
 								(data.dislikeCount + data.likeCount || 1)) *
 								100}%"
 							aria-valuenow={data.dislikeCount}
-							aria-valuemin="0"
+							aria-valuemin={0}
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 					</div>
 					<div class="row">
 						<div class="col d-flex justify-content-start">
-							<span class="light-text mx-2">
+							<span class="light-text px-2">
 								{data.likeCount} like{data.likeCount == 1
 									? ""
 									: "s"}
 							</span>
 						</div>
 						<div class="col d-flex justify-content-end">
-							<span class="light-text mx-2">
+							<span class="light-text px-2">
 								{data.dislikeCount} dislike{data.dislikeCount ==
 								1
 									? ""
@@ -282,12 +281,10 @@
 		</div>
 	</div>
 
-	<div class="bg-a">
-		<TabNav bind:tabData justify />
-	</div>
+	<TabNav bind:tabData justify />
 
 	<Tab {tabData}>
-		{data.description[0]?.text || ""}
+		{data.description.text || ""}
 	</Tab>
 
 	<Tab {tabData}>
@@ -306,25 +303,23 @@
 				Autopilot to get started easily.
 			</p>
 			<div class="d-flex align-items-start mb-4">
-				<div class="bg-a me-4">
-					<TabNav bind:tabData={tabData2} vertical />
-					<!-- Prevents nested tabs from breaking -->
-					{((tabData2.num = 0), "")}
-				</div>
+				<TabNav bind:tabData={tabData2} vertical />
+				<!-- Prevents nested tabs from breaking -->
+				{((tabData2.num = 0), "")}
 				<Tab tabData={tabData2}>
-					<p class="light-text mb-1">
+					<p class="light-text">
 						You can host your server by opening your map in <button
 							class="btn btn-primary p-1 btn-sm"
-							on:click={() => {
-								launch("mercury-player:1+launchmode:ide")
-							}}>
-							<i class="fas fa-arrow-up-right-from-square" />
+							on:click={launch(
+								"mercury-player:1+launchmode:ide"
+							)}>
+							<fa fa-arrow-up-right-from-square />
 							Studio
 						</button>
 						and then in the command bar, paste this in:
 					</p>
 					<code>
-						loadfile("http://banland.xyz/Game/Host?ticket={data.serverTicket}")()
+						loadfile("{hostTicket}")()
 					</code>
 				</Tab>
 				<Tab tabData={tabData2}>
@@ -350,24 +345,22 @@
 							aria-label="Map location" />
 						<button
 							class="btn btn-primary"
-							on:click={() => {
-								launch("mercury-player:1+launchmode:maps")
-							}}
+							on:click={launch(
+								"mercury-player:1+launchmode:maps"
+							)}
 							type="button">
-							<i class="fas fa-arrow-up-right-from-square" />
+							<fa fa-arrow-up-right-from-square />
 							Map Folder
 						</button>
 						<button
 							class="btn btn-success"
-							on:click={() => {
-								launch(
-									`mercury-player:1+launchmode:ide+script:http://banland.xyz/Game/Host?ticket=${
-										data.serverTicket
-									}&autopilot=${btoa(filepath)}`
-								)
-							}}
+							on:click={launch(
+								`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${btoa(
+									filepath
+								)}`
+							)}
 							type="button">
-							<i class="fas fa-wifi" />
+							<fa fa-wifi />
 							Begin Hosting
 						</button>
 
@@ -378,14 +371,11 @@
 									<li class="rounded-2">
 										<button
 											class="btn light-text ps-4 pe-0 text-start"
-											on:click={() =>
-												launch(
-													`mercury-player:1+launchmode:build+script:http://banland.xyz/Game/Host?ticket=${
-														data.serverTicket
-													}&autopilot=${btoa(
-														filepath
-													)}`
-												)}
+											on:click={launch(
+												`mercury-player:1+launchmode:build+script:${hostTicket}&autopilot=${btoa(
+													filepath
+												)}`
+											)}
 											type="button">
 											Begin Hosting (no Studio tools)
 										</button>
@@ -399,12 +389,12 @@
 		{/if}
 		<h4 class="light-text">Server List</h4>
 		{#if data.serverPing > Date.now() / 1000 - 35}
-			<div class="card mb-2">
+			<div class="card pb-2">
 				<div class="card-body">
 					<div class="row">
 						<div class="col col-2">
 							<p class="light-text mb-2">
-								Currently Playing: {data.gameSessions
+								Currently Playing: {data.players
 									.length}/{data.maxPlayers}
 							</p>
 							<button
@@ -414,20 +404,9 @@
 								Join Server
 							</button>
 						</div>
-						<div class="col d-flex">
-							{#each data.gameSessions as { user }}
-								<a
-									href="/user/{user.number}"
-									class="gamesession text-decoration-none d-flex">
-									<span class="bg-background rounded-circle">
-										<img
-											src="/api/avatar/{user.username}"
-											alt={user.username}
-											height="75"
-											width="75"
-											class="rounded-circle rounded-top-0" />
-									</span>
-								</a>
+						<div class="col d-flex gap-3">
+							{#each data.players as user}
+								<User {user} size="4.5rem" bg="darker" />
 							{/each}
 						</div>
 					</div>
@@ -450,12 +429,12 @@
 </div>
 
 <Modal {modal}>
-	<div class="d-flex flex-column px-6">
+	<div class="d-flex flex-column px-6 pt-6">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
 				id="wrapper"
-				class=" align-self-center mt-4 mb-6">
+				class="align-self-center">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
@@ -473,15 +452,15 @@
 			</div>
 		{/key}
 		{#if success}
-			<h1 class="text-center fs-5 light-text">
+			<h1 class="text-center fs-5 light-text pt-6">
 				"{data.name}" is ready to play! Have fun!
 			</h1>
 		{:else if installed}
-			<h1 class="text-center fs-5 light-text">
+			<h1 class="text-center fs-5 light-text pt-6">
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
 			</h1>
 		{:else}
-			<h1 class="text-center fs-5 light-text mb-4">
+			<h1 class="text-center fs-5 light-text pt-6">
 				Install the Mercury client and start playing now!
 			</h1>
 			<a
@@ -516,7 +495,7 @@
 
 	.dropdown-toggle
 		border-radius 0 0.375rem 0.375rem 0
-		&::after 
+		&::after
 			display inline-block
 			vertical-align 0.255rem
 			content ""
@@ -542,16 +521,4 @@
 	@keyframes moon
 		100%
 			transform rotate(360deg)
-
-	.user
-		.pfp
-		.pfp img
-			width 1.5rem
-			height 1.5rem
-
-	.gamesession
-		span
-		img
-			width 75px
-			height 75px
 </style>

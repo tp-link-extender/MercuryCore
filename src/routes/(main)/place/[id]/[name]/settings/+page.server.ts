@@ -1,62 +1,96 @@
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { query, squery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
 import fs from "fs"
 import sharp from "sharp"
 import { superValidate, message } from "sveltekit-superforms/server"
-import { createId } from "@paralleldrive/cuid2"
-import { v4 as uuid } from "uuid"
 import { z } from "zod"
 
-const schema = z.object({
-	title: z.string().max(100).optional(),
-	icon: z.any(),
-	description: z.string().max(1000).optional(),
-	serverIP: z
-		.string()
-		.max(100)
-		.regex(
-			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/,
-		)
-		.optional(),
-	serverPort: z.number().int().min(1024).max(65535).optional(),
-	maxPlayers: z.number().int().min(1).max(100).optional(),
-	privateServer: z.boolean().optional(),
-})
+const schemas = {
+	view: z.object({
+		title: z.string().max(100),
+		icon: z.any(),
+		description: z.string().max(1000).optional(),
+	}),
+	network: z.object({
+		serverIP: z
+			.string()
+			.max(100)
+			.regex(
+				/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/,
+			),
+		serverPort: z.number().int().min(1024).max(65535),
+		maxPlayers: z.number().int().min(1).max(100),
+	}),
+	ticket: z.object({}),
+	privacy: z.object({
+		privateServer: z.boolean(),
+	}),
+	privatelink: z.object({}),
+}
+
+type Place = {
+	created: string
+	deleted: boolean
+	description: {
+		text: string
+		updated: string
+	}
+	id: string
+	maxPlayers: number
+	name: string
+	owner: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+	privateServer: boolean
+	privateTicket: string
+	serverIP: string
+	serverPing: number
+	serverPort: number
+	serverTicket: string
+	updated: string
+}
+
+const placeQuery = async (id: string | number) =>
+	await squery<Place>(
+		surql`
+			SELECT
+				*,
+				meta::id(id) AS id,
+				(SELECT
+					number,
+					status,
+					username
+				FROM <-owns<-user)[0] AS owner,
+				(SELECT text, updated FROM $parent.description
+				ORDER BY updated DESC)[0] AS description
+			FROM $place`,
+		{ place: `place:${id}` },
+	)
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id))
 		throw error(400, `Invalid game id: ${params.id}`)
 
-	const getPlace = await prisma.place.findUnique({
-		where: {
-			id: parseInt(params.id),
-		},
-		include: {
-			ownerUser: true,
-			description: {
-				orderBy: {
-					updated: "desc",
-				},
-				select: {
-					text: true,
-				},
-				take: 1,
-			},
-		},
-	})
+	const getPlace = await placeQuery(params.id)
 
-	if (!getPlace) throw error(404, "Not found")
+	if (!getPlace) throw error(404, "Place not found")
 
 	const { user } = await authorise(locals)
 
-	if (user.number != getPlace.ownerUser?.number && user.permissionLevel < 4)
+	if (user.number != getPlace.owner.number && user.permissionLevel < 4)
 		throw error(403, "You do not have permission to view this page.")
 
 	return {
 		...getPlace,
-		form: superValidate(schema),
+		viewForm: superValidate(schemas.view),
+		networkForm: superValidate(schemas.network),
+		ticketForm: superValidate(schemas.ticket),
+		privacyForm: superValidate(schemas.privacy),
+		privatelinkForm: superValidate(schemas.privatelink),
 	}
 }
 
@@ -66,41 +100,17 @@ export const actions = {
 			throw error(400, `Invalid game id: ${params.id}`)
 		const id = parseInt(params.id || ""),
 			{ user } = await authorise(locals),
-			getPlace = await prisma.place.findUnique({
-				where: {
-					id,
-				},
-				include: {
-					ownerUser: true,
-					description: {
-						orderBy: {
-							updated: "desc",
-						},
-						select: {
-							text: true,
-						},
-						take: 1,
-					},
-				},
-			})
+			getPlace = await placeQuery(params.id)
 
-		if (user.id != getPlace?.ownerUser?.id && user.permissionLevel < 4)
+		if (user.number != getPlace.owner.number && user.permissionLevel < 4)
 			throw error(403, "You do not have permission to update this page.")
 
 		const action = url.searchParams.get("a")
 
-		let form: Awaited<ReturnType<typeof superValidate>>
 		switch (action) {
 			case "view": {
-				const formData = await request.formData()
-				form = await superValidate(
-					formData,
-					z.object({
-						title: z.string().max(100),
-						icon: z.any(),
-						description: z.string().max(1000),
-					}),
-				)
+				const formData = await request.formData(),
+					form = await superValidate(formData, schemas.view)
 				if (!form.valid) return formError(form)
 
 				const icon = formData.get("icon") as File
@@ -128,106 +138,93 @@ export const actions = {
 
 				const { title, description } = form.data
 
-				await prisma.place.update({
-					where: {
-						id,
+				await query(
+					surql`
+						LET $og = SELECT
+							title,
+							(SELECT text, updated FROM $parent.description
+							ORDER BY updated DESC)[0] AS description
+						FROM $place;
+
+						UPDATE $place SET name = $title;
+
+						IF $og.description.text != $description {
+							UPDATE $place SET description += {
+								text: $description,
+								updated: time::now(),
+							};
+						}`,
+					{
+						place: `place:${id}`,
+						title,
+						description: description || "",
 					},
-					data: {
-						name: title,
-						description: {
-							create: {
-								text: description || "",
-							},
-						},
-					},
-				})
+				)
 
 				return message(form, "View settings updated successfully!")
 			}
 
 			case "ticket":
-				await prisma.place.update({
-					where: {
-						id,
-					},
-					data: {
-						serverTicket: createId(),
-					},
-				})
+				await query(
+					surql`UPDATE $place SET serverTicket = rand::guid()`,
+					{ place: `place:${id}` },
+				)
 
 				return message(
-					await superValidate(request, schema),
-					"Successfully regenerated server ticket",
+					await superValidate(request, schemas.ticket),
+					"Regenerated!",
 				)
 
 			case "network": {
-				form = await superValidate(
-					request,
-					z.object({
-						serverIP: z
-							.string()
-							.max(100)
-							.regex(
-								/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/,
-							),
-						serverPort: z.number().int().min(1024).max(65535),
-						maxPlayers: z.number().int().min(1).max(100),
-					}),
-				)
+				const form = await superValidate(request, schemas.network)
 				if (!form.valid) return formError(form)
 
 				const { serverIP, serverPort, maxPlayers } = form.data
 
-				await prisma.place.update({
-					where: {
-						id,
-					},
-					data: {
+				await query(
+					surql`
+						UPDATE $place MERGE {
+							serverIP: $serverIP,
+							serverPort: $serverPort,
+							maxPlayers: $maxPlayers,
+						}`,
+					{
+						place: `place:${id}`,
 						serverIP,
 						serverPort,
 						maxPlayers,
 					},
-				})
+				)
 
 				return message(form, "Network settings updated successfully!")
 			}
 
 			case "privacy": {
-				form = await superValidate(
-					request,
-					z.object({
-						privateServer: z.boolean(),
-					}),
-				)
+				const form = await superValidate(request, schemas.privacy)
 				if (!form.valid) return formError(form)
 
 				const { privateServer } = form.data
 
-				await prisma.place.update({
-					where: {
-						id,
-					},
-					data: {
+				await query(
+					surql`UPDATE $place SET privateServer = $privateServer`,
+					{
+						place: `place:${id}`,
 						privateServer,
 					},
-				})
+				)
 
 				return message(form, "Privacy settings updated successfully!")
 			}
 
 			case "privatelink":
-				await prisma.place.update({
-					where: {
-						id,
-					},
-					data: {
-						privateTicket: uuid(),
-					},
-				})
+				await query(
+					surql`UPDATE $place SET privateTicket = rand::guid()`,
+					{ place: `place:${id}` },
+				)
 
 				return message(
-					await superValidate(request, schema),
-					"Successfully regenerated private link",
+					await superValidate(request, schemas.privatelink),
+					"Regenerated!",
 				)
 		}
 	},

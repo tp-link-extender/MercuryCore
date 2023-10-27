@@ -27,12 +27,13 @@
 </a>
 
 <style lang="stylus">
-	a .card-body
-		transition background-color 0.2s
-		&:hover
+	a 
+		.card-body
+			transition background-color 0.2s
+		&:hover .card-body
 			background-color var(--background) !important
 
 	.card
-		border-width 2px
-		border-color var(--accent3)
+		border-width 1px
+		border-color var(--accent2)
 </style>

@@ -127,7 +127,7 @@ print "[Mercury]: Loaded corescript 48488235"
 
 local ADMINS = {
 	taskmanager = 1,
-	Heliodex = 1,
+	heliodex = 1,
 	multako = "http://banland.xyz/asset/?id=6923328292",
 	mercury = 1,
 	pizzaboxer = "http://banland.xyz/asset/?id=6917566633",
@@ -183,7 +183,7 @@ end
 	imgName		asset name of image to fill background
 	@Return:	background gui object
 --]]
-function MakeBackgroundGuiObj(imgName)
+local function MakeBackgroundGuiObj(imgName)
 	return Obj.Create "ImageLabel" {
 		Name = "Background",
 		BackgroundTransparency = 1,
@@ -193,7 +193,7 @@ function MakeBackgroundGuiObj(imgName)
 	}
 end
 --[[ turns 255 integer color value to a color3 --]]
-function Color3I(r, g, b)
+local function Color3I(r, g, b)
 	return Color3.new(r / 255, g / 255, b / 255)
 end
 
@@ -203,13 +203,12 @@ end
 	membershipType		Enum of membership status
 	@Return: 			string of image asset
 --]]
-function getMembershipTypeIcon(membershipType, playerName)
+local function getMembershipTypeIcon(membershipType, playerName)
 	if ADMINS[string.lower(playerName)] ~= nil then
 		if ADMINS[string.lower(playerName)] == 1 then
 			return "http://banland.xyz/asset/?id=6923330951"
-		else
-			return ADMINS[string.lower(playerName)]
 		end
+		return ADMINS[string.lower(playerName)]
 	elseif membershipType == Enum.MembershipType.None then
 		return ""
 	elseif membershipType == Enum.MembershipType.BuildersClub then
@@ -299,7 +298,7 @@ end
 	child		name of child object to look for
 	@Return: object waited for
 --]]
-function WaitForChild(parent, child)
+local function WaitForChild(parent, child)
 	while not parent:FindFirstChild(child) do
 		wait()
 		debugprint(" child " .. parent.Name .. " waiting for " .. child)
@@ -1002,7 +1001,7 @@ end)
 -- 	return numEnts
 -- end
 
-function AreAllEntriesOnScreen()
+local function AreAllEntriesOnScreen()
 	return #MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale
 		<= 1 + DefaultBottomClipPos
 end
@@ -1011,24 +1010,25 @@ end
 -- 	return 1 + DefaultBottomClipPos
 -- end
 
-function GetMaxScroll()
+local function GetMaxScroll()
 	return DefaultBottomClipPos * -1
 end
+
 -- can be optimized by caching when this varible changes
-function GetMinScroll()
+local function GetMinScroll()
 	if AreAllEntriesOnScreen() then
 		return GetMaxScroll()
-	else
-		return (
-			GetMaxScroll()
-			- (#MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale)
-		) + (1 + DefaultBottomClipPos)
 	end
+	return (
+		GetMaxScroll()
+		- (#MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale)
+	) + (1 + DefaultBottomClipPos)
 end
 
-function AbsoluteToPercent(x, y)
+local function AbsoluteToPercent(x, y)
 	return Vector2.new(x, y) / ScreenGui.AbsoluteSize
 end
+
 --[[
 	tweens property of element from starta to enda over length of time
 	Warning: should be put in a Spawn call
@@ -1039,15 +1039,16 @@ end
 	enda		alpha to end tweening on
 	length		how many seconds to spend tweening
 --]]
-function TweenProperty(obj, propName, inita, enda, length)
+local function TweenProperty(obj, propName, inita, enda, length)
 	local startTime = tick()
 	while tick() - startTime < length do
 		obj[propName] = ((enda - inita) * ((tick() - startTime) / length))
 			+ inita
-		wait(1 / 30)
+		wait()
 	end
 	obj[propName] = enda
 end
+
 --[[
 	UGLY UGLY HACK FUNCTION
 	replace with some sort of global input catching A.S.A. FREAKING P.
@@ -1057,8 +1058,7 @@ end
 	polledFunction	function to call on mouse moved events in this gui
 	exitFunction	function to call when click event is fired
 --]]
-
-function WaitForClick(frameParent, polledFunction, exitFunction)
+local function WaitForClick(frameParent, polledFunction, exitFunction)
 	if WaitForClickLock then
 		return
 	end
@@ -1227,7 +1227,7 @@ end
 --[[
 	opens the abuse dialog, initialises text to display selectedplayer
 --]]
-function OpenAbuseDialog()
+local function OpenAbuseDialog()
 	debugprint "adding report dialog"
 	AbusePlayerLabel.Text = SelectedPlayer.Name
 	--AbuseDescriptionBox.Text = ""
@@ -1260,7 +1260,7 @@ end
 --[[
 	creates dropdownbox, registers all listeners for abuse dialog
 --]]
-function InitReportAbuse()
+local function InitReportAbuse()
 	UpdateAbuseFunction = function(abuseText)
 		AbuseName = abuseText
 		if AbuseName and SelectedPlayer then
@@ -1297,16 +1297,14 @@ end
 local function GetFriendStatus(player)
 	if player == game.Players.LocalPlayer then
 		return Enum.FriendStatus.NotFriend
-	else
-		local success, result = pcall(function()
-			return game.Players.LocalPlayer:GetFriendStatus(player)
-		end)
-		if success then
-			return result
-		else
-			return Enum.FriendStatus.NotFriend
-		end
 	end
+	local success, result = pcall(function()
+		return game.Players.LocalPlayer:GetFriendStatus(player)
+	end)
+	if success then
+		return result
+	end
+	return Enum.FriendStatus.NotFriend
 end
 
 --[[
@@ -1412,7 +1410,7 @@ function StatAdded(nchild, playerEntry)
 	-- dont re - add a leaderstat I alreday have
 	while AddingStatLock do
 		debugprint "in stat added function lock"
-		wait(1 / 30)
+		wait()
 	end
 	AddingStatLock = true
 	if
@@ -1460,8 +1458,9 @@ function StatAdded(nchild, playerEntry)
 		StatChanged(playerEntry, property)
 	end)
 end
+
 --returns whether any of the existing players has this stat
-function DoesStatExist(statName, exception)
+local function DoesStatExist(statName, exception)
 	for _, playerf in pairs(PlayerFrames) do
 		if
 			playerf.Player ~= exception
@@ -1487,7 +1486,7 @@ end
 function StatRemoved(nchild, playerEntry)
 	while AddingStatLock do
 		debugprint "In Adding Stat Lock1"
-		wait(1 / 30)
+		wait()
 	end
 	AddingStatLock = true
 	if playerEntry.Frame:FindFirstChild(nchild.Name) then
@@ -1530,12 +1529,10 @@ function GetScoreValue(score)
 	elseif score:IsA "BoolValue" then
 		if score.Value then
 			return 1
-		else
-			return 0
 		end
-	else
-		return score.Value
+		return 0
 	end
+	return score.Value
 end
 --[[
 
@@ -1607,7 +1604,7 @@ end
 function RecreateScoreColumns(ptable)
 	while AddingStatLock do
 		debugprint "In Adding Stat Lock2"
-		wait(1 / 30)
+		wait()
 	end
 	AddingStatLock = true
 	local Xoffset = 5 --15 --current offset from Right
@@ -2443,7 +2440,7 @@ function UpdateHeaderNameSize()
 	tHeader.FontSize = FONT_SIZES[fSize]
 	Delay(0.2, function()
 		while tHeader.TextBounds.x == 0 do
-			wait(1 / 30)
+			wait()
 		end
 		while tHeader.TextBounds.x - NormalBounds.X.Offset > 1 do
 			fSize -= 1
@@ -2485,7 +2482,7 @@ end
 function LeaderstatsRemoved(_, playerEntry)
 	while AddingFrameLock do
 		debugprint("waiting to insert " .. playerEntry.Player.Name)
-		wait(1 / 30)
+		wait()
 	end
 	AddingFrameLock = true
 	RemoveAllStats(playerEntry)
@@ -2659,7 +2656,7 @@ end
 	@Args:
 	entry	the player entry clicked
 --]]
-function OnPlayerEntrySelect(entry, startx, starty)
+local function OnPlayerEntrySelect(entry, startx, starty)
 	if not InPopupWaitForClick then
 		SelectedPlayerEntry = entry
 		SelectedPlayer = entry.Player
@@ -2681,7 +2678,7 @@ end
 	the basic update for the playerlist mode's state,
 	assures the order and length of the player frames
 --]]
-function PlayerListModeUpdate()
+local function PlayerListModeUpdate()
 	RecreateScoreColumns(PlayerFrames)
 	table.sort(PlayerFrames, PlayerSortFunction)
 	for i, val in ipairs(PlayerFrames) do
@@ -2692,6 +2689,7 @@ function PlayerListModeUpdate()
 	end
 	UpdateMinimize()
 end
+
 --[[
 	this one's a doozie, happens when a player is added to the game
 	inits their player frame and player entry, assigns them to a team if possible,
@@ -2699,10 +2697,10 @@ end
 	@Args:
 	nplayer		new player object to insert
 --]]
-function InsertPlayerFrame(nplayer)
+local function InsertPlayerFrame(nplayer)
 	while AddingFrameLock do
 		debugprint("waiting to insert " .. nplayer.Name)
-		wait(1 / 30)
+		wait()
 	end
 	AddingFrameLock = true
 
@@ -2802,7 +2800,7 @@ function InsertPlayerFrame(nplayer)
 		if nchild.Name == "leaderstats" then
 			while AddingFrameLock do
 				debugprint "in adding leaderstats lock"
-				wait(1 / 30)
+				wait()
 			end
 			AddingFrameLock = true
 			LeaderstatsAdded(nentry)
@@ -2837,7 +2835,7 @@ end
 function RemovePlayerFrame(tplayer)
 	while AddingFrameLock do
 		debugprint "in removing player frame lock"
-		wait(1 / 30)
+		wait()
 	end
 	AddingFrameLock = true
 
@@ -2918,46 +2916,21 @@ function TeamSortFunc(a, b)
 	end
 	return a.TeamScore < b.TeamScore
 end
---[[
-	consider adding lock with wait for performance
-	sorts each of the team's player lists induvidually, adds up the team scores.
-	@Args:
-	tentries		table of team entries
---]]
-function SortTeams(tentries)
-	for _, val in ipairs(tentries) do
-		table.sort(val.MyPlayers, PlayerSortFunction)
-		AddTeamScores(val)
-	end
-	table.sort(tentries, TeamSortFunc)
-end
---[[
-	base update for team mode, adds up the scores of all teams, sorts them,
-	then unrolls them into middleframes
---]]
-function TeamListModeUpdate()
-	RecreateScoreColumns(PlayerFrames)
-	SortTeams(TeamFrames)
-	if NeutralTeam then
-		AddTeamScores(NeutralTeam)
-		--RecreateScoreColumns(NeutralTeam['MyPlayers'])
-	end
-	UnrollTeams(TeamFrames, MiddleFrames)
-end
+
 --[[
 	adds up all the score of this team's players to form the team score
 	@Args:
 	team		team entry to sum the scores of
 --]]
-function AddTeamScores(team)
+local function AddTeamScores(team)
 	for j = 1, #ScoreNames, 1 do
 		local i = ScoreNames[j]
 		local tscore = 0
-		for _, j in ipairs(team.MyPlayers) do
-			local tval = j.Player:FindFirstChild "leaderstats"
-				and j.Player.leaderstats:FindFirstChild(i.Name)
+		for _, k in ipairs(team.MyPlayers) do
+			local tval = k.Player:FindFirstChild "leaderstats"
+				and k.Player.leaderstats:FindFirstChild(i.Name)
 			if tval and not tval:IsA "StringValue" then
-				tscore += GetScoreValue((j.Player.leaderstats)[i.Name])
+				tscore += GetScoreValue((k.Player.leaderstats)[i.Name])
 			end
 		end
 		if team.Frame:FindFirstChild(i.Name) then
@@ -2974,11 +2947,39 @@ function AddTeamScores(team)
 end
 
 --[[
+	consider adding lock with wait for performance
+	sorts each of the team's player lists induvidually, adds up the team scores.
+	@Args:
+	tentries		table of team entries
+--]]
+local function SortTeams(tentries)
+	for _, val in ipairs(tentries) do
+		table.sort(val.MyPlayers, PlayerSortFunction)
+		AddTeamScores(val)
+	end
+	table.sort(tentries, TeamSortFunc)
+end
+
+--[[
+	base update for team mode, adds up the scores of all teams, sorts them,
+	then unrolls them into middleframes
+--]]
+local function TeamListModeUpdate()
+	RecreateScoreColumns(PlayerFrames)
+	SortTeams(TeamFrames)
+	if NeutralTeam then
+		AddTeamScores(NeutralTeam)
+		--RecreateScoreColumns(NeutralTeam['MyPlayers'])
+	end
+	UnrollTeams(TeamFrames, MiddleFrames)
+end
+
+--[[
 	finds previous team this player was on, and if it exists calls removeplayerfromteam
 	@Args
 	entry	Player entry
 --]]
-function FindRemovePlayerFromTeam(entry)
+local function FindRemovePlayerFromTeam(entry)
 	if entry.MyTeam then
 		for j, oldEntry in ipairs(entry.MyTeam.MyPlayers) do
 			if oldEntry.Player == entry.Player then
@@ -2995,6 +2996,7 @@ function FindRemovePlayerFromTeam(entry)
 		end
 	end
 end
+
 --[[
 	removes a single player from a given team (not usually called directly)
 	@Args:
@@ -3008,6 +3010,7 @@ function RemovePlayerFromTeam(teamEntry, index)
 		RemoveNeutralTeam()
 	end
 end
+
 --[[
 	adds player entry entry to teamentry
 	removes them from any previous team
@@ -3026,7 +3029,7 @@ function AddPlayerToTeam(teamEntry, entry)
 	teamEntry.IsHidden = false
 end
 
-function SetPlayerToTeam(entry)
+local function SetPlayerToTeam(entry)
 	FindRemovePlayerFromTeam(entry)
 	-- check to see if team exists, if it does add to that team
 	local setToTeam = false
@@ -3060,7 +3063,7 @@ end
 function PlayerChanged(entry, property)
 	while PlayerChangedLock do
 		debugprint "in playerchanged lock"
-		wait(1 / 30)
+		wait()
 	end
 	PlayerChangedLock = true
 	if property == "Neutral" then
@@ -3211,7 +3214,7 @@ end
 --[[
 
 --]]
-function TeamScoreChanged(entry, nscore)
+local function TeamScoreChanged(entry, nscore)
 	WaitForChild(entry.Frame, "PlayerScore").Text = tostring(nscore)
 	entry.TeamScore = nscore
 end
@@ -3219,7 +3222,7 @@ end
 	called when child added to a team, used for autohide functionality
 	Note: still has teamscore, consiter removing
 --]]
-function TeamChildAdded(entry, nchild)
+local function TeamChildAdded(entry, nchild)
 	if nchild.Name == "AutoHide" then
 		entry.AutoHide = true
 	elseif nchild.Name == "TeamScore" then
@@ -3234,7 +3237,7 @@ end
 	called when child added to a team, used for autohide functionality
 	Note: still has teamscore, consiter removing
 --]]
-function TeamChildRemoved(entry, nchild)
+local function TeamChildRemoved(entry, nchild)
 	if nchild.Name == "AutoHide" then
 		entry.AutoHide = false
 	elseif nchild.Name == "TeamScore" then
@@ -3243,7 +3246,7 @@ function TeamChildRemoved(entry, nchild)
 	end
 end
 
-function TeamChanged(entry, property)
+local function TeamChanged(entry, property)
 	if property == "Name" then
 		WaitForChild(WaitForChild(entry.Frame, "TitleFrame"), "Title").Text =
 			entry.MyTeam.Name
@@ -3273,10 +3276,10 @@ end
 	@Args:
 	nteam	new team object added
 --]]
-function InsertTeamFrame(nteam)
+local function InsertTeamFrame(nteam)
 	while AddingFrameLock do
 		debugprint "in adding team frame lock"
-		wait(1 / 30)
+		wait()
 	end
 	AddingFrameLock = true
 	--for _,i in pairs(TeamFrames) do
@@ -3367,7 +3370,7 @@ end
 function RemoveTeamFrame(nteam)
 	while AddingFrameLock do
 		debugprint "in removing team frame lock"
-		wait(1 / 30)
+		wait()
 	end
 	AddingFrameLock = true
 	-- if IsMinimized.Value then
@@ -3410,7 +3413,7 @@ end
 function BaseUpdate()
 	while BaseUpdateLock do
 		debugprint "in baseupdate lock"
-		wait(1 / 30)
+		wait()
 	end
 	BaseUpdateLock = true
 	--print ('baseupdate')
@@ -3494,7 +3497,7 @@ game.GuiService.KeyPressed:connect(function(key)
 	end
 end)
 
-function PlayersChildAdded(tplayer)
+local function PlayersChildAdded(tplayer)
 	if tplayer:IsA "Player" then
 		Spawn(function()
 			debugPlayerAdd(tplayer)
@@ -3504,7 +3507,7 @@ function PlayersChildAdded(tplayer)
 	end
 end
 
-function coreGuiChanged(coreGuiType, enabled)
+local function coreGuiChanged(coreGuiType, enabled)
 	if
 		coreGuiType == Enum.CoreGuiType.All
 		or coreGuiType == Enum.CoreGuiType.PlayerList
@@ -3513,7 +3516,7 @@ function coreGuiChanged(coreGuiType, enabled)
 	end
 end
 
-function TeamsChildAdded(nteam)
+local function TeamsChildAdded(nteam)
 	if nteam:IsA "Team" then
 		TeamAdded(nteam)
 	else
@@ -3521,7 +3524,7 @@ function TeamsChildAdded(nteam)
 	end
 end
 
-function TeamsChildRemoved(nteam)
+local function TeamsChildRemoved(nteam)
 	if nteam:IsA "Team" then
 		TeamRemoved(nteam)
 	else
@@ -3545,7 +3548,7 @@ pcall(function()
 end)
 
 while not game:GetService "Teams" do
-	wait(1 / 30)
+	wait()
 	debugprint "Waiting For Teams"
 end
 for _, i in pairs(game.Teams:GetTeams()) do
@@ -3574,19 +3577,19 @@ IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
 ----------------------------
 
 --debug stuffs, will only run for 'newplayerlistisbad'
-if
-	LocalPlayer.Name == "newplayerlistisbad"
-	or LocalPlayer.Name == "imtotallyadmin"
-then
-	debugFrame.Parent = ScreenGui
-	Spawn(function()
-		while true do
-			local str_players = ""
-			for _, i in pairs(game.Players:GetPlayers()) do
-				str_players = str_players .. " " .. i.Name
-			end
-			debugplayers.Text = str_players
-			wait(0.5)
-		end
-	end)
-end
+-- if
+-- 	LocalPlayer.Name == "newplayerlistisbad"
+-- 	or LocalPlayer.Name == "imtotallyadmin"
+-- then
+-- 	debugFrame.Parent = ScreenGui
+-- 	Spawn(function()
+-- 		while true do
+-- 			local str_players = ""
+-- 			for _, i in pairs(game.Players:GetPlayers()) do
+-- 				str_players ..= " " .. i.Name
+-- 			end
+-- 			debugplayers.Text = str_players
+-- 			wait(0.5)
+-- 		end
+-- 	end)
+-- end

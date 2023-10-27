@@ -35,13 +35,6 @@
 								alt={user.username}
 								class="h-100 rounded-circle rounded-top-0" />
 						</div>
-						<!-- {#if user.status}
-							<span
-								class="position-absolute bottom-0 end-0 badge rounded-circle {statusColours[
-									user.status
-								]}">
-							</span>
-						{/if} -->
 					</div>
 					{user.username}
 				</a>
@@ -51,9 +44,7 @@
 		<div class="grid d-grid">
 			{#each data.places as place, num}
 				<div class="px-2 mb-2">
-					<div class="place">
-						<Place {place} {num} total={data.places.length} />
-					</div>
+					<Place {place} {num} total={data.places.length} />
 				</div>
 			{/each}
 		</div>
@@ -61,9 +52,7 @@
 		<div class="grid d-grid">
 			{#each data.assets as asset, num}
 				<div class="px-2 mb-2">
-					<div class="place">
-						<Asset {asset} {num} total={data.assets.length} />
-					</div>
+					<Asset {asset} {num} total={data.assets.length} />
 				</div>
 			{/each}
 		</div>
@@ -71,9 +60,7 @@
 		<div class="grid d-grid">
 			{#each data.groups as group, num}
 				<div class="px-2 mb-2">
-					<div class="place">
-						<Group {group} {num} total={data.groups.length} />
-					</div>
+					<Group {group} {num} total={data.groups.length} />
 				</div>
 			{/each}
 		</div>
@@ -97,11 +84,9 @@
 		grid-template-columns repeat(auto-fill, minmax(8rem, 1fr))
 		grid-gap 0 1rem
 
-	// .badge
-	// 	padding 0.75rem
-	.place
-		width 8rem
-		margin auto
+		div a
+			width 8rem
+			margin auto
 
 	.image-background
 	img

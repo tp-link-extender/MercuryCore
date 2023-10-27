@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ForumPost from "./ForumPost.svelte"
+
 	export let data
 	// Forum
 	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}
@@ -7,25 +9,22 @@
 <Head title="{data.name} - Forum" />
 
 <div class="container light-text">
-	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
-			<li class="breadcrumb-item">
-				<a href="/forum" class="accent-text">Forum</a>
-			</li>
-			<li class="breadcrumb-item active" aria-current="page">
-				{data.name}
-			</li>
-		</ol>
-	</nav>
+	<Breadcrumbs
+		path={[
+			["Forum", "/forum"],
+			[data.name, ""],
+		]} />
 
-	<h1 class="light-text mb-12">
+	<h1 class="light-text pb-8">
 		{data.name} - Forum
-		<a
-			href="/forum/create?category={data.name}"
-			class="btn btn-primary ms-6">
-			<i class="fa fa-file me-2" />
-			Create post
-		</a>
+		<span class="ps-6">
+			<a
+				href="/forum/create?category={data.name}"
+				class="btn btn-primary">
+				<fa fa-file class="pe-2" />
+				Create post
+			</a>
+		</span>
 	</h1>
 	{#each data.posts as post, num}
 		<ForumPost

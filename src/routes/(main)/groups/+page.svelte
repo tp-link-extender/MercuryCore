@@ -1,30 +1,28 @@
 <script lang="ts">
+	export let data
+
 	let query = "",
-		searchedData: any[] = []
+		searchedData: typeof data.groups = []
 
 	// Run function whenever query changes
 	$: query &&
 		(async () => {
 			const formdata = new FormData()
-			formdata.append("query", query)
+			formdata.append("q", query)
 
 			const response = await fetch("/groups", {
-					method: "POST",
-					body: formdata,
-				}),
-				result: any = deserialize(await response.text())
+				method: "POST",
+				body: formdata,
+			})
+			const result: any = deserialize(await response.text())
 
-			searchedData = result.data.places
+			searchedData = result.data.groups
 		})()
 
-	// Snapshots allow form values on a page to be restored
-	// if the user navigates away and then back again.
 	export const snapshot = {
 		capture: () => query,
 		restore: v => (query = v),
 	}
-
-	export let data
 </script>
 
 <Head title="Groups" />
@@ -54,7 +52,7 @@
 						class="btn btn-success"
 						aria-label="Search"
 						id="button-addon2">
-						<i class="fa fa-magnifying-glass" />
+						<fa fa-magnifying-glass />
 					</button>
 				</div>
 			</form>
@@ -66,7 +64,7 @@
 				<Group {group} {num} total={data.groups.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
-				<h2 class="fs-5 light-text mt-12">
+				<h2 class="fs-5 light-text pt-12">
 					No groups found with search term {query}
 				</h2>
 			{/if}

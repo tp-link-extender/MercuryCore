@@ -19,17 +19,15 @@
 	export const snapshot = { capture, restore }
 </script>
 
-<Head title="Create a post in {data.category.name}" />
+<Head title="Create a post in {data.categoryName}" />
 
-<h1 class="text-center light-text">Create a post in {data.category.name}</h1>
+<h1 class="text-center light-text">Create a post in {data.categoryName}</h1>
 
 <div class="container mt-12 light-text">
 	<form use:enhance method="POST">
 		<fieldset>
 			<div class="row mb-4">
-				<label for="title" class="col-md-3 col-form-label">
-					Post title
-				</label>
+				<label for="title" class="col-md-3">Post title</label>
 				<div class="col-md-9">
 					<input
 						bind:value={$form.title}
@@ -47,9 +45,7 @@
 				</div>
 			</div>
 			<div class="row mb-4">
-				<label for="content" class="col-md-3 col-form-label">
-					Post content
-				</label>
+				<label for="content" class="col-md-3">Post content</label>
 				<div class="col-md-9">
 					<textarea
 						bind:value={$form.content}

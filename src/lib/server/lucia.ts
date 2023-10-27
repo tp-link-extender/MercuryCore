@@ -1,26 +1,16 @@
 // Initialising Lucia, the authentication library
 
 import { dev } from "$app/environment"
-import { client } from "$lib/server/redis"
-import { PrismaClient } from "@prisma/client"
 import { redirect, error } from "@sveltejs/kit"
 import { lucia, type Session } from "lucia"
 import { sveltekit } from "lucia/middleware"
-import { prisma } from "@lucia-auth/adapter-prisma"
-import { redis } from "@lucia-auth/adapter-session-redis"
+import { adapter } from "./adapter-surreal"
 
 // As of v2, Lucia now shits itself if it doesn't have
 // access to the database clients during build time
 export const auth = lucia({
 	middleware: sveltekit(),
-	adapter: {
-		user: prisma(new PrismaClient(), {
-			user: "authUser",
-			key: "authKey",
-			session: "authKey", // fuck you
-		}),
-		session: redis(client),
-	},
+	adapter: adapter(),
 	env: dev ? "DEV" : "PROD",
 	getUserAttributes: data => ({
 		// This is the data that will be available in data.user
@@ -31,6 +21,7 @@ export const auth = lucia({
 		bio: data.bio,
 		email: data.email,
 		username: data.username,
+		status: data.status,
 		currency: data.currency,
 		currencyCollected: data.currencyCollected,
 		permissionLevel: data.permissionLevel,
@@ -53,9 +44,7 @@ export async function authorise(
 	{
 		auth,
 	}: {
-		auth: {
-			validate: () => Promise<Session | null>
-		}
+		auth: { validate: () => Promise<Session | null> }
 	},
 	level?: number,
 ) {
@@ -64,6 +53,10 @@ export async function authorise(
 
 	if (!session || !user) throw redirect(302, "/login")
 	if (level && user.permissionLevel < level)
-		throw error(403, "You do not have permission to view this page.")
-	return { session, user }
+		throw error(403, "You do not have permission to access this page.")
+
+	return {
+		session,
+		user,
+	}
 }

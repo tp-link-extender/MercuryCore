@@ -1,10 +1,10 @@
 <script lang="ts">
 	// Component for a group, used on the
-	// groups page and on a user's profile.
+	// groups and search pages.
 
 	export let group: {
 		name: string
-		members: number
+		memberCount: number
 	}
 	export let num: number
 	export let total: number
@@ -18,8 +18,8 @@
 		{group.name}
 		<div class="mt-auto mb-1 float-end">
 			<span class="float-end">
-				<i class="fa fa-user opacity-75" />
-				{group.members}
+				<fa fa-user class="opacity-75" />
+				{group.memberCount}
 			</span>
 		</div>
 	</div>

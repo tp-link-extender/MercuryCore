@@ -1,42 +1,44 @@
 <script lang="ts">
+	import PlaceCard from "./PlaceCard.svelte"
+
+	export let data
+
 	let query = "",
-		searchedData: any[] = []
+		searchedData: typeof data.places = []
 
 	// Run function whenever query changes
 	$: query &&
 		(async () => {
 			const formdata = new FormData()
-			formdata.append("query", query)
+			formdata.append("q", query)
 
 			const response = await fetch("/games", {
-					method: "POST",
-					body: formdata,
-				}),
-				result: any = deserialize(await response.text())
+				method: "POST",
+				body: formdata,
+			})
+			const result: any = deserialize(await response.text())
 
 			searchedData = result.data.places
 		})()
 
-	// Snapshots allow form values on a page to be restored
-	// if the user navigates away and then back again.
 	export const snapshot = {
 		capture: () => query,
 		restore: v => (query = v),
 	}
-
-	export let data
 </script>
 
 <Head title="Discover" />
 
 <div class="container">
-	<div class="row mb-12">
+	<div class="row pb-12">
 		<h1 class="col light-text">
 			Games
-			<a href="/games/create" class="btn btn-primary ms-6">
-				<i class="fas fa-plus" />
-				Create
-			</a>
+			<span class="ps-6">
+				<a href="/games/create" class="btn btn-primary">
+					<fa fa-plus />
+					 Create
+				</a>
+			</span>
 		</h1>
 		<div class="col-8">
 			<form
@@ -58,16 +60,14 @@
 							class="btn btn-success"
 							aria-label="Search"
 							id="button-addon2">
-							<i class="fa fa-magnifying-glass" />
+							<fa fa-magnifying-glass />
 						</button>
 					</div>
 				</div>
 				<div class="col-7 row">
-					<div class="ms-4 col">
+					<div class="ps-4 col">
 						<div class="row">
-							<label
-								for="genre"
-								class="form-label light-text col mt-1">
+							<label for="genre" class="light-text col py-1">
 								Genre
 							</label>
 							<select
@@ -82,7 +82,7 @@
 						</div>
 					</div>
 					<div class="ms-4 col">
-						<div class="form-check light-text mt-1">
+						<div class="form-check light-text py-1">
 							<input
 								class="form-check-input"
 								type="checkbox"
@@ -105,7 +105,7 @@
 				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
-				<h2 class="fs-5 light-text mt-12">
+				<h2 class="fs-5 light-text pt-12">
 					No games found with search term {query}
 				</h2>
 			{/if}

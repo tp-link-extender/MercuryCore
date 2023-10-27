@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { prisma, transaction } from "$lib/server/prisma"
+import { query, squery, transaction, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -29,64 +29,73 @@ export const actions = {
 		if (!form.valid) return formError(form)
 
 		const {
-			name,
-			description,
-			serverIP,
-			serverPort,
-			maxPlayers,
-			privateServer,
-		} = form.data
+				name,
+				description,
+				serverIP,
+				serverPort,
+				maxPlayers,
+				privateServer,
+			} = form.data,
+			gameCount = (
+				await squery<{
+					count: number
+				}>(surql`SELECT count(->owns->place) FROM user`)
+			).count
 
-		const gameCount = await prisma.authUser.findUnique({
-			where: {
-				id: user.id,
-			},
-			select: {
-				_count: true,
-			},
-		})
-
-		if (gameCount && gameCount?._count.places >= 2)
+		if (gameCount >= 2)
 			return formError(
 				form,
 				["other"],
 				["You may only have 2 places at most"],
 			)
 
-		let place: any
-		try {
-			await prisma.$transaction(async tx => {
-				place = await tx.place.create({
-					data: {
-						name,
-						description: {
-							create: {
-								text: description,
-							},
-						},
-						serverIP,
-						serverPort,
-						privateServer,
-						maxPlayers,
-						ownerUsername: user.username,
-					},
-				})
+		const id = (await query(
+			surql`stuff:increment.place`,
+		)) as unknown as number
 
-				await transaction(
-					{ id: user.id },
-					{ number: 1 },
-					0,
-					{
-						note: `Created place ${name}`,
-						link: `/place/${place.id}`,
-					},
-					tx,
-				)
+		try {
+			await transaction({ number: user.number }, { number: 1 }, 0, {
+				note: `Created place ${name}`,
+				link: `/place/${id + 1}`,
 			})
 		} catch (e: any) {
+			console.log("error caught", e.message)
 			return formError(form, ["other"], [e.message])
 		}
 
-		throw redirect(302, `/place/${place.id}`)
+		await query(
+			surql`
+				LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
+				LET $place = CREATE place CONTENT {
+					id: $id,
+					name: $name,
+					description: [{
+						text: $description,
+						updated: time::now(),
+					}],
+					serverIP: $serverIP,
+					serverPort: $serverPort,
+					privateServer: $privateServer,
+					serverTicket: rand::guid(),
+					privateTicket: rand::guid(),
+					serverPing: 0,
+					maxPlayers: $maxPlayers,
+					created: time::now(),
+					updated: time::now(),
+					deleted: false,
+				};
+				RELATE $user->owns->$place`,
+			{
+				user: `user:${user.id}`,
+				name,
+				description,
+				serverIP,
+				serverPort,
+				privateServer,
+				maxPlayers,
+			},
+		)
+
+		throw redirect(302, `/place/${id + 1}/${name}`)
 	},
 }

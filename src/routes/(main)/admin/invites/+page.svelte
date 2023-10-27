@@ -28,12 +28,12 @@
 <div class="container py-6">
 	<h1 class="light-text mb-0">Admin - Invites</h1>
 	<a href="/admin" class="text-decoration-none">
-		<i class="fas fa-caret-left" />
-		Back to panel
+		<fa fa-caret-left />
+		 Back to panel
 	</a>
 	<div class="row mt-6">
 		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData tabs />
+			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
@@ -42,7 +42,7 @@
 						<div class="row">
 							<label
 								for="enableInviteCustom"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 text-md-right light-text">
 								Enable custom invite key
 							</label>
 							<div class="col-md-2">
@@ -61,7 +61,7 @@
 							<div class="row" transition:fade>
 								<label
 									for="inviteCustom"
-									class="col-md-3 col-form-label text-md-right light-text">
+									class="col-md-3 text-md-right light-text">
 									Custom invite key
 								</label>
 								<div class="col-md-8">
@@ -88,7 +88,7 @@
 						<div class="row">
 							<label
 								for="enableInviteExpiry"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 text-md-right light-text">
 								Enable expiry
 							</label>
 							<div class="col-md-2">
@@ -107,7 +107,7 @@
 							<div class="row" transition:fade>
 								<label
 									for="inviteExpiry"
-									class="col-md-3 col-form-label text-md-right light-text">
+									class="col-md-3 text-md-right light-text">
 									Expiry date
 								</label>
 								<div class="col-md-8">
@@ -132,7 +132,7 @@
 						<div class="row">
 							<label
 								for="inviteUses"
-								class="col-md-3 col-form-label text-md-right light-text">
+								class="col-md-3 text-md-right light-text">
 								Uses
 							</label>
 							<div class="col-md-8">
@@ -170,7 +170,7 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<table class="table table-responsive shadow-none">
+				<table class="w-100">
 					<thead>
 						<tr>
 							<th scope="col">Options</th>
@@ -187,23 +187,27 @@
 									<form
 										use:enhance
 										method="POST"
-										action="?id={invite.key}">
+										action="?id={invite.id}">
 										<button
 											name="action"
 											value="disable"
 											class="btn btn-sm btn-link text-decoration-none text-danger my-0">
-											<i class="fas fa-ban" />
-											Disable Invite
+											<fa fa-ban />
+											 Disable Invite
 										</button>
 									</form>
 								</td>
-								<td>mercurkey-{invite.key}</td>
+								<td>mercurkey-{invite.id}</td>
 								<td>{invite.usesLeft}</td>
-								<td>{invite.creator?.username}</td>
 								<td>
-									{new Date(
-										invite.creation
-									).toLocaleDateString()}
+									{#if invite.creator}
+										<User user={invite.creator} full thin />
+									{:else}
+										<em>Nobody</em>
+									{/if}
+								</td>
+								<td>
+									{new Date(invite.created).toLocaleString()}
 								</td>
 							</tr>
 						{/each}

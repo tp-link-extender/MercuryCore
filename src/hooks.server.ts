@@ -3,10 +3,10 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
+import { query, squery, surql } from "$lib/server/surreal"
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
-import { client } from "$lib/server/redis"
+import surreal from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
 
@@ -52,55 +52,49 @@ export async function handle({ event, resolve }) {
 
 	if (!session || !user) return await resolve(event)
 
+	const moderation = await squery(
+		surql`
+			SELECT *
+			FROM moderation
+			WHERE out = $user
+				AND active = true`,
+		{ user: `user:${user.id}` },
+	)
+
 	if (
-		!["/moderation", "/terms"].includes(pathname) &&
-		(
-			await prisma.moderationAction.findMany({
-				where: {
-					moderateeId: user.id,
-					active: true,
-				},
-			})
-		)[0]
+		!["/moderation", "/terms", "/privacy", "/api"].includes(pathname) &&
+		!pathname.startsWith("/api/avatar") &&
+		moderation
 	)
 		throw redirect(302, "/moderation")
 
-	await prisma.authUser.update({
-		where: {
-			id: user.id,
-		},
-		data: {
-			lastOnline: new Date(),
-		},
+	await query(surql`UPDATE $user SET lastOnline = time::now()`, {
+		user: `user:${user.id}`,
 	})
 
+	const economy = (await surreal.select("stuff:economy"))[0],
+		dailyStipend = (economy?.dailyStipend as number) || 10
+
 	if (
-		!(
-			user.currencyCollected.getTime() -
-				(new Date().getTime() -
-					1000 *
-						3600 *
-						Number((await client.get("stipendTime")) || 12)) >
-			0
-		)
+		new Date(user.currencyCollected).getTime() -
+			(new Date().getTime() - 3600_000 * dailyStipend) <
+		0
 	)
-		await prisma.authUser.update({
-			where: {
-				id: user.id,
+		await query(
+			surql`
+				UPDATE $user SET currencyCollected = time::now();
+				UPDATE $user SET currency += $dailyStipend`,
+			{
+				user: `user:${user.id}`,
+				dailyStipend,
 			},
-			data: {
-				currencyCollected: new Date(),
-				currency: {
-					increment: Number((await client.get("dailyStipend")) || 10),
-				},
-			},
-		})
+		)
 
 	return resolve(event)
 }
 
 export const handleError = async ({ event, error }) => {
-	const session = await event.locals.auth.validate(),
+	const session = await event.locals.auth?.validate(),
 		user = session?.user
 
 	// Fancy error logging: time, user, and error
