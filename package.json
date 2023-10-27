@@ -50,7 +50,7 @@
 		"@threlte/extras": "7.3.0",
 		"bootstrap": "^5.3.2",
 		"check-disk-space": "^3.4.0",
-		"crypto-js": "^4.1.1",
+		"crypto-js": "^4.2.0",
 		"custom-protocol-check": "^1.4.0",
 		"d3-interpolate": "^3.0.1",
 		"dotenv": "^16.3.1",
