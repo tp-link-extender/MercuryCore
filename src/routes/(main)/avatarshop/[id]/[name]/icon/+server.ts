@@ -20,15 +20,17 @@ export async function GET({ locals, params }) {
 				name,
 				visibility
 			FROM $asset`,
-		{ asset: `asset:${params.id}` },
+		{ asset: `asset:${id}` },
 	)
 
 	if (!asset) throw error(404, "Not found")
 
 	const { user } = await authorise(locals)
 	if (asset.visibility == "Moderated")
+		// If the asset is moderated
 		throw redirect(302, `/mercurx.svg`)
 	if (asset.visibility != "Visible" && user.permissionLevel < 4)
+		// If the asset is pending review
 		throw redirect(302, `/light/mQuestion.svg`)
 
 	let file
@@ -40,5 +42,6 @@ export async function GET({ locals, params }) {
 		} catch (e) {}
 
 	if (file) return new Response(file)
+	// If the asset is visible, but the file doesn't exist (waiting for RCC?)
 	throw redirect(302, `/m....png`)
 }

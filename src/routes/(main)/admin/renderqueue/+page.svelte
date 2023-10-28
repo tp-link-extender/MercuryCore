@@ -119,7 +119,13 @@
 								<td>
 									{new Date(task.created).toLocaleString()}
 								</td>
-								<td>N/A</td>
+								<td>
+									{task.completed
+										? new Date(
+												task.completed
+										  ).toLocaleString()
+										: "N/A"}
+								</td>
 							</tr>
 						{/each}
 					</tbody>

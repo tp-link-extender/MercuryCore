@@ -246,7 +246,4 @@
 		#interactions
 			flex-direction column
 			align-items left
-
-	#avatar
-		aspect-ratio 3/4
 </style>
