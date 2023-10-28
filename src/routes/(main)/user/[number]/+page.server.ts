@@ -293,15 +293,15 @@ export const actions = {
 			throw e
 		}
 	},
-	rerender: async ({ locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 3)
+	rerender: async ({ locals, params, getClientAddress }) => {
+		await authorise(locals, 3)
 
 		const limit = ratelimit({}, "rerender", getClientAddress, 60)
 		if (limit) return fail(429, { msg: "Too many requests" })
 
 		try {
-			await requestRender("Avatar", user.number)
-		} catch(e) {
+			await requestRender("Avatar", parseInt(params.number))
+		} catch (e) {
 			console.error(e)
 			return fail(500, { msg: "Failed to request render" })
 		}

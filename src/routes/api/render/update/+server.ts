@@ -40,13 +40,15 @@ export async function POST({ request, url }) {
 			: new TextDecoder().decode(buffer2),
 	)
 
-	const status: number = json.Status
+	const status: "Rendering" | "Completed" = json.Status
 
-	if (status == 1)
+	console.log(status)
+
+	if (status == "Rendering")
 		await query(surql`UPDATE $render SET status = "Rendering"`, {
 			render: `render:${id}`,
 		})
-	else if (status == 2) {
+	else if (status == "Completed") {
 		const base64: string = json.Click
 
 		// Convert base64 from RCCService to an image
@@ -55,6 +57,8 @@ export async function POST({ request, url }) {
 		}/${task.relativeId}.png`
 
 		fs.writeFileSync(path, base64, "base64")
+
+		console.log("SAVE", path)
 
 		await query(
 			surql`
