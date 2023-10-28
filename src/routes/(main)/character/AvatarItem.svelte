@@ -1,6 +1,6 @@
 <script lang="ts">
-	// An avatar shop item component, used in the
-	// avatar shop and inventory pages.
+	import type { SubmitFunction } from "@sveltejs/kit"
+	// An equippable avatar item component
 
 	export let asset: {
 		name: string
