@@ -1,4 +1,3 @@
-import render from "$lib/server/render"
 import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
