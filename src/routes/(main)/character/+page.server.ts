@@ -1,8 +1,8 @@
-import render from "$lib/server/render"
 import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { fail, error } from "@sveltejs/kit"
+import requestRender from "$lib/server/requestRender"
 
 // Heads, Faces, T-Shirts, Shirts, Pants, Gear
 const allowedTypes = [17, 18, 2, 11, 12, 19]
@@ -84,20 +84,15 @@ export const actions = {
 
 		currentColours[bodyPart] = parseInt(bodyColour)
 
-		await Promise.all([
-			query(surql`UPDATE $user SET bodyColours = $currentColours`, {
-				user: `user:${user.id}`,
-				currentColours,
-			}),
-			render(user.username, currentColours),
-		])
+		await query(surql`UPDATE $user SET bodyColours = $currentColours`, {
+			user: `user:${user.id}`,
+			currentColours,
+		})
+
+		await requestRender("Avatar", user.number, true)
 
 		return {
-			avatar: `${await render(
-				user.username,
-				currentColours,
-				true,
-			)}?r=${Math.random()}`,
+			avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
 		}
 	},
 	regen: async ({ locals, getClientAddress }) => {
@@ -106,12 +101,14 @@ export const actions = {
 		if (ratelimit({}, "regen", getClientAddress, 2))
 			return fail(429, { msg: "Too many requests" })
 
-		return {
-			avatar: `${await render(
-				user.username,
-				user.bodyColours,
-				true,
-			)}?r=${Math.random()}`,
+		try {
+			await requestRender("Avatar", user.number, true)
+			return {
+				avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
+			}
+		} catch (e) {
+			console.error(e)
+			return fail(500, { msg: "Failed to request render" })
 		}
 	},
 	equip: async ({ locals, url, getClientAddress }) => {
@@ -175,6 +172,16 @@ export const actions = {
 					user: `user:${user.id}`,
 					asset: `asset:${id}`,
 				})
+		}
+
+		try {
+			await requestRender("Avatar", user.number, true)
+			return {
+				avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
+			}
+		} catch (e) {
+			console.error(e)
+			return fail(500, { msg: "Failed to request render" })
 		}
 	},
 }

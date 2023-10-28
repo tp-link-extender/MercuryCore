@@ -14,8 +14,8 @@ local ScriptContext = game:GetService "ScriptContext"
 
 pcall(function()
 	ContentProvider:SetBaseUrl(baseUrl)
-	InsertService:SetAssetUrl(baseUrl .. "/Asset/?id=%d")
-	InsertService:SetAssetVersionUrl(baseUrl .. "/Asset/?assetversionid=%d")
+	InsertService:SetAssetUrl(baseUrl .. "/asset/assetfetch?id=%d")
+	InsertService:SetAssetVersionUrl(baseUrl .. "/asset/assetfetch?assetversionid=%d")
 end)
 
 HttpService.HttpEnabled = true
@@ -36,7 +36,7 @@ game:HttpPost(
 		.. thumbnailKey
 		.. "&amp;taskID="
 		.. game.JobId,
-	'{"Status": 1}',
+	'{"Status": "Rendering"}',
 	true,
 	"text/json"
 )
@@ -56,7 +56,7 @@ end
 
 local click = ThumbnailGenerator:Click("PNG", 420, 420, true)
 
-local result = '{"Status": 2, "Click": "' .. tostring(click) .. '"}'
+local result = '{"Status": "Completed", "Click": "' .. tostring(click) .. '"}'
 print("[" .. game.JobId .. "] Successfully rendered, moving on...")
 
 while true do

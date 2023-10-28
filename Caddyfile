@@ -1,7 +1,7 @@
 banland.xyz {
-	rewrite /Asset /asset/assetfetch
-	rewrite /Asset/ /asset/assetfetch
-	rewrite /Asset/Default.ashx /asset/assetfetch
+	rewrite /Asset /asset
+	rewrite /Asset/ /asset
+	rewrite /Asset/Default.ashx /asset
 	rewrite /Asset/CharacterFetch.ashx /asset/characterfetch
 	rewrite /Asset/BodyColors.ashx /asset/bodycolors
 
