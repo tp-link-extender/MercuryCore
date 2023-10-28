@@ -51,7 +51,6 @@ declare global {
 
 	declare const AdminLink: typeof import("$lib/components/AdminLink.svelte").default
 	declare const Asset: typeof import("$lib/components/Asset.svelte").default
-	declare const AvatarItem: typeof import("$lib/components/AvatarItem.svelte").default
 	declare const Breadcrumbs: typeof import("$lib/components/Breadcrumbs.svelte").default
 	declare const DeleteButton: typeof import("$lib/components/DeleteButton.svelte").default
 	declare const Footer: typeof import("$lib/components/Footer.svelte").default

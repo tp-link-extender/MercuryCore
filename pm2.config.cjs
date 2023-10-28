@@ -5,7 +5,7 @@ module.exports = {
 	apps: [
 		{
 			name: "Mercury",
-			script: "build/index.js",
+			script: "build",
 			node_args: "-r dotenv/config",
 		},
 	],

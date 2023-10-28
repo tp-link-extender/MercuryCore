@@ -500,10 +500,10 @@ export default defineConfig({
 		],
 
 		[
-			/^fa[s]?$/,
-			() => ({
+			/^fa(r?)$/,
+			([, a]) => ({
 				"font-family": '"Font Awesome 6"',
-				"font-weight": 900,
+				"font-weight": a[0] == "r" ?400 : 900,
 				"-moz-osx-font-smoothing": "grayscale",
 				"-webkit-font-smoothing": "antialiased",
 				display: "inline-block",
@@ -511,13 +511,6 @@ export default defineConfig({
 				"font-variant": "normal",
 				"line-height": "1",
 				"text-rendering": "auto",
-			}),
-		],
-		[
-			/^far$/,
-			() => ({
-				"font-family": '"Font Awesome 6"',
-				"font-weight": 400,
 			}),
 		],
 	],

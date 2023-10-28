@@ -1,17 +1,16 @@
-import render from "$lib/server/render"
 import { squery, surql } from "$lib/server/surreal"
 import fs from "fs"
 import { error } from "@sveltejs/kit"
+import requestRender from "$lib/server/requestRender"
 
-export async function GET({ params, setHeaders }) {
+export async function GET({ url, params }) {
 	let { username } = params
 	if (!username) throw error(400, "Invalid Request")
 
-	let bodyShot = ""
-	if (username.endsWith("-body")) {
-		username = username.replace("-body", "")
-		bodyShot = "-body"
-	}
+	const wait = url.searchParams.has("wait")
+
+	if (username.endsWith("-body")) username = username.replace("-body", "")
+
 	const user = await squery<{
 		bodyColours: {
 			Head: number
@@ -21,23 +20,36 @@ export async function GET({ params, setHeaders }) {
 			LeftLeg: number
 			RightLeg: number
 		}
+		number: number
 	}>(
 		surql`
-			SELECT bodyColours FROM user
+			SELECT bodyColours, number FROM user
 			WHERE username = $username`,
 		{ username },
 	)
 
 	if (!user) throw error(404, "User not found")
 
-	if (!fs.existsSync(`data/avatars/${username}${bodyShot}.webp`))
-		await render(username, user.bodyColours, !!bodyShot)
+	try {
+		if (wait) {
+			// If the file doesn't exist, wait for it to be created
+			// if it does exist, wait for it to be modified
+			console.log("waiting...")
+			await new Promise<void>(resolve => {
+				const watcher = fs.watch(
+					`data/avatars/${user.number}.png`,
+					() => {
+						watcher.close()
+						resolve()
+					},
+				)
+			})
+			console.log("waited")
+		} else if (!fs.existsSync(`data/avatars/${user.number}.png`))
+			throw new Error()
 
-	setHeaders({
-		"Cache-Control": "max-age=5",
-	})
-
-	return new Response(
-		fs.readFileSync(`data/avatars/${username}${bodyShot}.webp`),
-	)
+		return new Response(fs.readFileSync(`data/avatars/${user.number}.png`))
+	} catch {
+		return new Response(fs.readFileSync(`static/m....png`))
+	}
 }

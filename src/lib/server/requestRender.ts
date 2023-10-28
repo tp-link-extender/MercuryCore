@@ -15,6 +15,7 @@ const selectRender = surql`
 export default async function (
 	renderType: "Clothing" | "Avatar",
 	relativeId: number,
+	wait = false,
 ) {
 	const renders = await mquery<Render[]>(
 		surql`
@@ -69,12 +70,30 @@ export default async function (
 
 	// Send the XML to RCCService
 
-	await fetch("http://localhost:64989", {
-		method: "POST",
-		body: xml,
-		headers: {
-			"Content-Type": "text/xml; charset=utf-8",
-			SOAPAction: "http://roblox.com/OpenJobEx",
-		},
-	})
+	const path = `data/${
+		renderType == "Avatar" ? "avatars" : "thumbnails"
+	}/${relativeId}.png`
+
+	let waiter = wait
+		? // If the file doesn't exist, wait for it to be created
+		  // if it does exist, wait for it to be modified
+		  new Promise<void>(resolve => {
+				const watcher = fs.watch(path, () => {
+					watcher.close()
+					resolve()
+				})
+		  })
+		: null
+
+	await Promise.all([
+		waiter,
+		fetch(process.env.RCC_DOMAIN as string, {
+			method: "POST",
+			body: xml,
+			headers: {
+				"Content-Type": "text/xml; charset=utf-8",
+				SOAPAction: "http://roblox.com/OpenJobEx",
+			},
+		}),
+	])
 }
