@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from "$app/environment"
+	import AvatarItem from "./AvatarItem.svelte"
 
 	export let data, form
 	const { user } = data
@@ -142,14 +143,14 @@
 	<h1 class="text-white">Avatar</h1>
 	<div class="row mt-6">
 		<div
-			class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex flex-column
-		gap-4">
+			class="col-xl-3 col-lg-3 col-md-6 col-sm-12
+			d-flex flex-column gap-4">
 			<div class="card">
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
 						<button class="btn btn-primary w-100">
 							<fa fa-rotate />
-							 Regenerate
+							Regenerate
 						</button>
 					</form>
 					<p class="text-danger">
@@ -286,9 +287,6 @@
 	button.colour
 		height 2.5rem
 		width 2.5rem
-
-	img
-		aspect-ratio 3/4 !important
 
 	.parts
 		position relative

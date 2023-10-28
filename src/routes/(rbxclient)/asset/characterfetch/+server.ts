@@ -31,11 +31,10 @@ export async function GET({ url, setHeaders }) {
 
 	if (!user) throw error(404, "User not found")
 
-	let charApp = `${process.env.RCC_ORIGIN}/Asset/BodyColors.ashx?id=${userNumber}`
+	let charApp = `${process.env.RCC_ORIGIN}/asset/bodycolors?id=${userNumber}`
 
-	for (const asset of user.wearing) {
+	for (const asset of user.wearing)
 		charApp += `;${process.env.RCC_ORIGIN}/asset?id=${asset}`
-	}
 
 	setHeaders({
 		Pragma: "no-cache",
