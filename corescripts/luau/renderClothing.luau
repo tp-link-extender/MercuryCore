@@ -15,12 +15,13 @@ local ScriptContext = game:GetService "ScriptContext"
 pcall(function()
 	ContentProvider:SetBaseUrl(baseUrl)
 	InsertService:SetAssetUrl(baseUrl .. "/asset/assetfetch?id=%d")
-	InsertService:SetAssetVersionUrl(baseUrl .. "/asset/assetfetch?assetversionid=%d")
+	InsertService:SetAssetVersionUrl(
+		baseUrl .. "/asset/assetfetch?assetversionid=%d"
+	)
 end)
 
 HttpService.HttpEnabled = true
 ScriptContext.ScriptsDisabled = true
-
 
 print(
 	"["
@@ -72,16 +73,15 @@ while true do
 			"text/json"
 		)
 	end)
-	if not ok then
-		print(
-			"["
-				.. game.JobId
-				.. "] An error occurred! ("
-				.. err
-				.. "). Uploading again..."
-		)
-	else
+	if ok then
 		print("[" .. game.JobId .. "] Upload successful! Moving on...")
 		break
 	end
+	print(
+		"["
+			.. game.JobId
+			.. "] An error occurred! ("
+			.. err
+			.. "). Uploading again..."
+	)
 end
