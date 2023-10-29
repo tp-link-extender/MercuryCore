@@ -111,7 +111,8 @@
 					<img
 						id="avatar"
 						class="mx-auto"
-						src="/api/avatar/{data.username}-body"
+						src={form?.avatar ||
+							`/api/avatar/${data.username}-body`}
 						alt={data.username} />
 					{#if user?.permissionLevel > 2}
 						<form
