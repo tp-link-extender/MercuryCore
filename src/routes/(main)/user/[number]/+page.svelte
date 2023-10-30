@@ -234,14 +234,16 @@
 	#all
 		max-width 60rem
 
-	+lg()
-		#infocard
-			padding 1.5rem
-		.display-sm
-			display none !important
+	#infocard
+		padding 1.5rem
+	.display-sm
+		display none !important
+
 	+-lg()
 		#infocard
 			padding 1rem
+		.display-sm
+			display initial !important
 		.display-lg
 			display none !important
 		#interactions

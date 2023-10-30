@@ -11,7 +11,7 @@ export async function load({ locals, params }) {
 
 	const number = parseInt(params.number),
 		{ user } = await authorise(locals),
-		userExists = await query<{
+		userExists = await squery<{
 			bio: {
 				id: string
 				text: string
@@ -108,12 +108,11 @@ export async function load({ locals, params }) {
 				number,
 				user: `user:${user.id}`,
 			},
-		),
-		user2 = userExists[0]
+		)
 
-	if (!user2) throw error(404, "Not found")
+	if (!userExists) throw error(404, "Not found")
 
-	return user2
+	return userExists
 }
 
 async function getData({

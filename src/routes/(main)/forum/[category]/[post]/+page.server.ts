@@ -26,7 +26,7 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	const forumPost = await query<{
+	const forumPost = await squery<{
 		author: {
 			number: number
 			status: "Playing" | "Online" | "Offline"
@@ -67,11 +67,11 @@ export async function load({ locals, params }) {
 		},
 	)
 
-	if (!forumPost[0]) throw error(404, "Not found")
+	if (!forumPost) throw error(404, "Not found")
 
 	return {
 		form: superValidate(schema),
-		...forumPost[0],
+		...forumPost,
 	}
 }
 
