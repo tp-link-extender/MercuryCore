@@ -71,16 +71,15 @@ while true do
 			"text/json"
 		)
 	end)
-	if not ok then
-		print(
-			"["
-				.. game.JobId
-				.. "] An error occurred! ("
-				.. err
-				.. "). Uploading again..."
-		)
-	else
+	if ok then
 		print("[" .. game.JobId .. "] Upload successful! Moving on...")
 		break
 	end
+	print(
+		"["
+			.. game.JobId
+			.. "] An error occurred! ("
+			.. err
+			.. "). Uploading again..."
+	)
 end
