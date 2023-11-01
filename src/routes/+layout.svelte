@@ -104,7 +104,9 @@
 					use:enhance
 					method="POST"
 					action="/notifications?s={notification.id}">
-					<button class="btn-close" aria-label="Close" />
+					<button class="btn p-0 px-1" aria-label="Close">
+						<fa fa-xmark-large />
+					</button>
 				</form>
 			</div>
 			<a
@@ -137,11 +139,6 @@
 {/if}
 
 <style lang="stylus">
-	.btn-close
-		filter invert(1) grayscale(100%) brightness(200%)
-		+lightTheme()
-			filter none
-
 	.toasts
 		width 25rem
 		--bs-toast-box-shadow 0 0 2rem #fff1
