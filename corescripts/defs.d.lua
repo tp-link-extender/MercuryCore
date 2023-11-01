@@ -7425,9 +7425,6 @@ declare class ServiceProvider extends Instance
 	StudioAssetService: StudioAssetService
 	StudioData: StudioData
 	StudioScriptDebugEventListener: StudioScriptDebugEventListener
-	StudioSdkService: StudioSdkService
-	StudioService: StudioService
-	StylingService: StylingService
 	TaskScheduler: TaskScheduler
 	TeamCreateData: TeamCreateData
 	TeamCreateService: TeamCreateService
@@ -7608,9 +7605,6 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "StudioAssetService"): StudioAssetService
 	function GetService(self, service: "StudioData"): StudioData
 	function GetService(self, service: "StudioScriptDebugEventListener"): StudioScriptDebugEventListener
-	function GetService(self, service: "StudioSdkService"): StudioSdkService
-	function GetService(self, service: "StudioService"): StudioService
-	function GetService(self, service: "StylingService"): StylingService
 	function GetService(self, service: "TaskScheduler"): TaskScheduler
 	function GetService(self, service: "TeamCreateData"): TeamCreateData
 	function GetService(self, service: "TeamCreateService"): TeamCreateService
@@ -8032,59 +8026,6 @@ declare class StudioWidget extends StudioObjectBase
 end
 
 declare class StudioScriptDebugEventListener extends Instance
-end
-
-declare class StudioSdkService extends Instance
-	function GetSdk(self): Instance
-	function SetSdk(self, sdk: Instance): nil
-end
-
-declare class StudioService extends Instance
-	ActiveScript: Instance
-	AlignDraggedObjects: boolean
-	DraggerSolveConstraints: boolean
-	GridSize: number
-	HoverInstance: Instance
-	InstalledPluginData: string
-	OnImportFromRoblox: RBXScriptSignal<>
-	OnOpenGameSettings: RBXScriptSignal<string>
-	OnOpenManagePackagePlugin: RBXScriptSignal<number, number>
-	OnPluginInstalledFromToolbox: RBXScriptSignal<>
-	OnPluginInstalledFromWeb: RBXScriptSignal<string>
-	OnPublishAsPlugin: RBXScriptSignal<{ Instance }>
-	OnSaveToRoblox: RBXScriptSignal<{ Instance }>
-	PivotSnapToGeometry: boolean
-	PromptTransformPluginCheckEnable: RBXScriptSignal<>
-	RotateIncrement: number
-	SaveLocallyAsComplete: RBXScriptSignal<boolean>
-	ShowConstraintDetails: boolean
-	StudioLocaleId: string
-	UseLocalSpace: boolean
-	function AnimationIdSelected(self, id: number): nil
-	function CopyToClipboard(self, stringToCopy: string): nil
-	function GetBadgeConfigureUrl(self, badgeId: number): string
-	function GetBadgeUploadUrl(self): string
-	function GetClassIcon(self, className: string): { [any]: any }
-	function GetPlaceIsPersistedToCloud(self): boolean
-	function GetResourceByCategory(self, category: string): { [any]: any }
-	function GetStartupAssetId(self): string
-	function GetStartupPluginId(self): string
-	function GetTermsOfUseUrl(self): string
-	function GetUserId(self): number
-	function GizmoRaycast(self, origin: Vector3, direction: Vector3, raycastParams: RaycastParams?): RaycastResult
-	function HasInternalPermission(self): boolean
-	function IsPluginInstalled(self, assetId: number): boolean
-	function IsPluginUpToDate(self, assetId: number, currentAssetVersion: number): boolean
-	function OpenInBrowser_DONOTUSE(self, url: string): nil
-	function PromptImportFile(self, fileTypeFilter: { any }?): Instance
-	function PromptImportFiles(self, fileTypeFilter: { any }?): { Instance }
-	function RequestClose(self, closeMode: EnumStudioCloseMode): nil
-	function SetPluginEnabled(self, assetId: number, state: boolean): nil
-	function ShowPlaceVersionHistoryDialog(self, placeId: number): nil
-	function ShowPublishToRoblox(self): nil
-	function TryInstallPlugin(self, assetId: number, assetVersionId: number): nil
-	function UninstallPlugin(self, assetId: number): nil
-	function UpdatePluginManagement(self): nil
 end
 
 declare class SurfaceAppearance extends Instance
