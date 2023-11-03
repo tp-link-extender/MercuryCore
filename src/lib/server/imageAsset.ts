@@ -114,5 +114,5 @@ export async function tShirtThumbnail(file: File) {
 		})
 
 	return (id: string | number) =>
-		fs.writeFileSync(`data/thumbnails/${id}.png`, fileBuffer)
+		fs.writeFileSync(`data/thumbnails/${id}`, fileBuffer)
 }

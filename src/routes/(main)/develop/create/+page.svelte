@@ -18,11 +18,16 @@
 
 	export const snapshot = { capture, restore }
 
-	const assets: any = {
-		2: "T-Shirt",
-		11: "Shirt",
-		12: "Pants",
-		13: "Decal",
+	const assets: { [k: string]: string } = {
+		"2": "T-Shirt",
+		"11": "Shirt",
+		"12": "Pants",
+		"13": "Decal",
+	}
+
+	if (data.user.permissionLevel > 3) {
+		// assets["8"] = "Hat"
+		assets["18"] = "Face"
 	}
 </script>
 
