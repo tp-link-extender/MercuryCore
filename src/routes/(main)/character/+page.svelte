@@ -140,7 +140,7 @@
 </script>
 
 <div class="container">
-	<h1 class="text-white">Avatar</h1>
+	<h1 class="text-white">Character</h1>
 	<div class="row mt-6">
 		<div
 			class="col-xl-3 col-lg-3 col-md-6 col-sm-12
@@ -157,15 +157,15 @@
 						{form?.msg || ""}
 					</p>
 					<img
-						alt="Your avatar"
+						alt="Your character"
 						class="w-100"
 						src={form?.avatar ||
 							`/api/avatar/${user.username}-body`} />
 				</div>
 			</div>
 			<div class="card">
-				<div class="card-header light-text">Body Colours</div>
-				<div class="card-body">
+				<div class="card-body light-text">
+					Body Colours
 					<div class="mannequin text-center">
 						<div
 							class="mx-auto"

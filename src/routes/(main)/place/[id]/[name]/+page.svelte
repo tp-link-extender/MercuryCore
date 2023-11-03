@@ -169,7 +169,6 @@
 				<button
 					on:click={placeLauncher}
 					id="play"
-					class:disabled={data.serverPing < Date.now() / 1000 - 35}
 					class="btn btn-lg btn-success mt-6">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
