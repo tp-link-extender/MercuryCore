@@ -4,17 +4,17 @@
 
 <footer class="position-relative text-center">
 	<br />
-	<p class="grey-text mb-2">
+	<div class="grey-text pb-2">
 		<a href="/" class="text-decoration-none accent-text me-1">Mercury</a>
 		2022-{new Date().getFullYear()}
 		<button
 			on:mousedown={() => (clicked = !clicked)}
-			class="heart border-0 p-0 grey-text cursor-pointer"
+			class="heart border-0 p-0 grey-text cursor-pointer fs-4"
 			class:clicked>
 			<span class="grey-text">made with</span>
 			<fa fa-heart />
 		</button>
-	</p>
+	</div>
 	<a class="light-text" href="/about">About</a>
 	<span class="text-muted">|</span>
 	<a class="light-text" href="/terms">Terms of Service</a>
