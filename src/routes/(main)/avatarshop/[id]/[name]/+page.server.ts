@@ -119,8 +119,10 @@ export const actions = {
 			},
 		)
 
-		if (!commentAuthor) throw error(404)
-		receiverId = commentAuthor.id || ""
+		console.log(commentAuthor)
+
+		if (replyId && !commentAuthor) throw error(404)
+		receiverId = commentAuthor?.id || ""
 
 		const newReplyId = await squery<string>(surql`fn::id()`)
 
