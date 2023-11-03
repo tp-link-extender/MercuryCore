@@ -15,7 +15,7 @@ import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({
-		type: z.enum(["2", "11", "12", "13"]),
+		type: z.enum(["2", "8", "11", "12", "13"]),
 		name: z.string().min(3).max(50),
 		description: z.string().max(1000).optional(),
 		price: z.number().int().min(0).max(999),
@@ -23,6 +23,7 @@ const schema = z.object({
 	}),
 	assets: { [k: number]: any } = {
 		2: "T-Shirt",
+		8: "Hat",
 		11: "Shirt",
 		12: "Pants",
 		13: "Decal",
@@ -82,6 +83,13 @@ export const actions = {
 					)
 				}
 				break
+
+			case 8: // Hat
+				return formError(
+					form,
+					["type"],
+					["Cannot upload this type of asset yet"],
+				)
 
 			case 11: // Shirt
 				return formError(
