@@ -23,9 +23,79 @@ main
 	overflow hidden
 
 body
+	margin 0
 	display flex
 	flex-direction column
 	min-height 100vh
+	line-height 1.5
+
+hr
+	margin 1rem 0
+	color inherit
+	border 0
+	border-top 1px solid
+	opacity 0.25
+
+h1
+	font-size 2rem
+h2
+	font-size 1.5rem
+h3
+	font-size 1.3rem
+h4
+	font-size 1rem
+// h5
+// 	font-size 0.8rem
+// h6
+// 	font-size 0.7rem
+
+h1
+h2
+h3
+h4
+h5
+h6
+	margin-top 0
+	margin-bottom 0.5rem
+	font-weight 500
+	line-height 1.2
+	color var(--light-text) !important
+
+*
+*::before
+*::after
+	box-sizing border-box
+
+code
+	font-size 1rem
+	font-family monospace
+	word-wrap break-word
+	color #d63384
+
+textarea
+	resize vertical
+	font-family inherit
+
+fieldset
+	min-width 0
+	padding 0
+	margin 0
+	border 0
+
+label
+	display inline-block
+
+img
+svg
+	vertical-align middle
+
+table
+	caption-side bottom
+	border-collapse collapse
+
+select
+input
+	font-family inherit
 
 .light-text
 	color var(--light-text) !important
@@ -96,11 +166,8 @@ img[src^="/api/avatar"]
 	--bs-body-color #495057
 	--bs-link-color-rgb 52, 89, 230
 	--bs-link-hover-color-rgb 42, 71, 184
-
-.card
-	--bs-card-bg var(--accent)
-	--bs-card-spacer-y 1rem
-	--bs-card-spacer-x 1.5rem
+	@media (prefers-reduced-motion no-preference)
+		scroll-behavior smooth
 
 .btn
 	--bs-btn-padding-x 1rem
@@ -269,7 +336,7 @@ div[role="progressbar"]
 
 @keyframes progress-bar-stripes
 	0%
-  		background-position-x 1rem
+			background-position-x 1rem
 	100%
 		background-position-x 0
 
@@ -297,3 +364,21 @@ div[role="progressbar"]
 	padding-left 0
 	margin-bottom 0
 	list-style none
+
+.card
+	position relative
+	display flex
+	flex-direction column
+	min-width 0
+	color var(--text-light)
+	word-wrap break-word
+	background-color var(--accent)
+	background-clip border-box
+	border-radius 0.375rem
+	// border 1px solid var(--accent)
+
+.card-body
+	// Enable `flex-grow 1` for decks and groups so that card blocks take up
+	// as much space as possible, ensuring footers are aligned to the bottom.
+	flex 1 1 auto
+	padding 1rem

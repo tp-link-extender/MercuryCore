@@ -306,9 +306,8 @@ export const actions = {
 		const { locals, params, getClientAddress } = e
 		await authorise(locals, 3)
 
-		const { user2 } = await getData(e)
-
-		const limit = ratelimit({}, "rerender", getClientAddress, 60)
+		const { user2 } = await getData(e),
+			limit = ratelimit({}, "rerender", getClientAddress, 60)
 		if (limit) return fail(429, { msg: "Too many requests" })
 
 		try {

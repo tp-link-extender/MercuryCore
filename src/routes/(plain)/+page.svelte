@@ -67,7 +67,7 @@
 				</a>
 			</b>
 		</div>
-		<a href="/about" class="text-decoration-none pt-4 fs-5">
+		<a href="/about" class="text-decoration-none pt-4">
 			About us <fa fa-chevron-right />
 		</a>
 	</div>

@@ -52,7 +52,7 @@
 		border none
 
 	.card
-		border-width 1px
+		border 1px solid var(--accent2)
 
 	.assetcard
 		.card-body

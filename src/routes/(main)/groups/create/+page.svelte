@@ -13,7 +13,7 @@
 
 <Head title="Create a group" />
 
-<h1 class="text-center light-text">Create a group</h1>
+<h1 class="text-center">Create a group</h1>
 
 <form use:enhance method="POST" class="container pt-12 light-text">
 	<fieldset>
@@ -37,7 +37,7 @@
 				Working...
 			{:else}
 				Create ( <fa fa-gem />
-				 10 )
+				10 )
 			{/if}
 		</button>
 	</fieldset>

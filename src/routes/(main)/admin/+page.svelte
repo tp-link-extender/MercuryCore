@@ -69,14 +69,15 @@
 <Head title="Admin" />
 
 <div class="container py-6">
-	<h1 class="fs-2 light-text">Admin Panel</h1>
-	<h2 class="fs-4 mb-6 border-bottom border-2 pb-4 light-text">
-		Your permission level is: <span
+	<h1 class="light-text">Admin Panel</h1>
+	<h2 class="fs-3 pb-4">
+		Your permission level is <span
 			style="color: {permissions[user?.permissionLevel][0]}">
-			<fa class="{permissions[user?.permissionLevel][1]} me-1" />
+			<fa class="{permissions[user?.permissionLevel][1]} px-1" />
 			{permissions[user?.permissionLevel][2]}
 		</span>
 	</h2>
+	<hr class="text-light" />
 	<div class="row">
 		<div class="col-lg-2 col-md-3 mb-6 pe-0">
 			<TabNav bind:tabData vertical />
@@ -98,9 +99,10 @@
 			{/each}
 
 			<Tab {tabData}>
-				<div class="row pt-1">
-					<div class="col-lg-7 col-md-7 ps-1">
-						<div class="card bg-a3 text-black mb-4">
+				<div class="row">
+					<div
+						class="col-lg-7 col-md-7 d-flex flex-column gap-4 pb-4">
+						<div class="card bg-a3 text-black shadow-none">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
 									<fa fa-memory />
@@ -135,7 +137,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="card bg-a3 text-black">
+						<div class="card bg-a3 text-black shadow-none">
 							<div class="card-body bg-a rounded-1">
 								{#await diskSpace || getDiskSpace()}
 									<h3 class="light-text">Loading...</h3>
@@ -174,8 +176,8 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-5 col-md-5">
-						<div class="card bg-a3 text-black mb-4">
+					<div class="col-lg-5 col-md-5 d-flex flex-column gap-4">
+						<div class="card bg-a3 text-black shadow-none">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
 									<far fa-user class="me-2" />
@@ -187,7 +189,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="card bg-a3 text-black mb-4">
+						<div class="card bg-a3 text-black shadow-none">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
 									<far fa-file class="me-2" />
@@ -236,6 +238,5 @@
 		border-color var(--accent3) !important
 
 	.card
-		border-width 2px
-		border-color var(--accent3)
+		border 1px solid var(--accent2)
 </style>

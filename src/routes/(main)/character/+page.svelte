@@ -219,7 +219,7 @@
 						total={(assets || []).length} />
 				{/each}
 				{#if query && assets.length == 0}
-					<h2 class="fs-5 light-text mt-12">
+					<h2 class="fs-5 mt-12">
 						{#if tabData.currentTab == "Recent"}
 							No recently worn items found with search term {query}
 						{:else}
@@ -240,7 +240,7 @@
 		bind:this={bodyPartModals[bodyPart]} />
 	<div class="modal2">
 		<div class="modal-box d-flex flex-column p-4">
-			<h1 class="fs-4 light-text">Choose a {bodyPart} color</h1>
+			<h1 class="fs-4">Choose a {bodyPart} color</h1>
 			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
 					<form

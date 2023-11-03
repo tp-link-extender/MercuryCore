@@ -36,14 +36,19 @@ export async function GET({ url, params }) {
 			// if it does exist, wait for it to be modified
 			console.log("waiting...")
 			await new Promise<void>(resolve => {
-				const watcher = fs.watch(
-					`data/avatars/${user.number}.png`,
-					() => {
-						watcher.close()
-						resolve()
-					},
-				)
+				try {
+					const watcher = fs.watch(
+						`data/avatars/${user.number}.png`,
+						() => {
+							watcher.close()
+							resolve()
+						},
+					)
+				} catch {
+					resolve()
+				}
 			})
+
 			console.log("waited")
 		} else if (!fs.existsSync(`data/avatars/${user.number}.png`))
 			throw new Error()

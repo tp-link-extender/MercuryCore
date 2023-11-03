@@ -15,7 +15,7 @@
 			[data.name, ""],
 		]} />
 
-	<h1 class="light-text pb-8">
+	<h1 class="pb-8">
 		{data.name} - Forum
 		<span class="ps-6">
 			<a

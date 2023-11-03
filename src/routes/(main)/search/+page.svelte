@@ -11,11 +11,11 @@
 <Head title="Search for {data.query}" />
 
 {#if data.category}
-	<h1 class="text-center light-text">
+	<h1 class="text-center">
 		Search for "{data.query}" in {data.category}
 	</h1>
 {:else}
-	<h1 class="text-center light-text fs-2">
+	<h1 class="text-center fs-2">
 		Choose a category to search for "{data.query}"
 	</h1>
 {/if}

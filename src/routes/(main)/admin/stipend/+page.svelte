@@ -27,7 +27,7 @@
 <Head title="Daily Stipend - Admin" />
 
 <div class="container py-6">
-	<h1 class="light-text mb-0">Admin - Daily Stipend</h1>
+	<h1 class="mb-0">Admin - Daily Stipend</h1>
 	<a href="/admin" class="text-decoration-none">
 		<fa fa-caret-left />
 		Back to panel
