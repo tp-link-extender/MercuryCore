@@ -168,7 +168,7 @@
 		width 2.5rem
 
 	.post
-		border-color var(--accent2)
+		border 1px solid var(--accent2)
 
 	p
 		word-break break-word

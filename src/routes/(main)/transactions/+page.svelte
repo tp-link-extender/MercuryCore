@@ -4,7 +4,7 @@
 
 <Head title="Your transactions" />
 
-<h1 class="text-center light-text">Your transactions</h1>
+<h1 class="text-center">Your transactions</h1>
 
 <div class="container mt-12">
 	<table class="w-100 m-auto">
@@ -23,7 +23,7 @@
 				</td>
 
 				<td class="d-flex justify-content-center gap-3">
-					<div class="fs-6 pt-2">
+					<div class="fs-4 pt-2">
 						<span class="text-success">
 							<fa fa-gem />
 							{transaction.amountSent}
@@ -41,7 +41,7 @@
 						</small>
 					</div>
 					{#if value}
-						<div class="fs-6 pt-2">
+						<div class="fs-4 pt-2">
 							<fa fa-arrow-right class="me-1" />
 							<span class="text-success">
 								<fa fa-gem />

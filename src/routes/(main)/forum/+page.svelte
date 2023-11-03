@@ -5,7 +5,7 @@
 <Head title="Forum" />
 
 <div class="container light-text d-flex flex-column gap-4">
-	<h1 class="light-text pb-6">Forum</h1>
+	<h1 class="pb-6">Forum</h1>
 	{#each data.categories as category, num}
 		<div
 			in:fade|global={{ num, total: data.categories.length }}
@@ -15,12 +15,12 @@
 					class="col-lg-9 col-md-7 row light-text text-decoration-none"
 					href="/forum/{category.name.toLowerCase()}">
 					<div class="col-9">
-						<h2 class="fs-4">
+						<h2>
 							{category.name}
 						</h2>
 						{category.description}
 					</div>
-					<h3 class="col fs-5">
+					<h3 class="col">
 						{category.postCount} post{category.postCount == 1
 							? ""
 							: "s"}
@@ -33,7 +33,7 @@
 								.latestPost.id}"
 							class="light-text text-decoration-none">
 							Last post:
-							<h3 class="fs-5">
+							<h3>
 								{category.latestPost.title}
 							</h3>
 						</a>
@@ -56,6 +56,6 @@
 	containerMinWidth(70rem)
 
 	.category
-		border-color var(--accent2)
+		border 1px solid var(--accent2)
 		transition all 0.3s ease-out
 </style>

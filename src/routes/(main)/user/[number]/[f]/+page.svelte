@@ -12,7 +12,7 @@
 
 <Head title={titles[data.type]} />
 
-<h1 class="light-text text-center">{titles[data.type]} ({data.number})</h1>
+<h1 class="text-center">{titles[data.type]} ({data.number})</h1>
 
 <div class="container mt-12 d-grid">
 	{#each data.users as user, num}

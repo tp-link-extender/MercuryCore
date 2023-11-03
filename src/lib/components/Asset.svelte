@@ -36,8 +36,7 @@
 
 <style lang="stylus">
 	.card
-		border-width 1px
-		border-color var(--accent2)
+		border 1px solid var(--accent2)
 
 	a
 		.card-body

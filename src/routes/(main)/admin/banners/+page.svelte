@@ -41,7 +41,7 @@
 <Head title="Banners - Admin" />
 
 <div class="container py-6">
-	<h1 class="light-text mb-0">Admin - Banners</h1>
+	<h1 class="mb-0">Admin - Banners</h1>
 	<a href="/admin" class="text-decoration-none">
 		<fa fa-caret-left />
 		Back to panel
@@ -242,7 +242,7 @@
 {#if $modal}
 	<Modal {modal}>
 		<div class="d-flex align-items-start">
-			<h1 class="fs-4 pe-4 light-text">Banner #{bannerData.id}</h1>
+			<h1 class="fs-4 pe-4">Banner #{bannerData.id}</h1>
 			<button
 				type="button"
 				class="btn p-0 px-2"

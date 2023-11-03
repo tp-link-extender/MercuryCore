@@ -13,27 +13,24 @@
 
 <Head title="Create a place" />
 
-<h1 class="text-center light-text">Create a place</h1>
+<h1 class="text-center">Create a place</h1>
 
 <form use:enhance method="POST" class="container pt-12 light-text">
 	<fieldset>
 		<div class="row pb-2">
-			<label for="name" class="col-md-3>Place name</label">
-				<div class="col-md-8">
-					<input
-						bind:value={$form.name}
-						{...$constraints.name}
-						name="name"
-						id="name"
-						placeholder="Make sure to make it accurate"
-						class="form-control {$errors.name
-							? 'is-in'
-							: ''}valid" />
-					<p class="col-12 pb-2 text-danger">
-						{$errors.name || ""}
-					</p>
-				</div>
-			</label>
+			<label for="name" class="col-md-3">Place name</label>
+			<div class="col-md-8">
+				<input
+					bind:value={$form.name}
+					{...$constraints.name}
+					name="name"
+					id="name"
+					placeholder="Make sure to make it accurate"
+					class="form-control {$errors.name ? 'is-in' : ''}valid" />
+				<p class="col-12 pb-2 text-danger">
+					{$errors.name || ""}
+				</p>
+			</div>
 		</div>
 		<div class="row pb-2">
 			<label for="description" class="col-md-3">Description</label>

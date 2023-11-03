@@ -11,22 +11,25 @@
 	in:fade|global={{ num, total, duration: 300 }}
 	{href}
 	class="col-lg-3 p-1 text-decoration-none">
-	<div class="px-0 card bg-a3 text-center light-text">
+	<div class="px-0 card bg-a3 text-center light-text shadow-none">
 		<div class="card-body bg-a rounded-1 p-6">
 			{#if emoji}
-				<span class="fs-1">{emoji}</span>
+				<span class="icon">{emoji}</span>
 			{:else}
-				<i class="fs-1 {iconClass}" />
+				<i class="icon {iconClass}" />
 			{/if}
-			<h4 class="fs-5 mt-4">
+			<div class="fs-3 mt-4">
 				{name}
-			</h4>
+			</div>
 			<slot />
 		</div>
 	</div>
 </a>
 
 <style lang="stylus">
+	.icon
+		font-size 2.5rem
+
 	a 
 		.card-body
 			transition background-color 0.2s
@@ -34,6 +37,5 @@
 			background-color var(--background) !important
 
 	.card
-		border-width 1px
-		border-color var(--accent2)
+		border 1px solid var(--accent2)
 </style>

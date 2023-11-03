@@ -10,7 +10,7 @@
 <Head title="Render Queue - Admin" />
 
 <div class="container py-6">
-	<h1 class="light-text mb-0">Admin - Render Queue</h1>
+	<h1 class="mb-0">Admin - Render Queue</h1>
 	<a href="/admin" class="text-decoration-none">
 		<fa fa-caret-left />
 		Back to panel
@@ -71,16 +71,18 @@
 										<tr>
 											<th scope="row">{current.id}</th>
 											<td>{current.type}</td>
-											{#if current.user}
-												<User
-													user={current.user}
-													full
-													thin />
-											{:else if current.asset}
-												<td>{current.asset.name}</td>
-											{:else}
-												<td>Unknown</td>
-											{/if}
+											<td>
+												{#if current.user}
+													<User
+														user={current.user}
+														full
+														thin />
+												{:else if current.asset}
+													{current.asset.name}
+												{:else}
+													Unknown
+												{/if}
+											</td>
 										</tr>
 									</tbody>
 								</table>

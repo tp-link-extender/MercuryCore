@@ -24,31 +24,31 @@
 
 <div class="row">
 	<div id="dark" class="col light-text">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0 shadow-none">
-			<fa fa-arrow-left class="me-2" />
+		<a type="button" href="/" class="btn btn-lg border-0 px-0 fs-4">
+			<fa fa-arrow-left class="pe-2" />
 			Home
 		</a>
-		<h1 class="font-black light-text mb-6">
+		<h1 class="font-black mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
-		<div class="ms-4 mt-4 w-100">
-			<h2 class="fs-4 light-text">Endless possibilities</h2>
+		<div class="ps-4 w-100">
+			<h2 class="light-text">Endless possibilities</h2>
 			<p class="light-text opacity-75 more">
 				Create or play your favourite games and customise your character
 				with items on our catalog.
 			</p>
 		</div>
-		<div class="ms-4 mt-4 w-100">
-			<h2 class="fs-4 light-text">New features</h2>
+		<div class="ps-4 w-100">
+			<h2 class="light-text">New features</h2>
 			<p class="light-text opacity-75 more">
 				In addition to full client usability, additional features such
 				as security fixes, QoL fixes and an easy to use website make
 				your experience better.
 			</p>
 		</div>
-		<div class="ms-4 mt-4 w-100">
-			<h2 class="fs-4 light-text">Same nostalgia</h2>
+		<div class="ps-4 w-100">
+			<h2 class="light-text">Same nostalgia</h2>
 			<p class="light-text opacity-75 more">
 				All of our clients will remain as vanilla as possible, to make
 				sure it's exactly as you remember it.
@@ -83,7 +83,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="Username" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.username || ""}
 							</p>
 						</div>
@@ -101,7 +101,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="Password" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.password || ""}
 							</p>
 						</div>
@@ -111,8 +111,6 @@
 							{:else}
 								Log in
 							{/if}
-							<!-- $delayed is true if the form takes
-							more than a few hundred ms to submit -->
 						</button>
 					</fieldset>
 				</form>
