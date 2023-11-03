@@ -4,7 +4,7 @@
 
 <Head title="Members of {data.name}" />
 
-<h1 class="light-text text-center">Members of {data.name} ({data.memberCount})</h1>
+<h1 class="text-center">Members of {data.name} ({data.memberCount})</h1>
 
 <div class="container mt-12 d-grid">
 	{#each data.members as user, num}

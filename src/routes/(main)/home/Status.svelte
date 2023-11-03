@@ -8,12 +8,12 @@
 			<User user={status.authorUser} size="2rem" full bg="darker" />
 		</div>
 		<span class="report align-self-center">
-			<em class="small light-text timestamp">
-				{new Date(status.posted).toLocaleString()}
-			</em>
+			<small>
+				<em>{new Date(status.posted).toLocaleString()}</em>
+			</small>
 			<ReportButton
-				user={status.authorUser?.username || ""}
-				url="status:{status.id}" />
+				user={status.authorUser.username}
+				url={status.id} />
 		</span>
 	</div>
 	<p class="text-start">
@@ -32,6 +32,5 @@
 			justify-content space-between
 
 	.card
-		border-width 1px
-		border-color var(--accent2)
+		border 1px solid var(--accent2)
 </style>

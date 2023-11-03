@@ -30,7 +30,7 @@
 			<div class="w-100">
 				<div class="d-flex mb-2 justify-content-between">
 					<div class="d-flex align-items-center">
-						<h1 class="fs-2 light-text d-inline pe-4 mb-0">
+						<h1 class="d-inline pe-4 mb-0">
 							{data.username}
 						</h1>
 						{#if data.follower}
@@ -58,7 +58,7 @@
 							href="/user/{data.number}/friends"
 							class="light-text text-center text-decoration-none">
 							Friends
-							<h2 class="fs-3 light-text">
+							<h2>
 								{data.friendCount}
 							</h2>
 						</a>
@@ -66,7 +66,7 @@
 							href="/user/{data.number}/followers"
 							class="light-text text-center text-decoration-none">
 							Followers
-							<h2 class="fs-3 light-text">
+							<h2>
 								{data.followerCount}
 							</h2>
 						</a>
@@ -74,7 +74,7 @@
 							href="/user/{data.number}/following"
 							class="light-text text-center text-decoration-none">
 							Following
-							<h2 class="fs-3 light-text">
+							<h2>
 								{data.followingCount}
 							</h2>
 						</a>
@@ -101,12 +101,12 @@
 		<div class="col-6">
 			{#if data.bio}
 				<div class="pt-6">
-					<h2 class="fs-4 light-text">Bio</h2>
+					<h2 class="light-text">Bio</h2>
 					<p class="light-text ps-2">{data.bio.text}</p>
 				</div>
 			{/if}
 			<div class="pt-6">
-				<h2 class="fs-4 light-text">Avatar</h2>
+				<h2 class="light-text">Avatar</h2>
 				<div class="card bg-darker card-body">
 					<img
 						id="avatar"
@@ -135,7 +135,7 @@
 		<div class="col-6">
 			{#if data.places.length > 0}
 				<div class="pt-6">
-					<h2 class="fs-4 light-text">Creations</h2>
+					<h2 class="light-text">Creations</h2>
 					{#each data.places as place, num}
 						<div
 							in:fade|global={{
@@ -151,22 +151,27 @@
 		{#if data.groupsOwned.length > 0}
 			<div class="col-6 pt-6">
 				<div class="pt-6">
-					<h2 class="fs-4 light-text">Groups owned</h2>
+					<h2 class="light-text">Groups owned</h2>
 					{#each data.groupsOwned as group, num}
-						<a
-							in:fade={{ num, total: data.groupsOwned.length }}
-							class="card bg-darker light-text text-decoration-none fs-6 my-2"
-							href="/groups/{group.name}">
-							<div class="p-2">
-								<span class="float-start">
-									{group.name}
-								</span>
-								<span class="float-end">
-									<fa fa-user class="opacity-75" />
-									{group.memberCount}
-								</span>
-							</div>
-						</a>
+						<div class="py-2">
+							<a
+								in:fade={{
+									num,
+									total: data.groupsOwned.length,
+								}}
+								class="card bg-darker light-text text-decoration-none"
+								href="/groups/{group.name}">
+								<div class="p-2">
+									<span class="float-start">
+										{group.name}
+									</span>
+									<span class="float-end">
+										<fa fa-user class="opacity-75" />
+										{group.memberCount}
+									</span>
+								</div>
+							</a>
+						</div>
 					{/each}
 				</div>
 			</div>
@@ -174,28 +179,30 @@
 		{#if data.groups.length > 0}
 			<div class="col-6 pt-6">
 				<div class="pt-6">
-					<h2 class="fs-4 light-text">Groups in</h2>
+					<h2 class="light-text">Groups in</h2>
 					{#each data.groups as group, num}
-						<a
-							in:fade={{ num, total: data.groups.length }}
-							class="card bg-darker light-text text-decoration-none fs-6 my-2"
-							href="/groups/{group.name}">
-							<div class="p-2">
-								<span class="float-start">
-									{group.name}
-								</span>
-								<span class="float-end">
-									<fa fa-user class="opacity-75" />
-									{group.memberCount}
-								</span>
-							</div>
-						</a>
+						<div class="py-2">
+							<a
+								in:fade={{ num, total: data.groups.length }}
+								class="card bg-darker light-text text-decoration-none"
+								href="/groups/{group.name}">
+								<div class="p-2">
+									<span class="float-start">
+										{group.name}
+									</span>
+									<span class="float-end">
+										<fa fa-user class="opacity-75" />
+										{group.memberCount}
+									</span>
+								</div>
+							</a>
+						</div>
 					{/each}
 				</div>
 			</div>
 		{/if}
 		{#if data.posts.length > 0}
-			<h2 class="fs-4 pt-6 light-text">Latest feed posts</h2>
+			<h2 class="pt-6">Latest feed posts</h2>
 			<div id="feed" class="light-text px-4">
 				<div class="row">
 					{#each data.posts.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}

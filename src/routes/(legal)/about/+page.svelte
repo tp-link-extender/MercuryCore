@@ -56,16 +56,14 @@
 			id="info"
 			class="container pe-none d-flex flex-column justify-content-center
 			align-items-center position-relative">
-			<h1 class="title font-black light-text">Mercury 2</h1>
-			<p class="lead light-text text-center">
+			<h1 class="title font-black">Mercury 2</h1>
+			<p class="fs-4 light-text text-center">
 				Endless possibilities. New features. Same nostalgia.
 			</p>
-			<h2 class="fs-5">
-				<span
-					class="p-2 py-1 rounded-3 font-bold fs-6
+			<h2
+				class="p-2 py-1 rounded-3 font-bold fs-4
 				bg-secondary text-light opacity-75">
-					Closed Beta
-				</span>
+				Closed Beta
 			</h2>
 		</div>
 	{:else}
@@ -128,10 +126,10 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart>
 			<div class="w-100">
-				<h1 class="font-black light-text w-100">
+				<h1 class="font-black w-100">
 					Endless possibilities
 				</h1>
-				<h3 class="fs-4 light-text w-100">
+				<h3 class=" light-text w-100">
 					On Mercury 2, you can create games for others to play, or
 					shirts and pants for people to buy and wear. You can
 					customise your character to your heart's content with a vast
@@ -151,8 +149,8 @@
 	<ParallaxLayer offset={1} rate={2}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-black light-text w-100">New features</h1>
-				<h3 class="fs-4 light-text w-100">
+				<h1 class="font-black w-100">New features</h1>
+				<h3 class="w-100">
 					Mercury 2 has an even better website experience - easy to
 					use and even more feature-packed than the previous website.
 				</h3>
@@ -165,8 +163,8 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-black light-text w-100">Same nostalgia.</h1>
-				<h3 class="fs-4 light-text w-100">
+				<h1 class="font-black w-100">Same nostalgia.</h1>
+				<h3 class="w-100">
 					We ensure the clients are as vanilla as possible so that you
 					remember the client as it was back then.
 				</h3>
@@ -176,10 +174,10 @@
 	<ParallaxLayer offset={1} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-black light-text w-100">
+				<h1 class="font-black w-100">
 					Professional developers and community outreach.
 				</h1>
-				<h3 class="fs-4 light-text w-100">
+				<h3 class="w-100">
 					Mercury 2 developers deliver consistent updates so your
 					experience is always great.
 					<br />
@@ -201,8 +199,8 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-100">
-				<h1 class="font-black light-text w-100">Why Mercury 2?</h1>
-				<h3 class="fs-4 light-text w-100">
+				<h1 class="font-black w-100">Why Mercury 2?</h1>
+				<h3 class="w-100">
 					Mercury 2 provides a simple yet elegant website, with an
 					unique client and a forum, so you can communicate with your
 					friends
@@ -218,7 +216,7 @@
 				id="info"
 				class="container d-flex flex-column justify-content-center
 				align-items-center position-relative">
-				<h1 class="title font-black light-text">Mercury 2</h1>
+				<h1 class="title font-black">Mercury 2</h1>
 				<p class="lead light-text text-center">
 					Endless possibilities. New features. Same nostalgia.
 				</p>
@@ -259,6 +257,9 @@
 		right 0
 		bottom 0
 		z-index 10
+
+	h1
+		font-size 3rem
 
 	h1
 	h3

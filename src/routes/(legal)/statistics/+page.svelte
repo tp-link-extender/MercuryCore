@@ -4,10 +4,10 @@
 
 <Head title="Statistics" />
 
-<h1 class="text-center light-text">Statistics</h1>
+<h1 class="text-center">Statistics</h1>
 
-<div class="container mt-12 light-text fs-5">
-	<h2 class="light-text mb-4">Total number of:</h2>
+<div class="container pt-8 light-text fs-3">
+	<h2 class="pb-2">Total number of:</h2>
 	<table>
 		<tr>
 			<td>Users</td>
@@ -54,11 +54,12 @@
 			<td class="ps-6">{data.forumReplies}</td>
 		</tr>
 	</table>
-	<h2 class="light-text mt-6 mb-4">Average number of:</h2>
+	<br />
+	<h2 class="pb-2">Average number of:</h2>
 	<table>
 		<tr>
 			<td>
-				<fa fa-gem class="me-2" />
+				<fa fa-gem class="pe-2" />
 				per user
 			</td>
 			<td class="ps-6">{data.avgCurrency?.toFixed(2)}</td>

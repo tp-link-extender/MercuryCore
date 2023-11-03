@@ -3,7 +3,7 @@
 </script>
 
 <nav aria-label="breadcrumb" class="grey-text d-flex flex-wrap">
-	<ol class="border-0 shadow-none fs-6 px-0">
+	<ol class="fs-4 px-0">
 		{#each path as [name, href], num}
 			<li class="crumb" class:final={num == path.length - 1}>
 				{#if num == path.length - 1}

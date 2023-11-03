@@ -24,30 +24,30 @@
 
 <div class="row">
 	<div id="dark" class="col light-text">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0 shadow-none">
-			<fa fa-arrow-left class="me-2" />
+		<a type="button" href="/" class="btn btn-lg border-0 px-0 fs-4">
+			<fa fa-arrow-left class="pe-2" />
 			Home
 		</a>
-		<h1 class="font-black light-text mb-6">
+		<h1 class="font-black mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
-		<div class="ms-4 mt-4 w-100">
-			<h2 class="fs-4 light-text">Original username</h2>
+		<div class="ps-4 w-100">
+			<h2 class="light-text">Original username</h2>
 			<p class="light-text opacity-75 more">
 				Make sure it is appropriate and between 3-21 characters.
 				Underscores are allowed.
 			</p>
 		</div>
-		<div class="ms-4 mt-4 w-100">
-			<h2 class="fs-4 light-text">Valid email</h2>
+		<div class="ps-4 w-100">
+			<h2 class="light-text">Valid email</h2>
 			<p class="light-text opacity-75 more">
 				Mercury requires a valid email so you can reset your password at
 				any time.
 			</p>
 		</div>
-		<div class="ms-4 mt-4 w-100">
-			<h2 class="fs-4 light-text">Secure password</h2>
+		<div class="ps-4 w-100">
+			<h2 class="light-text">Secure password</h2>
 			<p class="light-text opacity-75 more">
 				Make sure your password has a mix of letters, numbers, and
 				symbols to protect against hackers.
@@ -82,7 +82,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="3-21 characters" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.username || ""}
 							</p>
 						</div>
@@ -100,7 +100,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="mercury@banland.xyz" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.email || ""}
 							</p>
 						</div>
@@ -118,7 +118,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="Password" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.password || ""}
 							</p>
 						</div>
@@ -136,7 +136,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="Confirm Password" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.cpassword || ""}
 							</p>
 						</div>
@@ -152,7 +152,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="mercurkey-12311121123" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.regkey || ""}
 							</p>
 						</div>
@@ -163,8 +163,6 @@
 							{:else}
 								Register
 							{/if}
-							<!-- $delayed is true if the form takes
-							more than a few hundred ms to submit -->
 						</button>
 					</fieldset>
 				</form>
@@ -219,7 +217,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="3-21 characters" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.username || ""}
 							</p>
 						</div>
@@ -237,7 +235,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="Password" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.password || ""}
 							</p>
 						</div>
@@ -255,7 +253,7 @@
 									? 'is-in'
 									: ''}valid"
 								placeholder="Confirm Password" />
-							<p class="col-12 mb-4 text-danger">
+							<p class="text-danger">
 								{$errors.cpassword || ""}
 							</p>
 						</div>
@@ -266,8 +264,6 @@
 							{:else}
 								Let's begin!
 							{/if}
-							<!-- $delayed is true if the form takes
-							more than a few hundred ms to submit -->
 						</button>
 					</fieldset>
 				</form>
