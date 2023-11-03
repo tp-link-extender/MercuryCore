@@ -6,8 +6,6 @@ const strings = {
 		contentName: "Graphic",
 		stringName: "Shirt Graphic",
 	},
-	Decal: { class: "Decal", contentName: "Texture", stringName: "Decal" },
-	Face: { class: "Decal", contentName: "Texture", stringName: "face" },
 	Shirt: {
 		class: "Shirt",
 		contentName: "ShirtTemplate",
@@ -18,6 +16,8 @@ const strings = {
 		contentName: "PantsTemplate",
 		stringName: "Pants",
 	},
+	Decal: { class: "Decal", contentName: "Texture", stringName: "Decal" },
+	Face: { class: "Face", contentName: "Texture", stringName: "face" },
 }
 
 /**
@@ -29,10 +29,11 @@ const strings = {
  * graphicAsset("T-Shirt", imageAssetId, id)
  */
 export function graphicAsset(
-	type: keyof typeof strings,
+	type: string,
 	imageAssetId: string | number,
 	graphicAssetId: string | number,
 ) {
+	const stringType = strings[type as keyof typeof strings]
 	const asset = fs
 		.readFileSync(
 			`xml/graphicAsset${
@@ -40,9 +41,9 @@ export function graphicAsset(
 			}.xml`,
 			"utf-8",
 		)
-		.replaceAll("_CLASS", strings[type].class)
-		.replaceAll("_CONTENT_NAME", strings[type].contentName)
-		.replaceAll("_STRING_NAME", strings[type].stringName)
+		.replaceAll("_CLASS", stringType.class)
+		.replaceAll("_CONTENT_NAME", stringType.contentName)
+		.replaceAll("_STRING_NAME", stringType.stringName)
 		.replaceAll("_ASSET_ID", imageAssetId.toString())
 
 	fs.writeFileSync(`data/assets/${graphicAssetId}`, asset)

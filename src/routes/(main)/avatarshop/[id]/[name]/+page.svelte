@@ -31,6 +31,7 @@
 		11: "Shirt",
 		12: "Pants",
 		13: "Decal",
+		18: "Face",
 	}
 
 	const usernav = [["fa-pencil", "Edit Asset", "/requests"]]
@@ -52,9 +53,9 @@
 					<h1 class="mb-0">{data.name}</h1>
 				</div>
 				<div class="col d-flex justify-content-end">
-					<li class="dropdown dropdown-hover dropdown-end ps-2 mt-2">
+					<li class="dropdown dropdown-hover dropdown-end ps-2 pt-2">
 						<fa fa-ellipsis />
-						<div class="dropdown-content pt-2">
+						<div class="dropdown-content">
 							<ul class="p-2 rounded-3">
 								{#each usernav as [icon, title, href]}
 									<li class="rounded-2">
@@ -114,7 +115,7 @@
 						sold
 					</p>
 					<p>
-						<strong>Type:</strong>
+						<strong>Type</strong>
 						{types[data.type]}
 					</p>
 				</div>
