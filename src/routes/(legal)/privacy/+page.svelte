@@ -1,9 +1,9 @@
 <Head title="Privacy Policy" description="Mercury's Privacy Policy" />
 
-<h1 class="text-center light-text">Privacy Policy</h1>
+<h1 class="text-center">Privacy Policy</h1>
 
-<div class="container mt-12 light-text">
-	<h2 class="fs-4 light-text text-center">Security</h2>
+<div class="container pt-6 light-text">
+	<h2 class="text-center pt-2">Security</h2>
 	<p>
 		Passwords are salted and hashed securely using SCrypt.
 		<br />
@@ -13,9 +13,7 @@
 		No personally identifying information such as location, device information,
 		network information, or IP addresses are collected by Mercury.
 	</p>
-	<h2 class="fs-4 light-text text-center mt-6">
-		Children under the age of 13
-	</h2>
+	<h2 class="text-center pt-2">Children under the age of 13</h2>
 	<p>
 		We do not knowingly collect personally identifiable information from
 		children under 13 years of age without parental consent. In the case we
@@ -27,13 +25,13 @@
 		that we will be able to complete the necessary actions to remove their
 		data.
 	</p>
-	<h2 class="fs-4 light-text text-center mt-6">Third parties</h2>
+	<h2 class="text-center pt-2">Third parties</h2>
 	<p>
 		We do not allow any third party to collect personal information from our
 		users. We do not work with any third parties and we do not give our
 		users' data to any third parties.
 	</p>
-	<h2 class="fs-4 light-text text-center mt-6">Data protection</h2>
+	<h2 class="text-center pt-2">Data protection</h2>
 	<p>
 		Under the General Data Protection Regulation (in the EU), Data
 		Protection Act (in the UK), or California Consumer Privacy Act (in

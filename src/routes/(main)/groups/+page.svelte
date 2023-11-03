@@ -29,7 +29,7 @@
 
 <div class="container">
 	<div class="row mb-12">
-		<h1 class="col-6 light-text">
+		<h1 class="col-6">
 			Groups
 			<a href="/groups/create" class="btn btn-primary ms-6">Create</a>
 		</h1>
@@ -64,7 +64,7 @@
 				<Group {group} {num} total={data.groups.length} />
 			{/each}
 			{#if query && searchedData.length == 0}
-				<h2 class="fs-5 light-text pt-12">
+				<h2 class="fs-5 pt-12">
 					No groups found with search term {query}
 				</h2>
 			{/if}

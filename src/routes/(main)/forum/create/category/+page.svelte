@@ -21,7 +21,7 @@
 
 <Head title="Create a forum category" />
 
-<h1 class="text-center light-text">Create a forum category</h1>
+<h1 class="text-center">Create a forum category</h1>
 
 <div class="container pt-12 light-text">
 	<form use:enhance method="POST">

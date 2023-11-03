@@ -15,18 +15,21 @@ import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({
-		type: z.enum(["2", "11", "12", "13"]),
-		name: z.string().min(3).max(50),
-		description: z.string().max(1000).optional(),
-		price: z.number().int().min(0).max(999),
-		asset: z.any(),
-	}),
-	assets: { [k: number]: any } = {
-		2: "T-Shirt",
-		11: "Shirt",
-		12: "Pants",
-		13: "Decal",
-	}
+	// Object.keys(assets) doesn't work
+	type: z.enum(["2", "8", "11", "12", "13", "18"]),
+	name: z.string().min(3).max(50),
+	description: z.string().max(1000).optional(),
+	price: z.number().int().min(0).max(999),
+	asset: z.any(),
+})
+const assets: { [k: number]: string } = {
+	2: "T-Shirt",
+	// 8: "Hat",
+	11: "Shirt",
+	12: "Pants",
+	13: "Decal",
+	18: "Face",
+}
 
 export async function load({ request, locals }) {
 	await authorise(locals, 5)
@@ -48,7 +51,7 @@ export const actions = {
 		if (limit) return limit
 
 		const { type, name, description, price } = form.data,
-			assetType = parseInt(type),
+			assetType = parseInt(type) as keyof typeof assets,
 			asset = formData.get("asset") as File
 
 		if (!asset)
@@ -83,6 +86,21 @@ export const actions = {
 				}
 				break
 
+			// case 8: // Hat
+			// 	if (user.permissionLevel < 3)
+			// 		return formError(
+			// 			form,
+			// 			["type"],
+			// 			[
+			// 				"You do not have permission to upload this type of asset",
+			// 			],
+			// 		)
+			// 	return formError(
+			// 		form,
+			// 		["type"],
+			// 		["Cannot upload this type of asset yet"],
+			// 	)
+
 			case 11: // Shirt
 				return formError(
 					form,
@@ -98,6 +116,7 @@ export const actions = {
 				)
 
 			case 13: // Decal
+			case 18: // Face
 				try {
 					saveImages = await Promise.all([
 						imageAsset(asset),
@@ -114,9 +133,10 @@ export const actions = {
 		}
 
 		const currentId = (await query(
-				surql`stuff:increment.asset`,
-			)) as unknown as number,
-			imageAssetId = currentId + 1,
+			surql`stuff:increment.asset`,
+		)) as unknown as number
+
+		const imageAssetId = currentId + 1,
 			id = currentId + 2
 
 		await query(

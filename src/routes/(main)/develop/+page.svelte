@@ -9,7 +9,10 @@
 	export let data
 	const { user } = data
 
-	if (user?.permissionLevel == 5) assetTypes.push(["Hats", "🎩", ""])
+	if (user?.permissionLevel > 2) {
+		assetTypes.push(["Hats", "🎩", "8"])
+		assetTypes.push(["Face", "🙂", "18"],)
+}
 
 	let tabData = TabData(data.url, ["Create", "Creations"])
 	let tabData2 = TabData(data.url, ["Shirts", "T-Shirts", "Pants", "Decals"])
@@ -18,7 +21,7 @@
 <Head title="Create" />
 
 <div class="container py-2">
-	<h1 class="mb-2 light-text">Create</h1>
+	<h1 class="mb-2">Create</h1>
 	<div class="row">
 		<div class="col-lg-2 col-md-3 mb-6">
 			<TabNav bind:tabData vertical />

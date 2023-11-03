@@ -87,7 +87,7 @@
 		<a
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
 			class="px-4 pt-2 text-decoration-none light-text w-100">
-			<h2 class="fs-4 pt-2">
+			<h2 class="pt-2">
 				{post.title}
 			</h2>
 
@@ -112,11 +112,11 @@
 		overflow hidden
 		word-break break-word
 
-		border-color var(--accent2)
+		border 1px solid var(--accent2)
 		transition all 0.3s ease-out
 		&:hover
 			background var(--background)
-			border-color var(--accent3)
+			border 1px solid var(--accent3)
 
 	.gradient
 		position absolute

@@ -254,6 +254,7 @@
 				</div>
 
 				{#if depth > 8}
+					<!-- todo fix incorrect colour -->
 					<a href="{baseUrl}/{reply.id}" class="text-decoration-none">
 						<fa fa-arrow-down class="me-2" />
 						More replies
