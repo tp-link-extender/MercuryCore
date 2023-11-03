@@ -74,20 +74,20 @@ export default async function (
 		renderType == "Avatar" ? "avatars" : "thumbnails"
 	}/${relativeId}.png`
 
-    let waiter = wait
-        ? // If the file doesn't exist, wait for it to be created
-          // if it does exist, wait for it to be modified
-          new Promise<void>((resolve, reject) => {
-              try {
-                const watcher = fs.watch(path, () => {
-                        watcher.close()
-                        resolve()
-                    })
-                } catch {
-                    reject()
-                }
-          })
-        : null
+	let waiter = wait
+		? // If the file doesn't exist, wait for it to be created
+		  // if it does exist, wait for it to be modified
+		  new Promise<void>(resolve => {
+				try {
+					const watcher = fs.watch(path, () => {
+						watcher.close()
+						resolve()
+					})
+				} catch {
+					resolve()
+				}
+		  })
+		: null
 
 	await Promise.all([
 		waiter,
