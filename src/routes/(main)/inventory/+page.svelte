@@ -35,6 +35,7 @@
 		Hats: 8,
 		Pants: 12,
 		Decals: 13,
+		Faces: 18,
 	}
 
 	let tabData = TabData(data.url, Object.keys(tabTypes))
