@@ -24,7 +24,7 @@ banland.xyz {
 }
 
 analytics.banland.xyz {
-	reverse_proxy localhost:8000
+	reverse_proxy localhost:8888
 }
 
 setup.banland.xyz, http://setup.banland.xyz {
