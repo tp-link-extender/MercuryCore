@@ -9,7 +9,7 @@
 	export let data
 	const { user } = data
 
-	if (user?.permissionLevel == 5) assetTypes.push(["Hats", "🎩", ""])
+	if (user?.permissionLevel > 2) assetTypes.push(["Hats", "🎩", "8"])
 
 	let tabData = TabData(data.url, ["Create", "Creations"])
 	let tabData2 = TabData(data.url, ["Shirts", "T-Shirts", "Pants", "Decals"])
