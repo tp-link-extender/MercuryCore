@@ -16,8 +16,8 @@ export async function imageAsset(
 	sharpOptions?: sharp.ResizeOptions,
 ) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
-		.resize(420, 420, {
-			fit: "inside",
+		.resize(256, 256, {
+			fit: "contain",
 			...sharpOptions,
 		})
 		.png()
