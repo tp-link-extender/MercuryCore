@@ -3,6 +3,7 @@ import { query, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
+	clothingAsset,
 	imageAsset,
 	tShirt,
 	tShirtThumbnail,
@@ -13,6 +14,7 @@ import { redirect } from "@sveltejs/kit"
 import fs from "fs"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import requestRender from "$lib/server/requestRender.js"
 
 const schema = z.object({
 	// Object.keys(assets) doesn't work
@@ -67,69 +69,50 @@ export const actions = {
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
-		let saveImages: ((arg0: string | number) => void)[] = []
+		let saveImages: ((arg0: number) => void | Promise<void>)[] = []
 
-		switch (assetType) {
-			case 2: // T-Shirt
-				try {
+		try {
+			switch (assetType) {
+				case 2: // T-Shirt
 					saveImages = await Promise.all([
 						tShirt(asset),
 						tShirtThumbnail(asset),
 					])
-				} catch (e) {
-					console.log(e)
-					return formError(
-						form,
-						["asset"],
-						["Asset failed to upload"],
-					)
-				}
-				break
+					break
 
-			// case 8: // Hat
-			// 	if (user.permissionLevel < 3)
-			// 		return formError(
-			// 			form,
-			// 			["type"],
-			// 			[
-			// 				"You do not have permission to upload this type of asset",
-			// 			],
-			// 		)
-			// 	return formError(
-			// 		form,
-			// 		["type"],
-			// 		["Cannot upload this type of asset yet"],
-			// 	)
+				// case 8: // Hat
+				// 	if (user.permissionLevel < 3)
+				// 		return formError(
+				// 			form,
+				// 			["type"],
+				// 			[
+				// 				"You do not have permission to upload this type of asset",
+				// 			],
+				// 		)
+				// 	return formError(
+				// 		form,
+				// 		["type"],
+				// 		["Cannot upload this type of asset yet"],
+				// 	)
 
-			case 11: // Shirt
-				return formError(
-					form,
-					["type"],
-					["Cannot upload this type of asset yet"],
-				)
+				case 11: // Shirt
+				case 12: // Pants
+					saveImages[0] = await clothingAsset(asset)
+					saveImages[1] = (id: number) =>
+						requestRender("Clothing", id)
 
-			case 12: // Pants
-				return formError(
-					form,
-					["type"],
-					["Cannot upload this type of asset yet"],
-				)
+					break
 
-			case 13: // Decal
-			case 18: // Face
-				try {
+				case 13: // Decal
+				case 18: // Face
 					saveImages = await Promise.all([
 						imageAsset(asset),
 						thumbnail(asset),
 					])
-				} catch (e) {
-					console.log(e)
-					return formError(
-						form,
-						["asset"],
-						["Asset failed to upload"],
-					)
-				}
+			}
+		} catch (e) {
+			console.log(e)
+			return formError(form, ["asset"], ["Asset failed to upload"])
 		}
 
 		const currentId = (await query(
@@ -181,9 +164,9 @@ export const actions = {
 			},
 		)
 
-		saveImages[0](imageAssetId)
-		saveImages[1](id)
 		graphicAsset(assets[assetType], imageAssetId, id)
+		await saveImages[0](imageAssetId)
+		await saveImages[1](id)
 
 		throw redirect(302, `/avatarshop/${id}/${name}`)
 	},
