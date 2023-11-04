@@ -38,9 +38,9 @@
 						</small>
 					</div>
 				{/if}
-				<p class="m-0">
+				<span class="fs-4">
 					{asset.name}
-				</p>
+				</span>
 			</div>
 		</div>
 	</button>
