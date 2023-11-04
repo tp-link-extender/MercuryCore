@@ -38,7 +38,7 @@
 	</div>
 	{#if data.places.length > 0}
 		<div class="pt-6">
-			<h2 class="fs-4 light-text">Creations</h2>
+			<h2 class="fs-4">Creations</h2>
 			<div class="row m-0 p-0">
 				{#each data.places as place, num}
 					<div class="col col-4 col-sm-3 col-md-2 text-center">
@@ -49,7 +49,7 @@
 		</div>
 	{/if}
 	{#if data.feed.length > 0}
-		<h2 class="fs-4 pt-12 light-text">Latest feed posts</h2>
+		<h2 class="fs-4 pt-12">Latest feed posts</h2>
 		<div id="feed" class="light-text p-4">
 			<div class="row">
 				{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status}

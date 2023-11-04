@@ -50,12 +50,12 @@
 
 <nav class="py-0 justify-content-start">
 	<div id="nav1" class="pt-1 d-flex w-100">
-		<a class="brand light-text fs-5 text-decoration-none my-auto" href="/">
+		<a class="brand light-text fs-3 text-decoration-none my-auto" href="/">
 			<img src="/icon.svg" alt="Mercury logo" />
 			<span>Mercury</span>
 		</a>
 		{#if user}
-			<div id="topnav" class="row ps-6 pe-2">
+			<div id="topnav" class="ps-6 pe-2">
 				<div class="d-flex flex-row gap-4 ps-3" id="topnavitems">
 					{#each nav1 as [title, href]}
 						<a class="btn px-1 light-text border-0" {href}>
@@ -174,7 +174,7 @@
 					class="text-success d-flex align-items-center
 					text-decoration-none">
 					<fa fa-gem class="pe-2 text-success" />
-					<span class="fs-6 text-success">
+					<span class="fs-4 text-success">
 						{user.currency}
 					</span>
 				</a>

@@ -153,8 +153,12 @@ export const actions = {
 				await query(
 					surql`
 						IF $type = 2 {
-							# Unequip if there's already a t-shirt equipped
+							# Unequip if there's already a T-Shirt equipped
 							DELETE $user->wearing WHERE out.type = 2;
+						};
+						IF $type = 18 {
+							# Unequip if there's already a Face equipped
+							DELETE $user->wearing WHERE out.type = 18;
 						};
 						RELATE $user->wearing->$asset
 							SET time = time::now();

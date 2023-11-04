@@ -169,7 +169,6 @@
 				<button
 					on:click={placeLauncher}
 					id="play"
-					class:disabled={data.serverPing < Date.now() / 1000 - 35}
 					class="btn btn-lg btn-success mt-6">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
@@ -289,7 +288,7 @@
 
 	<Tab {tabData}>
 		{#if user?.permissionLevel == 5 || data.ownerUser?.number == user?.number}
-			<h1 class="fs-4 light-text">Hosting on Mercury</h1>
+			<h1 class="fs-4">Hosting on Mercury</h1>
 			<p class="light-text">
 				To begin hosting your map for everybody to play, you need to
 				make sure that you are forwarding the port you wish to run the
@@ -429,7 +428,7 @@
 </div>
 
 <Modal {modal}>
-	<div class="d-flex flex-column px-6 pt-6">
+	<div class="d-flex flex-column px-6 pt-6 text-center">
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
@@ -452,17 +451,17 @@
 			</div>
 		{/key}
 		{#if success}
-			<h1 class="text-center fs-5 light-text pt-6">
+			<span class="fs-3 pt-6">
 				"{data.name}" is ready to play! Have fun!
-			</h1>
+			</span>
 		{:else if installed}
-			<h1 class="text-center fs-5 light-text pt-6">
+			<span class="fs-3 pt-6">
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
-			</h1>
+			</span>
 		{:else}
-			<h1 class="text-center fs-5 light-text pt-6">
+			<span class="fs-3 pt-6">
 				Install the Mercury client and start playing now!
-			</h1>
+			</span>
 			<a
 				class="btn btn-success"
 				href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
@@ -506,12 +505,12 @@
 	#wrapper
 		width 128px
 		height 128px
+		transform translateX(-50%)
 
 		+lightTheme()
 			filter invert(1)
 
 		img
-			box-sizing border-box
 			position absolute
 
 	#outer

@@ -31,6 +31,7 @@
 		11: "Shirt",
 		12: "Pants",
 		13: "Decal",
+		18: "Face",
 	}
 
 	const usernav = [["fa-pencil", "Edit Asset", "/requests"]]
@@ -52,9 +53,9 @@
 					<h1 class="mb-0">{data.name}</h1>
 				</div>
 				<div class="col d-flex justify-content-end">
-					<li class="dropdown dropdown-hover dropdown-end ps-2 mt-2">
+					<li class="dropdown dropdown-hover dropdown-end ps-2 pt-2">
 						<fa fa-ellipsis />
-						<div class="dropdown-content pt-2">
+						<div class="dropdown-content">
 							<ul class="p-2 rounded-3">
 								{#each usernav as [icon, title, href]}
 									<li class="rounded-2">
@@ -114,7 +115,7 @@
 						sold
 					</p>
 					<p>
-						<strong>Type:</strong>
+						<strong>Type</strong>
 						{types[data.type]}
 					</p>
 				</div>
@@ -129,13 +130,13 @@
 							</p>
 							{#if !data.owned}
 								<label for="buy" class="btn btn-success mt-1">
-									<strong class="fs-5">
+									<strong class="fs-3">
 										{data.price > 0 ? "Buy Now" : "Get"}
 									</strong>
 								</label>
 							{:else}
 								<span class="btn btn-secondary mt-1 disabled">
-									<strong class="fs-5">Owned</strong>
+									<strong class="fs-3">Owned</strong>
 								</span>
 							{/if}
 						</div>
@@ -195,7 +196,7 @@
 <div class="modal2">
 	<div class="modal-box">
 		{#if data.user.currency >= data.price}
-			<h3 class="text-lg font-bold light-text">Purchase {data.name}</h3>
+			<h3 class="text-lg font-bold">Purchase {data.name}</h3>
 			<p class="pb-4">
 				Would you like to {data.price > 0 ? "buy" : "get"}
 				{data.name} for
@@ -215,10 +216,10 @@
 			</form>
 			<label for="buy" class="btn btn-dark ms-2">{data.noText}</label>
 		{:else}
-			<h3 class="text-lg font-bold light-text">Insufficient funds</h3>
+			<h3 class="text-lg font-bold">Insufficient funds</h3>
 			<span>
 				You don't have enough <fa fa-gem />
-				 s to buy this item.
+				s to buy this item.
 			</span>
 			<p>
 				You'll need <strong>

@@ -14,7 +14,7 @@
 		height="100"
 		alt="DB:Z"
 		src="https://cdn.shopify.com/s/files/1/0258/6899/2592/products/DRAGONBALLZSHENLONGANDKIDSGOKU_cff940fb-ca93-42dd-af31-d37d34a10e28.jpg?v=1586915490" />
-	<h1 class="font-weight-normal light-text mt-2">Mercury Screenshot</h1>
+	<h1 class="font-weight-normal pt-2">Mercury Screenshot</h1>
 	<p>Hey, you just took a screenshot in Mercury! You could:</p>
 	<ul>
 		<li>
@@ -29,7 +29,7 @@
 	<hr class="divider-bottom" />
 	<button class="btn btn-sm btn-danger">
 		<fa fa-ban />
-		 Not interested
+		Not interested
 	</button>
 	<p class="text-light">Hey Kakarot, I think they found us</p>
 </div>

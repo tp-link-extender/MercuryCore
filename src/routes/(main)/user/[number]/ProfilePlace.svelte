@@ -13,7 +13,7 @@
 	</div>
 	<div class="d-collapse-content">
 		<a
-			class="card bg-darker shadow-none placecard text-center light-text text-decoration-none fs-6 m-0 w-100"
+			class="card bg-darker shadow-none placecard text-center light-text text-decoration-none m-0 w-100"
 			href="/place/{place.id}/{place.name}">
 			<div class="row">
 				<div class="col col-6">
@@ -25,10 +25,10 @@
 					</div>
 				</div>
 				<div class="col col-6 p-2 row">
-					<p class="mb-1 fs-5">
+					<p>
 						{place.name}
 					</p>
-					<div class="mt-auto mb-1">
+					<div class="mt-auto">
 						<div class="float-start">
 							<span>
 								<fa fa-thumbs-up class="opacity-75" />

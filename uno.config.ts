@@ -4,15 +4,7 @@ import presetTagify from "@unocss/preset-tagify"
 let fa: { [k: string]: string }
 
 const i = (a: number | string) => `${a} !important`
-const bsFonts = [
-	"0",
-	"calc(1.375rem + 1.5vw)",
-	"calc(1.325rem + 0.9vw)",
-	"calc(1.3rem + 0.6vw)",
-	"calc(1.275rem + 0.3vw)",
-	"1.25rem",
-	"1rem",
-]
+const bsFonts = ["0", "2rem", "1.5rem", "1.3rem", "1rem", "0.8rem", "0.7rem"]
 const bsWeights = {
 	thin: 100,
 	extralight: 200,

@@ -153,7 +153,7 @@ export const actions = {
 					out: string
 					ping: number
 					valid: boolean
-				}[]
+				}[][]
 			>(
 				surql`
 					UPDATE (SELECT * FROM $user->playing) SET valid = false;
@@ -166,7 +166,7 @@ export const actions = {
 					place: `place:${serverId}`,
 				},
 			)
-		)[1]
+		)[1][0]
 
 		return {
 			joinScriptUrl: `https://banland.xyz/game/join?ticket=${

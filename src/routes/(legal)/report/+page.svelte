@@ -21,10 +21,10 @@
 
 <Head title="Report {data.reportee}" />
 
-<h1 class="text-center light-text">Report</h1>
+<h1 class="text-center">Report</h1>
 
 <div class="container mt-6 light-text">
-	<h2 class="light-text fs-5">
+	<h2 class="fs-5">
 		Tell us how you think {data.reportee} is breaking the rules.
 	</h2>
 

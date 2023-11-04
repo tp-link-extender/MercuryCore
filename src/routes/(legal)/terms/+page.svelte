@@ -1,6 +1,6 @@
 <Head title="Terms of Service" description="Mercury's Terms of Service" />
 
-<h1 class="text-center light-text">Terms of Service</h1>
+<h1 class="text-center">Terms of Service</h1>
 
 <div class="container mt-12">
 	<div class="light-text">
