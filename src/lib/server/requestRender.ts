@@ -78,10 +78,14 @@ export default async function (
 		? // If the file doesn't exist, wait for it to be created
 		  // if it does exist, wait for it to be modified
 		  new Promise<void>(resolve => {
-				const watcher = fs.watch(path, () => {
-					watcher.close()
+				try {
+					const watcher = fs.watch(path, () => {
+						watcher.close()
+						resolve()
+					})
+				} catch {
 					resolve()
-				})
+				}
 		  })
 		: null
 

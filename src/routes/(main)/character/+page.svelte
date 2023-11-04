@@ -140,7 +140,7 @@
 </script>
 
 <div class="container">
-	<h1 class="text-white">Avatar</h1>
+	<h1 class="text-white">Character</h1>
 	<div class="row mt-6">
 		<div
 			class="col-xl-3 col-lg-3 col-md-6 col-sm-12
@@ -157,15 +157,15 @@
 						{form?.msg || ""}
 					</p>
 					<img
-						alt="Your avatar"
+						alt="Your character"
 						class="w-100"
 						src={form?.avatar ||
 							`/api/avatar/${user.username}-body`} />
 				</div>
 			</div>
 			<div class="card">
-				<div class="card-header light-text">Body Colours</div>
-				<div class="card-body">
+				<div class="card-body light-text">
+					Body Colours
 					<div class="mannequin text-center">
 						<div
 							class="mx-auto"
@@ -219,7 +219,7 @@
 						total={(assets || []).length} />
 				{/each}
 				{#if query && assets.length == 0}
-					<h2 class="fs-5 light-text mt-12">
+					<h2 class="fs-5 mt-12">
 						{#if tabData.currentTab == "Recent"}
 							No recently worn items found with search term {query}
 						{:else}
@@ -240,7 +240,7 @@
 		bind:this={bodyPartModals[bodyPart]} />
 	<div class="modal2">
 		<div class="modal-box d-flex flex-column p-4">
-			<h1 class="fs-4 light-text">Choose a {bodyPart} color</h1>
+			<h1 class="fs-4">Choose a {bodyPart} color</h1>
 			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
 					<form

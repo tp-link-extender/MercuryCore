@@ -11,7 +11,7 @@ export async function load({ locals, params }) {
 
 	const number = parseInt(params.number),
 		{ user } = await authorise(locals),
-		userExists = await query<{
+		userExists = await squery<{
 			bio: {
 				id: string
 				text: string
@@ -108,61 +108,70 @@ export async function load({ locals, params }) {
 				number,
 				user: `user:${user.id}`,
 			},
-		),
-		user2 = userExists[0]
+		)
 
-	if (!user2) throw error(404, "Not found")
+	if (!userExists) throw error(404, "Not found")
 
-	return user2
+	return userExists
+}
+
+async function getData({
+	params,
+}: Parameters<(typeof actions)[keyof typeof actions]>[0]) {
+	if (!/^\d+$/.test(params.number))
+		throw error(400, `Invalid user id: ${params.number}`)
+	const number = parseInt(params.number)
+	const user2 = await squery<{
+		id: string
+		username: string
+	}>(
+		surql`
+			SELECT meta::id(id) AS id, username
+			FROM user WHERE number = $number`,
+		{ number },
+	)
+	if (!user2) throw error(404, "User not found")
+
+	return { user2 }
 }
 
 export const actions = {
-	interact: async ({ request, locals, params }) => {
-		const { user } = await authorise(locals)
+	interact: async e => {
+		const { request, locals } = e,
+			{ user } = await authorise(locals),
+			{ user2 } = await getData(e)
 
-		if (!/^\d+$/.test(params.number))
-			throw error(400, `Invalid user id: ${params.number}`)
-		const number = parseInt(params.number)
-		const user2 = await squery<{
-			id: string
-		}>(
-			surql`
-				SELECT meta::id(id) AS id
-				FROM user WHERE number = $number`,
-			{ number },
-		)
-		if (!user2) throw error(404, "User not found")
 		if (user.id == user2.id)
 			throw error(400, "You can't friend/follow yourself")
 
 		const data = await formData(request),
-			{ action } = data,
-			qParams = {
-				user: `user:${user.id}`,
-				user2: `user:${user2.id}`,
-			},
-			accept = () =>
-				query(
-					// The direction of the ->friends relationship matches
-					// the direction of the previous ->request relationship.
-					surql`
-						DELETE $user2->request WHERE out = $user;
-						RELATE $user2->friends->$user
-							SET time = time::now();
-						RELATE $user->notification->$user2 CONTENT {
-							type: $type,
-							time: time::now(),
-							note: $note,
-							relativeId: $relativeId,
-							read: false,
-						}`,
-					{
-						type: "NewFriend",
-						...qParams,
-						note: `${user.username} is now friends with you!`,
-						relativeId: user.id,
-					},
-				)
+			{ action } = data
+		const qParams = {
+			user: `user:${user.id}`,
+			user2: `user:${user2.id}`,
+		}
+		const accept = () =>
+			query(
+				// The direction of the ->friends relationship matches
+				// the direction of the previous ->request relationship.
+				surql`
+					DELETE $user2->request WHERE out = $user;
+					RELATE $user2->friends->$user
+						SET time = time::now();
+					RELATE $user->notification->$user2 CONTENT {
+						type: $type,
+						time: time::now(),
+						note: $note,
+						relativeId: $relativeId,
+						read: false,
+					}`,
+				{
+					type: "NewFriend",
+					...qParams,
+					note: `${user.username} is now friends with you!`,
+					relativeId: user.id,
+				},
+			)
 
 		try {
 			switch (action) {
@@ -293,14 +302,19 @@ export const actions = {
 			throw e
 		}
 	},
-	rerender: async ({ locals, params, getClientAddress }) => {
+	rerender: async e => {
+		const { locals, params, getClientAddress } = e
 		await authorise(locals, 3)
 
-		const limit = ratelimit({}, "rerender", getClientAddress, 60)
+		const { user2 } = await getData(e),
+			limit = ratelimit({}, "rerender", getClientAddress, 60)
 		if (limit) return fail(429, { msg: "Too many requests" })
 
 		try {
-			await requestRender("Avatar", parseInt(params.number))
+			await requestRender("Avatar", parseInt(params.number), true)
+			return {
+				avatar: `/api/avatar/${user2.username}-body?r=${Math.random()}`,
+			}
 		} catch (e) {
 			console.error(e)
 			return fail(500, { msg: "Failed to request render" })

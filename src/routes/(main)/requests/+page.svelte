@@ -4,7 +4,7 @@
 
 <Head title="Friend requests" />
 
-<h1 class="light-text text-center">Friend requests ({data.users.length})</h1>
+<h1 class="text-center">Friend requests ({data.users.length})</h1>
 
 <div class="container mt-12 d-grid">
 	{#each data.users as user, num}

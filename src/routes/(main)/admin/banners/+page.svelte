@@ -41,7 +41,7 @@
 <Head title="Banners - Admin" />
 
 <div class="container py-6">
-	<h1 class="light-text mb-0">Admin - Banners</h1>
+	<h1 class="mb-0">Admin - Banners</h1>
 	<a href="/admin" class="text-decoration-none">
 		<fa fa-caret-left />
 		Back to panel
@@ -241,13 +241,15 @@
 
 {#if $modal}
 	<Modal {modal}>
-		<div class="d-flex">
-			<h1 class="fs-4 pe-4 light-text">Banner #{bannerData.id}</h1>
+		<div class="d-flex align-items-start">
+			<h1 class="fs-4 pe-4">Banner #{bannerData.id}</h1>
 			<button
 				type="button"
-				class="btn-close"
+				class="btn p-0 px-2"
 				on:click={() => modal.set(false)}
-				aria-label="Close" />
+				aria-label="Close">
+				<fa fa-xmark-large />
+			</button>
 		</div>
 		<form
 			use:enhance
@@ -293,12 +295,6 @@
 	input[type="checkbox"]
 		height 1.5rem
 		width 1.5rem
-
-	.btn-close
-		filter invert(1) grayscale(100%) brightness(200%)
-	+lightTheme()
-		.btn-close
-			filter none
 
 	td
 		height: 4.8rem

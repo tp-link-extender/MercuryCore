@@ -7,7 +7,7 @@
 <Head title="Transactions - Admin" />
 
 <div class="container py-6">
-	<h1 class="light-text mb-0">Admin - Transactions</h1>
+	<h1 class="mb-0">Admin - Transactions</h1>
 	<a href="/admin" class="text-decoration-none">
 		<fa fa-caret-left />
 		Back to panel
@@ -38,7 +38,7 @@
 							</td>
 
 							<td class="d-flex justify-content-center gap-3">
-								<div class="fs-6 pt-2">
+								<div class="fs-4 pt-2">
 									<span class="text-success">
 										<fa fa-gem />
 										{transaction.amountSent}
@@ -59,7 +59,7 @@
 									</small>
 								</div>
 								{#if value}
-									<div class="fs-6 pt-2">
+									<div class="fs-4 pt-2">
 										<fa fa-arrow-right class="me-1" />
 										<span class="text-success">
 											<fa fa-gem />

@@ -35,6 +35,7 @@
 		Hats: 8,
 		Pants: 12,
 		Decals: 13,
+		Faces: 18,
 	}
 
 	let tabData = TabData(data.url, Object.keys(tabTypes))
@@ -46,7 +47,7 @@
 
 <Head title="Inventory" />
 
-<h1 class="light-text text-center mb-4">Inventory</h1>
+<h1 class="text-center mb-4">Inventory</h1>
 
 <div class="container">
 	<div class="row">
@@ -81,7 +82,7 @@
 						<Asset {asset} {num} total={assets.length} />
 					{/each}
 					{#if query && assets.length == 0}
-						<h2 class="fs-5 light-text pt-12">
+						<h2 class="fs-5 pt-12">
 							No items found with search term {query}
 						</h2>
 					{/if}
@@ -90,7 +91,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-
-</style>

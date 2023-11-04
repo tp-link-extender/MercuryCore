@@ -4,6 +4,7 @@ import formError from "$lib/server/formError"
 import { redirect, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import requestRender from "$lib/server/requestRender.js"
 
 const schemaInitial = z.object({
 		username: z
@@ -93,7 +94,7 @@ export const actions = {
 					["This registration key has ran out of uses"],
 				)
 
-			const user = await auth.createUser({
+			const { userId } = await auth.createUser({
 				key: {
 					providerId: "username",
 					providerUserId: username.toLowerCase(),
@@ -107,21 +108,28 @@ export const actions = {
 				} as any,
 			})
 
-			locals.auth.setSession(
-				await auth.createSession({
-					userId: user.id,
-					attributes: {},
-				}),
-			)
-
-			await query(
+			const { number } = await squery<{
+				number: number
+			}>(
 				surql`
+					SELECT * FROM $user;
 					RELATE $user->used->$key;
 					UPDATE $key SET usesLeft -= 1`,
 				{
-					user: `user:${user.id}`,
+					user: `user:${userId}`,
 					key: `regKey:⟨${regkey}⟩`,
 				},
+			)
+
+			try {
+				await requestRender("Avatar", number)
+			} catch {}
+
+			locals.auth.setSession(
+				await auth.createSession({
+					userId,
+					attributes: {},
+				}),
 			)
 		} catch (e) {
 			const error = e as Error

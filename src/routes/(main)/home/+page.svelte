@@ -82,7 +82,7 @@
 		<div class="col col-12 col-xxl-6 col-xl-7 col-md-6">
 			<div class="col2 pt-28">
 				{#if data.friends.length > 0}
-					<h2 class="fs-4 light-text">Friends</h2>
+					<h2 class="light-text">Friends</h2>
 					<div class="home-row d-flex">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
@@ -103,7 +103,7 @@
 				{/if}
 			</div>
 			<div class="pt-12">
-				<h2 class="fs-4 light-text">Resume playing</h2>
+				<h2 class="light-text">Resume playing</h2>
 				<div class="home-row d-flex">
 					<div class="home-row d-flex">
 						{#each data.places || [] as place, num}
@@ -120,10 +120,10 @@
 				</div>
 			</div>
 			<div class="pt-12 col-6 col-md-8 col-lg-6 col-xl-4">
-				<h2 class="fs-4 light-text">Random fact</h2>
+				<h2 class="light-text">Random fact</h2>
 				<div
 					id="fact"
-					class="card bg-darker card-body light-text fs-5 pb-6">
+					class="card bg-darker card-body light-text fs-4 pb-6">
 					{data.stuff.fact}
 				</div>
 			</div>

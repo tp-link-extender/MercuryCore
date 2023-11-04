@@ -18,34 +18,40 @@
 
 	export const snapshot = { capture, restore }
 
-	const assets: any = {
-		2: "T-Shirt",
-		11: "Shirt",
-		12: "Pants",
-		13: "Decal",
+	const assets: { [k: string]: string } = {
+		"2": "T-Shirt",
+		"11": "Shirt",
+		"12": "Pants",
+		"13": "Decal",
+	}
+
+	if (data.user.permissionLevel > 3) {
+		// assets["8"] = "Hat"
+		assets["18"] = "Face"
 	}
 </script>
 
 <Head title="Develop" />
 
 <div class="container py-2">
-	<h1 class="light-text mb-0 text-center">
+	<h1 class="mb-0 text-center">
 		Develop - Create <br />
 	</h1>
-	<h6 class="text-center light-text mb-0">
-		<span class="fs-6 light-text text-center">
+	<div class="text-center">
+		<a href="/develop" class="text-decoration-none accent-text">
 			<fa fa-caret-left />
-			<a href="/develop" class="text-decoration-none">Back to Develop</a>
-		</span>
-	</h6>
+
+			Back to Develop
+		</a>
+	</div>
 </div>
 <form
 	use:enhance
 	method="POST"
-	class="container mt-12 light-text"
+	class="container pt-8 light-text"
 	enctype="multipart/form-data">
 	<fieldset>
-		<div class="row mb-4">
+		<div class="row pb-4">
 			<label for="type" class="col-md-3 light-text">Asset type</label>
 			<div class="col-md-8">
 				<select
@@ -61,12 +67,12 @@
 						</option>
 					{/each}
 				</select>
-				<p class="col-12 mb-4 text-danger">
+				<p class="text-danger">
 					{$errors.type || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row pb-4">
 			<label for="name" class="col-md-3 light-text">Asset name</label>
 			<div class="col-md-8">
 				<input
@@ -76,12 +82,12 @@
 					id="name"
 					placeholder="Make sure to make it accurate"
 					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="text-danger">
 					{$errors.name || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row pb-4">
 			<label for="description" class="col-md-3 light-text">
 				Asset description
 			</label>
@@ -95,12 +101,12 @@
 					class="form-control {$errors.description
 						? 'is-in'
 						: ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="text-danger">
 					{$errors.description || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row pb-4">
 			<label for="price" class="col-md-3 light-text">Asset price</label>
 			<div class="col-md-8">
 				<input
@@ -110,12 +116,12 @@
 					id="price"
 					type="number"
 					class="form-control {$errors.price ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-4 text-danger">
+				<p class="text-danger">
 					{$errors.price || ""}
 				</p>
 			</div>
 		</div>
-		<div class="row mb-4">
+		<div class="row pb-4">
 			<label for="asset" class="col-md-3 light-text">Asset</label>
 			<div class="col-md-8">
 				<input
@@ -129,7 +135,7 @@
 				<small class="light-text">
 					Max image size: 20MB. Supported file types: .png, .jpg, .bmp
 				</small>
-				<p class="col-12 mb-4 text-danger">
+				<p class="text-danger">
 					{$errors.asset || ""}
 				</p>
 			</div>
@@ -146,7 +152,7 @@
 				Working...
 			{:else}
 				Create ( <fa fa-gem />
-				 15 )
+				15 )
 			{/if}
 		</button>
 	</fieldset>

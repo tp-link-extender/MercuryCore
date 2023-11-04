@@ -42,7 +42,7 @@
 				{style} />
 		</span>
 		{#if full}
-			<span class="username {thin ? 'ps-2 fs-6' : 'font-bold ps-4'}">
+			<span class="username {thin ? 'ps-2 fs-4' : 'font-bold ps-4'}">
 				{user.username}
 			</span>
 		{/if}
@@ -64,7 +64,7 @@
 				{style} />
 		</span>
 		{#if full}
-			<span class="username {thin ? 'ps-2 fs-6' : 'font-bold ps-4'}">
+			<span class="username {thin ? 'ps-2 fs-4' : 'font-bold ps-4'}">
 				{user.username}
 			</span>
 		{:else if bottom}

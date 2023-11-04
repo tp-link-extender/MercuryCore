@@ -35,7 +35,7 @@ export async function GET({ locals, params }) {
 
 	let file
 
-	for (const f of [`data/thumbnails/${id}.png`, `data/assets/${id}`])
+	for (const f of [`data/thumbnails/${id}`, `data/assets/${id}`])
 		try {
 			file = fs.readFileSync(f)
 			break
