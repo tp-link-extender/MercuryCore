@@ -70,7 +70,7 @@ export async function thumbnail(
  */
 export async function tShirt(file: File) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
-		.resize(128, 128, {
+		.resize(420, 420, {
 			fit: "contain",
 			position: "top",
 			background: { r: 0, g: 0, b: 0, alpha: 0 },
@@ -99,7 +99,7 @@ export async function tShirtThumbnail(file: File) {
 		.composite([
 			{
 				input: await sharp(await file.arrayBuffer())
-					.resize(250, 250, {
+					.resize(420, 420, {
 						fit: "contain",
 						position: "top",
 						background: { r: 0, g: 0, b: 0, alpha: 0 },
