@@ -17,7 +17,7 @@ const strings = {
 		stringName: "Pants",
 	},
 	Decal: { class: "Decal", contentName: "Texture", stringName: "Decal" },
-	Face: { class: "Face", contentName: "Texture", stringName: "face" },
+	Face: { class: "Decal", contentName: "Texture", stringName: "face" },
 }
 
 /**
