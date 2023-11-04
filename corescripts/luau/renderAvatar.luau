@@ -53,10 +53,36 @@ if gear then
 	player.Character.Torso["Right Shoulder"].CurrentAngle = math.rad(90)
 end
 
-local click = ThumbnailGenerator:Click("PNG", 420, 420, true)
+local clickBody = ThumbnailGenerator:Click("PNG", 840, 840, true)
 
-local result = '{"Status": "Completed", "Click": "' .. tostring(click) .. '"}'
-print("[" .. game.JobId .. "] Successfully rendered, moving on...")
+print("[" .. game.JobId .. "] Rendered bodyshot")
+
+player.Character.Torso["Right Shoulder"].CurrentAngle = 0
+
+-- Headshot Camera
+local FOV = 52.5
+
+local CameraAngle = player.Character.Head.CFrame
+local CameraPosition = CameraAngle
+	+ CFrame.Angles(0, math.pi, 0).lookVector.unit * 2.75
+
+local Camera = Instance.new "Camera"
+Camera.Name = "ThumbnailCamera"
+Camera.CameraType = Enum.CameraType.Scriptable
+Camera.CoordinateFrame = CFrame.new(CameraPosition.p, CameraAngle.p)
+Camera.FieldOfView = FOV
+Camera.Parent = player.Character
+workspace.CurrentCamera = Camera
+
+local clickHead = ThumbnailGenerator:Click("PNG", 300, 300, true)
+
+local result = '{"Status": "Completed", "ClickBody": "'
+	.. tostring(clickBody)
+	.. '", "ClickHead": "'
+	.. tostring(clickHead)
+	.. '"}'
+
+print("[" .. game.JobId .. "] Rendered headshot")
 
 while true do
 	local ok, err = pcall(function()
