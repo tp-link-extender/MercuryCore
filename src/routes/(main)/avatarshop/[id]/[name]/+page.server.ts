@@ -381,11 +381,37 @@ export const actions = {
 	rerender: async ({ locals, params, getClientAddress }) => {
 		await authorise(locals, 3)
 
-		const limit = ratelimit({}, "rerender", getClientAddress, 60)
-		if (limit) return fail(429, { msg: "Too many requests" })
+		// const limit = ratelimit({}, "rerender", getClientAddress, 60)
+		// if (limit) return fail(429, { msg: "Too many requests" })
+
+		const asset = await squery<{
+			type: number
+			imageAsset: {
+				id: number
+				type: number
+			}
+		}>(
+			surql`
+				SELECT 
+					type,
+					(SELECT meta::id(id) AS id, type
+					FROM ->imageAsset->asset)[0] AS imageAsset
+				FROM $asset`,
+			{ asset: `asset:${params.id}` },
+		)
+
+		if (!asset) throw error(404, "Not found")
+
+		if (![11, 12].includes(asset.type))
+			throw error(400, "Can't rerender this type of asset")
 
 		try {
-			await requestRender("Clothing", parseInt(params.id))
+			await requestRender(
+				"Clothing",
+				asset.imageAsset.id,
+				false,
+				parseInt(params.id),
+			)
 		} catch (e) {
 			console.error(e)
 			return fail(500, { msg: "Failed to request render" })

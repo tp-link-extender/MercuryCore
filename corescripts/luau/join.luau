@@ -54,8 +54,8 @@ ContentProvider:SetThreadPool(16)
 InsertService:SetBaseSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=10&type=base"
 InsertService:SetUserSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
 InsertService:SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d"
-InsertService:SetAssetUrl "http://banland.xyz/Asset/?id=%d"
-InsertService:SetAssetVersionUrl "http://banland.xyz/Asset/?assetversionid=%d"
+InsertService:SetAssetUrl "http://banland.xyz/asset?id=%d"
+InsertService:SetAssetVersionUrl "http://banland.xyz/asset?assetversionid=%d"
 
 pcall(function()
 	SocialService:SetFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d"

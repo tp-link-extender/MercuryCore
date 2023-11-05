@@ -16,7 +16,7 @@ export async function GET({ url }) {
 
 	const gameSession = await squery<{
 		place: {
-			id: string
+			id: number
 			ownerUser: {
 				number: number
 			}
@@ -64,7 +64,7 @@ export async function GET({ url }) {
 	})
 
 	const userNumber = gameSession.user.number,
-		placeId = parseInt(gameSession.place.id.split(":")[1]),
+		placeId = gameSession.place.id,
 		creatorId = gameSession.place.ownerUser?.number || 0,
 		charApp = `http://banland.xyz/asset/characterfetch?userID=${userNumber}`,
 		pingUrl = `http://banland.xyz/game/clientpresence?ticket=${clientTicket}`

@@ -10,12 +10,17 @@ const selectRender = surql`
 	(SELECT status, created, id
 	FROM render WHERE status ∈ ["Pending", "Rendering"]
 		AND type = $renderType
-		AND relativeId = $relativeId)[0]`
+		AND relativeId = $id)[0]`
 
+/**
+ * Requests a render from RCCService
+ * todo write this
+ */
 export default async function (
 	renderType: "Clothing" | "Avatar",
 	relativeId: number,
 	wait = false,
+	saveAsId: number = relativeId,
 ) {
 	const renders = await mquery<Render[]>(
 		surql`
@@ -26,7 +31,7 @@ export default async function (
 			RETURN ${selectRender}`,
 		{
 			renderType,
-			relativeId,
+			id: saveAsId,
 		},
 	)
 	const render = renders[2]
@@ -43,18 +48,20 @@ export default async function (
 				status: "Pending",
 				created: time::now(),
 				completed: NONE,
-				relativeId: $relativeId
+				relativeId: $id
 			})[0];
 			RETURN meta::id($render.id)`,
 		{
 			renderType,
-			relativeId,
+			id: saveAsId,
 		},
 	)
 	const renderId = newRender[1]
 
 	console.log({ renderId })
 	// Tap in rcc
+
+	console.log(process.env.RCC_ORIGIN)
 
 	const script = fs
 		.readFileSync(`corescripts/processed/render${renderType}.lua`, "utf-8")
@@ -72,7 +79,7 @@ export default async function (
 
 	const path = `data/${
 		renderType == "Avatar" ? "avatars" : "thumbnails"
-	}/${relativeId}.png`
+	}/${saveAsId}${renderType == "Avatar" ? ".png" : ""}`
 
 	let waiter = wait
 		? // If the file doesn't exist, wait for it to be created

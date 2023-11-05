@@ -3,6 +3,7 @@ import { error } from "@sveltejs/kit"
 import fs from "fs"
 import "dotenv/config"
 import { gunzipSync } from "node:zlib"
+import sharp from "sharp"
 
 type Render = {
 	id: number
@@ -40,7 +41,8 @@ export async function POST({ request, url }) {
 			: new TextDecoder().decode(buffer2),
 	)
 
-	const status: "Rendering" | "Completed" = json.Status
+	const status: "Rendering" | "Completed" = json.Status,
+		typeAvatar = task.type == "Avatar"
 
 	console.log(status)
 
@@ -49,16 +51,40 @@ export async function POST({ request, url }) {
 			render: `render:${id}`,
 		})
 	else if (status == "Completed") {
-		const base64: string = json.Click
+		const click: string | undefined = json?.Click,
+			clickBody: string | undefined = json?.ClickBody,
+			clickHead: string | undefined = json?.ClickHead
 
 		// Convert base64 from RCCService to an image
-		const path = `data/${
-			task.type == "Avatar" ? "avatars" : "thumbnails"
-		}/${task.relativeId}.png`
+		if (click) {
+			const path = `data/${typeAvatar ? "avatars" : "thumbnails"}/${
+				task.relativeId
+			}${typeAvatar ? ".png" : ""}`
 
-		fs.writeFileSync(path, base64, "base64")
+			fs.writeFileSync(path, click, "base64")
+		} else if (clickBody && clickHead) {
+			const path = (s: string) =>
+				`data/${typeAvatar ? "avatars" : "thumbnails"}/${
+					task.relativeId
+				}${s}${typeAvatar ? ".png" : ""}`
 
-		console.log("SAVE", path)
+			await Promise.all([
+				sharp(Buffer.from(clickHead, "base64"))
+					.resize(150, 150)
+					.png()
+					.toFile(path("-head"))
+					.catch(() => {
+						throw new Error("Failed to resize head image")
+					}),
+				sharp(Buffer.from(clickBody, "base64"))
+					.resize(420, 420)
+					.png()
+					.toFile(path("-body"))
+					.catch(() => {
+						throw new Error("Failed to resize body image")
+					}),
+			])
+		}
 
 		await query(
 			surql`

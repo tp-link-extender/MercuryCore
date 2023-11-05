@@ -3226,7 +3226,8 @@ declare class PathWaypoint
 end
 
 declare class CFrame
-	LookVector: Vector3
+	lookVector: Vector3
+	LookVector: Vector3 -- ?
 	Position: Vector3
 	RightVector: Vector3
 	Rotation: CFrame
@@ -5661,6 +5662,9 @@ declare class InsertService extends Instance
 	function LoadLocalAsset(self, assetPath: string): Instance
 	function LoadPackageAsset(self, url: Content): { Instance }
 	function LoadPackageAssetAsync(self, url: Content): { Instance }
+
+	function SetAssetUrl(self, assetUrl: Content): nil
+	function SetAssetVersionUrl(self, assetVersionUrl: Content): nil
 end
 
 declare class JointInstance extends Instance

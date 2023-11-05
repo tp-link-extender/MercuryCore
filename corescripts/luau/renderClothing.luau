@@ -14,10 +14,8 @@ local ScriptContext = game:GetService "ScriptContext"
 
 pcall(function()
 	ContentProvider:SetBaseUrl(baseUrl)
-	InsertService:SetAssetUrl(baseUrl .. "/asset/assetfetch?id=%d")
-	InsertService:SetAssetVersionUrl(
-		baseUrl .. "/asset/assetfetch?assetversionid=%d"
-	)
+	InsertService:SetAssetUrl(baseUrl .. "/asset?id=%d")
+	InsertService:SetAssetVersionUrl(baseUrl .. "/asset?assetversionid=%d")
 end)
 
 HttpService.HttpEnabled = true
@@ -46,6 +44,8 @@ local player = game:GetService("Players"):CreateLocalPlayer(0)
 player.CharacterAppearance = baseUrl
 	.. "/api/render/characterasset?id="
 	.. assetId
+	.. "&amp;apiKey="
+	.. thumbnailKey
 player:LoadCharacter(false)
 
 -- Raise up the character's arm if they have gear.
