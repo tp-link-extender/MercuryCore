@@ -10,7 +10,7 @@ const selectRender = surql`
 	(SELECT status, created, id
 	FROM render WHERE status ∈ ["Pending", "Rendering"]
 		AND type = $renderType
-		AND relativeId = $id)[0]`
+		AND relativeId = $relativeId)[0]`
 
 /**
  * Requests a render from RCCService
@@ -20,7 +20,6 @@ export default async function (
 	renderType: "Clothing" | "Avatar",
 	relativeId: number,
 	wait = false,
-	saveAsId: number = relativeId,
 ) {
 	const renders = await mquery<Render[]>(
 		surql`
@@ -31,7 +30,7 @@ export default async function (
 			RETURN ${selectRender}`,
 		{
 			renderType,
-			id: saveAsId,
+			relativeId,
 		},
 	)
 	const render = renders[2]
@@ -48,12 +47,12 @@ export default async function (
 				status: "Pending",
 				created: time::now(),
 				completed: NONE,
-				relativeId: $id
+				relativeId: $relativeId
 			})[0];
 			RETURN meta::id($render.id)`,
 		{
 			renderType,
-			id: saveAsId,
+			relativeId,
 		},
 	)
 	const renderId = newRender[1]
@@ -79,7 +78,7 @@ export default async function (
 
 	const path = `data/${
 		renderType == "Avatar" ? "avatars" : "thumbnails"
-	}/${saveAsId}${renderType == "Avatar" ? ".png" : ""}`
+	}/${relativeId}${renderType == "Avatar" ? ".png" : ""}`
 
 	let waiter = wait
 		? // If the file doesn't exist, wait for it to be created

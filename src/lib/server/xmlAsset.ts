@@ -1,4 +1,5 @@
 import fs from "fs"
+import "dotenv/config"
 
 const strings = {
 	"T-Shirt": {
@@ -44,7 +45,10 @@ export function graphicAsset(
 		.replaceAll("_CLASS", stringType.class)
 		.replaceAll("_CONTENT_NAME", stringType.contentName)
 		.replaceAll("_STRING_NAME", stringType.stringName)
-		.replaceAll("_ASSET_ID", imageAssetId.toString())
+		.replaceAll(
+			"_ASSET_URL",
+			`${process.env.RCC_ORIGIN}/asset?id=${imageAssetId.toString()}`,
+		)
 
 	fs.writeFileSync(`data/assets/${graphicAssetId}`, asset)
 }

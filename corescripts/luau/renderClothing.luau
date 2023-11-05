@@ -55,7 +55,7 @@ if gear then
 	player.Character.Torso["Right Shoulder"].CurrentAngle = math.rad(90)
 end
 
-local click = ThumbnailGenerator:Click("PNG", 420, 420, true)
+local click = ThumbnailGenerator:Click("PNG", 2048, 2048, true)
 
 local result = '{"Status": "Completed", "Click": "' .. tostring(click) .. '"}'
 print("[" .. game.JobId .. "] Successfully rendered, moving on...")

@@ -80,7 +80,6 @@ export async function GET({ url, setHeaders }) {
 
 		return new Response(file2)
 	} catch (e) {
-		console.log(e)
 		throw redirect(
 			302,
 			`https://assetdelivery.roblox.com/v1/asset?id=${id}`,

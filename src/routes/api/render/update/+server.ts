@@ -1,6 +1,5 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import fs from "fs"
 import "dotenv/config"
 import { gunzipSync } from "node:zlib"
 import sharp from "sharp"
@@ -61,7 +60,13 @@ export async function POST({ request, url }) {
 				task.relativeId
 			}${typeAvatar ? ".png" : ""}`
 
-			fs.writeFileSync(path, click, "base64")
+			await sharp(Buffer.from(click, "base64"))
+				.resize(420, 420)
+				.png()
+				.toFile(path)
+				.catch(() => {
+					throw new Error("Failed to resize image")
+				})
 		} else if (clickBody && clickHead) {
 			const path = (s: string) =>
 				`data/${typeAvatar ? "avatars" : "thumbnails"}/${
