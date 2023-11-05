@@ -1,6 +1,5 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import { json } from "@sveltejs/kit"
 import "dotenv/config"
 
 export async function GET({ url, setHeaders }) {
