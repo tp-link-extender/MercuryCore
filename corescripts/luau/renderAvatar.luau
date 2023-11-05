@@ -41,9 +41,7 @@ game:HttpPost(
 )
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
-player.CharacterAppearance = baseUrl
-	.. "/asset/characterfetch?userID="
-	.. assetId
+player.CharacterAppearance = baseUrl .. "/asset/characterfetch?userID=" .. assetId 
 player:LoadCharacter(false)
 
 -- Raise up the character's arm if they have gear.
@@ -53,7 +51,7 @@ if gear then
 	player.Character.Torso["Right Shoulder"].CurrentAngle = math.rad(90)
 end
 
-local clickBody = ThumbnailGenerator:Click("PNG", 840, 840, true)
+local clickBody = ThumbnailGenerator:Click("PNG", 2048, 2048, true)
 
 print("[" .. game.JobId .. "] Rendered bodyshot")
 
