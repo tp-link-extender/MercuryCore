@@ -141,7 +141,7 @@ export const actions = {
 					),
 					fs.rm(`data/assets/${id}`),
 					fs.rm(`data/assets/${iaid}`),
-					fs.rm(`data/thumbnails/${id}.png`),
+					fs.rm(`data/thumbnails/${id}`),
 				])
 		}
 	},

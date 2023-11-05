@@ -21,7 +21,8 @@ const select = surql`
 		type,
 		($user ∈ <-wearing<-user) AS wearing
 	FROM asset WHERE $user ∈ <-owns<-user
-		AND type ∈ [${allowedTypes.join(", ")}]`
+		AND type ∈ [${allowedTypes.join(", ")}]
+		AND visibility = "Visible"`
 
 export const load = async ({ locals, url }) => {
 	const searchQ = url.searchParams.get("q")?.trim()
