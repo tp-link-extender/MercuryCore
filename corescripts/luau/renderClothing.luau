@@ -35,7 +35,7 @@ game:HttpPost(
 		.. thumbnailKey
 		.. "&amp;taskID="
 		.. game.JobId,
-	'{"Status": "Rendering"}',
+	"Rendering",
 	true,
 	"text/json"
 )
@@ -57,10 +57,10 @@ end
 
 local click = ThumbnailGenerator:Click("PNG", 2048, 2048, true)
 
-local result = '{"Status": "Completed", "Click": "' .. tostring(click) .. '"}'
+local result = "Completed\n" .. tostring(click)
 print("[" .. game.JobId .. "] Successfully rendered, moving on...")
 
-while true do
+for i = 1, 3 do
 	local ok, err = pcall(function()
 		game:HttpPost(
 			baseUrl
@@ -75,6 +75,15 @@ while true do
 	end)
 	if ok then
 		print("[" .. game.JobId .. "] Upload successful! Moving on...")
+		break
+	elseif i == 3 then
+		print(
+			"["
+				.. game.JobId
+				.. "] An error occurred! ("
+				.. err
+				.. "). Giving up..."
+		)
 		break
 	end
 	print(
