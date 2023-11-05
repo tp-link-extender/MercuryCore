@@ -3,7 +3,7 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 	<soap:Body>
-		<OpenJobEx xmlns="http://roblox.com/">
+		<BatchJobEx xmlns="http://roblox.com/">
 			<job>
 				<id>_TASK_ID</id>
 				<expirationInSeconds>30</expirationInSeconds>
@@ -16,6 +16,6 @@
 					_RENDER_SCRIPT
 				</script>
 			</script>
-		</OpenJobEx>
+		</BatchJobEx>
 	</soap:Body>
 </soap:Envelope>

@@ -41,9 +41,7 @@ game:HttpPost(
 )
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
-player.CharacterAppearance = baseUrl
-	.. "/asset/characterfetch?userID="
-	.. assetId
+player.CharacterAppearance = baseUrl .. "/asset/characterfetch?userID=" .. assetId 
 player:LoadCharacter(false)
 
 -- Raise up the character's arm if they have gear.
