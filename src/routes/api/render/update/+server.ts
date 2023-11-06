@@ -29,7 +29,14 @@ export async function POST({ request, url }) {
 
 	// Check if response is gzipped, and if so, gunzip it
 	const buffer = await request.arrayBuffer(),
-		gzipped = request.headers.get("content-encoding") == "gzip"
+		headerBytes = new Uint8Array(buffer).slice(0, 2),
+		gzipped = headerBytes[0] == 0x1f && headerBytes[1] == 0x8b
+
+	// request.headers.get("content-encoding") == "gzip"
+	// This doesn't work because RCC is a LIAR!!!!
+
+	console.log("buffer", buffer)
+	console.log("gzipped", gzipped)
 
 	const data = gzipped
 		? gunzipSync(buffer).toString()
@@ -38,8 +45,6 @@ export async function POST({ request, url }) {
 	const [status, clickBody, clickHead] = data.split("\n"),
 		typeAvatar = task.type == "Avatar"
 
-	console.log("buffer", buffer)
-	console.log("gzipped", gzipped)
 	console.log(status)
 
 	if (status == "Rendering")
