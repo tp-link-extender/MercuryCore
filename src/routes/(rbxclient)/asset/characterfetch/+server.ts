@@ -1,8 +1,8 @@
-import { query, squery, surql } from "$lib/server/surreal"
+import { squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import "dotenv/config"
 
-export async function GET({ url, setHeaders }) {
+export async function GET({ url }) {
 	const userNumber = url.searchParams.get("userID")
 
 	if (!userNumber || !/^\d+$/.test(userNumber))
@@ -36,10 +36,10 @@ export async function GET({ url, setHeaders }) {
 	for (const asset of user.wearing)
 		charApp += `;${process.env.RCC_ORIGIN}/asset?id=${asset}`
 
-	setHeaders({
-		Pragma: "no-cache",
-		"Cache-Control": "no-cache",
+	return new Response(charApp, {
+		headers: {
+			Pragma: "no-cache",
+			"Cache-Control": "no-cache",
+		},
 	})
-
-	return new Response(charApp)
 }
