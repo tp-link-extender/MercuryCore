@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { query, surql } from "$lib/server/surreal"
 
-export async function GET({ url, request, setHeaders }) {
+export async function GET({ url, request }) {
 	const ticket = url.searchParams.get("ticket") as string
 
 	if (!ticket) throw error(400, "Invalid Request")
@@ -15,10 +15,10 @@ export async function GET({ url, request, setHeaders }) {
 		{ ticket },
 	)
 
-	setHeaders({
-		Pragma: "no-cache",
-		"Cache-Control": "no-cache",
+	return new Response("OK", {
+		headers: {
+			Pragma: "no-cache",
+			"Cache-Control": "no-cache",
+		},
 	})
-
-	return new Response("OK")
 }

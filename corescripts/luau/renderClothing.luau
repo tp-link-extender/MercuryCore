@@ -44,8 +44,6 @@ local player = game:GetService("Players"):CreateLocalPlayer(0)
 player.CharacterAppearance = baseUrl
 	.. "/api/render/characterasset?id="
 	.. assetId
-	.. "&amp;apiKey="
-	.. thumbnailKey
 player:LoadCharacter(false)
 
 -- Raise up the character's arm if they have gear.
