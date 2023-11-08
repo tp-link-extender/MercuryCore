@@ -4,12 +4,17 @@ import { error, redirect } from "@sveltejs/kit"
 import md5 from "crypto-js/md5"
 import fs from "fs"
 
-export async function GET({ url, setHeaders }) {
-	const id = url.searchParams.get("id")
-	if (!id || !/^\d+$/.test(id)) throw error(400, "Invalid Request")
+const header = (file: string) => ({
+	headers: {
+		"Content-Type": "binary/octet-stream",
+		"Content-Disposition": `attachment; filename="${md5(file).toString()}"`,
+	},
+})
 
-	const apiKey = url.searchParams.get("apiKey")
-	if (apiKey && apiKey != process.env.RCC_KEY) throw error(400, "Nerd")
+export async function GET({ url }) {
+	const id = url.searchParams.get("id")
+	console.log(`Serving ${id}`)
+	if (!id || !/^\d+$/.test(id)) throw error(400, "Invalid Request")
 
 	try {
 		// Try loading as an asset
@@ -29,27 +34,16 @@ export async function GET({ url, setHeaders }) {
 				{ asset: `asset:${id}` },
 			)
 
-			if (!apiKey && (!asset || asset.visibility != "Visible"))
-				throw new Error("Not authorised")
+			if (!asset || asset.visibility == "Moderated") throw new Error()
 
-
-			console.log("apikey", apiKey)
-			
-
-			// The asset is visible, or the request is coming from RCCService
+			// The asset is visible or pending
+			// (allow pending assets to be shown through the api)
 
 			const file = fs.readFileSync(`data/assets/${id}`, "utf-8")
 
-			setHeaders({
-				"Content-Type": "binary/octet-stream",
-				"Content-Disposition": `attachment; filename="${md5(
-					file,
-				).toString()}"`,
-			})
-
 			console.log(`served asset #${id}`)
 
-			return new Response(fs.readFileSync(`data/assets/${id}`))
+			return new Response(fs.readFileSync(`data/assets/${id}`), header(file))
 		}
 
 		// Try loading as a corescript
@@ -63,13 +57,6 @@ export async function GET({ url, setHeaders }) {
 			"utf-8",
 		)
 
-		setHeaders({
-			"Content-Type": "binary/octet-stream",
-			"Content-Disposition": `attachment; filename="${md5(
-				file,
-			).toString()}"`,
-		})
-
 		let file2 = file.replaceAll("roblox.com/asset", "banland.xyz/asset")
 
 		// Health corescript and shaggy lol
@@ -78,9 +65,15 @@ export async function GET({ url, setHeaders }) {
 
 		console.log("served corescript", id)
 
-		return new Response(file2)
-	} catch (e) {
-		console.log(e)
+		return new Response(file2, {
+			headers: {
+				"Content-Type": "binary/octet-stream",
+				"Content-Disposition": `attachment; filename="${md5(
+					file,
+				).toString()}"`,
+			},
+		})
+	} catch {
 		throw redirect(
 			302,
 			`https://assetdelivery.roblox.com/v1/asset?id=${id}`,
