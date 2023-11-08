@@ -11,7 +11,7 @@
 				name="Shiny">20</float>
 			<float name="Specular">0</float>
 			<Content name="Texture">
-				<url>http://banland.xyz/asset?id=_ASSET_ID</url>
+				<url>_ASSET_URL</url>
 			</Content>
 			<bool name="archivable">true</bool>
 		</Properties>

@@ -7,7 +7,7 @@
 		<Properties>
 			<Content
 				name="_CONTENT_NAME">
-				<url>http://banland.xyz/asset?id=_ASSET_ID</url>
+				<url>_ASSET_URL</url>
 			</Content>
 			<string
 				name="Name">_STRING_NAME</string>
