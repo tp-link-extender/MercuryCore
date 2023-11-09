@@ -35,13 +35,15 @@ game:HttpPost(
 		.. thumbnailKey
 		.. "&amp;taskID="
 		.. game.JobId,
-	'{"Status": "Rendering"}',
+	"Rendering",
 	true,
 	"text/json"
 )
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
-player.CharacterAppearance = baseUrl .. "/asset/characterfetch?userID=" .. assetId 
+player.CharacterAppearance = baseUrl
+	.. "/asset/characterfetch?userID="
+	.. assetId
 player:LoadCharacter(false)
 
 -- Raise up the character's arm if they have gear.
@@ -74,15 +76,14 @@ workspace.CurrentCamera = Camera
 
 local clickHead = ThumbnailGenerator:Click("PNG", 300, 300, true)
 
-local result = '{"Status": "Completed", "ClickBody": "'
+local result = "Completed\n"
 	.. tostring(clickBody)
-	.. '", "ClickHead": "'
+	.. "\n"
 	.. tostring(clickHead)
-	.. '"}'
 
 print("[" .. game.JobId .. "] Rendered headshot")
 
-while true do
+for i = 1, 3 do
 	local ok, err = pcall(function()
 		game:HttpPost(
 			baseUrl
@@ -97,6 +98,15 @@ while true do
 	end)
 	if ok then
 		print("[" .. game.JobId .. "] Upload successful! Moving on...")
+		break
+	elseif i == 3 then
+		print(
+			"["
+				.. game.JobId
+				.. "] An error occurred! ("
+				.. err
+				.. "). Giving up..."
+		)
 		break
 	end
 	print(

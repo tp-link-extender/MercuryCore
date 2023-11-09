@@ -386,32 +386,21 @@ export const actions = {
 
 		const asset = await squery<{
 			type: number
-			imageAsset: {
-				id: number
-				type: number
-			}
-		}>(
-			surql`
-				SELECT 
-					type,
-					(SELECT meta::id(id) AS id, type
-					FROM ->imageAsset->asset)[0] AS imageAsset
-				FROM $asset`,
-			{ asset: `asset:${params.id}` },
-		)
+			visibility: string
+		}>(surql`SELECT type, visibility FROM $asset`, {
+			asset: `asset:${params.id}`,
+		})
 
 		if (!asset) throw error(404, "Not found")
 
 		if (![11, 12].includes(asset.type))
 			throw error(400, "Can't rerender this type of asset")
 
+		if (asset.visibility == "Moderated")
+			throw error(400, "Can't rerender a moderated asset")
+
 		try {
-			await requestRender(
-				"Clothing",
-				asset.imageAsset.id,
-				false,
-				parseInt(params.id),
-			)
+			await requestRender("Clothing", parseInt(params.id))
 		} catch (e) {
 			console.error(e)
 			return fail(500, { msg: "Failed to request render" })
