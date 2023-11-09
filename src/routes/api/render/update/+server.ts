@@ -1,6 +1,5 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import fs from "fs"
 import "dotenv/config"
 import { gunzipSync } from "node:zlib"
 import sharp from "sharp"
@@ -29,19 +28,21 @@ export async function POST({ request, url }) {
 	if (!task) throw error(404, "Task not found")
 
 	// Check if response is gzipped, and if so, gunzip it
-	const buffer = await request.arrayBuffer()
+	const buffer = await request.arrayBuffer(),
+		headerBytes = new Uint8Array(buffer).slice(0, 2),
+		gzipped = headerBytes[0] == 0x1f && headerBytes[1] == 0x8b
 
-	if (buffer.byteLength < 2) throw error(400, "Request too short or empty")
+	// request.headers.get("content-encoding") == "gzip"
+	// This doesn't work because RCC is a LIAR!!!!
 
-	const buffer2 = new Uint8Array(buffer),
-		headerBytes = buffer2.slice(0, 2)
-	const json = JSON.parse(
-		headerBytes[0] == 0x1f && headerBytes[1] == 0x8b
-			? gunzipSync(buffer2).toString()
-			: new TextDecoder().decode(buffer2),
-	)
+	console.log("buffer", buffer)
+	console.log("gzipped", gzipped)
 
-	const status: "Rendering" | "Completed" = json.Status,
+	const data = gzipped
+		? gunzipSync(buffer).toString()
+		: new TextDecoder().decode(buffer)
+
+	const [status, clickBody, clickHead] = data.split("\n"),
 		typeAvatar = task.type == "Avatar"
 
 	console.log(status)
@@ -51,18 +52,8 @@ export async function POST({ request, url }) {
 			render: `render:${id}`,
 		})
 	else if (status == "Completed") {
-		const click: string | undefined = json?.Click,
-			clickBody: string | undefined = json?.ClickBody,
-			clickHead: string | undefined = json?.ClickHead
-
 		// Convert base64 from RCCService to an image
-		if (click) {
-			const path = `data/${typeAvatar ? "avatars" : "thumbnails"}/${
-				task.relativeId
-			}${typeAvatar ? ".png" : ""}`
-
-			fs.writeFileSync(path, click, "base64")
-		} else if (clickBody && clickHead) {
+		if (clickBody && clickHead) {
 			const path = (s: string) =>
 				`data/${typeAvatar ? "avatars" : "thumbnails"}/${
 					task.relativeId
@@ -84,6 +75,18 @@ export async function POST({ request, url }) {
 						throw new Error("Failed to resize body image")
 					}),
 			])
+		} else if (clickBody) {
+			const path = `data/${typeAvatar ? "avatars" : "thumbnails"}/${
+				task.relativeId
+			}${typeAvatar ? ".png" : ""}`
+
+			await sharp(Buffer.from(clickBody, "base64"))
+				.resize(420, 420)
+				.png()
+				.toFile(path)
+				.catch(() => {
+					throw new Error("Failed to resize image")
+				})
 		}
 
 		await query(
