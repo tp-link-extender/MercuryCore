@@ -22,7 +22,7 @@
 					alt={asset.name} />
 			</div>
 			{asset.name}
-			<span class="d-flex">
+			<span class="d-flex pb-2">
 				<strong class="pe-2">by</strong>
 				<User
 					user={asset.creator}
@@ -31,7 +31,7 @@
 					full
 					bg="background" />
 			</span>
-			<div class="btn-group mt-2">
+			<div class="">
 				<form
 					use:enhance
 					method="POST"
