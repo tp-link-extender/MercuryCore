@@ -120,26 +120,24 @@
 					</p>
 				</div>
 				<div class="col d-flex flex-row-reverse">
-					<div class="card">
-						<div class="card-body">
-							<p class="light-text text-center mb-0">
-								Price: <span class="text-success">
-									<far fa-gem />
-									{data.price}
-								</span>
-							</p>
-							{#if !data.owned}
-								<label for="buy" class="btn btn-success mt-1">
-									<strong class="fs-3">
-										{data.price > 0 ? "Buy Now" : "Get"}
-									</strong>
-								</label>
-							{:else}
-								<span class="btn btn-secondary mt-1 disabled">
-									<strong class="fs-3">Owned</strong>
-								</span>
-							{/if}
-						</div>
+					<div class="card p-4">
+						<p class="light-text text-center mb-0 pb-1">
+							Price: <span class="text-success">
+								<far fa-gem />
+								{data.price}
+							</span>
+						</p>
+						{#if !data.owned}
+							<label for="buy" class="btn btn-success">
+								<strong class="fs-3">
+									{data.price > 0 ? "Buy Now" : "Get"}
+								</strong>
+							</label>
+						{:else}
+							<span class="btn btn-dark bg-a3 disabled">
+								<strong class="fs-3">Owned</strong>
+							</span>
+						{/if}
 					</div>
 				</div>
 			</div>

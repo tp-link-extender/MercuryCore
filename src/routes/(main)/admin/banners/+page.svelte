@@ -154,7 +154,7 @@
 										method="POST"
 										action="?id={banner.id}&a=delete">
 										<button
-											class="btn btn-sm btn-link text-decoration-none text-danger">
+											class="btn btn-sm text-decoration-none text-danger">
 											<fa fa-trash class="pe-1" />
 											Delete Banner
 										</button>
@@ -166,7 +166,7 @@
 											? 'hide'
 											: 'show'}">
 										<button
-											class="btn btn-sm btn-link text-decoration-none text-{banner.active
+											class="btn btn-sm text-decoration-none text-{banner.active
 												? 'warning'
 												: 'success'}">
 											<i

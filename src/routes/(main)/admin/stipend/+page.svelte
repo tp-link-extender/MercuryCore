@@ -46,22 +46,17 @@
 								class="col-md-3 light-text">
 								Daily stipend
 							</label>
-							<div class="col-md-8">
-								<div class="input-group">
-									<input
-										bind:value={$form.dailyStipend}
-										{...$constraints.dailyStipend}
-										type="number"
-										name="dailyStipend"
-										id="dailyStipend"
-										class="form-control {$errors.dailyStipend
-											? 'is-in'
-											: ''}valid" />
-									<span
-										class="input-group-text light-text bg-a1">
-										<fa fa-gem class="text-success" />
-									</span>
-								</div>
+							<div class="col d-flex align-items-center">
+								<input
+									bind:value={$form.dailyStipend}
+									{...$constraints.dailyStipend}
+									type="number"
+									name="dailyStipend"
+									id="dailyStipend"
+									class="form-control {$errors.dailyStipend
+										? 'is-in'
+										: ''}valid" />
+								<fa fa-gem class="text-success ps-3" />
 							</div>
 						</div>
 						<br />
@@ -71,22 +66,17 @@
 								class="col-md-3 light-text">
 								Time between stipend
 							</label>
-							<div class="col-md-8">
-								<div class="input-group">
-									<input
-										bind:value={$form.stipendTime}
-										{...$constraints.stipendTime}
-										type="number"
-										name="stipendTime"
-										id="stipendTime"
-										class="form-control {$errors.stipendTime
-											? 'is-in'
-											: ''}valid" />
-									<span
-										class="input-group-text light-text bg-a1">
-										hours
-									</span>
-								</div>
+							<div class="col d-flex align-items-center">
+								<input
+									bind:value={$form.stipendTime}
+									{...$constraints.stipendTime}
+									type="number"
+									name="stipendTime"
+									id="stipendTime"
+									class="form-control {$errors.stipendTime
+										? 'is-in'
+										: ''}valid" />
+								<span class="light-text ps-3">hours</span>
 							</div>
 						</div>
 						<br />
@@ -110,9 +100,6 @@
 </div>
 
 <style lang="stylus">
-	.input-group-text
-		border-color var(--accent3)
-
-	.input-group
+	input
 		max-width 12rem
 </style>

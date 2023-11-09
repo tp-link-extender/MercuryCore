@@ -191,7 +191,7 @@
 										<button
 											name="action"
 											value="disable"
-											class="btn btn-sm btn-link text-decoration-none text-danger my-0">
+											class="btn btn-sm text-decoration-none text-danger my-0">
 											<fa fa-ban />
 											Disable Invite
 										</button>
