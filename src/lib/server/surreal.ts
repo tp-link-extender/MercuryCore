@@ -4,13 +4,13 @@ const db = new Surreal()
 
 await db.connect("http://localhost:8000/rpc")
 await db.signin({
-	user: "root",
-	pass: "root",
+	username: "root",
+	password: "root",
 })
 
 await db.use({
-	ns: "main",
-	db: "main",
+	namespace: "main",
+	database: "main",
 })
 
 console.log("loaded surreal")
@@ -54,7 +54,7 @@ await db.query(surql`
  * @returns The result of the first query given.
  */
 export const query = async <T>(input: string, params?: { [k: string]: any }) =>
-	(await db.query(input, params))[0].result as T[]
+	(await db.query(input, params))?.[0] as T[]
 
 /**
  * Executes a query in SurrealDB and returns the first item in its results.
@@ -72,7 +72,7 @@ export const squery = async <T>(input: string, params?: { [k: string]: any }) =>
  * @returns The result of all queries given.
  */
 export const mquery = async <T>(input: string, params?: { [k: string]: any }) =>
-	(await db.query(input, params)).map(v => v.result) as T
+	(await db.query(input, params)) as T
 
 const failed = "The query was not executed due to a failed transaction"
 /**
