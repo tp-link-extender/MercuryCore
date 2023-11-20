@@ -3,6 +3,7 @@ import preprocess from "svelte-preprocess"
 import autoImport from "sveltekit-autoimport"
 import { resolve } from "path"
 
+/** @type {import("@sveltejs/kit").Config} */
 export default {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors

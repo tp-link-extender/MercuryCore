@@ -23,7 +23,7 @@
 				class="align-self-center row w-100 p-2 pt-0"
 				method="POST"
 				use:enhance
-				action="/user/{user.number}">
+				action="/user/{user.number}?/interact">
 				<button
 					name="action"
 					value="accept"
