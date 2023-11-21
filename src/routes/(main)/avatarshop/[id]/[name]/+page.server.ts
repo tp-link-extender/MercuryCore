@@ -6,7 +6,7 @@ import formError from "$lib/server/formError"
 import { error, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import { like, likeSwitch } from "$lib/server/like"
+import { like, likeActions } from "$lib/server/like"
 import { recurse, type Replies } from "./select"
 import requestRender from "$lib/server/requestRender"
 
@@ -180,7 +180,7 @@ export const actions = {
 	like: async ({ request, locals, url }) => {
 		const { user } = await authorise(locals),
 			data = await formData(request),
-			{ action } = data,
+			action = data.action as keyof typeof likeActions,
 			id = url.searchParams.get("id"),
 			replyId = url.searchParams.get("rid")
 
@@ -193,8 +193,7 @@ export const actions = {
 		)
 			throw error(404)
 
-		await likeSwitch(
-			action,
+		await likeActions[action](
 			user.id,
 			`asset${replyId ? "Comment" : ""}:${id || replyId}`,
 		)
