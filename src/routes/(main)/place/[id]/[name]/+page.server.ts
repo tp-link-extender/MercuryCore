@@ -1,7 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import surreal, { mquery, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
-import { likeSwitch } from "$lib/server/like"
+import { likeActions } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
 
 export async function load({ url, locals, params }) {
@@ -26,12 +26,12 @@ export async function load({ url, locals, params }) {
 			name: string
 			ownerUser: {
 				number: number
-			status: "Playing" | "Online" | "Offline"
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			players: {
 				number: number
-			status: "Playing" | "Online" | "Offline"
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}[]
 			privateServer: boolean
@@ -96,7 +96,7 @@ export const actions = {
 		const id = parseInt(params.id),
 			{ user } = await authorise(locals),
 			data = await formData(request),
-			{ action } = data,
+			action = data.action as keyof typeof likeActions,
 			privateTicket = url.searchParams.get("privateTicket")
 		const place = (
 			(await surreal.select(`place:${id}`)) as {
@@ -111,7 +111,7 @@ export const actions = {
 		)
 			throw error(404, "Place not found")
 
-		await likeSwitch(action, user.id, `place:${id}`)
+		await likeActions[action](user.id, `place:${id}`)
 	},
 
 	join: async ({ request, locals }) => {

@@ -4,7 +4,6 @@ import formData from "$lib/server/formData"
 import { fail, error } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import type { User } from "lucia"
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
@@ -130,12 +129,13 @@ async function getData({
 	return { user2 }
 }
 
-type QParams = {
-	user: string
-	user2: string
-}
-
-type ActionFunction = (a1: QParams, a2: User) => Promise<any>
+type ActionFunction = (
+	params: {
+		user: string
+		user2: string
+	},
+	user: import("lucia").User,
+) => Promise<any>
 
 const acceptExisting: ActionFunction = (params, user) =>
 	query(
@@ -159,7 +159,6 @@ const acceptExisting: ActionFunction = (params, user) =>
 			relativeId: user.id,
 		},
 	)
-
 const follow: ActionFunction = (params, user) =>
 	query(
 		surql`
@@ -181,7 +180,6 @@ const follow: ActionFunction = (params, user) =>
 			relativeId: user.id,
 		},
 	)
-
 const unfollow: ActionFunction = params =>
 	query(
 		surql`
@@ -195,7 +193,6 @@ const unfollow: ActionFunction = params =>
 			...params,
 		},
 	)
-
 const unfriend: ActionFunction = params =>
 	query(
 		surql`
@@ -210,7 +207,6 @@ const unfriend: ActionFunction = params =>
 			...params,
 		},
 	)
-
 const sendRequest: ActionFunction = async (params, user) => {
 	if (
 		!(
@@ -248,7 +244,6 @@ const sendRequest: ActionFunction = async (params, user) => {
 			)
 	else throw error(400, "Already friends")
 }
-
 const cancel: ActionFunction = params =>
 	query(
 		surql`
@@ -262,11 +257,9 @@ const cancel: ActionFunction = params =>
 			...params,
 		},
 	)
-
 const decline: ActionFunction = params =>
 	query(surql`DELETE $user2->request WHERE out = $user`, params)
-
-const accept = async (params: QParams, user: User) => {
+const accept: ActionFunction = async (params, user) => {
 	if (await query(surql`$user ∈ $user2->request->user`, params))
 		// Make sure an incoming request exists before accepting
 		await acceptExisting(params, user)
@@ -295,18 +288,13 @@ export const actions = {
 		const data = await formData(request),
 			{ action } = data
 
-		try {
-			actionFunctions?.[action](
-				{
-					user: `user:${user.id}`,
-					user2: `user:${user2.id}`,
-				},
-				user,
-			)
-		} catch (e) {
-			console.error(e)
-			throw e
-		}
+		actionFunctions?.[action](
+			{
+				user: `user:${user.id}`,
+				user2: `user:${user2.id}`,
+			},
+			user,
+		)
 	},
 	rerender: async e => {
 		const { locals, params, getClientAddress } = e

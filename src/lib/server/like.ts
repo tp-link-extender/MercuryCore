@@ -31,15 +31,10 @@ export const undislike = (userId: string, thing: string) =>
 		user: `user:${userId}`,
 	})
 
-export function likeSwitch(action: string, userId: string, thing: string) {
-	switch (action) {
-		case "like":
-			return like(userId, thing)
-		case "unlike":
-			return unlike(userId, thing)
-		case "dislike":
-			return dislike(userId, thing)
-		case "undislike":
-			return undislike(userId, thing)
-	}
+// better than like switch
+export const likeActions = {
+	like,
+	unlike,
+	dislike,
+	undislike,
 }
