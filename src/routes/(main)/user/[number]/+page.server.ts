@@ -4,6 +4,7 @@ import formData from "$lib/server/formData"
 import { fail, error } from "@sveltejs/kit"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
+import type { RequestEvent } from "./$types"
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
@@ -109,12 +110,9 @@ export async function load({ locals, params }) {
 	return userExists
 }
 
-async function getData({
-	params,
-}: Parameters<(typeof actions)[keyof typeof actions]>[0]) {
+async function getData({ params }: RequestEvent) {
 	if (!/^\d+$/.test(params.number))
 		throw error(400, `Invalid user id: ${params.number}`)
-	const number = parseInt(params.number)
 	const user2 = await squery<{
 		id: string
 		username: string
@@ -122,7 +120,7 @@ async function getData({
 		surql`
 			SELECT meta::id(id) AS id, username
 			FROM user WHERE number = $number`,
-		{ number },
+		{ number: parseInt(params.number) },
 	)
 	if (!user2) throw error(404, "User not found")
 
@@ -159,74 +157,32 @@ const acceptExisting: ActionFunction = (params, user) =>
 			relativeId: user.id,
 		},
 	)
-const follow: ActionFunction = (params, user) =>
-	query(
-		surql`
-			IF $user2 ∉ $user->follows->user {
-				RELATE $user->follows->$user2
-					SET time = time::now();
-				RELATE $user->notification->$user2 CONTENT {
-					type: $type,
-					time: time::now(),
-					note: $note,
-					relativeId: $relativeId,
-					read: false,
-				}
-			}`,
-		{
-			type: "Follower",
-			...params,
-			note: `${user.username} is now following you!`,
-			relativeId: user.id,
+
+async function getInteractData(e: RequestEvent) {
+	const { request, locals } = e,
+		{ user } = await authorise(locals),
+		{ user2 } = await getData(e)
+
+	if (user.id == user2.id)
+		throw error(400, "You can't friend/follow yourself")
+
+	return {
+		user,
+		params: {
+			user: `user:${user.id}`,
+			user2: `user:${user2.id}`,
 		},
-	)
-const unfollow: ActionFunction = params =>
-	query(
-		surql`
-			DELETE $user->follows WHERE out = $user2;
-			DELETE $user->notification WHERE in = $user
-				AND out = $user2
-				AND type = $type
-				AND read = false`,
-		{
-			type: "Follower",
-			...params,
-		},
-	)
-const unfriend: ActionFunction = params =>
-	query(
-		surql`
-			DELETE $user<-friends WHERE in = $user2;
-			DELETE $user->friends WHERE out = $user2;
-			DELETE $user->notification WHERE in = $user
-				AND out = $user2
-				AND type = $type
-				AND read = false`,
-		{
-			type: "NewFriend",
-			...params,
-		},
-	)
-const sendRequest: ActionFunction = async (params, user) => {
-	if (
-		!(
-			// Make sure users are not already friends
-			(await query(
-				surql`$user ∈ $user2->friends->user
-					OR $user2 ∈ $user->friends->user`,
-				params,
-			))
-		)
-	)
-		if (
-			// If there is already an incoming request, accept it instead
-			await query(surql`$user ∈ $user2->request->user`, params)
-		)
-			await acceptExisting(params, user)
-		else
-			await query(
-				surql`
-					RELATE $user->request->$user2
+		data: await formData(request),
+	}
+}
+
+export const actions = {
+	follow: async e => {
+		const { user, params } = await getInteractData(e)
+		await query(
+			surql`
+				IF $user2 ∉ $user->follows->user {
+					RELATE $user->follows->$user2
 						SET time = time::now();
 					RELATE $user->notification->$user2 CONTENT {
 						type: $type,
@@ -234,67 +190,106 @@ const sendRequest: ActionFunction = async (params, user) => {
 						note: $note,
 						relativeId: $relativeId,
 						read: false,
-					}`,
-				{
-					type: "FriendRequest",
-					...params,
-					note: `${user.username} has sent you a friend request.`,
-					relativeId: user.id,
-				},
-			)
-	else throw error(400, "Already friends")
-}
-const cancel: ActionFunction = params =>
-	query(
-		surql`
-			DELETE $user->request WHERE out = $user2;
-			DELETE $user->notification WHERE in = $user
-				AND out = $user2
-				AND type = $type
-				AND read = false`,
-		{
-			type: "FriendRequest",
-			...params,
-		},
-	)
-const decline: ActionFunction = params =>
-	query(surql`DELETE $user2->request WHERE out = $user`, params)
-const accept: ActionFunction = async (params, user) => {
-	if (await query(surql`$user ∈ $user2->request->user`, params))
-		// Make sure an incoming request exists before accepting
-		await acceptExisting(params, user)
-	else throw error(400, "No friend request to accept")
-}
-
-const actionFunctions: { [k: string]: ActionFunction } = {
-	follow,
-	unfollow,
-	unfriend,
-	request: sendRequest,
-	cancel,
-	decline,
-	accept,
-}
-
-export const actions = {
-	interact: async e => {
-		const { request, locals } = e,
-			{ user } = await authorise(locals),
-			{ user2 } = await getData(e)
-
-		if (user.id == user2.id)
-			throw error(400, "You can't friend/follow yourself")
-
-		const data = await formData(request),
-			{ action } = data
-
-		actionFunctions?.[action](
+					}
+				}`,
 			{
-				user: `user:${user.id}`,
-				user2: `user:${user2.id}`,
+				type: "Follower",
+				...params,
+				note: `${user.username} is now following you!`,
+				relativeId: user.id,
 			},
-			user,
 		)
+	},
+	unfollow: async e => {
+		const { params } = await getInteractData(e)
+		await query(
+			surql`
+				DELETE $user->follows WHERE out = $user2;
+				DELETE $user->notification WHERE in = $user
+					AND out = $user2
+					AND type = $type
+					AND read = false`,
+			{
+				type: "Follower",
+				...params,
+			},
+		)
+	},
+	unfriend: async e => {
+		const { params } = await getInteractData(e)
+		await query(
+			surql`
+				DELETE $user<-friends WHERE in = $user2;
+				DELETE $user->friends WHERE out = $user2;
+				DELETE $user->notification WHERE in = $user
+					AND out = $user2
+					AND type = $type
+					AND read = false`,
+			{
+				type: "NewFriend",
+				...params,
+			},
+		)
+	},
+	request: async e => {
+		const { user, params } = await getInteractData(e)
+		if (
+			// Make sure users are not already friends
+			!(await query(
+				surql`$user ∈ $user2->friends->user
+					OR $user2 ∈ $user->friends->user`,
+				params,
+			))
+		)
+			if (await query(surql`$user ∈ $user2->request->user`, params))
+				// If there is already an incoming request, accept it instead
+				await acceptExisting(params, user)
+			else
+				await query(
+					surql`
+						RELATE $user->request->$user2
+							SET time = time::now();
+						RELATE $user->notification->$user2 CONTENT {
+							type: $type,
+							time: time::now(),
+							note: $note,
+							relativeId: $relativeId,
+							read: false,
+						}`,
+					{
+						type: "FriendRequest",
+						...params,
+						note: `${user.username} has sent you a friend request.`,
+						relativeId: user.id,
+					},
+				)
+		else throw error(400, "Already friends")
+	},
+	cancel: async e => {
+		const { params } = await getInteractData(e)
+		await query(
+			surql`
+				DELETE $user->request WHERE out = $user2;
+				DELETE $user->notification WHERE in = $user
+					AND out = $user2
+					AND type = $type
+					AND read = false`,
+			{
+				type: "FriendRequest",
+				...params,
+			},
+		)
+	},
+	decline: async e => {
+		const { params } = await getInteractData(e)
+		await query(surql`DELETE $user2->request WHERE out = $user`, params)
+	},
+	accept: async e => {
+		const { user, params } = await getInteractData(e)
+		if (await query(surql`$user ∈ $user2->request->user`, params))
+			// Make sure an incoming request exists before accepting
+			await acceptExisting(params, user)
+		else throw error(400, "No friend request to accept")
 	},
 	rerender: async e => {
 		const { locals, params, getClientAddress } = e

@@ -4,6 +4,7 @@ import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
+import type { RequestEvent } from "./$types"
 
 const schema = z.object({
 	bannerText: z.string().max(100).optional(),
@@ -39,153 +40,152 @@ export async function load({ locals }) {
 					creator.username
 				FROM $parent)[0].creator AS creator
 			OMIT deleted
-			FROM banner WHERE deleted = false
-		`),
+			FROM banner WHERE deleted = false`),
 	}
 }
 
+const bannerActiveCount = () =>
+	squery<number>(surql`
+		count(
+			SELECT * FROM banner
+			WHERE active = true AND deleted = false
+		)`)
+
+async function getData({ request, locals }: RequestEvent) {
+	const { user } = await authorise(locals, 5),
+		form = await superValidate(request, schema)
+
+	return { user, form, error: !form.valid && formError(form) }
+}
+
+const showHide = (action: string) => async (e: RequestEvent) => {
+	const { form, error } = await getData(e)
+	if (error) return error
+	const id = e.url.searchParams.get("id")
+
+	if (!id)
+		return message(form, "Missing fields", {
+			status: 400,
+		})
+
+	if (action == "show" && (await bannerActiveCount()) >= 3)
+		return message(form, "Too many active banners", {
+			status: 400,
+		})
+
+	await surreal.merge(`banner:${id}`, {
+		active: action == "show",
+	})
+}
 export const actions = {
-	default: async ({ url, request, locals, getClientAddress }) => {
-		await authorise(locals, 5)
+	create: async e => {
+		const { user, form, error } = await getData(e)
+		if (error) return error
+		const { getClientAddress } = e
 
-		const { user } = await authorise(locals),
-			form = await superValidate(request, schema)
-		if (!form.valid) return formError(form)
+		const limit = ratelimit(form, "createBanner", getClientAddress, 30)
+		if (limit) return limit
+		const { bannerText, bannerColour, bannerTextLight } = form.data
 
-		const { bannerText, bannerColour, bannerBody, bannerTextLight } =
-				form.data,
-			id = url.searchParams.get("id"),
-			action = url.searchParams.get("a"),
-			bannerActiveCount = await squery<number>(surql`
-				count(
-					SELECT * FROM banner
-					WHERE active = true AND deleted = false
-				)
-			`)
+		if (!bannerText || !bannerColour)
+			return message(form, "Missing fields", {
+				status: 400,
+			})
 
-		console.log(bannerActiveCount)
+		if ((await bannerActiveCount()) >= 3)
+			return message(form, "Too many active banners", {
+				status: 400,
+			})
 
-		switch (action) {
-			case "create": {
-				const limit = ratelimit(
-					form,
-					"createBanner",
-					getClientAddress,
-					30,
-				)
-				if (limit) return limit
+		await Promise.all([
+			surreal.create("banner", {
+				active: true,
+				deleted: false,
+				body: bannerText,
+				bgColour: bannerColour,
+				textLight: !!bannerTextLight,
+				creator: `user:${user.id}`,
+			}),
 
-				if (!bannerText || !bannerColour)
-					return message(form, "Missing fields", {
-						status: 400,
-					})
+			query(
+				surql`
+					CREATE auditLog CONTENT {
+						action: "Administration",
+						note: $note,
+						user: $user,
+						time: time::now()
+					}`,
+				{
+					note: `Create banner "${bannerText}"`,
+					user: `user:${user.id}`,
+				},
+			),
+		])
 
-				if (bannerActiveCount >= 3)
-					return message(form, "Too many active banners", {
-						status: 400,
-					})
-
-				await Promise.all([
-					surreal.create("banner", {
-						active: true,
-						deleted: false,
-						body: bannerText,
-						bgColour: bannerColour,
-						textLight: !!bannerTextLight,
-						creator: `user:${user.id}`,
-					}),
-
-					query(
-						surql`
-							CREATE auditLog CONTENT {
-								action: "Administration",
-								note: $note,
-								user: $user,
-								time: time::now()
-							}`,
-						{
-							note: `Create banner "${bannerText}"`,
-							user: `user:${user.id}`,
-						},
-					),
-				])
-
-				return message(form, "Banner created successfully!")
-			}
-			case "show":
-			case "hide":
-				if (!id)
-					return message(form, "Missing fields", {
-						status: 400,
-					})
-
-				if (action == "show" && bannerActiveCount >= 3)
-					return message(form, "Too many active banners", {
-						status: 400,
-					})
-
-				await surreal.merge(`banner:${id}`, {
-					active: action == "show",
-				})
-
-				return
-			case "delete":
-				if (!id)
-					return message(form, "Missing fields", {
-						status: 400,
-					})
-
-				const deletedBanner = (
-					await surreal.merge(`banner:${id}`, {
-						deleted: true,
-					})
-				)[0] as {
-					active: boolean
-					bgColour: string
-					body: string
-					creator: string
-					deleted: boolean
-					id: string
-					textLight: boolean
-				}
-
-				await query(
-					surql`
-						CREATE auditLog CONTENT {
-							action: "Administration",
-							note: $note,
-							user: $user,
-							time: time::now()
-						}`,
-					{
-						note: `Delete banner "${deletedBanner.body}"`,
-						user: `user:${user.id}`,
-					},
-				)
-
-				return
-			case "updateBody":
-				if (!bannerBody || !id)
-					return message(form, "Missing fields", {
-						status: 400,
-					})
-
-				await surreal.merge(`banner:${id}`, {
-					body: bannerBody,
-				})
-
-				return
-			case "updateTextLight":
-				if (bannerTextLight == null || !id)
-					return message(form, "Missing fields", {
-						status: 400,
-					})
-
-				await surreal.merge(`banner:${id}`, {
-					textLight: bannerTextLight,
-				})
-
-				return
-		}
+		return message(form, "Banner created successfully!")
 	},
+	delete: async e => {
+		const { user, form, error } = await getData(e)
+		if (error) return error
+		const id = e.url.searchParams.get("id")
+
+		if (!id)
+			return message(form, "Missing fields", {
+				status: 400,
+			})
+
+		const deletedBanner = (
+			await surreal.merge(`banner:${id}`, {
+				deleted: true,
+			})
+		)[0] as unknown as {
+			body: string
+		}
+
+		await query(
+			surql`
+			CREATE auditLog CONTENT {
+				action: "Administration",
+				note: $note,
+				user: $user,
+				time: time::now()
+			}`,
+			{
+				note: `Delete banner "${deletedBanner.body}"`,
+				user: `user:${user.id}`,
+			},
+		)
+	},
+	updateBody: async e => {
+		const { form, error } = await getData(e)
+		if (error) return error
+		const id = e.url.searchParams.get("id"),
+			{ bannerBody } = form.data
+
+		if (!bannerBody || !id)
+			return message(form, "Missing fields", {
+				status: 400,
+			})
+
+		await surreal.merge(`banner:${id}`, {
+			body: bannerBody,
+		})
+	},
+	updateTextLight: async e => {
+		const { form, error } = await getData(e)
+		if (error) return error
+		const id = e.url.searchParams.get("id"),
+			{ bannerTextLight } = form.data
+
+		if (bannerTextLight == null || !id)
+			return message(form, "Missing fields", {
+				status: 400,
+			})
+
+		await surreal.merge(`banner:${id}`, {
+			textLight: bannerTextLight,
+		})
+	},
+	show: showHide("show"),
+	hide: showHide("hide"),
 }

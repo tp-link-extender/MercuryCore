@@ -8,18 +8,16 @@
 		<form
 			use:enhance
 			method="POST"
-			action="?/interact"
+			action="?/{data.friends
+				? 'unfriend'
+				: data.outgoingRequest
+				? 'cancel'
+				: data.incomingRequest
+				? 'accept'
+				: 'request'}"
 			in:fade
 			class="align-self-center pe-2 d-flex gap-2">
 			<button
-				name="action"
-				value={data.friends
-					? "unfriend"
-					: data.outgoingRequest
-					? "cancel"
-					: data.incomingRequest
-					? "accept"
-					: "request"}
 				class="btn {data.friends || data.outgoingRequest
 					? 'btn-danger'
 					: data.incomingRequest
@@ -35,14 +33,25 @@
 					Send friend request
 				{/if}
 			</button>
-			{#if data.incomingRequest}
-				<button name="action" value="decline" class="btn btn-danger">
-					Decline request
-				</button>
-			{/if}
+		</form>
+		{#if data.incomingRequest}
+			<form
+				use:enhance
+				method="POST"
+				action="?/decline"
+				in:fade
+				class="align-self-center pe-2 d-flex gap-2">
+				<button class="btn btn-danger">Decline request</button>
+			</form>
+		{/if}
+		<form
+			use:enhance
+			method="POST"
+			action="?/{data.following ? 'unfollow' : 'follow'}"
+			in:fade
+			class="align-self-center pe-2 d-flex gap-2">
 			<button
 				name="action"
-				value={data.following ? "unfollow" : "follow"}
 				class="btn h-100 {data.following
 					? 'btn-danger'
 					: 'btn-primary'}">

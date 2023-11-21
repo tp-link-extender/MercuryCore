@@ -4,6 +4,7 @@ import requestRender from "$lib/server/requestRender"
 import { squery, query, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import fs from "fs/promises"
+import type { RequestEvent } from "./$types"
 
 export const load = async ({ locals }) => ({
 	assets: query<{
@@ -37,78 +38,38 @@ export const load = async ({ locals }) => ({
 	),
 })
 
-type ActionFunction = (
-	params: {
-		user: string
-		asset: string
-	},
-	asset: {
-		name: string
-	},
-	id: string,
-	getClientAddress: () => string,
-) => Promise<any>
+async function getData({ locals, url }: RequestEvent) {
+	const { user } = await authorise(locals, 3),
+		id = url.searchParams.get("id")
 
-const approve: ActionFunction = async (params, asset, id) => {
-	await squery(
-		surql`
-			UPDATE $asset SET visibility = "Visible";
-			UPDATE $asset->imageAsset->asset
-				SET visibility = "Visible";
-			CREATE auditLog CONTENT {
-				action: "Moderation",
-				note: $note,
-				user: $user,
-				time: time::now()
-			}`,
-		{
-			...params,
-			note: `Approve asset ${asset.name} (id ${id})`,
-		},
-	)
-}
-const deny: ActionFunction = async (params, asset, id) => {
-	await squery(
-		surql`
-			UPDATE $asset SET visibility = "Moderated";
-			UPDATE $asset->imageAsset->asset
-				SET visibility = "Moderated";
-			CREATE auditLog CONTENT {
-				action: "Moderation",
-				note: $note,
-				user: $user,
-				time: time::now()
-			}`,
-		{
-			...params,
-			note: `Moderate asset ${asset.name} (id ${id})`,
-		},
-	)
-}
-const rerender: ActionFunction = async (_, _2, id, getClientAddress) => {
-	const limit = ratelimit({}, "rerender", getClientAddress, 60)
-	if (limit) return fail(429, { msg: "Too many requests" })
+	if (!id) throw error(400, "Missing asset id")
+	if (!/^\d+$/.test(id)) throw error(400, `Invalid asset id: ${id}`)
 
-	try {
-		await requestRender("Clothing", parseInt(id))
-	} catch (e) {
-		console.error(e)
-		return fail(500, { msg: "Failed to request render" })
+	const params = {
+		user: `user:${user.id}`,
+		asset: `asset:${id}`,
 	}
-}
-const purge: ActionFunction = async (params, asset, id) => {
-	const { iaid } = await squery<{ iaid: number }>(
-		surql`
-			SELECT meta::id((->imageAsset->asset.id)[0]) AS iaid
-			FROM $asset`,
-		{ asset: `asset:${id}` },
-	)
+	const asset = await squery<{
+		name: string
+	}>(surql`SELECT * FROM $asset`, params)
 
-	await Promise.all([
-		query(
+	if (!asset) throw error(404, "Asset not found")
+
+	return { user, id, params, assetName: asset.name }
+}
+
+// it goes like this, the bug, the fix
+// the pull request, the git commit
+// the coder's late-night screams
+// of hallelujah
+export const actions = {
+	approve: async e => {
+		const { id, params, assetName } = await getData(e)
+		await squery(
 			surql`
-				DELETE $asset;
-				DELETE $imageAsset;
+				UPDATE $asset SET visibility = "Visible";
+				UPDATE $asset->imageAsset->asset
+					SET visibility = "Visible";
 				CREATE auditLog CONTENT {
 					action: "Moderation",
 					note: $note,
@@ -117,41 +78,70 @@ const purge: ActionFunction = async (params, asset, id) => {
 				}`,
 			{
 				...params,
-				imageAsset: `asset:${iaid}`,
-				note: `Purge asset ${asset.name} (id ${id})`,
+				note: `Approve asset ${assetName} (id ${id})`,
 			},
-		),
-		fs.rm(`data/assets/${id}`),
-		fs.rm(`data/assets/${iaid}`),
-		fs.rm(`data/thumbnails/${id}`),
-	])
-}
+		)
+	},
+	deny: async e => {
+		const { id, params, assetName } = await getData(e)
+		await squery(
+			surql`
+				UPDATE $asset SET visibility = "Moderated";
+				UPDATE $asset->imageAsset->asset
+					SET visibility = "Moderated";
+				CREATE auditLog CONTENT {
+					action: "Moderation",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
+			{
+				...params,
+				note: `Moderate asset ${assetName} (id ${id})`,
+			},
+		)
+	},
+	rerender: async e => {
+		const { id } = await getData(e),
+			limit = ratelimit({}, "rerender", e.getClientAddress, 60)
+		if (limit) return fail(429, { msg: "Too many requests" })
 
-const actionFunctions = { approve, deny, rerender, purge }
-
-// it goes like this, the bug, the fix
-// the pull request, the git commit
-// the coder's late-night screams
-// of hallelujah
-export const actions = {
-	default: async ({ locals, url, getClientAddress }) => {
-		const { user } = await authorise(locals, 3),
-			id = url.searchParams.get("id"),
-			action = url.searchParams.get("a") as keyof typeof actionFunctions
-
-		if (!id) throw error(400, "Missing asset id")
-		if (!/^\d+$/.test(id)) throw error(400, `Invalid asset id: ${id}`)
-
-		const qParams = {
-			user: `user:${user.id}`,
-			asset: `asset:${id}`,
+		try {
+			await requestRender("Clothing", parseInt(id))
+		} catch (e) {
+			console.error(e)
+			return fail(500, { msg: "Failed to request render" })
 		}
-		const asset = await squery<{
-			name: string
-		}>(surql`SELECT * FROM $asset`, qParams)
+	},
+	purge: async e => {
+		const { id, params, assetName } = await getData(e)
+		const { iaid } = await squery<{ iaid: number }>(
+			surql`
+				SELECT meta::id((->imageAsset->asset.id)[0]) AS iaid
+				FROM $asset`,
+			{ asset: `asset:${id}` },
+		)
 
-		if (!asset) throw error(404, "Asset not found")
-
-		return actionFunctions?.[action](qParams, asset, id, getClientAddress)
+		await Promise.all([
+			query(
+				surql`
+					DELETE $asset;
+					DELETE $imageAsset;
+					CREATE auditLog CONTENT {
+						action: "Moderation",
+						note: $note,
+						user: $user,
+						time: time::now()
+					}`,
+				{
+					...params,
+					imageAsset: `asset:${iaid}`,
+					note: `Purge asset ${assetName} (id ${id})`,
+				},
+			),
+			fs.rm(`data/assets/${id}`),
+			fs.rm(`data/assets/${iaid}`),
+			fs.rm(`data/thumbnails/${id}`),
+		])
 	},
 }
