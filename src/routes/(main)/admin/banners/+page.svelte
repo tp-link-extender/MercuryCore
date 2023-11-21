@@ -16,24 +16,24 @@
 		textLightForms: { [k: string]: HTMLFormElement } = {}
 
 	const {
-			form,
-			errors,
-			message,
-			constraints,
-			enhance,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		}),
-		viewBody = (newBannerData: typeof bannerData) => () => {
-			modal.set(true)
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
+	const viewBody = (newBannerData: typeof bannerData) => () => {
+		modal.set(true)
 
-			newBannerData.body = newBannerData.body.trim()
-			$form.bannerBody = newBannerData.body
-			bannerData = newBannerData
-		}
+		newBannerData.body = newBannerData.body.trim()
+		$form.bannerBody = newBannerData.body
+		bannerData = newBannerData
+	}
 
 	export const snapshot = { capture, restore }
 </script>
@@ -52,7 +52,7 @@
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
-				<form use:enhance method="POST" action="?a=create">
+				<form use:enhance method="POST" action="?/create">
 					<fieldset>
 						<div class="row">
 							<label
@@ -152,7 +152,7 @@
 									<form
 										use:enhance
 										method="POST"
-										action="?id={banner.id}&a=delete">
+										action="?/delete&id={banner.id}">
 										<button
 											class="btn btn-sm text-decoration-none text-danger">
 											<fa fa-trash class="pe-1" />
@@ -162,9 +162,9 @@
 									<form
 										use:enhance
 										method="POST"
-										action="?id={banner.id}&a={banner.active
+										action="?/{banner.active
 											? 'hide'
-											: 'show'}">
+											: 'show'}&id={banner.id}">
 										<button
 											class="btn btn-sm text-decoration-none text-{banner.active
 												? 'warning'
@@ -199,7 +199,7 @@
 										bind:this={textLightForms[banner.id]}
 										method="POST"
 										class="px-2"
-										action="?id={banner.id}&a=updateTextLight">
+										action="?/updateTextLight&id={banner.id}">
 										<input
 											on:change={async () => {
 												textLightForms[
@@ -254,7 +254,7 @@
 		<form
 			use:enhance
 			method="POST"
-			action="?id={bannerData.id}&a=updateBody">
+			action="?/updateBody&id={bannerData.id}">
 			<textarea
 				bind:value={$form.bannerBody}
 				{...$constraints.bannerBody}

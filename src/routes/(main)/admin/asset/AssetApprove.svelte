@@ -35,14 +35,14 @@
 				<form
 					use:enhance
 					method="POST"
-					action="/admin/asset?id={asset.id}&a=approve"
+					action="/admin/asset?/approve&id={asset.id}"
 					class="d-inline">
 					<button class="btn btn-sm btn-primary mb-1">Approve</button>
 				</form>
 				<form
 					use:enhance
 					method="POST"
-					action="/admin/asset?id={asset.id}&a=deny"
+					action="/admin/asset?/deny&id={asset.id}"
 					class="d-inline">
 					<button class="btn btn-sm btn-danger mb-1">Deny</button>
 				</form>
@@ -77,7 +77,7 @@
 			<form
 				use:enhance
 				method="POST"
-				action="/admin/asset?id={asset.id}&a=rerender"
+				action="/admin/asset?/rerender&id={asset.id}"
 				class="w-100 pt-3">
 				<button class="btn btn-lg btn-primary w-100">Re-render</button>
 			</form>
@@ -107,7 +107,7 @@
 		<form
 			use:enhance
 			method="POST"
-			action="/admin/asset?id={asset.id}&a=purge"
+			action="/admin/asset?/purge&id={asset.id}"
 			class="d-inline">
 			<button
 				class="btn btn-danger"
