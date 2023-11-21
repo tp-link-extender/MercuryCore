@@ -37,7 +37,7 @@
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
-				<form use:enhance method="POST">
+				<form use:enhance action="?/create" method="POST">
 					<fieldset>
 						<div class="row">
 							<label
@@ -150,10 +150,7 @@
 								</p>
 							</div>
 						</div>
-						<button
-							name="action"
-							value="create"
-							class="btn btn-success mt-4">
+						<button class="btn btn-success mt-4">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -187,10 +184,8 @@
 									<form
 										use:enhance
 										method="POST"
-										action="?id={invite.id}">
+										action="?/disable&id={invite.id}">
 										<button
-											name="action"
-											value="disable"
 											class="btn btn-sm text-decoration-none text-danger my-0">
 											<fa fa-ban />
 											Disable Invite
