@@ -17,7 +17,7 @@
 	use:enhance
 	method="POST"
 	class="col-lg-8"
-	action="?a=privatelink&tab=Privacy">
+	action="?/privatelink&tab=Privacy">
 	<fieldset class="row">
 		<label for="privateLink" class="col-md-3 text-md-right">
 			Private Server Link

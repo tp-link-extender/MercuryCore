@@ -9,6 +9,7 @@ import { z } from "zod"
 import { like, likeActions } from "$lib/server/like"
 import { recurse, type Replies } from "./select"
 import requestRender from "$lib/server/requestRender"
+import type { RequestEvent } from "./$types"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -90,6 +91,20 @@ export async function load({ locals, params }) {
 		form: superValidate(schema),
 		...asset,
 	}
+}
+
+async function getBuyData(e: RequestEvent) {
+	const { user } = await authorise(e.locals),
+		id = parseInt(e.params.id)
+
+	if (
+		!(await squery(surql`SELECT * FROM $asset`, {
+			asset: `asset:${id}`,
+		}))
+	)
+		throw error(404)
+
+	return { user, id }
 }
 
 export const actions = {
@@ -198,119 +213,95 @@ export const actions = {
 			`asset${replyId ? "Comment" : ""}:${id || replyId}`,
 		)
 	},
-	buy: async ({ url, locals, params }) => {
-		const { user } = await authorise(locals),
-			action = url.searchParams.get("a"),
-			id = parseInt(params.id)
+	buy: async e => {
+		const { user, id } = await getBuyData(e)
 
-		console.log(action)
-
-		if (
-			!(await squery(surql`SELECT * FROM $asset`, {
+		const asset = await squery<{
+			creator: {
+				id: string
+				username: string
+			}
+			name: string
+			owned: boolean
+			price: number
+			visibility: string
+		}>(
+			surql`
+				SELECT
+					*,
+					(SELECT meta::id(id) AS id, username
+					FROM <-created<-user)[0] AS creator,
+					$user ∈ <-owns<-user.id AS owned
+				FROM $asset`,
+			{
 				asset: `asset:${id}`,
-			}))
+				user: `user:${user.id}`,
+			},
 		)
-			throw error(404)
+		if (!asset) throw error(404, "Not found")
+		if (asset.owned) throw error(400, "You already own this item")
+		if (asset.visibility != "Visible")
+			throw error(400, "This item hasn't been approved yet")
 
-		console.log("Action:", action)
-
-		switch (action) {
-			case "buy": {
-				const asset = await squery<{
-					creator: {
-						id: string
-						username: string
-					}
-					name: string
-					owned: boolean
-					price: number
-					visibility: string
-				}>(
-					surql`
-						SELECT
-							*,
-							(SELECT
-								meta::id(id) AS id,
-								username
-							FROM <-created<-user)[0] AS creator,
-							$user ∈ <-owns<-user.id AS owned
-						FROM $asset`,
-					{
-						asset: `asset:${id}`,
-						user: `user:${user.id}`,
-					},
-				)
-				if (!asset) throw error(404, "Not found")
-				if (asset.owned) throw error(400, "You already own this item")
-				if (asset.visibility != "Visible")
-					throw error(400, "This item hasn't been approved yet")
-
-				try {
-					await transaction(
-						{ id: user.id },
-						{ id: asset.creator.id },
-						asset.price,
-						{
-							note: `Purchased asset ${asset.name}`,
-							link: `/avatarshop/${params.id}/${asset.name}`,
-						},
-					)
-				} catch (e: any) {
-					console.log(e.message)
-					throw error(400, e.message)
-				}
-
-				await Promise.all([
-					query(surql`RELATE $user->owns->$asset`, {
-						user: `user:${user.id}`,
-						asset: `asset:${id}`,
-					}),
-					user.id == asset.creator.id
-						? null
-						: query(
-								surql`
-									RELATE $sender->notification->$receiver CONTENT {
-										type: $type,
-										time: time::now(),
-										note: $note,
-										relativeId: $relativeId,
-										read: false,
-									}`,
-								{
-									type: "ItemPurchase",
-									sender: `user:${user.id}`,
-									receiver: `user:${asset.creator.id}`,
-									note: `${user.username} just purchased your item: ${asset.name}`,
-									relativeId: params.id,
-								},
-						  ),
-				])
-
-				break
-			}
-			case "delete": {
-				const asset = await squery<{ owned: boolean }>(
-					surql`
-						SELECT
-							$user ∈ <-owns<-user.id AS owned
-						FROM $asset`,
-					{
-						asset: `asset:${id}`,
-						user: `user:${user.id}`,
-					},
-				)
-				if (!asset) throw error(404, "Not found")
-				if (asset.owned) throw error(400, "You don't own this item")
-
-				await query(surql`DELETE $user->owns WHERE out = $asset`, {
-					user: `user:${user.id}`,
-					asset: `asset:${id}`,
-				})
-
-				break
-			}
+		try {
+			await transaction(
+				{ id: user.id },
+				{ id: asset.creator.id },
+				asset.price,
+				{
+					note: `Purchased asset ${asset.name}`,
+					link: `/avatarshop/${e.params.id}/${asset.name}`,
+				},
+			)
+		} catch (e: any) {
+			console.log(e.message)
+			throw error(400, e.message)
 		}
+
+		await Promise.all([
+			query(surql`RELATE $user->owns->$asset`, {
+				user: `user:${user.id}`,
+				asset: `asset:${id}`,
+			}),
+			user.id == asset.creator.id
+				? null
+				: query(
+						surql`
+							RELATE $sender->notification->$receiver CONTENT {
+								type: $type,
+								time: time::now(),
+								note: $note,
+								relativeId: $relativeId,
+								read: false,
+							}`,
+						{
+							type: "ItemPurchase",
+							sender: `user:${user.id}`,
+							receiver: `user:${asset.creator.id}`,
+							note: `${user.username} just purchased your item: ${asset.name}`,
+							relativeId: e.params.id,
+						},
+				  ),
+		])
 	},
+	// deleteAsset: async e => {
+	// 	const { user, id } = await getBuyData(e)
+
+	// 	const asset = await squery<{ owned: boolean }>(
+	// 		surql`SELECT $user ∈ <-owns<-user.id AS owned FROM $asset`,
+	// 		{
+	// 			asset: `asset:${id}`,
+	// 			user: `user:${user.id}`,
+	// 		},
+	// 	)
+	// 	if (!asset) throw error(404, "Not found")
+	// 	if (asset.owned) throw error(400, "You don't own this item")
+
+	// 	await query(surql`DELETE $user->owns WHERE out = $asset`, {
+	// 		user: `user:${user.id}`,
+	// 		asset: `asset:${id}`,
+	// 	})
+	// },
 	delete: async ({ url, locals }) => {
 		const { user } = await authorise(locals),
 			id = url.searchParams.get("id")
@@ -340,8 +331,7 @@ export const actions = {
 
 		await query(
 			surql`
-				LET $poster = (SELECT
-					<-posted<-user AS poster
+				LET $poster = (SELECT <-posted<-user AS poster
 				FROM $assetComment)[0].poster;
 
 				UPDATE $assetComment SET content += {
@@ -380,8 +370,8 @@ export const actions = {
 	rerender: async ({ locals, params, getClientAddress }) => {
 		await authorise(locals, 3)
 
-		// const limit = ratelimit({}, "rerender", getClientAddress, 60)
-		// if (limit) return fail(429, { msg: "Too many requests" })
+		const limit = ratelimit({}, "rerender", getClientAddress, 60)
+		if (limit) return fail(429, { msg: "Too many requests" })
 
 		const asset = await squery<{
 			type: number

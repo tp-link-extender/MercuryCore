@@ -14,7 +14,7 @@
 	if (user.bio?.[0]) $form.bio = user.bio[0].text
 </script>
 
-<form use:enhance method="POST" class="col-lg-8" action="?a=profile">
+<form use:enhance method="POST" class="col-lg-8" action="?/profile">
 	<fieldset class="pb-2">
 		<div class="row">
 			<label for="theme" class="col-md-3 text-md-right">Theme</label>

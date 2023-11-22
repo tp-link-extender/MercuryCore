@@ -18,7 +18,7 @@
 	use:enhance
 	method="POST"
 	class="col-lg-8"
-	action="?a=network&tab=Network">
+	action="?/network&tab=Network">
 	<fieldset class="pb-6">
 		<div class="row">
 			<label for="serverIP" class="col-md-3 text-md-right">Address</label>

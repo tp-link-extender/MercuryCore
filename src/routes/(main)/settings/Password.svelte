@@ -10,7 +10,7 @@
 	)
 </script>
 
-<form use:enhance method="POST" class="col-sm-8" action="?a=password">
+<form use:enhance method="POST" class="col-sm-8" action="?/password">
 	<fieldset class="pb-2">
 		<label for="password" class="col-sm-4">Current Password</label>
 		<div class="col-sm-10">

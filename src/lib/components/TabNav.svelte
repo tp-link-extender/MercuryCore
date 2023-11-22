@@ -69,7 +69,6 @@
 	.activeTab.item
 		background var(--accent2)
 
-
 	.justified .item
 		flex-basis 0
 		flex-grow 1

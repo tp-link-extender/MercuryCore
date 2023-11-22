@@ -9,7 +9,7 @@
 	})
 </script>
 
-<form use:enhance method="POST" class="col-lg-8" action="?a=ticket&tab=Network">
+<form use:enhance method="POST" class="col-lg-8" action="?/ticket&tab=Network">
 	<fieldset class="row pb-4">
 		<label for="ticket" class="col-md-3 text-md-right">Server Ticket</label>
 		<div class="col-md-9">

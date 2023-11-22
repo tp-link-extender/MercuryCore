@@ -16,7 +16,7 @@
 		$form.description = data.description.text
 </script>
 
-<form use:enhance method="POST" class="col-lg-8" action="?a=view&tab=View">
+<form use:enhance method="POST" class="col-lg-8" action="?/view&tab=View">
 	<fieldset class="pb-6">
 		<div class="row">
 			<label for="title" class="col-md-3 text-md-right">Title</label>
