@@ -6,6 +6,7 @@ import fs from "fs"
 import sharp from "sharp"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
+import type { RequestEvent } from "./$types"
 
 const schemas = {
 	view: z.object({
@@ -60,10 +61,7 @@ const placeQuery = async (id: string | number) =>
 			SELECT
 				*,
 				meta::id(id) AS id,
-				(SELECT
-					number,
-					status,
-					username
+				(SELECT number, status, username
 				FROM <-owns<-user)[0] AS owner,
 				(SELECT text, updated FROM $parent.description
 				ORDER BY updated DESC)[0] AS description
@@ -76,7 +74,6 @@ export async function load({ locals, params }) {
 		throw error(400, `Invalid game id: ${params.id}`)
 
 	const getPlace = await placeQuery(params.id)
-
 	if (!getPlace) throw error(404, "Place not found")
 
 	const { user } = await authorise(locals)
@@ -94,138 +91,140 @@ export async function load({ locals, params }) {
 	}
 }
 
+async function getData(e: RequestEvent) {
+	if (!/^\d+$/.test(e.params.id || ""))
+		throw error(400, `Invalid game id: ${e.params.id}`)
+	const id = parseInt(e.params.id || ""),
+		{ user } = await authorise(e.locals),
+		getPlace = await placeQuery(e.params.id)
+
+	if (user.number != getPlace.owner.number && user.permissionLevel < 4)
+		throw error(403, "You do not have permission to update this page.")
+
+	return id
+}
+
 export const actions = {
-	default: async ({ request, locals, params, url }) => {
-		if (!/^\d+$/.test(params.id || ""))
-			throw error(400, `Invalid game id: ${params.id}`)
-		const id = parseInt(params.id || ""),
-			{ user } = await authorise(locals),
-			getPlace = await placeQuery(params.id)
+	view: async e => {
+		const id = await getData(e),
+			{ request } = e
 
-		if (user.number != getPlace.owner.number && user.permissionLevel < 4)
-			throw error(403, "You do not have permission to update this page.")
+		const formData = await request.formData(),
+			form = await superValidate(formData, schemas.view)
+		if (!form.valid) return formError(form)
 
-		const action = url.searchParams.get("a")
+		const icon = formData.get("icon") as File
 
-		switch (action) {
-			case "view": {
-				const formData = await request.formData(),
-					form = await superValidate(formData, schemas.view)
-				if (!form.valid) return formError(form)
-
-				const icon = formData.get("icon") as File
-
-				if (icon && icon.size > 0) {
-					if (icon.size > 1e6)
-						return formError(
-							form,
-							["icon"],
-							["Icon must be less than 1MB in size"],
-						)
-
-					if (!fs.existsSync("data/icons")) fs.mkdirSync("data/icons")
-					sharp(await icon.arrayBuffer())
-						.resize(270, 270)
-						.toFile(`data/icons/${id}.webp`)
-						.catch(() =>
-							formError(
-								form,
-								["icon"],
-								["Icon failed to upload"],
-							),
-						)
-				}
-
-				const { title, description } = form.data
-
-				await query(
-					surql`
-						LET $og = SELECT
-							title,
-							(SELECT text, updated FROM $parent.description
-							ORDER BY updated DESC)[0] AS description
-						FROM $place;
-
-						UPDATE $place SET name = $title;
-
-						IF $og.description.text != $description {
-							UPDATE $place SET description += {
-								text: $description,
-								updated: time::now(),
-							};
-						}`,
-					{
-						place: `place:${id}`,
-						title,
-						description: description || "",
-					},
+		if (icon && icon.size > 0) {
+			if (icon.size > 1e6)
+				return formError(
+					form,
+					["icon"],
+					["Icon must be less than 1MB in size"],
 				)
 
-				return message(form, "View settings updated successfully!")
-			}
-
-			case "ticket":
-				await query(
-					surql`UPDATE $place SET serverTicket = rand::guid()`,
-					{ place: `place:${id}` },
-				)
-
-				return message(
-					await superValidate(request, schemas.ticket),
-					"Regenerated!",
-				)
-
-			case "network": {
-				const form = await superValidate(request, schemas.network)
-				if (!form.valid) return formError(form)
-
-				const { serverIP, serverPort, maxPlayers } = form.data
-
-				await query(
-					surql`
-						UPDATE $place MERGE {
-							serverIP: $serverIP,
-							serverPort: $serverPort,
-							maxPlayers: $maxPlayers,
-						}`,
-					{
-						place: `place:${id}`,
-						serverIP,
-						serverPort,
-						maxPlayers,
-					},
-				)
-
-				return message(form, "Network settings updated successfully!")
-			}
-
-			case "privacy": {
-				const form = await superValidate(request, schemas.privacy)
-				if (!form.valid) return formError(form)
-
-				const { privateServer } = form.data
-
-				await query(
-					surql`UPDATE $place SET privateServer = $privateServer`,
-					{
-						place: `place:${id}`,
-						privateServer,
-					},
-				)
-
-				return message(form, "Privacy settings updated successfully!")
-			}
-
-			case "privatelink":
-				await query(
-					surql`UPDATE $place SET privateTicket = rand::guid()`,
-					{ place: `place:${id}` },
-				)
-
-				return message(
-					await superValidate(request, schemas.privatelink),
-					"Regenerated!",
+			if (!fs.existsSync("data/icons")) fs.mkdirSync("data/icons")
+			sharp(await icon.arrayBuffer())
+				.resize(270, 270)
+				.toFile(`data/icons/${id}.webp`)
+				.catch(() =>
+					formError(form, ["icon"], ["Icon failed to upload"]),
 				)
 		}
+
+		const { title, description } = form.data
+
+		await query(
+			surql`
+				LET $og = SELECT
+					title,
+					(SELECT text, updated FROM $parent.description
+					ORDER BY updated DESC)[0] AS description
+				FROM $place;
+
+				UPDATE $place SET name = $title;
+
+				IF $og.description.text != $description {
+					UPDATE $place SET description += {
+						text: $description,
+						updated: time::now(),
+					};
+				}`,
+			{
+				place: `place:${id}`,
+				title,
+				description: description || "",
+			},
+		)
+
+		return message(form, "View settings updated successfully!")
+	},
+	ticket: async e => {
+		const id = await getData(e),
+			{ request } = e
+
+		await query(surql`UPDATE $place SET serverTicket = rand::guid()`, {
+			place: `place:${id}`,
+		})
+
+		return message(
+			await superValidate(request, schemas.ticket),
+			"Regenerated!",
+		)
+	},
+	network: async e => {
+		const id = await getData(e),
+			{ request } = e
+
+		const form = await superValidate(request, schemas.network)
+		if (!form.valid) return formError(form)
+
+		const { serverIP, serverPort, maxPlayers } = form.data
+
+		await query(
+			surql`
+				UPDATE $place MERGE {
+					serverIP: $serverIP,
+					serverPort: $serverPort,
+					maxPlayers: $maxPlayers,
+				}`,
+			{
+				place: `place:${id}`,
+				serverIP,
+				serverPort,
+				maxPlayers,
+			},
+		)
+
+		return message(form, "Network settings updated successfully!")
+	},
+	privacy: async e => {
+		const id = await getData(e),
+			{ request } = e
+
+		const form = await superValidate(request, schemas.privacy)
+		if (!form.valid) return formError(form)
+
+		const { privateServer } = form.data
+
+		await query(surql`UPDATE $place SET privateServer = $privateServer`, {
+			place: `place:${id}`,
+			privateServer,
+		})
+
+		return message(form, "Privacy settings updated successfully!")
+	},
+	privatelink: async e => {
+		const id = await getData(e)
+		const { url, request } = e
+
+		await query(surql`UPDATE $place SET privateTicket = rand::guid()`, {
+			place: `place:${id}`,
+		})
+
+		return message(
+			await superValidate(request, schemas.privatelink),
+			"Regenerated!",
+		)
 	},
 }

@@ -23,84 +23,74 @@ export const load = () => ({
 })
 
 export const actions = {
-	default: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals),
-			action = url.searchParams.get("a")
+	profile: async ({ request, locals }) => {
+		const { user } = await authorise(locals)
 
-		console.log(action)
+		const form = await superValidate(request, schemas.profile)
+		if (!form.valid) return formError(form)
 
-		switch (action) {
-			case "profile": {
-				const form = await superValidate(request, schemas.profile)
-				if (!form.valid) return formError(form)
+		const { bio, theme } = form.data
 
-				const { bio, theme } = form.data
+		await query(
+			surql`
+				LET $og = SELECT
+					(SELECT text, updated FROM $parent.bio
+					ORDER BY updated DESC)[0] AS bio
+				FROM $user;
 
-				await query(
-					surql`
-						LET $og = SELECT
-							(SELECT text, updated FROM $parent.bio
-							ORDER BY updated DESC)[0] AS bio
-						FROM $user;
+				UPDATE $user SET theme = $theme;
 
-						UPDATE $user SET theme = $theme;
+				IF $og.bio.text != $bio {
+					UPDATE $user SET bio += {
+						text: $bio,
+						updated: time::now(),
+					}
+				}`,
+			{
+				user: `user:${user.id}`,
+				bio,
+				theme,
+			},
+		)
 
-						IF $og.bio.text != $bio {
-							UPDATE $user SET bio += {
-								text: $bio,
-								updated: time::now(),
-							}
-						}`,
-					{
-						user: `user:${user.id}`,
-						bio,
-						theme,
-					},
-				)
+		return message(form, "Profile updated successfully!")
+	},
+	password: async ({ request, locals }) => {
+		const { user } = await authorise(locals)
 
-				return message(form, "Profile updated successfully!")
-			}
+		const form = await superValidate(request, schemas.password)
+		if (!form.valid) return formError(form)
 
-			case "password": {
-				const form = await superValidate(request, schemas.password)
-				if (!form.valid) return formError(form)
+		const { cpassword, npassword, cnpassword } = form.data
 
-				const { cpassword, npassword, cnpassword } = form.data
+		if (npassword != cnpassword)
+			return formError(form, ["cnpassword"], ["Passwords do not match"])
 
-				if (npassword != cnpassword)
-					return formError(
-						form,
-						["cnpassword"],
-						["Passwords do not match"],
-					)
-
-				try {
-					await auth.useKey(
-						"username",
-						user.username.toLowerCase(),
-						cpassword,
-					)
-				} catch {
-					return formError(
-						form,
-						["cpassword"],
-						["Incorrect username or password"],
-					)
-				}
-
-				await auth.updateKeyPassword(
-					"username",
-					user.username.toLowerCase(),
-					npassword,
-				)
-
-				// Don't send the password back to the client
-				form.data.cpassword = ""
-				form.data.npassword = ""
-				form.data.cnpassword = ""
-
-				return message(form, "Password updated successfully!")
-			}
+		try {
+			await auth.useKey(
+				"username",
+				user.username.toLowerCase(),
+				cpassword,
+			)
+		} catch {
+			return formError(
+				form,
+				["cpassword"],
+				["Incorrect username or password"],
+			)
 		}
+
+		await auth.updateKeyPassword(
+			"username",
+			user.username.toLowerCase(),
+			npassword,
+		)
+
+		// Don't send the password back to the client
+		form.data.cpassword = ""
+		form.data.npassword = ""
+		form.data.cnpassword = ""
+
+		return message(form, "Password updated successfully!")
 	},
 }
