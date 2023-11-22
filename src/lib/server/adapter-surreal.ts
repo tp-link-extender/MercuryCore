@@ -33,6 +33,7 @@ export const adapter = (
 					UPDATE $u MERGE {
 						theme: "standard",
 						created: time::now(),
+						currencyCollected: time::now(),
 						bio: [],
 						bodyColours: {
 							Head: 24,
