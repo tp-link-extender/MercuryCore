@@ -292,7 +292,7 @@ local function presentDialogChoices(talkingPart, dialogChoices)
 	end
 
 	lastChoice.Position = UDim2.new(0, 0, 0, yPosition)
-	lastChoice.Number.Text = pos .. ")"
+	lastChoice.Number.Text = `{pos})`
 
 	mainFrame.Size = UDim2.new(0, 350, 0, yPosition + 24 + 32)
 	mainFrame.Position = UDim2.new(0, 20, 0, -mainFrame.Size.Y.Offset - 20)
@@ -311,7 +311,6 @@ local function renewKillswitch(dialog)
 	currentAbortDialogScript.Disabled = false
 	currentAbortDialogScript.Parent = dialog
 end
-
 
 local function selectChoice(choice)
 	renewKillswitch(currentConversationDialog)

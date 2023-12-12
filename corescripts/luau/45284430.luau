@@ -2186,18 +2186,18 @@ t.AutoTruncateTextObject = function(textLabel)
 			end
 		else
 			local len = string.len(text)
-			textLabel.Text = text .. "~"
+			textLabel.Text = `{text}~`
 
 			--Shrink the text
 			local textSize = binaryGrow(0, len, function(pos)
 				if pos == 0 then
 					textLabel.Text = "~"
 				else
-					textLabel.Text = string.sub(text, 1, pos) .. "~"
+					textLabel.Text = `{string.sub(text, 1, pos)}~`
 				end
 				return textLabel.TextFits
 			end)
-			shortText = string.sub(text, 1, textSize) .. "~"
+			shortText = `{string.sub(text, 1, textSize)}~`
 			textLabel.Text = shortText
 
 			--Make sure the fullLabel fits
@@ -2699,9 +2699,9 @@ t.CreateSetPanel = function(
 		and type(userIdsForSets) ~= "userdata"
 	then
 		error(
-			"CreateSetPanel: userIdsForSets (first arg) is of type "
-				.. type(userIdsForSets)
-				.. ", should be of type table or userdata"
+			`CreateSetPanel: userIdsForSets (first arg) is of type {type(
+				userIdsForSets
+			)}, should be of type table or userdata`
 		)
 	end
 	if not objectSelected then
@@ -2709,16 +2709,16 @@ t.CreateSetPanel = function(
 	end
 	if type(objectSelected) ~= "function" then
 		error(
-			"CreateSetPanel: objectSelected (second arg) is of type "
-				.. type(objectSelected)
-				.. ", should be of type function!"
+			`CreateSetPanel: objectSelected (second arg) is of type {type(
+				objectSelected
+			)}, should be of type function!`
 		)
 	end
 	if dialogClosed and type(dialogClosed) ~= "function" then
 		error(
-			"CreateSetPanel: dialogClosed (third arg) is of type "
-				.. type(dialogClosed)
-				.. ", should be of type function!"
+			`CreateSetPanel: dialogClosed (third arg) is of type {type(
+				dialogClosed
+			)}, should be of type function!`
 		)
 	end
 
@@ -2750,17 +2750,14 @@ t.CreateSetPanel = function(
 	local SmallThumbnailUrl
 	local LargeThumbnailUrl
 	local BaseUrl = game:GetService("ContentProvider").BaseUrl:lower()
+	local ThumbUrl = `{BaseUrl}Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=`
 
 	if useAssetVersionId then
-		LargeThumbnailUrl = BaseUrl
-			.. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=420&ht=420&assetversionid="
-		SmallThumbnailUrl = BaseUrl
-			.. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&assetversionid="
+		LargeThumbnailUrl = `{ThumbUrl}420&ht=420&assetversionid=`
+		SmallThumbnailUrl = `{ThumbUrl}75&ht=75&assetversionid=`
 	else
-		LargeThumbnailUrl = BaseUrl
-			.. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=420&ht=420&aid="
-		SmallThumbnailUrl = BaseUrl
-			.. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&aid="
+		LargeThumbnailUrl = `{ThumbUrl}420&ht=420&aid=`
+		SmallThumbnailUrl = `{ThumbUrl}75&ht=75&aid=`
 	end
 
 	local function drillDownSetZIndex(parent, index)
@@ -3135,7 +3132,7 @@ t.CreateSetPanel = function(
 
 	local function createTerrainTypeButton(name, parent)
 		local dropDownTextButton = Instance.new "TextButton"
-		dropDownTextButton.Name = name .. "Button"
+		dropDownTextButton.Name = `{name}Button`
 		dropDownTextButton.Font = Enum.Font.ArialBold
 		dropDownTextButton.FontSize = Enum.FontSize.Size14
 		dropDownTextButton.BorderSizePixel = 0
@@ -3446,12 +3443,12 @@ t.CreateSetPanel = function(
 
 	local function resetAllSetButtonSelection()
 		local setButtons = setGui.SetPanel.Sets.SetsLists:GetChildren()
-		for i = 1, #setButtons do
-			if setButtons[i]:IsA "TextButton" then
-				setButtons[i].Selected = false
-				setButtons[i].BackgroundTransparency = 1
-				setButtons[i].TextColor3 = Color3.new(1, 1, 1)
-				setButtons[i].BackgroundColor3 = Color3.new(1, 1, 1)
+		for _, setButton in ipairs(setButtons) do
+			if setButton:IsA "TextButton" then
+				setButton.Selected = false
+				setButton.BackgroundTransparency = 1
+				setButton.TextColor3 = Color3.new(1, 1, 1)
+				setButton.BackgroundColor3 = Color3.new(1, 1, 1)
 			end
 		end
 	end
@@ -4026,9 +4023,9 @@ t.CreateLoadingFrame = function(name, size, position)
 	)
 		if percent and type(percent) ~= "number" then
 			error(
-				"updateLoadingGuiPercent expects number as argument, got "
-					.. type(percent)
-					.. " instead"
+				`updateLoadingGuiPercent expects number as argument, got {type(
+					percent
+				)} instead`
 			)
 		end
 
@@ -4077,9 +4074,8 @@ t.CreateLoadingFrame = function(name, size, position)
 
 	loadingGreenBar.Changed:connect(function(prop)
 		if prop == "Size" then
-			loadingPercent.Text = tostring(
-				math.ceil(loadingGreenBar.Size.X.Scale * 100)
-			) .. "%"
+			loadingPercent.Text =
+				`{math.ceil(loadingGreenBar.Size.X.Scale * 100)}%`
 		end
 	end)
 
@@ -4120,7 +4116,7 @@ t.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	end
 
 	local dragBar = Instance.new "Frame"
-	dragBar.Name = tostring(name) .. "DragBar"
+	dragBar.Name = `{name}DragBar`
 	dragBar.BackgroundColor3 = Color3.new(39 / 255, 39 / 255, 39 / 255)
 	dragBar.BorderColor3 = Color3.new(0, 0, 0)
 	if size then
@@ -4146,7 +4142,7 @@ t.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	-- plugin name label
 	local pluginNameLabel = Instance.new "TextLabel"
 	pluginNameLabel.Name = "BarNameLabel"
-	pluginNameLabel.Text = " " .. tostring(name)
+	pluginNameLabel.Text = ` {name}`
 	pluginNameLabel.TextColor3 = Color3.new(1, 1, 1)
 	pluginNameLabel.TextStrokeTransparency = 0
 	pluginNameLabel.Size = UDim2.new(1, 0, 1, 0)

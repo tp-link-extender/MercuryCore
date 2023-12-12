@@ -1251,9 +1251,7 @@ t.SetupStamperDragger = function(
 		end
 		if not Mouse:IsA "Mouse" then
 			error(
-				"Error: RbxStamper.DoStamperMouseMove: Mouse is of type "
-					.. Mouse.className
-					.. " should be of type Mouse"
+				`Error: RbxStamper.DoStamperMouseMove: Mouse is of type {Mouse.className} should be of type Mouse`
 			)
 			return
 		end
@@ -1845,8 +1843,7 @@ t.SetupStamperDragger = function(
 		end
 
 		-- After rotating, update the position
-		configFound, targetCFrame =
-			findConfigAtMouseTarget(Mouse, stampData)
+		configFound, targetCFrame = findConfigAtMouseTarget(Mouse, stampData)
 		if configFound then
 			stampData.CurrentParts =
 				positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
@@ -2566,7 +2563,8 @@ t.SetupStamperDragger = function(
 			end
 
 			-- if it's a model, we also want to fill in the playerID and playerName tags, if it has those (e.g. for the friend-only door)
-			local playerIdTag = stampData.CurrentParts:FindFirstChild "PlayerIdTag"
+			local playerIdTag =
+				stampData.CurrentParts:FindFirstChild "PlayerIdTag"
 			local playerNameTag =
 				stampData.CurrentParts:FindFirstChild "PlayerNameTag"
 
@@ -2804,7 +2802,8 @@ t.SetupStamperDragger = function(
 		end
 
 		if clone:FindFirstChild("ClusterMaterial", true) then -- extract all info from vector
-			local clusterMaterial = clone:FindFirstChild("ClusterMaterial", true)
+			local clusterMaterial =
+				clone:FindFirstChild("ClusterMaterial", true)
 			if clusterMaterial:IsA "Vector3Value" then
 				cellInfo.Material = clusterMaterial.Value.X
 				cellInfo.clusterType = clusterMaterial.Value.Y

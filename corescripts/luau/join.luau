@@ -193,10 +193,10 @@ function onConnectionAccepted(_, replicator)
 end
 
 -- called when the client connection fails
-function onConnectionFailed(_, error)
+function onConnectionFailed(_, err)
 	showErrorWindow(
-		"Failed to connect to the Game. (ID=" .. error .. ")",
-		"ID" .. error,
+		`Failed to connect to the Game. (ID={err})`,
+		`ID{err}`,
 		"Other"
 	)
 end
@@ -212,12 +212,12 @@ function onConnectionRejected()
 end
 
 local idled = false
-function onPlayerIdled(time)
-	if time > 20 * 60 then
+function onPlayerIdled(idleTime)
+	if idleTime > 20 * 60 then
 		showErrorWindow(
 			string.format(
 				"You were disconnected for being idle %d minutes",
-				time / 60
+				idleTime / 60
 			),
 			"Idle",
 			"Idle"

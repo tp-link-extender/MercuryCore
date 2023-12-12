@@ -792,7 +792,7 @@ local addingPlayerChild = function(
 	end
 
 	local slotNum = slotToMod % 10
-	local parent = currentLoadout:FindFirstChild("Slot" .. tostring(slotNum))
+	local parent = currentLoadout:FindFirstChild(`Slot{slotNum}`)
 	gearClone.Parent = parent
 
 	if inventoryGearButton then
