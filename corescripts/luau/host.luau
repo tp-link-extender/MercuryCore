@@ -52,15 +52,11 @@ function onDied(victim, humanoid)
 	local victorId = 0
 	if killer then
 		victorId = killer.userId
-		print("STAT: kill by " .. victorId .. " of " .. victim.userId)
-		game:HttpGet(
-			url .. "/Game/Knockouts.ashx?UserID=" .. victorId .. "&" .. access
-		)
+		print(`STAT: kill by {victorId} of {victim.userId}`)
+		game:HttpGet(`{url}/Game/Knockouts.ashx?UserID={victorId}&{access}`)
 	end
-	print("STAT: death of " .. victim.userId .. " by " .. victorId)
-	game:HttpGet(
-		url .. "/Game/Wipeouts.ashx?UserID=" .. victim.userId .. "&" .. access
-	)
+	print(`STAT: death of {victim.userId} by {victorId}`)
+	game:HttpGet(`{url}/Game/Wipeouts.ashx?UserID={victim.userId}&{access}`)
 end
 
 -----------------------------------END UTILITY FUNCTIONS -------------------------
@@ -104,75 +100,61 @@ local ns = game:GetService "NetworkServer"
 
 if url ~= nil then
 	pcall(function()
-		game:GetService("Players"):SetAbuseReportUrl(
-			url .. "/Report/Games.ashx"
-		)
+		game:GetService("Players"):SetAbuseReportUrl(`{url}/Report/Games.ashx`)
 	end)
 	pcall(function()
-		game:GetService("ScriptInformationProvider")
-			:SetAssetUrl(url .. "/Asset/")
+		game:GetService("ScriptInformationProvider"):SetAssetUrl(`{url}/Asset/`)
 	end)
 	pcall(function()
-		game:GetService("ContentProvider"):SetBaseUrl(url .. "/")
+		game:GetService("ContentProvider"):SetBaseUrl(`{url}/`)
 	end)
-	-- pcall(function() game:GetService("Players"):SetChatFilterUrl(url .. "/Game/ChatFilter.ashx") end)
+	-- pcall(function()
+	-- 	game:GetService("Players"):SetChatFilterUrl(
+	-- 		`{url}/Game/ChatFilter.ashx`
+	-- 	)
+	-- end)
 
 	-- BadgeService:SetPlaceId(placeId)
 	if access ~= nil then
 		BadgeService:SetAwardBadgeUrl(
-			url
-				.. "/Game/Badge/AwardBadge.ashx?UserID=%d&BadgeID=%d&PlaceID=%d&"
-				.. access
+			`{url}/Game/Badge/AwardBadge.ashx?UserID=%d&BadgeID=%d&PlaceID=%d&{access}`
 		)
 		BadgeService:SetHasBadgeUrl(
-			url .. "/Game/Badge/HasBadge.ashx?UserID=%d&BadgeID=%d&" .. access
+			`{url}/Game/Badge/HasBadge.ashx?UserID=%d&BadgeID=%d&{access}`
 		)
 		BadgeService:SetIsBadgeDisabledUrl(
-			url
-				.. "/Game/Badge/IsBadgeDisabled.ashx?BadgeID=%d&PlaceID=%d&"
-				.. access
+			`{url}/Game/Badge/IsBadgeDisabled.ashx?BadgeID=%d&PlaceID=%d&{access}`
 		)
 
 		FriendService:SetMakeFriendUrl(
-			servicesUrl
-				.. "/Friend/CreateFriend?firstUserId=%d&secondUserId=%d&"
-				.. access
+			`{servicesUrl}/Friend/CreateFriend?firstUserId=%d&secondUserId=%d&{access}`
 		)
 		FriendService:SetBreakFriendUrl(
-			servicesUrl
-				.. "/Friend/BreakFriend?firstUserId=%d&secondUserId=%d&"
-				.. access
+			`{servicesUrl}/Friend/BreakFriend?firstUserId=%d&secondUserId=%d&{access}`
 		)
 		FriendService:SetGetFriendsUrl(
-			servicesUrl .. "/Friend/AreFriends?userId=%d&" .. access
+			`{servicesUrl}/Friend/AreFriends?userId={access}`
 		)
 	end
 	BadgeService:SetIsBadgeLegalUrl ""
-	InsertService
-		:SetBaseSetsUrl(
-			url .. "/Game/Tools/InsertAsset.ashx?nsets=10&type=base"
-		)
-	InsertService:SetUserSetsUrl(
-		url .. "/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d"
+	InsertService:SetBaseSetsUrl(
+		`{url}/Game/Tools/InsertAsset.ashx?nsets=10&type=base`
 	)
-	InsertService
-		:SetCollectionUrl(url .. "/Game/Tools/InsertAsset.ashx?sid=%d")
-	InsertService:SetAssetUrl(url .. "/Asset/?id=%d")
-	InsertService
-		:SetAssetVersionUrl(url .. "/Asset/?assetversionid=%d")
+	InsertService:SetUserSetsUrl(
+		`{url}/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d`
+	)
+	InsertService:SetCollectionUrl(`{url}/Game/Tools/InsertAsset.ashx?sid=%d`)
+	InsertService:SetAssetUrl(`{url}/Asset/?id=%d`)
+	InsertService:SetAssetVersionUrl(`{url}/Asset/?assetversionid=%d`)
 
 	pcall(function()
-		loadfile(url .. "/Game/LoadPlaceInfo.ashx?PlaceId=" .. placeId)()
+		loadfile(`{url}/Game/LoadPlaceInfo.ashx?PlaceId={placeId}`)()
 	end)
 
 	pcall(function()
 		if access then
 			loadfile(
-				url
-					.. "/Game/PlaceSpecificScript.ashx?PlaceId="
-					.. placeId
-					.. "&"
-					.. access
+				`{url}/Game/PlaceSpecificScript.ashx?PlaceId={placeId}&{access}`
 			)()
 		end
 	end)
@@ -213,42 +195,24 @@ if placeId ~= nil and killID ~= nil and deathID ~= nil and url ~= nil then
 end
 
 game:GetService("Players").PlayerAdded:connect(function(player)
-	print("Player " .. player.userId .. " added")
+	print(`Player {player.userId} added`)
 
 	if url and access and placeId and player and player.userId then
 		game:HttpGet(
-			url
-				.. "/Game/ClientPresence.ashx?action=connect&"
-				.. access
-				.. "&PlaceID="
-				.. placeId
-				.. "&UserID="
-				.. player.userId
+			`{url}/Game/ClientPresence.ashx?action=connect&{access}&PlaceID={placeId}&UserID={player.userId}`
 		)
 		game:HttpGet(
-			url
-				.. "/Game/PlaceVisit.ashx?UserID="
-				.. player.userId
-				.. "&AssociatedPlaceID="
-				.. placeId
-				.. "&"
-				.. access
+			`{url}/Game/PlaceVisit.ashx?UserID={player.userId}&AssociatedPlaceID={placeId}&{access}`
 		)
 	end
 end)
 
 game:GetService("Players").PlayerRemoving:connect(function(player)
-	print("Player " .. player.userId .. " leaving")
+	print(`Player {player.userId} leaving`)
 
 	if url and access and placeId and player and player.userId then
 		game:HttpGet(
-			url
-				.. "/Game/ClientPresence.ashx?action=disconnect&"
-				.. access
-				.. "&PlaceID="
-				.. placeId
-				.. "&UserID="
-				.. player.userId
+			`{url}/Game/ClientPresence.ashx?action=disconnect&{access}&PlaceID={placeId}&UserID={player.userId}`
 		)
 	end
 end)
@@ -258,7 +222,7 @@ if placeId ~= nil and url ~= nil then
 	wait()
 
 	-- load the game
-	game:Load(url .. "/asset/?id=" .. placeId)
+	game:Load(`{url}/asset/?id={placeId}`)
 end
 
 if _MAP_LOCATION_EXISTS then
@@ -279,18 +243,16 @@ if timeout then
 end
 ScriptContext.ScriptsDisabled = false
 
---delay(1, function()
---	loadfile(url .. "/analytics/GamePerfMonitor.ashx")(game.JobId, placeId)
---end)
+-- delay(1, function()
+-- 	loadfile(`{url}/analytics/GamePerfMonitor.ashx`)(game.JobId, placeId)
+-- end)
 
 -- yimy stuff
 local reset = ";mc"
 game.Players.PlayerAdded:connect(function(player)
 	player.Chatted:connect(function(msg)
-		if msg == reset then
-			if player.Character then
-				player.Character.Humanoid.Health = 0
-			end
+		if msg == reset and player.Character then
+			player.Character.Humanoid.Health = 0
 		end
 	end)
 end)

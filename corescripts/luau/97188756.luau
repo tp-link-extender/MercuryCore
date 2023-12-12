@@ -83,7 +83,7 @@ do
 			end,
 		},
 		__tostring = function(self)
-			return "Enum." .. self[EnumName]
+			return `Enum.{self[EnumName]}`
 		end,
 	}
 	local item_mt = {
@@ -91,7 +91,7 @@ do
 			return value == self or value == self.Name or value == self.Value
 		end,
 		__tostring = function(self)
-			return "Enum." .. self[EnumName] .. "." .. self.Name
+			return `Enum.{self[EnumName]}.{self.Name}`
 		end,
 	}
 	CreateEnum = function(enumName)
@@ -179,11 +179,45 @@ local Chat = {
 	Messages_List = {},
 	MessageThread = nil,
 
-	--[[ Admins_List = {'Sorcus', 'Shedletsky', 'Telamon', 'Tarabyte', 'StickMasterLuke', 'OnlyTwentyCharacters', 'FusRoblox', 'SolarCrane',
-								'HotThoth', 'JediTkacheff', 'Builderman', 'Brighteyes', 'ReeseMcblox', 'GemLocker', 'GongfuTiger', 'Erik.Cassel', 'Matt Dusek', 'Keith',
-								'Totbl', 'LordRugDump', 'David.Baszucki', 'Dbapostle', 'DaveYorkRBX', 'nJay', 'OstrichSized', 'TobotRobot', 'twberg', 'Mercury', 'RBAdam', 'Doughtless',
-								'Anaminus', 'Stravant', 'Cr3470r', 'CodeWriter', 'Games', 'AcesWayUpHigh', 'Phil'
-								}, --]]
+	-- Admins_List = {
+	-- 	"Sorcus",
+	-- 	"Shedletsky",
+	-- 	"Telamon",
+	-- 	"Tarabyte",
+	-- 	"StickMasterLuke",
+	-- 	"OnlyTwentyCharacters",
+	-- 	"FusRoblox",
+	-- 	"SolarCrane",
+	-- 	"HotThoth",
+	-- 	"JediTkacheff",
+	-- 	"Builderman",
+	-- 	"Brighteyes",
+	-- 	"ReeseMcblox",
+	-- 	"GemLocker",
+	-- 	"GongfuTiger",
+	-- 	"Erik.Cassel",
+	-- 	"Matt Dusek",
+	-- 	"Keith",
+	-- 	"Totbl",
+	-- 	"LordRugDump",
+	-- 	"David.Baszucki",
+	-- 	"Dbapostle",
+	-- 	"DaveYorkRBX",
+	-- 	"nJay",
+	-- 	"OstrichSized",
+	-- 	"TobotRobot",
+	-- 	"twberg",
+	-- 	"Mercury",
+	-- 	"RBAdam",
+	-- 	"Doughtless",
+	-- 	"Anaminus",
+	-- 	"Stravant",
+	-- 	"Cr3470r",
+	-- 	"CodeWriter",
+	-- 	"Games",
+	-- 	"AcesWayUpHigh",
+	-- 	"Phil",
+	-- },
 	Admins_List = { "taskmanager", "Heliodex", "tako" },
 
 	SafeChat_List = {
@@ -990,21 +1024,23 @@ end
 
 -- Scrolling
 -- function Chat:ScrollQueue(value)
--- 	--[[for i = 1, #self.MessageQueue do
+-- 	for i = 1, #self.MessageQueue do
 -- 		if self.MessageQueue[i] then
 -- 			for _, label in pairs(self.MessageQueue[i]) do
 -- 				local next = self.MessageQueue[i].Next
 -- 				local previous = self.MessageQueue[i].Previous
--- 				if label and label:IsA('TextLabel') or label:IsA('TextButton') then
+-- 				if
+-- 					label and label:IsA "TextLabel" or label:IsA "TextButton"
+-- 				then
 -- 					if value > 0 and previous and previous.Message then
--- 						label.Position = previous['Message'].Position
+-- 						label.Position = previous["Message"].Position
 -- 					elseif value < 1 and next.Message then
--- 						label.Position = previous['Message'].Position
+-- 						label.Position = previous["Message"].Position
 -- 					end
 -- 				end
 -- 			end
 -- 		end
--- 	end ]]
+-- 	end
 -- end
 
 -- Handles the rendering of the text objects in their appropriate places
@@ -1119,10 +1155,10 @@ function Chat:ComputeSpaceString(pLabel)
 	end
 
 	while self.TempSpaceLabel.TextBounds.X < pLabel.TextBounds.X do
-		nString = nString .. " "
+		nString ..= " "
 		self.TempSpaceLabel.Text = nString
 	end
-	nString = nString .. " "
+	nString ..= " "
 	self.CachedSpaceStrings_List[pLabel.Text] = nString
 	self.TempSpaceLabel.Text = ""
 	return nString
@@ -1194,10 +1230,10 @@ function Chat:CreateMessage(cPlayer, message)
 	-- If we ever hit the mark, which would be in every popular game btw
 	-- we wrap around and reuse the labels
 	if #self.MessageQueue > self.Configuration.HistoryLength then
-		--[[pLabel = self.MessageQueue[#self.MessageQueue]['Player']
-		mLabel = self.MessageQueue[#self.MessageQueue]['Message']
+		--[[pLabel = self.MessageQueue[#self.MessageQueue]["Player"]
+		mLabel = self.MessageQueue[#self.MessageQueue]["Message"]
 
-		pLabel.Text = pName .. ':'
+		pLabel.Text = `{pName}:`
 		pLabel.Name = pName
 
 		local pColor
@@ -1213,17 +1249,17 @@ function Chat:CreateMessage(cPlayer, message)
 			nString = Chat:ComputeSpaceString(pLabel)
 		else
 			nString = self.CachedSpaceStrings_List[pName]
-		end 
+		end
 
 		mLabel.Text = ""
-		mLabel.Name = pName .. " - message"
-		mLabel.Text = nString .. message;
+		mLabel.Name = `{pName} - message`
+		mLabel.Text = nString .. message
 
 		mLabel.Parent = nil
 		mLabel.Parent = self.RenderFrame
 
-		mLabel.Position = UDim2.new(0, 0, 1, 0);
-		pLabel.Position = UDim2.new(0, 0, 1, 0);]]
+		mLabel.Position = UDim2.new(0, 0, 1, 0)
+		pLabel.Position = UDim2.new(0, 0, 1, 0)]]
 
 		-- Reinserted at the beginning, ring buffer
 		self.MessageQueue[#self.MessageQueue] = nil
@@ -1232,7 +1268,7 @@ function Chat:CreateMessage(cPlayer, message)
 	-- Haven't hit the mark yet, so keep creating
 	pLabel = Gui.Create "TextLabel" {
 		Name = pName,
-		Text = pName .. ":",
+		Text = `{pName}:`,
 		-- TextColor3 = pColor,
 		FontSize = Chat.Configuration.FontSize,
 		TextXAlignment = Enum.TextXAlignment.Left,
@@ -1263,7 +1299,7 @@ function Chat:CreateMessage(cPlayer, message)
 	end
 
 	mLabel = Gui.Create "TextLabel" {
-		Name = pName .. " - message",
+		Name = `{pName} - message`,
 		-- Max is 3 lines
 		Size = UDim2.new(1, 0, 0.5, 0),
 		TextColor3 = Chat.Configuration.MessageColor,

@@ -14,36 +14,23 @@ local ScriptContext = game:GetService "ScriptContext"
 
 pcall(function()
 	ContentProvider:SetBaseUrl(baseUrl)
-	InsertService:SetAssetUrl(baseUrl .. "/asset?id=%d")
-	InsertService:SetAssetVersionUrl(baseUrl .. "/asset?assetversionid=%d")
+	InsertService:SetAssetUrl(`{baseUrl}/asset?id=%d`)
+	InsertService:SetAssetVersionUrl(`{baseUrl}/asset?assetversionid=%d`)
 end)
 
 HttpService.HttpEnabled = true
 ScriptContext.ScriptsDisabled = true
 
-print(
-	"["
-		.. game.JobId
-		.. "] Starting new render for "
-		.. renderType
-		.. " ID "
-		.. assetId
-)
+print(`[{game.JobId}] Starting new render for {renderType} ID {assetId}`)
 game:HttpPost(
-	baseUrl
-		.. "/api/render/update?apiKey="
-		.. thumbnailKey
-		.. "&amp;taskID="
-		.. game.JobId,
+	`{baseUrl}/api/render/update?apiKey={thumbnailKey}&amp;taskID={game.JobId}`,
 	"Rendering",
 	true,
 	"text/json"
 )
 
 local player = game:GetService("Players"):CreateLocalPlayer(0)
-player.CharacterAppearance = baseUrl
-	.. "/asset/characterfetch?userID="
-	.. assetId
+player.CharacterAppearance = `{baseUrl}/asset/characterfetch?userID={assetId}`
 player:LoadCharacter(false)
 
 -- Raise up the character's arm if they have gear.
@@ -55,7 +42,7 @@ end
 
 local clickBody = ThumbnailGenerator:Click("PNG", 2048, 2048, true)
 
-print("[" .. game.JobId .. "] Rendered bodyshot")
+print(`[{game.JobId}] Rendered bodyshot`)
 
 player.Character.Torso["Right Shoulder"].CurrentAngle = 0
 
@@ -76,44 +63,25 @@ workspace.CurrentCamera = Camera
 
 local clickHead = ThumbnailGenerator:Click("PNG", 300, 300, true)
 
-local result = "Completed\n"
-	.. tostring(clickBody)
-	.. "\n"
-	.. tostring(clickHead)
+local result = `Completed\n{clickBody}\n{clickHead}`
 
-print("[" .. game.JobId .. "] Rendered headshot")
+print(`[{game.JobId}] Rendered headshot`)
 
 for i = 1, 3 do
 	local ok, err = pcall(function()
 		game:HttpPost(
-			baseUrl
-				.. "/api/render/update?apiKey="
-				.. thumbnailKey
-				.. "&amp;taskID="
-				.. game.JobId,
+			`{baseUrl}/api/render/update?apiKey={thumbnailKey}&amp;taskID={game.JobId}`,
 			result,
 			true,
 			"text/json"
 		)
 	end)
 	if ok then
-		print("[" .. game.JobId .. "] Upload successful! Moving on...")
+		print(`[{game.JobId}] Upload successful! Moving on...`)
 		break
 	elseif i == 3 then
-		print(
-			"["
-				.. game.JobId
-				.. "] An error occurred! ("
-				.. err
-				.. "). Giving up..."
-		)
+		print(`[{game.JobId}] An error occurred! ({err}). Giving up...`)
 		break
 	end
-	print(
-		"["
-			.. game.JobId
-			.. "] An error occurred! ("
-			.. err
-			.. "). Uploading again..."
-	)
+	print(`[{game.JobId}] An error occurred! ({err}). Uploading again...`)
 end

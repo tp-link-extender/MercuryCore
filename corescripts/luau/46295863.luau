@@ -1257,7 +1257,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 
 				game:GetService("GuiService"):SendNotification(
 					"Graphics Quality",
-					"Increased to (" .. graphicsSetter.Text .. ")",
+					`Increased to ({graphicsSetter.Text})`,
 					"",
 					2,
 					function() end
@@ -1272,7 +1272,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 
 				game:GetService("GuiService"):SendNotification(
 					"Graphics Quality",
-					"Decreased to (" .. graphicsSetter.Text .. ")",
+					`Decreased to ({graphicsSetter.Text})`,
 					"",
 					2,
 					function() end

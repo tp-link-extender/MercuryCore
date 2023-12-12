@@ -218,7 +218,7 @@ local function getMembershipTypeIcon(membershipType, playerName)
 	elseif membershipType == Enum.MembershipType.OutrageousBuildersClub then
 		return "rbxasset://textures/ui/TinyObcIcon.png"
 	else
-		error("Unknown membershipType" .. membershipType)
+		error(`Unknown membershipType {membershipType}`)
 	end
 end
 
@@ -235,7 +235,7 @@ local function getFriendStatusIcon(friendStatus)
 	elseif friendStatus == Enum.FriendStatus.FriendRequestReceived then
 		return "http://banland.xyz/asset/?id=99776838"
 	else
-		error("Unknown FriendStatus: " .. friendStatus)
+		error(`Unknown FriendStatus {friendStatus}`)
 	end
 end
 
@@ -301,7 +301,7 @@ end
 local function WaitForChild(parent, child)
 	while not parent:FindFirstChild(child) do
 		wait()
-		debugprint(" child " .. parent.Name .. " waiting for " .. child)
+		debugprint(` child {parent.Name} waiting for {child}`)
 	end
 	return parent[child]
 end
@@ -880,7 +880,7 @@ local DefaultEntriesOnScreen = 8
 
 for _, i in pairs(Images) do
 	Game:GetService("ContentProvider")
-		:Preload("http://banland.xyz/asset/?id=" .. i)
+		:Preload(`http://banland.xyz/asset/?id={i}`)
 end
 
 -- ordered array of 'score data', each entry has:
@@ -1171,26 +1171,25 @@ function HighlightMyRank(
 	MemberButton,
 	AdminButton
 )
-	BanPlayerButton.Image = "http://banland.xyz/asset/?id="
-		.. Images.LightPopupMid
-	VisitorButton.Image = "http://banland.xyz/asset/?id=" .. Images.DarkPopupMid
-	MemberButton.Image = "http://banland.xyz/asset/?id=" .. Images.LightPopupMid
-	AdminButton.Image = "http://banland.xyz/asset/?id="
-		.. Images.DarkPopupBottom
+	BanPlayerButton.Image =
+		`http://banland.xyz/asset/?id={Images.LightPopupMid}`
+	VisitorButton.Image = `http://banland.xyz/asset/?id={Images.DarkPopupMid}`
+	MemberButton.Image = `http://banland.xyz/asset/?id={Images.LightPopupMid}`
+	AdminButton.Image = `http://banland.xyz/asset/?id={Images.DarkPopupBottom}`
 
 	local rank = player.PersonalServerRank
 	if rank <= PrivilegeLevel.Banned then
-		BanPlayerButton.Image = "http://banland.xyz/asset/?id="
-			.. Images.LightBluePopupMid
+		BanPlayerButton.Image =
+			`http://banland.xyz/asset/?id={Images.LightBluePopupMid}`
 	elseif rank <= PrivilegeLevel.Visitor then
-		VisitorButton.Image = "http://banland.xyz/asset/?id="
-			.. Images.DarkBluePopupMid
+		VisitorButton.Image =
+			`http://banland.xyz/asset/?id={Images.DarkBluePopupMid}`
 	elseif rank <= PrivilegeLevel.Member then
-		MemberButton.Image = "http://banland.xyz/asset/?id="
-			.. Images.LightBluePopupMid
+		MemberButton.Image =
+			`http://banland.xyz/asset/?id={Images.LightBluePopupMid}`
 	elseif rank <= PrivilegeLevel.Admin then
-		AdminButton.Image = "http://banland.xyz/asset/?id="
-			.. Images.DarkBluePopupBottom
+		AdminButton.Image =
+			`http://banland.xyz/asset/?id={Images.DarkBluePopupBottom}`
 	end
 end
 
@@ -1467,7 +1466,7 @@ local function DoesStatExist(statName, exception)
 			and playerf.Player:FindFirstChild "leaderstats"
 			and playerf.Player.leaderstats:FindFirstChild(statName)
 		then
-			--print('player:' .. playerf['Player'].Name ..' has stat')
+			-- print(`player {playerf.Player.Name} has stat`)
 			return true
 		end
 	end
@@ -1625,9 +1624,7 @@ function RecreateScoreColumns(ptable)
 				-- make an entry for this object
 				local nentry = MakeScoreEntry(entry, scoreval, panel)
 				if nentry then
-					debugprint(
-						"adding " .. nentry.Name .. " to " .. entry.Player.Name
-					)
+					debugprint(`adding {nentry.Name} to {entry.Player.Name}`)
 					nentry.Parent = panel
 					-- add score to team
 					if
@@ -1947,7 +1944,7 @@ function UpdateMaximize()
 				for j = 1, #ScoreNames, 1 do
 					local scoreval = ScoreNames[j]
 					if i:FindFirstChild(scoreval.Name) and scoreval.XOffset then
-						--print('updateing stat position: ' .. scoreval['Name'])
+						-- print(`updateing stat position {scoreval["Name"]}`)
 						i[scoreval.Name]:TweenPosition(
 							UDim2.new(RightEdgeSpace, -scoreval.XOffset, 0, 0),
 							"Out",
@@ -2220,7 +2217,7 @@ function StartDrag(entry, startx, starty)
 		end
 		local nowY = AbsoluteToPercent(nx, ny).Y
 		debugprint(
-			"drag dist:" .. Vector2.new(startx - nx, starty - ny).magnitude
+			`drag dist {Vector2.new(startx - nx, starty - ny).magnitude}`
 		)
 		if
 			Vector2.new(startx - nx, starty - ny).magnitude
@@ -2481,7 +2478,7 @@ end
 --]]
 function LeaderstatsRemoved(_, playerEntry)
 	while AddingFrameLock do
-		debugprint("waiting to insert " .. playerEntry.Player.Name)
+		debugprint(`waiting to insert {playerEntry.Player.Name}`)
 		wait()
 	end
 	AddingFrameLock = true
@@ -2699,7 +2696,7 @@ end
 --]]
 local function InsertPlayerFrame(nplayer)
 	while AddingFrameLock do
-		debugprint("waiting to insert " .. nplayer.Name)
+		debugprint(`waiting to insert {nplayer.Name}`)
 		wait()
 	end
 	AddingFrameLock = true
@@ -3042,7 +3039,7 @@ local function SetPlayerToTeam(entry)
 	end
 	-- if player was set to an invalid team, then set it back to neutral
 	if not setToTeam and #(game.Teams:GetTeams()) > 0 then
-		debugprint(entry.Player.Name .. "could not find team")
+		debugprint(`{entry.Player.Name} could not find team`)
 		entry.MyTeam = nil
 		if not NeutralTeam then
 			AddNeutralTeam()
@@ -3069,18 +3066,18 @@ function PlayerChanged(entry, property)
 	if property == "Neutral" then
 		-- if player changing to neutral
 		if entry.Player.Neutral and #(game.Teams:GetTeams()) > 0 then
-			debugprint(entry.Player.Name .. "setting to neutral")
+			debugprint(`{entry.Player.Name} setting to neutral`)
 			FindRemovePlayerFromTeam(entry)
 			entry.MyTeam = nil
 			if not NeutralTeam then
-				debugprint(entry.Player.Name .. "creating neutral team")
+				debugprint(`{entry.Player.Name} creating neutral team`)
 				AddNeutralTeam()
 			else
-				debugprint(entry.Player.Name .. "adding to neutral team")
+				debugprint(`{entry.Player.Name} adding to neutral team`)
 				AddPlayerToTeam(NeutralTeam, entry)
 			end
 		elseif #(game.Teams:GetTeams()) > 0 then -- else player switching to a team, or a weird edgecase
-			debugprint(entry.Player.Name .. "has been set non-neutral")
+			debugprint(`{entry.Player.Name} has been set non-neutral`)
 			SetPlayerToTeam(entry)
 		end
 		BaseUpdate()
@@ -3089,7 +3086,7 @@ function PlayerChanged(entry, property)
 		and not entry.Player.Neutral
 		and entry.Player ~= entry.MyTeam
 	then
-		debugprint(entry.Player.Name .. "setting to new team")
+		debugprint(`{entry.Player.Name} setting to new team`)
 		SetPlayerToTeam(entry)
 		BaseUpdate()
 	elseif property == "Name" or property == "MembershipType" then
@@ -3114,12 +3111,7 @@ end
 function OnFriendshipChanged(player, friendStatus)
 	Delay(0.5, function()
 		debugprint(
-			"friend status changed for:"
-				.. player.Name
-				.. " "
-				.. tostring(friendStatus)
-				.. " vs "
-				.. tostring(GetFriendStatus(player))
+			`friend status changed for {player.Name} {friendStatus} vs {GetFriendStatus(player)}`
 		)
 		for _, entry in ipairs(PlayerFrames) do
 			if entry.Player == player then
@@ -3130,7 +3122,7 @@ function OnFriendshipChanged(player, friendStatus)
 				elseif nicon ~= "" and entry.Frame.FriendLabel.Image == "" then
 					entry.Frame.TitleFrame.Title.Position = entry.Frame.TitleFrame.Title.Position
 						+ UDim2.new(0, 17, 0, 0)
-					debugprint("confirmed status:" .. player.Name)
+					debugprint(`confirmed status {player.Name}`)
 				end
 				entry.Frame.FriendLabel.Image = nicon
 				return
@@ -3586,7 +3578,7 @@ IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
 -- 		while true do
 -- 			local str_players = ""
 -- 			for _, i in pairs(game.Players:GetPlayers()) do
--- 				str_players ..= " " .. i.Name
+-- 				str_players ..= ` {i.Name}`
 -- 			end
 -- 			debugplayers.Text = str_players
 -- 			wait(0.5)
