@@ -55,7 +55,7 @@ export async function GET({ url }) {
 			id == "38037265"
 				? "corescripts/38037265.xml"
 				: id == "20573078"
-					? "corescripts/20573078.xml"
+					? "corescripts/20573078.xml" // todo remove the shaggy l8r
 					: `corescripts/processed/${id}.lua`,
 			"utf-8"
 		)
