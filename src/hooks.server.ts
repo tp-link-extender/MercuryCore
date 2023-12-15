@@ -54,10 +54,8 @@ export async function handle({ event, resolve }) {
 
 	const moderation = await squery(
 		surql`
-			SELECT *
-			FROM moderation
-			WHERE out = $user
-				AND active = true`,
+			SELECT * FROM moderation
+			WHERE out = $user AND active = true`,
 		{ user: `user:${user.id}` },
 	)
 
