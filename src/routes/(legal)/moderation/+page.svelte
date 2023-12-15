@@ -24,7 +24,6 @@
 				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000)
 			)
 		if (diffInHours >= 1)
-			// return diffInHours + " hour(s) " + diffInMinutes + " minute(s)"
 			return `${diffInHours} hour(s) ${diffInMinutes} minute(s)`
 
 		return `${diffInMinutes} minute(s)`
@@ -33,7 +32,7 @@
 
 <Head title={moderationAction[data.type]} />
 
-<div class="container mt-12">
+<div class="container pt-8">
 	<div class="card">
 		<div class="card-body light-text">
 			<h1>
@@ -70,8 +69,8 @@
 						to prevent further action to be taken on your account.
 					</p>
 					<p>
-						You may reactivate your account by agreeing to our
-						Terms of Service.
+						You may reactivate your account by agreeing to our Terms
+						of Service.
 					</p>
 					<div class="form-check mb-2">
 						<input
