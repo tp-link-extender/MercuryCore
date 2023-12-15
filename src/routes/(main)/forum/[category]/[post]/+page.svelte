@@ -36,8 +36,8 @@
 
 	<div class="post card bg-darker flex-row">
 		<form
-			use:enhance2={e => {
-				const action = e.data.get("action")
+			use:enhance2={({ formData }) => {
+				const action = formData.get("action")
 
 				if (action == "like") {
 					data.likes = true

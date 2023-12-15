@@ -1,6 +1,6 @@
 <script lang="ts">
 	// lel, anything for intellisense
-	export let post: import("../../routes/(main)/forum/[category]/$types").PageData["posts"][number]
+	export let post: import("./$types").PageData["posts"][number]
 	export let num: number
 	export let total: number
 	export let categoryName: string
