@@ -14,9 +14,7 @@ const CACHE = `cache-${version}`,
 self.addEventListener("install", event =>
 	// Create a new cache and add all files to it
 
-	event.waitUntil(
-		async () => await (await caches.open(CACHE)).addAll(ASSETS),
-	),
+	event.waitUntil(async () => await (await caches.open(CACHE)).addAll(ASSETS))
 )
 
 self.addEventListener("activate", event =>
@@ -25,7 +23,7 @@ self.addEventListener("activate", event =>
 	event.waitUntil(async () => {
 		for (const key of await caches.keys())
 			if (key != CACHE) await caches.delete(key)
-	}),
+	})
 )
 
 self.addEventListener("fetch", event => {

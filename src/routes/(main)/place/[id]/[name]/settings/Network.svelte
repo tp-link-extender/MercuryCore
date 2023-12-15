@@ -14,11 +14,7 @@
 	if (data.maxPlayers) $form.maxPlayers = data.maxPlayers
 </script>
 
-<form
-	use:enhance
-	method="POST"
-	class="col-lg-8"
-	action="?/network&tab=Network">
+<form use:enhance method="POST" class="col-lg-8" action="?/network&tab=Network">
 	<fieldset class="pb-6">
 		<div class="row">
 			<label for="serverIP" class="col-md-3 text-md-right">Address</label>

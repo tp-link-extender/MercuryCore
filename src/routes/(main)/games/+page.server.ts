@@ -24,8 +24,8 @@ const select = surql`
 	FROM place
 	WHERE !privateServer AND !deleted`
 
-export const load = () => ({
-	places: query<Place>(select),
+export const load = async () => ({
+	places: await query<Place>(select),
 })
 
 export const actions = {

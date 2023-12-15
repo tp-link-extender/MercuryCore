@@ -17,7 +17,7 @@ export async function load({ locals }) {
 	await authorise(locals, 4)
 
 	return {
-		form: superValidate(schema),
+		form: await superValidate(schema),
 	}
 }
 
@@ -47,7 +47,7 @@ export const actions = {
 					permissionLevel
 				FROM user
 				WHERE username = $username`,
-			{ username },
+			{ username }
 		)
 
 		if (!getModeratee)
@@ -57,14 +57,14 @@ export const actions = {
 			return formError(
 				form,
 				["username"],
-				["You cannot moderate staff members"],
+				["You cannot moderate staff members"]
 			)
 
 		if (getModeratee.id == user.id)
 			return formError(
 				form,
 				["username"],
-				["You cannot moderate yourself"],
+				["You cannot moderate yourself"]
 			)
 
 		const moderationMessage = [
@@ -93,13 +93,13 @@ export const actions = {
 						WHERE in = $moderator
 							AND out = $moderatee
 							AND active = true`,
-					qParams,
+					qParams
 				))
 			)
 				return formError(
 					form,
 					["action"],
-					["You cannot unban a user that has not been moderated yet"],
+					["You cannot unban a user that has not been moderated yet"]
 				)
 
 			if (
@@ -110,13 +110,13 @@ export const actions = {
 							AND out = $moderatee
 							AND active = true
 							AND type = "AccountDeleted"`,
-					qParams,
+					qParams
 				)
 			)
 				return formError(
 					form,
 					["action"],
-					["You cannot unban a deleted user"],
+					["You cannot unban a deleted user"]
 				)
 
 			await query(
@@ -132,7 +132,7 @@ export const actions = {
 				{
 					note: `Unban ${username}`,
 					...query,
-				},
+				}
 			)
 
 			return message(form, `${username} has been unbanned`)
@@ -146,13 +146,13 @@ export const actions = {
 					SELECT * FROM moderation
 					WHERE out = $moderatee
 						AND active = true`,
-				query,
+				query
 			)
 		)
 			return formError(
 				form,
 				["username"],
-				["User has already been moderated"],
+				["User has already been moderated"]
 			)
 
 		await query(
@@ -182,12 +182,12 @@ export const actions = {
 				moderationAction,
 				timeEnds: date || new Date(),
 				...query,
-			},
+			}
 		)
 
 		return message(
 			form,
-			`${username} has been ${moderationMessage[action - 1]}`,
+			`${username} has been ${moderationMessage[action - 1]}`
 		)
 	},
 }

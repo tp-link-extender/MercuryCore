@@ -6,9 +6,9 @@ export const load = async ({ url }) => {
 	const searchQ = url.searchParams.get("q") || "",
 		category = url.searchParams.get("c")?.toLowerCase() || ""
 
-	if (!searchQ) throw error(400, "Missing search query")
+	if (!searchQ) error(400, "Missing search query")
 	if (category && !["users", "places", "assets", "groups"].includes(category))
-		throw error(400, "Invalid category")
+		error(400, "Invalid category")
 
 	if (category == "users") {
 		const userExists = await squery<{ number: number }>(
@@ -18,7 +18,7 @@ export const load = async ({ url }) => {
 			{ searchQ },
 		)
 
-		if (userExists) throw redirect(302, `/user/${userExists.number}`)
+		if (userExists) redirect(302, `/user/${userExists.number}`)
 	}
 
 	return {
@@ -26,7 +26,7 @@ export const load = async ({ url }) => {
 		category,
 		users:
 			category == "users" &&
-			query<{
+			(await query<{
 				number: number
 				status: "Playing" | "Online" | "Offline"
 				username: string
@@ -39,10 +39,10 @@ export const load = async ({ url }) => {
 					FROM user
 					WHERE string::lowercase($searchQ) ∈ string::lowercase(username)`,
 				{ searchQ },
-			),
+			)),
 		places:
 			category == "places" &&
-			query<{
+			(await query<{
 				id: number
 				name: string
 				playerCount: number
@@ -67,10 +67,10 @@ export const load = async ({ url }) => {
 						AND !deleted
 						AND string::lowercase($searchQ) ∈ string::lowercase(name)`,
 				{ searchQ },
-			),
+			)),
 		assets:
 			category == "assets" &&
-			query<{
+			(await query<{
 				id: number
 				name: string
 				price: number
@@ -84,10 +84,10 @@ export const load = async ({ url }) => {
 					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)
 						AND type ∈ [17, 18, 2, 11, 12, 19]`,
 				{ searchQ },
-			),
+			)),
 		groups:
 			category == "groups" &&
-			query<{
+			(await query<{
 				name: string
 				memberCount: number
 			}>(
@@ -98,7 +98,7 @@ export const load = async ({ url }) => {
 					FROM group
 					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)`,
 				{ searchQ },
-			),
+			)),
 	}
 }
 
@@ -110,9 +110,6 @@ export const actions = {
 
 		console.log(`searching for ${query} in ${category}`)
 
-		throw redirect(
-			302,
-			`/search?q=${query}${category ? `&c=${category}` : ""}`,
-		)
+		redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
 	},
 }

@@ -70,36 +70,35 @@ const placeQuery = async (id: string | number) =>
 	)
 
 export async function load({ locals, params }) {
-	if (!/^\d+$/.test(params.id))
-		throw error(400, `Invalid game id: ${params.id}`)
+	if (!/^\d+$/.test(params.id)) error(400, `Invalid game id: ${params.id}`)
 
 	const getPlace = await placeQuery(params.id)
-	if (!getPlace) throw error(404, "Place not found")
+	if (!getPlace) error(404, "Place not found")
 
 	const { user } = await authorise(locals)
 
 	if (user.number != getPlace.owner.number && user.permissionLevel < 4)
-		throw error(403, "You do not have permission to view this page.")
+		error(403, "You do not have permission to view this page.")
 
 	return {
 		...getPlace,
-		viewForm: superValidate(schemas.view),
-		networkForm: superValidate(schemas.network),
-		ticketForm: superValidate(schemas.ticket),
-		privacyForm: superValidate(schemas.privacy),
-		privatelinkForm: superValidate(schemas.privatelink),
+		viewForm: await superValidate(schemas.view),
+		networkForm: await superValidate(schemas.network),
+		ticketForm: await superValidate(schemas.ticket),
+		privacyForm: await superValidate(schemas.privacy),
+		privatelinkForm: await superValidate(schemas.privatelink),
 	}
 }
 
 async function getData(e: RequestEvent) {
 	if (!/^\d+$/.test(e.params.id || ""))
-		throw error(400, `Invalid game id: ${e.params.id}`)
+		error(400, `Invalid game id: ${e.params.id}`)
 	const id = parseInt(e.params.id || ""),
 		{ user } = await authorise(e.locals),
 		getPlace = await placeQuery(e.params.id)
 
 	if (user.number != getPlace.owner.number && user.permissionLevel < 4)
-		throw error(403, "You do not have permission to update this page.")
+		error(403, "You do not have permission to update this page.")
 
 	return id
 }

@@ -37,7 +37,7 @@ export async function load({ request, locals }) {
 	await authorise(locals, 5)
 
 	return {
-		form: superValidate(schema),
+		form: await superValidate(schema),
 		assettype: new URL(request.url).searchParams.get("asset"),
 	}
 }
@@ -63,7 +63,7 @@ export const actions = {
 			return formError(
 				form,
 				["asset"],
-				["Asset must be less than 20MB in size"],
+				["Asset must be less than 20MB in size"]
 			)
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
@@ -116,7 +116,7 @@ export const actions = {
 		}
 
 		const currentId = (await query(
-			surql`stuff:increment.asset`,
+			surql`stuff:increment.asset`
 		)) as unknown as number
 
 		const imageAssetId = currentId + 1,
@@ -161,13 +161,13 @@ export const actions = {
 				price,
 				description,
 				user: `user:${user.id}`,
-			},
+			}
 		)
 
 		graphicAsset(assets[assetType], imageAssetId, id)
 		await saveImages[0](imageAssetId)
 		await saveImages[1](id)
 
-		throw redirect(302, `/avatarshop/${id}/${name}`)
+		redirect(302, `/avatarshop/${id}/${name}`)
 	},
 }

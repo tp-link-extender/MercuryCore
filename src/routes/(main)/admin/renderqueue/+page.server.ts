@@ -18,9 +18,9 @@ type Render = {
 	}
 }
 
-export const load = () => ({
-	status: query(surql`stuff:ping.render`) as unknown as string,
-	queue: query<Render>(surql`
+export const load = async () => ({
+	status: (await query(surql`stuff:ping.render`)) as unknown as string,
+	queue: await query<Render>(surql`
 		SELECT
 			meta::id(id) AS id,
 			type,

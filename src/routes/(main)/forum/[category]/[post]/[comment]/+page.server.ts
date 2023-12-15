@@ -5,11 +5,11 @@ import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "../select"
 
 const SELECTREPLIES = recurse(
-	from => surql`(${from} <-replyToReply<-forumReply) AS replies`,
+	from => surql`(${from} <-replyToReply<-forumReply) AS replies`
 )
 
 export async function load({ locals, params }) {
-	if (!/^[0-9a-z]+$/.test(params.post)) throw error(400, "Invalid post id")
+	if (!/^[0-9a-z]+$/.test(params.post)) error(400, "Invalid post id")
 
 	const post = await squery<{
 		author: {
@@ -21,10 +21,10 @@ export async function load({ locals, params }) {
 				(SELECT username
 				FROM <-posted<-user)[0] AS author
 			FROM $forumPost`,
-		{ forumPost: `forumPost:${params.post}` },
+		{ forumPost: `forumPost:${params.post}` }
 	)
 
-	if (!post) throw error(404, "Post not found")
+	if (!post) error(404, "Post not found")
 
 	const { user } = await authorise(locals)
 
@@ -66,10 +66,10 @@ export async function load({ locals, params }) {
 			forumReply: `forumReply:${params.comment}`,
 			forumPost: `forumPost:${params.post}`,
 			user: `user:${user.id}`,
-		},
+		}
 	)
 
-	if (!forumReplies[0]) throw error(404, "Reply not found")
+	if (!forumReplies[0]) error(404, "Reply not found")
 
 	return {
 		replies: forumReplies,

@@ -11,11 +11,7 @@
 	if (data.privateServer) $form.privateServer = data.privateServer
 </script>
 
-<form
-	use:enhance
-	method="POST"
-	class="col-lg-8"
-	action="?/privacy&tab=Privacy">
+<form use:enhance method="POST" class="col-lg-8" action="?/privacy&tab=Privacy">
 	<fieldset class="pb-6">
 		<div class="row">
 			<label for="privacy" class="col-md-3 text-md-right">

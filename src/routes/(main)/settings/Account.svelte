@@ -37,7 +37,7 @@
 <p>A Discord account has not been linked.</p>
 <button class="btn btn-primary">
 	<fa fa-link />
-	 Link Discord
+	Link Discord
 </button>
 <hr class="grey-text" />
 
@@ -45,5 +45,5 @@
 <p>You have not verified your email address.</p>
 <button class="btn btn-primary mb-4">
 	<fa fa-envelope-circle-check />
-	 Verify Email
+	Verify Email
 </button>

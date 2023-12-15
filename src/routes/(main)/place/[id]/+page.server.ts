@@ -4,7 +4,7 @@ import { error, redirect } from "@sveltejs/kit"
 
 export async function load({ locals, params }) {
 	if (!params.id || !/^\d+$/.test(params.id))
-		throw error(400, `Invalid place id: ${params.id}`)
+		error(400, `Invalid place id: ${params.id}`)
 
 	const place = await squery<{
 		id: string
@@ -23,7 +23,7 @@ export async function load({ locals, params }) {
 					meta::id(id) AS id
 				FROM <-owns<-user)[0] AS owner
 			FROM $place`,
-		{ place: `place:${params.id}` },
+		{ place: `place:${params.id}` }
 	)
 
 	if (
@@ -31,7 +31,7 @@ export async function load({ locals, params }) {
 		(!place.privateServer ||
 			(await authorise(locals)).user.id == place.owner.id)
 	)
-		throw redirect(302, `/place/${params.id}/${place.name}`)
+		redirect(302, `/place/${params.id}/${place.name}`)
 
-	throw error(404, "Place not found")
+	error(404, "Place not found")
 }

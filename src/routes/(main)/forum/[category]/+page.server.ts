@@ -52,10 +52,10 @@ export async function load({ locals, params }) {
 		{
 			...params,
 			user: `user:${user.id}`,
-		},
+		}
 	)
 
-	if (!category) throw error(404, "Not found")
+	if (!category) error(404, "Not found")
 
 	return category
 }
@@ -72,11 +72,11 @@ export const actions = {
 			(id && !(await surreal.select(`forumPost:${id}`))[0]) ||
 			(replyId && !(await surreal.select(`forumReply:${replyId}`))[0])
 		)
-			throw error(404)
+			error(404)
 
 		await likeActions[action](
 			user.id,
-			`forum${replyId ? "Reply" : "Post"}:${id || replyId}`,
+			`forum${replyId ? "Reply" : "Post"}:${id || replyId}`
 		)
 	},
 }

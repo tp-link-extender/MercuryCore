@@ -8,7 +8,7 @@ export const like = (userId: string, thing: string) =>
 				RELATE $user->likes->$thing
 					SET time = time::now()
 			END`,
-		{ thing, user: `user:${userId}` },
+		{ thing, user: `user:${userId}` }
 	)
 export const unlike = (userId: string, thing: string) =>
 	query(surql`DELETE $user->likes WHERE out = $thing`, {
@@ -23,7 +23,7 @@ export const dislike = (userId: string, thing: string) =>
 				RELATE $user->dislikes->$thing
 					SET time = time::now()
 			END`,
-		{ thing, user: `user:${userId}` },
+		{ thing, user: `user:${userId}` }
 	)
 export const undislike = (userId: string, thing: string) =>
 	query(surql`DELETE $user->dislikes WHERE out = $thing`, {

@@ -17,9 +17,9 @@ const schemas = {
 	}),
 }
 
-export const load = () => ({
-	profileForm: superValidate(schemas.profile),
-	passwordForm: superValidate(schemas.password),
+export const load = async () => ({
+	profileForm: await superValidate(schemas.profile),
+	passwordForm: await superValidate(schemas.password),
 })
 
 export const actions = {

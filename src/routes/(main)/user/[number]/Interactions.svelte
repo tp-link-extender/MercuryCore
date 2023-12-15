@@ -11,18 +11,18 @@
 			action="?/{data.friends
 				? 'unfriend'
 				: data.outgoingRequest
-				? 'cancel'
-				: data.incomingRequest
-				? 'accept'
-				: 'request'}"
+					? 'cancel'
+					: data.incomingRequest
+						? 'accept'
+						: 'request'}"
 			in:fade
 			class="align-self-center pe-2 d-flex gap-2">
 			<button
 				class="btn {data.friends || data.outgoingRequest
 					? 'btn-danger'
 					: data.incomingRequest
-					? 'btn-info'
-					: 'btn-success'}">
+						? 'btn-info'
+						: 'btn-success'}">
 				{#if data.friends}
 					Unfriend
 				{:else if data.incomingRequest}

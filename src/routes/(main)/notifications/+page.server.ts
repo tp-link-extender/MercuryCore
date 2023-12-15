@@ -12,7 +12,7 @@ export const load = async ({ locals }) => {
 			WHERE out = $user`,
 		{
 			user: `user:${user.id}`,
-		},
+		}
 	)
 }
 
@@ -20,7 +20,7 @@ export const actions = {
 	default: async ({ locals, url }) => {
 		const { user } = await authorise(locals),
 			id = url.searchParams.get("s")
-		if (!id) throw error(400)
+		if (!id) error(400)
 
 		try {
 			await query(
@@ -31,10 +31,10 @@ export const actions = {
 					}`,
 				{
 					notification: `notification:${id}`,
-				},
+				}
 			)
 		} catch (e: any) {
-			throw error(400)
+			error(400)
 		}
 	},
 }

@@ -15,9 +15,7 @@
 	<TabNav bind:tabData />
 	<Tab {tabData}>
 		<h2 class="fs-3">User Profile</h2>
-		<p class="grey-text pb-6">
-			Change your bio, site theme and more.
-		</p>
+		<p class="grey-text pb-6">Change your bio, site theme and more.</p>
 		<ProfileForm {data} />
 	</Tab>
 

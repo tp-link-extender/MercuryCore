@@ -7,16 +7,16 @@ export async function GET({ url }) {
 	const ticket = url.searchParams.get("ticket")
 	let mapLocation = url.searchParams.get("autopilot")
 
-	if (!ticket) throw error(400, "Invalid Request")
+	if (!ticket) error(400, "Invalid Request")
 
 	const placeData = await squery<{ serverPort: number }>(
 		surql`
 			SELECT serverPort FROM place
 			WHERE serverTicket = $ticket`,
-		{ ticket },
+		{ ticket }
 	)
 
-	if (!placeData) throw error(400, "Invalid Server Ticket")
+	if (!placeData) error(400, "Invalid Server Ticket")
 
 	let port = placeData.serverPort,
 		baseUrl = "http://banland.xyz",
@@ -38,7 +38,7 @@ export async function GET({ url }) {
 				.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())
 				.replaceAll("_MAP_LOCATION", mapLocation || "")
 				.replaceAll("_SERVER_PORT", port.toString())
-				.replaceAll("_SERVER_PRESENCE_URL", serverPresenceUrl),
-		),
+				.replaceAll("_SERVER_PRESENCE_URL", serverPresenceUrl)
+		)
 	)
 }

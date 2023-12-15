@@ -18,8 +18,8 @@ const schema = z.object({
 	privateServer: z.boolean().optional(),
 })
 
-export const load = () => ({
-	form: superValidate(schema),
+export const load = async () => ({
+	form: await superValidate(schema),
 })
 
 export const actions = {
@@ -96,6 +96,6 @@ export const actions = {
 			},
 		)
 
-		throw redirect(302, `/place/${id + 1}/${name}`)
+		redirect(302, `/place/${id + 1}/${name}`)
 	},
 }

@@ -7,7 +7,7 @@ import fs from "fs/promises"
 import type { RequestEvent } from "./$types"
 
 export const load = async ({ locals }) => ({
-	assets: query<{
+	assets: await query<{
 		name: string
 		price: number
 		id: number
@@ -42,8 +42,8 @@ async function getData({ locals, url }: RequestEvent) {
 	const { user } = await authorise(locals, 3),
 		id = url.searchParams.get("id")
 
-	if (!id) throw error(400, "Missing asset id")
-	if (!/^\d+$/.test(id)) throw error(400, `Invalid asset id: ${id}`)
+	if (!id) error(400, "Missing asset id")
+	if (!/^\d+$/.test(id)) error(400, `Invalid asset id: ${id}`)
 
 	const params = {
 		user: `user:${user.id}`,
@@ -53,7 +53,7 @@ async function getData({ locals, url }: RequestEvent) {
 		name: string
 	}>(surql`SELECT * FROM $asset`, params)
 
-	if (!asset) throw error(404, "Asset not found")
+	if (!asset) error(404, "Asset not found")
 
 	return { user, id, params, assetName: asset.name }
 }
@@ -79,7 +79,7 @@ export const actions = {
 			{
 				...params,
 				note: `Approve asset ${assetName} (id ${id})`,
-			},
+			}
 		)
 	},
 	deny: async e => {
@@ -98,7 +98,7 @@ export const actions = {
 			{
 				...params,
 				note: `Moderate asset ${assetName} (id ${id})`,
-			},
+			}
 		)
 	},
 	rerender: async e => {
@@ -119,7 +119,7 @@ export const actions = {
 			surql`
 				SELECT meta::id((->imageAsset->asset.id)[0]) AS iaid
 				FROM $asset`,
-			{ asset: `asset:${id}` },
+			{ asset: `asset:${id}` }
 		)
 
 		await Promise.all([
@@ -137,7 +137,7 @@ export const actions = {
 					...params,
 					imageAsset: `asset:${iaid}`,
 					note: `Purge asset ${assetName} (id ${id})`,
-				},
+				}
 			),
 			fs.rm(`data/assets/${id}`),
 			fs.rm(`data/assets/${iaid}`),

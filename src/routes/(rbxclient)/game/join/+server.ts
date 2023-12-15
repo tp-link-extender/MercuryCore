@@ -11,7 +11,7 @@ export async function GET({ url }) {
 
 	if (!clientTicket) {
 		isStudioJoin = true
-		throw error(400, "Invalid Request")
+		error(400, "Invalid Request")
 	}
 
 	const gameSession = await squery<{
@@ -43,20 +43,20 @@ export async function GET({ url }) {
 					permissionLevel
 				FROM <-user)[0] AS user
 			FROM $playingId`,
-		{ playingId: `playing:${clientTicket}` },
+		{ playingId: `playing:${clientTicket}` }
 	)
 
-	if (!gameSession) throw error(400, "Invalid Game Session")
+	if (!gameSession) error(400, "Invalid Game Session")
 
 	if (privateServer) {
 		const privateSession = await squery(
 			surql`
 				SELECT * FROM place
 				WHERE privateTicket = $privateServer`,
-			{ privateServer },
+			{ privateServer }
 		)
 
-		if (!privateSession) throw error(400, "Invalid Private Server")
+		if (!privateSession) error(400, "Invalid Private Server")
 	}
 
 	await surreal.merge(`playing:${clientTicket}`, {
@@ -78,7 +78,7 @@ export async function GET({ url }) {
 				.replaceAll("_SERVER_ADDRESS", gameSession.place.serverIP)
 				.replaceAll(
 					"_SERVER_PORT",
-					gameSession.place.serverPort.toString(),
+					gameSession.place.serverPort.toString()
 				)
 				.replaceAll("_CREATOR_ID", creatorId.toString())
 				.replaceAll("_USER_ID", userNumber.toString())
@@ -87,10 +87,10 @@ export async function GET({ url }) {
 					"_MEMBERSHIP_TYPE",
 					gameSession.user.permissionLevel == 2
 						? "BuildersClub"
-						: "None",
+						: "None"
 				)
 				.replaceAll("_CHAR_APPEARANCE", charApp)
-				.replaceAll("_PING_URL", pingUrl),
-		),
+				.replaceAll("_PING_URL", pingUrl)
+		)
 	)
 }

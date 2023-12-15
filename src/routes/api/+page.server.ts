@@ -5,9 +5,9 @@ import { auth, authorise } from "$lib/server/lucia"
 import { error, redirect } from "@sveltejs/kit"
 
 export function load() {
-	throw error(
+	error(
 		451,
-		Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"),
+		Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii")
 	)
 }
 
@@ -17,7 +17,7 @@ export const actions = {
 
 		await auth.invalidateSession(session.sessionId) // invalidate session
 		locals.auth.setSession(null) // remove cookie
-		throw redirect(302, "/login")
+		redirect(302, "/login")
 	},
 	statusping: () => {
 		// does nothing

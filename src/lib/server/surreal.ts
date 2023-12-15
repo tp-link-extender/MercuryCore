@@ -86,7 +86,7 @@ export async function transaction(
 	sender: { id?: string; number?: number },
 	receiver: { id?: string; number?: number },
 	amountSent: number,
-	{ note, link }: { note?: String; link?: String },
+	{ note, link }: { note?: String; link?: String }
 ) {
 	const qResult = await mquery<
 		| string[]
@@ -165,7 +165,7 @@ export async function transaction(
 			amountSent,
 			note,
 			link,
-		},
+		}
 	)
 
 	for (const result of qResult) {
@@ -173,7 +173,7 @@ export async function transaction(
 			for (const result2 of qResult)
 				if (typeof result2 == "string" && result2 != failed)
 					throw new Error(
-						result2.match(/An error occurred: (.*)/)?.[1],
+						result2.match(/An error occurred: (.*)/)?.[1]
 					)
 	}
 }

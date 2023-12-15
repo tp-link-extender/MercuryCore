@@ -56,8 +56,8 @@
 				class="py-2 text-center {post.likes
 					? 'text-success font-bold'
 					: post.dislikes
-					? 'text-danger font-bold'
-					: ''}">
+						? 'text-danger font-bold'
+						: ''}">
 				{post.likeCount - post.dislikeCount}
 			</span>
 			<div class="text-center">
