@@ -16,7 +16,7 @@ export const load = async ({ locals, url }) => {
 
 	return {
 		query: searchQ,
-		assets: query<{
+		assets: await query<{
 			name: string
 			price: number
 			id: number

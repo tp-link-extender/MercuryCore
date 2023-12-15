@@ -28,7 +28,7 @@ const schemaInitial = z.object({
 	})
 
 export const load = async () => ({
-	form: superValidate(schema),
+	form: await superValidate(schema),
 	users:
 		((await query(surql`count(SELECT * FROM user)`)) as unknown as number) >
 		0,
@@ -144,7 +144,7 @@ export const actions = {
 			return fail(500) // idk
 		}
 
-		throw redirect(302, "/home")
+		redirect(302, "/home")
 	},
 	initialAccount: async ({ request, locals }) => {
 		// This is the initial account creation, which is
@@ -209,6 +209,6 @@ export const actions = {
 			return fail(500) // idk
 		}
 
-		throw redirect(302, "/home")
+		redirect(302, "/home")
 	},
 }

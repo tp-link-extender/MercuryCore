@@ -167,8 +167,8 @@
 									class="my-1 text-center {reply.likes
 										? 'text-success font-bold'
 										: reply.dislikes
-										? 'text-danger font-bold'
-										: ''}">
+											? 'text-danger font-bold'
+											: ''}">
 									{reply.likeCount - reply.dislikeCount}
 								</span>
 								<button

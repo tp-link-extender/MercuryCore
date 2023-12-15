@@ -10,7 +10,7 @@ export async function GET({ url }) {
 		assetId = parseInt(url.searchParams.get("aid") as string),
 		stringAssetId = assetId.toString()
 
-	if (!assetId || !width || !height) throw error(404, "Asset not found")
+	if (!assetId || !width || !height) error(404, "Asset not found")
 
 	const params = new URLSearchParams({
 			assetIds: stringAssetId,
@@ -23,13 +23,13 @@ export async function GET({ url }) {
 			asset: `assetCache:${stringAssetId}`,
 		})
 
-	if (cache) throw redirect(302, cache.url)
+	if (cache) redirect(302, cache.url)
 
 	const thumb = await fetch(
-		`https://thumbnails.roblox.com/v1/assets?${params}`,
+		`https://thumbnails.roblox.com/v1/assets?${params}`
 	)
 
-	if (thumb.status != 200) throw error(400, "Invalid asset")
+	if (thumb.status != 200) error(400, "Invalid asset")
 
 	const thumbnail = JSON.parse(await thumb.text())
 
@@ -37,5 +37,5 @@ export async function GET({ url }) {
 		url: thumbnail.data[0].imageUrl,
 	})
 
-	throw redirect(302, thumbnail.data[0].imageUrl)
+	redirect(302, thumbnail.data[0].imageUrl)
 }

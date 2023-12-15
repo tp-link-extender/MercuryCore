@@ -15,17 +15,16 @@ type Render = {
 
 export async function POST({ request, url }) {
 	const apiKey = url.searchParams.get("apiKey")
-	if (!apiKey || apiKey != process.env.RCC_KEY) throw error(400, "Stfu")
+	if (!apiKey || apiKey != process.env.RCC_KEY) error(400, "Stfu")
 
 	const id = url.searchParams.get("taskID")
-	if (!id || !/^[\d\w]+$/.test(id))
-		throw error(400, "Missing taskID parameter")
+	if (!id || !/^[\d\w]+$/.test(id)) error(400, "Missing taskID parameter")
 
 	const task = await squery<Render>(surql`SELECT * FROM $render`, {
 		render: `render:${id}`,
 	})
 
-	if (!task) throw error(404, "Task not found")
+	if (!task) error(404, "Task not found")
 
 	// Check if response is gzipped, and if so, gunzip it
 	const buffer = await request.arrayBuffer(),
@@ -95,7 +94,7 @@ export async function POST({ request, url }) {
 					status: "Completed",
 					completed: time::now(),
 				}`,
-			{ render: `render:${id}` },
+			{ render: `render:${id}` }
 		)
 	}
 

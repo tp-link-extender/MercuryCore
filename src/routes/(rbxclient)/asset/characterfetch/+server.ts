@@ -6,7 +6,7 @@ export async function GET({ url }) {
 	const userNumber = url.searchParams.get("userID")
 
 	if (!userNumber || !/^\d+$/.test(userNumber))
-		throw error(400, "Missing userID parameter")
+		error(400, "Missing userID parameter")
 
 	const user = await squery<{
 		bodyColours: {
@@ -26,10 +26,10 @@ export async function GET({ url }) {
 					meta::id(id) as id
 				FROM ->wearing->asset).id AS wearing
 			FROM user WHERE number = $id`,
-		{ id: parseInt(userNumber) },
+		{ id: parseInt(userNumber) }
 	)
 
-	if (!user) throw error(404, "User not found")
+	if (!user) error(404, "User not found")
 
 	let charApp = `${process.env.RCC_ORIGIN}/asset/bodycolors?id=${userNumber}`
 

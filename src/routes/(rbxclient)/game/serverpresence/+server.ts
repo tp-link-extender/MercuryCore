@@ -4,15 +4,15 @@ import { query, surql } from "$lib/server/surreal"
 export async function GET({ url, request }) {
 	const ticket = url.searchParams.get("ticket") as string
 
-	if (!ticket) throw error(400, "Invalid Request")
+	if (!ticket) error(400, "Invalid Request")
 	if (request.headers.get("user-agent") != "Roblox/WinInet")
-		throw error(400, "Invalid Request")
+		error(400, "Invalid Request")
 
 	await query(
 		surql`
 			UPDATE place SET serverPing = time::nano() / 1000000000
 			WHERE serverTicket = $ticket`,
-		{ ticket },
+		{ ticket }
 	)
 
 	return new Response("OK", {

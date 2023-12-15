@@ -126,9 +126,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart>
 			<div class="w-100">
-				<h1 class="font-black w-100">
-					Endless possibilities
-				</h1>
+				<h1 class="font-black w-100">Endless possibilities</h1>
 				<h3 class=" light-text w-100">
 					On Mercury 2, you can create games for others to play, or
 					shirts and pants for people to buy and wear. You can

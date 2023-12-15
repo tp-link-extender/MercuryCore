@@ -13,7 +13,7 @@ import sharp from "sharp"
  */
 export async function imageAsset(
 	file: File,
-	sharpOptions?: sharp.ResizeOptions,
+	sharpOptions?: sharp.ResizeOptions
 ) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
 		.resize(256, 256, {
@@ -42,7 +42,7 @@ export async function imageAsset(
  */
 export async function clothingAsset(
 	file: File,
-	sharpOptions?: sharp.ResizeOptions,
+	sharpOptions?: sharp.ResizeOptions
 ) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
 		.resize(585, 559, {
@@ -71,7 +71,7 @@ export async function clothingAsset(
  */
 export async function thumbnail(
 	file: File,
-	sharpOptions?: sharp.ResizeOptions,
+	sharpOptions?: sharp.ResizeOptions
 ) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
 		.resize(420, 420, {

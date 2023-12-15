@@ -8,7 +8,7 @@ import type { RequestEvent } from "./$types"
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
-		throw error(400, `Invalid user id: ${params.number}`)
+		error(400, `Invalid user id: ${params.number}`)
 
 	const number = parseInt(params.number),
 		{ user } = await authorise(locals)
@@ -102,17 +102,17 @@ export async function load({ locals, params }) {
 		{
 			number,
 			user: `user:${user.id}`,
-		},
+		}
 	)
 
-	if (!userExists) throw error(404, "Not found")
+	if (!userExists) error(404, "Not found")
 
 	return userExists
 }
 
 async function getData({ params }: RequestEvent) {
 	if (!/^\d+$/.test(params.number))
-		throw error(400, `Invalid user id: ${params.number}`)
+		error(400, `Invalid user id: ${params.number}`)
 	const user2 = await squery<{
 		id: string
 		username: string
@@ -120,9 +120,9 @@ async function getData({ params }: RequestEvent) {
 		surql`
 			SELECT meta::id(id) AS id, username
 			FROM user WHERE number = $number`,
-		{ number: parseInt(params.number) },
+		{ number: parseInt(params.number) }
 	)
-	if (!user2) throw error(404, "User not found")
+	if (!user2) error(404, "User not found")
 
 	return { user2 }
 }
@@ -132,7 +132,7 @@ type ActionFunction = (
 		user: string
 		user2: string
 	},
-	user: import("lucia").User,
+	user: import("lucia").User
 ) => Promise<any>
 
 const acceptExisting: ActionFunction = (params, user) =>
@@ -155,7 +155,7 @@ const acceptExisting: ActionFunction = (params, user) =>
 			...params,
 			note: `${user.username} is now friends with you!`,
 			relativeId: user.id,
-		},
+		}
 	)
 
 async function getInteractData(e: RequestEvent) {
@@ -163,8 +163,7 @@ async function getInteractData(e: RequestEvent) {
 		{ user } = await authorise(locals),
 		{ user2 } = await getData(e)
 
-	if (user.id == user2.id)
-		throw error(400, "You can't friend/follow yourself")
+	if (user.id == user2.id) error(400, "You can't friend/follow yourself")
 
 	return {
 		user,
@@ -197,7 +196,7 @@ export const actions = {
 				...params,
 				note: `${user.username} is now following you!`,
 				relativeId: user.id,
-			},
+			}
 		)
 	},
 	unfollow: async e => {
@@ -212,7 +211,7 @@ export const actions = {
 			{
 				type: "Follower",
 				...params,
-			},
+			}
 		)
 	},
 	unfriend: async e => {
@@ -228,7 +227,7 @@ export const actions = {
 			{
 				type: "NewFriend",
 				...params,
-			},
+			}
 		)
 	},
 	request: async e => {
@@ -238,7 +237,7 @@ export const actions = {
 			!(await query(
 				surql`$user ∈ $user2->friends->user
 					OR $user2 ∈ $user->friends->user`,
-				params,
+				params
 			))
 		)
 			if (await query(surql`$user ∈ $user2->request->user`, params))
@@ -261,9 +260,9 @@ export const actions = {
 						...params,
 						note: `${user.username} has sent you a friend request.`,
 						relativeId: user.id,
-					},
+					}
 				)
-		else throw error(400, "Already friends")
+		else error(400, "Already friends")
 	},
 	cancel: async e => {
 		const { params } = await getInteractData(e)
@@ -277,7 +276,7 @@ export const actions = {
 			{
 				type: "FriendRequest",
 				...params,
-			},
+			}
 		)
 	},
 	decline: async e => {
@@ -289,7 +288,7 @@ export const actions = {
 		if (await query(surql`$user ∈ $user2->request->user`, params))
 			// Make sure an incoming request exists before accepting
 			await acceptExisting(params, user)
-		else throw error(400, "No friend request to accept")
+		else error(400, "No friend request to accept")
 	},
 	rerender: async e => {
 		const { locals, params, getClientAddress } = e

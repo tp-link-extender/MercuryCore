@@ -15,7 +15,7 @@ const schema = z.object({
 })
 
 export const load = async () => ({
-	form: superValidate(schema),
+	form: await superValidate(schema),
 	users:
 		((await query(surql`count(SELECT * FROM user)`)) as unknown as number) >
 		0,
@@ -48,6 +48,6 @@ export const actions = {
 			)
 		}
 
-		throw redirect(302, "/home")
+		redirect(302, "/home")
 	},
 }

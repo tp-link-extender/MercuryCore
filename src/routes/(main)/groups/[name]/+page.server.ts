@@ -31,10 +31,10 @@ export async function load({ locals, params }) {
 		{
 			user: `user:${user.id}`,
 			...params,
-		},
+		}
 	)
 
-	if (!group) throw error(404, "Not found")
+	if (!group) error(404, "Not found")
 
 	return group
 }
@@ -47,7 +47,7 @@ async function getData(e: RequestEvent) {
 		surql`
 			SELECT id FROM group
 			WHERE string::lowercase(name) = string::lowercase($name)`,
-		e.params,
+		e.params
 	)
 
 	if (!group) return fail(400, { msg: "User not found" })
@@ -64,13 +64,13 @@ export const actions = {
 			surql`
 				RELATE $user->member->$group
 					SET time = time::now()`,
-			await getData(e),
+			await getData(e)
 		)
 	},
 	leave: async e => {
 		await query(
 			surql`DELETE $user->member WHERE out = $group`,
-			await getData(e),
+			await getData(e)
 		)
 	},
 }

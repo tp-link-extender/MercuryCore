@@ -5,7 +5,7 @@ export async function load({ locals }) {
 	const { user } = await authorise(locals)
 
 	return {
-		users: query<{
+		users: await query<{
 			number: number
 			status: "Playing" | "Online" | "Offline"
 			username: string

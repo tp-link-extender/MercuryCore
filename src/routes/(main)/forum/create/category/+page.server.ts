@@ -14,7 +14,7 @@ const schema = z.object({
 export async function load({ locals }) {
 	await authorise(locals, 5)
 	return {
-		form: superValidate(schema),
+		form: await superValidate(schema),
 	}
 }
 
@@ -38,6 +38,6 @@ export const actions = {
 			description,
 		})
 
-		throw redirect(302, `/forum/${name}`)
+		redirect(302, `/forum/${name}`)
 	},
 }

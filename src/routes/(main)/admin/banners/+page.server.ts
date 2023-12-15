@@ -18,8 +18,8 @@ export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	return {
-		form: superValidate(schema),
-		banners: query<{
+		form: await superValidate(schema),
+		banners: await query<{
 			id: string
 			active: boolean
 			bgColour: string
@@ -118,7 +118,7 @@ export const actions = {
 				{
 					note: `Create banner "${bannerText}"`,
 					user: `user:${user.id}`,
-				},
+				}
 			),
 		])
 
@@ -153,7 +153,7 @@ export const actions = {
 			{
 				note: `Delete banner "${deletedBanner.body}"`,
 				user: `user:${user.id}`,
-			},
+			}
 		)
 	},
 	updateBody: async e => {

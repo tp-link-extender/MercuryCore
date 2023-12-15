@@ -101,8 +101,9 @@
 											searchCategories.length
 												? 0
 												: currentSearchFocus < 0
-												? searchCategories.length - 1
-												: currentSearchFocus
+													? searchCategories.length -
+														1
+													: currentSearchFocus
 
 										searchResults[
 											currentSearchFocus
@@ -127,9 +128,8 @@
 							autocomplete="off" />
 						<button
 							on:click|preventDefault={() => {
-								search.trim()
-									? goto(`/search?q=${search.trim()}&c=users`)
-									: null
+								search.trim() &&
+									goto(`/search?q=${search.trim()}&c=users`)
 
 								searchCompleted = true
 							}}

@@ -37,7 +37,7 @@ export async function load({ request, locals }) {
 				ORDER BY time DESC`,
 			{
 				user: `user:${user.id}`,
-			},
+			}
 		)
 
 		// Make type relativeId optional so we can delete it later
@@ -75,7 +75,7 @@ export async function load({ request, locals }) {
 									name
 								FROM ->replyToAsset->asset)[0] AS parentAsset
 							FROM $comment`,
-						{ comment: `assetComment:${i.relativeId}` },
+						{ comment: `assetComment:${i.relativeId}` }
 					)
 					if (!comment) break
 
@@ -99,7 +99,7 @@ export async function load({ request, locals }) {
 									(->in->forumCategory)[0].name as categoryName
 								FROM ->replyToPost[0]->forumPost)[0] AS parentPost
 							FROM $reply`,
-						{ reply: `forumReply:${i.relativeId}` },
+						{ reply: `forumReply:${i.relativeId}` }
 					)
 					if (!reply) break
 
@@ -122,7 +122,7 @@ export async function load({ request, locals }) {
 							FROM $forumPost`,
 						{
 							forumPost: `forumPost:${i.relativeId}`,
-						},
+						}
 					)
 					if (!post) break
 
@@ -140,7 +140,7 @@ export async function load({ request, locals }) {
 	}
 
 	return {
-		banners: query<{
+		banners: await query<{
 			bgColour: string
 			body: string
 			id: string

@@ -11,8 +11,8 @@ const select = surql`
 		count(<-member) AS memberCount
 	FROM group`
 
-export const load = () => ({
-	groups: query<Group>(select),
+export const load = async () => ({
+	groups: await query<Group>(select),
 })
 
 export const actions = {

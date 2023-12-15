@@ -9,8 +9,8 @@ const schema = z.object({
 	name: z.string().min(3).max(40),
 })
 
-export const load = () => ({
-	form: superValidate(schema),
+export const load = async () => ({
+	form: await superValidate(schema),
 })
 
 export const actions = {
@@ -28,9 +28,9 @@ export const actions = {
 				[
 					Buffer.from(
 						"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
-						"base64",
+						"base64"
 					).toString("ascii"),
-				],
+				]
 			)
 
 		if (name.toLowerCase() == "changed")
@@ -40,7 +40,7 @@ export const actions = {
 			return formError(
 				form,
 				["name"],
-				["GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"],
+				["GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"]
 			)
 
 		if (
@@ -48,13 +48,13 @@ export const actions = {
 				surql`
 					SELECT * FROM group WHERE string::lowercase(name)
 						= string::lowercase($name)`,
-				{ name },
+				{ name }
 			)
 		)
 			return formError(
 				form,
 				["name"],
-				["A group with this name already exists"],
+				["A group with this name already exists"]
 			)
 
 		try {
@@ -79,9 +79,9 @@ export const actions = {
 			{
 				name,
 				user: `user:${user.id}`,
-			},
+			}
 		)
 
-		throw redirect(302, `/groups/${name}`)
+		redirect(302, `/groups/${name}`)
 	},
 }

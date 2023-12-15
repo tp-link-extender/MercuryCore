@@ -29,13 +29,12 @@ export async function load({ locals, url }) {
 	const reportee = url.searchParams.get("user"),
 		reportedUrl = url.searchParams.get("url")
 
-	if (!reportee || !reportedUrl)
-		throw error(400, "Missing user or url parameters")
+	if (!reportee || !reportedUrl) error(400, "Missing user or url parameters")
 
 	return {
 		reportee,
 		url: reportedUrl,
-		form: superValidate(schema),
+		form: await superValidate(schema),
 	}
 }
 
@@ -51,14 +50,14 @@ export const actions = {
 			username = url.searchParams.get("user"),
 			userUrl = url.searchParams.get("user")
 
-		if (!username || !userUrl) throw error(400, "Missing fields")
+		if (!username || !userUrl) error(400, "Missing fields")
 
 		const reportee = await squery<{ id: string }>(
 			surql`
 				SELECT id
 				FROM user
 				WHERE username = $username`,
-			{ username },
+			{ username }
 		)
 
 		if (!reportee)
@@ -80,7 +79,7 @@ export const actions = {
 				note,
 				userUrl,
 				category,
-			},
+			}
 		)
 
 		return message(form, "Report sent successfully.")

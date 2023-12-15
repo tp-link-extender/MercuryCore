@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Gradient } from "stripe-gradient"
+	import g from "stripe-gradient"
+	const { Gradient } = g
 	import { Canvas } from "@threlte/core"
 
 	// Gradient must run upon page being loaded,

@@ -5,8 +5,7 @@ import { likeActions } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
 
 export async function load({ url, locals, params }) {
-	if (!/^\d+$/.test(params.id))
-		throw error(400, `Invalid place id: ${params.id}`)
+	if (!/^\d+$/.test(params.id)) error(400, `Invalid place id: ${params.id}`)
 
 	const { user } = await authorise(locals),
 		id = parseInt(params.id),
@@ -74,7 +73,7 @@ export async function load({ url, locals, params }) {
 			{
 				user: `user:${user.id}`,
 				place: `place:${id}`,
-			},
+			}
 		)
 
 	if (
@@ -83,7 +82,7 @@ export async function load({ url, locals, params }) {
 			getPlace.privateServer &&
 			privateServerCode != getPlace.privateTicket)
 	)
-		throw error(404, "Place not found")
+		error(404, "Place not found")
 
 	return getPlace
 }
@@ -91,7 +90,7 @@ export async function load({ url, locals, params }) {
 export const actions = {
 	like: async ({ url, request, locals, params }) => {
 		if (!/^\d+$/.test(params.id))
-			throw error(400, `Invalid place id: ${params.id}`)
+			error(400, `Invalid place id: ${params.id}`)
 
 		const id = parseInt(params.id),
 			{ user } = await authorise(locals),
@@ -109,7 +108,7 @@ export const actions = {
 			!place ||
 			(place.privateServer && privateTicket != place.privateTicket)
 		)
-			throw error(404, "Place not found")
+			error(404, "Place not found")
 
 		await likeActions[action](user.id, `place:${id}`)
 	},
@@ -120,12 +119,12 @@ export const actions = {
 			requestType = data.request,
 			serverId = parseInt(data.serverId)
 
-		if (!requestType || !serverId) throw error(400, "Invalid Request")
+		if (!requestType || !serverId) error(400, "Invalid Request")
 		if (requestType != "RequestGame")
-			throw error(400, "Invalid Request (request type invalid)")
+			error(400, "Invalid Request (request type invalid)")
 
 		if (!(await surreal.select(`place:${serverId}`))[0])
-			throw error(404, "Place not found")
+			error(404, "Place not found")
 
 		if (
 			await squery<{
@@ -139,10 +138,10 @@ export const actions = {
 					FROM moderation
 					WHERE out = $user
 						AND active = true`,
-				{ user: `user:${user.id}` },
+				{ user: `user:${user.id}` }
 			)
 		)
-			throw error(403, "You cannot currently play games")
+			error(403, "You cannot currently play games")
 
 		// Invalidate all game sessions and create valid session
 		const session = (
@@ -164,7 +163,7 @@ export const actions = {
 				{
 					user: `user:${user.id}`,
 					place: `place:${serverId}`,
-				},
+				}
 			)
 		)[1][0]
 

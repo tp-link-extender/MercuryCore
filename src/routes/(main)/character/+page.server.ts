@@ -30,7 +30,7 @@ export const load = async ({ locals, url }) => {
 
 	return {
 		query: searchQ,
-		assets: query<{
+		assets: await query<{
 			name: string
 			price: number
 			id: number
@@ -57,8 +57,8 @@ async function getEquipData(e: RequestEvent) {
 	if (ratelimit({}, "equip", e.getClientAddress, 45))
 		return { error: fail(429, { msg: "Too many requests" }) }
 
-	if (!id) throw error(400, "Missing asset id")
-	if (!/^\d+$/.test(id)) throw error(400, `Invalid asset id: ${id}`)
+	if (!id) error(400, "Missing asset id")
+	if (!/^\d+$/.test(id)) error(400, `Invalid asset id: ${id}`)
 
 	const asset = await squery<{
 		id: number
@@ -71,16 +71,16 @@ async function getEquipData(e: RequestEvent) {
 		{
 			asset: `asset:${id}`,
 			user: `user:${user.id}`,
-		},
+		}
 	)
 
-	if (!asset) throw error(404, "Item not found or not owned")
+	if (!asset) error(404, "Item not found or not owned")
 
 	if (!allowedTypes.includes(asset.type))
-		throw error(400, "Can't equip this type of item")
+		error(400, "Can't equip this type of item")
 
 	if (asset.visibility != "Visible")
-		throw error(400, "This item hasn't been approved yet")
+		error(400, "This item hasn't been approved yet")
 
 	return { user, id, asset }
 }
@@ -105,7 +105,7 @@ export const actions = {
 			{
 				query: ((await request.formData()).get("q") as string).trim(),
 				user: `user:${(await authorise(locals)).user.id}`,
-			},
+			}
 		),
 	}),
 	paint: async ({ locals, url }) => {
@@ -170,7 +170,7 @@ export const actions = {
 				user: `user:${user.id}`,
 				asset: `asset:${id}`,
 				type: asset.type,
-			},
+			}
 		)
 
 		return await rerender(user)

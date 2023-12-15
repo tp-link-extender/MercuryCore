@@ -51,7 +51,7 @@ export function recurse(query: (from: string) => string) {
 	for (let i = 0; i < 9; i++)
 		rep = rep.replace(
 			/# again #/g,
-			surql`(${SELECTFROM} <-replyToComment<-assetComment) AS replies`,
+			surql`(${SELECTFROM} <-replyToComment<-assetComment) AS replies`
 		)
 
 	return rep.replace(/# again #/g, "[] AS replies")

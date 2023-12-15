@@ -41,7 +41,7 @@
 					? `ned for ${formatDateDifference(
 							Date.now(),
 							new Date(data.timeEnds).getTime()
-					  )}`
+						)}`
 					: ""}
 			</h1>
 

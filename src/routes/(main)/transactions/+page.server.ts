@@ -5,7 +5,7 @@ export async function load({ locals }) {
 	const { user } = await authorise(locals)
 
 	return {
-		transactions: query<{
+		transactions: await query<{
 			amountSent: number
 			id: string
 			in: string

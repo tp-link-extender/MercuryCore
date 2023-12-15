@@ -9,7 +9,7 @@ const select = surql`
 	FROM asset WHERE visibility = "Visible"`
 
 export const load = async () => ({
-	assets: query<{
+	assets: await query<{
 		name: string
 		price: number
 		id: number
@@ -22,7 +22,7 @@ export const actions = {
 		assets: await query(
 			surql`${select}
 				AND string::lowercase($query) ∈ string::lowercase(name)`,
-			{ query: (await request.formData()).get("q") as string },
+			{ query: (await request.formData()).get("q") as string }
 		),
 	}),
 }

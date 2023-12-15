@@ -80,8 +80,8 @@
 					class="my-2 text-center {data.likes
 						? 'text-success font-bold'
 						: data.dislikes
-						? 'text-danger font-bold'
-						: ''}">
+							? 'text-danger font-bold'
+							: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
 				<div>

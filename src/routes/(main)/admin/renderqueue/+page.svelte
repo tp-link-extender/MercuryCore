@@ -125,7 +125,7 @@
 									{task.completed
 										? new Date(
 												task.completed
-										  ).toLocaleString()
+											).toLocaleString()
 										: "N/A"}
 								</td>
 							</tr>

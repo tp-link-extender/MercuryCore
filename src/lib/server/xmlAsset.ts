@@ -32,7 +32,7 @@ const strings = {
 export function graphicAsset(
 	type: string,
 	imageAssetId: string | number,
-	graphicAssetId: string | number,
+	graphicAssetId: string | number
 ) {
 	const stringType = strings[type as keyof typeof strings]
 	const asset = fs
@@ -40,14 +40,14 @@ export function graphicAsset(
 			`xml/graphicAsset${
 				type == "Face" || type == "Decal" ? "Image" : "Other"
 			}.xml`,
-			"utf-8",
+			"utf-8"
 		)
 		.replaceAll("_CLASS", stringType.class)
 		.replaceAll("_CONTENT_NAME", stringType.contentName)
 		.replaceAll("_STRING_NAME", stringType.stringName)
 		.replaceAll(
 			"_ASSET_URL",
-			`${process.env.RCC_ORIGIN}/asset?id=${imageAssetId.toString()}`,
+			`${process.env.RCC_ORIGIN}/asset?id=${imageAssetId.toString()}`
 		)
 
 	fs.writeFileSync(`data/assets/${graphicAssetId}`, asset)

@@ -39,7 +39,7 @@ export async function load({ locals }) {
 	)
 
 	return {
-		form: superValidate(schema),
+		form: await superValidate(schema),
 		invites,
 	}
 }
@@ -47,8 +47,6 @@ export async function load({ locals }) {
 async function getData(e: RequestEvent) {
 	const { user } = await authorise(e.locals, 5),
 		form = await superValidate(e.request, schema)
-
-	console.log(form)
 
 	return { user, form, error: !form.valid && formError(form) }
 }
@@ -118,7 +116,7 @@ export const actions = {
 			: message(
 					form,
 					"Invite created successfully! Check the Invites tab for your new key.",
-			  )
+				)
 	},
 	disable: async e => {
 		const { user, form, error } = await getData(e)
