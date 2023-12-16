@@ -93,32 +93,34 @@
 			<div in:fade|global={{ num }} class="w-100">
 				<div class="d-flex w-100">
 					<div class="w-100">
-						<a
-							href="/user/{reply.author.number}"
-							class:hidden
-							class="user userlink d-flex text-decoration-none pt-2 ms-4 {reply
-								.author.username == postAuthorName
-								? ''
-								: 'light-text'}">
-							<span
-								class="font-bold {reply.author.username ==
-								postAuthorName
-									? assetName
-										? 'text-warning'
-										: 'text-primary'
-									: ''}">
-								{reply.author.username}
-								{#if reply.author.username == postAuthorName}
-									<i
-										class="fa {assetName
-											? 'fa-hammer'
-											: 'fa-microphone'} ms-2" />
-								{/if}
-							</span>
+						<div class="d-flex align-items-center ps-4 pt-2">
+							<a
+								href="/user/{reply.author.number}"
+								class:hidden
+								class="user userlink text-decoration-none {reply
+									.author.username == postAuthorName
+									? ''
+									: 'light-text'}">
+								<span
+									class="font-bold {reply.author.username ==
+									postAuthorName
+										? assetName
+											? 'text-warning'
+											: 'text-primary'
+										: ''}">
+									{reply.author.username}
+									{#if reply.author.username == postAuthorName}
+										<i
+											class="fa {assetName
+												? 'fa-hammer'
+												: 'fa-microphone'} ms-2" />
+									{/if}
+								</span>
+							</a>
 							<small class="light-text ps-6">
 								{new Date(reply.posted).toLocaleString()}
 							</small>
-						</a>
+						</div>
 						<p class:hidden class="my-2">
 							{reply.content[0].text}
 						</p>

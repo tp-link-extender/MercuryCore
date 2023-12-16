@@ -1,6 +1,8 @@
 <script lang="ts">
 	// Link to a place used on Games page.
 
+	import { preloadData, pushState, goto } from "$app/navigation"
+
 	export let place: {
 		id: number
 		name: string
@@ -18,6 +20,17 @@
 </script>
 
 <a
+	on:click={async e => {
+		if (e.metaKey) return
+		e.preventDefault()
+
+		const { href } = e.currentTarget,
+			result = await preloadData(href)
+
+		if (result.type == "loaded" && result.status == 200)
+			pushState(href, { openPlace: result.data })
+		else goto(href)
+	}}
 	in:fade|global={{ num, total }}
 	class="card text-center light-text bg-darker text-decoration-none fs-4 rounded-4 m-0"
 	class:border-success={place.serverPing >=

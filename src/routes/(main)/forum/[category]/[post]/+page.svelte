@@ -4,6 +4,7 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
+	export let asComponent = false
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({}),
@@ -27,12 +28,18 @@
 <Head title={data.title} />
 
 <div class="container light-text">
-	<Breadcrumbs
-		path={[
-			["Forum", "/forum"],
-			[data.categoryName, `/forum/${data.categoryName}`],
-			[data.title, ""],
-		]} />
+	{#if !asComponent}
+		<!--
+			Breadcrumbs can give confusing behaviour if linking
+			to the same page the component is shallow-routed on
+		-->
+		<Breadcrumbs
+			path={[
+				["Forum", "/forum"],
+				[data.categoryName, `/forum/${data.categoryName}`],
+				[data.title, ""],
+			]} />
+	{/if}
 
 	<div class="post card bg-darker flex-row">
 		<form

@@ -1,5 +1,6 @@
 <script lang="ts">
-	// lel, anything for intellisense
+	import { preloadData, pushState, goto } from "$app/navigation"
+
 	export let post: import("./$types").PageData["posts"][number]
 	export let num: number
 	export let total: number
@@ -72,9 +73,6 @@
 					<i class="fa{post.dislikes ? '' : 'r'} fa-thumbs-down" />
 				</button>
 			</div>
-			<!-- <div id="replycount" class="d-flex">
-				<div class="mt-auto"><far fa-message /> {post._count.replies}</div>
-			</div> -->
 		</div>
 	</form>
 	<div class="ps-2 d-flex flex-column w-100">
@@ -85,6 +83,19 @@
 			</em>
 		</div>
 		<a
+			on:click={async e => {
+				// Dude.
+				// Shallow routing is AWESOME
+				if (e.metaKey) return
+				e.preventDefault()
+
+				const { href } = e.currentTarget,
+					result = await preloadData(href)
+
+				if (result.type == "loaded" && result.status == 200)
+					pushState(href, { openPost: result.data })
+				else goto(href)
+			}}
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
 			class="px-4 pt-2 text-decoration-none light-text w-100">
 			<h2 class="pt-2">
@@ -102,10 +113,6 @@
 <style lang="stylus">
 	.sidebar
 		z-index 1
-		// min-width 3rem
-
-	// #replycount
-	// 	justify-content center
 
 	.post
 		height 10rem
