@@ -14,6 +14,10 @@ declare global {
 		interface Locals {
 			auth: import("lucia").AuthRequest
 		}
+		interface PageState {
+			openPost?: import("./routes/(main)/forum/[category]/[post]/$types").PageData
+			openPlace?: import("./routes/(main)/place/[id]/[name]/$types").PageData
+		}
 	}
 	namespace Lucia {
 		type Auth = typeof import("$lib/server/lucia").auth

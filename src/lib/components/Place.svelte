@@ -1,5 +1,5 @@
 <script lang="ts">
-	// Link to a place used on the homepage or on a user's profile.
+	// Link to a place used on the homepage and the search page.
 
 	export let place: {
 		id: number

@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { page } from "$app/stores"
 	import ForumPost from "./ForumPost.svelte"
+	import PostPage from "./[post]/+page.svelte"
 
 	export let data
 	// Forum
-	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}
 </script>
 
 <Head title="{data.name} - Forum" />
@@ -35,6 +36,28 @@
 	{/each}
 </div>
 
+{#if $page.state.openPost}
+	<div
+		class="modal-static position-fixed w-100 h-100 z-10 overflow-y-auto py-20">
+		<div
+			transition:fade={{ duration: 200 }}
+			role="button"
+			tabindex="0"
+			on:click={() => history.back()}
+			on:keypress={() => history.back()}
+			class="modal-backdrop vh-100 w-100" />
+		<div
+			transition:fade={{ duration: 100 }}
+			class="modal-box bg-background h-100 py-10">
+			<PostPage data={$page.state.openPost} asComponent />
+		</div>
+	</div>
+{/if}
+
 <style lang="stylus">
 	containerMinWidth()
+
+	.modal-box
+		min-width 70rem
+		max-height initial !important
 </style>

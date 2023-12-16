@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { page } from "$app/stores"
 	import PlaceCard from "./PlaceCard.svelte"
+	import PlacePage from "../place/[id]/[name]/+page.svelte"
 
 	export let data
 
@@ -113,6 +115,24 @@
 	</div>
 </div>
 
+{#if $page.state.openPlace}
+	<div
+		class="modal-static position-fixed w-100 h-100 z-10 overflow-y-auto p-20 px-10">
+		<div
+			transition:fade={{ duration: 200 }}
+			role="button"
+			tabindex="0"
+			on:click={() => history.back()}
+			on:keypress={() => history.back()}
+			class="modal-backdrop vh-100 w-100" />
+		<div
+			transition:fade={{ duration: 100 }}
+			class="modal-box bg-background h-100 py-10">
+			<PlacePage data={$page.state.openPlace} />
+		</div>
+	</div>
+{/if}
+
 <style lang="stylus">
 	input
 	select
@@ -126,4 +146,7 @@
 		column-gap 0.7rem
 		row-gap 0.7rem
 		place-items center
+
+	.modal-box
+		max-height initial !important
 </style>
