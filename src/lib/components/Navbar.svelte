@@ -145,7 +145,7 @@
 								{#each searchCategories as [name, category], num}
 									<a
 										bind:this={searchResults[num]}
-										class="btn text-start light-text py-2"
+										class="searchresult btn light-text py-2"
 										href="/search?q={search.trim()}&c={category}"
 										title="Search {name}">
 										Search <b>{search}</b>
@@ -375,4 +375,7 @@
 		button
 		input
 			height 2.3rem
+
+	.searchresult
+		text-align start !important
 </style>

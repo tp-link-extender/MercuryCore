@@ -10,7 +10,7 @@
 		dislikesDisabled = false
 </script>
 
-<div in:fade|global={{ num, total }} class="post card bg-darker mb-4 flex-row">
+<div in:fade|global={{ num, total }} class="post card bg-darker mb-4">
 	<form
 		use:enhance={({ formData }) => {
 			const action = formData.get("action")
@@ -40,7 +40,7 @@
 		class="sidebar bg-a p-1"
 		method="POST"
 		action="?/like&id={post.id}">
-		<div class="d-flex flex-column">
+		<div class="flex flex-col">
 			<div class="text-center">
 				<button
 					name="action"
@@ -118,6 +118,7 @@
 		height 10rem
 		overflow hidden
 		word-break break-word
+		flex-direction row !important
 
 		border 1px solid var(--accent2)
 		transition all 0.3s ease-out
