@@ -1,4 +1,9 @@
-import { defineConfig, toEscapedSelector as e, presetAttributify } from "unocss"
+import {
+	defineConfig,
+	toEscapedSelector as e,
+	presetAttributify,
+	presetUno,
+} from "unocss"
 import presetTagify from "@unocss/preset-tagify"
 
 let fa: { [k: string]: string }
@@ -45,7 +50,7 @@ export default defineConfig({
 				fa[c]
 					? `${e(rawSelector)}:before{content: "\\${
 							fa[c]
-					  }" !important}`
+						}" !important}`
 					: "",
 		],
 
@@ -127,8 +132,8 @@ export default defineConfig({
 				[a == "start"
 					? "border-left"
 					: a == "end"
-					? "border-right"
-					: `border-${a}`]: i(0),
+						? "border-right"
+						: `border-${a}`]: i(0),
 			}),
 		],
 
@@ -139,9 +144,9 @@ export default defineConfig({
 				[a == "start"
 					? "border-left"
 					: a == "end"
-					? "border-right"
-					: `border-${a}`]: i(
-					"var(--bs-border-width) var(--bs-border-style) var(--bs-border-color)",
+						? "border-right"
+						: `border-${a}`]: i(
+					"var(--bs-border-width) var(--bs-border-style) var(--bs-border-color)"
 				),
 			}),
 		],
@@ -152,7 +157,7 @@ export default defineConfig({
 			([, a]) => ({
 				"--bs-border-opacity": i(1),
 				"border-color": i(
-					`RGBA(var(--bs-${a}-rgb), var(--bs-border-opacity))`,
+					`RGBA(var(--bs-${a}-rgb), var(--bs-border-opacity))`
 				),
 			}),
 		],
@@ -178,7 +183,7 @@ export default defineConfig({
 			/^(w|h)-(\d+|auto)$/,
 			([, a, b]) => ({
 				[a == "w" ? "width" : "height"]: i(
-					b == "auto" ? "auto" : `${b}%`,
+					b == "auto" ? "auto" : `${b}%`
 				),
 			}),
 		],
@@ -206,8 +211,8 @@ export default defineConfig({
 					a == "start" || a == "end"
 						? `flex-${a}`
 						: a == "between" || a == "around" || a == "evenly"
-						? `space-${a}`
-						: a,
+							? `space-${a}`
+							: a
 				),
 			}),
 		],
@@ -228,8 +233,8 @@ export default defineConfig({
 					a == "start" || a == "end"
 						? `flex-${a}`
 						: a == "between" || a == "around"
-						? `space-${a}`
-						: a,
+							? `space-${a}`
+							: a
 				),
 			}),
 		],
@@ -258,18 +263,18 @@ export default defineConfig({
 				for (const d of xy == "x"
 					? [`${key}-left`, `${key}-right`]
 					: xy == "y"
-					? [`${key}-top`, `${key}-bottom`]
-					: xy == "t"
-					? [`${key}-top`]
-					: xy == "b"
-					? [`${key}-bottom`]
-					: xy == "s"
-					? [`${key}-left`]
-					: xy == "e"
-					? [`${key}-right`]
-					: [key])
+						? [`${key}-top`, `${key}-bottom`]
+						: xy == "t"
+							? [`${key}-top`]
+							: xy == "b"
+								? [`${key}-bottom`]
+								: xy == "s"
+									? [`${key}-left`]
+									: xy == "e"
+										? [`${key}-right`]
+										: [key])
 					o[d] = i(
-						n == "auto" ? "auto" : `${parseFloat(n) * 0.25}rem`,
+						n == "auto" ? "auto" : `${parseFloat(n) * 0.25}rem`
 					)
 
 				return o
@@ -316,16 +321,6 @@ export default defineConfig({
 		// 	}),
 		// ],
 
-		// text-start/end/center
-		[
-			/^text-(start|end|center)$/,
-			([, a]) => ({
-				"text-align": i(
-					a == "start" ? "left" : a == "end" ? "right" : a,
-				),
-			}),
-		],
-
 		// text-decoration-none/underline/line-through
 		[
 			/^text-decoration-(none|underline|line-through)$/,
@@ -355,8 +350,8 @@ export default defineConfig({
 					a == "body"
 						? "RGBA(var(--bs-body-color-rgb), var(--bs-text-opacity))"
 						: a == "muted"
-						? "var(--bs-secondary-color)"
-						: `RGBA(var(--bs-${a}-rgb), var(--bs-text-opacity))`,
+							? "var(--bs-secondary-color)"
+							: `RGBA(var(--bs-${a}-rgb), var(--bs-text-opacity))`
 				)
 
 				return o
@@ -371,7 +366,7 @@ export default defineConfig({
 				[`--bs-${a}-color`]: i(
 					`RGBA(${a == "black" ? "0,0,0" : "255,255,255"}, ${
 						parseInt(n) / 100
-					})`,
+					})`
 				),
 			}),
 		],
@@ -425,7 +420,7 @@ export default defineConfig({
 			([, a]) => ({
 				"--bs-bg-opacity": 1,
 				"background-color": i(
-					`RGBA(var(--bs-${a}-rgb), var(--bs-bg-opacity))`,
+					`RGBA(var(--bs-${a}-rgb), var(--bs-bg-opacity))`
 				),
 			}),
 		],
@@ -495,7 +490,7 @@ export default defineConfig({
 			/^fa(r?)$/,
 			([, a]) => ({
 				"font-family": '"Font Awesome 6"',
-				"font-weight": a[0] == "r" ?400 : 900,
+				"font-weight": a[0] == "r" ? 400 : 900,
 				"-moz-osx-font-smoothing": "grayscale",
 				"-webkit-font-smoothing": "antialiased",
 				display: "inline-block",
@@ -507,7 +502,7 @@ export default defineConfig({
 		],
 	],
 
-	presets: [presetTagify(), presetAttributify()],
+	presets: [presetTagify(), presetAttributify(), presetUno()],
 })
 
 fa = {

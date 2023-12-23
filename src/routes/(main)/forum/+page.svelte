@@ -4,7 +4,7 @@
 
 <Head title="Forum" />
 
-<div class="container light-text d-flex flex-column gap-4">
+<div class="container light-text flex flex-column gap-4">
 	<h1 class="pb-6">Forum</h1>
 	{#each data.categories as category, num}
 		<div
@@ -54,6 +54,9 @@
 
 <style lang="stylus">
 	containerMinWidth(70rem)
+
+	.container
+		flex-direction column !important
 
 	.category
 		border 1px solid var(--accent2)

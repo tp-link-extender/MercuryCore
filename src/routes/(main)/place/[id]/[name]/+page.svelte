@@ -115,7 +115,7 @@
 			</div>
 		</div>
 
-		<div class="flex col-md-4">
+		<div class="col-md-4">
 			<div class="card rounded-none mb-6">
 				<div class="card-body">
 					<div class="row">
@@ -165,11 +165,11 @@
 					</span>
 				</div>
 			</div>
-			<div id="buttons" class="row">
+			<div id="buttons" class="row pt-6">
 				<button
 					on:click={placeLauncher}
 					id="play"
-					class="btn btn-lg btn-success mt-6">
+					class="btn btn-lg text-center btn-success">
 					<img src="/place/join.svg" alt="Play button icon" />
 				</button>
 
