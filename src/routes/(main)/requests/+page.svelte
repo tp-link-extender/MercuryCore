@@ -10,29 +10,29 @@
 	{#each data.users as user, num}
 		<div
 			in:fade|global={{ num, total: data.users.length, max: 12 }}
-			class="card bg-darker w-100">
+			class="card bg-darker w-full">
 			<div class="flex p-6">
 				<User {user} size="6rem" bg="accent" />
 				<a
-					class="ps-12 fs-3 text-light no-underline"
+					class="pl-12 fs-3 text-light no-underline"
 					href="/user/{user.number}">
 					{user.username}
 				</a>
 			</div>
 			<div class="flex gap-2 px-2">
 				<form
-					class="w-100"
+					class="w-full"
 					method="POST"
 					use:enhance
 					action="/user/{user.number}?/accept">
-					<button class="btn btn-info w-100">Accept</button>
+					<button class="btn btn-info w-full">Accept</button>
 				</form>
 				<form
-					class="w-100"
+					class="w-full"
 					method="POST"
 					use:enhance
 					action="/user/{user.number}?/decline">
-					<button class="btn btn-danger w-100">Decline</button>
+					<button class="btn btn-danger w-full">Decline</button>
 				</form>
 			</div>
 		</div>

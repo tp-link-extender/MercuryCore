@@ -167,7 +167,7 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<table class="w-100">
+				<table class="w-full">
 					<thead>
 						<tr>
 							<th scope="col">Options</th>

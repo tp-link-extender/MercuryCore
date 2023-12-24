@@ -5,11 +5,11 @@
 <footer class="relative text-center">
 	<br />
 	<div class="grey-text pb-2">
-		<a href="/" class="no-underline accent-text me-1">Mercury</a>
+		<a href="/" class="no-underline accent-text mr-1">Mercury</a>
 		2022-{new Date().getFullYear()}
 		<button
 			on:mousedown={() => (clicked = !clicked)}
-			class="heart border-0 p-0 grey-text cursor-pointer fs-4"
+			class="heart border-0 p-0 grey-text cursor-pointer text-base"
 			class:clicked>
 			<span class="grey-text">made with</span>
 			<fa fa-heart />
@@ -27,7 +27,7 @@
 </footer>
 
 <noscript>
-	<div id="nojs" class="fixed bottom-0 block vw-100">
+	<div id="nojs" class="fixed bottom-0 block w-screen">
 		<p class="light-text text-center">
 			Javascript is disabled. You may have a diminished experience while
 			using Mercury.

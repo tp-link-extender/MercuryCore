@@ -8,7 +8,7 @@
 
 {#if $modal}
 	<div
-		class="modal-static fixed w-100 h-100 z-10
+		class="modal-static fixed w-full h-full z-10
 		justify-center items-center flex"
 		tabindex="-1"
 		transition:fly|global={{ y: -50, duration: 300 }}>
@@ -18,7 +18,7 @@
 			transition:fade|global={{ duration: 200 }}
 			on:click={close}
 			on:keypress={close}
-			class="modal-backdrop vh-100 w-100 fixed" />
+			class="modal-backdrop h-screen w-full fixed" />
 		<div class="modal-box">
 			<slot />
 		</div>

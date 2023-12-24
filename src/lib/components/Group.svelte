@@ -14,7 +14,7 @@
 	in:fade={{ num, total }}
 	class="card text-center light-text bg-darker no-underline rounded-4"
 	href="/groups/{group.name}">
-	<div class="p-4 flex flex-col h-100">
+	<div class="p-4 flex flex-col h-full">
 		{group.name}
 		<div class="mt-auto mb-1 float-right">
 			<span class="float-right">

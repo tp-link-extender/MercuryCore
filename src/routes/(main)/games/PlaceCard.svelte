@@ -32,7 +32,7 @@
 		else goto(href)
 	}}
 	in:fade|global={{ num, total }}
-	class="card text-center light-text bg-darker no-underline fs-4 rounded-4 m-0"
+	class="card text-center light-text bg-darker no-underline text-base rounded-4 m-0"
 	class:border-success={place.serverPing >=
 		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
@@ -41,11 +41,11 @@
 		class:opacity-50={place.serverPing <
 			Math.floor(Date.now() / 1000) - 35}>
 		<div class="col col-6">
-			<div class="shadow overflow-hidden bg-black h-100">
+			<div class="shadow overflow-hidden bg-black h-full">
 				<img
 					src="/place/{place.id}/{place.name}/icon"
 					alt={place.name}
-					class="w-100 h-100" />
+					class="w-full h-full" />
 			</div>
 		</div>
 		<div class="col col-6 p-2 row">

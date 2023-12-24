@@ -15,8 +15,8 @@
 
 <Head title="Log in" description="Log into your Mercury account." />
 
-<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
-	<div class="w-100 fixed bottom-0">
+<div id="wavep" class="w-full h-full absolute top-0 overflow-hidden">
+	<div class="w-full fixed bottom-0">
 		<div class="absolute" />
 		<div class="absolute" />
 	</div>
@@ -24,22 +24,22 @@
 
 <div class="row">
 	<div id="dark" class="col light-text">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0 fs-4">
-			<fa fa-arrow-left class="pe-2" />
+		<a type="button" href="/" class="btn btn-lg border-0 px-0 text-base">
+			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
 		<h1 class="font-black mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Endless possibilities</h2>
 			<p class="light-text opacity-75 more">
 				Create or play your favourite games and customise your character
 				with items on our catalog.
 			</p>
 		</div>
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">New features</h2>
 			<p class="light-text opacity-75 more">
 				In addition to full client usability, additional features such
@@ -47,7 +47,7 @@
 				your experience better.
 			</p>
 		</div>
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Same nostalgia</h2>
 			<p class="light-text opacity-75 more">
 				All of our clients will remain as vanilla as possible, to make

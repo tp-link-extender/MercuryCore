@@ -148,7 +148,7 @@
 			<div class="card">
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
-						<button class="btn btn-primary w-100">
+						<button class="btn btn-primary w-full">
 							<fa fa-rotate />
 							Regenerate
 						</button>
@@ -158,7 +158,7 @@
 					</p>
 					<img
 						alt="Your character"
-						class="w-100"
+						class="w-full"
 						src={form?.avatar ||
 							`/api/avatar/${user.username}-body`} />
 				</div>
@@ -240,7 +240,7 @@
 		bind:this={bodyPartModals[bodyPart]} />
 	<div class="modal2">
 		<div class="modal-box flex flex-col p-4">
-			<h1 class="fs-4">Choose a {bodyPart} color</h1>
+			<h1 class="text-base">Choose a {bodyPart} color</h1>
 			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
 					<form

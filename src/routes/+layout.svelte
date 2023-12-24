@@ -87,7 +87,7 @@
 			<div class="flex bg-a light-text p-2 rounded-top-2">
 				<a
 					href="/user/{notification.sender.number}"
-					class="flex gap-3 items-center w-100 light-text no-underline">
+					class="flex gap-3 items-center w-full light-text no-underline">
 					<User
 						user={notification.sender}
 						size="1.6rem"

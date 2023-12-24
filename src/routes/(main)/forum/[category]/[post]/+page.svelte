@@ -68,7 +68,7 @@
 
 				return () => {}
 			}}
-			class="sidebar bg-a me-2 p-1"
+			class="sidebar bg-a mr-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
 			<div class="row mb-2 flex">
@@ -107,10 +107,10 @@
 				</div>
 			</div>
 		</form>
-		<div class="p-4 no-underline light-text w-100">
+		<div class="p-4 no-underline light-text w-full">
 			<span class="flex">
 				<User user={data.author} full />
-				<em class="ps-4 self-center">
+				<em class="pl-4 self-center">
 					{new Date(data.posted).toLocaleString()}
 				</em>
 				<span class="ms-auto">
@@ -119,7 +119,7 @@
 						url="/forum/{data.categoryName}/{data.id}" />
 				</span>
 			</span>
-			<h2 class="fs-4 mt-2">
+			<h2 class="text-base mt-2">
 				{data.title}
 			</h2>
 			<p>
@@ -138,7 +138,7 @@
 				name="content"
 				placeholder="What are your thoughts?"
 				rows="4" />
-			<button class="btn btn-success ms-4 mt-auto">
+			<button class="btn btn-success ml-4 mt-auto">
 				{#if $delayed}
 					Working...
 				{:else}

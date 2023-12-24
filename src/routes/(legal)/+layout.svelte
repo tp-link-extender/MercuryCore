@@ -2,7 +2,7 @@
 	export let data
 </script>
 
-<div id="bg" class="fixed w-100 h-100 pointer-events-none" />
+<div id="bg" class="fixed w-full h-full pointer-events-none" />
 
 <!--
 	Data from the root layout must be passed into the

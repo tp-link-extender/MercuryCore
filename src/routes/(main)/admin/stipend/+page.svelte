@@ -56,7 +56,7 @@
 									class="form-control {$errors.dailyStipend
 										? 'is-in'
 										: ''}valid" />
-								<fa fa-gem class="text-success ps-3" />
+								<fa fa-gem class="text-success pl-3" />
 							</div>
 						</div>
 						<br />
@@ -76,7 +76,7 @@
 									class="form-control {$errors.stipendTime
 										? 'is-in'
 										: ''}valid" />
-								<span class="light-text ps-3">hours</span>
+								<span class="light-text pl-3">hours</span>
 							</div>
 						</div>
 						<br />

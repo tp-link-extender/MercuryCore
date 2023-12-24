@@ -23,18 +23,18 @@
 	description="Mercury: Endless possibilities. New features. Same nostalgia."
 	ogImage="/mercury.gif" />
 
-<div id="gradientbg" class="w-100 h-100 fixed" />
+<div id="gradientbg" class="w-full h-full fixed" />
 
 <canvas
 	id="gradientcanvas"
-	class="w-100 h-100 fixed"
+	class="w-full h-full fixed"
 	style="opacity: {canvasOpacity}" />
 
 <div
 	id="info"
 	class="ctnr flex justify-center items-center"
 	style="padding-top: {infoPadding}vh">
-	<div id="moon" class="absolute w-100" style="opacity: {canvasOpacity}">
+	<div id="moon" class="absolute w-full" style="opacity: {canvasOpacity}">
 		<Canvas>
 			<Moon />
 		</Canvas>
@@ -71,8 +71,8 @@
 	</div>
 </div>
 
-<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
-	<div class="w-100 absolute bottom-0">
+<div id="wavep" class="w-full h-full absolute top-0 overflow-hidden">
+	<div class="w-full absolute bottom-0">
 		<div class="absolute" />
 		<div class="absolute" />
 	</div>
