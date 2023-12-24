@@ -31,7 +31,7 @@
 
 <Head title="Discover" />
 
-<div class="container">
+<div class="ctnr">
 	<div class="row pb-12">
 		<h1 class="col">
 			Games
@@ -102,7 +102,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="container d-grid m-0">
+		<div class="ctnr grid m-0">
 			{#each query ? searchedData : data.places || [] as place, num (place.id)}
 				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
@@ -116,8 +116,7 @@
 </div>
 
 {#if $page.state.openPlace}
-	<div
-		class="modal-static position-fixed w-100 h-100 z-10 overflow-y-auto p-20 px-10">
+	<div class="modal-static fixed w-100 h-100 z-10 overflow-y-auto p-20 px-10">
 		<div
 			transition:fade={{ duration: 200 }}
 			role="button"
@@ -139,7 +138,7 @@
 		background-color var(--accent)
 		border-color var(--accent2)
 
-	.d-grid
+	.grid
 		font-size 0.9rem
 
 		grid-template-columns repeat(auto-fit, minmax(19rem, 1fr))

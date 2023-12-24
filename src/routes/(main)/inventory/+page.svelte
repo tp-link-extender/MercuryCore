@@ -49,13 +49,13 @@
 
 <h1 class="text-center mb-4">Inventory</h1>
 
-<div class="container">
+<div class="ctnr">
 	<div class="row">
 		<div class="col-lg-2 col-md-3">
 			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-xl-9 col-lg-9">
-			<div class="container">
+			<div class="ctnr">
 				<form
 					on:submit|preventDefault
 					action="/inventory?tab={tabData.currentTab}"

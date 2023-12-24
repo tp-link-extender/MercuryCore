@@ -33,7 +33,7 @@
 </script>
 
 {#if image}
-	<div class="d-flex" class:align-items-center={full}>
+	<div class="flex" class:items-center={full}>
 		<span class="rounded-circle overflow-hidden" style="{style};{style2}">
 			<img
 				src="/api/avatar/{user.username}"
@@ -50,9 +50,9 @@
 {:else}
 	<a
 		href="/user/{user.number}"
-		class="d-flex text-decoration-none"
-		class:flex-column={bottom}
-		class:align-items-center={full}>
+		class="flex no-underline"
+		class:flex-col={bottom}
+		class:items-center={full}>
 		<span
 			class="pfp rounded-circle overflow-hidden"
 			style="{style};{style2};

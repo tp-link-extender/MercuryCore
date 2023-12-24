@@ -42,7 +42,7 @@
 
 <Head title="Catalog" />
 
-<div class="container">
+<div class="ctnr">
 	<div class="row mb-4">
 		<h1 class="col-xl-4 col-lg-4 col-md-3 mb-0">Catalog</h1>
 		<div class="col-xl-8 col-lg-8 col-md-9 mt-2">
@@ -187,7 +187,7 @@
 			</div>
 		</div>
 		<div class="col-xl-9 col-lg-9">
-			<div class="container">
+			<div class="ctnr">
 				<div class="row">
 					{#each assets as asset, num (asset.id)}
 						<Asset {asset} {num} total={data.assets.length} />

@@ -23,7 +23,7 @@
 
 <h1 class="text-center">Report</h1>
 
-<div class="container mt-6 light-text">
+<div class="ctnr mt-6 light-text">
 	<h2 class="fs-5">
 		Tell us how you think {data.reportee} is breaking the rules.
 	</h2>

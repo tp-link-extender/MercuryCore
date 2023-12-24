@@ -15,7 +15,7 @@
 <a
 	in:fade|global={{ num, total }}
 	href="/avatarshop/{asset.id}/{asset.name}"
-	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 px-2 mb-2 text-decoration-none">
+	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 px-2 mb-2 no-underline">
 	<div class="card bg-a3 h-100">
 		<div class="card-body bg-a p-4 rounded-1">
 			<div class="text-center pb-4">

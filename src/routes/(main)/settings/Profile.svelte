@@ -38,7 +38,7 @@
 		<hr class="grey-text" />
 		<div class="row">
 			<label for="bio" class="light-text">Bio</label>
-			<div class="container">
+			<div class="ctnr">
 				<textarea
 					bind:value={$form.bio}
 					{...$constraints.bio}

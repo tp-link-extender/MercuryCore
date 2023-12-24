@@ -25,9 +25,9 @@
 
 <Head title="Invites - Admin" />
 
-<div class="container py-6">
+<div class="ctnr py-6">
 	<h1 class="mb-0">Admin - Invites</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>
@@ -186,7 +186,7 @@
 										method="POST"
 										action="?/disable&id={invite.id}">
 										<button
-											class="btn btn-sm text-decoration-none text-danger my-0">
+											class="btn btn-sm no-underline text-danger my-0">
 											<fa fa-ban />
 											Disable Invite
 										</button>

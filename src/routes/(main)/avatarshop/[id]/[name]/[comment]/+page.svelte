@@ -10,7 +10,7 @@
 
 <Head title="Replies to forum post" />
 
-<div class="container light-text">
+<div class="ctnr light-text">
 	<Breadcrumbs
 		path={[
 			["Avatar shop", "/avatarshop"],

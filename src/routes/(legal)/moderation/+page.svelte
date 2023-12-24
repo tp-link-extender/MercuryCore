@@ -32,7 +32,7 @@
 
 <Head title={moderationAction[data.type]} />
 
-<div class="container pt-8">
+<div class="ctnr pt-8">
 	<div class="card">
 		<div class="card-body light-text">
 			<h1>
@@ -63,7 +63,7 @@
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="text-decoration-none">
+							class="no-underline">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.
@@ -91,7 +91,7 @@
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="text-decoration-none">
+							class="no-underline">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.

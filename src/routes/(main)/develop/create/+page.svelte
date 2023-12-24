@@ -33,12 +33,12 @@
 
 <Head title="Develop" />
 
-<div class="container py-2">
+<div class="ctnr py-2">
 	<h1 class="mb-0 text-center">
 		Develop - Create <br />
 	</h1>
 	<div class="text-center">
-		<a href="/develop" class="text-decoration-none accent-text">
+		<a href="/develop" class="no-underline accent-text">
 			<fa fa-caret-left />
 
 			Back to Develop
@@ -48,7 +48,7 @@
 <form
 	use:enhance
 	method="POST"
-	class="container pt-8 light-text"
+	class="ctnr pt-8 light-text"
 	enctype="multipart/form-data">
 	<fieldset>
 		<div class="row pb-4">

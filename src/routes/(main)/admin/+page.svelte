@@ -68,7 +68,7 @@
 
 <Head title="Admin" />
 
-<div class="container py-6">
+<div class="ctnr py-6">
 	<h1 class="light-text">Admin Panel</h1>
 	<h2 class="fs-3 pb-4">
 		Your permission level is <span
@@ -100,8 +100,7 @@
 
 			<Tab {tabData}>
 				<div class="row">
-					<div
-						class="col-lg-7 col-md-7 d-flex flex-column gap-4 pb-4">
+					<div class="col-lg-7 col-md-7 flex flex-col gap-4 pb-4">
 						<div class="card bg-a3 text-black shadow-none">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
@@ -121,7 +120,7 @@
 									)} MB is being used
 								</span>
 								<div
-									class="d-flex bg-darker rounded-2"
+									class="flex bg-darker rounded-2"
 									style="height: 1rem">
 									<div
 										class="progress-bar-striped bg-success rounded-2"
@@ -158,7 +157,7 @@
 										)} MB is being used
 									</span>
 									<div
-										class="d-flex bg-darker rounded-2"
+										class="flex bg-darker rounded-2"
 										style="height: 1rem">
 										<div
 											class="progress-bar-striped bg-primary rounded-2"
@@ -176,7 +175,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-5 col-md-5 d-flex flex-column gap-4">
+					<div class="col-lg-5 col-md-5 flex flex-col gap-4">
 						<div class="card bg-a3 text-black shadow-none">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">

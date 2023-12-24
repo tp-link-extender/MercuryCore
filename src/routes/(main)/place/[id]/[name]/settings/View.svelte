@@ -51,7 +51,7 @@
 		<hr class="grey-text" />
 		<div class="row">
 			<label for="description" class="light-text">Description</label>
-			<div class="container">
+			<div class="ctnr">
 				<textarea
 					bind:value={$form.description}
 					{...$constraints.description}

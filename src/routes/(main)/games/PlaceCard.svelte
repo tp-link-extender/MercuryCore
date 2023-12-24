@@ -32,7 +32,7 @@
 		else goto(href)
 	}}
 	in:fade|global={{ num, total }}
-	class="card text-center light-text bg-darker text-decoration-none fs-4 rounded-4 m-0"
+	class="card text-center light-text bg-darker no-underline fs-4 rounded-4 m-0"
 	class:border-success={place.serverPing >=
 		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
@@ -59,7 +59,7 @@
 						{isNaN(ratio) ? "--" : ratio}%
 					</span>
 				</div>
-				<div class="float-end">
+				<div class="float-right">
 					<span>
 						<fa fa-user class="opacity-75" />
 						{place.playerCount}

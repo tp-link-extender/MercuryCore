@@ -15,10 +15,10 @@
 
 <Head title="Log in" description="Log into your Mercury account." />
 
-<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-fixed bottom-0">
-		<div class="position-absolute" />
-		<div class="position-absolute" />
+<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
+	<div class="w-100 fixed bottom-0">
+		<div class="absolute" />
+		<div class="absolute" />
 	</div>
 </div>
 
@@ -64,9 +64,7 @@
 				<h2 class="light-text">Log into your account</h2>
 				<p class="light-text">
 					Don't yet have an account?
-					<a href="/register" class="text-decoration-none">
-						Register
-					</a>
+					<a href="/register" class="no-underline">Register</a>
 				</p>
 
 				<form use:enhance class="m-auto form-group mt-6" method="POST">
@@ -105,7 +103,7 @@
 								{$errors.password || ""}
 							</p>
 						</div>
-						<button class="container-fluid btn btn-primary mb-4">
+						<button class="btn btn-primary mb-4">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -123,9 +121,7 @@
 				</p>
 				<p class="pt-2">
 					If it's the former, head to the
-					<a href="/register" class="text-decoration-none">
-						Register
-					</a>
+					<a href="/register" class="no-underline">Register</a>
 					page to create the first user!
 				</p>
 			{/if}

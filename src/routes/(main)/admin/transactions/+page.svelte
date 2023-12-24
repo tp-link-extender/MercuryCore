@@ -6,9 +6,9 @@
 
 <Head title="Transactions - Admin" />
 
-<div class="container py-6">
+<div class="ctnr py-6">
 	<h1 class="mb-0">Admin - Transactions</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>
@@ -37,7 +37,7 @@
 									bg="accent" />
 							</td>
 
-							<td class="d-flex justify-content-center gap-3">
+							<td class="flex justify-center gap-3">
 								<div class="fs-4 pt-2">
 									<span class="text-success">
 										<fa fa-gem />
@@ -47,8 +47,7 @@
 										<fa fa-arrow-right-1 />
 									{/if}
 								</div>
-								<div
-									class="d-flex flex-column justify-content-center">
+								<div class="flex flex-col justify-center">
 									{#if value}
 										{transaction.taxRate}% tax
 									{/if}
@@ -74,7 +73,7 @@
 							</td>
 
 							<td>
-								<div class="d-flex justify-content-end">
+								<div class="flex justify-end">
 									<User
 										user={transaction.receiver}
 										full

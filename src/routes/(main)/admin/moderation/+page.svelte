@@ -25,9 +25,9 @@
 
 <Head title="Moderate User - Admin" />
 
-<div class="container py-6">
+<div class="ctnr py-6">
 	<h1 class="mb-0">Admin - Moderate User</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>

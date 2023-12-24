@@ -20,7 +20,7 @@
 
 <Head title="Create" />
 
-<div class="container py-2">
+<div class="ctnr py-2">
 	<h1 class="mb-2">Create</h1>
 	<div class="row">
 		<div class="col-lg-2 col-md-3 mb-6">

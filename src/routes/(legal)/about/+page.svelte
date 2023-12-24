@@ -37,7 +37,7 @@
 
 <svelte:window bind:scrollY />
 
-<div id="cubes" class="position-absolute h-100 w-100">
+<div id="cubes" class="absolute h-100 w-100">
 	<Canvas>
 		<Cubes
 			{columns}
@@ -47,15 +47,15 @@
 	</Canvas>
 </div>
 
-<div bind:this={top} id="top" class="position-relative top-0" />
+<div bind:this={top} id="top" class="relative top-0" />
 
 <Pagepart fullwidth>
 	{#if cubePercentage < 20}
 		<div
 			out:fade
 			id="info"
-			class="container pe-none d-flex flex-column justify-content-center
-			align-items-center position-relative">
+			class="ctnr pointer-events-none flex flex-col justify-center
+			items-center relative">
 			<h1 class="title font-black">Mercury 2</h1>
 			<p class="fs-4 light-text text-center">
 				Endless possibilities. New features. Same nostalgia.
@@ -69,28 +69,34 @@
 	{:else}
 		<div
 			id="cubesMoved"
-			class="pe-none position-absolute top-50 start-50 text-center w-100">
+			class="pointer-events-none absolute top-50 start-50 text-center w-100">
 			{#if completed}
-				<h1 in:fade class="pe-none text-white opacity-75 font-black">
+				<h1
+					in:fade
+					class="pointer-events-none text-white opacity-75 font-black">
 					lmao%
 				</h1>
 			{:else}
-				<h1 in:fade class="pe-none text-white opacity-75 font-black">
+				<h1
+					in:fade
+					class="pointer-events-none text-white opacity-75 font-black">
 					{cubePercentage}%
 				</h1>
 				{#if cubePercentage2 > 0}
 					<h1
 						in:fade
-						class="pe-none text-danger opacity-75 font-black">
+						class="pointer-events-none text-danger opacity-75 font-black">
 						{cubePercentage2}%
 					</h1>
 				{/if}
 				{#if cubePercentage >= 60 && cubePercentage < 80}
-					<h2 class="pe-none text-white opacity-75 font-black">
+					<h2
+						class="pointer-events-none text-white opacity-75 font-black">
 						zoom out
 					</h2>
 				{:else if cubePercentage == 100 && cubePercentage2 < 2}
-					<h2 class="pe-none text-danger opacity-75 font-black">
+					<h2
+						class="pointer-events-none text-danger opacity-75 font-black">
 						click the cubes
 					</h2>
 				{/if}
@@ -101,7 +107,7 @@
 	<div id="arrowcontainer">
 		<button
 			id="arrow"
-			class="btn position-absolute shadow-none start-50 light-text"
+			class="btn absolute shadow-none start-50 light-text"
 			aria-label="Scroll down"
 			on:click={downScroll}
 			on:keypress={downScroll}
@@ -111,7 +117,7 @@
 	</div>
 	<button
 		id="arrow2"
-		class="btn position-fixed pb-4 light-text"
+		class="btn fixed pb-4 light-text"
 		aria-label="Scroll up"
 		on:click={upScroll}
 		on:keypress={upScroll}
@@ -212,8 +218,8 @@
 		<Pagepart fullwidth>
 			<div
 				id="info"
-				class="container d-flex flex-column justify-content-center
-				align-items-center position-relative">
+				class="ctnr flex flex-col justify-center
+				items-center relative">
 				<h1 class="title font-black">Mercury 2</h1>
 				<p class="lead light-text text-center">
 					Endless possibilities. New features. Same nostalgia.
@@ -222,7 +228,7 @@
 					<a
 						type="button"
 						href="/register"
-						class="d-inline btn btn-sm btn-success text-decoration-none">
+						class="inline btn btn-sm btn-success no-underline">
 						Register <fa fa-chevron-right />
 					</a>
 				</b>

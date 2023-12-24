@@ -139,12 +139,12 @@
 	)
 </script>
 
-<div class="container">
+<div class="ctnr">
 	<h1 class="text-white">Character</h1>
 	<div class="row mt-6">
 		<div
 			class="col-xl-3 col-lg-3 col-md-6 col-sm-12
-			d-flex flex-column gap-4">
+			flex flex-col gap-4">
 			<div class="card">
 				<div class="card-body">
 					<form use:enhance action="?/regen" method="POST">
@@ -178,7 +178,7 @@
 											`;background-color: #${
 												brickToHex[bodyParts[bodyPart]]
 											};`}
-										class="btn p-0 bodyPart position-absolute" />
+										class="btn p-0 bodyPart absolute" />
 								{/each}
 							</div>
 						</div>
@@ -239,7 +239,7 @@
 		class="modal-toggle"
 		bind:this={bodyPartModals[bodyPart]} />
 	<div class="modal2">
-		<div class="modal-box d-flex flex-column p-4">
+		<div class="modal-box flex flex-col p-4">
 			<h1 class="fs-4">Choose a {bodyPart} color</h1>
 			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
@@ -251,7 +251,7 @@
 							bodyParts[bodyPart] = colour
 							bodyPartModals[bodyPart].checked = false
 						}}
-						class="d-inline">
+						class="inline">
 						<button
 							class="btn colour my-1"
 							style="background-color: #{brickToHex[colour]};" />

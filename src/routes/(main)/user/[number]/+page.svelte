@@ -18,9 +18,9 @@
 
 <Head title={data.username} />
 
-<div id="all" class="container">
+<div id="all" class="ctnr">
 	<div id="infocard" class="card bg-darker">
-		<div class="d-flex">
+		<div class="flex">
 			<span class="display-lg pe-6">
 				<User user={data} size="7rem" bg="accent" image />
 			</span>
@@ -28,9 +28,9 @@
 				<User user={data} size="6rem" bg="accent" image />
 			</span>
 			<div class="w-100">
-				<div class="d-flex mb-2 justify-content-between">
-					<div class="d-flex align-items-center">
-						<h1 class="d-inline pe-4 mb-0">
+				<div class="flex mb-2 justify-between">
+					<div class="flex items-center">
+						<h1 class="inline pe-4 mb-0">
 							{data.username}
 						</h1>
 						{#if data.follower}
@@ -39,7 +39,7 @@
 							</span>
 						{/if}
 					</div>
-					<div class="d-flex align-self-start">
+					<div class="flex self-start">
 						<b
 							style="color: {permissions[
 								data.permissionLevel
@@ -52,11 +52,11 @@
 						</b>
 					</div>
 				</div>
-				<div id="interactions" class="d-flex justify-content-between">
-					<div class="d-flex gap-6">
+				<div id="interactions" class="flex justify-between">
+					<div class="flex gap-6">
 						<a
 							href="/user/{data.number}/friends"
-							class="light-text text-center text-decoration-none">
+							class="light-text text-center no-underline">
 							Friends
 							<h2>
 								{data.friendCount}
@@ -64,7 +64,7 @@
 						</a>
 						<a
 							href="/user/{data.number}/followers"
-							class="light-text text-center text-decoration-none">
+							class="light-text text-center no-underline">
 							Followers
 							<h2>
 								{data.followerCount}
@@ -72,7 +72,7 @@
 						</a>
 						<a
 							href="/user/{data.number}/following"
-							class="light-text text-center text-decoration-none">
+							class="light-text text-center no-underline">
 							Following
 							<h2>
 								{data.followingCount}
@@ -84,15 +84,14 @@
 						<Interactions {data} />
 					</span>
 				</div>
-				<div class="float-end display-lg">
+				<div class="float-right display-lg">
 					<ReportButton
 						user={data.username}
 						url="/user/{data.number}" />
 				</div>
 			</div>
 		</div>
-		<span
-			class="display-sm d-flex justify-content-between align-items-end pt-2">
+		<span class="display-sm flex justify-between items-end pt-2">
 			<Interactions {data} />
 			<ReportButton user={data.username} url="/user/{data.number}" />
 		</span>
@@ -120,12 +119,12 @@
 							method="POST"
 							action="?/rerender"
 							in:fade
-							class="position-absolute end-0 pe-4">
+							class="absolute end-0 pe-4">
 							<button class="btn btn-sm btn-primary">
 								<fa fa-arrows-rotate />
 								Re-render
 							</button>
-							<small class="text-danger d-block">
+							<small class="text-danger block">
 								{form?.msg || ""}
 							</small>
 						</form>{/if}
@@ -159,13 +158,13 @@
 									num,
 									total: data.groupsOwned.length,
 								}}
-								class="card bg-darker light-text text-decoration-none"
+								class="card bg-darker light-text no-underline"
 								href="/groups/{group.name}">
 								<div class="p-2">
 									<span class="float-start">
 										{group.name}
 									</span>
-									<span class="float-end">
+									<span class="float-right">
 										<fa fa-user class="opacity-75" />
 										{group.memberCount}
 									</span>
@@ -184,13 +183,13 @@
 						<div class="py-2">
 							<a
 								in:fade={{ num, total: data.groups.length }}
-								class="card bg-darker light-text text-decoration-none"
+								class="card bg-darker light-text no-underline"
 								href="/groups/{group.name}">
 								<div class="p-2">
 									<span class="float-start">
 										{group.name}
 									</span>
-									<span class="float-end">
+									<span class="float-right">
 										<fa fa-user class="opacity-75" />
 										{group.memberCount}
 									</span>
@@ -212,7 +211,7 @@
 							<div class="card bg-darker p-3 h-100">
 								<div
 									id="user"
-									class="d-flex pb-2 justify-content-between">
+									class="flex pb-2 justify-between">
 									<User
 										user={data}
 										size="2rem"

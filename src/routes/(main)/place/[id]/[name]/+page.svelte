@@ -80,21 +80,21 @@
 
 <Head title={data.name} />
 
-<div class="container light-text">
+<div class="ctnr light-text">
 	<div class="row">
 		<div class="col-md-8 mb-4">
 			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
 					<div
 						id="slide{i + 1}"
-						class="carousel-item position-relative w-100"
+						class="carousel-item relative w-100"
 						class:active={!i}>
 						<img
 							{src}
-							class="d-block w-100"
+							class="block w-100"
 							alt="Placeholder place thumbnail" />
 						<div
-							class="position-absolute d-flex justify-content-between carouselbuttons">
+							class="absolute flex justify-between carouselbuttons">
 							<a
 								href="#slide{i < 1 ? images.length : i}"
 								class="btn rounded-pill bg-background"
@@ -126,7 +126,7 @@
 							<div
 								id="settings"
 								aria-label="Place settings"
-								class="col d-flex justify-content-end">
+								class="col flex justify-end">
 								<a
 									href="/place/{data.id}/{data.name}/settings"
 									class="btn btn-sm btn-outline-warning">
@@ -135,7 +135,7 @@
 							</div>
 						{/if}
 					</div>
-					<span class="light-text d-flex pb-2">
+					<span class="light-text flex pb-2">
 						<b class="pe-2">by</b>
 						{#if data.ownerUser}
 							<User
@@ -158,7 +158,7 @@
 							? "Online"
 							: "Offline"}
 					</small>
-					<span class="float-end">
+					<span class="float-right">
 						<ReportButton
 							user={data.ownerUser?.username || ""}
 							url="/place/{data.id}/{data.name}" />
@@ -199,11 +199,11 @@
 
 						return () => {}
 					}}
-					class="align-self-center col pt-4 px-0 pb-2"
+					class="self-center col pt-4 px-0 pb-2"
 					method="POST"
 					action="?/like&privateTicket={data.privateTicket}">
 					<div class="row pb-2">
-						<div class="col d-flex justify-content-start">
+						<div class="col flex justify-start">
 							<button
 								name="action"
 								value={data.likes ? "unlike" : "like"}
@@ -217,7 +217,7 @@
 										: 'r'} fa-thumbs-up" />
 							</button>
 						</div>
-						<div class="col d-flex justify-content-end">
+						<div class="col flex justify-end">
 							<button
 								name="action"
 								value={data.dislikes ? "undislike" : "dislike"}
@@ -234,7 +234,7 @@
 							</button>
 						</div>
 					</div>
-					<div class="d-flex bg-a2" style="height: 3px">
+					<div class="flex bg-a2" style="height: 3px">
 						<div
 							class="bg-success"
 							role="progressbar"
@@ -259,14 +259,14 @@
 								data.likeCount} />
 					</div>
 					<div class="row">
-						<div class="col d-flex justify-content-start">
+						<div class="col flex justify-start">
 							<span class="light-text px-2">
 								{data.likeCount} like{data.likeCount == 1
 									? ""
 									: "s"}
 							</span>
 						</div>
-						<div class="col d-flex justify-content-end">
+						<div class="col flex justify-end">
 							<span class="light-text px-2">
 								{data.dislikeCount} dislike{data.dislikeCount ==
 								1
@@ -301,7 +301,7 @@
 				running. Below are two methods of hosting - we recommend using
 				Autopilot to get started easily.
 			</p>
-			<div class="d-flex align-items-start mb-4">
+			<div class="flex items-start mb-4">
 				<TabNav bind:tabData={tabData2} vertical />
 				<!-- Prevents nested tabs from breaking -->
 				{((tabData2.num = 0), "")}
@@ -403,7 +403,7 @@
 								Join Server
 							</button>
 						</div>
-						<div class="col d-flex gap-3">
+						<div class="col flex gap-3">
 							{#each data.players as user}
 								<User {user} size="4.5rem" bg="darker" />
 							{/each}
@@ -428,12 +428,9 @@
 </div>
 
 <Modal {modal}>
-	<div class="d-flex flex-column px-6 pt-6 text-center">
+	<div class="flex flex-col px-6 pt-6 text-center">
 		{#key installed}
-			<div
-				in:fade={{ duration: 500 }}
-				id="wrapper"
-				class="align-self-center">
+			<div in:fade={{ duration: 500 }} id="wrapper" class="self-center">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"

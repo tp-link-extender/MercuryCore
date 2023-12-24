@@ -6,7 +6,7 @@
 
 <h1 class="text-center">Your transactions</h1>
 
-<div class="container mt-12">
+<div class="ctnr pt-12">
 	<table class="w-100 m-auto">
 		{#each data.transactions as transaction, num}
 			{@const value = transaction.amountSent > 0}
@@ -22,7 +22,7 @@
 						bg="accent" />
 				</td>
 
-				<td class="d-flex justify-content-center gap-3">
+				<td class="flex justify-center gap-3">
 					<div class="fs-4 pt-2">
 						<span class="text-success">
 							<fa fa-gem />
@@ -32,7 +32,7 @@
 							<fa fa-arrow-right-1 />
 						{/if}
 					</div>
-					<div class="d-flex flex-column justify-content-center">
+					<div class="flex flex-col justify-center">
 						{#if value}
 							{transaction.taxRate}% tax
 						{/if}
@@ -55,7 +55,7 @@
 				</td>
 
 				<td>
-					<div class="d-flex justify-content-end">
+					<div class="flex justify-end">
 						<User
 							user={transaction.receiver}
 							full

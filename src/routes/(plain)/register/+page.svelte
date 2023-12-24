@@ -15,10 +15,10 @@
 
 <Head title="Register" description="Create a Mercury account." />
 
-<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-fixed bottom-0">
-		<div class="position-absolute" />
-		<div class="position-absolute" />
+<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
+	<div class="w-100 fixed bottom-0">
+		<div class="absolute" />
+		<div class="absolute" />
 	</div>
 </div>
 
@@ -61,7 +61,7 @@
 				<h2>Create a free account</h2>
 				<p>
 					Already have an account?
-					<a href="/login" class="text-decoration-none">Log in</a>
+					<a href="/login" class="no-underline">Log in</a>
 				</p>
 
 				<form
@@ -157,7 +157,7 @@
 							</p>
 						</div>
 
-						<button class="container-fluid btn btn-primary mb-4">
+						<button class="btn btn-primary mb-4">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -168,13 +168,9 @@
 				</form>
 				<p>
 					By signing up, you agree to our
-					<a href="/terms" class="text-decoration-none">
-						Terms of Service
-					</a>
+					<a href="/terms" class="no-underline">Terms of Service</a>
 					and
-					<a href="/privacy" class="text-decoration-none">
-						Privacy policy
-					</a>
+					<a href="/privacy" class="no-underline">Privacy policy</a>
 					.
 				</p>
 			{:else}
@@ -258,7 +254,7 @@
 							</p>
 						</div>
 
-						<button class="container-fluid btn btn-primary mb-4">
+						<button class="btn btn-primary mb-4">
 							{#if $delayed}
 								Working...
 							{:else}

@@ -10,7 +10,7 @@
 <a
 	in:fade|global={{ num, total, duration: 300 }}
 	{href}
-	class="col-lg-3 p-1 text-decoration-none">
+	class="col-lg-3 p-1 no-underline">
 	<div class="px-0 card bg-a3 text-center light-text shadow-none">
 		<div class="card-body bg-a rounded-1 p-6">
 			{#if emoji}

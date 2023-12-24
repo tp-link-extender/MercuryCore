@@ -18,7 +18,7 @@
 
 <a
 	in:fade|global={{ num, total }}
-	class="rounded-3 text-center light-text text-decoration-none"
+	class="rounded-3 text-center light-text no-underline"
 	href="/place/{place.id}/{place.name}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
 		<img
@@ -33,7 +33,7 @@
 		<fa fa-thumbs-up class="opacity-75" />
 		{isNaN(ratio) ? "--" : ratio}%
 	</span>
-	<span class="float-end pe-1 pt-1">
+	<span class="float-right pe-1 pt-1">
 		<fa fa-user class="opacity-75" />
 		{place.playerCount}
 	</span>

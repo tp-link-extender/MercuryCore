@@ -10,8 +10,8 @@
 
 <Head title="Settings" />
 
-<div class="container mt-6 light-text">
-	<h1 class="pb-4">Settings</h1>
+<div class="ctnr light-text">
+	<h1 class="py-6">Settings</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
 		<h2 class="fs-3">User Profile</h2>

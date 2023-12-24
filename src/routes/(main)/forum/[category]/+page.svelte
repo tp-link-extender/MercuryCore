@@ -9,7 +9,7 @@
 
 <Head title="{data.name} - Forum" />
 
-<div class="container light-text">
+<div class="ctnr light-text">
 	<Breadcrumbs
 		path={[
 			["Forum", "/forum"],
@@ -37,8 +37,7 @@
 </div>
 
 {#if $page.state.openPost}
-	<div
-		class="modal-static position-fixed w-100 h-100 z-10 overflow-y-auto py-20">
+	<div class="modal-static fixed w-100 h-100 z-10 overflow-y-auto py-20">
 		<div
 			transition:fade={{ duration: 200 }}
 			role="button"

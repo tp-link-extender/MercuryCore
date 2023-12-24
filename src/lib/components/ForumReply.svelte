@@ -42,9 +42,7 @@
 </script>
 
 {#if !topLevel}
-	<a
-		href="{baseUrl}{assetName ? '?tab=Comments' : ''}"
-		class="text-decoration-none">
+	<a href="{baseUrl}{assetName ? '?tab=Comments' : ''}" class="no-underline">
 		<fa fa-arrow-left class="me-2" />
 		{#if assetName}
 			Back to asset
@@ -54,7 +52,7 @@
 	</a>
 	{#if reply.parentReplyId}
 		<br />
-		<a href="{baseUrl}/{reply.parentReplyId}" class="text-decoration-none">
+		<a href="{baseUrl}/{reply.parentReplyId}" class="no-underline">
 			<fa fa-arrow-up class="me-2" />
 			Parent reply
 		</a>
@@ -62,8 +60,8 @@
 {/if}
 
 {#if reply && reply.author}
-	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="d-flex">
-		<span class="d-flex flex-column pt-2">
+	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="flex">
+		<span class="flex flex-col pt-2">
 			<User user={reply.author} thin size="1.5rem" />
 			<button
 				on:click={collapse(reply.id)}
@@ -91,14 +89,14 @@
 			</button>
 		{:else}
 			<div in:fade|global={{ num }} class="w-100">
-				<div class="d-flex w-100">
+				<div class="flex w-100">
 					<div class="w-100">
-						<div class="d-flex align-items-center ps-4 pt-2">
+						<div class="flex items-center ps-4 pt-2">
 							<a
 								href="/user/{reply.author.number}"
 								class:hidden
-								class="user userlink text-decoration-none {reply
-									.author.username == postAuthorName
+								class="user userlink no-underline {reply.author
+									.username == postAuthorName
 									? ''
 									: 'light-text'}">
 								<span
@@ -152,7 +150,7 @@
 									return () => {}
 								}}
 								class:hidden
-								class="d-inline me-2"
+								class="inline me-2"
 								method="POST"
 								action="?/like&rid={reply.id}">
 								<button
@@ -257,7 +255,7 @@
 
 				{#if depth > 8}
 					<!-- todo fix incorrect colour -->
-					<a href="{baseUrl}/{reply.id}" class="text-decoration-none">
+					<a href="{baseUrl}/{reply.id}" class="no-underline">
 						<fa fa-arrow-down class="me-2" />
 						More replies
 					</a>

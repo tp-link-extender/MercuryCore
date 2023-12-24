@@ -4,7 +4,7 @@
 </script>
 
 {#if data.username != user?.username}
-	<div class="d-flex">
+	<div class="flex">
 		<form
 			use:enhance
 			method="POST"
@@ -16,7 +16,7 @@
 						? 'accept'
 						: 'request'}"
 			in:fade
-			class="align-self-center pe-2 d-flex gap-2">
+			class="self-center pe-2 flex gap-2">
 			<button
 				class="btn {data.friends || data.outgoingRequest
 					? 'btn-danger'
@@ -40,7 +40,7 @@
 				method="POST"
 				action="?/decline"
 				in:fade
-				class="align-self-center pe-2 d-flex gap-2">
+				class="self-center pe-2 flex gap-2">
 				<button class="btn btn-danger">Decline request</button>
 			</form>
 		{/if}
@@ -49,7 +49,7 @@
 			method="POST"
 			action="?/{data.following ? 'unfollow' : 'follow'}"
 			in:fade
-			class="align-self-center pe-2 d-flex gap-2">
+			class="self-center pe-2 flex gap-2">
 			<button
 				name="action"
 				class="btn h-100 {data.following

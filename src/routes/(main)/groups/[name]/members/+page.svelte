@@ -6,14 +6,14 @@
 
 <h1 class="text-center">Members of {data.name} ({data.memberCount})</h1>
 
-<div class="container mt-12 d-grid">
+<div class="ctnr pt-12 grid">
 	{#each data.members as user, num}
 		<UserCard {user} {num} total={data.members.length} />
 	{/each}
 </div>
 
 <style lang="stylus">
-	.container
+	.ctnr
 		max-width 100%
 		font-size 0.9rem
 

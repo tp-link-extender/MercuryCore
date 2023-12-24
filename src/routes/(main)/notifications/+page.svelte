@@ -21,11 +21,11 @@
 
 <h1 class="text-center">Notifications</h1>
 
-<div class="container pt-12">
+<div class="ctnr pt-12">
 	{#each data.notifications as notification}
 		<div class="pb-4">
 			<div class:bg-darker={notification.read} class="card p-4">
-				<span class="d-flex gap-3 align-items-center pb-4">
+				<span class="flex gap-3 items-center pb-4">
 					<User
 						user={notification.sender}
 						size="3rem"
