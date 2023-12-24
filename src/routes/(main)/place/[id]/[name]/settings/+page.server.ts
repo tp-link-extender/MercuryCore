@@ -19,7 +19,7 @@ const schemas = {
 			.string()
 			.max(100)
 			.regex(
-				/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/,
+				/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
 			),
 		serverPort: z.number().int().min(1024).max(65535),
 		maxPlayers: z.number().int().min(1).max(100),
@@ -66,7 +66,7 @@ const placeQuery = async (id: string | number) =>
 				(SELECT text, updated FROM $parent.description
 				ORDER BY updated DESC)[0] AS description
 			FROM $place`,
-		{ place: `place:${id}` },
+		{ place: `place:${id}` }
 	)
 
 export async function load({ locals, params }) {
@@ -119,7 +119,7 @@ export const actions = {
 				return formError(
 					form,
 					["icon"],
-					["Icon must be less than 1MB in size"],
+					["Icon must be less than 1MB in size"]
 				)
 
 			if (!fs.existsSync("data/icons")) fs.mkdirSync("data/icons")
@@ -127,7 +127,7 @@ export const actions = {
 				.resize(270, 270)
 				.toFile(`data/icons/${id}.webp`)
 				.catch(() =>
-					formError(form, ["icon"], ["Icon failed to upload"]),
+					formError(form, ["icon"], ["Icon failed to upload"])
 				)
 		}
 
@@ -153,7 +153,7 @@ export const actions = {
 				place: `place:${id}`,
 				title,
 				description: description || "",
-			},
+			}
 		)
 
 		return message(form, "View settings updated successfully!")
@@ -168,7 +168,7 @@ export const actions = {
 
 		return message(
 			await superValidate(request, schemas.ticket),
-			"Regenerated!",
+			"Regenerated!"
 		)
 	},
 	network: async e => {
@@ -192,7 +192,7 @@ export const actions = {
 				serverIP,
 				serverPort,
 				maxPlayers,
-			},
+			}
 		)
 
 		return message(form, "Network settings updated successfully!")
@@ -223,7 +223,7 @@ export const actions = {
 
 		return message(
 			await superValidate(request, schemas.privatelink),
-			"Regenerated!",
+			"Regenerated!"
 		)
 	},
 }

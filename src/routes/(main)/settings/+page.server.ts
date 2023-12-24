@@ -50,7 +50,7 @@ export const actions = {
 				user: `user:${user.id}`,
 				bio,
 				theme,
-			},
+			}
 		)
 
 		return message(form, "Profile updated successfully!")
@@ -70,20 +70,20 @@ export const actions = {
 			await auth.useKey(
 				"username",
 				user.username.toLowerCase(),
-				cpassword,
+				cpassword
 			)
 		} catch {
 			return formError(
 				form,
 				["cpassword"],
-				["Incorrect username or password"],
+				["Incorrect username or password"]
 			)
 		}
 
 		await auth.updateKeyPassword(
 			"username",
 			user.username.toLowerCase(),
-			npassword,
+			npassword
 		)
 
 		// Don't send the password back to the client

@@ -20,7 +20,7 @@ export const actions = {
 		groups: await query<Group>(
 			surql`${select}
 				WHERE string::lowercase($query) ∈ string::lowercase(name)`,
-			{ query: (await request.formData()).get("q") as string },
+			{ query: (await request.formData()).get("q") as string }
 		),
 	}),
 }

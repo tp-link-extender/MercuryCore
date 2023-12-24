@@ -18,7 +18,7 @@ const SELECTREPLIES = recurse(
 	from => surql`
 		(${from} <-replyToPost<-forumReply
 		# Make sure it's not a reply to another reply
-		WHERE !->replyToReply) AS replies`,
+		WHERE !->replyToReply) AS replies`
 )
 
 export async function load({ locals, params }) {
@@ -64,7 +64,7 @@ export async function load({ locals, params }) {
 		{
 			forumPost: `forumPost:${params.post}`,
 			user: `user:${user.id}`,
-		},
+		}
 	)
 
 	if (!forumPost) error(404, "Not found")
@@ -101,7 +101,7 @@ export const actions = {
 				replypostId: replyId
 					? `forumReply:${replyId}`
 					: `forumPost:${params.post}`,
-			},
+			}
 		)
 
 		if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
@@ -129,7 +129,7 @@ export const actions = {
 				forumReply: `forumReply:${newReplyId}`,
 				post: `forumPost:${params.post}`,
 				replyId: replyId ? `forumReply:${replyId}` : undefined,
-			},
+			}
 		)
 
 		if (user.id != replypost.authorId)
@@ -150,7 +150,7 @@ export const actions = {
 						replyId ? "reply" : "post"
 					}: ${content}`,
 					relativeId: newReplyId,
-				},
+				}
 			)
 
 		await like(user.id, `forumReply:${newReplyId}`)
@@ -171,7 +171,7 @@ export const actions = {
 					meta::id((-posted<-user.id)[0]) AS authorId
 					visibility
 				FROM $forumReply`,
-			{ forumReply: `forumReply:${id}` },
+			{ forumReply: `forumReply:${id}` }
 		)
 
 		if (!reply) error(404, "Reply not found")
@@ -192,7 +192,7 @@ export const actions = {
 					updated: time::now(),
 				}];
 				UPDATE $forumReply SET visibility = "Deleted"`,
-			{ forumReply: `forumReply:${id}` },
+			{ forumReply: `forumReply:${id}` }
 		)
 	},
 	moderate: async ({ url, locals }) => {
@@ -219,7 +219,7 @@ export const actions = {
 				};
 				UPDATE $forumReply SET visibility = "Moderated";
 				COMMIT TRANSACTION`,
-			{ forumReply: `forumReply:${id}` },
+			{ forumReply: `forumReply:${id}` }
 		)
 	},
 	like: categoryActions.like as any,

@@ -48,20 +48,20 @@ export const actions = {
 			return formError(
 				form,
 				["password", "cpassword"],
-				[" ", "The specified passwords do not match"],
+				[" ", "The specified passwords do not match"]
 			)
 
 		try {
 			if (
 				await squery(
 					surql`SELECT * FROM user WHERE username = $username`,
-					{ username },
+					{ username }
 				)
 			)
 				return formError(
 					form,
 					["username"],
-					["This username is already in use"],
+					["This username is already in use"]
 				)
 
 			if (
@@ -72,7 +72,7 @@ export const actions = {
 				return formError(
 					form,
 					["email"],
-					["This email is already in use"],
+					["This email is already in use"]
 				)
 
 			const regkeyCheck = (
@@ -85,13 +85,13 @@ export const actions = {
 				return formError(
 					form,
 					["regkey"],
-					["Registration key is invalid"],
+					["Registration key is invalid"]
 				)
 			if (regkeyCheck.usesLeft < 1)
 				return formError(
 					form,
 					["regkey"],
-					["This registration key has ran out of uses"],
+					["This registration key has ran out of uses"]
 				)
 
 			const { userId } = await auth.createUser({
@@ -118,7 +118,7 @@ export const actions = {
 				{
 					user: `user:${userId}`,
 					key: `regKey:⟨${regkey}⟩`,
-				},
+				}
 			)
 
 			try {
@@ -129,7 +129,7 @@ export const actions = {
 				await auth.createSession({
 					userId,
 					attributes: {},
-				}),
+				})
 			)
 		} catch (e) {
 			const error = e as Error
@@ -137,7 +137,7 @@ export const actions = {
 				return formError(
 					form,
 					["username"],
-					["This username is already in use"],
+					["This username is already in use"]
 				)
 
 			console.error("Registration error:", error)
@@ -159,19 +159,19 @@ export const actions = {
 			return formError(
 				form,
 				["password", "cpassword"],
-				[" ", "The specified passwords do not match"],
+				[" ", "The specified passwords do not match"]
 			)
 
 		try {
 			if (
 				((await query(
-					surql`count(SELECT * FROM user)`,
+					surql`count(SELECT * FROM user)`
 				)) as unknown as number) > 0
 			)
 				return formError(
 					form,
 					["username"],
-					["There's already an account registered"],
+					["There's already an account registered"]
 				)
 
 			await query(surql`UPDATE ONLY stuff:increment SET user = 0`)
@@ -194,7 +194,7 @@ export const actions = {
 				await auth.createSession({
 					userId: user.id,
 					attributes: {},
-				}),
+				})
 			)
 		} catch (e) {
 			const error = e as Error
@@ -202,7 +202,7 @@ export const actions = {
 				return formError(
 					form,
 					["username"],
-					["This username is already in use"],
+					["This username is already in use"]
 				)
 
 			console.error("Registration error:", error)

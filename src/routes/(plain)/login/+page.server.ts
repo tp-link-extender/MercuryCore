@@ -32,19 +32,19 @@ export const actions = {
 			const user = await auth.useKey(
 				"username",
 				username.toLowerCase(),
-				password,
+				password
 			)
 			locals.auth.setSession(
 				await auth.createSession({
 					userId: user.userId,
 					attributes: {},
-				}),
+				})
 			)
 		} catch {
 			return formError(
 				form,
 				["username", "password"],
-				[" ", "Incorrect username or password"],
+				[" ", "Incorrect username or password"]
 			)
 		}
 

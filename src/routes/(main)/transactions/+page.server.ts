@@ -39,7 +39,7 @@ export async function load({ locals }) {
 					username
 				FROM out.*)[0] AS receiver
 			FROM $user<->transaction`,
-			{ user: `user:${user.id}` },
+			{ user: `user:${user.id}` }
 		),
 	}
 }

@@ -45,7 +45,7 @@ export const load = async ({ locals, url }) => {
 			{
 				user: `user:${(await authorise(locals)).user.id}`,
 				query: searchQ,
-			},
+			}
 		),
 	}
 }

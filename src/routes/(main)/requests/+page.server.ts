@@ -16,7 +16,7 @@ export async function load({ locals }) {
 					status,
 					username
 				FROM user WHERE $user ∈ ->request->user`,
-			{ user: `user:${user.id}` },
+			{ user: `user:${user.id}` }
 		),
 	}
 }

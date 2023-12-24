@@ -39,7 +39,7 @@ export async function load({ locals }) {
 					status,
 					username
 				FROM out.*)[0] AS receiver
-			FROM transaction`,
+			FROM transaction`
 		),
 	}
 }
