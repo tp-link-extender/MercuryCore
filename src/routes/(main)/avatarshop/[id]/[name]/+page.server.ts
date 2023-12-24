@@ -19,7 +19,7 @@ const schema = z.object({
 const SELECTCOMMENTS = recurse(
 	from => surql`
 		(${from} <-replyToAsset<-assetComment
-		WHERE !->replyToComment) AS replies`,
+		WHERE !->replyToComment) AS replies`
 	// Make sure it's not a reply to another reply
 )
 
@@ -70,7 +70,7 @@ export async function load({ locals, params }) {
 		{
 			asset: `asset:${id}`,
 			user: `user:${user.id}`,
-		},
+		}
 	)
 
 	if (!asset || !asset.creator) error(404, "Not found")
@@ -124,21 +124,20 @@ export const actions = {
 
 		let receiverId
 		const commentAuthor = await squery<{ id: string }>(
-			surql`SELECT meta::id(id) AS id FROM ` + replyId
-				? surql`$comment<-posted<-user`
-				: surql`$asset<-created<-user`,
+			surql`SELECT meta::id(id) AS id FROM ` +
+				(replyId
+					? surql`$comment<-posted<-user`
+					: surql`$asset<-created<-user`),
 			{
 				comment: `assetComment:${replyId}`,
 				asset: `asset:${params.id}`,
-			},
+			}
 		)
-
-		console.log(commentAuthor)
 
 		if (replyId && !commentAuthor) error(404)
 		receiverId = commentAuthor?.id || ""
 
-		const newReplyId = await squery<string>(surql`fn::id()`)
+		const newReplyId = (await query(surql`fn::id()`)) as unknown as string
 
 		await query(
 			surql`
@@ -161,11 +160,11 @@ export const actions = {
 				assetComment: `assetComment:${newReplyId}`,
 				asset: `asset:${params.id}`,
 				replyId: replyId ? `assetComment:${replyId}` : undefined,
-			},
+			}
 		)
 
 		await Promise.all([
-			(user.id != receiverId || !replyId) &&
+			user.id != receiverId &&
 				query(
 					surql`
 						RELATE $sender->notification->$receiver CONTENT {
@@ -185,7 +184,7 @@ export const actions = {
 								: "commented on your asset"
 						}: ${content}`,
 						relativeId: newReplyId,
-					},
+					}
 				),
 
 			like(user.id, `assetComment:${newReplyId}`),
@@ -209,7 +208,7 @@ export const actions = {
 
 		await likeActions[action](
 			user.id,
-			`asset${replyId ? "Comment" : ""}:${id || replyId}`,
+			`asset${replyId ? "Comment" : ""}:${id || replyId}`
 		)
 	},
 	buy: async e => {
@@ -235,7 +234,7 @@ export const actions = {
 			{
 				asset: `asset:${id}`,
 				user: `user:${user.id}`,
-			},
+			}
 		)
 		if (!asset) error(404, "Not found")
 		if (asset.owned) error(400, "You already own this item")
@@ -250,7 +249,7 @@ export const actions = {
 				{
 					note: `Purchased asset ${asset.name}`,
 					link: `/avatarshop/${e.params.id}/${asset.name}`,
-				},
+				}
 			)
 		} catch (e: any) {
 			console.log(e.message)
@@ -278,7 +277,7 @@ export const actions = {
 						receiver: `user:${asset.creator.id}`,
 						note: `${user.username} just purchased your item: ${asset.name}`,
 						relativeId: e.params.id,
-					},
+					}
 				),
 		])
 	},
@@ -316,7 +315,7 @@ export const actions = {
 					meta::id((<-posted<-user.id)[0]) AS authorId,
 					visibility
 				FROM $assetComment`,
-			{ assetComment: `assetComment:${id}` },
+			{ assetComment: `assetComment:${id}` }
 		)
 
 		if (!comment) error(404, "Comment not found")
@@ -337,7 +336,7 @@ export const actions = {
 					updated: time::now(),
 				};
 				UPDATE $assetComment SET visibility = "Deleted"`,
-			{ assetComment: `assetComment:${id}` },
+			{ assetComment: `assetComment:${id}` }
 		)
 	},
 	moderate: async ({ url, locals }) => {
@@ -362,7 +361,7 @@ export const actions = {
 					updated: time::now(),
 				};
 				UPDATE $assetComment SET visibility = "Moderated"`,
-			{ assetComment: `assetComment:${id}` },
+			{ assetComment: `assetComment:${id}` }
 		)
 	},
 	rerender: async ({ locals, params, getClientAddress }) => {
