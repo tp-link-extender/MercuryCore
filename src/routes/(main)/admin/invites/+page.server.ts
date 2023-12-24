@@ -35,7 +35,7 @@ export async function load({ locals }) {
 				meta::id(id) AS id,
 				(SELECT number, status, username
 				FROM <-created<-user)[0] AS creator
-			FROM regKey ORDER BY creation DESC`,
+			FROM regKey ORDER BY creation DESC`
 	)
 
 	return {
@@ -108,14 +108,14 @@ export const actions = {
 				inviteUses,
 				expiry,
 				regKey: `regKey:⟨${inviteCustom}⟩`,
-			},
+			}
 		)
 
 		return typeof log == "string"
 			? message(form, "This invite key already exists", { status: 400 })
 			: message(
 					form,
-					"Invite created successfully! Check the Invites tab for your new key.",
+					"Invite created successfully! Check the Invites tab for your new key."
 				)
 	},
 	disable: async e => {
@@ -152,7 +152,7 @@ export const actions = {
 				note: `Disable invite key ${id}`,
 				user: `user:${user.id}`,
 				key: `regKey:⟨${id}⟩`,
-			},
+			}
 		)
 
 		return message(form, "Invite key disabled successfully")

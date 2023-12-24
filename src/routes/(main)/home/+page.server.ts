@@ -70,7 +70,7 @@ export async function load({ locals }) {
 					status,
 					username
 				FROM $user->friends->user OR $user<-friends<-user`,
-			{ user: `user:${user.id}` },
+			{ user: `user:${user.id}` }
 		),
 		feed: await query<{
 			authorUser: {
@@ -124,7 +124,7 @@ export const actions = {
 			{
 				content: form.data.status,
 				user: `user:${user.id}`,
-			},
+			}
 		)
 	},
 }

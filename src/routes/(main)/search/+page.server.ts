@@ -15,7 +15,7 @@ export const load = async ({ url }) => {
 			surql`
 				SELECT * FROM user
 				WHERE username = $searchQ`,
-			{ searchQ },
+			{ searchQ }
 		)
 
 		if (userExists) redirect(302, `/user/${userExists.number}`)
@@ -38,7 +38,7 @@ export const load = async ({ url }) => {
 						username
 					FROM user
 					WHERE string::lowercase($searchQ) ∈ string::lowercase(username)`,
-				{ searchQ },
+				{ searchQ }
 			)),
 		places:
 			category == "places" &&
@@ -66,7 +66,7 @@ export const load = async ({ url }) => {
 					WHERE !privateServer
 						AND !deleted
 						AND string::lowercase($searchQ) ∈ string::lowercase(name)`,
-				{ searchQ },
+				{ searchQ }
 			)),
 		assets:
 			category == "assets" &&
@@ -83,7 +83,7 @@ export const load = async ({ url }) => {
 					FROM asset
 					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)
 						AND type ∈ [17, 18, 2, 11, 12, 19]`,
-				{ searchQ },
+				{ searchQ }
 			)),
 		groups:
 			category == "groups" &&
@@ -97,7 +97,7 @@ export const load = async ({ url }) => {
 						count(<-member) AS memberCount
 					FROM group
 					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)`,
-				{ searchQ },
+				{ searchQ }
 			)),
 	}
 }
