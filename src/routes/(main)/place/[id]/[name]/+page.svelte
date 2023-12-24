@@ -87,11 +87,11 @@
 				{#each images as src, i}
 					<div
 						id="slide{i + 1}"
-						class="carousel-item relative w-100"
+						class="carousel-item relative w-full"
 						class:active={!i}>
 						<img
 							{src}
-							class="block w-100"
+							class="block w-full"
 							alt="Placeholder place thumbnail" />
 						<div
 							class="absolute flex justify-between carouselbuttons">
@@ -136,7 +136,7 @@
 						{/if}
 					</div>
 					<span class="light-text flex pb-2">
-						<b class="pe-2">by</b>
+						<b class="pr-2">by</b>
 						{#if data.ownerUser}
 							<User
 								user={data.ownerUser}
@@ -288,7 +288,7 @@
 
 	<Tab {tabData}>
 		{#if user?.permissionLevel == 5 || data.ownerUser?.number == user?.number}
-			<h1 class="fs-4">Hosting on Mercury</h1>
+			<h1 class="text-base">Hosting on Mercury</h1>
 			<p class="light-text">
 				To begin hosting your map for everybody to play, you need to
 				make sure that you are forwarding the port you wish to run the
@@ -369,7 +369,7 @@
 								<ul class="p-2 rounded-3">
 									<li class="rounded-2">
 										<button
-											class="btn light-text ps-4 pe-0 text-start"
+											class="btn light-text pl-4 pr-0 text-start"
 											on:click={launch(
 												`mercury-player:1+launchmode:build+script:${hostTicket}&autopilot=${btoa(
 													filepath

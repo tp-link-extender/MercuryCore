@@ -75,10 +75,10 @@
 			</div>
 		</div>
 	</form>
-	<div class="ps-2 flex flex-col w-100">
-		<div class="flex pt-2 ps-4">
+	<div class="pl-2 flex flex-col w-full">
+		<div class="flex pt-2 pl-4">
 			<User user={post.author} full />
-			<em class="light-text ps-4 self-center">
+			<em class="light-text pl-4 self-center">
 				{new Date(post.posted).toLocaleString()}
 			</em>
 		</div>
@@ -97,13 +97,13 @@
 				else goto(href)
 			}}
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
-			class="px-4 pt-2 no-underline light-text w-100">
+			class="px-4 pt-2 no-underline light-text w-full">
 			<h2 class="pt-2">
 				{post.title}
 			</h2>
 
 			<div class="mb-0">
-				<div class="gradient w-100 h-75" />
+				<div class="gradient w-full h-3/4" />
 				{post.content[0].text || ""}
 			</div>
 		</a>

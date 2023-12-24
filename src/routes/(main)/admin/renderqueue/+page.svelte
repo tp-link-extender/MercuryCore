@@ -34,19 +34,19 @@
 
 								<br />
 								<span>
-									<fa fa-image class="text-success pe-1" />
+									<fa fa-image class="text-success pr-1" />
 									Renders Completed:
 								</span>
 								<br />
 								<span>
 									<i
-										class="fa fa-bars-progress text-warning pe-1" />
+										class="fa fa-bars-progress text-warning pr-1" />
 									Renders Pending:
 								</span>
 								<br />
 								<span>
 									<i
-										class="fa fa-image-slash text-danger pe-1" />
+										class="fa fa-image-slash text-danger pr-1" />
 									Renders Failed:
 								</span>
 							</div>
@@ -57,7 +57,7 @@
 							<div class="card-body">
 								<h2 class="fs-3">Currently Rendering</h2>
 								<table
-									class="p-5 w-100 bg-background rounded-2">
+									class="p-5 w-full bg-background rounded-2">
 									<thead>
 										<tr>
 											<th scope="col">Task ID</th>
@@ -92,7 +92,7 @@
 				</div>
 			</Tab>
 			<Tab {tabData}>
-				<table id="rendertable" class="w-100 light-text">
+				<table id="rendertable" class="w-full light-text">
 					<thead>
 						<tr>
 							<th scope="col">Task id</th>

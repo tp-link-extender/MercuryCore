@@ -61,7 +61,7 @@
 						aria-label="Search for an item"
 						aria-describedby="button-addon2" />
 					<select
-						class="form-select form-select-sm light-text ps-4"
+						class="form-select form-select-sm light-text pl-4"
 						placeholder="Type"
 						aria-label="Type">
 						<option value="Shirt">Shirts</option>

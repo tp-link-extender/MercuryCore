@@ -15,8 +15,8 @@
 
 <Head title="Register" description="Create a Mercury account." />
 
-<div id="wavep" class="w-100 h-100 absolute top-0 overflow-hidden">
-	<div class="w-100 fixed bottom-0">
+<div id="wavep" class="w-full h-full absolute top-0 overflow-hidden">
+	<div class="w-full fixed bottom-0">
 		<div class="absolute" />
 		<div class="absolute" />
 	</div>
@@ -24,29 +24,29 @@
 
 <div class="row">
 	<div id="dark" class="col light-text">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0 fs-4">
-			<fa fa-arrow-left class="pe-2" />
+		<a type="button" href="/" class="btn btn-lg border-0 px-0 text-base">
+			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
 		<h1 class="font-black mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Original username</h2>
 			<p class="light-text opacity-75 more">
 				Make sure it is appropriate and between 3-21 characters.
 				Underscores are allowed.
 			</p>
 		</div>
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Valid email</h2>
 			<p class="light-text opacity-75 more">
 				Mercury requires a valid email so you can reset your password at
 				any time.
 			</p>
 		</div>
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Secure password</h2>
 			<p class="light-text opacity-75 more">
 				Make sure your password has a mix of letters, numbers, and

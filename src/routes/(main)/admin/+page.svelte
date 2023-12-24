@@ -79,7 +79,7 @@
 	</h2>
 	<hr class="text-light" />
 	<div class="row">
-		<div class="col-lg-2 col-md-3 mb-6 pe-0">
+		<div class="col-lg-2 col-md-3 mb-6 pr-0">
 			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-lg-10 col-md-9">
@@ -142,7 +142,7 @@
 									<h3 class="light-text">Loading...</h3>
 								{:then disk}
 									<h3 class="light-text">
-										<fa fa-hard-drive class="pe-2" />
+										<fa fa-hard-drive class="pr-2" />
 										{(
 											(disk.size - disk.free) /
 											1024 ** 3
@@ -179,7 +179,7 @@
 						<div class="card bg-a3 text-black shadow-none">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
-									<far fa-user class="me-2" />
+									<far fa-user class="mr-2" />
 									Users
 								</h3>
 								<span class="light-text">
@@ -191,33 +191,33 @@
 						<div class="card bg-a3 text-black shadow-none">
 							<div class="card-body bg-a rounded-1">
 								<h3 class="light-text">
-									<far fa-file class="me-2" />
+									<far fa-file class="mr-2" />
 									Assets
 								</h3>
 								<span class="light-text">
 									<i
-										class="fa text-warning fa-file-circle-minus me-2" />
+										class="fa text-warning fa-file-circle-minus mr-2" />
 									<b class="light-text">0 assets</b>
 									are currently pending
 								</span>
 								<br />
 								<span class="light-text">
 									<i
-										class="fa text-success fa-file-circle-check me-2" />
+										class="fa text-success fa-file-circle-check mr-2" />
 									<b class="light-text">0 assets</b>
 									have been approved
 								</span>
 								<br />
 								<span class="light-text">
 									<i
-										class="fa text-danger fa-file-circle-xmark me-2" />
+										class="fa text-danger fa-file-circle-xmark mr-2" />
 									<b class="light-text">0 assets</b>
 									have been disapproved
 								</span>
 								<br />
 								<span class="light-text">
 									<i
-										class="fa text-info fa-folder-closed me-2" />
+										class="fa text-info fa-folder-closed mr-2" />
 									<b class="light-text">0 assets</b>
 									in total
 								</span>

@@ -43,7 +43,7 @@
 
 {#if !topLevel}
 	<a href="{baseUrl}{assetName ? '?tab=Comments' : ''}" class="no-underline">
-		<fa fa-arrow-left class="me-2" />
+		<fa fa-arrow-left class="mr-2" />
 		{#if assetName}
 			Back to asset
 		{:else}
@@ -53,7 +53,7 @@
 	{#if reply.parentReplyId}
 		<br />
 		<a href="{baseUrl}/{reply.parentReplyId}" class="no-underline">
-			<fa fa-arrow-up class="me-2" />
+			<fa fa-arrow-up class="mr-2" />
 			Parent reply
 		</a>
 	{/if}
@@ -66,14 +66,14 @@
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Collapse reply"
-				class="collapseBar bg-a2 p-0 border-0 h-100 mt-4" />
+				class="collapseBar bg-a2 p-0 border-0 h-full mt-4" />
 		</span>
 
 		{#if $repliesCollapsed?.[reply.id]}
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Expand reply"
-				class="expandBar m-2 ms-4 p-0 mt-0">
+				class="expandBar m-2 ml-4 p-0 mt-0">
 				<small>
 					<span class="grey-text">
 						{reply.author.username}
@@ -81,17 +81,17 @@
 							<i
 								class="fa {assetName
 									? 'fa-hammer'
-									: 'fa-microphone'} ms-1" />
+									: 'fa-microphone'} ml-1" />
 						{/if}
 					</span>
 					- {reply.content[0].text}
 				</small>
 			</button>
 		{:else}
-			<div in:fade|global={{ num }} class="w-100">
-				<div class="flex w-100">
-					<div class="w-100">
-						<div class="flex items-center ps-4 pt-2">
+			<div in:fade|global={{ num }} class="w-full">
+				<div class="flex w-full">
+					<div class="w-full">
+						<div class="flex items-center pl-4 pt-2">
 							<a
 								href="/user/{reply.author.number}"
 								class:hidden
@@ -111,11 +111,11 @@
 										<i
 											class="fa {assetName
 												? 'fa-hammer'
-												: 'fa-microphone'} ms-2" />
+												: 'fa-microphone'} ml-2" />
 									{/if}
 								</span>
 							</a>
-							<small class="light-text ps-6">
+							<small class="light-text pl-6">
 								{new Date(reply.posted).toLocaleString()}
 							</small>
 						</div>
@@ -150,7 +150,7 @@
 									return () => {}
 								}}
 								class:hidden
-								class="inline me-2"
+								class="inline mr-2"
 								method="POST"
 								action="?/like&rid={reply.id}">
 								<button
@@ -190,7 +190,7 @@
 								on:click={() => replyingTo.set(reply.id)}
 								class:hidden
 								class="p-0 btn btn-sm grey-text px-1">
-								<far fa-message class="pe-2" />
+								<far fa-message class="pr-2" />
 								Reply
 							</button>
 							{#if !hidden}
@@ -235,14 +235,14 @@
 												rows="4" />
 											<button class="btn btn-success">
 												<i
-													class="far fa-message me-2" />
+													class="far fa-message mr-2" />
 												Reply
 											</button>
 											<button
 												on:click={() =>
 													replyingTo.set("")}
-												class="btn btn-dark grey-text ms-1">
-												<fa fa-cancel class="me-2" />
+												class="btn btn-dark grey-text ml-1">
+												<fa fa-cancel class="mr-2" />
 												Cancel
 											</button>
 										</fieldset>
@@ -256,7 +256,7 @@
 				{#if depth > 8}
 					<!-- todo fix incorrect colour -->
 					<a href="{baseUrl}/{reply.id}" class="no-underline">
-						<fa fa-arrow-down class="me-2" />
+						<fa fa-arrow-down class="mr-2" />
 						More replies
 					</a>
 				{/if}

@@ -21,16 +21,16 @@
 <div id="all" class="ctnr">
 	<div id="infocard" class="card bg-darker">
 		<div class="flex">
-			<span class="display-lg pe-6">
+			<span class="display-lg pr-6">
 				<User user={data} size="7rem" bg="accent" image />
 			</span>
-			<span class="display-sm pe-4">
+			<span class="display-sm pr-4">
 				<User user={data} size="6rem" bg="accent" image />
 			</span>
-			<div class="w-100">
+			<div class="w-full">
 				<div class="flex mb-2 justify-between">
 					<div class="flex items-center">
-						<h1 class="inline pe-4 mb-0">
+						<h1 class="inline pr-4 mb-0">
 							{data.username}
 						</h1>
 						{#if data.follower}
@@ -47,7 +47,7 @@
 							<i
 								class="fa {permissions[
 									data.permissionLevel
-								][1]} pe-1" />
+								][1]} pr-1" />
 							{permissions[data.permissionLevel][2]}
 						</b>
 					</div>
@@ -101,7 +101,7 @@
 			{#if data.bio}
 				<div class="pt-6">
 					<h2 class="light-text">Bio</h2>
-					<p class="light-text ps-2">{data.bio.text}</p>
+					<p class="light-text pl-2">{data.bio.text}</p>
 				</div>
 			{/if}
 			<div class="pt-6">
@@ -119,7 +119,7 @@
 							method="POST"
 							action="?/rerender"
 							in:fade
-							class="absolute end-0 pe-4">
+							class="absolute end-0 pr-4">
 							<button class="btn btn-sm btn-primary">
 								<fa fa-arrows-rotate />
 								Re-render
@@ -208,7 +208,7 @@
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
 							class="p-2 col-md-6 col-sm-12">
-							<div class="card bg-darker p-3 h-100">
+							<div class="card bg-darker p-3 h-full">
 								<div
 									id="user"
 									class="flex pb-2 justify-between">

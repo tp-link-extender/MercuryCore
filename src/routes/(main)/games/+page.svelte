@@ -35,7 +35,7 @@
 	<div class="row pb-12">
 		<h1 class="col">
 			Games
-			<span class="ps-6">
+			<span class="pl-6">
 				<a href="/games/create" class="btn btn-primary">
 					<fa fa-plus />
 					Create
@@ -67,7 +67,7 @@
 					</div>
 				</div>
 				<div class="col-7 row">
-					<div class="ps-4 col">
+					<div class="pl-4 col">
 						<div class="row">
 							<label for="genre" class="light-text col py-1">
 								Genre
@@ -83,7 +83,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="ms-4 col">
+					<div class="ml-4 col">
 						<div class="form-check light-text py-1">
 							<input
 								class="form-check-input"
@@ -116,17 +116,18 @@
 </div>
 
 {#if $page.state.openPlace}
-	<div class="modal-static fixed w-100 h-100 z-10 overflow-y-auto p-20 px-10">
+	<div
+		class="modal-static fixed w-full h-full z-10 overflow-y-auto p-20 px-10">
 		<div
 			transition:fade={{ duration: 200 }}
 			role="button"
 			tabindex="0"
 			on:click={() => history.back()}
 			on:keypress={() => history.back()}
-			class="modal-backdrop vh-100 w-100" />
+			class="modal-backdrop h-screen w-full" />
 		<div
 			transition:fade={{ duration: 100 }}
-			class="modal-box bg-background h-100 py-10">
+			class="modal-box bg-background h-full py-10">
 			<PlacePage data={$page.state.openPlace} />
 		</div>
 	</div>

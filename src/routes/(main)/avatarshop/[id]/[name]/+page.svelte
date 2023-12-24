@@ -41,7 +41,7 @@
 
 <div class="ctnr">
 	<div class="row">
-		<div class="col pe-4 pb-4">
+		<div class="col pr-4 pb-4">
 			<img
 				class="image"
 				src="/avatarshop/{data.id}/{data.name}/icon"
@@ -53,16 +53,16 @@
 					<h1 class="mb-0">{data.name}</h1>
 				</div>
 				<div class="col flex justify-end">
-					<li class="dropdown dropdown-hover dropdown-end ps-2 pt-2">
+					<li class="dropdown dropdown-hover dropdown-end pl-2 pt-2">
 						<fa fa-ellipsis />
 						<div class="dropdown-content">
 							<ul class="p-2 rounded-3">
 								{#each usernav as [icon, title, href]}
 									<li class="rounded-2">
 										<a
-											class="btn light-text ps-4 pe-0 text-start"
+											class="btn light-text pl-4 pr-0 text-start"
 											{href}>
-											<fa class="{icon} me-2" />
+											<fa class="{icon} mr-2" />
 											{title}
 										</a>
 									</li>
@@ -74,9 +74,9 @@
 											method="POST"
 											action="?/rerender">
 											<button
-												class="btn text-primary ps-4 pe-0 text-start">
+												class="btn text-primary pl-4 pr-0 text-start">
 												<i
-													class="fa fa-arrows-rotate me-2" />
+													class="fa fa-arrows-rotate mr-2" />
 												<b>Re-render</b>
 											</button>
 										</form>
@@ -88,7 +88,7 @@
 				</div>
 			</div>
 			<div class="flex">
-				<strong class="pe-2">by:</strong>
+				<strong class="pr-2">by:</strong>
 
 				{#if data.creator}
 					<User
@@ -159,7 +159,7 @@
 					name="content"
 					placeholder="What are your thoughts?"
 					rows="4" />
-				<button class="btn btn-success ms-4 mt-auto">
+				<button class="btn btn-success ml-4 mt-auto">
 					{#if $delayed}
 						Working...
 					{:else}
@@ -212,7 +212,7 @@
 					{data.price > 0 ? "Buy Now" : "Get"}
 				</button>
 			</form>
-			<label for="buy" class="btn btn-dark ms-2">{data.noText}</label>
+			<label for="buy" class="btn btn-dark ml-2">{data.noText}</label>
 		{:else}
 			<h3 class="text-lg font-bold">Insufficient funds</h3>
 			<span>

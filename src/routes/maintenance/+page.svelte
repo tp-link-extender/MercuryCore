@@ -13,7 +13,7 @@
 	description="Mercury: Endless possibilities. New features. Same nostalgia."
 	ogImage="/mercury.gif" />
 
-<canvas id="gradient-canvas" class="w-100 h-100 fixed" />
+<canvas id="gradient-canvas" class="w-full h-full fixed" />
 
 <div id="info" class="ctnr flex flex-col justify-center items-center relative">
 	<div id="moon" class="ctnr absolute">
@@ -26,7 +26,7 @@
 		</Canvas>
 	</div>
 	<h1 id="title" class="font-black text-white opacity-75">Mercury 2</h1>
-	<p class="fs-4 text-white opacity-75 text-center">
+	<p class="text-base text-white opacity-75 text-center">
 		is currently undergoing maintenance. Check back later!
 	</p>
 	<a

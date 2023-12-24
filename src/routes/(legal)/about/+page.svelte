@@ -37,7 +37,7 @@
 
 <svelte:window bind:scrollY />
 
-<div id="cubes" class="absolute h-100 w-100">
+<div id="cubes" class="absolute h-full w-full">
 	<Canvas>
 		<Cubes
 			{columns}
@@ -57,11 +57,11 @@
 			class="ctnr pointer-events-none flex flex-col justify-center
 			items-center relative">
 			<h1 class="title font-black">Mercury 2</h1>
-			<p class="fs-4 light-text text-center">
+			<p class="text-base light-text text-center">
 				Endless possibilities. New features. Same nostalgia.
 			</p>
 			<h2
-				class="p-2 py-1 rounded-3 font-bold fs-4
+				class="p-2 py-1 rounded-3 font-bold text-base
 				bg-secondary text-light opacity-75">
 				Closed Beta
 			</h2>
@@ -69,7 +69,7 @@
 	{:else}
 		<div
 			id="cubesMoved"
-			class="pointer-events-none absolute top-50 start-50 text-center w-100">
+			class="pointer-events-none absolute top-50 start-50 text-center w-full">
 			{#if completed}
 				<h1
 					in:fade
@@ -131,9 +131,9 @@
 <Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart>
-			<div class="w-100">
-				<h1 class="font-black w-100">Endless possibilities</h1>
-				<h3 class=" light-text w-100">
+			<div class="w-full">
+				<h1 class="font-black w-full">Endless possibilities</h1>
+				<h3 class=" light-text w-full">
 					On Mercury 2, you can create games for others to play, or
 					shirts and pants for people to buy and wear. You can
 					customise your character to your heart's content with a vast
@@ -145,16 +145,16 @@
 	<ParallaxLayer offset={0} rate={-2}>
 		<Pagepart right>
 			<img
-				class="w-100"
+				class="w-full"
 				src="/about_assets/devices.webp"
 				alt="Devices playing Mercury" />
 		</Pagepart>
 	</ParallaxLayer>
 	<ParallaxLayer offset={1} rate={2}>
 		<Pagepart fullwidth>
-			<div class="w-100">
-				<h1 class="font-black w-100">New features</h1>
-				<h3 class="w-100">
+			<div class="w-full">
+				<h1 class="font-black w-full">New features</h1>
+				<h3 class="w-full">
 					Mercury 2 has an even better website experience - easy to
 					use and even more feature-packed than the previous website.
 				</h3>
@@ -166,9 +166,9 @@
 <Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
-			<div class="w-100">
-				<h1 class="font-black w-100">Same nostalgia.</h1>
-				<h3 class="w-100">
+			<div class="w-full">
+				<h1 class="font-black w-full">Same nostalgia.</h1>
+				<h3 class="w-full">
 					We ensure the clients are as vanilla as possible so that you
 					remember the client as it was back then.
 				</h3>
@@ -177,11 +177,11 @@
 	</ParallaxLayer>
 	<ParallaxLayer offset={1} rate={0}>
 		<Pagepart fullwidth>
-			<div class="w-100">
-				<h1 class="font-black w-100">
+			<div class="w-full">
+				<h1 class="font-black w-full">
 					Professional developers and community outreach.
 				</h1>
-				<h3 class="w-100">
+				<h3 class="w-full">
 					Mercury 2 developers deliver consistent updates so your
 					experience is always great.
 					<br />
@@ -202,9 +202,9 @@
 <Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
-			<div class="w-100">
-				<h1 class="font-black w-100">Why Mercury 2?</h1>
-				<h3 class="w-100">
+			<div class="w-full">
+				<h1 class="font-black w-full">Why Mercury 2?</h1>
+				<h3 class="w-full">
 					Mercury 2 provides a simple yet elegant website, with an
 					unique client and a forum, so you can communicate with your
 					friends

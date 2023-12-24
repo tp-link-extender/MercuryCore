@@ -10,17 +10,6 @@ let fa: { [k: string]: string }
 
 const i = (a: number | string) => `${a} !important`
 const bsFonts = ["0", "2rem", "1.5rem", "1.3rem", "1rem", "0.8rem", "0.7rem"]
-const bsWeights = {
-	thin: 100,
-	extralight: 200,
-	light: 300,
-	normal: 400,
-	medium: 500,
-	semibold: 600,
-	bold: 700,
-	extrabold: 800,
-	black: 900,
-}
 const bsRounds = {
 	"": "var(--bs-border-radius)",
 	"-0": "0",
@@ -92,16 +81,6 @@ export default defineConfig({
 			}),
 		],
 
-		// w-\d+/auto and h-\d+/auto
-		[
-			/^(w|h)-(\d+|auto)$/,
-			([, a, b]) => ({
-				[a == "w" ? "width" : "height"]: i(
-					b == "auto" ? "auto" : `${b}%`
-				),
-			}),
-		],
-
 		// fs-1-6
 		[
 			/^fs-(\d)$/,
@@ -156,27 +135,27 @@ export default defineConfig({
 		],
 
 		// rounded(-top|-end|-bottom|-start)(a-z0-5-)
-		[
-			/^rounded(-(top|end|bottom|start))?([a-z0-5-]+)?$/,
-			([, a, , v]) => {
-				const o = {}
+		// [
+		// 	/^rounded(-(top|end|bottom|start))?([a-z0-5-]+)?$/,
+		// 	([, a, , v]) => {
+		// 		const o = {}
 
-				if (!v) v = ""
+		// 		if (!v) v = ""
 
-				if (a == "-top" || a == "-start")
-					o["border-top-left-radius"] = i(bsRounds[v])
-				if (a == "-top" || a == "-end")
-					o["border-top-right-radius"] = i(bsRounds[v])
-				if (a == "-bottom" || a == "-start")
-					o["border-bottom-left-radius"] = i(bsRounds[v])
-				if (a == "-end" || a == "-bottom")
-					o["border-bottom-right-radius"] = i(bsRounds[v])
+		// 		if (a == "-top" || a == "-start")
+		// 			o["border-top-left-radius"] = i(bsRounds[v])
+		// 		if (a == "-top" || a == "-end")
+		// 			o["border-top-right-radius"] = i(bsRounds[v])
+		// 		if (a == "-bottom" || a == "-start")
+		// 			o["border-bottom-left-radius"] = i(bsRounds[v])
+		// 		if (a == "-end" || a == "-bottom")
+		// 			o["border-bottom-right-radius"] = i(bsRounds[v])
 
-				if (!a) o["border-radius"] = i(bsRounds[v])
+		// 		if (!a) o["border-radius"] = i(bsRounds[v])
 
-				return o
-			},
-		],
+		// 		return o
+		// 	},
+		// ],
 
 		// z-\d+ and z-n\d+
 		[

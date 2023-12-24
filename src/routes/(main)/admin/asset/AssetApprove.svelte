@@ -23,7 +23,7 @@
 			</div>
 			{asset.name}
 			<span class="flex pb-2">
-				<strong class="pe-2">by</strong>
+				<strong class="pr-2">by</strong>
 				<User
 					user={asset.creator}
 					size="1.5rem"
@@ -58,7 +58,7 @@
 	bind:this={modal} />
 <div class="modal2 light-text">
 	<div class="modal-box flex flex-col p-4 text-center" style="width: 25rem">
-		<h2 class="fs-4">Asset {asset.name}</h2>
+		<h2 class="text-base">Asset {asset.name}</h2>
 		{#if asset.imageAsset}
 			<div class="text-center pb-3">
 				<h3 class="fs-5">Image asset</h3>
@@ -76,8 +76,8 @@
 				use:enhance
 				method="POST"
 				action="/admin/asset?/rerender&id={asset.id}"
-				class="w-100 pt-3">
-				<button class="btn btn-lg btn-primary w-100">Re-render</button>
+				class="w-full pt-3">
+				<button class="btn btn-lg btn-primary w-full">Re-render</button>
 			</form>
 		{/if}
 	</div>
@@ -91,7 +91,7 @@
 	bind:this={modal} />
 <div class="modal2 light-text">
 	<div class="modal-box p-4" style="width: 30rem">
-		<h2 class="fs-4">Purge {asset.name}</h2>
+		<h2 class="text-base">Purge {asset.name}</h2>
 
 		<p>Are you sure you want to purge this asset?</p>
 		<p>
@@ -114,7 +114,7 @@
 				Yes, do as I say!
 			</button>
 		</form>
-		<label for="purge{asset.id}" class="btn btn-dark ms-2">
+		<label for="purge{asset.id}" class="btn btn-dark ml-2">
 			Misinput MISINPUT
 		</label>
 	</div>

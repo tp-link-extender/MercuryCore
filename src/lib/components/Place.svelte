@@ -24,16 +24,16 @@
 		<img
 			src="/place/{place.id}/{place.name}/icon"
 			alt={place.name}
-			class="w-100 h-100" />
+			class="w-full h-full" />
 	</div>
 	<p class="mb-0 pb-1">
 		{place.name}
 	</p>
-	<span class="float-start ps-1 pt-1">
+	<span class="float-start pl-1 pt-1">
 		<fa fa-thumbs-up class="opacity-75" />
 		{isNaN(ratio) ? "--" : ratio}%
 	</span>
-	<span class="float-right pe-1 pt-1">
+	<span class="float-right pr-1 pt-1">
 		<fa fa-user class="opacity-75" />
 		{place.playerCount}
 	</span>

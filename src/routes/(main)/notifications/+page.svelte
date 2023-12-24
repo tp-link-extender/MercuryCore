@@ -30,7 +30,7 @@
 						user={notification.sender}
 						size="3rem"
 						bg="background" />
-					<h2 class="fs-4 pt-1">
+					<h2 class="text-base pt-1">
 						{notificationNotes[notification.type]}
 					</h2>
 				</span>

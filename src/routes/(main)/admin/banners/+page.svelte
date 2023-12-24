@@ -47,7 +47,7 @@
 		Back to panel
 	</a>
 	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6 pe-0">
+		<div class="col-lg-2 col-md-3 mb-6 pr-0">
 			<TabNav bind:tabData vertical />
 		</div>
 		<div class="col-lg-10 col-md-9">
@@ -134,7 +134,7 @@
 			</Tab>
 
 			<Tab {tabData}>
-				<table class="w-100 light-text">
+				<table class="w-full light-text">
 					<thead>
 						<tr>
 							<th scope="col">Options</th>
@@ -155,7 +155,7 @@
 										action="?/delete&id={banner.id}">
 										<button
 											class="btn btn-sm no-underline text-danger">
-											<fa fa-trash class="pe-1" />
+											<fa fa-trash class="pr-1" />
 											Delete Banner
 										</button>
 									</form>
@@ -242,7 +242,7 @@
 {#if $modal}
 	<Modal {modal}>
 		<div class="flex items-start">
-			<h1 class="fs-4 pe-4">Banner #{bannerData.id}</h1>
+			<h1 class="text-base pr-4">Banner #{bannerData.id}</h1>
 			<button
 				type="button"
 				class="btn p-0 px-2"

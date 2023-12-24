@@ -18,11 +18,11 @@
 
 	<h1 class="pb-8">
 		{data.name} - Forum
-		<span class="ps-6">
+		<span class="pl-6">
 			<a
 				href="/forum/create?category={data.name}"
 				class="btn btn-primary">
-				<fa fa-file class="pe-2" />
+				<fa fa-file class="pr-2" />
 				Create post
 			</a>
 		</span>
@@ -37,17 +37,17 @@
 </div>
 
 {#if $page.state.openPost}
-	<div class="modal-static fixed w-100 h-100 z-10 overflow-y-auto py-20">
+	<div class="modal-static fixed w-full h-full z-10 overflow-y-auto py-20">
 		<div
 			transition:fade={{ duration: 200 }}
 			role="button"
 			tabindex="0"
 			on:click={() => history.back()}
 			on:keypress={() => history.back()}
-			class="modal-backdrop vh-100 w-100" />
+			class="modal-backdrop h-screen w-full" />
 		<div
 			transition:fade={{ duration: 100 }}
-			class="modal-box bg-background h-100 py-10">
+			class="modal-box bg-background h-full py-10">
 			<PostPage data={$page.state.openPost} asComponent />
 		</div>
 	</div>

@@ -31,7 +31,7 @@
 					href="/user/{user?.number}"
 					class="no-underline light-text flex">
 					<User {user} size="6rem" bg="accent" image />
-					<span class="my-auto ms-6">
+					<span class="my-auto ml-6">
 						{data.stuff.greet}
 					</span>
 				</a>
@@ -123,7 +123,7 @@
 				<h2 class="light-text">Random fact</h2>
 				<div
 					id="fact"
-					class="card bg-darker card-body light-text fs-4 pb-6">
+					class="card bg-darker card-body light-text text-base pb-6">
 					{data.stuff.fact}
 				</div>
 			</div>

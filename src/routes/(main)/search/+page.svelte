@@ -29,11 +29,11 @@
 					class="px-2 pb-2 text-center light-text no-underline"
 					href="/user/{user.number}">
 					<div class="relative pb-2">
-						<div class="image-background bg-a rounded-circle">
+						<div class="image-background bg-a rounded-full">
 							<img
 								src="/api/avatar/{user.username}"
 								alt={user.username}
-								class="h-100 rounded-circle rounded-top-0" />
+								class="h-full rounded-full rounded-top-0" />
 						</div>
 					</div>
 					{user.username}

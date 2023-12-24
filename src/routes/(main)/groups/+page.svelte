@@ -31,9 +31,9 @@
 	<div class="row mb-12">
 		<h1 class="col-6">
 			Groups
-			<a href="/groups/create" class="btn btn-primary ms-6">Create</a>
+			<a href="/groups/create" class="btn btn-primary ml-6">Create</a>
 		</h1>
-		<div class="col-4 ms-6">
+		<div class="col-4 ml-6">
 			<form
 				use:enhance
 				method="POST"

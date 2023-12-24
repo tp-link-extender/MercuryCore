@@ -20,7 +20,7 @@
 </script>
 
 <ul
-	class="nav {vertical ? 'flex-col gap-2 pe-6' : 'pb-6'}"
+	class="nav {vertical ? 'flex-col gap-2 pr-6' : 'pb-6'}"
 	class:justified={justify}
 	role="tablist">
 	{#each tabData.tabs as tab, pos}

@@ -11,7 +11,7 @@
 
 <form use:enhance method="POST" class="inline" action="?/{text}&id={id}">
 	{#if clicked}
-		<small class="ps-2 light-text inline-flex items-center">
+		<small class="pl-2 light-text inline-flex items-center">
 			{text}?
 			<button class="btn p-0 px-1 {colour}">yes</button>
 			/
@@ -22,16 +22,16 @@
 			</button>
 		</small>
 	{:else}
-		<button on:click={() => (clicked = true)} class="btn p-0 ps-2 {colour}">
+		<button on:click={() => (clicked = true)} class="btn p-0 pl-2 {colour}">
 			<small>
 				{#if reverse}
-					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pe-2" />
+					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pr-2" />
 				{/if}
 				<span class="{text} {colour}">
 					{text.charAt(0).toUpperCase() + text.slice(1)}
 				</span>
 				{#if !reverse}
-					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} ps-2" />
+					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pl-2" />
 				{/if}
 			</small>
 		</button>

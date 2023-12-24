@@ -28,7 +28,7 @@
 				</div>
 				{#if asset.wearing}
 					<div
-						class="top-0 end-0 pe-1 absolute
+						class="top-0 end-0 pr-1 absolute
 						translate-middle">
 						<small
 							class="text-light p-2 py-1 rounded-3
@@ -37,7 +37,7 @@
 						</small>
 					</div>
 				{/if}
-				<span class="fs-4">
+				<span class="text-base">
 					{asset.name}
 				</span>
 			</div>

@@ -18,7 +18,7 @@
 		</div>
 		<div class="col-lg-10 col-md-9">
 			<Tab {tabData}>
-				<table class="w-100 m-auto">
+				<table class="w-full m-auto">
 					{#each data.transactions as transaction, num}
 						{@const value = transaction.amountSent > 0}
 						<tr
@@ -38,7 +38,7 @@
 							</td>
 
 							<td class="flex justify-center gap-3">
-								<div class="fs-4 pt-2">
+								<div class="text-base pt-2">
 									<span class="text-success">
 										<fa fa-gem />
 										{transaction.amountSent}
@@ -58,8 +58,8 @@
 									</small>
 								</div>
 								{#if value}
-									<div class="fs-4 pt-2">
-										<fa fa-arrow-right class="me-1" />
+									<div class="text-base pt-2">
+										<fa fa-arrow-right class="mr-1" />
 										<span class="text-success">
 											<fa fa-gem />
 											{Math.round(
