@@ -4,17 +4,17 @@
 
 <Head title={data.name} />
 
-<div class="container">
+<div class="ctnr">
 	<div class="px-6">
 		<h1>{data.name}</h1>
-		<p class="d-flex">
+		<p class="flex">
 			<b class="pe-2">by</b>
 			<User user={data.owner} full thin bg="accent" size="1.5rem" />
 		</p>
-		<div class="d-flex pt-6 justify-content-between">
+		<div class="flex pt-6 justify-between">
 			<a
 				href="/groups/{data.name}/members"
-				class="light-text text-center text-decoration-none ps-6">
+				class="light-text text-center no-underline ps-6">
 				Members
 				<h3 class="light-text">
 					{data.memberCount}
@@ -24,7 +24,7 @@
 				use:enhance
 				method="POST"
 				action="?/{data.in ? 'leave' : 'join'}"
-				class="align-self-center">
+				class="self-center">
 				<button class="btn {data.in ? 'btn-danger' : 'btn-success'}">
 					{#if data.in}
 						Leave
@@ -55,7 +55,7 @@
 					<div class="p-2 col-md-6 col-sm-12">
 						<div class="card h-100">
 							<div class="card-body pb-0">
-								<div id="user" class="d-flex mb-2">
+								<div id="user" class="flex mb-2">
 									<span class="font-bold ms-4 light-text">
 										{data.name}
 									</span>
@@ -77,6 +77,6 @@
 </div>
 
 <style lang="stylus">
-	.container
+	.ctnr
 		max-width 60rem
 </style>

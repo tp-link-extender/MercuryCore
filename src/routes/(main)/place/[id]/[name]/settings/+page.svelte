@@ -22,7 +22,7 @@
 	Pretty chuffed with this way of organising forms, makes it way easier
 	to have multiple forms on a page without them messing eachother up.
  -->
-<div class="container light-text">
+<div class="ctnr light-text">
 	<h1 class="py-6">Configure {data.name}</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>

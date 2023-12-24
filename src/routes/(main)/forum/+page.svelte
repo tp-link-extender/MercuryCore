@@ -4,7 +4,7 @@
 
 <Head title="Forum" />
 
-<div class="container light-text flex flex-column gap-4">
+<div class="ctnr light-text flex flex-col gap-4">
 	<h1 class="pb-6">Forum</h1>
 	{#each data.categories as category, num}
 		<div
@@ -12,7 +12,7 @@
 			class="category card bg-darker p-4">
 			<div class="row">
 				<a
-					class="col-lg-9 col-md-7 row light-text text-decoration-none"
+					class="col-lg-9 col-md-7 row light-text no-underline"
 					href="/forum/{category.name.toLowerCase()}">
 					<div class="col-9">
 						<h2>
@@ -31,13 +31,13 @@
 						<a
 							href="/forum/{category.name.toLowerCase()}/{category
 								.latestPost.id}"
-							class="light-text text-decoration-none">
+							class="light-text no-underline">
 							Last post:
 							<h3>
 								{category.latestPost.title}
 							</h3>
 						</a>
-						<span class="d-flex gap-2">
+						<span class="flex gap-2">
 							by
 							<User
 								user={category.latestPost.author}
@@ -55,7 +55,7 @@
 <style lang="stylus">
 	containerMinWidth(70rem)
 
-	.container
+	.ctnr
 		flex-direction column !important
 
 	.category

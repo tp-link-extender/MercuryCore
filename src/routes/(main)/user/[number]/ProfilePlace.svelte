@@ -13,7 +13,7 @@
 	</div>
 	<div class="d-collapse-content">
 		<a
-			class="card bg-darker shadow-none placecard text-center light-text text-decoration-none m-0 w-100"
+			class="card bg-darker shadow-none placecard text-center light-text no-underline m-0 w-100"
 			href="/place/{place.id}/{place.name}">
 			<div class="row">
 				<div class="col col-6">
@@ -35,7 +35,7 @@
 								{isNaN(ratio) ? "--" : ratio}%
 							</span>
 						</div>
-						<div class="float-end">
+						<div class="float-right">
 							<span>
 								<fa fa-user class="opacity-75" />
 								{place.playerCount}

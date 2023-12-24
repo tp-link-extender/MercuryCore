@@ -12,12 +12,12 @@
 
 <a
 	in:fade={{ num, total }}
-	class="card text-center light-text bg-darker text-decoration-none rounded-4"
+	class="card text-center light-text bg-darker no-underline rounded-4"
 	href="/groups/{group.name}">
-	<div class="p-4 d-flex flex-column h-100">
+	<div class="p-4 flex flex-col h-100">
 		{group.name}
-		<div class="mt-auto mb-1 float-end">
-			<span class="float-end">
+		<div class="mt-auto mb-1 float-right">
+			<span class="float-right">
 				<fa fa-user class="opacity-75" />
 				{group.memberCount}
 			</span>

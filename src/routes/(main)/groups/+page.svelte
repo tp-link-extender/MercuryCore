@@ -27,7 +27,7 @@
 
 <Head title="Groups" />
 
-<div class="container">
+<div class="ctnr">
 	<div class="row mb-12">
 		<h1 class="col-6">
 			Groups
@@ -59,7 +59,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="container d-grid m-0">
+		<div class="ctnr grid m-0">
 			{#each query ? searchedData : data.groups || [] as group, num (group.name)}
 				<Group {group} {num} total={data.groups.length} />
 			{/each}
@@ -77,7 +77,7 @@
 		background-color var(--accent)
 		border-color var(--accent2)
 
-	.d-grid
+	.grid
 		font-size 0.9rem
 
 		grid-template-columns repeat(auto-fit, minmax(11rem, 1fr))

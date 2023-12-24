@@ -3,11 +3,11 @@
 </script>
 
 <div class="card p-3">
-	<div class="statusheader d-flex pb-2 user justify-content-between">
-		<div class="d-flex align-items-center">
+	<div class="statusheader flex pb-2 user justify-between">
+		<div class="flex items-center">
 			<User user={status.authorUser} size="2rem" full bg="darker" />
 		</div>
-		<span class="report align-self-center">
+		<span class="report self-center">
 			<small>
 				<em>{new Date(status.posted).toLocaleString()}</em>
 			</small>

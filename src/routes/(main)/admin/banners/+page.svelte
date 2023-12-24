@@ -40,9 +40,9 @@
 
 <Head title="Banners - Admin" />
 
-<div class="container py-6">
+<div class="ctnr py-6">
 	<h1 class="mb-0">Admin - Banners</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>
@@ -154,7 +154,7 @@
 										method="POST"
 										action="?/delete&id={banner.id}">
 										<button
-											class="btn btn-sm text-decoration-none text-danger">
+											class="btn btn-sm no-underline text-danger">
 											<fa fa-trash class="pe-1" />
 											Delete Banner
 										</button>
@@ -166,7 +166,7 @@
 											? 'hide'
 											: 'show'}&id={banner.id}">
 										<button
-											class="btn btn-sm text-decoration-none text-{banner.active
+											class="btn btn-sm no-underline text-{banner.active
 												? 'warning'
 												: 'success'}">
 											<i
@@ -193,7 +193,7 @@
 										disabled
 										class="valid" />
 								</td>
-								<td class="d-flex align-items-center">
+								<td class="flex items-center">
 									<form
 										use:enhance
 										bind:this={textLightForms[banner.id]}
@@ -241,7 +241,7 @@
 
 {#if $modal}
 	<Modal {modal}>
-		<div class="d-flex align-items-start">
+		<div class="flex items-start">
 			<h1 class="fs-4 pe-4">Banner #{bannerData.id}</h1>
 			<button
 				type="button"
@@ -271,7 +271,7 @@
 				{$errors.bannerBody || ""}
 			</p>
 			{#if $form.bannerBody?.trim() && bannerData.body.trim() != $form.bannerBody?.trim()}
-				<div transition:fade class="d-grid gap-2">
+				<div transition:fade class="grid gap-2">
 					<button
 						on:click={() => modal.set(false)}
 						class="btn btn-success"

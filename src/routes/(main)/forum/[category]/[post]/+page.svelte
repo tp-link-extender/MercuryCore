@@ -27,7 +27,7 @@
 
 <Head title={data.title} />
 
-<div class="container light-text">
+<div class="ctnr light-text">
 	{#if !asComponent}
 		<!--
 			Breadcrumbs can give confusing behaviour if linking
@@ -71,7 +71,7 @@
 			class="sidebar bg-a me-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
-			<div class="row mb-2 d-flex">
+			<div class="row mb-2 flex">
 				<div>
 					<button
 						name="action"
@@ -107,10 +107,10 @@
 				</div>
 			</div>
 		</form>
-		<div class="p-4 text-decoration-none light-text w-100">
-			<span class="d-flex">
+		<div class="p-4 no-underline light-text w-100">
+			<span class="flex">
 				<User user={data.author} full />
-				<em class="ps-4 align-self-center">
+				<em class="ps-4 self-center">
 					{new Date(data.posted).toLocaleString()}
 				</em>
 				<span class="ms-auto">
@@ -130,7 +130,7 @@
 
 	<form use:enhance class="py-2 mb-6 p-1 row" method="POST" action="?/reply">
 		<label for="content" class="light-text py-2">Post a Reply</label>
-		<fieldset class="col-lg-7 d-flex">
+		<fieldset class="col-lg-7 flex">
 			<textarea
 				bind:value={$form.content}
 				{...$constraints.content}

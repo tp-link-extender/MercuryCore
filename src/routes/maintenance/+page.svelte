@@ -13,12 +13,10 @@
 	description="Mercury: Endless possibilities. New features. Same nostalgia."
 	ogImage="/mercury.gif" />
 
-<canvas id="gradient-canvas" class="w-100 h-100 position-fixed" />
+<canvas id="gradient-canvas" class="w-100 h-100 fixed" />
 
-<div
-	id="info"
-	class="container d-flex flex-column justify-content-center align-items-center position-relative">
-	<div id="moon" class="container position-absolute">
+<div id="info" class="ctnr flex flex-col justify-center items-center relative">
+	<div id="moon" class="ctnr absolute">
 		<Canvas>
 			<Moon
 				item={{
@@ -33,7 +31,7 @@
 	</p>
 	<a
 		href="https://status.banland.xyz"
-		class="text-decoration-none pt-4 fs-5 font-bold accent-text">
+		class="no-underline pt-4 fs-5 font-bold accent-text">
 		Status <fa fa-chevron-right />
 	</a>
 </div>

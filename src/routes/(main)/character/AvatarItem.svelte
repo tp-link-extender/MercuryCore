@@ -14,7 +14,7 @@
 <form
 	use:enhance
 	method="POST"
-	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 text-decoration-none p-0"
+	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 no-underline p-0"
 	action="/character?/{asset.wearing
 		? 'un'
 		: ''}equip&tab={currentTab}&id={asset.id}">
@@ -28,7 +28,7 @@
 				</div>
 				{#if asset.wearing}
 					<div
-						class="top-0 end-0 pe-1 position-absolute
+						class="top-0 end-0 pe-1 absolute
 						translate-middle">
 						<small
 							class="text-light p-2 py-1 rounded-3

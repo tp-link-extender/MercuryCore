@@ -48,15 +48,15 @@
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 </script>
 
-<nav class="py-0 justify-content-start">
-	<div id="nav1" class="pt-1 d-flex w-100">
-		<a class="brand light-text fs-3 text-decoration-none my-auto" href="/">
+<nav class="py-0 justify-start">
+	<div id="nav1" class="pt-1 flex w-100">
+		<a class="brand light-text fs-3 no-underline my-auto" href="/">
 			<img src="/icon.svg" alt="Mercury logo" />
 			<span>Mercury</span>
 		</a>
 		{#if user}
 			<div id="topnav" class="ps-6 pe-2">
-				<div class="d-flex flex-row gap-4 ps-3" id="topnavitems">
+				<div class="flex flex-row gap-4 ps-3" id="topnavitems">
 					{#each nav1 as [title, href]}
 						<a class="btn px-1 light-text border-0" {href}>
 							{title}
@@ -141,7 +141,7 @@
 							<div
 								transition:fade={{ duration: 150 }}
 								id="results"
-								class="position-absolute d-flex flex-column bg-darker p-2 mt-12 rounded-3">
+								class="absolute flex flex-col bg-darker p-2 mt-12 rounded-3">
 								{#each searchCategories as [name, category], num}
 									<a
 										bind:this={searchResults[num]}
@@ -157,7 +157,7 @@
 					</div>
 				</form>
 			</div>
-			<div class="d-flex align-items-center gap-4">
+			<div class="flex items-center gap-4">
 				<a
 					id="notificationstop"
 					href="/notifications"
@@ -171,8 +171,8 @@
 					href="/transactions"
 					role="button"
 					aria-label="Transactions"
-					class="text-success d-flex align-items-center
-					text-decoration-none">
+					class="text-success flex items-center
+					no-underline">
 					<fa fa-gem class="pe-2 text-success" />
 					<span class="fs-4 text-success">
 						{user.currency}
@@ -210,8 +210,7 @@
 				</div>
 			</div>
 		{:else}
-			<div
-				class="d-flex w-100 gap-4 justify-content-end align-items-center">
+			<div class="flex w-100 gap-4 justify-end items-center">
 				<a href="/login" class="btn light-text">Log in</a>
 				<a href="/register" class="btn btn-success">Register</a>
 			</div>
@@ -233,10 +232,10 @@
 {/if}
 
 {#if user}
-	<nav id="bottomnav" class="position-fixed bottom-0 bg-darker w-100">
-		<div class="d-flex justify-content-evenly mx-auto">
+	<nav id="bottomnav" class="fixed bottom-0 bg-darker w-100">
+		<div class="flex justify-evenly mx-auto">
 			{#each nav1 as [title, href, icon]}
-				<a {href} class="btn light-text border-0 d-flex flex-column">
+				<a {href} class="btn light-text border-0 flex flex-col">
 					<fa class="{icon} pb-1" />
 					{title}
 				</a>
@@ -244,7 +243,7 @@
 			<a
 				href="/notifications"
 				id="notificationsbottom"
-				class="btn light-text border-0 flex-column">
+				class="btn light-text border-0 flex-col">
 				<fa fa-bell class="pb-1" />
 				Notifications
 			</a>

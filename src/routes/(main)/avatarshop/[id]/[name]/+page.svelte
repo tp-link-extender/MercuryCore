@@ -39,7 +39,7 @@
 
 <Head title={data.name} />
 
-<div class="container">
+<div class="ctnr">
 	<div class="row">
 		<div class="col pe-4 pb-4">
 			<img
@@ -52,7 +52,7 @@
 				<div class="col">
 					<h1 class="mb-0">{data.name}</h1>
 				</div>
-				<div class="col d-flex justify-content-end">
+				<div class="col flex justify-end">
 					<li class="dropdown dropdown-hover dropdown-end ps-2 pt-2">
 						<fa fa-ellipsis />
 						<div class="dropdown-content">
@@ -87,7 +87,7 @@
 					</li>
 				</div>
 			</div>
-			<div class="d-flex">
+			<div class="flex">
 				<strong class="pe-2">by:</strong>
 
 				{#if data.creator}
@@ -119,7 +119,7 @@
 						{types[data.type]}
 					</p>
 				</div>
-				<div class="col d-flex flex-row-reverse">
+				<div class="col flex flex-row-reverse">
 					<div class="card p-4">
 						<p class="light-text text-center mb-0 pb-1">
 							Price: <span class="text-success">
@@ -151,7 +151,7 @@
 	<Tab {tabData}>
 		<form use:enhance2 class="py-2" method="POST" action="?/reply">
 			<label for="content" class="light-text py-2">Post a Comment</label>
-			<fieldset class="col-lg-7 d-flex">
+			<fieldset class="col-lg-7 flex">
 				<textarea
 					bind:value={$form.content}
 					{...$constraints.content}
@@ -207,7 +207,7 @@
 				?
 			</p>
 
-			<form method="POST" action="?/buy" class="d-inline">
+			<form method="POST" action="?/buy" class="inline">
 				<button class="btn btn-success">
 					{data.price > 0 ? "Buy Now" : "Get"}
 				</button>

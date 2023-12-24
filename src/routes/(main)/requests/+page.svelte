@@ -6,20 +6,20 @@
 
 <h1 class="text-center">Friend requests ({data.users.length})</h1>
 
-<div class="container pt-8 d-grid">
+<div class="ctnr pt-8 grid">
 	{#each data.users as user, num}
 		<div
 			in:fade|global={{ num, total: data.users.length, max: 12 }}
 			class="card bg-darker w-100">
-			<div class="d-flex p-6">
+			<div class="flex p-6">
 				<User {user} size="6rem" bg="accent" />
 				<a
-					class="ps-12 fs-3 text-light text-decoration-none"
+					class="ps-12 fs-3 text-light no-underline"
 					href="/user/{user.number}">
 					{user.username}
 				</a>
 			</div>
-			<div class="d-flex gap-2 px-2">
+			<div class="flex gap-2 px-2">
 				<form
 					class="w-100"
 					method="POST"
@@ -40,7 +40,7 @@
 </div>
 
 <style lang="stylus">
-	.container
+	.ctnr
 		max-width 100%
 		font-size 0.9rem
 

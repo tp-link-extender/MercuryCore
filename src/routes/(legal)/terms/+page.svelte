@@ -2,7 +2,7 @@
 
 <h1 class="text-center">Terms of Service</h1>
 
-<div class="container mt-12">
+<div class="ctnr pt-12">
 	<div class="light-text">
 		<p>
 			This Terms of Service Agreement (“agreement”) is an agreement made

@@ -10,9 +10,9 @@
 
 <a
 	in:fade|global={{ num, total, max: 12 }}
-	class="card light-text h-100 w-100 d-flex flex-row bg-darker"
+	class="card light-text h-100 w-100 flex flex-row bg-darker"
 	href="/user/{user.number}">
-	<div class="p-6 d-flex">
+	<div class="p-6 flex">
 		<User {user} image size="6rem" bg="accent" />
 	</div>
 	<p class="fs-4 p-6">

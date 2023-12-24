@@ -9,9 +9,9 @@
 
 <Head title="Render Queue - Admin" />
 
-<div class="container py-6">
+<div class="ctnr py-6">
 	<h1>Admin - Render Queue</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>

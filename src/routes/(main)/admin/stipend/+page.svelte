@@ -26,9 +26,9 @@
 
 <Head title="Daily Stipend - Admin" />
 
-<div class="container py-6">
+<div class="ctnr py-6">
 	<h1 class="mb-0">Admin - Daily Stipend</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>
@@ -46,7 +46,7 @@
 								class="col-md-3 light-text">
 								Daily stipend
 							</label>
-							<div class="col d-flex align-items-center">
+							<div class="col flex items-center">
 								<input
 									bind:value={$form.dailyStipend}
 									{...$constraints.dailyStipend}
@@ -66,7 +66,7 @@
 								class="col-md-3 light-text">
 								Time between stipend
 							</label>
-							<div class="col d-flex align-items-center">
+							<div class="col flex items-center">
 								<input
 									bind:value={$form.stipendTime}
 									{...$constraints.stipendTime}

@@ -9,9 +9,9 @@
 	let clicked = false
 </script>
 
-<form use:enhance method="POST" class="d-inline" action="?/{text}&id={id}">
+<form use:enhance method="POST" class="inline" action="?/{text}&id={id}">
 	{#if clicked}
-		<small class="ps-2 light-text d-inline-flex align-items-center">
+		<small class="ps-2 light-text inline-flex items-center">
 			{text}?
 			<button class="btn p-0 px-1 {colour}">yes</button>
 			/

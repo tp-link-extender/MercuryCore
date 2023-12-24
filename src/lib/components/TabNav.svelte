@@ -20,7 +20,7 @@
 </script>
 
 <ul
-	class="nav {vertical ? 'flex-column gap-2 pe-6' : 'pb-6'}"
+	class="nav {vertical ? 'flex-col gap-2 pe-6' : 'pb-6'}"
 	class:justified={justify}
 	role="tablist">
 	{#each tabData.tabs as tab, pos}
@@ -32,7 +32,7 @@
 			style="border-bottom-color: {$colour}"
 			data-sveltekit-preload-data="off">
 			<a
-				class="d-block tab text-decoration-none light-text {vertical
+				class="block tab no-underline light-text {vertical
 					? 'p-4 py-2'
 					: 'p-3 py-1'} rounded-2 {tabData.currentTab == tab
 					? 'disabled active'

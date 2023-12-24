@@ -23,13 +23,13 @@
 
 <Head title="Home" />
 
-<div class="container">
+<div class="ctnr">
 	<div class="row">
 		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
-			<h1 class="top d-flex px-2 pb-6">
+			<h1 class="top flex px-2 pb-6">
 				<a
 					href="/user/{user?.number}"
-					class="text-decoration-none light-text d-flex">
+					class="no-underline light-text flex">
 					<User {user} size="6rem" bg="accent" image />
 					<span class="my-auto ms-6">
 						{data.stuff.greet}
@@ -65,7 +65,7 @@
 					class:text-danger={$page.status >= 400 || $errors.status}>
 					{$errors.status || $message || ""}
 				</p>
-				<div class="d-flex flex-column gap-3">
+				<div class="flex flex-col gap-3">
 					{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
 						<div
 							in:fade|global={{
@@ -83,7 +83,7 @@
 			<div class="col2 pt-28">
 				{#if data.friends.length > 0}
 					<h2 class="light-text">Friends</h2>
-					<div class="home-row d-flex">
+					<div class="home-row flex">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
 							<span
@@ -104,8 +104,8 @@
 			</div>
 			<div class="pt-12">
 				<h2 class="light-text">Resume playing</h2>
-				<div class="home-row d-flex">
-					<div class="home-row d-flex">
+				<div class="home-row flex">
+					<div class="home-row flex">
 						{#each data.places || [] as place, num}
 							<div class="px-2 mb-2">
 								<div class="place">

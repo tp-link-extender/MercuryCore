@@ -23,7 +23,7 @@
 
 <h1 class="text-center">Create a post in {data.categoryName}</h1>
 
-<div class="container mt-12 light-text">
+<div class="ctnr pt-12 light-text">
 	<form use:enhance method="POST">
 		<fieldset>
 			<div class="row mb-4">

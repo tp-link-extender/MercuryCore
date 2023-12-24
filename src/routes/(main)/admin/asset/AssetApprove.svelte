@@ -13,7 +13,7 @@
 	in:fade|global={{ num, total }}
 	for="modal{asset.id}"
 	class="assetcard col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6
-	text-decoration-none px-2">
+	no-underline px-2">
 	<div class="card bg-a3">
 		<div class="card-body bg-a p-4 pb-3 rounded-1 light-text">
 			<div class="text-center pb-4">
@@ -22,7 +22,7 @@
 					alt={asset.name} />
 			</div>
 			{asset.name}
-			<span class="d-flex pb-2">
+			<span class="flex pb-2">
 				<strong class="pe-2">by</strong>
 				<User
 					user={asset.creator}
@@ -36,14 +36,14 @@
 					use:enhance
 					method="POST"
 					action="/admin/asset?/approve&id={asset.id}"
-					class="d-inline">
+					class="inline">
 					<button class="btn btn-sm btn-primary mb-1">Approve</button>
 				</form>
 				<form
 					use:enhance
 					method="POST"
 					action="/admin/asset?/deny&id={asset.id}"
-					class="d-inline">
+					class="inline">
 					<button class="btn btn-sm btn-danger mb-1">Deny</button>
 				</form>
 			</div>
@@ -57,9 +57,7 @@
 	class="modal-toggle"
 	bind:this={modal} />
 <div class="modal2 light-text">
-	<div
-		class="modal-box d-flex flex-column p-4 text-center"
-		style="width: 25rem">
+	<div class="modal-box flex flex-col p-4 text-center" style="width: 25rem">
 		<h2 class="fs-4">Asset {asset.name}</h2>
 		{#if asset.imageAsset}
 			<div class="text-center pb-3">
@@ -108,7 +106,7 @@
 			use:enhance
 			method="POST"
 			action="/admin/asset?/purge&id={asset.id}"
-			class="d-inline">
+			class="inline">
 			<button
 				class="btn btn-danger"
 				style="background: #930010;

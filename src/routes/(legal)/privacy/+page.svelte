@@ -2,7 +2,7 @@
 
 <h1 class="text-center">Privacy Policy</h1>
 
-<div class="container pt-6 light-text">
+<div class="ctnr pt-6 light-text">
 	<h2 class="text-center pt-2">Security</h2>
 	<p>
 		Passwords are salted and hashed securely using SCrypt.
