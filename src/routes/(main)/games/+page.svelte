@@ -101,17 +101,17 @@
 			</form>
 		</div>
 	</div>
-	<div class="row">
-		<div class="ctnr grid m-0">
-			{#each query ? searchedData : data.places || [] as place, num (place.id)}
+	<div class="ctnr flex flex-wrap gap-4 justify-center">
+		{#each query ? searchedData : data.places || [] as place, num (place.id)}
+			{#each { length: 50 } as _}
 				<PlaceCard {place} {num} total={data.places.length} />
 			{/each}
-			{#if query && searchedData.length == 0}
-				<h2 class="fs-5 pt-12">
-					No games found with search term {query}
-				</h2>
-			{/if}
-		</div>
+		{/each}
+		{#if query && searchedData.length == 0}
+			<h2 class="fs-5 pt-12">
+				No games found with search term {query}
+			</h2>
+		{/if}
 	</div>
 </div>
 
@@ -124,10 +124,10 @@
 			tabindex="0"
 			on:click={() => history.back()}
 			on:keypress={() => history.back()}
-			class="modal-backdrop h-screen w-full" />
+			class="modal-backdrop" />
 		<div
 			transition:fade={{ duration: 100 }}
-			class="modal-box bg-background h-full py-10">
+			class="modal-box bg-background py-10">
 			<PlacePage data={$page.state.openPlace} />
 		</div>
 	</div>
@@ -138,14 +138,6 @@
 	select
 		background-color var(--accent)
 		border-color var(--accent2)
-
-	.grid
-		font-size 0.9rem
-
-		grid-template-columns repeat(auto-fit, minmax(19rem, 1fr))
-		column-gap 0.7rem
-		row-gap 0.7rem
-		place-items center
 
 	.modal-box
 		max-height initial !important
