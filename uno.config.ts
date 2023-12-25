@@ -44,32 +44,6 @@ export default defineConfig({
 		],
 
 		// Bootstrap API
-		// border-top bottom start end-0
-		[
-			/^border-(top|bottom|start|end)-0$/,
-			([, a]) => ({
-				[a == "start"
-					? "border-left"
-					: a == "end"
-						? "border-right"
-						: `border-${a}`]: i(0),
-			}),
-		],
-
-		// border-top bottom start end
-		[
-			/^border-(top|bottom|start|end)$/,
-			([, a]) => ({
-				[a == "start"
-					? "border-left"
-					: a == "end"
-						? "border-right"
-						: `border-${a}`]: i(
-					"var(--bs-border-width) var(--bs-border-style) var(--bs-border-color)"
-				),
-			}),
-		],
-
 		// border-{colour}
 		[
 			/^border-(primary|secondary|success|danger|warning|info|light|dark|black|white)$/,
@@ -132,35 +106,6 @@ export default defineConfig({
 					`RGBA(var(--bs-${a}-rgb), var(--bs-bg-opacity))`
 				),
 			}),
-		],
-
-		// rounded(-top|-end|-bottom|-start)(a-z0-5-)
-		// [
-		// 	/^rounded(-(top|end|bottom|start))?([a-z0-5-]+)?$/,
-		// 	([, a, , v]) => {
-		// 		const o = {}
-
-		// 		if (!v) v = ""
-
-		// 		if (a == "-top" || a == "-start")
-		// 			o["border-top-left-radius"] = i(bsRounds[v])
-		// 		if (a == "-top" || a == "-end")
-		// 			o["border-top-right-radius"] = i(bsRounds[v])
-		// 		if (a == "-bottom" || a == "-start")
-		// 			o["border-bottom-left-radius"] = i(bsRounds[v])
-		// 		if (a == "-end" || a == "-bottom")
-		// 			o["border-bottom-right-radius"] = i(bsRounds[v])
-
-		// 		if (!a) o["border-radius"] = i(bsRounds[v])
-
-		// 		return o
-		// 	},
-		// ],
-
-		// z-\d+ and z-n\d+
-		[
-			/^z-(n\d+|\d+)$/,
-			([, a]) => ({ "z-index": i(a[0] == "n" ? -a.slice(1) : a) }),
 		],
 
 		[

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tweened, type Tweened } from "svelte/motion"
+	import { tweened } from "svelte/motion"
 	import { interpolateLab } from "d3-interpolate"
 
 	export let tabData: {
@@ -26,7 +26,7 @@
 	{#each tabData.tabs as tab, pos}
 		<li
 			class="item {vertical && tabData.currentTab == tab
-				? 'activeTab'
+				? 'activetab'
 				: ''} {vertical ? 'rounded-2' : 'p-1'}"
 			class:active={!vertical && tabData.currentTab == tab}
 			style="border-bottom-color: {$colour}"
@@ -66,7 +66,7 @@
 	.active.item
 		border-bottom-width 2px
 		border-bottom-style solid
-	.activeTab.item
+	.activetab.item
 		background var(--accent2)
 
 	.justified .item
@@ -79,10 +79,7 @@
 	.tab
 		transition background-color 0.2s
 	.tab
-		background 0 0
-		border-radius 0
 		border-width 0px 0px 2px !important
-		color var(--light-text)
 		&:hover
 			background #7531ff7f
 </style>

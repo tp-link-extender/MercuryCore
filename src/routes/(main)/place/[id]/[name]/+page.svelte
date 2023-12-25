@@ -81,8 +81,8 @@
 <Head title={data.name} />
 
 <div class="ctnr light-text">
-	<div class="row">
-		<div class="col-md-8 mb-4">
+	<div class="flex flex-wrap">
+		<div class="md:w-2/3 pb-4">
 			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
 					<div
@@ -91,13 +91,14 @@
 						class:active={!i}>
 						<img
 							{src}
-							class="block w-full"
+							class="w-full"
 							alt="Placeholder place thumbnail" />
 						<div
-							class="absolute flex justify-between carouselbuttons">
+							class="absolute flex justify-between top-1/2
+							-translate-y-1/2 left-4 right-4">
 							<a
 								href="#slide{i < 1 ? images.length : i}"
-								class="btn rounded-pill bg-background"
+								class="btn rounded-full bg-background"
 								on:click|preventDefault={scroll}>
 								❮
 							</a>
@@ -105,7 +106,7 @@
 								href="#slide{i == images.length - 1
 									? 1
 									: i + 2}"
-								class="btn rounded-pill bg-background"
+								class="btn rounded-full bg-background"
 								on:click|preventDefault={scroll}>
 								❯
 							</a>
@@ -115,7 +116,7 @@
 			</div>
 		</div>
 
-		<div class="col-md-4">
+		<div class="w-full md:w-1/3 md:ps-4">
 			<div class="card rounded-none mb-6">
 				<div class="card-body">
 					<div class="row">
@@ -475,12 +476,6 @@
 		margin auto
 		display flex
 		flex-direction column
-
-	.carouselbuttons
-		transform translateY(-50%)
-		left 1.25rem
-		right 1.25rem
-		top 50%
 
 	#play img
 		height 2rem
