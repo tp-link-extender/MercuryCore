@@ -4,19 +4,19 @@
 	import Status from "./Status.svelte"
 
 	export let data
-	const { user } = data,
-		{
-			form,
-			errors,
-			message,
-			constraints,
-			enhance,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		})
+	const { user } = data
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
 
 	export const snapshot = { capture, restore }
 </script>
@@ -24,19 +24,19 @@
 <Head title="Home" />
 
 <div class="ctnr">
-	<div class="row">
-		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
-			<h1 class="top flex px-2 pb-6">
+	<div class="flex flex-wrap">
+		<div class="w-full md:w-1/2 pr-2">
+			<h1 class="w-screen flex px-2 pb-6">
 				<a
 					href="/user/{user?.number}"
-					class="no-underline light-text flex">
+					class="no-underline light-text flex items-center">
 					<User {user} size="6rem" bg="accent" image />
-					<span class="my-auto ml-6">
+					<span class="ml-6">
 						{data.stuff.greet}
 					</span>
 				</a>
 			</h1>
-			<div id="feed" class="card p-4 bg-darker">
+			<div id="feed" class="card p-4 bg-darker <md:h-50vh">
 				<p>
 					Post your status - your friends and followers can view how
 					you're doing!
@@ -79,15 +79,14 @@
 			</div>
 		</div>
 
-		<div class="col col-12 col-xxl-6 col-xl-7 col-md-6">
-			<div class="col2 pt-28">
-				{#if data.friends.length > 0}
+		<div class="pt-12 md:pt-28 pl-2 flex gap-12 flex-col w-1/2">
+			{#if data.friends.length > 0}
+				<div>
 					<h2 class="light-text">Friends</h2>
-					<div class="home-row flex">
+					<div class="home-row flex overflow-x-auto gap-4">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
 							<span
-								class="px-2"
 								in:fade|global={{
 									num,
 									total: data.friends.length,
@@ -100,26 +99,19 @@
 							</span>
 						{/each}
 					</div>
-				{/if}
-			</div>
-			<div class="pt-12">
+				</div>
+			{/if}
+			<div>
 				<h2 class="light-text">Resume playing</h2>
-				<div class="home-row flex">
-					<div class="home-row flex">
-						{#each data.places || [] as place, num}
-							<div class="px-2 mb-2">
-								<div class="place">
-									<Place
-										{place}
-										{num}
-										total={data.places.length} />
-								</div>
-							</div>
-						{/each}
-					</div>
+				<div class="home-row flex overflow-x-auto gap-4">
+					{#each data.places || [] as place, num}
+						<div class="min-w-32 w-32">
+							<Place {place} {num} total={data.places.length} />
+						</div>
+					{/each}
 				</div>
 			</div>
-			<div class="pt-12 col-6 col-md-8 col-lg-6 col-xl-4">
+			<div class="w-1/2 cmd:w-2/3 lg:w-1/2 xl:w-2/3">
 				<h2 class="light-text">Random fact</h2>
 				<div
 					id="fact"
@@ -132,14 +124,6 @@
 </div>
 
 <style lang="stylus">
-	+-md()
-		#feed
-			max-height 50vh
-		.col2
-			margin-top 3rem !important
-
-	.top
-		width 100vw
 
 	h1
 		margin auto 2rem
@@ -170,11 +154,4 @@
 	#feed
 	#news
 		overflow-x hidden
-
-	.home-row
-		overflow-x auto
-
-		.place
-			width 8rem
-			margin auto
 </style>
