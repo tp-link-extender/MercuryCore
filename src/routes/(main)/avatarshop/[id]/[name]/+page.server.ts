@@ -137,7 +137,7 @@ export const actions = {
 		if (replyId && !commentAuthor) error(404)
 		receiverId = commentAuthor?.id || ""
 
-		const newReplyId = (await query(surql`fn::id()`)) as unknown as string
+		const newReplyId = await query<string>(surql`[fn::id()]`)
 
 		await query(
 			surql`

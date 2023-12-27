@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
@@ -115,9 +115,7 @@ export const actions = {
 			return formError(form, ["asset"], ["Asset failed to upload"])
 		}
 
-		const currentId = (await query(
-			surql`stuff:increment.asset`
-		)) as unknown as number
+		const currentId = await squery<number>(surql`[stuff:increment.asset]`)
 
 		const imageAssetId = currentId + 1,
 			id = currentId + 2

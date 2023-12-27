@@ -60,8 +60,8 @@ export async function load({ params }) {
 		}>(usersQueries[type], {
 			user: user.id,
 		}),
-		number: (await query(numberQueries[type], {
+		number: await squery<number>(`[${numberQueries[type]}]`, {
 			user: user.id,
-		})) as unknown as number,
+		}),
 	}
 }

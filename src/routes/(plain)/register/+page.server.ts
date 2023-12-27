@@ -29,9 +29,7 @@ const schemaInitial = z.object({
 
 export const load = async () => ({
 	form: await superValidate(schema),
-	users:
-		((await query(surql`count(SELECT * FROM user)`)) as unknown as number) >
-		0,
+	users: (await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0,
 })
 
 export const actions = {
@@ -163,11 +161,7 @@ export const actions = {
 			)
 
 		try {
-			if (
-				((await query(
-					surql`count(SELECT * FROM user)`
-				)) as unknown as number) > 0
-			)
+			if ((await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0)
 				return formError(
 					form,
 					["username"],

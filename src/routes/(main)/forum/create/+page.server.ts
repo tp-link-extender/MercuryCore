@@ -55,7 +55,7 @@ export const actions = {
 		)
 			error(400, "Invalid category")
 
-		const postId = await squery<string>(surql`fn::id()`)
+		const postId = await squery<string>(surql`[fn::id()]`)
 
 		await query(
 			surql`
