@@ -19,12 +19,12 @@
 		<Input
 			{formData}
 			name="name"
-			description="Category name"
+			label="Category name"
 			placeholder="Make sure to make it accurate" />
 		<Input
 			{formData}
 			name="description"
-			description="Category description"
+			label="Category description"
 			placeholder="Give it some further detail" />
 	</Form>
 </div>

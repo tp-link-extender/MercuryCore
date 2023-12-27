@@ -26,7 +26,7 @@
 				type="text"
 				readonly
 				id="email"
-				value={`*******@${user.email.split("@")[1]}`}
+				value={user.email}
 				class="form-control valid" />
 		</div>
 	</div>

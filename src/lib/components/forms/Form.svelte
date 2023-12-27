@@ -4,18 +4,24 @@
 	export let working = "Working..."
 	export let submit = "Submit"
 	export let formData: any // boooo but nothing else works
-	const { message, enhance, delayed, capture, restore } = formData
+	const { errors, message, enhance, delayed, capture, restore } = formData
 
 	export const snapshot = { capture, restore }
+	$: other = ($errors as any).other || ""
 </script>
 
 <form use:enhance method="POST" {...$$restProps}>
 	<fieldset class="pb-2">
 		<slot />
+		<button class="btn btn-success">
+			{@html /* ecks ess ess moment */ $delayed ? working : submit}
+		</button>
 	</fieldset>
-	<button class="btn btn-success">
-		{$delayed ? working : submit}
-	</button>
+	{#if other}
+		<p class="text-danger">
+			{other}
+		</p>
+	{/if}
 </form>
 <p
 	class:text-success={$page.status == 200}

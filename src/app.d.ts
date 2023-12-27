@@ -71,9 +71,10 @@ declare global {
 	declare const TabNav: typeof import("$lib/components/TabNav.svelte").default
 	declare const User: typeof import("$lib/components/User.svelte").default
 	declare const UserCard: typeof import("$lib/components/UserCard.svelte").default
-	
+
 	declare const Form: typeof import("$lib/components/forms/Form.svelte").default
 	declare const Input: typeof import("$lib/components/forms/Input.svelte").default
+	declare const Select: typeof import("$lib/components/forms/Select.svelte").default
 	declare const Textarea: typeof import("$lib/components/forms/Textarea.svelte").default
 
 	declare const { onMount }: typeof import("svelte")
