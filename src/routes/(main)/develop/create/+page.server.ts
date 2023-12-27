@@ -14,7 +14,7 @@ import { redirect } from "@sveltejs/kit"
 import fs from "fs"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import requestRender from "$lib/server/requestRender.js"
+import requestRender from "$lib/server/requestRender"
 
 const schema = z.object({
 	// Object.keys(assets) doesn't work
@@ -115,9 +115,8 @@ export const actions = {
 			return formError(form, ["asset"], ["Asset failed to upload"])
 		}
 
-		const currentId = await squery<number>(surql`[stuff:increment.asset]`)
-
-		const imageAssetId = currentId + 1,
+		const currentId = await squery<number>(surql`[stuff:increment.asset]`),
+			imageAssetId = currentId + 1,
 			id = currentId + 2
 
 		await query(
@@ -163,8 +162,14 @@ export const actions = {
 		)
 
 		graphicAsset(assets[assetType], imageAssetId, id)
-		await saveImages[0](imageAssetId)
-		await saveImages[1](id)
+
+		try {
+			await saveImages[0](imageAssetId)
+			await saveImages[1](id)
+		} catch (e) {
+			console.log("Rendering images failed!")
+			console.error(e)
+		}
 
 		redirect(302, `/avatarshop/${id}/${name}`)
 	},

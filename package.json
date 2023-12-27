@@ -11,7 +11,8 @@
 		"preview": "vite preview",
 		"buildview": "vite build && vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+		"lines": "./scc -c --no-size --no-cocomo --sort lines --exclude-dir \"Client deployer\" --exclude-file defs.d.lua,bootstrap.css,deno.lock,pnpm-lock.yaml,mercury.yml --exclude-ext lua --ci -o ./data/lines"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^2.0.2",

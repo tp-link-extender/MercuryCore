@@ -13,13 +13,25 @@ const schema = z.object({
 		.regex(
 			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
 		),
-	serverPort: z.number().int().min(25565).max(65535).default(53640),
+	// eh, works well enough and the built-in
+	// z.string().url() requires a protocol
+	serverPort: z.number().int().min(1024).max(65535).default(53640),
 	maxPlayers: z.number().int().min(1).max(99).default(10),
 	privateServer: z.boolean().optional(),
 })
 
-export const load = async () => ({
+const placeCount = async (id: string) =>
+	(
+		await squery<{
+			count: number
+		}>(surql`SELECT count(->owns->place) FROM $user`, {
+			user: `user:${id}`,
+		})
+	).count
+
+export const load = async ({ locals }) => ({
 	form: await superValidate(schema),
+	placeCount: await placeCount((await authorise(locals)).user.id),
 })
 
 export const actions = {
@@ -36,17 +48,12 @@ export const actions = {
 			maxPlayers,
 			privateServer,
 		} = form.data
-		const gameCount = (
-			await squery<{
-				count: number
-			}>(surql`SELECT count(->owns->place) FROM user`)
-		).count
 
-		if (gameCount >= 2)
+		if ((await placeCount(user.id)) >= 2)
 			return formError(
 				form,
 				["other"],
-				["You may only have 2 places at most"]
+				["You can't have more than two places"]
 			)
 
 		const id = await squery<number>(surql`[stuff:increment.place]`)

@@ -1,4 +1,12 @@
+import fs from "fs"
 import { query, squery, surql } from "$lib/server/surreal"
+
+const lines = fs
+	.readFileSync("data/lines", "utf-8")
+	.split("\n")
+	.filter(l => l.startsWith("  n_lines"))[0]
+	.split(" ")
+	.pop()
 
 export async function load({ request, locals }) {
 	const session = await locals.auth.validate(),
@@ -157,5 +165,6 @@ export async function load({ request, locals }) {
 		user,
 		notifications: notifications || [],
 		url: request.url,
+		lines, // footer thing
 	}
 }
