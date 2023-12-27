@@ -7,10 +7,10 @@ settings:
 dependencies:
   '@threlte/core':
     specifier: 7.0.12
-    version: 7.0.12(svelte@4.2.8)(three@0.159.0)
+    version: 7.0.12(svelte@4.2.8)(three@0.160.0)
   '@threlte/extras':
     specifier: 8.1.0
-    version: 8.1.0(svelte@4.2.8)(three@0.159.0)
+    version: 8.1.0(svelte@4.2.8)(three@0.160.0)
   bootstrap:
     specifier: ^5.3.2
     version: 5.3.2(@popperjs/core@2.11.8)
@@ -63,8 +63,8 @@ dependencies:
     specifier: ^0.6.0
     version: 0.6.0
   three:
-    specifier: ^0.159.0
-    version: 0.159.0
+    specifier: ^0.160.0
+    version: 0.160.0
   vite:
     specifier: ^5.0.10
     version: 5.0.10(@types/node@20.10.5)(sass@1.69.5)(stylus@0.62.0)
@@ -95,11 +95,11 @@ devDependencies:
     specifier: ^0.2.3
     version: 0.2.3
   '@types/serviceworker':
-    specifier: ^0.0.81
-    version: 0.0.81
+    specifier: ^0.0.82
+    version: 0.0.82
   '@types/three':
-    specifier: ^0.159.0
-    version: 0.159.0
+    specifier: ^0.160.0
+    version: 0.160.0
   '@types/uuid':
     specifier: ^9.0.7
     version: 9.0.7
@@ -1170,7 +1170,7 @@ packages:
       - supports-color
     dev: true
 
-  /@threlte/core@7.0.12(svelte@4.2.8)(three@0.159.0):
+  /@threlte/core@7.0.12(svelte@4.2.8)(three@0.160.0):
     resolution: {integrity: sha512-+I4+mVsxAfn4Og9it48x5+oQSDr3kg4O1qpCxUdVVPAzu69MpVd+2iYU9lnBlS1ZCSlNlTXU2UUFlw895HJ9ZA==}
     peerDependencies:
       svelte: '>=4'
@@ -1178,18 +1178,18 @@ packages:
     dependencies:
       mitt: 3.0.1
       svelte: 4.2.8
-      three: 0.159.0
+      three: 0.160.0
     dev: false
 
-  /@threlte/extras@8.1.0(svelte@4.2.8)(three@0.159.0):
+  /@threlte/extras@8.1.0(svelte@4.2.8)(three@0.160.0):
     resolution: {integrity: sha512-Pd950komky4UQYNEA31vwgc6bvD18Siq5tgoLjMxmS9/w7qq0xUBMsM33gkDoZav4YAaCeltFKZIc8gmUhzpcg==}
     peerDependencies:
       svelte: '>=4'
       three: '>=0.133'
     dependencies:
       svelte: 4.2.8
-      three: 0.159.0
-      troika-three-text: 0.47.2(three@0.159.0)
+      three: 0.160.0
+      troika-three-text: 0.47.2(three@0.160.0)
     dev: false
 
   /@types/cookie@0.6.0:
@@ -1230,16 +1230,16 @@ packages:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
     dev: true
 
-  /@types/serviceworker@0.0.81:
-    resolution: {integrity: sha512-XZ9gX1AWmOZQyvdvZeAAcWwz1dUqoqE9uXgt6yrVNLpnYWZtTDOUzGyfctsyJtcxoWtJ6U60iwcWYfweNwclCA==}
+  /@types/serviceworker@0.0.82:
+    resolution: {integrity: sha512-JkHWXMbqUd8sAA8yUxEjabRqgm6yn/rjOY2VZeifryu72e/hbQW2MLsvpZvu8vwhkls8AGczw3U2MVKdnayqng==}
     dev: true
 
   /@types/stats.js@0.17.3:
     resolution: {integrity: sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==}
     dev: true
 
-  /@types/three@0.159.0:
-    resolution: {integrity: sha512-2gybdh7HtX+rGUgslzK7QEJfzD2I0qrbUGzKk+dK0FDx49UHkNX0rqZVRzIgeFjBd1HzzhNNgwNoMacm3Wyc7w==}
+  /@types/three@0.160.0:
+    resolution: {integrity: sha512-jWlbUBovicUKaOYxzgkLlhkiEQJkhCVvg4W2IYD2trqD2om3VK4DGLpHH5zQHNr7RweZK/5re/4IVhbhvxbV9w==}
     dependencies:
       '@types/stats.js': 0.17.3
       '@types/webxr': 0.5.10
@@ -2217,8 +2217,8 @@ packages:
     hasBin: true
     dev: false
 
-  /node-fetch-native@1.4.1:
-    resolution: {integrity: sha512-NsXBU0UgBxo2rQLOeWNZqS3fvflWePMECr8CoSWoSTqCqGbVVsvl9vZu1HfQicYN0g5piV9Gh8RTEvo/uP752w==}
+  /node-fetch-native@1.6.1:
+    resolution: {integrity: sha512-bW9T/uJDPAJB2YNYEpWzE54U5O3MQidXsOyTfnbKYtTtFexRvGzb1waphBN4ZwP6EcIvYYEOwW0b72BpAqydTw==}
     dev: true
 
   /node-releases@2.0.14:
@@ -2244,7 +2244,7 @@ packages:
     resolution: {integrity: sha512-s1ZCMmQWXy4b5K/TW9i/DtiN8Ku+xCiHcjQ6/J/nDdssirrQNOoB165Zu8EqLMA2lln1JUth9a0aW9Ap2ctrUg==}
     dependencies:
       destr: 2.0.2
-      node-fetch-native: 1.4.1
+      node-fetch-native: 1.6.1
       ufo: 1.3.2
     dev: true
 
@@ -2593,8 +2593,8 @@ packages:
   /surrealdb.js@0.11.0:
     resolution: {integrity: sha512-x/Qd0UYyNilwY27JZlWgP8NsCdBzDtextRzP9oIm7xO27qsZvE5Rh4wnYN0xD68zgRAE4W8Jsufbm+hKbaGsTg==}
     dependencies:
-      unws: 0.2.4(ws@8.15.1)
-      ws: 8.15.1
+      unws: 0.2.4(ws@8.16.0)
+      ws: 8.16.0
       zod: 3.22.4
     transitivePeerDependencies:
       - bufferutil
@@ -2743,8 +2743,8 @@ packages:
       zod: 3.22.4
     dev: true
 
-  /three@0.159.0:
-    resolution: {integrity: sha512-eCmhlLGbBgucuo4VEA9IO3Qpc7dh8Bd4VKzr7WfW4+8hMcIfoAVi1ev0pJYN9PTTsCslbcKgBwr2wNZ1EvLInA==}
+  /three@0.160.0:
+    resolution: {integrity: sha512-DLU8lc0zNIPkM7rH5/e1Ks1Z8tWCGRq6g8mPowdDJpw1CFBJMU7UoJjC6PefXW7z//SSl0b2+GCw14LB+uDhng==}
     dev: false
 
   /tiny-glob@0.2.9:
@@ -2770,24 +2770,24 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /troika-three-text@0.47.2(three@0.159.0):
+  /troika-three-text@0.47.2(three@0.160.0):
     resolution: {integrity: sha512-qylT0F+U7xGs+/PEf3ujBdJMYWbn0Qci0kLqI5BJG2kW1wdg4T1XSxneypnF05DxFqJhEzuaOR9S2SjiyknMng==}
     peerDependencies:
       three: '>=0.125.0'
     dependencies:
       bidi-js: 1.0.3
-      three: 0.159.0
-      troika-three-utils: 0.47.2(three@0.159.0)
+      three: 0.160.0
+      troika-three-utils: 0.47.2(three@0.160.0)
       troika-worker-utils: 0.47.2
       webgl-sdf-generator: 1.1.1
     dev: false
 
-  /troika-three-utils@0.47.2(three@0.159.0):
+  /troika-three-utils@0.47.2(three@0.160.0):
     resolution: {integrity: sha512-/28plhCxfKtH7MSxEGx8e3b/OXU5A0xlwl+Sbdp0H8FXUHKZDoksduEKmjQayXYtxAyuUiCRunYIv/8Vi7aiyg==}
     peerDependencies:
       three: '>=0.125.0'
     dependencies:
-      three: 0.159.0
+      three: 0.160.0
     dev: false
 
   /troika-worker-utils@0.47.2:
@@ -2861,13 +2861,13 @@ packages:
       - supports-color
     dev: true
 
-  /unws@0.2.4(ws@8.15.1):
+  /unws@0.2.4(ws@8.16.0):
     resolution: {integrity: sha512-/N1ajiqrSp0A/26/LBg7r10fOcPtGXCqJRJ61sijUFoGZMr6ESWGYn7i0cwr7fR7eEECY5HsitqtjGHDZLAu2w==}
     engines: {node: '>=16.14.0'}
     peerDependencies:
       ws: '*'
     dependencies:
-      ws: 8.15.1
+      ws: 8.16.0
     dev: false
 
   /update-browserslist-db@1.0.13(browserslist@4.22.2):
@@ -2953,8 +2953,8 @@ packages:
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  /ws@8.15.1:
-    resolution: {integrity: sha512-W5OZiCjXEmk0yZ66ZN82beM5Sz7l7coYxpRkzS+p9PP+ToQry8szKh+61eNktr7EA9DOwvFGhfC605jDHbP6QQ==}
+  /ws@8.16.0:
+    resolution: {integrity: sha512-HS0c//TP7Ina87TfiPUz1rQzMhHrl/SG2guqRcTOIUYD2q8uhUdNHZYJUaQ8aTGPzCh+c6oawMKW35nFl1dxyQ==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
