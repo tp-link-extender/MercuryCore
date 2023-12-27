@@ -135,12 +135,13 @@ export const actions = {
 			})
 
 		const deletedBanner = (
-			await surreal.merge(`banner:${id}`, {
+			await surreal.merge<{
+				body: string
+				deleted: boolean
+			}>(`banner:${id}`, {
 				deleted: true,
 			})
-		)[0] as unknown as {
-			body: string
-		}
+		)[0]
 
 		await query(
 			surql`

@@ -49,9 +49,7 @@ export const actions = {
 				["You may only have 2 places at most"]
 			)
 
-		const id = (await query(
-			surql`stuff:increment.place`
-		)) as unknown as number
+		const id = await squery<number>(surql`[stuff:increment.place]`)
 
 		try {
 			await transaction({ number: user.number }, { number: 1 }, 0, {
