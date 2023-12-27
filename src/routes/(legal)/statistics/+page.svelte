@@ -6,7 +6,7 @@
 
 <h1 class="text-center">Statistics</h1>
 
-<div class="ctnr pt-8 light-text fs-3">
+<div class="ctnr pt-8 max-w-200 fs-3">
 	<h2 class="pb-2">Total number of:</h2>
 	<table>
 		<tr>
@@ -76,8 +76,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth()
-
 	td
 		padding 0
 </style>

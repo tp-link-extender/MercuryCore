@@ -18,13 +18,13 @@
 
 <Head title={data.username} />
 
-<div id="all" class="ctnr">
-	<div id="infocard" class="card bg-darker">
+<div class="ctnr max-w-240">
+	<div class="card bg-darker p-4 lg:p-6">
 		<div class="flex">
-			<span class="display-lg pr-6">
+			<span class="<lg:hidden pr-6">
 				<User user={data} size="7rem" bg="accent" image />
 			</span>
-			<span class="display-sm pr-4">
+			<span class="lg:hidden pr-4">
 				<User user={data} size="6rem" bg="accent" image />
 			</span>
 			<div class="w-full">
@@ -80,18 +80,18 @@
 						</a>
 					</div>
 
-					<span class="display-lg">
+					<span class="<lg:hidden">
 						<Interactions {data} />
 					</span>
 				</div>
-				<div class="float-right display-lg">
+				<div class="float-right <lg:hidden">
 					<ReportButton
 						user={data.username}
 						url="/user/{data.number}" />
 				</div>
 			</div>
 		</div>
-		<span class="display-sm flex justify-between items-end pt-2">
+		<span class="lg:hidden flex justify-between items-end pt-2">
 			<Interactions {data} />
 			<ReportButton user={data.username} url="/user/{data.number}" />
 		</span>
@@ -108,8 +108,6 @@
 				<h2 class="light-text">Avatar</h2>
 				<div class="card bg-darker card-body">
 					<img
-						id="avatar"
-						class="mx-auto"
 						src={form?.avatar ||
 							`/api/avatar/${data.username}-body`}
 						alt={data.username} />
@@ -235,24 +233,3 @@
 		{/if}
 	</div>
 </div>
-
-<style lang="stylus">
-	#all
-		max-width 60rem
-
-	#infocard
-		padding 1.5rem
-	.display-sm
-		display none !important
-
-	+-lg()
-		#infocard
-			padding 1rem
-		.display-sm
-			display initial !important
-		.display-lg
-			display none !important
-		#interactions
-			flex-direction column
-			align-items left
-</style>

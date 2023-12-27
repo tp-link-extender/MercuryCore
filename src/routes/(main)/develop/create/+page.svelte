@@ -33,26 +33,22 @@
 
 <Head title="Develop" />
 
-<div class="ctnr py-2">
-	<h1 class="mb-0 text-center">
-		Develop - Create <br />
-	</h1>
-	<div class="text-center">
-		<a href="/develop" class="no-underline accent-text">
-			<fa fa-caret-left />
-
-			Back to Develop
-		</a>
-	</div>
+<div class="text-center">
+	<h1>Develop - Create</h1>
+	<a href="/develop" class="no-underline accent-text">
+		<fa fa-caret-left />
+		Back to Develop
+	</a>
 </div>
+
 <form
 	use:enhance
 	method="POST"
-	class="ctnr pt-8 light-text"
+	class="ctnr pt-8 max-w-200 light-text"
 	enctype="multipart/form-data">
 	<fieldset>
 		<div class="row pb-4">
-			<label for="type" class="col-md-3 light-text">Asset type</label>
+			<label for="type" class="col-md-3">Asset type</label>
 			<div class="col-md-8">
 				<select
 					bind:value={$form.type}
@@ -73,7 +69,7 @@
 			</div>
 		</div>
 		<div class="row pb-4">
-			<label for="name" class="col-md-3 light-text">Asset name</label>
+			<label for="name" class="col-md-3">Asset name</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.name}
@@ -88,7 +84,7 @@
 			</div>
 		</div>
 		<div class="row pb-4">
-			<label for="description" class="col-md-3 light-text">
+			<label for="description" class="col-md-3">
 				Asset description
 			</label>
 			<div class="col-md-8">
@@ -107,7 +103,7 @@
 			</div>
 		</div>
 		<div class="row pb-4">
-			<label for="price" class="col-md-3 light-text">Asset price</label>
+			<label for="price" class="col-md-3">Asset price</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.price}
@@ -122,7 +118,7 @@
 			</div>
 		</div>
 		<div class="row pb-4">
-			<label for="asset" class="col-md-3 light-text">Asset</label>
+			<label for="asset" class="col-md-3">Asset</label>
 			<div class="col-md-8">
 				<input
 					bind:value={$form.asset}
@@ -159,8 +155,6 @@
 </form>
 
 <style lang="stylus">
-	containerMinWidth()
-
 	input[type="number"]
 		width 9rem
 </style>

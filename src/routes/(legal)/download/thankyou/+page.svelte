@@ -2,7 +2,7 @@
 
 <h1 class="text-center">Welcome to Mercury</h1>
 
-<div class="ctnr pt-12">
+<div class="ctnr pt-12 max-w-200">
 	<div class="light-text">
 		<h2 class="text-base text-center">
 			Thank you for downloading our client. To get started, head over to
@@ -11,7 +11,3 @@
 		</h2>
 	</div>
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

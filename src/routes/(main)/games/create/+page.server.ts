@@ -29,18 +29,18 @@ export const actions = {
 		if (!form.valid) return formError(form)
 
 		const {
-				name,
-				description,
-				serverIP,
-				serverPort,
-				maxPlayers,
-				privateServer,
-			} = form.data,
-			gameCount = (
-				await squery<{
-					count: number
-				}>(surql`SELECT count(->owns->place) FROM user`)
-			).count
+			name,
+			description,
+			serverIP,
+			serverPort,
+			maxPlayers,
+			privateServer,
+		} = form.data
+		const gameCount = (
+			await squery<{
+				count: number
+			}>(surql`SELECT count(->owns->place) FROM user`)
+		).count
 
 		if (gameCount >= 2)
 			return formError(

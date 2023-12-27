@@ -68,7 +68,7 @@
 
 <Head title="Admin" />
 
-<div class="ctnr py-6">
+<div class="ctnr pt-6 max-w-340">
 	<h1 class="light-text">Admin Panel</h1>
 	<h2 class="fs-3 pb-4">
 		Your permission level is <span
@@ -231,8 +231,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth(85rem)
-
 	h2
 		border-color var(--accent3) !important
 

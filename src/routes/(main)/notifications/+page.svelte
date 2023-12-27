@@ -21,7 +21,7 @@
 
 <h1 class="text-center">Notifications</h1>
 
-<div class="ctnr pt-12">
+<div class="ctnr pt-12 max-w-200">
 	{#each data.notifications as notification}
 		<div class="pb-4">
 			<div class:bg-darker={notification.read} class="card p-4">
@@ -41,7 +41,3 @@
 		</div>
 	{/each}
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

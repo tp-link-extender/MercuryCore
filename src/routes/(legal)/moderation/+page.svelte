@@ -32,7 +32,7 @@
 
 <Head title={moderationAction[data.type]} />
 
-<div class="ctnr pt-8">
+<div class="ctnr pt-8 max-w-200">
 	<div class="card">
 		<div class="card-body light-text">
 			<h1>
@@ -122,7 +122,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

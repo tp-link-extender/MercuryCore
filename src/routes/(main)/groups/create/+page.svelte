@@ -15,7 +15,7 @@
 
 <h1 class="text-center">Create a group</h1>
 
-<form use:enhance method="POST" class="ctnr pt-12 light-text">
+<form use:enhance method="POST" class="ctnr pt-12 max-w-200 light-text">
 	<fieldset>
 		<div class="row mb-4">
 			<label for="name" class="col-md-3 text-md-right">Group name</label>
@@ -45,7 +45,3 @@
 		{other}
 	</p>
 </form>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

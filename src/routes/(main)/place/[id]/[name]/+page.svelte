@@ -80,7 +80,7 @@
 
 <Head title={data.name} />
 
-<div class="ctnr light-text">
+<div class="ctnr max-w-240 light-text">
 	<div class="flex flex-wrap">
 		<div class="md:w-2/3 pb-4">
 			<div in:fade class="carousel rounded-4">
@@ -470,8 +470,6 @@
 </Modal>
 
 <style lang="stylus">
-	containerMinWidth(60rem)
-
 	#buttons
 		margin auto
 		display flex

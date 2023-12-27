@@ -8,26 +8,26 @@
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({}),
-		{ user } = data,
-		{
-			form,
-			errors,
-			message,
-			constraints,
-			enhance,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		})
+		{ user } = data
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	})
 
 	export const snapshot = { capture, restore }
 </script>
 
 <Head title={data.title} />
 
-<div class="ctnr light-text">
+<div class="ctnr max-w-280 light-text">
 	{#if !asComponent}
 		<!--
 			Breadcrumbs can give confusing behaviour if linking
@@ -169,8 +169,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth(70rem)
-
 	.sidebar
 		width 2.5rem
 
