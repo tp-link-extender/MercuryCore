@@ -8,17 +8,17 @@
 
 	const dispatch = createEventDispatcher(),
 		opacity = spring(Math.random() + (-j - i / 2 - 5) / 12),
-		scale = spring(0, {
-			stiffness: 0.1,
-			damping: 1,
-		}),
 		clicked = new Map<string, "hovered" | "clicked">()
+	const scale = spring(0, {
+		stiffness: 0.1,
+		damping: 1,
+	})
 
 	let colour = tweened(interpolateLab("#6c2fb9", "#321f9c")(Math.random()), {
-			duration: 500,
-			interpolate: interpolateLab,
-		}),
-		clickable = false
+		duration: 500,
+		interpolate: interpolateLab,
+	})
+	let clickable = false
 
 	setTimeout(() => {
 		clickable = true

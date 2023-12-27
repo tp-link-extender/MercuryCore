@@ -47,7 +47,7 @@
 	</Canvas>
 </div>
 
-<div bind:this={top} id="top" class="relative top-0" />
+<div bind:this={top} id="top" class="absolute top-0" />
 
 <Pagepart fullwidth>
 	{#if cubePercentage < 20}
@@ -68,8 +68,9 @@
 		</div>
 	{:else}
 		<div
+			in:fade={{ delay: 500 }}
 			id="cubesMoved"
-			class="pointer-events-none absolute top-50 start-50 text-center w-full">
+			class="pointer-events-none absolute top-1/2 left-1/2 -translate-1/2">
 			{#if completed}
 				<h1
 					in:fade
@@ -107,7 +108,7 @@
 	<div id="arrowcontainer">
 		<button
 			id="arrow"
-			class="btn absolute shadow-none start-50 light-text"
+			class="btn absolute shadow-none left-1/2 light-text"
 			aria-label="Scroll down"
 			on:click={downScroll}
 			on:keypress={downScroll}
@@ -241,11 +242,6 @@
 	#info
 		height 70vh
 
-	#top
-		scroll-snap-align end
-	#first
-		scroll-snap-align start
-
 	.title
 		font-size 4rem
 
@@ -271,7 +267,4 @@
 
 	#cubes
 		margin-top -5vh
-
-	#cubesMoved
-		transform translate(-50%, -50%)
 </style>
