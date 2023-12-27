@@ -26,7 +26,7 @@
 	<h1 class="py-6">Configure {data.name}</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h4>Game View</h4>
+		<h2 class="fs-3">Game View</h2>
 		<p class="grey-text">
 			Change the title and description of your server.
 		</p>
@@ -34,7 +34,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4>Network</h4>
+		<h2 class="fs-3">Network</h2>
 		<p class="grey-text">
 			Change the network configurations of your server.
 		</p>
@@ -45,7 +45,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h4>Privacy</h4>
+		<h2 class="fs-3">Privacy</h2>
 		<p class="grey-text">
 			Enable private server to make your game only accessible to those
 			with the link.

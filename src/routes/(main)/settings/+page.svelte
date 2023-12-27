@@ -10,7 +10,7 @@
 
 <Head title="Settings" />
 
-<div class="ctnr light-text">
+<div class="ctnr max-w-220 light-text">
 	<h1 class="py-6">Settings</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>

@@ -10,17 +10,6 @@ let fa: { [k: string]: string }
 
 const i = (a: number | string) => `${a} !important`
 const bsFonts = ["0", "2rem", "1.5rem", "1.3rem", "1rem", "0.8rem", "0.7rem"]
-const bsRounds = {
-	"": "var(--bs-border-radius)",
-	"-0": "0",
-	"-1": "var(--bs-border-radius-sm)",
-	"-2": "var(--bs-border-radius)",
-	"-3": "var(--bs-border-radius-lg)",
-	"-4": "var(--bs-border-radius-xl)",
-	"-5": "var(--bs-border-radius-xxl)",
-	"-circle": "50%",
-	"-pill": "50rem",
-}
 
 export default defineConfig({
 	rules: [

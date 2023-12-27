@@ -12,7 +12,7 @@
 		"buildview": "vite build && vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-		"lines": "./scc -c --no-size --no-cocomo --sort lines --exclude-dir \"Client deployer\" --exclude-file defs.d.lua,bootstrap.css,deno.lock,pnpm-lock.yaml,mercury.yml --exclude-ext lua --ci -o ./data/lines"
+		"lines": "scc -c --no-size --no-cocomo --sort lines --exclude-dir \"Client deployer\" --exclude-file defs.d.lua,bootstrap.css,deno.lock,pnpm-lock.yaml,mercury.yml,uno.config.ts --exclude-ext lua --ci -f cloc-yaml -o ./data/lines"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^2.0.2",
