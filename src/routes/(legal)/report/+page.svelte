@@ -23,12 +23,12 @@
 
 <h1 class="text-center">Report</h1>
 
-<div class="ctnr mt-6 light-text">
-	<h2 class="fs-5">
+<div class="ctnr pt-12 max-w-200 light-text">
+	<h2 class="fs-3">
 		Tell us how you think {data.reportee} is breaking the rules.
 	</h2>
 
-	<form use:enhance method="POST" class="mt-6">
+	<form use:enhance method="POST" class="pt-6">
 		<fieldset>
 			<div class="row">
 				<label for="category" class="col-md-3 text-md-right">
@@ -101,7 +101,3 @@
 		{$message || ""}
 	</p>
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

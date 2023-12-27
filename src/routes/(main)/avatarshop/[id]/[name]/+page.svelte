@@ -39,7 +39,7 @@
 
 <Head title={data.name} />
 
-<div class="ctnr">
+<div class="ctnr max-w-240">
 	<div class="row">
 		<div class="col pr-4 pb-4">
 			<img
@@ -233,8 +233,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth(60rem)
-
 	.image
 		background var(--accent1)
 		background-image:

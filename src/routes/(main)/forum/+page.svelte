@@ -4,7 +4,7 @@
 
 <Head title="Forum" />
 
-<div class="ctnr light-text flex flex-col gap-4">
+<div class="ctnr light-text max-w-280 flex flex-col gap-4">
 	<h1 class="pb-6">Forum</h1>
 	{#each data.categories as category, num}
 		<div
@@ -53,8 +53,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth(70rem)
-
 	.ctnr
 		flex-direction column !important
 

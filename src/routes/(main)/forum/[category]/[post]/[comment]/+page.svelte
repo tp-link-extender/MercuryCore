@@ -3,7 +3,6 @@
 	const repliesCollapsed = writable({})
 
 	export let data
-	const { user } = data
 
 	$: topReply = data.replies[0]
 	$: parentPost = topReply.parentPost
@@ -11,7 +10,7 @@
 
 <Head title="Replies to forum post" />
 
-<div class="ctnr light-text">
+<div class="ctnr max-w-280">
 	<Breadcrumbs
 		path={[
 			["Forum", "/forum"],
@@ -28,7 +27,7 @@
 
 	{#each data.replies as reply, num}
 		<ForumReply
-			{user}
+			user={data.user}
 			{reply}
 			{num}
 			{replyingTo}
@@ -38,7 +37,3 @@
 			{repliesCollapsed} />
 	{/each}
 </div>
-
-<style lang="stylus">
-	containerMinWidth(70rem)
-</style>

@@ -2,7 +2,7 @@
 
 <h1 class="text-center">Terms of Service</h1>
 
-<div class="ctnr pt-12">
+<div class="ctnr pt-12 max-w-200">
 	<div class="light-text">
 		<p>
 			This Terms of Service Agreement (“agreement”) is an agreement made
@@ -163,8 +163,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth()
-
 	a
 		color var(--mainaccent)
 </style>

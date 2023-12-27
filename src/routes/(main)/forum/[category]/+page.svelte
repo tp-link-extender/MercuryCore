@@ -9,7 +9,7 @@
 
 <Head title="{data.name} - Forum" />
 
-<div class="ctnr light-text">
+<div class="ctnr max-w-200">
 	<Breadcrumbs
 		path={[
 			["Forum", "/forum"],
@@ -54,8 +54,6 @@
 {/if}
 
 <style lang="stylus">
-	containerMinWidth()
-
 	.modal-box
 		min-width 70rem
 		max-height initial !important
