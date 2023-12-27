@@ -1,22 +1,12 @@
 <script lang="ts">
-	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
+	const formData = superForm(data.form, {
 		taintedMessage: false,
 	})
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 </script>
 
 <Head title="Create a post in {data.categoryName}" />
@@ -24,58 +14,17 @@
 <h1 class="text-center">Create a post in {data.categoryName}</h1>
 
 <div class="ctnr pt-12 max-w-200 light-text">
-	<form use:enhance method="POST">
-		<fieldset>
-			<div class="row mb-4">
-				<label for="title" class="col-md-3">Post title</label>
-				<div class="col-md-9">
-					<input
-						bind:value={$form.title}
-						{...$constraints.title}
-						name="title"
-						id="title"
-						placeholder="Make sure to make it accurate"
-						class="form-control {$errors.title
-							? 'is-in'
-							: ''}valid" />
-
-					<small class="col-12 mb-4 text-danger">
-						{$errors.title || ""}
-					</small>
-				</div>
-			</div>
-			<div class="row mb-4">
-				<label for="content" class="col-md-3">Post content</label>
-				<div class="col-md-9">
-					<textarea
-						bind:value={$form.content}
-						{...$constraints.content}
-						rows="6"
-						name="content"
-						id="content"
-						placeholder="Up to 3000 characters"
-						class="form-control {$errors.content
-							? 'is-in'
-							: ''}valid" />
-
-					<small class="col-12 mb-4 text-danger">
-						{$errors.content || ""}
-					</small>
-				</div>
-			</div>
-			<button class="btn btn-success my-4">
-				{#if $delayed}
-					Working...
-				{:else}
-					Post
-				{/if}
-			</button>
-		</fieldset>
-	</form>
-	<p
-		class:text-success={$page.status == 200}
-		class:text-danger={$page.status >= 400}>
-		{$message || ""}
-	</p>
-	<br />
+	<Form {formData} submit="Post">
+		<Input
+			{formData}
+			name="title"
+			description="Post title"
+			placeholder="Make sure to make it accurate" />
+		<Textarea
+			{formData}
+			rows="3"
+			name="content"
+			description="Post content"
+			placeholder="Up to 3000 characters" />
+	</Form>
 </div>
