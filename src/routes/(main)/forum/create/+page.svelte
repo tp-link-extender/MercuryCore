@@ -18,13 +18,13 @@
 		<Input
 			{formData}
 			name="title"
-			description="Post title"
+			label="Post title"
 			placeholder="Make sure to make it accurate" />
 		<Textarea
 			{formData}
 			rows="3"
 			name="content"
-			description="Post content"
+			label="Post content"
 			placeholder="Up to 3000 characters" />
 	</Form>
 </div>

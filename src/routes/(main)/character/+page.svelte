@@ -166,21 +166,20 @@
 			<div class="card">
 				<div class="card-body light-text">
 					Body Colours
-					<div class="mannequin text-center">
-						<div
-							class="mx-auto"
-							style="height:240px;width:194px;text-align:center;">
-							<div class="parts">
-								{#each Object.keys(bodyParts) as bodyPart}
-									<label
-										for={bodyPart}
-										style={styles[bodyPart] +
-											`;background-color: #${
-												brickToHex[bodyParts[bodyPart]]
-											};`}
-										class="btn p-0 bodyPart absolute" />
-								{/each}
-							</div>
+					<div
+						class="mx-auto"
+						style="height: 240px; width: 194px; text-align: center">
+						<div class="parts">
+							{#each Object.keys(bodyParts) as bodyPart}
+								<label
+									for={bodyPart}
+									style="{styles[
+										bodyPart
+									]};background-color: #{brickToHex[
+										bodyParts[bodyPart]
+									]}"
+									class="btn p-0 bodyPart absolute" />
+							{/each}
 						</div>
 					</div>
 				</div>
@@ -254,7 +253,7 @@
 						class="inline">
 						<button
 							class="btn colour my-1"
-							style="background-color: #{brickToHex[colour]};" />
+							style="background-color: #{brickToHex[colour]}" />
 					</form>
 				{/each}
 			</div>

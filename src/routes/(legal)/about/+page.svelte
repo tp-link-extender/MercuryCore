@@ -6,11 +6,11 @@
 
 	let top: HTMLElement, first: HTMLElement, scrollY: number
 
-	const downScroll = () => first.scrollIntoView({ behavior: "smooth" }),
-		upScroll = () => top.scrollIntoView({ behavior: "smooth" })
-
 	const range = (n: number) =>
-			Array.from({ length: n }, (_, index) => -Math.floor(n / 2) + index),
+		Array.from({ length: n }, (_, index) => -Math.floor(n / 2) + index)
+
+	const downScroll = () => first.scrollIntoView({ behavior: "smooth" }),
+		upScroll = () => top.scrollIntoView({ behavior: "smooth" }),
 		columns = range(37),
 		rows = range(19)
 

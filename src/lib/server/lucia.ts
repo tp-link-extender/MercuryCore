@@ -19,7 +19,7 @@ export const auth = lucia({
 		id: data.id,
 		number: data.number,
 		bio: data.bio,
-		email: data.email,
+		email: data.email ? `*******@${data.email.split("@")[1]}` : undefined,
 		username: data.username,
 		status: data.status,
 		currency: data.currency,
