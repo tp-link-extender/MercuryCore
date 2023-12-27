@@ -3,9 +3,9 @@
 	const { user } = data
 </script>
 
-<div class="form-group row">
-	<label for="name" class="col-md-3 text-md-right">Username</label>
-	<div class="col-md-6">
+<div class="form-group flex flex-wrap">
+	<label for="name" class="w-full md:w-1/3 text-md-right">Username</label>
+	<div class="w-full md:w-2/3">
 		<input
 			type="text"
 			readonly
@@ -13,15 +13,19 @@
 			disabled
 			value={user?.username}
 			class="form-control valid" />
+		<small class="w-full grey-text pb-2">
+			You cannot change your username.
+		</small>
 	</div>
-	<small class="grey-text pb-2">You cannot change your username.</small>
 </div>
 <hr class="grey-text" />
 
 {#if user.email}
-	<div class="form-group row pb-6">
-		<label for="name" class="col-md-3 text-md-right">Email Address</label>
-		<div class="col-md-6">
+	<div class="form-group flex flex-wrap pb-6">
+		<label for="name" class="w-full md:w-1/3 text-md-right">
+			Email Address
+		</label>
+		<div class="w-full md:w-2/3">
 			<input
 				type="text"
 				readonly
@@ -33,7 +37,7 @@
 	<hr class="grey-text" />
 {/if}
 
-<h4>Discord Verification</h4>
+<h3 class="fs-4">Discord Verification</h3>
 <p>A Discord account has not been linked.</p>
 <button class="btn btn-primary">
 	<fa fa-link />
@@ -41,7 +45,7 @@
 </button>
 <hr class="grey-text" />
 
-<h4>Email Verification</h4>
+<h3 class="fs-4">Email Verification</h3>
 <p>You have not verified your email address.</p>
 <button class="btn btn-primary mb-4">
 	<fa fa-envelope-circle-check />
