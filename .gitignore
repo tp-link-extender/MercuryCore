@@ -13,3 +13,5 @@ node_modules
 /setup
 /corescripts/processed/*.lua
 src/bootstrap.css
+scc
+scc.exe

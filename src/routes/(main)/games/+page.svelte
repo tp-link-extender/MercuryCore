@@ -103,9 +103,7 @@
 	</div>
 	<div class="ctnr flex flex-wrap gap-4 justify-center">
 		{#each query ? searchedData : data.places || [] as place, num (place.id)}
-			{#each { length: 50 } as _}
-				<PlaceCard {place} {num} total={data.places.length} />
-			{/each}
+			<PlaceCard {place} {num} total={data.places.length} />
 		{/each}
 		{#if query && searchedData.length == 0}
 			<h2 class="fs-5 pt-12">

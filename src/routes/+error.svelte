@@ -47,7 +47,7 @@
 	</div>
 </main>
 
-<Footer />
+<Footer {data} />
 
 <style lang="stylus">
 	.errimg

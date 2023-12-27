@@ -4,7 +4,7 @@ import formError from "$lib/server/formError"
 import { redirect, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import requestRender from "$lib/server/requestRender.js"
+import requestRender from "$lib/server/requestRender"
 
 const schemaInitial = z.object({
 		username: z
