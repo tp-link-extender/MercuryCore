@@ -2,19 +2,22 @@
 	import type { HTMLInputTypeAttribute } from "svelte/elements"
 
 	export let name: string
-	export let label: string
+	export let label = ""
 	export let help = ""
 	export let type: HTMLInputTypeAttribute = "text"
 
+	export let inline = false
 	export let formData: any
 	const { form, errors, constraints } = formData
 </script>
 
-<div class="flex flex-wrap pb-8">
-	<label for={name} class="w-full md:w-1/4">
-		{label}
-	</label>
-	<div class="w-full md:w-3/4">
+<div class="flex flex-wrap {inline ? 'flex-1' : 'pb-8'}">
+	{#if label}
+		<label for={name} class="w-full md:w-1/4">
+			{label}
+		</label>
+	{/if}
+	<div class="w-full {label ? 'md:w-3/4' : ''}">
 		<!-- welp, boilerplate begets boilerplate -->
 		{#if type == "checkbox"}
 			<input
@@ -33,6 +36,7 @@
 				{name}
 				id={name}
 				{...{ type /* lmfao */ }}
+				class:rounded-r-0={inline}
 				class="form-{type == 'checkbox'
 					? 'check-input'
 					: type == 'color'

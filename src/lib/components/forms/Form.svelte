@@ -4,6 +4,7 @@
 	export let working = "Working..."
 	export let submit = "Submit"
 
+	export let inline = false
 	export let formData: any // boooo but nothing else works
 	const { errors, message, enhance, delayed } = formData
 
@@ -11,7 +12,7 @@
 </script>
 
 <form use:enhance method="POST" {...$$restProps}>
-	<fieldset class="pb-2">
+	<fieldset class={inline ? "input-group" : "pb-2"}>
 		<slot />
 		{#if submit}
 			<button class="btn btn-success">
@@ -26,6 +27,7 @@
 	{/if}
 </form>
 <p
+	class={inline ? "mb-0 pb-3" : ""}
 	class:text-success={$page.status == 200}
 	class:text-danger={$page.status >= 400}>
 	{$message || ""}

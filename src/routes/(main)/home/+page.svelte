@@ -1,22 +1,16 @@
 <script lang="ts">
-	import { page } from "$app/stores"
 	import superForm from "$lib/superForm"
 	import Status from "./Status.svelte"
 
 	export let data
 	const { user } = data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form)
+	const formData = superForm(data.form)
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
+
+	$: sortedFeed = data.feed.sort(
+		(a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()
+	)
 </script>
 
 <Head title="Home" />
@@ -24,7 +18,7 @@
 <div class="ctnr">
 	<div class="flex flex-wrap">
 		<div class="w-full md:w-1/2 pr-2">
-			<h1 class="w-screen flex px-2 pb-6">
+			<h1 class="w-full flex px-10 pb-6 my-0">
 				<a
 					href="/user/{user?.number}"
 					class="no-underline light-text flex items-center">
@@ -34,37 +28,25 @@
 					</span>
 				</a>
 			</h1>
-			<div id="feed" class="card p-4 bg-darker <md:h-50vh">
+			<div class="card p-4 bg-darker overflow-x-hidden <md:h-50vh">
 				<p>
 					Post your status - your friends and followers can view how
 					you're doing!
 				</p>
-				<form use:enhance method="POST" class="input-group">
-					<input
-						bind:value={$form.status}
-						{...$constraints.status}
-						placeholder="Post status"
+				<Form
+					{formData}
+					inline
+					submit="<fa fa-paper-plane-top />"
+					working="..."
+					class="input-group w-full">
+					<Input
+						{formData}
+						inline
 						name="status"
-						aria-label="Post Status"
-						class="form-control light-text {$errors.status
-							? 'is-in'
-							: ''}valid" />
-					<button class="btn btn-success" aria-label="Send">
-						{#if $delayed}
-							...
-						{:else}
-							<fa fa-paper-plane-top />
-						{/if}
-					</button>
-				</form>
-				<p
-					class="mb-0 pb-3"
-					class:text-success={$page.status == 200}
-					class:text-danger={$page.status >= 400 || $errors.status}>
-					{$errors.status || $message || ""}
-				</p>
+						placeholder="Post status" />
+				</Form>
 				<div class="flex flex-col gap-3">
-					{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
+					{#each sortedFeed as status, num}
 						<div
 							in:fade|global={{
 								num,
@@ -120,36 +102,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-
-	h1
-		margin auto 2rem
-
-	.username
-		overflow hidden
-		text-overflow ellipsis
-		white-space nowrap
-
-	.small
-		font-size 0.9rem
-
-	.friendname
-		max-width 7rem
-		max-height 3rem
-
-	.date
-		min-width 5rem
-	.gradient
-		left 0
-		right 0
-		height 8rem
-		background linear-gradient(0deg, var(--accent) 10%, rgba(0,0,0,0) 100%)
-	.content
-		max-height 5rem
-		overflow hidden
-
-	#feed
-	#news
-		overflow-x hidden
-</style>
