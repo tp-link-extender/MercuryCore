@@ -1,25 +1,23 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { enhance } from "$app/forms" // idky
-	import { superForm } from "sveltekit-superforms/client"
+	import { enhance as enhance2 } from "$app/forms" // idky
+	import superForm from "$lib/superForm"
 
 	export let data
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({}),
-		{ user } = data,
-		{
-			form,
-			errors,
-			message,
-			constraints,
-			enhance: enhance2,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		})
+		{ user } = data
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form)
 
 	export const snapshot = { capture, restore }
 
@@ -70,7 +68,7 @@
 								{#if data.user.permissionLevel > 2}
 									<li class="rounded-2">
 										<form
-											use:enhance
+											use:enhance2
 											method="POST"
 											action="?/rerender">
 											<button
@@ -149,7 +147,7 @@
 	<Tab {tabData} />
 
 	<Tab {tabData}>
-		<form use:enhance2 class="py-2" method="POST" action="?/reply">
+		<form use:enhance class="py-2" method="POST" action="?/reply">
 			<label for="content" class="light-text py-2">Post a Comment</label>
 			<fieldset class="col-lg-7 flex">
 				<textarea

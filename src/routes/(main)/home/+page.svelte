@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 	import Status from "./Status.svelte"
 
 	export let data
@@ -14,9 +14,7 @@
 		delayed,
 		capture,
 		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+	} = superForm(data.form)
 
 	export const snapshot = { capture, restore }
 </script>

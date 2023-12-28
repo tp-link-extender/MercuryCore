@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
 	const { form, errors, constraints, enhance, delayed, capture, restore } =
 		superForm(data.form, {
-			taintedMessage: false,
 			onResult: ({ result }) =>
 				// Reload to get the new session after redirecting to homepage
 				result.type == "redirect" ? window.location.reload() : null,

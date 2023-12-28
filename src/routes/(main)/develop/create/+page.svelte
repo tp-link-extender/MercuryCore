@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
-	const formData = superForm(data.form, {
-		taintedMessage: false,
-	})
+	const formData = superForm(data.form)
 
 	export const snapshot = formData
 

@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data: import("./$types").PageData
-
-	const formData = superForm(data.passwordForm, { taintedMessage: false })
+	const formData = superForm(data.passwordForm)
 </script>
 
 <Form {formData} action="?/password" submit="Save changes">
