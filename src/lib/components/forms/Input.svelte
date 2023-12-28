@@ -6,6 +6,7 @@
 	export let help = ""
 	export let placeholder = ""
 	export let autocomplete = ""
+	export let accept = ""
 	export let type: HTMLInputTypeAttribute = "text"
 
 	export let formData: any
@@ -25,6 +26,7 @@
 			{...{ type /* lmfao */ }}
 			placeholder={placeholder || null}
 			autocomplete={autocomplete || null}
+			accept={accept || null}
 			class="form-{type == 'checkbox'
 				? 'check-input'
 				: 'control'} {$errors[name] ? 'is-in' : ''}valid"

@@ -4,9 +4,8 @@
 	export let working = "Working..."
 	export let submit = "Submit"
 	export let formData: any // boooo but nothing else works
-	const { errors, message, enhance, delayed, capture, restore } = formData
+	const { errors, message, enhance, delayed } = formData
 
-	export const snapshot = { capture, restore }
 	$: other = ($errors as any).other || ""
 </script>
 

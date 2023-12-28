@@ -3,7 +3,6 @@
 	import superForm from "$lib/superForm"
 
 	export let data: import("./$types").PageData
-
 	const { message, enhance, delayed } = superForm(data.privatelinkForm)
 
 	$: value = `https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`
@@ -14,13 +13,12 @@
 <form
 	use:enhance
 	method="POST"
-	class="col-lg-8"
 	action="?/privatelink&tab=Privacy">
-	<fieldset class="row">
-		<label for="privateLink" class="col-md-3 text-md-right">
+	<fieldset class="flex flex-wrap pb-2">
+		<label for="privateLink" class="w-full md:w-1/4">
 			Private Server Link
 		</label>
-		<div class="col-md-9">
+		<div class="w-full md:w-3/4">
 			<div class="input-group">
 				<input
 					id="privateLink"

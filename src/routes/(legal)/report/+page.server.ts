@@ -23,6 +23,15 @@ const schema = z.object({
 	note: z.string().optional(),
 })
 
+const getReportee = (username: string) =>
+	squery<{ id: string }>(
+		surql`
+			SELECT id
+			FROM user
+			WHERE username = $username`,
+		{ username }
+	)
+
 export async function load({ locals, url }) {
 	await authorise(locals)
 
@@ -30,6 +39,9 @@ export async function load({ locals, url }) {
 		reportedUrl = url.searchParams.get("url")
 
 	if (!reportee || !reportedUrl) error(400, "Missing user or url parameters")
+
+	const reporteeUser = await getReportee(reportee)
+	if (!reporteeUser) error(400, "Invalid user")
 
 	return {
 		reportee,
@@ -48,17 +60,11 @@ export const actions = {
 		const { user } = await authorise(locals),
 			{ category, note } = form.data,
 			username = url.searchParams.get("user"),
-			userUrl = url.searchParams.get("user")
+			reportUrl = url.searchParams.get("url")
 
-		if (!username || !userUrl) error(400, "Missing fields")
+		if (!username || !reportUrl) error(400, "Missing fields")
 
-		const reportee = await squery<{ id: string }>(
-			surql`
-				SELECT id
-				FROM user
-				WHERE username = $username`,
-			{ username }
-		)
+		const reportee = await getReportee(username)
 
 		if (!reportee)
 			return message(form, "Invalid user", {
@@ -70,14 +76,14 @@ export const actions = {
 				RELATE $reporter->report->$reportee CONTENT {
 					time: time::now(),
 					note: $note,
-					url: userUrl,
+					url: $reportUrl,
 					category: $category,
 				}`,
 			{
 				reporter: `user:${user.id}`,
 				reportee: reportee.id,
 				note,
-				userUrl,
+				reportUrl,
 				category,
 			}
 		)

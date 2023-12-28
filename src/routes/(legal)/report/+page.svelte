@@ -1,101 +1,43 @@
 <script lang="ts">
-	import { page } from "$app/stores"
 	import superForm from "$lib/superForm"
 
 	export let data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form)
+	const formData = superForm(data.form)
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 </script>
 
 <Head title="Report {data.reportee}" />
 
 <h1 class="text-center">Report</h1>
 
-<div class="ctnr pt-12 max-w-200 light-text">
-	<h2 class="fs-3">
+<div class="ctnr pt-12 max-w-180 light-text">
+	<h2 class="fs-3 pb-6">
 		Tell us how you think {data.reportee} is breaking the rules.
 	</h2>
 
-	<form use:enhance method="POST" class="pt-6">
-		<fieldset>
-			<div class="row">
-				<label for="category" class="col-md-3 text-md-right">
-					Item category
-				</label>
-				<div class="col-md-8">
-					<select
-						bind:value={$form.category}
-						{...$constraints.category}
-						name="category"
-						id="category"
-						class="form-select {$errors.category
-							? 'is-in'
-							: ''}valid">
-						<option value="AccountTheft">Account theft</option>
-						<option value="Dating">Dating</option>
-						<option value="Exploiting">Exploiting</option>
-						<option value="Harassment">
-							Harassment or discrimination
-						</option>
-						<option value="InappropriateContent">
-							Inappropriate content
-						</option>
-						<option value="PersonalInformation">
-							Personal information (displaying their own or asking
-							for others')
-						</option>
-						<option value="Scamming">Scamming</option>
-						<option value="Under13">Suspected under 13 user</option>
-						<option value="Spam">Spam</option>
-						<option value="Swearing">Swearing</option>
-						<option value="Threats">Threats</option>
-					</select>
-					<p class="col-12 mb-4 text-danger">
-						{$errors.category || ""}
-					</p>
-				</div>
-			</div>
-			<br />
-			<div class="row mb-4">
-				<label for="note" class="col-md-3 text-md-right">
-					Further information
-				</label>
-				<div class="col-md-8">
-					<textarea
-						bind:value={$form.note}
-						{...$constraints.note}
-						name="note"
-						id="note"
-						placeholder="Up to 1000 characters"
-						class="form-control {$errors.note ? 'is-in' : ''}valid"
-						rows="5" />
-					<p class="col-12 mb-4 text-danger">
-						{$errors.note || ""}
-					</p>
-				</div>
-			</div>
-			<button class="btn btn-success">
-				{#if $delayed}
-					Working...
-				{:else}
-					Submit
-				{/if}
-			</button>
-		</fieldset>
-	</form>
-	<p
-		class:text-success={$page.status == 200}
-		class:text-danger={$page.status >= 400}>
-		{$message || ""}
-	</p>
+	<Form {formData}>
+		<Select {formData} name="category" label="Report category">
+			<option value="AccountTheft">Account theft</option>
+			<option value="Dating">Dating</option>
+			<option value="Exploiting">Exploiting</option>
+			<option value="Harassment">Harassment or discrimination</option>
+			<option value="InappropriateContent">Inappropriate content</option>
+			<option value="PersonalInformation">
+				Personal information (displaying their own or asking for
+				others')
+			</option>
+			<option value="Scamming">Scamming</option>
+			<option value="Under13">Suspected under 13 user</option>
+			<option value="Spam">Spam</option>
+			<option value="Swearing">Swearing</option>
+			<option value="Threats">Threats</option>
+		</Select>
+		<Textarea
+			{formData}
+			name="note"
+			label="Further information"
+			placeholder="Up to 1000 characters"
+			rows="5" />
+	</Form>
 </div>
