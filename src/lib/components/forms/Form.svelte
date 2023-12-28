@@ -3,6 +3,7 @@
 
 	export let working = "Working..."
 	export let submit = "Submit"
+
 	export let formData: any // boooo but nothing else works
 	const { errors, message, enhance, delayed } = formData
 
@@ -12,9 +13,11 @@
 <form use:enhance method="POST" {...$$restProps}>
 	<fieldset class="pb-2">
 		<slot />
-		<button class="btn btn-success">
-			{@html /* ecks ess ess moment */ $delayed ? working : submit}
-		</button>
+		{#if submit}
+			<button class="btn btn-success">
+				{@html /* ecks ess ess moment */ $delayed ? working : submit}
+			</button>
+		{/if}
 	</fieldset>
 	{#if other}
 		<p class="text-danger">

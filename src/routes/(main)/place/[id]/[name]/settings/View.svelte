@@ -4,17 +4,11 @@
 
 	export let data: import("./$types").PageData
 	const formData = superForm(data.viewForm)
+	const { form } = formData
 
-	if (data.name && !get(formData.form).title)
-		formData.form.update(v => {
-			v.title = data.name
-			return v
-		})
+	if (data.name && !get(formData.form).title) $form.title = data.name
 	if (data.description && !get(formData.form).description)
-		formData.form.update(v => {
-			v.description = data.description.text
-			return v
-		})
+		$form.description = data.description.text
 </script>
 
 <Form

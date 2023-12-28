@@ -12,21 +12,23 @@
 
 	function formatDateDifference(date1: number, date2: number) {
 		const diffInMilliseconds = Math.round(date2 - date1),
-			millisecondsPerDay = 24 * 60 * 60 * 1000,
+			millisecondsPerDay = 86400e3,
 			diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay)
 
-		if (diffInMilliseconds < 0) return "0 minute(s)"
+		if (diffInMilliseconds < 0) return "0 minutes"
 
-		if (diffInDays >= 1) return diffInDays + " day(s)"
+		if (diffInDays >= 1)
+			return `${diffInDays} day${diffInDays > 1 ? "s" : ""}`
 
-		const diffInHours = Math.floor(diffInMilliseconds / (60 * 60 * 1000)),
-			diffInMinutes = Math.floor(
-				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000)
-			)
+		const diffInHours = Math.floor(diffInMilliseconds / 3600e3)
+		const diffInMinutes = Math.floor((diffInMilliseconds % 3600e3) / 60e3)
+
 		if (diffInHours >= 1)
-			return `${diffInHours} hour(s) ${diffInMinutes} minute(s)`
+			return `${diffInHours} hour${
+				diffInHours > 1 ? "s" : ""
+			} ${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""}`
 
-		return `${diffInMinutes} minute(s)`
+		return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""}`
 	}
 </script>
 
@@ -100,7 +102,7 @@
 						You may reactivate your account after your ban ends in {formatDateDifference(
 							Date.now(),
 							new Date(data.timeEnds).getTime()
-						)}
+						)}.
 					</p>
 					<button
 						class="btn btn-primary {new Date(

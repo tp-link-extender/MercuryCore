@@ -76,7 +76,7 @@ export async function handle({ event, resolve }) {
 
 	if (
 		new Date(user.currencyCollected).getTime() -
-			(new Date().getTime() - 3600_000 * dailyStipend) <
+			(new Date().getTime() - 3600e3 * dailyStipend) <
 		0
 	)
 		await query(

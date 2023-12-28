@@ -31,19 +31,15 @@
 
 	let content = "" // Allows current reply to not be lost on clicking to another reply
 
-	const collapse = (id: string) => () => {
-		repliesCollapsed.update(collapsed => {
-			collapsed[id] = !collapsed[id]
-			return collapsed
-		})
-	}
+	const collapse = (id: string) => () =>
+		($repliesCollapsed[id] = !$repliesCollapsed[id])
 
 	$: hidden = reply.visibility != "Visible"
 </script>
 
 {#if !topLevel}
 	<a href="{baseUrl}{assetName ? '?tab=Comments' : ''}" class="no-underline">
-		<fa fa-arrow-left class="mr-2" />
+		<fa fa-arrow-left class="pr-2" />
 		{#if assetName}
 			Back to asset
 		{:else}
@@ -53,7 +49,7 @@
 	{#if reply.parentReplyId}
 		<br />
 		<a href="{baseUrl}/{reply.parentReplyId}" class="no-underline">
-			<fa fa-arrow-up class="mr-2" />
+			<fa fa-arrow-up class="pr-2" />
 			Parent reply
 		</a>
 	{/if}
@@ -73,7 +69,7 @@
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Expand reply"
-				class="expandBar m-2 ml-4 p-0 mt-0">
+				class="expandBar m-2 pl-2 mt-0 text-base">
 				<small>
 					<span class="grey-text">
 						{reply.author.username}
@@ -81,7 +77,7 @@
 							<i
 								class="fa {assetName
 									? 'fa-hammer'
-									: 'fa-microphone'} ml-1" />
+									: 'fa-microphone'} pl-1" />
 						{/if}
 					</span>
 					- {reply.content[0].text}
