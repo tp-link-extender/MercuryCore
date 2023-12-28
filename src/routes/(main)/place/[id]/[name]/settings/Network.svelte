@@ -1,90 +1,33 @@
 <script lang="ts">
-	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data: import("./$types").PageData
+	const formData = superForm(data.networkForm)
 
-	const { form, errors, message, constraints, enhance, delayed } = superForm(
-		data.networkForm,
-		{ taintedMessage: false }
-	)
-
-	if (data.serverIP) $form.serverIP = data.serverIP
-	if (data.serverPort) $form.serverPort = data.serverPort
-	if (data.maxPlayers) $form.maxPlayers = data.maxPlayers
+	if (data.serverIP)
+		formData.form.update(v => {
+			v.serverIP = data.serverIP
+			return v
+		})
+	if (data.serverPort)
+		formData.form.update(v => {
+			v.serverPort = data.serverPort
+			return v
+		})
+	if (data.maxPlayers)
+		formData.form.update(v => {
+			v.maxPlayers = data.maxPlayers
+			return v
+		})
 </script>
 
-<form use:enhance method="POST" class="col-lg-8" action="?/network&tab=Network">
-	<fieldset class="pb-6">
-		<div class="row">
-			<label for="serverIP" class="col-md-3 text-md-right">Address</label>
-			<div class="col-md-9">
-				<input
-					bind:value={$form.serverIP}
-					{...$constraints.serverIP}
-					required
-					id="serverIP"
-					name="serverIP"
-					class="form-control {$errors.serverIP
-						? 'is-in'
-						: ''}valid" />
-				<p class="col-12 text-danger">
-					{$errors.serverIP || ""}
-				</p>
-			</div>
-		</div>
-		<div class="row">
-			<label for="serverPort" class="col-md-3 text-md-right">Port</label>
-			<div class="col-md-9">
-				<input
-					bind:value={$form.serverPort}
-					{...$constraints.serverPort}
-					type="number"
-					required
-					name="serverPort"
-					id="serverPort"
-					class="form-control {$errors.serverPort
-						? 'is-in'
-						: ''}valid" />
-				<p class="col-12 text-danger">
-					{$errors.serverPort || ""}
-				</p>
-				<small class="grey-text">
-					Using a port number lower than 49152 may not work correctly.
-				</small>
-			</div>
-		</div>
-		<div class="row">
-			<label for="maxPlayers" class="col-md-3 text-md-right">
-				Server Limit
-			</label>
-			<div class="col-md-9">
-				<input
-					bind:value={$form.maxPlayers}
-					{...$constraints.maxPlayers}
-					required
-					name="maxPlayers"
-					id="maxPlayers"
-					type="number"
-					class="form-control {$errors.maxPlayers
-						? 'is-in'
-						: ''}valid" />
-				<p class="col-12 text-danger">
-					{$errors.maxPlayers || ""}
-				</p>
-			</div>
-		</div>
-	</fieldset>
-	<button class="btn btn-success">
-		{#if $delayed}
-			Working...
-		{:else}
-			Save changes
-		{/if}
-	</button>
-	<p
-		class:text-success={$page.status == 200}
-		class:text-danger={$page.status >= 400}>
-		{$message || ""}
-	</p>
-</form>
+<Form {formData} submit="Save changes" action="?/network&tab=Network">
+	<Input {formData} name="serverIP" label="Address" />
+	<Input
+		{formData}
+		name="serverPort"
+		label="Port"
+		type="number"
+		help="Using a port number lower than 49152 may not work correctly." />
+	<Input {formData} name="maxPlayers" label="Server Limit" type="number" />
+</Form>

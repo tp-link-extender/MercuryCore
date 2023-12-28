@@ -11,7 +11,7 @@ import type { RequestEvent } from "./$types"
 const schemas = {
 	view: z.object({
 		title: z.string().max(100),
-		icon: z.any(),
+		icon: z.any().optional(),
 		description: z.string().max(1000).optional(),
 	}),
 	network: z.object({
