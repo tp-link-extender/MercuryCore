@@ -4,18 +4,10 @@
 	export let data: import("./$types").PageData
 	const { user } = data
 	const formData = superForm(data.profileForm)
+	const { form } = formData
 
-	// damn dollar signs
-	if (user.theme)
-		formData.form.update(v => {
-			v.theme = user.theme
-			return v
-		})
-	if (user.bio?.[0])
-		formData.form.update(v => {
-			v.bio = user.bio[user.bio.length - 1].text
-			return v
-		})
+	if (user.theme) $form.theme = user.theme
+	if (user.bio?.[0]) $form.bio = user.bio[user.bio.length - 1].text
 
 	console.log(user.bio[user.bio.length - 1].text)
 </script>

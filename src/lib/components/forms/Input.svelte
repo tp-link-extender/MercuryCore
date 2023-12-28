@@ -4,37 +4,45 @@
 	export let name: string
 	export let label: string
 	export let help = ""
-	export let placeholder = ""
-	export let autocomplete = ""
-	export let accept = ""
 	export let type: HTMLInputTypeAttribute = "text"
 
 	export let formData: any
 	const { form, errors, constraints } = formData
 </script>
 
-<div {...$$restProps} class="flex flex-wrap pb-8">
+<div class="flex flex-wrap pb-8">
 	<label for={name} class="w-full md:w-1/4">
 		{label}
 	</label>
 	<div class="w-full md:w-3/4">
-		<input
-			bind:value={$form[name]}
-			{...$constraints[name]}
-			{name}
-			id={name}
-			{...{ type /* lmfao */ }}
-			placeholder={placeholder || null}
-			autocomplete={autocomplete || null}
-			accept={accept || null}
-			class="form-{type == 'checkbox'
-				? 'check-input'
-				: 'control'} {$errors[name] ? 'is-in' : ''}valid"
-			style={type == "number"
-				? "width: 9rem"
-				: type == "checkbox"
-					? "width: 1.5rem; height: 1.5rem"
-					: null} />
+		<!-- welp, boilerplate begets boilerplate -->
+		{#if type == "checkbox"}
+			<input
+				{...$$restProps}
+				bind:checked={$form[name]}
+				{name}
+				id={name}
+				type="checkbox"
+				class="form-check-input valid"
+				style="width: 1.5rem; height: 1.5rem" />
+		{:else}
+			<input
+				{...$$restProps}
+				bind:value={$form[name]}
+				{...$constraints[name]}
+				{name}
+				id={name}
+				{...{ type /* lmfao */ }}
+				class="form-{type == 'checkbox'
+					? 'check-input'
+					: type == 'color'
+						? ''
+						: 'control'} {$errors[name] ? 'is-in' : ''}valid"
+				style={type == "number"
+					? "width: 9rem"
+					: type == "color"
+						? "height: 2.5rem; border-radius: 0.375rem"
+						: null} />{/if}
 
 		{#if help}
 			<small class="grey-text">

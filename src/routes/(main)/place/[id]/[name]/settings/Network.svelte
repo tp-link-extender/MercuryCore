@@ -3,22 +3,11 @@
 
 	export let data: import("./$types").PageData
 	const formData = superForm(data.networkForm)
+	const { form } = formData
 
-	if (data.serverIP)
-		formData.form.update(v => {
-			v.serverIP = data.serverIP
-			return v
-		})
-	if (data.serverPort)
-		formData.form.update(v => {
-			v.serverPort = data.serverPort
-			return v
-		})
-	if (data.maxPlayers)
-		formData.form.update(v => {
-			v.maxPlayers = data.maxPlayers
-			return v
-		})
+	if (data.serverIP) $form.serverIP = data.serverIP
+	if (data.serverPort) $form.serverPort = data.serverPort
+	if (data.maxPlayers) $form.maxPlayers = data.maxPlayers
 </script>
 
 <Form {formData} submit="Save changes" action="?/network&tab=Network">

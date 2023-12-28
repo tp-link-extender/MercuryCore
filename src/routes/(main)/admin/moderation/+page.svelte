@@ -1,142 +1,54 @@
 <script lang="ts">
-	import { page } from "$app/stores"
 	import superForm from "$lib/superForm"
 
 	export let data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form)
+	const formData = superForm(data.form)
+	const { form } = formData
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 
-	const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10)
+	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
 	let tabData = TabData(data.url, ["Moderate User"])
 </script>
 
 <Head title="Moderate User - Admin" />
 
-<div class="ctnr py-6">
+<div class="ctnr pt-6 max-w-280 light-text">
 	<h1 class="mb-0">Admin - Moderate User</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>
-	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6">
+
+	<div class="flex flex-wrap pt-6">
+		<div class="w-full lg:w-1/6 md:w-1/4 pb-6">
 			<TabNav bind:tabData vertical />
 		</div>
-		<div class="col-lg-10 col-md-9">
+		<div class="w-full lg:w-5/6 md:w-3/4">
 			<Tab {tabData}>
-				<form use:enhance method="POST" action="?/moderateUser">
-					<fieldset>
-						<div class="row">
-							<label for="username" class="col-md-3 light-text">
-								Username
-							</label>
-							<div class="col-md-8">
-								<input
-									bind:value={$form.username}
-									{...$constraints.username}
-									type="text"
-									name="username"
-									id="username"
-									class="form-control {$errors.username
-										? 'is-in'
-										: ''}valid" />
-								<p class="col-12 text-danger">
-									{$errors.username || ""}
-								</p>
-							</div>
+				<Form {formData} submit="Moderate">
+					<Input {formData} name="username" label="Username" />
+					<Select {formData} name="action" label="Action">
+						<option value="1">Warning</option>
+						<option value="2">Ban</option>
+						<option value="3">Termination</option>
+						<option value="4">Account Deletion</option>
+						<option value="5">Unban</option>
+					</Select>
+					{#if $form.action == "2"}
+						<div transition:fade>
+							<Input
+								{formData}
+								name="banDate"
+								label="Ban until"
+								type="date"
+								min={tomorrow}
+								required />
 						</div>
-						<div class="row">
-							<label for="action" class="col-md-3 light-text">
-								Action
-							</label>
-							<div class="col-md-8">
-								<select
-									bind:value={$form.action}
-									{...$constraints.action}
-									name="action"
-									id="action"
-									class="form-control light-text {$errors.action
-										? 'is-in'
-										: ''}valid">
-									<option value="1" selected>Warning</option>
-									<option value="2">Ban</option>
-									<option value="3">Termination</option>
-									<option value="4">Account Deletion</option>
-									<option value="5">Unban</option>
-								</select>
-								<p class="col-12 text-danger">
-									{$errors.action || ""}
-								</p>
-							</div>
-						</div>
-						{#if $form.action == 2}
-							<div class="row" transition:fade>
-								<label
-									for="banDate"
-									class="col-md-3 light-text">
-									Ban until
-								</label>
-								<div class="col-md-8">
-									<input
-										bind:value={$form.banDate}
-										{...$constraints.banDate}
-										type="date"
-										name="banDate"
-										id="banDate"
-										min={tomorrow}
-										required
-										class="form-control {$errors.banDate
-											? 'is-in'
-											: ''}valid" />
-									<p class="col-12 text-danger">
-										{$errors.banDate || ""}
-									</p>
-								</div>
-							</div>
-						{/if}
-						<div class="row">
-							<label for="reason" class="col-md-3 light-text">
-								Reason
-							</label>
-							<div class="col-md-8">
-								<textarea
-									bind:value={$form.reason}
-									{...$constraints.reason}
-									name="reason"
-									id="reason"
-									class="form-control {$errors.reason
-										? 'is-in'
-										: ''}valid" />
-								<p class="col-12 text-danger">
-									{$errors.reason || ""}
-								</p>
-							</div>
-						</div>
-						<button class="btn btn-success mt-4">
-							{#if $delayed}
-								Working...
-							{:else}
-								Moderate
-							{/if}
-						</button>
-					</fieldset>
-				</form>
-				<p
-					class:text-success={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
-					{$message || ""}
-				</p>
+					{/if}
+					<Textarea {formData} name="reason" label="Reason" />
+				</Form>
 			</Tab>
 		</div>
 	</div>

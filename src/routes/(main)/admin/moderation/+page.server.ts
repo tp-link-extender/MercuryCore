@@ -7,7 +7,8 @@ import { z } from "zod"
 
 const schema = z.object({
 	username: z.string().min(3).max(21),
-	action: z.number().int().min(1).max(5),
+	// enum to allow 1 to be selected initially
+	action: z.enum(["1", "2", "3", "4", "5"]),
 	banDate: z.string().optional(),
 	reason: z.string().min(15).max(150),
 })
@@ -22,7 +23,7 @@ export async function load({ locals }) {
 }
 
 export const actions = {
-	moderateUser: async ({ request, locals, getClientAddress }) => {
+	default: async ({ request, locals, getClientAddress }) => {
 		const { user } = await authorise(locals, 4),
 			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
@@ -30,9 +31,10 @@ export const actions = {
 		if (limit) return limit
 
 		const { username, action, banDate, reason } = form.data,
-			date = banDate ? new Date(banDate) : null
+			date = banDate ? new Date(banDate) : null,
+			intAction = parseInt(action)
 
-		if (action == 2 && (date?.getTime() || 0) < new Date().getTime())
+		if (intAction == 2 && (date?.getTime() || 0) < new Date().getTime())
 			return formError(form, ["banDate"], ["Invalid date"])
 
 		const getModeratee = await squery<{
@@ -84,7 +86,7 @@ export const actions = {
 			moderatee: `user:${getModeratee.id}`,
 		}
 
-		if (action == 5) {
+		if (intAction == 5) {
 			// Unban
 			if (
 				!(await squery(
@@ -131,14 +133,14 @@ export const actions = {
 					}`,
 				{
 					note: `Unban ${username}`,
-					...query,
+					...qParams,
 				}
 			)
 
 			return message(form, `${username} has been unbanned`)
 		}
 
-		const moderationAction = moderationActions[action - 1]
+		const moderationAction = moderationActions[intAction - 1]
 
 		if (
 			await squery(
@@ -177,17 +179,17 @@ export const actions = {
 						`Ban ${username}`,
 						`Terminate ${username}`,
 						`Delete ${username}'s account`,
-					][action - 1] + `: ${reason}`,
+					][intAction - 1] + `: ${reason}`,
 				reason,
 				moderationAction,
 				timeEnds: date || new Date(),
-				...query,
+				...qParams,
 			}
 		)
 
 		return message(
 			form,
-			`${username} has been ${moderationMessage[action - 1]}`
+			`${username} has been ${moderationMessage[intAction - 1]}`
 		)
 	},
 }

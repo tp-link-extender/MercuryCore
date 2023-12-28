@@ -3,12 +3,9 @@
 
 	export let data: import("./$types").PageData
 	const formData = superForm(data.privacyForm)
+	const { form } = formData
 
-	if (data.privateServer)
-		formData.form.update(v => {
-			v.privateServer = data.privateServer
-			return v
-		})
+	if (data.privateServer) $form.privateServer = data.privateServer
 </script>
 
 <Form {formData} submit="Save changes" action="?/privacy&tab=Privacy">
