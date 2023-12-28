@@ -1,31 +1,4 @@
 import { json } from "@sveltejs/kit"
+import settings from "./settings.json"
 
-export const GET = () =>
-	json({
-		FFlagUserHttpAPIVisible: "True",
-		FFlagModuleScriptsVisible: "True",
-		DFFlagAllowAllUsersToUseHttpService: "True",
-		DFFlagUserHttpAPIEnabled: "True",
-		FFlagSurfaceGuiVisible: "True",
-		FFlagCreateServerScriptServiceInStudio: "True",
-		FFlagCreateServerStorageInStudio: "True",
-		FFlagCreateReplicatedStorageInStudio: "True",
-
-		FFlagStudioInitializeViewOnPaint: "True",
-		FFlagStudioZoomExtentsExplorerFixEnabled: "True",
-		FFlagStudioPropertiesRespectCollisionToggle: "True",
-		FFlagStudioScriptBlockAutocomplete: "True",
-		FFlagStudioRightClickFixesEnabled: "True",
-
-		FFlagQtFindInExplorer: "True",
-		FFlagQtRightClickContextMenu: "True",
-		FFlagQtTooltipObjectDescriptions: "True",
-
-		FFlagRibbonBarEnabled: "True",
-		FFlagAllowBrowsableAppearInExplorer: "True",
-		FFlagBetterGuiObjectInsertDefaults: "True",
-
-		FFlagTrimExtraSlashesAfterRobloxDomain: "False",
-		FFlagStudioIntellesenseEnabled: "False",
-		FFlagStudioShowToolboxByDefault: "False",
-	})
+export const GET = () => json(settings)

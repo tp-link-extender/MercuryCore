@@ -4,11 +4,10 @@
 import { auth, authorise } from "$lib/server/lucia"
 import { error, redirect } from "@sveltejs/kit"
 
+const msg = Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString()
+
 export function load() {
-	error(
-		451,
-		Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii")
-	)
+	error(451, msg)
 }
 
 export const actions = {
