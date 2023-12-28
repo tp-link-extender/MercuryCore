@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { invalidate } from "$app/navigation"
 	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
 
 	let modal = writable(false),
-		bannerData = {
-			id: "",
-			bgColour: "",
-			textLight: false,
-			body: "",
-		},
 		tabData = TabData(data.url, ["Create Banner", "Banner List"]),
 		textLightForms: { [k: string]: HTMLFormElement } = {}
+	let bannerData = {
+		id: "",
+		bgColour: "",
+		textLight: false,
+		body: "",
+	}
 
 	const {
 		form,
@@ -24,9 +24,7 @@
 		delayed,
 		capture,
 		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+	} = superForm(data.form)
 	const viewBody = (newBannerData: typeof bannerData) => () => {
 		modal.set(true)
 

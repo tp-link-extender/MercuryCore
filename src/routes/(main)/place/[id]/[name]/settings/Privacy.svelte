@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data: import("./$types").PageData
 
-	const { form, message, enhance, delayed } = superForm(data.privacyForm, {
-		taintedMessage: false,
-	})
+	const { form, message, enhance, delayed } = superForm(data.privacyForm)
 
 	if (data.privateServer) $form.privateServer = data.privateServer
 </script>

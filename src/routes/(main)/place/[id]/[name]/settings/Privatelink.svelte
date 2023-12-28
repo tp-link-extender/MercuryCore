@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data: import("./$types").PageData
 
-	const { message, enhance, delayed } = superForm(data.privatelinkForm, {
-		taintedMessage: false,
-	})
+	const { message, enhance, delayed } = superForm(data.privatelinkForm)
 
 	$: value = `https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`
 

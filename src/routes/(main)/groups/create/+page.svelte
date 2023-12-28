@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
 	const { form, errors, constraints, enhance, delayed, capture, restore } =
-		superForm(data.form, {
-			taintedMessage: false,
-		})
+		superForm(data.form)
 
 	export const snapshot = { capture, restore }
 	$: other = ($errors as any).other || ""

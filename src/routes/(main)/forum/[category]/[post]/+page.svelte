@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { enhance as enhance2 } from "$app/forms"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
 	export let asComponent = false
@@ -18,9 +18,7 @@
 		delayed,
 		capture,
 		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+	} = superForm(data.form)
 
 	export const snapshot = { capture, restore }
 </script>

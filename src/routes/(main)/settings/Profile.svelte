@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data: import("./$types").PageData
 	const { user } = data
-
-	const formData = superForm(data.profileForm, { taintedMessage: false })
+	const formData = superForm(data.profileForm)
 
 	// damn dollar signs
 	if (user.theme)

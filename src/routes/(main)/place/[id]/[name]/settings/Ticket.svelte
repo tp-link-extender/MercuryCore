@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data: import("./$types").PageData
 
-	const { message, enhance, delayed } = superForm(data.ticketForm, {
-		taintedMessage: false,
-	})
+	const { message, enhance, delayed } = superForm(data.ticketForm)
 </script>
 
 <form use:enhance method="POST" class="col-lg-8" action="?/ticket&tab=Network">
