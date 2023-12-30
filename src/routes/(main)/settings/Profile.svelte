@@ -27,5 +27,6 @@
 		rows="3"
 		name="bio"
 		label="Bio"
-		help="Maximum 1000 characters, your bio will appear on your profile and allow other users to know who you are." />
+		placeholder="Maximum 1000 characters"
+		help="Your bio will appear on your profile and allow other users to know who you are." />
 </Form>

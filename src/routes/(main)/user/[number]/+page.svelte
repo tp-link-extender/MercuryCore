@@ -133,15 +133,17 @@
 			{#if data.places.length > 0}
 				<div class="pt-6">
 					<h2 class="light-text">Creations</h2>
-					{#each data.places as place, num}
-						<div
-							in:fade|global={{
-								num,
-								total: data.places.length,
-							}}>
-							<ProfilePlace {place} />
-						</div>
-					{/each}
+					<div class="flex flex-col gap-2">
+						{#each data.places as place, num}
+							<div
+								in:fade|global={{
+									num,
+									total: data.places.length,
+								}}>
+								<ProfilePlace {place} />
+							</div>
+						{/each}
+					</div>
 				</div>
 			{/if}
 		</div>

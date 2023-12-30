@@ -206,44 +206,39 @@
 								{/if}
 							{/if}
 						{:else}
-							<div class="mb-2 card reply bg-darker">
-								<div class="card-body p-4 pt-1 pb-0">
-									<form
-										use:enhance
-										on:submit={() => replyingTo.set("")}
-										class="mb-6"
-										method="POST"
-										action="?/reply&rid={reply.id}">
-										<label
-											for="content"
-											class="light-text py-2">
-											Post a Reply
-										</label>
-										<fieldset>
-											<textarea
-												bind:value={content}
-												class="form-control valid mb-2"
-												required
-												minlength="1"
-												maxlength="1000"
-												name="content"
-												placeholder="What are your thoughts?"
-												rows="4" />
-											<button class="btn btn-success">
-												<i
-													class="far fa-message mr-2" />
-												Reply
-											</button>
-											<button
-												on:click={() =>
-													replyingTo.set("")}
-												class="btn btn-dark grey-text ml-1">
-												<fa fa-cancel class="mr-2" />
-												Cancel
-											</button>
-										</fieldset>
-									</form>
-								</div>
+							<div class="mb-2 card reply bg-darker p-4 pt-2">
+								<form
+									use:enhance
+									on:submit={() => replyingTo.set("")}
+									method="POST"
+									action="?/reply&rid={reply.id}">
+									<label
+										for="content"
+										class="light-text pb-2">
+										Post a Reply
+									</label>
+									<fieldset>
+										<textarea
+											bind:value={content}
+											class="form-control valid mb-2"
+											required
+											minlength="1"
+											maxlength="1000"
+											name="content"
+											placeholder="What are your thoughts?"
+											rows="4" />
+										<button class="btn btn-success">
+											<i class="far fa-message mr-2" />
+											Reply
+										</button>
+										<button
+											on:click={() => replyingTo.set("")}
+											class="btn btn-dark grey-text ml-1">
+											<fa fa-cancel class="mr-2" />
+											Cancel
+										</button>
+									</fieldset>
+								</form>
 							</div>
 						{/if}
 					</div>

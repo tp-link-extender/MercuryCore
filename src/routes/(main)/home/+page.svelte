@@ -17,7 +17,7 @@
 
 <div class="ctnr">
 	<div class="flex flex-wrap">
-		<div class="w-full md:w-1/2 pr-2">
+		<div class="w-full md:w-1/2 md:pr-2">
 			<h1 class="w-full flex px-10 pb-6 my-0">
 				<a
 					href="/user/{user?.number}"
@@ -33,6 +33,7 @@
 					Post your status - your friends and followers can view how
 					you're doing!
 				</p>
+				<!-- fa-paper-plane-top (for unocss) -->
 				<Form
 					{formData}
 					inline

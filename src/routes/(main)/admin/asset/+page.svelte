@@ -15,9 +15,7 @@
 		Back to panel
 	</a>
 	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData vertical />
-		</div>
+		<TabNav bind:tabData vertical class="col-lg-2 col-md-3 mb-6" />
 		<div class="col-lg-10 col-md-9">
 			<div class="row">
 				{#each data.assets || [] as asset, num}

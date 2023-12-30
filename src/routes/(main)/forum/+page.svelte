@@ -10,23 +10,23 @@
 		<div
 			in:fade|global={{ num, total: data.categories.length }}
 			class="category card bg-darker p-4">
-			<div class="row">
+			<div class="flex flex-wrap">
 				<a
-					class="col-lg-9 col-md-7 row light-text no-underline"
+					class="w-full lg:w-3/4 md:w-7/12 row light-text no-underline"
 					href="/forum/{category.name.toLowerCase()}">
-					<div class="col-9">
+					<div class="w-3/4">
 						<h2>
 							{category.name}
 						</h2>
 						{category.description}
 					</div>
-					<h3 class="col">
+					<h3 class="w-1/4">
 						{category.postCount} post{category.postCount == 1
 							? ""
 							: "s"}
 					</h3>
 				</a>
-				<div class="col-lg-3 col-md-5 row">
+				<div class="w-full lg:w-1/4 md:w-5/12 row">
 					{#if category.latestPost}
 						<a
 							href="/forum/{category.name.toLowerCase()}/{category

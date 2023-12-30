@@ -82,9 +82,7 @@
 	</div>
 	<div class="row mb-4">
 		<h2 class="col-xl-2 col-lg-4 col-md-3 mb-0">Categories</h2>
-		<div class="col-xl-10 col-lg-8 col-md-9">
-			<TabNav bind:tabData justify />
-		</div>
+		<TabNav bind:tabData justify class="col-xl-10 col-lg-8 col-md-9" />
 	</div>
 
 	<div class="row">

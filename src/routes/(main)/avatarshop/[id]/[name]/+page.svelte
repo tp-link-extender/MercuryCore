@@ -4,22 +4,14 @@
 	import superForm from "$lib/superForm"
 
 	export let data
+	const { user } = data
 
 	let replyingTo = writable("")
-	const repliesCollapsed = writable({}),
-		{ user } = data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form)
+	const repliesCollapsed = writable({})
+	const formData = superForm(data.form)
+	const { form, errors, message, constraints, enhance, delayed } = formData
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 
 	let tabData = TabData(data.url, ["Recommended", "Comments"])
 
@@ -31,8 +23,6 @@
 		13: "Decal",
 		18: "Face",
 	}
-
-	const usernav = [["fa-pencil", "Edit Asset", "/requests"]]
 </script>
 
 <Head title={data.name} />
@@ -55,16 +45,19 @@
 						<fa fa-ellipsis />
 						<div class="dropdown-content">
 							<ul class="p-2 rounded-3">
-								{#each usernav as [icon, title, href]}
-									<li class="rounded-2">
-										<a
-											class="btn light-text pl-4 pr-0 text-start"
-											{href}>
-											<fa class="{icon} mr-2" />
-											{title}
-										</a>
-									</li>
-								{/each}
+								<button
+									class="btn light-text pl-4 pr-0 text-start">
+									<fa fa-pencil class="mr-2" />
+									nothing here
+								</button>
+								<!-- <li class="rounded-2">
+									<a
+										class="btn light-text pl-4 pr-0 text-start"
+										href="/requests">
+										<fa class="fa-pencil mr-2" />
+										Edit asset
+									</a>
+								</li> -->
 								{#if data.user.permissionLevel > 2}
 									<li class="rounded-2">
 										<form

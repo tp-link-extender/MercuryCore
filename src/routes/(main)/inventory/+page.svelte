@@ -51,9 +51,7 @@
 
 <div class="ctnr">
 	<div class="row">
-		<div class="col-lg-2 col-md-3">
-			<TabNav bind:tabData vertical />
-		</div>
+		<TabNav bind:tabData vertical class="col-lg-2 col-md-3" />
 		<div class="col-xl-9 col-lg-9">
 			<div class="ctnr">
 				<form
