@@ -12,42 +12,37 @@
 <label
 	in:fade|global={{ num, total }}
 	for="modal{asset.id}"
-	class="assetcard col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6
-	no-underline px-2">
-	<div class="card bg-a3">
-		<div class="card-body bg-a p-4 pb-3 rounded-1 light-text">
-			<div class="text-center pb-4">
-				<img
-					src="/avatarshop/{asset.id}/{asset.name}/icon"
-					alt={asset.name} />
-			</div>
-			{asset.name}
-			<span class="flex pb-2">
-				<strong class="pr-2">by</strong>
-				<User
-					user={asset.creator}
-					size="1.5rem"
-					thin
-					full
-					bg="background" />
-			</span>
-			<div class="">
-				<form
-					use:enhance
-					method="POST"
-					action="/admin/asset?/approve&id={asset.id}"
-					class="inline">
-					<button class="btn btn-sm btn-primary mb-1">Approve</button>
-				</form>
-				<form
-					use:enhance
-					method="POST"
-					action="/admin/asset?/deny&id={asset.id}"
-					class="inline">
-					<button class="btn btn-sm btn-danger mb-1">Deny</button>
-				</form>
-			</div>
+	class="assetcard no-underline light-text">
+	<div class="card bg-a p-3">
+		<div class="text-center pb-4">
+			<img
+				src="/avatarshop/{asset.id}/{asset.name}/icon"
+				alt={asset.name} />
 		</div>
+		{asset.name}
+		<span class="flex pb-2">
+			<strong class="pr-2">by</strong>
+			<User
+				user={asset.creator}
+				size="1.5rem"
+				thin
+				full
+				bg="background" />
+		</span>
+		<form
+			use:enhance
+			method="POST"
+			action="/admin/asset?/approve&id={asset.id}"
+			class="inline">
+			<button class="btn btn-sm btn-primary mb-1">Approve</button>
+		</form>
+		<form
+			use:enhance
+			method="POST"
+			action="/admin/asset?/deny&id={asset.id}"
+			class="inline">
+			<button class="btn btn-sm btn-danger mb-1">Deny</button>
+		</form>
 	</div>
 </label>
 
@@ -63,7 +58,7 @@
 			<div class="text-center pb-3">
 				<h3 class="fs-5">Image asset</h3>
 				<img
-					class="image"
+					class="image aspect-1 md:w-80 w-60"
 					src="/avatarshop/{asset.imageAsset.id}/{asset.imageAsset
 						.name}/icon"
 					alt={asset.imageAsset.name} />
@@ -123,14 +118,13 @@
 
 <style lang="stylus">
 	.card
-		border-width 2px
+		border 1px solid var(--accent2)
 
 	.assetcard
 		cursor pointer
-		.card-body
-			transition 0.3s
-			&:hover
-				background var(--darker) !important
+		transition 0.3s
+		&:hover
+			background var(--darker) !important
 
 	.image
 		background var(--accent)
@@ -145,13 +139,6 @@
 			)
 		background-size 20px 20px
 		background-position 0 0, 10px 10px
-
-		height 20rem
-		width 20rem
-
-		+-sm()
-			height 15rem
-			width 15rem
 
 	label img
 		width 85%

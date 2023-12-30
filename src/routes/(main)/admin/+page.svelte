@@ -79,20 +79,21 @@
 	</h2>
 	<hr />
 	<div class="flex flex-wrap">
-		<TabNav bind:tabData vertical class="w-full lg:w-1/6 md:w-1/4 pb-6" />
+		<TabNav
+			bind:tabData
+			vertical
+			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
 		<div class="w-full lg:w-5/6 md:w-3/4">
 			{#each tabNames.slice(0, -1) as key}
-				<Tab {tabData}>
-					<div class="row">
-						{#each panel[key] as i, num}
-							<AdminLink
-								href={i[1]}
-								iconClass={i[2]}
-								{num}
-								total={panel[key].length}
-								name={i[0]} />
-						{/each}
-					</div>
+				<Tab {tabData} class="grid lg:grid-cols-4 gap-2">
+					{#each panel[key] as i, num}
+						<AdminLink
+							href={i[1]}
+							iconClass={i[2]}
+							{num}
+							total={panel[key].length}
+							name={i[0]} />
+					{/each}
 				</Tab>
 			{/each}
 

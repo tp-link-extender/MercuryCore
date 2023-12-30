@@ -16,8 +16,9 @@
 <Head title="Home" />
 
 <div class="ctnr">
-	<div class="flex flex-wrap">
-		<div class="w-full md:w-1/2 md:pr-2">
+	<!-- Flex or Grid? what a dilemma -->
+	<div class="grid lg:grid-cols-2 gap-4">
+		<div>
 			<h1 class="w-full flex px-10 pb-6 my-0">
 				<a
 					href="/user/{user?.number}"
@@ -60,7 +61,7 @@
 			</div>
 		</div>
 
-		<div class="pt-12 md:pt-28 pl-2 flex gap-12 flex-col w-1/2">
+		<div class="pt-12 md:pt-28 pl-2 flex flex-col gap-12">
 			{#if data.friends.length > 0}
 				<div>
 					<h2 class="light-text">Friends</h2>

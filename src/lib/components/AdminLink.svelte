@@ -7,10 +7,7 @@
 	export let name: string
 </script>
 
-<a
-	in:fade|global={{ num, total, duration: 300 }}
-	{href}
-	class="col-lg-3 p-1 no-underline">
+<a in:fade|global={{ num, total, duration: 300 }} {href} class="no-underline">
 	<div class="px-0 card bg-a3 text-center light-text shadow-none">
 		<div class="card-body bg-a rounded-1 p-6">
 			{#if emoji}
@@ -18,7 +15,7 @@
 			{:else}
 				<i class="icon {iconClass}" />
 			{/if}
-			<div class="fs-3 mt-4">
+			<div class="fs-3 pt-4">
 				{name}
 			</div>
 			<slot />

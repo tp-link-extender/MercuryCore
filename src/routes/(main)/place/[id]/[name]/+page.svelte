@@ -81,8 +81,8 @@
 <Head title={data.name} />
 
 <div class="ctnr max-w-240 light-text">
-	<div class="flex flex-wrap">
-		<div class="md:w-2/3 pb-4">
+	<div class="grid md:grid-cols-3 gap-4">
+		<div class="col-span-2 pb-4">
 			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
 					<div
@@ -116,7 +116,7 @@
 			</div>
 		</div>
 
-		<div class="w-full md:w-1/3 md:ps-4">
+		<div>
 			<div class="card rounded-none mb-6">
 				<div class="card-body">
 					<div class="row">
@@ -290,20 +290,20 @@
 	<Tab {tabData}>
 		{#if user?.permissionLevel == 5 || data.ownerUser?.number == user?.number}
 			<h1 class="text-base">Hosting on Mercury</h1>
-			<p class="light-text">
+			<p>
 				To begin hosting your map for everybody to play, you need to
 				make sure that you are forwarding the port you wish to run the
 				server on. If you are unsure on how to host, there are many
 				resources available online on how to port forward on your
 				router.
 			</p>
-			<p class="light-text">
+			<p>
 				If you have port forwarded already, it's time to get your server
 				running. Below are two methods of hosting - we recommend using
 				Autopilot to get started easily.
 			</p>
 			<div class="flex items-start mb-4">
-				<TabNav bind:tabData={tabData2} vertical />
+				<TabNav bind:tabData={tabData2} vertical class="pr-4" />
 				<!-- Prevents nested tabs from breaking -->
 				{((tabData2.num = 0), "")}
 				<Tab tabData={tabData2}>
