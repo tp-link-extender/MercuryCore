@@ -3,6 +3,7 @@ import { query, squery, surql } from "$lib/server/surreal"
 
 let lines = "0"
 
+// extract the line count from the stupid file that scc outputs
 try {
 	lines =
 		fs

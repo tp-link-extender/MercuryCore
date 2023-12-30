@@ -36,17 +36,20 @@
 				{name}
 				id={name}
 				{...{ type /* lmfao */ }}
-				class:rounded-r-0={inline}
 				class="form-{type == 'checkbox'
 					? 'check-input'
 					: type == 'color'
 						? ''
-						: 'control'} {$errors[name] ? 'is-in' : ''}valid"
+						: 'control'} {$errors[name] ? 'is-in' : ''}valid {inline
+					? 'rounded-r-0'
+					: // idk y unocss isn't extracting from class: directives
+						''}"
 				style={type == "number"
 					? "width: 9rem"
 					: type == "color"
 						? "height: 2.5rem; border-radius: 0.375rem"
-						: null} />{/if}
+						: null} />
+		{/if}
 
 		{#if help}
 			<small class="grey-text">

@@ -33,7 +33,7 @@
 			class="errimg dark"
 			style="background-image: url(/dark/{errors[status] || 'm!'}.svg)" />
 
-		<h1 class="mt-4">
+		<h1 class="pt-4">
 			<a
 				href="https://http.cat/images/{status}.jpg"
 				target="_blank"
