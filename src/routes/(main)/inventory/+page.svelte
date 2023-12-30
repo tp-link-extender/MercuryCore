@@ -47,45 +47,46 @@
 
 <Head title="Inventory" />
 
-<h1 class="text-center mb-4">Inventory</h1>
+<h1 class="text-center pb-4">Inventory</h1>
 
-<div class="ctnr">
-	<div class="row">
-		<TabNav bind:tabData vertical class="col-lg-2 col-md-3" />
-		<div class="col-xl-9 col-lg-9">
-			<div class="ctnr">
-				<form
-					on:submit|preventDefault
-					action="/inventory?tab={tabData.currentTab}"
-					class="row mb-4">
-					<div class="input-group">
-						<input
-							bind:value={query}
-							type="text"
-							name="q"
-							class="form-control light-text valid"
-							placeholder="Search for an item"
-							aria-label="Search for an item"
-							aria-describedby="button-addon2" />
-						<button
-							class="btn btn-success"
-							aria-label="Search"
-							id="button-addon2">
-							<fa fa-magnifying-glass />
-						</button>
-					</div>
-				</form>
-				<div class="row px-1">
-					{#each assets as asset, num}
-						<Asset {asset} {num} total={assets.length} />
-					{/each}
-					{#if query && assets.length == 0}
-						<h2 class="fs-5 pt-12">
-							No items found with search term {query}
-						</h2>
-					{/if}
-				</div>
+<div class="ctnr flex flex-wrap">
+	<TabNav
+		bind:tabData
+		vertical
+		class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
+	<div class="w-full lg:w-5/6 md:w-3/4">
+		<form
+			on:submit|preventDefault
+			action="/inventory?tab={tabData.currentTab}"
+			class="row pb-4">
+			<div class="input-group">
+				<input
+					bind:value={query}
+					type="text"
+					name="q"
+					class="form-control light-text valid"
+					placeholder="Search for an item"
+					aria-label="Search for an item"
+					aria-describedby="button-addon2" />
+				<button
+					class="btn btn-success"
+					aria-label="Search"
+					id="button-addon2">
+					<fa fa-magnifying-glass />
+				</button>
 			</div>
+		</form>
+		<div
+			class="grid gap-4 grid-cols-2
+			xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
+			{#each assets as asset, num}
+				<Asset {asset} {num} total={assets.length} />
+			{/each}
+			{#if query && assets.length == 0}
+				<h2 class="fs-5 pt-12">
+					No items found with search term {query}
+				</h2>
+			{/if}
 		</div>
 	</div>
 </div>

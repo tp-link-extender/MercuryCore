@@ -21,55 +21,50 @@
 <Head title="Create" />
 
 <div class="ctnr py-2">
-	<h1 class="mb-2">Create</h1>
-	<div class="row">
-		<TabNav bind:tabData vertical class="col-lg-2 col-md-3 mb-6" />
-		<div class="col-lg-10 col-md-9">
-			<Tab {tabData}>
-				<div class="row">
-					{#each assetTypes as asset, num}
-						<AdminLink
-							href="/develop/create?asset={asset[2]}"
-							emoji={asset[1]}
-							{num}
-							total={assetTypes.length}
-							name={asset[0]} />
-					{/each}
-				</div>
+	<h1>Create</h1>
+	<div class="flex flex-wrap pt-6">
+		<TabNav
+			bind:tabData
+			vertical
+			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
+		<div class="w-full lg:w-5/6 md:w-3/4">
+			<Tab {tabData} class="grid lg:grid-cols-4 gap-2">
+				{#each assetTypes as asset, num}
+					<AdminLink
+						href="/develop/create?asset={asset[2]}"
+						emoji={asset[1]}
+						{num}
+						total={assetTypes.length}
+						name={asset[0]} />
+				{/each}
 			</Tab>
 
 			<Tab {tabData}>
-				<div class="row">
-					<TabNav bind:tabData={tabData2} justify />
-					<form
-						on:submit|preventDefault
-						action="/character?tab={tabData.currentTab}"
-						class="row mb-4">
+				<TabNav bind:tabData={tabData2} justify />
+				<form
+					on:submit|preventDefault
+					action="/character?tab={tabData.currentTab}"
+					class="pb-4">
+					<input
+						type="hidden"
+						name="tab"
+						value={tabData.currentTab} />
+					<div class="input-group">
 						<input
-							type="hidden"
-							name="tab"
-							value={tabData.currentTab} />
-						<div class="input-group">
-							<input
-								type="text"
-								name="q"
-								class="form-control light-text valid"
-								placeholder="Search for an item"
-								aria-label="Search for an item"
-								aria-describedby="button-addon2" />
-							<button
-								class="btn btn-success"
-								aria-label="Search"
-								id="button-addon2">
-								<fa fa-magnifying-glass />
-							</button>
-						</div>
-					</form>
-					<Tab tabData={tabData2} />
-					<Tab tabData={tabData2} />
-					<Tab tabData={tabData2} />
-					<Tab tabData={tabData2} />
-				</div>
+							type="text"
+							name="q"
+							class="form-control light-text valid"
+							placeholder="Search for an item"
+							aria-label="Search for an item"
+							aria-describedby="button-addon2" />
+						<button
+							class="btn btn-success"
+							aria-label="Search"
+							id="button-addon2">
+							<fa fa-magnifying-glass />
+						</button>
+					</div>
+				</form>
 			</Tab>
 		</div>
 	</div>

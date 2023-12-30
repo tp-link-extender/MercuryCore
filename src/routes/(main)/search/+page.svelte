@@ -20,7 +20,7 @@
 	</h1>
 {/if}
 
-<div class="pt-12">
+<div class="pt-12 px-4">
 	{#if data.category == "users" && data.users}
 		<div class="grid">
 			{#each data.users as user, num}
@@ -51,7 +51,7 @@
 	{:else if data.category == "assets" && data.assets}
 		<div class="grid">
 			{#each data.assets as asset, num}
-				<div class="px-2 pb-2">
+				<div class="pb-4">
 					<Asset {asset} {num} total={data.assets.length} />
 				</div>
 			{/each}

@@ -96,8 +96,8 @@
 			<ReportButton user={data.username} url="/user/{data.number}" />
 		</span>
 	</div>
-	<div class="row">
-		<div class="col-6">
+	<div class="grid grid-cols-2 gap-4">
+		<div>
 			{#if data.bio}
 				<div class="pt-6">
 					<h2 class="light-text">Bio</h2>
@@ -129,7 +129,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-6">
+		<div>
 			{#if data.places.length > 0}
 				<div class="pt-6">
 					<h2 class="light-text">Creations</h2>
