@@ -32,23 +32,21 @@
 <Head title="Discover" />
 
 <div class="ctnr">
-	<div class="row pb-12">
-		<h1 class="col">
-			Games
-			<span class="pl-6">
-				<a href="/games/create" class="btn btn-primary">
-					<fa fa-plus />
-					Create
-				</a>
-			</span>
+	<div class="flex pb-12">
+		<h1 class="w-1/3">
+			<span class="pe-6">Games</span>
+			<a href="/games/create" class="btn btn-primary">
+				<fa fa-plus />
+				Create
+			</a>
 		</h1>
-		<div class="col-8">
+		<div class="w-2/3">
 			<form
 				use:enhance
 				method="POST"
 				action="/search?c=places"
-				class="row">
-				<div class="col-5">
+				class="flex gap-4">
+				<div class="w-5/12">
 					<div class="input-group">
 						<input
 							bind:value={query}
@@ -66,36 +64,32 @@
 						</button>
 					</div>
 				</div>
-				<div class="col-7 row">
-					<div class="pl-4 col">
-						<div class="row">
-							<label for="genre" class="light-text col py-1">
-								Genre
-							</label>
-							<select
-								class="form-select form-select-sm light-text col"
-								id="genre"
-								placeholder="Genre"
-								aria-label="genre">
-								<option value="Obby">Obby</option>
-								<option value="Horror">Horror</option>
-								<option value="Comedy">Comedy</option>
-							</select>
-						</div>
+				<div class="pl-4 w-7/24">
+					<div class="row">
+						<label for="genre" class="light-text col py-1">
+							Genre
+						</label>
+						<select
+							class="form-select form-select-sm light-text col"
+							id="genre"
+							placeholder="Genre"
+							aria-label="genre">
+							<option value="Obby">Obby</option>
+							<option value="Horror">Horror</option>
+							<option value="Comedy">Comedy</option>
+						</select>
 					</div>
-					<div class="ml-4 col">
-						<div class="form-check light-text py-1">
-							<input
-								class="form-check-input"
-								type="checkbox"
-								value=""
-								id="flexCheckDefault" />
-							<label
-								class="form-check-label"
-								for="flexCheckDefault">
-								Gears Allowed
-							</label>
-						</div>
+				</div>
+				<div class="pl-4 w-7/24">
+					<div class="form-check light-text py-1">
+						<input
+							class="form-check-input"
+							type="checkbox"
+							value=""
+							id="flexCheckDefault" />
+						<label class="form-check-label" for="flexCheckDefault">
+							Gears Allowed
+						</label>
 					</div>
 				</div>
 			</form>
