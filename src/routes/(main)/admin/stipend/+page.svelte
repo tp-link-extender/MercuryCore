@@ -30,9 +30,12 @@
 		<fa fa-caret-left />
 		Back to panel
 	</a>
-	<div class="row mt-6">
-		<TabNav bind:tabData vertical class="col-lg-2 col-md-3 mb-6" />
-		<div class="col-lg-10 col-md-9">
+	<div class="flex flex-wrap pt-6">
+		<TabNav
+			bind:tabData
+			vertical
+			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
+		<div class="w-full lg:w-5/6 md:w-3/4">
 			<Tab {tabData}>
 				<form use:enhance method="POST" action="?/updateStipend">
 					<fieldset>
