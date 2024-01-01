@@ -7,9 +7,7 @@
 	const { form } = formData
 
 	if (user.theme) $form.theme = user.theme
-	if (user.bio?.[0]) $form.bio = user.bio[user.bio.length - 1].text
-
-	console.log(user.bio[user.bio.length - 1].text)
+	if (user.bio?.[0]) $form.bio = user.bio[user.bio.length - 1]?.text || ""
 </script>
 
 <Form {formData} action="?/profile" submit="Save changes">
