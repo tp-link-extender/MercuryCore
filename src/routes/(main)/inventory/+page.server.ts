@@ -16,7 +16,7 @@ export const load = async ({ locals, url }) => {
 
 	return {
 		query: searchQ,
-		assets: query<{
+		assets: await query<{
 			name: string
 			price: number
 			id: number
@@ -30,7 +30,7 @@ export const load = async ({ locals, url }) => {
 			{
 				user: `user:${(await authorise(locals)).user.id}`,
 				query: searchQ,
-			},
+			}
 		),
 	}
 }
@@ -43,7 +43,7 @@ export const actions = {
 			{
 				query: (await request.formData()).get("q") as string,
 				user: `user:${(await authorise(locals)).user.id}`,
-			},
+			}
 		),
 	}),
 }

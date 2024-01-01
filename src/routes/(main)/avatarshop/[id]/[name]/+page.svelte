@@ -1,27 +1,17 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { enhance } from "$app/forms" // idky
-	import { superForm } from "sveltekit-superforms/client"
+	import { enhance as enhance2 } from "$app/forms" // idky
+	import superForm from "$lib/superForm"
 
 	export let data
+	const { user } = data
 
 	let replyingTo = writable("")
-	const repliesCollapsed = writable({}),
-		{ user } = data,
-		{
-			form,
-			errors,
-			message,
-			constraints,
-			enhance: enhance2,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		})
+	const repliesCollapsed = writable({})
+	const formData = superForm(data.form)
+	const { form, errors, message, constraints, enhance, delayed } = formData
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 
 	let tabData = TabData(data.url, ["Recommended", "Comments"])
 
@@ -33,15 +23,13 @@
 		13: "Decal",
 		18: "Face",
 	}
-
-	const usernav = [["fa-pencil", "Edit Asset", "/requests"]]
 </script>
 
 <Head title={data.name} />
 
-<div class="container">
+<div class="ctnr max-w-240">
 	<div class="row">
-		<div class="col pe-4 pb-4">
+		<div class="col pr-4 pb-4">
 			<img
 				class="image"
 				src="/avatarshop/{data.id}/{data.name}/icon"
@@ -52,31 +40,34 @@
 				<div class="col">
 					<h1 class="mb-0">{data.name}</h1>
 				</div>
-				<div class="col d-flex justify-content-end">
-					<li class="dropdown dropdown-hover dropdown-end ps-2 pt-2">
+				<div class="col flex justify-end">
+					<li class="dropdown dropdown-hover dropdown-end pl-2 pt-2">
 						<fa fa-ellipsis />
 						<div class="dropdown-content">
 							<ul class="p-2 rounded-3">
-								{#each usernav as [icon, title, href]}
-									<li class="rounded-2">
-										<a
-											class="btn light-text ps-4 pe-0 text-start"
-											{href}>
-											<fa class="{icon} me-2" />
-											{title}
-										</a>
-									</li>
-								{/each}
+								<button
+									class="btn light-text pl-4 pr-0 text-start">
+									<fa fa-pencil class="mr-2" />
+									nothing here
+								</button>
+								<!-- <li class="rounded-2">
+									<a
+										class="btn light-text pl-4 pr-0 text-start"
+										href="/requests">
+										<fa class="fa-pencil mr-2" />
+										Edit asset
+									</a>
+								</li> -->
 								{#if data.user.permissionLevel > 2}
 									<li class="rounded-2">
 										<form
-											use:enhance
+											use:enhance2
 											method="POST"
 											action="?/rerender">
 											<button
-												class="btn text-primary ps-4 pe-0 text-start">
+												class="btn text-primary pl-4 pr-0 text-start">
 												<i
-													class="fa fa-arrows-rotate me-2" />
+													class="fa fa-arrows-rotate mr-2" />
 												<b>Re-render</b>
 											</button>
 										</form>
@@ -87,8 +78,8 @@
 					</li>
 				</div>
 			</div>
-			<div class="d-flex">
-				<strong class="pe-2">by:</strong>
+			<div class="flex">
+				<strong class="pr-2">by:</strong>
 
 				{#if data.creator}
 					<User
@@ -119,27 +110,25 @@
 						{types[data.type]}
 					</p>
 				</div>
-				<div class="col d-flex flex-row-reverse">
-					<div class="card">
-						<div class="card-body">
-							<p class="light-text text-center mb-0">
-								Price: <span class="text-success">
-									<far fa-gem />
-									{data.price}
-								</span>
-							</p>
-							{#if !data.owned}
-								<label for="buy" class="btn btn-success mt-1">
-									<strong class="fs-3">
-										{data.price > 0 ? "Buy Now" : "Get"}
-									</strong>
-								</label>
-							{:else}
-								<span class="btn btn-secondary mt-1 disabled">
-									<strong class="fs-3">Owned</strong>
-								</span>
-							{/if}
-						</div>
+				<div class="col flex flex-row-reverse">
+					<div class="card p-4">
+						<p class="light-text text-center mb-0 pb-1">
+							Price: <span class="text-success">
+								<far fa-gem />
+								{data.price}
+							</span>
+						</p>
+						{#if !data.owned}
+							<label for="buy" class="btn btn-success">
+								<strong class="fs-3">
+									{data.price > 0 ? "Buy Now" : "Get"}
+								</strong>
+							</label>
+						{:else}
+							<span class="btn btn-dark bg-a3 disabled">
+								<strong class="fs-3">Owned</strong>
+							</span>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -151,9 +140,9 @@
 	<Tab {tabData} />
 
 	<Tab {tabData}>
-		<form use:enhance2 class="py-2" method="POST" action="?/reply">
+		<form use:enhance class="py-2" method="POST" action="?/reply">
 			<label for="content" class="light-text py-2">Post a Comment</label>
-			<fieldset class="col-lg-7 d-flex">
+			<fieldset class="col-lg-7 flex">
 				<textarea
 					bind:value={$form.content}
 					{...$constraints.content}
@@ -161,7 +150,7 @@
 					name="content"
 					placeholder="What are your thoughts?"
 					rows="4" />
-				<button class="btn btn-success ms-4 mt-auto">
+				<button class="btn btn-success ml-4 mt-auto">
 					{#if $delayed}
 						Working...
 					{:else}
@@ -209,12 +198,12 @@
 				?
 			</p>
 
-			<form method="POST" action="?/buy&a=buy" class="d-inline">
+			<form method="POST" action="?/buy" class="inline">
 				<button class="btn btn-success">
 					{data.price > 0 ? "Buy Now" : "Get"}
 				</button>
 			</form>
-			<label for="buy" class="btn btn-dark ms-2">{data.noText}</label>
+			<label for="buy" class="btn btn-dark ml-2">{data.noText}</label>
 		{:else}
 			<h3 class="text-lg font-bold">Insufficient funds</h3>
 			<span>
@@ -235,8 +224,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth(60rem)
-
 	.image
 		background var(--accent1)
 		background-image:

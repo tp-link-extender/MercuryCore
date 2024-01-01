@@ -287,12 +287,12 @@ function JsonReader:ReadNumber()
 	local result = self:Next()
 	local peek = self:Peek()
 	while peek ~= nil and string.find(peek, "[%+%-%d%.eE]") do
-		result = result .. self:Next()
+		result ..= self:Next()
 		peek = self:Peek()
 	end
 	result = tonumber(result)
 	if result == nil then
-		error(string.format("Invalid number: '%s'", result))
+		error(`"Invalid number: '{result}'`)
 	else
 		return result
 	end
@@ -309,7 +309,7 @@ function JsonReader:ReadString()
 				ch = self.escapes[ch]
 			end
 		end
-		result = result .. ch
+		result ..= ch
 	end
 	assert(self:Next() == '"')
 	local fromunicode = function(m)
@@ -326,7 +326,7 @@ function JsonReader:ReadComment()
 	elseif second == "*" then
 		self:ReadBlockComment()
 	else
-		error(string.format("Invalid comment: %s", self:All()))
+		error(`Invalid comment: {self:All()}`)
 	end
 end
 
@@ -338,9 +338,7 @@ function JsonReader:ReadBlockComment()
 			done = true
 		end
 		if not done and ch == "/" and self:Peek() == "*" then
-			error(
-				string.format("Invalid comment: %s, '/*' illegal.", self:All())
-			)
+			error(string.format(`Invalid comment: {self:All()}, '/*' illegal.`))
 		end
 	end
 	self:Next()
@@ -370,13 +368,7 @@ function JsonReader:ReadArray()
 		if not done then
 			local ch = self:Next()
 			if ch ~= "," then
-				error(
-					string.format(
-						"Invalid array: '%s' due to: '%s'",
-						self:All(),
-						ch
-					)
-				)
+				error(`Invalid array: '{self:All()}' due to: '{ch}'`)
 			end
 		end
 	end
@@ -394,18 +386,12 @@ function JsonReader:ReadObject()
 	while not done do
 		local key = self:Read()
 		if type(key) ~= "string" then
-			error(string.format("Invalid non-string object key: %s", key))
+			error(`Invalid non-string object key: {key}`)
 		end
 		self:SkipWhiteSpace()
 		local ch = self:Next()
 		if ch ~= ":" then
-			error(
-				string.format(
-					"Invalid object: '%s' due to: '%s'",
-					self:All(),
-					ch
-				)
-			)
+			error(`Invalid object: '{self:All()}' due to: '{ch}'`)
 		end
 		self:SkipWhiteSpace()
 		local val = self:Read()
@@ -417,13 +403,7 @@ function JsonReader:ReadObject()
 		if not done then
 			ch = self:Next()
 			if ch ~= "," then
-				error(
-					string.format(
-						"Invalid array: '%s' near: '%s'",
-						self:All(),
-						ch
-					)
-				)
+				error(`Invalid array: '{self:All()}' near: '{ch}'`)
 			end
 		end
 	end
@@ -522,14 +502,16 @@ t.SelectTerrainRegion = function(
 
 	if type(regionToSelect) ~= "Region3" then
 		error(
-			"regionToSelect (first arg), should be of type Region3, but is type "
-				.. type(regionToSelect)
+			`regionToSelect (first arg), should be of type Region3, but is type {type(
+				regionToSelect
+			)}`
 		)
 	end
 	if type(color) ~= "BrickColor" then
 		error(
-			"color (second arg), should be of type BrickColor, but is type "
-				.. type(color)
+			`color (second arg), should be of type BrickColor, but is type {type(
+				color
+			)}`
 		)
 	end
 
@@ -568,10 +550,14 @@ t.SelectTerrainRegion = function(
 
 	-- srs translation from region3 to region3int16
 	-- local function Region3ToRegion3int16(region3)
-	-- 	local theLowVec = region3.CFrame.p - (region3.Size / 2) + Vector3.new(2, 2, 2)
+	-- 	local theLowVec = region3.CFrame.p
+	-- 		- (region3.Size / 2)
+	-- 		+ Vector3.new(2, 2, 2)
 	-- 	local lowCell = WorldToCellPreferSolid(terrain, theLowVec)
 
-	-- 	local theHighVec = region3.CFrame.p + (region3.Size / 2) - Vector3.new(2, 2, 2)
+	-- 	local theHighVec = region3.CFrame.p
+	-- 		+ (region3.Size / 2)
+	-- 		- Vector3.new(2, 2, 2)
 	-- 	local highCell = WorldToCellPreferSolid(terrain, theHighVec)
 
 	-- 	local highIntVec = Vector3int16.new(highCell.x, highCell.y, highCell.z)
@@ -960,9 +946,7 @@ local function Create_PrivImpl(objectType)
 			elseif type(k) == "number" then
 				if type(v) ~= "userdata" then
 					error(
-						"Bad entry in Create body: Numeric keys must be paired with children, got a: "
-							.. type(v),
-						2
+						`Bad entry in Create body: Numeric keys must be paired with children, got a: {v}`
 					)
 				end
 				v.Parent = obj
@@ -971,10 +955,7 @@ local function Create_PrivImpl(objectType)
 			elseif type(k) == "table" and k.__eventname then
 				if type(v) ~= "function" then
 					error(
-						"Bad entry in Create body: Key `[Create.E'"
-							.. k.__eventname
-							.. "']` must have a function value, got: "
-							.. tostring(v),
+						`Bad entry in Create body: Key \`[Create.E'{k.__eventname}']\` must have a function value, got: {v}`,
 						2
 					)
 				end
@@ -984,8 +965,7 @@ local function Create_PrivImpl(objectType)
 			elseif k == t.Create then
 				if type(v) ~= "function" then
 					error(
-						"Bad entry in Create body: Key `[Create]` should be paired with a constructor function, got: "
-							.. tostring(v),
+						`Bad entry in Create body: Key \`[Create]\` should be paired with a constructor function, got: {v}`,
 						2
 					)
 				elseif ctor then
@@ -997,14 +977,7 @@ local function Create_PrivImpl(objectType)
 				end
 				ctor = v
 			else
-				error(
-					"Bad entry ("
-						.. tostring(k)
-						.. " => "
-						.. tostring(v)
-						.. ") in Create body",
-					2
-				)
+				error(`Bad entry ({k} => {v}) in Create body`, 2)
 			end
 		end
 

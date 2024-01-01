@@ -46,32 +46,20 @@ local spinnerIcons
 local smallScreenThreshold = 450
 
 -- user facing images
-local assetUrls = {}
 local assetUrl = "http://banland.xyz/Asset/?id="
-local errorImageUrl = assetUrl .. "42557901"
-table.insert(assetUrls, errorImageUrl)
-local buyImageUrl = assetUrl .. "104651457"
-table.insert(assetUrls, buyImageUrl)
-local buyImageDownUrl = assetUrl .. "104651515"
-table.insert(assetUrls, buyImageDownUrl)
-local buyImageDisabledUrl = assetUrl .. "104651532"
-table.insert(assetUrls, buyImageDisabledUrl)
-local cancelButtonImageUrl = assetUrl .. "104651592"
-table.insert(assetUrls, cancelButtonImageUrl)
-local cancelButtonDownUrl = assetUrl .. "104651639"
-table.insert(assetUrls, cancelButtonDownUrl)
-local okButtonUrl = assetUrl .. "104651665"
-table.insert(assetUrls, okButtonUrl)
-local okButtonPressedrl = assetUrl .. "104651707"
-table.insert(assetUrls, okButtonPressedrl)
-local freeButtonImageUrl = assetUrl .. "104651733"
-table.insert(assetUrls, freeButtonImageUrl)
-local freeButtonImageDownUrl = assetUrl .. "104651761"
-table.insert(assetUrls, freeButtonImageDownUrl)
-local tixIcon = assetUrl .. "102481431"
-table.insert(assetUrls, tixIcon)
-local robuxIcon = assetUrl .. "102481419"
-table.insert(assetUrls, robuxIcon)
+
+local errorImageUrl = `{assetUrl}42557901`
+local buyImageUrl = `{assetUrl}104651457`
+local buyImageDownUrl = `{assetUrl}104651515`
+local buyImageDisabledUrl = `{assetUrl}104651532`
+local cancelButtonImageUrl = `{assetUrl}104651592`
+local cancelButtonDownUrl = `{assetUrl}104651639`
+local okButtonUrl = `{assetUrl}104651665`
+local okButtonPressedrl = `{assetUrl}104651707`
+local freeButtonImageUrl = `{assetUrl}104651733`
+local freeButtonImageDownUrl = `{assetUrl}104651761`
+local tixIcon = `{assetUrl}102481431`
+local robuxIcon = `{assetUrl}102481419`
 
 -- user facing string
 local buyHeaderText = "Buy"
@@ -109,8 +97,21 @@ function getRbxUtility()
 end
 
 function preloadAssets()
-	for i = 1, #assetUrls do
-		game:GetService("ContentProvider"):Preload(assetUrls[i])
+	for _, assetUrl in ipairs {
+		errorImageUrl,
+		buyImageUrl,
+		buyImageDownUrl,
+		buyImageDisabledUrl,
+		cancelButtonImageUrl,
+		cancelButtonDownUrl,
+		okButtonUrl,
+		okButtonPressedrl,
+		freeButtonImageUrl,
+		freeButtonImageDownUrl,
+		tixIcon,
+		robuxIcon,
+	} do
+		game:GetService("ContentProvider"):Preload(assetUrl)
 	end
 end
 ----------------------------- End Util Functions ---------------------------------------------
@@ -224,15 +225,11 @@ function updatePurchasePromptData(_)
 		newItemDescription
 
 	if purchasingConsumable then
-		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl
-			.. "thumbs/asset.ashx?assetid="
-			.. tostring(currentProductInfo.IconImageAssetId)
-			.. "&x=100&y=100&format=png"
+		purchaseDialog.BodyFrame.ItemPreview.Image =
+			`{baseUrl}thumbs/asset.ashx?assetid={currentProductInfo.IconImageAssetId}&x=100&y=100&format=png`
 	else
-		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl
-			.. "thumbs/asset.ashx?assetid="
-			.. tostring(currentAssetId)
-			.. "&x=100&y=100&format=png"
+		purchaseDialog.BodyFrame.ItemPreview.Image =
+			`{baseUrl}thumbs/asset.ashx?assetid={currentAssetId}&x=100&y=100&format=png`
 	end
 end
 
@@ -247,7 +244,7 @@ function doPlayerFundsCheck(checkIndefinitely)
 				and checkingPlayerFunds
 				and canPurchase
 			do
-				wait(1 / 10)
+				wait(0.1)
 				canPurchase, insufficientFunds = canPurchaseItem()
 				retries -= 1
 			end
@@ -415,30 +412,19 @@ function doAcceptPurchase(_)
 
 	-- http call to do the purchase
 	local response = "none"
-	local url
+	local url = `{getSecureApiBaseUrl()}marketplace/`
+
+	local currencyData = `&currencyTypeId={currencyEnumToInt(
+		currentCurrencyType
+	)}&currencyTypeId={currencyEnumToInt(
+		currentCurrencyType
+	)}`
 
 	-- consumables need to use a different url
 	if purchasingConsumable then
-		url = getSecureApiBaseUrl()
-			.. "marketplace/submitpurchase?productId="
-			.. tostring(currentProductId)
-			.. "&currencyTypeId="
-			.. tostring(currencyEnumToInt(currentCurrencyType))
-			.. "&expectedUnitPrice="
-			.. tostring(currentCurrencyAmount)
-			.. "&placeId="
-			.. tostring(Game.PlaceId)
+		url ..= `submitpurchase?productId={currentProductId}{currencyData}&expectedUnitPrice={currentCurrencyAmount}&placeId={Game.PlaceId}`
 	else
-		url = getSecureApiBaseUrl()
-			.. "marketplace/purchase?productId="
-			.. tostring(currentProductId)
-			.. "&currencyTypeId="
-			.. tostring(currencyEnumToInt(currentCurrencyType))
-			.. "&purchasePrice="
-			.. tostring(currentCurrencyAmount)
-			.. "&locationType=Game"
-			.. "&locationId="
-			.. Game.PlaceId
+		url ..= `purchase?productId={currentProductId}{currencyData}&purchasePrice={currentCurrencyAmount}&locationType=Game&locationId={Game.PlaceId}`
 	end
 
 	local success, reason = ypcall(function()
@@ -652,7 +638,7 @@ local function getPlayerBalance()
 	local playerBalance
 	local success, errorCode = ypcall(function()
 		playerBalance =
-			game:HttpGetAsync(getSecureApiBaseUrl() .. "currency/balance")
+			game:HttpGetAsync(`{getSecureApiBaseUrl()}currency/balance`)
 	end)
 	if not success then
 		print("Get player balance failed because", errorCode)
@@ -671,12 +657,12 @@ end
 -- should open an external default browser window to this url
 function openBuyCurrencyWindow()
 	checkingPlayerFunds = true
-	GuiService:OpenBrowserWindow(baseUrl .. "Upgrades/Robux.aspx")
+	GuiService:OpenBrowserWindow(`{baseUrl}Upgrades/Robux.aspx`)
 end
 
 function openBCUpSellWindow()
 	GuiService:OpenBrowserWindow(
-		baseUrl .. "Upgrades/BuildersClubMemberships.aspx"
+		`{baseUrl}Upgrades/BuildersClubMemberships.aspx`
 	)
 end
 
@@ -714,18 +700,12 @@ function updateAfterBalanceText(playerBalance, notRightBc)
 						openBuyCurrencyWindow
 					)
 			end
-			purchaseDialog.BodyFrame.AfterBalanceButton.Text = "You need "
-				.. currencyTypeToString(currentCurrencyType)
-				.. " "
-				.. tostring(-afterBalanceNumber)
-				.. " more to buy this, click here to purchase more."
+			purchaseDialog.BodyFrame.AfterBalanceButton.Text =
+				`You need R$ {-afterBalanceNumber} more to buy this, click here to purchase more.`
 			return true, true
 		elseif afterBalanceNumber < 0 and keyWord == "tickets" then
-			purchaseDialog.BodyFrame.AfterBalanceButton.Text = "You need "
-				.. tostring(-afterBalanceNumber)
-				.. " "
-				.. currencyTypeToString(currentCurrencyType)
-				.. " more to buy this item."
+			purchaseDialog.BodyFrame.AfterBalanceButton.Text =
+				`You need {-afterBalanceNumber} Tix more to buy this item.`
 			return true, true -- user can't buy more tickets, so we say fail the transaction (maybe instead we can prompt them to trade currency???)
 		end
 	end
@@ -735,11 +715,10 @@ function updateAfterBalanceText(playerBalance, notRightBc)
 		openBuyCurrencyWindowConnection:disconnect()
 		openBuyCurrencyWindowConnection = nil
 	end
-	purchaseDialog.BodyFrame.AfterBalanceButton.Text = "Your balance after this transaction will be "
-		.. currencyTypeToString(currentCurrencyType)
-		.. " "
-		.. tostring(afterBalanceNumber)
-		.. "."
+	purchaseDialog.BodyFrame.AfterBalanceButton.Text =
+		`Your balance after this transaction will be {currencyTypeToString(
+			currentCurrencyType
+		)} {afterBalanceNumber}.`
 	return true, false
 end
 
@@ -780,9 +759,7 @@ function canPurchaseItem()
 		local currentProductInfoRaw
 		success = ypcall(function()
 			currentProductInfoRaw = Game:HttpGetAsync(
-				getSecureApiBaseUrl()
-					.. "marketplace/productDetails?productid="
-					.. tostring(currentProductId)
+				`{getSecureApiBaseUrl()}marketplace/productDetails?productid={currentProductId}`
 			)
 		end)
 		if success then
@@ -814,11 +791,7 @@ function canPurchaseItem()
 
 		local success2, errorCode = ypcall(function()
 			playerOwnsAsset = game:HttpGetAsync(
-				getSecureApiBaseUrl()
-					.. "ownership/hasAsset?userId="
-					.. tostring(game.Players.LocalPlayer.userId)
-					.. "&assetId="
-					.. tostring(currentAssetId)
+				`{getSecureApiBaseUrl()}ownership/hasAsset?userId={game.Players.LocalPlayer.userId}&assetId={currentAssetId}`
 			)
 		end)
 
@@ -925,7 +898,8 @@ end
 -- function computeSpaceString(pLabel)
 -- 	local nString = " "
 -- 	local tempSpaceLabel = Instance.new "TextButton"
--- 	tempSpaceLabel.Size = UDim2.new(0, pLabel.AbsoluteSize.X, 0, pLabel.AbsoluteSize.Y)
+-- 	tempSpaceLabel.Size =
+-- 		UDim2.new(0, pLabel.AbsoluteSize.X, 0, pLabel.AbsoluteSize.Y)
 -- 	tempSpaceLabel.FontSize = pLabel.FontSize
 -- 	tempSpaceLabel.Parent = pLabel.Parent
 -- 	tempSpaceLabel.BackgroundTransparency = 1
@@ -933,10 +907,10 @@ end
 -- 	tempSpaceLabel.Name = "SpaceButton"
 
 -- 	while tempSpaceLabel.TextBounds.X < pLabel.TextBounds.X do
--- 		nString = nString .. " "
+-- 		nString ..= " "
 -- 		tempSpaceLabel.Text = nString
 -- 	end
--- 	nString = nString .. " "
+-- 	nString ..= " "
 -- 	tempSpaceLabel.Text = ""
 -- 	return nString
 -- end

@@ -4,13 +4,13 @@ const db = new Surreal()
 
 await db.connect("http://localhost:8000/rpc")
 await db.signin({
-	user: "root",
-	pass: "root",
+	username: "root",
+	password: "root",
 })
 
 await db.use({
-	ns: "main",
-	db: "main",
+	namespace: "main",
+	database: "main",
 })
 
 console.log("loaded surreal")
@@ -54,7 +54,7 @@ await db.query(surql`
  * @returns The result of the first query given.
  */
 export const query = async <T>(input: string, params?: { [k: string]: any }) =>
-	(await db.query(input, params))[0].result as T[]
+	(await db.query(input, params))?.[0] as T[]
 
 /**
  * Executes a query in SurrealDB and returns the first item in its results.
@@ -72,7 +72,7 @@ export const squery = async <T>(input: string, params?: { [k: string]: any }) =>
  * @returns The result of all queries given.
  */
 export const mquery = async <T>(input: string, params?: { [k: string]: any }) =>
-	(await db.query(input, params)).map(v => v.result) as T
+	(await db.query(input, params)) as T
 
 const failed = "The query was not executed due to a failed transaction"
 /**
@@ -86,7 +86,7 @@ export async function transaction(
 	sender: { id?: string; number?: number },
 	receiver: { id?: string; number?: number },
 	amountSent: number,
-	{ note, link }: { note?: String; link?: String },
+	{ note, link }: { note?: String; link?: String }
 ) {
 	const qResult = await mquery<
 		| string[]
@@ -165,7 +165,7 @@ export async function transaction(
 			amountSent,
 			note,
 			link,
-		},
+		}
 	)
 
 	for (const result of qResult) {
@@ -173,7 +173,7 @@ export async function transaction(
 			for (const result2 of qResult)
 				if (typeof result2 == "string" && result2 != failed)
 					throw new Error(
-						result2.match(/An error occurred: (.*)/)?.[1],
+						result2.match(/An error occurred: (.*)/)?.[1]
 					)
 	}
 }

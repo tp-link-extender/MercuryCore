@@ -2,69 +2,54 @@ import { query, squery, surql } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
 import { error, redirect } from "@sveltejs/kit"
 
+const getModeration = async (id: string) => {
+	const moderation = await squery<{
+		type: string
+		note: string
+		time: string
+		timeEnds: string
+	}>(
+		surql`
+			SELECT *
+			FROM moderation
+			WHERE out = $user
+				AND active = true`,
+		{ user: `user:${id}` }
+	)
+
+	if (moderation) return moderation
+
+	error(
+		454,
+		"Your ID has been sent to the Mercury Servers for moderation. Thank you!"
+	)
+}
+
 // Make sure a user has been moderated before loading the page.
 export async function load({ locals }) {
-	const { user } = await authorise(locals),
-		userModeration = await squery<{
-			type: string
-			note: string
-			time: string
-			timeEnds: string
-		}>(
-			surql`
-				SELECT *
-				FROM moderation
-				WHERE out = $user
-					AND active = true`,
-			{ user: `user:${user.id}` },
-		)
+	const { user } = await authorise(locals)
 
-	if (!userModeration)
-		throw error(
-			454,
-			"Your ID has been sent to the Mercury Servers for moderation. Thank you!",
-		)
-
-	return userModeration
+	return await getModeration(user.id)
 }
 
 export const actions = {
 	default: async ({ locals }) => {
 		const { user } = await authorise(locals),
-			userModeration = await squery<{
-				type: string
-				timeEnds: string
-			}>(
-				surql`
-					SELECT *
-					FROM moderation
-					WHERE out = $user
-						AND active = true`,
-				{ user: `user:${user.id}` },
-			)
-
-		if (!userModeration)
-			throw error(
-				454,
-				"Your ID has been sent to the Mercury Servers for moderation. Thank you!",
-			)
+			userModeration = await getModeration(user.id)
 
 		if (new Date(userModeration.timeEnds).getTime() > Date.now())
-			throw error(400, "Your moderation action has not yet ended")
+			error(400, "Your moderation action has not yet ended")
 
-		if (
-			userModeration.type == "AccountDeleted" ||
-			userModeration.type == "Termination"
-		)
-			throw error(400, "You cannot reactivate your account")
+		if (["AccountDeleted", "Termination"].includes(userModeration.type))
+			error(400, "You cannot reactivate your account")
 
 		await query(
 			surql`
 				UPDATE moderation SET active = false
 				WHERE out = $user`,
-			{ user: `user:${user.id}` },
+			{ user: `user:${user.id}` }
 		)
 
-		throw redirect(302, "/home")
+		redirect(302, "/home")
 	},
 }

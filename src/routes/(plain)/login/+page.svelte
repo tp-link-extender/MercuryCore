@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
 	const { form, errors, constraints, enhance, delayed, capture, restore } =
 		superForm(data.form, {
-			taintedMessage: false,
 			onResult: ({ result }) =>
 				// Reload to get the new session after redirecting to homepage
 				result.type == "redirect" ? window.location.reload() : null,
@@ -15,31 +14,31 @@
 
 <Head title="Log in" description="Log into your Mercury account." />
 
-<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-fixed bottom-0">
-		<div class="position-absolute" />
-		<div class="position-absolute" />
+<div id="wavep" class="w-full h-full absolute top-0 overflow-hidden">
+	<div class="w-full fixed bottom-0">
+		<div class="absolute" />
+		<div class="absolute" />
 	</div>
 </div>
 
 <div class="row">
 	<div id="dark" class="col light-text">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0 fs-4">
-			<fa fa-arrow-left class="pe-2" />
+		<a type="button" href="/" class="btn btn-lg border-0 px-0 text-base">
+			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
 		<h1 class="font-black mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Endless possibilities</h2>
 			<p class="light-text opacity-75 more">
 				Create or play your favourite games and customise your character
 				with items on our catalog.
 			</p>
 		</div>
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">New features</h2>
 			<p class="light-text opacity-75 more">
 				In addition to full client usability, additional features such
@@ -47,7 +46,7 @@
 				your experience better.
 			</p>
 		</div>
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Same nostalgia</h2>
 			<p class="light-text opacity-75 more">
 				All of our clients will remain as vanilla as possible, to make
@@ -64,9 +63,7 @@
 				<h2 class="light-text">Log into your account</h2>
 				<p class="light-text">
 					Don't yet have an account?
-					<a href="/register" class="text-decoration-none">
-						Register
-					</a>
+					<a href="/register" class="no-underline">Register</a>
 				</p>
 
 				<form use:enhance class="m-auto form-group mt-6" method="POST">
@@ -105,7 +102,7 @@
 								{$errors.password || ""}
 							</p>
 						</div>
-						<button class="container-fluid btn btn-primary mb-4">
+						<button class="btn btn-primary mb-4">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -123,9 +120,7 @@
 				</p>
 				<p class="pt-2">
 					If it's the former, head to the
-					<a href="/register" class="text-decoration-none">
-						Register
-					</a>
+					<a href="/register" class="no-underline">Register</a>
 					page to create the first user!
 				</p>
 			{/if}

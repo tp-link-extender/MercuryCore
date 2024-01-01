@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Gradient } from "stripe-gradient"
+	import g from "stripe-gradient"
+	const { Gradient } = g
 	import { Canvas } from "@threlte/core"
 
 	// Gradient must run upon page being loaded,
@@ -22,39 +23,36 @@
 	description="Mercury: Endless possibilities. New features. Same nostalgia."
 	ogImage="/mercury.gif" />
 
-<div id="gradientbg" class="w-100 h-100 position-fixed" />
+<div id="gradientbg" class="w-full h-full fixed" />
 
 <canvas
 	id="gradientcanvas"
-	class="w-100 h-100 position-fixed"
+	class="w-full h-full fixed"
 	style="opacity: {canvasOpacity}" />
 
 <div
 	id="info"
-	class="container d-flex justify-content-center align-items-center"
+	class="ctnr flex justify-center items-center"
 	style="padding-top: {infoPadding}vh">
-	<div
-		id="moon"
-		class="position-absolute w-100"
-		style="opacity: {canvasOpacity}">
+	<div id="moon" class="absolute w-full" style="opacity: {canvasOpacity}">
 		<Canvas>
 			<Moon />
 		</Canvas>
 	</div>
 	<div
 		id="infotext"
-		class="d-flex flex-column justify-content-center align-items-center position-relative"
+		class="flex flex-col justify-center items-center relative"
 		style="margin-top: {infoTextMargin}vh">
 		<h1 class="font-black text-white opacity-75">Mercury 2</h1>
 		<p class="lead text-white text-center">
 			Endless possibilities. New features. Same nostalgia.
 		</p>
-		<div class="d-inline mb-4">
+		<div class="inline mb-4">
 			<b>
 				<a
 					type="button"
 					href="/register"
-					class="d-inline btn btn-sm btn-success text-decoration-none">
+					class="inline btn btn-sm btn-success no-underline">
 					Register <fa fa-chevron-right />
 				</a>
 			</b>
@@ -62,21 +60,21 @@
 				<a
 					type="button"
 					href="/login"
-					class="d-inline btn btn-sm btn-primary text-decoration-none">
+					class="inline btn btn-sm btn-primary no-underline">
 					Login <fa fa-chevron-right />
 				</a>
 			</b>
 		</div>
-		<a href="/about" class="text-decoration-none pt-4">
+		<a href="/about" class="no-underline pt-4">
 			About us <fa fa-chevron-right />
 		</a>
 	</div>
 </div>
 
-<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-absolute bottom-0">
-		<div class="position-absolute" />
-		<div class="position-absolute" />
+<div id="wavep" class="w-full h-full absolute top-0 overflow-hidden">
+	<div class="w-full absolute bottom-0">
+		<div class="absolute" />
+		<div class="absolute" />
 	</div>
 </div>
 

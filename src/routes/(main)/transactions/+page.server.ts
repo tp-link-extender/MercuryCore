@@ -5,7 +5,7 @@ export async function load({ locals }) {
 	const { user } = await authorise(locals)
 
 	return {
-		transactions: query<{
+		transactions: await query<{
 			amountSent: number
 			id: string
 			in: string
@@ -39,7 +39,7 @@ export async function load({ locals }) {
 					username
 				FROM out.*)[0] AS receiver
 			FROM $user<->transaction`,
-			{ user: `user:${user.id}` },
+			{ user: `user:${user.id}` }
 		),
 	}
 }

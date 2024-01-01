@@ -6,41 +6,38 @@
 	)
 </script>
 
-<div class="d-collapse d-collapse light-text bg-darker pb-2 rounded-3">
+<div class="d-collapse light-text bg-darker rounded-3">
 	<input type="radio" name="accordion" />
 	<div class="d-collapse-title p-2">
 		{place.name}
 	</div>
 	<div class="d-collapse-content">
 		<a
-			class="card bg-darker shadow-none placecard text-center light-text text-decoration-none m-0 w-100"
+			class="card bg-darker text-center light-text no-underline m-0 w-full"
 			href="/place/{place.id}/{place.name}">
-			<div class="row">
-				<div class="col col-6">
-					<div class="overflow-hidden bg-black shadow">
+			<div class="flex">
+				<div class="w-1/2">
+					<div
+						class="shadow overflow-hidden bg-black relative rounded-bl-4">
 						<img
 							src="/place/{place.id}/{place.name}/icon"
 							alt={place.name}
-							class="w-100 h-100" />
+							class="w-full" />
 					</div>
 				</div>
-				<div class="col col-6 p-2 row">
-					<p>
+				<div class="w-1/2 flex flex-col justify-between py-2">
+					<span>
 						{place.name}
-					</p>
-					<div class="mt-auto">
-						<div class="float-start">
-							<span>
-								<fa fa-thumbs-up class="opacity-75" />
-								{isNaN(ratio) ? "--" : ratio}%
-							</span>
-						</div>
-						<div class="float-end">
-							<span>
-								<fa fa-user class="opacity-75" />
-								{place.playerCount}
-							</span>
-						</div>
+					</span>
+					<div class="flex justify-between px-3">
+						<span>
+							<fa fa-thumbs-up class="opacity-75" />
+							{isNaN(ratio) ? "--" : ratio}%
+						</span>
+						<span>
+							<fa fa-user class="opacity-75" />
+							{place.playerCount}
+						</span>
 					</div>
 				</div>
 			</div>
@@ -49,7 +46,7 @@
 </div>
 
 <style lang="stylus">
-	.placecard
+	a
 		transition all 0.2s
 		border none
 		&:hover
@@ -57,17 +54,17 @@
 			.shadow::after
 				box-shadow inset 0 0 4rem 0 #fff2
 
-		.shadow
-			aspect-ratio 1
-			position relative
-			&::after
-				transition all 0.3s
-				content ""
-				position absolute
-				top 0
-				left 0
-				width 100%
-				height 100%
+	.shadow
+		aspect-ratio 1
+		position relative
+		&::after
+			transition all 0.3s
+			content ""
+			position absolute
+			top 0
+			left 0
+			width 100%
+			height 100%
 
 	input[type="radio"]
 		cursor pointer

@@ -18,11 +18,11 @@ const SELECTREPLIES = recurse(
 	from => surql`
 		(${from} <-replyToPost<-forumReply
 		# Make sure it's not a reply to another reply
-		WHERE !->replyToReply) AS replies`,
+		WHERE !->replyToReply) AS replies`
 )
 
 export async function load({ locals, params }) {
-	if (!/^[0-9a-z]+$/.test(params.post)) throw error(400, "Invalid post id")
+	if (!/^[0-9a-z]+$/.test(params.post)) error(400, "Invalid post id")
 
 	const { user } = await authorise(locals)
 
@@ -64,13 +64,13 @@ export async function load({ locals, params }) {
 		{
 			forumPost: `forumPost:${params.post}`,
 			user: `user:${user.id}`,
-		},
+		}
 	)
 
-	if (!forumPost) throw error(404, "Not found")
+	if (!forumPost) error(404, "Not found")
 
 	return {
-		form: superValidate(schema),
+		form: await superValidate(schema),
 		...forumPost,
 	}
 }
@@ -89,7 +89,7 @@ export const actions = {
 		// If there is a replyId, it is a reply to another reply
 
 		if (replyId && !/^[0-9a-z]+$/.test(replyId))
-			throw error(400, "Invalid reply id")
+			error(400, "Invalid reply id")
 
 		const replypost = await squery<{ authorId: string }>(
 			surql`
@@ -101,11 +101,10 @@ export const actions = {
 				replypostId: replyId
 					? `forumReply:${replyId}`
 					: `forumPost:${params.post}`,
-			},
+			}
 		)
 
-		if (!replypost)
-			throw error(404, `${replyId ? "Reply" : "Post"} not found`)
+		if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
 
 		const newReplyId = await squery<string>(surql`fn::id()`)
 
@@ -130,7 +129,7 @@ export const actions = {
 				forumReply: `forumReply:${newReplyId}`,
 				post: `forumPost:${params.post}`,
 				replyId: replyId ? `forumReply:${replyId}` : undefined,
-			},
+			}
 		)
 
 		if (user.id != replypost.authorId)
@@ -151,7 +150,7 @@ export const actions = {
 						replyId ? "reply" : "post"
 					}: ${content}`,
 					relativeId: newReplyId,
-				},
+				}
 			)
 
 		await like(user.id, `forumReply:${newReplyId}`)
@@ -159,8 +158,8 @@ export const actions = {
 	delete: async ({ url, locals }) => {
 		const { user } = await authorise(locals),
 			id = url.searchParams.get("id")
-		if (!id) throw error(400, "Missing comment id")
-		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
+		if (!id) error(400, "Missing comment id")
+		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
 		// Prevents incorrect ids erroring the Surreal query as well
 
 		const reply = await squery<{
@@ -172,16 +171,15 @@ export const actions = {
 					meta::id((-posted<-user.id)[0]) AS authorId
 					visibility
 				FROM $forumReply`,
-			{ forumReply: `forumReply:${id}` },
+			{ forumReply: `forumReply:${id}` }
 		)
 
-		if (!reply) throw error(404, "Reply not found")
+		if (!reply) error(404, "Reply not found")
 
 		if (reply.authorId != user.id)
-			throw error(403, "You cannot delete someone else's reply")
+			error(403, "You cannot delete someone else's reply")
 
-		if (reply.visibility != "Visible")
-			throw error(400, "Reply already deleted")
+		if (reply.visibility != "Visible") error(400, "Reply already deleted")
 
 		await query(
 			surql`
@@ -194,19 +192,19 @@ export const actions = {
 					updated: time::now(),
 				}];
 				UPDATE $forumReply SET visibility = "Deleted"`,
-			{ forumReply: `forumReply:${id}` },
+			{ forumReply: `forumReply:${id}` }
 		)
 	},
 	moderate: async ({ url, locals }) => {
 		await authorise(locals, 4)
 
 		const id = url.searchParams.get("id")
-		if (!id) throw error(400, "Missing comment id")
-		if (!/^[0-9a-z]+$/.test(id)) throw error(400, "Invalid reply id")
+		if (!id) error(400, "Missing comment id")
+		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
 
 		const findReply = (await surreal.select(`forumReply:${id}`))[0]
 
-		if (!findReply) throw error(404, "Reply not found")
+		if (!findReply) error(404, "Reply not found")
 
 		await query(
 			surql`
@@ -221,7 +219,7 @@ export const actions = {
 				};
 				UPDATE $forumReply SET visibility = "Moderated";
 				COMMIT TRANSACTION`,
-			{ forumReply: `forumReply:${id}` },
+			{ forumReply: `forumReply:${id}` }
 		)
 	},
 	like: categoryActions.like as any,

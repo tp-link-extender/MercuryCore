@@ -14,7 +14,7 @@ const header = (file: string) => ({
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
 	console.log(`Serving ${id}`)
-	if (!id || !/^\d+$/.test(id)) throw error(400, "Invalid Request")
+	if (!id || !/^\d+$/.test(id)) error(400, "Invalid Request")
 
 	try {
 		// Try loading as an asset
@@ -31,7 +31,7 @@ export async function GET({ url }) {
 						name,
 						visibility
 					FROM $asset`,
-				{ asset: `asset:${id}` },
+				{ asset: `asset:${id}` }
 			)
 
 			if (!asset || asset.visibility == "Moderated") throw new Error()
@@ -43,7 +43,10 @@ export async function GET({ url }) {
 
 			console.log(`served asset #${id}`)
 
-			return new Response(fs.readFileSync(`data/assets/${id}`), header(file))
+			return new Response(
+				fs.readFileSync(`data/assets/${id}`),
+				header(file)
+			)
 		}
 
 		// Try loading as a corescript
@@ -52,9 +55,9 @@ export async function GET({ url }) {
 			id == "38037265"
 				? "corescripts/38037265.xml"
 				: id == "20573078"
-				? "corescripts/20573078.xml"
-				: `corescripts/processed/${id}.lua`,
-			"utf-8",
+					? "corescripts/20573078.xml" // todo remove the shaggy l8r
+					: `corescripts/processed/${id}.lua`,
+			"utf-8"
 		)
 
 		let file2 = file.replaceAll("roblox.com/asset", "banland.xyz/asset")
@@ -69,14 +72,11 @@ export async function GET({ url }) {
 			headers: {
 				"Content-Type": "binary/octet-stream",
 				"Content-Disposition": `attachment; filename="${md5(
-					file,
+					file
 				).toString()}"`,
 			},
 		})
 	} catch {
-		throw redirect(
-			302,
-			`https://assetdelivery.roblox.com/v1/asset?id=${id}`,
-		)
+		redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${id}`)
 	}
 }

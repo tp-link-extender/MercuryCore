@@ -1,5 +1,5 @@
 <script lang="ts">
-	// Link to a place used on the homepage or on a user's profile.
+	// Link to a place used on the homepage and the search page.
 
 	export let place: {
 		id: number
@@ -18,22 +18,22 @@
 
 <a
 	in:fade|global={{ num, total }}
-	class="rounded-3 text-center light-text text-decoration-none"
+	class="rounded-3 text-center light-text no-underline"
 	href="/place/{place.id}/{place.name}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
 		<img
 			src="/place/{place.id}/{place.name}/icon"
 			alt={place.name}
-			class="w-100 h-100" />
+			class="w-full h-full" />
 	</div>
 	<p class="mb-0 pb-1">
 		{place.name}
 	</p>
-	<span class="float-start ps-1 pt-1">
+	<span class="float-start pl-1 pt-1">
 		<fa fa-thumbs-up class="opacity-75" />
 		{isNaN(ratio) ? "--" : ratio}%
 	</span>
-	<span class="float-end pe-1 pt-1">
+	<span class="float-right pr-1 pt-1">
 		<fa fa-user class="opacity-75" />
 		{place.playerCount}
 	</span>

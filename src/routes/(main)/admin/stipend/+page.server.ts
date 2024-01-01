@@ -17,7 +17,7 @@ export async function load({ locals }) {
 	const economy = (await surreal.select("stuff:economy"))[0]
 
 	return {
-		form: superValidate(schema),
+		form: await superValidate(schema),
 		dailyStipend: (economy?.dailyStipend as number) || 10,
 		stipendTime: (economy?.stipendTime as number) || 10,
 	}
@@ -66,7 +66,7 @@ export const actions = {
 			{
 				note: auditText,
 				user: `user:${user.id}`,
-			},
+			}
 		)
 
 		return message(form, "Economy updated successfully!")

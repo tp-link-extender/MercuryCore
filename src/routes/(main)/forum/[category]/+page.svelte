@@ -1,14 +1,15 @@
 <script lang="ts">
+	import { page } from "$app/stores"
 	import ForumPost from "./ForumPost.svelte"
+	import PostPage from "./[post]/+page.svelte"
 
 	export let data
 	// Forum
-	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}
 </script>
 
 <Head title="{data.name} - Forum" />
 
-<div class="container light-text">
+<div class="ctnr max-w-200">
 	<Breadcrumbs
 		path={[
 			["Forum", "/forum"],
@@ -17,11 +18,11 @@
 
 	<h1 class="pb-8">
 		{data.name} - Forum
-		<span class="ps-6">
+		<span class="pl-6">
 			<a
 				href="/forum/create?category={data.name}"
 				class="btn btn-primary">
-				<fa fa-file class="pe-2" />
+				<fa fa-file class="pr-2" />
 				Create post
 			</a>
 		</span>
@@ -35,6 +36,25 @@
 	{/each}
 </div>
 
+{#if $page.state.openPost}
+	<div class="modal-static fixed w-full h-full z-10 overflow-y-auto py-20">
+		<div
+			transition:fade={{ duration: 200 }}
+			role="button"
+			tabindex="0"
+			on:click={() => history.back()}
+			on:keypress={() => history.back()}
+			class="modal-backdrop h-screen w-full" />
+		<div
+			transition:fade={{ duration: 100 }}
+			class="modal-box bg-background h-full py-10">
+			<PostPage data={$page.state.openPost} asComponent />
+		</div>
+	</div>
+{/if}
+
 <style lang="stylus">
-	containerMinWidth()
+	.modal-box
+		min-width 70rem
+		max-height initial !important
 </style>

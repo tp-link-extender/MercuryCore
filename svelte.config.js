@@ -3,6 +3,7 @@ import preprocess from "svelte-preprocess"
 import autoImport from "sveltekit-autoimport"
 import { resolve } from "path"
 
+/** @type {import("@sveltejs/kit").Config} */
 export default {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
@@ -13,7 +14,7 @@ export default {
 			},
 		}),
 		autoImport({
-			components: ["./src/lib/components"],
+			components: [{ name: "./src/lib/components", flat: true }],
 			module: {
 				svelte: ["onMount"],
 				"svelte/store": ["writable"],
@@ -36,8 +37,8 @@ export default {
 				process.env.NODE_ENV == "production"
 					? resolve("src/bootstrap.sass")
 					: // Using the css version in development, because
-					  // the sass compiler slows the dev server to a crawl
-					  resolve("src/bootstrap.css"),
+						// the sass compiler slows the dev server to a crawl
+						resolve("src/bootstrap.css"),
 		},
 	},
 

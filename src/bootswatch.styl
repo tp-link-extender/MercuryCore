@@ -2,20 +2,7 @@
 // Bootswatch
 
 // Variables
-font-size-base = 1rem
-font-size-sm = font-size-base * 0.875
-border-radius = 0.375rem
-
-grey-100 = #f8f9fa
-grey-300 = #dee2e6
-grey-600 = #6c757d
-grey-900 = #212529
-
-secondary = grey-600
-light = grey-100
-
-box-shadow = 0 0.5rem 1rem rgba(black, 0.15)
-box-shadow-lg = 0 1rem 3rem rgba(black, 0.175)
+secondary = #6c757d
 
 @font-face
 	font-family "SF UI Display Regular"
@@ -36,8 +23,8 @@ box-shadow-lg = 0 1rem 3rem rgba(black, 0.175)
 	font-weight 700
 	font-display swap
 	src url(/SFbold.woff2) format("woff2"),
-		url(/SFregular.woff) format("woff"),
-		url(/SFregular.ttf) format("ttf")
+		url(/SFbold.woff) format("woff"),
+		url(/SFbold.ttf) format("ttf")
 
 	unicode-range U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
 		U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
@@ -46,49 +33,27 @@ box-shadow-lg = 0 1rem 3rem rgba(black, 0.175)
 // Buttons
 
 .btn-secondary
-.btn-light
-.btn-outline-secondary
-.btn-outline-light
-	color grey-900
+	color #212529
+	border-color shade-color(secondary, 10%)
 
 	&:disabled
 	&.disabled
 		border 1px solid shade-color(secondary, 10%)
-
-.btn-secondary
-.btn-outline-secondary
-	border-color shade-color(secondary, 10%)
 
 	&:hover
 	&:active
 		background-color shade-color(secondary, 10%)
 		border-color shade-color(secondary, 10%)
 
-.btn-light
-.btn-outline-light
-	border-color shade-color(light, 10%)
-
-	&:hover
-	&:active
-		background-color shade-color(light, 10%)
-		border-color shade-color(light, 10%)
-
 // Tables
 
 thead th
-	font-size font-size-sm
+	font-size 0.875rem
 	text-transform uppercase
-
-// Forms
-
-.input-group-text
-	box-shadow box-shadow
 
 // Containers
 
 .card
-	box-shadow box-shadow-lg
-
 	h1
 	h2
 	h3
@@ -102,12 +67,6 @@ thead th
 	.h5
 	.h6
 		color inherit
-
-.modal-footer
-	background-color grey-100
-
-.modal-content
-	box-shadow box-shadow-lg
 
 .table > :not(caption) > * > *
 	background-color #0000

@@ -19,7 +19,7 @@ export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	return {
-		form: superValidate(schema),
+		form: await superValidate(schema),
 	}
 }
 
@@ -38,7 +38,7 @@ export const actions = {
 			await auth.updateKeyPassword(
 				"username",
 				username.toLowerCase(),
-				password,
+				password
 			)
 		} catch {
 			return message(form, "Invalid credentials", {
@@ -57,7 +57,7 @@ export const actions = {
 			{
 				note: `Change account password for ${username}`,
 				user: `user:${user.id}`,
-			},
+			}
 		)
 
 		return message(form, "Password changed successfully!")

@@ -773,11 +773,11 @@ function getGearContextMenu()
 		local element = contextElement
 		if element.Type == "Button" then
 			local button = Instance.new "TextButton"
-			button.Name = "UnequipContextButton" .. i
+			button.Name = `UnequipContextButton{i}`
 			button.BackgroundColor3 = Color3.new(0, 0, 0)
 			button.BorderSizePixel = 0
 			button.TextXAlignment = Enum.TextXAlignment.Left
-			button.Text = " " .. contextElement.Text
+			button.Text = ` {contextElement.Text}`
 			button.Font = Enum.Font.Arial
 			button.FontSize = Enum.FontSize.Size14
 			button.Size = UDim2.new(1, 8, 0, elementHeight)
@@ -815,7 +815,7 @@ function getGearContextMenu()
 			contextElement.Element = button
 		elseif element.Type == "Label" then
 			local frame = Instance.new "Frame"
-			frame.Name = "ContextLabel" .. i
+			frame.Name = `ContextLabel{i}`
 			frame.BackgroundTransparency = 1
 			frame.Size = UDim2.new(1, 8, 0, elementHeight)
 

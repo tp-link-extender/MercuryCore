@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { page } from "$app/stores"
 	import PlaceCard from "./PlaceCard.svelte"
+	import PlacePage from "../place/[id]/[name]/+page.svelte"
 
 	export let data
 
@@ -29,24 +31,22 @@
 
 <Head title="Discover" />
 
-<div class="container">
-	<div class="row pb-12">
-		<h1 class="col">
-			Games
-			<span class="ps-6">
-				<a href="/games/create" class="btn btn-primary">
-					<fa fa-plus />
-					Create
-				</a>
-			</span>
+<div class="ctnr">
+	<div class="flex pb-12">
+		<h1 class="w-1/3">
+			<span class="pe-6">Games</span>
+			<a href="/games/create" class="btn btn-primary">
+				<fa fa-plus />
+				Create
+			</a>
 		</h1>
-		<div class="col-8">
+		<div class="w-2/3">
 			<form
 				use:enhance
 				method="POST"
 				action="/search?c=places"
-				class="row">
-				<div class="col-5">
+				class="flex gap-4">
+				<div class="w-5/12">
 					<div class="input-group">
 						<input
 							bind:value={query}
@@ -64,54 +64,66 @@
 						</button>
 					</div>
 				</div>
-				<div class="col-7 row">
-					<div class="ps-4 col">
-						<div class="row">
-							<label for="genre" class="light-text col py-1">
-								Genre
-							</label>
-							<select
-								class="form-select form-select-sm light-text col"
-								id="genre"
-								placeholder="Genre"
-								aria-label="genre">
-								<option value="Obby">Obby</option>
-								<option value="Horror">Horror</option>
-								<option value="Comedy">Comedy</option>
-							</select>
-						</div>
+				<div class="pl-4 w-7/24">
+					<div class="row">
+						<label for="genre" class="light-text col py-1">
+							Genre
+						</label>
+						<select
+							class="form-select form-select-sm light-text col"
+							id="genre"
+							placeholder="Genre"
+							aria-label="genre">
+							<option value="Obby">Obby</option>
+							<option value="Horror">Horror</option>
+							<option value="Comedy">Comedy</option>
+						</select>
 					</div>
-					<div class="ms-4 col">
-						<div class="form-check light-text py-1">
-							<input
-								class="form-check-input"
-								type="checkbox"
-								value=""
-								id="flexCheckDefault" />
-							<label
-								class="form-check-label"
-								for="flexCheckDefault">
-								Gears Allowed
-							</label>
-						</div>
+				</div>
+				<div class="pl-4 w-7/24">
+					<div class="form-check light-text py-1">
+						<input
+							class="form-check-input"
+							type="checkbox"
+							value=""
+							id="flexCheckDefault" />
+						<label class="form-check-label" for="flexCheckDefault">
+							Gears Allowed
+						</label>
 					</div>
 				</div>
 			</form>
 		</div>
 	</div>
-	<div class="row">
-		<div class="container d-grid m-0">
-			{#each query ? searchedData : data.places || [] as place, num (place.id)}
-				<PlaceCard {place} {num} total={data.places.length} />
-			{/each}
-			{#if query && searchedData.length == 0}
-				<h2 class="fs-5 pt-12">
-					No games found with search term {query}
-				</h2>
-			{/if}
-		</div>
+	<div class="ctnr flex flex-wrap gap-4 justify-center">
+		{#each query ? searchedData : data.places || [] as place, num (place.id)}
+			<PlaceCard {place} {num} total={data.places.length} />
+		{/each}
+		{#if query && searchedData.length == 0}
+			<h2 class="fs-5 pt-12">
+				No games found with search term {query}
+			</h2>
+		{/if}
 	</div>
 </div>
+
+{#if $page.state.openPlace}
+	<div
+		class="modal-static fixed w-full h-full z-10 overflow-y-auto p-20 px-10">
+		<div
+			transition:fade={{ duration: 200 }}
+			role="button"
+			tabindex="0"
+			on:click={() => history.back()}
+			on:keypress={() => history.back()}
+			class="modal-backdrop" />
+		<div
+			transition:fade={{ duration: 100 }}
+			class="modal-box bg-background py-10">
+			<PlacePage data={$page.state.openPlace} />
+		</div>
+	</div>
+{/if}
 
 <style lang="stylus">
 	input
@@ -119,11 +131,6 @@
 		background-color var(--accent)
 		border-color var(--accent2)
 
-	.d-grid
-		font-size 0.9rem
-
-		grid-template-columns repeat(auto-fit, minmax(19rem, 1fr))
-		column-gap 0.7rem
-		row-gap 0.7rem
-		place-items center
+	.modal-box
+		max-height initial !important
 </style>

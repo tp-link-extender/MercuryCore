@@ -37,8 +37,8 @@ export async function load({ locals }) {
 			greet: greets[Math.floor(Math.random() * greets.length)],
 			fact: facts[Math.floor(Math.random() * facts.length)],
 		},
-		form: superValidate(schema),
-		places: query<{
+		form: await superValidate(schema),
+		places: await query<{
 			id: number
 			name: string
 			playerCount: number
@@ -59,7 +59,7 @@ export async function load({ locals }) {
 				count(<-dislikes) AS dislikeCount
 			FROM place
 			WHERE !privateServer AND !deleted`),
-		friends: query<{
+		friends: await query<{
 			number: number
 			status: "Playing" | "Online" | "Offline"
 			username: string
@@ -70,9 +70,9 @@ export async function load({ locals }) {
 					status,
 					username
 				FROM $user->friends->user OR $user<-friends<-user`,
-			{ user: `user:${user.id}` },
+			{ user: `user:${user.id}` }
 		),
-		feed: query<{
+		feed: await query<{
 			authorUser: {
 				number: number
 				status: "Playing" | "Online" | "Offline"
@@ -124,7 +124,7 @@ export const actions = {
 			{
 				content: form.data.status,
 				user: `user:${user.id}`,
-			},
+			}
 		)
 	},
 }

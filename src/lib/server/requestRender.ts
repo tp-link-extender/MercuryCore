@@ -19,7 +19,7 @@ const selectRender = surql`
 export default async function (
 	renderType: "Clothing" | "Avatar",
 	relativeId: number,
-	wait = false,
+	wait = false
 ) {
 	const renders = await mquery<Render[]>(
 		surql`
@@ -31,7 +31,7 @@ export default async function (
 		{
 			renderType,
 			relativeId,
-		},
+		}
 	)
 	const render = renders[2]
 
@@ -53,7 +53,7 @@ export default async function (
 		{
 			renderType,
 			relativeId,
-		},
+		}
 	)
 	const renderId = newRender[1]
 
@@ -80,20 +80,20 @@ export default async function (
 		renderType == "Avatar" ? "avatars" : "thumbnails"
 	}/${relativeId}${renderType == "Avatar" ? ".png" : ""}`
 
-	let waiter = wait
-		? // If the file doesn't exist, wait for it to be created
-		  // if it does exist, wait for it to be modified
-		  new Promise<void>(resolve => {
-				try {
-					const watcher = fs.watch(path, () => {
-						watcher.close()
-						resolve()
-					})
-				} catch {
+	// If the file doesn't exist, wait for it to be created
+	// if it does exist, wait for it to be modified
+	let waiter =
+		wait &&
+		new Promise<void>(resolve => {
+			try {
+				const watcher = fs.watch(path, () => {
+					watcher.close()
 					resolve()
-				}
-		  })
-		: null
+				})
+			} catch {
+				resolve()
+			}
+		})
 
 	await Promise.all([
 		waiter,

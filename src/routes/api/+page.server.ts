@@ -4,11 +4,10 @@
 import { auth, authorise } from "$lib/server/lucia"
 import { error, redirect } from "@sveltejs/kit"
 
+const msg = Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString()
+
 export function load() {
-	throw error(
-		451,
-		Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"),
-	)
+	error(451, msg)
 }
 
 export const actions = {
@@ -17,7 +16,7 @@ export const actions = {
 
 		await auth.invalidateSession(session.sessionId) // invalidate session
 		locals.auth.setSession(null) // remove cookie
-		throw redirect(302, "/login")
+		redirect(302, "/login")
 	},
 	statusping: () => {
 		// does nothing

@@ -12,7 +12,7 @@ export const adapter = (
 		user: "user",
 		session: "session",
 		key: "key",
-	},
+	}
 ): InitializeAdapter<Adapter> => {
 	return LuciaError => {
 		return {
@@ -23,7 +23,7 @@ export const adapter = (
 							*,
 							meta::id(id) AS id
 						FROM $id`,
-					{ id: `${modelNames.user}:${userId}` },
+					{ id: `${modelNames.user}:${userId}` }
 				),
 			setUser: async (user, key) => {
 				// Can't create the user number in the MERGE step, or it would
@@ -33,6 +33,7 @@ export const adapter = (
 					UPDATE $u MERGE {
 						theme: "standard",
 						created: time::now(),
+						currencyCollected: time::now(),
 						bio: [],
 						bodyColours: {
 							Head: 24,
@@ -80,7 +81,7 @@ export const adapter = (
 						user,
 						key: `${modelNames.key}:⟨${key.id}⟩`,
 						...key,
-					},
+					}
 				)
 			},
 			deleteUser: async userId => {},
@@ -98,14 +99,14 @@ export const adapter = (
 							meta::id((<-hasSession<-user)[0]) AS user_id,
 							meta::id(id) AS id
 						FROM $sess`,
-					{ sess: `${modelNames.session}:${sessionId}` },
+					{ sess: `${modelNames.session}:${sessionId}` }
 				),
 			getSessionsByUserId: userId =>
 				query<SessionSchema>(
 					surql`
 						SELECT * FROM $id
 						WHERE $user ∈ <-usingKey<-user`,
-					{ id: `${modelNames.session}:${userId}` },
+					{ id: `${modelNames.session}:${userId}` }
 				),
 			setSession: async session => {
 				const userExists = await squery(surql`SELECT true FROM $id`, {
@@ -125,7 +126,7 @@ export const adapter = (
 						sess: `${modelNames.session}:${session.id}`,
 						...session,
 						user: `${modelNames.user}:${session.user_id}`,
-					},
+					}
 				)
 			},
 			deleteSession: async sessionId => {
@@ -134,7 +135,7 @@ export const adapter = (
 			deleteSessionsByUserId: async userId => {
 				await query(
 					surql`DELETE session WHERE $user ∈ <-hasSession<-user`,
-					{ user: `${modelNames.user}:${userId}` },
+					{ user: `${modelNames.user}:${userId}` }
 				)
 			},
 			updateSession: async (userId, partialSession) => {
@@ -148,7 +149,7 @@ export const adapter = (
 					{
 						user: `${modelNames.user}:${userId}`,
 						partialSession,
-					},
+					}
 				)
 			},
 
@@ -160,14 +161,14 @@ export const adapter = (
 							meta::id((<-hasKey<-user)[0]) AS user_id,
 							meta::id(id) AS id
 						FROM $key`,
-					{ key: `${modelNames.key}:⟨${keyId}⟩` },
+					{ key: `${modelNames.key}:⟨${keyId}⟩` }
 				),
 			getKeysByUserId: async userId => {
 				return await query<KeySchema>(
 					surql`
 						SELECT * FROM ${modelNames.key}
 						WHERE $user ∈ <-usingKey<-user`,
-					{ user: `${modelNames.user}:${userId}` },
+					{ user: `${modelNames.user}:${userId}` }
 				)
 			},
 			setKey: async key => {
@@ -193,7 +194,7 @@ export const adapter = (
 						key: `${modelNames.key}:⟨${key.id}⟩`,
 						...key,
 						user: `${modelNames.user}:${key.user_id}`,
-					},
+					}
 				)
 			},
 			deleteKey: async keyId => {
@@ -210,7 +211,7 @@ export const adapter = (
 					{
 						key: `${modelNames.key}:⟨${keyId}⟩`,
 						...partialKey,
-					},
+					}
 				)
 			},
 		}

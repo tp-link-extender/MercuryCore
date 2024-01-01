@@ -99,7 +99,7 @@ for i = 0, NumSlots do
 	slotFrame.BackgroundColor3 = Color3.new(0, 0, 0)
 	slotFrame.BackgroundTransparency = 1
 	slotFrame.BorderColor3 = Color3.new(1, 1, 1)
-	slotFrame.Name = "Slot" .. tostring(i)
+	slotFrame.Name = `Slot{i}`
 	slotFrame.ZIndex = 4.0
 	if i == 0 then
 		slotFrame.Position = UDim2.new(0.9, 0, 0, 0)

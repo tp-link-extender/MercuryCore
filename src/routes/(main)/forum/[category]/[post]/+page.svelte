@@ -1,43 +1,48 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import { enhance as enhance2 } from "$app/forms"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
+	export let asComponent = false
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({}),
-		{ user } = data,
-		{
-			form,
-			errors,
-			message,
-			constraints,
-			enhance,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		})
+		{ user } = data
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance,
+		delayed,
+		capture,
+		restore,
+	} = superForm(data.form)
 
 	export const snapshot = { capture, restore }
 </script>
 
 <Head title={data.title} />
 
-<div class="container light-text">
-	<Breadcrumbs
-		path={[
-			["Forum", "/forum"],
-			[data.categoryName, `/forum/${data.categoryName}`],
-			[data.title, ""],
-		]} />
+<div class="ctnr max-w-280 light-text">
+	{#if !asComponent}
+		<!--
+			Breadcrumbs can give confusing behaviour if linking
+			to the same page the component is shallow-routed on
+		-->
+		<Breadcrumbs
+			path={[
+				["Forum", "/forum"],
+				[data.categoryName, `/forum/${data.categoryName}`],
+				[data.title, ""],
+			]} />
+	{/if}
 
 	<div class="post card bg-darker flex-row">
 		<form
-			use:enhance2={e => {
-				const action = e.data.get("action")
+			use:enhance2={({ formData }) => {
+				const action = formData.get("action")
 
 				if (action == "like") {
 					data.likes = true
@@ -61,10 +66,10 @@
 
 				return () => {}
 			}}
-			class="sidebar bg-a me-2 p-1"
+			class="sidebar bg-a mr-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
-			<div class="row mb-2 d-flex">
+			<div class="row mb-2 flex">
 				<div>
 					<button
 						name="action"
@@ -80,8 +85,8 @@
 					class="my-2 text-center {data.likes
 						? 'text-success font-bold'
 						: data.dislikes
-						? 'text-danger font-bold'
-						: ''}">
+							? 'text-danger font-bold'
+							: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
 				<div>
@@ -100,10 +105,10 @@
 				</div>
 			</div>
 		</form>
-		<div class="p-4 text-decoration-none light-text w-100">
-			<span class="d-flex">
+		<div class="p-4 no-underline light-text w-full">
+			<span class="flex">
 				<User user={data.author} full />
-				<em class="ps-4 align-self-center">
+				<em class="pl-4 self-center">
 					{new Date(data.posted).toLocaleString()}
 				</em>
 				<span class="ms-auto">
@@ -112,7 +117,7 @@
 						url="/forum/{data.categoryName}/{data.id}" />
 				</span>
 			</span>
-			<h2 class="fs-4 mt-2">
+			<h2 class="text-base mt-2">
 				{data.title}
 			</h2>
 			<p>
@@ -123,7 +128,7 @@
 
 	<form use:enhance class="py-2 mb-6 p-1 row" method="POST" action="?/reply">
 		<label for="content" class="light-text py-2">Post a Reply</label>
-		<fieldset class="col-lg-7 d-flex">
+		<fieldset class="col-lg-7 flex">
 			<textarea
 				bind:value={$form.content}
 				{...$constraints.content}
@@ -131,7 +136,7 @@
 				name="content"
 				placeholder="What are your thoughts?"
 				rows="4" />
-			<button class="btn btn-success ms-4 mt-auto">
+			<button class="btn btn-success ml-4 mt-auto">
 				{#if $delayed}
 					Working...
 				{:else}
@@ -162,8 +167,6 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth(70rem)
-
 	.sidebar
 		width 2.5rem
 

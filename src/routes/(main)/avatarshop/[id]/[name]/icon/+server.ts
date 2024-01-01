@@ -4,8 +4,7 @@ import { error, redirect } from "@sveltejs/kit"
 import fs from "fs"
 
 export async function GET({ locals, params }) {
-	if (!/^\d+$/.test(params.id))
-		throw error(400, `Invalid asset id: ${params.id}`)
+	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
 	const id = parseInt(params.id)
 
@@ -20,18 +19,18 @@ export async function GET({ locals, params }) {
 				name,
 				visibility
 			FROM $asset`,
-		{ asset: `asset:${id}` },
+		{ asset: `asset:${id}` }
 	)
 
-	if (!asset) throw error(404, "Not found")
+	if (!asset) error(404, "Not found")
 
 	const { user } = await authorise(locals)
 	if (asset.visibility == "Moderated")
 		// If the asset is moderated
-		throw redirect(302, `/mercurx.svg`)
+		redirect(302, `/mercurx.svg`)
 	if (asset.visibility != "Visible" && user.permissionLevel < 4)
 		// If the asset is pending review
-		throw redirect(302, `/light/mQuestion.svg`)
+		redirect(302, `/light/mQuestion.svg`)
 
 	let file
 
@@ -43,5 +42,5 @@ export async function GET({ locals, params }) {
 
 	if (file) return new Response(file)
 	// If the asset is visible, but the file doesn't exist (waiting for RCC?)
-	throw redirect(302, `/m....png`)
+	redirect(302, `/m....png`)
 }

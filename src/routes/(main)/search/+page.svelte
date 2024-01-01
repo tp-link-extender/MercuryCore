@@ -20,20 +20,20 @@
 	</h1>
 {/if}
 
-<div class="container-fluid mt-12">
+<div class="pt-12 px-4">
 	{#if data.category == "users" && data.users}
-		<div class="grid d-grid">
+		<div class="grid">
 			{#each data.users as user, num}
 				<a
 					in:fade={{ num, total: data.users.length }}
-					class="px-2 mb-2 text-center light-text text-decoration-none"
+					class="px-2 pb-2 text-center light-text no-underline"
 					href="/user/{user.number}">
-					<div class="position-relative mb-2">
-						<div class="image-background bg-a rounded-circle">
+					<div class="relative pb-2">
+						<div class="image-background bg-a rounded-full">
 							<img
 								src="/api/avatar/{user.username}"
 								alt={user.username}
-								class="h-100 rounded-circle rounded-top-0" />
+								class="h-full rounded-full rounded-top-0" />
 						</div>
 					</div>
 					{user.username}
@@ -41,31 +41,31 @@
 			{/each}
 		</div>
 	{:else if data.category == "places" && data.places}
-		<div class="grid d-grid">
+		<div class="grid">
 			{#each data.places as place, num}
-				<div class="px-2 mb-2">
+				<div class="px-2 pb-2">
 					<Place {place} {num} total={data.places.length} />
 				</div>
 			{/each}
 		</div>
 	{:else if data.category == "assets" && data.assets}
-		<div class="grid d-grid">
+		<div class="grid">
 			{#each data.assets as asset, num}
-				<div class="px-2 mb-2">
+				<div class="pb-4">
 					<Asset {asset} {num} total={data.assets.length} />
 				</div>
 			{/each}
 		</div>
 	{:else if data.category == "groups" && data.groups}
-		<div class="grid d-grid">
+		<div class="grid">
 			{#each data.groups as group, num}
-				<div class="px-2 mb-2">
+				<div class="px-2 pb-2">
 					<Group {group} {num} total={data.groups.length} />
 				</div>
 			{/each}
 		</div>
 	{:else}
-		<div id="buttons" class="d-flex justify-content-center gap-4">
+		<div id="buttons" class="flex justify-center gap-4">
 			<a class="btn btn-primary" href="/search?q={data.query}&c=users">
 				Users
 			</a>

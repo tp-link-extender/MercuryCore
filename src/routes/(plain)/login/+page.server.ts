@@ -1,5 +1,5 @@
 import { auth } from "$lib/server/lucia"
-import { query, surql } from "$lib/server/surreal"
+import { squery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -15,10 +15,8 @@ const schema = z.object({
 })
 
 export const load = async () => ({
-	form: superValidate(schema),
-	users:
-		((await query(surql`count(SELECT * FROM user)`)) as unknown as number) >
-		0,
+	form: await superValidate(schema),
+	users: (await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0,
 })
 
 export const actions = {
@@ -32,22 +30,22 @@ export const actions = {
 			const user = await auth.useKey(
 				"username",
 				username.toLowerCase(),
-				password,
+				password
 			)
 			locals.auth.setSession(
 				await auth.createSession({
 					userId: user.userId,
 					attributes: {},
-				}),
+				})
 			)
 		} catch {
 			return formError(
 				form,
 				["username", "password"],
-				[" ", "Incorrect username or password"],
+				[" ", "Incorrect username or password"]
 			)
 		}
 
-		throw redirect(302, "/home")
+		redirect(302, "/home")
 	},
 }

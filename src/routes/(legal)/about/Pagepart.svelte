@@ -13,7 +13,7 @@
 </script>
 
 <div
-	class="container {fullwidth ? 'full min-vw-100' : 'half'}"
+	class="ctnr {fullwidth ? 'full min-w-screen' : 'half'}"
 	id={fullwidth ? "" : right ? "right" : "left"}
 	use:inview={{ unobserveOnEnter: true, rootMargin: "-20%" }}
 	on:change={inView}>
@@ -21,11 +21,11 @@
 		<div
 			in:fly={{ y: -100, duration: 500 }}
 			id="b"
-			class="d-flex flex-row align-items-center min-vh-100">
+			class="flex flex-row items-center min-h-screen">
 			<slot />
 		</div>
 	{:else}
-		<div id="b" class="min-vh-100" />
+		<div id="b" class="min-h-screen" />
 	{/if}
 </div>
 

@@ -8,17 +8,17 @@
 
 	const dispatch = createEventDispatcher(),
 		opacity = spring(Math.random() + (-j - i / 2 - 5) / 12),
-		scale = spring(0, {
-			stiffness: 0.1,
-			damping: 1,
-		}),
 		clicked = new Map<string, "hovered" | "clicked">()
+	const scale = spring(0, {
+		stiffness: 0.1,
+		damping: 1,
+	})
 
 	let colour = tweened(interpolateLab("#6c2fb9", "#321f9c")(Math.random()), {
-			duration: 500,
-			interpolate: interpolateLab,
-		}),
-		clickable = false
+		duration: 500,
+		interpolate: interpolateLab,
+	})
+	let clickable = false
 
 	setTimeout(() => {
 		clickable = true
@@ -35,9 +35,10 @@
 		opacity.set(1)
 		dispatch("moved")
 	}}
-	on:pointerdown={(e) => {
+	on:pointerdown={e => {
 		e.stopPropagation()
-		if (!clickable || $scale != -j || clicked.get(`${i},${j}`) == "clicked") return
+		if (!clickable || $scale != -j || clicked.get(`${i},${j}`) == "clicked")
+			return
 		clicked.set(`${i},${j}`, "clicked")
 		colour.set("red")
 		dispatch("clicked")

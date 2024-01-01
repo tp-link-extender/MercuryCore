@@ -1,140 +1,66 @@
 <script lang="ts">
 	import { invalidate } from "$app/navigation"
 	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
 
 	let modal = writable(false),
-		bannerData = {
-			id: "",
-			bgColour: "",
-			textLight: false,
-			body: "",
-		},
 		tabData = TabData(data.url, ["Create Banner", "Banner List"]),
 		textLightForms: { [k: string]: HTMLFormElement } = {}
+	let bannerData = {
+		id: "",
+		bgColour: "",
+		textLight: false,
+		body: "",
+	}
 
-	const {
-			form,
-			errors,
-			message,
-			constraints,
-			enhance,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		}),
-		viewBody = (newBannerData: typeof bannerData) => () => {
-			modal.set(true)
+	const formData = superForm(data.form)
+	const { form, message, delayed } = formData
+	const viewBody = (newBannerData: typeof bannerData) => () => {
+		modal.set(true)
 
-			newBannerData.body = newBannerData.body.trim()
-			$form.bannerBody = newBannerData.body
-			bannerData = newBannerData
-		}
+		newBannerData.body = newBannerData.body.trim()
+		$form.bannerBody = newBannerData.body
+		bannerData = newBannerData
+	}
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 </script>
 
 <Head title="Banners - Admin" />
 
-<div class="container py-6">
+<div class="ctnr pt-6 max-w-280 light-text">
 	<h1 class="mb-0">Admin - Banners</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>
-	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6 pe-0">
-			<TabNav bind:tabData vertical />
-		</div>
-		<div class="col-lg-10 col-md-9">
+	<div class="flex flex-wrap pt-6">
+		<TabNav bind:tabData vertical class="w-full lg:w-1/6 md:w-1/4 pb-6" />
+		<div class="w-full lg:w-5/6 md:w-3/4">
 			<Tab {tabData}>
-				<form use:enhance method="POST" action="?a=create">
-					<fieldset>
-						<div class="row">
-							<label
-								for="bannerText"
-								class="col-md-3 text-md-right light-text">
-								Banner text
-							</label>
-							<div class="col-md-8">
-								<textarea
-									bind:value={$form.bannerBody}
-									{...$constraints.bannerBody}
-									name="bannerText"
-									id="bannerText"
-									class="form-control {$errors.bannerBody
-										? 'is-in'
-										: ''}valid" />
-								<small class="light-text">
-									3-100 characters
-								</small>
-								<p class="col-12 mb-4 text-danger">
-									{$errors.bannerBody || ""}
-								</p>
-							</div>
-						</div>
-						<br />
-						<div class="row">
-							<label
-								for="bannerColour"
-								class="col-md-3 text-md-right light-text">
-								Banner colour
-							</label>
-							<div class="col-md-2">
-								<input
-									bind:value={$form.bannerColour}
-									{...$constraints.bannerColour}
-									type="color"
-									name="bannerColour"
-									id="bannerColour"
-									class="{$errors.bannerColour
-										? 'is-in'
-										: ''}valid" />
-								<p class="col-12 mb-4 text-danger">
-									{$errors.bannerColour || ""}
-								</p>
-							</div>
-						</div>
-						<br />
-						<div class="row">
-							<label
-								for="bannerTextLight"
-								class="col-md-3 text-md-right light-text">
-								Light text
-							</label>
-							<div class="col-md-2">
-								<input
-									bind:checked={$form.bannerTextLight}
-									value="true"
-									type="checkbox"
-									name="bannerTextLight"
-									id="bannerTextLight"
-									class="form-check-input valid" />
-							</div>
-						</div>
-						<button class="btn btn-success mt-4">
-							{#if $delayed}
-								Working...
-							{:else}
-								Create
-							{/if}
-						</button>
-					</fieldset>
-				</form>
-
-				<p
-					class:text-success={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
-					{$message || ""}
-				</p>
+				<Form {formData} submit="Create" action="?/create">
+					<Textarea
+						{formData}
+						name="bannerText"
+						label="Banner text"
+						placeholder="3-100 characters" />
+					<Input
+						{formData}
+						name="bannerColour"
+						label="Banner colour"
+						type="color" />
+					<Input
+						{formData}
+						name="bannerTextLight"
+						label="Light text"
+						type="checkbox" />
+				</Form>
 			</Tab>
 
 			<Tab {tabData}>
-				<table class="w-100 light-text">
+				<table class="w-full light-text">
 					<thead>
 						<tr>
 							<th scope="col">Options</th>
@@ -152,21 +78,21 @@
 									<form
 										use:enhance
 										method="POST"
-										action="?id={banner.id}&a=delete">
+										action="?/delete&id={banner.id}">
 										<button
-											class="btn btn-sm btn-link text-decoration-none text-danger">
-											<fa fa-trash class="pe-1" />
+											class="btn btn-sm no-underline text-danger">
+											<fa fa-trash class="pr-1" />
 											Delete Banner
 										</button>
 									</form>
 									<form
 										use:enhance
 										method="POST"
-										action="?id={banner.id}&a={banner.active
+										action="?/{banner.active
 											? 'hide'
-											: 'show'}">
+											: 'show'}&id={banner.id}">
 										<button
-											class="btn btn-sm btn-link text-decoration-none text-{banner.active
+											class="btn btn-sm no-underline text-{banner.active
 												? 'warning'
 												: 'success'}">
 											<i
@@ -193,13 +119,13 @@
 										disabled
 										class="valid" />
 								</td>
-								<td class="d-flex align-items-center">
+								<td class="flex items-center">
 									<form
 										use:enhance
 										bind:this={textLightForms[banner.id]}
 										method="POST"
 										class="px-2"
-										action="?id={banner.id}&a=updateTextLight">
+										action="?/updateTextLight&id={banner.id}">
 										<input
 											on:change={async () => {
 												textLightForms[
@@ -241,8 +167,8 @@
 
 {#if $modal}
 	<Modal {modal}>
-		<div class="d-flex align-items-start">
-			<h1 class="fs-4 pe-4">Banner #{bannerData.id}</h1>
+		<div class="flex items-start">
+			<h1 class="text-base pr-4">Banner #{bannerData.id}</h1>
 			<button
 				type="button"
 				class="btn p-0 px-2"
@@ -251,46 +177,37 @@
 				<fa fa-xmark-large />
 			</button>
 		</div>
-		<form
-			use:enhance
-			method="POST"
-			action="?id={bannerData.id}&a=updateBody">
-			<textarea
-				bind:value={$form.bannerBody}
-				{...$constraints.bannerBody}
+
+		<Form {formData} submit="" action="?/updateBody&id={bannerData.id}">
+			<Textarea
+				{formData}
 				name="bannerBody"
-				id="bannerBody"
 				rows="1"
-				class="form-control {$errors.bannerBody
-					? 'is-in'
-					: ''}valid mb-4 text-{bannerData.textLight
-					? 'light'
-					: 'dark'}"
+				placeholder="3-100 characters"
+				class="text-{bannerData.textLight ? 'light' : 'dark'}"
 				style="background: {bannerData.bgColour} !important" />
-			<p class="col-12 mb-4 text-danger">
-				{$errors.bannerBody || ""}
-			</p>
-			{#if $form.bannerBody?.trim() && bannerData.body.trim() != $form.bannerBody?.trim()}
-				<div transition:fade class="d-grid gap-2">
-					<button
-						on:click={() => modal.set(false)}
-						class="btn btn-success"
-						id="saveBannerBody">
-						{#if $delayed}
-							Working...
-						{:else}
-							Save changes
-						{/if}
-					</button>
-				</div>
-			{/if}
-		</form>
+			<div transition:fade class="grid">
+				<button
+					on:click={() => modal.set(false)}
+					class="btn btn-success"
+					disabled={!$form.bannerBody?.trim() ||
+						bannerData.body.trim() == $form.bannerBody?.trim()}
+					id="saveBannerBody">
+					{#if $delayed}
+						Working...
+					{:else}
+						Save changes
+					{/if}
+				</button>
+			</div>
+		</Form>
 	</Modal>
 {/if}
 
 <style lang="stylus">
 	input[type="color"]
 		height 2.5rem
+		border-radius 0.375rem
 
 	input[type="checkbox"]
 		height 1.5rem

@@ -42,10 +42,10 @@
 
 <Head title="Catalog" />
 
-<div class="container">
-	<div class="row mb-4">
-		<h1 class="col-xl-4 col-lg-4 col-md-3 mb-0">Catalog</h1>
-		<div class="col-xl-8 col-lg-8 col-md-9 mt-2">
+<div class="ctnr">
+	<div class="flex flex-wrap pb-4">
+		<h1 class="w-full lg:w-1/3 md:w-1/4 mb-0">Catalog</h1>
+		<div class="w-full lg:w-2/3 md:w-3/4 pt-2">
 			<form
 				use:enhance
 				method="POST"
@@ -61,7 +61,7 @@
 						aria-label="Search for an item"
 						aria-describedby="button-addon2" />
 					<select
-						class="form-select form-select-sm light-text ps-4"
+						class="form-select form-select-sm light-text pl-4"
 						placeholder="Type"
 						aria-label="Type">
 						<option value="Shirt">Shirts</option>
@@ -80,15 +80,10 @@
 			</form>
 		</div>
 	</div>
-	<div class="row mb-4">
-		<h2 class="col-xl-2 col-lg-4 col-md-3 mb-0">Categories</h2>
-		<div class="col-xl-10 col-lg-8 col-md-9">
-			<TabNav bind:tabData justify />
-		</div>
-	</div>
 
-	<div class="row">
-		<div class="col-xl-2 col-lg-3 mb-2">
+	<div class="flex flex-wrap">
+		<div class="w-full xl:w-1/6 lg:w-1/4 pb-2 md:pr-4">
+			<h2 class="pb-4">Categories</h2>
 			<h2>Filters</h2>
 			<p class="light-text mb-0">Sort by:</p>
 			<div class="form-check">
@@ -186,19 +181,21 @@
 				</label>
 			</div>
 		</div>
-		<div class="col-xl-9 col-lg-9">
-			<div class="container">
-				<div class="row">
+		<div class="w-full xl:w-5/6 lg:w-3/4">
+			<TabNav bind:tabData justify />
+			{#if !query || assets.length > 0}
+				<div
+					class="grid gap-4 grid-cols-2
+					xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
 					{#each assets as asset, num (asset.id)}
 						<Asset {asset} {num} total={data.assets.length} />
 					{/each}
-					{#if query && assets.length == 0}
-						<h2 class="pt-12">
-							No items found with search term {query}
-						</h2>
-					{/if}
 				</div>
-			</div>
+			{:else}
+				<h2 class="pt-12">
+					No items found with search term {query}
+				</h2>
+			{/if}
 		</div>
 	</div>
 </div>

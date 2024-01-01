@@ -1,9 +1,11 @@
 {
 	generator: "dense",
 	rules: [
+		"convert_index_to_field",
 		"remove_comments",
 		"remove_spaces",
 		"remove_compound_assignment",
+		"remove_interpolated_string",
 		"group_local_assignment",
 		// "compute_expression",
 		"remove_unused_if_branch",

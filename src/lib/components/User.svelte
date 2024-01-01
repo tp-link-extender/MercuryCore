@@ -33,16 +33,16 @@
 </script>
 
 {#if image}
-	<div class="d-flex" class:align-items-center={full}>
-		<span class="rounded-circle overflow-hidden" style="{style};{style2}">
+	<div class="flex" class:items-center={full}>
+		<span class="rounded-full overflow-hidden" style="{style};{style2}">
 			<img
 				src="/api/avatar/{user.username}"
 				alt={user.username}
-				class="rounded-circle rounded-top-0"
+				class="rounded-full rounded-top-0"
 				{style} />
 		</span>
 		{#if full}
-			<span class="username {thin ? 'ps-2 fs-4' : 'font-bold ps-4'}">
+			<span class="username {thin ? 'pl-2 text-base' : 'font-bold pl-4'}">
 				{user.username}
 			</span>
 		{/if}
@@ -50,21 +50,21 @@
 {:else}
 	<a
 		href="/user/{user.number}"
-		class="d-flex text-decoration-none"
-		class:flex-column={bottom}
-		class:align-items-center={full}>
+		class="flex no-underline"
+		class:flex-col={bottom}
+		class:items-center={full}>
 		<span
-			class="pfp rounded-circle overflow-hidden"
+			class="pfp rounded-full overflow-hidden"
 			style="{style};{style2};
 			--hover: var(--{transitionBackgrounds[bg]}">
 			<img
 				src="/api/avatar/{user.username}"
 				alt={user.username}
-				class="rounded-circle rounded-top-0"
+				class="rounded-full rounded-top-0"
 				{style} />
 		</span>
 		{#if full}
-			<span class="username {thin ? 'ps-2 fs-4' : 'font-bold ps-4'}">
+			<span class="username {thin ? 'pl-2 text-base' : 'font-bold pl-4'}">
 				{user.username}
 			</span>
 		{:else if bottom}
@@ -88,7 +88,7 @@
 			.pfp
 				background var(--hover) !important
 
-	span.rounded-circle
+	span.rounded-full
 		box-shadow inset 0 0 0rem 1.5px var(--status)
 
 	.bottom

@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
 	const { form, errors, constraints, enhance, delayed, capture, restore } =
 		superForm(data.form, {
-			taintedMessage: false,
 			onResult: ({ result }) =>
 				// Reload to get the new session after redirecting to homepage
 				result.type == "redirect" ? window.location.reload() : null,
@@ -15,38 +14,38 @@
 
 <Head title="Register" description="Create a Mercury account." />
 
-<div id="wavep" class="w-100 h-100 position-absolute top-0 overflow-hidden">
-	<div class="w-100 position-fixed bottom-0">
-		<div class="position-absolute" />
-		<div class="position-absolute" />
+<div id="wavep" class="w-full h-full absolute top-0 overflow-hidden">
+	<div class="w-full fixed bottom-0">
+		<div class="absolute" />
+		<div class="absolute" />
 	</div>
 </div>
 
 <div class="row">
 	<div id="dark" class="col light-text">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0 fs-4">
-			<fa fa-arrow-left class="pe-2" />
+		<a type="button" href="/" class="btn btn-lg border-0 px-0 text-base">
+			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
 		<h1 class="font-black mb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Original username</h2>
 			<p class="light-text opacity-75 more">
 				Make sure it is appropriate and between 3-21 characters.
 				Underscores are allowed.
 			</p>
 		</div>
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Valid email</h2>
 			<p class="light-text opacity-75 more">
 				Mercury requires a valid email so you can reset your password at
 				any time.
 			</p>
 		</div>
-		<div class="ps-4 w-100">
+		<div class="pl-4 w-full">
 			<h2 class="light-text">Secure password</h2>
 			<p class="light-text opacity-75 more">
 				Make sure your password has a mix of letters, numbers, and
@@ -61,7 +60,7 @@
 				<h2>Create a free account</h2>
 				<p>
 					Already have an account?
-					<a href="/login" class="text-decoration-none">Log in</a>
+					<a href="/login" class="no-underline">Log in</a>
 				</p>
 
 				<form
@@ -157,7 +156,7 @@
 							</p>
 						</div>
 
-						<button class="container-fluid btn btn-primary mb-4">
+						<button class="btn btn-primary mb-4">
 							{#if $delayed}
 								Working...
 							{:else}
@@ -168,13 +167,9 @@
 				</form>
 				<p>
 					By signing up, you agree to our
-					<a href="/terms" class="text-decoration-none">
-						Terms of Service
-					</a>
+					<a href="/terms" class="no-underline">Terms of Service</a>
 					and
-					<a href="/privacy" class="text-decoration-none">
-						Privacy policy
-					</a>
+					<a href="/privacy" class="no-underline">Privacy policy</a>
 					.
 				</p>
 			{:else}
@@ -258,7 +253,7 @@
 							</p>
 						</div>
 
-						<button class="container-fluid btn btn-primary mb-4">
+						<button class="btn btn-primary mb-4">
 							{#if $delayed}
 								Working...
 							{:else}

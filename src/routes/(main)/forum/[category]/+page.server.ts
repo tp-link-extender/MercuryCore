@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import surreal, { squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
-import { likeSwitch } from "$lib/server/like"
+import { likeActions } from "$lib/server/like"
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
@@ -52,10 +52,10 @@ export async function load({ locals, params }) {
 		{
 			...params,
 			user: `user:${user.id}`,
-		},
+		}
 	)
 
-	if (!category) throw error(404, "Not found")
+	if (!category) error(404, "Not found")
 
 	return category
 }
@@ -64,7 +64,7 @@ export const actions = {
 	like: async ({ request, locals, url }) => {
 		const { user } = await authorise(locals),
 			data = await formData(request),
-			{ action } = data,
+			action = data.action as keyof typeof likeActions,
 			id = url.searchParams.get("id"),
 			replyId = url.searchParams.get("rid")
 
@@ -72,12 +72,11 @@ export const actions = {
 			(id && !(await surreal.select(`forumPost:${id}`))[0]) ||
 			(replyId && !(await surreal.select(`forumReply:${replyId}`))[0])
 		)
-			throw error(404)
+			error(404)
 
-		await likeSwitch(
-			action,
+		await likeActions[action](
 			user.id,
-			`forum${replyId ? "Reply" : "Post"}:${id || replyId}`,
+			`forum${replyId ? "Reply" : "Post"}:${id || replyId}`
 		)
 	},
 }

@@ -31,21 +31,15 @@
 
 	let content = "" // Allows current reply to not be lost on clicking to another reply
 
-	const collapse = (id: string) => () => {
-		repliesCollapsed.update(collapsed => {
-			collapsed[id] = !collapsed[id]
-			return collapsed
-		})
-	}
+	const collapse = (id: string) => () =>
+		($repliesCollapsed[id] = !$repliesCollapsed[id])
 
 	$: hidden = reply.visibility != "Visible"
 </script>
 
 {#if !topLevel}
-	<a
-		href="{baseUrl}{assetName ? '?tab=Comments' : ''}"
-		class="text-decoration-none">
-		<fa fa-arrow-left class="me-2" />
+	<a href="{baseUrl}{assetName ? '?tab=Comments' : ''}" class="no-underline">
+		<fa fa-arrow-left class="pr-2" />
 		{#if assetName}
 			Back to asset
 		{:else}
@@ -54,28 +48,28 @@
 	</a>
 	{#if reply.parentReplyId}
 		<br />
-		<a href="{baseUrl}/{reply.parentReplyId}" class="text-decoration-none">
-			<fa fa-arrow-up class="me-2" />
+		<a href="{baseUrl}/{reply.parentReplyId}" class="no-underline">
+			<fa fa-arrow-up class="pr-2" />
 			Parent reply
 		</a>
 	{/if}
 {/if}
 
 {#if reply && reply.author}
-	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="d-flex">
-		<span class="d-flex flex-column pt-2">
+	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="flex">
+		<span class="flex flex-col pt-2">
 			<User user={reply.author} thin size="1.5rem" />
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Collapse reply"
-				class="collapseBar bg-a2 p-0 border-0 h-100 mt-4" />
+				class="collapseBar bg-a2 p-0 border-0 h-full mt-4" />
 		</span>
 
 		{#if $repliesCollapsed?.[reply.id]}
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Expand reply"
-				class="expandBar m-2 ms-4 p-0 mt-0">
+				class="expandBar m-2 pl-2 mt-0 text-base">
 				<small>
 					<span class="grey-text">
 						{reply.author.username}
@@ -83,42 +77,44 @@
 							<i
 								class="fa {assetName
 									? 'fa-hammer'
-									: 'fa-microphone'} ms-1" />
+									: 'fa-microphone'} pl-1" />
 						{/if}
 					</span>
 					- {reply.content[0].text}
 				</small>
 			</button>
 		{:else}
-			<div in:fade|global={{ num }} class="w-100">
-				<div class="d-flex w-100">
-					<div class="w-100">
-						<a
-							href="/user/{reply.author.number}"
-							class:hidden
-							class="user userlink d-flex text-decoration-none pt-2 ms-4 {reply
-								.author.username == postAuthorName
-								? ''
-								: 'light-text'}">
-							<span
-								class="font-bold {reply.author.username ==
-								postAuthorName
-									? assetName
-										? 'text-warning'
-										: 'text-primary'
-									: ''}">
-								{reply.author.username}
-								{#if reply.author.username == postAuthorName}
-									<i
-										class="fa {assetName
-											? 'fa-hammer'
-											: 'fa-microphone'} ms-2" />
-								{/if}
-							</span>
-							<small class="light-text ps-6">
+			<div in:fade|global={{ num }} class="w-full">
+				<div class="flex w-full">
+					<div class="w-full">
+						<div class="flex items-center pl-4 pt-2">
+							<a
+								href="/user/{reply.author.number}"
+								class:hidden
+								class="user userlink no-underline {reply.author
+									.username == postAuthorName
+									? ''
+									: 'light-text'}">
+								<span
+									class="font-bold {reply.author.username ==
+									postAuthorName
+										? assetName
+											? 'text-warning'
+											: 'text-primary'
+										: ''}">
+									{reply.author.username}
+									{#if reply.author.username == postAuthorName}
+										<i
+											class="fa {assetName
+												? 'fa-hammer'
+												: 'fa-microphone'} ml-2" />
+									{/if}
+								</span>
+							</a>
+							<small class="light-text pl-6">
 								{new Date(reply.posted).toLocaleString()}
 							</small>
-						</a>
+						</div>
 						<p class:hidden class="my-2">
 							{reply.content[0].text}
 						</p>
@@ -150,7 +146,7 @@
 									return () => {}
 								}}
 								class:hidden
-								class="d-inline me-2"
+								class="inline mr-2"
 								method="POST"
 								action="?/like&rid={reply.id}">
 								<button
@@ -167,8 +163,8 @@
 									class="my-1 text-center {reply.likes
 										? 'text-success font-bold'
 										: reply.dislikes
-										? 'text-danger font-bold'
-										: ''}">
+											? 'text-danger font-bold'
+											: ''}">
 									{reply.likeCount - reply.dislikeCount}
 								</span>
 								<button
@@ -190,7 +186,7 @@
 								on:click={() => replyingTo.set(reply.id)}
 								class:hidden
 								class="p-0 btn btn-sm grey-text px-1">
-								<far fa-message class="pe-2" />
+								<far fa-message class="pr-2" />
 								Reply
 							</button>
 							{#if !hidden}
@@ -210,44 +206,39 @@
 								{/if}
 							{/if}
 						{:else}
-							<div class="mb-2 card reply bg-darker">
-								<div class="card-body p-4 pt-1 pb-0">
-									<form
-										use:enhance
-										on:submit={() => replyingTo.set("")}
-										class="mb-6"
-										method="POST"
-										action="?/reply&rid={reply.id}">
-										<label
-											for="content"
-											class="light-text py-2">
-											Post a Reply
-										</label>
-										<fieldset>
-											<textarea
-												bind:value={content}
-												class="form-control valid mb-2"
-												required
-												minlength="1"
-												maxlength="1000"
-												name="content"
-												placeholder="What are your thoughts?"
-												rows="4" />
-											<button class="btn btn-success">
-												<i
-													class="far fa-message me-2" />
-												Reply
-											</button>
-											<button
-												on:click={() =>
-													replyingTo.set("")}
-												class="btn btn-dark grey-text ms-1">
-												<fa fa-cancel class="me-2" />
-												Cancel
-											</button>
-										</fieldset>
-									</form>
-								</div>
+							<div class="mb-2 card reply bg-darker p-4 pt-2">
+								<form
+									use:enhance
+									on:submit={() => replyingTo.set("")}
+									method="POST"
+									action="?/reply&rid={reply.id}">
+									<label
+										for="content"
+										class="light-text pb-2">
+										Post a Reply
+									</label>
+									<fieldset>
+										<textarea
+											bind:value={content}
+											class="form-control valid mb-2"
+											required
+											minlength="1"
+											maxlength="1000"
+											name="content"
+											placeholder="What are your thoughts?"
+											rows="4" />
+										<button class="btn btn-success">
+											<i class="far fa-message mr-2" />
+											Reply
+										</button>
+										<button
+											on:click={() => replyingTo.set("")}
+											class="btn btn-dark grey-text ml-1">
+											<fa fa-cancel class="mr-2" />
+											Cancel
+										</button>
+									</fieldset>
+								</form>
 							</div>
 						{/if}
 					</div>
@@ -255,8 +246,8 @@
 
 				{#if depth > 8}
 					<!-- todo fix incorrect colour -->
-					<a href="{baseUrl}/{reply.id}" class="text-decoration-none">
-						<fa fa-arrow-down class="me-2" />
+					<a href="{baseUrl}/{reply.id}" class="no-underline">
+						<fa fa-arrow-down class="mr-2" />
 						More replies
 					</a>
 				{/if}

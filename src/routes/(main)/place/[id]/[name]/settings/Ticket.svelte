@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data: import("./$types").PageData
-
-	const { message, enhance, delayed } = superForm(data.ticketForm, {
-		taintedMessage: false,
-	})
+	const { message, enhance, delayed } = superForm(data.ticketForm)
 </script>
 
-<form use:enhance method="POST" class="col-lg-8" action="?a=ticket&tab=Network">
-	<fieldset class="row pb-4">
-		<label for="ticket" class="col-md-3 text-md-right">Server Ticket</label>
-		<div class="col-md-9">
+<form use:enhance method="POST" action="?/ticket&tab=Network">
+	<fieldset class="flex flex-wrap pb-4">
+		<label for="ticket" class="w-full md:w-1/4 text-md-right">
+			Server Ticket
+		</label>
+		<div class="w-full md:w-3/4">
 			<div class="input-group">
 				<input
 					id="ticket"

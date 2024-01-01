@@ -32,10 +32,10 @@ const types = ["friends", "followers", "following"],
 
 export async function load({ params }) {
 	if (!/^\d+$/.test(params.number))
-		throw error(400, `Invalid user id: ${params.number}`)
+		error(400, `Invalid user id: ${params.number}`)
 	const number = parseInt(params.number)
 
-	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
+	if (params.f && !types.includes(params.f)) error(400, "Not found")
 
 	const type = params.f as keyof typeof usersQueries,
 		user = await squery<{
@@ -45,23 +45,23 @@ export async function load({ params }) {
 			surql`
 				SELECT id, username FROM user
 				WHERE number = $number`,
-			{ number },
+			{ number }
 		)
 
-	if (!user) throw error(404, "Not found")
+	if (!user) error(404, "Not found")
 
 	return {
 		type,
 		username: user.username,
-		users: query<{
+		users: await query<{
 			number: number
 			status: "Playing" | "Online" | "Offline"
 			username: string
 		}>(usersQueries[type], {
 			user: user.id,
 		}),
-		number: query(numberQueries[type], {
+		number: await squery<number>(`[${numberQueries[type]}]`, {
 			user: user.id,
-		}) as unknown as number,
+		}),
 	}
 }
