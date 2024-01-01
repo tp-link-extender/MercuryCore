@@ -26,7 +26,7 @@
 			placeholder={placeholder || null}
 			class="form-control {$errors[name]
 				? 'is-in'
-				: ''}valid {$$restProps.class}" />
+				: ''}valid {$$restProps.class || ''}" />
 
 		{#if help}
 			<small class="grey-text">

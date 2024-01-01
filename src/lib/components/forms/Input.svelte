@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { HTMLInputTypeAttribute } from "svelte/elements"
+	import SubInput from "./SubInput.svelte"
 
 	export let name: string
 	export let label = ""
 	export let help = ""
+	export let after = ""
 	export let type: HTMLInputTypeAttribute = "text"
 
 	export let inline = false
@@ -11,44 +13,22 @@
 	const { form, errors, constraints } = formData
 </script>
 
-<div class="flex flex-wrap {inline ? 'flex-1' : 'pb-8'}">
+<div
+	class="{inline ? 'inline' : 'flex'} flex-wrap {inline ? 'flex-1' : 'pb-8'}">
 	{#if label}
 		<label for={name} class="w-full md:w-1/4">
 			{label}
 		</label>
 	{/if}
-	<div class="w-full {label ? 'md:w-3/4' : ''}">
+	<div class="w-max {label ? 'md:w-3/4' : ''} {$$restProps.mainclass || ''}">
 		<!-- welp, boilerplate begets boilerplate -->
-		{#if type == "checkbox"}
-			<input
-				{...$$restProps}
-				bind:checked={$form[name]}
-				{name}
-				id={name}
-				type="checkbox"
-				class="form-check-input valid"
-				style="width: 1.5rem; height: 1.5rem" />
+		{#if after}
+			<div class="flex items-center">
+				<SubInput {...$$restProps} {name} {type} {inline} {formData} />
+				{@html after}
+			</div>
 		{:else}
-			<input
-				{...$$restProps}
-				bind:value={$form[name]}
-				{...$constraints[name]}
-				{name}
-				id={name}
-				{...{ type /* lmfao */ }}
-				class="form-{type == 'checkbox'
-					? 'check-input'
-					: type == 'color'
-						? ''
-						: 'control'} {$errors[name] ? 'is-in' : ''}valid {inline
-					? 'rounded-r-0'
-					: // idk y unocss isn't extracting from class: directives
-						''}"
-				style={type == "number"
-					? "width: 9rem"
-					: type == "color"
-						? "height: 2.5rem; border-radius: 0.375rem"
-						: null} />
+			<SubInput {...$$restProps} {name} {type} {inline} {formData} />
 		{/if}
 
 		{#if help}
