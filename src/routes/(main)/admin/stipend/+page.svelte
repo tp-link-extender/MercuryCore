@@ -1,22 +1,12 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+	const formData = superForm(data.form)
+	const { form, errors, message, constraints, enhance, delayed } = formData
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 
 	$form.dailyStipend = data.dailyStipend
 	$form.stipendTime = data.stipendTime
@@ -26,93 +16,34 @@
 
 <Head title="Daily Stipend - Admin" />
 
-<div class="container py-6">
-	<h1 class="mb-0">Admin - Daily Stipend</h1>
-	<a href="/admin" class="text-decoration-none">
+<div class="ctnr pt-6 light-text">
+	<h1>Admin - Daily Stipend</h1>
+	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>
-	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData vertical />
-		</div>
-		<div class="col-lg-10 col-md-9">
+	<div class="flex flex-wrap pt-6">
+		<TabNav
+			bind:tabData
+			vertical
+			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
+		<div class="w-full lg:w-5/6 md:w-3/4">
 			<Tab {tabData}>
-				<form use:enhance method="POST" action="?/updateStipend">
-					<fieldset>
-						<div class="row">
-							<label
-								for="dailyStipend"
-								class="col-md-3 light-text">
-								Daily stipend
-							</label>
-							<div class="col-md-8">
-								<div class="input-group">
-									<input
-										bind:value={$form.dailyStipend}
-										{...$constraints.dailyStipend}
-										type="number"
-										name="dailyStipend"
-										id="dailyStipend"
-										class="form-control {$errors.dailyStipend
-											? 'is-in'
-											: ''}valid" />
-									<span
-										class="input-group-text light-text bg-a1">
-										<fa fa-gem class="text-success" />
-									</span>
-								</div>
-							</div>
-						</div>
-						<br />
-						<div class="row">
-							<label
-								for="stipendTime"
-								class="col-md-3 light-text">
-								Time between stipend
-							</label>
-							<div class="col-md-8">
-								<div class="input-group">
-									<input
-										bind:value={$form.stipendTime}
-										{...$constraints.stipendTime}
-										type="number"
-										name="stipendTime"
-										id="stipendTime"
-										class="form-control {$errors.stipendTime
-											? 'is-in'
-											: ''}valid" />
-									<span
-										class="input-group-text light-text bg-a1">
-										hours
-									</span>
-								</div>
-							</div>
-						</div>
-						<br />
-						<button class="btn btn-success">
-							{#if $delayed}
-								Working...
-							{:else}
-								Save
-							{/if}
-						</button>
-					</fieldset>
-				</form>
-				<p
-					class:text-success={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
-					{$message || ""}
-				</p>
+				<Form {formData} action="?/updateStipend" submit="Save changes">
+					<Input
+						{formData}
+						name="dailyStipend"
+						label="Daily stipend"
+						type="number"
+						after="<fa fa-gem class='text-success pl-3' />" />
+					<Input
+						{formData}
+						name="stipendTime"
+						label="Time between stipend"
+						type="number"
+						after="<span class='light-text pl-3'>hours</span>" />
+				</Form>
 			</Tab>
 		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-	.input-group-text
-		border-color var(--accent3)
-
-	.input-group
-		max-width 12rem
-</style>

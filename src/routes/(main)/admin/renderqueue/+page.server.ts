@@ -1,4 +1,4 @@
-import { query, surql } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 
 type Render = {
 	id: number
@@ -18,9 +18,9 @@ type Render = {
 	}
 }
 
-export const load = () => ({
-	status: query(surql`stuff:ping.render`) as unknown as string,
-	queue: query<Render>(surql`
+export const load = async () => ({
+	status: await squery<string>(surql`[stuff:ping.render]`),
+	queue: await query<Render>(surql`
 		SELECT
 			meta::id(id) AS id,
 			type,

@@ -11,8 +11,8 @@ const select = surql`
 		count(<-member) AS memberCount
 	FROM group`
 
-export const load = () => ({
-	groups: query<Group>(select),
+export const load = async () => ({
+	groups: await query<Group>(select),
 })
 
 export const actions = {
@@ -20,7 +20,7 @@ export const actions = {
 		groups: await query<Group>(
 			surql`${select}
 				WHERE string::lowercase($query) ∈ string::lowercase(name)`,
-			{ query: (await request.formData()).get("q") as string },
+			{ query: (await request.formData()).get("q") as string }
 		),
 	}),
 }

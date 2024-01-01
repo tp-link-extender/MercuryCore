@@ -44,12 +44,9 @@ function makeFriend(fromPlayer, toPlayer)
 		return
 	end -- previously cancelled friend request, we don't want it!
 
-	popup.PopupText.Text = "Accept Friend Request from "
-		.. tostring(fromPlayer.Name)
-		.. "?"
-	popup.PopupImage.Image = "http://banland.xyz/thumbs/avatar.ashx?userId="
-		.. tostring(fromPlayer.userId)
-		.. "&x=352&y=352"
+	popup.PopupText.Text = `Accept Friend Request from {fromPlayer.Name}?`
+	popup.PopupImage.Image =
+		`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=352&y=352`
 
 	showTwoButtons()
 	popup.Visible = true
@@ -116,10 +113,8 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 		if event == Enum.FriendRequestEvent.Accept then
 			game:GetService("GuiService"):SendNotification(
 				"You are Friends",
-				"With " .. toPlayer.Name .. "!",
-				"http://banland.xyz/thumbs/avatar.ashx?userId="
-					.. tostring(toPlayer.userId)
-					.. "&x=48&y=48",
+				`With {toPlayer.Name}!`,
+				`http://banland.xyz/thumbs/avatar.ashx?userId={toPlayer.userId}&x=48&y=48`,
 				5,
 				function() end
 			)
@@ -131,10 +126,8 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 			end -- previously cancelled friend request, we don't want it!
 			game:GetService("GuiService"):SendNotification(
 				"Friend Request",
-				"From " .. fromPlayer.Name,
-				"http://banland.xyz/thumbs/avatar.ashx?userId="
-					.. tostring(fromPlayer.userId)
-					.. "&x=48&y=48",
+				`From {fromPlayer.Name}`,
+				`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
 				8,
 				function()
 					makeFriend(fromPlayer, toPlayer)
@@ -143,10 +136,8 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 		elseif event == Enum.FriendRequestEvent.Accept then
 			game:GetService("GuiService"):SendNotification(
 				"You are Friends",
-				"With " .. fromPlayer.Name .. "!",
-				"http://banland.xyz/thumbs/avatar.ashx?userId="
-					.. tostring(fromPlayer.userId)
-					.. "&x=48&y=48",
+				`With {fromPlayer.Name}!`,
+				`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
 				5,
 				function() end
 			)

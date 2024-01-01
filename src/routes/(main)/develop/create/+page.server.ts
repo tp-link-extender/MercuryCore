@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
@@ -14,7 +14,7 @@ import { redirect } from "@sveltejs/kit"
 import fs from "fs"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import requestRender from "$lib/server/requestRender.js"
+import requestRender from "$lib/server/requestRender"
 
 const schema = z.object({
 	// Object.keys(assets) doesn't work
@@ -37,7 +37,7 @@ export async function load({ request, locals }) {
 	await authorise(locals, 5)
 
 	return {
-		form: superValidate(schema),
+		form: await superValidate(schema),
 		assettype: new URL(request.url).searchParams.get("asset"),
 	}
 }
@@ -63,7 +63,7 @@ export const actions = {
 			return formError(
 				form,
 				["asset"],
-				["Asset must be less than 20MB in size"],
+				["Asset must be less than 20MB in size"]
 			)
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
@@ -115,11 +115,8 @@ export const actions = {
 			return formError(form, ["asset"], ["Asset failed to upload"])
 		}
 
-		const currentId = (await query(
-			surql`stuff:increment.asset`,
-		)) as unknown as number
-
-		const imageAssetId = currentId + 1,
+		const currentId = await squery<number>(surql`[stuff:increment.asset]`),
+			imageAssetId = currentId + 1,
 			id = currentId + 2
 
 		await query(
@@ -161,13 +158,19 @@ export const actions = {
 				price,
 				description,
 				user: `user:${user.id}`,
-			},
+			}
 		)
 
 		graphicAsset(assets[assetType], imageAssetId, id)
-		await saveImages[0](imageAssetId)
-		await saveImages[1](id)
 
-		throw redirect(302, `/avatarshop/${id}/${name}`)
+		try {
+			await saveImages[0](imageAssetId)
+			await saveImages[1](id)
+		} catch (e) {
+			console.log("Rendering images failed!")
+			console.error(e)
+		}
+
+		redirect(302, `/avatarshop/${id}/${name}`)
 	},
 }

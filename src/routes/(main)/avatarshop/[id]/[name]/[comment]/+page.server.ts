@@ -5,12 +5,11 @@ import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "../select"
 
 const SELECTREPLIES = recurse(
-	from => surql`(${from} <-replyToComment<-assetComment) AS replies`,
+	from => surql`(${from} <-replyToComment<-assetComment) AS replies`
 )
 
 export async function load({ locals, params }) {
-	if (!/^\d+$/.test(params.id))
-		throw error(400, `Invalid asset id: ${params.id}`)
+	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
 	const asset = await squery<{
 		creator: {
@@ -22,10 +21,10 @@ export async function load({ locals, params }) {
 				(SELECT username
 				FROM <-created<-user)[0] AS creator
 			FROM $asset`,
-		{ asset: `asset:${params.id}` },
+		{ asset: `asset:${params.id}` }
 	)
 
-	if (!asset) throw error(404, "Asset not found")
+	if (!asset) error(404, "Asset not found")
 
 	const { user } = await authorise(locals)
 
@@ -66,10 +65,10 @@ export async function load({ locals, params }) {
 			assetComment: `assetComment:${params.comment}`,
 			forumPost: `forumPost:${params.id}`,
 			user: `user:${user.id}`,
-		},
+		}
 	)
 
-	if (!assetComments) throw error(404, "Comment not found")
+	if (!assetComments) error(404, "Comment not found")
 
 	return {
 		replies: assetComments,

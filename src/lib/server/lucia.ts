@@ -19,7 +19,7 @@ export const auth = lucia({
 		id: data.id,
 		number: data.number,
 		bio: data.bio,
-		email: data.email,
+		email: data.email ? `*******@${data.email.split("@")[1]}` : undefined,
 		username: data.username,
 		status: data.status,
 		currency: data.currency,
@@ -46,14 +46,14 @@ export async function authorise(
 	}: {
 		auth: { validate: () => Promise<Session | null> }
 	},
-	level?: number,
+	level?: number
 ) {
 	const session = await auth.validate(),
 		user = session?.user
 
-	if (!session || !user) throw redirect(302, "/login")
+	if (!session || !user) redirect(302, "/login")
 	if (level && user.permissionLevel < level)
-		throw error(403, "You do not have permission to access this page.")
+		error(403, "You do not have permission to access this page.")
 
 	return {
 		session,

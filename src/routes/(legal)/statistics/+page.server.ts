@@ -29,7 +29,7 @@ export async function load({ locals }) {
 		count(SELECT * FROM statusPost);
 		count(SELECT * FROM forumPost);
 		count(SELECT * FROM forumReply);
-		LET $currency = (SELECT currency FROM user).currency;
+		LET $currency = (SELECT currency FROM user WHERE number != 1).currency;
 		math::mean($currency);
 		math::sum($currency)`)
 

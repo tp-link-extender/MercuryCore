@@ -3,12 +3,12 @@
 	import { navigating } from "$app/stores"
 	import nprogress from "nprogress"
 
-	import "uno.css"
 	import "/src/nprogress.styl"
 	import "$bootstrap"
 	import "/src/bootswatch.styl"
 	import "/src/global.styl"
 	import "/src/fa/sass/fontawesome.styl"
+	import "uno.css"
 
 	export let data
 	$: user = data.user
@@ -76,18 +76,18 @@
 
 <!-- Toast notifications -->
 <div
-	class="toasts position-fixed z-1 bottom-0 end-0 p-4
-	d-flex flex-column gap-4">
+	class="toasts fixed z-1 bottom-0 end-0 p-4
+	flex flex-col gap-4">
 	{#each notifications as notification}
 		<div
 			class="show bg-darker light-text rounded-2"
 			role="alert"
 			aria-live="assertive"
 			aria-atomic="true">
-			<div class="d-flex bg-a light-text p-2 rounded-top-2">
+			<div class="flex bg-a light-text p-2 rounded-top-2">
 				<a
 					href="/user/{notification.sender.number}"
-					class="d-flex gap-3 align-items-center w-100 light-text text-decoration-none">
+					class="flex gap-3 items-center w-full light-text no-underline">
 					<User
 						user={notification.sender}
 						size="1.6rem"
@@ -111,8 +111,8 @@
 			</div>
 			<a
 				href={notification.link}
-				class="body p-3 light-text text-decoration-none
-				d-block rounded-2">
+				class="body p-3 light-text no-underline
+				block rounded-2">
 				{notification.note}
 			</a>
 		</div>

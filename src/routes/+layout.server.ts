@@ -1,4 +1,20 @@
+import fs from "fs"
 import { query, squery, surql } from "$lib/server/surreal"
+
+let lines = "0"
+
+// extract the line count from the stupid file that scc outputs
+try {
+	lines =
+		fs
+			.readFileSync("data/lines", "utf-8")
+			.split("\n")
+			.filter(l => l.startsWith("  n_lines"))[0]
+			.split(" ")
+			.pop() || "0"
+} catch (e) {
+	console.error(e)
+}
 
 export async function load({ request, locals }) {
 	const session = await locals.auth.validate(),
@@ -37,7 +53,7 @@ export async function load({ request, locals }) {
 				ORDER BY time DESC`,
 			{
 				user: `user:${user.id}`,
-			},
+			}
 		)
 
 		// Make type relativeId optional so we can delete it later
@@ -75,7 +91,7 @@ export async function load({ request, locals }) {
 									name
 								FROM ->replyToAsset->asset)[0] AS parentAsset
 							FROM $comment`,
-						{ comment: `assetComment:${i.relativeId}` },
+						{ comment: `assetComment:${i.relativeId}` }
 					)
 					if (!comment) break
 
@@ -99,7 +115,7 @@ export async function load({ request, locals }) {
 									(->in->forumCategory)[0].name as categoryName
 								FROM ->replyToPost[0]->forumPost)[0] AS parentPost
 							FROM $reply`,
-						{ reply: `forumReply:${i.relativeId}` },
+						{ reply: `forumReply:${i.relativeId}` }
 					)
 					if (!reply) break
 
@@ -122,7 +138,7 @@ export async function load({ request, locals }) {
 							FROM $forumPost`,
 						{
 							forumPost: `forumPost:${i.relativeId}`,
-						},
+						}
 					)
 					if (!post) break
 
@@ -140,7 +156,7 @@ export async function load({ request, locals }) {
 	}
 
 	return {
-		banners: query<{
+		banners: await query<{
 			bgColour: string
 			body: string
 			id: string
@@ -157,5 +173,6 @@ export async function load({ request, locals }) {
 		user,
 		notifications: notifications || [],
 		url: request.url,
+		lines, // footer thing
 	}
 }

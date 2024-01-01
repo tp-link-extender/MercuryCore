@@ -1,7 +1,7 @@
 import { query, surql } from "$lib/server/surreal"
 
-export const load = () => ({
-	categories: query<{
+export const load = async () => ({
+	categories: await query<{
 		description: string
 		name: string
 		postCount: number

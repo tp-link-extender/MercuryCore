@@ -624,9 +624,8 @@ function initializeDeveloperConsole()
 				message.TextWrapped = wordWrapToggleOn
 				message.Size = UDim2.new(0.98, 0, 0, 2000)
 				message.Parent = Dev_Container
-				message.Text = messageList[i].Time
-					.. " -- "
-					.. messageList[i].Message
+				message.Text =
+					`{messageList[i].Time} -- {messageList[i].Message}`
 
 				message.Size = UDim2.new(0.98, 0, 0, message.TextBounds.Y)
 				message.Position = UDim2.new(0, 5, 0, posOffset)

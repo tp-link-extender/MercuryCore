@@ -1,6 +1,7 @@
 <script lang="ts">
-	// lel, anything for intellisense
-	export let post: import("../../routes/(main)/forum/[category]/$types").PageData["posts"][number]
+	import { preloadData, pushState, goto } from "$app/navigation"
+
+	export let post: import("./$types").PageData["posts"][number]
 	export let num: number
 	export let total: number
 	export let categoryName: string
@@ -9,7 +10,7 @@
 		dislikesDisabled = false
 </script>
 
-<div in:fade|global={{ num, total }} class="post card bg-darker mb-4 flex-row">
+<div in:fade|global={{ num, total }} class="post card bg-darker mb-4">
 	<form
 		use:enhance={({ formData }) => {
 			const action = formData.get("action")
@@ -39,7 +40,7 @@
 		class="sidebar bg-a p-1"
 		method="POST"
 		action="?/like&id={post.id}">
-		<div class="d-flex flex-column">
+		<div class="flex flex-col">
 			<div class="text-center">
 				<button
 					name="action"
@@ -56,8 +57,8 @@
 				class="py-2 text-center {post.likes
 					? 'text-success font-bold'
 					: post.dislikes
-					? 'text-danger font-bold'
-					: ''}">
+						? 'text-danger font-bold'
+						: ''}">
 				{post.likeCount - post.dislikeCount}
 			</span>
 			<div class="text-center">
@@ -72,27 +73,37 @@
 					<i class="fa{post.dislikes ? '' : 'r'} fa-thumbs-down" />
 				</button>
 			</div>
-			<!-- <div id="replycount" class="d-flex">
-				<div class="mt-auto"><far fa-message /> {post._count.replies}</div>
-			</div> -->
 		</div>
 	</form>
-	<div class="ps-2 d-flex flex-column w-100">
-		<div class="d-flex pt-2 ps-4">
+	<div class="pl-2 flex flex-col w-full">
+		<div class="flex pt-2 pl-4">
 			<User user={post.author} full />
-			<em class="light-text ps-4 align-self-center">
+			<em class="light-text pl-4 self-center">
 				{new Date(post.posted).toLocaleString()}
 			</em>
 		</div>
 		<a
+			on:click={async e => {
+				// Dude.
+				// Shallow routing is AWESOME
+				if (e.metaKey) return
+				e.preventDefault()
+
+				const { href } = e.currentTarget,
+					result = await preloadData(href)
+
+				if (result.type == "loaded" && result.status == 200)
+					pushState(href, { openPost: result.data })
+				else goto(href)
+			}}
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
-			class="px-4 pt-2 text-decoration-none light-text w-100">
+			class="px-4 pt-2 no-underline light-text w-full">
 			<h2 class="pt-2">
 				{post.title}
 			</h2>
 
 			<div class="mb-0">
-				<div class="gradient w-100 h-75" />
+				<div class="gradient w-full h-3/4" />
 				{post.content[0].text || ""}
 			</div>
 		</a>
@@ -102,15 +113,12 @@
 <style lang="stylus">
 	.sidebar
 		z-index 1
-		// min-width 3rem
-
-	// #replycount
-	// 	justify-content center
 
 	.post
 		height 10rem
 		overflow hidden
 		word-break break-word
+		flex-direction row !important
 
 		border 1px solid var(--accent2)
 		transition all 0.3s ease-out

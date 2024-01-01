@@ -24,10 +24,10 @@ export const load = async ({ params }) => {
 				FROM <-member<-user) AS members
 			FROM group WHERE string::lowercase(name)
 				= string::lowercase($name)`,
-		params,
+		params
 	)
 
-	if (!group) throw error(404, "Not found")
+	if (!group) error(404, "Not found")
 
 	return group
 }

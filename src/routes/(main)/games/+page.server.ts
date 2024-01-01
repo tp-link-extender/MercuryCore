@@ -24,8 +24,8 @@ const select = surql`
 	FROM place
 	WHERE !privateServer AND !deleted`
 
-export const load = () => ({
-	places: query<Place>(select),
+export const load = async () => ({
+	places: await query<Place>(select),
 })
 
 export const actions = {
@@ -33,7 +33,7 @@ export const actions = {
 		places: await query<Place>(
 			surql`${select}
 				AND string::lowercase($query) ∈ string::lowercase(name)`,
-			{ query: (await request.formData()).get("q") as string },
+			{ query: (await request.formData()).get("q") as string }
 		),
 	}),
 }

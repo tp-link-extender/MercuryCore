@@ -4,27 +4,25 @@
 </script>
 
 {#if data.username != user?.username}
-	<div class="d-flex">
+	<div class="flex">
 		<form
 			use:enhance
 			method="POST"
-			action="?/interact"
-			in:fade
-			class="align-self-center pe-2 d-flex gap-2">
-			<button
-				name="action"
-				value={data.friends
-					? "unfriend"
-					: data.outgoingRequest
-					? "cancel"
+			action="?/{data.friends
+				? 'unfriend'
+				: data.outgoingRequest
+					? 'cancel'
 					: data.incomingRequest
-					? "accept"
-					: "request"}
+						? 'accept'
+						: 'request'}"
+			in:fade
+			class="self-center pr-2 flex gap-2">
+			<button
 				class="btn {data.friends || data.outgoingRequest
 					? 'btn-danger'
 					: data.incomingRequest
-					? 'btn-info'
-					: 'btn-success'}">
+						? 'btn-info'
+						: 'btn-success'}">
 				{#if data.friends}
 					Unfriend
 				{:else if data.incomingRequest}
@@ -35,15 +33,26 @@
 					Send friend request
 				{/if}
 			</button>
-			{#if data.incomingRequest}
-				<button name="action" value="decline" class="btn btn-danger">
-					Decline request
-				</button>
-			{/if}
+		</form>
+		{#if data.incomingRequest}
+			<form
+				use:enhance
+				method="POST"
+				action="?/decline"
+				in:fade
+				class="self-center pr-2 flex gap-2">
+				<button class="btn btn-danger">Decline request</button>
+			</form>
+		{/if}
+		<form
+			use:enhance
+			method="POST"
+			action="?/{data.following ? 'unfollow' : 'follow'}"
+			in:fade
+			class="self-center pr-2 flex gap-2">
 			<button
 				name="action"
-				value={data.following ? "unfollow" : "follow"}
-				class="btn h-100 {data.following
+				class="btn h-full {data.following
 					? 'btn-danger'
 					: 'btn-primary'}">
 				{#if data.following}

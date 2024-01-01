@@ -19,17 +19,18 @@ const { magenta, red, yellow, green, blue, gray } = pc,
 		pathname.startsWith("/api")
 			? green(pathname)
 			: pathname.startsWith("/download") ||
-			  pathname.startsWith("/moderation") ||
-			  pathname.startsWith("/report") ||
-			  pathname.startsWith("/statistics")
-			? yellow(pathname)
-			: pathname.startsWith("/register") || pathname.startsWith("/login")
-			? blue(pathname)
-			: pathname.match(/^\/place\/\d+\/.*\/icon$/)
-			? magenta(pathname)
-			: pathname.startsWith("/admin")
-			? red(pathname)
-			: pathname
+				  pathname.startsWith("/moderation") ||
+				  pathname.startsWith("/report") ||
+				  pathname.startsWith("/statistics")
+				? yellow(pathname)
+				: pathname.startsWith("/register") ||
+					  pathname.startsWith("/login")
+					? blue(pathname)
+					: pathname.match(/^\/place\/\d+\/.*\/icon$/)
+						? magenta(pathname)
+						: pathname.startsWith("/admin")
+							? red(pathname)
+							: pathname
 
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
@@ -47,18 +48,16 @@ export async function handle({ event, resolve }) {
 			? blue(user.username) + " ".repeat(21 - user.username.length)
 			: yellow("Logged-out user      "),
 		(methodColours[method] || method) + " ".repeat(7 - method.length),
-		pathnameColour(decodeURI(pathname) + search),
+		pathnameColour(decodeURI(pathname) + search)
 	)
 
 	if (!session || !user) return await resolve(event)
 
 	const moderation = await squery(
 		surql`
-			SELECT *
-			FROM moderation
-			WHERE out = $user
-				AND active = true`,
-		{ user: `user:${user.id}` },
+			SELECT * FROM moderation
+			WHERE out = $user AND active = true`,
+		{ user: `user:${user.id}` }
 	)
 
 	if (
@@ -66,7 +65,7 @@ export async function handle({ event, resolve }) {
 		!pathname.startsWith("/api/avatar") &&
 		moderation
 	)
-		throw redirect(302, "/moderation")
+		redirect(302, "/moderation")
 
 	await query(surql`UPDATE $user SET lastOnline = time::now()`, {
 		user: `user:${user.id}`,
@@ -77,7 +76,7 @@ export async function handle({ event, resolve }) {
 
 	if (
 		new Date(user.currencyCollected).getTime() -
-			(new Date().getTime() - 3600_000 * dailyStipend) <
+			(new Date().getTime() - 3600e3 * dailyStipend) <
 		0
 	)
 		await query(
@@ -87,7 +86,7 @@ export async function handle({ event, resolve }) {
 			{
 				user: `user:${user.id}`,
 				dailyStipend,
-			},
+			}
 		)
 
 	return resolve(event)
@@ -102,10 +101,10 @@ export const handleError = async ({ event, error }) => {
 		dev
 			? error
 			: (gray(new Date().toLocaleString()) + " ",
-			  user
+				user
 					? blue(user.username) +
-					  " ".repeat(21 - user.username.length)
+						" ".repeat(21 - user.username.length)
 					: yellow("Logged-out user      "),
-			  red(error as string)),
+				red(error as string))
 	)
 }

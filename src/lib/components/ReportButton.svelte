@@ -4,16 +4,14 @@
 	export let reverse = false
 </script>
 
-<a
-	class="text-danger text-decoration-none ps-2"
-	href="/report?user={user}&url={url}">
-	<small class="d-inline-flex align-items-center">
+<a class="text-danger no-underline pl-2" href="/report?user={user}&url={url}">
+	<small class="inline-flex items-center">
 		{#if reverse}
-			<far fa-flag class="pe-2" />
+			<far fa-flag class="pr-2" />
 		{/if}
 		<span class="text-danger">Report abuse</span>
 		{#if !reverse}
-			<far fa-flag class="ps-2" />
+			<far fa-flag class="pl-2" />
 		{/if}
 	</small>
 </a>

@@ -3,6 +3,7 @@ import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { fail, error } from "@sveltejs/kit"
 import requestRender from "$lib/server/requestRender"
+import type { RequestEvent } from "./$types"
 
 // Heads, Faces, T-Shirts, Shirts, Pants, Gear
 const allowedTypes = [17, 18, 2, 11, 12, 19]
@@ -29,7 +30,7 @@ export const load = async ({ locals, url }) => {
 
 	return {
 		query: searchQ,
-		assets: query<{
+		assets: await query<{
 			name: string
 			price: number
 			id: number
@@ -44,8 +45,55 @@ export const load = async ({ locals, url }) => {
 			{
 				user: `user:${(await authorise(locals)).user.id}`,
 				query: searchQ,
-			},
+			}
 		),
+	}
+}
+
+async function getEquipData(e: RequestEvent) {
+	const { user } = await authorise(e.locals),
+		id = e.url.searchParams.get("id")
+
+	if (ratelimit({}, "equip", e.getClientAddress, 45))
+		return { error: fail(429, { msg: "Too many requests" }) }
+
+	if (!id) error(400, "Missing asset id")
+	if (!/^\d+$/.test(id)) error(400, `Invalid asset id: ${id}`)
+
+	const asset = await squery<{
+		id: number
+		type: number
+		visibility: string
+	}>(
+		surql`
+			SELECT meta::id(id) AS id, type, visibility
+			FROM $asset WHERE $user ∈ <-owns<-user`,
+		{
+			asset: `asset:${id}`,
+			user: `user:${user.id}`,
+		}
+	)
+
+	if (!asset) error(404, "Item not found or not owned")
+
+	if (!allowedTypes.includes(asset.type))
+		error(400, "Can't equip this type of item")
+
+	if (asset.visibility != "Visible")
+		error(400, "This item hasn't been approved yet")
+
+	return { user, id, asset }
+}
+
+async function rerender(user: import("lucia").User) {
+	try {
+		await requestRender("Avatar", user.number, true)
+		return {
+			avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
+		}
+	} catch (e) {
+		console.error(e)
+		return fail(500, { msg: "Failed to request render" })
 	}
 }
 
@@ -57,7 +105,7 @@ export const actions = {
 			{
 				query: ((await request.formData()).get("q") as string).trim(),
 				user: `user:${(await authorise(locals)).user.id}`,
-			},
+			}
 		),
 	}),
 	paint: async ({ locals, url }) => {
@@ -90,11 +138,7 @@ export const actions = {
 			currentColours,
 		})
 
-		await requestRender("Avatar", user.number, true)
-
-		return {
-			avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
-		}
+		return await rerender(user)
 	},
 	regen: async ({ locals, getClientAddress }) => {
 		const { user } = await authorise(locals)
@@ -102,91 +146,44 @@ export const actions = {
 		if (ratelimit({}, "regen", getClientAddress, 2))
 			return fail(429, { msg: "Too many requests" })
 
-		try {
-			await requestRender("Avatar", user.number, true)
-			return {
-				avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
-			}
-		} catch (e) {
-			console.error(e)
-			return fail(500, { msg: "Failed to request render" })
-		}
+		return await rerender(user)
 	},
-	equip: async ({ locals, url, getClientAddress }) => {
-		const { user } = await authorise(locals),
-			id = url.searchParams.get("id"),
-			action = url.searchParams.get("a")
+	equip: async e => {
+		const { user, id, asset, error } = await getEquipData(e)
+		if (error) return error
 
-		// if (ratelimit({}, "equip", getClientAddress, 45))
-		// 	return fail(429, { msg: "Too many requests" })
-
-		if (!id) throw error(400, "Missing asset id")
-		if (!/^\d+$/.test(id)) throw error(400, `Invalid asset id: ${id}`)
-
-		const asset = await squery<{
-			id: number
-			type: number
-			visibility: string
-		}>(
+		await query(
 			surql`
-				SELECT
-					meta::id(id) AS id,
-					type,
-					visibility
-				FROM $asset
-				WHERE $user ∈ <-owns<-user`,
+				IF $type = 2 {
+					# Unequip if there's already a T-Shirt equipped
+					DELETE $user->wearing WHERE out.type = 2;
+				};
+				IF $type = 18 {
+					# Unequip if there's already a Face equipped
+					DELETE $user->wearing WHERE out.type = 18;
+				};
+				RELATE $user->wearing->$asset
+					SET time = time::now();
+				RELATE $user->recentlyWorn->$asset
+					SET time = time::now()`,
 			{
-				asset: `asset:${id}`,
 				user: `user:${user.id}`,
-			},
+				asset: `asset:${id}`,
+				type: asset.type,
+			}
 		)
 
-		if (!asset) throw error(404, "Item not found or not owned")
+		return await rerender(user)
+	},
+	unequip: async e => {
+		const { user, id, error } = await getEquipData(e)
+		if (error) return error
 
-		if (!allowedTypes.includes(asset.type))
-			throw error(400, "Can't equip this type of item")
+		await query(surql`DELETE $user->wearing WHERE out = $asset`, {
+			user: `user:${user.id}`,
+			asset: `asset:${id}`,
+		})
 
-		if (asset.visibility != "Visible")
-			throw error(400, "This item hasn't been approved yet")
-
-		switch (action) {
-			case "equip":
-				await query(
-					surql`
-						IF $type = 2 {
-							# Unequip if there's already a T-Shirt equipped
-							DELETE $user->wearing WHERE out.type = 2;
-						};
-						IF $type = 18 {
-							# Unequip if there's already a Face equipped
-							DELETE $user->wearing WHERE out.type = 18;
-						};
-						RELATE $user->wearing->$asset
-							SET time = time::now();
-						RELATE $user->recentlyWorn->$asset
-							SET time = time::now()`,
-					{
-						user: `user:${user.id}`,
-						asset: `asset:${id}`,
-						type: asset.type,
-					},
-				)
-				break
-			case "unequip":
-				await query(surql`DELETE $user->wearing WHERE out = $asset`, {
-					user: `user:${user.id}`,
-					asset: `asset:${id}`,
-				})
-		}
-
-		try {
-			await requestRender("Avatar", user.number, true)
-			return {
-				avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
-			}
-		} catch (e) {
-			console.error(e)
-			return fail(500, { msg: "Failed to request render" })
-		}
+		return await rerender(user)
 	},
 }

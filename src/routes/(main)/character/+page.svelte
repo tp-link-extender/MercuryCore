@@ -139,66 +139,58 @@
 	)
 </script>
 
-<div class="container">
-	<h1 class="text-white">Character</h1>
-	<div class="row mt-6">
-		<div
-			class="col-xl-3 col-lg-3 col-md-6 col-sm-12
-			d-flex flex-column gap-4">
-			<div class="card">
-				<div class="card-body">
-					<form use:enhance action="?/regen" method="POST">
-						<button class="btn btn-primary w-100">
-							<fa fa-rotate />
-							Regenerate
-						</button>
-					</form>
-					<p class="text-danger">
-						{form?.msg || ""}
-					</p>
-					<img
-						alt="Your character"
-						class="w-100"
-						src={form?.avatar ||
-							`/api/avatar/${user.username}-body`} />
-				</div>
+<div class="ctnr light-text">
+	<h1>Character</h1>
+	<div class="grid lg:grid-cols-4 gap-4 pt-6">
+		<div class="<md:col-span-3 flex lg:flex-col gap-4">
+			<div class="w-full card p-4">
+				<form use:enhance action="?/regen" method="POST">
+					<button class="btn btn-primary w-full">
+						<fa fa-rotate />
+						Regenerate
+					</button>
+				</form>
+				<p class="text-danger">
+					{form?.msg || ""}
+				</p>
+				<img
+					alt="Your character"
+					class="w-full"
+					src={form?.avatar || `/api/avatar/${user.username}-body`} />
 			</div>
-			<div class="card">
-				<div class="card-body light-text">
-					Body Colours
-					<div class="mannequin text-center">
-						<div
-							class="mx-auto"
-							style="height:240px;width:194px;text-align:center;">
-							<div class="parts">
-								{#each Object.keys(bodyParts) as bodyPart}
-									<label
-										for={bodyPart}
-										style={styles[bodyPart] +
-											`;background-color: #${
-												brickToHex[bodyParts[bodyPart]]
-											};`}
-										class="btn p-0 bodyPart position-absolute" />
-								{/each}
-							</div>
-						</div>
+			<div class="w-full card p-4">
+				Body Colours
+				<div
+					class="mx-auto"
+					style="height: 240px; width: 194px; text-align: center">
+					<div class="parts">
+						{#each Object.keys(bodyParts) as bodyPart}
+							<label
+								for={bodyPart}
+								style="{styles[
+									bodyPart
+								]};background-color: #{brickToHex[
+									bodyParts[bodyPart]
+								]}"
+								class="btn p-0 bodyPart absolute" />
+						{/each}
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-xl-9 col-lg-9 col-md-12">
+		<div class="col-span-3">
 			<TabNav bind:tabData justify />
 			<form
 				on:submit|preventDefault
 				action="/character?tab={tabData.currentTab}"
-				class="row mb-4">
+				class="row pb-4">
 				<input type="hidden" name="tab" value={tabData.currentTab} />
 				<div class="input-group">
 					<input
 						bind:value={query}
 						type="text"
 						name="q"
-						class="form-control light-text valid"
+						class="form-control valid"
 						placeholder="Search for an item"
 						aria-label="Search for an item"
 						aria-describedby="button-addon2" />
@@ -210,7 +202,7 @@
 					</button>
 				</div>
 			</form>
-			<div class="row px-1">
+			<div class="grid xl:grid-cols-6 sm:grid-cols-4 grid-cols-3 gap-4">
 				{#each assets || [] as asset, num}
 					<AvatarItem
 						{asset}
@@ -219,7 +211,7 @@
 						total={(assets || []).length} />
 				{/each}
 				{#if query && assets.length == 0}
-					<h2 class="fs-5 mt-12">
+					<h2 class="fs-5 pt-12">
 						{#if tabData.currentTab == "Recent"}
 							No recently worn items found with search term {query}
 						{:else}
@@ -239,8 +231,8 @@
 		class="modal-toggle"
 		bind:this={bodyPartModals[bodyPart]} />
 	<div class="modal2">
-		<div class="modal-box d-flex flex-column p-4">
-			<h1 class="fs-4">Choose a {bodyPart} color</h1>
+		<div class="modal-box flex flex-col p-4">
+			<h1 class="text-base">Choose a {bodyPart} color</h1>
 			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
 					<form
@@ -251,10 +243,10 @@
 							bodyParts[bodyPart] = colour
 							bodyPartModals[bodyPart].checked = false
 						}}
-						class="d-inline">
+						class="inline">
 						<button
 							class="btn colour my-1"
-							style="background-color: #{brickToHex[colour]};" />
+							style="background-color: #{brickToHex[colour]}" />
 					</form>
 				{/each}
 			</div>

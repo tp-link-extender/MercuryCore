@@ -1,1 +1,1 @@
-export const GET = () => new Response("OK")
+export const GET = () => new Response("OK") // ok

@@ -8,17 +8,8 @@
 -->
 <Navbar {data} />
 
-<main>
+<main class="py-5vh <lg:pt-2.5vh flex-1">
 	<slot />
 </main>
 
-<Footer />
-
-<style lang="stylus">
-	main
-		padding-bottom 5vh
-		padding-top 5vh //10vh
-		flex 1 0 auto
-		+-lg()
-			padding-top 2.5vh
-</style>
+<Footer {data} />

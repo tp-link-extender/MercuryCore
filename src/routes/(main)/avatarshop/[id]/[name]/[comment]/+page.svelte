@@ -10,7 +10,7 @@
 
 <Head title="Replies to forum post" />
 
-<div class="container light-text">
+<div class="ctnr max-w-280 light-text">
 	<Breadcrumbs
 		path={[
 			["Avatar shop", "/avatarshop"],
@@ -31,6 +31,3 @@
 	{/each}
 </div>
 
-<style lang="stylus">
-	containerMinWidth(70rem)
-</style>

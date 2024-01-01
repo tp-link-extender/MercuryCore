@@ -3,7 +3,7 @@ import { error } from "@sveltejs/kit"
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
-	if (!id || !/^\d+$/.test(id)) throw error(400, "Missing id parameter")
+	if (!id || !/^\d+$/.test(id)) error(400, "Missing id parameter")
 
 	const getUser = await squery<{
 		bodyColours: {
@@ -18,10 +18,10 @@ export async function GET({ url }) {
 		surql`
 			SELECT bodyColours FROM user
 			WHERE number = $id`,
-		{ id: parseInt(id) },
+		{ id: parseInt(id) }
 	)
 
-	if (!getUser) throw error(404, "User not found")
+	if (!getUser) error(404, "User not found")
 
 	const colours = getUser.bodyColours
 
@@ -49,6 +49,6 @@ export async function GET({ url }) {
 				Pragma: "no-cache",
 				"Cache-Control": "no-cache",
 			},
-		},
+		}
 	)
 }

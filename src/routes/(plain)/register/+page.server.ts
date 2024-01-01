@@ -4,7 +4,7 @@ import formError from "$lib/server/formError"
 import { redirect, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import requestRender from "$lib/server/requestRender.js"
+import requestRender from "$lib/server/requestRender"
 
 const schemaInitial = z.object({
 		username: z
@@ -28,10 +28,8 @@ const schemaInitial = z.object({
 	})
 
 export const load = async () => ({
-	form: superValidate(schema),
-	users:
-		((await query(surql`count(SELECT * FROM user)`)) as unknown as number) >
-		0,
+	form: await superValidate(schema),
+	users: (await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0,
 })
 
 export const actions = {
@@ -48,20 +46,20 @@ export const actions = {
 			return formError(
 				form,
 				["password", "cpassword"],
-				[" ", "The specified passwords do not match"],
+				[" ", "The specified passwords do not match"]
 			)
 
 		try {
 			if (
 				await squery(
 					surql`SELECT * FROM user WHERE username = $username`,
-					{ username },
+					{ username }
 				)
 			)
 				return formError(
 					form,
 					["username"],
-					["This username is already in use"],
+					["This username is already in use"]
 				)
 
 			if (
@@ -72,7 +70,7 @@ export const actions = {
 				return formError(
 					form,
 					["email"],
-					["This email is already in use"],
+					["This email is already in use"]
 				)
 
 			const regkeyCheck = (
@@ -85,13 +83,13 @@ export const actions = {
 				return formError(
 					form,
 					["regkey"],
-					["Registration key is invalid"],
+					["Registration key is invalid"]
 				)
 			if (regkeyCheck.usesLeft < 1)
 				return formError(
 					form,
 					["regkey"],
-					["This registration key has ran out of uses"],
+					["This registration key has ran out of uses"]
 				)
 
 			const { userId } = await auth.createUser({
@@ -118,7 +116,7 @@ export const actions = {
 				{
 					user: `user:${userId}`,
 					key: `regKey:⟨${regkey}⟩`,
-				},
+				}
 			)
 
 			try {
@@ -129,7 +127,7 @@ export const actions = {
 				await auth.createSession({
 					userId,
 					attributes: {},
-				}),
+				})
 			)
 		} catch (e) {
 			const error = e as Error
@@ -137,14 +135,14 @@ export const actions = {
 				return formError(
 					form,
 					["username"],
-					["This username is already in use"],
+					["This username is already in use"]
 				)
 
 			console.error("Registration error:", error)
 			return fail(500) // idk
 		}
 
-		throw redirect(302, "/home")
+		redirect(302, "/home")
 	},
 	initialAccount: async ({ request, locals }) => {
 		// This is the initial account creation, which is
@@ -159,19 +157,15 @@ export const actions = {
 			return formError(
 				form,
 				["password", "cpassword"],
-				[" ", "The specified passwords do not match"],
+				[" ", "The specified passwords do not match"]
 			)
 
 		try {
-			if (
-				((await query(
-					surql`count(SELECT * FROM user)`,
-				)) as unknown as number) > 0
-			)
+			if ((await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0)
 				return formError(
 					form,
 					["username"],
-					["There's already an account registered"],
+					["There's already an account registered"]
 				)
 
 			await query(surql`UPDATE ONLY stuff:increment SET user = 0`)
@@ -194,7 +188,7 @@ export const actions = {
 				await auth.createSession({
 					userId: user.id,
 					attributes: {},
-				}),
+				})
 			)
 		} catch (e) {
 			const error = e as Error
@@ -202,13 +196,13 @@ export const actions = {
 				return formError(
 					form,
 					["username"],
-					["This username is already in use"],
+					["This username is already in use"]
 				)
 
 			console.error("Registration error:", error)
 			return fail(500) // idk
 		}
 
-		throw redirect(302, "/home")
+		redirect(302, "/home")
 	},
 }

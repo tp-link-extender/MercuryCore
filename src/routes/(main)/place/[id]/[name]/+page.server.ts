@@ -1,12 +1,11 @@
 import { authorise } from "$lib/server/lucia"
 import surreal, { mquery, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
-import { likeSwitch } from "$lib/server/like"
+import { likeActions } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
 
 export async function load({ url, locals, params }) {
-	if (!/^\d+$/.test(params.id))
-		throw error(400, `Invalid place id: ${params.id}`)
+	if (!/^\d+$/.test(params.id)) error(400, `Invalid place id: ${params.id}`)
 
 	const { user } = await authorise(locals),
 		id = parseInt(params.id),
@@ -26,12 +25,12 @@ export async function load({ url, locals, params }) {
 			name: string
 			ownerUser: {
 				number: number
-			status: "Playing" | "Online" | "Offline"
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}
 			players: {
 				number: number
-			status: "Playing" | "Online" | "Offline"
+				status: "Playing" | "Online" | "Offline"
 				username: string
 			}[]
 			privateServer: boolean
@@ -74,7 +73,7 @@ export async function load({ url, locals, params }) {
 			{
 				user: `user:${user.id}`,
 				place: `place:${id}`,
-			},
+			}
 		)
 
 	if (
@@ -83,7 +82,7 @@ export async function load({ url, locals, params }) {
 			getPlace.privateServer &&
 			privateServerCode != getPlace.privateTicket)
 	)
-		throw error(404, "Place not found")
+		error(404, "Place not found")
 
 	return getPlace
 }
@@ -91,12 +90,12 @@ export async function load({ url, locals, params }) {
 export const actions = {
 	like: async ({ url, request, locals, params }) => {
 		if (!/^\d+$/.test(params.id))
-			throw error(400, `Invalid place id: ${params.id}`)
+			error(400, `Invalid place id: ${params.id}`)
 
 		const id = parseInt(params.id),
 			{ user } = await authorise(locals),
 			data = await formData(request),
-			{ action } = data,
+			action = data.action as keyof typeof likeActions,
 			privateTicket = url.searchParams.get("privateTicket")
 		const place = (
 			(await surreal.select(`place:${id}`)) as {
@@ -109,9 +108,9 @@ export const actions = {
 			!place ||
 			(place.privateServer && privateTicket != place.privateTicket)
 		)
-			throw error(404, "Place not found")
+			error(404, "Place not found")
 
-		await likeSwitch(action, user.id, `place:${id}`)
+		await likeActions[action](user.id, `place:${id}`)
 	},
 
 	join: async ({ request, locals }) => {
@@ -120,12 +119,12 @@ export const actions = {
 			requestType = data.request,
 			serverId = parseInt(data.serverId)
 
-		if (!requestType || !serverId) throw error(400, "Invalid Request")
+		if (!requestType || !serverId) error(400, "Invalid Request")
 		if (requestType != "RequestGame")
-			throw error(400, "Invalid Request (request type invalid)")
+			error(400, "Invalid Request (request type invalid)")
 
 		if (!(await surreal.select(`place:${serverId}`))[0])
-			throw error(404, "Place not found")
+			error(404, "Place not found")
 
 		if (
 			await squery<{
@@ -139,10 +138,10 @@ export const actions = {
 					FROM moderation
 					WHERE out = $user
 						AND active = true`,
-				{ user: `user:${user.id}` },
+				{ user: `user:${user.id}` }
 			)
 		)
-			throw error(403, "You cannot currently play games")
+			error(403, "You cannot currently play games")
 
 		// Invalidate all game sessions and create valid session
 		const session = (
@@ -164,7 +163,7 @@ export const actions = {
 				{
 					user: `user:${user.id}`,
 					place: `place:${serverId}`,
-				},
+				}
 			)
 		)[1][0]
 

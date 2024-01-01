@@ -14,20 +14,20 @@ const schema = z.object({
 
 export async function load({ url }) {
 	const categoryQuery = url.searchParams.get("category")
-	if (!categoryQuery) throw error(400, "Missing category")
+	if (!categoryQuery) error(400, "Missing category")
 
 	const category = await squery<{ name: string }>(
 		surql`
 			SELECT name FROM forumCategory
 			WHERE string::lowercase(name) = string::lowercase($categoryQuery)`,
-		{ categoryQuery },
+		{ categoryQuery }
 	)
 
-	if (!category) throw error(404, "Category not found")
+	if (!category) error(404, "Category not found")
 
 	return {
 		categoryName: category.name,
-		form: superValidate(schema),
+		form: await superValidate(schema),
 	}
 }
 
@@ -50,12 +50,12 @@ export const actions = {
 				surql`
 					SELECT * FROM forumCategory
 					WHERE string::lowercase(name) = string::lowercase($category)`,
-				{ category },
+				{ category }
 			))
 		)
-			throw error(400, "Invalid category")
+			error(400, "Invalid category")
 
-		const postId = await squery<string>(surql`fn::id()`)
+		const postId = await squery<string>(surql`[fn::id()]`)
 
 		await query(
 			surql`
@@ -76,11 +76,11 @@ export const actions = {
 				category: `forumCategory:⟨${category}⟩`,
 				title,
 				content,
-			},
+			}
 		)
 
 		await like(user.id, `forumPost:${postId}`)
 
-		throw redirect(302, `/forum/${category}/${postId}`)
+		redirect(302, `/forum/${category}/${postId}`)
 	},
 }

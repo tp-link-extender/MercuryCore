@@ -1,72 +1,54 @@
 <script lang="ts">
-	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 	import Status from "./Status.svelte"
 
 	export let data
-	const { user } = data,
-		{
-			form,
-			errors,
-			message,
-			constraints,
-			enhance,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		})
+	const { user } = data
+	const formData = superForm(data.form)
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
+
+	$: sortedFeed = data.feed.sort(
+		(a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()
+	)
 </script>
 
 <Head title="Home" />
 
-<div class="container">
-	<div class="row">
-		<div class="col col-12 col-xxl-6 col-xl-5 col-md-6 col-sm-12">
-			<h1 class="top d-flex px-2 pb-6">
+<div class="ctnr">
+	<!-- Flex or Grid? what a dilemma -->
+	<div class="grid lg:grid-cols-2 gap-4">
+		<div>
+			<h1 class="w-full flex px-10 pb-6 my-0">
 				<a
 					href="/user/{user?.number}"
-					class="text-decoration-none light-text d-flex">
+					class="no-underline light-text flex items-center">
 					<User {user} size="6rem" bg="accent" image />
-					<span class="my-auto ms-6">
+					<span class="ml-6">
 						{data.stuff.greet}
 					</span>
 				</a>
 			</h1>
-			<div id="feed" class="card p-4 bg-darker">
+			<div class="card p-4 bg-darker overflow-x-hidden <md:h-50vh">
 				<p>
 					Post your status - your friends and followers can view how
 					you're doing!
 				</p>
-				<form use:enhance method="POST" class="input-group">
-					<input
-						bind:value={$form.status}
-						{...$constraints.status}
-						placeholder="Post status"
+				<!-- fa-paper-plane-top (for unocss) -->
+				<Form
+					{formData}
+					inline
+					submit="<fa fa-paper-plane-top />"
+					working="..."
+					class="input-group w-full">
+					<Input
+						{formData}
+						inline
 						name="status"
-						aria-label="Post Status"
-						class="form-control light-text {$errors.status
-							? 'is-in'
-							: ''}valid" />
-					<button class="btn btn-success" aria-label="Send">
-						{#if $delayed}
-							...
-						{:else}
-							<fa fa-paper-plane-top />
-						{/if}
-					</button>
-				</form>
-				<p
-					class="mb-0 pb-3"
-					class:text-success={$page.status == 200}
-					class:text-danger={$page.status >= 400 || $errors.status}>
-					{$errors.status || $message || ""}
-				</p>
-				<div class="d-flex flex-column gap-3">
-					{#each data.feed.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
+						placeholder="Post status" />
+				</Form>
+				<div class="flex flex-col gap-3">
+					{#each sortedFeed as status, num}
 						<div
 							in:fade|global={{
 								num,
@@ -79,15 +61,14 @@
 			</div>
 		</div>
 
-		<div class="col col-12 col-xxl-6 col-xl-7 col-md-6">
-			<div class="col2 pt-28">
-				{#if data.friends.length > 0}
+		<div class="pt-12 md:pt-28 pl-2 flex flex-col gap-12">
+			{#if data.friends.length > 0}
+				<div>
 					<h2 class="light-text">Friends</h2>
-					<div class="home-row d-flex">
+					<div class="home-row flex overflow-x-auto gap-4">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
 							<span
-								class="px-2"
 								in:fade|global={{
 									num,
 									total: data.friends.length,
@@ -100,81 +81,26 @@
 							</span>
 						{/each}
 					</div>
-				{/if}
-			</div>
-			<div class="pt-12">
+				</div>
+			{/if}
+			<div>
 				<h2 class="light-text">Resume playing</h2>
-				<div class="home-row d-flex">
-					<div class="home-row d-flex">
-						{#each data.places || [] as place, num}
-							<div class="px-2 mb-2">
-								<div class="place">
-									<Place
-										{place}
-										{num}
-										total={data.places.length} />
-								</div>
-							</div>
-						{/each}
-					</div>
+				<div class="home-row flex overflow-x-auto gap-4">
+					{#each data.places || [] as place, num}
+						<div class="min-w-32 w-32">
+							<Place {place} {num} total={data.places.length} />
+						</div>
+					{/each}
 				</div>
 			</div>
-			<div class="pt-12 col-6 col-md-8 col-lg-6 col-xl-4">
+			<div class="w-1/2 cmd:w-2/3 lg:w-1/2 xl:w-2/3">
 				<h2 class="light-text">Random fact</h2>
 				<div
 					id="fact"
-					class="card bg-darker card-body light-text fs-4 pb-6">
+					class="card bg-darker card-body light-text text-base pb-6">
 					{data.stuff.fact}
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-	+-md()
-		#feed
-			max-height 50vh
-		.col2
-			margin-top 3rem !important
-
-	.top
-		width 100vw
-
-	h1
-		margin auto 2rem
-
-	.username
-		overflow hidden
-		text-overflow ellipsis
-		white-space nowrap
-
-	.small
-		font-size 0.9rem
-
-	.friendname
-		max-width 7rem
-		max-height 3rem
-
-	.date
-		min-width 5rem
-	.gradient
-		left 0
-		right 0
-		height 8rem
-		background linear-gradient(0deg, var(--accent) 10%, rgba(0,0,0,0) 100%)
-	.content
-		max-height 5rem
-		overflow hidden
-
-	#feed
-	#news
-		overflow-x hidden
-
-	.home-row
-		overflow-x auto
-
-		.place
-			width 8rem
-			margin auto
-</style>

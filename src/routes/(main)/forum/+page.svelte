@@ -4,40 +4,40 @@
 
 <Head title="Forum" />
 
-<div class="container light-text d-flex flex-column gap-4">
+<div class="ctnr light-text max-w-280 flex flex-col gap-4">
 	<h1 class="pb-6">Forum</h1>
 	{#each data.categories as category, num}
 		<div
 			in:fade|global={{ num, total: data.categories.length }}
 			class="category card bg-darker p-4">
-			<div class="row">
+			<div class="flex flex-wrap">
 				<a
-					class="col-lg-9 col-md-7 row light-text text-decoration-none"
+					class="w-full lg:w-3/4 md:w-7/12 row light-text no-underline"
 					href="/forum/{category.name.toLowerCase()}">
-					<div class="col-9">
+					<div class="w-3/4">
 						<h2>
 							{category.name}
 						</h2>
 						{category.description}
 					</div>
-					<h3 class="col">
+					<h3 class="w-1/4">
 						{category.postCount} post{category.postCount == 1
 							? ""
 							: "s"}
 					</h3>
 				</a>
-				<div class="col-lg-3 col-md-5 row">
+				<div class="w-full lg:w-1/4 md:w-5/12 row">
 					{#if category.latestPost}
 						<a
 							href="/forum/{category.name.toLowerCase()}/{category
 								.latestPost.id}"
-							class="light-text text-decoration-none">
+							class="light-text no-underline">
 							Last post:
 							<h3>
 								{category.latestPost.title}
 							</h3>
 						</a>
-						<span class="d-flex gap-2">
+						<span class="flex gap-2">
 							by
 							<User
 								user={category.latestPost.author}
@@ -53,7 +53,8 @@
 </div>
 
 <style lang="stylus">
-	containerMinWidth(70rem)
+	.ctnr
+		flex-direction column !important
 
 	.category
 		border 1px solid var(--accent2)

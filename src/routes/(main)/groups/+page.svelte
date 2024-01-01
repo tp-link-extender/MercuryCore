@@ -27,13 +27,13 @@
 
 <Head title="Groups" />
 
-<div class="container">
-	<div class="row mb-12">
-		<h1 class="col-6">
-			Groups
-			<a href="/groups/create" class="btn btn-primary ms-6">Create</a>
+<div class="ctnr">
+	<div class="flex pb-6">
+		<h1 class="w-1/2">
+			<span class="pr-6">Groups</span>
+			<a href="/groups/create" class="btn btn-primary">Create</a>
 		</h1>
-		<div class="col-4 ms-6">
+		<div class="w-1/2 pl-6">
 			<form
 				use:enhance
 				method="POST"
@@ -58,17 +58,15 @@
 			</form>
 		</div>
 	</div>
-	<div class="row">
-		<div class="container d-grid m-0">
-			{#each query ? searchedData : data.groups || [] as group, num (group.name)}
-				<Group {group} {num} total={data.groups.length} />
-			{/each}
-			{#if query && searchedData.length == 0}
-				<h2 class="fs-5 pt-12">
-					No groups found with search term {query}
-				</h2>
-			{/if}
-		</div>
+	<div class="grid">
+		{#each query ? searchedData : data.groups || [] as group, num (group.name)}
+			<Group {group} {num} total={data.groups.length} />
+		{/each}
+		{#if query && searchedData.length == 0}
+			<h2 class="fs-5 pt-12">
+				No groups found with search term {query}
+			</h2>
+		{/if}
 	</div>
 </div>
 
@@ -77,7 +75,7 @@
 		background-color var(--accent)
 		border-color var(--accent2)
 
-	.d-grid
+	.grid
 		font-size 0.9rem
 
 		grid-template-columns repeat(auto-fit, minmax(11rem, 1fr))

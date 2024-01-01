@@ -4,7 +4,7 @@ import { error } from "@sveltejs/kit"
 
 export async function GET({ url, params }) {
 	let { username } = params
-	if (!username) throw error(400, "Invalid Request")
+	if (!username) error(400, "Invalid Request")
 
 	const wait = url.searchParams.has("wait")
 
@@ -28,10 +28,10 @@ export async function GET({ url, params }) {
 		surql`
 			SELECT bodyColours, number FROM user
 			WHERE username = $username`,
-		{ username },
+		{ username }
 	)
 
-	if (!user) throw error(404, "User not found")
+	if (!user) error(404, "User not found")
 
 	const path = `data/avatars/${user.number}${shotType}.png`
 

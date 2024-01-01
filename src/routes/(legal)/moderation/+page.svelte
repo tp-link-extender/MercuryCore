@@ -12,28 +12,29 @@
 
 	function formatDateDifference(date1: number, date2: number) {
 		const diffInMilliseconds = Math.round(date2 - date1),
-			millisecondsPerDay = 24 * 60 * 60 * 1000,
+			millisecondsPerDay = 86400e3,
 			diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay)
 
-		if (diffInMilliseconds < 0) return "0 minute(s)"
+		if (diffInMilliseconds < 0) return "0 minutes"
 
-		if (diffInDays >= 1) return diffInDays + " day(s)"
+		if (diffInDays >= 1)
+			return `${diffInDays} day${diffInDays > 1 ? "s" : ""}`
 
-		const diffInHours = Math.floor(diffInMilliseconds / (60 * 60 * 1000)),
-			diffInMinutes = Math.floor(
-				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000)
-			)
+		const diffInHours = Math.floor(diffInMilliseconds / 3600e3)
+		const diffInMinutes = Math.floor((diffInMilliseconds % 3600e3) / 60e3)
+
 		if (diffInHours >= 1)
-			// return diffInHours + " hour(s) " + diffInMinutes + " minute(s)"
-			return `${diffInHours} hour(s) ${diffInMinutes} minute(s)`
+			return `${diffInHours} hour${
+				diffInHours > 1 ? "s" : ""
+			} ${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""}`
 
-		return `${diffInMinutes} minute(s)`
+		return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""}`
 	}
 </script>
 
 <Head title={moderationAction[data.type]} />
 
-<div class="container mt-12">
+<div class="ctnr pt-8 max-w-200">
 	<div class="card">
 		<div class="card-body light-text">
 			<h1>
@@ -42,7 +43,7 @@
 					? `ned for ${formatDateDifference(
 							Date.now(),
 							new Date(data.timeEnds).getTime()
-					  )}`
+						)}`
 					: ""}
 			</h1>
 
@@ -64,14 +65,14 @@
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="text-decoration-none">
+							class="no-underline">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.
 					</p>
 					<p>
-						You may reactivate your account by agreeing to our
-						Terms of Service.
+						You may reactivate your account by agreeing to our Terms
+						of Service.
 					</p>
 					<div class="form-check mb-2">
 						<input
@@ -92,7 +93,7 @@
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="text-decoration-none">
+							class="no-underline">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.
@@ -101,7 +102,7 @@
 						You may reactivate your account after your ban ends in {formatDateDifference(
 							Date.now(),
 							new Date(data.timeEnds).getTime()
-						)}
+						)}.
 					</p>
 					<button
 						class="btn btn-primary {new Date(
@@ -123,7 +124,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

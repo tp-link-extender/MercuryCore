@@ -1,176 +1,70 @@
 <script lang="ts">
-	import { page } from "$app/stores"
-	import { superForm } from "sveltekit-superforms/client"
+	import superForm from "$lib/superForm"
 
 	export let data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+	const formData = superForm(data.form)
+	const { form } = formData
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 
-	const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10)
+	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
 	let tabData = TabData(data.url, ["Create Invite Key", "Invites"])
 </script>
 
 <Head title="Invites - Admin" />
 
-<div class="container py-6">
+<div class="ctnr pt-6 light-text">
 	<h1 class="mb-0">Admin - Invites</h1>
-	<a href="/admin" class="text-decoration-none">
+	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>
-	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData vertical />
-		</div>
-		<div class="col-lg-10 col-md-9">
+	<div class="flex flex-wrap pt-6">
+		<TabNav bind:tabData vertical class="w-full lg:w-1/6 md:w-1/4 pb-6" />
+		<div class="w-full lg:w-5/6 md:w-3/4">
 			<Tab {tabData}>
-				<form use:enhance method="POST">
-					<fieldset>
-						<div class="row">
-							<label
-								for="enableInviteCustom"
-								class="col-md-3 text-md-right light-text">
-								Enable custom invite key
-							</label>
-							<div class="col-md-2">
-								<input
-									bind:checked={$form.enableInviteCustom}
-									{...$constraints.enableInviteCustom}
-									type="checkbox"
-									name="enableInviteCustom"
-									id="enableInviteCustom"
-									value="true"
-									class="form-check-input valid" />
-							</div>
+				<Form {formData} action="?/create" submit="Create">
+					<Input
+						{formData}
+						name="enableInviteCustom"
+						label="Enable Custom Invite Key"
+						type="checkbox" />
+					{#if $form.enableInviteCustom}
+						<div transition:fade>
+							<Input
+								{formData}
+								name="inviteCustom"
+								label="Custom Invite Key"
+								help="Instead of having a randomly generated key, this allows you to set the key." />
 						</div>
-						<br />
-						{#if $form.enableInviteCustom}
-							<div class="row" transition:fade>
-								<label
-									for="inviteCustom"
-									class="col-md-3 text-md-right light-text">
-									Custom invite key
-								</label>
-								<div class="col-md-8">
-									<input
-										bind:value={$form.inviteCustom}
-										{...$constraints.inviteCustom}
-										type="text"
-										name="inviteCustom"
-										id="inviteCustom"
-										class="form-control {$errors.inviteCustom
-											? 'is-in'
-											: ''}valid" />
-									<small class="light-text">
-										Instead of having a randomly generated
-										key, this allows you to set the key.
-									</small>
-									<p class="col-12 mb-4 text-danger">
-										{$errors.inviteCustom || ""}
-									</p>
-								</div>
-							</div>
-							<br />
-						{/if}
-						<div class="row">
-							<label
-								for="enableInviteExpiry"
-								class="col-md-3 text-md-right light-text">
-								Enable expiry
-							</label>
-							<div class="col-md-2">
-								<input
-									bind:checked={$form.enableInviteExpiry}
-									{...$constraints.enableInviteExpiry}
-									type="checkbox"
-									name="enableInviteExpiry"
-									id="enableInviteExpiry"
-									value="true"
-									class="form-check-input valid" />
-							</div>
+					{/if}
+					<Input
+						{formData}
+						name="enableInviteExpiry"
+						label="Enable Expiry"
+						type="checkbox" />
+					{#if $form.enableInviteExpiry}
+						<div transition:fade>
+							<Input
+								{formData}
+								name="inviteExpiry"
+								label="Expiry Date"
+								type="date"
+								min={tomorrow}
+								required />
 						</div>
-						<br />
-						{#if $form.enableInviteExpiry}
-							<div class="row" transition:fade>
-								<label
-									for="inviteExpiry"
-									class="col-md-3 text-md-right light-text">
-									Expiry date
-								</label>
-								<div class="col-md-8">
-									<input
-										bind:value={$form.inviteExpiry}
-										{...$constraints.inviteExpiry}
-										type="date"
-										name="inviteExpiry"
-										id="inviteExpiry"
-										min={tomorrow}
-										required
-										class="form-control {$errors.inviteExpiry
-											? 'is-in'
-											: ''}valid" />
-									<p class="col-12 mb-4 text-danger">
-										{$errors.inviteExpiry || ""}
-									</p>
-								</div>
-							</div>
-							<br />
-						{/if}
-						<div class="row">
-							<label
-								for="inviteUses"
-								class="col-md-3 text-md-right light-text">
-								Uses
-							</label>
-							<div class="col-md-8">
-								<input
-									bind:value={$form.inviteUses}
-									{...$constraints.inviteUses}
-									type="number"
-									name="inviteUses"
-									id="inviteUses"
-									class="form-control {$errors.inviteUses
-										? 'is-in'
-										: ''}valid" />
-								<p class="col-12 mb-4 text-danger">
-									{$errors.inviteUses || ""}
-								</p>
-							</div>
-						</div>
-						<button
-							name="action"
-							value="create"
-							class="btn btn-success mt-4">
-							{#if $delayed}
-								Working...
-							{:else}
-								Create
-							{/if}
-						</button>
-					</fieldset>
-				</form>
-				<p
-					class:text-success={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
-					{$message || ""}
-				</p>
+					{/if}
+					<Input
+						{formData}
+						name="inviteUses"
+						label="Uses"
+						type="number" />
+				</Form>
 			</Tab>
 
 			<Tab {tabData}>
-				<table class="w-100">
+				<table class="w-full">
 					<thead>
 						<tr>
 							<th scope="col">Options</th>
@@ -187,11 +81,9 @@
 									<form
 										use:enhance
 										method="POST"
-										action="?id={invite.id}">
+										action="?/disable&id={invite.id}">
 										<button
-											name="action"
-											value="disable"
-											class="btn btn-sm btn-link text-decoration-none text-danger my-0">
+											class="btn btn-sm no-underline text-danger my-0">
 											<fa fa-ban />
 											Disable Invite
 										</button>
@@ -219,13 +111,6 @@
 </div>
 
 <style lang="stylus">
-	input[type="checkbox"]
-		height 1.5rem
-		width 1.5rem
-
-	input[type="number"]
-		width 10rem
-
 	table
 		tr
 		td

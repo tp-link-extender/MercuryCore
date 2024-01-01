@@ -1,6 +1,8 @@
 <script lang="ts">
 	// Link to a place used on Games page.
 
+	import { preloadData, pushState, goto } from "$app/navigation"
+
 	export let place: {
 		id: number
 		name: string
@@ -18,40 +20,47 @@
 </script>
 
 <a
+	on:click={async e => {
+		if (e.metaKey) return
+		e.preventDefault()
+
+		const { href } = e.currentTarget,
+			result = await preloadData(href)
+
+		if (result.type == "loaded" && result.status == 200)
+			pushState(href, { openPlace: result.data })
+		else goto(href)
+	}}
 	in:fade|global={{ num, total }}
-	class="card text-center light-text bg-darker text-decoration-none fs-4 rounded-4 m-0"
+	class="card text-center light-text bg-darker no-underline rounded-4"
 	class:border-success={place.serverPing >=
 		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
 	<div
-		class="row"
+		class="flex"
 		class:opacity-50={place.serverPing <
 			Math.floor(Date.now() / 1000) - 35}>
-		<div class="col col-6">
-			<div class="shadow overflow-hidden bg-black h-100">
+		<div class="w-1/2">
+			<div class="shadow overflow-hidden bg-black relative rounded-l-4">
 				<img
 					src="/place/{place.id}/{place.name}/icon"
 					alt={place.name}
-					class="w-100 h-100" />
+					class="w-full" />
 			</div>
 		</div>
-		<div class="col col-6 p-2 row">
-			<p class="mb-1">
+		<div class="w-1/2 flex flex-col justify-between py-2">
+			<span>
 				{place.name}
-			</p>
-			<div class="mt-auto mb-1">
-				<div class="float-start">
-					<span>
-						<fa fa-thumbs-up class="opacity-75" />
-						{isNaN(ratio) ? "--" : ratio}%
-					</span>
-				</div>
-				<div class="float-end">
-					<span>
-						<fa fa-user class="opacity-75" />
-						{place.playerCount}
-					</span>
-				</div>
+			</span>
+			<div class="flex justify-between px-3">
+				<span>
+					<fa fa-thumbs-up class="opacity-75" />
+					{isNaN(ratio) ? "--" : ratio}%
+				</span>
+				<span>
+					<fa fa-user class="opacity-75" />
+					{place.playerCount}
+				</span>
 			</div>
 		</div>
 	</div>
@@ -65,18 +74,6 @@
 		+-md()
 			width 25rem
 
-	img
-		// make sure the image is the same size while loading
-		// as the image that will be loaded
-		aspect-ratio 1
-		width 100%
-		height 100%
-		object-fit cover
-
-	p
-		height 8rem
-		transition all 0.3s
-
 	a
 		line-height 1.2
 		transition all 0.2s
@@ -85,15 +82,12 @@
 			.shadow::after
 				box-shadow inset 0 0 4rem 0 #fff2
 
-	.shadow
-		position relative
-		border-radius 1rem 0 0 1rem
-		&::after
-			transition all 0.3s
-			content ""
-			position absolute
-			top 0
-			left 0
-			width 100%
-			height 100%
+	.shadow::after
+		transition all 0.3s
+		content ""
+		position absolute
+		top 0
+		left 0
+		width 100%
+		height 100%
 </style>

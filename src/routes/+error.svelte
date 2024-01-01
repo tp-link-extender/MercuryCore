@@ -24,7 +24,7 @@
 
 <main>
 	<div
-		class="container d-flex flex-column justify-content-center align-items-center light-text bg-a rounded-4">
+		class="ctnr flex flex-col justify-center items-center light-text bg-a rounded-4">
 		<div
 			class="errimg light"
 			style="background-image: url(/light/{errors[status] ||
@@ -33,12 +33,12 @@
 			class="errimg dark"
 			style="background-image: url(/dark/{errors[status] || 'm!'}.svg)" />
 
-		<h1 class="mt-4">
+		<h1 class="pt-4">
 			<a
 				href="https://http.cat/images/{status}.jpg"
 				target="_blank"
 				rel="noopener noreferrer"
-				class="light-text text-decoration-none">
+				class="light-text no-underline">
 				Error {status}
 			</a>
 		</h1>
@@ -47,7 +47,7 @@
 	</div>
 </main>
 
-<Footer />
+<Footer {data} />
 
 <style lang="stylus">
 	.errimg

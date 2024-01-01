@@ -1,33 +1,38 @@
 <script lang="ts">
+	export let data: import("../../routes/$types").LayoutData
+
 	let clicked = false
 </script>
 
-<footer class="position-relative text-center">
+<footer class="relative text-center">
 	<br />
 	<div class="grey-text pb-2">
-		<a href="/" class="text-decoration-none accent-text me-1">Mercury</a>
+		<a href="/" class="no-underline accent-text pr-2">Mercury</a>
 		2022-{new Date().getFullYear()}
 		<button
 			on:mousedown={() => (clicked = !clicked)}
-			class="heart border-0 p-0 grey-text cursor-pointer fs-4"
+			id="heart"
+			class="border-0 p-0 ps-1 pr-2 grey-text cursor-pointer text-base
+			bg-transparent"
 			class:clicked>
 			<span class="grey-text">made with</span>
 			<fa fa-heart />
 		</button>
+		{data.lines} lines of code
 	</div>
 	<a class="light-text" href="/about">About</a>
-	<span class="text-muted">|</span>
+	<span class="opacity-25">|</span>
 	<a class="light-text" href="/terms">Terms of Service</a>
-	<span class="text-muted">|</span>
+	<span class="opacity-25">|</span>
 	<a class="light-text" href="/privacy">Privacy Policy</a>
-	<span class="text-muted">|</span>
+	<span class="opacity-25">|</span>
 	<a class="light-text" href="/statistics">Statistics</a>
 	<br />
 	<br />
 </footer>
 
 <noscript>
-	<div id="nojs" class="position-fixed bottom-0 d-block vw-100">
+	<div id="nojs" class="fixed bottom-0 block w-screen">
 		<p class="light-text text-center">
 			Javascript is disabled. You may have a diminished experience while
 			using Mercury.
@@ -36,8 +41,7 @@
 </noscript>
 
 <style lang="stylus">
-	.heart
-		background transparent
+	#heart
 		fa
 			transition 0.2s
 		span
@@ -54,7 +58,7 @@
 				width 4.6rem
 				margin-left 0.2rem
 
-	.heart:not(.clicked) fa:hover
+	#heart:not(.clicked) fa:hover
 		color var(--light-text) !important
 
 	@keyframes heart
