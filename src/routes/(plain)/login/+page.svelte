@@ -21,8 +21,8 @@
 	</div>
 </div>
 
-<div class="row">
-	<div id="dark" class="col light-text">
+<div class="flex <lg:flex-col light-text h-screen overflow-auto">
+	<div id="dark" class="lg:w-1/2 p-8vw pt-5vh lg:pt-20vh">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0 text-base">
 			<fa fa-arrow-left class="pr-2" />
 			Home
@@ -55,9 +55,7 @@
 		</div>
 	</div>
 
-	<div
-		id="light"
-		class="col{data.users ? '' : 'none'} col-12 col-lg-6 light-text">
+	<div id="light" class="lg:w-1/2 p-8vw pt-5vh lg:pt-20vh">
 		<div id="login" class="m-auto">
 			{#if data.users}
 				<h2 class="light-text">Log into your account</h2>
@@ -66,7 +64,7 @@
 					<a href="/register" class="no-underline">Register</a>
 				</p>
 
-				<form use:enhance class="m-auto form-group mt-6" method="POST">
+				<form use:enhance class="m-auto form-group pt-6" method="POST">
 					<fieldset>
 						<label for="username">Username</label>
 						<div class="mb-6">
@@ -130,12 +128,6 @@
 
 <style lang="stylus">
 	@import "../loginregister"
-
-	+lg()
-		.col
-			padding-top 20vh
-		.colnone
-			padding-top 30vh
 
 	@keyframes waves
 		0%

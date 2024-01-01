@@ -148,7 +148,7 @@
 			{/if}
 		</div>
 		{#if data.groupsOwned.length > 0}
-			<div class="col-6 pt-6">
+			<div class="pt-6">
 				<div class="pt-6">
 					<h2 class="light-text">Groups owned</h2>
 					{#each data.groupsOwned as group, num}
@@ -176,7 +176,7 @@
 			</div>
 		{/if}
 		{#if data.groups.length > 0}
-			<div class="col-6 pt-6">
+			<div class="pt-6">
 				<div class="pt-6">
 					<h2 class="light-text">Groups in</h2>
 					{#each data.groups as group, num}
@@ -200,14 +200,14 @@
 				</div>
 			</div>
 		{/if}
-		{#if data.posts.length > 0}
-			<h2 class="pt-6">Latest feed posts</h2>
-			<div id="feed" class="light-text px-4">
-				<div class="row">
+		<div class="col-span-2">
+			{#if data.posts.length > 0}
+				<h2 class="pt-6">Latest feed posts</h2>
+				<div class="flex flex-wrap">
 					{#each data.posts.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
-							class="p-2 col-md-6 col-sm-12">
+							class="p-2 w-full md:w-1/2">
 							<div class="card bg-darker p-3 h-full">
 								<div
 									id="user"
@@ -231,7 +231,7 @@
 						</div>
 					{/each}
 				</div>
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</div>
 </div>

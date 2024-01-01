@@ -21,13 +21,13 @@
 	</div>
 </div>
 
-<div class="row">
-	<div id="dark" class="col light-text">
+<div class="flex <lg:flex-col light-text h-screen overflow-auto">
+	<div id="dark" class="lg:w-1/2 p-8vw pt-5vh lg:pt-11vh">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0 text-base">
 			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
-		<h1 class="font-black mb-6">
+		<h1 class="font-black pb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
@@ -54,7 +54,7 @@
 		</div>
 	</div>
 
-	<div id="light" class="col col-12 col-lg-6 light-text">
+	<div id="light" class="lg:w-1/2 p-8vw pt-5vh lg:pt-11vh">
 		<div id="login" class="m-auto">
 			{#if data.users}
 				<h2>Create a free account</h2>
@@ -65,7 +65,7 @@
 
 				<form
 					use:enhance
-					class="m-auto form-group mt-6"
+					class="m-auto form-group pt-6"
 					method="POST"
 					action="?/register">
 					<fieldset>
@@ -274,10 +274,6 @@
 
 <style lang="stylus">
 	@import "../loginregister"
-
-	+lg()
-		.col
-			padding-top 11vh
 
 	@keyframes waves
 		0%

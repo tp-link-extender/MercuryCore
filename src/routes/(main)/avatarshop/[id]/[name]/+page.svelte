@@ -28,14 +28,14 @@
 <Head title={data.name} />
 
 <div class="ctnr max-w-240">
-	<div class="row">
-		<div class="col pr-4 pb-4">
+	<div class="flex <sm:flex-col">
+		<div class="pr-4 pb-4">
 			<img
-				class="image"
+				class="image aspect-1 w-80vw max-w-100"
 				src="/avatarshop/{data.id}/{data.name}/icon"
 				alt={data.name} />
 		</div>
-		<div class="col light-text">
+		<div class="w-full light-text">
 			<div class="row">
 				<div class="col">
 					<h1 class="mb-0">{data.name}</h1>
@@ -99,8 +99,8 @@
 			</p>
 
 			<hr />
-			<div class="row mb-2">
-				<div class="col-md-4">
+			<div class="flex flex-wrap mb-2">
+				<div class="w-full md:w-1/3">
 					<p class="mb-2">
 						<strong>{data.sold}</strong>
 						sold
@@ -110,7 +110,7 @@
 						{types[data.type]}
 					</p>
 				</div>
-				<div class="col flex flex-row-reverse">
+				<div class="w-full md:w-2/3 flex flex-row-reverse">
 					<div class="card p-4">
 						<p class="light-text text-center mb-0 pb-1">
 							Price: <span class="text-success">
@@ -142,7 +142,7 @@
 	<Tab {tabData}>
 		<form use:enhance class="py-2" method="POST" action="?/reply">
 			<label for="content" class="light-text py-2">Post a Comment</label>
-			<fieldset class="col-lg-7 flex">
+			<fieldset class="w-7/12 flex gap-4 items-end">
 				<textarea
 					bind:value={$form.content}
 					{...$constraints.content}
@@ -150,7 +150,7 @@
 					name="content"
 					placeholder="What are your thoughts?"
 					rows="4" />
-				<button class="btn btn-success ml-4 mt-auto">
+				<button class="btn btn-success">
 					{#if $delayed}
 						Working...
 					{:else}
@@ -159,7 +159,7 @@
 				</button>
 			</fieldset>
 			<p
-				class="mb-4"
+				class="pb-4"
 				class:text-success={$page.status == 200}
 				class:text-danger={$page.status >= 400}>
 				{$message || ""}
@@ -237,13 +237,6 @@
 			)
 		background-size 20px 20px
 		background-position 0 0, 10px 10px
-
-		height 25rem
-		width 25rem
-
-		+-sm()
-			height 15rem
-			width 15rem
 
 	#notify
 		font-size 0.8rem
