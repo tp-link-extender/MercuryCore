@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from "$app/stores"
-	import { enhance as enhance2 } from "$app/forms" // idky
 	import superForm from "$lib/superForm"
 
 	export let data
@@ -9,7 +7,6 @@
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 	const formData = superForm(data.form)
-	const { form, errors, message, constraints, enhance, delayed } = formData
 
 	export const snapshot = formData
 
@@ -36,21 +33,17 @@
 				alt={data.name} />
 		</div>
 		<div class="w-full light-text">
-			<div class="row">
-				<div class="col">
-					<h1 class="mb-0">{data.name}</h1>
-				</div>
-				<div class="col flex justify-end">
-					<li class="dropdown dropdown-hover dropdown-end pl-2 pt-2">
-						<fa fa-ellipsis />
-						<div class="dropdown-content">
-							<ul class="p-2 rounded-3">
-								<button
-									class="btn light-text pl-4 pr-0 text-start">
-									<fa fa-pencil class="mr-2" />
-									nothing here
-								</button>
-								<!-- <li class="rounded-2">
+			<div class="flex justify-between">
+				<h1>{data.name}</h1>
+				<li class="dropdown dropdown-hover dropdown-end pl-2 pt-2">
+					<fa fa-ellipsis />
+					<div class="dropdown-content">
+						<ul class="p-2 rounded-3">
+							<button class="btn light-text pl-4 pr-0 text-start">
+								<fa fa-pencil class="mr-2" />
+								nothing here
+							</button>
+							<!-- <li class="rounded-2">
 									<a
 										class="btn light-text pl-4 pr-0 text-start"
 										href="/requests">
@@ -58,25 +51,24 @@
 										Edit asset
 									</a>
 								</li> -->
-								{#if data.user.permissionLevel > 2}
-									<li class="rounded-2">
-										<form
-											use:enhance2
-											method="POST"
-											action="?/rerender">
-											<button
-												class="btn text-primary pl-4 pr-0 text-start">
-												<i
-													class="fa fa-arrows-rotate mr-2" />
-												<b>Re-render</b>
-											</button>
-										</form>
-									</li>
-								{/if}
-							</ul>
-						</div>
-					</li>
-				</div>
+							{#if data.user.permissionLevel > 2}
+								<li class="rounded-2">
+									<form
+										use:enhance
+										method="POST"
+										action="?/rerender">
+										<button
+											class="btn text-primary pl-4 pr-0 text-start">
+											<i
+												class="fa fa-arrows-rotate mr-2" />
+											<b>Re-render</b>
+										</button>
+									</form>
+								</li>
+							{/if}
+						</ul>
+					</div>
+				</li>
 			</div>
 			<div class="flex">
 				<strong class="pr-2">by:</strong>
@@ -140,31 +132,7 @@
 	<Tab {tabData} />
 
 	<Tab {tabData}>
-		<form use:enhance class="py-2" method="POST" action="?/reply">
-			<label for="content" class="light-text py-2">Post a Comment</label>
-			<fieldset class="w-7/12 flex gap-4 items-end">
-				<textarea
-					bind:value={$form.content}
-					{...$constraints.content}
-					class="form-control {$errors.content ? 'is-in' : ''}valid"
-					name="content"
-					placeholder="What are your thoughts?"
-					rows="4" />
-				<button class="btn btn-success">
-					{#if $delayed}
-						Working...
-					{:else}
-						Comment
-					{/if}
-				</button>
-			</fieldset>
-			<p
-				class="pb-4"
-				class:text-success={$page.status == 200}
-				class:text-danger={$page.status >= 400}>
-				{$message || ""}
-			</p>
-		</form>
+		<PostReply {formData} comment />
 
 		{#each data.replies as reply, num}
 			<ForumReply
@@ -237,14 +205,6 @@
 			)
 		background-size 20px 20px
 		background-position 0 0, 10px 10px
-
-	#notify
-		font-size 0.8rem
-		opacity 0
-		height 0
-		transform translateY(-1.5rem)
-		transition all 0.2s ease-out
-		pointer-events none
 
 	#buy
 		z-index 5

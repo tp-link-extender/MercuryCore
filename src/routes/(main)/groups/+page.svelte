@@ -38,23 +38,21 @@
 				use:enhance
 				method="POST"
 				action="/search?c=groups"
-				class="row">
-				<div class="input-group">
-					<input
-						bind:value={query}
-						type="text"
-						name="query"
-						class="form-control light-text valid"
-						placeholder="Search for a group"
-						aria-label="Search for a group"
-						aria-describedby="button-addon2" />
-					<button
-						class="btn btn-success"
-						aria-label="Search"
-						id="button-addon2">
-						<fa fa-magnifying-glass />
-					</button>
-				</div>
+				class="input-group">
+				<input
+					bind:value={query}
+					type="text"
+					name="query"
+					class="form-control light-text valid"
+					placeholder="Search for a group"
+					aria-label="Search for a group"
+					aria-describedby="button-addon2" />
+				<button
+					class="btn btn-success"
+					aria-label="Search"
+					id="button-addon2">
+					<fa fa-magnifying-glass />
+				</button>
 			</form>
 		</div>
 	</div>

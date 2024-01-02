@@ -64,21 +64,19 @@
 						</button>
 					</div>
 				</div>
-				<div class="pl-4 w-7/24">
-					<div class="row">
-						<label for="genre" class="light-text col py-1">
-							Genre
-						</label>
-						<select
-							class="form-select form-select-sm light-text col"
-							id="genre"
-							placeholder="Genre"
-							aria-label="genre">
-							<option value="Obby">Obby</option>
-							<option value="Horror">Horror</option>
-							<option value="Comedy">Comedy</option>
-						</select>
-					</div>
+				<div class="pl-4 w-7/24 flex">
+					<label for="genre" class="light-text py-1 pr-4">
+						Genre
+					</label>
+					<select
+						class="form-select form-select-sm light-text"
+						id="genre"
+						placeholder="Genre"
+						aria-label="genre">
+						<option value="Obby">Obby</option>
+						<option value="Horror">Horror</option>
+						<option value="Comedy">Comedy</option>
+					</select>
 				</div>
 				<div class="pl-4 w-7/24">
 					<div class="form-check light-text py-1">

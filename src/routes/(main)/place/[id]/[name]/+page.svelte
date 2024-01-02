@@ -122,9 +122,7 @@
 		<div class="flex flex-col justify-between gap-3">
 			<div class="card rounded-none p-4 pb-6 block">
 				<div class="flex justify-between">
-					<div class="col">
-						<h2 class="light-text">{data.name}</h2>
-					</div>
+					<h1 class="fs-2">{data.name}</h1>
 					{#if data.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
 						<div>
 							<a
@@ -136,7 +134,7 @@
 						</div>
 					{/if}
 				</div>
-				<span class="light-text flex pb-2">
+				<span class="flex pb-2">
 					<b class="pr-2">by</b>
 					{#if data.ownerUser}
 						<User
@@ -147,9 +145,9 @@
 							thin />
 					{/if}
 				</span>
-				<p class="light-text mb-0">
+				<div>
 					Gears: <far fa-circle-xmark />
-				</p>
+				</div>
 				<small
 					class="text-light rounded-2 bg-{online
 						? 'success'
@@ -199,39 +197,30 @@
 					class="w-full pt-4 px-0 pb-2"
 					method="POST"
 					action="?/like&privateTicket={data.privateTicket}">
-					<div class="row pb-2">
-						<div class="col flex justify-start">
-							<button
-								name="action"
-								value={data.likes ? "unlike" : "like"}
-								aria-label={data.likes ? "Unlike" : "Like"}
-								class="btn btn-sm btn-{data.likes
+					<div class="flex justify-between pb-2">
+						<button
+							name="action"
+							value={data.likes ? "unlike" : "like"}
+							aria-label={data.likes ? "Unlike" : "Like"}
+							class="btn btn-sm btn-{data.likes
+								? ''
+								: 'outline-'}success">
+							<i class="fa{data.likes ? '' : 'r'} fa-thumbs-up" />
+						</button>
+						<button
+							name="action"
+							value={data.dislikes ? "undislike" : "dislike"}
+							aria-label={data.dislikes ? "Undislike" : "Dislike"}
+							class="btn btn-sm btn-{data.dislikes
+								? ''
+								: 'outline-'}danger">
+							<i
+								class="fa{data.dislikes
 									? ''
-									: 'outline-'}success">
-								<i
-									class="fa{data.likes
-										? ''
-										: 'r'} fa-thumbs-up" />
-							</button>
-						</div>
-						<div class="col flex justify-end">
-							<button
-								name="action"
-								value={data.dislikes ? "undislike" : "dislike"}
-								aria-label={data.dislikes
-									? "Undislike"
-									: "Dislike"}
-								class="btn btn-sm btn-{data.dislikes
-									? ''
-									: 'outline-'}danger">
-								<i
-									class="fa{data.dislikes
-										? ''
-										: 'r'} fa-thumbs-down" />
-							</button>
-						</div>
+									: 'r'} fa-thumbs-down" />
+						</button>
 					</div>
-					<div class="flex bg-a2" style="height: 3px">
+					<div class="flex bg-a2 h-3px">
 						<div
 							class="bg-success"
 							role="progressbar"
@@ -255,22 +244,17 @@
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 					</div>
-					<div class="row">
-						<div class="col flex justify-start">
-							<span class="light-text px-2">
-								{data.likeCount} like{data.likeCount == 1
-									? ""
-									: "s"}
-							</span>
-						</div>
-						<div class="col flex justify-end">
-							<span class="light-text px-2">
-								{data.dislikeCount} dislike{data.dislikeCount ==
-								1
-									? ""
-									: "s"}
-							</span>
-						</div>
+					<div class="flex justify-between">
+						<span class="px-2">
+							{data.likeCount} like{data.likeCount == 1
+								? ""
+								: "s"}
+						</span>
+						<span class="px-2">
+							{data.dislikeCount} dislike{data.dislikeCount == 1
+								? ""
+								: "s"}
+						</span>
 					</div>
 				</form>
 			</div>
@@ -303,7 +287,7 @@
 				<!-- Prevents nested tabs from breaking -->
 				{((tabData2.num = 0), "")}
 				<Tab tabData={tabData2}>
-					<p class="light-text">
+					<p>
 						You can host your server by opening your map in <button
 							class="btn btn-primary p-1 btn-sm"
 							on:click={launch(
@@ -383,11 +367,11 @@
 				</Tab>
 			</div>
 		{/if}
-		<h4 class="light-text">Server List</h4>
+		<h4>Server List</h4>
 		{#if online}
 			<div class="card p-4 flex flex-row">
 				<div class="w-1/6">
-					<div class="light-text pb-2">
+					<div class="pb-2">
 						Currently Playing: {data.players
 							.length}/{data.maxPlayers}
 					</div>
@@ -409,11 +393,11 @@
 		{/if}
 	</Tab>
 	<hr />
-	<div class="row">
+	<div class="flex justify-around">
 		{#each statistics as [title, stat]}
-			<div class="col">
-				<p class="light-text text-center"><b>{title}</b></p>
-				<p class="light-text text-center">{stat}</p>
+			<div>
+				<p class="text-center"><b>{title}</b></p>
+				<p class="text-center">{stat}</p>
 			</div>
 		{/each}
 	</div>

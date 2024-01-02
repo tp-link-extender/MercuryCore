@@ -183,24 +183,22 @@
 			<form
 				on:submit|preventDefault
 				action="/character?tab={tabData.currentTab}"
-				class="row pb-4">
+				class="input-group pb-4">
 				<input type="hidden" name="tab" value={tabData.currentTab} />
-				<div class="input-group">
-					<input
-						bind:value={query}
-						type="text"
-						name="q"
-						class="form-control valid"
-						placeholder="Search for an item"
-						aria-label="Search for an item"
-						aria-describedby="button-addon2" />
-					<button
-						class="btn btn-success"
-						aria-label="Search"
-						id="button-addon2">
-						<fa fa-magnifying-glass />
-					</button>
-				</div>
+				<input
+					bind:value={query}
+					type="text"
+					name="q"
+					class="form-control valid"
+					placeholder="Search for an item"
+					aria-label="Search for an item"
+					aria-describedby="button-addon2" />
+				<button
+					class="btn btn-success"
+					aria-label="Search"
+					id="button-addon2">
+					<fa fa-magnifying-glass />
+				</button>
 			</form>
 			<div class="grid xl:grid-cols-6 sm:grid-cols-4 grid-cols-3 gap-4">
 				{#each assets || [] as asset, num}
