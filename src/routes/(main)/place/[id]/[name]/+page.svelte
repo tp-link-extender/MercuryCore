@@ -3,6 +3,9 @@
 
 	export let data
 	const { user } = data
+
+	$: online = data.serverPing > Date.now() / 1000 - 35
+
 	const statistics = [
 		["Activity", "0 visits"],
 		["Creation", new Date(data.created).toLocaleDateString()],
@@ -81,7 +84,7 @@
 <Head title={data.name} />
 
 <div class="ctnr max-w-240 light-text">
-	<div class="grid md:grid-cols-3 gap-4">
+	<div class="grid grid-cols-1 md:grid-cols-3 md:gap-4">
 		<div class="col-span-2 pb-4">
 			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
@@ -116,57 +119,50 @@
 			</div>
 		</div>
 
-		<div>
-			<div class="card rounded-none mb-6">
-				<div class="card-body">
-					<div class="row">
-						<div class="col">
-							<h2 class="light-text">{data.name}</h2>
-						</div>
-						{#if data.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
-							<div
-								id="settings"
-								aria-label="Place settings"
-								class="col flex justify-end">
-								<a
-									href="/place/{data.id}/{data.name}/settings"
-									class="btn btn-sm btn-outline-warning">
-									<fa fa-sliders />
-								</a>
-							</div>
-						{/if}
+		<div class="flex flex-col justify-between gap-3">
+			<div class="card rounded-none p-4 pb-6 block">
+				<div class="flex justify-between">
+					<div class="col">
+						<h2 class="light-text">{data.name}</h2>
 					</div>
-					<span class="light-text flex pb-2">
-						<b class="pr-2">by</b>
-						{#if data.ownerUser}
-							<User
-								user={data.ownerUser}
-								size="1.5rem"
-								bg="darker"
-								full
-								thin />
-						{/if}
-					</span>
-					<p class="light-text mb-0">
-						Gears: <far fa-circle-xmark />
-					</p>
-					<small
-						class="text-light rounded-2 bg-{data.serverPing >
-						Math.floor(Date.now() / 1000) - 35
-							? 'success'
-							: 'danger'} p-2 py-1">
-						{data.serverPing > Date.now() / 1000 - 35
-							? "Online"
-							: "Offline"}
-					</small>
-					<span class="float-right">
-						<ReportButton
-							user={data.ownerUser?.username || ""}
-							url="/place/{data.id}/{data.name}" />
-					</span>
+					{#if data.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
+						<div>
+							<a
+								aria-label="Place settings"
+								href="/place/{data.id}/{data.name}/settings"
+								class="btn btn-sm btn-outline-warning">
+								<fa fa-sliders />
+							</a>
+						</div>
+					{/if}
 				</div>
+				<span class="light-text flex pb-2">
+					<b class="pr-2">by</b>
+					{#if data.ownerUser}
+						<User
+							user={data.ownerUser}
+							size="1.5rem"
+							bg="darker"
+							full
+							thin />
+					{/if}
+				</span>
+				<p class="light-text mb-0">
+					Gears: <far fa-circle-xmark />
+				</p>
+				<small
+					class="text-light rounded-2 bg-{online
+						? 'success'
+						: 'danger'} p-2 py-1">
+					{online ? "Online" : "Offline"}
+				</small>
+				<span class="float-right">
+					<ReportButton
+						user={data.ownerUser?.username || ""}
+						url="/place/{data.id}/{data.name}" />
+				</span>
 			</div>
-			<div id="buttons" class="row pt-6">
+			<div id="buttons" class="flex flex-col">
 				<button
 					on:click={placeLauncher}
 					id="play"
@@ -200,7 +196,7 @@
 
 						return () => {}
 					}}
-					class="self-center col pt-4 px-0 pb-2"
+					class="w-full pt-4 px-0 pb-2"
 					method="POST"
 					action="?/like&privateTicket={data.privateTicket}">
 					<div class="row pb-2">
@@ -388,28 +384,24 @@
 			</div>
 		{/if}
 		<h4 class="light-text">Server List</h4>
-		{#if data.serverPing > Date.now() / 1000 - 35}
-			<div class="card pb-2">
-				<div class="card-body">
-					<div class="row">
-						<div class="col col-2">
-							<p class="light-text mb-2">
-								Currently Playing: {data.players
-									.length}/{data.maxPlayers}
-							</p>
-							<button
-								on:click={placeLauncher}
-								id="join"
-								class="btn btn-sm btn-success">
-								Join Server
-							</button>
-						</div>
-						<div class="col flex gap-3">
-							{#each data.players as user}
-								<User {user} size="4.5rem" bg="darker" />
-							{/each}
-						</div>
+		{#if online}
+			<div class="card p-4 flex flex-row">
+				<div class="w-1/6">
+					<div class="light-text pb-2">
+						Currently Playing: {data.players
+							.length}/{data.maxPlayers}
 					</div>
+					<button
+						on:click={placeLauncher}
+						id="join"
+						class="btn btn-sm btn-success">
+						Join Server
+					</button>
+				</div>
+				<div class="w-5/6 flex gap-3">
+					{#each data.players as user}
+						<User {user} size="4.5rem" bg="darker" />
+					{/each}
 				</div>
 			</div>
 		{:else}
@@ -470,17 +462,8 @@
 </Modal>
 
 <style lang="stylus">
-	#buttons
-		margin auto
-		display flex
-		flex-direction column
-
 	#play img
 		height 2rem
-
-	#settings
-		position absolute
-		margin 3px 0px 0px -10px
 
 	.dropdown-toggle
 		border-radius 0 0.375rem 0.375rem 0

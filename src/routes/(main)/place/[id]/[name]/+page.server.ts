@@ -30,7 +30,7 @@ export async function load({ url, locals, params }) {
 			}
 			players: {
 				number: number
-				status: "Playing" | "Online" | "Offline"
+				status: "Playing"
 				username: string
 			}[]
 			privateServer: boolean

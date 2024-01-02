@@ -11,7 +11,10 @@
 
 <h1 class="text-center">Create a place</h1>
 
-<Form {formData} class="ctnr pt-12 max-w-200 light-text">
+<Form
+	{formData}
+	class="ctnr pt-12 max-w-200 light-text"
+	submit="Create ( <fa fa-gem></fa> Free )">
 	<Input
 		{formData}
 		name="name"
