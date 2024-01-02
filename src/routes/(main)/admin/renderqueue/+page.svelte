@@ -9,82 +9,78 @@
 
 <Head title="Render Queue - Admin" />
 
-<div class="ctnr py-6">
+<div class="ctnr pt-6 max-w-280 light-text">
 	<h1>Admin - Render Queue</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
 	</a>
-	<div class="row pt-6">
-		<TabNav bind:tabData vertical class="col-lg-2 col-md-3 mb-6" />
-		<div class="col-lg-10 col-md-9">
+	<div class="flex flex-wrap pt-6">
+		<TabNav
+			bind:tabData
+			vertical
+			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
+		<div class="w-full lg:w-5/6 md:w-3/4">
 			<Tab {tabData}>
-				<div class="row">
-					<div class="col">
-						<div class="card light-text pb-1">
-							<div class="card-body">
-								<h2 class="fs-3 mb-0">Render Server</h2>
-								<small class="pb-3">
-									is <strong class="text-success">
-										active
-									</strong>
-								</small>
+				<div class="<lg:flex flex-col lg:grid grid-cols-2 gap-2">
+					<div class="card light-text pb-1">
+						<div class="card-body">
+							<h2 class="fs-3 mb-0">Render Server</h2>
+							<small class="pb-3">
+								is <b class="text-success">active</b>
+							</small>
 
-								<br />
-								<span>
-									<fa fa-image class="text-success pr-1" />
-									Renders Completed:
-								</span>
-								<br />
-								<span>
-									<i
-										class="fa fa-bars-progress text-warning pr-1" />
-									Renders Pending:
-								</span>
-								<br />
-								<span>
-									<i
-										class="fa fa-image-slash text-danger pr-1" />
-									Renders Failed:
-								</span>
+							<div>
+								<fa fa-image class="text-success pr-1" />
+								<b>0 renders</b>
+								Completed
+							</div>
+							<div>
+								<fa
+									fa-bars-progress
+									class="text-warning pr-1" />
+								<b>0 renders</b>
+								Pending
+							</div>
+							<div>
+								<fa fa-image-slash class="text-danger pr-1" />
+								<b>0 renders</b>
+								Failed
 							</div>
 						</div>
 					</div>
-					<div class="col">
-						<div class="card light-text">
-							<div class="card-body">
-								<h2 class="fs-3">Currently Rendering</h2>
-								<table
-									class="p-5 w-full bg-background rounded-2">
-									<thead>
-										<tr>
-											<th scope="col">Task ID</th>
-											<th scope="col">Render Type</th>
-											<th scope="col">
-												User/Asset Requested
-											</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<th scope="row">{current.id}</th>
-											<td>{current.type}</td>
-											<td>
-												{#if current.user}
-													<User
-														user={current.user}
-														full
-														thin />
-												{:else if current.asset}
-													{current.asset.name}
-												{:else}
-													Unknown
-												{/if}
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
+					<div class="card light-text">
+						<div class="card-body">
+							<h2 class="fs-3">Currently Rendering</h2>
+							<table class="p-5 w-full bg-background rounded-2">
+								<thead>
+									<tr>
+										<th scope="col">Task ID</th>
+										<th scope="col">Render Type</th>
+										<th scope="col">
+											User/Asset Requested
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">{current.id}</th>
+										<td>{current.type}</td>
+										<td>
+											{#if current.user}
+												<User
+													user={current.user}
+													full
+													thin />
+											{:else if current.asset}
+												{current.asset.name}
+											{:else}
+												Unknown
+											{/if}
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
@@ -143,4 +139,7 @@
 
 		td
 			height 3rem
+
+	.card
+		border 1px solid var(--accent2)
 </style>

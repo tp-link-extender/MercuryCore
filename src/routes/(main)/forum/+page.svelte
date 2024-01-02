@@ -12,7 +12,7 @@
 			class="category card bg-darker p-4">
 			<div class="flex flex-wrap">
 				<a
-					class="w-full lg:w-3/4 md:w-7/12 row light-text no-underline"
+					class="flex w-full lg:w-3/4 md:w-7/12 light-text no-underline"
 					href="/forum/{category.name.toLowerCase()}">
 					<div class="w-3/4">
 						<h2>
@@ -26,7 +26,7 @@
 							: "s"}
 					</h3>
 				</a>
-				<div class="w-full lg:w-1/4 md:w-5/12 row">
+				<div class="w-full lg:w-1/4 md:w-5/12">
 					{#if category.latestPost}
 						<a
 							href="/forum/{category.name.toLowerCase()}/{category

@@ -50,33 +50,31 @@
 				use:enhance
 				method="POST"
 				action="/search?c=assets"
-				class="row">
-				<div class="input-group">
-					<input
-						bind:value={query}
-						type="text"
-						name="query"
-						class="form-control light-text valid"
-						placeholder="Search for an item"
-						aria-label="Search for an item"
-						aria-describedby="button-addon2" />
-					<select
-						class="form-select form-select-sm light-text pl-4"
-						placeholder="Type"
-						aria-label="Type">
-						<option value="Shirt">Shirts</option>
-						<option value="TShirt">T-Shirts</option>
-						<option value="Hat">Hats</option>
-						<option value="Pant">Pants</option>
-						<option value="Decal">Decals</option>
-					</select>
-					<button
-						class="btn btn-success"
-						aria-label="Search"
-						id="button-addon2">
-						<fa fa-magnifying-glass />
-					</button>
-				</div>
+				class="input-group">
+				<input
+					bind:value={query}
+					type="text"
+					name="query"
+					class="form-control light-text valid"
+					placeholder="Search for an item"
+					aria-label="Search for an item"
+					aria-describedby="button-addon2" />
+				<select
+					class="form-select form-select-sm light-text pl-4"
+					placeholder="Type"
+					aria-label="Type">
+					<option value="Shirt">Shirts</option>
+					<option value="TShirt">T-Shirts</option>
+					<option value="Hat">Hats</option>
+					<option value="Pant">Pants</option>
+					<option value="Decal">Decals</option>
+				</select>
+				<button
+					class="btn btn-success"
+					aria-label="Search"
+					id="button-addon2">
+					<fa fa-magnifying-glass />
+				</button>
 			</form>
 		</div>
 	</div>

@@ -58,23 +58,21 @@
 		<form
 			on:submit|preventDefault
 			action="/inventory?tab={tabData.currentTab}"
-			class="row pb-4">
-			<div class="input-group">
-				<input
-					bind:value={query}
-					type="text"
-					name="q"
-					class="form-control light-text valid"
-					placeholder="Search for an item"
-					aria-label="Search for an item"
-					aria-describedby="button-addon2" />
-				<button
-					class="btn btn-success"
-					aria-label="Search"
-					id="button-addon2">
-					<fa fa-magnifying-glass />
-				</button>
-			</div>
+			class="input-group pb-4">
+			<input
+				bind:value={query}
+				type="text"
+				name="q"
+				class="form-control light-text valid"
+				placeholder="Search for an item"
+				aria-label="Search for an item"
+				aria-describedby="button-addon2" />
+			<button
+				class="btn btn-success"
+				aria-label="Search"
+				id="button-addon2">
+				<fa fa-magnifying-glass />
+			</button>
 		</form>
 		<div
 			class="grid gap-4 grid-cols-2

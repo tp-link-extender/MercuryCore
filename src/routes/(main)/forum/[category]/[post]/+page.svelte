@@ -1,26 +1,16 @@
 <script lang="ts">
-	import { page } from "$app/stores"
 	import { enhance as enhance2 } from "$app/forms"
 	import superForm from "$lib/superForm"
 
 	export let data
+	const { user } = data
 	export let asComponent = false
 
 	let replyingTo = writable("")
-	const repliesCollapsed = writable({}),
-		{ user } = data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form)
+	const repliesCollapsed = writable({})
+	const formData = superForm(data.form)
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 </script>
 
 <Head title={data.title} />
@@ -69,7 +59,7 @@
 			class="sidebar bg-a mr-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
-			<div class="row mb-2 flex">
+			<div class="flex flex-col pb-2">
 				<div>
 					<button
 						name="action"
@@ -82,7 +72,7 @@
 					</button>
 				</div>
 				<span
-					class="my-2 text-center {data.likes
+					class="py-2 text-center {data.likes
 						? 'text-success font-bold'
 						: data.dislikes
 							? 'text-danger font-bold'
@@ -126,31 +116,7 @@
 		</div>
 	</div>
 
-	<form use:enhance class="py-2 mb-6 p-1 row" method="POST" action="?/reply">
-		<label for="content" class="light-text py-2">Post a Reply</label>
-		<fieldset class="col-lg-7 flex">
-			<textarea
-				bind:value={$form.content}
-				{...$constraints.content}
-				class="form-control {$errors.content ? 'is-in' : ''}valid"
-				name="content"
-				placeholder="What are your thoughts?"
-				rows="4" />
-			<button class="btn btn-success ml-4 mt-auto">
-				{#if $delayed}
-					Working...
-				{:else}
-					Reply
-				{/if}
-			</button>
-		</fieldset>
-		<p
-			class="mb-4"
-			class:text-success={$page.status == 200}
-			class:text-danger={$page.status >= 400}>
-			{$message || ""}
-		</p>
-	</form>
+	<PostReply {formData} />
 
 	{#each data.replies as reply, num}
 		<ForumReply
