@@ -34,7 +34,7 @@
 <div class="ctnr">
 	<div class="flex pb-12">
 		<h1 class="w-1/3">
-			<span class="pe-6">Games</span>
+			<span class="pr-6">Games</span>
 			<a href="/games/create" class="btn btn-primary">
 				<fa fa-plus />
 				Create
