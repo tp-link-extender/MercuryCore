@@ -20,7 +20,7 @@
 </div>
 
 <style lang="stylus">
-	+-lg()
+	+-md()
 		.statusheader
 			flex-direction column
 		.report
