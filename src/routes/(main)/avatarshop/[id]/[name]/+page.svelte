@@ -58,7 +58,7 @@
 										method="POST"
 										action="?/rerender">
 										<button
-											class="btn text-primary pl-4 pr-0 text-start">
+											class="btn text-blue-5 pl-4 pr-0 text-start">
 											<i
 												class="fa fa-arrows-rotate mr-2" />
 											<b>Re-render</b>
@@ -112,13 +112,13 @@
 						</p>
 						{#if !data.owned}
 							<label for="buy" class="btn btn-success">
-								<strong class="fs-3">
+								<strong class="text-xl">
 									{data.price > 0 ? "Buy Now" : "Get"}
 								</strong>
 							</label>
 						{:else}
 							<span class="btn btn-dark bg-a3 disabled">
-								<strong class="fs-3">Owned</strong>
+								<strong class="text-xl">Owned</strong>
 							</span>
 						{/if}
 					</div>

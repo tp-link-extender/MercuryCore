@@ -100,7 +100,7 @@
 									postAuthorName
 										? assetName
 											? 'text-yellow-5'
-											: 'text-primary'
+											: 'text-blue-6'
 										: ''}">
 									{reply.author.username}
 									{#if reply.author.username == postAuthorName}
@@ -230,12 +230,12 @@
 											placeholder="What are your thoughts?"
 											rows="4" />
 										<button class="btn btn-success">
-											<i class="far fa-message pr-2" />
+											<far fa-message class="pr-2" />
 											Reply
 										</button>
 										<button
 											on:click={() => replyingTo.set("")}
-											class="btn btn-dark grey-text pl-1">
+											class="btn btn-dark grey-text">
 											<fa fa-cancel class="pr-2" />
 											Cancel
 										</button>
@@ -321,9 +321,6 @@
 			transition color 0.2s
 			&:hover
 				color var(--grey-text) !important
-
-		span.text-primary:hover
-			color var(--accent-text) !important
 
 	.user
 		align-items center

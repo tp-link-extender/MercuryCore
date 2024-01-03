@@ -28,12 +28,8 @@
 				alt={asset.name} />
 		</div>
 		{#if asset.wearing}
-			<div
-				class="top-0 end-0 pr-1 absolute
-						translate-middle">
-				<small
-					class="text-white p-2 py-1 rounded-3
-							font-bold bg-primary">
+			<div class="top-0 end-0 absolute">
+				<small class="p-2 py-1 rounded-1.5 font-bold bg-blue-5">
 					Wearing
 				</small>
 			</div>

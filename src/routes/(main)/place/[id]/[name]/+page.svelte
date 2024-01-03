@@ -122,7 +122,7 @@
 		<div class="flex flex-col justify-between gap-3">
 			<div class="card rounded-none p-4 pb-6 block">
 				<div class="flex justify-between">
-					<h1 class="fs-2">{data.name}</h1>
+					<h1 class="text-2xl">{data.name}</h1>
 					{#if data.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
 						<div>
 							<a
@@ -150,9 +150,9 @@
 					Gears: <far fa-circle-xmark />
 				</div>
 				<small
-					class="text-white rounded-2 bg-{online
-						? 'success'
-						: 'danger'} p-2 py-1">
+					class="text-white rounded-2 {online
+						? 'bg-emerald-6'
+						: 'bg-red-5'} p-2 py-1">
 					{online ? "Online" : "Offline"}
 				</small>
 				<span class="float-right">
@@ -426,15 +426,15 @@
 			</div>
 		{/key}
 		{#if success}
-			<span class="fs-3 pt-6">
+			<span class="text-xl pt-6">
 				"{data.name}" is ready to play! Have fun!
 			</span>
 		{:else if installed}
-			<span class="fs-3 pt-6">
+			<span class="text-xl pt-6">
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
 			</span>
 		{:else}
-			<span class="fs-3 pt-6">
+			<span class="text-xl pt-6">
 				Install the Mercury client and start playing now!
 			</span>
 			<a

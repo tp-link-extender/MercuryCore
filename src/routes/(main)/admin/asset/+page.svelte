@@ -20,8 +20,8 @@
 			vertical
 			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
 		<div
-			class="w-full lg:w-5/6 md:w-3/4 grid gap-4
-			xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 grid-cols-2">
+			class="w-full lg:w-5/6 md:w-3/4 grid gap-4 grid-cols-2
+			xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-4">
 			{#each data.assets || [] as asset, num}
 				<AssetApprove
 					{asset}

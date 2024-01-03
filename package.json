@@ -4,7 +4,6 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"bootstrap": "sass src/bootstrap.sass src/bootstrap.css --no-source-map",
 		"format": "prettier -w --plugin prettier-plugin-svelte ./src",
 		"prod": "pnpm lines && pnpm i && vite build",
 		"package": "svelte-kit package",
@@ -12,7 +11,7 @@
 		"buildview": "vite build && vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-		"lines": "scc -c --no-size --no-cocomo --sort lines --exclude-dir \"Client deployer\" --exclude-file defs.d.lua,bootstrap.css,deno.lock,pnpm-lock.yaml,mercury.yml,uno.config.ts --exclude-ext lua --ci -f cloc-yaml -o ./data/lines"
+		"lines": "scc -c --no-size --no-cocomo --sort lines --exclude-dir \"Client deployer\" --exclude-file defs.d.lua,deno.lock,pnpm-lock.yaml,mercury.yml,uno.config.ts --exclude-ext lua --ci -f cloc-yaml -o ./data/lines"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^2.0.2",
@@ -46,7 +45,6 @@
 	"dependencies": {
 		"@threlte/core": "7.0.12",
 		"@threlte/extras": "8.1.1",
-		"bootstrap": "^5.3.2",
 		"check-disk-space": "^3.4.0",
 		"crypto-js": "^4.2.0",
 		"custom-protocol-check": "^1.4.0",

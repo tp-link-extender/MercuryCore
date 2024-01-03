@@ -83,7 +83,7 @@
 										method="POST"
 										action="?/delete&id={banner.id}">
 										<button
-											class="btn btn-sm no-underline text-red-5">
+											class="btn py-0 no-underline text-red-5">
 											<fa fa-trash class="pr-1" />
 											Delete Banner
 										</button>
@@ -95,14 +95,16 @@
 											? 'hide'
 											: 'show'}&id={banner.id}">
 										<button
-											class="btn btn-sm no-underline text-{banner.active
-												? 'warning'
-												: 'success'}">
+											class="btn py-0 no-underline {banner.active
+												? 'text-yellow-5'
+												: 'text-emerald-5'}">
 											<i
 												class="fa {banner.active
 													? 'fa-eye-slash'
 													: 'fa-eye'}" />
-											{banner.active ? "Dea" : "A"}ctivate
+											{banner.active
+												? "Deactivate"
+												: "Activate"}
 										</button>
 									</form>
 								</td>

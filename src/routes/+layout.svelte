@@ -4,7 +4,6 @@
 	import nprogress from "nprogress"
 
 	import "/src/nprogress.styl"
-	import "/src/bootswatch.styl"
 	import "/src/global.styl"
 	import "/src/fa/sass/fontawesome.styl"
 	import "uno.css"
@@ -99,7 +98,9 @@
 					use:enhance
 					method="POST"
 					action="/notifications?s={notification.id}">
-					<button class="btn p-0 px-1" aria-label="Close">
+					<button
+						class="btn p-0 px-1 text-white hover:text-neutral-5"
+						aria-label="Close">
 						<fa fa-xmark-large />
 					</button>
 				</form>

@@ -97,7 +97,7 @@
 			<PlaceCard {place} {num} total={data.places.length} />
 		{/each}
 		{#if query && searchedData.length == 0}
-			<h2 class="fs-5 pt-12">
+			<h2 class="text-xs pt-12">
 				No games found with search term {query}
 			</h2>
 		{/if}

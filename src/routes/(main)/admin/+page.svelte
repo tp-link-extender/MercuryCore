@@ -70,7 +70,7 @@
 
 <div class="ctnr pt-6 max-w-340 light-text">
 	<h1>Admin Panel</h1>
-	<h2 class="fs-3 pb-4">
+	<h2 class="text-xl pb-4">
 		Your permission level is <span
 			style="color: {permissions[user?.permissionLevel][0]}">
 			<fa class="{permissions[user?.permissionLevel][1]} px-1" />
@@ -121,7 +121,7 @@
 								class="flex bg-darker rounded-2"
 								style="height: 1rem">
 								<div
-									class="progress-bar-striped bg-success rounded-2"
+									class="progress-bar-striped bg-emerald-6 rounded-2"
 									role="progressbar"
 									aria-valuenow={data.totalmem - data.freemem}
 									aria-valuemin={0}
@@ -155,7 +155,7 @@
 									class="flex bg-darker rounded-2"
 									style="height: 1rem">
 									<div
-										class="progress-bar-striped bg-primary rounded-2"
+										class="progress-bar-striped bg-blue-6 rounded-2"
 										role="progressbar"
 										aria-valuenow={disk.size - disk.free}
 										aria-valuemin={0}
@@ -174,8 +174,10 @@
 								<far fa-user class="pr-2" />
 								Users
 							</h3>
-							<b class="text-primary">0 users</b>
-							are currently online
+							<span>
+								<b class="text-blue-5">0 users</b>
+								are currently online
+							</span>
 						</div>
 						<div class="card bg-a p-4">
 							<h3>

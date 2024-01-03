@@ -26,7 +26,7 @@
 	<hr class="grey-text" />
 {/if}
 
-<h3 class="fs-4">Discord Verification</h3>
+<h3 class="text-base">Discord Verification</h3>
 <p>A Discord account has not been linked.</p>
 <button class="btn btn-primary">
 	<fa fa-link />
@@ -34,7 +34,7 @@
 </button>
 <hr class="grey-text" />
 
-<h3 class="fs-4">Email Verification</h3>
+<h3 class="text-base">Email Verification</h3>
 <p>You have not verified your email address.</p>
 <button class="btn btn-primary mb-4">
 	<fa fa-envelope-circle-check />

@@ -60,7 +60,7 @@
 			<Group {group} {num} total={data.groups.length} />
 		{/each}
 		{#if query && searchedData.length == 0}
-			<h2 class="fs-5 pt-12">
+			<h2 class="text-xs pt-12">
 				No groups found with search term {query}
 			</h2>
 		{/if}
