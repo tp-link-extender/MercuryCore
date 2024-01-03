@@ -33,17 +33,6 @@ export default defineConfig({
 		],
 
 		// Bootstrap API
-		// border-{colour}
-		[
-			/^border-(primary|secondary|success|danger|warning|info|light|dark|black|white)$/,
-			([, a]) => ({
-				"--bs-border-opacity": i(1),
-				"border-color": i(
-					`RGBA(var(--bs-${a}-rgb), var(--bs-border-opacity))`
-				),
-			}),
-		],
-
 		// fs-1-6
 		[
 			/^fs-(\d)$/,
