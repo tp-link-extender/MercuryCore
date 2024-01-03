@@ -7,25 +7,25 @@ import { z } from "zod"
 import requestRender from "$lib/server/requestRender"
 
 const schemaInitial = z.object({
-		username: z
-			.string()
-			.min(3)
-			.max(21)
-			.regex(/^[A-Za-z0-9_]+$/),
-		password: z.string().min(1).max(6969),
-		cpassword: z.string().min(1).max(6969),
-	}),
-	schema = z.object({
-		username: z
-			.string()
-			.min(3)
-			.max(21)
-			.regex(/^[A-Za-z0-9_]+$/),
-		email: z.string().email(),
-		password: z.string().min(1).max(6969),
-		cpassword: z.string().min(1).max(6969),
-		regkey: z.string().min(1).max(6969),
-	})
+	username: z
+		.string()
+		.min(3)
+		.max(21)
+		.regex(/^[A-Za-z0-9_]+$/),
+	password: z.string().min(1).max(6969),
+	cpassword: z.string().min(1).max(6969),
+})
+const schema = z.object({
+	username: z
+		.string()
+		.min(3)
+		.max(21)
+		.regex(/^[A-Za-z0-9_]+$/),
+	email: z.string().email(),
+	password: z.string().min(1).max(6969),
+	cpassword: z.string().min(1).max(6969),
+	regkey: z.string().min(1).max(6969),
+})
 
 export const load = async () => ({
 	form: await superValidate(schema),
