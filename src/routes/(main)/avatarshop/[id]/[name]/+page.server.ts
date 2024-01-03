@@ -115,9 +115,12 @@ export const actions = {
 		const limit = ratelimit(form, "assetComment", getClientAddress, 5)
 		if (limit) return limit
 
-		const { content } = form.data,
-			replyId = url.searchParams.get("rid")
+		const replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another comment
+
+		const content = form.data.content.trim()
+		if (!content)
+			return formError(form, ["content"], ["Comment cannot be empty"])
 
 		if (replyId && !/^[0-9a-z]+$/.test(replyId))
 			error(400, "Invalid reply id")

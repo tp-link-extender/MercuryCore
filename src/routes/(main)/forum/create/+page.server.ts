@@ -41,8 +41,12 @@ export const actions = {
 		const limit = ratelimit(form, "forumPost", getClientAddress, 30)
 		if (limit) return limit
 
-		const { title, content } = form.data,
-			category = url.searchParams.get("category")
+		const category = url.searchParams.get("category")
+
+		const title = form.data.title.trim()
+		if (!title)
+			return formError(form, ["title"], ["Post must have a title"])
+		const content = form.data.content?.trim()
 
 		if (
 			!category ||
