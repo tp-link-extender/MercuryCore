@@ -2,14 +2,14 @@
 	import superForm from "$lib/superForm"
 
 	export let data
-	const { form, errors, constraints, enhance, delayed, capture, restore } =
-		superForm(data.form, {
-			onResult: ({ result }) =>
-				// Reload to get the new session after redirecting to homepage
-				result.type == "redirect" ? window.location.reload() : null,
-		})
+	const formData = superForm(data.form, {
+		onResult: ({ result }) =>
+			// Reload to get the new session after redirecting to homepage
+			result.type == "redirect" ? window.location.reload() : null,
+	})
+	const { form, errors, constraints, enhance, delayed } = formData
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 </script>
 
 <Head title="Log in" description="Log into your Mercury account." />
@@ -27,28 +27,28 @@
 			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
-		<h1 class="font-black mb-6">
+		<h1 class="font-black pb-6">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
 		<div class="pl-4 w-full">
-			<h2 class="light-text">Endless possibilities</h2>
-			<p class="light-text opacity-75 more">
+			<h2>Endless possibilities</h2>
+			<p class="opacity-75">
 				Create or play your favourite games and customise your character
 				with items on our catalog.
 			</p>
 		</div>
 		<div class="pl-4 w-full">
-			<h2 class="light-text">New features</h2>
-			<p class="light-text opacity-75 more">
+			<h2>New features</h2>
+			<p class="opacity-75">
 				In addition to full client usability, additional features such
 				as security fixes, QoL fixes and an easy to use website make
 				your experience better.
 			</p>
 		</div>
 		<div class="pl-4 w-full">
-			<h2 class="light-text">Same nostalgia</h2>
-			<p class="light-text opacity-75 more">
+			<h2>Same nostalgia</h2>
+			<p class="opacity-75">
 				All of our clients will remain as vanilla as possible, to make
 				sure it's exactly as you remember it.
 			</p>
@@ -58,57 +58,27 @@
 	<div id="light" class="lg:w-1/2 p-8vw pt-5vh lg:pt-20vh">
 		<div id="login" class="m-auto">
 			{#if data.users}
-				<h2 class="light-text">Log into your account</h2>
-				<p class="light-text">
+				<h2>Log into your account</h2>
+				<p>
 					Don't yet have an account?
 					<a href="/register" class="no-underline">Register</a>
 				</p>
 
-				<form use:enhance class="m-auto form-group pt-6" method="POST">
-					<fieldset>
-						<label for="username">Username</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.username}
-								{...$constraints.username}
-								id="username"
-								name="username"
-								autocomplete="username"
-								class="light-text form-control {$errors.username
-									? 'is-in'
-									: ''}valid"
-								placeholder="Username" />
-							<p class="text-danger">
-								{$errors.username || ""}
-							</p>
-						</div>
-
-						<label for="password">Password</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.password}
-								{...$constraints.password}
-								type="password"
-								id="password"
-								name="password"
-								autocomplete="current-password"
-								class="light-text form-control {$errors.password
-									? 'is-in'
-									: ''}valid"
-								placeholder="Password" />
-							<p class="text-danger">
-								{$errors.password || ""}
-							</p>
-						</div>
-						<button class="btn btn-primary mb-4">
-							{#if $delayed}
-								Working...
-							{:else}
-								Log in
-							{/if}
-						</button>
-					</fieldset>
-				</form>
+				<Form {formData} class="pt-6" submit="Log in">
+					<Input
+						{formData}
+						column
+						name="username"
+						label="Username"
+						placeholder="Username" />
+					<Input
+						{formData}
+						column
+						name="password"
+						label="Password"
+						type="password"
+						placeholder="Password" />
+				</Form>
 			{:else}
 				<h2>There are no users registered in the database yet!</h2>
 				<p class="pt-4">

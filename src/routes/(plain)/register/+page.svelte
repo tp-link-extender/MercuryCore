@@ -2,14 +2,14 @@
 	import superForm from "$lib/superForm"
 
 	export let data
-	const { form, errors, constraints, enhance, delayed, capture, restore } =
-		superForm(data.form, {
-			onResult: ({ result }) =>
-				// Reload to get the new session after redirecting to homepage
-				result.type == "redirect" ? window.location.reload() : null,
-		})
+	const formData = superForm(data.form, {
+		onResult: ({ result }) =>
+			// Reload to get the new session after redirecting to homepage
+			result.type == "redirect" ? window.location.reload() : null,
+	})
+	const { form, errors, constraints, enhance, delayed } = formData
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 </script>
 
 <Head title="Register" description="Create a Mercury account." />
@@ -32,22 +32,22 @@
 		</h1>
 
 		<div class="pl-4 w-full">
-			<h2 class="light-text">Original username</h2>
-			<p class="light-text opacity-75 more">
+			<h2>Original username</h2>
+			<p class="opacity-75">
 				Make sure it is appropriate and between 3-21 characters.
 				Underscores are allowed.
 			</p>
 		</div>
 		<div class="pl-4 w-full">
-			<h2 class="light-text">Valid email</h2>
-			<p class="light-text opacity-75 more">
+			<h2>Valid email</h2>
+			<p class="opacity-75">
 				Mercury requires a valid email so you can reset your password at
 				any time.
 			</p>
 		</div>
 		<div class="pl-4 w-full">
-			<h2 class="light-text">Secure password</h2>
-			<p class="light-text opacity-75 more">
+			<h2>Secure password</h2>
+			<p class="opacity-75">
 				Make sure your password has a mix of letters, numbers, and
 				symbols to protect against hackers.
 			</p>
@@ -63,108 +63,46 @@
 					<a href="/login" class="no-underline">Log in</a>
 				</p>
 
-				<form
-					use:enhance
-					class="m-auto form-group pt-6"
-					method="POST"
-					action="?/register">
-					<fieldset>
-						<label for="username">Username</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.username}
-								{...$constraints.username}
-								id="username"
-								name="username"
-								autocomplete="username"
-								class="light-text form-control {$errors.username
-									? 'is-in'
-									: ''}valid"
-								placeholder="3-21 characters" />
-							<p class="text-danger">
-								{$errors.username || ""}
-							</p>
-						</div>
+				<Form
+					{formData}
+					action="?/register"
+					class="pt-6"
+					submit="Register">
+					<Input
+						{formData}
+						column
+						name="username"
+						label="Username"
+						placeholder="3-21 characters" />
+					<Input
+						{formData}
+						column
+						name="email"
+						label="Email Address"
+						type="email"
+						placeholder="mercury@banland.xyz" />
+					<Input
+						{formData}
+						column
+						name="password"
+						label="Password"
+						type="password"
+						placeholder={"•".repeat(14)} />
+					<Input
+						{formData}
+						column
+						name="cpassword"
+						label="Confirm Password"
+						type="password"
+						placeholder={"•".repeat(14)} />
+					<Input
+						{formData}
+						column
+						name="regkey"
+						label="Registration Key"
+						placeholder="mercurkey-12311121123" />
+				</Form>
 
-						<label for="email">Email Address</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.email}
-								{...$constraints.email}
-								type="email"
-								id="email"
-								name="email"
-								autocomplete="email"
-								class="light-text form-control {$errors.email
-									? 'is-in'
-									: ''}valid"
-								placeholder="mercury@banland.xyz" />
-							<p class="text-danger">
-								{$errors.email || ""}
-							</p>
-						</div>
-
-						<label for="password">Password</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.password}
-								{...$constraints.password}
-								type="password"
-								id="password"
-								name="password"
-								autocomplete="new-password"
-								class="light-text form-control {$errors.password
-									? 'is-in'
-									: ''}valid"
-								placeholder="Password" />
-							<p class="text-danger">
-								{$errors.password || ""}
-							</p>
-						</div>
-
-						<label for="cpassword">Confirm Password</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.cpassword}
-								{...$constraints.cpassword}
-								type="password"
-								id="cpassword"
-								name="cpassword"
-								autocomplete="new-password"
-								class="light-text form-control {$errors.cpassword
-									? 'is-in'
-									: ''}valid"
-								placeholder="Confirm Password" />
-							<p class="text-danger">
-								{$errors.cpassword || ""}
-							</p>
-						</div>
-
-						<label for="regkey">Registration Key</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.regkey}
-								{...$constraints.regkey}
-								id="regkey"
-								name="regkey"
-								class="light-text form-control {$errors.regkey
-									? 'is-in'
-									: ''}valid"
-								placeholder="mercurkey-12311121123" />
-							<p class="text-danger">
-								{$errors.regkey || ""}
-							</p>
-						</div>
-
-						<button class="btn btn-primary mb-4">
-							{#if $delayed}
-								Working...
-							{:else}
-								Register
-							{/if}
-						</button>
-					</fieldset>
-				</form>
 				<p>
 					By signing up, you agree to our
 					<a href="/terms" class="no-underline">Terms of Service</a>
@@ -173,7 +111,7 @@
 					.
 				</p>
 			{:else}
-				<h2 class="light-text">Create the initial account</h2>
+				<h2>Create the initial account</h2>
 
 				<p class="pt-2">
 					This will be the first user account on this Mercury
@@ -194,77 +132,36 @@
 					Pick the username and password carefully, and good luck on
 					your journey with Mercury!
 				</p>
-				<form
-					use:enhance
-					class="m-auto form-group mt-6"
-					method="POST"
-					action="?/initialAccount">
-					<fieldset>
-						<label for="username">Username</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.username}
-								{...$constraints.username}
-								id="username"
-								name="username"
-								autocomplete="username"
-								class="light-text form-control {$errors.username
-									? 'is-in'
-									: ''}valid"
-								placeholder="3-21 characters" />
-							<p class="text-danger">
-								{$errors.username || ""}
-							</p>
-						</div>
 
-						<label for="password">Password</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.password}
-								{...$constraints.password}
-								type="password"
-								id="password"
-								name="password"
-								autocomplete="new-password"
-								class="light-text form-control {$errors.password
-									? 'is-in'
-									: ''}valid"
-								placeholder="Password" />
-							<p class="text-danger">
-								{$errors.password || ""}
-							</p>
-						</div>
-
-						<label for="cpassword">Confirm Password</label>
-						<div class="mb-6">
-							<input
-								bind:value={$form.cpassword}
-								{...$constraints.cpassword}
-								type="password"
-								id="cpassword"
-								name="cpassword"
-								autocomplete="new-password"
-								class="light-text form-control {$errors.cpassword
-									? 'is-in'
-									: ''}valid"
-								placeholder="Confirm Password" />
-							<p class="text-danger">
-								{$errors.cpassword || ""}
-							</p>
-						</div>
-
-						<button class="btn btn-primary mb-4">
-							{#if $delayed}
-								Working...
-							{:else}
-								Let's begin!
-							{/if}
-						</button>
-					</fieldset>
-				</form>
+				<Form
+					{formData}
+					action="?/initialAccount"
+					class="pt-6"
+					submit="Let's begin!">
+					<Input
+						{formData}
+						column
+						name="username"
+						label="Username"
+						placeholder="3-21 characters" />
+					<Input
+						{formData}
+						column
+						name="password"
+						label="Password"
+						type="password"
+						placeholder={"•".repeat(14)} />
+					<Input
+						{formData}
+						column
+						name="cpassword"
+						label="Confirm Password"
+						type="password"
+						placeholder={"•".repeat(14)} />
+				</Form>
 				<p>
 					If you want to create more users, head to the Admin panel
-					after logging in to create some registration keys, then head
+					after logging in to create some registration keys, then come
 					back to this page.
 				</p>
 			{/if}
