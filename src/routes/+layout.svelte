@@ -4,7 +4,7 @@
 	import nprogress from "nprogress"
 
 	import "/src/nprogress.styl"
-	import "$bootstrap"
+	import "/src/bootstrap.css"
 	import "/src/bootswatch.styl"
 	import "/src/global.styl"
 	import "/src/fa/sass/fontawesome.styl"
@@ -17,10 +17,10 @@
 	// at the top of the page when navigating
 	nprogress.configure({ showSpinner: false })
 
-	let timeout: any
+	let timeout: NodeJS.Timeout | null
 	// 100ms is the minimum time the loading bar will be shown
 	$: if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
-	else {
+	else if (timeout) {
 		clearTimeout(timeout)
 		timeout = null
 
@@ -72,19 +72,15 @@
 	{/if}
 </svelte:head>
 
-<slot />
-
 <!-- Toast notifications -->
-<div
-	class="toasts fixed z-1 bottom-0 end-0 p-4
-	flex flex-col gap-4">
+<div class="max-w-110 fixed bottom-0 end-0 p-4 flex flex-col gap-4 z-10">
 	{#each notifications as notification}
 		<div
 			class="show bg-darker light-text rounded-2"
 			role="alert"
 			aria-live="assertive"
 			aria-atomic="true">
-			<div class="flex bg-a light-text p-2 rounded-top-2">
+			<div class="flex bg-a light-text p-2 rounded-t-2">
 				<a
 					href="/user/{notification.sender.number}"
 					class="flex gap-3 items-center w-full light-text no-underline">
@@ -111,13 +107,14 @@
 			</div>
 			<a
 				href={notification.link}
-				class="body p-3 light-text no-underline
-				block rounded-2">
+				class="p-3 light-text no-underline block rounded-2">
 				{notification.note}
 			</a>
 		</div>
 	{/each}
 </div>
+
+<slot />
 
 <!-- Theme files contain CSS variables that are used throughout the site. -->
 {#if user?.theme == "darken"}
@@ -137,14 +134,3 @@
 		@import "../themes/standard"
 	</style>
 {/if}
-
-<style lang="stylus">
-	.toasts
-		width 25rem
-		--bs-toast-box-shadow 0 0 2rem #fff1
-		+lightTheme()
-			--bs-toast-box-shadow 0 0 2rem #0001
-
-	.body
-		min-height 4rem
-</style>

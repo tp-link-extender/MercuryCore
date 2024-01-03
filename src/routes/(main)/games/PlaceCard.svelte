@@ -17,6 +17,8 @@
 	const ratio = Math.floor(
 		(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
 	)
+
+	$: online = true//place.serverPing > Date.now() / 1000 - 35
 </script>
 
 <a
@@ -33,13 +35,8 @@
 	}}
 	in:fade|global={{ num, total }}
 	class="card text-center light-text bg-darker no-underline rounded-4"
-	class:border-success={place.serverPing >=
-		Math.floor(Date.now() / 1000) - 35}
 	href="/place/{place.id}/{place.name}">
-	<div
-		class="flex"
-		class:opacity-50={place.serverPing <
-			Math.floor(Date.now() / 1000) - 35}>
+	<div class="flex" class:opacity-50={!online}>
 		<div class="w-1/2">
 			<div class="shadow overflow-hidden bg-black relative rounded-l-4">
 				<img
