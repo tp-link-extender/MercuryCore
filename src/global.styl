@@ -60,7 +60,7 @@ h6
 	margin-bottom 0.5rem
 	font-weight 500
 	line-height 1.2
-	color var(--light-text) !important
+	color var(--light-text)
 
 p
 	margin-top 0
@@ -166,16 +166,30 @@ img[src^="/api/avatar"]
 
 // bootstrap variables
 :root
-	color #495057
+	color var(--light-text)
 	@media (prefers-reduced-motion no-preference)
 		scroll-behavior smooth
 
 .btn
-	padding-top 0.5rem
-	padding-bottom 0.5rem
+	@apply transition no-underline
+	background none
+	outline none
+	border 1px solid transparent
+	display inline-block
+	padding-top 0.7rem
+	padding-bottom 0.7rem
 	padding-left 1rem
 	padding-right 1rem
 	font-size 0.875rem
+	border-radius 0.375rem
+	cursor pointer
+
+.btn-sm
+	font-size 0.75rem
+	padding-top 0.25rem
+	padding-bottom 0.25rem
+	padding-left 0.5rem
+	padding-right 0.5rem
 
 p
 span
@@ -200,40 +214,31 @@ span
 	border-radius 0.25rem
 
 .btn-success
-	background #238560
-	border 1px solid #238560
-	&:focus-visible
-		box-shadow 0 0 0 0.25rem rgba(68, 151, 120, 0.5)
+	transition background 0.3s, box-shadow 0.15s
+	@apply bg-emerald-6 border-1 border-emerald-6
 	&:hover
-		background #1e7152
-		border-color #1c6a4d
+		@apply bg-emerald-7 border-emerald-7
 	&:active
-		background #1c6a4d
-		border-color #1a6448
+		@apply bg-emerald-8 border-emerald-8
+		@apply ring-3 ring-emerald-7/50
 
 .btn-primary
-	background #3459e6
-	border 1px solid #3459e6
-	&:focus-visible
-		box-shadow 0 0 0 0.25rem rgba(82, 114, 234, 0.5)
+	transition background 0.3s, box-shadow 0.15s
+	@apply bg-blue-6 border-1 border-blue-6
 	&:hover
-		background #2c4cc4
-		border-color #2a47b8
+		@apply bg-blue-7 border-blue-7
 	&:active
-		background #2a47b8
-		border-color #2743ad
+		@apply bg-blue-8 border-blue-8
+		@apply ring-3 ring-blue-7/50
 
 .btn-info
-	background #287bb5
-	border 1px solid #287bb5
-	&:focus-visible
-		box-shadow 0 0 0 0.25rem rgba(72, 143, 192, 0.5)
+	transition background 0.3s, box-shadow 0.15s
+	@apply bg-cyan-6 border-1 border-cyan-6
 	&:hover
-		background #22699a
-		border-color #206291
+		@apply bg-cyan-7 border-cyan-7
 	&:active
-		background #206291
-		border-color #1e5c88
+		@apply bg-cyan-8 border-cyan-8
+		@apply ring-3 ring-cyan-7/50
 
 .btn-success
 .btn-primary
@@ -331,7 +336,7 @@ textarea
 	@media (prefers-reduced-motion no-preference)
 		transition box-shadow 0.15s ease-in-out
 	&:focus
-		@apply ring-3 ring-blue-700/50
+		@apply ring-3 ring-blue-7/50
 
 input[type=checkbox]
 	width 1.5rem
@@ -367,6 +372,7 @@ input[type=text]
 input[type=password]
 input[type=email]
 input[type=number]
+input:not([type])
 textarea
 	display block
 	width 100%
@@ -399,13 +405,12 @@ input[type=file]
 	input
 	select
 		&:not(:last-child)
-			border-top-right-radius 0 !important
-			border-bottom-right-radius 0 !important
+			border-top-right-radius 0
+			border-bottom-right-radius 0
 		&:not(:first-child)
-			border-top-left-radius 0 !important
-			border-bottom-left-radius 0 !important
+			border-top-left-radius 0
+			border-bottom-left-radius 0
 	> button
-		max-height 41px
 		position relative
 		z-index 2
 	> input

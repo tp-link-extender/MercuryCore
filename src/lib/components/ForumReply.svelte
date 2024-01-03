@@ -99,7 +99,7 @@
 									class="font-bold {reply.author.username ==
 									postAuthorName
 										? assetName
-											? 'text-warning'
+											? 'text-yellow-5'
 											: 'text-primary'
 										: ''}">
 									{reply.author.username}
@@ -153,17 +153,18 @@
 									name="action"
 									value={reply.likes ? "unlike" : "like"}
 									aria-label={reply.likes ? "Unlike" : "Like"}
-									class="smallbutton p-0 btn btn-sm">
+									class="smallbutton p-0 btn">
 									<i
 										class="fa{reply.likes
-											? ' text-success'
-											: 'r'} fa-thumbs-up" />
+											? ' text-emerald-6 hover:text-emerald-3'
+											: 'r text-neutral-5 hover:text-neutral-3'}
+										fa-thumbs-up transition" />
 								</button>
 								<span
 									class="my-1 text-center {reply.likes
-										? 'text-success font-bold'
+										? 'text-emerald-6 font-bold'
 										: reply.dislikes
-											? 'text-danger font-bold'
+											? 'text-red-5 font-bold'
 											: ''}">
 									{reply.likeCount - reply.dislikeCount}
 								</span>
@@ -175,11 +176,12 @@
 									aria-label={reply.dislikes
 										? "Undislike"
 										: "Dislike"}
-									class="smallbutton p-0 btn btn-sm">
+									class="smallbutton p-0 btn">
 									<i
 										class="fa{reply.dislikes
-											? ' text-danger'
-											: 'r'} fa-thumbs-down" />
+											? ' text-red-5 hover:text-red-3'
+											: 'r text-neutral-5 hover:text-neutral-3'}
+										fa-thumbs-down transition" />
 								</button>
 							</form>
 							<button
@@ -233,7 +235,7 @@
 										</button>
 										<button
 											on:click={() => replyingTo.set("")}
-											class="btn btn-dark grey-text ml-1">
+											class="btn btn-dark grey-text pl-1">
 											<fa fa-cancel class="pr-2" />
 											Cancel
 										</button>

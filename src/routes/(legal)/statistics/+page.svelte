@@ -6,7 +6,7 @@
 
 <h1 class="text-center">Statistics</h1>
 
-<div class="ctnr pt-8 max-w-200 fs-3 text-light">
+<div class="ctnr pt-8 max-w-200 fs-3 text-white">
 	<h2 class="pb-2">Total number of:</h2>
 	<table>
 		<tr>

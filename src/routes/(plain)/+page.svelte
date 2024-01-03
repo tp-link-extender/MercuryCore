@@ -37,7 +37,10 @@
 	id="info"
 	class="ctnr flex justify-center items-center h-75vh"
 	style="padding-top: {infoPadding}vh">
-	<div id="moon" class="absolute w-full h-20vh" style="opacity: {canvasOpacity}">
+	<div
+		id="moon"
+		class="absolute w-full h-20vh"
+		style="opacity: {canvasOpacity}">
 		<Canvas>
 			<Moon />
 		</Canvas>
@@ -46,8 +49,8 @@
 		id="infotext"
 		class="flex flex-col justify-center items-center relative"
 		style="padding-top: {infoTextMargin}vh">
-		<h1 class="font-black text-white opacity-75 text-16">Mercury 2</h1>
-		<p class="lead text-white text-center">
+		<h1 class="font-black opacity-75 text-16">Mercury 2</h1>
+		<p class="lead text-center">
 			Endless possibilities. New features. Same nostalgia.
 		</p>
 		<div class="inline mb-4">

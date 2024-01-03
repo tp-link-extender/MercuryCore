@@ -3,7 +3,7 @@
 </script>
 
 <span
-	class="w-full h-full absolute top-0 overflow-hidden"
+	class="w-full h-full absolute top-0 overflow-hidden pointer-events-none"
 	style="--margin-1: {reverse ? 0 : -1600}px; --margin-2: {reverse
 		? -1600
 		: 0}px">

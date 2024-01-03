@@ -35,7 +35,7 @@
 						name="dailyStipend"
 						label="Daily stipend"
 						type="number"
-						after="<fa fa-gem class='text-success pl-3' />" />
+						after="<fa fa-gem class='text-emerald-6 pl-3' />" />
 					<Input
 						{formData}
 						name="stipendTime"

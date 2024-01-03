@@ -116,13 +116,13 @@
 				role="search"
 				class="mx-auto px-2">
 				<div
-					class="input-group max-w-140 pt-2px xl:absolute
-				xl:left-1/2 xl:-translate-x-1/2 xl:w-35vw lg:w-76 md:w-100
-				sm:w-52">
+					class="input-group max-w-140 pt-3px xl:absolute
+					xl:left-1/2 xl:-translate-x-1/2 xl:w-35vw lg:w-76 md:w-100
+					sm:w-52">
 					<input
 						bind:value={search}
 						on:keydown={keydown}
-						class="bg-background h-2.3rem ps-4"
+						class="bg-background h-2.5rem ps-4"
 						name="query"
 						type="search"
 						placeholder="Search"
@@ -134,7 +134,7 @@
 								goto(`/search?q=${search.trim()}&c=users`)
 							searchCompleted = true
 						}}
-						class="btn btn-success h-2.3rem"
+						class="btn btn-success h-full rounded-r-0.375rem!"
 						title="Search">
 						<fa fa-search />
 					</button>
@@ -171,10 +171,10 @@
 					href="/transactions"
 					role="button"
 					aria-label="Transactions"
-					class="text-success flex items-center
+					class="text-emerald-6 flex items-center
 					no-underline <sm:w-20">
-					<fa fa-gem class="pr-2 text-success" />
-					<span class="text-base text-success">
+					<fa fa-gem class="pr-2 text-emerald-6" />
+					<span class="text-base text-emerald-6">
 						{user.currency}
 					</span>
 				</a>
@@ -195,7 +195,7 @@
 									use:enhance
 									method="POST"
 									action="/api?/logout">
-									<button class="btn text-danger pl-4 pr-0">
+									<button class="btn text-red-5 pl-4 pr-0">
 										<fa
 											fa-arrow-right-from-bracket
 											class="pr-2" />
@@ -221,7 +221,7 @@
 		<div
 			transition:height
 			class="py-1 text-center"
-			class:text-light={banner.textLight}
+			class:text-white={banner.textLight}
 			role="alert"
 			style="background: {banner.bgColour}">
 			{banner.body}

@@ -22,7 +22,7 @@
 			{name}
 			id={name}
 			{placeholder}
-			class="{$errors[name] ? 'is-invalid' : ''}">
+			class={$errors[name] ? "is-invalid" : ""}>
 			<slot />
 		</select>
 
@@ -32,7 +32,7 @@
 			</small>
 		{/if}
 
-		<small class="pb-4 text-danger">
+		<small class="pb-4 text-red-5">
 			{$errors[name] || ""}
 		</small>
 	</div>

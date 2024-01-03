@@ -4,7 +4,6 @@
 	import nprogress from "nprogress"
 
 	import "/src/nprogress.styl"
-	import "/src/bootstrap.css"
 	import "/src/bootswatch.styl"
 	import "/src/global.styl"
 	import "/src/fa/sass/fontawesome.styl"
