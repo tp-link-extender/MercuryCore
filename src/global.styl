@@ -8,6 +8,32 @@
 @import "./daisyui/dropdown.styl"
 @import "./daisyui/modal.styl"
 
+@font-face
+	font-family "SF UI Display Regular"
+	font-style normal
+	font-weight 400
+	font-display swap
+	src url(/SFregular.woff2) format("woff2"),
+		url(/SFregular.woff) format("woff"),
+		url(/SFregular.ttf) format("ttf")
+
+	unicode-range U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+		U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
+		U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD
+
+@font-face
+	font-family "SF UI Display Regular"
+	font-style normal
+	font-weight 700
+	font-display swap
+	src url(/SFbold.woff2) format("woff2"),
+		url(/SFbold.woff) format("woff"),
+		url(/SFbold.ttf) format("ttf")
+
+	unicode-range U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+		U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC,
+		U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD
+
 :root
 html
 body
@@ -164,7 +190,7 @@ img[src^="/api/avatar"]
 		&:active
 			background var(--accent2)
 
-// bootstrap variables
+// bootstrap classes
 :root
 	color var(--light-text)
 	@media (prefers-reduced-motion no-preference)
@@ -172,7 +198,7 @@ img[src^="/api/avatar"]
 
 .btn
 	@apply transition no-underline
-	background none
+	background transparent
 	outline none
 	border 1px solid transparent
 	display inline-block
@@ -214,36 +240,48 @@ span
 	border-radius 0.25rem
 
 .btn-success
-	transition background 0.3s, box-shadow 0.15s
-	@apply bg-emerald-6 border-1 border-emerald-6
+	@apply bg-emerald-6
 	&:hover
-		@apply bg-emerald-7 border-emerald-7
+		@apply bg-emerald-7
 	&:active
-		@apply bg-emerald-8 border-emerald-8
-		@apply ring-3 ring-emerald-7/50
+		@apply bg-emerald-8 ring-3 ring-emerald-7/50
 
 .btn-primary
-	transition background 0.3s, box-shadow 0.15s
-	@apply bg-blue-6 border-1 border-blue-6
+	@apply bg-blue-6
 	&:hover
-		@apply bg-blue-7 border-blue-7
+		@apply bg-blue-7
 	&:active
-		@apply bg-blue-8 border-blue-8
-		@apply ring-3 ring-blue-7/50
+		@apply bg-blue-8 ring-3 ring-blue-7/50
 
 .btn-info
-	transition background 0.3s, box-shadow 0.15s
-	@apply bg-cyan-6 border-1 border-cyan-6
+	@apply bg-cyan-6
 	&:hover
-		@apply bg-cyan-7 border-cyan-7
+		@apply bg-cyan-7
 	&:active
-		@apply bg-cyan-8 border-cyan-8
-		@apply ring-3 ring-cyan-7/50
+		@apply bg-cyan-8 ring-3 ring-cyan-7/50
+
+.btn-danger
+	@apply bg-red-6
+	&:hover
+		@apply bg-red-7
+	&:active
+		@apply bg-red-8 ring-3 ring-red-7/50
+
+.btn-dark
+	@apply bg-neutral-8
+	&:hover
+		@apply bg-neutral-9
+	&:active
+		@apply bg-neutral-950 ring-3 ring-neutral-7/50
 
 .btn-success
 .btn-primary
 .btn-info
+.btn-danger
+.btn-dark
+	@apply border-1
 	color white
+	transition background 0.3s, box-shadow 0.15s
 
 .btn-sm
 	padding 0.25rem 0.5rem !important
@@ -278,6 +316,15 @@ div[role="progressbar"]
 		transparent 75%,
 		transparent)
 	background-size 1rem 1rem
+
+// Tables
+
+thead th
+	font-size 0.875rem
+	text-transform uppercase
+
+.table > :not(caption) > * > *
+	background-color #0000
 
 .ctnr
 	max-width 75rem
@@ -379,6 +426,7 @@ textarea
 	padding 0.7rem 1rem
 
 input[type=file]
+	display block
 	padding 0
 	cursor pointer
 	// disable choose file button

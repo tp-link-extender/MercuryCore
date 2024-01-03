@@ -29,20 +29,26 @@
 				full
 				bg="background" />
 		</span>
-		<form
-			use:enhance
-			method="POST"
-			action="/admin/asset?/approve&id={asset.id}"
-			class="inline">
-			<button class="btn btn-sm btn-primary mb-1">Approve</button>
-		</form>
-		<form
-			use:enhance
-			method="POST"
-			action="/admin/asset?/deny&id={asset.id}"
-			class="inline">
-			<button class="btn btn-sm btn-danger mb-1">Deny</button>
-		</form>
+		<div class="input-group">
+			<form
+				use:enhance
+				method="POST"
+				action="/admin/asset?/approve&id={asset.id}"
+				class="w-1/2">
+				<button class="w-full btn btn-sm btn-primary rounded-r-0">
+					Approve
+				</button>
+			</form>
+			<form
+				use:enhance
+				method="POST"
+				action="/admin/asset?/deny&id={asset.id}"
+				class="w-1/2">
+				<button class="w-full btn btn-sm btn-danger rounded-l-0">
+					Deny
+				</button>
+			</form>
+		</div>
 	</div>
 </label>
 
@@ -56,7 +62,7 @@
 		<h2 class="text-base">Asset {asset.name}</h2>
 		{#if asset.imageAsset}
 			<div class="text-center pb-3">
-				<h3 class="fs-5">Image asset</h3>
+				<h3 class="text-xs">Image asset</h3>
 				<img
 					class="image aspect-1 md:w-80 w-60"
 					src="/avatarshop/{asset.imageAsset.id}/{asset.imageAsset
@@ -102,10 +108,7 @@
 			method="POST"
 			action="/admin/asset?/purge&id={asset.id}"
 			class="inline">
-			<button
-				class="btn btn-danger"
-				style="background: #930010;
-				border-color: #930010">
+			<button class="btn btn-danger bg-red-9 border-red-9">
 				Yes, do as I say!
 			</button>
 		</form>

@@ -1,10 +1,4 @@
 <script lang="ts">
-	// const statusColours: { [k: string]: string } = {
-	// 	Online: "bg-info",
-	// 	Joined: "bg-success",
-	// 	Developing: "bg-warning",
-	// }
-
 	export let data
 </script>
 
@@ -15,7 +9,7 @@
 		Search for "{data.query}" in {data.category}
 	</h1>
 {:else}
-	<h1 class="text-center fs-2">
+	<h1 class="text-center text-2xl">
 		Choose a category to search for "{data.query}"
 	</h1>
 {/if}

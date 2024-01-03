@@ -12,6 +12,5 @@ node_modules
 /keys
 /setup
 /corescripts/processed/*.lua
-src/bootstrap.css
 scc
 scc.exe

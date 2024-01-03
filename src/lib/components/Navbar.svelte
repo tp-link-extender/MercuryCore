@@ -93,7 +93,7 @@
 	<div
 		class="pt-1 px-2 sm:px-4 flex w-full pb-2px
 		bg-#201f1e @light:bg-#b8b6b6">
-		<a class="brand light-text fs-3 no-underline my-auto" href="/">
+		<a class="brand light-text text-xl no-underline my-auto" href="/">
 			<img
 				src="/icon.svg"
 				alt="Mercury logo"
@@ -220,8 +220,9 @@
 	{#each data.banners as banner (banner.id)}
 		<div
 			transition:height
-			class="py-1 text-center"
-			class:text-white={banner.textLight}
+			class="py-1 text-center {banner.textLight
+				? 'text-white'
+				: 'text-black'}"
 			role="alert"
 			style="background: {banner.bgColour}">
 			{banner.body}
@@ -237,7 +238,7 @@
 			{#each [...nav1, ["Notifications", "/notifications", "fa-bell"]] as [title, href, icon]}
 				<a
 					{href}
-					class="btn light-text border-0 flex flex-col
+					class="btn light-text border-0 flex flex-col items-center
 					text-0.9rem px-0.2rem sm:text-base sm:px-2">
 					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem" />
 					{title}

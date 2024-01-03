@@ -25,7 +25,7 @@
 				<div class="<lg:flex flex-col lg:grid grid-cols-2 gap-2">
 					<div class="card light-text pb-1">
 						<div class="card-body">
-							<h2 class="fs-3 mb-0">Render Server</h2>
+							<h2 class="text-xl mb-0">Render Server</h2>
 							<small class="pb-3">
 								is <b class="text-emerald-6">active</b>
 							</small>
@@ -51,7 +51,7 @@
 					</div>
 					<div class="card light-text">
 						<div class="card-body">
-							<h2 class="fs-3">Currently Rendering</h2>
+							<h2 class="text-xl">Currently Rendering</h2>
 							<table class="p-5 w-full bg-background rounded-2">
 								<thead>
 									<tr>

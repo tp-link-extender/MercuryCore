@@ -208,7 +208,7 @@
 						total={(assets || []).length} />
 				{/each}
 				{#if query && assets.length == 0}
-					<h2 class="fs-5 pt-12">
+					<h2 class="text-xs pt-12">
 						{#if tabData.currentTab == "Recent"}
 							No recently worn items found with search term {query}
 						{:else}
