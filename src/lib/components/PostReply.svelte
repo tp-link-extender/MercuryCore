@@ -31,6 +31,6 @@
 		class="pb-4"
 		class:text-success={$page.status == 200}
 		class:text-danger={$page.status >= 400}>
-		{$message || ""}
+		{$message || $errors["content"] || ""}
 	</p>
 </form>
