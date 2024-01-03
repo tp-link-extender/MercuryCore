@@ -318,7 +318,6 @@
 					<div class="input-group">
 						<input
 							type="text"
-							class="form-control valid"
 							id="filepath"
 							bind:value={filepath}
 							placeholder="Map location"

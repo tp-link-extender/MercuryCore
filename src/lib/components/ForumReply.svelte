@@ -220,7 +220,7 @@
 									<fieldset>
 										<textarea
 											bind:value={content}
-											class="form-control valid mb-2"
+											class="mb-2"
 											required
 											minlength="1"
 											maxlength="1000"
@@ -228,13 +228,13 @@
 											placeholder="What are your thoughts?"
 											rows="4" />
 										<button class="btn btn-success">
-											<i class="far fa-message mr-2" />
+											<i class="far fa-message pr-2" />
 											Reply
 										</button>
 										<button
 											on:click={() => replyingTo.set("")}
 											class="btn btn-dark grey-text ml-1">
-											<fa fa-cancel class="mr-2" />
+											<fa fa-cancel class="pr-2" />
 											Cancel
 										</button>
 									</fieldset>

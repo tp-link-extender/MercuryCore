@@ -15,7 +15,7 @@
 		<textarea
 			bind:value={$form.content}
 			{...$constraints.content}
-			class="form-control {$errors.content ? 'is-in' : ''}valid"
+			class:is-invalid={$errors.content}
 			name="content"
 			placeholder="What are your thoughts?"
 			rows="4" />

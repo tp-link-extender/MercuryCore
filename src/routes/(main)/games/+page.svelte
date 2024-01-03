@@ -52,7 +52,6 @@
 							bind:value={query}
 							type="text"
 							name="query"
-							class="form-control light-text valid"
 							placeholder="Search for a game"
 							aria-label="Search for a game"
 							aria-describedby="button-addon2" />
@@ -69,7 +68,7 @@
 						Genre
 					</label>
 					<select
-						class="form-select form-select-sm light-text"
+						class="form-select light-text"
 						id="genre"
 						placeholder="Genre"
 						aria-label="genre">
@@ -79,13 +78,13 @@
 					</select>
 				</div>
 				<div class="pl-4 w-7/24">
-					<div class="form-check light-text py-1">
+					<div class="flex items-center light-text py-1">
 						<input
 							class="form-check-input"
 							type="checkbox"
 							value=""
 							id="flexCheckDefault" />
-						<label class="form-check-label" for="flexCheckDefault">
+						<label class="pl-2" for="flexCheckDefault">
 							Gears Allowed
 						</label>
 					</div>

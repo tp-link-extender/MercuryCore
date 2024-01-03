@@ -108,7 +108,7 @@
 	<div id="arrowcontainer">
 		<button
 			id="arrow"
-			class="btn absolute shadow-none left-1/2 light-text"
+			class="btn absolute left-1/2 light-text"
 			aria-label="Scroll down"
 			on:click={downScroll}
 			on:keypress={downScroll}

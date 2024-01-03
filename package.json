@@ -28,6 +28,7 @@
 		"@unocss/core": "^0.58.3",
 		"@unocss/extractor-svelte": "^0.58.3",
 		"@unocss/preset-tagify": "^0.58.3",
+		"@unocss/transformer-directives": "^0.58.3",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"sass": "^1.69.7",

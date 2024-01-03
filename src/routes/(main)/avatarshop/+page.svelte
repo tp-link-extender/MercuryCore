@@ -42,7 +42,7 @@
 
 <Head title="Catalog" />
 
-<div class="ctnr">
+<div class="ctnr light-text">
 	<div class="flex flex-wrap pb-4">
 		<h1 class="w-full lg:w-1/3 md:w-1/4 mb-0">Catalog</h1>
 		<div class="w-full lg:w-2/3 md:w-3/4 pt-2">
@@ -55,12 +55,11 @@
 					bind:value={query}
 					type="text"
 					name="query"
-					class="form-control light-text valid"
 					placeholder="Search for an item"
 					aria-label="Search for an item"
 					aria-describedby="button-addon2" />
 				<select
-					class="form-select form-select-sm light-text pl-4"
+					class="form-select pl-4"
 					placeholder="Type"
 					aria-label="Type">
 					<option value="Shirt">Shirts</option>
@@ -83,100 +82,72 @@
 		<div class="w-full xl:w-1/6 lg:w-1/4 pb-2 md:pr-4">
 			<h2 class="pb-4">Categories</h2>
 			<h2>Filters</h2>
-			<p class="light-text mb-0">Sort by:</p>
-			<div class="form-check">
+			<p>Sort by:</p>
+			<div>
 				<input
 					class="form-check-input"
 					type="radio"
-					name="filter"
-					id="bestsellingRadio" />
-				<label
-					class="form-check-label light-text"
-					for="bestsellingRadio">
-					Bestselling
-				</label>
+					name="sort"
+					id="bestselling" />
+				<label for="bestselling">Bestselling</label>
 			</div>
-			<div class="form-check">
+			<div>
 				<input
 					class="form-check-input"
 					type="radio"
-					name="filter"
-					id="recentlyCreatedRadio" />
-				<label
-					class="form-check-label light-text"
-					for="recentlyCreatedRadio">
-					Recently Created
-				</label>
+					name="sort"
+					id="recentlyCreated" />
+				<label for="recentlyCreated">Recently Created</label>
 			</div>
-			<div class="form-check">
+			<div>
 				<input
 					class="form-check-input"
 					type="radio"
-					name="filter"
-					id="mercuryRadio" />
-				<label class="form-check-label light-text" for="mercuryRadio">
-					Mercury
-				</label>
+					name="sort"
+					id="mercury" />
+				<label for="mercury">Mercury</label>
 			</div>
-			<p class="light-text mb-0">Price:</p>
-			<div class="form-check">
+			<div>
 				<input
 					class="form-check-input"
 					type="radio"
-					name="filter"
-					id="defaultPriceRadio"
+					name="sort"
+					id="highToLow" />
+				<label for="highToLow">Price (high to low)</label>
+			</div>
+			<div>
+				<input
+					class="form-check-input"
+					type="radio"
+					name="sort"
+					id="lowToHigh" />
+				<label for="lowToHigh">Price (low to high)</label>
+			</div>
+			<p>Price:</p>
+			<div>
+				<input
+					class="form-check-input"
+					type="radio"
+					name="price"
+					id="any"
 					checked />
-				<label
-					class="form-check-label light-text"
-					for="defaultPriceRadio">
-					Any price
-				</label>
+				<label for="any">Any price</label>
 			</div>
-			<div class="form-check">
+			<div>
+				<input class="form-check-input" type="radio" name="price" />
 				<input
-					class="form-check-input"
-					type="radio"
-					name="filter"
-					id="customPriceRadio" />
-				<input
-					class="form-control form-control-sm mb-2"
+					class="mb-2"
 					type="number"
 					min="0"
 					max="999"
-					placeholder="Minimum price"
-					aria-label="Min price" />
+					placeholder="Minimum price" />
 				<input
-					class="form-control form-control-sm mb-2"
+					class="mb-2"
 					type="number"
 					min="0"
 					max="999"
-					placeholder="Maximum price"
-					aria-label="Max price" />
+					placeholder="Maximum price" />
 				<button class="btn btn-success btn-sm">Set</button>
-			</div>
-			<div class="form-check">
-				<input
-					class="form-check-input"
-					type="radio"
-					name="filter"
-					id="lowToHighPriceRadio" />
-				<label
-					class="form-check-label light-text"
-					for="lowToHighPriceRadioRadio">
-					Price (low to high)
-				</label>
-			</div>
-			<div class="form-check">
-				<input
-					class="form-check-input"
-					type="radio"
-					name="filter"
-					id="highToLowPricePriceRadio" />
-				<label
-					class="form-check-label light-text"
-					for="highToLowPricePriceRadio">
-					Price (high to low)
-				</label>
 			</div>
 		</div>
 		<div class="w-full xl:w-5/6 lg:w-3/4">

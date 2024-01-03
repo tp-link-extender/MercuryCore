@@ -112,6 +112,9 @@ devDependencies:
   '@unocss/preset-tagify':
     specifier: ^0.58.3
     version: 0.58.3
+  '@unocss/transformer-directives':
+    specifier: ^0.58.3
+    version: 0.58.3
   prettier:
     specifier: ^3.1.1
     version: 3.1.1
