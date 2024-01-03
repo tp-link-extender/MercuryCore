@@ -53,7 +53,6 @@
 						<input
 							type="text"
 							name="q"
-							class="form-control light-text valid"
 							placeholder="Search for an item"
 							aria-label="Search for an item"
 							aria-describedby="button-addon2" />

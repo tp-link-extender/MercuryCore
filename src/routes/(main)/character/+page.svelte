@@ -189,7 +189,6 @@
 					bind:value={query}
 					type="text"
 					name="q"
-					class="form-control valid"
 					placeholder="Search for an item"
 					aria-label="Search for an item"
 					aria-describedby="button-addon2" />

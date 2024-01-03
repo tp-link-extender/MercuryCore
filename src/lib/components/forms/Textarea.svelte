@@ -24,9 +24,7 @@
 			id={name}
 			{rows}
 			placeholder={placeholder || null}
-			class="form-control {$errors[name]
-				? 'is-in'
-				: ''}valid {$$restProps.class || ''}" />
+			class:is-invalid={$errors[name]} />
 
 		{#if help}
 			<small class="grey-text">

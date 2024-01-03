@@ -7,7 +7,7 @@
 	export let formData: any
 	const { form, errors, constraints } = formData
 
-	// could make this based on a js object or something
+	// could make forms based on a js object or something instead of components
 	// but concerns with forms that require more interactivity
 </script>
 
@@ -22,7 +22,7 @@
 			{name}
 			id={name}
 			{placeholder}
-			class="form-select {$errors[name] ? 'is-in' : ''}valid">
+			class="{$errors[name] ? 'is-invalid' : ''}">
 			<slot />
 		</select>
 

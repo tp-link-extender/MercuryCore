@@ -130,8 +130,7 @@ select
 textarea
 	background-color var(--accent) !important
 	color var(--light-text) !important
-.valid
-	border-color var(--accent2) !important
+	border 1px solid var(--accent2) !important
 
 a.light-text
 a > p
@@ -167,19 +166,16 @@ img[src^="/api/avatar"]
 
 // bootstrap variables
 :root
-	--bs-body-color #495057
-	--bs-link-color-rgb 52, 89, 230
-	--bs-link-hover-color-rgb 42, 71, 184
+	color #495057
 	@media (prefers-reduced-motion no-preference)
 		scroll-behavior smooth
 
 .btn
-	--bs-btn-padding-x 1rem
-	--bs-btn-padding-y 0.5rem
-	--bs-btn-font-size 0.875rem
-
-.dropdown-menu
-	--bs-dropdown-bg var(--darker)
+	padding-top 0.5rem
+	padding-bottom 0.5rem
+	padding-left 1rem
+	padding-right 1rem
+	font-size 0.875rem
 
 p
 span
@@ -201,81 +197,53 @@ span
 	padding-bottom 0.25rem
 	padding-left 0.5rem
 	font-size 0.875rem
-	border-radius var(--bs-border-radius-sm)
+	border-radius 0.25rem
 
 .btn-success
-	--bs-btn-bg #238560
-	--bs-btn-border-color #238560
-	--bs-btn-hover-bg #1e7152
-	--bs-btn-hover-border-color #1c6a4d
-	--bs-btn-focus-shadow-rgb 68, 151, 120
-	--bs-btn-active-bg #1c6a4d
-	--bs-btn-active-border-color #1a6448
-	--bs-btn-disabled-bg #238560
-	--bs-btn-disabled-border-color #238560
+	background #238560
+	border 1px solid #238560
+	&:focus-visible
+		box-shadow 0 0 0 0.25rem rgba(68, 151, 120, 0.5)
+	&:hover
+		background #1e7152
+		border-color #1c6a4d
+	&:active
+		background #1c6a4d
+		border-color #1a6448
 
 .btn-primary
-	--bs-btn-bg #3459e6
-	--bs-btn-border-color #3459e6
-	--bs-btn-hover-bg #2c4cc4
-	--bs-btn-hover-border-color #2a47b8
-	--bs-btn-focus-shadow-rgb 82, 114, 234
-	--bs-btn-active-bg #2a47b8
-	--bs-btn-active-border-color #2743ad
-	--bs-btn-disabled-bg #3459e6
-	--bs-btn-disabled-border-color #3459e6
+	background #3459e6
+	border 1px solid #3459e6
+	&:focus-visible
+		box-shadow 0 0 0 0.25rem rgba(82, 114, 234, 0.5)
+	&:hover
+		background #2c4cc4
+		border-color #2a47b8
+	&:active
+		background #2a47b8
+		border-color #2743ad
 
 .btn-info
-	--bs-btn-bg #287bb5
-	--bs-btn-border-color #287bb5
-	--bs-btn-hover-bg #22699a
-	--bs-btn-hover-border-color #206291
-	--bs-btn-focus-shadow-rgb 72, 143, 192
-	--bs-btn-active-bg #206291
-	--bs-btn-active-border-color #1e5c88
-	--bs-btn-disabled-bg #287bb5
-	--bs-btn-disabled-border-color #287bb5
+	background #287bb5
+	border 1px solid #287bb5
+	&:focus-visible
+		box-shadow 0 0 0 0.25rem rgba(72, 143, 192, 0.5)
+	&:hover
+		background #22699a
+		border-color #206291
+	&:active
+		background #206291
+		border-color #1e5c88
 
 .btn-success
 .btn-primary
 .btn-info
-	--bs-btn-active-shadow 0 1px 2px rgba(0, 0, 0, 0.05)
-	--bs-btn-active-color #fff
-	--bs-btn-disabled-color #fff
-	--bs-btn-color #fff
-	--bs-btn-hover-color #fff
+	color white
 
 .btn-sm
-	padding 0.25rem 0.5rem
+	padding 0.25rem 0.5rem !important
 
 // bootsrap compatibility stuff
-
-.shadow
-	box-shadow 0 0.5rem 1rem RGBA(0, 0, 0, 0.15) !important
-
-.shadow-none
-	box-shadow none !important
-
-.mw-100
-	max-width 100% !important
-
-.vw-100
-	width 100vw !important
-
-.min-vw-100
-	min-width 100vw !important
-
-.mh-100
-	max-height 100% !important
-
-.vh-100
-	height 100vh !important
-
-.min-vh-100
-	min-height 100vh !important
-
-.italic
-	font-style italic !important
 
 table
 	vertical-align top
@@ -337,10 +305,110 @@ div[role="progressbar"]
 	flex 1 1 auto
 	padding 1rem
 
-.form-control.is-invalid
-	border-color: var(--bs-form-invalid-border-color);
-	padding-right: calc(1.5em + 0.75rem);
-	background-image: url("/invalid.svg");
-	background-repeat: no-repeat;
-	background-position: right calc(0.375em + 0.1875rem) center;
-	background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+.is-invalid
+	border-color #dc3545 !important
+	padding-right 2.2rem
+	background-image url("/invalid.svg")
+	background-repeat no-repeat
+	background-position right 0.5rem center
+	background-size 1.2rem
+
+@keyframes checkmark
+	0%
+		background-position-y 2px
+	60%
+		background-position-y -1px
+	100%
+		background-position-y 0
+
+input
+select
+textarea
+	appearance none
+	outline none
+	border-radius 0.375rem
+	font-size 0.875rem
+	@media (prefers-reduced-motion no-preference)
+		transition box-shadow 0.15s ease-in-out
+	&:focus
+		@apply ring-3 ring-blue-700/50
+
+input[type=checkbox]
+	width 1.5rem
+	height 1.5rem
+	margin 0
+	cursor pointer
+	&:checked
+		background-image url("/check.svg")
+		animation checkmark 0.15s ease-out
+	&:indeterminate
+		background-image url("/indeterminate.svg")
+		animation checkmark 0.15s ease-out
+
+input[type=radio]
+	width 1rem
+	height 1rem
+	margin 0
+	border-radius 50%
+	cursor pointer
+	&:checked
+		background-image url("/radio.svg")
+
+select
+	width 100%
+	padding 0.7rem 1rem
+	background-image url("/select.svg")
+	background-repeat no-repeat
+	background-position right 0.75rem center
+	background-size 1rem 0.75rem
+	cursor pointer
+
+input[type=text]
+input[type=password]
+input[type=email]
+input[type=number]
+textarea
+	display block
+	width 100%
+	padding 0.7rem 1rem
+
+input[type=file]
+	padding 0
+	cursor pointer
+	// disable choose file button
+	&::-webkit-file-upload-button
+		display none
+
+	&::before
+		content "Choose file"
+		display inline-block
+		padding 0.7rem 1rem
+		margin-right 0.7rem
+		background-color var(--background)
+		border-radius 0.375rem 0 0 0.375rem
+
+.input-group
+	position relative
+	display flex
+	flex-wrap wrap // for errors n stuff
+	flex 1 1 auto
+	align-items stretch
+	width 100%
+
+	button
+	input
+	select
+		&:not(:last-child)
+			border-top-right-radius 0 !important
+			border-bottom-right-radius 0 !important
+		&:not(:first-child)
+			border-top-left-radius 0 !important
+			border-bottom-left-radius 0 !important
+	> button
+		max-height 41px
+		position relative
+		z-index 2
+	> input
+		width 1%
+		flex 1 1 auto
+		

@@ -43,7 +43,6 @@
 					bind:value={query}
 					type="text"
 					name="query"
-					class="form-control light-text valid"
 					placeholder="Search for a group"
 					aria-label="Search for a group"
 					aria-describedby="button-addon2" />

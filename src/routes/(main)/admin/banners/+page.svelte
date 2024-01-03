@@ -208,13 +208,9 @@
 {/if}
 
 <style lang="stylus">
-	input[type="color"]
+	input[type=color]
 		height 2.5rem
 		border-radius 0.375rem
-
-	input[type="checkbox"]
-		height 1.5rem
-		width 1.5rem
 
 	td
 		height: 4.8rem

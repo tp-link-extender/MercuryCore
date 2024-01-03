@@ -10,21 +10,14 @@
 	let copiedSuccess = false
 </script>
 
-<form
-	use:enhance
-	method="POST"
-	action="?/privatelink&tab=Privacy">
+<form use:enhance method="POST" action="?/privatelink&tab=Privacy">
 	<fieldset class="flex flex-wrap pb-2">
 		<label for="privateLink" class="w-full md:w-1/4">
 			Private Server Link
 		</label>
 		<div class="w-full md:w-3/4">
 			<div class="input-group">
-				<input
-					id="privateLink"
-					{value}
-					class="form-control valid"
-					disabled />
+				<input id="privateLink" {value} disabled />
 				<button
 					on:click={() => {
 						navigator.clipboard.writeText(value)

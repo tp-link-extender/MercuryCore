@@ -5,6 +5,7 @@ import {
 	presetUno,
 } from "unocss"
 import presetTagify from "@unocss/preset-tagify"
+import transformerDirectives from "@unocss/transformer-directives"
 
 let fa: { [k: string]: string }
 
@@ -47,15 +48,15 @@ export default defineConfig({
 			/^text-(primary|secondary|success|danger|warning|info|light|dark|white|body|muted)$/,
 			([, a]) => {
 				const o = {
-					"--bs-text-opacity": 1,
+					"--text-opacity": 1,
 				}
 
 				o["color"] = i(
 					a == "body"
-						? "RGBA(var(--bs-body-color-rgb), var(--bs-text-opacity))"
+						? "RGBA(var(--body-color-rgb), var(--text-opacity))"
 						: a == "muted"
-							? "var(--bs-secondary-color)"
-							: `RGBA(var(--bs-${a}-rgb), var(--bs-text-opacity))`
+							? "var(--secondary-color)"
+							: `RGBA(var(--${a}-rgb), var(--text-opacity))`
 				)
 
 				return o
@@ -66,8 +67,8 @@ export default defineConfig({
 		[
 			/^text-(black|white)-(\d+)$/,
 			([, a, n]) => ({
-				"--bs-text-opacity": 1,
-				[`--bs-${a}-color`]: i(
+				"--text-opacity": 1,
+				[`--${a}-color`]: i(
 					`RGBA(${a == "black" ? "0,0,0" : "255,255,255"}, ${
 						parseInt(n) / 100
 					})`
@@ -79,9 +80,9 @@ export default defineConfig({
 		[
 			/^bg-(primary|secondary|success|danger|warning|info|light|dark|white|body)$/,
 			([, a]) => ({
-				"--bs-bg-opacity": 1,
+				"--bg-opacity": 1,
 				"background-color": i(
-					`RGBA(var(--bs-${a}-rgb), var(--bs-bg-opacity))`
+					`RGBA(var(--${a}-rgb), var(--bg-opacity))`
 				),
 			}),
 		],
@@ -103,6 +104,7 @@ export default defineConfig({
 	],
 
 	presets: [presetTagify(), presetAttributify(), presetUno()],
+	transformers: [transformerDirectives()],
 })
 
 fa = {

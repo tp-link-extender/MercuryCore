@@ -5,7 +5,6 @@
 	export let name: string
 	export let type: HTMLInputTypeAttribute
 
-	export let inline = false
 	export let formData: any
 	const { form, errors, constraints } = formData
 </script>
@@ -16,9 +15,7 @@
 		bind:checked={$form[name]}
 		{name}
 		id={name}
-		type="checkbox"
-		class="form-check-input valid"
-		style="width: 1.5rem; height: 1.5rem" />
+		type="checkbox" />
 {:else}
 	<input
 		{...$$restProps}
@@ -27,14 +24,7 @@
 		{name}
 		id={name}
 		{...{ type /* lmfao */ }}
-		class="form-{type == 'checkbox'
-			? 'check-input'
-			: type == 'color'
-				? ''
-				: 'control'} {$errors[name] ? 'is-in' : ''}valid {inline
-			? 'rounded-r-0'
-			: // idk y unocss isn't extracting from class: directives
-				''}"
+		class:is-invalid={$errors[name]}
 		style={type == "number"
 			? "width: 9rem"
 			: type == "color"

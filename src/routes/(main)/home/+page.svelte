@@ -39,13 +39,12 @@
 					{formData}
 					inline
 					submit="<fa fa-paper-plane-top />"
-					working="..."
-					class="input-group">
+					working="...">
 					<Input
 						{formData}
 						inline
 						name="status"
-						placeholder="Post status" />
+						placeholder="Post a status" />
 				</Form>
 				<div class="flex flex-col gap-3">
 					{#each sortedFeed as status, num}
@@ -95,9 +94,7 @@
 			</div>
 			<div class="w-1/2 cmd:w-2/3 lg:w-1/2 xl:w-2/3">
 				<h2>Random fact</h2>
-				<div
-					id="fact"
-					class="card bg-darker card-body text-base pb-6">
+				<div id="fact" class="card bg-darker card-body text-base pb-6">
 					{data.stuff.fact}
 				</div>
 			</div>

@@ -17,7 +17,6 @@
 					id="ticket"
 					required
 					value={data.serverTicket}
-					class="form-control valid"
 					disabled />
 				<button
 					class="btn btn-{$message && $page.status == 200

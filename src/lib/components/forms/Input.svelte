@@ -27,11 +27,11 @@
 		<!-- welp, boilerplate begets boilerplate -->
 		{#if after}
 			<div class="flex items-center">
-				<SubInput {...$$restProps} {name} {type} {inline} {formData} />
+				<SubInput {...$$restProps} {name} {type} {formData} />
 				{@html after}
 			</div>
 		{:else}
-			<SubInput {...$$restProps} {name} {type} {inline} {formData} />
+			<SubInput {...$$restProps} {name} {type} {formData} />
 		{/if}
 
 		{#if help}

@@ -6,13 +6,7 @@
 <div class="form-group flex flex-wrap">
 	<label for="name" class="w-full md:w-1/3 text-md-right">Username</label>
 	<div class="w-full md:w-2/3">
-		<input
-			type="text"
-			readonly
-			id="name"
-			disabled
-			value={user?.username}
-			class="form-control valid" />
+		<input type="text" readonly id="name" disabled value={user?.username} />
 		<small class="w-full grey-text pb-2">
 			You cannot change your username.
 		</small>
@@ -26,12 +20,7 @@
 			Email Address
 		</label>
 		<div class="w-full md:w-2/3">
-			<input
-				type="text"
-				readonly
-				id="email"
-				value={user.email}
-				class="form-control valid" />
+			<input type="text" readonly id="email" value={user.email} />
 		</div>
 	</div>
 	<hr class="grey-text" />
