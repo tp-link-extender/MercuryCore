@@ -61,8 +61,8 @@
 				Endless possibilities. New features. Same nostalgia.
 			</p>
 			<h2
-				class="p-2 py-1 rounded-3 font-bold text-base
-				bg-secondary text-light opacity-75">
+				class="p-2 py-1 rounded-2 font-bold text-base
+				bg-neutral-5 opacity-75">
 				Closed Beta
 			</h2>
 		</div>
@@ -86,7 +86,7 @@
 				{#if cubePercentage2 > 0}
 					<h1
 						in:fade
-						class="pointer-events-none text-danger opacity-75 font-black">
+						class="pointer-events-none text-red-5 opacity-75 font-black">
 						{cubePercentage2}%
 					</h1>
 				{/if}
@@ -97,7 +97,7 @@
 					</h2>
 				{:else if cubePercentage == 100 && cubePercentage2 < 2}
 					<h2
-						class="pointer-events-none text-danger opacity-75 font-black">
+						class="pointer-events-none text-red-5 opacity-75 font-black">
 						click the cubes
 					</h2>
 				{/if}

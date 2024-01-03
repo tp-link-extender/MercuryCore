@@ -83,7 +83,7 @@
 										method="POST"
 										action="?/disable&id={invite.id}">
 										<button
-											class="btn btn-sm no-underline text-danger my-0">
+											class="btn btn-sm no-underline text-red-5 my-0">
 											<fa fa-ban />
 											Disable Invite
 										</button>

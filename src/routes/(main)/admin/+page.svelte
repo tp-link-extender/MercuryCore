@@ -185,26 +185,26 @@
 							<div>
 								<fa
 									fa-file-circle-minus
-									class="text-warning pr-2" />
+									class="text-yellow-5 pr-2" />
 								<b>0 assets</b>
 								are currently pending
 							</div>
 							<div>
 								<fa
 									fa-file-circle-check
-									class="text-success pr-2" />
+									class="text-emerald-6 pr-2" />
 								<b>0 assets</b>
 								have been approved
 							</div>
 							<div>
 								<fa
 									fa-file-circle-xmark
-									class="text-danger pr-2" />
+									class="text-red-5 pr-2" />
 								<b>0 assets</b>
 								have been denied
 							</div>
 							<div>
-								<fa fa-folder-closed class="text-info pr-2" />
+								<fa fa-folder-closed class="text-cyan-5 pr-2" />
 								<b>0 assets</b>
 								in total
 							</div>

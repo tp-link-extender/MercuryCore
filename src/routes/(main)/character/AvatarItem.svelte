@@ -18,27 +18,29 @@
 	action="/character?/{asset.wearing
 		? 'un'
 		: ''}equip&tab={currentTab}&id={asset.id}">
-	<button in:fade|global={{ num, total }} class="card bg-a assetcard h-full p-4">
-			<div class="text-center pb-4">
-				<img
-					class="w-85%"
-					src="/avatarshop/{asset.id}/{asset.name}/icon"
-					alt={asset.name} />
-			</div>
-			{#if asset.wearing}
-				<div
-					class="top-0 end-0 pr-1 absolute
+	<button
+		in:fade|global={{ num, total }}
+		class="card bg-a assetcard h-full p-4">
+		<div class="text-center pb-4">
+			<img
+				class="w-85%"
+				src="/avatarshop/{asset.id}/{asset.name}/icon"
+				alt={asset.name} />
+		</div>
+		{#if asset.wearing}
+			<div
+				class="top-0 end-0 pr-1 absolute
 						translate-middle">
-					<small
-						class="text-light p-2 py-1 rounded-3
+				<small
+					class="text-white p-2 py-1 rounded-3
 							font-bold bg-primary">
-						Wearing
-					</small>
-				</div>
-			{/if}
-			<span class="text-base">
-				{asset.name}
-			</span>
+					Wearing
+				</small>
+			</div>
+		{/if}
+		<span class="text-base">
+			{asset.name}
+		</span>
 	</button>
 </form>
 

@@ -128,7 +128,8 @@
 							<a
 								aria-label="Place settings"
 								href="/place/{data.id}/{data.name}/settings"
-								class="btn btn-sm btn-outline-warning">
+								class="btn btn-sm text-yellow-5 hover:text-black
+								border-yellow-5 hover:bg-yellow-5">
 								<fa fa-sliders />
 							</a>
 						</div>
@@ -149,7 +150,7 @@
 					Gears: <far fa-circle-xmark />
 				</div>
 				<small
-					class="text-light rounded-2 bg-{online
+					class="text-white rounded-2 bg-{online
 						? 'success'
 						: 'danger'} p-2 py-1">
 					{online ? "Online" : "Offline"}
@@ -202,27 +203,28 @@
 							name="action"
 							value={data.likes ? "unlike" : "like"}
 							aria-label={data.likes ? "Unlike" : "Like"}
-							class="btn btn-sm btn-{data.likes
-								? ''
-								: 'outline-'}success">
-							<i class="fa{data.likes ? '' : 'r'} fa-thumbs-up" />
+							class="btn p-0 px-1 text-emerald-5">
+							<i
+								class="fa{data.likes
+									? ' text-emerald-6 hover:text-emerald-3'
+									: 'r text-neutral-5 hover:text-neutral-3'}
+								fa-thumbs-up transition text-lg" />
 						</button>
 						<button
 							name="action"
 							value={data.dislikes ? "undislike" : "dislike"}
 							aria-label={data.dislikes ? "Undislike" : "Dislike"}
-							class="btn btn-sm btn-{data.dislikes
-								? ''
-								: 'outline-'}danger">
+							class="btn p-0 px-1 text-red-5">
 							<i
 								class="fa{data.dislikes
-									? ''
-									: 'r'} fa-thumbs-down" />
+									? ' text-red-5 hover:text-red-3'
+									: 'r text-neutral-5 hover:text-neutral-3'}
+								fa-thumbs-down transition text-lg" />
 						</button>
 					</div>
 					<div class="flex bg-a2 h-3px">
 						<div
-							class="bg-success"
+							class="bg-emerald-5"
 							role="progressbar"
 							aria-label="Likes"
 							style="width: {(data.likeCount /
@@ -233,7 +235,7 @@
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 						<div
-							class="bg-danger"
+							class="bg-red-5"
 							role="progressbar"
 							aria-label="Dislikes"
 							style="width: {(data.dislikeCount /

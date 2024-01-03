@@ -83,7 +83,7 @@
 										method="POST"
 										action="?/delete&id={banner.id}">
 										<button
-											class="btn btn-sm no-underline text-danger">
+											class="btn btn-sm no-underline text-red-5">
 											<fa fa-trash class="pr-1" />
 											Delete Banner
 										</button>
@@ -159,8 +159,8 @@
 					</tbody>
 				</table>
 				<p
-					class:text-success={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
+					class:text-emerald-6={$page.status == 200}
+					class:text-red-5={$page.status >= 400}>
 					{$message || ""}
 				</p>
 			</Tab>

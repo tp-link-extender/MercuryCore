@@ -150,7 +150,7 @@
 						Regenerate
 					</button>
 				</form>
-				<p class="text-danger">
+				<p class="text-red-5">
 					{form?.msg || ""}
 				</p>
 				<img

@@ -44,7 +44,7 @@
 				<small
 					id="copiedSuccess"
 					transition:fade
-					class="block text-warning">
+					class="block text-yellow-5">
 					Successfully copied link to clipboard
 				</small>
 			{/if}

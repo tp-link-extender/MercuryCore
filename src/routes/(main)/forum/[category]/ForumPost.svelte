@@ -41,38 +41,38 @@
 		method="POST"
 		action="?/like&id={post.id}">
 		<div class="flex flex-col">
-			<div class="text-center">
-				<button
-					name="action"
-					value={post.likes ? "unlike" : "like"}
-					aria-label={post.likes ? "Unlike" : "Like"}
-					disabled={likesDisabled}
-					class="btn btn-sm {post.likes
-						? 'btn-success'
-						: 'btn-outline-success'}">
-					<i class="fa{post.likes ? '' : 'r'} fa-thumbs-up" />
-				</button>
-			</div>
+			<button
+				name="action"
+				value={post.likes ? "unlike" : "like"}
+				aria-label={post.likes ? "Unlike" : "Like"}
+				disabled={likesDisabled}
+				class="btn p-1">
+				<i
+					class="fa{post.likes
+						? ' text-emerald-6 hover:text-emerald-3'
+						: 'r text-neutral-5 hover:text-neutral-3'}
+					fa-thumbs-up transition text-lg" />
+			</button>
 			<span
 				class="py-2 text-center {post.likes
-					? 'text-success font-bold'
+					? 'text-emerald-6 font-bold'
 					: post.dislikes
-						? 'text-danger font-bold'
+						? 'text-red-5 font-bold'
 						: ''}">
 				{post.likeCount - post.dislikeCount}
 			</span>
-			<div class="text-center">
-				<button
-					name="action"
-					value={post.dislikes ? "undislike" : "dislike"}
-					aria-label={post.dislikes ? "Undislike" : "Dislike"}
-					disabled={dislikesDisabled}
-					class="btn btn-sm {post.dislikes
-						? 'btn-danger'
-						: 'btn-outline-danger'}">
-					<i class="fa{post.dislikes ? '' : 'r'} fa-thumbs-down" />
-				</button>
-			</div>
+			<button
+				name="action"
+				value={post.dislikes ? "undislike" : "dislike"}
+				aria-label={post.dislikes ? "Undislike" : "Dislike"}
+				disabled={dislikesDisabled}
+				class="btn p-1">
+				<i
+					class="fa{post.dislikes
+						? ' text-red-5 hover:text-red-3'
+						: 'r text-neutral-5 hover:text-neutral-3'}
+					fa-thumbs-down transition text-lg" />
+			</button>
 		</div>
 	</form>
 	<div class="pl-2 flex flex-col w-full">

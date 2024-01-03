@@ -105,7 +105,7 @@
 				<div class="w-full md:w-2/3 flex flex-row-reverse">
 					<div class="card p-4">
 						<p class="light-text text-center mb-0 pb-1">
-							Price: <span class="text-success">
+							Price: <span class="text-emerald-6">
 								<far fa-gem />
 								{data.price}
 							</span>

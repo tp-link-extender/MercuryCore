@@ -40,7 +40,7 @@
 
 							<td class="flex justify-center gap-3">
 								<div class="text-base pt-2">
-									<span class="text-success">
+									<span class="text-emerald-6">
 										<fa fa-gem />
 										{transaction.amountSent}
 									</span>
@@ -61,7 +61,7 @@
 								{#if value}
 									<div class="text-base pt-2">
 										<fa fa-arrow-right class="mr-1" />
-										<span class="text-success">
+										<span class="text-emerald-6">
 											<fa fa-gem />
 											{Math.round(
 												(1 -

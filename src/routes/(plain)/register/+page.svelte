@@ -93,7 +93,7 @@
 			It will have all permissions, and will be the destination for all
 			transactions that aren't sent to a specific user. It will be
 			initialised with a balance of
-			<span class="text-success">
+			<span class="text-emerald-6">
 				<fa fa-gem />
 				999999
 			</span>

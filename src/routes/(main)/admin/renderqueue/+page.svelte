@@ -27,23 +27,23 @@
 						<div class="card-body">
 							<h2 class="fs-3 mb-0">Render Server</h2>
 							<small class="pb-3">
-								is <b class="text-success">active</b>
+								is <b class="text-emerald-6">active</b>
 							</small>
 
 							<div>
-								<fa fa-image class="text-success pr-1" />
+								<fa fa-image class="text-emerald-6 pr-1" />
 								<b>0 renders</b>
 								Completed
 							</div>
 							<div>
 								<fa
 									fa-bars-progress
-									class="text-warning pr-1" />
+									class="text-yellow-5 pr-1" />
 								<b>0 renders</b>
 								Pending
 							</div>
 							<div>
-								<fa fa-image-slash class="text-danger pr-1" />
+								<fa fa-image-slash class="text-red-5 pr-1" />
 								<b>0 renders</b>
 								Failed
 							</div>

@@ -122,7 +122,7 @@
 								<fa fa-arrows-rotate />
 								Re-render
 							</button>
-							<small class="text-danger block">
+							<small class="text-red-5 block">
 								{form?.msg || ""}
 							</small>
 						</form>{/if}

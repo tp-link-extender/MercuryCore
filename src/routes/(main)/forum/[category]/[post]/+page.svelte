@@ -59,40 +59,37 @@
 			class="sidebar bg-a mr-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
-			<div class="flex flex-col pb-2">
-				<div>
-					<button
-						name="action"
-						value={data.likes ? "unlike" : "like"}
-						aria-label={data.likes ? "Unlike" : "Like"}
-						class="btn btn-sm {data.likes
-							? 'btn-success'
-							: 'btn-outline-success'}">
-						<i class="fa{data.likes ? '' : 'r'} fa-thumbs-up" />
-					</button>
-				</div>
+			<div class="flex flex-col">
+				<button
+					name="action"
+					value={data.likes ? "unlike" : "like"}
+					aria-label={data.likes ? "Unlike" : "Like"}
+					class="btn p-1">
+					<i
+						class="fa{data.likes
+							? ' text-emerald-6 hover:text-emerald-3'
+							: 'r text-neutral-5 hover:text-neutral-3'}
+						fa-thumbs-up transition text-lg" />
+				</button>
 				<span
 					class="py-2 text-center {data.likes
-						? 'text-success font-bold'
+						? 'text-emerald-6 font-bold'
 						: data.dislikes
-							? 'text-danger font-bold'
+							? 'text-red-5 font-bold'
 							: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
-				<div>
-					<button
-						name="action"
-						value={data.dislikes ? "undislike" : "dislike"}
-						aria-label={data.dislikes ? "Undislike" : "Dislike"}
-						class="btn btn-sm {data.dislikes
-							? 'btn-danger'
-							: 'btn-outline-danger'}">
-						<i
-							class="fa{data.dislikes
-								? ''
-								: 'r'} fa-thumbs-down" />
-					</button>
-				</div>
+				<button
+					name="action"
+					value={data.dislikes ? "undislike" : "dislike"}
+					aria-label={data.dislikes ? "Undislike" : "Dislike"}
+					class="btn p-1">
+					<i
+						class="fa{data.dislikes
+							? ' text-red-5 hover:text-red-3'
+							: 'r text-neutral-5 hover:text-neutral-3'}
+						fa-thumbs-down transition text-lg" />
+				</button>
 			</div>
 		</form>
 		<div class="p-4 no-underline light-text w-full">
