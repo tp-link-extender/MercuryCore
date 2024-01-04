@@ -6,6 +6,7 @@ import {
 } from "unocss"
 import presetTagify from "@unocss/preset-tagify"
 import transformerDirectives from "@unocss/transformer-directives"
+import transformerVariantGroup from "@unocss/transformer-variant-group"
 
 let fa: { [k: string]: string }
 
@@ -13,13 +14,6 @@ export default defineConfig({
 	rules: [
 		// Fontawesome
 		[/^fa-([\.\d]+)x$/, ([, n]) => ({ "font-size": `${n}em` })],
-		[
-			/^fa-rotate-([\.\d]+)$/,
-			([, n]) => ({
-				transform: `rotate(${n}deg)`,
-				"-webkit-transform": `rotate(${n}deg)`,
-			}),
-		],
 		[
 			/^fa-([a-zA-Z0-9-]+)$/,
 			([, c], { rawSelector }) =>
@@ -46,7 +40,7 @@ export default defineConfig({
 	],
 
 	presets: [presetTagify(), presetAttributify(), presetUno()],
-	transformers: [transformerDirectives()],
+	transformers: [transformerDirectives(), transformerVariantGroup()],
 })
 
 fa = {

@@ -24,7 +24,6 @@ The following extensions are recommended:
 -   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 -   [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
 -   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
--   [Sass (.sass only)](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented)
 -   [stylus](https://marketplace.visualstudio.com/items?itemName=sysoev.language-stylus)
 -   [SurrealQL](https://marketplace.visualstudio.com/items?itemName=surrealdb.surrealql)
 -   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
@@ -97,7 +96,7 @@ Mercury's frontent is built with [Svelte](https://svelte.dev), a UI framework th
 
 The site uses [TypeScript](https://typescriptlang.org) throughout, a language that adds type extensions ontop of Javascript. An IDE that supports intellisense is recommended to make development easier.
 
-Styling is done in [Stylus](https://stylus-lang.com) and [Sass](https://sass-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
+Styling is done in [Stylus](https://stylus-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
 
 [SurrealDB](https://surrealdb.com) is used as the database, a powerful multi-model database that easily allows for storing and querying the highly relational data used in Mercury.
 

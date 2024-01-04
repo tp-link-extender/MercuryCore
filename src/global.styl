@@ -206,16 +206,18 @@ img[src^="/api/avatar"]
 	padding-bottom 0.7rem
 	padding-left 1rem
 	padding-right 1rem
-	font-size 0.875rem
+	font-size 0.9rem
 	border-radius 0.375rem
 	cursor pointer
 
 .btn-sm
-	font-size 0.75rem
+	font-size 0.8rem
 	padding-top 0.25rem
 	padding-bottom 0.25rem
 	padding-left 0.5rem
 	padding-right 0.5rem
+	border-radius 0.25rem
+	font-weight 400
 
 p
 span
@@ -239,49 +241,129 @@ span
 	font-size 0.875rem
 	border-radius 0.25rem
 
-.btn-success
-	@apply bg-emerald-6
-	&:hover
-		@apply bg-emerald-7
-	&:active
-		@apply bg-emerald-8 ring-3 ring-emerald-7/50
-
 .btn-primary
 	@apply bg-blue-6
 	&:hover
 		@apply bg-blue-7
 	&:active
-		@apply bg-blue-8 ring-3 ring-blue-7/50
+		@apply ring-blue-7/50
+	&-outline
+		@apply text-blue-6 border-1 border-blue-6
+		&:hover
+			@apply text-white bg-blue-6
+		&:active
+			@apply ring-blue-7/50
 
-.btn-info
-	@apply bg-cyan-6
+.btn-secondary
+	@apply bg-neutral-5
 	&:hover
-		@apply bg-cyan-7
+		@apply bg-neutral-6
 	&:active
-		@apply bg-cyan-8 ring-3 ring-cyan-7/50
+		@apply ring-neutral-7/50
+	&-outline
+		@apply text-neutral-5 border-1 border-neutral-5
+		&:hover
+			@apply text-white bg-neutral-5
+		&:active
+			@apply ring-neutral-7/50
+
+.btn-success
+	@apply bg-emerald-6
+	&:hover
+		@apply bg-emerald-7
+	&:active
+		@apply ring-emerald-7/50
+	&-outline
+		@apply text-emerald-6 border-1 border-emerald-6
+		&:hover
+			@apply text-white bg-emerald-6
+		&:active
+			@apply ring-emerald-7/50
 
 .btn-danger
-	@apply bg-red-6
+	@apply bg-red-5
 	&:hover
-		@apply bg-red-7
+		@apply bg-red-6
 	&:active
-		@apply bg-red-8 ring-3 ring-red-7/50
+		@apply ring-red-7/50
+	&-outline
+		@apply text-red-5 border-1 border-red-5
+		&:hover
+			@apply text-white bg-red-5
+		&:active
+			@apply ring-red-7/50
+
+.btn-warning
+	@apply bg-yellow-5
+	&:hover
+		@apply bg-yellow-4
+	&:active
+		@apply ring-yellow-6/50
+	&-outline
+		@apply text-yellow-5 border-1 border-yellow-5
+		&:hover
+			@apply text-white bg-yellow-5
+		&:active
+			@apply ring-yellow-6/50
+
+.btn-info
+	@apply bg-cyan-5
+	&:hover
+		@apply bg-cyan-4
+	&:active
+		@apply ring-cyan-6/50
+	&-outline
+		@apply text-cyan-5 border-1 border-cyan-5
+		&:hover
+			@apply text-white bg-cyan-5
+		&:active
+			@apply ring-cyan-6/50
+
+.btn-light
+	@apply bg-neutral-2
+	&:hover
+		@apply bg-neutral-3
+	&:active
+		@apply ring-neutral-3/50
+	&-outline
+		@apply text-neutral-2 border-1 border-neutral-2
+		&:hover
+			@apply text-white bg-neutral-2
+		&:active
+			@apply ring-neutral-3/50
 
 .btn-dark
 	@apply bg-neutral-8
 	&:hover
-		@apply bg-neutral-9
+		@apply bg-neutral-7
 	&:active
-		@apply bg-neutral-950 ring-3 ring-neutral-7/50
+		@apply ring-neutral-6/50
+	&-outline
+		@apply text-neutral-8 border-1 border-neutral-8
+		&:hover
+			@apply text-white bg-neutral-8
+		&:active
+			@apply ring-neutral-6/50
 
-.btn-success
-.btn-primary
-.btn-info
-.btn-danger
-.btn-dark
-	@apply border-1
-	color white
-	transition background 0.3s, box-shadow 0.15s
+lightstyles = primary secondary success danger dark
+darkstyles = warning info light
+styles = primary secondary success danger warning info light dark
+
+for style in styles
+	.btn-{style}
+	.btn-{style}-outline
+		@apply border-1
+		transition background 0.3s, color 0.3s, box-shadow 0.15s
+		&:active
+			@apply ring-3
+
+for style in lightstyles
+	.btn-{style}
+		color white
+for style in darkstyles
+	.btn-{style}-outline
+		&:hover
+			color black
 
 .btn-sm
 	padding 0.25rem 0.5rem !important
@@ -464,4 +546,3 @@ input[type=file]
 	> input
 		width 1%
 		flex 1 1 auto
-		
