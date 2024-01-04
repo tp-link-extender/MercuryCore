@@ -1,4 +1,6 @@
 <script lang="ts">
+	import AdminShell from "./AdminShell.svelte"
+
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],
@@ -78,144 +80,130 @@
 		</span>
 	</h2>
 	<hr />
-	<div class="flex flex-wrap">
-		<TabNav
-			bind:tabData
-			vertical
-			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
-		<div class="w-full lg:w-5/6 md:w-3/4">
-			{#each tabNames.slice(0, -1) as key}
-				<Tab {tabData} class="grid lg:grid-cols-4 gap-2">
-					{#each panel[key] as i, num}
-						<AdminLink
-							href={i[1]}
-							iconClass={i[2]}
-							{num}
-							total={panel[key].length}
-							name={i[0]} />
-					{/each}
-				</Tab>
-			{/each}
+	<AdminShell bind:tabData>
+		{#each tabNames.slice(0, -1) as key}
+			<Tab {tabData} class="grid lg:grid-cols-4 gap-2">
+				{#each panel[key] as i, num}
+					<AdminLink
+						href={i[1]}
+						iconClass={i[2]}
+						{num}
+						total={panel[key].length}
+						name={i[0]} />
+				{/each}
+			</Tab>
+		{/each}
 
-			<Tab {tabData}>
-				<div class="flex flex-wrap">
-					<div
-						class="w-full lg:max-w-7/12 flex flex-col gap-2 lg:pr-2 pb-2">
-						<div class="card bg-a p-4">
+		<Tab {tabData}>
+			<div class="flex flex-wrap">
+				<div
+					class="w-full lg:max-w-7/12 flex flex-col gap-2 lg:pr-2 pb-2">
+					<div class="card bg-a p-4">
+						<h3>
+							<fa fa-memory />
+							{(
+								(data.totalmem - data.freemem) /
+								1024 ** 3
+							).toFixed(2)} / {(
+								data.totalmem /
+								1024 ** 3
+							).toFixed(2)} GB
+						</h3>
+						<span class="pb-2">
+							{Math.round(
+								(data.totalmem - data.freemem) / 1024 ** 2
+							)} MB is being used
+						</span>
+						<div
+							class="flex bg-darker rounded-2"
+							style="height: 1rem">
+							<div
+								class="progress-bar-striped bg-emerald-6 rounded-2"
+								role="progressbar"
+								aria-valuenow={data.totalmem - data.freemem}
+								aria-valuemin={0}
+								aria-valuemax={data.totalmem}
+								style="width: {((data.totalmem - data.freemem) /
+									data.totalmem) *
+									100}%;" />
+						</div>
+					</div>
+					<div class="card bg-a p-4">
+						{#await diskSpace || getDiskSpace()}
+							<h3>Loading...</h3>
+						{:then disk}
 							<h3>
-								<fa fa-memory />
-								{(
-									(data.totalmem - data.freemem) /
-									1024 ** 3
-								).toFixed(2)} / {(
-									data.totalmem /
-									1024 ** 3
-								).toFixed(2)} GB
+								<fa fa-hard-drive class="pr-2" />
+								{((disk.size - disk.free) / 1024 ** 3).toFixed(
+									2
+								)} / {(disk.size / 1024 ** 3).toFixed(2)} GB
 							</h3>
 							<span class="pb-2">
 								{Math.round(
-									(data.totalmem - data.freemem) / 1024 ** 2
+									(disk.size - disk.free) / 1024 ** 2
 								)} MB is being used
 							</span>
 							<div
 								class="flex bg-darker rounded-2"
 								style="height: 1rem">
 								<div
-									class="progress-bar-striped bg-emerald-6 rounded-2"
+									class="progress-bar-striped bg-blue-6 rounded-2"
 									role="progressbar"
-									aria-valuenow={data.totalmem - data.freemem}
+									aria-valuenow={disk.size - disk.free}
 									aria-valuemin={0}
-									aria-valuemax={data.totalmem}
-									style="width: {((data.totalmem -
-										data.freemem) /
-										data.totalmem) *
+									aria-valuemax={disk.size}
+									style="width: {((disk.size - disk.free) /
+										disk.size) *
 										100}%;" />
 							</div>
-						</div>
-						<div class="card bg-a p-4">
-							{#await diskSpace || getDiskSpace()}
-								<h3>Loading...</h3>
-							{:then disk}
-								<h3>
-									<fa fa-hard-drive class="pr-2" />
-									{(
-										(disk.size - disk.free) /
-										1024 ** 3
-									).toFixed(2)} / {(
-										disk.size /
-										1024 ** 3
-									).toFixed(2)} GB
-								</h3>
-								<span class="pb-2">
-									{Math.round(
-										(disk.size - disk.free) / 1024 ** 2
-									)} MB is being used
-								</span>
-								<div
-									class="flex bg-darker rounded-2"
-									style="height: 1rem">
-									<div
-										class="progress-bar-striped bg-blue-6 rounded-2"
-										role="progressbar"
-										aria-valuenow={disk.size - disk.free}
-										aria-valuemin={0}
-										aria-valuemax={disk.size}
-										style="width: {((disk.size -
-											disk.free) /
-											disk.size) *
-											100}%;" />
-								</div>
-							{/await}
-						</div>
+						{/await}
 					</div>
-					<div class="w-full lg:max-w-5/12 flex flex-col gap-2">
-						<div class="card bg-a p-4">
-							<h3>
-								<far fa-user class="pr-2" />
-								Users
-							</h3>
-							<span>
-								<b class="text-blue-5">0 users</b>
-								are currently online
-							</span>
+				</div>
+				<div class="w-full lg:max-w-5/12 flex flex-col gap-2">
+					<div class="card bg-a p-4">
+						<h3>
+							<far fa-user class="pr-2" />
+							Users
+						</h3>
+						<span>
+							<b class="text-blue-5">0 users</b>
+							are currently online
+						</span>
+					</div>
+					<div class="card bg-a p-4">
+						<h3>
+							<far fa-file class="pr-2" />
+							Assets
+						</h3>
+						<div>
+							<fa
+								fa-file-circle-minus
+								class="text-yellow-5 pr-2" />
+							<b>0 assets</b>
+							are currently pending
 						</div>
-						<div class="card bg-a p-4">
-							<h3>
-								<far fa-file class="pr-2" />
-								Assets
-							</h3>
-							<div>
-								<fa
-									fa-file-circle-minus
-									class="text-yellow-5 pr-2" />
-								<b>0 assets</b>
-								are currently pending
-							</div>
-							<div>
-								<fa
-									fa-file-circle-check
-									class="text-emerald-6 pr-2" />
-								<b>0 assets</b>
-								have been approved
-							</div>
-							<div>
-								<fa
-									fa-file-circle-xmark
-									class="text-red-5 pr-2" />
-								<b>0 assets</b>
-								have been denied
-							</div>
-							<div>
-								<fa fa-folder-closed class="text-cyan-5 pr-2" />
-								<b>0 assets</b>
-								in total
-							</div>
+						<div>
+							<fa
+								fa-file-circle-check
+								class="text-emerald-6 pr-2" />
+							<b>0 assets</b>
+							have been approved
+						</div>
+						<div>
+							<fa fa-file-circle-xmark class="text-red-5 pr-2" />
+							<b>0 assets</b>
+							have been denied
+						</div>
+						<div>
+							<fa fa-folder-closed class="text-cyan-5 pr-2" />
+							<b>0 assets</b>
+							in total
 						</div>
 					</div>
 				</div>
-			</Tab>
-		</div>
-	</div>
+			</div>
+		</Tab>
+	</AdminShell>
 </div>
 
 <style lang="stylus">

@@ -128,8 +128,8 @@
 							<a
 								aria-label="Place settings"
 								href="/place/{data.id}/{data.name}/settings"
-								class="btn btn-sm text-yellow-5 hover:text-black
-								border-yellow-5 hover:bg-yellow-5">
+								class="btn btn-sm text-yellow-5 border-yellow-5
+								hover:(text-black bg-yellow-5)">
 								<fa fa-sliders />
 							</a>
 						</div>
