@@ -2,6 +2,7 @@
 	import { invalidate } from "$app/navigation"
 	import { page } from "$app/stores"
 	import superForm from "$lib/superForm"
+	import AdminShell from "../AdminShell.svelte"
 
 	export let data
 
@@ -36,138 +37,133 @@
 		<fa fa-caret-left />
 		Back to panel
 	</a>
-	<div class="flex flex-wrap pt-6">
-		<TabNav
-			bind:tabData
-			vertical
-			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
-		<div class="w-full lg:w-5/6 md:w-3/4">
-			<Tab {tabData}>
-				<Form {formData} submit="Create" action="?/create">
-					<Textarea
-						{formData}
-						name="bannerText"
-						label="Banner text"
-						placeholder="3-100 characters" />
-					<Input
-						{formData}
-						name="bannerColour"
-						label="Banner colour"
-						type="color" />
-					<Input
-						{formData}
-						name="bannerTextLight"
-						label="Light text"
-						type="checkbox" />
-				</Form>
-			</Tab>
 
-			<Tab {tabData}>
-				<table class="w-full light-text">
-					<thead>
+	<AdminShell bind:tabData>
+		<Tab {tabData}>
+			<Form {formData} submit="Create" action="?/create">
+				<Textarea
+					{formData}
+					name="bannerText"
+					label="Banner text"
+					placeholder="3-100 characters" />
+				<Input
+					{formData}
+					name="bannerColour"
+					label="Banner colour"
+					type="color" />
+				<Input
+					{formData}
+					name="bannerTextLight"
+					label="Light text"
+					type="checkbox" />
+			</Form>
+		</Tab>
+
+		<Tab {tabData}>
+			<table class="w-full light-text">
+				<thead>
+					<tr>
+						<th scope="col">Options</th>
+						<th scope="col">Active</th>
+						<th scope="col">Body</th>
+						<th scope="col">Color</th>
+						<th scope="col">Text Color</th>
+						<th scope="col">Creator</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each data.banners as banner}
 						<tr>
-							<th scope="col">Options</th>
-							<th scope="col">Active</th>
-							<th scope="col">Body</th>
-							<th scope="col">Color</th>
-							<th scope="col">Text Color</th>
-							<th scope="col">Creator</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each data.banners as banner}
-							<tr>
-								<td>
-									<form
-										use:enhance
-										method="POST"
-										action="?/delete&id={banner.id}">
-										<button
-											class="btn py-0 no-underline text-red-5">
-											<fa fa-trash class="pr-1" />
-											Delete Banner
-										</button>
-									</form>
-									<form
-										use:enhance
-										method="POST"
-										action="?/{banner.active
-											? 'hide'
-											: 'show'}&id={banner.id}">
-										<button
-											class="btn py-0 no-underline {banner.active
-												? 'text-yellow-5'
-												: 'text-emerald-5'}">
-											<i
-												class="fa {banner.active
-													? 'fa-eye-slash'
-													: 'fa-eye'}" />
-											{banner.active
-												? "Deactivate"
-												: "Activate"}
-										</button>
-									</form>
-								</td>
-								<td>{banner.active ? "Yes" : "No"}</td>
-								<td>
+							<td>
+								<form
+									use:enhance
+									method="POST"
+									action="?/delete&id={banner.id}">
 									<button
-										type="button"
-										on:click={viewBody(banner)}
-										class="btn btn-sm btn-success">
-										View Body
+										class="btn py-0 no-underline text-red-5">
+										<fa fa-trash class="pr-1" />
+										Delete Banner
 									</button>
-								</td>
-								<td>
+								</form>
+								<form
+									use:enhance
+									method="POST"
+									action="?/{banner.active
+										? 'hide'
+										: 'show'}&id={banner.id}">
+									<button
+										class="btn py-0 no-underline {banner.active
+											? 'text-yellow-5'
+											: 'text-emerald-5'}">
+										<i
+											class="fa {banner.active
+												? 'fa-eye-slash'
+												: 'fa-eye'}" />
+										{banner.active
+											? "Deactivate"
+											: "Activate"}
+									</button>
+								</form>
+							</td>
+							<td>{banner.active ? "Yes" : "No"}</td>
+							<td>
+								<button
+									type="button"
+									on:click={viewBody(banner)}
+									class="btn btn-sm btn-success">
+									View Body
+								</button>
+							</td>
+							<td>
+								<input
+									type="color"
+									value={banner.bgColour}
+									disabled
+									class="valid" />
+							</td>
+							<td class="flex items-center">
+								<form
+									use:enhance
+									bind:this={textLightForms[banner.id]}
+									method="POST"
+									class="px-2"
+									action="?/updateTextLight&id={banner.id}">
 									<input
-										type="color"
-										value={banner.bgColour}
-										disabled
-										class="valid" />
-								</td>
-								<td class="flex items-center">
-									<form
-										use:enhance
-										bind:this={textLightForms[banner.id]}
-										method="POST"
-										class="px-2"
-										action="?/updateTextLight&id={banner.id}">
-										<input
-											on:change={async () => {
-												textLightForms[
-													banner.id
-												].requestSubmit()
-												await invalidate(
-													window.location.href
-												)
-											}}
-											checked={banner.textLight}
-											type="checkbox"
-											name="bannerTextLight"
-											value="true"
-											id="bannerTextLight"
-											class="form-check-input valid" />
-									</form>
-									{banner.textLight ? "Light" : "Dark"}
-								</td>
-								<td>
-									<User
-										user={banner.creator}
-										full
-										thin
-										bg="accent" />
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-				<p
-					class:text-emerald-6={$page.status == 200}
-					class:text-red-5={$page.status >= 400}>
-					{$message || ""}
-				</p>
-			</Tab>
-		</div>
-	</div>
+										on:change={async () => {
+											textLightForms[
+												banner.id
+											].requestSubmit()
+											await invalidate(
+												window.location.href
+											)
+										}}
+										checked={banner.textLight}
+										type="checkbox"
+										name="bannerTextLight"
+										value="true"
+										id="bannerTextLight"
+										class="form-check-input valid" />
+								</form>
+								{banner.textLight ? "Light" : "Dark"}
+							</td>
+							<td>
+								<User
+									user={banner.creator}
+									full
+									thin
+									bg="accent" />
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+			<p
+				class:text-emerald-6={$page.status == 200}
+				class:text-red-5={$page.status >= 400}>
+				{$message || ""}
+			</p>
+		</Tab>
+	</AdminShell>
 </div>
 
 {#if $modal}

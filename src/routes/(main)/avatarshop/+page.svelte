@@ -43,9 +43,9 @@
 <Head title="Catalog" />
 
 <div class="ctnr light-text">
-	<div class="flex flex-wrap pb-4">
-		<h1 class="w-full lg:w-1/3 md:w-1/4 mb-0">Catalog</h1>
-		<div class="w-full lg:w-2/3 md:w-3/4 pt-2">
+	<div class="grid lg:grid-cols-[1fr_2fr] md:grid-cols-[1fr_3fr] pb-4">
+		<h1>Catalog</h1>
+		<div class="pt-2">
 			<form
 				use:enhance
 				method="POST"
@@ -78,9 +78,11 @@
 		</div>
 	</div>
 
-	<div class="flex flex-wrap">
-		<div class="w-full xl:w-1/6 lg:w-1/4 pb-2 md:pr-4">
-			<h2 class="pb-4">Categories</h2>
+	<div
+		class="grid gap-2 md:gap-4
+		lg:grid-cols-[1fr_5fr] md:grid-cols-[1fr_4fr]">
+		<div>
+			<h2 class="pb-4 <md:hidden">Categories</h2>
 			<h2>Filters</h2>
 			<p>Sort by:</p>
 			<div>
@@ -150,7 +152,7 @@
 				<button class="btn btn-success btn-sm">Set</button>
 			</div>
 		</div>
-		<div class="w-full xl:w-5/6 lg:w-3/4">
+		<div>
 			<TabNav bind:tabData justify />
 			{#if !query || assets.length > 0}
 				<div
