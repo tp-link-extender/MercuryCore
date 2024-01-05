@@ -19,11 +19,12 @@
 	<!-- Flex or Grid? what a dilemma -->
 	<div class="lg:grid grid-cols-2 gap-4">
 		<div>
-			<h1 class="w-full flex px-10 pb-6 my-0">
+			<h1 class="w-full flex px-10 pb-6 my-0 <sm:text-2xl">
 				<a
 					href="/user/{user?.number}"
 					class="no-underline flex items-center">
-					<User {user} size="6rem" bg="accent" image />
+					<User {user} size="6rem" bg="accent" image class="<sm:hidden" />
+					<User {user} size="4rem" bg="accent" image class="sm:hidden" />
 					<span class="pl-6">
 						{data.stuff.greet}
 					</span>

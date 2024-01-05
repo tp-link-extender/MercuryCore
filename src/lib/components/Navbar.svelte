@@ -97,7 +97,7 @@
 			<img
 				src="/icon.svg"
 				alt="Mercury logo"
-				class="sm:hidden w-8 h-8 @light:invert" />
+				class="sm:hidden size-8 @light:invert" />
 			<span class="<sm:hidden">Mercury</span>
 		</a>
 		{#if user}
@@ -134,7 +134,7 @@
 								goto(`/search?q=${search.trim()}&c=users`)
 							searchCompleted = true
 						}}
-						class="btn btn-success h-full rounded-r-0.375rem!"
+						class="btn btn-success h-full <sm:px-3 rounded-r-1.5!"
 						title="Search">
 						<fa fa-search />
 					</button>
@@ -179,7 +179,19 @@
 					</span>
 				</a>
 				<div class="dropdown dropdown-hover dropdown-end pl-2">
-					<User {user} full thin bg="background" size="2.4rem" />
+					<User
+						{user}
+						class="<sm:hidden"
+						thin
+						bg="background"
+						size="2.4rem"
+						full />
+					<User
+						{user}
+						class="sm:hidden"
+						thin
+						bg="background"
+						size="2.4rem" />
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
 							{#each usernav as [icon, title, href]}
@@ -233,7 +245,7 @@
 {#if user}
 	<nav
 		id="bottomnav"
-		class="lg:hidden fixed bottom-0 bg-darker w-full h-14 sm:h-16">
+		class="lg:hidden fixed bottom-0 bg-darker w-full h-14 sm:h-16 z-11">
 		<div class="flex justify-evenly mx-auto w-full sm:w-1/2">
 			{#each [...nav1, ["Notifications", "/notifications", "fa-bell"]] as [title, href, icon]}
 				<a

@@ -18,12 +18,12 @@
 		(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
 	)
 
-	$: online = true//place.serverPing > Date.now() / 1000 - 35
+	$: online = place.serverPing > Date.now() / 1000 - 35
 </script>
 
 <a
 	on:click={async e => {
-		if (e.metaKey) return
+		if (e.metaKey || innerWidth < 640) return
 		e.preventDefault()
 
 		const { href } = e.currentTarget,

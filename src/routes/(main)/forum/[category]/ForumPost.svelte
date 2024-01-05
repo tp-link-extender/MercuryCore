@@ -86,7 +86,7 @@
 			on:click={async e => {
 				// Dude.
 				// Shallow routing is AWESOME
-				if (e.metaKey) return
+				if (e.metaKey || innerWidth < 640) return
 				e.preventDefault()
 
 				const { href } = e.currentTarget,
