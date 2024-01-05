@@ -96,7 +96,7 @@
 			<ReportButton user={data.username} url="/user/{data.number}" />
 		</span>
 	</div>
-	<div class="grid grid-cols-2 gap-4">
+	<div class="sm:grid grid-cols-2 gap-4">
 		<div>
 			{#if data.bio}
 				<div class="pt-6">

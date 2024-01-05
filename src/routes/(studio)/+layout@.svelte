@@ -4,7 +4,7 @@
 	<footer>
 		<p>
 			<a href="/">Mercury</a>
-			2022-{new Date().getFullYear()}
+			2021-{new Date().getFullYear()}
 		</p>
 		<a class="footer" href="/about">About</a>
 		|

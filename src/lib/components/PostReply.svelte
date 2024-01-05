@@ -11,7 +11,7 @@
 	<label for="content" class="light-text py-2">
 		Post a {comment ? "comment" : "reply"}
 	</label>
-	<fieldset class="w-7/12 flex gap-4 items-end">
+	<fieldset class="max-w-140 flex gap-4 items-end">
 		<textarea
 			bind:value={$form.content}
 			{...$constraints.content}

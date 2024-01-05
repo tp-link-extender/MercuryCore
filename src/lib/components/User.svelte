@@ -34,7 +34,7 @@
 </script>
 
 {#if image}
-	<div class="flex" class:items-center={full}>
+	<div class="flex {$$restProps.class}" class:items-center={full}>
 		<span class="rounded-full overflow-hidden" style="{style};{style2}">
 			<img
 				src="/api/avatar/{user.username}"
@@ -51,7 +51,7 @@
 {:else}
 	<a
 		href="/user/{user.number}"
-		class="flex no-underline"
+		class="flex no-underline {$$restProps.class}"
 		class:flex-col={bottom}
 		class:items-center={full}>
 		<span
