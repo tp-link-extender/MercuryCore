@@ -19,7 +19,7 @@
 			name="content"
 			placeholder="What are your thoughts?"
 			rows="4" />
-		<button class="btn btn-success">
+		<button class="btn btn-secondary">
 			{#if $delayed}
 				Working...
 			{:else}

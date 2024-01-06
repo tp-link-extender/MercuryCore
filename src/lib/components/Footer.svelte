@@ -8,7 +8,7 @@
 	<div class="flex <sm:flex-col justify-between items-start w-200 p-4 pb-8">
 		<div>
 			<img src="/icon-footer.svg" alt="Mercury logo" class="size-8" />
-			<a href="/" class="no-underline accent-text pl-2">Mercury</a>
+			<a href="/" class="no-underline pl-2">Mercury</a>
 			<span class="grey-text pl-1">
 				2021-{new Date().getFullYear()}
 			</span>

@@ -5,18 +5,18 @@
 	const formData = superForm(data.passwordForm)
 </script>
 
-<Form {formData} action="?/password" submit="Save changes">
+<Form {formData} action="?/password" submit="Change password">
 	<Input
 		{formData}
 		name="cpassword"
-		label="Current Password"
+		label="Current password"
 		type="password"
 		placeholder={"•".repeat(14)}
 		autocomplete="current-password" />
 	<Input
 		{formData}
 		name="npassword"
-		label="New Password"
+		label="New password"
 		type="password"
 		autocomplete="new-password"
 		placeholder={"•".repeat(20)}
@@ -24,7 +24,7 @@
 	<Input
 		{formData}
 		name="cnpassword"
-		label="Confirm New Password"
+		label="Confirm new password"
 		type="password"
 		placeholder={"•".repeat(20)}
 		autocomplete="new-password" />

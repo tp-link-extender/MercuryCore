@@ -21,7 +21,7 @@
 				<button
 					class="btn btn-{$message && $page.status == 200
 						? 'success'
-						: 'primary'}">
+						: 'secondary'}">
 					<fa fa-rotate />
 					{#if $delayed}
 						Working...

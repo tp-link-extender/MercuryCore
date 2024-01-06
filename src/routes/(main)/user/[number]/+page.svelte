@@ -44,8 +44,8 @@
 							style="color: {permissions[
 								data.permissionLevel
 							][0]}">
-							<i
-								class="fa {permissions[
+							<fa
+								class="{permissions[
 									data.permissionLevel
 								][1]} pr-1" />
 							{permissions[data.permissionLevel][2]}
@@ -98,7 +98,7 @@
 	</div>
 	<div class="sm:grid grid-cols-2 gap-4">
 		<div>
-			{#if data.bio}
+			{#if data.bio && data.bio.text}
 				<div class="pt-6">
 					<h2 class="light-text">Bio</h2>
 					<p class="light-text pl-2">{data.bio.text}</p>
@@ -117,15 +117,16 @@
 							method="POST"
 							action="?/rerender"
 							in:fade
-							class="absolute end-0 pr-4">
-							<button class="btn btn-sm btn-primary">
+							class="absolute text-right end-0 pr-4">
+							<button class="btn btn-sm btn-tertiary">
 								<fa fa-arrows-rotate />
 								Re-render
 							</button>
 							<small class="text-red-5 block">
 								{form?.msg || ""}
 							</small>
-						</form>{/if}
+						</form>
+					{/if}
 				</div>
 			</div>
 		</div>

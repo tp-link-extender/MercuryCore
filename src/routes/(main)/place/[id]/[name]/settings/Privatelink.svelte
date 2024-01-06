@@ -24,14 +24,14 @@
 						copiedSuccess = true
 						setTimeout(() => (copiedSuccess = false), 4000)
 					}}
-					class="btn btn-info"
+					class="btn btn-tertiary border-[--accent2] border-l-0"
 					type="button">
 					<fa fa-paste />
 				</button>
 				<button
 					class="btn btn-{$message && $page.status == 200
 						? 'success'
-						: 'primary'}">
+						: 'secondary'}">
 					<fa fa-rotate />
 					{#if $delayed}
 						Working...

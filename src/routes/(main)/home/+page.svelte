@@ -23,9 +23,19 @@
 				<a
 					href="/user/{user?.number}"
 					class="no-underline flex items-center">
-					<User {user} size="6rem" bg="accent" image class="<sm:hidden" />
-					<User {user} size="4rem" bg="accent" image class="sm:hidden" />
-					<span class="pl-6">
+					<User
+						{user}
+						size="6rem"
+						bg="accent"
+						image
+						class="<sm:hidden" />
+					<User
+						{user}
+						size="4rem"
+						bg="accent"
+						image
+						class="sm:hidden" />
+					<span class="sf pl-6">
 						{data.stuff.greet}
 					</span>
 				</a>
@@ -64,7 +74,7 @@
 		<div class="pt-12 lg:pt-28 pl-2 flex flex-col gap-12">
 			{#if data.friends.length > 0}
 				<div>
-					<h2>Friends</h2>
+					<h2 class="pb-2">Friends</h2>
 					<div class="flex overflow-x-auto gap-4">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
@@ -84,7 +94,7 @@
 				</div>
 			{/if}
 			<div>
-				<h2>Resume playing</h2>
+				<h2 class="pb-2">Resume playing</h2>
 				<div class="flex overflow-x-auto gap-4">
 					{#each data.places || [] as place, num}
 						<div class="min-w-32 w-32">
@@ -94,7 +104,7 @@
 				</div>
 			</div>
 			<div class="w-1/2 md:w-2/3 lg:w-1/2 xl:w-2/3">
-				<h2>Random fact</h2>
+				<h2 class="pb-2">Random fact</h2>
 				<div id="fact" class="card bg-darker card-body text-base pb-6">
 					{data.stuff.fact}
 				</div>

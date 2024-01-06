@@ -19,10 +19,10 @@
 			class="flex gap-2">
 			<button
 				class="btn {data.friends || data.outgoingRequest
-					? 'btn-danger'
+					? 'btn-red-tertiary'
 					: data.incomingRequest
-						? 'btn-info'
-						: 'btn-success'}">
+						? 'btn-secondary'
+						: 'btn-secondary'}">
 				{#if data.friends}
 					Unfriend
 				{:else if data.incomingRequest}
@@ -41,7 +41,7 @@
 				action="?/decline"
 				in:fade
 				class="flex gap-2">
-				<button class="btn btn-danger">Decline request</button>
+				<button class="btn btn-red-secondary">Decline request</button>
 			</form>
 		{/if}
 		<form
@@ -53,8 +53,8 @@
 			<button
 				name="action"
 				class="btn h-full {data.following
-					? 'btn-danger'
-					: 'btn-primary'}">
+					? 'btn-red-tertiary'
+					: 'btn-tertiary'}">
 				{#if data.following}
 					Unfollow
 				{:else}

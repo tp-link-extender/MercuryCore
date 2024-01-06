@@ -28,15 +28,9 @@ export async function load({ locals }) {
 			surql`
 			SELECT
 				*,
-				(SELECT
-					number,
-					status,
-					username
+				(SELECT number, status, username
 				FROM in.*)[0] AS sender,
-				(SELECT
-					number,
-					status,
-					username
+				(SELECT number, status, username
 				FROM out.*)[0] AS receiver
 			FROM $user<->transaction`,
 			{ user: `user:${user.id}` }
