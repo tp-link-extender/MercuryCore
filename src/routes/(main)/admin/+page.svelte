@@ -82,7 +82,7 @@
 	<hr />
 	<AdminShell bind:tabData>
 		{#each tabNames.slice(0, -1) as key}
-			<Tab {tabData} class="grid lg:grid-cols-4 gap-2">
+			<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
 				{#each panel[key] as i, num}
 					<AdminLink
 						href={i[1]}
@@ -95,9 +95,9 @@
 		{/each}
 
 		<Tab {tabData}>
-			<div class="flex flex-wrap">
+			<div class="lg:grid grid-cols-[7fr_5fr] gap-4">
 				<div
-					class="w-full lg:max-w-7/12 flex flex-col gap-2 lg:pr-2 pb-2">
+					class="flex flex-col gap-4">
 					<div class="card bg-a p-4">
 						<h3>
 							<fa fa-memory />
@@ -159,14 +159,14 @@
 						{/await}
 					</div>
 				</div>
-				<div class="w-full lg:max-w-5/12 flex flex-col gap-2">
+				<div class="flex flex-col gap-4">
 					<div class="card bg-a p-4">
 						<h3>
 							<far fa-user class="pr-2" />
 							Users
 						</h3>
 						<span>
-							<b class="text-blue-5">0 users</b>
+							<b class="accent-text">0 users</b>
 							are currently online
 						</span>
 					</div>

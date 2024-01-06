@@ -17,11 +17,13 @@
 <Head title="Daily Stipend - Admin" />
 
 <div class="ctnr pt-6 light-text">
-	<h1>Admin - Daily Stipend</h1>
-	<a href="/admin" class="no-underline">
-		<fa fa-caret-left />
-		Back to panel
-	</a>
+	<div class="pb-4">
+		<h1>Admin - Daily Stipend</h1>
+		<a href="/admin" class="no-underline">
+			<fa fa-caret-left />
+			Back to panel
+		</a>
+	</div>
 
 	<AdminShell bind:tabData>
 		<Tab {tabData}>

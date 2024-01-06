@@ -41,10 +41,6 @@
 </form>
 
 <style lang="stylus">
-	button
-		background none
-		border none
-
 	.card
 		border 1px solid var(--accent2)
 

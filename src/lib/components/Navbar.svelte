@@ -98,7 +98,7 @@
 				src="/icon.svg"
 				alt="Mercury logo"
 				class="sm:hidden size-8 @light:invert" />
-			<span class="<sm:hidden">Mercury</span>
+			<span class="sf <sm:hidden">Mercury</span>
 		</a>
 		{#if user}
 			<div
@@ -122,7 +122,7 @@
 					<input
 						bind:value={search}
 						on:keydown={keydown}
-						class="bg-background h-2.5rem ps-4"
+						class="bg-background h-10 ps-4"
 						name="query"
 						type="search"
 						placeholder="Search"
@@ -134,7 +134,7 @@
 								goto(`/search?q=${search.trim()}&c=users`)
 							searchCompleted = true
 						}}
-						class="btn btn-success h-full <sm:px-3 rounded-r-1.5!"
+						class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
 						title="Search">
 						<fa fa-search />
 					</button>
@@ -220,9 +220,9 @@
 				</div>
 			</div>
 		{:else}
-			<div class="flex w-full gap-4 justify-end items-center">
-				<a href="/login" class="btn light-text">Log in</a>
-				<a href="/register" class="btn btn-success">Register</a>
+			<div class="flex w-full gap-4 justify-end items-center py-1">
+				<a href="/login" class="btn btn-secondary py-2">Log in</a>
+				<a href="/register" class="btn btn-primary py-2">Register</a>
 			</div>
 		{/if}
 	</div>

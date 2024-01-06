@@ -19,7 +19,7 @@
 		"/place/placeholderImage2.webp",
 		"/place/placeholderImage3.webp",
 	]
-	const scroll = async (e: MouseEvent) =>
+	const scroll = (e: MouseEvent) =>
 		document
 			.getElementById(
 				new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
@@ -101,7 +101,7 @@
 							-translate-y-1/2 left-4 right-4">
 							<a
 								href="#slide{i < 1 ? images.length : i}"
-								class="btn rounded-full bg-background"
+								class="carousel-button"
 								on:click|preventDefault={scroll}>
 								❮
 							</a>
@@ -109,7 +109,7 @@
 								href="#slide{i == images.length - 1
 									? 1
 									: i + 2}"
-								class="btn rounded-full bg-background"
+								class="carousel-button"
 								on:click|preventDefault={scroll}>
 								❯
 							</a>
@@ -120,7 +120,7 @@
 		</div>
 
 		<div class="flex flex-col justify-between gap-3">
-			<div class="card rounded-none p-4 pb-6 block">
+			<div class="card bg-darker p-4 pb-6 block">
 				<div class="flex justify-between">
 					<h1 class="text-2xl">{data.name}</h1>
 					{#if data.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
@@ -128,8 +128,7 @@
 							<a
 								aria-label="Place settings"
 								href="/place/{data.id}/{data.name}/settings"
-								class="btn btn-sm text-yellow-5 border-yellow-5
-								hover:(text-black bg-yellow-5)">
+								class="btn btn-sm btn-secondary">
 								<fa fa-sliders />
 							</a>
 						</div>
@@ -162,11 +161,11 @@
 				</span>
 			</div>
 			<div id="buttons" class="flex flex-col">
-				<button
-					on:click={placeLauncher}
-					id="play"
-					class="btn btn-lg text-center btn-success">
-					<img src="/place/join.svg" alt="Play button icon" />
+				<button on:click={placeLauncher} class="btn btn-success">
+					<img
+						src="/place/join.svg"
+						alt="Play button icon"
+						class="h-8" />
 				</button>
 
 				<form
@@ -291,7 +290,7 @@
 				<Tab tabData={tabData2}>
 					<p>
 						You can host your server by opening your map in <button
-							class="btn btn-primary p-1 btn-sm"
+							class="btn btn-sm btn-tertiary"
 							on:click={launch(
 								"mercury-player:1+launchmode:ide"
 							)}>
@@ -325,7 +324,7 @@
 							placeholder="Map location"
 							aria-label="Map location" />
 						<button
-							class="btn btn-primary"
+							class="btn btn-secondary"
 							on:click={launch(
 								"mercury-player:1+launchmode:maps"
 							)}
@@ -334,7 +333,7 @@
 							Map Folder
 						</button>
 						<button
-							class="btn btn-success"
+							class="btn btn-primary"
 							on:click={launch(
 								`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${btoa(
 									filepath
@@ -346,7 +345,9 @@
 						</button>
 
 						<div class="dropdown dropdown-hover dropdown-end">
-							<div class="btn btn-success dropdown-toggle" />
+							<div
+								class="btn btn-tertiary dropdown-toggle
+								border-[--accent2] border-l-0" />
 							<div class="dropdown-content pt-2">
 								<ul class="p-2 rounded-3">
 									<li class="rounded-2">
@@ -408,16 +409,19 @@
 <Modal {modal}>
 	<div class="flex flex-col px-6 pt-6 text-center">
 		{#key installed}
-			<div in:fade={{ duration: 500 }} id="wrapper" class="self-center">
+			<div
+				in:fade={{ duration: 500 }}
+				class="self-center size-32 -translate-x-1/2 @light:invert">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
+					class="absolute"
 					width="128"
 					height="128" />
 				<img
 					src="/outerlogo.svg"
 					alt="Mercury logo outer part (circle around M)"
-					id="outer"
+					class="absolute animate-[spin_1.5s_linear_infinite]"
 					width="128"
 					height="128"
 					style={installed
@@ -447,35 +451,12 @@
 </Modal>
 
 <style lang="stylus">
-	#play img
-		height 2rem
-
-	.dropdown-toggle
-		border-radius 0 0.375rem 0.375rem 0
-		&::after
-			display inline-block
-			vertical-align 0.255rem
-			content ""
-			border-top 0.3rem solid
-			border-right 0.3rem solid transparent
-			border-left 0.3rem solid transparent
-
-	#wrapper
-		width 128px
-		height 128px
-		transform translateX(-50%)
-
-		+lightTheme()
-			filter invert(1)
-
-		img
-			position absolute
-
-	#outer
-		transform rotate(0)
-		animation moon 1.5s 0s infinite linear
-
-	@keyframes moon
-		100%
-			transform rotate(360deg)
+	.dropdown-toggle::after
+		// funny down arrow
+		display inline-block
+		vertical-align 0.255rem
+		content ""
+		border-top 0.3rem solid
+		border-right 0.3rem solid transparent
+		border-left 0.3rem solid transparent
 </style>

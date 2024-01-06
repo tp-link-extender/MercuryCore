@@ -13,11 +13,14 @@
 <Head title="Accounts - Admin" />
 
 <div class="ctnr pt-6 max-w-280 light-text">
-	<h1>Admin - Accounts</h1>
-	<a href="/admin" class="no-underline">
-		<fa fa-caret-left />
-		Back to panel
-	</a>
+	<div class="pb-4">
+		<h1>Admin - Accounts</h1>
+		<a href="/admin" class="no-underline">
+			<fa fa-caret-left />
+			Back to panel
+		</a>
+	</div>
+
 	<AdminShell bind:tabData>
 		<Form {formData} submit="Reset">
 			<Input {formData} name="username" label="Username" />

@@ -145,7 +145,7 @@
 		<div class="<md:col-span-3 flex lg:flex-col gap-4">
 			<div class="w-full card p-4">
 				<form use:enhance action="?/regen" method="POST">
-					<button class="btn btn-primary w-full">
+					<button class="btn btn-secondary w-full">
 						<fa fa-rotate />
 						Regenerate
 					</button>
@@ -184,16 +184,16 @@
 				on:submit|preventDefault
 				action="/character?tab={tabData.currentTab}"
 				class="input-group pb-4">
-				<input type="hidden" name="tab" value={tabData.currentTab} />
 				<input
-					bind:value={query}
-					type="text"
-					name="q"
-					placeholder="Search for an item"
-					aria-label="Search for an item"
-					aria-describedby="button-addon2" />
+				bind:value={query}
+				type="text"
+				name="q"
+				placeholder="Search for an item"
+				aria-label="Search for an item"
+				aria-describedby="button-addon2" />
+				<input type="hidden" name="tab" value={tabData.currentTab} />
 				<button
-					class="btn btn-success"
+					class="btn btn-secondary"
 					aria-label="Search"
 					id="button-addon2">
 					<fa fa-magnifying-glass />

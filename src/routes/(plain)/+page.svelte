@@ -49,29 +49,29 @@
 		id="infotext"
 		class="flex flex-col justify-center items-center relative"
 		style="padding-top: {infoTextMargin}vh">
-		<h1 class="font-black opacity-75 text-16">Mercury 2</h1>
+		<h1 class="sf font-bold opacity-75 text-16">Mercury 2</h1>
 		<p class="lead text-center">
 			Endless possibilities. New features. Same nostalgia.
 		</p>
-		<div class="inline mb-4">
-			<b>
-				<a
-					type="button"
-					href="/register"
-					class="inline btn btn-sm btn-success no-underline">
-					Register <fa fa-chevron-right />
-				</a>
-			</b>
-			<b>
-				<a
-					type="button"
-					href="/login"
-					class="inline btn btn-sm btn-primary no-underline">
+		<div class="inline pb-2">
+			<a
+				type="button"
+				href="/login"
+				class="inline btn btn-sm btn-secondary">
+				<b>
 					Login <fa fa-chevron-right />
-				</a>
-			</b>
+				</b>
+			</a>
+			<a
+				type="button"
+				href="/register"
+				class="inline btn btn-sm btn-primary">
+				<b>
+					Register <fa fa-chevron-right />
+				</b>
+			</a>
 		</div>
-		<a href="/about" class="no-underline pt-4">
+		<a href="/about" class="btn btn-sm btn-tertiary">
 			About us <fa fa-chevron-right />
 		</a>
 	</div>

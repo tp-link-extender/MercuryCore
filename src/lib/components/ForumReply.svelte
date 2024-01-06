@@ -187,7 +187,8 @@
 							<button
 								on:click={() => replyingTo.set(reply.id)}
 								class:hidden
-								class="p-0 btn btn-sm grey-text px-1">
+								class="p-0 btn btn-sm px-1
+								text-neutral-5 hover:text-neutral-3">
 								<far fa-message class="pr-2" />
 								Reply
 							</button>
@@ -219,26 +220,28 @@
 										class="light-text pb-2">
 										Post a Reply
 									</label>
-									<fieldset>
+									<fieldset class="flex flex-col gap-3">
 										<textarea
 											bind:value={content}
-											class="mb-2"
 											required
 											minlength="1"
 											maxlength="1000"
 											name="content"
 											placeholder="What are your thoughts?"
 											rows="4" />
-										<button class="btn btn-success">
-											<far fa-message class="pr-2" />
-											Reply
-										</button>
-										<button
-											on:click={() => replyingTo.set("")}
-											class="btn btn-dark grey-text">
-											<fa fa-cancel class="pr-2" />
-											Cancel
-										</button>
+										<div class="flex gap-3">
+											<button class="btn btn-secondary">
+												<far fa-message class="pr-2" />
+												Reply
+											</button>
+											<button
+												on:click={() =>
+													replyingTo.set("")}
+												class="btn btn-tertiary grey-text">
+												<fa fa-cancel class="pr-2" />
+												Cancel
+											</button>
+										</div>
 									</fieldset>
 								</form>
 							</div>

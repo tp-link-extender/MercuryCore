@@ -58,7 +58,7 @@
 										method="POST"
 										action="?/rerender">
 										<button
-											class="btn text-blue-5 pl-4 pr-0 text-start">
+											class="btn accent-text pl-4 pr-0 text-start">
 											<i
 												class="fa fa-arrows-rotate mr-2" />
 											<b>Re-render</b>
@@ -117,9 +117,11 @@
 								</strong>
 							</label>
 						{:else}
-							<span class="btn btn-dark bg-a3 disabled">
-								<strong class="text-xl">Owned</strong>
-							</span>
+							<strong
+								class="btn btn-dark bg-a3
+								pointer-events-none text-xl">
+								Owned
+							</strong>
 						{/if}
 					</div>
 				</div>

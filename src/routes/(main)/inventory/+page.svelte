@@ -67,7 +67,7 @@
 				aria-label="Search for an item"
 				aria-describedby="button-addon2" />
 			<button
-				class="btn btn-success"
+				class="btn btn-secondary"
 				aria-label="Search"
 				id="button-addon2">
 				<fa fa-magnifying-glass />

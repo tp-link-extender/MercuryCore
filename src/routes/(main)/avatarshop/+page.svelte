@@ -69,7 +69,7 @@
 					<option value="Decal">Decals</option>
 				</select>
 				<button
-					class="btn btn-success"
+					class="btn btn-secondary"
 					aria-label="Search"
 					id="button-addon2">
 					<fa fa-magnifying-glass />
@@ -82,42 +82,33 @@
 		class="grid gap-2 md:gap-4
 		lg:grid-cols-[1fr_5fr] md:grid-cols-[1fr_4fr]">
 		<div>
-			<h2 class="pb-4 <md:hidden">Categories</h2>
 			<h2>Filters</h2>
-			<p>Sort by:</p>
-			<div>
+			<p class="text-neutral-4">Sort by</p>
+			<div class="grid grid-cols-[1fr_9fr] items-center gap-1">
 				<input
 					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="bestselling" />
 				<label for="bestselling">Bestselling</label>
-			</div>
-			<div>
 				<input
 					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="recentlyCreated" />
 				<label for="recentlyCreated">Recently Created</label>
-			</div>
-			<div>
 				<input
 					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="mercury" />
 				<label for="mercury">Mercury</label>
-			</div>
-			<div>
 				<input
 					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="highToLow" />
 				<label for="highToLow">Price (high to low)</label>
-			</div>
-			<div>
 				<input
 					class="form-check-input"
 					type="radio"
@@ -126,7 +117,7 @@
 				<label for="lowToHigh">Price (low to high)</label>
 			</div>
 			<p>Price:</p>
-			<div>
+			<div class="grid grid-cols-[1fr_9fr] items-center gap-1">
 				<input
 					class="form-check-input"
 					type="radio"
@@ -134,22 +125,25 @@
 					id="any"
 					checked />
 				<label for="any">Any price</label>
-			</div>
-			<div>
-				<input class="form-check-input" type="radio" name="price" />
 				<input
-					class="mb-2"
-					type="number"
-					min="0"
-					max="999"
-					placeholder="Minimum price" />
-				<input
-					class="mb-2"
-					type="number"
-					min="0"
-					max="999"
-					placeholder="Maximum price" />
-				<button class="btn btn-success btn-sm">Set</button>
+					class="form-check-input self-start"
+					type="radio"
+					name="price" />
+				<div>
+					<input
+						class="mb-2"
+						type="number"
+						min="0"
+						max="999"
+						placeholder="Minimum price" />
+					<input
+						class="mb-2"
+						type="number"
+						min="0"
+						max="999"
+						placeholder="Maximum price" />
+					<button class="btn btn-tertiary btn-sm">Set</button>
+				</div>
 			</div>
 		</div>
 		<div>

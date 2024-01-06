@@ -5,6 +5,8 @@
 	export let submit = "Submit"
 
 	export let inline = false
+	export let secondary = false
+
 	export let formData: any // boooo but nothing else works
 	const { errors, message, enhance, delayed } = formData
 
@@ -15,7 +17,10 @@
 	<fieldset class={inline ? "input-group" : "pb-2"}>
 		<slot />
 		{#if submit}
-			<button class="btn btn-success h-full">
+			<button
+				class="btn {secondary
+					? 'btn-secondary'
+					: 'btn-primary'} h-full">
 				{@html /* ecks ess ess moment */ $delayed ? working : submit}
 			</button>
 		{/if}

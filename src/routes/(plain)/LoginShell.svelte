@@ -11,13 +11,13 @@
 			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
-		<h1 class="font-black pb-6 text-14">
+		<h1 class="sf font-bold pb-6 text-14">
 			Mercury 2 <span class="opacity-50">beta</span>
 		</h1>
 
 		{#each descriptions as [title, description]}
 			<div class="pl-4 w-full">
-				<h2>{title}</h2>
+				<h2 class="font-semibold">{title}</h2>
 				<p class="opacity-75">{description}</p>
 			</div>
 		{/each}
@@ -33,10 +33,6 @@
 </div>
 
 <style lang="stylus">
-	a
-	:global(a)
-		color var(--mainaccent)
-
 	#light
 		background radial-gradient(#35332e7f 1px, #0000 1px), var(--background)
 		background-size 2rem 2rem
@@ -44,8 +40,6 @@
 
 		:global(form) :global(button)
 			width 100%
-			background var(--mainaccent)
-			border-color var(--mainaccent)
 
 	#dark
 		background linear-gradient(-20deg, var(--darker) 50%, var(--mainaccent) 250%)

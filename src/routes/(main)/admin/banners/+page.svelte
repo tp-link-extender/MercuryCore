@@ -32,11 +32,13 @@
 <Head title="Banners - Admin" />
 
 <div class="ctnr pt-6 max-w-280 light-text">
-	<h1 class="mb-0">Admin - Banners</h1>
-	<a href="/admin" class="no-underline">
-		<fa fa-caret-left />
-		Back to panel
-	</a>
+	<div class="pb-4">
+		<h1>Admin - Banners</h1>
+		<a href="/admin" class="no-underline">
+			<fa fa-caret-left />
+			Back to panel
+		</a>
+	</div>
 
 	<AdminShell bind:tabData>
 		<Tab {tabData}>
@@ -110,7 +112,7 @@
 								<button
 									type="button"
 									on:click={viewBody(banner)}
-									class="btn btn-sm btn-success">
+									class="btn btn-sm btn-tertiary">
 									View Body
 								</button>
 							</td>
