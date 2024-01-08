@@ -14,3 +14,4 @@ node_modules
 /corescripts/processed/*.lua
 scc
 scc.exe
+/RCCService/RCCService
