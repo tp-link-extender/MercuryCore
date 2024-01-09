@@ -117,20 +117,6 @@
 <slot />
 
 <!-- Theme files contain CSS variables that are used throughout the site. -->
-{#if user?.theme == "darken"}
-	<style lang="stylus">
-		@import "../themes/darken"
-	</style>
-{:else if user?.theme == "storm"}
-	<style lang="stylus">
-		@import "../themes/storm"
-	</style>
-{:else if user?.theme == "solar"}
-	<style lang="stylus">
-		@import "../themes/solar"
-	</style>
-{:else}
-	<style lang="stylus">
-		@import "../themes/standard"
-	</style>
-{/if}
+<style lang="stylus">
+	@import "../themes/standard"
+</style>

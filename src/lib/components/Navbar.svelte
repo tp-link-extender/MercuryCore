@@ -265,8 +265,6 @@
 		border-top 1px solid var(--accent)
 
 		box-shadow 0 0 1rem 0.2rem black
-		+lightTheme()
-			box-shadow 0 0 1rem 0.2rem white
 
 	#results
 		a:hover

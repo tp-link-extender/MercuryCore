@@ -11,12 +11,13 @@
 	// but concerns with forms that require more interactivity
 </script>
 
-<div {...$$restProps} class="flex flex-wrap pb-8">
+<div class="flex flex-wrap pb-8">
 	<label for={name} class="w-full md:w-1/4">
 		{label}
 	</label>
 	<div class="w-full md:w-3/4">
 		<select
+			{...$$restProps}
 			bind:value={$form[name]}
 			{...$constraints[name]}
 			{name}

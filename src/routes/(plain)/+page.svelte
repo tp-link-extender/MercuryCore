@@ -80,12 +80,6 @@
 <style lang="stylus">
 	canvas
 	#gradientbg
-		+lightTheme()
-			--gradient-color-1 #5551ff
-			--gradient-color-2 #5599ff
-			--gradient-color-3 #55c3ff
-			--gradient-color-4 #af79e6
-
 		--gradient-color-1 #161a92
 		--gradient-color-2 #2b0574
 		--gradient-color-3 #6c2fb9
