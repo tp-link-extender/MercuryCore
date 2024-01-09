@@ -42,7 +42,7 @@ declare global {
 			lastOnline: string
 			number: number
 			permissionLevel: number
-			theme: "standard" | "darken" | "storm" | "solar"
+			// theme: "standard" | "darken" | "storm" | "solar"
 			status: "Playing" | "Online" | "Offline"
 			username: string
 		}
