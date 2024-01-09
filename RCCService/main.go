@@ -1,3 +1,12 @@
+// "GO?
+// WHY THE FUCK
+// IS THIS IN GO?
+// ARE YOU STUPID
+// ???"
+// - taskmanager, 9 January 2024
+
+// cope harder
+
 package main
 
 import (
@@ -15,7 +24,8 @@ import (
 )
 
 func Log(a ...any) {
-	a = append([]any{time.Now().Format("01/02/2006, 15:04:05 ")}, a...)
+	a = append([]any{time.Now().Format("02/01/2006, 15:04:05 ")}, a...)
+	// I HATE GO DATE FORMATTING!!! I HATE GO DATE FORMATTING!!!
 	fmt.Println(a...)
 }
 
@@ -55,20 +65,21 @@ func main() {
 	r.Use(gin.Recovery())
 	r.SetTrustedProxies([]string{"127.0.0.1"})
 
-	r.POST("/:id", func(c *gin.Context) {
-		ip := c.ClientIP()
+	r.POST("/:id", func(cx *gin.Context) {
+		ip := cx.ClientIP()
 		if ip != os.Getenv("IP") && ip != "::1" {
 			Log("IP " + ip + " is not allowed")
-			c.AbortWithStatus(http.StatusForbidden)
+			cx.AbortWithStatus(http.StatusForbidden)
 			return
 		}
 
-		renderScript, err := io.ReadAll(c.Request.Body)
+		renderScript, err := io.ReadAll(cx.Request.Body)
 		if err != nil {
 			panic(err)
 		}
 
-		currentTemplate := strings.ReplaceAll(template, "_TASK_ID", c.Param("id"))
+		id := cx.Param("id")
+		currentTemplate := strings.ReplaceAll(template, "_TASK_ID", id)
 		currentTemplate = strings.ReplaceAll(currentTemplate, "_RENDER_SCRIPT", string(renderScript))
 
 		client := &http.Client{}
@@ -81,7 +92,9 @@ func main() {
 
 		client.Do(req)
 
-		c.String(200, "OK")
+		Log(c.InBlue("Rendering " + id))
+
+		cx.String(200, "OK")
 	})
 
 	Log(c.InGreen("~ RCCService is up on port 64990 ~"))

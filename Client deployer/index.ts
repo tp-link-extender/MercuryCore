@@ -2,6 +2,8 @@
 // Place all client data inside staging, then run this script to deploy it
 // with `deno task run` or `deno task headless`
 
+// TODO: broken, rewrite in go
+
 import {
 	black,
 	red,
@@ -51,7 +53,7 @@ function rainbow(text: string) {
 						r: f(i - spaces),
 						g: f(i - spaces, 8),
 						b: f(i - spaces, 4),
-				  })
+					})
 	console.log(bold(`\n${rainbow}\n`))
 }
 

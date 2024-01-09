@@ -56,11 +56,7 @@ export default async function (
 		}
 	)
 	const renderId = newRender[1]
-
-	console.log({ renderId })
 	// Tap in rcc
-
-	console.log(process.env.RCC_ORIGIN)
 
 	const script = fs
 		.readFileSync(`corescripts/processed/render${renderType}.lua`, "utf-8")
@@ -69,12 +65,7 @@ export default async function (
 		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
 		.replaceAll("_ASSET_ID", relativeId.toString())
 
-	const xml = fs
-		.readFileSync(`xml/soap.xml`, "utf-8")
-		.replaceAll("_TASK_ID", renderId)
-		.replaceAll("_RENDER_SCRIPT", script)
-
-	// Send the XML to RCCService
+	// Send the script to the RCCService proxy
 
 	const path = `data/${
 		renderType == "Avatar" ? "avatars" : "thumbnails"
@@ -97,13 +88,10 @@ export default async function (
 
 	await Promise.all([
 		waiter,
-		fetch(process.env.RCC_DOMAIN as string, {
+		// Uhh carrot just got the
+		fetch(`${process.env.RCC_PROXY}/${renderId}`, {
 			method: "POST",
-			body: xml,
-			headers: {
-				"Content-Type": "text/xml; charset=utf-8",
-				SOAPAction: "http://roblox.com/OpenJobEx",
-			},
+			body: script,
 		}),
 	])
 }
