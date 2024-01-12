@@ -1,4 +1,4 @@
-module github.com/tp-link-extender/mercuryv2/tree/main/RCCService
+module RCCService
 
 go 1.21.4
 
