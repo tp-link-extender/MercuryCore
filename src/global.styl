@@ -154,8 +154,11 @@ input
 a
 	color hsl(260, 100%, 66%)
 	transition 0.2s color
-	&:hover:not(.btn)
-		color hsl(260, 100%, 60%)
+	&:hover
+		&:not(.btn):not(.light-text)
+			color hsl(260, 100%, 60%)
+		&.light-text
+			color var(--grey-text)
 
 .bg-background
 	background var(--background)

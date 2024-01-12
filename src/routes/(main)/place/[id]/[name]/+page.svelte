@@ -134,7 +134,7 @@
 						</div>
 					{/if}
 				</div>
-				<span class="flex pb-2">
+				<span class="flex py-2">
 					<b class="pr-2">by</b>
 					{#if data.ownerUser}
 						<User
@@ -161,7 +161,7 @@
 				</span>
 			</div>
 			<div id="buttons" class="flex flex-col">
-				<button on:click={placeLauncher} class="btn btn-success">
+				<button on:click={placeLauncher} class="btn btn-primary">
 					<img
 						src="/place/join.svg"
 						alt="Play button icon"
@@ -380,7 +380,7 @@
 					<button
 						on:click={placeLauncher}
 						id="join"
-						class="btn btn-sm btn-success">
+						class="btn btn-sm btn-primary">
 						Join Server
 					</button>
 				</div>
@@ -442,7 +442,7 @@
 				Install the Mercury client and start playing now!
 			</span>
 			<a
-				class="btn btn-success"
+				class="btn btn-primary"
 				href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
 				Download 2013
 			</a>

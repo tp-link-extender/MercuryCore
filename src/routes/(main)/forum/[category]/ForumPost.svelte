@@ -10,7 +10,7 @@
 		dislikesDisabled = false
 </script>
 
-<div in:fade|global={{ num, total }} class="post card bg-darker mb-4">
+<div in:fade|global={{ num, total }} class="post card bg-darker mb-4 h-40">
 	<form
 		use:enhance={({ formData }) => {
 			const action = formData.get("action")
@@ -37,7 +37,7 @@
 
 			return () => {}
 		}}
-		class="sidebar bg-a p-1"
+		class="bg-a p-1 z-1"
 		method="POST"
 		action="?/like&id={post.id}">
 		<div class="flex flex-col">
@@ -103,7 +103,7 @@
 			</h2>
 
 			<div class="mb-0">
-				<div class="gradient w-full h-3/4" />
+				<div class="gradient w-full h-20 absolute bottom-0 left-0" />
 				{post.content[0].text || ""}
 			</div>
 		</a>
@@ -111,14 +111,10 @@
 </div>
 
 <style lang="stylus">
-	.sidebar
-		z-index 1
-
 	.post
-		height 10rem
 		overflow hidden
 		word-break break-word
-		flex-direction row !important
+		flex-direction row
 
 		border 1px solid var(--accent2)
 		transition all 0.3s ease-out
@@ -127,9 +123,5 @@
 			border 1px solid var(--accent3)
 
 	.gradient
-		position absolute
-		bottom 0
-		left 0
-		height 5rem !important
 		background linear-gradient(#0000, var(--darker))
 </style>
