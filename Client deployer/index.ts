@@ -28,13 +28,11 @@ function error(txt: string) {
 	Deno.exit(1)
 }
 const log = (txt: string) =>
-		writeAllSync(
-			Deno.stdout,
-			new TextEncoder().encode(
-				txt + " ".repeat(Math.max(70 - txt.length, 1))
-			)
-		),
-	done = () => console.log(bgGreen(bold(black(" Done! "))))
+	writeAllSync(
+		Deno.stdout,
+		new TextEncoder().encode(txt + " ".repeat(Math.max(70 - txt.length, 1)))
+	)
+const done = () => console.log(bgGreen(bold(black(" Done! "))))
 
 function rainbow(text: string) {
 	let rainbow = ""
@@ -66,14 +64,14 @@ async function createDir(path: string) {
 	await Deno.mkdir(path)
 }
 
-const cwd = Deno.cwd(),
-	cli = !Deno.args[0], // Pass any flag to run in headless mode
-	RandomString = (size: number) =>
-		[...Array(size)]
-			.map(() => Math.floor(Math.random() * 16).toString(16))
-			.join(""),
-	GetFileName = (returnString: string) =>
-		returnString.substring(returnString.lastIndexOf("/"))
+const cwd = Deno.cwd()
+const cli = !Deno.args[0] // Pass any flag to run in headless mode
+const RandomString = (size: number) =>
+	Array(size)
+		.map(() => Math.floor(Math.random() * 16).toString(16))
+		.join("")
+const GetFileName = (returnString: string) =>
+	returnString.substring(returnString.lastIndexOf("/"))
 
 function zipFromArray(
 	sources: string[],
@@ -122,21 +120,7 @@ console.log(
 	"New version to be deployed will have a version hash of",
 	blue(`version-${versionHash}`)
 )
-if (cli) {
-	console.log(
-		"To change the version hash, enter it here or press enter to continue with generated one"
-	)
-	const newVersion = prompt(green("> "))
-	if (newVersion) {
-		versionHash = newVersion
-		console.log(
-			"Version hash has been changed to",
-			blue(`version-${versionHash}`)
-		)
-	}
-}
 
-if (cli) alert(red(bold("\nPRESS ENTER TO CONFIRM DEPLOYMENT")))
 console.log(green("Now commencing deployment\n"))
 
 console.log("Checking staging directory")
