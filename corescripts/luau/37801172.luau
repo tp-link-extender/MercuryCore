@@ -6,11 +6,6 @@ local scriptContext = game:GetService "ScriptContext"
 -- Creates all neccessary scripts for the gui on initial load, everything except build tools
 -- Please note that these are loaded in a specific order to diminish errors/perceived load time by user
 
-local touchEnabled = false
-pcall(function()
-	touchEnabled = game:GetService("UserInputService").TouchEnabled
-end)
-
 -- library registration
 scriptContext:AddCoreScript(
 	60595695,
@@ -23,30 +18,14 @@ local function waitForChild(instance, name)
 		instance.ChildAdded:wait()
 	end
 end
--- local function waitForProperty(instance, property)
--- 	while not instance[property] do
--- 		instance.Changed:wait()
--- 	end
--- end
-
--- Responsible for tracking logging items
-scriptContext:AddCoreScript(59002209, scriptContext, "CoreScripts/Sections")
 
 waitForChild(game:GetService "CoreGui", "RobloxGui")
 local screenGui = game:GetService("CoreGui"):FindFirstChild "RobloxGui"
 
-if not touchEnabled then
-	-- ToolTipper  (creates tool tips for gui)
-	scriptContext:AddCoreScript(36868950, screenGui, "CoreScripts/ToolTip")
-	-- SettingsScript
-	scriptContext:AddCoreScript(46295863, screenGui, "CoreScripts/Settings")
-else
-	scriptContext:AddCoreScript(
-		153556783,
-		screenGui,
-		"CoreScripts/TouchControls"
-	)
-end
+-- ToolTipper  (creates tool tips for gui)
+scriptContext:AddCoreScript(36868950, screenGui, "CoreScripts/ToolTip")
+-- SettingsScript
+scriptContext:AddCoreScript(46295863, screenGui, "CoreScripts/Settings")
 
 -- MainBotChatScript
 scriptContext:AddCoreScript(
@@ -72,7 +51,7 @@ scriptContext:AddCoreScript(
 	"CoreScripts/PurchasePromptScript"
 )
 
-if not touchEnabled or screenGui.AbsoluteSize.Y > 600 then
+if screenGui.AbsoluteSize.Y > 600 then
 	-- New Player List
 	scriptContext:AddCoreScript(
 		48488235,
@@ -125,14 +104,6 @@ if game.CoreGui.Version >= 3 and game.PlaceId ~= 130815926 then --todo: remove p
 		screenGui.CurrentLoadout,
 		"CoreScripts/BackpackScripts/LoadoutScript"
 	)
-	-- if game.CoreGui.Version >= 8 then
-	-- 	-- Wardrobe script handles all character dressing operations
-	-- 	scriptContext:AddCoreScript(
-	-- 		-1,
-	-- 		Backpack,
-	-- 		"CoreScripts/BackpackScripts/BackpackWardrobe"
-	-- 	)
-	-- end
 end
 
 local IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
@@ -151,19 +122,3 @@ game.Workspace.ChildAdded:connect(function(nchild)
 			)
 	end
 end)
-
-if touchEnabled then -- touch devices don't use same control frame
-	-- only used for touch device button generation
-	scriptContext:AddCoreScript(
-		152908679,
-		screenGui,
-		"CoreScripts/ContextActionTouch"
-	)
-
-	waitForChild(screenGui, "ControlFrame")
-	waitForChild(screenGui.ControlFrame, "BottomLeftControl")
-	screenGui.ControlFrame.BottomLeftControl.Visible = false
-
-	waitForChild(screenGui.ControlFrame, "TopLeftControl")
-	screenGui.ControlFrame.TopLeftControl.Visible = false
-end

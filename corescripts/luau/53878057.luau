@@ -116,6 +116,8 @@ for i = 1, maxNumLoadoutItems do
 end
 
 local backpackWasOpened = false
+
+local dragBeginPos
 --- End Locals
 
 -- Begin Functions
@@ -135,13 +137,13 @@ local function kill(prop, con, gear)
 	end
 end
 
-function registerNumberKeys()
+local function registerNumberKeys()
 	for i = 0, 9 do
 		GuiService:AddKey(tostring(i))
 	end
 end
 
-function unregisterNumberKeys()
+local function unregisterNumberKeys()
 	pcall(function()
 		for i = 0, 9 do
 			GuiService:RemoveKey(tostring(i))
@@ -149,7 +151,7 @@ function unregisterNumberKeys()
 	end)
 end
 
-function characterInWorkspace()
+local function characterInWorkspace()
 	if game.Players.LocalPlayer then
 		if game.Players.LocalPlayer.Character then
 			if game.Players.LocalPlayer.Character ~= nil then
@@ -163,7 +165,7 @@ function characterInWorkspace()
 	return false
 end
 
-function removeGear(gear)
+local function removeGear(gear)
 	local emptySlot
 	for i = 1, #gearSlots do
 		if gearSlots[i] == gear and gear.Parent ~= nil then
@@ -225,7 +227,7 @@ function removeGear(gear)
 	end
 end
 
-function insertGear(gear, addToSlot)
+local function insertGear(gear, addToSlot)
 	local pos
 	if not addToSlot then
 		for i = 1, #gearSlots do
@@ -284,7 +286,7 @@ function insertGear(gear, addToSlot)
 	end)
 end
 
-function reorganizeLoadout(gear, inserting, _, addToSlot)
+local function reorganizeLoadout(gear, inserting, _, addToSlot)
 	if inserting then -- add in gear
 		insertGear(gear, addToSlot)
 	else
@@ -295,7 +297,7 @@ function reorganizeLoadout(gear, inserting, _, addToSlot)
 	end
 end
 
-function checkToolAncestry(child, parent)
+local function checkToolAncestry(child, parent)
 	if child:FindFirstChild "RobloxBuildTool" then
 		return
 	end -- don't show roblox build tools
@@ -325,7 +327,7 @@ function checkToolAncestry(child, parent)
 	end
 end
 
-function removeAllEquippedGear(physGear)
+local function removeAllEquippedGear(physGear)
 	local stuff = player.Character:GetChildren()
 	for i = 1, #stuff do
 		if
@@ -342,159 +344,7 @@ function removeAllEquippedGear(physGear)
 	end
 end
 
-function hopperBinSwitcher(numKey, physGear)
-	if not physGear then
-		return
-	end
-
-	physGear:ToggleSelect()
-
-	if gearSlots[numKey] == "empty" then
-		return
-	end
-
-	if not physGear.Active then
-		gearSlots[numKey].Selected = false
-		normalizeButton(gearSlots[numKey])
-	else
-		gearSlots[numKey].Selected = true
-		enlargeButton(gearSlots[numKey])
-	end
-end
-
-function toolSwitcher(numKey)
-	if not gearSlots[numKey] then
-		return
-	end
-	local physGear = gearSlots[numKey].GearReference.Value
-	if physGear == nil then
-		return
-	end
-
-	removeAllEquippedGear(physGear) -- we don't remove this gear, as then we get a double switcheroo
-
-	local key = numKey
-	if numKey == 0 then
-		key = 10
-	end
-
-	for i = 1, #gearSlots do
-		if gearSlots[i] and gearSlots[i] ~= "empty" and i ~= key then
-			normalizeButton(gearSlots[i])
-			gearSlots[i].Selected = false
-			if
-				gearSlots[i].GearReference
-				and gearSlots[i].GearReference.Value
-				and gearSlots[i].GearReference.Value:IsA "HopperBin"
-				and gearSlots[i].GearReference.Value.Active
-			then
-				gearSlots[i].GearReference.Value:ToggleSelect()
-			end
-		end
-	end
-
-	if physGear:IsA "HopperBin" then
-		hopperBinSwitcher(numKey, physGear)
-	else
-		if physGear.Parent == player.Character then
-			physGear.Parent = player.Backpack
-
-			if gearSlots[numKey] ~= "empty" then
-				gearSlots[numKey].Selected = false
-				normalizeButton(gearSlots[numKey])
-			end
-		else
-			--player.Character.Humanoid:EquipTool(physGear)
-
-			physGear.Parent = player.Character
-			gearSlots[numKey].Selected = true
-
-			enlargeButton(gearSlots[numKey])
-		end
-	end
-end
-
-function activateGear(num)
-	local numKey
-	if num == "0" then
-		numKey = 10 -- why do lua indexes have to start at 1? :(
-	else
-		numKey = tonumber(num)
-	end
-
-	if numKey == nil then
-		return
-	end
-
-	if gearSlots[numKey] ~= "empty" then
-		toolSwitcher(numKey)
-	end
-end
-
-enlargeButton = function(button)
-	if button.Size.Y.Scale > 1 then
-		return
-	end
-	if not button.Parent then
-		return
-	end
-	if not button.Selected then
-		return
-	end
-
-	for i = 1, #gearSlots do
-		if gearSlots[i] == "empty" then
-			break
-		end
-		if gearSlots[i] ~= button then
-			normalizeButton(gearSlots[i])
-		end
-	end
-
-	if not enlargeOverride then
-		return
-	end
-
-	if button:FindFirstChild "Highlight" then
-		button.Highlight.Visible = true
-	end
-
-	if button:IsA "ImageButton" or button:IsA "TextButton" then
-		button.ZIndex = 5
-		local centerizeX = -(
-				buttonSizeEnlarge.X.Scale - button.Size.X.Scale
-			) / 2
-		local centerizeY = -(
-				buttonSizeEnlarge.Y.Scale - button.Size.Y.Scale
-			) / 2
-		button:TweenSizeAndPosition(
-			buttonSizeEnlarge,
-			UDim2.new(
-				button.Position.X.Scale + centerizeX,
-				button.Position.X.Offset,
-				button.Position.Y.Scale + centerizeY,
-				button.Position.Y.Offset
-			),
-			Enum.EasingDirection.Out,
-			Enum.EasingStyle.Quad,
-			guiTweenSpeed / 5,
-			enlargeOverride
-		)
-	end
-end
-
-normalizeAllButtons = function()
-	for i = 1, #gearSlots do
-		if gearSlots[i] == "empty" then
-			break
-		end
-		if gearSlots[i] ~= button then
-			normalizeButton(gearSlots[i], 0.1)
-		end
-	end
-end
-
-normalizeButton = function(button, speed)
+local function normaliseButton(button, speed)
 	if not button then
 		return
 	end
@@ -537,13 +387,154 @@ normalizeButton = function(button, speed)
 	end
 end
 
+local function enlargeButton(button)
+	if button.Size.Y.Scale > 1 then
+		return
+	end
+	if not button.Parent then
+		return
+	end
+	if not button.Selected then
+		return
+	end
+
+	for i = 1, #gearSlots do
+		if gearSlots[i] == "empty" then
+			break
+		end
+		if gearSlots[i] ~= button then
+			normaliseButton(gearSlots[i])
+		end
+	end
+
+	if not enlargeOverride then
+		return
+	end
+
+	if button:FindFirstChild "Highlight" then
+		button.Highlight.Visible = true
+	end
+
+	if button:IsA "ImageButton" or button:IsA "TextButton" then
+		button.ZIndex = 5
+		local centerizeX = -(
+				buttonSizeEnlarge.X.Scale - button.Size.X.Scale
+			) / 2
+		local centerizeY = -(
+				buttonSizeEnlarge.Y.Scale - button.Size.Y.Scale
+			) / 2
+		button:TweenSizeAndPosition(
+			buttonSizeEnlarge,
+			UDim2.new(
+				button.Position.X.Scale + centerizeX,
+				button.Position.X.Offset,
+				button.Position.Y.Scale + centerizeY,
+				button.Position.Y.Offset
+			),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			guiTweenSpeed / 5,
+			enlargeOverride
+		)
+	end
+end
+
+local function hopperBinSwitcher(numKey, physGear)
+	if not physGear then
+		return
+	end
+
+	physGear:ToggleSelect()
+
+	if gearSlots[numKey] == "empty" then
+		return
+	end
+
+	if not physGear.Active then
+		gearSlots[numKey].Selected = false
+		normaliseButton(gearSlots[numKey])
+	else
+		gearSlots[numKey].Selected = true
+		enlargeButton(gearSlots[numKey])
+	end
+end
+
+local function toolSwitcher(numKey)
+	if not gearSlots[numKey] then
+		return
+	end
+	local physGear = gearSlots[numKey].GearReference.Value
+	if physGear == nil then
+		return
+	end
+
+	removeAllEquippedGear(physGear) -- we don't remove this gear, as then we get a double switcheroo
+
+	local key = numKey
+	if numKey == 0 then
+		key = 10
+	end
+
+	for i = 1, #gearSlots do
+		if gearSlots[i] and gearSlots[i] ~= "empty" and i ~= key then
+			normaliseButton(gearSlots[i])
+			gearSlots[i].Selected = false
+			if
+				gearSlots[i].GearReference
+				and gearSlots[i].GearReference.Value
+				and gearSlots[i].GearReference.Value:IsA "HopperBin"
+				and gearSlots[i].GearReference.Value.Active
+			then
+				gearSlots[i].GearReference.Value:ToggleSelect()
+			end
+		end
+	end
+
+	if physGear:IsA "HopperBin" then
+		hopperBinSwitcher(numKey, physGear)
+	else
+		if physGear.Parent == player.Character then
+			physGear.Parent = player.Backpack
+
+			if gearSlots[numKey] ~= "empty" then
+				gearSlots[numKey].Selected = false
+				normaliseButton(gearSlots[numKey])
+			end
+		else
+			--player.Character.Humanoid:EquipTool(physGear)
+
+			physGear.Parent = player.Character
+			gearSlots[numKey].Selected = true
+
+			enlargeButton(gearSlots[numKey])
+		end
+	end
+end
+
+local function activateGear(num)
+	local numKey
+	if num == "0" then
+		numKey = 10 -- why do lua indexes have to start at 1? :(
+	else
+		numKey = tonumber(num)
+	end
+
+	if numKey == nil then
+		return
+	end
+
+	if gearSlots[numKey] ~= "empty" then
+		toolSwitcher(numKey)
+	end
+end
+
 local waitForDebounce = function()
 	while debounce do
 		wait()
 	end
 end
 
-function pointInRectangle(point, rectTopLeft, rectSize)
+local function pointInRectangle(point, rectTopLeft, rectSize)
 	if point.x > rectTopLeft.x and point.x < (rectTopLeft.x + rectSize.x) then
 		if
 			point.y > rectTopLeft.y
@@ -555,7 +546,7 @@ function pointInRectangle(point, rectTopLeft, rectSize)
 	return false
 end
 
-function swapGear(gearClone, toFrame)
+local function swapGear(gearClone, toFrame)
 	local toFrameChildren = toFrame:GetChildren()
 	if #toFrameChildren == 1 then
 		if toFrameChildren[1]:FindFirstChild "SlotNumber" then
@@ -625,7 +616,7 @@ function swapGear(gearClone, toFrame)
 	end
 end
 
-function resolveDrag(gearClone, x, y)
+local function resolveDrag(gearClone, x, y)
 	local mousePoint = Vector2.new(x, y)
 
 	local frame = gearClone.Parent
@@ -666,7 +657,7 @@ function resolveDrag(gearClone, x, y)
 	return -1
 end
 
-function unequipAllItems(dontEquipThis)
+local function unequipAllItems(dontEquipThis)
 	for i = 1, #gearSlots do
 		if gearSlots[i] == "empty" then
 			break
@@ -686,7 +677,7 @@ function unequipAllItems(dontEquipThis)
 	end
 end
 
-function showToolTip(button, tip)
+local function showToolTip(button, tip)
 	if
 		button
 		and button:FindFirstChild "ToolTipLabel"
@@ -701,7 +692,7 @@ function showToolTip(button, tip)
 	end
 end
 
-function hideToolTip(button, _)
+local function hideToolTip(button, _)
 	if
 		button
 		and button:FindFirstChild "ToolTipLabel"
@@ -711,7 +702,16 @@ function hideToolTip(button, _)
 	end
 end
 
-local addingPlayerChild = function(
+local function removeFromInventory(child)
+	for i = 1, #inventory do
+		if inventory[i] == child then
+			table.remove(inventory, i)
+			inventory[i] = nil
+		end
+	end
+end
+
+local function addingPlayerChild(
 	child,
 	equipped,
 	addToSlot,
@@ -845,7 +845,6 @@ local addingPlayerChild = function(
 		)
 	end
 
-	local dragBeginPos
 	local clickCon, buttonDeleteCon, mouseEnterCon, mouseLeaveCon, dragStop, dragBegin
 	clickCon = gearClone.MouseButton1Click:connect(function()
 		if characterInWorkspace() then
@@ -924,8 +923,8 @@ local addingPlayerChild = function(
 
 	local childCon
 	local childChangeCon
-	childCon = child.AncestryChanged:connect(function(newChild, parent)
-		if not checkToolAncestry(newChild, parent) then
+	childCon = child.AncestryChanged:connect(function(newChild, newParent)
+		if not checkToolAncestry(newChild, newParent) then
 			if childCon then
 				childCon:disconnect()
 			end
@@ -933,8 +932,8 @@ local addingPlayerChild = function(
 				childChangeCon:disconnect()
 			end
 			removeFromInventory(child)
-		elseif parent == game.Players.LocalPlayer.Backpack then
-			normalizeButton(gearClone)
+		elseif newParent == game.Players.LocalPlayer.Backpack then
+			normaliseButton(gearClone)
 		end
 	end)
 
@@ -947,7 +946,7 @@ local addingPlayerChild = function(
 			if child and child:IsA "HopperBin" then
 				if not child.Active then
 					gearClone.Selected = false
-					normalizeButton(gearClone)
+					normaliseButton(gearClone)
 				end
 			end
 		elseif prop == "TextureId" then
@@ -973,7 +972,7 @@ local addingPlayerChild = function(
 	end)
 end
 
-function addToInventory(child)
+local function addToInventory(child)
 	if not child:IsA "Tool" or not child:IsA "HopperBin" then
 		return
 	end
@@ -996,17 +995,8 @@ function addToInventory(child)
 	end
 end
 
-function removeFromInventory(child)
-	for i = 1, #inventory do
-		if inventory[i] == child then
-			table.remove(inventory, i)
-			inventory[i] = nil
-		end
-	end
-end
-
 local spreadOutGear = function()
-	loadoutChildren = currentLoadout:GetChildren()
+	local loadoutChildren = currentLoadout:GetChildren()
 
 	for i = 1, #loadoutChildren do
 		if loadoutChildren[i]:IsA "Frame" then
@@ -1037,7 +1027,7 @@ local spreadOutGear = function()
 end
 
 local centerGear = function()
-	loadoutChildren = currentLoadout:GetChildren()
+	local loadoutChildren = currentLoadout:GetChildren()
 	local gearButtons = {}
 	local lastSlotAdd
 
@@ -1080,20 +1070,20 @@ local centerGear = function()
 	end
 end
 
-function editLoadout()
+local function editLoadout()
 	backpackWasOpened = true
 	if inGearTab then
 		spreadOutGear()
 	end
 end
 
-function readonlyLoadout()
+local function readonlyLoadout()
 	if not inGearTab then
 		centerGear()
 	end
 end
 
-function setupBackpackListener()
+local function setupBackpackListener()
 	if backpackChildCon then
 		backpackChildCon:disconnect()
 		backpackChildCon = nil
@@ -1111,20 +1101,20 @@ function setupBackpackListener()
 	end)
 end
 
-function playerCharacterChildAdded(child)
+local function playerCharacterChildAdded(child)
 	addingPlayerChild(child, true)
 	addToInventory(child)
 end
 
-function activateLoadout()
+local function activateLoadout()
 	currentLoadout.Visible = true
 end
 
-function deactivateLoadout()
+local function deactivateLoadout()
 	currentLoadout.Visible = false
 end
 
-function tabHandler(inFocus)
+local function tabHandler(inFocus)
 	inGearTab = inFocus
 	if inFocus then
 		editLoadout()
@@ -1133,7 +1123,7 @@ function tabHandler(inFocus)
 	end
 end
 
-function coreGuiChanged(coreGuiType, enabled)
+local function coreGuiChanged(coreGuiType, enabled)
 	if
 		coreGuiType == Enum.CoreGuiType.Backpack
 		or coreGuiType == Enum.CoreGuiType.All

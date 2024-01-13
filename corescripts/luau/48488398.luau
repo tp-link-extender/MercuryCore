@@ -46,7 +46,7 @@ function makeFriend(fromPlayer, toPlayer)
 
 	popup.PopupText.Text = `Accept Friend Request from {fromPlayer.Name}?`
 	popup.PopupImage.Image =
-		`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=352&y=352`
+		`https://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=352&y=352`
 
 	showTwoButtons()
 	popup.Visible = true
@@ -114,7 +114,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 			game:GetService("GuiService"):SendNotification(
 				"You are Friends",
 				`With {toPlayer.Name}!`,
-				`http://banland.xyz/thumbs/avatar.ashx?userId={toPlayer.userId}&x=48&y=48`,
+				`https://banland.xyz/thumbs/avatar.ashx?userId={toPlayer.userId}&x=48&y=48`,
 				5,
 				function() end
 			)
@@ -127,7 +127,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 			game:GetService("GuiService"):SendNotification(
 				"Friend Request",
 				`From {fromPlayer.Name}`,
-				`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
+				`https://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
 				8,
 				function()
 					makeFriend(fromPlayer, toPlayer)
@@ -137,7 +137,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 			game:GetService("GuiService"):SendNotification(
 				"You are Friends",
 				`With {fromPlayer.Name}!`,
-				`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
+				`https://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
 				5,
 				function() end
 			)

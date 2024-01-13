@@ -55,7 +55,7 @@ CurrentLoadout.Parent = gui
 local CLBackground = Instance.new "ImageLabel"
 CLBackground.Name = "Background"
 CLBackground.Size = UDim2.new(1.2, 0, 1.2, 0)
-CLBackground.Image = "http://banland.xyz/asset/?id=96536002"
+CLBackground.Image = "https://banland.xyz/asset/?id=96536002"
 CLBackground.BackgroundTransparency = 1
 CLBackground.Position = UDim2.new(-0.1, 0, -0.1, 0)
 CLBackground.ZIndex = 0.0
@@ -65,7 +65,7 @@ CLBackground.Visible = false
 local BackgroundUp = Instance.new "ImageLabel"
 BackgroundUp.Size = UDim2.new(1, 0, 0.025, 1)
 BackgroundUp.Position = UDim2.new(0, 0, 0, 0)
-BackgroundUp.Image = "http://banland.xyz/asset/?id=97662207"
+BackgroundUp.Image = "https://banland.xyz/asset/?id=97662207"
 BackgroundUp.BackgroundTransparency = 1
 BackgroundUp.Parent = CLBackground
 
@@ -79,7 +79,7 @@ BackpackButton.RobloxLocked = true
 BackpackButton.Visible = false
 BackpackButton.Name = "BackpackButton"
 BackpackButton.BackgroundTransparency = 1
-BackpackButton.Image = "http://banland.xyz/asset/?id=97617958"
+BackpackButton.Image = "https://banland.xyz/asset/?id=97617958"
 BackpackButton.Position = UDim2.new(0.5, -60, 1, -108)
 BackpackButton.Size = UDim2.new(0, 120, 0, 18)
 waitForChild(gui, "ControlFrame")
@@ -138,14 +138,14 @@ TempSlot.ZIndex = 3.0
 local slotBackground = Instance.new "ImageLabel"
 slotBackground.Name = "Background"
 slotBackground.BackgroundTransparency = 1
-slotBackground.Image = "http://banland.xyz/asset/?id=97613075"
+slotBackground.Image = "https://banland.xyz/asset/?id=97613075"
 slotBackground.Size = UDim2.new(1, 0, 1, 0)
 slotBackground.Parent = TempSlot
 
 local HighLight = Instance.new "ImageLabel"
 HighLight.Name = "Highlight"
 HighLight.BackgroundTransparency = 1
-HighLight.Image = "http://banland.xyz/asset/?id=97643886"
+HighLight.Image = "https://banland.xyz/asset/?id=97643886"
 HighLight.Size = UDim2.new(1, 0, 1, 0)
 --HighLight.Parent = TempSlot
 HighLight.Visible = false
@@ -339,8 +339,8 @@ closeButton.Modal = true
 local XImage = Instance.new "ImageLabel"
 XImage.RobloxLocked = true
 XImage.Name = "XImage"
-ContentProvider:Preload "http://banland.xyz/asset/?id=75547445"
-XImage.Image = "http://banland.xyz/asset/?id=75547445" --TODO: move to rbxasset
+ContentProvider:Preload "https://banland.xyz/asset/?id=75547445"
+XImage.Image = "https://banland.xyz/asset/?id=75547445" --TODO: move to rbxasset
 XImage.BackgroundTransparency = 1
 XImage.Position = UDim2.new(-0.25, -1, -0.25, -1)
 XImage.Size = UDim2.new(1.5, 2, 1.5, 2)
@@ -430,7 +430,7 @@ GearGrid.Size = UDim2.new(0.95, 0, 1, 0)
 GearGrid.BackgroundTransparency = 1
 GearGrid.Parent = Gear
 
-local GearButton = Instance.new "ImageButton"
+GearButton = Instance.new "ImageButton"
 GearButton.RobloxLocked = true
 GearButton.Visible = false
 GearButton.Name = "GearButton"
@@ -439,15 +439,15 @@ GearButton.Style = "Custom"
 GearButton.BackgroundTransparency = 1
 GearButton.Parent = GearGrid
 
-local slotBackground = Instance.new "ImageLabel"
+slotBackground = Instance.new "ImageLabel"
 slotBackground.Name = "Background"
 slotBackground.BackgroundTransparency = 1
-slotBackground.Image = "http://banland.xyz/asset/?id=97613075"
+slotBackground.Image = "https://banland.xyz/asset/?id=97613075"
 slotBackground.Size = UDim2.new(1, 0, 1, 0)
 slotBackground.Parent = GearButton
 
 -- GearButton Children
-local GearReference = Instance.new "ObjectValue"
+GearReference = Instance.new "ObjectValue"
 GearReference.RobloxLocked = true
 GearReference.Name = "GearReference"
 GearReference.Parent = GearButton
@@ -462,7 +462,7 @@ GreyOutButton.Visible = false
 GreyOutButton.ZIndex = 3
 GreyOutButton.Parent = GearButton
 
-local GearText = Instance.new "TextLabel"
+GearText = Instance.new "TextLabel"
 GearText.RobloxLocked = true
 GearText.Name = "GearText"
 GearText.BackgroundTransparency = 1
@@ -564,7 +564,7 @@ GearName.TextWrap = true
 GearName.ZIndex = 9
 GearName.Parent = GearStats
 
-local GearImage = Instance.new "ImageLabel"
+GearImage = Instance.new "ImageLabel"
 GearImage.RobloxLocked = true
 GearImage.Name = "GearImage"
 GearImage.Image = ""
@@ -771,10 +771,10 @@ CharacterPane.Parent = Wardrobe
 
 --CharacterPane Children
 local FaceFrame = makeCharFrame("FacesFrame", CharacterPane)
-ContentProvider:Preload "http://banland.xyz/asset/?id=75460621"
+ContentProvider:Preload "https://banland.xyz/asset/?id=75460621"
 makeZone(
 	"FaceZone",
-	"http://banland.xyz/asset/?id=75460621",
+	"https://banland.xyz/asset/?id=75460621",
 	UDim2.new(0, 157, 0, 137),
 	UDim2.new(0.5, -78, 0.5, -68),
 	FaceFrame
@@ -789,7 +789,7 @@ makeStyledButton(
 local HeadFrame = makeCharFrame("HeadsFrame", CharacterPane)
 makeZone(
 	"FaceZone",
-	"http://banland.xyz/asset/?id=75460621",
+	"https://banland.xyz/asset/?id=75460621",
 	UDim2.new(0, 157, 0, 137),
 	UDim2.new(0.5, -78, 0.5, -68),
 	HeadFrame
@@ -802,10 +802,10 @@ makeStyledButton(
 )
 
 local HatsFrame = makeCharFrame("HatsFrame", CharacterPane)
-ContentProvider:Preload "http://banland.xyz/asset/?id=75457888"
+ContentProvider:Preload "https://banland.xyz/asset/?id=75457888"
 local HatsZone = makeZone(
 	"HatsZone",
-	"http://banland.xyz/asset/?id=75457888",
+	"https://banland.xyz/asset/?id=75457888",
 	UDim2.new(0, 186, 0, 184),
 	UDim2.new(0.5, -93, 0.5, -100),
 	HatsFrame
@@ -833,10 +833,10 @@ makeStyledButton(
 )
 
 local PantsFrame = makeCharFrame("PantsFrame", CharacterPane)
-ContentProvider:Preload "http://banland.xyz/asset/?id=75457920"
+ContentProvider:Preload "https://banland.xyz/asset/?id=75457920"
 makeZone(
 	"PantsZone",
-	"http://banland.xyz/asset/?id=75457920",
+	"https://banland.xyz/asset/?id=75457920",
 	UDim2.new(0, 121, 0, 99),
 	UDim2.new(0.5, -60, 0.5, -100),
 	PantsFrame
@@ -928,10 +928,10 @@ makeTextLabel(
 )
 
 local TShirtFrame = makeCharFrame("T-ShirtsFrame", CharacterPane)
-ContentProvider:Preload "http://banland.xyz/asset/?id=75460642"
+ContentProvider:Preload "https://banland.xyz/asset/?id=75460642"
 makeZone(
 	"TShirtZone",
-	"http://banland.xyz/asset/?id=75460642",
+	"https://banland.xyz/asset/?id=75460642",
 	UDim2.new(0, 121, 0, 154),
 	UDim2.new(0.5, -60, 0.5, -100),
 	TShirtFrame
@@ -946,7 +946,7 @@ makeStyledButton(
 local ShirtFrame = makeCharFrame("ShirtsFrame", CharacterPane)
 makeZone(
 	"ShirtZone",
-	"http://banland.xyz/asset/?id=75460642",
+	"https://banland.xyz/asset/?id=75460642",
 	UDim2.new(0, 121, 0, 154),
 	UDim2.new(0.5, -60, 0.5, -100),
 	ShirtFrame
@@ -959,10 +959,10 @@ makeStyledButton(
 )
 
 local ColorFrame = makeCharFrame("ColorFrame", CharacterPane)
-ContentProvider:Preload "http://banland.xyz/asset/?id=76049888"
+ContentProvider:Preload "https://banland.xyz/asset/?id=76049888"
 local ColorZone = makeZone(
 	"ColorZone",
-	"http://banland.xyz/asset/?id=76049888",
+	"https://banland.xyz/asset/?id=76049888",
 	UDim2.new(0, 120, 0, 150),
 	UDim2.new(0.5, -60, 0.5, -100),
 	ColorFrame

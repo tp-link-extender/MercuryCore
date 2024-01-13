@@ -3,13 +3,7 @@ print "[Mercury]: Loaded corescript 73157242"
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 
-local t = {}
-
--- function waitForChild(instance, name)
--- 	while not instance:FindFirstChild(name) do
--- 		instance.ChildAdded:wait()
--- 	end
--- end
+local RbxStamper = {}
 
 -- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)
 --
@@ -743,7 +737,7 @@ local function restoreTheWelds(manualWeldTable, manualWeldParentTable)
 	end
 end
 
-t.CanEditRegion = function(partOrModel, EditRegion) -- todo: use model and stamper metadata
+RbxStamper.CanEditRegion = function(partOrModel, EditRegion) -- todo: use model and stamper metadata
 	if not EditRegion then
 		return true, false
 	end
@@ -769,7 +763,7 @@ t.CanEditRegion = function(partOrModel, EditRegion) -- todo: use model and stamp
 	return true, false
 end
 
-t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
+RbxStamper.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	if assetId == 0 then
 		return nil, "No Asset"
 	end
@@ -859,7 +853,7 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 			local inverseCornerWedgeMesh = Instance.new "SpecialMesh"
 			inverseCornerWedgeMesh.MeshType = "FileMesh"
 			inverseCornerWedgeMesh.MeshId =
-				"http://banland.xyz/asset?id=66832495"
+				"https://banland.xyz/asset?id=66832495"
 			inverseCornerWedgeMesh.Scale = Vector3.new(2, 2, 2)
 			inverseCornerWedgeMesh.Parent = newTerrainPiece
 		end
@@ -986,7 +980,7 @@ t.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	return root
 end
 
-t.SetupStamperDragger = function(
+RbxStamper.SetupStamperDragger = function(
 	modelToStamp,
 	Mouse,
 	StampInModel,
@@ -1161,7 +1155,7 @@ t.SetupStamperDragger = function(
 			-- take out any component of line2 along line1, so you get perpendicular to line1 component
 			line2 -= line.unit * line.unit:Dot(line2)
 
-			tempCFrame = CFrame.new(
+			local tempCFrame = CFrame.new(
 				HighScalabilityLine.Start,
 				HighScalabilityLine.Start + line
 			)
@@ -1193,7 +1187,7 @@ t.SetupStamperDragger = function(
 		end
 
 		-- resize the "line" graphic to be the correct size and orientation
-		tempCFrame = CFrame.new(
+		local tempCFrame = CFrame.new(
 			HighScalabilityLine.Start,
 			HighScalabilityLine.Start + line
 		)
@@ -1244,21 +1238,21 @@ t.SetupStamperDragger = function(
 		end
 	end
 
-	local function DoStamperMouseMove(Mouse)
-		if not Mouse then
+	local function DoStamperMouseMove(mouse)
+		if not mouse then
 			error "Error: RbxStamper.DoStamperMouseMove: Mouse is nil"
 			return
 		end
-		if not Mouse:IsA "Mouse" then
+		if not mouse:IsA "Mouse" then
 			error(
-				`Error: RbxStamper.DoStamperMouseMove: Mouse is of type {Mouse.className} should be of type Mouse`
+				`Error: RbxStamper.DoStamperMouseMove: Mouse is of type {mouse.className} should be of type Mouse`
 			)
 			return
 		end
 
 		-- There wasn't a target (no part or terrain), so check for plane intersection.
-		if not Mouse.Target then
-			local cellPos = GetTerrainForMouse(Mouse)
+		if not mouse.Target then
+			local cellPos = GetTerrainForMouse(mouse)
 			if nil == cellPos then
 				return
 			end
@@ -1271,7 +1265,7 @@ t.SetupStamperDragger = function(
 		-- don't move with dragger - will move in one step on mouse down
 		-- draw ghost at acceptable positions
 		configFound, targetCFrame, targetSurface =
-			findConfigAtMouseTarget(Mouse, stampData)
+			findConfigAtMouseTarget(mouse, stampData)
 		if not configFound then
 			error "RbxStamper.DoStamperMouseMove No configFound, returning"
 			return
@@ -1405,10 +1399,10 @@ t.SetupStamperDragger = function(
 		end
 
 		-- auto break joints code
-		if Mouse and Mouse.Target and Mouse.Target.Parent then
-			local modelInfo = Mouse.Target:FindFirstChild "RobloxModel"
+		if mouse and mouse.Target and mouse.Target.Parent then
+			local modelInfo = mouse.Target:FindFirstChild "RobloxModel"
 			if not modelInfo then
-				modelInfo = Mouse.Target.Parent:FindFirstChild "RobloxModel"
+				modelInfo = mouse.Target.Parent:FindFirstChild "RobloxModel"
 			end
 
 			local myModelInfo =
@@ -1433,7 +1427,7 @@ t.SetupStamperDragger = function(
 					hitFace = modelTargetSurface(
 						modelInfo.Parent,
 						game.Workspace.CurrentCamera.CoordinateFrame.p,
-						Mouse.Hit.p
+						mouse.Hit.p
 					)
 				end
 
@@ -1450,7 +1444,7 @@ t.SetupStamperDragger = function(
 				-- now we have to cast the ray back in the other direction to find the surface we're stamping FROM
 				hitFace = modelTargetSurface(
 					stampData.CurrentParts,
-					Mouse.Hit.p,
+					mouse.Hit.p,
 					game.Workspace.CurrentCamera.CoordinateFrame.p
 				)
 
@@ -1476,9 +1470,9 @@ t.SetupStamperDragger = function(
 		if
 			not pcall(function()
 				if
-					Mouse
-					and Mouse.Target
-					and Mouse.Target.Parent:FindFirstChild "RobloxModel"
+					mouse
+					and mouse.Target
+					and mouse.Target.Parent:FindFirstChild "RobloxModel"
 						== nil
 				then
 					return
@@ -1488,17 +1482,17 @@ t.SetupStamperDragger = function(
 			end)
 		then
 			game.JointsService:ClearJoinAfterMoveJoints()
-			Mouse = nil
+			mouse = nil
 			error "Error: RbxStamper.DoStamperMouseMove Mouse is nil on second check"
 			return
 		end
 
 		if
-			Mouse
-			and Mouse.Target
-			and Mouse.Target.Parent:FindFirstChild "RobloxModel" == nil
+			mouse
+			and mouse.Target
+			and mouse.Target.Parent:FindFirstChild "RobloxModel" == nil
 		then
-			game.JointsService:SetJoinAfterMoveTarget(Mouse.Target)
+			game.JointsService:SetJoinAfterMoveTarget(mouse.Target)
 		else
 			game.JointsService:SetJoinAfterMoveTarget(nil)
 		end
@@ -1514,7 +1508,7 @@ t.SetupStamperDragger = function(
 		end
 	end
 
-	local function setupKeyListener(key, Mouse)
+	local function setupKeyListener(key, mouse)
 		if control and control.Paused then
 			return
 		end -- don't do this if we have no stamp
@@ -1552,12 +1546,12 @@ t.SetupStamperDragger = function(
 
 			-- After rotating, update the position
 			configFound, targetCFrame =
-				findConfigAtMouseTarget(Mouse, stampData)
+				findConfigAtMouseTarget(mouse, stampData)
 			if configFound then
 				positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
 
 				-- update everything else in MouseMove
-				DoStamperMouseMove(Mouse)
+				DoStamperMouseMove(mouse)
 			end
 		elseif key == "c" then -- try to expand our high scalability dragger dimension
 			if
@@ -1593,12 +1587,12 @@ t.SetupStamperDragger = function(
 
 	local function flashRedBox()
 		local gui = game.CoreGui
-		if game:FindFirstChild "Players" then
-			if game.Players.LocalPlayer then
-				if game.Players.LocalPlayer:FindFirstChild "PlayerGui" then
-					gui = game.Players.LocalPlayer.PlayerGui
-				end
-			end
+		if
+			game:FindFirstChild "Players"
+			and game.Players.LocalPlayer
+			and game.Players.LocalPlayer:FindFirstChild "PlayerGui"
+		then
+			gui = game.Players.LocalPlayer.PlayerGui
 		end
 		if not stampData.ErrorBox then
 			return
@@ -1624,21 +1618,19 @@ t.SetupStamperDragger = function(
 			end
 			if stampData.ErrorBox then
 				stampData.ErrorBox.Adornee = nil
-				stampData.ErrorBox.Parent = Tool
+				stampData.ErrorBox.Parent = Tool -- ?
 			end
 		end)
 	end
 
-	local function DoStamperMouseDown(Mouse)
-		if not Mouse then
+	local function DoStamperMouseDown(mouse)
+		if not mouse then
 			error "Error: RbxStamper.DoStamperMouseDown: Mouse is nil"
 			return
 		end
-		if not Mouse:IsA "Mouse" then
+		if not mouse:IsA "Mouse" then
 			error(
-				"Error: RbxStamper.DoStamperMouseDown: Mouse is of type",
-				Mouse.className,
-				"should be of type Mouse"
+				`Error: RbxStamper.DoStamperMouseDown: Mouse is of type {mouse.className}, should be of type Mouse`
 			)
 			return
 		end
@@ -1647,7 +1639,7 @@ t.SetupStamperDragger = function(
 		end
 
 		if isMegaClusterPart() then
-			if Mouse and HighScalabilityLine then
+			if mouse and HighScalabilityLine then
 				local megaCube = stampData.CurrentParts:FindFirstChild(
 					"MegaClusterCube",
 					true
@@ -1938,7 +1930,7 @@ t.SetupStamperDragger = function(
 
 			if checkHighScalabilityStamp then -- check to see if cell is in region, if not we'll skip set
 				if allowedStampRegion then
-					local cellPos = cellCenterToWorld(
+					cellPos = cellCenterToWorld(
 						game.Workspace.Terrain,
 						cellPos.X,
 						cellPos.Y,
@@ -2231,16 +2223,14 @@ t.SetupStamperDragger = function(
 		return cellSet
 	end
 
-	local function DoStamperMouseUp(Mouse)
-		if not Mouse then
+	local function DoStamperMouseUp(mouse)
+		if not mouse then
 			error "Error: RbxStamper.DoStamperMouseUp: Mouse is nil"
 			return false
 		end
-		if not Mouse:IsA "Mouse" then
+		if not mouse:IsA "Mouse" then
 			error(
-				"Error: RbxStamper.DoStamperMouseUp: Mouse is of type",
-				Mouse.className,
-				"should be of type Mouse"
+				`Error: RbxStamper.DoStamperMouseUp: Mouse is of type {mouse.className}, should be of type Mouse`
 			)
 			return false
 		end
@@ -2269,8 +2259,10 @@ t.SetupStamperDragger = function(
 				canStamp = true
 				checkHighScalabilityStamp = true
 			else
-				canStamp, checkHighScalabilityStamp =
-					t.CanEditRegion(stampData.CurrentParts, allowedStampRegion)
+				canStamp, checkHighScalabilityStamp = RbxStamper.CanEditRegion(
+					stampData.CurrentParts,
+					allowedStampRegion
+				)
 			end
 
 			if not canStamp then
@@ -2288,8 +2280,9 @@ t.SetupStamperDragger = function(
 		end
 
 		-- recheck if we can stamp, as we just moved part
+		local canStamp
 		canStamp, checkHighScalabilityStamp =
-			t.CanEditRegion(stampData.CurrentParts, allowedStampRegion)
+			RbxStamper.CanEditRegion(stampData.CurrentParts, allowedStampRegion)
 		if not canStamp then
 			if stampFailedFunc then
 				stampFailedFunc()
@@ -2305,7 +2298,7 @@ t.SetupStamperDragger = function(
 		-- HotThoth's note:  Now that above CurrentParts positioning has been commented out, to be truly correct, we would need to use the
 		--                     value of configFound from the previous onStamperMouseMove call which moved the CurrentParts
 		--                     Shouldn't this be true when lastTargetCFrame has been set and false otherwise?
-		configFound, targetCFrame = findConfigAtMouseTarget(Mouse, stampData)
+		configFound, targetCFrame = findConfigAtMouseTarget(mouse, stampData)
 
 		if configFound and not HighScalabilityLine.Adorn.Parent then
 			if
@@ -2612,9 +2605,9 @@ t.SetupStamperDragger = function(
 		end
 
 		-- make sure all the joints are activated before restoring anchor states
-		if not createJoints then
-			game.JointsService:CreateJoinAfterMoveJoints()
-		end
+		-- if not createJoints then
+		game.JointsService:CreateJoinAfterMoveJoints()
+		-- end
 
 		-- Restore the original properties for all parts being stamped
 		for part, transparency in pairs(stampData.TransparencyTable) do
@@ -2663,9 +2656,9 @@ t.SetupStamperDragger = function(
 		end
 
 		-- and make sure we don't delete it, now that it's not a ghost part
-		if ghostRemovalScript then
-			ghostRemovalScript.Parent = nil
-		end
+		-- if ghostRemovalScript then
+		-- 	ghostRemovalScript.Parent = nil
+		-- end
 
 		--Re-enable the scripts
 		for _, script in pairs(stampData.DisabledScripts) do
@@ -2979,20 +2972,20 @@ t.SetupStamperDragger = function(
 	return control
 end
 
-t.Help = function(funcNameOrFunc)
+RbxStamper.Help = function(funcNameOrFunc)
 	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
 	if
 		funcNameOrFunc == "GetStampModel"
-		or funcNameOrFunc == t.GetStampModel
+		or funcNameOrFunc == RbxStamper.GetStampModel
 	then
 		return "Function GetStampModel.  Arguments: assetId, useAssetVersionId.  assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId.  Side effect: returns a model of the assetId, or a string with error message if something fails"
 	end
 	if
 		funcNameOrFunc == "SetupStamperDragger"
-		or funcNameOrFunc == t.SetupStamperDragger
+		or funcNameOrFunc == RbxStamper.SetupStamperDragger
 	then
 		return "Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4.  Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action."
 	end
 end
 
-return t
+return RbxStamper
