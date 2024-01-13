@@ -34,44 +34,20 @@ const log = (txt: string) =>
 	)
 const done = () => console.log(bgGreen(bold(black(" Done! "))))
 
-function rainbow(text: string) {
-	let rainbow = ""
-	// HSL to RGB, allowing to loop through hue for rainbow effect
-	const f = (
-		i: number,
-		n = 0,
-		k = (n + (i * 12) / text.replace(/\s/g, "").length) % 12
-	) => 0.5 - Math.min(k - 3, 9 - k) * 255
-	let spaces = 0 // Skip spaces in the rainbow effect
-	for (let i = 0; i < text.length; i++)
-		rainbow +=
-			text[i] == " "
-				? ++spaces && " "
-				: rgb24(text[i], {
-						r: f(i - spaces),
-						g: f(i - spaces, 8),
-						b: f(i - spaces, 4),
-					})
-	console.log(bold(`\n${rainbow}\n`))
-}
-
 async function createDir(path: string) {
 	try {
 		await Deno.remove(path, { recursive: true })
-	} catch {
-		0 // why no empty statement, deno
-	}
+	} catch {}
 	await Deno.mkdir(path)
 }
 
 const cwd = Deno.cwd()
-const cli = !Deno.args[0] // Pass any flag to run in headless mode
 const RandomString = (size: number) =>
 	Array(size)
 		.map(() => Math.floor(Math.random() * 16).toString(16))
 		.join("")
-const GetFileName = (returnString: string) =>
-	returnString.substring(returnString.lastIndexOf("/"))
+const GetFileName = (str: string) =>
+	str.substring(str.lastIndexOf("/"))
 
 function zipFromArray(
 	sources: string[],
@@ -103,7 +79,7 @@ function zipDirectory(source: string, destination: string) {
 }
 
 const setup_directory = `${cwd + SEP}setup`
-let versionHash = RandomString(16)
+const versionHash = RandomString(16)
 
 console.log(bold(italic(gray("\n  -- Mercury Setup Deployer --  \n"))))
 let currentVersion
@@ -212,20 +188,9 @@ zipDirectory("staging/content/sky", "PrepForUpload/content-sky.zip")
 zipDirectory("staging/content/fonts", "PrepForUpload/content-fonts.zip")
 zipDirectory("staging/content/music", "PrepForUpload/content-music.zip")
 zipDirectory("staging/content/sounds", "PrepForUpload/content-sounds.zip")
-zipFromArray(
-	texturesHalf(0),
-	"PrepForUpload/content-textures.zip",
-	"content/textures/"
-)
-zipFromArray(
-	texturesHalf(1),
-	"PrepForUpload/content-textures2.zip",
-	"content/textures/"
-)
-zipDirectory(
-	"staging/PlatformContent/pc/textures/",
-	"PrepForUpload/content-textures3.zip"
-)
+zipFromArray(texturesHalf(0), "PrepForUpload/content-textures.zip", "content/textures/" )
+zipFromArray(texturesHalf(1), "PrepForUpload/content-textures2.zip", "content/textures/")
+zipDirectory("staging/PlatformContent/pc/textures/", "PrepForUpload/content-textures3.zip")
 zipDirectory("staging/content/particles", "PrepForUpload/content-particles.zip")
 zipDirectory("staging/BuiltInPlugins", "PrepForUpload/BuiltInPlugins.zip")
 zipDirectory("staging/imageformats", "PrepForUpload/imageformats.zip")
@@ -236,26 +201,11 @@ import { shCapture } from "https://deno.land/x/drake@v1.5.0/mod.ts"
 const output = await shCapture(
 	`(ls ${cwd}/staging/MercuryPlayerLauncher.exe | % versioninfo).FileVersion`
 )
-if (output?.code || 0 > 0) {
-	console.log(
-		red(
-			"Seems like attempting to get version info of MercuryPlayerLauncher.exe failed, are you using PowerShell on Windows?"
-		)
+if (output?.code || 0 > 0)
+	error(
+		"Seems like attempting to get version info of MercuryPlayerLauncher.exe failed, are you using PowerShell on Windows?"
 	)
-	if (cli) {
-		console.log(
-			yellow(
-				`If you are unable to get past this error, you may wish to manually run the following command in PowerShell:\n(ls ${
-					cwd +
-					SEP +
-					["staging", "MercuryPlayerLauncher.exe"].join(SEP)
-				} | % versioninfo).FileVersion\nThen paste the output here`
-			)
-		)
-		output.output = prompt(green("> ")) || ""
-		console.log(green("Continuing"))
-	} else error("Running in headless mode, cannot continue")
-}
+
 Deno.writeTextFile("PrepForUpload/MercuryVersion.txt", output.output.trim())
 
 console.log(
@@ -271,4 +221,4 @@ Deno.writeTextFile(`${setup_directory}/DeployHistory.txt`, "Done!\n", {
 	append: true,
 })
 
-rainbow(" ~~~~  Deployment complete!!  ~~~~ ")
+console.log(" ~~~~  Deployment complete!!  ~~~~ ")
