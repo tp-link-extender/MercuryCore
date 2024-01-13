@@ -212,11 +212,11 @@ end
 
 local JsonReader = {
 	escapes = {
-		["t"] = "\t",
-		["n"] = "\n",
-		["f"] = "\f",
-		["r"] = "\r",
-		["b"] = "\b",
+		t = "\t",
+		n = "\n",
+		f = "\f",
+		r = "\r",
+		b = "\b",
 	},
 }
 
@@ -338,7 +338,7 @@ function JsonReader:ReadBlockComment()
 			done = true
 		end
 		if not done and ch == "/" and self:Peek() == "*" then
-			error(string.format(`Invalid comment: {self:All()}, '/*' illegal.`))
+			error(`Invalid comment: {self:All()}, '/*' illegal.`)
 		end
 	end
 	self:Next()
@@ -488,7 +488,7 @@ end
 
 t.SelectTerrainRegion = function(
 	regionToSelect,
-	color,
+	colour,
 	selectEmptyCells,
 	selectionParent
 )
@@ -498,7 +498,7 @@ t.SelectTerrainRegion = function(
 	end
 
 	assert(regionToSelect)
-	assert(color)
+	assert(colour)
 
 	if type(regionToSelect) ~= "Region3" then
 		error(
@@ -507,10 +507,10 @@ t.SelectTerrainRegion = function(
 			)}`
 		)
 	end
-	if type(color) ~= "BrickColor" then
+	if type(colour) ~= "BrickColor" then
 		error(
 			`color (second arg), should be of type BrickColor, but is type {type(
-				color
+				colour
 			)}`
 		)
 	end
@@ -548,26 +548,8 @@ t.SelectTerrainRegion = function(
 
 	local selectionBox = Instance.new "SelectionBox"
 
-	-- srs translation from region3 to region3int16
-	-- local function Region3ToRegion3int16(region3)
-	-- 	local theLowVec = region3.CFrame.p
-	-- 		- (region3.Size / 2)
-	-- 		+ Vector3.new(2, 2, 2)
-	-- 	local lowCell = WorldToCellPreferSolid(terrain, theLowVec)
-
-	-- 	local theHighVec = region3.CFrame.p
-	-- 		+ (region3.Size / 2)
-	-- 		- Vector3.new(2, 2, 2)
-	-- 	local highCell = WorldToCellPreferSolid(terrain, theHighVec)
-
-	-- 	local highIntVec = Vector3int16.new(highCell.x, highCell.y, highCell.z)
-	-- 	local lowIntVec = Vector3int16.new(lowCell.x, lowCell.y, lowCell.z)
-
-	-- 	return Region3int16.new(lowIntVec, highIntVec)
-	-- end
-
 	-- helper function that creates the basis for a selection box
-	local function createAdornment(theColor)
+	local function createAdornment(theColour)
 		local selectionPartClone
 		local selectionBoxClone
 
@@ -592,8 +574,8 @@ t.SelectTerrainRegion = function(
 			selectionBoxClone.Parent = selectionContainer
 		end
 
-		if theColor then
-			selectionBoxClone.Color = theColor
+		if theColour then
+			selectionBoxClone.Color = theColour
 		end
 
 		return selectionPartClone, selectionBoxClone
@@ -623,7 +605,7 @@ t.SelectTerrainRegion = function(
 	end
 
 	-- finds full cells in region and adorns each cell with a box, with the argument color
-	local function adornFullCellsInRegion(region, color)
+	local function adornFullCellsInRegion(region, newColour)
 		local regionBegin = region.CFrame.p
 			- (region.Size / 2)
 			+ Vector3.new(2, 2, 2)
@@ -648,8 +630,8 @@ t.SelectTerrainRegion = function(
 						for cellPosAdorn, adornTable in pairs(adornments) do
 							if cellPosAdorn == cellPos then
 								adornTable.KeepAlive = currentKeepAliveTag
-								if color then
-									adornTable.SelectionBox.Color = color
+								if newColour then
+									adornTable.SelectionBox.Color = newColour
 								end
 								updated = true
 								break
@@ -657,8 +639,8 @@ t.SelectTerrainRegion = function(
 						end
 
 						if not updated then
-							local selectionPart, selectionBox =
-								createAdornment(color)
+							selectionPart, selectionBox =
+								createAdornment(newColour)
 							selectionPart.Size = Vector3.new(4, 4, 4)
 							selectionPart.CFrame = CFrame.new(cframePos)
 							local adornTable = {
@@ -679,7 +661,7 @@ t.SelectTerrainRegion = function(
 	lastRegion = regionToSelect
 
 	if selectEmptyCells then -- use one big selection to represent the area selected
-		local selectionPart, selectionBox = createAdornment(color)
+		selectionPart, selectionBox = createAdornment(colour)
 
 		selectionPart.Size = regionToSelect.Size
 		selectionPart.CFrame = regionToSelect.CFrame
@@ -687,22 +669,22 @@ t.SelectTerrainRegion = function(
 		adornments.SelectionPart = selectionPart
 		adornments.SelectionBox = selectionBox
 
-		updateSelection = function(newRegion, color)
+		updateSelection = function(newRegion, newColour)
 			if newRegion and newRegion ~= lastRegion then
 				lastRegion = newRegion
 				selectionPart.Size = newRegion.Size
 				selectionPart.CFrame = newRegion.CFrame
 			end
-			if color then
-				selectionBox.Color = color
+			if newColour then
+				selectionBox.Color = newColour
 			end
 		end
 	else -- use individual cell adorns to represent the area selected
-		adornFullCellsInRegion(regionToSelect, color)
-		updateSelection = function(newRegion, color)
+		adornFullCellsInRegion(regionToSelect, colour)
+		updateSelection = function(newRegion, newColour)
 			if newRegion and newRegion ~= lastRegion then
 				lastRegion = newRegion
-				adornFullCellsInRegion(newRegion, color)
+				adornFullCellsInRegion(newRegion, newColour)
 			end
 		end
 	end
@@ -776,7 +758,7 @@ function t.CreateSignal()
 		local cn = mBindableEvent.Event:connect(func)
 		mAllCns[cn] = true
 		local pubCn = {}
-		function pubCn:disconnect()
+		function pubCn.disconnect(_)
 			cn:disconnect()
 			mAllCns[cn] = nil
 		end
