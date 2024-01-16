@@ -15,7 +15,6 @@ import {
 	bold,
 	italic,
 	underline,
-	rgb24,
 	bgGreen,
 } from "https://deno.land/std@0.179.0/fmt/colors.ts"
 import { writeAllSync } from "https://deno.land/std@0.179.0/streams/write_all.ts"
@@ -46,8 +45,7 @@ const RandomString = (size: number) =>
 	Array(size)
 		.map(() => Math.floor(Math.random() * 16).toString(16))
 		.join("")
-const GetFileName = (str: string) =>
-	str.substring(str.lastIndexOf("/"))
+const GetFileName = (str: string) => str.substring(str.lastIndexOf("/"))
 
 function zipFromArray(
 	sources: string[],
@@ -166,20 +164,11 @@ console.log(magenta("Copying terrain plugins"))
 
 for (const file of Deno.readDirSync("terrain plugins/processed"))
 	if (file.isFile)
-		Deno.copyFile(
-			`terrain plugins/processed/${file.name}`,
-			`staging/BuiltInPlugins/terrain/${file.name}`
-		)
+		Deno.copyFile(`terrain plugins/processed/${file.name}`, `staging/BuiltInPlugins/terrain/${file.name}`)
 
 console.log(magenta(`Copying ${underline("MercuryPlayerLauncher.exe")}`))
-Deno.copyFile(
-	"staging/MercuryPlayerLauncher.exe",
-	"PrepForUpload/MercuryPlayerLauncher.exe"
-)
-Deno.copyFile(
-	"staging/MercuryPlayerLauncher.exe",
-	`${setup_directory}/MercuryPlayerLauncher.exe`
-)
+Deno.copyFile("staging/MercuryPlayerLauncher.exe", "PrepForUpload/MercuryPlayerLauncher.exe")
+Deno.copyFile("staging/MercuryPlayerLauncher.exe", `${setup_directory}/MercuryPlayerLauncher.exe`)
 
 console.log(magenta(`Updating ${underline("version.txt")}`))
 Deno.writeTextFile(`${setup_directory}/version.txt`, `version-${versionHash}`)
@@ -188,7 +177,7 @@ zipDirectory("staging/content/sky", "PrepForUpload/content-sky.zip")
 zipDirectory("staging/content/fonts", "PrepForUpload/content-fonts.zip")
 zipDirectory("staging/content/music", "PrepForUpload/content-music.zip")
 zipDirectory("staging/content/sounds", "PrepForUpload/content-sounds.zip")
-zipFromArray(texturesHalf(0), "PrepForUpload/content-textures.zip", "content/textures/" )
+zipFromArray(texturesHalf(0), "PrepForUpload/content-textures.zip", "content/textures/")
 zipFromArray(texturesHalf(1), "PrepForUpload/content-textures2.zip", "content/textures/")
 zipDirectory("staging/PlatformContent/pc/textures/", "PrepForUpload/content-textures3.zip")
 zipDirectory("staging/content/particles", "PrepForUpload/content-particles.zip")

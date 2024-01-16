@@ -13,6 +13,7 @@ import (
 	"time"
 
 	c "github.com/TwiN/go-color"
+	fileversion "github.com/bi-zone/go-fileversion"
 )
 
 func Error(txt string) {
@@ -20,10 +21,15 @@ func Error(txt string) {
 	os.Exit(1)
 }
 
-func Log(txt string) {
-	spaces := 70 - len(txt)
-	fmt.Print(txt + strings.Repeat(" ", spaces))
+func Assert(err error, txt string) {
+	if err != nil {
+		fmt.Println(err)
+		Error(txt)
+	}
 }
+
+// Create a waitgroup to wait for all goroutines to finish
+var wg = sync.WaitGroup{}
 
 type Task struct {
 	name      string
@@ -36,13 +42,13 @@ type TaskList struct {
 }
 
 func (t *TaskList) Update() {
-	// clear last x lines, where x is the number of tasks
-	toPrint := "\033[" + fmt.Sprint(len(t.tasks)) + "A"
+	// Clear last x lines, where x is the number of tasks
+	toPrint := fmt.Sprintf("\033[%dA", len(t.tasks))
 
-	// print all tasks, with [ Done! ] at the end if they are completed
+	// Print all tasks, with [ Done! ] at the end if they are completed
 
 	for _, task := range t.tasks {
-		spaces := 50 - len(task.name)
+		spaces := 30 - len(task.name)
 		toPrint += c.InBlue("Creating " + c.InUnderline(task.name) + strings.Repeat(" ", spaces))
 		if task.timeEnd > 0 {
 			toPrint += c.InBlackOverGreen(" Done! (" + fmt.Sprint(task.timeEnd-task.timeStart) + "ms) ")
@@ -75,12 +81,13 @@ func (t *TaskList) CompleteTask(completedTask string) {
 		}
 	}
 	t.Update()
+	wg.Done()
 }
 
 var list = TaskList{tasks: []Task{}}
 
 func RandomString() string {
-	// generate a hexadecimal string of a given size
+	// Generate a hexadecimal string of a given size
 	const hex = "0123456789abcdef"
 	buf := make([]byte, 16)
 	for i := range buf {
@@ -90,35 +97,26 @@ func RandomString() string {
 }
 
 func WriteFile(writer *zip.Writer, pathName string, entryName string) {
-	// read file
+	// Read file
 	file, err := os.Open(pathName)
-	if err != nil {
-		Error("Could not read file " + pathName)
-	}
+	Assert(err, "Could not read file "+pathName)
 	defer file.Close()
 
-	// create zip entry
+	// Create zip entry
 	entry, err := writer.Create(entryName)
-	if err != nil {
-		Error("Could not create zip entry " + entryName)
-	}
+	Assert(err, "Could not create zip entry "+entryName)
 
-	// copy file to zip entry
+	// Copy file to zip entry
 	_, err = io.Copy(entry, file)
-	if err != nil {
-		fmt.Println(err)
-		Error("Could not copy file " + pathName + " to zip entry " + entryName)
-	}
+	Assert(err, "Could not copy file "+pathName+" to zip entry "+entryName)
 }
 
 func WriteFolder(writer *zip.Writer, pathName string, entryName string) {
-	// read directory
+	// Read directory
 	files, err := os.ReadDir(pathName)
-	if err != nil {
-		Error("Could not read directory " + pathName)
-	}
+	Assert(err, "Could not read directory "+pathName)
 
-	// write files to zip entry
+	// Write files to zip entry
 	for _, file := range files {
 		if file.IsDir() {
 			WriteFolder(writer, path.Join(pathName, file.Name()), entryName+"/"+file.Name())
@@ -128,17 +126,16 @@ func WriteFolder(writer *zip.Writer, pathName string, entryName string) {
 	}
 }
 
-func zipFromArray(wg *sync.WaitGroup, destination string, sources []string, baseDirectory string, isFolder bool) {
-	defer wg.Done()
-
-	var entryName string
+func ZipFromArray(destination string, sources []string, baseDirectory string, isFolder bool) {
+	defer list.CompleteTask(destination)
+	destination = filepath.Join("PrepForUpload", destination)
 
 	zipFile, err := os.Create(destination)
-	if err != nil {
-		Error("Could not create zip file " + destination)
-	}
+	Assert(err, "Could not create zip file "+destination)
 
 	archive := zip.NewWriter(zipFile)
+	defer archive.Close()
+	var entryName string
 
 	for _, file := range sources {
 		if len(baseDirectory) > 0 {
@@ -148,7 +145,7 @@ func zipFromArray(wg *sync.WaitGroup, destination string, sources []string, base
 			entryName = entryParts[len(entryParts)-1]
 		}
 
-		pathName := path.Join("staging", baseDirectory+file)
+		pathName := path.Join("staging", baseDirectory, file)
 		if entryName == "ui" {
 			WriteFolder(archive, pathName, "ui")
 		} else if isFolder {
@@ -157,16 +154,69 @@ func zipFromArray(wg *sync.WaitGroup, destination string, sources []string, base
 			WriteFile(archive, pathName, baseDirectory+file)
 		}
 	}
+}
 
-	list.CompleteTask(destination)
-	archive.Close()
+func ZipFromFolder(destination string, source string) {
+	defer list.CompleteTask(destination)
+	destination = filepath.Join("PrepForUpload", destination)
+
+	zipFile, err := os.Create(destination)
+	Assert(err, "Could not create zip file "+destination)
+
+	archive := zip.NewWriter(zipFile)
+	defer archive.Close()
+
+	WriteFolder(archive, source, "")
+}
+
+func TexturesHalf(first bool) []string {
+	// Read staging/content/textures
+	files, err := os.ReadDir("staging/content/textures")
+	Assert(err, "Could not read directory staging/content/textures")
+
+	var filenames []string
+	for _, file := range files {
+		if !file.IsDir() {
+			filenames = append(filenames, file.Name())
+		}
+	}
+
+	if first {
+		filenames = filenames[:len(filenames)/2]
+		filenames = append(filenames, "ui")
+	} else {
+		filenames = filenames[len(filenames)/2:]
+	}
+
+	return filenames
+}
+
+func CopyTerrainPlugins(cwd string) {
+	os.MkdirAll(filepath.Join(cwd, "staging", "BuiltInPlugins", "terrain"), 0777)
+
+	// Copy terrain plugins/processed to staging/BuiltInPlugins/terrain
+	plugins, err := os.ReadDir(filepath.Join(cwd, "terrain plugins", "processed"))
+	Assert(err, "Could not read directory terrain plugins/processed")
+	for _, plugin := range plugins {
+		// Copy plugin to staging/BuiltInPlugins/terrain
+		pluginFile, err := os.Open(filepath.Join(cwd, "terrain plugins", "processed", plugin.Name()))
+		Assert(err, "Could not read file terrain plugins/processed/"+plugin.Name())
+		defer pluginFile.Close()
+
+		pluginDestination, err := os.Create(filepath.Join(cwd, "staging", "BuiltInPlugins", "terrain", plugin.Name()))
+		Assert(err, "Could not create file staging/BuiltInPlugins/terrain/"+plugin.Name())
+		defer pluginDestination.Close()
+
+		_, err = io.Copy(pluginDestination, pluginFile)
+		Assert(err, "Could not copy terrain plugins/processed/"+plugin.Name())
+	}
+
+	list.CompleteTask("terrain plugins")
 }
 
 func main() {
 	cwd, err := os.Getwd()
-	if err != nil {
-		Error("Could not get current working directory")
-	}
+	Assert(err, "Could not get current working directory")
 	setupDirectory := filepath.Join(cwd, "setup")
 	versionHash := RandomString()
 
@@ -174,7 +224,7 @@ func main() {
 	var currentVersion string
 	newVersion := "version-" + versionHash
 
-	// get version from setup directory/version.txt
+	// Get version from setup directory/version.txt
 	versionFile, err := os.Open(filepath.Join(setupDirectory, "version.txt"))
 	if err != nil {
 		currentVersion = "none"
@@ -186,25 +236,20 @@ func main() {
 	fmt.Println("New version to be deployed will have a version hash of", c.InBlue(newVersion))
 	fmt.Println(c.InGreen("Now commencing deployment\n"))
 
-	// create staging directory
+	// Create staging directory
 	os.Mkdir(filepath.Join(cwd, "staging"), 0777)
 	os.Mkdir(filepath.Join(cwd, "PrepForUpload"), 0777)
 
-	// find if there are any files in the staging directory
+	// Find if there are any files in the staging directory
 	stagingFiles, err := os.ReadDir(filepath.Join(cwd, "staging"))
-	if err != nil {
-		Error("Could not read staging directory")
-	}
+	Assert(err, "Could not read staging directory")
 	if len(stagingFiles) == 0 {
 		Error("Staging directory is empty")
 	}
 
-	// create a waitgroup to wait for all goroutines to finish
-	var wg sync.WaitGroup
-
 	fmt.Println(c.InPurple("Preparing " + c.InUnderline("Mercury.zip")))
 
-	// get all files in the staging directory that end with .dll
+	// Get all files in the staging directory that end with .dll
 	dllFiles := []string{}
 	for _, file := range stagingFiles {
 		if strings.HasSuffix(file.Name(), ".dll") {
@@ -213,20 +258,90 @@ func main() {
 	}
 
 	tasks := []string{
-		"PrepForUpload/redist.zip",
-		"PrepForUpload/Mercury.zip",
-		"PrepForUpload/Libraries.zip",
+		"version.txt",
+		"terrain plugins",
+		"MercuryPlayerLauncher.exe",
+		"redist.zip",
+		"Mercury.zip",
+		"Libraries.zip",
+		"content-textures.zip",
+		"content-textures2.zip",
+		"content-sky.zip",
+		"content-fonts.zip",
+		"content-music.zip",
+		"content-sounds.zip",
+		"content-particles.zip",
+		"BuiltInPlugins.zip",
+		"imageformats.zip",
+		"shaders.zip",
 	}
 
 	list.AddTasks(tasks)
 	wg.Add(len(tasks))
 
-	go zipFromArray(&wg, tasks[0], []string{"Microsoft.VC90.CRT", "Microsoft.VC90.MFC", "Microsoft.VC90.OPENMP"}, "", true)
-	go zipFromArray(&wg, tasks[1], []string{"MercuryPlayerBeta.exe", "MercuryStudioBeta.exe", "ReflectionMetadata.xml", "RobloxStudioRibbon.xml"}, "", false)
-	go zipFromArray(&wg, tasks[2], dllFiles, "", false)
+	go (func() {
+		// Update version.txt with the new version
+		versionFile, err := os.Create(filepath.Join(setupDirectory, "version.txt"))
+		Assert(err, "Could not create version.txt")
+		defer versionFile.Close()
+		fmt.Fprint(versionFile, newVersion)
+		list.CompleteTask(tasks[0])
+	})()
 
-	// wait for gorooutines to finish
+	go CopyTerrainPlugins(cwd)
+
+	go (func() {
+		// Copy MercuryPlayerLauncher.exe to staging
+		launcher, err := os.Open(filepath.Join(setupDirectory, "MercuryPlayerLauncher.exe"))
+		Assert(err, "Could not read MercuryPlayerLauncher.exe")
+		defer launcher.Close()
+
+		destination1, err := os.Create(filepath.Join(cwd, "staging", "MercuryPlayerLauncher.exe"))
+		destination2, err := os.Create(filepath.Join(cwd, "PrepForUpload", "MercuryPlayerLauncher.exe"))
+		Assert(err, "Could not create MercuryPlayerLauncher.exe")
+		defer destination1.Close()
+		defer destination2.Close()
+
+		fv, err := fileversion.New("setup/MercuryPlayerLauncher.exe")
+		Assert(err, "Could not get file version of MercuryPlayerLauncher.exe")
+		fileVersion := fv.FileVersion()
+
+		// Write version to MercuryVersion.txt
+		fmt.Fprint(versionFile, fileVersion)
+
+		_, err = io.Copy(destination1, launcher)
+		_, err = io.Copy(destination2, launcher)
+		Assert(err, "Could not copy MercuryPlayerLauncher.exe")
+
+		list.CompleteTask(tasks[2])
+	})()
+
+	go ZipFromArray(tasks[3], []string{"Microsoft.VC90.CRT", "Microsoft.VC90.MFC", "Microsoft.VC90.OPENMP"}, "", true)
+	go ZipFromArray(tasks[4], []string{"MercuryPlayerBeta.exe", "MercuryStudioBeta.exe", "ReflectionMetadata.xml", "RobloxStudioRibbon.xml"}, "", false)
+	go ZipFromArray(tasks[5], dllFiles, "", false)
+	go ZipFromArray(tasks[6], TexturesHalf(true), "content/textures", false)
+	go ZipFromArray(tasks[7], TexturesHalf(false), "content/textures", false)
+	go ZipFromFolder(tasks[8], "staging/content/sky")
+	go ZipFromFolder(tasks[9], "staging/content/fonts")
+	go ZipFromFolder(tasks[10], "staging/content/music")
+	go ZipFromFolder(tasks[11], "staging/content/sounds")
+	go ZipFromFolder(tasks[12], "staging/content/particles")
+	go ZipFromFolder(tasks[13], "staging/BuiltInPlugins")
+	go ZipFromFolder(tasks[14], "staging/imageformats")
+	go ZipFromFolder(tasks[15], "staging/shaders")
+
+	// Wait for goroutines to finish
 	wg.Wait()
 
-	fmt.Println(" ~~~~  Deployment complete!!  ~~~~")
+	finalPath := path.Join("setup", newVersion)
+	fmt.Println(c.InYellow("Copying contents of "+c.InUnderline("PrepForUpload")) + c.InYellow(" to "+c.InUnderline(finalPath)))
+
+	// Copy contents of PrepForUpload to finalPath
+	err = os.RemoveAll(finalPath)
+	Assert(err, "Could not remove "+finalPath)
+
+	err = os.Rename("PrepForUpload", finalPath)
+	Assert(err, "Could not rename PrepForUpload to "+finalPath)
+
+	fmt.Println(c.InGreen(" ~~~~  Deployment complete!!  ~~~~"))
 }
