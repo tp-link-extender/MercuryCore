@@ -15,21 +15,32 @@
 
 <Head title="Home" />
 
-<div class="ctnr">
+<div class="ctnr light-text">
 	<!-- Flex or Grid? what a dilemma -->
-	<div class="grid lg:grid-cols-2 gap-4">
+	<div class="lg:grid grid-cols-2 gap-4">
 		<div>
-			<h1 class="w-full flex px-10 pb-6 my-0">
+			<h1 class="w-full flex px-10 pb-6 my-0 <sm:text-2xl">
 				<a
 					href="/user/{user?.number}"
-					class="no-underline light-text flex items-center">
-					<User {user} size="6rem" bg="accent" image />
-					<span class="ml-6">
+					class="no-underline flex items-center">
+					<User
+						{user}
+						size="6rem"
+						bg="accent"
+						image
+						class="<sm:hidden" />
+					<User
+						{user}
+						size="4rem"
+						bg="accent"
+						image
+						class="sm:hidden" />
+					<span class="sf pl-6">
 						{data.stuff.greet}
 					</span>
 				</a>
 			</h1>
-			<div class="card p-4 bg-darker overflow-x-hidden <md:h-50vh">
+			<div class="card p-4 bg-darker overflow-x-hidden <lg:h-50vh">
 				<p>
 					Post your status - your friends and followers can view how
 					you're doing!
@@ -39,13 +50,12 @@
 					{formData}
 					inline
 					submit="<fa fa-paper-plane-top />"
-					working="..."
-					class="input-group w-full">
+					working="...">
 					<Input
 						{formData}
 						inline
 						name="status"
-						placeholder="Post status" />
+						placeholder="Post a status" />
 				</Form>
 				<div class="flex flex-col gap-3">
 					{#each sortedFeed as status, num}
@@ -61,11 +71,11 @@
 			</div>
 		</div>
 
-		<div class="pt-12 md:pt-28 pl-2 flex flex-col gap-12">
+		<div class="pt-12 lg:pt-28 pl-2 flex flex-col gap-12">
 			{#if data.friends.length > 0}
 				<div>
-					<h2 class="light-text">Friends</h2>
-					<div class="home-row flex overflow-x-auto gap-4">
+					<h2 class="pb-2">Friends</h2>
+					<div class="flex overflow-x-auto gap-4">
 						{#each data.friends as friend, num}
 							<!-- Larger delay between fades for more items -->
 							<span
@@ -84,8 +94,8 @@
 				</div>
 			{/if}
 			<div>
-				<h2 class="light-text">Resume playing</h2>
-				<div class="home-row flex overflow-x-auto gap-4">
+				<h2 class="pb-2">Resume playing</h2>
+				<div class="flex overflow-x-auto gap-4">
 					{#each data.places || [] as place, num}
 						<div class="min-w-32 w-32">
 							<Place {place} {num} total={data.places.length} />
@@ -93,11 +103,9 @@
 					{/each}
 				</div>
 			</div>
-			<div class="w-1/2 cmd:w-2/3 lg:w-1/2 xl:w-2/3">
-				<h2 class="light-text">Random fact</h2>
-				<div
-					id="fact"
-					class="card bg-darker card-body light-text text-base pb-6">
+			<div class="w-1/2 md:w-2/3 lg:w-1/2 xl:w-2/3">
+				<h2 class="pb-2">Random fact</h2>
+				<div id="fact" class="card bg-darker card-body text-base pb-6">
 					{data.stuff.fact}
 				</div>
 			</div>

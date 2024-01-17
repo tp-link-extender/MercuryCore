@@ -1,24 +1,21 @@
 sm()
-	@media (min-width 576px) {block}
+	@media (min-width 640px) {block}
 md()
 	@media (min-width 768px) {block}
 lg()
-	@media (min-width 992px) {block}
+	@media (min-width 1024px) {block}
 xl()
-	@media (min-width 1200px) {block}
-xxl()
-	@media (min-width 1400px) {block}
+	@media (min-width 1280px) {block}
+2xl()
+	@media (min-width 1536px) {block}
 
 -sm()
-	@media (max-width 575px) {block}
+	@media (max-width 639.9px) {block}
 -md()
-	@media (max-width 767px) {block}
+	@media (max-width 767.9px) {block}
 -lg()
-	@media (max-width 991px) {block}
+	@media (max-width 1023.9px) {block}
 -xl()
-	@media (max-width 1199px) {block}
--xxl()
-	@media (max-width 1399px) {block}
-
-lightTheme()
-	@media (prefers-color-scheme light) {block}
+	@media (max-width 1279.9px) {block}
+-2xl()
+	@media (max-width 1535.9px) {block}

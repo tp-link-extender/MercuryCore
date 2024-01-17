@@ -7,6 +7,14 @@ local BadgeService = game:GetService "BadgeService"
 local FriendService = game:GetService "FriendService"
 local ScriptContext = game:GetService "ScriptContext"
 local RunService = game:GetService "RunService"
+local ScriptInformationProvider = game:GetService "ScriptInformationProvider"
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local ContentProvider = game:GetService "ContentProvider"
+local Players = game:GetService "Players"
+local Visit = game:GetService "Visit"
+
+-- establish this peer as the Server
+local NetworkServer = game:GetService "NetworkServer"
 
 -- StartGame --
 pcall(function()
@@ -93,23 +101,20 @@ end)
 ScriptContext.ScriptsDisabled = true
 
 -- game:SetPlaceID(nil, false)
-game:GetService("ChangeHistoryService"):SetEnabled(false)
-
--- establish this peer as the Server
-local ns = game:GetService "NetworkServer"
+ChangeHistoryService:SetEnabled(false)
 
 if url ~= nil then
 	pcall(function()
-		game:GetService("Players"):SetAbuseReportUrl(`{url}/Report/Games.ashx`)
+		Players:SetAbuseReportUrl(`{url}/Report/Games.ashx`)
 	end)
 	pcall(function()
-		game:GetService("ScriptInformationProvider"):SetAssetUrl(`{url}/Asset/`)
+		ScriptInformationProvider:SetAssetUrl(`{url}/Asset/`)
 	end)
 	pcall(function()
-		game:GetService("ContentProvider"):SetBaseUrl(`{url}/`)
+		ContentProvider:SetBaseUrl(`{url}/`)
 	end)
 	-- pcall(function()
-	-- 	game:GetService("Players"):SetChatFilterUrl(
+	-- 	Players:SetChatFilterUrl(
 	-- 		`{url}/Game/ChatFilter.ashx`
 	-- 	)
 	-- end)
@@ -144,7 +149,7 @@ if url ~= nil then
 		`{url}/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d`
 	)
 	InsertService:SetCollectionUrl(`{url}/Game/Tools/InsertAsset.ashx?sid=%d`)
-	InsertService:SetAssetUrl(`{url}/Asset/?id=%d`)
+	InsertService:SetAssetUrl(`{url}/asset?id=%d`)
 	InsertService:SetAssetVersionUrl(`{url}/Asset/?assetversionid=%d`)
 
 	pcall(function()
@@ -161,15 +166,9 @@ if url ~= nil then
 end
 
 pcall(function()
-	game:GetService("NetworkServer"):SetIsPlayerAuthenticationRequired(true)
+	NetworkServer:SetIsPlayerAuthenticationRequired(true)
 end)
 settings().Diagnostics.LuaRamLimit = 0
---settings().Network:SetThroughputSensitivity(0.08, 0.01)
---settings().Network.SendRate = 35
---settings().Network.PhysicsSend = 0  -- 1==RoundRobin
-
---shared.__time = 0
---game:GetService("RunService").Stepped:connect(function (time) shared.__time = time end)
 
 if placeId ~= nil and killID ~= nil and deathID ~= nil and url ~= nil then
 	-- listen for the death of a Player
@@ -184,7 +183,7 @@ if placeId ~= nil and killID ~= nil and deathID ~= nil and url ~= nil then
 	end
 
 	-- listen to all Players' Characters
-	game:GetService("Players").ChildAdded:connect(function(player)
+	Players.ChildAdded:connect(function(player)
 		createDeathMonitor(player)
 		player.Changed:connect(function(property)
 			if property == "Character" then
@@ -194,7 +193,7 @@ if placeId ~= nil and killID ~= nil and deathID ~= nil and url ~= nil then
 	end)
 end
 
-game:GetService("Players").PlayerAdded:connect(function(player)
+Players.PlayerAdded:connect(function(player)
 	print(`Player {player.userId} added`)
 
 	if url and access and placeId and player and player.userId then
@@ -207,7 +206,7 @@ game:GetService("Players").PlayerAdded:connect(function(player)
 	end
 end)
 
-game:GetService("Players").PlayerRemoving:connect(function(player)
+Players.PlayerRemoving:connect(function(player)
 	print(`Player {player.userId} leaving`)
 
 	if url and access and placeId and player and player.userId then
@@ -234,9 +233,9 @@ if _MAP_LOCATION_EXISTS then
 end
 
 -- Now start the connection
-ns:Start(_SERVER_PORT, sleeptime)
+NetworkServer:Start(_SERVER_PORT, sleeptime)
 
-game:GetService("Visit"):SetPing("_SERVER_PRESENCE_URL", 30)
+Visit:SetPing("_SERVER_PRESENCE_URL", 30)
 
 if timeout then
 	ScriptContext:SetTimeout(timeout)

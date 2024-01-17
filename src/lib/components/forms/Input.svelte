@@ -9,25 +9,29 @@
 	export let type: HTMLInputTypeAttribute = "text"
 
 	export let inline = false
+	export let column = false
 	export let formData: any
 	const { errors } = formData
 </script>
 
 <div class="flex flex-wrap {inline ? 'flex-1' : 'pb-8'}">
 	{#if label}
-		<label for={name} class="w-full md:w-1/4">
+		<label for={name} class="w-full {column ? '' : 'md:w-1/4'}">
 			{label}
 		</label>
 	{/if}
-	<div class="w-full {label ? 'md:w-3/4' : ''} {$$restProps.mainclass || ''}">
+	<div
+		class="w-full {label && !column
+			? 'md:w-3/4'
+			: ''} {$$restProps.mainclass || ''}">
 		<!-- welp, boilerplate begets boilerplate -->
 		{#if after}
 			<div class="flex items-center">
-				<SubInput {...$$restProps} {name} {type} {inline} {formData} />
+				<SubInput {...$$restProps} {name} {type} {formData} />
 				{@html after}
 			</div>
 		{:else}
-			<SubInput {...$$restProps} {name} {type} {inline} {formData} />
+			<SubInput {...$$restProps} {name} {type} {formData} />
 		{/if}
 
 		{#if help}
@@ -36,7 +40,7 @@
 			</small>
 		{/if}
 
-		<small class="pb-4 text-danger">
+		<small class="pb-4 text-red-5">
 			{$errors[name] || ""}
 		</small>
 	</div>

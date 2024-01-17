@@ -58,23 +58,20 @@
 		<form
 			on:submit|preventDefault
 			action="/inventory?tab={tabData.currentTab}"
-			class="row pb-4">
-			<div class="input-group">
-				<input
-					bind:value={query}
-					type="text"
-					name="q"
-					class="form-control light-text valid"
-					placeholder="Search for an item"
-					aria-label="Search for an item"
-					aria-describedby="button-addon2" />
-				<button
-					class="btn btn-success"
-					aria-label="Search"
-					id="button-addon2">
-					<fa fa-magnifying-glass />
-				</button>
-			</div>
+			class="input-group pb-4">
+			<input
+				bind:value={query}
+				type="text"
+				name="q"
+				placeholder="Search for an item"
+				aria-label="Search for an item"
+				aria-describedby="button-addon2" />
+			<button
+				class="btn btn-secondary"
+				aria-label="Search"
+				id="button-addon2">
+				<fa fa-magnifying-glass />
+			</button>
 		</form>
 		<div
 			class="grid gap-4 grid-cols-2
@@ -83,7 +80,7 @@
 				<Asset {asset} {num} total={assets.length} />
 			{/each}
 			{#if query && assets.length == 0}
-				<h2 class="fs-5 pt-12">
+				<h2 class="text-xs pt-12">
 					No items found with search term {query}
 				</h2>
 			{/if}

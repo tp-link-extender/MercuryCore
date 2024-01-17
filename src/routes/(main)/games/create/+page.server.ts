@@ -40,14 +40,17 @@ export const actions = {
 			form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
-		const {
-			name,
-			description,
-			serverIP,
-			serverPort,
-			maxPlayers,
-			privateServer,
-		} = form.data
+		const { serverIP, serverPort, maxPlayers, privateServer } = form.data
+
+		const name = form.data.name.trim()
+		if (!name) return formError(form, ["name"], ["Place must have a name"])
+		const description = form.data.description.trim()
+		if (!description)
+			return formError(
+				form,
+				["description"],
+				["Place must have a description"]
+			)
 
 		if ((await placeCount(user.id)) >= 2)
 			return formError(

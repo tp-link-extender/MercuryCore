@@ -31,5 +31,5 @@
 		<fa fa-ban />
 		Not interested
 	</button>
-	<p class="text-light">Hey Kakarot, I think they found us</p>
+	<p class="text-white">Hey Kakarot, I think they found us</p>
 </div>

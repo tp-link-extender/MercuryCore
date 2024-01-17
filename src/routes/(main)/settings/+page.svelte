@@ -14,13 +14,13 @@
 	<h1 class="py-6">Settings</h1>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h2 class="fs-3">User Profile</h2>
+		<h2 class="text-xl">User Profile</h2>
 		<p class="grey-text pb-6">Change your bio, site theme and more.</p>
 		<ProfileForm {data} />
 	</Tab>
 
 	<Tab {tabData}>
-		<h2 class="fs-3">User Information</h2>
+		<h2 class="text-xl">User Information</h2>
 		<p class="grey-text pb-6">
 			Information about your account, you can change certain aspects of it
 			here.
@@ -29,7 +29,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h2 class="fs-3 pb-4">Change Password</h2>
+		<h2 class="text-xl pb-4">Change Password</h2>
 		<PasswordForm {data} />
 	</Tab>
 </div>

@@ -84,17 +84,19 @@ export const actions = {
 		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
 		if (limit) return limit
 
-		const { content } = form.data,
-			replyId = url.searchParams.get("rid")
+		const replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another reply
+
+		const content = form.data.content.trim()
+		if (!content)
+			return formError(form, ["content"], ["Reply cannot be empty"])
 
 		if (replyId && !/^[0-9a-z]+$/.test(replyId))
 			error(400, "Invalid reply id")
 
 		const replypost = await squery<{ authorId: string }>(
 			surql`
-				SELECT
-					meta::id(<-posted[0]<-user[0].id) AS authorId
+				SELECT meta::id(<-posted[0]<-user[0].id) AS authorId
 				FROM $replypostId
 				WHERE visibility = "Visible"`,
 			{
@@ -106,7 +108,7 @@ export const actions = {
 
 		if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
 
-		const newReplyId = await squery<string>(surql`fn::id()`)
+		const newReplyId = await squery<string>(surql`[fn::id()]`)
 
 		await query(
 			surql`
@@ -168,12 +170,11 @@ export const actions = {
 		}>(
 			surql`
 				SELECT
-					meta::id((-posted<-user.id)[0]) AS authorId
+					meta::id((<-posted<-user.id)[0]) AS authorId,
 					visibility
 				FROM $forumReply`,
 			{ forumReply: `forumReply:${id}` }
 		)
-
 		if (!reply) error(404, "Reply not found")
 
 		if (reply.authorId != user.id)
@@ -183,8 +184,7 @@ export const actions = {
 
 		await query(
 			surql`
-				LET $poster = (SELECT
-					<-posted<-user AS poster
+				LET $poster = (SELECT <-posted<-user AS poster
 				FROM $forumReply)[0].poster;
 
 				UPDATE $forumReply SET content += [{

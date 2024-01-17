@@ -42,146 +42,111 @@
 
 <Head title="Catalog" />
 
-<div class="ctnr">
-	<div class="flex flex-wrap pb-4">
-		<h1 class="w-full lg:w-1/3 md:w-1/4 mb-0">Catalog</h1>
-		<div class="w-full lg:w-2/3 md:w-3/4 pt-2">
+<div class="ctnr light-text">
+	<div class="grid lg:grid-cols-[1fr_2fr] md:grid-cols-[1fr_3fr] pb-4">
+		<h1>Catalog</h1>
+		<div class="pt-2">
 			<form
 				use:enhance
 				method="POST"
 				action="/search?c=assets"
-				class="row">
-				<div class="input-group">
-					<input
-						bind:value={query}
-						type="text"
-						name="query"
-						class="form-control light-text valid"
-						placeholder="Search for an item"
-						aria-label="Search for an item"
-						aria-describedby="button-addon2" />
-					<select
-						class="form-select form-select-sm light-text pl-4"
-						placeholder="Type"
-						aria-label="Type">
-						<option value="Shirt">Shirts</option>
-						<option value="TShirt">T-Shirts</option>
-						<option value="Hat">Hats</option>
-						<option value="Pant">Pants</option>
-						<option value="Decal">Decals</option>
-					</select>
-					<button
-						class="btn btn-success"
-						aria-label="Search"
-						id="button-addon2">
-						<fa fa-magnifying-glass />
-					</button>
-				</div>
+				class="input-group">
+				<input
+					bind:value={query}
+					type="text"
+					name="query"
+					placeholder="Search for an item"
+					aria-label="Search for an item"
+					aria-describedby="button-addon2" />
+				<select
+					class="form-select pl-4"
+					placeholder="Type"
+					aria-label="Type">
+					<option value="Shirt">Shirts</option>
+					<option value="TShirt">T-Shirts</option>
+					<option value="Hat">Hats</option>
+					<option value="Pant">Pants</option>
+					<option value="Decal">Decals</option>
+				</select>
+				<button
+					class="btn btn-secondary"
+					aria-label="Search"
+					id="button-addon2">
+					<fa fa-magnifying-glass />
+				</button>
 			</form>
 		</div>
 	</div>
 
-	<div class="flex flex-wrap">
-		<div class="w-full xl:w-1/6 lg:w-1/4 pb-2 md:pr-4">
-			<h2 class="pb-4">Categories</h2>
+	<div
+		class="grid gap-2 md:gap-4
+		lg:grid-cols-[1fr_5fr] md:grid-cols-[1fr_4fr]">
+		<div>
 			<h2>Filters</h2>
-			<p class="light-text mb-0">Sort by:</p>
-			<div class="form-check">
+			<p class="text-neutral-4">Sort by</p>
+			<div class="grid grid-cols-[1fr_9fr] items-center gap-1">
 				<input
 					class="form-check-input"
 					type="radio"
-					name="filter"
-					id="bestsellingRadio" />
-				<label
-					class="form-check-label light-text"
-					for="bestsellingRadio">
-					Bestselling
-				</label>
+					name="sort"
+					id="bestselling" />
+				<label for="bestselling">Bestselling</label>
+				<input
+					class="form-check-input"
+					type="radio"
+					name="sort"
+					id="recentlyCreated" />
+				<label for="recentlyCreated">Recently Created</label>
+				<input
+					class="form-check-input"
+					type="radio"
+					name="sort"
+					id="mercury" />
+				<label for="mercury">Mercury</label>
+				<input
+					class="form-check-input"
+					type="radio"
+					name="sort"
+					id="highToLow" />
+				<label for="highToLow">Price (high to low)</label>
+				<input
+					class="form-check-input"
+					type="radio"
+					name="sort"
+					id="lowToHigh" />
+				<label for="lowToHigh">Price (low to high)</label>
 			</div>
-			<div class="form-check">
+			<p>Price:</p>
+			<div class="grid grid-cols-[1fr_9fr] items-center gap-1">
 				<input
 					class="form-check-input"
 					type="radio"
-					name="filter"
-					id="recentlyCreatedRadio" />
-				<label
-					class="form-check-label light-text"
-					for="recentlyCreatedRadio">
-					Recently Created
-				</label>
-			</div>
-			<div class="form-check">
-				<input
-					class="form-check-input"
-					type="radio"
-					name="filter"
-					id="mercuryRadio" />
-				<label class="form-check-label light-text" for="mercuryRadio">
-					Mercury
-				</label>
-			</div>
-			<p class="light-text mb-0">Price:</p>
-			<div class="form-check">
-				<input
-					class="form-check-input"
-					type="radio"
-					name="filter"
-					id="defaultPriceRadio"
+					name="price"
+					id="any"
 					checked />
-				<label
-					class="form-check-label light-text"
-					for="defaultPriceRadio">
-					Any price
-				</label>
-			</div>
-			<div class="form-check">
+				<label for="any">Any price</label>
 				<input
-					class="form-check-input"
+					class="form-check-input self-start"
 					type="radio"
-					name="filter"
-					id="customPriceRadio" />
-				<input
-					class="form-control form-control-sm mb-2"
-					type="number"
-					min="0"
-					max="999"
-					placeholder="Minimum price"
-					aria-label="Min price" />
-				<input
-					class="form-control form-control-sm mb-2"
-					type="number"
-					min="0"
-					max="999"
-					placeholder="Maximum price"
-					aria-label="Max price" />
-				<button class="btn btn-success btn-sm">Set</button>
-			</div>
-			<div class="form-check">
-				<input
-					class="form-check-input"
-					type="radio"
-					name="filter"
-					id="lowToHighPriceRadio" />
-				<label
-					class="form-check-label light-text"
-					for="lowToHighPriceRadioRadio">
-					Price (low to high)
-				</label>
-			</div>
-			<div class="form-check">
-				<input
-					class="form-check-input"
-					type="radio"
-					name="filter"
-					id="highToLowPricePriceRadio" />
-				<label
-					class="form-check-label light-text"
-					for="highToLowPricePriceRadio">
-					Price (high to low)
-				</label>
+					name="price" />
+				<div>
+					<input
+						class="mb-2"
+						type="number"
+						min="0"
+						max="999"
+						placeholder="Minimum price" />
+					<input
+						class="mb-2"
+						type="number"
+						min="0"
+						max="999"
+						placeholder="Maximum price" />
+					<button class="btn btn-tertiary btn-sm">Set</button>
+				</div>
 			</div>
 		</div>
-		<div class="w-full xl:w-5/6 lg:w-3/4">
+		<div>
 			<TabNav bind:tabData justify />
 			{#if !query || assets.length > 0}
 				<div

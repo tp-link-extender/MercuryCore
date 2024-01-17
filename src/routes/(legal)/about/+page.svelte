@@ -56,13 +56,13 @@
 			id="info"
 			class="ctnr pointer-events-none flex flex-col justify-center
 			items-center relative">
-			<h1 class="title font-black">Mercury 2</h1>
+			<h1 class="text-16 font-bold">Mercury 2</h1>
 			<p class="text-base light-text text-center">
 				Endless possibilities. New features. Same nostalgia.
 			</p>
 			<h2
-				class="p-2 py-1 rounded-3 font-bold text-base
-				bg-secondary text-light opacity-75">
+				class="p-2 py-1 rounded-2 font-bold text-base
+				bg-neutral-5 opacity-75">
 				Closed Beta
 			</h2>
 		</div>
@@ -74,30 +74,30 @@
 			{#if completed}
 				<h1
 					in:fade
-					class="pointer-events-none text-white opacity-75 font-black">
+					class="sf font-bold pointer-events-none text-white opacity-75">
 					lmao%
 				</h1>
 			{:else}
 				<h1
 					in:fade
-					class="pointer-events-none text-white opacity-75 font-black">
+					class="sf font-bold pointer-events-none text-white opacity-75">
 					{cubePercentage}%
 				</h1>
 				{#if cubePercentage2 > 0}
 					<h1
 						in:fade
-						class="pointer-events-none text-danger opacity-75 font-black">
+						class="sf font-bold pointer-events-none text-red-5 opacity-75">
 						{cubePercentage2}%
 					</h1>
 				{/if}
 				{#if cubePercentage >= 60 && cubePercentage < 80}
 					<h2
-						class="pointer-events-none text-white opacity-75 font-black">
+						class="sf font-bold pointer-events-none text-white opacity-75">
 						zoom out
 					</h2>
 				{:else if cubePercentage == 100 && cubePercentage2 < 2}
 					<h2
-						class="pointer-events-none text-danger opacity-75 font-black">
+						class="sf font-bold pointer-events-none text-red-5 opacity-75">
 						click the cubes
 					</h2>
 				{/if}
@@ -108,7 +108,7 @@
 	<div id="arrowcontainer">
 		<button
 			id="arrow"
-			class="btn absolute shadow-none left-1/2 light-text"
+			class="btn absolute left-1/2 light-text"
 			aria-label="Scroll down"
 			on:click={downScroll}
 			on:keypress={downScroll}
@@ -133,7 +133,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart>
 			<div class="w-full">
-				<h1 class="font-black w-full">Endless possibilities</h1>
+				<h1 class="sf font-bold w-full">Endless possibilities</h1>
 				<h3 class=" light-text w-full">
 					On Mercury 2, you can create games for others to play, or
 					shirts and pants for people to buy and wear. You can
@@ -154,7 +154,7 @@
 	<ParallaxLayer offset={1} rate={2}>
 		<Pagepart fullwidth>
 			<div class="w-full">
-				<h1 class="font-black w-full">New features</h1>
+				<h1 class="sf font-bold w-full">New features</h1>
 				<h3 class="w-full">
 					Mercury 2 has an even better website experience - easy to
 					use and even more feature-packed than the previous website.
@@ -168,7 +168,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-full">
-				<h1 class="font-black w-full">Same nostalgia.</h1>
+				<h1 class="sf font-bold w-full">Same nostalgia.</h1>
 				<h3 class="w-full">
 					We ensure the clients are as vanilla as possible so that you
 					remember the client as it was back then.
@@ -179,7 +179,7 @@
 	<ParallaxLayer offset={1} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-full">
-				<h1 class="font-black w-full">
+				<h1 class="sf font-bold w-full">
 					Professional developers and community outreach.
 				</h1>
 				<h3 class="w-full">
@@ -204,7 +204,7 @@
 	<ParallaxLayer offset={0} rate={0}>
 		<Pagepart fullwidth>
 			<div class="w-full">
-				<h1 class="font-black w-full">Why Mercury 2?</h1>
+				<h1 class="sf font-bold w-full">Why Mercury 2?</h1>
 				<h3 class="w-full">
 					Mercury 2 provides a simple yet elegant website, with an
 					unique client and a forum, so you can communicate with your
@@ -221,7 +221,7 @@
 				id="info"
 				class="ctnr flex flex-col justify-center
 				items-center relative">
-				<h1 class="title font-black">Mercury 2</h1>
+				<h1 class="text-16 sf font-bold">Mercury 2</h1>
 				<p class="lead light-text text-center">
 					Endless possibilities. New features. Same nostalgia.
 				</p>
@@ -241,9 +241,6 @@
 <style lang="stylus">
 	#info
 		height 70vh
-
-	.title
-		font-size 4rem
 
 	#arrowcontainer
 		padding-top 55vh

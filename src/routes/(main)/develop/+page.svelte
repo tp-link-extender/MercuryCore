@@ -28,7 +28,7 @@
 			vertical
 			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
 		<div class="w-full lg:w-5/6 md:w-3/4">
-			<Tab {tabData} class="grid lg:grid-cols-4 gap-2">
+			<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
 				{#each assetTypes as asset, num}
 					<AdminLink
 						href="/develop/create?asset={asset[2]}"
@@ -53,12 +53,11 @@
 						<input
 							type="text"
 							name="q"
-							class="form-control light-text valid"
 							placeholder="Search for an item"
 							aria-label="Search for an item"
 							aria-describedby="button-addon2" />
 						<button
-							class="btn btn-success"
+							class="btn btn-secondary"
 							aria-label="Search"
 							id="button-addon2">
 							<fa fa-magnifying-glass />

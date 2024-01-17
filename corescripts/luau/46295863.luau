@@ -23,8 +23,8 @@ local RbxGui
 local helpButton, updateCameraDropDownSelection, updateVideoCaptureDropDownSelection
 local tweenTime = 0.2
 
-local mouseLockLookScreenUrl = "http://banland.xyz/asset?id=54071825"
-local classicLookScreenUrl = "http://banland.xyz/Asset?id=45915798"
+local mouseLockLookScreenUrl = "https://banland.xyz/asset?id=54071825"
+local classicLookScreenUrl = "https://banland.xyz/Asset?id=45915798"
 
 local hasGraphicsSlider = (game:GetService("CoreGui").Version >= 5)
 local GraphicsQualityLevels = 10 -- how many levels we allow on graphics slider
@@ -415,17 +415,17 @@ local function createHelpDialog(baseZIndex)
 	buttons[2] = {}
 	buttons[2].Text = "Move"
 	buttons[2].Function = function()
-		image.Image = "http://banland.xyz/Asset?id=45915811"
+		image.Image = "https://banland.xyz/Asset?id=45915811"
 	end
 	buttons[3] = {}
 	buttons[3].Text = "Gear"
 	buttons[3].Function = function()
-		image.Image = "http://banland.xyz/Asset?id=45917596"
+		image.Image = "https://banland.xyz/Asset?id=45917596"
 	end
 	buttons[4] = {}
 	buttons[4].Text = "Zoom"
 	buttons[4].Function = function()
-		image.Image = "http://banland.xyz/Asset?id=45915825"
+		image.Image = "https://banland.xyz/Asset?id=45915825"
 	end
 
 	CreateTextButtons(buttonRow, buttons, UDim.new(0, 0), UDim.new(1, 0))
@@ -2007,7 +2007,7 @@ local createSaveDialogs = function()
 			-8
 		)
 		spinnerImage.BackgroundTransparency = 1
-		spinnerImage.Image = "http://banland.xyz/Asset?id=45880710"
+		spinnerImage.Image = "https://banland.xyz/Asset?id=45880710"
 		spinnerImage.Parent = spinnerFrame
 
 		spinnerIcons[spinnerNum] = spinnerImage
@@ -2029,10 +2029,10 @@ local createSaveDialogs = function()
 				while pos < 8 do
 					if pos == spinPos or pos == ((spinPos + 1) % 8) then
 						spinnerIcons[pos + 1].Image =
-							"http://banland.xyz/Asset?id=45880668"
+							"https://banland.xyz/Asset?id=45880668"
 					else
 						spinnerIcons[pos + 1].Image =
-							"http://banland.xyz/Asset?id=45880710"
+							"https://banland.xyz/Asset?id=45880710"
 					end
 
 					pos += 1
@@ -2169,7 +2169,7 @@ local createReportAbuseDialog = function()
 	frame.Active = true
 	frame.Parent = shield
 
-	local settingsFrame = Instance.new "Frame"
+	settingsFrame = Instance.new "Frame"
 	settingsFrame.Name = "ReportAbuseStyle"
 	settingsFrame.Size = UDim2.new(1, 0, 1, 0)
 	settingsFrame.Style = Enum.FrameStyle.RobloxRound
@@ -2601,26 +2601,4 @@ if success and luaChat then
 		end
 	end)
 end
-]]
-
---[[
-local BurningManPlaceID = 41324860
--- TODO: remove click to walk completely if testing shows we don't need it
--- Removes click to walk option from Burning Man
-delay(0, function()
-	waitForChild(game, "NetworkClient")
-	waitForChild(game, "Players")
-	waitForProperty(game.Players, "LocalPlayer")
-	waitForProperty(game.Players.LocalPlayer, "Character")
-	waitForChild(game.Players.LocalPlayer.Character, "Humanoid")
-	waitForProperty(game, "PlaceId")
-
-	if game.PlaceId == BurningManPlaceID then
-		game.Players.LocalPlayer.Character.Humanoid:SetClickToWalkEnabled(false)
-		game.Players.LocalPlayer.CharacterAdded:connect(function(character)
-			waitForChild(character, "Humanoid")
-			character.Humanoid:SetClickToWalkEnabled(false)
-		end)
-	end
-end)
 ]]

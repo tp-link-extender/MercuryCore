@@ -26,7 +26,7 @@
 			<p class="m-0">
 				{asset.name}
 			</p>
-			<p class="m-0 text-success">
+			<p class="m-0 text-emerald-6">
 				<far fa-gem />
 				{asset.price}
 			</p>

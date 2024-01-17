@@ -24,10 +24,10 @@ The following extensions are recommended:
 -   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 -   [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
 -   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
--   [Sass (.sass only)](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented)
 -   [stylus](https://marketplace.visualstudio.com/items?itemName=sysoev.language-stylus)
 -   [SurrealQL](https://marketplace.visualstudio.com/items?itemName=surrealdb.surrealql)
 -   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
+-   [UnoCSS](https://marketplace.visualstudio.com/items?itemName=antfu.unocss)
 
 # Editing the website
 
@@ -46,15 +46,8 @@ Instructions:
 -   Run `npm i -g pnpm` to install pnpm
 -   Run `pnpm i` to install all dependencies
 -   Run `pnpm build avatar` to build the avatar renderer, so that user images will work correctly
--   Run `pnpm bootstrap` to compile Bootstrap's SCSS files. This results in the development server being much faster, as it does not have to wait for the Sass compiler
-    -   If you are using PowerShell on windows, you may encounter an execution policy error when running pnpm. Run the command `set-executionpolicy remotesigned` in an administrator PowerShell to fix this.
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
--   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
--   Run `npx prisma migrate dev` to apply the schema to the Postgres database and create the PrismaClient package
-
--   Run `npx prisma studio` to open the database editor on port 5555
--   Navigate to the Regkey table and create a registration key, set key and usesLeft fields to whatever you want
-    -   You may wish to use a different database editor like [pgAdmin](https://pgadmin.org) to edith the database instead.
+-   Run `docker-compose up -d` to start the database
 
 To start a local dev server, run `pnpm dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
@@ -88,9 +81,8 @@ Instructions:
 -   Clone the repository to your server, and navigate to its directory
 -   Run `caddy start` to start the Caddy reverse proxy server
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
--   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
+-   Run `docker-compose up -d` to start the database
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
--   Run `npx prisma migrate deploy` to apply the schema to the Postgres database and create the PrismaClient package
 -   Open a terminal and navigate to the directory of the repository
 -   Run `npm i -g pm2` to install pm2, the node process manager
 -   Run `pnpm i` and `pnpm build` to install dependencies and build the website
@@ -104,7 +96,7 @@ Mercury's frontent is built with [Svelte](https://svelte.dev), a UI framework th
 
 The site uses [TypeScript](https://typescriptlang.org) throughout, a language that adds type extensions ontop of Javascript. An IDE that supports intellisense is recommended to make development easier.
 
-Styling is done in [Stylus](https://stylus-lang.com) and [Sass](https://sass-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
+Styling is done in [Stylus](https://stylus-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
 
 [SurrealDB](https://surrealdb.com) is used as the database, a powerful multi-model database that easily allows for storing and querying the highly relational data used in Mercury.
 
@@ -114,7 +106,7 @@ Styling is done in [Stylus](https://stylus-lang.com) and [Sass](https://sass-lan
 
 ## Route structure
 
-Actual pages for the site are stored in /src/routes. The structure for them might look crazy at first, but it makes it very simple to differentiate between clientside and serverside code.
+Actual pages for the site are stored in /src/routes. The structure for them might look crazy at first, but it makes it very simple to differentiate between clientside and serverside code, and layout groups help to heavily reduce boilerplate and code duplication.
 
 See the [SvelteKit Routing docs](https://kit.svelte.dev/docs/routing) for more information.
 

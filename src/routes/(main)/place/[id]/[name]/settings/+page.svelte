@@ -23,10 +23,16 @@
 	to have multiple forms on a page without them messing eachother up.
  -->
 <div class="ctnr max-w-220 light-text">
-	<h1 class="py-6">Configure {data.name}</h1>
+		<div class="pb-4">
+		<h1>Configure {data.name}</h1>
+		<a href="/place/{data.id}/{data.name}" class="no-underline">
+			<fa fa-caret-left />
+			Back to place
+		</a>
+	</div>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
-		<h2 class="fs-3">Game View</h2>
+		<h2 class="text-xl">Game View</h2>
 		<p class="grey-text">
 			Change the title and description of your server.
 		</p>
@@ -34,7 +40,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h2 class="fs-3">Network</h2>
+		<h2 class="text-xl">Network</h2>
 		<p class="grey-text">
 			Change the network configurations of your server.
 		</p>
@@ -45,7 +51,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		<h2 class="fs-3">Privacy</h2>
+		<h2 class="text-xl">Privacy</h2>
 		<p class="grey-text">
 			Enable private server to make your game only accessible to those
 			with the link.

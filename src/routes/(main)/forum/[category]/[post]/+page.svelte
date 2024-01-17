@@ -1,26 +1,16 @@
 <script lang="ts">
-	import { page } from "$app/stores"
 	import { enhance as enhance2 } from "$app/forms"
 	import superForm from "$lib/superForm"
 
 	export let data
+	const { user } = data
 	export let asComponent = false
 
 	let replyingTo = writable("")
-	const repliesCollapsed = writable({}),
-		{ user } = data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form)
+	const repliesCollapsed = writable({})
+	const formData = superForm(data.form)
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 </script>
 
 <Head title={data.title} />
@@ -69,40 +59,37 @@
 			class="sidebar bg-a mr-2 p-1"
 			method="POST"
 			action="?/like&id={data.id}">
-			<div class="row mb-2 flex">
-				<div>
-					<button
-						name="action"
-						value={data.likes ? "unlike" : "like"}
-						aria-label={data.likes ? "Unlike" : "Like"}
-						class="btn btn-sm {data.likes
-							? 'btn-success'
-							: 'btn-outline-success'}">
-						<i class="fa{data.likes ? '' : 'r'} fa-thumbs-up" />
-					</button>
-				</div>
+			<div class="flex flex-col">
+				<button
+					name="action"
+					value={data.likes ? "unlike" : "like"}
+					aria-label={data.likes ? "Unlike" : "Like"}
+					class="btn p-1">
+					<i
+						class="fa{data.likes
+							? ' text-emerald-6 hover:text-emerald-3'
+							: 'r text-neutral-5 hover:text-neutral-3'}
+						fa-thumbs-up transition text-lg" />
+				</button>
 				<span
-					class="my-2 text-center {data.likes
-						? 'text-success font-bold'
+					class="py-2 text-center {data.likes
+						? 'text-emerald-6 font-bold'
 						: data.dislikes
-							? 'text-danger font-bold'
+							? 'text-red-5 font-bold'
 							: ''}">
 					{data.likeCount - data.dislikeCount}
 				</span>
-				<div>
-					<button
-						name="action"
-						value={data.dislikes ? "undislike" : "dislike"}
-						aria-label={data.dislikes ? "Undislike" : "Dislike"}
-						class="btn btn-sm {data.dislikes
-							? 'btn-danger'
-							: 'btn-outline-danger'}">
-						<i
-							class="fa{data.dislikes
-								? ''
-								: 'r'} fa-thumbs-down" />
-					</button>
-				</div>
+				<button
+					name="action"
+					value={data.dislikes ? "undislike" : "dislike"}
+					aria-label={data.dislikes ? "Undislike" : "Dislike"}
+					class="btn p-1">
+					<i
+						class="fa{data.dislikes
+							? ' text-red-5 hover:text-red-3'
+							: 'r text-neutral-5 hover:text-neutral-3'}
+						fa-thumbs-down transition text-lg" />
+				</button>
 			</div>
 		</form>
 		<div class="p-4 no-underline light-text w-full">
@@ -126,31 +113,7 @@
 		</div>
 	</div>
 
-	<form use:enhance class="py-2 mb-6 p-1 row" method="POST" action="?/reply">
-		<label for="content" class="light-text py-2">Post a Reply</label>
-		<fieldset class="col-lg-7 flex">
-			<textarea
-				bind:value={$form.content}
-				{...$constraints.content}
-				class="form-control {$errors.content ? 'is-in' : ''}valid"
-				name="content"
-				placeholder="What are your thoughts?"
-				rows="4" />
-			<button class="btn btn-success ml-4 mt-auto">
-				{#if $delayed}
-					Working...
-				{:else}
-					Reply
-				{/if}
-			</button>
-		</fieldset>
-		<p
-			class="mb-4"
-			class:text-success={$page.status == 200}
-			class:text-danger={$page.status >= 400}>
-			{$message || ""}
-		</p>
-	</form>
+	<PostReply {formData} />
 
 	{#each data.replies as reply, num}
 		<ForumReply

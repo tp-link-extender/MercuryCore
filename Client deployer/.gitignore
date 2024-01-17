@@ -1,4 +1,5 @@
 /setup
 /PrepForUpload
-/staging/**/*.lua
 /.vscode
+/staging/BuiltInPlugins/terrain
+Client-deployer.exe

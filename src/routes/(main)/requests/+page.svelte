@@ -14,7 +14,7 @@
 			<div class="flex p-6">
 				<User {user} size="6rem" bg="accent" />
 				<a
-					class="pl-12 fs-3 text-light no-underline"
+					class="pl-12 text-xl text-white no-underline"
 					href="/user/{user.number}">
 					{user.username}
 				</a>

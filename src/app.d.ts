@@ -42,7 +42,7 @@ declare global {
 			lastOnline: string
 			number: number
 			permissionLevel: number
-			theme: "standard" | "darken" | "storm" | "solar"
+			// theme: "standard" | "darken" | "storm" | "solar"
 			status: "Playing" | "Online" | "Offline"
 			username: string
 		}
@@ -65,6 +65,7 @@ declare global {
 	declare const Moon: typeof import("$lib/components/Moon.svelte").default
 	declare const Navbar: typeof import("$lib/components/Navbar.svelte").default
 	declare const Place: typeof import("$lib/components/Place.svelte").default
+	declare const PostReply: typeof import("$lib/components/PostReply.svelte").default
 	declare const ReportButton: typeof import("$lib/components/ReportButton.svelte").default
 	declare const Tab: typeof import("$lib/components/Tab.svelte").default
 	declare const TabData: typeof import("$lib/components/TabData").default

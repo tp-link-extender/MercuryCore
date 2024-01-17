@@ -5,7 +5,6 @@ local ContentProvider = game:GetService "ContentProvider"
 local SocialService = game:GetService "SocialService"
 local GamePassService = game:GetService "GamePassService"
 local MarketplaceService = game:GetService "MarketplaceService"
--- local UserInputService = game:GetService "UserInputService"
 local Players = game:GetService "Players"
 local Client = game:GetService "NetworkClient"
 local Visit = game:GetService "Visit"
@@ -51,29 +50,29 @@ print "! Joining game '_PLACE_ID' place _PLACE_ID at _SERVER_ADDRESS"
 
 ChangeHistoryService:SetEnabled(false)
 ContentProvider:SetThreadPool(16)
-InsertService:SetBaseSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=10&type=base"
-InsertService:SetUserSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
-InsertService:SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d"
-InsertService:SetAssetUrl "http://banland.xyz/asset?id=%d"
-InsertService:SetAssetVersionUrl "http://banland.xyz/asset?assetversionid=%d"
+InsertService:SetBaseSetsUrl "https://banland.xyz/game/tools/insertasset?nsets=10&type=base"
+InsertService:SetUserSetsUrl "https://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
+InsertService:SetCollectionUrl "https://banland.xyz/game/tools/insertasset?sid=%d"
+InsertService:SetAssetUrl "https://banland.xyz/asset?id=%d"
+InsertService:SetAssetVersionUrl "https://banland.xyz/asset?assetversionid=%d"
 
 pcall(function()
-	SocialService:SetFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d"
+	SocialService:SetFriendUrl "https://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d"
 end)
 pcall(function()
-	SocialService:SetBestFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d"
+	SocialService:SetBestFriendUrl "https://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d"
 end)
 pcall(function()
-	SocialService:SetGroupUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d"
+	SocialService:SetGroupUrl "https://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d"
 end)
 pcall(function()
-	SocialService:SetGroupRankUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d"
+	SocialService:SetGroupRankUrl "https://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d"
 end)
 pcall(function()
-	SocialService:SetGroupRoleUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d"
+	SocialService:SetGroupRoleUrl "https://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d"
 end)
 pcall(function()
-	GamePassService:SetPlayerHasPassUrl "http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
+	GamePassService:SetPlayerHasPassUrl "https://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
 end)
 pcall(function()
 	MarketplaceService:SetProductInfoUrl "https://banland.xyz/marketplace/productinfo?assetId=%d"
@@ -293,6 +292,6 @@ pcall(function()
 	game:SetScreenshotInfo ""
 end)
 pcall(function()
-	game:SetVideoInfo '<?xml version="1.0"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007"><media:group><media:title type="plain"><![CDATA[Mercury Place]]></media:title><media:description type="plain"><![CDATA[ For more games visit http://banland.xyz]]></media:description><media:category scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Games</media:category><media:keywords>Mercury, video, free game, online virtual world</media:keywords></media:group></entry>'
+	game:SetVideoInfo '<?xml version="1.0"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007"><media:group><media:title type="plain"><![CDATA[Mercury Place]]></media:title><media:description type="plain"><![CDATA[ For more games visit https://banland.xyz]]></media:description><media:category scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Games</media:category><media:keywords>Mercury, video, free game, online virtual world</media:keywords></media:group></entry>'
 end)
 -- use single quotes here because the video info string may have unescaped double quotes
