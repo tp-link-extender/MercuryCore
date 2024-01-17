@@ -214,6 +214,21 @@ func CopyTerrainPlugins(cwd string) {
 	list.CompleteTask("terrain plugins")
 }
 
+func RecursiveRead(path string) []string {
+	files, err := os.ReadDir(path)
+	Assert(err, "Could not read directory "+path)
+
+	var filenames []string
+	for _, file := range files {
+		if file.IsDir() {
+			filenames = append(filenames, RecursiveRead(filepath.Join(path, file.Name()))...)
+		} else {
+			filenames = append(filenames, filepath.Join(path, file.Name()))
+		}
+	}
+	return filenames
+}
+
 func main() {
 	cwd, err := os.Getwd()
 	Assert(err, "Could not get current working directory")
@@ -236,9 +251,12 @@ func main() {
 	fmt.Println("New version to be deployed will have a version hash of", c.InBlue(newVersion))
 	fmt.Println(c.InGreen("Now commencing deployment\n"))
 
+	// remove PreForUpload directory
+	os.RemoveAll("PrepForUpload")
+
 	// Create staging directory
-	os.Mkdir(filepath.Join(cwd, "staging"), 0777)
-	os.Mkdir(filepath.Join(cwd, "PrepForUpload"), 0777)
+	os.Mkdir("staging", 0777)
+	os.Mkdir("PrepForUpload", 0777)
 
 	// Find if there are any files in the staging directory
 	stagingFiles, err := os.ReadDir(filepath.Join(cwd, "staging"))
@@ -246,8 +264,6 @@ func main() {
 	if len(stagingFiles) == 0 {
 		Error("Staging directory is empty")
 	}
-
-	fmt.Println(c.InPurple("Preparing " + c.InUnderline("Mercury.zip")))
 
 	// Get all files in the staging directory that end with .dll
 	dllFiles := []string{}
@@ -336,12 +352,24 @@ func main() {
 	finalPath := path.Join("setup", newVersion)
 	fmt.Println(c.InYellow("Copying contents of "+c.InUnderline("PrepForUpload")) + c.InYellow(" to "+c.InUnderline(finalPath)))
 
-	// Copy contents of PrepForUpload to finalPath
-	err = os.RemoveAll(finalPath)
-	Assert(err, "Could not remove "+finalPath)
+	// Copy all files in PrepForUpload to setup/newVersion
+	// the slow way, because copying the entire directory at once
+	// causes access denied errors
+	for _, filename := range RecursiveRead("PrepForUpload") {
+		file, err := os.Open(filename)
+		Assert(err, "Could not read file "+filename)
+		defer file.Close()
 
-	err = os.Rename("PrepForUpload", finalPath)
-	Assert(err, "Could not rename PrepForUpload to "+finalPath)
+		// create directories
+		err = os.MkdirAll(filepath.Join(finalPath, filepath.Dir(filename)), 0777)
+		Assert(err, "Could not create directory "+filepath.Join(finalPath, filepath.Dir(filename)))
+
+		destination, err := os.Create(filepath.Join(finalPath, filename))
+		Assert(err, "Could not create file "+filepath.Join(finalPath, filename))
+
+		_, err = io.Copy(destination, file)
+		Assert(err, "Could not copy file "+filename)
+	}
 
 	fmt.Println(c.InGreen(" ~~~~  Deployment complete!!  ~~~~"))
 }
