@@ -1,10 +1,12 @@
+// Mercury Setup Deployer 3, now in Go
+// goroutines make it run fast as FUCK
+
 package main
 
 import (
 	"archive/zip"
 	"fmt"
 	"io"
-	"math/rand"
 	"os"
 	"path"
 	"path/filepath"
@@ -16,12 +18,17 @@ import (
 	fileversion "github.com/bi-zone/go-fileversion"
 )
 
+// what a great coincidence that this is exactly 16 characters long
+// also makes it way easier to order the versions in a file explorer than a random string
+var versionHash = fmt.Sprintf("%x", time.Now().UnixNano())
+
 func Error(txt string) {
 	fmt.Println(c.InRed("Error: ") + txt)
 	os.Exit(1)
 }
 
 func Assert(err error, txt string) {
+	// so that I don't have to write this every time
 	if err != nil {
 		fmt.Println(err)
 		Error(txt)
@@ -29,7 +36,7 @@ func Assert(err error, txt string) {
 }
 
 // Create a waitgroup to wait for all goroutines to finish
-var wg = sync.WaitGroup{}
+var wg sync.WaitGroup
 
 type Task struct {
 	name      string
@@ -42,28 +49,20 @@ type TaskList struct {
 }
 
 func (t *TaskList) Update() {
-	// Clear last x lines, where x is the number of tasks
+	// Clear last printed tasks
 	toPrint := fmt.Sprintf("\033[%dA", len(t.tasks))
 
-	// Print all tasks, with [ Done! ] at the end if they are completed
-
+	// Print all tasks, with "Done! (0ms)" at the end if they are completed
 	for _, task := range t.tasks {
 		spaces := 30 - len(task.name)
 		toPrint += c.InBlue("Creating " + c.InUnderline(task.name) + strings.Repeat(" ", spaces))
 		if task.timeEnd > 0 {
 			toPrint += c.InBlackOverGreen(" Done! (" + fmt.Sprint(task.timeEnd-task.timeStart) + "ms) ")
 		}
-
 		toPrint += "\n"
 	}
 
 	fmt.Print(toPrint)
-}
-
-func (t *TaskList) AddTask(task string) {
-	fmt.Println()
-	t.tasks = append(t.tasks, Task{name: task, timeStart: int(time.Now().UnixNano() / int64(time.Millisecond))})
-	t.Update()
 }
 
 func (t *TaskList) AddTasks(tasks []string) {
@@ -85,16 +84,6 @@ func (t *TaskList) CompleteTask(completedTask string) {
 }
 
 var list = TaskList{tasks: []Task{}}
-
-func RandomString() string {
-	// Generate a hexadecimal string of a given size
-	const hex = "0123456789abcdef"
-	buf := make([]byte, 16)
-	for i := range buf {
-		buf[i] = hex[rand.Intn(len(hex))]
-	}
-	return string(buf)
-}
 
 func WriteFile(writer *zip.Writer, pathName string, entryName string) {
 	// Read file
@@ -182,36 +171,9 @@ func TexturesHalf(first bool) []string {
 	}
 
 	if first {
-		filenames = filenames[:len(filenames)/2]
-		filenames = append(filenames, "ui")
-	} else {
-		filenames = filenames[len(filenames)/2:]
+		return append(filenames[:len(filenames)/2], "ui")
 	}
-
-	return filenames
-}
-
-func CopyTerrainPlugins(cwd string) {
-	os.MkdirAll(filepath.Join(cwd, "staging", "BuiltInPlugins", "terrain"), 0777)
-
-	// Copy terrain plugins/processed to staging/BuiltInPlugins/terrain
-	plugins, err := os.ReadDir(filepath.Join(cwd, "terrain plugins", "processed"))
-	Assert(err, "Could not read directory terrain plugins/processed")
-	for _, plugin := range plugins {
-		// Copy plugin to staging/BuiltInPlugins/terrain
-		pluginFile, err := os.Open(filepath.Join(cwd, "terrain plugins", "processed", plugin.Name()))
-		Assert(err, "Could not read file terrain plugins/processed/"+plugin.Name())
-		defer pluginFile.Close()
-
-		pluginDestination, err := os.Create(filepath.Join(cwd, "staging", "BuiltInPlugins", "terrain", plugin.Name()))
-		Assert(err, "Could not create file staging/BuiltInPlugins/terrain/"+plugin.Name())
-		defer pluginDestination.Close()
-
-		_, err = io.Copy(pluginDestination, pluginFile)
-		Assert(err, "Could not copy terrain plugins/processed/"+plugin.Name())
-	}
-
-	list.CompleteTask("terrain plugins")
+	return filenames[len(filenames)/2:]
 }
 
 func RecursiveRead(path string) []string {
@@ -230,17 +192,12 @@ func RecursiveRead(path string) []string {
 }
 
 func main() {
-	cwd, err := os.Getwd()
-	Assert(err, "Could not get current working directory")
-	setupDirectory := filepath.Join(cwd, "setup")
-	versionHash := RandomString()
-
-	fmt.Println(c.InBold("\n  -- Mercury Setup Deployer --  \n"))
+	fmt.Println(c.InBold("\n  -- Mercury Setup Deployer 3: Now with more EVERYTHING! --  \n"))
 	var currentVersion string
 	newVersion := "version-" + versionHash
 
 	// Get version from setup directory/version.txt
-	versionFile, err := os.Open(filepath.Join(setupDirectory, "version.txt"))
+	versionFile, err := os.Open(filepath.Join("setup", "version.txt"))
 	if err != nil {
 		currentVersion = "none"
 	}
@@ -251,19 +208,19 @@ func main() {
 	fmt.Println("New version to be deployed will have a version hash of", c.InBlue(newVersion))
 	fmt.Println(c.InGreen("Now commencing deployment\n"))
 
+	// Find if there are any files in the staging directory
+	stagingFiles, err := os.ReadDir("staging")
+	Assert(err, "Could not read staging directory")
+	if len(stagingFiles) == 0 {
+		Error("Staging directory is empty. Please place your files in the staging directory, or run this script from a different directory.")
+	}
+
 	// remove PreForUpload directory
 	os.RemoveAll("PrepForUpload")
 
 	// Create staging directory
 	os.Mkdir("staging", 0777)
 	os.Mkdir("PrepForUpload", 0777)
-
-	// Find if there are any files in the staging directory
-	stagingFiles, err := os.ReadDir(filepath.Join(cwd, "staging"))
-	Assert(err, "Could not read staging directory")
-	if len(stagingFiles) == 0 {
-		Error("Staging directory is empty")
-	}
 
 	// Get all files in the staging directory that end with .dll
 	dllFiles := []string{}
@@ -297,23 +254,44 @@ func main() {
 
 	go (func() {
 		// Update version.txt with the new version
-		versionFile, err := os.Create(filepath.Join(setupDirectory, "version.txt"))
+		versionFile, err := os.Create(filepath.Join("setup", "version.txt"))
 		Assert(err, "Could not create version.txt")
 		defer versionFile.Close()
 		fmt.Fprint(versionFile, newVersion)
 		list.CompleteTask(tasks[0])
 	})()
 
-	go CopyTerrainPlugins(cwd)
+	go (func() {
+		os.MkdirAll(filepath.Join("staging", "BuiltInPlugins", "terrain"), 0777)
+
+		// Copy terrain plugins/processed to staging/BuiltInPlugins/terrain (pretty mercury specific but ye)
+		plugins, err := os.ReadDir(filepath.Join("terrain plugins", "processed"))
+		Assert(err, "Could not read directory terrain plugins/processed")
+		for _, plugin := range plugins {
+			// Copy plugin to staging/BuiltInPlugins/terrain
+			pluginFile, err := os.Open(filepath.Join("terrain plugins", "processed", plugin.Name()))
+			Assert(err, "Could not read file terrain plugins/processed/"+plugin.Name())
+			defer pluginFile.Close()
+
+			pluginDestination, err := os.Create(filepath.Join("staging", "BuiltInPlugins", "terrain", plugin.Name()))
+			Assert(err, "Could not create file staging/BuiltInPlugins/terrain/"+plugin.Name())
+			defer pluginDestination.Close()
+
+			_, err = io.Copy(pluginDestination, pluginFile)
+			Assert(err, "Could not copy terrain plugins/processed/"+plugin.Name())
+		}
+
+		list.CompleteTask("terrain plugins")
+	})()
 
 	go (func() {
 		// Copy MercuryPlayerLauncher.exe to staging
-		launcher, err := os.Open(filepath.Join(setupDirectory, "MercuryPlayerLauncher.exe"))
+		launcher, err := os.Open(filepath.Join("setup", tasks[2]))
 		Assert(err, "Could not read MercuryPlayerLauncher.exe")
 		defer launcher.Close()
 
-		destination1, err := os.Create(filepath.Join(cwd, "staging", "MercuryPlayerLauncher.exe"))
-		destination2, err := os.Create(filepath.Join(cwd, "PrepForUpload", "MercuryPlayerLauncher.exe"))
+		destination1, err := os.Create(filepath.Join("staging", tasks[2]))
+		destination2, err := os.Create(filepath.Join("PrepForUpload", tasks[2]))
 		Assert(err, "Could not create MercuryPlayerLauncher.exe")
 		defer destination1.Close()
 		defer destination2.Close()
@@ -332,6 +310,7 @@ func main() {
 		list.CompleteTask(tasks[2])
 	})()
 
+	// I LOVE GOROUTINES!!!
 	go ZipFromArray(tasks[3], []string{"Microsoft.VC90.CRT", "Microsoft.VC90.MFC", "Microsoft.VC90.OPENMP"}, "", true)
 	go ZipFromArray(tasks[4], []string{"MercuryPlayerBeta.exe", "MercuryStudioBeta.exe", "ReflectionMetadata.xml", "RobloxStudioRibbon.xml"}, "", false)
 	go ZipFromArray(tasks[5], dllFiles, "", false)
@@ -353,14 +332,13 @@ func main() {
 	fmt.Println(c.InYellow("Copying contents of "+c.InUnderline("PrepForUpload")) + c.InYellow(" to "+c.InUnderline(finalPath)))
 
 	// Copy all files in PrepForUpload to setup/newVersion
-	// the slow way, because copying the entire directory at once
-	// causes access denied errors
+	// the slow way, because copying the entire directory at once causes access denied errors
 	for _, filename := range RecursiveRead("PrepForUpload") {
 		file, err := os.Open(filename)
 		Assert(err, "Could not read file "+filename)
 		defer file.Close()
 
-		// create directories
+		// Create directories
 		err = os.MkdirAll(filepath.Join(finalPath, filepath.Dir(filename)), 0777)
 		Assert(err, "Could not create directory "+filepath.Join(finalPath, filepath.Dir(filename)))
 
