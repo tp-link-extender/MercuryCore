@@ -5,23 +5,15 @@ import {
 	presetUno,
 } from "unocss"
 import presetTagify from "@unocss/preset-tagify"
+import transformerDirectives from "@unocss/transformer-directives"
+import transformerVariantGroup from "@unocss/transformer-variant-group"
 
 let fa: { [k: string]: string }
-
-const i = (a: number | string) => `${a} !important`
-const bsFonts = ["0", "2rem", "1.5rem", "1.3rem", "1rem", "0.8rem", "0.7rem"]
 
 export default defineConfig({
 	rules: [
 		// Fontawesome
 		[/^fa-([\.\d]+)x$/, ([, n]) => ({ "font-size": `${n}em` })],
-		[
-			/^fa-rotate-([\.\d]+)$/,
-			([, n]) => ({
-				transform: `rotate(${n}deg)`,
-				"-webkit-transform": `rotate(${n}deg)`,
-			}),
-		],
 		[
 			/^fa-([a-zA-Z0-9-]+)$/,
 			([, c], { rawSelector }) =>
@@ -31,72 +23,6 @@ export default defineConfig({
 						}" !important}`
 					: "",
 		],
-
-		// Bootstrap API
-		// border-{colour}
-		[
-			/^border-(primary|secondary|success|danger|warning|info|light|dark|black|white)$/,
-			([, a]) => ({
-				"--bs-border-opacity": i(1),
-				"border-color": i(
-					`RGBA(var(--bs-${a}-rgb), var(--bs-border-opacity))`
-				),
-			}),
-		],
-
-		// fs-1-6
-		[
-			/^fs-(\d)$/,
-			([, n]) => ({
-				"font-size": i(bsFonts[n]),
-			}),
-		],
-
-		// text-{colour}
-		[
-			// /^text-(primary|secondary|success|danger|warning|info|light|dark|white|body|muted)$/,
-			/^text-(primary|secondary|success|danger|warning|info|light|dark|white|body|muted)$/,
-			([, a]) => {
-				const o = {
-					"--bs-text-opacity": 1,
-				}
-
-				o["color"] = i(
-					a == "body"
-						? "RGBA(var(--bs-body-color-rgb), var(--bs-text-opacity))"
-						: a == "muted"
-							? "var(--bs-secondary-color)"
-							: `RGBA(var(--bs-${a}-rgb), var(--bs-text-opacity))`
-				)
-
-				return o
-			},
-		],
-
-		// text-black-\d+/white-\d+
-		[
-			/^text-(black|white)-(\d+)$/,
-			([, a, n]) => ({
-				"--bs-text-opacity": 1,
-				[`--bs-${a}-color`]: i(
-					`RGBA(${a == "black" ? "0,0,0" : "255,255,255"}, ${
-						parseInt(n) / 100
-					})`
-				),
-			}),
-		],
-
-		// bg-{colour}
-		[
-			/^bg-(primary|secondary|success|danger|warning|info|light|dark|white|body)$/,
-			([, a]) => ({
-				"--bs-bg-opacity": 1,
-				"background-color": i(
-					`RGBA(var(--bs-${a}-rgb), var(--bs-bg-opacity))`
-				),
-			}),
-		],
-
 		[
 			/^fa(r?)$/,
 			([, a]) => ({
@@ -114,6 +40,7 @@ export default defineConfig({
 	],
 
 	presets: [presetTagify(), presetAttributify(), presetUno()],
+	transformers: [transformerDirectives(), transformerVariantGroup()],
 })
 
 fa = {

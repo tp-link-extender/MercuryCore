@@ -12,7 +12,7 @@
 <h1 class="text-center">Report</h1>
 
 <div class="ctnr pt-12 max-w-180 light-text">
-	<h2 class="fs-3 pb-6">
+	<h2 class="text-xl pb-6">
 		Tell us how you think {data.reportee} is breaking the rules.
 	</h2>
 

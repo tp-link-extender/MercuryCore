@@ -4,31 +4,39 @@
 	let clicked = false
 </script>
 
-<footer class="relative text-center">
-	<br />
-	<div class="grey-text pb-2">
-		<a href="/" class="no-underline accent-text pr-2">Mercury</a>
-		2022-{new Date().getFullYear()}
-		<button
-			on:mousedown={() => (clicked = !clicked)}
-			id="heart"
-			class="border-0 p-0 ps-1 pr-2 grey-text cursor-pointer text-base
-			bg-transparent"
-			class:clicked>
-			<span class="grey-text">made with</span>
-			<fa fa-heart />
-		</button>
-		{data.lines} lines of code
+<footer class="relative flex justify-center bg-darker">
+	<div class="flex <sm:flex-col justify-between items-start w-200 p-4 pb-8">
+		<div>
+			<img src="/icon-footer.svg" alt="Mercury logo" class="size-8" />
+			<a href="/" class="no-underline pl-2">Mercury</a>
+			<span class="grey-text pl-1">
+				2021-{new Date().getFullYear()}
+			</span>
+		</div>
+		<div class="sm:text-right <sm:pt-4">
+			<div class="grey-text pb-2">
+				<span class="grey-text pe-1">
+					{data.lines} lines of code
+				</span>
+				&ndash;
+				<button
+					on:mousedown={() => (clicked = !clicked)}
+					id="heart"
+					class="border-0 p-0 pr-2 grey-text cursor-pointer text-base
+					bg-transparent"
+					class:clicked>
+					<span class="grey-text">made with</span>
+					<fa fa-heart />
+				</button>
+			</div>
+			<div class="flex <sm:flex-col sm:gap-3">
+				<a class="light-text" href="/about">About</a>
+				<a class="light-text" href="/terms">Terms of Service</a>
+				<a class="light-text" href="/privacy">Privacy Policy</a>
+				<a class="light-text" href="/statistics">Statistics</a>
+			</div>
+		</div>
 	</div>
-	<a class="light-text" href="/about">About</a>
-	<span class="opacity-25">|</span>
-	<a class="light-text" href="/terms">Terms of Service</a>
-	<span class="opacity-25">|</span>
-	<a class="light-text" href="/privacy">Privacy Policy</a>
-	<span class="opacity-25">|</span>
-	<a class="light-text" href="/statistics">Statistics</a>
-	<br />
-	<br />
 </footer>
 
 <noscript>

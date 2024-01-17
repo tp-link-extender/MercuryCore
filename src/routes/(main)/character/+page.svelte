@@ -145,12 +145,12 @@
 		<div class="<md:col-span-3 flex lg:flex-col gap-4">
 			<div class="w-full card p-4">
 				<form use:enhance action="?/regen" method="POST">
-					<button class="btn btn-primary w-full">
+					<button class="btn btn-secondary w-full">
 						<fa fa-rotate />
 						Regenerate
 					</button>
 				</form>
-				<p class="text-danger">
+				<p class="text-red-5">
 					{form?.msg || ""}
 				</p>
 				<img
@@ -183,24 +183,21 @@
 			<form
 				on:submit|preventDefault
 				action="/character?tab={tabData.currentTab}"
-				class="row pb-4">
+				class="input-group pb-4">
+				<input
+				bind:value={query}
+				type="text"
+				name="q"
+				placeholder="Search for an item"
+				aria-label="Search for an item"
+				aria-describedby="button-addon2" />
 				<input type="hidden" name="tab" value={tabData.currentTab} />
-				<div class="input-group">
-					<input
-						bind:value={query}
-						type="text"
-						name="q"
-						class="form-control valid"
-						placeholder="Search for an item"
-						aria-label="Search for an item"
-						aria-describedby="button-addon2" />
-					<button
-						class="btn btn-success"
-						aria-label="Search"
-						id="button-addon2">
-						<fa fa-magnifying-glass />
-					</button>
-				</div>
+				<button
+					class="btn btn-secondary"
+					aria-label="Search"
+					id="button-addon2">
+					<fa fa-magnifying-glass />
+				</button>
 			</form>
 			<div class="grid xl:grid-cols-6 sm:grid-cols-4 grid-cols-3 gap-4">
 				{#each assets || [] as asset, num}
@@ -211,7 +208,7 @@
 						total={(assets || []).length} />
 				{/each}
 				{#if query && assets.length == 0}
-					<h2 class="fs-5 pt-12">
+					<h2 class="text-xs pt-12">
 						{#if tabData.currentTab == "Recent"}
 							No recently worn items found with search term {query}
 						{:else}

@@ -99,8 +99,8 @@
 									class="font-bold {reply.author.username ==
 									postAuthorName
 										? assetName
-											? 'text-warning'
-											: 'text-primary'
+											? 'text-yellow-5'
+											: 'text-blue-6'
 										: ''}">
 									{reply.author.username}
 									{#if reply.author.username == postAuthorName}
@@ -153,17 +153,18 @@
 									name="action"
 									value={reply.likes ? "unlike" : "like"}
 									aria-label={reply.likes ? "Unlike" : "Like"}
-									class="smallbutton p-0 btn btn-sm">
+									class="smallbutton p-0 btn">
 									<i
 										class="fa{reply.likes
-											? ' text-success'
-											: 'r'} fa-thumbs-up" />
+											? ' text-emerald-6 hover:text-emerald-3'
+											: 'r text-neutral-5 hover:text-neutral-3'}
+										fa-thumbs-up transition" />
 								</button>
 								<span
 									class="my-1 text-center {reply.likes
-										? 'text-success font-bold'
+										? 'text-emerald-6 font-bold'
 										: reply.dislikes
-											? 'text-danger font-bold'
+											? 'text-red-5 font-bold'
 											: ''}">
 									{reply.likeCount - reply.dislikeCount}
 								</span>
@@ -175,17 +176,19 @@
 									aria-label={reply.dislikes
 										? "Undislike"
 										: "Dislike"}
-									class="smallbutton p-0 btn btn-sm">
+									class="smallbutton p-0 btn">
 									<i
 										class="fa{reply.dislikes
-											? ' text-danger'
-											: 'r'} fa-thumbs-down" />
+											? ' text-red-5 hover:text-red-3'
+											: 'r text-neutral-5 hover:text-neutral-3'}
+										fa-thumbs-down transition" />
 								</button>
 							</form>
 							<button
 								on:click={() => replyingTo.set(reply.id)}
 								class:hidden
-								class="p-0 btn btn-sm grey-text px-1">
+								class="p-0 btn btn-sm px-1
+								text-neutral-5 hover:text-neutral-3">
 								<far fa-message class="pr-2" />
 								Reply
 							</button>
@@ -217,26 +220,28 @@
 										class="light-text pb-2">
 										Post a Reply
 									</label>
-									<fieldset>
+									<fieldset class="flex flex-col gap-3">
 										<textarea
 											bind:value={content}
-											class="form-control valid mb-2"
 											required
 											minlength="1"
 											maxlength="1000"
 											name="content"
 											placeholder="What are your thoughts?"
 											rows="4" />
-										<button class="btn btn-success">
-											<i class="far fa-message mr-2" />
-											Reply
-										</button>
-										<button
-											on:click={() => replyingTo.set("")}
-											class="btn btn-dark grey-text ml-1">
-											<fa fa-cancel class="mr-2" />
-											Cancel
-										</button>
+										<div class="flex gap-3">
+											<button class="btn btn-secondary">
+												<far fa-message class="pr-2" />
+												Reply
+											</button>
+											<button
+												on:click={() =>
+													replyingTo.set("")}
+												class="btn btn-tertiary grey-text">
+												<fa fa-cancel class="pr-2" />
+												Cancel
+											</button>
+										</div>
 									</fieldset>
 								</form>
 							</div>
@@ -319,9 +324,6 @@
 			transition color 0.2s
 			&:hover
 				color var(--grey-text) !important
-
-		span.text-primary:hover
-			color var(--accent-text) !important
 
 	.user
 		align-items center

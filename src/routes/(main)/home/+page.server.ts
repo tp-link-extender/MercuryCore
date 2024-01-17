@@ -110,6 +110,10 @@ export const actions = {
 
 		const { user } = await authorise(locals)
 
+		const content = form.data.status.trim()
+		if (!content)
+			return formError(form, ["status"], ["Status cannot be empty"])
+
 		await query(
 			surql`
 				LET $status = CREATE statusPost CONTENT {
@@ -122,7 +126,7 @@ export const actions = {
 				};
 				RELATE $user->posted->$status`,
 			{
-				content: form.data.status,
+				content,
 				user: `user:${user.id}`,
 			}
 		)

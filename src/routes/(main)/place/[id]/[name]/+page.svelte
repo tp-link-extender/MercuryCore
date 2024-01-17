@@ -3,6 +3,9 @@
 
 	export let data
 	const { user } = data
+
+	$: online = data.serverPing > Date.now() / 1000 - 35
+
 	const statistics = [
 		["Activity", "0 visits"],
 		["Creation", new Date(data.created).toLocaleDateString()],
@@ -16,7 +19,7 @@
 		"/place/placeholderImage2.webp",
 		"/place/placeholderImage3.webp",
 	]
-	const scroll = async (e: MouseEvent) =>
+	const scroll = (e: MouseEvent) =>
 		document
 			.getElementById(
 				new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
@@ -81,7 +84,7 @@
 <Head title={data.name} />
 
 <div class="ctnr max-w-240 light-text">
-	<div class="grid md:grid-cols-3 gap-4">
+	<div class="grid grid-cols-1 md:grid-cols-3 md:gap-4">
 		<div class="col-span-2 pb-4">
 			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}
@@ -98,7 +101,7 @@
 							-translate-y-1/2 left-4 right-4">
 							<a
 								href="#slide{i < 1 ? images.length : i}"
-								class="btn rounded-full bg-background"
+								class="carousel-button"
 								on:click|preventDefault={scroll}>
 								❮
 							</a>
@@ -106,7 +109,7 @@
 								href="#slide{i == images.length - 1
 									? 1
 									: i + 2}"
-								class="btn rounded-full bg-background"
+								class="carousel-button"
 								on:click|preventDefault={scroll}>
 								❯
 							</a>
@@ -116,62 +119,53 @@
 			</div>
 		</div>
 
-		<div>
-			<div class="card rounded-none mb-6">
-				<div class="card-body">
-					<div class="row">
-						<div class="col">
-							<h2 class="light-text">{data.name}</h2>
-						</div>
-						{#if data.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
-							<div
-								id="settings"
+		<div class="flex flex-col justify-between gap-3">
+			<div class="card bg-darker p-4 pb-6 block">
+				<div class="flex justify-between">
+					<h1 class="text-2xl">{data.name}</h1>
+					{#if data.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
+						<div>
+							<a
 								aria-label="Place settings"
-								class="col flex justify-end">
-								<a
-									href="/place/{data.id}/{data.name}/settings"
-									class="btn btn-sm btn-outline-warning">
-									<fa fa-sliders />
-								</a>
-							</div>
-						{/if}
-					</div>
-					<span class="light-text flex pb-2">
-						<b class="pr-2">by</b>
-						{#if data.ownerUser}
-							<User
-								user={data.ownerUser}
-								size="1.5rem"
-								bg="darker"
-								full
-								thin />
-						{/if}
-					</span>
-					<p class="light-text mb-0">
-						Gears: <far fa-circle-xmark />
-					</p>
-					<small
-						class="text-light rounded-2 bg-{data.serverPing >
-						Math.floor(Date.now() / 1000) - 35
-							? 'success'
-							: 'danger'} p-2 py-1">
-						{data.serverPing > Date.now() / 1000 - 35
-							? "Online"
-							: "Offline"}
-					</small>
-					<span class="float-right">
-						<ReportButton
-							user={data.ownerUser?.username || ""}
-							url="/place/{data.id}/{data.name}" />
-					</span>
+								href="/place/{data.id}/{data.name}/settings"
+								class="btn btn-sm btn-secondary">
+								<fa fa-sliders />
+							</a>
+						</div>
+					{/if}
 				</div>
+				<span class="flex py-2">
+					<b class="pr-2">by</b>
+					{#if data.ownerUser}
+						<User
+							user={data.ownerUser}
+							size="1.5rem"
+							bg="darker"
+							full
+							thin />
+					{/if}
+				</span>
+				<div>
+					Gears: <far fa-circle-xmark />
+				</div>
+				<small
+					class="text-white rounded-2 {online
+						? 'bg-emerald-6'
+						: 'bg-red-5'} p-2 py-1">
+					{online ? "Online" : "Offline"}
+				</small>
+				<span class="float-right">
+					<ReportButton
+						user={data.ownerUser?.username || ""}
+						url="/place/{data.id}/{data.name}" />
+				</span>
 			</div>
-			<div id="buttons" class="row pt-6">
-				<button
-					on:click={placeLauncher}
-					id="play"
-					class="btn btn-lg text-center btn-success">
-					<img src="/place/join.svg" alt="Play button icon" />
+			<div id="buttons" class="flex flex-col">
+				<button on:click={placeLauncher} class="btn btn-primary">
+					<img
+						src="/place/join.svg"
+						alt="Play button icon"
+						class="h-8" />
 				</button>
 
 				<form
@@ -200,44 +194,36 @@
 
 						return () => {}
 					}}
-					class="self-center col pt-4 px-0 pb-2"
+					class="w-full pt-4 px-0 pb-2"
 					method="POST"
 					action="?/like&privateTicket={data.privateTicket}">
-					<div class="row pb-2">
-						<div class="col flex justify-start">
-							<button
-								name="action"
-								value={data.likes ? "unlike" : "like"}
-								aria-label={data.likes ? "Unlike" : "Like"}
-								class="btn btn-sm btn-{data.likes
-									? ''
-									: 'outline-'}success">
-								<i
-									class="fa{data.likes
-										? ''
-										: 'r'} fa-thumbs-up" />
-							</button>
-						</div>
-						<div class="col flex justify-end">
-							<button
-								name="action"
-								value={data.dislikes ? "undislike" : "dislike"}
-								aria-label={data.dislikes
-									? "Undislike"
-									: "Dislike"}
-								class="btn btn-sm btn-{data.dislikes
-									? ''
-									: 'outline-'}danger">
-								<i
-									class="fa{data.dislikes
-										? ''
-										: 'r'} fa-thumbs-down" />
-							</button>
-						</div>
+					<div class="flex justify-between pb-2">
+						<button
+							name="action"
+							value={data.likes ? "unlike" : "like"}
+							aria-label={data.likes ? "Unlike" : "Like"}
+							class="btn p-0 px-1 text-emerald-5">
+							<i
+								class="fa{data.likes
+									? ' text-emerald-6 hover:text-emerald-3'
+									: 'r text-neutral-5 hover:text-neutral-3'}
+								fa-thumbs-up transition text-lg" />
+						</button>
+						<button
+							name="action"
+							value={data.dislikes ? "undislike" : "dislike"}
+							aria-label={data.dislikes ? "Undislike" : "Dislike"}
+							class="btn p-0 px-1 text-red-5">
+							<i
+								class="fa{data.dislikes
+									? ' text-red-5 hover:text-red-3'
+									: 'r text-neutral-5 hover:text-neutral-3'}
+								fa-thumbs-down transition text-lg" />
+						</button>
 					</div>
-					<div class="flex bg-a2" style="height: 3px">
+					<div class="flex bg-a2 h-3px">
 						<div
-							class="bg-success"
+							class="bg-emerald-5"
 							role="progressbar"
 							aria-label="Likes"
 							style="width: {(data.likeCount /
@@ -248,7 +234,7 @@
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 						<div
-							class="bg-danger"
+							class="bg-red-5"
 							role="progressbar"
 							aria-label="Dislikes"
 							style="width: {(data.dislikeCount /
@@ -259,22 +245,17 @@
 							aria-valuemax={data.dislikeCount +
 								data.likeCount} />
 					</div>
-					<div class="row">
-						<div class="col flex justify-start">
-							<span class="light-text px-2">
-								{data.likeCount} like{data.likeCount == 1
-									? ""
-									: "s"}
-							</span>
-						</div>
-						<div class="col flex justify-end">
-							<span class="light-text px-2">
-								{data.dislikeCount} dislike{data.dislikeCount ==
-								1
-									? ""
-									: "s"}
-							</span>
-						</div>
+					<div class="flex justify-between">
+						<span class="px-2">
+							{data.likeCount} like{data.likeCount == 1
+								? ""
+								: "s"}
+						</span>
+						<span class="px-2">
+							{data.dislikeCount} dislike{data.dislikeCount == 1
+								? ""
+								: "s"}
+						</span>
 					</div>
 				</form>
 			</div>
@@ -307,9 +288,9 @@
 				<!-- Prevents nested tabs from breaking -->
 				{((tabData2.num = 0), "")}
 				<Tab tabData={tabData2}>
-					<p class="light-text">
+					<p>
 						You can host your server by opening your map in <button
-							class="btn btn-primary p-1 btn-sm"
+							class="btn btn-sm btn-tertiary"
 							on:click={launch(
 								"mercury-player:1+launchmode:ide"
 							)}>
@@ -338,13 +319,12 @@
 					<div class="input-group">
 						<input
 							type="text"
-							class="form-control valid"
 							id="filepath"
 							bind:value={filepath}
 							placeholder="Map location"
 							aria-label="Map location" />
 						<button
-							class="btn btn-primary"
+							class="btn btn-secondary"
 							on:click={launch(
 								"mercury-player:1+launchmode:maps"
 							)}
@@ -353,7 +333,7 @@
 							Map Folder
 						</button>
 						<button
-							class="btn btn-success"
+							class="btn btn-primary"
 							on:click={launch(
 								`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${btoa(
 									filepath
@@ -365,7 +345,9 @@
 						</button>
 
 						<div class="dropdown dropdown-hover dropdown-end">
-							<div class="btn btn-success dropdown-toggle" />
+							<div
+								class="btn btn-tertiary dropdown-toggle
+								border-[--accent2] border-l-0" />
 							<div class="dropdown-content pt-2">
 								<ul class="p-2 rounded-3">
 									<li class="rounded-2">
@@ -387,29 +369,25 @@
 				</Tab>
 			</div>
 		{/if}
-		<h4 class="light-text">Server List</h4>
-		{#if data.serverPing > Date.now() / 1000 - 35}
-			<div class="card pb-2">
-				<div class="card-body">
-					<div class="row">
-						<div class="col col-2">
-							<p class="light-text mb-2">
-								Currently Playing: {data.players
-									.length}/{data.maxPlayers}
-							</p>
-							<button
-								on:click={placeLauncher}
-								id="join"
-								class="btn btn-sm btn-success">
-								Join Server
-							</button>
-						</div>
-						<div class="col flex gap-3">
-							{#each data.players as user}
-								<User {user} size="4.5rem" bg="darker" />
-							{/each}
-						</div>
+		<h4>Server List</h4>
+		{#if online}
+			<div class="card p-4 flex flex-row">
+				<div class="w-1/6">
+					<div class="pb-2">
+						Currently Playing: {data.players
+							.length}/{data.maxPlayers}
 					</div>
+					<button
+						on:click={placeLauncher}
+						id="join"
+						class="btn btn-sm btn-primary">
+						Join Server
+					</button>
+				</div>
+				<div class="w-5/6 flex gap-3">
+					{#each data.players as user}
+						<User {user} size="4.5rem" bg="darker" />
+					{/each}
 				</div>
 			</div>
 		{:else}
@@ -417,11 +395,11 @@
 		{/if}
 	</Tab>
 	<hr />
-	<div class="row">
+	<div class="flex justify-around">
 		{#each statistics as [title, stat]}
-			<div class="col">
-				<p class="light-text text-center"><b>{title}</b></p>
-				<p class="light-text text-center">{stat}</p>
+			<div>
+				<p class="text-center"><b>{title}</b></p>
+				<p class="text-center">{stat}</p>
 			</div>
 		{/each}
 	</div>
@@ -431,16 +409,19 @@
 <Modal {modal}>
 	<div class="flex flex-col px-6 pt-6 text-center">
 		{#key installed}
-			<div in:fade={{ duration: 500 }} id="wrapper" class="self-center">
+			<div
+				in:fade={{ duration: 500 }}
+				class="self-center size-32 -translate-x-1/2 @light:invert">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
+					class="absolute"
 					width="128"
 					height="128" />
 				<img
 					src="/outerlogo.svg"
 					alt="Mercury logo outer part (circle around M)"
-					id="outer"
+					class="absolute animate-[spin_1.5s_linear_infinite]"
 					width="128"
 					height="128"
 					style={installed
@@ -449,19 +430,19 @@
 			</div>
 		{/key}
 		{#if success}
-			<span class="fs-3 pt-6">
+			<span class="text-xl pt-6">
 				"{data.name}" is ready to play! Have fun!
 			</span>
 		{:else if installed}
-			<span class="fs-3 pt-6">
+			<span class="text-xl pt-6">
 				Get ready to join "{data.name}" by {data.ownerUser?.username}!
 			</span>
 		{:else}
-			<span class="fs-3 pt-6">
+			<span class="text-xl pt-6">
 				Install the Mercury client and start playing now!
 			</span>
 			<a
-				class="btn btn-success"
+				class="btn btn-primary"
 				href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
 				Download 2013
 			</a>
@@ -470,44 +451,12 @@
 </Modal>
 
 <style lang="stylus">
-	#buttons
-		margin auto
-		display flex
-		flex-direction column
-
-	#play img
-		height 2rem
-
-	#settings
-		position absolute
-		margin 3px 0px 0px -10px
-
-	.dropdown-toggle
-		border-radius 0 0.375rem 0.375rem 0
-		&::after
-			display inline-block
-			vertical-align 0.255rem
-			content ""
-			border-top 0.3rem solid
-			border-right 0.3rem solid transparent
-			border-left 0.3rem solid transparent
-
-	#wrapper
-		width 128px
-		height 128px
-		transform translateX(-50%)
-
-		+lightTheme()
-			filter invert(1)
-
-		img
-			position absolute
-
-	#outer
-		transform rotate(0)
-		animation moon 1.5s 0s infinite linear
-
-	@keyframes moon
-		100%
-			transform rotate(360deg)
+	.dropdown-toggle::after
+		// funny down arrow
+		display inline-block
+		vertical-align 0.255rem
+		content ""
+		border-top 0.3rem solid
+		border-right 0.3rem solid transparent
+		border-left 0.3rem solid transparent
 </style>

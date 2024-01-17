@@ -34,7 +34,7 @@
 <div class="ctnr">
 	<div class="flex pb-12">
 		<h1 class="w-1/3">
-			<span class="pe-6">Games</span>
+			<span class="pr-6">Games</span>
 			<a href="/games/create" class="btn btn-primary">
 				<fa fa-plus />
 				Create
@@ -52,42 +52,39 @@
 							bind:value={query}
 							type="text"
 							name="query"
-							class="form-control light-text valid"
 							placeholder="Search for a game"
 							aria-label="Search for a game"
 							aria-describedby="button-addon2" />
 						<button
-							class="btn btn-success"
+							class="btn btn-secondary"
 							aria-label="Search"
 							id="button-addon2">
 							<fa fa-magnifying-glass />
 						</button>
 					</div>
 				</div>
-				<div class="pl-4 w-7/24">
-					<div class="row">
-						<label for="genre" class="light-text col py-1">
-							Genre
-						</label>
-						<select
-							class="form-select form-select-sm light-text col"
-							id="genre"
-							placeholder="Genre"
-							aria-label="genre">
-							<option value="Obby">Obby</option>
-							<option value="Horror">Horror</option>
-							<option value="Comedy">Comedy</option>
-						</select>
-					</div>
+				<div class="pl-4 w-7/24 flex">
+					<label for="genre" class="light-text py-1 pr-4">
+						Genre
+					</label>
+					<select
+						class="form-select light-text"
+						id="genre"
+						placeholder="Genre"
+						aria-label="genre">
+						<option value="Obby">Obby</option>
+						<option value="Horror">Horror</option>
+						<option value="Comedy">Comedy</option>
+					</select>
 				</div>
 				<div class="pl-4 w-7/24">
-					<div class="form-check light-text py-1">
+					<div class="flex items-center light-text py-1">
 						<input
 							class="form-check-input"
 							type="checkbox"
 							value=""
 							id="flexCheckDefault" />
-						<label class="form-check-label" for="flexCheckDefault">
+						<label class="pl-2" for="flexCheckDefault">
 							Gears Allowed
 						</label>
 					</div>
@@ -100,7 +97,7 @@
 			<PlaceCard {place} {num} total={data.places.length} />
 		{/each}
 		{#if query && searchedData.length == 0}
-			<h2 class="fs-5 pt-12">
+			<h2 class="text-xs pt-12">
 				No games found with search term {query}
 			</h2>
 		{/if}

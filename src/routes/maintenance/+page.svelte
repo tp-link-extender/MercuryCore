@@ -31,7 +31,7 @@
 	</p>
 	<a
 		href="https://status.banland.xyz"
-		class="no-underline pt-4 fs-5 font-bold accent-text">
+		class="no-underline pt-4 text-xs font-bold accent-text">
 		Status <fa fa-chevron-right />
 	</a>
 </div>

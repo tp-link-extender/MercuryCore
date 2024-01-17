@@ -285,10 +285,11 @@ export const actions = {
 	},
 	accept: async e => {
 		const { user, params } = await getInteractData(e)
-		if (await query(surql`$user ∈ $user2->request->user`, params))
-			// Make sure an incoming request exists before accepting
-			await acceptExisting(params, user)
-		else error(400, "No friend request to accept")
+		// Make sure an incoming request exists before accepting
+		if (!(await query(surql`$user ∈ $user2->request->user`, params)))
+			error(400, "No friend request to accept")
+
+		await acceptExisting(params, user)
 	},
 	rerender: async e => {
 		const { locals, params, getClientAddress } = e

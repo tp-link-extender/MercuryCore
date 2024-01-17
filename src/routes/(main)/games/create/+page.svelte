@@ -11,7 +11,10 @@
 
 <h1 class="text-center">Create a place</h1>
 
-<Form {formData} class="ctnr pt-12 max-w-200 light-text">
+<Form
+	{formData}
+	class="ctnr pt-12 max-w-200 light-text"
+	submit="Create ( <fa fa-gem></fa> Free )">
 	<Input
 		{formData}
 		name="name"
@@ -31,18 +34,18 @@
 		{formData}
 		type="number"
 		name="serverPort"
-		label="Server Port"
+		label="Server port"
 		placeholder="1024 - 65536"
 		help="Using a port number lower than 49152 may not work correctly." />
 	<Input
 		{formData}
 		type="number"
 		name="maxPlayers"
-		label="Player Limit"
+		label="Player limit"
 		placeholder="1 - 99 players" />
 	<Input
 		{formData}
 		type="checkbox"
 		name="privateServer"
-		label="Private Server" />
+		label="Private server?" />
 </Form>

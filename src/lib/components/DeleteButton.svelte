@@ -4,7 +4,7 @@
 	export let moderate = false
 
 	const text = moderate ? "moderate" : "delete",
-		colour = moderate ? "text-info" : "text-warning"
+		colour = moderate ? "text-cyan-5" : "text-yellow-5"
 
 	let clicked = false
 </script>

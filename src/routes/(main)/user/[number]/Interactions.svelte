@@ -4,7 +4,7 @@
 </script>
 
 {#if data.username != user?.username}
-	<div class="flex">
+	<div class="flex gap-2">
 		<form
 			use:enhance
 			method="POST"
@@ -16,13 +16,13 @@
 						? 'accept'
 						: 'request'}"
 			in:fade
-			class="self-center pr-2 flex gap-2">
+			class="flex gap-2">
 			<button
 				class="btn {data.friends || data.outgoingRequest
-					? 'btn-danger'
+					? 'btn-red-tertiary'
 					: data.incomingRequest
-						? 'btn-info'
-						: 'btn-success'}">
+						? 'btn-secondary'
+						: 'btn-secondary'}">
 				{#if data.friends}
 					Unfriend
 				{:else if data.incomingRequest}
@@ -40,8 +40,8 @@
 				method="POST"
 				action="?/decline"
 				in:fade
-				class="self-center pr-2 flex gap-2">
-				<button class="btn btn-danger">Decline request</button>
+				class="flex gap-2">
+				<button class="btn btn-red-secondary">Decline request</button>
 			</form>
 		{/if}
 		<form
@@ -49,12 +49,12 @@
 			method="POST"
 			action="?/{data.following ? 'unfollow' : 'follow'}"
 			in:fade
-			class="self-center pr-2 flex gap-2">
+			class="flex gap-2">
 			<button
 				name="action"
 				class="btn h-full {data.following
-					? 'btn-danger'
-					: 'btn-primary'}">
+					? 'btn-red-tertiary'
+					: 'btn-tertiary'}">
 				{#if data.following}
 					Unfollow
 				{:else}

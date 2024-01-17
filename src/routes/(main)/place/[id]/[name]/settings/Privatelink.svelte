@@ -10,35 +10,28 @@
 	let copiedSuccess = false
 </script>
 
-<form
-	use:enhance
-	method="POST"
-	action="?/privatelink&tab=Privacy">
+<form use:enhance method="POST" action="?/privatelink&tab=Privacy">
 	<fieldset class="flex flex-wrap pb-2">
 		<label for="privateLink" class="w-full md:w-1/4">
 			Private Server Link
 		</label>
 		<div class="w-full md:w-3/4">
 			<div class="input-group">
-				<input
-					id="privateLink"
-					{value}
-					class="form-control valid"
-					disabled />
+				<input id="privateLink" {value} disabled />
 				<button
 					on:click={() => {
 						navigator.clipboard.writeText(value)
 						copiedSuccess = true
 						setTimeout(() => (copiedSuccess = false), 4000)
 					}}
-					class="btn btn-info"
+					class="btn btn-tertiary border-[--accent2] border-l-0"
 					type="button">
 					<fa fa-paste />
 				</button>
 				<button
 					class="btn btn-{$message && $page.status == 200
 						? 'success'
-						: 'primary'}">
+						: 'secondary'}">
 					<fa fa-rotate />
 					{#if $delayed}
 						Working...
@@ -51,7 +44,7 @@
 				<small
 					id="copiedSuccess"
 					transition:fade
-					class="block text-warning">
+					class="block text-yellow-5">
 					Successfully copied link to clipboard
 				</small>
 			{/if}

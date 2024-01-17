@@ -1,7 +1,7 @@
 -- RbxGui
 print "[Mercury]: Loaded corescript 45284430"
 
-local t = {}
+local RbxGui = {}
 
 local function ScopedConnect(
 	parentInstance,
@@ -135,7 +135,7 @@ local function cancelSlide(areaSoak)
 	end
 end
 
-t.CreateStyledMessageDialog = function(title, message, style, buttons)
+RbxGui.CreateStyledMessageDialog = function(title, message, style, buttons)
 	local frame = Instance.new "Frame"
 	frame.Size = UDim2.new(0.5, 0, 0, 165)
 	frame.Position = UDim2.new(0.25, 0, 0.5, -72.5)
@@ -149,15 +149,15 @@ t.CreateStyledMessageDialog = function(title, message, style, buttons)
 	styleImage.Position = UDim2.new(0, 5, 0, 15)
 	if style == "error" or style == "Error" then
 		styleImage.Size = UDim2.new(0, 71, 0, 71)
-		styleImage.Image = "http://banland.xyz/asset?id=42565285"
+		styleImage.Image = "https://banland.xyz/asset?id=42565285"
 	elseif style == "notify" or style == "Notify" then
 		styleImage.Size = UDim2.new(0, 71, 0, 71)
-		styleImage.Image = "http://banland.xyz/asset?id=42604978"
+		styleImage.Image = "https://banland.xyz/asset?id=42604978"
 	elseif style == "confirm" or style == "Confirm" then
 		styleImage.Size = UDim2.new(0, 74, 0, 76)
-		styleImage.Image = "http://banland.xyz/asset?id=42557901"
+		styleImage.Image = "https://banland.xyz/asset?id=42557901"
 	else
-		return t.CreateMessageDialog(title, message, buttons)
+		return RbxGui.CreateMessageDialog(title, message, buttons)
 	end
 	styleImage.Parent = frame
 
@@ -195,7 +195,7 @@ t.CreateStyledMessageDialog = function(title, message, style, buttons)
 	return frame
 end
 
-t.CreateMessageDialog = function(title, message, buttons)
+RbxGui.CreateMessageDialog = function(title, message, buttons)
 	local frame = Instance.new "Frame"
 	frame.Size = UDim2.new(0.5, 0, 0.5, 0)
 	frame.Position = UDim2.new(0.25, 0, 0.25, 0)
@@ -235,7 +235,8 @@ t.CreateMessageDialog = function(title, message, buttons)
 	return frame
 end
 
-t.CreateDropDownMenu = function(items, onSelect, forRoblox)
+local scrollMouseCount
+RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	local width = UDim.new(0, 100)
 	local height = UDim.new(0, 32)
 
@@ -263,7 +264,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	local dropDownIcon = Instance.new "ImageLabel"
 	dropDownIcon.Name = "Icon"
 	dropDownIcon.Active = false
-	dropDownIcon.Image = "http://banland.xyz/asset/?id=45732894"
+	dropDownIcon.Image = "https://banland.xyz/asset/?id=45732894"
 	dropDownIcon.BackgroundTransparency = 1
 	dropDownIcon.Size = UDim2.new(0, 11, 0, 6)
 	dropDownIcon.Position = UDim2.new(1, -11, 0.5, -2)
@@ -325,7 +326,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 
 	local scrollUpButton
 	local scrollDownButton
-	local scrollMouseCount = 0
+	scrollMouseCount = 0
 
 	local setZIndex = function(baseZIndex)
 		droppedDownMenu.ZIndex = baseZIndex + 1
@@ -580,7 +581,7 @@ t.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	return frame, updateSelection
 end
 
-t.CreatePropertyDropDownMenu = function(instance, property, enum)
+RbxGui.CreatePropertyDropDownMenu = function(instance, property, enum)
 	local items = enum:GetEnumItems()
 	local names = {}
 	local nameToItem = {}
@@ -591,7 +592,7 @@ t.CreatePropertyDropDownMenu = function(instance, property, enum)
 
 	local frame
 	local updateSelection
-	frame, updateSelection = t.CreateDropDownMenu(names, function(text)
+	frame, updateSelection = RbxGui.CreateDropDownMenu(names, function(text)
 		instance[property] = nameToItem[text]
 	end)
 
@@ -606,7 +607,7 @@ t.CreatePropertyDropDownMenu = function(instance, property, enum)
 	return frame
 end
 
-t.GetFontHeight = function(font, fontSize)
+RbxGui.GetFontHeight = function(font, fontSize)
 	if font == nil or fontSize == nil then
 		error "Font and FontSize must be non-nil"
 	end
@@ -743,7 +744,7 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 	end
 end
 
-t.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
+RbxGui.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
 	if not frame:IsA "GuiObject" then
 		error "Frame must be a GuiObject"
 	end
@@ -797,7 +798,7 @@ t.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
 	layoutGuiObjectsHelper(wrapperFrame, guiObjects, settingsTable)
 end
 
-t.CreateSlider = function(steps, width, position)
+RbxGui.CreateSlider = function(steps, width, position)
 	local sliderGui = Instance.new "Frame"
 	sliderGui.Size = UDim2.new(1, 0, 1, 0)
 	sliderGui.BackgroundTransparency = 1
@@ -910,7 +911,7 @@ t.CreateSlider = function(steps, width, position)
 	return sliderGui, sliderPosition, sliderSteps
 end
 
-t.CreateTrueScrollingFrame = function()
+RbxGui.CreateTrueScrollingFrame = function()
 	local lowY
 	local highY
 
@@ -988,14 +989,14 @@ t.CreateTrueScrollingFrame = function()
 	end
 	scrollDownButton.MouseEnter:connect(function()
 		scrollDownButton.BackgroundTransparency = 0.1
-		local downChildren = scrollDownButton:GetChildren()
+		downChildren = scrollDownButton:GetChildren()
 		for i = 1, #downChildren do
 			downChildren[i].BackgroundTransparency = 0.1
 		end
 	end)
 	scrollDownButton.MouseLeave:connect(function()
 		scrollDownButton.BackgroundTransparency = 0.5
-		local downChildren = scrollDownButton:GetChildren()
+		downChildren = scrollDownButton:GetChildren()
 		for i = 1, #downChildren do
 			downChildren[i].BackgroundTransparency = 0.5
 		end
@@ -1308,11 +1309,12 @@ t.CreateTrueScrollingFrame = function()
 		reentrancyGuardScrollDown = false
 	end
 
+	local scrollStamp
+
 	local function scrollUp(mouseYPos)
 		if scrollUpButton.Active then
-			local scrollStamp = tick()
+			scrollStamp = tick()
 			local current = scrollStamp
-			local upCon
 			upCon = mouseDrag.MouseButton1Up:connect(function()
 				scrollStamp = tick()
 				mouseDrag.Parent = nil
@@ -1343,7 +1345,7 @@ t.CreateTrueScrollingFrame = function()
 
 	local function scrollDown(mouseYPos)
 		if scrollDownButton.Active then
-			local scrollStamp = tick()
+			scrollStamp = tick()
 			local current = scrollStamp
 			local downCon
 			downCon = mouseDrag.MouseButton1Up:connect(function()
@@ -1380,7 +1382,6 @@ t.CreateTrueScrollingFrame = function()
 
 	scrollbar.MouseButton1Down:connect(function(_, y)
 		if scrollbar.Active then
-			local scrollStamp = tick()
 			local mouseOffset = y - scrollbar.AbsolutePosition.y
 			if dragCon then
 				dragCon:disconnect()
@@ -1391,30 +1392,28 @@ t.CreateTrueScrollingFrame = function()
 				upCon = nil
 			end
 			local reentrancyGuardMouseScroll = false
-			dragCon = mouseDrag.MouseMoved:connect(function(x, y)
+			dragCon = mouseDrag.MouseMoved:connect(function(x2, y2)
 				if reentrancyGuardMouseScroll then
 					return
 				end
 
 				reentrancyGuardMouseScroll = true
-				if positionScrollBar(x, y, mouseOffset) then
+				if positionScrollBar(x2, y2, mouseOffset) then
 					recalculate()
 				end
 				reentrancyGuardMouseScroll = false
 			end)
 			upCon = mouseDrag.MouseButton1Up:connect(function()
-				scrollStamp = tick()
 				mouseDrag.Parent = nil
 				dragCon:disconnect()
 				dragCon = nil
 				upCon:disconnect()
-				drag = nil
 			end)
 			mouseDrag.Parent = getScreenGuiAncestor(scrollbar)
 		end
 	end)
 
-	local scrollMouseCount = 0
+	scrollMouseCount = 0
 
 	scrollUpButton.MouseButton1Down:connect(function()
 		scrollUp()
@@ -1507,7 +1506,7 @@ t.CreateTrueScrollingFrame = function()
 	return scrollingFrame, controlFrame
 end
 
-t.CreateScrollingFrame = function(orderList, scrollStyle)
+RbxGui.CreateScrollingFrame = function(orderList, scrollStyle)
 	local frame = Instance.new "Frame"
 	frame.Name = "ScrollingFrame"
 	frame.BackgroundTransparency = 1
@@ -1534,7 +1533,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 	local scrollStamp = 0
 
 	local scrollDrag = Instance.new "ImageButton"
-	scrollDrag.Image = "http://banland.xyz/asset/?id=61367186"
+	scrollDrag.Image = "https://banland.xyz/asset/?id=61367186"
 	scrollDrag.Size = UDim2.new(1, 0, 0, 16)
 	scrollDrag.BackgroundTransparency = 1
 	scrollDrag.Name = "ScrollDrag"
@@ -1676,7 +1675,8 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		setRowSize = true
 		local lastChildSize = 0
 
-		local xOffset, yOffset = 0
+		local xOffset = 0
+		local yOffset = 0
 		if guiObjects[1] then
 			yOffset = math.ceil(
 				math.floor(
@@ -1924,7 +1924,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 		recalculate()
 	end
 
-	local scrollUp = function(mouseYPos)
+	local function scrollUp(mouseYPos)
 		if scrollUpButton.Active then
 			scrollStamp = tick()
 			local current = scrollStamp
@@ -2001,17 +2001,17 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 			local mouseOffset = y - scrollDrag.AbsolutePosition.y
 			local dragCon
 			local upCon
-			dragCon = mouseDrag.MouseMoved:connect(function(_, y)
+			dragCon = mouseDrag.MouseMoved:connect(function(_, y2)
 				local barAbsPos = scrollbar.AbsolutePosition.y
 				local barAbsSize = scrollbar.AbsoluteSize.y
 
 				local dragAbsSize = scrollDrag.AbsoluteSize.y
 				local barAbsOne = barAbsPos + barAbsSize - dragAbsSize
-				y -= mouseOffset
-				y = y < barAbsPos and barAbsPos
-					or y > barAbsOne and barAbsOne
-					or y
-				y -= barAbsPos
+				y2 -= mouseOffset
+				y2 = y2 < barAbsPos and barAbsPos
+					or y2 > barAbsOne and barAbsOne
+					or y2
+				y2 -= barAbsPos
 
 				local guiObjects = 0
 				local children = frame:GetChildren()
@@ -2023,7 +2023,7 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 					end
 				end
 
-				local doublePercent = y / (barAbsSize - dragAbsSize)
+				local doublePercent = y2 / (barAbsSize - dragAbsSize)
 				local rowDiff = rowSize
 				local totalScrollCount = guiObjects - (howManyDisplayed - 1)
 				local newScrollPosition = math.floor(
@@ -2046,13 +2046,12 @@ t.CreateScrollingFrame = function(orderList, scrollStyle)
 				dragCon:disconnect()
 				dragCon = nil
 				upCon:disconnect()
-				drag = nil
 			end)
 			mouseDrag.Parent = getScreenGuiAncestor(scrollbar)
 		end
 	end)
 
-	local scrollMouseCount = 0
+	scrollMouseCount = 0
 
 	scrollUpButton.MouseButton1Down:connect(function()
 		scrollUp()
@@ -2151,7 +2150,7 @@ local function getGuiOwner(instance)
 	return nil
 end
 
-t.AutoTruncateTextObject = function(textLabel)
+RbxGui.AutoTruncateTextObject = function(textLabel)
 	local text = textLabel.Text
 
 	local fullLabel = textLabel:Clone()
@@ -2304,7 +2303,7 @@ local function TransitionTutorialPages(
 	)
 end
 
-t.CreateTutorial = function(name, tutorialKey, createButtons)
+RbxGui.CreateTutorial = function(name, tutorialKey, createButtons)
 	local frame = Instance.new "Frame"
 	frame.Name = "Tutorial-" .. name
 	frame.BackgroundTransparency = 1
@@ -2545,7 +2544,7 @@ local function CreateBasicTutorialPage(
 	return frame, innerFrame
 end
 
-t.CreateTextTutorialPage = function(name, text, skipTutorialFunc)
+RbxGui.CreateTextTutorialPage = function(name, text, skipTutorialFunc)
 	local frame
 	local contentFrame
 
@@ -2561,8 +2560,8 @@ t.CreateTextTutorialPage = function(name, text, skipTutorialFunc)
 	textLabel.Size = UDim2.new(1, 0, 1, 0)
 
 	local function handleResize(minSize, maxSize)
-		local size = binaryShrink(minSize, maxSize, function(size)
-			frame.Size = UDim2.new(0, size, 0, size)
+		local size = binaryShrink(minSize, maxSize, function(newSize)
+			frame.Size = UDim2.new(0, newSize, 0, newSize)
 			return textLabel.TextFits
 		end)
 		frame.Size = UDim2.new(0, size, 0, size)
@@ -2576,7 +2575,7 @@ t.CreateTextTutorialPage = function(name, text, skipTutorialFunc)
 	return frame
 end
 
-t.CreateImageTutorialPage = function(
+RbxGui.CreateImageTutorialPage = function(
 	name,
 	imageAsset,
 	x,
@@ -2594,8 +2593,8 @@ t.CreateImageTutorialPage = function(
 	imageLabel.Position = UDim2.new(0.5, -x / 2, 0.5, -y / 2)
 
 	local function handleResize(minSize, maxSize)
-		local size = binaryShrink(minSize, maxSize, function(size)
-			return size >= x and size >= y
+		local size = binaryShrink(minSize, maxSize, function(newSize)
+			return newSize >= x and newSize >= y
 		end)
 		if size >= x and size >= y then
 			imageLabel.Size = UDim2.new(0, x, 0, y)
@@ -2627,7 +2626,7 @@ t.CreateImageTutorialPage = function(
 	return frame
 end
 
-t.AddTutorialPage = function(tutorial, tutorialPage)
+RbxGui.AddTutorialPage = function(tutorial, tutorialPage)
 	local transitionFrame = tutorial.TransitionFrame
 	local currentPageValue = tutorial.CurrentTutorialPage
 
@@ -2682,7 +2681,7 @@ t.AddTutorialPage = function(tutorial, tutorialPage)
 	end
 end
 
-t.CreateSetPanel = function(
+RbxGui.CreateSetPanel = function(
 	userIdsForSets,
 	objectSelected,
 	dialogClosed,
@@ -2813,7 +2812,7 @@ t.CreateSetPanel = function(
 		waterForceDirLabel.Position = UDim2.new(0, 0, 0, 50)
 		waterForceDirLabel.Parent = waterFrame
 
-		local waterTypeChangedEvent = Instance.new "BindableEvent"
+		waterTypeChangedEvent = Instance.new "BindableEvent"
 		waterTypeChangedEvent.Name = "WaterTypeChangedEvent"
 		waterTypeChangedEvent.Parent = waterFrame
 
@@ -2827,7 +2826,7 @@ t.CreateSetPanel = function(
 		end
 
 		local waterForceDirectionDropDown, forceWaterDirectionSelection =
-			t.CreateDropDownMenu(
+			RbxGui.CreateDropDownMenu(
 				waterForceDirections,
 				waterForceDirectionSelectedFunc
 			)
@@ -2837,7 +2836,7 @@ t.CreateSetPanel = function(
 		waterForceDirectionDropDown.Parent = waterForceDirLabel
 
 		local waterForceDropDown, forceWaterForceSelection =
-			t.CreateDropDownMenu(waterForces, waterForceSelectedFunc)
+			RbxGui.CreateDropDownMenu(waterForces, waterForceSelectedFunc)
 		forceWaterForceSelection "None"
 		waterForceDropDown.Size = UDim2.new(1, 0, 0, 25)
 		waterForceDropDown.Position = UDim2.new(0, 0, 1, 3)
@@ -2848,7 +2847,7 @@ t.CreateSetPanel = function(
 
 	-- Helper Function that contructs gui elements
 	local function createSetGui()
-		local setGui = Instance.new "ScreenGui"
+		setGui = Instance.new "ScreenGui"
 		setGui.Name = "SetGui"
 
 		local setPanel = Instance.new "Frame"
@@ -2929,7 +2928,7 @@ t.CreateSetPanel = function(
 		line.ZIndex = 6
 		line.Parent = sets
 
-		local setsLists, controlFrame = t.CreateTrueScrollingFrame()
+		local setsLists, controlFrame = RbxGui.CreateTrueScrollingFrame()
 		setsLists.Size = UDim2.new(1, -6, 0.94, 0)
 		setsLists.Position = UDim2.new(0, 0, 0.06, 0)
 		setsLists.BackgroundTransparency = 1
@@ -2965,7 +2964,7 @@ t.CreateSetPanel = function(
 		local cancelImage = Instance.new "ImageLabel"
 		cancelImage.Name = "CancelImage"
 		cancelImage.BackgroundTransparency = 1
-		cancelImage.Image = "http://banland.xyz/asset?id=54135717"
+		cancelImage.Image = "https://banland.xyz/asset?id=54135717"
 		cancelImage.Position = UDim2.new(0, -2, 0, -2)
 		cancelImage.Size = UDim2.new(0, 16, 0, 16)
 		cancelImage.ZIndex = 6
@@ -3201,7 +3200,7 @@ t.CreateSetPanel = function(
 	local function createDropDownMenuButton(parent)
 		local dropDownButton = Instance.new "ImageButton"
 		dropDownButton.Name = "DropDownButton"
-		dropDownButton.Image = "http://banland.xyz/asset/?id=67581509"
+		dropDownButton.Image = "https://banland.xyz/asset/?id=67581509"
 		dropDownButton.BackgroundTransparency = 1
 		dropDownButton.Size = UDim2.new(0, 16, 0, 16)
 		dropDownButton.Position = UDim2.new(1, -24, 0, 6)
@@ -3529,7 +3528,7 @@ t.CreateSetPanel = function(
 		end
 	)
 
-	local scrollFrame, controlFrame = t.CreateTrueScrollingFrame()
+	local scrollFrame, controlFrame = RbxGui.CreateTrueScrollingFrame()
 	scrollFrame.Size = UDim2.new(0.54, 0, 0.85, 0)
 	scrollFrame.Position = UDim2.new(0.24, 0, 0.085, 0)
 	scrollFrame.Name = "ItemsFrame"
@@ -3541,6 +3540,11 @@ t.CreateSetPanel = function(
 
 	controlFrame.Parent = setGui.SetPanel
 	controlFrame.Position = UDim2.new(0.76, 5, 0, 0)
+
+	local rows =
+		math.floor(setGui.SetPanel.ItemsFrame.AbsoluteSize.Y / buttonHeight)
+	local columns =
+		math.floor(setGui.SetPanel.ItemsFrame.AbsoluteSize.X / buttonWidth)
 
 	local debounce = false
 	controlFrame.ScrollBottom.Changed:connect(function(_)
@@ -3572,10 +3576,6 @@ t.CreateSetPanel = function(
 	if userData then
 		userCategoryButtons = processCategory(userData)
 	end
-
-	rows = math.floor(setGui.SetPanel.ItemsFrame.AbsoluteSize.Y / buttonHeight)
-	columns =
-		math.floor(setGui.SetPanel.ItemsFrame.AbsoluteSize.X / buttonWidth)
 
 	populateSetsFrame()
 
@@ -3611,7 +3611,7 @@ t.CreateSetPanel = function(
 		waterTypeChangedEvent
 end
 
-t.CreateTerrainMaterialSelector = function(size, position)
+RbxGui.CreateTerrainMaterialSelector = function(size, position)
 	local terrainMaterialSelectionChanged = Instance.new "BindableEvent"
 	terrainMaterialSelectionChanged.Name = "TerrainMaterialSelectionChanged"
 
@@ -3619,11 +3619,7 @@ t.CreateTerrainMaterialSelector = function(size, position)
 
 	local frame = Instance.new "Frame"
 	frame.Name = "TerrainMaterialSelector"
-	if size then
-		frame.Size = size
-	else
-		frame.Size = UDim2.new(0, 245, 0, 230)
-	end
+	frame.Size = size or UDim2.new(0, 245, 0, 230)
 	if position then
 		frame.Position = position
 	end
@@ -3770,63 +3766,63 @@ t.CreateTerrainMaterialSelector = function(size, position)
 		materialToImageMap[v] = {}
 		if v == "Grass" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=56563112"
+				"https://banland.xyz/asset/?id=56563112"
 		elseif v == "Sand" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=62356652"
+				"https://banland.xyz/asset/?id=62356652"
 		elseif v == "Brick" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=65961537"
+				"https://banland.xyz/asset/?id=65961537"
 		elseif v == "Granite" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532153"
+				"https://banland.xyz/asset/?id=67532153"
 		elseif v == "Asphalt" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532038"
+				"https://banland.xyz/asset/?id=67532038"
 		elseif v == "Iron" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532093"
+				"https://banland.xyz/asset/?id=67532093"
 		elseif v == "Aluminum" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67531995"
+				"https://banland.xyz/asset/?id=67531995"
 		elseif v == "Gold" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532118"
+				"https://banland.xyz/asset/?id=67532118"
 		elseif v == "Plastic (red)" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67531848"
+				"https://banland.xyz/asset/?id=67531848"
 		elseif v == "Plastic (blue)" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67531924"
+				"https://banland.xyz/asset/?id=67531924"
 		elseif v == "Plank" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532015"
+				"https://banland.xyz/asset/?id=67532015"
 		elseif v == "Log" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532051"
+				"https://banland.xyz/asset/?id=67532051"
 		elseif v == "Gravel" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532206"
+				"https://banland.xyz/asset/?id=67532206"
 		elseif v == "Cinder Block" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532103"
+				"https://banland.xyz/asset/?id=67532103"
 		elseif v == "Stone Wall" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67531804"
+				"https://banland.xyz/asset/?id=67531804"
 		elseif v == "Concrete" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532059"
+				"https://banland.xyz/asset/?id=67532059"
 		elseif v == "Water" then
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=81407474"
+				"https://banland.xyz/asset/?id=81407474"
 		else
 			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=66887593" -- fill in the rest here!!
+				"https://banland.xyz/asset/?id=66887593" -- fill in the rest here!!
 		end
 	end
 
 	local scrollFrame, scrollUp, scrollDown, recalculateScroll =
-		t.CreateScrollingFrame(nil, "grid")
+		RbxGui.CreateScrollingFrame(nil, "grid")
 	scrollFrame.Size = UDim2.new(0.85, 0, 1, 0)
 	scrollFrame.Position = UDim2.new(0, 0, 0, 0)
 	scrollFrame.Parent = frame
@@ -3940,9 +3936,9 @@ t.CreateTerrainMaterialSelector = function(size, position)
 	return frame, terrainMaterialSelectionChanged, forceTerrainMaterialSelection
 end
 
-t.CreateLoadingFrame = function(name, size, position)
+RbxGui.CreateLoadingFrame = function(name, size, position)
 	game:GetService("ContentProvider")
-		:Preload "http://banland.xyz/asset/?id=35238053"
+		:Preload "https://banland.xyz/asset/?id=35238053"
 
 	local loadingFrame = Instance.new "Frame"
 	loadingFrame.Name = "LoadingFrame"
@@ -3969,7 +3965,7 @@ t.CreateLoadingFrame = function(name, size, position)
 
 	local loadingGreenBar = Instance.new "ImageLabel"
 	loadingGreenBar.Name = "LoadingGreenBar"
-	loadingGreenBar.Image = "http://banland.xyz/asset/?id=35238053"
+	loadingGreenBar.Image = "https://banland.xyz/asset/?id=35238053"
 	loadingGreenBar.Position = UDim2.new(0, 0, 0, 0)
 	loadingGreenBar.Size = UDim2.new(0, 0, 1, 0)
 	loadingGreenBar.Visible = false
@@ -4082,8 +4078,15 @@ t.CreateLoadingFrame = function(name, size, position)
 	return loadingFrame, updateLoadingGuiPercent, cancelButtonClicked
 end
 
-t.CreatePluginFrame = function(name, size, position, scrollable, parent)
-	function createMenuButton(size, position, text, fontsize, name, parent)
+RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
+	local function createMenuButton(
+		size,
+		position,
+		text,
+		fontsize,
+		name,
+		parent
+	)
 		local button = Instance.new "TextButton"
 		button.AutoButtonColor = false
 		button.Name = name
@@ -4298,7 +4301,7 @@ t.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	local frame, control, verticalDragger
 	if scrollable then
 		--frame for widgets
-		frame, control = t.CreateTrueScrollingFrame()
+		frame, control = RbxGui.CreateTrueScrollingFrame()
 		frame.Size = UDim2.new(1, 0, 1, 0)
 		frame.BackgroundColor3 = Color3.new(72 / 255, 72 / 255, 72 / 255)
 		frame.BorderColor3 = Color3.new(0, 0, 0)
@@ -4450,11 +4453,11 @@ t.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	return dragBar, widgetContainer, helpFrame, closeEvent
 end
 
-t.Help = function(funcNameOrFunc)
+RbxGui.Help = function(funcNameOrFunc)
 	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
 	if
 		funcNameOrFunc == "CreatePropertyDropDownMenu"
-		or funcNameOrFunc == t.CreatePropertyDropDownMenu
+		or funcNameOrFunc == RbxGui.CreatePropertyDropDownMenu
 	then
 		return "Function CreatePropertyDropDownMenu.  "
 			.. "Arguments: (instance, propertyName, enumType).  "
@@ -4462,7 +4465,7 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "CreateDropDownMenu"
-		or funcNameOrFunc == t.CreateDropDownMenu
+		or funcNameOrFunc == RbxGui.CreateDropDownMenu
 	then
 		return "Function CreateDropDownMenu.  "
 			.. "Arguments: (items, onItemSelected).  "
@@ -4470,7 +4473,7 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "CreateMessageDialog"
-		or funcNameOrFunc == t.CreateMessageDialog
+		or funcNameOrFunc == RbxGui.CreateMessageDialog
 	then
 		return "Function CreateMessageDialog.  "
 			.. "Arguments: (title, message, buttons). "
@@ -4478,7 +4481,7 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "CreateStyledMessageDialog"
-		or funcNameOrFunc == t.CreateStyledMessageDialog
+		or funcNameOrFunc == RbxGui.CreateStyledMessageDialog
 	then
 		return "Function CreateStyledMessageDialog.  "
 			.. "Arguments: (title, message, style, buttons). "
@@ -4486,7 +4489,7 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "GetFontHeight"
-		or funcNameOrFunc == t.GetFontHeight
+		or funcNameOrFunc == RbxGui.GetFontHeight
 	then
 		return "Function GetFontHeight.  "
 			.. "Arguments: (font, fontSize). "
@@ -4494,7 +4497,7 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "CreateScrollingFrame"
-		or funcNameOrFunc == t.CreateScrollingFrame
+		or funcNameOrFunc == RbxGui.CreateScrollingFrame
 	then
 		return "Function CreateScrollingFrame.  "
 			.. "Arguments: (orderList, style) "
@@ -4502,7 +4505,7 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "CreateTrueScrollingFrame"
-		or funcNameOrFunc == t.CreateTrueScrollingFrame
+		or funcNameOrFunc == RbxGui.CreateTrueScrollingFrame
 	then
 		return "Function CreateTrueScrollingFrame.  "
 			.. "Arguments: (nil) "
@@ -4510,20 +4513,23 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "AutoTruncateTextObject"
-		or funcNameOrFunc == t.AutoTruncateTextObject
+		or funcNameOrFunc == RbxGui.AutoTruncateTextObject
 	then
 		return "Function AutoTruncateTextObject.  "
 			.. "Arguments: (textLabel) "
 			.. "Side effect: returns 2 objects, (textLabel, changeText).  The 'textLabel' input is modified to automatically truncate text (with ellipsis), if it gets too small to fit.  'changeText' is a function that can be used to change the text, it takes 1 string as an argument"
 	end
-	if funcNameOrFunc == "CreateSlider" or funcNameOrFunc == t.CreateSlider then
+	if
+		funcNameOrFunc == "CreateSlider"
+		or funcNameOrFunc == RbxGui.CreateSlider
+	then
 		return "Function CreateSlider.  "
 			.. "Arguments: (steps, width, position) "
 			.. "Side effect: returns 2 objects, (sliderGui, sliderPosition).  The 'steps' argument specifies how many different positions the slider can hold along the bar.  'width' specifies in pixels how wide the bar should be (modifiable afterwards if desired). 'position' argument should be a UDim2 for slider positioning. 'sliderPosition' is an IntValue whose current .Value specifies the specific step the slider is currently on."
 	end
 	if
 		funcNameOrFunc == "CreateLoadingFrame"
-		or funcNameOrFunc == t.CreateLoadingFrame
+		or funcNameOrFunc == RbxGui.CreateLoadingFrame
 	then
 		return "Function CreateLoadingFrame.  "
 			.. "Arguments: (name, size, position) "
@@ -4531,7 +4537,7 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "CreateTerrainMaterialSelector"
-		or funcNameOrFunc == t.CreateTerrainMaterialSelector
+		or funcNameOrFunc == RbxGui.CreateTerrainMaterialSelector
 	then
 		return "Function CreateTerrainMaterialSelector.  "
 			.. "Arguments: (size, position) "
@@ -4539,4 +4545,4 @@ t.Help = function(funcNameOrFunc)
 	end
 end
 
-return t
+return RbxGui

@@ -32,14 +32,6 @@ export default {
 		files: {
 			lib: "./src/lib",
 		},
-		alias: {
-			$bootstrap:
-				process.env.NODE_ENV == "production"
-					? resolve("src/bootstrap.sass")
-					: // Using the css version in development, because
-						// the sass compiler slows the dev server to a crawl
-						resolve("src/bootstrap.css"),
-		},
 	},
 
 	vitePlugin: {

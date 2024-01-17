@@ -7,7 +7,7 @@ import { z } from "zod"
 
 const schemas = {
 	profile: z.object({
-		theme: z.enum(["standard", "darken", "storm", "solar"]),
+		// theme: z.enum(["standard", "darken", "storm", "solar"]),
 		bio: z.string().max(1000).optional(),
 	}),
 	password: z.object({
@@ -29,7 +29,7 @@ export const actions = {
 		const form = await superValidate(request, schemas.profile)
 		if (!form.valid) return formError(form)
 
-		const { bio, theme } = form.data
+		const { bio } = form.data
 
 		await query(
 			surql`
@@ -38,7 +38,7 @@ export const actions = {
 					ORDER BY updated DESC)[0] AS bio
 				FROM $user;
 
-				UPDATE $user SET theme = $theme;
+				-- UPDATE $user SET theme = $theme;
 
 				IF $og.bio.text != $bio {
 					UPDATE $user SET bio += {
@@ -49,7 +49,7 @@ export const actions = {
 			{
 				user: `user:${user.id}`,
 				bio,
-				theme,
+				// theme,
 			}
 		)
 
