@@ -91,10 +91,7 @@ export async function load({ locals }) {
 				*,
 				(SELECT text, updated FROM $parent.content
 				ORDER BY updated DESC) AS content,
-				(SELECT
-					number,
-					status,
-					username
+				(SELECT number, status, username
 				FROM <-posted<-user)[0] as authorUser
 			FROM statusPost
 			LIMIT 40`),

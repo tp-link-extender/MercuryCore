@@ -15,21 +15,8 @@ export async function GET({ url, params }) {
 	}
 
 	const user = await squery<{
-		bodyColours: {
-			Head: number
-			Torso: number
-			LeftArm: number
-			RightArm: number
-			LeftLeg: number
-			RightLeg: number
-		}
 		number: number
-	}>(
-		surql`
-			SELECT bodyColours, number FROM user
-			WHERE username = $username`,
-		{ username }
-	)
+	}>(surql`SELECT number FROM user WHERE username = $username`, { username })
 
 	if (!user) error(404, "User not found")
 

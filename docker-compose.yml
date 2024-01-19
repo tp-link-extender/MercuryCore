@@ -5,7 +5,9 @@ version: "3"
 
 services:
     surreal:
-        image: surrealdb/surrealdb:nightly
+        # not :nightly because doing that once caused failures
+        # when graph linking
+        image: surrealdb/surrealdb:v1.1.1
         ports:
             - 8000:8000
         restart: unless-stopped

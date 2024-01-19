@@ -43,10 +43,7 @@ export async function load({ request, locals }) {
 				SELECT
 					*,
 					meta::id(id) AS id,
-					(SELECT
-						number,
-						status,
-						username
+					(SELECT number, status, username
 					FROM <-user)[0] AS sender
 				FROM notification
 				WHERE out = $user
