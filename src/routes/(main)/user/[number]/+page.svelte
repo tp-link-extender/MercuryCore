@@ -111,7 +111,7 @@
 						src={form?.avatar ||
 							`/api/avatar/${data.username}-body`}
 						alt={data.username} />
-					{#if user?.permissionLevel > 2}
+					{#if user?.permissionLevel >= 5}
 						<form
 							use:enhance
 							method="POST"

@@ -292,12 +292,10 @@ export const actions = {
 		await acceptExisting(params, user)
 	},
 	rerender: async e => {
-		const { locals, params, getClientAddress } = e
-		await authorise(locals, 3)
+		const { locals, params } = e
+		await authorise(locals, 5)
 
-		const { user2 } = await getData(e),
-			limit = ratelimit({}, "rerender", getClientAddress, 60)
-		if (limit) return fail(429, { msg: "Too many requests" })
+		const { user2 } = await getData(e)
 
 		try {
 			await requestRender("Avatar", parseInt(params.number), true)
