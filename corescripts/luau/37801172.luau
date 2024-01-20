@@ -71,40 +71,36 @@ else
 	end)
 end
 
-if game.CoreGui.Version >= 3 and game.PlaceId ~= 130815926 then --todo: remove placeid hack for halloween
-	-- Backpack Builder, creates most of the backpack gui
-	scriptContext:AddCoreScript(
-		53878047,
-		screenGui,
-		"CoreScripts/BackpackScripts/BackpackBuilder"
-	)
+-- Backpack Builder, creates most of the backpack gui
+scriptContext:AddCoreScript(
+	53878047,
+	screenGui,
+	"CoreScripts/BackpackScripts/BackpackBuilder"
+)
 
-	waitForChild(screenGui, "CurrentLoadout")
-	waitForChild(screenGui, "Backpack")
-	local Backpack = screenGui.Backpack
+waitForChild(screenGui, "CurrentLoadout")
+waitForChild(screenGui, "Backpack")
+local Backpack = screenGui.Backpack
 
-	-- Manager handles all big backpack state changes, other scripts subscribe to this and do things accordingly
-	if game.CoreGui.Version >= 7 then
-		scriptContext:AddCoreScript(
-			89449093,
-			Backpack,
-			"CoreScripts/BackpackScripts/BackpackManager"
-		)
-	end
+-- Manager handles all big backpack state changes, other scripts subscribe to this and do things accordingly
+scriptContext:AddCoreScript(
+	89449093,
+	Backpack,
+	"CoreScripts/BackpackScripts/BackpackManager"
+)
 
-	-- Backpack Gear (handles all backpack gear tab stuff)
-	game:GetService("ScriptContext"):AddCoreScript(
-		89449008,
-		Backpack,
-		"CoreScripts/BackpackScripts/BackpackGear"
-	)
-	-- Loadout Script, used for gear hotkeys
-	scriptContext:AddCoreScript(
-		53878057,
-		screenGui.CurrentLoadout,
-		"CoreScripts/BackpackScripts/LoadoutScript"
-	)
-end
+-- Backpack Gear (handles all backpack gear tab stuff)
+scriptContext:AddCoreScript(
+	89449008,
+	Backpack,
+	"CoreScripts/BackpackScripts/BackpackGear"
+)
+-- Loadout Script, used for gear hotkeys
+scriptContext:AddCoreScript(
+	53878057,
+	screenGui.CurrentLoadout,
+	"CoreScripts/BackpackScripts/LoadoutScript"
+)
 
 local IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
 if IsPersonalServer then
