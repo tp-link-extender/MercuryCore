@@ -47,15 +47,32 @@ await db.query(surql`
 	};
 `)
 
+const stupidError =
+	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
+
 /**
  * Executes a query in SurrealDB and returns its results.
  * @param input The surql query to execute.
  * @param params An array of variables to pass to SurrealDB.
  * @returns The result of the first query given.
  */
-export const query = async <T>(input: string, params?: { [k: string]: any }) =>
-	(await db.query(input, params))?.[0] as T[]
-
+export const query = async <T>(
+	input: string,
+	params?: { [k: string]: any }
+) => {
+	// WORST
+	// DATABASE
+	// ISSUE
+	// EVER
+	for (let i = 1; i <= 3; i++) {
+		try {
+			return (await db.query(input, params))?.[0] as T[]
+		} catch (e: any) {
+			if (e.message != stupidError) throw new Error(e.message)
+		}
+		console.log(`retrying query ${i} time${i > 1 ? "s" : ""}`)
+	}
+}
 /**
  * Executes a query in SurrealDB and returns the first item in its results.
  * @param input The surql query to execute.
@@ -63,7 +80,7 @@ export const query = async <T>(input: string, params?: { [k: string]: any }) =>
  * @returns The first item in the array returned by the first query.
  */
 export const squery = async <T>(input: string, params?: { [k: string]: any }) =>
-	(await query<T>(input, params))[0]
+	((await db.query(input, params))?.[0] as T[])[0]
 
 /**
  * Executes multiple queries in SurrealDB and returns their results.
