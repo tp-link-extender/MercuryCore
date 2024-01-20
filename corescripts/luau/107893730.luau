@@ -47,7 +47,7 @@ local smallScreenThreshold = 450
 
 -- user facing images
 local function assetUrl(id: number)
-	return `https://banland.xyz/asset?id={id}`
+	return `http://banland.xyz/asset?id={id}`
 end
 
 local errorImageUrl = assetUrl(42557901)

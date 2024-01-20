@@ -1,6 +1,10 @@
 -- CoreGui.RobloxGui.CoreScripts/Settings
 print "[Mercury]: Loaded corescript 46295863"
 
+local CoreGui = game:GetService "CoreGui"
+local GuiService = game:GetService "GuiService"
+local Players = game:GetService "Players"
+
 local function waitForChild(instance, name)
 	while not instance:FindFirstChild(name) do
 		instance.ChildAdded:wait()
@@ -23,10 +27,10 @@ local RbxGui
 local helpButton, updateCameraDropDownSelection, updateVideoCaptureDropDownSelection
 local tweenTime = 0.2
 
-local mouseLockLookScreenUrl = "https://banland.xyz/asset?id=54071825"
-local classicLookScreenUrl = "https://banland.xyz/Asset?id=45915798"
+local mouseLockLookScreenUrl = "http://banland.xyz/asset?id=54071825"
+local classicLookScreenUrl = "http://banland.xyz/Asset?id=45915798"
 
-local hasGraphicsSlider = (game:GetService("CoreGui").Version >= 5)
+local hasGraphicsSlider = true
 local GraphicsQualityLevels = 10 -- how many levels we allow on graphics slider
 local recordingVideo = false
 
@@ -415,17 +419,17 @@ local function createHelpDialog(baseZIndex)
 	buttons[2] = {}
 	buttons[2].Text = "Move"
 	buttons[2].Function = function()
-		image.Image = "https://banland.xyz/Asset?id=45915811"
+		image.Image = "http://banland.xyz/Asset?id=45915811"
 	end
 	buttons[3] = {}
 	buttons[3].Text = "Gear"
 	buttons[3].Function = function()
-		image.Image = "https://banland.xyz/Asset?id=45917596"
+		image.Image = "http://banland.xyz/Asset?id=45917596"
 	end
 	buttons[4] = {}
 	buttons[4].Text = "Zoom"
 	buttons[4].Function = function()
-		image.Image = "https://banland.xyz/Asset?id=45915825"
+		image.Image = "http://banland.xyz/Asset?id=45915825"
 	end
 
 	CreateTextButtons(buttonRow, buttons, UDim.new(0, 0), UDim.new(1, 0))
@@ -904,201 +908,127 @@ local function createGameSettingsMenu(baseZIndex, _)
 
 	local studioCheckbox
 
-	if hasGraphicsSlider then
-		local qualityText = Instance.new "TextLabel"
-		qualityText.Name = "QualityText"
-		qualityText.Text = "Graphics Quality"
-		qualityText.Size = UDim2.new(0, 128, 0, 18)
-		qualityText.Position = UDim2.new(0, 30, 0, 239)
-		qualityText.Font = Enum.Font.Arial
-		qualityText.FontSize = Enum.FontSize.Size18
-		qualityText.TextColor3 = Color3.new(1, 1, 1)
-		qualityText.ZIndex = baseZIndex + 4
-		qualityText.BackgroundTransparency = 1
-		qualityText.Parent = gameSettingsMenuFrame
-		qualityText.Visible = not inStudioMode
+	local qualityText = Instance.new "TextLabel"
+	qualityText.Name = "QualityText"
+	qualityText.Text = "Graphics Quality"
+	qualityText.Size = UDim2.new(0, 128, 0, 18)
+	qualityText.Position = UDim2.new(0, 30, 0, 239)
+	qualityText.Font = Enum.Font.Arial
+	qualityText.FontSize = Enum.FontSize.Size18
+	qualityText.TextColor3 = Color3.new(1, 1, 1)
+	qualityText.ZIndex = baseZIndex + 4
+	qualityText.BackgroundTransparency = 1
+	qualityText.Parent = gameSettingsMenuFrame
+	qualityText.Visible = not inStudioMode
 
-		local autoText = qualityText:clone()
-		autoText.Name = "AutoText"
-		autoText.Text = "Auto"
-		autoText.Position = UDim2.new(0, 183, 0, 214)
-		autoText.TextColor3 = Color3.new(128 / 255, 128 / 255, 128 / 255)
-		autoText.Size = UDim2.new(0, 34, 0, 18)
-		autoText.Parent = gameSettingsMenuFrame
-		autoText.Visible = not inStudioMode
+	local autoText = qualityText:clone()
+	autoText.Name = "AutoText"
+	autoText.Text = "Auto"
+	autoText.Position = UDim2.new(0, 183, 0, 214)
+	autoText.TextColor3 = Color3.new(128 / 255, 128 / 255, 128 / 255)
+	autoText.Size = UDim2.new(0, 34, 0, 18)
+	autoText.Parent = gameSettingsMenuFrame
+	autoText.Visible = not inStudioMode
 
-		local fasterText = autoText:clone()
-		fasterText.Name = "FasterText"
-		fasterText.Text = "Faster"
-		fasterText.Position = UDim2.new(0, 185, 0, 274)
-		fasterText.TextColor3 = Color3.new(95, 95, 95)
-		fasterText.FontSize = Enum.FontSize.Size14
-		fasterText.Parent = gameSettingsMenuFrame
-		fasterText.Visible = not inStudioMode
+	local fasterText = autoText:clone()
+	fasterText.Name = "FasterText"
+	fasterText.Text = "Faster"
+	fasterText.Position = UDim2.new(0, 185, 0, 274)
+	fasterText.TextColor3 = Color3.new(95, 95, 95)
+	fasterText.FontSize = Enum.FontSize.Size14
+	fasterText.Parent = gameSettingsMenuFrame
+	fasterText.Visible = not inStudioMode
 
-		local fasterShortcut = fullscreenShortcut:clone()
-		fasterShortcut.Name = "FasterShortcutText"
-		fasterShortcut.Text = "F10 + Shift"
-		fasterShortcut.Position = UDim2.new(0, 185, 0, 283)
-		fasterShortcut.Parent = gameSettingsMenuFrame
-		fasterShortcut.Visible = not inStudioMode
+	local fasterShortcut = fullscreenShortcut:clone()
+	fasterShortcut.Name = "FasterShortcutText"
+	fasterShortcut.Text = "F10 + Shift"
+	fasterShortcut.Position = UDim2.new(0, 185, 0, 283)
+	fasterShortcut.Parent = gameSettingsMenuFrame
+	fasterShortcut.Visible = not inStudioMode
 
-		local betterQualityText = autoText:clone()
-		betterQualityText.Name = "BetterQualityText"
-		betterQualityText.Text = "Better Quality"
-		betterQualityText.TextWrap = true
-		betterQualityText.Size = UDim2.new(0, 41, 0, 28)
-		betterQualityText.Position = UDim2.new(0, 390, 0, 269)
-		betterQualityText.TextColor3 = Color3.new(95, 95, 95)
-		betterQualityText.FontSize = Enum.FontSize.Size14
-		betterQualityText.Parent = gameSettingsMenuFrame
-		betterQualityText.Visible = not inStudioMode
+	local betterQualityText = autoText:clone()
+	betterQualityText.Name = "BetterQualityText"
+	betterQualityText.Text = "Better Quality"
+	betterQualityText.TextWrap = true
+	betterQualityText.Size = UDim2.new(0, 41, 0, 28)
+	betterQualityText.Position = UDim2.new(0, 390, 0, 269)
+	betterQualityText.TextColor3 = Color3.new(95, 95, 95)
+	betterQualityText.FontSize = Enum.FontSize.Size14
+	betterQualityText.Parent = gameSettingsMenuFrame
+	betterQualityText.Visible = not inStudioMode
 
-		local betterQualityShortcut = fullscreenShortcut:clone()
-		betterQualityShortcut.Name = "BetterQualityShortcut"
-		betterQualityShortcut.Text = "F10"
-		betterQualityShortcut.Position = UDim2.new(0, 394, 0, 288)
-		betterQualityShortcut.Parent = gameSettingsMenuFrame
-		betterQualityShortcut.Visible = not inStudioMode
+	local betterQualityShortcut = fullscreenShortcut:clone()
+	betterQualityShortcut.Name = "BetterQualityShortcut"
+	betterQualityShortcut.Text = "F10"
+	betterQualityShortcut.Position = UDim2.new(0, 394, 0, 288)
+	betterQualityShortcut.Parent = gameSettingsMenuFrame
+	betterQualityShortcut.Visible = not inStudioMode
 
-		local autoGraphicsButton = createTextButton(
-			"X",
-			Enum.ButtonStyle.RobloxButton,
-			Enum.FontSize.Size18,
-			UDim2.new(0, 25, 0, 25),
-			UDim2.new(0, 187, 0, 239)
+	local autoGraphicsButton = createTextButton(
+		"X",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size18,
+		UDim2.new(0, 25, 0, 25),
+		UDim2.new(0, 187, 0, 239)
+	)
+	autoGraphicsButton.Name = "AutoGraphicsButton"
+	autoGraphicsButton.ZIndex = baseZIndex + 4
+	autoGraphicsButton.Parent = gameSettingsMenuFrame
+	autoGraphicsButton.Visible = not inStudioMode
+
+	local graphicsSlider, graphicsLevel = RbxGui.CreateSlider(
+		GraphicsQualityLevels,
+		150,
+		UDim2.new(0, 230, 0, 280)
+	) -- graphics - 1 because slider starts at 1 instead of 0
+	graphicsSlider.Parent = gameSettingsMenuFrame
+	graphicsSlider.Bar.ZIndex = baseZIndex + 4
+	graphicsSlider.Bar.Slider.ZIndex = baseZIndex + 5
+	graphicsSlider.Visible = not inStudioMode
+	graphicsLevel.Value =
+		math.floor((settings().Rendering:GetMaxQualityLevel() - 1) / 2)
+
+	local graphicsSetter = Instance.new "TextBox"
+	graphicsSetter.Name = "GraphicsSetter"
+	graphicsSetter.BackgroundColor3 = Color3.new(0, 0, 0)
+	graphicsSetter.BorderColor3 = Color3.new(128 / 255, 128 / 255, 128 / 255)
+	graphicsSetter.Size = UDim2.new(0, 50, 0, 25)
+	graphicsSetter.Position = UDim2.new(0, 450, 0, 269)
+	graphicsSetter.TextColor3 = Color3.new(1, 1, 1)
+	graphicsSetter.Font = Enum.Font.Arial
+	graphicsSetter.FontSize = Enum.FontSize.Size18
+	graphicsSetter.Text = "Auto"
+	graphicsSetter.ZIndex = 1
+	graphicsSetter.TextWrap = true
+	graphicsSetter.Parent = gameSettingsMenuFrame
+	graphicsSetter.Visible = not inStudioMode
+
+	local isAutoGraphics = true
+	if not inStudioMode then
+		isAutoGraphics = (
+			UserSettings().GameSettings.SavedQualityLevel
+			== Enum.SavedQualitySetting.Automatic
 		)
-		autoGraphicsButton.Name = "AutoGraphicsButton"
-		autoGraphicsButton.ZIndex = baseZIndex + 4
-		autoGraphicsButton.Parent = gameSettingsMenuFrame
-		autoGraphicsButton.Visible = not inStudioMode
+	else
+		settings().Rendering.EnableFRM = false
+	end
 
-		local graphicsSlider, graphicsLevel = RbxGui.CreateSlider(
-			GraphicsQualityLevels,
-			150,
-			UDim2.new(0, 230, 0, 280)
-		) -- graphics - 1 because slider starts at 1 instead of 0
-		graphicsSlider.Parent = gameSettingsMenuFrame
-		graphicsSlider.Bar.ZIndex = baseZIndex + 4
-		graphicsSlider.Bar.Slider.ZIndex = baseZIndex + 5
-		graphicsSlider.Visible = not inStudioMode
-		graphicsLevel.Value =
-			math.floor((settings().Rendering:GetMaxQualityLevel() - 1) / 2)
+	local listenToGraphicsLevelChange = true
 
-		local graphicsSetter = Instance.new "TextBox"
-		graphicsSetter.Name = "GraphicsSetter"
-		graphicsSetter.BackgroundColor3 = Color3.new(0, 0, 0)
-		graphicsSetter.BorderColor3 =
-			Color3.new(128 / 255, 128 / 255, 128 / 255)
-		graphicsSetter.Size = UDim2.new(0, 50, 0, 25)
-		graphicsSetter.Position = UDim2.new(0, 450, 0, 269)
-		graphicsSetter.TextColor3 = Color3.new(1, 1, 1)
-		graphicsSetter.Font = Enum.Font.Arial
-		graphicsSetter.FontSize = Enum.FontSize.Size18
-		graphicsSetter.Text = "Auto"
-		graphicsSetter.ZIndex = 1
-		graphicsSetter.TextWrap = true
-		graphicsSetter.Parent = gameSettingsMenuFrame
-		graphicsSetter.Visible = not inStudioMode
-
-		local isAutoGraphics = true
-		if not inStudioMode then
-			isAutoGraphics = (
-				UserSettings().GameSettings.SavedQualityLevel
-				== Enum.SavedQualitySetting.Automatic
-			)
+	local function setAutoGraphicsGui(active)
+		isAutoGraphics = active
+		if active then
+			autoGraphicsButton.Text = "X"
+			betterQualityText.ZIndex = 1
+			betterQualityShortcut.ZIndex = 1
+			fasterShortcut.ZIndex = 1
+			fasterText.ZIndex = 1
+			graphicsSlider.Bar.ZIndex = 1
+			graphicsSlider.Bar.Slider.ZIndex = 1
+			graphicsSetter.ZIndex = 1
+			graphicsSetter.Text = "Auto"
 		else
-			settings().Rendering.EnableFRM = false
-		end
-
-		local listenToGraphicsLevelChange = true
-
-		local function setAutoGraphicsGui(active)
-			isAutoGraphics = active
-			if active then
-				autoGraphicsButton.Text = "X"
-				betterQualityText.ZIndex = 1
-				betterQualityShortcut.ZIndex = 1
-				fasterShortcut.ZIndex = 1
-				fasterText.ZIndex = 1
-				graphicsSlider.Bar.ZIndex = 1
-				graphicsSlider.Bar.Slider.ZIndex = 1
-				graphicsSetter.ZIndex = 1
-				graphicsSetter.Text = "Auto"
-			else
-				autoGraphicsButton.Text = ""
-				graphicsSlider.Bar.ZIndex = baseZIndex + 4
-				graphicsSlider.Bar.Slider.ZIndex = baseZIndex + 5
-				betterQualityShortcut.ZIndex = baseZIndex + 4
-				fasterShortcut.ZIndex = baseZIndex + 4
-				betterQualityText.ZIndex = baseZIndex + 4
-				fasterText.ZIndex = baseZIndex + 4
-				graphicsSetter.ZIndex = baseZIndex + 4
-			end
-		end
-
-		local function goToAutoGraphics()
-			setAutoGraphicsGui(true)
-
-			UserSettings().GameSettings.SavedQualityLevel =
-				Enum.SavedQualitySetting.Automatic
-
-			settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
-		end
-
-		local function setGraphicsQualityLevel(newLevel)
-			local percentage = newLevel / GraphicsQualityLevels
-			local newSetting = math.floor(
-				(settings().Rendering:GetMaxQualityLevel() - 1) * percentage
-			)
-			if newSetting == 20 then -- Level 20 is the same as level 21, except it doesn't render ambient occlusion
-				newSetting = 21
-			elseif newLevel == 1 then -- make sure we can go to lowest settings (for terrible computers)
-				newSetting = 1
-			elseif newSetting > settings().Rendering:GetMaxQualityLevel() then
-				newSetting = settings().Rendering:GetMaxQualityLevel() - 1
-			end
-
-			UserSettings().GameSettings.SavedQualityLevel = newLevel
-			settings().Rendering.QualityLevel = newSetting
-		end
-
-		local function goToManualGraphics(explicitLevel)
-			setAutoGraphicsGui(false)
-
-			if explicitLevel then
-				graphicsLevel.Value = explicitLevel
-			else
-				graphicsLevel.Value = math.floor(
-					(
-						settings().Rendering.AutoFRMLevel
-						/ (settings().Rendering:GetMaxQualityLevel() - 1)
-					) * GraphicsQualityLevels
-				)
-			end
-
-			if explicitLevel == graphicsLevel.Value then -- make sure we are actually in right graphics mode
-				setGraphicsQualityLevel(graphicsLevel.Value)
-			end
-
-			if not explicitLevel then
-				UserSettings().GameSettings.SavedQualityLevel =
-					graphicsLevel.Value
-			end
-			graphicsSetter.Text = tostring(graphicsLevel.Value)
-		end
-
-		local function showAutoGraphics()
-			autoText.ZIndex = baseZIndex + 4
-			autoGraphicsButton.ZIndex = baseZIndex + 4
-		end
-
-		local function hideAutoGraphics()
-			autoText.ZIndex = 1
-			autoGraphicsButton.ZIndex = 1
-		end
-
-		local function showManualGraphics()
+			autoGraphicsButton.Text = ""
 			graphicsSlider.Bar.ZIndex = baseZIndex + 4
 			graphicsSlider.Bar.Slider.ZIndex = baseZIndex + 5
 			betterQualityShortcut.ZIndex = baseZIndex + 4
@@ -1107,249 +1037,319 @@ local function createGameSettingsMenu(baseZIndex, _)
 			fasterText.ZIndex = baseZIndex + 4
 			graphicsSetter.ZIndex = baseZIndex + 4
 		end
+	end
 
-		local function hideManualGraphics()
-			betterQualityText.ZIndex = 1
-			betterQualityShortcut.ZIndex = 1
-			fasterShortcut.ZIndex = 1
-			fasterText.ZIndex = 1
-			graphicsSlider.Bar.ZIndex = 1
-			graphicsSlider.Bar.Slider.ZIndex = 1
-			graphicsSetter.ZIndex = 1
+	local function goToAutoGraphics()
+		setAutoGraphicsGui(true)
+
+		UserSettings().GameSettings.SavedQualityLevel =
+			Enum.SavedQualitySetting.Automatic
+
+		settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
+	end
+
+	local function setGraphicsQualityLevel(newLevel)
+		local percentage = newLevel / GraphicsQualityLevels
+		local newSetting = math.floor(
+			(settings().Rendering:GetMaxQualityLevel() - 1) * percentage
+		)
+		if newSetting == 20 then -- Level 20 is the same as level 21, except it doesn't render ambient occlusion
+			newSetting = 21
+		elseif newLevel == 1 then -- make sure we can go to lowest settings (for terrible computers)
+			newSetting = 1
+		elseif newSetting > settings().Rendering:GetMaxQualityLevel() then
+			newSetting = settings().Rendering:GetMaxQualityLevel() - 1
 		end
 
-		local function translateSavedQualityLevelToInt(savedQualityLevel)
-			local sqs = Enum.SavedQualitySetting
-			if savedQualityLevel == sqs.QualityLevel1 then
-				return 1
-			elseif savedQualityLevel == sqs.QualityLevel2 then
-				return 2
-			elseif savedQualityLevel == sqs.QualityLevel3 then
-				return 3
-			elseif savedQualityLevel == sqs.QualityLevel4 then
-				return 4
-			elseif savedQualityLevel == sqs.QualityLevel5 then
-				return 5
-			elseif savedQualityLevel == sqs.QualityLevel6 then
-				return 6
-			elseif savedQualityLevel == sqs.QualityLevel7 then
-				return 7
-			elseif savedQualityLevel == sqs.QualityLevel8 then
-				return 8
-			elseif savedQualityLevel == sqs.QualityLevel9 then
-				return 9
-			elseif savedQualityLevel == sqs.QualityLevel10 then
-				return 10
-			end
-			return 0
-		end
+		UserSettings().GameSettings.SavedQualityLevel = newLevel
+		settings().Rendering.QualityLevel = newSetting
+	end
 
-		local function enableGraphicsWidget()
-			settings().Rendering.EnableFRM = true
+	local function goToManualGraphics(explicitLevel)
+		setAutoGraphicsGui(false)
 
-			isAutoGraphics = (
-				UserSettings().GameSettings.SavedQualityLevel
-				== Enum.SavedQualitySetting.Automatic
-			)
-			if isAutoGraphics then
-				showAutoGraphics()
-				goToAutoGraphics()
-			else
-				showAutoGraphics()
-				showManualGraphics()
-				goToManualGraphics(
-					translateSavedQualityLevelToInt(
-						UserSettings().GameSettings.SavedQualityLevel
-					)
-				)
-			end
-		end
-
-		local function disableGraphicsWidget()
-			hideManualGraphics()
-			hideAutoGraphics()
-			settings().Rendering.EnableFRM = false
-		end
-
-		graphicsSetter.FocusLost:connect(function()
-			if isAutoGraphics then
-				graphicsSetter.Text = tostring(graphicsLevel.Value)
-				return
-			end
-
-			local newGraphicsValue = tonumber(graphicsSetter.Text)
-			if newGraphicsValue == nil then
-				graphicsSetter.Text = tostring(graphicsLevel.Value)
-				return
-			end
-
-			if newGraphicsValue < 1 then
-				newGraphicsValue = 1
-			elseif
-				newGraphicsValue >= settings().Rendering:GetMaxQualityLevel()
-			then
-				newGraphicsValue = settings().Rendering:GetMaxQualityLevel() - 1
-			end
-
-			graphicsLevel.Value = newGraphicsValue
-			setGraphicsQualityLevel(graphicsLevel.Value)
-			graphicsSetter.Text = tostring(graphicsLevel.Value)
-		end)
-
-		graphicsLevel.Changed:connect(function(_)
-			if isAutoGraphics then
-				return
-			end
-			if not listenToGraphicsLevelChange then
-				return
-			end
-
-			graphicsSetter.Text = tostring(graphicsLevel.Value)
-			setGraphicsQualityLevel(graphicsLevel.Value)
-		end)
-
-		-- setup our graphic mode on load
-		if
-			inStudioMode
-			or UserSettings().GameSettings.SavedQualityLevel
-				== Enum.SavedQualitySetting.Automatic
-		then
-			if inStudioMode then
-				settings().Rendering.EnableFRM = false
-				disableGraphicsWidget()
-			else
-				settings().Rendering.EnableFRM = true
-				goToAutoGraphics()
-			end
+		if explicitLevel then
+			graphicsLevel.Value = explicitLevel
 		else
-			settings().Rendering.EnableFRM = true
+			graphicsLevel.Value = math.floor(
+				(
+					settings().Rendering.AutoFRMLevel
+					/ (settings().Rendering:GetMaxQualityLevel() - 1)
+				) * GraphicsQualityLevels
+			)
+		end
+
+		if explicitLevel == graphicsLevel.Value then -- make sure we are actually in right graphics mode
+			setGraphicsQualityLevel(graphicsLevel.Value)
+		end
+
+		if not explicitLevel then
+			UserSettings().GameSettings.SavedQualityLevel = graphicsLevel.Value
+		end
+		graphicsSetter.Text = tostring(graphicsLevel.Value)
+	end
+
+	local function showAutoGraphics()
+		autoText.ZIndex = baseZIndex + 4
+		autoGraphicsButton.ZIndex = baseZIndex + 4
+	end
+
+	local function hideAutoGraphics()
+		autoText.ZIndex = 1
+		autoGraphicsButton.ZIndex = 1
+	end
+
+	local function showManualGraphics()
+		graphicsSlider.Bar.ZIndex = baseZIndex + 4
+		graphicsSlider.Bar.Slider.ZIndex = baseZIndex + 5
+		betterQualityShortcut.ZIndex = baseZIndex + 4
+		fasterShortcut.ZIndex = baseZIndex + 4
+		betterQualityText.ZIndex = baseZIndex + 4
+		fasterText.ZIndex = baseZIndex + 4
+		graphicsSetter.ZIndex = baseZIndex + 4
+	end
+
+	local function hideManualGraphics()
+		betterQualityText.ZIndex = 1
+		betterQualityShortcut.ZIndex = 1
+		fasterShortcut.ZIndex = 1
+		fasterText.ZIndex = 1
+		graphicsSlider.Bar.ZIndex = 1
+		graphicsSlider.Bar.Slider.ZIndex = 1
+		graphicsSetter.ZIndex = 1
+	end
+
+	local function translateSavedQualityLevelToInt(savedQualityLevel)
+		local sqs = Enum.SavedQualitySetting
+		if savedQualityLevel == sqs.QualityLevel1 then
+			return 1
+		elseif savedQualityLevel == sqs.QualityLevel2 then
+			return 2
+		elseif savedQualityLevel == sqs.QualityLevel3 then
+			return 3
+		elseif savedQualityLevel == sqs.QualityLevel4 then
+			return 4
+		elseif savedQualityLevel == sqs.QualityLevel5 then
+			return 5
+		elseif savedQualityLevel == sqs.QualityLevel6 then
+			return 6
+		elseif savedQualityLevel == sqs.QualityLevel7 then
+			return 7
+		elseif savedQualityLevel == sqs.QualityLevel8 then
+			return 8
+		elseif savedQualityLevel == sqs.QualityLevel9 then
+			return 9
+		elseif savedQualityLevel == sqs.QualityLevel10 then
+			return 10
+		end
+		return 0
+	end
+
+	local function enableGraphicsWidget()
+		settings().Rendering.EnableFRM = true
+
+		isAutoGraphics = (
+			UserSettings().GameSettings.SavedQualityLevel
+			== Enum.SavedQualitySetting.Automatic
+		)
+		if isAutoGraphics then
+			showAutoGraphics()
+			goToAutoGraphics()
+		else
+			showAutoGraphics()
+			showManualGraphics()
 			goToManualGraphics(
 				translateSavedQualityLevelToInt(
 					UserSettings().GameSettings.SavedQualityLevel
 				)
 			)
 		end
+	end
 
-		autoGraphicsButton.MouseButton1Click:connect(function()
-			if inStudioMode and not game.Players.LocalPlayer then
-				return
-			end
+	local function disableGraphicsWidget()
+		hideManualGraphics()
+		hideAutoGraphics()
+		settings().Rendering.EnableFRM = false
+	end
 
-			if not isAutoGraphics then
-				goToAutoGraphics()
-			else
-				goToManualGraphics(graphicsLevel.Value)
-			end
-		end)
-
-		game.GraphicsQualityChangeRequest:connect(function(graphicsIncrease)
-			if isAutoGraphics then
-				return
-			end -- only can set graphics in manual mode
-
-			if graphicsIncrease then
-				if (graphicsLevel.Value + 1) > GraphicsQualityLevels then
-					return
-				end
-				graphicsLevel.Value += 1
-				graphicsSetter.Text = tostring(graphicsLevel.Value)
-				setGraphicsQualityLevel(graphicsLevel.Value)
-
-				game:GetService("GuiService"):SendNotification(
-					"Graphics Quality",
-					`Increased to ({graphicsSetter.Text})`,
-					"",
-					2,
-					function() end
-				)
-			else
-				if (graphicsLevel.Value - 1) <= 0 then
-					return
-				end
-				graphicsLevel.Value -= 1
-				graphicsSetter.Text = tostring(graphicsLevel.Value)
-				setGraphicsQualityLevel(graphicsLevel.Value)
-
-				game:GetService("GuiService"):SendNotification(
-					"Graphics Quality",
-					`Decreased to ({graphicsSetter.Text})`,
-					"",
-					2,
-					function() end
-				)
-			end
-		end)
-
-		game.Players.PlayerAdded:connect(function(player)
-			if player == game.Players.LocalPlayer and inStudioMode then
-				enableGraphicsWidget()
-			end
-		end)
-		game.Players.PlayerRemoving:connect(function(player)
-			if player == game.Players.LocalPlayer and inStudioMode then
-				disableGraphicsWidget()
-			end
-		end)
-
-		studioCheckbox = createTextButton(
-			"",
-			Enum.ButtonStyle.RobloxButton,
-			Enum.FontSize.Size18,
-			UDim2.new(0, 25, 0, 25),
-			UDim2.new(0, 30, 0, 176)
-		)
-		studioCheckbox.Name = "StudioCheckbox"
-		studioCheckbox.ZIndex = baseZIndex + 4
-		--studioCheckbox.Parent = gameSettingsMenuFrame -- todo: enable when studio h4x aren't an issue anymore
-		studioCheckbox:SetVerb "TogglePlayMode"
-		studioCheckbox.Visible = false -- todo: enabled when studio h4x aren't an issue anymore
-
-		local wasManualGraphics = (
-			settings().Rendering.QualityLevel ~= Enum.QualityLevel.Automatic
-		)
-		if inStudioMode and not game.Players.LocalPlayer then
-			studioCheckbox.Text = "X"
-			disableGraphicsWidget()
-		elseif inStudioMode then
-			studioCheckbox.Text = "X"
-			enableGraphicsWidget()
+	graphicsSetter.FocusLost:connect(function()
+		if isAutoGraphics then
+			graphicsSetter.Text = tostring(graphicsLevel.Value)
+			return
 		end
-		if hasGraphicsSlider then
-			UserSettings().GameSettings.StudioModeChanged:connect(
-				function(isStudioMode)
-					inStudioMode = isStudioMode
-					if isStudioMode then
-						wasManualGraphics = (
-							settings().Rendering.QualityLevel
-							~= Enum.QualityLevel.Automatic
-						)
-						goToAutoGraphics()
-						studioCheckbox.Text = "X"
-						autoGraphicsButton.ZIndex = 1
-						autoText.ZIndex = 1
-					else
-						if wasManualGraphics then
-							goToManualGraphics()
-						end
-						studioCheckbox.Text = ""
-						autoGraphicsButton.ZIndex = baseZIndex + 4
-						autoText.ZIndex = baseZIndex + 4
-					end
-				end
+
+		local newGraphicsValue = tonumber(graphicsSetter.Text)
+		if newGraphicsValue == nil then
+			graphicsSetter.Text = tostring(graphicsLevel.Value)
+			return
+		end
+
+		if newGraphicsValue < 1 then
+			newGraphicsValue = 1
+		elseif
+			newGraphicsValue >= settings().Rendering:GetMaxQualityLevel()
+		then
+			newGraphicsValue = settings().Rendering:GetMaxQualityLevel() - 1
+		end
+
+		graphicsLevel.Value = newGraphicsValue
+		setGraphicsQualityLevel(graphicsLevel.Value)
+		graphicsSetter.Text = tostring(graphicsLevel.Value)
+	end)
+
+	graphicsLevel.Changed:connect(function(_)
+		if isAutoGraphics then
+			return
+		end
+		if not listenToGraphicsLevelChange then
+			return
+		end
+
+		graphicsSetter.Text = tostring(graphicsLevel.Value)
+		setGraphicsQualityLevel(graphicsLevel.Value)
+	end)
+
+	-- setup our graphic mode on load
+	if
+		inStudioMode
+		or UserSettings().GameSettings.SavedQualityLevel
+			== Enum.SavedQualitySetting.Automatic
+	then
+		if inStudioMode then
+			settings().Rendering.EnableFRM = false
+			disableGraphicsWidget()
+		else
+			settings().Rendering.EnableFRM = true
+			goToAutoGraphics()
+		end
+	else
+		settings().Rendering.EnableFRM = true
+		goToManualGraphics(
+			translateSavedQualityLevelToInt(
+				UserSettings().GameSettings.SavedQualityLevel
+			)
+		)
+	end
+
+	autoGraphicsButton.MouseButton1Click:connect(function()
+		if inStudioMode and not game.Players.LocalPlayer then
+			return
+		end
+
+		if not isAutoGraphics then
+			goToAutoGraphics()
+		else
+			goToManualGraphics(graphicsLevel.Value)
+		end
+	end)
+
+	game.GraphicsQualityChangeRequest:connect(function(graphicsIncrease)
+		if isAutoGraphics then
+			return
+		end -- only can set graphics in manual mode
+
+		if graphicsIncrease then
+			if (graphicsLevel.Value + 1) > GraphicsQualityLevels then
+				return
+			end
+			graphicsLevel.Value += 1
+			graphicsSetter.Text = tostring(graphicsLevel.Value)
+			setGraphicsQualityLevel(graphicsLevel.Value)
+
+			GuiService:SendNotification(
+				"Graphics Quality",
+				`Increased to ({graphicsSetter.Text})`,
+				"",
+				2,
+				function() end
 			)
 		else
-			studioCheckbox.MouseButton1Click:connect(function()
-				if not studioCheckbox.Active then
-					return
-				end
+			if (graphicsLevel.Value - 1) <= 0 then
+				return
+			end
+			graphicsLevel.Value -= 1
+			graphicsSetter.Text = tostring(graphicsLevel.Value)
+			setGraphicsQualityLevel(graphicsLevel.Value)
 
-				if studioCheckbox.Text == "" then
-					studioCheckbox.Text = "X"
-				else
-					studioCheckbox.Text = ""
-				end
-			end)
+			GuiService:SendNotification(
+				"Graphics Quality",
+				`Decreased to ({graphicsSetter.Text})`,
+				"",
+				2,
+				function() end
+			)
 		end
+	end)
+
+	game.Players.PlayerAdded:connect(function(player)
+		if player == game.Players.LocalPlayer and inStudioMode then
+			enableGraphicsWidget()
+		end
+	end)
+	game.Players.PlayerRemoving:connect(function(player)
+		if player == game.Players.LocalPlayer and inStudioMode then
+			disableGraphicsWidget()
+		end
+	end)
+
+	studioCheckbox = createTextButton(
+		"",
+		Enum.ButtonStyle.RobloxButton,
+		Enum.FontSize.Size18,
+		UDim2.new(0, 25, 0, 25),
+		UDim2.new(0, 30, 0, 176)
+	)
+	studioCheckbox.Name = "StudioCheckbox"
+	studioCheckbox.ZIndex = baseZIndex + 4
+	--studioCheckbox.Parent = gameSettingsMenuFrame -- todo: enable when studio h4x aren't an issue anymore
+	studioCheckbox:SetVerb "TogglePlayMode"
+	studioCheckbox.Visible = false -- todo: enabled when studio h4x aren't an issue anymore
+
+	local wasManualGraphics = (
+		settings().Rendering.QualityLevel ~= Enum.QualityLevel.Automatic
+	)
+	if inStudioMode and not game.Players.LocalPlayer then
+		studioCheckbox.Text = "X"
+		disableGraphicsWidget()
+	elseif inStudioMode then
+		studioCheckbox.Text = "X"
+		enableGraphicsWidget()
+	end
+	if hasGraphicsSlider then
+		UserSettings().GameSettings.StudioModeChanged:connect(
+			function(isStudioMode)
+				inStudioMode = isStudioMode
+				if isStudioMode then
+					wasManualGraphics = (
+						settings().Rendering.QualityLevel
+						~= Enum.QualityLevel.Automatic
+					)
+					goToAutoGraphics()
+					studioCheckbox.Text = "X"
+					autoGraphicsButton.ZIndex = 1
+					autoText.ZIndex = 1
+				else
+					if wasManualGraphics then
+						goToManualGraphics()
+					end
+					studioCheckbox.Text = ""
+					autoGraphicsButton.ZIndex = baseZIndex + 4
+					autoText.ZIndex = baseZIndex + 4
+				end
+			end
+		)
+	else
+		studioCheckbox.MouseButton1Click:connect(function()
+			if not studioCheckbox.Active then
+				return
+			end
+
+			if studioCheckbox.Text == "" then
+				studioCheckbox.Text = "X"
+			else
+				studioCheckbox.Text = ""
+			end
+		end)
 	end
 
 	local fullscreenCheckbox = createTextButton(
@@ -1676,91 +1676,89 @@ if UserSettings then
 			)
 		end)
 
-		if game.CoreGui.Version >= 4 then -- we can use escape!
-			game:GetService("GuiService").EscapeKeyPressed:connect(function()
-				if currentMenuSelection == nil then
-					game.GuiService:AddCenterDialog(
-						shield,
-						Enum.CenterDialogType.ModalDialog,
-						--showFunction
-						function()
-							settingsButton.Active = false
-							updateCameraDropDownSelection(
-								UserSettings().GameSettings.ControlMode.Name
-							)
+		GuiService.EscapeKeyPressed:connect(function()
+			if currentMenuSelection == nil then
+				game.GuiService:AddCenterDialog(
+					shield,
+					Enum.CenterDialogType.ModalDialog,
+					--showFunction
+					function()
+						settingsButton.Active = false
+						updateCameraDropDownSelection(
+							UserSettings().GameSettings.ControlMode.Name
+						)
 
-							if syncVideoCaptureSetting then
-								syncVideoCaptureSetting()
-							end
-
-							goToMenu(
-								settingsFrame,
-								"GameMainMenu",
-								"right",
-								UDim2.new(0, 525, 0, 430)
-							)
-							shield.Visible = true
-							shield.Active = true
-							settingsFrame.Parent:TweenPosition(
-								UDim2.new(0.5, -262, 0.5, -200),
-								Enum.EasingDirection.InOut,
-								Enum.EasingStyle.Sine,
-								tweenTime,
-								true
-							)
-							settingsFrame.Parent:TweenSize(
-								UDim2.new(0, 525, 0, 430),
-								Enum.EasingDirection.InOut,
-								Enum.EasingStyle.Sine,
-								tweenTime,
-								true
-							)
-						end,
-						--hideFunction
-						function()
-							settingsFrame.Parent:TweenPosition(
-								UDim2.new(0.5, -262, -0.5, -200),
-								Enum.EasingDirection.InOut,
-								Enum.EasingStyle.Sine,
-								tweenTime,
-								true
-							)
-							settingsFrame.Parent:TweenSize(
-								UDim2.new(0, 525, 0, 430),
-								Enum.EasingDirection.InOut,
-								Enum.EasingStyle.Sine,
-								tweenTime,
-								true
-							)
-							shield.Visible = false
-							settingsButton.Active = true
+						if syncVideoCaptureSetting then
+							syncVideoCaptureSetting()
 						end
-					)
-				elseif #lastMenuSelection > 0 then
-					if #centerDialogs > 0 then
-						for i = 1, #centerDialogs do
-							game.GuiService:RemoveCenterDialog(centerDialogs[i])
-							centerDialogs[i].Visible = false
-						end
-						centerDialogs = {}
-					end
 
-					goToMenu(
-						lastMenuSelection[#lastMenuSelection]["container"],
-						lastMenuSelection[#lastMenuSelection]["name"],
-						lastMenuSelection[#lastMenuSelection]["direction"],
-						lastMenuSelection[#lastMenuSelection]["lastSize"]
-					)
-
-					table.remove(lastMenuSelection, #lastMenuSelection)
-					if #lastMenuSelection == 1 then -- apparently lua can't reduce count to 0... T_T
-						lastMenuSelection = {}
+						goToMenu(
+							settingsFrame,
+							"GameMainMenu",
+							"right",
+							UDim2.new(0, 525, 0, 430)
+						)
+						shield.Visible = true
+						shield.Active = true
+						settingsFrame.Parent:TweenPosition(
+							UDim2.new(0.5, -262, 0.5, -200),
+							Enum.EasingDirection.InOut,
+							Enum.EasingStyle.Sine,
+							tweenTime,
+							true
+						)
+						settingsFrame.Parent:TweenSize(
+							UDim2.new(0, 525, 0, 430),
+							Enum.EasingDirection.InOut,
+							Enum.EasingStyle.Sine,
+							tweenTime,
+							true
+						)
+					end,
+					--hideFunction
+					function()
+						settingsFrame.Parent:TweenPosition(
+							UDim2.new(0.5, -262, -0.5, -200),
+							Enum.EasingDirection.InOut,
+							Enum.EasingStyle.Sine,
+							tweenTime,
+							true
+						)
+						settingsFrame.Parent:TweenSize(
+							UDim2.new(0, 525, 0, 430),
+							Enum.EasingDirection.InOut,
+							Enum.EasingStyle.Sine,
+							tweenTime,
+							true
+						)
+						shield.Visible = false
+						settingsButton.Active = true
 					end
-				else
-					resumeGameFunction(shield)
+				)
+			elseif #lastMenuSelection > 0 then
+				if #centerDialogs > 0 then
+					for i = 1, #centerDialogs do
+						game.GuiService:RemoveCenterDialog(centerDialogs[i])
+						centerDialogs[i].Visible = false
+					end
+					centerDialogs = {}
 				end
-			end)
-		end
+
+				goToMenu(
+					lastMenuSelection[#lastMenuSelection]["container"],
+					lastMenuSelection[#lastMenuSelection]["name"],
+					lastMenuSelection[#lastMenuSelection]["direction"],
+					lastMenuSelection[#lastMenuSelection]["lastSize"]
+				)
+
+				table.remove(lastMenuSelection, #lastMenuSelection)
+				if #lastMenuSelection == 1 then -- apparently lua can't reduce count to 0... T_T
+					lastMenuSelection = {}
+				end
+			else
+				resumeGameFunction(shield)
+			end
+		end)
 
 		local gameSettingsMenu = createGameSettingsMenu(baseZIndex, shield)
 		gameSettingsMenu.Visible = false
@@ -2007,7 +2005,7 @@ local createSaveDialogs = function()
 			-8
 		)
 		spinnerImage.BackgroundTransparency = 1
-		spinnerImage.Image = "https://banland.xyz/Asset?id=45880710"
+		spinnerImage.Image = "http://banland.xyz/Asset?id=45880710"
 		spinnerImage.Parent = spinnerFrame
 
 		spinnerIcons[spinnerNum] = spinnerImage
@@ -2029,10 +2027,10 @@ local createSaveDialogs = function()
 				while pos < 8 do
 					if pos == spinPos or pos == ((spinPos + 1) % 8) then
 						spinnerIcons[pos + 1].Image =
-							"https://banland.xyz/Asset?id=45880668"
+							"http://banland.xyz/Asset?id=45880668"
 					else
 						spinnerIcons[pos + 1].Image =
-							"https://banland.xyz/Asset?id=45880710"
+							"http://banland.xyz/Asset?id=45880710"
 					end
 
 					pos += 1
@@ -2222,10 +2220,9 @@ local createReportAbuseDialog = function()
 
 	local updatePlayerSelection
 	local function createPlayersDropDown()
-		local players = game:GetService "Players"
 		local playerNames = {}
 		local nameToPlayer = {}
-		local children = players:GetChildren()
+		local children = Players:GetChildren()
 		local pos = 1
 		if children then
 			for _, player in ipairs(children) do
