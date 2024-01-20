@@ -10,9 +10,7 @@ export const load = async ({ locals }) => {
 			UPDATE notification
 			SET read = true
 			WHERE out = $user`,
-		{
-			user: `user:${user.id}`,
-		}
+		{ user: `user:${user.id}` }
 	)
 }
 
@@ -29,9 +27,7 @@ export const actions = {
 						UPDATE $notification
 						SET read = true
 					}`,
-				{
-					notification: `notification:${id}`,
-				}
+				{ notification: `notification:${id}` }
 			)
 		} catch (e: any) {
 			error(400)

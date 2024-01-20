@@ -22,7 +22,7 @@
 	</div>
 
 	<AdminShell bind:tabData>
-		<Form {formData} submit="Reset">
+		<Form {formData} submit="Reset" action="?/resetPassword">
 			<Input {formData} name="username" label="Username" />
 			<Input
 				{formData}

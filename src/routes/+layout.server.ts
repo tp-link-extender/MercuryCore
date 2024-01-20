@@ -48,9 +48,7 @@ export async function load({ request, locals }) {
 				FROM notification
 				WHERE out = $user
 				ORDER BY time DESC`,
-			{
-				user: `user:${user.id}`,
-			}
+			{ user: `user:${user.id}` }
 		)
 
 		// Make type relativeId optional so we can delete it later
@@ -133,9 +131,7 @@ export async function load({ request, locals }) {
 								(SELECT name
 								FROM ->in->forumCategory) AS category
 							FROM $forumPost`,
-						{
-							forumPost: `forumPost:${i.relativeId}`,
-						}
+						{ forumPost: `forumPost:${i.relativeId}` }
 					)
 					if (!post) break
 
