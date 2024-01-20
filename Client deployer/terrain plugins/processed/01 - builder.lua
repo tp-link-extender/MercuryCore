@@ -120,8 +120,11 @@ function MouseHighlighter.Create(mouseUse)
 	-- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
 	PlaneIntersection = function(vectorPos)
 		local currCamera = game.Workspace.CurrentCamera
-		local startPos =
-			Vector3.new(currCamera.CoordinateFrame.p.X, currCamera.CoordinateFrame.p.Y, currCamera.CoordinateFrame.p.Z)
+		local startPos = Vector3.new(
+			currCamera.CoordinateFrame.p.X,
+			currCamera.CoordinateFrame.p.Y,
+			currCamera.CoordinateFrame.p.Z
+		)
 		local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
 		local normal = Vector3.new(0, 1, 0)
 		local p3 = Vector3.new(0, 0, 0)
@@ -170,18 +173,25 @@ function MouseHighlighter.Create(mouseUse)
 		local regionToSelect
 
 		local lowVec = CellCenterToWorld(c, cellPos.x, cellPos.y - 1, cellPos.z)
-		local highVec = CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
+		local highVec =
+			CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
 		regionToSelect = Region3.new(lowVec, highVec)
 
-		highlighter.selectionPart.Size = regionToSelect.Size - Vector3.new(-4, 4, -4)
+		highlighter.selectionPart.Size = regionToSelect.Size
+			- Vector3.new(-4, 4, -4)
 		highlighter.selectionPart.CFrame = regionToSelect.CFrame
 
 		if nil ~= highlighter.OnClicked and highlighter.mouseDown then
 			if nil == highlighter.lastUsedPoint then
-				highlighter.lastUsedPoint =
-					WorldToCellPreferEmpty(c, Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z))
+				highlighter.lastUsedPoint = WorldToCellPreferEmpty(
+					c,
+					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+				)
 			else
-				cellPos = WorldToCellPreferEmpty(c, Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z))
+				cellPos = WorldToCellPreferEmpty(
+					c,
+					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+				)
 			end
 		end
 	end
@@ -243,7 +253,13 @@ local properties = { autoWedgeEnabled = false }
 
 -- Gui frame for the plugin.
 local builderPropertiesDragBar, builderFrame, builderHelpFrame, builderCloseEvent =
-	RbxGui.CreatePluginFrame("Builder", UDim2.new(0, 123, 0, 40), UDim2.new(0, 0, 0, 0), false, g)
+	RbxGui.CreatePluginFrame(
+		"Builder",
+		UDim2.new(0, 123, 0, 40),
+		UDim2.new(0, 0, 0, 0),
+		false,
+		g
+	)
 builderPropertiesDragBar.Visible = false
 builderCloseEvent.Event:connect(function()
 	Off()
@@ -266,21 +282,34 @@ builderHelpText.Text = [[
 Clicking terrain adds a single block into the selection box shown. The terrain material and type will be the same as the cell that was clicked on.]]
 builderHelpText.Parent = builderHelpFrame
 
-CreateStandardLabel("AddText", UDim2.new(0, 8, 0, 10), UDim2.new(0, 67, 0, 14), "Click to add terrain.", builderFrame)
+CreateStandardLabel(
+	"AddText",
+	UDim2.new(0, 8, 0, 10),
+	UDim2.new(0, 67, 0, 14),
+	"Click to add terrain.",
+	builderFrame
+)
 
 -- Function to connect to the mouse button 1 down event.  This is what will run when the user clicks.
 -- Adding and autowedging done here.
 -- mouse 	- Mouse data.
 function onClicked(mouseC)
 	if on then
-		local cellPos = WorldToCellPreferEmpty(c, Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z))
+		local cellPos = WorldToCellPreferEmpty(
+			c,
+			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
+		)
 		local x = cellPos.x
 		local y = cellPos.y
 		local z = cellPos.z
 
-		local solidCellPos = WorldToCellPreferSolid(c, Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z))
+		local solidCellPos = WorldToCellPreferSolid(
+			c,
+			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
+		)
 
-		local celMat = GetCell(c, solidCellPos.x, solidCellPos.y, solidCellPos.z)
+		local celMat =
+			GetCell(c, solidCellPos.x, solidCellPos.y, solidCellPos.z)
 		local success = false
 
 		if celMat.Value > 0 then
@@ -294,7 +323,9 @@ function onClicked(mouseC)
 				selectionProps.terrainMaterial = 1
 			end
 
-			success, cellPos = PlaneIntersection(Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z))
+			success, cellPos = PlaneIntersection(
+				Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
+			)
 			if not success then
 				cellPos = solidCellPos
 			end
@@ -305,13 +336,26 @@ function onClicked(mouseC)
 		end
 
 		if selectionProps.isWater and 17 == selectionProps.terrainMaterial then
-			SetWaterCell(c, x, y, z, selectionProps.waterForce, selectionProps.waterDirection)
+			SetWaterCell(
+				c,
+				x,
+				y,
+				z,
+				selectionProps.waterForce,
+				selectionProps.waterDirection
+			)
 		else
 			SetCell(c, x, y, z, selectionProps.terrainMaterial, 0, 0)
 		end
 
 		if properties.autoWedgeEnabled then
-			AutoWedge(c, Region3int16.new(Vector3int16.new(x - 1, y - 1, z - 1), Vector3int16.new(x + 1, y + 1, z + 1)))
+			AutoWedge(
+				c,
+				Region3int16.new(
+					Vector3int16.new(x - 1, y - 1, z - 1),
+					Vector3int16.new(x + 1, y + 1, z + 1)
+				)
+			)
 		end
 
 		-- Mark undo point.

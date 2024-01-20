@@ -16,7 +16,11 @@ this.Deactivation:connect(function()
 end)
 
 local toolbar = this:CreateToolbar "Terrain"
-local toolbarbutton = toolbar:CreateButton("Stamper", "Part Stamper - Toggle List (Shift + F)", "stamp.png")
+local toolbarbutton = toolbar:CreateButton(
+	"Stamper",
+	"Part Stamper - Toggle List (Shift + F)",
+	"stamp.png"
+)
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -46,7 +50,8 @@ local lastStampModel
 local keyCon
 
 -- ids of users we want to load sets in from
-local userSetIds = { 11744447, 18881789, 18881808, 18881829, 18881853, 18881866 }
+local userSetIds =
+	{ 11744447, 18881789, 18881808, 18881829, 18881853, 18881866 }
 local recentButtonStack = {}
 
 -- mouse management
@@ -133,12 +138,17 @@ local partSelected = function(name, id, terrainShape)
 	if lastStampModel.Name == "MegaClusterCube" then
 		local clusterTag = lastStampModel:FindFirstChild "ClusterMaterial"
 		-- we are going to stamp water, send info to stamper about this
-		if clusterTag and clusterTag:isA "Vector3Value" and clusterTag.Value.X == 17 then
+		if
+			clusterTag
+			and clusterTag:isA "Vector3Value"
+			and clusterTag.Value.X == 17
+		then
 			local waterForceTag = Instance.new("StringValue", lastStampModel)
 			waterForceTag.Name = "WaterForceTag"
 			waterForceTag.Value = waterForceAndDirection[1]
 
-			local waterForceDirectionTag = Instance.new("StringValue", lastStampModel)
+			local waterForceDirectionTag =
+				Instance.new("StringValue", lastStampModel)
 			waterForceDirectionTag.Name = "WaterForceDirectionTag"
 			waterForceDirectionTag.Value = waterForceAndDirection[2]
 		end
@@ -168,7 +178,8 @@ function updateWaterInfo()
 			waterForceTag.Name = "WaterForceTag"
 			waterForceTag.Value = waterForceAndDirection[1]
 
-			local waterForceDirectionTag = Instance.new("StringValue", lastStampModel)
+			local waterForceDirectionTag =
+				Instance.new("StringValue", lastStampModel)
 			waterForceDirectionTag.Name = "WaterForceDirectionTag"
 			waterForceDirectionTag.Value = waterForceAndDirection[2]
 		end
@@ -310,9 +321,11 @@ function updateRecentParts(newName, newId, newTerrainShape)
 		for i = #recentButtonStack - 1, 1, -1 do
 			recentButtonStack[i + 1].Id = recentButtonStack[i].Id
 			recentButtonStack[i + 1].Name = recentButtonStack[i].Name
-			recentButtonStack[i + 1].TerrainShape = recentButtonStack[i].TerrainShape
+			recentButtonStack[i + 1].TerrainShape =
+				recentButtonStack[i].TerrainShape
 
-			recentButtonStack[i + 1].Button.Image = recentButtonStack[i].Button.Image
+			recentButtonStack[i + 1].Button.Image =
+				recentButtonStack[i].Button.Image
 		end
 
 		recentButtonStack[1].Id = newId
@@ -330,14 +343,15 @@ end
 
 function createGui()
 	--Insert Panel
-	currStampGui, setPanelVisibility, getPanelVisibility, waterTypeChangedEvent = getRbxGui().CreateSetPanel(
-		userSetIds,
-		partSelected,
-		dialogClosed,
-		UDim2.new(0.8, 0, 0.9, 0),
-		UDim2.new(0.1, 0, 0.05, 0),
-		true
-	)
+	currStampGui, setPanelVisibility, getPanelVisibility, waterTypeChangedEvent =
+		getRbxGui().CreateSetPanel(
+			userSetIds,
+			partSelected,
+			dialogClosed,
+			UDim2.new(0.8, 0, 0.9, 0),
+			UDim2.new(0.1, 0, 0.05, 0),
+			true
+		)
 	setPanelVisibility(false)
 
 	currStampGui.Parent = game:GetService "CoreGui"
@@ -412,7 +426,11 @@ function createGui()
 				return
 			end
 			buttonClicked = true
-			partSelected(recentButtonStack[i].Name, recentButtonStack[i].Id, recentButtonStack[i].TerrainShape)
+			partSelected(
+				recentButtonStack[i].Name,
+				recentButtonStack[i].Id,
+				recentButtonStack[i].TerrainShape
+			)
 			buttonClicked = false
 		end)
 	end
