@@ -20,7 +20,8 @@ mouse.Button1Down:connect(function()
 	onClicked(mouse)
 end)
 local toolbar = plugin:CreateToolbar "Terrain"
-local toolbarbutton = toolbar:CreateButton("Remover", "Remover", "destroyer.png")
+local toolbarbutton =
+	toolbar:CreateButton("Remover", "Remover", "destroyer.png")
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -120,18 +121,25 @@ function MouseHighlighter.Create(mouseUse)
 		local regionToSelect
 
 		local lowVec = CellCenterToWorld(c, cellPos.x, cellPos.y - 1, cellPos.z)
-		local highVec = CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
+		local highVec =
+			CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
 		regionToSelect = Region3.new(lowVec, highVec)
 
-		highlighter.selectionPart.Size = regionToSelect.Size - Vector3.new(-4, 4, -4)
+		highlighter.selectionPart.Size = regionToSelect.Size
+			- Vector3.new(-4, 4, -4)
 		highlighter.selectionPart.CFrame = regionToSelect.CFrame
 
 		if nil ~= highlighter.OnClicked and highlighter.mouseDown then
 			if nil == highlighter.lastUsedPoint then
-				highlighter.lastUsedPoint =
-					WorldToCellPreferSolid(c, Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z))
+				highlighter.lastUsedPoint = WorldToCellPreferSolid(
+					c,
+					Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+				)
 			else
-				cellPos = WorldToCellPreferSolid(c, Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z))
+				cellPos = WorldToCellPreferSolid(
+					c,
+					Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+				)
 
 				holdChange = cellPos - highlighter.lastUsedPoint
 
@@ -201,7 +209,13 @@ local properties = { autoWedgeEnabled = false }
 
 -- Gui frame for the plugin.
 local removerPropertiesDragBar, removerFrame, removerHelpFrame, removerCloseEvent =
-	RbxGui.CreatePluginFrame("Remover", UDim2.new(0, 143, 0, 40), UDim2.new(0, 0, 0, 0), false, g)
+	RbxGui.CreatePluginFrame(
+		"Remover",
+		UDim2.new(0, 143, 0, 40),
+		UDim2.new(0, 0, 0, 0),
+		false,
+		g
+	)
 removerPropertiesDragBar.Visible = false
 removerCloseEvent.Event:connect(function()
 	Off()
@@ -236,7 +250,10 @@ CreateStandardLabel(
 -- mouse 	- Mouse data.
 function onClicked(mouse2)
 	if on then
-		local cellPos = WorldToCellPreferSolid(c, Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z))
+		local cellPos = WorldToCellPreferSolid(
+			c,
+			Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+		)
 		local x = cellPos.x
 		local y = cellPos.y
 		local z = cellPos.z
@@ -249,7 +266,13 @@ function onClicked(mouse2)
 		UpdatePosition(mouse2.Hit)
 
 		if properties.autoWedgeEnabled then
-			AutoWedge(c, Region3int16.new(Vector3int16.new(x - 1, y - 1, z - 1), Vector3int16.new(x + 1, y + 1, z + 1)))
+			AutoWedge(
+				c,
+				Region3int16.new(
+					Vector3int16.new(x - 1, y - 1, z - 1),
+					Vector3int16.new(x + 1, y + 1, z + 1)
+				)
+			)
 		end
 	end
 end
