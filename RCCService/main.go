@@ -23,21 +23,27 @@ import (
 	env "github.com/joho/godotenv"
 )
 
-func Log(a ...any) {
-	a = append([]any{time.Now().Format("02/01/2006, 15:04:05 ")}, a...)
+var client http.Client
+
+func Log(txt string) {
 	// I HATE GO DATE FORMATTING!!! I HATE GO DATE FORMATTING!!!
-	fmt.Println(a...)
+	fmt.Println(time.Now().Format("02/01/2006, 15:04:05 "), txt)
+}
+
+func Assert(err error, txt string) {
+	// so that I don't have to write this every time
+	if err != nil {
+		fmt.Println(err)
+		Log(c.InRed(txt))
+		os.Exit(1)
+	}
 }
 
 func StartRCC() {
-	if _, err := os.Stat("./RCCService/RCCService.exe"); os.IsNotExist(err) {
-		Log(c.InRed("RCCService not found!"))
-		os.Exit(1)
-	}
+	_, err := os.Stat("./RCCService/RCCService.exe")
+	Assert(err, "RCCService.exe not found! Please place the RCCService folder in the current directory.")
 	for {
-		cmd := exec.Command("./RCCService/RCCService.exe", "-Console")
-		cmd.Run()
-
+		exec.Command("./RCCService/RCCService.exe", "-Console").Run()
 		Log(c.InRed("RCCService has stopped. Restarting..."))
 	}
 }
@@ -45,15 +51,11 @@ func StartRCC() {
 func main() {
 	Log(c.InYellow("Loading environment variables..."))
 	err := env.Load(".env")
-	if err != nil {
-		panic(err)
-	}
+	Assert(err, "Failed to load environment variables. Please place them in a .env file in the current directory.")
 
 	Log(c.InYellow("Loading XML template..."))
 	soap, err := os.ReadFile("soap.xml")
-	if err != nil {
-		panic(err)
-	}
+	Assert(err, "Failed to read soap.xml")
 	template := string(soap)
 
 	Log(c.InPurple("Starting RCCService..."))
@@ -66,33 +68,27 @@ func main() {
 	r.SetTrustedProxies([]string{"127.0.0.1"})
 
 	r.POST("/:id", func(cx *gin.Context) {
-		ip := cx.ClientIP()
-		if ip != os.Getenv("IP") && ip != "::1" {
-			Log("IP " + ip + " is not allowed")
+		if ip := cx.ClientIP(); ip != os.Getenv("IP") && ip != "::1" {
+			Log(c.InRed("IP " + ip + " is not allowed!"))
 			cx.AbortWithStatus(http.StatusForbidden)
 			return
 		}
 
 		renderScript, err := io.ReadAll(cx.Request.Body)
-		if err != nil {
-			panic(err)
-		}
+		Assert(err, "Failed to read render script")
 
 		id := cx.Param("id")
 		currentTemplate := strings.ReplaceAll(template, "_TASK_ID", id)
 		currentTemplate = strings.ReplaceAll(currentTemplate, "_RENDER_SCRIPT", string(renderScript))
 
-		client := &http.Client{}
 		req, err := http.NewRequest("POST", "http://localhost:64989", strings.NewReader(currentTemplate))
-		if err != nil {
-			panic(err)
-		}
+		Assert(err, "Failed to create request")
+
 		req.Header.Set("Content-Type", "text/xml; charset=utf-8")
 		req.Header.Set("SOAPAction", "http://roblox.com/OpenJobEx")
 
-		client.Do(req)
-
 		Log(c.InBlue("Rendering " + id))
+		client.Do(req)
 
 		cx.String(200, "OK")
 	})
