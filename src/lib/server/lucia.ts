@@ -55,8 +55,5 @@ export async function authorise(
 	if (level && user.permissionLevel < level)
 		error(403, "You do not have permission to access this page.")
 
-	return {
-		session,
-		user,
-	}
+	return { session, user }
 }
