@@ -10,8 +10,8 @@ export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
 		error(400, `Invalid user id: ${params.number}`)
 
-	const number = parseInt(params.number),
-		{ user } = await authorise(locals)
+	const number = parseInt(params.number)
+	const { user } = await authorise(locals)
 	const userExists = await squery<{
 		bio: {
 			id: string
@@ -133,7 +133,7 @@ type ActionFunction = (
 		user2: string
 	},
 	user: import("lucia").User
-) => Promise<any>
+) => Promise<unknown>
 
 const acceptExisting: ActionFunction = (params, user) =>
 	query(
@@ -159,11 +159,11 @@ const acceptExisting: ActionFunction = (params, user) =>
 	)
 
 async function getInteractData(e: RequestEvent) {
-	const { request, locals } = e,
-		{ user } = await authorise(locals),
-		{ user2 } = await getData(e)
+	const { request, locals } = e
+	const { user } = await authorise(locals)
+	const { user2 } = await getData(e)
 
-	if (user.id == user2.id) error(400, "You can't friend/follow yourself")
+	if (user.id === user2.id) error(400, "You can't friend/follow yourself")
 
 	return {
 		user,

@@ -43,6 +43,6 @@ export async function GET({ url, params }) {
 
 		return new Response(fs.readFileSync(path))
 	} catch {
-		return new Response(fs.readFileSync(`static/m....png`))
+		return new Response(fs.readFileSync("static/m....png"))
 	}
 }

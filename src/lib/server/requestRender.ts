@@ -35,7 +35,7 @@ export default async function (
 	)
 	const render = renders[2]
 
-	if (render && render.status != "Error") return
+	if (render && render.status !== "Error") return
 
 	// If the render doesn't exist or if the last one
 	// errored, create a new render
@@ -68,12 +68,12 @@ export default async function (
 	// Send the script to the RCCService proxy
 
 	const path = `data/${
-		renderType == "Avatar" ? "avatars" : "thumbnails"
-	}/${relativeId}${renderType == "Avatar" ? ".png" : ""}`
+		renderType === "Avatar" ? "avatars" : "thumbnails"
+	}/${relativeId}${renderType === "Avatar" ? ".png" : ""}`
 
 	// If the file doesn't exist, wait for it to be created
 	// if it does exist, wait for it to be modified
-	let waiter =
+	const waiter =
 		wait &&
 		new Promise<void>(resolve => {
 			try {

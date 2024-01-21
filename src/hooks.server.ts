@@ -35,14 +35,14 @@ const pathnameColour = (pathname: string) =>
 // Requests for prerendered pages do not trigger this hook.
 export async function handle({ event, resolve }) {
 	event.locals.auth = auth.handleRequest(event)
-	const session = await event.locals.auth.validate(),
-		user = session?.user,
-		{ pathname, search } = event.url,
-		{ method } = event.request
+	const session = await event.locals.auth.validate()
+	const user = session?.user
+	const { pathname, search } = event.url
+	const { method } = event.request
 
 	// Fancy logging: time, user, method, and path
 	console.log(
-		gray(new Date().toLocaleString()) + " ",
+		`${gray(new Date().toLocaleString())} `,
 		user
 			? blue(user.username) + " ".repeat(21 - user.username.length)
 			: yellow("Logged-out user      "),
@@ -70,8 +70,8 @@ export async function handle({ event, resolve }) {
 		user: `user:${user.id}`,
 	})
 
-	const economy = (await surreal.select("stuff:economy"))[0],
-		dailyStipend = (economy?.dailyStipend as number) || 10
+	const economy = (await surreal.select("stuff:economy"))[0]
+	const dailyStipend = (economy?.dailyStipend as number) || 10
 
 	if (
 		new Date(user.currencyCollected).getTime() -
@@ -92,18 +92,17 @@ export async function handle({ event, resolve }) {
 }
 
 export const handleError = async ({ event, error }) => {
-	const session = await event.locals.auth?.validate(),
-		user = session?.user
+	const session = await event.locals.auth?.validate()
+	const user = session?.user
 
 	// Fancy error logging: time, user, and error
-	console.error(
-		dev
-			? error
-			: (gray(new Date().toLocaleString()) + " ",
-			  user
-					? blue(user.username) +
-					  " ".repeat(21 - user.username.length)
-					: yellow("Logged-out user      "),
-			  red(error as string))
-	)
+	if (dev) console.error(error)
+	else
+		console.error(
+			`${gray(new Date().toLocaleString())} `,
+			user
+				? blue(user.username) + " ".repeat(21 - user.username.length)
+				: yellow("Logged-out user      "),
+			red(error as string)
+		)
 }

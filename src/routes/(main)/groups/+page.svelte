@@ -14,7 +14,11 @@
 				method: "POST",
 				body: formdata,
 			})
-			const result: any = deserialize(await response.text())
+			const result = deserialize(await response.text()) as {
+				data: {
+					groups: typeof data.groups
+				}
+			}
 
 			searchedData = result.data.groups
 		})()

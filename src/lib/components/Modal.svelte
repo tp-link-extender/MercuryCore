@@ -19,13 +19,8 @@
 			on:click={close}
 			on:keypress={close}
 			class="modal-backdrop h-screen w-full fixed" />
-		<div class="modal-box">
+		<div class="modal-box max-w-128">
 			<slot />
 		</div>
 	</div>
 {/if}
-
-<style lang="stylus">
-	.modal-box
-		max-width 32rem
-</style>

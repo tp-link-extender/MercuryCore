@@ -9,10 +9,10 @@
 	const range = (n: number) =>
 		Array.from({ length: n }, (_, index) => -Math.floor(n / 2) + index)
 
-	const downScroll = () => first.scrollIntoView({ behavior: "smooth" }),
-		upScroll = () => top.scrollIntoView({ behavior: "smooth" }),
-		columns = range(37),
-		rows = range(19)
+	const downScroll = () => first.scrollIntoView({ behavior: "smooth" })
+	const upScroll = () => top.scrollIntoView({ behavior: "smooth" })
+	const columns = range(37)
+	const rows = range(19)
 
 	let cubesMoved = 0,
 		cubesClicked = 0,

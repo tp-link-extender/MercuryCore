@@ -18,14 +18,14 @@ export async function GET({ url }) {
 
 	if (!placeData) error(400, "Invalid Server Ticket")
 
-	let port = placeData.serverPort,
-		baseUrl = "http://banland.xyz",
-		// serverId = placeData.id.toString(),
-		serverPresenceUrl = `${baseUrl}/game/serverpresence?ticket=${ticket}`
+	const port = placeData.serverPort
+	const baseUrl = "http://banland.xyz"
+	// const serverId = placeData.id.toString()
+	const serverPresenceUrl = `${baseUrl}/game/serverpresence?ticket=${ticket}`
 
 	if (mapLocation) {
 		mapLocation = Buffer.from(mapLocation, "base64").toString()
-		if (mapLocation.slice(-5) != ".rbxl") mapLocation = null
+		if (mapLocation.slice(-5) !== ".rbxl") mapLocation = null
 
 		if (mapLocation != null) mapLocation = `rbxasset://maps/${mapLocation}`
 	}
@@ -33,7 +33,7 @@ export async function GET({ url }) {
 	return new Response(
 		SignData(
 			fs
-				.readFileSync(`corescripts/processed/host.lua`, "utf-8")
+				.readFileSync("corescripts/processed/host.lua", "utf-8")
 				.replaceAll("_BASE_URL", baseUrl)
 				.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())
 				.replaceAll("_MAP_LOCATION", mapLocation || "")

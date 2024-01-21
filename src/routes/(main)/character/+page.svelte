@@ -21,7 +21,11 @@
 				method: "POST",
 				body: formdata,
 			})
-			const result: any = deserialize(await response.text())
+			const result = deserialize(await response.text()) as {
+				data: {
+					assets: typeof data.assets
+				}
+			}
 
 			searchedData = result.data.assets
 		})()
@@ -185,12 +189,12 @@
 				action="/character?tab={tabData.currentTab}"
 				class="input-group pb-4">
 				<input
-				bind:value={query}
-				type="text"
-				name="q"
-				placeholder="Search for an item"
-				aria-label="Search for an item"
-				aria-describedby="button-addon2" />
+					bind:value={query}
+					type="text"
+					name="q"
+					placeholder="Search for an item"
+					aria-label="Search for an item"
+					aria-describedby="button-addon2" />
 				<input type="hidden" name="tab" value={tabData.currentTab} />
 				<button
 					class="btn btn-secondary"

@@ -48,8 +48,8 @@ export async function authorise(
 	},
 	level?: number
 ) {
-	const session = await auth.validate(),
-		user = session?.user
+	const session = await auth.validate()
+	const user = session?.user
 
 	if (!session || !user) redirect(302, "/login")
 	if (level && user.permissionLevel < level)

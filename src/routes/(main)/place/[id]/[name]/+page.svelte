@@ -29,10 +29,10 @@
 
 	// Place Launcher
 
-	let modal = writable(false),
-		installed = true,
-		success = false,
-		filepath = ""
+	const modal = writable(false)
+	let installed = true
+	let success = false
+	let filepath = ""
 
 	const launch = (joinscripturl: string) => () => {
 		success = false
@@ -64,12 +64,17 @@
 		formdata.append("privateTicket", data.privateTicket)
 
 		const response = await fetch(`/place/${data.id}/${data.name}?/join`, {
-				method: "POST",
-				body: formdata,
-			}),
-			joinScriptData: any = deserialize(await response.text())
+			method: "POST",
+			body: formdata,
+		})
+		const joinScriptData = deserialize(await response.text()) as {
+			status: number
+			data: {
+				joinScriptUrl: string
+			}
+		}
 
-		if (joinScriptData.status == 200)
+		if (joinScriptData.status === 200)
 			launch(
 				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
 					joinScriptData.data.joinScriptUrl

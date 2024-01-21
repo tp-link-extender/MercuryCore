@@ -5,6 +5,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"format": "biome format src --write",
+		"lint": "biome lint src",
 		"prod": "pnpm lines && pnpm i && vite build",
 		"package": "svelte-kit package",
 		"preview": "vite preview",

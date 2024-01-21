@@ -4,8 +4,8 @@ import surreal, { squery, surql } from "$lib/server/surreal"
 import fs from "fs"
 
 export async function GET({ url }) {
-	const clientTicket = url.searchParams.get("ticket"),
-		privateServer = url.searchParams.get("privateServer") as string
+	const clientTicket = url.searchParams.get("ticket")
+	const privateServer = url.searchParams.get("privateServer") as string
 
 	if (!clientTicket) error(400, "Invalid Request")
 
@@ -58,14 +58,14 @@ export async function GET({ url }) {
 		valid: false,
 	})
 
-	const userNumber = gameSession.user.number,
-		placeId = gameSession.place.id,
-		creatorId = gameSession.place.ownerUser?.number || 0,
-		charApp = `http://banland.xyz/asset/characterfetch?userID=${userNumber}`,
-		pingUrl = `http://banland.xyz/game/clientpresence?ticket=${clientTicket}`
+	const userNumber = gameSession.user.number
+	const placeId = gameSession.place.id
+	const creatorId = gameSession.place.ownerUser?.number || 0
+	const charApp = `http://banland.xyz/asset/characterfetch?userID=${userNumber}`
+	const pingUrl = `http://banland.xyz/game/clientpresence?ticket=${clientTicket}`
 
 	const file = fs
-		.readFileSync(`corescripts/processed/join.lua`, "utf-8")
+		.readFileSync("corescripts/processed/join.lua", "utf-8")
 		.replaceAll("_PLACE_ID", placeId.toString())
 		.replaceAll("_SERVER_ADDRESS", gameSession.place.serverIP)
 		.replaceAll("_SERVER_PORT", gameSession.place.serverPort.toString())
@@ -74,7 +74,7 @@ export async function GET({ url }) {
 		.replaceAll("_USER_NAME", gameSession.user.username)
 		.replaceAll(
 			"_MEMBERSHIP_TYPE",
-			gameSession.user.permissionLevel == 2 ? "BuildersClub" : "None"
+			gameSession.user.permissionLevel >= 2 ? "BuildersClub" : "None"
 		)
 		.replaceAll("_CvHAR_APPEARANCE", charApp)
 		.replaceAll("_PING_URL", pingUrl)
