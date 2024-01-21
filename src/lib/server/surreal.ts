@@ -59,7 +59,7 @@ const stupidError =
 export const query = async <T>(
 	input: string,
 	params?: { [k: string]: any }
-) => {
+): Promise<T[]> => {
 	// WORST
 	// DATABASE
 	// ISSUE
@@ -72,6 +72,7 @@ export const query = async <T>(
 		}
 		console.log(`retrying query ${i} time${i > 1 ? "s" : ""}`)
 	}
+	return undefined as unknown as T[]
 }
 /**
  * Executes a query in SurrealDB and returns the first item in its results.
