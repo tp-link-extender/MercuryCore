@@ -116,7 +116,7 @@ export const actions = {
 			: message(
 					form,
 					"Invite created successfully! Check the Invites tab for your new key."
-				)
+			  )
 	},
 	disable: async e => {
 		const { user, form, error } = await getData(e)

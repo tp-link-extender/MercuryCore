@@ -20,7 +20,7 @@ export default defineConfig({
 				fa[c]
 					? `${e(rawSelector)}:before{content: "\\${
 							fa[c]
-						}" !important}`
+					  }" !important}`
 					: "",
 		],
 		[

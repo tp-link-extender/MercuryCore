@@ -22,14 +22,14 @@ const pathnameColour = (pathname: string) =>
 			  pathname.startsWith("/moderation") ||
 			  pathname.startsWith("/report") ||
 			  pathname.startsWith("/statistics")
-			? yellow(pathname)
-			: pathname.startsWith("/register") || pathname.startsWith("/login")
-				? blue(pathname)
-				: pathname.match(/^\/place\/\d+\/.*\/icon$/)
-					? magenta(pathname)
-					: pathname.startsWith("/admin")
-						? red(pathname)
-						: pathname
+		  ? yellow(pathname)
+		  : pathname.startsWith("/register") || pathname.startsWith("/login")
+			  ? blue(pathname)
+			  : pathname.match(/^\/place\/\d+\/.*\/icon$/)
+				  ? magenta(pathname)
+				  : pathname.startsWith("/admin")
+					  ? red(pathname)
+					  : pathname
 
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
@@ -100,10 +100,10 @@ export const handleError = async ({ event, error }) => {
 		dev
 			? error
 			: (gray(new Date().toLocaleString()) + " ",
-				user
+			  user
 					? blue(user.username) +
-						" ".repeat(21 - user.username.length)
+					  " ".repeat(21 - user.username.length)
 					: yellow("Logged-out user      "),
-				red(error as string))
+			  red(error as string))
 	)
 }
