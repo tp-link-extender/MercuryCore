@@ -39,8 +39,8 @@ export const load = async ({ locals }) => ({
 })
 
 async function getData({ locals, url }: RequestEvent) {
-	const { user } = await authorise(locals, 3),
-		id = url.searchParams.get("id")
+	const { user } = await authorise(locals, 3)
+	const id = url.searchParams.get("id")
 
 	if (!id) error(400, "Missing asset id")
 	if (!/^\d+$/.test(id)) error(400, `Invalid asset id: ${id}`)
@@ -102,8 +102,8 @@ export const actions = {
 		)
 	},
 	rerender: async e => {
-		const { id } = await getData(e),
-			limit = ratelimit({}, "rerender", e.getClientAddress, 60)
+		const { id } = await getData(e)
+		const limit = ratelimit({}, "rerender", e.getClientAddress, 60)
 		if (limit) return fail(429, { msg: "Too many requests" })
 
 		try {

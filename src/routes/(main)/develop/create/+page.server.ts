@@ -44,17 +44,17 @@ export async function load({ request, locals }) {
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals),
-			formData = await request.formData(),
-			form = await superValidate(formData, schema)
+		const { user } = await authorise(locals)
+		const formData = await request.formData()
+		const form = await superValidate(formData, schema)
 		if (!form.valid) return formError(form)
 
 		const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
 		if (limit) return limit
 
-		const { type, name, description, price } = form.data,
-			assetType = parseInt(type) as keyof typeof assets,
-			asset = formData.get("asset") as File
+		const { type, name, description, price } = form.data
+		const assetType = parseInt(type) as keyof typeof assets
+		const asset = formData.get("asset") as File
 
 		if (!asset)
 			return formError(form, ["asset"], ["You must upload an asset"])
@@ -115,9 +115,9 @@ export const actions = {
 			return formError(form, ["asset"], ["Asset failed to upload"])
 		}
 
-		const currentId = await squery<number>(surql`[stuff:increment.asset]`),
-			imageAssetId = currentId + 1,
-			id = currentId + 2
+		const currentId = await squery<number>(surql`[stuff:increment.asset]`)
+		const imageAssetId = currentId + 1
+		const id = currentId + 2
 
 		await query(
 			surql`

@@ -24,7 +24,9 @@
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/avatarshop/${postId}/${assetName}`
 
-	export let repliesCollapsed: Writable<any>
+	export let repliesCollapsed: Writable<{
+		[id: string]: boolean
+	}>
 	export let topLevel = false
 	// Some have to be writables to allow them to keep state,
 	// either on element destroy or on page change
@@ -62,7 +64,8 @@
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Collapse reply"
-				class="collapseBar bg-a2 p-0 border-0 h-full mt-4" />
+				class="collapseBar bg-a2 p-0 border-0 h-full mt-4
+				cursor-pointer" />
 		</span>
 
 		{#if $repliesCollapsed?.[reply.id]}
@@ -70,7 +73,7 @@
 				on:click={collapse(reply.id)}
 				aria-label="Expand reply"
 				class="expandBar m-2 pl-2 mt-0 text-base">
-				<small>
+				<small class="max-w-40 text-ellipsis">
 					<span class="grey-text">
 						{reply.author.username}
 						{#if reply.author.username == postAuthorName}
@@ -90,11 +93,12 @@
 						<div class="flex items-center pl-4 pt-2">
 							<a
 								href="/user/{reply.author.number}"
-								class:hidden
-								class="user userlink no-underline {reply.author
-									.username == postAuthorName
+								class="items-center userlink no-underline {reply
+									.author.username == postAuthorName
 									? ''
-									: 'light-text'}">
+									: 'light-text'} {hidden
+									? 'opacity-33'
+									: ''}">
 								<span
 									class="font-bold {reply.author.username ==
 									postAuthorName
@@ -115,7 +119,7 @@
 								{new Date(reply.posted).toLocaleString()}
 							</small>
 						</div>
-						<p class:hidden class="my-2">
+						<p class="my-2 break-all {hidden ? 'opacity-33' : ''}">
 							{reply.content[0].text}
 						</p>
 						{#if $replyingTo != reply.id}
@@ -145,15 +149,14 @@
 
 									return () => {}
 								}}
-								class:hidden
-								class="inline mr-2"
+								class="inline mr-2 {hidden ? 'opacity-33' : ''}"
 								method="POST"
 								action="?/like&rid={reply.id}">
 								<button
 									name="action"
 									value={reply.likes ? "unlike" : "like"}
 									aria-label={reply.likes ? "Unlike" : "Like"}
-									class="smallbutton p-0 btn">
+									class="size-6 p-0 btn">
 									<i
 										class="fa{reply.likes
 											? ' text-emerald-6 hover:text-emerald-3'
@@ -176,7 +179,7 @@
 									aria-label={reply.dislikes
 										? "Undislike"
 										: "Dislike"}
-									class="smallbutton p-0 btn">
+									class="size-6 p-0 btn">
 									<i
 										class="fa{reply.dislikes
 											? ' text-red-5 hover:text-red-3'
@@ -186,9 +189,8 @@
 							</form>
 							<button
 								on:click={() => replyingTo.set(reply.id)}
-								class:hidden
-								class="p-0 btn btn-sm px-1
-								text-neutral-5 hover:text-neutral-3">
+								class="p-0 btn btn-sm px-1 text-neutral-5
+								 hover:text-neutral-3 {hidden ? 'opacity-33' : ''}">
 								<far fa-message class="pr-2" />
 								Reply
 							</button>
@@ -209,7 +211,9 @@
 								{/if}
 							{/if}
 						{:else}
-							<div class="mb-2 card reply bg-darker p-4 pt-2">
+							<div
+								class="mb-2 card reply bg-darker p-4 pt-2
+								max-w-3/4">
 								<form
 									use:enhance
 									on:submit={() => replyingTo.set("")}
@@ -283,11 +287,10 @@
 		transition all 0.2s ease-out
 
 	.collapseBar
-		width auto
-		border-left 9px solid var(--background) !important
-		border-right 13px solid var(--background) !important
+		border-left 9px solid var(--background)
+		border-right 13px solid var(--background)
 		&:hover
-			background var(--grey-text) !important
+			background var(--grey-text)
 
 	.expandBar
 		border none
@@ -297,22 +300,8 @@
 		&:hover
 			color var(--grey-text)
 
-		small
-			max-width 10rem
-			text-overflow ellipsis
-
-	.card
-		max-width 75%
-
 	.reply
 		border-color var(--accent2)
-
-	.smallbutton
-		width 1.5rem
-		height 1.5rem
-
-	p
-		word-break break-word
 
 	.userlink
 		margin-top 1px
@@ -324,10 +313,4 @@
 			transition color 0.2s
 			&:hover
 				color var(--grey-text) !important
-
-	.user
-		align-items center
-
-	.hidden
-		opacity 33%
 </style>

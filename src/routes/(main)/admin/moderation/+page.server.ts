@@ -24,17 +24,17 @@ export async function load({ locals }) {
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 4),
-			form = await superValidate(request, schema)
+		const { user } = await authorise(locals, 4)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
 		if (limit) return limit
 
-		const { username, action, banDate, reason } = form.data,
-			date = banDate ? new Date(banDate) : null,
-			intAction = parseInt(action)
+		const { username, action, banDate, reason } = form.data
+		const date = banDate ? new Date(banDate) : null
+		const intAction = parseInt(action)
 
-		if (intAction == 2 && (date?.getTime() || 0) < new Date().getTime())
+		if (intAction === 2 && (date?.getTime() || 0) < new Date().getTime())
 			return formError(form, ["banDate"], ["Invalid date"])
 
 		const getModeratee = await squery<{
@@ -62,7 +62,7 @@ export const actions = {
 				["You cannot moderate staff members"]
 			)
 
-		if (getModeratee.id == user.id)
+		if (getModeratee.id === user.id)
 			return formError(
 				form,
 				["username"],
@@ -86,7 +86,7 @@ export const actions = {
 			moderatee: `user:${getModeratee.id}`,
 		}
 
-		if (intAction == 5) {
+		if (intAction === 5) {
 			// Unban
 			if (
 				!(await squery(
@@ -173,13 +173,14 @@ export const actions = {
 					time: time::now(),
 				}`,
 			{
-				note:
+				note: `${
 					[
 						`Warn ${username}`,
 						`Ban ${username}`,
 						`Terminate ${username}`,
 						`Delete ${username}'s account`,
-					][intAction - 1] + `: ${reason}`,
+					][intAction - 1]
+				}: ${reason}`,
 				reason,
 				moderationAction,
 				timeEnds: date || new Date(),

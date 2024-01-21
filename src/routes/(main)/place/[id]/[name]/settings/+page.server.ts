@@ -77,7 +77,7 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	if (user.number != getPlace.owner.number && user.permissionLevel < 4)
+	if (user.number !== getPlace.owner.number && user.permissionLevel < 4)
 		error(403, "You do not have permission to view this page.")
 
 	return {
@@ -93,11 +93,11 @@ export async function load({ locals, params }) {
 async function getData(e: RequestEvent) {
 	if (!/^\d+$/.test(e.params.id || ""))
 		error(400, `Invalid game id: ${e.params.id}`)
-	const id = parseInt(e.params.id || ""),
-		{ user } = await authorise(e.locals),
-		getPlace = await placeQuery(e.params.id)
+	const id = parseInt(e.params.id || "")
+	const { user } = await authorise(e.locals)
+	const getPlace = await placeQuery(e.params.id)
 
-	if (user.number != getPlace.owner.number && user.permissionLevel < 4)
+	if (user.number !== getPlace.owner.number && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")
 
 	return id
@@ -105,11 +105,11 @@ async function getData(e: RequestEvent) {
 
 export const actions = {
 	view: async e => {
-		const id = await getData(e),
-			{ request } = e
+		const id = await getData(e)
+		const { request } = e
 
-		const formData = await request.formData(),
-			form = await superValidate(formData, schemas.view)
+		const formData = await request.formData()
+		const form = await superValidate(formData, schemas.view)
 		if (!form.valid) return formError(form)
 
 		const icon = formData.get("icon") as File
@@ -159,8 +159,8 @@ export const actions = {
 		return message(form, "View settings updated successfully!")
 	},
 	ticket: async e => {
-		const id = await getData(e),
-			{ request } = e
+		const id = await getData(e)
+		const { request } = e
 
 		await query(surql`UPDATE $place SET serverTicket = rand::guid()`, {
 			place: `place:${id}`,
@@ -172,8 +172,8 @@ export const actions = {
 		)
 	},
 	network: async e => {
-		const id = await getData(e),
-			{ request } = e
+		const id = await getData(e)
+		const { request } = e
 
 		const form = await superValidate(request, schemas.network)
 		if (!form.valid) return formError(form)
@@ -198,8 +198,8 @@ export const actions = {
 		return message(form, "Network settings updated successfully!")
 	},
 	privacy: async e => {
-		const id = await getData(e),
-			{ request } = e
+		const id = await getData(e)
+		const { request } = e
 
 		const form = await superValidate(request, schemas.privacy)
 		if (!form.valid) return formError(form)

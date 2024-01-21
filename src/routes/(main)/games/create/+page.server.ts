@@ -36,8 +36,8 @@ export const load = async ({ locals }) => ({
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const { user } = await authorise(locals),
-			form = await superValidate(request, schema)
+		const { user } = await authorise(locals)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { serverIP, serverPort, maxPlayers, privateServer } = form.data
@@ -66,7 +66,8 @@ export const actions = {
 				note: `Created place ${name}`,
 				link: `/place/${id + 1}`,
 			})
-		} catch (e: any) {
+		} catch (err) {
+			const e = err as Error
 			console.log("error caught", e.message)
 			return formError(form, ["other"], [e.message])
 		}

@@ -34,8 +34,8 @@ export async function load({ locals }) {
 
 export const actions = {
 	default: async ({ locals }) => {
-		const { user } = await authorise(locals),
-			userModeration = await getModeration(user.id)
+		const { user } = await authorise(locals)
+		const userModeration = await getModeration(user.id)
 
 		if (new Date(userModeration.timeEnds).getTime() > Date.now())
 			error(400, "Your moderation action has not yet ended")

@@ -15,13 +15,13 @@ export const load = async () => ({
 
 export const actions = {
 	default: async ({ request, locals }) => {
-		const { user } = await authorise(locals),
-			form = await superValidate(request, schema)
+		const { user } = await authorise(locals)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const { name } = form.data
 
-		if (name.toLowerCase() == "create")
+		if (name.toLowerCase() === "create")
 			return formError(
 				form,
 				["name"],
@@ -33,10 +33,10 @@ export const actions = {
 				]
 			)
 
-		if (name.toLowerCase() == "changed")
+		if (name.toLowerCase() === "changed")
 			return formError(form, ["name"], ["Dickhead"])
 
-		if (name.toLowerCase() == "wisely")
+		if (name.toLowerCase() === "wisely")
 			return formError(
 				form,
 				["name"],
@@ -62,7 +62,8 @@ export const actions = {
 				note: `Created group ${name}`,
 				link: `/groups/${name}`,
 			})
-		} catch (e: any) {
+		} catch (err) {
+			const e = err as Error
 			return formError(form, ["other"], [e.message])
 		}
 

@@ -107,7 +107,7 @@
 			<h2 class="text-base mt-2">
 				{data.title}
 			</h2>
-			<p>
+			<p class="break-all">
 				{data.content[0].text || ""}
 			</p>
 		</div>
@@ -135,7 +135,4 @@
 
 	.post
 		border 1px solid var(--accent2)
-
-	p
-		word-break break-word
 </style>

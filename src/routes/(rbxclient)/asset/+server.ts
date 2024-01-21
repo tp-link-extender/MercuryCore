@@ -34,7 +34,7 @@ export async function GET({ url }) {
 				{ asset: `asset:${id}` }
 			)
 
-			if (!asset || asset.visibility == "Moderated") throw new Error()
+			if (!asset || asset.visibility === "Moderated") throw new Error()
 
 			// The asset is visible or pending
 			// (allow pending assets to be shown through the api)
@@ -52,9 +52,9 @@ export async function GET({ url }) {
 		// Try loading as a corescript
 
 		const file = fs.readFileSync(
-			id == "38037265"
+			id === "38037265"
 				? "corescripts/38037265.xml"
-				: id == "20573078"
+				: id === "20573078"
 				  ? "corescripts/20573078.xml" // todo remove the shaggy l8r
 				  : `corescripts/processed/${id}.lua`,
 			"utf-8"

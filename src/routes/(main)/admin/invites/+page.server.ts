@@ -45,10 +45,14 @@ export async function load({ locals }) {
 }
 
 async function getData(e: RequestEvent) {
-	const { user } = await authorise(e.locals, 5),
-		form = await superValidate(e.request, schema)
+	const { user } = await authorise(e.locals, 5)
+	const form = await superValidate(e.request, schema)
 
-	return { user, form, error: !form.valid && formError(form) }
+	return {
+		user,
+		form,
+		error: !form.valid && formError(form),
+	}
 }
 
 export const actions = {
@@ -90,7 +94,7 @@ export const actions = {
 		const log = await query(
 			surql`
 				BEGIN TRANSACTION;
-				LET $key = CREATE ${!!enableInviteCustom ? "$" : ""}regKey CONTENT {
+				LET $key = CREATE ${enableInviteCustom ? "$" : ""}regKey CONTENT {
 					usesLeft: $inviteUses,
 					expiry: $expiry,
 					created: time::now(),
@@ -111,7 +115,7 @@ export const actions = {
 			}
 		)
 
-		return typeof log == "string"
+		return typeof log === "string"
 			? message(form, "This invite key already exists", { status: 400 })
 			: message(
 					form,
@@ -134,7 +138,7 @@ export const actions = {
 			}[]
 		)[0]
 
-		if (key && key.usesLeft == 0)
+		if (key && key.usesLeft === 0)
 			return message(form, "Invite key is already disabled", {
 				status: 400,
 			})

@@ -26,8 +26,8 @@ const SELECTCOMMENTS = recurse(
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
-	const { user } = await authorise(locals),
-		id = parseInt(params.id)
+	const { user } = await authorise(locals)
+	const id = parseInt(params.id)
 
 	const asset = await squery<{
 		creator: {
@@ -36,8 +36,7 @@ export async function load({ locals, params }) {
 			username: string
 		}
 		description: {
-			id: string
-			text: any
+			text: string
 			updated: string
 		}
 		id: string
@@ -54,10 +53,7 @@ export async function load({ locals, params }) {
 			SELECT
 				*,
 				meta::id(id) AS id,
-				(SELECT
-					number,
-					status,
-					username
+				(SELECT number, status, username
 				FROM <-created<-user)[0] AS creator,
 				count(<-owns<-user) AS sold,
 				$user ∈ <-owns<-user.id AS owned,
@@ -76,13 +72,13 @@ export async function load({ locals, params }) {
 	if (!asset || !asset.creator) error(404, "Not found")
 
 	const noTexts = [
-			"Cancel",
-			"No thanks",
-			"I've reconsidered",
-			"Not really",
-			"Nevermind",
-		],
-		failTexts = ["Bruh", "Okay", "Aight", "Rip", "Aw man..."]
+		"Cancel",
+		"No thanks",
+		"I've reconsidered",
+		"Not really",
+		"Nevermind",
+	]
+	const failTexts = ["Bruh", "Okay", "Aight", "Rip", "Aw man..."]
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
@@ -93,8 +89,8 @@ export async function load({ locals, params }) {
 }
 
 async function getBuyData(e: RequestEvent) {
-	const { user } = await authorise(e.locals),
-		id = parseInt(e.params.id)
+	const { user } = await authorise(e.locals)
+	const id = parseInt(e.params.id)
 
 	if (
 		!(await squery(surql`SELECT * FROM $asset`, {
@@ -108,8 +104,8 @@ async function getBuyData(e: RequestEvent) {
 
 export const actions = {
 	reply: async ({ url, request, locals, params, getClientAddress }) => {
-		const { user } = await authorise(locals),
-			form = await superValidate(request, schema)
+		const { user } = await authorise(locals)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const limit = ratelimit(form, "assetComment", getClientAddress, 5)
@@ -125,7 +121,6 @@ export const actions = {
 		if (replyId && !/^[0-9a-z]+$/.test(replyId))
 			error(400, "Invalid reply id")
 
-		let receiverId
 		const commentAuthor = await squery<{ id: string }>(
 			surql`SELECT meta::id(id) AS id FROM ` +
 				(replyId
@@ -138,8 +133,8 @@ export const actions = {
 		)
 
 		if (replyId && !commentAuthor) error(404)
-		receiverId = commentAuthor?.id || ""
 
+		const receiverId = commentAuthor?.id || ""
 		const newReplyId = await query<string>(surql`[fn::id()]`)
 
 		await query(
@@ -167,7 +162,7 @@ export const actions = {
 		)
 
 		await Promise.all([
-			user.id != receiverId &&
+			user.id !== receiverId &&
 				query(
 					surql`
 						RELATE $sender->notification->$receiver CONTENT {
@@ -194,11 +189,11 @@ export const actions = {
 		])
 	},
 	like: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals),
-			data = await formData(request),
-			action = data.action as keyof typeof likeActions,
-			id = url.searchParams.get("id"),
-			replyId = url.searchParams.get("rid")
+		const { user } = await authorise(locals)
+		const data = await formData(request)
+		const action = data.action as keyof typeof likeActions
+		const id = url.searchParams.get("id")
+		const replyId = url.searchParams.get("rid")
 
 		if (replyId && !/^[0-9a-z]+$/.test(replyId))
 			error(400, "Invalid reply id")
@@ -241,7 +236,7 @@ export const actions = {
 		)
 		if (!asset) error(404, "Not found")
 		if (asset.owned) error(400, "You already own this item")
-		if (asset.visibility != "Visible")
+		if (asset.visibility !== "Visible")
 			error(400, "This item hasn't been approved yet")
 
 		try {
@@ -254,7 +249,8 @@ export const actions = {
 					link: `/avatarshop/${e.params.id}/${asset.name}`,
 				}
 			)
-		} catch (e: any) {
+		} catch (err) {
+			const e = err as Error
 			console.log(e.message)
 			error(400, e.message)
 		}
@@ -264,7 +260,7 @@ export const actions = {
 				user: `user:${user.id}`,
 				asset: `asset:${id}`,
 			}),
-			user.id == asset.creator.id ||
+			user.id === asset.creator.id ||
 				query(
 					surql`
 						RELATE $sender->notification->$receiver CONTENT {
@@ -303,8 +299,8 @@ export const actions = {
 	// 	})
 	// },
 	delete: async ({ url, locals }) => {
-		const { user } = await authorise(locals),
-			id = url.searchParams.get("id")
+		const { user } = await authorise(locals)
+		const id = url.searchParams.get("id")
 		if (!id) error(400, "Missing comment id")
 		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
 		// Prevents incorrect ids erroring the Surreal query as well
@@ -323,10 +319,10 @@ export const actions = {
 
 		if (!comment) error(404, "Comment not found")
 
-		if (comment.authorId != user.id)
+		if (comment.authorId !== user.id)
 			error(403, "You cannot delete someone else's comment")
 
-		if (comment.visibility != "Visible")
+		if (comment.visibility !== "Visible")
 			error(400, "Comment already deleted")
 
 		await query(
@@ -385,7 +381,7 @@ export const actions = {
 		if (![11, 12].includes(asset.type))
 			error(400, "Can't rerender this type of asset")
 
-		if (asset.visibility == "Moderated")
+		if (asset.visibility === "Moderated")
 			error(400, "Can't rerender a moderated asset")
 
 		try {

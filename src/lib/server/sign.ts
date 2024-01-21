@@ -12,13 +12,13 @@ import fs from "fs"
  * `)
  */
 export function SignData(data: string, assetId?: number) {
-	data = assetId ? `--rbxassetid%${assetId}%\n${data}` : `\n${data}`
+	const signed = assetId ? `--rbxassetid%${assetId}%\n${data}` : `\n${data}`
 
-	const sign = crypto.createSign("SHA1"),
-		key = fs.readFileSync("./keys/PrivateKey.pem")
+	const sign = crypto.createSign("SHA1")
+	const key = fs.readFileSync("./keys/PrivateKey.pem")
 
-	sign.write(data)
+	sign.write(signed)
 	sign.end()
 
-	return `--rbxsig%${sign.sign(key, "base64")}%${data}`
+	return `--rbxsig%${sign.sign(key, "base64")}%${signed}`
 }

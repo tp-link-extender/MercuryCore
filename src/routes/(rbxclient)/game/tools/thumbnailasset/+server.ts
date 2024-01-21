@@ -5,23 +5,23 @@ import surreal, { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function GET({ url }) {
-	const width = parseInt(url.searchParams.get("wd") as string),
-		height = parseInt(url.searchParams.get("ht") as string),
-		assetId = parseInt(url.searchParams.get("aid") as string),
-		stringAssetId = assetId.toString()
+	const width = parseInt(url.searchParams.get("wd") as string)
+	const height = parseInt(url.searchParams.get("ht") as string)
+	const assetId = parseInt(url.searchParams.get("aid") as string)
+	const stringAssetId = assetId.toString()
 
 	if (!assetId || !width || !height) error(404, "Asset not found")
 
 	const params = new URLSearchParams({
-			assetIds: stringAssetId,
-			returnPolicy: "Placeholder",
-			size: `${width}x${height}`,
-			format: "Png",
-			isCircular: "false",
-		}),
-		cache = await squery<{ url: string }>(surql`SELECT * FROM $asset`, {
-			asset: `assetCache:${stringAssetId}`,
-		})
+		assetIds: stringAssetId,
+		returnPolicy: "Placeholder",
+		size: `${width}x${height}`,
+		format: "Png",
+		isCircular: "false",
+	})
+	const cache = await squery<{ url: string }>(surql`SELECT * FROM $asset`, {
+		asset: `assetCache:${stringAssetId}`,
+	})
 
 	if (cache) redirect(302, cache.url)
 
@@ -29,7 +29,7 @@ export async function GET({ url }) {
 		`https://thumbnails.roblox.com/v1/assets?${params}`
 	)
 
-	if (thumb.status != 200) error(400, "Invalid asset")
+	if (thumb.status !== 200) error(400, "Invalid asset")
 
 	const thumbnail = JSON.parse(await thumb.text())
 

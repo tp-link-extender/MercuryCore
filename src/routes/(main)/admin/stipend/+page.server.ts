@@ -25,19 +25,19 @@ export async function load({ locals }) {
 
 export const actions = {
 	updateStipend: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 5),
-			form = await superValidate(request, schema)
+		const { user } = await authorise(locals, 5)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const limit = ratelimit(form, "economy", getClientAddress, 30)
 		if (limit) return limit
 
-		const economy = (await surreal.select("stuff:economy"))[0],
-			currentStipend = economy?.dailyStipend || 10,
-			currentStipendTime = economy?.stipendTime || 12,
-			{ dailyStipend, stipendTime } = form.data
+		const economy = (await surreal.select("stuff:economy"))[0]
+		const currentStipend = economy?.dailyStipend || 10
+		const currentStipendTime = economy?.stipendTime || 12
+		const { dailyStipend, stipendTime } = form.data
 
-		if (currentStipend == dailyStipend && currentStipendTime == stipendTime)
+		if (currentStipend === dailyStipend && currentStipendTime === stipendTime)
 			return message(form, "No changes were made")
 
 		await surreal.merge("stuff:economy", {
@@ -47,10 +47,10 @@ export const actions = {
 
 		let auditText = ""
 
-		if (currentStipend != dailyStipend)
+		if (currentStipend !== dailyStipend)
 			auditText += `Change daily stipend from ${currentStipend} to ${dailyStipend}`
 
-		if (currentStipendTime != stipendTime) {
+		if (currentStipendTime !== stipendTime) {
 			if (auditText) auditText += ", "
 			auditText += `Change stipend time from ${currentStipendTime} to ${stipendTime}`
 		}

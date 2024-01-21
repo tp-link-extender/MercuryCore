@@ -134,9 +134,6 @@ export const adapter =
 			)
 		},
 		updateSession: async (userId, partialSession) => {
-			delete partialSession.id
-			delete partialSession.user_id
-
 			await query(
 				surql`
 					UPDATE session MERGE $partialSession
