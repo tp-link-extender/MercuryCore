@@ -18,20 +18,9 @@
 	{#if data.category == "users" && data.users}
 		<div class="grid">
 			{#each data.users as user, num}
-				<a
-					in:fade={{ num, total: data.users.length }}
-					class="px-2 pb-2 text-center light-text no-underline"
-					href="/user/{user.number}">
-					<div class="relative pb-2">
-						<div class="image-background bg-a rounded-full">
-							<img
-								src="/api/avatar/{user.username}"
-								alt={user.username}
-								class="h-full rounded-full rounded-top-0" />
-						</div>
-					</div>
-					{user.username}
-				</a>
+				<div in:fade={{ num, total: data.users.length }}>
+					<User {user} size="7rem" bg="accent" bottom />
+				</div>
 			{/each}
 		</div>
 	{:else if data.category == "places" && data.places}

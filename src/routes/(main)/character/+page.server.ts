@@ -54,7 +54,7 @@ async function getEquipData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
 	const id = e.url.searchParams.get("id")
 
-	if (ratelimit({}, "equip", e.getClientAddress, 45))
+	if (ratelimit({}, "equip", e.getClientAddress, 2))
 		return { error: fail(429, { msg: "Too many requests" }) }
 
 	if (!id) error(400, "Missing asset id")

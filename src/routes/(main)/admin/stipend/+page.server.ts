@@ -37,7 +37,10 @@ export const actions = {
 		const currentStipendTime = economy?.stipendTime || 12
 		const { dailyStipend, stipendTime } = form.data
 
-		if (currentStipend === dailyStipend && currentStipendTime === stipendTime)
+		if (
+			currentStipend === dailyStipend &&
+			currentStipendTime === stipendTime
+		)
 			return message(form, "No changes were made")
 
 		await surreal.merge("stuff:economy", {

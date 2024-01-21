@@ -26,9 +26,6 @@ dependencies:
   dotenv:
     specifier: ^16.3.2
     version: 16.3.2
-  esbuild:
-    specifier: ^0.19.11
-    version: 0.19.11
   lucia:
     specifier: ^2.7.6
     version: 2.7.6
@@ -118,12 +115,9 @@ devDependencies:
   '@unocss/transformer-variant-group':
     specifier: ^0.58.3
     version: 0.58.3
-  prettier:
-    specifier: ^3.2.4
-    version: 3.2.4
-  prettier-plugin-svelte:
-    specifier: ^3.1.2
-    version: 3.1.2(prettier@3.2.4)(svelte@4.2.9)
+  esbuild:
+    specifier: ^0.19.11
+    version: 0.19.11
   stylus:
     specifier: ^0.62.0
     version: 0.62.0
@@ -2427,22 +2421,6 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
-
-  /prettier-plugin-svelte@3.1.2(prettier@3.2.4)(svelte@4.2.9):
-    resolution: {integrity: sha512-7xfMZtwgAWHMT0iZc8jN4o65zgbAQ3+O32V6W7pXrqNvKnHnkoyQCGCbKeUyXKZLbYE0YhFRnamfxfkEGxm8qA==}
-    peerDependencies:
-      prettier: ^3.0.0
-      svelte: ^3.2.0 || ^4.0.0-next.0 || ^5.0.0-next.0
-    dependencies:
-      prettier: 3.2.4
-      svelte: 4.2.9
-    dev: true
-
-  /prettier@3.2.4:
-    resolution: {integrity: sha512-FWu1oLHKCrtpO1ypU6J0SbK2d9Ckwysq6bHj/uaCP26DxrPpppCLQRGVuqAxSTvhF00AcvDRyYrLNW7ocBhFFQ==}
-    engines: {node: '>=14'}
-    hasBin: true
-    dev: true
 
   /profane-words@1.5.11:
     resolution: {integrity: sha512-LWe0nG62ZCV2WMds+TwoDsTCGdRnlwEQY1f3rRbzENQixC1eJ3+NR3GWJRn0AWHZQnxgPR1l3CgyrQqIiUGxFA==}

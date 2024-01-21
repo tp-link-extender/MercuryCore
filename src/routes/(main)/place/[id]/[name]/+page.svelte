@@ -1,5 +1,6 @@
 <script lang="ts">
 	import customProtocolCheck from "custom-protocol-check"
+	import Autopilot from "./Autopilot.svelte"
 
 	export let data
 	const { user } = data
@@ -12,12 +13,12 @@
 		["Updated", new Date(data.updated).toLocaleDateString()],
 		["Genre", "Horror"],
 		["Server Limit", data.maxPlayers],
-		["Now Playing", data.players.length],
+		["Now Playing", data.players.length]
 	]
 	const images = [
 		"/place/placeholderImage1.webp",
 		"/place/placeholderImage2.webp",
-		"/place/placeholderImage3.webp",
+		"/place/placeholderImage3.webp"
 	]
 	const scroll = (e: MouseEvent) =>
 		document
@@ -32,7 +33,6 @@
 	const modal = writable(false)
 	let installed = true
 	let success = false
-	let filepath = ""
 
 	const launch = (joinscripturl: string) => () => {
 		success = false
@@ -65,7 +65,7 @@
 
 		const response = await fetch(`/place/${data.id}/${data.name}?/join`, {
 			method: "POST",
-			body: formdata,
+			body: formdata
 		})
 		const joinScriptData = deserialize(await response.text()) as {
 			status: number
@@ -82,8 +82,8 @@
 			)()
 	}
 
-	let tabData = TabData(data.url, ["Description", "Game"]),
-		tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
+	let tabData = TabData(data.url, ["Description", "Game"])
+	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
 </script>
 
 <Head title={data.name} />
@@ -309,68 +309,7 @@
 					</code>
 				</Tab>
 				<Tab tabData={tabData2}>
-					<p class="light-text">
-						Autopilot manages initial Studio operations. All you
-						need to do is type in a map that's in the map folder,
-						and start the server.
-					</p>
-					<p class="light-text">
-						Place your maps in Mercury Studio's maps folder. For
-						example, entering <code>CoolMap.rbxl</code>
-						will point to
-						<code>content\maps\CoolMap.rbxl</code>
-						.
-					</p>
-					<div class="input-group">
-						<input
-							type="text"
-							id="filepath"
-							bind:value={filepath}
-							placeholder="Map location"
-							aria-label="Map location" />
-						<button
-							class="btn btn-secondary"
-							on:click={launch(
-								"mercury-player:1+launchmode:maps"
-							)}
-							type="button">
-							<fa fa-arrow-up-right-from-square />
-							Map Folder
-						</button>
-						<button
-							class="btn btn-primary"
-							on:click={launch(
-								`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${btoa(
-									filepath
-								)}`
-							)}
-							type="button">
-							<fa fa-wifi />
-							Begin Hosting
-						</button>
-
-						<div class="dropdown dropdown-hover dropdown-end">
-							<div
-								class="btn btn-tertiary dropdown-toggle
-								border-[--accent2] border-l-0" />
-							<div class="dropdown-content pt-2">
-								<ul class="p-2 rounded-3">
-									<li class="rounded-2">
-										<button
-											class="btn light-text pl-4 pr-0 text-start"
-											on:click={launch(
-												`mercury-player:1+launchmode:build+script:${hostTicket}&autopilot=${btoa(
-													filepath
-												)}`
-											)}
-											type="button">
-											Begin Hosting (no Studio tools)
-										</button>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
+					<Autopilot {launch} {hostTicket} />
 				</Tab>
 			</div>
 		{/if}
@@ -454,14 +393,3 @@
 		{/if}
 	</div>
 </Modal>
-
-<style lang="stylus">
-	.dropdown-toggle::after
-		// funny down arrow
-		display inline-block
-		vertical-align 0.255rem
-		content ""
-		border-top 0.3rem solid
-		border-right 0.3rem solid transparent
-		border-left 0.3rem solid transparent
-</style>

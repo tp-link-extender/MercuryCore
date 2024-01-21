@@ -50,7 +50,7 @@ await db.query(surql`
 const stupidError =
 	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
 
-type Param = string | number | boolean | null | undefined // basically anything
+type Param = string | number | boolean | null | object | undefined // basically anything
 
 /**
  * Executes a query in SurrealDB and returns its results.
@@ -66,7 +66,7 @@ export const query = async <T>(
 	// DATABASE
 	// ISSUE
 	// EVER
-	for (let i = 1; i <= 3; i++) {
+	for (let i = 1; i <= 1; i++) {
 		try {
 			return (await db.query(input, params))?.[0] as T[]
 		} catch (err) {

@@ -15,7 +15,7 @@
 		duration: 300,
 		css: (t: number) => `
 			height: ${2 * quadOut(t)}rem;
-			overflow: hidden`,
+			overflow: hidden`
 	})
 	const searchResults: HTMLElement[] = []
 
@@ -70,18 +70,18 @@
 		["Catalog", "/avatarshop", "fa-book-open-cover"],
 		// ["Groups", "/groups", "fa-people-group"],
 		["Create", "/develop", "fa-plus"],
-		["Forum", "/forum", "fa-messages"],
+		["Forum", "/forum", "fa-messages"]
 	]
 	const usernav = [
 		["fa-user-group", "Friends", "/requests"],
 		["fa-box-open-full", "Inventory", "/inventory"],
 		["fa-user-pen", "Character", "/character"],
-		["fa-gears", "Settings", "/settings"],
+		["fa-gears", "Settings", "/settings"]
 	]
 	const searchCategories = [
 		["Users", "users"],
 		["Places", "places"],
-		["Catalog", "assets"],
+		["Catalog", "assets"]
 		// ["Groups", "groups"],
 	]
 
@@ -136,7 +136,7 @@
 						}}
 						class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
 						title="Search">
-						<fa fa-search />
+						<fa fa-search></fa>
 					</button>
 					{#if search.trim() && !searchCompleted}
 						<div
@@ -164,19 +164,17 @@
 					href="/notifications"
 					role="button"
 					aria-label="Notifications"
-					class="<lg:hidden font-bold pr-4">
-					<fa fa-bell class="light-text" />
+					class="<lg:hidden font-bold pr-4 light-text">
+					<fa fa-bell></fa>
 				</a>
 				<a
 					href="/transactions"
 					role="button"
 					aria-label="Transactions"
-					class="text-emerald-6 flex items-center
-					no-underline <sm:w-20">
-					<fa fa-gem class="pr-2 text-emerald-6" />
-					<span class="text-base text-emerald-6">
-						{user.currency}
-					</span>
+					class="flex items-center no-underline <sm:w-20
+					text-emerald-6 hover:text-emerald-8!">
+					<fa fa-gem class="pr-2"></fa>
+					{user.currency}
 				</a>
 				<div class="dropdown dropdown-hover dropdown-end pl-2">
 					<User
@@ -197,7 +195,7 @@
 							{#each usernav as [icon, title, href]}
 								<li class="rounded-2">
 									<a class="btn light-text pl-4 pr-0" {href}>
-										<fa class="{icon} pr-2" />
+										<fa class="{icon} pr-2"></fa>
 										{title}
 									</a>
 								</li>
@@ -210,7 +208,8 @@
 									<button class="btn text-red-5 pl-4 pr-0">
 										<fa
 											fa-arrow-right-from-bracket
-											class="pr-2" />
+											class="pr-2">
+										</fa>
 										<b>Log out</b>
 									</button>
 								</form>
@@ -252,7 +251,7 @@
 					{href}
 					class="btn light-text border-0 flex flex-col items-center
 					text-0.9rem px-0.2rem sm:text-base sm:px-2">
-					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem" />
+					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem"></fa>
 					{title}
 				</a>
 			{/each}
