@@ -53,11 +53,10 @@
 						: ''}">
 					{reply.author.username}
 					{#if reply.author.username == postAuthorName}
-						<i
-							class="fa {assetName
+						<fa
+							class="{assetName
 								? 'fa-hammer'
-								: 'fa-microphone'} ml-2">
-						</i>
+								: 'fa-microphone'} ml-2" />
 					{/if}
 				</span>
 			</a>
@@ -65,7 +64,7 @@
 				{new Date(reply.posted).toLocaleString()}
 			</small>
 		</div>
-		<p class="my-2 break-all {hidden ? 'opacity-33' : ''}">
+		<p class="py-2 m-0 break-all {hidden ? 'opacity-33' : ''}">
 			{reply.content[0].text}
 		</p>
 		{#if $replyingTo != reply.id}
@@ -107,7 +106,7 @@
 						class="fa{reply.likes
 							? ' text-emerald-6 hover:text-emerald-3'
 							: 'r text-neutral-5 hover:text-neutral-3'}
-										fa-thumbs-up transition">
+							fa-thumbs-up transition">
 					</i>
 				</button>
 				<span
@@ -127,15 +126,15 @@
 						class="fa{reply.dislikes
 							? ' text-red-5 hover:text-red-3'
 							: 'r text-neutral-5 hover:text-neutral-3'}
-										fa-thumbs-down transition">
+							fa-thumbs-down transition">
 					</i>
 				</button>
 			</form>
 			<button
 				on:click={() => replyingTo.set(reply.id)}
 				class="p-0 btn btn-sm px-1 text-neutral-5
-								 hover:text-neutral-3 {hidden ? 'opacity-33' : ''}">
-				<far fa-message class="pr-2"></far>
+				hover:text-neutral-3 {hidden ? 'opacity-33' : ''}">
+				<far fa-message class="pr-2" />
 				Reply
 			</button>
 			{#if !hidden}
@@ -172,13 +171,13 @@
 							rows="4" />
 						<div class="flex gap-3">
 							<button class="btn btn-secondary">
-								<far fa-message class="pr-2"></far>
+								<far fa-message class="pr-2" />
 								Reply
 							</button>
 							<button
 								on:click={() => replyingTo.set("")}
 								class="btn btn-tertiary grey-text">
-								<fa fa-cancel class="pr-2"></fa>
+								<fa fa-cancel class="pr-2" />
 								Cancel
 							</button>
 						</div>
@@ -192,7 +191,7 @@
 {#if depth > 8}
 	<!-- todo fix incorrect colour -->
 	<a href="{baseUrl}/{reply.id}" class="no-underline">
-		<fa fa-arrow-down class="mr-2"></fa>
+		<fa fa-arrow-down class="mr-2" />
 		More replies
 	</a>
 {/if}

@@ -13,7 +13,7 @@
 		id: "",
 		bgColour: "",
 		textLight: false,
-		body: "",
+		body: ""
 	}
 
 	const formData = superForm(data.form)
@@ -97,10 +97,10 @@
 										class="btn py-0 no-underline {banner.active
 											? 'text-yellow-5'
 											: 'text-emerald-5'}">
-										<i
-											class="fa {banner.active
-												? 'fa-eye-slash'
-												: 'fa-eye'}" />
+										<fa
+											class={banner.active
+												? "fa-eye-slash"
+												: "fa-eye"} />
 										{banner.active
 											? "Deactivate"
 											: "Activate"}

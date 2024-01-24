@@ -32,17 +32,13 @@
 	// Some have to be writables to allow them to keep state,
 	// either on element destroy or on page change
 
-	let content = "" // Allows current reply to not be lost on clicking to another reply
-
 	const collapse = (id: string) => () =>
 		($repliesCollapsed[id] = !$repliesCollapsed[id])
-
-	$: hidden = reply.visibility != "Visible"
 </script>
 
 {#if !topLevel}
 	<a href="{baseUrl}{assetName ? '?tab=Comments' : ''}" class="no-underline">
-		<fa fa-arrow-left class="pr-2"></fa>
+		<fa fa-arrow-left class="pr-2" />
 		{#if assetName}
 			Back to asset
 		{:else}
@@ -52,7 +48,7 @@
 	{#if reply.parentReplyId}
 		<br />
 		<a href="{baseUrl}/{reply.parentReplyId}" class="no-underline">
-			<fa fa-arrow-up class="pr-2"></fa>
+			<fa fa-arrow-up class="pr-2" />
 			Parent reply
 		</a>
 	{/if}
@@ -79,11 +75,10 @@
 					<span class="grey-text">
 						{reply.author.username}
 						{#if reply.author.username == postAuthorName}
-							<i
-								class="fa {assetName
+							<fa
+								class="{assetName
 									? 'fa-hammer'
-									: 'fa-microphone'} pl-1">
-							</i>
+									: 'fa-microphone'} pl-1" />
 						{/if}
 					</span>
 					- {reply.content[0].text}

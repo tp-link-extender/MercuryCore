@@ -27,7 +27,10 @@
 				{#if reverse}
 					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pr-2" />
 				{/if}
-				<span class="{text} {colour}">
+				<span
+					class="{text} {colour} overflow-hidden align-middle w-0
+					-mt-0.4">
+					<!-- perfect alignment -->
 					{text.charAt(0).toUpperCase() + text.slice(1)}
 				</span>
 				{#if !reverse}
@@ -45,17 +48,13 @@
 	span
 		transition all 0.2s
 		display inline-block
-		overflow hidden
 		white-space nowrap
-		width 0
-		vertical-align middle // not perfectly centered
-		margin-top -0.1rem // there we go
 
 	button:hover
 		far
 			font-weight 900
 		.delete
-			width 2.5rem
+			width 2.8rem
 		.moderate
-			width 3.7rem
+			width 4.1rem
 </style>

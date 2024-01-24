@@ -15,13 +15,14 @@
 
 	let colour = tweened("#fff", {
 		duration: 200,
-		interpolate: interpolateLab,
+		interpolate: interpolateLab
 	})
 </script>
 
 <ul
-	class="nav mt-0 {vertical ? 'flex-col gap-2' : 'pb-6'} {$$restProps.class ||
-		''}"
+	class="nav min-w-28 mt-0 {vertical
+		? 'vertical flex-col gap-2'
+		: 'pb-6'} {$$restProps.class || ''}"
 	class:justified={justify}
 	role="tablist">
 	{#each tabData.tabs as tab, pos}
@@ -44,9 +45,9 @@
 					return currentSearch.toString()
 				})()}"
 				on:click|preventDefault={() => {
-					colour = tweened("#7531ff", {
+					colour = tweened("hsl(260, 100%, 60%)", {
 						duration: 500,
-						interpolate: interpolateLab,
+						interpolate: interpolateLab
 					})
 					tabData.currentTab = tab
 					$colour = "#fff"
@@ -61,9 +62,6 @@
 </ul>
 
 <style lang="stylus">
-	.nav
-		min-width 7rem
-
 	.active.item
 		border-bottom-width 2px
 		border-bottom-style solid
@@ -81,6 +79,18 @@
 		transition background-color 0.2s
 	.tab
 		border-width 0px 0px 2px !important
+		--un-ring-color hsla(260, 75%, 45%, 50%)
+
+	:not(.activetab) > .tab
 		&:hover
-			background #7531ff7f
+			background hsla(260, 100%, 60%, 50%)
+		&:active
+			background hsla(260, 100%, 55%, 40%)
+
+	.vertical .tab
+		@apply ring-offset-neutral-9
+		&:focus:not(:active)
+			@apply ring-2 ring-offset-2
+		&:active
+			@apply ring-3
 </style>
