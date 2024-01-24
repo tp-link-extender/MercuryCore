@@ -70,9 +70,4 @@
 		div a
 			width 8rem
 			margin auto
-
-	.image-background
-	img
-		width 7rem
-		margin auto
 </style>
