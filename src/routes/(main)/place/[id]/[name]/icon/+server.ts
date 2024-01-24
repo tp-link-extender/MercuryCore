@@ -5,8 +5,8 @@ import fs from "fs"
 export async function GET({ params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid game id: ${params.id}`)
 
-	const id = parseInt(params.id),
-		filename = `data/icons/${id}.webp`
+	const id = parseInt(params.id)
+	const filename = `data/icons/${id}.webp`
 
 	if (!(await surreal.select(`place:${id}`))[0]) error(404, "Not found")
 

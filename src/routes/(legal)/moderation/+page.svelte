@@ -11,9 +11,9 @@
 	}
 
 	function formatDateDifference(date1: number, date2: number) {
-		const diffInMilliseconds = Math.round(date2 - date1),
-			millisecondsPerDay = 86400e3,
-			diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay)
+		const diffInMilliseconds = Math.round(date2 - date1)
+		const millisecondsPerDay = 86400e3
+		const diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay)
 
 		if (diffInMilliseconds < 0) return "0 minutes"
 

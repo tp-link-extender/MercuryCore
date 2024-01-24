@@ -26,8 +26,8 @@
 		if (e.metaKey || innerWidth < 640) return
 		e.preventDefault()
 
-		const { href } = e.currentTarget,
-			result = await preloadData(href)
+		const { href } = e.currentTarget
+		const result = await preloadData(href)
 
 		if (result.type == "loaded" && result.status == 200)
 			pushState(href, { openPlace: result.data })

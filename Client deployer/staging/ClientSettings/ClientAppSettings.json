@@ -42,7 +42,6 @@
 	"FFlagAllowBrowsableAppearInExplorer": "True",
 	"FFlagBetterGuiObjectInsertDefaults": "True",
 
-
 	"FFlagTrimExtraSlashesAfterRobloxDomain": "False",
 	"FFlagStudioIntellesenseEnabled": "False",
 	"FFlagStudioShowToolboxByDefault": "False"

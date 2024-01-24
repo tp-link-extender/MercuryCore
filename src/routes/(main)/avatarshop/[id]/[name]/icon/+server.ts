@@ -25,14 +25,14 @@ export async function GET({ locals, params }) {
 	if (!asset) error(404, "Not found")
 
 	const { user } = await authorise(locals)
-	if (asset.visibility == "Moderated")
+	if (asset.visibility === "Moderated")
 		// If the asset is moderated
-		redirect(302, `/mercurx.svg`)
-	if (asset.visibility != "Visible" && user.permissionLevel < 4)
+		redirect(302, "/mercurx.svg")
+	if (asset.visibility !== "Visible" && user.permissionLevel < 4)
 		// If the asset is pending review
-		redirect(302, `/light/mQuestion.svg`)
+		redirect(302, "/light/mQuestion.svg")
 
-	let file
+	let file: Buffer | undefined
 
 	for (const f of [`data/thumbnails/${id}`, `data/assets/${id}`])
 		try {
@@ -42,5 +42,5 @@ export async function GET({ locals, params }) {
 
 	if (file) return new Response(file)
 	// If the asset is visible, but the file doesn't exist (waiting for RCC?)
-	redirect(302, `/m....png`)
+	redirect(302, "/m....png")
 }

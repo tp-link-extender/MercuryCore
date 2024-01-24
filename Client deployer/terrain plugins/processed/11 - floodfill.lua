@@ -20,7 +20,8 @@ mouse.Button1Up:connect(function()
 end)
 
 local toolbar = this:CreateToolbar "Terrain"
-local toolbarbutton = toolbar:CreateButton("Flood Fill", "Flood Fill", "floodFill.png")
+local toolbarbutton =
+	toolbar:CreateButton("Flood Fill", "Flood Fill", "floodFill.png")
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -66,12 +67,13 @@ local currentMaterial = 1
 -- load our libraries
 local RbxGui = LoadLibrary "RbxGui"
 -- local RbxUtil = LoadLibrary "RbxUtility"
-game:GetService("ContentProvider"):Preload "http://banland.xyz/asset/?id=82741829"
+game:GetService("ContentProvider")
+	:Preload "http://banland.xyz/asset/?id=82741829"
 
 ------------------------- OBJECT DEFINITIONS ---------------------
 
 -- helper function for objects
-function getClosestColorToTerrainMaterial(terrainValue)
+local function getClosestColorToTerrainMaterial(terrainValue)
 	if terrainValue == 1 then
 		return BrickColor.new "Bright green"
 	elseif terrainValue == 2 then
@@ -157,7 +159,8 @@ function MouseHighlighter.Create(mouseUse)
 	highlighter.selectionPart.Size = Vector3.new(4, 4, 4)
 	highlighter.selectionPart.BottomSurface = 0
 	highlighter.selectionPart.TopSurface = 0
-	highlighter.selectionPart.BrickColor = getClosestColorToTerrainMaterial(currentMaterial)
+	highlighter.selectionPart.BrickColor =
+		getClosestColorToTerrainMaterial(currentMaterial)
 	highlighter.selectionPart.Parent = game.Workspace
 
 	local billboardGui = Instance.new "BillboardGui"
@@ -185,7 +188,11 @@ function MouseHighlighter.Create(mouseUse)
 			local thisTweenStamp = lastTweenChange
 
 			tweenDown = function()
-				if imageLabel and imageLabel:IsDescendantOf(game.Workspace) and thisTweenStamp == lastTweenChange then
+				if
+					imageLabel
+					and imageLabel:IsDescendantOf(game.Workspace)
+					and thisTweenStamp == lastTweenChange
+				then
 					imageLabel:TweenPosition(
 						UDim2.new(-0.35, 0, -0.5, 0),
 						Enum.EasingDirection.In,
@@ -197,7 +204,11 @@ function MouseHighlighter.Create(mouseUse)
 				end
 			end
 			tweenUp = function()
-				if imageLabel and imageLabel:IsDescendantOf(game.Workspace) and thisTweenStamp == lastTweenChange then
+				if
+					imageLabel
+					and imageLabel:IsDescendantOf(game.Workspace)
+					and thisTweenStamp == lastTweenChange
+				then
 					imageLabel:TweenPosition(
 						UDim2.new(-0.35, 0, -0.7, 0),
 						Enum.EasingDirection.Out,
@@ -260,17 +271,23 @@ function MouseHighlighter.Create(mouseUse)
 		cellPos = Vector3.new(cellPos.x, y, cellPos.z)
 
 		local lowVec = CellCenterToWorld(c, cellPos.x, cellPos.y - 1, cellPos.z)
-		local highVec = CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
+		local highVec =
+			CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
 		regionToSelect = Region3.new(lowVec, highVec)
 
 		highlighter.selectionPart.CFrame = regionToSelect.CFrame
 
 		if nil ~= highlighter.OnClicked and highlighter.mouseDown then
 			if nil == highlighter.lastUsedPoint then
-				highlighter.lastUsedPoint =
-					WorldToCellPreferEmpty(c, Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z))
+				highlighter.lastUsedPoint = WorldToCellPreferEmpty(
+					c,
+					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+				)
 			else
-				cellPos = WorldToCellPreferEmpty(c, Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z))
+				cellPos = WorldToCellPreferEmpty(
+					c,
+					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+				)
 
 				-- holdChange = cellPos - highlighter.lastUsedPoint
 
@@ -288,7 +305,8 @@ function MouseHighlighter.Create(mouseUse)
 end
 
 function MouseHighlighter:SetMaterial(newMaterial)
-	self.selectionPart.BrickColor = getClosestColorToTerrainMaterial(newMaterial)
+	self.selectionPart.BrickColor =
+		getClosestColorToTerrainMaterial(newMaterial)
 end
 
 function MouseHighlighter:GetPosition()
@@ -406,8 +424,12 @@ function ConfirmationPopup.Create(
 	popup.confirmationFrame = Instance.new "Frame"
 	popup.confirmationFrame.Name = "ConfirmationFrame"
 	popup.confirmationFrame.Size = UDim2.new(0, 280, 0, 160)
-	popup.confirmationFrame.Position =
-		UDim2.new(0.5, -popup.confirmationFrame.Size.X.Offset / 2, 0.5, -popup.confirmationFrame.Size.Y.Offset / 2)
+	popup.confirmationFrame.Position = UDim2.new(
+		0.5,
+		-popup.confirmationFrame.Size.X.Offset / 2,
+		0.5,
+		-popup.confirmationFrame.Size.Y.Offset / 2
+	)
 	popup.confirmationFrame.Style = Enum.FrameStyle.RobloxRound
 	popup.confirmationFrame.Parent = screenGui
 
@@ -607,9 +629,11 @@ function LoadProgressBar(text)
 
 			while pos < 8 do
 				if pos == spinPos or pos == ((spinPos + 1) % 8) then
-					spinnerIcons[pos + 1].Image = "http://banland.xyz/asset/?id=45880668"
+					spinnerIcons[pos + 1].Image =
+						"http://banland.xyz/asset/?id=45880668"
 				else
-					spinnerIcons[pos + 1].Image = "http://banland.xyz/asset/?id=45880710"
+					spinnerIcons[pos + 1].Image =
+						"http://banland.xyz/asset/?id=45880710"
 				end
 
 				pos = pos + 1
@@ -641,7 +665,11 @@ function breadthFill(x, y, z)
 	while yDepthChecks and #yDepthChecks > 0 do
 		local newYChecks = {}
 		for i = 1, #yDepthChecks do
-			local currYDepthChecks = doBreadthFill(yDepthChecks[i].xPos, yDepthChecks[i].yPos, yDepthChecks[i].zPos)
+			local currYDepthChecks = doBreadthFill(
+				yDepthChecks[i].xPos,
+				yDepthChecks[i].yPos,
+				yDepthChecks[i].zPos
+			)
 
 			if not processing then
 				return
@@ -678,8 +706,12 @@ function doBreadthFill(x, y, z)
 			end
 
 			count = count + 1
-			local newCellsToCheck =
-				breadthFillHelper(cellsToCheck[i].xPos, cellsToCheck[i].yPos, cellsToCheck[i].zPos, yDepthChecks)
+			local newCellsToCheck = breadthFillHelper(
+				cellsToCheck[i].xPos,
+				cellsToCheck[i].yPos,
+				cellsToCheck[i].zPos,
+				yDepthChecks
+			)
 			if newCellsToCheck and #newCellsToCheck > 0 then
 				for j = 1, #newCellsToCheck do
 					table.insert(cellCheckQueue, {
@@ -723,24 +755,47 @@ function breadthFillHelper(x, y, z, yDepthChecks)
 	end
 
 	local cellsToFill = {}
-	if cellInTerrain(x + 1, y, z) and getMaterial(x + 1, y, z) == emptyMaterial then
+	if
+		cellInTerrain(x + 1, y, z)
+		and getMaterial(x + 1, y, z) == emptyMaterial
+	then
 		table.insert(cellsToFill, { xPos = x + 1, yPos = y, zPos = z })
 	end
-	if cellInTerrain(x - 1, y, z) and getMaterial(x - 1, y, z) == emptyMaterial then
+	if
+		cellInTerrain(x - 1, y, z)
+		and getMaterial(x - 1, y, z) == emptyMaterial
+	then
 		table.insert(cellsToFill, { xPos = x - 1, yPos = y, zPos = z })
 	end
-	if cellInTerrain(x, y, z + 1) and getMaterial(x, y, z + 1) == emptyMaterial then
+	if
+		cellInTerrain(x, y, z + 1)
+		and getMaterial(x, y, z + 1) == emptyMaterial
+	then
 		table.insert(cellsToFill, { xPos = x, yPos = y, zPos = z + 1 })
 	end
-	if cellInTerrain(x, y, z - 1) and getMaterial(x, y, z - 1) == emptyMaterial then
+	if
+		cellInTerrain(x, y, z - 1)
+		and getMaterial(x, y, z - 1) == emptyMaterial
+	then
 		table.insert(cellsToFill, { xPos = x, yPos = y, zPos = z - 1 })
 	end
-	if cellInTerrain(x, y - 1, z) and getMaterial(x, y - 1, z) == emptyMaterial then
+	if
+		cellInTerrain(x, y - 1, z)
+		and getMaterial(x, y - 1, z) == emptyMaterial
+	then
 		table.insert(yDepthChecks, { xPos = x, yPos = y - 1, zPos = z })
 	end
 
 	for i = 1, #cellsToFill do
-		SetCell(c, cellsToFill[i].xPos, cellsToFill[i].yPos, cellsToFill[i].zPos, currentMaterial, 0, 0)
+		SetCell(
+			c,
+			cellsToFill[i].xPos,
+			cellsToFill[i].yPos,
+			cellsToFill[i].zPos,
+			currentMaterial,
+			0,
+			0
+		)
 	end
 
 	if #cellsToFill <= 0 then
@@ -790,8 +845,14 @@ screenGui = Instance.new "ScreenGui"
 screenGui.Name = "FloodFillGui"
 screenGui.Parent = game:GetService "CoreGui"
 
-dragBar, containerFrame, helpFrame, closeEvent =
-	RbxGui.CreatePluginFrame("Flood Fill", UDim2.new(0, 163, 0, 195), UDim2.new(0, 0, 0, 0), false, screenGui)
+local containerFrame
+dragBar, containerFrame, helpFrame, closeEvent = RbxGui.CreatePluginFrame(
+	"Flood Fill",
+	UDim2.new(0, 163, 0, 195),
+	UDim2.new(0, 0, 0, 0),
+	false,
+	screenGui
+)
 dragBar.Visible = false
 
 helpFrame.Size = UDim2.new(0, 200, 0, 190)
@@ -819,7 +880,10 @@ closeEvent.Event:connect(function()
 end)
 
 local terrainSelectorGui, terrainSelected, forceTerrainMaterialSelection =
-	RbxGui.CreateTerrainMaterialSelector(UDim2.new(1, -10, 0, 184), UDim2.new(0, 5, 0, 5))
+	RbxGui.CreateTerrainMaterialSelector(
+		UDim2.new(1, -10, 0, 184),
+		UDim2.new(0, 5, 0, 5)
+	)
 terrainSelectorGui.Parent = containerFrame
 terrainSelectorGui.BackgroundTransparency = 1
 terrainSelectorGui.BorderSizePixel = 0

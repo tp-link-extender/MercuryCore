@@ -34,8 +34,7 @@ export async function load({ locals, params }) {
 		}
 		categoryName: string
 		content: {
-			id: string
-			text: any
+			text: string
 			updated: string
 		}[]
 		dislikeCount: number
@@ -77,8 +76,8 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	reply: async ({ url, request, locals, params, getClientAddress }) => {
-		const { user } = await authorise(locals),
-			form = await superValidate(request, schema)
+		const { user } = await authorise(locals)
+		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
@@ -134,7 +133,7 @@ export const actions = {
 			}
 		)
 
-		if (user.id != replypost.authorId)
+		if (user.id !== replypost.authorId)
 			await query(
 				surql`
 					RELATE $sender->notification->$receiver CONTENT {
@@ -158,8 +157,8 @@ export const actions = {
 		await like(user.id, `forumReply:${newReplyId}`)
 	},
 	delete: async ({ url, locals }) => {
-		const { user } = await authorise(locals),
-			id = url.searchParams.get("id")
+		const { user } = await authorise(locals)
+		const id = url.searchParams.get("id")
 		if (!id) error(400, "Missing comment id")
 		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
 		// Prevents incorrect ids erroring the Surreal query as well
@@ -177,10 +176,10 @@ export const actions = {
 		)
 		if (!reply) error(404, "Reply not found")
 
-		if (reply.authorId != user.id)
+		if (reply.authorId !== user.id)
 			error(403, "You cannot delete someone else's reply")
 
-		if (reply.visibility != "Visible") error(400, "Reply already deleted")
+		if (reply.visibility !== "Visible") error(400, "Reply already deleted")
 
 		await query(
 			surql`
@@ -222,5 +221,6 @@ export const actions = {
 			{ forumReply: `forumReply:${id}` }
 		)
 	},
-	like: categoryActions.like as any,
+	like: e =>
+		categoryActions.like(e as unknown as import("../$types").RequestEvent),
 }

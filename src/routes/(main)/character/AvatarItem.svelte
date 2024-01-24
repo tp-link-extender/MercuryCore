@@ -9,10 +9,11 @@
 	export let num: number
 	export let total: number
 	export let currentTab: string
+	export let enhanceRegen: import("./$types").SubmitFunction
 </script>
 
 <form
-	use:enhance
+	use:enhance={enhanceRegen}
 	method="POST"
 	class="no-underline"
 	action="/character?/{asset.wearing
@@ -20,21 +21,21 @@
 		: ''}equip&tab={currentTab}&id={asset.id}">
 	<button
 		in:fade|global={{ num, total }}
-		class="card bg-a assetcard h-full p-4">
-		<div class="text-center pb-4">
+		class="card bg-a assetcard size-full p-4 cursor-pointer">
+		{#if asset.wearing}
+			<small
+				class="top-0 end-0 absolute p-2 py-1 rounded-1.5 font-bold
+				bg-blue-5">
+				Wearing
+			</small>
+		{/if}
+		<div class="text-center w-full pb-4">
 			<img
 				class="w-85%"
 				src="/avatarshop/{asset.id}/{asset.name}/icon"
 				alt={asset.name} />
 		</div>
-		{#if asset.wearing}
-			<div class="top-0 end-0 absolute">
-				<small class="p-2 py-1 rounded-1.5 font-bold bg-blue-5">
-					Wearing
-				</small>
-			</div>
-		{/if}
-		<span class="text-base">
+		<span class="text-base w-full">
 			{asset.name}
 		</span>
 	</button>
@@ -47,5 +48,5 @@
 	.assetcard
 		transition 0.3s
 		&:hover
-			background var(--darker) !important
+			background var(--darker)
 </style>

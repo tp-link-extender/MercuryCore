@@ -57,7 +57,10 @@ local roadDragBar, roadFrame, roadCloseEvent
 function coordHeight(x, z, height)
 	SetCells(
 		c,
-		Region3int16.new(Vector3int16.new(x, 1, z), Vector3int16.new(x, height, z)),
+		Region3int16.new(
+			Vector3int16.new(x, 1, z),
+			Vector3int16.new(x, height, z)
+		),
 		DefaultTerrainMaterial,
 		0,
 		0
@@ -80,7 +83,9 @@ function dist(dx1, dy1, dx2, dy2)
 end
 
 function dist3d(dx1, dy1, dz1, dx2, dy2, dz2)
-	return math.sqrt(math.pow(dist(dx1, dy1, dx2, dy2), 2) + math.pow(dz2 - dz1, 2))
+	return math.sqrt(
+		math.pow(dist(dx1, dy1, dx2, dy2), 2) + math.pow(dz2 - dz1, 2)
+	)
 end
 
 --create a path between coordinates (x1,z1) and (x2,z2) at height h in cluster c
@@ -100,14 +105,20 @@ function makePath(px1, pz1, px2, pz2, ph, pp)
 	for x = px1, px2 + n, incx do
 		SetCells(
 			c,
-			Region3int16.new(Vector3int16.new(x, h + 1, pz1 - 1), Vector3int16.new(x, ph + 3, pz1 + 1)),
+			Region3int16.new(
+				Vector3int16.new(x, h + 1, pz1 - 1),
+				Vector3int16.new(x, ph + 3, pz1 + 1)
+			),
 			0,
 			0,
 			0
 		)
 		SetCells(
 			c,
-			Region3int16.new(Vector3int16.new(x, ph, pz1 - 1), Vector3int16.new(x, ph, pz1 + 1)),
+			Region3int16.new(
+				Vector3int16.new(x, ph, pz1 - 1),
+				Vector3int16.new(x, ph, pz1 + 1)
+			),
 			DefaultTerrainMaterial,
 			0,
 			0
@@ -139,14 +150,20 @@ function makePath(px1, pz1, px2, pz2, ph, pp)
 	for z = pz1 + m, pz2 + n, incz do
 		SetCells(
 			c,
-			Region3int16.new(Vector3int16.new(px2 - 1, ph + 1, z), Vector3int16.new(px2 + 1, ph + 3, z)),
+			Region3int16.new(
+				Vector3int16.new(px2 - 1, ph + 1, z),
+				Vector3int16.new(px2 + 1, ph + 3, z)
+			),
 			0,
 			0,
 			0
 		)
 		SetCells(
 			c,
-			Region3int16.new(Vector3int16.new(x2 - 1, ph, z), Vector3int16.new(px2 + 1, ph, z)),
+			Region3int16.new(
+				Vector3int16.new(x2 - 1, ph, z),
+				Vector3int16.new(px2 + 1, ph, z)
+			),
 			DefaultTerrainMaterial,
 			0,
 			0
@@ -178,8 +195,11 @@ end
 -- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
 function PlaneIntersection(vectorPos)
 	local currCamera = game.Workspace.CurrentCamera
-	local startPos =
-		Vector3.new(currCamera.CoordinateFrame.p.X, currCamera.CoordinateFrame.p.Y, currCamera.CoordinateFrame.p.Z)
+	local startPos = Vector3.new(
+		currCamera.CoordinateFrame.p.X,
+		currCamera.CoordinateFrame.p.Y,
+		currCamera.CoordinateFrame.p.Z
+	)
 	local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
 	local normal = Vector3.new(0, 1, 0)
 	local p3 = Vector3.new(0, 0, 0)
@@ -201,14 +221,22 @@ end
 
 function onClicked(mouseC)
 	if on then
-		local cellPos = WorldToCellPreferEmpty(c, Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z))
-		local solidCell = WorldToCellPreferSolid(c, Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z))
+		local cellPos = WorldToCellPreferEmpty(
+			c,
+			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
+		)
+		local solidCell = WorldToCellPreferSolid(
+			c,
+			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
+		)
 		local success = false
 
 		-- If nothing was hit, do the plane intersection.
 		if 0 == GetCell(c, solidCell.X, solidCell.Y, solidCell.Z).Value then
 			--print('Plane Intersection happens')
-			success, cellPos = PlaneIntersection(Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z))
+			success, cellPos = PlaneIntersection(
+				Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
+			)
 			if not success then
 				cellPos = solidCell
 			end
@@ -282,14 +310,21 @@ g.Name = "RoadGui"
 g.Parent = game:GetService "CoreGui"
 
 roadDragBar, roadFrame, roadHelpFrame, roadCloseEvent =
-	RbxGui.CreatePluginFrame("Roads", UDim2.new(0, 141, 0, 80), UDim2.new(0, 0, 0, 0), false, g)
+	RbxGui.CreatePluginFrame(
+		"Roads",
+		UDim2.new(0, 141, 0, 80),
+		UDim2.new(0, 0, 0, 0),
+		false,
+		g
+	)
 roadDragBar.Visible = false
 roadCloseEvent.Event:connect(function()
 	Off()
 end)
 
 local roadTextHelper = Instance.new "TextLabel"
-roadTextHelper.Text = "Click once to set the starting point and again to set the endpoint of the road."
+roadTextHelper.Text =
+	"Click once to set the starting point and again to set the endpoint of the road."
 roadTextHelper.Font = Enum.Font.ArialBold
 roadTextHelper.FontSize = Enum.FontSize.Size14
 roadTextHelper.TextColor3 = Color3.new(1, 1, 1)

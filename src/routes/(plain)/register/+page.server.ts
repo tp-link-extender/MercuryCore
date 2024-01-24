@@ -5,6 +5,7 @@ import { redirect, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import requestRender from "$lib/server/requestRender"
+import type { GlobalDatabaseUserAttributes } from "lucia"
 
 const schemaInitial = z.object({
 	username: z
@@ -42,7 +43,7 @@ export const actions = {
 		email = email.toLowerCase() || ""
 		regkey = regkey.split("-")[1] || ""
 
-		if (cpassword != password)
+		if (cpassword !== password)
 			return formError(
 				form,
 				["password", "cpassword"],
@@ -103,7 +104,7 @@ export const actions = {
 					email,
 					permissionLevel: 1,
 					currency: 0,
-				} as any,
+				} as GlobalDatabaseUserAttributes,
 			})
 
 			const { number } = await squery<{
@@ -131,7 +132,7 @@ export const actions = {
 			)
 		} catch (e) {
 			const error = e as Error
-			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID")
+			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID")
 				return formError(
 					form,
 					["username"],
@@ -151,9 +152,9 @@ export const actions = {
 		const form = await superValidate(request, schemaInitial)
 		if (!form.valid) return formError(form)
 
-		let { username, password, cpassword } = form.data
+		const { username, password, cpassword } = form.data
 
-		if (cpassword != password)
+		if (cpassword !== password)
 			return formError(
 				form,
 				["password", "cpassword"],
@@ -181,7 +182,7 @@ export const actions = {
 					email: "",
 					permissionLevel: 5,
 					currency: 999999,
-				} as any,
+				} as GlobalDatabaseUserAttributes,
 			})
 
 			locals.auth.setSession(
@@ -192,7 +193,7 @@ export const actions = {
 			)
 		} catch (e) {
 			const error = e as Error
-			if (error.message == "AUTH_DUPLICATE_PROVIDER_ID")
+			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID")
 				return formError(
 					form,
 					["username"],

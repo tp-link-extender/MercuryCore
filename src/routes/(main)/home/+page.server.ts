@@ -21,9 +21,9 @@ export async function load({ locals }) {
 		few: "rd",
 		other: "th",
 	}
-	const ordinals = new Intl.PluralRules("en", { type: "ordinal" }),
-		ordinal = (n: number) => `${n}${suffixes[ordinals.select(n)]}`,
-		greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
+	const ordinals = new Intl.PluralRules("en", { type: "ordinal" })
+	const ordinal = (n: number) => `${n}${suffixes[ordinals.select(n)]}`
+	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
 	const facts = [
 		`You joined mercury on ${user?.accountCreated
 			.toLocaleString()
@@ -91,10 +91,7 @@ export async function load({ locals }) {
 				*,
 				(SELECT text, updated FROM $parent.content
 				ORDER BY updated DESC) AS content,
-				(SELECT
-					number,
-					status,
-					username
+				(SELECT number, status, username
 				FROM <-posted<-user)[0] as authorUser
 			FROM statusPost
 			LIMIT 40`),

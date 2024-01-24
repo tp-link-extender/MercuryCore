@@ -5,7 +5,7 @@ export async function GET({ url, request }) {
 	const ticket = url.searchParams.get("ticket") as string
 
 	if (!ticket) error(400, "Invalid Request")
-	if (request.headers.get("user-agent") != "Roblox/WinInet")
+	if (request.headers.get("user-agent") !== "Roblox/WinInet")
 		error(400, "Invalid Request")
 
 	await query(

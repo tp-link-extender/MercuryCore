@@ -10,8 +10,8 @@ export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
 		error(400, `Invalid user id: ${params.number}`)
 
-	const number = parseInt(params.number),
-		{ user } = await authorise(locals)
+	const number = parseInt(params.number)
+	const { user } = await authorise(locals)
 	const userExists = await squery<{
 		bio: {
 			id: string
@@ -133,7 +133,7 @@ type ActionFunction = (
 		user2: string
 	},
 	user: import("lucia").User
-) => Promise<any>
+) => Promise<unknown>
 
 const acceptExisting: ActionFunction = (params, user) =>
 	query(
@@ -159,11 +159,11 @@ const acceptExisting: ActionFunction = (params, user) =>
 	)
 
 async function getInteractData(e: RequestEvent) {
-	const { request, locals } = e,
-		{ user } = await authorise(locals),
-		{ user2 } = await getData(e)
+	const { request, locals } = e
+	const { user } = await authorise(locals)
+	const { user2 } = await getData(e)
 
-	if (user.id == user2.id) error(400, "You can't friend/follow yourself")
+	if (user.id === user2.id) error(400, "You can't friend/follow yourself")
 
 	return {
 		user,
@@ -204,8 +204,7 @@ export const actions = {
 		await query(
 			surql`
 				DELETE $user->follows WHERE out = $user2;
-				DELETE $user->notification WHERE in = $user
-					AND out = $user2
+				DELETE $user->notification WHERE out = $user2
 					AND type = $type
 					AND read = false`,
 			{
@@ -220,8 +219,7 @@ export const actions = {
 			surql`
 				DELETE $user<-friends WHERE in = $user2;
 				DELETE $user->friends WHERE out = $user2;
-				DELETE $user->notification WHERE in = $user
-					AND out = $user2
+				DELETE $user->notification WHERE out = $user2
 					AND type = $type
 					AND read = false`,
 			{
@@ -269,8 +267,7 @@ export const actions = {
 		await query(
 			surql`
 				DELETE $user->request WHERE out = $user2;
-				DELETE $user->notification WHERE in = $user
-					AND out = $user2
+				DELETE $user->notification WHERE out = $user2
 					AND type = $type
 					AND read = false`,
 			{
@@ -292,17 +289,18 @@ export const actions = {
 		await acceptExisting(params, user)
 	},
 	rerender: async e => {
-		const { locals, params, getClientAddress } = e
-		await authorise(locals, 3)
+		const { locals, params } = e
+		await authorise(locals, 5)
 
-		const { user2 } = await getData(e),
-			limit = ratelimit({}, "rerender", getClientAddress, 60)
-		if (limit) return fail(429, { msg: "Too many requests" })
+		const { user2 } = await getData(e)
 
 		try {
 			await requestRender("Avatar", parseInt(params.number), true)
 			return {
-				avatar: `/api/avatar/${user2.username}-body?r=${Math.random()}`,
+				avatarBody: `/api/avatar/${
+					user2.username
+				}-body?r=${Math.random()}`,
+				avatar: `/api/avatar/${user2.username}?r=${Math.random()}`,
 			}
 		} catch (e) {
 			console.error(e)

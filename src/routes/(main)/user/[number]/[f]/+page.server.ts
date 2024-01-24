@@ -3,32 +3,23 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
-const types = ["friends", "followers", "following"],
-	usersQueries = {
-		friends: surql`
-			SELECT
-				number,
-				status,
-				username
-			FROM $user->friends->user OR $user<-friends<-user`,
-		followers: surql`
-			SELECT
-				number,
-				status,
-				username
-			FROM $user<-follows<-user`,
-		following: surql`
-			SELECT
-				number,
-				status,
-				username
-			FROM $user->follows->user`,
-	},
-	numberQueries = {
-		friends: surql`count($user->friends->user) + count($user<-friends<-user)`,
-		followers: surql`count($user<-follows<-user)`,
-		following: surql`count($user->follows->user)`,
-	}
+const types = ["friends", "followers", "following"]
+const usersQueries = {
+	friends: surql`
+		SELECT number, status, username
+		FROM $user->friends->user OR $user<-friends<-user`,
+	followers: surql`
+		SELECT number, status, username
+		FROM $user<-follows<-user`,
+	following: surql`
+		SELECT number, status, username
+		FROM $user->follows->user`,
+}
+const numberQueries = {
+	friends: surql`count($user->friends->user) + count($user<-friends<-user)`,
+	followers: surql`count($user<-follows<-user)`,
+	following: surql`count($user->follows->user)`,
+}
 
 export async function load({ params }) {
 	if (!/^\d+$/.test(params.number))
@@ -37,16 +28,16 @@ export async function load({ params }) {
 
 	if (params.f && !types.includes(params.f)) error(400, "Not found")
 
-	const type = params.f as keyof typeof usersQueries,
-		user = await squery<{
-			id: string
-			username: string
-		}>(
-			surql`
-				SELECT id, username FROM user
-				WHERE number = $number`,
-			{ number }
-		)
+	const type = params.f as keyof typeof usersQueries
+	const user = await squery<{
+		id: string
+		username: string
+	}>(
+		surql`
+			SELECT id, username FROM user
+			WHERE number = $number`,
+		{ number }
+	)
 
 	if (!user) error(404, "Not found")
 

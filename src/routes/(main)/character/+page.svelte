@@ -1,12 +1,25 @@
 <script lang="ts">
 	import { browser } from "$app/environment"
+	import { applyAction } from "$app/forms"
+	import { invalidateAll } from "$app/navigation"
 	import AvatarItem from "./AvatarItem.svelte"
 
-	export let data, form
+	export let data
 	const { user } = data
+	export let form
 
-	let query = data.query,
-		searchedData: typeof data.assets = []
+	let query = data.query
+	let searchedData: typeof data.assets = []
+	let regenerating = false
+
+	const enhanceRegen: import("./$types").SubmitFunction = () => {
+		regenerating = true
+		return async ({ result }) => {
+			if (result.type === "success") await invalidateAll()
+			await applyAction(result)
+			regenerating = false
+		}
+	}
 
 	// Run function whenever query changes
 	$: query &&
@@ -19,16 +32,20 @@
 
 			const response = await fetch("/character?/search", {
 				method: "POST",
-				body: formdata,
+				body: formdata
 			})
-			const result: any = deserialize(await response.text())
+			const result = deserialize(await response.text()) as {
+				data: {
+					assets: typeof data.assets
+				}
+			}
 
 			searchedData = result.data.assets
 		})()
 
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v),
+		restore: v => (query = v)
 	}
 
 	const tabTypes: { [k: string]: number } = {
@@ -38,7 +55,7 @@
 		"T-Shirts": 2,
 		Shirts: 11,
 		Pants: 12,
-		Gear: 19,
+		Gear: 19
 	}
 	let tabData = TabData(data.url, Object.keys(tabTypes))
 
@@ -48,7 +65,7 @@
 		LeftArm: user?.bodyColours.LeftArm,
 		RightArm: user?.bodyColours.RightArm,
 		LeftLeg: user?.bodyColours.LeftLeg,
-		RightLeg: user?.bodyColours.RightLeg,
+		RightLeg: user?.bodyColours.RightLeg
 	}
 	const bodyPartModals: { [k: string]: HTMLInputElement } = {}
 	const bodyColours = [
@@ -56,7 +73,7 @@
 		1013, 107, 1028, 29, 119, 37, 1021, 1020, 28, 141, 1029, 226, 1008, 24,
 		1017, 1009, 105, 1025, 125, 101, 1007, 1016, 1032, 1004, 21, 9, 1026,
 		1006, 153, 1023, 1015, 1031, 104, 5, 1030, 18, 106, 38, 1014, 217, 192,
-		1001, 1, 208, 1002, 194, 199, 26, 1003,
+		1001, 1, 208, 1002, 194, 199, 26, 1003
 	]
 	const brickToHex: { [k: number]: string } = {
 		1: "F2F3F3",
@@ -120,7 +137,7 @@
 		1029: "FFFFCC",
 		1030: "FFCC99",
 		1031: "6225D1",
-		1032: "FF00BF",
+		1032: "FF00BF"
 	}
 	const styles: { [k: string]: string } = {
 		Head: `left: 68px; height: 3rem; width: 3rem`,
@@ -128,7 +145,7 @@
 		LeftArm: `left: 1px; top: 54px; height: 88px; width: 40px`,
 		RightArm: `left: 142px; top: 54px; height: 88px; width: 40px`,
 		LeftLeg: `left: 3rem; top: 148px; height: 88px; width: 40px`,
-		RightLeg: `left: 96px; top: 148px; height: 88px; width: 40px`,
+		RightLeg: `left: 96px; top: 148px; height: 88px; width: 40px`
 	}
 
 	$: assets = (query && browser ? searchedData : data.assets || []).filter(
@@ -144,7 +161,7 @@
 	<div class="grid lg:grid-cols-4 gap-4 pt-6">
 		<div class="<md:col-span-3 flex lg:flex-col gap-4">
 			<div class="w-full card p-4">
-				<form use:enhance action="?/regen" method="POST">
+				<form use:enhance={enhanceRegen} action="?/regen" method="POST">
 					<button class="btn btn-secondary w-full">
 						<fa fa-rotate />
 						Regenerate
@@ -155,7 +172,8 @@
 				</p>
 				<img
 					alt="Your character"
-					class="w-full"
+					class:opacity-50={regenerating}
+					class="w-full transition-opacity duration-300"
 					src={form?.avatar || `/api/avatar/${user.username}-body`} />
 			</div>
 			<div class="w-full card p-4">
@@ -185,12 +203,12 @@
 				action="/character?tab={tabData.currentTab}"
 				class="input-group pb-4">
 				<input
-				bind:value={query}
-				type="text"
-				name="q"
-				placeholder="Search for an item"
-				aria-label="Search for an item"
-				aria-describedby="button-addon2" />
+					bind:value={query}
+					type="text"
+					name="q"
+					placeholder="Search for an item"
+					aria-label="Search for an item"
+					aria-describedby="button-addon2" />
 				<input type="hidden" name="tab" value={tabData.currentTab} />
 				<button
 					class="btn btn-secondary"
@@ -204,8 +222,9 @@
 					<AvatarItem
 						{asset}
 						{num}
+						total={(assets || []).length}
 						currentTab={tabData.currentTab}
-						total={(assets || []).length} />
+						{enhanceRegen} />
 				{/each}
 				{#if query && assets.length == 0}
 					<h2 class="text-xs pt-12">
@@ -233,7 +252,7 @@
 			<div id="colourPicker" class="text-left mx-auto">
 				{#each bodyColours as colour}
 					<form
-						use:enhance
+						use:enhance={enhanceRegen}
 						method="POST"
 						action="?/paint&p={bodyPart}&c={colour}"
 						on:submit={() => {

@@ -7,19 +7,19 @@ import type {
 	UserSchema,
 } from "lucia"
 
-export const adapter = (
-	modelNames = {
-		user: "user",
-		session: "session",
-		key: "key",
-	}
-): InitializeAdapter<Adapter> => {
-	return LuciaError => ({
+export const adapter =
+	(
+		modelNames = {
+			user: "user",
+			session: "session",
+			key: "key",
+		}
+	): InitializeAdapter<Adapter> =>
+	LuciaError => ({
 		getUser: userId =>
-			squery<UserSchema>(
-				surql`SELECT *, meta::id(id) AS id FROM $id`,
-				{ id: `${modelNames.user}:${userId}` }
-			),
+			squery<UserSchema>(surql`SELECT *, meta::id(id) AS id FROM $id`, {
+				id: `${modelNames.user}:${userId}`,
+			}),
 		setUser: async (user, key) => {
 			// Can't create the user number in the MERGE step, or it would
 			// create two numbers (why?) and miss out all the odd ones
@@ -134,9 +134,6 @@ export const adapter = (
 			)
 		},
 		updateSession: async (userId, partialSession) => {
-			delete partialSession.id
-			delete partialSession.user_id
-
 			await query(
 				surql`
 					UPDATE session MERGE $partialSession
@@ -158,14 +155,13 @@ export const adapter = (
 					FROM $key`,
 				{ key: `${modelNames.key}:⟨${keyId}⟩` }
 			),
-		getKeysByUserId: async userId => {
-			return await query<KeySchema>(
+		getKeysByUserId: userId =>
+			query<KeySchema>(
 				surql`
 					SELECT * FROM ${modelNames.key}
 					WHERE $user ∈ <-usingKey<-user`,
 				{ user: `${modelNames.user}:${userId}` }
-			)
-		},
+			),
 		setKey: async key => {
 			const userExists = await squery(surql`SELECT true FROM $id`, {
 				id: `${modelNames.user}:${key.user_id}`,
@@ -210,4 +206,3 @@ export const adapter = (
 			)
 		},
 	})
-}

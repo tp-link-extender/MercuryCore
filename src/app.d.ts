@@ -46,7 +46,6 @@ declare global {
 			status: "Playing" | "Online" | "Offline"
 			username: string
 		}
-		type DatabaseSessionAttributes = {}
 	}
 
 	// sveltekit-autoimport types

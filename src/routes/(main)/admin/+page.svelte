@@ -43,16 +43,17 @@
 				).json()
 			).data
 		)
-		return (diskSpace = {
+		diskSpace = {
 			free: jsonData[1],
 			size: jsonData[2],
-		})
+		}
+		return diskSpace
 	}
 
 	export let data
 	const { user } = data
 
-	if (user?.permissionLevel == 5) {
+	if (user?.permissionLevel === 5) {
 		panel.Economy.push(["Daily Stipend", "/admin/stipend", "far fa-clock"])
 		panel.Administration = [
 			["Banners", "/admin/banners", "fa fa-bullhorn"],
@@ -63,7 +64,7 @@
 	}
 
 	const tabNames = ["Moderation", "Economy", "Statistics"]
-	if (user?.permissionLevel == 5) tabNames.unshift("Administration")
+	if (user?.permissionLevel === 5) tabNames.unshift("Administration")
 
 	let tabData = TabData(data.url, tabNames)
 </script>
@@ -96,8 +97,7 @@
 
 		<Tab {tabData}>
 			<div class="lg:grid grid-cols-[7fr_5fr] gap-4">
-				<div
-					class="flex flex-col gap-4">
+				<div class="flex flex-col gap-4">
 					<div class="card bg-a p-4">
 						<h3>
 							<fa fa-memory />

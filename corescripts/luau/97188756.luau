@@ -1415,7 +1415,7 @@ function Chat:CreateSafeChatGui()
 			Size = UDim2.new(0, 44, 0, 31),
 			Position = UDim2.new(0, 1, 0.35, 0),
 			BackgroundTransparency = 1,
-			Image = "https://banland.xyz/asset/?id=97080365",
+			Image = "http://banland.xyz/asset/?id=97080365",
 		},
 	}
 
@@ -1462,7 +1462,7 @@ function Chat:CreateTouchButton()
 			Size = UDim2.new(1, 0, 1, 0),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,
-			Image = "https://banland.xyz/asset/?id=97078724",
+			Image = "http://banland.xyz/asset/?id=97078724",
 		},
 	}
 	self.TapToChatLabel = self.ChatTouchFrame.ChatLabel
@@ -1567,7 +1567,7 @@ function Chat:CreateGui()
 
 		Gui.Create "ImageLabel" {
 			Name = "Background",
-			Image = "https://banland.xyz/asset/?id=97120937", --96551212';
+			Image = "http://banland.xyz/asset/?id=97120937", --96551212';
 			Size = UDim2.new(1.3, 0, 1.64, 0),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,

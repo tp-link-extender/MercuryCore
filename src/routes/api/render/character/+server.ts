@@ -1,4 +1,3 @@
-
 export const GET = () =>
 	new Response(`<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime"

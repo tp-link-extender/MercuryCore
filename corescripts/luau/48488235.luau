@@ -10,9 +10,9 @@ print "[Mercury]: Loaded corescript 48488235"
 local ADMINS = {
 	taskmanager = 1,
 	heliodex = 1,
-	multako = "https://banland.xyz/asset?id=6923328292",
+	multako = "http://banland.xyz/asset?id=6923328292",
 	mercury = 1,
-	pizzaboxer = "https://banland.xyz/asset?id=6917566633",
+	pizzaboxer = "http://banland.xyz/asset?id=6917566633",
 }
 
 local Images = {
@@ -87,7 +87,7 @@ end
 local function getMembershipTypeIcon(membershipType, playerName)
 	if ADMINS[string.lower(playerName)] ~= nil then
 		if ADMINS[string.lower(playerName)] == 1 then
-			return "https://banland.xyz/asset?id=6923330951"
+			return "http://banland.xyz/asset?id=6923330951"
 		end
 		return ADMINS[string.lower(playerName)]
 	elseif membershipType == Enum.MembershipType.None then
@@ -110,11 +110,11 @@ local function getFriendStatusIcon(friendStatus)
 	then
 		return ""
 	elseif friendStatus == Enum.FriendStatus.Friend then
-		return "https://banland.xyz/asset?id=99749771"
+		return "http://banland.xyz/asset?id=99749771"
 	elseif friendStatus == Enum.FriendStatus.FriendRequestSent then
-		return "https://banland.xyz/asset?id=99776888"
+		return "http://banland.xyz/asset?id=99776888"
 	elseif friendStatus == Enum.FriendStatus.FriendRequestReceived then
-		return "https://banland.xyz/asset?id=99776838"
+		return "http://banland.xyz/asset?id=99776838"
 	else
 		error(`Unknown FriendStatus {friendStatus}`)
 	end
@@ -155,20 +155,20 @@ local function MakePopupButton(nparent, ntext, index, last)
 		Parent = nparent,
 	}
 	if index == 0 then
-		tobj.Image = "https://banland.xyz/asset?id=97108784"
+		tobj.Image = "http://banland.xyz/asset?id=97108784"
 	elseif last then
 		if index % 2 == 1 then
-			tobj.Image = "https://banland.xyz/asset?id="
+			tobj.Image = "http://banland.xyz/asset?id="
 				.. Images.LightPopupBottom
 		else
-			tobj.Image = "https://banland.xyz/asset?id="
+			tobj.Image = "http://banland.xyz/asset?id="
 				.. Images.DarkPopupBottom
 		end
 	else
 		if index % 2 == 1 then
-			tobj.Image = "https://banland.xyz/asset?id=97112126"
+			tobj.Image = "http://banland.xyz/asset?id=97112126"
 		else
-			tobj.Image = "https://banland.xyz/asset?id=97109338"
+			tobj.Image = "http://banland.xyz/asset?id=97109338"
 		end
 	end
 	return tobj
@@ -219,7 +219,7 @@ HeaderFrame = Create "Frame" {
 	Position = UDim2.new(0, 0, 0, 0),
 	Size = UDim2.new(1, 0, 0.07, 0),
 	Parent = MainFrame,
-	MakeBackgroundGuiObj "https://banland.xyz/asset?id=94692054",
+	MakeBackgroundGuiObj "http://banland.xyz/asset?id=94692054",
 }
 local HeaderFrameHeight = HeaderFrame.Size.Y.Scale
 local MaximizeButton = Create "ImageButton" {
@@ -276,7 +276,7 @@ local BottomFrame = Create "Frame" {
 	Position = UDim2.new(0, 0, 0.07, 0),
 	Size = UDim2.new(1, 0, 0.03, 0),
 	Parent = BottomShiftFrame,
-	MakeBackgroundGuiObj "https://banland.xyz/asset?id=94754966",
+	MakeBackgroundGuiObj "http://banland.xyz/asset?id=94754966",
 }
 local ExtendButton = Create "ImageButton" {
 	Name = "bigbutton",
@@ -291,7 +291,7 @@ local ExtendTab = Create "ImageButton" {
 	Name = "extendTab",
 	Active = true,
 	BackgroundTransparency = 1,
-	Image = "https://banland.xyz/asset?id=94692731",
+	Image = "http://banland.xyz/asset?id=94692731",
 	Position = UDim2.new(0.608, 0, 0.3, 0),
 	Size = UDim2.new(0.3, 0, 0.7, 0),
 	Parent = BottomFrame,
@@ -443,7 +443,7 @@ local MiddleBGTemplate = Create "Frame" {
 	BackgroundTransparency = 1,
 	Position = UDim2.new(100, 0, 0.07, 0),
 	Size = UDim2.new(0.5, 0, 0.025, 0), --UDim2.new(1, 0, .03, 0),
-	MakeBackgroundGuiObj "https://banland.xyz/asset?id=94692025",
+	MakeBackgroundGuiObj "http://banland.xyz/asset?id=94692025",
 }
 
 -- REPORT ABUSE OBJECTS
@@ -474,7 +474,7 @@ local AbuseSettingsFrame = Create "Frame" {
 	Size = UDim2.new(1, 0, 1, 0),
 	Active = true,
 	BackgroundTransparency = 1,
-	MakeBackgroundGuiObj "https://banland.xyz/asset?id=96488767", -- 96480351'),
+	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96488767", -- 96480351'),
 	Create "TextLabel" {
 		Name = "Title",
 		Text = "Report Abuse",
@@ -553,7 +553,7 @@ local SubmitReportButton = Create "ImageButton" {
 	Position = UDim2.new(0.5, -200, 1, -80),
 	Size = UDim2.new(0, 150, 0, 50),
 	AutoButtonColor = false,
-	Image = "https://banland.xyz/asset?id=96502438", -- 96501119',
+	Image = "http://banland.xyz/asset?id=96502438", -- 96501119',
 	Parent = AbuseSettingsFrame,
 }
 
@@ -563,7 +563,7 @@ local CancelReportButton = Create "ImageButton" {
 	Position = UDim2.new(0.5, 50, 1, -80),
 	Size = UDim2.new(0, 150, 0, 50),
 	AutoButtonColor = true,
-	Image = "https://banland.xyz/asset?id=96500683",
+	Image = "http://banland.xyz/asset?id=96500683",
 	Parent = AbuseSettingsFrame,
 }
 
@@ -599,7 +599,7 @@ local CalmingAbuseBox = Create "Frame" {
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.25, 0, 0.300000012, 0),
 	Size = UDim2.new(0.5, 0, 0.370000005, 0),
-	MakeBackgroundGuiObj "https://banland.xyz/asset?id=96506233",
+	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96506233",
 	Create "TextLabel" {
 		Name = "Header",
 		Position = UDim2.new(0, 10, 0.05, 0),
@@ -632,7 +632,7 @@ local CalmingAbuseBox = Create "Frame" {
 		Position = UDim2.new(0.5, -75, 1, -80),
 		Size = UDim2.new(0, 150, 0, 50),
 		AutoButtonColor = true,
-		Image = "https://banland.xyz/asset?id=96507959",
+		Image = "http://banland.xyz/asset?id=96507959",
 	},
 }
 local NormalAbuseBox = Create "Frame" {
@@ -640,7 +640,7 @@ local NormalAbuseBox = Create "Frame" {
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.25, 0, 0.300000012, 0),
 	Size = UDim2.new(0.5, 0, 0.370000005, 0),
-	MakeBackgroundGuiObj "https://banland.xyz/asset?id=96506233",
+	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96506233",
 	Create "TextLabel" {
 		Name = "Header",
 		Position = UDim2.new(0, 10, 0.05, 0),
@@ -673,7 +673,7 @@ local NormalAbuseBox = Create "Frame" {
 		Position = UDim2.new(0.5, -75, 1, -80),
 		Size = UDim2.new(0, 150, 0, 50),
 		AutoButtonColor = true,
-		Image = "https://banland.xyz/asset?id=96507959",
+		Image = "http://banland.xyz/asset?id=96507959",
 	},
 }
 
@@ -693,7 +693,7 @@ local debugFrame = Create "Frame" {
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.25, 0, 0.300000012, 0),
 	Size = UDim2.new(0.5, 0, 0.370000005, 0),
-	MakeBackgroundGuiObj "https://banland.xyz/asset?id=96506233",
+	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96506233",
 }
 local debugOutput = Create "TextLabel" {
 	BackgroundTransparency = 0.8,
@@ -746,8 +746,9 @@ local RbxGui = assert(LoadLibrary "RbxGui")
 local DefaultEntriesOnScreen = 8
 
 for _, i in pairs(Images) do
-	Game:GetService("ContentProvider")
-		:Preload(`https://banland.xyz/asset?id={i}`)
+	Game:GetService("ContentProvider"):Preload(
+		`http://banland.xyz/asset?id={i}`
+	)
 end
 
 -- ordered array of 'score data', each entry has:
@@ -1014,25 +1015,24 @@ local function HighlightMyRank(
 	MemberButton,
 	AdminButton
 )
-	BanPlayerButton.Image =
-		`https://banland.xyz/asset?id={Images.LightPopupMid}`
-	VisitorButton.Image = `https://banland.xyz/asset?id={Images.DarkPopupMid}`
-	MemberButton.Image = `https://banland.xyz/asset?id={Images.LightPopupMid}`
-	AdminButton.Image = `https://banland.xyz/asset?id={Images.DarkPopupBottom}`
+	BanPlayerButton.Image = `http://banland.xyz/asset?id={Images.LightPopupMid}`
+	VisitorButton.Image = `http://banland.xyz/asset?id={Images.DarkPopupMid}`
+	MemberButton.Image = `http://banland.xyz/asset?id={Images.LightPopupMid}`
+	AdminButton.Image = `http://banland.xyz/asset?id={Images.DarkPopupBottom}`
 
 	local rank = player.PersonalServerRank
 	if rank <= PrivilegeLevel.Banned then
 		BanPlayerButton.Image =
-			`https://banland.xyz/asset?id={Images.LightBluePopupMid}`
+			`http://banland.xyz/asset?id={Images.LightBluePopupMid}`
 	elseif rank <= PrivilegeLevel.Visitor then
 		VisitorButton.Image =
-			`https://banland.xyz/asset?id={Images.DarkBluePopupMid}`
+			`http://banland.xyz/asset?id={Images.DarkBluePopupMid}`
 	elseif rank <= PrivilegeLevel.Member then
 		MemberButton.Image =
-			`https://banland.xyz/asset?id={Images.LightBluePopupMid}`
+			`http://banland.xyz/asset?id={Images.LightBluePopupMid}`
 	elseif rank <= PrivilegeLevel.Admin then
 		AdminButton.Image =
-			`https://banland.xyz/asset?id={Images.DarkBluePopupBottom}`
+			`http://banland.xyz/asset?id={Images.DarkBluePopupBottom}`
 	end
 end
 
@@ -1071,7 +1071,7 @@ end
 local function CloseAbuseDialog()
 	AbuseName = nil
 	SubmitReportButton.Active = false
-	SubmitReportButton.Image = "https://banland.xyz/asset?id=96502438" -- 96501119',
+	SubmitReportButton.Image = "http://banland.xyz/asset?id=96502438" -- 96501119',
 	AbuseDescriptionBox:Destroy()
 	CalmingAbuseBox.Parent = nil
 	NormalAbuseBox.Parent = nil
@@ -1153,7 +1153,7 @@ local function InitReportAbuse()
 		AbuseName = abuseText
 		if AbuseName and SelectedPlayer then
 			SubmitReportButton.Active = true
-			SubmitReportButton.Image = "https://banland.xyz/asset?id=96501119"
+			SubmitReportButton.Image = "http://banland.xyz/asset?id=96501119"
 		end
 	end
 
@@ -1449,16 +1449,16 @@ local function UpdateMaximize()
 			BASE_TWEEN * 1.2,
 			true
 		)
-		HeaderFrame.Background.Image = "https://banland.xyz/asset?id="
+		HeaderFrame.Background.Image = "http://banland.xyz/asset?id="
 			.. Images.LargeHeader
-		BottomFrame.Background.Image = "https://banland.xyz/asset?id="
+		BottomFrame.Background.Image = "http://banland.xyz/asset?id="
 			.. Images.LargeBottom
 		for index, i in ipairs(MiddleFrameBackgrounds) do
 			if (index % 2) ~= 1 then
-				i.Background.Image = "https://banland.xyz/asset?id="
+				i.Background.Image = "http://banland.xyz/asset?id="
 					.. Images.LargeDark
 			else
-				i.Background.Image = "https://banland.xyz/asset?id="
+				i.Background.Image = "http://banland.xyz/asset?id="
 					.. Images.LargeLight
 			end
 		end
@@ -1519,16 +1519,16 @@ local function UpdateMaximize()
 			BASE_TWEEN * 1.2,
 			true
 		)
-		HeaderFrame.Background.Image = "https://banland.xyz/asset?id="
+		HeaderFrame.Background.Image = "http://banland.xyz/asset?id="
 			.. Images.NormalHeader
-		BottomFrame.Background.Image = "https://banland.xyz/asset?id="
+		BottomFrame.Background.Image = "http://banland.xyz/asset?id="
 			.. Images.NormalBottom
 		for index, i in ipairs(MiddleFrameBackgrounds) do
 			if index % 2 ~= 1 then
-				i.Background.Image = "https://banland.xyz/asset?id="
+				i.Background.Image = "http://banland.xyz/asset?id="
 					.. Images.midDark
 			else
-				i.Background.Image = "https://banland.xyz/asset?id="
+				i.Background.Image = "http://banland.xyz/asset?id="
 					.. Images.midLight
 			end
 		end
@@ -1997,7 +1997,7 @@ UpdateMinimize = function()
 			true
 		)
 		FocusFrame.Size = UDim2.new(1, 0, HeaderFrameHeight, 0)
-		ExtendTab.Image = "https://banland.xyz/asset?id=94692731"
+		ExtendTab.Image = "http://banland.xyz/asset?id=94692731"
 	else
 		if not IsMaximized.Value then
 			MainFrame:TweenSizeAndPosition(
@@ -2022,7 +2022,7 @@ UpdateMinimize = function()
 		)
 		BottomFrame.Position = UDim2.new(0, 0, bottomPositon, 0)
 		FocusFrame.Size = UDim2.new(1, 0, bottomPositon + HeaderFrameHeight, 0)
-		ExtendTab.Image = "https://banland.xyz/asset?id=94825585"
+		ExtendTab.Image = "http://banland.xyz/asset?id=94825585"
 	end
 end
 
@@ -2617,18 +2617,18 @@ local function AddMiddleBGFrame()
 		UDim2.new(0.5, 0, (#MiddleFrameBackgrounds * nBGFrame.Size.Y.Scale), 0)
 	if (#MiddleFrameBackgrounds + 1) % 2 ~= 1 then
 		if IsMaximized.Value then
-			nBGFrame.Background.Image = "https://banland.xyz/asset?id="
+			nBGFrame.Background.Image = "http://banland.xyz/asset?id="
 				.. Images.LargeDark
 		else
-			nBGFrame.Background.Image = "https://banland.xyz/asset?id="
+			nBGFrame.Background.Image = "http://banland.xyz/asset?id="
 				.. Images.midDark
 		end
 	else
 		if IsMaximized.Value then
-			nBGFrame.Background.Image = "https://banland.xyz/asset?id="
+			nBGFrame.Background.Image = "http://banland.xyz/asset?id="
 				.. Images.LargeLight
 		else
-			nBGFrame.Background.Image = "https://banland.xyz/asset?id="
+			nBGFrame.Background.Image = "http://banland.xyz/asset?id="
 				.. Images.midLight
 		end
 	end

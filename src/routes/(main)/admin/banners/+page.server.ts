@@ -52,8 +52,8 @@ const bannerActiveCount = () =>
 		)`)
 
 async function getData({ request, locals }: RequestEvent) {
-	const { user } = await authorise(locals, 5),
-		form = await superValidate(request, schema)
+	const { user } = await authorise(locals, 5)
+	const form = await superValidate(request, schema)
 
 	return { user, form, error: !form.valid && formError(form) }
 }
@@ -68,13 +68,13 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 			status: 400,
 		})
 
-	if (action == "show" && (await bannerActiveCount()) >= 3)
+	if (action === "show" && (await bannerActiveCount()) >= 3)
 		return message(form, "Too many active banners", {
 			status: 400,
 		})
 
 	await surreal.merge(`banner:${id}`, {
-		active: action == "show",
+		active: action === "show",
 	})
 }
 export const actions = {
@@ -160,8 +160,8 @@ export const actions = {
 	updateBody: async e => {
 		const { form, error } = await getData(e)
 		if (error) return error
-		const id = e.url.searchParams.get("id"),
-			{ bannerBody } = form.data
+		const id = e.url.searchParams.get("id")
+		const { bannerBody } = form.data
 
 		if (!bannerBody || !id)
 			return message(form, "Missing fields", {
@@ -175,8 +175,8 @@ export const actions = {
 	updateTextLight: async e => {
 		const { form, error } = await getData(e)
 		if (error) return error
-		const id = e.url.searchParams.get("id"),
-			{ bannerTextLight } = form.data
+		const id = e.url.searchParams.get("id")
+		const { bannerTextLight } = form.data
 
 		if (bannerTextLight == null || !id)
 			return message(form, "Missing fields", {

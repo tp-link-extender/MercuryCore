@@ -33,8 +33,8 @@ export async function load({ url }) {
 
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
-		const { user } = await authorise(locals),
-			form = await superValidate(request, schema)
+		const { user } = await authorise(locals)
+		const form = await superValidate(request, schema)
 
 		if (!form.valid) return formError(form)
 

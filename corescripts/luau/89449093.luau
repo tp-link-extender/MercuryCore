@@ -1,11 +1,6 @@
 -- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
 print "[Mercury]: Loaded corescript 89449093"
 
--- This script manages context switches in the backpack (Gear to Wardrobe, etc.) and player state changes.  Also manages global functions across different tabs (currently only search)
-if game.CoreGui.Version < 7 then
-	return
-end -- peace out if we aren't using the right client
-
 local GuiService = game:GetService "GuiService"
 
 -- basic functions
@@ -45,10 +40,6 @@ waitForChild(backpack.Tabs, "InventoryButton")
 local inventoryButton = backpack.Tabs.InventoryButton
 
 local wardrobeButton
--- if game.CoreGui.Version >= 8 then
--- 	waitForChild(backpack.Tabs, "WardrobeButton")
--- 	wardrobeButton = backpack.Tabs.WardrobeButton
--- end
 waitForChild(backpack.Parent, "ControlFrame")
 local backpackButton =
 	waitForChild(backpack.Parent.ControlFrame, "BackpackButton")
@@ -215,7 +206,7 @@ function showBackpack()
 		backpackOpenEvent:Fire(currentTab)
 		canToggle = true
 		readyForNextEvent = true
-		backpackButton.Image = "https://banland.xyz/asset/?id=97644093"
+		backpackButton.Image = "http://banland.xyz/asset/?id=97644093"
 		backpackButton.Position =
 			UDim2.new(0.5, -60, 1, -backpackSize.Y.Offset - 103)
 	end)
@@ -240,7 +231,7 @@ function toggleBackpack()
 	backpackIsOpen = not backpackIsOpen
 
 	if backpackIsOpen then
-		loadoutBackground.Image = "https://banland.xyz/asset/?id=97623721"
+		loadoutBackground.Image = "http://banland.xyz/asset/?id=97623721"
 		loadoutBackground.Position = UDim2.new(-0.03, 0, -0.17, 0)
 		loadoutBackground.Size = UDim2.new(1.05, 0, 1.25, 0)
 		loadoutBackground.ZIndex = 2.0
@@ -250,8 +241,8 @@ function toggleBackpack()
 		backpackButton.Position = UDim2.new(0.5, -60, 1, -44)
 		loadoutBackground.Visible = false
 		backpackButton.Selected = false
-		backpackButton.Image = "https://banland.xyz/asset/?id=97617958"
-		loadoutBackground.Image = "https://banland.xyz/asset/?id=96536002"
+		backpackButton.Image = "http://banland.xyz/asset/?id=97617958"
+		loadoutBackground.Image = "http://banland.xyz/asset/?id=96536002"
 		loadoutBackground.Position = UDim2.new(-0.1, 0, -0.1, 0)
 		loadoutBackground.Size = UDim2.new(1.2, 0, 1.2, 0)
 		hideBackpack()
@@ -442,18 +433,6 @@ end)
 inventoryButton.MouseLeave:connect(function()
 	mouseLeaveTab(inventoryButton)
 end)
-
--- if game.CoreGui.Version >= 8 then
--- 	wardrobeButton.MouseButton1Click:connect(function()
--- 		newTabClicked "wardrobe"
--- 	end)
--- 	wardrobeButton.MouseEnter:connect(function()
--- 		mouseOverTab(wardrobeButton)
--- 	end)
--- 	wardrobeButton.MouseLeave:connect(function()
--- 		mouseLeaveTab(wardrobeButton)
--- 	end)
--- end
 
 closeButton.MouseButton1Click:connect(closeBackpack)
 

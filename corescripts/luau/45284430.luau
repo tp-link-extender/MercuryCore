@@ -149,13 +149,13 @@ RbxGui.CreateStyledMessageDialog = function(title, message, style, buttons)
 	styleImage.Position = UDim2.new(0, 5, 0, 15)
 	if style == "error" or style == "Error" then
 		styleImage.Size = UDim2.new(0, 71, 0, 71)
-		styleImage.Image = "https://banland.xyz/asset?id=42565285"
+		styleImage.Image = "http://banland.xyz/asset?id=42565285"
 	elseif style == "notify" or style == "Notify" then
 		styleImage.Size = UDim2.new(0, 71, 0, 71)
-		styleImage.Image = "https://banland.xyz/asset?id=42604978"
+		styleImage.Image = "http://banland.xyz/asset?id=42604978"
 	elseif style == "confirm" or style == "Confirm" then
 		styleImage.Size = UDim2.new(0, 74, 0, 76)
-		styleImage.Image = "https://banland.xyz/asset?id=42557901"
+		styleImage.Image = "http://banland.xyz/asset?id=42557901"
 	else
 		return RbxGui.CreateMessageDialog(title, message, buttons)
 	end
@@ -264,7 +264,7 @@ RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	local dropDownIcon = Instance.new "ImageLabel"
 	dropDownIcon.Name = "Icon"
 	dropDownIcon.Active = false
-	dropDownIcon.Image = "https://banland.xyz/asset/?id=45732894"
+	dropDownIcon.Image = "http://banland.xyz/asset/?id=45732894"
 	dropDownIcon.BackgroundTransparency = 1
 	dropDownIcon.Size = UDim2.new(0, 11, 0, 6)
 	dropDownIcon.Position = UDim2.new(1, -11, 0.5, -2)
@@ -1533,7 +1533,7 @@ RbxGui.CreateScrollingFrame = function(orderList, scrollStyle)
 	local scrollStamp = 0
 
 	local scrollDrag = Instance.new "ImageButton"
-	scrollDrag.Image = "https://banland.xyz/asset/?id=61367186"
+	scrollDrag.Image = "http://banland.xyz/asset/?id=61367186"
 	scrollDrag.Size = UDim2.new(1, 0, 0, 16)
 	scrollDrag.BackgroundTransparency = 1
 	scrollDrag.Name = "ScrollDrag"
@@ -2964,7 +2964,7 @@ RbxGui.CreateSetPanel = function(
 		local cancelImage = Instance.new "ImageLabel"
 		cancelImage.Name = "CancelImage"
 		cancelImage.BackgroundTransparency = 1
-		cancelImage.Image = "https://banland.xyz/asset?id=54135717"
+		cancelImage.Image = "http://banland.xyz/asset?id=54135717"
 		cancelImage.Position = UDim2.new(0, -2, 0, -2)
 		cancelImage.Size = UDim2.new(0, 16, 0, 16)
 		cancelImage.ZIndex = 6
@@ -3200,7 +3200,7 @@ RbxGui.CreateSetPanel = function(
 	local function createDropDownMenuButton(parent)
 		local dropDownButton = Instance.new "ImageButton"
 		dropDownButton.Name = "DropDownButton"
-		dropDownButton.Image = "https://banland.xyz/asset/?id=67581509"
+		dropDownButton.Image = "http://banland.xyz/asset/?id=67581509"
 		dropDownButton.BackgroundTransparency = 1
 		dropDownButton.Size = UDim2.new(0, 16, 0, 16)
 		dropDownButton.Position = UDim2.new(1, -24, 0, 6)
@@ -3766,58 +3766,58 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 		materialToImageMap[v] = {}
 		if v == "Grass" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=56563112"
+				"http://banland.xyz/asset/?id=56563112"
 		elseif v == "Sand" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=62356652"
+				"http://banland.xyz/asset/?id=62356652"
 		elseif v == "Brick" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=65961537"
+				"http://banland.xyz/asset/?id=65961537"
 		elseif v == "Granite" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67532153"
+				"http://banland.xyz/asset/?id=67532153"
 		elseif v == "Asphalt" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67532038"
+				"http://banland.xyz/asset/?id=67532038"
 		elseif v == "Iron" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67532093"
+				"http://banland.xyz/asset/?id=67532093"
 		elseif v == "Aluminum" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67531995"
+				"http://banland.xyz/asset/?id=67531995"
 		elseif v == "Gold" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67532118"
+				"http://banland.xyz/asset/?id=67532118"
 		elseif v == "Plastic (red)" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67531848"
+				"http://banland.xyz/asset/?id=67531848"
 		elseif v == "Plastic (blue)" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67531924"
+				"http://banland.xyz/asset/?id=67531924"
 		elseif v == "Plank" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67532015"
+				"http://banland.xyz/asset/?id=67532015"
 		elseif v == "Log" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67532051"
+				"http://banland.xyz/asset/?id=67532051"
 		elseif v == "Gravel" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67532206"
+				"http://banland.xyz/asset/?id=67532206"
 		elseif v == "Cinder Block" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67532103"
+				"http://banland.xyz/asset/?id=67532103"
 		elseif v == "Stone Wall" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67531804"
+				"http://banland.xyz/asset/?id=67531804"
 		elseif v == "Concrete" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=67532059"
+				"http://banland.xyz/asset/?id=67532059"
 		elseif v == "Water" then
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=81407474"
+				"http://banland.xyz/asset/?id=81407474"
 		else
 			materialToImageMap[v].Regular =
-				"https://banland.xyz/asset/?id=66887593" -- fill in the rest here!!
+				"http://banland.xyz/asset/?id=66887593" -- fill in the rest here!!
 		end
 	end
 
@@ -3938,7 +3938,7 @@ end
 
 RbxGui.CreateLoadingFrame = function(name, size, position)
 	game:GetService("ContentProvider")
-		:Preload "https://banland.xyz/asset/?id=35238053"
+		:Preload "http://banland.xyz/asset/?id=35238053"
 
 	local loadingFrame = Instance.new "Frame"
 	loadingFrame.Name = "LoadingFrame"
@@ -3965,7 +3965,7 @@ RbxGui.CreateLoadingFrame = function(name, size, position)
 
 	local loadingGreenBar = Instance.new "ImageLabel"
 	loadingGreenBar.Name = "LoadingGreenBar"
-	loadingGreenBar.Image = "https://banland.xyz/asset/?id=35238053"
+	loadingGreenBar.Image = "http://banland.xyz/asset/?id=35238053"
 	loadingGreenBar.Position = UDim2.new(0, 0, 0, 0)
 	loadingGreenBar.Size = UDim2.new(0, 0, 1, 0)
 	loadingGreenBar.Visible = false

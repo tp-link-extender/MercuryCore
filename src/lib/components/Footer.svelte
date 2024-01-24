@@ -63,7 +63,7 @@
 
 		&:hover
 			span
-				width 4.6rem
+				width 5rem
 				margin-left 0.2rem
 
 	#heart:not(.clicked) fa:hover
