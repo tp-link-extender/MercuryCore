@@ -12,7 +12,7 @@
 		"buildview": "vite build && vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-		"lines": "scc -c --no-size --no-cocomo --sort lines --exclude-dir staging --exclude-dir setup --exclude-dir PrepForUpload  --exclude-file defs.d.lua,deno.lock,pnpm-lock.yaml,mercury.yml,uno.config.ts,AppSettings.xml,ReflectionMetadata.xml,materials.json,shaders.json --exclude-ext lua,h,txt --c -f cloc-yaml -o ./data/lines"
+		"lines": "scc -c --no-size --no-cocomo --sort lines --exclude-dir staging --exclude-dir setup --exclude-dir PrepForUpload  --exclude-file defs.d.lua,deno.lock,pnpm-lock.yaml,mercury.yml,uno.config.ts,AppSettings.xml,ReflectionMetadata.xml,materials.json,shaders.json --exclude-ext lua,h,txt --ci -f cloc-yaml -o ./data/lines"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.5.2",
