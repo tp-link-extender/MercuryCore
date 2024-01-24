@@ -28,7 +28,7 @@
 		class="btn btn-secondary"
 		on:click={launch("mercury-player:1+launchmode:maps")}
 		type="button">
-		<fa fa-arrow-up-right-from-square></fa>
+		<fa fa-arrow-up-right-from-square />
 		Map Folder
 	</button>
 	<button
@@ -39,14 +39,14 @@
 			)}`
 		)}
 		type="button">
-		<fa fa-wifi></fa>
+		<fa fa-wifi />
 		Begin Hosting
 	</button>
 
 	<div class="dropdown dropdown-hover dropdown-end">
 		<div
 			class="btn btn-tertiary dropdown-toggle border-[--accent2]
-			border-l-0">
+			rounded-l-0">
 		</div>
 		<div class="dropdown-content pt-2">
 			<ul class="p-2 rounded-3">

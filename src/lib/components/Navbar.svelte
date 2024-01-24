@@ -136,7 +136,7 @@
 						}}
 						class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
 						title="Search">
-						<fa fa-search></fa>
+						<fa fa-search />
 					</button>
 					{#if search.trim() && !searchCompleted}
 						<div
@@ -160,12 +160,11 @@
 			</form>
 			<div class="flex items-center gap-4">
 				<a
-					id="notificationstop"
 					href="/notifications"
 					role="button"
 					aria-label="Notifications"
 					class="<lg:hidden font-bold pr-4 light-text">
-					<fa fa-bell></fa>
+					<fa fa-bell />
 				</a>
 				<a
 					href="/transactions"
@@ -173,7 +172,7 @@
 					aria-label="Transactions"
 					class="flex items-center no-underline <sm:w-20
 					text-emerald-6 hover:text-emerald-8!">
-					<fa fa-gem class="pr-2"></fa>
+					<fa fa-gem class="pr-2" />
 					{user.currency}
 				</a>
 				<div class="dropdown dropdown-hover dropdown-end pl-2">
@@ -195,7 +194,7 @@
 							{#each usernav as [icon, title, href]}
 								<li class="rounded-2">
 									<a class="btn light-text pl-4 pr-0" {href}>
-										<fa class="{icon} pr-2"></fa>
+										<fa class="{icon} pr-2" />
 										{title}
 									</a>
 								</li>
@@ -208,8 +207,7 @@
 									<button class="btn text-red-5 pl-4 pr-0">
 										<fa
 											fa-arrow-right-from-bracket
-											class="pr-2">
-										</fa>
+											class="pr-2" />
 										<b>Log out</b>
 									</button>
 								</form>
@@ -251,7 +249,7 @@
 					{href}
 					class="btn light-text border-0 flex flex-col items-center
 					text-0.9rem px-0.2rem sm:text-base sm:px-2">
-					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem"></fa>
+					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem" />
 					{title}
 				</a>
 			{/each}
