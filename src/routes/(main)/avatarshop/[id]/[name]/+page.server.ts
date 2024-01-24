@@ -364,17 +364,23 @@ export const actions = {
 		)
 	},
 	rerender: async ({ locals, params, getClientAddress }) => {
-		await authorise(locals, 3)
-
-		const limit = ratelimit({}, "rerender", getClientAddress, 60)
-		if (limit) return fail(429, { msg: "Too many requests" })
+		await authorise(locals, 5)
 
 		const asset = await squery<{
+			name: string
+			id: string
 			type: number
 			visibility: string
-		}>(surql`SELECT type, visibility FROM $asset`, {
-			asset: `asset:${params.id}`,
-		})
+		}>(
+			surql`
+				SELECT
+					name,
+					meta::id(id) AS id, 
+					type,
+					visibility
+				FROM $asset`,
+			{ asset: `asset:${params.id}` }
+		)
 
 		if (!asset) error(404, "Not found")
 
@@ -386,6 +392,11 @@ export const actions = {
 
 		try {
 			await requestRender("Clothing", parseInt(params.id))
+			return {
+				icon: `/avatarshop/${asset.id}/${
+					asset.name
+				}/icon?r=${Math.random()}`,
+			}
 		} catch (e) {
 			console.error(e)
 			return fail(500, { msg: "Failed to request render" })

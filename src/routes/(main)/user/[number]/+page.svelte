@@ -145,7 +145,7 @@
 							class="absolute text-right end-0 pr-4">
 							<button class="btn btn-sm btn-tertiary">
 								<fa fa-arrows-rotate />
-								Re-render
+								Rerender
 							</button>
 							<small class="text-red-5 block">
 								{form?.msg || ""}

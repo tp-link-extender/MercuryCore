@@ -1,8 +1,22 @@
 <script lang="ts">
+	import { applyAction } from "$app/forms"
+	import { invalidateAll } from "$app/navigation"
 	import superForm from "$lib/superForm"
 
 	export let data
 	const { user } = data
+	export let form
+
+	let regenerating = false
+
+	const enhanceRegen: import("./$types").SubmitFunction = () => {
+		regenerating = true
+		return async ({ result }) => {
+			if (result.type === "success") await invalidateAll()
+			await applyAction(result)
+			regenerating = false
+		}
+	}
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
@@ -18,7 +32,7 @@
 		11: "Shirt",
 		12: "Pants",
 		13: "Decal",
-		18: "Face",
+		18: "Face"
 	}
 </script>
 
@@ -28,8 +42,10 @@
 	<div class="flex <sm:flex-col">
 		<div class="pr-4 pb-4">
 			<img
-				class="image aspect-1 w-80vw max-w-100"
-				src="/avatarshop/{data.id}/{data.name}/icon"
+				class:opacity-50={regenerating}
+				class="image transition-opacity duration-300 aspect-1
+				w-80vw max-w-100"
+				src={form?.icon || `/avatarshop/${data.id}/${data.name}/icon`}
 				alt={data.name} />
 		</div>
 		<div class="w-full light-text">
@@ -40,28 +56,27 @@
 					<div class="dropdown-content">
 						<ul class="p-2 rounded-3">
 							<button class="btn light-text pl-4 pr-0 text-start">
-								<fa fa-pencil class="mr-2" />
+								<fa fa-pencil class="pr-2" />
 								nothing here
 							</button>
 							<!-- <li class="rounded-2">
-									<a
-										class="btn light-text pl-4 pr-0 text-start"
-										href="/requests">
-										<fa class="fa-pencil mr-2" />
-										Edit asset
-									</a>
-								</li> -->
-							{#if data.user.permissionLevel > 2}
+								<a
+									class="btn light-text pl-4 pr-0 text-start"
+									href="/requests">
+									<fa fa-pencil class="pr-2" />
+									Edit asset
+								</a>
+							</li> -->
+							{#if data.user.permissionLevel >= 5 && [11, 12].includes(data.type)}
 								<li class="rounded-2">
 									<form
-										use:enhance
+										use:enhance={enhanceRegen}
 										method="POST"
 										action="?/rerender">
 										<button
 											class="btn accent-text pl-4 pr-0 text-start">
-											<i
-												class="fa fa-arrows-rotate mr-2" />
-											<b>Re-render</b>
+											<fa fa-arrows-rotate class="pr-2" />
+											<b>Rerender</b>
 										</button>
 									</form>
 								</li>

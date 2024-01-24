@@ -25,10 +25,12 @@
 	export let thin = false
 	export let image = false
 	export let bottom = false
-	export let rerender: {
-		form?: any
-		regenerating?: boolean
-	} = {} // Used on profile page for rerender button
+	export let rerender:
+		| {
+				form?: any
+				regenerating?: boolean
+		  }
+		| undefined = undefined // Used on profile page for rerender button
 	export let size = "2rem"
 	export let bg: keyof typeof transitionBackgrounds = "accent2"
 
@@ -40,7 +42,7 @@
 {#if image}
 	<div class="flex {$$restProps.class}" class:items-center={full}>
 		<span class="rounded-full overflow-hidden" style="{style};{style2}">
-			{#if rerender.form}
+			{#if rerender}
 				<img
 					class="transition-opacity duration-300 rounded-full
 					rounded-t-0"

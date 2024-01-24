@@ -78,7 +78,7 @@
 				method="POST"
 				action="/admin/asset?/rerender&id={asset.id}"
 				class="w-full pt-3">
-				<button class="btn btn-lg btn-primary w-full">Re-render</button>
+				<button class="btn btn-lg btn-primary w-full">Rerender</button>
 			</form>
 		{/if}
 	</div>
