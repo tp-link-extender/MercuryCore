@@ -51,10 +51,10 @@ export const load = async ({ locals, url }) => {
 }
 
 async function getEquipData(e: RequestEvent) {
-	const { user } = await authorise(e.locals),
-		id = e.url.searchParams.get("id")
+	const { user } = await authorise(e.locals)
+	const id = e.url.searchParams.get("id")
 
-	if (ratelimit({}, "equip", e.getClientAddress, 45))
+	if (ratelimit({}, "equip", e.getClientAddress, 2))
 		return { error: fail(429, { msg: "Too many requests" }) }
 
 	if (!id) error(400, "Missing asset id")
@@ -79,7 +79,7 @@ async function getEquipData(e: RequestEvent) {
 	if (!allowedTypes.includes(asset.type))
 		error(400, "Can't equip this type of item")
 
-	if (asset.visibility != "Visible")
+	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 
 	return { user, id, asset }
@@ -109,9 +109,9 @@ export const actions = {
 		),
 	}),
 	paint: async ({ locals, url }) => {
-		const { user } = await authorise(locals),
-			bodyPartQuery = url.searchParams.get("p"),
-			bodyColour = url.searchParams.get("c")
+		const { user } = await authorise(locals)
+		const bodyPartQuery = url.searchParams.get("p")
+		const bodyColour = url.searchParams.get("c")
 
 		if (
 			!bodyPartQuery ||
@@ -128,8 +128,8 @@ export const actions = {
 		)
 			return fail(400)
 
-		const bodyPart = bodyPartQuery as keyof typeof user.bodyColours,
-			currentColours = user.bodyColours
+		const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
+		const currentColours = user.bodyColours
 
 		currentColours[bodyPart] = parseInt(bodyColour)
 

@@ -853,7 +853,7 @@ RbxStamper.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 			local inverseCornerWedgeMesh = Instance.new "SpecialMesh"
 			inverseCornerWedgeMesh.MeshType = "FileMesh"
 			inverseCornerWedgeMesh.MeshId =
-				"https://banland.xyz/asset?id=66832495"
+				"http://banland.xyz/asset?id=66832495"
 			inverseCornerWedgeMesh.Scale = Vector3.new(2, 2, 2)
 			inverseCornerWedgeMesh.Parent = newTerrainPiece
 		end

@@ -18,7 +18,11 @@
 				method: "POST",
 				body: formdata,
 			})
-			const result: any = deserialize(await response.text())
+			const result = deserialize(await response.text()) as {
+				data: {
+					places: typeof data.places
+				}
+			}
 
 			searchedData = result.data.places
 		})()

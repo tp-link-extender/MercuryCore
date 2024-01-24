@@ -6,9 +6,9 @@
 
 	export let i: number, j: number
 
-	const dispatch = createEventDispatcher(),
-		opacity = spring(Math.random() + (-j - i / 2 - 5) / 12),
-		clicked = new Map<string, "hovered" | "clicked">()
+	const dispatch = createEventDispatcher()
+	const opacity = spring(Math.random() + (-j - i / 2 - 5) / 12)
+	const clicked = new Map<string, "hovered" | "clicked">()
 	const scale = spring(0, {
 		stiffness: 0.1,
 		damping: 1,

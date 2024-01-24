@@ -63,7 +63,7 @@ export const actions = {
 
 		const { cpassword, npassword, cnpassword } = form.data
 
-		if (npassword != cnpassword)
+		if (npassword !== cnpassword)
 			return formError(form, ["cnpassword"], ["Passwords do not match"])
 
 		try {

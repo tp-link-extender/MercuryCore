@@ -9,7 +9,11 @@
 	export let right = false
 	export let fullwidth = false
 
-	const inView = (e: any) => (isInView = e.detail.inView)
+	const inView = (
+		e: Event & {
+			currentTarget: EventTarget & HTMLDivElement
+		} & { detail?: { inView: boolean } }
+	) => (isInView = !!e?.detail?.inView)
 </script>
 
 <div

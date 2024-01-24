@@ -213,8 +213,18 @@ function updatePreviewSelection(position)
 			end
 		end
 
-		local lowVec = CellCenterToWorld(c, cellPos.x - radius, lowY - 1, cellPos.z - radius)
-		local highVec = CellCenterToWorld(c, cellPos.x + radius, yWithDepth + 1, cellPos.z + radius)
+		local lowVec = CellCenterToWorld(
+			c,
+			cellPos.x - radius,
+			lowY - 1,
+			cellPos.z - radius
+		)
+		local highVec = CellCenterToWorld(
+			c,
+			cellPos.x + radius,
+			yWithDepth + 1,
+			cellPos.z + radius
+		)
 		selectionBox.Color = BrickColor.new "Lime green"
 		regionToSelect = Region3.new(lowVec, highVec)
 	else
@@ -223,8 +233,14 @@ function updatePreviewSelection(position)
 			yPos = brushheight + depth
 		end
 
-		local lowVec = CellCenterToWorld(c, cellPos.x - radius, yPos, cellPos.z - radius)
-		local highVec = CellCenterToWorld(c, cellPos.x + radius, maxYExtents, cellPos.z + radius)
+		local lowVec =
+			CellCenterToWorld(c, cellPos.x - radius, yPos, cellPos.z - radius)
+		local highVec = CellCenterToWorld(
+			c,
+			cellPos.x + radius,
+			maxYExtents,
+			cellPos.z + radius
+		)
 		selectionBox.Color = BrickColor.new "Really red"
 		regionToSelect = Region3.new(lowVec, highVec)
 	end
@@ -239,11 +255,10 @@ function doFillCells(position, mouseDrag, needsCellPos)
 	if mouseDrag then
 		local timeBetweenFills = tick() - lastCellFillTime
 		local totalDragPixels = math.abs(mouseDrag.x) + math.abs(mouseDrag.y)
-		local editDistance = (game.Workspace.CurrentCamera.CoordinateFrame.p - Vector3.new(
-			position.x,
-			position.y,
-			position.z
-		)).magnitude
+		local editDistance = (
+			game.Workspace.CurrentCamera.CoordinateFrame.p
+			- Vector3.new(position.x, position.y, position.z)
+		).magnitude
 
 		if timeBetweenFills <= 0.05 then
 			if editDistance * totalDragPixels < 450 then
@@ -315,8 +330,11 @@ end
 -- intersection - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
 function PlaneIntersection(vectorPos)
 	local currCamera = game.Workspace.CurrentCamera
-	local startPos =
-		Vector3.new(currCamera.CoordinateFrame.p.X, currCamera.CoordinateFrame.p.Y, currCamera.CoordinateFrame.p.Z)
+	local startPos = Vector3.new(
+		currCamera.CoordinateFrame.p.X,
+		currCamera.CoordinateFrame.p.Y,
+		currCamera.CoordinateFrame.p.Z
+	)
 	local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
 	local normal = Vector3.new(0, 1, 0)
 	local p3 = Vector3.new(0, 0, 0)
@@ -337,13 +355,21 @@ end
 
 function buttonDown()
 	if on then
-		local firstCellPos = WorldToCellPreferSolid(c, Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z))
-		local solidCell = WorldToCellPreferSolid(c, Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z))
+		local firstCellPos = WorldToCellPreferSolid(
+			c,
+			Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+		)
+		local solidCell = WorldToCellPreferSolid(
+			c,
+			Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+		)
 
 		-- If nothing was hit, do the plane intersection.
 		if 0 == GetCell(c, solidCell.X, solidCell.Y, solidCell.Z).Value then
 			local success = false
-			success, firstCellPos = PlaneIntersection(Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z))
+			success, firstCellPos = PlaneIntersection(
+				Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+			)
 			if not success then
 				if mouse.Target then
 					firstCellPos = solidCell
@@ -353,7 +379,8 @@ function buttonDown()
 			end
 		end
 
-		local celMat = GetCell(c, firstCellPos.x, firstCellPos.y, firstCellPos.z)
+		local celMat =
+			GetCell(c, firstCellPos.x, firstCellPos.y, firstCellPos.z)
 		if celMat.Value > 0 then
 			material = celMat.Value
 		else
@@ -422,9 +449,17 @@ local RbxGui = LoadLibrary "RbxGui"
 -- Return:
 -- dropdown 	   - The dropdown gui.
 -- updateSelection - Object to use to change the current dropdown.
-function CreateStandardDropdown(name, pos, values, initValue, funcOnChange, parent)
+function CreateStandardDropdown(
+	name,
+	pos,
+	values,
+	initValue,
+	funcOnChange,
+	parent
+)
 	-- Create a dropdown selection for the modes to fill in a river
-	local dropdown, updateSelection = RbxGui.CreateDropDownMenu(values, funcOnChange)
+	local dropdown, updateSelection =
+		RbxGui.CreateDropDownMenu(values, funcOnChange)
 	dropdown.Name = name
 	dropdown.Position = pos
 	dropdown.Active = true
@@ -470,8 +505,17 @@ end
 -- Return:
 -- sliderGui      - Slider gui object.
 -- sliderPosition - Object that can set the slider value.
-function CreateStandardSlider(name, pos, lengthBarPos, steps, funcOnChange, initValue, parent)
-	local sliderGui, sliderPosition = RbxGui.CreateSlider(steps, 0, UDim2.new(0, 0, 0, 0))
+function CreateStandardSlider(
+	name,
+	pos,
+	lengthBarPos,
+	steps,
+	funcOnChange,
+	initValue,
+	parent
+)
+	local sliderGui, sliderPosition =
+		RbxGui.CreateSlider(steps, 0, UDim2.new(0, 0, 0, 0))
 
 	sliderGui.Name = name
 	sliderGui.Parent = parent
@@ -500,7 +544,13 @@ g.Name = "TerrainBrushGui"
 g.Parent = game:GetService "CoreGui"
 
 brushDragBar, elevationFrame, elevationHelpFrame, elevationCloseEvent =
-	RbxGui.CreatePluginFrame("Terrain Brush", UDim2.new(0, 151, 0, 160), UDim2.new(0, 0, 0, 0), false, g)
+	RbxGui.CreatePluginFrame(
+		"Terrain Brush",
+		UDim2.new(0, 151, 0, 160),
+		UDim2.new(0, 0, 0, 0),
+		false,
+		g
+	)
 brushDragBar.Visible = false
 elevationCloseEvent.Event:connect(function()
 	Off()
@@ -542,7 +592,8 @@ radl.BackgroundTransparency = 1
 radl.Parent = elevationFrame
 
 --radius slider
-local radSliderGui, radSliderPosition = RbxGui.CreateSlider(5, 0, UDim2.new(0, 10, 0, 92))
+local radSliderGui, radSliderPosition =
+	RbxGui.CreateSlider(5, 0, UDim2.new(0, 10, 0, 92))
 radSliderGui.Parent = elevationFrame
 local radBar = radSliderGui:FindFirstChild "Bar"
 radBar.Size = UDim2.new(1, -20, 0, 5)
@@ -567,7 +618,8 @@ dfl.BackgroundTransparency = 1
 dfl.Parent = elevationFrame
 
 --depth factor slider
-local addSliderGui, addSliderPosition = RbxGui.CreateSlider(31, 0, UDim2.new(0, 10, 0, 132))
+local addSliderGui, addSliderPosition =
+	RbxGui.CreateSlider(31, 0, UDim2.new(0, 10, 0, 132))
 addSliderGui.Parent = elevationFrame
 local dfBar = addSliderGui:FindFirstChild "Bar"
 dfBar.Size = UDim2.new(1, -20, 0, 5)
@@ -578,7 +630,8 @@ end)
 addSliderPosition.Value = buildTerrainHeight
 
 --depth factor slider
-local removeSliderGui, removeSliderPosition = RbxGui.CreateSlider(31, 0, UDim2.new(0, 10, 0, 132))
+local removeSliderGui, removeSliderPosition =
+	RbxGui.CreateSlider(31, 0, UDim2.new(0, 10, 0, 132))
 removeSliderGui.Parent = elevationFrame
 dfBar = removeSliderGui:FindFirstChild "Bar"
 dfBar.Size = UDim2.new(1, -20, 0, 5)

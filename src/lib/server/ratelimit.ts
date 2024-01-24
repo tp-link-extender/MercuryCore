@@ -2,10 +2,12 @@
 // and returns a 429 failure if too many requests are sent
 
 import { message } from "sveltekit-superforms/server"
+import type { SuperValidated } from "sveltekit-superforms"
+import type { AnyZodObject } from "zod"
 
-const ratelimitTimewindow = new Map<string, number>(),
-	ratelimitRequests = new Map<string, number>(),
-	existingTimeouts = new Map<string, NodeJS.Timeout>()
+const ratelimitTimewindow = new Map<string, number>()
+const ratelimitRequests = new Map<string, number>()
+const existingTimeouts = new Map<string, NodeJS.Timeout>()
 
 /** Ratelimit a function by a category.
  * @param form The superForm object sent by the client.
@@ -19,14 +21,14 @@ const ratelimitTimewindow = new Map<string, number>(),
  *	if (limit) return limit
  */
 export default function (
-	form: any,
+	form: SuperValidated<AnyZodObject> | object,
 	category: string,
 	getClientAddress: () => string,
 	timeWindow: number,
 	maxRequests = 1
 ) {
-	const id = getClientAddress() + category,
-		currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
+	const id = getClientAddress() + category
+	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 
 	if (currentTimewindow > Date.now() + timeWindow * 1000)
 		return message(form, "Too many requests", { status: 429 })

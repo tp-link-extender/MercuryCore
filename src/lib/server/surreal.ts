@@ -24,12 +24,12 @@ export const surql = (
 ) =>
 	statement.raw.reduce((query, part, index) => {
 		// Add the current part of the statement to the query
-		query += part
+		let newQuery = query + part
 
 		// If there is a substitution at this index, add it
-		if (index < substitutions.length) query += substitutions[index]
+		if (index < substitutions.length) newQuery += substitutions[index]
 
-		return query
+		return newQuery
 	}, "")
 
 await db.query(surql`
@@ -47,23 +47,46 @@ await db.query(surql`
 	};
 `)
 
+const stupidError =
+	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
+
+type Param = string | number | boolean | null | object | undefined // basically anything
+
 /**
  * Executes a query in SurrealDB and returns its results.
  * @param input The surql query to execute.
  * @param params An array of variables to pass to SurrealDB.
  * @returns The result of the first query given.
  */
-export const query = async <T>(input: string, params?: { [k: string]: any }) =>
-	(await db.query(input, params))?.[0] as T[]
-
+export const query = async <T>(
+	input: string,
+	params?: { [k: string]: Param }
+): Promise<T[]> => {
+	// WORST
+	// DATABASE
+	// ISSUE
+	// EVER
+	for (let i = 1; i <= 1; i++) {
+		try {
+			return (await db.query(input, params))?.[0] as T[]
+		} catch (err) {
+			const e = err as Error
+			if (e.message !== stupidError) throw new Error(e.message)
+		}
+		console.log(`retrying query ${i} time${i > 1 ? "s" : ""}`)
+	}
+	return undefined as unknown as T[]
+}
 /**
  * Executes a query in SurrealDB and returns the first item in its results.
  * @param input The surql query to execute.
  * @param params An array of variables to pass to SurrealDB.
  * @returns The first item in the array returned by the first query.
  */
-export const squery = async <T>(input: string, params?: { [k: string]: any }) =>
-	(await query<T>(input, params))[0]
+export const squery = async <T>(
+	input: string,
+	params?: { [k: string]: Param }
+) => ((await db.query(input, params))?.[0] as T[])[0]
 
 /**
  * Executes multiple queries in SurrealDB and returns their results.
@@ -71,8 +94,10 @@ export const squery = async <T>(input: string, params?: { [k: string]: any }) =>
  * @param params An array of variables to pass to SurrealDB.
  * @returns The result of all queries given.
  */
-export const mquery = async <T>(input: string, params?: { [k: string]: any }) =>
-	(await db.query(input, params)) as T
+export const mquery = async <T>(
+	input: string,
+	params?: { [k: string]: Param }
+) => (await db.query(input, params)) as T
 
 const failed = "The query was not executed due to a failed transaction"
 /**
@@ -86,7 +111,7 @@ export async function transaction(
 	sender: { id?: string; number?: number },
 	receiver: { id?: string; number?: number },
 	amountSent: number,
-	{ note, link }: { note?: String; link?: String }
+	{ note, link }: { note?: string; link?: string }
 ) {
 	const qResult = await mquery<
 		| string[]
@@ -169,9 +194,9 @@ export async function transaction(
 	)
 
 	for (const result of qResult) {
-		if (result == failed)
+		if (result === failed)
 			for (const result2 of qResult)
-				if (typeof result2 == "string" && result2 != failed)
+				if (typeof result2 === "string" && result2 !== failed)
 					throw new Error(
 						result2.match(/An error occurred: (.*)/)?.[1]
 					)

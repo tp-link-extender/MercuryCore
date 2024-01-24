@@ -38,7 +38,7 @@ export function graphicAsset(
 	const asset = fs
 		.readFileSync(
 			`xml/graphicAsset${
-				type == "Face" || type == "Decal" ? "Image" : "Other"
+				type === "Face" || type === "Decal" ? "Image" : "Other"
 			}.xml`,
 			"utf-8"
 		)

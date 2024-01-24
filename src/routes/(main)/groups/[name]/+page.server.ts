@@ -14,8 +14,6 @@ export async function load({ locals, params }) {
 			status: "Playing" | "Online" | "Offline"
 			username: string
 		}
-		places: any[]
-		feed: any[]
 	}>(
 		surql`
 			SELECT

@@ -6,11 +6,13 @@
 	export let total: number
 	export let categoryName: string
 
-	let likesDisabled = false,
-		dislikesDisabled = false
+	let likesDisabled = false
+	let dislikesDisabled = false
 </script>
 
-<div in:fade|global={{ num, total }} class="post card bg-darker mb-4 h-40">
+<div
+	in:fade|global={{ num, total }}
+	class="post card bg-darker flex-row overflow-hidden mb-4 h-40">
 	<form
 		use:enhance={({ formData }) => {
 			const action = formData.get("action")
@@ -89,8 +91,8 @@
 				if (e.metaKey || innerWidth < 640) return
 				e.preventDefault()
 
-				const { href } = e.currentTarget,
-					result = await preloadData(href)
+				const { href } = e.currentTarget
+				const result = await preloadData(href)
 
 				if (result.type == "loaded" && result.status == 200)
 					pushState(href, { openPost: result.data })
@@ -102,20 +104,16 @@
 				{post.title}
 			</h2>
 
-			<div class="mb-0">
-				<div class="gradient w-full h-20 absolute bottom-0 left-0" />
+			<div class="gradient w-full h-20 absolute bottom-0 left-0" />
+			<p class="break-all">
 				{post.content[0].text || ""}
-			</div>
+			</p>
 		</a>
 	</div>
 </div>
 
 <style lang="stylus">
 	.post
-		overflow hidden
-		word-break break-word
-		flex-direction row
-
 		border 1px solid var(--accent2)
 		transition all 0.3s ease-out
 		&:hover

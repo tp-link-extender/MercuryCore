@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ForumReplyMain from "./ForumReplyMain.svelte"
 	import type { Writable } from "svelte/store"
 
 	// too many exports help
@@ -24,7 +25,9 @@
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/avatarshop/${postId}/${assetName}`
 
-	export let repliesCollapsed: Writable<any>
+	export let repliesCollapsed: Writable<{
+		[id: string]: boolean
+	}>
 	export let topLevel = false
 	// Some have to be writables to allow them to keep state,
 	// either on element destroy or on page change
@@ -39,7 +42,7 @@
 
 {#if !topLevel}
 	<a href="{baseUrl}{assetName ? '?tab=Comments' : ''}" class="no-underline">
-		<fa fa-arrow-left class="pr-2" />
+		<fa fa-arrow-left class="pr-2"></fa>
 		{#if assetName}
 			Back to asset
 		{:else}
@@ -49,7 +52,7 @@
 	{#if reply.parentReplyId}
 		<br />
 		<a href="{baseUrl}/{reply.parentReplyId}" class="no-underline">
-			<fa fa-arrow-up class="pr-2" />
+			<fa fa-arrow-up class="pr-2"></fa>
 			Parent reply
 		</a>
 	{/if}
@@ -62,7 +65,9 @@
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Collapse reply"
-				class="collapseBar bg-a2 p-0 border-0 h-full mt-4" />
+				class="collapseBar bg-a2 p-0 border-0 h-full mt-4
+				cursor-pointer">
+			</button>
 		</span>
 
 		{#if $repliesCollapsed?.[reply.id]}
@@ -70,14 +75,15 @@
 				on:click={collapse(reply.id)}
 				aria-label="Expand reply"
 				class="expandBar m-2 pl-2 mt-0 text-base">
-				<small>
+				<small class="max-w-40 text-ellipsis">
 					<span class="grey-text">
 						{reply.author.username}
 						{#if reply.author.username == postAuthorName}
 							<i
 								class="fa {assetName
 									? 'fa-hammer'
-									: 'fa-microphone'} pl-1" />
+									: 'fa-microphone'} pl-1">
+							</i>
 						{/if}
 					</span>
 					- {reply.content[0].text}
@@ -85,193 +91,17 @@
 			</button>
 		{:else}
 			<div in:fade|global={{ num }} class="w-full">
-				<div class="flex w-full">
-					<div class="w-full">
-						<div class="flex items-center pl-4 pt-2">
-							<a
-								href="/user/{reply.author.number}"
-								class:hidden
-								class="user userlink no-underline {reply.author
-									.username == postAuthorName
-									? ''
-									: 'light-text'}">
-								<span
-									class="font-bold {reply.author.username ==
-									postAuthorName
-										? assetName
-											? 'text-yellow-5'
-											: 'text-blue-6'
-										: ''}">
-									{reply.author.username}
-									{#if reply.author.username == postAuthorName}
-										<i
-											class="fa {assetName
-												? 'fa-hammer'
-												: 'fa-microphone'} ml-2" />
-									{/if}
-								</span>
-							</a>
-							<small class="light-text pl-6">
-								{new Date(reply.posted).toLocaleString()}
-							</small>
-						</div>
-						<p class:hidden class="my-2">
-							{reply.content[0].text}
-						</p>
-						{#if $replyingTo != reply.id}
-							<form
-								use:enhance={({ formData }) => {
-									const action = formData.get("action")
-
-									if (action == "like") {
-										reply.likes = true
-
-										if (reply.dislikes) reply.dislikeCount--
-										reply.dislikes = false
-										reply.likeCount++
-									} else if (action == "dislike") {
-										reply.dislikes = true
-
-										if (reply.likes) reply.likeCount--
-										reply.likes = false
-										reply.dislikeCount++
-									} else if (action == "unlike") {
-										reply.likes = false
-										reply.likeCount--
-									} else if (action == "undislike") {
-										reply.dislikes = false
-										reply.dislikeCount--
-									}
-
-									return () => {}
-								}}
-								class:hidden
-								class="inline mr-2"
-								method="POST"
-								action="?/like&rid={reply.id}">
-								<button
-									name="action"
-									value={reply.likes ? "unlike" : "like"}
-									aria-label={reply.likes ? "Unlike" : "Like"}
-									class="smallbutton p-0 btn">
-									<i
-										class="fa{reply.likes
-											? ' text-emerald-6 hover:text-emerald-3'
-											: 'r text-neutral-5 hover:text-neutral-3'}
-										fa-thumbs-up transition" />
-								</button>
-								<span
-									class="my-1 text-center {reply.likes
-										? 'text-emerald-6 font-bold'
-										: reply.dislikes
-											? 'text-red-5 font-bold'
-											: ''}">
-									{reply.likeCount - reply.dislikeCount}
-								</span>
-								<button
-									name="action"
-									value={reply.dislikes
-										? "undislike"
-										: "dislike"}
-									aria-label={reply.dislikes
-										? "Undislike"
-										: "Dislike"}
-									class="smallbutton p-0 btn">
-									<i
-										class="fa{reply.dislikes
-											? ' text-red-5 hover:text-red-3'
-											: 'r text-neutral-5 hover:text-neutral-3'}
-										fa-thumbs-down transition" />
-								</button>
-							</form>
-							<button
-								on:click={() => replyingTo.set(reply.id)}
-								class:hidden
-								class="p-0 btn btn-sm px-1
-								text-neutral-5 hover:text-neutral-3">
-								<far fa-message class="pr-2" />
-								Reply
-							</button>
-							{#if !hidden}
-								{#if reply.author.username == user.username}
-									<DeleteButton id={reply.id} reverse />
-								{:else}
-									<ReportButton
-										user={reply.author.username}
-										url="/forum/{categoryName}/{postId}/{reply.id}"
-										reverse />
-									{#if user.permissionLevel >= 4}
-										<DeleteButton
-											id={reply.id}
-											moderate
-											reverse />
-									{/if}
-								{/if}
-							{/if}
-						{:else}
-							<div class="mb-2 card reply bg-darker p-4 pt-2">
-								<form
-									use:enhance
-									on:submit={() => replyingTo.set("")}
-									method="POST"
-									action="?/reply&rid={reply.id}">
-									<label
-										for="content"
-										class="light-text pb-2">
-										Post a Reply
-									</label>
-									<fieldset class="flex flex-col gap-3">
-										<textarea
-											bind:value={content}
-											required
-											minlength="1"
-											maxlength="1000"
-											name="content"
-											placeholder="What are your thoughts?"
-											rows="4" />
-										<div class="flex gap-3">
-											<button class="btn btn-secondary">
-												<far fa-message class="pr-2" />
-												Reply
-											</button>
-											<button
-												on:click={() =>
-													replyingTo.set("")}
-												class="btn btn-tertiary grey-text">
-												<fa fa-cancel class="pr-2" />
-												Cancel
-											</button>
-										</div>
-									</fieldset>
-								</form>
-							</div>
-						{/if}
-					</div>
-				</div>
-
-				{#if depth > 8}
-					<!-- todo fix incorrect colour -->
-					<a href="{baseUrl}/{reply.id}" class="no-underline">
-						<fa fa-arrow-down class="mr-2" />
-						More replies
-					</a>
-				{/if}
-
-				{#each reply.replies as reply2}
-					<!-- Get READY for some RECURSION!!! -->
-					<svelte:self
-						{user}
-						reply={reply2}
-						{num}
-						{replyingTo}
-						{categoryName}
-						{postId}
-						{assetName}
-						{postAuthorName}
-						{repliesCollapsed}
-						depth={depth + 1}
-						topLevel />
-				{/each}
+				<ForumReplyMain
+					{user}
+					{reply}
+					{num}
+					{depth}
+					{replyingTo}
+					{postAuthorName}
+					{categoryName}
+					{postId}
+					{assetName}
+					{repliesCollapsed} />
 			</div>
 		{/if}
 	</div>
@@ -283,11 +113,10 @@
 		transition all 0.2s ease-out
 
 	.collapseBar
-		width auto
-		border-left 9px solid var(--background) !important
-		border-right 13px solid var(--background) !important
+		border-left 9px solid var(--background)
+		border-right 13px solid var(--background)
 		&:hover
-			background var(--grey-text) !important
+			background var(--grey-text)
 
 	.expandBar
 		border none
@@ -296,38 +125,4 @@
 		color var(--accent3)
 		&:hover
 			color var(--grey-text)
-
-		small
-			max-width 10rem
-			text-overflow ellipsis
-
-	.card
-		max-width 75%
-
-	.reply
-		border-color var(--accent2)
-
-	.smallbutton
-		width 1.5rem
-		height 1.5rem
-
-	p
-		word-break break-word
-
-	.userlink
-		margin-top 1px
-		transition color 0.2s
-		// &:hover
-		// 	color var(--accent3)
-
-		span
-			transition color 0.2s
-			&:hover
-				color var(--grey-text) !important
-
-	.user
-		align-items center
-
-	.hidden
-		opacity 33%
 </style>

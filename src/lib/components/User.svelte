@@ -5,7 +5,7 @@
 		// 8 months late lmao
 		Playing: "#238560",
 		Online: "#3459e6",
-		Offline: "#0000",
+		Offline: "#0000"
 	}
 	const transitionBackgrounds = {
 		darker: "background",
@@ -13,7 +13,7 @@
 		accent: "accent1",
 		accent1: "accent2",
 		accent2: "accent3",
-		accent3: "accent2",
+		accent3: "accent2"
 	}
 
 	export let user: {
@@ -25,6 +25,10 @@
 	export let thin = false
 	export let image = false
 	export let bottom = false
+	export let rerender: {
+		form?: any
+		regenerating?: boolean
+	} = {} // Used on profile page for rerender button
 	export let size = "2rem"
 	export let bg: keyof typeof transitionBackgrounds = "accent2"
 
@@ -36,11 +40,22 @@
 {#if image}
 	<div class="flex {$$restProps.class}" class:items-center={full}>
 		<span class="rounded-full overflow-hidden" style="{style};{style2}">
-			<img
-				src="/api/avatar/{user.username}"
-				alt={user.username}
-				class="rounded-full rounded-top-0"
-				{style} />
+			{#if rerender.form}
+				<img
+					class="transition-opacity duration-300 rounded-full
+					rounded-t-0"
+					class:opacity-50={rerender.regenerating}
+					src={rerender.form?.avatar ||
+						`/api/avatar/${user.username}`}
+					alt={user.username}
+					{style} />
+			{:else}
+				<img
+					src="/api/avatar/{user.username}"
+					alt={user.username}
+					class="rounded-full rounded-t-0"
+					{style} />
+			{/if}
 		</span>
 		{#if full}
 			<span class="username {thin ? 'pl-2 text-base' : 'font-bold pl-4'}">
@@ -61,7 +76,7 @@
 			<img
 				src="/api/avatar/{user.username}"
 				alt={user.username}
-				class="rounded-full rounded-top-0"
+				class="rounded-full rounded-t-0"
 				{style} />
 		</span>
 		{#if full}

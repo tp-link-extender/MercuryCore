@@ -62,11 +62,11 @@ export async function load({ locals, params }) {
 
 export const actions = {
 	like: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals),
-			data = await formData(request),
-			action = data.action as keyof typeof likeActions,
-			id = url.searchParams.get("id"),
-			replyId = url.searchParams.get("rid")
+		const { user } = await authorise(locals)
+		const data = await formData(request)
+		const action = data.action as keyof typeof likeActions
+		const id = url.searchParams.get("id")
+		const replyId = url.searchParams.get("rid")
 
 		if (
 			(id && !(await surreal.select(`forumPost:${id}`))[0]) ||

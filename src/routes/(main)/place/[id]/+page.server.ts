@@ -19,8 +19,7 @@ export async function load({ locals, params }) {
 				name,
 				privateServer,
 				meta::id(id) AS id,
-				(SELECT
-					meta::id(id) AS id
+				(SELECT meta::id(id) AS id
 				FROM <-owns<-user)[0] AS owner
 			FROM $place`,
 		{ place: `place:${params.id}` }
@@ -29,7 +28,7 @@ export async function load({ locals, params }) {
 	if (
 		place &&
 		(!place.privateServer ||
-			(await authorise(locals)).user.id == place.owner.id)
+			(await authorise(locals)).user.id === place.owner.id)
 	)
 		redirect(302, `/place/${params.id}/${place.name}`)
 

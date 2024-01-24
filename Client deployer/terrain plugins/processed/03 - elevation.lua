@@ -17,7 +17,11 @@ mouse.Button1Down:connect(function()
 	onClicked(mouse)
 end)
 local toolbar = plugin:CreateToolbar "Terrain"
-local toolbarbutton = toolbar:CreateButton("Elevation Adjuster", "Elevation Adjuster", "elevation.png")
+local toolbarbutton = toolbar:CreateButton(
+	"Elevation Adjuster",
+	"Elevation Adjuster",
+	"elevation.png"
+)
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -121,10 +125,13 @@ function MouseHighlighter.Create(mouseUse)
 	-- Return:
 	-- success - Value is true if there was a plane intersection, false if not.
 	-- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
-	function PlaneIntersection(vectorPos)
+	local function PlaneIntersection(vectorPos)
 		local currCamera = game.Workspace.CurrentCamera
-		local startPos =
-			Vector3.new(currCamera.CoordinateFrame.p.X, currCamera.CoordinateFrame.p.Y, currCamera.CoordinateFrame.p.Z)
+		local startPos = Vector3.new(
+			currCamera.CoordinateFrame.p.X,
+			currCamera.CoordinateFrame.p.Y,
+			currCamera.CoordinateFrame.p.Z
+		)
 		local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
 		local normal = Vector3.new(0, 1, 0)
 		local p3 = Vector3.new(0, 0, 0)
@@ -173,18 +180,25 @@ function MouseHighlighter.Create(mouseUse)
 		local regionToSelect
 
 		local lowVec = CellCenterToWorld(c, cellPos.x, cellPos.y - 1, cellPos.z)
-		local highVec = CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
+		local highVec =
+			CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
 		regionToSelect = Region3.new(lowVec, highVec)
 
-		highlighter.selectionPart.Size = regionToSelect.Size - Vector3.new(-4, 4, -4)
+		highlighter.selectionPart.Size = regionToSelect.Size
+			- Vector3.new(-4, 4, -4)
 		highlighter.selectionPart.CFrame = regionToSelect.CFrame
 
 		if nil ~= highlighter.OnClicked and highlighter.mouseDown then
 			if nil == highlighter.lastUsedPoint then
-				highlighter.lastUsedPoint =
-					WorldToCellPreferEmpty(c, Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z))
+				highlighter.lastUsedPoint = WorldToCellPreferEmpty(
+					c,
+					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+				)
 			else
-				cellPos = WorldToCellPreferEmpty(c, Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z))
+				cellPos = WorldToCellPreferEmpty(
+					c,
+					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+				)
 			end
 		end
 	end
@@ -250,8 +264,17 @@ end
 -- Return:
 -- sliderGui      - Slider gui object.
 -- sliderPosition - Object that can set the slider value.
-function CreateStandardSlider(name, pos, lengthBarPos, steps, funcOnChange, initValue, parent)
-	local sliderGui, sliderPosition = RbxGui.CreateSlider(steps, 0, UDim2.new(0, 0, 0, 0))
+function CreateStandardSlider(
+	name,
+	pos,
+	lengthBarPos,
+	steps,
+	funcOnChange,
+	initValue,
+	parent
+)
+	local sliderGui, sliderPosition =
+		RbxGui.CreateSlider(steps, 0, UDim2.new(0, 0, 0, 0))
 
 	sliderGui.Name = name
 	sliderGui.Parent = parent
@@ -276,7 +299,13 @@ end
 
 -- Gui frame for the plugin.
 local elevationPropertiesDragBar, elevationFrame, elevationHelpFrame, elevationCloseEvent =
-	RbxGui.CreatePluginFrame("Elevation Adjuster", UDim2.new(0, 185, 0, 100), UDim2.new(0, 0, 0, 0), false, g)
+	RbxGui.CreatePluginFrame(
+		"Elevation Adjuster",
+		UDim2.new(0, 185, 0, 100),
+		UDim2.new(0, 0, 0, 0),
+		false,
+		g
+	)
 elevationPropertiesDragBar.Visible = false
 elevationCloseEvent.Event:connect(function()
 	Off()
@@ -306,8 +335,13 @@ The larger it is, the steeper the slope.]]
 elevationHelpText.Parent = elevationHelpFrame
 
 -- Slider for controlling radius.
-local radiusLabel =
-	CreateStandardLabel("RadiusLabel", UDim2.new(0, 8, 0, 10), UDim2.new(0, 67, 0, 14), "", elevationFrame)
+local radiusLabel = CreateStandardLabel(
+	"RadiusLabel",
+	UDim2.new(0, 8, 0, 10),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	elevationFrame
+)
 local _, radiusSliderPosition = CreateStandardSlider(
 	"radiusSliderGui",
 	UDim2.new(0, 1, 0, 26),
@@ -323,8 +357,13 @@ local _, radiusSliderPosition = CreateStandardSlider(
 radiusSliderPosition.Value = 1
 
 -- Slider for controlling the z offset to generate terrain at.
-local slopeLabel =
-	CreateStandardLabel("SlopeLabel", UDim2.new(0, 8, 0, 51), UDim2.new(0, 67, 0, 14), "", elevationFrame)
+local slopeLabel = CreateStandardLabel(
+	"SlopeLabel",
+	UDim2.new(0, 8, 0, 51),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	elevationFrame
+)
 local _, slopeSliderPosition = CreateStandardSlider(
 	"slopeSliderGui",
 	UDim2.new(0, 1, 0, 67),
@@ -346,10 +385,10 @@ slopeSliderPosition.Value = 1
 --find height at coordinate x, z
 function findHeight(x, z)
 	local h = 0
-	local material, wedge, rotation = GetCell(c, x, h + 1, z)
+	local material, _, _ = GetCell(c, x, h + 1, z)
 	while material.Value > 0 do
 		h = h + 1
-		material, wedge, rotation = GetCell(c, x, h + 1, z)
+		material, _, _ = GetCell(c, x, h + 1, z)
 	end
 	return h
 end
@@ -362,10 +401,28 @@ function makeShell(x, z, heightmap, shellheightmap)
 			if shellheightmap[i][k] < originalheight then
 				for h = originalheight, shellheightmap[i][k] - 2, -1 do
 					if h > 0 then
-						if waterMaterialID == elevationOptions.defaultTerrainMaterial then
-							SetWaterCell(c, i, h, k, elevationOptions.waterForce, elevationOptions.waterDirection)
+						if
+							waterMaterialID
+							== elevationOptions.defaultTerrainMaterial
+						then
+							SetWaterCell(
+								c,
+								i,
+								h,
+								k,
+								elevationOptions.waterForce,
+								elevationOptions.waterDirection
+							)
 						else
-							SetCell(c, i, h, k, elevationOptions.defaultTerrainMaterial, 0, 0)
+							SetCell(
+								c,
+								i,
+								h,
+								k,
+								elevationOptions.defaultTerrainMaterial,
+								0,
+								0
+							)
 						end
 					end
 				end
@@ -397,7 +454,8 @@ function elevate(x, y, z, r1, r2, d, range)
 				height = y + d
 			elseif distance < r2 then
 				height = math.floor(
-					(y + d) * (1 - (distance - r1) / (r2 - r1)) + oldheightmap[i][k] * (distance - r1) / (r2 - r1)
+					(y + d) * (1 - (distance - r1) / (r2 - r1))
+						+ oldheightmap[i][k] * (distance - r1) / (r2 - r1)
 				)
 			else
 				height = oldheightmap[i][k]
@@ -417,7 +475,15 @@ function elevate(x, y, z, r1, r2, d, range)
 			--the height is either greater than or less than the current height
 			if height > heightmap[i][k] then
 				for h = heightmap[i][k] - 2, height do
-					SetCell(c, i, h, k, elevationOptions.defaultTerrainMaterial, 0, 0)
+					SetCell(
+						c,
+						i,
+						h,
+						k,
+						elevationOptions.defaultTerrainMaterial,
+						0,
+						0
+					)
 				end
 				heightmap[i][k] = height
 			elseif height < heightmap[i][k] then
@@ -486,15 +552,23 @@ function onClicked(mouse2)
 	if on then
 		oldheightmap = {}
 		heightmap = {}
-		local cellPos = WorldToCellPreferEmpty(c, Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z))
+		local cellPos = WorldToCellPreferEmpty(
+			c,
+			Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+		)
 
-		local solidCell = WorldToCellPreferSolid(c, Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z))
+		local solidCell = WorldToCellPreferSolid(
+			c,
+			Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+		)
 		local success = false
 
 		-- If nothing was hit, do the plane intersection.
 		if 0 == GetCell(c, solidCell.X, solidCell.Y, solidCell.Z).Value then
 			--print('Plane Intersection happens')
-			success, cellPos = PlaneIntersection(Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z))
+			success, cellPos = PlaneIntersection(
+				Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+			)
 			if not success then
 				cellPos = solidCell
 			end
@@ -529,7 +603,13 @@ function onClicked(mouse2)
 			if math.abs(mouse2.Y - prevY) >= 5 then
 				prevY = mouse2.Y
 				local r2 = elevationOptions.r
-					+ math.floor(50 * 1 / elevationOptions.s * math.abs(originalY - prevY) / mouse2.ViewSizeY)
+					+ math.floor(
+						50
+							* 1
+							/ elevationOptions.s
+							* math.abs(originalY - prevY)
+							/ mouse2.ViewSizeY
+					)
 				if r2 > range then
 					range = r2
 				end

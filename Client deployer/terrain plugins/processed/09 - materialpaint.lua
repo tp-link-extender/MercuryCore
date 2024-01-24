@@ -23,7 +23,11 @@ mouse.Move:connect(function()
 end)
 
 local toolbar = this:CreateToolbar "Terrain"
-local toolbarbutton = toolbar:CreateButton("Material Brush", "Material Brush", "materialBrush.png")
+local toolbarbutton = toolbar:CreateButton(
+	"Material Brush",
+	"Material Brush",
+	"materialBrush.png"
+)
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -205,19 +209,61 @@ function setWaterDirection(mouseCellPos, setCells)
 	else
 		for i = 1, #setCells do
 			if setCells[i].xPos == initX then
-				SetWaterCell(c, setCells[i].xPos, setCells[i].yPos, setCells[i].zPos, mediumWaterForce, down)
+				SetWaterCell(
+					c,
+					setCells[i].xPos,
+					setCells[i].yPos,
+					setCells[i].zPos,
+					mediumWaterForce,
+					down
+				)
 			elseif setCells[i].xPos == endX then
-				SetWaterCell(c, setCells[i].xPos, setCells[i].yPos, setCells[i].zPos, mediumWaterForce, up)
+				SetWaterCell(
+					c,
+					setCells[i].xPos,
+					setCells[i].yPos,
+					setCells[i].zPos,
+					mediumWaterForce,
+					up
+				)
 			else
 				if setCells[i].zPos < zMiddle then
-					SetWaterCell(c, setCells[i].xPos, setCells[i].yPos, setCells[i].zPos, mediumWaterForce, right)
+					SetWaterCell(
+						c,
+						setCells[i].xPos,
+						setCells[i].yPos,
+						setCells[i].zPos,
+						mediumWaterForce,
+						right
+					)
 				elseif setCells[i].zPos > zMiddle then
-					SetWaterCell(c, setCells[i].xPos, setCells[i].yPos, setCells[i].zPos, mediumWaterForce, left)
+					SetWaterCell(
+						c,
+						setCells[i].xPos,
+						setCells[i].yPos,
+						setCells[i].zPos,
+						mediumWaterForce,
+						left
+					)
 				else
 					if setCells[i].xPos < xMiddle then
-						SetWaterCell(c, setCells[i].xPos, setCells[i].yPos, setCells[i].zPos, mediumWaterForce, down)
+						SetWaterCell(
+							c,
+							setCells[i].xPos,
+							setCells[i].yPos,
+							setCells[i].zPos,
+							mediumWaterForce,
+							down
+						)
 					elseif setCells[i].xPos > xMiddle then
-						SetWaterCell(c, setCells[i].xPos, setCells[i].yPos, setCells[i].zPos, mediumWaterForce, up)
+						SetWaterCell(
+							c,
+							setCells[i].xPos,
+							setCells[i].yPos,
+							setCells[i].zPos,
+							mediumWaterForce,
+							up
+						)
 					end
 				end
 			end
@@ -238,7 +284,13 @@ function getSquare(cellPos, setCells)
 				if oldMaterial.Value > 0 then
 					table.insert(
 						setCells,
-						{ xPos = x, yPos = y, zPos = z, theType = oldType, orientation = oldOrientation }
+						{
+							xPos = x,
+							yPos = y,
+							zPos = z,
+							theType = oldType,
+							orientation = oldOrientation,
+						}
 					)
 				end
 			end
@@ -260,11 +312,18 @@ function getCircular(cellPos, setCells)
 				local holdDist = tempCellPos - cellPos
 				local distSq = (holdDist):Dot(holdDist)
 				if distSq < radiusSquared then
-					local oldMaterial, oldType, oldOrientation = GetCell(c, x, y, z)
+					local oldMaterial, oldType, oldOrientation =
+						GetCell(c, x, y, z)
 					if oldMaterial.Value > 0 then
 						table.insert(
 							setCells,
-							{ xPos = x, yPos = y, zPos = z, theType = oldType, orientation = oldOrientation }
+							{
+								xPos = x,
+								yPos = y,
+								zPos = z,
+								theType = oldType,
+								orientation = oldOrientation,
+							}
 						)
 					end
 				end
@@ -345,24 +404,36 @@ end
 function calculateRegion(mouseR)
 	local cellPos = WorldToCellPreferSolid(c, mouseR.Hit.p)
 
-	local lowVec = Vector3.new(cellPos.x - radius, cellPos.y - radius, cellPos.z - radius)
-	local highVec = Vector3.new(cellPos.x + radius, cellPos.y + radius, cellPos.z + radius)
+	local lowVec =
+		Vector3.new(cellPos.x - radius, cellPos.y - radius, cellPos.z - radius)
+	local highVec =
+		Vector3.new(cellPos.x + radius, cellPos.y + radius, cellPos.z + radius)
 	lowVec = CellCenterToWorld(c, lowVec.x, lowVec.y, lowVec.z)
 	highVec = CellCenterToWorld(c, highVec.x, highVec.y, highVec.z)
 
-	return Region3.new(lowVec + Vector3.new(2, 2, 2), highVec - Vector3.new(2, 2, 2))
+	return Region3.new(
+		lowVec + Vector3.new(2, 2, 2),
+		highVec - Vector3.new(2, 2, 2)
+	)
 end
 
 function createSelection(mouseS, massSelection)
-	currSelectionUpdate, currSelectionDestroy =
-		RbxUtil.SelectTerrainRegion(calculateRegion(mouseS), BrickColor.new "Lime green", massSelection, game.CoreGui)
+	currSelectionUpdate, currSelectionDestroy = RbxUtil.SelectTerrainRegion(
+		calculateRegion(mouseS),
+		BrickColor.new "Lime green",
+		massSelection,
+		game.CoreGui
+	)
 end
 
 function updateSelection(mouseS)
 	if not currSelectionUpdate then
 		createSelection(mouseS, radius > 4)
 	else
-		currSelectionUpdate(calculateRegion(mouseS), BrickColor.new "Lime green")
+		currSelectionUpdate(
+			calculateRegion(mouseS),
+			BrickColor.new "Lime green"
+		)
 	end
 end
 
@@ -400,7 +471,10 @@ function setPositionDirectionality()
 	local overallDirection = (lastCell - lastLastCell).unit
 	local cellsToSet = paint(lastCell)
 
-	local absX, absY, absZ = math.abs(overallDirection.X), math.abs(overallDirection.Y), math.abs(overallDirection.Z)
+	local absX, absY, absZ =
+		math.abs(overallDirection.X),
+		math.abs(overallDirection.Y),
+		math.abs(overallDirection.Z)
 	local direction
 
 	if absX > absY and absX > absZ then
@@ -428,7 +502,14 @@ function setPositionDirectionality()
 	end
 
 	for i = 1, #cellsToSet do
-		SetWaterCell(c, cellsToSet[i].xPos, cellsToSet[i].yPos, cellsToSet[i].zPos, mediumWaterForce, direction)
+		SetWaterCell(
+			c,
+			cellsToSet[i].xPos,
+			cellsToSet[i].yPos,
+			cellsToSet[i].zPos,
+			mediumWaterForce,
+			direction
+		)
 	end
 end
 
@@ -440,7 +521,10 @@ function mouseDown(mouseD)
 				local newCell = WorldToCellPreferSolid(c, mouseD.Hit.p)
 				if newCell then
 					local setCells = paint(newCell)
-					if currentMaterial == waterMaterial and directionIsDown(lastCell, newCell) then
+					if
+						currentMaterial == waterMaterial
+						and directionIsDown(lastCell, newCell)
+					then
 						paintWaterfall(setCells)
 					end
 					lastCell = newCell
@@ -497,7 +581,8 @@ function directionIsDown(fromCell, toCell)
 
 	if toCell and fromCell then
 		local direction = (toCell - fromCell).unit
-		local absX, absY, absZ = math.abs(direction.X), math.abs(direction.Y), math.abs(direction.Z)
+		local absX, absY, absZ =
+			math.abs(direction.X), math.abs(direction.Y), math.abs(direction.Z)
 		if absY > absX and absY > absZ then
 			return true
 		end
@@ -511,7 +596,8 @@ function directionIsDown(fromCell, toCell)
 		return false
 	end
 
-	local lowX, lowY, lowZ = viableCells[1].xPos, viableCells[1].yPos, viableCells[1].zPos
+	local lowX, lowY, lowZ =
+		viableCells[1].xPos, viableCells[1].yPos, viableCells[1].zPos
 	local highX, highY, highZ = lowX, lowY, lowZ
 
 	for i = 2, #viableCells do
@@ -537,7 +623,8 @@ function directionIsDown(fromCell, toCell)
 		end
 	end
 
-	local xRange, yRange, zRange = math.abs(highX - lowX), math.abs(highY - lowY), math.abs(highZ - lowZ)
+	local xRange, yRange, zRange =
+		math.abs(highX - lowX), math.abs(highY - lowY), math.abs(highZ - lowZ)
 
 	local xzPlaneArea = xRange * zRange
 	local xyPlaneArea = xRange * yRange
@@ -600,7 +687,11 @@ end
 function paintBetweenPoints(lastCellP, newCell)
 	local currCell = lastCellP
 
-	while currCell.X ~= newCell.X or currCell.Z ~= newCell.Z or currCell.Y ~= newCell.Y do
+	while
+		currCell.X ~= newCell.X
+		or currCell.Z ~= newCell.Z
+		or currCell.Y ~= newCell.Y
+	do
 		currCell = interpolateOneDim("X", currCell.X, newCell.X, currCell)
 		currCell = interpolateOneDim("Z", currCell.Z, newCell.Z, currCell)
 		currCell = interpolateOneDim("Y", currCell.Y, newCell.Y, currCell)
@@ -635,8 +726,13 @@ local g = Instance.new "ScreenGui"
 g.Name = "MaterialPainterGui"
 g.Parent = game:GetService "CoreGui"
 
-dragBar, containerFrame, helpFrame, closeEvent =
-	RbxGui.CreatePluginFrame("Material Brush", UDim2.new(0, 163, 0, 285), UDim2.new(0, 0, 0, 0), false, g)
+dragBar, containerFrame, helpFrame, closeEvent = RbxGui.CreatePluginFrame(
+	"Material Brush",
+	UDim2.new(0, 163, 0, 285),
+	UDim2.new(0, 0, 0, 0),
+	false,
+	g
+)
 dragBar.Visible = false
 
 -- End dragging if it goes over the gui frame.
@@ -680,7 +776,10 @@ closeEvent.Event:connect(function()
 end)
 
 terrainSelectorGui, terrainSelected, forceTerrainSelection =
-	RbxGui.CreateTerrainMaterialSelector(UDim2.new(1, -10, 0, 184), UDim2.new(0, 5, 1, -190))
+	RbxGui.CreateTerrainMaterialSelector(
+		UDim2.new(1, -10, 0, 184),
+		UDim2.new(0, 5, 1, -190)
+	)
 terrainSelectorGui.Parent = containerFrame
 terrainSelectorGui.BackgroundTransparency = 1
 terrainSelectorGui.BorderSizePixel = 0
@@ -709,7 +808,8 @@ radiusLabel.TextXAlignment = Enum.TextXAlignment.Left
 radiusLabel.Parent = containerFrame
 
 --radius slider
-local radSliderGui, radSliderPosition = RbxGui.CreateSlider(6, 0, UDim2.new(0, 0, 0, 18))
+local radSliderGui, radSliderPosition =
+	RbxGui.CreateSlider(6, 0, UDim2.new(0, 0, 0, 18))
 radSliderGui.Size = UDim2.new(1, -2, 0, 20)
 radSliderGui.Position = UDim2.new(0, 0, 0, 24)
 radSliderGui.Parent = containerFrame
@@ -727,7 +827,8 @@ local brushTypeChanged = function(newBrush)
 	brushType = newBrush
 end
 -- brush type drop-down
-local brushDropDown, forceSelection = RbxGui.CreateDropDownMenu(brushTypes, brushTypeChanged)
+local brushDropDown, forceSelection =
+	RbxGui.CreateDropDownMenu(brushTypes, brushTypeChanged)
 forceSelection "Square"
 brushDropDown.Size = UDim2.new(1, -10, 0.01, 25)
 brushDropDown.Position = UDim2.new(0, 5, 0, 65)

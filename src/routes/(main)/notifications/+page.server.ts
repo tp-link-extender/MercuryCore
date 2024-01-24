@@ -10,16 +10,14 @@ export const load = async ({ locals }) => {
 			UPDATE notification
 			SET read = true
 			WHERE out = $user`,
-		{
-			user: `user:${user.id}`,
-		}
+		{ user: `user:${user.id}` }
 	)
 }
 
 export const actions = {
 	default: async ({ locals, url }) => {
-		const { user } = await authorise(locals),
-			id = url.searchParams.get("s")
+		const { user } = await authorise(locals)
+		const id = url.searchParams.get("s")
 		if (!id) error(400)
 
 		try {
@@ -29,11 +27,9 @@ export const actions = {
 						UPDATE $notification
 						SET read = true
 					}`,
-				{
-					notification: `notification:${id}`,
-				}
+				{ notification: `notification:${id}` }
 			)
-		} catch (e: any) {
+		} catch (e) {
 			error(400)
 		}
 	},
