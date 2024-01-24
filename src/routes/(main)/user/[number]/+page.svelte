@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { applyAction } from "$app/forms"
+	import { invalidateAll } from "$app/navigation"
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
 
@@ -8,12 +10,23 @@
 		["aqua", "fa-check", "Verified"],
 		["violet", "fa-hammer", "Catalog Manager"],
 		["orange", "fa-shield-alt", "Moderator"],
-		["crimson", "fa-scale-balanced", "Administrator"],
+		["crimson", "fa-scale-balanced", "Administrator"]
 	]
 
 	export let data
-	export let form
 	const { user } = data
+	export let form
+
+	let regenerating = false
+
+	const enhanceRegen: import("./$types").SubmitFunction = () => {
+		regenerating = true
+		return async ({ result }) => {
+			if (result.type === "success") await invalidateAll()
+			await applyAction(result)
+			regenerating = false
+		}
+	}
 </script>
 
 <Head title={data.username} />
@@ -22,10 +35,20 @@
 	<div class="card bg-darker p-4 lg:p-6">
 		<div class="flex">
 			<span class="<lg:hidden pr-6">
-				<User user={data} size="7rem" bg="accent" image />
+				<User
+					user={data}
+					size="7rem"
+					bg="accent"
+					image
+					rerender={{ form, regenerating }} />
 			</span>
 			<span class="lg:hidden pr-4">
-				<User user={data} size="6rem" bg="accent" image />
+				<User
+					user={data}
+					size="6rem"
+					bg="accent"
+					image
+					rerender={{ form, regenerating }} />
 			</span>
 			<div class="w-full">
 				<div class="flex mb-2 justify-between">
@@ -108,12 +131,14 @@
 				<h2 class="light-text">Avatar</h2>
 				<div class="card bg-darker card-body">
 					<img
-						src={form?.avatar ||
+						class="transition-opacity duration-300"
+						class:opacity-50={regenerating}
+						src={form?.avatarBody ||
 							`/api/avatar/${data.username}-body`}
 						alt={data.username} />
 					{#if user?.permissionLevel >= 5}
 						<form
-							use:enhance
+							use:enhance={enhanceRegen}
 							method="POST"
 							action="?/rerender"
 							in:fade
@@ -139,7 +164,7 @@
 							<div
 								in:fade|global={{
 									num,
-									total: data.places.length,
+									total: data.places.length
 								}}>
 								<ProfilePlace {place} />
 							</div>
@@ -157,7 +182,7 @@
 							<a
 								in:fade={{
 									num,
-									total: data.groupsOwned.length,
+									total: data.groupsOwned.length
 								}}
 								class="card bg-darker light-text no-underline"
 								href="/groups/{group.name}">

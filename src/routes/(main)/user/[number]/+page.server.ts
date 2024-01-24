@@ -297,7 +297,10 @@ export const actions = {
 		try {
 			await requestRender("Avatar", parseInt(params.number), true)
 			return {
-				avatar: `/api/avatar/${user2.username}-body?r=${Math.random()}`,
+				avatarBody: `/api/avatar/${
+					user2.username
+				}-body?r=${Math.random()}`,
+				avatar: `/api/avatar/${user2.username}?r=${Math.random()}`,
 			}
 		} catch (e) {
 			console.error(e)

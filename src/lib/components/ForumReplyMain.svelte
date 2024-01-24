@@ -169,8 +169,7 @@
 							maxlength="1000"
 							name="content"
 							placeholder="What are your thoughts?"
-							rows="4">
-						</textarea>
+							rows="4" />
 						<div class="flex gap-3">
 							<button class="btn btn-secondary">
 								<far fa-message class="pr-2"></far>
