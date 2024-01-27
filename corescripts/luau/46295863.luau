@@ -1489,8 +1489,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	cameraLabel.ZIndex = baseZIndex + 4
 	cameraLabel.Parent = gameSettingsMenuFrame
 
-	mouseLockLabel =
-		game.CoreGui.RobloxGui:FindFirstChild("MouseLockLabel", true)
+	mouseLockLabel = CoreGui.RobloxGui:FindFirstChild("MouseLockLabel", true)
 
 	local enumItems = Enum.ControlMode:GetEnumItems()
 	local enumNames = {}
@@ -1612,7 +1611,7 @@ if UserSettings then
 			end)
 		end
 
-		game.CoreGui.RobloxGui.Changed:connect(
+		CoreGui.RobloxGui.Changed:connect(
 			function(prop) -- We have stopped recording when we resize
 				if prop == "AbsoluteSize" and recordingVideo then
 					recordVideoClick(

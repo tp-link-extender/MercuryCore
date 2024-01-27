@@ -128,6 +128,8 @@ local function setSliderPos(newAbsPosX, slider, sliderPosition, bar, steps)
 	end
 end
 
+local areaSoakMouseMoveCon
+
 local function cancelSlide(areaSoak)
 	areaSoak.Visible = false
 	if areaSoakMouseMoveCon then
@@ -864,8 +866,6 @@ RbxGui.CreateSlider = function(steps, width, position)
 	slider.Size = UDim2.new(0, 20, 0, 20)
 	slider.ZIndex = 3
 	slider.Parent = bar
-
-	local areaSoakMouseMoveCon
 
 	areaSoak.MouseLeave:connect(function()
 		if areaSoak.Visible then
@@ -3611,6 +3611,88 @@ RbxGui.CreateSetPanel = function(
 		waterTypeChangedEvent
 end
 
+local function getEnumFromName(choice)
+	if choice == "Grass" then
+		return 1
+	elseif choice == "Sand" then
+		return 2
+	elseif choice == "Erase" then
+		return 0
+	elseif choice == "Brick" then
+		return 3
+	elseif choice == "Granite" then
+		return 4
+	elseif choice == "Asphalt" then
+		return 5
+	elseif choice == "Iron" then
+		return 6
+	elseif choice == "Aluminum" then
+		return 7
+	elseif choice == "Gold" then
+		return 8
+	elseif choice == "Plank" then
+		return 9
+	elseif choice == "Log" then
+		return 10
+	elseif choice == "Gravel" then
+		return 11
+	elseif choice == "Cinder Block" then
+		return 12
+	elseif choice == "Stone Wall" then
+		return 13
+	elseif choice == "Concrete" then
+		return 14
+	elseif choice == "Plastic (red)" then
+		return 15
+	elseif choice == "Plastic (blue)" then
+		return 16
+	elseif choice == "Water" then
+		return 17
+	end
+	return
+end
+
+local function getNameFromEnum(choice)
+	if choice == Enum.CellMaterial.Grass or choice == 1 then
+		return "Grass"
+	elseif choice == Enum.CellMaterial.Sand or choice == 2 then
+		return "Sand"
+	elseif choice == Enum.CellMaterial.Empty or choice == 0 then
+		return "Erase"
+	elseif choice == Enum.CellMaterial.Brick or choice == 3 then
+		return "Brick"
+	elseif choice == Enum.CellMaterial.Granite or choice == 4 then
+		return "Granite"
+	elseif choice == Enum.CellMaterial.Asphalt or choice == 5 then
+		return "Asphalt"
+	elseif choice == Enum.CellMaterial.Iron or choice == 6 then
+		return "Iron"
+	elseif choice == Enum.CellMaterial.Aluminum or choice == 7 then
+		return "Aluminum"
+	elseif choice == Enum.CellMaterial.Gold or choice == 8 then
+		return "Gold"
+	elseif choice == Enum.CellMaterial.WoodPlank or choice == 9 then
+		return "Plank"
+	elseif choice == Enum.CellMaterial.WoodLog or choice == 10 then
+		return "Log"
+	elseif choice == Enum.CellMaterial.Gravel or choice == 11 then
+		return "Gravel"
+	elseif choice == Enum.CellMaterial.CinderBlock or choice == 12 then
+		return "Cinder Block"
+	elseif choice == Enum.CellMaterial.MossyStone or choice == 13 then
+		return "Stone Wall"
+	elseif choice == Enum.CellMaterial.Cement or choice == 14 then
+		return "Concrete"
+	elseif choice == Enum.CellMaterial.RedPlastic or choice == 15 then
+		return "Plastic (red)"
+	elseif choice == Enum.CellMaterial.BluePlastic or choice == 16 then
+		return "Plastic (blue)"
+	elseif choice == Enum.CellMaterial.Water or choice == 17 then
+		return "Water"
+	end
+	return
+end
+
 RbxGui.CreateTerrainMaterialSelector = function(size, position)
 	local terrainMaterialSelectionChanged = Instance.new "BindableEvent"
 	terrainMaterialSelectionChanged.Name = "TerrainMaterialSelectionChanged"
@@ -3628,8 +3710,6 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 	frame.Active = true
 
 	terrainMaterialSelectionChanged.Parent = frame
-
-	local waterEnabled = true -- todo: turn this on when water is ready
 
 	local materialToImageMap = {}
 	local materialNames = {
@@ -3649,112 +3729,10 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 		"Concrete",
 		"Plastic (red)",
 		"Plastic (blue)",
+		"Water",
 	}
-	if waterEnabled then
-		table.insert(materialNames, "Water")
-	end
+
 	local currentMaterial = 1
-
-	function getEnumFromName(choice)
-		if choice == "Grass" then
-			return 1
-		end
-		if choice == "Sand" then
-			return 2
-		end
-		if choice == "Erase" then
-			return 0
-		end
-		if choice == "Brick" then
-			return 3
-		end
-		if choice == "Granite" then
-			return 4
-		end
-		if choice == "Asphalt" then
-			return 5
-		end
-		if choice == "Iron" then
-			return 6
-		end
-		if choice == "Aluminum" then
-			return 7
-		end
-		if choice == "Gold" then
-			return 8
-		end
-		if choice == "Plank" then
-			return 9
-		end
-		if choice == "Log" then
-			return 10
-		end
-		if choice == "Gravel" then
-			return 11
-		end
-		if choice == "Cinder Block" then
-			return 12
-		end
-		if choice == "Stone Wall" then
-			return 13
-		end
-		if choice == "Concrete" then
-			return 14
-		end
-		if choice == "Plastic (red)" then
-			return 15
-		end
-		if choice == "Plastic (blue)" then
-			return 16
-		end
-		if choice == "Water" then
-			return 17
-		end
-	end
-
-	function getNameFromEnum(choice)
-		if choice == Enum.CellMaterial.Grass or choice == 1 then
-			return "Grass"
-		elseif choice == Enum.CellMaterial.Sand or choice == 2 then
-			return "Sand"
-		elseif choice == Enum.CellMaterial.Empty or choice == 0 then
-			return "Erase"
-		elseif choice == Enum.CellMaterial.Brick or choice == 3 then
-			return "Brick"
-		elseif choice == Enum.CellMaterial.Granite or choice == 4 then
-			return "Granite"
-		elseif choice == Enum.CellMaterial.Asphalt or choice == 5 then
-			return "Asphalt"
-		elseif choice == Enum.CellMaterial.Iron or choice == 6 then
-			return "Iron"
-		elseif choice == Enum.CellMaterial.Aluminum or choice == 7 then
-			return "Aluminum"
-		elseif choice == Enum.CellMaterial.Gold or choice == 8 then
-			return "Gold"
-		elseif choice == Enum.CellMaterial.WoodPlank or choice == 9 then
-			return "Plank"
-		elseif choice == Enum.CellMaterial.WoodLog or choice == 10 then
-			return "Log"
-		elseif choice == Enum.CellMaterial.Gravel or choice == 11 then
-			return "Gravel"
-		elseif choice == Enum.CellMaterial.CinderBlock or choice == 12 then
-			return "Cinder Block"
-		elseif choice == Enum.CellMaterial.MossyStone or choice == 13 then
-			return "Stone Wall"
-		elseif choice == Enum.CellMaterial.Cement or choice == 14 then
-			return "Concrete"
-		elseif choice == Enum.CellMaterial.RedPlastic or choice == 15 then
-			return "Plastic (red)"
-		elseif choice == Enum.CellMaterial.BluePlastic or choice == 16 then
-			return "Plastic (blue)"
-		end
-
-		if waterEnabled then
-			if choice == Enum.CellMaterial.Water or choice == 17 then
-				return "Water"
-			end
-		end
-	end
 
 	local function updateMaterialChoice(choice)
 		currentMaterial = getEnumFromName(choice)
@@ -3763,62 +3741,46 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 
 	-- we so need a better way to do this
 	for _, v in pairs(materialNames) do
-		materialToImageMap[v] = {}
+		local toAdd
 		if v == "Grass" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=56563112"
+			toAdd = 56563112
 		elseif v == "Sand" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=62356652"
+			toAdd = 62356652
 		elseif v == "Brick" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=65961537"
+			toAdd = 65961537
 		elseif v == "Granite" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532153"
+			toAdd = 67532153
 		elseif v == "Asphalt" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532038"
+			toAdd = 67532038
 		elseif v == "Iron" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532093"
+			toAdd = 67532093
 		elseif v == "Aluminum" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67531995"
+			toAdd = 67531995
 		elseif v == "Gold" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532118"
+			toAdd = 67532118
 		elseif v == "Plastic (red)" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67531848"
+			toAdd = 67531848
 		elseif v == "Plastic (blue)" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67531924"
+			toAdd = 67531924
 		elseif v == "Plank" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532015"
+			toAdd = 67532015
 		elseif v == "Log" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532051"
+			toAdd = 67532051
 		elseif v == "Gravel" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532206"
+			toAdd = 67532206
 		elseif v == "Cinder Block" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532103"
+			toAdd = 67532103
 		elseif v == "Stone Wall" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67531804"
+			toAdd = 67531804
 		elseif v == "Concrete" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=67532059"
+			toAdd = 67532059
 		elseif v == "Water" then
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=81407474"
+			toAdd = 81407474
 		else
-			materialToImageMap[v].Regular =
-				"http://banland.xyz/asset/?id=66887593" -- fill in the rest here!!
+			toAdd = 66887593 -- fill in the rest here!!
 		end
+		materialToImageMap[v] =
+			{ Regular = `http://banland.xyz/asset/?id={toAdd}` }
 	end
 
 	local scrollFrame, scrollUp, scrollDown, recalculateScroll =
@@ -4462,80 +4424,70 @@ RbxGui.Help = function(funcNameOrFunc)
 		return "Function CreatePropertyDropDownMenu.  "
 			.. "Arguments: (instance, propertyName, enumType).  "
 			.. "Side effect: returns a container with a drop-down-box that is linked to the 'property' field of 'instance' which is of type 'enumType'"
-	end
-	if
+	elseif
 		funcNameOrFunc == "CreateDropDownMenu"
 		or funcNameOrFunc == RbxGui.CreateDropDownMenu
 	then
 		return "Function CreateDropDownMenu.  "
 			.. "Arguments: (items, onItemSelected).  "
 			.. "Side effect: Returns 2 results, a container to the gui object and a 'updateSelection' function for external updating.  The container is a drop-down-box created around a list of items"
-	end
-	if
+	elseif
 		funcNameOrFunc == "CreateMessageDialog"
 		or funcNameOrFunc == RbxGui.CreateMessageDialog
 	then
 		return "Function CreateMessageDialog.  "
 			.. "Arguments: (title, message, buttons). "
 			.. "Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in.  'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button"
-	end
-	if
+	elseif
 		funcNameOrFunc == "CreateStyledMessageDialog"
 		or funcNameOrFunc == RbxGui.CreateStyledMessageDialog
 	then
 		return "Function CreateStyledMessageDialog.  "
 			.. "Arguments: (title, message, style, buttons). "
 			.. "Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in.  'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button, 'style' is a string, either Error, Notify or Confirm"
-	end
-	if
+	elseif
 		funcNameOrFunc == "GetFontHeight"
 		or funcNameOrFunc == RbxGui.GetFontHeight
 	then
 		return "Function GetFontHeight.  "
 			.. "Arguments: (font, fontSize). "
 			.. "Side effect: returns the size in pixels of the given font + fontSize"
-	end
-	if
+	elseif
 		funcNameOrFunc == "CreateScrollingFrame"
 		or funcNameOrFunc == RbxGui.CreateScrollingFrame
 	then
 		return "Function CreateScrollingFrame.  "
 			.. "Arguments: (orderList, style) "
 			.. "Side effect: returns 4 objects, (scrollFrame, scrollUpButton, scrollDownButton, recalculateFunction).  'scrollFrame' can be filled with GuiObjects.  It will lay them out and allow scrollUpButton/scrollDownButton to interact with them.  Orderlist is optional (and specifies the order to layout the children.  Without orderlist, it uses the children order. style is also optional, and allows for a 'grid' styling if style is passed 'grid' as a string.  recalculateFunction can be called when a relayout is needed (when orderList changes)"
-	end
-	if
+	elseif
 		funcNameOrFunc == "CreateTrueScrollingFrame"
 		or funcNameOrFunc == RbxGui.CreateTrueScrollingFrame
 	then
 		return "Function CreateTrueScrollingFrame.  "
 			.. "Arguments: (nil) "
 			.. "Side effect: returns 2 objects, (scrollFrame, controlFrame).  'scrollFrame' can be filled with GuiObjects, and they will be clipped if not inside the frame's bounds. controlFrame has children scrollup and scrolldown, as well as a slider.  controlFrame can be parented to any guiobject and it will readjust itself to fit."
-	end
-	if
+	elseif
 		funcNameOrFunc == "AutoTruncateTextObject"
 		or funcNameOrFunc == RbxGui.AutoTruncateTextObject
 	then
 		return "Function AutoTruncateTextObject.  "
 			.. "Arguments: (textLabel) "
 			.. "Side effect: returns 2 objects, (textLabel, changeText).  The 'textLabel' input is modified to automatically truncate text (with ellipsis), if it gets too small to fit.  'changeText' is a function that can be used to change the text, it takes 1 string as an argument"
-	end
-	if
+	elseif
 		funcNameOrFunc == "CreateSlider"
 		or funcNameOrFunc == RbxGui.CreateSlider
 	then
 		return "Function CreateSlider.  "
 			.. "Arguments: (steps, width, position) "
 			.. "Side effect: returns 2 objects, (sliderGui, sliderPosition).  The 'steps' argument specifies how many different positions the slider can hold along the bar.  'width' specifies in pixels how wide the bar should be (modifiable afterwards if desired). 'position' argument should be a UDim2 for slider positioning. 'sliderPosition' is an IntValue whose current .Value specifies the specific step the slider is currently on."
-	end
-	if
+	elseif
 		funcNameOrFunc == "CreateLoadingFrame"
 		or funcNameOrFunc == RbxGui.CreateLoadingFrame
 	then
 		return "Function CreateLoadingFrame.  "
 			.. "Arguments: (name, size, position) "
 			.. "Side effect: Creates a gui that can be manipulated to show progress for a particular action.  Name appears above the loading bar, and size and position are udim2 values (both size and position are optional arguments).  Returns 3 arguments, the first being the gui created. The second being updateLoadingGuiPercent, which is a bindable function.  This function takes one argument (two optionally), which should be a number between 0 and 1, representing the percentage the loading gui should be at.  The second argument to this function is a boolean value that if set to true will tween the current percentage value to the new percentage value, therefore our third argument is how long this tween should take. Our third returned argument is a BindableEvent, that when fired means that someone clicked the cancel button on the dialog."
-	end
-	if
+	elseif
 		funcNameOrFunc == "CreateTerrainMaterialSelector"
 		or funcNameOrFunc == RbxGui.CreateTerrainMaterialSelector
 	then
@@ -4543,6 +4495,7 @@ RbxGui.Help = function(funcNameOrFunc)
 			.. "Arguments: (size, position) "
 			.. "Side effect: Size and position are UDim2 values that specifies the selector's size and position.  Both size and position are optional arguments. This method returns 3 objects (terrainSelectorGui, terrainSelected, forceTerrainSelection).  terrainSelectorGui is just the gui object that we generate with this function, parent it as you like. TerrainSelected is a BindableEvent that is fired whenever a new terrain type is selected in the gui.  ForceTerrainSelection is a function that takes an argument of Enum.CellMaterial and will force the gui to show that material as currently selected."
 	end
+	return "No help available for this function"
 end
 
 return RbxGui
