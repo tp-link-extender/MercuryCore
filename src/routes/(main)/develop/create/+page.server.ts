@@ -80,20 +80,20 @@ export const actions = {
 					])
 					break
 
-				// case 8: // Hat
-				// 	if (user.permissionLevel < 3)
-				// 		return formError(
-				// 			form,
-				// 			["type"],
-				// 			[
-				// 				"You do not have permission to upload this type of asset",
-				// 			],
-				// 		)
-				// 	return formError(
-				// 		form,
-				// 		["type"],
-				// 		["Cannot upload this type of asset yet"],
-				// 	)
+				case 8: // Hat
+					if (user.permissionLevel < 3)
+						return formError(
+							form,
+							["type"],
+							[
+								"You do not have permission to upload this type of asset",
+							],
+						)
+					return formError(
+						form,
+						["type"],
+						["Cannot upload this type of asset yet"],
+					)
 
 				case 11: // Shirt
 				case 12: // Pants
@@ -104,7 +104,21 @@ export const actions = {
 					break
 
 				case 13: // Decal
+					saveImages = await Promise.all([
+						imageAsset(asset),
+						thumbnail(asset),
+					])
+					break
+
 				case 18: // Face
+					if (user.permissionLevel < 3)
+						return formError(
+							form,
+							["type"],
+							[
+								"You do not have permission to upload this type of asset",
+							],
+						)
 					saveImages = await Promise.all([
 						imageAsset(asset),
 						thumbnail(asset),
