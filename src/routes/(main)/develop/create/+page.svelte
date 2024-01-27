@@ -14,7 +14,7 @@
 	}
 
 	if (data.user.permissionLevel > 3) {
-		// assets["8"] = "Hat"
+		assets["8"] = "Hat"
 		assets["18"] = "Face"
 	}
 </script>

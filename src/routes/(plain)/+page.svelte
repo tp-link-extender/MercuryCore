@@ -59,7 +59,7 @@
 				href="/login"
 				class="inline btn btn-sm btn-secondary">
 				<b>
-					Login <fa fa-chevron-right />
+					Login <fa fa-right-to-bracket />
 				</b>
 			</a>
 			<a
@@ -67,12 +67,12 @@
 				href="/register"
 				class="inline btn btn-sm btn-primary">
 				<b>
-					Register <fa fa-chevron-right />
+					Register <fa fa-plus />
 				</b>
 			</a>
 		</div>
 		<a href="/about" class="btn btn-sm btn-tertiary">
-			About us <fa fa-chevron-right />
+			About us <far fa-circle-question />
 		</a>
 	</div>
 </div>
