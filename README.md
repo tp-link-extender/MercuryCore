@@ -18,12 +18,12 @@ We recommend using [Visual Studio Code](https://code.visualstudio.com) as your e
 
 The following extensions are recommended:
 
+-   [Biome](https://marketplace.visualstudio.com/items?itemName=biomejs.biome)
 -   [Caddyfile Support](https://marketplace.visualstudio.com/items?itemName=matthewpi.caddyfile-support)
 -   [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 -   [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
 -   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 -   [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
--   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 -   [stylus](https://marketplace.visualstudio.com/items?itemName=sysoev.language-stylus)
 -   [SurrealQL](https://marketplace.visualstudio.com/items?itemName=surrealdb.surrealql)
 -   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
@@ -51,7 +51,7 @@ Instructions:
 
 To start a local dev server, run `pnpm dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
--   If you are using WSL2, the server may not correctly reflect the changes you make. To fix this, add the following to the default export of vite.config.ts:
+-   If you are using WSL2, the server may not correctly reflect the changes you make if the repository is stored on the Windows drive. To fix this, move the repository into a folder managed by WSL, or alternatively add the following to the default export of vite.config.ts:
 
 ```ts
 server: {
@@ -116,6 +116,6 @@ Take a look at the [Svelte docs](https://svelte.dev/docs), or the incredibly hel
 
 # Deploying new client versions
 
-To deploy a new version of the client, you'll need Deno. Don't ask why
+To deploy a new version of the client, you'll need Go.
 
-Edit files in the /Client deployer/staging directory. Navigate to /Client deployer and run `deno task run` to start the deployer. You can also run `deno task headless` to skip any interactivity and randomly generate a version hash.
+Edit files in the /Client deployer/staging directory. Navigate to /Client deployer and run `go run .` to start the deployer.
