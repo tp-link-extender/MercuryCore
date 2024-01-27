@@ -8,7 +8,7 @@
 	if (data.privateServer) $form.privateServer = data.privateServer
 </script>
 
-<Form {formData} submit="Save changes" action="?/privacy&tab=Privacy">
+<Form {formData} submit="<fa fa-save></fa> Save changes" action="?/privacy&tab=Privacy">
 	<Input
 		{formData}
 		name="privateServer"

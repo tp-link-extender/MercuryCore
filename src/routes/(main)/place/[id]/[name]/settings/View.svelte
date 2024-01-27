@@ -14,7 +14,7 @@
 <Form
 	{formData}
 	enctype="multipart/form-data"
-	submit="Save changes"
+	submit="<fa fa-save></fa> Save changes"
 	action="?/view&tab=View">
 	<Input {formData} name="title" label="Title" />
 	<Input

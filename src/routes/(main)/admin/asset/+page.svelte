@@ -4,7 +4,11 @@
 
 	export let data
 
-	let tabData = TabData(data.url, ["Asset Queue"])
+	let tabData = TabData(
+		data.url,
+		["Asset Queue"],
+		["fa fa-file-circle-xmark"]
+	)
 </script>
 
 <Head title="Asset Approval - Admin" />

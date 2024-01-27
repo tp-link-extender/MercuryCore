@@ -30,13 +30,16 @@ export default function (
 	const id = getClientAddress() + category
 	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 
-	if (currentTimewindow > Date.now() + timeWindow * 1000)
+	if (currentTimewindow > Date.now() + timeWindow * 1000) {
+		console.log("Ratelimited based on time window!")
 		return message(form, "Too many requests", { status: 429 })
+	}
 
 	const currentRequests = (ratelimitRequests.get(id) || 0) + 1
 
 	if (currentRequests > maxRequests) {
 		ratelimitTimewindow.set(id, currentTimewindow)
+		console.log("Ratelimited based on requests!")
 		return message(form, "Too many requests", { status: 429 })
 	}
 

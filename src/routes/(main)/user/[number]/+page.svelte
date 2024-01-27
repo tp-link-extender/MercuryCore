@@ -123,12 +123,19 @@
 		<div>
 			{#if data.bio && data.bio.text}
 				<div class="pt-6">
-					<h2 class="light-text">Bio</h2>
-					<p class="light-text pl-2">{data.bio.text}</p>
+					<div class="flex justify-between">
+						<h2>Bio</h2>
+						<a
+							href="/settings"
+							class="btn light-text text-lg p-0 px-2">
+							<fa fa-pencil />
+						</a>
+					</div>
+					<p class="pl-2">{data.bio.text}</p>
 				</div>
 			{/if}
 			<div class="pt-6">
-				<h2 class="light-text">Avatar</h2>
+				<h2>Avatar</h2>
 				<div class="card bg-darker card-body">
 					<img
 						class="transition-opacity duration-300"
@@ -158,7 +165,7 @@
 		<div>
 			{#if data.places.length > 0}
 				<div class="pt-6">
-					<h2 class="light-text">Creations</h2>
+					<h2>Creations</h2>
 					<div class="flex flex-col gap-2">
 						{#each data.places as place, num}
 							<div
@@ -176,7 +183,7 @@
 		{#if data.groupsOwned.length > 0}
 			<div class="pt-6">
 				<div class="pt-6">
-					<h2 class="light-text">Groups owned</h2>
+					<h2>Groups owned</h2>
 					{#each data.groupsOwned as group, num}
 						<div class="py-2">
 							<a
@@ -184,7 +191,7 @@
 									num,
 									total: data.groupsOwned.length
 								}}
-								class="card bg-darker light-text no-underline"
+								class="card bg-darker no-underline"
 								href="/groups/{group.name}">
 								<div class="p-2">
 									<span class="float-start">
@@ -204,12 +211,12 @@
 		{#if data.groups.length > 0}
 			<div class="pt-6">
 				<div class="pt-6">
-					<h2 class="light-text">Groups in</h2>
+					<h2>Groups in</h2>
 					{#each data.groups as group, num}
 						<div class="py-2">
 							<a
 								in:fade={{ num, total: data.groups.length }}
-								class="card bg-darker light-text no-underline"
+								class="card bg-darker no-underline"
 								href="/groups/{group.name}">
 								<div class="p-2">
 									<span class="float-start">
@@ -244,7 +251,7 @@
 										full
 										image
 										bg="accent" />
-									<span class="italic light-text flex-end">
+									<span class="italic flex-end">
 										{new Date(
 											status.posted
 										).toLocaleString()}

@@ -11,7 +11,7 @@
 	$form.dailyStipend = data.dailyStipend
 	$form.stipendTime = data.stipendTime
 
-	let tabData = TabData(data.url, ["Daily Stipend"])
+	let tabData = TabData(data.url, ["Daily Stipend"], ["fa fa-gem"])
 </script>
 
 <Head title="Daily Stipend - Admin" />
@@ -27,7 +27,12 @@
 
 	<AdminShell bind:tabData>
 		<Tab {tabData}>
-			<Form {formData} action="?/updateStipend" submit="Save changes">
+			<Form
+				{formData}
+				action="?/updateStipend"
+				submit={$form.dailyStipend > 2 * data.dailyStipend // funny
+					? "<far fa-money-bill-trend-up></far> Make it rain!"
+					: "<fa fa-save></fa> Save changes"}>
 				<Input
 					{formData}
 					name="dailyStipend"

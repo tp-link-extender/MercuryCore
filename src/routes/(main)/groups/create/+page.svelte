@@ -13,6 +13,7 @@
 
 <Form
 	{formData}
+	nopad
 	class="ctnr pt-12 max-w-200 light-text"
 	submit="Create ( <fa fa-gem></fa> 10 )">
 	<Input

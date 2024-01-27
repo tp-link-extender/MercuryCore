@@ -7,7 +7,7 @@
 
 	export const snapshot = formData
 
-	let tabData = TabData(data.url, ["Reset User Password"])
+	let tabData = TabData(data.url, ["Change User Password"], ["far fa-key"])
 </script>
 
 <Head title="Accounts - Admin" />
@@ -22,7 +22,10 @@
 	</div>
 
 	<AdminShell bind:tabData>
-		<Form {formData} submit="Reset" action="?/resetPassword">
+		<Form
+			{formData}
+			submit="<far fa-key></far> Change password"
+			action="?/changePassword">
 			<Input {formData} name="username" label="Username" />
 			<Input
 				{formData}

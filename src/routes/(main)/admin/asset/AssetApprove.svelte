@@ -12,43 +12,31 @@
 <label
 	in:fade|global={{ num, total }}
 	for="modal{asset.id}"
-	class="assetcard no-underline light-text">
-	<div class="card bg-a p-3">
-		<div class="text-center pb-4">
-			<img
-				src="/avatarshop/{asset.id}/{asset.name}/icon"
-				alt={asset.name} />
-		</div>
-		{asset.name}
-		<span class="flex pb-2">
-			<strong class="pr-2">by</strong>
-			<User
-				user={asset.creator}
-				size="1.5rem"
-				thin
-				full
-				bg="background" />
-		</span>
-		<div class="input-group">
-			<form
-				use:enhance
-				method="POST"
-				action="/admin/asset?/approve&id={asset.id}"
-				class="w-1/2">
-				<button class="w-full btn btn-sm btn-primary rounded-r-0">
-					Approve
-				</button>
-			</form>
-			<form
-				use:enhance
-				method="POST"
-				action="/admin/asset?/deny&id={asset.id}"
-				class="w-1/2">
-				<button class="w-full btn btn-sm btn-danger rounded-l-0">
-					Deny
-				</button>
-			</form>
-		</div>
+	class="card no-underline p-3 cursor-pointer duration-300">
+	<div class="text-center pb-4">
+		<img
+			src="/avatarshop/{asset.id}/{asset.name}/icon"
+			alt={asset.name}
+			class="w-85%" />
+	</div>
+	{asset.name}
+	<span class="flex pb-2">
+		<strong class="pr-2">by</strong>
+		<User user={asset.creator} size="1.5rem" thin full bg="background" />
+	</span>
+	<div>
+		<form
+			use:enhance
+			method="POST"
+			action="/admin/asset?/approve&id={asset.id}">
+			<button class="w-full btn btn-sm btn-secondary">Approve</button>
+		</form>
+		<form
+			use:enhance
+			method="POST"
+			action="/admin/asset?/deny&id={asset.id}">
+			<button class="w-full btn btn-sm btn-red-secondary">Deny</button>
+		</form>
 	</div>
 </label>
 
@@ -70,16 +58,20 @@
 					alt={asset.imageAsset.name} />
 			</div>
 
-			<label for="purge{asset.id}" class="btn btn-lg btn-danger">
-				Purge
-			</label>
 			<form
 				use:enhance
 				method="POST"
 				action="/admin/asset?/rerender&id={asset.id}"
-				class="w-full pt-3">
-				<button class="btn btn-lg btn-primary w-full">Rerender</button>
+				class="w-full pb-3">
+				<button class="btn btn-lg btn-primary w-full">
+					<fa fa-arrows-rotate class="pr-1" />
+					Rerender
+				</button>
 			</form>
+			<label for="purge{asset.id}" class="btn btn-lg btn-red-tertiary">
+				<fa fa-trash-xmark class="pr-1" />
+				Purge
+			</label>
 		{/if}
 	</div>
 	<label class="modal-backdrop" for="modal{asset.id}">Close</label>
@@ -91,7 +83,7 @@
 	class="modal-toggle"
 	bind:this={modal} />
 <div class="modal2 light-text">
-	<div class="modal-box p-4" style="width: 30rem">
+	<div class="modal-box p-4 max-w-120">
 		<h2 class="text-base">Purge {asset.name}</h2>
 
 		<p>Are you sure you want to purge this asset?</p>
@@ -101,20 +93,22 @@
 				related image asset, and all thumbnails and data associated with
 				it.
 			</strong>
+			Treat this as a last resort &ndash; the nuclear option.
 		</p>
 
-		<form
-			use:enhance
-			method="POST"
-			action="/admin/asset?/purge&id={asset.id}"
-			class="inline">
-			<button class="btn btn-danger bg-red-9 border-red-9">
-				Yes, do as I say!
-			</button>
-		</form>
-		<label for="purge{asset.id}" class="btn btn-dark ml-2">
-			Misinput MISINPUT
-		</label>
+		<div class="flex flex-wrap gap-3">
+			<form
+				use:enhance
+				method="POST"
+				action="/admin/asset?/purge&id={asset.id}">
+				<button class="btn btn-danger bg-red-9 border-red-9">
+					Yes, do as I say!
+				</button>
+			</form>
+			<label for="purge{asset.id}" class="btn btn-dark">
+				Misinput MISINPUT
+			</label>
+		</div>
 	</div>
 	<label class="modal-backdrop" for="purge{asset.id}">Close</label>
 </div>
@@ -122,10 +116,6 @@
 <style lang="stylus">
 	.card
 		border 1px solid var(--accent2)
-
-	.assetcard
-		cursor pointer
-		transition 0.3s
 		&:hover
 			background var(--darker) !important
 
@@ -142,7 +132,4 @@
 			)
 		background-size 20px 20px
 		background-position 0 0, 10px 10px
-
-	label img
-		width 85%
 </style>

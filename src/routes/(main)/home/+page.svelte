@@ -15,99 +15,88 @@
 
 <Head title="Home" />
 
-<div class="ctnr light-text">
-	<!-- Flex or Grid? what a dilemma -->
-	<div class="lg:grid grid-cols-2 gap-4">
-		<div>
-			<h1 class="w-full flex px-10 pb-6 my-0 <sm:text-2xl">
-				<a
-					href="/user/{user?.number}"
-					class="no-underline flex items-center">
-					<User
-						{user}
-						size="6rem"
-						bg="accent"
-						image
-						class="<sm:hidden" />
-					<User
-						{user}
-						size="4rem"
-						bg="accent"
-						image
-						class="sm:hidden" />
-					<span class="sf pl-6">
-						{data.stuff.greet}
-					</span>
-				</a>
-			</h1>
-			<div class="card p-4 bg-darker overflow-x-hidden <lg:h-50vh">
-				<p>
-					Post your status - your friends and followers can view how
-					you're doing!
-				</p>
-				<!-- fa-paper-plane-top (for unocss) -->
-				<Form
+<!-- Flex or Grid? what a dilemma -->
+<div class="ctnr lg:grid grid-cols-2 gap-4">
+	<div>
+		<h1 class="w-full flex px-10 pb-6 my-0 <sm:text-2xl">
+			<a
+				href="/user/{user?.number}"
+				class="no-underline flex items-center">
+				<User {user} size="6rem" bg="accent" image class="<sm:hidden" />
+				<User {user} size="4rem" bg="accent" image class="sm:hidden" />
+				<span class="sf pl-6">
+					{data.stuff.greet}
+				</span>
+			</a>
+		</h1>
+		<div class="card p-4 bg-darker overflow-x-hidden <lg:h-50vh">
+			<p>
+				Post your status - your friends and followers can view how
+				you're doing!
+			</p>
+			<!-- fa-paper-plane-top (for unocss) -->
+			<Form
+				{formData}
+				inline
+				nopad
+				submit="<fa fa-paper-plane-top />"
+				working="...">
+				<Input
 					{formData}
 					inline
-					submit="<fa fa-paper-plane-top />"
-					working="...">
-					<Input
-						{formData}
-						inline
-						name="status"
-						placeholder="Post a status" />
-				</Form>
-				<div class="flex flex-col gap-3">
-					{#each sortedFeed as status, num}
-						<div
-							in:fade|global={{
-								num,
-								total: data.feed.length,
-							}}>
-							<Status {status} />
-						</div>
-					{/each}
-				</div>
+					name="status"
+					placeholder="Post a status" />
+			</Form>
+			<div class="flex flex-col gap-3 pt-3">
+				{#each sortedFeed as status, num}
+					<div
+						in:fade|global={{
+							num,
+							total: data.feed.length
+						}}>
+						<Status {status} />
+					</div>
+				{/each}
 			</div>
 		</div>
+	</div>
 
-		<div class="pt-12 lg:pt-28 pl-2 flex flex-col gap-12">
-			{#if data.friends.length > 0}
-				<div>
-					<h2 class="pb-2">Friends</h2>
-					<div class="flex overflow-x-auto gap-4">
-						{#each data.friends as friend, num}
-							<!-- Larger delay between fades for more items -->
-							<span
-								in:fade|global={{
-									num,
-									total: data.friends.length,
-								}}>
-								<User
-									user={friend}
-									size="7rem"
-									bg="accent"
-									bottom />
-							</span>
-						{/each}
-					</div>
-				</div>
-			{/if}
+	<div class="pt-12 lg:pt-28 pl-2 flex flex-col gap-12">
+		{#if data.friends.length > 0}
 			<div>
-				<h2 class="pb-2">Resume playing</h2>
+				<h2 class="pb-2">Friends</h2>
 				<div class="flex overflow-x-auto gap-4">
-					{#each data.places || [] as place, num}
-						<div class="min-w-32 w-32">
-							<Place {place} {num} total={data.places.length} />
-						</div>
+					{#each data.friends as friend, num}
+						<!-- Larger delay between fades for more items -->
+						<span
+							in:fade|global={{
+								num,
+								total: data.friends.length
+							}}>
+							<User
+								user={friend}
+								size="7rem"
+								bg="accent"
+								bottom />
+						</span>
 					{/each}
 				</div>
 			</div>
-			<div class="w-1/2 md:w-2/3 lg:w-1/2 xl:w-2/3">
-				<h2 class="pb-2">Random fact</h2>
-				<div id="fact" class="card bg-darker card-body text-base pb-6">
-					{data.stuff.fact}
-				</div>
+		{/if}
+		<div>
+			<h2 class="pb-2">Resume playing</h2>
+			<div class="flex overflow-x-auto gap-4">
+				{#each data.places || [] as place, num}
+					<div class="min-w-32 w-32">
+						<Place {place} {num} total={data.places.length} />
+					</div>
+				{/each}
+			</div>
+		</div>
+		<div class="w-1/2 md:w-2/3 lg:w-1/2 xl:w-2/3">
+			<h2 class="pb-2">Random fact</h2>
+			<div id="fact" class="card bg-darker card-body text-base pb-6">
+				{data.stuff.fact}
 			</div>
 		</div>
 	</div>

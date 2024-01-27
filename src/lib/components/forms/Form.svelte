@@ -5,7 +5,7 @@
 	export let submit = "Submit"
 
 	export let inline = false
-	export let secondary = false
+	export let nopad = false // Don't pad the icon on the submit button
 
 	export let formData: any // boooo but nothing else works
 	const { errors, message, enhance, delayed } = formData
@@ -17,10 +17,7 @@
 	<fieldset class={inline ? "input-group" : "pb-2"}>
 		<slot />
 		{#if submit}
-			<button
-				class="btn {secondary
-					? 'btn-secondary'
-					: 'btn-primary'} h-full">
+			<button class="btn btn-primary h-full" class:nopad>
 				{@html /* ecks ess ess moment */ $delayed ? working : submit}
 			</button>
 		{/if}
@@ -31,9 +28,19 @@
 		</p>
 	{/if}
 </form>
-<p
-	class={inline ? "mb-0 pb-3" : ""}
-	class:text-emerald-6={$page.status == 200}
-	class:text-red-5={$page.status >= 400}>
-	{$message || ""}
-</p>
+
+{#if $message}
+	<p
+		class={inline ? "mb-0 pb-3" : ""}
+		class:text-emerald-6={$page.status == 200}
+		class:text-red-5={$page.status >= 400}>
+		{$message}
+	</p>
+{/if}
+
+<style lang="stylus">
+	button:not(.nopad)
+		:global(fa)
+		:global(far)
+			padding-right 0.5rem
+</style>
