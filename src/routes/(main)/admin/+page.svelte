@@ -7,7 +7,7 @@
 		["aqua", "fa-check", "Verified"],
 		["violet", "fa-hammer", "Catalog Manager"],
 		["orange", "fa-shield-alt", "Moderator"],
-		["crimson", "fa-scale-balanced", "Administrator"],
+		["crimson", "fa-scale-balanced", "Administrator"]
 	]
 
 	const panel: { [k: string]: [string, string, string][] } = {
@@ -15,17 +15,13 @@
 			["Moderate User", "/admin/moderation", "fa fa-user-slash"],
 			// ["Report Abuse", "#", "far fa-flag"],
 			["Asset Approval", "/admin/asset", "fa fa-file-circle-check"],
-			["Render Queue", "/admin/renderqueue", "fa fa-file-image"],
+			["Render Queue", "/admin/renderqueue", "fa fa-file-image"]
 		],
 		Economy: [
 			// ["Award Currency", "#", "far fa-gem"],
 			// ["Create New Asset", "#", "fa fa-file-circle-plus"],
-			[
-				"Transactions",
-				"/admin/transactions",
-				"fa fa-money-bill-transfer",
-			],
-		],
+			["Transactions", "/admin/transactions", "fa fa-money-bill-transfer"]
+		]
 	}
 
 	let diskSpace: {
@@ -38,14 +34,14 @@
 				await (
 					await fetch("admin", {
 						body: "",
-						method: "POST",
+						method: "POST"
 					})
 				).json()
 			).data
 		)
 		diskSpace = {
 			free: jsonData[1],
-			size: jsonData[2],
+			size: jsonData[2]
 		}
 		return diskSpace
 	}
@@ -59,14 +55,19 @@
 			["Banners", "/admin/banners", "fa fa-bullhorn"],
 			["Accounts", "/admin/accounts", "far fa-user"],
 			["Audit Logs", "/admin/audit", "fa fa-book"],
-			["Invites", "/admin/invites", "fa fa-key"],
+			["Invites", "/admin/invites", "fa fa-envelopes"]
 		]
 	}
 
 	const tabNames = ["Moderation", "Economy", "Statistics"]
 	if (user?.permissionLevel === 5) tabNames.unshift("Administration")
 
-	let tabData = TabData(data.url, tabNames)
+	let tabData = TabData(data.url, tabNames, [
+		"fa fa-diamond-half-stroke",
+		"fa fa-stamp",
+		"fa fa-coins",
+		"fa fa-chart-mixed"
+	])
 </script>
 
 <Head title="Admin" />
@@ -96,7 +97,7 @@
 		{/each}
 
 		<Tab {tabData}>
-			<div class="lg:grid grid-cols-[7fr_5fr] gap-4">
+			<div class="grid lg:grid-cols-[7fr_5fr] gap-4">
 				<div class="flex flex-col gap-4">
 					<div class="card bg-a p-4">
 						<h3>

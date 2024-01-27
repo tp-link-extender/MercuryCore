@@ -10,7 +10,7 @@
 	if (data.maxPlayers) $form.maxPlayers = data.maxPlayers
 </script>
 
-<Form {formData} submit="Save changes" action="?/network&tab=Network">
+<Form {formData} submit="<fa fa-save></fa> Save changes" action="?/network&tab=Network">
 	<Input {formData} name="serverIP" label="Address" />
 	<Input
 		{formData}

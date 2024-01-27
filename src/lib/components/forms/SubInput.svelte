@@ -9,7 +9,7 @@
 	const { form, errors, constraints } = formData
 </script>
 
-{#if type == "checkbox"}
+{#if type === "checkbox"}
 	<input
 		{...$$restProps}
 		bind:checked={$form[name]}
@@ -25,9 +25,11 @@
 		id={name}
 		{...{ type /* lmfao */ }}
 		class:is-invalid={$errors[name]}
-		style={type == "number"
+		style={type === "number"
 			? "width: 9rem"
-			: type == "color"
+			: type === "color"
 				? "height: 2.5rem; border-radius: 0.375rem"
-				: null} />
+				: type === "date"
+					? "width: 11rem"
+					: null} />
 {/if}

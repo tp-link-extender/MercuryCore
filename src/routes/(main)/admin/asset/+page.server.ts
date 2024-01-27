@@ -103,7 +103,7 @@ export const actions = {
 	},
 	rerender: async e => {
 		const { id } = await getData(e)
-		const limit = ratelimit({}, "rerender", e.getClientAddress, 60)
+		const limit = ratelimit({}, "rerender", e.getClientAddress, 10)
 		if (limit) return fail(429, { msg: "Too many requests" })
 
 		try {
@@ -114,6 +114,7 @@ export const actions = {
 		}
 	},
 	purge: async e => {
+		// Nuclear option
 		const { id, params, assetName } = await getData(e)
 		const { iaid } = await squery<{ iaid: number }>(
 			surql`

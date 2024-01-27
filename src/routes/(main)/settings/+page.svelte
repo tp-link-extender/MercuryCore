@@ -4,14 +4,25 @@
 	import PasswordForm from "./Password.svelte"
 
 	export let data
+	const { user } = data
 
-	let tabData = TabData(data.url, ["Profile", "Account", "Security"])
+	let tabData = TabData(
+		data.url,
+		["Profile", "Account", "Security"],
+		["fa fa-id-card", "fa fa-user", "far fa-lock"]
+	)
 </script>
 
 <Head title="Settings" />
 
 <div class="ctnr max-w-220 light-text">
-	<h1 class="py-6">Settings</h1>
+	<div class="pb-4">
+		<h1>User settings</h1>
+		<a href="/user/{user.number}" class="no-underline">
+			<fa fa-caret-left />
+			View profile
+		</a>
+	</div>
 	<TabNav bind:tabData />
 	<Tab {tabData}>
 		<h2 class="text-xl">User Profile</h2>

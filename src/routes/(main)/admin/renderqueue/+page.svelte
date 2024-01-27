@@ -3,7 +3,11 @@
 
 	export let data
 
-	let tabData = TabData(data.url, ["Status", "Render Queue"])
+	let tabData = TabData(
+		data.url,
+		["Status", "Render Queue"],
+		["fa fa-check-circle", "far fa-bars-progress"]
+	)
 
 	const current = data.queue[0]
 </script>
@@ -21,7 +25,7 @@
 
 	<AdminShell bind:tabData>
 		<Tab {tabData}>
-			<div class="<lg:flex flex-col lg:grid grid-cols-2 gap-2">
+			<div class="<lg:flex flex-col lg:grid grid-cols-2 gap-4">
 				<div class="card light-text pb-1">
 					<div class="card-body">
 						<h2 class="text-xl mb-0">Render Server</h2>

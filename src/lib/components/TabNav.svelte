@@ -34,7 +34,7 @@
 			style="border-bottom-color: {$colour}"
 			data-sveltekit-preload-data="off">
 			<a
-				class="block tab no-underline light-text {vertical
+				class="block tab no-underline {vertical
 					? 'p-4 py-2'
 					: 'p-3 py-1'} rounded-2 {tabData.currentTab == tab
 					? 'disabled active'
@@ -53,7 +53,7 @@
 					$colour = "#fff"
 				}}>
 				{#if tabData.icons}
-					<i class={tabData.icons[pos]} />
+					<i class="{tabData.icons[pos]} pr-2" />
 				{/if}
 				{tab}
 			</a>
@@ -78,6 +78,7 @@
 	.tab
 		transition background-color 0.2s
 	.tab
+		color var(--light-text) !important
 		border-width 0px 0px 2px !important
 		--un-ring-color hsla(260, 75%, 45%, 50%)
 

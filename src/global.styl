@@ -251,16 +251,16 @@ span
 .btn-primary
 	background hsl(260, 85%, 54%)
 	--un-ring-color hsla(260, 75%, 55%, 50%)
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		background hsl(260, 100%, 60%)
 
 .btn-secondary
 	background hsl(260, 65%, 14%)
 	border-color hsla(260, 100%, 60%, 80%)
 	--un-ring-color hsla(260, 75%, 55%, 50%)
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		background hsl(260, 65%, 22%)
 		border-color hsl(260, 100%, 60%)
 
@@ -271,69 +271,69 @@ span
 	background hsl(260, 0%, 12%)
 	color hsl(260, 100%, 66%)
 	--un-ring-color hsla(260, 75%, 55%, 50%)
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		background hsl(260, 55%, 18%)
 		color white
 
 .btn-quatenary
 	color hsl(260, 100%, 66%)
 	--un-ring-color hsla(260, 55%, 35%, 50%)
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		background hsl(260, 0%, 10%)
 		color hsl(260, 100%, 70%)
-	&:active
+	&:active:not(:disabled)
 		background hsl(260, 65%, 15%)
 
 .btn-red-secondary
 	@apply bg-red-950/60 border-red-7/80
 	@apply ring-red-7/50
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		@apply bg-red-950 border-red-6
 
 .btn-red-tertiary
 	background hsl(260, 0%, 12%)
 	@apply text-red-5
 	@apply ring-red-8/50
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		@apply bg-red-950/80 text-white
 
 .btn-success
 	@apply bg-emerald-6
 	@apply ring-emerald-7/50
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		@apply bg-emerald-7
 
 .btn-danger
 	@apply bg-red-5
 	@apply ring-red-7/50
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		@apply bg-red-6
 
 .btn-warning
 	@apply bg-yellow-5
 	@apply ring-yellow-6/50
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		@apply bg-yellow-4
 
 .btn-info
 	@apply bg-cyan-5
 	@apply ring-cyan-6/50
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		@apply bg-cyan-4
 
 .btn-dark
 	@apply bg-neutral-8
 	@apply ring-neutral-6/50
-	&:hover
-	&:focus:not(:active)
+	&:hover:not(:disabled)
+	&:focus:not(:active):not(:disabled)
 		@apply bg-neutral-7
 
 lightstyles = primary secondary red-secondary first success danger dark
@@ -343,11 +343,13 @@ styles = primary secondary tertiary quatenary red-secondary red-tertiary first s
 for style in styles
 	.btn-{style}
 		@apply border-1 ring-offset-neutral-9
-		transition background 0.3s, color 0.3s, box-shadow 0.15s
-		&:active
+		transition background 0.3s, color 0.3s, box-shadow 0.15s, opacity 0.3s
+		&:active:not(:disabled)
 			@apply ring-3
-		&:focus:not(:active)
+		&:focus:not(:active):not(:disabled)
 			@apply ring-2 ring-offset-2
+		&:disabled
+			opacity 0.5
 
 for style in lightstyles
 	.btn-{style}
@@ -481,6 +483,7 @@ input[type=text]
 input[type=password]
 input[type=email]
 input[type=number]
+input[type=date]
 input:not([type])
 textarea
 	display block
@@ -506,7 +509,6 @@ input[type=file]
 .input-group
 	position relative
 	display flex
-	flex-wrap wrap // for errors n stuff
 	flex 1 1 auto
 	align-items stretch
 	width 100%

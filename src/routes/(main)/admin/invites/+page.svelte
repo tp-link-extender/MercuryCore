@@ -10,7 +10,11 @@
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
-	let tabData = TabData(data.url, ["Create Invite Key", "Invites"])
+	let tabData = TabData(
+		data.url,
+		["Create Invite Key", "Invites"],
+		["fa fa-envelope-circle-check", "fa fa-envelopes-bulk"]
+	)
 </script>
 
 <Head title="Invites - Admin" />

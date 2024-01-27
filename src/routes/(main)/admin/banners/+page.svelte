@@ -6,9 +6,13 @@
 
 	export let data
 
-	let modal = writable(false),
-		tabData = TabData(data.url, ["Create Banner", "Banner List"]),
-		textLightForms: { [k: string]: HTMLFormElement } = {}
+	let modal = writable(false)
+	let tabData = TabData(
+		data.url,
+		["Create Banner", "Banner List"],
+		["fa fa-plus", "fa fa-list"]
+	)
+	let textLightForms: { [k: string]: HTMLFormElement } = {}
 	let bannerData = {
 		id: "",
 		bgColour: "",
@@ -42,7 +46,10 @@
 
 	<AdminShell bind:tabData>
 		<Tab {tabData}>
-			<Form {formData} submit="Create" action="?/create">
+			<Form
+				{formData}
+				submit="<fa fa-plus></fa> Create"
+				action="?/create">
 				<Textarea
 					{formData}
 					name="bannerText"
@@ -189,16 +196,17 @@
 				placeholder="3-100 characters"
 				class="text-{bannerData.textLight ? 'light' : 'dark'}"
 				style="background: {bannerData.bgColour} !important" />
-			<div transition:fade class="grid">
+			<div transition:fade class="grid my-0">
 				<button
 					on:click={() => modal.set(false)}
-					class="btn btn-success"
+					class="btn btn-primary"
 					disabled={!$form.bannerBody?.trim() ||
 						bannerData.body.trim() == $form.bannerBody?.trim()}
 					id="saveBannerBody">
 					{#if $delayed}
 						Working...
 					{:else}
+						<fa fa-save class="pr-1" />
 						Save changes
 					{/if}
 				</button>

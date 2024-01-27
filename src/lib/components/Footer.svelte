@@ -15,7 +15,7 @@
 		</div>
 		<div class="sm:text-right <sm:pt-4">
 			<div class="grey-text pb-2">
-				<span class="grey-text pe-1">
+				<span class="grey-text pr-1">
 					{data.lines} lines of code
 				</span>
 				&ndash;

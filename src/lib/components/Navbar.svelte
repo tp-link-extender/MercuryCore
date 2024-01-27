@@ -122,7 +122,7 @@
 					<input
 						bind:value={search}
 						on:keydown={keydown}
-						class="bg-background h-10 ps-4"
+						class="bg-background h-10 pl-4"
 						name="query"
 						type="search"
 						placeholder="Search"

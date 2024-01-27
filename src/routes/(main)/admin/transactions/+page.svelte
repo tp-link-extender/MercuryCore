@@ -3,7 +3,11 @@
 
 	export let data
 
-	let tabData = TabData(data.url, ["Transactions"])
+	let tabData = TabData(
+		data.url,
+		["All transactions"],
+		["fa fa-money-bill-wave"]
+	)
 </script>
 
 <Head title="Transactions - Admin" />
@@ -26,7 +30,7 @@
 						in:fade={{
 							num,
 							total: data.transactions.length,
-							max: 12,
+							max: 12
 						}}
 						class="light-text">
 						<td>

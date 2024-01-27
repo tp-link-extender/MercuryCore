@@ -24,7 +24,7 @@ export async function load({ locals }) {
 }
 
 export const actions = {
-	resetPassword: async ({ request, locals, getClientAddress }) => {
+	changePassword: async ({ request, locals, getClientAddress }) => {
 		const { user } = await authorise(locals, 5)
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)

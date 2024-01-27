@@ -3,7 +3,7 @@
 
 	export let data
 
-	let tabData = TabData(data.url, ["Audit Logs"])
+	let tabData = TabData(data.url, ["Audit Logs"], ["fa fa-list"])
 </script>
 
 <Head title="Audit Logs - Admin" />

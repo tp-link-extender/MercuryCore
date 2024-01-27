@@ -10,7 +10,7 @@
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
-	let tabData = TabData(data.url, ["Moderate User"])
+	let tabData = TabData(data.url, ["Moderate User"], ["far fa-gavel"])
 </script>
 
 <Head title="Moderate User - Admin" />
@@ -26,7 +26,13 @@
 
 	<AdminShell bind:tabData>
 		<Tab {tabData}>
-			<Form {formData} submit="Moderate">
+			<Form
+				{formData}
+				submit={$form.action === "3" || $form.action === "4" // 5:53 am and im bored as shit
+					? "<fa fa-explosion></fa> TERMINATE THAT MOTHAFUCKA!!!!"
+					: $form.action === "5"
+						? "<fa fa-unlock></fa> Unban"
+						: "<fa fa-hammer-crash></fa> Moderate"}>
 				<Input {formData} name="username" label="Username" />
 				<Select {formData} name="action" label="Action">
 					<option value="1">Warning</option>

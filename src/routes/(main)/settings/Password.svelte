@@ -5,7 +5,10 @@
 	const formData = superForm(data.passwordForm)
 </script>
 
-<Form {formData} action="?/password" submit="Change password">
+<Form
+	{formData}
+	action="?/password"
+	submit="<far fa-key></far> Change password">
 	<Input
 		{formData}
 		name="cpassword"
