@@ -8,21 +8,11 @@ declare namespace svelteHTML {
 
 	type HTMLAttributes = AttributifyAttributes
 }
-
-declare global {
-	namespace App {
-		interface Locals {
-			auth: import("lucia").AuthRequest
-		}
-		interface PageState {
-			openPost?: import("./routes/(main)/forum/[category]/[post]/$types").PageData
-			openPlace?: import("./routes/(main)/place/[id]/[name]/$types").PageData
-		}
-	}
-	namespace Lucia {
-		type Auth = typeof import("$lib/server/lucia").auth
-		type DatabaseUserAttributes = {
-			// id is defined in Lucia
+declare module "lucia" {
+	interface Register {
+		Lucia: typeof import("$lib/server/lucia").auth
+		DatabaseUserAttributes: {
+			id: string
 			bio: {
 				text: string
 				updated: string
@@ -39,12 +29,26 @@ declare global {
 			currencyCollected: string
 			created: string
 			email: string
+			hashedPassword: string
 			lastOnline: string
 			number: number
 			permissionLevel: number
 			// theme: "standard" | "darken" | "storm" | "solar"
 			status: "Playing" | "Online" | "Offline"
 			username: string
+		}
+	}
+}
+
+declare global {
+	namespace App {
+		interface Locals {
+			user: import("lucia").User | null
+			session: import("lucia").Session | null
+		}
+		interface PageState {
+			openPost?: import("./routes/(main)/forum/[category]/[post]/$types").PageData
+			openPlace?: import("./routes/(main)/place/[id]/[name]/$types").PageData
 		}
 	}
 

@@ -11,11 +11,11 @@ export function load() {
 }
 
 export const actions = {
-	logout: async ({ locals }) => {
+	logout: async ({ locals, cookies }) => {
 		const { session } = await authorise(locals)
 
-		await auth.invalidateSession(session.sessionId) // invalidate session
-		locals.auth.setSession(null) // remove cookie
+		await auth.invalidateSession(session.id)
+		cookies.delete("auth_session", { path: "." })
 		redirect(302, "/login")
 	},
 	statusping: () => {

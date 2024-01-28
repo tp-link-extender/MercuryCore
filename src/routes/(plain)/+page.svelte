@@ -58,21 +58,20 @@
 				type="button"
 				href="/login"
 				class="inline btn btn-sm btn-secondary">
-				<b>
-					Login <fa fa-right-to-bracket />
-				</b>
+				<b>Login</b>
+				<fa fa-right-to-bracket class="pl-1" />
 			</a>
 			<a
 				type="button"
 				href="/register"
 				class="inline btn btn-sm btn-primary">
-				<b>
-					Register <fa fa-plus />
-				</b>
+				<b>Register</b>
+				<fa fa-plus class="pl-1" />
 			</a>
 		</div>
 		<a href="/about" class="btn btn-sm btn-tertiary">
-			About us <far fa-circle-question />
+			About us
+			<far fa-circle-question class="pl-1" />
 		</a>
 	</div>
 </div>

@@ -40,8 +40,10 @@
 			</small>
 		{/if}
 
-		<small class="pb-4 text-red-5">
-			{$errors[name] || ""}
-		</small>
+		{#if $errors[name]}
+			<small class="block text-red-5">
+				{$errors[name]}
+			</small>
+		{/if}
 	</div>
 </div>
