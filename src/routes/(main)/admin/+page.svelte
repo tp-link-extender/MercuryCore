@@ -17,6 +17,9 @@
 			["Asset Approval", "/admin/asset", "fa fa-file-circle-check"],
 			["Render Queue", "/admin/renderqueue", "fa fa-file-image"]
 		],
+		Catalog: [
+			["Create Asset", "/admin/create", "fa fa-file-circle-plus"]
+		],
 		Economy: [
 			// ["Award Currency", "#", "far fa-gem"],
 			// ["Create New Asset", "#", "fa fa-file-circle-plus"],
@@ -59,12 +62,13 @@
 		]
 	}
 
-	const tabNames = ["Moderation", "Economy", "Statistics"]
+	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
 	if (user?.permissionLevel === 5) tabNames.unshift("Administration")
 
 	let tabData = TabData(data.url, tabNames, [
 		"fa fa-diamond-half-stroke",
 		"fa fa-stamp",
+		"fa fa-basket-shopping",
 		"fa fa-coins",
 		"fa fa-chart-mixed"
 	])

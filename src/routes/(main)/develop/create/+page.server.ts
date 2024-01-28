@@ -26,11 +26,9 @@ const schema = z.object({
 })
 const assets: { [k: number]: string } = {
 	2: "T-Shirt",
-	// 8: "Hat",
 	11: "Shirt",
 	12: "Pants",
 	13: "Decal",
-	18: "Face",
 }
 
 export async function load({ request, locals }) {
@@ -79,22 +77,7 @@ export const actions = {
 						tShirtThumbnail(asset),
 					])
 					break
-
-				case 8: // Hat
-					if (user.permissionLevel < 3)
-						return formError(
-							form,
-							["type"],
-							[
-								"You do not have permission to upload this type of asset",
-							],
-						)
-					return formError(
-						form,
-						["type"],
-						["Cannot upload this type of asset yet"],
-					)
-
+					
 				case 11: // Shirt
 				case 12: // Pants
 					saveImages[0] = await clothingAsset(asset)
