@@ -9,6 +9,7 @@ import { auth } from "$lib/server/lucia"
 import surreal from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
+import type { Cookie, Session, User } from "lucia"
 
 const { magenta, red, yellow, green, blue, gray } = pc
 const methodColours: { [k: string]: string } = {
@@ -34,23 +35,52 @@ const pathnameColour = (pathname: string) =>
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
 export async function handle({ event, resolve }) {
-	event.locals.auth = auth.handleRequest(event)
-	const session = await event.locals.auth.validate()
-	const user = session?.user
 	const { pathname, search } = event.url
-	const { method } = event.request
 
-	// Fancy logging: time, user, method, and path
-	console.log(
-		`${gray(new Date().toLocaleString())} `,
-		user
-			? blue(user.username) + " ".repeat(21 - user.username.length)
-			: yellow("Logged-out user      "),
-		(methodColours[method] || method) + " ".repeat(7 - method.length),
-		pathnameColour(decodeURI(pathname) + search)
-	)
+	function finish() {
+		const { method } = event.request
+		const { user } = event.locals // is this needed?
 
-	if (!session || !user) return await resolve(event)
+		// Fancy logging: time, user, method, and path
+		console.log(
+			`${gray(new Date().toLocaleString())} `,
+			user
+				? blue(user.username) + " ".repeat(21 - user.username.length)
+				: yellow("Logged-out user      "),
+			(methodColours[method] || method) + " ".repeat(7 - method.length),
+			pathnameColour(decodeURI(pathname) + search)
+		)
+
+		return resolve(event)
+	}
+
+	const sessionId = event.cookies.get(auth.sessionCookieName)
+
+	if (!sessionId) {
+		event.locals.session = null
+		event.locals.user = null
+		return await finish()
+	}
+
+	const { session, user } = await auth.validateSession(sessionId)
+
+	if (!session || !user) return await finish()
+
+	event.locals.session = session
+	event.locals.user = user
+
+	const setSession = (sessionCookie: Cookie) =>
+		// sveltekit types deviates from the de facto standard
+		// `as any` is usable too
+		{
+			return event.cookies.set(sessionCookie.name, sessionCookie.value, {
+				path: ".",
+				...sessionCookie.attributes,
+			})
+		}
+
+	if (!session) setSession(auth.createBlankSessionCookie())
+	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
 
 	const moderation = await squery(
 		surql`
@@ -88,12 +118,11 @@ export async function handle({ event, resolve }) {
 			}
 		)
 
-	return resolve(event)
+	return await finish()
 }
 
 export const handleError = async ({ event, error }) => {
-	const session = await event.locals.auth?.validate()
-	const user = session?.user
+	const user = event.locals.user
 
 	// Fancy error logging: time, user, and error
 	if (dev) console.error(error)

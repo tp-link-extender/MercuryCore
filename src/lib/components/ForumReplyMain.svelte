@@ -189,7 +189,6 @@
 </div>
 
 {#if depth > 8}
-	<!-- todo fix incorrect colour -->
 	<a href="{baseUrl}/{reply.id}" class="no-underline">
 		<fa fa-arrow-down class="mr-2" />
 		More replies

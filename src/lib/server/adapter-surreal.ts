@@ -1,208 +1,81 @@
-import surreal, { query, squery, surql } from "./surreal"
+import surreal, { query, mquery, surql } from "./surreal"
 import type {
 	Adapter,
-	InitializeAdapter,
-	KeySchema,
-	SessionSchema,
-	UserSchema,
+	DatabaseSession,
+	DatabaseUser,
+	RegisteredDatabaseUserAttributes,
 } from "lucia"
 
-export const adapter =
-	(
-		modelNames = {
-			user: "user",
-			session: "session",
-			key: "key",
-		}
-	): InitializeAdapter<Adapter> =>
-	LuciaError => ({
-		getUser: userId =>
-			squery<UserSchema>(surql`SELECT *, meta::id(id) AS id FROM $id`, {
-				id: `${modelNames.user}:${userId}`,
-			}),
-		setUser: async (user, key) => {
-			// Can't create the user number in the MERGE step, or it would
-			// create two numbers (why?) and miss out all the odd ones
-			const createUser = surql`
-				LET $u = CREATE user CONTENT $user;
-				UPDATE $u MERGE {
-					theme: "standard",
-					created: time::now(),
-					currencyCollected: time::now(),
-					bio: [],
-					bodyColours: {
-						Head: 24,
-						Torso: 23,
-						LeftArm: 24,
-						RightArm: 24,
-						LeftLeg: 119,
-						RightLeg: 119,
-					},
-					status: <future> {
-						(IF (SELECT * FROM ->playing
-							WHERE valid AND ping > time::now() - 35s
-						)[0] THEN
-							"Playing"
-						ELSE IF lastOnline > time::now() - 35s THEN
-							"Online"
-						ELSE
-							"Offline"
-						END)
-					}
-				};
-				UPDATE $u SET number =
-					(UPDATE ONLY stuff:increment
-					SET user += 1).user`
+export class SurrealAdapter implements Adapter {
+	public async deleteSession(sessionId: string): Promise<void> {
+		await surreal.delete(`session:${sessionId}`)
+	}
 
-			if (!key) {
-				await query(createUser, { user })
-				return
+	public async deleteUserSessions(userId: string): Promise<void> {
+		await query(surql`DELETE session WHERE $user ∈ <-hasSession<-user`, {
+			user: `user:${userId}`,
+		})
+	}
+
+	public async getSessionAndUser(
+		sessionId: string
+	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+		const [session, user] = await mquery<
+			[DatabaseSession | null, RegisteredDatabaseUserAttributes | null]
+		>(
+			surql`
+				(SELECT *, meta::id(id) AS id FROM $sess)[0];
+				(SELECT *, meta::id(id) AS id FROM $sess<-hasSession<-user)[0]`,
+			{ sess: `session:${sessionId}` }
+		)
+
+		if (session)
+			session.expiresAt = new Date(
+				(session.expiresAt as unknown as number) * 1000
+			)
+
+		return [
+			session,
+			user
+				? {
+						id: user.id,
+						attributes: user,
+				  }
+				: null,
+		]
+	}
+
+	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+		return await query<DatabaseSession>(
+			surql`SELECT *, meta::id(id) AS id FROM session WHERE $user ∈ <-usingKey<-user`,
+			{ user: `user:${userId}` }
+		)
+	}
+
+	public async setSession(session: DatabaseSession): Promise<void> {
+		await query(
+			surql`
+				LET $s = CREATE $sess SET expiresAt = time::unix($expiresAt);
+				RELATE $user->hasSession->$s`,
+			{
+				sess: `session:${session.id}`,
+				...session,
+				user: `user:${session.userId}`,
 			}
+		)
+	}
 
-			const keyExists = (
-				await surreal.select(`${modelNames.key}:⟨${key.id}⟩`)
-			)[0]
+	public async updateSessionExpiration(
+		sessionId: string,
+		expiresAt: Date
+	): Promise<void> {
+		await query(surql`UPDATE $sess SET expiresAt = $expiresAt`, {
+			sess: `session:${sessionId}`,
+			expiresAt: Math.floor(expiresAt.getTime() / 1000),
+		})
+	}
 
-			if (keyExists) throw new LuciaError("AUTH_DUPLICATE_KEY_ID")
-
-			await query(
-				surql`
-						${createUser};
-						LET $k = CREATE $key CONTENT {
-							hashed_password: $hashed_password,
-						};
-						RELATE $u->hasKey->$k`,
-				{
-					user,
-					key: `${modelNames.key}:⟨${key.id}⟩`,
-					...key,
-				}
-			)
-		},
-		deleteUser: async userId => {},
-		updateUser: async (userId, partialUser) => {
-			await query(surql`UPDATE $user MERGE $partialUser`, {
-				user: `${modelNames.user}:${userId}`,
-				partialUser,
-			})
-		},
-		getSession: sessionId =>
-			squery<SessionSchema>(
-				surql`
-					SELECT
-						*,
-						meta::id((<-hasSession<-user)[0]) AS user_id,
-						meta::id(id) AS id
-					FROM $sess`,
-				{ sess: `${modelNames.session}:${sessionId}` }
-			),
-		getSessionsByUserId: userId =>
-			query<SessionSchema>(
-				surql`
-					SELECT * FROM $id
-					WHERE $user ∈ <-usingKey<-user`,
-				{ id: `${modelNames.session}:${userId}` }
-			),
-		setSession: async session => {
-			const userExists = await squery(surql`SELECT true FROM $id`, {
-				id: `${modelNames.user}:${session.user_id}`,
-			})
-
-			if (!userExists) throw new LuciaError("AUTH_INVALID_USER_ID")
-
-			await query(
-				surql`
-					LET $s = CREATE $sess CONTENT {
-						active_expires: $active_expires,
-						idle_expires: $idle_expires,
-					};
-					RELATE $user->hasSession->$s`,
-				{
-					sess: `${modelNames.session}:${session.id}`,
-					...session,
-					user: `${modelNames.user}:${session.user_id}`,
-				}
-			)
-		},
-		deleteSession: async sessionId => {
-			await surreal.delete(`${modelNames.session}:${sessionId}`)
-		},
-		deleteSessionsByUserId: async userId => {
-			await query(
-				surql`DELETE session WHERE $user ∈ <-hasSession<-user`,
-				{ user: `${modelNames.user}:${userId}` }
-			)
-		},
-		updateSession: async (userId, partialSession) => {
-			await query(
-				surql`
-					UPDATE session MERGE $partialSession
-					WHERE $user ∈ <-hasSession<-user`,
-				{
-					user: `${modelNames.user}:${userId}`,
-					partialSession,
-				}
-			)
-		},
-
-		getKey: keyId =>
-			squery<KeySchema>(
-				surql`
-					SELECT
-						*,
-						meta::id((<-hasKey<-user)[0]) AS user_id,
-						meta::id(id) AS id
-					FROM $key`,
-				{ key: `${modelNames.key}:⟨${keyId}⟩` }
-			),
-		getKeysByUserId: userId =>
-			query<KeySchema>(
-				surql`
-					SELECT * FROM ${modelNames.key}
-					WHERE $user ∈ <-usingKey<-user`,
-				{ user: `${modelNames.user}:${userId}` }
-			),
-		setKey: async key => {
-			const userExists = await squery(surql`SELECT true FROM $id`, {
-				id: `${modelNames.user}:${key.user_id}`,
-			})
-
-			if (!userExists) throw new LuciaError("AUTH_INVALID_USER_ID")
-
-			const keyExists = (
-				await surreal.select(`${modelNames.key}:⟨${key.id}⟩`)
-			)[0]
-
-			if (keyExists) throw new LuciaError("AUTH_DUPLICATE_KEY_ID")
-
-			await query(
-				surql`
-					LET $k = CREATE $key CONTENT {
-						hashed_password: $hashed_password,
-					};
-					RELATE $user->hasKey->$k`,
-				{
-					key: `${modelNames.key}:⟨${key.id}⟩`,
-					...key,
-					user: `${modelNames.user}:${key.user_id}`,
-				}
-			)
-		},
-		deleteKey: async keyId => {
-			await surreal.delete(`${modelNames.key}:⟨${keyId}⟩`)
-		},
-		deleteKeysByUserId: async userId => {
-			await query(surql`DELETE key WHERE $user ∈ <-hasKey<-user`, {
-				user: `${modelNames.user}:${userId}`,
-			})
-		},
-		updateKey: async (keyId, partialKey) => {
-			await query(
-				surql`UPDATE $key SET hashed_password = $hashed_password`,
-				{
-					key: `${modelNames.key}:⟨${keyId}⟩`,
-					...partialKey,
-				}
-			)
-		},
-	})
+	public async deleteExpiredSessions(): Promise<void> {
+		await query(surql`DELETE session WHERE expiresAt < time::millis()`)
+	}
+}

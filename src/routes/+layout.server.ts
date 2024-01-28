@@ -18,8 +18,7 @@ try {
 }
 
 export async function load({ request, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
+	const { session, user } = locals
 	// Not authorise function, as we don't want
 	// to redirect to login page if not logged in
 
