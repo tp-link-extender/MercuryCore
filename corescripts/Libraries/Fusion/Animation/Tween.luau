@@ -13,7 +13,7 @@ local logError = require "../Logging/logError"
 local logErrorNonFatal = require "../Logging/logErrorNonFatal"
 local xtypeof = require "../Utility/xtypeof"
 local peek = require "../State/peek"
-local typeof = require "../Polyfill/typeof"
+local typeof = require "../../../Modules/Polyfill/typeof"
 
 local class = {}
 

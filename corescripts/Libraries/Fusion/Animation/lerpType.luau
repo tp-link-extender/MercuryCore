@@ -10,7 +10,7 @@
 ]]
 
 local Oklab = require "../Colour/Oklab"
-local typeof = require "../Polyfill/typeof"
+local typeof = require "../../../Modules/Polyfill/typeof"
 
 local function lerpType(from: any, to: any, ratio: number): any
 	local typeString = typeof(from)

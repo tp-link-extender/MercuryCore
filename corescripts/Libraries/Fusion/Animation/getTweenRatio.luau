@@ -6,7 +6,7 @@
 ]]
 
 -- local TweenService = game:GetService "TweenService"
-local easing = require "../Polyfill/easing"
+local easing = require "../../../Modules/Polyfill/easing"
 
 local function getTweenRatio(tweenInfo: TweenInfo, currentTime: number): number
 	local delay = tweenInfo.DelayTime
