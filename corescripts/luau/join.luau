@@ -160,7 +160,7 @@ local function onConnectionAccepted(_, replicator)
 	local waitingForMarker = true
 
 	local success, err = pcall(function()
-		Visit:SetPing("_PING_URL", 30)
+		Visit:SetPing(_PING_URL, 30)
 
 		loadingState += 1
 		game:SetMessageBrickCount()
@@ -257,7 +257,7 @@ local success, err = pcall(function()
 	pcall(function()
 		player.Name = [========[_USER_NAME]========]
 	end)
-	player.CharacterAppearance = "_CHAR_APPEARANCE"
+	player.CharacterAppearance = _CHAR_APPEARANCE
 	Visit:SetUploadUrl ""
 end)
 

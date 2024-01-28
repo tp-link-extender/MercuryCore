@@ -2166,13 +2166,13 @@ local createReportAbuseDialog = function()
 	frame.Active = true
 	frame.Parent = shield
 
-	settingsFrame = Instance.new "Frame"
-	settingsFrame.Name = "ReportAbuseStyle"
-	settingsFrame.Size = UDim2.new(1, 0, 1, 0)
-	settingsFrame.Style = Enum.FrameStyle.RobloxRound
-	settingsFrame.Active = true
-	settingsFrame.ZIndex = baseZIndex + 1
-	settingsFrame.Parent = frame
+	local reportAbuseFrame = Instance.new "Frame"
+	reportAbuseFrame.Name = "ReportAbuseStyle"
+	reportAbuseFrame.Size = UDim2.new(1, 0, 1, 0)
+	reportAbuseFrame.Style = Enum.FrameStyle.RobloxRound
+	reportAbuseFrame.Active = true
+	reportAbuseFrame.ZIndex = baseZIndex + 1
+	reportAbuseFrame.Parent = frame
 
 	local title = Instance.new "TextLabel"
 	title.Name = "Title"
@@ -2182,7 +2182,7 @@ local createReportAbuseDialog = function()
 	title.Font = Enum.Font.ArialBold
 	title.FontSize = Enum.FontSize.Size36
 	title.ZIndex = baseZIndex + 2
-	title.Parent = settingsFrame
+	title.Parent = reportAbuseFrame
 
 	local description = Instance.new "TextLabel"
 	description.Name = "Description"
@@ -2198,7 +2198,7 @@ local createReportAbuseDialog = function()
 	description.ZIndex = baseZIndex + 2
 	description.TextXAlignment = Enum.TextXAlignment.Left
 	description.TextYAlignment = Enum.TextYAlignment.Top
-	description.Parent = settingsFrame
+	description.Parent = reportAbuseFrame
 
 	local playerLabel = Instance.new "TextLabel"
 	playerLabel.Name = "PlayerLabel"
@@ -2211,7 +2211,7 @@ local createReportAbuseDialog = function()
 	playerLabel.TextColor3 = Color3I(255, 255, 255)
 	playerLabel.TextXAlignment = Enum.TextXAlignment.Left
 	playerLabel.ZIndex = baseZIndex + 2
-	playerLabel.Parent = settingsFrame
+	playerLabel.Parent = reportAbuseFrame
 
 	local abusingPlayer
 	local abuse
@@ -2261,7 +2261,7 @@ local createReportAbuseDialog = function()
 	abuseLabel.TextColor3 = Color3I(255, 255, 255)
 	abuseLabel.TextXAlignment = Enum.TextXAlignment.Left
 	abuseLabel.ZIndex = baseZIndex + 2
-	abuseLabel.Parent = settingsFrame
+	abuseLabel.Parent = reportAbuseFrame
 
 	local abuses = {
 		"Swearing",
@@ -2288,7 +2288,7 @@ local createReportAbuseDialog = function()
 	abuseDropDown.ZIndex = baseZIndex + 2
 	abuseDropDown.Position = UDim2.new(0.425, 0, 0, 142)
 	abuseDropDown.Size = UDim2.new(0.55, 0, 0, 32)
-	abuseDropDown.Parent = settingsFrame
+	abuseDropDown.Parent = reportAbuseFrame
 
 	local shortDescriptionLabel = Instance.new "TextLabel"
 	shortDescriptionLabel.Name = "ShortDescriptionLabel"
@@ -2301,7 +2301,7 @@ local createReportAbuseDialog = function()
 	shortDescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
 	shortDescriptionLabel.BackgroundTransparency = 1
 	shortDescriptionLabel.ZIndex = baseZIndex + 2
-	shortDescriptionLabel.Parent = settingsFrame
+	shortDescriptionLabel.Parent = reportAbuseFrame
 
 	local shortDescriptionWrapper = Instance.new "Frame"
 	shortDescriptionWrapper.Name = "ShortDescriptionWrapper"
@@ -2310,7 +2310,7 @@ local createReportAbuseDialog = function()
 	shortDescriptionWrapper.BackgroundColor3 = Color3I(0, 0, 0)
 	shortDescriptionWrapper.BorderSizePixel = 0
 	shortDescriptionWrapper.ZIndex = baseZIndex + 2
-	shortDescriptionWrapper.Parent = settingsFrame
+	shortDescriptionWrapper.Parent = reportAbuseFrame
 
 	local shortDescriptionBox = Instance.new "TextBox"
 	shortDescriptionBox.Name = "TextBox"
@@ -2342,7 +2342,7 @@ local createReportAbuseDialog = function()
 	submitReportButton.Text = "Submit Report"
 	submitReportButton.TextColor3 = Color3I(255, 255, 255)
 	submitReportButton.ZIndex = baseZIndex + 2
-	submitReportButton.Parent = settingsFrame
+	submitReportButton.Parent = reportAbuseFrame
 
 	submitReportButton.MouseButton1Click:connect(function()
 		if submitReportButton.Active then
@@ -2377,11 +2377,11 @@ local createReportAbuseDialog = function()
 	cancelButton.Text = "Cancel"
 	cancelButton.TextColor3 = Color3I(255, 255, 255)
 	cancelButton.ZIndex = baseZIndex + 2
-	cancelButton.Parent = settingsFrame
+	cancelButton.Parent = reportAbuseFrame
 
 	closeAndResetDialog = function()
 		--Delete old player combo box
-		local oldComboBox = settingsFrame:FindFirstChild "PlayersComboBox"
+		local oldComboBox = reportAbuseFrame:FindFirstChild "PlayersComboBox"
 		if oldComboBox then
 			oldComboBox.Parent = nil
 		end
@@ -2404,7 +2404,7 @@ local createReportAbuseDialog = function()
 	cancelButton.MouseButton1Click:connect(closeAndResetDialog)
 
 	reportAbuseButton.MouseButton1Click:connect(function()
-		createPlayersDropDown().Parent = settingsFrame
+		createPlayersDropDown().Parent = reportAbuseFrame
 		table.insert(centerDialogs, shield)
 		game.GuiService:AddCenterDialog(
 			shield,

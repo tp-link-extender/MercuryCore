@@ -51,7 +51,7 @@
 		)
 	}
 
-	const hostTicket = `http://banland.xyz/Game/Host?ticket=${data.serverTicket}`
+	const hostTicket = `http://banland.xyz/game/host?ticket=${data.serverTicket}`
 
 	async function placeLauncher() {
 		installed = true
