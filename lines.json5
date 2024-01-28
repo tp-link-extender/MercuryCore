@@ -1,4 +1,10 @@
 {
+	bundle: {
+		require_mode: {
+			name: "path",
+			module_folder_name: "init",
+		},
+	},
 	rules: [
 		"convert_index_to_field",
 		"remove_spaces",

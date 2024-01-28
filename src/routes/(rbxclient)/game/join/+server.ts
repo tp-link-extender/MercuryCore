@@ -76,8 +76,8 @@ export async function GET({ url }) {
 			"_MEMBERSHIP_TYPE",
 			gameSession.user.permissionLevel >= 2 ? "BuildersClub" : "None"
 		)
-		.replaceAll("_CvHAR_APPEARANCE", charApp)
-		.replaceAll("_PING_URL", pingUrl)
+		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
+		.replaceAll("_PING_URL", `"${pingUrl}"`)
 
 	return new Response(SignData(file))
 }
