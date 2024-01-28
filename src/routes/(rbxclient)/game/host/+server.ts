@@ -19,9 +19,8 @@ export async function GET({ url }) {
 	if (!placeData) error(400, "Invalid Server Ticket")
 
 	const port = placeData.serverPort
-	const baseUrl = "http://banland.xyz"
 	// const serverId = placeData.id.toString()
-	const serverPresenceUrl = `${baseUrl}/game/serverpresence?ticket=${ticket}`
+	const serverPresenceUrl = `${process.env.RCC_ORIGIN}/game/serverpresence?ticket=${ticket}`
 
 	if (mapLocation) {
 		mapLocation = Buffer.from(mapLocation, "base64").toString()
@@ -34,11 +33,11 @@ export async function GET({ url }) {
 		SignData(
 			fs
 				.readFileSync("corescripts/processed/host.lua", "utf-8")
-				.replaceAll("_BASE_URL", baseUrl)
+				.replaceAll("_BASE_URL", `"${process.env.RCC_ORIGIN}"`)
 				.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())
-				.replaceAll("_MAP_LOCATION", mapLocation || "")
+				.replaceAll("_MAP_LOCATION", `"${mapLocation || ""}"`)
 				.replaceAll("_SERVER_PORT", port.toString())
-				.replaceAll("_SERVER_PRESENCE_URL", serverPresenceUrl)
+				.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)
 		)
 	)
 }

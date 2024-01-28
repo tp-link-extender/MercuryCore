@@ -60,8 +60,8 @@ export default async function (
 
 	const script = fs
 		.readFileSync(`corescripts/processed/render${renderType}.lua`, "utf-8")
-		.replaceAll("_BASE_URL", `"${process.env.RCC_ORIGIN}"` as string)
-		.replaceAll("_THUMBNAIL_KEY", `"${process.env.RCC_KEY}"` as string)
+		.replaceAll("_BASE_URL", `"${process.env.RCC_ORIGIN}"`)
+		.replaceAll("_THUMBNAIL_KEY", `"${process.env.RCC_KEY}"`)
 		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
 		.replaceAll("_ASSET_ID", relativeId.toString())
 
