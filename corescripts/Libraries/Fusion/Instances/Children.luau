@@ -11,7 +11,7 @@ local logWarn = require "../Logging/logWarn"
 local Observer = require "../State/Observer"
 local peek = require "../State/peek"
 local isState = require "../State/isState"
-local typeof = require "../Polyfill/typeof"
+local typeof = require "../../../Modules/Polyfill/typeof"
 
 type Set<T> = { [T]: boolean }
 

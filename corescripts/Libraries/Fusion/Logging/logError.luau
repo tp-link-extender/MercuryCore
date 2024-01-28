@@ -20,24 +20,20 @@ local function logError(messageID: string, errObj: Types.Error?, ...)
 	local errorString
 	if errObj == nil then
 		errorString = string.format(
-			"[Fusion] " .. formatString .. "\n(ID: " .. messageID .. ")",
-			...
+			string.format(`[Fusion] {formatString}\n(ID: {messageID})`, ...)
 		)
 	else
 		formatString =
-			formatString:gsub("ERROR_MESSAGE", tostring(errObj.message))
+			string.gsub(formatString, "ERROR_MESSAGE", tostring(errObj.message))
 		errorString = string.format(
-			"[Fusion] "
-				.. formatString
-				.. "\n(ID: "
-				.. messageID
-				.. ")\n---- Stack trace ----\n"
-				.. tostring(errObj.trace),
+			`[Fusion] {formatString}\n(ID: {messageID})\n---- Stack trace ----\n{tostring(
+				errObj.trace
+			)}`,
 			...
 		)
 	end
 
-	error(errorString:gsub("\n", "\n    "), 0)
+	error(string.gsub(errorString, "\n", "\n    "), 0)
 end
 
 return logError

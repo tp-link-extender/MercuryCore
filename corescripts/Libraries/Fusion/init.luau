@@ -42,8 +42,8 @@ local Fusion = restrictRead("Fusion", {
 	doNothing = require "./Utility/doNothing",
 	peek = require "./State/peek",
 
-	typeof = require "./Polyfill/typeof",
-	TweenInfo = require "./Polyfill/TweenInfo",
+	typeof = require "../../Modules/Polyfill/typeof",
+	TweenInfo = require "../../Modules/Polyfill/TweenInfo",
 
 	Help = function()
 		return "See https://elttob.uk/Fusion/0.3/ for more information."
@@ -69,10 +69,10 @@ type Fusion = {
 
 	New: (
 		className: string
-	) -> ((propertyTable: PubTypes.PropertyTable) -> Instance),
+	) -> (propertyTable: PubTypes.PropertyTable) -> Instance,
 	Hydrate: (
 		target: Instance
-	) -> ((propertyTable: PubTypes.PropertyTable) -> Instance),
+	) -> (propertyTable: PubTypes.PropertyTable) -> Instance,
 	Ref: PubTypes.SpecialKey,
 	Cleanup: PubTypes.SpecialKey,
 	Children: PubTypes.SpecialKey,

@@ -133,7 +133,7 @@ export type Spring<T> = StateObject<T> & Dependent & {
 -- An object which can listen for updates on another state object.
 export type Observer = Dependent & {
 	kind: "Observer",
-	onChange: (Observer, callback: () -> ()) -> (() -> ()),
+	onChange: (Observer, callback: () -> ()) -> () -> (),
 }
 
 --[[
