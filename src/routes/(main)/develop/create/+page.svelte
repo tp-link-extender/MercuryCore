@@ -12,11 +12,6 @@
 		"12": "Pants",
 		"13": "Decal",
 	}
-
-	if (data.user.permissionLevel > 3) {
-		assets["8"] = "Hat"
-		assets["18"] = "Face"
-	}
 </script>
 
 <Head title="Develop" />
@@ -53,10 +48,12 @@
 		label="Asset description"
 		placeholder="Up to 1000 characters" />
 	<Input {formData} name="price" label="Asset price" type="number" />
+	{#if data.assettype != "Hat"}
 	<Input
 		{formData}
 		type="file"
 		name="asset"
 		label="Asset"
 		help="Max image size: 20MB. Supported file types: .png, .jpg, .bmp" />
+	{/if}
 </Form>
