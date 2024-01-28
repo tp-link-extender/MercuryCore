@@ -10,7 +10,7 @@ export async function GET({ url, request }) {
 
 	await query(
 		surql`
-			UPDATE place SET serverPing = time::nano() / 1000000000
+			UPDATE place SET serverPing = time::unix()
 			WHERE serverTicket = $ticket`,
 		{ ticket }
 	)

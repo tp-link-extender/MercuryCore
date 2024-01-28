@@ -1,7 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import { query, surql } from "$lib/server/surreal"
-import { auth } from "$lib/server/lucia"
 import formError from "$lib/server/formError"
+import { Scrypt } from "oslo/password"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { z } from "zod"
 
@@ -66,25 +66,23 @@ export const actions = {
 		if (npassword !== cnpassword)
 			return formError(form, ["cnpassword"], ["Passwords do not match"])
 
-		try {
-			await auth.useKey(
-				"username",
-				user.username.toLowerCase(),
-				cpassword
-			)
-		} catch {
+		if (npassword === cpassword)
 			return formError(
 				form,
-				["cpassword"],
-				["Incorrect username or password"]
+				["npassword", "cnpassword"],
+				["New password cannot be the same as the current password", ""]
 			)
-		}
 
-		await auth.updateKeyPassword(
-			"username",
-			user.username.toLowerCase(),
-			npassword
-		)
+		if (user.hashedPassword.startsWith("s2:"))
+			user.hashedPassword = user.hashedPassword.slice(3)
+
+		if (!(await new Scrypt().verify(user.hashedPassword, cpassword)))
+			return formError(form, ["cpassword"], ["Incorrect password"])
+
+		await query(surql`UPDATE $user SET hashedPassword = $npassword`, {
+			user: `user:${user.id}`,
+			npassword: await new Scrypt().hash(npassword),
+		})
 
 		// Don't send the password back to the client
 		form.data.cpassword = ""

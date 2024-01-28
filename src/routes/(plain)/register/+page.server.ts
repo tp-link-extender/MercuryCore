@@ -1,11 +1,12 @@
 import { auth } from "$lib/server/lucia"
-import surreal, { query, squery, surql } from "$lib/server/surreal"
+import surreal, { query, squery, mquery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import requestRender from "$lib/server/requestRender"
-import type { GlobalDatabaseUserAttributes } from "lucia"
+import { LegacyScrypt } from "lucia"
+// import { Scrypt } from "oslo/password"
 
 const schemaInitial = z.object({
 	username: z
@@ -28,20 +29,83 @@ const schema = z.object({
 	regkey: z.string().min(1).max(6969),
 })
 
+async function createUser(
+	user: {
+		username: string
+		email: string
+		hashedPassword: string
+		permissionLevel: number
+		currency: number
+	},
+	keyUsed?: string
+) {
+	const q = await mquery<
+		{
+			number: number
+			id: string
+		}[]
+	>(
+		surql`
+			LET $u = CREATE user CONTENT $user;
+			UPDATE $u MERGE {
+				theme: "standard",
+				created: time::now(),
+				currencyCollected: time::now(),
+				bio: [],
+				bodyColours: {
+					Head: 24,
+					Torso: 23,
+					LeftArm: 24,
+					RightArm: 24,
+					LeftLeg: 119,
+					RightLeg: 119,
+				},
+				status: <future> {
+					(IF (SELECT * FROM ->playing
+						WHERE valid AND ping > time::now() - 35s
+					)[0] THEN
+						"Playing"
+					ELSE IF lastOnline > time::now() - 35s THEN
+						"Online"
+					ELSE
+						"Offline"
+					END)
+				}
+			};
+			UPDATE $u SET number =
+				(UPDATE ONLY stuff:increment SET user += 1).user;
+			# Return some user data
+			{
+				number: $u.number,
+				id: $u.id,
+			};
+			${
+				keyUsed
+					? surql`
+						UPDATE ONLY $key SET usesLeft -= 1;
+						RELATE $u->used->$key`
+					: ""
+			}`,
+		{ user, key: `regKey:⟨${keyUsed}⟩` }
+	)
+
+	return q[3]
+}
+
 export const load = async () => ({
 	form: await superValidate(schema),
 	users: (await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0,
 })
 
 export const actions = {
-	register: async ({ request, locals }) => {
+	register: async ({ request, cookies }) => {
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
 		let { username, email, password, cpassword, regkey } = form.data
 
-		email = email.toLowerCase() || ""
-		regkey = regkey.split("-")[1] || ""
+		email = email.toLowerCase()
+		regkey = regkey.split("-")[1]
 
 		if (cpassword !== password)
 			return formError(
@@ -50,102 +114,67 @@ export const actions = {
 				[" ", "The specified passwords do not match"]
 			)
 
+		const userCheck = await squery(
+			surql`SELECT 1 FROM user WHERE username = $username`,
+			{ username }
+		)
+
+		if (userCheck)
+			return formError(
+				form,
+				["username"],
+				["This username is already in use"]
+			)
+
+		const emailCheck = await squery(
+			surql`SELECT * FROM user WHERE email = $email`,
+			{ email }
+		)
+
+		if (emailCheck)
+			return formError(form, ["email"], ["This email is already in use"])
+
+		const regkeyCheck = (
+			(await surreal.select(`regKey:⟨${regkey}⟩`)) as {
+				usesLeft: number
+			}[]
+		)[0]
+
+		if (!regkeyCheck)
+			return formError(form, ["regkey"], ["Registration key is invalid"])
+		if (regkeyCheck.usesLeft < 1)
+			return formError(
+				form,
+				["regkey"],
+				["This registration key has ran out of uses"]
+			)
+
+		const user = await createUser(
+			{
+				username,
+				email,
+				hashedPassword: await new LegacyScrypt().hash(password),
+				permissionLevel: 1,
+				currency: 0,
+			},
+			regkey
+		)
+
 		try {
-			if (
-				await squery(
-					surql`SELECT * FROM user WHERE username = $username`,
-					{ username }
-				)
-			)
-				return formError(
-					form,
-					["username"],
-					["This username is already in use"]
-				)
+			await requestRender("Avatar", user.number)
+		} catch {}
 
-			if (
-				await squery(surql`SELECT * FROM user WHERE email = $email`, {
-					email,
-				})
-			)
-				return formError(
-					form,
-					["email"],
-					["This email is already in use"]
-				)
+		const session = await auth.createSession(user.id, {})
+		const sessionCookie = auth.createSessionCookie(session.id)
 
-			const regkeyCheck = (
-				(await surreal.select(`regKey:⟨${regkey}⟩`)) as {
-					usesLeft: number
-				}[]
-			)[0]
-
-			if (!regkeyCheck)
-				return formError(
-					form,
-					["regkey"],
-					["Registration key is invalid"]
-				)
-			if (regkeyCheck.usesLeft < 1)
-				return formError(
-					form,
-					["regkey"],
-					["This registration key has ran out of uses"]
-				)
-
-			const { userId } = await auth.createUser({
-				key: {
-					providerId: "username",
-					providerUserId: username.toLowerCase(),
-					password,
-				},
-				attributes: {
-					username,
-					email,
-					permissionLevel: 1,
-					currency: 0,
-				} as GlobalDatabaseUserAttributes,
-			})
-
-			const { number } = await squery<{
-				number: number
-			}>(
-				surql`
-					SELECT * FROM $user;
-					RELATE $user->used->$key;
-					UPDATE $key SET usesLeft -= 1`,
-				{
-					user: `user:${userId}`,
-					key: `regKey:⟨${regkey}⟩`,
-				}
-			)
-
-			try {
-				await requestRender("Avatar", number)
-			} catch {}
-
-			locals.auth.setSession(
-				await auth.createSession({
-					userId,
-					attributes: {},
-				})
-			)
-		} catch (e) {
-			const error = e as Error
-			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID")
-				return formError(
-					form,
-					["username"],
-					["This username is already in use"]
-				)
-
-			console.error("Registration error:", error)
-			return fail(500) // idk
-		}
+		cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: ".",
+			...sessionCookie.attributes,
+		})
 
 		redirect(302, "/home")
 	},
-	initialAccount: async ({ request, locals }) => {
+	initialAccount: async ({ request, cookies }) => {
 		// This is the initial account creation, which is
 		// only allowed if there are no existing users.
 
@@ -161,48 +190,34 @@ export const actions = {
 				[" ", "The specified passwords do not match"]
 			)
 
-		try {
-			if ((await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0)
-				return formError(
-					form,
-					["username"],
-					["There's already an account registered"]
-				)
-
-			await query(surql`UPDATE ONLY stuff:increment SET user = 0`)
-
-			const user = await auth.createUser({
-				key: {
-					providerId: "username",
-					providerUserId: username.toLowerCase(),
-					password,
-				},
-				attributes: {
-					username,
-					email: "",
-					permissionLevel: 5,
-					currency: 999999,
-				} as GlobalDatabaseUserAttributes,
-			})
-
-			locals.auth.setSession(
-				await auth.createSession({
-					userId: user.id,
-					attributes: {},
-				})
+		if ((await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0)
+			return formError(
+				form,
+				["username"],
+				["There's already an account registered"]
 			)
-		} catch (e) {
-			const error = e as Error
-			if (error.message === "AUTH_DUPLICATE_PROVIDER_ID")
-				return formError(
-					form,
-					["username"],
-					["This username is already in use"]
-				)
 
-			console.error("Registration error:", error)
-			return fail(500) // idk
-		}
+		await query(surql`UPDATE ONLY stuff:increment SET user = 0`)
+
+		const user = await createUser({
+			username,
+			email: "",
+			hashedPassword: await new LegacyScrypt().hash(password),
+			permissionLevel: 1,
+			currency: 0,
+		})
+
+		try {
+			await requestRender("Avatar", user.number)
+		} catch {}
+
+		const session = await auth.createSession(user.id, {})
+		const sessionCookie = auth.createSessionCookie(session.id)
+
+		cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: ".",
+			...sessionCookie.attributes,
+		})
 
 		redirect(302, "/home")
 	},
