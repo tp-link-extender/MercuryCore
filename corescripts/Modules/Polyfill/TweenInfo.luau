@@ -1,7 +1,6 @@
 -- A basic polyfill for the TweenInfo.new function,
 -- allows using Enum.EasingStyle/Direction or strings instead
 
-local logError = require "../Logging/logError"
 local TweenInfo = {}
 
 function TweenInfo.new(
@@ -19,7 +18,7 @@ function TweenInfo.new(
 	-- convert it to a string
 	if type(easingStyle) ~= "string" then
 		if easingStyle then
-			easingStyle = tostring(easingStyle):gsub("Enum.%w+.", "")
+			easingStyle = string.gsub(tostring(easingStyle), "Enum.%w+.", "")
 		end
 	else
 		local ok
@@ -42,13 +41,17 @@ function TweenInfo.new(
 			end
 		end
 		if not ok then
-			logError("invalidEasingStyle", nil, easingStyle)
+			error(
+				`The easing style must be a valid Enum.EasingStyle or a string of 'Linear', 'Quad', 'Cubic', 'Quart', 'Quint', 'Sine', 'Exponential', 'Circular', 'Elastic', 'Back', 'Bounce'. (got {easingStyle})`,
+				0
+			)
 		end
 	end
 
 	if type(easingDirection) ~= "string" then
 		if easingDirection then
-			easingDirection = tostring(easingDirection):gsub("Enum.%w+.", "")
+			easingDirection =
+				string.gsub(tostring(easingDirection), "Enum.%w+.", "")
 		end
 	else
 		local ok
@@ -64,7 +67,10 @@ function TweenInfo.new(
 			end
 		end
 		if not ok then
-			logError("invalidEasingDirection", nil, easingDirection)
+			error(
+				`The easing direction must be a valid Enum.EasingDirection or a string of 'In', 'Out', 'InOut', 'OutIn'. (got {easingDirection})`,
+				0
+			)
 		end
 	end
 
@@ -99,9 +105,9 @@ function TweenInfo.new(
 			.. " Reverses:"
 			.. (reverses and "True" or "False")
 			.. " EasingDirection:"
-			.. easingDirection
+			.. tostring(easingDirection)
 			.. " EasingStyle:"
-			.. easingStyle
+			.. tostring(easingStyle)
 	end
 
 	mt.__metatable = "The metatable is locked"

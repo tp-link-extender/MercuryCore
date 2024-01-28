@@ -26,8 +26,6 @@ globals:
     args: []
   _SERVER:
     args: []
-  _CLIENT:
-    args: []
 
   _BASE_URL:
     args: []

@@ -6,7 +6,7 @@
 	Otherwise, returns `typeof()` the argument.
 ]]
 
-local typeof = require "../Polyfill/typeof"
+local typeof = require "../../../Modules/Polyfill/typeof"
 
 local function xtypeof(x: any)
 	local typeString = typeof(x)

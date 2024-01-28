@@ -11,7 +11,7 @@
 	- an array - `cleanup` will be called on each item
 ]]
 
-local typeof = require "../Polyfill/typeof"
+local typeof = require "../../../Modules/Polyfill/typeof"
 
 local function cleanupOne(task: any)
 	local taskType = typeof(task)

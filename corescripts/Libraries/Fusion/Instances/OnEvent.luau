@@ -7,7 +7,7 @@
 
 local PubTypes = require "../PubTypes"
 local logError = require "../Logging/logError"
-local typeof = require "../Polyfill/typeof"
+local typeof = require "../../../Modules/Polyfill/typeof"
 
 local function getProperty_unsafe(instance: Instance, property: string)
 	return (instance :: any)[property]

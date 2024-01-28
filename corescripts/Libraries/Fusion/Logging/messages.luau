@@ -23,6 +23,7 @@ return {
 	forKeysKeyCollision = "ForKeys should only write to output key '%s' once when processing key changes, but it wrote to it twice. Previously input key: '%s'; New input key: '%s'",
 	forKeysDestructorError = "ForKeys destructor error: ERROR_MESSAGE",
 	forPairsDestructorError = "ForPairs destructor error: ERROR_MESSAGE",
+	-- logError(invalidEasingStyle, easingStyle)
 	forPairsKeyCollision = "ForPairs should only write to output key '%s' once when processing key changes, but it wrote to it twice. Previous input pair: '[%s] = %s'; New input pair: '[%s] = %s'",
 	forPairsProcessorError = "ForPairs callback error: ERROR_MESSAGE",
 	forValuesProcessorError = "ForValues callback error: ERROR_MESSAGE",
@@ -49,7 +50,4 @@ return {
 	unrecognisedChildType = "'%s' type children aren't accepted by `[Children]`.",
 	unrecognisedPropertyKey = "'%s' keys aren't accepted in property tables.",
 	unrecognisedPropertyStage = "'%s' isn't a valid stage for a special key to be applied at.",
-
-	invalidEasingStyle = "The easing style must be a valid Enum.EasingStyle or a string of 'Linear', 'Quad', 'Cubic', 'Quart', 'Quint', 'Sine', 'Exponential', 'Circular', 'Elastic', 'Back', 'Bounce'. (got %s)",
-	invalidEasingDirection = "The easing direction must be a valid Enum.EasingDirection or a string of 'In', 'Out', 'InOut', 'OutIn'. (got %s)",
 }

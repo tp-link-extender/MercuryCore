@@ -178,4 +178,5 @@ return function(value)
 			return t
 		end
 	end
+	return basicType
 end

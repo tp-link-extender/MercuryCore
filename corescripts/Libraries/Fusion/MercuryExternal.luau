@@ -1,6 +1,6 @@
 --!strict
 --[[
-    Roblox implementation for Fusion's abstract scheduler layer.
+    Mercury implementation for Fusion's abstract scheduler layer.
 ]]
 
 local RunService = game:GetService "RunService"
@@ -24,7 +24,7 @@ function MercuryExternal.doTaskDeferred(resume: () -> ())
 end
 
 --[[
-    Sends an update step to Fusion using the Roblox clock time.
+    Sends an update step to Fusion using the Mercury clock time.
 ]]
 local function performUpdateStep()
 	External.performUpdateStep(time())
@@ -38,7 +38,7 @@ function MercuryExternal.startScheduler()
 	if stopSchedulerFunc ~= nil then
 		return
 	end
-	-- if RunService:IsClient() then
+	-- if not _SERVER then
 	-- In cases where multiple Fusion modules are running simultaneously,
 	-- -- this prevents collisions.
 	-- local id = "FusionUpdateStep_" .. HttpService:GenerateGUID()
