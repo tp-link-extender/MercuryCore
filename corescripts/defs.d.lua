@@ -3149,8 +3149,11 @@ declare class Vector3
 	Unit: Vector3
 	unit: Vector3
 	X: number
+	x: number
 	Y: number
+	y: number
 	Z: number
+	z: number
 	function Angle(self, other: Vector3, axis: Vector3?): number
 	function Cross(self, other: Vector3): Vector3
 	function Dot(self, other: Vector3): number
@@ -3194,31 +3197,18 @@ end
 
 declare class CFrame
 	lookVector: Vector3
-	LookVector: Vector3 -- ?
-	Position: Vector3
-	RightVector: Vector3
-	Rotation: CFrame
-	UpVector: Vector3
+	p: Vector3
 	X: number
-	XVector: Vector3
 	Y: number
-	YVector: Vector3
 	Z: number
-	ZVector: Vector3
-	function GetComponents(self): (number, number, number, number, number, number, number, number, number, number, number, number)
-	function Inverse(self): CFrame
-	function Lerp(self, goal: CFrame, alpha: number): CFrame
-	function Orthonormalize(self): CFrame
-	function PointToObjectSpace(self, v3: Vector3): Vector3
-	function PointToWorldSpace(self, v3: Vector3): Vector3
-	function ToAxisAngle(self): (Vector3, number)
-	function ToEulerAnglesXYZ(self): (number, number, number)
-	function ToEulerAnglesYXZ(self): (number, number, number)
-	function ToObjectSpace(self, cf: CFrame): CFrame
-	function ToOrientation(self): (number, number, number)
-	function ToWorldSpace(self, cf: CFrame): CFrame
-	function VectorToObjectSpace(self, v3: Vector3): Vector3
-	function VectorToWorldSpace(self, v3: Vector3): Vector3
+	function inverse(self): CFrame
+	function pointToObjectSpace(self, v3: Vector3): Vector3
+	function pointToWorldSpace(self, v3: Vector3): Vector3
+	function toEulerAnglesXYZ(self): (number, number, number)
+	function toObjectSpace(self, cf: CFrame): CFrame
+	function toWorldSpace(self, cf: CFrame): CFrame
+	function vectorToObjectSpace(self, v3: Vector3): Vector3
+	function vectorToWorldSpace(self, v3: Vector3): Vector3
 	function __add(self, other: Vector3): CFrame
 	function __mul(self, other: CFrame): CFrame
 	function __mul(self, other: Vector3): Vector3
@@ -6214,6 +6204,8 @@ declare class Terrain extends BasePart
 	function WriteVoxels(self, region: Region3, resolution: number, materials: { any }, occupancy: { any }): nil
 
 	function AutoWedgeCell(self, x: number, y: number, z: number): boolean
+	function SetWaterCell(self, x: number, y: number, z: number, waterForce: EnumWaterForce, waterDirection: EnumWaterDirection): nil
+	function SetCell(self, x: number, y: number, z: number, material: EnumCellMaterial, orientation: EnumCellOrientation): nil
 end
 
 declare class TriangleMeshPart extends BasePart
@@ -7051,6 +7043,8 @@ declare class ScriptContext extends Instance
 	function StopScriptProfiling(self): string
 
 	function AddCoreScript(self, id: number, player: Player, name: string): nil
+	function RegisterLibrary(self, name: string, id: string): nil
+	function LibraryRegistrationComplete(self): nil
 end
 
 declare class ScriptDebugger extends Instance
@@ -8903,7 +8897,7 @@ export type Red = {
 	Load: (self: Red, Script: LuaSourceContainer) -> RedCore,
 }
 
-declare LoadLibrary: ((libraryName: "RbxFusion") -> Fusion) & ((libraryName: "RbxRed") -> Red)
+declare LoadLibrary: ((libraryName: "RbxFusion") -> Fusion) & ((libraryName: "RbxRed") -> Red) & ((libraryName: string) -> any)
 
 declare function settings(): GlobalSettings
 declare function UserSettings(): UserSettings
