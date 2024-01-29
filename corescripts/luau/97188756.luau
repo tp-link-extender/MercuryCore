@@ -18,9 +18,10 @@ local function WaitForChild(parent, childName)
 	return parent[childName]
 end
 
-local function typedef(obj)
-	return obj
-end
+-- wtf
+-- local function typedef(obj)
+-- 	return obj
+-- end
 
 local function IsPhone()
 	local cGui = Game:GetService "CoreGui"
@@ -51,7 +52,7 @@ while Player.Character == nil do
 	wait(0.03)
 end
 local RbxUtility = LoadLibrary "RbxUtility"
-local Gui = typedef(RbxUtility)
+local Create = RbxUtility.Create
 local Camera = Game.Workspace.CurrentCamera
 
 -- Services
@@ -127,7 +128,6 @@ local Input = {
 ---------------------------------------------------
 ------------------ Chat class --------------------
 local Chat = {
-
 	ChatColors = {
 		BrickColor.new "Bright red",
 		BrickColor.new "Bright blue",
@@ -1098,7 +1098,7 @@ end
 function Chat:ComputeSpaceString(pLabel)
 	local nString = " "
 	if not self.TempSpaceLabel then
-		self.TempSpaceLabel = Gui.Create "TextButton" {
+		self.TempSpaceLabel = Create "TextButton" {
 			Size = UDim2.new(
 				0,
 				pLabel.AbsoluteSize.X,
@@ -1227,7 +1227,7 @@ function Chat:CreateMessage(cPlayer, message)
 	end
 	--else
 	-- Haven't hit the mark yet, so keep creating
-	pLabel = Gui.Create "TextLabel" {
+	pLabel = Create "TextLabel" {
 		Name = pName,
 		Text = `{pName}:`,
 		-- TextColor3 = pColor,
@@ -1259,7 +1259,7 @@ function Chat:CreateMessage(cPlayer, message)
 		nString = self.CachedSpaceStrings_List[pName]
 	end
 
-	mLabel = Gui.Create "TextLabel" {
+	mLabel = Create "TextLabel" {
 		Name = `{pName} - message`,
 		-- Max is 3 lines
 		Size = UDim2.new(1, 0, 0.5, 0),
@@ -1353,7 +1353,7 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 	rootButton = rootButton or self.SafeChatButton
 	for msg, _ in pairs(list) do
 		if type(msg) == "string" then
-			local chatText = Gui.Create "TextButton" {
+			local chatText = Create "TextButton" {
 				Name = msg,
 				Text = msg,
 				Size = UDim2.new(0, 100, 0, 20),
@@ -1404,13 +1404,13 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 end
 
 function Chat:CreateSafeChatGui()
-	self.SafeChatFrame = Gui.Create "Frame" {
+	self.SafeChatFrame = Create "Frame" {
 		Name = "SafeChatFrame",
 		Size = UDim2.new(1, 0, 1, 0),
 		Parent = self.Gui,
 		BackgroundTransparency = 1,
 
-		Gui.Create "ImageButton" {
+		Create "ImageButton" {
 			Name = "SafeChatButton",
 			Size = UDim2.new(0, 44, 0, 31),
 			Position = UDim2.new(0, 1, 0.35, 0),
@@ -1443,21 +1443,21 @@ end
 
 -- For touch devices we create a button instead
 function Chat:CreateTouchButton()
-	self.ChatTouchFrame = Gui.Create "Frame" {
+	self.ChatTouchFrame = Create "Frame" {
 		Name = "ChatTouchFrame",
 		Size = UDim2.new(0, 128, 0, 32),
 		Position = UDim2.new(0, 88, 0, 0),
 		BackgroundTransparency = 1,
 		Parent = self.Gui,
 
-		Gui.Create "ImageButton" {
+		Create "ImageButton" {
 			Name = "ChatLabel",
 			Size = UDim2.new(0, 74, 0, 28),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,
 			ZIndex = 2.0,
 		},
-		Gui.Create "ImageLabel" {
+		Create "ImageLabel" {
 			Name = "Background",
 			Size = UDim2.new(1, 0, 1, 0),
 			Position = UDim2.new(0, 0, 0, 0),
@@ -1468,7 +1468,7 @@ function Chat:CreateTouchButton()
 	self.TapToChatLabel = self.ChatTouchFrame.ChatLabel
 	self.TouchLabelBackground = self.ChatTouchFrame.Background
 
-	self.ChatBar = Gui.Create "TextBox" {
+	self.ChatBar = Create "TextBox" {
 		Name = "ChatBar",
 		Size = UDim2.new(1, 0, 0.2, 0),
 		Position = UDim2.new(0, 0, 0.8, 800),
@@ -1500,7 +1500,7 @@ function Chat:CreateChatBar()
 		return GuiService.UseLuaChat
 	end)
 	if forceChatGUI or (status and result) then
-		self.ClickToChatButton = Gui.Create "TextButton" {
+		self.ClickToChatButton = Create "TextButton" {
 			Name = "ClickToChat",
 			Size = UDim2.new(1, 0, 0, 20),
 			BackgroundTransparency = 1,
@@ -1513,7 +1513,7 @@ function Chat:CreateChatBar()
 			FontSize = Enum.FontSize.Size12,
 		}
 
-		self.ChatBar = Gui.Create "TextBox" {
+		self.ChatBar = Create "TextBox" {
 			Name = "ChatBar",
 			Size = UDim2.new(1, 0, 0, 20),
 			Position = UDim2.new(0, 0, 1, 0),
@@ -1554,7 +1554,7 @@ end
 -- Done only once
 function Chat:CreateGui()
 	self.Gui = WaitForChild(CoreGuiService, "RobloxGui")
-	self.Frame = Gui.Create "Frame" {
+	self.Frame = Create "Frame" {
 		Name = "ChatFrame",
 		--Size = self.Configuration.Size;
 		Size = UDim2.new(0, 500, 0, 120),
@@ -1565,7 +1565,7 @@ function Chat:CreateGui()
 		Parent = self.Gui,
 		Active = false,
 
-		Gui.Create "ImageLabel" {
+		Create "ImageLabel" {
 			Name = "Background",
 			Image = "http://banland.xyz/asset/?id=97120937", --96551212';
 			Size = UDim2.new(1.3, 0, 1.64, 0),
@@ -1575,7 +1575,7 @@ function Chat:CreateGui()
 			Visible = false,
 		},
 
-		Gui.Create "Frame" {
+		Create "Frame" {
 			Name = "Border",
 			Size = UDim2.new(1, 0, 0, 1),
 			Position = UDim2.new(0, 0, 0.8, 0),
@@ -1585,7 +1585,7 @@ function Chat:CreateGui()
 			Visible = false,
 		},
 
-		Gui.Create "Frame" {
+		Create "Frame" {
 			Name = "ChatRenderFrame",
 			Size = UDim2.new(1.02, 0, 1.01, 0),
 			Position = UDim2.new(0, 0, 0, 0),
