@@ -111,25 +111,17 @@ end
 
 function JsonWriter:ParseString(s)
 	self:Append '"'
-	self:Append(string.gsub(s, '[%z%c\\"/]', function(n)
-		local c = self.backslashes[n]
-		if c then
-			return c
-		end
-		return string.format("\\u%.4X", string.byte(n))
-	end))
+	local copy = string.gsub(s, '[%z%c\\"/]', function(n)
+		return self.backslashes[n] or string.format("\\u%.4X", string.byte(n))
+	end)
+	self:Append(copy)
 	self:Append '"'
 end
 
 function JsonWriter:IsArray(t)
 	local count = 0
-	local isindex = function(k)
-		if type(k) == "number" and k > 0 then
-			if math.floor(k) == k then
-				return true
-			end
-		end
-		return false
+	local function isindex(k)
+		return type(k) == "number" and k > 0 and math.floor(k) == k
 	end
 	for k, _ in pairs(t) do
 		if not isindex(k) then
@@ -451,9 +443,9 @@ function Null()
 end
 -------------------- End JSON Parser ------------------------
 
-local t = {}
+local RbxUtility = {}
 
-t.DecodeJSON = function(jsonString)
+RbxUtility.DecodeJSON = function(jsonString: string)
 	pcall(function()
 		warn "RbxUtility.DecodeJSON is deprecated, please use Game:GetService('HttpService'):JSONDecode() instead."
 	end)
@@ -465,7 +457,7 @@ t.DecodeJSON = function(jsonString)
 	return nil
 end
 
-t.EncodeJSON = function(jsonTable)
+RbxUtility.EncodeJSON = function(jsonTable: { [any]: any })
 	pcall(function()
 		warn "RbxUtility.EncodeJSON is deprecated, please use Game:GetService('HttpService'):JSONEncode() instead."
 	end)
@@ -482,17 +474,17 @@ end
 --makes a wedge at location x, y, z
 --sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously w
 --returns true if made a wedge, false if the cell remains a block
-t.MakeWedge = function(x, y, z, _)
+RbxUtility.MakeWedge = function(x, y, z, _)
 	return game:GetService("Terrain"):AutoWedgeCell(x, y, z)
 end
 
-t.SelectTerrainRegion = function(
-	regionToSelect,
-	colour,
-	selectEmptyCells,
-	selectionParent
+RbxUtility.SelectTerrainRegion = function(
+	regionToSelect: Region3,
+	colour: BrickColor,
+	selectEmptyCells: boolean,
+	selectionParent: Instance
 )
-	local terrain = game.Workspace:FindFirstChild "Terrain"
+	local terrain = game.Workspace:FindFirstChild "Terrain" :: Terrain
 	if not terrain then
 		return
 	end
@@ -500,14 +492,15 @@ t.SelectTerrainRegion = function(
 	assert(regionToSelect)
 	assert(colour)
 
-	if type(regionToSelect) ~= "Region3" then
+	-- can't use typeof
+	if not (regionToSelect.CFrame and regionToSelect.Size) then
 		error(
 			`regionToSelect (first arg), should be of type Region3, but is type {type(
 				regionToSelect
 			)}`
 		)
 	end
-	if type(colour) ~= "BrickColor" then
+	if not (colour.Number and colour.r and colour.Color) then
 		error(
 			`color (second arg), should be of type BrickColor, but is type {type(
 				colour
@@ -669,7 +662,7 @@ t.SelectTerrainRegion = function(
 		adornments.SelectionPart = selectionPart
 		adornments.SelectionBox = selectionBox
 
-		updateSelection = function(newRegion, newColour)
+		updateSelection = function(newRegion: Region3, newColour)
 			if newRegion and newRegion ~= lastRegion then
 				lastRegion = newRegion
 				selectionPart.Size = newRegion.Size
@@ -737,7 +730,7 @@ Method :wait()
 	Description: This call blocks until
 ]]
 
-function t.CreateSignal()
+function RbxUtility.CreateSignal()
 	local this = {}
 
 	local mBindableEvent = Instance.new "BindableEvent"
@@ -800,7 +793,7 @@ function t.CreateSignal()
 end
 
 ------------------------------------------------- Sigal class End ------------------------------------------------------
-
+-- this ones my favourite - Heliodex
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
@@ -894,7 +887,7 @@ Note: It is also perfectly legal to save a reference to the function returned by
 
 --the Create function need to be created as a functor, not a function, in order to support the Create.E syntax, so it
 --will be created in several steps rather than as a single function declaration.
-local function Create_PrivImpl(objectType)
+local function Create_PrivImpl(objectType: string)
 	if type(objectType) ~= "string" then
 		error("Argument of Create must be a string", 2)
 	end
@@ -902,7 +895,7 @@ local function Create_PrivImpl(objectType)
 	--The first function call is a function call using Lua's single-string-argument syntax
 	--The second function call is using Lua's single-table-argument syntax
 	--Both can be chained together for the nice effect.
-	return function(dat)
+	return function(dat: { [string | number | { any } | any]: any })
 		--default to nothing, to handle the no argument given case
 		dat = dat or {}
 
@@ -944,7 +937,7 @@ local function Create_PrivImpl(objectType)
 				obj[k.__eventname]:connect(v)
 
 			--define constructor function
-			elseif k == t.Create then
+			elseif k == RbxUtility.Create then
 				if type(v) ~= "function" then
 					error(
 						`Bad entry in Create body: Key \`[Create]\` should be paired with a constructor function, got: {v}`,
@@ -978,7 +971,7 @@ local function Create_PrivImpl(objectType)
 end
 
 --now, create the functor:
-t.Create = setmetatable({}, {
+RbxUtility.Create = setmetatable({}, {
 	__call = function(_, ...)
 		return Create_PrivImpl(...)
 	end,
@@ -986,7 +979,7 @@ t.Create = setmetatable({}, {
 
 --and create the "Event.E" syntax stub. Really it's just a stub to construct a table which our Create
 --function can recognize as special.
-t.Create.E = function(eventName)
+RbxUtility.Create.E = function(eventName)
 	return { __eventname = eventName }
 end
 
@@ -1000,19 +993,28 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 
-t.Help = function(funcNameOrFunc)
+RbxUtility.Help = function(funcNameOrFunc)
 	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
-	if funcNameOrFunc == "DecodeJSON" or funcNameOrFunc == t.DecodeJSON then
+	if
+		funcNameOrFunc == "DecodeJSON"
+		or funcNameOrFunc == RbxUtility.DecodeJSON
+	then
 		return "Function DecodeJSON.  "
 			.. "Arguments: (string).  "
 			.. "Side effect: returns a table with all parsed JSON values"
 	end
-	if funcNameOrFunc == "EncodeJSON" or funcNameOrFunc == t.EncodeJSON then
+	if
+		funcNameOrFunc == "EncodeJSON"
+		or funcNameOrFunc == RbxUtility.EncodeJSON
+	then
 		return "Function EncodeJSON.  "
 			.. "Arguments: (table).  "
 			.. "Side effect: returns a string composed of argument table in JSON data format"
 	end
-	if funcNameOrFunc == "MakeWedge" or funcNameOrFunc == t.MakeWedge then
+	if
+		funcNameOrFunc == "MakeWedge"
+		or funcNameOrFunc == RbxUtility.MakeWedge
+	then
 		return "Function MakeWedge. "
 			.. "Arguments: (x, y, z, [default material]). "
 			.. "Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if "
@@ -1021,7 +1023,7 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "SelectTerrainRegion"
-		or funcNameOrFunc == t.SelectTerrainRegion
+		or funcNameOrFunc == RbxUtility.SelectTerrainRegion
 	then
 		return "Function SelectTerrainRegion. "
 			.. "Arguments: (regionToSelect, color, selectEmptyCells, selectionParent). "
@@ -1033,7 +1035,10 @@ t.Help = function(funcNameOrFunc)
 			.. "arguments to said function are a new region3 to select, and the adornment color (color arg is optional). "
 			.. "Also returns a second function that takes no arguments and destroys the selection"
 	end
-	if funcNameOrFunc == "CreateSignal" or funcNameOrFunc == t.CreateSignal then
+	if
+		funcNameOrFunc == "CreateSignal"
+		or funcNameOrFunc == RbxUtility.CreateSignal
+	then
 		return "Function CreateSignal. "
 			.. "Arguments: None. "
 			.. "Returns: The newly created Signal object. This object is identical to the RBXScriptSignal class "
@@ -1082,8 +1087,9 @@ t.Help = function(funcNameOrFunc)
 			.. "Descrition: Create is a very powerfull function, whose description is too long to fit here, and "
 			.. "is best described via example, please see the wiki page for a description of how to use it."
 	end
+	return "No help available for this function"
 end
 
 --------------------------------------------Documentation Ends----------------------------------------------------------
 
-return t
+return RbxUtility

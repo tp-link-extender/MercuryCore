@@ -10,7 +10,7 @@
 		"2": "T-Shirt",
 		"11": "Shirt",
 		"12": "Pants",
-		"13": "Decal",
+		"13": "Decal"
 	}
 </script>
 

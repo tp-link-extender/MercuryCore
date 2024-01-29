@@ -426,26 +426,17 @@ local function getMouseTargetCFrame(targetPart)
 	return targetPart.CFrame
 end
 
-local function isBlocker(part) -- returns whether or not we want to cancel the stamp because we're blocked by this part
-	if not part then
+local function isBlocker(part: Instance) -- returns whether or not we want to cancel the stamp because we're blocked by this part
+	if not part or not part.Parent or part:FindFirstChild "Humanoid" then
 		return false
-	end
-	if not part.Parent then
-		return false
-	end
-	if part:FindFirstChild "Humanoid" then
-		return false
-	end
-	if
+	elseif
 		part:FindFirstChild "RobloxStamper"
 		or part:FindFirstChild "RobloxModel"
 	then
 		return true
-	end
-	if part:IsA "Part" and not part.CanCollide then
-		return false
-	end
-	if part == game.Lighting then
+	elseif
+		(part:IsA "Part" and not part.CanCollide) or (part == game.Lighting)
+	then
 		return false
 	end
 	return isBlocker(part.Parent)
@@ -453,7 +444,11 @@ end
 
 -- helper function to determine if a character can be pushed upwards by a certain amount
 -- character is 5 studs tall, we'll check a 1.5 x 1.5 x 4.5 box around char, with center .5 studs below torsocenter
-local function spaceAboveCharacter(charTorso, newTorsoY, stampData)
+local function spaceAboveCharacter(
+	charTorso: BasePart,
+	newTorsoY,
+	stampData: Instance
+)
 	local partsAboveChar = game.Workspace:FindPartsInRegion3(
 		Region3.new(
 			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
@@ -461,7 +456,7 @@ local function spaceAboveCharacter(charTorso, newTorsoY, stampData)
 			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
 				+ Vector3.new(0.75, 1.75, 0.75)
 		),
-		charTorso.Parent,
+		charTorso.Parent :: Instance,
 		100
 	)
 
@@ -474,30 +469,25 @@ local function spaceAboveCharacter(charTorso, newTorsoY, stampData)
 		end
 	end
 
-	if
-		clusterPartsInRegion(
-			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
-				- Vector3.new(0.75, 2.75, 0.75),
-			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
-				+ Vector3.new(0.75, 1.75, 0.75)
-		)
-	then
-		return false
-	end
-
-	return true
+	return not clusterPartsInRegion(
+		Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
+			- Vector3.new(0.75, 2.75, 0.75),
+		Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
+			+ Vector3.new(0.75, 1.75, 0.75)
+	)
 end
 
-local function findConfigAtMouseTarget(Mouse, stampData)
+local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 	-- *Critical Assumption* :
 	--				This function assumes the target CF axes are orthogonal with the target bounding box faces
 	--				And, it assumes the insert CF axes are orthongonal with the insert bounding box faces
 	--				Therefore, insertion will not work with angled faces on wedges or other "non-block" parts, nor
 	--				will it work for parts in a model that are not orthogonally aligned with the model's CF.
 
+	-- This can happen sometimes, return if so
 	if not Mouse then
 		return nil
-	end -- This can happen sometimes, return if so
+	end
 	if not stampData then
 		error "findConfigAtMouseTarget: stampData is nil"
 		return nil
@@ -572,7 +562,7 @@ local function findConfigAtMouseTarget(Mouse, stampData)
 
 	if targetPart:IsA "Terrain" then
 		if not cluster then
-			cluster = game.Workspace:FindFirstChild "Terrain"
+			cluster = game.Workspace:FindFirstChild "Terrain" :: Terrain
 		end
 		local cellID = cluster:WorldToCellPreferSolid(mouseHitInWorld)
 		if hitPlane then
@@ -1025,7 +1015,9 @@ RbxStamper.SetupStamperDragger = function(
 
 	-- Init all state variables
 	local gInitial90DegreeRotations = 0
-	local stampData
+	local stampData: {
+		DisabledScripts: { LuaSourceContainer }?,
+	}
 	local mouseTarget
 
 	local errorBox = Instance.new "SelectionBox"
@@ -1327,6 +1319,8 @@ RbxStamper.SetupStamperDragger = function(
 		minBB += targetCFrame.p - currModelCFrame.p
 		maxBB += targetCFrame.p - currModelCFrame.p
 
+		local clusterMat: Instance
+
 		-- don't drag into terrain
 		if
 			clusterPartsInRegion(
@@ -1391,7 +1385,7 @@ RbxStamper.SetupStamperDragger = function(
 		positionPartsAtCFrame3(targetCFrame, stampData.CurrentParts)
 		lastTarget.CFrame = targetCFrame -- successful positioning, so update 'dat cframe
 		if stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) then
-			local clusterMat =
+			clusterMat =
 				stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
 			if clusterMat:IsA "Vector3Value" then
 				lastTarget.TerrainOrientation = clusterMat.Value.Z
@@ -1707,15 +1701,16 @@ RbxStamper.SetupStamperDragger = function(
 		local parts = {}
 		local decals = {}
 
-		stampData = {}
-		stampData.DisabledScripts = {}
-		stampData.TransparencyTable = {}
-		stampData.MaterialTable = {}
-		stampData.CanCollideTable = {}
-		stampData.AnchoredTable = {}
-		stampData.ArchivableTable = {}
-		stampData.DecalTransparencyTable = {}
-		stampData.SurfaceTypeTable = {}
+		stampData = {
+			DisabledScripts = {},
+			TransparencyTable = {},
+			MaterialTable = {},
+			CanCollideTable = {},
+			AnchoredTable = {},
+			ArchivableTable = {},
+			DecalTransparencyTable = {},
+			SurfaceTypeTable = {},
+		}
 
 		collectParts(clone, parts, scripts, decals)
 

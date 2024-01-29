@@ -2404,8 +2404,8 @@ RbxGui.CreateTutorial = function(name, tutorialKey, createButtons)
 end
 
 local function CreateBasicTutorialPage(
-	name,
-	handleResize,
+	name: string,
+	handleResize: (number, number) -> (),
 	skipTutorial,
 	giveDoneButton
 )
