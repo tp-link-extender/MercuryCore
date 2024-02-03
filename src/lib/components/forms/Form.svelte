@@ -7,13 +7,18 @@
 	export let inline = false
 	export let nopad = false // Don't pad the icon on the submit button
 
+	export let method = "POST"
+
 	export let formData: any // boooo but nothing else works
 	const { errors, message, enhance, delayed } = formData
+
+	// use:enhance may not be used on forms that aren't method == "POST"
+	const use = method == "POST" ? enhance : () => {}
 
 	$: other = ($errors as any).other || ""
 </script>
 
-<form use:enhance method="POST" {...$$restProps}>
+<form use:use {method} {...$$restProps}>
 	<fieldset class={inline ? "input-group" : "pb-2"}>
 		<slot />
 		{#if submit}
