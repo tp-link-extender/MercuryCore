@@ -1,6 +1,6 @@
 --!strict
 --[[
-    Returns true if A and B are 'similar' - i.e. any user of A would not need
+    Returns true if A and B are 'similar' - ie. any user of A would not need
     to recompute if it changed to B.
 ]]
 

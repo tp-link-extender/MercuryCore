@@ -11,7 +11,7 @@
 		["Create Asset"],
 		["fa fa-file-circle-plus"]
 	)
-	let tabData2 = TabData(data.url, ["Manual", "Autopilot"])
+	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], [], "tab2")
 
 	const assets: { [k: string]: string } = {
 		"8": "Hat",
@@ -41,7 +41,7 @@
 			<Tab tabData={tabData2}>
 				<div class="alert alert-primary" role="alert">
 					<far class="pr-2" fa-circle-info />
-					Manual uploading mode is for shared assets (i.e. requires textures)
+					Manual uploading mode is for shared assets (ie. requires textures)
 				</div>
 				<Form
 					formData={formDataManual}
@@ -85,11 +85,11 @@
 			<Tab tabData={tabData2}>
 				<div class="alert alert-primary" role="alert">
 					<far class="pr-2" fa-circle-info />
-					Use manual uploading mode for shared assets (i.e. mesh)
+					Use manual uploading mode for shared assets (ie. mesh)
 				</div>
 				<Form
 					formData={formDataAutopilot}
-					nopad
+					method="GET"
 					enctype="multipart/form-data"
 					submit="Create"
 					class="pt-8 light-text">
@@ -106,26 +106,26 @@
 					<Input
 						formData={formDataAutopilot}
 						name="assetId"
-						label="Asset ID"
+						label="Asset Id"
 						type="number" />
 					<Input
-						formData={formDataManual}
+						formData={formDataAutopilot}
 						name="name"
 						label="Asset name"
 						placeholder="Make sure to make it accurate" />
 					<Textarea
-						formData={formDataManual}
+						formData={formDataAutopilot}
 						name="description"
 						label="Asset description"
 						placeholder="Up to 1000 characters" />
 					<Input
-						formData={formDataManual}
+						formData={formDataAutopilot}
 						name="price"
 						label="Asset price"
 						type="number" />
-					<Select
+					<!-- <Select
 						formData={formDataAutopilot}
-						name="type"
+						name="version"
 						label="Asset version">
 						{#each Object.keys(assetsAutopilot) as value}
 							<option {value}>
@@ -135,14 +135,14 @@
 					</Select>
 					<Select
 						formData={formDataAutopilot}
-						name="type"
+						name="shared"
 						label="Shared assets">
 						{#each Object.keys(assetsAutopilot) as value}
 							<option {value}>
 								{assets[value]}
 							</option>
 						{/each}
-					</Select>
+					</Select> -->
 				</Form>
 			</Tab>
 		</Tab>

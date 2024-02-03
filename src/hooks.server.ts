@@ -72,12 +72,10 @@ export async function handle({ event, resolve }) {
 	const setSession = (sessionCookie: Cookie) =>
 		// sveltekit types deviates from the de facto standard
 		// `as any` is usable too
-		{
-			return event.cookies.set(sessionCookie.name, sessionCookie.value, {
-				path: ".",
-				...sessionCookie.attributes,
-			})
-		}
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: ".",
+			...sessionCookie.attributes,
+		})
 
 	if (!session) setSession(auth.createBlankSessionCookie())
 	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
