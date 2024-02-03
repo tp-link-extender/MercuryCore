@@ -84,9 +84,8 @@ local function unpackType(value: any, typeString: string): { number }
 		return { value.X, value.Y, value.Z }
 	elseif typeString == "Vector3int16" then
 		return { value.X, value.Y, value.Z }
-	else
-		return {}
 	end
+	return {}
 end
 
 return unpackType
