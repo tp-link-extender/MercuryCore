@@ -6,21 +6,24 @@
 	const formData = superForm(data.profileForm)
 	const { form } = formData
 
+	const themes = [
+		["standard", "Standard"],
+		["darken", "Darken"],
+		["storm", "Storm"],
+		["solar", "Solar"]
+	]
+
 	if (user.bio?.[0]) $form.bio = user.bio[user.bio.length - 1]?.text || ""
 </script>
 
 <Form {formData} action="?/profile" submit="<fa fa-save></fa> Save changes">
 	<Select
 		{formData}
+		options={themes}
 		name="theme"
 		label="Theme"
 		disabled
-		help="Themes have been disabled while we focus on consolidating the site's design.">
-		<option value="standard">Standard</option>
-		<option value="darken">Darken</option>
-		<option value="storm">Storm</option>
-		<option value="solar">Solar</option>
-	</Select>
+		help="Themes have been disabled while we focus on consolidating the site's design." />
 
 	<hr class="grey-text pb-6" />
 

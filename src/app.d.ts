@@ -67,6 +67,7 @@ declare global {
 	declare const Modal: typeof import("$lib/components/Modal.svelte").default
 	declare const Moon: typeof import("$lib/components/Moon.svelte").default
 	declare const Navbar: typeof import("$lib/components/Navbar.svelte").default
+	declare const NoScript: typeof import("$lib/components/NoScript.svelte").default
 	declare const Place: typeof import("$lib/components/Place.svelte").default
 	declare const PostReply: typeof import("$lib/components/PostReply.svelte").default
 	declare const ReportButton: typeof import("$lib/components/ReportButton.svelte").default
@@ -75,6 +76,7 @@ declare global {
 	declare const TabNav: typeof import("$lib/components/TabNav.svelte").default
 	declare const User: typeof import("$lib/components/User.svelte").default
 	declare const UserCard: typeof import("$lib/components/UserCard.svelte").default
+	declare const YesScript: typeof import("$lib/components/YesScript.svelte").default
 
 	declare const Form: typeof import("$lib/components/forms/Form.svelte").default
 	declare const Input: typeof import("$lib/components/forms/Input.svelte").default

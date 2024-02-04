@@ -188,6 +188,9 @@ img[src^="/api/avatar"]
 ::-webkit-scrollbar
 	width 0.8rem
 	height 0.8rem
+	// overlay scrollbar
+	position absolute
+	z-index 1
 
 	&-track
 	&-corner
@@ -343,11 +346,12 @@ styles = primary secondary tertiary quatenary red-secondary red-tertiary first s
 for style in styles
 	.btn-{style}
 		@apply border-1 ring-offset-neutral-9
-		transition background 0.3s, color 0.3s, box-shadow 0.15s, opacity 0.3s
+		transition all 0.3s, box-shadow 0.15s
+
 		&:active:not(:disabled)
-			@apply ring-3
+			@apply ring-2
 		&:focus:not(:active):not(:disabled)
-			@apply ring-2 ring-offset-2
+			@apply ring-1 ring-offset-2
 		&:disabled
 			opacity 0.5
 
@@ -372,7 +376,7 @@ div[role="progressbar"]
 
 @keyframes progress-bar-stripes
 	0%
-			background-position-x 1rem
+		background-position-x 1rem
 	100%
 		background-position-x 0
 
@@ -430,6 +434,7 @@ thead th
 input
 select
 textarea
+.fakeselect
 	background-color var(--accent)
 	color var(--light-text)
 	border 1px solid var(--accent2)
@@ -444,9 +449,9 @@ textarea
 		transition box-shadow 0.15s ease-in-out
 
 	&:active
-		@apply ring-3
+		@apply ring-2
 	&:focus:not(:active)
-		@apply ring-offset-2 ring-2
+		@apply ring-offset-1 ring-2
 
 
 input[type=checkbox]
@@ -471,6 +476,7 @@ input[type=radio]
 		background-image url("/radio.svg")
 
 select
+.fakeselect
 	width 100%
 	padding 0.7rem 1rem
 	background-image url("/select.svg")
@@ -478,6 +484,9 @@ select
 	background-position right 0.75rem center
 	background-size 1rem 0.75rem
 	cursor pointer
+
+.fakeselect
+	text-align left
 
 input[type=text]
 input[type=password]

@@ -47,14 +47,11 @@ export const actions = {
 		const form = await superValidate(formData, schema)
 		if (!form.valid) return formError(form)
 
-		const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
-		if (limit) return limit
-
 		const { type, name, description, price } = form.data
 		const assetType = parseInt(type) as keyof typeof assets
 		const asset = formData.get("asset") as File
 
-		if (!asset)
+		if (!asset || asset.size < 1)
 			return formError(form, ["asset"], ["You must upload an asset"])
 
 		if (asset.size > 20e6)
@@ -63,6 +60,9 @@ export const actions = {
 				["asset"],
 				["Asset must be less than 20MB in size"]
 			)
+
+		const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
+		if (limit) return limit
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
@@ -77,7 +77,7 @@ export const actions = {
 						tShirtThumbnail(asset),
 					])
 					break
-					
+
 				case 11: // Shirt
 				case 12: // Pants
 					saveImages[0] = await clothingAsset(asset)
@@ -100,7 +100,7 @@ export const actions = {
 							["type"],
 							[
 								"You do not have permission to upload this type of asset",
-							],
+							]
 						)
 					saveImages = await Promise.all([
 						imageAsset(asset),

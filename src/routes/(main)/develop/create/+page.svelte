@@ -3,6 +3,7 @@
 
 	export let data
 	const formData = superForm(data.form)
+	const { form } = formData
 
 	export const snapshot = formData
 
@@ -30,13 +31,12 @@
 	enctype="multipart/form-data"
 	submit="Create ( <fa fa-gem></fa> 15 )"
 	class="ctnr pt-8 max-w-200 light-text">
-	<Select {formData} name="type" label="Asset type" selected={data.assettype}>
-		{#each Object.keys(assets) as value}
-			<option {value} selected={value == data.assettype}>
-				{assets[value]}
-			</option>
-		{/each}
-	</Select>
+	<Select
+		{formData}
+		options={Object.entries(assets)}
+		selected={data.assettype}
+		name="type"
+		label="Asset type" />
 	<Input
 		{formData}
 		name="name"
@@ -49,11 +49,11 @@
 		placeholder="Up to 1000 characters" />
 	<Input {formData} name="price" label="Asset price" type="number" />
 	{#if data.assettype != "Hat"}
-	<Input
-		{formData}
-		type="file"
-		name="asset"
-		label="Asset"
-		help="Max image size: 20MB. Supported file types: .png, .jpg, .bmp" />
+		<Input
+			{formData}
+			type="file"
+			name="asset"
+			label="Asset"
+			help="Max image size: 20MB. Supported file types: .png, .jpg, .bmp" />
 	{/if}
 </Form>

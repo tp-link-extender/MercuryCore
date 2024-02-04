@@ -93,7 +93,7 @@
 				{/each}
 			</div>
 		</div>
-		<div class="w-1/2 md:w-2/3 lg:w-1/2 xl:w-2/3">
+		<div class="w-1/2 xl:w-2/3 lg:w-1/2 md:w-2/3">
 			<h2 class="pb-2">Random fact</h2>
 			<div id="fact" class="card bg-darker card-body text-base pb-6">
 				{data.stuff.fact}

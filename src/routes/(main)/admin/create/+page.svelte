@@ -51,14 +51,9 @@
 					class="pt-8 light-text">
 					<Select
 						formData={formDataManual}
+						options={Object.entries(assets)}
 						name="type"
-						label="Asset type">
-						{#each Object.keys(assets) as value}
-							<option {value}>
-								{assets[value]}
-							</option>
-						{/each}
-					</Select>
+						label="Asset type" />
 					<Input
 						formData={formDataManual}
 						name="name"
@@ -95,14 +90,9 @@
 					class="pt-8 light-text">
 					<Select
 						formData={formDataAutopilot}
+						options={Object.entries(assetsAutopilot)}
 						name="type"
-						label="Asset type">
-						{#each Object.keys(assetsAutopilot) as value}
-							<option {value}>
-								{assets[value]}
-							</option>
-						{/each}
-					</Select>
+						label="Asset type" />
 					<Input
 						formData={formDataAutopilot}
 						name="assetId"
@@ -125,24 +115,14 @@
 						type="number" />
 					<!-- <Select
 						formData={formDataAutopilot}
+						options={Object.entries(assetsAutopilot)}
 						name="version"
-						label="Asset version">
-						{#each Object.keys(assetsAutopilot) as value}
-							<option {value}>
-								{assets[value]}
-							</option>
-						{/each}
-					</Select>
+						label="Asset version" />
 					<Select
 						formData={formDataAutopilot}
+						options={Object.entries(assetsAutopilot)}
 						name="shared"
-						label="Shared assets">
-						{#each Object.keys(assetsAutopilot) as value}
-							<option {value}>
-								{assets[value]}
-							</option>
-						{/each}
-					</Select> -->
+						label="Shared assets" /> -->
 				</Form>
 			</Tab>
 		</Tab>

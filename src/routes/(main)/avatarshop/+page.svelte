@@ -12,7 +12,7 @@
 
 			const response = await fetch("/avatarshop", {
 				method: "POST",
-				body: formdata,
+				body: formdata
 			})
 			const result = deserialize(await response.text()) as {
 				data: {
@@ -25,7 +25,7 @@
 
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v),
+		restore: v => (query = v)
 	}
 
 	const tabTypes: { [k: string]: number } = {
@@ -34,7 +34,7 @@
 		Hats: 8,
 		Pants: 12,
 		Decals: 13,
-		Faces: 18,
+		Faces: 18
 	}
 
 	let tabData = TabData(data.url, Object.keys(tabTypes))
@@ -83,8 +83,8 @@
 	</div>
 
 	<div
-		class="grid gap-2 md:gap-4
-		lg:grid-cols-[1fr_5fr] md:grid-cols-[1fr_4fr]">
+		class="grid gap-2 lg:grid-cols-[1fr_5fr]
+		md:(grid-cols-[1fr_4fr] gap-4)">
 		<div>
 			<h2>Filters</h2>
 			<p class="text-neutral-4">Sort by</p>

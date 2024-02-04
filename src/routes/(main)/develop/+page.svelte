@@ -3,11 +3,10 @@
 		["Shirts", "🧥", "11"],
 		["T-Shirts", "👕", "2"],
 		["Pants", "👖", "12"],
-		["Decals", "🖼️", "13"],
+		["Decals", "🖼️", "13"]
 	]
 
 	export let data
-	const { user } = data
 
 	let tabData = TabData(data.url, ["Create", "Creations"])
 	let tabData2 = TabData(data.url, ["Shirts", "T-Shirts", "Pants", "Decals"])
@@ -21,7 +20,7 @@
 		<TabNav
 			bind:tabData
 			vertical
-			class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
+			class="w-full lg:w-1/6 md:(w-1/4 pr-4) pb-6 " />
 		<div class="w-full lg:w-5/6 md:w-3/4">
 			<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
 				{#each assetTypes as asset, num}
