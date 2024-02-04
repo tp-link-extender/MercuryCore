@@ -89,7 +89,7 @@
 <Head title={data.name} />
 
 <div class="ctnr max-w-240 light-text">
-	<div class="grid grid-cols-1 md:grid-cols-3 md:gap-4">
+	<div class="grid grid-cols-1 md:(grid-cols-3 gap-4)">
 		<div class="col-span-2 pb-4">
 			<div in:fade class="carousel rounded-4">
 				{#each images as src, i}

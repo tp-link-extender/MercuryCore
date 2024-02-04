@@ -17,7 +17,7 @@
 
 			const response = await fetch("/inventory", {
 				method: "POST",
-				body: formdata,
+				body: formdata
 			})
 			const result = deserialize(await response.text()) as {
 				data: {
@@ -30,7 +30,7 @@
 
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v),
+		restore: v => (query = v)
 	}
 
 	const tabTypes: { [k: string]: number } = {
@@ -39,7 +39,7 @@
 		Hats: 8,
 		Pants: 12,
 		Decals: 13,
-		Faces: 18,
+		Faces: 18
 	}
 
 	let tabData = TabData(data.url, Object.keys(tabTypes))
@@ -57,7 +57,7 @@
 	<TabNav
 		bind:tabData
 		vertical
-		class="w-full lg:w-1/6 md:w-1/4 pb-6 md:pr-4" />
+		class="w-full lg:w-1/6 md:(w-1/4 pr-4) pb-6" />
 	<div class="w-full lg:w-5/6 md:w-3/4">
 		<form
 			on:submit|preventDefault

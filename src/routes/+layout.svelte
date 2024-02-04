@@ -31,7 +31,7 @@
 			if (user)
 				fetch("/api?/statusping", {
 					method: "POST",
-					body: new FormData(),
+					body: new FormData()
 				})
 		}, 30e3)
 	)
@@ -48,7 +48,7 @@
 		ForumPost: "New forum post",
 		ItemPurchase: "Item purchased",
 		Message: "New message",
-		NewFriend: "New friend",
+		NewFriend: "New friend"
 	}
 
 	$: notifications = data.notifications.filter(n => !n.read)
@@ -107,7 +107,7 @@
 			</div>
 			<a
 				href={notification.link}
-				class="p-3 light-text no-underline block rounded-2">
+				class="light-text p-3 no-underline block rounded-2">
 				{notification.note}
 			</a>
 		</div>

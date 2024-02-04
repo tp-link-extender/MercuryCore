@@ -114,11 +114,11 @@
 				method="POST"
 				action="/search"
 				role="search"
-				class="mx-auto px-2">
+				class="mx-auto px-2 pb-1">
 				<div
-					class="input-group max-w-140 pt-3px xl:absolute
-					xl:left-1/2 xl:-translate-x-1/2 xl:w-35vw lg:w-76 md:w-100
-					sm:w-52">
+					class="input-group max-w-140 pt-3px
+					xl:(absolute left-1/2 -translate-x-1/2 w-35vw)
+					lg:w-76 md:w-100 sm:w-52">
 					<input
 						bind:value={search}
 						on:keydown={keydown}
@@ -248,7 +248,7 @@
 				<a
 					{href}
 					class="btn light-text border-0 flex flex-col items-center
-					text-0.9rem px-0.2rem sm:text-base sm:px-2">
+					text-0.9rem px-0.2rem sm:(text-base px-2)">
 					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem" />
 					{title}
 				</a>

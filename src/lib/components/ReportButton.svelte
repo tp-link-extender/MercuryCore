@@ -4,7 +4,9 @@
 	export let reverse = false
 </script>
 
-<a class="text-red-5 hover:text-red-5! no-underline pl-2" href="/report?user={user}&url={url}">
+<a
+	class="text-red-5 hover:text-red-5! no-underline pl-2"
+	href="/report?user={user}&url={url}">
 	<small class="inline-flex items-center">
 		{#if reverse}
 			<far fa-flag class="pr-2" />

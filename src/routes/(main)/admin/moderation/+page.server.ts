@@ -27,8 +27,6 @@ export const actions = {
 		const { user } = await authorise(locals, 4)
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
-		const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
-		if (limit) return limit
 
 		const { username, action, banDate, reason } = form.data
 		const date = banDate ? new Date(banDate) : null
@@ -68,6 +66,9 @@ export const actions = {
 				["username"],
 				["You cannot moderate yourself"]
 			)
+
+		const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
+		if (limit) return limit
 
 		const moderationMessage = [
 			"warned",
@@ -148,7 +149,7 @@ export const actions = {
 					SELECT * FROM moderation
 					WHERE out = $moderatee
 						AND active = true`,
-				query
+				qParams
 			)
 		)
 			return formError(

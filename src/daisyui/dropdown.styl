@@ -32,6 +32,8 @@
 .dropdown-content
 	z-index 1000
 	padding-left 0.5rem
+	max-height 25rem !important
+	overflow-y auto
 
 	ul
 		list-style none
@@ -46,6 +48,7 @@
 		text-align start !important
 		&:hover
 		&:focus
+		&[data-highlighted]
 			color var(--grey-text) !important
 			background hsla(260, 100%, 60%, 50%)
 		&:active

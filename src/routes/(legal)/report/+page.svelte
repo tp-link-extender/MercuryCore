@@ -5,6 +5,23 @@
 	const formData = superForm(data.form)
 
 	export const snapshot = formData
+
+	const reports = [
+		["AccountTheft", "Account theft"],
+		["Dating", "Dating"],
+		["Exploiting", "Exploiting"],
+		["Harassment", "Harassment or discrimination"],
+		["InappropriateContent", "Inappropriate content"],
+		[
+			"PersonalInformation",
+			"Personal information (displaying their own or asking for others')"
+		],
+		["Scamming", "Scamming"],
+		["Under13", "Suspected under 13 user"],
+		["Spam", "Spam"],
+		["Swearing", "Swearing"],
+		["Threats", "Threats"]
+	]
 </script>
 
 <Head title="Report {data.reportee}" />
@@ -17,22 +34,11 @@
 	</h2>
 
 	<Form {formData}>
-		<Select {formData} name="category" label="Report category">
-			<option value="AccountTheft">Account theft</option>
-			<option value="Dating">Dating</option>
-			<option value="Exploiting">Exploiting</option>
-			<option value="Harassment">Harassment or discrimination</option>
-			<option value="InappropriateContent">Inappropriate content</option>
-			<option value="PersonalInformation">
-				Personal information (displaying their own or asking for
-				others')
-			</option>
-			<option value="Scamming">Scamming</option>
-			<option value="Under13">Suspected under 13 user</option>
-			<option value="Spam">Spam</option>
-			<option value="Swearing">Swearing</option>
-			<option value="Threats">Threats</option>
-		</Select>
+		<Select
+			{formData}
+			options={reports}
+			name="category"
+			label="Report category" />
 		<Textarea
 			{formData}
 			name="note"
