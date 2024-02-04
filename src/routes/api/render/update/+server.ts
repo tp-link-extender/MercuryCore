@@ -15,7 +15,7 @@ type Render = {
 
 export async function POST({ request, url }) {
 	const apiKey = url.searchParams.get("apiKey")
-	if (!apiKey || apiKey !== process.env.RCC_KEY) error(400, "Stfu")
+	if (!apiKey || apiKey !== process.env.RCC_KEY) error(403, "Stfu")
 
 	const id = url.searchParams.get("taskID")
 	if (!id || !/^[\d\w]+$/.test(id)) error(400, "Missing taskID parameter")
@@ -33,6 +33,7 @@ export async function POST({ request, url }) {
 
 	// request.headers.get("content-encoding") == "gzip"
 	// This doesn't work because RCC is a LIAR!!!!
+	// we could do this with the proxy but whatever
 
 	console.log("buffer", buffer)
 	console.log("gzipped", gzipped)
@@ -44,49 +45,35 @@ export async function POST({ request, url }) {
 	const [status, clickBody, clickHead] = data.split("\n")
 	const typeAvatar = task.type === "Avatar"
 
-	console.log(status)
+	console.log("Render status update:", status)
 
 	if (status === "Rendering")
 		await query(surql`UPDATE $render SET status = "Rendering"`, {
 			render: `render:${id}`,
 		})
 	else if (status === "Completed") {
-		// Convert base64 from RCCService to an image
-		if (clickBody && clickHead) {
-			const path = (s: string) =>
-				`data/${typeAvatar ? "avatars" : "thumbnails"}/${
-					task.relativeId
-				}${s}${typeAvatar ? ".png" : ""}`
+		// repetitive but way more readable
 
-			await Promise.all([
-				sharp(Buffer.from(clickHead, "base64"))
-					.resize(150, 150)
-					.png()
-					.toFile(path("-head"))
-					.catch(() => {
-						throw new Error("Failed to resize head image")
-					}),
-				sharp(Buffer.from(clickBody, "base64"))
-					.resize(420, 420)
-					.png()
-					.toFile(path("-body"))
-					.catch(() => {
-						throw new Error("Failed to resize body image")
-					}),
-			])
-		} else if (clickBody) {
-			const path = `data/${typeAvatar ? "avatars" : "thumbnails"}/${
-				task.relativeId
-			}${typeAvatar ? ".png" : ""}`
-
-			await sharp(Buffer.from(clickBody, "base64"))
-				.resize(420, 420)
+		const sharpen = (input: string, size: number, name = "") =>
+			sharp(Buffer.from(input, "base64"))
+				.resize(size, size)
 				.png()
-				.toFile(path)
+				.toFile(
+					`data/${typeAvatar ? "avatars" : "thumbnails"}/${
+						task.relativeId
+					}${name && "-"}${name}${typeAvatar ? ".png" : ""}`
+				)
 				.catch(() => {
-					throw new Error("Failed to resize image")
+					throw new Error(`Failed to resize ${name} image`)
 				})
-		}
+
+		// Convert base64 from RCCService to an image
+		if (clickHead && clickBody)
+			await Promise.all([
+				sharpen(clickHead, 150, "head"),
+				sharpen(clickBody, 420, "body"),
+			])
+		else if (clickBody) await sharpen(clickBody, 420)
 
 		await query(
 			surql`
