@@ -3,7 +3,7 @@
 	export let pad = false
 </script>
 
-<div class="flex <lg:flex-col light-text h-screen overflow-auto">
+<div class="light-text flex <lg:flex-col min-h-screen h-full overflow-auto">
 	<div
 		id="dark"
 		class="lg:w-1/2 p-8vw pt-5vh {pad ? 'lg:pt-20vh' : 'lg:pt-11vh'}">
@@ -25,7 +25,7 @@
 
 	<div
 		id="light"
-		class="lg:w-1/2 p-8vw pt-5vh {pad ? 'lg:pt-20vh' : 'lg:pt-11vh'} z-1">
+		class="lg:w-1/2 py-8vh px-8vw pt-5vh {pad ? 'lg:pt-20vh' : 'lg:pt-11vh'} z-1">
 		<div class="max-w-120 mx-auto">
 			<slot />
 		</div>

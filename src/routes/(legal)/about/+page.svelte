@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Parallax, ParallaxLayer } from "svelte-parallax"
 	import { Canvas } from "@threlte/core"
 	import Cubes from "./Cubes.svelte"
 	import Pagepart from "./Pagepart.svelte"
@@ -14,9 +13,9 @@
 	const columns = range(37)
 	const rows = range(19)
 
-	let cubesMoved = 0,
-		cubesClicked = 0,
-		completed = false
+	let cubesMoved = 0
+	let cubesClicked = 0
+	let completed = false
 
 	$: cubePercentage = Math.floor(
 		(cubesMoved / (columns.length * rows.length)) * 100
@@ -37,7 +36,7 @@
 
 <svelte:window bind:scrollY />
 
-<div id="cubes" class="absolute h-full w-full">
+<div id="cubes" class="absolute h-full w-full -mt-5vh">
 	<Canvas>
 		<Cubes
 			{columns}
@@ -49,13 +48,13 @@
 
 <div bind:this={top} id="top" class="absolute top-0" />
 
-<Pagepart fullwidth>
+<Pagepart>
 	{#if cubePercentage < 20}
 		<div
 			out:fade
 			id="info"
-			class="ctnr pointer-events-none flex flex-col justify-center
-			items-center relative">
+			class="pointer-events-none flex flex-col justify-center
+			items-center relative h-70vh">
 			<h1 class="text-16 font-bold">Mercury 2</h1>
 			<p class="text-base light-text text-center">
 				Endless possibilities. New features. Same nostalgia.
@@ -105,10 +104,9 @@
 		</div>
 	{/if}
 
-	<div id="arrowcontainer">
+	<div class="absolute left-1/2 top-4/5 translate-x--1/2">
 		<button
-			id="arrow"
-			class="btn absolute left-1/2 light-text"
+			class="btn light-text left-1/2 text-3rem z-3"
 			aria-label="Scroll down"
 			on:click={downScroll}
 			on:keypress={downScroll}
@@ -117,8 +115,7 @@
 		</button>
 	</div>
 	<button
-		id="arrow2"
-		class="btn fixed pb-4 light-text"
+		class="btn light-text fixed pb-4 bottom-0 right-0 z-10 text-2rem"
 		aria-label="Scroll up"
 		on:click={upScroll}
 		on:keypress={upScroll}
@@ -129,139 +126,83 @@
 
 <div bind:this={first} id="first" />
 
-<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
-	<ParallaxLayer offset={0} rate={0}>
-		<Pagepart>
-			<div class="w-full">
-				<h1 class="sf font-bold w-full">Endless possibilities</h1>
-				<h3 class=" light-text w-full">
-					On Mercury 2, you can create games for others to play, or
-					shirts and pants for people to buy and wear. You can
-					customise your character to your heart's content with a vast
-					selection of items on the catalog.
-				</h3>
-			</div>
-		</Pagepart>
-	</ParallaxLayer>
-	<ParallaxLayer offset={0} rate={-2}>
-		<Pagepart right>
-			<img
-				class="w-full"
-				src="/about_assets/devices.webp"
-				alt="Devices playing Mercury" />
-		</Pagepart>
-	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={2}>
-		<Pagepart fullwidth>
-			<div class="w-full">
-				<h1 class="sf font-bold w-full">New features</h1>
-				<h3 class="w-full">
-					Mercury 2 has an even better website experience - easy to
-					use and even more feature-packed than the previous website.
-				</h3>
-			</div>
-		</Pagepart>
-	</ParallaxLayer>
-</Parallax>
-
-<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
-	<ParallaxLayer offset={0} rate={0}>
-		<Pagepart fullwidth>
-			<div class="w-full">
-				<h1 class="sf font-bold w-full">Same nostalgia.</h1>
-				<h3 class="w-full">
-					We ensure the clients are as vanilla as possible so that you
-					remember the client as it was back then.
-				</h3>
-			</div>
-		</Pagepart>
-	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={0}>
-		<Pagepart fullwidth>
-			<div class="w-full">
-				<h1 class="sf font-bold w-full">
-					Professional developers and community outreach.
-				</h1>
-				<h3 class="w-full">
-					Mercury 2 developers deliver consistent updates so your
-					experience is always great.
-					<br />
-					In addition, we aim to fix bugs and glitches as soon as they
-					are reported.
-					<br />
-					Community wise, Mercury 2 aims to be completely transparent and
-					non-biased with decisions.
-					<br />
-					While other private servers proceed to initiate petty wars with
-					others, we take an impartial view.
-				</h3>
-			</div>
-		</Pagepart>
-	</ParallaxLayer>
-</Parallax>
-
-<Parallax sections={2} config={{ stiffness: 1, damping: 1 }}>
-	<ParallaxLayer offset={0} rate={0}>
-		<Pagepart fullwidth>
-			<div class="w-full">
-				<h1 class="sf font-bold w-full">Why Mercury 2?</h1>
-				<h3 class="w-full">
-					Mercury 2 provides a simple yet elegant website, with an
-					unique client and a forum, so you can communicate with your
-					friends
-					<br />
-					- or make new ones!
-				</h3>
-			</div>
-		</Pagepart>
-	</ParallaxLayer>
-	<ParallaxLayer offset={1} rate={0}>
-		<Pagepart fullwidth>
-			<div
-				id="info"
-				class="ctnr flex flex-col justify-center
-				items-center relative">
-				<h1 class="text-16 sf font-bold">Mercury 2</h1>
-				<p class="lead light-text text-center">
-					Endless possibilities. New features. Same nostalgia.
-				</p>
-				<b>
-					<a
-						type="button"
-						href="/register"
-						class="inline btn btn-sm btn-success no-underline">
-						Register <fa fa-chevron-right />
-					</a>
-				</b>
-			</div>
-		</Pagepart>
-	</ParallaxLayer>
-</Parallax>
+<Pagepart class="px-12 max-w-350 mx-auto">
+	<div class="grid lg:grid-cols-2 gap-6 items-center">
+		<div>
+			<h1>The ultimate experience</h1>
+			<h2>Built with modern technology</h2>
+			<p>
+				Mercury aims to be the foremost platform of its kind, and the
+				Mercury website plays a key part in this. After years of
+				testing, tinkering, and tweaking, we've landed on a stack that
+				combines rock-solid stability with a flexible foundation for the
+				future.
+			</p>
+			<h2>Limitless possibilities</h2>
+			<p>
+				Mercury provides everything you would expect from a modern
+				revival platform and then some:
+			</p>
+			<ul>
+				<li>An expansive catalog for character customisation</li>
+				<li>A robust and intuitive user interface</li>
+				<li>A wide variety of games and activities</li>
+				<li>
+					And communication features that help foster a sense of
+					connection and community within Mercury.
+				</li>
+			</ul>
+		</div>
+		<img
+			src="/about_assets/screenshots.webp"
+			alt="Mercury logo"
+			class="w-full" />
+	</div>
+</Pagepart>
+<Pagepart class="px-12 max-w-350 mx-auto">
+	<div class="grid lg:grid-cols-2 gap-6 items-center">
+		<div>
+			<h1>The ultimate experience</h1>
+			<h2>Built with modern technology</h2>
+			<p>
+				Mercury aims to be the foremost platform of its kind, and the
+				Mercury website plays a key part in this. After years of
+				testing, tinkering, and tweaking, we've landed on a stack that
+				combines rock-solid stability with a flexible foundation for the
+				future.
+			</p>
+			<h2>Limitless possibilities</h2>
+			<p>
+				Mercury provides everything you would expect from a modern
+				revival platform and then some:
+			</p>
+			<ul>
+				<li>An expansive catalog for character customisation</li>
+				<li>A robust and intuitive user interface</li>
+				<li>A wide variety of games and activities</li>
+				<li>
+					And communication features that help foster a sense of
+					connection and community within Mercury.
+				</li>
+			</ul>
+		</div>
+		<img
+			src="/about_assets/screenshots.webp"
+			alt="Mercury logo"
+			class="w-full" />
+	</div>
+</Pagepart>
 
 <style lang="stylus">
-	#info
-		height 70vh
-
-	#arrowcontainer
-		padding-top 55vh
-		button
-			font-size 3rem
-			transform translateX(-50%)
-			z-index 3
-
-	#arrow2
-		font-size 2rem
-		right 0
-		bottom 0
-		z-index 10
-
 	h1
-		font-size 3rem
+		font-size 2.6rem
+		padding-bottom 1rem
 
-	h1
-	h3
-		text-align center
+	p
+		padding-left 1rem
 
-	#cubes
-		margin-top -5vh
+	p
+	ul
+		@apply text-neutral-3
+		font-size 1.35rem
 </style>
