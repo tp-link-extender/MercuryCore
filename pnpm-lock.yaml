@@ -136,9 +136,6 @@ devDependencies:
   svelte-check:
     specifier: ^3.6.3
     version: 3.6.3(@babel/core@7.23.9)(postcss@8.4.33)(stylus@0.62.0)(svelte@4.2.9)
-  svelte-client-components:
-    specifier: ^0.1.0
-    version: 0.1.0(svelte@4.2.9)
   svelte-preprocess:
     specifier: ^5.1.3
     version: 5.1.3(@babel/core@7.23.9)(postcss@8.4.33)(stylus@0.62.0)(svelte@4.2.9)(typescript@5.3.3)
@@ -3341,16 +3338,6 @@ packages:
       - sugarss
     dev: true
 
-  /svelte-client-components@0.1.0(svelte@4.2.9):
-    resolution: {integrity: sha512-2cxPAitlg70A5aPCBJTinE78IaReZTGuwOxdhvLON/x6o+aMx4Jx0EecWFVy+kHKlqwuDIIf6ovDALp8B2ugyQ==}
-    peerDependencies:
-      svelte: ^4
-    dependencies:
-      magic-string: 0.30.5
-      svelte: 4.2.9
-      zimmerframe: 1.1.0
-    dev: true
-
   /svelte-hmr@0.15.3(svelte@4.2.9):
     resolution: {integrity: sha512-41snaPswvSf8TJUhlkoJBekRrABDXDMdpNpT2tfHIv4JuhgvHqLMhEPGtaQn0BmbNSTkuz2Ed20DF2eHw0SmBQ==}
     engines: {node: ^12.20 || ^14.13.1 || >= 16}
@@ -3703,10 +3690,6 @@ packages:
   /yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
-    dev: true
-
-  /zimmerframe@1.1.0:
-    resolution: {integrity: sha512-+AmV37r9NPUy7KcuG0Fde9AAFSD88kN5pnqvD7Pkp5WLLK0jct7hAtIDXXFDCRk3l5Mc1r2Sth3gfP2ZLE+/Qw==}
     dev: true
 
   /zod@3.22.4:

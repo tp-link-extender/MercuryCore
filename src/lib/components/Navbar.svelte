@@ -90,9 +90,7 @@
 </script>
 
 <nav class="py-0 justify-start z-11">
-	<div
-		class="pt-1 px-2 sm:px-4 flex w-full pb-2px
-		bg-#201f1e @light:bg-#b8b6b6">
+	<div class="pt-1 px-2 sm:px-4 flex w-full pb-2px bg-[--navbar]">
 		<a class="brand light-text text-xl no-underline my-auto" href="/">
 			<img
 				src="/icon.svg"

@@ -94,19 +94,19 @@
 					type="radio"
 					name="sort"
 					id="bestselling" />
-				<label for="bestselling">Bestselling</label>
+				<label for="bestselling">Best selling</label>
 				<input
 					class="form-check-input"
 					type="radio"
 					name="sort"
-					id="recentlyCreated" />
-				<label for="recentlyCreated">Recently Created</label>
+					id="recent" />
+				<label for="recent">Recently created</label>
 				<input
 					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="mercury" />
-				<label for="mercury">Mercury</label>
+				<label for="mercury">By Mercury</label>
 				<input
 					class="form-check-input"
 					type="radio"
