@@ -1645,7 +1645,7 @@ end
 	tframes		the team entries to unroll
 	outframes	the list to unroll these entries into
 --]]
-local function UnrollTeams(tframes: table, outframes: table)
+local function UnrollTeams(tframes: { any }, outframes: { any })
 	local numEntries = 0
 	if NeutralTeam and not NeutralTeam.IsHidden then
 		for _, val in ipairs(NeutralTeam.MyPlayers) do
@@ -2615,23 +2615,23 @@ local function AddMiddleBGFrame()
 	local nBGFrame = MiddleBGTemplate:Clone()
 	nBGFrame.Position =
 		UDim2.new(0.5, 0, (#MiddleFrameBackgrounds * nBGFrame.Size.Y.Scale), 0)
+
+	local function applyImage(id: string)
+		nBGFrame.Background.Image = `http://banland.xyz/asset?id={id}`
+	end
+
 	if (#MiddleFrameBackgrounds + 1) % 2 ~= 1 then
 		if IsMaximized.Value then
-			nBGFrame.Background.Image = "http://banland.xyz/asset?id="
-				.. Images.LargeDark
+			applyImage(Images.LargeDark)
 		else
-			nBGFrame.Background.Image = "http://banland.xyz/asset?id="
-				.. Images.midDark
+			applyImage(Images.midDark)
 		end
+	elseif IsMaximized.Value then
+		applyImage(Images.LargeLight)
 	else
-		if IsMaximized.Value then
-			nBGFrame.Background.Image = "http://banland.xyz/asset?id="
-				.. Images.LargeLight
-		else
-			nBGFrame.Background.Image = "http://banland.xyz/asset?id="
-				.. Images.midLight
-		end
+		applyImage(Images.midLight)
 	end
+
 	nBGFrame.Parent = ListFrame
 	table.insert(MiddleFrameBackgrounds, nBGFrame)
 

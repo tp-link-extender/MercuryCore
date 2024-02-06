@@ -94,7 +94,7 @@
 			transform translate(201px, 138px) scale(1.03, 1)
 		100%
 			transform translate(201px, 138px) scale(1.03, 1)
-	
+
 	@keyframes light
 		0%
 			fill #ff0000
