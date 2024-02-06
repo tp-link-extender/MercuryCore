@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { Canvas } from "@threlte/core"
 	import Cubes from "./Cubes.svelte"
+	import Libraries from "./Libraries.svelte"
+	import Padlock from "./Padlock.svelte"
 	import Pagepart from "./Pagepart.svelte"
+	import Screenshots from "./Screenshots.svelte"
 
 	let top: HTMLElement, first: HTMLElement, scrollY: number
 
@@ -48,28 +51,22 @@
 
 <div bind:this={top} id="top" class="absolute top-0" />
 
-<Pagepart>
+<Pagepart class="cubes {cubePercentage < 20 ? 'pb-60' : 'pb-220'}">
 	{#if cubePercentage < 20}
 		<div
 			out:fade
-			id="info"
-			class="pointer-events-none flex flex-col justify-center
-			items-center relative h-70vh">
+			class="pointer-events-none flex flex-col justify-center items-center relative h-70vh">
 			<h1 class="text-16 font-bold">Mercury 2</h1>
-			<p class="text-base light-text text-center">
-				Endless possibilities. New features. Same nostalgia.
-			</p>
-			<h2
-				class="p-2 py-1 rounded-2 font-bold text-base
-				bg-neutral-5 opacity-75">
+			<p>Endless possibilities. New features. Same nostalgia.</p>
+			<h3
+				class="p-3 py-1 rounded-2 font-bold text-lg! bg-neutral-5 opacity-75">
 				Closed Beta
-			</h2>
+			</h3>
 		</div>
 	{:else}
 		<div
 			in:fade={{ delay: 500 }}
-			id="cubesMoved"
-			class="pointer-events-none absolute top-1/2 left-1/2 -translate-1/2">
+			class="pointer-events-none absolute top-1/2 left-1/2 translate--1/2">
 			{#if completed}
 				<h1
 					in:fade
@@ -90,15 +87,15 @@
 					</h1>
 				{/if}
 				{#if cubePercentage >= 60 && cubePercentage < 80}
-					<h2
+					<h3
 						class="sf font-bold pointer-events-none text-white opacity-75">
 						zoom out
-					</h2>
+					</h3>
 				{:else if cubePercentage == 100 && cubePercentage2 < 2}
-					<h2
+					<h3
 						class="sf font-bold pointer-events-none text-red-5 opacity-75">
 						click the cubes
-					</h2>
+					</h3>
 				{/if}
 			{/if}
 		</div>
@@ -126,77 +123,141 @@
 
 <div bind:this={first} id="first" />
 
-<Pagepart class="px-12 max-w-350 mx-auto">
-	<div class="grid lg:grid-cols-2 gap-6 items-center">
-		<div>
-			<h1>The ultimate experience</h1>
-			<h2>Built with modern technology</h2>
+<Pagepart class="px-12 mx-auto <lg:pb-50">
+	<div class="lg:flex gap-6 items-center">
+		<div class="lg:max-w-150">
+			<h2>The ultimate experience</h2>
+			<h3>Built with modern technology</h3>
 			<p>
 				Mercury aims to be the foremost platform of its kind, and the
-				Mercury website plays a key part in this. After years of
+				Mercury website plays a prominent part in this. After years of
 				testing, tinkering, and tweaking, we've landed on a stack that
 				combines rock-solid stability with a flexible foundation for the
 				future.
 			</p>
-			<h2>Limitless possibilities</h2>
+			<h3>Limitless possibilities</h3>
 			<p>
 				Mercury provides everything you would expect from a modern
 				revival platform and then some:
 			</p>
 			<ul>
 				<li>An expansive catalog for character customisation</li>
-				<li>A robust and intuitive user interface</li>
-				<li>A wide variety of games and activities</li>
+				<li>An innovative, robust, and intuitive user interface</li>
+				<li>A vast variety of places and games to explore</li>
 				<li>
 					And communication features that help foster a sense of
 					connection and community within Mercury.
 				</li>
 			</ul>
 		</div>
-		<img
-			src="/about_assets/screenshots.webp"
-			alt="Mercury logo"
-			class="w-full" />
+		<div class="w-full h-80 min-w-[min(40vw,40rem)] <lg:pt-30 relative">
+			<Screenshots />
+		</div>
 	</div>
 </Pagepart>
-<Pagepart class="px-12 max-w-350 mx-auto">
-	<div class="grid lg:grid-cols-2 gap-6 items-center">
-		<div>
-			<h1>The ultimate experience</h1>
-			<h2>Built with modern technology</h2>
-			<p>
-				Mercury aims to be the foremost platform of its kind, and the
-				Mercury website plays a key part in this. After years of
-				testing, tinkering, and tweaking, we've landed on a stack that
-				combines rock-solid stability with a flexible foundation for the
-				future.
-			</p>
-			<h2>Limitless possibilities</h2>
-			<p>
-				Mercury provides everything you would expect from a modern
-				revival platform and then some:
-			</p>
-			<ul>
-				<li>An expansive catalog for character customisation</li>
-				<li>A robust and intuitive user interface</li>
-				<li>A wide variety of games and activities</li>
-				<li>
-					And communication features that help foster a sense of
-					connection and community within Mercury.
-				</li>
-			</ul>
+
+<Pagepart class="px-12 mx-auto <lg:pb-50">
+	<div class="lg:flex gap-6 items-center">
+		<div class="w-full h-150 min-w-100 mb--25 flex justify-center">
+			<Padlock />
 		</div>
-		<img
-			src="/about_assets/screenshots.webp"
-			alt="Mercury logo"
-			class="w-full" />
+		<div class="lg:max-w-180">
+			<h2>Security and privacy</h2>
+			<h3>Data protection</h3>
+			<p>
+				We take the security and privacy of our users very seriously. No
+				identifying information is stored on our servers, and no data is
+				shared with third parties. Further detail can be found in our
+				<a href="/privacy">privacy policy.</a>
+			</p>
+			<h3>Vulnerability management</h3>
+			<p>
+				Careful technology choices ensure that Mercury isn't vulnerable
+				to the same attacks that plague similar platforms. We're
+				constantly monitoring and updating our systems to ensure that
+				users are safe &ndash; and a streamlined reporting system allows
+				us to respond to any security concerns quickly and effectively.
+			</p>
+		</div>
+	</div>
+</Pagepart>
+
+<Pagepart class="px-12 mx-auto <lg:pb-50">
+	<div class="lg:flex gap-6 items-center">
+		<div class="lg:max-w-300">
+			<h2>Transparency and trust</h2>
+			<div class="grid grid-cols-2 gap-6">
+				<div>
+					<h3>Professional developers</h3>
+					<p>
+						A group of experienced developers are behind Mercury,
+						and we're committed to improving user experience and
+						security. We aim to remain transparent and open about
+						our development process and decisions.
+					</p>
+				</div>
+				<div>
+					<h3>Community outreach</h3>
+					<p>
+						Our team of testers contribute extensively to the
+						platform's development and direction, and we're always
+						open to feedback and suggestions from the community.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</Pagepart>
+
+<Pagepart class="px-12 mx-auto pb-100">
+	<div class="lg:flex gap-6 items-center">
+		<div class="w-full h-140 min-w-[min(40vw,40rem)] relative">
+			<Libraries />
+		</div>
+		<div class="lg:max-w-150 <lg:pt-60">
+			<h2>Development experience</h2>
+			<h3>Library usage</h3>
+			<p>
+				We put a strong emphasis on library usage to improve development
+				speed and maintainability. Mercury is the first revival platform
+				to utilise modern libraries and frameworks backported from
+				contemporary Lua, Luau, and JavaScript ecosystems.
+			</p>
+			<h3>Optimisation and stability</h3>
+			<p>
+				Mercury makes use of techniques borrowed from modern game
+				development to boost performance and reduce latency. Our
+				optimisations have already been proven to improve user
+				experience &ndash; for example, place joining on Mercury is
+				30-40% faster than competing platforms.
+			</p>
+		</div>
+	</div>
+</Pagepart>
+
+<Pagepart class="pb-60">
+	<div class="flex flex-col justify-center items-center relative">
+		<h1 class="text-16 sf font-bold">Mercury 2</h1>
+		<p>Endless possibilities. New features. Same nostalgia.</p>
+		<a
+			type="button"
+			href="/register"
+			class="btn btn-sm btn-primary inline no-underline">
+			<b>Register</b>
+			<fa fa-chevron-right />
+		</a>
 	</div>
 </Pagepart>
 
 <style lang="stylus">
-	h1
+	:not(.cubes) h2
 		font-size 2.6rem
 		padding-bottom 1rem
+		font-weight 600
+		text-decoration underline hsl(260, 100%, 66%)
+
+	:not(.cubes) h3
+		font-size 1.5rem
 
 	p
 		padding-left 1rem
@@ -205,4 +266,5 @@
 	ul
 		@apply text-neutral-3
 		font-size 1.35rem
+		font-weight 330
 </style>
