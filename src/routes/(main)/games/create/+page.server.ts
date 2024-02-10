@@ -62,7 +62,7 @@ export const actions = {
 		const id = await squery<number>(surql`[stuff:increment.place]`)
 
 		try {
-			await transaction({ number: user.number }, { number: 1 }, 0, {
+			await transaction(user, { number: 1 }, 0, {
 				note: `Created place ${name}`,
 				link: `/place/${id + 1}`,
 			})

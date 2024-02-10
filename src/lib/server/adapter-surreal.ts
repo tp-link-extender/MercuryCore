@@ -7,11 +7,11 @@ import type {
 } from "lucia"
 
 export class SurrealAdapter implements Adapter {
-	public async deleteSession(sessionId: string): Promise<void> {
+	public async deleteSession(sessionId: string) {
 		await surreal.delete(`session:${sessionId}`)
 	}
 
-	public async deleteUserSessions(userId: string): Promise<void> {
+	public async deleteUserSessions(userId: string) {
 		await query(surql`DELETE session WHERE $user ∈ <-hasSession<-user`, {
 			user: `user:${userId}`,
 		})
@@ -45,14 +45,14 @@ export class SurrealAdapter implements Adapter {
 		]
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+	public async getUserSessions(userId: string) {
 		return await query<DatabaseSession>(
 			surql`SELECT *, meta::id(id) AS id FROM session WHERE $user ∈ <-usingKey<-user`,
 			{ user: `user:${userId}` }
 		)
 	}
 
-	public async setSession(session: DatabaseSession): Promise<void> {
+	public async setSession(session: DatabaseSession) {
 		await query(
 			surql`
 				LET $s = CREATE $sess SET expiresAt = time::unix($expiresAt);

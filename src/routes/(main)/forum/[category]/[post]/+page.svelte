@@ -25,11 +25,11 @@
 			path={[
 				["Forum", "/forum"],
 				[data.categoryName, `/forum/${data.categoryName}`],
-				[data.title, ""],
+				[data.title, ""]
 			]} />
 	{/if}
 
-	<div class="post card bg-darker flex-row">
+	<div class="post card bg-darker flex-row overflow-hidden">
 		<form
 			use:enhance2={({ formData }) => {
 				const action = formData.get("action")
@@ -56,7 +56,7 @@
 
 				return () => {}
 			}}
-			class="sidebar bg-a mr-2 p-1"
+			class="bg-a p-1"
 			method="POST"
 			action="?/like&id={data.id}">
 			<div class="flex flex-col">
@@ -92,7 +92,7 @@
 				</button>
 			</div>
 		</form>
-		<div class="p-4 no-underline light-text w-full">
+		<div class="p-4 pl-6 no-underline light-text w-full">
 			<span class="flex">
 				<User user={data.author} full />
 				<em class="pl-4 self-center">
@@ -130,9 +130,6 @@
 </div>
 
 <style lang="stylus">
-	.sidebar
-		width 2.5rem
-
 	.post
 		border 1px solid var(--accent2)
 </style>

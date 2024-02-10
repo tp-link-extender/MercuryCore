@@ -56,7 +56,7 @@
 				Places
 			</a>
 			<a class="btn btn-primary" href="/search?q={data.query}&c=assets">
-				Assets
+				Catalog
 			</a>
 		</div>
 	{/if}

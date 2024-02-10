@@ -80,7 +80,6 @@ export async function load({ locals, params }) {
 
 					count(<-likes) AS likeCount,
 					count(<-dislikes) AS dislikeCount
-
 				FROM ->owns->place) AS places,
 
 				count(<->friends) AS friendCount,
@@ -97,7 +96,6 @@ export async function load({ locals, params }) {
 				FROM ->member->group) AS groups,
 				(SELECT name, count(<-member) AS memberCount
 				FROM ->owns->group) AS groupsOwned
-
 			FROM user WHERE number = $number`,
 		{
 			number,

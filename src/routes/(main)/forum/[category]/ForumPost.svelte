@@ -99,7 +99,7 @@
 				else goto(href)
 			}}
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
-			class="px-4 pt-2 no-underline light-text w-full">
+			class="light-text px-4 pt-2 no-underline w-full">
 			<h2 class="pt-2">
 				{post.title}
 			</h2>

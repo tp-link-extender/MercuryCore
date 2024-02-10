@@ -2,10 +2,12 @@ import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import { recurse, type Replies } from "../select"
+import { recurse, type Replies } from "$lib/server/nestedReplies"
 
 const SELECTREPLIES = recurse(
-	from => surql`(${from} <-replyToReply<-forumReply) AS replies`
+	from => surql`(${from} <-replyToReply<-forumReply) AS replies`,
+	"replyToReply",
+	"forumReply"
 )
 
 export async function load({ locals, params }) {
