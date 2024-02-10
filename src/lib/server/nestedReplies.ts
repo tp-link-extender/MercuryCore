@@ -1,4 +1,4 @@
-// Functions for selecting nested forum replies
+// Functions for selecting nested forum replies or asset comments
 
 import { surql } from "$lib/server/surreal"
 
@@ -31,10 +31,7 @@ const SELECTFROM = surql`
 		ORDER BY updated DESC) AS content,
 		meta::id(id) AS id,
 		NONE AS parentReplyId,
-		(SELECT
-			number,
-			status,
-			username
+		(SELECT number, status, username
 		FROM <-posted<-user)[0] AS author,
 
 		count(<-likes) AS likeCount,
@@ -45,13 +42,17 @@ const SELECTFROM = surql`
 		# again #
 	FROM`
 
-export function recurse(query: (from: string) => string) {
+export function recurse(
+	query: (from: string) => string,
+	relationName: string,
+	commentName: string
+) {
 	let rep = query(SELECTFROM)
 
 	for (let i = 0; i < 9; i++)
 		rep = rep.replace(
 			/# again #/g,
-			surql`(${SELECTFROM} <-replyToComment<-assetComment) AS replies`
+			surql`(${SELECTFROM} <-${relationName}<-${commentName}) AS replies`
 		)
 
 	return rep.replace(/# again #/g, "[] AS replies")

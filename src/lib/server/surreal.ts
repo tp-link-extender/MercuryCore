@@ -17,7 +17,15 @@ console.log("loaded surreal")
 
 export default db
 
-// Surreal template tag
+// Probably the most referenced function in Mercury
+/**
+ * Surreal template tag. No it's not injection-safe, we're not Next.js.
+ * @param statement The statement to execute as a template literal.
+ * @param substitutions The substitutions made into the template literal.
+ * @returns The statement with the substitutions made.
+ * @example
+ * query(surql`SELECT * FROM user WHERE username = "Heliodex"`)
+ */
 export const surql = (
 	statement: TemplateStringsArray,
 	...substitutions: string[]
@@ -57,6 +65,11 @@ type Param = string | number | boolean | null | object | undefined // basically 
  * @param input The surql query to execute.
  * @param params An array of variables to pass to SurrealDB.
  * @returns The result of the first query given.
+ * @example
+ * await query<{ email: string }>(
+ * 	surql`SELECT email FROM user WHERE username = $username`,
+ * 	{ username: "Heliodex" }
+ * ) // [{ email: heli@odex.cf }] - return an array for this query
  */
 export const query = async <T>(
 	input: string,
@@ -82,6 +95,11 @@ export const query = async <T>(
  * @param input The surql query to execute.
  * @param params An array of variables to pass to SurrealDB.
  * @returns The first item in the array returned by the first query.
+ * @example
+ * await query<{ email: string }>(
+ * 	surql`SELECT email FROM user WHERE username = $username`,
+ * 	{ username: "Heliodex" }
+ * ) // { email: heli@odex.cf } - returns an object for this query
  */
 export const squery = async <T>(
 	input: string,
@@ -93,6 +111,8 @@ export const squery = async <T>(
  * @param input The surql query to execute.
  * @param params An array of variables to pass to SurrealDB.
  * @returns The result of all queries given.
+ * @example
+ *
  */
 export const mquery = async <T>(
 	input: string,
@@ -106,6 +126,11 @@ const failed = "The query was not executed due to a failed transaction"
  * @param receiver An object containing the id or number of the user receiving the currency.
  * @param amountSent The amount of currency to send.
  * @param notelink An object containing a note for the transaction, as well as a link to what the transaction was for if possible.
+ * @example
+ * await transaction(user, { number: 1 }, 10, {
+ * 	note: `Bought item ${name}`,
+ * 	link: `/avatarshop/${id}/${name}`,
+ * })
  */
 export async function transaction(
 	sender: { id?: string; number?: number },
@@ -128,20 +153,14 @@ export async function transaction(
 
 			LET $taxRate = stuff:economy.taxRate OR 30;
 
-			LET $sender = (SELECT
-				id,
-				currency,
-				number
-			FROM user WHERE number = $senderNumber OR id = $senderId)[0];
+			LET $sender = (SELECT id, currency, number FROM user
+			WHERE number = $senderNumber OR id = $senderId)[0];
 			IF !$sender {
 				THROW "Sender not found"
 			};
 
-			LET $receiver = (SELECT
-				id,
-				currency,
-				number
-			FROM user WHERE number = $receiverNumber OR id = $receiverId)[0];
+			LET $receiver = (SELECT id, currency, number FROM user
+			WHERE number = $receiverNumber OR id = $receiverId)[0];
 			IF !$receiver {
 				THROW "Receiver not found"
 			};
@@ -157,18 +176,10 @@ export async function transaction(
 				LET $finalAmount = math::round($amountSent * (1 - $taxRate / 100));
 
 				UPDATE $sender SET currency -=
-					IF $senderAdmin THEN
-						0
-					ELSE
-						$amountSent
-					END;
+					IF $senderAdmin THEN 0 ELSE $amountSent END;
 
 				UPDATE $receiver SET currency +=
-					IF $receiverAdmin THEN
-						0
-					ELSE
-						$finalAmount
-					END;
+					IF $receiverAdmin THEN 0 ELSE $finalAmount END;
 			};
 
 			RELATE $sender->transaction->$receiver CONTENT {
@@ -193,12 +204,11 @@ export async function transaction(
 		}
 	)
 
-	for (const result of qResult) {
+	for (const result of qResult)
 		if (result === failed)
 			for (const result2 of qResult)
 				if (typeof result2 === "string" && result2 !== failed)
 					throw new Error(
 						result2.match(/An error occurred: (.*)/)?.[1]
 					)
-	}
 }

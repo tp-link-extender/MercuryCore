@@ -7,7 +7,7 @@ import { error } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import { like } from "$lib/server/like"
-import { recurse, type Replies } from "./select"
+import { recurse, type Replies } from "$lib/server/nestedReplies"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -17,8 +17,10 @@ const schema = z.object({
 const SELECTREPLIES = recurse(
 	from => surql`
 		(${from} <-replyToPost<-forumReply
-		# Make sure it's not a reply to another reply
-		WHERE !->replyToReply) AS replies`
+		WHERE !->replyToReply) AS replies`,
+	// Make sure it's not a reply to another reply
+	"replyToReply",
+	"forumReply"
 )
 
 export async function load({ locals, params }) {

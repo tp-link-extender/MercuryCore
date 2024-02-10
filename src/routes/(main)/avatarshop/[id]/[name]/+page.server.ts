@@ -7,7 +7,7 @@ import { error, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import { like, likeActions } from "$lib/server/like"
-import { recurse, type Replies } from "./select"
+import { recurse, type Replies } from "$lib/server/nestedReplies"
 import requestRender from "$lib/server/requestRender"
 import type { RequestEvent } from "./$types"
 
@@ -19,8 +19,10 @@ const schema = z.object({
 const SELECTCOMMENTS = recurse(
 	from => surql`
 		(${from} <-replyToAsset<-assetComment
-		WHERE !->replyToComment) AS replies`
+		WHERE !->replyToComment) AS replies`,
 	// Make sure it's not a reply to another reply
+	"replyToComment",
+	"assetComment"
 )
 
 export async function load({ locals, params }) {
@@ -240,15 +242,10 @@ export const actions = {
 			error(400, "This item hasn't been approved yet")
 
 		try {
-			await transaction(
-				{ id: user.id },
-				{ id: asset.creator.id },
-				asset.price,
-				{
-					note: `Purchased asset ${asset.name}`,
-					link: `/avatarshop/${e.params.id}/${asset.name}`,
-				}
-			)
+			await transaction(user, asset.creator, asset.price, {
+				note: `Purchased asset ${asset.name}`,
+				link: `/avatarshop/${e.params.id}/${asset.name}`,
+			})
 		} catch (err) {
 			const e = err as Error
 			console.log(e.message)
@@ -288,7 +285,7 @@ export const actions = {
 	// 		{
 	// 			asset: `asset:${id}`,
 	// 			user: `user:${user.id}`,
-	// 		},
+	// 		}
 	// 	)
 	// 	if (!asset) throw error(404, "Not found")
 	// 	if (asset.owned) throw error(400, "You don't own this item")

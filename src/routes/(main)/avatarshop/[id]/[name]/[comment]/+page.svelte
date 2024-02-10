@@ -8,7 +8,7 @@
 	$: topReply = data.replies[0]
 </script>
 
-<Head title="Replies to forum post" />
+<Head title="Comments on asset" />
 
 <div class="ctnr max-w-280 light-text">
 	<Breadcrumbs

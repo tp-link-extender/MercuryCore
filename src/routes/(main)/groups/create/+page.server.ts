@@ -58,7 +58,7 @@ export const actions = {
 			)
 
 		try {
-			await transaction({ number: user.number }, { number: 1 }, 10, {
+			await transaction(user, { number: 1 }, 10, {
 				note: `Created group ${name}`,
 				link: `/groups/${name}`,
 			})

@@ -9,7 +9,7 @@ import { auth } from "$lib/server/lucia"
 import surreal from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
-import type { Cookie, Session, User } from "lucia"
+import type { Cookie } from "lucia"
 
 const { magenta, red, yellow, green, blue, gray } = pc
 const methodColours: { [k: string]: string } = {
