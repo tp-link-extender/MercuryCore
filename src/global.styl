@@ -4,7 +4,6 @@
 
 // @import "./variables.styl"
 @import "./daisyui/carousel.styl"
-@import "./daisyui/collapse.styl"
 @import "./daisyui/dropdown.styl"
 @import "./daisyui/modal.styl"
 
@@ -161,11 +160,11 @@ a
 			color var(--grey-text)
 
 .bg-background
-	background var(--background)
+	background var(--background) !important
 .bg-darker
-	background var(--darker)
+	background var(--darker) !important
 .bg-a
-	background var(--accent)
+	background var(--accent) !important
 
 for i in 1 .. 3
 	.bg-a{i}
@@ -214,8 +213,7 @@ img[src^="/api/avatar"]
 		scroll-behavior smooth
 
 .btn
-	@apply transition no-underline
-	background transparent
+	@apply transition no-underline bg-transparent
 	outline none
 	border 1px solid transparent
 	display inline-block
@@ -537,6 +535,15 @@ input[type=file]
 	> input
 		width 1%
 		flex 1 1 auto
+
+summary
+	cursor pointer
+	user-select none
+	&::before
+		display none
+
+details[open] summary
+	@apply rounded-b-0
 
 .alert 
 	@apply p-4 px-6 rounded-2 

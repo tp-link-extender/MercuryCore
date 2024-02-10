@@ -7,9 +7,7 @@
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	id="Lock">
 	<path
-		fill-rule="evenodd"
-		clip-rule="evenodd"
-		d="M87 0C39.2274 0 0.5 38.7274 0.5 86.5V128.149C4.16443 126.616 8.27103 126.002 12.4932 126.558C14.9913 126.887 17.3442 127.601 19.5 128.633V86.5C19.5 49.2208 49.7208 19 87 19C124.279 19 154.5 49.2208 154.5 86.5V134.5C154.5 139.747 158.753 144 164 144C169.247 144 173.5 139.747 173.5 134.5V86.5C173.5 38.7274 134.773 0 87 0Z"
+		d="M0 100.5L-5.17708e-06 110L19 110L19 100.5L0 100.5ZM9.50001 86.5L19 86.5L19 86.5L9.50001 86.5ZM149.893 86.5L159.393 86.5V86.5H149.893ZM140.393 134.5C140.393 139.747 144.646 144 149.893 144C155.139 144 159.393 139.747 159.393 134.5L140.393 134.5ZM79.6963 9.5L79.6963 0L79.6963 9.5ZM19 100.5L19 86.5L7.6294e-06 86.5L0 100.5L19 100.5ZM140.393 86.5L140.393 134.5L159.393 134.5L159.393 86.5L140.393 86.5ZM79.6963 19C112.41 19 140.393 48.3746 140.393 86.5H159.393C159.393 39.5736 124.519 7.83711e-06 79.6963 0L79.6963 19ZM19 86.5C19 48.3746 46.9827 19 79.6963 19L79.6963 0C34.8733 -7.83711e-06 1.58343e-05 39.5736 7.62939e-06 86.5L19 86.5Z"
 		fill="white" />
 </svg>
 <svg
@@ -23,7 +21,7 @@
 	<path
 		fill-rule="evenodd"
 		clip-rule="evenodd"
-		d="M19.5 10C19.5 4.75329 15.2467 0.5 10 0.5C4.75329 0.5 0.5 4.7533 0.5 10L0.500002 50.0564C3.27205 48.9033 6.31191 48.2669 9.50005 48.2669C13.0762 48.2669 16.4657 49.0677 19.5 50.5001L19.5 10Z"
+		d="M19.5 10C19.5 4.75329 15.2467 0.5 10 0.5C4.7533 0.5 0.5 4.7533 0.5 10L0.500003 70.0564C3.27205 68.9033 6.31191 68.2669 9.50005 68.2669C13.0762 68.2669 16.4657 69.0677 19.5 70.5001L19.5 10Z"
 		fill="white" />
 </svg>
 <svg
@@ -78,6 +76,10 @@
 	@keyframes unlock
 		0%
 			transform translate(-153px, 60px) scale(-1, 1)
+		5%
+			transform translate(-153px, 60px) scale(-1, 1)
+		10%
+			transform translate(-153px, 70px) scale(-1, 1)
 		33%
 			transform translate(-153px, 20px) scale(-1, 1)
 		66%
@@ -87,13 +89,19 @@
 
 	@keyframes bar
 		0%
-			transform translate(-158px, 138px) scale(-1.03, 1)
+			transform translate(-158px, 118px) scale(-1.03, 1)
+		5%
+			transform translate(-158px, 118px) scale(-1.03, 1)
+		10%
+			transform translate(-158px, 88px) scale(-1.03, 0.8)
+		0%
+			transform translate(-158px, 118px) scale(-1.03, 1)
 		33%
-			transform translate(-158px, 138px) scale(-1.03, 1)
+			transform translate(-158px, 118px) scale(-1.03, 1)
 		66%
-			transform translate(201px, 138px) scale(1.03, 1)
+			transform translate(201px, 118px) scale(1.03, 1)
 		100%
-			transform translate(201px, 138px) scale(1.03, 1)
+			transform translate(201px, 103px) scale(1.03, 0.9)
 
 	@keyframes light
 		0%
@@ -106,7 +114,7 @@
 			fill #00ff00
 
 	#Bar
-		transform translate(-158px, 138px) scale(-1.03, 1)
+		transform translate(-158px, 118px) scale(-1.03, 1)
 		animation bar 1.8s forwards
 		animation-delay 0.8s
 	#Lock
