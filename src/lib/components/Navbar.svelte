@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation"
-	import { quadOut } from "svelte/easing"
+	import { slide } from "svelte/transition"
 
 	let search = "",
 		searchCompleted = true,
@@ -11,12 +11,6 @@
 		currentSearchFocus = -1
 	}
 
-	const height = (_: HTMLElement) => ({
-		duration: 300,
-		css: (t: number) => `
-			height: ${2 * quadOut(t)}rem;
-			overflow: hidden`
-	})
 	const searchResults: HTMLElement[] = []
 
 	function keydown(
@@ -226,7 +220,7 @@
 {#if data.banners && user}
 	{#each data.banners as banner (banner.id)}
 		<div
-			transition:height
+			transition:slide
 			class="py-1 text-center {banner.textLight
 				? 'text-white'
 				: 'text-black'}"

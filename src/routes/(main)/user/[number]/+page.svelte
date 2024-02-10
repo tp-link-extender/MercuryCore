@@ -27,6 +27,8 @@
 			regenerating = false
 		}
 	}
+
+	let accordion: any // Sometimes undefined for some probably crazy reason
 </script>
 
 <Head title={data.username} />
@@ -166,17 +168,15 @@
 			{#if data.places.length > 0}
 				<div class="pt-6">
 					<h2>Creations</h2>
-					<div class="flex flex-col gap-2">
-						{#each data.places as place, num}
-							<div
-								in:fade|global={{
-									num,
-									total: data.places.length
-								}}>
-								<ProfilePlace {place} />
-							</div>
-						{/each}
-					</div>
+					<Accordion bind:accordion>
+						<div class="flex flex-col gap-2">
+							{#each accordion ? data.places : [] as place}
+								<AccordionItem {accordion} title={place.name}>
+									<ProfilePlace {place} />
+								</AccordionItem>
+							{/each}
+						</div>
+					</Accordion>
 				</div>
 			{/if}
 		</div>

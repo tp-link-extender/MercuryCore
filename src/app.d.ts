@@ -56,6 +56,8 @@ declare global {
 
 	declare const fade: typeof import("$lib/fade").default
 
+	declare const Accordion: typeof import("$lib/components/Accordion.svelte").default
+	declare const AccordionItem: typeof import("$lib/components/AccordionItem.svelte").default
 	declare const AdminLink: typeof import("$lib/components/AdminLink.svelte").default
 	declare const Asset: typeof import("$lib/components/Asset.svelte").default
 	declare const Breadcrumbs: typeof import("$lib/components/Breadcrumbs.svelte").default
