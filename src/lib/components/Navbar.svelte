@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation"
+	import { e } from "@unocss/core"
 	import { slide } from "svelte/transition"
 
 	let search = "",
@@ -11,6 +12,7 @@
 		currentSearchFocus = -1
 	}
 
+	let searchInput: HTMLInputElement
 	const searchResults: HTMLElement[] = []
 
 	function keydown(
@@ -83,6 +85,14 @@
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 </script>
 
+<svelte:window
+	on:keydown={e => {
+		if (e.ctrlKey && e.key == "k") {
+			e.preventDefault()
+			searchInput.focus()
+		}
+	}} />
+
 <nav class="py-0 justify-start z-11">
 	<div class="pt-1 px-2 sm:px-4 flex w-full pb-2px bg-[--navbar]">
 		<a class="brand light-text text-xl no-underline my-auto" href="/">
@@ -112,13 +122,14 @@
 					xl:(absolute left-1/2 -translate-x-1/2 w-35vw)
 					lg:w-76 md:w-100 sm:w-52">
 					<input
+						bind:this={searchInput}
 						bind:value={search}
 						on:keydown={keydown}
 						class="bg-background h-10 pl-4"
 						name="query"
 						type="search"
-						placeholder="Search"
-						aria-label="Search"
+						placeholder="Search (ctrl+k)"
+						aria-label="Search (ctrl+k)"
 						autocomplete="off" />
 					<button
 						on:click|preventDefault={() => {
@@ -127,7 +138,7 @@
 							searchCompleted = true
 						}}
 						class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
-						title="Search">
+						title="Search (ctrl+k)">
 						<fa fa-search />
 					</button>
 					{#if search.trim() && !searchCompleted}
