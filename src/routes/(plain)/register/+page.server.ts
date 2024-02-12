@@ -59,7 +59,7 @@ async function createUser(
 					RightLeg: 119,
 				},
 				status: <future> {
-					(IF (SELECT true FROM ->playing
+					(IF (SELECT 1 FROM ->playing
 						WHERE valid AND ping > time::now() - 35s
 					)[0] THEN
 						"Playing"
@@ -126,7 +126,7 @@ export const actions = {
 			)
 
 		const emailCheck = await squery(
-			surql`SELECT * FROM user WHERE email = $email`,
+			surql`SELECT 1 FROM user WHERE email = $email`,
 			{ email }
 		)
 
@@ -152,7 +152,7 @@ export const actions = {
 			{
 				username,
 				email,
-				hashedPassword: await new LegacyScrypt().hash(password),
+				hashedPassword: await new Scrypt().hash(password),
 				permissionLevel: 1,
 				currency: 0,
 			},

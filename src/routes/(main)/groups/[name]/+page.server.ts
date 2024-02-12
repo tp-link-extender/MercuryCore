@@ -3,18 +3,20 @@ import { query, squery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types"
 
+type Group = {
+	in: boolean
+	memberCount: number
+	name: string
+	owner: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+}
+
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
-	const group = await squery<{
-		in: boolean
-		memberCount: number
-		name: string
-		owner: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
-	}>(
+	const group = await squery<Group>(
 		surql`
 			SELECT
 				name,
@@ -24,8 +26,8 @@ export async function load({ locals, params }) {
 				$user ∈ <-member<-user.id AS in
 				# [] AS places,
 				# [] AS feed
-			FROM group WHERE string::lowercase(name)
-				= string::lowercase($name)`,
+			FROM group
+			WHERE string::lowercase(name) = string::lowercase($name)`,
 		{
 			user: `user:${user.id}`,
 			...params,
@@ -59,9 +61,7 @@ async function getData(e: RequestEvent) {
 export const actions = {
 	join: async e => {
 		await query(
-			surql`
-				RELATE $user->member->$group
-					SET time = time::now()`,
+			surql`RELATE $user->member->$group SET time = time::now()`,
 			await getData(e)
 		)
 	},

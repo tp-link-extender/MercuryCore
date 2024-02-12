@@ -17,7 +17,7 @@ const schema = z.object({
 
 export const load = async () => ({
 	form: await superValidate(schema),
-	users: (await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0,
+	users: (await squery<number>(surql`[count(SELECT 1 FROM user)]`)) > 0,
 })
 
 export const actions = {
@@ -50,9 +50,6 @@ export const actions = {
 				}
 			)
 		}
-
-		console.log(user.hashedPassword)
-		console.log(await new Scrypt().hash(password))
 
 		// remove this statement and we'll end up like Mercury 1 💀
 		if (

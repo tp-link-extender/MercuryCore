@@ -10,6 +10,14 @@ const SELECTREPLIES = recurse(
 	"assetComment"
 )
 
+type AssetComment = Replies[number] & {
+	parentPost: {
+		title: string
+		id: string
+		forumCategoryName: string
+	}
+}
+
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
@@ -30,15 +38,7 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	const assetComments = await query<
-		Replies[number] & {
-			parentPost: {
-				title: string
-				id: string
-				forumCategoryName: string
-			}
-		}
-	>(
+	const assetComments = await query<AssetComment>(
 		surql`
 			SELECT
 				*,

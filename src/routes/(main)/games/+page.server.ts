@@ -15,14 +15,12 @@ const select = surql`
 		name,
 		serverPing,
 		count(
-			SELECT * FROM <-playing
-			WHERE valid
-				AND ping > time::now() - 35s
+			SELECT 1 FROM <-playing
+			WHERE valid AND ping > time::now() - 35s
 		) AS playerCount,
 		count(<-likes) AS likeCount,
 		count(<-dislikes) AS dislikeCount
-	FROM place
-	WHERE !privateServer AND !deleted`
+	FROM place WHERE !privateServer AND !deleted`
 
 export const load = async () => ({
 	places: await query<Place>(select),

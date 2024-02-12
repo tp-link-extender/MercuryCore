@@ -33,7 +33,6 @@ const schemas = {
 
 type Place = {
 	created: string
-	deleted: boolean
 	description: {
 		text: string
 		updated: string
