@@ -12,7 +12,7 @@
 
 			const response = await fetch("/groups", {
 				method: "POST",
-				body: formdata,
+				body: formdata
 			})
 			const result = deserialize(await response.text()) as {
 				data: {
@@ -23,9 +23,11 @@
 			searchedData = result.data.groups
 		})()
 
+	$: groups = query ? searchedData : data.groups || []
+
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v),
+		restore: v => (query = v)
 	}
 </script>
 
@@ -51,7 +53,7 @@
 					aria-label="Search for a group"
 					aria-describedby="button-addon2" />
 				<button
-					class="btn btn-success"
+					class="btn btn-secondary"
 					aria-label="Search"
 					id="button-addon2">
 					<fa fa-magnifying-glass />
@@ -59,16 +61,21 @@
 			</form>
 		</div>
 	</div>
-	<div class="grid">
-		{#each query ? searchedData : data.groups || [] as group, num (group.name)}
-			<Group {group} {num} total={data.groups.length} />
-		{/each}
-		{#if query && searchedData.length == 0}
-			<h2 class="text-xs pt-12">
-				No groups found with search term {query}
-			</h2>
-		{/if}
-	</div>
+
+	{#if data.groups.length > 0}
+		<div class="grid">
+			{#each groups as group, num (group.name)}
+				<Group {group} {num} total={data.groups.length} />
+			{/each}
+			{#if query && searchedData.length == 0}
+				<h2 class="text-xs pt-12">
+					No groups found with search term {query}
+				</h2>
+			{/if}
+		</div>
+	{:else}
+		<h2 class="text-center">No groups yet. Be the first to post one!</h2>
+	{/if}
 </div>
 
 <style lang="stylus">

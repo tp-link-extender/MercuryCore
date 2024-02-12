@@ -93,18 +93,20 @@
 			</div>
 		</form>
 		<div class="p-4 pl-6 no-underline light-text w-full">
-			<span class="flex">
-				<User user={data.author} full />
-				<em class="pl-4 self-center">
-					{new Date(data.posted).toLocaleString()}
-				</em>
-				<span class="ms-auto">
+			<span class="flex justify-between">
+				<div class="flex">
+					<User user={data.author} full />
+					<i class="pl-4 self-center">
+						{new Date(data.posted).toLocaleString()}
+					</i>
+				</div>
+				<span>
 					<ReportButton
 						user={data.author.username}
 						url="/forum/{data.categoryName}/{data.id}" />
 				</span>
 			</span>
-			<h2 class="text-base mt-2">
+			<h2 class="text-xl pt-2">
 				{data.title}
 			</h2>
 			<p class="break-all">
@@ -115,18 +117,24 @@
 
 	<PostReply {formData} />
 
-	{#each data.replies as reply, num}
-		<ForumReply
-			{user}
-			{reply}
-			{num}
-			{replyingTo}
-			categoryName={data.categoryName}
-			postId={data.id}
-			postAuthorName={data.author.username}
-			{repliesCollapsed}
-			topLevel />
-	{/each}
+	{#if data.replies.length > 0}
+		{#each data.replies as reply, num}
+			<ForumReply
+				{user}
+				{reply}
+				{num}
+				{replyingTo}
+				categoryName={data.categoryName}
+				postId={data.id}
+				postAuthorName={data.author.username}
+				{repliesCollapsed}
+				topLevel />
+		{/each}
+	{:else}
+		<h3 class="text-center pt-6">
+			No replies yet. Be the first to post one!
+		</h3>
+	{/if}
 </div>
 
 <style lang="stylus">

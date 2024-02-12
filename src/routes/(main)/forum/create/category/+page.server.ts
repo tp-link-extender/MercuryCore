@@ -25,13 +25,13 @@ export const actions = {
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
-		const limit = ratelimit(form, "forumCategory", getClientAddress, 30)
-		if (limit) return limit
-
 		const { name, description } = form.data
 
 		if (name.toLowerCase() === "create")
 			return formError(form, ["name"], ["Can't park there mate"])
+
+		const limit = ratelimit(form, "forumCategory", getClientAddress, 30)
+		if (limit) return limit
 
 		await surreal.create(`forumCategory:⟨${name}⟩`, {
 			name,

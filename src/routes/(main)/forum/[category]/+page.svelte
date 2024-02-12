@@ -13,7 +13,7 @@
 	<Breadcrumbs
 		path={[
 			["Forum", "/forum"],
-			[data.name, ""],
+			[data.name, ""]
 		]} />
 
 	<h1 class="pb-8">
@@ -27,13 +27,19 @@
 			</a>
 		</span>
 	</h1>
-	{#each data.posts as post, num}
-		<ForumPost
-			{post}
-			{num}
-			total={data.posts.length}
-			categoryName={data.name} />
-	{/each}
+	{#if data.posts.length > 0}
+		{#each data.posts as post, num}
+			<ForumPost
+				{post}
+				{num}
+				total={data.posts.length}
+				categoryName={data.name} />
+		{/each}
+	{:else}
+		<h2 class="text-center">
+			No posts in this category yet. Be the first to create one!
+		</h2>
+	{/if}
 </div>
 
 {#if $page.state.openPost}

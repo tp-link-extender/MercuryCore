@@ -47,17 +47,23 @@
 					name="status"
 					placeholder="Post a status" />
 			</Form>
-			<div class="flex flex-col gap-3 pt-3">
-				{#each sortedFeed as status, num}
-					<div
-						in:fade|global={{
-							num,
-							total: data.feed.length
-						}}>
-						<Status {status} />
-					</div>
-				{/each}
-			</div>
+			{#if sortedFeed.length > 0}
+				<div class="flex flex-col gap-3 pt-3">
+					{#each sortedFeed as status, num}
+						<div
+							in:fade|global={{
+								num,
+								total: data.feed.length
+							}}>
+							<Status {status} />
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<div class="p-4 pb-2">
+					No status posts yet. Be the first to post one!
+				</div>
+			{/if}
 		</div>
 	</div>
 
@@ -83,16 +89,18 @@
 				</div>
 			</div>
 		{/if}
-		<div>
-			<h2 class="pb-2">Resume playing</h2>
-			<div class="flex overflow-x-auto gap-4">
-				{#each data.places || [] as place, num}
-					<div class="min-w-32 w-32">
-						<Place {place} {num} total={data.places.length} />
-					</div>
-				{/each}
+		{#if data.places.length > 0}
+			<div>
+				<h2 class="pb-2">Resume playing</h2>
+				<div class="flex overflow-x-auto gap-4">
+					{#each data.places || [] as place, num}
+						<div class="min-w-32 w-32">
+							<Place {place} {num} total={data.places.length} />
+						</div>
+					{/each}
+				</div>
 			</div>
-		</div>
+		{/if}
 		<div class="w-1/2 xl:w-2/3 lg:w-1/2 md:w-2/3">
 			<h2 class="pb-2">Random fact</h2>
 			<div id="fact" class="card bg-darker card-body text-base pb-6">

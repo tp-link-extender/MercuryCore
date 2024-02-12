@@ -66,7 +66,7 @@
 	{:else}
 		<div
 			in:fade={{ delay: 500 }}
-			class="pointer-events-none absolute top-1/2 left-1/2 translate--1/2">
+			class="pointer-events-none absolute top-1/2 left-1/2 translate--1/2 flex flex-col items-center">
 			{#if completed}
 				<h1
 					in:fade
