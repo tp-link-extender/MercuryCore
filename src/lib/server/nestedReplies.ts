@@ -45,11 +45,12 @@ const SELECTFROM = surql`
 export function recurse(
 	query: (from: string) => string,
 	relationName: string,
-	commentName: string
+	commentName: string,
+	times = 9 // On a comment page, the top comment is already selected
 ) {
 	let rep = query(SELECTFROM)
 
-	for (let i = 0; i < 9; i++)
+	for (let i = 0; i < times; i++)
 		rep = rep.replace(
 			/# again #/g,
 			surql`(${SELECTFROM} <-${relationName}<-${commentName}) AS replies`

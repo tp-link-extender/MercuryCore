@@ -84,9 +84,6 @@ export const actions = {
 		const form = await superValidate(request, schema)
 		if (!form.valid) return formError(form)
 
-		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
-		if (limit) return limit
-
 		const replyId = url.searchParams.get("rid")
 		// If there is a replyId, it is a reply to another reply
 
@@ -96,6 +93,9 @@ export const actions = {
 
 		if (replyId && !/^[0-9a-z]+$/.test(replyId))
 			error(400, "Invalid reply id")
+
+		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
+		if (limit) return limit
 
 		const replypost = await squery<{ authorId: string }>(
 			surql`

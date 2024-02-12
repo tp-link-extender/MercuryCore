@@ -1,17 +1,26 @@
-<script lang="ts">
-	import ForumReplyMain from "./ForumReplyMain.svelte"
-	import type { Writable } from "svelte/store"
-
-	// too many exports help
-	export let user: {
+<script lang="ts" context="module">
+	export type User = {
 		username: string
 		permissionLevel: number
 		status: "Playing" | "Online" | "Offline"
 	}
 
-	export let reply:
+	export type Reply =
 		| import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
 		| import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
+
+	export type RepliesCollapsed = Writable<{
+		[id: string]: boolean
+	}>
+</script>
+
+<script lang="ts">
+	import ForumReplyMain from "./ForumReplyMain.svelte"
+	import type { Writable } from "svelte/store"
+
+	// too many exports help
+	export let user: User
+	export let reply: Reply
 
 	export let num: number
 	export let depth = 0
@@ -25,9 +34,7 @@
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/avatarshop/${postId}/${assetName}`
 
-	export let repliesCollapsed: Writable<{
-		[id: string]: boolean
-	}>
+	export let repliesCollapsed: RepliesCollapsed
 	export let topLevel = false
 	// Some have to be writables to allow them to keep state,
 	// either on element destroy or on page change
@@ -55,22 +62,24 @@
 {/if}
 
 {#if reply && reply.author}
-	<div class:mt-2={!$repliesCollapsed?.[reply.id]} class="flex">
-		<span class="flex flex-col pt-2">
-			<User user={reply.author} thin size="1.5rem" />
-			<button
-				on:click={collapse(reply.id)}
-				aria-label="Collapse reply"
-				class="collapseBar bg-a2 p-0 border-0 h-full mt-4
+	<div class="pt-2" class:flex={topLevel}>
+		{#if topLevel}
+			<span class="flex flex-col pt-2">
+				<User user={reply.author} thin size="1.5rem" />
+				<button
+					on:click={collapse(reply.id)}
+					aria-label="Collapse reply"
+					class="collapseBar bg-a2 p-0 border-0 h-full mt-4
 				cursor-pointer">
-			</button>
-		</span>
+				</button>
+			</span>
+		{/if}
 
 		{#if $repliesCollapsed?.[reply.id]}
 			<button
 				on:click={collapse(reply.id)}
 				aria-label="Expand reply"
-				class="expandBar m-2 pl-2 mt-0 text-base">
+				class="expandBar pb-2 pl-4 text-base cursor-pointer">
 				<small class="max-w-40 text-ellipsis">
 					<span class="grey-text">
 						{reply.author.username}
@@ -96,7 +105,8 @@
 					{categoryName}
 					{postId}
 					{assetName}
-					{repliesCollapsed} />
+					{repliesCollapsed}
+					{topLevel} />
 			</div>
 		{/if}
 	</div>
