@@ -1,17 +1,10 @@
 <script lang="ts">
 	import ForumReply from "./ForumReply.svelte"
 	import type { Writable } from "svelte/store"
+	import type { User, Reply, RepliesCollapsed } from "./ForumReply.svelte"
 
-	// too many exports help
-	export let user: {
-		username: string
-		permissionLevel: number
-		status: "Playing" | "Online" | "Offline"
-	}
-
-	export let reply:
-		| import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
-		| import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
+	export let user: User
+	export let reply: Reply
 
 	export let num: number
 	export let depth = 0
@@ -25,11 +18,8 @@
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/avatarshop/${postId}/${assetName}`
 
-	export let repliesCollapsed: Writable<{
-		[id: string]: boolean
-	}>
-	// Some have to be writables to allow them to keep state,
-	// either on element destroy or on page change
+	export let repliesCollapsed: RepliesCollapsed
+	export let topLevel = false
 
 	let content = "" // Allows current reply to not be lost on clicking to another reply
 
@@ -38,26 +28,30 @@
 
 <div class="flex w-full">
 	<div class="w-full">
-		<div class="flex items-center pl-4 pt-2">
+		<div class="flex items-center pt-2">
 			<a
 				href="/user/{reply.author.number}"
-				class="items-center userlink no-underline {reply.author
-					.username == postAuthorName
-					? ''
-					: 'light-text'} {hidden ? 'opacity-33' : ''}">
-				<span
-					class="font-bold {reply.author.username == postAuthorName
-						? assetName
-							? 'text-yellow-5'
-							: 'text-blue-6'
-						: ''}">
-					{reply.author.username}
-					{#if reply.author.username == postAuthorName}
-						<fa
-							class="{assetName
-								? 'fa-hammer'
-								: 'fa-microphone'} ml-2" />
+				class="userlink items-center no-underline"
+				class:light-text={reply.author.username != postAuthorName}
+				class:opacity-33={hidden}>
+				<span class="flex flex-row font-bold">
+					{#if !topLevel}
+						<User user={reply.author} thin size="1.5rem" image />
 					{/if}
+					<span
+						class="pl-4 {reply.author.username == postAuthorName
+							? assetName
+								? 'text-yellow-5'
+								: 'text-blue-6'
+							: ''}">
+						{reply.author.username}
+						{#if reply.author.username == postAuthorName}
+							<fa
+								class="{assetName
+									? 'fa-hammer'
+									: 'fa-microphone'} ml-2" />
+						{/if}
+					</span>
 				</span>
 			</a>
 			<small class="light-text pl-6">
@@ -94,7 +88,7 @@
 
 					return () => {}
 				}}
-				class="inline mr-2 {hidden ? 'opacity-33' : ''}"
+				class="inline pr-2 {hidden ? 'opacity-33' : ''}"
 				method="POST"
 				action="?/like&rid={reply.id}">
 				<button
@@ -130,13 +124,14 @@
 					</i>
 				</button>
 			</form>
-			<button
-				on:click={() => replyingTo.set(reply.id)}
+			<a
+				href="/forum/{categoryName}/{postId}/{reply.id}"
+				on:click|preventDefault={() => replyingTo.set(reply.id)}
 				class="p-0 btn btn-sm px-1 text-neutral-5
 				hover:text-neutral-3 {hidden ? 'opacity-33' : ''}">
 				<far fa-message class="pr-2" />
 				Reply
-			</button>
+			</a>
 			{#if !hidden}
 				{#if reply.author.username == user.username}
 					<DeleteButton id={reply.id} reverse />
@@ -151,7 +146,7 @@
 				{/if}
 			{/if}
 		{:else}
-			<div class="mb-2 card reply bg-darker p-4 pt-2 max-w-3/4">
+			<div class="card reply bg-darker mb-2 p-4 pt-2 max-w-3/4">
 				<form
 					use:enhance
 					on:submit={() => replyingTo.set("")}
@@ -185,12 +180,50 @@
 				</form>
 			</div>
 		{/if}
+		{#if !topLevel}
+			<!-- Pls give snippets svelte -->
+			<noscript>
+				<div class="card reply bg-darker mb-2 p-4 pt-2 max-w-3/4">
+					<form
+						use:enhance
+						on:submit={() => replyingTo.set("")}
+						method="POST"
+						action="?/reply&rid={reply.id}">
+						<label for="content" class="light-text pb-2">
+							Post a Reply
+						</label>
+						<fieldset class="flex flex-col gap-3">
+							<textarea
+								bind:value={content}
+								required
+								minlength="1"
+								maxlength="1000"
+								name="content"
+								placeholder="What are your thoughts?"
+								rows="4" />
+							<div class="flex gap-3">
+								<button class="btn btn-secondary">
+									<far fa-message class="pr-2" />
+									Reply
+								</button>
+								<button
+									on:click={() => replyingTo.set("")}
+									class="btn btn-tertiary grey-text">
+									<fa fa-cancel class="pr-2" />
+									Cancel
+								</button>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</noscript>
+		{/if}
 	</div>
 </div>
 
 {#if depth > 8}
-	<a href="{baseUrl}/{reply.id}" class="no-underline">
-		<fa fa-arrow-down class="mr-2" />
+	<a href="{baseUrl}/{reply.id}" class="no-underline my-2">
+		<fa fa-arrow-down class="pr-2" />
 		More replies
 	</a>
 {/if}

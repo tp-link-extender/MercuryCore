@@ -7,7 +7,8 @@ import { recurse, type Replies } from "$lib/server/nestedReplies"
 const SELECTREPLIES = recurse(
 	from => surql`(${from} <-replyToReply<-forumReply) AS replies`,
 	"replyToReply",
-	"forumReply"
+	"forumReply",
+	8
 )
 
 type ForumReplies = Replies[number] & {
@@ -49,7 +50,8 @@ export async function load({ locals, params }) {
 				(IF ->replyToReply->forumReply.id THEN
 					meta::id(->replyToReply[0]->forumReply[0].id)
 				END) AS parentReplyId,
-				(SELECT number, username FROM <-posted<-user)[0] AS author,
+				(SELECT number, status, username
+				FROM <-posted<-user)[0] AS author,
 
 				count(<-likes) AS likeCount,
 				count(<-dislikes) AS dislikeCount,
