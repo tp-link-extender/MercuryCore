@@ -1,31 +1,30 @@
 import { authorise } from "$lib/server/lucia"
 import { query, surql } from "$lib/server/surreal"
 
-export async function load({ locals }) {
-	const { user } = await authorise(locals)
+type Transaction = {
+	amountSent: number
+	id: string
+	in: string
+	link: string
+	note: string
+	out: string
+	receiver: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+	sender: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+	taxRate: number
+	time: string
+}
 
-	return {
-		transactions: await query<{
-			amountSent: number
-			id: string
-			in: string
-			link: string
-			note: string
-			out: string
-			receiver: {
-				number: number
-				status: "Playing" | "Online" | "Offline"
-				username: string
-			}
-			sender: {
-				number: number
-				status: "Playing" | "Online" | "Offline"
-				username: string
-			}
-			taxRate: number
-			time: string
-		}>(
-			surql`
+export const load = async ({ locals }) => ({
+	transactions: await query<Transaction>(
+		surql`
 			SELECT
 				*,
 				(SELECT number, status, username
@@ -33,7 +32,6 @@ export async function load({ locals }) {
 				(SELECT number, status, username
 				FROM out.*)[0] AS receiver
 			FROM $user<->transaction`,
-			{ user: `user:${user.id}` }
-		),
-	}
-}
+		{ user: `user:${(await authorise(locals)).user.id}` }
+	),
+})

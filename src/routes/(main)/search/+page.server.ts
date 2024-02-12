@@ -2,6 +2,32 @@ import { query, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
+type User = {
+	number: number
+	status: "Playing" | "Online" | "Offline"
+	username: string
+}
+
+type Place = {
+	id: number
+	name: string
+	playerCount: number
+	serverPing: number
+	likeCount: number
+	dislikeCount: number
+}
+
+type Asset = {
+	id: number
+	name: string
+	price: number
+}
+
+type Group = {
+	name: string
+	memberCount: number
+}
+
 export const load = async ({ url }) => {
 	const searchQ = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
@@ -13,7 +39,7 @@ export const load = async ({ url }) => {
 	if (category === "users") {
 		const userExists = await squery<{ number: number }>(
 			surql`
-				SELECT * FROM user
+				SELECT number FROM user
 				WHERE username = $searchQ`,
 			{ searchQ }
 		)
@@ -21,16 +47,14 @@ export const load = async ({ url }) => {
 		if (userExists) redirect(302, `/user/${userExists.number}`)
 	}
 
+	// TODO: make this full-text search because that would be much nicer
+
 	return {
 		query: searchQ,
 		category,
 		users:
 			category === "users" &&
-			(await query<{
-				number: number
-				status: "Playing" | "Online" | "Offline"
-				username: string
-			}>(
+			(await query<User>(
 				surql`
 					SELECT number, status, username
 					FROM user
@@ -39,23 +63,15 @@ export const load = async ({ url }) => {
 			)),
 		places:
 			category === "places" &&
-			(await query<{
-				id: number
-				name: string
-				playerCount: number
-				serverPing: number
-				likeCount: number
-				dislikeCount: number
-			}>(
+			(await query<Place>(
 				surql`
 					SELECT
 						meta::id(id) AS id,
 						name,
 						serverPing,
 						count(
-							SELECT * FROM <-playing
-							WHERE valid
-								AND ping > time::now() - 35s
+							SELECT 1 FROM <-playing
+							WHERE valid AND ping > time::now() - 35s
 						) AS playerCount,
 						count(<-likes) AS likeCount,
 						count(<-dislikes) AS dislikeCount
@@ -67,11 +83,7 @@ export const load = async ({ url }) => {
 			)),
 		assets:
 			category === "assets" &&
-			(await query<{
-				id: number
-				name: string
-				price: number
-			}>(
+			(await query<Asset>(
 				surql`
 					SELECT meta::id(id) AS id, name, price
 					FROM asset
@@ -81,10 +93,7 @@ export const load = async ({ url }) => {
 			)),
 		groups:
 			category === "groups" &&
-			(await query<{
-				name: string
-				memberCount: number
-			}>(
+			(await query<Group>(
 				surql`
 					SELECT
 						name,

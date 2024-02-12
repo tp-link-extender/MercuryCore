@@ -10,6 +10,14 @@ const SELECTREPLIES = recurse(
 	"forumReply"
 )
 
+type ForumReplies = Replies[number] & {
+	parentPost: {
+		title: string
+		id: string
+		forumCategoryName: string
+	}
+}
+
 export async function load({ locals, params }) {
 	if (!/^[0-9a-z]+$/.test(params.post)) error(400, "Invalid post id")
 
@@ -30,15 +38,7 @@ export async function load({ locals, params }) {
 
 	const { user } = await authorise(locals)
 
-	const forumReplies = await query<
-		Replies[number] & {
-			parentPost: {
-				title: string
-				id: string
-				forumCategoryName: string
-			}
-		}
-	>(
+	const forumReplies = await query<ForumReplies>(
 		surql`
 			SELECT
 				*,

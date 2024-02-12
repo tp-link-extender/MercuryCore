@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql } from "$lib/server/surreal"
+import { query, mquery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -9,20 +9,20 @@ const schema = z.object({
 	status: z.string().min(1).max(1000),
 })
 
+// for the "You are the 1st user to join Mercury!" fact
+const suffixes: { [k: string]: string } = {
+	one: "st",
+	two: "nd",
+	few: "rd",
+	other: "th",
+}
+const ordinals = new Intl.PluralRules("en", { type: "ordinal" })
+const ordinal = (n: number) => `${n}${suffixes[ordinals.select(n)]}`
+
 export async function load({ locals }) {
 	const { user } = await authorise(locals)
-	// (main)/+layout.server.ts will handle most redirects for logged-out users,
-	// but sometimes errors for this page.
+	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
 
-	// for the "You are the 1st user to join Mercury!" fact
-	const suffixes: { [k: string]: string } = {
-		one: "st",
-		two: "nd",
-		few: "rd",
-		other: "th",
-	}
-	const ordinals = new Intl.PluralRules("en", { type: "ordinal" })
-	const ordinal = (n: number) => `${n}${suffixes[ordinals.select(n)]}`
 	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
 	const facts = [
 		`You joined mercury on ${user?.accountCreated
@@ -32,47 +32,56 @@ export async function load({ locals }) {
 		`You are the ${ordinal(user?.number)} user to join Mercury!`,
 	]
 
+	const results = await mquery<unknown[]>(
+		surql`
+			# Places
+			SELECT
+				meta::id(id) AS id,
+				name,
+				serverPing,
+				count(
+					SELECT 1 FROM <-playing
+					WHERE valid AND ping > time::now() - 35s
+				) AS playerCount,
+				count(<-likes) AS likeCount,
+				count(<-dislikes) AS dislikeCount
+			FROM place WHERE !privateServer AND !deleted;
+
+			# Friends
+			SELECT number, status, username
+			FROM $user->friends->user OR $user<-friends<-user;
+
+			# Feed
+			SELECT
+				*,
+				(SELECT text, updated FROM $parent.content
+				ORDER BY updated DESC) AS content,
+				(SELECT number, status, username
+				FROM <-posted<-user)[0] as authorUser
+			FROM statusPost LIMIT 40`,
+		{ user: `user:${user.id}` }
+	)
+
 	return {
 		stuff: {
 			greet: greets[Math.floor(Math.random() * greets.length)],
 			fact: facts[Math.floor(Math.random() * facts.length)],
 		},
 		form: await superValidate(schema),
-		places: await query<{
+		places: results[0] as {
 			id: number
 			name: string
 			playerCount: number
 			serverPing: number
 			likeCount: number
 			dislikeCount: number
-		}>(surql`
-			SELECT
-				meta::id(id) AS id,
-				name,
-				serverPing,
-				count(
-					SELECT * FROM <-playing
-					WHERE valid
-						AND ping > time::now() - 35s
-				) AS playerCount,
-				count(<-likes) AS likeCount,
-				count(<-dislikes) AS dislikeCount
-			FROM place
-			WHERE !privateServer AND !deleted`),
-		friends: await query<{
+		},
+		friends: results[1] as {
 			number: number
 			status: "Playing" | "Online" | "Offline"
 			username: string
-		}>(
-			surql`
-				SELECT
-					number,
-					status,
-					username
-				FROM $user->friends->user OR $user<-friends<-user`,
-			{ user: `user:${user.id}` }
-		),
-		feed: await query<{
+		},
+		feed: results[2] as {
 			authorUser: {
 				number: number
 				status: "Playing" | "Online" | "Offline"
@@ -86,15 +95,7 @@ export async function load({ locals }) {
 			id: string
 			posted: string
 			visibility: string
-		}>(surql`
-			SELECT
-				*,
-				(SELECT text, updated FROM $parent.content
-				ORDER BY updated DESC) AS content,
-				(SELECT number, status, username
-				FROM <-posted<-user)[0] as authorUser
-			FROM statusPost
-			LIMIT 40`),
+		},
 	}
 }
 

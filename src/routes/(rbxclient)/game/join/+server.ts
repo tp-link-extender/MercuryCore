@@ -3,27 +3,29 @@ import { SignData } from "$lib/server/sign"
 import surreal, { squery, surql } from "$lib/server/surreal"
 import fs from "fs"
 
+type Session = {
+	place: {
+		id: number
+		ownerUser: {
+			number: number
+		}
+		serverIP: string
+		serverPort: number
+	}
+	user: {
+		number: number
+		permissionLevel: number
+		username: string
+	}
+}
+
 export async function GET({ url }) {
 	const clientTicket = url.searchParams.get("ticket")
 	const privateServer = url.searchParams.get("privateServer") as string
 
 	if (!clientTicket) error(400, "Invalid Request")
 
-	const gameSession = await squery<{
-		place: {
-			id: number
-			ownerUser: {
-				number: number
-			}
-			serverIP: string
-			serverPort: number
-		}
-		user: {
-			number: number
-			permissionLevel: number
-			username: string
-		}
-	}>(
+	const gameSession = await squery<Session>(
 		surql`
 			SELECT
 				(SELECT
@@ -32,10 +34,7 @@ export async function GET({ url }) {
 					serverPort,
 					(SELECT number FROM <-owns<-user)[0] AS ownerUser
 				FROM ->place)[0] AS place,
-				(SELECT
-					username,
-					number,
-					permissionLevel
+				(SELECT username, number, permissionLevel
 				FROM <-user)[0] AS user
 			FROM $playingId`,
 		{ playingId: `playing:${clientTicket}` }
@@ -43,16 +42,14 @@ export async function GET({ url }) {
 
 	if (!gameSession) error(400, "Invalid Game Session")
 
-	if (privateServer) {
-		const privateSession = await squery(
-			surql`
-				SELECT * FROM place
-				WHERE privateTicket = $privateServer`,
+	if (
+		privateServer &&
+		!(await squery(
+			surql`SELECT 1 FROM place WHERE privateTicket = $privateServer`,
 			{ privateServer }
-		)
-
-		if (!privateSession) error(400, "Invalid Private Server")
-	}
+		))
+	)
+		error(400, "Invalid Private Server")
 
 	await surreal.merge(`playing:${clientTicket}`, {
 		valid: false,

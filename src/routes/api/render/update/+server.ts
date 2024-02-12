@@ -52,8 +52,7 @@ export async function POST({ request, url }) {
 			render: `render:${id}`,
 		})
 	else if (status === "Completed") {
-		// repetitive but way more readable
-
+		// Less repetitive and more readable
 		const sharpen = (input: string, size: number, name = "") =>
 			sharp(Buffer.from(input, "base64"))
 				.resize(size, size)

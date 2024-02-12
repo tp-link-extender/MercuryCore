@@ -2,18 +2,20 @@ import { authorise } from "$lib/server/lucia"
 import { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
+type Place = {
+	id: string
+	name: string
+	owner: {
+		id: string
+	}
+	privateServer: boolean
+}
+
 export async function load({ locals, params }) {
 	if (!params.id || !/^\d+$/.test(params.id))
 		error(400, `Invalid place id: ${params.id}`)
 
-	const place = await squery<{
-		id: string
-		name: string
-		owner: {
-			id: string
-		}
-		privateServer: boolean
-	}>(
+	const place = await squery<Place>(
 		surql`
 			SELECT
 				name,

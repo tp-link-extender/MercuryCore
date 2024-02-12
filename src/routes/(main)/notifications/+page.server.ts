@@ -7,8 +7,7 @@ export const load = async ({ locals }) => {
 
 	await query(
 		surql`
-			UPDATE notification
-			SET read = true
+			UPDATE notification SET read = true
 			WHERE out = $user`,
 		{ user: `user:${user.id}` }
 	)
@@ -24,8 +23,7 @@ export const actions = {
 			await query(
 				surql`
 					IF $notification.* {
-						UPDATE $notification
-						SET read = true
+						UPDATE $notification SET read = true
 					}`,
 				{ notification: `notification:${id}` }
 			)

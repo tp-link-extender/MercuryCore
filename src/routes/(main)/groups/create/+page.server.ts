@@ -46,8 +46,8 @@ export const actions = {
 		if (
 			await squery(
 				surql`
-					SELECT * FROM group WHERE string::lowercase(name)
-						= string::lowercase($name)`,
+					SELECT 1 FROM group
+					WHERE string::lowercase(name) = string::lowercase($name)`,
 				{ name }
 			)
 		)
@@ -73,10 +73,8 @@ export const actions = {
 					name: $name,
 					created: time::now(),
 				};
-				RELATE $user->owns->$group
-					SET time = time::now();
-				RELATE $user->member->$group
-					SET time = time::now()`,
+				RELATE $user->owns->$group SET time = time::now();
+				RELATE $user->member->$group SET time = time::now()`,
 			{
 				name,
 				user: `user:${user.id}`,

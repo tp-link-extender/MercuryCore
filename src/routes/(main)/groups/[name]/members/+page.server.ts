@@ -1,29 +1,28 @@
 // The member page for a group.
 
-import { query, squery, surql } from "$lib/server/surreal"
+import { squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
+type Group = {
+	memberCount: number
+	members: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}[]
+	name: string
+}
+
 export const load = async ({ params }) => {
-	const group = await squery<{
-		memberCount: number
-		members: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}[]
-		name: string
-	}>(
+	const group = await squery<Group>(
 		surql`
 			SELECT
 				name,
 				count(<-member) AS memberCount,
-				(SELECT
-					number,
-					status,
-					username
+				(SELECT number, status, username
 				FROM <-member<-user) AS members
-			FROM group WHERE string::lowercase(name)
-				= string::lowercase($name)`,
+			FROM group
+			WHERE string::lowercase(name) = string::lowercase($name)`,
 		params
 	)
 

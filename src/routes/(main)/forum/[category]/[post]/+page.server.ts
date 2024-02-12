@@ -23,32 +23,34 @@ const SELECTREPLIES = recurse(
 	"forumReply"
 )
 
+type ForumPost = {
+	author: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+	categoryName: string
+	content: {
+		text: string
+		updated: string
+	}[]
+	dislikeCount: number
+	dislikes: boolean
+	id: string
+	likeCount: number
+	likes: boolean
+	posted: string
+	replies: Replies
+	title: string
+	visibility: string
+}
+
 export async function load({ locals, params }) {
 	if (!/^[0-9a-z]+$/.test(params.post)) error(400, "Invalid post id")
 
 	const { user } = await authorise(locals)
 
-	const forumPost = await squery<{
-		author: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
-		categoryName: string
-		content: {
-			text: string
-			updated: string
-		}[]
-		dislikeCount: number
-		dislikes: boolean
-		id: string
-		likeCount: number
-		likes: boolean
-		posted: string
-		replies: Replies
-		title: string
-		visibility: string
-	}>(
+	const forumPost = await squery<ForumPost>(
 		surql`
 			SELECT
 				*,
@@ -210,8 +212,7 @@ export const actions = {
 		await query(
 			surql`
 				BEGIN TRANSACTION;
-				LET $reply = SELECT (<-posted<-user)[0] AS poster
-					FROM $forumReply;
+				LET $reply = SELECT (<-posted<-user)[0] AS poster FROM $forumReply;
 				LET $poster = $reply.poster;
 
 				UPDATE $forumReply SET content += {

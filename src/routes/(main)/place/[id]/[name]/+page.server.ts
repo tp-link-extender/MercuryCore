@@ -4,41 +4,43 @@ import formData from "$lib/server/formData"
 import { likeActions } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
 
+type Place = {
+	created: string
+	description: {
+		text: string
+		updated: string
+	}
+	dislikeCount: number
+	dislikes: boolean
+	id: string
+	likeCount: number
+	likes: boolean
+	maxPlayers: number
+	name: string
+	ownerUser: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+	players: {
+		number: number
+		status: "Playing"
+		username: string
+	}[]
+	privateServer: boolean
+	privateTicket: string
+	serverPing: number
+	serverTicket: string
+	updated: string
+}
+
 export async function load({ url, locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid place id: ${params.id}`)
 
 	const { user } = await authorise(locals)
 	const id = parseInt(params.id)
 	const privateServerCode = url.searchParams.get("privateServer")
-	const getPlace = await squery<{
-		created: string
-		description: {
-			text: string
-			updated: string
-		}
-		dislikeCount: number
-		dislikes: boolean
-		id: string
-		likeCount: number
-		likes: boolean
-		maxPlayers: number
-		name: string
-		ownerUser: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
-		players: {
-			number: number
-			status: "Playing"
-			username: string
-		}[]
-		privateServer: boolean
-		privateTicket: string
-		serverPing: number
-		serverTicket: string
-		updated: string
-	}>(
+	const getPlace = await squery<Place>(
 		surql`
 			SELECT
 				meta::id(id) AS id,
@@ -52,18 +54,14 @@ export async function load({ url, locals, params }) {
 				created,
 				updated,
 				maxPlayers,
-				(SELECT
-					username,
-					status,
-					number
+				(SELECT username, status, number
 				FROM <-owns<-user)[0] AS ownerUser,
 				(SELECT
 					in.username AS username,
 					"Playing" AS status, # duh
 					in.number AS number
 				FROM <-playing
-				WHERE valid
-					AND ping > time::now() - 35s) AS players,
+				WHERE valid AND ping > time::now() - 35s) AS players,
 
 				count((SELECT * FROM $parent<-likes).in) AS likeCount,
 				count((SELECT * FROM $parent<-dislikes).in) AS dislikeCount,
@@ -134,10 +132,8 @@ export const actions = {
 				timeEnds: string
 			}>(
 				surql`
-					SELECT *
-					FROM moderation
-					WHERE out = $user
-						AND active = true`,
+					SELECT 1 FROM moderation
+					WHERE out = $user AND active = true`,
 				{ user: `user:${user.id}` }
 			)
 		)

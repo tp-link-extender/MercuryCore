@@ -2,28 +2,29 @@ import { squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import "dotenv/config"
 
+type User = {
+	bodyColours: {
+		Head: number
+		Torso: number
+		LeftArm: number
+		RightArm: number
+		LeftLeg: number
+		RightLeg: number
+	}
+	wearing: number[]
+}
+
 export async function GET({ url }) {
 	const userNumber = url.searchParams.get("userID")
 
 	if (!userNumber || !/^\d+$/.test(userNumber))
 		error(400, "Missing userID parameter")
 
-	const user = await squery<{
-		bodyColours: {
-			Head: number
-			Torso: number
-			LeftArm: number
-			RightArm: number
-			LeftLeg: number
-			RightLeg: number
-		}
-		wearing: number[]
-	}>(
+	const user = await squery<User>(
 		surql`
 			SELECT
 				bodyColours,
-				(SELECT
-					meta::id(id) as id
+				(SELECT meta::id(id) AS id
 				FROM ->wearing->asset).id AS wearing
 			FROM user WHERE number = $id`,
 		{ id: parseInt(userNumber) }

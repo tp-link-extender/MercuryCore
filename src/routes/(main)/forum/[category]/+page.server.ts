@@ -4,30 +4,32 @@ import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeActions } from "$lib/server/like"
 
+type Category = {
+	description: string
+	name: string
+	posts: {
+		author: {
+			number: number
+			status: "Playing" | "Online" | "Offline"
+			username: string
+		}
+		content: {
+			text?: string
+		}[]
+		dislikeCount: number
+		dislikes: boolean
+		id: string
+		likeCount: number
+		likes: boolean
+		posted: string
+		title: string
+		visibility: string
+	}[]
+}
+
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
-	const category = await squery<{
-		description: string
-		name: string
-		posts: {
-			author: {
-				number: number
-				status: "Playing" | "Online" | "Offline"
-				username: string
-			}
-			content: {
-				text?: string
-			}[]
-			dislikeCount: number
-			dislikes: boolean
-			id: string
-			likeCount: number
-			likes: boolean
-			posted: string
-			title: string
-			visibility: string
-		}[]
-	}>(
+	const category = await squery<Category>(
 		surql`
 			SELECT
 				*,
@@ -36,10 +38,7 @@ export async function load({ locals, params }) {
 					meta::id(id) AS id,
 					(SELECT text, updated FROM $parent.content
 					ORDER BY updated DESC) AS content,
-					(SELECT
-						number,
-						status,
-						username
+					(SELECT number, status, username
 					FROM <-posted<-user)[0] AS author,
 					count(<-likes<-user) AS likeCount,
 					count(<-dislikes<-user) AS dislikeCount,

@@ -19,7 +19,7 @@ export async function GET({ url }) {
 		format: "Png",
 		isCircular: "false",
 	})
-	const cache = await squery<{ url: string }>(surql`SELECT * FROM $asset`, {
+	const cache = await squery<{ url: string }>(surql`SELECT url FROM $asset`, {
 		asset: `assetCache:${stringAssetId}`,
 	})
 

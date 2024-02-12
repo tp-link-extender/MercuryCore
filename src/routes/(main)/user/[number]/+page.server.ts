@@ -2,9 +2,53 @@ import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { fail, error } from "@sveltejs/kit"
-import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import type { RequestEvent } from "./$types"
+
+type User = {
+	bio: {
+		id: string
+		text: string
+		updated: string
+	}
+	follower: boolean
+	followerCount: number
+	following: boolean
+	followingCount: number
+	friendCount: number
+	friends: boolean
+	groups: {
+		memberCount: number
+		name: string
+	}[]
+	groupsOwned: {
+		memberCount: number
+		name: string
+	}[]
+	incomingRequest: boolean
+	number: number
+	outgoingRequest: boolean
+	permissionLevel: number
+	places: {
+		dislikeCount: number
+		id: string
+		likeCount: number
+		name: string
+		playerCount: number
+	}[]
+	posts: {
+		content: {
+			id: string
+			text: string
+			updated: string
+		}[]
+		id: string
+		posted: string
+		visibility: string
+	}[]
+	status: "Playing" | "Online" | "Offline"
+	username: string
+}
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
@@ -12,50 +56,8 @@ export async function load({ locals, params }) {
 
 	const number = parseInt(params.number)
 	const { user } = await authorise(locals)
-	const userExists = await squery<{
-		bio: {
-			id: string
-			text: string
-			updated: string
-		}
-		follower: boolean
-		followerCount: number
-		following: boolean
-		followingCount: number
-		friendCount: number
-		friends: boolean
-		groups: {
-			memberCount: number
-			name: string
-		}[]
-		groupsOwned: {
-			memberCount: number
-			name: string
-		}[]
-		incomingRequest: boolean
-		number: number
-		outgoingRequest: boolean
-		permissionLevel: number
-		places: {
-			dislikeCount: number
-			id: string
-			likeCount: number
-			name: string
-			playerCount: number
-		}[]
-		posts: {
-			content: {
-				id: string
-				text: string
-				updated: string
-			}[]
-			id: string
-			posted: string
-			visibility: string
-		}[]
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}>(
+	const userExists = await squery<User>(
+		// You could start with five or six queries, or ~just one~
 		surql`
 			SELECT
 				username,
@@ -74,7 +76,7 @@ export async function load({ locals, params }) {
 					meta::id(id) AS id,
 					name,
 					count(
-						SELECT * FROM <-playing
+						SELECT 1 FROM <-playing
 						WHERE valid AND ping > time::now() - 35s
 					) AS playerCount,
 
@@ -139,8 +141,7 @@ const acceptExisting: ActionFunction = (params, user) =>
 		// the direction of the previous ->request relationship.
 		surql`
 			DELETE $user2->request WHERE out = $user;
-			RELATE $user2->friends->$user
-				SET time = time::now();
+			RELATE $user2->friends->$user SET time = time::now();
 			RELATE $user->notification->$user2 CONTENT {
 				type: $type,
 				time: time::now(),
@@ -179,8 +180,7 @@ export const actions = {
 		await query(
 			surql`
 				IF $user2 ∉ $user->follows->user {
-					RELATE $user->follows->$user2
-						SET time = time::now();
+					RELATE $user->follows->$user2 SET time = time::now();
 					RELATE $user->notification->$user2 CONTENT {
 						type: $type,
 						time: time::now(),
@@ -242,8 +242,7 @@ export const actions = {
 			else
 				await query(
 					surql`
-						RELATE $user->request->$user2
-							SET time = time::now();
+						RELATE $user->request->$user2 SET time = time::now();
 						RELATE $user->notification->$user2 CONTENT {
 							type: $type,
 							time: time::now(),
