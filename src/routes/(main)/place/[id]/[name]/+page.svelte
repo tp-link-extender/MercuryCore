@@ -368,9 +368,11 @@
 					class="absolute animate-[spin_1.5s_linear_infinite]"
 					width="128"
 					height="128"
-					style={installed
-						? ""
-						: "animation: none --rotation: 0deg"} />
+					style={installed ? "" : "animation: none"} />
+				<!--
+					Here's my ass going back in time 200 commits to see what that CSS variable did, only to find that it never did anything.
+					Hello, fellow time traveller!
+				-->
 			</div>
 		{/key}
 		{#if success}

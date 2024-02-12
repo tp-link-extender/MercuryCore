@@ -202,7 +202,7 @@ export const actions = {
 			username,
 			email: "",
 			hashedPassword: await new Scrypt().hash(password),
-			permissionLevel: 1,
+			permissionLevel: 5,
 			currency: 0,
 		})
 

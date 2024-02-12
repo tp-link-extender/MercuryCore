@@ -75,12 +75,12 @@ export async function load({ locals }) {
 			serverPing: number
 			likeCount: number
 			dislikeCount: number
-		},
+		}[],
 		friends: results[1] as {
 			number: number
 			status: "Playing" | "Online" | "Offline"
 			username: string
-		},
+		}[],
 		feed: results[2] as {
 			authorUser: {
 				number: number
@@ -95,7 +95,7 @@ export async function load({ locals }) {
 			id: string
 			posted: string
 			visibility: string
-		},
+		}[],
 	}
 }
 

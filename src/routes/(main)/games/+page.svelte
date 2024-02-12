@@ -16,7 +16,7 @@
 
 			const response = await fetch("/games", {
 				method: "POST",
-				body: formdata,
+				body: formdata
 			})
 			const result = deserialize(await response.text()) as {
 				data: {
@@ -27,9 +27,11 @@
 			searchedData = result.data.places
 		})()
 
+	$: places = query ? searchedData : data.places || []
+
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v),
+		restore: v => (query = v)
 	}
 </script>
 
@@ -96,16 +98,20 @@
 			</form>
 		</div>
 	</div>
-	<div class="ctnr flex flex-wrap gap-4 justify-center">
-		{#each query ? searchedData : data.places || [] as place, num (place.id)}
-			<PlaceCard {place} {num} total={data.places.length} />
-		{/each}
-		{#if query && searchedData.length == 0}
-			<h2 class="text-xs pt-12">
-				No games found with search term {query}
-			</h2>
-		{/if}
-	</div>
+	{#if places.length > 0}
+		<div class="flex flex-wrap gap-4 justify-center">
+			{#each places as place, num (place.id)}
+				<PlaceCard {place} {num} total={data.places.length} />
+			{/each}
+			{#if query && searchedData.length == 0}
+				<h2 class="text-lg pt-12">
+					No games found with search term {query}
+				</h2>
+			{/if}
+		</div>
+	{:else}
+		<h2 class="text-center">No games yet. Be the first to create one!</h2>
+	{/if}
 </div>
 
 {#if $page.state.openPlace}
