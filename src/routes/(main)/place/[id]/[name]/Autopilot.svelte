@@ -45,8 +45,7 @@
 
 	<div class="dropdown dropdown-hover dropdown-end">
 		<div
-			class="btn btn-tertiary dropdown-toggle border-[--accent2]
-			rounded-l-0">
+			class="btn btn-tertiary dropdown-toggle border-[--accent2] rounded-l-0">
 		</div>
 		<div class="dropdown-content pt-2">
 			<ul class="p-2 rounded-3">

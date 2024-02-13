@@ -1,6 +1,5 @@
 <script lang="ts">
-	// If an error happens in any +page or +layout file,
-	// this page will be rendered instead.
+	// If an error happens in any +page or +layout file, this page will be rendered instead.
 
 	import { page } from "$app/stores"
 

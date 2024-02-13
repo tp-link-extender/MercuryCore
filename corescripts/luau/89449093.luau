@@ -67,7 +67,7 @@ local guiTweenSpeed = 0.25 -- how quickly we open/close the backpack
 
 local searchDefaultText = "Search..."
 local tilde = "~"
-local backquote = "`"
+local backtick = "`"
 
 local backpackSize = UDim2.new(0, 600, 0, 400)
 
@@ -391,11 +391,11 @@ function coreGuiChanged(coreGuiType, enabled)
 		if disabledByDeveloper then
 			pcall(function()
 				GuiService:RemoveKey(tilde)
-				GuiService:RemoveKey(backquote)
+				GuiService:RemoveKey(backtick)
 			end)
 		else
 			GuiService:AddKey(tilde)
-			GuiService:AddKey(backquote)
+			GuiService:AddKey(backtick)
 		end
 
 		resetSearch()
@@ -444,12 +444,12 @@ end)
 
 -- GuiService key setup
 GuiService:AddKey(tilde)
-GuiService:AddKey(backquote)
+GuiService:AddKey(backtick)
 GuiService.KeyPressed:connect(function(key)
 	if not active or disabledByDeveloper then
 		return
 	end
-	if key == tilde or key == backquote then
+	if key == tilde or key == backtick then
 		toggleBackpack()
 	end
 end)

@@ -4,11 +4,10 @@
 	import { Canvas } from "@threlte/core"
 	import Waves from "./Waves.svelte"
 
-	// Gradient must run upon page being loaded,
-	// and cannot be rendered on serverside.
-	let canvasOpacity = 0,
-		infoPadding = 50,
-		infoTextMargin = -30
+	// Gradient must run upon page being loaded, and cannot be rendered on serverside.
+	let canvasOpacity = 0
+	let infoPadding = 50
+	let infoTextMargin = -30
 
 	onMount(() => {
 		new Gradient().initGradient("#gradientcanvas")

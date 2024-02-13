@@ -43,8 +43,7 @@
 		<div class="pr-4 pb-4">
 			<img
 				class:opacity-50={regenerating}
-				class="image transition-opacity duration-300 aspect-1
-				w-80vw max-w-100"
+				class="image transition-opacity duration-300 aspect-1 w-80vw max-w-100"
 				src={form?.icon || `/avatarshop/${data.id}/${data.name}/icon`}
 				alt={data.name} />
 		</div>
@@ -133,8 +132,7 @@
 							</label>
 						{:else}
 							<strong
-								class="btn btn-dark bg-a3
-								pointer-events-none text-xl">
+								class="btn btn-dark bg-a3 pointer-events-none text-xl">
 								Owned
 							</strong>
 						{/if}

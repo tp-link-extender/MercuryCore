@@ -118,9 +118,7 @@
 				role="search"
 				class="mx-auto px-2 pb-1">
 				<div
-					class="input-group max-w-140 pt-3px
-					xl:(absolute left-1/2 -translate-x-1/2 w-35vw)
-					lg:w-76 md:w-100 sm:w-52">
+					class="input-group max-w-140 pt-3px xl:(absolute left-1/2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
 					<input
 						bind:this={searchInput}
 						bind:value={search}
@@ -145,8 +143,7 @@
 						<div
 							transition:fade={{ duration: 150 }}
 							id="results"
-							class="absolute flex flex-col bg-darker p-2 mt-12
-							rounded-3 z-5 min-w-25vw">
+							class="absolute flex flex-col bg-darker p-2 mt-12 rounded-3 z-5 min-w-25vw">
 							{#each searchCategories as [name, category], num}
 								<a
 									bind:this={searchResults[num]}
@@ -173,8 +170,7 @@
 					href="/transactions"
 					role="button"
 					aria-label="Transactions"
-					class="flex items-center no-underline <sm:w-20
-					text-emerald-6 hover:text-emerald-8!">
+					class="flex items-center no-underline <sm:w-20 text-emerald-6 hover:text-emerald-8!">
 					<fa fa-gem class="pr-2" />
 					{user.currency}
 				</a>
@@ -250,8 +246,7 @@
 			{#each [...nav1, ["Notifications", "/notifications", "fa-bell"]] as [title, href, icon]}
 				<a
 					{href}
-					class="btn light-text border-0 flex flex-col items-center
-					text-0.9rem px-0.2rem sm:(text-base px-2)">
+					class="btn light-text border-0 flex flex-col items-center text-0.9rem px-0.2rem sm:(text-base px-2)">
 					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem" />
 					{title}
 				</a>

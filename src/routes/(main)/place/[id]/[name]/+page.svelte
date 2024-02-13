@@ -102,8 +102,7 @@
 							class="w-full"
 							alt="Placeholder place thumbnail" />
 						<div
-							class="absolute flex justify-between top-1/2
-							-translate-y-1/2 left-4 right-4">
+							class="absolute flex justify-between top-1/2 -translate-y-1/2 left-4 right-4">
 							<a
 								href="#slide{i < 1 ? images.length : i}"
 								class="carousel-button"

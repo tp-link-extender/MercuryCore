@@ -1,6 +1,5 @@
 <script lang="ts">
-	// Component for a group, used on the
-	// groups and search pages.
+	// Component for a group, used on the groups and search pages.
 
 	export let group: {
 		name: string

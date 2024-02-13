@@ -43,8 +43,7 @@
 		<span class="rounded-full overflow-hidden" style="{style};{style2}">
 			{#if rerender}
 				<img
-					class="transition-opacity duration-300 rounded-full
-					rounded-t-0"
+					class="transition-opacity duration-300 rounded-full rounded-t-0"
 					class:opacity-50={rerender.regenerating}
 					src={rerender.form?.avatar ||
 						`/api/avatar/${user.username}`}

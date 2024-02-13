@@ -39,8 +39,7 @@ self.addEventListener("fetch", event => {
 		// buggy atm so disabled
 		// if (ASSETS.includes(url.pathname)) return cache.match(event.request)
 
-		// for everything else, try the network first, but
-		// fall back to the cache if we're offline
+		// for everything else, try the network first, but fall back to the cache if we're offline
 		try {
 			const response = await fetch(event.request)
 

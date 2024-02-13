@@ -1,6 +1,10 @@
 -- CoreGui.RobloxGui.CurrentLoadout.CoreScripts/BackpackScript
 print "[Mercury]: Loaded corescript 53878057"
 
+local CoreGui = game:GetService "CoreGui"
+local GuiService = game:GetService "GuiService"
+local UserInputService = Game:GetService "UserInputService"
+
 -- A couple of necessary functions
 local function waitForChild(instance, name)
 	while not instance:FindFirstChild(name) do
@@ -18,9 +22,8 @@ local currentLoadout = script.Parent
 local StaticTabName = "gear"
 local backpackEnabled = true
 
-local robloxGui = game:GetService("CoreGui"):FindFirstChild "RobloxGui"
+local robloxGui = CoreGui:FindFirstChild "RobloxGui"
 assert(robloxGui)
-local GuiService = game:GetService "GuiService"
 
 local controlFrame = waitForChild(robloxGui, "ControlFrame")
 local backpackButton = waitForChild(controlFrame, "BackpackButton")
@@ -35,7 +38,7 @@ local clBackground = currentLoadout.Background
 local function IsTouchDevice()
 	local touchEnabled = false
 	pcall(function()
-		touchEnabled = Game:GetService("UserInputService").TouchEnabled
+		touchEnabled = UserInputService.TouchEnabled
 	end)
 	return touchEnabled
 end
@@ -123,6 +126,8 @@ local function backpackIsOpen()
 	end
 	return false
 end
+
+local reorganizeLoadout
 
 local function kill(prop, con, gear)
 	if con then
@@ -282,7 +287,7 @@ local function insertGear(gear, addToSlot)
 	end)
 end
 
-local function reorganizeLoadout(gear, inserting, _, addToSlot)
+reorganizeLoadout = function(gear, inserting, _, addToSlot)
 	if inserting then -- add in gear
 		insertGear(gear, addToSlot)
 	else
@@ -294,33 +299,36 @@ local function reorganizeLoadout(gear, inserting, _, addToSlot)
 end
 
 local function checkToolAncestry(child, parent)
-	if child:FindFirstChild "RobloxBuildTool" then
+	if
+		child:FindFirstChild "RobloxBuildTool" -- don't show roblox build tools
+		or not (child:IsA "Tool" or child:IsA "HopperBin")
+	then
 		return
-	end -- don't show roblox build tools
-	if child:IsA "Tool" or child:IsA "HopperBin" then
-		for i = 1, #gearSlots do
-			if
-				gearSlots[i] ~= "empty"
-				and gearSlots[i].GearReference.Value == child
-			then
-				if parent == nil then
-					gearSlots[i].Kill.Value = true
-					return false
-				elseif child.Parent == player.Character then
-					gearSlots[i].Selected = true
-					return true
-				elseif child.Parent == player.Backpack then
-					if child:IsA "Tool" or child:IsA "HopperBin" then
-						gearSlots[i].Selected = false
-					end
-					return true
-				end
+	end
 
+	for i = 1, #gearSlots do
+		if
+			gearSlots[i] ~= "empty"
+			and gearSlots[i].GearReference.Value == child
+		then
+			if parent == nil then
 				gearSlots[i].Kill.Value = true
 				return false
+			elseif child.Parent == player.Character then
+				gearSlots[i].Selected = true
+				return true
+			elseif child.Parent == player.Backpack then
+				if child:IsA "Tool" or child:IsA "HopperBin" then
+					gearSlots[i].Selected = false
+				end
+				return true
 			end
+
+			gearSlots[i].Kill.Value = true
+			return false
 		end
 	end
+	return
 end
 
 local function removeAllEquippedGear(physGear)
@@ -384,21 +392,14 @@ local function normaliseButton(button, speed)
 end
 
 local function enlargeButton(button)
-	if button.Size.Y.Scale > 1 then
-		return
-	end
-	if not button.Parent then
-		return
-	end
-	if not button.Selected then
+	if button.Size.Y.Scale > 1 or not button.Parent or not button.Selected then
 		return
 	end
 
 	for i = 1, #gearSlots do
 		if gearSlots[i] == "empty" then
 			break
-		end
-		if gearSlots[i] ~= button then
+		elseif gearSlots[i] ~= button then
 			normaliseButton(gearSlots[i])
 		end
 	end
@@ -720,11 +721,9 @@ local function addingPlayerChild(
 		debounce = false
 		return
 	end -- don't show roblox build tools
-	if not child:IsA "Tool" then
-		if not child:IsA "HopperBin" then
-			debounce = false
-			return -- we don't care about anything besides tools (sigh...)
-		end
+	if not (child:IsA "Tool" or child:IsA "HopperBin") then
+		debounce = false
+		return -- we don't care about anything besides tools (sigh...)
 	end
 
 	if not addToSlot then
@@ -812,10 +811,8 @@ local function addingPlayerChild(
 
 	if gearClone.Parent == nil then
 		debounce = false
-		return
-	end -- couldn't fit in (hopper is full!)
-
-	if equipped then
+		return -- couldn't fit in (hopper is full!)
+	elseif equipped then
 		gearClone.Selected = true
 		unequipAllItems(child)
 		delay(
@@ -843,10 +840,8 @@ local function addingPlayerChild(
 
 	local clickCon, buttonDeleteCon, mouseEnterCon, mouseLeaveCon, dragStop, dragBegin
 	clickCon = gearClone.MouseButton1Click:connect(function()
-		if characterInWorkspace() then
-			if not gearClone.Draggable then
-				activateGear(gearClone.SlotNumber.Text)
-			end
+		if characterInWorkspace() and not gearClone.Draggable then
+			activateGear(gearClone.SlotNumber.Text)
 		end
 	end)
 	mouseEnterCon = gearClone.MouseEnter:connect(function()

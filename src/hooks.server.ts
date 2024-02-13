@@ -70,8 +70,7 @@ export async function handle({ event, resolve }) {
 	event.locals.user = user
 
 	const setSession = (sessionCookie: Cookie) =>
-		// sveltekit types deviates from the de facto standard
-		// `as any` is usable too
+		// sveltekit types deviates from the de facto standard `as any` is usable too
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
 			...sessionCookie.attributes,
