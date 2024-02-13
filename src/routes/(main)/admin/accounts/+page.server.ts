@@ -3,6 +3,7 @@ import { query, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
@@ -19,14 +20,14 @@ export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	return {
-		form: await superValidate(schema),
+		form: await superValidate(zod(schema)),
 	}
 }
 
 export const actions = {
 	changePassword: async ({ request, locals, getClientAddress }) => {
 		const { user } = await authorise(locals, 5)
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)

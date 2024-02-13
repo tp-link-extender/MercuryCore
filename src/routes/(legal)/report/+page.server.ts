@@ -4,6 +4,7 @@ import ratelimit from "$lib/server/ratelimit"
 import { error } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
@@ -46,13 +47,13 @@ export async function load({ locals, url }) {
 	return {
 		reportee,
 		url: reportedUrl,
-		form: await superValidate(schema),
+		form: await superValidate(zod(schema)),
 	}
 }
 
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "report", getClientAddress, 120)
 		if (limit) return limit

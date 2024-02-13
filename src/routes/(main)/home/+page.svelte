@@ -1,5 +1,5 @@
 <script lang="ts">
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 	import Status from "./Status.svelte"
 
 	export let data

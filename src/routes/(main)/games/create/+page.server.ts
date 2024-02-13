@@ -3,6 +3,7 @@ import { query, squery, transaction, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
@@ -29,14 +30,14 @@ const placeCount = async (id: string) =>
 	).count
 
 export const load = async ({ locals }) => ({
-	form: await superValidate(schema),
+	form: await superValidate(zod(schema)),
 	placeCount: await placeCount((await authorise(locals)).user.id),
 })
 
 export const actions = {
 	default: async ({ request, locals }) => {
 		const { user } = await authorise(locals)
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		const { serverIP, serverPort, maxPlayers, privateServer } = form.data

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AdminShell from "../AdminShell.svelte"
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
 	const formDataManual = superForm(data.formManual)

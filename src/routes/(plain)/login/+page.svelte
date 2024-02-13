@@ -1,5 +1,5 @@
 <script lang="ts">
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 	import LoginShell from "../LoginShell.svelte"
 	import Waves from "../Waves.svelte"
 
@@ -7,7 +7,7 @@
 	const formData = superForm(data.form, {
 		onResult: ({ result }) =>
 			// Reload to get the new session after redirecting to homepage
-			result.type == "redirect" ? window.location.reload() : null,
+			result.type == "redirect" ? window.location.reload() : null
 	})
 
 	export const snapshot = formData
@@ -15,16 +15,16 @@
 	const descriptions = [
 		[
 			"Endless possibilites",
-			"Create or play your favourite games and customise your character with items on our catalog.",
+			"Create or play your favourite games and customise your character with items on our catalog."
 		],
 		[
 			"New features",
-			"In addition to full client usability, additional features such as security fixes, QoL fixes and an easy to use website make your experience better.",
+			"In addition to full client usability, additional features such as security fixes, QoL fixes and an easy to use website make your experience better."
 		],
 		[
 			"Same nostalgia",
-			"All of our clients will remain as vanilla as possible, to make sure it's exactly as you remember it.",
-		],
+			"All of our clients will remain as vanilla as possible, to make sure it's exactly as you remember it."
+		]
 	]
 </script>
 

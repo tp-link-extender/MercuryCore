@@ -1,6 +1,7 @@
 import { authorise } from "$lib/server/lucia"
-import { z } from "zod"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
+import { z } from "zod"
 
 const schemaManual = z.object({
 	type: z.enum(["8", "18"]),
@@ -22,7 +23,7 @@ export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	return {
-		formManual: await superValidate(schemaManual),
-		formAuto: await superValidate(schemaAuto),
+		formManual: await superValidate(zod(schemaManual)),
+		formAuto: await superValidate(zod(schemaAuto)),
 	}
 }

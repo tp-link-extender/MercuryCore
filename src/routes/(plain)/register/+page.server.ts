@@ -3,6 +3,7 @@ import surreal, { query, squery, mquery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import requestRender from "$lib/server/requestRender"
 import { Scrypt } from "oslo/password"
@@ -92,13 +93,13 @@ async function createUser(
 }
 
 export const load = async () => ({
-	form: await superValidate(schema),
+	form: await superValidate(zod(schema)),
 	users: (await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0,
 })
 
 export const actions = {
 	register: async ({ request, cookies }) => {
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		let { username, email, password, cpassword, regkey } = form.data
@@ -176,7 +177,7 @@ export const actions = {
 	initialAccount: async ({ request, cookies }) => {
 		// This is the initial account creation, which is only allowed if there are no existing users.
 
-		const form = await superValidate(request, schemaInitial)
+		const form = await superValidate(request, zod(schemaInitial))
 		if (!form.valid) return formError(form)
 
 		const { username, password, cpassword } = form.data

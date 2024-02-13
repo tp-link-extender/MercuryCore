@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { applyAction } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
 	const { user } = data

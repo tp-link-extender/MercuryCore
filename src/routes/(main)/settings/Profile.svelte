@@ -1,5 +1,5 @@
 <script lang="ts">
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
 	const { user } = data

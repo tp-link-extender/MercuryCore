@@ -3,6 +3,7 @@ import { query, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { Scrypt } from "oslo/password"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schemas = {
@@ -18,15 +19,15 @@ const schemas = {
 }
 
 export const load = async () => ({
-	profileForm: await superValidate(schemas.profile),
-	passwordForm: await superValidate(schemas.password),
+	profileForm: await superValidate(zod(schemas.profile)),
+	passwordForm: await superValidate(zod(schemas.password)),
 })
 
 export const actions = {
 	profile: async ({ request, locals }) => {
 		const { user } = await authorise(locals)
 
-		const form = await superValidate(request, schemas.profile)
+		const form = await superValidate(request, zod(schemas.profile))
 		if (!form.valid) return formError(form)
 
 		const { bio } = form.data
@@ -58,7 +59,7 @@ export const actions = {
 	password: async ({ request, locals }) => {
 		const { user } = await authorise(locals)
 
-		const form = await superValidate(request, schemas.password)
+		const form = await superValidate(request, zod(schemas.password))
 		if (!form.valid) return formError(form)
 
 		const { cpassword, npassword, cnpassword } = form.data

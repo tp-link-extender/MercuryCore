@@ -1,5 +1,5 @@
 <script lang="ts">
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 	import AdminShell from "../AdminShell.svelte"
 
 	export let data

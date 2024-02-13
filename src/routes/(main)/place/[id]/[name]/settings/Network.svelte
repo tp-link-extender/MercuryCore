@@ -1,5 +1,5 @@
 <script lang="ts">
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
 	const formData = superForm(data.networkForm)
@@ -10,7 +10,10 @@
 	if (data.maxPlayers) $form.maxPlayers = data.maxPlayers
 </script>
 
-<Form {formData} submit="<fa fa-save></fa> Save changes" action="?/network&tab=Network">
+<Form
+	{formData}
+	submit="<fa fa-save></fa> Save changes"
+	action="?/network&tab=Network">
 	<Input {formData} name="serverIP" label="Address" />
 	<Input
 		{formData}

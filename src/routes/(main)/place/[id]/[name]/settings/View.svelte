@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { get } from "svelte/store"
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
 	const formData = superForm(data.viewForm)

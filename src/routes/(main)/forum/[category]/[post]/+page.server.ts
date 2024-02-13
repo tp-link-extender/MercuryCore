@@ -5,6 +5,7 @@ import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { like } from "$lib/server/like"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
@@ -73,7 +74,7 @@ export async function load({ locals, params }) {
 	if (!forumPost) error(404, "Not found")
 
 	return {
-		form: await superValidate(schema),
+		form: await superValidate(zod(schema)),
 		...forumPost,
 	}
 }
@@ -81,7 +82,7 @@ export async function load({ locals, params }) {
 export const actions = {
 	reply: async ({ url, request, locals, params, getClientAddress }) => {
 		const { user } = await authorise(locals)
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		const replyId = url.searchParams.get("rid")

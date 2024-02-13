@@ -2,7 +2,6 @@
 
 import { fail } from "@sveltejs/kit"
 import type { SuperValidated } from "sveltekit-superforms"
-import type { AnyZodObject } from "zod"
 
 /**
  * Returns a custom error for a superForm.
@@ -14,7 +13,7 @@ import type { AnyZodObject } from "zod"
  * return formError(form, ["password"], ["Username or password is incorrect"])
  */
 export default function (
-	form: SuperValidated<AnyZodObject>,
+	form: SuperValidated<{ [k: string]: unknown }, unknown, { [k: string]: unknown }>,
 	fields?: string[],
 	messages?: string[]
 ) {

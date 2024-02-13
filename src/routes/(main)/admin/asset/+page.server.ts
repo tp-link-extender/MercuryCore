@@ -103,8 +103,8 @@ export const actions = {
 	},
 	rerender: async e => {
 		const { id } = await getData(e)
-		const limit = ratelimit({}, "rerender", e.getClientAddress, 10)
-		if (limit) return fail(429, { msg: "Too many requests" })
+		const limit = ratelimit(null, "rerender", e.getClientAddress, 10)
+		if (limit) return limit
 
 		try {
 			await requestRender("Clothing", parseInt(id))

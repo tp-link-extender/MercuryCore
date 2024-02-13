@@ -3,6 +3,7 @@ import surreal, { query, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
@@ -17,7 +18,7 @@ export async function load({ locals }) {
 	const economy = (await surreal.select("stuff:economy"))[0]
 
 	return {
-		form: await superValidate(schema),
+		form: await superValidate(zod(schema)),
 		dailyStipend: (economy?.dailyStipend as number) || 10,
 		stipendTime: (economy?.stipendTime as number) || 10,
 	}
@@ -26,7 +27,7 @@ export async function load({ locals }) {
 export const actions = {
 	updateStipend: async ({ request, locals, getClientAddress }) => {
 		const { user } = await authorise(locals, 5)
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		const limit = ratelimit(form, "economy", getClientAddress, 30)

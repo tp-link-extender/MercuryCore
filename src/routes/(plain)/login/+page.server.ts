@@ -4,6 +4,7 @@ import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { Scrypt } from "oslo/password"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
@@ -16,13 +17,13 @@ const schema = z.object({
 })
 
 export const load = async () => ({
-	form: await superValidate(schema),
+	form: await superValidate(zod(schema)),
 	users: (await squery<number>(surql`[count(SELECT 1 FROM user)]`)) > 0,
 })
 
 export const actions = {
 	default: async ({ request, cookies }) => {
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		const { username, password } = form.data

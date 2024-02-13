@@ -3,14 +3,14 @@
 
 import { message } from "sveltekit-superforms/server"
 import type { SuperValidated } from "sveltekit-superforms"
-import type { AnyZodObject } from "zod"
+import { fail } from "@sveltejs/kit"
 
 const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()
 const existingTimeouts = new Map<string, NodeJS.Timeout>()
 
 /** Ratelimit a function by a category.
- * @param form The superForm object sent by the client.
+ * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.
  * @param category The category to ratelimit by.
  * @param getClientAddress The client's IP address, set by the adapter.
  * @param timeWindow The time window in seconds. If there are no successful requests in this time, the ratelimit is reset.
@@ -21,7 +21,11 @@ const existingTimeouts = new Map<string, NodeJS.Timeout>()
  *	if (limit) return limit
  */
 export default function (
-	form: SuperValidated<AnyZodObject> | object,
+	form: SuperValidated<
+		{ [k: string]: unknown },
+		unknown,
+		{ [k: string]: unknown }
+	> | null,
 	category: string,
 	getClientAddress: () => string,
 	timeWindow: number,
@@ -30,9 +34,14 @@ export default function (
 	const id = getClientAddress() + category
 	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 
+	const limit = () =>
+		form
+			? message(form, "Too many requests", { status: 429 })
+			: fail(429, { msg: "Too many requests" })
+
 	if (currentTimewindow > Date.now() + timeWindow * 1000) {
 		console.log("Ratelimited based on time window!")
-		return message(form, "Too many requests", { status: 429 })
+		return limit()
 	}
 
 	const currentRequests = (ratelimitRequests.get(id) || 0) + 1
@@ -40,7 +49,7 @@ export default function (
 	if (currentRequests > maxRequests) {
 		ratelimitTimewindow.set(id, currentTimewindow)
 		console.log("Ratelimited based on requests!")
-		return message(form, "Too many requests", { status: 429 })
+		return limit()
 	}
 
 	clearTimeout(existingTimeouts.get(id))

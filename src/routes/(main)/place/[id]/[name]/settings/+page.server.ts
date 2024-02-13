@@ -5,6 +5,7 @@ import { error } from "@sveltejs/kit"
 import fs from "fs"
 import sharp from "sharp"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import type { RequestEvent } from "./$types"
 
@@ -81,11 +82,11 @@ export async function load({ locals, params }) {
 
 	return {
 		...getPlace,
-		viewForm: await superValidate(schemas.view),
-		networkForm: await superValidate(schemas.network),
-		ticketForm: await superValidate(schemas.ticket),
-		privacyForm: await superValidate(schemas.privacy),
-		privatelinkForm: await superValidate(schemas.privatelink),
+		viewForm: await superValidate(zod(schemas.view)),
+		networkForm: await superValidate(zod(schemas.network)),
+		ticketForm: await superValidate(zod(schemas.ticket)),
+		privacyForm: await superValidate(zod(schemas.privacy)),
+		privatelinkForm: await superValidate(zod(schemas.privatelink)),
 	}
 }
 
@@ -108,7 +109,7 @@ export const actions = {
 		const { request } = e
 
 		const formData = await request.formData()
-		const form = await superValidate(formData, schemas.view)
+		const form = await superValidate(formData, zod(schemas.view))
 		if (!form.valid) return formError(form)
 
 		const icon = formData.get("icon") as File
@@ -166,7 +167,7 @@ export const actions = {
 		})
 
 		return message(
-			await superValidate(request, schemas.ticket),
+			await superValidate(request, zod(schemas.ticket)),
 			"Regenerated!"
 		)
 	},
@@ -174,7 +175,7 @@ export const actions = {
 		const id = await getData(e)
 		const { request } = e
 
-		const form = await superValidate(request, schemas.network)
+		const form = await superValidate(request, zod(schemas.network))
 		if (!form.valid) return formError(form)
 
 		const { serverIP, serverPort, maxPlayers } = form.data
@@ -200,7 +201,7 @@ export const actions = {
 		const id = await getData(e)
 		const { request } = e
 
-		const form = await superValidate(request, schemas.privacy)
+		const form = await superValidate(request, zod(schemas.privacy))
 		if (!form.valid) return formError(form)
 
 		const { privateServer } = form.data
@@ -221,7 +222,7 @@ export const actions = {
 		})
 
 		return message(
-			await superValidate(request, schemas.privatelink),
+			await superValidate(request, zod(schemas.privatelink)),
 			"Regenerated!"
 		)
 	},

@@ -3,6 +3,7 @@ import ratelimit from "$lib/server/ratelimit"
 import surreal, { query, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import type { RequestEvent } from "./$types"
 
@@ -39,14 +40,14 @@ export async function load({ locals }) {
 	)
 
 	return {
-		form: await superValidate(schema),
+		form: await superValidate(zod(schema)),
 		invites,
 	}
 }
 
 async function getData(e: RequestEvent) {
 	const { user } = await authorise(e.locals, 5)
-	const form = await superValidate(e.request, schema)
+	const form = await superValidate(e.request, zod(schema))
 
 	return {
 		user,

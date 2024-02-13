@@ -5,6 +5,7 @@ import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
 import { error, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { like, likeActions } from "$lib/server/like"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
@@ -85,7 +86,7 @@ export async function load({ locals, params }) {
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
-		form: await superValidate(schema),
+		form: await superValidate(zod(schema)),
 		...asset,
 	}
 }
@@ -107,7 +108,7 @@ async function getBuyData(e: RequestEvent) {
 export const actions = {
 	reply: async ({ url, request, locals, params, getClientAddress }) => {
 		const { user } = await authorise(locals)
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		const limit = ratelimit(form, "assetComment", getClientAddress, 5)
