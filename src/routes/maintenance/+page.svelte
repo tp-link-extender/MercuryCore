@@ -3,8 +3,7 @@
 	import g from "stripe-gradient"
 	const { Gradient } = g
 
-	// Gradient must run upon page being loaded,
-	// and cannot be rendered on serverside.
+	// Gradient must run upon page being loaded, and cannot be rendered on serverside.
 	onMount(() => new Gradient().initGradient("#gradient-canvas"))
 </script>
 

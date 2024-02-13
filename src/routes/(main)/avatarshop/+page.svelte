@@ -83,8 +83,7 @@
 	</div>
 
 	<div
-		class="grid gap-2 lg:grid-cols-[1fr_5fr]
-		md:(grid-cols-[1fr_4fr] gap-4)">
+		class="grid gap-2 lg:grid-cols-[1fr_5fr] md:(grid-cols-[1fr_4fr] gap-4)">
 		<div>
 			<h2>Filters</h2>
 			<p class="text-neutral-4">Sort by</p>
@@ -154,8 +153,7 @@
 			<TabNav bind:tabData justify />
 			{#if !query || assets.length > 0}
 				<div
-					class="grid gap-4 grid-cols-2
-					xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
+					class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
 					{#each assets as asset, num (asset.id)}
 						<Asset {asset} {num} total={data.assets.length} />
 					{/each}

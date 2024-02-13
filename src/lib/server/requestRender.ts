@@ -37,8 +37,7 @@ export default async function (
 
 	if (render && render.status !== "Error") return
 
-	// If the render doesn't exist or if the last one
-	// errored, create a new render
+	// If the render doesn't exist or if the last one errored, create a new render
 
 	const newRender = await mquery<string[]>(
 		surql`

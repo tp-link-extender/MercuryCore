@@ -486,14 +486,14 @@ local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 
 	-- This can happen sometimes, return if so
 	if not Mouse then
-		return nil
+		return
 	end
 	if not stampData then
 		error "findConfigAtMouseTarget: stampData is nil"
-		return nil
+		return
 	end
 	if not stampData.CurrentParts then
-		return nil
+		return
 	end
 
 	local grid = 4.0
@@ -587,15 +587,27 @@ local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 		targetVectorInWorld = targetPart.CFrame:vectorToWorldSpace(
 			Vector3.FromNormalId(Mouse.TargetSurface)
 		) -- better, but model cframe would be best
-		--[[if targetPart.Parent:IsA("Model") then
-			local hitFace = modelTargetSurface(targetPart.Parent, Mouse.Hit.p, game.Workspace.CurrentCamera.CoordinateFrame.p)  -- best, if you get it right
-			local WORLD_AXES = {Vector3.new(1, 0, 0), Vector3.new(0, 1, 0), Vector3.new(0, 0, 1)}
-			if hitFace > 0 then
-				targetVectorInWorld = targetCFrame:vectorToWorldSpace(WORLD_AXES[hitFace])
-			elseif hitFace < 0 then
-				targetVectorInWorld = targetCFrame:vectorToWorldSpace(-WORLD_AXES[-hitFace])
+		--[[
+			if targetPart.Parent:IsA "Model" then
+				local hitFace = modelTargetSurface(
+					targetPart.Parent,
+					Mouse.Hit.p,
+					game.Workspace.CurrentCamera.CoordinateFrame.p
+				) -- best, if you get it right
+				local WORLD_AXES = {
+					Vector3.new(1, 0, 0),
+					Vector3.new(0, 1, 0),
+					Vector3.new(0, 0, 1),
+				}
+				if hitFace > 0 then
+					targetVectorInWorld =
+						targetCFrame:vectorToWorldSpace(WORLD_AXES[hitFace])
+				elseif hitFace < 0 then
+					targetVectorInWorld =
+						targetCFrame:vectorToWorldSpace(-WORLD_AXES[-hitFace])
+				end
 			end
-		end]]
+		]]
 	end
 
 	local targetRefPointInTarget, insertRefPointInInsert
@@ -703,10 +715,9 @@ local function truncateToCircleEighth(bigValue, littleValue)
 		-- between 22.5 and 45 degrees, so truncate to 45-degree tilt
 		return 0.707106781 * hypotenuse * bigSign,
 			0.707106781 * hypotenuse * littleSign
-	else
-		-- between 0 and 22.5 degrees, so truncate to 0-degree tilt
-		return hypotenuse * bigSign, 0
 	end
+	-- between 0 and 22.5 degrees, so truncate to 0-degree tilt
+	return hypotenuse * bigSign, 0
 end
 
 local function saveTheWelds(object, manualWeldTable, manualWeldParentTable)
@@ -740,9 +751,7 @@ RbxStamper.CanEditRegion = function(partOrModel, EditRegion) -- todo: use model 
 		or minBB.Z < EditRegion.CFrame.p.Z - EditRegion.Size.Z / 2
 	then
 		return false, false
-	end
-
-	if
+	elseif
 		maxBB.X > EditRegion.CFrame.p.X + EditRegion.Size.X / 2
 		or maxBB.Y > EditRegion.CFrame.p.Y + EditRegion.Size.Y / 2
 		or maxBB.Z > EditRegion.CFrame.p.Z + EditRegion.Size.Z / 2
@@ -1017,6 +1026,13 @@ RbxStamper.SetupStamperDragger = function(
 	local gInitial90DegreeRotations = 0
 	local stampData: {
 		DisabledScripts: { LuaSourceContainer }?,
+		TransparencyTable: {}?,
+		MaterialTable: {}?,
+		CanCollideTable: {}?,
+		AnchoredTable: {}?,
+		ArchivableTable: {}?,
+		DecalTransparencyTable: {}?,
+		SurfaceTypeTable: {}?,
 	}
 	local mouseTarget
 

@@ -1,6 +1,5 @@
 <script lang="ts">
-	// The component that controls the 3D object
-	// on the landing and maintenance pages.
+	// The component that controls the 3D object on the landing and maintenance pages.
 
 	import { T } from "@threlte/core"
 	import { GLTF, OrbitControls } from "@threlte/extras"

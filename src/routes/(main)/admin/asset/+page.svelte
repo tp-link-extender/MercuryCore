@@ -24,8 +24,7 @@
 
 	<AdminShell
 		bind:tabData
-		class="grid gap-4 grid-cols-2 xl:grid-cols-6
-		lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-4">
+		class="grid gap-4 grid-cols-2 xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-4">
 		{#each data.assets || [] as asset, num}
 			<AssetApprove {asset} {num} total={(data.assets || []).length} />
 		{/each}

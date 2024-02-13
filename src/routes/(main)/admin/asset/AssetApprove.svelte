@@ -1,6 +1,5 @@
 <script lang="ts">
-	// An avatar shop item component, used in the
-	// avatar shop and inventory pages.
+	// An avatar shop item component, used in the avatar shop and inventory pages.
 
 	export let asset: import("./$types").PageData["assets"][0]
 	export let num: number

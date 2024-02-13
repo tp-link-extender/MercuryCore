@@ -22,8 +22,7 @@
 				<button
 					on:mousedown={() => (clicked = !clicked)}
 					id="heart"
-					class="border-0 p-0 pr-2 grey-text cursor-pointer text-base
-					bg-transparent"
+					class="border-0 p-0 pr-2 grey-text cursor-pointer text-base bg-transparent"
 					class:clicked>
 					<span class="grey-text">made with</span>
 					<fa fa-heart />

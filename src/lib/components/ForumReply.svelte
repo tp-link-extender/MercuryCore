@@ -36,8 +36,7 @@
 
 	export let repliesCollapsed: RepliesCollapsed
 	export let topLevel = false
-	// Some have to be writables to allow them to keep state,
-	// either on element destroy or on page change
+	// Some have to be writables to allow them to keep state, either on element destroy or on page change
 
 	const collapse = (id: string) => () =>
 		($repliesCollapsed[id] = !$repliesCollapsed[id])
@@ -69,8 +68,7 @@
 				<button
 					on:click={collapse(reply.id)}
 					aria-label="Collapse reply"
-					class="collapseBar bg-a2 p-0 border-0 h-full mt-4
-				cursor-pointer">
+					class="collapseBar bg-a2 p-0 border-0 h-full mt-4 cursor-pointer">
 				</button>
 			</span>
 		{/if}

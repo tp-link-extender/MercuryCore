@@ -1,6 +1,5 @@
 <script lang="ts">
-	// could make forms based on a js object or something instead of components
-	// but concerns with forms that require more interactivity/customisation
+	// could make forms based on a js object or something instead of components but concerns with forms that require more interactivity/customisation
 
 	import { createSelect, melt } from "@melt-ui/svelte"
 

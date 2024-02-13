@@ -28,8 +28,7 @@
 					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pr-2" />
 				{/if}
 				<span
-					class="{text} {colour} overflow-hidden align-middle w-0
-					-mt-0.4">
+					class="{text} {colour} overflow-hidden align-middle w-0 -mt-0.4">
 					<!-- perfect alignment -->
 					{text.charAt(0).toUpperCase() + text.slice(1)}
 				</span>

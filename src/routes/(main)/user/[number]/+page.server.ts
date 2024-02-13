@@ -137,8 +137,7 @@ type ActionFunction = (
 
 const acceptExisting: ActionFunction = (params, user) =>
 	query(
-		// The direction of the ->friends relationship matches
-		// the direction of the previous ->request relationship.
+		// The direction of the ->friends relationship matches the direction of the previous ->request relationship.
 		surql`
 			DELETE $user2->request WHERE out = $user;
 			RELATE $user2->friends->$user SET time = time::now();
