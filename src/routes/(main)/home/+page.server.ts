@@ -26,7 +26,7 @@ export async function load({ locals }) {
 
 	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
 	const facts = [
-		`You joined mercury on ${user?.accountCreated
+		`You joined Mercury on ${user?.accountCreated
 			.toLocaleString()
 			.substring(0, 10)}!`,
 		// Add "st", "nd", "rd", "th" to number
