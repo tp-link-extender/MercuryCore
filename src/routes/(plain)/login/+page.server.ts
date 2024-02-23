@@ -7,8 +7,6 @@ import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
-console.log("loadde")
-
 const schema = z.object({
 	username: z
 		.string()

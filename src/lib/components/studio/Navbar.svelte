@@ -1,62 +1,12 @@
 <script lang="ts">
-	import { goto } from "$app/navigation"
 	import { slide } from "svelte/transition"
 
 	let search = ""
 	let searchCompleted = true
-	let currentSearchFocus = -1
 
-	$: if (search == "") {
-		searchCompleted = true
-		currentSearchFocus = -1
-	}
-
-	let searchInput: HTMLInputElement
 	const searchResults: HTMLElement[] = []
 
-	function keydown(
-		e: KeyboardEvent & {
-			currentTarget: EventTarget & HTMLInputElement
-		}
-	) {
-		switch (e.key) {
-			case "Enter":
-				if (!searchCompleted && currentSearchFocus >= 0) {
-					e.preventDefault()
-					searchResults[currentSearchFocus].click()
-				}
-
-				searchCompleted = true
-				currentSearchFocus = -1
-				break
-			case "ArrowDown":
-			case "ArrowUp":
-				e.preventDefault()
-
-				// Focus first result
-				const prevSearchFocus = currentSearchFocus
-
-				currentSearchFocus += e.key == "ArrowDown" ? 1 : -1
-				currentSearchFocus =
-					currentSearchFocus >= searchCategories.length
-						? 0
-						: currentSearchFocus < 0
-							? searchCategories.length - 1
-							: currentSearchFocus
-
-				searchResults[currentSearchFocus]?.classList.add("pseudofocus")
-				searchResults[prevSearchFocus]?.classList.remove("pseudofocus")
-
-				break
-			case "Escape":
-				search = ""
-				break
-			default:
-				searchCompleted = false
-		}
-	}
-
-	export let data: import("../../routes/$types").LayoutData
+	export let data: import("../../../routes/studio/$types").LayoutData
 
 	const { user } = data
 	const nav1 = [
@@ -84,14 +34,6 @@
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 </script>
 
-<svelte:window
-	on:keydown={e => {
-		if (e.ctrlKey && e.key == "k") {
-			e.preventDefault()
-			searchInput.focus()
-		}
-	}} />
-
 <nav class="py-0 justify-start z-11">
 	<div class="pt-1 px-2 sm:px-4 flex w-full pb-2px bg-[--navbar]">
 		<a class="brand light-text text-xl no-underline my-auto" href="/">
@@ -111,7 +53,6 @@
 				{/each}
 			</div>
 			<form
-				use:enhance
 				method="POST"
 				action="/search"
 				role="search"
@@ -119,9 +60,6 @@
 				<div
 					class="input-group max-w-140 pt-3px xl:(absolute left-1/2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
 					<input
-						bind:this={searchInput}
-						bind:value={search}
-						on:keydown={keydown}
 						class="bg-background h-10 pl-4"
 						name="query"
 						type="search"
@@ -129,11 +67,6 @@
 						aria-label="Search (ctrl+k)"
 						autocomplete="off" />
 					<button
-						on:click|preventDefault={() => {
-							if (search.trim())
-								goto(`/search?q=${search.trim()}&c=users`)
-							searchCompleted = true
-						}}
 						class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
 						title="Search (ctrl+k)">
 						<fa fa-search />
@@ -198,10 +131,7 @@
 								</li>
 							{/each}
 							<li class="rounded-2">
-								<form
-									use:enhance
-									method="POST"
-									action="/api?/logout">
+								<form method="POST" action="/api?/logout">
 									<button class="btn text-red-5 pl-4 pr-0">
 										<fa
 											fa-arrow-right-from-bracket

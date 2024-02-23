@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let data
+	// export let data
 
 	import "/src/routes/studio/studio.styl"
 </script>

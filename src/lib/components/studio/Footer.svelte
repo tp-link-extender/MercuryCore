@@ -1,9 +1,10 @@
 <script lang="ts">
-	export let data: import("../../routes/$types").LayoutData
+	export let data: import("../../../routes/studio/$types").LayoutData
 </script>
 
 <footer class="w-full bg-darker mt-auto">
-	<div class="mx-auto flex <md:flex-col justify-between items-start w-200 p-4 pb-8">
+	<div
+		class="mx-auto flex <md:flex-col justify-between items-start w-200 p-4 pb-8">
 		<div>
 			<img src="/icon-footer.svg" alt="Mercury logo" class="size-8" />
 			<a href="/studio" class="no-underline pl-2">Mercury</a>
@@ -19,7 +20,7 @@
 				&ndash;
 				<span
 					id="heart"
-					class="grey-text border-0 p-0 pr-2 cursor-pointer text-base bg-transparent">
+					class="grey-text border-0 p-0 pr-2 text-base bg-transparent">
 					made with
 					<fa fa-heart />
 				</span>

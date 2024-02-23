@@ -29,6 +29,7 @@
 	]
 </script>
 
+<!-- 🌊 WAVES 🌊 DON'T 🌊 DIE 🌊 -->
 <!-- <Waves /> -->
 
 <LoginShell {descriptions}>

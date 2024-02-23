@@ -6,7 +6,7 @@
 	<!-- todo fix the lg:h-9999 please -->
 	<div
 		id="dark"
-		class="bg-darker lg:(h-9999 float-left w-1/2) px-8% pt-5 lg:pt-6%">
+		class="bg-darker lg:(h-9999 float-left w-1/2 pt-6%) px-8% pt-5">
 		<a type="button" href="/" class="btn btn-lg border-0 px-0 text-base">
 			<fa fa-arrow-left class="pr-2" />
 			Home
@@ -23,7 +23,7 @@
 		{/each}
 	</div>
 
-	<div id="light" class="lg:(h-9999 float-right w-1/2) px-8% pt-5 lg:pt-9%">
+	<div id="light" class="lg:(h-9999 float-right w-1/2 pt-9%) px-8% pt-5">
 		<div class="max-w-120 mx-auto">
 			<slot />
 		</div>
