@@ -1,0 +1,49 @@
+background = #100f0e
+darker = #0a0908
+accent = #1f1d1c
+accent1 = #262423
+accent2 = #363433
+accent3 = #464443
+light-text = #f6f4f3
+grey-text = #8c8b8a
+mainaccent = hsl(260, 100%, 60%)
+
+:root
+html
+body
+main
+	background background
+	color light-text
+	height 100%
+
+a
+	color hsl(260 100% 66%)
+	transition 0.2s color
+	&:hover
+		&:not(.btn):not(.light-text)
+			color hsl(260 100% 60%)
+		&.light-text
+			color var(--grey-text)
+
+.light-text
+	color light-text
+.grey-text
+	color grey-text
+
+.bg-darker
+	background darker
+
+input
+	background accent
+	color light-text
+	border 1px solid accent2
+	&:focus
+		box-shadow 0 0 0 3px #5c29c27f !important
+	&:active
+		box-shadow 0 0 0 2px #5c29c27f !important
+
+.is-invalid
+	background-position 99% 0.5rem
+
+.text-red-5
+	color rgb(239 68 68)

@@ -14,7 +14,11 @@ export default {
 			},
 		}),
 		autoImport({
-			components: [{ name: "./src/lib/components", flat: true }],
+			components: [
+				"./src/lib/components",
+				"./src/lib/components/forms",
+				{ name: "./src/lib/components/studio", prefix: "studio" }
+			],
 			module: {
 				svelte: ["onMount"],
 				"svelte/store": ["writable"],
