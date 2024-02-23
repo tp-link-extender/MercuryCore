@@ -15,7 +15,6 @@ const schema = z.object({
 })
 
 export async function load({ locals }) {
-	// Make sure a user is an administrator/moderator before loading the page.
 	await authorise(locals, 4)
 
 	return {
@@ -93,7 +92,7 @@ export const actions = {
 			if (
 				!(await squery(
 					surql`
-						SELECT * FROM moderation
+						SELECT 1 FROM moderation
 						WHERE in = $moderator
 							AND out = $moderatee
 							AND active = true`,
@@ -109,7 +108,7 @@ export const actions = {
 			if (
 				await squery(
 					surql`
-						SELECT * FROM moderation
+						SELECT 1 FROM moderation
 						WHERE in = $moderator
 							AND out = $moderatee
 							AND active = true
@@ -147,7 +146,7 @@ export const actions = {
 		if (
 			await squery(
 				surql`
-					SELECT * FROM moderation
+					SELECT 1 FROM moderation
 					WHERE out = $moderatee
 						AND active = true`,
 				qParams

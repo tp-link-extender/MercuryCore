@@ -29,7 +29,7 @@
 				</span>
 			</a>
 		</h1>
-		<div class="card p-4 bg-darker overflow-x-hidden <lg:h-50vh">
+		<div class="card p-4 bg-darker overflow-x-hidden <lg:max-h-50vh">
 			<p>
 				Post your status - your friends and followers can view how
 				you're doing!

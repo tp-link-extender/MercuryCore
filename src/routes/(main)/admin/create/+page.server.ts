@@ -18,7 +18,6 @@ const schemaAuto = z.object({
 	price: z.number().int().min(0).max(999),
 })
 
-// Make sure a user is an administrator before loading the page.
 export async function load({ locals }) {
 	await authorise(locals, 5)
 

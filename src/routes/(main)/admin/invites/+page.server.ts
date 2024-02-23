@@ -16,7 +16,6 @@ const schema = z.object({
 })
 
 export async function load({ locals }) {
-	// Make sure a user is an administrator before loading the page.
 	await authorise(locals, 5)
 
 	const invites = await query<{
