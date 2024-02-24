@@ -36,16 +36,13 @@
 
 <nav class="py-0 justify-start z-11">
 	<div class="pt-1 px-2 sm:px-4 flex w-full pb-2px bg-[--navbar]">
-		<a class="brand light-text text-xl no-underline my-auto" href="/">
-			<img
-				src="/icon.svg"
-				alt="Mercury logo"
-				class="sm:hidden size-8 @light:invert" />
+		<a class="float-left brand light-text text-xl no-underline my-auto" href="/">
+			<img src="/icon.svg" alt="Mercury logo" class="sm:hidden size-8" />
 			<span class="sf <sm:hidden">Mercury</span>
 		</a>
 		{#if user}
 			<div
-				class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3 pt-0.19rem">
+				class="<lg:hidden pl-6 pr-2 gap-4 pl-3 pt-0.19rem">
 				{#each nav1 as [title, href]}
 					<a class="btn px-1 light-text border-0" {href}>
 						{title}
@@ -56,7 +53,7 @@
 				method="POST"
 				action="/search"
 				role="search"
-				class="mx-auto px-2 pb-1">
+				class="float-right mx-auto px-2 pb-1">
 				<div
 					class="input-group max-w-140 pt-3px xl:(absolute left-1/2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
 					<input
@@ -90,7 +87,7 @@
 					{/if}
 				</div>
 			</form>
-			<div class="flex items-center gap-4">
+			<div class="float-right flex items-center gap-4">
 				<a
 					href="/notifications"
 					role="button"

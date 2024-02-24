@@ -44,12 +44,14 @@
 			<Input
 				{formData}
 				column
+				autocomplete="username"
 				name="username"
 				label="Username"
 				placeholder="Username" />
 			<Input
 				{formData}
 				column
+				autocomplete="current-password"
 				name="password"
 				label="Password"
 				type="password"

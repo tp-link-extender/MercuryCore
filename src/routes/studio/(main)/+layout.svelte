@@ -8,7 +8,7 @@
 -->
 <StudioNavbar {data} />
 
-<main class="py-5vh <lg:pt-2.5vh flex-1">
+<main class="h-90% bg-darker">
 	<!-- <slot /> -->
 	Yeah
 </main>

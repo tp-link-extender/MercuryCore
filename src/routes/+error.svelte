@@ -11,7 +11,7 @@
 		409: "mDouble",
 		410: "mGone",
 		451: "mBurn",
-		454: "mTick",
+		454: "mTick"
 	}
 
 	export let data: import("./$types").LayoutData

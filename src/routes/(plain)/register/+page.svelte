@@ -44,12 +44,14 @@
 			<Input
 				{formData}
 				column
+				autocomplete="username"
 				name="username"
 				label="Username"
 				placeholder="3-21 characters" />
 			<Input
 				{formData}
 				column
+				autocomplete="email"
 				name="email"
 				label="Email Address"
 				type="email"
@@ -57,6 +59,7 @@
 			<Input
 				{formData}
 				column
+				autocomplete="new-password"
 				name="password"
 				label="Password"
 				type="password"
@@ -64,6 +67,7 @@
 			<Input
 				{formData}
 				column
+				autocomplete="new-password"
 				name="cpassword"
 				label="Confirm Password"
 				type="password"
@@ -80,8 +84,7 @@
 			By signing up, you agree to our
 			<a href="/terms" class="no-underline">Terms of Service</a>
 			and
-			<a href="/privacy" class="no-underline">Privacy policy</a>
-			.
+			<a href="/privacy" class="no-underline">Privacy policy.</a>
 		</p>
 	{:else}
 		<h2>Create the initial account</h2>

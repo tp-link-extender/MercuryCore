@@ -13,8 +13,6 @@
 	)
 </script>
 
-<Head title="Home" />
-
 <!-- Flex or Grid? what a dilemma -->
 <div class="ctnr lg:grid grid-cols-2 gap-4">
 	<div>

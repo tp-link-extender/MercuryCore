@@ -1,6 +1,4 @@
 <script lang="ts">
-	import Waves from "../Waves.svelte"
-
 	import { superForm } from "sveltekit-superforms/client"
 	import LoginShell from "../LoginShell.svelte"
 

@@ -95,10 +95,7 @@
 <nav class="py-0 justify-start z-11">
 	<div class="pt-1 px-2 sm:px-4 flex w-full pb-2px bg-[--navbar]">
 		<a class="brand light-text text-xl no-underline my-auto" href="/">
-			<img
-				src="/icon.svg"
-				alt="Mercury logo"
-				class="sm:hidden size-8 @light:invert" />
+			<img src="/icon.svg" alt="Mercury logo" class="sm:hidden size-8" />
 			<span class="sf <sm:hidden">Mercury</span>
 		</a>
 		{#if user}

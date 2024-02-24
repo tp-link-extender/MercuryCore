@@ -85,6 +85,9 @@ declare global {
 	declare const Select: typeof import("$lib/components/forms/Select.svelte").default
 	declare const Textarea: typeof import("$lib/components/forms/Textarea.svelte").default
 
+	declare const StudioNavbar: typeof import("$lib/components/studio/Navbar.svelte").default
+	declare const StudioFooter: typeof import("$lib/components/studio/Footer.svelte").default
+
 	declare const { onMount }: typeof import("svelte")
 	declare const { writable }: typeof import("svelte/store")
 	declare const { enhance, deserialize }: typeof import("$app/forms")

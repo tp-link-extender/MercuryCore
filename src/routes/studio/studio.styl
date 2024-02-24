@@ -29,10 +29,23 @@ input
 	background accent
 	color light-text
 	border 1px solid accent2
-	&:focus
-		box-shadow 0 0 0 3px #5c29c27f !important
-	&:active
-		box-shadow 0 0 0 2px #5c29c27f !important
+	&:active:not(:disabled)
+		box-shadow 0 0 0 2px #5c29c2 !important
+	&:focus:not(:active):not(:disabled)
+		box-shadow 0 0 0 2px background, 0 0 0 3px #5c29c2
+
+lightstyles = primary secondary red-secondary first success danger dark
+darkstyles = warning info light
+styles = primary secondary tertiary quatenary red-secondary red-tertiary first success danger warning info light dark
+
+for style in styles
+	.btn-{style}
+		&:active:not(:disabled)
+			box-shadow 0 0 0 2px #5c29c2 !important
+		&:focus:not(:active):not(:disabled)
+			box-shadow 0 0 0 2px background, 0 0 0 3px #5c29c2
+		&:disabled
+			opacity 0.5
 
 .is-invalid
 	background-position 99% 0.5rem

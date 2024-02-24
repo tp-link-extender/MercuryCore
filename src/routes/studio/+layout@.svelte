@@ -1,10 +1,23 @@
 <script lang="ts">
-	// export let data
+	import { dev } from "$app/environment"
 
-	import "/src/routes/studio/studio.styl"
+	import "/src/global.styl"
+	import "/src/fa/sass/fontawesome.styl"
+	import "uno.css"
+	import "/src/routes/(studio)/studio.styl"
 </script>
 
 <svelte:head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	{#if !dev}
+		<script
+			defer
+			data-domain="banland.xyz"
+			src="https://analytics.banland.xyz/js/script.js"></script>
+	{/if}
+
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	<script>
@@ -20,11 +33,4 @@
 	</script>
 </svelte:head>
 
-<main>
-	<slot />
-</main>
-
-<style lang="stylus">
-	main
-		z-index 1
-</style>
+<slot />
