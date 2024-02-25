@@ -21,6 +21,7 @@
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 </script>
 
+<!-- Jake Weary? Who's that? -->
 <svelte:head>
 	<script>
 		$(document).ready(function () {
@@ -36,6 +37,7 @@
 	</script>
 </svelte:head>
 
+<!-- Hellish to do without flex. -->
 <nav class="py-0 justify-start z-11">
 	<div
 		class="pt-1 px-2 sm:px-4 flex w-full pb-2px"

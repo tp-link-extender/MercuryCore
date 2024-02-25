@@ -23,7 +23,7 @@
 		{...$constraints[name]}
 		{name}
 		id={name}
-		{...{ type /* lmfao */ }}
+		{...{ type /* lmfao, todo fix this in svelte 5 */ }}
 		class:is-invalid={$errors[name]}
 		style={type === "number"
 			? "width: 9rem"

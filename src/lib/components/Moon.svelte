@@ -4,23 +4,26 @@
 	import { T } from "@threlte/core"
 	import { GLTF, OrbitControls } from "@threlte/extras"
 
-	const items = [
+	const items: {
+		name: string
+		camPos: [number, number, number]
+	}[] = [
 		{
 			name: "moon",
-			camPos: [100, 60, 100],
+			camPos: [100, 60, 100]
 		},
 		{
 			name: "mercury",
-			camPos: [100, 20, 100],
+			camPos: [100, 20, 100]
 		},
 		{
 			name: "rock",
-			camPos: [100, 100, 100],
+			camPos: [100, 100, 100]
 		},
 		{
 			name: "mercury2",
-			camPos: [100, 20, 100],
-		},
+			camPos: [100, 20, 100]
+		}
 		// {
 		// 	name: "planetMercury",
 		// 	camPos: [100, 40, 100],
@@ -40,7 +43,7 @@
 		enableZoom={false} />
 </T.PerspectiveCamera>
 
-<T.DirectionalLight color="white" position={[15, 45, 20]} intensity="3" />
-<T.HemisphereLight skyColor="white" groundColor="#7531ff" intensity="2" />
+<T.DirectionalLight color="white" position={[15, 45, 20]} intensity={3} />
+<T.HemisphereLight skyColor="white" groundColor="#7531ff" intensity={2} />
 
 <GLTF url="/landing/{item.name}.glb" />

@@ -15,6 +15,7 @@
 		<div class="md:text-right <md:pt-4">
 			<div class="grey-text pb-2">
 				<span class="grey-text pr-1">
+					<!-- Brag -->
 					{data.lines} lines of code
 				</span>
 				&ndash;
