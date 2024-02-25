@@ -6,13 +6,15 @@ This bot is used to send applications from users to administrators for invite ke
 
 This bot uses discord.py to function which requires Python 3.
 
+### Virtual Environment
+
 To configure the bot, create a virtual environment in your working directory by:
 
 ```
 py -m venv mercbot-env
 ```
 
-You must then activate the virtual environment.
+You must then activate the virtual environment.  
 On Windows, run
 
 ```
@@ -23,4 +25,12 @@ On Unix/Mac, run
 
 ```
 source tutorial-env/bin/activate
+```
+
+### Dependencies
+
+To install the dependencies this bot requires, run
+
+```
+pip install -r requirements.txt
 ```
