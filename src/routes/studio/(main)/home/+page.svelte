@@ -20,8 +20,8 @@
 			<a
 				href="/user/{user?.number}"
 				class="no-underline flex items-center">
-				<User {user} size="6rem" bg="accent" image class="<sm:hidden" />
-				<User {user} size="4rem" bg="accent" image class="sm:hidden" />
+				<StudioUser {user} size="6rem" bg="accent" image class="<sm:hidden" />
+				<StudioUser {user} size="4rem" bg="accent" image class="sm:hidden" />
 				<span class="sf pl-6">
 					{data.stuff.greet}
 				</span>
@@ -77,7 +77,7 @@
 								num,
 								total: data.friends.length
 							}}>
-							<User
+							<StudioUser
 								user={friend}
 								size="7rem"
 								bg="accent"

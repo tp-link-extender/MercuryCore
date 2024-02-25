@@ -2,6 +2,7 @@
 	// If an error happens in any +page or +layout file, this page will be rendered instead.
 
 	import { page } from "$app/stores"
+	import "/src/routes/studio/studio.styl" // brih
 
 	const status = $page.status
 	const errors: { [k: number]: string } = {
@@ -17,29 +18,56 @@
 	export let data: import("./$types").LayoutData
 </script>
 
-<Head title="Error {status}" />
+{#if !data.isStudio}
+	<Head title="Error {status}" />
 
-<Navbar {data} />
+	<Navbar {data} />
 
-<main class="flex-1 flex justify-center items-center py-4">
-	<div class="ctnr flex flex-col items-center bg-a rounded-4 px-20 py-8">
-		<div
-			class="errimg light w-full h-24 bg-contain bg-no-repeat bg-center"
-			style="background-image: url(/error/{errors[status] ||
-				'm!'}.svg)" />
+	<main class="flex-1 flex justify-center items-center py-4">
+		<div class="ctnr flex flex-col items-center bg-a rounded-4 px-20 py-8">
+			<div
+				class="errimg light w-full h-24 bg-contain bg-no-repeat bg-center"
+				style="background-image: url(/error/{errors[status] ||
+					'm!'}.svg)" />
 
-		<h1 class="pt-4">
-			<a
-				href="https://http.cat/images/{status}.jpg"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="light-text no-underline">
-				Error {status}
-			</a>
-		</h1>
-		{$page.error?.message}
-		<a href="/home" class="accent-text">Head home?</a>
-	</div>
-</main>
+			<h1 class="pt-4">
+				<a
+					href="https://http.cat/images/{status}.jpg"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="light-text no-underline">
+					Error {status}
+				</a>
+			</h1>
+			{$page.error?.message}
+			<a href="/home" class="accent-text">Head home?</a>
+		</div>
+	</main>
 
-<Footer {data} />
+	<Footer {data} />
+{:else}
+	<StudioNavbar {data} />
+
+	<main class="flex-1 flex justify-center items-center py-4">
+		<div class="ctnr flex flex-col items-center bg-a rounded-4 px-20 py-8">
+			<div
+				class="errimg light w-full h-24 bg-contain bg-no-repeat bg-center"
+				style="background-image: url(/error/{errors[status] ||
+					'm!'}.svg)" />
+
+			<h1 class="pt-4">
+				<a
+					href="https://http.cat/images/{status}.jpg"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="light-text no-underline">
+					Error {status}
+				</a>
+			</h1>
+			{$page.error?.message}
+			<a href="/home" class="accent-text">Head home?</a>
+		</div>
+	</main>
+
+	<StudioFooter {data} />
+{/if}

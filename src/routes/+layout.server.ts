@@ -37,11 +37,16 @@ export async function load({ request, locals }) {
 		FROM banner
 		WHERE deleted = false AND active = true`)
 
+	const isStudio = request.headers
+		.get("user-agent")
+		?.includes("RobloxStudio/2013")
+
 	return {
 		banners,
 		user,
 		notifications: await getNotifications(session, user),
 		url: request.url,
 		lines, // footer thing
+		...(isStudio && { isStudio }),
 	}
 }

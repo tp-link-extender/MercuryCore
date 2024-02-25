@@ -4,7 +4,7 @@
 	import "/src/global.styl"
 	import "/src/fa/sass/fontawesome.styl"
 	import "uno.css"
-	import "/src/routes/(studio)/studio.styl"
+	import "/src/routes/studio/studio.styl"
 </script>
 
 <svelte:head>

@@ -5,7 +5,7 @@
 <div class="card p-3">
 	<div class="statusheader flex pb-2 user justify-between">
 		<div class="flex items-center">
-			<User user={status.authorUser} size="2rem" full bg="darker" />
+			<StudioUser user={status.authorUser} size="2rem" full bg="darker" />
 		</div>
 		<span class="report self-center">
 			<small>

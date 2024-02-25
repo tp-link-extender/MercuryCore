@@ -87,6 +87,7 @@ declare global {
 
 	declare const StudioNavbar: typeof import("$lib/components/studio/Navbar.svelte").default
 	declare const StudioFooter: typeof import("$lib/components/studio/Footer.svelte").default
+	declare const StudioUser: typeof import("$lib/components/studio/User.svelte").default
 
 	declare const { onMount }: typeof import("svelte")
 	declare const { writable }: typeof import("svelte/store")

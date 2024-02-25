@@ -1,11 +1,4 @@
 <script lang="ts">
-	import { slide } from "svelte/transition"
-
-	let search = ""
-	let searchCompleted = true
-
-	const searchResults: HTMLElement[] = []
-
 	export let data: import("../../../routes/studio/$types").LayoutData
 
 	const { user } = data
@@ -23,71 +16,45 @@
 		["fa-user-pen", "Character", "/character"],
 		["fa-gears", "Settings", "/settings"]
 	]
-	const searchCategories = [
-		["Users", "users"],
-		["Places", "places"],
-		["Catalog", "assets"]
-		// ["Groups", "groups"],
-	]
 
 	if (user && user.permissionLevel >= 4)
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 </script>
 
+<svelte:head>
+	<script>
+		$(document).ready(function () {
+			$("#hover").hover(
+				function () {
+					$("#dropdown").show()
+				},
+				function () {
+					$("#dropdown").hide()
+				}
+			)
+		})
+	</script>
+</svelte:head>
+
 <nav class="py-0 justify-start z-11">
-	<div class="pt-1 px-2 sm:px-4 flex w-full pb-2px bg-[--navbar]">
-		<a class="float-left brand light-text text-xl no-underline my-auto" href="/">
+	<div
+		class="pt-1 px-2 sm:px-4 flex w-full pb-2px"
+		style="background: #201f1e">
+		<a
+			class="brand light-text float-left text-xl no-underline pt-2"
+			href="/">
 			<img src="/icon.svg" alt="Mercury logo" class="sm:hidden size-8" />
-			<span class="sf <sm:hidden">Mercury</span>
+			<span class="sf <sm:hidden pr-3">Mercury</span>
 		</a>
 		{#if user}
-			<div
-				class="<lg:hidden pl-6 pr-2 gap-4 pl-3 pt-0.19rem">
+			<span class="mr-auto <lg:hidden pl-6 pr-2 pl-3 pt-0.19rem">
 				{#each nav1 as [title, href]}
-					<a class="btn px-1 light-text border-0" {href}>
+					<a class="btn light-text border-0 pl-3" {href}>
 						{title}
 					</a>
 				{/each}
-			</div>
-			<form
-				method="POST"
-				action="/search"
-				role="search"
-				class="float-right mx-auto px-2 pb-1">
-				<div
-					class="input-group max-w-140 pt-3px xl:(absolute left-1/2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
-					<input
-						class="bg-background h-10 pl-4"
-						name="query"
-						type="search"
-						placeholder="Search (ctrl+k)"
-						aria-label="Search (ctrl+k)"
-						autocomplete="off" />
-					<button
-						class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
-						title="Search (ctrl+k)">
-						<fa fa-search />
-					</button>
-					{#if search.trim() && !searchCompleted}
-						<div
-							transition:fade={{ duration: 150 }}
-							id="results"
-							class="absolute flex flex-col bg-darker p-2 mt-12 rounded-3 z-5 min-w-25vw">
-							{#each searchCategories as [name, category], num}
-								<a
-									bind:this={searchResults[num]}
-									class="btn light-text py-2 text-start"
-									href="/search?q={search.trim()}&c={category}"
-									title="Search {name}">
-									Search <b>{search}</b>
-									in {name}
-								</a>
-							{/each}
-						</div>
-					{/if}
-				</div>
-			</form>
-			<div class="float-right flex items-center gap-4">
+			</span>
+			<span class="float-right ml-auto items-center gap-4">
 				<a
 					href="/notifications"
 					role="button"
@@ -99,26 +66,29 @@
 					href="/transactions"
 					role="button"
 					aria-label="Transactions"
-					class="flex items-center no-underline <sm:w-20 text-emerald-6 hover:text-emerald-8!">
+					class="flex items-center no-underline <sm:w-20"
+					style="color: rgb(5, 150, 105) !important">
 					<fa fa-gem class="pr-2" />
 					{user.currency}
 				</a>
-				<div class="dropdown dropdown-hover dropdown-end pl-2">
-					<User
+				<div
+					id="hover"
+					class="dropdown dropdown-hover dropdown-end pl-2">
+					<StudioUser
 						{user}
 						class="<sm:hidden"
 						thin
 						bg="background"
 						size="2.4rem"
 						full />
-					<User
+					<StudioUser
 						{user}
 						class="sm:hidden"
 						thin
 						bg="background"
 						size="2.4rem" />
-					<div class="dropdown-content pt-2">
-						<ul class="p-2 rounded-3">
+					<div id="dropdown" class="hidden dropdown-content pt-2">
+						<ul class="bg-darker p-2 rounded-3">
 							{#each usernav as [icon, title, href]}
 								<li class="rounded-2">
 									<a class="btn light-text pl-4 pr-0" {href}>
@@ -140,7 +110,7 @@
 						</ul>
 					</div>
 				</div>
-			</div>
+			</span>
 		{:else}
 			<div class="flex w-full gap-4 justify-end items-center py-1">
 				<a href="/login" class="btn btn-secondary py-2">Log in</a>
@@ -153,7 +123,6 @@
 {#if data.banners && user}
 	{#each data.banners as banner (banner.id)}
 		<div
-			transition:slide
 			class="py-1 text-center {banner.textLight
 				? 'text-white'
 				: 'text-black'}"
@@ -167,7 +136,7 @@
 {#if user}
 	<nav
 		id="bottomnav"
-		class="lg:hidden fixed bottom-0 bg-darker w-full h-14 sm:h-16 z-11">
+		class="bg-darker lg:hidden fixed bottom-0 w-full h-14 sm:h-16 z-11">
 		<div class="flex justify-evenly mx-auto w-full sm:w-1/2">
 			{#each [...nav1, ["Notifications", "/notifications", "fa-bell"]] as [title, href, icon]}
 				<a
@@ -186,12 +155,4 @@
 		border-top 1px solid var(--accent)
 
 		box-shadow 0 0 1rem 0.2rem black
-
-	#results
-		a:hover
-			background var(--accent)
-
-		:global(.pseudofocus)
-			color var(--grey-text) !important
-			background var(--accent)
 </style>
