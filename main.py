@@ -3,7 +3,7 @@ from discord import app_commands
 import os
 from rich import print
 
-
+token = os.getenv("token")
 
 client = discord.Client(intents=discord.Intents.all())
 
