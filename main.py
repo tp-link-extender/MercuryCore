@@ -1,10 +1,9 @@
 import discord
 from discord import app_commands
-import json
+import os
 from rich import print
 
-with open("bot.json", "r") as f:
-    config = json.load(f)
+
 
 client = discord.Client(intents=discord.Intents.all())
 
