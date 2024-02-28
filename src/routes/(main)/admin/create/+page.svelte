@@ -1,7 +1,6 @@
 <script lang="ts">
 	import AdminShell from "../AdminShell.svelte"
 	import { superForm } from "sveltekit-superforms/client"
-	import { page } from "$app/stores"
 
 	export let data
 	const formDataManual = superForm(data.formManual)
@@ -98,8 +97,11 @@
 						{#await data.getVersions}
 							Getting asset versions, please wait...
 						{:then versions}
-							{#if versions.length > 0}
-								Found {versions.length} versions of asset {data.assetId}
+							{#if versions.list.length > 0}
+								Found {versions.list.length} versions of asset {data.assetId}
+								{#if versions.cached}
+									(Using cached data)
+								{/if}
 							{:else}
 								No versions found for asset {data.assetId}
 							{/if}
@@ -129,10 +131,10 @@
 							name="assetId"
 							value={data.assetId} />
 						{#await data.getVersions then versions}
-							{#if versions.length > 0}
+							{#if versions.list.length > 0}
 								<Select
 									formData={formDataAutopilot}
-									options={versions}
+									options={versions.list}
 									name="version"
 									label="Asset version" />
 							{/if}
