@@ -155,23 +155,21 @@
 					{/if}
 				</div>
 			</form>
-			<div class="flex items-center gap-4">
+			<div class="flex items-center gap-6">
 				<a
 					href="/notifications"
-					role="button"
 					aria-label="Notifications"
-					class="<lg:hidden font-bold pr-4 light-text">
+					class="tooltip <lg:hidden font-bold light-text">
 					<fa fa-bell />
 				</a>
 				<a
 					href="/transactions"
-					role="button"
 					aria-label="Transactions"
-					class="flex items-center no-underline <sm:w-20 text-emerald-6 hover:text-emerald-8!">
+					class="tooltip flex items-center no-underline <sm:w-20 text-emerald-6 hover:text-emerald-8!">
 					<fa fa-gem class="pr-2" />
 					{user.currency}
 				</a>
-				<div class="dropdown dropdown-hover dropdown-end pl-2">
+				<div class="dropdown dropdown-hover dropdown-end">
 					<User
 						{user}
 						class="<sm:hidden"
