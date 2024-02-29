@@ -14,7 +14,9 @@ const selectRender = surql`
 
 /**
  * Requests a render from RCCService
- * todo write this
+ * @param renderType The type of render to request, either "Clothing" or "Avatar"
+ * @param relativeId If "Clothing", the id of the clothing asset to render. If "Avatar", the number of the user to render their avatar.
+ * @param wait Whether to wait for the render to be completed before resolving.
  */
 export default async function (
 	renderType: "Clothing" | "Avatar",
@@ -27,7 +29,7 @@ export default async function (
 			IF $render AND $render.created + 1s < time::now() {
 				UPDATE $render.id SET status = "Error"
 			};
-			RETURN ${selectRender}`,
+			${selectRender}`,
 		{
 			renderType,
 			relativeId,
@@ -48,7 +50,7 @@ export default async function (
 				completed: NONE,
 				relativeId: $relativeId
 			})[0];
-			RETURN meta::id($render.id)`,
+			meta::id($render.id)`,
 		{
 			renderType,
 			relativeId,

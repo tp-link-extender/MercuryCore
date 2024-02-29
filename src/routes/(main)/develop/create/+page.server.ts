@@ -68,7 +68,7 @@ export const actions = {
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
-		let saveImages: ((arg0: number) => void | Promise<void>)[] = []
+		let saveImages: ((id: number) => void | Promise<void>)[] = []
 
 		try {
 			switch (assetType) {
@@ -113,6 +113,7 @@ export const actions = {
 			return formError(form, ["asset"], ["Asset failed to upload"])
 		}
 
+		// lmao probably has huge concurrency issues that I am not going to test
 		const currentId = await squery<number>(surql`[stuff:increment.asset]`)
 		const imageAssetId = currentId + 1
 		const id = currentId + 2

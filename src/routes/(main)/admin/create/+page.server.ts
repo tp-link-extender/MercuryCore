@@ -75,6 +75,7 @@ async function getVersions(id: number) {
 
 		// Welp
 		// this is because newer asset versions (rbxl) are binary, and contain data that causes the query to hang
+		// After all, they give the data in the response anyway. Why shouldn't I cache it?
 		const b64 = Buffer.from(await data.text()).toString("base64")
 
 		versions.push({
@@ -88,6 +89,7 @@ async function getVersions(id: number) {
 		surql`
 			FOR $version IN $versions {
 				# can't do assetCache:$version.id or :($version.id) for some reason
+				# array record ids still hella useful though
 				UPDATE assetCache:[$version.id[0], $version.id[1]] CONTENT {
 					created: time::now(),
 					data: $version.data,
