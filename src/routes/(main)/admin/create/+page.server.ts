@@ -23,7 +23,9 @@ const schemaAuto = z.object({
 type Asset = {
 	id: [number, number]
 	data: string
-	assetModified: Date
+	// Watch out for inconsistencies in date formatting between API and DB
+	// This should be safe, for now...
+	assetModified: string
 }
 
 async function getVersions(id: number) {
@@ -32,14 +34,8 @@ async function getVersions(id: number) {
 	const transformVersions = (vs: Asset[], cached = false) => ({
 		cached,
 		list: vs.map(v => [
-			v.id.toString(),
-			`${id} - ${v.assetModified.toLocaleString("en-GB", {
-				year: "numeric",
-				month: "short",
-				day: "numeric",
-				hour: "numeric",
-				minute: "numeric",
-			})}`,
+			v.id[1].toString(),
+			`${v.id[1]} - ${v.assetModified.substring(0, 10)}`, // docsocial type beat
 		]),
 	})
 
@@ -50,7 +46,7 @@ async function getVersions(id: number) {
 			SELECT
 				meta::id(id) AS id,
 				assetModified
-			FROM assetCache:[$id, 0]..`,
+			FROM assetCache:[$id, 0]..[$id, 99]`, // idk if it's worth getting more versions
 		{ id }
 	)
 
@@ -62,7 +58,7 @@ async function getVersions(id: number) {
 	console.log("No cached asset versions of", id, "fetching...")
 
 	// Get asset versions
-	// ported directly from polygon
+	// ported directly from polygon (real polygon, not polygon-foss lmao)
 	for (let v = 1; ; v++) {
 		console.log("Fetching asset version", v, "of", id)
 		const data = await fetch(
@@ -78,20 +74,20 @@ async function getVersions(id: number) {
 		if (!date) break
 
 		// Welp
-		// this is because newer asset versions (rbxl) are binary, and cotain data that causes the query to hang
+		// this is because newer asset versions (rbxl) are binary, and contain data that causes the query to hang
 		const b64 = Buffer.from(await data.text()).toString("base64")
 
 		versions.push({
 			id: [id, v],
 			data: b64,
-			assetModified: new Date(date),
+			assetModified: new Date(date).toISOString(),
 		})
 	}
 
 	await query(
 		surql`
 			FOR $version IN $versions {
-				# can't do assetCache:$version.id
+				# can't do assetCache:$version.id or :($version.id) for some reason
 				UPDATE assetCache:[$version.id[0], $version.id[1]] CONTENT {
 					created: time::now(),
 					data: $version.data,
