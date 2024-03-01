@@ -11,29 +11,13 @@ token = os.getenv("token")
 
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 
-class btns(discord.ui.View):
-    def __init__(self):
-        super().__init__(timeout = None)
-        self.cooldown = commands.CooldownMapping.from_cooldown(1, 300, commands.BucketType.member)
-
-    @discord.ui.button(label="Get Started", style=discord.ButtonStyle.success, custom_id="getStarted")
-    async def getStarted(self, interaction: discord.Interaction, Button: discord.ui.Button):
-        channel = bot.get_channel(1211323371367698492)
-        interaction.message.author = interaction.user
-        bucket = self.cooldown.get_bucket(interaction.message)
-        retry = bucket.update_rate_limit()
-        if retry:
-            return await interaction.response.send_message(f"Please wait {round(retry, 1//60)} seconds before trying again.", ephemeral=True)
-        await interaction.response.send_message("Testing!", ephemeral=True)
-        await channel.send(f"Test message - {interaction.user} has registered")
-
 async def confirmed(interaction):
     print(f"[green]Sending user {interaction.user} application instructions[green]")
     desc = ":white_check_mark: Registration instructions have been sent to your DMS!"
     embedV = discord.Embed(color=0x472a96, description=desc)
     embedV.set_author(name="Mercury 2 - Register", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
     embedV.add_field(name="I don't see any message!", value="Make sure that you have enabled DMs from this server. If you have and you still have not recieved a message, please contact an adminstrator.")
-    await interaction.response.send_message(embed=embedV)
+    await interaction.response.send_message(embed=embedV, ephemeral = True)
 
 async def application(interaction):
     user = await interaction.user.create_dm()
@@ -45,9 +29,67 @@ async def application(interaction):
     embedV.add_field(name="How can I check the progress of my application?", value="You can check the progress of your application by running the */info* command.", inline=False)
     embedV.add_field(name="I no longer wish to apply for a key", value="You can unsubmit your application by running the */unsubmit* command.", inline=False)
     if isinstance(interaction.channel, discord.DMChannel):
-        await interaction.response.send_message(embed=embedV, view=btns())
+        await interaction.response.send_message(embed=embedV, view=applyBtns())
     else:
-        await user.send(embed=embedV, view=btns())
+        await user.send(embed=embedV, view=applyBtns())
+
+async def sendApplicationToAdmin(interaction):
+    channel = bot.get_channel(1211323371367698492)
+    embedV = discord.Embed(color=0x472a96)
+    embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
+    embedV.title = f"New Applicant #{300} - {interaction.user}"
+    embedV.add_field(name="1. Why would you like to join Mercury 2", value="{user response}", inline=False)
+    embedV.add_field(name="2. Where did you hear about Mercury 2?", value="{user response}", inline=False)
+    embedV.add_field(name="3. Do you have any friends that are already in/applying for Mercury 2?", value="{user response}", inline=False)
+    embedV.add_field(name="I agree to Mercury 2's terms of service and understand that if I break these terms my access may be removed from Mercury 2.", value="{user response}", inline=False)
+    embedV.add_field(name="Status", value="No decision yet")
+    await channel.send(embed=embedV, view=adminBtns(appid = 300))
+
+class applyBtns(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout = None)
+        self.cooldown = commands.CooldownMapping.from_cooldown(1, 300, commands.BucketType.member)
+
+    @discord.ui.button(label="Get Started", style=discord.ButtonStyle.success, custom_id="getStarted")
+    async def getStarted(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        interaction.message.author = interaction.user
+        bucket = self.cooldown.get_bucket(interaction.message)
+        retry = bucket.update_rate_limit()
+        if retry:
+            return await interaction.response.send_message(f"Please wait {round(retry, 1//60)} seconds before trying again.")
+        await interaction.response.send_message("Testing!")
+        await sendApplicationToAdmin(interaction)
+        
+class adminBtns(discord.ui.View):
+    def __init__(self, appid):
+        self.appid = appid
+        super().__init__(timeout = None)
+
+    @discord.ui.button(label="Accept", style=discord.ButtonStyle.success, custom_id="acceptApp")
+    async def acceptApp(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        for i in self.children:
+            i.disabled = True
+
+        embedV = interaction.message.embeds[0].to_dict()
+        embedV["fields"][-1]["value"] = f"Accepted by {interaction.user}"
+        embedV["color"] = 0x4acc39
+        embedV = discord.Embed.from_dict(embedV)
+        await interaction.response.edit_message(embed=embedV, view=self)
+        await interaction.followup.send(f"Application #{self.appid} accepted!", ephemeral=True)
+        print(f"[green]Application #{self.appid} accepted by {interaction.user}[/green]")
+
+    @discord.ui.button(label="Deny", style=discord.ButtonStyle.danger, custom_id="denyApp")
+    async def denyApp(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        for i in self.children:
+            i.disabled = True
+
+        embedV = interaction.message.embeds[0].to_dict()
+        embedV["fields"][-1]["value"] = f"Denied by {interaction.user}"
+        embedV["color"] = 0xd9363e 
+        embedV = discord.Embed.from_dict(embedV)
+        await interaction.response.edit_message(embed=embedV, view=self)
+        await interaction.followup.send(f"Application #{self.appid} denied!", ephemeral=True)
+        print(f"[green]Application #{self.appid} denied by {interaction.user}[/green]")
 
 @bot.event
 async def on_ready():
