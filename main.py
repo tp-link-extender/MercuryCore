@@ -18,12 +18,14 @@ class btns(discord.ui.View):
 
     @discord.ui.button(label="Get Started", style=discord.ButtonStyle.success, custom_id="getStarted")
     async def getStarted(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        channel = bot.get_channel(1211323371367698492)
         interaction.message.author = interaction.user
         bucket = self.cooldown.get_bucket(interaction.message)
         retry = bucket.update_rate_limit()
         if retry:
             return await interaction.response.send_message(f"Please wait {round(retry, 1//60)} seconds before trying again.", ephemeral=True)
         await interaction.response.send_message("Testing!", ephemeral=True)
+        await channel.send(f"Test message - {interaction.user} has registered")
 
 async def confirmed(interaction):
     print(f"[green]Sending user {interaction.user} application instructions[green]")
