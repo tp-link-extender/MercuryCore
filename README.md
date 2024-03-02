@@ -2,7 +2,7 @@
 
 This bot is used to send applications from users to administrators for invite keys
 
-# Setup
+## Setup
 
 This bot uses discord.py to function which requires Python 3.
 
