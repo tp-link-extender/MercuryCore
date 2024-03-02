@@ -19,7 +19,6 @@ import (
 	"time"
 
 	c "github.com/TwiN/go-color"
-	"github.com/gin-gonic/gin"
 	env "github.com/joho/godotenv"
 )
 
@@ -62,24 +61,28 @@ func main() {
 	go StartRCC()
 
 	Log(c.InPurple("Starting server..."))
-	gin.SetMode(gin.ReleaseMode)
-	r := gin.New()
-	r.Use(gin.Recovery())
-	r.SetTrustedProxies([]string{"127.0.0.1"})
+	
+	router := http.NewServeMux()
 
-	r.POST("/:id", func(cx *gin.Context) {
-		if ip := cx.ClientIP(); ip != os.Getenv("IP") && ip != "::1" {
+	router.HandleFunc("POST /{id}", func(w http.ResponseWriter, r *http.Request) {
+	
+		// remove port from IP (can't just split by ":" because of IPv6)
+		ip := r.RemoteAddr[:strings.LastIndex(r.RemoteAddr, ":")]
+		if ip != os.Getenv("IP") && ip != "[::1]" {
 			Log(c.InRed("IP " + ip + " is not allowed!"))
-			cx.AbortWithStatus(http.StatusForbidden)
+			w.WriteHeader(http.StatusForbidden)
 			return
 		}
 
-		renderScript, err := io.ReadAll(cx.Request.Body)
+		loadScript, err := io.ReadAll(r.Body)
 		Assert(err, "Failed to read render script")
 
-		id := cx.Param("id")
+		script := string(loadScript)
+		// script = strings.ReplaceAll(script, "_BASE_URL", `"http://localhost:64990"`)
+
+		id := r.PathValue("id")
 		currentTemplate := strings.ReplaceAll(template, "_TASK_ID", id)
-		currentTemplate = strings.ReplaceAll(currentTemplate, "_RENDER_SCRIPT", string(renderScript))
+		currentTemplate = strings.ReplaceAll(currentTemplate, "_RENDER_SCRIPT", script)
 
 		req, err := http.NewRequest("POST", "http://localhost:64989", strings.NewReader(currentTemplate))
 		Assert(err, "Failed to create request")
@@ -90,10 +93,10 @@ func main() {
 		Log(c.InBlue("Rendering " + id))
 		client.Do(req)
 
-		cx.String(200, "OK")
+		w.WriteHeader(http.StatusOK)
 	})
 
 	Log(c.InGreen("~ RCCService is up on port 64990 ~"))
 	Log(c.InGreen("Send a POST request to /{your task id} with the render script as the body to start a render"))
-	r.Run("0.0.0.0:64990")
+	http.ListenAndServe(":64990", router)
 }
