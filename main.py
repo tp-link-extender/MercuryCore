@@ -1,5 +1,5 @@
 import discord
-from discord import app_commands
+from discord import app_commands, ui
 from discord.ext import commands
 import os
 from rich import print
@@ -28,6 +28,7 @@ async def application(interaction):
     embedV.add_field(name="How long does it take for my application to be reviewed?", value="We aim for your application to be reviewed within the same day or tommorrow.", inline=False)
     embedV.add_field(name="How can I check the progress of my application?", value="You can check the progress of your application by running the */info* command.", inline=False)
     embedV.add_field(name="I no longer wish to apply for a key", value="You can unsubmit your application by running the */unsubmit* command.", inline=False)
+    embedV.set_footer(text="Mercury Discord - https://discord.gg/5dQWXJn6pW", icon_url="https://banland.xyz/icon192.png")
     if isinstance(interaction.channel, discord.DMChannel):
         await interaction.response.send_message(embed=embedV, view=applyBtns())
     else:
@@ -40,10 +41,14 @@ async def sendApplicationToAdmin(interaction):
     embedV.title = f"New Applicant #{300} - {interaction.user}"
     embedV.add_field(name="1. Why would you like to join Mercury 2", value="{user response}", inline=False)
     embedV.add_field(name="2. Where did you hear about Mercury 2?", value="{user response}", inline=False)
-    embedV.add_field(name="3. Do you have any friends that are already in/applying for Mercury 2?", value="{user response}", inline=False)
-    embedV.add_field(name="I agree to Mercury 2's terms of service and understand that if I break these terms my access may be removed from Mercury 2.", value="{user response}", inline=False)
+    embedV.add_field(name="3. Any questions/suggestions?", value="{user response}", inline=False)
     embedV.add_field(name="Status", value="No decision yet")
     await channel.send(embed=embedV, view=adminBtns(appid = 300))
+
+class keyApplication(ui.Modal, title="Application"):
+    q1 = ui.TextInput(label="Why would you like to join Mercury 2?", style=discord.TextStyle.paragraph, required=True, min_length="10")
+    q2 = ui.TextInput(label="Where did you hear about Mercury 2?", style=discord.TextStyle.short, required=True, min_length="5")
+    q3 = ui.TextInput(label="Any questions/suggestions?", style=discord.TextStyle.short, required=False)
 
 class applyBtns(discord.ui.View):
     def __init__(self):
@@ -57,7 +62,7 @@ class applyBtns(discord.ui.View):
         retry = bucket.update_rate_limit()
         if retry:
             return await interaction.response.send_message(f"Please wait {round(retry, 1//60)} seconds before trying again.")
-        await interaction.response.send_message("Testing!")
+        await interaction.response.send_modal(keyApplication())
         await sendApplicationToAdmin(interaction)
         
 class adminBtns(discord.ui.View):
@@ -101,7 +106,7 @@ async def on_ready():
         print(e)
 
 @bot.tree.command(name="register")
-async def register(interaction: discord.Interaction):
+async def register(interaction: discord.Interaction):    
     if isinstance(interaction.channel, discord.DMChannel):
         await application(interaction)
     else:
