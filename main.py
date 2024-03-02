@@ -61,7 +61,7 @@ class applyBtns(discord.ui.View):
         bucket = self.cooldown.get_bucket(interaction.message)
         retry = bucket.update_rate_limit()
         if retry:
-            return await interaction.response.send_message(f"Please wait {round(retry, 1//60)} seconds before trying again.")
+            return await interaction.response.send_message(f"Please wait {round(retry, 1//60)} minute(s) before trying again.")
         await interaction.response.send_modal(keyApplication())
         await sendApplicationToAdmin(interaction)
         
