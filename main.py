@@ -46,6 +46,29 @@ async def sendApplicationToAdmin(interaction):
     embedV.add_field(name="Status", value="No decision yet")
     await channel.send(embed=embedV, view=adminBtns())
 
+async def reviewedApp(interaction, user, decision):
+    if decision == "denied":
+        desc = f"Hello, @{interaction.user}! Unfortunately, your application was **not successful**. The reason for this has been provided below."
+        embedV = discord.Embed(color=0xd9363e, description=desc)
+        embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
+        embedV.title = "Application unsuccessful"
+        embedV.add_field(name="Reason for rejection", value="{reason}", inline=False)
+        embedV.add_field(name="What can I do now?", value="You may re-apply for an invite on **{date}**. You may re-apply as many times as you wish until your application is successful.", inline=False)
+        embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
+        print(f"[green]Application denied by {interaction.user}[/green]")
+    else:
+        desc = f"Hello, @{interaction.user}! Congratulations! Your application was **successful**! Your invite key has been provided below."
+        embedV = discord.Embed(color=0x4acc39, description=desc)
+        embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
+        embedV.title = "Application successful"
+        embedV.add_field(name="Invite key", value="{key}", inline=False)
+        embedV.add_field(name="What can I do now?", value="You can now create an account on https://banland.xyz. Additionally, you have been given the prestigious role of QA tester and now you can contribute to the future of Mercury 2!", inline=False)
+        embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
+        print(f"[green]Application approved by {interaction.user}[/green]")
+    
+    await user.send(embed=embedV)
+
+
 class keyApplication(ui.Modal, title="Application"):
     q1 = ui.TextInput(label="Why would you like to join Mercury 2?", style=discord.TextStyle.paragraph, required=True, min_length="10")
     q2 = ui.TextInput(label="Where did you hear about Mercury 2?", style=discord.TextStyle.short, required=True, min_length="5")
@@ -54,7 +77,7 @@ class keyApplication(ui.Modal, title="Application"):
 class applyBtns(discord.ui.View):
     def __init__(self):
         super().__init__(timeout = None)
-        self.cooldown = commands.CooldownMapping.from_cooldown(1, 300, commands.BucketType.member)
+        self.cooldown = commands.CooldownMapping.from_cooldown(1, 5, commands.BucketType.member)
 
     @discord.ui.button(label="Get Started", style=discord.ButtonStyle.success, custom_id="getStarted")
     async def getStarted(self, interaction: discord.Interaction, Button: discord.ui.Button):
@@ -62,7 +85,7 @@ class applyBtns(discord.ui.View):
         bucket = self.cooldown.get_bucket(interaction.message)
         retry = bucket.update_rate_limit()
         if retry:
-            return await interaction.response.send_message(f"Please wait {round(retry, 1//60)} minute(s) before trying again.")
+            return await interaction.response.send_message(f"Please wait {round(retry, 1)} second(s) before trying again.")
         await interaction.response.send_modal(keyApplication())
         await sendApplicationToAdmin(interaction)
         
@@ -76,12 +99,13 @@ class adminBtns(discord.ui.View):
             i.disabled = True
 
         embedV = interaction.message.embeds[0].to_dict()
+        user = bot.get_user(int(embedV["fields"][0]["value"]))
         embedV["fields"][-1]["value"] = f"Accepted by {interaction.user}"
         embedV["color"] = 0x4acc39
         embedV = discord.Embed.from_dict(embedV)
         await interaction.response.edit_message(embed=embedV, view=self)
         await interaction.followup.send(f"Application accepted!", ephemeral=True)
-        print(f"[green]Application accepted by {interaction.user}[/green]")
+        await reviewedApp(interaction, user, "approved")
 
     @discord.ui.button(label="Deny", style=discord.ButtonStyle.danger, custom_id="denyApp")
     async def denyApp(self, interaction: discord.Interaction, Button: discord.ui.Button):
@@ -95,8 +119,7 @@ class adminBtns(discord.ui.View):
         embedV = discord.Embed.from_dict(embedV)
         await interaction.response.edit_message(embed=embedV, view=self)
         await interaction.followup.send(f"Application denied!", ephemeral=True)
-        await user.send("Application denied buddy")
-        print(f"[green]Application denied by {interaction.user}[/green]")
+        await reviewedApp(interaction, user, "denied")
 
 @bot.event
 async def on_ready():
