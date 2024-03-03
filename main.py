@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+serverid = os.getenv("SERVERID")
+adminid = os.getenv("ADMINID")
+
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 
 async def confirmed(interaction):
@@ -43,7 +46,7 @@ async def sendApplicationToAdmin(interaction, q1, q2, q3):
     embedV.add_field(name="2. Where did you hear about Mercury 2?", value=f"`{str(q2)}`", inline=False)
     embedV.add_field(name="3. Any questions/suggestions?", value=f"`{str(q3)}`", inline=False)
     embedV.add_field(name="Status", value="No decision yet")
-    channel = bot.get_channel(1211323371367698492)
+    channel = bot.get_channel(adminid)
     message = await channel.send(embed=embedV, allowed_mentions=None)
     await message.edit(view=adminBtns(message_id = message.id))
 
@@ -59,12 +62,19 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
         print(f"[green]Application #{userID} denied by {interaction.user}[/green]")
     elif decision == "approved":
+        member = bot.get_guild(serverid).get_member(userID)
+        if not member:
+            return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot. If this is a mistake, please contact @task.mgr with details.") 
+        
+        role = discord.utils.get(bot.get_guild(serverid).roles, name="cool role")
+        await member.add_roles(role)
+
         desc = f"Hello, @{interaction.user}! Congratulations! Your application was **successful**! Your invite key has been provided below."
         embedV = discord.Embed(color=0x4acc39, description=desc)
         embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
         embedV.title = ":white_check_mark: Application successful"
         embedV.add_field(name="Invite key", value="{key}", inline=False)
-        embedV.add_field(name="What can I do now?", value="You can now create an account on https://banland.xyz. Additionally, you have been given the prestigious role of QA tester and now you can contribute to the future of Mercury 2!", inline=False)
+        embedV.add_field(name="What can I do now?", value="You can now create an account on https://banland.xyz. Additionally, you have full access to the Mercury Discord server and have been given the prestigious role of QA tester and now you can contribute to the future of Mercury 2!", inline=False)
         embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
         print(f"[green]Application #{userID} approved by {interaction.user}[/green]")
     else:
@@ -100,6 +110,10 @@ class keyApplication(ui.Modal):
     q3 = ui.TextInput(label="Any questions/suggestions?", style=discord.TextStyle.short, required=False)
 
     async def on_submit(self, interaction: discord.Interaction):
+        member = bot.get_guild(serverid).get_member(interaction.user.id) 
+        if not member:
+            return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot.") 
+        
         print(f"[green]Application #{self.userId} is sending to server for creation")
         url = f"https://banland.xyz/api/discord/createApplication/{self.userId}?apiKey={os.getenv('APIKEY')}"
         await sendPost(url, {})
@@ -160,15 +174,9 @@ class bannedReason(ui.Modal):
 class applyBtns(discord.ui.View):
     def __init__(self):
         super().__init__(timeout = None)
-        self.cooldown = commands.CooldownMapping.from_cooldown(1, 180, commands.BucketType.member)
 
     @discord.ui.button(label="Get Started", style=discord.ButtonStyle.success, custom_id="getStarted")
     async def getStarted(self, interaction: discord.Interaction, Button: discord.ui.Button):
-        interaction.message.author = interaction.user
-        bucket = self.cooldown.get_bucket(interaction.message)
-        retry = bucket.update_rate_limit()
-        if retry:
-            return await interaction.response.send_message(f"Please wait {round(retry, 1//60)} minute(s) before trying again.")
         await interaction.response.send_modal(keyApplication(userId = interaction.user.id))
         
 class adminBtns(discord.ui.View):
@@ -222,7 +230,11 @@ async def on_ready():
         print(e)
 
 @bot.tree.command(name="register")
-async def register(interaction: discord.Interaction):    
+async def register(interaction: discord.Interaction):
+    member = bot.get_guild(serverid).get_member(interaction.user.id) 
+    if not member:
+        return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot.")  
+
     if isinstance(interaction.channel, discord.DMChannel):
         await application(interaction)
     else:
