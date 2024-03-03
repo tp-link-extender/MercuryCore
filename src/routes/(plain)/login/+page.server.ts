@@ -50,18 +50,6 @@ export const actions = {
 			{ username }
 		)
 
-		// todo remove this on next database wipe
-		if (user.hashedPassword.startsWith("s2:")) {
-			user.hashedPassword = user.hashedPassword.slice(3)
-			await query(
-				surql`UPDATE $user SET hashedPassword = $hashedPassword`,
-				{
-					user: `user:${user.id}`,
-					hashedPassword: user.hashedPassword,
-				}
-			)
-		}
-
 		// remove this statement and we'll end up like Mercury 1 💀
 		if (
 			!user ||
