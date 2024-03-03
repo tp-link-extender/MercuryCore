@@ -7,7 +7,10 @@ export async function POST({ url, params }) {
 	// Create a new application for the user
 	const id = parseInt(params.id)
 	const ban = await squery<{ reason: string }>(
-		surql`SELECT reason FROM type::thing("applicationBan", $id)`,
+		surql`
+			(SELECT * FROM application
+			WHERE discordId = $id AND status = "Banned"
+			ORDER BY created DESC LIMIT 1)[0]`,
 		{ id }
 	)
 
@@ -21,6 +24,16 @@ export async function POST({ url, params }) {
 			{ status: 400 }
 		)
 	if (!(await canApply(id))) error(400, "This user can't apply again")
+	// if user already applied and has been accepted, error
+	if (
+		await squery(
+			surql`
+				SELECT 1 FROM application
+				WHERE discordId = $id AND status = "Accepted"`,
+			{ id }
+		)
+	)
+		error(400, "This user has already been accepted")
 
 	await query(
 		surql`
@@ -32,5 +45,5 @@ export async function POST({ url, params }) {
 		{ id }
 	)
 
-	return new Response("OK")
+	return new Response()
 }

@@ -12,10 +12,9 @@ export const canApply = async (discordId: number) =>
 		surql`
 			SELECT 1 FROM application
 			WHERE discordId = $discordId
-				# ensure id isn't banned
-				AND !(SELECT 1 FROM type::thing("applicationBan", $discordId))
 				AND deleted != true
 				AND (status = "Pending"
+					OR status = "Banned"
 					OR status = "Denied" AND reviewed > time::now() - 1w)`,
 		{ discordId }
 	))

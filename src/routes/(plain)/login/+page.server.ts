@@ -44,8 +44,7 @@ export const actions = {
 			hashedPassword: string
 		}>(
 			surql`
-				SELECT meta::id(id) AS id, username, hashedPassword
-				FROM user
+				SELECT meta::id(id) AS id, username, hashedPassword FROM user
 				WHERE string::lowercase(username) = string::lowercase($username)`,
 			{ username }
 		)

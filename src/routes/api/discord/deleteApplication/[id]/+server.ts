@@ -8,10 +8,12 @@ export async function POST({ url, params }) {
 
 	await query(
 		surql`
-			UPDATE application SET deleted = true
-			WHERE discordId = $id`,
+			UPDATE (
+				SELECT * FROM application WHERE discordId = $id
+				ORDER BY created DESC LIMIT 1
+			)[0] SET deleted = true`,
 		{ id }
 	)
 
-	return new Response("OK")
+	return new Response()
 }

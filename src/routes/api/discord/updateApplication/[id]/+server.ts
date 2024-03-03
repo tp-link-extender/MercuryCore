@@ -1,4 +1,4 @@
-import { query, squery, surql } from "$lib/server/surreal"
+import { query, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { verify } from "../../discord"
 
@@ -18,46 +18,26 @@ export async function POST({ request, url, params }) {
 
 	const { status, reason } = data
 	if (!status) error(400, "Missing status")
-	if (!["Accepted", "Denied", "Banned"].includes(status)) error(400, "Invalid status")
+	if (!["Accepted", "Denied", "Banned"].includes(status))
+		error(400, "Invalid status")
 
 	if (status === "Accepted" && reason)
 		error(400, "Reason for acceptance is not needed")
 	if (["Denied", "Banned"].includes(status) && !reason)
 		error(400, "Missing reason")
 
-	if (
-		status !== "Banned" &&
-		!(await squery(
-			surql`
-				SELECT 1 FROM application WHERE discordId = $id
-					AND deleted != true`,
-			{ id }
-		))
-	)
-		error(400, "User has no application")
-
-	if (status === "Banned")
-		await query(
-			surql`
-				CREATE $ban CONTENT {
-					created: time::now(),
-					reason: $reason
-				}`,
-			{
-				ban: `applicationBan:${id}`,
-				reason,
-			}
-		)
-	else
-		await query(
-			surql`
-			UPDATE application MERGE {
+	await query(
+		surql`
+			UPDATE (
+				SELECT * FROM application WHERE discordId = $id
+				ORDER BY created DESC LIMIT 1
+			)[0] MERGE {
 				status: $status,
 				reason: $reason,
 				reviewed: time::now()
-			} WHERE discordId = $id`,
-			{ id, status, reason }
-		)
+			}`,
+		{ id, status, reason }
+	)
 
 	return new Response()
 }
