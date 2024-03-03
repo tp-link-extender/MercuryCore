@@ -1,5 +1,6 @@
 import { squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import "dotenv/config"
 
 export function verify(url: URL) {
 	const apiKey = url.searchParams.get("apiKey")
