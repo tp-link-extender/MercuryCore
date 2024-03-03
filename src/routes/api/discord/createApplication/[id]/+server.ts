@@ -8,9 +8,9 @@ export async function POST({ url, params }) {
 	const id = parseInt(params.id)
 	const ban = await squery<{ reason: string }>(
 		surql`
-			(SELECT * FROM application
+			SELECT reason FROM application
 			WHERE discordId = $id AND status = "Banned"
-			ORDER BY created DESC LIMIT 1)[0]`,
+			ORDER BY created DESC LIMIT 1`,
 		{ id }
 	)
 
