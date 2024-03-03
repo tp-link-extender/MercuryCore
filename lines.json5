@@ -7,6 +7,7 @@
 	},
 	rules: [
 		"convert_index_to_field",
+		"remove_comments",
 		"remove_spaces",
 		"remove_compound_assignment",
 		"remove_interpolated_string",

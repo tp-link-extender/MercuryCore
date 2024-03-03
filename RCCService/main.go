@@ -10,23 +10,31 @@
 package main
 
 import (
+	"compress/gzip"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 	"time"
 
 	c "github.com/TwiN/go-color"
+	"github.com/disintegration/imaging"
 	env "github.com/joho/godotenv"
 )
 
+var wg sync.WaitGroup
 var client http.Client
 
 func Log(txt string) {
 	// I HATE GO DATE FORMATTING!!! I HATE GO DATE FORMATTING!!!
 	fmt.Println(time.Now().Format("02/01/2006, 15:04:05 "), txt)
+}
+func Logr(txt string) {
+	fmt.Print("\r", time.Now().Format("02/01/2006, 15:04:05  "), txt)
 }
 
 func Assert(err error, txt string) {
@@ -47,6 +55,25 @@ func StartRCC() {
 	}
 }
 
+func Compress(b64 string, resolution int, name string, compressed *string) {
+	data, err := base64.StdEncoding.DecodeString(b64)
+	Assert(err, "Failed to decode base64 of image")
+
+	srcimg, err := imaging.Decode(strings.NewReader(string(data)))
+	Assert(err, "Failed to decode image from data")
+
+	// Lanczos my beloved 💖 (change it to something faster idc)
+	img := imaging.Resize(srcimg, resolution, resolution, imaging.Lanczos)
+	Assert(err, "Failed to create image from data")
+
+	writer := new(strings.Builder)
+	imaging.Encode(writer, img, imaging.PNG)
+
+	*compressed = base64.StdEncoding.EncodeToString([]byte(writer.String()))
+
+	wg.Done()
+}
+
 func main() {
 	Log(c.InYellow("Loading environment variables..."))
 	err := env.Load(".env")
@@ -60,16 +87,24 @@ func main() {
 	Log(c.InPurple("Starting RCCService..."))
 	go StartRCC()
 
+	for i := 1; ; i++ {
+		time.Sleep(1 * time.Second)
+		Logr(c.InPurple("Waiting for RCCService to start... (" + fmt.Sprint(i) + "s)"))
+		_, err := http.Get("http://localhost:64989")
+		if err == nil {
+			break
+		}
+	}
+
+	fmt.Println()
 	Log(c.InPurple("Starting server..."))
-	
+
 	router := http.NewServeMux()
 
 	router.HandleFunc("POST /{id}", func(w http.ResponseWriter, r *http.Request) {
-	
 		// remove port from IP (can't just split by ":" because of IPv6)
-		ip := r.RemoteAddr[:strings.LastIndex(r.RemoteAddr, ":")]
-		if ip != os.Getenv("IP") && ip != "[::1]" {
-			Log(c.InRed("IP " + ip + " is not allowed!"))
+		if ip := r.RemoteAddr[:strings.LastIndex(r.RemoteAddr, ":")]; ip != os.Getenv("IP") && ip != "[::1]" {
+			Log(c.InRed("IP " + ip + " is not allowed! (render)"))
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
@@ -78,7 +113,7 @@ func main() {
 		Assert(err, "Failed to read render script")
 
 		script := string(loadScript)
-		// script = strings.ReplaceAll(script, "_BASE_URL", `"http://localhost:64990"`)
+		script = strings.ReplaceAll(script, "_PING_URL", `"http://localhost:64990/ping"`)
 
 		id := r.PathValue("id")
 		currentTemplate := strings.ReplaceAll(template, "_TASK_ID", id)
@@ -90,8 +125,69 @@ func main() {
 		req.Header.Set("Content-Type", "text/xml; charset=utf-8")
 		req.Header.Set("SOAPAction", "http://roblox.com/OpenJobEx")
 
-		Log(c.InBlue("Rendering " + id))
+		Log(c.InBlue("Sending request to render " + id))
 		client.Do(req)
+
+		w.WriteHeader(http.StatusOK)
+	})
+
+	router.HandleFunc("POST /ping/{id}", func(w http.ResponseWriter, r *http.Request) {
+		// remove port from IP (can't just split by ":" because of IPv6)
+		if ip := r.RemoteAddr[:strings.LastIndex(r.RemoteAddr, ":")]; ip != "[::1]" {
+			Log(c.InRed("IP " + ip + " is not allowed! (ping)"))
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
+		apiKey := r.URL.Query().Get("apiKey")
+		id := r.PathValue("id")
+
+		readBody, err := io.ReadAll(r.Body)
+		Assert(err, "Failed to read request body")
+
+		// if the body is gzipped, unzip it
+		if strings.HasPrefix(string(readBody), "\x1f\x8b") {
+			reader, err := gzip.NewReader(strings.NewReader(string(readBody)))
+			Assert(err, "Failed to create gzip reader")
+			readBody, err = io.ReadAll(reader)
+			Assert(err, "Failed to read gzipped request body")
+		}
+
+		data := strings.Split(string(readBody), "\n")
+		status := data[0]
+
+		var compressed []string
+
+		if status == "Rendering" {
+			Log(c.InGreen("Render " + id + " is rendering"))
+		} else if status == "Completed" {
+			num := len(data) - 1
+			wg.Add(num)
+
+			// Could result in a random order if appending to an array instead
+			var body, head string
+			go Compress(data[1], 420, "body", &body)
+			if num == 2 {
+				go Compress(data[2], 150, "head", &head)
+			}
+			wg.Wait()
+
+			compressed = []string{body}
+			if num == 2 {
+				compressed = append(compressed, head)
+			}
+
+			Log(c.InGreen("Render " + id + " is complete"))
+		}
+
+		compressed = append([]string{status}, compressed...)
+
+		// Send to server as base64
+		// todo make it multipart/form-data or something for lower bandwidth
+		endpoint := os.Getenv("ENDPOINT") + "/" + id + "?apiKey=" + apiKey
+		// We (still) have to lie about the contentType to avoid being nuked by CORS from the website
+		_, err = http.Post(endpoint, "text/json", strings.NewReader(strings.Join(compressed, "\n")))
+		Assert(err, "Failed to send render data to server")
 
 		w.WriteHeader(http.StatusOK)
 	})
