@@ -46,7 +46,7 @@ async def sendApplicationToAdmin(interaction, q1, q2, q3):
     embedV.add_field(name="2. Where did you hear about Mercury 2?", value=f"`{str(q2)}`", inline=False)
     embedV.add_field(name="3. Any questions/suggestions?", value=f"`{str(q3)}`", inline=False)
     embedV.add_field(name="Status", value="No decision yet")
-    channel = bot.get_channel(adminid)
+    channel = bot.get_channel(int(adminid))
     message = await channel.send(embed=embedV, allowed_mentions=None)
     await message.edit(view=adminBtns(message_id = message.id))
 
@@ -62,11 +62,11 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
         print(f"[green]Application #{userID} denied by {interaction.user}[/green]")
     elif decision == "approved":
-        member = bot.get_guild(serverid).get_member(userID)
+        member = bot.get_guild(int(serverid)).get_member(userID)
         if not member:
             return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot. If this is a mistake, please contact @task.mgr with details.") 
         
-        role = discord.utils.get(bot.get_guild(serverid).roles, name="cool role")
+        role = discord.utils.get(bot.get_guild(int(serverid)).roles, name="cool role")
         await member.add_roles(role)
 
         desc = f"Hello, @{interaction.user}! Congratulations! Your application was **successful**! Your invite key has been provided below."
@@ -89,45 +89,66 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
     
     await user.send(embed=embedV)
 
-async def sendPost(url, data):
+async def sendApplication(url):
     async with aiohttp.ClientSession() as session:
-        headers = {"Content-Type": "application/json"}
-        json_data = json.dumps(data)
-        async with session.post(url, data=json_data, headers=headers) as resp:
+        async with session.post(url) as resp:
             resp_data = await resp.text()
+            data = json.loads(resp_data)
             if resp_data == "OK":
                 print("[green]Successfully sent application to server![/green]")
-            else:
-                print(f"[orange]{resp_data}[/orange]")
+                return "created"
+
+            if data["message"] == "This user can't apply again":
+                print("[green]User has already sent an application[/green]")
+                return "pending"
+            
+            if data["message"] == "This user is banned":
+                print("[green]User is banned from sending applications[/green]")
+                return data["reason"]
 
 class keyApplication(ui.Modal):
     def __init__(self, userId):
         self.userId = userId
+        self.cooldown = commands.CooldownMapping.from_cooldown(1, 120, commands.BucketType.member)
         super().__init__(title="Application")
 
     q1 = ui.TextInput(label="Why would you like to join Mercury 2?", style=discord.TextStyle.paragraph, required=True, min_length="10")
     q2 = ui.TextInput(label="Where did you hear about Mercury 2?", style=discord.TextStyle.short, required=True, min_length="5")
     q3 = ui.TextInput(label="Any questions/suggestions?", style=discord.TextStyle.short, required=False)
 
-    async def on_submit(self, interaction: discord.Interaction):
-        member = bot.get_guild(serverid).get_member(interaction.user.id) 
-        if not member:
-            return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot.") 
-        
-        print(f"[green]Application #{self.userId} is sending to server for creation")
-        url = f"https://banland.xyz/api/discord/createApplication/{self.userId}?apiKey={os.getenv('APIKEY')}"
-        await sendPost(url, {})
-        desc = "Thank you for sending an application! It will be reviewed and you should recieve a decision on this application within 1-2 days or later. You can view the status of this application at any time by using */info*. You may also unsubmit this application at any time by using */unsubmit*."
-        embedV = discord.Embed(color=0x4acc39, description=desc)
-        embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
-        embedV.title = ":white_check_mark: Application sent"
-        embedV.add_field(name="Why would you like to join Mercury 2?", value=f"`{str(self.q1)}`", inline=False)
-        embedV.add_field(name="Where did you hear about Mercury 2?", value=f"`{str(self.q2)}`", inline=False)
-        embedV.add_field(name="Any questions/suggestions?", value=f"`{str(self.q3)}`", inline=False)
-        embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
+    async def on_submit(self, interaction: discord.Interaction):        
+        interaction.message.author = interaction.user
+        bucket = self.cooldown.get_bucket(interaction.message)
+        retry = bucket.update_rate_limit()
+        if retry:
+            return await interaction.response.send_message(f"Please wait {round(retry, 1)} second(s) before trying again.") 
 
+        print(f"[green]Application #{self.userId} is sending to server for creation")
+        appResp = await sendApplication(f"https://banland.xyz/api/discord/createApplication/{self.userId}?apiKey={os.getenv('APIKEY')}")
+        if appResp == "created":
+            desc = "Thank you for sending an application! It will be reviewed and you should recieve a decision on this application within 1-2 days or later. You can view the status of this application at any time by using */info*. You may also unsubmit this application at any time by using */unsubmit*."
+            embedV = discord.Embed(color=0x4acc39, description=desc)
+            embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
+            embedV.title = ":white_check_mark: Application sent"
+            embedV.add_field(name="Why would you like to join Mercury 2?", value=f"`{str(self.q1)}`", inline=False)
+            embedV.add_field(name="Where did you hear about Mercury 2?", value=f"`{str(self.q2)}`", inline=False)
+            embedV.add_field(name="Any questions/suggestions?", value=f"`{str(self.q3)}`", inline=False)
+            embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
+            await sendApplicationToAdmin(interaction, self.q1, self.q2, self.q3)
+        elif appResp == "pending":
+            desc = "The application you have just completed has not been sent as your previous application is still pending. You can run */info* to view more information about your pending application or run */unsubmit* to unsubmit your previous application."
+            embedV = discord.Embed(color=0xd9363e, description=desc)
+            embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
+            embedV.title = ":x: Previous application is still pending"
+        else:
+            desc = f"Unfortunately, your account has been **banned** from applying in the future. The reason for this has been provided below."
+            embedV = discord.Embed(color=0xd9363e, description=desc)
+            embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
+            embedV.title = ":x: Account banned from future applications"
+            embedV.add_field(name="Reason for ban", value=f"`{str(appResp)}`", inline=False)
+            embedV.add_field(name="What can I do now?", value="You are unable to apply for future applications. This decision can be appealed by messaging @task.mgr.", inline=False)
+        
         await interaction.response.send_message(embed=embedV)
-        await sendApplicationToAdmin(interaction, self.q1, self.q2, self.q3)
 
 class deniedReason(ui.Modal):
     def __init__(self, userId, appMsg, embedMsg, btnView):
@@ -177,6 +198,9 @@ class applyBtns(discord.ui.View):
 
     @discord.ui.button(label="Get Started", style=discord.ButtonStyle.success, custom_id="getStarted")
     async def getStarted(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        member = bot.get_guild(int(serverid)).get_member(interaction.user.id) 
+        if not member:
+            return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot.")
         await interaction.response.send_modal(keyApplication(userId = interaction.user.id))
         
 class adminBtns(discord.ui.View):
@@ -231,7 +255,7 @@ async def on_ready():
 
 @bot.tree.command(name="register")
 async def register(interaction: discord.Interaction):
-    member = bot.get_guild(serverid).get_member(interaction.user.id) 
+    member = bot.get_guild(int(serverid)).get_member(interaction.user.id) 
     if not member:
         return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot.")  
 
