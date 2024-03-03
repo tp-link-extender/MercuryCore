@@ -113,6 +113,8 @@
 		100%
 			fill #00ff00
 
+	// Still doesn't look perfect, but close enough
+
 	#Bar
 		transform translate(-158px, 118px) scale(-1.03, 1)
 		animation bar 1.8s forwards

@@ -9,7 +9,7 @@ local function post(url: string, body: string)
 	game:HttpPost(url, body, true, "text/json")
 end
 
-return function(baseUrl: string, thumbnailKey: string)
+return function(baseUrl: string, pingUrl: string, thumbnailKey: string)
 	local Render = {}
 
 	function Render.SetupAvatar(
@@ -32,7 +32,7 @@ return function(baseUrl: string, thumbnailKey: string)
 			`[{game.JobId}] Starting new render for {renderType} ID {assetId}`
 		)
 		post(
-			`{baseUrl}/api/render/update?apiKey={thumbnailKey}&amp;taskID={game.JobId}`,
+			`{pingUrl}/{game.JobId}?apiKey={thumbnailKey}`,
 			"Rendering"
 		)
 
@@ -54,7 +54,7 @@ return function(baseUrl: string, thumbnailKey: string)
 		for i = 1, 3 do
 			local ok, err = pcall(function()
 				post(
-					`{baseUrl}/api/render/update?apiKey={thumbnailKey}&amp;taskID={game.JobId}`,
+					`{pingUrl}/{game.JobId}?apiKey={thumbnailKey}`,
 					result
 				)
 			end)

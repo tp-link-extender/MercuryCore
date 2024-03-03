@@ -3,6 +3,7 @@ import surreal, { query, squery, mquery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import requestRender from "$lib/server/requestRender"
 import { Scrypt } from "oslo/password"
@@ -44,7 +45,9 @@ async function createUser(
 			id: string
 		}[]
 	>(
+		// Assign $number to a variable, otherwise when it's returned it will increment the number by 2 instead of 1 (?????????)
 		surql`
+			LET $number = (UPDATE ONLY stuff:increment SET user += 1).user;
 			UPDATE (CREATE user CONTENT $user)[0] MERGE {
 				theme: "standard",
 				created: time::now(),
@@ -69,14 +72,14 @@ async function createUser(
 						"Offline"
 					END)
 				},
-				number: (UPDATE ONLY stuff:increment SET user += 1).user,
+				number: $number,
 			};
 			LET $u = (SELECT number, id FROM user
 				WHERE username = $user.username)[0];
 			# Return some user data
 			{
 				id: meta::id($u.id),
-				number: $u.number,
+				number: $number,
 			};
 			${
 				keyUsed
@@ -88,17 +91,17 @@ async function createUser(
 		{ user, key: `regKey:⟨${keyUsed}⟩` }
 	)
 
-	return q[2]
+	return q[3]
 }
 
 export const load = async () => ({
-	form: await superValidate(schema),
-	users: (await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0,
+	form: await superValidate(zod(schema)),
+	users: (await squery<number>(surql`[count(SELECT 1 FROM user)]`)) > 0,
 })
 
 export const actions = {
 	register: async ({ request, cookies }) => {
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		let { username, email, password, cpassword, regkey } = form.data
@@ -176,7 +179,7 @@ export const actions = {
 	initialAccount: async ({ request, cookies }) => {
 		// This is the initial account creation, which is only allowed if there are no existing users.
 
-		const form = await superValidate(request, schemaInitial)
+		const form = await superValidate(request, zod(schemaInitial))
 		if (!form.valid) return formError(form)
 
 		const { username, password, cpassword } = form.data
@@ -198,6 +201,7 @@ export const actions = {
 		await query(surql`UPDATE ONLY stuff:increment SET user = 0`)
 
 		// This is the kind of stuff that always breaks due to never getting tested
+		// Remember: untested === unworking
 		const user = await createUser({
 			username,
 			email: "",

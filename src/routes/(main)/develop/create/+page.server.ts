@@ -13,6 +13,7 @@ import { graphicAsset } from "$lib/server/xmlAsset"
 import { redirect } from "@sveltejs/kit"
 import fs from "fs"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import requestRender from "$lib/server/requestRender"
 
@@ -35,7 +36,7 @@ export async function load({ request, locals }) {
 	await authorise(locals, 5)
 
 	return {
-		form: await superValidate(schema),
+		form: await superValidate(zod(schema)),
 		assettype: new URL(request.url).searchParams.get("asset"),
 	}
 }
@@ -44,7 +45,7 @@ export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
 		const { user } = await authorise(locals)
 		const formData = await request.formData()
-		const form = await superValidate(formData, schema)
+		const form = await superValidate(formData, zod(schema))
 		if (!form.valid) return formError(form)
 
 		const { type, name, description, price } = form.data
@@ -67,7 +68,7 @@ export const actions = {
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
-		let saveImages: ((arg0: number) => void | Promise<void>)[] = []
+		let saveImages: ((id: number) => void | Promise<void>)[] = []
 
 		try {
 			switch (assetType) {
@@ -112,6 +113,7 @@ export const actions = {
 			return formError(form, ["asset"], ["Asset failed to upload"])
 		}
 
+		// lmao probably has huge concurrency issues that I am not going to test
 		const currentId = await squery<number>(surql`[stuff:increment.asset]`)
 		const imageAssetId = currentId + 1
 		const id = currentId + 2

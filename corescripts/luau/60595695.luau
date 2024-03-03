@@ -5,23 +5,32 @@ print "[Mercury]: Loaded corescript 60595695"
 -- This script is used to register RbxLua libraries on game servers, so game scripts have
 -- access to all of the libraries (otherwise only local scripts do)
 
-local sc = game:GetService "ScriptContext"
-local tries = 0
+local ScriptContext
 
-while not sc and tries < 3 do
-	tries += 1
-	sc = game:GetService "ScriptContext"
+for i = 1, 4 do
+	ScriptContext = game:GetService "ScriptContext"
+	if ScriptContext then
+		break
+	end
 	wait(0.2)
 end
 
-if sc then
-	sc:RegisterLibrary("Libraries/RbxFusion", "10000001")
-	sc:RegisterLibrary("Libraries/RbxRed", "10000002")
-	sc:RegisterLibrary("Libraries/RbxGui", "45284430")
-	sc:RegisterLibrary("Libraries/RbxGear", "45374389")
-	sc:RegisterLibrary("Libraries/RbxUtility", "60595411")
-	sc:RegisterLibrary("Libraries/RbxStamper", "73157242")
-	sc:LibraryRegistrationComplete()
+local function RegisterLibraries(t: { [string]: number })
+	for name, id in pairs(t) do
+		ScriptContext:RegisterLibrary(`Libraries/Rbx{name}`, tostring(id))
+	end
+end
+
+if ScriptContext then
+	RegisterLibraries {
+		Fusion = 10000001,
+		Red = 10000002,
+		Gui = 45284430,
+		Gear = 45374389,
+		Utility = 60595411,
+		Stamper = 73157242,
+	}
+	ScriptContext:LibraryRegistrationComplete()
 else
 	print "failed to find script context, libraries did not load"
 end

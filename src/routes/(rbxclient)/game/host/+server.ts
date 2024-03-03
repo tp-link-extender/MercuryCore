@@ -25,8 +25,8 @@ export async function GET({ url }) {
 	if (mapLocation) {
 		mapLocation = Buffer.from(mapLocation, "base64").toString()
 		if (mapLocation.slice(-5) !== ".rbxl") mapLocation = null
-
-		if (mapLocation != null) mapLocation = `rbxasset://maps/${mapLocation}`
+		else if (mapLocation != null)
+			mapLocation = `rbxasset://maps/${mapLocation}`
 	}
 
 	return new Response(

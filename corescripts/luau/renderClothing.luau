@@ -1,7 +1,8 @@
 -- Render script for R6 clothing
 
 local ThumbnailGenerator = game:GetService "ThumbnailGenerator"
-local Render = require "../Modules/Render.luau"(_BASE_URL, _THUMBNAIL_KEY)
+local RenderModule = require "../Modules/Render.luau"
+local Render = RenderModule(_BASE_URL, _PING_URL, _THUMBNAIL_KEY) -- avoid ambiguous syntax after compilation
 
 Render.SetupAvatar(_RENDER_TYPE, _ASSET_ID, `/api/render/characterasset?id=`)
 

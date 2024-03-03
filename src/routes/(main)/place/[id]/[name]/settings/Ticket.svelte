@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
 	const { message, enhance, delayed } = superForm(data.ticketForm)

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invalidate } from "$app/navigation"
 	import { page } from "$app/stores"
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 	import AdminShell from "../AdminShell.svelte"
 
 	export let data

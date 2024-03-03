@@ -7,12 +7,12 @@
 	<div
 		id="dark"
 		class="lg:w-1/2 p-8vw pt-5vh {pad ? 'lg:pt-20vh' : 'lg:pt-11vh'}">
-		<a type="button" href="/" class="btn btn-lg border-0 px-0 text-base">
+		<a href="/" class="btn btn-lg border-0 px-0 text-base">
 			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
 		<h1 class="sf font-bold pb-6 text-14">
-			Mercury 2 <span class="opacity-50">beta</span>
+			Mercury 2 <span class="opacity-50">rc</span>
 		</h1>
 
 		{#each descriptions as [title, description]}

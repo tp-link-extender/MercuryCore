@@ -43,6 +43,7 @@
 	</label>
 	<div class="w-full md:w-3/4">
 		<NoScript>
+			<!-- fallback to standard select -->
 			<select
 				{disabled}
 				{...$$restProps}

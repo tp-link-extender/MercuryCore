@@ -11,7 +11,7 @@ import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
 import type { Cookie } from "lucia"
 
-const { magenta, red, yellow, green, blue, gray } = pc
+const { magenta, red, yellow, green, blue, gray, cyan } = pc
 const methodColours: { [k: string]: string } = {
 	GET: green("GET"),
 	POST: yellow("POST"),
@@ -30,7 +30,9 @@ const pathnameColour = (pathname: string) =>
 				  ? magenta(pathname)
 				  : pathname.startsWith("/admin")
 					  ? red(pathname)
-					  : pathname
+					  : pathname.startsWith("/studio")
+						  ? cyan(pathname)
+						  : pathname
 
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
@@ -51,6 +53,23 @@ export async function handle({ event, resolve }) {
 			pathnameColour(decodeURI(pathname) + search)
 		)
 
+		const isStudio = event.request.headers
+			.get("user-agent")
+			?.includes("RobloxStudio/2013")
+
+		if (
+			isStudio &&
+			!pathname.startsWith("/studio") &&
+			!pathname.startsWith("/api")
+		) {
+			// trim trailing slash
+			const newPathname = pathname.replace(/\/+$/, "")
+			redirect(302, `/studio${newPathname}`)
+		}
+
+		// if (!isStudio && pathname.startsWith("/studio"))
+		// 	redirect(302, /studio(.*)/.exec(pathname)?.[1] || "/")
+
 		return resolve(event)
 	}
 
@@ -70,7 +89,7 @@ export async function handle({ event, resolve }) {
 	event.locals.user = user
 
 	const setSession = (sessionCookie: Cookie) =>
-		// sveltekit types deviates from the de facto standard `as any` is usable too
+		// sveltekit types deviate from the de facto standard here
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
 			...sessionCookie.attributes,
@@ -89,6 +108,7 @@ export async function handle({ event, resolve }) {
 	if (
 		!["/moderation", "/terms", "/privacy", "/api"].includes(pathname) &&
 		!pathname.startsWith("/api/avatar") &&
+		!pathname.startsWith("/studio") &&
 		moderation
 	)
 		redirect(302, "/moderation")

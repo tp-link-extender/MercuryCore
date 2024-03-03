@@ -3,6 +3,7 @@ import ratelimit from "$lib/server/ratelimit"
 import { query, squery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
@@ -14,18 +15,17 @@ const schema = z.object({
 })
 
 export async function load({ locals }) {
-	// Make sure a user is an administrator/moderator before loading the page.
 	await authorise(locals, 4)
 
 	return {
-		form: await superValidate(schema),
+		form: await superValidate(zod(schema)),
 	}
 }
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
 		const { user } = await authorise(locals, 4)
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		const { username, action, banDate, reason } = form.data
@@ -92,7 +92,7 @@ export const actions = {
 			if (
 				!(await squery(
 					surql`
-						SELECT * FROM moderation
+						SELECT 1 FROM moderation
 						WHERE in = $moderator
 							AND out = $moderatee
 							AND active = true`,
@@ -108,7 +108,7 @@ export const actions = {
 			if (
 				await squery(
 					surql`
-						SELECT * FROM moderation
+						SELECT 1 FROM moderation
 						WHERE in = $moderator
 							AND out = $moderatee
 							AND active = true
@@ -146,7 +146,7 @@ export const actions = {
 		if (
 			await squery(
 				surql`
-					SELECT * FROM moderation
+					SELECT 1 FROM moderation
 					WHERE out = $moderatee
 						AND active = true`,
 				qParams

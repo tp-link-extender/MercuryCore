@@ -19,8 +19,7 @@ try {
 
 export async function load({ request, locals }) {
 	const { session, user } = locals
-	// Not authorise function, as we don't want
-	// to redirect to login page if not logged in
+	// Not authorise function, as we don't want to redirect to login page if not logged in
 
 	const banners = await query<{
 		body: string
@@ -37,11 +36,16 @@ export async function load({ request, locals }) {
 		FROM banner
 		WHERE deleted = false AND active = true`)
 
+	const isStudio = request.headers
+		.get("user-agent")
+		?.includes("RobloxStudio/2013")
+
 	return {
 		banners,
 		user,
 		notifications: await getNotifications(session, user),
 		url: request.url,
 		lines, // footer thing
+		...(isStudio && { isStudio }),
 	}
 }

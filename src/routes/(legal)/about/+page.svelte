@@ -51,7 +51,7 @@
 
 <div bind:this={top} id="top" class="absolute top-0" />
 
-<Pagepart class="cubes {cubePercentage < 20 ? 'pb-60' : 'pb-220'}">
+<Pagepart class="cubes {cubePercentage < 20 ? 'pb-60' : 'pb-[calc(15rem+70vh)]'}">
 	{#if cubePercentage < 20}
 		<div
 			out:fade
@@ -60,7 +60,7 @@
 			<p>Endless possibilities. New features. Same nostalgia.</p>
 			<h3
 				class="p-3 py-1 rounded-2 font-bold text-lg! bg-neutral-5 opacity-75">
-				Closed Beta
+				Release Candidate
 			</h3>
 		</div>
 	{:else}
@@ -126,8 +126,8 @@
 <Pagepart class="px-12 mx-auto <lg:pb-50">
 	<div class="lg:flex gap-6 items-center">
 		<div class="lg:max-w-150">
-			<h2>The ultimate experience</h2>
-			<h3>Built with modern technology</h3>
+			<h2>A refurbished experience</h2>
+			<h3>New features.</h3>
 			<p>
 				Mercury aims to be the foremost platform of its kind, and the
 				Mercury website plays a prominent part in this. After years of
@@ -135,7 +135,7 @@
 				combines rock-solid stability with a flexible foundation for the
 				future.
 			</p>
-			<h3>Limitless possibilities</h3>
+			<h3>Limitless possibilities.</h3>
 			<p>
 				Mercury provides everything you would expect from a modern
 				revival platform and then some:
@@ -149,8 +149,15 @@
 					connection and community within Mercury.
 				</li>
 			</ul>
+			<h3>Same nostalgia.</h3>
+			<p>
+				Mercury still uses the exact same client as the previous
+				iteration. Our philosophy when it comes to our client is to make
+				sure that it is accurately represented. The end-goal with our
+				client is to implement every feature that it originally had.
+			</p>
 		</div>
-		<div class="w-full h-80 min-w-[min(40vw,40rem)] <lg:pt-30 relative">
+		<div class="w-full h-80 min-w-[min(40vw,40rem)] <lg:pt-50 relative">
 			<Screenshots />
 		</div>
 	</div>
@@ -211,7 +218,7 @@
 
 <Pagepart class="px-12 mx-auto pb-100">
 	<div class="lg:flex gap-6 items-center">
-		<div class="w-full h-140 min-w-[min(40vw,40rem)] relative">
+		<div class="w-full h-140 min-w-[min(40vw,40rem)] <lg:mb--20 relative">
 			<Libraries />
 		</div>
 		<div class="lg:max-w-150 <lg:pt-60">

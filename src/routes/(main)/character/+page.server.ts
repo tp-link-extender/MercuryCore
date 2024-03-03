@@ -54,11 +54,11 @@ async function getEquipData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
 	const id = e.url.searchParams.get("id")
 
-	if (ratelimit({}, "equip", e.getClientAddress, 2))
-		return { error: fail(429, { msg: "Too many requests" }) }
-
 	if (!id) error(400, "Missing asset id")
 	if (!/^\d+$/.test(id)) error(400, `Invalid asset id: ${id}`)
+
+	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
+	if (limit) return { error: limit }
 
 	const asset = await squery<{
 		id: number
@@ -143,8 +143,8 @@ export const actions = {
 	regen: async ({ locals, getClientAddress }) => {
 		const { user } = await authorise(locals)
 
-		if (ratelimit({}, "regen", getClientAddress, 2))
-			return fail(429, { msg: "Too many requests" })
+		const limit = ratelimit(null, "regen", getClientAddress, 2)
+		if (limit) return limit
 
 		return await rerender(user)
 	},

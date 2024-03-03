@@ -11,7 +11,7 @@
 
 <form use:enhance method="POST" class="inline" action="?/{text}&id={id}">
 	{#if clicked}
-		<small class="pl-2 light-text inline-flex items-center">
+		<small class="light-text pl-2 inline-flex items-center">
 			{text}?
 			<button class="btn p-0 px-1 {colour}">yes</button>
 			/

@@ -1148,8 +1148,8 @@ function Chat:UpdateChat(cPlayer, message)
 	end
 end
 
-function Chat:RecalculateSpacing()
-	--[[for i = 1, #self.MessageQueue do
+-- function Chat:RecalculateSpacing()
+--[[for i = 1, #self.MessageQueue do
 		local pLabel = self.MessageQueue[i]['Player']
 		local mLabel = self.MessageQueue[i]['Message']
 
@@ -1166,7 +1166,7 @@ function Chat:RecalculateSpacing()
 
 		Chat:UpdateQueue(self.MessageQueue[i], diff)
 	end ]]
-end
+-- end
 
 -- function Chat:ApplyFilter(str)
 -- 	--[[for _, word in pair(self.Filter_List) do
@@ -1316,7 +1316,7 @@ function Chat:ScreenSizeChanged()
 	while self.Frame.AbsoluteSize.Y > 120 do
 		self.Frame.Size -= UDim2.new(0, 0, 0.005, 0)
 	end
-	Chat:RecalculateSpacing()
+	-- Chat:RecalculateSpacing()
 end
 
 function Chat:FindButtonTree(scButton, rootList)

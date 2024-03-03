@@ -7,7 +7,9 @@ const types = ["friends", "followers", "following"]
 const usersQueries = {
 	friends: surql`
 		SELECT number, status, username
-		FROM $user->friends->user OR $user<-friends<-user`,
+		# "user->friends->user OR $user<-friends<-user" doesn't work
+		# "user<->friends<->user" shows yourself in the list (twice)
+		FROM array::combine($user->friends->user, $user<-friends<-user)[0]`,
 	followers: surql`
 		SELECT number, status, username
 		FROM $user<-follows<-user`,
@@ -32,12 +34,7 @@ export async function load({ params }) {
 	const user = await squery<{
 		id: string
 		username: string
-	}>(
-		surql`
-			SELECT id, username FROM user
-			WHERE number = $number`,
-		{ number }
-	)
+	}>(surql`SELECT id, username FROM user WHERE number = $number`, { number })
 
 	if (!user) error(404, "Not found")
 

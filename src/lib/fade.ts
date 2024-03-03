@@ -11,6 +11,7 @@ type Params = FadeParams & {
 }
 
 export default (node: HTMLElement, props: Params = { duration: 300 }) => {
+	// animationsettings doesn't work, todo look at this again in another year or so
 	// if (get(user)?.animationSettings === "off") return () => {}
 	if (props.num && props.total)
 		props.delay = (props.num * 150) / Math.min(props.total, props?.max || 6)

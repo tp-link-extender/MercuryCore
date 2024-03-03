@@ -10,13 +10,13 @@
 <a
 	in:fade|global={{ num, total, duration: 300 }}
 	{href}
-	class="no-underline light-text">
-	<div class="px-0 card bg-a3 text-center light-text">
+	class="light-text no-underline">
+	<div class=" card bg-a3 light-text px-0 text-center">
 		<div class="card-body bg-a rounded-1 p-6">
 			{#if emoji}
-				<span class="icon">{emoji}</span>
+				<span class="text-10">{emoji}</span>
 			{:else}
-				<i class="icon {iconClass}" />
+				<i class="text-10 {iconClass}" />
 			{/if}
 			<div class="text-xl pt-4">
 				{name}
@@ -27,9 +27,6 @@
 </a>
 
 <style lang="stylus">
-	.icon
-		font-size 2.5rem
-
 	a 
 		.card-body
 			transition background-color 0.2s

@@ -3,6 +3,7 @@ import { query, mquery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
@@ -25,7 +26,7 @@ export async function load({ locals }) {
 
 	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
 	const facts = [
-		`You joined mercury on ${user?.accountCreated
+		`You joined Mercury on ${user?.accountCreated
 			.toLocaleString()
 			.substring(0, 10)}!`,
 		// Add "st", "nd", "rd", "th" to number
@@ -67,7 +68,7 @@ export async function load({ locals }) {
 			greet: greets[Math.floor(Math.random() * greets.length)],
 			fact: facts[Math.floor(Math.random() * facts.length)],
 		},
-		form: await superValidate(schema),
+		form: await superValidate(zod(schema)),
 		places: results[0] as {
 			id: number
 			name: string
@@ -101,7 +102,7 @@ export async function load({ locals }) {
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "statusPost", getClientAddress, 30)
 		if (limit) return limit

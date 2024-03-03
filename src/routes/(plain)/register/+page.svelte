@@ -1,5 +1,5 @@
 <script lang="ts">
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 	import LoginShell from "../LoginShell.svelte"
 	import Waves from "../Waves.svelte"
 
@@ -7,7 +7,7 @@
 	const formData = superForm(data.form, {
 		onResult: ({ result }) =>
 			// Reload to get the new session after redirecting to homepage
-			result.type == "redirect" ? window.location.reload() : null,
+			result.type == "redirect" ? window.location.reload() : null
 	})
 
 	export const snapshot = formData
@@ -15,16 +15,16 @@
 	const descriptions = [
 		[
 			"Original username",
-			"Make sure it is appropriate and between 3-21 characters. Underscores are allowed.",
+			"Make sure it is appropriate and between 3-21 characters. Underscores are allowed."
 		],
 		[
 			"Valid email",
-			"Mercury requires a valid email so you can reset your password at any time.",
+			"Mercury requires a valid email so you can reset your password at any time."
 		],
 		[
 			"Secure password",
-			"Make sure your password has a mix of letters, numbers, and symbols to protect against hackers.",
-		],
+			"Make sure your password has a mix of letters, numbers, and symbols to protect against hackers."
+		]
 	]
 </script>
 
@@ -44,12 +44,14 @@
 			<Input
 				{formData}
 				column
+				autocomplete="username"
 				name="username"
 				label="Username"
 				placeholder="3-21 characters" />
 			<Input
 				{formData}
 				column
+				autocomplete="email"
 				name="email"
 				label="Email Address"
 				type="email"
@@ -57,6 +59,7 @@
 			<Input
 				{formData}
 				column
+				autocomplete="new-password"
 				name="password"
 				label="Password"
 				type="password"
@@ -64,6 +67,7 @@
 			<Input
 				{formData}
 				column
+				autocomplete="new-password"
 				name="cpassword"
 				label="Confirm Password"
 				type="password"
@@ -80,8 +84,7 @@
 			By signing up, you agree to our
 			<a href="/terms" class="no-underline">Terms of Service</a>
 			and
-			<a href="/privacy" class="no-underline">Privacy policy</a>
-			.
+			<a href="/privacy" class="no-underline">Privacy policy.</a>
 		</p>
 	{:else}
 		<h2>Create the initial account</h2>

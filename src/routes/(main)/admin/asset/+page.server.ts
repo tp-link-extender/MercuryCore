@@ -34,7 +34,7 @@ export const load = async ({ locals }) => ({
 				FROM ->imageAsset->asset)[0] AS imageAsset
 			FROM asset WHERE visibility = "Pending"
 				AND type ∈ [17, 18, 2, 11, 12, 19]`,
-		{ user: `user:${(await authorise(locals)).user.id}` }
+		{ user: `user:${(await authorise(locals, 3)).user.id}` }
 	),
 })
 
@@ -103,8 +103,8 @@ export const actions = {
 	},
 	rerender: async e => {
 		const { id } = await getData(e)
-		const limit = ratelimit({}, "rerender", e.getClientAddress, 10)
-		if (limit) return fail(429, { msg: "Too many requests" })
+		const limit = ratelimit(null, "rerender", e.getClientAddress, 10)
+		if (limit) return limit
 
 		try {
 			await requestRender("Clothing", parseInt(id))

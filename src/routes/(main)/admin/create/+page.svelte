@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AdminShell from "../AdminShell.svelte"
-	import superForm from "$lib/superForm"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
 	const formDataManual = superForm(data.formManual)
@@ -82,47 +82,85 @@
 					<far class="pr-2" fa-circle-info />
 					Use manual uploading mode for shared assets (ie. mesh)
 				</div>
+				{#if data.stage >= 2}
+					<div class="py-4">
+						<a
+							href="/admin/create?tab2=Autopilot"
+							class="btn btn-secondary">
+							Reset
+						</a>
+					</div>
+				{/if}
+
+				{#if data.stage == 2 && data.getVersions}
+					<p>
+						{#await data.getVersions}
+							Getting asset versions, please wait...
+						{:then versions}
+							{#if versions.list.length > 0}
+								Found {versions.list.length} versions of asset {data.assetId}
+								{#if versions.cached}
+									(Using cached data)
+								{/if}
+							{:else}
+								No versions found for asset {data.assetId}
+							{/if}
+						{/await}
+					</p>
+				{/if}
 				<Form
 					formData={formDataAutopilot}
 					method="GET"
-					enctype="multipart/form-data"
 					submit="Create"
 					class="pt-8 light-text">
-					<Select
-						formData={formDataAutopilot}
-						options={Object.entries(assetsAutopilot)}
-						name="type"
-						label="Asset type" />
-					<Input
-						formData={formDataAutopilot}
-						name="assetId"
-						label="Asset Id"
-						type="number" />
-					<Input
-						formData={formDataAutopilot}
-						name="name"
-						label="Asset name"
-						placeholder="Make sure to make it accurate" />
-					<Textarea
-						formData={formDataAutopilot}
-						name="description"
-						label="Asset description"
-						placeholder="Up to 1000 characters" />
-					<Input
-						formData={formDataAutopilot}
-						name="price"
-						label="Asset price"
-						type="number" />
-					<!-- <Select
-						formData={formDataAutopilot}
-						options={Object.entries(assetsAutopilot)}
-						name="version"
-						label="Asset version" />
-					<Select
-						formData={formDataAutopilot}
-						options={Object.entries(assetsAutopilot)}
-						name="shared"
-						label="Shared assets" /> -->
+					<input
+						type="hidden"
+						name="tab2"
+						value={tabData2.currentTab} />
+					{#if data.stage === 1}
+						<Input
+							formData={formDataAutopilot}
+							name="assetId"
+							label="Asset Id"
+							type="number"
+							placeholder="33866846"
+							required />
+					{:else if data.stage === 2 && data.getVersions}
+						<input
+							type="hidden"
+							name="assetId"
+							value={data.assetId} />
+						{#await data.getVersions then versions}
+							{#if versions.list.length > 0}
+								<Select
+									formData={formDataAutopilot}
+									options={versions.list}
+									name="version"
+									label="Asset version" />
+							{/if}
+						{/await}
+					{:else if data.stage === 3}
+						<Input
+							formData={formDataAutopilot}
+							name="name"
+							label="Asset name"
+							placeholder="Make sure to make it accurate" />
+						<Textarea
+							formData={formDataAutopilot}
+							name="description"
+							label="Asset description"
+							placeholder="Up to 1000 characters" />
+						<Input
+							formData={formDataAutopilot}
+							name="price"
+							label="Asset price"
+							type="number" />
+						<Select
+							formData={formDataAutopilot}
+							options={[]}
+							name="shared"
+							label="Shared assets" />
+					{/if}
 				</Form>
 			</Tab>
 		</Tab>

@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { goto } from "$app/navigation"
-	import { e } from "@unocss/core"
 	import { slide } from "svelte/transition"
 
-	let search = "",
-		searchCompleted = true,
-		currentSearchFocus = -1
+	let search = ""
+	let searchCompleted = true
+	let currentSearchFocus = -1
 
 	$: if (search == "") {
 		searchCompleted = true
@@ -87,6 +86,7 @@
 
 <svelte:window
 	on:keydown={e => {
+		// the right way (actually works on different keyboard layouts)
 		if (e.ctrlKey && e.key == "k") {
 			e.preventDefault()
 			searchInput.focus()
@@ -96,10 +96,7 @@
 <nav class="py-0 justify-start z-11">
 	<div class="pt-1 px-2 sm:px-4 flex w-full pb-2px bg-[--navbar]">
 		<a class="brand light-text text-xl no-underline my-auto" href="/">
-			<img
-				src="/icon.svg"
-				alt="Mercury logo"
-				class="sm:hidden size-8 @light:invert" />
+			<img src="/icon.svg" alt="Mercury logo" class="sm:hidden size-8" />
 			<span class="sf <sm:hidden">Mercury</span>
 		</a>
 		{#if user}
@@ -158,23 +155,21 @@
 					{/if}
 				</div>
 			</form>
-			<div class="flex items-center gap-4">
+			<div class="flex items-center gap-6">
 				<a
 					href="/notifications"
-					role="button"
 					aria-label="Notifications"
-					class="<lg:hidden font-bold pr-4 light-text">
+					class="tooltip <lg:hidden font-bold light-text">
 					<fa fa-bell />
 				</a>
 				<a
 					href="/transactions"
-					role="button"
 					aria-label="Transactions"
-					class="flex items-center no-underline <sm:w-20 text-emerald-6 hover:text-emerald-8!">
+					class="tooltip flex items-center no-underline <sm:w-20 text-emerald-6 hover:text-emerald-8!">
 					<fa fa-gem class="pr-2" />
 					{user.currency}
 				</a>
-				<div class="dropdown dropdown-hover dropdown-end pl-2">
+				<div class="dropdown dropdown-hover dropdown-end">
 					<User
 						{user}
 						class="<sm:hidden"

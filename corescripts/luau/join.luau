@@ -93,7 +93,6 @@ end)
 -- functions ---------------------------------------
 local loadingState = 0
 local function setLoadingMessage(message: string)
-	-- todo: animated "..."
 	local dots = ""
 	loadingState += 1
 	local currentLoadingState = loadingState

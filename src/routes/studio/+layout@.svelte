@@ -1,0 +1,36 @@
+<script lang="ts">
+	import { dev } from "$app/environment"
+
+	import "/src/global.styl"
+	import "/src/fa/sass/fontawesome.styl"
+	import "uno.css"
+	import "/src/routes/studio/studio.styl"
+</script>
+
+<svelte:head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	{#if !dev}
+		<script
+			defer
+			data-domain="banland.xyz"
+			src="https://analytics.banland.xyz/js/script.js"></script>
+	{/if}
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script>
+		window.onerror = function (msg, url, line) {
+			alert("Message: " + msg + "\nUrl: " + url + "\nLine: " + line)
+		}
+	</script>
+	<script>
+		// poor man's hmr
+		// setTimeout(function() {
+		// 	window.location.reload()
+		// }, 1000)
+	</script>
+</svelte:head>
+
+<slot />
