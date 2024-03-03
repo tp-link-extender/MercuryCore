@@ -25,9 +25,12 @@ export async function POST({ request, url, params }) {
 	if (status === "Denied" && !reason) error(400, "Missing reason for denial")
 
 	if (
-		!(await squery(surql`SELECT 1 FROM application WHERE discordId = $id`, {
-			id,
-		}))
+		!(await squery(
+			surql`
+				SELECT 1 FROM application WHERE discordId = $id
+					AND deleted != true`,
+			{ id }
+		))
 	)
 		error(400, "User has no application")
 
