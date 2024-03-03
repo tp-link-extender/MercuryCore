@@ -1,12 +1,11 @@
 <script lang="ts">
 	// The friends, followers, and following pages for a user.
-
 	export let data
 
 	const titles = {
 		friends: `${data.username}'s friends`,
 		followers: `${data.username}'s followers`,
-		following: `Followed by ${data.username}`,
+		following: `Followed by ${data.username}`
 	}
 </script>
 

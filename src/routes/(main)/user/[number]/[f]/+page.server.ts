@@ -9,7 +9,7 @@ const usersQueries = {
 		SELECT number, status, username
 		# "user->friends->user OR $user<-friends<-user" doesn't work
 		# "user<->friends<->user" shows yourself in the list (twice)
-		FROM array::combine($user->friends->user, $user<-friends<-user)[0]`,
+		FROM array::concat($user->friends->user, $user<-friends<-user)[0]`,
 	followers: surql`
 		SELECT number, status, username
 		FROM $user<-follows<-user`,
