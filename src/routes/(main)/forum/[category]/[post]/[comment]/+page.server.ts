@@ -53,8 +53,7 @@ export async function load({ locals, params }) {
 				(SELECT number, status, username
 				FROM <-posted<-user)[0] AS author,
 
-				count(<-likes) AS likeCount,
-				count(<-dislikes) AS dislikeCount,
+				count(<-likes) - count(<-dislikes) AS score,
 				$user ∈ <-likes<-user.id AS likes,
 				$user ∈ <-dislikes<-user.id AS dislikes,
 

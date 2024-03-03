@@ -3,6 +3,12 @@
 	export let hostTicket: string
 
 	let filepath = ""
+
+	const host = launch(
+		`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${window.btoa(
+			filepath
+		)}`
+	)
 </script>
 
 <p>
@@ -31,14 +37,7 @@
 		<fa fa-arrow-up-right-from-square />
 		Map Folder
 	</button>
-	<button
-		class="btn btn-primary"
-		on:click={launch(
-			`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${btoa(
-				filepath
-			)}`
-		)}
-		type="button">
+	<button class="btn btn-primary" on:click={host} type="button">
 		<fa fa-wifi />
 		Begin Hosting
 	</button>
@@ -52,11 +51,7 @@
 				<li class="rounded-2">
 					<button
 						class="btn light-text pl-4 pr-0 text-start"
-						on:click={launch(
-							`mercury-player:1+launchmode:build+script:${hostTicket}&autopilot=${btoa(
-								filepath
-							)}`
-						)}
+						on:click={host}
 						type="button">
 						Begin Hosting (no Studio tools)
 					</button>

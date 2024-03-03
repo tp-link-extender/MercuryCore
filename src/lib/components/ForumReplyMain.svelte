@@ -19,7 +19,9 @@
 		: `/avatarshop/${postId}/${assetName}`
 
 	export let repliesCollapsed: RepliesCollapsed
-	export let topLevel = false
+	export let topLevel = true
+	export let pinnable = false
+	export let refreshReplies: () => void
 
 	let content = "" // Allows current reply to not be lost on clicking to another reply
 
@@ -35,7 +37,7 @@
 				class:light-text={reply.author.username != postAuthorName}
 				class:opacity-33={hidden}>
 				<span class="flex flex-row font-bold">
-					{#if !topLevel}
+					{#if topLevel}
 						<User user={reply.author} thin size="1.5rem" image />
 					{/if}
 					<span
@@ -69,21 +71,21 @@
 					if (action == "like") {
 						reply.likes = true
 
-						if (reply.dislikes) reply.dislikeCount--
+						if (reply.dislikes) reply.score++
 						reply.dislikes = false
-						reply.likeCount++
+						reply.score++
 					} else if (action == "dislike") {
 						reply.dislikes = true
 
-						if (reply.likes) reply.likeCount--
+						if (reply.likes) reply.score--
 						reply.likes = false
-						reply.dislikeCount++
+						reply.score--
 					} else if (action == "unlike") {
 						reply.likes = false
-						reply.likeCount--
+						reply.score--
 					} else if (action == "undislike") {
 						reply.dislikes = false
-						reply.dislikeCount--
+						reply.score++
 					}
 
 					return () => {}
@@ -109,7 +111,7 @@
 						: reply.dislikes
 							? 'text-red-5 font-bold'
 							: ''}">
-					{reply.likeCount - reply.dislikeCount}
+					{reply.score}
 				</span>
 				<button
 					name="action"
@@ -143,6 +145,13 @@
 					{#if user.permissionLevel >= 4}
 						<DeleteButton id={reply.id} moderate reverse />
 					{/if}
+				{/if}
+				{#if pinnable}
+					<PinButton
+						{refreshReplies}
+						id={reply.id}
+						pinned={reply.pinned}
+						reverse />
 				{/if}
 			{/if}
 		{:else}
@@ -180,7 +189,7 @@
 				</form>
 			</div>
 		{/if}
-		{#if !topLevel}
+		{#if topLevel}
 			<!-- Pls give snippets svelte -->
 			<noscript>
 				<div class="card reply bg-darker mb-2 p-4 pt-2 max-w-3/4">
@@ -241,7 +250,8 @@
 		{postAuthorName}
 		{repliesCollapsed}
 		depth={depth + 1}
-		topLevel />
+		topLevel={false}
+		{refreshReplies} />
 {/each}
 
 <style lang="stylus">

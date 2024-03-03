@@ -11,6 +11,8 @@
 	const formData = superForm(data.form)
 
 	export const snapshot = formData
+
+	let refresh = 0
 </script>
 
 <Head title={data.title} />
@@ -118,18 +120,22 @@
 	<PostReply {formData} />
 
 	{#if data.replies.length > 0}
-		{#each data.replies as reply, num}
-			<ForumReply
-				{user}
-				{reply}
-				{num}
-				{replyingTo}
-				categoryName={data.categoryName}
-				postId={data.id}
-				postAuthorName={data.author.username}
-				{repliesCollapsed}
-				topLevel />
-		{/each}
+		{#key refresh}
+			{#each data.replies as reply, num}
+				<ForumReply
+					{user}
+					{reply}
+					{num}
+					{replyingTo}
+					categoryName={data.categoryName}
+					postId={data.id}
+					postAuthorName={data.author.username}
+					{repliesCollapsed}
+					topLevel={false}
+					pinnable
+					refreshReplies={() => refresh++} />
+			{/each}
+		{/key}
 	{:else}
 		<h3 class="text-center pt-6">
 			No replies yet. Be the first to post one!

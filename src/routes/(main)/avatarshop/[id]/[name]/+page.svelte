@@ -24,6 +24,8 @@
 
 	export const snapshot = formData
 
+	let refresh = 0
+
 	let tabData = TabData(data.url, ["Recommended", "Comments"])
 
 	const types: { [k: number]: string } = {
@@ -159,7 +161,9 @@
 				assetName={data.name}
 				postAuthorName={data.creator.username || ""}
 				{repliesCollapsed}
-				topLevel />
+				topLevel={false}
+				pinnable
+				refreshReplies={() => refresh++} />
 		{/each}
 	</Tab>
 </div>

@@ -9,6 +9,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { like } from "$lib/server/like"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
+import type { RequestEvent } from "./$types"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -18,7 +19,8 @@ const schema = z.object({
 const SELECTREPLIES = recurse(
 	from => surql`
 		(${from} <-replyToPost<-forumReply
-		WHERE !->replyToReply) AS replies`,
+		WHERE !->replyToReply
+		ORDER BY pinned DESC, score DESC) AS replies`,
 	// Make sure it's not a reply to another reply
 	"replyToReply",
 	"forumReply"
@@ -40,6 +42,7 @@ type ForumPost = {
 	id: string
 	likeCount: number
 	likes: boolean
+	pinned: boolean
 	posted: string
 	replies: Replies
 	title: string
@@ -77,6 +80,24 @@ export async function load({ locals, params }) {
 		form: await superValidate(zod(schema)),
 		...forumPost,
 	}
+}
+
+async function findReply<T>(
+	e: RequestEvent,
+	input = surql`SELECT 1 FROM $forumReply`
+) {
+	const { locals, url } = e
+	const { user } = await authorise(locals, 4)
+
+	const id = url.searchParams.get("id")
+	if (!id) error(400, "Missing reply id")
+	// Prevents incorrect ids erroring the Surreal query as well
+	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
+
+	const reply = await squery<T>(input, { forumReply: `forumReply:${id}` })
+	if (!reply) error(404, "Reply not found")
+
+	return { user, reply, id }
 }
 
 export const actions = {
@@ -161,25 +182,18 @@ export const actions = {
 
 		await like(user.id, `forumReply:${newReplyId}`)
 	},
-	delete: async ({ url, locals }) => {
-		const { user } = await authorise(locals)
-		const id = url.searchParams.get("id")
-		if (!id) error(400, "Missing comment id")
-		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
-		// Prevents incorrect ids erroring the Surreal query as well
-
-		const reply = await squery<{
+	delete: async e => {
+		const { user, reply, id } = await findReply<{
 			authorId: string
 			visibility: string
 		}>(
+			e,
 			surql`
 				SELECT
 					meta::id((<-posted<-user.id)[0]) AS authorId,
 					visibility
-				FROM $forumReply`,
-			{ forumReply: `forumReply:${id}` }
+				FROM $forumReply`
 		)
-		if (!reply) error(404, "Reply not found")
 
 		if (reply.authorId !== user.id)
 			error(403, "You cannot delete someone else's reply")
@@ -199,16 +213,8 @@ export const actions = {
 			{ forumReply: `forumReply:${id}` }
 		)
 	},
-	moderate: async ({ url, locals }) => {
-		await authorise(locals, 4)
-
-		const id = url.searchParams.get("id")
-		if (!id) error(400, "Missing comment id")
-		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
-
-		const findReply = (await surreal.select(`forumReply:${id}`))[0]
-
-		if (!findReply) error(404, "Reply not found")
+	moderate: async e => {
+		const { id } = await findReply(e)
 
 		await query(
 			surql`
@@ -224,6 +230,20 @@ export const actions = {
 				COMMIT TRANSACTION`,
 			{ forumReply: `forumReply:${id}` }
 		)
+	},
+	pin: async e => {
+		const { id } = await findReply(e)
+
+		await query(surql`UPDATE $forumReply SET pinned = true`, {
+			forumReply: `forumReply:${id}`,
+		})
+	},
+	unpin: async e => {
+		const { id } = await findReply(e)
+
+		await query(surql`UPDATE $forumReply SET pinned = false`, {
+			forumReply: `forumReply:${id}`,
+		})
 	},
 	like: e =>
 		categoryActions.like(e as unknown as import("../$types").RequestEvent),
