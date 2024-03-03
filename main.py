@@ -44,7 +44,7 @@ async def sendApplicationToAdmin(interaction):
     embedV.add_field(name="3. Any questions/suggestions?", value="{user response}", inline=False)
     embedV.add_field(name="Status", value="No decision yet")
     channel = bot.get_channel(1211323371367698492)
-    message = await channel.send(embed=embedV)
+    message = await channel.send(embed=embedV, allowed_mentions=None)
     await message.edit(view=adminBtns(message_id = message.id))
 
 
@@ -76,13 +76,21 @@ class keyApplication(ui.Modal, title="Application"):
     q3 = ui.TextInput(label="Any questions/suggestions?", style=discord.TextStyle.short, required=False)
 
 class deniedReason(ui.Modal):
-    def __init__(self, user):
+    def __init__(self, user, appMsg, embedMsg, btnView):
         self.user = user
+        self.appMsg = appMsg
+        self.embedMsg = embedMsg
+        self.btnView = btnView
         super().__init__(title="Reason for denial")
 
     q1 = ui.TextInput(label="Reason for denial:", style=discord.TextStyle.paragraph, required=True, min_length="2")
 
     async def on_submit(self, interaction: discord.Interaction):
+        embedV = self.embedMsg.to_dict()
+        embedV["fields"][-1]["value"] = f"Denied by {interaction.user}"
+        embedV["color"] = 0xd9363e 
+        embedV = discord.Embed.from_dict(embedV)
+        await self.appMsg.edit(embed=embedV, view=self.btnView)
         await interaction.response.send_message(f"Your response was {self.q1}.", ephemeral=True)
         await reviewedApp(interaction, self.user, "denied", reason=self.q1)
 
@@ -127,14 +135,10 @@ class adminBtns(discord.ui.View):
             i.disabled = True
 
         embedV = interaction.message.embeds[0].to_dict()
-        userID = bot.get_user(int(embedV["fields"][0]["value"]))
-        embedV["fields"][-1]["value"] = f"Denied by {interaction.user}"
-        embedV["color"] = 0xd9363e 
-        embedV = discord.Embed.from_dict(embedV)
         msg = await bot.get_channel(interaction.channel_id).fetch_message(self.message_id)
-        await msg.edit(embed=embedV, view=self)
-        await interaction.response.send_modal(deniedReason(user = userID))
-
+        userID = bot.get_user(int(embedV["fields"][0]["value"]))
+        await interaction.response.send_modal(deniedReason(user=userID, appMsg=msg, embedMsg=interaction.message.embeds[0], btnView=self))
+        
 @bot.event
 async def on_ready():
     print(f"[green]Bot is active[/green]")
