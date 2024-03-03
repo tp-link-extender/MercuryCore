@@ -22,9 +22,11 @@ export async function POST({ request, url, params }) {
 
 	if (status === "Accepted" && reason)
 		error(400, "Reason for acceptance is not needed")
-	if (status === "Denied" && !reason) error(400, "Missing reason for denial")
+	if (["Denied", "Banned"].includes(status) && !reason)
+		error(400, "Missing reason")
 
 	if (
+		status !== "Banned" &&
 		!(await squery(
 			surql`
 				SELECT 1 FROM application WHERE discordId = $id
@@ -34,15 +36,28 @@ export async function POST({ request, url, params }) {
 	)
 		error(400, "User has no application")
 
-	await query(
-		surql`
+	if (status === "Banned")
+		await query(
+			surql`
+				CREATE $ban CONTENT {
+					created: time::now(),
+					reason: $reason
+				}`,
+			{
+				ban: `applicationBan:${id}`,
+				reason,
+			}
+		)
+	else
+		await query(
+			surql`
 			UPDATE application MERGE {
 				status: $status,
 				reason: $reason,
 				reviewed: time::now()
 			} WHERE discordId = $id`,
-		{ id, status, reason }
-	)
+			{ id, status, reason }
+		)
 
 	return new Response()
 }
