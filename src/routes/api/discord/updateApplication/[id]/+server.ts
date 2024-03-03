@@ -18,7 +18,7 @@ export async function POST({ request, url, params }) {
 
 	const { status, reason } = data
 	if (!status) error(400, "Missing status")
-	if (!["Accepted", "Denied"].includes(status)) error(400, "Invalid status")
+	if (!["Accepted", "Denied", "Banned"].includes(status)) error(400, "Invalid status")
 
 	if (status === "Accepted" && reason)
 		error(400, "Reason for acceptance is not needed")
