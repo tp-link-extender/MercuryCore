@@ -19,8 +19,7 @@ try {
 
 export async function load({ request, locals }) {
 	const { session, user } = locals
-	// Not authorise function, as we don't want
-	// to redirect to login page if not logged in
+	// Not authorise function, as we don't want to redirect to login page if not logged in
 
 	const banners = await query<{
 		body: string
