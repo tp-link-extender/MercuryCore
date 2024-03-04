@@ -1,6 +1,6 @@
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import surreal, { query, squery, surql } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
@@ -37,14 +37,13 @@ type ForumPost = {
 		text: string
 		updated: string
 	}[]
-	dislikeCount: number
 	dislikes: boolean
 	id: string
-	likeCount: number
 	likes: boolean
 	pinned: boolean
 	posted: string
 	replies: Replies
+	score: number
 	title: string
 	visibility: string
 }
@@ -60,8 +59,7 @@ export async function load({ locals, params }) {
 				*,
 				meta::id(id) AS id,
 				(SELECT number, username FROM <-posted<-user)[0] AS author,
-				count(<-likes) AS likeCount,
-				count(<-dislikes) AS dislikeCount,
+				count(<-likes) - count(<-dislikes) AS score,
 				$user ∈ <-likes<-user.id AS likes,
 				$user ∈ <-dislikes<-user.id AS dislikes,
 				(->in->forumCategory)[0].name AS categoryName,
@@ -84,10 +82,11 @@ export async function load({ locals, params }) {
 
 async function findReply<T>(
 	e: RequestEvent,
+	permissionLevel?: number,
 	input = surql`SELECT 1 FROM $forumReply`
 ) {
 	const { locals, url } = e
-	const { user } = await authorise(locals, 4)
+	const { user } = await authorise(locals, permissionLevel)
 
 	const id = url.searchParams.get("id")
 	if (!id) error(400, "Missing reply id")
@@ -98,6 +97,25 @@ async function findReply<T>(
 	if (!reply) error(404, "Reply not found")
 
 	return { user, reply, id }
+}
+
+const pinThing = (pinned: boolean, thing: string) =>
+	query(surql`UPDATE $thing SET pinned = $pinned`, { thing, pinned })
+
+// wrapping this stuff in arrow functions just to prevent it from maybe returning god knows what to the client from an action
+const pinReply = (pinned: boolean) => async (e: RequestEvent) => {
+	await pinThing(pinned, `forumReply:${(await findReply(e, 4)).id}`)
+}
+
+const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
+	const { locals, url } = e
+	await authorise(locals, 4)
+
+	const id = url.searchParams.get("id")
+	if (!id) error(400, "Missing post id")
+	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid post id")
+
+	await pinThing(pinned, `forumPost:${id}`)
 }
 
 export const actions = {
@@ -188,6 +206,7 @@ export const actions = {
 			visibility: string
 		}>(
 			e,
+			undefined,
 			surql`
 				SELECT
 					meta::id((<-posted<-user.id)[0]) AS authorId,
@@ -214,7 +233,7 @@ export const actions = {
 		)
 	},
 	moderate: async e => {
-		const { id } = await findReply(e)
+		const { id } = await findReply(e, 4)
 
 		await query(
 			surql`
@@ -231,20 +250,10 @@ export const actions = {
 			{ forumReply: `forumReply:${id}` }
 		)
 	},
-	pin: async e => {
-		const { id } = await findReply(e)
-
-		await query(surql`UPDATE $forumReply SET pinned = true`, {
-			forumReply: `forumReply:${id}`,
-		})
-	},
-	unpin: async e => {
-		const { id } = await findReply(e)
-
-		await query(surql`UPDATE $forumReply SET pinned = false`, {
-			forumReply: `forumReply:${id}`,
-		})
-	},
+	pin: pinReply(true),
+	unpin: pinReply(false),
+	pinpost: pinPost(true),
+	unpinpost: pinPost(false),
 	like: e =>
 		categoryActions.like(e as unknown as import("../$types").RequestEvent),
 }

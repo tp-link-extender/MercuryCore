@@ -146,9 +146,9 @@
 						<DeleteButton id={reply.id} moderate reverse />
 					{/if}
 				{/if}
-				{#if pinnable}
+				{#if pinnable && user.permissionLevel >= 4}
 					<PinButton
-						{refreshReplies}
+						refresh={refreshReplies}
 						id={reply.id}
 						pinned={reply.pinned}
 						reverse />

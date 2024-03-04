@@ -5,8 +5,9 @@
 	export let id: string
 	export let reverse = false
 	export let pinned = false
+	export let post = false
 	// Replies need to be re-ordered after a reply is pinned or unpinned
-	export let refreshReplies: () => void
+	export let refresh: () => void
 
 	const text = pinned ? "unpin" : "pin"
 	const colour = pinned ? "text-red-5" : "text-green-5"
@@ -20,11 +21,11 @@
 			if (result.type === "success") await invalidateAll()
 			await applyAction(result)
 			// We need to wait until the new replies have been fetched before refreshing
-			refreshReplies()
+			refresh()
 		}}
 	method="POST"
 	class="inline"
-	action="?/{text}&id={id}">
+	action="?/{text}{post ? 'post' : ''}&id={id}">
 	{#if clicked}
 		<small class="light-text pl-2 inline-flex items-center">
 			{text}?
