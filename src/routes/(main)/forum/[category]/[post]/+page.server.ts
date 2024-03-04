@@ -49,7 +49,8 @@ type ForumPost = {
 }
 
 export async function load({ locals, params }) {
-	if (!/^[0-9a-z]+$/.test(params.post)) error(400, "Invalid post id")
+	if (!/^[0-9a-z]+$/.test(params.post))
+		error(400, `Invalid post id: ${params.post}`)
 
 	const { user } = await authorise(locals)
 
@@ -98,6 +99,21 @@ async function findReply<T>(
 
 	return { user, reply, id }
 }
+
+const updateVisibility = (visibility: string, text: string, id: string) =>
+	query(
+		surql`
+			BEGIN TRANSACTION;
+			LET $poster = (SELECT <-posted<-user AS poster FROM $forumReply)[0].poster;
+
+			UPDATE $forumReply SET content += {
+				text: $text,
+				updated: time::now(),
+			};
+			UPDATE $forumReply SET visibility = $visibility;
+			COMMIT TRANSACTION`,
+		{ forumReply: `forumReply:${id}`, text, visibility }
+	)
 
 const pinThing = (pinned: boolean, thing: string) =>
 	query(surql`UPDATE $thing SET pinned = $pinned`, { thing, pinned })
@@ -158,6 +174,7 @@ export const actions = {
 				LET $reply = CREATE $forumReply CONTENT {
 					posted: time::now(),
 					visibility: "Visible",
+					pinned: false,
 					content: [{
 						text: $content,
 						updated: time::now(),
@@ -219,35 +236,13 @@ export const actions = {
 
 		if (reply.visibility !== "Visible") error(400, "Reply already deleted")
 
-		await query(
-			surql`
-				LET $poster = (SELECT <-posted<-user AS poster
-				FROM $forumReply)[0].poster;
-
-				UPDATE $forumReply SET content += [{
-					text: "[deleted]",
-					updated: time::now(),
-				}];
-				UPDATE $forumReply SET visibility = "Deleted"`,
-			{ forumReply: `forumReply:${id}` }
-		)
+		await updateVisibility("Deleted", "[deleted]", id)
 	},
 	moderate: async e => {
-		const { id } = await findReply(e, 4)
-
-		await query(
-			surql`
-				BEGIN TRANSACTION;
-				LET $reply = SELECT (<-posted<-user)[0] AS poster FROM $forumReply;
-				LET $poster = $reply.poster;
-
-				UPDATE $forumReply SET content += {
-					text: "[removed]",
-					updated: time::now(),
-				};
-				UPDATE $forumReply SET visibility = "Moderated";
-				COMMIT TRANSACTION`,
-			{ forumReply: `forumReply:${id}` }
+		await updateVisibility(
+			"Moderated",
+			"[removed]",
+			(await findReply(e, 4)).id
 		)
 	},
 	pin: pinReply(true),

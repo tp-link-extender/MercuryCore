@@ -20,7 +20,7 @@
 		async ({ result }) => {
 			if (result.type === "success") await invalidateAll()
 			await applyAction(result)
-			// We need to wait until the new replies have been fetched before refreshing
+			// We need to wait until the new data has been fetched before refreshing
 			refresh()
 		}}
 	method="POST"

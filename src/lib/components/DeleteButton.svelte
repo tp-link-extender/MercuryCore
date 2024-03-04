@@ -2,6 +2,7 @@
 	export let id: string
 	export let reverse = false
 	export let moderate = false
+	export let post = false
 
 	const text = moderate ? "moderate" : "delete"
 	const colour = moderate ? "text-cyan-5" : "text-yellow-5"
@@ -9,7 +10,11 @@
 	let clicked = false
 </script>
 
-<form use:enhance method="POST" class="inline" action="?/{text}&id={id}">
+<form
+	use:enhance
+	method="POST"
+	class="inline"
+	action="?/{text}{post ? 'post' : ''}&id={id}">
 	{#if clicked}
 		<small class="light-text pl-2 inline-flex items-center">
 			{text}?
