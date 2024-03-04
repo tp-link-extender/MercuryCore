@@ -50,9 +50,24 @@ async def sendApplicationToAdmin(interaction, q1, q2, q3):
     message = await channel.send(embed=embedV, allowed_mentions=None)
     await message.edit(view=adminBtns(message_id = message.id))
 
+async def updateApplication(url, jsonData, userID):
+        async with aiohttp.ClientSession() as session:
+            headers = {"Content-Type":"application/json"}
+            json_data = json.dumps(jsonData)
+
+            async with session.post(url, data=json_data, headers=headers) as resp:
+                if resp.status == 200:
+                    print(f"[green]Successfully updated application #{userID} on server![/green]")
+                    return "created"
+                else:
+                    resptext = await resp.text()
+                    print(resp.status, resptext)
 
 async def reviewedApp(interaction, user, userID, decision, reason=None):
     if decision == "denied":
+        print(f"[green]Updating application #{userID}[/green]")
+        data = {"status":"Denied", "reason":f"{str(reason)}"}
+        await updateApplication(f"https://banland.xyz/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}", data, userID)
         desc = f"Hello, @{interaction.user}! Unfortunately, your application was **not successful**. The reason for this has been provided below."
         embedV = discord.Embed(color=0xd9363e, description=desc)
         embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
@@ -62,6 +77,9 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
         print(f"[green]Application #{userID} denied by {interaction.user}[/green]")
     elif decision == "approved":
+        print(f"[green]Updating application #{userID}[/green]")
+        data = {"status":"Accepted"}
+        await updateApplication(f"https://banland.xyz/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}", data, userID)
         member = bot.get_guild(int(serverid)).get_member(userID)
         if not member:
             return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot. If this is a mistake, please contact @task.mgr with details.") 
@@ -78,6 +96,9 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
         print(f"[green]Application #{userID} approved by {interaction.user}[/green]")
     else:
+        print(f"[green]Updating application #{userID}[/green]")
+        data = {"status":"Banned", "reason":f"{str(reason)}"}
+        await updateApplication(f"https://banland.xyz/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}", data, userID)
         desc = f"Hello, @{interaction.user}! Unfortunately, your account has been **banned** from applying in the future. The reason for this has been provided below."
         embedV = discord.Embed(color=0xd9363e, description=desc)
         embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
@@ -92,15 +113,20 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
 async def sendApplication(url):
     async with aiohttp.ClientSession() as session:
         async with session.post(url) as resp:
-            resp_data = await resp.text()
-            data = json.loads(resp_data)
-            if resp_data == "OK":
+            if resp.status == 200:
                 print("[green]Successfully sent application to server![/green]")
                 return "created"
+            
+            resp_data = await resp.text()
+            data = json.loads(resp_data)
 
             if data["message"] == "This user can't apply again":
                 print("[green]User has already sent an application[/green]")
                 return "pending"
+            
+            if data["message"] == "This user has already been accepted":
+                print("[green]User has already been accepted[/green]")
+                return "accepted"
             
             if data["message"] == "This user is banned":
                 print("[green]User is banned from sending applications[/green]")
@@ -140,6 +166,11 @@ class keyApplication(ui.Modal):
             embedV = discord.Embed(color=0xd9363e, description=desc)
             embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
             embedV.title = ":x: Previous application is still pending"
+        elif appResp == "accepted":
+            desc = "The application you have just completed has not been sent as you have already been accepted into Mercury 2."
+            embedV = discord.Embed(color=0xd9363e, description=desc)
+            embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
+            embedV.title = ":question: You have already been accepted"
         else:
             desc = f"Unfortunately, your account has been **banned** from applying in the future. The reason for this has been provided below."
             embedV = discord.Embed(color=0xd9363e, description=desc)
@@ -166,7 +197,7 @@ class deniedReason(ui.Modal):
         user = bot.get_user(self.userId)
         embedV["color"] = 0xd9363e 
         embedV = discord.Embed.from_dict(embedV)
-        embedV.add_field(name="Reason for denial", value=f"`{self.q1}`")
+        embedV.add_field(name="Reason for denial", value=f"`{self.q1}`", inline=False)
         await self.appMsg.edit(embed=embedV, view=self.btnView)
         await interaction.response.send_message(f"Your reason for denial was `{self.q1}`.", ephemeral=True)
         await reviewedApp(interaction, user, self.userId, "denied", reason=self.q1)
@@ -187,7 +218,7 @@ class bannedReason(ui.Modal):
         user = bot.get_user(self.userId)
         embedV["color"] = 0xd9363e 
         embedV = discord.Embed.from_dict(embedV)
-        embedV.add_field(name="Reason for ban", value=f"`{self.q1}`")
+        embedV.add_field(name="Reason for ban", value=f"`{self.q1}`", inline=False)
         await self.appMsg.edit(embed=embedV, view=self.btnView)
         await interaction.response.send_message(f"Your reason for banning was `{self.q1}`.", ephemeral=True)
         await reviewedApp(interaction, user, self.userId, "banned", reason=self.q1)
