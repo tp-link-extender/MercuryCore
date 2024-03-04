@@ -2,7 +2,7 @@ import { squery, surql } from "$lib/server/surreal"
 import { json } from "@sveltejs/kit"
 import { verify } from "../../discord"
 
-export async function POST({ url, params }) {
+export async function GET({ url, params }) {
 	verify(url)
 	// Get information about the application
 
