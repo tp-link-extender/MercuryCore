@@ -1,4 +1,4 @@
-import { query, surql } from "$lib/server/surreal"
+import { mquery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { verify } from "../../discord"
 
@@ -25,16 +25,36 @@ export async function POST({ request, url, params }) {
 	if (["Denied", "Banned"].includes(status) && !reason)
 		error(400, "Missing reason")
 
-	await query(
+	const response = await mquery<
+		{
+			created: string
+			expiry: null
+			id: string
+			usesLeft: number
+		}[]
+	>(
 		surql`
-			UPDATE (
+			BEGIN TRANSACTION;
+			LET $application = (
 				SELECT * FROM application WHERE discordId = $id
 				ORDER BY created DESC LIMIT 1
-			)[0] MERGE {
+			)[0];
+			UPDATE $application MERGE {
 				status: $status,
 				reason: $reason,
 				reviewed: time::now()
-			}`,
+			};
+			# If the response was accepted, create a new regKey to allow the user to register
+			IF $status = "Accepted" {
+				LET $key = (CREATE regKey CONTENT {
+					usesLeft: 1,
+					expiry: NONE,
+					created: time::now(),
+				})[0];
+				RELATE $application->applicationKey->$key;
+				RETURN $key
+			};
+			COMMIT TRANSACTION`,
 		{
 			id: parseInt(params.id),
 			status,
@@ -42,5 +62,5 @@ export async function POST({ request, url, params }) {
 		}
 	)
 
-	return new Response()
+	return new Response(`mercurkey-${response[2].id.split(":")[1]}`)
 }
