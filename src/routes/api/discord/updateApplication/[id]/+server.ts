@@ -5,7 +5,6 @@ import { verify } from "../../discord"
 export async function POST({ request, url, params }) {
 	verify(url)
 	// Update user application
-	const id = parseInt(params.id)
 	let data: {
 		status: string
 		reason?: string
@@ -36,7 +35,11 @@ export async function POST({ request, url, params }) {
 				reason: $reason,
 				reviewed: time::now()
 			}`,
-		{ id, status, reason }
+		{
+			id: parseInt(params.id),
+			status,
+			reason,
+		}
 	)
 
 	return new Response()

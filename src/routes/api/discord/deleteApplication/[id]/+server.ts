@@ -3,8 +3,7 @@ import { verify } from "../../discord"
 
 export async function POST({ url, params }) {
 	verify(url)
-	// Delete application by id?
-	const id = parseInt(params.id)
+	// Delete application by id
 
 	await query(
 		surql`
@@ -12,7 +11,7 @@ export async function POST({ url, params }) {
 				SELECT * FROM application WHERE discordId = $id
 				ORDER BY created DESC LIMIT 1
 			)[0] SET deleted = true`,
-		{ id }
+		{ id: parseInt(params.id) }
 	)
 
 	return new Response()
