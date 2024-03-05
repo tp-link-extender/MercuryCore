@@ -5,8 +5,7 @@ import { redirect, error } from "@sveltejs/kit"
 import { Lucia, type User, type Session } from "lucia"
 import { SurrealAdapter } from "./adapter-surreal"
 
-// As of v2, Lucia now shits itself if it doesn't have
-// access to the database clients during build time
+// As of v3, Lucia no longer shits itself if it doesn't have access to the database clients during build time
 export const auth = new Lucia(new SurrealAdapter(), {
 	sessionCookie: {
 		attributes: {

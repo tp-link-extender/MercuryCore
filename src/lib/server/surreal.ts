@@ -1,19 +1,22 @@
+import { building } from "$app/environment"
 import { Surreal } from "surrealdb.js"
 
 const db = new Surreal()
 
-await db.connect("http://localhost:8000/rpc")
-await db.signin({
-	username: "root",
-	password: "root",
-})
+if (!building) {
+	await db.connect("http://localhost:8000/rpc")
+	await db.signin({
+		username: "root",
+		password: "root",
+	})
 
-await db.use({
-	namespace: "main",
-	database: "main",
-})
+	await db.use({
+		namespace: "main",
+		database: "main",
+	})
 
-console.log("loaded surreal")
+	console.log("loaded surreal")
+}
 
 export default db
 
@@ -40,20 +43,20 @@ export const surql = (
 		return newQuery
 	}, "")
 
-await db.query(surql`
-	DEFINE TABLE stuff SCHEMALESS;
+if (!building)
+	await db.query(surql`
+		DEFINE TABLE stuff SCHEMALESS;
 
-	DEFINE TABLE user SCHEMALESS;
-	DEFINE INDEX usernameI ON TABLE user COLUMNS username UNIQUE;
-	DEFINE INDEX numberI ON TABLE user COLUMNS number UNIQUE;
-	DEFINE INDEX emailI ON TABLE user COLUMNS email UNIQUE;
+		DEFINE TABLE user SCHEMALESS;
+		DEFINE INDEX usernameI ON TABLE user COLUMNS username UNIQUE;
+		DEFINE INDEX numberI ON TABLE user COLUMNS number UNIQUE;
+		DEFINE INDEX emailI ON TABLE user COLUMNS email UNIQUE;
 
-	DEFINE FUNCTION fn::id() {
-		RETURN function((UPDATE ONLY stuff:increment SET ids += 1).ids) {
-			return arguments[0].toString(36)
-		}
-	};
-`)
+		DEFINE FUNCTION fn::id() {
+			RETURN function((UPDATE ONLY stuff:increment SET ids += 1).ids) {
+				return arguments[0].toString(36) // jar var script in muh dayta bayse
+			}
+		}`)
 
 const stupidError =
 	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
