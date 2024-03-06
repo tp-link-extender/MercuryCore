@@ -101,17 +101,24 @@ async def sendApplication(url, data):
                 return data["reason"]
 
 async def updateApplication(url, jsonData, userID):
-        async with aiohttp.ClientSession() as session:
-            headers = {"Content-Type":"application/json"}
-            json_data = json.dumps(jsonData)
+    async with aiohttp.ClientSession() as session:
+        headers = {"Content-Type":"application/json"}
+        json_data = json.dumps(jsonData)
 
-            async with session.post(url, data=json_data, headers=headers) as resp:
-                if resp.status == 200:
-                    print(f"[green]Successfully updated application #{userID} on server![/green]")
-                    return "created"
+        method = jsonData["status"]
+
+        async with session.post(url, data=json_data, headers=headers) as resp:
+            resptext = await resp.text()
+            if resp.status == 200:
+                print(f"[green]Successfully updated application #{userID} on server![/green]")
+                if method == "Accepted":
+                    return resptext
                 else:
-                    resptext = await resp.text()
-                    print(resp.status, resptext)
+                    return "updated"
+            else:
+                resptext = await resp.text()
+                print(resp.status, resptext)
+                return resp.status
 
 async def getApplication(url, userID):
     async with aiohttp.ClientSession() as session:
@@ -161,9 +168,6 @@ async def deleteApplication(userID, interaction):
         await user.send(embed=embedV, view=deleteBtns(userId=userID))
     
 async def reviewedApp(interaction, user, userID, decision, reason=None):
-
-
-
     if decision == "denied":
         print(f"[green]Updating application #{userID}[/green]")
         data = {"status":"Denied", "reason":f"{str(reason)}"}
@@ -194,7 +198,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             print(f"[green]Application #{userID} denied by {interaction.user} due to member not in server[/green]")
             await interaction.followup.send("User was not found in server - autorejected user.")
         
-        await updateApplication(f"https://banland.xyz/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}", data, userID)
+        key = await updateApplication(f"https://banland.xyz/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}", data, userID)
 
         role = discord.utils.get(bot.get_guild(int(serverid)).roles, name="cool role")
         await member.add_roles(role)
@@ -203,7 +207,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         embedV = discord.Embed(color=0x4acc39, description=desc)
         embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
         embedV.title = ":white_check_mark: Application successful"
-        embedV.add_field(name="Invite key", value="{key}", inline=False)
+        embedV.add_field(name="Invite key", value=f"`{key}`", inline=False)
         embedV.add_field(name="What can I do now?", value="You can now create an account on https://banland.xyz. Additionally, you have full access to the Mercury Discord server and have been given the prestigious role of QA tester and now you can contribute to the future of Mercury 2!", inline=False)
         embedV.set_footer(text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png")
         print(f"[green]Application #{userID} approved by {interaction.user}[/green]")
@@ -327,19 +331,49 @@ class applyBtns(discord.ui.View):
 class deleteBtns(discord.ui.View):
     def __init__(self, userId):
         self.userId = userId
+        self.cooldown = commands.CooldownMapping.from_cooldown(1, 300, commands.BucketType.member)
         super().__init__(timeout = None)
 
     @discord.ui.button(label="Confirm Unsubmit", style=discord.ButtonStyle.danger, custom_id="deleteApp")
     async def deleteApp(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        user = await interaction.user.create_dm()
+
+        interaction.message.author = interaction.user
+        bucket = self.cooldown.get_bucket(interaction.message)
+        retry = bucket.update_rate_limit()
+        if retry:
+            return await interaction.response.send_message(f"Please try again in {round(retry, 1//60)} minute(s).")
+
         for i in self.children:
             i.disabled = True
 
+        msg = await bot.get_channel(interaction.channel_id).fetch_message(interaction.message.id)
+        await msg.edit(view=self)
+
         data = {"status":"Denied", "reason":"User unsubmitted application"}
 
-        await updateApplication(f"https://banland.xyz/api/discord/updateApplication/{self.userId}?apiKey={os.getenv('APIKEY')}", data, self.userId)
-        await notifyAdminsUnsubmit(interaction)
-        await interaction.response.send_message(f"Application has been unsubmitted! If this was a mistake, please contact @task.mgr with details.")
+        await interaction.response.send_message(f"Application is unsubmitting! If this was a mistake, please contact @task.mgr with details.")
+        
+        try:
+            update = await updateApplication(f"https://banland.xyz/api/discord/updateApplication/{self.userId}?apiKey={os.getenv('APIKEY')}", data, self.userId)
+        except:
+            for i in self.children:
+                i.disabled = False
 
+            await msg.edit(view=self)
+
+            await user.send(f"Sorry, but your application was not unsubmitted. Please contact @task.mgr with this code: 451")
+
+        if update == "updated":
+            print(f"[green]Application #{self.userId} has been unsubmitted[/green]")
+            await notifyAdminsUnsubmit(interaction)
+            await user.send("Your application has been unsubmitted. If this was a mistake, please contact @task.mgr with details.")
+        else:
+            for i in self.children:
+                i.disabled = False
+
+            await msg.edit(view=self)
+            user.send(f"Sorry, but your application was not unsubmitted. Please contact @task.mgr with this code: {update}")
 
 class adminBtns(discord.ui.View):
     def __init__(self, message_id):
@@ -421,11 +455,18 @@ async def unsubmit(interaction: discord.Interaction):
     if not member:
         return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot.")  
 
+    try:
+        status, reason, response, created = getApplication(f"https://banland.xyz/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}", interaction.user.id)
+        if status == "Accepted" or status == "Banned" or status == "Denied":
+            return await interaction.response.send_message("You do not have a current application at the moment.")  
+    except:
+        return await interaction.response.send_message("Sorry, but there was a problem running this command. Please notify @task.mgr with details.")  
+
     if isinstance(interaction.channel, discord.DMChannel):
-        await deleteApplication(interaction)
+        await deleteApplication(interaction.user.id, interaction)
     else:
         await confirmedDelete(interaction)
-        await deleteApplication(interaction)
+        await deleteApplication(interaction.user.id, interaction)
 
 
 bot.run(os.getenv("TOKEN"))
