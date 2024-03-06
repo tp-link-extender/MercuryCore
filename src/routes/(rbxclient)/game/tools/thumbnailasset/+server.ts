@@ -20,7 +20,7 @@ export async function GET({ url }) {
 		isCircular: "false",
 	})
 	const cache = await squery<{ url: string }>(surql`SELECT url FROM $asset`, {
-		asset: `assetCache:${stringAssetId}`,
+		asset: `thumbnailCache:${stringAssetId}`,
 	})
 
 	if (cache) redirect(302, cache.url)
@@ -33,7 +33,7 @@ export async function GET({ url }) {
 
 	const thumbnail = JSON.parse(await thumb.text())
 
-	await surreal.merge(`assetCache:${stringAssetId}`, {
+	await surreal.merge(`thumbnailCache:${stringAssetId}`, {
 		url: thumbnail.data[0].imageUrl,
 	})
 

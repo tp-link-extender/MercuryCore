@@ -62,5 +62,9 @@ export async function POST({ request, url, params }) {
 		}
 	)
 
-	return new Response(`mercurkey-${response[2].id.split(":")[1]}`)
+	return new Response(
+		response?.[2]?.id
+			? `mercurkey-${response[2].id.split(":")[1]}`
+			: undefined
+	)
 }
