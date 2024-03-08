@@ -10,6 +10,7 @@ export async function GET({ url, params }) {
 		response: string[]
 		created: string
 		status: string
+		reviewed: string
 		reason: string | undefined
 	}>(
 		surql`
@@ -17,6 +18,7 @@ export async function GET({ url, params }) {
 				response,
 				created,
 				status,
+				reviewed,
 				reason
 			FROM application
 			WHERE discordId = $id
