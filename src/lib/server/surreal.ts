@@ -99,7 +99,7 @@ export const query = async <T>(
  * @param params An array of variables to pass to SurrealDB.
  * @returns The first item in the array returned by the first query.
  * @example
- * await query<{ email: string }>(
+ * await squery<{ email: string }>(
  * 	surql`SELECT email FROM user WHERE username = $username`,
  * 	{ username: "Heliodex" }
  * ) // { email: heli@odex.cf } - returns an object for this query
@@ -115,7 +115,11 @@ export const squery = async <T>(
  * @param params An array of variables to pass to SurrealDB.
  * @returns The result of all queries given.
  * @example
- *
+ * await mquery<{ email: string }>(
+ * 	surql`
+ * 		LET $username = "Heliodex";
+ * 		SELECT email FROM user WHERE username = $username`
+ * ) // [null, [{ email: heli@odex.cf }]] - returns an array with an element for each query
  */
 export const mquery = async <T>(
 	input: string,

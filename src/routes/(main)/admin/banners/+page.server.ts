@@ -1,5 +1,6 @@
 import { authorise } from "$lib/server/lucia"
-import surreal, { query, squery, surql } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
+import { auditLog, banner } from "$lib/server/orm"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -71,9 +72,7 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 	if (action === "show" && (await bannerActiveCount()) >= 3)
 		return message(form, "Too many active banners", { status: 400 })
 
-	await surreal.merge(`banner:${id}`, {
-		active: action === "show",
-	})
+	await banner.merge(id, { active: action === "show" })
 }
 export const actions = {
 	create: async e => {
@@ -92,7 +91,7 @@ export const actions = {
 			return message(form, "Too many active banners", { status: 400 })
 
 		await Promise.all([
-			surreal.create("banner", {
+			banner.create({
 				active: true,
 				deleted: false,
 				body: bannerText,
@@ -101,19 +100,11 @@ export const actions = {
 				creator: `user:${user.id}`,
 			}),
 
-			query(
-				surql`
-					CREATE auditLog CONTENT {
-						action: "Administration",
-						note: $note,
-						user: $user,
-						time: time::now()
-					}`,
-				{
-					note: `Create banner "${bannerText}"`,
-					user: `user:${user.id}`,
-				}
-			),
+			auditLog.create({
+				action: "Administration",
+				note: `Create banner "${bannerText}" (testing)`,
+				user: `user:${user.id}`,
+			}),
 		])
 
 		return message(form, "Banner created successfully!")
@@ -125,28 +116,13 @@ export const actions = {
 
 		if (!id) return message(form, "Missing fields", { status: 400 })
 
-		const deletedBanner = (
-			await surreal.merge<{
-				body: string
-				deleted: boolean
-			}>(`banner:${id}`, {
-				deleted: true,
-			})
-		)[0]
+		const deletedBanner = await banner.merge(id, { deleted: true })
 
-		await query(
-			surql`
-				CREATE auditLog CONTENT {
-					action: "Administration",
-					note: $note,
-					user: $user,
-					time: time::now()
-				}`,
-			{
-				note: `Delete banner "${deletedBanner.body}"`,
-				user: `user:${user.id}`,
-			}
-		)
+		await auditLog.create({
+			action: "Administration",
+			note: `Delete banner "${deletedBanner.body}"`,
+			user: `user:${user.id}`,
+		})
 	},
 	updateBody: async e => {
 		const { form, error } = await getData(e)
@@ -157,7 +133,7 @@ export const actions = {
 		if (!bannerBody || !id)
 			return message(form, "Missing fields", { status: 400 })
 
-		await surreal.merge(`banner:${id}`, { body: bannerBody })
+		await banner.merge(id, { body: bannerBody })
 	},
 	updateTextLight: async e => {
 		const { form, error } = await getData(e)
@@ -167,7 +143,7 @@ export const actions = {
 
 		if (!id) return message(form, "Missing fields", { status: 400 })
 
-		await surreal.merge(`banner:${id}`, { textLight: !!bannerTextLight })
+		await banner.merge(id, { textLight: !!bannerTextLight })
 	},
 	show: showHide("show"),
 	hide: showHide("hide"),
