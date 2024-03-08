@@ -1,5 +1,6 @@
 import { authorise } from "$lib/server/lucia"
-import surreal, { query, surql } from "$lib/server/surreal"
+import surreal from "$lib/server/surreal"
+import { auditLog } from "$lib/server/orm"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -58,19 +59,11 @@ export const actions = {
 			auditText += `Change stipend time from ${currentStipendTime} to ${stipendTime}`
 		}
 
-		await query(
-			surql`
-				CREATE auditLog CONTENT {
-					action: "Account",
-					note: $note,
-					user: $user,
-					time: time::now()
-				}`,
-			{
-				note: auditText,
-				user: `user:${user.id}`,
-			}
-		)
+		await auditLog.create({
+			action: "Economy",
+			note: auditText,
+			user: `user:${user.id}`,
+		})
 
 		return message(form, "Economy updated successfully!")
 	},

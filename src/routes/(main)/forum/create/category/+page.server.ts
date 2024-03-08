@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import surreal from "$lib/server/surreal"
+import { forumCategory } from "$lib/server/orm"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
@@ -28,16 +28,14 @@ export const actions = {
 
 		const { name, description } = form.data
 
+		// Conflicts with /forum/create
 		if (name.toLowerCase() === "create")
 			return formError(form, ["name"], ["Can't park there mate"])
 
 		const limit = ratelimit(form, "forumCategory", getClientAddress, 30)
 		if (limit) return limit
 
-		await surreal.create(`forumCategory:⟨${name}⟩`, {
-			name,
-			description,
-		})
+		await forumCategory.create(name, { name, description })
 
 		redirect(302, `/forum/${name}`)
 	},

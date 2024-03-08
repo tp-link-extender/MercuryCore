@@ -42,7 +42,7 @@ const tables = z.object({
 	}),
 	auditLog: z.object({
 		id: z.string(),
-		action: z.enum(["Administration", "Moderation"]),
+		action: z.enum(["Account", "Administration", "Economy", "Moderation"]),
 		note: z.string(),
 		time: z.date(),
 		user: z.string(),
@@ -294,7 +294,10 @@ const defaultTypes: Partial<{ [k in Table]: string }> = {
 
 function thing<T extends Table>(table: T) {
 	const tid = (id: string) => `${table}:⟨${id}⟩`
-	const delet = () => query(surql`DELETE $table`, { table }) as Promise<[]>
+	const delet = (id?: string) =>
+		id
+			? query<never>(surql`DELETE $id`, { id: tid(id) })
+			: query<never>(surql`DELETE $table`, { table })
 
 	type Selectable = keyof Tables[T]
 	type Props = Partial<{
@@ -356,8 +359,7 @@ function thing<T extends Table>(table: T) {
 		})
 
 	const get = (id: string) => {
-		const delet = () =>
-			query(surql`DELETE $id`, { id: tid(id) }) as Promise<[]>
+		const delet = () => query<never>(surql`DELETE $id`, { id: tid(id) })
 
 		// Should error when selecting a field that wasn't specified
 		// eg. select1("created").updated should error
