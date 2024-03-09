@@ -358,114 +358,82 @@ function thing<T extends Table>(table: T) {
 			props,
 		})
 
-	const get = (id: string) => {
-		const delet = () => query<never>(surql`DELETE $id`, { id: tid(id) })
+	// Should error when selecting a field that wasn't specified
+	// eg. select1("created").updated should error
 
-		// Should error when selecting a field that wasn't specified
-		// eg. select1("created").updated should error
+	// We're in the Typescript zone now, nerds
+	type Return<F extends Selectable> = F[] extends ["*"]
+		? Tables[T]
+		: { [K in F]: Tables[T][K] }
 
-		// We're in the Typescript zone now, nerds
-		type Return<F extends Selectable> = F[] extends ["*"]
-			? Tables[T]
-			: { [K in F]: Tables[T][K] }
+	// const select = <F extends Selectable>(...toSelect: F[] | ["*"]) =>
+	// 	// if toSelect is ["*"], return all fields
+	// 	squery<Return<F>>(surql`SELECT ${toSelect.join(", ")} FROM $id`, {
+	// 		id: tid(id),
+	// 	})
 
-		const select = <F extends Selectable>(...toSelect: F[] | ["*"]) =>
-			// if toSelect is ["*"], return all fields
-			squery<Return<F>>(surql`SELECT ${toSelect.join(", ")} FROM $id`, {
-				id: tid(id),
-			})
-		return {
-			delete: delet,
-			select,
-		}
-	}
+	// const from = (id: string) => {
+	// 	const select = <F extends Selectable>(...toSelect: F[] | ["*"]) =>
+	// 		// if toSelect is ["*"], return all fields
+	// 		squery<Return<F>>(surql`SELECT ${toSelect.join(", ")} FROM $id`, {
+	// 			id: tid(id),
+	// 		})
+	// 	return {
+	// 		delete: delet,
+	// 		select,
+	// 	}
+	// }
+
+	const find = (id: string) =>
+		query(surql`!!SELECT 1 FROM $id`, {
+			id: tid(id),
+		}) as unknown as Promise<boolean>
 
 	return {
 		id: tid,
 		delete: delet,
 		create,
 		merge,
-		get,
+		find,
+		// from,
 	}
 }
 
-const application = thing("application")
-const asset = thing("asset")
-const assetCache = thing("assetCache")
-const assetComment = thing("assetComment")
-const auditLog = thing("auditLog")
-const banner = thing("banner")
-const created = thing("created")
-const dislikes = thing("dislikes")
-const follows = thing("follows")
-const forumCategory = thing("forumCategory")
-const forumPost = thing("forumPost")
-const forumReply = thing("forumReply")
-const friends = thing("friends")
-const hasSession = thing("hasSession")
-const imageAsset = thing("imageAsset")
-// const in = thing("in")
-const likes = thing("likes")
-const notification = thing("notification")
-const owns = thing("owns")
-const place = thing("place")
-const playing = thing("playing")
-const posted = thing("posted")
-const recentlyWorn = thing("recentlyWorn")
-const regKey = thing("regKey")
-const render = thing("render")
-const replyToAsset = thing("replyToAsset")
-const replyToComment = thing("replyToComment")
-const replyToPost = thing("replyToPost")
-const replyToReply = thing("replyToReply")
-const request = thing("request")
-const session = thing("session")
-const statusPost = thing("statusPost")
-const stuff = thing("stuff")
-const thumbnailCache = thing("thumbnailCache")
-const transaction = thing("transaction")
-const used = thing("used")
-const user = thing("user")
-const wearing = thing("wearing")
-
-export {
-	// bruh bruh ts bruh
-	application,
-	asset,
-	assetCache,
-	assetComment,
-	auditLog,
-	banner,
-	created,
-	dislikes,
-	follows,
-	forumCategory,
-	forumPost,
-	forumReply,
-	friends,
-	hasSession,
-	imageAsset,
-	// in,
-	likes,
-	notification,
-	owns,
-	place,
-	playing,
-	posted,
-	recentlyWorn,
-	regKey,
-	render,
-	replyToAsset,
-	replyToComment,
-	replyToPost,
-	replyToReply,
-	request,
-	session,
-	statusPost,
-	stuff,
-	thumbnailCache,
-	transaction,
-	used,
-	user,
-	wearing,
-}
+export const application = thing("application")
+export const asset = thing("asset")
+export const assetCache = thing("assetCache")
+export const assetComment = thing("assetComment")
+export const auditLog = thing("auditLog")
+export const banner = thing("banner")
+export const created = thing("created")
+export const dislikes = thing("dislikes")
+export const follows = thing("follows")
+export const forumCategory = thing("forumCategory")
+export const forumPost = thing("forumPost")
+export const forumReply = thing("forumReply")
+export const friends = thing("friends")
+export const hasSession = thing("hasSession")
+export const imageAsset = thing("imageAsset")
+// export const in = thing("in")
+export const likes = thing("likes")
+export const notification = thing("notification")
+export const owns = thing("owns")
+export const place = thing("place")
+export const playing = thing("playing")
+export const posted = thing("posted")
+export const recentlyWorn = thing("recentlyWorn")
+export const regKey = thing("regKey")
+export const render = thing("render")
+export const replyToAsset = thing("replyToAsset")
+export const replyToComment = thing("replyToComment")
+export const replyToPost = thing("replyToPost")
+export const replyToReply = thing("replyToReply")
+export const request = thing("request")
+export const session = thing("session")
+export const statusPost = thing("statusPost")
+export const stuff = thing("stuff")
+export const thumbnailCache = thing("thumbnailCache")
+export const transaction = thing("transaction")
+export const used = thing("used")
+export const user = thing("user")
+export const wearing = thing("wearing")
