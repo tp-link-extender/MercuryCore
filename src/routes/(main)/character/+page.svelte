@@ -25,7 +25,10 @@
 	$: query &&
 		browser &&
 		(async () => {
-			if (query.trim().length < 1) return (searchedData = data.assets)
+			if (query.trim().length < 1) {
+				searchedData = data.assets
+				return
+			}
 
 			const formdata = new FormData()
 			formdata.append("q", query)
@@ -45,7 +48,9 @@
 
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v)
+		restore: v => {
+			query = v
+		}
 	}
 
 	const tabTypes: { [k: string]: number } = {
@@ -140,19 +145,19 @@
 		1032: "FF00BF"
 	}
 	const styles: { [k: string]: string } = {
-		Head: `left: 68px; height: 3rem; width: 3rem`,
-		Torso: `left: 3rem; top: 54px; height: 88px; width: 88px`,
-		LeftArm: `left: 1px; top: 54px; height: 88px; width: 40px`,
-		RightArm: `left: 142px; top: 54px; height: 88px; width: 40px`,
-		LeftLeg: `left: 3rem; top: 148px; height: 88px; width: 40px`,
-		RightLeg: `left: 96px; top: 148px; height: 88px; width: 40px`
+		Head: "left: 68px; height: 3rem; width: 3rem",
+		Torso: "left: 3rem; top: 54px; height: 88px; width: 88px",
+		LeftArm: "left: 1px; top: 54px; height: 88px; width: 40px",
+		RightArm: "left: 142px; top: 54px; height: 88px; width: 40px",
+		LeftLeg: "left: 3rem; top: 148px; height: 88px; width: 40px",
+		RightLeg: "left: 96px; top: 148px; height: 88px; width: 40px"
 	}
 
 	$: assets = (query && browser ? searchedData : data.assets || []).filter(
 		a =>
-			tabData.currentTab == "Recent"
+			tabData.currentTab === "Recent"
 				? true
-				: a.type == tabTypes[tabData.currentTab]
+				: a.type === tabTypes[tabData.currentTab]
 	)
 </script>
 

@@ -1,4 +1,4 @@
-import fs from "fs"
+import fs from "node:fs"
 import { query, surql } from "$lib/server/surreal"
 import getNotifications from "./notifications"
 

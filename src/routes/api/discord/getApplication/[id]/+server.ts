@@ -23,7 +23,7 @@ export async function GET({ url, params }) {
 			FROM application
 			WHERE discordId = $id
 			ORDER BY created DESC LIMIT 1`,
-		{ id: parseInt(params.id) }
+		{ id: +params.id }
 	)
 
 	return json(application)

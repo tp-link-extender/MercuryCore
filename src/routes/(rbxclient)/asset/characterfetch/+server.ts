@@ -27,7 +27,7 @@ export async function GET({ url }) {
 				(SELECT meta::id(id) AS id
 				FROM ->wearing->asset).id AS wearing
 			FROM user WHERE number = $id`,
-		{ id: parseInt(userNumber) }
+		{ id: +userNumber }
 	)
 
 	if (!user) error(404, "User not found")

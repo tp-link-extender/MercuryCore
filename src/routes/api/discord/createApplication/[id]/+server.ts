@@ -5,7 +5,7 @@ import { verify, canApply } from "../../discord"
 export async function POST({ request, url, params }) {
 	verify(url)
 	// Create a new application for the user
-	const id = parseInt(params.id)
+	const id = +params.id
 	let data: string[]
 	try {
 		data = await request.json()

@@ -116,7 +116,7 @@ export const actions = {
 		if (
 			!bodyPartQuery ||
 			!bodyColour ||
-			!brickColours.includes(parseInt(bodyColour)) ||
+			!brickColours.includes(+bodyColour) ||
 			![
 				"Head",
 				"Torso",
@@ -131,7 +131,7 @@ export const actions = {
 		const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
 		const currentColours = user.bodyColours
 
-		currentColours[bodyPart] = parseInt(bodyColour)
+		currentColours[bodyPart] = +bodyColour
 
 		await query(surql`UPDATE $user SET bodyColours = $currentColours`, {
 			user: `user:${user.id}`,

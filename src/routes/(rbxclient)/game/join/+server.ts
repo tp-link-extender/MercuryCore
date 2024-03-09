@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 import surreal, { squery, surql } from "$lib/server/surreal"
-import fs from "fs"
+import fs from "node:fs"
 
 type Session = {
 	place: {

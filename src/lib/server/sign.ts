@@ -1,5 +1,5 @@
-import crypto from "crypto"
-import fs from "fs"
+import crypto from "node:crypto"
+import fs from "node:fs"
 
 /**
  * Signs a Lua script with a private key by adding a signature to the top of the script.

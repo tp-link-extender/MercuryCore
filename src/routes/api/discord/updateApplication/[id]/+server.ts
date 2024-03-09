@@ -56,7 +56,7 @@ export async function POST({ request, url, params }) {
 			};
 			COMMIT TRANSACTION`,
 		{
-			id: parseInt(params.id),
+			id: +params.id,
 			status,
 			reason,
 		}

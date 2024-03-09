@@ -95,4 +95,4 @@ declare global {
 	declare const { enhance, deserialize }: typeof import("$app/forms")
 }
 
-export {}
+export type {}

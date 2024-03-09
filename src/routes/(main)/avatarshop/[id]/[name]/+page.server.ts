@@ -52,7 +52,7 @@ export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
 	const { user } = await authorise(locals)
-	const id = parseInt(params.id)
+	const id = +params.id
 
 	const asset = await squery<Asset>(
 		surql`
@@ -96,7 +96,7 @@ export async function load({ locals, params }) {
 
 async function getBuyData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
-	const id = parseInt(e.params.id)
+	const id = +e.params.id
 
 	if (
 		!(await squery(surql`SELECT * FROM $asset`, {
@@ -384,7 +384,7 @@ export const actions = {
 			error(400, "Can't rerender a moderated asset")
 
 		try {
-			await requestRender("Clothing", parseInt(params.id))
+			await requestRender("Clothing", +params.id)
 			return {
 				icon: `/avatarshop/${asset.id}/${
 					asset.name

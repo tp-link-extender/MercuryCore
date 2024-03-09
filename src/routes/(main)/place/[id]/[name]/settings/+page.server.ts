@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
-import fs from "fs"
+import fs from "node:fs"
 import sharp from "sharp"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
@@ -93,7 +93,7 @@ export async function load({ locals, params }) {
 async function getData(e: RequestEvent) {
 	if (!/^\d+$/.test(e.params.id || ""))
 		error(400, `Invalid game id: ${e.params.id}`)
-	const id = parseInt(e.params.id || "")
+	const id = +e.params.id
 	const { user } = await authorise(e.locals)
 	const getPlace = await placeQuery(e.params.id)
 

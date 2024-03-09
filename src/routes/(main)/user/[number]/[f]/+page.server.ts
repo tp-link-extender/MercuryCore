@@ -26,7 +26,7 @@ const numberQueries = {
 export async function load({ params }) {
 	if (!/^\d+$/.test(params.number))
 		error(400, `Invalid user id: ${params.number}`)
-	const number = parseInt(params.number)
+	const number = +params.number
 
 	if (params.f && !types.includes(params.f)) error(400, "Not found")
 
