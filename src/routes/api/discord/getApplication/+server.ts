@@ -1,4 +1,4 @@
-import { squery, surql } from "$lib/server/surreal"
+import { query, surql } from "$lib/server/surreal"
 import { json } from "@sveltejs/kit"
 import { verify } from "../discord"
 
@@ -6,7 +6,7 @@ export async function GET({ url }) {
 	verify(url)
 	// Get all pending applications
 
-	const applications = await squery<{
+	const applications = await query<{
 		response: string[]
 		created: string
 		status: string
