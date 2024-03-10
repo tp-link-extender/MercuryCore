@@ -1,5 +1,6 @@
 import { auth } from "$lib/server/lucia"
-import surreal, { query, squery, mquery, surql } from "$lib/server/surreal"
+import { query, squery, mquery, surql } from "$lib/server/surreal"
+import { regKey } from "$lib/server/orm"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -136,11 +137,7 @@ export const actions = {
 		if (emailCheck)
 			return formError(form, ["email"], ["This email is already in use"])
 
-		const regkeyCheck = (
-			(await surreal.select(`regKey:⟨${regkey}⟩`)) as {
-				usesLeft: number
-			}[]
-		)[0]
+		const regkeyCheck = await regKey.select(regkey, "usesLeft")
 
 		if (!regkeyCheck)
 			return formError(form, ["regkey"], ["Registration key is invalid"])

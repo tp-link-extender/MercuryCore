@@ -1,5 +1,6 @@
 import { authorise } from "$lib/server/lucia"
-import surreal, { mquery, squery, surql } from "$lib/server/surreal"
+import { mquery, squery, surql } from "$lib/server/surreal"
+import { place } from "$lib/server/orm"
 import formData from "$lib/server/formData"
 import { likeActions } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
@@ -95,16 +96,17 @@ export const actions = {
 		const data = await formData(request)
 		const action = data.action as keyof typeof likeActions
 		const privateTicket = url.searchParams.get("privateTicket")
-		const place = (
-			(await surreal.select(`place:${id}`)) as {
-				privateServer: boolean
-				privateTicket: string
-			}[]
-		)[0]
+
+		const likePlace = await place.select(
+			id.toString(),
+			"privateServer",
+			"privateTicket"
+		)
 
 		if (
-			!place ||
-			(place.privateServer && privateTicket !== place.privateTicket)
+			!likePlace ||
+			(likePlace.privateServer &&
+				privateTicket !== likePlace.privateTicket)
 		)
 			error(404, "Place not found")
 
@@ -121,7 +123,7 @@ export const actions = {
 		if (requestType !== "RequestGame")
 			error(400, "Invalid Request (request type invalid)")
 
-		if (!(await surreal.select(`place:${serverId}`))[0])
+		if (!(await place.find(serverId.toString())))
 			error(404, "Place not found")
 
 		if (

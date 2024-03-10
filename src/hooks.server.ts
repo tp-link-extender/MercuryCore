@@ -4,9 +4,9 @@
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import { query, squery, surql } from "$lib/server/surreal"
+import { stuff } from "$lib/server/orm"
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
-import surreal from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
 import type { Cookie } from "lucia"
@@ -117,12 +117,13 @@ export async function handle({ event, resolve }) {
 		user: `user:${user.id}`,
 	})
 
-	const economy = (await surreal.select("stuff:economy"))[0]
-	const dailyStipend = (economy?.dailyStipend as number) || 10
+	const economy = await stuff.select("economy", "dailyStipend", "stipendTime")
+	const dailyStipend = economy?.dailyStipend || 10
+	const stipendTime = economy?.stipendTime || 12
 
 	if (
 		new Date(user.currencyCollected).getTime() -
-			(new Date().getTime() - 3600e3 * dailyStipend) <
+			(new Date().getTime() - 3600e3 * stipendTime) <
 		0
 	)
 		await query(

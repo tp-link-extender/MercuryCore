@@ -1,5 +1,6 @@
 import { authorise } from "$lib/server/lucia"
-import surreal, { squery, surql } from "$lib/server/surreal"
+import { squery, surql } from "$lib/server/surreal"
+import { forumPost, forumReply } from "$lib/server/orm"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeActions } from "$lib/server/like"
@@ -68,8 +69,8 @@ export const actions = {
 		const replyId = url.searchParams.get("rid")
 
 		if (
-			(id && !(await surreal.select(`forumPost:${id}`))[0]) ||
-			(replyId && !(await surreal.select(`forumReply:${replyId}`))[0])
+			(id && !(await forumPost.find(id))) ||
+			(replyId && !(await forumReply.find(replyId)))
 		)
 			error(404)
 

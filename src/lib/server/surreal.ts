@@ -18,8 +18,6 @@ if (!building) {
 	console.log("loaded surreal")
 }
 
-export default db
-
 // Probably the most referenced function in Mercury
 /**
  * Surreal template tag. No it's not injection-safe, we're not Next.js.
@@ -82,7 +80,7 @@ export const query = async <T>(
 	// DATABASE
 	// ISSUE
 	// EVER
-	for (let i = 1; i <= 1; i++) {
+	for (let i = 1; i <= 3; i++) {
 		try {
 			return (await db.query(input, params))?.[0] as T[]
 		} catch (err) {

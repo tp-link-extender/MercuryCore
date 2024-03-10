@@ -35,11 +35,8 @@ export async function load({ locals }) {
 			SELECT
 				*,
 				meta::id(id) AS id,
-				(SELECT
-					creator.number,
-					creator.status,
-					creator.username
-				FROM $parent)[0].creator AS creator
+				(SELECT number, status, username
+				FROM $parent.creator)[0] AS creator
 			OMIT deleted
 			FROM banner WHERE deleted = false`),
 	}

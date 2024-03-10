@@ -144,6 +144,7 @@ const tables = z.object({
 		maxPlayers: z.number(),
 		name: z.string(),
 		privateServer: z.boolean().optional(),
+		privateTicket: z.string(),
 		serverIP: z.string(),
 		serverPing: z.number(),
 		serverPort: z.number(),
@@ -227,6 +228,8 @@ const tables = z.object({
 		ids: z.number(),
 		place: z.number(),
 		taxRate: z.number().optional(),
+		dailyStipend: z.number().optional(),
+		stipendTime: z.number().optional(),
 		user: z.number(),
 	}),
 	thumbnailCache: z.object({
@@ -360,21 +363,22 @@ function thing<T extends Table>(table: T) {
 
 	// Should error when selecting a field that wasn't specified
 	// eg. select1("created").updated should error
-
+	// if toSelect is ["*"], return all fields
 	// We're in the Typescript zone now, nerds
 	type Return<F extends Selectable> = F[] extends ["*"]
 		? Tables[T]
 		: { [K in F]: Tables[T][K] }
 
-	// const select = <F extends Selectable>(...toSelect: F[] | ["*"]) =>
-	// 	// if toSelect is ["*"], return all fields
-	// 	squery<Return<F>>(surql`SELECT ${toSelect.join(", ")} FROM $id`, {
-	// 		id: tid(id),
-	// 	})
+	const select = <F extends Selectable>(
+		id: string,
+		...toSelect: F[] | ["*"]
+	) =>
+		squery<Return<F>>(surql`SELECT ${toSelect.join(", ")} FROM $id`, {
+			id: tid(id),
+		})
 
 	// const from = (id: string) => {
 	// 	const select = <F extends Selectable>(...toSelect: F[] | ["*"]) =>
-	// 		// if toSelect is ["*"], return all fields
 	// 		squery<Return<F>>(surql`SELECT ${toSelect.join(", ")} FROM $id`, {
 	// 			id: tid(id),
 	// 		})
@@ -395,6 +399,7 @@ function thing<T extends Table>(table: T) {
 		create,
 		merge,
 		find,
+		select,
 		// from,
 	}
 }
