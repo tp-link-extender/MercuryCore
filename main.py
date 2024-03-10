@@ -56,6 +56,10 @@ async def application(interaction):
         await user.send(embed=embedV, view=applyBtns())
 
 async def sendApplicationToAdmin(interaction, q1, q2, q3):
+
+    if len(str(q3)) <= 20:
+        q3 = "N/A"
+
     embedV = discord.Embed(color=0x472a96)
     embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
     embedV.title = f"New Applicant - @{interaction.user}"
@@ -127,30 +131,37 @@ async def getApplication(url, userID):
             if int(resp.headers.get("Content-Length")) > 0 and resp.status == 200:
                 data = json.loads(resp_data)
                 print(f"[green]Successfully fetched application #{userID} from server![/green]")
-                return data["status"], data["reason"], data["response"], data["created"]
+                return data["status"], data["reason"], data["response"], data["created"], data["reviewed"]
             else:
-                return None, None, None, None
+                return None, None, None, None, None
             
 async def fetchApplication(url, userID, interaction):
     user = await interaction.user.create_dm()
 
-    status, reason, response, created = await getApplication(url, interaction.user.id)
+    status, reason, response, created, reviewed = await getApplication(url, interaction.user.id)
 
     if status == None:
         return await interaction.response.send_message("Sorry, but you do not have any previous/pending applications. You can create one by running */register*.", ephemeral=True)
+
+    if len(response[2]) <= 20:
+        response[2] = "N/A"
 
     print(f"[green]Successfully fetched application #{userID} from server![/green]")
     embedV = discord.Embed(color=0x472a96)
     embedV.set_author(name="Mercury 2 - Info", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
     embedV.title = "Your Application"
-    embedV.add_field(name="Date submitted", value=f"{dateutil.parser.isoparse(created).strftime('%d-%m-%Y %H:%M:%S')}")
+    embedV.add_field(name="Date submitted", value=f"<t:{int(dateutil.parser.isoparse(created).timestamp())}>")
+    if status != "Pending":
+        embedV.add_field(name="Date reviewed", value=f"<t:{int(dateutil.parser.isoparse(reviewed).timestamp())}>")
     embedV.add_field(name="Status", value=f"**{status}**", inline=False)
     embedV.add_field(name="Why would you like to join Mercury 2?", value=f"`{response[0]}`", inline=False)
     embedV.add_field(name="Where did you hear about Mercury 2?", value=f"`{response[1]}`", inline=False)
     embedV.add_field(name="Any questions/suggestions?", value=f"`{response[2]}`", inline=False)
     if status == "Denied" or status == "Banned":
         embedV.add_field(name="Reason for denial/ban", value=f"`{reason}`", inline=False)
-            
+    if status == "Denied":
+        date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(weeks=1)
+        embedV.add_field(name="Application unlocked on", value=f"<t:{int(date.timestamp())}>")
     if isinstance(interaction.channel, discord.DMChannel):
         await interaction.response.send_message(embed=embedV)
     else:
@@ -246,6 +257,10 @@ class keyApplication(ui.Modal):
         print(f"[green]Application #{self.userId} is sending to server for creation")
         appResp = await sendApplication(f"https://banland.xyz/api/discord/createApplication/{self.userId}?apiKey={os.getenv('APIKEY')}", [str(self.q1), str(self.q2), str(self.q3)])
         if appResp == "created":
+
+            if len(str(self.q3)) <= 20:
+                self.q3 = "N/A"
+
             desc = "Thank you for sending an application! It will be reviewed and you should recieve a decision on this application within 1-2 days or later. You can view the status of this application at any time by using */info*. You may also unsubmit this application at any time by using */unsubmit*."
             embedV = discord.Embed(color=0x4acc39, description=desc)
             embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
@@ -323,6 +338,12 @@ class applyBtns(discord.ui.View):
 
     @discord.ui.button(label="Get Started", style=discord.ButtonStyle.success, custom_id="getStarted")
     async def getStarted(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        for i in self.children:
+            i.disabled = True
+
+        msg = await bot.get_channel(interaction.channel_id).fetch_message(interaction.message.id)
+        await msg.edit(view=self)
+
         member = bot.get_guild(int(serverid)).get_member(interaction.user.id) 
         if not member:
             return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot.")
@@ -431,6 +452,17 @@ async def register(interaction: discord.Interaction):
     if not member:
         return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot.")  
 
+    try:
+        status, reason, response, created, reviewed = await getApplication(f"https://banland.xyz/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}", interaction.user.id)
+        if status == "Banned":
+            return await interaction.response.send_message("You cannot submit an application at this moment. Please run */info* for more details.")  
+        if status == "Denied":
+            date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(weeks=1)
+            timestamp = int(date.timestamp())
+            return await interaction.response.send_message(f"You cannot submit an application at this moment. You may retry on <t:{timestamp}>")  
+    except:
+        return await interaction.response.send_message("Sorry, but there was a problem running this command. Please notify @task.mgr with details.")  
+
     if isinstance(interaction.channel, discord.DMChannel):
         await application(interaction)
     else:
@@ -456,9 +488,9 @@ async def unsubmit(interaction: discord.Interaction):
         return await interaction.response.send_message("Sorry, but you must be a member of the [Mercury 2 Discord server](https://discord.gg/5dQWXJn6pW) to use this bot.")  
 
     try:
-        status, reason, response, created = getApplication(f"https://banland.xyz/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}", interaction.user.id)
-        if status == "Accepted" or status == "Banned" or status == "Denied":
-            return await interaction.response.send_message("You do not have a current application at the moment.")  
+        status, reason, response, created, reviewed = await getApplication(f"https://banland.xyz/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}", interaction.user.id)
+        if status != "Pending" or status == None:
+            return await interaction.response.send_message("You do not have a current pending application at the moment.")  
     except:
         return await interaction.response.send_message("Sorry, but there was a problem running this command. Please notify @task.mgr with details.")  
 
