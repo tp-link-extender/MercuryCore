@@ -7,6 +7,7 @@ export async function GET({ url }) {
 	// Get all pending applications
 
 	const applications = await query<{
+		discordId: number
 		response: string[]
 		created: string
 		status: string
@@ -15,6 +16,7 @@ export async function GET({ url }) {
 	}>(
 		surql`
 			SELECT
+				discordId,
 				response,
 				created,
 				status,
