@@ -17,7 +17,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.6.0",
 		"@melt-ui/pp": "^0.3.0",
-		"@melt-ui/svelte": "^0.75.3",
+		"@melt-ui/svelte": "^0.76.0",
 		"@sveltejs/adapter-node": "^5.0.1",
 		"@sveltejs/kit": "^2.5.3",
 		"@sveltejs/vite-plugin-svelte": "^3.0.2",
@@ -25,7 +25,7 @@
 		"@types/d3-interpolate": "^3.0.4",
 		"@types/node": "^20.11.25",
 		"@types/nprogress": "^0.2.3",
-		"@types/serviceworker": "^0.0.83",
+		"@types/serviceworker": "^0.0.84",
 		"@types/three": "^0.162.0",
 		"@types/uuid": "^9.0.8",
 		"@unocss/core": "^0.58.5",

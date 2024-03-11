@@ -13,7 +13,7 @@ let fa: { [k: string]: string } = {}
 export default defineConfig({
 	rules: [
 		// Fontawesome
-		[/^fa-([\.\d]+)x$/, ([, n]) => ({ "font-size": `${n}em` })],
+		[/^fa-([.\d]+)x$/, ([, n]) => ({ "font-size": `${n}em` })],
 		[
 			/^fa-([a-zA-Z0-9-]+)$/,
 			([, c], { rawSelector }) =>
