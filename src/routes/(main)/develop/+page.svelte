@@ -3,54 +3,61 @@
 		["Shirts", "🧥", "11"],
 		["T-Shirts", "👕", "2"],
 		["Pants", "👖", "12"],
-		["Decals", "🖼️", "13"],
+		["Decals", "🖼️", "13"]
 	]
 
 	export let data
-	const { user } = data
-
-	if (user?.permissionLevel == 5) assetTypes.push(["Hats", "🎩", ""])
 
 	let tabData = TabData(data.url, ["Create", "Creations"])
+	let tabData2 = TabData(data.url, ["Shirts", "T-Shirts", "Pants", "Decals"])
 </script>
 
 <Head title="Create" />
 
-<div class="container py-2">
-	<h1 class="h1 mb-2 light-text">Create</h1>
-	<div class="row">
-		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData tabs />
-		</div>
-		<div class="col-lg-10 col-md-9">
-			<Tab {tabData}>
-				<div class="row">
-					{#each assetTypes as asset, num}
-						<AdminLink
-							href="/develop/create?asset={asset[2]}"
-							emoji={asset[1]}
-							{num}
-							total={assetTypes.length}
-							name={asset[0]} />
-					{/each}
-				</div>
+<div class="ctnr py-2">
+	<h1>Create</h1>
+	<div class="flex flex-wrap pt-6">
+		<TabNav
+			bind:tabData
+			vertical
+			class="w-full lg:w-1/6 md:(w-1/4 pr-4) pb-6 " />
+		<div class="w-full lg:w-5/6 md:w-3/4">
+			<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
+				{#each assetTypes as asset, num}
+					<AdminLink
+						href="/develop/create?asset={asset[2]}"
+						emoji={asset[1]}
+						{num}
+						total={assetTypes.length}
+						name={asset[0]} />
+				{/each}
 			</Tab>
 
 			<Tab {tabData}>
-				<div class="row">
-					{#each assetTypes as asset, num}
-						<AdminLink
-							href="/develop/create?asset={asset[2]}"
-							emoji={asset[1]}
-							{num}
-							total={assetTypes.length}
-							name={asset[0]}>
-							<small class="text-warning">
-								0 of this asset created and approved
-							</small>
-						</AdminLink>
-					{/each}
-				</div>
+				<TabNav bind:tabData={tabData2} justify />
+				<form
+					on:submit|preventDefault
+					action="/character?tab={tabData.currentTab}"
+					class="pb-4">
+					<input
+						type="hidden"
+						name="tab"
+						value={tabData.currentTab} />
+					<div class="input-group">
+						<input
+							type="text"
+							name="q"
+							placeholder="Search for an item"
+							aria-label="Search for an item"
+							aria-describedby="button-addon2" />
+						<button
+							class="btn btn-secondary"
+							aria-label="Search"
+							id="button-addon2">
+							<fa fa-magnifying-glass />
+						</button>
+					</div>
+				</form>
 			</Tab>
 		</div>
 	</div>

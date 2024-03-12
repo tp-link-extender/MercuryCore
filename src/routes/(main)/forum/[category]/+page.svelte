@@ -1,41 +1,61 @@
 <script lang="ts">
+	import { page } from "$app/stores"
+	import ForumPost from "./ForumPost.svelte"
+	import PostPage from "./[post]/+page.svelte"
+
 	export let data
 	// Forum
-	// data.posts contain each post as {id, content, likes, dislikes, author: {username}}
 </script>
 
 <Head title="{data.name} - Forum" />
 
-<div class="container light-text">
-	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
-			<li class="breadcrumb-item">
-				<a href="/forum" class="accent-text">Forum</a>
-			</li>
-			<li class="breadcrumb-item active" aria-current="page">
-				{data.name}
-			</li>
-		</ol>
-	</nav>
+<div class="ctnr max-w-200">
+	<Breadcrumbs
+		path={[
+			["Forum", "/forum"],
+			[data.name, ""]
+		]} />
 
-	<h1 class="light-text mb-12">
+	<h1 class="pb-8">
 		{data.name} - Forum
-		<a
-			href="/forum/create?category={data.name}"
-			class="btn btn-primary ms-6">
-			<i class="fa fa-file me-2" />
-			Create post
-		</a>
+		<span class="pl-6">
+			<a
+				href="/forum/create?category={data.name}"
+				class="btn btn-primary">
+				<fa fa-file class="pr-2" />
+				Create post
+			</a>
+		</span>
 	</h1>
-	{#each data.posts as post, num}
-		<ForumPost
-			{post}
-			{num}
-			total={data.posts.length}
-			categoryName={data.name} />
-	{/each}
+	{#if data.posts.length > 0}
+		{#each data.posts as post, num}
+			<ForumPost
+				{post}
+				{num}
+				total={data.posts.length}
+				categoryName={data.name} />
+		{/each}
+	{:else}
+		<h2 class="text-center">
+			No posts in this category yet. Be the first to create one!
+		</h2>
+	{/if}
 </div>
 
-<style lang="stylus">
-	containerMinWidth()
-</style>
+{#if $page.state.openPost}
+	<div
+		class="modal-static fixed h-full z-10 overflow-y-auto p-10 py-20">
+		<div
+			transition:fade={{ duration: 200 }}
+			role="button"
+			tabindex="0"
+			on:click={() => history.back()}
+			on:keypress={() => history.back()}
+			class="modal-backdrop" />
+		<div
+			transition:fade={{ duration: 100 }}
+			class="modal-box bg-background h-full w-full max-w-280 py-10 max-h-initial!">
+			<PostPage data={$page.state.openPost} asComponent />
+		</div>
+	</div>
+{/if}

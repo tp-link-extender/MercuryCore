@@ -1,22 +1,24 @@
 import { error } from "@sveltejs/kit"
-import { prisma } from "$lib/server/prisma"
+import { query, surql } from "$lib/server/surreal"
 
-export async function GET({ url, request, setHeaders }) {
+export async function GET({ url, request }) {
 	const ticket = url.searchParams.get("ticket") as string
 
-	if (!ticket) throw error(400, "Invalid Request")
-	if (request.headers.get("user-agent") != "Roblox/WinInet")
-		throw error(400, "Invalid Request")
+	if (!ticket) error(400, "Invalid Request")
+	if (request.headers.get("user-agent") !== "Roblox/WinInet")
+		error(400, "Good one")
 
-	await prisma.place.update({
-		where: { serverTicket: ticket },
-		data: { serverPing: Math.floor(Date.now() / 1000) },
+	await query(
+		surql`
+			UPDATE place SET serverPing = time::unix()
+			WHERE serverTicket = $ticket`,
+		{ ticket }
+	)
+
+	return new Response("OK", {
+		headers: {
+			Pragma: "no-cache",
+			"Cache-Control": "no-cache",
+		},
 	})
-
-	setHeaders({
-		Pragma: "no-cache",
-		"Cache-Control": "no-cache",
-	})
-
-	return new Response("OK")
 }

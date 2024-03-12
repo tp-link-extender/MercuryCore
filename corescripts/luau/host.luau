@@ -1,67 +1,27 @@
+-- Start Game
 print "[Mercury]: Loaded Host corescript"
--- Start Game Script Arguments
-local placeId, sleeptime, access, url, killID, deathID, timeout, injectScriptAssetID, servicesUrl, libraryRegistrationScriptAssetID
 
 local InsertService = game:GetService "InsertService"
 local BadgeService = game:GetService "BadgeService"
-local FriendService = game:GetService "FriendService"
+local ScriptContext = game:GetService "ScriptContext"
+local RunService = game:GetService "RunService"
+local ScriptInformationProvider = game:GetService "ScriptInformationProvider"
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local ContentProvider = game:GetService "ContentProvider"
+local Players = game:GetService "Players"
+local Visit = game:GetService "Visit"
+
+-- establish this peer as the Server
+local NetworkServer = game:GetService "NetworkServer"
 
 -- StartGame --
-pcall(function()
-	game:GetService("ScriptContext"):AddStarterScript(injectScriptAssetID)
-end)
-game:GetService("RunService"):Run()
+
+RunService:Run()
 
 -- REQUIRES: StartGanmeSharedArgs.txt
 -- REQUIRES: MonitorGameStatus.txt
 
-------------------- UTILITY FUNCTIONS --------------------------
-
-function waitForChild(parent, childName)
-	while true do
-		local child = parent:findFirstChild(childName)
-		if child then
-			return child
-		end
-		parent.ChildAdded:wait()
-	end
-end
-
--- returns the player object that killed this humanoid
--- returns nil if the killer is no longer in the game
-function getKillerOfHumanoidIfStillInGame(humanoid)
-	-- check for kill tag on humanoid - may be more than one - todo: deal with this
-	local tag = humanoid:findFirstChild "creator"
-
-	-- find player with name on tag
-	if tag then
-		local killer = tag.Value
-		if killer.Parent then -- killer still in game
-			return killer
-		end
-	end
-
-	return nil
-end
-
--- send kill and death stats when a player dies
-function onDied(victim, humanoid)
-	local killer = getKillerOfHumanoidIfStillInGame(humanoid)
-	local victorId = 0
-	if killer then
-		victorId = killer.userId
-		print("STAT: kill by " .. victorId .. " of " .. victim.userId)
-		game:HttpGet(
-			url .. "/Game/Knockouts.ashx?UserID=" .. victorId .. "&" .. access
-		)
-	end
-	print("STAT: death of " .. victim.userId .. " by " .. victorId)
-	game:HttpGet(
-		url .. "/Game/Wipeouts.ashx?UserID=" .. victim.userId .. "&" .. access
-	)
-end
-
------------------------------------END UTILITY FUNCTIONS -------------------------
+local url = _BASE_URL
 
 -----------------------------------"CUSTOM" SHARED CODE----------------------------------
 
@@ -87,208 +47,78 @@ end)
 
 -----------------------------------START GAME SHARED SCRIPT------------------------------
 
-url = "_BASE_URL"
-
-local scriptContext = game:GetService "ScriptContext"
-pcall(function()
-	scriptContext:AddStarterScript(libraryRegistrationScriptAssetID)
-end)
-scriptContext.ScriptsDisabled = true
+-- pcall(function()
+-- 	ScriptContext:AddStarterScript(libraryRegistrationScriptAssetID)
+-- end)
+ScriptContext.ScriptsDisabled = true
 
 -- game:SetPlaceID(nil, false)
-game:GetService("ChangeHistoryService"):SetEnabled(false)
-
--- establish this peer as the Server
-local ns = game:GetService "NetworkServer"
+ChangeHistoryService:SetEnabled(false)
 
 if url ~= nil then
 	pcall(function()
-		game:GetService("Players"):SetAbuseReportUrl(
-			url .. "/Report/Games.ashx"
-		)
+		Players:SetAbuseReportUrl(`{url}/Report/Games.ashx`)
 	end)
 	pcall(function()
-		game:GetService("ScriptInformationProvider")
-			:SetAssetUrl(url .. "/Asset/")
+		ScriptInformationProvider:SetAssetUrl(`{url}/Asset/`)
 	end)
 	pcall(function()
-		game:GetService("ContentProvider"):SetBaseUrl(url .. "/")
+		ContentProvider:SetBaseUrl(`{url}/`)
 	end)
-	-- pcall(function() game:GetService("Players"):SetChatFilterUrl(url .. "/Game/ChatFilter.ashx") end)
 
-	-- BadgeService:SetPlaceId(placeId)
-	if access ~= nil then
-		BadgeService:SetAwardBadgeUrl(
-			url
-				.. "/Game/Badge/AwardBadge.ashx?UserID=%d&BadgeID=%d&PlaceID=%d&"
-				.. access
-		)
-		BadgeService:SetHasBadgeUrl(
-			url .. "/Game/Badge/HasBadge.ashx?UserID=%d&BadgeID=%d&" .. access
-		)
-		BadgeService:SetIsBadgeDisabledUrl(
-			url
-				.. "/Game/Badge/IsBadgeDisabled.ashx?BadgeID=%d&PlaceID=%d&"
-				.. access
-		)
-
-		FriendService:SetMakeFriendUrl(
-			servicesUrl
-				.. "/Friend/CreateFriend?firstUserId=%d&secondUserId=%d&"
-				.. access
-		)
-		FriendService:SetBreakFriendUrl(
-			servicesUrl
-				.. "/Friend/BreakFriend?firstUserId=%d&secondUserId=%d&"
-				.. access
-		)
-		FriendService:SetGetFriendsUrl(
-			servicesUrl .. "/Friend/AreFriends?userId=%d&" .. access
-		)
-	end
 	BadgeService:SetIsBadgeLegalUrl ""
-	InsertService
-		:SetBaseSetsUrl(
-			url .. "/Game/Tools/InsertAsset.ashx?nsets=10&type=base"
-		)
-	InsertService:SetUserSetsUrl(
-		url .. "/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d"
+	InsertService:SetBaseSetsUrl(
+		`{url}/Game/Tools/InsertAsset.ashx?nsets=10&type=base`
 	)
-	InsertService
-		:SetCollectionUrl(url .. "/Game/Tools/InsertAsset.ashx?sid=%d")
-	InsertService:SetAssetUrl(url .. "/Asset/?id=%d")
-	InsertService
-		:SetAssetVersionUrl(url .. "/Asset/?assetversionid=%d")
-
-	pcall(function()
-		loadfile(url .. "/Game/LoadPlaceInfo.ashx?PlaceId=" .. placeId)()
-	end)
-
-	pcall(function()
-		if access then
-			loadfile(
-				url
-					.. "/Game/PlaceSpecificScript.ashx?PlaceId="
-					.. placeId
-					.. "&"
-					.. access
-			)()
-		end
-	end)
+	InsertService:SetUserSetsUrl(
+		`{url}/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d`
+	)
+	InsertService:SetCollectionUrl(`{url}/Game/Tools/InsertAsset.ashx?sid=%d`)
+	InsertService:SetAssetUrl(`{url}/asset?id=%d`)
+	InsertService:SetAssetVersionUrl(`{url}/Asset/?assetversionid=%d`)
 end
 
 pcall(function()
-	game:GetService("NetworkServer"):SetIsPlayerAuthenticationRequired(true)
+	NetworkServer:SetIsPlayerAuthenticationRequired(true)
 end)
 settings().Diagnostics.LuaRamLimit = 0
---settings().Network:SetThroughputSensitivity(0.08, 0.01)
---settings().Network.SendRate = 35
---settings().Network.PhysicsSend = 0  -- 1==RoundRobin
 
---shared.__time = 0
---game:GetService("RunService").Stepped:connect(function (time) shared.__time = time end)
-
-if placeId ~= nil and killID ~= nil and deathID ~= nil and url ~= nil then
-	-- listen for the death of a Player
-	function createDeathMonitor(player)
-		-- we don't need to clean up old monitors or connections since the Character will be destroyed soon
-		if player.Character then
-			local humanoid = waitForChild(player.Character, "Humanoid")
-			humanoid.Died:connect(function()
-				onDied(player, humanoid)
-			end)
-		end
-	end
-
-	-- listen to all Players' Characters
-	game:GetService("Players").ChildAdded:connect(function(player)
-		createDeathMonitor(player)
-		player.Changed:connect(function(property)
-			if property == "Character" then
-				createDeathMonitor(player)
-			end
-		end)
-	end)
-end
-
-game:GetService("Players").PlayerAdded:connect(function(player)
-	print("Player " .. player.userId .. " added")
-
-	if url and access and placeId and player and player.userId then
-		game:HttpGet(
-			url
-				.. "/Game/ClientPresence.ashx?action=connect&"
-				.. access
-				.. "&PlaceID="
-				.. placeId
-				.. "&UserID="
-				.. player.userId
-		)
-		game:HttpGet(
-			url
-				.. "/Game/PlaceVisit.ashx?UserID="
-				.. player.userId
-				.. "&AssociatedPlaceID="
-				.. placeId
-				.. "&"
-				.. access
-		)
-	end
+Players.PlayerAdded:connect(function(player)
+	print(`Player {player.userId} added`)
 end)
 
-game:GetService("Players").PlayerRemoving:connect(function(player)
-	print("Player " .. player.userId .. " leaving")
-
-	if url and access and placeId and player and player.userId then
-		game:HttpGet(
-			url
-				.. "/Game/ClientPresence.ashx?action=disconnect&"
-				.. access
-				.. "&PlaceID="
-				.. placeId
-				.. "&UserID="
-				.. player.userId
-		)
-	end
+Players.PlayerRemoving:connect(function(player)
+	print(`Player {player.userId} leaving`)
 end)
-
-if placeId ~= nil and url ~= nil then
-	-- yield so that file load happens in the heartbeat thread
-	wait()
-
-	-- load the game
-	game:Load(url .. "/asset/?id=" .. placeId)
-end
 
 if _MAP_LOCATION_EXISTS then
 	-- yield so that file load happens in the heartbeat thread
 	wait()
 
 	-- load the game
-	game:Load "_MAP_LOCATION"
+	game:Load(_MAP_LOCATION)
 end
 
 -- Now start the connection
-ns:Start(_SERVER_PORT, sleeptime)
+NetworkServer:Start(_SERVER_PORT)
 
-game:GetService("Visit"):SetPing("_SERVER_PRESENCE_URL", 30)
+Visit:SetPing(_SERVER_PRESENCE_URL, 30)
 
-if timeout then
-	scriptContext:SetTimeout(timeout)
-end
-scriptContext.ScriptsDisabled = false
+-- if timeout then
+-- 	ScriptContext:SetTimeout(timeout)
+-- end
+ScriptContext.ScriptsDisabled = false
 
---delay(1, function()
---	loadfile(url .. "/analytics/GamePerfMonitor.ashx")(game.JobId, placeId)
---end)
+-- delay(1, function()
+-- 	loadfile(`{url}/analytics/GamePerfMonitor.ashx`)(game.JobId, placeId)
+-- end)
 
+-- yimy stuff
 local reset = ";mc"
 game.Players.PlayerAdded:connect(function(player)
 	player.Chatted:connect(function(msg)
-		if msg == reset then
-			if player.Character then
-				player.Character.Humanoid.Health = 0
-			end
+		if msg == reset and player.Character then
+			player.Character.Humanoid.Health = 0
 		end
 	end)
 end)

@@ -26,7 +26,16 @@ globals:
     args: []
   _SERVER:
     args: []
-  _CLIENT:
+
+  _BASE_URL:
+    args: []
+  _PING_URL:
+    args: []
+  _THUMBNAIL_KEY:
+    args: []
+  _RENDER_TYPE:
+    args: []
+  _ASSET_ID:
     args: []
 
   assert:
@@ -7029,6 +7038,7 @@ structs:
             - LanguageService
             - Lighting
             - LocalStorageService
+            - LogService
             - AppStorageService
             - UserStorageService
             - LocalizationService
@@ -7113,6 +7123,7 @@ structs:
             - TextChatService
             - TextService
             - ThirdPartyUserService
+            - ThumbnailGenerator
             - TimerService
             - ToastNotificationService
             - ToolboxService
@@ -7151,6 +7162,8 @@ structs:
       method: true
     HttpPost:
       args:
+        - required: false
+          type: any
         - required: false
           type: any
         - required: false

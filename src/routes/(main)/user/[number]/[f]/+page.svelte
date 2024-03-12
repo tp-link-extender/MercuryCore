@@ -1,27 +1,26 @@
 <script lang="ts">
 	// The friends, followers, and following pages for a user.
-
 	export let data
 
 	const titles = {
 		friends: `${data.username}'s friends`,
 		followers: `${data.username}'s followers`,
-		following: `Followed by ${data.username}`,
+		following: `Followed by ${data.username}`
 	}
 </script>
 
 <Head title={titles[data.type]} />
 
-<h1 class="light-text text-center">{titles[data.type]} ({data.number})</h1>
+<h1 class="text-center">{titles[data.type]} ({data.number})</h1>
 
-<div class="container mt-12 d-grid">
+<div class="ctnr pt-12 grid">
 	{#each data.users as user, num}
 		<UserCard {user} {num} total={data.users.length} />
 	{/each}
 </div>
 
 <style lang="stylus">
-	.container
+	.ctnr
 		max-width 100%
 		font-size 0.9rem
 

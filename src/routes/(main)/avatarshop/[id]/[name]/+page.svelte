@@ -1,214 +1,223 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { applyAction } from "$app/forms"
+	import { invalidateAll } from "$app/navigation"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
+	const { user } = data
+	export let form
+
+	let regenerating = false
+
+	const enhanceRegen: import("./$types").SubmitFunction = () => {
+		regenerating = true
+		return async ({ result }) => {
+			if (result.type === "success") await invalidateAll()
+			await applyAction(result)
+			regenerating = false
+		}
+	}
 
 	let replyingTo = writable("")
-	const repliesCollapsed = writable({}),
-		{ user } = data,
-		{
-			form,
-			errors,
-			message,
-			constraints,
-			enhance,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		})
+	const repliesCollapsed = writable({})
+	const formData = superForm(data.form)
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 
-	let modal = writable(false),
-		tabData = TabData(data.url, ["Recommended", "Comments"])
+	let refreshComments = 0
 
-	const types: any = {
+	let tabData = TabData(data.url, ["Recommended", "Comments"])
+
+	const types: { [k: number]: string } = {
 		1: "Image",
 		2: "T-Shirt",
 		11: "Shirt",
 		12: "Pants",
 		13: "Decal",
+		18: "Face"
 	}
 </script>
 
 <Head title={data.name} />
 
-<div class="container">
-	<div class="row">
-		<div class="col">
+<div class="ctnr max-w-240">
+	<div class="flex <sm:flex-col">
+		<div class="pr-4 pb-4">
 			<img
-				class="image me-4 mb-4"
-				src="/avatarshop/{data.id}/{data.name}/icon"
+				class:opacity-50={regenerating}
+				class="image transition-opacity duration-300 aspect-1 w-80vw max-w-100"
+				src={form?.icon || `/avatarshop/${data.id}/${data.name}/icon`}
 				alt={data.name} />
 		</div>
-		<div class="col light-text">
-			<h1 class="mb-0">{data.name}</h1>
-			<strong>by:</strong>
-			<a
-				href="/user/{data.creatorUser?.number}"
-				class="user light-text text-decoration-none">
-				<span class="pfp bg-darker rounded-circle ms-1">
-					<img
-						src="/api/avatar/{data.creatorUser?.username}"
-						alt={data.creatorUser?.username}
-						class="rounded-circle rounded-top-0" />
-				</span>
-				{data.creatorUser?.username}
-			</a>
+		<div class="w-full light-text">
+			<div class="flex justify-between">
+				<h1>{data.name}</h1>
+				<li class="dropdown dropdown-hover dropdown-end pl-2 pt-2">
+					<fa fa-ellipsis />
+					<div class="dropdown-content">
+						<ul class="p-2 rounded-3">
+							<button class="btn light-text pl-4 pr-0 text-start">
+								<fa fa-pencil class="pr-2" />
+								nothing here
+							</button>
+							<!-- <li class="rounded-2">
+								<a
+									class="btn light-text pl-4 pr-0 text-start"
+									href="/requests">
+									<fa fa-pencil class="pr-2" />
+									Edit asset
+								</a>
+							</li> -->
+							{#if data.user.permissionLevel >= 5 && [11, 12].includes(data.type)}
+								<li class="rounded-2">
+									<form
+										use:enhance={enhanceRegen}
+										method="POST"
+										action="?/rerender">
+										<button
+											class="btn accent-text pl-4 pr-0 text-start">
+											<fa fa-arrows-rotate class="pr-2" />
+											<b>Rerender</b>
+										</button>
+									</form>
+								</li>
+							{/if}
+						</ul>
+					</div>
+				</li>
+			</div>
+			<div class="flex">
+				<strong class="pr-2">by:</strong>
+
+				{#if data.creator}
+					<User
+						user={data.creator}
+						size="1.5rem"
+						full
+						thin
+						bg="accent" />
+				{/if}
+			</div>
 			<p class="mt-2">
-				{#if data.description[0]}
-					{data.description[0].text}
+				{#if data.description}
+					{data.description.text}
 				{:else}
 					<em>No description available</em>
 				{/if}
 			</p>
 
 			<hr />
-			<div class="row mb-2">
-				<div class="col-md-4">
+			<div class="flex flex-wrap mb-2">
+				<div class="w-full md:w-1/3">
 					<p class="mb-2">
-						<strong>Sold:</strong>
-						{data.sold}
-						<br />
+						<strong>{data.sold}</strong>
+						sold
 					</p>
 					<p>
-						<strong>Type:</strong>
+						<strong>Type</strong>
 						{types[data.type]}
 					</p>
 				</div>
-				<div class="col d-flex flex-row-reverse">
-					<div class="card">
-						<div class="card-body">
-							<p class="light-text mb-1 text-center">
-								Price: <span class="text-success">
-									<i class="far fa-gem" />
-									{data.price}
-								</span>
-							</p>
-							<button class="btn btn-success">
-								<strong class="h5">
+				<div class="w-full md:w-2/3 flex flex-row-reverse">
+					<div class="card p-4">
+						<p class="light-text text-center mb-0 pb-1">
+							Price: <span class="text-emerald-6">
+								<far fa-gem />
+								{data.price}
+							</span>
+						</p>
+						{#if !data.owned}
+							<label for="buy" class="btn btn-success">
+								<strong class="text-xl">
 									{data.price > 0 ? "Buy Now" : "Get"}
 								</strong>
-							</button>
-						</div>
+							</label>
+						{:else}
+							<strong
+								class="btn btn-dark bg-a3 pointer-events-none text-xl">
+								Owned
+							</strong>
+						{/if}
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- <span class="w-100">
 
-			<button
-				name="action"
-				on:click={() => modal.set(true)}
-				id="buy"
-				value="buy"
-				class="btn btn-sm rounded-3 w-100 float-left mb-6 {data.owned
-					? 'btn-secondary disabled'
-					: user?.currency < data.price
-					? 'btn-danger disabled'
-					: 'btn-success'}">
-				<h4 class="mb-0">
-					{#if data.owned}
-						<i class="fa fa-gem" />
-						{data.price == 0 ? "Free" : data.price}
-						<i class="fa fa-check" />
-						Owned
-					{:else if data.price == 0}
-						Get
-					{:else}
-						Buy for <i class="fa fa-gem" />
-						{data.price}
-					{/if}
-				</h4>
-			</button>
-			{#if data.owned}
-				<button
-					name="action"
-					value="delete"
-					class="btn btn-sm w-100 float-right btn-danger">
-					[debug] delete from inventory
-				</button>
-			{:else if data.price != 0}
-				<p class="light-text" id="notify">
-					Funds will be deducted from your account immediately upon
-					pressing the buy button.
-				</p>
-			{/if} -->
-	<!-- {#if form?.msg}
-					<p class="text-danger">{form.msg}</p>
-				{/if} -->
-	<!-- </span> -->
-
-	<div class="bg-a">
-		<TabNav bind:tabData justify />
-	</div>
+	<TabNav bind:tabData justify />
 
 	<Tab {tabData} />
 
 	<Tab {tabData}>
-		<form use:enhance class="p-1" method="POST" action="?/reply">
-			<label for="content" class="form-label light-text mt-2">
-				Post a Comment
-			</label>
-			<fieldset class="col-lg-7 d-flex">
-				<textarea
-					bind:value={$form.content}
-					{...$constraints.content}
-					class="form-control {$errors.content ? 'is-in' : ''}valid"
-					name="content"
-					placeholder="What are your thoughts?"
-					rows="4" />
-				<button class="btn btn-success ms-4 mt-auto">
-					{#if $delayed}
-						Working...
-					{:else}
-						Comment
-					{/if}
-				</button>
-			</fieldset>
-			<p
-				class="mb-4"
-				class:text-success={$page.status == 200}
-				class:text-danger={$page.status >= 400}>
-				{$message || ""}
-			</p>
-		</form>
-
-		{#each data.replies as reply, num}
-			<ForumReply
-				{user}
-				{reply}
-				{num}
-				{replyingTo}
-				postId={data.id.toString()}
-				assetName={data.name}
-				postAuthorName={data.creatorUser?.username || ""}
-				{repliesCollapsed}
-				topLevel />
-		{/each}
+		<PostReply {formData} comment />
+		{#if data.replies.length > 0}
+			{#key refreshComments}
+				{#each data.replies as reply, num}
+					<ForumReply
+						{user}
+						{reply}
+						{num}
+						{replyingTo}
+						postId={data.id.toString()}
+						assetName={data.name}
+						postAuthorName={data.creator.username || ""}
+						{repliesCollapsed}
+						topLevel={false}
+						pinnable
+						refreshReplies={() => refreshComments++} />
+				{/each}
+			{/key}
+		{:else}
+			<h3 class="text-center pt-6">
+				No replies yet. Be the first to post one!
+			</h3>
+		{/if}
 	</Tab>
 </div>
 
-<Modal {modal}>
-	<div class="modal-body d-flex flex-column p-6">
-		<h1 class="text-center h5 light-text">
-			"{data.name}" is ready to play! Have fun!
-		</h1>
-		<a
-			class="btn btn-success"
-			href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
-			Download 2013
-		</a>
+<input type="checkbox" id="buy" class="modal-toggle" />
+<div class="modal2">
+	<div class="modal-box">
+		{#if data.user.currency >= data.price}
+			<h3 class="text-lg font-bold">Purchase {data.name}</h3>
+			<p class="pb-4">
+				Would you like to {data.price > 0 ? "buy" : "get"}
+				{data.name} for
+				{#if data.price > 0}
+					<far fa-gem />
+					{data.price}
+				{:else}
+					<strong>FREE</strong>
+				{/if}
+				?
+			</p>
+
+			<form method="POST" action="?/buy" class="inline">
+				<button class="btn btn-success">
+					{data.price > 0 ? "Buy Now" : "Get"}
+				</button>
+			</form>
+			<label for="buy" class="btn btn-dark ml-2">{data.noText}</label>
+		{:else}
+			<h3 class="text-lg font-bold">Insufficient funds</h3>
+			<span>
+				You don't have enough <fa fa-gem />
+				s to buy this item.
+			</span>
+			<p>
+				You'll need <strong>
+					{data.price - data.user.currency}
+				</strong>
+				more.
+			</p>
+
+			<label for="buy" class="btn btn-danger">{data.failText}</label>
+		{/if}
 	</div>
-</Modal>
+	<label class="modal-backdrop" for="buy">Close</label>
+</div>
 
 <style lang="stylus">
-	containerMinWidth(60rem)
-
 	.image
 		background var(--accent1)
 		background-image:
@@ -223,32 +232,9 @@
 		background-size 20px 20px
 		background-position 0 0, 10px 10px
 
-		height 25rem
-		width 25rem
-
-		+-sm()
-			height 15rem
-			width 15rem
-
-	#notify
-		font-size 0.8rem
-		opacity 0
-		height 0
-		transform translateY(-1.5rem)
-		transition all 0.2s ease-out
-		pointer-events none
-
 	#buy
 		z-index 5
 
-	.pfp
-	.pfp img
-		width 3.5rem
-		height 3.5rem
-
-	.user
-		.pfp
-		img
-			width 1.5rem
-			height 1.5rem
+	.modal-box
+		min-width 30rem
 </style>

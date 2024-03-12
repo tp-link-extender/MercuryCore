@@ -1,16 +1,13 @@
 -- Unused by Mercury
 print "[Mercury]: Loaded corescript 38037565"
-for _ = 1, 4 do
-	pcall(function()
-		warn "IF YOU SEE THIS MESSAGE, PLEASE REPORT IT TO THE MERCURY DEVELOPERS"
-	end)
+for _ = 1, 8 do
 	print "IF YOU SEE THIS MESSAGE, PLEASE REPORT IT TO THE MERCURY DEVELOPERS"
 end
 
 local damageGuiWidth = 5.0
 local damageGuiHeight = 5.0
 
-function waitForChild(parent, childName)
+local function waitForChild(parent, childName)
 	local child = parent:findFirstChild(childName)
 	if child then
 		return child
@@ -55,7 +52,7 @@ end
 Humanoid.MaxHealth = myHealth.Value
 Humanoid.Health = myHealth.Value
 
-function onMaxHealthChange()
+local function onMaxHealthChange()
 	Humanoid.MaxHealth = myHealth.Value
 	Humanoid.Health = myHealth.Value
 end
@@ -79,7 +76,7 @@ end
 
 print "newHealth declarations finished"
 
-function billboardHealthChange(dmg)
+local function billboardHealthChange(dmg)
 	local textLabel = Instance.new "TextLabel"
 	if dmg > 0 then
 		textLabel.Text = tostring(dmg)
@@ -104,7 +101,7 @@ function billboardHealthChange(dmg)
 	textLabel:remove()
 end
 
-function setMaxHealth()
+local function setMaxHealth()
 	--print(Humanoid.Health)
 	if myHealth.Value >= 0 then
 		Humanoid.MaxHealth = myHealth.Value

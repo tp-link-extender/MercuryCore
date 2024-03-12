@@ -10,7 +10,7 @@
 	"display": "minimal-ui",
 	"icons": [
 		{
-			"src": "/favicon.svg",
+			"src": "/icon.svg",
 			"sizes": "any",
 			"type": "image/svg+xml"
 		},

@@ -4,19 +4,22 @@
 import { auth, authorise } from "$lib/server/lucia"
 import { error, redirect } from "@sveltejs/kit"
 
+const msg = Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString()
+
 export function load() {
-	throw error(
-		451,
-		Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString("ascii"),
-	)
+	error(451, msg)
 }
 
 export const actions = {
-	logout: async ({ locals }) => {
+	logout: async ({ locals, cookies }) => {
 		const { session } = await authorise(locals)
 
-		await auth.invalidateSession(session.sessionId) // invalidate session
-		locals.auth.setSession(null) // remove cookie
-		throw redirect(302, "/login")
+		await auth.invalidateSession(session.id)
+		cookies.delete("auth_session", { path: "." })
+		redirect(302, "/login")
+	},
+	statusping: () => {
+		// does nothing
+		// hooks.server.ts will update the user's status when pinged
 	},
 }

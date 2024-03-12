@@ -1,20 +1,46 @@
+import { squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import "dotenv/config"
 
-export function GET({ url, setHeaders }) {
-	const userId = url.searchParams.get("userID")
+type User = {
+	bodyColours: {
+		Head: number
+		Torso: number
+		LeftArm: number
+		RightArm: number
+		LeftLeg: number
+		RightLeg: number
+	}
+	wearing: number[]
+}
 
-	if (!userId || !/^\d+$/.test(userId)) throw error(400, "Invalid Request")
+export async function GET({ url }) {
+	const userNumber = url.searchParams.get("userID")
 
-	let charApp = `http://banland.xyz/Asset/BodyColors.ashx?id=${userId}`
+	if (!userNumber || !/^\d+$/.test(userNumber))
+		error(400, "Missing userID parameter")
 
-	setHeaders({
-		Pragma: "no-cache",
-		"Cache-Control": "no-cache",
-	})
-
-	return new Response(
-		charApp +
-			";http://banland.xyz/asset/?id=20573078;" +
-			"http://banland.xyz/asset?id=2",
+	const user = await squery<User>(
+		surql`
+			SELECT
+				bodyColours,
+				(SELECT meta::id(id) AS id
+				FROM ->wearing->asset).id AS wearing
+			FROM user WHERE number = $id`,
+		{ id: +userNumber }
 	)
+
+	if (!user) error(404, "User not found")
+
+	let charApp = `${process.env.RCC_ORIGIN}/asset/bodycolors?id=${userNumber}`
+
+	for (const asset of user.wearing)
+		charApp += `;${process.env.RCC_ORIGIN}/asset?id=${asset}`
+
+	return new Response(charApp, {
+		headers: {
+			Pragma: "no-cache",
+			"Cache-Control": "no-cache",
+		},
+	})
 }

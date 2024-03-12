@@ -1,32 +1,34 @@
-import { prisma } from "$lib/server/prisma"
+import { query, surql } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
-import { fail } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 
-export const load = () =>
-	prisma.notification.updateMany({
-		data: {
-			read: true,
-		},
-	})
+export const load = async ({ locals }) => {
+	const { user } = await authorise(locals)
+
+	await query(
+		surql`
+			UPDATE notification SET read = true
+			WHERE out = $user`,
+		{ user: `user:${user.id}` }
+	)
+}
 
 export const actions = {
 	default: async ({ locals, url }) => {
-		const { user } = await authorise(locals),
-			id = url.searchParams.get("s")
-		if (!id) return fail(400)
+		const { user } = await authorise(locals)
+		const id = url.searchParams.get("s")
+		if (!id) error(400)
 
 		try {
-			await prisma.notification.updateMany({
-				where: {
-					id,
-					receiverId: user.id,
-				},
-				data: {
-					read: true,
-				},
-			})
-		} catch (e: any) {
-			return fail(400)
+			await query(
+				surql`
+					IF $notification.* {
+						UPDATE $notification SET read = true
+					}`,
+				{ notification: `notification:${id}` }
+			)
+		} catch (e) {
+			error(400)
 		}
 	},
 }

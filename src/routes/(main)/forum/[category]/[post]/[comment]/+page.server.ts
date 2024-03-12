@@ -1,82 +1,84 @@
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
-import addLikes from "$lib/server/addLikes"
+import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import { Prisma } from "@prisma/client"
+import { recurse, type Replies } from "$lib/server/nestedReplies"
+
+const SELECTREPLIES = recurse(
+	from => surql`(${from} <-replyToReply<-forumReply) AS replies`,
+	"replyToReply",
+	"forumReply",
+	8
+)
+
+type ForumReplies = Replies[number] & {
+	parentPost: {
+		title: string
+		id: string
+		forumCategoryName: string
+	}
+}
 
 export async function load({ locals, params }) {
-	const post = await prisma.forumPost.findUnique({
-		where: {
-			id: params.post,
-		},
-		select: {
-			author: true,
-		},
-	})
+	if (!/^[0-9a-z]+$/.test(params.post)) error(400, "Invalid post id")
 
-	if (!post) throw error(404, "Post not found")
+	const post = await squery<{
+		author: {
+			username: string
+		}
+	}>(
+		surql`
+			SELECT
+				(SELECT username
+				FROM <-posted<-user)[0] AS author
+			FROM $forumPost`,
+		{ forumPost: `forumPost:${params.post}` }
+	)
 
-	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectReplies = {
-		// where: {
-		// 	OR: [{ visibility: Visibility.Visible }, { authorId: user.id }],
-		// },
-		select: {
-			id: true,
-			posted: true,
-			parentReplyId: true,
-			visibility: true,
-			parentPost: {
-				select: {
-					forumCategoryName: true,
-					title: true,
-					id: true,
-				},
-			},
-			author: {
-				select: {
-					username: true,
-					number: true,
-				},
-			},
-			content: {
-				select: {
-					text: true,
-				},
-				orderBy: {
-					updated: Prisma.SortOrder.desc,
-				},
-				take: 1,
-			},
-			replies: {},
-		},
-	}
-	for (let i = 0; i < 9; i++)
-		selectReplies.select.replies = structuredClone(selectReplies)
+	if (!post) error(404, "Post not found")
 
-	const forumReplies = await prisma.forumReply.findUnique({
-		where: {
-			id: params.comment,
-		},
-		...selectReplies,
-	})
+	const { user } = await authorise(locals)
 
-	if (!forumReplies) throw error(404, "Reply not found")
+	const forumReplies = await query<ForumReplies>(
+		surql`
+			SELECT
+				*,
+				(SELECT text, updated FROM $parent.content
+				ORDER BY updated DESC) AS content,
+				meta::id(id) AS id,
+				$forumPost AS parentPost,
+				(IF ->replyToReply->forumReply.id THEN
+					meta::id(->replyToReply[0]->forumReply[0].id)
+				END) AS parentReplyId,
+				(SELECT number, status, username
+				FROM <-posted<-user)[0] AS author,
 
-	const { user } = await authorise(locals),
-		repliesWithLikes = await addLikes<typeof forumReplies>(
-			"forum",
-			"Reply",
-			forumReplies,
-			user.username,
-		)
+				count(<-likes) - count(<-dislikes) AS score,
+				$user ∈ <-likes<-user.id AS likes,
+				$user ∈ <-dislikes<-user.id AS dislikes,
+
+				(SELECT
+					title,
+					meta::id(id) AS id,
+					->in[0]->forumCategory[0].name as forumCategoryName
+				FROM $forumPost)[0] AS parentPost,
+
+				${SELECTREPLIES}
+			FROM $forumReply`,
+		{
+			forumReply: `forumReply:${params.comment}`,
+			forumPost: `forumPost:${params.post}`,
+			user: `user:${user.id}`,
+		}
+	)
+
+	if (!forumReplies[0]) error(404, "Reply not found")
 
 	return {
-		replies: [repliesWithLikes],
+		replies: forumReplies,
 		forumCategory: params.category,
 		postId: params.post,
-		author: post?.author.username,
+		author: post.author.username,
 	}
 }
 

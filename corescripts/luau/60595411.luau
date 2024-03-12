@@ -1,497 +1,18 @@
 -- RbxUtility
 print "[Mercury]: Loaded corescript 60595411"
 
-local t = {}
+local Terrain = game:GetService "Terrain"
 
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------JSON Functions Begin----------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
+local RbxUtility = {}
 
---JSON Encoder and Parser for Lua 5.1
---
---2007 Shaun Brown  (http://www.chipmunkav.com)
---All Rights Reserved.
+-- Fuq json
 
---Permission is hereby granted, free of charge, to any person
---obtaining a copy of this software to deal in the Software without
---restriction, including without limitation the rights to use,
---copy, modify, merge, publish, distribute, sublicense, and/or
---sell copies of the Software, and to permit persons to whom the
---Software is furnished to do so, subject to the following conditions:
-
---The above copyright notice and this permission notice shall be
---included in all copies or substantial portions of the Software.
---If you find this software useful please give www.chipmunkav.com a mention.
-
---THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
---EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
---OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
---IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
---ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
---CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
---CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-local assert = assert
-
-local StringBuilder = {
-	buffer = {},
-}
-
-function StringBuilder:New()
-	local o = {}
-	setmetatable(o, self)
-	self.__index = self
-	o.buffer = {}
-	return o
+RbxUtility.DecodeJSON = function()
+	error 'RbxUtility.DecodeJSON has been removed, please use Game:GetService("HttpService"):JSONDecode() instead.'
 end
 
-function StringBuilder:Append(s)
-	self.buffer[#self.buffer + 1] = s
-end
-
-function StringBuilder:ToString()
-	return table.concat(self.buffer)
-end
-
-local JsonWriter = {
-	backslashes = {
-		["\b"] = "\\b",
-		["\t"] = "\\t",
-		["\n"] = "\\n",
-		["\f"] = "\\f",
-		["\r"] = "\\r",
-		['"'] = '\\"',
-		["\\"] = "\\\\",
-		["/"] = "\\/",
-	},
-}
-
-function JsonWriter:New()
-	local o = {}
-	o.writer = StringBuilder:New()
-	setmetatable(o, self)
-	self.__index = self
-	return o
-end
-
-function JsonWriter:Append(s)
-	self.writer:Append(s)
-end
-
-function JsonWriter:ToString()
-	return self.writer:ToString()
-end
-
-function JsonWriter:Write(o)
-	local t = type(o)
-	if t == "nil" then
-		self:WriteNil()
-	elseif t == "boolean" or t == "number" then
-		self:WriteString(o)
-	elseif t == "string" then
-		self:ParseString(o)
-	elseif t == "table" then
-		self:WriteTable(o)
-	elseif t == "function" then
-		self:WriteFunction(o)
-	elseif t == "thread" or t == "userdata" then
-		self:WriteError(o)
-	end
-end
-
-function JsonWriter:WriteNil()
-	self:Append "null"
-end
-
-function JsonWriter:WriteString(o)
-	self:Append(tostring(o))
-end
-
-function JsonWriter:ParseString(s)
-	self:Append '"'
-	self:Append(string.gsub(s, '[%z%c\\"/]', function(n)
-		local c = self.backslashes[n]
-		if c then
-			return c
-		end
-		return string.format("\\u%.4X", string.byte(n))
-	end))
-	self:Append '"'
-end
-
-function JsonWriter:IsArray(t)
-	local count = 0
-	local isindex = function(k)
-		if type(k) == "number" and k > 0 then
-			if math.floor(k) == k then
-				return true
-			end
-		end
-		return false
-	end
-	for k, _ in pairs(t) do
-		if not isindex(k) then
-			return false, "{", "}"
-		else
-			count = math.max(count, k)
-		end
-	end
-	return true, "[", "]", count
-end
-
-function JsonWriter:WriteTable(t)
-	local ba, st, et, n = self:IsArray(t)
-	self:Append(st)
-	if ba then
-		for i = 1, n do
-			self:Write(t[i])
-			if i < n then
-				self:Append ","
-			end
-		end
-	else
-		local first = true
-		for k, v in pairs(t) do
-			if not first then
-				self:Append ","
-			end
-			first = false
-			self:ParseString(k)
-			self:Append ":"
-			self:Write(v)
-		end
-	end
-	self:Append(et)
-end
-
-function JsonWriter:WriteError(o)
-	error(string.format("Encoding of %s unsupported", tostring(o)))
-end
-
-function JsonWriter:WriteFunction(o)
-	if o == Null then
-		self:WriteNil()
-	else
-		self:WriteError(o)
-	end
-end
-
-local StringReader = {
-	s = "",
-	i = 0,
-}
-
-function StringReader:New(s)
-	local o = {}
-	setmetatable(o, self)
-	self.__index = self
-	o.s = s or o.s
-	return o
-end
-
-function StringReader:Peek()
-	local i = self.i + 1
-	if i <= #self.s then
-		return string.sub(self.s, i, i)
-	end
-	return nil
-end
-
-function StringReader:Next()
-	self.i += 1
-	if self.i <= #self.s then
-		return string.sub(self.s, self.i, self.i)
-	end
-	return nil
-end
-
-function StringReader:All()
-	return self.s
-end
-
-local JsonReader = {
-	escapes = {
-		["t"] = "\t",
-		["n"] = "\n",
-		["f"] = "\f",
-		["r"] = "\r",
-		["b"] = "\b",
-	},
-}
-
-function JsonReader:New(s)
-	local o = {}
-	o.reader = StringReader:New(s)
-	setmetatable(o, self)
-	self.__index = self
-	return o
-end
-
-function JsonReader:Read()
-	self:SkipWhiteSpace()
-	local peek = self:Peek()
-	if peek == nil then
-		error(string.format("Nil string: '%s'", self:All()))
-	elseif peek == "{" then
-		return self:ReadObject()
-	elseif peek == "[" then
-		return self:ReadArray()
-	elseif peek == '"' then
-		return self:ReadString()
-	elseif string.find(peek, "[%+%-%d]") then
-		return self:ReadNumber()
-	elseif peek == "t" then
-		return self:ReadTrue()
-	elseif peek == "f" then
-		return self:ReadFalse()
-	elseif peek == "n" then
-		return self:ReadNull()
-	elseif peek == "/" then
-		self:ReadComment()
-		return self:Read()
-	else
-		return nil
-	end
-end
-
-function JsonReader:ReadTrue()
-	self:TestReservedWord { "t", "r", "u", "e" }
-	return true
-end
-
-function JsonReader:ReadFalse()
-	self:TestReservedWord { "f", "a", "l", "s", "e" }
-	return false
-end
-
-function JsonReader:ReadNull()
-	self:TestReservedWord { "n", "u", "l", "l" }
-	return nil
-end
-
-function JsonReader:TestReservedWord(t)
-	for _, v in ipairs(t) do
-		if self:Next() ~= v then
-			error(
-				string.format(
-					"Error reading '%s': %s",
-					table.concat(t),
-					self:All()
-				)
-			)
-		end
-	end
-end
-
-function JsonReader:ReadNumber()
-	local result = self:Next()
-	local peek = self:Peek()
-	while peek ~= nil and string.find(peek, "[%+%-%d%.eE]") do
-		result = result .. self:Next()
-		peek = self:Peek()
-	end
-	result = tonumber(result)
-	if result == nil then
-		error(string.format("Invalid number: '%s'", result))
-	else
-		return result
-	end
-end
-
-function JsonReader:ReadString()
-	local result = ""
-	assert(self:Next() == '"')
-	while self:Peek() ~= '"' do
-		local ch = self:Next()
-		if ch == "\\" then
-			ch = self:Next()
-			if self.escapes[ch] then
-				ch = self.escapes[ch]
-			end
-		end
-		result = result .. ch
-	end
-	assert(self:Next() == '"')
-	local fromunicode = function(m)
-		return string.char(tonumber(m, 16))
-	end
-	return string.gsub(result, "u%x%x(%x%x)", fromunicode)
-end
-
-function JsonReader:ReadComment()
-	assert(self:Next() == "/")
-	local second = self:Next()
-	if second == "/" then
-		self:ReadSingleLineComment()
-	elseif second == "*" then
-		self:ReadBlockComment()
-	else
-		error(string.format("Invalid comment: %s", self:All()))
-	end
-end
-
-function JsonReader:ReadBlockComment()
-	local done = false
-	while not done do
-		local ch = self:Next()
-		if ch == "*" and self:Peek() == "/" then
-			done = true
-		end
-		if not done and ch == "/" and self:Peek() == "*" then
-			error(
-				string.format("Invalid comment: %s, '/*' illegal.", self:All())
-			)
-		end
-	end
-	self:Next()
-end
-
-function JsonReader:ReadSingleLineComment()
-	local ch = self:Next()
-	while ch ~= "\r" and ch ~= "\n" do
-		ch = self:Next()
-	end
-end
-
-function JsonReader:ReadArray()
-	local result = {}
-	assert(self:Next() == "[")
-	local done = false
-	if self:Peek() == "]" then
-		done = true
-	end
-	while not done do
-		local item = self:Read()
-		result[#result + 1] = item
-		self:SkipWhiteSpace()
-		if self:Peek() == "]" then
-			done = true
-		end
-		if not done then
-			local ch = self:Next()
-			if ch ~= "," then
-				error(
-					string.format(
-						"Invalid array: '%s' due to: '%s'",
-						self:All(),
-						ch
-					)
-				)
-			end
-		end
-	end
-	assert("]" == self:Next())
-	return result
-end
-
-function JsonReader:ReadObject()
-	local result = {}
-	assert(self:Next() == "{")
-	local done = false
-	if self:Peek() == "}" then
-		done = true
-	end
-	while not done do
-		local key = self:Read()
-		if type(key) ~= "string" then
-			error(string.format("Invalid non-string object key: %s", key))
-		end
-		self:SkipWhiteSpace()
-		local ch = self:Next()
-		if ch ~= ":" then
-			error(
-				string.format(
-					"Invalid object: '%s' due to: '%s'",
-					self:All(),
-					ch
-				)
-			)
-		end
-		self:SkipWhiteSpace()
-		local val = self:Read()
-		result[key] = val
-		self:SkipWhiteSpace()
-		if self:Peek() == "}" then
-			done = true
-		end
-		if not done then
-			ch = self:Next()
-			if ch ~= "," then
-				error(
-					string.format(
-						"Invalid array: '%s' near: '%s'",
-						self:All(),
-						ch
-					)
-				)
-			end
-		end
-	end
-	assert(self:Next() == "}")
-	return result
-end
-
-function JsonReader:SkipWhiteSpace()
-	local p = self:Peek()
-	while p ~= nil and string.find(p, "[%s/]") do
-		if p == "/" then
-			self:ReadComment()
-		else
-			self:Next()
-		end
-		p = self:Peek()
-	end
-end
-
-function JsonReader:Peek()
-	return self.reader:Peek()
-end
-
-function JsonReader:Next()
-	return self.reader:Next()
-end
-
-function JsonReader:All()
-	return self.reader:All()
-end
-
-function Encode(o)
-	local writer = JsonWriter:New()
-	writer:Write(o)
-	return writer:ToString()
-end
-
-function Decode(s)
-	local reader = JsonReader:New(s)
-	return reader:Read()
-end
-
-function Null()
-	return Null
-end
--------------------- End JSON Parser ------------------------
-
-t.DecodeJSON = function(jsonString)
-	pcall(function()
-		warn "RbxUtility.DecodeJSON is deprecated, please use Game:GetService('HttpService'):JSONDecode() instead."
-	end)
-
-	if type(jsonString) == "string" then
-		return Decode(jsonString)
-	end
-	print "RbxUtil.DecodeJSON expects string argument!"
-	return nil
-end
-
-t.EncodeJSON = function(jsonTable)
-	pcall(function()
-		warn "RbxUtility.EncodeJSON is deprecated, please use Game:GetService('HttpService'):JSONEncode() instead."
-	end)
-	return Encode(jsonTable)
+RbxUtility.EncodeJSON = function()
+	error 'RbxUtility.EncodeJSON has been removed, please use Game:GetService("HttpService"):JSONEncode() instead.'
 end
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -504,34 +25,37 @@ end
 --makes a wedge at location x, y, z
 --sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously w
 --returns true if made a wedge, false if the cell remains a block
-t.MakeWedge = function(x, y, z, _)
-	return game:GetService("Terrain"):AutoWedgeCell(x, y, z)
+RbxUtility.MakeWedge = function(x, y, z, _)
+	return Terrain:AutoWedgeCell(x, y, z)
 end
 
-t.SelectTerrainRegion = function(
-	regionToSelect,
-	color,
-	selectEmptyCells,
-	selectionParent
+RbxUtility.SelectTerrainRegion = function(
+	regionToSelect: Region3,
+	colour: BrickColor,
+	selectEmptyCells: boolean,
+	selectionParent: Instance
 )
-	local terrain = game.Workspace:FindFirstChild "Terrain"
+	local terrain = game.Workspace:FindFirstChild "Terrain" :: Terrain
 	if not terrain then
 		return
 	end
 
 	assert(regionToSelect)
-	assert(color)
+	assert(colour)
 
-	if type(regionToSelect) ~= "Region3" then
+	-- can't use typeof
+	if not (regionToSelect.CFrame and regionToSelect.Size) then
 		error(
-			"regionToSelect (first arg), should be of type Region3, but is type "
-				.. type(regionToSelect)
+			`regionToSelect (first arg), should be of type Region3, but is type {type(
+				regionToSelect
+			)}`
 		)
 	end
-	if type(color) ~= "BrickColor" then
+	if not (colour.Number and colour.r and colour.Color) then
 		error(
-			"color (second arg), should be of type BrickColor, but is type "
-				.. type(color)
+			`color (second arg), should be of type BrickColor, but is type {type(
+				colour
+			)}`
 		)
 	end
 
@@ -568,22 +92,8 @@ t.SelectTerrainRegion = function(
 
 	local selectionBox = Instance.new "SelectionBox"
 
-	-- srs translation from region3 to region3int16
-	-- local function Region3ToRegion3int16(region3)
-	-- 	local theLowVec = region3.CFrame.p - (region3.Size / 2) + Vector3.new(2, 2, 2)
-	-- 	local lowCell = WorldToCellPreferSolid(terrain, theLowVec)
-
-	-- 	local theHighVec = region3.CFrame.p + (region3.Size / 2) - Vector3.new(2, 2, 2)
-	-- 	local highCell = WorldToCellPreferSolid(terrain, theHighVec)
-
-	-- 	local highIntVec = Vector3int16.new(highCell.x, highCell.y, highCell.z)
-	-- 	local lowIntVec = Vector3int16.new(lowCell.x, lowCell.y, lowCell.z)
-
-	-- 	return Region3int16.new(lowIntVec, highIntVec)
-	-- end
-
 	-- helper function that creates the basis for a selection box
-	local function createAdornment(theColor)
+	local function createAdornment(theColour)
 		local selectionPartClone
 		local selectionBoxClone
 
@@ -608,15 +118,15 @@ t.SelectTerrainRegion = function(
 			selectionBoxClone.Parent = selectionContainer
 		end
 
-		if theColor then
-			selectionBoxClone.Color = theColor
+		if theColour then
+			selectionBoxClone.Color = theColour
 		end
 
 		return selectionPartClone, selectionBoxClone
 	end
 
 	-- iterates through all current adornments and deletes any that don't have latest tag
-	function cleanUpAdornments()
+	local function cleanUpAdornments()
 		for cellPos, adornTable in pairs(adornments) do
 			if adornTable.KeepAlive ~= currentKeepAliveTag then -- old news, we should get rid of this
 				adornTable.SelectionBox.Visible = false
@@ -630,7 +140,7 @@ t.SelectTerrainRegion = function(
 	end
 
 	-- helper function to update tag
-	function incrementAliveCounter()
+	local function incrementAliveCounter()
 		aliveCounter += 1
 		if aliveCounter > 1000000 then
 			aliveCounter = 0
@@ -639,7 +149,7 @@ t.SelectTerrainRegion = function(
 	end
 
 	-- finds full cells in region and adorns each cell with a box, with the argument color
-	function adornFullCellsInRegion(region, color)
+	local function adornFullCellsInRegion(region, newColour)
 		local regionBegin = region.CFrame.p
 			- (region.Size / 2)
 			+ Vector3.new(2, 2, 2)
@@ -664,8 +174,8 @@ t.SelectTerrainRegion = function(
 						for cellPosAdorn, adornTable in pairs(adornments) do
 							if cellPosAdorn == cellPos then
 								adornTable.KeepAlive = currentKeepAliveTag
-								if color then
-									adornTable.SelectionBox.Color = color
+								if newColour then
+									adornTable.SelectionBox.Color = newColour
 								end
 								updated = true
 								break
@@ -673,8 +183,8 @@ t.SelectTerrainRegion = function(
 						end
 
 						if not updated then
-							local selectionPart, selectionBox =
-								createAdornment(color)
+							selectionPart, selectionBox =
+								createAdornment(newColour)
 							selectionPart.Size = Vector3.new(4, 4, 4)
 							selectionPart.CFrame = CFrame.new(cframePos)
 							local adornTable = {
@@ -695,7 +205,7 @@ t.SelectTerrainRegion = function(
 	lastRegion = regionToSelect
 
 	if selectEmptyCells then -- use one big selection to represent the area selected
-		local selectionPart, selectionBox = createAdornment(color)
+		selectionPart, selectionBox = createAdornment(colour)
 
 		selectionPart.Size = regionToSelect.Size
 		selectionPart.CFrame = regionToSelect.CFrame
@@ -703,22 +213,22 @@ t.SelectTerrainRegion = function(
 		adornments.SelectionPart = selectionPart
 		adornments.SelectionBox = selectionBox
 
-		updateSelection = function(newRegion, color)
+		updateSelection = function(newRegion: Region3, newColour)
 			if newRegion and newRegion ~= lastRegion then
 				lastRegion = newRegion
 				selectionPart.Size = newRegion.Size
 				selectionPart.CFrame = newRegion.CFrame
 			end
-			if color then
-				selectionBox.Color = color
+			if newColour then
+				selectionBox.Color = newColour
 			end
 		end
 	else -- use individual cell adorns to represent the area selected
-		adornFullCellsInRegion(regionToSelect, color)
-		updateSelection = function(newRegion, color)
+		adornFullCellsInRegion(regionToSelect, colour)
+		updateSelection = function(newRegion, newColour)
 			if newRegion and newRegion ~= lastRegion then
 				lastRegion = newRegion
-				adornFullCellsInRegion(newRegion, color)
+				adornFullCellsInRegion(newRegion, newColour)
 			end
 		end
 	end
@@ -771,7 +281,7 @@ Method :wait()
 	Description: This call blocks until
 ]]
 
-function t.CreateSignal()
+function RbxUtility.CreateSignal()
 	local this = {}
 
 	local mBindableEvent = Instance.new "BindableEvent"
@@ -792,7 +302,7 @@ function t.CreateSignal()
 		local cn = mBindableEvent.Event:connect(func)
 		mAllCns[cn] = true
 		local pubCn = {}
-		function pubCn:disconnect()
+		function pubCn.disconnect(_)
 			cn:disconnect()
 			mAllCns[cn] = nil
 		end
@@ -834,7 +344,7 @@ function t.CreateSignal()
 end
 
 ------------------------------------------------- Sigal class End ------------------------------------------------------
-
+-- this ones my favourite - Heliodex
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
@@ -928,7 +438,7 @@ Note: It is also perfectly legal to save a reference to the function returned by
 
 --the Create function need to be created as a functor, not a function, in order to support the Create.E syntax, so it
 --will be created in several steps rather than as a single function declaration.
-local function Create_PrivImpl(objectType)
+local function Create_PrivImpl(objectType: string)
 	if type(objectType) ~= "string" then
 		error("Argument of Create must be a string", 2)
 	end
@@ -936,7 +446,7 @@ local function Create_PrivImpl(objectType)
 	--The first function call is a function call using Lua's single-string-argument syntax
 	--The second function call is using Lua's single-table-argument syntax
 	--Both can be chained together for the nice effect.
-	return function(dat)
+	return function(dat: { [string | number | { any } | any]: any })
 		--default to nothing, to handle the no argument given case
 		dat = dat or {}
 
@@ -962,9 +472,7 @@ local function Create_PrivImpl(objectType)
 			elseif type(k) == "number" then
 				if type(v) ~= "userdata" then
 					error(
-						"Bad entry in Create body: Numeric keys must be paired with children, got a: "
-							.. type(v),
-						2
+						`Bad entry in Create body: Numeric keys must be paired with children, got a: {v}`
 					)
 				end
 				v.Parent = obj
@@ -973,21 +481,17 @@ local function Create_PrivImpl(objectType)
 			elseif type(k) == "table" and k.__eventname then
 				if type(v) ~= "function" then
 					error(
-						"Bad entry in Create body: Key `[Create.E'"
-							.. k.__eventname
-							.. "']` must have a function value, got: "
-							.. tostring(v),
+						`Bad entry in Create body: Key \`[Create.E'{k.__eventname}']\` must have a function value, got: {v}`,
 						2
 					)
 				end
 				obj[k.__eventname]:connect(v)
 
 			--define constructor function
-			elseif k == t.Create then
+			elseif k == RbxUtility.Create then
 				if type(v) ~= "function" then
 					error(
-						"Bad entry in Create body: Key `[Create]` should be paired with a constructor function, got: "
-							.. tostring(v),
+						`Bad entry in Create body: Key \`[Create]\` should be paired with a constructor function, got: {v}`,
 						2
 					)
 				elseif ctor then
@@ -999,14 +503,7 @@ local function Create_PrivImpl(objectType)
 				end
 				ctor = v
 			else
-				error(
-					"Bad entry ("
-						.. tostring(k)
-						.. " => "
-						.. tostring(v)
-						.. ") in Create body",
-					2
-				)
+				error(`Bad entry ({k} => {v}) in Create body`, 2)
 			end
 		end
 
@@ -1025,7 +522,7 @@ local function Create_PrivImpl(objectType)
 end
 
 --now, create the functor:
-t.Create = setmetatable({}, {
+RbxUtility.Create = setmetatable({}, {
 	__call = function(_, ...)
 		return Create_PrivImpl(...)
 	end,
@@ -1033,31 +530,11 @@ t.Create = setmetatable({}, {
 
 --and create the "Event.E" syntax stub. Really it's just a stub to construct a table which our Create
 --function can recognize as special.
-t.Create.E = function(eventName)
+RbxUtility.Create.E = function(eventName)
 	return { __eventname = eventName }
 end
 
 -------------------------------------------------Create function End----------------------------------------------------
-
--- Lmao time - Heliodex
-
-function t.HttpGet(url: string)
-	return game:HttpGet(url)
-end
-
-function t.HttpGetAsync(url: string)
-	return game:HttpGetAsync(url)
-end
-
-function t.HttpPost(url: string)
-	return game:HttpPost(url)
-end
-
-function t.HttpPostAsync(url: string)
-	return game:HttpPostAsync(url)
-end
-
--- Lmao time end
 
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
@@ -1067,19 +544,28 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 
-t.Help = function(funcNameOrFunc)
+RbxUtility.Help = function(funcNameOrFunc)
 	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
-	if funcNameOrFunc == "DecodeJSON" or funcNameOrFunc == t.DecodeJSON then
+	if
+		funcNameOrFunc == "DecodeJSON"
+		or funcNameOrFunc == RbxUtility.DecodeJSON
+	then
 		return "Function DecodeJSON.  "
 			.. "Arguments: (string).  "
 			.. "Side effect: returns a table with all parsed JSON values"
 	end
-	if funcNameOrFunc == "EncodeJSON" or funcNameOrFunc == t.EncodeJSON then
+	if
+		funcNameOrFunc == "EncodeJSON"
+		or funcNameOrFunc == RbxUtility.EncodeJSON
+	then
 		return "Function EncodeJSON.  "
 			.. "Arguments: (table).  "
 			.. "Side effect: returns a string composed of argument table in JSON data format"
 	end
-	if funcNameOrFunc == "MakeWedge" or funcNameOrFunc == t.MakeWedge then
+	if
+		funcNameOrFunc == "MakeWedge"
+		or funcNameOrFunc == RbxUtility.MakeWedge
+	then
 		return "Function MakeWedge. "
 			.. "Arguments: (x, y, z, [default material]). "
 			.. "Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if "
@@ -1088,7 +574,7 @@ t.Help = function(funcNameOrFunc)
 	end
 	if
 		funcNameOrFunc == "SelectTerrainRegion"
-		or funcNameOrFunc == t.SelectTerrainRegion
+		or funcNameOrFunc == RbxUtility.SelectTerrainRegion
 	then
 		return "Function SelectTerrainRegion. "
 			.. "Arguments: (regionToSelect, color, selectEmptyCells, selectionParent). "
@@ -1100,7 +586,10 @@ t.Help = function(funcNameOrFunc)
 			.. "arguments to said function are a new region3 to select, and the adornment color (color arg is optional). "
 			.. "Also returns a second function that takes no arguments and destroys the selection"
 	end
-	if funcNameOrFunc == "CreateSignal" or funcNameOrFunc == t.CreateSignal then
+	if
+		funcNameOrFunc == "CreateSignal"
+		or funcNameOrFunc == RbxUtility.CreateSignal
+	then
 		return "Function CreateSignal. "
 			.. "Arguments: None. "
 			.. "Returns: The newly created Signal object. This object is identical to the RBXScriptSignal class "
@@ -1149,8 +638,9 @@ t.Help = function(funcNameOrFunc)
 			.. "Descrition: Create is a very powerfull function, whose description is too long to fit here, and "
 			.. "is best described via example, please see the wiki page for a description of how to use it."
 	end
+	return "No help available for this function"
 end
 
 --------------------------------------------Documentation Ends----------------------------------------------------------
 
-return t
+return RbxUtility

@@ -1,329 +1,278 @@
 <script lang="ts">
+	import { applyAction } from "$app/forms"
+	import { invalidateAll } from "$app/navigation"
+	import Interactions from "./Interactions.svelte"
+	import ProfilePlace from "./ProfilePlace.svelte"
+
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],
 		["aqua", "fa-check", "Verified"],
 		["violet", "fa-hammer", "Catalog Manager"],
 		["orange", "fa-shield-alt", "Moderator"],
-		["crimson", "fa-scale-balanced", "Administrator"],
+		["crimson", "fa-scale-balanced", "Administrator"]
 	]
 
 	export let data
 	const { user } = data
+	export let form
+
+	let regenerating = false
+
+	const enhanceRegen: import("./$types").SubmitFunction = () => {
+		regenerating = true
+		return async ({ result }) => {
+			if (result.type === "success") await invalidateAll()
+			await applyAction(result)
+			regenerating = false
+		}
+	}
+
+	let accordion: any // Sometimes undefined for some probably crazy reason
 </script>
 
 <Head title={data.username} />
 
-<div id="all" class="container">
-	<div class="card bg-darker pt-6">
-		<div class="d-flex px-6">
-			<div id="image-background" class="me-6 rounded-circle bg-a">
-				<img
-					src="/api/avatar/{data.username}"
-					alt={data.username}
-					class="rounded-circle rounded-top-0" />
-			</div>
-			<div class="container">
-				<div class="d-flex mb-2">
-					<h1 class="h2 light-text d-inline">{data.username}</h1>
-					<b
-						class="ms-auto"
-						style="color: {permissions[data.permissionLevel][0]}">
-						<i
-							class="fa {permissions[
+<div class="ctnr max-w-240">
+	<div class="card bg-darker p-4 lg:p-6">
+		<div class="flex">
+			<span class="<lg:hidden pr-6">
+				<User
+					user={data}
+					size="7rem"
+					bg="accent"
+					image
+					rerender={{ form, regenerating }} />
+			</span>
+			<span class="lg:hidden pr-4">
+				<User
+					user={data}
+					size="6rem"
+					bg="accent"
+					image
+					rerender={{ form, regenerating }} />
+			</span>
+			<div class="w-full">
+				<div class="flex mb-2 justify-between">
+					<div class="flex items-center">
+						<h1 class="inline pr-4 mb-0">
+							{data.username}
+						</h1>
+						{#if data.follower}
+							<span class="grey-text bg-a px-2 rounded">
+								Follows you
+							</span>
+						{/if}
+					</div>
+					<div class="flex self-start">
+						<b
+							style="color: {permissions[
 								data.permissionLevel
-							][1]} me-1" />
-						{permissions[data.permissionLevel][2]}
-					</b>
+							][0]}">
+							<fa
+								class="{permissions[
+									data.permissionLevel
+								][1]} pr-1" />
+							{permissions[data.permissionLevel][2]}
+						</b>
+					</div>
 				</div>
-				<div class="d-flex">
-					<a
-						href="/user/{data.number}/friends"
-						class="light-text text-center text-decoration-none">
-						Friends
-						<h2 class="h3 light-text">
-							{data.friendCount}
-						</h2>
-					</a>
-					<a
-						href="/user/{data.number}/followers"
-						class="light-text text-center text-decoration-none ms-6">
-						Followers
-						<h2 class="h3 light-text">
-							{data.followerCount}
-						</h2>
-					</a>
-					<a
-						href="/user/{data.number}/following"
-						class="light-text text-center text-decoration-none ms-6">
-						Following
-						<h2 class="h3 light-text">
-							{data.followingCount}
-						</h2>
-					</a>
+				<div id="interactions" class="flex justify-between">
+					<div class="flex gap-6">
+						<a
+							href="/user/{data.number}/friends"
+							class="light-text text-center no-underline">
+							Friends
+							<h2>
+								{data.friendCount}
+							</h2>
+						</a>
+						<a
+							href="/user/{data.number}/followers"
+							class="light-text text-center no-underline">
+							Followers
+							<h2>
+								{data.followerCount}
+							</h2>
+						</a>
+						<a
+							href="/user/{data.number}/following"
+							class="light-text text-center no-underline">
+							Following
+							<h2>
+								{data.followingCount}
+							</h2>
+						</a>
+					</div>
 
-					{#if data.username != user?.username}
+					{#if data.username !== user.username}
+						<span class="<lg:hidden">
+							<Interactions {data} />
+						</span>
+					{/if}
+				</div>
+				{#if data.username !== user.username}
+					<div class="float-right <lg:hidden">
+						<ReportButton
+							user={data.username}
+							url="/user/{data.number}" />
+					</div>
+				{/if}
+			</div>
+		</div>
+		{#if data.username !== user.username}
+			<span class="lg:hidden flex justify-between items-end pt-2">
+				<Interactions {data} />
+				<ReportButton user={data.username} url="/user/{data.number}" />
+			</span>
+		{/if}
+	</div>
+	<div class="sm:grid grid-cols-2 gap-4">
+		<div>
+			{#if data.bio && data.bio.text}
+				<div class="pt-6">
+					<div class="flex justify-between">
+						<h2>Bio</h2>
+						{#if data.username === user.username}
+							<a
+								href="/settings"
+								class="btn light-text text-lg p-0 px-2">
+								<fa fa-pencil />
+							</a>
+						{/if}
+					</div>
+					<p class="pl-2">{data.bio.text}</p>
+				</div>
+			{:else if data.username === user.username}
+				<div class="pt-6 text-center">
+					Add a bio in
+					<a href="/settings">Settings</a>
+					to tell others about yourself! It will display here.
+				</div>
+			{/if}
+			<div class="pt-6">
+				<h2>Avatar</h2>
+				<div class="card bg-darker card-body">
+					<img
+						class="transition-opacity duration-300"
+						class:opacity-50={regenerating}
+						src={form?.avatarBody ||
+							`/api/avatar/${data.username}-body`}
+						alt={data.username} />
+					{#if user?.permissionLevel >= 5}
 						<form
-							in:fade
-							class="align-self-center ms-auto me-2"
+							use:enhance={enhanceRegen}
 							method="POST"
-							use:enhance>
-							<button
-								name="action"
-								value={data.friends
-									? "unfriend"
-									: data.outgoingRequest
-									? "cancel"
-									: data.incomingRequest
-									? "accept"
-									: "request"}
-								class="btn {data.friends || data.outgoingRequest
-									? 'btn-danger'
-									: data.incomingRequest
-									? 'btn-info'
-									: 'btn-success'}">
-								{#if data.friends}
-									Unfriend
-								{:else if data.incomingRequest}
-									Accept request
-								{:else if data.outgoingRequest}
-									Cancel request
-								{:else}
-									Send friend request
-								{/if}
-							</button>
-							{#if data.incomingRequest}
-								<button
-									name="action"
-									value="decline"
-									class="btn btn-danger ms-2">
-									Decline request
-								</button>
-							{/if}
-						</form>
-						<form
+							action="?/rerender"
 							in:fade
-							class="align-self-center"
-							method="POST"
-							use:enhance>
-							<button
-								name="action"
-								value={data.following ? "unfollow" : "follow"}
-								class="btn {data.following
-									? 'btn-danger'
-									: 'btn-primary'}">
-								{#if data.following}
-									Unfollow
-								{:else}
-									Follow
-								{/if}
+							class="absolute text-right end-0 pr-4">
+							<button class="btn btn-sm btn-tertiary">
+								<fa fa-arrows-rotate />
+								Rerender
 							</button>
+							<small class="text-red-5 block">
+								{form?.msg || ""}
+							</small>
 						</form>
 					{/if}
 				</div>
-				<div class="float-end mb-4">
-					<ReportButton
-						user={data.username}
-						url="/user/{data.number}" />
-				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-6">
-			{#if data.bio[0]}
-				<div class="mt-6">
-					<h2 class="h4 light-text">Bio</h2>
-					<p class="light-text ms-2">{data.bio[0].text}</p>
-				</div>
-			{/if}
-			<div class="mt-6">
-				<h2 class="h4 light-text">Avatar</h2>
-				<div class="card bg-darker card-body">
-					<img
-						id="avatar"
-						class="mx-auto"
-						src="/api/avatar/{data.username}-body"
-						alt={data.username} />
-				</div>
-			</div>
-		</div>
-		<div class="col-6">
+		<div>
 			{#if data.places.length > 0}
-				<div class="mt-6">
-					<h2 class="h4 light-text">Creations</h2>
-					{#each data.places as place, num}
-						<div
-							in:fade|global={{
-								num,
-								total: data.places.length,
-							}}
-							class="d-collapse d-collapse light-text bg-darker mb-2 rounded-3">
-							<input type="radio" name="accordion" />
-							<div class="d-collapse-title p-2">
-								{place.name}
-							</div>
-							<div class="d-collapse-content">
-								<a
-									class="card bg-darker shadow-none placecard text-center light-text text-decoration-none h6 m-0 w-100"
-									href="/place/{place.id}/{place.name}">
-									<div class="row">
-										<div class="col col-6">
-											<div
-												class="overflow-hidden bg-black shadow">
-												<img
-													src="/place/{place.id}/{place.name}/icon"
-													alt={place.name}
-													class="w-100 h-100" />
-											</div>
-										</div>
-										<div class="col col-6 p-2 row">
-											<p class="mb-1 h5">
-												{place.name}
-											</p>
-											<div class="mt-auto mb-1">
-												<div class="float-start">
-													<span>
-														<i
-															class="fa fa-thumbs-up opacity-75" />
-														{place.ratio}%
-													</span>
-												</div>
-												<div class="float-end">
-													<span>
-														<i
-															class="fa fa-user opacity-75" />
-														{place.gameSessions
-															.length}
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</a>
-							</div>
+				<div class="pt-6">
+					<h2>Creations</h2>
+					<Accordion bind:accordion>
+						<div class="flex flex-col gap-2">
+							{#each accordion ? data.places : [] as place}
+								<AccordionItem {accordion} title={place.name}>
+									<ProfilePlace {place} />
+								</AccordionItem>
+							{/each}
 						</div>
-					{/each}
+					</Accordion>
 				</div>
 			{/if}
 		</div>
-		<div class="col-6 mt-6">
-			{#if data.groupsOwned.length > 0}
-				<div class="mt-6">
-					<h2 class="h4 light-text">Groups owned</h2>
+		{#if data.groupsOwned.length > 0}
+			<div class="pt-6">
+				<div class="pt-6">
+					<h2>Groups owned</h2>
 					{#each data.groupsOwned as group, num}
-						<a
-							in:fade={{ num, total: data.groupsOwned.length }}
-							class="card bg-darker light-text text-decoration-none h6 my-2"
-							href="/groups/{group.name}">
-							<div class="p-2">
-								<span class="float-start">
-									{group.name}
-								</span>
-								<span class="float-end">
-									<i class="fa fa-user opacity-75" />
-									{group.members}
-								</span>
-							</div>
-						</a>
-					{/each}
-				</div>
-			{/if}
-		</div>
-		<div class="col-6 mt-6">
-			{#if data.groups.length > 0}
-				<div class="mt-6">
-					<h2 class="h4 light-text">Groups in</h2>
-					{#each data.groups as group, num}
-						<a
-							in:fade={{ num, total: data.groups.length }}
-							class="card bg-darker light-text text-decoration-none h6 my-2"
-							href="/groups/{group.name}">
-							<div class="p-2">
-								<span class="float-start">
-									{group.name}
-								</span>
-								<span class="float-end">
-									<i class="fa fa-user opacity-75" />
-									{group.members}
-								</span>
-							</div>
-						</a>
-					{/each}
-				</div>
-			{/if}
-		</div>
-		{#if data.posts.length > 0}
-			<h2 class="h4 mt-12 light-text">Latest feed posts</h2>
-			<div id="feed" class="light-text p-4">
-				<div class="row">
-					{#each data.posts.sort((a, b) => b.posted.getTime() - a.posted.getTime()) as status, num}
-						<div
-							in:fade={{ num, total: data.posts.length, max: 9 }}
-							class="p-2 col-md-6 col-sm-12">
-							<div class="card bg-darker p-2 h-100">
-								<div id="user" class="d-flex mb-2">
-									<span class="pfp rounded-circle bg-a2">
-										<img
-											src="/api/avatar/{data.username}"
-											alt={data.username}
-											class="rounded-circle rounded-top-0" />
+						<div class="py-2">
+							<a
+								in:fade={{
+									num,
+									total: data.groupsOwned.length
+								}}
+								class="card bg-darker no-underline"
+								href="/groups/{group.name}">
+								<div class="p-2">
+									<span class="float-start">
+										{group.name}
 									</span>
-									<span class="font-bold ms-4 light-text">
-										{data.username}
-									</span>
-									<span
-										class="ms-auto italic light-text text-end">
-										{status.posted.toLocaleString()}
+									<span class="float-right">
+										<fa fa-user class="opacity-75" />
+										{group.memberCount}
 									</span>
 								</div>
-								<p class="text-start mb-0">
-									{status.content}
-								</p>
-							</div>
+							</a>
 						</div>
 					{/each}
 				</div>
 			</div>
 		{/if}
+		{#if data.groups.length > 0}
+			<div class="pt-6">
+				<div class="pt-6">
+					<h2>Groups in</h2>
+					{#each data.groups as group, num}
+						<div class="py-2">
+							<a
+								in:fade={{ num, total: data.groups.length }}
+								class="card bg-darker no-underline"
+								href="/groups/{group.name}">
+								<div class="p-2">
+									<span class="float-start">
+										{group.name}
+									</span>
+									<span class="float-right">
+										<fa fa-user class="opacity-75" />
+										{group.memberCount}
+									</span>
+								</div>
+							</a>
+						</div>
+					{/each}
+				</div>
+			</div>
+		{/if}
+		<div class="col-span-2">
+			{#if data.posts.length > 0}
+				<h2 class="pt-6">Latest feed posts</h2>
+				<div class="grid md:grid-cols-2 gap-4">
+					{#each data.posts.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
+						<div
+							in:fade={{ num, total: data.posts.length, max: 9 }}
+							class="card bg-darker p-3 h-full">
+							<div id="user" class="flex pb-2 justify-between">
+								<User
+									user={data}
+									size="2rem"
+									full
+									image
+									bg="accent" />
+								<span class="italic flex-end">
+									{new Date(status.posted).toLocaleString()}
+								</span>
+							</div>
+							<p class="text-start mb-0">
+								{status.content[0].text}
+							</p>
+						</div>
+					{/each}
+				</div>
+			{/if}
+		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-	#all
-		max-width 60rem
-
-	#image-background, #image-background img
-		height 7rem
-
-	.placecard
-		transition all 0.2s
-		border none
-		&:hover
-			transition all 0.2s
-			.shadow::after
-				box-shadow inset 0 0 4rem 0 #fff2
-
-		.shadow
-			aspect-ratio 1
-			position relative
-			&::after
-				transition all 0.3s
-				content ""
-				position absolute
-				top 0
-				left 0
-				width 100%
-				height 100%
-
-	#user
-		align-items center
-		.pfp img
-			width 2rem
-
-	#avatar
-		aspect-ratio 3/4
-
-	input[type="radio"]
-		cursor pointer
-</style>

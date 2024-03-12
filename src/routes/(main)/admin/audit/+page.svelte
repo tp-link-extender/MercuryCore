@@ -1,23 +1,23 @@
 <script lang="ts">
+	import AdminShell from "../AdminShell.svelte"
+
 	export let data
 
-	let tabData = TabData(data.url, ["Audit Logs"])
+	let tabData = TabData(data.url, ["Audit Logs"], ["fa fa-list"])
 </script>
 
 <Head title="Audit Logs - Admin" />
 
-<div class="container py-6">
-	<h1 class="light-text mb-0">Admin - Audit Logs</h1>
-	<a href="/admin" class="text-decoration-none">
-		<i class="fas fa-caret-left" />
-		Back to panel
-	</a>
-	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData tabs />
-		</div>
-		<div class="col-lg-10 col-md-9">
-			<Tab {tabData} />
-		</div>
+<div class="ctnr pt-6">
+	<div class="pb-4">
+		<h1>Admin - Audit Logs</h1>
+		<a href="/admin" class="no-underline">
+			<fa fa-caret-left />
+			Back to panel
+		</a>
 	</div>
+
+	<AdminShell bind:tabData>
+		<Tab {tabData} />
+	</AdminShell>
 </div>

@@ -1,5 +1,5 @@
-import crypto from "crypto"
-import fs from "fs"
+import crypto from "node:crypto"
+import fs from "node:fs"
 
 /**
  * Signs a Lua script with a private key by adding a signature to the top of the script.
@@ -12,14 +12,13 @@ import fs from "fs"
  * `)
  */
 export function SignData(data: string, assetId?: number) {
-	if (assetId) data = `--rbxassetid%${assetId}%\n${data}`
-	else data = `\n${data}`
+	const signed = assetId ? `--rbxassetid%${assetId}%\n${data}` : `\n${data}`
 
-	const sign = crypto.createSign("SHA1"),
-		key = fs.readFileSync("./keys/PrivateKey.pem")
+	const sign = crypto.createSign("SHA1")
+	const key = fs.readFileSync("./keys/PrivateKey.pem")
 
-	sign.write(data)
+	sign.write(signed)
 	sign.end()
 
-	return `--rbxsig%${sign.sign(key, "base64")}%${data}`
+	return `--rbxsig%${sign.sign(key, "base64")}%${signed}`
 }

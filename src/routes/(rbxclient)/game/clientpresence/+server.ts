@@ -1,22 +1,24 @@
 import { error } from "@sveltejs/kit"
-import { prisma } from "$lib/server/prisma"
+import surreal from "$lib/server/surreal"
 
-export async function GET({ url, request, setHeaders }) {
+export async function GET({ url, request }) {
 	const ticket = url.searchParams.get("ticket") as string
 
-	if (!ticket) throw error(400, "Invalid Request")
-	if (request.headers.get("user-agent") != "Roblox/WinInet")
-		throw error(400, "Invalid Request")
+	if (!ticket) error(400, "Invalid Request")
+	if (request.headers.get("user-agent") !== "Roblox/WinInet")
+		error(400, "Good one")
 
-	await prisma.gameSessions.update({
-		where: { ticket: ticket },
-		data: { ping: Math.floor(Date.now() / 1000) },
+	if (!(await surreal.select(`playing:${ticket}`))[0])
+		error(400, "Ticket not found")
+
+	surreal.merge(`playing:${ticket}`, {
+		ping: Math.floor(Date.now() / 1000),
 	})
 
-	setHeaders({
-		Pragma: "no-cache",
-		"Cache-Control": "no-cache",
+	return new Response("OK", {
+		headers: {
+			Pragma: "no-cache",
+			"Cache-Control": "no-cache",
+		},
 	})
-
-	return new Response("OK")
 }

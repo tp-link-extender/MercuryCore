@@ -1,126 +1,95 @@
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
-import { auth } from "$lib/server/lucia"
+import { query, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
+import { Scrypt } from "oslo/password"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
-export const load = async ({ locals }) => {
-	const { user } = await authorise(locals),
-		getUser = await prisma.authUser.findUnique({
-			where: {
-				id: user.id,
-			},
-			include: {
-				bio: {
-					orderBy: {
-						updated: "desc",
-					},
-					select: {
-						text: true,
-					},
-					take: 1,
-				},
-			},
-		})
-
-	return {
-		bio: getUser?.bio, // because can't get nested properties from lucia.ts I think
-		theme: getUser?.theme,
-		form: superValidate(
-			z.object({
-				theme: z.enum(["standard", "darken", "storm", "solar"]),
-				bio: z.string().max(1000),
-				cpassword: z.string().min(1),
-				npassword: z.string().min(1),
-				cnpassword: z.string().min(1),
-			}),
-		),
-	}
+const schemas = {
+	profile: z.object({
+		// theme: z.enum(["standard", "darken", "storm", "solar"]),
+		bio: z.string().max(1000).optional(),
+	}),
+	password: z.object({
+		cpassword: z.string().min(1),
+		npassword: z.string().min(1),
+		cnpassword: z.string().min(1),
+	}),
 }
 
+export const load = async () => ({
+	profileForm: await superValidate(zod(schemas.profile)),
+	passwordForm: await superValidate(zod(schemas.password)),
+})
+
 export const actions = {
-	default: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals),
-			action = url.searchParams.get("a")
+	profile: async ({ request, locals }) => {
+		const { user } = await authorise(locals)
 
-		console.log(action)
+		const form = await superValidate(request, zod(schemas.profile))
+		if (!form.valid) return formError(form)
 
-		let form
-		switch (action) {
-			case "profile": {
-				form = await superValidate(
-					request,
-					z.object({
-						theme: z.enum(["standard", "darken", "storm", "solar"]),
-						bio: z.string().max(1000),
-					}),
-				)
-				if (!form.valid) return formError(form)
-				const { bio, theme } = form.data
+		const { bio } = form.data
 
-				await prisma.authUser.update({
-					where: {
-						number: user.number,
-					},
-					data: {
-						bio: {
-							create: {
-								text: bio,
-							},
-						},
-						theme,
-					},
-				})
+		await query(
+			surql`
+				LET $og = SELECT
+					(SELECT text, updated FROM $parent.bio
+					ORDER BY updated DESC)[0] AS bio
+				FROM $user;
 
-				return message(form, "Profile updated successfully!")
+				# UPDATE $user SET theme = $theme;
+
+				IF $og.bio.text != $bio {
+					UPDATE $user SET bio += {
+						text: $bio,
+						updated: time::now(),
+					}
+				}`,
+			{
+				user: `user:${user.id}`,
+				bio,
+				// theme,
 			}
+		)
 
-			case "password": {
-				form = await superValidate(
-					request,
-					z.object({
-						cpassword: z.string().min(1),
-						npassword: z.string().min(1),
-						cnpassword: z.string().min(1),
-					}),
-				)
-				if (!form.valid) return formError(form)
+		return message(form, "Profile updated successfully!")
+	},
+	password: async ({ request, locals }) => {
+		const { user } = await authorise(locals)
 
-				const { cpassword, npassword, cnpassword } = form.data
+		const form = await superValidate(request, zod(schemas.password))
+		if (!form.valid) return formError(form)
 
-				if (npassword != cnpassword)
-					return formError(
-						form,
-						["cnpassword"],
-						["Passwords do not match"],
-					)
+		const { cpassword, npassword, cnpassword } = form.data
 
-				try {
-					await auth.useKey(
-						"username",
-						user.username.toLowerCase(),
-						cpassword,
-					)
-				} catch {
-					return formError(
-						form,
-						["cpassword"],
-						["Incorrect username or password"],
-					)
-				}
+		if (npassword !== cnpassword)
+			return formError(form, ["cnpassword"], ["Passwords do not match"])
 
-				await auth.updateKeyPassword(
-					"username",
-					user.username.toLowerCase(),
-					npassword,
-				)
+		if (npassword === cpassword)
+			return formError(
+				form,
+				["npassword", "cnpassword"],
+				["New password cannot be the same as the current password", ""]
+			)
 
-				form.data.cpassword = ""
-				form.data.npassword = ""
-				form.data.cnpassword = ""
-				return message(form, "Password updated successfully!")
-			}
-		}
+		if (user.hashedPassword.startsWith("s2:"))
+			user.hashedPassword = user.hashedPassword.slice(3)
+
+		if (!(await new Scrypt().verify(user.hashedPassword, cpassword)))
+			return formError(form, ["cpassword"], ["Incorrect password"])
+
+		await query(surql`UPDATE $user SET hashedPassword = $npassword`, {
+			user: `user:${user.id}`,
+			npassword: await new Scrypt().hash(npassword),
+		})
+
+		// Don't send the password back to the client
+		form.data.cpassword = ""
+		form.data.npassword = ""
+		form.data.cnpassword = ""
+
+		return message(form, "Password updated successfully!")
 	},
 }

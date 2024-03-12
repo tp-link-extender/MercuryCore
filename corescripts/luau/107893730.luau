@@ -4,6 +4,7 @@ print "[Mercury]: Loaded corescript 107893730"
 -- this script creates the gui and sends the web requests for in game purchase prompts
 
 local MarketplaceService = game:GetService "MarketplaceService"
+local GuiService = game:GetService "GuiService"
 
 -- wait for important items to appear
 while not Game do
@@ -45,32 +46,22 @@ local spinnerIcons
 local smallScreenThreshold = 450
 
 -- user facing images
-local assetUrls = {}
-local assetUrl = "http://banland.xyz/Asset/?id="
-local errorImageUrl = assetUrl .. "42557901"
-table.insert(assetUrls, errorImageUrl)
-local buyImageUrl = assetUrl .. "104651457"
-table.insert(assetUrls, buyImageUrl)
-local buyImageDownUrl = assetUrl .. "104651515"
-table.insert(assetUrls, buyImageDownUrl)
-local buyImageDisabledUrl = assetUrl .. "104651532"
-table.insert(assetUrls, buyImageDisabledUrl)
-local cancelButtonImageUrl = assetUrl .. "104651592"
-table.insert(assetUrls, cancelButtonImageUrl)
-local cancelButtonDownUrl = assetUrl .. "104651639"
-table.insert(assetUrls, cancelButtonDownUrl)
-local okButtonUrl = assetUrl .. "104651665"
-table.insert(assetUrls, okButtonUrl)
-local okButtonPressedrl = assetUrl .. "104651707"
-table.insert(assetUrls, okButtonPressedrl)
-local freeButtonImageUrl = assetUrl .. "104651733"
-table.insert(assetUrls, freeButtonImageUrl)
-local freeButtonImageDownUrl = assetUrl .. "104651761"
-table.insert(assetUrls, freeButtonImageDownUrl)
-local tixIcon = assetUrl .. "102481431"
-table.insert(assetUrls, tixIcon)
-local robuxIcon = assetUrl .. "102481419"
-table.insert(assetUrls, robuxIcon)
+local function assetUrl(id: number)
+	return `http://banland.xyz/asset?id={id}`
+end
+
+local errorImageUrl = assetUrl(42557901)
+local buyImageUrl = assetUrl(104651457)
+local buyImageDownUrl = assetUrl(104651515)
+local buyImageDisabledUrl = assetUrl(104651532)
+local cancelButtonImageUrl = assetUrl(104651592)
+local cancelButtonDownUrl = assetUrl(104651639)
+local okButtonUrl = assetUrl(104651665)
+local okButtonPressedrl = assetUrl(104651707)
+local freeButtonImageUrl = assetUrl(104651733)
+local freeButtonImageDownUrl = assetUrl(104651761)
+local tixIcon = assetUrl(102481431)
+local robuxIcon = assetUrl(102481419)
 
 -- user facing string
 local buyHeaderText = "Buy"
@@ -93,29 +84,45 @@ local freeItemBalanceText =
 -------------------------------- End Global Variables ----------------------------------------
 
 ----------------------------- Util Functions ---------------------------------------------
-function getSecureApiBaseUrl()
+
+local function getSecureApiBaseUrl()
 	local secureApiUrl = baseUrl
 	secureApiUrl = string.gsub(secureApiUrl, "http", "https")
 	secureApiUrl = string.gsub(secureApiUrl, "www", "api")
 	return secureApiUrl
 end
 
-function getRbxUtility()
+local function getRbxUtility()
 	if not RbxUtility then
 		RbxUtility = LoadLibrary "RbxUtility"
 	end
 	return RbxUtility
 end
 
-function preloadAssets()
-	for i = 1, #assetUrls do
-		game:GetService("ContentProvider"):Preload(assetUrls[i])
+local function preloadAssets()
+	for _, url in ipairs {
+		errorImageUrl,
+		buyImageUrl,
+		buyImageDownUrl,
+		buyImageDisabledUrl,
+		cancelButtonImageUrl,
+		cancelButtonDownUrl,
+		okButtonUrl,
+		okButtonPressedrl,
+		freeButtonImageUrl,
+		freeButtonImageDownUrl,
+		tixIcon,
+		robuxIcon,
+	} do
+		game:GetService("ContentProvider"):Preload(url)
 	end
 end
+
 ----------------------------- End Util Functions ---------------------------------------------
 
 -------------------------------- Accept/Decline Functions --------------------------------------
-function removeCurrentPurchaseInfo()
+
+local function removeCurrentPurchaseInfo()
 	currentAssetId = nil
 	currentCurrencyType = nil
 	currentCurrencyAmount = nil
@@ -127,7 +134,12 @@ function removeCurrentPurchaseInfo()
 	checkingPlayerFunds = false
 end
 
-function closePurchasePrompt()
+local function hidePurchasing()
+	purchaseDialog.PurchasingFrame.Visible = false
+	spinning = false
+end
+
+local function closePurchasePrompt()
 	purchaseDialog:TweenPosition(
 		hidePosition,
 		Enum.EasingDirection.Out,
@@ -143,7 +155,44 @@ function closePurchasePrompt()
 	)
 end
 
-function userPurchaseActionsEnded(isSuccess: boolean)
+local function signalPromptEnded(isSuccess)
+	closePurchasePrompt()
+	if purchasingConsumable then
+		MarketplaceService:SignalPromptProductPurchaseFinished(
+			game.Players.LocalPlayer.userId,
+			currentProductId,
+			isSuccess
+		)
+	else
+		MarketplaceService:SignalPromptPurchaseFinished(
+			game.Players.LocalPlayer,
+			currentAssetId,
+			isSuccess
+		)
+	end
+	removeCurrentPurchaseInfo()
+end
+
+-- convenience method to say exactly what buttons should be visible (all others are not!)
+local function setButtonsVisible(...)
+	local args = { ... }
+	local argCount = select("#", ...)
+
+	local bodyFrameChildren = purchaseDialog.BodyFrame:GetChildren()
+	for i = 1, #bodyFrameChildren do
+		if bodyFrameChildren[i]:IsA "GuiButton" then
+			bodyFrameChildren[i].Visible = false
+			for j = 1, argCount do
+				if bodyFrameChildren[i] == args[j] then
+					bodyFrameChildren[i].Visible = true
+					break
+				end
+			end
+		end
+	end
+end
+
+local function userPurchaseActionsEnded(isSuccess: boolean)
 	checkingPlayerFunds = false
 
 	if isSuccess then -- show the user we bought the item successfully, when they close this dialog we will call signalPromptEnded
@@ -161,390 +210,16 @@ function userPurchaseActionsEnded(isSuccess: boolean)
 	end
 end
 
-function signalPromptEnded(isSuccess)
-	closePurchasePrompt()
-	if purchasingConsumable then
-		game:GetService("MarketplaceService")
-			:SignalPromptProductPurchaseFinished(
-				game.Players.LocalPlayer.userId,
-				currentProductId,
-				isSuccess
-			)
-	else
-		game:GetService("MarketplaceService"):SignalPromptPurchaseFinished(
-			game.Players.LocalPlayer,
-			currentAssetId,
-			isSuccess
-		)
-	end
-	removeCurrentPurchaseInfo()
-end
-
--- make sure our gui displays the proper purchase data, and set the productid we will try and buy if use specifies a buy action
-function updatePurchasePromptData(_)
-	local newItemDescription = ""
-
-	-- id to use when we request a purchase
-	if not currentProductId then
-		currentProductId = currentProductInfo.ProductId
-	end
-
-	if isFreeItem() then
-		newItemDescription = string.gsub(
-			freeItemPurchaseText,
-			"itemName",
-			tostring(currentProductInfo.Name)
-		)
-		newItemDescription = string.gsub(
-			newItemDescription,
-			"assetType",
-			tostring(assetTypeToString(currentProductInfo.AssetTypeId))
-		)
-		setHeaderText(takeHeaderText)
-	else -- otherwise item costs something, so different prompt
-		newItemDescription = string.gsub(
-			productPurchaseText,
-			"itemName",
-			tostring(currentProductInfo.Name)
-		)
-		newItemDescription = string.gsub(
-			newItemDescription,
-			"currencyType",
-			tostring(currencyTypeToString(currentCurrencyType))
-		)
-		newItemDescription = string.gsub(
-			newItemDescription,
-			"currencyAmount",
-			tostring(currentCurrencyAmount)
-		)
-		setHeaderText(buyHeaderText)
-	end
-
-	purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text =
-		newItemDescription
-
-	if purchasingConsumable then
-		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl
-			.. "thumbs/asset.ashx?assetid="
-			.. tostring(currentProductInfo.IconImageAssetId)
-			.. "&x=100&y=100&format=png"
-	else
-		purchaseDialog.BodyFrame.ItemPreview.Image = baseUrl
-			.. "thumbs/asset.ashx?assetid="
-			.. tostring(currentAssetId)
-			.. "&x=100&y=100&format=png"
-	end
-end
-
-function doPlayerFundsCheck(checkIndefinitely)
-	if checkingPlayerFunds then
-		local canPurchase, insufficientFunds = canPurchaseItem() -- check again to see if we can buy item
-		if canPurchase and insufficientFunds then -- wait a bit and try a few more times
-			local retries = 1000
-			while
-				(retries > 0 or checkIndefinitely)
-				and insufficientFunds
-				and checkingPlayerFunds
-				and canPurchase
-			do
-				wait(1 / 10)
-				canPurchase, insufficientFunds = canPurchaseItem()
-				retries -= 1
-			end
-		end
-		if canPurchase and not insufficientFunds then
-			-- we can buy item! set our buttons up and we will exit this loop
-			setButtonsVisible(
-				purchaseDialog.BodyFrame.BuyButton,
-				purchaseDialog.BodyFrame.CancelButton,
-				purchaseDialog.BodyFrame.AfterBalanceButton
-			)
-		end
-	end
-end
-
-function showPurchasePrompt()
-	local canPurchase, insufficientFunds, notRightBC, override, descText =
-		canPurchaseItem()
-
-	if canPurchase then
-		updatePurchasePromptData()
-
-		if override and descText then
-			purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text = descText
-			purchaseDialog.BodyFrame.AfterBalanceButton.Visible = false
-		end
-		game.GuiService:AddCenterDialog(
-			purchaseDialog,
-			Enum.CenterDialogType.ModalDialog,
-			--ShowFunction
-			function()
-				-- set the state for our buttons
-				purchaseDialog.Visible = true
-				if isFreeItem() then
-					setButtonsVisible(
-						purchaseDialog.BodyFrame.FreeButton,
-						purchaseDialog.BodyFrame.CancelButton,
-						purchaseDialog.BodyFrame.AfterBalanceButton
-					)
-				elseif notRightBC then
-					purchaseDialog.BodyFrame.AfterBalanceButton.Text =
-						"You require an upgrade to your Builders Club membership to purchase this item. Click here to upgrade."
-					if not openBCUpSellWindowConnection then
-						openBCUpSellWindowConnection = purchaseDialog.BodyFrame.AfterBalanceButton.MouseButton1Click:connect(
-							function()
-								if
-									purchaseDialog.BodyFrame.AfterBalanceButton.Text
-									== "You require an upgrade to your Builders Club membership to purchase this item. Click here to upgrade."
-								then
-									openBCUpSellWindow()
-								end
-							end
-						)
-					end
-					setButtonsVisible(
-						purchaseDialog.BodyFrame.BuyDisabledButton,
-						purchaseDialog.BodyFrame.CancelButton,
-						purchaseDialog.BodyFrame.AfterBalanceButton
-					)
-				elseif insufficientFunds then
-					setButtonsVisible(
-						purchaseDialog.BodyFrame.BuyDisabledButton,
-						purchaseDialog.BodyFrame.CancelButton,
-						purchaseDialog.BodyFrame.AfterBalanceButton
-					)
-				elseif override then
-					setButtonsVisible(
-						purchaseDialog.BodyFrame.BuyDisabledButton,
-						purchaseDialog.BodyFrame.CancelButton
-					) -- , purchaseDialog.BodyFrame.AfterBalanceButton)
-				else
-					setButtonsVisible(
-						purchaseDialog.BodyFrame.BuyButton,
-						purchaseDialog.BodyFrame.CancelButton
-					) -- , purchaseDialog.BodyFrame.AfterBalanceButton)
-				end
-
-				purchaseDialog:TweenPosition(
-					showPosition,
-					Enum.EasingDirection.Out,
-					Enum.EasingStyle.Quad,
-					tweenTime,
-					true
-				)
-
-				if
-					canPurchase
-					and insufficientFunds
-					and not enableBrowserWindowClosedEvent
-				then
-					checkingPlayerFunds = true
-					doPlayerFundsCheck(true)
-				end
-			end,
-			--HideFunction
-			function()
-				purchaseDialog.Visible = false
-			end
-		)
-	else -- we failed in prompting a purchase, do a decline
-		doDeclinePurchase()
-	end
-end
-
--- given an asset id, this function will grab that asset from the website, and return the first "Tool" object found inside it
-function getToolAssetID(assetID)
-	local newTool = game:GetService("InsertService"):LoadAsset(assetID)
-	if not newTool then
-		return nil
-	end
-
-	if newTool:IsA "Tool" then
-		return newTool
-	end
-
-	local toolChildren = newTool:GetChildren()
-	for i = 1, #toolChildren do
-		if toolChildren[i]:IsA "Tool" then
-			return toolChildren[i]
-		end
-	end
-	return nil
-end
-
--- the user tried to purchase by clicking the purchase button, but something went wrong.
--- let them know their account was not charged, and that they do not own the item yet.
-function purchaseFailed(inGamePurchasesDisabled)
-	local name = "Item"
-	if currentProductInfo then
-		name = currentProductInfo.Name
-	end
-
-	local newPurchasedFailedText =
-		string.gsub(purchaseFailedText, "itemName", tostring(name))
-	if inGamePurchasesDisabled then
-		newPurchasedFailedText = string.gsub(
-			newPurchasedFailedText,
-			"errorReason",
-			tostring(errorPurchasesDisabledText)
-		)
-	else
-		newPurchasedFailedText = string.gsub(
-			newPurchasedFailedText,
-			"errorReason",
-			tostring(errorPurchasesUnknownText)
-		)
-	end
-
-	purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text =
-		newPurchasedFailedText
-	purchaseDialog.BodyFrame.ItemPreview.Image = errorImageUrl
-
-	setButtonsVisible(purchaseDialog.BodyFrame.OkButton)
-
-	setHeaderText(buyFailedHeaderText)
-
-	hidePurchasing()
-end
-
--- user has specified they want to buy an item, now try to attempt to buy it for them
-function doAcceptPurchase(_)
-	showPurchasing() -- shows a purchasing ui (shows spinner)
-
-	local startTime = tick()
-
-	-- http call to do the purchase
-	local response = "none"
-	local url
-
-	-- consumables need to use a different url
-	if purchasingConsumable then
-		url = getSecureApiBaseUrl()
-			.. "marketplace/submitpurchase?productId="
-			.. tostring(currentProductId)
-			.. "&currencyTypeId="
-			.. tostring(currencyEnumToInt(currentCurrencyType))
-			.. "&expectedUnitPrice="
-			.. tostring(currentCurrencyAmount)
-			.. "&placeId="
-			.. tostring(Game.PlaceId)
-	else
-		url = getSecureApiBaseUrl()
-			.. "marketplace/purchase?productId="
-			.. tostring(currentProductId)
-			.. "&currencyTypeId="
-			.. tostring(currencyEnumToInt(currentCurrencyType))
-			.. "&purchasePrice="
-			.. tostring(currentCurrencyAmount)
-			.. "&locationType=Game"
-			.. "&locationId="
-			.. Game.PlaceId
-	end
-
-	local success, reason = ypcall(function()
-		response = game:HttpPostAsync(url, "RobloxPurchaseRequest")
-	end)
-
-	-- debug output for us (found in the logs from local)
-	print(
-		"doAcceptPurchase success from ypcall is ",
-		success,
-		"reason is",
-		reason
-	)
-
-	if (tick() - startTime) < 1 then
-		wait(1) -- allow the purchasing waiting dialog to at least be readable (otherwise it might flash, looks bad)...
-	end
-
-	-- check to make sure purchase actually happened on the web end
-	if response == "none" or response == nil or response == "" then
-		print(
-			"did not get a proper response from web on purchase of",
-			currentAssetId,
-			currentProductId
-		)
-		purchaseFailed()
-		return
-	end
-
-	-- parse our response, decide how to react
-	response = getRbxUtility().DecodeJSON(response)
-
-	if response then
-		if response.success == false then
-			if response.status ~= "AlreadyOwned" then
-				print(
-					"web return response of fail on purchase of",
-					currentAssetId,
-					currentProductId
-				)
-				purchaseFailed((response.status == "EconomyDisabled"))
-				return
-			end
-		end
-	else
-		print(
-			"web return response of non parsable JSON on purchase of",
-			currentAssetId
-		)
-		purchaseFailed()
-		return
-	end
-
-	-- check to see if this item was bought, and if we want to equip it (also need to make sure the asset type was gear)
-	if
-		currentEquipOnPurchase
-		and success
-		and currentAssetId
-		and tonumber(currentProductInfo.AssetTypeId) == 19
-	then
-		local tool = getToolAssetID(tonumber(currentAssetId))
-		if tool then
-			tool.Parent = game.Players.LocalPlayer.Backpack
-		end
-	end
-
-	if purchasingConsumable then
-		if not response.receipt then
-			print(
-				"tried to buy productId, but no receipt returned. productId was",
-				currentProductId
-			)
-			purchaseFailed()
-			return
-		end
-		Game:GetService("MarketplaceService"):SignalClientPurchaseSuccess(
-			tostring(response.receipt),
-			game.Players.LocalPlayer.userId,
-			currentProductId
-		)
-	else
-		userPurchaseActionsEnded(success)
-	end
-end
-
--- user pressed the cancel button, just remove all purchasing prompts
-function doDeclinePurchase()
-	userPurchaseActionsEnded(false)
-end
--------------------------------- End Accept/Decline Functions --------------------------------------
-
----------------------------------------------- Currency Functions ---------------------------------------------
 -- enums have no implicit conversion to numbers in lua, has to have a function to do this
-function currencyEnumToInt(currencyEnum: Enum.CurrencyType)
-	if
-		currencyEnum == Enum.CurrencyType.Robux
-		or currencyEnum == Enum.CurrencyType.Default
-	then
-		return 1
-	elseif currencyEnum == Enum.CurrencyType.Tix then
+local function currencyEnumToInt(currencyEnum: Enum.CurrencyType)
+	if currencyEnum == Enum.CurrencyType.Tix then
 		return 2
 	end
+	return 1
 end
 
 -- oi, this is ugly
-function assetTypeToString(assetType)
+local function assetTypeToString(assetType)
 	if assetType == 1 then
 		return "Image"
 	elseif assetType == 2 then
@@ -612,81 +287,100 @@ function assetTypeToString(assetType)
 	return ""
 end
 
-function currencyTypeToString(currencyType)
+local function isFreeItem()
+	-- if both of these are true, then the item is free, just prompt user if they want to take one
+	return currentProductInfo
+		and currentProductInfo.IsForSale == true
+		and currentProductInfo.IsPublicDomain == true
+end
+
+local function setHeaderText(text)
+	purchaseDialog.TitleLabel.Text = text
+	purchaseDialog.TitleBackdrop.Text = text
+end
+
+local function currencyTypeToString(currencyType)
 	if currencyType == Enum.CurrencyType.Tix then
 		return "Tix"
+	end
+	return "R$"
+end
+
+-- make sure our gui displays the proper purchase data, and set the productid we will try and buy if use specifies a buy action
+local function updatePurchasePromptData(_)
+	local newItemDescription = ""
+
+	-- id to use when we request a purchase
+	if not currentProductId then
+		currentProductId = currentProductInfo.ProductId
+	end
+
+	if isFreeItem() then
+		newItemDescription = string.gsub(
+			freeItemPurchaseText,
+			"itemName",
+			tostring(currentProductInfo.Name)
+		)
+		newItemDescription = string.gsub(
+			newItemDescription,
+			"assetType",
+			tostring(assetTypeToString(currentProductInfo.AssetTypeId))
+		)
+		setHeaderText(takeHeaderText)
+	else -- otherwise item costs something, so different prompt
+		newItemDescription = string.gsub(
+			productPurchaseText,
+			"itemName",
+			tostring(currentProductInfo.Name)
+		)
+		newItemDescription = string.gsub(
+			newItemDescription,
+			"currencyType",
+			tostring(currencyTypeToString(currentCurrencyType))
+		)
+		newItemDescription = string.gsub(
+			newItemDescription,
+			"currencyAmount",
+			tostring(currentCurrencyAmount)
+		)
+		setHeaderText(buyHeaderText)
+	end
+
+	purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text =
+		newItemDescription
+
+	if purchasingConsumable then
+		purchaseDialog.BodyFrame.ItemPreview.Image =
+			`{baseUrl}thumbs/asset.ashx?assetid={currentProductInfo.IconImageAssetId}&x=100&y=100&format=png`
 	else
-		return "R$"
+		purchaseDialog.BodyFrame.ItemPreview.Image =
+			`{baseUrl}thumbs/asset.ashx?assetid={currentAssetId}&x=100&y=100&format=png`
 	end
 end
 
--- figure out what currency to use based on the currency you can actually sell the item in and what the script specified
-function setCurrencyAmountAndType(priceInRobux, priceInTix)
-	if
-		currentCurrencyType == Enum.CurrencyType.Default
-		or currentCurrencyType == Enum.CurrencyType.Robux
-	then -- sell for default (user doesn't care) or robux
-		if priceInRobux ~= nil and priceInRobux ~= 0 then -- we can sell for robux
-			currentCurrencyAmount = priceInRobux
-			currentCurrencyType = Enum.CurrencyType.Robux
-		else -- have to use tix
-			currentCurrencyAmount = priceInTix
-			currentCurrencyType = Enum.CurrencyType.Tix
-		end
-	elseif currentCurrencyType == Enum.CurrencyType.Tix then -- we want to sell for tix
-		if priceInTix ~= nil and priceInTix ~= 0 then -- we can sell for tix
-			currentCurrencyAmount = priceInTix
-			currentCurrencyType = Enum.CurrencyType.Tix
-		else -- have to use robux
-			currentCurrencyAmount = priceInRobux
-			currentCurrencyType = Enum.CurrencyType.Robux
-		end
-	else
-		return false
+-- more enum to int fun!
+local function membershipTypeToNumber(membership)
+	if membership == Enum.MembershipType.None then
+		return 0
+	elseif membership == Enum.MembershipType.BuildersClub then
+		return 1
+	elseif membership == Enum.MembershipType.TurboBuildersClub then
+		return 2
+	elseif membership == Enum.MembershipType.OutrageousBuildersClub then
+		return 3
 	end
 
-	if currentCurrencyAmount == nil then
-		return false
-	end
-
-	return true
-end
-
--- will get the player's balance of robux and tix, return in a table
-function getPlayerBalance()
-	local playerBalance
-	local success, errorCode = ypcall(function()
-		playerBalance =
-			game:HttpGetAsync(getSecureApiBaseUrl() .. "currency/balance")
-	end)
-	if not success then
-		print("Get player balance failed because", errorCode)
-		return nil
-	end
-
-	if playerBalance == "" then
-		return nil
-	end
-
-	playerBalance = getRbxUtility().DecodeJSON(playerBalance)
-
-	return playerBalance
+	return -1
 end
 
 -- should open an external default browser window to this url
-function openBuyCurrencyWindow()
+local function openBuyCurrencyWindow()
 	checkingPlayerFunds = true
-	game:GetService("GuiService")
-		:OpenBrowserWindow(baseUrl .. "Upgrades/Robux.aspx")
-end
-
-function openBCUpSellWindow()
-	Game:GetService("GuiService")
-		:OpenBrowserWindow(baseUrl .. "Upgrades/BuildersClubMemberships.aspx")
+	GuiService:OpenBrowserWindow(`{baseUrl}Upgrades/Robux.aspx`)
 end
 
 -- set up the gui text at the bottom of the prompt (alerts user to how much money they will have left, or if they need to buy more to buy the item)
-function updateAfterBalanceText(playerBalance, notRightBc)
+local function updateAfterBalanceText(playerBalance, notRightBc)
 	if isFreeItem() then
 		purchaseDialog.BodyFrame.AfterBalanceButton.Text = freeItemBalanceText
 		return true, false
@@ -719,18 +413,12 @@ function updateAfterBalanceText(playerBalance, notRightBc)
 						openBuyCurrencyWindow
 					)
 			end
-			purchaseDialog.BodyFrame.AfterBalanceButton.Text = "You need "
-				.. currencyTypeToString(currentCurrencyType)
-				.. " "
-				.. tostring(-afterBalanceNumber)
-				.. " more to buy this, click here to purchase more."
+			purchaseDialog.BodyFrame.AfterBalanceButton.Text =
+				`You need R$ {-afterBalanceNumber} more to buy this, click here to purchase more.`
 			return true, true
 		elseif afterBalanceNumber < 0 and keyWord == "tickets" then
-			purchaseDialog.BodyFrame.AfterBalanceButton.Text = "You need "
-				.. tostring(-afterBalanceNumber)
-				.. " "
-				.. currencyTypeToString(currentCurrencyType)
-				.. " more to buy this item."
+			purchaseDialog.BodyFrame.AfterBalanceButton.Text =
+				`You need {-afterBalanceNumber} Tix more to buy this item.`
 			return true, true -- user can't buy more tickets, so we say fail the transaction (maybe instead we can prompt them to trade currency???)
 		end
 	end
@@ -740,41 +428,68 @@ function updateAfterBalanceText(playerBalance, notRightBc)
 		openBuyCurrencyWindowConnection:disconnect()
 		openBuyCurrencyWindowConnection = nil
 	end
-	purchaseDialog.BodyFrame.AfterBalanceButton.Text = "Your balance after this transaction will be "
-		.. currencyTypeToString(currentCurrencyType)
-		.. " "
-		.. tostring(afterBalanceNumber)
-		.. "."
+	purchaseDialog.BodyFrame.AfterBalanceButton.Text =
+		`Your balance after this transaction will be {currencyTypeToString(
+			currentCurrencyType
+		)} {afterBalanceNumber}.`
 	return true, false
 end
 
-function isFreeItem()
-	-- if both of these are true, then the item is free, just prompt user if they want to take one
-	return currentProductInfo
-		and currentProductInfo.IsForSale == true
-		and currentProductInfo.IsPublicDomain == true
-end
----------------------------------------------- End Currency Functions ---------------------------------------------
-
----------------------------------------------- Data Functions -----------------------------------------------------
-
--- more enum to int fun!
-function membershipTypeToNumber(membership)
-	if membership == Enum.MembershipType.None then
-		return 0
-	elseif membership == Enum.MembershipType.BuildersClub then
-		return 1
-	elseif membership == Enum.MembershipType.TurboBuildersClub then
-		return 2
-	elseif membership == Enum.MembershipType.OutrageousBuildersClub then
-		return 3
+-- will get the player's balance of robux and tix, return in a table
+local function getPlayerBalance()
+	local playerBalance
+	local success, errorCode = ypcall(function()
+		playerBalance =
+			game:HttpGetAsync(`{getSecureApiBaseUrl()}currency/balance`)
+	end)
+	if not success then
+		print("Get player balance failed because", errorCode)
+		return
 	end
 
-	return -1
+	if playerBalance == "" then
+		return
+	end
+
+	playerBalance = getRbxUtility().DecodeJSON(playerBalance)
+
+	return playerBalance
+end
+
+-- figure out what currency to use based on the currency you can actually sell the item in and what the script specified
+local function setCurrencyAmountAndType(priceInRobux, priceInTix)
+	if
+		currentCurrencyType == Enum.CurrencyType.Default
+		or currentCurrencyType == Enum.CurrencyType.Robux
+	then -- sell for default (user doesn't care) or robux
+		if priceInRobux ~= nil and priceInRobux ~= 0 then -- we can sell for robux
+			currentCurrencyAmount = priceInRobux
+			currentCurrencyType = Enum.CurrencyType.Robux
+		else -- have to use tix
+			currentCurrencyAmount = priceInTix
+			currentCurrencyType = Enum.CurrencyType.Tix
+		end
+	elseif currentCurrencyType == Enum.CurrencyType.Tix then -- we want to sell for tix
+		if priceInTix ~= nil and priceInTix ~= 0 then -- we can sell for tix
+			currentCurrencyAmount = priceInTix
+			currentCurrencyType = Enum.CurrencyType.Tix
+		else -- have to use robux
+			currentCurrencyAmount = priceInRobux
+			currentCurrencyType = Enum.CurrencyType.Robux
+		end
+	else
+		return false
+	end
+
+	if currentCurrencyAmount == nil then
+		return false
+	end
+
+	return true
 end
 
 -- This functions checks to make sure the purchase is even possible, if not it returns false and we don't prompt user (some situations require user feedback when we won't prompt)
-function canPurchaseItem()
+local function canPurchaseItem()
 	-- first we see if player already owns the asset/get the productinfo
 	local playerOwnsAsset = false
 	local notRightBc = false
@@ -785,9 +500,7 @@ function canPurchaseItem()
 		local currentProductInfoRaw
 		success = ypcall(function()
 			currentProductInfoRaw = Game:HttpGetAsync(
-				getSecureApiBaseUrl()
-					.. "marketplace/productDetails?productid="
-					.. tostring(currentProductId)
+				`{getSecureApiBaseUrl()}marketplace/productDetails?productid={currentProductId}`
 			)
 		end)
 		if success then
@@ -796,8 +509,8 @@ function canPurchaseItem()
 		end
 	else
 		success = ypcall(function()
-			currentProductInfo = game:GetService("MarketplaceService")
-				:GetProductInfo(currentAssetId)
+			currentProductInfo =
+				MarketplaceService:GetProductInfo(currentAssetId)
 		end)
 	end
 
@@ -817,17 +530,13 @@ function canPurchaseItem()
 			return false
 		end
 
-		local success, errorCode = ypcall(function()
+		local success2, errorCode = ypcall(function()
 			playerOwnsAsset = game:HttpGetAsync(
-				getSecureApiBaseUrl()
-					.. "ownership/hasAsset?userId="
-					.. tostring(game.Players.LocalPlayer.userId)
-					.. "&assetId="
-					.. tostring(currentAssetId)
+				`{getSecureApiBaseUrl()}ownership/hasAsset?userId={game.Players.LocalPlayer.userId}&assetId={currentAssetId}`
 			)
 		end)
 
-		if not success then
+		if not success2 then
 			print("could not tell if player owns asset because", errorCode)
 			return false
 		end
@@ -927,29 +636,186 @@ function canPurchaseItem()
 	return true, insufficientFunds
 end
 
--- function computeSpaceString(pLabel)
--- 	local nString = " "
--- 	local tempSpaceLabel = Instance.new "TextButton"
--- 	tempSpaceLabel.Size = UDim2.new(0, pLabel.AbsoluteSize.X, 0, pLabel.AbsoluteSize.Y)
--- 	tempSpaceLabel.FontSize = pLabel.FontSize
--- 	tempSpaceLabel.Parent = pLabel.Parent
--- 	tempSpaceLabel.BackgroundTransparency = 1
--- 	tempSpaceLabel.Text = nString
--- 	tempSpaceLabel.Name = "SpaceButton"
+local function doPlayerFundsCheck(checkIndefinitely)
+	if checkingPlayerFunds then
+		local canPurchase, insufficientFunds = canPurchaseItem() -- check again to see if we can buy item
+		if canPurchase and insufficientFunds then -- wait a bit and try a few more times
+			local retries = 1000
+			while
+				(retries > 0 or checkIndefinitely)
+				and insufficientFunds
+				and checkingPlayerFunds
+				and canPurchase
+			do
+				wait(0.1)
+				canPurchase, insufficientFunds = canPurchaseItem()
+				retries -= 1
+			end
+		end
+		if canPurchase and not insufficientFunds then
+			-- we can buy item! set our buttons up and we will exit this loop
+			setButtonsVisible(
+				purchaseDialog.BodyFrame.BuyButton,
+				purchaseDialog.BodyFrame.CancelButton,
+				purchaseDialog.BodyFrame.AfterBalanceButton
+			)
+		end
+	end
+end
 
--- 	while tempSpaceLabel.TextBounds.X < pLabel.TextBounds.X do
--- 		nString = nString .. " "
--- 		tempSpaceLabel.Text = nString
--- 	end
--- 	nString = nString .. " "
--- 	tempSpaceLabel.Text = ""
--- 	return nString
--- end
+local function openBCUpSellWindow()
+	GuiService:OpenBrowserWindow(
+		`{baseUrl}Upgrades/BuildersClubMemberships.aspx`
+	)
+end
 
----------------------------------------------- End Data Functions -----------------------------------------------------
+-- user pressed the cancel button, just remove all purchasing prompts
 
----------------------------------------------- Gui Functions ----------------------------------------------
-function startSpinner()
+local function showPurchasePrompt()
+	local canPurchase, insufficientFunds, notRightBC, override, descText =
+		canPurchaseItem()
+
+	if canPurchase then
+		updatePurchasePromptData()
+
+		if override and descText then
+			purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text = descText
+			purchaseDialog.BodyFrame.AfterBalanceButton.Visible = false
+		end
+		game.GuiService:AddCenterDialog(
+			purchaseDialog,
+			Enum.CenterDialogType.ModalDialog,
+			--ShowFunction
+			function()
+				-- set the state for our buttons
+				purchaseDialog.Visible = true
+				if isFreeItem() then
+					setButtonsVisible(
+						purchaseDialog.BodyFrame.FreeButton,
+						purchaseDialog.BodyFrame.CancelButton,
+						purchaseDialog.BodyFrame.AfterBalanceButton
+					)
+				elseif notRightBC then
+					purchaseDialog.BodyFrame.AfterBalanceButton.Text =
+						"You require an upgrade to your Builders Club membership to purchase this item. Click here to upgrade."
+					if not openBCUpSellWindowConnection then
+						openBCUpSellWindowConnection = purchaseDialog.BodyFrame.AfterBalanceButton.MouseButton1Click:connect(
+							function()
+								if
+									purchaseDialog.BodyFrame.AfterBalanceButton.Text
+									== "You require an upgrade to your Builders Club membership to purchase this item. Click here to upgrade."
+								then
+									openBCUpSellWindow()
+								end
+							end
+						)
+					end
+					setButtonsVisible(
+						purchaseDialog.BodyFrame.BuyDisabledButton,
+						purchaseDialog.BodyFrame.CancelButton,
+						purchaseDialog.BodyFrame.AfterBalanceButton
+					)
+				elseif insufficientFunds then
+					setButtonsVisible(
+						purchaseDialog.BodyFrame.BuyDisabledButton,
+						purchaseDialog.BodyFrame.CancelButton,
+						purchaseDialog.BodyFrame.AfterBalanceButton
+					)
+				elseif override then
+					setButtonsVisible(
+						purchaseDialog.BodyFrame.BuyDisabledButton,
+						purchaseDialog.BodyFrame.CancelButton
+					) -- , purchaseDialog.BodyFrame.AfterBalanceButton)
+				else
+					setButtonsVisible(
+						purchaseDialog.BodyFrame.BuyButton,
+						purchaseDialog.BodyFrame.CancelButton
+					) -- , purchaseDialog.BodyFrame.AfterBalanceButton)
+				end
+
+				purchaseDialog:TweenPosition(
+					showPosition,
+					Enum.EasingDirection.Out,
+					Enum.EasingStyle.Quad,
+					tweenTime,
+					true
+				)
+
+				if
+					canPurchase
+					and insufficientFunds
+					and not enableBrowserWindowClosedEvent
+				then
+					checkingPlayerFunds = true
+					doPlayerFundsCheck(true)
+				end
+			end,
+			--HideFunction
+			function()
+				purchaseDialog.Visible = false
+			end
+		)
+	else -- we failed in prompting a purchase, do a decline
+		userPurchaseActionsEnded(false)
+	end
+end
+
+-- given an asset id, this function will grab that asset from the website, and return the first "Tool" object found inside it
+local function getToolAssetID(assetID)
+	local newTool = game:GetService("InsertService"):LoadAsset(assetID)
+	if not newTool then
+		return nil
+	end
+
+	if newTool:IsA "Tool" then
+		return newTool
+	end
+
+	local toolChildren = newTool:GetChildren()
+	for i = 1, #toolChildren do
+		if toolChildren[i]:IsA "Tool" then
+			return toolChildren[i]
+		end
+	end
+	return nil
+end
+
+-- the user tried to purchase by clicking the purchase button, but something went wrong.
+-- let them know their account was not charged, and that they do not own the item yet.
+local function purchaseFailed(inGamePurchasesDisabled)
+	local name = "Item"
+	if currentProductInfo then
+		name = currentProductInfo.Name
+	end
+
+	local newPurchasedFailedText =
+		string.gsub(purchaseFailedText, "itemName", tostring(name))
+	if inGamePurchasesDisabled then
+		newPurchasedFailedText = string.gsub(
+			newPurchasedFailedText,
+			"errorReason",
+			tostring(errorPurchasesDisabledText)
+		)
+	else
+		newPurchasedFailedText = string.gsub(
+			newPurchasedFailedText,
+			"errorReason",
+			tostring(errorPurchasesUnknownText)
+		)
+	end
+
+	purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text =
+		newPurchasedFailedText
+	purchaseDialog.BodyFrame.ItemPreview.Image = errorImageUrl
+
+	setButtonsVisible(purchaseDialog.BodyFrame.OkButton)
+
+	setHeaderText(buyFailedHeaderText)
+
+	hidePurchasing()
+end
+
+local function startSpinner()
 	spinning = true
 	Spawn(function()
 		local spinPos = 0
@@ -958,11 +824,9 @@ function startSpinner()
 
 			while pos < 8 do
 				if pos == spinPos or pos == ((spinPos + 1) % 8) then
-					spinnerIcons[pos + 1].Image =
-						"http://banland.xyz/Asset/?id=45880668"
+					spinnerIcons[pos + 1].Image = assetUrl(45880668)
 				else
-					spinnerIcons[pos + 1].Image =
-						"http://banland.xyz/Asset/?id=45880710"
+					spinnerIcons[pos + 1].Image = assetUrl(45880710)
 				end
 
 				pos += 1
@@ -973,31 +837,120 @@ function startSpinner()
 	end)
 end
 
-function stopSpinner()
-	spinning = false
-end
+-- user has specified they want to buy an item, now try to attempt to buy it for them
+local function acceptPurchase()
+	-- shows a purchasing ui (shows spinner)
+	startSpinner()
+	purchaseDialog.PurchasingFrame.Visible = true
 
--- convenience method to say exactly what buttons should be visible (all others are not!)
-function setButtonsVisible(...)
-	local args = { ... }
-	local argCount = select("#", ...)
+	local startTime = tick()
 
-	local bodyFrameChildren = purchaseDialog.BodyFrame:GetChildren()
-	for i = 1, #bodyFrameChildren do
-		if bodyFrameChildren[i]:IsA "GuiButton" then
-			bodyFrameChildren[i].Visible = false
-			for j = 1, argCount do
-				if bodyFrameChildren[i] == args[j] then
-					bodyFrameChildren[i].Visible = true
-					break
-				end
+	-- http call to do the purchase
+	local response = "none"
+	local url = `{getSecureApiBaseUrl()}marketplace/`
+
+	local currencyData = `&currencyTypeId={currencyEnumToInt(
+		currentCurrencyType
+	)}&currencyTypeId={currencyEnumToInt(
+		currentCurrencyType
+	)}`
+
+	-- consumables need to use a different url
+	if purchasingConsumable then
+		url ..= `submitpurchase?productId={currentProductId}{currencyData}&expectedUnitPrice={currentCurrencyAmount}&placeId={Game.PlaceId}`
+	else
+		url ..= `purchase?productId={currentProductId}{currencyData}&purchasePrice={currentCurrencyAmount}&locationType=Game&locationId={Game.PlaceId}`
+	end
+
+	local success, reason = ypcall(function()
+		response = game:HttpPostAsync(url, "RobloxPurchaseRequest")
+	end)
+
+	-- debug output for us (found in the logs from local)
+	print(
+		"acceptPurchase success from ypcall is ",
+		success,
+		"reason is",
+		reason
+	)
+
+	if tick() - startTime < 1 then
+		wait(1) -- allow the purchasing waiting dialog to at least be readable (otherwise it might flash, looks bad)...
+	end
+
+	-- check to make sure purchase actually happened on the web end
+	if response == "none" or response == nil or response == "" then
+		print(
+			"did not get a proper response from web on purchase of",
+			currentAssetId,
+			currentProductId
+		)
+		purchaseFailed()
+		return
+	end
+
+	-- parse our response, decide how to react
+	response = getRbxUtility().DecodeJSON(response)
+
+	if response then
+		if response.success == false then
+			if response.status ~= "AlreadyOwned" then
+				print(
+					"web return response of fail on purchase of",
+					currentAssetId,
+					currentProductId
+				)
+				purchaseFailed((response.status == "EconomyDisabled"))
+				return
 			end
 		end
+	else
+		print(
+			"web return response of non parsable JSON on purchase of",
+			currentAssetId
+		)
+		purchaseFailed()
+		return
+	end
+
+	-- check to see if this item was bought, and if we want to equip it (also need to make sure the asset type was gear)
+	if
+		currentEquipOnPurchase
+		and success
+		and currentAssetId
+		and tonumber(currentProductInfo.AssetTypeId) == 19
+	then
+		local tool = getToolAssetID(tonumber(currentAssetId))
+		if tool then
+			tool.Parent = game.Players.LocalPlayer.Backpack
+		end
+	end
+
+	if purchasingConsumable then
+		if not response.receipt then
+			print(
+				"tried to buy productId, but no receipt returned. productId was",
+				currentProductId
+			)
+			purchaseFailed()
+			return
+		end
+		MarketplaceService:SignalClientPurchaseSuccess(
+			tostring(response.receipt),
+			game.Players.LocalPlayer.userId,
+			currentProductId
+		)
+	else
+		userPurchaseActionsEnded(success)
 	end
 end
 
+-------------------------------- End Accept/Decline Functions --------------------------------------
+
+---------------------------------------------- Gui Functions ----------------------------------------------
+
 -- used for the "Purchasing..." frame
-function createSpinner(size, position, parent)
+local function createSpinner(size, position, parent)
 	local spinnerFrame = Instance.new "Frame"
 	spinnerFrame.Name = "Spinner"
 	spinnerFrame.Size = size
@@ -1010,7 +963,7 @@ function createSpinner(size, position, parent)
 	local spinnerNum = 1
 	while spinnerNum <= 8 do
 		local spinnerImage = Instance.new "ImageLabel"
-		spinnerImage.Name = "Spinner" .. spinnerNum
+		spinnerImage.Name = `Spinner{spinnerNum}`
 		spinnerImage.Size = UDim2.new(0, 16, 0, 16)
 		spinnerImage.Position = UDim2.new(
 			0.5 + 0.3 * math.cos(math.rad(45 * spinnerNum)),
@@ -1020,7 +973,7 @@ function createSpinner(size, position, parent)
 		)
 		spinnerImage.BackgroundTransparency = 1
 		spinnerImage.ZIndex = 10
-		spinnerImage.Image = "http://banland.xyz/Asset/?id=45880710"
+		spinnerImage.Image = assetUrl(45880710)
 		spinnerImage.Parent = spinnerFrame
 
 		spinnerIcons[spinnerNum] = spinnerImage
@@ -1028,8 +981,65 @@ function createSpinner(size, position, parent)
 	end
 end
 
+local function userPurchaseProductActionsEnded(userIsClosingDialog)
+	checkingPlayerFunds = false
+
+	if userIsClosingDialog then
+		closePurchasePrompt()
+		if currentServerResponseTable then
+			local isPurchased = false
+			if
+				tostring(currentServerResponseTable.isValid):lower()
+				== "true"
+			then
+				isPurchased = true
+			end
+
+			MarketplaceService:SignalPromptProductPurchaseFinished(
+				tonumber(currentServerResponseTable.playerId),
+				tonumber(currentServerResponseTable.productId),
+				isPurchased
+			)
+		else
+			print "Something went wrong, no currentServerResponseTable"
+		end
+		removeCurrentPurchaseInfo()
+	else
+		local newPurchasedSucceededText = string.gsub(
+			purchaseSucceededText,
+			"itemName",
+			tostring(currentProductInfo.Name)
+		)
+		purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text =
+			newPurchasedSucceededText
+		setButtonsVisible(purchaseDialog.BodyFrame.OkPurchasedButton)
+		hidePurchasing()
+	end
+end
+
+local function createImageButton(name)
+	local imageButton = Instance.new "ImageButton"
+	imageButton.Size = UDim2.new(0, 153, 0, 46)
+	imageButton.Name = name
+	return imageButton
+end
+
+local function createTextObject(name, text, type, size)
+	local textLabel = Instance.new(type)
+	textLabel.Font = Enum.Font.ArialBold
+	textLabel.TextColor3 = Color3.new(217 / 255, 217 / 255, 217 / 255)
+	textLabel.TextWrapped = true
+	textLabel.Name = name
+	textLabel.Text = text
+	textLabel.BackgroundTransparency = 1
+	textLabel.BorderSizePixel = 0
+	textLabel.FontSize = size
+
+	return textLabel
+end
+
 -- all the gui init.  Would be nice if this didn't have to be a script
-function createPurchasePromptGui()
+local function createPurchasePromptGui()
 	purchaseDialog = Instance.new "Frame"
 	purchaseDialog.Name = "PurchaseFrame"
 	purchaseDialog.Size = UDim2.new(0, 660, 0, 400)
@@ -1087,7 +1097,10 @@ function createPurchasePromptGui()
 	cancelButton.MouseLeave:connect(function()
 		cancelButton.Image = cancelButtonImageUrl
 	end)
-	cancelButton.MouseButton1Click:connect(doDeclinePurchase)
+	cancelButton.MouseButton1Click:connect(function()
+		-- user pressed the cancel button, just remove all purchasing prompts
+		userPurchaseActionsEnded(false)
+	end)
 
 	local buyButton = createImageButton "BuyButton"
 	buyButton.Position =
@@ -1177,10 +1190,10 @@ function createPurchasePromptGui()
 		end
 	end)
 	buyButton.MouseButton1Click:connect(function()
-		doAcceptPurchase(Enum.CurrencyType.Robux)
+		acceptPurchase()
 	end)
 	freeButton.MouseButton1Click:connect(function()
-		doAcceptPurchase(false)
+		acceptPurchase()
 	end)
 
 	local itemPreview = Instance.new "ImageLabel"
@@ -1245,44 +1258,10 @@ function createPurchasePromptGui()
 end
 
 -- next two functions control the "Purchasing..." overlay
-function showPurchasing()
-	startSpinner()
-	purchaseDialog.PurchasingFrame.Visible = true
-end
-
-function hidePurchasing()
-	purchaseDialog.PurchasingFrame.Visible = false
-	stopSpinner()
-end
 
 -- next 2 functions are convenienvce creation functions for guis
-function createTextObject(name, text, type, size)
-	local textLabel = Instance.new(type)
-	textLabel.Font = Enum.Font.ArialBold
-	textLabel.TextColor3 = Color3.new(217 / 255, 217 / 255, 217 / 255)
-	textLabel.TextWrapped = true
-	textLabel.Name = name
-	textLabel.Text = text
-	textLabel.BackgroundTransparency = 1
-	textLabel.BorderSizePixel = 0
-	textLabel.FontSize = size
 
-	return textLabel
-end
-
-function createImageButton(name)
-	local imageButton = Instance.new "ImageButton"
-	imageButton.Size = UDim2.new(0, 153, 0, 46)
-	imageButton.Name = name
-	return imageButton
-end
-
-function setHeaderText(text)
-	purchaseDialog.TitleLabel.Text = text
-	purchaseDialog.TitleBackdrop.Text = text
-end
-
-function cutSizeInHalfRecursive(_)
+local function cutSizeInHalfRecursive(_)
 	-- todo: change the gui size based on how much space we have
 	--[[changeSize(instance,0.5)
 
@@ -1292,7 +1271,7 @@ function cutSizeInHalfRecursive(_)
 	end]]
 end
 
-function doubleSizeRecursive(_)
+local function doubleSizeRecursive(_)
 	-- todo: change the gui size based on how much space we have
 	--[[changeSize(instance,2)
 
@@ -1302,16 +1281,16 @@ function doubleSizeRecursive(_)
 	end]]
 end
 
-function modifyForSmallScreen()
+local function modifyForSmallScreen()
 	cutSizeInHalfRecursive(purchaseDialog)
 end
 
-function modifyForLargeScreen()
+local function modifyForLargeScreen()
 	doubleSizeRecursive(purchaseDialog)
 end
 
 -- depending on screen size, we need to change the gui
-function changeGuiToScreenSize(smallScreen)
+local function changeGuiToScreenSize(smallScreen)
 	if smallScreen then
 		modifyForSmallScreen()
 	else
@@ -1319,7 +1298,7 @@ function changeGuiToScreenSize(smallScreen)
 	end
 end
 
-function doPurchasePrompt(
+local function doPurchasePrompt(
 	player,
 	assetId,
 	equipIfPurchased,
@@ -1348,44 +1327,7 @@ function doPurchasePrompt(
 	end
 end
 
-function userPurchaseProductActionsEnded(userIsClosingDialog)
-	checkingPlayerFunds = false
-
-	if userIsClosingDialog then
-		closePurchasePrompt()
-		if currentServerResponseTable then
-			local isPurchased = false
-			if
-				tostring(currentServerResponseTable.isValid):lower()
-				== "true"
-			then
-				isPurchased = true
-			end
-
-			Game:GetService("MarketplaceService")
-				:SignalPromptProductPurchaseFinished(
-					tonumber(currentServerResponseTable.playerId),
-					tonumber(currentServerResponseTable.productId),
-					isPurchased
-				)
-		else
-			print "Something went wrong, no currentServerResponseTable"
-		end
-		removeCurrentPurchaseInfo()
-	else
-		local newPurchasedSucceededText = string.gsub(
-			purchaseSucceededText,
-			"itemName",
-			tostring(currentProductInfo.Name)
-		)
-		purchaseDialog.BodyFrame.ItemPreview.ItemDescription.Text =
-			newPurchasedSucceededText
-		setButtonsVisible(purchaseDialog.BodyFrame.OkPurchasedButton)
-		hidePurchasing()
-	end
-end
-
-function doProcessServerPurchaseResponse(serverResponseTable)
+local function doProcessServerPurchaseResponse(serverResponseTable)
 	if not serverResponseTable then
 		print "Server response table was nil, cancelling purchase"
 		purchaseFailed()
@@ -1407,23 +1349,26 @@ end
 ---------------------------------------------- Script Event start/initialization ----------------------------------------------
 preloadAssets()
 
-game:GetService("MarketplaceService").PromptProductPurchaseRequested
-	:connect(function(player, productId, equipIfPurchased, currencyType)
+MarketplaceService.PromptProductPurchaseRequested:connect(
+	function(player, productId, equipIfPurchased, currencyType)
 		doPurchasePrompt(player, nil, equipIfPurchased, currencyType, productId)
-	end)
+	end
+)
 
-Game:GetService("MarketplaceService").PromptPurchaseRequested
-	:connect(function(player, assetId, equipIfPurchased, currencyType)
+MarketplaceService.PromptPurchaseRequested:connect(
+	function(player, assetId, equipIfPurchased, currencyType)
 		doPurchasePrompt(player, assetId, equipIfPurchased, currencyType, nil)
-	end)
+	end
+)
 
-Game:GetService("MarketplaceService").ServerPurchaseVerification
-	:connect(function(serverResponseTable)
+MarketplaceService.ServerPurchaseVerification:connect(
+	function(serverResponseTable)
 		doProcessServerPurchaseResponse(serverResponseTable)
-	end)
+	end
+)
 
 if enableBrowserWindowClosedEvent then
-	Game:GetService("GuiService").BrowserWindowClosed:connect(function()
+	GuiService.BrowserWindowClosed:connect(function()
 		doPlayerFundsCheck(false)
 	end)
 end

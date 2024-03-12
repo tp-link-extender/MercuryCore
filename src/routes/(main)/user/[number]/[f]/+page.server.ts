@@ -1,73 +1,55 @@
 // The friends, followers, and following pages for a user.
 
-import cql from "$lib/cyphertag"
-import { prisma } from "$lib/server/prisma"
-import { roQuery } from "$lib/server/redis"
+import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
-const types = ["friends", "followers", "following"],
-	usersQueries = {
-		friends: `
-			MATCH (:User { name: $user }) -[:friends]- (u:User)
-			RETURN u.name AS name`,
-		followers: `
-			MATCH (:User { name: $user }) <-[:follows]- (u:User)
-			RETURN u.name AS name`,
-		following: `
-			MATCH (:User { name: $user }) -[:follows]-> (u:User)
-			RETURN u.name AS name`,
-	}
-
+const types = ["friends", "followers", "following"]
+const usersQueries = {
+	friends: surql`
+		SELECT number, status, username
+		# "user->friends->user OR $user<-friends<-user" doesn't work
+		# "user<->friends<->user" shows yourself in the list (twice)
+		FROM array::concat($user->friends->user, $user<-friends<-user)`,
+	followers: surql`
+		SELECT number, status, username
+		FROM $user<-follows<-user`,
+	following: surql`
+		SELECT number, status, username
+		FROM $user->follows->user`,
+}
 const numberQueries = {
-	friends: cql`RETURN SIZE((:User { name: $user }) -[:friends]- (:User))`,
-	followers: cql`RETURN SIZE((:User { name: $user }) <-[:follows]- (:User))`,
-	following: cql`RETURN SIZE((:User { name: $user }) -[:follows]-> (:User))`,
+	friends: surql`count($user->friends->user) + count($user<-friends<-user)`,
+	followers: surql`count($user<-follows<-user)`,
+	following: surql`count($user->follows->user)`,
 }
 
-export const load = async ({ params }) => {
+export async function load({ params }) {
 	if (!/^\d+$/.test(params.number))
-		throw error(400, `Invalid user id: ${params.number}`)
-	const number = parseInt(params.number)
+		error(400, `Invalid user id: ${params.number}`)
+	const number = +params.number
 
-	if (params.f && !types.includes(params.f)) throw error(400, "Not found")
+	if (params.f && !types.includes(params.f)) error(400, "Not found")
 
-	const type = params.f as "friends" | "followers" | "following",
-		user = await prisma.authUser.findUnique({
-			where: {
-				number,
-			},
-		})
+	const type = params.f as keyof typeof usersQueries
+	const user = await squery<{
+		id: string
+		username: string
+	}>(surql`SELECT id, username FROM user WHERE number = $number`, { number })
 
-	if (user) {
-		const query = {
-			user: user.username,
-		}
+	if (!user) error(404, "Not found")
 
-		return {
-			type,
-			username: user.username,
-			users: prisma.authUser.findMany({
-				where: {
-					username: {
-						in: (
-							await roQuery(
-								"friends",
-								usersQueries[type],
-								query,
-								false,
-								true,
-							)
-						).map((i: any) => i.name),
-					},
-				},
-				select: {
-					username: true,
-					number: true,
-				},
-			}),
-			number: roQuery("friends", numberQueries[type], query, true),
-		}
+	return {
+		type,
+		username: user.username,
+		users: await query<{
+			number: number
+			status: "Playing" | "Online" | "Offline"
+			username: string
+		}>(usersQueries[type], {
+			user: user.id,
+		}),
+		number: await squery<number>(`[${numberQueries[type]}]`, {
+			user: user.id,
+		}),
 	}
-
-	throw error(404, `Not found`)
 }

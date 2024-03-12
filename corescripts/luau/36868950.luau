@@ -30,7 +30,7 @@ inside.Name = "inside"
 inside.Value = false
 inside.Parent = frameTip
 
-function setUpListeners(frameToListen)
+local function setUpListeners(frameToListen)
 	local fadeSpeed = 0.1
 	frameToListen.Parent.MouseEnter:connect(function()
 		if frameToListen:FindFirstChild "inside" then
@@ -50,11 +50,13 @@ function setUpListeners(frameToListen)
 			end
 		end
 	end)
-	function killTip(killFrame)
+
+	local function killTip(killFrame)
 		killFrame.inside.Value = false
 		killFrame.BackgroundTransparency = 1
 		killFrame.TextTransparency = 1
 	end
+
 	frameToListen.Parent.MouseLeave:connect(function()
 		killTip(frameToListen)
 	end)
@@ -63,7 +65,7 @@ function setUpListeners(frameToListen)
 	end)
 end
 
-function createSettingsButtonTip(parent)
+local function createSettingsButtonTip(parent)
 	if parent == nil then
 		parent = bottomLeftControl:FindFirstChild "SettingsButton"
 	end

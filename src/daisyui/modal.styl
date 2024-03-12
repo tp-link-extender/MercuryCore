@@ -1,0 +1,72 @@
+.modal2
+	pointer-events none
+	opacity 0
+
+.modal2
+.modal-static
+	position fixed
+	max-height none
+	max-width none
+	width 100%
+	height 100%
+	inset 0px
+	margin 0px
+	padding 0px
+	display grid
+	justify-items center
+
+	overscroll-behavior contain
+	z-index 999
+
+	transition all 0.2s ease-out
+
+.modal-backdrop
+	display grid
+	grid-column-start 1
+	grid-row-start 1
+	z-index -1
+	opacity 0.4
+	background black
+	color transparent
+
+	position fixed
+	top 0
+	left 0
+	width 100vw
+	height 100vh
+	cursor default
+
+.modal-scroll
+	overscroll-behavior auto
+
+:where(.modal2)
+	align-items center
+
+.modal-box
+	max-height calc(100vh - 5em)
+	background var(--darker)
+	padding 1.5rem
+	border-radius 0.5rem
+	box-shadow rgba(0, 0, 0, 0.25) 0px 1.5rem 3rem -0.75rem
+	transition all 0.2s ease-out
+	transform translateY(-1rem)
+	border 1px solid var(--accent)
+
+.modal-open
+.modal:target
+.modal-toggle:checked + .modal2
+.modal2[open]
+	pointer-events auto
+	opacity 1
+	.modal-box
+		transform translateY(0rem)
+
+.modal-action
+	display flex
+
+.modal-toggle
+	position fixed
+	height 0px
+	width 0px
+	appearance none
+	opacity 0

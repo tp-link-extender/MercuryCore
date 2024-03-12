@@ -1,204 +1,162 @@
 <script lang="ts">
-	import { page } from "$app/stores"
 	import { enhance as enhance2 } from "$app/forms"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
+	const { user } = data
+	export let asComponent = false
 
 	let replyingTo = writable("")
-	const repliesCollapsed = writable({}),
-		{ user } = data,
-		{
-			form,
-			errors,
-			message,
-			constraints,
-			enhance,
-			delayed,
-			capture,
-			restore,
-		} = superForm(data.form, {
-			taintedMessage: false,
-		})
+	const repliesCollapsed = writable({})
+	const formData = superForm(data.form)
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
+
+	let refreshPost = 0
+	let refreshReplies = 0
 </script>
 
 <Head title={data.title} />
 
-<div class="container light-text">
-	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
-			<li class="breadcrumb-item">
-				<a href="/forum" class="accent-text">Forum</a>
-			</li>
-			<li class="breadcrumb-item">
-				<a href="/forum/{data.forumCategory.name}" class="accent-text">
-					{data.forumCategory.name}
-				</a>
-			</li>
-			<li class="breadcrumb-item active" aria-current="page">
-				{data.title}
-			</li>
-		</ol>
-	</nav>
+<div class="ctnr max-w-280 light-text">
+	{#if !asComponent}
+		<!--
+			Breadcrumbs can give confusing behaviour if linking
+			to the same page the component is shallow-routed on
+		-->
+		<Breadcrumbs
+			path={[
+				["Forum", "/forum"],
+				[data.categoryName, `/forum/${data.categoryName}`],
+				[data.title, ""]
+			]} />
+	{/if}
 
-	<div class="post card bg-darker flex-row">
-		<form
-			use:enhance2={e => {
-				const action = e.data.get("action")
+	{#key refreshPost}
+		<div
+			class="post card bg-darker flex-row overflow-hidden {data.pinned
+				? 'border-(solid 1px green-5)!'
+				: ''}">
+			<form
+				use:enhance2={({ formData }) => {
+					const action = formData.get("action")
 
-				if (action == "like") {
-					data.likes = true
+					if (action == "like") {
+						data.likes = true
 
-					if (data.dislikes) data.dislikeCount--
-					data.dislikes = false
-					data.likeCount++
-				} else if (action == "dislike") {
-					data.dislikes = true
+						if (data.dislikes) data.score++
+						data.dislikes = false
+						data.score++
+					} else if (action == "dislike") {
+						data.dislikes = true
 
-					if (data.likes) data.likeCount--
-					data.likes = false
-					data.dislikeCount++
-				} else if (action == "unlike") {
-					data.likes = false
-					data.likeCount--
-				} else if (action == "undislike") {
-					data.dislikes = false
-					data.dislikeCount--
-				}
+						if (data.likes) data.score--
+						data.likes = false
+						data.score--
+					} else if (action == "unlike") {
+						data.likes = false
+						data.score--
+					} else if (action == "undislike") {
+						data.dislikes = false
+						data.score++
+					}
 
-				return () => {}
-			}}
-			class="sidebar bg-a me-2 p-1"
-			method="POST"
-			action="?/like&id={data.id}">
-			<div class="row mb-2 d-flex">
-				<div>
+					return () => {}
+				}}
+				class="bg-a p-1"
+				method="POST"
+				action="?/like&id={data.id}">
+				<div class="flex flex-col">
 					<button
 						name="action"
 						value={data.likes ? "unlike" : "like"}
 						aria-label={data.likes ? "Unlike" : "Like"}
-						class="btn btn-sm {data.likes
-							? 'btn-success'
-							: 'btn-outline-success'}">
-						<i class="fa{data.likes ? '' : 'r'} fa-thumbs-up" />
+						class="btn p-1">
+						<i
+							class="fa{data.likes
+								? ' text-emerald-6 hover:text-emerald-3'
+								: 'r text-neutral-5 hover:text-neutral-3'}
+						fa-thumbs-up transition text-lg" />
 					</button>
-				</div>
-				<span
-					class="my-2 text-center {data.likes
-						? 'text-success font-bold'
-						: data.dislikes
-						? 'text-danger font-bold'
-						: ''}">
-					{data.likeCount - data.dislikeCount}
-				</span>
-				<div>
+					<span
+						class="py-2 text-center {data.likes
+							? 'text-emerald-6 font-bold'
+							: data.dislikes
+								? 'text-red-5 font-bold'
+								: ''}">
+						{data.score}
+					</span>
 					<button
 						name="action"
 						value={data.dislikes ? "undislike" : "dislike"}
 						aria-label={data.dislikes ? "Undislike" : "Dislike"}
-						class="btn btn-sm {data.dislikes
-							? 'btn-danger'
-							: 'btn-outline-danger'}">
+						class="btn p-1">
 						<i
 							class="fa{data.dislikes
-								? ''
-								: 'r'} fa-thumbs-down" />
+								? ' text-red-5 hover:text-red-3'
+								: 'r text-neutral-5 hover:text-neutral-3'}
+						fa-thumbs-down transition text-lg" />
 					</button>
 				</div>
-			</div>
-		</form>
-		<div class="p-4 text-decoration-none light-text w-100">
-			<span class="d-flex">
-				<a
-					href="/user/{data.author.number}"
-					class="user d-flex text-decoration-none light-text">
-					<span class="pfp bg-a2 rounded-circle">
-						<img
-							src="/api/avatar/{data.author.username}"
-							alt={data.author.username}
-							class="rounded-circle rounded-top-0" />
+			</form>
+			<div class="p-4 pl-6 no-underline light-text w-full">
+				<span class="flex justify-between">
+					<div class="flex">
+						<User user={data.author} full />
+						<i class="pl-4 self-center">
+							{new Date(data.posted).toLocaleString()}
+						</i>
+					</div>
+					<span>
+						{#if user.permissionLevel >= 4}
+							<PinButton
+								refresh={() => refreshPost++}
+								id={data.id}
+								pinned={data.pinned}
+								post />
+						{/if}
+						<ReportButton
+							user={data.author.username}
+							url="/forum/{data.categoryName}/{data.id}" />
 					</span>
-					<span class="font-bold ms-4">
-						{data.author.username}
-					</span>
-					<span class="ms-4">
-						{data.posted.toLocaleString()}
-					</span>
-				</a>
-				<span class="ms-auto">
-					<ReportButton
-						user={data.author.username}
-						url="/forum/{data.forumCategory.name}/{data.id}" />
 				</span>
-			</span>
-			<h2 class="h4 mt-2">
-				{data.title}
-			</h2>
-			<p>
-				{data.content[0].text}
-			</p>
+				<h2 class="text-xl pt-2">
+					{data.title}
+				</h2>
+				<p class="break-all">
+					{data.content[0].text || ""}
+				</p>
+			</div>
 		</div>
-	</div>
+	{/key}
 
-	<form use:enhance class="mt-2 mb-6 p-1 row" method="POST" action="?/reply">
-		<label for="content" class="form-label light-text mt-2">
-			Post a Reply
-		</label>
-		<fieldset class="col-lg-7 d-flex">
-			<textarea
-				bind:value={$form.content}
-				{...$constraints.content}
-				class="form-control {$errors.content ? 'is-in' : ''}valid"
-				name="content"
-				placeholder="What are your thoughts?"
-				rows="4" />
-			<button class="btn btn-success ms-4 mt-auto">
-				{#if $delayed}
-					Working...
-				{:else}
-					Reply
-				{/if}
-			</button>
-		</fieldset>
-		<p
-			class="mb-4"
-			class:text-success={$page.status == 200}
-			class:text-danger={$page.status >= 400}>
-			{$message || ""}
-		</p>
-	</form>
+	<PostReply {formData} />
 
-	{#each data.replies as reply, num}
-		<ForumReply
-			{user}
-			{reply}
-			{num}
-			{replyingTo}
-			forumCategory={data.forumCategory.name}
-			postId={data.id}
-			postAuthorName={data.author.username}
-			{repliesCollapsed}
-			topLevel />
-	{/each}
+	{#if data.replies.length > 0}
+		{#key refreshReplies}
+			{#each data.replies as reply, num}
+				<ForumReply
+					{user}
+					{reply}
+					{num}
+					{replyingTo}
+					categoryName={data.categoryName}
+					postId={data.id}
+					postAuthorName={data.author.username}
+					{repliesCollapsed}
+					topLevel={false}
+					pinnable
+					refreshReplies={() => refreshReplies++} />
+			{/each}
+		{/key}
+	{:else}
+		<h3 class="text-center pt-6">
+			No replies yet. Be the first to post one!
+		</h3>
+	{/if}
 </div>
 
 <style lang="stylus">
-	containerMinWidth(70rem)
-
-	.sidebar
-		width 2.5rem
-
 	.post
-		border-color var(--accent2)
-
-	p
-		word-break break-word
-
-	.user
-		align-items center
-		.pfp img
-			max-width 2rem
-			width 2rem
+		border 1px solid var(--accent2)
 </style>

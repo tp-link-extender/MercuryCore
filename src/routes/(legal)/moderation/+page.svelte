@@ -11,30 +11,30 @@
 	}
 
 	function formatDateDifference(date1: number, date2: number) {
-		const diffInMilliseconds = Math.round(date2 - date1),
-			millisecondsPerDay = 24 * 60 * 60 * 1000,
-			diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay)
+		const diffInMilliseconds = Math.round(date2 - date1)
+		const millisecondsPerDay = 86400e3
+		const diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay)
 
-		if (diffInMilliseconds < 0) return "0 minute(s)"
+		if (diffInMilliseconds < 0) return "0 minutes"
 
-		if (diffInDays >= 1) return diffInDays + " day(s)"
-		else {
-			const diffInHours = Math.floor(
-				diffInMilliseconds / (60 * 60 * 1000)
-			)
-			const diffInMinutes = Math.floor(
-				(diffInMilliseconds % (60 * 60 * 1000)) / (60 * 1000)
-			)
-			if (diffInHours >= 1)
-				return diffInHours + " hour(s) " + diffInMinutes + " minute(s)"
-			else return diffInMinutes + " minute(s)"
-		}
+		if (diffInDays >= 1)
+			return `${diffInDays} day${diffInDays > 1 ? "s" : ""}`
+
+		const diffInHours = Math.floor(diffInMilliseconds / 3600e3)
+		const diffInMinutes = Math.floor((diffInMilliseconds % 3600e3) / 60e3)
+
+		if (diffInHours >= 1)
+			return `${diffInHours} hour${
+				diffInHours > 1 ? "s" : ""
+			} ${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""}`
+
+		return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""}`
 	}
 </script>
 
 <Head title={moderationAction[data.type]} />
 
-<div class="container mt-12">
+<div class="ctnr pt-8 max-w-200">
 	<div class="card">
 		<div class="card-body light-text">
 			<h1>
@@ -42,8 +42,8 @@
 				"Ban"
 					? `ned for ${formatDateDifference(
 							Date.now(),
-							data.timeEnds.getTime()
-					  )}`
+							new Date(data.timeEnds).getTime()
+						)}`
 					: ""}
 			</h1>
 
@@ -53,7 +53,7 @@
 			</p>
 
 			<p>
-				Reviewed: <code>{data.time}</code>
+				Reviewed: <code>{new Date(data.time)}</code>
 			</p>
 
 			<p>
@@ -65,14 +65,14 @@
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="text-decoration-none">
+							class="no-underline">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.
 					</p>
 					<p>
-						You may re-activate your account by agreeing to our
-						Terms of Service.
+						You may reactivate your account by agreeing to our Terms
+						of Service.
 					</p>
 					<div class="form-check mb-2">
 						<input
@@ -93,27 +93,28 @@
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
 							href="/terms"
-							class="text-decoration-none">
+							class="no-underline">
 							Terms of Service
 						</a>
 						to prevent further action to be taken on your account.
 					</p>
 					<p>
-						You may re-activate your account after your ban ends in {formatDateDifference(
+						You may reactivate your account after your ban ends in {formatDateDifference(
 							Date.now(),
-							data.timeEnds.getTime()
-						)}
+							new Date(data.timeEnds).getTime()
+						)}.
 					</p>
 					<button
-						class="btn btn-primary {data.timeEnds.getTime() <
-						Date.now()
+						class="btn btn-primary {new Date(
+							data.timeEnds
+						).getTime() < Date.now()
 							? ''
 							: 'disabled'}">
 						Reactivate
 					</button>
 				</form>
 			{:else if moderationAction[data.type] == "Termination"}
-				<p>You may not re-activate your account.</p>
+				<p>You may not reactivate your account.</p>
 			{:else}
 				<p>
 					Your account has been deleted, but you may create another in
@@ -123,7 +124,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-	containerMinWidth()
-</style>

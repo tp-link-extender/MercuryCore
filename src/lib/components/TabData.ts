@@ -6,13 +6,13 @@
  * @param name The name of the query parameter to use for the tab
  * @returns An object to provide data to the TabNav and Tab components
  * @example
- * let tabData = TabData(url, ["tab1", "tab2"], ["fa fa-1", "fa fa-2"])
+ * let tabData = TabData(url, ["tab1", "tab2"], ["fa fa-user", "fa fa-gem"])
  */
 export default (
 	url: string,
 	tabs: string[],
 	icons?: string[],
-	name = "tab",
+	name = "tab"
 ) => ({
 	name,
 	tabs,

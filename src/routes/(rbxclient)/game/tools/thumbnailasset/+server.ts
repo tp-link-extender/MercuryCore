@@ -1,42 +1,41 @@
-// this should be moved to asset thumbnails for every asset on mercury but for now we'll use it for the stamper tool (and other games which require it)
+// This should be moved to asset thumbnails for every asset on Mercury, but
+// for now we'll use it for the stamper tool (and other games which require it)
 
+import surreal, { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
-import { client } from "$lib/server/redis"
 
 export async function GET({ url }) {
-	const width = parseInt(url.searchParams.get("wd") as string)
-	const height = parseInt(url.searchParams.get("ht") as string)
-	const assetId = parseInt(url.searchParams.get("aid") as string)
+	const width = +(url.searchParams.get("wd") as string)
+	const height = +(url.searchParams.get("ht") as string)
+	const assetId = +(url.searchParams.get("aid") as string)
+	const stringAssetId = assetId.toString()
 
-	if (!assetId || !width || !height) throw error(404, "Asset not found")
+	if (!assetId || !width || !height) error(404, "Asset not found")
 
 	const params = new URLSearchParams({
-		assetIds: assetId.toString(),
+		assetIds: stringAssetId,
 		returnPolicy: "Placeholder",
 		size: `${width}x${height}`,
 		format: "Png",
 		isCircular: "false",
 	})
+	const cache = await squery<{ url: string }>(surql`SELECT url FROM $asset`, {
+		asset: `thumbnailCache:${stringAssetId}`,
+	})
 
-	const cache = await client.hGet("thumbnailAsset", assetId.toString())
-
-	if (cache) throw redirect(302, cache)
+	if (cache) redirect(302, cache.url)
 
 	const thumb = await fetch(
-		`https://thumbnails.roblox.com/v1/assets?${params}`,
+		`https://thumbnails.roblox.com/v1/assets?${params}`
 	)
 
-	if (thumb.status == 200) {
-		const thumbnail = JSON.parse(await thumb.text())
+	if (thumb.status !== 200) error(400, "Invalid asset")
 
-		await client.hSet(
-			"thumbnailAsset",
-			assetId.toString(),
-			thumbnail.data[0].imageUrl,
-		)
+	const thumbnail = JSON.parse(await thumb.text())
 
-		throw redirect(302, thumbnail.data[0].imageUrl)
-	}
+	await surreal.merge(`thumbnailCache:${stringAssetId}`, {
+		url: thumbnail.data[0].imageUrl,
+	})
 
-	throw error(400, "Invalid asset")
+	redirect(302, thumbnail.data[0].imageUrl)
 }

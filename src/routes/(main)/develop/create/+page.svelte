@@ -2,153 +2,58 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const { form, errors, constraints, enhance, delayed, capture, restore } =
-		superForm(data.form, {
-			taintedMessage: false,
-		})
+	const formData = superForm(data.form)
+	const { form } = formData
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 
-	const assets: any = {
-		2: "T-Shirt",
-		11: "Shirt",
-		12: "Pants",
-		13: "Decal",
+	const assets: { [k: string]: string } = {
+		"2": "T-Shirt",
+		"11": "Shirt",
+		"12": "Pants",
+		"13": "Decal"
 	}
 </script>
 
 <Head title="Develop" />
 
-<div class="container py-2">
-	<h1 class="light-text mb-0 text-center">
-		Develop - Create <br />
-	</h1>
-	<h6 class="text-center light-text mb-0">
-		<span class="h6 light-text text-center">
-			<i class="fas fa-caret-left" />
-			<a href="/develop" class="text-decoration-none">Back to Develop</a>
-		</span>
-	</h6>
+<div class="text-center">
+	<h1>Develop - Create</h1>
+	<a href="/develop" class="no-underline accent-text">
+		<fa fa-caret-left />
+		Back to Develop
+	</a>
 </div>
-<form
-	use:enhance
-	method="POST"
-	class="container mt-12 light-text"
-	enctype="multipart/form-data">
-	<fieldset>
-		<div class="row mb-4">
-			<label for="type" class="col-md-3 col-form-label light-text">
-				Asset type
-			</label>
-			<div class="col-md-8">
-				<select
-					bind:value={$form.type}
-					{...$constraints.type}
-					name="type"
-					id="type"
-					class="form-select {$errors.type ? 'is-in' : ''}valid"
-					aria-label="Asset type select">
-					{#each Object.keys(assets) as value}
-						<option {value} selected={value == data.assettype}>
-							{assets[value]}
-						</option>
-					{/each}
-				</select>
-				<p class="col-12 mb-4 text-danger">
-					{$errors.type || ""}
-				</p>
-			</div>
-		</div>
-		<div class="row mb-4">
-			<label for="name" class="col-md-3 col-form-label light-text">
-				Asset name
-			</label>
-			<div class="col-md-8">
-				<input
-					bind:value={$form.name}
-					{...$constraints.name}
-					name="name"
-					id="name"
-					placeholder="Make sure to make it accurate"
-					class="form-control {$errors.name ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-4 text-danger">
-					{$errors.name || ""}
-				</p>
-			</div>
-		</div>
-		<div class="row mb-4">
-			<label for="description" class="col-md-3 col-form-label light-text">
-				Asset description
-			</label>
-			<div class="col-md-8">
-				<textarea
-					bind:value={$form.description}
-					{...$constraints.description}
-					name="description"
-					id="description"
-					placeholder="1-1000 characters"
-					class="form-control {$errors.description
-						? 'is-in'
-						: ''}valid" />
-				<p class="col-12 mb-4 text-danger">
-					{$errors.description || ""}
-				</p>
-			</div>
-		</div>
-		<div class="row mb-4">
-			<label for="price" class="col-md-3 col-form-label light-text">
-				Asset price
-			</label>
-			<div class="col-md-8">
-				<input
-					bind:value={$form.price}
-					{...$constraints.price}
-					name="price"
-					id="price"
-					type="number"
-					class="form-control {$errors.price ? 'is-in' : ''}valid" />
-				<p class="col-12 mb-4 text-danger">
-					{$errors.price || ""}
-				</p>
-			</div>
-		</div>
-		<div class="row mb-4">
-			<label for="asset" class="col-md-3 col-form-label light-text">
-				Asset
-			</label>
-			<div class="col-md-8">
-				<input
-					bind:value={$form.asset}
-					{...$constraints.asset}
-					name="asset"
-					id="asset"
-					type="file"
-					required
-					class="form-control {$errors.asset ? 'is-in' : ''}valid" />
-				<small class="light-text">
-					Max image size: 20MB. Supported file types: .png, .jpg, .bmp
-				</small>
-				<p class="col-12 mb-4 text-danger">
-					{$errors.asset || ""}
-				</p>
-			</div>
-		</div>
 
-		<button class="btn btn-success">
-			{#if $delayed}
-				Working...
-			{:else}
-				Create (
-				<i class="fa fa-gem" />
-				15 )
-			{/if}
-		</button>
-	</fieldset>
-</form>
-
-<style lang="stylus">
-	containerMinWidth()
-
-	input[type="number"]
-		width 9rem
-</style>
+<Form
+	{formData}
+	nopad
+	enctype="multipart/form-data"
+	submit="Create ( <fa fa-gem></fa> 15 )"
+	class="ctnr pt-8 max-w-200 light-text">
+	<Select
+		{formData}
+		options={Object.entries(assets)}
+		selected={data.assettype}
+		name="type"
+		label="Asset type" />
+	<Input
+		{formData}
+		name="name"
+		label="Asset name"
+		placeholder="Make sure to make it accurate" />
+	<Textarea
+		{formData}
+		name="description"
+		label="Asset description"
+		placeholder="Up to 1000 characters" />
+	<Input {formData} name="price" label="Asset price" type="number" />
+	{#if data.assettype != "Hat"}
+		<Input
+			{formData}
+			type="file"
+			name="asset"
+			label="Asset"
+			help="Max image size: 20MB. Supported file types: .png, .jpg, .bmp" />
+	{/if}
+</Form>

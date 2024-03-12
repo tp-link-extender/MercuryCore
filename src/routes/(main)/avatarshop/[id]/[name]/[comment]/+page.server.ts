@@ -1,75 +1,81 @@
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
-import addLikes from "$lib/server/addLikes"
+import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import { Prisma } from "@prisma/client"
+import { recurse, type Replies } from "$lib/server/nestedReplies"
+
+const SELECTREPLIES = recurse(
+	from => surql`(${from} <-replyToComment<-assetComment) AS replies`,
+	"replyToComment",
+	"assetComment"
+)
+
+type AssetComment = Replies[number] & {
+	parentPost: {
+		title: string
+		id: string
+		forumCategoryName: string
+	}
+}
 
 export async function load({ locals, params }) {
-	const getAsset = await prisma.asset.findUnique({
-		where: {
-			id: parseInt(params.id),
-		},
-		select: {
-			creatorUser: true,
-		},
-	})
+	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
-	if (!getAsset) throw error(404, "Asset not found")
+	const asset = await squery<{
+		creator: {
+			username: string
+		}
+	}>(
+		surql`
+			SELECT
+				(SELECT username
+				FROM <-created<-user)[0] AS creator
+			FROM $asset`,
+		{ asset: `asset:${params.id}` }
+	)
 
-	// Since prisma does not yet support recursive copying, we have to do it manually
-	const selectComments = {
-		// where: {
-		// 	OR: [{ visibility: Visibility.Visible }, { authorId: user.id }],
-		// },
-		select: {
-			id: true,
-			posted: true,
-			parentReplyId: true,
-			visibility: true,
-			author: {
-				select: {
-					username: true,
-					number: true,
-				},
-			},
-			content: {
-				orderBy: {
-					updated: Prisma.SortOrder.desc,
-				},
-				select: {
-					text: true,
-				},
-				take: 1,
-			},
-			replies: {},
-		},
-	}
-	for (let i = 0; i < 9; i++)
-		selectComments.select.replies = structuredClone(selectComments)
+	if (!asset) error(404, "Asset not found")
 
-	const assetComments = await prisma.assetComment.findUnique({
-		where: {
-			id: params.comment,
-		},
-		...selectComments,
-	})
+	const { user } = await authorise(locals)
 
-	if (!assetComments) throw error(404, "Comment not found")
+	const assetComments = await query<AssetComment>(
+		surql`
+			SELECT
+				*,
+				(SELECT text, updated FROM $parent.content
+				ORDER BY updated DESC) AS content,
+				meta::id(id) AS id,
+				(IF ->replyToComment->assetComment.id THEN
+					meta::id(->replyToComment[0]->assetComment[0].id)
+				END) AS parentReplyId,
+				(SELECT number, username FROM <-posted<-user)[0] AS author,
 
-	const { user } = await authorise(locals),
-		commentsWithLikes = await addLikes<typeof assetComments>(
-			"asset",
-			"Comment",
-			assetComments,
-			user.username,
-		)
+				count(<-likes) - count(<-dislikes) AS score,
+				$user ∈ <-likes<-user.id AS likes,
+				$user ∈ <-dislikes<-user.id AS dislikes,
+
+				(SELECT
+					title,
+					meta::id(id) AS id,
+					->in[0]->forumCategory[0].name as forumCategoryName
+				FROM $forumPost)[0] AS parentPost,
+
+				${SELECTREPLIES}
+			FROM $assetComment`,
+		{
+			assetComment: `assetComment:${params.comment}`,
+			forumPost: `forumPost:${params.id}`,
+			user: `user:${user.id}`,
+		}
+	)
+
+	if (!assetComments) error(404, "Comment not found")
 
 	return {
-		replies: [commentsWithLikes],
+		replies: assetComments,
 		assetId: params.id,
 		assetName: params.name,
-		creator: getAsset?.creatorUser?.username,
+		creator: asset.creator.username,
 	}
 }
 

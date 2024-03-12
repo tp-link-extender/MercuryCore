@@ -8,18 +8,18 @@
 	}
 </script>
 
-<div class="app container py-6 light-text">
+<div class="ctnr app py-6 light-text">
 	<img
 		width="100"
 		height="100"
 		alt="DB:Z"
 		src="https://cdn.shopify.com/s/files/1/0258/6899/2592/products/DRAGONBALLZSHENLONGANDKIDSGOKU_cff940fb-ca93-42dd-af31-d37d34a10e28.jpg?v=1586915490" />
-	<h1 class="font-weight-normal light-text mt-2">Mercury Screenshot</h1>
+	<h1 class="font-weight-normal pt-2">Mercury Screenshot</h1>
 	<p>Hey, you just took a screenshot in Mercury! You could:</p>
 	<ul>
 		<li>
 			Open <button on:click={openPictures} class="btn btn-sm btn-primary">
-				<i class="far fa-folder-open" />
+				<far fa-folder-open />
 				My Pictures
 			</button>
 			to check it out!
@@ -28,8 +28,8 @@
 	</ul>
 	<hr class="divider-bottom" />
 	<button class="btn btn-sm btn-danger">
-		<i class="fas fa-ban" />
+		<fa fa-ban />
 		Not interested
 	</button>
-	<p class="text-light">Hey Kakarot, I think they found us</p>
+	<p class="text-white">Hey Kakarot, I think they found us</p>
 </div>

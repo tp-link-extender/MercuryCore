@@ -1,16 +1,16 @@
-# Mercury website
+# Mercury monorepo
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](https://forthebadge.com)
-![mercury-2](https://github.com/tp-link-extender/mercuryv2/assets/51055281/2a820bc4-f38d-43f4-a5f2-78b0077aece9)
+![Logo banner](./.github/assets/banner.png)
 
 Contents:
 
--   [Mercury website](#mercury-website)
--   [Recommended development setup](#recommended-development-setup)
--   [Editing the website](#editing-the-website)
--   [Hosting the website](#hosting-the-website)
--   [Mercury's stack](#mercurys-stack)
-    -   [Route structure](#route-structure)
+- [Mercury monorepo](#mercury-monorepo)
+- [Recommended development setup](#recommended-development-setup)
+- [Editing the website](#editing-the-website)
+- [Hosting the website](#hosting-the-website)
+- [Mercury's stack](#mercurys-stack)
+	- [Route structure](#route-structure)
+- [Deploying new client versions](#deploying-new-client-versions)
 
 # Recommended development setup
 
@@ -18,17 +18,16 @@ We recommend using [Visual Studio Code](https://code.visualstudio.com) as your e
 
 The following extensions are recommended:
 
+-   [Biome](https://marketplace.visualstudio.com/items?itemName=biomejs.biome)
 -   [Caddyfile Support](https://marketplace.visualstudio.com/items?itemName=matthewpi.caddyfile-support)
--   [Cypher Query Language Tools for Neoj](https://marketplace.visualstudio.com/items?itemName=AnthonyJGatlin.vscode-cypher-query-language-tools)
 -   [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 -   [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
 -   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 -   [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
--   [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
--   [Prisma](https://marketplace.visualstudio.com/items?itemName=Prisma.prisma)
--   [Sass (.sass only)](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented)
 -   [stylus](https://marketplace.visualstudio.com/items?itemName=sysoev.language-stylus)
+-   [SurrealQL](https://marketplace.visualstudio.com/items?itemName=surrealdb.surrealql)
 -   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
+-   [UnoCSS](https://marketplace.visualstudio.com/items?itemName=antfu.unocss)
 
 # Editing the website
 
@@ -47,19 +46,12 @@ Instructions:
 -   Run `npm i -g pnpm` to install pnpm
 -   Run `pnpm i` to install all dependencies
 -   Run `pnpm build avatar` to build the avatar renderer, so that user images will work correctly
--   Run `pnpm bootstrap` to compile Bootstrap's SCSS files. This results in the development server being much faster, as it does not have to wait for the Sass compiler
-    -   If you are using PowerShell on windows, you may encounter an execution policy error when running pnpm. Run the command `set-executionpolicy remotesigned` in an administrator PowerShell to fix this.
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
--   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
--   Run `npx prisma migrate dev` to apply the schema to the Postgres database and create the PrismaClient package
-
--   Run `npx prisma studio` to open the database editor on port 5555
--   Navigate to the Regkey table and create a registration key, set key and usesLeft fields to whatever you want
-    -   You may wish to use a different database editor like [pgAdmin](https://pgadmin.org) to edith the database instead.
+-   Run `docker-compose up -d` to start the database
 
 To start a local dev server, run `pnpm dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
--   If you are using WSL2, the server may not correctly reflect the changes you make. To fix this, add the following to the default export of vite.config.ts:
+-   If you are using WSL2, the server may not correctly reflect the changes you make if the repository is stored on the Windows drive. To fix this, move the repository into a folder managed by WSL, or alternatively add the following to the default export of vite.config.ts:
 
 ```ts
 server: {
@@ -89,9 +81,8 @@ Instructions:
 -   Clone the repository to your server, and navigate to its directory
 -   Run `caddy start` to start the Caddy reverse proxy server
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
--   Run `docker-compose up -d` to start the Postgres and RedisGraph databases
+-   Run `docker-compose up -d` to start the database
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
--   Run `npx prisma migrate deploy` to apply the schema to the Postgres database and create the PrismaClient package
 -   Open a terminal and navigate to the directory of the repository
 -   Run `npm i -g pm2` to install pm2, the node process manager
 -   Run `pnpm i` and `pnpm build` to install dependencies and build the website
@@ -105,11 +96,9 @@ Mercury's frontent is built with [Svelte](https://svelte.dev), a UI framework th
 
 The site uses [TypeScript](https://typescriptlang.org) throughout, a language that adds type extensions ontop of Javascript. An IDE that supports intellisense is recommended to make development easier.
 
-Styling is done in [Stylus](https://stylus-lang.com) and [Sass](https://sass-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
+Styling is done in [Stylus](https://stylus-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
 
-The [PostgreSQL](https://postgresql.org) relational database is managed by [Prisma](https://prisma.io), which allows for complete type safety and intellisense, and makes it easier to query data. The schema for the database is stored in /prisma/schema.prisma.
-
-A [Redis](https://redis.io) database with the [RedisGraph](https://redis.com/modules/redis-graph) module is used to store a graph of data that is extremely relational, including likes, dislikes, friends, and followers. Redis also stores some of the site's global variables, such as the current site banner, tax rate, etc.
+[SurrealDB](https://surrealdb.com) is used as the database, a powerful multi-model database that easily allows for storing and querying the highly relational data used in Mercury.
 
 [Vite](https://vitejs.dev) brings the stack for the website together, giving an extremely fast and responsive development environment, as well as zero-downtime deployments.
 
@@ -117,10 +106,16 @@ A [Redis](https://redis.io) database with the [RedisGraph](https://redis.com/mod
 
 ## Route structure
 
-Actual pages for the site are stored in /src/routes. The structure for them might look crazy at first, but it makes it very simple to differentiate between clientside and serverside code.
+Actual pages for the site are stored in /src/routes. The structure for them might look crazy at first, but it makes it very simple to differentiate between clientside and serverside code, and layout groups help to heavily reduce boilerplate and code duplication.
 
 See the [SvelteKit Routing docs](https://kit.svelte.dev/docs/routing) for more information.
 
 The markup for pages is enhanced with HTMLx templating, which adds extra features such as adding variables, reactivity, and logic blocks such as {#if} and {#each}.
 
 Take a look at the [Svelte docs](https://svelte.dev/docs), or the incredibly helpful [Svelte tutorial](https://learn.svelte.dev), for more information.
+
+# Deploying new client versions
+
+To deploy a new version of the client, you'll need Go.
+
+Edit files in the /Client deployer/staging directory. Navigate to /Client deployer and run `go run .` to start the deployer.

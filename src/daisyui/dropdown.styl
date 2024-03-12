@@ -1,49 +1,23 @@
-.dropdown2
+.dropdown
 	position relative
 	display inline-block
 
-.dropdown2 > *:focus
+.dropdown > *:focus
 	outline 2px solid transparent
 	outline-offset 2px
 
-.dropdown2 .dropdown-content
+.dropdown .dropdown-content
 	position absolute
 
-.dropdown2:is(:not(details)) .dropdown-content
+.dropdown:is(:not(details)) .dropdown-content
 	visibility hidden
 	opacity 0
 
 .dropdown-end .dropdown-content
 	right 0px
 
-// .dropdown-left .dropdown-content
-// 	bottom auto
-// 	top 0px
-// 	right 100%
-
-// .dropdown-right .dropdown-content
-// 	left 100%
-// 	bottom auto
-// 	top 0px
-
-// .dropdown-bottom .dropdown-content
-// 	bottom auto
-// 	top 100%
-
-// .dropdown-top .dropdown-content
-// 	top auto
-// 	bottom 100%
-
-// .dropdown-end.dropdown-right .dropdown-content
-// 	bottom 0%
-// 	top auto
-
-// .dropdown-end.dropdown-left .dropdown-content
-// 	bottom 0%
-// 	top auto
-
-.dropdown2
-	&.dropdown-open .dropdown-content
+.dropdown
+	// &.dropdown-open .dropdown-content
 	&:not(.dropdown-hover):focus .dropdown-content
 	&:focus-within .dropdown-content
 	&.dropdown-hover:hover .dropdown-content
@@ -53,31 +27,35 @@
 	&:is(details) summary::-webkit-details-marker
 		display none
 
-	// Other styles
-
-	// details
-	// 	width 10rem
+// Other styles
 
 .dropdown-content
+	@apply transition transition-all duration-300 ease-in-out
+
 	z-index 1000
 	padding-left 0.5rem
+	max-height 25rem !important
+	overflow-y auto
 
 	ul
 		list-style none
 		width 10rem
-		padding-left 0
 		background var(--darker)
+		margin 0
 
 	a
 	button
+		transition background 0.2s !important
 		width 100%
-		padding-left 0
-		padding-right 3rem
 		border none
+		text-align start !important
 		&:hover
 		&:focus
+		&[data-highlighted]
 			color var(--grey-text) !important
-			background var(--accent)
+			background hsla(260, 100%, 60%, 50%)
+		&:active
+			background hsla(260, 100%, 55%, 40%)
 
 	li
 		padding 0px

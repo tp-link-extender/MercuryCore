@@ -4,18 +4,13 @@
 	scroll-snap-type x mandatory
 	scroll-behavior smooth
 
-	// &-vertical
-	// 	flex-direction column
-	// 	overflow-y scroll
-	// 	scroll-snap-type y mandatory
-
 	&-item
 		box-sizing content-box
 		flex none
 		scroll-snap-align start
 
-	// &-center .carousel-item
-	// 	scroll-snap-align center
-
-	// &-end .carousel-item
-	// 	scroll-snap-align end
+	&-button
+		@apply text-white no-underline size-10 rounded-full
+		@apply flex items-center justify-center
+		background var(--background)
+		border 1px solid var(--accent3)

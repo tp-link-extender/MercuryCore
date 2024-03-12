@@ -1,28 +1,30 @@
 <script lang="ts">
+	import AdminShell from "./AdminShell.svelte"
+
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],
 		["aqua", "fa-check", "Verified"],
 		["violet", "fa-hammer", "Catalog Manager"],
 		["orange", "fa-shield-alt", "Moderator"],
-		["crimson", "fa-scale-balanced", "Administrator"],
+		["crimson", "fa-scale-balanced", "Administrator"]
 	]
 
 	const panel: { [k: string]: [string, string, string][] } = {
 		Moderation: [
-			["Moderate User", "/admin/moderation", "fas fa-user-slash"],
+			["Moderate User", "/admin/moderation", "fa fa-user-slash"],
 			// ["Report Abuse", "#", "far fa-flag"],
-			["Asset Approval", "/admin/asset", "fas fa-file-circle-check"],
+			["Asset Approval", "/admin/asset", "fa fa-file-circle-check"],
+			["Render Queue", "/admin/renderqueue", "fa fa-file-image"]
+		],
+		Catalog: [
+			["Create Asset", "/admin/create", "fa fa-file-circle-plus"]
 		],
 		Economy: [
 			// ["Award Currency", "#", "far fa-gem"],
-			// ["Create New Asset", "#", "fas fa-file-circle-plus"],
-			[
-				"Transactions",
-				"/admin/transactions",
-				"fas fa-money-bill-transfer",
-			],
-		],
+			// ["Create New Asset", "#", "fa fa-file-circle-plus"],
+			["Transactions", "/admin/transactions", "fa fa-money-bill-transfer"]
+		]
 	}
 
 	let diskSpace: {
@@ -35,193 +37,178 @@
 				await (
 					await fetch("admin", {
 						body: "",
-						method: "POST",
+						method: "POST"
 					})
 				).json()
 			).data
 		)
-		return (diskSpace = {
+		diskSpace = {
 			free: jsonData[1],
-			size: jsonData[2],
-		})
+			size: jsonData[2]
+		}
+		return diskSpace
 	}
 
 	export let data
 	const { user } = data
 
-	if (user?.permissionLevel == 5) {
+	if (user?.permissionLevel === 5) {
 		panel.Economy.push(["Daily Stipend", "/admin/stipend", "far fa-clock"])
 		panel.Administration = [
-			["Banners", "/admin/banners", "fas fa-bullhorn"],
+			["Banners", "/admin/banners", "fa fa-bullhorn"],
 			["Accounts", "/admin/accounts", "far fa-user"],
-			["Audit Logs", "/admin/audit", "fas fa-book"],
-			["Invites", "/admin/invites", "fas fa-key"],
+			["Audit Logs", "/admin/audit", "fa fa-book"],
+			["Invites", "/admin/invites", "fa fa-envelopes"]
 		]
 	}
 
-	const tabNames = ["Moderation", "Economy", "Statistics"]
-	if (user?.permissionLevel == 5) tabNames.unshift("Administration")
+	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
+	if (user?.permissionLevel === 5) tabNames.unshift("Administration")
 
-	let tabData = TabData(data.url, tabNames)
+	let tabData = TabData(data.url, tabNames, [
+		"fa fa-diamond-half-stroke",
+		"fa fa-stamp",
+		"fa fa-basket-shopping",
+		"fa fa-coins",
+		"fa fa-chart-mixed"
+	])
 </script>
 
 <Head title="Admin" />
 
-<div class="container py-6">
-	<h1 class="h2 light-text">Admin Panel</h1>
-	<h2 class="h4 mb-6 border-bottom border-2 pb-4 light-text">
-		Your permission level is: <span
+<div class="ctnr pt-6 max-w-340 light-text">
+	<h1>Admin Panel</h1>
+	<h2 class="text-xl pb-4">
+		Your permission level is <span
 			style="color: {permissions[user?.permissionLevel][0]}">
-			<i class="fa {permissions[user?.permissionLevel][1]} me-1" />
+			<fa class="{permissions[user?.permissionLevel][1]} px-1" />
 			{permissions[user?.permissionLevel][2]}
 		</span>
 	</h2>
-	<div class="row">
-		<div class="col-lg-2 col-md-3 mb-6 pe-0">
-			<TabNav bind:tabData tabs />
-		</div>
-		<div class="col-lg-10 col-md-9">
-			{#each tabNames.slice(0, -1) as key}
-				<Tab {tabData}>
-					<div class="row g-3">
-						{#each panel[key] as i, num}
-							<AdminLink
-								href={i[1]}
-								iconClass={i[2]}
-								{num}
-								total={panel[key].length}
-								name={i[0]} />
-						{/each}
-					</div>
-				</Tab>
-			{/each}
+	<hr />
+	<AdminShell bind:tabData>
+		{#each tabNames.slice(0, -1) as key}
+			<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
+				{#each panel[key] as i, num}
+					<AdminLink
+						href={i[1]}
+						iconClass={i[2]}
+						{num}
+						total={panel[key].length}
+						name={i[0]} />
+				{/each}
+			</Tab>
+		{/each}
 
-			<Tab {tabData}>
-				<div class="row g-3 pt-1">
-					<div class="col-lg-7 col-md-7 ps-1">
-						<div class="card bg-a3 text-black mb-4">
-							<div class="card-body bg-a rounded-1">
-								<h3 class="light-text">
-									<i class="fas fa-memory" />
-									{(
-										(data.totalmem - data.freemem) /
-										1024 ** 3
-									).toFixed(2)} / {(
-										data.totalmem /
-										1024 ** 3
-									).toFixed(2)} GB
-								</h3>
-								<span class="light-text">
-									{Math.round(
-										(data.totalmem - data.freemem) /
-											1024 ** 2
-									)} MB is being used
-								</span>
-								<div class="progress bg-darker mt-2">
-									<div
-										class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-										role="progressbar"
-										aria-valuenow={data.totalmem -
-											data.freemem}
-										aria-valuemin={0}
-										aria-valuemax={data.totalmem}
-										style="width: {((data.totalmem -
-											data.freemem) /
-											data.totalmem) *
-											100}%;" />
-								</div>
-							</div>
-						</div>
-						<div class="card bg-a3 text-black mb-4">
-							<div class="card-body bg-a rounded-1">
-								{#await diskSpace || getDiskSpace()}
-									<h3 class="light-text">Loading...</h3>
-								{:then disk}
-									<h3 class="light-text">
-										<i class="fas fa-hard-drive me-2" />
-										{(
-											(disk.size - disk.free) /
-											1024 ** 3
-										).toFixed(2)} / {(
-											disk.size /
-											1024 ** 3
-										).toFixed(2)} GB
-									</h3>
-									<span class="light-text">
-										{Math.round(
-											(disk.size - disk.free) / 1024 ** 2
-										)} MB is being used
-									</span>
-									<div class="progress bg-darker mt-2">
-										<div
-											class="progress-bar progress-bar-striped progress-bar-animated"
-											role="progressbar"
-											aria-valuenow={disk.size -
-												disk.free}
-											aria-valuemin={0}
-											aria-valuemax={disk.size}
-											style="width: {((disk.size -
-												disk.free) /
-												disk.size) *
-												100}%;" />
-									</div>
-								{/await}
-							</div>
+		<Tab {tabData}>
+			<div class="grid lg:grid-cols-[7fr_5fr] gap-4">
+				<div class="flex flex-col gap-4">
+					<div class="card bg-a p-4">
+						<h3>
+							<fa fa-memory />
+							{(
+								(data.totalmem - data.freemem) /
+								1024 ** 3
+							).toFixed(2)} / {(
+								data.totalmem /
+								1024 ** 3
+							).toFixed(2)} GB
+						</h3>
+						<span class="pb-2">
+							{Math.round(
+								(data.totalmem - data.freemem) / 1024 ** 2
+							)} MB is being used
+						</span>
+						<div
+							class="flex bg-darker rounded-2"
+							style="height: 1rem">
+							<div
+								class="progress-bar-striped bg-emerald-6 rounded-2"
+								role="progressbar"
+								aria-valuenow={data.totalmem - data.freemem}
+								aria-valuemin={0}
+								aria-valuemax={data.totalmem}
+								style="width: {((data.totalmem - data.freemem) /
+									data.totalmem) *
+									100}%;" />
 						</div>
 					</div>
-					<div class="col-lg-5 col-md-5 pe-1">
-						<div class="card bg-a3 text-black mb-4">
-							<div class="card-body bg-a rounded-1">
-								<h3 class="light-text">
-									<i class="far fa-user me-2" />
-									Users
-								</h3>
-								<span class="light-text">
-									<b class="text-primary">0 users</b>
-									are currently online
-								</span>
+					<div class="card bg-a p-4">
+						{#await diskSpace || getDiskSpace()}
+							<h3>Loading...</h3>
+						{:then disk}
+							<h3>
+								<fa fa-hard-drive class="pr-2" />
+								{((disk.size - disk.free) / 1024 ** 3).toFixed(
+									2
+								)} / {(disk.size / 1024 ** 3).toFixed(2)} GB
+							</h3>
+							<span class="pb-2">
+								{Math.round(
+									(disk.size - disk.free) / 1024 ** 2
+								)} MB is being used
+							</span>
+							<div
+								class="flex bg-darker rounded-2"
+								style="height: 1rem">
+								<div
+									class="progress-bar-striped bg-blue-6 rounded-2"
+									role="progressbar"
+									aria-valuenow={disk.size - disk.free}
+									aria-valuemin={0}
+									aria-valuemax={disk.size}
+									style="width: {((disk.size - disk.free) /
+										disk.size) *
+										100}%;" />
 							</div>
+						{/await}
+					</div>
+				</div>
+				<div class="flex flex-col gap-4">
+					<div class="card bg-a p-4">
+						<h3>
+							<far fa-user class="pr-2" />
+							Users
+						</h3>
+						<span>
+							<b class="accent-text">0 users</b>
+							are currently online
+						</span>
+					</div>
+					<div class="card bg-a p-4">
+						<h3>
+							<far fa-file class="pr-2" />
+							Assets
+						</h3>
+						<div>
+							<fa
+								fa-file-circle-minus
+								class="text-yellow-5 pr-2" />
+							<b>0 assets</b>
+							are currently pending
 						</div>
-						<div class="card bg-a3 text-black mb-4">
-							<div class="card-body bg-a rounded-1">
-								<h3 class="light-text">
-									<i class="far fa-file me-2" />
-									Assets
-								</h3>
-								<span class="light-text">
-									<i
-										class="fas text-warning fa-file-circle-minus me-2" />
-									<b class="light-text">0 assets</b>
-									are currently pending
-								</span>
-								<br />
-								<span class="light-text">
-									<i
-										class="fas text-success fa-file-circle-check me-2" />
-									<b class="light-text">0 assets</b>
-									have been approved
-								</span>
-								<br />
-								<span class="light-text">
-									<i
-										class="fas text-danger fa-file-circle-xmark me-2" />
-									<b class="light-text">0 assets</b>
-									have been disapproved
-								</span>
-								<br />
-								<span class="light-text">
-									<i
-										class="fas text-info fa-folder-closed me-2" />
-									<b class="light-text">0 assets</b>
-									in total
-								</span>
-							</div>
+						<div>
+							<fa
+								fa-file-circle-check
+								class="text-emerald-6 pr-2" />
+							<b>0 assets</b>
+							have been approved
+						</div>
+						<div>
+							<fa fa-file-circle-xmark class="text-red-5 pr-2" />
+							<b>0 assets</b>
+							have been denied
+						</div>
+						<div>
+							<fa fa-folder-closed class="text-cyan-5 pr-2" />
+							<b>0 assets</b>
+							in total
 						</div>
 					</div>
 				</div>
-			</Tab>
-		</div>
-	</div>
+			</div>
+		</Tab>
+	</AdminShell>
 </div>
 
 <style lang="stylus">
@@ -229,6 +216,5 @@
 		border-color var(--accent3) !important
 
 	.card
-		border-width 2px
-		border-color var(--accent3)
+		border 1px solid var(--accent2)
 </style>

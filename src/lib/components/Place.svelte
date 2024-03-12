@@ -1,41 +1,47 @@
 <script lang="ts">
-	// Link to a place used on the homepage or on a user's profile.
+	// Link to a place used on the homepage and the search page.
 
 	export let place: {
 		id: number
 		name: string
-		ratio: string | number
-		gameSessions?: any[]
+		likeCount: number
+		dislikeCount: number
+		playerCount: number
 	}
 	export let num: number
 	export let total: number
+
+	const ratio = Math.floor(
+		(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
+	)
 </script>
 
 <a
 	in:fade|global={{ num, total }}
-	class="rounded-3 text-center light-text text-decoration-none h6"
+	class="rounded-3 text-center light-text no-underline"
 	href="/place/{place.id}/{place.name}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
 		<img
 			src="/place/{place.id}/{place.name}/icon"
 			alt={place.name}
-			class="w-100 h-100" />
+			class="w-full h-full" />
 	</div>
-	<p class="mb-1">
+	<p class="mb-0 pb-1">
 		{place.name}
 	</p>
-	<span class="float-start ms-1">
-		<i class="fa fa-thumbs-up opacity-75" />
-		{place.ratio}%
+	<span class="float-start pl-1 pt-1">
+		<fa fa-thumbs-up class="opacity-75" />
+		{isNaN(ratio) ? "--" : ratio}%
 	</span>
-	<span class="float-end me-1">
-		<i class="fa fa-user opacity-75" />
-		{place.gameSessions?.length}
+	<span class="float-right pr-1 pt-1">
+		<fa fa-user class="opacity-75" />
+		{place.playerCount}
 	</span>
 </a>
 
 <style lang="stylus">
 	a
+		line-height 1.2
 		transition all 0.2s
 		&:hover
 			transition all 0.2s

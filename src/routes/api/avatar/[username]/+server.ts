@@ -1,33 +1,48 @@
-import { prisma } from "$lib/server/prisma"
-import render from "$lib/server/render"
-import fs from "fs"
+import { squery, surql } from "$lib/server/surreal"
+import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 
-export async function GET({ params }) {
+export async function GET({ url, params }) {
 	let { username } = params
-	if (!username) throw error(400, "Invalid Request")
+	if (!username) error(400, "Invalid Request")
 
-	let bodyShot = ""
+	const wait = url.searchParams.has("wait")
+
+	let shotType = "-head"
 	if (username.endsWith("-body")) {
 		username = username.replace("-body", "")
-		bodyShot = "-body"
+		shotType = "-body"
 	}
-	const user = await prisma.authUser.findUnique({
-		where: {
-			username,
-		},
-		select: {
-			bodyColours: true,
-		},
-	})
 
-	if (!user) throw error(404, "User not found")
+	const user = await squery<{
+		number: number
+	}>(surql`SELECT number FROM user WHERE username = $username`, { username })
 
-	if (!fs.existsSync(`data/avatars/${username}${bodyShot}.webp`))
-		if (bodyShot) await render(username, user.bodyColours, true)
-		else await render(username, user.bodyColours)
+	if (!user) error(404, "User not found")
 
-	return new Response(
-		fs.readFileSync(`data/avatars/${username}${bodyShot}.webp`),
-	)
+	const path = `data/avatars/${user.number}${shotType}.png`
+
+	try {
+		if (wait) {
+			// If the file doesn't exist, wait for it to be created
+			// if it does exist, wait for it to be modified
+			console.log("waiting...")
+			await new Promise<void>(resolve => {
+				try {
+					const watcher = fs.watch(path, () => {
+						watcher.close()
+						resolve()
+					})
+				} catch {
+					resolve()
+				}
+			})
+
+			console.log("waited")
+		} else if (!fs.existsSync(path)) throw new Error()
+
+		return new Response(fs.readFileSync(path))
+	} catch {
+		return new Response(fs.readFileSync("static/m....png"))
+	}
 }

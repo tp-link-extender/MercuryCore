@@ -15,8 +15,8 @@
 <a
 	in:fade|global={{ num, total }}
 	href="/avatarshop/{asset.id}/{asset.name}"
-	class="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-6 px-2 mb-2 text-decoration-none assetcard">
-	<div class="card bg-a3">
+	class="no-underline">
+	<div class="card bg-a3 h-full">
 		<div class="card-body bg-a p-4 rounded-1">
 			<div class="text-center pb-4">
 				<img
@@ -26,8 +26,8 @@
 			<p class="m-0">
 				{asset.name}
 			</p>
-			<p class="m-0 text-success">
-				<i class="far fa-gem" />
+			<p class="m-0 text-emerald-6">
+				<far fa-gem />
 				{asset.price}
 			</p>
 		</div>
@@ -36,14 +36,13 @@
 
 <style lang="stylus">
 	.card
-		border-width 2px
+		border 1px solid var(--accent2)
 
-	.assetcard
+	a
 		.card-body
 			transition 0.3s
-		&:hover
-			.card-body
-				background var(--darker) !important
+		&:hover .card-body
+			background var(--darker) !important
 
 	img
 		width 85%

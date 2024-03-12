@@ -1,13 +1,37 @@
-import { prisma } from "$lib/server/prisma"
+import { authorise } from "$lib/server/lucia"
+import { query, surql } from "$lib/server/surreal"
 
-export const load = () => ({
-	transactions: prisma.transaction.findMany({
-		include: {
-			sender: true,
-			receiver: true,
-		},
-		orderBy: {
-			time: "desc",
-		},
-	}),
+type Transaction = {
+	amountSent: number
+	id: string
+	in: string
+	link: string
+	note: string
+	out: string
+	receiver: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+	sender: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+	taxRate: number
+	time: string
+}
+
+export const load = async ({ locals }) => ({
+	transactions: await query<Transaction>(
+		surql`
+			SELECT
+				*,
+				(SELECT number, status, username
+				FROM in.*)[0] AS sender,
+				(SELECT number, status, username
+				FROM out.*)[0] AS receiver
+			FROM array::union($user->transaction, $user<-transaction)`,
+		{ user: `user:${(await authorise(locals)).user.id}` }
+	),
 })

@@ -8,30 +8,18 @@
 
 {#if $modal}
 	<div
-		class="modal d-block"
+		class="modal-static fixed w-full h-full z-10 justify-center items-center flex"
 		tabindex="-1"
 		transition:fly|global={{ y: -50, duration: 300 }}>
 		<div
 			role="button"
 			tabindex="0"
-			transition:fade|global={{ duration: 300 }}
+			transition:fade|global={{ duration: 200 }}
 			on:click={close}
 			on:keypress={close}
-			class="fade vh-100 vw-100 position-fixed top-0" />
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<slot />
-			</div>
+			class="modal-backdrop h-screen w-full fixed" />
+		<div class="modal-box max-w-128">
+			<slot />
 		</div>
 	</div>
 {/if}
-
-<style lang="stylus">
-	.fade
-		opacity 0.5
-		background black
-
-	.modal-content
-		background var(--background)
-		--bs-modal-border-color var(--accent2)
-</style>

@@ -1,4 +1,4 @@
-import fs from "fs"
+import fs from "node:fs"
 import sharp from "sharp"
 
 /**
@@ -13,11 +13,40 @@ import sharp from "sharp"
  */
 export async function imageAsset(
 	file: File,
-	sharpOptions?: sharp.ResizeOptions,
+	sharpOptions?: sharp.ResizeOptions
 ) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
-		.resize(420, 420, {
-			fit: "inside",
+		.resize(256, 256, {
+			fit: "contain",
+			...sharpOptions,
+		})
+		.png()
+		.toBuffer()
+		.catch(() => {
+			throw new Error("Image asset failed to upload")
+		})
+
+	return (id: string | number) =>
+		fs.writeFileSync(`data/assets/${id}`, fileBuffer)
+}
+
+/**
+ * Creates a clothing asset based off a file object
+ * @param file A File object for the image to save
+ * @param sharpOptions Extra options to pass to sharp
+ * @returns A function that saves the image to data/assets
+ * @example
+ * const save = await clothingAsset(image)
+ * const id = // Load from database
+ * save(id)
+ */
+export async function clothingAsset(
+	file: File,
+	sharpOptions?: sharp.ResizeOptions
+) {
+	const fileBuffer = await sharp(await file.arrayBuffer())
+		.resize(585, 559, {
+			fit: "fill",
 			...sharpOptions,
 		})
 		.png()
@@ -42,7 +71,7 @@ export async function imageAsset(
  */
 export async function thumbnail(
 	file: File,
-	sharpOptions?: sharp.ResizeOptions,
+	sharpOptions?: sharp.ResizeOptions
 ) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
 		.resize(420, 420, {
@@ -70,7 +99,7 @@ export async function thumbnail(
  */
 export async function tShirt(file: File) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
-		.resize(128, 128, {
+		.resize(420, 420, {
 			fit: "contain",
 			position: "top",
 			background: { r: 0, g: 0, b: 0, alpha: 0 },
@@ -114,5 +143,5 @@ export async function tShirtThumbnail(file: File) {
 		})
 
 	return (id: string | number) =>
-		fs.writeFileSync(`data/thumbnails/${id}.png`, fileBuffer)
+		fs.writeFileSync(`data/thumbnails/${id}`, fileBuffer)
 }

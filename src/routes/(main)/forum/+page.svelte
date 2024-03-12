@@ -1,73 +1,75 @@
 <script lang="ts">
 	export let data
+	const { user } = data
 </script>
 
 <Head title="Forum" />
 
-<div class="container light-text">
-	<h1 class="light-text mb-12">Forum</h1>
-	{#each data.categories as category, num}
-		<div
-			in:fade|global={{ num, total: data.categories.length }}
-			class="category card bg-darker p-4 mb-4">
-			<div class="row">
-				<a
-					class="col-lg-9 col-md-7 row light-text text-decoration-none"
-					href="/forum/{category.name.toLowerCase()}">
-					<div class="col-9">
-						<h2 class="h4">
-							{category.name}
-						</h2>
-						{category.description}
-					</div>
-					<h3 class="col h5">
-						{category._count.posts} post{category._count.posts > 1
-							? "s"
-							: ""}
-					</h3>
-				</a>
-				<div class="col-lg-3 col-md-5 row">
-					{#if category.posts[0]}
-						<a
-							href="/forum/{category.name.toLowerCase()}/{category
-								.posts[0].id}"
-							class="light-text text-decoration-none">
-							Last post:
-							<h3 class="h5">
-								{category.posts[0].title}
-							</h3>
-						</a>
-						<span class="d-flex">
-							by
+<div class="ctnr light-text max-w-280 flex flex-col gap-4">
+	<h1 class="pb-6">Forum</h1>
+	{#if data.categories.length > 0}
+		{#each data.categories as category, num}
+			<div
+				in:fade|global={{ num, total: data.categories.length }}
+				class="category card bg-darker p-4">
+				<div class="flex flex-wrap">
+					<a
+						class="flex w-full lg:w-3/4 md:w-7/12 light-text no-underline"
+						href="/forum/{category.name.toLowerCase()}">
+						<div class="w-3/4">
+							<h2>
+								{category.name}
+							</h2>
+							{category.description}
+						</div>
+						<h3 class="w-1/4">
+							{category.postCount || "No"} post{category.postCount ==
+							1
+								? ""
+								: "s"}
+						</h3>
+					</a>
+					<div class="w-full lg:w-1/4 md:w-5/12">
+						{#if category.latestPost}
 							<a
-								href="/user/{category.posts[0].author.number}"
-								class="light-text text-decoration-none d-flex">
-								<span class="pfp bg-a2 rounded-circle mx-1">
-									<img
-										src="/api/avatar/{category.posts[0]
-											.author.username}"
-										alt={category.posts[0].author.username}
-										class="rounded-circle rounded-top-0" />
-								</span>
-								{category.posts[0].author.username}
+								href="/forum/{category.name.toLowerCase()}/{category
+									.latestPost.id}"
+								class="light-text no-underline">
+								Latest post:
+								<h3>
+									{category.latestPost.title}
+								</h3>
 							</a>
-						</span>
-					{/if}
+							<span class="flex gap-2">
+								by
+								<User
+									user={category.latestPost.author}
+									full
+									thin
+									size="1.5rem" />
+							</span>
+						{/if}
+					</div>
 				</div>
 			</div>
-		</div>
-	{/each}
+		{/each}
+	{:else}
+		<h2 class="text-center">
+			There are no categories available in the forum yet.
+		</h2>
+		{#if user.permissionLevel === 5}
+			<div class="text-center">
+				Why not <a href="/forum/create/category">create one?</a>
+			</div>
+		{/if}
+	{/if}
 </div>
 
 <style lang="stylus">
-	containerMinWidth(70rem)
+	.ctnr
+		flex-direction column !important
 
 	.category
-		border-color var(--accent2)
+		border 1px solid var(--accent2)
 		transition all 0.3s ease-out
-
-	.pfp
-	.pfp img
-		width 1.5rem
-		height 1.5rem
 </style>

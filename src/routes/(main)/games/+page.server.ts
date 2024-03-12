@@ -1,49 +1,37 @@
-import { findPlaces } from "$lib/server/prisma"
+import { query, surql } from "$lib/server/surreal"
 
-export const load = () => ({
-	places: findPlaces({
-		where: {
-			privateServer: false,
-		},
-		include: {
-			gameSessions: {
-				where: {
-					ping: {
-						gt: Math.floor(Date.now() / 1000) - 35,
-					},
-				},
-			},
-		},
-		orderBy: {
-			serverPing: "desc",
-		},
-	}),
+type Place = {
+	id: number
+	name: string
+	playerCount: number
+	serverPing: number
+	likeCount: number
+	dislikeCount: number
+}
+
+const select = surql`
+	SELECT
+		meta::id(id) AS id,
+		name,
+		serverPing,
+		count(
+			SELECT 1 FROM <-playing
+			WHERE valid AND ping > time::now() - 35s
+		) AS playerCount,
+		count(<-likes) AS likeCount,
+		count(<-dislikes) AS dislikeCount
+	FROM place WHERE !privateServer AND !deleted`
+
+export const load = async () => ({
+	places: await query<Place>(select),
 })
 
 export const actions = {
 	default: async ({ request }) => ({
-		places: await findPlaces({
-			where: {
-				name: {
-					contains: (await request.formData()).get("query") as string,
-					mode: "insensitive",
-				},
-				privateServer: false,
-			},
-			// When returning from an action, remember to only select
-			// the data needed, as it will by sent directly to the client.
-			select: {
-				name: true,
-				id: true,
-				serverPing: true,
-				gameSessions: {
-					where: {
-						ping: {
-							gt: Math.floor(Date.now() / 1000) - 35,
-						},
-					},
-				},
-			},
-		}),
+		places: await query<Place>(
+			surql`${select}
+				AND string::lowercase($query) ∈ string::lowercase(name)`,
+			{ query: (await request.formData()).get("q") as string }
+		),
 	}),
 }

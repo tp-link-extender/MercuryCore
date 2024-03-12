@@ -1,11 +1,6 @@
 -- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
 print "[Mercury]: Loaded corescript 89449093"
 
--- This script manages context switches in the backpack (Gear to Wardrobe, etc.) and player state changes.  Also manages global functions across different tabs (currently only search)
-if game.CoreGui.Version < 7 then
-	return
-end -- peace out if we aren't using the right client
-
 local GuiService = game:GetService "GuiService"
 
 -- basic functions
@@ -45,10 +40,6 @@ waitForChild(backpack.Tabs, "InventoryButton")
 local inventoryButton = backpack.Tabs.InventoryButton
 
 local wardrobeButton
-if game.CoreGui.Version >= 8 then
-	waitForChild(backpack.Tabs, "WardrobeButton")
-	wardrobeButton = backpack.Tabs.WardrobeButton
-end
 waitForChild(backpack.Parent, "ControlFrame")
 local backpackButton =
 	waitForChild(backpack.Parent.ControlFrame, "BackpackButton")
@@ -76,7 +67,7 @@ local guiTweenSpeed = 0.25 -- how quickly we open/close the backpack
 
 local searchDefaultText = "Search..."
 local tilde = "~"
-local backquote = "`"
+local backtick = "`"
 
 local backpackSize = UDim2.new(0, 600, 0, 400)
 
@@ -400,11 +391,11 @@ function coreGuiChanged(coreGuiType, enabled)
 		if disabledByDeveloper then
 			pcall(function()
 				GuiService:RemoveKey(tilde)
-				GuiService:RemoveKey(backquote)
+				GuiService:RemoveKey(backtick)
 			end)
 		else
 			GuiService:AddKey(tilde)
-			GuiService:AddKey(backquote)
+			GuiService:AddKey(backtick)
 		end
 
 		resetSearch()
@@ -443,18 +434,6 @@ inventoryButton.MouseLeave:connect(function()
 	mouseLeaveTab(inventoryButton)
 end)
 
-if game.CoreGui.Version >= 8 then
-	wardrobeButton.MouseButton1Click:connect(function()
-		newTabClicked "wardrobe"
-	end)
-	wardrobeButton.MouseEnter:connect(function()
-		mouseOverTab(wardrobeButton)
-	end)
-	wardrobeButton.MouseLeave:connect(function()
-		mouseLeaveTab(wardrobeButton)
-	end)
-end
-
 closeButton.MouseButton1Click:connect(closeBackpack)
 
 screen.Changed:connect(function(prop)
@@ -465,12 +444,12 @@ end)
 
 -- GuiService key setup
 GuiService:AddKey(tilde)
-GuiService:AddKey(backquote)
+GuiService:AddKey(backtick)
 GuiService.KeyPressed:connect(function(key)
 	if not active or disabledByDeveloper then
 		return
 	end
-	if key == tilde or key == backquote then
+	if key == tilde or key == backtick then
 		toggleBackpack()
 	end
 end)

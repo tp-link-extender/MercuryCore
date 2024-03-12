@@ -18,9 +18,10 @@ local function WaitForChild(parent, childName)
 	return parent[childName]
 end
 
-local function typedef(obj)
-	return obj
-end
+-- wtf
+-- local function typedef(obj)
+-- 	return obj
+-- end
 
 local function IsPhone()
 	local cGui = Game:GetService "CoreGui"
@@ -51,7 +52,7 @@ while Player.Character == nil do
 	wait(0.03)
 end
 local RbxUtility = LoadLibrary "RbxUtility"
-local Gui = typedef(RbxUtility)
+local Create = RbxUtility.Create
 local Camera = Game.Workspace.CurrentCamera
 
 -- Services
@@ -83,7 +84,7 @@ do
 			end,
 		},
 		__tostring = function(self)
-			return "Enum." .. self[EnumName]
+			return `Enum.{self[EnumName]}`
 		end,
 	}
 	local item_mt = {
@@ -91,7 +92,7 @@ do
 			return value == self or value == self.Name or value == self.Value
 		end,
 		__tostring = function(self)
-			return "Enum." .. self[EnumName] .. "." .. self.Name
+			return `Enum.{self[EnumName]}.{self.Name}`
 		end,
 	}
 	CreateEnum = function(enumName)
@@ -127,7 +128,6 @@ local Input = {
 ---------------------------------------------------
 ------------------ Chat class --------------------
 local Chat = {
-
 	ChatColors = {
 		BrickColor.new "Bright red",
 		BrickColor.new "Bright blue",
@@ -164,7 +164,7 @@ local Chat = {
 		AdminMessageColor = Color3.new(1, 215 / 255, 0),
 		XScale = 0.025,
 		LifeTime = 45,
-		Position = UDim2.new(0, 2, 0.05, 0),
+		Position = UDim2.new(0, 2, 0.35, 0),
 		DefaultTweenSpeed = 0.15,
 	},
 
@@ -179,11 +179,6 @@ local Chat = {
 	Messages_List = {},
 	MessageThread = nil,
 
-	--[[ Admins_List = {'Sorcus', 'Shedletsky', 'Telamon', 'Tarabyte', 'StickMasterLuke', 'OnlyTwentyCharacters', 'FusRoblox', 'SolarCrane',
-								'HotThoth', 'JediTkacheff', 'Builderman', 'Brighteyes', 'ReeseMcblox', 'GemLocker', 'GongfuTiger', 'Erik.Cassel', 'Matt Dusek', 'Keith',
-								'Totbl', 'LordRugDump', 'David.Baszucki', 'Dbapostle', 'DaveYorkRBX', 'nJay', 'OstrichSized', 'TobotRobot', 'twberg', 'Mercury', 'RBAdam', 'Doughtless',
-								'Anaminus', 'Stravant', 'Cr3470r', 'CodeWriter', 'Games', 'AcesWayUpHigh', 'Phil'
-								}, --]]
 	Admins_List = { "taskmanager", "Heliodex", "tako" },
 
 	SafeChat_List = {
@@ -990,21 +985,23 @@ end
 
 -- Scrolling
 -- function Chat:ScrollQueue(value)
--- 	--[[for i = 1, #self.MessageQueue do
+-- 	for i = 1, #self.MessageQueue do
 -- 		if self.MessageQueue[i] then
 -- 			for _, label in pairs(self.MessageQueue[i]) do
 -- 				local next = self.MessageQueue[i].Next
 -- 				local previous = self.MessageQueue[i].Previous
--- 				if label and label:IsA('TextLabel') or label:IsA('TextButton') then
+-- 				if
+-- 					label and label:IsA "TextLabel" or label:IsA "TextButton"
+-- 				then
 -- 					if value > 0 and previous and previous.Message then
--- 						label.Position = previous['Message'].Position
+-- 						label.Position = previous["Message"].Position
 -- 					elseif value < 1 and next.Message then
--- 						label.Position = previous['Message'].Position
+-- 						label.Position = previous["Message"].Position
 -- 					end
 -- 				end
 -- 			end
 -- 		end
--- 	end ]]
+-- 	end
 -- end
 
 -- Handles the rendering of the text objects in their appropriate places
@@ -1092,8 +1089,6 @@ function Chat:CheckIfInBounds(value)
 		and Chat.MessageQueue[1]["Player"].Position.Y.Scale < 0
 	then
 		return true
-	else
-		return false
 	end
 	return false
 end
@@ -1103,7 +1098,7 @@ end
 function Chat:ComputeSpaceString(pLabel)
 	local nString = " "
 	if not self.TempSpaceLabel then
-		self.TempSpaceLabel = Gui.Create "TextButton" {
+		self.TempSpaceLabel = Create "TextButton" {
 			Size = UDim2.new(
 				0,
 				pLabel.AbsoluteSize.X,
@@ -1121,10 +1116,10 @@ function Chat:ComputeSpaceString(pLabel)
 	end
 
 	while self.TempSpaceLabel.TextBounds.X < pLabel.TextBounds.X do
-		nString = nString .. " "
+		nString ..= " "
 		self.TempSpaceLabel.Text = nString
 	end
-	nString = nString .. " "
+	nString ..= " "
 	self.CachedSpaceStrings_List[pLabel.Text] = nString
 	self.TempSpaceLabel.Text = ""
 	return nString
@@ -1153,8 +1148,8 @@ function Chat:UpdateChat(cPlayer, message)
 	end
 end
 
-function Chat:RecalculateSpacing()
-	--[[for i = 1, #self.MessageQueue do
+-- function Chat:RecalculateSpacing()
+--[[for i = 1, #self.MessageQueue do
 		local pLabel = self.MessageQueue[i]['Player']
 		local mLabel = self.MessageQueue[i]['Message']
 
@@ -1171,7 +1166,7 @@ function Chat:RecalculateSpacing()
 
 		Chat:UpdateQueue(self.MessageQueue[i], diff)
 	end ]]
-end
+-- end
 
 -- function Chat:ApplyFilter(str)
 -- 	--[[for _, word in pair(self.Filter_List) do
@@ -1196,10 +1191,10 @@ function Chat:CreateMessage(cPlayer, message)
 	-- If we ever hit the mark, which would be in every popular game btw
 	-- we wrap around and reuse the labels
 	if #self.MessageQueue > self.Configuration.HistoryLength then
-		--[[pLabel = self.MessageQueue[#self.MessageQueue]['Player']
-		mLabel = self.MessageQueue[#self.MessageQueue]['Message']
+		--[[pLabel = self.MessageQueue[#self.MessageQueue]["Player"]
+		mLabel = self.MessageQueue[#self.MessageQueue]["Message"]
 
-		pLabel.Text = pName .. ':'
+		pLabel.Text = `{pName}:`
 		pLabel.Name = pName
 
 		local pColor
@@ -1215,26 +1210,26 @@ function Chat:CreateMessage(cPlayer, message)
 			nString = Chat:ComputeSpaceString(pLabel)
 		else
 			nString = self.CachedSpaceStrings_List[pName]
-		end 
+		end
 
 		mLabel.Text = ""
-		mLabel.Name = pName .. " - message"
-		mLabel.Text = nString .. message;
+		mLabel.Name = `{pName} - message`
+		mLabel.Text = nString .. message
 
 		mLabel.Parent = nil
 		mLabel.Parent = self.RenderFrame
 
-		mLabel.Position = UDim2.new(0, 0, 1, 0);
-		pLabel.Position = UDim2.new(0, 0, 1, 0);]]
+		mLabel.Position = UDim2.new(0, 0, 1, 0)
+		pLabel.Position = UDim2.new(0, 0, 1, 0)]]
 
 		-- Reinserted at the beginning, ring buffer
 		self.MessageQueue[#self.MessageQueue] = nil
 	end
 	--else
 	-- Haven't hit the mark yet, so keep creating
-	pLabel = Gui.Create "TextLabel" {
+	pLabel = Create "TextLabel" {
 		Name = pName,
-		Text = pName .. ":",
+		Text = `{pName}:`,
 		-- TextColor3 = pColor,
 		FontSize = Chat.Configuration.FontSize,
 		TextXAlignment = Enum.TextXAlignment.Left,
@@ -1264,8 +1259,8 @@ function Chat:CreateMessage(cPlayer, message)
 		nString = self.CachedSpaceStrings_List[pName]
 	end
 
-	mLabel = Gui.Create "TextLabel" {
-		Name = pName .. " - message",
+	mLabel = Create "TextLabel" {
+		Name = `{pName} - message`,
 		-- Max is 3 lines
 		Size = UDim2.new(1, 0, 0.5, 0),
 		TextColor3 = Chat.Configuration.MessageColor,
@@ -1321,7 +1316,7 @@ function Chat:ScreenSizeChanged()
 	while self.Frame.AbsoluteSize.Y > 120 do
 		self.Frame.Size -= UDim2.new(0, 0, 0.005, 0)
 	end
-	Chat:RecalculateSpacing()
+	-- Chat:RecalculateSpacing()
 end
 
 function Chat:FindButtonTree(scButton, rootList)
@@ -1358,7 +1353,7 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 	rootButton = rootButton or self.SafeChatButton
 	for msg, _ in pairs(list) do
 		if type(msg) == "string" then
-			local chatText = Gui.Create "TextButton" {
+			local chatText = Create "TextButton" {
 				Name = msg,
 				Text = msg,
 				Size = UDim2.new(0, 100, 0, 20),
@@ -1409,13 +1404,13 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 end
 
 function Chat:CreateSafeChatGui()
-	self.SafeChatFrame = Gui.Create "Frame" {
+	self.SafeChatFrame = Create "Frame" {
 		Name = "SafeChatFrame",
 		Size = UDim2.new(1, 0, 1, 0),
 		Parent = self.Gui,
 		BackgroundTransparency = 1,
 
-		Gui.Create "ImageButton" {
+		Create "ImageButton" {
 			Name = "SafeChatButton",
 			Size = UDim2.new(0, 44, 0, 31),
 			Position = UDim2.new(0, 1, 0.35, 0),
@@ -1448,21 +1443,21 @@ end
 
 -- For touch devices we create a button instead
 function Chat:CreateTouchButton()
-	self.ChatTouchFrame = Gui.Create "Frame" {
+	self.ChatTouchFrame = Create "Frame" {
 		Name = "ChatTouchFrame",
 		Size = UDim2.new(0, 128, 0, 32),
 		Position = UDim2.new(0, 88, 0, 0),
 		BackgroundTransparency = 1,
 		Parent = self.Gui,
 
-		Gui.Create "ImageButton" {
+		Create "ImageButton" {
 			Name = "ChatLabel",
 			Size = UDim2.new(0, 74, 0, 28),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,
 			ZIndex = 2.0,
 		},
-		Gui.Create "ImageLabel" {
+		Create "ImageLabel" {
 			Name = "Background",
 			Size = UDim2.new(1, 0, 1, 0),
 			Position = UDim2.new(0, 0, 0, 0),
@@ -1473,7 +1468,7 @@ function Chat:CreateTouchButton()
 	self.TapToChatLabel = self.ChatTouchFrame.ChatLabel
 	self.TouchLabelBackground = self.ChatTouchFrame.Background
 
-	self.ChatBar = Gui.Create "TextBox" {
+	self.ChatBar = Create "TextBox" {
 		Name = "ChatBar",
 		Size = UDim2.new(1, 0, 0.2, 0),
 		Position = UDim2.new(0, 0, 0.8, 800),
@@ -1505,7 +1500,7 @@ function Chat:CreateChatBar()
 		return GuiService.UseLuaChat
 	end)
 	if forceChatGUI or (status and result) then
-		self.ClickToChatButton = Gui.Create "TextButton" {
+		self.ClickToChatButton = Create "TextButton" {
 			Name = "ClickToChat",
 			Size = UDim2.new(1, 0, 0, 20),
 			BackgroundTransparency = 1,
@@ -1518,7 +1513,7 @@ function Chat:CreateChatBar()
 			FontSize = Enum.FontSize.Size12,
 		}
 
-		self.ChatBar = Gui.Create "TextBox" {
+		self.ChatBar = Create "TextBox" {
 			Name = "ChatBar",
 			Size = UDim2.new(1, 0, 0, 20),
 			Position = UDim2.new(0, 0, 1, 0),
@@ -1535,7 +1530,7 @@ function Chat:CreateChatBar()
 
 		-- Engine has code to offset the entire world, so if we do it by -20 pixels nothing gets in our chat's way
 		--GuiService:SetGlobalSizeOffsetPixel(0, -20)
-		local success, error = pcall(function()
+		local success = pcall(function()
 			GuiService:SetGlobalGuiInset(0, 0, 0, 20)
 		end)
 		if not success then
@@ -1559,7 +1554,7 @@ end
 -- Done only once
 function Chat:CreateGui()
 	self.Gui = WaitForChild(CoreGuiService, "RobloxGui")
-	self.Frame = Gui.Create "Frame" {
+	self.Frame = Create "Frame" {
 		Name = "ChatFrame",
 		--Size = self.Configuration.Size;
 		Size = UDim2.new(0, 500, 0, 120),
@@ -1570,7 +1565,7 @@ function Chat:CreateGui()
 		Parent = self.Gui,
 		Active = false,
 
-		Gui.Create "ImageLabel" {
+		Create "ImageLabel" {
 			Name = "Background",
 			Image = "http://banland.xyz/asset/?id=97120937", --96551212';
 			Size = UDim2.new(1.3, 0, 1.64, 0),
@@ -1580,7 +1575,7 @@ function Chat:CreateGui()
 			Visible = false,
 		},
 
-		Gui.Create "Frame" {
+		Create "Frame" {
 			Name = "Border",
 			Size = UDim2.new(1, 0, 0, 1),
 			Position = UDim2.new(0, 0, 0.8, 0),
@@ -1590,7 +1585,7 @@ function Chat:CreateGui()
 			Visible = false,
 		},
 
-		Gui.Create "Frame" {
+		Create "Frame" {
 			Name = "ChatRenderFrame",
 			Size = UDim2.new(1.02, 0, 1.01, 0),
 			Position = UDim2.new(0, 0, 0, 0),

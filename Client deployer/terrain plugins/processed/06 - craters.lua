@@ -58,7 +58,10 @@ function makeCrater(x, y, z, cr, cd)
 		local cellschanged = false
 		for i = x - (cr + 1), x + (cr + 1) do
 			for k = z - (cr + 1), z + (cr + 1) do
-				local distance = math.sqrt(math.pow(dist(x, z, i, k), 2) + math.pow(y - (y - j * (100 / cd)), 2))
+				local distance = math.sqrt(
+					math.pow(dist(x, z, i, k), 2)
+						+ math.pow(y - (y - j * (100 / cd)), 2)
+				)
 				if distance < r then
 					SetCell(c, i, y + j, k, 0, 0, 0)
 					SetCell(c, i, y - j, k, 0, 0, 0)
@@ -117,7 +120,10 @@ function onClicked(mouseC)
 	if on and not debounce then
 		debounce = true
 
-		local cellPos = WorldToCellPreferSolid(c, Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z))
+		local cellPos = WorldToCellPreferSolid(
+			c,
+			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
+		)
 		local x = cellPos.x
 		local y = cellPos.y
 		local z = cellPos.z
@@ -168,7 +174,13 @@ g.Name = "CraterGui"
 g.Parent = game:GetService "CoreGui"
 
 craterDragBar, craterFrame, craterHelpFrame, craterCloseEvent =
-	RbxGui.CreatePluginFrame("Crater", UDim2.new(0, 141, 0, 100), UDim2.new(0, 0, 0, 0), false, g)
+	RbxGui.CreatePluginFrame(
+		"Crater",
+		UDim2.new(0, 141, 0, 100),
+		UDim2.new(0, 0, 0, 0),
+		false,
+		g
+	)
 craterDragBar.Visible = false
 craterCloseEvent.Event:connect(function()
 	Off()
@@ -184,7 +196,8 @@ helpText.TextWrap = true
 helpText.Size = UDim2.new(1, -10, 1, -10)
 helpText.Position = UDim2.new(0, 5, 0, 5)
 helpText.TextXAlignment = Enum.TextXAlignment.Left
-helpText.Text = [[Creates craters in existing terrain.  Click on a point in terrain to make a crater.
+helpText.Text =
+	[[Creates craters in existing terrain.  Click on a point in terrain to make a crater.
 
 Radius:
 Half of the width of the crater to be created.
@@ -209,7 +222,8 @@ radl.BackgroundTransparency = 1
 radl.Parent = craterFrame
 
 --radius slider
-local radSliderGui, radSliderPosition = RbxGui.CreateSlider(128, 0, UDim2.new(0, 10, 0, 32))
+local radSliderGui, radSliderPosition =
+	RbxGui.CreateSlider(128, 0, UDim2.new(0, 10, 0, 32))
 radSliderGui.Parent = craterFrame
 local radBar = radSliderGui:FindFirstChild "Bar"
 radBar.Size = UDim2.new(1, -20, 0, 5)
@@ -234,7 +248,8 @@ dfl.BackgroundTransparency = 1
 dfl.Parent = craterFrame
 
 --depth factor slider
-local dfSliderGui, dfSliderPosition = RbxGui.CreateSlider(100, 0, UDim2.new(0, 10, 0, 72))
+local dfSliderGui, dfSliderPosition =
+	RbxGui.CreateSlider(100, 0, UDim2.new(0, 10, 0, 72))
 dfSliderGui.Parent = craterFrame
 local dfBar = dfSliderGui:FindFirstChild "Bar"
 dfBar.Size = UDim2.new(1, -20, 0, 5)

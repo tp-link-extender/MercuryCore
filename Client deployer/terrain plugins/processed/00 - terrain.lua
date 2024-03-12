@@ -13,7 +13,8 @@ local On, Off
 
 local plugin = PluginManager():CreatePlugin()
 local toolbar = plugin:CreateToolbar "Terrain"
-local toolbarbutton = toolbar:CreateButton("Generator", "Terrain Generator", "terrain.png")
+local toolbarbutton =
+	toolbar:CreateButton("Generator", "Terrain Generator", "terrain.png")
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -129,7 +130,13 @@ local RbxGui = LoadLibrary "RbxGui"
 
 -- Gui frame for the plugin.
 local terrainPropertiesDragBar, terrainFrame, terrainHelpFrame, terrainCloseEvent =
-	RbxGui.CreatePluginFrame("Terrain Generator", UDim2.new(0, 186, 0, 428), UDim2.new(0, 0, 0, 0), false, g)
+	RbxGui.CreatePluginFrame(
+		"Terrain Generator",
+		UDim2.new(0, 186, 0, 428),
+		UDim2.new(0, 0, 0, 0),
+		false,
+		g
+	)
 terrainPropertiesDragBar.Visible = false
 terrainCloseEvent.Event:connect(function()
 	Off()
@@ -259,9 +266,18 @@ function Highlighter:UpdatePosition(cellPos)
 	self.y = cellPos.y
 	self.z = cellPos.z
 
-	local lowVec = CellCenterToWorld(c, cellPos.x - self.width / 2, cellPos.y - 1, cellPos.z - self.length / 2)
-	local highVec =
-		CellCenterToWorld(c, cellPos.x + self.width / 2, cellPos.y + self.height, cellPos.z + self.length / 2)
+	local lowVec = CellCenterToWorld(
+		c,
+		cellPos.x - self.width / 2,
+		cellPos.y - 1,
+		cellPos.z - self.length / 2
+	)
+	local highVec = CellCenterToWorld(
+		c,
+		cellPos.x + self.width / 2,
+		cellPos.y + self.height,
+		cellPos.z + self.length / 2
+	)
 	regionToSelect = Region3.new(lowVec, highVec)
 
 	self.selectionPart.Size = regionToSelect.Size - Vector3.new(-4, 4, -4)
@@ -314,8 +330,17 @@ end
 -- Return:
 -- sliderGui      - Slider gui object.
 -- sliderPosition - Object that can set the slider value.
-function CreateStandardSlider(name, pos, lengthBarPos, steps, funcOnChange, initValue, parent)
-	local sliderGui, sliderPosition = RbxGui.CreateSlider(steps, 0, UDim2.new(0, 0, 0, 0))
+function CreateStandardSlider(
+	name,
+	pos,
+	lengthBarPos,
+	steps,
+	funcOnChange,
+	initValue,
+	parent
+)
+	local sliderGui, sliderPosition =
+		RbxGui.CreateSlider(steps, 0, UDim2.new(0, 0, 0, 0))
 
 	sliderGui.Name = name
 	sliderGui.Parent = parent
@@ -417,7 +442,8 @@ function LoadProgressBar(text)
 		cancelValues.progressBar, cancelValues.setAmountFunc, cancelValues.bindForCancel =
 			RbxGui.CreateLoadingFrame(text)
 
-		cancelValues.progressBar.Position = UDim2.new(0.5, -cancelValues.progressBar.Size.X.Offset / 2, 0, 15)
+		cancelValues.progressBar.Position =
+			UDim2.new(0.5, -cancelValues.progressBar.Size.X.Offset / 2, 0, 15)
 		cancelValues.progressBar.Parent = g
 
 		cancelValues.bindForCancel.Event:connect(function(_)
@@ -444,8 +470,13 @@ function UnloadProgressBar()
 end
 
 -- Slider for controlling the x offset to generate terrain at.
-local offsetXLabel =
-	CreateStandardLabel("offsetXLabel", UDim2.new(0, 8, 0, 10), UDim2.new(0, 67, 0, 14), "", terrainFrame)
+local offsetXLabel = CreateStandardLabel(
+	"offsetXLabel",
+	UDim2.new(0, 8, 0, 10),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	terrainFrame
+)
 local _, offsetXSliderPosition = CreateStandardSlider(
 	"offsetXSliderGui",
 	UDim2.new(0, 1, 0, 26),
@@ -461,8 +492,13 @@ local _, offsetXSliderPosition = CreateStandardSlider(
 offsetXSliderPosition.Value = (terrainOptions.xpos + 252) / 4 + 1
 
 -- Slider for controlling the z offset to generate terrain at.
-local offsetZLabel =
-	CreateStandardLabel("OffsetZLabel", UDim2.new(0, 8, 0, 51), UDim2.new(0, 67, 0, 14), "", terrainFrame)
+local offsetZLabel = CreateStandardLabel(
+	"OffsetZLabel",
+	UDim2.new(0, 8, 0, 51),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	terrainFrame
+)
 local _, offsetZSliderPosition = CreateStandardSlider(
 	"OffsetZSliderGui",
 	UDim2.new(0, 1, 0, 67),
@@ -485,7 +521,10 @@ offsetZSliderPosition.Value = (terrainOptions.zpos + 252) / 4 + 1
 function coordHeight(x, z, height)
 	SetCells(
 		c,
-		Region3int16.new(Vector3int16.new(x, 1, z), Vector3int16.new(x, height, z)),
+		Region3int16.new(
+			Vector3int16.new(x, 1, z),
+			Vector3int16.new(x, height, z)
+		),
 		terrainOptions.terrainMaterial,
 		0,
 		0
@@ -523,15 +562,27 @@ function mountLayer(width, depth, wf, df, a)
 	for i = 0, width - (width / wf), width / wf do
 		for k = 0, depth - (depth / df), depth / df do
 			local c1 = corners[i / (width / wf)][k / (depth / df)]
-			local c2 = corners[i / (width / wf)][(k + depth / df) / (depth / df)]
-			local c3 = corners[(i + width / wf) / (width / wf)][k / (depth / df)]
-			local c4 = corners[(i + width / wf) / (width / wf)][(k + depth / df) / (depth / df)]
+			local c2 =
+				corners[i / (width / wf)][(k + depth / df) / (depth / df)]
+			local c3 =
+				corners[(i + width / wf) / (width / wf)][k / (depth / df)]
+			local c4 =
+				corners[(i + width / wf) / (width / wf)][(k + depth / df) / (depth / df)]
 			for x = i, i + (width / wf) - 1 do
 				for z = k, k + (depth / df) - 1 do
-					local avgc1c3 = (math.abs(x - i) * c3 + math.abs(x - (i + width / wf)) * c1) / (width / wf)
-					local avgc2c4 = (math.abs(x - i) * c4 + math.abs(x - (i + width / wf)) * c2) / (width / wf)
+					local avgc1c3 = (
+						math.abs(x - i) * c3
+						+ math.abs(x - (i + width / wf)) * c1
+					) / (width / wf)
+					local avgc2c4 = (
+						math.abs(x - i) * c4
+						+ math.abs(x - (i + width / wf)) * c2
+					) / (width / wf)
 					local avg = math.floor(
-						(math.abs(z - k) * avgc2c4 + math.abs(z - (k + depth / df)) * avgc1c3) / (depth / df)
+						(
+							math.abs(z - k) * avgc2c4
+							+ math.abs(z - (k + depth / df)) * avgc1c3
+						) / (depth / df)
 					)
 					if avg > 100 then
 						print(avg)
@@ -553,7 +604,15 @@ function makeShell(x, z, heightmap, shellheightmap)
 			if shellheightmap[i][k] < originalheight then
 				for h = originalheight, shellheightmap[i][k] - 2, -1 do
 					if h > 0 then
-						SetCell(c, i, h, k, terrainOptions.terrainMaterial, 0, 0)
+						SetCell(
+							c,
+							i,
+							h,
+							k,
+							terrainOptions.terrainMaterial,
+							0,
+							0
+						)
 					end
 				end
 				shellheightmap[i][k] = originalheight
@@ -602,11 +661,13 @@ function SetCamera(centerX, centerZ, length, width, height)
 		end
 
 		local distance = Vector3.new(0, (200 * scale) + 200, (1100 * scale))
-		cameraPos = Vector3.new(centerX + distance.X, distance.Y, centerZ + distance.Z)
+		cameraPos =
+			Vector3.new(centerX + distance.X, distance.Y, centerZ + distance.Z)
 		cameraFocus = Vector3.new(centerX, height * 4, centerZ)
 	end
 
-	currCamera.CoordinateFrame = CFrame.new(cameraPos.X, cameraPos.Y, cameraPos.Z)
+	currCamera.CoordinateFrame =
+		CFrame.new(cameraPos.X, cameraPos.Y, cameraPos.Z)
 	currCamera.Focus = CFrame.new(cameraFocus.X, cameraFocus.Y, cameraFocus.Z)
 end
 
@@ -664,7 +725,8 @@ function GenerateTerrain()
 	for x = 0, generateOptions.width - 1 do
 		shellheightmap[x + xpos2] = {}
 		for z = 0, generateOptions.length - 1 do
-			shellheightmap[x + xpos2][z + zpos2] = heightmap[x + xpos2][z + zpos2]
+			shellheightmap[x + xpos2][z + zpos2] =
+				heightmap[x + xpos2][z + zpos2]
 		end
 	end
 	local gprogress = 0
@@ -678,7 +740,11 @@ function GenerateTerrain()
 			c,
 			Region3int16.new(
 				Vector3int16.new(xpos2, 1, zpos2),
-				Vector3int16.new(xpos2, generateOptions.waterHeight, zpos2 + generateOptions.length - 1)
+				Vector3int16.new(
+					xpos2,
+					generateOptions.waterHeight,
+					zpos2 + generateOptions.length - 1
+				)
 			),
 			Enum.CellMaterial.Water,
 			0,
@@ -702,7 +768,11 @@ function GenerateTerrain()
 			c,
 			Region3int16.new(
 				Vector3int16.new(xpos2, 1, zpos2),
-				Vector3int16.new(xpos2 + generateOptions.width - 1, generateOptions.waterHeight, zpos2)
+				Vector3int16.new(
+					xpos2 + generateOptions.width - 1,
+					generateOptions.waterHeight,
+					zpos2
+				)
 			),
 			Enum.CellMaterial.Water,
 			0,
@@ -728,7 +798,11 @@ function GenerateTerrain()
 			c,
 			Region3int16.new(
 				Vector3int16.new(xpos2, 0, zpos2),
-				Vector3int16.new(xpos2, generateOptions.baseHeight, zpos2 + generateOptions.length - 1)
+				Vector3int16.new(
+					xpos2,
+					generateOptions.baseHeight,
+					zpos2 + generateOptions.length - 1
+				)
 			),
 			terrainOptions.terrainMaterial,
 			0,
@@ -752,7 +826,11 @@ function GenerateTerrain()
 			c,
 			Region3int16.new(
 				Vector3int16.new(xpos2, 0, zpos2),
-				Vector3int16.new(xpos2 + generateOptions.width - 1, generateOptions.baseHeight, zpos2)
+				Vector3int16.new(
+					xpos2 + generateOptions.width - 1,
+					generateOptions.baseHeight,
+					zpos2
+				)
 			),
 			terrainOptions.terrainMaterial,
 			0,
@@ -778,7 +856,8 @@ function GenerateTerrain()
 		for x = 1 + xpos2, generateOptions.width - 2 + xpos2 do
 			-- End on cancel.
 			if cancelValues.cancelActions then
-				game:GetService("ChangeHistoryService"):SetWaypoint "CancelGenerate"
+				game:GetService("ChangeHistoryService")
+					:SetWaypoint "CancelGenerate"
 				UnloadProgressBar()
 				return
 			end
@@ -787,7 +866,10 @@ function GenerateTerrain()
 			if 0 ~= generateOptions.waterHeight then
 				SetCells(
 					c,
-					Region3int16.new(Vector3int16.new(x, 1, k), Vector3int16.new(x, generateOptions.waterHeight, k)),
+					Region3int16.new(
+						Vector3int16.new(x, 1, k),
+						Vector3int16.new(x, generateOptions.waterHeight, k)
+					),
 					Enum.CellMaterial.Water,
 					0,
 					0
@@ -798,7 +880,10 @@ function GenerateTerrain()
 			if 0 ~= generateOptions.baseHeight then
 				SetCells(
 					c,
-					Region3int16.new(Vector3int16.new(x, 0, k), Vector3int16.new(x, generateOptions.baseHeight, k)),
+					Region3int16.new(
+						Vector3int16.new(x, 0, k),
+						Vector3int16.new(x, generateOptions.baseHeight, k)
+					),
 					terrainOptions.terrainMaterial,
 					0,
 					0
@@ -829,7 +914,8 @@ function GenerateTerrain()
 		for x = 1 + xpos2, generateOptions.width - 2 + xpos2 do
 			-- End on cancel.
 			if cancelValues.cancelActions then
-				game:GetService("ChangeHistoryService"):SetWaypoint "GenerateGenerate"
+				game:GetService("ChangeHistoryService")
+					:SetWaypoint "GenerateGenerate"
 				UnloadProgressBar()
 				return
 			end
@@ -854,7 +940,11 @@ function GenerateTerrain()
 				c,
 				Region3int16.new(
 					Vector3int16.new(1 + xpos2, 0, oldK),
-					Vector3int16.new(generateOptions.width - 2 + xpos2, maxHeight, k)
+					Vector3int16.new(
+						generateOptions.width - 2 + xpos2,
+						maxHeight,
+						k
+					)
 				)
 			)
 			oldK = k + 1
@@ -868,7 +958,11 @@ function GenerateTerrain()
 				c,
 				Region3int16.new(
 					Vector3int16.new(1 + xpos2, 0, oldK),
-					Vector3int16.new(generateOptions.width - 2 + xpos2, maxHeight, k)
+					Vector3int16.new(
+						generateOptions.width - 2 + xpos2,
+						maxHeight,
+						k
+					)
 				)
 			)
 		end
@@ -970,7 +1064,13 @@ ConfirmationPopup.__index = ConfirmationPopup
 --
 -- Return:
 -- Value a table with confirmation gui and options.
-function ConfirmationPopup.Create(confirmText, confirmButtonText, declineButtonText, confirmFunction, declineFunction)
+function ConfirmationPopup.Create(
+	confirmText,
+	confirmButtonText,
+	declineButtonText,
+	confirmFunction,
+	declineFunction
+)
 	local popup = {}
 	popup.confirmButton = nil -- Hold the button to confirm a choice.
 	popup.declineButton = nil -- Hold the button to decline a choice.
@@ -981,8 +1081,12 @@ function ConfirmationPopup.Create(confirmText, confirmButtonText, declineButtonT
 	popup.confirmationFrame = Instance.new "Frame"
 	popup.confirmationFrame.Name = "ConfirmationFrame"
 	popup.confirmationFrame.Size = UDim2.new(0, 280, 0, 140)
-	popup.confirmationFrame.Position =
-		UDim2.new(0.5, -popup.confirmationFrame.Size.X.Offset / 2, 0.5, -popup.confirmationFrame.Size.Y.Offset / 2)
+	popup.confirmationFrame.Position = UDim2.new(
+		0.5,
+		-popup.confirmationFrame.Size.X.Offset / 2,
+		0.5,
+		-popup.confirmationFrame.Size.Y.Offset / 2
+	)
 	popup.confirmationFrame.Style = Enum.FrameStyle.RobloxRound
 	popup.confirmationFrame.Parent = g
 
@@ -1051,7 +1155,13 @@ local maxXZExtentsLog = c.MaxExtents.Max.X > 512 and 6 or 4
 local maxYExtents = math.min(c.MaxExtents.Max.Y, 256)
 
 -- Slider for controlling the width of the terran area.  Terran is created in a region this wide.
-local widthLabel = CreateStandardLabel("WidthLabel", UDim2.new(0, 8, 0, 92), UDim2.new(0, 67, 0, 14), "", terrainFrame)
+local widthLabel = CreateStandardLabel(
+	"WidthLabel",
+	UDim2.new(0, 8, 0, 92),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	terrainFrame
+)
 local _, _ --[[widthSliderGui, widthSliderPosition]] = CreateStandardSlider(
 	"WidthSliderGui",
 	UDim2.new(0, 1, 0, 108),
@@ -1066,8 +1176,13 @@ local _, _ --[[widthSliderGui, widthSliderPosition]] = CreateStandardSlider(
 )
 
 -- Slider for controlling the length of the terran area.  Terran is created in a region this long.
-local lengthLabel =
-	CreateStandardLabel("LengthLabel", UDim2.new(0, 8, 0, 133), UDim2.new(0, 67, 0, 14), "", terrainFrame)
+local lengthLabel = CreateStandardLabel(
+	"LengthLabel",
+	UDim2.new(0, 8, 0, 133),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	terrainFrame
+)
 local _, _ --[[lengthSliderGui, lengthSliderPosition]] = CreateStandardSlider(
 	"LengthSliderGui",
 	UDim2.new(0, 1, 0, 149),
@@ -1082,8 +1197,13 @@ local _, _ --[[lengthSliderGui, lengthSliderPosition]] = CreateStandardSlider(
 )
 
 -- Slider for controlling the amplitude of hills.
-local amplitudeLabel =
-	CreateStandardLabel("AmplitudeLabel", UDim2.new(0, 8, 0, 174), UDim2.new(0, 67, 0, 14), "", terrainFrame)
+local amplitudeLabel = CreateStandardLabel(
+	"AmplitudeLabel",
+	UDim2.new(0, 8, 0, 174),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	terrainFrame
+)
 local _, amplitudeSliderPosition = CreateStandardSlider(
 	"AmplitudeSliderGui",
 	UDim2.new(0, 1, 0, 190),
@@ -1099,8 +1219,13 @@ local _, amplitudeSliderPosition = CreateStandardSlider(
 amplitudeSliderPosition.Value = terrainOptions.a - 1
 
 -- Slider for controlling the frequency of hills.
-local frequencyLabel =
-	CreateStandardLabel("FrequencyLabel", UDim2.new(0, 8, 0, 215), UDim2.new(0, 67, 0, 14), "", terrainFrame)
+local frequencyLabel = CreateStandardLabel(
+	"FrequencyLabel",
+	UDim2.new(0, 8, 0, 215),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	terrainFrame
+)
 local _, frequencySliderPosition = CreateStandardSlider(
 	"FrequencySliderGui",
 	UDim2.new(0, 1, 0, 231),
@@ -1116,8 +1241,13 @@ local _, frequencySliderPosition = CreateStandardSlider(
 frequencySliderPosition.Value = 4
 
 -- Slider for controlling the baseHeight, how deep the base terrain should be.
-local baseHeightLabel =
-	CreateStandardLabel("BaseHeightLabel", UDim2.new(0, 8, 0, 256), UDim2.new(0, 67, 0, 14), "", terrainFrame)
+local baseHeightLabel = CreateStandardLabel(
+	"BaseHeightLabel",
+	UDim2.new(0, 8, 0, 256),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	terrainFrame
+)
 local _, baseHeightSliderPosition = CreateStandardSlider(
 	"BaseHeightSliderGui",
 	UDim2.new(0, 1, 0, 272),
@@ -1133,8 +1263,13 @@ local _, baseHeightSliderPosition = CreateStandardSlider(
 baseHeightSliderPosition.Value = terrainOptions.baseHeight + 1
 
 -- Slider for controlling the waterHeight, how much water to fill.
-local waterHeightLabel =
-	CreateStandardLabel("WaterHeightLabel", UDim2.new(0, 8, 0, 297), UDim2.new(0, 67, 0, 14), "", terrainFrame)
+local waterHeightLabel = CreateStandardLabel(
+	"WaterHeightLabel",
+	UDim2.new(0, 8, 0, 297),
+	UDim2.new(0, 67, 0, 14),
+	"",
+	terrainFrame
+)
 local _, waterHeightSliderPosition = CreateStandardSlider(
 	"WaterHeightSliderGui",
 	UDim2.new(0, 1, 0, 313),

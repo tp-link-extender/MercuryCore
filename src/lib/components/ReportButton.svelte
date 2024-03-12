@@ -5,15 +5,15 @@
 </script>
 
 <a
-	class="text-danger text-decoration-none ps-2"
+	class="text-red-5 hover:text-red-5! no-underline pl-2"
 	href="/report?user={user}&url={url}">
-	<small>
+	<small class="inline-flex items-center">
 		{#if reverse}
-			<i class="far fa-flag me-1" />
+			<far fa-flag class="pr-2" />
 		{/if}
-		<span class="text-danger">Report abuse</span>
+		<span class="text-red-5">Report abuse</span>
 		{#if !reverse}
-			<i class="far fa-flag" />
+			<far fa-flag class="pl-2" />
 		{/if}
 	</small>
 </a>
@@ -25,12 +25,10 @@
 		overflow hidden
 		white-space nowrap
 		width 0
-		vertical-align middle // not perfectly centered
-		margin-top -0.1rem // there we go
 
 	a:hover
-		i
+		far
 			font-weight 900
 		span
-			width 5.2rem
+			width 5.3rem
 </style>

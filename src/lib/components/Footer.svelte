@@ -1,33 +1,46 @@
 <script lang="ts">
+	export let data: import("../../routes/$types").LayoutData
+
 	let clicked = false
 </script>
 
-<footer class="position-relative text-center">
-	<br />
-	<p class="grey-text mb-2">
-		<a href="/" class="text-decoration-none accent-text me-1">Mercury</a>
-		2022-{new Date().getFullYear()}
-		<button
-			on:mousedown={() => (clicked = !clicked)}
-			class="heart border-0 p-0 grey-text cursor-pointer"
-			class:clicked>
-			<span class="grey-text">made with</span>
-			<i class="fa fa-heart" />
-		</button>
-	</p>
-	<a class="light-text" href="/about">About</a>
-	<span class="text-muted">|</span>
-	<a class="light-text" href="/terms">Terms of Service</a>
-	<span class="text-muted">|</span>
-	<a class="light-text" href="/privacy">Privacy Policy</a>
-	<span class="text-muted">|</span>
-	<a class="light-text" href="/statistics">Statistics</a>
-	<br />
-	<br />
+<footer class="relative flex justify-center bg-darker">
+	<div class="flex <sm:flex-col justify-between items-start w-200 p-4 pb-8">
+		<div>
+			<img src="/icon-footer.svg" alt="Mercury logo" class="size-8" />
+			<a href="/" class="no-underline pl-2">Mercury</a>
+			<span class="grey-text pl-1">
+				2021-{new Date().getFullYear()}
+			</span>
+		</div>
+		<div class="sm:text-right <sm:pt-4">
+			<div class="grey-text pb-2">
+				<span class="grey-text pr-1">
+					<!-- Brag -->
+					{data.lines} lines of code
+				</span>
+				&ndash;
+				<button
+					on:mousedown={() => (clicked = !clicked)}
+					id="heart"
+					class="border-0 p-0 pr-2 grey-text cursor-pointer text-base bg-transparent"
+					class:clicked>
+					<span class="grey-text">made with</span>
+					<fa fa-heart />
+				</button>
+			</div>
+			<div class="flex <sm:flex-col sm:gap-3">
+				<a class="light-text" href="/about">About</a>
+				<a class="light-text" href="/terms">Terms of Service</a>
+				<a class="light-text" href="/privacy">Privacy Policy</a>
+				<a class="light-text" href="/statistics">Statistics</a>
+			</div>
+		</div>
+	</div>
 </footer>
 
 <noscript>
-	<div id="nojs" class="position-fixed bottom-0 d-block vw-100">
+	<div id="nojs" class="fixed bottom-0 block w-screen">
 		<p class="light-text text-center">
 			Javascript is disabled. You may have a diminished experience while
 			using Mercury.
@@ -36,9 +49,8 @@
 </noscript>
 
 <style lang="stylus">
-	.heart
-		background transparent
-		i
+	#heart
+		fa
 			transition 0.2s
 		span
 			transition all 0.3s
@@ -51,10 +63,10 @@
 
 		&:hover
 			span
-				width 4.6rem
+				width 5rem
 				margin-left 0.2rem
 
-	.heart:not(.clicked) i:hover
+	#heart:not(.clicked) fa:hover
 		color var(--light-text) !important
 
 	@keyframes heart
@@ -74,9 +86,9 @@
 			rotate 0
 
 	.clicked
-		i
+		fa
 			animation heart 2s
-		i
+		fa
 		span
 			color #f4b !important
 

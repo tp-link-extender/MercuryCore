@@ -1,97 +1,38 @@
 <script lang="ts">
-	import { page } from "$app/stores"
 	import { superForm } from "sveltekit-superforms/client"
+	import AdminShell from "../AdminShell.svelte"
 
 	export let data
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance,
-		delayed,
-		capture,
-		restore,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	})
+	const formData = superForm(data.form)
 
-	export const snapshot = { capture, restore }
+	export const snapshot = formData
 
-	let tabData = TabData(data.url, ["Reset User Password"])
+	let tabData = TabData(data.url, ["Change User Password"], ["far fa-key"])
 </script>
 
 <Head title="Accounts - Admin" />
 
-<div class="container py-6">
-	<h1 class="light-text mb-0">Admin - Accounts</h1>
-	<a href="/admin" class="text-decoration-none">
-		<i class="fas fa-caret-left" />
-		Back to panel
-	</a>
-	<div class="row mt-6">
-		<div class="col-lg-2 col-md-3 mb-6">
-			<TabNav bind:tabData tabs />
-		</div>
-		<div class="col-lg-10 col-md-9">
-			<Tab {tabData}>
-				<form use:enhance method="POST" action="?/resetPassword">
-					<fieldset>
-						<div class="row light-text mb-4">
-							<label
-								for="username"
-								class="col-md-3 col-form-label">
-								Username
-							</label>
-							<div class="col-md-8">
-								<input
-									bind:value={$form.username}
-									{...$constraints.username}
-									name="username"
-									id="username"
-									class="form-control {$errors.username
-										? 'is-in'
-										: ''}valid" />
-								<p class="col-12 mb-4 text-danger">
-									{$errors.username || ""}
-								</p>
-							</div>
-						</div>
-						<div class="row light-text mb-4">
-							<label
-								for="password"
-								class="col-md-3 col-form-label">
-								New password
-							</label>
-							<div class="col-md-8">
-								<input
-									bind:value={$form.password}
-									{...$constraints.password}
-									name="password"
-									id="password"
-									class="form-control {$errors.password
-										? 'is-in'
-										: ''}valid" />
-								<p class="col-12 mb-4 text-danger">
-									{$errors.password || ""}
-								</p>
-							</div>
-						</div>
-						<button class="btn btn-success">
-							{#if $delayed}
-								Working...
-							{:else}
-								Reset
-							{/if}
-						</button>
-					</fieldset>
-				</form>
-				<p
-					class:text-success={$page.status == 200}
-					class:text-danger={$page.status >= 400}>
-					{$message || ""}
-				</p>
-			</Tab>
-		</div>
+<div class="ctnr pt-6 max-w-280 light-text">
+	<div class="pb-4">
+		<h1>Admin - Accounts</h1>
+		<a href="/admin" class="no-underline">
+			<fa fa-caret-left />
+			Back to panel
+		</a>
 	</div>
+
+	<AdminShell bind:tabData>
+		<Form
+			{formData}
+			submit="<far fa-key></far> Change password"
+			action="?/changePassword">
+			<Input {formData} name="username" label="Username" />
+			<Input
+				{formData}
+				name="password"
+				label="New password"
+				type="password"
+				placeholder={"•".repeat(20)} />
+		</Form>
+	</AdminShell>
 </div>

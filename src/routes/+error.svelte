@@ -1,86 +1,73 @@
 <script lang="ts">
-	// If an error happens in any +page or +layout file,
-	// this page will be rendered instead.
+	// If an error happens in any +page or +layout file, this page will be rendered instead.
 
 	import { page } from "$app/stores"
+	import "/src/routes/studio/studio.styl" // brih
 
-	const status = $page.status,
-		errors: { [k: number]: string } = {
-			401: "mStop",
-			403: "mStop",
-			404: "mQuestion",
-			409: "mDouble",
-			410: "mGone",
-			454: "mTick",
-			451: "mBurn",
-		}
+	const status = $page.status
+	const errors: { [k: number]: string } = {
+		401: "mStop",
+		403: "mStop",
+		404: "mQuestion",
+		409: "mDouble",
+		410: "mGone",
+		451: "mBurn",
+		454: "mTick"
+	}
 
 	export let data: import("./$types").LayoutData
 </script>
 
-<Head title="Error {status}" />
+{#if !data.isStudio}
+	<Head title="Error {status}" />
 
-<Navbar {data} />
+	<Navbar {data} />
 
-<main>
-	<div
-		class="container d-flex flex-column justify-content-center align-items-center light-text bg-a rounded-4">
-		<div
-			class="errimg light"
-			style="background-image: url(/light/{errors[status] ||
-				'm!'}.svg)" />
-		<div
-			class="errimg dark"
-			style="background-image: url(/dark/{errors[status] || 'm!'}.svg)" />
+	<main class="flex-1 flex justify-center items-center py-4">
+		<div class="ctnr flex flex-col items-center bg-a rounded-4 px-20 py-8">
+			<div
+				class="errimg light w-full h-24 bg-contain bg-no-repeat bg-center"
+				style="background-image: url(/error/{errors[status] ||
+					'm!'}.svg)" />
 
-		<h1 class="mt-4">
-			<a
-				href="https://http.cat/images/{status}.jpg"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="light-text text-decoration-none">
-				Error {status}
-			</a>
-		</h1>
-		{$page.error?.message}
-		<a href="/home" class="accent-text">Head home?</a>
-	</div>
-</main>
+			<h1 class="pt-4">
+				<a
+					href="https://http.cat/images/{status}.jpg"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="light-text no-underline">
+					Error {status}
+				</a>
+			</h1>
+			{$page.error?.message}
+			<a href="/home" class="accent-text">Head home?</a>
+		</div>
+	</main>
 
-<Footer />
+	<Footer {data} />
+{:else}
+	<StudioNavbar {data} />
 
-<style lang="stylus">
-	.errimg
-		height 6rem
+	<main class="flex-1 flex justify-center items-center py-4">
+		<div class="ctnr flex flex-col items-center bg-a rounded-4 px-20 py-8">
+			<div
+				class="errimg light w-full h-24 bg-contain bg-no-repeat bg-center"
+				style="background-image: url(/error/{errors[status] ||
+					'm!'}.svg)" />
 
-		background-size contain
-		background-repeat no-repeat
-		background-position center
+			<h1 class="pt-4">
+				<a
+					href="https://http.cat/images/{status}.jpg"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="light-text no-underline">
+					Error {status}
+				</a>
+			</h1>
+			{$page.error?.message}
+			<a href="/home" class="accent-text">Head home?</a>
+		</div>
+	</main>
 
-		&.light
-			display block
-		&.dark
-			display none
-
-		+lightTheme()
-			&.light
-				display none
-			&.dark
-				display block
-
-
-	main
-		padding-bottom 25vh
-		padding-top 25vh
-		flex 1 0 auto
-		+-lg()
-			padding-top 23vh
-			padding-bottom 22vh
-		+-md()
-			padding-top 20vh
-			padding-bottom 20vh
-
-		div
-			width fit-content
-			padding 2rem 5rem
-</style>
+	<StudioFooter {data} />
+{/if}

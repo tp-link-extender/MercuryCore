@@ -6,42 +6,33 @@
 	const { user } = data
 
 	$: topReply = data.replies[0]
+
+	let refresh = 0
 </script>
 
-<Head title="Replies to forum post" />
+<Head title="Comments on asset" />
 
-<div class="container light-text">
-	<nav aria-label="breadcrumb" class="mx-auto">
-		<ol class="breadcrumb border-0 m-0 shadow-none fs-6">
-			<li class="breadcrumb-item">
-				<a href="/avatarshop" class="accent-text">Avatar shop</a>
-			</li>
-			<li class="breadcrumb-item">
-				<a
-					href="/avatarshop/{data.assetId}/{data.assetName}"
-					class="accent-text">
-					{data.assetName}
-				</a>
-			</li>
-			<li class="breadcrumb-item active" aria-current="page">
-				{topReply.content[0].text}
-			</li>
-		</ol>
-	</nav>
+<div class="ctnr max-w-280 light-text">
+	<Breadcrumbs
+		path={[
+			["Avatar shop", "/avatarshop"],
+			[data.assetName, `/avatarshop/${data.assetId}/${data.assetName}`],
+			[topReply.content[0].text, ""]
+		]} />
 
-	{#each data.replies as reply, num}
-		<ForumReply
-			{user}
-			{reply}
-			{num}
-			{replyingTo}
-			postId={data.assetId.toString()}
-			assetName={data.assetName}
-			postAuthorName={data.creator || ""}
-			{repliesCollapsed} />
-	{/each}
+	{#key refresh}
+		{#each data.replies as reply, num}
+			<ForumReply
+				{user}
+				{reply}
+				{num}
+				{replyingTo}
+				postId={data.assetId.toString()}
+				assetName={data.assetName}
+				postAuthorName={data.creator || ""}
+				{repliesCollapsed}
+				pinnable={!reply.parentReplyId}
+				refreshReplies={() => refresh++} />
+		{/each}
+	{/key}
 </div>
-
-<style lang="stylus">
-	containerMinWidth(70rem)
-</style>

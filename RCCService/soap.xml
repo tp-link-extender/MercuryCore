@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<BatchJobEx xmlns="http://roblox.com/">
+			<job>
+				<id>_TASK_ID</id>
+				<expirationInSeconds>30</expirationInSeconds>
+				<category>1</category>
+				<cores>1</cores>
+			</job>
+			<script>
+				<name>RenderScript</name>
+				<script>
+					_RENDER_SCRIPT
+				</script>
+			</script>
+		</BatchJobEx>
+	</soap:Body>
+</soap:Envelope>

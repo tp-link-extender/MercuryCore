@@ -1,13 +1,15 @@
 -- CoreGui.RobloxGui.CoreScripts/MainBotChatScript
 print "[Mercury]: Loaded corescript 39250920"
 
-function waitForProperty(instance, name)
+local InsertService = game:GetService "InsertService"
+
+local function waitForProperty(instance, name)
 	while not instance[name] do
 		instance.Changed:wait()
 	end
 end
 
-function waitForChild(instance, name)
+local function waitForChild(instance, name)
 	while not instance:FindFirstChild(name) do
 		instance.ChildAdded:wait()
 	end
@@ -39,15 +41,14 @@ else
 	gui = game.CoreGui.RobloxGui
 end
 
-function currentTone()
+local function currentTone()
 	if currentConversationDialog then
 		return currentConversationDialog.Tone
-	else
-		return Enum.DialogTone.Neutral
 	end
+	return Enum.DialogTone.Neutral
 end
 
-function createChatNotificationGui()
+local function createChatNotificationGui()
 	chatNotificationGui = Instance.new "BillboardGui"
 	chatNotificationGui.Name = "ChatNotificationGui"
 	chatNotificationGui.ExtentsOffset = Vector3.new(0, 1, 0)
@@ -79,24 +80,36 @@ function createChatNotificationGui()
 	button.Parent = image
 end
 
-function getChatColor(tone)
-	if tone == Enum.DialogTone.Neutral then
-		return Enum.ChatColor.Blue
-	elseif tone == Enum.DialogTone.Friendly then
+local function getChatColor(tone)
+	if tone == Enum.DialogTone.Friendly then
 		return Enum.ChatColor.Green
 	elseif tone == Enum.DialogTone.Enemy then
 		return Enum.ChatColor.Red
 	end
+	return Enum.ChatColor.Blue
 end
 
-function styleChoices(tone)
+local function resetColor(frame, tone)
+	if tone == Enum.DialogTone.Neutral then
+		frame.BackgroundColor3 = Color3.new(0 / 255, 0 / 255, 179 / 255)
+		frame.Number.TextColor3 = Color3.new(45 / 255, 142 / 255, 245 / 255)
+	elseif tone == Enum.DialogTone.Friendly then
+		frame.BackgroundColor3 = Color3.new(0 / 255, 77 / 255, 0 / 255)
+		frame.Number.TextColor3 = Color3.new(0 / 255, 190 / 255, 0 / 255)
+	elseif tone == Enum.DialogTone.Enemy then
+		frame.BackgroundColor3 = Color3.new(140 / 255, 0 / 255, 0 / 255)
+		frame.Number.TextColor3 = Color3.new(255 / 255, 88 / 255, 79 / 255)
+	end
+end
+
+local function styleChoices(tone)
 	for _, obj in pairs(choices) do
 		resetColor(obj, tone)
 	end
 	resetColor(lastChoice, tone)
 end
 
-function styleMainFrame(tone)
+local function styleMainFrame(tone)
 	if tone == Enum.DialogTone.Neutral then
 		mainFrame.Style = Enum.FrameStyle.ChatBlue
 		mainFrame.Tail.Image =
@@ -113,29 +126,31 @@ function styleMainFrame(tone)
 
 	styleChoices(tone)
 end
-function setChatNotificationTone(gui, purpose, tone)
+
+local function setChatNotificationTone(notificationGui, purpose, tone)
 	if tone == Enum.DialogTone.Neutral then
-		gui.Image.Image =
+		notificationGui.Image.Image =
 			"rbxasset://textures/chatBubble_botBlue_notify_bkg.png"
 	elseif tone == Enum.DialogTone.Friendly then
-		gui.Image.Image =
+		notificationGui.Image.Image =
 			"rbxasset://textures/chatBubble_botGreen_notify_bkg.png"
 	elseif tone == Enum.DialogTone.Enemy then
-		gui.Image.Image = "rbxasset://textures/chatBubble_botRed_notify_bkg.png"
+		notificationGui.Image.Image =
+			"rbxasset://textures/chatBubble_botRed_notify_bkg.png"
 	end
 	if purpose == Enum.DialogPurpose.Quest then
-		gui.Image.Button.Image =
+		notificationGui.Image.Button.Image =
 			"rbxasset://textures/chatBubble_bot_notify_bang.png"
 	elseif purpose == Enum.DialogPurpose.Help then
-		gui.Image.Button.Image =
+		notificationGui.Image.Button.Image =
 			"rbxasset://textures/chatBubble_bot_notify_question.png"
 	elseif purpose == Enum.DialogPurpose.Shop then
-		gui.Image.Button.Image =
+		notificationGui.Image.Button.Image =
 			"rbxasset://textures/chatBubble_bot_notify_money.png"
 	end
 end
 
-function createMessageDialog()
+local function createMessageDialog()
 	messageDialog = Instance.new "Frame"
 	messageDialog.Name = "DialogScriptMessage"
 	messageDialog.Style = Enum.FrameStyle.RobloxRound
@@ -152,7 +167,7 @@ function createMessageDialog()
 	text.Parent = messageDialog
 end
 
-function showMessage(msg, size)
+local function showMessage(msg, size)
 	messageDialog.Text.Text = msg
 	messageDialog.Size = UDim2.new(0, size, 0, 40)
 	messageDialog.Position = UDim2.new(0.5, -size / 2, 0.5, -40)
@@ -161,25 +176,12 @@ function showMessage(msg, size)
 	messageDialog.Visible = false
 end
 
-function variableDelay(str)
+local function variableDelay(str)
 	local length = math.min(string.len(str), 100)
 	wait(0.75 + ((length / 75) * 1.5))
 end
 
-function resetColor(frame, tone)
-	if tone == Enum.DialogTone.Neutral then
-		frame.BackgroundColor3 = Color3.new(0 / 255, 0 / 255, 179 / 255)
-		frame.Number.TextColor3 = Color3.new(45 / 255, 142 / 255, 245 / 255)
-	elseif tone == Enum.DialogTone.Friendly then
-		frame.BackgroundColor3 = Color3.new(0 / 255, 77 / 255, 0 / 255)
-		frame.Number.TextColor3 = Color3.new(0 / 255, 190 / 255, 0 / 255)
-	elseif tone == Enum.DialogTone.Enemy then
-		frame.BackgroundColor3 = Color3.new(140 / 255, 0 / 255, 0 / 255)
-		frame.Number.TextColor3 = Color3.new(255 / 255, 88 / 255, 79 / 255)
-	end
-end
-
-function highlightColor(frame, tone)
+local function highlightColor(frame, tone)
 	if tone == Enum.DialogTone.Neutral then
 		frame.BackgroundColor3 = Color3.new(2 / 255, 108 / 255, 255 / 255)
 		frame.Number.TextColor3 = Color3.new(1, 1, 1)
@@ -192,7 +194,7 @@ function highlightColor(frame, tone)
 	end
 end
 
-function endDialog()
+local function endDialog()
 	if currentAbortDialogScript then
 		currentAbortDialogScript:Remove()
 		currentAbortDialogScript = nil
@@ -207,163 +209,42 @@ function endDialog()
 		reenableScript.Parent = dialog
 	end
 
-	for dialog, gui in pairs(dialogMap) do
-		if dialog and gui then
-			gui.Enabled = not dialog.InUse
+	for dialog2, gui2 in pairs(dialogMap) do
+		if dialog2 and gui2 then
+			gui2.Enabled = not dialog2.InUse
 		end
 	end
 
 	currentConversationPartner = nil
 end
 
-function wanderDialog()
-	print "Wander"
+local function wanderDialog()
+	print "[Mercury]: Dialog wander"
 	mainFrame.Visible = false
 	endDialog()
 	showMessage(characterWanderedOffMessage, characterWanderedOffSize)
 end
 
-function timeoutDialog()
-	print "Timeout"
+local function timeoutDialog()
+	print "[Mercury]: Dialog timeout"
 	mainFrame.Visible = false
 	endDialog()
 	showMessage(conversationTimedOut, conversationTimedOutSize)
 end
-function normalEndDialog()
-	print "Done"
+
+local function normalEndDialog()
+	print "[Mercury]: Dialog done"
 	endDialog()
 end
 
-function sanitizeMessage(msg)
+local function sanitizeMessage(msg)
 	if string.len(msg) == 0 then
 		return "..."
-	else
-		return msg
 	end
+	return msg
 end
 
-function selectChoice(choice)
-	renewKillswitch(currentConversationDialog)
-
-	--First hide the Gui
-	mainFrame.Visible = false
-	if choice == lastChoice then
-		game.Chat:Chat(
-			game.Players.LocalPlayer.Character,
-			"Goodbye!",
-			getChatColor(currentTone())
-		)
-
-		normalEndDialog()
-	else
-		local dialogChoice = choiceMap[choice]
-
-		game.Chat:Chat(
-			game.Players.LocalPlayer.Character,
-			sanitizeMessage(dialogChoice.UserDialog),
-			getChatColor(currentTone())
-		)
-		wait(1)
-		currentConversationDialog:SignalDialogChoiceSelected(
-			player,
-			dialogChoice
-		)
-		game.Chat:Chat(
-			currentConversationPartner,
-			sanitizeMessage(dialogChoice.ResponseDialog),
-			getChatColor(currentTone())
-		)
-
-		variableDelay(dialogChoice.ResponseDialog)
-		presentDialogChoices(
-			currentConversationPartner,
-			dialogChoice:GetChildren()
-		)
-	end
-end
-
-function newChoice(numberText)
-	local frame = Instance.new "TextButton"
-	frame.BackgroundColor3 = Color3.new(0 / 255, 0 / 255, 179 / 255)
-	frame.AutoButtonColor = false
-	frame.BorderSizePixel = 0
-	frame.Text = ""
-	frame.MouseEnter:connect(function()
-		highlightColor(frame, currentTone())
-	end)
-	frame.MouseLeave:connect(function()
-		resetColor(frame, currentTone())
-	end)
-	frame.MouseButton1Click:connect(function()
-		selectChoice(frame)
-	end)
-	frame.RobloxLocked = true
-
-	local number = Instance.new "TextLabel"
-	number.Name = "Number"
-	number.TextColor3 = Color3.new(127 / 255, 212 / 255, 255 / 255)
-	number.Text = numberText
-	number.FontSize = Enum.FontSize.Size14
-	number.BackgroundTransparency = 1
-	number.Position = UDim2.new(0, 4, 0, 2)
-	number.Size = UDim2.new(0, 20, 0, 24)
-	number.TextXAlignment = Enum.TextXAlignment.Left
-	number.TextYAlignment = Enum.TextYAlignment.Top
-	number.RobloxLocked = true
-	number.Parent = frame
-
-	local prompt = Instance.new "TextLabel"
-	prompt.Name = "UserPrompt"
-	prompt.BackgroundTransparency = 1
-	prompt.TextColor3 = Color3.new(1, 1, 1)
-	prompt.FontSize = Enum.FontSize.Size14
-	prompt.Position = UDim2.new(0, 28, 0, 2)
-	prompt.Size = UDim2.new(1, -32, 1, -4)
-	prompt.TextXAlignment = Enum.TextXAlignment.Left
-	prompt.TextYAlignment = Enum.TextYAlignment.Top
-	prompt.TextWrap = true
-	prompt.RobloxLocked = true
-	prompt.Parent = frame
-
-	return frame
-end
-function initialize(parent)
-	choices[1] = newChoice "1)"
-	choices[2] = newChoice "2)"
-	choices[3] = newChoice "3)"
-	choices[4] = newChoice "4)"
-
-	lastChoice = newChoice "5)"
-	lastChoice.UserPrompt.Text = "Goodbye!"
-	lastChoice.Size = UDim2.new(1, 0, 0, 28)
-
-	mainFrame = Instance.new "Frame"
-	mainFrame.Name = "UserDialogArea"
-	mainFrame.Size = UDim2.new(0, 350, 0, 200)
-	mainFrame.Style = Enum.FrameStyle.ChatBlue
-	mainFrame.Visible = false
-
-	local imageLabel = Instance.new "ImageLabel"
-	imageLabel.Name = "Tail"
-	imageLabel.Size = UDim2.new(0, 62, 0, 53)
-	imageLabel.Position = UDim2.new(1, 8, 0.25)
-	imageLabel.Image = "rbxasset://textures/chatBubble_botBlue_tailRight.png"
-	imageLabel.BackgroundTransparency = 1
-	imageLabel.RobloxLocked = true
-	imageLabel.Parent = mainFrame
-
-	for _, obj in pairs(choices) do
-		obj.RobloxLocked = true
-		obj.Parent = mainFrame
-	end
-	lastChoice.RobloxLocked = true
-	lastChoice.Parent = mainFrame
-
-	mainFrame.RobloxLocked = true
-	mainFrame.Parent = parent
-end
-
-function presentDialogChoices(talkingPart, dialogChoices)
+local function presentDialogChoices(talkingPart, dialogChoices)
 	if not currentConversationDialog then
 		return
 	end
@@ -411,7 +292,7 @@ function presentDialogChoices(talkingPart, dialogChoices)
 	end
 
 	lastChoice.Position = UDim2.new(0, 0, 0, yPosition)
-	lastChoice.Number.Text = pos .. ")"
+	lastChoice.Number.Text = `{pos})`
 
 	mainFrame.Size = UDim2.new(0, 350, 0, yPosition + 24 + 32)
 	mainFrame.Position = UDim2.new(0, 20, 0, -mainFrame.Size.Y.Offset - 20)
@@ -419,18 +300,158 @@ function presentDialogChoices(talkingPart, dialogChoices)
 	mainFrame.Visible = true
 end
 
-function doDialog(dialog)
-	while not Instance.Lock(dialog, player) do
-		wait()
+local function renewKillswitch(dialog)
+	if currentAbortDialogScript then
+		currentAbortDialogScript:Remove()
+		currentAbortDialogScript = nil
 	end
+
+	currentAbortDialogScript = timeoutScript:Clone()
+	currentAbortDialogScript.archivable = false
+	currentAbortDialogScript.Disabled = false
+	currentAbortDialogScript.Parent = dialog
+end
+
+local function selectChoice(choice)
+	renewKillswitch(currentConversationDialog)
+
+	--First hide the Gui
+	mainFrame.Visible = false
+	if choice == lastChoice then
+		game.Chat:Chat(
+			game.Players.LocalPlayer.Character,
+			"Goodbye!",
+			getChatColor(currentTone())
+		)
+
+		normalEndDialog()
+	else
+		local dialogChoice = choiceMap[choice]
+
+		game.Chat:Chat(
+			game.Players.LocalPlayer.Character,
+			sanitizeMessage(dialogChoice.UserDialog),
+			getChatColor(currentTone())
+		)
+		wait(1)
+		currentConversationDialog:SignalDialogChoiceSelected(
+			player,
+			dialogChoice
+		)
+		game.Chat:Chat(
+			currentConversationPartner,
+			sanitizeMessage(dialogChoice.ResponseDialog),
+			getChatColor(currentTone())
+		)
+
+		variableDelay(dialogChoice.ResponseDialog)
+		presentDialogChoices(
+			currentConversationPartner,
+			dialogChoice:GetChildren()
+		)
+	end
+end
+
+local function newChoice(numberText)
+	local frame = Instance.new "TextButton"
+	frame.BackgroundColor3 = Color3.new(0 / 255, 0 / 255, 179 / 255)
+	frame.AutoButtonColor = false
+	frame.BorderSizePixel = 0
+	frame.Text = ""
+	frame.MouseEnter:connect(function()
+		highlightColor(frame, currentTone())
+	end)
+	frame.MouseLeave:connect(function()
+		resetColor(frame, currentTone())
+	end)
+	frame.MouseButton1Click:connect(function()
+		selectChoice(frame)
+	end)
+	frame.RobloxLocked = true
+
+	local number = Instance.new "TextLabel"
+	number.Name = "Number"
+	number.TextColor3 = Color3.new(127 / 255, 212 / 255, 255 / 255)
+	number.Text = numberText
+	number.FontSize = Enum.FontSize.Size14
+	number.BackgroundTransparency = 1
+	number.Position = UDim2.new(0, 4, 0, 2)
+	number.Size = UDim2.new(0, 20, 0, 24)
+	number.TextXAlignment = Enum.TextXAlignment.Left
+	number.TextYAlignment = Enum.TextYAlignment.Top
+	number.RobloxLocked = true
+	number.Parent = frame
+
+	local prompt = Instance.new "TextLabel"
+	prompt.Name = "UserPrompt"
+	prompt.BackgroundTransparency = 1
+	prompt.TextColor3 = Color3.new(1, 1, 1)
+	prompt.FontSize = Enum.FontSize.Size14
+	prompt.Position = UDim2.new(0, 28, 0, 2)
+	prompt.Size = UDim2.new(1, -32, 1, -4)
+	prompt.TextXAlignment = Enum.TextXAlignment.Left
+	prompt.TextYAlignment = Enum.TextYAlignment.Top
+	prompt.TextWrap = true
+	prompt.RobloxLocked = true
+	prompt.Parent = frame
+
+	return frame
+end
+
+local function initialize(parent)
+	choices[1] = newChoice "1)"
+	choices[2] = newChoice "2)"
+	choices[3] = newChoice "3)"
+	choices[4] = newChoice "4)"
+
+	lastChoice = newChoice "5)"
+	lastChoice.UserPrompt.Text = "Goodbye!"
+	lastChoice.Size = UDim2.new(1, 0, 0, 28)
+
+	mainFrame = Instance.new "Frame"
+	mainFrame.Name = "UserDialogArea"
+	mainFrame.Size = UDim2.new(0, 350, 0, 200)
+	mainFrame.Style = Enum.FrameStyle.ChatBlue
+	mainFrame.Visible = false
+
+	local imageLabel = Instance.new "ImageLabel"
+	imageLabel.Name = "Tail"
+	imageLabel.Size = UDim2.new(0, 62, 0, 53)
+	imageLabel.Position = UDim2.new(1, 8, 0.25)
+	imageLabel.Image = "rbxasset://textures/chatBubble_botBlue_tailRight.png"
+	imageLabel.BackgroundTransparency = 1
+	imageLabel.RobloxLocked = true
+	imageLabel.Parent = mainFrame
+
+	for _, obj in pairs(choices) do
+		obj.RobloxLocked = true
+		obj.Parent = mainFrame
+	end
+	lastChoice.RobloxLocked = true
+	lastChoice.Parent = mainFrame
+
+	mainFrame.RobloxLocked = true
+	mainFrame.Parent = parent
+end
+
+local function doDialog(dialog)
+	local il = Instance.Lock(dialog, player)
+	print("for instance", il)
+	while not il do
+		wait()
+		il = Instance.Lock(dialog, player)
+		print("for instance", il)
+	end
+
+	print("testin", dialog)
 
 	if dialog.InUse then
 		Instance.Unlock(dialog)
 		return
-	else
-		dialog.InUse = true
-		Instance.Unlock(dialog)
 	end
+
+	dialog.InUse = true
+	Instance.Unlock(dialog)
 
 	currentConversationDialog = dialog
 	game.Chat:Chat(
@@ -443,19 +464,7 @@ function doDialog(dialog)
 	presentDialogChoices(dialog.Parent, dialog:GetChildren())
 end
 
-function renewKillswitch(dialog)
-	if currentAbortDialogScript then
-		currentAbortDialogScript:Remove()
-		currentAbortDialogScript = nil
-	end
-
-	currentAbortDialogScript = timeoutScript:Clone()
-	currentAbortDialogScript.archivable = false
-	currentAbortDialogScript.Disabled = false
-	currentAbortDialogScript.Parent = dialog
-end
-
-function checkForLeaveArea()
+local function checkForLeaveArea()
 	while currentConversationDialog do
 		if
 			currentConversationDialog.Parent
@@ -471,7 +480,7 @@ function checkForLeaveArea()
 	end
 end
 
-function startDialog(dialog)
+local function startDialog(dialog)
 	if dialog.Parent and dialog.Parent:IsA "BasePart" then
 		if
 			player:DistanceFromCharacter(dialog.Parent.Position)
@@ -481,9 +490,9 @@ function startDialog(dialog)
 			return
 		end
 
-		for dialog, gui in pairs(dialogMap) do
-			if dialog and gui then
-				gui.Enabled = false
+		for dialog2, gui2 in pairs(dialogMap) do
+			if dialog2 and gui2 then
+				gui2.Enabled = false
 			end
 		end
 
@@ -494,7 +503,7 @@ function startDialog(dialog)
 	end
 end
 
-function removeDialog(dialog)
+local function removeDialog(dialog)
 	if dialogMap[dialog] then
 		dialogMap[dialog]:Remove()
 		dialogMap[dialog] = nil
@@ -505,7 +514,7 @@ function removeDialog(dialog)
 	end
 end
 
-function addDialog(dialog)
+local function addDialog(dialog)
 	if dialog.Parent then
 		if dialog.Parent:IsA "BasePart" then
 			local chatGui = chatNotificationGui:clone()
@@ -551,11 +560,11 @@ function addDialog(dialog)
 	end
 end
 
-function fetchScripts()
-	local model = game:GetService("InsertService"):LoadAsset(39226062)
+local function fetchScripts()
+	local model = InsertService:LoadAsset(39226062)
 	if type(model) == "string" then -- load failed, lets try again
 		wait(0.1)
-		model = game:GetService("InsertService"):LoadAsset(39226062)
+		model = InsertService:LoadAsset(39226062)
 	end
 	if type(model) == "string" then -- not going to work, lets bail
 		return
@@ -567,7 +576,7 @@ function fetchScripts()
 	reenableDialogScript = model.ReenableDialogScript
 end
 
-function onLoad()
+local function onLoad()
 	waitForProperty(game.Players, "LocalPlayer")
 	player = game.Players.LocalPlayer
 	waitForProperty(player, "Character")

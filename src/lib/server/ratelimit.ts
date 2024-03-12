@@ -2,13 +2,15 @@
 // and returns a 429 failure if too many requests are sent
 
 import { message } from "sveltekit-superforms/server"
+import type { SuperValidated } from "sveltekit-superforms"
+import { fail } from "@sveltejs/kit"
 
-const ratelimitTimewindow = new Map<string, number>(),
-	ratelimitRequests = new Map<string, number>(),
-	existingTimeouts = new Map<string, any>()
+const ratelimitTimewindow = new Map<string, number>()
+const ratelimitRequests = new Map<string, number>()
+const existingTimeouts = new Map<string, NodeJS.Timeout>()
 
 /** Ratelimit a function by a category.
- * @param form The superForm object sent by the client.
+ * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.
  * @param category The category to ratelimit by.
  * @param getClientAddress The client's IP address, set by the adapter.
  * @param timeWindow The time window in seconds. If there are no successful requests in this time, the ratelimit is reset.
@@ -19,29 +21,41 @@ const ratelimitTimewindow = new Map<string, number>(),
  *	if (limit) return limit
  */
 export default function (
-	form: any,
+	form: SuperValidated<
+		{ [k: string]: unknown },
+		unknown,
+		{ [k: string]: unknown }
+	> | null,
 	category: string,
 	getClientAddress: () => string,
 	timeWindow: number,
-	maxRequests = 1,
+	maxRequests = 1
 ) {
-	const id = getClientAddress() + category,
-		currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
+	const id = getClientAddress() + category
+	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 
-	if (currentTimewindow > Date.now() + timeWindow * 1000)
-		return message(form, "Too many requests", { status: 429 })
+	const limit = () =>
+		form
+			? message(form, "Too many requests", { status: 429 })
+			: fail(429, { msg: "Too many requests" })
+
+	if (currentTimewindow > Date.now() + timeWindow * 1000) {
+		console.log("Ratelimited based on time window!")
+		return limit()
+	}
 
 	const currentRequests = (ratelimitRequests.get(id) || 0) + 1
 
 	if (currentRequests > maxRequests) {
 		ratelimitTimewindow.set(id, currentTimewindow)
-		return message(form, "Too many requests", { status: 429 })
-	} else {
-		clearTimeout(existingTimeouts.get(id))
-		existingTimeouts.set(
-			id,
-			setTimeout(() => ratelimitRequests.delete(id), timeWindow * 1000),
-		)
-		ratelimitRequests.set(id, currentRequests)
+		console.log("Ratelimited based on requests!")
+		return limit()
 	}
+
+	clearTimeout(existingTimeouts.get(id))
+	existingTimeouts.set(
+		id,
+		setTimeout(() => ratelimitRequests.delete(id), timeWindow * 1000)
+	)
+	ratelimitRequests.set(id, currentRequests)
 }

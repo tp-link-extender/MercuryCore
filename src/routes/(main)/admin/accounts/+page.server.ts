@@ -1,8 +1,9 @@
 import { auth, authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { query, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
@@ -15,18 +16,17 @@ const schema = z.object({
 })
 
 export async function load({ locals }) {
-	// Make sure a user is an administrator before loading the page.
 	await authorise(locals, 5)
 
 	return {
-		form: superValidate(schema),
+		form: await superValidate(zod(schema)),
 	}
 }
 
 export const actions = {
-	resetPassword: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 5),
-			form = await superValidate(request, schema)
+	changePassword: async ({ request, locals, getClientAddress }) => {
+		const { user } = await authorise(locals, 5)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 
 		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
@@ -38,7 +38,7 @@ export const actions = {
 			await auth.updateKeyPassword(
 				"username",
 				username.toLowerCase(),
-				password,
+				password
 			)
 		} catch {
 			return message(form, "Invalid credentials", {
@@ -46,17 +46,19 @@ export const actions = {
 			})
 		}
 
-		await prisma.auditLog.create({
-			data: {
-				action: "Account",
+		await query(
+			surql`
+				CREATE auditLog CONTENT {
+					action: "Account",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
+			{
 				note: `Change account password for ${username}`,
-				user: {
-					connect: {
-						id: user.id,
-					},
-				},
-			},
-		})
+				user: `user:${user.id}`,
+			}
+		)
 
 		return message(form, "Password changed successfully!")
 	},

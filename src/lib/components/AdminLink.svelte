@@ -10,29 +10,29 @@
 <a
 	in:fade|global={{ num, total, duration: 300 }}
 	{href}
-	class="col-lg-3 p-1 text-decoration-none">
-	<div class="px-0 card bg-a3 text-center light-text">
+	class="light-text no-underline">
+	<div class=" card bg-a3 light-text px-0 text-center">
 		<div class="card-body bg-a rounded-1 p-6">
 			{#if emoji}
-				<span class="h1">{emoji}</span>
+				<span class="text-10">{emoji}</span>
 			{:else}
-				<i class="h1 {iconClass}" />
+				<i class="text-10 {iconClass}" />
 			{/if}
-			<h4 class="h5 mt-4">
+			<div class="text-xl pt-4">
 				{name}
-			</h4>
+			</div>
 			<slot />
 		</div>
 	</div>
 </a>
 
 <style lang="stylus">
-	a .card-body
-		transition background-color 0.2s
-		&:hover
+	a 
+		.card-body
+			transition background-color 0.2s
+		&:hover .card-body
 			background-color var(--background) !important
 
 	.card
-		border-width 2px
-		border-color var(--accent3)
+		border 1px solid var(--accent2)
 </style>

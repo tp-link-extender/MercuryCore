@@ -13,12 +13,12 @@ pcall(function()
 	InsertService:SetFreeDecalUrl "http://banland.xyz/game/tools/insertasset?type=fd&q=%s&pg=%d&rs=%d"
 end)
 
-ScriptInformationProvider:SetAssetUrl "http://banland.xyz/Asset/"
+ScriptInformationProvider:SetAssetUrl "http://banland.xyz/asset/"
 InsertService:SetBaseSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=10&type=base"
 InsertService:SetUserSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
 InsertService:SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d"
-InsertService:SetAssetUrl "http://banland.xyz/Asset/?id=%d"
-InsertService:SetAssetVersionUrl "http://banland.xyz/Asset/?assetversionid=%d"
+InsertService:SetAssetUrl "http://banland.xyz/asset/?id=%d"
+InsertService:SetAssetVersionUrl "http://banland.xyz/asset/?assetversionid=%d"
 InsertService:SetTrustLevel(0)
 
 pcall(function()
@@ -40,13 +40,13 @@ pcall(function()
 	GamePassService:SetPlayerHasPassUrl "http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
 end)
 pcall(function()
-	MarketplaceService:SetProductInfoUrl "https://banland.xyz/marketplace/productinfo?assetId=%d"
+	MarketplaceService:SetProductInfoUrl "http://banland.xyz/marketplace/productinfo?assetId=%d"
 end)
 pcall(function()
-	MarketplaceService:SetDevProductInfoUrl "https://banland.xyz/marketplace/productDetails?productId=%d"
+	MarketplaceService:SetDevProductInfoUrl "http://banland.xyz/marketplace/productDetails?productId=%d"
 end)
 pcall(function()
-	MarketplaceService:SetPlayerOwnsAssetUrl "https://banland.xyz/ownership/hasasset?userId=%d&assetId=%d"
+	MarketplaceService:SetPlayerOwnsAssetUrl "http://banland.xyz/ownership/hasasset?userId=%d&assetId=%d"
 end)
 
 local result, _ = pcall(function()

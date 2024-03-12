@@ -1,10 +1,10 @@
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { error } from "@sveltejs/kit"
-import type { ReportCategory } from "@prisma/client"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
@@ -24,55 +24,70 @@ const schema = z.object({
 	note: z.string().optional(),
 })
 
+const getReportee = (username: string) =>
+	squery<{ id: string }>(
+		surql`
+			SELECT id
+			FROM user
+			WHERE username = $username`,
+		{ username }
+	)
+
 export async function load({ locals, url }) {
 	await authorise(locals)
 
-	const reportee = url.searchParams.get("user"),
-		reportedUrl = url.searchParams.get("url")
+	const reportee = url.searchParams.get("user")
+	const reportedUrl = url.searchParams.get("url")
 
-	if (!reportee || !reportedUrl)
-		throw error(400, "Missing user or url parameters")
+	if (!reportee || !reportedUrl) error(400, "Missing user or url parameters")
+
+	const reporteeUser = await getReportee(reportee)
+	if (!reporteeUser) error(400, "Invalid user")
 
 	return {
 		reportee,
 		url: reportedUrl,
-		form: superValidate(schema),
+		form: await superValidate(zod(schema)),
 	}
 }
 
 export const actions = {
 	default: async ({ request, locals, url, getClientAddress }) => {
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "report", getClientAddress, 120)
 		if (limit) return limit
 
-		const { user } = await authorise(locals),
-			{ category, note } = form.data,
-			username = url.searchParams.get("user"),
-			userUrl = url.searchParams.get("user")
+		const { user } = await authorise(locals)
+		const { category, note } = form.data
+		const username = url.searchParams.get("user")
+		const reportUrl = url.searchParams.get("url")
 
-		if (!username || !userUrl) throw error(400, "Missing fields")
+		if (!username || !reportUrl) error(400, "Missing fields")
 
-		const reportee = await prisma.authUser.findUnique({
-			where: {
-				username,
-			},
-		})
+		const reportee = await getReportee(username)
+
 		if (!reportee)
 			return message(form, "Invalid user", {
 				status: 400,
 			})
 
-		await prisma.report.create({
-			data: {
-				reporterId: user.id,
-				reporteeId: reportee.id,
-				note: (note as ReportCategory) || null,
-				url: userUrl,
+		await query(
+			surql`
+				RELATE $reporter->report->$reportee CONTENT {
+					time: time::now(),
+					note: $note,
+					url: $reportUrl,
+					category: $category,
+				}`,
+			{
+				reporter: `user:${user.id}`,
+				reportee: reportee.id,
+				note,
+				reportUrl,
 				category,
-			},
-		})
+			}
+		)
 
 		return message(form, "Report sent successfully.")
 	},

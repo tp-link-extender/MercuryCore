@@ -1,115 +1,133 @@
-import cql from "$lib/cyphertag"
 import { authorise } from "$lib/server/lucia"
-import { prisma, findPlaces } from "$lib/server/prisma"
-import { roQuery } from "$lib/server/redis"
+import { query, mquery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
+import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 
 const schema = z.object({
 	status: z.string().min(1).max(1000),
 })
 
-export async function load({ locals }) {
-	const { user } = await authorise(locals),
-		// (main)/+layout.server.ts will handle most redirects for logged-out users,
-		// but sometimes errors for this page.
+// for the "You are the 1st user to join Mercury!" fact
+const suffixes: { [k: string]: string } = {
+	one: "st",
+	two: "nd",
+	few: "rd",
+	other: "th",
+}
+const ordinals = new Intl.PluralRules("en", { type: "ordinal" })
+const ordinal = (n: number) => `${n}${suffixes[ordinals.select(n)]}`
 
-		greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`],
-		facts = [
-			`You joined mercury on ${user?.accountCreated
-				.toLocaleString()
-				.substring(0, 10)}!`,
-			// Add "st", "nd", "rd", "th" to number
-			`You are the ${user?.number}${
-				["st", "nd", "rd"][(user?.number % 10) - 1] || "th"
-			} user to join Mercury!`,
-		]
+export async function load({ locals }) {
+	const { user } = await authorise(locals)
+	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
+
+	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
+	const facts = [
+		`You joined Mercury on ${user?.accountCreated
+			.toLocaleString()
+			.substring(0, 10)}!`,
+		// Add "st", "nd", "rd", "th" to number
+		`You are the ${ordinal(user?.number)} user to join Mercury!`,
+	]
+
+	const results = await mquery<unknown[]>(
+		surql`
+			# Places
+			SELECT
+				meta::id(id) AS id,
+				name,
+				serverPing,
+				count(
+					SELECT 1 FROM <-playing
+					WHERE valid AND ping > time::now() - 35s
+				) AS playerCount,
+				count(<-likes) AS likeCount,
+				count(<-dislikes) AS dislikeCount
+			FROM place WHERE !privateServer AND !deleted;
+
+			# Friends
+			SELECT number, status, username
+			FROM $user->friends->user OR $user<-friends<-user;
+
+			# Feed
+			SELECT
+				*,
+				(SELECT text, updated FROM $parent.content
+				ORDER BY updated DESC) AS content,
+				(SELECT number, status, username
+				FROM <-posted<-user)[0] as authorUser
+			FROM statusPost LIMIT 40`,
+		{ user: `user:${user.id}` }
+	)
 
 	return {
 		stuff: {
 			greet: greets[Math.floor(Math.random() * greets.length)],
 			fact: facts[Math.floor(Math.random() * facts.length)],
 		},
-		form: superValidate(schema),
-		places: findPlaces({
-			where: {
-				privateServer: false,
-			},
-			select: {
-				name: true,
-				id: true,
-				gameSessions: {
-					where: {
-						ping: {
-							gt: Math.floor(Date.now() / 1000) - 35,
-						},
-					},
-				},
-			},
-		}),
-		friends: prisma.authUser.findMany({
-			where: {
-				username: {
-					in: (
-						await roQuery(
-							"friends",
-							cql`
-								MATCH (:User { name: $user }) -[r:friends]- (u:User)
-								RETURN u.name as name`,
-							{
-								user: user.username,
-							},
-							false,
-							true,
-						)
-					).map((i: any) => i.name),
-				},
-			},
-			select: {
-				username: true,
-				number: true,
-			},
-		}),
-		feed: prisma.post.findMany({
-			select: {
-				id: true,
-				content: true,
-				posted: true,
-				authorUser: {
-					select: {
-						username: true,
-						number: true,
-					},
-				},
-			},
-			orderBy: {
-				posted: "desc",
-			},
-			take: 40,
-		}),
+		form: await superValidate(zod(schema)),
+		places: results[0] as {
+			id: number
+			name: string
+			playerCount: number
+			serverPing: number
+			likeCount: number
+			dislikeCount: number
+		}[],
+		friends: results[1] as {
+			number: number
+			status: "Playing" | "Online" | "Offline"
+			username: string
+		}[],
+		feed: results[2] as {
+			authorUser: {
+				number: number
+				status: "Playing" | "Online" | "Offline"
+				username: string
+			}
+			content: {
+				id: string
+				text: string
+				updated: string
+			}[]
+			id: string
+			posted: string
+			visibility: string
+		}[],
 	}
 }
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
-		const form = await superValidate(request, schema)
+		const form = await superValidate(request, zod(schema))
 		if (!form.valid) return formError(form)
 		const limit = ratelimit(form, "statusPost", getClientAddress, 30)
 		if (limit) return limit
 
 		const { user } = await authorise(locals)
 
-		await prisma.post.create({
-			data: {
-				authorUser: {
-					connect: {
-						username: user.username,
-					},
-				},
-				content: form.data.status,
-			},
-		})
+		const content = form.data.status.trim()
+		if (!content)
+			return formError(form, ["status"], ["Status cannot be empty"])
+
+		await query(
+			surql`
+				LET $status = CREATE statusPost CONTENT {
+					posted: time::now(),
+					visibility: "Visible",
+					content: [{
+						text: $content,
+						updated: time::now(),
+					}],
+				};
+				RELATE $user->posted->$status`,
+			{
+				content,
+				user: `user:${user.id}`,
+			}
+		)
 	},
 }

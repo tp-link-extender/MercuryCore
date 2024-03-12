@@ -1,19 +1,49 @@
 import { authorise } from "$lib/server/lucia"
-import { prisma } from "$lib/server/prisma"
+import { query, surql } from "$lib/server/surreal"
 
-export const load = async ({ locals }) => ({
-	assets: await prisma.asset.findMany({
-		where: {
-			owners: {
-				some: {
-					number: (await authorise(locals)).user.number,
-				},
-			},
-		},
-		select: {
-			name: true,
-			price: true,
-			id: true,
-		},
+const select = surql`
+	SELECT
+		meta::id(id) AS id,
+		name,
+		price,
+		type,
+		<-owns<-user AS owners
+	FROM asset WHERE $user ∈ <-owns<-user
+		AND type ∈ [17, 18, 2, 11, 12, 19] `
+
+export const load = async ({ locals, url }) => {
+	const searchQ = url.searchParams.get("q")?.trim()
+
+	return {
+		query: searchQ,
+		assets: await query<{
+			name: string
+			price: number
+			id: number
+			type: number
+		}>(
+			surql`${select} ${
+				searchQ
+					? surql`AND string::lowercase($query) ∈ string::lowercase(name)`
+					: ""
+			}`,
+			{
+				user: `user:${(await authorise(locals)).user.id}`,
+				query: searchQ,
+			}
+		),
+	}
+}
+
+export const actions = {
+	default: async ({ request, locals }) => ({
+		assets: await query(
+			surql`${select}
+				AND string::lowercase($query) ∈ string::lowercase(name)`,
+			{
+				query: (await request.formData()).get("q") as string,
+				user: `user:${(await authorise(locals)).user.id}`,
+			}
+		),
 	}),
-})
+}

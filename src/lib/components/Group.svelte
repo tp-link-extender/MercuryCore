@@ -1,10 +1,9 @@
 <script lang="ts">
-	// Component for a group, used on the
-	// groups page and on a user's profile.
+	// Component for a group, used on the groups and search pages.
 
 	export let group: {
 		name: string
-		members: number
+		memberCount: number
 	}
 	export let num: number
 	export let total: number
@@ -12,14 +11,14 @@
 
 <a
 	in:fade={{ num, total }}
-	class="card text-center light-text bg-darker text-decoration-none h6 rounded-4 m-0"
+	class="card text-center light-text bg-darker no-underline rounded-4"
 	href="/groups/{group.name}">
-	<div class="p-4 d-flex flex-column h-100">
+	<div class="p-4 flex flex-col h-full">
 		{group.name}
-		<div class="mt-auto mb-1 float-end">
-			<span class="float-end">
-				<i class="fa fa-user opacity-75" />
-				{group.members}
+		<div class="mt-auto mb-1 float-right">
+			<span class="float-right">
+				<fa fa-user class="opacity-75" />
+				{group.memberCount}
 			</span>
 		</div>
 	</div>

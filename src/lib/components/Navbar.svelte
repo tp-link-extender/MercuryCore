@@ -1,428 +1,266 @@
 <script lang="ts">
 	import { goto } from "$app/navigation"
-	import { quadOut } from "svelte/easing"
+	import { slide } from "svelte/transition"
 
-	let search = "",
-		searchCompleted = true,
-		currentSearchFocus = -1
+	let search = ""
+	let searchCompleted = true
+	let currentSearchFocus = -1
 
 	$: if (search == "") {
 		searchCompleted = true
 		currentSearchFocus = -1
 	}
 
-	const height = (_: HTMLElement) => ({
-			duration: 300,
-			css: (t: number) => `
-				height: ${2 * quadOut(t)}rem;
-				overflow: hidden;
-			`,
-		}),
-		searchResults: HTMLElement[] = []
+	let searchInput: HTMLInputElement
+	const searchResults: HTMLElement[] = []
+
+	function keydown(
+		e: KeyboardEvent & {
+			currentTarget: EventTarget & HTMLInputElement
+		}
+	) {
+		switch (e.key) {
+			case "Enter":
+				if (!searchCompleted && currentSearchFocus >= 0) {
+					e.preventDefault()
+					searchResults[currentSearchFocus].click()
+				}
+
+				searchCompleted = true
+				currentSearchFocus = -1
+				break
+			case "ArrowDown":
+			case "ArrowUp":
+				e.preventDefault()
+
+				// Focus first result
+				const prevSearchFocus = currentSearchFocus
+
+				currentSearchFocus += e.key == "ArrowDown" ? 1 : -1
+				currentSearchFocus =
+					currentSearchFocus >= searchCategories.length
+						? 0
+						: currentSearchFocus < 0
+							? searchCategories.length - 1
+							: currentSearchFocus
+
+				searchResults[currentSearchFocus]?.classList.add("pseudofocus")
+				searchResults[prevSearchFocus]?.classList.remove("pseudofocus")
+
+				break
+			case "Escape":
+				search = ""
+				break
+			default:
+				searchCompleted = false
+		}
+	}
 
 	export let data: import("../../routes/$types").LayoutData
 
-	const { user } = data,
-		nav1 = [
-			// ["Home", "/", "fa-house-chimney"],
-			["Games", "/games", "fa-mountain-sun"],
-			["Catalog", "/avatarshop", "fa-book-open-cover"],
-			// ["Groups", "/groups", "fa-people-group"],
-			["Create", "/develop", "fa-plus"],
-			["Forum", "/forum", "fa-messages"],
-		],
-		usernav = [
-			["fa-user-group", "Friends", "/requests"],
-			["fa-box-open-full", "Inventory", "/inventory"],
-			["fa-user-pen", "Avatar", "/avatar"],
-			["fa-gears", "Settings", "/settings"],
-		],
-		searchCategories = [
-			["Users", "users"],
-			["Places", "places"],
-			["Catalog", "assets"],
-			// ["Groups", "groups"],
-		]
+	const { user } = data
+	const nav1 = [
+		// ["Home", "/", "fa-house-chimney"],
+		["Games", "/games", "fa-mountain-sun"],
+		["Catalog", "/avatarshop", "fa-book-open-cover"],
+		// ["Groups", "/groups", "fa-people-group"],
+		["Create", "/develop", "fa-plus"],
+		["Forum", "/forum", "fa-messages"]
+	]
+	const usernav = [
+		["fa-user-group", "Friends", "/requests"],
+		["fa-box-open-full", "Inventory", "/inventory"],
+		["fa-user-pen", "Character", "/character"],
+		["fa-gears", "Settings", "/settings"]
+	]
+	const searchCategories = [
+		["Users", "users"],
+		["Places", "places"],
+		["Catalog", "assets"]
+		// ["Groups", "groups"],
+	]
 
 	if (user && user.permissionLevel >= 4)
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 </script>
 
-<nav class="navbar navbar-expand py-0">
-	<div class="w-100 border-0" tabindex="-1">
-		<div id="nav1" class="py-1 d-flex">
-			<a class="navbar-brand light-text me-0" href="/">
-				<img class="me-2" src="/favicon.svg" alt="Mercury logo" />
-				<span class="me-6">Mercury</span>
-			</a>
-			{#if user}
-				<div id="topnav" class="row me-2">
-					<div class="col-6">
-						<div class="navbar-nav">
-							{#each nav1 as [title, href]}
+<svelte:window
+	on:keydown={e => {
+		// the right way (actually works on different keyboard layouts)
+		if (e.ctrlKey && e.key == "k") {
+			e.preventDefault()
+			searchInput.focus()
+		}
+	}} />
+
+<nav class="py-0 justify-start z-11">
+	<div class="pt-1 px-2 sm:px-4 flex w-full pb-2px bg-[--navbar]">
+		<a class="brand light-text text-xl no-underline my-auto" href="/">
+			<img src="/icon.svg" alt="Mercury logo" class="sm:hidden size-8" />
+			<span class="sf <sm:hidden">Mercury</span>
+		</a>
+		{#if user}
+			<div
+				class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3 pt-0.19rem">
+				{#each nav1 as [title, href]}
+					<a class="btn px-1 light-text border-0" {href}>
+						{title}
+					</a>
+				{/each}
+			</div>
+			<form
+				use:enhance
+				method="POST"
+				action="/search"
+				role="search"
+				class="mx-auto px-2 pb-1">
+				<div
+					class="input-group max-w-140 pt-3px xl:(absolute left-1/2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
+					<input
+						bind:this={searchInput}
+						bind:value={search}
+						on:keydown={keydown}
+						class="bg-background h-10 pl-4"
+						name="query"
+						type="search"
+						placeholder="Search (ctrl+k)"
+						aria-label="Search (ctrl+k)"
+						autocomplete="off" />
+					<button
+						on:click|preventDefault={() => {
+							if (search.trim())
+								goto(`/search?q=${search.trim()}&c=users`)
+							searchCompleted = true
+						}}
+						class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
+						title="Search (ctrl+k)">
+						<fa fa-search />
+					</button>
+					{#if search.trim() && !searchCompleted}
+						<div
+							transition:fade={{ duration: 150 }}
+							id="results"
+							class="absolute flex flex-col bg-darker p-2 mt-12 rounded-3 z-5 min-w-25vw">
+							{#each searchCategories as [name, category], num}
 								<a
-									class="btn mt-1 px-1 light-text nav-item"
-									{href}>
-									{title}
+									bind:this={searchResults[num]}
+									class="btn light-text py-2 text-start"
+									href="/search?q={search.trim()}&c={category}"
+									title="Search {name}">
+									Search <b>{search}</b>
+									in {name}
 								</a>
 							{/each}
 						</div>
+					{/if}
+				</div>
+			</form>
+			<div class="flex items-center gap-6">
+				<a
+					href="/notifications"
+					aria-label="Notifications"
+					class="tooltip <lg:hidden font-bold light-text">
+					<fa fa-bell />
+				</a>
+				<a
+					href="/transactions"
+					aria-label="Transactions"
+					class="tooltip flex items-center no-underline <sm:w-20 text-emerald-6 hover:text-emerald-8!">
+					<fa fa-gem class="pr-2" />
+					{user.currency}
+				</a>
+				<div class="dropdown dropdown-hover dropdown-end">
+					<User
+						{user}
+						class="<sm:hidden"
+						thin
+						bg="background"
+						size="2.4rem"
+						full />
+					<User
+						{user}
+						class="sm:hidden"
+						thin
+						bg="background"
+						size="2.4rem" />
+					<div class="dropdown-content pt-2">
+						<ul class="p-2 rounded-3">
+							{#each usernav as [icon, title, href]}
+								<li class="rounded-2">
+									<a class="btn light-text pl-4 pr-0" {href}>
+										<fa class="{icon} pr-2" />
+										{title}
+									</a>
+								</li>
+							{/each}
+							<li class="rounded-2">
+								<form
+									use:enhance
+									method="POST"
+									action="/api?/logout">
+									<button class="btn text-red-5 pl-4 pr-0">
+										<fa
+											fa-arrow-right-from-bracket
+											class="pr-2" />
+										<b>Log out</b>
+									</button>
+								</form>
+							</li>
+						</ul>
 					</div>
 				</div>
-				<div class="navbar-nav mx-auto">
-					<form
-						use:enhance
-						method="POST"
-						action="/search"
-						class="w-auto"
-						role="search">
-						<div class="input-group">
-							<input
-								bind:value={search}
-								on:keydown={e => {
-									switch (e.key) {
-										case "Enter":
-											if (
-												!searchCompleted &&
-												currentSearchFocus >= 0
-											) {
-												e.preventDefault()
-												searchResults[
-													currentSearchFocus
-												].click()
-											}
-
-											searchCompleted = true
-											currentSearchFocus = -1
-											break
-										case "ArrowDown":
-										case "ArrowUp":
-											e.preventDefault()
-
-											// Focus first result
-											const prevSearchFocus =
-												currentSearchFocus
-
-											currentSearchFocus +=
-												e.key == "ArrowDown" ? 1 : -1
-
-											currentSearchFocus =
-												currentSearchFocus >=
-												searchCategories.length
-													? 0
-													: currentSearchFocus < 0
-													? searchCategories.length -
-													  1
-													: currentSearchFocus
-
-											searchResults[
-												currentSearchFocus
-											]?.classList.add("pseudofocus")
-											searchResults[
-												prevSearchFocus
-											]?.classList.remove("pseudofocus")
-
-											break
-										case "Escape":
-											search = ""
-											break
-										default:
-											searchCompleted = false
-									}
-								}}
-								class="form-control valid bg-background"
-								name="query"
-								type="search"
-								placeholder="Search"
-								aria-label="Search"
-								autocomplete="off" />
-							<button
-								on:click|preventDefault={() => {
-									search
-										? goto(`/search?q=${search}&c=users`)
-										: null
-
-									searchCompleted = true
-								}}
-								class="btn btn-success py-0 rounded-end-2"
-								title="Search">
-								<i class="fa fa-search" />
-							</button>
-							{#if search && !searchCompleted}
-								<div
-									transition:fade={{ duration: 150 }}
-									id="results"
-									class="position-absolute d-flex flex-column bg-darker p-2 mt-12 rounded-3">
-									{#each searchCategories as [name, category], num}
-										<a
-											bind:this={searchResults[num]}
-											class="btn text-start light-text py-2"
-											href="/search?q={search}&c={category}"
-											title="Search {name}">
-											Search <b>{search}</b>
-											in {name}
-										</a>
-									{/each}
-								</div>
-							{/if}
-						</div>
-					</form>
-				</div>
-				<ul class="navbar-nav loggedin m-0">
-					<li id="notificationstop" class="pt-1">
-						<a
-							href="/notifications"
-							role="button"
-							aria-label="Notifications"
-							class="font-bold nav-link me-1">
-							<i class="fa fa-bell light-text" />
-						</a>
-					</li>
-					<li id="transactionsbutton" class="pt-1">
-						<a
-							href="/transactions/your"
-							role="button"
-							aria-label="Transactions"
-							class="nav-link text-success">
-							<i class="fa fa-gem me-1 text-success" />
-							<span class="h6 text-success">
-								{user.currency}
-							</span>
-						</a>
-					</li>
-
-					<li class="dropdown2 dropdown-hover dropdown-end">
-						<a href="/user/{user.number}" class="btn p-0 d-flex">
-							<div
-								id="pfp"
-								class="mx-2 rounded-circle bg-background">
-								<img
-									src="/api/avatar/{user?.username}"
-									alt="You"
-									class="rounded-circle rounded-top-0" />
-							</div>
-							<p class="my-auto fs-6 light-text">
-								{user?.username}
-							</p>
-						</a>
-						<div class="dropdown-content pt-2">
-							<ul class="p-2 rounded-3">
-								{#each usernav as [icon, title, href]}
-									<li class="rounded-2">
-										<a
-											class="btn light-text ps-4 pe-0 text-start"
-											{href}>
-											<i class="fa {icon} me-2" />
-											{title}
-										</a>
-									</li>
-								{/each}
-								<li class="rounded-2">
-									<form
-										use:enhance
-										method="POST"
-										action="/api?/logout">
-										<button
-											class="btn text-danger ps-4 pe-0 text-start">
-											<i
-												class="fa fa-arrow-right-from-bracket me-2" />
-											<b>Log out</b>
-										</button>
-									</form>
-								</li>
-							</ul>
-						</div>
-					</li>
-				</ul>
-			{:else}
-				<ul class="navbar-nav loggedin">
-					<li class="nav-item mt-1">
-						<a href="/login" class="btn mb-1 light-text">Log in</a>
-					</li>
-					<li class="nav-item mt-1">
-						<a
-							href="/register"
-							class="btn btn-success my-2 my-sm-0">
-							Register
-						</a>
-					</li>
-				</ul>
-			{/if}
-		</div>
+			</div>
+		{:else}
+			<div class="flex w-full gap-4 justify-end items-center py-1">
+				<a href="/login" class="btn btn-secondary py-2">Log in</a>
+				<a href="/register" class="btn btn-primary py-2">Register</a>
+			</div>
+		{/if}
 	</div>
 </nav>
 
 {#if data.banners && user}
-	{#each data.banners as announcement (announcement.id)}
+	{#each data.banners as banner (banner.id)}
 		<div
-			transition:height
-			class="py-1 my-0 rounded-0 text-center border-0 text-{announcement.textLight
-				? 'light'
-				: ''}"
+			transition:slide
+			class="py-1 text-center {banner.textLight
+				? 'text-white'
+				: 'text-black'}"
 			role="alert"
-			style="background: {announcement.bgColour}">
-			{announcement.body}
+			style="background: {banner.bgColour}">
+			{banner.body}
 		</div>
 	{/each}
 {/if}
 
 {#if user}
-	<nav id="bottomnav" class="position-fixed bottom-0 bg-darker w-100">
-		<div class="d-flex flex-row justify-content-evenly mx-auto">
-			{#each nav1 as [title, href, icon]}
-				<a {href} class="btn light-text nav-item d-flex flex-column">
-					<i class="fa {icon} mb-1" />
+	<nav
+		id="bottomnav"
+		class="lg:hidden fixed bottom-0 bg-darker w-full h-14 sm:h-16 z-11">
+		<div class="flex justify-evenly mx-auto w-full sm:w-1/2">
+			{#each [...nav1, ["Notifications", "/notifications", "fa-bell"]] as [title, href, icon]}
+				<a
+					{href}
+					class="btn light-text border-0 flex flex-col items-center text-0.9rem px-0.2rem sm:(text-base px-2)">
+					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem" />
 					{title}
 				</a>
 			{/each}
-			<a
-				href="/notifications"
-				id="notificationsbottom"
-				class="btn light-text nav-item flex-column">
-				<i class="fa fa-bell mb-1" />
-				Notifications
-			</a>
 		</div>
 	</nav>
 {/if}
 
 <style lang="stylus">
-	.loggedin
-		margin-left auto
-
-	nav
-		z-index 9
-
 	#bottomnav
 		border-top 1px solid var(--accent)
-		height 4rem
 
 		box-shadow 0 0 1rem 0.2rem black
-		+lightTheme()
-			box-shadow 0 0 1rem 0.2rem white
-
-		div
-			width 50%
-		a
-			font-size 1rem
-			padding-left 0.5rem
-			padding-right 0.5rem
-		i
-			font-size 1.5rem
-	
-	+lightTheme()
-		.navbar-brand img
-			filter invert(1)
-
-	+lg()
-		#bottomnav
-		#notificationsbottom
-			display none
-
-	+-lg()
-		#topnav
-		#notificationstop
-			display none
-		#notificationsbottom
-			display flex
-
-	+sm()
-		#nav1
-			padding-left 1rem
-			padding-right 1rem
-		.navbar-brand
-			img
-				display none
-
-	+-sm()
-		#nav1
-			padding-left 0.5rem
-			padding-right 0.5rem
-		.dropdown2 p
-			display none
-		.navbar-brand
-			img
-				margin-top -0.2rem
-				width 2rem
-				height 2rem
-
-			span
-				display none
-
-		#bottomnav
-			height 3.5rem
-			div
-				width 100%
-			a
-				font-size 0.9rem	
-				padding-left 0.2rem
-				padding-right 0.2rem
-			i
-				font-size 1.2rem
-
-		#transactionsbutton
-			width 5rem
-
-	#nav1
-		background #fff1
-		+lightTheme()
-			background #0003
-
-	.loggedin
-		padding 0
-
-	.dropdown2
-		margin-top 2px
-		p
-			max-width 6rem
-			min-width 1rem
-			// ellipsis
-			overflow hidden
-			text-overflow ellipsis
-
-	#topnav
-		z-index 9
-		max-height 10vh
-
-	#bottomnav
-	.navbar-nav
-		a
-			border none
-
-	#pfp
-	#pfp img
-		width 2.4rem
-		height 2.4rem
 
 	#results
-		z-index 5
-		min-width 25vw
 		a:hover
 			background var(--accent)
 
 		:global(.pseudofocus)
 			color var(--grey-text) !important
 			background var(--accent)
-
-	.input-group
-		width 35vw
-		max-width 35rem
-		margin-top 2px
-
-		+xl()
-			position absolute
-			left 50%
-			transform translateX(-50%)
-		+-xl()
-			width 19rem
-		+-lg()
-			width 25rem
-		+-md()
-			width 13rem
-		+-sm()
-			width 100%
-
-		button
-		input
-			height 2.3rem
 </style>
