@@ -122,7 +122,31 @@ export const mquery = async <T>(
 	params?: { [k: string]: Param }
 ) => (await db.query(input, params)) as T
 
-const failed = "The query was not executed due to a failed transaction"
+export const failed = "The query was not executed due to a failed transaction"
+
+/**
+ * Returns an error if the query failed.
+ * @param qResult The result of a query.
+ * @example
+ * try {
+ * 	result = await query(surql`SELECT * FROM user WHERE username = "Heliodex"`)
+ * } catch (err) {
+ * 	const e = err as Error
+ * 	getError(e.message)
+ * }
+ */
+export function getError(qResult: unknown) {
+	let res: unknown[] = qResult as unknown[]
+	if (!Array.isArray(res)) res = [qResult]
+
+	for (const result of res)
+		if (result === failed || res.length === 1)
+			// Every other result will be `failed` if the query failed
+			for (const result2 of res)
+				if (typeof result2 === "string" && result2 !== failed)
+					return result2.match(/An error occurred: (.*)/)?.[1]
+}
+
 /**
  * Transfers currency from one user to another, and creates a transaction in the database.
  * @param sender An object containing the id or number of the user sending the currency.
@@ -153,7 +177,6 @@ export async function transaction(
 	>(
 		surql`
 			BEGIN TRANSACTION; # lmfao
-
 			LET $taxRate = stuff:economy.taxRate OR 30;
 
 			LET $sender = (SELECT id, currency, number FROM user
@@ -192,7 +215,6 @@ export async function transaction(
 				link: $link,
 				time: time::now(),
 			};
-
 			COMMIT TRANSACTION`,
 		{
 			...(sender?.number
@@ -207,11 +229,7 @@ export async function transaction(
 		}
 	)
 
-	for (const result of qResult)
-		if (result === failed)
-			for (const result2 of qResult)
-				if (typeof result2 === "string" && result2 !== failed)
-					throw new Error(
-						result2.match(/An error occurred: (.*)/)?.[1]
-					)
+	// todo test dis it might be broke
+	const e = getError(qResult)
+	if (e) throw new Error(e)
 }
