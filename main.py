@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-serverid = os.getenv("SERVERID")
-adminid = os.getenv("ADMINID")
+serverid = int(os.getenv("SERVERID"))
+adminid = int(os.getenv("ADMINID"))
 
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 
@@ -161,7 +161,7 @@ async def fetchApplication(url, userID, interaction):
         embedV.add_field(name="Reason for denial/ban", value=f"`{reason}`", inline=False)
     if status == "Denied":
         date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(weeks=1)
-        embedV.add_field(name="Application unlocked on", value=f"<t:{int(date.timestamp())}>")
+        embedV.add_field(name="Next application unlocked on", value=f"<t:{int(date.timestamp())}>")
     if isinstance(interaction.channel, discord.DMChannel):
         await interaction.response.send_message(embed=embedV)
     else:
@@ -177,7 +177,7 @@ async def deleteApplication(userID, interaction):
         await interaction.response.send_message(embed=embedV, view=deleteBtns(userId=userID))
     else:
         await user.send(embed=embedV, view=deleteBtns(userId=userID))
-    
+
 async def reviewedApp(interaction, user, userID, decision, reason=None):
     if decision == "denied":
         print(f"[green]Updating application #{userID}[/green]")
@@ -196,7 +196,13 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
 
         data = {"status":"Accepted"}
 
-        member = bot.get_guild(int(serverid)).get_member(userID)
+        guild = await bot.fetch_guild(int(serverid))
+
+        try: 
+            member = await guild.fetch_member(userID)
+        except:
+            member = False
+
         if not member:
             data = {"status":"Denied", "reason":"You are not currently in the Mercury 2 Discord server. If this is a mistake, please contact @task.mgr immediately."}
             desc = f"Hello, @{interaction.user}! Unfortunately, your application was **not successful**. The reason for this has been provided below."
@@ -211,7 +217,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         
         key = await updateApplication(f"https://banland.xyz/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}", data, userID)
 
-        role = discord.utils.get(bot.get_guild(int(serverid)).roles, name="cool role")
+        role = discord.utils.get(guild.roles, name="cool role")
         await member.add_roles(role)
 
         desc = f"Hello, @{interaction.user}! Congratulations! Your application was **successful**! Your invite key has been provided below."
@@ -236,6 +242,19 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         print(f"[green]{userID} banned by {interaction.user}[/green]")
     
     await user.send(embed=embedV)
+
+async def fetchAllApplications(url, userID):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            resp_data = await resp.text()
+            if resp.status == 200:
+                data = json.loads(resp_data)
+                print(f"[green]{userID} successfully fetched {len(data)} application(s) from server![/green]")
+                print(data)
+                return data
+            else:
+                print(resp.status)
+                return []  
 
 class keyApplication(ui.Modal):
     def __init__(self, userId):
@@ -500,5 +519,48 @@ async def unsubmit(interaction: discord.Interaction):
         await confirmedDelete(interaction)
         await deleteApplication(interaction.user.id, interaction)
 
+@bot.tree.command(name="fetch", description="Fetches all pending applications")
+async def fetch(interaction: discord.Interaction):
+
+    guild = await bot.fetch_guild(serverid)
+
+    mod = discord.utils.get(guild.roles, name='Owners')
+
+    if mod not in interaction.user.roles:
+        return await interaction.response.send_message("Sorry, but there was a problem running this command. Please notify @task.mgr with details.")
+
+    try:
+        applications = await fetchAllApplications(f"https://banland.xyz/api/discord/getApplication?apiKey={os.getenv('APIKEY')}", interaction.user.id)
+    except:
+        return await interaction.response.send_message("Sorry, but there was a problem running this command. Please notify @task.mgr with details.")
+    
+    if len(applications) == 0:
+        return await interaction.response.send_message("There are no pending applications at the moment.")
+
+    for i in range(len(applications)):
+
+        try:
+            user = await guild.fetch_member(int(applications[i]["discordId"]))
+        except:
+            user = "N/A - Left Server"
+
+        if len(str(applications[i]["response"][2])) <= 20:
+            applications[i]["response"][2] = "N/A"
+
+        print(applications[i]['discordId'])
+
+        embedV = discord.Embed(color=0x472a96)
+        embedV.set_author(name="Mercury 2 - Applications", url="https://banland.xyz", icon_url="https://banland.xyz/icon192.png")
+        embedV.title = f"New Applicant - @{user}"
+        embedV.add_field(name="User ID", value=str(applications[i]["discordId"]))
+        embedV.add_field(name="1. Why would you like to join Mercury 2", value=f"`{str(applications[i]['response'][0])}`", inline=False)
+        embedV.add_field(name="2. Where did you hear about Mercury 2?", value=f"`{str(applications[i]['response'][1])}`", inline=False)
+        embedV.add_field(name="3. Any questions/suggestions?", value=f"`{str(applications[i]['response'][2])}`", inline=False)
+        embedV.add_field(name="Status", value="No decision yet")
+        channel = bot.get_channel(int(adminid))
+        message = await channel.send(embed=embedV, allowed_mentions=None)
+        await message.edit(view=adminBtns(message_id = message.id)) 
+
+    await interaction.response.send_message(f"Fetched {len(applications)} applications!")
 
 bot.run(os.getenv("TOKEN"))
