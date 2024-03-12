@@ -7,7 +7,7 @@ export function verify(url: URL) {
 	if (!apiKey || apiKey !== process.env.DISCORD_KEY) error(400, "Gfy")
 }
 
-export const canApply = async (discordId: number) =>
+export const canApply = async (discordId: string) =>
 	!(await squery(
 		surql`
 			SELECT 1 FROM application

@@ -7,7 +7,7 @@ export async function GET({ url }) {
 	// Get all pending applications
 
 	const applications = await query<{
-		discordId: number
+		discordId: string
 		response: string[]
 		created: string
 		status: string
