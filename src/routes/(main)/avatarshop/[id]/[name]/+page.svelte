@@ -24,6 +24,8 @@
 
 	export const snapshot = formData
 
+	let refreshComments = 0
+
 	let tabData = TabData(data.url, ["Recommended", "Comments"])
 
 	const types: { [k: number]: string } = {
@@ -148,19 +150,28 @@
 
 	<Tab {tabData}>
 		<PostReply {formData} comment />
-
-		{#each data.replies as reply, num}
-			<ForumReply
-				{user}
-				{reply}
-				{num}
-				{replyingTo}
-				postId={data.id.toString()}
-				assetName={data.name}
-				postAuthorName={data.creator.username || ""}
-				{repliesCollapsed}
-				topLevel />
-		{/each}
+		{#if data.replies.length > 0}
+			{#key refreshComments}
+				{#each data.replies as reply, num}
+					<ForumReply
+						{user}
+						{reply}
+						{num}
+						{replyingTo}
+						postId={data.id.toString()}
+						assetName={data.name}
+						postAuthorName={data.creator.username || ""}
+						{repliesCollapsed}
+						topLevel={false}
+						pinnable
+						refreshReplies={() => refreshComments++} />
+				{/each}
+			{/key}
+		{:else}
+			<h3 class="text-center pt-6">
+				No replies yet. Be the first to post one!
+			</h3>
+		{/if}
 	</Tab>
 </div>
 

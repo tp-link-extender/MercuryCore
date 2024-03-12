@@ -1,5 +1,5 @@
 import { mquery, surql } from "./surreal"
-import fs from "fs"
+import fs from "node:fs"
 import "dotenv/config"
 
 type Render = {

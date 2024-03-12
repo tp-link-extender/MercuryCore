@@ -63,7 +63,7 @@ async function getVersions(id: number) {
 		console.log("Fetching asset version", v, "of", id)
 		const data = await fetch(
 			`https://assetdelivery.roblox.com/v1/asset/?id=${id}&version=${v}`,
-			{ headers: { "User-Agent": "Roblox/WinInet" } }
+			{ headers: { "user-agent": "Roblox/WinInet" } }
 		)
 
 		if (data.status === 500) continue
@@ -121,7 +121,7 @@ export async function load({ locals, url }) {
 		formAuto: await superValidate(zod(schemaAuto)),
 		stage,
 		...(stage === 2 && assetId
-			? { assetId, getVersions: getVersions(parseInt(assetId)) }
+			? { assetId, getVersions: getVersions(+assetId) }
 			: {}),
 	}
 }

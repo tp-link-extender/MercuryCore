@@ -1,4 +1,4 @@
-import os from "os"
+import os from "node:os"
 import { authorise } from "$lib/server/lucia"
 import checkDiskSpace from "check-disk-space"
 

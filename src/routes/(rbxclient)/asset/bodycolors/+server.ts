@@ -20,7 +20,7 @@ export async function GET({ url }) {
 		surql`
 			SELECT bodyColours FROM user
 			WHERE number = $id`,
-		{ id: parseInt(id) }
+		{ id: +id }
 	)
 
 	if (!getUser) error(404, "User not found")

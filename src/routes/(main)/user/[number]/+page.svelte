@@ -105,21 +105,27 @@
 						</a>
 					</div>
 
-					<span class="<lg:hidden">
-						<Interactions {data} />
-					</span>
+					{#if data.username !== user.username}
+						<span class="<lg:hidden">
+							<Interactions {data} />
+						</span>
+					{/if}
 				</div>
-				<div class="float-right <lg:hidden">
-					<ReportButton
-						user={data.username}
-						url="/user/{data.number}" />
-				</div>
+				{#if data.username !== user.username}
+					<div class="float-right <lg:hidden">
+						<ReportButton
+							user={data.username}
+							url="/user/{data.number}" />
+					</div>
+				{/if}
 			</div>
 		</div>
-		<span class="lg:hidden flex justify-between items-end pt-2">
-			<Interactions {data} />
-			<ReportButton user={data.username} url="/user/{data.number}" />
-		</span>
+		{#if data.username !== user.username}
+			<span class="lg:hidden flex justify-between items-end pt-2">
+				<Interactions {data} />
+				<ReportButton user={data.username} url="/user/{data.number}" />
+			</span>
+		{/if}
 	</div>
 	<div class="sm:grid grid-cols-2 gap-4">
 		<div>
@@ -127,13 +133,21 @@
 				<div class="pt-6">
 					<div class="flex justify-between">
 						<h2>Bio</h2>
-						<a
-							href="/settings"
-							class="btn light-text text-lg p-0 px-2">
-							<fa fa-pencil />
-						</a>
+						{#if data.username === user.username}
+							<a
+								href="/settings"
+								class="btn light-text text-lg p-0 px-2">
+								<fa fa-pencil />
+							</a>
+						{/if}
 					</div>
 					<p class="pl-2">{data.bio.text}</p>
+				</div>
+			{:else if data.username === user.username}
+				<div class="pt-6 text-center">
+					Add a bio in
+					<a href="/settings">Settings</a>
+					to tell others about yourself! It will display here.
 				</div>
 			{/if}
 			<div class="pt-6">
@@ -236,31 +250,25 @@
 		<div class="col-span-2">
 			{#if data.posts.length > 0}
 				<h2 class="pt-6">Latest feed posts</h2>
-				<div class="flex flex-wrap">
+				<div class="grid md:grid-cols-2 gap-4">
 					{#each data.posts.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
-							class="p-2 w-full md:w-1/2">
-							<div class="card bg-darker p-3 h-full">
-								<div
-									id="user"
-									class="flex pb-2 justify-between">
-									<User
-										user={data}
-										size="2rem"
-										full
-										image
-										bg="accent" />
-									<span class="italic flex-end">
-										{new Date(
-											status.posted
-										).toLocaleString()}
-									</span>
-								</div>
-								<p class="text-start mb-0">
-									{status.content[0].text}
-								</p>
+							class="card bg-darker p-3 h-full">
+							<div id="user" class="flex pb-2 justify-between">
+								<User
+									user={data}
+									size="2rem"
+									full
+									image
+									bg="accent" />
+								<span class="italic flex-end">
+									{new Date(status.posted).toLocaleString()}
+								</span>
 							</div>
+							<p class="text-start mb-0">
+								{status.content[0].text}
+							</p>
 						</div>
 					{/each}
 				</div>

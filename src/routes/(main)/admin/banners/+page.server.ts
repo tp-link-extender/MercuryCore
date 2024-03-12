@@ -55,7 +55,11 @@ async function getData({ request, locals }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, zod(schema))
 
-	return { user, form, error: !form.valid && formError(form) }
+	return {
+		user,
+		form,
+		error: !form.valid && formError(form),
+	}
 }
 
 const showHide = (action: string) => async (e: RequestEvent) => {
@@ -63,15 +67,9 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 	if (error) return error
 	const id = e.url.searchParams.get("id")
 
-	if (!id)
-		return message(form, "Missing fields", {
-			status: 400,
-		})
-
+	if (!id) return message(form, "Missing fields", { status: 400 })
 	if (action === "show" && (await bannerActiveCount()) >= 3)
-		return message(form, "Too many active banners", {
-			status: 400,
-		})
+		return message(form, "Too many active banners", { status: 400 })
 
 	await surreal.merge(`banner:${id}`, {
 		active: action === "show",
@@ -88,14 +86,10 @@ export const actions = {
 		const { bannerText, bannerColour, bannerTextLight } = form.data
 
 		if (!bannerText || !bannerColour)
-			return message(form, "Missing fields", {
-				status: 400,
-			})
+			return message(form, "Missing fields", { status: 400 })
 
 		if ((await bannerActiveCount()) >= 3)
-			return message(form, "Too many active banners", {
-				status: 400,
-			})
+			return message(form, "Too many active banners", { status: 400 })
 
 		await Promise.all([
 			surreal.create("banner", {
@@ -129,10 +123,7 @@ export const actions = {
 		if (error) return error
 		const id = e.url.searchParams.get("id")
 
-		if (!id)
-			return message(form, "Missing fields", {
-				status: 400,
-			})
+		if (!id) return message(form, "Missing fields", { status: 400 })
 
 		const deletedBanner = (
 			await surreal.merge<{
@@ -145,12 +136,12 @@ export const actions = {
 
 		await query(
 			surql`
-			CREATE auditLog CONTENT {
-				action: "Administration",
-				note: $note,
-				user: $user,
-				time: time::now()
-			}`,
+				CREATE auditLog CONTENT {
+					action: "Administration",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
 			{
 				note: `Delete banner "${deletedBanner.body}"`,
 				user: `user:${user.id}`,
@@ -164,13 +155,9 @@ export const actions = {
 		const { bannerBody } = form.data
 
 		if (!bannerBody || !id)
-			return message(form, "Missing fields", {
-				status: 400,
-			})
+			return message(form, "Missing fields", { status: 400 })
 
-		await surreal.merge(`banner:${id}`, {
-			body: bannerBody,
-		})
+		await surreal.merge(`banner:${id}`, { body: bannerBody })
 	},
 	updateTextLight: async e => {
 		const { form, error } = await getData(e)
@@ -178,14 +165,9 @@ export const actions = {
 		const id = e.url.searchParams.get("id")
 		const { bannerTextLight } = form.data
 
-		if (bannerTextLight == null || !id)
-			return message(form, "Missing fields", {
-				status: 400,
-			})
+		if (!id) return message(form, "Missing fields", { status: 400 })
 
-		await surreal.merge(`banner:${id}`, {
-			textLight: bannerTextLight,
-		})
+		await surreal.merge(`banner:${id}`, { textLight: !!bannerTextLight })
 	},
 	show: showHide("show"),
 	hide: showHide("hide"),

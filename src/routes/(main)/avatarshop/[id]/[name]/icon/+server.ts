@@ -1,12 +1,12 @@
 import { authorise } from "$lib/server/lucia"
 import { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
-import fs from "fs"
+import fs from "node:fs"
 
 export async function GET({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
-	const id = parseInt(params.id)
+	const id = +params.id
 
 	const asset = await squery<{
 		id: number

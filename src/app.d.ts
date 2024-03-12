@@ -70,6 +70,7 @@ declare global {
 	declare const Moon: typeof import("$lib/components/Moon.svelte").default
 	declare const Navbar: typeof import("$lib/components/Navbar.svelte").default
 	declare const NoScript: typeof import("$lib/components/NoScript.svelte").default
+	declare const PinButton: typeof import("$lib/components/PinButton.svelte").default
 	declare const Place: typeof import("$lib/components/Place.svelte").default
 	declare const PostReply: typeof import("$lib/components/PostReply.svelte").default
 	declare const ReportButton: typeof import("$lib/components/ReportButton.svelte").default
@@ -94,4 +95,4 @@ declare global {
 	declare const { enhance, deserialize }: typeof import("$app/forms")
 }
 
-export {}
+export type {}

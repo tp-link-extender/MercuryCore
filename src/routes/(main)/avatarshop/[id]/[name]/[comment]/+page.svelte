@@ -6,6 +6,8 @@
 	const { user } = data
 
 	$: topReply = data.replies[0]
+
+	let refresh = 0
 </script>
 
 <Head title="Comments on asset" />
@@ -15,19 +17,22 @@
 		path={[
 			["Avatar shop", "/avatarshop"],
 			[data.assetName, `/avatarshop/${data.assetId}/${data.assetName}`],
-			[topReply.content[0].text, ""],
+			[topReply.content[0].text, ""]
 		]} />
 
-	{#each data.replies as reply, num}
-		<ForumReply
-			{user}
-			{reply}
-			{num}
-			{replyingTo}
-			postId={data.assetId.toString()}
-			assetName={data.assetName}
-			postAuthorName={data.creator || ""}
-			{repliesCollapsed} />
-	{/each}
+	{#key refresh}
+		{#each data.replies as reply, num}
+			<ForumReply
+				{user}
+				{reply}
+				{num}
+				{replyingTo}
+				postId={data.assetId.toString()}
+				assetName={data.assetName}
+				postAuthorName={data.creator || ""}
+				{repliesCollapsed}
+				pinnable={!reply.parentReplyId}
+				refreshReplies={() => refresh++} />
+		{/each}
+	{/key}
 </div>
-

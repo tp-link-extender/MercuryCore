@@ -54,7 +54,7 @@ export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.number))
 		error(400, `Invalid user id: ${params.number}`)
 
-	const number = parseInt(params.number)
+	const number = +params.number
 	const { user } = await authorise(locals)
 	const userExists = await squery<User>(
 		// You could start with five or six queries, or ~just one~
@@ -120,7 +120,7 @@ async function getData({ params }: RequestEvent) {
 		surql`
 			SELECT meta::id(id) AS id, username
 			FROM user WHERE number = $number`,
-		{ number: parseInt(params.number) }
+		{ number: +params.number }
 	)
 	if (!user2) error(404, "User not found")
 
@@ -291,7 +291,7 @@ export const actions = {
 		const { user2 } = await getData(e)
 
 		try {
-			await requestRender("Avatar", parseInt(params.number), true)
+			await requestRender("Avatar", +params.number, true)
 			return {
 				avatarBody: `/api/avatar/${
 					user2.username

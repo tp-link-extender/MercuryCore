@@ -97,7 +97,7 @@ export const actions = {
 				LET $key = CREATE ${enableInviteCustom ? "$" : ""}regKey CONTENT {
 					usesLeft: $inviteUses,
 					expiry: $expiry,
-					created: time::now(),
+					created: time::now()
 				};
 				RELATE $user->created->$key;
 				CREATE auditLog CONTENT {
@@ -106,7 +106,7 @@ export const actions = {
 					user: $user,
 					time: time::now()
 				};
-				COMMIT TRANSACTION;`,
+				COMMIT TRANSACTION`,
 			{
 				user: `user:${user.id}`,
 				inviteUses,

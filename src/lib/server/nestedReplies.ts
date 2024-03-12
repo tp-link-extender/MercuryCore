@@ -13,14 +13,14 @@ export type Replies = {
 		text: string
 		updated: string
 	}[]
-	dislikeCount: number
 	dislikes: boolean
 	id: string
-	likeCount: number
 	likes: boolean
 	parentReplyId: null
+	pinned: boolean
 	posted: string
 	replies: Replies
+	score: number
 	visibility: string
 }[]
 
@@ -34,8 +34,7 @@ const SELECTFROM = surql`
 		(SELECT number, status, username
 		FROM <-posted<-user)[0] AS author,
 
-		count(<-likes) AS likeCount,
-		count(<-dislikes) AS dislikeCount,
+		count(<-likes) - count(<-dislikes) AS score,
 		$user ∈ <-likes<-user.id AS likes,
 		$user ∈ <-dislikes<-user.id AS dislikes,
 
@@ -53,7 +52,8 @@ export function recurse(
 	for (let i = 0; i < times; i++)
 		rep = rep.replace(
 			/# again #/g,
-			surql`(${SELECTFROM} <-${relationName}<-${commentName}) AS replies`
+			surql`
+				(${SELECTFROM} <-${relationName}<-${commentName}) AS replies`
 		)
 
 	return rep.replace(/# again #/g, "[] AS replies")

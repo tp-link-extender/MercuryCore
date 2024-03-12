@@ -17,7 +17,7 @@
 	right 0px
 
 .dropdown
-	&.dropdown-open .dropdown-content
+	// &.dropdown-open .dropdown-content
 	&:not(.dropdown-hover):focus .dropdown-content
 	&:focus-within .dropdown-content
 	&.dropdown-hover:hover .dropdown-content
@@ -30,6 +30,8 @@
 // Other styles
 
 .dropdown-content
+	@apply transition transition-all duration-300 ease-in-out
+
 	z-index 1000
 	padding-left 0.5rem
 	max-height 25rem !important
@@ -39,6 +41,7 @@
 		list-style none
 		width 10rem
 		background var(--darker)
+		margin 0
 
 	a
 	button

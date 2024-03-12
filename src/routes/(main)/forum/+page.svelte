@@ -35,7 +35,7 @@
 								href="/forum/{category.name.toLowerCase()}/{category
 									.latestPost.id}"
 								class="light-text no-underline">
-								Last post:
+								Latest post:
 								<h3>
 									{category.latestPost.title}
 								</h3>

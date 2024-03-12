@@ -16,12 +16,12 @@ type Category = {
 		content: {
 			text?: string
 		}[]
-		dislikeCount: number
 		dislikes: boolean
 		id: string
-		likeCount: number
 		likes: boolean
+		pinned: boolean
 		posted: string
+		score: number
 		title: string
 		visibility: string
 	}[]
@@ -40,11 +40,11 @@ export async function load({ locals, params }) {
 					ORDER BY updated DESC) AS content,
 					(SELECT number, status, username
 					FROM <-posted<-user)[0] AS author,
-					count(<-likes<-user) AS likeCount,
-					count(<-dislikes<-user) AS dislikeCount,
+					count(<-likes<-user) - count(<-dislikes<-user) AS score,
 					($user ∈ <-likes<-user.id) AS likes,
 					($user ∈ <-dislikes<-user.id) AS dislikes
-				FROM $parent<-in.in) AS posts
+				FROM $parent<-in.in
+				ORDER BY pinned DESC, score DESC) AS posts
 			OMIT id
 			FROM forumCategory
 			WHERE string::lowercase(name) = string::lowercase($category)`,

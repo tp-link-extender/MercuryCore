@@ -1,19 +1,22 @@
+import { building } from "$app/environment"
 import { Surreal } from "surrealdb.js"
 
 const db = new Surreal()
 
-await db.connect("http://localhost:8000/rpc")
-await db.signin({
-	username: "root",
-	password: "root",
-})
+if (!building) {
+	await db.connect("http://localhost:8000/rpc")
+	await db.signin({
+		username: "root",
+		password: "root",
+	})
 
-await db.use({
-	namespace: "main",
-	database: "main",
-})
+	await db.use({
+		namespace: "main",
+		database: "main",
+	})
 
-console.log("loaded surreal")
+	console.log("loaded surreal")
+}
 
 export default db
 
@@ -40,20 +43,20 @@ export const surql = (
 		return newQuery
 	}, "")
 
-await db.query(surql`
-	DEFINE TABLE stuff SCHEMALESS;
+if (!building)
+	await db.query(surql`
+		DEFINE TABLE stuff SCHEMALESS;
 
-	DEFINE TABLE user SCHEMALESS;
-	DEFINE INDEX usernameI ON TABLE user COLUMNS username UNIQUE;
-	DEFINE INDEX numberI ON TABLE user COLUMNS number UNIQUE;
-	DEFINE INDEX emailI ON TABLE user COLUMNS email UNIQUE;
+		DEFINE TABLE user SCHEMALESS;
+		DEFINE INDEX usernameI ON TABLE user COLUMNS username UNIQUE;
+		DEFINE INDEX numberI ON TABLE user COLUMNS number UNIQUE;
+		DEFINE INDEX emailI ON TABLE user COLUMNS email UNIQUE;
 
-	DEFINE FUNCTION fn::id() {
-		RETURN function((UPDATE ONLY stuff:increment SET ids += 1).ids) {
-			return arguments[0].toString(36)
-		}
-	};
-`)
+		DEFINE FUNCTION fn::id() {
+			RETURN function((UPDATE ONLY stuff:increment SET ids += 1).ids) {
+				return arguments[0].toString(36) // jar var script in muh dayta bayse
+			}
+		}`)
 
 const stupidError =
 	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
@@ -119,7 +122,31 @@ export const mquery = async <T>(
 	params?: { [k: string]: Param }
 ) => (await db.query(input, params)) as T
 
-const failed = "The query was not executed due to a failed transaction"
+export const failed = "The query was not executed due to a failed transaction"
+
+/**
+ * Returns an error if the query failed.
+ * @param qResult The result of a query.
+ * @example
+ * try {
+ * 	result = await query(surql`SELECT * FROM user WHERE username = "Heliodex"`)
+ * } catch (err) {
+ * 	const e = err as Error
+ * 	getError(e.message)
+ * }
+ */
+export function getError(qResult: unknown) {
+	let res: unknown[] = qResult as unknown[]
+	if (!Array.isArray(res)) res = [qResult]
+
+	for (const result of res)
+		if (result === failed || res.length === 1)
+			// Every other result will be `failed` if the query failed
+			for (const result2 of res)
+				if (typeof result2 === "string" && result2 !== failed)
+					return result2.match(/An error occurred: (.*)/)?.[1]
+}
+
 /**
  * Transfers currency from one user to another, and creates a transaction in the database.
  * @param sender An object containing the id or number of the user sending the currency.
@@ -150,7 +177,6 @@ export async function transaction(
 	>(
 		surql`
 			BEGIN TRANSACTION; # lmfao
-
 			LET $taxRate = stuff:economy.taxRate OR 30;
 
 			LET $sender = (SELECT id, currency, number FROM user
@@ -189,7 +215,6 @@ export async function transaction(
 				link: $link,
 				time: time::now(),
 			};
-
 			COMMIT TRANSACTION`,
 		{
 			...(sender?.number
@@ -204,11 +229,7 @@ export async function transaction(
 		}
 	)
 
-	for (const result of qResult)
-		if (result === failed)
-			for (const result2 of qResult)
-				if (typeof result2 === "string" && result2 !== failed)
-					throw new Error(
-						result2.match(/An error occurred: (.*)/)?.[1]
-					)
+	// todo test dis it might be broke
+	const e = getError(qResult)
+	if (e) throw new Error(e)
 }

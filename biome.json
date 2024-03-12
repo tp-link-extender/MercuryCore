@@ -3,6 +3,19 @@
 	"formatter": {
 		"indentWidth": 4
 	},
+	"files": {
+		"ignore": ["*.svelte"]
+	},
+	"linter": {
+		"rules": {
+			"nursery": {
+				"all": true,
+				"noUndeclaredDependencies": "off",
+				"noNodejsModules": "off",
+				"noConsole": "off"
+			}
+		}
+	},
 	"javascript": {
 		"formatter": {
 			"semicolons": "asNeeded",

@@ -20,38 +20,41 @@ const schema = z.object({
 const SELECTCOMMENTS = recurse(
 	from => surql`
 		(${from} <-replyToAsset<-assetComment
-		WHERE !->replyToComment) AS replies`,
+		WHERE !->replyToComment
+		ORDER BY pinned DESC, score DESC) AS replies`,
 	// Make sure it's not a reply to another reply
 	"replyToComment",
 	"assetComment"
 )
 
+type Asset = {
+	creator: {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+	description: {
+		text: string
+		updated: string
+	}
+	id: string
+	name: string
+	owned: boolean
+	posted: string
+	price: number
+	replies: Replies
+	sold: number
+	type: number
+	visibility: string
+}
+
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
 	const { user } = await authorise(locals)
-	const id = parseInt(params.id)
+	const id = +params.id
 
-	const asset = await squery<{
-		creator: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
-		description: {
-			text: string
-			updated: string
-		}
-		id: string
-		name: string
-		owned: boolean
-		posted: string
-		price: number
-		replies: Replies
-		sold: number
-		type: number
-		visibility: string
-	}>(
+	const asset = await squery<Asset>(
 		surql`
 			SELECT
 				*,
@@ -93,7 +96,7 @@ export async function load({ locals, params }) {
 
 async function getBuyData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
-	const id = parseInt(e.params.id)
+	const id = +e.params.id
 
 	if (
 		!(await squery(surql`SELECT * FROM $asset`, {
@@ -103,6 +106,49 @@ async function getBuyData(e: RequestEvent) {
 		error(404)
 
 	return { user, id }
+}
+
+async function findComment<T>(
+	e: RequestEvent,
+	permissionLevel?: number,
+	input = surql`SELECT 1 FROM $assetComment`
+) {
+	const { locals, url } = e
+	const { user } = await authorise(locals, permissionLevel)
+
+	const id = url.searchParams.get("id")
+	if (!id) error(400, "Missing comment id")
+	// Prevents incorrect ids erroring the Surreal query as well
+	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid comment id")
+
+	const comment = await squery<T>(input, {
+		assetComment: `assetComment:${id}`,
+	})
+	if (!comment) error(404, "Comment not found")
+
+	return { user, comment, id }
+}
+
+const updateVisibility = (visibility: string, text: string, id: string) =>
+	query(
+		surql`
+			BEGIN TRANSACTION;
+			LET $poster = (SELECT <-posted<-user AS poster FROM $forumReply)[0].poster;
+
+			UPDATE $assetComment SET content += {
+				text: $text,
+				updated: time::now(),
+			};
+			UPDATE $assetComment SET visibility = $visibility;
+			COMMIT TRANSACTION`,
+		{ assetComment: `assetComment:${id}`, text, visibility }
+	)
+
+const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
+	await query(surql`UPDATE $assetComment SET pinned = $pinned`, {
+		assetComment: `assetComment:${(await findComment(e, 4)).id}`,
+		pinned,
+	})
 }
 
 export const actions = {
@@ -145,6 +191,7 @@ export const actions = {
 				LET $reply = CREATE $assetComment CONTENT {
 					posted: time::now(),
 					visibility: "Visible",
+					pinned: false,
 					content: [{
 						text: $content,
 						updated: time::now(),
@@ -278,44 +325,19 @@ export const actions = {
 				),
 		])
 	},
-	// deleteAsset: async e => {
-	// 	const { user, id } = await getBuyData(e)
-
-	// 	const asset = await squery<{ owned: boolean }>(
-	// 		surql`SELECT $user ∈ <-owns<-user.id AS owned FROM $asset`,
-	// 		{
-	// 			asset: `asset:${id}`,
-	// 			user: `user:${user.id}`,
-	// 		}
-	// 	)
-	// 	if (!asset) throw error(404, "Not found")
-	// 	if (asset.owned) throw error(400, "You don't own this item")
-
-	// 	await query(surql`DELETE $user->owns WHERE out = $asset`, {
-	// 		user: `user:${user.id}`,
-	// 		asset: `asset:${id}`,
-	// 	})
-	// },
-	delete: async ({ url, locals }) => {
-		const { user } = await authorise(locals)
-		const id = url.searchParams.get("id")
-		if (!id) error(400, "Missing comment id")
-		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
-		// Prevents incorrect ids erroring the Surreal query as well
-
-		const comment = await squery<{
+	delete: async e => {
+		const { user, comment, id } = await findComment<{
 			authorId: string
 			visibility: string
 		}>(
+			e,
+			undefined,
 			surql`
 				SELECT
 					meta::id((<-posted<-user.id)[0]) AS authorId,
 					visibility
-				FROM $assetComment`,
-			{ assetComment: `assetComment:${id}` }
+				FROM $assetComment`
 		)
-
-		if (!comment) error(404, "Comment not found")
 
 		if (comment.authorId !== user.id)
 			error(403, "You cannot delete someone else's comment")
@@ -323,45 +345,18 @@ export const actions = {
 		if (comment.visibility !== "Visible")
 			error(400, "Comment already deleted")
 
-		await query(
-			surql`
-				LET $poster = (SELECT <-posted<-user AS poster
-				FROM $assetComment)[0].poster;
-
-				UPDATE $assetComment SET content += {
-					text: "[deleted]",
-					updated: time::now(),
-				};
-				UPDATE $assetComment SET visibility = "Deleted"`,
-			{ assetComment: `assetComment:${id}` }
+		await updateVisibility("Deleted", "[deleted]", id)
+	},
+	moderate: async e => {
+		await updateVisibility(
+			"Moderated",
+			"[removed]",
+			(await findComment(e, 4)).id
 		)
 	},
-	moderate: async ({ url, locals }) => {
-		await authorise(locals, 4)
-
-		const id = url.searchParams.get("id")
-		if (!id) error(400, "Missing comment id")
-		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
-
-		const findComment = (await surreal.select(`assetComment:${id}`))[0]
-
-		if (!findComment) error(404, "Comment not found")
-
-		await query(
-			surql`
-				LET $reply = SELECT (<-posted<-user)[0] AS poster
-					FROM $assetComment;
-				LET $poster = $reply.poster;
-
-				UPDATE $assetComment SET content += {
-					text: "[removed]",
-					updated: time::now(),
-				};
-				UPDATE $assetComment SET visibility = "Moderated"`,
-			{ assetComment: `assetComment:${id}` }
-		)
-	},
-	rerender: async ({ locals, params, getClientAddress }) => {
+	pin: pinComment(true),
+	unpin: pinComment(false),
+	rerender: async ({ locals, params }) => {
 		await authorise(locals, 5)
 
 		const asset = await squery<{
@@ -389,7 +384,7 @@ export const actions = {
 			error(400, "Can't rerender a moderated asset")
 
 		try {
-			await requestRender("Clothing", parseInt(params.id))
+			await requestRender("Clothing", +params.id)
 			return {
 				icon: `/avatarshop/${asset.id}/${
 					asset.name

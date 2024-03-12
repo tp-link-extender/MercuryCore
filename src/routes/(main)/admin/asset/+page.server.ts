@@ -3,7 +3,7 @@ import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { squery, query, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
-import fs from "fs/promises"
+import fs from "node:fs/promises"
 import type { RequestEvent } from "./$types"
 
 export const load = async ({ locals }) => ({
@@ -107,7 +107,7 @@ export const actions = {
 		if (limit) return limit
 
 		try {
-			await requestRender("Clothing", parseInt(id))
+			await requestRender("Clothing", +id)
 		} catch (e) {
 			console.error(e)
 			return fail(500, { msg: "Failed to request render" })

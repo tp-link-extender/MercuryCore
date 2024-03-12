@@ -9,7 +9,7 @@ const usersQueries = {
 		SELECT number, status, username
 		# "user->friends->user OR $user<-friends<-user" doesn't work
 		# "user<->friends<->user" shows yourself in the list (twice)
-		FROM array::combine($user->friends->user, $user<-friends<-user)[0]`,
+		FROM array::concat($user->friends->user, $user<-friends<-user)`,
 	followers: surql`
 		SELECT number, status, username
 		FROM $user<-follows<-user`,
@@ -26,7 +26,7 @@ const numberQueries = {
 export async function load({ params }) {
 	if (!/^\d+$/.test(params.number))
 		error(400, `Invalid user id: ${params.number}`)
-	const number = parseInt(params.number)
+	const number = +params.number
 
 	if (params.f && !types.includes(params.f)) error(400, "Not found")
 

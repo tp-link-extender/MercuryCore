@@ -5,9 +5,9 @@ import surreal, { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function GET({ url }) {
-	const width = parseInt(url.searchParams.get("wd") as string)
-	const height = parseInt(url.searchParams.get("ht") as string)
-	const assetId = parseInt(url.searchParams.get("aid") as string)
+	const width = +(url.searchParams.get("wd") as string)
+	const height = +(url.searchParams.get("ht") as string)
+	const assetId = +(url.searchParams.get("aid") as string)
 	const stringAssetId = assetId.toString()
 
 	if (!assetId || !width || !height) error(404, "Asset not found")
@@ -20,7 +20,7 @@ export async function GET({ url }) {
 		isCircular: "false",
 	})
 	const cache = await squery<{ url: string }>(surql`SELECT url FROM $asset`, {
-		asset: `assetCache:${stringAssetId}`,
+		asset: `thumbnailCache:${stringAssetId}`,
 	})
 
 	if (cache) redirect(302, cache.url)
@@ -33,7 +33,7 @@ export async function GET({ url }) {
 
 	const thumbnail = JSON.parse(await thumb.text())
 
-	await surreal.merge(`assetCache:${stringAssetId}`, {
+	await surreal.merge(`thumbnailCache:${stringAssetId}`, {
 		url: thumbnail.data[0].imageUrl,
 	})
 

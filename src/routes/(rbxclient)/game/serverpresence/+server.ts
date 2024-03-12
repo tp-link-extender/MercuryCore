@@ -6,7 +6,7 @@ export async function GET({ url, request }) {
 
 	if (!ticket) error(400, "Invalid Request")
 	if (request.headers.get("user-agent") !== "Roblox/WinInet")
-		error(400, "Invalid Request")
+		error(400, "Good one")
 
 	await query(
 		surql`

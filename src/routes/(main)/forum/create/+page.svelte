@@ -9,7 +9,14 @@
 
 <Head title="Create a post in {data.categoryName}" />
 
-<h1 class="text-center">Create a post in {data.categoryName}</h1>
+
+<div class="text-center">
+	<h1>Create a post in {data.categoryName}</h1>
+	<a href="/forum/{data.categoryName}" class="no-underline accent-text">
+		<fa fa-caret-left />
+		Back to forum
+	</a>
+</div>
 
 <div class="ctnr pt-12 max-w-200 light-text">
 	<Form {formData} submit="Post">

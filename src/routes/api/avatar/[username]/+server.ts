@@ -1,5 +1,5 @@
 import { squery, surql } from "$lib/server/surreal"
-import fs from "fs"
+import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, params }) {

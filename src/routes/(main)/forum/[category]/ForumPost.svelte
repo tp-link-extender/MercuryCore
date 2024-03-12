@@ -12,7 +12,9 @@
 
 <div
 	in:fade|global={{ num, total }}
-	class="post card bg-darker flex-row overflow-hidden mb-4 h-40">
+	class="post card bg-darker flex-row overflow-hidden mb-4 h-40 {post.pinned
+		? 'border-(solid 1px green-5)!'
+		: ''}">
 	<form
 		use:enhance={({ formData }) => {
 			const action = formData.get("action")
@@ -20,21 +22,21 @@
 			if (action == "like") {
 				post.likes = true
 
-				if (post.dislikes) post.dislikeCount--
+				if (post.dislikes) post.score++
 				post.dislikes = false
-				post.likeCount++
+				post.score++
 			} else if (action == "dislike") {
 				post.dislikes = true
 
-				if (post.likes) post.likeCount--
+				if (post.likes) post.score--
 				post.likes = false
-				post.dislikeCount++
+				post.score--
 			} else if (action == "unlike") {
 				post.likes = false
-				post.likeCount--
+				post.score--
 			} else if (action == "undislike") {
 				post.dislikes = false
-				post.dislikeCount--
+				post.score++
 			}
 
 			return () => {}
@@ -61,7 +63,7 @@
 					: post.dislikes
 						? 'text-red-5 font-bold'
 						: ''}">
-				{post.likeCount - post.dislikeCount}
+				{post.score}
 			</span>
 			<button
 				name="action"

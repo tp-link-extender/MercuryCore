@@ -29,20 +29,22 @@
 	export let categoryName = ""
 	export let postId: string
 	export let assetName = ""
+	export let pinnable = false
+	export let refreshReplies: () => void
 
 	const baseUrl = categoryName
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/avatarshop/${postId}/${assetName}`
 
 	export let repliesCollapsed: RepliesCollapsed
-	export let topLevel = false
+	export let topLevel = true
 	// Some have to be writables to allow them to keep state, either on element destroy or on page change
 
 	const collapse = (id: string) => () =>
 		($repliesCollapsed[id] = !$repliesCollapsed[id])
 </script>
 
-{#if !topLevel}
+{#if topLevel}
 	<a href="{baseUrl}{assetName ? '?tab=Comments' : ''}" class="no-underline">
 		<fa fa-arrow-left class="pr-2" />
 		{#if assetName}
@@ -61,14 +63,16 @@
 {/if}
 
 {#if reply && reply.author}
-	<div class="pt-2" class:flex={topLevel}>
-		{#if topLevel}
+	<div class="pt-2" class:flex={!topLevel}>
+		{#if !topLevel}
 			<span class="flex flex-col pt-2">
 				<User user={reply.author} thin size="1.5rem" />
 				<button
 					on:click={collapse(reply.id)}
 					aria-label="Collapse reply"
-					class="collapseBar bg-a2 p-0 border-0 h-full mt-4 cursor-pointer">
+					class="collapseBar {reply.pinned
+						? 'bg-green-5'
+						: 'bg-a2'} p-0 border-0 h-full mt-4 cursor-pointer">
 				</button>
 			</span>
 		{/if}
@@ -104,7 +108,9 @@
 					{postId}
 					{assetName}
 					{repliesCollapsed}
-					{topLevel} />
+					{topLevel}
+					{pinnable}
+					{refreshReplies} />
 			</div>
 		{/if}
 	</div>

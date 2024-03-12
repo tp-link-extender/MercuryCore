@@ -11,7 +11,7 @@ import {
 } from "$lib/server/imageAsset"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { redirect } from "@sveltejs/kit"
-import fs from "fs"
+import fs from "node:fs"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
@@ -49,7 +49,7 @@ export const actions = {
 		if (!form.valid) return formError(form)
 
 		const { type, name, description, price } = form.data
-		const assetType = parseInt(type) as keyof typeof assets
+		const assetType = +type as keyof typeof assets
 		const asset = formData.get("asset") as File
 
 		if (!asset || asset.size < 1)

@@ -6,6 +6,8 @@
 
 	$: topReply = data.replies[0]
 	$: parentPost = topReply.parentPost
+
+	let refresh = 0
 </script>
 
 <Head title="Replies to forum post" />
@@ -16,24 +18,28 @@
 			["Forum", "/forum"],
 			[
 				parentPost.forumCategoryName,
-				`/forum/${parentPost.forumCategoryName}`,
+				`/forum/${parentPost.forumCategoryName}`
 			],
 			[
 				parentPost.title,
-				`/forum/${parentPost.forumCategoryName}/${parentPost.id}`,
+				`/forum/${parentPost.forumCategoryName}/${parentPost.id}`
 			],
-			[topReply.content[0].text, ""],
+			[topReply.content[0].text, ""]
 		]} />
 
-	{#each data.replies as reply, num}
-		<ForumReply
-			user={data.user}
-			{reply}
-			{num}
-			{replyingTo}
-			categoryName={data.forumCategory}
-			postId={data.postId}
-			postAuthorName={data.author}
-			{repliesCollapsed} />
-	{/each}
+	{#key refresh}
+		{#each data.replies as reply, num}
+			<ForumReply
+				user={data.user}
+				{reply}
+				{num}
+				{replyingTo}
+				categoryName={data.forumCategory}
+				postId={data.postId}
+				postAuthorName={data.author}
+				{repliesCollapsed}
+				pinnable={!reply.parentReplyId}
+				refreshReplies={() => refresh++} />
+		{/each}
+	{/key}
 </div>

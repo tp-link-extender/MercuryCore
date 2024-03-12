@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
-import fs from "fs"
+import fs from "node:fs"
 import sharp from "sharp"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
@@ -20,7 +20,7 @@ const schemas = {
 			.string()
 			.max(100)
 			.regex(
-				/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+				/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
 			),
 		serverPort: z.number().int().min(1024).max(65535),
 		maxPlayers: z.number().int().min(1).max(100),
@@ -93,7 +93,7 @@ export async function load({ locals, params }) {
 async function getData(e: RequestEvent) {
 	if (!/^\d+$/.test(e.params.id || ""))
 		error(400, `Invalid game id: ${e.params.id}`)
-	const id = parseInt(e.params.id || "")
+	const id = +e.params.id
 	const { user } = await authorise(e.locals)
 	const getPlace = await placeQuery(e.params.id)
 

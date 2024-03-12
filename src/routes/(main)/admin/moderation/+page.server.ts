@@ -30,7 +30,7 @@ export const actions = {
 
 		const { username, action, banDate, reason } = form.data
 		const date = banDate ? new Date(banDate) : null
-		const intAction = parseInt(action)
+		const intAction = +action
 
 		if (intAction === 2 && (date?.getTime() || 0) < new Date().getTime())
 			return formError(form, ["banDate"], ["Invalid date"])

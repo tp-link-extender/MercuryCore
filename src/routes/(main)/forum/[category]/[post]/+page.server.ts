@@ -1,6 +1,6 @@
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import surreal, { query, squery, surql } from "$lib/server/surreal"
+import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
@@ -9,6 +9,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { like } from "$lib/server/like"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
+import type { RequestEvent } from "./$types"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -18,7 +19,8 @@ const schema = z.object({
 const SELECTREPLIES = recurse(
 	from => surql`
 		(${from} <-replyToPost<-forumReply
-		WHERE !->replyToReply) AS replies`,
+		WHERE !->replyToReply
+		ORDER BY pinned DESC, score DESC) AS replies`,
 	// Make sure it's not a reply to another reply
 	"replyToReply",
 	"forumReply"
@@ -35,19 +37,20 @@ type ForumPost = {
 		text: string
 		updated: string
 	}[]
-	dislikeCount: number
 	dislikes: boolean
 	id: string
-	likeCount: number
 	likes: boolean
+	pinned: boolean
 	posted: string
 	replies: Replies
+	score: number
 	title: string
 	visibility: string
 }
 
 export async function load({ locals, params }) {
-	if (!/^[0-9a-z]+$/.test(params.post)) error(400, "Invalid post id")
+	if (!/^[0-9a-z]+$/.test(params.post))
+		error(400, `Invalid post id: ${params.post}`)
 
 	const { user } = await authorise(locals)
 
@@ -57,8 +60,7 @@ export async function load({ locals, params }) {
 				*,
 				meta::id(id) AS id,
 				(SELECT number, username FROM <-posted<-user)[0] AS author,
-				count(<-likes) AS likeCount,
-				count(<-dislikes) AS dislikeCount,
+				count(<-likes) - count(<-dislikes) AS score,
 				$user ∈ <-likes<-user.id AS likes,
 				$user ∈ <-dislikes<-user.id AS dislikes,
 				(->in->forumCategory)[0].name AS categoryName,
@@ -77,6 +79,59 @@ export async function load({ locals, params }) {
 		form: await superValidate(zod(schema)),
 		...forumPost,
 	}
+}
+
+async function findReply<T>(
+	e: RequestEvent,
+	permissionLevel?: number,
+	input = surql`SELECT 1 FROM $forumReply`
+) {
+	const { locals, url } = e
+	const { user } = await authorise(locals, permissionLevel)
+
+	const id = url.searchParams.get("id")
+	if (!id) error(400, "Missing reply id")
+	// Prevents incorrect ids erroring the Surreal query as well
+	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
+
+	const reply = await squery<T>(input, { forumReply: `forumReply:${id}` })
+	if (!reply) error(404, "Reply not found")
+
+	return { user, reply, id }
+}
+
+const updateVisibility = (visibility: string, text: string, id: string) =>
+	query(
+		surql`
+			BEGIN TRANSACTION;
+			LET $poster = (SELECT <-posted<-user AS poster FROM $forumReply)[0].poster;
+
+			UPDATE $forumReply SET content += {
+				text: $text,
+				updated: time::now(),
+			};
+			UPDATE $forumReply SET visibility = $visibility;
+			COMMIT TRANSACTION`,
+		{ forumReply: `forumReply:${id}`, text, visibility }
+	)
+
+const pinThing = (pinned: boolean, thing: string) =>
+	query(surql`UPDATE $thing SET pinned = $pinned`, { thing, pinned })
+
+// wrapping this stuff in arrow functions just to prevent it from maybe returning god knows what to the client from an action
+const pinReply = (pinned: boolean) => async (e: RequestEvent) => {
+	await pinThing(pinned, `forumReply:${(await findReply(e, 4)).id}`)
+}
+
+const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
+	const { locals, url } = e
+	await authorise(locals, 4)
+
+	const id = url.searchParams.get("id")
+	if (!id) error(400, "Missing post id")
+	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid post id")
+
+	await pinThing(pinned, `forumPost:${id}`)
 }
 
 export const actions = {
@@ -119,6 +174,7 @@ export const actions = {
 				LET $reply = CREATE $forumReply CONTENT {
 					posted: time::now(),
 					visibility: "Visible",
+					pinned: false,
 					content: [{
 						text: $content,
 						updated: time::now(),
@@ -161,70 +217,38 @@ export const actions = {
 
 		await like(user.id, `forumReply:${newReplyId}`)
 	},
-	delete: async ({ url, locals }) => {
-		const { user } = await authorise(locals)
-		const id = url.searchParams.get("id")
-		if (!id) error(400, "Missing comment id")
-		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
-		// Prevents incorrect ids erroring the Surreal query as well
-
-		const reply = await squery<{
+	delete: async e => {
+		const { user, reply, id } = await findReply<{
 			authorId: string
 			visibility: string
 		}>(
+			e,
+			undefined,
 			surql`
 				SELECT
 					meta::id((<-posted<-user.id)[0]) AS authorId,
 					visibility
-				FROM $forumReply`,
-			{ forumReply: `forumReply:${id}` }
+				FROM $forumReply`
 		)
-		if (!reply) error(404, "Reply not found")
 
 		if (reply.authorId !== user.id)
 			error(403, "You cannot delete someone else's reply")
 
 		if (reply.visibility !== "Visible") error(400, "Reply already deleted")
 
-		await query(
-			surql`
-				LET $poster = (SELECT <-posted<-user AS poster
-				FROM $forumReply)[0].poster;
-
-				UPDATE $forumReply SET content += [{
-					text: "[deleted]",
-					updated: time::now(),
-				}];
-				UPDATE $forumReply SET visibility = "Deleted"`,
-			{ forumReply: `forumReply:${id}` }
+		await updateVisibility("Deleted", "[deleted]", id)
+	},
+	moderate: async e => {
+		await updateVisibility(
+			"Moderated",
+			"[removed]",
+			(await findReply(e, 4)).id
 		)
 	},
-	moderate: async ({ url, locals }) => {
-		await authorise(locals, 4)
-
-		const id = url.searchParams.get("id")
-		if (!id) error(400, "Missing comment id")
-		if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
-
-		const findReply = (await surreal.select(`forumReply:${id}`))[0]
-
-		if (!findReply) error(404, "Reply not found")
-
-		await query(
-			surql`
-				BEGIN TRANSACTION;
-				LET $reply = SELECT (<-posted<-user)[0] AS poster FROM $forumReply;
-				LET $poster = $reply.poster;
-
-				UPDATE $forumReply SET content += {
-					text: "[removed]",
-					updated: time::now(),
-				};
-				UPDATE $forumReply SET visibility = "Moderated";
-				COMMIT TRANSACTION`,
-			{ forumReply: `forumReply:${id}` }
-		)
-	},
+	pin: pinReply(true),
+	unpin: pinReply(false),
+	pinpost: pinPost(true),
+	unpinpost: pinPost(false),
 	like: e =>
 		categoryActions.like(e as unknown as import("../$types").RequestEvent),
 }
