@@ -59,7 +59,7 @@ if (!building)
 const stupidError =
 	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
 
-type Param = string | number | boolean | null | object | Date | undefined // basically anything
+export type Param = string | number | boolean | null | object | Date | undefined // basically anything
 
 /**
  * Executes a query in SurrealDB and returns its results.

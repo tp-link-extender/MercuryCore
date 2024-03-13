@@ -117,7 +117,11 @@ export async function handle({ event, resolve }) {
 		user: `user:${user.id}`,
 	})
 
-	const economy = await stuff.select("economy", "dailyStipend", "stipendTime")
+	const economy = await stuff.select1(
+		"economy",
+		"dailyStipend",
+		"stipendTime"
+	)
 	const dailyStipend = economy?.dailyStipend || 10
 	const stipendTime = economy?.stipendTime || 12
 

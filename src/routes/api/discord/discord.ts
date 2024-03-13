@@ -1,4 +1,4 @@
-import { squery, surql } from "$lib/server/surreal"
+import { application } from "$lib/server/orm"
 import { error } from "@sveltejs/kit"
 import "dotenv/config"
 
@@ -8,13 +8,15 @@ export function verify(url: URL) {
 }
 
 export const canApply = async (discordId: string) =>
-	!(await squery(
-		surql`
-			SELECT 1 FROM application
-			WHERE discordId = $discordId
-				AND deleted != true
-				AND (status = "Pending"
+	!(await application
+		.where(
+			[
+				"deleted != true",
+				"discordId = $discordId",
+				`(status = "Pending"
 					OR status = "Banned"
 					OR status = "Denied" AND reviewed > time::now() - 1w)`,
-		{ discordId }
-	))
+			],
+			{ discordId }
+		)
+		.find())

@@ -137,7 +137,7 @@ export const actions = {
 		if (emailCheck)
 			return formError(form, ["email"], ["This email is already in use"])
 
-		const regkeyCheck = await regKey.select(regkey, "usesLeft")
+		const regkeyCheck = await regKey.select1(regkey, "usesLeft")
 
 		if (!regkeyCheck)
 			return formError(form, ["regkey"], ["Registration key is invalid"])

@@ -8,7 +8,7 @@ export async function GET({ params }) {
 	const id = +params.id
 	const filename = `data/icons/${id}.webp`
 
-	if (!(await place.find(id.toString()))) error(404, "Not found")
+	if (!(await place.find(id))) error(404, "Not found")
 
 	if (!fs.existsSync(filename))
 		redirect(302, `/place/placeholderIcon${1 + (id % 3)}.webp`)

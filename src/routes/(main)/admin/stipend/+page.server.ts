@@ -14,7 +14,11 @@ const schema = z.object({
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
-	const economy = await stuff.select("economy", "dailyStipend", "stipendTime")
+	const economy = await stuff.select1(
+		"economy",
+		"dailyStipend",
+		"stipendTime"
+	)
 
 	return {
 		form: await superValidate(zod(schema)),
@@ -32,7 +36,7 @@ export const actions = {
 		const limit = ratelimit(form, "economy", getClientAddress, 30)
 		if (limit) return limit
 
-		const economy = await stuff.select(
+		const economy = await stuff.select1(
 			"economy",
 			"dailyStipend",
 			"stipendTime"

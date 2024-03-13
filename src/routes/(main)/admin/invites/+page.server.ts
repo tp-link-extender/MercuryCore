@@ -130,7 +130,7 @@ export const actions = {
 
 		if (!id) return message(form, "Missing fields", { status: 400 })
 
-		const key = await regKey.select(id, "usesLeft")
+		const key = await regKey.select1(id, "usesLeft")
 
 		if (key && key.usesLeft === 0)
 			return message(form, "Invite key is already disabled", {

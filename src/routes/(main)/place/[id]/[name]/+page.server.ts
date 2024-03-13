@@ -97,7 +97,7 @@ export const actions = {
 		const action = data.action as keyof typeof likeActions
 		const privateTicket = url.searchParams.get("privateTicket")
 
-		const likePlace = await place.select(
+		const likePlace = await place.select1(
 			id.toString(),
 			"privateServer",
 			"privateTicket"

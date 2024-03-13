@@ -100,8 +100,7 @@ export default async function (session: Session | null, user: User | null) {
 				}>(
 					surql`
 						SELECT
-							(SELECT name
-							FROM ->in->forumCategory) AS category
+							(SELECT name FROM ->in->forumCategory) AS category
 						FROM $forumPost`,
 					{ forumPost: `forumPost:${i.relativeId}` }
 				)

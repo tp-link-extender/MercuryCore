@@ -1,291 +1,289 @@
-import { mquery, query, squery, surql } from "./surreal"
-import { z } from "zod"
+import { mquery, query, squery, surql, type Param } from "./surreal"
 
-const textContent = z.object({
-	text: z.string(),
-	updated: z.date(),
-})
+type TextContent = {
+	text: string
+	updated: Date
+}
 
-const tables = z.object({
-	application: z.object({
-		id: z.string(),
-		created: z.date(),
-		discordId: z.number(),
-		status: z.enum(["Pending", "Accepted", "Declined", "Banned"]),
-		reason: z.string().optional(),
-		response: z.array(z.string()),
-		reviewed: z.date().optional(),
-	}),
-	asset: z.object({
-		id: z.string(),
-		created: z.date(),
-		description: textContent,
-		name: z.string(),
-		price: z.number(),
-		type: z.number(),
-		updated: z.date(),
-		visibility: z.enum(["Pending", "Visible", "Moderated"]),
-		// in: z.string(),
-	}),
-	assetCache: z.object({
-		id: z.string(),
-		assetModified: z.date(),
-		created: z.date(),
-		data: z.string(),
-	}),
-	assetComment: z.object({
-		id: z.string(),
-		content: textContent,
-		pinned: z.boolean(),
-		posted: z.date(),
-		visibility: z.enum(["Visible", "Moderated", "Deleted"]),
-	}),
-	auditLog: z.object({
-		id: z.string(),
-		action: z.enum(["Account", "Administration", "Economy", "Moderation"]),
-		note: z.string(),
-		time: z.date(),
-		user: z.string(),
-	}),
-	banner: z.object({
-		id: z.string(),
-		active: z.boolean(),
-		bgColour: z.string(),
-		body: z.string(),
-		creator: z.string(),
-		deleted: z.boolean(),
-		textLight: z.boolean(),
-	}),
-	created: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	dislikes: z.object({
-		id: z.string(),
-		time: z.date(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	follows: z.object({
-		id: z.string(),
-		time: z.date(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	forumCategory: z.object({
-		id: z.string(),
-		name: z.string(),
-		description: z.string(),
-		// in: z.string(),
-	}),
-	forumPost: z.object({
-		id: z.string(),
-		content: textContent,
-		pinned: z.boolean(),
-		posted: z.date(),
-		title: z.string(),
-		visibility: z.enum(["Visible", "Moderated", "Deleted"]),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	forumReply: z.object({
-		id: z.string(),
-		content: textContent,
-		pinned: z.boolean(),
-		posted: z.date(),
-		visibility: z.enum(["Visible", "Moderated", "Deleted"]),
-	}),
-	friends: z.object({
-		id: z.string(),
-		time: z.date(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	hasSession: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	imageAsset: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	in: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	likes: z.object({
-		id: z.string(),
-		time: z.date(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	notification: z.object({
-		id: z.string(),
-		note: z.string(),
-		read: z.boolean(),
-		relativeId: z.string(),
-		time: z.date(),
-		type: z.enum(["NewFriend", "FriendRequest", "Follower"]),
-	}),
-	owns: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	place: z.object({
-		id: z.string(),
-		created: z.date(),
-		deleted: z.boolean(),
-		description: textContent,
-		maxPlayers: z.number(),
-		name: z.string(),
-		privateServer: z.boolean().optional(),
-		privateTicket: z.string(),
-		serverIP: z.string(),
-		serverPing: z.number(),
-		serverPort: z.number(),
-		serverTicket: z.string(),
-		updated: z.date(),
-		// in: z.string(),
-	}),
-	playing: z.object({
-		id: z.string(),
-		ping: z.number(),
-		valid: z.boolean(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	posted: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	recentlyWorn: z.object({
-		id: z.string(),
-		time: z.date(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	regKey: z.object({
-		id: z.string(),
-		created: z.date(),
-		expiry: z.date().optional(),
-		usesLeft: z.number(),
-		// in: z.string(),
-	}),
-	render: z.object({
-		id: z.string(),
-		completed: z.date(),
-		created: z.date(),
-		relativeId: z.number(),
-		status: z.enum(["Rendering", "Completed", "Error"]),
-		type: z.enum(["Avatar", "Clothing"]),
-	}),
-	replyToAsset: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	replyToComment: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	replyToPost: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	replyToReply: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	request: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	session: z.object({
-		id: z.string(),
-		expiresAt: z.date(),
-		// in: z.string(),
-	}),
-	statusPost: z.object({
-		id: z.string(),
-		content: textContent,
-		posted: z.date(),
-		visibility: z.enum(["Visible", "Moderated", "Deleted"]),
-		// in: z.string(),
-	}),
-	stuff: z.object({
-		id: z.string(),
-		asset: z.number().optional(),
-		ids: z.number(),
-		place: z.number(),
-		taxRate: z.number().optional(),
-		dailyStipend: z.number().optional(),
-		stipendTime: z.number().optional(),
-		user: z.number(),
-	}),
-	thumbnailCache: z.object({
-		id: z.string(),
-		url: z.string(),
-	}),
-	transaction: z.object({
-		id: z.string(),
-		amountSent: z.number(),
-		link: z.string(),
-		note: z.string(),
-		taxRate: z.number(),
-		time: z.date(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	used: z.object({
-		id: z.string(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-	user: z.object({
-		id: z.string(),
-		bio: z.object({
-			text: z.string(),
-			updated: z.date(),
-		}),
-		bodyColours: z.object({
-			Head: z.number(),
-			LeftArm: z.number(),
-			LeftLeg: z.number(),
-			RightArm: z.number(),
-			RightLeg: z.number(),
-			Torso: z.number(),
-		}),
-		created: z.date(),
-		currency: z.number(),
-		currencyCollected: z.date(),
-		email: z.string(),
-		hashedPassword: z.string(),
-		lastOnline: z.date(),
-		number: z.number(),
-		permissionLevel: z.number(),
-		status: z.enum(["Online", "Offline"]),
-		theme: z.enum(["standard"]),
-		username: z.string(),
-	}),
-	wearing: z.object({
-		id: z.string(),
-		time: z.date(),
-		// in: z.string(),
-		// out: z.string(),
-	}),
-})
+type Infer = {
+	application: {
+		id: string
+		created: Date
+		discordId: number
+		status: "Pending" | "Accepted" | "Declined" | "Banned"
+		reason?: string
+		response: string[]
+		reviewed?: Date
+	}
+	asset: {
+		id: string
+		created: Date
+		description: TextContent
+		name: string
+		price: number
+		type: number
+		updated: Date
+		visibility: "Pending" | "Visible" | "Moderated"
+		// in: string
+	}
+	assetCache: {
+		id: string
+		assetModified: Date
+		created: Date
+		data: string
+	}
+	assetComment: {
+		id: string
+		content: TextContent
+		pinned: boolean
+		posted: Date
+		visibility: "Visible" | "Moderated" | "Deleted"
+	}
+	auditLog: {
+		id: string
+		action: "Account" | "Administration" | "Economy" | "Moderation"
+		note: string
+		time: Date
+		user: string
+	}
+	banner: {
+		id: string
+		active: boolean
+		bgColour: string
+		body: string
+		creator: string
+		deleted: boolean
+		textLight: boolean
+	}
+	created: {
+		id: string
+		// in: string
+		// out: string
+	}
+	dislikes: {
+		id: string
+		time: Date
+		// in: string
+		// out: string
+	}
+	follows: {
+		id: string
+		time: Date
+		// in: string
+		// out: string
+	}
+	forumCategory: {
+		id: string
+		name: string
+		description: string
+		// in: string
+	}
+	forumPost: {
+		id: string
+		content: TextContent
+		pinned: boolean
+		posted: Date
+		title: string
+		visibility: "Visible" | "Moderated" | "Deleted"
+		// in: string
+		// out: string
+	}
+	forumReply: {
+		id: string
+		content: TextContent
+		pinned: boolean
+		posted: Date
+		visibility: "Visible" | "Moderated" | "Deleted"
+	}
+	friends: {
+		id: string
+		time: Date
+		// in: string
+		// out: string
+	}
+	hasSession: {
+		id: string
+		// in: string
+		// out: string
+	}
+	imageAsset: {
+		id: string
+		// in: string
+		// out: string
+	}
+	in: {
+		id: string
+		// in: string
+		// out: string
+	}
+	likes: {
+		id: string
+		time: Date
+		// in: string
+		// out: string
+	}
+	notification: {
+		id: string
+		note: string
+		read: boolean
+		relativeId: string
+		time: Date
+		type: "NewFriend" | "FriendRequest" | "Follower"
+	}
+	owns: {
+		id: string
+		// in: string
+		// out: string
+	}
+	place: {
+		id: string
+		created: Date
+		deleted: boolean
+		description: TextContent
+		maxPlayers: number
+		name: string
+		privateServer?: boolean
+		privateTicket: string
+		serverIP: string
+		serverPing: number
+		serverPort: number
+		serverTicket: string
+		updated: Date
+		// in: string
+	}
+	playing: {
+		id: string
+		ping: number
+		valid: boolean
+		// in: string
+		// out: string
+	}
+	posted: {
+		id: string
+		// in: string
+		// out: string
+	}
+	recentlyWorn: {
+		id: string
+		time: Date
+		// in: string
+		// out: string
+	}
+	regKey: {
+		id: string
+		created: Date
+		expiry?: Date
+		usesLeft: number
+		// in: string
+	}
+	render: {
+		id: string
+		completed: Date
+		created: Date
+		relativeId: number
+		status: "Rendering" | "Completed" | "Error"
+		type: "Avatar" | "Clothing"
+	}
+	replyToAsset: {
+		id: string
+		// in: string
+		// out: string
+	}
+	replyToComment: {
+		id: string
+		// in: string
+		// out: string
+	}
+	replyToPost: {
+		id: string
+		// in: string
+		// out: string
+	}
+	replyToReply: {
+		id: string
+		// in: string
+		// out: string
+	}
+	request: {
+		id: string
+		// in: string
+		// out: string
+	}
+	session: {
+		id: string
+		expiresAt: Date
+		// in: string
+	}
+	statusPost: {
+		id: string
+		content: TextContent
+		posted: Date
+		visibility: "Visible" | "Moderated" | "Deleted"
+		// in: string
+	}
+	stuff: {
+		id: string
+		asset?: number
+		ids: number
+		place: number
+		taxRate?: number
+		dailyStipend?: number
+		stipendTime?: number
+		user: number
+	}
+	thumbnailCache: {
+		id: string
+		url: string
+	}
+	transaction: {
+		id: string
+		amountSent: number
+		link: string
+		note: string
+		taxRate: number
+		time: Date
+		// in: string
+		// out: string
+	}
+	used: {
+		id: string
+		// in: string
+		// out: string
+	}
+	user: {
+		id: string
+		bio: TextContent
+		bodyColours: {
+			Head: number
+			LeftArm: number
+			LeftLeg: number
+			RightArm: number
+			RightLeg: number
+			Torso: number
+		}
+		created: Date
+		currency: number
+		currencyCollected: Date
+		email: string
+		hashedPassword: string
+		lastOnline: Date
+		number: number
+		permissionLevel: number
+		status: "Online" | "Offline"
+		theme: "standard"
+		username: string
+	}
+	wearing: {
+		id: string
+		time: Date
+		// in: string
+		// out: string
+	}
+}
+type Tables = {
+	[K in keyof Infer]: { id: string; metaId: string } & Infer[K]
+}
 
-type Tables = z.infer<typeof tables>
 type Table = keyof Tables
 
 // Surreal specific functions and stuff that can't be passed in from the table
@@ -296,16 +294,15 @@ const defaultTypes: Partial<{ [k in Table]: string }> = {
 }
 
 function thing<T extends Table>(table: T) {
-	const tid = (id: string) => `${table}:⟨${id}⟩`
+	const tid = (id: string | number) =>
+		typeof id === "string" ? `${table}:⟨${id}⟩` : `${table}:${id}`
 	const delet = (id?: string) =>
 		id
 			? query<never>(surql`DELETE $id`, { id: tid(id) })
 			: query<never>(surql`DELETE $table`, { table })
 
 	type Selectable = keyof Tables[T]
-	type Props = Partial<{
-		[K in Selectable]: Tables[T][K]
-	}>
+	type Props = Partial<{ [K in Selectable]: Tables[T][K] }>
 
 	async function create(
 		idOrProps: string | Props,
@@ -365,42 +362,94 @@ function thing<T extends Table>(table: T) {
 	// eg. select1("created").updated should error
 	// if toSelect is ["*"], return all fields
 	// We're in the Typescript zone now, nerds
-	type Return<F extends Selectable> = F[] extends ["*"]
+	type ReturnProps<F extends Selectable> = F[] extends ["*"]
 		? Tables[T]
 		: { [K in F]: Tables[T][K] }
 
-	const select = <F extends Selectable>(
+	// if a field is "metaId", return the id as "id"
+	type Return<F extends Selectable> = ReturnProps<F> extends {
+		metaId: string
+	}
+		? Omit<ReturnProps<F>, "metaId"> & { id: string }
+		: ReturnProps<F>
+
+	const transform = <F extends Selectable>(selections: F[] | ["*"]) =>
+		// replace "metaId" with "meta::id(id) AS id"
+		selections
+			.map(s => (s === "metaId" ? "meta::id(id) AS id" : s))
+			.join(", ")
+
+	const select1 = <F extends Selectable>(
 		id: string,
 		...toSelect: F[] | ["*"]
 	) =>
-		squery<Return<F>>(surql`SELECT ${toSelect.join(", ")} FROM $id`, {
+		squery<Return<F>>(surql`SELECT ${transform(toSelect)} FROM $id`, {
 			id: tid(id),
 		})
 
-	// const from = (id: string) => {
-	// 	const select = <F extends Selectable>(...toSelect: F[] | ["*"]) =>
-	// 		squery<Return<F>>(surql`SELECT ${toSelect.join(", ")} FROM $id`, {
-	// 			id: tid(id),
-	// 		})
-	// 	return {
-	// 		delete: delet,
-	// 		select,
-	// 	}
-	// }
+	const select = <F extends Selectable>(...toSelect: F[] | ["*"]) =>
+		query<Return<F>>(surql`SELECT ${transform(toSelect)} FROM $table`, {
+			table,
+		})
 
-	const find = (id: string) =>
+	const find = (id: string | number) =>
 		query(surql`!!SELECT 1 FROM $id`, {
 			id: tid(id),
 		}) as unknown as Promise<boolean>
+
+	function where(conds: string[], extraProps: { [k: string]: Param } = {}) {
+		const conditions = conds.join(" AND ")
+
+		const select1Conditions = <F extends Selectable>(
+			id: string,
+			...toSelect: F[]
+		) =>
+			squery(
+				surql`SELECT ${transform(
+					toSelect
+				)} FROM $id WHERE ${conditions}`,
+				{ id: tid(id), ...extraProps }
+			) as Promise<Return<F>>
+
+		const selectConditions = <F extends Selectable>(
+			...toSelect: F[] | ["*"]
+		) =>
+			query(
+				surql`SELECT ${transform(
+					toSelect
+				)} FROM type::table($table) WHERE ${conditions}`,
+				{ table, ...extraProps }
+			) as Promise<Return<F>[]>
+
+		const find1Conditions = (id: string) =>
+			squery<boolean>(surql`!!SELECT 1 FROM $id WHERE ${conditions}`, {
+				id: tid(id),
+				...extraProps,
+			})
+
+		const findConditions = () =>
+			squery<boolean>(
+				surql`!!SELECT 1 FROM type::table($table) WHERE ${conditions}`,
+				{ table, ...extraProps }
+			)
+
+		return {
+			select1: select1Conditions,
+			select: selectConditions,
+			find1: find1Conditions,
+			find: findConditions,
+		}
+	}
 
 	return {
 		id: tid,
 		delete: delet,
 		create,
 		merge,
-		find,
+		where,
+		select1,
 		select,
-		// from,
+		find,
 	}
 }
 

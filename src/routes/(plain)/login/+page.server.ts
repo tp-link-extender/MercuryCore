@@ -1,5 +1,6 @@
 import { auth } from "$lib/server/lucia"
 import { squery, surql } from "$lib/server/surreal"
+import { user } from "$lib/server/orm"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { Scrypt } from "oslo/password"
@@ -38,21 +39,36 @@ export const actions = {
 
 		const { username, password } = form.data
 
-		const user = await squery<{
-			id: string
-			username: string
-			hashedPassword: string
-		}>(
-			surql`
-				SELECT meta::id(id) AS id, username, hashedPassword FROM user
-				WHERE string::lowercase(username) = string::lowercase($username)`,
-			{ username }
-		)
+		// const foundUser = await squery<{
+		// 	id: string
+		// 	username: string
+		// 	hashedPassword: string
+		// }>(
+		// 	surql`
+		// 		SELECT meta::id(id) AS id, username, hashedPassword FROM user
+		// 		WHERE string::lowercase(username) = string::lowercase($username)`,
+		// 	{ username }
+		// )
+		const foundUser = await user
+			.where(
+				["string::lowercase(username) = string::lowercase($username)"],
+				{ username }
+			)
+			.select1("metaId", "username", "hashedPassword")
+		const foundUsers = await user
+			.where(
+				["string::lowercase(username) = string::lowercase($username)"],
+				{ username }
+			)
+			.select("metaId", "username", "hashedPassword")
+
+		foundUser.id
+		foundUsers[0].id
 
 		// remove this statement and we'll end up like Mercury 1 💀
 		if (
-			!user ||
-			!(await new Scrypt().verify(user.hashedPassword, password))
+			!foundUser ||
+			!(await new Scrypt().verify(foundUser.hashedPassword, password))
 		)
 			return formError(
 				form,
@@ -60,7 +76,7 @@ export const actions = {
 				[" ", "Incorrect username or password"]
 			)
 
-		const session = await auth.createSession(user.id, {})
+		const session = await auth.createSession(foundUser.id, {})
 		const sessionCookie = auth.createSessionCookie(session.id)
 
 		cookies.set(sessionCookie.name, sessionCookie.value, {
