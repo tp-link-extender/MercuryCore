@@ -1,6 +1,6 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import fs from "fs/promises"
+import fs from "node:fs/promises"
 import "dotenv/config"
 
 type Render = {

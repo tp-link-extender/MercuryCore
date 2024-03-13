@@ -1,11 +1,11 @@
 import { place } from "$lib/server/orm"
 import { error, redirect } from "@sveltejs/kit"
-import fs from "fs"
+import fs from "node:fs"
 
 export async function GET({ params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid game id: ${params.id}`)
 
-	const id = parseInt(params.id)
+	const id = +params.id
 	const filename = `data/icons/${id}.webp`
 
 	if (!(await place.find(id.toString()))) error(404, "Not found")

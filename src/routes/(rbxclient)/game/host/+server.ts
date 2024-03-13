@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 import { squery, surql } from "$lib/server/surreal"
-import fs from "fs"
+import fs from "node:fs"
 
 export async function GET({ url }) {
 	const ticket = url.searchParams.get("ticket")

@@ -2,7 +2,7 @@ import { SignData } from "$lib/server/sign"
 import { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import md5 from "crypto-js/md5"
-import fs from "fs"
+import fs from "node:fs"
 
 const header = (file: string) => ({
 	headers: {
@@ -63,8 +63,7 @@ export async function GET({ url }) {
 		let file2 = file.replaceAll("roblox.com/asset", "banland.xyz/asset")
 
 		// Health corescript and shaggy lol
-		if (!["38037265", "20573078"].includes(id))
-			file2 = SignData(file2, parseInt(id))
+		if (!["38037265", "20573078"].includes(id)) file2 = SignData(file2, +id)
 
 		console.log("served corescript", id)
 

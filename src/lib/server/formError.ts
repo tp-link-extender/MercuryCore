@@ -13,7 +13,11 @@ import type { SuperValidated } from "sveltekit-superforms"
  * return formError(form, ["password"], ["Username or password is incorrect"])
  */
 export default function (
-	form: SuperValidated<{ [k: string]: unknown }, unknown, { [k: string]: unknown }>,
+	form: SuperValidated<
+		{ [k: string]: unknown },
+		unknown,
+		{ [k: string]: unknown }
+	>,
 	fields?: string[],
 	messages?: string[]
 ) {

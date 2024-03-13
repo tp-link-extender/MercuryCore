@@ -39,7 +39,7 @@ export async function load({ url, locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid place id: ${params.id}`)
 
 	const { user } = await authorise(locals)
-	const id = parseInt(params.id)
+	const id = +params.id
 	const privateServerCode = url.searchParams.get("privateServer")
 	const getPlace = await squery<Place>(
 		surql`
@@ -91,7 +91,7 @@ export const actions = {
 		if (!/^\d+$/.test(params.id))
 			error(400, `Invalid place id: ${params.id}`)
 
-		const id = parseInt(params.id)
+		const id = +params.id
 		const { user } = await authorise(locals)
 		const data = await formData(request)
 		const action = data.action as keyof typeof likeActions
@@ -117,7 +117,7 @@ export const actions = {
 		const { user } = await authorise(locals)
 		const data = await formData(request)
 		const requestType = data.request
-		const serverId = parseInt(data.serverId)
+		const serverId = +data.serverId
 
 		if (!requestType || !serverId) error(400, "Invalid Request")
 		if (requestType !== "RequestGame")
