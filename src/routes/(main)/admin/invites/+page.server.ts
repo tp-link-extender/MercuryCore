@@ -1,6 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import surreal, { query, surql } from "$lib/server/surreal"
+import { query, surql } from "$lib/server/surreal"
+import { regKey } from "$lib/server/orm"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
@@ -127,16 +128,9 @@ export const actions = {
 		if (error) return error
 		const id = e.url.searchParams.get("id")
 
-		if (!id)
-			return message(form, "Missing fields", {
-				status: 400,
-			})
+		if (!id) return message(form, "Missing fields", { status: 400 })
 
-		const key = (
-			(await surreal.select(`regKey:⟨${id}⟩`)) as {
-				usesLeft: number
-			}[]
-		)[0]
+		const key = await regKey.select(id, "usesLeft")
 
 		if (key && key.usesLeft === 0)
 			return message(form, "Invite key is already disabled", {
