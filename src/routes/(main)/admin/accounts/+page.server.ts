@@ -1,6 +1,5 @@
 import { authorise } from "$lib/server/lucia"
 import { query, surql } from "$lib/server/surreal"
-import { auditLog } from "$lib/server/orm"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -39,8 +38,8 @@ export const actions = {
 		try {
 			await query(
 				surql`
-					UPDATE user SET password = $npassword
-					WHERE username = $username`,
+					UPDATE user SET hashedPassword = $npassword
+					WHERE string::lowercase(username) = string::lowercase($username)`,
 				{
 					username,
 					npassword: await new Scrypt().hash(password),
@@ -52,25 +51,19 @@ export const actions = {
 			})
 		}
 
-
-		// await query(
-		// 	surql`
-		// 		CREATE auditLog CONTENT {
-		// 			action: "Account",
-		// 			note: $note,
-		// 			user: $user,
-		// 			time: time::now()
-		// 		}`,
-		// 	{
-		// 		note: `Change account password for ${username}`,
-		// 		user: `user:${user.id}`,
-		// 	}
-		// )
-		await auditLog.create({
-			action: "Account",
-			note: `Change account password for ${username}`,
-			user: `user:${user.id}`,
-		})
+		await query(
+			surql`
+				CREATE auditLog CONTENT {
+					action: "Account",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
+			{
+				note: `Change account password for ${username}`,
+				user: `user:${user.id}`,
+			}
+		)
 
 		return message(form, "Password changed successfully!")
 	},

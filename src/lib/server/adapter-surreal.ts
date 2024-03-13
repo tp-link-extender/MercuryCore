@@ -1,5 +1,4 @@
 import { query, mquery, surql } from "./surreal"
-import { session } from "./orm"
 import type {
 	Adapter,
 	DatabaseSession,
@@ -9,7 +8,7 @@ import type {
 
 export class SurrealAdapter implements Adapter {
 	public async deleteSession(sessionId: string) {
-		await session.delete(sessionId)
+		await query(surql`DELETE $sess`, { sess: `session:${sessionId}` })
 	}
 
 	public async deleteUserSessions(userId: string) {

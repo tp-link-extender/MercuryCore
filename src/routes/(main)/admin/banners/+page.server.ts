@@ -1,6 +1,5 @@
 import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
-import { auditLog, banner } from "$lib/server/orm"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -69,7 +68,10 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 	if (action === "show" && (await bannerActiveCount()) >= 3)
 		return message(form, "Too many active banners", { status: 400 })
 
-	await banner.merge(id, { active: action === "show" })
+	await query(surql`UPDATE $id SET active = $active`, {
+		id: `banner:${id}`,
+		active: action === "show",
+	})
 }
 export const actions = {
 	create: async e => {
@@ -88,20 +90,29 @@ export const actions = {
 			return message(form, "Too many active banners", { status: 400 })
 
 		await Promise.all([
-			banner.create({
-				active: true,
-				deleted: false,
-				body: bannerText,
-				bgColour: bannerColour,
-				textLight: !!bannerTextLight,
-				creator: `user:${user.id}`,
+			query(surql`CREATE banner CONTENT $data`, {
+				data: {
+					active: true,
+					deleted: false,
+					body: bannerText,
+					bgColour: bannerColour,
+					textLight: !!bannerTextLight,
+					creator: `user:${user.id}`,
+				},
 			}),
-
-			auditLog.create({
-				action: "Administration",
-				note: `Create banner "${bannerText}" (testing)`,
-				user: `user:${user.id}`,
-			}),
+			query(
+				surql`
+					CREATE auditLog CONTENT {
+						action: "Administration",
+						note: $note,
+						user: $user,
+						time: time::now()
+					}`,
+				{
+					note: `Create banner "${bannerText}"`,
+					user: `user:${user.id}`,
+				}
+			),
 		])
 
 		return message(form, "Banner created successfully!")
@@ -113,13 +124,25 @@ export const actions = {
 
 		if (!id) return message(form, "Missing fields", { status: 400 })
 
-		const deletedBanner = await banner.merge(id, { deleted: true })
+		// const deletedBanner = await banner.merge(id, { deleted: true })
+		const deletedBanner = await squery<{
+			body: string
+			creator: string
+		}>(surql`UPDATE $id SET deleted = true`, { id: `banner:${id}` })
 
-		await auditLog.create({
-			action: "Administration",
-			note: `Delete banner "${deletedBanner.body}"`,
-			user: `user:${user.id}`,
-		})
+		await query(
+			surql`
+				CREATE auditLog CONTENT {
+					action: "Administration",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
+			{
+				note: `Delete banner "${deletedBanner.body}"`,
+				user: `user:${user.id}`,
+			}
+		)
 	},
 	updateBody: async e => {
 		const { form, error } = await getData(e)
@@ -130,7 +153,11 @@ export const actions = {
 		if (!bannerBody || !id)
 			return message(form, "Missing fields", { status: 400 })
 
-		await banner.merge(id, { body: bannerBody })
+		// await banner.merge(id, { body: bannerBody })
+		await query(surql`UPDATE $id SET body = $bannerBody`, {
+			id: `banner:${id}`,
+			bannerBody,
+		})
 	},
 	updateTextLight: async e => {
 		const { form, error } = await getData(e)
@@ -140,7 +167,11 @@ export const actions = {
 
 		if (!id) return message(form, "Missing fields", { status: 400 })
 
-		await banner.merge(id, { textLight: !!bannerTextLight })
+		// await banner.merge(id, { textLight: !!bannerTextLight })
+		await query(surql`UPDATE $id SET textLight = $textLight`, {
+			id: `banner:${id}`,
+			textLight: !!bannerTextLight,
+		})
 	},
 	show: showHide("show"),
 	hide: showHide("hide"),

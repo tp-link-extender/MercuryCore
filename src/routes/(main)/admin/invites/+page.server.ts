@@ -1,7 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { query, surql } from "$lib/server/surreal"
-import { regKey } from "$lib/server/orm"
+import { query, squery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
@@ -130,7 +129,9 @@ export const actions = {
 
 		if (!id) return message(form, "Missing fields", { status: 400 })
 
-		const key = await regKey.select(id, "usesLeft")
+		const key = await squery<{
+			usesLeft: number
+		}>(surql`SELECT usesLeft FROM $id`, { id: `regKey:⟨${id}⟩` })
 
 		if (key && key.usesLeft === 0)
 			return message(form, "Invite key is already disabled", {

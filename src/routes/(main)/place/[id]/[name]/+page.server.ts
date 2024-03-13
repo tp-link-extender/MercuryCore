@@ -1,6 +1,5 @@
 import { authorise } from "$lib/server/lucia"
 import { mquery, squery, surql } from "$lib/server/surreal"
-import { place } from "$lib/server/orm"
 import formData from "$lib/server/formData"
 import { likeActions } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
@@ -97,11 +96,12 @@ export const actions = {
 		const action = data.action as keyof typeof likeActions
 		const privateTicket = url.searchParams.get("privateTicket")
 
-		const likePlace = await place.select(
-			id.toString(),
-			"privateServer",
-			"privateTicket"
-		)
+		const likePlace = await squery<{
+			privateServer: boolean
+			privateTicket: string
+		}>(surql`SELECT privateServer, privateTicket FROM $place`, {
+			place: `place:${id}`,
+		})
 
 		if (
 			!likePlace ||
@@ -123,7 +123,11 @@ export const actions = {
 		if (requestType !== "RequestGame")
 			error(400, "Invalid Request (request type invalid)")
 
-		if (!(await place.find(serverId.toString())))
+		if (
+			!(await squery<{ id: string }>(surql`SELECT 1 FROM $place`, {
+				place: `place:${serverId}`,
+			}))
+		)
 			error(404, "Place not found")
 
 		if (

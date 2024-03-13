@@ -4,7 +4,6 @@
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import { query, squery, surql } from "$lib/server/surreal"
-import { stuff } from "$lib/server/orm"
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
 import { redirect } from "@sveltejs/kit"
@@ -117,7 +116,10 @@ export async function handle({ event, resolve }) {
 		user: `user:${user.id}`,
 	})
 
-	const economy = await stuff.select("economy", "dailyStipend", "stipendTime")
+	const economy = await squery<{
+		dailyStipend?: number
+		stipendTime?: number
+	}>(surql`SELECT * FROM stuff:economy`)
 	const dailyStipend = economy?.dailyStipend || 10
 	const stipendTime = economy?.stipendTime || 12
 
