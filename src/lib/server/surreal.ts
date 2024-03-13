@@ -4,7 +4,7 @@ import { Surreal } from "surrealdb.js"
 const db = new Surreal()
 
 if (!building) {
-	await db.connect("http://localhost:8000/rpc")
+	await db.connect("ws://localhost:8000")
 	await db.signin({
 		username: "root",
 		password: "root",
