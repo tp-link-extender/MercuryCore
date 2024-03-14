@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, transaction, surql } from "$lib/server/surreal"
+import { query, squery, transaction, surql, find } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
@@ -249,14 +249,8 @@ export const actions = {
 			error(400, "Invalid reply id")
 
 		if (
-			(id &&
-				!(await squery(surql`SELECT 1 FROM $asset`, {
-					asset: `asset:${id}`,
-				}))) ||
-			(replyId &&
-				!(await squery(surql`SELECT 1 FROM $assetComment`, {
-					assetComment: `assetComment:${replyId}`,
-				})))
+			(id && !(await find(`asset:${id}`))) ||
+			(replyId && !(await find(`assetComment:${replyId}`)))
 		)
 			error(404)
 

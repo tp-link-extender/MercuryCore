@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import { findWhere, query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
@@ -51,10 +51,9 @@ export const actions = {
 
 		if (
 			!category ||
-			!(await squery(
-				surql`
-					SELECT 1 FROM forumCategory
-					WHERE string::lowercase(name) = string::lowercase($category)`,
+			!(await findWhere(
+				"forumCategory",
+				surql`string::lowercase(name) = string::lowercase($category)`,
 				{ category }
 			))
 		)

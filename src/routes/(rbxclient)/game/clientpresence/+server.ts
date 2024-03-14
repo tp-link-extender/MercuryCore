@@ -1,4 +1,4 @@
-import { query, surql } from "$lib/server/surreal"
+import { query, surql, find } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, request }) {
@@ -8,12 +8,7 @@ export async function GET({ url, request }) {
 	if (request.headers.get("user-agent") !== "Roblox/WinInet")
 		error(400, "Good one")
 
-	if (
-		!(await query(surql`SELECT 1 FROM $playing`, {
-			playing: `playing:${ticket}`,
-		}))
-	)
-		error(400, "Ticket not found")
+	if (!(await find(`playing:${ticket}`))) error(400, "Ticket not found")
 
 	await query(surql`UPDATE $ticket SET ping = $ping`, {
 		ticket,

@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { mquery, squery, surql } from "$lib/server/surreal"
+import { mquery, squery, surql, find, findWhere } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { likeActions } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
@@ -123,23 +123,12 @@ export const actions = {
 		if (requestType !== "RequestGame")
 			error(400, "Invalid Request (request type invalid)")
 
-		if (
-			!(await squery<{ id: string }>(surql`SELECT 1 FROM $place`, {
-				place: `place:${serverId}`,
-			}))
-		)
-			error(404, "Place not found")
+		if (!(await find(`place:${serverId}`))) error(404, "Place not found")
 
 		if (
-			await squery<{
-				type: string
-				note: string
-				time: string
-				timeEnds: string
-			}>(
-				surql`
-					SELECT 1 FROM moderation
-					WHERE out = $user AND active = true`,
+			await findWhere(
+				"moderation",
+				surql`out = $user AND active = true`,
 				{ user: `user:${user.id}` }
 			)
 		)

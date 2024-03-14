@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import { squery, surql, find } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeActions } from "$lib/server/like"
@@ -68,14 +68,8 @@ export const actions = {
 		const replyId = url.searchParams.get("rid")
 
 		if (
-			(id &&
-				!(await query(surql`SELECT 1 FROM $id`, {
-					id: `forumReply:${id}`,
-				}))) ||
-			(replyId &&
-				!(await query(surql`SELECT 1 FROM $id`, {
-					id: `forumReply:${replyId}`,
-				})))
+			(id && !(await find(`forumPost:${id}`))) ||
+			(replyId && !(await find(`forumReply:${replyId}`)))
 		)
 			error(404)
 

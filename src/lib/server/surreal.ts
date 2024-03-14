@@ -90,7 +90,7 @@ type Param = string | number | boolean | null | object | Date | undefined // bas
 /**
  * Executes a query in SurrealDB and returns its results.
  * @param input The surql query to execute.
- * @param params An array of variables to pass to SurrealDB.
+ * @param params An object of parameters to pass to SurrealDB.
  * @returns The result of the first query given.
  * @example
  * await query<{ email: string }>(
@@ -107,7 +107,7 @@ export const query = <T>(
 /**
  * Executes a query in SurrealDB and returns the first item in its results.
  * @param input The surql query to execute.
- * @param params An array of variables to pass to SurrealDB.
+ * @param params An object of parameters to pass to SurrealDB.
  * @returns The first item in the array returned by the first query.
  * @example
  * await squery<{ email: string }>(
@@ -115,16 +115,13 @@ export const query = <T>(
  * 	{ username: "Heliodex" }
  * ) // { email: heli@odex.cf } - returns an object for this query
  */
-export const squery = <T>(
-	input: string,
-	params?: { [k: string]: Param }
-	// ) => ((await db.query(input, params))?.[0] as T[])[0]
-) => fixError(async () => ((await db.query(input, params))?.[0] as T[])[0])
+export const squery = <T>(input: string, params?: { [k: string]: Param }) =>
+	fixError(async () => ((await db.query(input, params))?.[0] as T[])[0])
 
 /**
  * Executes multiple queries in SurrealDB and returns their results.
  * @param input The surql query to execute.
- * @param params An array of variables to pass to SurrealDB.
+ * @param params An object of parameters to pass to SurrealDB.
  * @returns The result of all queries given.
  * @example
  * await mquery<{ email: string }>(
@@ -135,6 +132,35 @@ export const squery = <T>(
  */
 export const mquery = <T>(input: string, params?: { [k: string]: Param }) =>
 	fixError(async () => (await db.query(input, params)) as T)
+
+/**
+ * Finds whether a record exists in the database.
+ * @param id The id of the record to find.
+ * @returns Whether the record exists.
+ * @example
+ * await find("user:1")
+ */
+export const find = (id: string) =>
+	query(surql`!!SELECT 1 FROM $id`, { id }) as unknown as Promise<boolean>
+
+/**
+ * Finds whether a record exists in the database matching a given condition.
+ * @param table The table to search in.
+ * @param where The condition to match.
+ * @param params An object of parameters to pass to SurrealDB.
+ * @returns Whether the record exists.
+ * @example
+ * await findWhere("user", surql`username = $username`, { username: "Heliodex" })
+ */
+export const findWhere = (
+	table: string,
+	where: string,
+	params?: { [k: string]: Param }
+) =>
+	query(surql`!!SELECT 1 FROM type::table($table) WHERE ${where}`, {
+		...params,
+		table,
+	}) as unknown as Promise<boolean>
 
 export const failed = "The query was not executed due to a failed transaction"
 
@@ -246,4 +272,30 @@ export async function transaction(
 	// todo test dis it might be broke
 	const e = getError(qResult)
 	if (e) throw new Error(e)
+}
+
+/**
+ * Creates a new audit log in the database.
+ * @param action The category of the action that was taken
+ * @param note The note to be added to the audit log
+ * @param userId The id of the user who took the action
+ */
+export async function auditLog(
+	action: "Account" | "Administration" | "Moderation" | "Economy",
+	note: string,
+	userId: string
+) {
+	await query(
+		surql`
+			CREATE auditLog CONTENT {
+				action: "Account",
+				note: $note,
+				user: $user,
+				time: time::now()
+			}`,
+		{
+			note,
+			user: `user:${userId}`,
+		}
+	)
 }

@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql } from "$lib/server/surreal"
+import { query, surql, auditLog } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -51,19 +51,7 @@ export const actions = {
 			})
 		}
 
-		await query(
-			surql`
-				CREATE auditLog CONTENT {
-					action: "Account",
-					note: $note,
-					user: $user,
-					time: time::now()
-				}`,
-			{
-				note: `Change account password for ${username}`,
-				user: `user:${user.id}`,
-			}
-		)
+		await auditLog("Account", `Change account password for ${username}`, user.id)
 
 		return message(form, "Password changed successfully!")
 	},

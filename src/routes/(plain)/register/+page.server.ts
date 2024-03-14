@@ -1,5 +1,5 @@
 import { auth } from "$lib/server/lucia"
-import { query, squery, mquery, surql } from "$lib/server/surreal"
+import { query, squery, mquery, surql, findWhere } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -116,10 +116,9 @@ export const actions = {
 				[" ", "The specified passwords do not match"]
 			)
 
-		const userCheck = await squery(
-			surql`SELECT 1 FROM user WHERE username = $username`,
-			{ username }
-		)
+		const userCheck = await findWhere("user", surql`username = $username`, {
+			username,
+		})
 
 		if (userCheck)
 			return formError(
@@ -128,10 +127,9 @@ export const actions = {
 				["This username is already in use"]
 			)
 
-		const emailCheck = await squery(
-			surql`SELECT 1 FROM user WHERE email = $email`,
-			{ email }
-		)
+		const emailCheck = await findWhere("user", surql`email = $email`, {
+			email,
+		})
 
 		if (emailCheck)
 			return formError(form, ["email"], ["This email is already in use"])

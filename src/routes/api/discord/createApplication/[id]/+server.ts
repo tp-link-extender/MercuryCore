@@ -1,4 +1,4 @@
-import { query, squery, surql } from "$lib/server/surreal"
+import { query, squery, surql, findWhere } from "$lib/server/surreal"
 import { error, json } from "@sveltejs/kit"
 import { verify, canApply } from "../../discord"
 
@@ -35,10 +35,9 @@ export async function POST({ request, url, params }) {
 	if (!(await canApply(id))) error(400, "This user can't apply again")
 	// if user already applied and has been accepted, error
 	if (
-		await squery(
-			surql`
-				SELECT 1 FROM application
-				WHERE discordId = $id AND status = "Accepted"`,
+		await findWhere(
+			"application",
+			surql`discordId = $id AND status = "Accepted"`,
 			{ id }
 		)
 	)
