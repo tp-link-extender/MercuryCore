@@ -3,7 +3,7 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
-const types = ["friends", "followers", "following"]
+
 const usersQueries = {
 	friends: surql`
 		SELECT number, status, username
@@ -24,11 +24,7 @@ const numberQueries = {
 }
 
 export async function load({ params }) {
-	if (!/^\d+$/.test(params.number))
-		error(400, `Invalid user id: ${params.number}`)
 	const number = +params.number
-
-	if (params.f && !types.includes(params.f)) error(400, "Not found")
 
 	const type = params.f as keyof typeof usersQueries
 	const user = await squery<{

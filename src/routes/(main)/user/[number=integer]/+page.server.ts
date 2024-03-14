@@ -51,9 +51,6 @@ type User = {
 }
 
 export async function load({ locals, params }) {
-	if (!/^\d+$/.test(params.number))
-		error(400, `Invalid user id: ${params.number}`)
-
 	const number = +params.number
 	const { user } = await authorise(locals)
 	const userExists = await squery<User>(

@@ -35,8 +35,6 @@ type Place = {
 }
 
 export async function load({ url, locals, params }) {
-	if (!/^\d+$/.test(params.id)) error(400, `Invalid place id: ${params.id}`)
-
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const privateServerCode = url.searchParams.get("privateServer")
@@ -87,9 +85,6 @@ export async function load({ url, locals, params }) {
 
 export const actions = {
 	like: async ({ url, request, locals, params }) => {
-		if (!/^\d+$/.test(params.id))
-			error(400, `Invalid place id: ${params.id}`)
-
 		const id = +params.id
 		const { user } = await authorise(locals)
 		const data = await formData(request)
@@ -112,7 +107,6 @@ export const actions = {
 
 		await likeActions[action](user.id, `place:${id}`)
 	},
-
 	join: async ({ request, locals }) => {
 		const { user } = await authorise(locals)
 		const data = await formData(request)

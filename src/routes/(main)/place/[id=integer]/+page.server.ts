@@ -12,9 +12,6 @@ type Place = {
 }
 
 export async function load({ locals, params }) {
-	if (!params.id || !/^\d+$/.test(params.id))
-		error(400, `Invalid place id: ${params.id}`)
-
 	const place = await squery<Place>(
 		surql`
 			SELECT

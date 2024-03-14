@@ -70,8 +70,6 @@ const placeQuery = async (id: string | number) =>
 	)
 
 export async function load({ locals, params }) {
-	if (!/^\d+$/.test(params.id)) error(400, `Invalid game id: ${params.id}`)
-
 	const getPlace = await placeQuery(params.id)
 	if (!getPlace) error(404, "Place not found")
 
@@ -91,8 +89,6 @@ export async function load({ locals, params }) {
 }
 
 async function getData(e: RequestEvent) {
-	if (!/^\d+$/.test(e.params.id || ""))
-		error(400, `Invalid game id: ${e.params.id}`)
 	const id = +e.params.id
 	const { user } = await authorise(e.locals)
 	const getPlace = await placeQuery(e.params.id)
