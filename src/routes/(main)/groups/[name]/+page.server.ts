@@ -39,18 +39,18 @@ export async function load({ locals, params }) {
 	return group
 }
 
-async function getData(e: RequestEvent) {
-	const { user } = await authorise(e.locals)
+async function getData({ locals, params }: RequestEvent) {
+	const { user } = await authorise(locals)
 	const group = await squery<{
 		id: string
 	}>(
 		surql`
 			SELECT id FROM group
 			WHERE string::lowercase(name) = string::lowercase($name)`,
-		e.params
+		params
 	)
 
-	if (!group) return fail(400, { msg: "User not found" })
+	if (!group) fail(400, { msg: "Group not found" })
 
 	return {
 		user: `user:${user.id}`,

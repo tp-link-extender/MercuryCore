@@ -7,7 +7,6 @@
 		"format": "biome format src --write",
 		"lint": "biome lint src",
 		"prod": "pnpm lines && pnpm i && vite build",
-		"package": "svelte-kit package",
 		"preview": "vite preview",
 		"buildview": "vite build && vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",

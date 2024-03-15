@@ -18,8 +18,8 @@ type Notification = {
 	link?: string
 }
 
-export default async function (session: Session | null, user: User | null) {
-	if (!session || !user) return []
+export default async function (user: User | null) {
+	if (!user) return []
 	const notifications = await query<Notification>(
 		surql`
 			SELECT
