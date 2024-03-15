@@ -387,7 +387,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             userID,
         )
 
-        role = discord.utils.get(guild.roles, name="cool role")
+        role = discord.utils.get(guild.roles, name="Verified")
         await member.add_roles(role)
 
         desc = f"Hello, @{interaction.user}! Congratulations! Your application was **successful**! Your invite key has been provided below."
@@ -813,22 +813,21 @@ async def register(interaction: discord.Interaction):
             interaction.user.id,
         )
 
-        if app == None:
-            return await problemMessage(interaction)
+        if app:
+            status, _, _, _, reviewed = app
 
-        status, _, _, _, reviewed = app
-
-        if status == "Banned":
-            return await interaction.response.send_message(
-                "You cannot submit an application at this moment. Please run */info* for more details."
-            )
-        if status == "Denied":
-            date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(weeks=1)
-            timestamp = int(date.timestamp())
-            return await interaction.response.send_message(
-                f"You cannot submit an application at this moment. You may retry on <t:{timestamp}>"
-            )
-    except:
+            if status == "Banned":
+                return await interaction.response.send_message(
+                    "You cannot submit an application at this moment. Please run */info* for more details."
+                )
+            if status == "Denied":
+                date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(weeks=1)
+                timestamp = int(date.timestamp())
+                return await interaction.response.send_message(
+                    f"You cannot submit an application at this moment. You may retry on <t:{timestamp}>"
+                )
+    except Exception as e:
+        print(e)
         return await problemMessage(interaction)
 
     if isinstance(interaction.channel, discord.DMChannel):
