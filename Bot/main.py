@@ -315,7 +315,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             data,
             userID,
         )
-        desc = f"Hello, @{interaction.user}! Unfortunately, your application was **not successful**. The reason for this has been provided below."
+        desc = f"Unfortunately, your application was **not successful**. The reason for this has been provided below."
         embedV = discord.Embed(color=0xD9363E, description=desc)
         embedV.set_author(
             name="Mercury 2 - Applications",
