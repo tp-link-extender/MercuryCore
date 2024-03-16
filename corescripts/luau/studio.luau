@@ -54,10 +54,6 @@ local result, _ = pcall(function()
 end)
 if not result then
 	pcall(function()
-		ScriptContext:AddCoreScript(
-			37801172,
-			game:GetService "ScriptContext",
-			"StarterScript"
-		)
+		ScriptContext:AddCoreScript(37801172, ScriptContext, "StarterScript")
 	end)
 end

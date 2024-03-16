@@ -2,6 +2,7 @@
 print "[Mercury]: Loaded corescript 37801172"
 
 local scriptContext = game:GetService "ScriptContext"
+local CoreGui = game:GetService "CoreGui"
 
 -- Creates all neccessary scripts for the gui on initial load, everything except build tools
 -- Please note that these are loaded in a specific order to diminish errors/perceived load time by user
@@ -19,8 +20,8 @@ local function waitForChild(instance, name)
 	end
 end
 
-waitForChild(game:GetService "CoreGui", "RobloxGui")
-local screenGui = game:GetService("CoreGui"):FindFirstChild "RobloxGui"
+waitForChild(CoreGui, "RobloxGui")
+local screenGui = CoreGui:FindFirstChild "RobloxGui"
 
 -- ToolTipper  (creates tool tips for gui)
 scriptContext:AddCoreScript(36868950, screenGui, "CoreScripts/ToolTip")
