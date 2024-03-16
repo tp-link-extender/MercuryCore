@@ -278,7 +278,7 @@ async def fetchApplication(url, userID, interaction):
             name="Reason for denial/ban", value=f"`{reason}`", inline=False
         )
     if status == "Denied":
-        date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(weeks=1)
+        date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(days=3)
         embedV.add_field(
             name="Next application unlocked on", value=f"<t:{int(date.timestamp())}>"
         )
