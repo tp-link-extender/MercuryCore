@@ -136,7 +136,9 @@ export const actions = {
 
 		const regkeyCheck = await squery<{
 			usesLeft: number
-		}>(surql`SELECT usesLeft FROM regKey WHERE id = $regkey`, { regkey })
+		}>(surql`SELECT usesLeft FROM $regKey`, {
+			regkey: `regKey:⟨${regkey}⟩`,
+		})
 
 		if (!regkeyCheck)
 			return formError(form, ["regkey"], ["Registration key is invalid"])
