@@ -136,7 +136,7 @@ export const actions = {
 
 		const regkeyCheck = await squery<{
 			usesLeft: number
-		}>(surql`SELECT usesLeft FROM $regKey`, {
+		}>(surql`SELECT usesLeft FROM $regkey`, {
 			regkey: `regKey:⟨${regkey}⟩`,
 		})
 
