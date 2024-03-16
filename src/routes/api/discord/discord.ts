@@ -14,6 +14,6 @@ export const canApply = async (discordId: string) =>
 			AND deleted != true
 			AND (status = "Pending"
 				OR status = "Banned"
-				OR status = "Denied" AND reviewed > time::now() - 1w)`,
+				OR status = "Denied" AND reviewed > time::now() - 3d)`,
 		{ discordId }
 	))
