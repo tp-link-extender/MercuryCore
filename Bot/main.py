@@ -115,7 +115,7 @@ async def application(interaction):
 
 async def sendApplicationToAdmin(interaction, q1, q2, q3):
 
-    if len(str(q3)) <= 20:
+    if len(str(q3)) <= 5:
         q3 = "N/A"
 
     embedV = discord.Embed(color=0x472A96)
@@ -352,7 +352,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
                 "status": "Denied",
                 "reason": "You are not currently in the Mercury 2 Discord server. If this is a mistake, please contact @task.mgr immediately.",
             }
-            desc = f"Hello, @{interaction.user}! Unfortunately, your application was **not successful**. The reason for this has been provided below."
+            desc = f"Unfortunately, your application was **not successful**. The reason for this has been provided below."
             embedV = discord.Embed(color=0xD9363E, description=desc)
             embedV.set_author(
                 name="Mercury 2 - Applications",
@@ -390,7 +390,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         role = discord.utils.get(guild.roles, name="Verified")
         await member.add_roles(role)
 
-        desc = f"Hello, @{interaction.user}! Congratulations! Your application was **successful**! Your invite key has been provided below."
+        desc = f"Congratulations! Your application was **successful**! Your invite key has been provided below."
         embedV = discord.Embed(color=0x4ACC39, description=desc)
         embedV.set_author(
             name="Mercury 2 - Applications",
@@ -416,7 +416,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             data,
             userID,
         )
-        desc = f"Hello, @{interaction.user}! Unfortunately, your account has been **banned** from applying in the future. The reason for this has been provided below."
+        desc = f"Unfortunately, your account has been **banned** from applying in the future. The reason for this has been provided below."
         embedV = discord.Embed(color=0xD9363E, description=desc)
         embedV.set_author(
             name="Mercury 2 - Applications",
@@ -495,7 +495,7 @@ class keyApplication(ui.Modal):
         )
         if appResp == "created":
 
-            if len(str(self.q3)) <= 20:
+            if len(str(self.q3)) <= 5:
                 self.q3 = "N/A"
 
             desc = "Thank you for sending an application! It will be reviewed and you should recieve a decision on this application within 1-2 days or later. You can view the status of this application at any time by using */info*. You may also unsubmit this application at any time by using */unsubmit*."
