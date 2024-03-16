@@ -1,5 +1,5 @@
 import { auth } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import { squery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { Scrypt } from "oslo/password"

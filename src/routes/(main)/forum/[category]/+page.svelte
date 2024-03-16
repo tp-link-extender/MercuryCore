@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import ForumPost from "./ForumPost.svelte"
-	import PostPage from "./[post]/+page.svelte"
+	import PostPage from "./[post=strid]/+page.svelte"
 
 	export let data
 	// Forum

@@ -49,9 +49,6 @@ type ForumPost = {
 }
 
 export async function load({ locals, params }) {
-	if (!/^[0-9a-z]+$/.test(params.post))
-		error(400, `Invalid post id: ${params.post}`)
-
 	const { user } = await authorise(locals)
 
 	const forumPost = await squery<ForumPost>(
@@ -91,8 +88,7 @@ async function findReply<T>(
 
 	const id = url.searchParams.get("id")
 	if (!id) error(400, "Missing reply id")
-	// Prevents incorrect ids erroring the Surreal query as well
-	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid reply id")
+	// Incorrect ids filtering is done with route matchers now
 
 	const reply = await squery<T>(input, { forumReply: `forumReply:${id}` })
 	if (!reply) error(404, "Reply not found")

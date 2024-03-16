@@ -20,8 +20,6 @@ type ForumReplies = Replies[number] & {
 }
 
 export async function load({ locals, params }) {
-	if (!/^[0-9a-z]+$/.test(params.post)) error(400, "Invalid post id")
-
 	const post = await squery<{
 		author: {
 			username: string

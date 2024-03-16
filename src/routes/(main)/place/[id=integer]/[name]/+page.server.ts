@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import surreal, { mquery, squery, surql } from "$lib/server/surreal"
+import { mquery, squery, surql, find, findWhere } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { likeActions } from "$lib/server/like"
 import { error } from "@sveltejs/kit"
@@ -35,8 +35,6 @@ type Place = {
 }
 
 export async function load({ url, locals, params }) {
-	if (!/^\d+$/.test(params.id)) error(400, `Invalid place id: ${params.id}`)
-
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const privateServerCode = url.searchParams.get("privateServer")
@@ -87,30 +85,28 @@ export async function load({ url, locals, params }) {
 
 export const actions = {
 	like: async ({ url, request, locals, params }) => {
-		if (!/^\d+$/.test(params.id))
-			error(400, `Invalid place id: ${params.id}`)
-
 		const id = +params.id
 		const { user } = await authorise(locals)
 		const data = await formData(request)
 		const action = data.action as keyof typeof likeActions
 		const privateTicket = url.searchParams.get("privateTicket")
-		const place = (
-			(await surreal.select(`place:${id}`)) as {
-				privateServer: boolean
-				privateTicket: string
-			}[]
-		)[0]
+
+		const likePlace = await squery<{
+			privateServer: boolean
+			privateTicket: string
+		}>(surql`SELECT privateServer, privateTicket FROM $place`, {
+			place: `place:${id}`,
+		})
 
 		if (
-			!place ||
-			(place.privateServer && privateTicket !== place.privateTicket)
+			!likePlace ||
+			(likePlace.privateServer &&
+				privateTicket !== likePlace.privateTicket)
 		)
 			error(404, "Place not found")
 
 		await likeActions[action](user.id, `place:${id}`)
 	},
-
 	join: async ({ request, locals }) => {
 		const { user } = await authorise(locals)
 		const data = await formData(request)
@@ -121,19 +117,12 @@ export const actions = {
 		if (requestType !== "RequestGame")
 			error(400, "Invalid Request (request type invalid)")
 
-		if (!(await surreal.select(`place:${serverId}`))[0])
-			error(404, "Place not found")
+		if (!(await find(`place:${serverId}`))) error(404, "Place not found")
 
 		if (
-			await squery<{
-				type: string
-				note: string
-				time: string
-				timeEnds: string
-			}>(
-				surql`
-					SELECT 1 FROM moderation
-					WHERE out = $user AND active = true`,
+			await findWhere(
+				"moderation",
+				surql`out = $user AND active = true`,
 				{ user: `user:${user.id}` }
 			)
 		)

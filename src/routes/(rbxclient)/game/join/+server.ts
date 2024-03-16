@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
-import surreal, { squery, surql } from "$lib/server/surreal"
+import { query, squery, surql, findWhere } from "$lib/server/surreal"
 import fs from "node:fs"
 
 type Session = {
@@ -44,15 +44,14 @@ export async function GET({ url }) {
 
 	if (
 		privateServer &&
-		!(await squery(
-			surql`SELECT 1 FROM place WHERE privateTicket = $privateServer`,
-			{ privateServer }
-		))
+		!(await findWhere("place", surql`privateTicket = $privateServer`, {
+			privateServer,
+		}))
 	)
 		error(400, "Invalid Private Server")
 
-	await surreal.merge(`playing:${clientTicket}`, {
-		valid: false,
+	await query(surql`UPDATE $playing SET valid = false`, {
+		playing: `playing:${clientTicket}`,
 	})
 
 	const userNumber = gameSession.user.number
