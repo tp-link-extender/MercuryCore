@@ -821,7 +821,7 @@ async def register(interaction: discord.Interaction):
                     "You cannot submit an application at this moment. Please run */info* for more details."
                 )
             if status == "Denied":
-                date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(weeks=1)
+                date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(days=3)
                 timestamp = int(date.timestamp())
                 return await interaction.response.send_message(
                     f"You cannot submit an application at this moment. You may retry on <t:{timestamp}>"
