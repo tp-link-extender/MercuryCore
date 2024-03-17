@@ -466,17 +466,20 @@ class keyApplication(ui.Modal):
         style=discord.TextStyle.paragraph,
         required=True,
         min_length=100,
+        max_length=600,
     )
     q2 = ui.TextInput(
         label="Where did you hear about Mercury 2?",
         style=discord.TextStyle.short,
         required=True,
         min_length=5,
+        max_length=500,
     )
     q3 = ui.TextInput(
         label="Any questions/suggestions?",
         style=discord.TextStyle.short,
         required=False,
+        max_length=500,
     )
 
     async def on_submit(self, interaction: discord.Interaction):
