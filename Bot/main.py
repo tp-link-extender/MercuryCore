@@ -290,7 +290,7 @@ async def fetchApplication(url, userID, interaction):
 
 async def deleteApplication(userID, interaction):
     user = await interaction.user.create_dm()
-    desc = "We're sorry you have to unsubmit your application. Before you confirm your unsubmit you must understand that **you will have to wait one week before sending another application**. If you do not want to unsubmit your application, just ignore this message."
+    desc = "We're sorry you have to unsubmit your application. Before you confirm your unsubmit you must understand that **you will have to wait three days before sending another application**. If you do not want to unsubmit your application, just ignore this message."
     embedV = discord.Embed(color=0x472A96, description=desc)
     embedV.set_author(
         name="Mercury 2 - Unsubmit",
@@ -328,7 +328,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         )
         embedV.add_field(
             name="What can I do now?",
-            value="You may re-apply for an invite a week from now. You may re-apply as many times as you wish until your application is successful.",
+            value="You may re-apply for an invite 3 days from now. You may re-apply as many times as you wish until your application is successful.",
             inline=False,
         )
         embedV.set_footer(
@@ -367,7 +367,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             )
             embedV.add_field(
                 name="What can I do now?",
-                value="Please make sure you are in the Mercury 2 Discord server. You may then re-apply for an invite a week from now. You may re-apply as many times as you wish until your application is successful.",
+                value="Please make sure you are in the Mercury 2 Discord server. You may then re-apply for an invite 3 days from now. You may re-apply as many times as you wish until your application is successful.",
                 inline=False,
             )
             embedV.set_footer(
