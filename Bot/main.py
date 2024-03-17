@@ -465,7 +465,7 @@ class keyApplication(ui.Modal):
         label="Why would you like to join Mercury 2?",
         style=discord.TextStyle.paragraph,
         required=True,
-        min_length=10,
+        min_length=100,
     )
     q2 = ui.TextInput(
         label="Where did you hear about Mercury 2?",
