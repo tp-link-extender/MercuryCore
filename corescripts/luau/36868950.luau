@@ -1,6 +1,8 @@
 -- CoreGui.RobloxGui.CoreScripts/ToolTip
 print "[Mercury]: Loaded corescript 36868950"
 
+local New = require "../Modules/New"
+
 local controlFrame = script.Parent:FindFirstChild "ControlFrame"
 
 if not controlFrame then
@@ -10,25 +12,25 @@ end
 local bottomLeftControl = controlFrame:FindFirstChild "BottomLeftControl"
 local bottomRightControl = controlFrame:FindFirstChild "BottomRightControl"
 
-local frameTip = Instance.new "TextLabel"
-frameTip.Name = "ToolTip"
-frameTip.Text = ""
-frameTip.Font = Enum.Font.ArialBold
-frameTip.FontSize = Enum.FontSize.Size12
-frameTip.TextColor3 = Color3.new(1, 1, 1)
-frameTip.BorderSizePixel = 0
-frameTip.ZIndex = 10
-frameTip.Size = UDim2.new(2, 0, 1, 0)
-frameTip.Position = UDim2.new(1, 0, 0, 0)
-frameTip.BackgroundColor3 = Color3.new(0, 0, 0)
-frameTip.BackgroundTransparency = 1
-frameTip.TextTransparency = 1
-frameTip.TextWrap = true
-
-local inside = Instance.new "BoolValue"
-inside.Name = "inside"
-inside.Value = false
-inside.Parent = frameTip
+local frameTip = New "TextLabel" {
+	Name = "ToolTip",
+	Text = "",
+	Font = Enum.Font.ArialBold,
+	FontSize = Enum.FontSize.Size12,
+	TextColor3 = Color3.new(1, 1, 1),
+	BorderSizePixel = 0,
+	ZIndex = 10,
+	Size = UDim2.new(2, 0, 1, 0),
+	Position = UDim2.new(1, 0, 0, 0),
+	BackgroundColor3 = Color3.new(0, 0, 0),
+	BackgroundTransparency = 1,
+	TextTransparency = 1,
+	TextWrap = true,
+	New "BoolValue" {
+		Name = "inside",
+		Value = false,
+	},
+}
 
 local function setUpListeners(frameToListen)
 	local fadeSpeed = 0.1
@@ -87,12 +89,14 @@ local bottomLeftChildren = bottomLeftControl:GetChildren()
 
 for i = 1, #bottomLeftChildren do
 	if bottomLeftChildren[i].Name == "Exit" then
-		local exitTip = frameTip:clone()
-		exitTip.RobloxLocked = true
-		exitTip.Text = "Leave Place"
-		exitTip.Position = UDim2.new(0, 0, -1, 0)
-		exitTip.Size = UDim2.new(1, 0, 1, 0)
-		exitTip.Parent = bottomLeftChildren[i]
+		local exitTip = New(frameTip:clone()) {
+			RobloxLocked = true,
+			Text = "Leave Place",
+			Position = UDim2.new(0, 0, -1, 0),
+			Size = UDim2.new(1, 0, 1, 0),
+			Parent = bottomLeftChildren[i],
+		}
+
 		setUpListeners(exitTip)
 	elseif bottomLeftChildren[i].Name == "SettingsButton" then
 		createSettingsButtonTip(bottomLeftChildren[i])
@@ -105,16 +109,20 @@ local bottomRightChildren = bottomRightControl:GetChildren()
 
 for i = 1, #bottomRightChildren do
 	if bottomRightChildren[i].Name:find "Camera" ~= nil then
-		local cameraTip = frameTip:clone()
-		cameraTip.RobloxLocked = true
-		cameraTip.Text = "Camera View"
+		local cameraTip = New(frameTip:clone()) {
+			RobloxLocked = true,
+			Text = "Camera View",
+			Size = UDim2.new(2, 0, 1.25, 0),
+		}
+
 		if bottomRightChildren[i].Name:find "Zoom" then
 			cameraTip.Position = UDim2.new(-1, 0, -1.5)
 		else
 			cameraTip.Position = UDim2.new(0, 0, -1.5, 0)
 		end
-		cameraTip.Size = UDim2.new(2, 0, 1.25, 0)
+
 		cameraTip.Parent = bottomRightChildren[i]
+
 		setUpListeners(cameraTip)
 	end
 end

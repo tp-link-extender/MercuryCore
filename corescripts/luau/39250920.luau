@@ -1,6 +1,8 @@
 -- CoreGui.RobloxGui.CoreScripts/MainBotChatScript
 print "[Mercury]: Loaded corescript 39250920"
 
+local New = require "../Modules/New"
+
 local InsertService = game:GetService "InsertService"
 
 local function waitForProperty(instance, name)
@@ -49,35 +51,35 @@ local function currentTone()
 end
 
 local function createChatNotificationGui()
-	chatNotificationGui = Instance.new "BillboardGui"
-	chatNotificationGui.Name = "ChatNotificationGui"
-	chatNotificationGui.ExtentsOffset = Vector3.new(0, 1, 0)
-	chatNotificationGui.Size = UDim2.new(4, 0, 5.42857122, 0)
-	chatNotificationGui.SizeOffset = Vector2.new(0, 0)
-	chatNotificationGui.StudsOffset = Vector3.new(0.4, 4.3, 0)
-	chatNotificationGui.Enabled = true
-	chatNotificationGui.RobloxLocked = true
-	chatNotificationGui.Active = true
-
-	local image = Instance.new "ImageLabel"
-	image.Name = "Image"
-	image.Active = false
-	image.BackgroundTransparency = 1
-	image.Position = UDim2.new(0, 0, 0, 0)
-	image.Size = UDim2.new(1, 0, 1, 0)
-	image.Image = ""
-	image.RobloxLocked = true
-	image.Parent = chatNotificationGui
-
-	local button = Instance.new "ImageButton"
-	button.Name = "Button"
-	button.AutoButtonColor = false
-	button.Position = UDim2.new(0.0879999995, 0, 0.0529999994, 0)
-	button.Size = UDim2.new(0.829999983, 0, 0.460000008, 0)
-	button.Image = ""
-	button.BackgroundTransparency = 1
-	button.RobloxLocked = true
-	button.Parent = image
+	chatNotificationGui = New "BillboardGui" {
+		Name = "ChatNotificationGui",
+		ExtentsOffset = Vector3.new(0, 1, 0),
+		Size = UDim2.new(4, 0, 5.42857122, 0),
+		SizeOffset = Vector2.new(0, 0),
+		StudsOffset = Vector3.new(0.4, 4.3, 0),
+		Enabled = true,
+		RobloxLocked = true,
+		Active = true,
+		New "ImageLabel" {
+			Name = "Image",
+			Active = false,
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(1, 0, 1, 0),
+			Image = "",
+			RobloxLocked = true,
+			Parent = chatNotificationGui,
+			New "ImageButton" {
+				Name = "Button",
+				AutoButtonColor = false,
+				Position = UDim2.new(0.0879999995, 0, 0.0529999994, 0),
+				Size = UDim2.new(0.829999983, 0, 0.460000008, 0),
+				Image = "",
+				BackgroundTransparency = 1,
+				RobloxLocked = true,
+			},
+		},
+	}
 end
 
 local function getChatColor(tone)
@@ -151,20 +153,20 @@ local function setChatNotificationTone(notificationGui, purpose, tone)
 end
 
 local function createMessageDialog()
-	messageDialog = Instance.new "Frame"
-	messageDialog.Name = "DialogScriptMessage"
-	messageDialog.Style = Enum.FrameStyle.RobloxRound
-	messageDialog.Visible = false
-
-	local text = Instance.new "TextLabel"
-	text.Name = "Text"
-	text.Position = UDim2.new(0, 0, 0, -1)
-	text.Size = UDim2.new(1, 0, 1, 0)
-	text.FontSize = Enum.FontSize.Size14
-	text.BackgroundTransparency = 1
-	text.TextColor3 = Color3.new(1, 1, 1)
-	text.RobloxLocked = true
-	text.Parent = messageDialog
+	messageDialog = New "Frame" {
+		Name = "DialogScriptMessage",
+		Style = Enum.FrameStyle.RobloxRound,
+		Visible = false,
+		New "TextLabel" {
+			Name = "Text",
+			Position = UDim2.new(0, 0, 0, -1),
+			Size = UDim2.new(1, 0, 1, 0),
+			FontSize = Enum.FontSize.Size14,
+			BackgroundTransparency = 1,
+			TextColor3 = Color3.new(1, 1, 1),
+			RobloxLocked = true,
+		},
+	}
 end
 
 local function showMessage(msg, size)
@@ -178,7 +180,7 @@ end
 
 local function variableDelay(str)
 	local length = math.min(string.len(str), 100)
-	wait(0.75 + ((length / 75) * 1.5))
+	wait(0.75 + (length / 50))
 end
 
 local function highlightColor(frame, tone)
@@ -306,10 +308,12 @@ local function renewKillswitch(dialog)
 		currentAbortDialogScript = nil
 	end
 
-	currentAbortDialogScript = timeoutScript:Clone()
-	currentAbortDialogScript.archivable = false
-	currentAbortDialogScript.Disabled = false
-	currentAbortDialogScript.Parent = dialog
+	currentAbortDialogScript = New(timeoutScript:Clone()) {
+
+		archivable = false,
+		Disabled = false,
+		Parent = dialog,
+	}
 end
 
 local function selectChoice(choice)
@@ -517,11 +521,12 @@ end
 local function addDialog(dialog)
 	if dialog.Parent then
 		if dialog.Parent:IsA "BasePart" then
-			local chatGui = chatNotificationGui:clone()
-			chatGui.Enabled = not dialog.InUse
-			chatGui.Adornee = dialog.Parent
-			chatGui.RobloxLocked = true
-			chatGui.Parent = game.CoreGui
+			local chatGui = New(chatNotificationGui:clone()) {
+				Enabled = not dialog.InUse,
+				Adornee = dialog.Parent,
+				RobloxLocked = true,
+				Parent = game.CoreGui,
+			}
 			chatGui.Image.Button.MouseButton1Click:connect(function()
 				startDialog(dialog)
 			end)
@@ -581,31 +586,32 @@ local function onLoad()
 	player = game.Players.LocalPlayer
 	waitForProperty(player, "Character")
 
-	--print("Fetching Scripts")
+	-- print "Fetching Scripts"
 	fetchScripts()
 
-	--print("Creating Guis")
+	-- print "Creating Guis"
 	createChatNotificationGui()
 
-	--print("Creating MessageDialog")
+	-- print "Creating MessageDialog"
 	createMessageDialog()
 	messageDialog.RobloxLocked = true
 	messageDialog.Parent = gui
 
-	--print("Waiting for BottomLeftControl")
+	-- print "Waiting for BottomLeftControl"
 	waitForChild(gui, "BottomLeftControl")
 
-	--print("Initializing Frame")
-	local frame = Instance.new "Frame"
-	frame.Name = "DialogFrame"
-	frame.Position = UDim2.new(0, 0, 0, 0)
-	frame.Size = UDim2.new(0, 0, 0, 0)
-	frame.BackgroundTransparency = 1
-	frame.RobloxLocked = true
-	frame.Parent = gui.BottomLeftControl
+	-- print "Initializing Frame"
+	local frame = New "Frame" {
+		Name = "DialogFrame",
+		Position = UDim2.new(0, 0, 0, 0),
+		Size = UDim2.new(0, 0, 0, 0),
+		BackgroundTransparency = 1,
+		RobloxLocked = true,
+		Parent = gui.BottomLeftControl,
+	}
 	initialize(frame)
 
-	--print("Adding Dialogs")
+	-- print "Adding Dialogs"
 	game.CollectionService.ItemAdded:connect(function(obj)
 		if obj:IsA "Dialog" then
 			addDialog(obj)
