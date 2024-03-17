@@ -24,8 +24,8 @@ adminid = int(envadminid)
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 
 
-def problemMessage(interaction: discord.Interaction):
-    return interaction.response.send_message(
+async def problemMessage(interaction: discord.Interaction):
+    return await interaction.response.send_message(
         "Sorry, but there was a problem running this command. Please notify @task.mgr with details."
     )
 
