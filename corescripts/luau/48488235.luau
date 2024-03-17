@@ -1,8 +1,8 @@
 -- CoreGui.RobloxGui.CoreScripts/PlayerListScript
 print "[Mercury]: Loaded corescript 48488235"
 
---new playerlist by Zach Lindblad (fusroblox)
---contact him for any revisions/issues
+local New = require "../Modules/New"
+
 --------------------
 -- Super Util
 --------------------
@@ -41,31 +41,13 @@ local BASE_TWEEN = 0.25
 local MOUSE_DRAG_DISTANCE = 15
 
 --[[
-	Generic object Create function, which I am using to create Gui's
-	Thanks to Stravant!
---]]
-local function Create(guiType)
-	return function(data)
-		local obj = Instance.new(guiType)
-		for k, v in pairs(data) do
-			if type(k) == "number" then
-				v.Parent = obj
-			else
-				obj[k] = v
-			end
-		end
-		return obj
-	end
-end
-
---[[
 	makes a full sized background for a guiobject
 	@Args:
 	imgName		asset name of image to fill background
 	@Return:	background gui object
 --]]
 local function MakeBackgroundGuiObj(imgName)
-	return Create "ImageLabel" {
+	return New "ImageLabel" {
 		Name = "Background",
 		BackgroundTransparency = 1,
 		Image = imgName,
@@ -132,13 +114,13 @@ local HeaderFrame
 	@Return:	a popup menu button
 --]]
 local function MakePopupButton(nparent, ntext, index, last)
-	local tobj = Create "ImageButton" {
+	local tobj = New "ImageButton" {
 		Name = "ReportButton",
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, 0, 1 * index, 0),
 		Size = UDim2.new(1, 0, 1, 0),
 		ZIndex = 7,
-		Create "TextLabel" {
+		New "TextLabel" {
 			Name = "ButtonText",
 			BackgroundTransparency = 1,
 			Position = UDim2.new(0.07, 0, 0.07, 0),
@@ -188,13 +170,13 @@ end
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
-local ScreenGui = Create "Frame" {
+local ScreenGui = New "Frame" {
 	Name = "PlayerListScreen",
 	Size = UDim2.new(1, 0, 1, 0),
 	BackgroundTransparency = 1,
 	Parent = script.Parent,
 }
-local MainFrame = Create "Frame" {
+local MainFrame = New "Frame" {
 	Name = "LeaderBoardFrame",
 	Position = UDim2.new(1, -150, 0.005, 0),
 	Size = UDim2.new(0, 150, 0, 800),
@@ -203,7 +185,7 @@ local MainFrame = Create "Frame" {
 }
 
 --frame used for expanding leaderstats when frame is 'focused'
-local FocusFrame = Create "Frame" {
+local FocusFrame = New "Frame" {
 	Name = "FocusFrame",
 	Position = UDim2.new(0, 0, 0, 0),
 	Size = UDim2.new(1, 0, 0, 100),
@@ -213,7 +195,7 @@ local FocusFrame = Create "Frame" {
 }
 
 -- HEADER
-HeaderFrame = Create "Frame" {
+HeaderFrame = New "Frame" {
 	Name = "Header",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0, 0, 0, 0),
@@ -222,7 +204,7 @@ HeaderFrame = Create "Frame" {
 	MakeBackgroundGuiObj "http://banland.xyz/asset?id=94692054",
 }
 local HeaderFrameHeight = HeaderFrame.Size.Y.Scale
-local MaximizeButton = Create "ImageButton" {
+local MaximizeButton = New "ImageButton" {
 	Name = "MaximizeButton",
 	Active = true,
 	BackgroundTransparency = 1,
@@ -230,7 +212,7 @@ local MaximizeButton = Create "ImageButton" {
 	Size = UDim2.new(1, 0, 1, 0),
 	Parent = HeaderFrame,
 }
-local HeaderName = Create "TextLabel" {
+local HeaderName = New "TextLabel" {
 	Name = "PlayerName",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0, 0, 0.01, 0),
@@ -246,7 +228,7 @@ local HeaderName = Create "TextLabel" {
 	TextXAlignment = "Right",
 	TextYAlignment = "Center",
 }
-local HeaderScore = Create "TextLabel" {
+local HeaderScore = New "TextLabel" {
 	Name = "PlayerScore",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0, 0, 0.4, 0),
@@ -263,14 +245,14 @@ local HeaderScore = Create "TextLabel" {
 }
 -- BOTTOM
 --used for shifting bottom frame for mouse over effects
-local BottomShiftFrame = Create "Frame" {
+local BottomShiftFrame = New "Frame" {
 	Name = "BottomShiftFrame",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0, 0, HeaderFrameHeight, 0),
 	Size = UDim2.new(1, 0, 1, 0),
 	Parent = MainFrame,
 }
-local BottomFrame = Create "Frame" {
+local BottomFrame = New "Frame" {
 	Name = "Bottom",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0, 0, 0.07, 0),
@@ -278,7 +260,7 @@ local BottomFrame = Create "Frame" {
 	Parent = BottomShiftFrame,
 	MakeBackgroundGuiObj "http://banland.xyz/asset?id=94754966",
 }
-local ExtendButton = Create "ImageButton" {
+local ExtendButton = New "ImageButton" {
 	Name = "bigbutton",
 	Active = true,
 	BackgroundTransparency = 1,
@@ -287,7 +269,7 @@ local ExtendButton = Create "ImageButton" {
 	ZIndex = 3,
 	Parent = BottomFrame,
 }
-local ExtendTab = Create "ImageButton" {
+local ExtendTab = New "ImageButton" {
 	Name = "extendTab",
 	Active = true,
 	BackgroundTransparency = 1,
@@ -296,7 +278,7 @@ local ExtendTab = Create "ImageButton" {
 	Size = UDim2.new(0.3, 0, 0.7, 0),
 	Parent = BottomFrame,
 }
-local TopClipFrame = Create "Frame" {
+local TopClipFrame = New "Frame" {
 	Name = "ListFrame",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(-1, 0, 0.07, 0),
@@ -304,7 +286,7 @@ local TopClipFrame = Create "Frame" {
 	Parent = MainFrame,
 	ClipsDescendants = true,
 }
-local BottomClipFrame = Create "Frame" {
+local BottomClipFrame = New "Frame" {
 	Name = "BottomFrame",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0, 0, -0.8, 0),
@@ -312,14 +294,14 @@ local BottomClipFrame = Create "Frame" {
 	Parent = TopClipFrame,
 	ClipsDescendants = true,
 }
-local ScrollBarFrame = Create "Frame" {
+local ScrollBarFrame = New "Frame" {
 	Name = "ScrollBarFrame",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.987, 0, 0.8, 0),
 	Size = UDim2.new(0.01, 0, 0.2, 0),
 	Parent = BottomClipFrame,
 }
-local ScrollBar = Create "Frame" {
+local ScrollBar = New "Frame" {
 	Name = "ScrollBar",
 	BackgroundTransparency = 0,
 	BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
@@ -328,14 +310,14 @@ local ScrollBar = Create "Frame" {
 	ZIndex = 5,
 	Parent = ScrollBarFrame,
 }
-local ListFrame = Create "Frame" {
+local ListFrame = New "Frame" {
 	Name = "SubFrame",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0, 0, 0.8, 0),
 	Size = UDim2.new(1, 0, 1, 0),
 	Parent = BottomClipFrame,
 }
-local PopUpClipFrame = Create "Frame" {
+local PopUpClipFrame = New "Frame" {
 	Name = "PopUpFrame",
 	BackgroundTransparency = 1,
 	SizeConstraint = "RelativeXX",
@@ -346,7 +328,7 @@ local PopUpClipFrame = Create "Frame" {
 	ZIndex = 7,
 }
 local PopUpPanel
-local PopUpPanelTemplate = Create "Frame" {
+local PopUpPanelTemplate = New "Frame" {
 	Name = "Panel",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(1, 0, 0, 0),
@@ -354,7 +336,7 @@ local PopUpPanelTemplate = Create "Frame" {
 	Parent = PopUpClipFrame,
 }
 
-local StatTitles = Create "Frame" {
+local StatTitles = New "Frame" {
 	Name = "StatTitles",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0, 0, 1, -10),
@@ -367,12 +349,12 @@ local IsMaximized = Instance.new "BoolValue"
 local IsTabified = Instance.new "BoolValue"
 local AreNamesExpanded = Instance.new "BoolValue"
 
-local MiddleTemplate = Create "Frame" {
+local MiddleTemplate = New "Frame" {
 	Name = "MidTemplate",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(100, 0, 0.07, 0),
 	Size = UDim2.new(0.5, 0, 0.025, 0), --UDim2.new(1, 0, .03, 0),
-	Create "ImageLabel" {
+	New "ImageLabel" {
 		Name = "BCLabel",
 		Active = true,
 		BackgroundTransparency = 1,
@@ -382,7 +364,7 @@ local MiddleTemplate = Create "Frame" {
 		Image = "",
 		ZIndex = 3,
 	},
-	Create "ImageLabel" {
+	New "ImageLabel" {
 		Name = "FriendLabel",
 		Active = true,
 		BackgroundTransparency = 1,
@@ -392,7 +374,7 @@ local MiddleTemplate = Create "Frame" {
 		Image = "",
 		ZIndex = 3,
 	},
-	Create "ImageButton" {
+	New "ImageButton" {
 		Name = "ClickListener",
 		Active = true,
 		BackgroundTransparency = 1,
@@ -400,13 +382,13 @@ local MiddleTemplate = Create "Frame" {
 		Size = UDim2.new(0.96, 0, 1, 0),
 		ZIndex = 3,
 	},
-	Create "Frame" {
+	New "Frame" {
 		Name = "TitleFrame",
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0.01, 0, 0, 0),
 		Size = UDim2.new(0, 140, 1, 0),
 		ClipsDescendants = true,
-		Create "TextLabel" {
+		New "TextLabel" {
 			Name = "Title",
 			BackgroundTransparency = 1,
 			Position = UDim2.new(0, 5, 0, 0),
@@ -420,7 +402,7 @@ local MiddleTemplate = Create "Frame" {
 		},
 	},
 
-	Create "TextLabel" {
+	New "TextLabel" {
 		Name = "PlayerScore",
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, 0, 0, 0),
@@ -438,7 +420,7 @@ local MiddleTemplate = Create "Frame" {
 	--Create'IntValue'{Name = 'Score'},
 	ZIndex = 3,
 }
-local MiddleBGTemplate = Create "Frame" {
+local MiddleBGTemplate = New "Frame" {
 	Name = "MidBGTemplate",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(100, 0, 0.07, 0),
@@ -448,7 +430,7 @@ local MiddleBGTemplate = Create "Frame" {
 
 -- REPORT ABUSE OBJECTS
 
-local ReportAbuseShield = Create "TextButton" {
+local ReportAbuseShield = New "TextButton" {
 	Name = "ReportAbuseShield",
 	Text = "",
 	AutoButtonColor = false,
@@ -460,7 +442,7 @@ local ReportAbuseShield = Create "TextButton" {
 	BackgroundTransparency = 1,
 }
 
-local ReportAbuseFrame = Create "Frame" {
+local ReportAbuseFrame = New "Frame" {
 	Name = "Settings",
 	Position = UDim2.new(0.5, -250, 0.5, -200),
 	Size = UDim2.new(0, 500, 0, 400),
@@ -469,13 +451,13 @@ local ReportAbuseFrame = Create "Frame" {
 	Parent = ReportAbuseShield,
 }
 
-local AbuseSettingsFrame = Create "Frame" {
+local AbuseSettingsFrame = New "Frame" {
 	Name = "ReportAbuseStyle",
 	Size = UDim2.new(1, 0, 1, 0),
 	Active = true,
 	BackgroundTransparency = 1,
-	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96488767", -- 96480351'),
-	Create "TextLabel" {
+	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96488767", -- 96480351",
+	New "TextLabel" {
 		Name = "Title",
 		Text = "Report Abuse",
 		TextColor3 = Color3I(221, 221, 221),
@@ -483,7 +465,7 @@ local AbuseSettingsFrame = Create "Frame" {
 		Font = Enum.Font.ArialBold,
 		FontSize = Enum.FontSize.Size36,
 	},
-	Create "TextLabel" {
+	New "TextLabel" {
 		Name = "Description",
 		Text = "This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action.",
 		TextColor3 = Color3I(221, 221, 221),
@@ -496,7 +478,7 @@ local AbuseSettingsFrame = Create "Frame" {
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Top,
 	},
-	Create "TextLabel" {
+	New "TextLabel" {
 		Name = "AbuseLabel",
 		Text = "What did they do?",
 		Font = Enum.Font.Arial,
@@ -507,7 +489,7 @@ local AbuseSettingsFrame = Create "Frame" {
 		TextColor3 = Color3I(255, 255, 255),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	},
-	Create "TextLabel" {
+	New "TextLabel" {
 		Name = "ShortDescriptionLabel",
 		Text = "Short Description: (optional)",
 		Font = Enum.Font.Arial,
@@ -518,7 +500,7 @@ local AbuseSettingsFrame = Create "Frame" {
 		TextXAlignment = Enum.TextXAlignment.Left,
 		BackgroundTransparency = 1,
 	},
-	Create "TextLabel" {
+	New "TextLabel" {
 		Name = "ReportingPlayerLabel",
 		Text = "Reporting Player",
 		BackgroundTransparency = 1,
@@ -533,7 +515,7 @@ local AbuseSettingsFrame = Create "Frame" {
 	Parent = ReportAbuseFrame,
 }
 
-local AbusePlayerLabel = Create "TextLabel" {
+local AbusePlayerLabel = New "TextLabel" {
 	Name = "PlayerLabel",
 	Text = "",
 	BackgroundTransparency = 1,
@@ -546,7 +528,7 @@ local AbusePlayerLabel = Create "TextLabel" {
 	Parent = AbuseSettingsFrame,
 }
 
-local SubmitReportButton = Create "ImageButton" {
+local SubmitReportButton = New "ImageButton" {
 	Name = "SubmitReportBtn",
 	Active = false,
 	BackgroundTransparency = 1,
@@ -557,7 +539,7 @@ local SubmitReportButton = Create "ImageButton" {
 	Parent = AbuseSettingsFrame,
 }
 
-local CancelReportButton = Create "ImageButton" {
+local CancelReportButton = New "ImageButton" {
 	Name = "CancelBtn",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.5, 50, 1, -80),
@@ -567,7 +549,7 @@ local CancelReportButton = Create "ImageButton" {
 	Parent = AbuseSettingsFrame,
 }
 
-local AbuseDescriptionWrapper = Create "Frame" {
+local AbuseDescriptionWrapper = New "Frame" {
 	Name = "AbuseDescriptionWrapper",
 	Position = UDim2.new(0.025, 0, 0, 220),
 	Size = UDim2.new(0.95, 0, 1, -310),
@@ -578,7 +560,7 @@ local AbuseDescriptionWrapper = Create "Frame" {
 
 local AbuseDescriptionBox
 
-local OriginalAbuseDescriptionBox = Create "TextBox" {
+local OriginalAbuseDescriptionBox = New "TextBox" {
 	Name = "TextBox",
 	Text = "",
 	ClearTextOnFocus = false,
@@ -594,13 +576,13 @@ local OriginalAbuseDescriptionBox = Create "TextBox" {
 	BorderSizePixel = 0,
 }
 
-local CalmingAbuseBox = Create "Frame" {
+local CalmingAbuseBox = New "Frame" {
 	Name = "AbuseFeedbackBox",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.25, 0, 0.300000012, 0),
 	Size = UDim2.new(0.5, 0, 0.370000005, 0),
 	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96506233",
-	Create "TextLabel" {
+	New "TextLabel" {
 		Name = "Header",
 		Position = UDim2.new(0, 10, 0.05, 0),
 		Size = UDim2.new(1, -30, 0.15, 0),
@@ -613,7 +595,7 @@ local CalmingAbuseBox = Create "Frame" {
 		FontSize = Enum.FontSize.Size48,
 		Font = "ArialBold",
 	},
-	Create "TextLabel" {
+	New "TextLabel" {
 		Name = "content",
 		Position = UDim2.new(0, 10, 0.20, 0),
 		Size = UDim2.new(1, -30, 0.40, 0),
@@ -626,7 +608,7 @@ local CalmingAbuseBox = Create "Frame" {
 		FontSize = Enum.FontSize.Size24,
 		Font = "Arial",
 	},
-	Create "ImageButton" {
+	New "ImageButton" {
 		Name = "OkButton",
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0.5, -75, 1, -80),
@@ -635,13 +617,13 @@ local CalmingAbuseBox = Create "Frame" {
 		Image = "http://banland.xyz/asset?id=96507959",
 	},
 }
-local NormalAbuseBox = Create "Frame" {
+local NormalAbuseBox = New "Frame" {
 	Name = "AbuseFeedbackBox",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.25, 0, 0.300000012, 0),
 	Size = UDim2.new(0.5, 0, 0.370000005, 0),
 	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96506233",
-	Create "TextLabel" {
+	New "TextLabel" {
 		Name = "Header",
 		Position = UDim2.new(0, 10, 0.05, 0),
 		Size = UDim2.new(1, -30, 0.15, 0),
@@ -654,7 +636,7 @@ local NormalAbuseBox = Create "Frame" {
 		FontSize = Enum.FontSize.Size48,
 		Font = "ArialBold",
 	},
-	Create "TextLabel" {
+	New "TextLabel" {
 		Name = "content",
 		Position = UDim2.new(0, 10, 0.20, 0),
 		Size = UDim2.new(1, -30, 0.15, 0),
@@ -667,7 +649,7 @@ local NormalAbuseBox = Create "Frame" {
 		FontSize = Enum.FontSize.Size24,
 		Font = "Arial",
 	},
-	Create "ImageButton" {
+	New "ImageButton" {
 		Name = "OkButton",
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0.5, -75, 1, -80),
@@ -685,7 +667,7 @@ BigButton.Visible = false
 --BigButton.Active=false
 BigButton.Parent = ScreenGui
 
-local debugFrame = Create "Frame" {
+local debugFrame = New "Frame" {
 	Name = "debugframe",
 	--Position = UDim2.new(0, 0, 0, 0),
 	--Size = UDim2.new(0, 150, 0, 800),--0.99000001
@@ -695,7 +677,7 @@ local debugFrame = Create "Frame" {
 	Size = UDim2.new(0.5, 0, 0.370000005, 0),
 	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96506233",
 }
-local debugOutput = Create "TextLabel" {
+local debugOutput = New "TextLabel" {
 	BackgroundTransparency = 0.8,
 	Position = UDim2.new(0, 0, 0.5, 0),
 	Size = UDim2.new(1, 0, 0.5, 0),
@@ -939,13 +921,13 @@ local function WaitForClick(frameParent, polledFunction, exitFunction)
 		if connection2 then
 			connection2:disconnect()
 		end
-		--debugprint('mouse up!')
+		-- debugprint "mouse up!"
 	end)
 	connection2 = BigButton.MouseMoved:connect(function(nx, ny)
 		polledFunction(nx, ny)
 	end)
 
-	--debugprint('waiting for click!')
+	-- debugprint "waiting for click!"
 	BigButton.Visible = true
 	BigButton.Active = true
 	BigButton.Parent = frameParent
@@ -1071,7 +1053,7 @@ end
 local function CloseAbuseDialog()
 	AbuseName = nil
 	SubmitReportButton.Active = false
-	SubmitReportButton.Image = "http://banland.xyz/asset?id=96502438" -- 96501119',
+	SubmitReportButton.Image = "http://banland.xyz/asset?id=96502438" -- 96501119",
 	AbuseDescriptionBox:Destroy()
 	CalmingAbuseBox.Parent = nil
 	NormalAbuseBox.Parent = nil
@@ -1742,7 +1724,7 @@ local function TeamListModeUpdate()
 	SortTeams(TeamFrames)
 	if NeutralTeam then
 		AddTeamScores(NeutralTeam)
-		--RecreateScoreColumns(NeutralTeam['MyPlayers'])
+		-- RecreateScoreColumns(NeutralTeam.MyPlayers)
 	end
 	UnrollTeams(TeamFrames, MiddleFrames)
 end
@@ -1774,7 +1756,7 @@ local function BaseUpdate()
 		wait()
 	end
 	BaseUpdateLock = true
-	--print ('baseupdate')
+	-- print "baseupdate"
 	UpdateStatNames()
 
 	if #TeamFrames == 0 and not NeutralTeam then
@@ -1803,7 +1785,7 @@ local function BaseUpdate()
 	UpdateScrollPosition()
 
 	UpdateScrollBarVisibility()
-	--debugprint('EndBaseUpdate')
+	-- debugprint "EndBaseUpdate"
 	BaseUpdateLock = false
 end
 
@@ -1816,7 +1798,7 @@ RecreateScoreColumns = function(ptable)
 		local nscoretxt = panel:FindFirstChild("PlayerScore"):Clone()
 		local thisScore
 		--here lies the resting place of a once great and terrible bug
-		--may its treachery never be forgoten, lest its survivors fall for it again
+		--may its treachery never be forgotten, lest its survivors fall for it again
 		--RIP the leaderstat bug, oct 2012-nov 2012
 		wait()
 		if
@@ -1891,7 +1873,7 @@ RecreateScoreColumns = function(ptable)
 						and not entry.MyTeam.Frame:FindFirstChild(scoreval.Name)
 					then
 						local ntitle = nentry:Clone()
-						--ntitle.TextXAlignment  = 'Right'
+						-- ntitle.TextXAlignment = "Right"
 						ntitle.Parent = entry.MyTeam.Frame
 					end
 				end
@@ -2083,8 +2065,8 @@ end
 	property		Name of stat changed
 --]]
 local function StatChanged(_, _) --playerEntry, property)
-	-- if(playerEntry['MyTeam']) then
-	-- UpdateSingleTeam(playerEntry['MyTeam'])
+	-- if playerEntry["MyTeam"] then
+	-- 	UpdateSingleTeam(playerEntry["MyTeam"])
 	-- else
 	BaseUpdate()
 	-- end
@@ -2500,7 +2482,7 @@ local function StartMinimizeDrag()
 		local startTime = tick()
 		debugprint "Got Click2"
 		local function dragExit()
-			--debugprint('undone click2')
+			-- debugprint "undone click2"
 			if tick() - startTime < 0.25 then --was click
 				ToggleMinimize()
 			else --was drag
@@ -2636,7 +2618,7 @@ local function AddMiddleBGFrame()
 	table.insert(MiddleFrameBackgrounds, nBGFrame)
 
 	if #MiddleFrameBackgrounds < DefaultListSize and not DidMinimizeDrag then
-		--print('readjusting bottom clip')
+		-- print "readjusting bottom clip"
 		DefaultBottomClipPos = -1
 			+ (#MiddleFrameBackgrounds * MiddleBGTemplate.Size.Y.Scale)
 	end
@@ -3109,7 +3091,9 @@ Players.ChildRemoved:connect(RemovePlayerFrame)
 local function OnFriendshipChanged(player, friendStatus)
 	Delay(0.5, function()
 		debugprint(
-			`friend status changed for {player.Name} {friendStatus} vs {GetFriendStatus(player)}`
+			`friend status changed for {player.Name} {friendStatus} vs {GetFriendStatus(
+				player
+			)}`
 		)
 		for _, entry in ipairs(PlayerFrames) do
 			if entry.Player == player then

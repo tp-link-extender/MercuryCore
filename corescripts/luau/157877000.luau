@@ -5,8 +5,7 @@ for _ = 1, 8 do
 end
 
 --Include
-local Create: (instance: string) -> ({ [string]: any }) -> Instance =
-	assert(LoadLibrary "RbxUtility").Create
+local New = require "../Modules/New"
 
 -- A Few Script Globals
 local gui
@@ -18,7 +17,7 @@ end
 
 -- Dev-Console Root
 
-local Dev_Container = Create "Frame" {
+local Dev_Container = New "Frame" {
 	Name = "DevConsoleContainer",
 	Parent = gui,
 	BackgroundColor3 = Color3.new(0, 0, 0),
@@ -28,7 +27,7 @@ local Dev_Container = Create "Frame" {
 	Visible = false,
 }
 
-local ToggleConsole = Create "BindableFunction" {
+local ToggleConsole = New "BindableFunction" {
 	Name = "ToggleDevConsole",
 	Parent = gui,
 }
@@ -67,16 +66,55 @@ function initializeDeveloperConsole()
 
 	--Create Dev-Console
 
-	local Dev_Body = Create "Frame" {
+	local Dev_Body = New "Frame" {
 		Name = "Body",
 		Parent = Dev_Container,
 		BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 0.5,
 		Position = UDim2.new(0, 0, 0, 21),
 		Size = UDim2.new(1, 0, 1, -25),
+		New "TextButton" {
+			Name = "LocalConsole",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BackgroundTransparency = 0.6,
+			Position = UDim2.new(0, 7, 0, 5),
+			Size = UDim2.new(0, 90, 0, 20),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size14,
+			Text = "Local Console",
+			TextColor3 = Color3.new(1, 1, 1),
+			TextYAlignment = Enum.TextYAlignment.Center,
+		},
+		New "TextButton" {
+			Name = "ServerConsole",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BackgroundTransparency = 0.8,
+			Position = UDim2.new(0, 102, 0, 5),
+			Size = UDim2.new(0, 90, 0, 17),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size14,
+			Text = "Server Console",
+			TextColor3 = Color3.new(1, 1, 1),
+			TextYAlignment = Enum.TextYAlignment.Center,
+		},
+		New "ImageButton" {
+			Name = "ResizeButton",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BackgroundTransparency = 0.5,
+			Position = UDim2.new(1, -20, 1, -20),
+			Size = UDim2.new(0, 20, 0, 20),
+			New "ImageLabel" {
+				Name = "ImageLabel",
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0, 6, 0, 6),
+				Size = UDim2.new(0.8, 0, 0.8, 0),
+				Rotation = 135,
+				Image = "http://banland.xyz/Asset?id=151205813",
+			},
+		},
 	}
 
-	local Dev_OptionsHolder = Create "Frame" {
+	local Dev_OptionsHolder = New "Frame" {
 		Name = "OptionsHolder",
 		Parent = Dev_Body,
 		BackgroundColor3 = Color3.new(0, 0, 0),
@@ -86,151 +124,127 @@ function initializeDeveloperConsole()
 		ClipsDescendants = true,
 	}
 
-	local Dev_OptionsBar = Create "Frame" {
+	local Dev_OptionsBar = New "Frame" {
 		Name = "OptionsBar",
 		Parent = Dev_OptionsHolder,
 		BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, -250, 0, 4),
 		Size = UDim2.new(0, 234, 0, 18),
+		New "TextButton" {
+			Name = "ErrorToggleButton",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BorderColor3 = Color3.new(1, 0, 0),
+			Position = UDim2.new(0, 115, 0, 0),
+			Size = UDim2.new(0, 18, 0, 18),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size14,
+			Text = "",
+			TextColor3 = Color3.new(1, 0, 0),
+			New "Frame" {
+				Name = "CheckFrame",
+				BackgroundColor3 = Color3.new(1, 0, 0),
+				BorderColor3 = Color3.new(1, 0, 0),
+				Position = UDim2.new(0, 4, 0, 4),
+				Size = UDim2.new(0, 10, 0, 10),
+			},
+		},
+		New "TextButton" {
+			Name = "InfoToggleButton",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BorderColor3 = Color3.new(0.4, 0.5, 1.0),
+			Position = UDim2.new(0, 65, 0, 0),
+			Size = UDim2.new(0, 18, 0, 18),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size14,
+			Text = "",
+			TextColor3 = Color3.new(0.4, 0.5, 1.0),
+			New "Frame" {
+				Name = "CheckFrame",
+				BackgroundColor3 = Color3.new(0.4, 0.5, 1.0),
+				BorderColor3 = Color3.new(0.4, 0.5, 1.0),
+				Position = UDim2.new(0, 4, 0, 4),
+				Size = UDim2.new(0, 10, 0, 10),
+			},
+		},
+		New "TextButton" {
+			Name = "OutputToggleButton",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BorderColor3 = Color3.new(1, 1, 1.0),
+			Position = UDim2.new(0, 40, 0, 0),
+			Size = UDim2.new(0, 18, 0, 18),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size14,
+			Text = "",
+			TextColor3 = Color3.new(1, 1, 1.0),
+			New "Frame" {
+				Name = "CheckFrame",
+				BackgroundColor3 = Color3.new(1, 1, 1.0),
+				BorderColor3 = Color3.new(1, 1, 1.0),
+				Position = UDim2.new(0, 4, 0, 4),
+				Size = UDim2.new(0, 10, 0, 10),
+			},
+		},
+		New "TextButton" {
+			Name = "WarningToggleButton",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BorderColor3 = Color3.new(1, 0.6, 0.4),
+			Position = UDim2.new(0, 90, 0, 0),
+			Size = UDim2.new(0, 18, 0, 18),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size14,
+			Text = "",
+			TextColor3 = Color3.new(1, 0.6, 0.4),
+			New "Frame" {
+				Name = "CheckFrame",
+				BackgroundColor3 = Color3.new(1, 0.6, 0.4),
+				BorderColor3 = Color3.new(1, 0.6, 0.4),
+				Position = UDim2.new(0, 4, 0, 4),
+				Size = UDim2.new(0, 10, 0, 10),
+			},
+		},
+		New "TextButton" {
+			Name = "WordWrapToggleButton",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BorderColor3 = Color3.new(0.8, 0.8, 0.8),
+			Position = UDim2.new(0, 215, 0, 0),
+			Size = UDim2.new(0, 18, 0, 18),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size14,
+			Text = "",
+			TextColor3 = Color3.new(0.8, 0.8, 0.8),
+			New "Frame" {
+				Name = "CheckFrame",
+				BackgroundColor3 = Color3.new(0.8, 0.8, 0.8),
+				BorderColor3 = Color3.new(0.8, 0.8, 0.8),
+				Position = UDim2.new(0, 4, 0, 4),
+				Size = UDim2.new(0, 10, 0, 10),
+				Visible = false,
+			},
+		},
+		New "TextLabel" {
+			Name = "Filter",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(0, 40, 0, 18),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size14,
+			Text = "Filter",
+			TextColor3 = Color3.new(1, 1, 1),
+		},
+		New "TextLabel" {
+			Name = "WordWrap",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 150, 0, 0),
+			Size = UDim2.new(0, 50, 0, 18),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size14,
+			Text = "Word Wrap",
+			TextColor3 = Color3.new(1, 1, 1),
+		},
 	}
 
-	local Dev_ErrorToggleFilter = Create "TextButton" {
-		Name = "ErrorToggleButton",
-		Parent = Dev_OptionsBar,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BorderColor3 = Color3.new(1, 0, 0),
-		Position = UDim2.new(0, 115, 0, 0),
-		Size = UDim2.new(0, 18, 0, 18),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size14,
-		Text = "",
-		TextColor3 = Color3.new(1, 0, 0),
-	}
-
-	Create "Frame" {
-		Name = "CheckFrame",
-		Parent = Dev_ErrorToggleFilter,
-		BackgroundColor3 = Color3.new(1, 0, 0),
-		BorderColor3 = Color3.new(1, 0, 0),
-		Position = UDim2.new(0, 4, 0, 4),
-		Size = UDim2.new(0, 10, 0, 10),
-	}
-
-	local Dev_InfoToggleFilter = Create "TextButton" {
-		Name = "InfoToggleButton",
-		Parent = Dev_OptionsBar,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BorderColor3 = Color3.new(0.4, 0.5, 1.0),
-		Position = UDim2.new(0, 65, 0, 0),
-		Size = UDim2.new(0, 18, 0, 18),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size14,
-		Text = "",
-		TextColor3 = Color3.new(0.4, 0.5, 1.0),
-	}
-
-	Create "Frame" {
-		Name = "CheckFrame",
-		Parent = Dev_InfoToggleFilter,
-		BackgroundColor3 = Color3.new(0.4, 0.5, 1.0),
-		BorderColor3 = Color3.new(0.4, 0.5, 1.0),
-		Position = UDim2.new(0, 4, 0, 4),
-		Size = UDim2.new(0, 10, 0, 10),
-	}
-
-	local Dev_OutputToggleFilter = Create "TextButton" {
-		Name = "OutputToggleButton",
-		Parent = Dev_OptionsBar,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BorderColor3 = Color3.new(1, 1, 1.0),
-		Position = UDim2.new(0, 40, 0, 0),
-		Size = UDim2.new(0, 18, 0, 18),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size14,
-		Text = "",
-		TextColor3 = Color3.new(1, 1, 1.0),
-	}
-
-	Create "Frame" {
-		Name = "CheckFrame",
-		Parent = Dev_OutputToggleFilter,
-		BackgroundColor3 = Color3.new(1, 1, 1.0),
-		BorderColor3 = Color3.new(1, 1, 1.0),
-		Position = UDim2.new(0, 4, 0, 4),
-		Size = UDim2.new(0, 10, 0, 10),
-	}
-
-	local Dev_WarningToggleFilter = Create "TextButton" {
-		Name = "WarningToggleButton",
-		Parent = Dev_OptionsBar,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BorderColor3 = Color3.new(1, 0.6, 0.4),
-		Position = UDim2.new(0, 90, 0, 0),
-		Size = UDim2.new(0, 18, 0, 18),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size14,
-		Text = "",
-		TextColor3 = Color3.new(1, 0.6, 0.4),
-	}
-
-	Create "Frame" {
-		Name = "CheckFrame",
-		Parent = Dev_WarningToggleFilter,
-		BackgroundColor3 = Color3.new(1, 0.6, 0.4),
-		BorderColor3 = Color3.new(1, 0.6, 0.4),
-		Position = UDim2.new(0, 4, 0, 4),
-		Size = UDim2.new(0, 10, 0, 10),
-	}
-
-	local Dev_WordWrapToggle = Create "TextButton" {
-		Name = "WordWrapToggleButton",
-		Parent = Dev_OptionsBar,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BorderColor3 = Color3.new(0.8, 0.8, 0.8),
-		Position = UDim2.new(0, 215, 0, 0),
-		Size = UDim2.new(0, 18, 0, 18),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size14,
-		Text = "",
-		TextColor3 = Color3.new(0.8, 0.8, 0.8),
-	}
-
-	Create "Frame" {
-		Name = "CheckFrame",
-		Parent = Dev_WordWrapToggle,
-		BackgroundColor3 = Color3.new(0.8, 0.8, 0.8),
-		BorderColor3 = Color3.new(0.8, 0.8, 0.8),
-		Position = UDim2.new(0, 4, 0, 4),
-		Size = UDim2.new(0, 10, 0, 10),
-		Visible = false,
-	}
-
-	Create "TextLabel" {
-		Name = "Filter",
-		Parent = Dev_OptionsBar,
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 0, 0, 0),
-		Size = UDim2.new(0, 40, 0, 18),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size14,
-		Text = "Filter",
-		TextColor3 = Color3.new(1, 1, 1),
-	}
-
-	Create "TextLabel" {
-		Name = "WordWrap",
-		Parent = Dev_OptionsBar,
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 150, 0, 0),
-		Size = UDim2.new(0, 50, 0, 18),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size14,
-		Text = "Word Wrap",
-		TextColor3 = Color3.new(1, 1, 1),
-	}
-
-	local Dev_ScrollBar = Create "Frame" {
+	local Dev_ScrollBar = New "Frame" {
 		Name = "ScrollBar",
 		Parent = Dev_Body,
 		BackgroundColor3 = Color3.new(0, 0, 0),
@@ -238,73 +252,61 @@ function initializeDeveloperConsole()
 		Position = UDim2.new(1, -20, 0, 26),
 		Size = UDim2.new(0, 20, 1, -50),
 		Visible = false,
+		New "ImageButton" {
+			Name = "Down",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BackgroundTransparency = 0.5,
+			Position = UDim2.new(0, 0, 1, -20),
+			Size = UDim2.new(0, 20, 0, 20),
+			New "ImageLabel" {
+				Name = "ImageLabel",
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0, 3, 0, 3),
+				Size = UDim2.new(0, 14, 0, 14),
+				Rotation = 180,
+				Image = "http://banland.xyz/Asset?id=151205813",
+			},
+		},
+		New "ImageButton" {
+			Name = "Up",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BackgroundTransparency = 0.5,
+			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(0, 20, 0, 20),
+			New "ImageLabel" {
+				Name = "ImageLabel",
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0, 3, 0, 3),
+				Size = UDim2.new(0, 14, 0, 14),
+				Image = "http://banland.xyz/Asset?id=151205813",
+			},
+		},
 	}
 
-	local Dev_ScrollArea = Create "Frame" {
+	local Dev_ScrollArea = New "Frame" {
 		Name = "ScrollArea",
 		Parent = Dev_ScrollBar,
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, 0, 0, 23),
 		Size = UDim2.new(1, 0, 1, -46),
+		New "ImageButton" {
+			Name = "Handle",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BackgroundTransparency = 0.5,
+			Position = UDim2.new(0, 0, 0.2, 0),
+			Size = UDim2.new(0, 20, 0, 40),
+			New "ImageLabel" {
+				Name = "ImageLabel",
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0, 0, 0.5, -8),
+				Rotation = 180,
+				Size = UDim2.new(1, 0, 0, 16),
+				Image = "http://banland.xyz/Asset?id=151205881",
+			},
+		},
 	}
 
-	local Dev_Handle = Create "ImageButton" {
-		Name = "Handle",
-		Parent = Dev_ScrollArea,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.5,
-		Position = UDim2.new(0, 0, 0.2, 0),
-		Size = UDim2.new(0, 20, 0, 40),
-	}
-
-	Create "ImageLabel" {
-		Name = "ImageLabel",
-		Parent = Dev_Handle,
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 0, 0.5, -8),
-		Rotation = 180,
-		Size = UDim2.new(1, 0, 0, 16),
-		Image = "http://banland.xyz/Asset?id=151205881",
-	}
-
-	local Dev_DownButton = Create "ImageButton" {
-		Name = "Down",
-		Parent = Dev_ScrollBar,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.5,
-		Position = UDim2.new(0, 0, 1, -20),
-		Size = UDim2.new(0, 20, 0, 20),
-	}
-
-	Create "ImageLabel" {
-		Name = "ImageLabel",
-		Parent = Dev_DownButton,
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 3, 0, 3),
-		Size = UDim2.new(0, 14, 0, 14),
-		Rotation = 180,
-		Image = "http://banland.xyz/Asset?id=151205813",
-	}
-
-	local Dev_UpButton = Create "ImageButton" {
-		Name = "Up",
-		Parent = Dev_ScrollBar,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.5,
-		Position = UDim2.new(0, 0, 0, 0),
-		Size = UDim2.new(0, 20, 0, 20),
-	}
-
-	Create "ImageLabel" {
-		Name = "ImageLabel",
-		Parent = Dev_UpButton,
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 3, 0, 3),
-		Size = UDim2.new(0, 14, 0, 14),
-		Image = "http://banland.xyz/Asset?id=151205813",
-	}
-
-	local Dev_TextBox = Create "Frame" {
+	local Dev_TextBox = New "Frame" {
 		Name = "TextBox",
 		Parent = Dev_Body,
 		BackgroundColor3 = Color3.new(0, 0, 0),
@@ -314,7 +316,7 @@ function initializeDeveloperConsole()
 		ClipsDescendants = true,
 	}
 
-	local Dev_TextHolder = Create "Frame" {
+	local Dev_TextHolder = New "Frame" {
 		Name = "TextHolder",
 		Parent = Dev_TextBox,
 		BackgroundTransparency = 1,
@@ -322,121 +324,64 @@ function initializeDeveloperConsole()
 		Size = UDim2.new(1, 0, 1, 0),
 	}
 
-	local Dev_OptionsButton = Create "ImageButton" {
+	local Dev_OptionsButton = New "ImageButton" {
 		Name = "OptionsButton",
 		Parent = Dev_Body,
 		BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 1,
 		Position = UDim2.new(0, 200, 0, 2),
 		Size = UDim2.new(0, 20, 0, 20),
+		New "ImageLabel" {
+			Name = "ImageLabel",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(1, 0, 1, 0),
+			Rotation = 0,
+			Image = "http://banland.xyz/Asset?id=152093917",
+		},
 	}
 
-	Create "ImageLabel" {
-		Name = "ImageLabel",
-		Parent = Dev_OptionsButton,
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 0, 0, 0),
-		Size = UDim2.new(1, 0, 1, 0),
-		Rotation = 0,
-		Image = "http://banland.xyz/Asset?id=152093917",
-	}
-
-	local Dev_ResizeButton = Create "ImageButton" {
-		Name = "ResizeButton",
-		Parent = Dev_Body,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.5,
-		Position = UDim2.new(1, -20, 1, -20),
-		Size = UDim2.new(0, 20, 0, 20),
-	}
-
-	Create "ImageLabel" {
-		Name = "ImageLabel",
-		Parent = Dev_ResizeButton,
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 6, 0, 6),
-		Size = UDim2.new(0.8, 0, 0.8, 0),
-		Rotation = 135,
-		Image = "http://banland.xyz/Asset?id=151205813",
-	}
-
-	Create "TextButton" {
-		Name = "LocalConsole",
-		Parent = Dev_Body,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.6,
-		Position = UDim2.new(0, 7, 0, 5),
-		Size = UDim2.new(0, 90, 0, 20),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size14,
-		Text = "Local Console",
-		TextColor3 = Color3.new(1, 1, 1),
-		TextYAlignment = Enum.TextYAlignment.Center,
-	}
-
-	Create "TextButton" {
-		Name = "ServerConsole",
-		Parent = Dev_Body,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.8,
-		Position = UDim2.new(0, 102, 0, 5),
-		Size = UDim2.new(0, 90, 0, 17),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size14,
-		Text = "Server Console",
-		TextColor3 = Color3.new(1, 1, 1),
-		TextYAlignment = Enum.TextYAlignment.Center,
-	}
-
-	local Dev_TitleBar = Create "Frame" {
+	local Dev_TitleBar = New "Frame" {
 		Name = "TitleBar",
 		Parent = Dev_Container,
 		BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 0.5,
 		Position = UDim2.new(0, 0, 0, 0),
 		Size = UDim2.new(1, 0, 0, 20),
-	}
-
-	local Dev_CloseButton = Create "ImageButton" {
-		Name = "CloseButton",
-		Parent = Dev_TitleBar,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.5,
-		Position = UDim2.new(1, -20, 0, 0),
-		Size = UDim2.new(0, 20, 0, 20),
-	}
-
-	Create "ImageLabel" {
-		Parent = Dev_CloseButton,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 3, 0, 3),
-		Size = UDim2.new(0, 14, 0, 14),
-		Image = "http://banland.xyz/Asset?id=151205852",
-	}
-
-	Create "TextButton" {
-		Name = "TextButton",
-		Parent = Dev_TitleBar,
-		BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.5,
-		Position = UDim2.new(0, 0, 0, 0),
-		Size = UDim2.new(1, -23, 1, 0),
-		Text = "",
-	}
-
-	Create "TextLabel" {
-		Name = "TitleText",
-		Parent = Dev_TitleBar,
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 0, 0, 0),
-		Size = UDim2.new(0, 185, 0, 20),
-		Font = "SourceSansBold",
-		FontSize = Enum.FontSize.Size18,
-		-- Text = "Server Console",
-		TextColor3 = Color3.new(1, 1, 1),
-		Text = "Roblox Developer Console",
-		TextYAlignment = Enum.TextYAlignment.Top,
+		New "ImageButton" {
+			Name = "CloseButton",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BackgroundTransparency = 0.5,
+			Position = UDim2.new(1, -20, 0, 0),
+			Size = UDim2.new(0, 20, 0, 20),
+			New "ImageLabel" {
+				BackgroundColor3 = Color3.new(0, 0, 0),
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0, 3, 0, 3),
+				Size = UDim2.new(0, 14, 0, 14),
+				Image = "http://banland.xyz/Asset?id=151205852",
+			},
+		},
+		New "TextButton" {
+			Name = "TextButton",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BackgroundTransparency = 0.5,
+			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(1, -23, 1, 0),
+			Text = "",
+		},
+		New "TextLabel" {
+			Name = "TitleText",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(0, 185, 0, 20),
+			Font = "SourceSansBold",
+			FontSize = Enum.FontSize.Size18,
+			-- Text = "Server Console",
+			TextColor3 = Color3.new(1, 1, 1),
+			Text = "Roblox Developer Console",
+			TextYAlignment = Enum.TextYAlignment.Top,
+		},
 	}
 
 	---Saved Mouse Information
@@ -556,6 +501,76 @@ function initializeDeveloperConsole()
 		startAnimation()
 	end)
 
+	--Refresh Dev-Console Message Positions
+	local function repositionList()
+		if currentConsole == LOCAL_CONSOLE then
+			localOffset = math.min(
+				math.max(localOffset, 0),
+				textHolderSize - Dev_Container.Body.TextBox.AbsoluteSize.Y
+			)
+			Dev_TextHolder.Size = UDim2.new(1, 0, 0, textHolderSize)
+		elseif currentConsole == SERVER_CONSOLE then
+			serverOffset = math.min(
+				math.max(serverOffset, 0),
+				textHolderSize - Dev_Container.Body.TextBox.AbsoluteSize.Y
+			)
+			Dev_TextHolder.Size = UDim2.new(1, 0, 0, textHolderSize)
+		end
+
+		local ratio = Dev_Container.Body.TextBox.AbsoluteSize.Y
+			/ Dev_TextHolder.AbsoluteSize.Y
+
+		if ratio >= 1 then
+			Dev_Container.Body.ScrollBar.Visible = false
+			Dev_Container.Body.TextBox.Size = UDim2.new(1, -4, 1, -28)
+
+			if
+				currentConsole == LOCAL_CONSOLE
+				or currentConsole == SERVER_CONSOLE
+			then
+				Dev_TextHolder.Position = UDim2.new(0, 0, 1, 0 - textHolderSize)
+			end
+		else
+			Dev_Container.Body.ScrollBar.Visible = true
+			Dev_Container.Body.TextBox.Size = UDim2.new(1, -25, 1, -28)
+
+			local backRatio = 1 - ratio
+			local offsetRatio
+
+			if currentConsole == LOCAL_CONSOLE then
+				offsetRatio = localOffset / Dev_TextHolder.AbsoluteSize.Y
+			elseif currentConsole == SERVER_CONSOLE then
+				offsetRatio = serverOffset / Dev_TextHolder.AbsoluteSize.Y
+			end
+
+			local topRatio = math.max(0, backRatio - offsetRatio)
+
+			local scrollHandleSize =
+				math.max(Dev_ScrollArea.AbsoluteSize.Y * ratio, 21)
+
+			local scrollRatio = scrollHandleSize / Dev_ScrollArea.AbsoluteSize.Y
+			local ratioConversion = (1 - scrollRatio) / (1 - ratio)
+
+			local topScrollRatio = topRatio * ratioConversion
+
+			local sPos = math.min(
+				Dev_ScrollArea.AbsoluteSize.Y * topScrollRatio,
+				Dev_ScrollArea.AbsoluteSize.Y - scrollHandleSize
+			)
+
+			Dev_ScrollArea.Handle.Size = UDim2.new(1, 0, 0, scrollHandleSize)
+			Dev_ScrollArea.Handle.Position = UDim2.new(0, 0, 0, sPos)
+
+			if currentConsole == LOCAL_CONSOLE then
+				Dev_TextHolder.Position =
+					UDim2.new(0, 0, 1, 0 - textHolderSize + localOffset)
+			elseif currentConsole == SERVER_CONSOLE then
+				Dev_TextHolder.Position =
+					UDim2.new(0, 0, 1, 0 - textHolderSize + serverOffset)
+			end
+		end
+	end
+
 	--Scroll Position
 
 	local function changeOffset(value)
@@ -592,7 +607,7 @@ function initializeDeveloperConsole()
 			local movePosition = false
 
 			if i > #childMessages then
-				message = Create "TextLabel" {
+				message = New "TextLabel" {
 					Name = "Message",
 					Parent = Dev_TextHolder,
 					BackgroundTransparency = 1,
@@ -784,76 +799,6 @@ function initializeDeveloperConsole()
 			return false
 		end
 		return true
-	end
-
-	--Refresh Dev-Console Message Positions
-	function repositionList()
-		if currentConsole == LOCAL_CONSOLE then
-			localOffset = math.min(
-				math.max(localOffset, 0),
-				textHolderSize - Dev_Container.Body.TextBox.AbsoluteSize.Y
-			)
-			Dev_TextHolder.Size = UDim2.new(1, 0, 0, textHolderSize)
-		elseif currentConsole == SERVER_CONSOLE then
-			serverOffset = math.min(
-				math.max(serverOffset, 0),
-				textHolderSize - Dev_Container.Body.TextBox.AbsoluteSize.Y
-			)
-			Dev_TextHolder.Size = UDim2.new(1, 0, 0, textHolderSize)
-		end
-
-		local ratio = Dev_Container.Body.TextBox.AbsoluteSize.Y
-			/ Dev_TextHolder.AbsoluteSize.Y
-
-		if ratio >= 1 then
-			Dev_Container.Body.ScrollBar.Visible = false
-			Dev_Container.Body.TextBox.Size = UDim2.new(1, -4, 1, -28)
-
-			if
-				currentConsole == LOCAL_CONSOLE
-				or currentConsole == SERVER_CONSOLE
-			then
-				Dev_TextHolder.Position = UDim2.new(0, 0, 1, 0 - textHolderSize)
-			end
-		else
-			Dev_Container.Body.ScrollBar.Visible = true
-			Dev_Container.Body.TextBox.Size = UDim2.new(1, -25, 1, -28)
-
-			local backRatio = 1 - ratio
-			local offsetRatio
-
-			if currentConsole == LOCAL_CONSOLE then
-				offsetRatio = localOffset / Dev_TextHolder.AbsoluteSize.Y
-			elseif currentConsole == SERVER_CONSOLE then
-				offsetRatio = serverOffset / Dev_TextHolder.AbsoluteSize.Y
-			end
-
-			local topRatio = math.max(0, backRatio - offsetRatio)
-
-			local scrollHandleSize =
-				math.max(Dev_ScrollArea.AbsoluteSize.Y * ratio, 21)
-
-			local scrollRatio = scrollHandleSize / Dev_ScrollArea.AbsoluteSize.Y
-			local ratioConversion = (1 - scrollRatio) / (1 - ratio)
-
-			local topScrollRatio = topRatio * ratioConversion
-
-			local sPos = math.min(
-				Dev_ScrollArea.AbsoluteSize.Y * topScrollRatio,
-				Dev_ScrollArea.AbsoluteSize.Y - scrollHandleSize
-			)
-
-			Dev_ScrollArea.Handle.Size = UDim2.new(1, 0, 0, scrollHandleSize)
-			Dev_ScrollArea.Handle.Position = UDim2.new(0, 0, 0, sPos)
-
-			if currentConsole == LOCAL_CONSOLE then
-				Dev_TextHolder.Position =
-					UDim2.new(0, 0, 1, 0 - textHolderSize + localOffset)
-			elseif currentConsole == SERVER_CONSOLE then
-				Dev_TextHolder.Position =
-					UDim2.new(0, 0, 1, 0 - textHolderSize + serverOffset)
-			end
-		end
 	end
 
 	-- Easy, fast, and working nicely

@@ -39,7 +39,6 @@ local closeButton = backpack.Tabs.CloseButton
 waitForChild(backpack.Tabs, "InventoryButton")
 local inventoryButton = backpack.Tabs.InventoryButton
 
-local wardrobeButton
 waitForChild(backpack.Parent, "ControlFrame")
 local backpackButton =
 	waitForChild(backpack.Parent.ControlFrame, "BackpackButton")
@@ -297,9 +296,7 @@ function updateTabGui(selectedTab)
 
 	if selectedTab == "gear" then
 		setSelected(inventoryButton)
-		setUnselected(wardrobeButton)
 	elseif selectedTab == "wardrobe" then
-		setSelected(wardrobeButton)
 		setUnselected(inventoryButton)
 	end
 end

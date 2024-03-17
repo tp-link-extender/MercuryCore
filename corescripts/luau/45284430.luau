@@ -954,10 +954,10 @@ RbxGui.CreateTrueScrollingFrame = function()
 	scrollBottom.Name = "ScrollBottom"
 	scrollBottom.Parent = controlFrame
 
-	local scrollUp = Instance.new "BoolValue"
-	scrollUp.Value = false
-	scrollUp.Name = "scrollUp"
-	scrollUp.Parent = controlFrame
+	local scrollUpValue = Instance.new "BoolValue"
+	scrollUpValue.Value = false
+	scrollUpValue.Name = "scrollUp"
+	scrollUpValue.Parent = controlFrame
 
 	local scrollUpButton = Instance.new "TextButton"
 	scrollUpButton.Name = "ScrollUpButton"
@@ -1109,13 +1109,13 @@ RbxGui.CreateTrueScrollingFrame = function()
 		if newScaleYPos + relativeSize > 1 then
 			newScaleYPos = 1 - relativeSize
 			scrollBottom.Value = true
-			scrollUp.Value = false
+			scrollUpValue.Value = false
 		elseif newScaleYPos <= 0 then
 			newScaleYPos = 0
-			scrollUp.Value = true
+			scrollUpValue.Value = true
 			scrollBottom.Value = false
 		else
-			scrollUp.Value = false
+			scrollUpValue.Value = false
 			scrollBottom.Value = false
 		end
 		scrollbar.Position = UDim2.new(
@@ -1325,7 +1325,7 @@ RbxGui.CreateTrueScrollingFrame = function()
 
 	local scrollStamp
 
-	local function scrollUp(mouseYPos)
+	local function scrollUp()
 		if scrollUpButton.Active then
 			scrollStamp = tick()
 			local current = scrollStamp
@@ -1341,9 +1341,6 @@ RbxGui.CreateTrueScrollingFrame = function()
 			local w = 0.1
 			while scrollStamp == current do
 				doScrollUp()
-				if mouseYPos and mouseYPos > scrollbar.AbsolutePosition.y then
-					break
-				end
 				if not scrollUpButton.Active then
 					break
 				end
