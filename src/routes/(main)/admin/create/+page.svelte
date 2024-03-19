@@ -108,6 +108,20 @@
 						{/await}
 					</p>
 				{/if}
+				{#if data.stage == 3 && data.getSharedAssets}
+					<p>
+						{#await data.getSharedAssets}
+							Getting asset versions, please wait...
+						{:then sharedAssets}
+							{#if sharedAssets.length > 0}
+								Found {sharedAssets.length} shared assets related
+								to {data.assetId}
+							{:else}
+								No versions found for asset {data.assetId}
+							{/if}
+						{/await}
+					</p>
+				{/if}
 				<Form
 					formData={formDataAutopilot}
 					method="GET"
@@ -140,6 +154,14 @@
 							{/if}
 						{/await}
 					{:else if data.stage === 3}
+						<input
+							type="hidden"
+							name="assetId"
+							value={data.assetId} />
+						<input
+							type="hidden"
+							name="version"
+							value={data.version} />
 						<Input
 							formData={formDataAutopilot}
 							name="name"
@@ -155,11 +177,15 @@
 							name="price"
 							label="Asset price"
 							type="number" />
-						<Select
-							formData={formDataAutopilot}
-							options={[]}
-							name="shared"
-							label="Shared assets" />
+						{#await data.getSharedAssets then sharedAssets}
+							{#if sharedAssets.length > 0}
+								<Select
+									formData={formDataAutopilot}
+									options={sharedAssets}
+									name="shared"
+									label="Shared assets" />
+							{/if}
+						{/await}
 					{/if}
 				</Form>
 			</Tab>

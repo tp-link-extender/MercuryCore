@@ -78,13 +78,9 @@ print "newHealth declarations finished"
 
 local function billboardHealthChange(dmg)
 	local textLabel = Instance.new "TextLabel"
-	if dmg > 0 then
-		textLabel.Text = tostring(dmg)
-		textLabel.TextColor3 = Color3.new(0, 1, 0)
-	else
-		textLabel.Text = tostring(dmg)
-		textLabel.TextColor3 = Color3.new(1, 0, 1)
-	end
+	textLabel.TextColor3 = dmg > 0 and Color3.new(0, 1, 0)
+		or Color3.new(1, 0, 1)
+	textLabel.Text = tostring(dmg)
 	textLabel.size = UDim2.new(1, 0, 1, 0.0)
 	textLabel.Active = true
 	textLabel.FontSize = 6

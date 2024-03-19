@@ -11,7 +11,13 @@
 
 <Head title={titles[data.type]} />
 
-<h1 class="text-center">{titles[data.type]} ({data.number})</h1>
+<div class="text-center">
+	<h1>{titles[data.type]} ({data.number})</h1>
+	<a href="/user/{data.number}" class="no-underline accent-text">
+		<fa fa-caret-left />
+		Back to {data.username}'s profile
+	</a>
+</div>
 
 <div class="ctnr pt-12 grid">
 	{#each data.users as user, num}
