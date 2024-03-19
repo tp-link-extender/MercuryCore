@@ -713,7 +713,7 @@ local function createGameMainMenu(baseZIndex, shield)
 	screenshotButton.Visible = not macClient
 	screenshotButton:SetVerb "Screenshot"
 
-	local screenshotShortcut = helpShortcut:clone()
+	local screenshotShortcut = helpShortcut:Clone()
 	screenshotShortcut.Name = "ScreenshotShortcutText"
 	screenshotShortcut.Text = "PrintSc"
 	screenshotShortcut.Position = UDim2.new(0, 118, 0, 0)
@@ -733,7 +733,7 @@ local function createGameMainMenu(baseZIndex, shield)
 	recordVideoButton.Visible = not macClient
 	recordVideoButton:SetVerb "RecordToggle"
 
-	local recordVideoShortcut = helpShortcut:clone()
+	local recordVideoShortcut = helpShortcut:Clone()
 	recordVideoShortcut.Visible = hasGraphicsSlider
 	recordVideoShortcut.Name = "RecordVideoShortcutText"
 	recordVideoShortcut.Text = "F12"
@@ -899,7 +899,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	studioText.BackgroundTransparency = 1
 	studioText.Parent = gameSettingsMenuFrame
 
-	local studioShortcut = fullscreenShortcut:clone()
+	local studioShortcut = fullscreenShortcut:Clone()
 	studioShortcut.Name = "StudioShortcutText"
 	studioShortcut.Visible = false -- TODO: turn back on when f2 hack is fixed
 	studioShortcut.Text = "F2"
@@ -921,7 +921,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	qualityText.Parent = gameSettingsMenuFrame
 	qualityText.Visible = not inStudioMode
 
-	local autoText = qualityText:clone()
+	local autoText = qualityText:Clone()
 	autoText.Name = "AutoText"
 	autoText.Text = "Auto"
 	autoText.Position = UDim2.new(0, 183, 0, 214)
@@ -930,7 +930,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	autoText.Parent = gameSettingsMenuFrame
 	autoText.Visible = not inStudioMode
 
-	local fasterText = autoText:clone()
+	local fasterText = autoText:Clone()
 	fasterText.Name = "FasterText"
 	fasterText.Text = "Faster"
 	fasterText.Position = UDim2.new(0, 185, 0, 274)
@@ -939,14 +939,14 @@ local function createGameSettingsMenu(baseZIndex, _)
 	fasterText.Parent = gameSettingsMenuFrame
 	fasterText.Visible = not inStudioMode
 
-	local fasterShortcut = fullscreenShortcut:clone()
+	local fasterShortcut = fullscreenShortcut:Clone()
 	fasterShortcut.Name = "FasterShortcutText"
 	fasterShortcut.Text = "F10 + Shift"
 	fasterShortcut.Position = UDim2.new(0, 185, 0, 283)
 	fasterShortcut.Parent = gameSettingsMenuFrame
 	fasterShortcut.Visible = not inStudioMode
 
-	local betterQualityText = autoText:clone()
+	local betterQualityText = autoText:Clone()
 	betterQualityText.Name = "BetterQualityText"
 	betterQualityText.Text = "Better Quality"
 	betterQualityText.TextWrap = true
@@ -957,7 +957,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	betterQualityText.Parent = gameSettingsMenuFrame
 	betterQualityText.Visible = not inStudioMode
 
-	local betterQualityShortcut = fullscreenShortcut:clone()
+	local betterQualityShortcut = fullscreenShortcut:Clone()
 	betterQualityShortcut.Name = "BetterQualityShortcut"
 	betterQualityShortcut.Text = "F10"
 	betterQualityShortcut.Position = UDim2.new(0, 394, 0, 288)

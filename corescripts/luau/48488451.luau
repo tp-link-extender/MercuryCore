@@ -1,7 +1,9 @@
 -- CoreGui.RobloxGui.CoreScripts/PopupScript
 print "[Mercury]: Loaded corescript 48488451"
 
-local New = require "../Modules/New"
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
 
 --build our gui
 
@@ -39,7 +41,7 @@ local popupFrame = New "Frame" {
 		ZIndex = 5,
 	},
 }
-New(popupFrame:clone()) {
+Hydrate(popupFrame:Clone()) {
 	Name = "Darken",
 	Size = UDim2.new(1, 16, 1, 16),
 	Position = UDim2.new(0, -8, 0, -8),
@@ -58,13 +60,13 @@ local acceptButton = New "TextButton" {
 	ZIndex = 5,
 	Parent = popupFrame,
 }
-New(acceptButton:clone()) {
+Hydrate(acceptButton:Clone()) {
 	Name = "DeclineButton",
 	Text = "No",
 	Position = UDim2.new(1, -120, 0, 270),
 	Parent = popupFrame,
 }
-New(acceptButton:clone()) {
+Hydrate(acceptButton:Clone()) {
 	Name = "OKButton",
 	Text = "OK",
 	Position = UDim2.new(0.5, -50, 0, 270),

@@ -1,7 +1,9 @@
 -- CoreGui.RobloxGui.CoreScripts/BackpackScripts/BackpackBuild
 print "[Mercury]: Loaded corescript 53878047"
 
-local New = require "../Modules/New"
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
 
 -- This script creates almost all gui elements found in the backpack (warning: there are a lot!)
 -- TODO: automate this process
@@ -159,13 +161,13 @@ local CurrentLoadout = New "Frame" {
 			ZIndex = 5.0,
 		},
 		SlotNumber(),
-		New(SlotNumber()) {
+		Hydrate(SlotNumber()) {
 			Name = "SlotNumberDownShadow",
 			TextColor3 = Color3.new(0, 0, 0),
 			Position = UDim2.new(0, 1, 0, -1),
 			ZIndex = 2,
 		},
-		New(SlotNumber()) {
+		Hydrate(SlotNumber()) {
 			Name = "SlotNumberUpShadow",
 			TextColor3 = Color3.new(0, 0, 0),
 			Position = UDim2.new(0, -1, 0, -1),
@@ -184,7 +186,7 @@ New "ImageButton" {
 	Image = "http://banland.xyz/asset/?id=97617958",
 	Position = UDim2.new(0.5, -60, 1, -108),
 	Size = UDim2.new(0, 120, 0, 18),
-	Parent = gui.ControlFrame
+	Parent = gui.ControlFrame,
 }
 
 for i = 0, 9 do
@@ -391,7 +393,7 @@ New "Frame" {
 					TextColor3 = Color3.new(1, 1, 1),
 				},
 			},
-			New(GearGridScrollingArea()) {
+			Hydrate(GearGridScrollingArea()) {
 				Name = "GearLoadoutsScrollingArea",
 				Position = UDim2.new(1, -15, 0.15, 2),
 				Size = UDim2.new(0, 17, 0.85, -2),
@@ -451,17 +453,17 @@ New "Frame" {
 					Visible = false,
 					ZIndex = 9,
 					AttributeImage(),
-					New(AttributeImage()) {
+					Hydrate(AttributeImage()) {
 						Name = "AttributeOneImage",
 						BackgroundColor3 = Color3.new(1, 51 / 255, 0),
 						Position = UDim2.new(0.25, 0, 0, 0),
 					},
-					New(AttributeImage()) {
+					Hydrate(AttributeImage()) {
 						Name = "AttributeTwoImage",
 						BackgroundColor3 = Color3.new(153 / 255, 1, 153 / 255),
 						Position = UDim2.new(0.5, 0, 0, 0),
 					},
-					New(AttributeImage()) {
+					Hydrate(AttributeImage()) {
 						Name = "AttributeThreeImage",
 						BackgroundColor3 = Color3.new(0, 0.5, 0.5),
 						Position = UDim2.new(0.75, 0, 0, 0),

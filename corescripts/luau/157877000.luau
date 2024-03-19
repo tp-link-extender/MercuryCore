@@ -5,7 +5,7 @@ for _ = 1, 8 do
 end
 
 --Include
-local New = require "../Modules/New"
+local New = (require "../Modules/New").New
 
 -- A Few Script Globals
 local gui
@@ -39,7 +39,7 @@ function initializeDeveloperConsole()
 	end
 	devConsoleInitialized = true
 
-	---Dev-Console Variables
+	-- Dev-Console Variables
 	local LOCAL_CONSOLE = 1
 	local SERVER_CONSOLE = 2
 
@@ -64,7 +64,7 @@ function initializeDeveloperConsole()
 
 	local frameNumber = 0
 
-	--Create Dev-Console
+	-- Create Dev-Console
 
 	local Dev_Body = New "Frame" {
 		Name = "Body",

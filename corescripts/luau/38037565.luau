@@ -4,8 +4,8 @@ for _ = 1, 8 do
 	print "IF YOU SEE THIS MESSAGE, PLEASE REPORT IT TO THE MERCURY DEVELOPERS"
 end
 
-local damageGuiWidth = 5.0
-local damageGuiHeight = 5.0
+local damageGuiWidth = 5
+local damageGuiHeight = 5
 
 local function waitForChild(parent, childName)
 	local child = parent:findFirstChild(childName)

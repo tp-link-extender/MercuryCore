@@ -8,7 +8,8 @@ print "[Mercury]: Loaded corescript 97188756"
 	//NOTE: If you find any bugs or inaccuracies PM Sorcus on Roblox or @Canavus on Twitter
 ]]
 
-local SafeChat = require "../Modules/Safechat.yml"
+local SafeChat = require "../Modules/Safechat.yml" -- THANK YOU DARKLUA
+local New = (require "../Modules/New").New
 
 local forceChatGUI = false
 
@@ -53,14 +54,13 @@ local Player = Game.Players.LocalPlayer
 while Player.Character == nil do
 	wait(0.03)
 end
-local RbxUtility = LoadLibrary "RbxUtility"
-local Create = RbxUtility.Create
 local Camera = Game.Workspace.CurrentCamera
 
 -- Services
 local CoreGuiService = Game:GetService "CoreGui"
 local PlayersService = Game:GetService "Players"
 local GuiService = Game:GetService "GuiService"
+local UserInputService = Game:GetService "UserInputService"
 
 -- Lua Enums
 local Enums, CreateEnum
@@ -119,7 +119,6 @@ end
 local Input = {
 	Mouse = Player:GetMouse(),
 	Speed = 0,
-	Simulating = false,
 
 	Configuration = {
 		DefaultSpeed = 1,
@@ -252,38 +251,46 @@ end
 -- 	end
 -- end
 
--- Check if we are running on a touch device
-function Chat:IsTouchDevice()
-	local touchEnabled = false
-	pcall(function()
-		touchEnabled = Game:GetService("UserInputService").TouchEnabled
-	end)
-	return touchEnabled
-end
-
 -- Scrolling
--- function Chat:ScrollQueue(value)
--- 	for i = 1, #self.MessageQueue do
--- 		if self.MessageQueue[i] then
--- 			for _, label in pairs(self.MessageQueue[i]) do
--- 				local next = self.MessageQueue[i].Next
--- 				local previous = self.MessageQueue[i].Previous
--- 				if
--- 					label and label:IsA "TextLabel" or label:IsA "TextButton"
--- 				then
--- 					if value > 0 and previous and previous.Message then
--- 						label.Position = previous["Message"].Position
--- 					elseif value < 1 and next.Message then
--- 						label.Position = previous["Message"].Position
--- 					end
--- 				end
--- 			end
--- 		end
--- 	end
--- end
+function Chat:ScrollQueue(value)
+	for i = 1, #self.MessageQueue do
+		if self.MessageQueue[i] then
+			for _, label in pairs(self.MessageQueue[i]) do
+				local Next = self.MessageQueue[i + 1]
+				local Previous = self.MessageQueue[i - 1]
+				if
+					label
+					and type(label) == "userdata" -- until i figure out what's going on
+					and (label:IsA "TextLabel" or label:IsA "TextButton")
+				then
+					print(
+						"scrolling",
+						value,
+						"|",
+						Previous,
+						"|",
+						Previous and Previous.message or "none",
+						"|",
+						Next,
+						"|",
+						Next and Next.message or "none"
+					)
+					-- if value > 0 and Previous and Previous.Message then
+					-- 	-- label.Position = previous.Message.Position
+					-- 	label.Position += UDim2.new(0, 0, 1, 0)
+					-- elseif value < 1 and Next.Message then
+					-- 	-- label.Position = previous.Message.Position
+					-- 	label.Position -= UDim2.new(0, 0, 1, 0)
+					-- end
+				end
+			end
+		end
+	end
+end
 
 -- Handles the rendering of the text objects in their appropriate places
 function Chat:UpdateQueue(field, diff)
+	print "Updating queue"
 	-- Have to do some sort of correction here
 	for i = #self.MessageQueue, 1, -1 do
 		if self.MessageQueue[i] then
@@ -356,15 +363,15 @@ function Chat:CheckIfInBounds(value)
 	if
 		value > 0
 		and Chat.MessageQueue[1]
-		and Chat.MessageQueue[1]["Player"]
-		and Chat.MessageQueue[1]["Player"].Position.Y.Scale == 0
+		and Chat.MessageQueue[1].Player
+		and Chat.MessageQueue[1].Player.Position.Y.Scale == 0
 	then
 		return true
 	elseif
 		value < 0
 		and Chat.MessageQueue[1]
-		and Chat.MessageQueue[1]["Player"]
-		and Chat.MessageQueue[1]["Player"].Position.Y.Scale < 0
+		and Chat.MessageQueue[1].Player
+		and Chat.MessageQueue[1].Player.Position.Y.Scale < 0
 	then
 		return true
 	end
@@ -376,7 +383,7 @@ end
 function Chat:ComputeSpaceString(pLabel)
 	local nString = " "
 	if not self.TempSpaceLabel then
-		self.TempSpaceLabel = Create "TextButton" {
+		self.TempSpaceLabel = New "TextButton" {
 			Size = UDim2.new(
 				0,
 				pLabel.AbsoluteSize.X,
@@ -427,31 +434,24 @@ function Chat:UpdateChat(cPlayer, message)
 end
 
 -- function Chat:RecalculateSpacing()
---[[for i = 1, #self.MessageQueue do
-		local pLabel = self.MessageQueue[i]['Player']
-		local mLabel = self.MessageQueue[i]['Message']
+-- 	for i = 1, #self.MessageQueue do
+-- 		local pLabel = self.MessageQueue[i].Player
+-- 		local mLabel = self.MessageQueue[i].Message
 
-		local prevYScale = mLabel.Size.Y.Scale
-		local prevText = mLabel.Text
-		mLabel.Text = prevText
+-- 		local prevYScale = mLabel.Size.Y.Scale
+-- 		local prevText = mLabel.Text
+-- 		mLabel.Text = prevText
 
-		local heightField = mLabel.TextBounds.Y
+-- 		local heightField = mLabel.TextBounds.Y
 
-		mLabel.Size = UDim2.new(1, 0, heightField/self.RenderFrame.AbsoluteSize.Y, 0)
-		pLabel.Size = mLabel.Size
+-- 		mLabel.Size =
+-- 			UDim2.new(1, 0, heightField / self.RenderFrame.AbsoluteSize.Y, 0)
+-- 		pLabel.Size = mLabel.Size
 
-		local diff = mLabel.Size.Y.Scale - prevYScale
+-- 		local diff = mLabel.Size.Y.Scale - prevYScale
 
-		Chat:UpdateQueue(self.MessageQueue[i], diff)
-	end ]]
--- end
-
--- function Chat:ApplyFilter(str)
--- 	--[[for _, word in pair(self.Filter_List) do
--- 		if string.find(str, word) then
--- 			str:gsub(word, '@#$^')
--- 		end
--- 	end ]]
+-- 		Chat:UpdateQueue(self.MessageQueue[i], diff)
+-- 	end
 -- end
 
 -- NOTE: Temporarily disabled ring buffer to allow for chat to always wrap around
@@ -469,43 +469,42 @@ function Chat:CreateMessage(cPlayer, message)
 	-- If we ever hit the mark, which would be in every popular game btw
 	-- we wrap around and reuse the labels
 	if #self.MessageQueue > self.Configuration.HistoryLength then
-		--[[pLabel = self.MessageQueue[#self.MessageQueue]["Player"]
-		mLabel = self.MessageQueue[#self.MessageQueue]["Message"]
+		-- pLabel = self.MessageQueue[#self.MessageQueue].Player
+		-- mLabel = self.MessageQueue[#self.MessageQueue].Message
 
-		pLabel.Text = `{pName}:`
-		pLabel.Name = pName
+		-- pLabel.Text = `{pName}:`
+		-- pLabel.Name = pName
 
-		local pColor
-		if cPlayer.Neutral then
-			pLabel.TextColor3 = Chat:ComputeChatColor(pName)
-		else
-			pLabel.TextColor3 = cPlayer.TeamColor.Color
-		end
+		-- if cPlayer.Neutral then
+		-- 	pLabel.TextColor3 = Chat:ComputeChatColor(pName)
+		-- else
+		-- 	pLabel.TextColor3 = cPlayer.TeamColor.Color
+		-- end
 
-		local nString
+		-- local nString
 
-		if not self.CachedSpaceStrings_List[pName] then
-			nString = Chat:ComputeSpaceString(pLabel)
-		else
-			nString = self.CachedSpaceStrings_List[pName]
-		end
+		-- if not self.CachedSpaceStrings_List[pName] then
+		-- 	nString = Chat:ComputeSpaceString(pLabel)
+		-- else
+		-- 	nString = self.CachedSpaceStrings_List[pName]
+		-- end
 
-		mLabel.Text = ""
-		mLabel.Name = `{pName} - message`
-		mLabel.Text = nString .. message
+		-- mLabel.Text = ""
+		-- mLabel.Name = `{pName} - message`
+		-- mLabel.Text = nString .. message
 
-		mLabel.Parent = nil
-		mLabel.Parent = self.RenderFrame
+		-- mLabel.Parent = nil
+		-- mLabel.Parent = self.RenderFrame
 
-		mLabel.Position = UDim2.new(0, 0, 1, 0)
-		pLabel.Position = UDim2.new(0, 0, 1, 0)]]
+		-- mLabel.Position = UDim2.new(0, 0, 1, 0)
+		-- pLabel.Position = UDim2.new(0, 0, 1, 0)
 
 		-- Reinserted at the beginning, ring buffer
 		self.MessageQueue[#self.MessageQueue] = nil
 	end
 	--else
 	-- Haven't hit the mark yet, so keep creating
-	pLabel = Create "TextLabel" {
+	pLabel = New "TextLabel" {
 		Name = pName,
 		Text = `{pName}:`,
 		-- TextColor3 = pColor,
@@ -537,7 +536,7 @@ function Chat:CreateMessage(cPlayer, message)
 		nString = self.CachedSpaceStrings_List[pName]
 	end
 
-	mLabel = Create "TextLabel" {
+	mLabel = New "TextLabel" {
 		Name = `{pName} - message`,
 		-- Max is 3 lines
 		Size = UDim2.new(1, 0, 0.5, 0),
@@ -580,10 +579,11 @@ function Chat:CreateMessage(cPlayer, message)
 		UDim2.new(1, 0, heightField / self.RenderFrame.AbsoluteSize.Y, 0)
 	pLabel.Size = mLabel.Size
 
-	local queueField = {}
-	queueField.Player = pLabel
-	queueField.Message = mLabel
-	queueField.SpawnTime = tick() -- Used for identifying when to make the message invisible
+	local queueField = {
+		Player = pLabel,
+		Message = mLabel,
+		SpawnTime = tick(), -- Used for identifying when to make the message invisible
+	}
 
 	table.insert(self.MessageQueue, 1, queueField)
 	Chat:UpdateQueue(queueField)
@@ -631,7 +631,7 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 	rootButton = rootButton or self.SafeChatButton
 	for msg, _ in pairs(list) do
 		if type(msg) == "string" then
-			local chatText = Create "TextButton" {
+			local chatText = New "TextButton" {
 				Name = msg,
 				Text = msg,
 				Size = UDim2.new(0, 100, 0, 20),
@@ -682,13 +682,13 @@ function Chat:CreateSafeChatOptions(list, rootButton)
 end
 
 function Chat:CreateSafeChatGui()
-	self.SafeChatFrame = Create "Frame" {
+	self.SafeChatFrame = New "Frame" {
 		Name = "SafeChatFrame",
 		Size = UDim2.new(1, 0, 1, 0),
 		Parent = self.Gui,
 		BackgroundTransparency = 1,
 
-		Create "ImageButton" {
+		New "ImageButton" {
 			Name = "SafeChatButton",
 			Size = UDim2.new(0, 44, 0, 31),
 			Position = UDim2.new(0, 1, 0.35, 0),
@@ -721,21 +721,21 @@ end
 
 -- For touch devices we create a button instead
 function Chat:CreateTouchButton()
-	self.ChatTouchFrame = Create "Frame" {
+	self.ChatTouchFrame = New "Frame" {
 		Name = "ChatTouchFrame",
 		Size = UDim2.new(0, 128, 0, 32),
 		Position = UDim2.new(0, 88, 0, 0),
 		BackgroundTransparency = 1,
 		Parent = self.Gui,
 
-		Create "ImageButton" {
+		New "ImageButton" {
 			Name = "ChatLabel",
 			Size = UDim2.new(0, 74, 0, 28),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,
 			ZIndex = 2.0,
 		},
-		Create "ImageLabel" {
+		New "ImageLabel" {
 			Name = "Background",
 			Size = UDim2.new(1, 0, 1, 0),
 			Position = UDim2.new(0, 0, 0, 0),
@@ -746,7 +746,7 @@ function Chat:CreateTouchButton()
 	self.TapToChatLabel = self.ChatTouchFrame.ChatLabel
 	self.TouchLabelBackground = self.ChatTouchFrame.Background
 
-	self.ChatBar = Create "TextBox" {
+	self.ChatBar = New "TextBox" {
 		Name = "ChatBar",
 		Size = UDim2.new(1, 0, 0.2, 0),
 		Position = UDim2.new(0, 0, 0.8, 800),
@@ -778,7 +778,7 @@ function Chat:CreateChatBar()
 		return GuiService.UseLuaChat
 	end)
 	if forceChatGUI or (status and result) then
-		self.ClickToChatButton = Create "TextButton" {
+		self.ClickToChatButton = New "TextButton" {
 			Name = "ClickToChat",
 			Size = UDim2.new(1, 0, 0, 20),
 			BackgroundTransparency = 1,
@@ -791,7 +791,7 @@ function Chat:CreateChatBar()
 			FontSize = Enum.FontSize.Size12,
 		}
 
-		self.ChatBar = Create "TextBox" {
+		self.ChatBar = New "TextBox" {
 			Name = "ChatBar",
 			Size = UDim2.new(1, 0, 0, 20),
 			Position = UDim2.new(0, 0, 1, 0),
@@ -814,7 +814,7 @@ function Chat:CreateChatBar()
 		if not success then
 			GuiService:SetGlobalSizeOffsetPixel(0, -20)
 		end
-		-- CHatHotKey is '/'
+		-- ChatHotKey is '/'
 		GuiService:AddSpecialKey(Enum.SpecialKey.ChatHotkey)
 		GuiService.SpecialKeyPressed:connect(function(key)
 			if key == Enum.SpecialKey.ChatHotkey then
@@ -832,7 +832,7 @@ end
 -- Done only once
 function Chat:CreateGui()
 	self.Gui = WaitForChild(CoreGuiService, "RobloxGui")
-	self.Frame = Create "Frame" {
+	self.Frame = New "Frame" {
 		Name = "ChatFrame",
 		--Size = self.Configuration.Size;
 		Size = UDim2.new(0, 500, 0, 120),
@@ -843,7 +843,7 @@ function Chat:CreateGui()
 		Parent = self.Gui,
 		Active = false,
 
-		Create "ImageLabel" {
+		New "ImageLabel" {
 			Name = "Background",
 			Image = "http://banland.xyz/asset/?id=97120937", --96551212';
 			Size = UDim2.new(1.3, 0, 1.64, 0),
@@ -853,7 +853,7 @@ function Chat:CreateGui()
 			Visible = false,
 		},
 
-		Create "Frame" {
+		New "Frame" {
 			Name = "Border",
 			Size = UDim2.new(1, 0, 0, 1),
 			Position = UDim2.new(0, 0, 0.8, 0),
@@ -863,7 +863,7 @@ function Chat:CreateGui()
 			Visible = false,
 		},
 
-		Create "Frame" {
+		New "Frame" {
 			Name = "ChatRenderFrame",
 			Size = UDim2.new(1.02, 0, 1.01, 0),
 			Position = UDim2.new(0, 0, 0, 0),
@@ -882,10 +882,7 @@ function Chat:CreateGui()
 	end)
 
 	self.RenderFrame = self.Frame.ChatRenderFrame
-	if Chat:IsTouchDevice() then
-		self.Frame.Position = self.Configuration.Position
-		self.RenderFrame.Size = UDim2.new(1, 0, 1, 0)
-	elseif self.Frame.AbsoluteSize.Y > 120 then
+	if self.Frame.AbsoluteSize.Y > 120 then
 		Chat:ScreenSizeChanged()
 		self.Gui.Changed:connect(function(property)
 			if property == "AbsoluteSize" then
@@ -895,35 +892,19 @@ function Chat:CreateGui()
 	end
 
 	if forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu then
-		if Chat:IsTouchDevice() then
-			Chat:CreateTouchButton()
-		else
-			Chat:CreateChatBar()
-			--Chat:CreateSafeChatGui()
-		end
+		Chat:CreateChatBar()
+		-- Chat:CreateSafeChatGui()
 
 		if self.ChatBar then
 			self.ChatBar.FocusLost:connect(function(enterPressed)
 				Chat.GotFocus = false
-				if Chat:IsTouchDevice() then
-					self.ChatBar.Visible = false
-					self.TapToChatLabel.Visible = true
-
-					if self.TouchLabelBackground then
-						self.TouchLabelBackground.Visible = true
-					end
-				end
 				if enterPressed and self.ChatBar.Text ~= "" then
 					local cText = self.ChatBar.Text
 					if string.sub(self.ChatBar.Text, 1, 1) == "%" then
 						cText = "(TEAM) " .. string.sub(cText, 2, #cText)
-						pcall(function()
-							PlayersService:TeamChat(cText)
-						end)
+						pcall(PlayersService.TeamChat, PlayersService, cText)
 					else
-						pcall(function()
-							PlayersService:Chat(cText)
-						end)
+						pcall(PlayersService.Chat, PlayersService, cText)
 					end
 
 					if self.ClickToChatButton then
@@ -932,7 +913,7 @@ function Chat:CreateGui()
 					self.ChatBar.Text = ""
 				end
 				Spawn(function()
-					wait(5.0)
+					wait(5)
 					if not Chat.GotFocus then
 						Chat.Frame.Background.Visible = false
 					end
@@ -965,14 +946,12 @@ function Input:OnMouseScroll()
 	if Chat:CheckIfInBounds(Input.Speed) then
 		return
 	end
-	-- Chat:ScrollQueue()
+	Chat:ScrollQueue(Input.Speed)
 end
 
 function Input:ApplySpeed(value)
 	Input.Speed += value
-	if not self.Simulating then
-		Input:OnMouseScroll()
-	end
+	Input:OnMouseScroll()
 end
 
 function Input:Initialize()
@@ -1080,7 +1059,7 @@ function Chat:CoreGuiChanged(coreGuiType, enabled)
 			self.Frame.Visible = enabled
 		end
 
-		if not Chat:IsTouchDevice() and self.ChatBar then
+		if self.ChatBar then
 			self.ChatBar.Visible = enabled
 			if enabled then
 				GuiService:SetGlobalGuiInset(0, 0, 0, 20)

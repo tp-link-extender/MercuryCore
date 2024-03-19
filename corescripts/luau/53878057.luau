@@ -620,17 +620,16 @@ local function resolveDrag(gearClone, x, y)
 	local frames = frame.Parent:GetChildren()
 
 	for i = 1, #frames do
-		if frames[i]:IsA "Frame" then
-			if
-				pointInRectangle(
-					mousePoint,
-					frames[i].AbsolutePosition,
-					frames[i].AbsoluteSize
-				)
-			then
-				swapGear(gearClone, frames[i])
-				return true
-			end
+		if
+			frames[i]:IsA "Frame"
+			and pointInRectangle(
+				mousePoint,
+				frames[i].AbsolutePosition,
+				frames[i].AbsoluteSize
+			)
+		then
+			swapGear(gearClone, frames[i])
+			return true
 		end
 	end
 
@@ -738,7 +737,7 @@ local function addingPlayerChild(
 		end
 	end
 
-	local gearClone = currentLoadout.TempSlot:clone()
+	local gearClone = currentLoadout.TempSlot:Clone()
 	gearClone.Name = child.Name
 	gearClone.GearImage.Image = child.TextureId
 	if gearClone.GearImage.Image == "" then
@@ -1174,27 +1173,20 @@ delay(1, function()
 end)
 
 delay(2, function()
-	--while true do
-	if not backpackWasOpened then
-		if robloxGui.AbsoluteSize.Y <= 320 then
-			local cChildren = currentLoadout:GetChildren()
-			for i = 1, #cChildren do
-				local slotNum = tonumber(
-					string.sub(
-						cChildren[i].Name,
-						5,
-						string.len(cChildren[i].Name)
-					)
-				)
-				if type(slotNum) == "number" then
-					cChildren[i].Position =
-						UDim2.new(0, (slotNum - 1) * 60, 0, 0)
-				end
+	-- while true do
+	if not backpackWasOpened and robloxGui.AbsoluteSize.Y <= 320 then
+		local cChildren = currentLoadout:GetChildren()
+		for i = 1, #cChildren do
+			local slotNum = tonumber(
+				string.sub(cChildren[i].Name, 5, string.len(cChildren[i].Name))
+			)
+			if type(slotNum) == "number" then
+				cChildren[i].Position = UDim2.new(0, (slotNum - 1) * 60, 0, 0)
 			end
 		end
 	end
 	wait(0.25)
-	--end
+	-- end
 end)
 
 player.ChildAdded:connect(function(child)
@@ -1288,27 +1280,25 @@ player.CharacterAdded:connect(function()
 	waitForChild(player, "PlayerGui")
 	moveHealthBar(player.PlayerGui)
 	delay(2, function()
-		--while true do
-		if not backpackWasOpened then
-			if robloxGui.AbsoluteSize.Y <= 320 then
-				local cChildren = currentLoadout:GetChildren()
-				for i = 1, #cChildren do
-					local slotNum = tonumber(
-						string.sub(
-							cChildren[i].Name,
-							5,
-							string.len(cChildren[i].Name)
-						)
+		-- while true do
+		if not backpackWasOpened and robloxGui.AbsoluteSize.Y <= 320 then
+			local cChildren = currentLoadout:GetChildren()
+			for i = 1, #cChildren do
+				local slotNum = tonumber(
+					string.sub(
+						cChildren[i].Name,
+						5,
+						string.len(cChildren[i].Name)
 					)
-					if type(slotNum) == "number" then
-						cChildren[i].Position =
-							UDim2.new(0, (slotNum - 1) * 60, 0, 0)
-					end
+				)
+				if type(slotNum) == "number" then
+					cChildren[i].Position =
+						UDim2.new(0, (slotNum - 1) * 60, 0, 0)
 				end
 			end
 		end
 		wait(0.25)
-		--end
+		-- end
 	end)
 end)
 

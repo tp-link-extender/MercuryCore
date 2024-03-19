@@ -1,6 +1,10 @@
 -- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
 print "[Mercury]: Loaded corescript 89449093"
 
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
+
 local GuiService = game:GetService "GuiService"
 
 -- basic functions
@@ -26,18 +30,17 @@ end
 waitForProperty(game.Players, "LocalPlayer")
 
 ------------------------ Locals ------------------------------
-local backpack = script.Parent
+local backpack = script.Parent :: GuiObject
 waitForChild(backpack, "Gear")
 
-local screen = script.Parent.Parent
-assert(screen:IsA "ScreenGui")
+local screen = backpack.Parent :: ScreenGui
 
 waitForChild(backpack, "Tabs")
 waitForChild(backpack.Tabs, "CloseButton")
 local closeButton = backpack.Tabs.CloseButton
 
 waitForChild(backpack.Tabs, "InventoryButton")
-local inventoryButton = backpack.Tabs.InventoryButton
+local inventoryButton: TextButton = backpack.Tabs.InventoryButton
 
 waitForChild(backpack.Parent, "ControlFrame")
 local backpackButton =
@@ -78,100 +81,48 @@ end
 
 ---------------------------------------- Public Event Setup ----------------------------------------
 
-function createPublicEvent(eventName)
-	assert(eventName, "eventName is nil")
-	assert(tostring(eventName), "eventName is not a string")
-
-	local newEvent = Instance.new "BindableEvent"
-	newEvent.Name = tostring(eventName)
-	newEvent.Parent = script
-
-	return newEvent
+function publicEvent(eventName: string)
+	return New "BindableEvent" {
+		Name = eventName,
+		Parent = script,
+	}
 end
 
-function createPublicFunction(funcName, invokeFunc)
-	assert(funcName, "funcName is nil")
-	assert(tostring(funcName), "funcName is not a string")
-	assert(invokeFunc, "invokeFunc is nil")
-	assert(
-		type(invokeFunc) == "function",
-		"invokeFunc should be of type 'function'"
-	)
-
-	local newFunction = Instance.new "BindableFunction"
-	newFunction.Name = tostring(funcName)
-	newFunction.OnInvoke = invokeFunc
-	newFunction.Parent = script
-
-	return newFunction
+function publicFunction(funcName: string, invokeFunc: () -> ())
+	return New "BindableFunction" {
+		Name = funcName,
+		OnInvoke = invokeFunc,
+		Parent = script,
+	}
 end
 
 -- Events
-local resizeEvent = createPublicEvent "ResizeEvent"
-local backpackOpenEvent = createPublicEvent "BackpackOpenEvent"
-local backpackCloseEvent = createPublicEvent "BackpackCloseEvent"
-local tabClickedEvent = createPublicEvent "TabClickedEvent"
-local searchRequestedEvent = createPublicEvent "SearchRequestedEvent"
+local resizeEvent = publicEvent "ResizeEvent"
+local backpackOpenEvent = publicEvent "BackpackOpenEvent"
+local backpackCloseEvent = publicEvent "BackpackCloseEvent"
+local tabClickedEvent = publicEvent "TabClickedEvent"
+local searchRequestedEvent = publicEvent "SearchRequestedEvent"
 ---------------------------------------- End Public Event Setup ----------------------------------------
 
 --------------------------- Internal Functions ----------------------------------------
 
-function deactivateBackpack()
+local function deactivateBackpack()
 	backpack.Visible = false
 	active = false
 end
 
-function initHumanoidDiedConnections()
+local function initHumanoidDiedConnections()
 	if humanoidDiedCon then
 		humanoidDiedCon:disconnect()
 	end
 	waitForProperty(game.Players.LocalPlayer, "Character")
-	waitForChild(game.Players.LocalPlayer.Character, "Humanoid")
-	humanoidDiedCon = game.Players.LocalPlayer.Character.Humanoid.Died:connect(
-		deactivateBackpack
-	)
+	local localPlayer = game.Players.LocalPlayer
+	waitForChild(localPlayer.Character, "Humanoid")
+	humanoidDiedCon =
+		localPlayer.Character.Humanoid.Died:connect(deactivateBackpack)
 end
 
-function activateBackpack()
-	initHumanoidDiedConnections()
-	active = true
-	backpack.Visible = backpackIsOpen
-	if backpackIsOpen then
-		toggleBackpack()
-	end
-end
-
-local hideBackpack = function()
-	backpackIsOpen = false
-	readyForNextEvent = false
-	backpackButton.Selected = false
-	resetSearch()
-	backpackCloseEvent:Fire(currentTab)
-	backpack.Tabs.Visible = false
-	searchFrame.Visible = false
-	backpack:TweenSizeAndPosition(
-		UDim2.new(0, backpackSize.X.Offset, 0, 0),
-		UDim2.new(0.5, -backpackSize.X.Offset / 2, 1, -85),
-		Enum.EasingDirection.Out,
-		Enum.EasingStyle.Quad,
-		guiTweenSpeed,
-		true,
-		function()
-			game.GuiService:RemoveCenterDialog(backpack)
-			backpack.Visible = false
-			backpackButton.Selected = false
-		end
-	)
-	delay(guiTweenSpeed, function()
-		game.GuiService:RemoveCenterDialog(backpack)
-		backpack.Visible = false
-		backpackButton.Selected = false
-		readyForNextEvent = true
-		canToggle = true
-	end)
-end
-
-function showBackpack()
+local function showBackpack()
 	game.GuiService:AddCenterDialog(
 		backpack,
 		Enum.CenterDialogType.PlayerInitiatedDialog,
@@ -211,17 +162,45 @@ function showBackpack()
 	end)
 end
 
-function toggleBackpack()
-	if not game.Players.LocalPlayer then
-		return
-	end
-	if not game.Players.LocalPlayer.Character then
-		return
-	end
-	if not canToggle then
-		return
-	end
-	if not readyForNextEvent then
+local function hideBackpack()
+	backpackIsOpen = false
+	readyForNextEvent = false
+	backpackButton.Selected = false
+	resetSearch()
+	backpackCloseEvent:Fire(currentTab)
+	backpack.Tabs.Visible = false
+	searchFrame.Visible = false
+	backpack:TweenSizeAndPosition(
+		UDim2.new(0, backpackSize.X.Offset, 0, 0),
+		UDim2.new(0.5, -backpackSize.X.Offset / 2, 1, -85),
+		Enum.EasingDirection.Out,
+		Enum.EasingStyle.Quad,
+		guiTweenSpeed,
+		true,
+		function()
+			game.GuiService:RemoveCenterDialog(backpack)
+			backpack.Visible = false
+			backpackButton.Selected = false
+		end
+	)
+	delay(guiTweenSpeed, function()
+		game.GuiService:RemoveCenterDialog(backpack)
+		backpack.Visible = false
+		backpackButton.Selected = false
+		readyForNextEvent = true
+		canToggle = true
+	end)
+end
+
+local function toggleBackpack()
+	if
+		not (
+			game.Players.LocalPlayer
+			and game.Players.LocalPlayer.Character
+			and canToggle
+			and readyForNextEvent
+		)
+	then
 		return
 	end
 	readyForNextEvent = false
@@ -230,20 +209,26 @@ function toggleBackpack()
 	backpackIsOpen = not backpackIsOpen
 
 	if backpackIsOpen then
-		loadoutBackground.Image = "http://banland.xyz/asset/?id=97623721"
-		loadoutBackground.Position = UDim2.new(-0.03, 0, -0.17, 0)
-		loadoutBackground.Size = UDim2.new(1.05, 0, 1.25, 0)
-		loadoutBackground.ZIndex = 2.0
-		loadoutBackground.Visible = true
+		Hydrate(loadoutBackground) {
+			Image = "http://banland.xyz/asset/?id=97623721",
+			Position = UDim2.new(-0.03, 0, -0.17, 0),
+			Size = UDim2.new(1.05, 0, 1.25, 0),
+			ZIndex = 2.0,
+			Visible = true,
+		}
 		showBackpack()
 	else
-		backpackButton.Position = UDim2.new(0.5, -60, 1, -44)
-		loadoutBackground.Visible = false
-		backpackButton.Selected = false
-		backpackButton.Image = "http://banland.xyz/asset/?id=97617958"
-		loadoutBackground.Image = "http://banland.xyz/asset/?id=96536002"
-		loadoutBackground.Position = UDim2.new(-0.1, 0, -0.1, 0)
-		loadoutBackground.Size = UDim2.new(1.2, 0, 1.2, 0)
+		Hydrate(backpackButton) {
+			Position = UDim2.new(0.5, -60, 1, -44),
+			Selected = false,
+			Image = "http://banland.xyz/asset/?id=97617958",
+		}
+		Hydrate(loadoutBackground) {
+			Visible = false,
+			Image = "http://banland.xyz/asset/?id=96536002",
+			Position = UDim2.new(-0.1, 0, -0.1, 0),
+			Size = UDim2.new(1.2, 0, 1.2, 0),
+		}
 		hideBackpack()
 
 		local clChildren = currentLoadout:GetChildren()
@@ -265,98 +250,57 @@ function toggleBackpack()
 	end
 end
 
-function closeBackpack()
+local function activateBackpack()
+	initHumanoidDiedConnections()
+	active = true
+	backpack.Visible = backpackIsOpen
 	if backpackIsOpen then
 		toggleBackpack()
 	end
 end
 
-function setSelected(tab)
-	assert(tab)
-	assert(tab:IsA "TextButton")
-
-	tab.BackgroundColor3 = Color3.new(1, 1, 1)
-	tab.TextColor3 = Color3.new(0, 0, 0)
-	tab.Selected = true
-	tab.ZIndex = 3
+local function closeBackpack()
+	if backpackIsOpen then
+		toggleBackpack()
+	end
 end
 
-function setUnselected(tab)
-	assert(tab)
-	assert(tab:IsA "TextButton")
-
-	tab.BackgroundColor3 = Color3.new(0, 0, 0)
-	tab.TextColor3 = Color3.new(1, 1, 1)
-	tab.Selected = false
-	tab.ZIndex = 1
-end
-
-function updateTabGui(selectedTab)
-	assert(selectedTab)
-
+local function updateTabGui(selectedTab: string)
 	if selectedTab == "gear" then
-		setSelected(inventoryButton)
+		-- Selected
+		Hydrate(inventoryButton) {
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			TextColor3 = Color3.new(0, 0, 0),
+			Selected = true,
+			ZIndex = 3,
+		}
 	elseif selectedTab == "wardrobe" then
-		setUnselected(inventoryButton)
+		-- Unselected
+		Hydrate(inventoryButton) {
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			TextColor3 = Color3.new(1, 1, 1),
+			Selected = false,
+			ZIndex = 1,
+		}
 	end
 end
 
-function mouseLeaveTab(button)
-	assert(button)
-	assert(button:IsA "TextButton")
-
-	if button.Selected then
-		return
-	end
-
-	button.BackgroundColor3 = Color3.new(0, 0, 0)
-end
-
-function mouseOverTab(button)
-	assert(button)
-	assert(button:IsA "TextButton")
-
-	if button.Selected then
-		return
-	end
-
-	button.BackgroundColor3 = Color3.new(39 / 255, 39 / 255, 39 / 255)
-end
-
-function newTabClicked(tabName)
-	assert(tabName)
-	tabName = string.lower(tabName)
-	currentTab = tabName
-
-	updateTabGui(tabName)
-	tabClickedEvent:Fire(tabName)
+local function newTabClicked()
+	updateTabGui(currentTab)
+	tabClickedEvent:Fire(currentTab)
 	resetSearch()
 end
 
-function trim(s)
+local function trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
--- function splitByWhitespace(text)
--- 	if type(text) ~= "string" then
--- 		return nil
--- 	end
-
--- 	local terms = {}
--- 	for token in string.gmatch(text, "[^%s]+") do
--- 		if string.len(token) > 0 then
--- 			table.insert(terms, token)
--- 		end
--- 	end
--- 	return terms
--- end
-
-function resetSearchBoxGui()
+local function resetSearchBoxGui()
 	resetButton.Visible = false
 	searchBox.Text = searchDefaultText
 end
 
-function doSearch()
+local function doSearch()
 	local searchText = searchBox.Text
 	if searchText == "" then
 		resetSearch()
@@ -364,7 +308,6 @@ function doSearch()
 	end
 	searchText = trim(searchText)
 	resetButton.Visible = true
-	-- termTable = splitByWhitespace(searchText)
 	searchRequestedEvent:Fire(searchText) -- todo: replace this with termtable when table passing is possible
 end
 
@@ -407,9 +350,8 @@ end
 --------------------------- End Internal Functions -------------------------------------
 
 ------------------------------ Public Functions Setup -------------------------------------
-createPublicFunction("CloseBackpack", hideBackpack)
-createPublicFunction("BackpackReady", backpackReady)
------------------------------- End Public Functions Setup ---------------------------------
+publicFunction("CloseBackpack", hideBackpack)
+publicFunction("BackpackReady", backpackReady)
 
 ------------------------ Connections/Script Main -------------------------------------------
 
@@ -421,14 +363,20 @@ pcall(function()
 	Game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
-inventoryButton.MouseButton1Click:connect(function()
-	newTabClicked "gear"
-end)
+inventoryButton.MouseButton1Click:connect(newTabClicked)
 inventoryButton.MouseEnter:connect(function()
-	mouseOverTab(inventoryButton)
+	if inventoryButton.Selected then
+		return
+	end
+
+	inventoryButton.BackgroundColor3 = Color3.new(39 / 255, 39 / 255, 39 / 255)
 end)
 inventoryButton.MouseLeave:connect(function()
-	mouseLeaveTab(inventoryButton)
+	if inventoryButton.Selected then
+		return
+	end
+
+	inventoryButton.BackgroundColor3 = Color3.new(0, 0, 0)
 end)
 
 closeButton.MouseButton1Click:connect(closeBackpack)
@@ -445,8 +393,7 @@ GuiService:AddKey(backtick)
 GuiService.KeyPressed:connect(function(key)
 	if not active or disabledByDeveloper then
 		return
-	end
-	if key == tilde or key == backtick then
+	elseif key == tilde or key == backtick then
 		toggleBackpack()
 	end
 end)

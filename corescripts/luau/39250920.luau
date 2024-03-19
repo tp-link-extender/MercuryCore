@@ -1,7 +1,9 @@
 -- CoreGui.RobloxGui.CoreScripts/MainBotChatScript
 print "[Mercury]: Loaded corescript 39250920"
 
-local New = require "../Modules/New"
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
 
 local InsertService = game:GetService "InsertService"
 
@@ -17,7 +19,9 @@ local function waitForChild(instance, name)
 	end
 end
 
-local mainFrame
+local mainFrame: Frame & {
+	Tail: ImageLabel,
+}
 local choices = {}
 local lastChoice
 local choiceMap = {}
@@ -308,7 +312,7 @@ local function renewKillswitch(dialog)
 		currentAbortDialogScript = nil
 	end
 
-	currentAbortDialogScript = New(timeoutScript:Clone()) {
+	currentAbortDialogScript = Hydrate(timeoutScript:Clone()) {
 
 		archivable = false,
 		Disabled = false,
@@ -357,11 +361,37 @@ local function selectChoice(choice)
 end
 
 local function newChoice(numberText)
-	local frame = Instance.new "TextButton"
-	frame.BackgroundColor3 = Color3.new(0 / 255, 0 / 255, 179 / 255)
-	frame.AutoButtonColor = false
-	frame.BorderSizePixel = 0
-	frame.Text = ""
+	local frame = New "TextButton" {
+		BackgroundColor3 = Color3.new(0 / 255, 0 / 255, 179 / 255),
+		AutoButtonColor = false,
+		BorderSizePixel = 0,
+		Text = "",
+		RobloxLocked = true,
+		New "TextLabel" {
+			Name = "Number",
+			TextColor3 = Color3.new(127 / 255, 212 / 255, 255 / 255),
+			Text = numberText,
+			FontSize = Enum.FontSize.Size14,
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 4, 0, 2),
+			Size = UDim2.new(0, 20, 0, 24),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top,
+			RobloxLocked = true,
+		},
+		New "TextLabel" {
+			Name = "UserPrompt",
+			BackgroundTransparency = 1,
+			TextColor3 = Color3.new(1, 1, 1),
+			FontSize = Enum.FontSize.Size14,
+			Position = UDim2.new(0, 28, 0, 2),
+			Size = UDim2.new(1, -32, 1, -4),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top,
+			TextWrap = true,
+			RobloxLocked = true,
+		},
+	}
 	frame.MouseEnter:connect(function()
 		highlightColor(frame, currentTone())
 	end)
@@ -371,33 +401,6 @@ local function newChoice(numberText)
 	frame.MouseButton1Click:connect(function()
 		selectChoice(frame)
 	end)
-	frame.RobloxLocked = true
-
-	local number = Instance.new "TextLabel"
-	number.Name = "Number"
-	number.TextColor3 = Color3.new(127 / 255, 212 / 255, 255 / 255)
-	number.Text = numberText
-	number.FontSize = Enum.FontSize.Size14
-	number.BackgroundTransparency = 1
-	number.Position = UDim2.new(0, 4, 0, 2)
-	number.Size = UDim2.new(0, 20, 0, 24)
-	number.TextXAlignment = Enum.TextXAlignment.Left
-	number.TextYAlignment = Enum.TextYAlignment.Top
-	number.RobloxLocked = true
-	number.Parent = frame
-
-	local prompt = Instance.new "TextLabel"
-	prompt.Name = "UserPrompt"
-	prompt.BackgroundTransparency = 1
-	prompt.TextColor3 = Color3.new(1, 1, 1)
-	prompt.FontSize = Enum.FontSize.Size14
-	prompt.Position = UDim2.new(0, 28, 0, 2)
-	prompt.Size = UDim2.new(1, -32, 1, -4)
-	prompt.TextXAlignment = Enum.TextXAlignment.Left
-	prompt.TextYAlignment = Enum.TextYAlignment.Top
-	prompt.TextWrap = true
-	prompt.RobloxLocked = true
-	prompt.Parent = frame
 
 	return frame
 end
@@ -412,30 +415,29 @@ local function initialize(parent)
 	lastChoice.UserPrompt.Text = "Goodbye!"
 	lastChoice.Size = UDim2.new(1, 0, 0, 28)
 
-	mainFrame = Instance.new "Frame"
-	mainFrame.Name = "UserDialogArea"
-	mainFrame.Size = UDim2.new(0, 350, 0, 200)
-	mainFrame.Style = Enum.FrameStyle.ChatBlue
-	mainFrame.Visible = false
-
-	local imageLabel = Instance.new "ImageLabel"
-	imageLabel.Name = "Tail"
-	imageLabel.Size = UDim2.new(0, 62, 0, 53)
-	imageLabel.Position = UDim2.new(1, 8, 0.25)
-	imageLabel.Image = "rbxasset://textures/chatBubble_botBlue_tailRight.png"
-	imageLabel.BackgroundTransparency = 1
-	imageLabel.RobloxLocked = true
-	imageLabel.Parent = mainFrame
+	mainFrame = New "Frame" {
+		Name = "UserDialogArea",
+		Size = UDim2.new(0, 350, 0, 200),
+		Style = Enum.FrameStyle.ChatBlue,
+		Visible = false,
+		RobloxLocked = true,
+		New "ImageLabel" {
+			Name = "Tail",
+			Size = UDim2.new(0, 62, 0, 53),
+			Position = UDim2.new(1, 8, 0.25),
+			Image = "rbxasset://textures/chatBubble_botBlue_tailRight.png",
+			BackgroundTransparency = 1,
+			RobloxLocked = true,
+		},
+	}
 
 	for _, obj in pairs(choices) do
 		obj.RobloxLocked = true
 		obj.Parent = mainFrame
 	end
 	lastChoice.RobloxLocked = true
-	lastChoice.Parent = mainFrame
-
-	mainFrame.RobloxLocked = true
 	mainFrame.Parent = parent
+	lastChoice.Parent = mainFrame
 end
 
 local function doDialog(dialog)
@@ -521,7 +523,7 @@ end
 local function addDialog(dialog)
 	if dialog.Parent then
 		if dialog.Parent:IsA "BasePart" then
-			local chatGui = New(chatNotificationGui:clone()) {
+			local chatGui = Hydrate(chatNotificationGui:Clone()) {
 				Enabled = not dialog.InUse,
 				Adornee = dialog.Parent,
 				RobloxLocked = true,

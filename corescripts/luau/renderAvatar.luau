@@ -2,6 +2,7 @@
 
 local ThumbnailGenerator = game:GetService "ThumbnailGenerator"
 local RenderModule = require "../Modules/Render.luau"
+local New = (require "../Modules/New").New
 local Render = RenderModule(_BASE_URL, _PING_URL, _THUMBNAIL_KEY) -- avoid ambiguous syntax after compilation
 
 local player =
@@ -18,12 +19,13 @@ local CameraAngle = player.Character.Head.CFrame
 local CameraPosition = CameraAngle
 	+ CFrame.Angles(0, math.pi, 0).lookVector.unit * 2.75
 
-local Camera = Instance.new "Camera"
-Camera.Name = "ThumbnailCamera"
-Camera.CameraType = Enum.CameraType.Scriptable
-Camera.CoordinateFrame = CFrame.new(CameraPosition.p, CameraAngle.p)
-Camera.FieldOfView = 52.5
-Camera.Parent = player.Character
+local Camera = New "Camera" {
+	Name = "ThumbnailCamera",
+	CameraType = Enum.CameraType.Scriptable,
+	CoordinateFrame = CFrame.new(CameraPosition.p, CameraAngle.p),
+	FieldOfView = 52.5,
+	Parent = player.Character,
+}
 workspace.CurrentCamera = Camera
 
 local clickHead = ThumbnailGenerator:Click("PNG", 300, 300, true)

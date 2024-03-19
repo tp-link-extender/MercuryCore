@@ -1,7 +1,9 @@
 -- CoreGui.RobloxGui.CoreScripts/ToolTip
 print "[Mercury]: Loaded corescript 36868950"
 
-local New = require "../Modules/New"
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
 
 local controlFrame = script.Parent:FindFirstChild "ControlFrame"
 
@@ -72,12 +74,13 @@ local function createSettingsButtonTip(parent)
 		parent = bottomLeftControl:FindFirstChild "SettingsButton"
 	end
 
-	local toolTip = frameTip:clone()
-	toolTip.RobloxLocked = true
-	toolTip.Text = "Settings/Leave Game"
-	toolTip.Position = UDim2.new(0, 0, 0, -18)
-	toolTip.Size = UDim2.new(0, 120, 0, 20)
-	toolTip.Parent = parent
+	local toolTip = Hydrate(frameTip:Clone()) {
+		RobloxLocked = true,
+		Text = "Settings/Leave Game",
+		Position = UDim2.new(0, 0, 0, -18),
+		Size = UDim2.new(0, 120, 0, 20),
+		Parent = parent,
+	}
 	setUpListeners(toolTip)
 end
 
@@ -89,7 +92,7 @@ local bottomLeftChildren = bottomLeftControl:GetChildren()
 
 for i = 1, #bottomLeftChildren do
 	if bottomLeftChildren[i].Name == "Exit" then
-		local exitTip = New(frameTip:clone()) {
+		local exitTip = Hydrate(frameTip:Clone()) {
 			RobloxLocked = true,
 			Text = "Leave Place",
 			Position = UDim2.new(0, 0, -1, 0),
@@ -109,7 +112,7 @@ local bottomRightChildren = bottomRightControl:GetChildren()
 
 for i = 1, #bottomRightChildren do
 	if bottomRightChildren[i].Name:find "Camera" ~= nil then
-		local cameraTip = New(frameTip:clone()) {
+		local cameraTip = Hydrate(frameTip:Clone()) {
 			RobloxLocked = true,
 			Text = "Camera View",
 			Size = UDim2.new(2, 0, 1.25, 0),

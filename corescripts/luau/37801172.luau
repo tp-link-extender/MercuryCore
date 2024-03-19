@@ -23,36 +23,21 @@ end
 waitForChild(CoreGui, "RobloxGui")
 local screenGui = CoreGui:FindFirstChild "RobloxGui"
 
--- ToolTipper  (creates tool tips for gui)
-ScriptContext:AddCoreScript(36868950, screenGui, "CoreScripts/ToolTip")
--- SettingsScript
-ScriptContext:AddCoreScript(46295863, screenGui, "CoreScripts/Settings")
+local scripts = {
+	[36868950] = "CoreScripts/ToolTip", -- ToolTipper  (creates tool tips for gui)
+	[46295863] = "CoreScripts/Settings", -- SettingsScript
+	[39250920] = "CoreScripts/MainBotChatScript", -- MainBotChatScript
+	[48488451] = "CoreScripts/PopupScript", -- Popup Script
+	[48488398] = "CoreScripts/NotificationScript", -- Friend Notification Script (probably can use this script to expand out to other notifications)
+	[97188756] = "CoreScripts/ChatScript", -- Chat script
+	[107893730] = "CoreScripts/PurchasePromptScript", -- Purchase Prompt Script
+}
 
--- MainBotChatScript
-ScriptContext:AddCoreScript(
-	39250920,
-	screenGui,
-	"CoreScripts/MainBotChatScript"
-)
+for id, path in pairs(scripts) do
+	ScriptContext:AddCoreScript(id, screenGui, path)
+end
 
--- Popup Script
-ScriptContext:AddCoreScript(48488451, screenGui, "CoreScripts/PopupScript")
--- Friend Notification Script (probably can use this script to expand out to other notifications)
-ScriptContext:AddCoreScript(
-	48488398,
-	screenGui,
-	"CoreScripts/NotificationScript"
-)
--- Chat script
-ScriptContext:AddCoreScript(97188756, screenGui, "CoreScripts/ChatScript")
--- Purchase Prompt Script
-ScriptContext:AddCoreScript(
-	107893730,
-	screenGui,
-	"CoreScripts/PurchasePromptScript"
-)
-
-if screenGui.AbsoluteSize.Y > 600 then
+if screenGui.AbsoluteSize.Y >= 600 then
 	-- New Player List
 	ScriptContext:AddCoreScript(
 		48488235,
@@ -103,21 +88,4 @@ ScriptContext:AddCoreScript(
 	"CoreScripts/BackpackScripts/LoadoutScript"
 )
 
-local IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
-if IsPersonalServer then
-	ScriptContext:AddCoreScript(
-		64164692,
-		game.Players.LocalPlayer,
-		"BuildToolManager"
-	)
-end
-game.Workspace.ChildAdded:connect(function(nchild)
-	if nchild.Name == "PSVariable" and nchild:IsA "BoolValue" then
-		IsPersonalServer = true
-		ScriptContext:AddCoreScript(
-			64164692,
-			game.Players.LocalPlayer,
-			"BuildToolManager"
-		)
-	end
-end)
+-- Personal servers are disabled, the corescript for it is not present

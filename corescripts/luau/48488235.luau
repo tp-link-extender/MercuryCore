@@ -1,7 +1,7 @@
 -- CoreGui.RobloxGui.CoreScripts/PlayerListScript
 print "[Mercury]: Loaded corescript 48488235"
 
-local New = require "../Modules/New"
+local New = (require "../Modules/New").New
 
 --------------------
 -- Super Util
