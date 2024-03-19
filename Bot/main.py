@@ -203,7 +203,7 @@ async def updateApplication(url, jsonData, userID):
             else:
                 resptext = await resp.text()
                 print(resp.status, resptext)
-                return resp.status
+                return "There was an error retrieving the key, this is possible due to the main site being down. Please message @task.mgr ASAP."
 
 
 async def getApplication(url, userID) -> tuple[str, str, list[str], str, str] | None:
