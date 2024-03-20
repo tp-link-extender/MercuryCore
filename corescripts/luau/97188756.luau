@@ -21,29 +21,10 @@ local function WaitForChild(parent, childName)
 	return parent[childName]
 end
 
--- wtf
--- local function typedef(obj)
--- 	return obj
--- end
-
 local function IsPhone()
 	local cGui = Game:GetService "CoreGui"
 	local rGui = WaitForChild(cGui, "RobloxGui")
-	if rGui.AbsoluteSize.Y < 600 then
-		return true
-	end
-	return false
-end
-
--- Users can use enough white spaces to spoof chatting as other players
--- This function removes trailing and leading white spaces
--- AFAIK, there is no reason for spam white spaces
-local function StringTrim(str)
-	-- %S is whitespaces
-	-- When we find the first non space character defined by ^%s
-	-- we yank out anything in between that and the end of the string
-	-- Everything else is replaced with %1 which is essentially nothing
-	return (str:gsub("^%s*(.-)%s*$", "%1"))
+	return rGui.AbsoluteSize.Y < 600
 end
 
 while Game.Players.LocalPlayer == nil do
@@ -60,59 +41,53 @@ local Camera = Game.Workspace.CurrentCamera
 local CoreGuiService = Game:GetService "CoreGui"
 local PlayersService = Game:GetService "Players"
 local GuiService = Game:GetService "GuiService"
-local UserInputService = Game:GetService "UserInputService"
 
 -- Lua Enums
-local Enums, CreateEnum
-do
-	Enums = {}
-	local EnumName = {} -- used as unique key for enum name
-	local enum_mt = {
-		__call = function(self, value)
-			return self[value] or self[tonumber(value)]
-		end,
-		__index = {
-			GetEnumItems = function(self)
-				local t = {}
-				for i, item in pairs(self) do
-					if type(i) == "number" then
-						t[#t + 1] = item
-					end
+local Enums = {}
+local EnumName = {} -- used as unique key for enum name
+local enum_mt = {
+	__call = function(self, value)
+		return self[value] or self[tonumber(value)]
+	end,
+	__index = {
+		GetEnumItems = function(self)
+			local t = {}
+			for i, item in pairs(self) do
+				if type(i) == "number" then
+					t[#t + 1] = item
 				end
-				table.sort(t, function(a, b)
-					return a.Value < b.Value
-				end)
-				return t
-			end,
-		},
-		__tostring = function(self)
-			return `Enum.{self[EnumName]}`
-		end,
-	}
-	local item_mt = {
-		__call = function(self, value)
-			return value == self or value == self.Name or value == self.Value
-		end,
-		__tostring = function(self)
-			return `Enum.{self[EnumName]}.{self.Name}`
-		end,
-	}
-	CreateEnum = function(enumName)
-		return function(t)
-			local e = { [EnumName] = enumName }
-			for i, name in pairs(t) do
-				local item = setmetatable(
-					{ Name = name, Value = i, Enum = e, [EnumName] = enumName },
-					item_mt
-				)
-				e[i] = item
-				e[name] = item
-				e[item] = item
 			end
-			Enums[enumName] = e
-			return setmetatable(e, enum_mt)
-		end
+			table.sort(t, function(a, b)
+				return a.Value < b.Value
+			end)
+			return t
+		end,
+	},
+	__tostring = function(self)
+		return `Enum.{self[EnumName]}`
+	end,
+}
+local item_mt = {
+	__call = function(self, value)
+		return value == self or value == self.Name or value == self.Value
+	end,
+	__tostring = function(self)
+		return `Enum.{self[EnumName]}.{self.Name}`
+	end,
+}
+local function CreateEnum(enumName, t)
+	local e = { [EnumName] = enumName }
+	for i, name in pairs(t) do
+		local item = setmetatable(
+			{ Name = name, Value = i, Enum = e, [EnumName] = enumName },
+			item_mt
+		)
+		e[i] = item
+		e[name] = item
+		e[item] = item
 	end
+	Enums[enumName] = e
+	return setmetatable(e, enum_mt)
 end
 ---------------------------------------------------
 ------------------ Input class --------------------
@@ -183,7 +158,7 @@ local Chat = {
 	Admins_List = { "taskmanager", "Heliodex", "tako" },
 
 	SafeChat_List = SafeChat,
-	CreateEnum "SafeChat" { "Level1", "Level2", "Level3" },
+	CreateEnum("SafeChat", { "Level1", "Level2", "Level3" }),
 	SafeChatTree = {},
 	TempSpaceLabel = nil,
 }
@@ -462,7 +437,13 @@ function Chat:CreateMessage(cPlayer, message)
 	else
 		pName = cPlayer.Name
 	end
-	message = StringTrim(message)
+	-- Users can use enough white spaces to spoof chatting as other players
+	-- This  removes trailing and leading white spaces
+	-- AFAIK, there is no reason for spam white spaces
+	-- %S is whitespaces
+	-- When we find the first non space character defined by ^%s we yank out anything in between that and the end of the string
+	-- Everything else is replaced with %1 which is essentially nothing
+	message = string.gsub(message, "^%s*(.-)%s*$", "%1")
 	local pLabel
 	local mLabel
 	-- Our history stores upto 50 messages that is 100 textlabels
@@ -610,103 +591,6 @@ function Chat:FindButtonTree(scButton, rootList)
 	return list
 end
 
-function Chat:ToggleSafeChatMenu(scButton)
-	local list = Chat:FindButtonTree(scButton, self.SafeChatTree)
-	if list then
-		for button, _ in pairs(list) do
-			if button:IsA "TextButton" or button:IsA "ImageButton" then
-				button.Visible = not button.Visible
-			end
-		end
-		return true
-	end
-	return false
-end
-
-function Chat:CreateSafeChatOptions(list, rootButton)
-	local text_List = {}
-	local count = 0
-	text_List[rootButton] = {}
-	text_List[rootButton][1] = list[1]
-	rootButton = rootButton or self.SafeChatButton
-	for msg, _ in pairs(list) do
-		if type(msg) == "string" then
-			local chatText = New "TextButton" {
-				Name = msg,
-				Text = msg,
-				Size = UDim2.new(0, 100, 0, 20),
-				TextXAlignment = Enum.TextXAlignment.Center,
-				TextColor3 = Color3.new(0.2, 0.1, 0.1),
-				BackgroundTransparency = 0.5,
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				Parent = self.SafeChatFrame,
-				Visible = false,
-				Position = UDim2.new(
-					0,
-					rootButton.Position.X.Scale + 105,
-					0,
-					rootButton.Position.Y.Scale - ((count - 3) * 100)
-				),
-			}
-
-			count += 1
-
-			if type(list[msg]) == "table" then
-				text_List[rootButton][chatText] =
-					Chat:CreateSafeChatOptions(list[msg], chatText)
-				-- else
-				-- 	--table.insert(text_List[chatText], true)
-			end
-			chatText.MouseEnter:connect(function()
-				Chat:ToggleSafeChatMenu(chatText)
-			end)
-
-			chatText.MouseLeave:connect(function()
-				Chat:ToggleSafeChatMenu(chatText)
-			end)
-
-			chatText.MouseButton1Click:connect(function()
-				local lList = Chat:FindButtonTree(chatText)
-				-- if lList then
-				-- 	for i, v in pairs(lList) do
-				-- 	end
-				-- else
-				-- end
-				pcall(function()
-					PlayersService:Chat(lList[1])
-				end)
-			end)
-		end
-	end
-	return text_List
-end
-
-function Chat:CreateSafeChatGui()
-	self.SafeChatFrame = New "Frame" {
-		Name = "SafeChatFrame",
-		Size = UDim2.new(1, 0, 1, 0),
-		Parent = self.Gui,
-		BackgroundTransparency = 1,
-
-		New "ImageButton" {
-			Name = "SafeChatButton",
-			Size = UDim2.new(0, 44, 0, 31),
-			Position = UDim2.new(0, 1, 0.35, 0),
-			BackgroundTransparency = 1,
-			Image = "http://banland.xyz/asset/?id=97080365",
-		},
-	}
-
-	self.SafeChatButton = self.SafeChatFrame.SafeChatButton
-	-- safe chat button is the root of this tree
-	self.SafeChatTree[self.SafeChatButton] =
-		Chat:CreateSafeChatOptions(self.SafeChat_List, self.SafeChatButton)
-
-	self.SafeChatButton.MouseButton1Click:connect(function()
-		Chat:ToggleSafeChatMenu(self.SafeChatButton)
-	end)
-end
-
 function Chat:FocusOnChatBar()
 	if self.ClickToChatButton then
 		self.ClickToChatButton.Visible = false
@@ -717,58 +601,6 @@ function Chat:FocusOnChatBar()
 		self.Frame.Background.Visible = false
 	end
 	self.ChatBar:CaptureFocus()
-end
-
--- For touch devices we create a button instead
-function Chat:CreateTouchButton()
-	self.ChatTouchFrame = New "Frame" {
-		Name = "ChatTouchFrame",
-		Size = UDim2.new(0, 128, 0, 32),
-		Position = UDim2.new(0, 88, 0, 0),
-		BackgroundTransparency = 1,
-		Parent = self.Gui,
-
-		New "ImageButton" {
-			Name = "ChatLabel",
-			Size = UDim2.new(0, 74, 0, 28),
-			Position = UDim2.new(0, 0, 0, 0),
-			BackgroundTransparency = 1,
-			ZIndex = 2.0,
-		},
-		New "ImageLabel" {
-			Name = "Background",
-			Size = UDim2.new(1, 0, 1, 0),
-			Position = UDim2.new(0, 0, 0, 0),
-			BackgroundTransparency = 1,
-			Image = "http://banland.xyz/asset/?id=97078724",
-		},
-	}
-	self.TapToChatLabel = self.ChatTouchFrame.ChatLabel
-	self.TouchLabelBackground = self.ChatTouchFrame.Background
-
-	self.ChatBar = New "TextBox" {
-		Name = "ChatBar",
-		Size = UDim2.new(1, 0, 0.2, 0),
-		Position = UDim2.new(0, 0, 0.8, 800),
-		Text = "",
-		ZIndex = 1,
-		BackgroundTransparency = 1,
-		Parent = self.Frame,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextColor3 = Color3.new(1, 1, 1),
-		ClearTextOnFocus = false,
-	}
-
-	self.TapToChatLabel.MouseButton1Click:connect(function()
-		self.TapToChatLabel.Visible = false
-		--self.ChatBar.Visible = true
-		--self.Frame.Background.Visible = true
-		self.ChatBar:CaptureFocus()
-		self.GotFocus = true
-		if self.TouchLabelBackground then
-			self.TouchLabelBackground.Visible = false
-		end
-	end)
 end
 
 -- Non touch devices, create the bottom chat bar
@@ -893,7 +725,6 @@ function Chat:CreateGui()
 
 	if forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu then
 		Chat:CreateChatBar()
-		-- Chat:CreateSafeChatGui()
 
 		if self.ChatBar then
 			self.ChatBar.FocusLost:connect(function(enterPressed)
@@ -965,19 +796,16 @@ function Input:Initialize()
 end
 
 function Chat:FindMessageInSafeChat(message, list)
-	local foundMessage = false
 	for msg, _ in pairs(list) do
-		if msg == message then
+		if
+			msg == message
+			or type(list[msg]) == "table"
+				and Chat:FindMessageInSafeChat(message, list[msg])
+		then
 			return true
 		end
-		if type(list[msg]) == "table" then
-			foundMessage = Chat:FindMessageInSafeChat(message, list[msg])
-			if foundMessage then
-				return true
-			end
-		end
 	end
-	return foundMessage
+	return false
 end
 
 -- Just a wrapper around our PlayerChatted event
@@ -997,22 +825,20 @@ function Chat:PlayerChatted(...)
 		end
 	end
 
-	if PlayersService.ClassicChat then
-		if
-			not (
-					string.sub(message, 1, 3) == "/e "
-					or string.sub(message, 1, 7) == "/emote "
-				)
-				and (forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu)
-			or (Player.ChatMode == Enum.ChatMode.Menu and string.sub(
+	if
+		PlayersService.ClassicChat
+			and (not (string.sub(message, 1, 3) == "/e " or string.sub(
+				message,
+				1,
+				7
+			) == "/emote ") and (forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu) or (Player.ChatMode == Enum.ChatMode.Menu and string.sub(
 				message,
 				1,
 				3
-			) == "/sc")
-			or (Chat:FindMessageInSafeChat(message, self.SafeChat_List))
-		then
-			Chat:UpdateChat(player, message)
-		end
+			) == "/sc"))
+		or (Chat:FindMessageInSafeChat(message, self.SafeChat_List))
+	then
+		Chat:UpdateChat(player, message)
 	end
 end
 
@@ -1061,11 +887,7 @@ function Chat:CoreGuiChanged(coreGuiType, enabled)
 
 		if self.ChatBar then
 			self.ChatBar.Visible = enabled
-			if enabled then
-				GuiService:SetGlobalGuiInset(0, 0, 0, 20)
-			else
-				GuiService:SetGlobalGuiInset(0, 0, 0, 0)
-			end
+			GuiService:SetGlobalGuiInset(0, 0, 0, enabled and 20 or 0)
 		end
 	end
 end
@@ -1087,11 +909,13 @@ function Chat:Initialize()
 		)
 	end)
 
-	self.EventListener = PlayersService.PlayerChatted:connect(function(...)
+	local function chatted(...)
 		-- This event has 4 callback arguments
 		-- Enum.PlayerChatType.All, chatPlayer, message, targetPlayer
 		Chat:PlayerChatted(...)
-	end)
+	end
+
+	self.EventListener = PlayersService.PlayerChatted:connect(chatted)
 
 	self.MessageThread = coroutine.create(function() end)
 	coroutine.resume(self.MessageThread)
@@ -1103,11 +927,7 @@ function Chat:Initialize()
 	-- NOTE: PlayerAdded only fires on the server, hence ChildAdded is used here
 	PlayersService.ChildAdded:connect(function()
 		Chat.EventListener:disconnect()
-		self.EventListener = PlayersService.PlayerChatted:connect(function(...)
-			-- This event has 4 callback arguments
-			-- Enum.PlayerChatType.All, chatPlayer, message, targetPlayer
-			Chat:PlayerChatted(...)
-		end)
+		self.EventListener = PlayersService.PlayerChatted:connect(chatted)
 	end)
 
 	Spawn(function()

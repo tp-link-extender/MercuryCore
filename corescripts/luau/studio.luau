@@ -1,4 +1,5 @@
 print "[Mercury]: Loaded Studio corescript"
+
 local MarketplaceService = game:GetService "MarketplaceService"
 local InsertService = game:GetService "InsertService"
 local SocialService = game:GetService "SocialService"

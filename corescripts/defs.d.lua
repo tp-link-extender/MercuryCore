@@ -7309,7 +7309,6 @@ declare class ServiceProvider extends Instance
 	LoadingGuiService: any
 	ScriptInformationProvider: ScriptInformationProvider
 	JointsService: JointsService
-	LogService: any
 	ThumbnailGenerator: ThumbnailGenerator
 
 	function FindService(self, className: string): Instance
@@ -7487,7 +7486,6 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "LoadingGuiService"): any
 	function GetService(self, service: "PersonalServerService"): PersonalServerService
 	function GetService(self, service: "Terrain"): Terrain
-	function GetService(self, service: "LogService"): any
 	function GetService(self, service: "ThumbnailGenerator"): ThumbnailGenerator
 end
 
