@@ -8,6 +8,7 @@
 	export let help = ""
 	export let placeholder = ""
 	export let disabled = false
+	export let multiple = false
 
 	export let options: string[][] // actually [string, string][] but whatever
 	export let selected: string | null = null
@@ -31,6 +32,7 @@
 			fitViewport: true,
 			sameWidth: true
 		},
+		multiple: multiple as false, // todo what the eff
 		...(mSelected && { defaultSelected: mSelected })
 	})
 

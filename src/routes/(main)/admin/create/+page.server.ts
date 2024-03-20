@@ -127,14 +127,13 @@ async function getVersions(id: number, version?: number) {
 
 // Watch out nerds: if there's a lot of shared assets, this will be SLOOOOW
 async function getXmlDependencies(data: string, version: number) {
-	const dependencies: number[] = []
+	const dependencies: string[] = []
 
 	const xml = Buffer.from(data, "base64").toString()
 	for (const [, url] of xml.matchAll(/<url>(.+)<\/url>/g)) {
 		const id = url.match(/\d+/)?.[0]
 		if (!id) continue // shouldn't happen, let's just ignore it
-		console.log("Fetching shared asset", id)
-		dependencies.push(+id)
+		dependencies.push(id)
 
 		const data = (await getVersions(+id, version)).data?.[0]
 		if (!data) continue
@@ -142,11 +141,8 @@ async function getXmlDependencies(data: string, version: number) {
 		console.log("Getting nested dependencies of", id)
 
 		const nested = await getXmlDependencies(data, version)
-		console.log(nested)
 		dependencies.push(...nested)
 	}
-
-	console.log("Dependencies of", version, "are", dependencies)
 
 	return dependencies
 }
@@ -165,8 +161,8 @@ async function getSharedAssets(id: number, version: number) {
 export async function load({ locals, url }) {
 	await authorise(locals, 5)
 	const assetId = url.searchParams.get("assetId")
-	if (assetId && !assetId.match(/\d+/)) error(400, "Invalid assetId")
 	const version = url.searchParams.get("version")
+	if (assetId && !assetId.match(/\d+/)) error(400, "Invalid assetId")
 	if (version && !version.match(/\d+/)) error(400, "Invalid version")
 
 	const stage = assetId ? (version ? 3 : 2) : 1

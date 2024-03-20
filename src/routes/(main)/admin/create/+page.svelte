@@ -17,10 +17,6 @@
 		"8": "Hat",
 		"18": "Face"
 	}
-
-	const assetsAutopilot: { [k: string]: string } = {
-		"8": "Hat"
-	}
 </script>
 
 <Head title="Create Asset - Admin" />
@@ -178,10 +174,10 @@
 							label="Asset price"
 							type="number" />
 						{#await data.getSharedAssets then sharedAssets}
-							{#if sharedAssets.length > 0}
-								<Select
+							{#if sharedAssets && sharedAssets.length > 0}
+								<Select multiple
 									formData={formDataAutopilot}
-									options={sharedAssets}
+									options={sharedAssets.map(a => [a, a])}
 									name="shared"
 									label="Shared assets" />
 							{/if}

@@ -3,14 +3,9 @@ import { authorise } from "$lib/server/lucia"
 import { error } from "@sveltejs/kit"
 
 export const load = async ({ locals }) => {
-	const { user } = await authorise(locals)
-
-	await query(
-		surql`
-			UPDATE notification SET read = true
-			WHERE out = $user`,
-		{ user: `user:${user.id}` }
-	)
+	await query(surql`UPDATE notification SET read = true WHERE out = $user`, {
+		user: `user:${(await authorise(locals)).user.id}`,
+	})
 }
 
 export const actions = {
