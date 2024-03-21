@@ -76,148 +76,127 @@
 
 <Head title="Admin" />
 
-<div class="flex px-4">
-	<div class="<lg:hidden w-75" />
-	<div class="flex w-full justify-center">
-		<div class="w-full max-w-240 <md:px-4">
-			<h1>Admin Panel</h1>
-			<h2 class="text-xl">
-				Your permission level is <span style="color: {perms[0]}">
-					<fa class="{perms[1]} px-1" />
-					{perms[2]}
-				</span>
-			</h2>
-		</div>
-		<div class="<lg:hidden shrink-9999 w-75" />
-	</div>
+<div class="ctnr max-w-340">
+	<h1>Admin Panel</h1>
+	<h2 class="text-xl pb-4">
+		Your permission level is <span style="color: {perms[0]}">
+			<fa class="{perms[1]} px-1" />
+			{perms[2]}
+		</span>
+	</h2>
+	<hr />
 </div>
 
-<div class="px-4 pt-4">
-	<hr />
-	<SidebarShell bind:tabData>
-		{#each tabNames.slice(0, -1) as key}
-			<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
-				{#each panel[key] as i, num}
-					<AdminLink
-						href={i[1]}
-						iconClass={i[2]}
-						{num}
-						total={panel[key].length}
-						name={i[0]} />
-				{/each}
-			</Tab>
-		{/each}
+<SidebarShell bind:tabData class="max-w-340">
+	{#each tabNames.slice(0, -1) as key}
+		<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
+			{#each panel[key] as i, num}
+				<AdminLink
+					href={i[1]}
+					iconClass={i[2]}
+					{num}
+					total={panel[key].length}
+					name={i[0]} />
+			{/each}
+		</Tab>
+	{/each}
 
-		<Tab {tabData}>
-			<div class="grid lg:grid-cols-[7fr_5fr] gap-4">
-				<div class="flex flex-col gap-4">
-					<div class="card bg-a p-4">
+	<Tab {tabData}>
+		<div class="grid lg:grid-cols-[7fr_5fr] gap-4">
+			<div class="flex flex-col gap-4">
+				<div class="card bg-a p-4">
+					<h3>
+						<fa fa-memory />
+						{((data.totalmem - data.freemem) / 1024 ** 3).toFixed(
+							2
+						)} / {(data.totalmem / 1024 ** 3).toFixed(2)} GB
+					</h3>
+					<span class="pb-2">
+						{Math.round((data.totalmem - data.freemem) / 1024 ** 2)}
+						MB is being used
+					</span>
+					<div class="flex bg-darker rounded-2" style="height: 1rem">
+						<div
+							class="progress-bar-striped bg-emerald-6 rounded-2"
+							role="progressbar"
+							aria-valuenow={data.totalmem - data.freemem}
+							aria-valuemin={0}
+							aria-valuemax={data.totalmem}
+							style="width: {((data.totalmem - data.freemem) /
+								data.totalmem) *
+								100}%;" />
+					</div>
+				</div>
+				<div class="card bg-a p-4">
+					{#await diskSpace || getDiskSpace()}
+						<h3>Loading...</h3>
+					{:then disk}
 						<h3>
-							<fa fa-memory />
-							{(
-								(data.totalmem - data.freemem) /
-								1024 ** 3
-							).toFixed(2)} / {(
-								data.totalmem /
-								1024 ** 3
-							).toFixed(2)} GB
+							<fa fa-hard-drive class="pr-2" />
+							{((disk.size - disk.free) / 1024 ** 3).toFixed(2)} /
+							{(disk.size / 1024 ** 3).toFixed(2)} GB
 						</h3>
 						<span class="pb-2">
-							{Math.round(
-								(data.totalmem - data.freemem) / 1024 ** 2
-							)} MB is being used
+							{Math.round((disk.size - disk.free) / 1024 ** 2)} MB
+							is being used
 						</span>
 						<div
 							class="flex bg-darker rounded-2"
 							style="height: 1rem">
 							<div
-								class="progress-bar-striped bg-emerald-6 rounded-2"
+								class="progress-bar-striped bg-blue-6 rounded-2"
 								role="progressbar"
-								aria-valuenow={data.totalmem - data.freemem}
+								aria-valuenow={disk.size - disk.free}
 								aria-valuemin={0}
-								aria-valuemax={data.totalmem}
-								style="width: {((data.totalmem - data.freemem) /
-									data.totalmem) *
+								aria-valuemax={disk.size}
+								style="width: {((disk.size - disk.free) /
+									disk.size) *
 									100}%;" />
 						</div>
-					</div>
-					<div class="card bg-a p-4">
-						{#await diskSpace || getDiskSpace()}
-							<h3>Loading...</h3>
-						{:then disk}
-							<h3>
-								<fa fa-hard-drive class="pr-2" />
-								{((disk.size - disk.free) / 1024 ** 3).toFixed(
-									2
-								)} / {(disk.size / 1024 ** 3).toFixed(2)} GB
-							</h3>
-							<span class="pb-2">
-								{Math.round(
-									(disk.size - disk.free) / 1024 ** 2
-								)} MB is being used
-							</span>
-							<div
-								class="flex bg-darker rounded-2"
-								style="height: 1rem">
-								<div
-									class="progress-bar-striped bg-blue-6 rounded-2"
-									role="progressbar"
-									aria-valuenow={disk.size - disk.free}
-									aria-valuemin={0}
-									aria-valuemax={disk.size}
-									style="width: {((disk.size - disk.free) /
-										disk.size) *
-										100}%;" />
-							</div>
-						{/await}
-					</div>
+					{/await}
 				</div>
-				<div class="flex flex-col gap-4">
-					<div class="card bg-a p-4">
-						<h3>
-							<far fa-user class="pr-2" />
-							Users
-						</h3>
-						<span>
-							<b class="accent-text">0 users</b>
-							are currently online
-						</span>
+			</div>
+			<div class="flex flex-col gap-4">
+				<div class="card bg-a p-4">
+					<h3>
+						<far fa-user class="pr-2" />
+						Users
+					</h3>
+					<span>
+						<b class="accent-text">0 users</b>
+						are currently online
+					</span>
+				</div>
+				<div class="card bg-a p-4">
+					<h3>
+						<far fa-file class="pr-2" />
+						Assets
+					</h3>
+					<div>
+						<fa fa-file-circle-minus class="text-yellow-5 pr-2" />
+						<b>0 assets</b>
+						are currently pending
 					</div>
-					<div class="card bg-a p-4">
-						<h3>
-							<far fa-file class="pr-2" />
-							Assets
-						</h3>
-						<div>
-							<fa
-								fa-file-circle-minus
-								class="text-yellow-5 pr-2" />
-							<b>0 assets</b>
-							are currently pending
-						</div>
-						<div>
-							<fa
-								fa-file-circle-check
-								class="text-emerald-6 pr-2" />
-							<b>0 assets</b>
-							have been approved
-						</div>
-						<div>
-							<fa fa-file-circle-xmark class="text-red-5 pr-2" />
-							<b>0 assets</b>
-							have been denied
-						</div>
-						<div>
-							<fa fa-folder-closed class="text-cyan-5 pr-2" />
-							<b>0 assets</b>
-							in total
-						</div>
+					<div>
+						<fa fa-file-circle-check class="text-emerald-6 pr-2" />
+						<b>0 assets</b>
+						have been approved
+					</div>
+					<div>
+						<fa fa-file-circle-xmark class="text-red-5 pr-2" />
+						<b>0 assets</b>
+						have been denied
+					</div>
+					<div>
+						<fa fa-folder-closed class="text-cyan-5 pr-2" />
+						<b>0 assets</b>
+						in total
 					</div>
 				</div>
 			</div>
-		</Tab>
-	</SidebarShell>
-</div>
+		</div>
+	</Tab>
+</SidebarShell>
 
 <style lang="stylus">
 	h2

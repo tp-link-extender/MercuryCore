@@ -11,18 +11,12 @@
 
 <Head title="Accounts - Admin" />
 
-<div class="flex px-4">
-	<div class="<lg:hidden w-75" />
-	<div class="flex w-full justify-center">
-		<div class="w-full max-w-240 <md:px-4">
-			<h1>Admin - Accounts</h1>
-			<a href="/admin" class="no-underline">
-				<fa fa-caret-left />
-				Back to panel
-			</a>
-		</div>
-		<div class="<lg:hidden shrink-9999 w-75" />
-	</div>
+<div class="ctnr max-w-240">
+	<h1>Admin - Accounts</h1>
+	<a href="/admin" class="no-underline">
+		<fa fa-caret-left />
+		Back to panel
+	</a>
 </div>
 
 <div class="px-4 pt-6">

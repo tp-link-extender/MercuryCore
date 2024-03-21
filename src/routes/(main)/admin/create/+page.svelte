@@ -20,177 +20,157 @@
 
 <Head title="Create asset - Admin" />
 
-<div class="flex px-4">
-	<div class="<lg:hidden w-75" />
-	<div class="flex w-full justify-center">
-		<div class="w-full max-w-240 <md:px-4">
-			<h1>Admin - Create asset</h1>
-			<a href="/admin" class="no-underline">
-				<fa fa-caret-left />
-				Back to panel
-			</a>
-		</div>
-		<div class="<lg:hidden shrink-9999 w-75" />
-	</div>
+<div class="ctnr max-w-240 pb-6">
+	<h1>Admin - Create asset</h1>
+	<a href="/admin" class="no-underline">
+		<fa fa-caret-left />
+		Back to panel
+	</a>
 </div>
 
-<div class="px-4 pt-6">
-	<SidebarShell bind:tabData>
-		<Tab {tabData}>
-			<TabNav bind:tabData={tabData2} justify />
-			{((tabData2.num = 0), "")}
-			<Tab tabData={tabData2}>
-				<div class="alert alert-primary" role="alert">
-					<far class="pr-2" fa-circle-info />
-					Manual uploading mode is for shared assets (ie. requires textures)
-				</div>
-				<Form
+<SidebarShell bind:tabData>
+	<Tab {tabData}>
+		<TabNav bind:tabData={tabData2} justify />
+		{((tabData2.num = 0), "")}
+		<Tab tabData={tabData2}>
+			<div class="alert alert-primary" role="alert">
+				<far class="pr-2" fa-circle-info />
+				Manual uploading mode is for shared assets (ie. requires textures)
+			</div>
+			<Form
+				formData={formDataManual}
+				nopad
+				enctype="multipart/form-data"
+				submit="Create"
+				class="pt-8 light-text">
+				<Select
 					formData={formDataManual}
-					nopad
-					enctype="multipart/form-data"
-					submit="Create"
-					class="pt-8 light-text">
-					<Select
-						formData={formDataManual}
-						options={Object.entries(assets)}
-						name="type"
-						label="Asset type" />
+					options={Object.entries(assets)}
+					name="type"
+					label="Asset type" />
+				<Input
+					formData={formDataManual}
+					name="name"
+					label="Asset name"
+					placeholder="Make sure to make it accurate" />
+				<Textarea
+					formData={formDataManual}
+					name="description"
+					label="Asset description"
+					placeholder="Up to 1000 characters" />
+				<Input
+					formData={formDataManual}
+					name="price"
+					label="Asset price"
+					type="number" />
+				<Input
+					formData={formDataManual}
+					type="file"
+					name="asset"
+					label="Asset"
+					help="Max image size: 20MB. Supported file types: .png, .jpg, .bmp, .rbxm, .xml" />
+			</Form>
+		</Tab>
+		<Tab tabData={tabData2}>
+			<div class="alert alert-primary" role="alert">
+				<far class="pr-2" fa-circle-info />
+				Use manual uploading mode for shared assets (ie. mesh)
+			</div>
+			{#if data.stage >= 2}
+				<div class="py-4">
+					<a
+						href="/admin/create?tab2=Autopilot"
+						class="btn btn-secondary">
+						Reset
+					</a>
+				</div>
+			{/if}
+
+			{#if data.stage == 2 && data.getVersions}
+				<p>
+					{#await data.getVersions}
+						Getting asset versions, please wait...
+					{:then versions}
+						{#if versions.list.length > 0}
+							Found {versions.list.length} versions of asset {data.assetId}
+							{#if versions.cached}
+								(Using cached data)
+							{/if}
+						{:else}
+							No versions found for asset {data.assetId}
+						{/if}
+					{/await}
+				</p>
+			{/if}
+			{#if data.stage == 3 && data.getSharedAssets}
+				<p>
+					{#await data.getSharedAssets}
+						Getting asset versions, please wait...
+					{:then sharedAssets}
+						{#if sharedAssets.length > 0}
+							Found {sharedAssets.length} shared assets related to
+							{data.assetId}
+						{:else}
+							No versions found for asset {data.assetId}
+						{/if}
+					{/await}
+				</p>
+			{/if}
+			<Form
+				formData={formDataAutopilot}
+				method="GET"
+				submit="Create"
+				class="pt-8 light-text">
+				<input type="hidden" name="tab2" value={tabData2.currentTab} />
+				{#if data.stage === 1}
 					<Input
-						formData={formDataManual}
+						formData={formDataAutopilot}
+						name="assetId"
+						label="Asset Id"
+						type="number"
+						placeholder="33866846"
+						required />
+				{:else if data.stage === 2 && data.getVersions}
+					<input type="hidden" name="assetId" value={data.assetId} />
+					{#await data.getVersions then versions}
+						{#if versions.list.length > 0}
+							<Select
+								formData={formDataAutopilot}
+								options={versions.list}
+								name="version"
+								label="Asset version" />
+						{/if}
+					{/await}
+				{:else if data.stage === 3}
+					<input type="hidden" name="assetId" value={data.assetId} />
+					<input type="hidden" name="version" value={data.version} />
+					<Input
+						formData={formDataAutopilot}
 						name="name"
 						label="Asset name"
 						placeholder="Make sure to make it accurate" />
 					<Textarea
-						formData={formDataManual}
+						formData={formDataAutopilot}
 						name="description"
 						label="Asset description"
 						placeholder="Up to 1000 characters" />
 					<Input
-						formData={formDataManual}
+						formData={formDataAutopilot}
 						name="price"
 						label="Asset price"
 						type="number" />
-					<Input
-						formData={formDataManual}
-						type="file"
-						name="asset"
-						label="Asset"
-						help="Max image size: 20MB. Supported file types: .png, .jpg, .bmp, .rbxm, .xml" />
-				</Form>
-			</Tab>
-			<Tab tabData={tabData2}>
-				<div class="alert alert-primary" role="alert">
-					<far class="pr-2" fa-circle-info />
-					Use manual uploading mode for shared assets (ie. mesh)
-				</div>
-				{#if data.stage >= 2}
-					<div class="py-4">
-						<a
-							href="/admin/create?tab2=Autopilot"
-							class="btn btn-secondary">
-							Reset
-						</a>
-					</div>
+					{#await data.getSharedAssets then sharedAssets}
+						{#if sharedAssets && sharedAssets.length > 0}
+							<Select
+								multiple
+								formData={formDataAutopilot}
+								options={sharedAssets.map(a => [a, a])}
+								name="shared"
+								label="Shared assets" />
+						{/if}
+					{/await}
 				{/if}
-
-				{#if data.stage == 2 && data.getVersions}
-					<p>
-						{#await data.getVersions}
-							Getting asset versions, please wait...
-						{:then versions}
-							{#if versions.list.length > 0}
-								Found {versions.list.length} versions of asset {data.assetId}
-								{#if versions.cached}
-									(Using cached data)
-								{/if}
-							{:else}
-								No versions found for asset {data.assetId}
-							{/if}
-						{/await}
-					</p>
-				{/if}
-				{#if data.stage == 3 && data.getSharedAssets}
-					<p>
-						{#await data.getSharedAssets}
-							Getting asset versions, please wait...
-						{:then sharedAssets}
-							{#if sharedAssets.length > 0}
-								Found {sharedAssets.length} shared assets related
-								to {data.assetId}
-							{:else}
-								No versions found for asset {data.assetId}
-							{/if}
-						{/await}
-					</p>
-				{/if}
-				<Form
-					formData={formDataAutopilot}
-					method="GET"
-					submit="Create"
-					class="pt-8 light-text">
-					<input
-						type="hidden"
-						name="tab2"
-						value={tabData2.currentTab} />
-					{#if data.stage === 1}
-						<Input
-							formData={formDataAutopilot}
-							name="assetId"
-							label="Asset Id"
-							type="number"
-							placeholder="33866846"
-							required />
-					{:else if data.stage === 2 && data.getVersions}
-						<input
-							type="hidden"
-							name="assetId"
-							value={data.assetId} />
-						{#await data.getVersions then versions}
-							{#if versions.list.length > 0}
-								<Select
-									formData={formDataAutopilot}
-									options={versions.list}
-									name="version"
-									label="Asset version" />
-							{/if}
-						{/await}
-					{:else if data.stage === 3}
-						<input
-							type="hidden"
-							name="assetId"
-							value={data.assetId} />
-						<input
-							type="hidden"
-							name="version"
-							value={data.version} />
-						<Input
-							formData={formDataAutopilot}
-							name="name"
-							label="Asset name"
-							placeholder="Make sure to make it accurate" />
-						<Textarea
-							formData={formDataAutopilot}
-							name="description"
-							label="Asset description"
-							placeholder="Up to 1000 characters" />
-						<Input
-							formData={formDataAutopilot}
-							name="price"
-							label="Asset price"
-							type="number" />
-						{#await data.getSharedAssets then sharedAssets}
-							{#if sharedAssets && sharedAssets.length > 0}
-								<Select
-									multiple
-									formData={formDataAutopilot}
-									options={sharedAssets.map(a => [a, a])}
-									name="shared"
-									label="Shared assets" />
-							{/if}
-						{/await}
-					{/if}
-				</Form>
-			</Tab>
+			</Form>
 		</Tab>
-	</SidebarShell>
-</div>
+	</Tab>
+</SidebarShell>
