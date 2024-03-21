@@ -20,7 +20,7 @@
 
 <Head title="Create asset - Admin" />
 
-<div class="ctnr max-w-240 pb-6">
+<div class="ctnr max-w-280 pb-6">
 	<h1>Admin - Create asset</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
@@ -28,7 +28,7 @@
 	</a>
 </div>
 
-<SidebarShell bind:tabData>
+<SidebarShell bind:tabData class="max-w-280">
 	<Tab {tabData}>
 		<TabNav bind:tabData={tabData2} justify />
 		{((tabData2.num = 0), "")}
@@ -118,7 +118,8 @@
 			{/if}
 			<Form
 				formData={formDataAutopilot}
-				method="GET"
+				method={data.stage === 3 ? "POST" : "GET"}
+				action="?/autopilot"
 				submit="Create"
 				class="pt-8 light-text">
 				<input type="hidden" name="tab2" value={tabData2.currentTab} />
@@ -161,12 +162,14 @@
 						type="number" />
 					{#await data.getSharedAssets then sharedAssets}
 						{#if sharedAssets && sharedAssets.length > 0}
-							<Select
-								multiple
-								formData={formDataAutopilot}
-								options={sharedAssets.map(a => [a, a])}
-								name="shared"
-								label="Shared assets" />
+							<div in:fade|global>
+								<Select
+									multiple
+									formData={formDataAutopilot}
+									options={sharedAssets.map(a => [a, a])}
+									name="shared"
+									label="Shared assets" />
+							</div>
 						{/if}
 					{/await}
 				{/if}

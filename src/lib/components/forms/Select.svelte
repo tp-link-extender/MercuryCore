@@ -8,7 +8,8 @@
 	export let help = ""
 	export let placeholder = ""
 	export let disabled = false
-	export let multiple = false
+	export let multiple = false // messes up hugely if this is true, custom behaviour incoming
+	// also messes up with superforms cuz it only submits the last selected value
 
 	export let options: string[][] // actually [string, string][] but whatever
 	export let selected: string | null = null
@@ -56,20 +57,36 @@
 				{placeholder}
 				class={$errors[name] ? "is-invalid" : ""}>
 				{#each mOptions as { value, label }}
-					<option {value} selected={value == mSelected?.value}>
+					<option {value} selected={$isSelected(value)}>
 						{label}
 					</option>
 				{/each}
 			</select>
 		</NoScript>
 		<YesScript>
-			<select bind:value={$form[name]} {name} id={name} class="hidden">
-				{#each mOptions as { value, label }}
-					<option {value} selected={value == mSelected?.value}>
-						{label}
-					</option>
-				{/each}
-			</select>
+			{#if multiple}
+				<!-- We do not speak of this (progressive enhancement impossible) -->
+				<input
+					{name}
+					id={name}
+					type="hidden"
+					value={Array.isArray($selectedValue)
+						? $selectedValue.map(({ value }) => value)
+						: ""} />
+			{:else}
+				<select
+					bind:value={$form[name]}
+					{name}
+					id={name}
+					multiple
+					class="hidden">
+					{#each mOptions as { value, label }}
+						<option {value} selected>
+							{label}
+						</option>
+					{/each}
+				</select>
+			{/if}
 
 			<button use:melt={$trigger} {disabled} class="fakeselect">
 				{$selectedLabel || placeholder || "Select an option"}

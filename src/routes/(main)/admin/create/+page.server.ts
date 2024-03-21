@@ -1,9 +1,10 @@
 import { authorise } from "$lib/server/lucia"
 import { superValidate } from "sveltekit-superforms/server"
-import { query, squery, surql } from "$lib/server/surreal"
+import { query, squery, mquery, surql } from "$lib/server/surreal"
+import formError from "$lib/server/formError"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
-import { error } from "@sveltejs/kit"
+import { error, redirect } from "@sveltejs/kit"
 
 const schemaManual = z.object({
 	type: z.enum(["8", "18"]),
@@ -13,11 +14,12 @@ const schemaManual = z.object({
 	asset: z.any(),
 })
 const schemaAuto = z.object({
-	type: z.enum(["8"]),
-	id: z.number(),
+	assetId: z.number().int(),
+	version: z.number().int(),
 	name: z.string().min(3).max(50),
 	description: z.string().max(1000).optional(),
 	price: z.number().int().min(0).max(999),
+	shared: z.string(),
 })
 
 type Asset = {
@@ -26,6 +28,9 @@ type Asset = {
 	// Watch out for inconsistencies in date formatting between API and DB
 	// This should be safe, for now...
 	assetModified: string
+	name: string
+	description: string
+	type: number
 }
 
 // Ghoofy ass function names
@@ -52,6 +57,14 @@ async function fetchAssetVersion(id: number, version: number) {
 	const date = data.headers.get("last-modified")
 	if (!date) return "done"
 
+	const meta: {
+		Name: string
+		Description: string
+		AssetTypeId: number
+	} = await (
+		await fetch(`https://economy.roblox.com/v2/assets/${id}/details`)
+	).json()
+
 	// Welp
 	// this is because newer asset versions (rbxl) are binary, and contain data that causes the query to hang
 	// After all, they give the data in the response anyway. Why shouldn't I cache it?
@@ -61,6 +74,9 @@ async function fetchAssetVersion(id: number, version: number) {
 		id: [id, version] as [number, number], // typescript moment
 		data: b64,
 		assetModified: new Date(date).toISOString(),
+		name: meta.Name,
+		description: meta.Description,
+		type: meta.AssetTypeId,
 	}
 }
 
@@ -78,10 +94,7 @@ async function getVersions(id: number, version?: number) {
 		{ id, version }
 	)
 
-	if (cache.length > 0) {
-		console.log("Got cached asset versions of", id)
-		return transformVersions(cache, true)
-	}
+	if (cache.length > 0) return transformVersions(cache, true)
 
 	console.log("No cached asset versions of", id, "fetching...")
 
@@ -116,6 +129,9 @@ async function getVersions(id: number, version?: number) {
 					# what on earth do I name this field?
 					# cache invalidation AND naming things in the same query?
 					assetModified: $version.assetModified,
+					name: $version.name,
+					description: $version.description,
+					type: $version.type,
 				}
 			}`,
 		{ versions }
@@ -125,37 +141,36 @@ async function getVersions(id: number, version?: number) {
 	return transformVersions(versions)
 }
 
-// Watch out nerds: if there's a lot of shared assets, this will be SLOOOOW
-async function getXmlDependencies(data: string, version: number) {
+async function getSharedAssets(id: number, version: number) {
+	const cache = await squery<{
+		id: [number, number]
+		data: string
+		assetModified: string
+	}>(
+		surql`
+			SELECT meta::id(id) AS id, data, assetModified
+			FROM assetCache:[$id, $version]`,
+		{ id, version }
+	)
+
+	if (!cache) return []
+
 	const dependencies: string[] = []
 
-	const xml = Buffer.from(data, "base64").toString()
+	const xml = Buffer.from(cache.data, "base64").toString()
 	for (const [, url] of xml.matchAll(/<url>(.+)<\/url>/g)) {
 		const id = url.match(/\d+/)?.[0]
 		if (!id) continue // shouldn't happen, let's just ignore it
 		dependencies.push(id)
 
-		const data = (await getVersions(+id, version)).data?.[0]
-		if (!data) continue
-
-		console.log("Getting nested dependencies of", id)
-
-		const nested = await getXmlDependencies(data, version)
-		dependencies.push(...nested)
+		// "why would a shared asset have dependencies
+		// like a mesh doesn't have any dependencies
+		// in what scenario would a shared asset have dependencies?"
+		// - Taskmanager, 21 March 2024
+		// ^^ Probably correct but I'm putting this here anyway (also it halves the number of database queries we have to do)
 	}
 
 	return dependencies
-}
-
-async function getSharedAssets(id: number, version: number) {
-	const cache = await squery<Asset>(
-		surql`
-			SELECT meta::id(id) AS id, assetModified, data
-			FROM assetCache:[$id, $version]`,
-		{ id, version }
-	)
-
-	return cache ? await getXmlDependencies(cache.data, version) : []
 }
 
 export async function load({ locals, url }) {
@@ -181,4 +196,75 @@ export async function load({ locals, url }) {
 				getSharedAssets: getSharedAssets(+assetId, +version),
 			}),
 	}
+}
+
+export const actions = {
+	autopilot: async ({ request, locals }) => {
+		await authorise(locals, 5)
+		const form = await superValidate(request, zod(schemaAuto))
+		if (!form.valid) return formError(form)
+
+		const res = await mquery<unknown[]>(
+			surql`
+				BEGIN TRANSACTION;
+				LET $user = (SELECT id FROM user WHERE number = 1)[0].id;
+				LET $newSharedIds = [];
+				FOR $assetId IN $assets {
+					# All the assets are cached already
+					LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
+					LET $cached = (SELECT * FROM assetCache:[$assetId, $version])[0];
+					LET $asset = CREATE asset CONTENT {
+						id: $id,
+						name: $cached.name,
+						type: $cached.type,
+						price: 0,
+						description: [{
+							text: $cached.description,
+							updated: time::now(),
+						}],
+						created: time::now(),
+						updated: time::now(),
+						visibility: "Visible",
+						autopilotId: $assetId,
+					};
+					RELATE $user->owns->$asset;
+					RELATE $user->created->$asset;
+					$newSharedIds = array::append($newSharedIds, $id);
+				};
+				# Now time for the big one
+				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
+				LET $cached = (SELECT * FROM assetCache:[$assetId, $version])[0];
+				LET $asset = CREATE asset CONTENT {
+					id: $id,
+					name: $name,
+					type: $cached.type,
+					price: $price,
+					description: [{
+						text: $description,
+						updated: time::now(),
+					}],
+					created: time::now(),
+					updated: time::now(),
+					visibility: "Visible",
+				};
+				RELATE $user->owns->$asset;
+				RELATE $user->created->$asset;
+				$id;
+				SELECT meta::id(id) AS id, data
+				FROM asset WHERE id ∈ $newSharedIds;
+				COMMIT TRANSACTION`,
+			{
+				assets: form.data.shared.split(",").map(s => +s),
+				...form.data,
+			}
+		)
+
+		const id = res[9]
+		const shared = res[10] as {
+			id: number
+			data: string
+		}[]
+
+		redirect(302, `/avatarshop/${id}`)
+	},
 }

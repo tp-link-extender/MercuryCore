@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import { squery, mquery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
@@ -113,12 +113,7 @@ export const actions = {
 			return formError(form, ["asset"], ["Asset failed to upload"])
 		}
 
-		// lmao probably has huge concurrency issues that I am not going to test
-		const currentId = await squery<number>(surql`[stuff:increment.asset]`)
-		const imageAssetId = currentId + 1
-		const id = currentId + 2
-
-		await query(
+		const res = await mquery<number[]>(
 			surql`
 				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
 				LET $imageAsset = CREATE asset CONTENT {
@@ -150,7 +145,9 @@ export const actions = {
 				};
 				RELATE $user->owns->$asset;
 				RELATE $user->created->$asset;
-				RELATE $asset->imageAsset->$imageAsset`,
+				RELATE $asset->imageAsset->$imageAsset;
+				$id; # return the idz
+				$id2`,
 			{
 				name,
 				assetType,
@@ -159,6 +156,9 @@ export const actions = {
 				user: `user:${user.id}`,
 			}
 		)
+
+		const imageAssetId = res[9]
+		const id = res[10] // concurrency issues fixed hopefully
 
 		graphicAsset(assets[assetType], imageAssetId, id)
 
