@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { superForm } from "sveltekit-superforms/client"
-	import AdminShell from "../AdminShell.svelte"
 
 	export let data
 	const formData = superForm(data.form)
@@ -19,16 +18,22 @@
 
 <Head title="Invites - Admin" />
 
-<div class="ctnr pt-6 light-text">
-	<div class="pb-4">
-		<h1>Admin - Invites</h1>
-		<a href="/admin" class="no-underline">
-			<fa fa-caret-left />
-			Back to panel
-		</a>
+<div class="flex px-4">
+	<div class="<lg:hidden w-75" />
+	<div class="flex w-full justify-center">
+		<div class="w-full max-w-240 <md:px-4">
+			<h1>Admin - Invites</h1>
+			<a href="/admin" class="no-underline">
+				<fa fa-caret-left />
+				Back to panel
+			</a>
+		</div>
+		<div class="<lg:hidden shrink-9999 w-75" />
 	</div>
+</div>
 
-	<AdminShell bind:tabData>
+<div class="px-4 pt-6">
+	<SidebarShell bind:tabData>
 		<Tab {tabData}>
 			<Form {formData} action="?/create" submit="Create">
 				<Input
@@ -112,7 +117,7 @@
 				</tbody>
 			</table>
 		</Tab>
-	</AdminShell>
+	</SidebarShell>
 </div>
 
 <style lang="stylus">

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import AdminShell from "../AdminShell.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
@@ -19,18 +18,24 @@
 	}
 </script>
 
-<Head title="Create Asset - Admin" />
+<Head title="Create asset - Admin" />
 
-<div class="ctnr pt-6">
-	<div class="pb-4">
-		<h1>Admin - Create Asset</h1>
-		<a href="/admin" class="no-underline">
-			<fa fa-caret-left />
-			Back to panel
-		</a>
+<div class="flex px-4">
+	<div class="<lg:hidden w-75" />
+	<div class="flex w-full justify-center">
+		<div class="w-full max-w-240 <md:px-4">
+			<h1>Admin - Create asset</h1>
+			<a href="/admin" class="no-underline">
+				<fa fa-caret-left />
+				Back to panel
+			</a>
+		</div>
+		<div class="<lg:hidden shrink-9999 w-75" />
 	</div>
+</div>
 
-	<AdminShell bind:tabData>
+<div class="px-4 pt-6">
+	<SidebarShell bind:tabData>
 		<Tab {tabData}>
 			<TabNav bind:tabData={tabData2} justify />
 			{((tabData2.num = 0), "")}
@@ -175,7 +180,8 @@
 							type="number" />
 						{#await data.getSharedAssets then sharedAssets}
 							{#if sharedAssets && sharedAssets.length > 0}
-								<Select multiple
+								<Select
+									multiple
 									formData={formDataAutopilot}
 									options={sharedAssets.map(a => [a, a])}
 									name="shared"
@@ -186,5 +192,5 @@
 				</Form>
 			</Tab>
 		</Tab>
-	</AdminShell>
+	</SidebarShell>
 </div>

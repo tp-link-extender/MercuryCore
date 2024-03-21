@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { superForm } from "sveltekit-superforms/client"
-	import AdminShell from "../AdminShell.svelte"
 
 	export let data
 	const formData = superForm(data.form)
@@ -11,21 +10,27 @@
 	$form.dailyStipend = data.dailyStipend
 	$form.stipendTime = data.stipendTime
 
-	let tabData = TabData(data.url, ["Daily Stipend"], ["fa fa-gem"])
+	let tabData = TabData(data.url, ["Daily stipend"], ["fa fa-gem"])
 </script>
 
-<Head title="Daily Stipend - Admin" />
+<Head title="Daily stipend - Admin" />
 
-<div class="ctnr pt-6 light-text">
-	<div class="pb-4">
-		<h1>Admin - Daily Stipend</h1>
-		<a href="/admin" class="no-underline">
-			<fa fa-caret-left />
-			Back to panel
-		</a>
+<div class="flex px-4">
+	<div class="<lg:hidden w-75" />
+	<div class="flex w-full justify-center">
+		<div class="w-full max-w-240 <md:px-4">
+			<h1>Admin - Daily stipend</h1>
+			<a href="/admin" class="no-underline">
+				<fa fa-caret-left />
+				Back to panel
+			</a>
+		</div>
+		<div class="<lg:hidden shrink-9999 w-75" />
 	</div>
+</div>
 
-	<AdminShell bind:tabData>
+<div class="px-4 pt-6">
+	<SidebarShell bind:tabData>
 		<Tab {tabData}>
 			<Form
 				{formData}
@@ -47,5 +52,5 @@
 					after="<span class='light-text pl-3'>hours</span>" />
 			</Form>
 		</Tab>
-	</AdminShell>
+	</SidebarShell>
 </div>

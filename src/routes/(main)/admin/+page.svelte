@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AdminShell from "./AdminShell.svelte"
+	import SidebarShell from "$lib/components/SidebarShell.svelte"
 
 	const permissions = [
 		[], // index from 1
@@ -17,9 +17,7 @@
 			["Asset Approval", "/admin/asset", "fa fa-file-circle-check"],
 			["Render Queue", "/admin/renderqueue", "fa fa-file-image"]
 		],
-		Catalog: [
-			["Create Asset", "/admin/create", "fa fa-file-circle-plus"]
-		],
+		Catalog: [["Create Asset", "/admin/create", "fa fa-file-circle-plus"]],
 		Economy: [
 			// ["Award Currency", "#", "far fa-gem"],
 			// ["Create New Asset", "#", "fa fa-file-circle-plus"],
@@ -52,6 +50,8 @@
 	export let data
 	const { user } = data
 
+	const perms = permissions[user?.permissionLevel]
+
 	if (user?.permissionLevel === 5) {
 		panel.Economy.push(["Daily Stipend", "/admin/stipend", "far fa-clock"])
 		panel.Administration = [
@@ -76,17 +76,25 @@
 
 <Head title="Admin" />
 
-<div class="ctnr pt-6 max-w-340 light-text">
-	<h1>Admin Panel</h1>
-	<h2 class="text-xl pb-4">
-		Your permission level is <span
-			style="color: {permissions[user?.permissionLevel][0]}">
-			<fa class="{permissions[user?.permissionLevel][1]} px-1" />
-			{permissions[user?.permissionLevel][2]}
-		</span>
-	</h2>
+<div class="flex px-4">
+	<div class="<lg:hidden w-75" />
+	<div class="flex w-full justify-center">
+		<div class="w-full max-w-240 <md:px-4">
+			<h1>Admin Panel</h1>
+			<h2 class="text-xl">
+				Your permission level is <span style="color: {perms[0]}">
+					<fa class="{perms[1]} px-1" />
+					{perms[2]}
+				</span>
+			</h2>
+		</div>
+		<div class="<lg:hidden shrink-9999 w-75" />
+	</div>
+</div>
+
+<div class="px-4 pt-4">
 	<hr />
-	<AdminShell bind:tabData>
+	<SidebarShell bind:tabData>
 		{#each tabNames.slice(0, -1) as key}
 			<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
 				{#each panel[key] as i, num}
@@ -208,7 +216,7 @@
 				</div>
 			</div>
 		</Tab>
-	</AdminShell>
+	</SidebarShell>
 </div>
 
 <style lang="stylus">

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import AdminShell from "../AdminShell.svelte"
-
 	export let data
 
 	let tabData = TabData(
@@ -14,16 +12,22 @@
 
 <Head title="Render Queue - Admin" />
 
-<div class="ctnr pt-6 max-w-280 light-text">
-	<div class="pb-4">
-		<h1>Admin - Render Queue</h1>
-		<a href="/admin" class="no-underline">
-			<fa fa-caret-left />
-			Back to panel
-		</a>
+<div class="flex px-4">
+	<div class="<lg:hidden w-75" />
+	<div class="flex w-full justify-center">
+		<div class="w-full max-w-280 <md:px-4">
+			<h1>Admin - Render Queue</h1>
+			<a href="/admin" class="no-underline">
+				<fa fa-caret-left />
+				Back to panel
+			</a>
+		</div>
+		<div class="<lg:hidden shrink-9999 w-75" />
 	</div>
+</div>
 
-	<AdminShell bind:tabData>
+<div class="px-4 pt-6">
+	<SidebarShell bind:tabData class="max-w-280">
 		<Tab {tabData}>
 			<div class="<lg:flex flex-col lg:grid grid-cols-2 gap-4">
 				<div class="card light-text pb-1">
@@ -124,7 +128,7 @@
 				</tbody>
 			</table>
 		</Tab>
-	</AdminShell>
+	</SidebarShell>
 </div>
 
 <style lang="stylus">

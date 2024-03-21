@@ -26,13 +26,18 @@
 	}
 
 	onMount(() =>
-		setInterval(() => {
+		setInterval(async () => {
 			// Keep the user's online status up to date
-			if (user)
-				fetch("/api?/statusping", {
-					method: "POST",
-					body: new FormData()
-				})
+			if (!user) return
+
+			// Save to localStorage so we don't ping multiple times if the user has multiple tabs open
+			const lastPing = localStorage.getItem("lastPing")
+			if (lastPing && Date.now() - +lastPing < 30e3) return
+			await fetch("/api?/statusping", {
+				method: "POST",
+				body: new FormData()
+			})
+			localStorage.setItem("lastPing", Date.now().toString())
 		}, 30e3)
 	)
 
