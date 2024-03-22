@@ -25,7 +25,6 @@ const schemaAuto = z.object({
 
 type Asset = {
 	id: [number, number]
-	data: string
 	// Watch out for inconsistencies in date formatting between API and DB
 	// This should be safe, for now...
 	assetModified: string
@@ -35,9 +34,8 @@ type Asset = {
 }
 
 // Ghoofy ass function names
-const transformVersions = (vs: Asset[], cached = false, getData = false) => ({
+const transformVersions = (vs: Asset[], cached = false) => ({
 	cached,
-	...(getData && { data: vs.map(v => v.data) }),
 	list: vs.map(v => [
 		v.id[1].toString(),
 		`${v.id[1]} - ${v.assetModified.substring(0, 10)}`, // docsocial type beat
@@ -46,10 +44,19 @@ const transformVersions = (vs: Asset[], cached = false, getData = false) => ({
 
 async function fetchAssetVersion(id: number, version: number) {
 	console.log("Fetching asset version", version, "of", id)
-	const data = await fetch(
-		`https://assetdelivery.roblox.com/v1/asset/?id=${id}&version=${version}`,
-		{ headers: { "user-agent": "Roblox/WinInet" } }
-	)
+
+	let data: Response
+	while (true)
+		try {
+			data = await fetch(
+				`https://assetdelivery.roblox.com/v1/asset/?id=${id}&version=${version}`,
+				{ headers: { "user-agent": "Roblox/WinInet" } }
+			)
+			break
+		} catch {
+			console.log("Ratelimited, waiting 30 seconds...") // polygon type beat
+			await new Promise(r => setTimeout(r, 30e3))
+		}
 
 	if (data.status === 500) return "skip" // atoms would be nice right about now
 	if (data.status !== 200) return "done"
@@ -57,6 +64,8 @@ async function fetchAssetVersion(id: number, version: number) {
 	// no need for a goofy ahh php loop
 	const date = data.headers.get("last-modified")
 	if (!date) return "done"
+
+	console.log("api getting")
 
 	const meta: {
 		Name: string
@@ -66,14 +75,18 @@ async function fetchAssetVersion(id: number, version: number) {
 		await fetch(`https://economy.roblox.com/v2/assets/${id}/details`)
 	).json()
 
-	// Welp
-	// this is because newer asset versions (rbxl) are binary, and contain data that causes the query to hang
+	if (!fs.existsSync("data/assetCache")) fs.mkdirSync("data/assetCache")
+
+	// write the data to a file
 	// After all, they give the data in the response anyway. Why shouldn't I cache it?
-	const b64 = Buffer.from(await data.text()).toString("base64")
+	fs.writeFileSync(
+		`data/assetCache/${id}_${version}`,
+		Buffer.from(await data.arrayBuffer())
+	)
 
 	return {
 		id: [id, version] as [number, number], // typescript moment
-		data: b64,
+
 		assetModified: new Date(date).toISOString(),
 		name: meta.Name,
 		description: meta.Description,
@@ -126,7 +139,6 @@ async function getVersions(id: number, version?: number) {
 				# array record ids still hella useful though
 				UPDATE assetCache:[$version.id[0], $version.id[1]] CONTENT {
 					created: time::now(),
-					data: $version.data,
 					# what on earth do I name this field?
 					# cache invalidation AND naming things in the same query?
 					assetModified: $version.assetModified,
@@ -144,11 +156,10 @@ async function getVersions(id: number, version?: number) {
 async function getSharedAssets(id: number, version: number) {
 	const cache = await squery<{
 		id: [number, number]
-		data: string
 		assetModified: string
 	}>(
 		surql`
-			SELECT meta::id(id) AS id, data, assetModified
+			SELECT meta::id(id) AS id, assetModified
 			FROM assetCache:[$id, $version]`,
 		{ id, version }
 	)
@@ -157,8 +168,19 @@ async function getSharedAssets(id: number, version: number) {
 
 	const dependencies: string[] = []
 
-	const xml = Buffer.from(cache.data, "base64").toString()
-	for (const [, url] of xml.matchAll(/<url>(.+)<\/url>/g)) {
+	let cachedData: string
+	try {
+		cachedData = fs.readFileSync(
+			`data/assetCache/${id}_${version}`,
+			"utf-8"
+		)
+		console.log("cached data", cachedData.startsWith("<roblox "))
+		if (!cachedData.startsWith("<roblox ")) return []
+	} catch {
+		return []
+	}
+
+	for (const [, url] of cachedData.matchAll(/<url>(.+)<\/url>/g)) {
 		const id = url.match(/\d+/)?.[0]
 		if (!id) continue // shouldn't happen, let's just ignore it
 		dependencies.push(id)
@@ -206,6 +228,7 @@ export const actions = {
 		await authorise(locals, 5)
 		const form = await superValidate(request, zod(schemaAuto))
 		if (!form.valid) return formError(form)
+		const { data } = form
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 
@@ -260,49 +283,45 @@ export const actions = {
 				(SELECT
 					(SELECT meta::id(id) AS id
 					FROM ->createdAsset->asset)[0].id AS id,
-					data,
 					type,
 					meta::id(id)[0] AS sharedId
 				FROM assetCache WHERE ->createdAsset->asset);
-				$cached.data;
 				COMMIT TRANSACTION`,
-			{
-				assets: form.data.shared.split(",").map(s => +s),
-				...form.data,
-			}
+			{ assets: form.data.shared.split(",").map(s => +s), ...data }
 		)
 
 		const id = res[8]
 		const shared = res[9] as {
 			id: number
-			data: string
 			type: number
 			sharedId: number
 		}[]
-		console.log(shared)
-		let xml = Buffer.from(res[10] as string, "base64").toString()
+
+		let cachedXml = fs.readFileSync(
+			`data/assetCache/${data.assetId}_${data.version}`,
+			"utf-8"
+		)
 
 		// Replace the shared asset URLs with the new asset IDs
-		for (const exec of xml.matchAll(/(<url>.+<\/url>)/g)) {
+		for (const exec of cachedXml.matchAll(/(<url>.+<\/url>)/g)) {
 			const url = exec[1]
-			console.log(url)
 			const id = url.match(/\d+/)?.[0]
 			if (!id) continue // shouldn't happen, let's just ignore it
 
 			const newId = shared.find(s => s.sharedId === +id)?.id
 			if (!newId) continue // same as above
-			xml = xml.replace(
+			cachedXml = cachedXml.replace(
 				url,
 				`<url>https://banland.xyz/asset?id=${newId}</url>`
 			)
 		}
 
 		await Promise.all([
-			fs.promises.writeFile(`data/assets/${id}`, xml),
+			fs.promises.writeFile(`data/assets/${id}`, cachedXml),
 			...shared.map(s =>
-				fs.promises.writeFile(
-					`data/assets/${s.id}`,
-					Buffer.from(s.data as string, "base64").toString()
+				fs.promises.copyFile(
+					`data/assetCache/${s.sharedId}_${form.data.version}`,
+					`data/assets/${s.id}`
 				)
 			),
 		])

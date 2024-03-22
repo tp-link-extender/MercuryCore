@@ -60,6 +60,7 @@
 		"T-Shirts": 2,
 		Shirts: 11,
 		Pants: 12,
+		Hats: 8,
 		Gear: 19
 	}
 	let tabData = TabData(data.url, Object.keys(tabTypes))
