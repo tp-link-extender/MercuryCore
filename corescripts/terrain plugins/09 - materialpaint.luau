@@ -2,6 +2,9 @@ while game == nil do
 	wait(1 / 30)
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local CoreGui = game:GetService "CoreGui"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -282,16 +285,13 @@ function getSquare(cellPos, setCells)
 				-- local tempCellPos = Vector3.new(x, y, z)
 				local oldMaterial, oldType, oldOrientation = GetCell(c, x, y, z)
 				if oldMaterial.Value > 0 then
-					table.insert(
-						setCells,
-						{
-							xPos = x,
-							yPos = y,
-							zPos = z,
-							theType = oldType,
-							orientation = oldOrientation,
-						}
-					)
+					table.insert(setCells, {
+						xPos = x,
+						yPos = y,
+						zPos = z,
+						theType = oldType,
+						orientation = oldOrientation,
+					})
 				end
 			end
 		end
@@ -315,16 +315,13 @@ function getCircular(cellPos, setCells)
 					local oldMaterial, oldType, oldOrientation =
 						GetCell(c, x, y, z)
 					if oldMaterial.Value > 0 then
-						table.insert(
-							setCells,
-							{
-								xPos = x,
-								yPos = y,
-								zPos = z,
-								theType = oldType,
-								orientation = oldOrientation,
-							}
-						)
+						table.insert(setCells, {
+							xPos = x,
+							yPos = y,
+							zPos = z,
+							theType = oldType,
+							orientation = oldOrientation,
+						})
 					end
 				end
 			end
@@ -543,7 +540,7 @@ function mouseUp(_)
 		setPositionDirectionality()
 	end
 
-	game:GetService("ChangeHistoryService"):SetWaypoint "MaterialPaint"
+	ChangeHistoryService:SetWaypoint "MaterialPaint"
 
 	lastLastCell = nil
 	lastCell = nil
@@ -725,7 +722,7 @@ end
 --screengui
 local g = Instance.new "ScreenGui"
 g.Name = "MaterialPainterGui"
-g.Parent = game:GetService "CoreGui"
+g.Parent = CoreGui
 
 dragBar, containerFrame, helpFrame, closeEvent = RbxGui.CreatePluginFrame(
 	"Material Brush",

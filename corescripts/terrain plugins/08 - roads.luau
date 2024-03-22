@@ -2,6 +2,8 @@ while game == nil do
 	wait(1 / 30)
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -184,7 +186,7 @@ function makePath(px1, pz1, px2, pz2, ph, pp)
 		end
 	end
 
-	game:GetService("ChangeHistoryService"):SetWaypoint "Roads"
+	ChangeHistoryService:SetWaypoint "Roads"
 end
 
 -- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)

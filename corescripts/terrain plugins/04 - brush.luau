@@ -2,6 +2,9 @@ while game == nil do
 	wait(1 / 30)
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local CoreGui = game:GetService "CoreGui"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -65,7 +68,7 @@ mouse.Button1Up:connect(function()
 	brushheight = nil
 	enablePreview()
 	updatePreviewSelection(mouse.Hit)
-	game:GetService("ChangeHistoryService"):SetWaypoint "Brush"
+	ChangeHistoryService:SetWaypoint "Brush"
 end)
 mouse.Move:connect(function()
 	mouseMoved()
@@ -541,7 +544,7 @@ end
 --screengui
 local g = Instance.new "ScreenGui"
 g.Name = "TerrainBrushGui"
-g.Parent = game:GetService "CoreGui"
+g.Parent = CoreGui
 
 brushDragBar, elevationFrame, elevationHelpFrame, elevationCloseEvent =
 	RbxGui.CreatePluginFrame(

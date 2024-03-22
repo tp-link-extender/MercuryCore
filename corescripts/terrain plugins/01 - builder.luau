@@ -2,6 +2,9 @@ while game == nil do
 	wait(1 / 30)
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local CoreGui = game:GetService "CoreGui"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -153,7 +156,7 @@ function MouseHighlighter.Create(mouseUse)
 
 		-- NOTE:
 		-- Change this gui to be the one you want to use.
-		highlighter.selectionBox.Parent = game:GetService "CoreGui"
+		highlighter.selectionBox.Parent = CoreGui
 
 		local vectorPos = Vector3.new(position.x, position.y, position.z)
 		local cellPos = WorldToCellPreferEmpty(c, vectorPos)
@@ -206,7 +209,7 @@ end
 
 -- Show the highlighter.
 function MouseHighlighter:EnablePreview()
-	self.selectionBox.Parent = game:GetService "CoreGui" -- This will make it not show up in workspace.
+	self.selectionBox.Parent = CoreGui -- This will make it not show up in workspace.
 end
 
 -- Create the mouse movement highlighter.
@@ -243,7 +246,7 @@ end
 --screengui
 local g = Instance.new "ScreenGui"
 g.Name = "BuilderGui"
-g.Parent = game:GetService "CoreGui"
+g.Parent = CoreGui
 
 -- UI gui load.  Required for sliders.
 local RbxGui = LoadLibrary "RbxGui"
@@ -359,7 +362,7 @@ function onClicked(mouseC)
 		end
 
 		-- Mark undo point.
-		game:GetService("ChangeHistoryService"):SetWaypoint "Builder"
+		ChangeHistoryService:SetWaypoint "Builder"
 
 		UpdatePosition(mouseC.Hit)
 	end

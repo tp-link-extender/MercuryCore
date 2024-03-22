@@ -2,6 +2,9 @@ while game == nil do
 	wait(1 / 30)
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local CoreGui = game:GetService "CoreGui"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -131,7 +134,7 @@ function onClicked(mouseC)
 		makeCrater(x, y, z, r, d)
 
 		debounce = false
-		game:GetService("ChangeHistoryService"):SetWaypoint "Crater"
+		ChangeHistoryService:SetWaypoint "Crater"
 	end
 end
 
@@ -171,7 +174,7 @@ local RbxGui = LoadLibrary "RbxGui"
 --screengui
 local g = Instance.new "ScreenGui"
 g.Name = "CraterGui"
-g.Parent = game:GetService "CoreGui"
+g.Parent = CoreGui
 
 craterDragBar, craterFrame, craterHelpFrame, craterCloseEvent =
 	RbxGui.CreatePluginFrame(

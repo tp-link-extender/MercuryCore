@@ -2,6 +2,9 @@ while game == nil do
 	wait(1 / 30)
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local CoreGui = game:GetService "CoreGui"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -62,6 +65,39 @@ local elevationOptions = {
 -- What color to use for the mouse highlighter.
 local mouseHighlightColor = BrickColor.new "Lime green"
 
+-- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)
+--
+-- vectorPos - End point of the line.
+--
+-- Return:
+-- success - Value is true if there was a plane intersection, false if not.
+-- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
+local function PlaneIntersection(vectorPos)
+	local currCamera = game.Workspace.CurrentCamera
+	local startPos = Vector3.new(
+		currCamera.CoordinateFrame.p.X,
+		currCamera.CoordinateFrame.p.Y,
+		currCamera.CoordinateFrame.p.Z
+	)
+	local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
+	local normal = Vector3.new(0, 1, 0)
+	local p3 = Vector3.new(0, 0, 0)
+	local startEndDot = normal:Dot(endPos - startPos)
+	local cellPos = vectorPos
+	local success = false
+
+	if startEndDot ~= 0 then
+		local t = normal:Dot(p3 - startPos) / startEndDot
+		if t >= 0 and t <= 1 then
+			local intersection = ((endPos - startPos) * t) + startPos
+			cellPos = c:WorldToCell(intersection)
+			success = true
+		end
+	end
+
+	return success, cellPos
+end
+
 -- Used to create a highlighter that follows the mouse.
 -- It is a class mouse highlighter.  To use, call MouseHighlighter.Create(mouse) where mouse is the mouse to track.
 local MouseHighlighter = {}
@@ -118,39 +154,6 @@ function MouseHighlighter.Create(mouseUse)
 	mouseH.TargetFilter = highlighter.selectionPart
 	setmetatable(highlighter, MouseHighlighter)
 
-	-- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)
-	--
-	-- vectorPos - End point of the line.
-	--
-	-- Return:
-	-- success - Value is true if there was a plane intersection, false if not.
-	-- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
-	local function PlaneIntersection(vectorPos)
-		local currCamera = game.Workspace.CurrentCamera
-		local startPos = Vector3.new(
-			currCamera.CoordinateFrame.p.X,
-			currCamera.CoordinateFrame.p.Y,
-			currCamera.CoordinateFrame.p.Z
-		)
-		local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
-		local normal = Vector3.new(0, 1, 0)
-		local p3 = Vector3.new(0, 0, 0)
-		local startEndDot = normal:Dot(endPos - startPos)
-		local cellPos = vectorPos
-		local success = false
-
-		if startEndDot ~= 0 then
-			local t = normal:Dot(p3 - startPos) / startEndDot
-			if t >= 0 and t <= 1 then
-				local intersection = ((endPos - startPos) * t) + startPos
-				cellPos = c:WorldToCell(intersection)
-				success = true
-			end
-		end
-
-		return success, cellPos
-	end
-
 	-- Update where the highlighter is displayed.
 	-- position - Where to display the highlighter, in world space.
 	function UpdatePosition(position)
@@ -160,7 +163,7 @@ function MouseHighlighter.Create(mouseUse)
 
 		-- NOTE:
 		-- Change this gui to be the one you want to use.
-		highlighter.selectionBox.Parent = game:GetService "CoreGui"
+		highlighter.selectionBox.Parent = CoreGui
 
 		local vectorPos = Vector3.new(position.x, position.y, position.z)
 		local cellPos = WorldToCellPreferEmpty(c, vectorPos)
@@ -213,7 +216,7 @@ end
 
 -- Show the highlighter.
 function MouseHighlighter:EnablePreview()
-	self.selectionBox.Parent = game:GetService "CoreGui" -- This will make it not show up in workspace.
+	self.selectionBox.Parent = CoreGui-- This will make it not show up in workspace.
 end
 
 -- Create the mouse movement highlighter.
@@ -225,7 +228,7 @@ local mouseHighlighter = MouseHighlighter.Create(mouse)
 --screengui
 local g = Instance.new "ScreenGui"
 g.Name = "ElevationGui"
-g.Parent = game:GetService "CoreGui"
+g.Parent = CoreGui
 
 -- UI gui load.  Required for sliders.
 local RbxGui = LoadLibrary "RbxGui"
@@ -364,7 +367,8 @@ local slopeLabel = CreateStandardLabel(
 	"",
 	elevationFrame
 )
-local _, slopeSliderPosition = CreateStandardSlider(
+local _, slopeSliderPosition
+_, slopeSliderPosition = CreateStandardSlider(
 	"slopeSliderGui",
 	UDim2.new(0, 1, 0, 67),
 	UDim2.new(0, 10, 0.5, -2),
@@ -434,6 +438,9 @@ function makeShell(x, z, heightmap, shellheightmap)
 end
 
 local height
+
+local oldheightmap = {}
+local heightmap = {}
 
 --elevates terrain at point (x, y, z) in cluster c
 --within radius r1 from x, z the elevation should become y + d
@@ -547,6 +554,8 @@ end
 -- 	return math.sqrt(math.pow(dist(x1, z1, x2, z2), 2) + math.pow(math.abs(y2 - y1) * 100 / d, 2))
 -- end
 
+local mousedown = false
+
 -- Run when the mouse gets clicked.  If the click is on terrain, then it will be used as the starting point of the elevation area.
 function onClicked(mouse2)
 	if on then
@@ -594,7 +603,7 @@ function onClicked(mouse2)
 		-- Hide the selection area while dragging.
 		mouseHighlighter:DisablePreview()
 
-		local mousedown = true
+		mousedown = true
 		local originalY = mouse2.Y
 		local prevY = originalY
 		local d = 0
@@ -618,7 +627,7 @@ function onClicked(mouse2)
 			end
 			wait(0)
 		end
-		game:GetService("ChangeHistoryService"):SetWaypoint "Elevation"
+		ChangeHistoryService:SetWaypoint "Elevation"
 	end
 end
 
