@@ -377,14 +377,17 @@ export const actions = {
 
 		if (!asset) error(404, "Not found")
 
-		if (![11, 12].includes(asset.type))
+		if (![11, 12, 8].includes(asset.type))
 			error(400, "Can't rerender this type of asset")
 
 		if (asset.visibility === "Moderated")
 			error(400, "Can't rerender a moderated asset")
 
 		try {
-			await requestRender("Clothing", +params.id)
+			await requestRender(
+				asset.type === 8 ? "Model" : "Clothing",
+				+params.id
+			)
 			return {
 				icon: `/avatarshop/${asset.id}/${
 					asset.name

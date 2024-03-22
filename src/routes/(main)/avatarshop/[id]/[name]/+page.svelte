@@ -68,7 +68,7 @@
 									Edit asset
 								</a>
 							</li> -->
-							{#if data.user.permissionLevel >= 5 && [11, 12].includes(data.type)}
+							{#if data.user.permissionLevel >= 5 && [11, 12, 8].includes(data.type)}
 								<li class="rounded-2">
 									<form
 										use:enhance={enhanceRegen}
