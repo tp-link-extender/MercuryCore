@@ -13,9 +13,36 @@
 	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], [], "tab2")
 
 	const assets: { [k: string]: string } = {
-		"8": "Hat",
-		"18": "Face"
+		1: "Image",
+		2: "T-Shirt",
+		3: "Audio",
+		4: "Mesh",
+		5: "Lua",
+		8: "Hat",
+		10: "Model",
+		11: "Shirt",
+		12: "Pants",
+		13: "Decal",
+		16: "Avatar",
+		17: "Head",
+		18: "Face",
+		19: "Gear",
+		24: "Animation",
+		25: "Arms",
+		26: "Legs",
+		27: "Torso",
+		28: "Right Arm",
+		29: "Left Arm",
+		30: "Left Leg",
+		31: "Right Leg",
+		32: "Package",
+		35: "App",
+		37: "Code",
+		38: "Plugin"
 	}
+
+	const aan = (word: string) =>
+		"aeiou".includes(word[0].toLowerCase()) ? "an" : "a"
 </script>
 
 <Head title="Create asset - Admin" />
@@ -76,13 +103,22 @@
 				<far class="pr-2" fa-circle-info />
 				Use manual uploading mode for shared assets (ie. mesh)
 			</div>
-			{#if data.stage >= 2}
-				<div class="py-4">
+			{#if data.stage >= 2 && data.type}
+				<div class="py-4 flex gap-6 items-center">
 					<a
 						href="/admin/create?tab2=Autopilot"
 						class="btn btn-secondary">
 						Reset
 					</a>
+					<span>
+						You are uploading {aan(assets[data.type])}
+						<b>{assets[data.type]}</b>
+						asset with asset id
+						<b>{data.assetId}</b>
+						{#if data.stage == 3}
+							and version <b>{data.version}</b>
+						{/if}
+					</span>
 				</div>
 			{/if}
 

@@ -2,6 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { superValidate } from "sveltekit-superforms/server"
 import { query, squery, mquery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
+import requestRender from "$lib/server/requestRender"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { error, redirect } from "@sveltejs/kit"
@@ -212,13 +213,25 @@ export async function load({ locals, url }) {
 		formAuto: await superValidate(zod(schemaAuto)),
 		stage,
 		...(stage === 2 &&
-			assetId && { assetId, getVersions: getVersions(+assetId) }),
+			assetId && {
+				assetId,
+				getVersions: getVersions(+assetId),
+			}),
 		...(stage === 3 &&
 			assetId &&
 			version && {
 				assetId,
 				version,
 				getSharedAssets: getSharedAssets(+assetId, +version),
+			}),
+		...(stage >= 2 &&
+			assetId && {
+				type: (
+					await squery<{ type: number }>(
+						surql`SELECT type FROM assetCache:[$id, 0]..[$id, 99]`, // gud enogh
+						{ id: +assetId }
+					)
+				).type,
 			}),
 	}
 }
@@ -290,7 +303,7 @@ export const actions = {
 			{ assets: form.data.shared.split(",").map(s => +s), ...data }
 		)
 
-		const id = res[8]
+		const id = res[8] as number
 		const shared = res[9] as {
 			id: number
 			type: number
@@ -323,6 +336,14 @@ export const actions = {
 					`data/assetCache/${s.sharedId}_${form.data.version}`,
 					`data/assets/${s.id}`
 				)
+			),
+		])
+
+		await Promise.all([
+			await requestRender("Model", id),
+			await requestRender(
+				"Mesh",
+				shared.find(s => s.type === 4)?.id || 0
 			),
 		])
 
