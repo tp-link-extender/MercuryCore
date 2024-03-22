@@ -105,12 +105,17 @@ func WriteFolder(writer *zip.Writer, pathName string, entryName string) {
 	files, err := os.ReadDir(pathName)
 	Assert(err, "Could not read directory "+pathName)
 
+	var newEntry string
+	if len(entryName) > 0 {
+		newEntry = entryName + "/"
+	}
+
 	// Write files to zip entry
 	for _, file := range files {
 		if file.IsDir() {
-			WriteFolder(writer, path.Join(pathName, file.Name()), entryName+"/"+file.Name())
+			WriteFolder(writer, path.Join(pathName, file.Name()), newEntry+file.Name())
 		} else {
-			WriteFile(writer, path.Join(pathName, file.Name()), entryName+"/"+file.Name())
+			WriteFile(writer, path.Join(pathName, file.Name()), newEntry+file.Name())
 		}
 	}
 }
@@ -140,7 +145,8 @@ func ZipFromArray(destination string, sources []string, baseDirectory string, is
 		} else if isFolder {
 			WriteFolder(archive, pathName, baseDirectory+file)
 		} else {
-			WriteFile(archive, pathName, baseDirectory+file)
+			fmt.Println("Writing", pathName, "to", file)
+			WriteFile(archive, pathName, file)
 		}
 	}
 }
@@ -155,7 +161,7 @@ func ZipFromFolder(destination string, source string) {
 	archive := zip.NewWriter(zipFile)
 	defer archive.Close()
 
-	WriteFolder(archive, source, "")
+	WriteFolder(archive, filepath.Join("staging", source), "")
 }
 
 func TexturesHalf(first bool) []string {
@@ -174,21 +180,6 @@ func TexturesHalf(first bool) []string {
 		return append(filenames[:len(filenames)/2], "ui")
 	}
 	return filenames[len(filenames)/2:]
-}
-
-func RecursiveRead(path string) []string {
-	files, err := os.ReadDir(path)
-	Assert(err, "Could not read directory "+path)
-
-	var filenames []string
-	for _, file := range files {
-		if file.IsDir() {
-			filenames = append(filenames, RecursiveRead(filepath.Join(path, file.Name()))...)
-		} else {
-			filenames = append(filenames, filepath.Join(path, file.Name()))
-		}
-	}
-	return filenames
 }
 
 func main() {
@@ -221,6 +212,7 @@ func main() {
 	// Create staging directory
 	os.Mkdir("staging", 0777)
 	os.Mkdir("PrepForUpload", 0777)
+	os.Mkdir("setup", 0777)
 
 	// Get all files in the staging directory that end with .dll
 	dllFiles := []string{}
@@ -239,6 +231,7 @@ func main() {
 		"Libraries.zip",
 		"content-textures.zip",
 		"content-textures2.zip",
+		"content-textures3.zip",
 		"content-sky.zip",
 		"content-fonts.zip",
 		"content-music.zip",
@@ -285,27 +278,32 @@ func main() {
 	})()
 
 	go (func() {
-		// Copy MercuryPlayerLauncher.exe to staging
-		launcher, err := os.Open(filepath.Join("setup", tasks[2]))
+		// Copy MercuryPlayerLauncher.exe to setup
+		launcher, err := os.Open(filepath.Join("staging", tasks[2]))
 		Assert(err, "Could not read MercuryPlayerLauncher.exe")
 		defer launcher.Close()
 
-		destination1, err := os.Create(filepath.Join("staging", tasks[2]))
-		destination2, err := os.Create(filepath.Join("PrepForUpload", tasks[2]))
-		Assert(err, "Could not create MercuryPlayerLauncher.exe")
+		destination1, err := os.Create(filepath.Join("setup", tasks[2]))
+		Assert(err, "Could not create MercuryPlayerLauncher.exe (1)")
 		defer destination1.Close()
+		destination2, err := os.Create(filepath.Join("PrepForUpload", tasks[2]))
+		Assert(err, "Could not create MercuryPlayerLauncher.exe (2)")
 		defer destination2.Close()
 
-		fv, err := fileversion.New("setup/MercuryPlayerLauncher.exe")
+		fv, err := fileversion.New(filepath.Join("staging", "MercuryPlayerLauncher.exe"))
 		Assert(err, "Could not get file version of MercuryPlayerLauncher.exe")
 		fileVersion := fv.FileVersion()
 
 		// Write version to MercuryVersion.txt
+		versionFile, err := os.Create(filepath.Join("PrepForUpload", "MercuryVersion.txt"))
+		Assert(err, "Could not create MercuryVersion.txt")
+		defer versionFile.Close()
 		fmt.Fprint(versionFile, fileVersion)
 
 		_, err = io.Copy(destination1, launcher)
+		Assert(err, "Could not copy MercuryPlayerLauncher.exe (1)")
 		_, err = io.Copy(destination2, launcher)
-		Assert(err, "Could not copy MercuryPlayerLauncher.exe")
+		Assert(err, "Could not copy MercuryPlayerLauncher.exe (2)")
 
 		list.CompleteTask(tasks[2])
 	})()
@@ -316,14 +314,15 @@ func main() {
 	go ZipFromArray(tasks[5], dllFiles, "", false)
 	go ZipFromArray(tasks[6], TexturesHalf(true), "content/textures", false)
 	go ZipFromArray(tasks[7], TexturesHalf(false), "content/textures", false)
-	go ZipFromFolder(tasks[8], "staging/content/sky")
-	go ZipFromFolder(tasks[9], "staging/content/fonts")
-	go ZipFromFolder(tasks[10], "staging/content/music")
-	go ZipFromFolder(tasks[11], "staging/content/sounds")
-	go ZipFromFolder(tasks[12], "staging/content/particles")
-	go ZipFromFolder(tasks[13], "staging/BuiltInPlugins")
-	go ZipFromFolder(tasks[14], "staging/imageformats")
-	go ZipFromFolder(tasks[15], "staging/shaders")
+	go ZipFromFolder(tasks[8], "PlatformContent/pc/textures")
+	go ZipFromFolder(tasks[9], "content/sky")
+	go ZipFromFolder(tasks[10], "content/fonts")
+	go ZipFromFolder(tasks[11], "content/music")
+	go ZipFromFolder(tasks[12], "content/sounds")
+	go ZipFromFolder(tasks[13], "content/particles")
+	go ZipFromFolder(tasks[14], "BuiltInPlugins")
+	go ZipFromFolder(tasks[15], "imageformats")
+	go ZipFromFolder(tasks[16], "shaders")
 
 	// Wait for goroutines to finish
 	wg.Wait()
@@ -333,8 +332,13 @@ func main() {
 
 	// Copy all files in PrepForUpload to setup/newVersion
 	// the slow way, because copying the entire directory at once causes access denied errors
-	for _, filename := range RecursiveRead("PrepForUpload") {
-		file, err := os.Open(filename)
+	files, err := os.ReadDir("PrepForUpload")
+	Assert(err, "Could not read PrepForUpload directory")
+
+	for _, file := range files {
+		filename := file.Name()
+
+		file, err := os.Open(filepath.Join("PrepForUpload", filename))
 		Assert(err, "Could not read file "+filename)
 		defer file.Close()
 
