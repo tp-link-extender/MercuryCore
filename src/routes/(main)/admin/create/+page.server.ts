@@ -5,6 +5,7 @@ import formError from "$lib/server/formError"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { error, redirect } from "@sveltejs/kit"
+import fs from "node:fs"
 
 const schemaManual = z.object({
 	type: z.enum(["8", "18"]),
@@ -137,7 +138,6 @@ async function getVersions(id: number, version?: number) {
 		{ versions }
 	)
 
-	console.log("RETURNING", versions.length, "versions of", id)
 	return transformVersions(versions)
 }
 
@@ -162,6 +162,9 @@ async function getSharedAssets(id: number, version: number) {
 		const id = url.match(/\d+/)?.[0]
 		if (!id) continue // shouldn't happen, let's just ignore it
 		dependencies.push(id)
+
+		// Cache dat sheeeit
+		await getVersions(+id, version)
 
 		// "why would a shared asset have dependencies
 		// like a mesh doesn't have any dependencies
@@ -204,6 +207,10 @@ export const actions = {
 		const form = await superValidate(request, zod(schemaAuto))
 		if (!form.valid) return formError(form)
 
+		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
+
+		// let saveImages: ((id: number) => void | Promise<void>)[] = []
+
 		const res = await mquery<unknown[]>(
 			surql`
 				BEGIN TRANSACTION;
@@ -225,15 +232,15 @@ export const actions = {
 						created: time::now(),
 						updated: time::now(),
 						visibility: "Visible",
-						autopilotId: $assetId,
 					};
 					RELATE $user->owns->$asset;
 					RELATE $user->created->$asset;
-					$newSharedIds = array::append($newSharedIds, $id);
+					RELATE $cached->createdAsset->$asset;
 				};
 				# Now time for the big one
 				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-				LET $cached = (SELECT * FROM assetCache:[$assetId, $version])[0];
+				LET $cached = (SELECT data, type
+				FROM assetCache:[$assetId, $version])[0];
 				LET $asset = CREATE asset CONTENT {
 					id: $id,
 					name: $name,
@@ -250,8 +257,14 @@ export const actions = {
 				RELATE $user->owns->$asset;
 				RELATE $user->created->$asset;
 				$id;
-				SELECT meta::id(id) AS id, data
-				FROM asset WHERE id ∈ $newSharedIds;
+				(SELECT
+					(SELECT meta::id(id) AS id
+					FROM ->createdAsset->asset)[0].id AS id,
+					data,
+					type,
+					meta::id(id)[0] AS sharedId
+				FROM assetCache WHERE ->createdAsset->asset);
+				$cached.data;
 				COMMIT TRANSACTION`,
 			{
 				assets: form.data.shared.split(",").map(s => +s),
@@ -259,11 +272,40 @@ export const actions = {
 			}
 		)
 
-		const id = res[9]
-		const shared = res[10] as {
+		const id = res[8]
+		const shared = res[9] as {
 			id: number
 			data: string
+			type: number
+			sharedId: number
 		}[]
+		console.log(shared)
+		let xml = Buffer.from(res[10] as string, "base64").toString()
+
+		// Replace the shared asset URLs with the new asset IDs
+		for (const exec of xml.matchAll(/(<url>.+<\/url>)/g)) {
+			const url = exec[1]
+			console.log(url)
+			const id = url.match(/\d+/)?.[0]
+			if (!id) continue // shouldn't happen, let's just ignore it
+
+			const newId = shared.find(s => s.sharedId === +id)?.id
+			if (!newId) continue // same as above
+			xml = xml.replace(
+				url,
+				`<url>https://banland.xyz/asset?id=${newId}</url>`
+			)
+		}
+
+		await Promise.all([
+			fs.promises.writeFile(`data/assets/${id}`, xml),
+			...shared.map(s =>
+				fs.promises.writeFile(
+					`data/assets/${s.id}`,
+					Buffer.from(s.data as string, "base64").toString()
+				)
+			),
+		])
 
 		redirect(302, `/avatarshop/${id}`)
 	},

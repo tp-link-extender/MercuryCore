@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { squery, mquery, surql } from "$lib/server/surreal"
+import { mquery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
