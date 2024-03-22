@@ -312,13 +312,11 @@ local function setDisabledState(guiObject)
 	elseif guiObject:IsA "TextButton" then
 		guiObject.TextTransparency = 0.9
 		guiObject.Active = false
-	else
-		if guiObject.ClassName then
-			print(
-				"setDisabledState() got object of unsupported type.  object type is ",
-				guiObject.ClassName
-			)
-		end
+	elseif guiObject.ClassName then
+		print(
+			"setDisabledState() got object of unsupported type.  object type is ",
+			guiObject.ClassName
+		)
 	end
 end
 
@@ -713,7 +711,7 @@ local function createGameMainMenu(baseZIndex, shield)
 	screenshotButton.Visible = not macClient
 	screenshotButton:SetVerb "Screenshot"
 
-	local screenshotShortcut = helpShortcut:clone()
+	local screenshotShortcut = helpShortcut:Clone()
 	screenshotShortcut.Name = "ScreenshotShortcutText"
 	screenshotShortcut.Text = "PrintSc"
 	screenshotShortcut.Position = UDim2.new(0, 118, 0, 0)
@@ -733,7 +731,7 @@ local function createGameMainMenu(baseZIndex, shield)
 	recordVideoButton.Visible = not macClient
 	recordVideoButton:SetVerb "RecordToggle"
 
-	local recordVideoShortcut = helpShortcut:clone()
+	local recordVideoShortcut = helpShortcut:Clone()
 	recordVideoShortcut.Visible = hasGraphicsSlider
 	recordVideoShortcut.Name = "RecordVideoShortcutText"
 	recordVideoShortcut.Text = "F12"
@@ -899,7 +897,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	studioText.BackgroundTransparency = 1
 	studioText.Parent = gameSettingsMenuFrame
 
-	local studioShortcut = fullscreenShortcut:clone()
+	local studioShortcut = fullscreenShortcut:Clone()
 	studioShortcut.Name = "StudioShortcutText"
 	studioShortcut.Visible = false -- TODO: turn back on when f2 hack is fixed
 	studioShortcut.Text = "F2"
@@ -921,7 +919,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	qualityText.Parent = gameSettingsMenuFrame
 	qualityText.Visible = not inStudioMode
 
-	local autoText = qualityText:clone()
+	local autoText = qualityText:Clone()
 	autoText.Name = "AutoText"
 	autoText.Text = "Auto"
 	autoText.Position = UDim2.new(0, 183, 0, 214)
@@ -930,7 +928,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	autoText.Parent = gameSettingsMenuFrame
 	autoText.Visible = not inStudioMode
 
-	local fasterText = autoText:clone()
+	local fasterText = autoText:Clone()
 	fasterText.Name = "FasterText"
 	fasterText.Text = "Faster"
 	fasterText.Position = UDim2.new(0, 185, 0, 274)
@@ -939,14 +937,14 @@ local function createGameSettingsMenu(baseZIndex, _)
 	fasterText.Parent = gameSettingsMenuFrame
 	fasterText.Visible = not inStudioMode
 
-	local fasterShortcut = fullscreenShortcut:clone()
+	local fasterShortcut = fullscreenShortcut:Clone()
 	fasterShortcut.Name = "FasterShortcutText"
 	fasterShortcut.Text = "F10 + Shift"
 	fasterShortcut.Position = UDim2.new(0, 185, 0, 283)
 	fasterShortcut.Parent = gameSettingsMenuFrame
 	fasterShortcut.Visible = not inStudioMode
 
-	local betterQualityText = autoText:clone()
+	local betterQualityText = autoText:Clone()
 	betterQualityText.Name = "BetterQualityText"
 	betterQualityText.Text = "Better Quality"
 	betterQualityText.TextWrap = true
@@ -957,7 +955,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	betterQualityText.Parent = gameSettingsMenuFrame
 	betterQualityText.Visible = not inStudioMode
 
-	local betterQualityShortcut = fullscreenShortcut:clone()
+	local betterQualityShortcut = fullscreenShortcut:Clone()
 	betterQualityShortcut.Name = "BetterQualityShortcut"
 	betterQualityShortcut.Text = "F10"
 	betterQualityShortcut.Position = UDim2.new(0, 394, 0, 288)
@@ -1369,20 +1367,13 @@ local function createGameSettingsMenu(baseZIndex, _)
 	if hasGraphicsSlider then
 		UserSettings().GameSettings.FullscreenChanged:connect(
 			function(isFullscreen)
-				if isFullscreen then
-					fullscreenCheckbox.Text = "X"
-				else
-					fullscreenCheckbox.Text = ""
-				end
+				fullscreenCheckbox.Text = isFullscreen and "X" or ""
 			end
 		)
 	else
 		fullscreenCheckbox.MouseButton1Click:connect(function()
-			if fullscreenCheckbox.Text == "" then
-				fullscreenCheckbox.Text = "X"
-			else
-				fullscreenCheckbox.Text = ""
-			end
+			fullscreenCheckbox.Text = fullscreenCheckbox.Text == "" and "X"
+				or ""
 		end)
 	end
 
@@ -1535,6 +1526,9 @@ end
 
 RbxGui = LoadLibrary "RbxGui"
 
+GuiService:AddKey "l"
+GuiService:AddKey "r"
+
 local baseZIndex = 0
 if UserSettings then
 	local createSettingsDialog = function()
@@ -1657,82 +1651,109 @@ if UserSettings then
 			end)
 		end
 
-		gameMainMenu.ResetButton.MouseButton1Click:connect(function()
+		local function confirmReset()
 			goToMenu(
 				settingsFrame,
 				"ResetConfirmationMenu",
 				"up",
 				UDim2.new(0, 525, 0, 370)
 			)
-		end)
+		end
 
-		gameMainMenu.LeaveGameButton.MouseButton1Click:connect(function()
+		local function confirmLeave()
 			goToMenu(
 				settingsFrame,
 				"LeaveConfirmationMenu",
 				"down",
 				UDim2.new(0, 525, 0, 300)
 			)
-		end)
+		end
+
+		local hotkeysConn
+		local function leaveResetHotkeys(key) -- esc, r, not enter (unfortunately)
+			if hotkeysConn then
+				hotkeysConn:disconnect()
+			end
+			if key == "r" then
+				confirmReset()
+			elseif key == "l" then
+				confirmLeave()
+			end
+		end
+
+		local function showFunction()
+			settingsButton.Active = false
+			updateCameraDropDownSelection(
+				UserSettings().GameSettings.ControlMode.Name
+			)
+
+			if syncVideoCaptureSetting then
+				syncVideoCaptureSetting()
+			end
+
+			goToMenu(
+				settingsFrame,
+				"GameMainMenu",
+				"right",
+				UDim2.new(0, 525, 0, 430)
+			)
+			shield.Visible = true
+			shield.Active = true
+			settingsFrame.Parent:TweenPosition(
+				UDim2.new(0.5, -262, 0.5, -200),
+				Enum.EasingDirection.InOut,
+				Enum.EasingStyle.Sine,
+				tweenTime,
+				true
+			)
+			settingsFrame.Parent:TweenSize(
+				UDim2.new(0, 525, 0, 430),
+				Enum.EasingDirection.InOut,
+				Enum.EasingStyle.Sine,
+				tweenTime,
+				true
+			)
+		end
+
+		local function hideFunction()
+			settingsFrame.Parent:TweenPosition(
+				UDim2.new(0.5, -262, -0.5, -200),
+				Enum.EasingDirection.InOut,
+				Enum.EasingStyle.Sine,
+				tweenTime,
+				true
+			)
+			settingsFrame.Parent:TweenSize(
+				UDim2.new(0, 525, 0, 430),
+				Enum.EasingDirection.InOut,
+				Enum.EasingStyle.Sine,
+				tweenTime,
+				true
+			)
+			shield.Visible = false
+			settingsButton.Active = true
+		end
+
+		gameMainMenu.ResetButton.MouseButton1Click:connect(confirmReset)
+		gameMainMenu.LeaveGameButton.MouseButton1Click:connect(confirmLeave)
 
 		GuiService.EscapeKeyPressed:connect(function()
+			if hotkeysConn then
+				hotkeysConn:disconnect()
+			end
+			-- Prevent mysterious missing settings menu bugs
+			delay(tweenTime, function()
+				if hotkeysConn then
+					hotkeysConn:disconnect()
+				end
+				hotkeysConn = GuiService.KeyPressed:connect(leaveResetHotkeys)
+			end)
 			if currentMenuSelection == nil then
 				game.GuiService:AddCenterDialog(
 					shield,
 					Enum.CenterDialogType.ModalDialog,
-					--showFunction
-					function()
-						settingsButton.Active = false
-						updateCameraDropDownSelection(
-							UserSettings().GameSettings.ControlMode.Name
-						)
-
-						if syncVideoCaptureSetting then
-							syncVideoCaptureSetting()
-						end
-
-						goToMenu(
-							settingsFrame,
-							"GameMainMenu",
-							"right",
-							UDim2.new(0, 525, 0, 430)
-						)
-						shield.Visible = true
-						shield.Active = true
-						settingsFrame.Parent:TweenPosition(
-							UDim2.new(0.5, -262, 0.5, -200),
-							Enum.EasingDirection.InOut,
-							Enum.EasingStyle.Sine,
-							tweenTime,
-							true
-						)
-						settingsFrame.Parent:TweenSize(
-							UDim2.new(0, 525, 0, 430),
-							Enum.EasingDirection.InOut,
-							Enum.EasingStyle.Sine,
-							tweenTime,
-							true
-						)
-					end,
-					--hideFunction
-					function()
-						settingsFrame.Parent:TweenPosition(
-							UDim2.new(0.5, -262, -0.5, -200),
-							Enum.EasingDirection.InOut,
-							Enum.EasingStyle.Sine,
-							tweenTime,
-							true
-						)
-						settingsFrame.Parent:TweenSize(
-							UDim2.new(0, 525, 0, 430),
-							Enum.EasingDirection.InOut,
-							Enum.EasingStyle.Sine,
-							tweenTime,
-							true
-						)
-						shield.Visible = false
-						settingsButton.Active = true
-					end
+					showFunction,
+					hideFunction
 				)
 			elseif #lastMenuSelection > 0 then
 				if #centerDialogs > 0 then

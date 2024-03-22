@@ -3,12 +3,12 @@ print "[Mercury]: Loaded corescript 48488398"
 
 local TeleportService = game:GetService "TeleportService"
 
-function waitForProperty(instance, property)
+local function waitForProperty(instance, property)
 	while not instance[property] do
 		instance.Changed:wait()
 	end
 end
-function waitForChild(instance, name)
+local function waitForChild(instance, name)
 	while not instance:FindFirstChild(name) do
 		instance.ChildAdded:wait()
 	end
@@ -26,13 +26,31 @@ local friendRequestBlacklist = {}
 
 local teleportEnabled = true
 
-local makePopupInvisible = function()
+local function makePopupInvisible()
 	if script.Parent.Popup then
 		script.Parent.Popup.Visible = false
 	end
 end
 
-function makeFriend(fromPlayer, toPlayer)
+local function showOneButton()
+	local popup = script.Parent:FindFirstChild "Popup"
+	if popup then
+		popup.OKButton.Visible = true
+		popup.DeclineButton.Visible = false
+		popup.AcceptButton.Visible = false
+	end
+end
+
+local function showTwoButtons()
+	local popup = script.Parent:FindFirstChild "Popup"
+	if popup then
+		popup.OKButton.Visible = false
+		popup.DeclineButton.Visible = true
+		popup.AcceptButton.Visible = true
+	end
+end
+
+local function makeFriend(fromPlayer, toPlayer)
 	local popup = script.Parent:FindFirstChild "Popup"
 	if popup == nil then
 		return
@@ -145,25 +163,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 	end
 end)
 
-function showOneButton()
-	local popup = script.Parent:FindFirstChild "Popup"
-	if popup then
-		popup.OKButton.Visible = true
-		popup.DeclineButton.Visible = false
-		popup.AcceptButton.Visible = false
-	end
-end
-
-function showTwoButtons()
-	local popup = script.Parent:FindFirstChild "Popup"
-	if popup then
-		popup.OKButton.Visible = false
-		popup.DeclineButton.Visible = true
-		popup.AcceptButton.Visible = true
-	end
-end
-
-function showTeleportUI(message, timer)
+local function showTeleportUI(message, timer)
 	if teleportUI ~= nil then
 		teleportUI:Remove()
 	end
@@ -177,7 +177,7 @@ function showTeleportUI(message, timer)
 	end
 end
 
-function onTeleport(teleportState, _, _)
+local function onTeleport(teleportState)
 	if TeleportService.CustomizedTeleportUI == false then
 		if teleportState == Enum.TeleportState.Started then
 			showTeleportUI("Teleport started...", 0)

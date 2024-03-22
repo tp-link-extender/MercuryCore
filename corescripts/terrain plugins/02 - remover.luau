@@ -2,6 +2,9 @@ while game == nil do
 	wait(1 / 30)
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local CoreGui = game:GetService "CoreGui"
+
 -----------------
 --DEFAULT VALUES-
 -----------------
@@ -64,7 +67,7 @@ function MouseHighlighter.Create(mouseUse)
 	highlighter.selectionPart = nil
 
 	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
-	function MouseMoved()
+	local function MouseMoved()
 		if on then
 			UpdatePosition(mouse2.Hit)
 		end
@@ -163,7 +166,7 @@ end
 
 -- Show the highlighter.
 function MouseHighlighter:EnablePreview()
-	self.selectionBox.Parent = game:GetService "CoreGui" -- This will make it not show up in workspace.
+	self.selectionBox.Parent = CoreGui -- This will make it not show up in workspace.
 end
 
 -- Create the mouse movement highlighter.
@@ -261,7 +264,7 @@ function onClicked(mouse2)
 		SetCell(c, x, y, z, 0, 0, 0)
 
 		-- Mark undo point.
-		game:GetService("ChangeHistoryService"):SetWaypoint "Remover"
+		ChangeHistoryService:SetWaypoint "Remover"
 
 		UpdatePosition(mouse2.Hit)
 

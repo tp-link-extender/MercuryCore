@@ -5,8 +5,8 @@ import { fail, error } from "@sveltejs/kit"
 import requestRender from "$lib/server/requestRender"
 import type { RequestEvent } from "./$types"
 
-// Heads, Faces, T-Shirts, Shirts, Pants, Gear
-const allowedTypes = [17, 18, 2, 11, 12, 19]
+// Heads, Faces, T-Shirts, Shirts, Pants, Gear, Hats
+const allowedTypes = [17, 18, 2, 11, 12, 19, 8]
 const brickColours = [
 	1, 5, 9, 11, 18, 21, 23, 24, 26, 28, 29, 37, 38, 101, 102, 104, 105, 106,
 	107, 119, 125, 135, 141, 151, 153, 192, 194, 199, 208, 217, 226, 1001, 1002,

@@ -8,6 +8,9 @@ print "[Mercury]: Loaded corescript 97188756"
 	//NOTE: If you find any bugs or inaccuracies PM Sorcus on Roblox or @Canavus on Twitter
 ]]
 
+local SafeChat = require "../Modules/Safechat.yml" -- THANK YOU DARKLUA
+local New = (require "../Modules/New").New
+
 local forceChatGUI = false
 
 -- Utility functions + Globals
@@ -18,29 +21,10 @@ local function WaitForChild(parent, childName)
 	return parent[childName]
 end
 
--- wtf
--- local function typedef(obj)
--- 	return obj
--- end
-
 local function IsPhone()
 	local cGui = Game:GetService "CoreGui"
 	local rGui = WaitForChild(cGui, "RobloxGui")
-	if rGui.AbsoluteSize.Y < 600 then
-		return true
-	end
-	return false
-end
-
--- Users can use enough white spaces to spoof chatting as other players
--- This function removes trailing and leading white spaces
--- AFAIK, there is no reason for spam white spaces
-local function StringTrim(str)
-	-- %S is whitespaces
-	-- When we find the first non space character defined by ^%s
-	-- we yank out anything in between that and the end of the string
-	-- Everything else is replaced with %1 which is essentially nothing
-	return (str:gsub("^%s*(.-)%s*$", "%1"))
+	return rGui.AbsoluteSize.Y < 600
 end
 
 while Game.Players.LocalPlayer == nil do
@@ -51,8 +35,6 @@ local Player = Game.Players.LocalPlayer
 while Player.Character == nil do
 	wait(0.03)
 end
-local RbxUtility = LoadLibrary "RbxUtility"
-local Create = RbxUtility.Create
 local Camera = Game.Workspace.CurrentCamera
 
 -- Services
@@ -61,63 +43,57 @@ local PlayersService = Game:GetService "Players"
 local GuiService = Game:GetService "GuiService"
 
 -- Lua Enums
-local Enums, CreateEnum
-do
-	Enums = {}
-	local EnumName = {} -- used as unique key for enum name
-	local enum_mt = {
-		__call = function(self, value)
-			return self[value] or self[tonumber(value)]
-		end,
-		__index = {
-			GetEnumItems = function(self)
-				local t = {}
-				for i, item in pairs(self) do
-					if type(i) == "number" then
-						t[#t + 1] = item
-					end
+local Enums = {}
+local EnumName = {} -- used as unique key for enum name
+local enum_mt = {
+	__call = function(self, value)
+		return self[value] or self[tonumber(value)]
+	end,
+	__index = {
+		GetEnumItems = function(self)
+			local t = {}
+			for i, item in pairs(self) do
+				if type(i) == "number" then
+					t[#t + 1] = item
 				end
-				table.sort(t, function(a, b)
-					return a.Value < b.Value
-				end)
-				return t
-			end,
-		},
-		__tostring = function(self)
-			return `Enum.{self[EnumName]}`
-		end,
-	}
-	local item_mt = {
-		__call = function(self, value)
-			return value == self or value == self.Name or value == self.Value
-		end,
-		__tostring = function(self)
-			return `Enum.{self[EnumName]}.{self.Name}`
-		end,
-	}
-	CreateEnum = function(enumName)
-		return function(t)
-			local e = { [EnumName] = enumName }
-			for i, name in pairs(t) do
-				local item = setmetatable(
-					{ Name = name, Value = i, Enum = e, [EnumName] = enumName },
-					item_mt
-				)
-				e[i] = item
-				e[name] = item
-				e[item] = item
 			end
-			Enums[enumName] = e
-			return setmetatable(e, enum_mt)
-		end
+			table.sort(t, function(a, b)
+				return a.Value < b.Value
+			end)
+			return t
+		end,
+	},
+	__tostring = function(self)
+		return `Enum.{self[EnumName]}`
+	end,
+}
+local item_mt = {
+	__call = function(self, value)
+		return value == self or value == self.Name or value == self.Value
+	end,
+	__tostring = function(self)
+		return `Enum.{self[EnumName]}.{self.Name}`
+	end,
+}
+local function CreateEnum(enumName, t)
+	local e = { [EnumName] = enumName }
+	for i, name in pairs(t) do
+		local item = setmetatable(
+			{ Name = name, Value = i, Enum = e, [EnumName] = enumName },
+			item_mt
+		)
+		e[i] = item
+		e[name] = item
+		e[item] = item
 	end
+	Enums[enumName] = e
+	return setmetatable(e, enum_mt)
 end
 ---------------------------------------------------
 ------------------ Input class --------------------
 local Input = {
 	Mouse = Player:GetMouse(),
 	Speed = 0,
-	Simulating = false,
 
 	Configuration = {
 		DefaultSpeed = 1,
@@ -181,732 +157,8 @@ local Chat = {
 
 	Admins_List = { "taskmanager", "Heliodex", "tako" },
 
-	SafeChat_List = {
-		["Use the Chat menu to talk to me."] = { "/sc 0", true },
-		["I can only see menu chats."] = { "/sc 1", true },
-		["Hello"] = {
-			["Hi"] = {
-				"/sc 2_0",
-				true,
-				["Hi there!"] = true,
-				["Hi everyone"] = true,
-			},
-			["Howdy"] = { "/sc 2_1", true, ["Howdy partner!"] = true },
-			["Greetings"] = {
-				"/sc 2_2",
-				true,
-				["Greetings everyone"] = true,
-				["Greetings Robloxians!"] = true,
-				["Seasons greetings!"] = true,
-			},
-			["Welcome"] = {
-				"/sc 2_3",
-				true,
-				["Welcome to my place"] = true,
-				["Welcome to my barbeque"] = true,
-				["Welcome to our base"] = true,
-			},
-			["Hey there!"] = { "/sc 2_4", true },
-			["What's up?"] = {
-				"/sc 2_5",
-				true,
-				["How are you doing?"] = true,
-				["How's it going?"] = true,
-				["What's new?"] = true,
-			},
-			["Good day"] = {
-				"/sc 2_6",
-				true,
-				["Good morning"] = true,
-				["Good evening"] = true,
-				["Good afternoon"] = true,
-				["Good night"] = true,
-			},
-			["Silly"] = {
-				"/sc 2_7",
-				true,
-				["Waaaaaaaz up?!"] = true,
-				["Hullo!"] = true,
-				["Behold greatness, mortals!"] = true,
-				["Pardon me, is this Sparta?"] = true,
-				["THIS IS SPARTAAAA!"] = true,
-			},
-			["Happy Holidays!"] = {
-				"/sc 2_8",
-				true,
-				["Happy New Year!"] = true,
-				["Happy Valentine's Day!"] = true,
-				["Beware the Ides of March!"] = true,
-				["Happy St. Patrick's Day!"] = true,
-				["Happy Easter!"] = true,
-				["Happy Earth Day!"] = true,
-				["Happy 4th of July!"] = true,
-				["Happy Thanksgiving!"] = true,
-				["Happy Halloween!"] = true,
-				["Happy Hanukkah!"] = true,
-				["Merry Christmas!"] = true,
-				["Happy May Day!"] = true,
-				["Happy Towel Day!"] = true,
-				["Happy Mercury Day!"] = true,
-				["Happy LOL Day!"] = true,
-			},
-
-			[1] = "/sc 2",
-		},
-		["Goodbye"] = {
-			["Good Night"] = {
-				"/sc 3_0",
-				true,
-				["Sweet dreams"] = true,
-				["Go to sleep!"] = true,
-				["Lights out!"] = true,
-				["Bedtime"] = true,
-				["Going to bed now"] = true,
-			},
-
-			["Later"] = {
-				"/sc 3_1",
-				true,
-				["See ya later"] = true,
-				["Later gator!"] = true,
-				["See you tomorrow"] = true,
-			},
-
-			["Bye"] = { "/sc 3_2", true, ["Hasta la bye bye!"] = true },
-			["I'll be right back"] = { "/sc 3_3", true },
-			["I have to go"] = { "/sc 3_4", true },
-			["Farewell"] = {
-				"/sc 3_5",
-				true,
-				["Take care"] = true,
-				["Have a nice day"] = true,
-				["Goodluck!"] = true,
-				["Ta-ta for now!"] = true,
-			},
-			["Peace"] = {
-				"/sc 3_6",
-				true,
-				["Peace out!"] = true,
-				["Peace dudes!"] = true,
-				["Rest in pieces!"] = true,
-			},
-			["Silly"] = {
-				"/sc 3_7",
-				true,
-				["To the batcave!"] = true,
-				["Over and out!"] = true,
-				["Happy trails!"] = true,
-				["I've got to book it!"] = true,
-				["Tootles!"] = true,
-				["Smell you later!"] = true,
-				["GG!"] = true,
-				["My house is on fire! gtg."] = true,
-			},
-			[1] = "/sc 3",
-		},
-		["Friend"] = {
-			["Wanna be friends?"] = { "/sc 4_0", true },
-			["Follow me"] = {
-				"/sc 4_1",
-				true,
-				["Come to my place!"] = true,
-				["Come to my base!"] = true,
-				["Follow me, team!"] = true,
-				["Follow me"] = true,
-			},
-			["Your place is cool"] = {
-				"/sc 4_2",
-				true,
-				["Your place is fun"] = true,
-				["Your place is awesome"] = true,
-				["Your place looks good"] = true,
-				["This place is awesome!"] = true,
-			},
-			["Thank you"] = {
-				"/sc 4_3",
-				true,
-				["Thanks for playing"] = true,
-				["Thanks for visiting"] = true,
-				["Thanks for everything"] = true,
-				["No, thank you"] = true,
-				["Thanx"] = true,
-			},
-			["No problem"] = {
-				"/sc 4_4",
-				true,
-				["Don't worry"] = true,
-				["That's ok"] = true,
-				["np"] = true,
-			},
-			["You are ..."] = {
-				"/sc 4_5",
-				true,
-				["You are great!"] = true,
-				["You are good!"] = true,
-				["You are cool!"] = true,
-				["You are funny!"] = true,
-				["You are silly!"] = true,
-				["You are awesome!"] = true,
-				["You are doing something I don't like, please stop"] = true,
-			},
-			["I like ..."] = {
-				"/sc 4_6",
-				true,
-				["I like your name"] = true,
-				["I like your shirt"] = true,
-				["I like your place"] = true,
-				["I like your style"] = true,
-				["I like you"] = true,
-				["I like items"] = true,
-				["I like money"] = true,
-			},
-			["Sorry"] = {
-				"/sc 4_7",
-				true,
-				["My bad!"] = true,
-				["I'm sorry"] = true,
-				["Whoops!"] = true,
-				["Please forgive me."] = true,
-				["I forgive you."] = true,
-				["I didn't mean to do that."] = true,
-				["Sorry, I'll stop now."] = true,
-			},
-			[1] = "/sc 4",
-		},
-		["Questions"] = {
-			["Who?"] = {
-				"/sc 5_0",
-				true,
-				["Who wants to be my friend?"] = true,
-				["Who wants to be on my team?"] = true,
-				["Who made this brilliant game?"] = true,
-			},
-			["What?"] = {
-				"/sc 5_1",
-				true,
-				["What is your favorite animal?"] = true,
-				["What is your favorite game?"] = true,
-				["What is your favorite movie?"] = true,
-				["What is your favorite TV show?"] = true,
-				["What is your favorite music?"] = true,
-				["What are your hobbies?"] = true,
-				["LOLWUT?"] = true,
-			},
-			["When?"] = {
-				"/sc 5_2",
-				true,
-				["When are you online?"] = true,
-				["When is the new version coming out?"] = true,
-				["When can we play again?"] = true,
-				["When will your place be done?"] = true,
-			},
-			["Where?"] = {
-				"/sc 5_3",
-				true,
-				["Where do you want to go?"] = true,
-				["Where are you going?"] = true,
-				["Where am I?!"] = true,
-				["Where did you go?"] = true,
-			},
-			["How?"] = {
-				"/sc 5_4",
-				true,
-				["How are you today?"] = true,
-				["How did you make this cool place?"] = true,
-				["LOLHOW?"] = true,
-			},
-			["Can I..."] = {
-				"/sc 5_5",
-				true,
-				["Can I have a tour?"] = true,
-				["Can I be on your team?"] = true,
-				["Can I be your friend?"] = true,
-				["Can I try something?"] = true,
-				["Can I have that please?"] = true,
-				["Can I have that back please?"] = true,
-				["Can I have borrow your hat?"] = true,
-				["Can I have borrow your gear?"] = true,
-			},
-			[1] = "/sc 5",
-		},
-		["Answers"] = {
-			["You need help?"] = {
-				"/sc 6_0",
-				true,
-				["Check out the news section"] = true,
-				["Check out the help section"] = true,
-				["Read the wiki!"] = true,
-				["All the answers are in the wiki!"] = true,
-				["I will help you with this."] = true,
-			},
-			["Some people ..."] = {
-				"/sc 6_1",
-				true,
-				["Me"] = true,
-				["Not me"] = true,
-				["You"] = true,
-				["All of us"] = true,
-				["Everyone but you"] = true,
-				["Builderman!"] = true,
-				["Telamon!"] = true,
-				["My team"] = true,
-				["My group"] = true,
-				["Mom"] = true,
-				["Dad"] = true,
-				["Sister"] = true,
-				["Brother"] = true,
-				["Cousin"] = true,
-				["Grandparent"] = true,
-				["Friend"] = true,
-			},
-			["Time ..."] = {
-				"/sc 6_2",
-				true,
-				["In the morning"] = true,
-				["In the afternoon"] = true,
-				["At night"] = true,
-				["Tomorrow"] = true,
-				["This week"] = true,
-				["This month"] = true,
-				["Sometime"] = true,
-				["Sometimes"] = true,
-				["Whenever you want"] = true,
-				["Never"] = true,
-				["After this"] = true,
-				["In 10 minutes"] = true,
-				["In a couple hours"] = true,
-				["In a couple days"] = true,
-			},
-			["Animals"] = {
-				"/sc 6_3",
-				true,
-				["Cats"] = {
-					["Lion"] = true,
-					["Tiger"] = true,
-					["Leopard"] = true,
-					["Cheetah"] = true,
-				},
-				["Dogs"] = {
-					["Wolves"] = true,
-					["Beagle"] = true,
-					["Collie"] = true,
-					["Dalmatian"] = true,
-					["Poodle"] = true,
-					["Spaniel"] = true,
-					["Shepherd"] = true,
-					["Terrier"] = true,
-					["Retriever"] = true,
-				},
-				["Horses"] = {
-					["Ponies"] = true,
-					["Stallions"] = true,
-					["Pwnyz"] = true,
-				},
-				["Reptiles"] = {
-					["Dinosaurs"] = true,
-					["Lizards"] = true,
-					["Snakes"] = true,
-					["Turtles!"] = true,
-				},
-				["Hamster"] = true,
-				["Monkey"] = true,
-				["Bears"] = true,
-				["Fish"] = {
-					["Goldfish"] = true,
-					["Sharks"] = true,
-					["Sea Bass"] = true,
-					["Halibut"] = true,
-					["Tropical Fish"] = true,
-				},
-				["Birds"] = {
-					["Eagles"] = true,
-					["Penguins"] = true,
-					["Parakeets"] = true,
-					["Owls"] = true,
-					["Hawks"] = true,
-					["Pidgeons"] = true,
-				},
-				["Elephants"] = true,
-				["Mythical Beasts"] = {
-					["Dragons"] = true,
-					["Unicorns"] = true,
-					["Sea Serpents"] = true,
-					["Sphinx"] = true,
-					["Cyclops"] = true,
-					["Minotaurs"] = true,
-					["Goblins"] = true,
-					["Honest Politicians"] = true,
-					["Ghosts"] = true,
-					["Scylla and Charybdis"] = true,
-				},
-			},
-			["Games"] = {
-				"/sc 6_4",
-				true,
-				["Action"] = true,
-				["Puzzle"] = true,
-				["Strategy"] = true,
-				["Racing"] = true,
-				["RPG"] = true,
-				["Obstacle Course"] = true,
-				["Tycoon"] = true,
-				["Roblox"] = {
-					["BrickBattle"] = true,
-					["Community Building"] = true,
-					["Roblox Minigames"] = true,
-					["Contest Place"] = true,
-				},
-				["Board games"] = {
-					["Chess"] = true,
-					["Checkers"] = true,
-					["Settlers of Catan"] = true,
-					["Tigris and Euphrates"] = true,
-					["El Grande"] = true,
-					["Stratego"] = true,
-					["Carcassonne"] = true,
-				},
-			},
-			["Sports"] = {
-				"/sc 6_5",
-				true,
-				["Hockey"] = true,
-				["Soccer"] = true,
-				["Football"] = true,
-				["Baseball"] = true,
-				["Basketball"] = true,
-				["Volleyball"] = true,
-				["Tennis"] = true,
-				["Sports team practice"] = true,
-				["Watersports"] = {
-					["Surfing"] = true,
-					["Swimming"] = true,
-					["Water Polo"] = true,
-				},
-				["Winter sports"] = {
-					["Skiing"] = true,
-					["Snowboarding"] = true,
-					["Sledding"] = true,
-					["Skating"] = true,
-				},
-				["Adventure"] = {
-					["Rock climbing"] = true,
-					["Hiking"] = true,
-					["Fishing"] = true,
-					["Horseback riding"] = true,
-				},
-				["Wacky"] = {
-					["Foosball"] = true,
-					["Calvinball"] = true,
-					["Croquet"] = true,
-					["Cricket"] = true,
-					["Dodgeball"] = true,
-					["Squash"] = true,
-					["Trampoline"] = true,
-				},
-			},
-			["Movies/TV"] = {
-				"/sc 6_6",
-				true,
-				["Science Fiction"] = true,
-				["Animated"] = { ["Anime"] = true },
-				["Comedy"] = true,
-				["Romantic"] = true,
-				["Action"] = true,
-				["Fantasy"] = true,
-			},
-			["Music"] = {
-				"/sc 6_7",
-				true,
-				["Country"] = true,
-				["Jazz"] = true,
-				["Rap"] = true,
-				["Hip-hop"] = true,
-				["Techno"] = true,
-				["Classical"] = true,
-				["Pop"] = true,
-				["Rock"] = true,
-			},
-			["Hobbies"] = {
-				"/sc 6_8",
-				true,
-				["Computers"] = {
-					["Building computers"] = true,
-					["Videogames"] = true,
-					["Coding"] = true,
-					["Hacking"] = true,
-				},
-				["The Internet"] = {
-					["lol. teh internets!"] = true,
-					["Watching vids"] = true,
-				},
-				["Dance"] = true,
-				["Gymnastics"] = true,
-				["Listening to music"] = true,
-				["Arts and crafts"] = true,
-				["Martial Arts"] = {
-					["Karate"] = true,
-					["Judo"] = true,
-					["Taikwon Do"] = true,
-					["Wushu"] = true,
-					["Street fighting"] = true,
-				},
-				["Music lessons"] = {
-					["Playing in my band"] = true,
-					["Playing piano"] = true,
-					["Playing guitar"] = true,
-					["Playing violin"] = true,
-					["Playing drums"] = true,
-					["Playing a weird instrument"] = true,
-				},
-			},
-			["Location"] = {
-				"/sc 6_9",
-				true,
-				["USA"] = {
-					["West"] = {
-						["Alaska"] = true,
-						["Arizona"] = true,
-						["California"] = true,
-						["Colorado"] = true,
-						["Hawaii"] = true,
-						["Idaho"] = true,
-						["Montana"] = true,
-						["Nevada"] = true,
-						["New Mexico"] = true,
-						["Oregon"] = true,
-						["Utah"] = true,
-						["Washington"] = true,
-						["Wyoming"] = true,
-					},
-					["South"] = {
-						["Alabama"] = true,
-						["Arkansas"] = true,
-						["Florida"] = true,
-						["Georgia"] = true,
-						["Kentucky"] = true,
-						["Louisiana"] = true,
-						["Mississippi"] = true,
-						["North Carolina"] = true,
-						["Oklahoma"] = true,
-						["South Carolina"] = true,
-						["Tennessee"] = true,
-						["Texas"] = true,
-						["Virginia"] = true,
-						["West Virginia"] = true,
-					},
-					["Northeast"] = {
-						["Connecticut"] = true,
-						["Delaware"] = true,
-						["Maine"] = true,
-						["Maryland"] = true,
-						["Massachusetts"] = true,
-						["New Hampshire"] = true,
-						["New Jersey"] = true,
-						["New York"] = true,
-						["Pennsylvania"] = true,
-						["Rhode Island"] = true,
-						["Vermont"] = true,
-					},
-					["Midwest"] = {
-						["Illinois"] = true,
-						["Indiana"] = true,
-						["Iowa"] = true,
-						["Kansas"] = true,
-						["Michigan"] = true,
-						["Minnesota"] = true,
-						["Missouri"] = true,
-						["Nebraska"] = true,
-						["North Dakota"] = true,
-						["Ohio"] = true,
-						["South Dakota"] = true,
-						["Wisconsin"] = true,
-					},
-				},
-				["Canada"] = {
-					["Alberta"] = true,
-					["British Columbia"] = true,
-					["Manitoba"] = true,
-					["New Brunswick"] = true,
-					["Newfoundland"] = true,
-					["Northwest Territories"] = true,
-					["Nova Scotia"] = true,
-					["Nunavut"] = true,
-					["Ontario"] = true,
-					["Prince Edward Island"] = true,
-					["Quebec"] = true,
-					["Saskatchewan"] = true,
-					["Yukon"] = true,
-				},
-				["Mexico"] = true,
-				["Central America"] = true,
-				["Europe"] = {
-					["France"] = true,
-					["Germany"] = true,
-					["Spain"] = true,
-					["Italy"] = true,
-					["Poland"] = true,
-					["Switzerland"] = true,
-					["Greece"] = true,
-					["Romania"] = true,
-					["Netherlands"] = true,
-					["Great Britain"] = {
-						["England"] = true,
-						["Scotland"] = true,
-						["Wales"] = true,
-						["Northern Ireland"] = true,
-					},
-				},
-				["Asia"] = {
-					["China"] = true,
-					["India"] = true,
-					["Japan"] = true,
-					["Korea"] = true,
-					["Russia"] = true,
-					["Vietnam"] = true,
-				},
-				["South America"] = { ["Argentina"] = true, ["Brazil"] = true },
-				["Africa"] = { ["Eygpt"] = true, ["Swaziland"] = true },
-				["Australia"] = true,
-				["Middle East"] = true,
-				["Antarctica"] = true,
-				["New Zealand"] = true,
-			},
-			["Age"] = {
-				"/sc 6_10",
-				true,
-				["Rugrat"] = true,
-				["Kid"] = true,
-				["Tween"] = true,
-				["Teen"] = true,
-				["Twenties"] = true,
-				["Old"] = true,
-				["Ancient"] = true,
-				["Mesozoic"] = true,
-				["I don't want to say my age. Don't ask."] = true,
-			},
-			["Mood"] = {
-				"/sc 6_11",
-				true,
-				["Good"] = true,
-				["Great!"] = true,
-				["Not bad"] = true,
-				["Sad"] = true,
-				["Hyper"] = true,
-				["Chill"] = true,
-				["Happy"] = true,
-				["Kind of mad"] = true,
-			},
-			["Boy"] = { "/sc 6_12", true },
-			["Girl"] = { "/sc 6_13", true },
-			["I don't want to say boy or girl. Don't ask."] = {
-				"/sc 6_14",
-				true,
-			},
-			[1] = "/sc 6",
-		},
-		["Game"] = {
-			["Let's build"] = { "/sc 7_0", true },
-			["Let's battle"] = { "/sc 7_1", true },
-			["Nice one!"] = { "/sc 7_2", true },
-			["So far so good"] = { "/sc 7_3", true },
-			["Lucky shot!"] = { "/sc 7_4", true },
-			["Oh man!"] = { "/sc 7_5", true },
-			["I challenge you to a fight!"] = { "/sc 7_6", true },
-			["Help me with this"] = { "/sc 7_7", true },
-			["Let's go to your game"] = { "/sc 7_8", true },
-			["Can you show me how do to that?"] = { "/sc 7_9", true },
-			["Backflip!"] = { "/sc 7_10", true },
-			["Frontflip!"] = { "/sc 7_11", true },
-			["Dance!"] = { "/sc 7_12", true },
-			["I'm on your side!"] = { "/sc 7_13", true },
-			["Game Commands"] = {
-				"/sc 7_14",
-				true,
-				["regen"] = true,
-				["reset"] = true,
-				["go"] = true,
-				["fix"] = true,
-				["respawn"] = true,
-			},
-			[1] = "/sc 7",
-		},
-		["Silly"] = {
-			["Muahahahaha!"] = true,
-			["all your base are belong to me!"] = true,
-			["GET OFF MAH LAWN"] = true,
-			["TEH EPIK DUCK IS COMING!!!"] = true,
-			["ROFL"] = true,
-			["1337"] = {
-				true,
-				["i r teh pwnz0r!"] = true,
-				["w00t!"] = true,
-				["z0mg h4x!"] = true,
-				["ub3rR0xXorzage!"] = true,
-			},
-		},
-		["Yes"] = {
-			["Absolutely!"] = true,
-			["Rock on!"] = true,
-			["Totally!"] = true,
-			["Juice!"] = true,
-			["Yay!"] = true,
-			["Yesh"] = true,
-		},
-		["No"] = {
-			["Ummm. No."] = true,
-			["..."] = true,
-			["Stop!"] = true,
-			["Go away!"] = true,
-			["Don't do that"] = true,
-			["Stop breaking the rules"] = true,
-			["I don't want to"] = true,
-		},
-		["Ok"] = {
-			["Well... ok"] = true,
-			["Sure"] = true,
-		},
-		["Uncertain"] = {
-			["Maybe"] = true,
-			["I don't know"] = true,
-			["idk"] = true,
-			["I can't decide"] = true,
-			["Hmm..."] = true,
-		},
-		[":-)"] = {
-			[":-("] = true,
-			[":D"] = true,
-			[":-O"] = true,
-			["lol"] = true,
-			["=D"] = true,
-			["D="] = true,
-			["XD"] = true,
-			[";D"] = true,
-			[";)"] = true,
-			["O_O"] = true,
-			["=)"] = true,
-			["@_@"] = true,
-			["&gt;_&lt;"] = true,
-			["T_T"] = true,
-			["^_^"] = true,
-			["<(0_0<) <(0_0)> (>0_0)> KIRBY DANCE"] = true,
-			[")';"] = true,
-			[":3"] = true,
-		},
-		["Ratings"] = {
-			["Rate it!"] = true,
-			["I give it a 1 out of 10"] = true,
-			["I give it a 2 out of 10"] = true,
-			["I give it a 3 out of 10"] = true,
-			["I give it a 4 out of 10"] = true,
-			["I give it a 5 out of 10"] = true,
-			["I give it a 6 out of 10"] = true,
-			["I give it a 7 out of 10"] = true,
-			["I give it a 8 out of 10"] = true,
-			["I give it a 9 out of 10"] = true,
-			["I give it a 10 out of 10!"] = true,
-		},
-	},
-	CreateEnum "SafeChat" { "Level1", "Level2", "Level3" },
+	SafeChat_List = SafeChat,
+	CreateEnum("SafeChat", { "Level1", "Level2", "Level3" }),
 	SafeChatTree = {},
 	TempSpaceLabel = nil,
 }
@@ -974,38 +226,46 @@ end
 -- 	end
 -- end
 
--- Check if we are running on a touch device
-function Chat:IsTouchDevice()
-	local touchEnabled = false
-	pcall(function()
-		touchEnabled = Game:GetService("UserInputService").TouchEnabled
-	end)
-	return touchEnabled
-end
-
 -- Scrolling
--- function Chat:ScrollQueue(value)
--- 	for i = 1, #self.MessageQueue do
--- 		if self.MessageQueue[i] then
--- 			for _, label in pairs(self.MessageQueue[i]) do
--- 				local next = self.MessageQueue[i].Next
--- 				local previous = self.MessageQueue[i].Previous
--- 				if
--- 					label and label:IsA "TextLabel" or label:IsA "TextButton"
--- 				then
--- 					if value > 0 and previous and previous.Message then
--- 						label.Position = previous["Message"].Position
--- 					elseif value < 1 and next.Message then
--- 						label.Position = previous["Message"].Position
--- 					end
--- 				end
--- 			end
--- 		end
--- 	end
--- end
+function Chat:ScrollQueue(value)
+	for i = 1, #self.MessageQueue do
+		if self.MessageQueue[i] then
+			for _, label in pairs(self.MessageQueue[i]) do
+				local Next = self.MessageQueue[i + 1]
+				local Previous = self.MessageQueue[i - 1]
+				if
+					label
+					and type(label) == "userdata" -- until i figure out what's going on
+					and (label:IsA "TextLabel" or label:IsA "TextButton")
+				then
+					print(
+						"scrolling",
+						value,
+						"|",
+						Previous,
+						"|",
+						Previous and Previous.message or "none",
+						"|",
+						Next,
+						"|",
+						Next and Next.message or "none"
+					)
+					-- if value > 0 and Previous and Previous.Message then
+					-- 	-- label.Position = previous.Message.Position
+					-- 	label.Position += UDim2.new(0, 0, 1, 0)
+					-- elseif value < 1 and Next.Message then
+					-- 	-- label.Position = previous.Message.Position
+					-- 	label.Position -= UDim2.new(0, 0, 1, 0)
+					-- end
+				end
+			end
+		end
+	end
+end
 
 -- Handles the rendering of the text objects in their appropriate places
 function Chat:UpdateQueue(field, diff)
+	print "Updating queue"
 	-- Have to do some sort of correction here
 	for i = #self.MessageQueue, 1, -1 do
 		if self.MessageQueue[i] then
@@ -1078,15 +338,15 @@ function Chat:CheckIfInBounds(value)
 	if
 		value > 0
 		and Chat.MessageQueue[1]
-		and Chat.MessageQueue[1]["Player"]
-		and Chat.MessageQueue[1]["Player"].Position.Y.Scale == 0
+		and Chat.MessageQueue[1].Player
+		and Chat.MessageQueue[1].Player.Position.Y.Scale == 0
 	then
 		return true
 	elseif
 		value < 0
 		and Chat.MessageQueue[1]
-		and Chat.MessageQueue[1]["Player"]
-		and Chat.MessageQueue[1]["Player"].Position.Y.Scale < 0
+		and Chat.MessageQueue[1].Player
+		and Chat.MessageQueue[1].Player.Position.Y.Scale < 0
 	then
 		return true
 	end
@@ -1098,7 +358,7 @@ end
 function Chat:ComputeSpaceString(pLabel)
 	local nString = " "
 	if not self.TempSpaceLabel then
-		self.TempSpaceLabel = Create "TextButton" {
+		self.TempSpaceLabel = New "TextButton" {
 			Size = UDim2.new(
 				0,
 				pLabel.AbsoluteSize.X,
@@ -1149,31 +409,24 @@ function Chat:UpdateChat(cPlayer, message)
 end
 
 -- function Chat:RecalculateSpacing()
---[[for i = 1, #self.MessageQueue do
-		local pLabel = self.MessageQueue[i]['Player']
-		local mLabel = self.MessageQueue[i]['Message']
+-- 	for i = 1, #self.MessageQueue do
+-- 		local pLabel = self.MessageQueue[i].Player
+-- 		local mLabel = self.MessageQueue[i].Message
 
-		local prevYScale = mLabel.Size.Y.Scale
-		local prevText = mLabel.Text
-		mLabel.Text = prevText
+-- 		local prevYScale = mLabel.Size.Y.Scale
+-- 		local prevText = mLabel.Text
+-- 		mLabel.Text = prevText
 
-		local heightField = mLabel.TextBounds.Y
+-- 		local heightField = mLabel.TextBounds.Y
 
-		mLabel.Size = UDim2.new(1, 0, heightField/self.RenderFrame.AbsoluteSize.Y, 0)
-		pLabel.Size = mLabel.Size
+-- 		mLabel.Size =
+-- 			UDim2.new(1, 0, heightField / self.RenderFrame.AbsoluteSize.Y, 0)
+-- 		pLabel.Size = mLabel.Size
 
-		local diff = mLabel.Size.Y.Scale - prevYScale
+-- 		local diff = mLabel.Size.Y.Scale - prevYScale
 
-		Chat:UpdateQueue(self.MessageQueue[i], diff)
-	end ]]
--- end
-
--- function Chat:ApplyFilter(str)
--- 	--[[for _, word in pair(self.Filter_List) do
--- 		if string.find(str, word) then
--- 			str:gsub(word, '@#$^')
--- 		end
--- 	end ]]
+-- 		Chat:UpdateQueue(self.MessageQueue[i], diff)
+-- 	end
 -- end
 
 -- NOTE: Temporarily disabled ring buffer to allow for chat to always wrap around
@@ -1184,50 +437,55 @@ function Chat:CreateMessage(cPlayer, message)
 	else
 		pName = cPlayer.Name
 	end
-	message = StringTrim(message)
+	-- Users can use enough white spaces to spoof chatting as other players
+	-- This  removes trailing and leading white spaces
+	-- AFAIK, there is no reason for spam white spaces
+	-- %S is whitespaces
+	-- When we find the first non space character defined by ^%s we yank out anything in between that and the end of the string
+	-- Everything else is replaced with %1 which is essentially nothing
+	message = string.gsub(message, "^%s*(.-)%s*$", "%1")
 	local pLabel
 	local mLabel
 	-- Our history stores upto 50 messages that is 100 textlabels
 	-- If we ever hit the mark, which would be in every popular game btw
 	-- we wrap around and reuse the labels
 	if #self.MessageQueue > self.Configuration.HistoryLength then
-		--[[pLabel = self.MessageQueue[#self.MessageQueue]["Player"]
-		mLabel = self.MessageQueue[#self.MessageQueue]["Message"]
+		-- pLabel = self.MessageQueue[#self.MessageQueue].Player
+		-- mLabel = self.MessageQueue[#self.MessageQueue].Message
 
-		pLabel.Text = `{pName}:`
-		pLabel.Name = pName
+		-- pLabel.Text = `{pName}:`
+		-- pLabel.Name = pName
 
-		local pColor
-		if cPlayer.Neutral then
-			pLabel.TextColor3 = Chat:ComputeChatColor(pName)
-		else
-			pLabel.TextColor3 = cPlayer.TeamColor.Color
-		end
+		-- if cPlayer.Neutral then
+		-- 	pLabel.TextColor3 = Chat:ComputeChatColor(pName)
+		-- else
+		-- 	pLabel.TextColor3 = cPlayer.TeamColor.Color
+		-- end
 
-		local nString
+		-- local nString
 
-		if not self.CachedSpaceStrings_List[pName] then
-			nString = Chat:ComputeSpaceString(pLabel)
-		else
-			nString = self.CachedSpaceStrings_List[pName]
-		end
+		-- if not self.CachedSpaceStrings_List[pName] then
+		-- 	nString = Chat:ComputeSpaceString(pLabel)
+		-- else
+		-- 	nString = self.CachedSpaceStrings_List[pName]
+		-- end
 
-		mLabel.Text = ""
-		mLabel.Name = `{pName} - message`
-		mLabel.Text = nString .. message
+		-- mLabel.Text = ""
+		-- mLabel.Name = `{pName} - message`
+		-- mLabel.Text = nString .. message
 
-		mLabel.Parent = nil
-		mLabel.Parent = self.RenderFrame
+		-- mLabel.Parent = nil
+		-- mLabel.Parent = self.RenderFrame
 
-		mLabel.Position = UDim2.new(0, 0, 1, 0)
-		pLabel.Position = UDim2.new(0, 0, 1, 0)]]
+		-- mLabel.Position = UDim2.new(0, 0, 1, 0)
+		-- pLabel.Position = UDim2.new(0, 0, 1, 0)
 
 		-- Reinserted at the beginning, ring buffer
 		self.MessageQueue[#self.MessageQueue] = nil
 	end
 	--else
 	-- Haven't hit the mark yet, so keep creating
-	pLabel = Create "TextLabel" {
+	pLabel = New "TextLabel" {
 		Name = pName,
 		Text = `{pName}:`,
 		-- TextColor3 = pColor,
@@ -1259,7 +517,7 @@ function Chat:CreateMessage(cPlayer, message)
 		nString = self.CachedSpaceStrings_List[pName]
 	end
 
-	mLabel = Create "TextLabel" {
+	mLabel = New "TextLabel" {
 		Name = `{pName} - message`,
 		-- Max is 3 lines
 		Size = UDim2.new(1, 0, 0.5, 0),
@@ -1302,10 +560,11 @@ function Chat:CreateMessage(cPlayer, message)
 		UDim2.new(1, 0, heightField / self.RenderFrame.AbsoluteSize.Y, 0)
 	pLabel.Size = mLabel.Size
 
-	local queueField = {}
-	queueField.Player = pLabel
-	queueField.Message = mLabel
-	queueField.SpawnTime = tick() -- Used for identifying when to make the message invisible
+	local queueField = {
+		Player = pLabel,
+		Message = mLabel,
+		SpawnTime = tick(), -- Used for identifying when to make the message invisible
+	}
 
 	table.insert(self.MessageQueue, 1, queueField)
 	Chat:UpdateQueue(queueField)
@@ -1332,103 +591,6 @@ function Chat:FindButtonTree(scButton, rootList)
 	return list
 end
 
-function Chat:ToggleSafeChatMenu(scButton)
-	local list = Chat:FindButtonTree(scButton, self.SafeChatTree)
-	if list then
-		for button, _ in pairs(list) do
-			if button:IsA "TextButton" or button:IsA "ImageButton" then
-				button.Visible = not button.Visible
-			end
-		end
-		return true
-	end
-	return false
-end
-
-function Chat:CreateSafeChatOptions(list, rootButton)
-	local text_List = {}
-	local count = 0
-	text_List[rootButton] = {}
-	text_List[rootButton][1] = list[1]
-	rootButton = rootButton or self.SafeChatButton
-	for msg, _ in pairs(list) do
-		if type(msg) == "string" then
-			local chatText = Create "TextButton" {
-				Name = msg,
-				Text = msg,
-				Size = UDim2.new(0, 100, 0, 20),
-				TextXAlignment = Enum.TextXAlignment.Center,
-				TextColor3 = Color3.new(0.2, 0.1, 0.1),
-				BackgroundTransparency = 0.5,
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				Parent = self.SafeChatFrame,
-				Visible = false,
-				Position = UDim2.new(
-					0,
-					rootButton.Position.X.Scale + 105,
-					0,
-					rootButton.Position.Y.Scale - ((count - 3) * 100)
-				),
-			}
-
-			count += 1
-
-			if type(list[msg]) == "table" then
-				text_List[rootButton][chatText] =
-					Chat:CreateSafeChatOptions(list[msg], chatText)
-				-- else
-				-- 	--table.insert(text_List[chatText], true)
-			end
-			chatText.MouseEnter:connect(function()
-				Chat:ToggleSafeChatMenu(chatText)
-			end)
-
-			chatText.MouseLeave:connect(function()
-				Chat:ToggleSafeChatMenu(chatText)
-			end)
-
-			chatText.MouseButton1Click:connect(function()
-				local lList = Chat:FindButtonTree(chatText)
-				-- if lList then
-				-- 	for i, v in pairs(lList) do
-				-- 	end
-				-- else
-				-- end
-				pcall(function()
-					PlayersService:Chat(lList[1])
-				end)
-			end)
-		end
-	end
-	return text_List
-end
-
-function Chat:CreateSafeChatGui()
-	self.SafeChatFrame = Create "Frame" {
-		Name = "SafeChatFrame",
-		Size = UDim2.new(1, 0, 1, 0),
-		Parent = self.Gui,
-		BackgroundTransparency = 1,
-
-		Create "ImageButton" {
-			Name = "SafeChatButton",
-			Size = UDim2.new(0, 44, 0, 31),
-			Position = UDim2.new(0, 1, 0.35, 0),
-			BackgroundTransparency = 1,
-			Image = "http://banland.xyz/asset/?id=97080365",
-		},
-	}
-
-	self.SafeChatButton = self.SafeChatFrame.SafeChatButton
-	-- safe chat button is the root of this tree
-	self.SafeChatTree[self.SafeChatButton] =
-		Chat:CreateSafeChatOptions(self.SafeChat_List, self.SafeChatButton)
-
-	self.SafeChatButton.MouseButton1Click:connect(function()
-		Chat:ToggleSafeChatMenu(self.SafeChatButton)
-	end)
-end
-
 function Chat:FocusOnChatBar()
 	if self.ClickToChatButton then
 		self.ClickToChatButton.Visible = false
@@ -1441,58 +603,6 @@ function Chat:FocusOnChatBar()
 	self.ChatBar:CaptureFocus()
 end
 
--- For touch devices we create a button instead
-function Chat:CreateTouchButton()
-	self.ChatTouchFrame = Create "Frame" {
-		Name = "ChatTouchFrame",
-		Size = UDim2.new(0, 128, 0, 32),
-		Position = UDim2.new(0, 88, 0, 0),
-		BackgroundTransparency = 1,
-		Parent = self.Gui,
-
-		Create "ImageButton" {
-			Name = "ChatLabel",
-			Size = UDim2.new(0, 74, 0, 28),
-			Position = UDim2.new(0, 0, 0, 0),
-			BackgroundTransparency = 1,
-			ZIndex = 2.0,
-		},
-		Create "ImageLabel" {
-			Name = "Background",
-			Size = UDim2.new(1, 0, 1, 0),
-			Position = UDim2.new(0, 0, 0, 0),
-			BackgroundTransparency = 1,
-			Image = "http://banland.xyz/asset/?id=97078724",
-		},
-	}
-	self.TapToChatLabel = self.ChatTouchFrame.ChatLabel
-	self.TouchLabelBackground = self.ChatTouchFrame.Background
-
-	self.ChatBar = Create "TextBox" {
-		Name = "ChatBar",
-		Size = UDim2.new(1, 0, 0.2, 0),
-		Position = UDim2.new(0, 0, 0.8, 800),
-		Text = "",
-		ZIndex = 1,
-		BackgroundTransparency = 1,
-		Parent = self.Frame,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextColor3 = Color3.new(1, 1, 1),
-		ClearTextOnFocus = false,
-	}
-
-	self.TapToChatLabel.MouseButton1Click:connect(function()
-		self.TapToChatLabel.Visible = false
-		--self.ChatBar.Visible = true
-		--self.Frame.Background.Visible = true
-		self.ChatBar:CaptureFocus()
-		self.GotFocus = true
-		if self.TouchLabelBackground then
-			self.TouchLabelBackground.Visible = false
-		end
-	end)
-end
-
 -- Non touch devices, create the bottom chat bar
 function Chat:CreateChatBar()
 	-- okay now we do
@@ -1500,7 +610,7 @@ function Chat:CreateChatBar()
 		return GuiService.UseLuaChat
 	end)
 	if forceChatGUI or (status and result) then
-		self.ClickToChatButton = Create "TextButton" {
+		self.ClickToChatButton = New "TextButton" {
 			Name = "ClickToChat",
 			Size = UDim2.new(1, 0, 0, 20),
 			BackgroundTransparency = 1,
@@ -1513,7 +623,7 @@ function Chat:CreateChatBar()
 			FontSize = Enum.FontSize.Size12,
 		}
 
-		self.ChatBar = Create "TextBox" {
+		self.ChatBar = New "TextBox" {
 			Name = "ChatBar",
 			Size = UDim2.new(1, 0, 0, 20),
 			Position = UDim2.new(0, 0, 1, 0),
@@ -1536,7 +646,7 @@ function Chat:CreateChatBar()
 		if not success then
 			GuiService:SetGlobalSizeOffsetPixel(0, -20)
 		end
-		-- CHatHotKey is '/'
+		-- ChatHotKey is '/'
 		GuiService:AddSpecialKey(Enum.SpecialKey.ChatHotkey)
 		GuiService.SpecialKeyPressed:connect(function(key)
 			if key == Enum.SpecialKey.ChatHotkey then
@@ -1554,7 +664,7 @@ end
 -- Done only once
 function Chat:CreateGui()
 	self.Gui = WaitForChild(CoreGuiService, "RobloxGui")
-	self.Frame = Create "Frame" {
+	self.Frame = New "Frame" {
 		Name = "ChatFrame",
 		--Size = self.Configuration.Size;
 		Size = UDim2.new(0, 500, 0, 120),
@@ -1565,7 +675,7 @@ function Chat:CreateGui()
 		Parent = self.Gui,
 		Active = false,
 
-		Create "ImageLabel" {
+		New "ImageLabel" {
 			Name = "Background",
 			Image = "http://banland.xyz/asset/?id=97120937", --96551212';
 			Size = UDim2.new(1.3, 0, 1.64, 0),
@@ -1575,7 +685,7 @@ function Chat:CreateGui()
 			Visible = false,
 		},
 
-		Create "Frame" {
+		New "Frame" {
 			Name = "Border",
 			Size = UDim2.new(1, 0, 0, 1),
 			Position = UDim2.new(0, 0, 0.8, 0),
@@ -1585,7 +695,7 @@ function Chat:CreateGui()
 			Visible = false,
 		},
 
-		Create "Frame" {
+		New "Frame" {
 			Name = "ChatRenderFrame",
 			Size = UDim2.new(1.02, 0, 1.01, 0),
 			Position = UDim2.new(0, 0, 0, 0),
@@ -1604,10 +714,7 @@ function Chat:CreateGui()
 	end)
 
 	self.RenderFrame = self.Frame.ChatRenderFrame
-	if Chat:IsTouchDevice() then
-		self.Frame.Position = self.Configuration.Position
-		self.RenderFrame.Size = UDim2.new(1, 0, 1, 0)
-	elseif self.Frame.AbsoluteSize.Y > 120 then
+	if self.Frame.AbsoluteSize.Y > 120 then
 		Chat:ScreenSizeChanged()
 		self.Gui.Changed:connect(function(property)
 			if property == "AbsoluteSize" then
@@ -1617,35 +724,18 @@ function Chat:CreateGui()
 	end
 
 	if forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu then
-		if Chat:IsTouchDevice() then
-			Chat:CreateTouchButton()
-		else
-			Chat:CreateChatBar()
-			--Chat:CreateSafeChatGui()
-		end
+		Chat:CreateChatBar()
 
 		if self.ChatBar then
 			self.ChatBar.FocusLost:connect(function(enterPressed)
 				Chat.GotFocus = false
-				if Chat:IsTouchDevice() then
-					self.ChatBar.Visible = false
-					self.TapToChatLabel.Visible = true
-
-					if self.TouchLabelBackground then
-						self.TouchLabelBackground.Visible = true
-					end
-				end
 				if enterPressed and self.ChatBar.Text ~= "" then
 					local cText = self.ChatBar.Text
 					if string.sub(self.ChatBar.Text, 1, 1) == "%" then
 						cText = "(TEAM) " .. string.sub(cText, 2, #cText)
-						pcall(function()
-							PlayersService:TeamChat(cText)
-						end)
+						pcall(PlayersService.TeamChat, PlayersService, cText)
 					else
-						pcall(function()
-							PlayersService:Chat(cText)
-						end)
+						pcall(PlayersService.Chat, PlayersService, cText)
 					end
 
 					if self.ClickToChatButton then
@@ -1654,7 +744,7 @@ function Chat:CreateGui()
 					self.ChatBar.Text = ""
 				end
 				Spawn(function()
-					wait(5.0)
+					wait(5)
 					if not Chat.GotFocus then
 						Chat.Frame.Background.Visible = false
 					end
@@ -1687,14 +777,12 @@ function Input:OnMouseScroll()
 	if Chat:CheckIfInBounds(Input.Speed) then
 		return
 	end
-	-- Chat:ScrollQueue()
+	Chat:ScrollQueue(Input.Speed)
 end
 
 function Input:ApplySpeed(value)
 	Input.Speed += value
-	if not self.Simulating then
-		Input:OnMouseScroll()
-	end
+	Input:OnMouseScroll()
 end
 
 function Input:Initialize()
@@ -1708,19 +796,16 @@ function Input:Initialize()
 end
 
 function Chat:FindMessageInSafeChat(message, list)
-	local foundMessage = false
 	for msg, _ in pairs(list) do
-		if msg == message then
+		if
+			msg == message
+			or type(list[msg]) == "table"
+				and Chat:FindMessageInSafeChat(message, list[msg])
+		then
 			return true
 		end
-		if type(list[msg]) == "table" then
-			foundMessage = Chat:FindMessageInSafeChat(message, list[msg])
-			if foundMessage then
-				return true
-			end
-		end
 	end
-	return foundMessage
+	return false
 end
 
 -- Just a wrapper around our PlayerChatted event
@@ -1740,22 +825,20 @@ function Chat:PlayerChatted(...)
 		end
 	end
 
-	if PlayersService.ClassicChat then
-		if
-			not (
-					string.sub(message, 1, 3) == "/e "
-					or string.sub(message, 1, 7) == "/emote "
-				)
-				and (forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu)
-			or (Player.ChatMode == Enum.ChatMode.Menu and string.sub(
+	if
+		PlayersService.ClassicChat
+			and (not (string.sub(message, 1, 3) == "/e " or string.sub(
+				message,
+				1,
+				7
+			) == "/emote ") and (forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu) or (Player.ChatMode == Enum.ChatMode.Menu and string.sub(
 				message,
 				1,
 				3
-			) == "/sc")
-			or (Chat:FindMessageInSafeChat(message, self.SafeChat_List))
-		then
-			Chat:UpdateChat(player, message)
-		end
+			) == "/sc"))
+		or (Chat:FindMessageInSafeChat(message, self.SafeChat_List))
+	then
+		Chat:UpdateChat(player, message)
 	end
 end
 
@@ -1802,13 +885,9 @@ function Chat:CoreGuiChanged(coreGuiType, enabled)
 			self.Frame.Visible = enabled
 		end
 
-		if not Chat:IsTouchDevice() and self.ChatBar then
+		if self.ChatBar then
 			self.ChatBar.Visible = enabled
-			if enabled then
-				GuiService:SetGlobalGuiInset(0, 0, 0, 20)
-			else
-				GuiService:SetGlobalGuiInset(0, 0, 0, 0)
-			end
+			GuiService:SetGlobalGuiInset(0, 0, 0, enabled and 20 or 0)
 		end
 	end
 end
@@ -1830,11 +909,13 @@ function Chat:Initialize()
 		)
 	end)
 
-	self.EventListener = PlayersService.PlayerChatted:connect(function(...)
+	local function chatted(...)
 		-- This event has 4 callback arguments
 		-- Enum.PlayerChatType.All, chatPlayer, message, targetPlayer
 		Chat:PlayerChatted(...)
-	end)
+	end
+
+	self.EventListener = PlayersService.PlayerChatted:connect(chatted)
 
 	self.MessageThread = coroutine.create(function() end)
 	coroutine.resume(self.MessageThread)
@@ -1846,11 +927,7 @@ function Chat:Initialize()
 	-- NOTE: PlayerAdded only fires on the server, hence ChildAdded is used here
 	PlayersService.ChildAdded:connect(function()
 		Chat.EventListener:disconnect()
-		self.EventListener = PlayersService.PlayerChatted:connect(function(...)
-			-- This event has 4 callback arguments
-			-- Enum.PlayerChatType.All, chatPlayer, message, targetPlayer
-			Chat:PlayerChatted(...)
-		end)
+		self.EventListener = PlayersService.PlayerChatted:connect(chatted)
 	end)
 
 	Spawn(function()

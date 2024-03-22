@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { superForm } from "sveltekit-superforms/client"
-	import AdminShell from "../AdminShell.svelte"
 
 	export let data
 	const formData = superForm(data.form)
@@ -12,16 +11,16 @@
 
 <Head title="Accounts - Admin" />
 
-<div class="ctnr pt-6 max-w-280 light-text">
-	<div class="pb-4">
-		<h1>Admin - Accounts</h1>
-		<a href="/admin" class="no-underline">
-			<fa fa-caret-left />
-			Back to panel
-		</a>
-	</div>
+<div class="ctnr max-w-240">
+	<h1>Admin - Accounts</h1>
+	<a href="/admin" class="no-underline">
+		<fa fa-caret-left />
+		Back to panel
+	</a>
+</div>
 
-	<AdminShell bind:tabData>
+<div class="px-4 pt-6">
+	<SidebarShell bind:tabData>
 		<Form
 			{formData}
 			submit="<far fa-key></far> Change password"
@@ -34,5 +33,5 @@
 				type="password"
 				placeholder={"•".repeat(20)} />
 		</Form>
-	</AdminShell>
+	</SidebarShell>
 </div>

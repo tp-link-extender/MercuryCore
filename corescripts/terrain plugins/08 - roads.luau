@@ -2,6 +2,8 @@ while game == nil do
 	wait(1 / 30)
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -76,17 +78,18 @@ function coordCheck(x, z, height)
 			return false
 		end
 	end
+	return
 end
 
-function dist(dx1, dy1, dx2, dy2)
-	return math.sqrt(math.pow(dx2 - dx1, 2) + math.pow(dy2 - dy1, 2))
-end
+-- local function dist(dx1, dy1, dx2, dy2)
+-- 	return math.sqrt(math.pow(dx2 - dx1, 2) + math.pow(dy2 - dy1, 2))
+-- end
 
-function dist3d(dx1, dy1, dz1, dx2, dy2, dz2)
-	return math.sqrt(
-		math.pow(dist(dx1, dy1, dx2, dy2), 2) + math.pow(dz2 - dz1, 2)
-	)
-end
+-- local function dist3d(dx1, dy1, dz1, dx2, dy2, dz2)
+-- 	return math.sqrt(
+-- 		math.pow(dist(dx1, dy1, dx2, dy2), 2) + math.pow(dz2 - dz1, 2)
+-- 	)
+-- end
 
 --create a path between coordinates (x1,z1) and (x2,z2) at height h in cluster c
 --a path is a road with height of 3 instead of 1, and it builds a bridge if there is no existing land under it
@@ -183,7 +186,7 @@ function makePath(px1, pz1, px2, pz2, ph, pp)
 		end
 	end
 
-	game:GetService("ChangeHistoryService"):SetWaypoint "Roads"
+	ChangeHistoryService:SetWaypoint "Roads"
 end
 
 -- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)

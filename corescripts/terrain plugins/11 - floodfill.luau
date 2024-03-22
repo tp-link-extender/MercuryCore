@@ -2,6 +2,10 @@ while game == nil do
 	wait(1 / 30)
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local ContentProvider = game:GetService "ContentProvider"
+local CoreGui = game:GetService "CoreGui"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -67,8 +71,7 @@ local currentMaterial = 1
 -- load our libraries
 local RbxGui = LoadLibrary "RbxGui"
 -- local RbxUtil = LoadLibrary "RbxUtility"
-game:GetService("ContentProvider")
-	:Preload "http://banland.xyz/asset/?id=82741829"
+ContentProvider:Preload "http://banland.xyz/asset/?id=82741829"
 
 ------------------------- OBJECT DEFINITIONS ---------------------
 
@@ -231,16 +234,9 @@ function MouseHighlighter.Create(mouseUse)
 	mouseH.TargetFilter = highlighter.selectionPart
 	setmetatable(highlighter, MouseHighlighter)
 
-	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
-	function MouseMoved()
-		if on and not processing then
-			UpdatePosition(mouseH.Hit)
-		end
-	end
-
 	-- Update where the highlighter is displayed.
 	-- position - Where to display the highlighter, in world space.
-	function UpdatePosition(position)
+	local function UpdatePosition(position)
 		if not position then
 			return
 		end
@@ -298,6 +294,13 @@ function MouseHighlighter.Create(mouseUse)
 					highlighter.lastUsedPoint = cellPos
 				end
 			end
+		end
+	end
+
+	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
+	function MouseMoved()
+		if on and not processing then
+			UpdatePosition(mouseH.Hit)
 		end
 	end
 
@@ -510,7 +513,7 @@ local floodFill = function(x, y, z)
 	LoadProgressBar "Processing"
 	breadthFill(x, y, z)
 	UnloadProgressBar()
-	game:GetService("ChangeHistoryService"):SetWaypoint "FloodFill"
+	ChangeHistoryService:SetWaypoint "FloodFill"
 end
 
 -- Function used when we try and flood fill.  Prompts the user first.
@@ -843,7 +846,7 @@ mouseHighlighter.OnClicked = mouseUp
 ------
 screenGui = Instance.new "ScreenGui"
 screenGui.Name = "FloodFillGui"
-screenGui.Parent = game:GetService "CoreGui"
+screenGui.Parent = CoreGui
 
 local containerFrame
 dragBar, containerFrame, helpFrame, closeEvent = RbxGui.CreatePluginFrame(

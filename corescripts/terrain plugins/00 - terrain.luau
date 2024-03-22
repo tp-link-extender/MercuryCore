@@ -249,7 +249,7 @@ end
 
 -- Show the highlighter.
 function Highlighter:EnablePreview()
-	self.selectionBox.Parent = game:GetService "CoreGui" -- This will make it not show up in workspace.
+	self.selectionBox.Parent = CoreGui -- This will make it not show up in workspace.
 end
 
 -- Update where the highlighter is displayed.
@@ -971,7 +971,7 @@ function GenerateTerrain()
 	-- Clean up the progress bar.
 	UnloadProgressBar()
 	--Generate Terrain End
-	game:GetService("ChangeHistoryService"):SetWaypoint "Generate"
+	ChangeHistoryService:SetWaypoint "Generate"
 end
 
 local ConfirmationPopup
@@ -1018,7 +1018,7 @@ function ClearTerrain()
 
 	--Erase Terrain End
 	UnloadProgressBar()
-	game:GetService("ChangeHistoryService"):SetWaypoint "Reset"
+	ChangeHistoryService:SetWaypoint "Reset"
 end
 
 -- Function used by the clear button.  Prompts the user first.

@@ -68,8 +68,7 @@ export const actions = {
 		await squery(
 			surql`
 				UPDATE $asset SET visibility = "Visible";
-				UPDATE $asset->imageAsset->asset
-					SET visibility = "Visible";
+				UPDATE $asset->imageAsset->asset SET visibility = "Visible";
 				CREATE auditLog CONTENT {
 					action: "Moderation",
 					note: $note,

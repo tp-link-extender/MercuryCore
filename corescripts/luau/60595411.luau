@@ -1,6 +1,10 @@
 -- RbxUtility
 print "[Mercury]: Loaded corescript 60595411"
 
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
+
 local Terrain = game:GetService "Terrain"
 
 local RbxUtility = {}
@@ -66,14 +70,11 @@ RbxUtility.SelectTerrainRegion = function(
 	local emptyMaterial = Enum.CellMaterial.Empty
 
 	-- container for all adornments, passed back to user
-	local selectionContainer = Instance.new "Model"
-	selectionContainer.Name = "SelectionContainer"
-	selectionContainer.Archivable = false
-	if selectionParent then
-		selectionContainer.Parent = selectionParent
-	else
-		selectionContainer.Parent = game.Workspace
-	end
+	local selectionContainer = New "Model" {
+		Name = "SelectionContainer",
+		Archivable = false,
+		Parent = selectionParent or game.Workspace,
+	}
 
 	local updateSelection -- function we return to allow user to update selection
 	local currentKeepAliveTag -- a tag that determines whether adorns should be destroyed
@@ -82,13 +83,14 @@ RbxUtility.SelectTerrainRegion = function(
 	local adornments = {} -- contains all adornments
 	local reusableAdorns = {}
 
-	local selectionPart = Instance.new "Part"
-	selectionPart.Name = "SelectionPart"
-	selectionPart.Transparency = 1
-	selectionPart.Anchored = true
-	selectionPart.Locked = true
-	selectionPart.CanCollide = false
-	selectionPart.Size = Vector3.new(4.2, 4.2, 4.2)
+	local selectionPart = New "Part" {
+		Name = "SelectionPart",
+		Transparency = 1,
+		Anchored = true,
+		Locked = true,
+		CanCollide = false,
+		Size = Vector3.new(4.2, 4.2, 4.2),
+	}
 
 	local selectionBox = Instance.new "SelectionBox"
 
@@ -104,18 +106,15 @@ RbxUtility.SelectTerrainRegion = function(
 
 			selectionBoxClone.Visible = true
 		else
-			selectionPartClone = selectionPart:Clone()
-			selectionPartClone.Archivable = false
+			selectionPartClone = Hydrate(selectionPart:Clone()) {
+				Archivable = false,
+			}
 
-			selectionBoxClone = selectionBox:Clone()
-			selectionBoxClone.Archivable = false
-
-			selectionBoxClone.Adornee = selectionPartClone
-			selectionBoxClone.Parent = selectionContainer
-
-			selectionBoxClone.Adornee = selectionPartClone
-
-			selectionBoxClone.Parent = selectionContainer
+			selectionBoxClone = Hydrate(selectionBox:Clone()) {
+				Archivable = false,
+				Adornee = selectionPartClone,
+				Parent = selectionContainer,
+			}
 		end
 
 		if theColour then
@@ -142,9 +141,7 @@ RbxUtility.SelectTerrainRegion = function(
 	-- helper function to update tag
 	local function incrementAliveCounter()
 		aliveCounter += 1
-		if aliveCounter > 1000000 then
-			aliveCounter = 0
-		end
+		aliveCounter %= 1000000
 		return aliveCounter
 	end
 
@@ -238,7 +235,7 @@ RbxUtility.SelectTerrainRegion = function(
 		if selectionContainer then
 			selectionContainer:Destroy()
 		end
-		adornments = nil
+		adornments = {}
 	end
 
 	return updateSelection, destroyFunc
@@ -597,7 +594,7 @@ RbxUtility.Help = function(funcNameOrFunc)
 			.. "Lua code. "
 			.. "Methods of the Signal object: :connect, :wait, :fire, :disconnect. "
 			.. "For more info you can pass the method name to the Help function, or view the wiki page "
-			.. "for this library. EG: Help('Signal:connect')."
+			.. 'for this library. EG: Help "Signal:connect".'
 	end
 	if funcNameOrFunc == "Signal:connect" then
 		return "Method Signal:connect. "
@@ -635,7 +632,7 @@ RbxUtility.Help = function(funcNameOrFunc)
 		return "Function Create. "
 			.. "Arguments: A table containing information about how to construct a collection of objects. "
 			.. "Returns: The constructed objects. "
-			.. "Descrition: Create is a very powerfull function, whose description is too long to fit here, and "
+			.. "Descrition: Create is a very powerful function, whose description is too long to fit here, and "
 			.. "is best described via example, please see the wiki page for a description of how to use it."
 	end
 	return "No help available for this function"
