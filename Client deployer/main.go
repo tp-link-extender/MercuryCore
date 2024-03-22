@@ -145,7 +145,6 @@ func ZipFromArray(destination string, sources []string, baseDirectory string, is
 		} else if isFolder {
 			WriteFolder(archive, pathName, baseDirectory+file)
 		} else {
-			fmt.Println("Writing", pathName, "to", file)
 			WriteFile(archive, pathName, file)
 		}
 	}
@@ -224,7 +223,6 @@ func main() {
 
 	tasks := []string{
 		"version.txt",
-		"terrain plugins",
 		"MercuryPlayerLauncher.exe",
 		"redist.zip",
 		"Mercury.zip",
@@ -255,38 +253,15 @@ func main() {
 	})()
 
 	go (func() {
-		os.MkdirAll(filepath.Join("staging", "BuiltInPlugins", "terrain"), 0777)
-
-		// Copy terrain plugins/processed to staging/BuiltInPlugins/terrain (pretty mercury specific but ye)
-		plugins, err := os.ReadDir(filepath.Join("terrain plugins", "processed"))
-		Assert(err, "Could not read directory terrain plugins/processed")
-		for _, plugin := range plugins {
-			// Copy plugin to staging/BuiltInPlugins/terrain
-			pluginFile, err := os.Open(filepath.Join("terrain plugins", "processed", plugin.Name()))
-			Assert(err, "Could not read file terrain plugins/processed/"+plugin.Name())
-			defer pluginFile.Close()
-
-			pluginDestination, err := os.Create(filepath.Join("staging", "BuiltInPlugins", "terrain", plugin.Name()))
-			Assert(err, "Could not create file staging/BuiltInPlugins/terrain/"+plugin.Name())
-			defer pluginDestination.Close()
-
-			_, err = io.Copy(pluginDestination, pluginFile)
-			Assert(err, "Could not copy terrain plugins/processed/"+plugin.Name())
-		}
-
-		list.CompleteTask("terrain plugins")
-	})()
-
-	go (func() {
 		// Copy MercuryPlayerLauncher.exe to setup
-		launcher, err := os.Open(filepath.Join("staging", tasks[2]))
+		launcher, err := os.Open(filepath.Join("staging", tasks[1]))
 		Assert(err, "Could not read MercuryPlayerLauncher.exe")
 		defer launcher.Close()
 
-		destination1, err := os.Create(filepath.Join("setup", tasks[2]))
+		destination1, err := os.Create(filepath.Join("setup", tasks[1]))
 		Assert(err, "Could not create MercuryPlayerLauncher.exe (1)")
 		defer destination1.Close()
-		destination2, err := os.Create(filepath.Join("PrepForUpload", tasks[2]))
+		destination2, err := os.Create(filepath.Join("PrepForUpload", tasks[1]))
 		Assert(err, "Could not create MercuryPlayerLauncher.exe (2)")
 		defer destination2.Close()
 
@@ -305,24 +280,24 @@ func main() {
 		_, err = io.Copy(destination2, launcher)
 		Assert(err, "Could not copy MercuryPlayerLauncher.exe (2)")
 
-		list.CompleteTask(tasks[2])
+		list.CompleteTask(tasks[1])
 	})()
 
 	// I LOVE GOROUTINES!!!
-	go ZipFromArray(tasks[3], []string{"Microsoft.VC90.CRT", "Microsoft.VC90.MFC", "Microsoft.VC90.OPENMP"}, "", true)
-	go ZipFromArray(tasks[4], []string{"MercuryPlayerBeta.exe", "MercuryStudioBeta.exe", "ReflectionMetadata.xml", "RobloxStudioRibbon.xml"}, "", false)
-	go ZipFromArray(tasks[5], dllFiles, "", false)
-	go ZipFromArray(tasks[6], TexturesHalf(true), "content/textures", false)
-	go ZipFromArray(tasks[7], TexturesHalf(false), "content/textures", false)
-	go ZipFromFolder(tasks[8], "PlatformContent/pc/textures")
-	go ZipFromFolder(tasks[9], "content/sky")
-	go ZipFromFolder(tasks[10], "content/fonts")
-	go ZipFromFolder(tasks[11], "content/music")
-	go ZipFromFolder(tasks[12], "content/sounds")
-	go ZipFromFolder(tasks[13], "content/particles")
-	go ZipFromFolder(tasks[14], "BuiltInPlugins")
-	go ZipFromFolder(tasks[15], "imageformats")
-	go ZipFromFolder(tasks[16], "shaders")
+	go ZipFromArray(tasks[2], []string{"Microsoft.VC90.CRT", "Microsoft.VC90.MFC", "Microsoft.VC90.OPENMP"}, "", true)
+	go ZipFromArray(tasks[3], []string{"MercuryPlayerBeta.exe", "MercuryStudioBeta.exe", "ReflectionMetadata.xml", "RobloxStudioRibbon.xml"}, "", false)
+	go ZipFromArray(tasks[4], dllFiles, "", false)
+	go ZipFromArray(tasks[5], TexturesHalf(true), "content/textures", false)
+	go ZipFromArray(tasks[6], TexturesHalf(false), "content/textures", false)
+	go ZipFromFolder(tasks[7], "PlatformContent/pc/textures")
+	go ZipFromFolder(tasks[8], "content/sky")
+	go ZipFromFolder(tasks[9], "content/fonts")
+	go ZipFromFolder(tasks[10], "content/music")
+	go ZipFromFolder(tasks[11], "content/sounds")
+	go ZipFromFolder(tasks[12], "content/particles")
+	go ZipFromFolder(tasks[13], "BuiltInPlugins")
+	go ZipFromFolder(tasks[14], "imageformats")
+	go ZipFromFolder(tasks[15], "shaders")
 
 	// Wait for goroutines to finish
 	wg.Wait()

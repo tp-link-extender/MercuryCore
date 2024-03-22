@@ -83,7 +83,7 @@ function MouseHighlighter.Create(mouseUse)
 	highlighter.selectionPart = nil
 
 	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
-	function MouseMoved()
+	local function MouseMoved()
 		if on then
 			UpdatePosition(mouseH.Hit)
 		end
@@ -496,7 +496,7 @@ function elevate(x, y, z, r1, r2, d, range)
 	end
 
 	--copy heightmap into shellheightmap
-	shellheightmap = {}
+	local shellheightmap = {}
 	for i = x - (range + 2), x + (range + 2) do
 		if shellheightmap[i] == nil then
 			shellheightmap[i] = {}

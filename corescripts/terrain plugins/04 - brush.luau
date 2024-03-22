@@ -479,21 +479,21 @@ end
 -- parent 	 - What to set the text parent as.
 -- Return:
 -- Value is the created label.
-function CreateStandardLabel(labelName, pos, size, text, parent)
-	local label = Instance.new "TextLabel"
-	label.Name = labelName
-	label.Position = pos
-	label.Size = size
-	label.Text = text
-	label.TextColor3 = Color3.new(0.95, 0.95, 0.95)
-	label.Font = Enum.Font.ArialBold
-	label.FontSize = Enum.FontSize.Size14
-	label.TextXAlignment = Enum.TextXAlignment.Left
-	label.BackgroundTransparency = 1
-	label.Parent = parent
+-- local function CreateStandardLabel(labelName, pos, size, text, parent)
+-- 	local label = Instance.new "TextLabel"
+-- 	label.Name = labelName
+-- 	label.Position = pos
+-- 	label.Size = size
+-- 	label.Text = text
+-- 	label.TextColor3 = Color3.new(0.95, 0.95, 0.95)
+-- 	label.Font = Enum.Font.ArialBold
+-- 	label.FontSize = Enum.FontSize.Size14
+-- 	label.TextXAlignment = Enum.TextXAlignment.Left
+-- 	label.BackgroundTransparency = 1
+-- 	label.Parent = parent
 
-	return label
-end
+-- 	return label
+-- end
 
 -- Create a standardized slider.
 -- name  - Name to use for the slider.
@@ -505,38 +505,38 @@ end
 -- Return:
 -- sliderGui      - Slider gui object.
 -- sliderPosition - Object that can set the slider value.
-function CreateStandardSlider(
-	name,
-	pos,
-	lengthBarPos,
-	steps,
-	funcOnChange,
-	initValue,
-	parent
-)
-	local sliderGui, sliderPosition =
-		RbxGui.CreateSlider(steps, 0, UDim2.new(0, 0, 0, 0))
+-- function CreateStandardSlider(
+-- 	name,
+-- 	pos,
+-- 	lengthBarPos,
+-- 	steps,
+-- 	funcOnChange,
+-- 	initValue,
+-- 	parent
+-- )
+-- 	local sliderGui, sliderPosition =
+-- 		RbxGui.CreateSlider(steps, 0, UDim2.new(0, 0, 0, 0))
 
-	sliderGui.Name = name
-	sliderGui.Parent = parent
-	sliderGui.Position = pos
-	sliderGui.Size = UDim2.new(0, 160, 0, 20)
-	local lengthBar = sliderGui:FindFirstChild "Bar"
-	lengthBar.Size = UDim2.new(1, -20, 0, 5)
-	lengthBar.Position = lengthBarPos
+-- 	sliderGui.Name = name
+-- 	sliderGui.Parent = parent
+-- 	sliderGui.Position = pos
+-- 	sliderGui.Size = UDim2.new(0, 160, 0, 20)
+-- 	local lengthBar = sliderGui:FindFirstChild "Bar"
+-- 	lengthBar.Size = UDim2.new(1, -20, 0, 5)
+-- 	lengthBar.Position = lengthBarPos
 
-	if nil ~= funcOnChange then
-		sliderPosition.Changed:connect(function()
-			funcOnChange(sliderPosition)
-		end)
-	end
+-- 	if nil ~= funcOnChange then
+-- 		sliderPosition.Changed:connect(function()
+-- 			funcOnChange(sliderPosition)
+-- 		end)
+-- 	end
 
-	if nil ~= initValue then
-		sliderPosition.Value = initValue
-	end
+-- 	if nil ~= initValue then
+-- 		sliderPosition.Value = initValue
+-- 	end
 
-	return sliderGui, sliderPosition
-end
+-- 	return sliderGui, sliderPosition
+-- end
 
 --screengui
 local g = Instance.new "ScreenGui"

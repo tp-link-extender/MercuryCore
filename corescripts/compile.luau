@@ -18,11 +18,15 @@ local libraryCores = {
 	"Red/init.luau",
 }
 local otherCores = {}
+local plugins = {}
 
 -- Allow for running from the base or corescripts directories
 local cwd = process.cwd
 local fromCoresDir = not not string.match(cwd, "corescripts/$")
 local normalCoresDir = if fromCoresDir then "./luau" else "./corescripts/luau"
+local normalPluginsDir = if fromCoresDir
+	then "./terrain plugins"
+	else "./corescripts/terrain plugins"
 
 for _, core in ipairs(fs.readDir(normalCoresDir)) do
 	table.insert(
@@ -31,6 +35,15 @@ for _, core in ipairs(fs.readDir(normalCoresDir)) do
 		core
 	)
 end
+for _, core in ipairs(fs.readDir(normalPluginsDir)) do
+	print(core)
+	table.insert(plugins, core)
+end
+
+local coresDir = if fromCoresDir then "." else "./corescripts"
+local pluginsDir = if fromCoresDir
+	then "../Client deployer"
+	else "./Client deployer"
 
 local function processCores(
 	scripts: { string },
@@ -43,12 +56,12 @@ local function processCores(
 		then `../{config}.json5`
 		else `{config}.json5`
 
-	local coresDir = if fromCoresDir then "." else "./corescripts"
-
 	for i, core in ipairs(scripts) do
 		local newCore = if libraries
 			then `{10000000 + i}.lua`
 			else string.gsub(core, "%.luau$", ".lua")
+
+		print(`{coresDir}/{startDir}/{core}`, `{endDir}/{newCore}`)
 
 		task.spawn(function()
 			local cmd = process.spawn("darklua", {
@@ -56,7 +69,7 @@ local function processCores(
 				"-c",
 				configFile,
 				`{coresDir}/{startDir}/{core}`,
-				`{coresDir}/{endDir}/{newCore}`,
+				`{endDir}/{newCore}`,
 			})
 
 			print(
@@ -69,13 +82,28 @@ local function processCores(
 end
 
 task.spawn(function()
-	processCores(libraryCores, "Libraries", "processed", "dense", true)
+	processCores(
+		libraryCores,
+		"Libraries",
+		`{coresDir}/processed`,
+		"dense",
+		true
+	)
 end)
 
 task.spawn(function()
-	processCores(normalCores, "luau", "processed", "dense")
+	processCores(
+		plugins,
+		"terrain plugins",
+		`{pluginsDir}/staging/BuiltInPlugins/terrain`,
+		"lines"
+	)
 end)
 
 task.spawn(function()
-	processCores(otherCores, "luau", "processed", "lines")
+	processCores(normalCores, "luau", `{coresDir}/processed`, "dense")
+end)
+
+task.spawn(function()
+	processCores(otherCores, "luau", `{coresDir}/processed`, "lines")
 end)

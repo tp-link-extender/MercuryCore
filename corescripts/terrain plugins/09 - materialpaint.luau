@@ -385,6 +385,7 @@ function paint(startPos)
 
 		return setCells
 	end
+	return
 end
 
 function getAffectedCells(startPos)

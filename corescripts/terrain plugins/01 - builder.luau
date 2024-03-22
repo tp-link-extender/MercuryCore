@@ -76,7 +76,7 @@ function MouseHighlighter.Create(mouseUse)
 	highlighter.selectionPart = nil
 
 	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
-	function MouseMoved()
+	local function MouseMoved()
 		if on then
 			UpdatePosition(mouseH.Hit)
 		end

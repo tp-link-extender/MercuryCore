@@ -231,16 +231,9 @@ function MouseHighlighter.Create(mouseUse)
 	mouseH.TargetFilter = highlighter.selectionPart
 	setmetatable(highlighter, MouseHighlighter)
 
-	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
-	function MouseMoved()
-		if on and not processing then
-			UpdatePosition(mouseH.Hit)
-		end
-	end
-
 	-- Update where the highlighter is displayed.
 	-- position - Where to display the highlighter, in world space.
-	function UpdatePosition(position)
+	local function UpdatePosition(position)
 		if not position then
 			return
 		end
@@ -298,6 +291,13 @@ function MouseHighlighter.Create(mouseUse)
 					highlighter.lastUsedPoint = cellPos
 				end
 			end
+		end
+	end
+
+	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
+	function MouseMoved()
+		if on and not processing then
+			UpdatePosition(mouseH.Hit)
 		end
 	end
 
