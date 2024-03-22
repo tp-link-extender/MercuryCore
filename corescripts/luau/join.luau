@@ -265,7 +265,7 @@ if not success then
 end
 
 -- TODO: Async get?
-loadfile ""("", -1, 0)
+-- loadfile ""("", -1, 0) -- wtf
 
 pcall(function()
 	game:SetScreenshotInfo ""

@@ -6551,6 +6551,7 @@ declare class Player extends Instance
 	CanLoadCharacterAppearance: boolean
 	Character: Model?
 	CharacterAdded: RBXScriptSignal<Model>
+	CharacterAppearance: string
 	CharacterAppearanceId: number
 	CharacterAppearanceLoaded: RBXScriptSignal<Model>
 	CharacterRemoving: RBXScriptSignal<Model>
@@ -6611,7 +6612,7 @@ declare class Player extends Instance
 	function IsInGroup(self, groupId: number): boolean
 	function IsVerified(self): boolean
 	function Kick(self, message: string?): nil
-	function LoadCharacter(self): nil
+	function LoadCharacter(self, inGame: boolean): nil
 	function LoadCharacterBlocking(self): nil
 	function Move(self, walkDirection: Vector3, relativeToCamera: boolean?): nil
 	function RemoveCharacter(self): nil
@@ -7131,7 +7132,7 @@ declare class ServerStorage extends Instance
 end
 
 declare class ThumbnailGenerator extends Instance
-	function Click(self, format: string, x: number, y: number, hideSky: boolean): string
+	function Click(self, format: "PNG" | "OBJ", x: number, y: number, hideSky: boolean, crop: boolean?): string
 end
 
 declare class ServiceProvider extends Instance

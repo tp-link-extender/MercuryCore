@@ -14,12 +14,12 @@ const selectRender = surql`
 
 /**
  * Requests a render from RCCService
- * @param renderType The type of render to request, either "Clothing" or "Avatar"
- * @param relativeId If "Clothing", the id of the clothing asset to render. If "Avatar", the number of the user to render their avatar.
+ * @param renderType The type of render to request, "Clothing", "Avatar", "Model", or "Mesh".
+ * @param relativeId If "Avatar", the number of the user to render their avatar, otherwise the id of the asset to render.
  * @param wait Whether to wait for the render to be completed before resolving.
  */
 export default async function (
-	renderType: "Clothing" | "Avatar",
+	renderType: "Clothing" | "Avatar" | "Model" | "Mesh",
 	relativeId: number,
 	wait = false
 ) {
@@ -30,10 +30,7 @@ export default async function (
 				UPDATE $render.id SET status = "Error"
 			};
 			${selectRender}`,
-		{
-			renderType,
-			relativeId,
-		}
+		{ renderType, relativeId }
 	)
 	const render = renders[2]
 
@@ -51,10 +48,7 @@ export default async function (
 				relativeId: $relativeId
 			})[0];
 			meta::id($render.id)`,
-		{
-			renderType,
-			relativeId,
-		}
+		{ renderType, relativeId }
 	)
 	const renderId = newRender[1]
 	// Tap in rcc
