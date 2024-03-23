@@ -18,7 +18,7 @@ jobs:
               with:
                   command: |
                     bash
-                    cd mercuryv2 && git restore . && git pull && aftman install && lune run ./corescripts/compile.luau && bun prod && pm2 start pm2.config.cjs && cd / && caddy reload && exit
+                    cd mercuryv2 && git restore . && git pull && aftman install && lune run ./corescripts/compile.luau && bun prod && pm2 start --interpreter ~/.bun/bin/bun build && cd / && caddy reload && exit
                     exit
                   host: ${{ secrets.HOST }}
                   port: ${{ secrets.PORT }}
