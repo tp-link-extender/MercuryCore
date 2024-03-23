@@ -152,20 +152,30 @@ export const actions = {
 		const { user, id, asset, error } = await getEquipData(e)
 		if (error) return error
 
+		// Find if there's more than 3 hats equipped, throw an error if there is
+		if (
+			asset.type === 8 &&
+			(await squery<number>(
+				surql`[count(SELECT 1 FROM $user->wearing WHERE out.type = 8)]`,
+				{ user: `user:${user.id}` }
+			)) >= 3
+		)
+			return fail(400, { msg: "You can only wear 3 hats" })
+
 		await query(
 			surql`
+				# Unequip if there's already a T-Shirt/Shirt/Pants/Face equipped
 				IF $type = 2 {
-					# Unequip if there's already a T-Shirt equipped
 					DELETE $user->wearing WHERE out.type = 2;
-				};
-				IF $type = 18 {
-					# Unequip if there's already a Face equipped
+				} ELSE IF $type = 11 {
+					DELETE $user->wearing WHERE out.type = 11;
+				} ELSE IF $type = 12 {
+					DELETE $user->wearing WHERE out.type = 12;
+				} ELSE IF $type = 18 {
 					DELETE $user->wearing WHERE out.type = 18;
 				};
-				RELATE $user->wearing->$asset
-					SET time = time::now();
-				RELATE $user->recentlyWorn->$asset
-					SET time = time::now()`,
+				RELATE $user->wearing->$asset SET time = time::now();
+				RELATE $user->recentlyWorn->$asset SET time = time::now()`,
 			{
 				user: `user:${user.id}`,
 				asset: `asset:${id}`,

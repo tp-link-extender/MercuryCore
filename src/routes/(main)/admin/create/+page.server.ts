@@ -81,17 +81,18 @@ async function fetchAssetVersion(id: number, version: number) {
 	// write the data to a file
 	// After all, they give the data in the response anyway. Why shouldn't I cache it?
 	fs.writeFileSync(
-		`data/assetCache/${id}_${version}`,
+		`data/assetCache/${id}_1`,
 		Buffer.from(await data.arrayBuffer())
 	)
 
+	const type = meta.AssetTypeId
+
 	return {
 		id: [id, version] as [number, number], // typescript moment
-
 		assetModified: new Date(date).toISOString(),
 		name: meta.Name,
 		description: meta.Description,
-		type: meta.AssetTypeId,
+		type: 41 < type && type < 47 ? 8 : type,
 	}
 }
 
@@ -187,7 +188,7 @@ async function getSharedAssets(id: number, version: number) {
 		dependencies.push(id)
 
 		// Cache dat sheeeit
-		await getVersions(+id, version)
+		await getVersions(+id, 1) // Always cache version 1 as it's usually the only version for dependency assets
 
 		// "why would a shared asset have dependencies
 		// like a mesh doesn't have any dependencies
@@ -200,7 +201,7 @@ async function getSharedAssets(id: number, version: number) {
 }
 
 export async function load({ locals, url }) {
-	await authorise(locals, 5)
+	await authorise(locals, 3)
 	const assetId = url.searchParams.get("assetId")
 	const version = url.searchParams.get("version")
 	if (assetId && !assetId.match(/\d+/)) error(400, "Invalid assetId")
@@ -238,24 +239,21 @@ export async function load({ locals, url }) {
 
 export const actions = {
 	autopilot: async ({ request, locals }) => {
-		await authorise(locals, 5)
+		await authorise(locals, 3)
 		const form = await superValidate(request, zod(schemaAuto))
 		if (!form.valid) return formError(form)
 		const { data } = form
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 
-		// let saveImages: ((id: number) => void | Promise<void>)[] = []
-
 		const res = await mquery<unknown[]>(
 			surql`
 				BEGIN TRANSACTION;
 				LET $user = (SELECT id FROM user WHERE number = 1)[0].id;
-				LET $newSharedIds = [];
 				FOR $assetId IN $assets {
 					# All the assets are cached already
 					LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-					LET $cached = (SELECT * FROM assetCache:[$assetId, $version])[0];
+					LET $cached = (SELECT * FROM assetCache:[$assetId, 1])[0]; # version 1 is usually the only version
 					LET $asset = CREATE asset CONTENT {
 						id: $id,
 						name: $cached.name,
@@ -333,7 +331,7 @@ export const actions = {
 			fs.promises.writeFile(`data/assets/${id}`, cachedXml),
 			...shared.map(s =>
 				fs.promises.copyFile(
-					`data/assetCache/${s.sharedId}_${form.data.version}`,
+					`data/assetCache/${s.sharedId}_1`,
 					`data/assets/${s.id}`
 				)
 			),
