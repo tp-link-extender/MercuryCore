@@ -38,7 +38,8 @@
 		32: "Package",
 		35: "App",
 		37: "Code",
-		38: "Plugin"
+		38: "Plugin",
+		42: "Face Accessory"
 	}
 
 	const aan = (word: string) =>
@@ -112,11 +113,11 @@
 					</a>
 					<span>
 						You are uploading
-						{#if data.type}
+						{#if data.type && assets[data.type]}
 							{aan(assets[data.type])}
 							<b>{assets[data.type]}</b>
 						{:else}
-							an unknown asset
+							an unknown
 						{/if}
 						asset with asset id
 						<b>{data.assetId}</b>

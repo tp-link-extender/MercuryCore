@@ -10,7 +10,7 @@ import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
 import type { Cookie } from "lucia"
 
-const { magenta, red, yellow, green, blue, gray, cyan } = pc
+const { magenta, red, yellow, green, blue, gray: grey, cyan } = pc
 const methodColours: { [k: string]: string } = {
 	GET: green("GET"),
 	POST: yellow("POST"),
@@ -40,11 +40,11 @@ export async function handle({ event, resolve }) {
 
 	function finish() {
 		const { method } = event.request
-		const { user } = event.locals // is this needed?
+		const { user } = event.locals // is this needed here?
 
 		// Fancy logging: time, user, method, and path
 		console.log(
-			`${gray(new Date().toLocaleString())} `,
+			`${grey(new Date().toLocaleString())} `,
 			user
 				? blue(user.username) + " ".repeat(21 - user.username.length)
 				: yellow("Logged-out user      "),
@@ -148,7 +148,7 @@ export const handleError = async ({ event, error }) => {
 	if (dev) console.error(error)
 	else
 		console.error(
-			`${gray(new Date().toLocaleString())} `,
+			`${grey(new Date().toLocaleString())} `,
 			user
 				? blue(user.username) + " ".repeat(21 - user.username.length)
 				: yellow("Logged-out user      "),
