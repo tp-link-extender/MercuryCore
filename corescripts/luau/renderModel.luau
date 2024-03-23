@@ -13,7 +13,7 @@ for _, object in pairs(game:GetObjects(`{_BASE_URL}/asset?id={_ASSET_ID}`)) do
 	end)
 end
 
-local click = ThumbnailGenerator:Click("PNG", 1024, 1024, true)
+local click = ThumbnailGenerator:Click("PNG", 1024, 1024, true, true) -- crop it (?)
 
 print(`[{game.JobId}] Rendered model`)
 

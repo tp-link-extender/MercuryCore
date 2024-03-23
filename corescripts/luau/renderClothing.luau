@@ -13,7 +13,7 @@ SetupAvatar(
 	"/api/render/characterasset?id="
 )
 
-local click = ThumbnailGenerator:Click("PNG", 1680, 1680, true, true) -- crop it (?)
+local click = ThumbnailGenerator:Click("PNG", 1680, 1680, true)
 
 print(`[{game.JobId}] Successfully rendered clothing`)
 

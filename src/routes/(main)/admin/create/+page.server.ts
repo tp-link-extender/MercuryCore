@@ -301,8 +301,8 @@ export const actions = {
 			{ assets: form.data.shared.split(",").map(s => +s), ...data }
 		)
 
-		const id = res[8] as number
-		const shared = res[9] as {
+		const id = res[7] as number
+		const shared = res[8] as {
 			id: number
 			type: number
 			sharedId: number
