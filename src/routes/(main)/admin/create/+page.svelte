@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { superForm } from "sveltekit-superforms/client"
+	import types from "$lib/assetTypes"
 
 	export let data
 	const formDataManual = superForm(data.formManual)
@@ -11,36 +12,6 @@
 		["fa fa-file-circle-plus"]
 	)
 	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], [], "tab2")
-
-	const assets: { [k: string]: string } = {
-		1: "Image",
-		2: "T-Shirt",
-		3: "Audio",
-		4: "Mesh",
-		5: "Lua",
-		8: "Hat",
-		10: "Model",
-		11: "Shirt",
-		12: "Pants",
-		13: "Decal",
-		16: "Avatar",
-		17: "Head",
-		18: "Face",
-		19: "Gear",
-		24: "Animation",
-		25: "Arms",
-		26: "Legs",
-		27: "Torso",
-		28: "Right Arm",
-		29: "Left Arm",
-		30: "Left Leg",
-		31: "Right Leg",
-		32: "Package",
-		35: "App",
-		37: "Code",
-		38: "Plugin",
-		42: "Face Accessory"
-	}
 
 	const aan = (word: string) =>
 		"aeiou".includes(word[0].toLowerCase()) ? "an" : "a"
@@ -73,7 +44,7 @@
 				class="pt-8 light-text">
 				<Select
 					formData={formDataManual}
-					options={Object.entries(assets)}
+					options={Object.entries(types)}
 					name="type"
 					label="Asset type" />
 				<Input
@@ -113,9 +84,9 @@
 					</a>
 					<span>
 						You are uploading
-						{#if data.type && assets[data.type]}
-							{aan(assets[data.type])}
-							<b>{assets[data.type]}</b>
+						{#if data.type && types[data.type]}
+							{aan(types[data.type])}
+							<b>{types[data.type]}</b>
 						{:else}
 							an unknown
 						{/if}
