@@ -6,7 +6,7 @@ module.exports = {
 		{
 			name: "Mercury",
 			script: "build",
-			node_args: "-r dotenv/config",
+			intperpreter: "~/.bun/bin/bun",
 		},
 	],
 }
