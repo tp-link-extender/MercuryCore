@@ -1,11 +1,18 @@
 <script lang="ts">
 	export let tabData: ReturnType<typeof TabData>
+	export let space = false
 </script>
 
-<div class="ctnr flex <md:flex-wrap max-w-240 {$$restProps.class || ''}">
+<div
+	class="flex <md:flex-wrap {space
+		? ''
+		: 'ctnr max-w-240 ' + $$restProps.class || ''}">
 	<TabNav bind:tabData vertical class="w-full md:w-75 pr-4 pb-6" />
 	<div class="flex w-full">
-		<div class="w-full mx-auto">
+		<div
+			class="w-full mx-auto {space
+				? 'max-w-240 ' + $$restProps.class || ''
+				: ''}">
 			<slot />
 		</div>
 		<!-- I know this looks like a hack but it works like a charm -->

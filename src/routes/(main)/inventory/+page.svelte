@@ -54,7 +54,7 @@
 <h1 class="text-center pb-4">Inventory</h1>
 
 <div class="px-4 pt-6">
-	<SidebarShell bind:tabData>
+	<SidebarShell bind:tabData space>
 		<form
 			on:submit|preventDefault
 			action="/inventory?tab={tabData.currentTab}"

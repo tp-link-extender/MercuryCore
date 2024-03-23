@@ -24,8 +24,8 @@ adminid = int(envadminid)
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 
 
-def problemMessage(interaction: discord.Interaction):
-    return interaction.response.send_message(
+async def problemMessage(interaction: discord.Interaction):
+    return await interaction.response.send_message(
         "Sorry, but there was a problem running this command. Please notify @task.mgr with details."
     )
 
@@ -203,7 +203,7 @@ async def updateApplication(url, jsonData, userID):
             else:
                 resptext = await resp.text()
                 print(resp.status, resptext)
-                return resp.status
+                return "There was an error retrieving the key, this is possible due to the main site being down. Please message @task.mgr ASAP."
 
 
 async def getApplication(url, userID) -> tuple[str, str, list[str], str, str] | None:
@@ -290,7 +290,7 @@ async def fetchApplication(url, userID, interaction):
 
 async def deleteApplication(userID, interaction):
     user = await interaction.user.create_dm()
-    desc = "We're sorry you have to unsubmit your application. Before you confirm your unsubmit you must understand that **you will have to wait one week before sending another application**. If you do not want to unsubmit your application, just ignore this message."
+    desc = "We're sorry you have to unsubmit your application. Before you confirm your unsubmit you must understand that **you will have to wait three days before sending another application**. If you do not want to unsubmit your application, just ignore this message."
     embedV = discord.Embed(color=0x472A96, description=desc)
     embedV.set_author(
         name="Mercury 2 - Unsubmit",
@@ -328,7 +328,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         )
         embedV.add_field(
             name="What can I do now?",
-            value="You may re-apply for an invite a week from now. You may re-apply as many times as you wish until your application is successful.",
+            value="You may re-apply for an invite 3 days from now. You may re-apply as many times as you wish until your application is successful.",
             inline=False,
         )
         embedV.set_footer(
@@ -367,7 +367,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             )
             embedV.add_field(
                 name="What can I do now?",
-                value="Please make sure you are in the Mercury 2 Discord server. You may then re-apply for an invite a week from now. You may re-apply as many times as you wish until your application is successful.",
+                value="Please make sure you are in the Mercury 2 Discord server. You may then re-apply for an invite 3 days from now. You may re-apply as many times as you wish until your application is successful.",
                 inline=False,
             )
             embedV.set_footer(
@@ -465,18 +465,21 @@ class keyApplication(ui.Modal):
         label="Why would you like to join Mercury 2?",
         style=discord.TextStyle.paragraph,
         required=True,
-        min_length=10,
+        min_length=100,
+        max_length=600,
     )
     q2 = ui.TextInput(
         label="Where did you hear about Mercury 2?",
         style=discord.TextStyle.short,
         required=True,
         min_length=5,
+        max_length=500,
     )
     q3 = ui.TextInput(
         label="Any questions/suggestions?",
         style=discord.TextStyle.short,
         required=False,
+        max_length=500,
     )
 
     async def on_submit(self, interaction: discord.Interaction):
@@ -816,12 +819,15 @@ async def register(interaction: discord.Interaction):
         if app:
             status, _, _, _, reviewed = app
 
+            date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(days=3)
+            timestamp = int(date.timestamp())
+
             if status == "Banned":
                 return await interaction.response.send_message(
                     "You cannot submit an application at this moment. Please run */info* for more details."
                 )
-            if status == "Denied":
-                date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(weeks=1)
+            if status == "Denied" and timestamp > int((datetime.datetime.now()).timestamp()):
+                date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(days=3)
                 timestamp = int(date.timestamp())
                 return await interaction.response.send_message(
                     f"You cannot submit an application at this moment. You may retry on <t:{timestamp}>"

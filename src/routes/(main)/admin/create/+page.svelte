@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { superForm } from "sveltekit-superforms/client"
+	import types from "$lib/assetTypes"
 
 	export let data
 	const formDataManual = superForm(data.formManual)
@@ -12,10 +13,8 @@
 	)
 	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], [], "tab2")
 
-	const assets: { [k: string]: string } = {
-		"8": "Hat",
-		"18": "Face"
-	}
+	const aan = (word: string) =>
+		"aeiou".includes(word[0].toLowerCase()) ? "an" : "a"
 </script>
 
 <Head title="Create asset - Admin" />
@@ -45,7 +44,7 @@
 				class="pt-8 light-text">
 				<Select
 					formData={formDataManual}
-					options={Object.entries(assets)}
+					options={Object.entries(types)}
 					name="type"
 					label="Asset type" />
 				<Input
@@ -77,12 +76,26 @@
 				Use manual uploading mode for shared assets (ie. mesh)
 			</div>
 			{#if data.stage >= 2}
-				<div class="py-4">
+				<div class="py-4 flex gap-6 items-center">
 					<a
 						href="/admin/create?tab2=Autopilot"
 						class="btn btn-secondary">
 						Reset
 					</a>
+					<span>
+						You are uploading
+						{#if data.type && types[data.type]}
+							{aan(types[data.type])}
+							<b>{types[data.type]}</b>
+						{:else}
+							an unknown
+						{/if}
+						asset with asset id
+						<b>{data.assetId}</b>
+						{#if data.stage == 3}
+							and version <b>{data.version}</b>
+						{/if}
+					</span>
 				</div>
 			{/if}
 

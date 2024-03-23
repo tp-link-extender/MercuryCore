@@ -2,6 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { superValidate } from "sveltekit-superforms/server"
 import { query, squery, mquery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
+import requestRender from "$lib/server/requestRender"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { error, redirect } from "@sveltejs/kit"
@@ -80,17 +81,18 @@ async function fetchAssetVersion(id: number, version: number) {
 	// write the data to a file
 	// After all, they give the data in the response anyway. Why shouldn't I cache it?
 	fs.writeFileSync(
-		`data/assetCache/${id}_${version}`,
+		`data/assetCache/${id}_1`,
 		Buffer.from(await data.arrayBuffer())
 	)
 
+	const type = meta.AssetTypeId
+
 	return {
 		id: [id, version] as [number, number], // typescript moment
-
 		assetModified: new Date(date).toISOString(),
 		name: meta.Name,
 		description: meta.Description,
-		type: meta.AssetTypeId,
+		type: 41 < type && type < 47 ? 8 : type,
 	}
 }
 
@@ -186,7 +188,7 @@ async function getSharedAssets(id: number, version: number) {
 		dependencies.push(id)
 
 		// Cache dat sheeeit
-		await getVersions(+id, version)
+		await getVersions(+id, 1) // Always cache version 1 as it's usually the only version for dependency assets
 
 		// "why would a shared asset have dependencies
 		// like a mesh doesn't have any dependencies
@@ -199,7 +201,7 @@ async function getSharedAssets(id: number, version: number) {
 }
 
 export async function load({ locals, url }) {
-	await authorise(locals, 5)
+	await authorise(locals, 3)
 	const assetId = url.searchParams.get("assetId")
 	const version = url.searchParams.get("version")
 	if (assetId && !assetId.match(/\d+/)) error(400, "Invalid assetId")
@@ -212,7 +214,10 @@ export async function load({ locals, url }) {
 		formAuto: await superValidate(zod(schemaAuto)),
 		stage,
 		...(stage === 2 &&
-			assetId && { assetId, getVersions: getVersions(+assetId) }),
+			assetId && {
+				assetId,
+				getVersions: getVersions(+assetId),
+			}),
 		...(stage === 3 &&
 			assetId &&
 			version && {
@@ -220,29 +225,35 @@ export async function load({ locals, url }) {
 				version,
 				getSharedAssets: getSharedAssets(+assetId, +version),
 			}),
+		...(stage >= 2 &&
+			assetId && {
+				type: (
+					await squery<{ type: number }>(
+						surql`SELECT type FROM assetCache:[$id, 0]..[$id, 99]`, // gud enogh
+						{ id: +assetId }
+					)
+				)?.type,
+			}),
 	}
 }
 
 export const actions = {
 	autopilot: async ({ request, locals }) => {
-		await authorise(locals, 5)
+		await authorise(locals, 3)
 		const form = await superValidate(request, zod(schemaAuto))
 		if (!form.valid) return formError(form)
 		const { data } = form
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 
-		// let saveImages: ((id: number) => void | Promise<void>)[] = []
-
 		const res = await mquery<unknown[]>(
 			surql`
 				BEGIN TRANSACTION;
 				LET $user = (SELECT id FROM user WHERE number = 1)[0].id;
-				LET $newSharedIds = [];
 				FOR $assetId IN $assets {
 					# All the assets are cached already
 					LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-					LET $cached = (SELECT * FROM assetCache:[$assetId, $version])[0];
+					LET $cached = (SELECT * FROM assetCache:[$assetId, 1])[0]; # version 1 is usually the only version
 					LET $asset = CREATE asset CONTENT {
 						id: $id,
 						name: $cached.name,
@@ -290,8 +301,8 @@ export const actions = {
 			{ assets: form.data.shared.split(",").map(s => +s), ...data }
 		)
 
-		const id = res[8]
-		const shared = res[9] as {
+		const id = res[7] as number
+		const shared = res[8] as {
 			id: number
 			type: number
 			sharedId: number
@@ -320,9 +331,17 @@ export const actions = {
 			fs.promises.writeFile(`data/assets/${id}`, cachedXml),
 			...shared.map(s =>
 				fs.promises.copyFile(
-					`data/assetCache/${s.sharedId}_${form.data.version}`,
+					`data/assetCache/${s.sharedId}_1`,
 					`data/assets/${s.id}`
 				)
+			),
+		])
+
+		await Promise.all([
+			await requestRender("Model", id),
+			await requestRender(
+				"Mesh",
+				shared.find(s => s.type === 4)?.id || 0
 			),
 		])
 

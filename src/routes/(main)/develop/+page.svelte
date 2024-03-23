@@ -14,14 +14,11 @@
 
 <Head title="Create" />
 
-<div class="ctnr py-2">
-	<h1>Create</h1>
-	<div class="flex flex-wrap pt-6">
-		<TabNav
-			bind:tabData
-			vertical
-			class="w-full lg:w-1/6 md:(w-1/4 pr-4) pb-6 " />
-		<div class="w-full lg:w-5/6 md:w-3/4">
+<h1 class="text-center pb-4">Create</h1>
+
+<div class="px-4 pt-6">
+	<SidebarShell bind:tabData space>
+		<div>
 			<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
 				{#each assetTypes as asset, num}
 					<AdminLink
@@ -60,5 +57,5 @@
 				</form>
 			</Tab>
 		</div>
-	</div>
+	</SidebarShell>
 </div>
