@@ -8,7 +8,7 @@ type Render = {
 
 const selectRender = surql`
 	(SELECT status, created, id
-	FROM render WHERE status ∈ ["Pending", "Rendering"]
+	FROM render WHERE status INSIDE ["Pending", "Rendering"]
 		AND type = $renderType
 		AND relativeId = $relativeId)[0]`
 

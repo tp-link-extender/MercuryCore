@@ -41,8 +41,8 @@ export async function load({ locals, params }) {
 					(SELECT number, status, username
 					FROM <-posted<-user)[0] AS author,
 					count(<-likes<-user) - count(<-dislikes<-user) AS score,
-					($user ∈ <-likes<-user.id) AS likes,
-					($user ∈ <-dislikes<-user.id) AS dislikes
+					($user INSIDE <-likes<-user.id) AS likes,
+					($user INSIDE <-dislikes<-user.id) AS dislikes
 				FROM $parent<-in.in
 				ORDER BY pinned DESC, score DESC) AS posts
 			OMIT id

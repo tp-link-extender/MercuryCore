@@ -33,7 +33,7 @@ export const load = async ({ locals }) => ({
 				(SELECT meta::id(id) AS id, name
 				FROM ->imageAsset->asset)[0] AS imageAsset
 			FROM asset WHERE visibility = "Pending"
-				AND type ∈ [17, 18, 2, 11, 12, 19]`,
+				AND type INSIDE [17, 18, 2, 11, 12, 19]`,
 		{ user: `user:${(await authorise(locals, 3)).user.id}` }
 	),
 })

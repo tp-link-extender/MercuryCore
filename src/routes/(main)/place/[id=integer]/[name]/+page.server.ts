@@ -63,8 +63,8 @@ export async function load({ url, locals, params }) {
 
 				count((SELECT * FROM $parent<-likes).in) AS likeCount,
 				count((SELECT * FROM $parent<-dislikes).in) AS dislikeCount,
-				$user ∈ (SELECT * FROM $parent<-likes).in AS likes,
-				$user ∈ (SELECT * FROM $parent<-dislikes).in AS dislikes
+				$user INSIDE (SELECT * FROM $parent<-likes).in AS likes,
+				$user INSIDE (SELECT * FROM $parent<-dislikes).in AS dislikes
 			FROM $place`,
 		{
 			user: `user:${user.id}`,

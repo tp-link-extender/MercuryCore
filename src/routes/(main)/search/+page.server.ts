@@ -58,7 +58,7 @@ export const load = async ({ url }) => {
 				surql`
 					SELECT number, status, username
 					FROM user
-					WHERE string::lowercase($searchQ) ∈ string::lowercase(username)`,
+					WHERE string::lowercase($searchQ) INSIDE string::lowercase(username)`,
 				{ searchQ }
 			)),
 		places:
@@ -78,7 +78,7 @@ export const load = async ({ url }) => {
 					FROM place
 					WHERE !privateServer
 						AND !deleted
-						AND string::lowercase($searchQ) ∈ string::lowercase(name)`,
+						AND string::lowercase($searchQ) INSIDE string::lowercase(name)`,
 				{ searchQ }
 			)),
 		assets:
@@ -87,8 +87,8 @@ export const load = async ({ url }) => {
 				surql`
 					SELECT meta::id(id) AS id, name, price
 					FROM asset
-					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)
-						AND type ∈ [17, 18, 2, 11, 12, 19]`,
+					WHERE string::lowercase($searchQ) INSIDE string::lowercase(name)
+						AND type INSIDE [17, 18, 2, 11, 12, 19]`,
 				{ searchQ }
 			)),
 		groups:
@@ -99,7 +99,7 @@ export const load = async ({ url }) => {
 						name,
 						count(<-member) AS memberCount
 					FROM group
-					WHERE string::lowercase($searchQ) ∈ string::lowercase(name)`,
+					WHERE string::lowercase($searchQ) INSIDE string::lowercase(name)`,
 				{ searchQ }
 			)),
 	}

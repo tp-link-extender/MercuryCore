@@ -62,7 +62,7 @@ export async function load({ locals, params }) {
 				(SELECT number, status, username
 				FROM <-created<-user)[0] AS creator,
 				count(<-owns<-user) AS sold,
-				$user ∈ <-owns<-user.id AS owned,
+				$user INSIDE <-owns<-user.id AS owned,
 
 				(SELECT text, updated FROM $parent.description
 				ORDER BY updated DESC)[0] AS description,
@@ -277,7 +277,7 @@ export const actions = {
 					*,
 					(SELECT meta::id(id) AS id, username
 					FROM <-created<-user)[0] AS creator,
-					$user ∈ <-owns<-user.id AS owned
+					$user INSIDE <-owns<-user.id AS owned
 				FROM $asset`,
 			{
 				asset: `asset:${id}`,

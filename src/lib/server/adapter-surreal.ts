@@ -12,9 +12,10 @@ export class SurrealAdapter implements Adapter {
 	}
 
 	public async deleteUserSessions(userId: string) {
-		await query(surql`DELETE session WHERE $user ∈ <-hasSession<-user`, {
-			user: `user:${userId}`,
-		})
+		await query(
+			surql`DELETE session WHERE $user INSIDE <-hasSession<-user`,
+			{ user: `user:${userId}` }
+		)
 	}
 
 	public async getSessionAndUser(
@@ -47,7 +48,9 @@ export class SurrealAdapter implements Adapter {
 
 	public async getUserSessions(userId: string) {
 		return await query<DatabaseSession>(
-			surql`SELECT *, meta::id(id) AS id FROM session WHERE $user ∈ <-usingKey<-user`,
+			surql`
+				SELECT *, meta::id(id) AS id FROM session
+				WHERE $user INSIDE <-usingKey<-user`,
 			{ user: `user:${userId}` }
 		)
 	}

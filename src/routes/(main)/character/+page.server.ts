@@ -20,9 +20,9 @@ const select = surql`
 		name,
 		price,
 		type,
-		($user ∈ <-wearing<-user) AS wearing
-	FROM asset WHERE $user ∈ <-owns<-user
-		AND type ∈ [${allowedTypes.join(", ")}]
+		($user INSIDE <-wearing<-user) AS wearing
+	FROM asset WHERE $user INSIDE <-owns<-user
+		AND type INSIDE [${allowedTypes.join(", ")}]
 		AND visibility = "Visible"`
 
 export const load = async ({ locals, url }) => {
@@ -39,7 +39,7 @@ export const load = async ({ locals, url }) => {
 		}>(
 			surql`${select} ${
 				searchQ
-					? surql`AND string::lowercase($query) ∈ string::lowercase(name)`
+					? surql`AND string::lowercase($query) INSIDE string::lowercase(name)`
 					: ""
 			}`,
 			{
@@ -67,7 +67,7 @@ async function getEquipData(e: RequestEvent) {
 	}>(
 		surql`
 			SELECT meta::id(id) AS id, type, visibility
-			FROM $asset WHERE $user ∈ <-owns<-user`,
+			FROM $asset WHERE $user INSIDE <-owns<-user`,
 		{
 			asset: `asset:${id}`,
 			user: `user:${user.id}`,
@@ -101,7 +101,7 @@ export const actions = {
 	search: async ({ request, locals }) => ({
 		assets: await query(
 			surql`${select}
-				AND string::lowercase($query) ∈ string::lowercase(name)`,
+				AND string::lowercase($query) INSIDE string::lowercase(name)`,
 			{
 				query: ((await request.formData()).get("q") as string).trim(),
 				user: `user:${(await authorise(locals)).user.id}`,

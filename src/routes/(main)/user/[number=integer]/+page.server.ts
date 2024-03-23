@@ -85,11 +85,11 @@ export async function load({ locals, params }) {
 				count(<-follows) AS followerCount,
 				count(->follows) AS followingCount,
 
-				$user ∈ <->friends<->user AS friends,
-				$user ∈ <-follows<-user AS following,
-				$user ∈ ->follows->user AS follower,
-				$user ∈ ->request->user AS incomingRequest,
-				$user ∈ <-request<-user AS outgoingRequest,
+				$user INSIDE <->friends<->user AS friends,
+				$user INSIDE <-follows<-user AS following,
+				$user INSIDE ->follows->user AS follower,
+				$user INSIDE ->request->user AS incomingRequest,
+				$user INSIDE <-request<-user AS outgoingRequest,
 
 				(SELECT name, count(<-member) AS memberCount
 				FROM ->member->group) AS groups,
@@ -175,7 +175,7 @@ export const actions = {
 		const { user, params } = await getInteractData(e)
 		await query(
 			surql`
-				IF $user2 ∉ $user->follows->user {
+				IF $user2 NOTINSIDE $user->follows->user {
 					RELATE $user->follows->$user2 SET time = time::now();
 					RELATE $user->notification->$user2 CONTENT {
 						type: $type,
@@ -227,12 +227,12 @@ export const actions = {
 		if (
 			// Make sure users are not already friends
 			!(await query(
-				surql`$user ∈ $user2->friends->user
-					OR $user2 ∈ $user->friends->user`,
+				surql`$user INSIDE $user2->friends->user
+					OR $user2 INSIDE $user->friends->user`,
 				params
 			))
 		)
-			if (await query(surql`$user ∈ $user2->request->user`, params))
+			if (await query(surql`$user INSIDE $user2->request->user`, params))
 				// If there is already an incoming request, accept it instead
 				await acceptExisting(params, user)
 			else
@@ -276,7 +276,7 @@ export const actions = {
 	accept: async e => {
 		const { user, params } = await getInteractData(e)
 		// Make sure an incoming request exists before accepting
-		if (!(await query(surql`$user ∈ $user2->request->user`, params)))
+		if (!(await query(surql`$user INSIDE $user2->request->user`, params)))
 			error(400, "No friend request to accept")
 
 		await acceptExisting(params, user)

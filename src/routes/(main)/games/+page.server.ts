@@ -30,7 +30,7 @@ export const actions = {
 	default: async ({ request }) => ({
 		places: await query<Place>(
 			surql`${select}
-				AND string::lowercase($query) ∈ string::lowercase(name)`,
+				AND string::lowercase($query) INSIDE string::lowercase(name)`,
 			{ query: (await request.formData()).get("q") as string }
 		),
 	}),
