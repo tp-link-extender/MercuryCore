@@ -1,6 +1,4 @@
 {
-	"DFFlagUseKeyframeHumanoidAnimations": "True",
-	"FFlagUseKeyframeHumanoidAnimations": "True",
 	"FFlagRenderNewMaterials": "True",
 	"FFlagRenderAnisotropy": "True",
 	"FFlagEnableNPCServerAnimation": "True",
