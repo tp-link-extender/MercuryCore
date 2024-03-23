@@ -55,12 +55,12 @@
 
 	const tabTypes: { [k: string]: number } = {
 		Recent: 0,
+		Hats: 8,
 		Heads: 17,
 		Faces: 18,
 		"T-Shirts": 2,
 		Shirts: 11,
 		Pants: 12,
-		Hats: 8,
 		Gear: 19
 	}
 	let tabData = TabData(data.url, Object.keys(tabTypes))

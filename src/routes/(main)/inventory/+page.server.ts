@@ -9,7 +9,7 @@ const select = surql`
 		type,
 		<-owns<-user AS owners
 	FROM asset WHERE $user ∈ <-owns<-user
-		AND type ∈ [17, 18, 2, 11, 12, 19] `
+		AND type ∈ [17, 18, 2, 11, 12, 19, 8] `
 
 export const load = async ({ locals, url }) => {
 	const searchQ = url.searchParams.get("q")?.trim()
