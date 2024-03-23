@@ -245,6 +245,7 @@ export const actions = {
 		const { data } = form
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
+		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
 		const res = await mquery<unknown[]>(
 			surql`
@@ -290,7 +291,10 @@ export const actions = {
 				};
 				RELATE $user->owns->$asset;
 				RELATE $user->created->$asset;
-				$id;
+				{
+					id: $id,
+					type: $cached.type,
+				};
 				(SELECT
 					(SELECT meta::id(id) AS id
 					FROM ->createdAsset->asset)[0].id AS id,
@@ -301,7 +305,10 @@ export const actions = {
 			{ assets: form.data.shared.split(",").map(s => +s), ...data }
 		)
 
-		const id = res[7] as number
+		const { id, type } = res[7] as {
+			id: number
+			type: number
+		}
 		const shared = res[8] as {
 			id: number
 			type: number
@@ -337,13 +344,25 @@ export const actions = {
 			),
 		])
 
-		await Promise.all([
-			await requestRender("Model", id),
-			await requestRender(
-				"Mesh",
-				shared.find(s => s.type === 4)?.id || 0
-			),
-		])
+		const renders: Promise<void>[] = []
+
+		if (type === 18) {
+			const imageAsset = shared.find(s => s.type === 1)?.id
+			if (imageAsset)
+				// we want to move the imageasset from assets to thumbnails (don't render it)
+				renders.push(
+					fs.promises.copyFile(
+						`data/assets/${imageAsset}`,
+						`data/thumbnails/${id}`
+					)
+				)
+		} else {
+			renders.push(requestRender("Model", id))
+			const renderMesh = shared.find(s => s.type === 4)?.id
+			if (renderMesh) renders.push(requestRender("Mesh", renderMesh))
+		}
+
+		await Promise.all(renders)
 
 		redirect(302, `/avatarshop/${id}`)
 	},
