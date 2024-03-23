@@ -5,7 +5,7 @@
 	let filepath = ""
 
 	const host = launch(
-		`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${window.btoa(
+		`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${btoa(
 			filepath
 		)}`
 	)

@@ -52,6 +52,7 @@
 	}
 
 	const hostTicket = `http://www.banland.xyz/game/host?ticket=${data.serverTicket}`
+	const loadCommand = `loadfile("${hostTicket}")()`
 
 	async function placeLauncher() {
 		installed = true
@@ -84,6 +85,7 @@
 
 	let tabData = TabData(data.url, ["Description", "Game"])
 	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
+	let copiedSuccess = false
 </script>
 
 <Head title={data.name} />
@@ -303,9 +305,25 @@
 						</button>
 						and then in the command bar, paste this in:
 					</p>
-					<code>
-						loadfile("{hostTicket}")()
-					</code>
+					<code class="pr-2">{loadCommand}</code>
+					<button
+						on:click={() => {
+							navigator.clipboard.writeText(loadCommand)
+							copiedSuccess = true
+							setTimeout(() => (copiedSuccess = false), 4000)
+						}}
+						class="btn btn-sm btn-secondary py-1.5!"
+						type="button">
+						<fa fa-copy />
+					</button>
+					{#if copiedSuccess}
+						<small
+							id="copiedSuccess"
+							transition:fade
+							class="block text-yellow-5">
+							Successfully copied command to clipboard
+						</small>
+					{/if}
 				</Tab>
 				<Tab tabData={tabData2}>
 					<Autopilot {launch} {hostTicket} />
@@ -354,7 +372,7 @@
 		{#key installed}
 			<div
 				in:fade={{ duration: 500 }}
-				class="self-center size-32 -translate-x-1/2 @light:invert">
+				class="self-center size-32 -translate-x-1/2">
 				<img
 					src="/innerlogo.svg"
 					alt="Mercury logo inner part (M)"
