@@ -59,7 +59,7 @@ local function getScreenGuiAncestor(instance)
 	return localInstance
 end
 
-local function Colour3(r, g, b)
+local function Colour3(r: number, g: number, b: number)
 	return Color3.new(r / 255, g / 255, b / 255)
 end
 

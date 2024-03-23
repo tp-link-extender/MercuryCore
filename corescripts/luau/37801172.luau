@@ -5,6 +5,8 @@ print "[Mercury]: Loaded corescript 37801172"
 local ScriptContext = game:GetService "ScriptContext"
 local CoreGui = game:GetService "CoreGui"
 
+require "../Modules/DebugConsole"(CoreGui)
+
 -- Creates all neccessary scripts for the gui on initial load, everything except build tools
 -- Please note that these are loaded in a specific order to diminish errors/perceived load time by user
 

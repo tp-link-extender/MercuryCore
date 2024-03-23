@@ -56,7 +56,7 @@ local function MakeBackgroundGuiObj(imgName)
 	}
 end
 --[[ turns 255 integer color value to a color3 --]]
-local function Color3I(r, g, b)
+local function Colour3(r: number, g: number, b: number)
 	return Color3.new(r / 255, g / 255, b / 255)
 end
 
@@ -102,66 +102,15 @@ local function getFriendStatusIcon(friendStatus)
 	end
 end
 
-local HeaderFrame
-
---[[
-	Utility function to create buttons for the popup menus
-	@Args:
-	nparent		what to parent this button to
-	ntext		text to put on this button
-	index		number index of this entry in menu
-	last		is this the last element of the popup menu
-	@Return:	a popup menu button
---]]
-local function MakePopupButton(nparent, ntext, index, last)
-	local tobj = New "ImageButton" {
-		Name = "ReportButton",
-		BackgroundTransparency = 1,
-		Position = UDim2.new(0, 0, 1 * index, 0),
-		Size = UDim2.new(1, 0, 1, 0),
-		ZIndex = 7,
-		New "TextLabel" {
-			Name = "ButtonText",
-			BackgroundTransparency = 1,
-			Position = UDim2.new(0.07, 0, 0.07, 0),
-			Size = UDim2.new(0.86, 0, 0.86, 0),
-			Parent = HeaderFrame,
-			Font = "ArialBold",
-			Text = ntext,
-			FontSize = "Size14",
-			TextScaled = true,
-			TextColor3 = Color3.new(1, 1, 1),
-			TextStrokeTransparency = 1,
-			ZIndex = 7,
-		},
-		Parent = nparent,
-	}
-	if index == 0 then
-		tobj.Image = "http://banland.xyz/asset?id=97108784"
-	elseif last then
-		if index % 2 == 1 then
-			tobj.Image = "http://banland.xyz/asset?id="
-				.. Images.LightPopupBottom
-		else
-			tobj.Image = "http://banland.xyz/asset?id="
-				.. Images.DarkPopupBottom
-		end
-	else
-		if index % 2 == 1 then
-			tobj.Image = "http://banland.xyz/asset?id=97112126"
-		else
-			tobj.Image = "http://banland.xyz/asset?id=97109338"
-		end
-	end
-	return tobj
-end
-
 ---------------------------
 -- Workspace Objects
 ---------------------------
 
 -- might want to move all this to an init function, wait for localplayer elsewhere
+local ContentProvider = game:GetService "ContentProvider"
+local PersonalServerService = game:GetService "PersonalServerService"
 local Players = game:GetService "Players"
+
 -- make sure this doesn't run on the server(it will if you dont do this)
 while not Players.LocalPlayer do
 	Players.Changed:wait()
@@ -184,7 +133,7 @@ local MainFrame = New "Frame" {
 	Parent = ScreenGui,
 }
 
---frame used for expanding leaderstats when frame is 'focused'
+-- frame used for expanding leaderstats when frame is "focussed"
 local FocusFrame = New "Frame" {
 	Name = "FocusFrame",
 	Position = UDim2.new(0, 0, 0, 0),
@@ -195,7 +144,7 @@ local FocusFrame = New "Frame" {
 }
 
 -- HEADER
-HeaderFrame = New "Frame" {
+local HeaderFrame = New "Frame" {
 	Name = "Header",
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0, 0, 0, 0),
@@ -415,9 +364,15 @@ local MiddleTemplate = New "Frame" {
 		TextYAlignment = "Center",
 		ZIndex = 3,
 	},
-	--Create'IntValue'{Name = 'ID'},
-	--Create'ObjectValue'{Name = 'Player'},
-	--Create'IntValue'{Name = 'Score'},
+	-- New "IntValue" {
+	-- 	Name = "ID",
+	-- },
+	-- New "ObjectValue" {
+	-- 	Name = "Player",
+	-- },
+	-- New "IntValue" {
+	-- 	Name = "Score",
+	-- },
 	ZIndex = 3,
 }
 local MiddleBGTemplate = New "Frame" {
@@ -437,8 +392,8 @@ local ReportAbuseShield = New "TextButton" {
 	Active = true,
 	Visible = true,
 	Size = UDim2.new(1, 0, 1, 0),
-	BackgroundColor3 = Color3I(51, 51, 51),
-	BorderColor3 = Color3I(27, 42, 53),
+	BackgroundColor3 = Colour3(51, 51, 51),
+	BorderColor3 = Colour3(27, 42, 53),
 	BackgroundTransparency = 1,
 }
 
@@ -460,15 +415,15 @@ local AbuseSettingsFrame = New "Frame" {
 	New "TextLabel" {
 		Name = "Title",
 		Text = "Report Abuse",
-		TextColor3 = Color3I(221, 221, 221),
+		TextColor3 = Colour3(221, 221, 221),
 		Position = UDim2.new(0.5, 0, 0, 30),
 		Font = Enum.Font.ArialBold,
 		FontSize = Enum.FontSize.Size36,
 	},
 	New "TextLabel" {
 		Name = "Description",
-		Text = "This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action.",
-		TextColor3 = Color3I(221, 221, 221),
+		Text = "This will send a complete report to a moderator. The moderator will review the chat log and take appropriate action.",
+		TextColor3 = Colour3(221, 221, 221),
 		Position = UDim2.new(0.01, 0, 0, 55),
 		Size = UDim2.new(0.99, 0, 0, 40),
 		BackgroundTransparency = 1,
@@ -486,7 +441,7 @@ local AbuseSettingsFrame = New "Frame" {
 		FontSize = Enum.FontSize.Size18,
 		Position = UDim2.new(0.025, 0, 0, 140),
 		Size = UDim2.new(0.4, 0, 0, 36),
-		TextColor3 = Color3I(255, 255, 255),
+		TextColor3 = Colour3(255, 255, 255),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	},
 	New "TextLabel" {
@@ -496,7 +451,7 @@ local AbuseSettingsFrame = New "Frame" {
 		FontSize = Enum.FontSize.Size18,
 		Position = UDim2.new(0.025, 0, 0, 180),
 		Size = UDim2.new(0.95, 0, 0, 36),
-		TextColor3 = Color3I(255, 255, 255),
+		TextColor3 = Colour3(255, 255, 255),
 		TextXAlignment = Enum.TextXAlignment.Left,
 		BackgroundTransparency = 1,
 	},
@@ -508,7 +463,7 @@ local AbuseSettingsFrame = New "Frame" {
 		FontSize = Enum.FontSize.Size18,
 		Position = UDim2.new(0.025, 0, 0, 100),
 		Size = UDim2.new(0.95, 0, 0, 36),
-		TextColor3 = Color3I(255, 255, 255),
+		TextColor3 = Colour3(255, 255, 255),
 		TextXAlignment = Enum.TextXAlignment.Left,
 	},
 
@@ -523,7 +478,7 @@ local AbusePlayerLabel = New "TextLabel" {
 	FontSize = Enum.FontSize.Size18,
 	Position = UDim2.new(0.025, 0, 0, 100),
 	Size = UDim2.new(0.95, 0, 0, 36),
-	TextColor3 = Color3I(255, 255, 255),
+	TextColor3 = Colour3(255, 255, 255),
 	TextXAlignment = Enum.TextXAlignment.Right,
 	Parent = AbuseSettingsFrame,
 }
@@ -553,7 +508,7 @@ local AbuseDescriptionWrapper = New "Frame" {
 	Name = "AbuseDescriptionWrapper",
 	Position = UDim2.new(0.025, 0, 0, 220),
 	Size = UDim2.new(0.95, 0, 1, -310),
-	BackgroundColor3 = Color3I(0, 0, 0),
+	BackgroundColor3 = Colour3(0, 0, 0),
 	BorderSizePixel = 0,
 	Parent = AbuseSettingsFrame,
 }
@@ -568,11 +523,11 @@ local OriginalAbuseDescriptionBox = New "TextBox" {
 	FontSize = Enum.FontSize.Size18,
 	Position = UDim2.new(0, 3, 0, 3),
 	Size = UDim2.new(1, -6, 1, -6),
-	TextColor3 = Color3I(255, 255, 255),
+	TextColor3 = Colour3(255, 255, 255),
 	TextXAlignment = Enum.TextXAlignment.Left,
 	TextYAlignment = Enum.TextYAlignment.Top,
 	TextWrap = true,
-	BackgroundColor3 = Color3I(0, 0, 0),
+	BackgroundColor3 = Colour3(0, 0, 0),
 	BorderSizePixel = 0,
 }
 
@@ -602,7 +557,7 @@ local CalmingAbuseBox = New "Frame" {
 		TextScaled = true,
 		BackgroundTransparency = 1,
 		TextColor3 = Color3.new(1, 1, 1),
-		Text = "Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
+		Text = "Our moderators will review the chat logs and determine what happened. The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
 		TextWrapped = true,
 		TextYAlignment = Enum.TextYAlignment.Top,
 		FontSize = Enum.FontSize.Size24,
@@ -659,19 +614,20 @@ local NormalAbuseBox = New "Frame" {
 	},
 }
 
-local BigButton = Instance.new "ImageButton"
-BigButton.Size = UDim2.new(1, 0, 1, 0)
-BigButton.BackgroundTransparency = 1
-BigButton.ZIndex = 8
-BigButton.Visible = false
---BigButton.Active=false
-BigButton.Parent = ScreenGui
+local BigButton = New "ImageButton" {
+	Size = UDim2.new(1, 0, 1, 0),
+	BackgroundTransparency = 1,
+	ZIndex = 8,
+	Visible = false,
+	-- Active = false,
+	Parent = ScreenGui,
+}
 
 local debugFrame = New "Frame" {
 	Name = "debugframe",
-	--Position = UDim2.new(0, 0, 0, 0),
-	--Size = UDim2.new(0, 150, 0, 800),--0.99000001
-	--BackgroundTransparency = 1,
+	-- Position = UDim2.new(0, 0, 0, 0),
+	-- Size = UDim2.new(0, 150, 0, 800),--0.99000001
+	-- BackgroundTransparency = 1,
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.25, 0, 0.300000012, 0),
 	Size = UDim2.new(0.5, 0, 0.370000005, 0),
@@ -728,9 +684,7 @@ local RbxGui = assert(LoadLibrary "RbxGui")
 local DefaultEntriesOnScreen = 8
 
 for _, i in pairs(Images) do
-	Game:GetService("ContentProvider"):Preload(
-		`http://banland.xyz/asset?id={i}`
-	)
+	ContentProvider:Preload("http://banland.xyz/asset?id=" .. i)
 end
 
 -- ordered array of 'score data', each entry has:
@@ -755,7 +709,7 @@ local PlayerFrames = {}
 -- AutoHide (bool saying whether it should be hidden)
 -- IsHidden (bool)
 -- ID (int to prevent flipping out of leaderboard, fun times)
-local TeamFrames = {}
+local TeamFrames: { any } = {}
 -- one special entry from teamFrames, for unaffiliated players, only shown if players non - empty
 local NeutralTeam
 
@@ -767,9 +721,9 @@ local LastClick = 0
 local ButtonCooldown = 0.25
 
 local OnIos = false
-pcall(function()
-	OnIos = Game:GetService("UserInputService").TouchEnabled
-end)
+-- pcall(function()
+-- 	OnIos = Game:GetService("UserInputService").TouchEnabled
+-- end)
 
 -- you get 200 of x screen space per stat added, start width 16%
 local BaseScreenXSize = 150
@@ -798,7 +752,7 @@ local InPopupWaitForClick = false
 local PlayerChangedLock = false
 local NeutralTeamLock = false
 
-local ScrollWheelConnections = {}
+local ScrollWheelConnections: { RBXScriptConnection }? = {}
 
 local DefaultListSize = 8
 if not OnIos then
@@ -839,26 +793,11 @@ local PrivilegeLevel = {
 -------------------------------
 -- Static Functions
 -------------------------------
--- function GetTotalEntries()
--- 	return math.min(#MiddleFrameBackgrounds, DefaultEntriesOnScreen)
--- end
-
--- function GetEntryListLength()
--- 	local numEnts = #PlayerFrames + #TeamFrames
--- 	if NeutralTeam then
--- 		numEnts += 1
--- 	end
--- 	return numEnts
--- end
 
 local function AreAllEntriesOnScreen()
 	return #MiddleFrameBackgrounds * MiddleTemplate.Size.Y.Scale
 		<= 1 + DefaultBottomClipPos
 end
-
--- function GetLengthOfVisbleScroll()
--- 	return 1 + DefaultBottomClipPos
--- end
 
 local function GetMaxScroll()
 	return DefaultBottomClipPos * -1
@@ -889,7 +828,7 @@ end
 	enda		alpha to end tweening on
 	length		how many seconds to spend tweening
 --]]
-local function TweenProperty(obj, propName, inita, enda, length)
+local function TweenProperty(obj, propName, inita: number, enda: number, length)
 	local startTime = tick()
 	while tick() - startTime < length do
 		obj[propName] = ((enda - inita) * ((tick() - startTime) / length))
@@ -947,7 +886,7 @@ end
 --Personal Server Handling
 ---------------------------
 --[[
-	returns privlage level based on integer rank
+	returns privilege level based on integer rank
 	Note: these privilege levels seem completely arbitrary, but no documentation exists
 	this is all from the old player list, really weird
 	@Args:
@@ -978,10 +917,10 @@ end
 --]]
 local function SetPrivilegeRank(player, nrank)
 	while player.PersonalServerRank < nrank do
-		game:GetService("PersonalServerService"):Promote(player)
+		PersonalServerService:Promote(player)
 	end
 	while player.PersonalServerRank > nrank do
-		game:GetService("PersonalServerService"):Demote(player)
+		PersonalServerService:Demote(player)
 	end
 end
 
@@ -1139,8 +1078,7 @@ local function InitReportAbuse()
 		end
 	end
 
-	AbuseDropDown, _ =
-		RbxGui.CreateDropDownMenu(Abuses, UpdateAbuseFunction, true)
+	AbuseDropDown = RbxGui.CreateDropDownMenu(Abuses, UpdateAbuseFunction, true)
 	AbuseDropDown.Name = "AbuseComboBox"
 	AbuseDropDown.Position = UDim2.new(0.425, 0, 0, 142)
 	AbuseDropDown.Size = UDim2.new(0.55, 0, 0, 32)
@@ -1553,16 +1491,13 @@ local function UpdateMaximize()
 	end
 end
 
-local function GetScoreValue(score)
+local function GetScoreValue(score: ValueBase): number
 	if
 		score:IsA "DoubleConstrainedValue" or score:IsA "IntConstrainedValue"
 	then
 		return score.ConstrainedValue
 	elseif score:IsA "BoolValue" then
-		if score.Value then
-			return 1
-		end
-		return 0
+		return score.Value and 1 or 0
 	end
 	return score.Value
 end
@@ -2038,8 +1973,8 @@ end
 
 -- removes and closes all leaderboard stuffs
 local function BlowThisPopsicleStand()
-	--ScreenGui:Destroy()
-	--script:Destroy()
+	-- ScreenGui:Destroy()
+	-- script:Destroy()
 	--time to make the fanboys rage...
 	Tabify()
 end
@@ -2232,19 +2167,14 @@ local function AttachScrollWheel()
 	if ScrollWheelConnections then
 		return
 	end
-	ScrollWheelConnections = {}
-	table.insert(
-		ScrollWheelConnections,
+	ScrollWheelConnections = {
 		Mouse.WheelForward:connect(function()
 			OnScrollWheelMove(0.05)
-		end)
-	)
-	table.insert(
-		ScrollWheelConnections,
+		end),
 		Mouse.WheelBackward:connect(function()
 			OnScrollWheelMove(-0.05)
-		end)
-	)
+		end),
+	}
 end
 
 local function DetachScrollWheel()
@@ -2270,6 +2200,58 @@ end)
 ------------------------
 -- Scroll Bar functions
 ------------------------
+
+--[[
+	Utility function to create buttons for the popup menus
+	@Args:
+	nparent		what to parent this button to
+	ntext		text to put on this button
+	index		number index of this entry in menu
+	last		is this the last element of the popup menu
+	@Return:	a popup menu button
+--]]
+local function MakePopupButton(nparent, ntext, index, last)
+	local tobj = New "ImageButton" {
+		Name = "ReportButton",
+		BackgroundTransparency = 1,
+		Position = UDim2.new(0, 0, 1 * index, 0),
+		Size = UDim2.new(1, 0, 1, 0),
+		ZIndex = 7,
+		New "TextLabel" {
+			Name = "ButtonText",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0.07, 0, 0.07, 0),
+			Size = UDim2.new(0.86, 0, 0.86, 0),
+			Parent = HeaderFrame,
+			Font = "ArialBold",
+			Text = ntext,
+			FontSize = "Size14",
+			TextScaled = true,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextStrokeTransparency = 1,
+			ZIndex = 7,
+		},
+		Parent = nparent,
+	}
+	if index == 0 then
+		tobj.Image = "http://banland.xyz/asset?id=97108784"
+	elseif last then
+		if index % 2 == 1 then
+			tobj.Image = "http://banland.xyz/asset?id="
+				.. Images.LightPopupBottom
+		else
+			tobj.Image = "http://banland.xyz/asset?id="
+				.. Images.DarkPopupBottom
+		end
+	else
+		if index % 2 == 1 then
+			tobj.Image = "http://banland.xyz/asset?id=97112126"
+		else
+			tobj.Image = "http://banland.xyz/asset?id=97109338"
+		end
+	end
+	return tobj
+end
 
 --[[
 	prepares the needed popup to be tweened on screen, and updates the position of the popup clip
@@ -3430,6 +3412,6 @@ InitReportAbuse()
 AreNamesExpanded.Value = true
 BaseUpdate()
 
---UGGGLY,find a better way later
+-- UGGGLY, find a better way later
 -- wait(2)
 -- IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
