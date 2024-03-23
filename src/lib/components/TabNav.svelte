@@ -90,6 +90,9 @@
 
 	.vertical .tab
 		@apply ring-offset-neutral-9
+		@media (prefers-reduced-motion no-preference)
+			transition all 0.3s, box-shadow 0.1s ease-in-out
+
 		&:focus:not(:active)
 			@apply ring-2 ring-offset-2
 		&:active

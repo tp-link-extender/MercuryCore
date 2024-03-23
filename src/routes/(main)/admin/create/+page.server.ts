@@ -231,7 +231,7 @@ export async function load({ locals, url }) {
 						surql`SELECT type FROM assetCache:[$id, 0]..[$id, 99]`, // gud enogh
 						{ id: +assetId }
 					)
-				).type,
+				)?.type,
 			}),
 	}
 }

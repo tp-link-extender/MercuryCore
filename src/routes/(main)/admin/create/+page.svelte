@@ -103,7 +103,7 @@
 				<far class="pr-2" fa-circle-info />
 				Use manual uploading mode for shared assets (ie. mesh)
 			</div>
-			{#if data.stage >= 2 && data.type}
+			{#if data.stage >= 2}
 				<div class="py-4 flex gap-6 items-center">
 					<a
 						href="/admin/create?tab2=Autopilot"
@@ -111,8 +111,13 @@
 						Reset
 					</a>
 					<span>
-						You are uploading {aan(assets[data.type])}
-						<b>{assets[data.type]}</b>
+						You are uploading
+						{#if data.type}
+							{aan(assets[data.type])}
+							<b>{assets[data.type]}</b>
+						{:else}
+							an unknown asset
+						{/if}
 						asset with asset id
 						<b>{data.assetId}</b>
 						{#if data.stage == 3}
