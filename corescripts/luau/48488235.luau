@@ -829,13 +829,13 @@ local PrivilegeLevel = {
 	Banned = 0,
 }
 
-local IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
+-- local IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
 
-game.Workspace.ChildAdded:connect(function(nchild)
-	if nchild.Name == "PSVariable" and nchild:IsA "BoolValue" then
-		IsPersonalServer = true
-	end
-end)
+-- game.Workspace.ChildAdded:connect(function(nchild)
+-- 	if nchild.Name == "PSVariable" and nchild:IsA "BoolValue" then
+-- 		IsPersonalServer = true
+-- 	end
+-- end)
 -------------------------------
 -- Static Functions
 -------------------------------
@@ -914,8 +914,8 @@ local function WaitForClick(frameParent, polledFunction, exitFunction)
 	end
 	WaitForClickLock = true
 	local connection, connection2
-	connection = BigButton.MouseButton1Up:connect(function(nx, ny)
-		exitFunction(nx, ny)
+	connection = BigButton.MouseButton1Up:connect(function()
+		exitFunction()
 		BigButton.Visible = false
 		connection:disconnect()
 		if connection2 then
@@ -933,7 +933,7 @@ local function WaitForClick(frameParent, polledFunction, exitFunction)
 	BigButton.Parent = frameParent
 	frameParent.AncestryChanged:connect(function(child, nparent)
 		if child == frameParent and nparent == nil then
-			exitFunction(nx, ny)
+			exitFunction()
 			BigButton.Visible = false
 			connection:disconnect()
 			connection2:disconnect()
@@ -2287,10 +2287,11 @@ local function InitMovingPanel(entry, player)
 	local nextIndex = 2
 	local friendStatus = GetFriendStatus(player)
 	debugprint(tostring(friendStatus))
-	local showRankMenu = IsPersonalServer
-		and LocalPlayer.PersonalServerRank >= PrivilegeLevel.Admin
-		and LocalPlayer.PersonalServerRank
-			> SelectedPlayer.PersonalServerRank
+	local showRankMenu = false
+	-- IsPersonalServer
+	-- and LocalPlayer.PersonalServerRank >= PrivilegeLevel.Admin
+	-- and LocalPlayer.PersonalServerRank
+	-- 	> SelectedPlayer.PersonalServerRank
 
 	local ReportPlayerButton = MakePopupButton(PopUpPanel, "Report Player", 0)
 	ReportPlayerButton.MouseButton1Click:connect(function()
@@ -2300,8 +2301,8 @@ local function InitMovingPanel(entry, player)
 		PopUpPanel,
 		"Friend",
 		1,
-		not showRankMenu
-			and friendStatus ~= Enum.FriendStatus.FriendRequestReceived
+		-- not showRankMenu and
+		friendStatus ~= Enum.FriendStatus.FriendRequestReceived
 	)
 	FriendPlayerButton.MouseButton1Click:connect(OnFriendButtonSelect)
 
@@ -2433,7 +2434,6 @@ local function StartDrag(entry, startx, starty)
 	WaitForChild(entry.Frame, "ClickListener")
 	local function dragExit()
 		-- stopDrag = true
-
 		if
 			entry.Player
 			and SelectedPlayer
@@ -3431,5 +3431,5 @@ AreNamesExpanded.Value = true
 BaseUpdate()
 
 --UGGGLY,find a better way later
-wait(2)
-IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
+-- wait(2)
+-- IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"

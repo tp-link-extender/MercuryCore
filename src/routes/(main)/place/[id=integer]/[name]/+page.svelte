@@ -51,8 +51,8 @@
 		)
 	}
 
-	const hostTicket = `http://www.banland.xyz/game/host?ticket=${data.serverTicket}`
-	const loadCommand = `loadfile("${hostTicket}")()`
+	const hostTicket = `http://banland.xyz/game/host?ticket=${data.serverTicket}`
+	const loadCommand = `LoadLibrary "RbxLoad".Start "${hostTicket}"`
 
 	async function placeLauncher() {
 		installed = true

@@ -1,3 +1,4 @@
+--!strict
 -- RbxGui
 print "[Mercury]: Loaded corescript 45284430"
 
@@ -143,7 +144,7 @@ local function cancelSlide(areaSoak)
 	end
 end
 
-RbxGui.CreateMessageDialog = function(title, message, buttons)
+function RbxGui.CreateMessageDialog(title, message, buttons)
 	local frame = New "Frame" {
 		Size = UDim2.new(0.5, 0, 0.5, 0),
 		Position = UDim2.new(0.25, 0, 0.25, 0),
@@ -182,7 +183,7 @@ RbxGui.CreateMessageDialog = function(title, message, buttons)
 	return frame
 end
 
-RbxGui.CreateStyledMessageDialog = function(title, message, style, buttons)
+function RbxGui.CreateStyledMessageDialog(title, message, style, buttons)
 	local frame = New "Frame" {
 		Size = UDim2.new(0.5, 0, 0, 165),
 		Position = UDim2.new(0.25, 0, 0.5, -72.5),
@@ -244,7 +245,7 @@ RbxGui.CreateStyledMessageDialog = function(title, message, style, buttons)
 end
 
 local scrollMouseCount
-RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
+function RbxGui.CreateDropDownMenu(items, onSelect, forRoblox)
 	local width = UDim.new(0, 100)
 	local height = UDim.new(0, 32)
 
@@ -601,7 +602,7 @@ RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	return frame, updateSelection
 end
 
-RbxGui.CreatePropertyDropDownMenu = function(instance, property, enum)
+function RbxGui.CreatePropertyDropDownMenu(instance, property, enum)
 	local items = enum:GetEnumItems()
 	local names = {}
 	local nameToItem = {}
@@ -627,7 +628,7 @@ RbxGui.CreatePropertyDropDownMenu = function(instance, property, enum)
 	return frame
 end
 
-RbxGui.GetFontHeight = function(font, fontSize)
+function RbxGui.GetFontHeight(font, fontSize)
 	if font == nil or fontSize == nil then
 		error "Font and FontSize must be non-nil"
 	end
@@ -764,7 +765,7 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 	end
 end
 
-RbxGui.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
+function RbxGui.LayoutGuiObjects(frame, guiObjects, settingsTable)
 	if not frame:IsA "GuiObject" then
 		error "Frame must be a GuiObject"
 	end
@@ -818,7 +819,7 @@ RbxGui.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
 	layoutGuiObjectsHelper(wrapperFrame, guiObjects, settingsTable)
 end
 
-RbxGui.CreateSlider = function(steps, width, position)
+function RbxGui.CreateSlider(steps, width, position)
 	local sliderGui = New "Frame" {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 1,
@@ -878,7 +879,7 @@ RbxGui.CreateSlider = function(steps, width, position)
 		bar.Position = position
 	end
 
-	local slider = New "TextButton" {
+	local slider = New "ImageButton" {
 		Name = "Slider",
 		BackgroundTransparency = 1,
 		Image = "rbxasset://textures/ui/Slider.png",
@@ -932,7 +933,7 @@ RbxGui.CreateSlider = function(steps, width, position)
 	return sliderGui, sliderPosition, sliderSteps
 end
 
-RbxGui.CreateTrueScrollingFrame = function()
+function RbxGui.CreateTrueScrollingFrame()
 	local lowY
 	local highY
 
@@ -1536,7 +1537,7 @@ RbxGui.CreateTrueScrollingFrame = function()
 	return scrollingFrame, controlFrame
 end
 
-RbxGui.CreateScrollingFrame = function(orderList, scrollStyle)
+function RbxGui.CreateScrollingFrame(orderList, scrollStyle)
 	local frame = New "Frame" {
 		Name = "ScrollingFrame",
 		BackgroundTransparency = 1,
@@ -2134,6 +2135,7 @@ RbxGui.CreateScrollingFrame = function(orderList, scrollStyle)
 
 	return frame, scrollUpButton, scrollDownButton, recalculate, scrollbar
 end
+
 local function binaryGrow(min, max, fits)
 	if min > max then
 		return min
@@ -2186,7 +2188,7 @@ local function getGuiOwner(instance)
 	return nil
 end
 
-RbxGui.AutoTruncateTextObject = function(textLabel)
+function RbxGui.AutoTruncateTextObject(textLabel)
 	local text = textLabel.Text
 
 	local fullLabel = Hydrate(textLabel:Clone()) {
@@ -2288,10 +2290,10 @@ RbxGui.AutoTruncateTextObject = function(textLabel)
 end
 
 local function TransitionTutorialPages(
-	fromPage,
-	toPage,
-	transitionFrame,
-	currentPageValue
+	fromPage: Instance?,
+	toPage: Instance?,
+	transitionFrame: Frame,
+	currentPageValue: ObjectValue
 )
 	if fromPage then
 		fromPage.Visible = false
@@ -2340,7 +2342,7 @@ local function TransitionTutorialPages(
 	)
 end
 
-RbxGui.CreateTutorial = function(name, tutorialKey, createButtons)
+function RbxGui.CreateTutorial(name, tutorialKey, createButtons: boolean)
 	local frame = New "Frame" {
 		Name = "Tutorial-" .. name,
 		BackgroundTransparency = 1,
@@ -4385,7 +4387,7 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	return dragBar, widgetContainer, helpFrame, closeEvent
 end
 
-RbxGui.Help = function(funcNameOrFunc)
+function RbxGui.Help(funcNameOrFunc)
 	--input argument can be a string or a function. Should return a description (of arguments and expected side effects)
 	if
 		funcNameOrFunc == "CreatePropertyDropDownMenu"

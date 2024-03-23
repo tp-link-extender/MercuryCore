@@ -17,6 +17,7 @@ local normalCores = {}
 local libraryCores = {
 	"Fusion/init.luau",
 	"Red/init.luau",
+	"Load.luau",
 }
 local otherCores = {}
 local plugins = {}

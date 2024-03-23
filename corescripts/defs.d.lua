@@ -8612,6 +8612,7 @@ declare TeleportService: TeleportService
 declare plugin: Plugin
 declare script: LuaSourceContainer
 declare function loadfile(file: string): any
+declare function dofile(file: string): any
 
 -- fusion
 
