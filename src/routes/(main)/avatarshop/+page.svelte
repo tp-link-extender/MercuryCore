@@ -29,9 +29,9 @@
 	}
 
 	const tabTypes: { [k: string]: number } = {
+		Hats: 8,
 		"T-Shirts": 2,
 		Shirts: 11,
-		Hats: 8,
 		Pants: 12,
 		Decals: 13,
 		Faces: 18
@@ -66,9 +66,9 @@
 					class="form-select pl-4"
 					placeholder="Type"
 					aria-label="Type">
+					<option value="Hat">Hats</option>
 					<option value="Shirt">Shirts</option>
 					<option value="TShirt">T-Shirts</option>
-					<option value="Hat">Hats</option>
 					<option value="Pant">Pants</option>
 					<option value="Decal">Decals</option>
 				</select>
