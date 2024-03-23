@@ -40,7 +40,7 @@
 
 {#if image}
 	<div class="flex {$$restProps.class}" class:items-center={full}>
-		<span class="rounded-full overflow-hidden" style="{style};{style2}">
+		<span class="rounded-full" style="{style};{style2}">
 			{#if rerender}
 				<img
 					class="transition-opacity duration-300 rounded-full rounded-t-0"
@@ -70,7 +70,7 @@
 		class:flex-col={bottom}
 		class:items-center={full}>
 		<span
-			class="pfp rounded-full overflow-hidden"
+			class="pfp rounded-full"
 			style="{style};{style2};
 			--hover: var(--{transitionBackgrounds[bg]}">
 			<img

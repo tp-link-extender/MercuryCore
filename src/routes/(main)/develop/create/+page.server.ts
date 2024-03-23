@@ -32,14 +32,10 @@ const assets: { [k: number]: string } = {
 	13: "Decal",
 }
 
-export async function load({ request, locals }) {
-	await authorise(locals, 5)
-
-	return {
-		form: await superValidate(zod(schema)),
-		assettype: new URL(request.url).searchParams.get("asset"),
-	}
-}
+export const load = async ({ request }) => ({
+	form: await superValidate(zod(schema)),
+	assettype: new URL(request.url).searchParams.get("asset"),
+})
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
