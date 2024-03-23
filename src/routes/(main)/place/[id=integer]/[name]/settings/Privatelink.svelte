@@ -5,7 +5,7 @@
 	export let data: import("./$types").PageData
 	const { message, enhance, delayed } = superForm(data.privatelinkForm)
 
-	$: value = `https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`
+	$: value = encodeURI(`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`)
 
 	let copiedSuccess = false
 </script>
