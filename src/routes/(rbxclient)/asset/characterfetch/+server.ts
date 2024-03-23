@@ -32,7 +32,7 @@ export async function GET({ url }) {
 
 	if (!user) error(404, "User not found")
 
-	let charApp = `https://banland.xyz/Asset/BodyColors.ashx?id=${userNumber}`
+	let charApp = `${process.env.RCC_ORIGIN}/Asset/BodyColors.ashx?id=${userNumber}`
 
 	for (const asset of user.wearing)
 		charApp += `;${process.env.RCC_ORIGIN}/asset?id=${asset}`
