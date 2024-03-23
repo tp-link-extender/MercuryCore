@@ -51,8 +51,7 @@
 		)
 	}
 
-	const hostTicket = `http://banland.xyz/game/host?ticket=${data.serverTicket}`
-	const loadCommand = `LoadLibrary "RbxLoad".Start "${hostTicket}"`
+	const loadCommand = `LoadLibrary "RbxLoad".Start "${data.serverTicket}"`
 
 	async function placeLauncher() {
 		installed = true
@@ -326,7 +325,7 @@
 					{/if}
 				</Tab>
 				<Tab tabData={tabData2}>
-					<Autopilot {launch} {hostTicket} />
+					<Autopilot {launch} serverTicket={data.serverTicket} />
 				</Tab>
 			</div>
 		{/if}

@@ -15,7 +15,7 @@ New "Part" {
 	},
 }
 
-local click = ThumbnailGenerator:Click("PNG", 1024, 1024, true)
+local click = ThumbnailGenerator:Click("PNG", 1024, 1024, true, true) -- crop it
 
 print(`[{game.JobId}] Successfully rendered mesh`)
 

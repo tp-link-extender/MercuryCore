@@ -7,6 +7,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { error, redirect } from "@sveltejs/kit"
 import fs from "node:fs"
+import "dotenv/config"
 
 const schemaManual = z.object({
 	type: z.enum(["8", "18"]),
@@ -59,7 +60,7 @@ async function fetchAssetVersion(id: number, version: number) {
 			await new Promise(r => setTimeout(r, 30e3))
 		}
 
-	if (data.status === 500) return "skip" // atoms would be nice right about now
+	if (data.status === 500) return "skip" // atoms (or enums..) would be nice right about now
 	if (data.status !== 200) return "done"
 
 	// no need for a goofy ahh php loop
@@ -81,7 +82,7 @@ async function fetchAssetVersion(id: number, version: number) {
 	// write the data to a file
 	// After all, they give the data in the response anyway. Why shouldn't I cache it?
 	fs.writeFileSync(
-		`data/assetCache/${id}_1`,
+		`data/assetCache/${id}_${version}`,
 		Buffer.from(await data.arrayBuffer())
 	)
 
@@ -330,7 +331,7 @@ export const actions = {
 			if (!newId) continue // same as above
 			cachedXml = cachedXml.replace(
 				url,
-				`<url>https://banland.xyz/asset?id=${newId}</url>`
+				`<url>${process.env.RCC_ORIGIN}/asset?id=${newId}</url>`
 			)
 		}
 

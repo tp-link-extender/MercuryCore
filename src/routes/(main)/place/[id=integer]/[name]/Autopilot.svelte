@@ -1,11 +1,11 @@
 <script lang="ts">
 	export let launch: (joinscripturl: string) => () => void
-	export let hostTicket: string
+	export let serverTicket: string
 
 	let filepath = ""
 
 	const host = launch(
-		`mercury-player:1+launchmode:ide+script:${hostTicket}&autopilot=${btoa(
+		`mercury-player:1+launchmode:ide+script:http://banland.xyz/game/host?ticket=${serverTicket}&autopilot=${btoa(
 			filepath
 		)}`
 	)
