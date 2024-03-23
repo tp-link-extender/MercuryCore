@@ -81,14 +81,14 @@ end
 
 ---------------------------------------- Public Event Setup ----------------------------------------
 
-function publicEvent(eventName: string)
+local function publicEvent(eventName: string)
 	return New "BindableEvent" {
 		Name = eventName,
 		Parent = script,
 	}
 end
 
-function publicFunction(funcName: string, invokeFunc: () -> ())
+local function publicFunction(funcName: string, invokeFunc: () -> ())
 	return New "BindableFunction" {
 		Name = funcName,
 		OnInvoke = invokeFunc,
@@ -156,10 +156,20 @@ local function showBackpack()
 		backpackOpenEvent:Fire(currentTab)
 		canToggle = true
 		readyForNextEvent = true
-		backpackButton.Image = "http://banland.xyz/asset/?id=97644093"
+		backpackButton.Image = "http://banland.xyz/asset?id=97644093"
 		backpackButton.Position =
 			UDim2.new(0.5, -60, 1, -backpackSize.Y.Offset - 103)
 	end)
+end
+
+local function resetSearchBoxGui()
+	resetButton.Visible = false
+	searchBox.Text = searchDefaultText
+end
+
+local function resetSearch()
+	resetSearchBoxGui()
+	searchRequestedEvent:Fire()
 end
 
 local function hideBackpack()
@@ -210,7 +220,7 @@ local function toggleBackpack()
 
 	if backpackIsOpen then
 		Hydrate(loadoutBackground) {
-			Image = "http://banland.xyz/asset/?id=97623721",
+			Image = "http://banland.xyz/asset?id=97623721",
 			Position = UDim2.new(-0.03, 0, -0.17, 0),
 			Size = UDim2.new(1.05, 0, 1.25, 0),
 			ZIndex = 2.0,
@@ -218,14 +228,13 @@ local function toggleBackpack()
 		}
 		showBackpack()
 	else
-		Hydrate(backpackButton) {
-			Position = UDim2.new(0.5, -60, 1, -44),
-			Selected = false,
-			Image = "http://banland.xyz/asset/?id=97617958",
-		}
+		-- No, it doesn't work if it's not in this exact order
+		backpackButton.Position = UDim2.new(0.5, -60, 1, -44)
+		loadoutBackground.Visible = false
+		backpackButton.Selected = false
+		backpackButton.Image = "http://banland.xyz/asset?id=97617958"
 		Hydrate(loadoutBackground) {
-			Visible = false,
-			Image = "http://banland.xyz/asset/?id=96536002",
+			Image = "http://banland.xyz/asset?id=96536002",
 			Position = UDim2.new(-0.1, 0, -0.1, 0),
 			Size = UDim2.new(1.2, 0, 1.2, 0),
 		}
@@ -292,12 +301,7 @@ local function newTabClicked()
 end
 
 local function trim(s)
-	return (s:gsub("^%s*(.-)%s*$", "%1"))
-end
-
-local function resetSearchBoxGui()
-	resetButton.Visible = false
-	searchBox.Text = searchDefaultText
+	return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
 end
 
 local function doSearch()
@@ -311,16 +315,11 @@ local function doSearch()
 	searchRequestedEvent:Fire(searchText) -- todo: replace this with termtable when table passing is possible
 end
 
-function resetSearch()
-	resetSearchBoxGui()
-	searchRequestedEvent:Fire()
-end
-
-local backpackReady = function()
+local function backpackReady()
 	readyForNextEvent = true
 end
 
-function coreGuiChanged(coreGuiType, enabled)
+local function coreGuiChanged(coreGuiType, enabled)
 	if
 		coreGuiType == Enum.CoreGuiType.Backpack
 		or coreGuiType == Enum.CoreGuiType.All

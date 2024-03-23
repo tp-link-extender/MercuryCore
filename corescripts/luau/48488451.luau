@@ -25,7 +25,7 @@ local popupFrame = New "Frame" {
 			Name = "Backing",
 			BackgroundTransparency = 1,
 			Size = UDim2.new(1, 0, 1, 0),
-			Image = "http://banland.xyz/asset/?id=47574181",
+			Image = "http://banland.xyz/asset?id=47574181",
 			ZIndex = 2,
 		},
 	},

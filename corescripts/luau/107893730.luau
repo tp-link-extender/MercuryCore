@@ -1,3 +1,4 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/PurchasePromptScript
 print "[Mercury]: Loaded corescript 107893730"
 
@@ -25,7 +26,7 @@ end
 
 -------------------------------- Global Variables ----------------------------------------
 -- utility variables
-local baseUrl = ContentProvider.BaseUrl:lower()
+local baseUrl = string.lower(ContentProvider.BaseUrl)
 
 -- data variables
 local currentProductInfo, currentAssetId, currentCurrencyType, currentCurrencyAmount, currentEquipOnPurchase, currentProductId, currentServerResponseTable
@@ -205,7 +206,7 @@ local function userPurchaseActionsEnded(isSuccess: boolean)
 end
 
 -- enums have no implicit conversion to numbers in lua, has to have a function to do this
-local function currencyEnumToInt(currencyEnum: Enum.CurrencyType)
+local function currencyEnumToInt(currencyEnum: EnumItem)
 	if currencyEnum == Enum.CurrencyType.Tix then
 		return 2
 	end
@@ -439,9 +440,7 @@ local function getPlayerBalance()
 	if not success then
 		print("Get player balance failed because", errorCode)
 		return
-	end
-
-	if playerBalance == "" then
+	elseif playerBalance == "" then
 		return
 	end
 
@@ -506,9 +505,11 @@ local function canPurchaseItem()
 	end
 
 	if currentProductInfo == nil or not success then
-		descText =
+		return true,
+			nil,
+			nil,
+			true,
 			"In-game sales are temporarily disabled. Please try again later."
-		return true, nil, nil, true, descText
 	end
 
 	if not purchasingConsumable then
@@ -976,7 +977,7 @@ local function userPurchaseProductActionsEnded(userIsClosingDialog)
 		if currentServerResponseTable then
 			local isPurchased = false
 			if
-				tostring(currentServerResponseTable.isValid):lower()
+				string.lower(tostring(currentServerResponseTable.isValid))
 				== "true"
 			then
 				isPurchased = true
@@ -1244,47 +1245,6 @@ local function createPurchasePromptGui()
 	)
 end
 
--- next two functions control the "Purchasing..." overlay
-
--- next 2 functions are convenienvce creation functions for guis
-
--- local function cutSizeInHalfRecursive(_)
-	-- todo: change the gui size based on how much space we have
-	-- changeSize(instance, 0.5)
-
-	-- local children = instance:GetChildren()
-	-- for i = 1, #children do
-	-- 	cutSizeInHalfRecursive(children[i])
-	-- end
--- end
-
--- local function doubleSizeRecursive(_)
-	-- todo: change the gui size based on how much space we have
-	-- changeSize(instance, 2)
-
-	-- local children = instance:GetChildren()
-	-- for i = 1, #children do
-	-- 	doubleSizeRecursive(children[i])
-	-- end
--- end
-
--- local function modifyForSmallScreen()
--- 	cutSizeInHalfRecursive(purchaseDialog)
--- end
-
--- local function modifyForLargeScreen()
--- 	doubleSizeRecursive(purchaseDialog)
--- end
-
--- depending on screen size, we need to change the gui
--- local function changeGuiToScreenSize(smallScreen)
--- 	if smallScreen then
--- 		modifyForSmallScreen()
--- 	else
--- 		modifyForLargeScreen()
--- 	end
--- end
-
 local function doPurchasePrompt(
 	player,
 	assetId,
@@ -1359,21 +1319,3 @@ if enableBrowserWindowClosedEvent then
 		doPlayerFundsCheck(false)
 	end)
 end
-
--- Game.CoreGui.RobloxGui.Changed:connect(function()
-	-- local nowIsSmallScreen = (
-	-- 	game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold
-	-- )
-	-- if nowIsSmallScreen and not isSmallScreen then
-	-- 	changeGuiToScreenSize(true)
-	-- elseif not nowIsSmallScreen and isSmallScreen then
-	-- 	changeGuiToScreenSize(false)
-	-- end
-
-	-- isSmallScreen = nowIsSmallScreen
--- end)
-
--- isSmallScreen = (game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold)
--- if isSmallScreen then
--- 	changeGuiToScreenSize(true)
--- end

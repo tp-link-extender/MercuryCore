@@ -12,7 +12,7 @@ local RbxStamper = {}
 -- Return:
 -- cellPos - The terrain cell intersection point if there is one, vectorPos if there isn't.
 -- hit - Whether there was a plane intersection.  Value is true if there was, false if not.
-function PlaneIntersection(vectorPos)
+local function PlaneIntersection(vectorPos)
 	local hit = false
 	local currCamera = game.Workspace.CurrentCamera
 	local startPos = Vector3.new(

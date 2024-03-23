@@ -4248,6 +4248,7 @@ declare class ContentProvider extends Instance
 	function RegisterEncryptedAsset(self, assetId: Content, encryptionKey: string): nil
 	function RegisterSessionEncryptedAsset(self, contentId: Content, sessionKey: string): nil
 	function SetBaseUrl(self, url: string): nil
+	function SetThreadPool(self, count: number): nil
 	function UnregisterDefaultEncryptionKey(self): nil
 	function UnregisterEncryptedAsset(self, assetId: Content): nil
 end
@@ -4793,6 +4794,7 @@ end
 
 
 declare class GamePassService extends Instance
+	function SetPlayerHasPassUrl(self, playerHasPassUrl: string): nil
 end
 
 declare class GameSettings extends Instance
@@ -5550,8 +5552,10 @@ declare class InsertService extends Instance
 	function LoadPackageAsset(self, url: Content): { Instance }
 	function LoadPackageAssetAsync(self, url: Content): { Instance }
 
-	function SetAssetUrl(self, assetUrl: Content): nil
-	function SetAssetVersionUrl(self, assetVersionUrl: Content): nil
+	function SetAssetUrl(self, assetUrl: string): nil
+	function SetAssetVersionUrl(self, assetVersionUrl: string): nil
+	function SetBaseSetsUrl(self, baseSetsUrl: string): nil
+	function SetCollectionUrl(self, collectionUrl: string): nil
 end
 
 declare class JointInstance extends Instance
@@ -5815,6 +5819,9 @@ declare class MarketplaceService extends Instance
 	function SignalPromptPurchaseFinished(self, player: Instance, assetId: number, success: boolean): nil
 	function SignalServerLuaDialogClosed(self, value: boolean): nil
 	function UserOwnsGamePassAsync(self, userId: number, gamePassId: number): boolean
+
+	function SetProductInfoUrl(self, url: string): nil
+	function SetPlayerOwnsAssetUrl(self, url: string): nil
 end
 
 declare class MaterialGenerationService extends Instance
@@ -7527,9 +7534,9 @@ declare class DataModel extends ServiceProvider
 	function GetObjectsList(self, urls: { any }): { any }
 	function GetPlaySessionId(self): string
 	function HttpGet(self, url: string, synchronous: boolean, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
-	function HttpGetAsync(self, url: string, synchronous: boolean, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpGetAsync(self, url: string, synchronous: boolean?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
 	function HttpPost(self, url: string, data: string, synchronous: boolean, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
-	function HttpPostAsync(self, url: string, data: string, synchronous: boolean, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpPostAsync(self, url: string, data: string?, synchronous: boolean?, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
 	function InsertObjectsAndJoinIfLegacyAsync(self, url: Content): { Instance }
 	function IsContentLoaded(self): boolean
 	function IsLoaded(self): boolean
@@ -7624,6 +7631,8 @@ declare class SocialService extends Instance
 	function SetBestFriendUrl(self, bestFriendUrl: string): nil
 	function SetStuffUrl(self, stuffUrl: string): nil
 	function SetPackageContentsUrl(self, stuffUrl: string): nil
+		
+	function SetGroupUrl(self, groupUrl: string): nil
 end
 
 declare class Sound extends Instance
@@ -9132,4 +9141,4 @@ declare LoadLibrary: ((libraryName: "RbxFusion") -> Fusion) & ((libraryName: "Rb
 declare function settings(): GlobalSettings
 declare function UserSettings(): UserSettings
 declare function PluginManager(): PluginManager
-declare function ypcall(f: () -> any, ...: any): (boolean, any)
+declare function ypcall(f: (() -> any) | (() -> ()), ...: any): (boolean, any)

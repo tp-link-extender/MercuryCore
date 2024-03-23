@@ -71,7 +71,7 @@ local currentMaterial = 1
 -- load our libraries
 local RbxGui = LoadLibrary "RbxGui"
 -- local RbxUtil = LoadLibrary "RbxUtility"
-ContentProvider:Preload "http://banland.xyz/asset/?id=82741829"
+ContentProvider:Preload "http://banland.xyz/asset?id=82741829"
 
 ------------------------- OBJECT DEFINITIONS ---------------------
 
@@ -175,7 +175,7 @@ function MouseHighlighter.Create(mouseUse)
 	imageLabel.BackgroundTransparency = 1
 	imageLabel.Size = UDim2.new(1, 0, 1, 0)
 	imageLabel.Position = UDim2.new(-0.35, 0, -0.5, 0)
-	imageLabel.Image = "http://banland.xyz/asset/?id=82741829"
+	imageLabel.Image = "http://banland.xyz/asset?id=82741829"
 	imageLabel.Parent = billboardGui
 
 	local lastTweenChange
@@ -617,7 +617,7 @@ function LoadProgressBar(text)
 			-8
 		)
 		spinnerImage.BackgroundTransparency = 1
-		spinnerImage.Image = "http://banland.xyz/asset/?id=45880710"
+		spinnerImage.Image = "http://banland.xyz/asset?id=45880710"
 		spinnerImage.Parent = spinnerFrame
 
 		spinnerIcons[spinnerNum] = spinnerImage
@@ -633,10 +633,10 @@ function LoadProgressBar(text)
 			while pos < 8 do
 				if pos == spinPos or pos == ((spinPos + 1) % 8) then
 					spinnerIcons[pos + 1].Image =
-						"http://banland.xyz/asset/?id=45880668"
+						"http://banland.xyz/asset?id=45880668"
 				else
 					spinnerIcons[pos + 1].Image =
-						"http://banland.xyz/asset/?id=45880710"
+						"http://banland.xyz/asset?id=45880710"
 				end
 
 				pos = pos + 1

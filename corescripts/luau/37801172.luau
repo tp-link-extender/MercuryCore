@@ -1,3 +1,4 @@
+--!strict
 -- Script Context.StarterScript
 print "[Mercury]: Loaded corescript 37801172"
 

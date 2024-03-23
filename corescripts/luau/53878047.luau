@@ -77,7 +77,7 @@ local CurrentLoadout = New "Frame" {
 	New "ImageLabel" {
 		Name = "Background",
 		Size = UDim2.new(1.2, 0, 1.2, 0),
-		Image = "http://banland.xyz/asset/?id=96536002",
+		Image = "http://banland.xyz/asset?id=96536002",
 		BackgroundTransparency = 1,
 		Position = UDim2.new(-0.1, 0, -0.1, 0),
 		ZIndex = 0.0,
@@ -85,7 +85,7 @@ local CurrentLoadout = New "Frame" {
 		New "ImageLabel" {
 			Size = UDim2.new(1, 0, 0.025, 1),
 			Position = UDim2.new(0, 0, 0, 0),
-			Image = "http://banland.xyz/asset/?id=97662207",
+			Image = "http://banland.xyz/asset?id=97662207",
 			BackgroundTransparency = 1,
 		},
 	},
@@ -105,13 +105,13 @@ local CurrentLoadout = New "Frame" {
 		New "ImageLabel" {
 			Name = "Background",
 			BackgroundTransparency = 1,
-			Image = "http://banland.xyz/asset/?id=97613075",
+			Image = "http://banland.xyz/asset?id=97613075",
 			Size = UDim2.new(1, 0, 1, 0),
 		},
 		-- New "ImageLabel" {
 		-- 	Name = "Highlight",
 		-- 	BackgroundTransparency = 1,
-		-- 	Image = "http://banland.xyz/asset/?id=97643886",
+		-- 	Image = "http://banland.xyz/asset?id=97643886",
 		-- 	Size = UDim2.new(1, 0, 1, 0),
 		-- 	Visible = false,
 		-- }
@@ -183,7 +183,7 @@ New "ImageButton" {
 	Visible = false,
 	Name = "BackpackButton",
 	BackgroundTransparency = 1,
-	Image = "http://banland.xyz/asset/?id=97617958",
+	Image = "http://banland.xyz/asset?id=97617958",
 	Position = UDim2.new(0.5, -60, 1, -108),
 	Size = UDim2.new(0, 120, 0, 18),
 	Parent = gui.ControlFrame,
@@ -283,7 +283,7 @@ New "Frame" {
 			New "ImageLabel" {
 				RobloxLocked = true,
 				Name = "XImage",
-				Image = "http://banland.xyz/asset/?id=75547445",
+				Image = "http://banland.xyz/asset?id=75547445",
 				BackgroundTransparency = 1,
 				Position = UDim2.new(-0.25, -1, -0.25, -1),
 				Size = UDim2.new(1.5, 2, 1.5, 2),
@@ -495,7 +495,7 @@ New "Frame" {
 				New "ImageLabel" {
 					Name = "Background",
 					BackgroundTransparency = 1,
-					Image = "http://banland.xyz/asset/?id=97613075",
+					Image = "http://banland.xyz/asset?id=97613075",
 					Size = UDim2.new(1, 0, 1, 0),
 				},
 				New "ObjectValue" {

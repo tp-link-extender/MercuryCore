@@ -677,7 +677,7 @@ function Chat:CreateGui()
 
 		New "ImageLabel" {
 			Name = "Background",
-			Image = "http://banland.xyz/asset/?id=97120937", --96551212';
+			Image = "http://banland.xyz/asset?id=97120937", --96551212';
 			Size = UDim2.new(1.3, 0, 1.64, 0),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,

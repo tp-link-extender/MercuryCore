@@ -37,7 +37,7 @@ settings().Diagnostics:LegacyScriptMode()
 InsertService:SetBaseSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=10&type=base"
 InsertService:SetUserSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
 InsertService:SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d"
-InsertService:SetAssetUrl "http://banland.xyz/Asset/?id=%d"
+InsertService:SetAssetUrl "http://banland.xyz/asset?id=%d"
 InsertService:SetAssetVersionUrl "http://banland.xyz/Asset/?assetversionid=%d"
 
 pcall(function()
@@ -84,7 +84,7 @@ end)
 
 workspace:SetPhysicsThrottleEnabled(true)
 
-function doVisit()
+local function doVisit()
 	message.Text = "Loading Game"
 
 	pcall(function()
