@@ -135,6 +135,8 @@ async function getVersions(id: number, version?: number) {
 			versions.push(fetched)
 		}
 
+	console.log("CACHE", versions)
+
 	await query(
 		surql`
 			FOR $version IN $versions {
@@ -247,6 +249,8 @@ export const actions = {
 
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
+
+		console.log({ assets: form.data.shared.split(",").map(s => +s), ...data })
 
 		const res = await mquery<unknown[]>(
 			surql`

@@ -1,4 +1,4 @@
---!nonstrict
+--!strict
 
 --[[
 	Constructs a new state object which can listen for updates on another state

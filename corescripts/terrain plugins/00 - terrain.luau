@@ -1,6 +1,6 @@
 -- Local function definitions
 while game == nil do
-	wait(1 / 30)
+	wait()
 end
 
 ---------------

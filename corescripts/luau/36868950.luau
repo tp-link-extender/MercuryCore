@@ -1,3 +1,4 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/ToolTip
 print "[Mercury]: Loaded corescript 36868950"
 
@@ -5,7 +6,10 @@ local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
 
-local controlFrame = script.Parent:FindFirstChild "ControlFrame"
+local RunService = game:GetService "RunService"
+
+local RobloxGui = script.Parent
+local controlFrame = RobloxGui:FindFirstChild "ControlFrame"
 
 if not controlFrame then
 	return
@@ -49,7 +53,7 @@ local function setUpListeners(frameToListen)
 						- fadeSpeed
 					frameToListen.TextTransparency = frameToListen.TextTransparency
 						- fadeSpeed
-					wait()
+					RunService.Heartbeat:wait()
 				end
 			end
 		end

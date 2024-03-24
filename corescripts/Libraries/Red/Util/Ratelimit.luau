@@ -1,3 +1,5 @@
+--!strict
+
 return function<T>(Limit: number, Interval: number)
 	assert(Limit > 0, "Limit must be greater than 0")
 

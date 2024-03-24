@@ -29,19 +29,15 @@ waitForProperty(game.Players, "LocalPlayer")
 
 local function SlotNumber()
 	return New "TextLabel" {
-		Name = "SlotNumber",
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
 		Font = Enum.Font.ArialBold,
 		FontSize = Enum.FontSize.Size18,
-		Position = UDim2.new(0, 0, 0, 0),
 		Size = UDim2.new(0, 10, 0, 15),
-		TextColor3 = Color3.new(1, 1, 1),
 		TextTransparency = 0,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Bottom,
 		RobloxLocked = true,
-		ZIndex = 5,
 	}
 end
 
@@ -160,7 +156,12 @@ local CurrentLoadout = New "Frame" {
 			TextWrap = true,
 			ZIndex = 5.0,
 		},
-		SlotNumber(),
+		Hydrate(SlotNumber()) {
+			Name = "SlotNumber",
+			TextColor3 = Color3.new(1, 1, 1),
+			Position = UDim2.new(0, 0, 0, 0),
+			ZIndex = 5,
+		},
 		Hydrate(SlotNumber()) {
 			Name = "SlotNumberDownShadow",
 			TextColor3 = Color3.new(0, 0, 0),

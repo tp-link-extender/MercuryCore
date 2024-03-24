@@ -1,3 +1,5 @@
+--!strict
+
 local CollectionService = game:GetService "CollectionService"
 
 local Spawn = require "./Spawn"

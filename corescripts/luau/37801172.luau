@@ -5,7 +5,8 @@ print "[Mercury]: Loaded corescript 37801172"
 local ScriptContext = game:GetService "ScriptContext"
 local CoreGui = game:GetService "CoreGui"
 
-require "../Modules/DebugConsole"(CoreGui)
+local Debug = require "../Modules/DebugConsole"
+Debug(CoreGui)
 
 -- Creates all neccessary scripts for the gui on initial load, everything except build tools
 -- Please note that these are loaded in a specific order to diminish errors/perceived load time by user
@@ -24,7 +25,10 @@ local function waitForChild(instance, name)
 end
 
 waitForChild(CoreGui, "RobloxGui")
-local screenGui = CoreGui:FindFirstChild "RobloxGui"
+local screenGui = CoreGui:FindFirstChild "RobloxGui" :: ScreenGui & {
+	Backpack: Frame,
+	CurrentLoadout: Frame,
+}
 
 local scripts = {
 	[36868950] = "CoreScripts/ToolTip", -- ToolTipper  (creates tool tips for gui)
@@ -40,25 +44,8 @@ for id, path in pairs(scripts) do
 	ScriptContext:AddCoreScript(id, screenGui, path)
 end
 
-if screenGui.AbsoluteSize.Y >= 600 then
-	-- New Player List
-	ScriptContext:AddCoreScript(
-		48488235,
-		screenGui,
-		"CoreScripts/PlayerListScript"
-	)
-else
-	delay(5, function()
-		if screenGui.AbsoluteSize.Y >= 600 then
-			-- New Player List
-			ScriptContext:AddCoreScript(
-				48488235,
-				screenGui,
-				"CoreScripts/PlayerListScript"
-			)
-		end
-	end)
-end
+-- New Player List
+ScriptContext:AddCoreScript(48488235, screenGui, "CoreScripts/PlayerListScript")
 
 -- Backpack Builder, creates most of the backpack gui
 ScriptContext:AddCoreScript(
@@ -69,7 +56,7 @@ ScriptContext:AddCoreScript(
 
 waitForChild(screenGui, "CurrentLoadout")
 waitForChild(screenGui, "Backpack")
-local Backpack = screenGui.Backpack
+local Backpack = screenGui.Backpack :: Frame
 
 -- Manager handles all big backpack state changes, other scripts subscribe to this and do things accordingly
 ScriptContext:AddCoreScript(

@@ -1,6 +1,8 @@
 -- Script Context./Libraries/LibraryRegistration/LibraryRegist
 print "[Mercury]: Loaded corescript 60595695"
 
+local RunService = game:GetService "RunService"
+
 -- Library Registration Script
 -- This script is used to register RbxLua libraries on game servers, so game scripts have
 -- access to all of the libraries (otherwise only local scripts do)
@@ -12,7 +14,7 @@ for i = 1, 4 do
 	if ScriptContext then
 		break
 	end
-	wait(0.2)
+	RunService.Heartbeat:wait()
 end
 
 if ScriptContext then

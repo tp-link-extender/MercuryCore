@@ -1,5 +1,4 @@
 --!strict
---!nolint LocalShadow
 
 --[[
     Time-based contextual values, to allow for transparently passing values down

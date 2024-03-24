@@ -1,3 +1,5 @@
+--!strict
+
 local Promise = require "./Promise"
 local Spawn = require "./Spawn"
 

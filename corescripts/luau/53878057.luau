@@ -3,6 +3,7 @@ print "[Mercury]: Loaded corescript 53878057"
 
 local CoreGui = game:GetService "CoreGui"
 local GuiService = game:GetService "GuiService"
+local RunService = game:GetService "RunService"
 local UserInputService = Game:GetService "UserInputService"
 
 -- A couple of necessary functions
@@ -525,12 +526,6 @@ local function activateGear(num)
 	end
 end
 
-local waitForDebounce = function()
-	while debounce do
-		wait()
-	end
-end
-
 local function pointInRectangle(point, rectTopLeft, rectSize)
 	if point.x > rectTopLeft.x and point.x < (rectTopLeft.x + rectSize.x) then
 		if
@@ -713,7 +708,9 @@ local function addingPlayerChild(
 	addToSlot,
 	inventoryGearButton
 )
-	waitForDebounce()
+	while debounce do
+		RunService.Heartbeat:wait()
+	end
 	debounce = true
 
 	if child:FindFirstChild "RobloxBuildTool" then
@@ -1153,7 +1150,7 @@ pcall(function()
 	Game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
-wait() -- let stuff initialize incase this is first heartbeat...
+RunService.Heartbeat:wait() -- let stuff initialize incase this is first heartbeat...
 
 waitForChild(player, "Backpack")
 waitForProperty(player, "Character")

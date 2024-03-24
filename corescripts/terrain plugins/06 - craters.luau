@@ -1,5 +1,5 @@
 while game == nil do
-	wait(1 / 30)
+	wait()
 end
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
@@ -80,11 +80,11 @@ function makeCrater(x, y, z, cr, cd)
 		if cellschanged == false then
 			break
 		end
-		wait(0)
+		wait()
 	end
 
 	for ri = 0, cr do
-		wait(0)
+		wait()
 
 		local i = x - ri
 		for k = z - cr, z + cr do

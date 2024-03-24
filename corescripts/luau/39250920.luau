@@ -1,3 +1,4 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/MainBotChatScript
 print "[Mercury]: Loaded corescript 39250920"
 
@@ -6,6 +7,7 @@ local New = News.New
 local Hydrate = News.Hydrate
 
 local InsertService = game:GetService "InsertService"
+local RunService = game:GetService "RunService"
 
 local function waitForProperty(instance, name)
 	while not instance[name] do
@@ -173,11 +175,13 @@ local function createMessageDialog()
 	}
 end
 
-local function showMessage(msg, size)
+local function showMessage(msg: string, size: number)
+	Hydrate(messageDialog) {
+		Size = UDim2.new(0, size, 0, 40),
+		Position = UDim2.new(0.5, -size / 2, 0.5, -40),
+		Visible = true,
+	}
 	messageDialog.Text.Text = msg
-	messageDialog.Size = UDim2.new(0, size, 0, 40)
-	messageDialog.Position = UDim2.new(0.5, -size / 2, 0.5, -40)
-	messageDialog.Visible = true
 	wait(2)
 	messageDialog.Visible = false
 end
@@ -243,7 +247,7 @@ local function normalEndDialog()
 	endDialog()
 end
 
-local function sanitizeMessage(msg)
+local function sanitiseMessage(msg)
 	if string.len(msg) == 0 then
 		return "..."
 	end
@@ -256,7 +260,7 @@ local function presentDialogChoices(talkingPart, dialogChoices)
 	end
 
 	currentConversationPartner = talkingPart
-	local sortedDialogChoices = {}
+	local sortedDialogChoices: { DialogChoice } = {}
 	for _, obj in pairs(dialogChoices) do
 		if obj:IsA "DialogChoice" then
 			table.insert(sortedDialogChoices, obj)
@@ -313,7 +317,6 @@ local function renewKillswitch(dialog)
 	end
 
 	currentAbortDialogScript = Hydrate(timeoutScript:Clone()) {
-
 		archivable = false,
 		Disabled = false,
 		Parent = dialog,
@@ -323,11 +326,13 @@ end
 local function selectChoice(choice)
 	renewKillswitch(currentConversationDialog)
 
+	local localPlayer = game.Players.LocalPlayer
+
 	--First hide the Gui
 	mainFrame.Visible = false
 	if choice == lastChoice then
 		game.Chat:Chat(
-			game.Players.LocalPlayer.Character,
+			localPlayer.Character,
 			"Goodbye!",
 			getChatColor(currentTone())
 		)
@@ -337,8 +342,8 @@ local function selectChoice(choice)
 		local dialogChoice = choiceMap[choice]
 
 		game.Chat:Chat(
-			game.Players.LocalPlayer.Character,
-			sanitizeMessage(dialogChoice.UserDialog),
+			localPlayer.Character,
+			sanitiseMessage(dialogChoice.UserDialog),
 			getChatColor(currentTone())
 		)
 		wait(1)
@@ -348,7 +353,7 @@ local function selectChoice(choice)
 		)
 		game.Chat:Chat(
 			currentConversationPartner,
-			sanitizeMessage(dialogChoice.ResponseDialog),
+			sanitiseMessage(dialogChoice.ResponseDialog),
 			getChatColor(currentTone())
 		)
 
@@ -444,7 +449,7 @@ local function doDialog(dialog)
 	local il = Instance.Lock(dialog, player)
 	print("for instance", il)
 	while not il do
-		wait()
+		RunService.Heartbeat:wait()
 		il = Instance.Lock(dialog, player)
 		print("for instance", il)
 	end
@@ -486,7 +491,7 @@ local function checkForLeaveArea()
 	end
 end
 
-local function startDialog(dialog)
+local function startDialog(dialog: Dialog)
 	if dialog.Parent and dialog.Parent:IsA "BasePart" then
 		if
 			player:DistanceFromCharacter(dialog.Parent.Position)
@@ -509,7 +514,7 @@ local function startDialog(dialog)
 	end
 end
 
-local function removeDialog(dialog)
+local function removeDialog(dialog: Dialog)
 	if dialogMap[dialog] then
 		dialogMap[dialog]:Remove()
 		dialogMap[dialog] = nil
@@ -520,7 +525,7 @@ local function removeDialog(dialog)
 	end
 end
 
-local function addDialog(dialog)
+local function addDialog(dialog: Dialog)
 	if dialog.Parent then
 		if dialog.Parent:IsA "BasePart" then
 			local chatGui = Hydrate(chatNotificationGui:Clone()) {

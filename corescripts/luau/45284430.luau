@@ -8,6 +8,7 @@ local Hydrate = News.Hydrate
 
 local ContentProvider = game:GetService "ContentProvider"
 local InsertService = game:GetService "InsertService"
+local RunService = game:GetService "RunService"
 
 local RbxGui = {}
 
@@ -111,7 +112,13 @@ local function CreateButtons(frame, buttons, yPos, ySize)
 	end
 end
 
-local function setSliderPos(newAbsPosX, slider, sliderPosition, bar, steps)
+local function setSliderPos(
+	newAbsPosX: number,
+	slider: ImageButton,
+	sliderPosition: IntValue,
+	bar,
+	steps: number
+)
 	local newStep = steps - 1 --otherwise we really get one more step than we want
 	local relativePosX = math.min(
 		1,
@@ -245,7 +252,7 @@ function RbxGui.CreateStyledMessageDialog(title, message, style, buttons)
 end
 
 local scrollMouseCount
-function RbxGui.CreateDropDownMenu(items, onSelect, forRoblox)
+function RbxGui.CreateDropDownMenu(items, onSelect, forRoblox: boolean?)
 	local width = UDim.new(0, 100)
 	local height = UDim.new(0, 32)
 
@@ -342,7 +349,7 @@ function RbxGui.CreateDropDownMenu(items, onSelect, forRoblox)
 	local scrollDownButton
 	scrollMouseCount = 0
 
-	local setZIndex = function(baseZIndex)
+	local function setZIndex(baseZIndex: number)
 		droppedDownMenu.ZIndex = baseZIndex + 1
 		if scrollUpButton then
 			scrollUpButton.ZIndex = baseZIndex + 3
@@ -686,11 +693,12 @@ function RbxGui.GetFontHeight(font, fontSize)
 	end
 end
 
-local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
+local function layoutGuiObjectsHelper(frame: Frame, guiObjects, settingsTable)
 	local totalPixels = frame.AbsoluteSize.Y
 	local pixelsRemaining = frame.AbsoluteSize.Y
-	for _, child in ipairs(guiObjects) do
-		if child:IsA "TextLabel" or child:IsA "TextButton" then
+	for _, ch in ipairs(guiObjects) do
+		if ch:IsA "TextLabel" or ch:IsA "TextButton" then
+			local child = ch :: TextLabel & TextButton -- luau moment
 			local isLabel = child:IsA "TextLabel"
 			if isLabel then
 				pixelsRemaining = pixelsRemaining
@@ -712,7 +720,10 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 				pixelsRemaining
 			)
 
-			if child.TextFits and child.TextBounds.Y < pixelsRemaining then
+			if
+				child.TextFits
+				and (child.TextBounds.Y :: number) < pixelsRemaining
+			then
 				child.Visible = true
 				if isLabel then
 					child.Size = UDim2.new(
@@ -752,7 +763,8 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 				pixelsRemaining = -1
 			end
 		else
-			--GuiObject
+			local child = ch :: GuiObject
+			-- GuiObject
 			child.Position = UDim2.new(
 				child.Position.X.Scale,
 				child.Position.X.Offset,
@@ -804,7 +816,7 @@ function RbxGui.LayoutGuiObjects(frame, guiObjects, settingsTable)
 	end
 
 	local recalculate = function()
-		wait()
+		RunService.Heartbeat:wait()
 		layoutGuiObjectsHelper(wrapperFrame, guiObjects, settingsTable)
 	end
 
@@ -819,7 +831,7 @@ function RbxGui.LayoutGuiObjects(frame, guiObjects, settingsTable)
 	layoutGuiObjectsHelper(wrapperFrame, guiObjects, settingsTable)
 end
 
-function RbxGui.CreateSlider(steps, width, position)
+function RbxGui.CreateSlider(steps: number, width: number, position)
 	local sliderGui = New "Frame" {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 1,
@@ -937,8 +949,8 @@ function RbxGui.CreateTrueScrollingFrame()
 	local lowY
 	local highY
 
-	local dragCon
-	local upCon
+	local dragCon: RBXScriptConnection?
+	local upCon: RBXScriptConnection?
 
 	local internalChange = false
 
@@ -1060,18 +1072,20 @@ function RbxGui.CreateTrueScrollingFrame()
 			Size = UDim2.new(0, 10, 0, 0),
 			ZIndex = 2,
 			BackgroundTransparency = 0.5,
-			Parent = scrollbar,
 		}
 	end
 
 	local scrollNub = Hydrate(nub()) {
 		Position = UDim2.new(0.5, -5, 0.5, 0),
+		Parent = scrollbar,
 	}
 	local newNub = Hydrate(nub()) {
 		Position = UDim2.new(0.5, -5, 0.5, -2),
+		Parent = scrollbar,
 	}
 	local lastNub = Hydrate(nub()) {
 		Position = UDim2.new(0.5, -5, 0.5, 2),
+		Parent = scrollbar,
 	}
 
 	scrollbar.MouseEnter:connect(function()
@@ -1148,7 +1162,7 @@ function RbxGui.CreateTrueScrollingFrame()
 		return (oldPos ~= scrollbar.Position)
 	end
 
-	local function drillDownSetHighLow(instance)
+	local function drillDownSetHighLow(instance: GuiObject)
 		if not instance or not instance:IsA "GuiObject" then
 			return
 		end
@@ -1176,7 +1190,7 @@ function RbxGui.CreateTrueScrollingFrame()
 		end
 		local children = instance:GetChildren()
 		for i = 1, #children do
-			drillDownSetHighLow(children[i])
+			drillDownSetHighLow(children[i] :: GuiObject)
 		end
 	end
 
@@ -1184,7 +1198,7 @@ function RbxGui.CreateTrueScrollingFrame()
 		local firstChildren = scrollingFrame:GetChildren()
 
 		for i = 1, #firstChildren do
-			drillDownSetHighLow(firstChildren[i])
+			drillDownSetHighLow(firstChildren[i]) -- y no type annotation here, luau?
 		end
 	end
 
@@ -1352,24 +1366,27 @@ function RbxGui.CreateTrueScrollingFrame()
 			upCon = mouseDrag.MouseButton1Up:connect(function()
 				scrollStamp = tick()
 				mouseDrag.Parent = nil
-				upCon:disconnect()
+				if upCon then
+					-- what's upcon
+					-- nothing much, you?
+					upCon:disconnect()
+				end
 			end)
 			mouseDrag.Parent = getScreenGuiAncestor(scrollbar)
 			doScrollUp()
 			wait(0.2)
 			local t = tick()
-			local w = 0.1
 			while scrollStamp == current do
 				doScrollUp()
 				if not scrollUpButton.Active then
 					break
-				end
-				if tick() - t > 5 then
-					w = 0
+				elseif tick() - t > 5 then
+					wait()
 				elseif tick() - t > 2 then
-					w = 0.06
+					wait(0.06)
+				else
+					wait(0.1)
 				end
-				wait(w)
 			end
 		end
 	end
@@ -1462,7 +1479,13 @@ function RbxGui.CreateTrueScrollingFrame()
 	scrollbar.MouseButton1Up:connect(scrollTick)
 
 	-- local function heightCheck(instance)
-	-- 	if (highY and (instance.AbsolutePosition.Y + instance.AbsoluteSize.Y) > highY) or not highY then
+	-- 	if
+	-- 		(
+	-- 			highY
+	-- 			and (instance.AbsolutePosition.Y + instance.AbsoluteSize.Y)
+	-- 				> highY
+	-- 		) or not highY
+	-- 	then
 	-- 		highY = instance.AbsolutePosition.Y + instance.AbsoluteSize.Y
 	-- 	end
 	-- 	setSliderSizeAndPosition()
@@ -1489,7 +1512,7 @@ function RbxGui.CreateTrueScrollingFrame()
 		end
 
 		if prop == "Size" or prop == "Position" then
-			wait()
+			RunService.Heartbeat:wait()
 			highLowRecheck()
 		end
 	end
@@ -1500,7 +1523,7 @@ function RbxGui.CreateTrueScrollingFrame()
 		end
 
 		if instance.Visible then
-			wait() -- wait a heartbeat for sizes to reconfig
+			RunService.Heartbeat:wait() -- wait a heartbeat for sizes to reconfig
 			highLowRecheck()
 		end
 
@@ -1519,7 +1542,7 @@ function RbxGui.CreateTrueScrollingFrame()
 			descendantsChangeConMap[instance]:disconnect()
 			descendantsChangeConMap[instance] = nil
 		end
-		wait() -- wait a heartbeat for sizes to reconfig
+		RunService.Heartbeat:wait() -- wait a heartbeat for sizes to reconfig
 		highLowRecheck()
 	end)
 
@@ -1930,7 +1953,7 @@ function RbxGui.CreateScrollingFrame(orderList, scrollStyle)
 			return
 		end
 		reentrancyGuard = true
-		wait()
+		RunService.Heartbeat:wait()
 		local success, err
 		if style == "grid" then
 			success, err = pcall(function()
@@ -2136,7 +2159,11 @@ function RbxGui.CreateScrollingFrame(orderList, scrollStyle)
 	return frame, scrollUpButton, scrollDownButton, recalculate, scrollbar
 end
 
-local function binaryGrow(min, max, fits)
+local function binaryGrow(
+	min: number,
+	max: number,
+	fits: (number) -> boolean
+): number
 	if min > max then
 		return min
 	end
@@ -2147,17 +2174,21 @@ local function binaryGrow(min, max, fits)
 		if fits(mid) and (biggestLegal == nil or biggestLegal < mid) then
 			biggestLegal = mid
 
-			--Try growing
+			-- Try growing
 			min = mid + 1
 		else
-			--Doesn't fit, shrink
+			-- Doesn't fit, shrink
 			max = mid - 1
 		end
 	end
 	return biggestLegal
 end
 
-local function binaryShrink(min, max, fits)
+local function binaryShrink(
+	min: number,
+	max: number,
+	fits: (number) -> boolean
+): number
 	if min > max then
 		return min
 	end
@@ -2168,27 +2199,28 @@ local function binaryShrink(min, max, fits)
 		if fits(mid) and (smallestLegal == nil or smallestLegal > mid) then
 			smallestLegal = mid
 
-			--It fits, shrink
+			-- It fits, shrink
 			max = mid - 1
 		else
-			--Doesn't fit, grow
+			-- Doesn't fit, grow
 			min = mid + 1
 		end
 	end
 	return smallestLegal
 end
 
-local function getGuiOwner(instance)
-	while instance ~= nil do
-		if instance:IsA "ScreenGui" or instance:IsA "BillboardGui" then
-			return instance
+local function hasGuiOwner(instance: Instance)
+	local obj: Instance? = instance
+	while obj do
+		if obj:IsA "ScreenGui" or obj:IsA "BillboardGui" then
+			return true
 		end
-		instance = instance.Parent
+		obj = obj.Parent
 	end
-	return nil
+	return false
 end
 
-function RbxGui.AutoTruncateTextObject(textLabel)
+function RbxGui.AutoTruncateTextObject(textLabel: TextLabel)
 	local text = textLabel.Text
 
 	local fullLabel = Hydrate(textLabel:Clone()) {
@@ -2204,11 +2236,11 @@ function RbxGui.AutoTruncateTextObject(textLabel)
 	}
 
 	local shortText
-	local mouseEnterConnection
-	local mouseLeaveConnection
+	local mouseEnterConnection: RBXScriptConnection?
+	local mouseLeaveConnection: RBXScriptConnection?
 
-	local checkForResize = function()
-		if getGuiOwner(textLabel) == nil then
+	local function checkForResize()
+		if not hasGuiOwner(textLabel) then
 			return
 		end
 		textLabel.Text = text
@@ -2228,11 +2260,8 @@ function RbxGui.AutoTruncateTextObject(textLabel)
 
 			--Shrink the text
 			local textSize = binaryGrow(0, len, function(pos)
-				if pos == 0 then
-					textLabel.Text = "~"
-				else
-					textLabel.Text = `{string.sub(text, 1, pos)}~`
-				end
+				textLabel.Text = pos == 0 and "~"
+					or string.sub(text, 1, pos) .. "~"
 				return textLabel.TextFits
 			end)
 			shortText = `{string.sub(text, 1, textSize)}~`
@@ -2290,8 +2319,8 @@ function RbxGui.AutoTruncateTextObject(textLabel)
 end
 
 local function TransitionTutorialPages(
-	fromPage: Instance?,
-	toPage: Instance?,
+	fromPage: GuiObject?,
+	toPage: GuiObject?,
 	transitionFrame: Frame,
 	currentPageValue: ObjectValue
 )
@@ -2445,8 +2474,8 @@ end
 local function CreateBasicTutorialPage(
 	name: string,
 	handleResize: (number, number) -> (),
-	skipTutorial,
-	giveDoneButton
+	skipTutorial: () -> (),
+	giveDoneButton: boolean? -- idk
 )
 	local frame = New "Frame" {
 		Name = "TutorialPage",
@@ -2543,7 +2572,7 @@ local function CreateBasicTutorialPage(
 	innerFrame.Size = giveDoneButton and UDim2.new(1, 0, 1, -75)
 		or UDim2.new(1, 0, 1, -22)
 
-	local parentConnection
+	local parentConnection: RBXScriptConnection?
 
 	local function basicHandleResize()
 		if frame.Visible and frame.Parent then
@@ -2557,7 +2586,7 @@ local function CreateBasicTutorialPage(
 
 	frame.Changed:connect(function(prop)
 		if prop == "Parent" then
-			if parentConnection ~= nil then
+			if parentConnection then
 				parentConnection:disconnect()
 				parentConnection = nil
 			end
@@ -2565,7 +2594,7 @@ local function CreateBasicTutorialPage(
 				parentConnection = frame.Parent.Changed:connect(
 					function(parentProp)
 						if parentProp == "AbsoluteSize" then
-							wait()
+							RunService.Heartbeat:wait()
 							basicHandleResize()
 						end
 					end
@@ -2582,7 +2611,7 @@ local function CreateBasicTutorialPage(
 	return frame, innerFrame
 end
 
-RbxGui.CreateTextTutorialPage = function(name, text, skipTutorialFunc)
+function RbxGui.CreateTextTutorialPage(name, text, skipTutorial)
 	local frame
 	local contentFrame
 
@@ -2608,7 +2637,7 @@ RbxGui.CreateTextTutorialPage = function(name, text, skipTutorialFunc)
 	end
 
 	frame, contentFrame =
-		CreateBasicTutorialPage(name, handleResize, skipTutorialFunc)
+		CreateBasicTutorialPage(name, handleResize, skipTutorial)
 	textLabel.Parent = contentFrame
 
 	return frame
@@ -2617,9 +2646,9 @@ end
 RbxGui.CreateImageTutorialPage = function(
 	name,
 	imageAsset,
-	x,
-	y,
-	skipTutorialFunc,
+	x: number,
+	y: number,
+	skipTutorial: () -> (),
 	giveDoneButton
 )
 	local frame
@@ -2663,7 +2692,7 @@ RbxGui.CreateImageTutorialPage = function(
 	frame, contentFrame = CreateBasicTutorialPage(
 		name,
 		handleResize,
-		skipTutorialFunc,
+		skipTutorial,
 		giveDoneButton
 	)
 	imageLabel.Parent = contentFrame
@@ -2671,7 +2700,12 @@ RbxGui.CreateImageTutorialPage = function(
 	return frame
 end
 
-RbxGui.AddTutorialPage = function(tutorial, tutorialPage)
+type TutorialPage = GuiObject & {
+	NextButton: TextButton,
+	PrevButton: TextButton,
+}
+
+RbxGui.AddTutorialPage = function(tutorial, tutorialPage: TutorialPage)
 	local transitionFrame = tutorial.TransitionFrame
 	local currentPageValue = tutorial.CurrentTutorialPage
 
@@ -2683,7 +2717,7 @@ RbxGui.AddTutorialPage = function(tutorial, tutorialPage)
 	local children = tutorial.Pages:GetChildren()
 	if children and #children > 0 then
 		tutorialPage.Name = "TutorialPage" .. (#children + 1)
-		local previousPage = children[#children]
+		local previousPage: TutorialPage = children[#children]
 		if not previousPage:IsA "GuiObject" then
 			error "All elements under Pages must be GuiObjects"
 		end
@@ -3066,7 +3100,7 @@ RbxGui.CreateSetPanel = function(
 	end
 
 	local function handleResize()
-		wait() -- neccessary to insure heartbeat happened
+		RunService.Heartbeat:wait() -- neccessary to insure heartbeat happened
 
 		local itemPreview = setGui.SetPanel.ItemPreview
 
@@ -3084,8 +3118,15 @@ RbxGui.CreateSetPanel = function(
 		)
 	end
 
+	local function buttonImage()
+		return New "ImageLabel" {
+			Image = "",
+			BackgroundTransparency = 1,
+		}
+	end
+
 	local function makeInsertAssetButton()
-		local insertAssetButtonExample = New "Frame" {
+		return New "Frame" {
 			Name = "InsertAssetButtonExample",
 			Position = UDim2.new(0, 128, 0, 64),
 			Size = UDim2.new(0, 64, 0, 64),
@@ -3100,39 +3141,28 @@ RbxGui.CreateSetPanel = function(
 				Name = "AssetName",
 				Value = "",
 			},
+			New "TextButton" {
+				Name = "Button",
+				Text = "",
+				Style = Enum.ButtonStyle.RobloxButton,
+				Position = UDim2.new(0.025, 0, 0.025, 0),
+				Size = UDim2.new(0.95, 0, 0.95, 0),
+				ZIndex = 6,
+				Hydrate(buttonImage()) {
+					Name = "ButtonImage",
+					Position = UDim2.new(0, -7, 0, -7),
+					Size = UDim2.new(1, 14, 1, 14),
+					ZIndex = 7,
+				},
+			},
+			Hydrate(buttonImage()) {
+				Name = "ConfigIcon",
+				Visible = false,
+				Position = UDim2.new(1, -23, 1, -24),
+				Size = UDim2.new(0, 16, 0, 16),
+				ZIndex = 6,
+			},
 		}
-
-		local button = New "TextButton" {
-			Name = "Button",
-			Text = "",
-			Style = Enum.ButtonStyle.RobloxButton,
-			Position = UDim2.new(0.025, 0, 0.025, 0),
-			Size = UDim2.new(0.95, 0, 0.95, 0),
-			ZIndex = 6,
-			Parent = insertAssetButtonExample,
-		}
-
-		local buttonImage = New "ImageLabel" {
-			Name = "ButtonImage",
-			Image = "",
-			Position = UDim2.new(0, -7, 0, -7),
-			Size = UDim2.new(1, 14, 1, 14),
-			BackgroundTransparency = 1,
-			ZIndex = 7,
-			Parent = button,
-		}
-
-		Hydrate(buttonImage:Clone()) {
-			Name = "ConfigIcon",
-			Visible = false,
-			Position = UDim2.new(1, -23, 1, -24),
-			Size = UDim2.new(0, 16, 0, 16),
-			Image = "",
-			ZIndex = 6,
-			Parent = insertAssetButtonExample,
-		}
-
-		return insertAssetButtonExample
 	end
 
 	local function showLargePreview(insertButton)
@@ -3161,9 +3191,9 @@ RbxGui.CreateSetPanel = function(
 		end
 	end
 
-	local function createTerrainTypeButton(name, parent)
+	local function createTerrainTypeButton(name: string, parent: Frame)
 		local dropDownTextButton = New "TextButton" {
-			Name = `{name}Button`,
+			Name = name .. "Button",
 			Font = Enum.Font.ArialBold,
 			FontSize = Enum.FontSize.Size14,
 			BorderSizePixel = 0,
@@ -3201,7 +3231,7 @@ RbxGui.CreateSetPanel = function(
 		return dropDownTextButton
 	end
 
-	local function createTerrainDropDownMenu(zIndex)
+	local function createTerrainDropDownMenu(zIndex: number)
 		local dropDown = New "Frame" {
 			Name = "TerrainDropDown",
 			BackgroundColor3 = Color3.new(0, 0, 0),
@@ -3231,7 +3261,7 @@ RbxGui.CreateSetPanel = function(
 		end)
 	end
 
-	local function createDropDownMenuButton(parent)
+	local function createDropDownMenuButton(parent: Frame)
 		local dropDownButton = New "ImageButton" {
 			Name = "DropDownButton",
 			Image = "http://banland.xyz/asset?id=67581509",
@@ -4002,7 +4032,7 @@ RbxGui.CreateLoadingFrame = function(name, size, position)
 	return loadingFrame, updateLoadingGuiPercent, cancelButtonClicked
 end
 
-RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
+function RbxGui.CreatePluginFrame(name: string, size, position, scrollable, parent)
 	local function createMenuButton(
 		size,
 		position,
@@ -4043,6 +4073,15 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 		return button
 	end
 
+	local function separatingLineC()
+		return New "Frame" {
+			Name = "SeparatingLine",
+			BackgroundColor3 = Colour3(115, 115, 115),
+			BorderSizePixel = 0,
+			Size = UDim2.new(0, 1, 0, 14),
+		}
+	end
+
 	local dragBar = New "ImageButton" {
 		Name = `{name}DragBar`,
 		BackgroundColor3 = Colour3(39, 39, 39),
@@ -4061,7 +4100,14 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 			TextXAlignment = Enum.TextXAlignment.Left,
 			BackgroundTransparency = 1,
 		},
+		Hydrate(separatingLineC()) {
+			Position = UDim2.new(1, -18, 0.5, -7),
+		},
+		Hydrate(separatingLineC()) {
+			Position = UDim2.new(1, -35, 0.5, -7),
+		},
 	}
+
 	if size then
 		dragBar.Size = UDim2.new(size.X.Scale, size.X.Offset, 0, 20)
 			+ UDim2.new(0, 20, 0, 0)
@@ -4181,20 +4227,6 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 		Parent = minimizeFrame,
 	}
 
-	local separatingLine = New "Frame" {
-		Name = "SeparatingLine",
-		BackgroundColor3 = Colour3(115, 115, 115),
-		BorderSizePixel = 0,
-		Position = UDim2.new(1, -18, 0.5, -7),
-		Size = UDim2.new(0, 1, 0, 14),
-		Parent = dragBar,
-	}
-	-- otherSeparatingLine
-	Hydrate(separatingLine:Clone()) {
-		Position = UDim2.new(1, -35, 0.5, -7),
-		Parent = dragBar,
-	}
-
 	local widgetContainer = New "Frame" {
 		Name = "WidgetContainer",
 		BackgroundTransparency = 1,
@@ -4208,22 +4240,11 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	widgetContainer.Parent = dragBar
 
 	if size then
-		if scrollable then
-			widgetContainer.Size = size
-		else
-			widgetContainer.Size = UDim2.new(
-				0,
-				dragBar.AbsoluteSize.X,
-				size.Y.Scale,
-				size.Y.Offset
-			)
-		end
+		widgetContainer.Size = scrollable and size
+			or UDim2.new(0, dragBar.AbsoluteSize.X, size.Y.Scale, size.Y.Offset)
 	else
-		if scrollable then
-			widgetContainer.Size = UDim2.new(0, 163, 0, 400)
-		else
-			widgetContainer.Size = UDim2.new(0, dragBar.AbsoluteSize.X, 0, 400)
-		end
+		widgetContainer.Size = scrollable and UDim2.new(0, 163, 0, 400)
+			or UDim2.new(0, dragBar.AbsoluteSize.X, 0, 400)
 	end
 	if position then
 		widgetContainer.Position = position + UDim2.new(0, 0, 0, 20)

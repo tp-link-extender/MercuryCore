@@ -1,5 +1,5 @@
 while game == nil do
-	wait(1 / 30)
+	wait()
 end
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
@@ -216,7 +216,7 @@ end
 
 -- Show the highlighter.
 function MouseHighlighter:EnablePreview()
-	self.selectionBox.Parent = CoreGui-- This will make it not show up in workspace.
+	self.selectionBox.Parent = CoreGui -- This will make it not show up in workspace.
 end
 
 -- Create the mouse movement highlighter.
@@ -625,7 +625,7 @@ function onClicked(mouse2)
 				d = math.floor(50 * (originalY - prevY) / mouse2.ViewSizeY)
 				elevate(x, y, z, elevationOptions.r, r2, d, range)
 			end
-			wait(0)
+			wait()
 		end
 		ChangeHistoryService:SetWaypoint "Elevation"
 	end

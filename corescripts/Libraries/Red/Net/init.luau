@@ -1,3 +1,5 @@
+--!strict
+
 return function(IsServer: boolean)
 	local Players = game:GetService "Players"
 

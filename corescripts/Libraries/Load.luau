@@ -1,3 +1,4 @@
+--!strict
 local Load = {}
 
 function Load.Help()

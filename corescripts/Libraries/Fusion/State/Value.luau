@@ -1,4 +1,4 @@
---!nonstrict
+--!strict
 
 --[[
 	Constructs and returns objects which can be used to model independent

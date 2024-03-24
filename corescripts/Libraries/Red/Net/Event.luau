@@ -1,3 +1,5 @@
+--!strict
+
 return function(IsServer: boolean)
 	local RunService = game:GetService "RunService"
 

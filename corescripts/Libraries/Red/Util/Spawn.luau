@@ -1,4 +1,6 @@
-local FreeThread: thread? = nil
+--!strict
+
+local FreeThread: thread?
 
 local function FunctionPasser(fn, ...)
 	local AquiredThread = FreeThread

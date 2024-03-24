@@ -4024,19 +4024,9 @@ declare class ClusterPacketCache extends Instance
 end
 
 declare class CollectionService extends Instance
-	TagAdded: RBXScriptSignal<string>
-	ItemAdded: RBXScriptSignal<string>
-	TagRemoved: RBXScriptSignal<string>
-	ItemRemoved: RBXScriptSignal<string>
-	function AddTag(self, instance: Instance, tag: string): nil
-	function GetAllTags(self): { string }
-	function GetInstanceAddedSignal(self, tag: string): RBXScriptSignal<Instance>
-	function GetInstanceRemovedSignal(self, tag: string): RBXScriptSignal<Instance>
+	ItemAdded: RBXScriptSignal<Instance>
+	ItemRemoved: RBXScriptSignal<Instance>
 	function GetCollection(self, tag: string): { Instance }
-	function GetTagged(self, tag: string): { Instance }
-	function GetTags(self, instance: Instance): { string }
-	function HasTag(self, instance: Instance, tag: string): boolean
-	function RemoveTag(self, instance: Instance, tag: string): nil
 end
 
 declare class CommandInstance extends Instance
@@ -5037,12 +5027,8 @@ end
 
 declare class TextBox extends GuiObject
 	ClearTextOnFocus: boolean
-	ContentText: string
-	CursorPosition: number
 	FocusLost: RBXScriptSignal<boolean, InputObject>
-	Focused: RBXScriptSignal<>
 	Font: EnumFont
-	FontFace: Font
 	LineHeight: number
 	ManualFocusRelease: boolean
 	MaxVisibleGraphemes: number
@@ -9142,4 +9128,4 @@ declare LoadLibrary: ((libraryName: "RbxFusion") -> Fusion) & ((libraryName: "Rb
 declare function settings(): GlobalSettings
 declare function UserSettings(): UserSettings
 declare function PluginManager(): PluginManager
-declare function ypcall(f: (() -> any) | (() -> ()), ...: any): (boolean, any)
+declare function ypcall(f: (() -> any) | (() -> ()) | ((...any) -> (), (...any) -> ()) -> (), ...: any): (boolean, any)

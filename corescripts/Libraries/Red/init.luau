@@ -1,3 +1,5 @@
+--!strict
+
 local function Red(_, Script: LuaSourceContainer)
 	local _SERVER
 

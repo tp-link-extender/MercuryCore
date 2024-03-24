@@ -1,12 +1,8 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/ChatScript
 print "[Mercury]: Loaded corescript 97188756"
 
---[[
-	//FileName: ChatScript.LUA
-	//Written by: Sorcus
-	//Description: Code for lua side chat on Mercury. Supports Scrolling.
-	//NOTE: If you find any bugs or inaccuracies PM Sorcus on Roblox or @Canavus on Twitter
-]]
+local RunService = game:GetService "RunService"
 
 local SafeChat = require "../Modules/Safechat.yml" -- THANK YOU DARKLUA
 local New = (require "../Modules/New").New
@@ -21,19 +17,13 @@ local function WaitForChild(parent, childName)
 	return parent[childName]
 end
 
-local function IsPhone()
-	local cGui = Game:GetService "CoreGui"
-	local rGui = WaitForChild(cGui, "RobloxGui")
-	return rGui.AbsoluteSize.Y < 600
-end
-
-while Game.Players.LocalPlayer == nil do
-	wait(0.03)
+while not Game.Players.LocalPlayer do
+	RunService.Heartbeat:wait()
 end
 
 local Player = Game.Players.LocalPlayer
-while Player.Character == nil do
-	wait(0.03)
+while not Player.Character do
+	RunService.Heartbeat:wait()
 end
 local Camera = Game.Workspace.CurrentCamera
 
@@ -51,7 +41,7 @@ local enum_mt = {
 	end,
 	__index = {
 		GetEnumItems = function(self)
-			local t = {}
+			local t: { any } = {}
 			for i, item in pairs(self) do
 				if type(i) == "number" then
 					t[#t + 1] = item
@@ -571,9 +561,9 @@ function Chat:CreateMessage(cPlayer, message)
 end
 
 function Chat:ScreenSizeChanged()
-	wait()
+	RunService.Heartbeat:wait()
 	while self.Frame.AbsoluteSize.Y > 120 do
-		self.Frame.Size -= UDim2.new(0, 0, 0.005, 0)
+		(self.Frame :: Frame).Size -= UDim2.new(0, 0, 0.005, 0)
 	end
 	-- Chat:RecalculateSpacing()
 end
@@ -705,13 +695,6 @@ function Chat:CreateGui()
 			Active = false,
 		},
 	}
-
-	Spawn(function()
-		wait(0.5)
-		if IsPhone() then
-			self.Frame.Size = UDim2.new(0, 280, 0, 120)
-		end
-	end)
 
 	self.RenderFrame = self.Frame.ChatRenderFrame
 	if self.Frame.AbsoluteSize.Y > 120 then
@@ -861,7 +844,7 @@ function Chat:CullThread()
 				end
 			end
 		end
-		wait(5.0)
+		wait(5)
 	end
 end
 

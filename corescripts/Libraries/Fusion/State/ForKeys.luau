@@ -1,4 +1,4 @@
---!nonstrict
+--!strict
 
 --[[
 	Constructs a new ForKeys state object which maps keys of an array using

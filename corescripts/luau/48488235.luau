@@ -1,7 +1,10 @@
 -- CoreGui.RobloxGui.CoreScripts/PlayerListScript
 print "[Mercury]: Loaded corescript 48488235"
 
+local RunService = game:GetService "RunService"
+
 local New = (require "../Modules/New").New
+local log = require "../Modules/Logger"
 
 --------------------
 -- Super Util
@@ -623,43 +626,6 @@ local BigButton = New "ImageButton" {
 	Parent = ScreenGui,
 }
 
-local debugFrame = New "Frame" {
-	Name = "debugframe",
-	-- Position = UDim2.new(0, 0, 0, 0),
-	-- Size = UDim2.new(0, 150, 0, 800),--0.99000001
-	-- BackgroundTransparency = 1,
-	BackgroundTransparency = 1,
-	Position = UDim2.new(0.25, 0, 0.300000012, 0),
-	Size = UDim2.new(0.5, 0, 0.370000005, 0),
-	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96506233",
-}
-local debugOutput = New "TextLabel" {
-	BackgroundTransparency = 0.8,
-	Position = UDim2.new(0, 0, 0.5, 0),
-	Size = UDim2.new(1, 0, 0.5, 0),
-	Parent = debugFrame,
-	Font = "ArialBold",
-	Text = "--",
-	FontSize = "Size14",
-	TextWrapped = true,
-	TextColor3 = Color3.new(1, 1, 1),
-	TextStrokeColor3 = Color3.new(0, 0, 0),
-	TextStrokeTransparency = 0,
-	TextXAlignment = "Right",
-	TextYAlignment = "Center",
-}
-
---[[
-	simple function to toggle the display of debug output
---]]
-local DebugPrintEnabled = true
-local function debugprint(str)
-	--print(str)
-	if DebugPrintEnabled then
-		debugOutput.Text = str
-	end
-end
-
 --[[
 	obligatory wait for child function
 	@Args:
@@ -669,8 +635,8 @@ end
 --]]
 local function WaitForChild(parent, child)
 	while not parent:FindFirstChild(child) do
-		wait()
-		debugprint(` child {parent.Name} waiting for {child}`)
+		RunService.Heartbeat:wait()
+		log(` child {parent.Name} waiting for {child}`)
 	end
 	return parent[child]
 end
@@ -833,7 +799,7 @@ local function TweenProperty(obj, propName, inita: number, enda: number, length)
 	while tick() - startTime < length do
 		obj[propName] = ((enda - inita) * ((tick() - startTime) / length))
 			+ inita
-		wait()
+		RunService.Heartbeat:wait()
 	end
 	obj[propName] = enda
 end
@@ -860,13 +826,13 @@ local function WaitForClick(frameParent, polledFunction, exitFunction)
 		if connection2 then
 			connection2:disconnect()
 		end
-		-- debugprint "mouse up!"
+		-- log "mouse up!"
 	end)
 	connection2 = BigButton.MouseMoved:connect(function(nx, ny)
 		polledFunction(nx, ny)
 	end)
 
-	-- debugprint "waiting for click!"
+	-- log "waiting for click!"
 	BigButton.Visible = true
 	BigButton.Active = true
 	BigButton.Parent = frameParent
@@ -876,7 +842,7 @@ local function WaitForClick(frameParent, polledFunction, exitFunction)
 			BigButton.Visible = false
 			connection:disconnect()
 			connection2:disconnect()
-			debugprint "forced out of wait for click"
+			log "forced out of wait for click"
 		end
 	end)
 	WaitForClickLock = false
@@ -971,7 +937,7 @@ local function OnPrivilegeLevelSelect(
 	MemberButton,
 	AdminButton
 )
-	debugprint "setting privilege level"
+	log "setting privilege level"
 	SetPrivilegeRank(player, nlevel)
 	HighlightMyRank(
 		player,
@@ -1018,7 +984,7 @@ local function OnSubmitAbuse()
 			then
 				CalmingAbuseBox.Parent = ReportAbuseShield
 			else
-				debugprint "opening abuse box"
+				log "opening abuse box"
 				NormalAbuseBox.Parent = ReportAbuseShield
 			end
 		else
@@ -1050,7 +1016,7 @@ end
 	opens the abuse dialog, initialises text to display selectedplayer
 --]]
 local function OpenAbuseDialog()
-	debugprint "adding report dialog"
+	log "adding report dialog"
 	AbusePlayerLabel.Text = SelectedPlayer.Name
 	--AbuseDescriptionBox.Text = ""
 	PopUpPanel:TweenPosition(
@@ -1304,7 +1270,7 @@ local function UpdateHeaderNameSize()
 	tHeader.FontSize = FONT_SIZES[fSize]
 	Delay(0.2, function()
 		while tHeader.TextBounds.x == 0 do
-			wait()
+			RunService.Heartbeat:wait()
 		end
 		while tHeader.TextBounds.x - NormalBounds.X.Offset > 1 do
 			fSize -= 1
@@ -1687,8 +1653,8 @@ end
 --]]
 local function BaseUpdate()
 	while BaseUpdateLock do
-		debugprint "in baseupdate lock"
-		wait()
+		log "in baseupdate lock"
+		RunService.Heartbeat:wait()
 	end
 	BaseUpdateLock = true
 	-- print "baseupdate"
@@ -1720,7 +1686,7 @@ local function BaseUpdate()
 	UpdateScrollPosition()
 
 	UpdateScrollBarVisibility()
-	-- debugprint "EndBaseUpdate"
+	-- log "EndBaseUpdate"
 	BaseUpdateLock = false
 end
 
@@ -1732,10 +1698,10 @@ RecreateScoreColumns = function(ptable)
 		end
 		local nscoretxt = panel:FindFirstChild("PlayerScore"):Clone()
 		local thisScore
-		--here lies the resting place of a once great and terrible bug
-		--may its treachery never be forgotten, lest its survivors fall for it again
-		--RIP the leaderstat bug, oct 2012-nov 2012
-		wait()
+		-- here lies the resting place of a once great and terrible bug
+		-- may its treachery never be forgotten, lest its survivors fall for it again
+		-- RIP the leaderstat bug, oct 2012-nov 2012
+		RunService.Heartbeat:wait()
 		if
 			entry.Player:FindFirstChild "leaderstats"
 			and entry.Player.leaderstats:FindFirstChild(scoreval.Name)
@@ -1754,7 +1720,7 @@ RecreateScoreColumns = function(ptable)
 		nscoretxt.Name = scoreval.Name
 		nscoretxt.Text = tostring(GetScoreValue(thisScore))
 		if scoreval.Name == ScoreNames[1]["Name"] then
-			debugprint "changing score"
+			log "changing score"
 			entry.Score = GetScoreValue(thisScore)
 			if entry.Player == LocalPlayer then
 				HeaderScore.Text = tostring(GetScoreValue(thisScore))
@@ -1778,8 +1744,8 @@ RecreateScoreColumns = function(ptable)
 	end
 
 	while AddingStatLock do
-		debugprint "In Adding Stat Lock2"
-		wait()
+		log "In Adding Stat Lock2"
+		RunService.Heartbeat:wait()
 	end
 	AddingStatLock = true
 	local Xoffset = 5 --15 --current offset from Right
@@ -1799,7 +1765,7 @@ RecreateScoreColumns = function(ptable)
 				-- make an entry for this object
 				local nentry = MakeScoreEntry(entry, scoreval, panel)
 				if nentry then
-					debugprint(`adding {nentry.Name} to {entry.Player.Name}`)
+					log(`adding {nentry.Name} to {entry.Player.Name}`)
 					nentry.Parent = panel
 					-- add score to team
 					if
@@ -2033,8 +1999,8 @@ end
 local function StatAdded(nchild, playerEntry)
 	-- dont re - add a leaderstat I alreday have
 	while AddingStatLock do
-		debugprint "in stat added function lock"
-		wait()
+		log "in stat added function lock"
+		RunService.Heartbeat:wait()
 	end
 	AddingStatLock = true
 	if
@@ -2109,12 +2075,12 @@ end
 --]]
 local function StatRemoved(nchild, playerEntry)
 	while AddingStatLock do
-		debugprint "In Adding Stat Lock1"
-		wait()
+		log "In Adding Stat Lock1"
+		RunService.Heartbeat:wait()
 	end
 	AddingStatLock = true
 	if playerEntry.Frame:FindFirstChild(nchild.Name) then
-		debugprint "Destroyed frame!"
+		log "Destroyed frame!"
 		playerEntry.Frame[nchild.Name].Parent = nil
 	end
 	if not DoesStatExist(nchild.Name, playerEntry.Player) then
@@ -2268,7 +2234,7 @@ local function InitMovingPanel(entry, player)
 
 	local nextIndex = 2
 	local friendStatus = GetFriendStatus(player)
-	debugprint(tostring(friendStatus))
+	log(tostring(friendStatus))
 	local showRankMenu = false
 	-- IsPersonalServer
 	-- and LocalPlayer.PersonalServerRank >= PrivilegeLevel.Admin
@@ -2391,7 +2357,7 @@ local function InitMovingPanel(entry, player)
 				0,
 				myFrame.AbsolutePosition.Y
 			)
-			wait()
+			RunService.Heartbeat:wait()
 		end
 	end)
 end
@@ -2434,9 +2400,7 @@ local function StartDrag(entry, startx, starty)
 			startY = AbsoluteToPercent(nx, ny).Y
 		end
 		local nowY = AbsoluteToPercent(nx, ny).Y
-		debugprint(
-			`drag dist {Vector2.new(startx - nx, starty - ny).magnitude}`
-		)
+		log(`drag dist {Vector2.new(startx - nx, starty - ny).magnitude}`)
 		if
 			Vector2.new(startx - nx, starty - ny).magnitude
 			> MOUSE_DRAG_DISTANCE
@@ -2462,9 +2426,9 @@ end
 local function StartMinimizeDrag()
 	Delay(0, function()
 		local startTime = tick()
-		debugprint "Got Click2"
+		log "Got Click2"
 		local function dragExit()
-			-- debugprint "undone click2"
+			-- log "undone click2"
 			if tick() - startTime < 0.25 then --was click
 				ToggleMinimize()
 			else --was drag
@@ -2660,8 +2624,8 @@ end
 --]]
 local function LeaderstatsRemoved(_, playerEntry)
 	while AddingFrameLock do
-		debugprint(`waiting to insert {playerEntry.Player.Name}`)
-		wait()
+		log(`waiting to insert {playerEntry.Player.Name}`)
+		RunService.Heartbeat:wait()
 	end
 	AddingFrameLock = true
 	RemoveAllStats(playerEntry)
@@ -2685,8 +2649,8 @@ end
 
 local function RemoveNeutralTeam()
 	while NeutralTeamLock do
-		debugprint "in neutral team lock"
-		wait()
+		log "in neutral team lock"
+		RunService.Heartbeat:wait()
 	end
 	NeutralTeamLock = true
 	NeutralTeam.Frame:Destroy()
@@ -2756,8 +2720,8 @@ end
 --]]
 local function AddNeutralTeam()
 	while NeutralTeamLock do
-		debugprint "in neutral team 2 lock"
-		wait()
+		log "in neutral team 2 lock"
+		RunService.Heartbeat:wait()
 	end
 	NeutralTeamLock = true
 
@@ -2821,7 +2785,7 @@ local function SetPlayerToTeam(entry)
 	end
 	-- if player was set to an invalid team, then set it back to neutral
 	if not setToTeam and #(game.Teams:GetTeams()) > 0 then
-		debugprint(`{entry.Player.Name} could not find team`)
+		log(`{entry.Player.Name} could not find team`)
 		entry.MyTeam = nil
 		if not NeutralTeam then
 			AddNeutralTeam()
@@ -2841,25 +2805,25 @@ end
 --]]
 local function PlayerChanged(entry, property)
 	while PlayerChangedLock do
-		debugprint "in playerchanged lock"
-		wait()
+		log "in playerchanged lock"
+		RunService.Heartbeat:wait()
 	end
 	PlayerChangedLock = true
 	if property == "Neutral" then
 		-- if player changing to neutral
 		if entry.Player.Neutral and #(game.Teams:GetTeams()) > 0 then
-			debugprint(`{entry.Player.Name} setting to neutral`)
+			log(`{entry.Player.Name} setting to neutral`)
 			FindRemovePlayerFromTeam(entry)
 			entry.MyTeam = nil
 			if not NeutralTeam then
-				debugprint(`{entry.Player.Name} creating neutral team`)
+				log(`{entry.Player.Name} creating neutral team`)
 				AddNeutralTeam()
 			else
-				debugprint(`{entry.Player.Name} adding to neutral team`)
+				log(`{entry.Player.Name} adding to neutral team`)
 				AddPlayerToTeam(NeutralTeam, entry)
 			end
 		elseif #(game.Teams:GetTeams()) > 0 then -- else player switching to a team, or a weird edgecase
-			debugprint(`{entry.Player.Name} has been set non-neutral`)
+			log(`{entry.Player.Name} has been set non-neutral`)
 			SetPlayerToTeam(entry)
 		end
 		BaseUpdate()
@@ -2868,7 +2832,7 @@ local function PlayerChanged(entry, property)
 		and not entry.Player.Neutral
 		and entry.Player ~= entry.MyTeam
 	then
-		debugprint(`{entry.Player.Name} setting to new team`)
+		log(`{entry.Player.Name} setting to new team`)
 		SetPlayerToTeam(entry)
 		BaseUpdate()
 	elseif property == "Name" or property == "MembershipType" then
@@ -2899,8 +2863,8 @@ end
 --]]
 local function InsertPlayerFrame(nplayer)
 	while AddingFrameLock do
-		debugprint(`waiting to insert {nplayer.Name}`)
-		wait()
+		log(`waiting to insert {nplayer.Name}`)
+		RunService.Heartbeat:wait()
 	end
 	AddingFrameLock = true
 
@@ -2999,8 +2963,8 @@ local function InsertPlayerFrame(nplayer)
 	nplayer.ChildAdded:connect(function(nchild)
 		if nchild.Name == "leaderstats" then
 			while AddingFrameLock do
-				debugprint "in adding leaderstats lock"
-				wait()
+				log "in adding leaderstats lock"
+				RunService.Heartbeat:wait()
 			end
 			AddingFrameLock = true
 			LeaderstatsAdded(nentry)
@@ -3034,8 +2998,8 @@ end
 --]]
 local function RemovePlayerFrame(tplayer)
 	while AddingFrameLock do
-		debugprint "in removing player frame lock"
-		wait()
+		log "in removing player frame lock"
+		RunService.Heartbeat:wait()
 	end
 	AddingFrameLock = true
 
@@ -3072,7 +3036,7 @@ Players.ChildRemoved:connect(RemovePlayerFrame)
 
 local function OnFriendshipChanged(player, friendStatus)
 	Delay(0.5, function()
-		debugprint(
+		log(
 			`friend status changed for {player.Name} {friendStatus} vs {GetFriendStatus(
 				player
 			)}`
@@ -3086,7 +3050,7 @@ local function OnFriendshipChanged(player, friendStatus)
 				elseif nicon ~= "" and entry.Frame.FriendLabel.Image == "" then
 					entry.Frame.TitleFrame.Title.Position = entry.Frame.TitleFrame.Title.Position
 						+ UDim2.new(0, 17, 0, 0)
-					debugprint(`confirmed status {player.Name}`)
+					log(`confirmed status {player.Name}`)
 				end
 				entry.Frame.FriendLabel.Image = nicon
 				return
@@ -3137,8 +3101,8 @@ end
 --]]
 local function RemoveTeamFrame(nteam)
 	while AddingFrameLock do
-		debugprint "in removing team frame lock"
-		wait()
+		log "in removing team frame lock"
+		RunService.Heartbeat:wait()
 	end
 	AddingFrameLock = true
 	-- if IsMinimized.Value then
@@ -3152,7 +3116,7 @@ local function RemoveTeamFrame(nteam)
 		end
 	end
 	if #TeamFrames == 0 then
-		debugprint "removeteamframe, remove neutral"
+		log "removeteamframe, remove neutral"
 		if NeutralTeam then
 			RemoveNeutralTeam()
 		end
@@ -3198,8 +3162,8 @@ end
 --]]
 local function InsertTeamFrame(nteam)
 	while AddingFrameLock do
-		debugprint "in adding team frame lock"
-		wait()
+		log "in adding team frame lock"
+		RunService.Heartbeat:wait()
 	end
 	AddingFrameLock = true
 	--for _,i in pairs(TeamFrames) do
@@ -3299,7 +3263,7 @@ game.GuiService:AddKey "\t"
 local LastTabTime = time()
 game.GuiService.KeyPressed:connect(function(key)
 	if key == "\t" then
-		debugprint "caught tab key"
+		log "caught tab key"
 		local modalCheck, isModal = pcall(function()
 			return game.GuiService.IsModalDialog
 		end)
@@ -3362,8 +3326,8 @@ pcall(function()
 end)
 
 while not game:GetService "Teams" do
-	wait()
-	debugprint "Waiting For Teams"
+	RunService.Heartbeat:wait()
+	log "Waiting For Teams"
 end
 for _, i in pairs(game.Teams:GetTeams()) do
 	TeamAdded(i)

@@ -1,5 +1,6 @@
 --!strict
 print "[Mercury]: Loaded Join corescript"
+
 local InsertService = game:GetService "InsertService"
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local ContentProvider = game:GetService "ContentProvider"

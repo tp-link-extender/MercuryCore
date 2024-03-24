@@ -8,20 +8,21 @@ local MarketplaceService = game:GetService "MarketplaceService"
 local GuiService = game:GetService "GuiService"
 local ContentProvider = game:GetService "ContentProvider"
 local HttpService = game:GetService "HttpService"
+local RunService = game:GetService "RunService"
 
 -- wait for important items to appear
 while not Game do
-	wait(0.1)
+	RunService.Heartbeat:wait()
 end
 while not MarketplaceService do
-	wait(0.1)
+	RunService.Heartbeat:wait()
 	MarketplaceService = game:GetService "MarketplaceService"
 end
 while not game:FindFirstChild "CoreGui" do
-	wait(0.1)
+	RunService.Heartbeat:wait()
 end
 while not game.CoreGui:FindFirstChild "RobloxGui" do
-	wait(0.1)
+	RunService.Heartbeat:wait()
 end
 
 -------------------------------- Global Variables ----------------------------------------
