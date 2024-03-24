@@ -20,7 +20,8 @@ const select = surql`
 		) AS playerCount,
 		count(<-likes) AS likeCount,
 		count(<-dislikes) AS dislikeCount
-	FROM place WHERE !privateServer AND !deleted`
+	FROM place WHERE !privateServer AND !deleted
+	ORDER BY playerCount DESC, serverPing`
 
 export const load = async () => ({
 	places: await query<Place>(select),

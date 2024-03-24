@@ -28,8 +28,8 @@ end
 local Camera = Game.Workspace.CurrentCamera
 
 -- Services
-local CoreGuiService = Game:GetService "CoreGui"
-local PlayersService = Game:GetService "Players"
+local CoreGui = Game:GetService "CoreGui"
+local Players = Game:GetService "Players"
 local GuiService = Game:GetService "GuiService"
 
 -- Lua Enums
@@ -653,7 +653,7 @@ end
 -- Create the initial Chat stuff
 -- Done only once
 function Chat:CreateGui()
-	self.Gui = WaitForChild(CoreGuiService, "RobloxGui")
+	self.Gui = WaitForChild(CoreGui, "RobloxGui")
 	self.Frame = New "Frame" {
 		Name = "ChatFrame",
 		--Size = self.Configuration.Size;
@@ -716,9 +716,9 @@ function Chat:CreateGui()
 					local cText = self.ChatBar.Text
 					if string.sub(self.ChatBar.Text, 1, 1) == "%" then
 						cText = "(TEAM) " .. string.sub(cText, 2, #cText)
-						pcall(PlayersService.TeamChat, PlayersService, cText)
+						pcall(Players.TeamChat, Players, cText)
 					else
-						pcall(PlayersService.Chat, PlayersService, cText)
+						pcall(Players.Chat, Players, cText)
 					end
 
 					if self.ClickToChatButton then
@@ -809,7 +809,7 @@ function Chat:PlayerChatted(...)
 	end
 
 	if
-		PlayersService.ClassicChat
+		Players.ClassicChat
 			and (not (string.sub(message, 1, 3) == "/e " or string.sub(
 				message,
 				1,
@@ -898,7 +898,7 @@ function Chat:Initialize()
 		Chat:PlayerChatted(...)
 	end
 
-	self.EventListener = PlayersService.PlayerChatted:connect(chatted)
+	self.EventListener = Players.PlayerChatted:connect(chatted)
 
 	self.MessageThread = coroutine.create(function() end)
 	coroutine.resume(self.MessageThread)
@@ -908,9 +908,9 @@ function Chat:Initialize()
 	-- Eww, everytime a player is added, you have to redo the connection
 	-- Seems this is not automatic
 	-- NOTE: PlayerAdded only fires on the server, hence ChildAdded is used here
-	PlayersService.ChildAdded:connect(function()
+	Players.ChildAdded:connect(function()
 		Chat.EventListener:disconnect()
-		self.EventListener = PlayersService.PlayerChatted:connect(chatted)
+		self.EventListener = Players.PlayerChatted:connect(chatted)
 	end)
 
 	Spawn(function()

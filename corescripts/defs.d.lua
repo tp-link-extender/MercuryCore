@@ -3787,7 +3787,7 @@ declare class BodyAngularVelocity extends BodyMover
 end
 
 declare class BodyForce extends BodyMover
-	Force: Vector3
+	force: Vector3
 end
 
 declare class BodyGyro extends BodyMover

@@ -2,11 +2,18 @@
 -- Script Context.StarterScript
 print "[Mercury]: Loaded corescript 37801172"
 
-local ScriptContext = game:GetService "ScriptContext"
 local CoreGui = game:GetService "CoreGui"
+local Players = game:GetService "Players"
+local ScriptContext = game:GetService "ScriptContext"
 
-local Debug = require "../Modules/DebugConsole"
-Debug(CoreGui)
+if Players.LocalPlayer and Players.LocalPlayer.Name == "Heliodex" then
+	-- Don't show the debug console for anyone but me
+	ScriptContext:AddCoreScript(
+		20000001,
+		ScriptContext,
+		"CoreScripts/DebugConsole"
+	)
+end
 
 -- Creates all neccessary scripts for the gui on initial load, everything except build tools
 -- Please note that these are loaded in a specific order to diminish errors/perceived load time by user
