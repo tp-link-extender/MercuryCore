@@ -105,7 +105,7 @@ local function Assert(condition: any, message: string)
 	end
 end
 
-local j = print
+local j = print -- j
 
 function utility.print(...)
 	local args = { ... }
