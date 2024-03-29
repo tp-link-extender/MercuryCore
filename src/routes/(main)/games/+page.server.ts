@@ -20,7 +20,8 @@ const select = surql`
 		) AS playerCount,
 		count(<-likes) AS likeCount,
 		count(<-dislikes) AS dislikeCount
-	FROM place WHERE !privateServer AND !deleted`
+	FROM place WHERE !privateServer AND !deleted
+	ORDER BY playerCount DESC, serverPing DESC`
 
 export const load = async () => ({
 	places: await query<Place>(select),
@@ -30,7 +31,7 @@ export const actions = {
 	default: async ({ request }) => ({
 		places: await query<Place>(
 			surql`${select}
-				AND string::lowercase($query) ∈ string::lowercase(name)`,
+				AND string::lowercase($query) INSIDE string::lowercase(name)`,
 			{ query: (await request.formData()).get("q") as string }
 		),
 	}),

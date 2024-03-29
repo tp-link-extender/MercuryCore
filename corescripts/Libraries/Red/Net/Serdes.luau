@@ -1,3 +1,5 @@
+--!strict
+
 return function(IsServer: boolean)
 	local RedEvent = require "../RedEvent"(IsServer)
 	local Event = RedEvent.Remote

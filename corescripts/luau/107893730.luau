@@ -1,3 +1,4 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/PurchasePromptScript
 print "[Mercury]: Loaded corescript 107893730"
 
@@ -5,26 +6,28 @@ print "[Mercury]: Loaded corescript 107893730"
 
 local MarketplaceService = game:GetService "MarketplaceService"
 local GuiService = game:GetService "GuiService"
+local ContentProvider = game:GetService "ContentProvider"
+local HttpService = game:GetService "HttpService"
+local RunService = game:GetService "RunService"
 
 -- wait for important items to appear
 while not Game do
-	wait(0.1)
+	RunService.Heartbeat:wait()
 end
 while not MarketplaceService do
-	wait(0.1)
+	RunService.Heartbeat:wait()
 	MarketplaceService = game:GetService "MarketplaceService"
 end
 while not game:FindFirstChild "CoreGui" do
-	wait(0.1)
+	RunService.Heartbeat:wait()
 end
 while not game.CoreGui:FindFirstChild "RobloxGui" do
-	wait(0.1)
+	RunService.Heartbeat:wait()
 end
 
 -------------------------------- Global Variables ----------------------------------------
 -- utility variables
-local RbxUtility
-local baseUrl = game:GetService("ContentProvider").BaseUrl:lower()
+local baseUrl = string.lower(ContentProvider.BaseUrl)
 
 -- data variables
 local currentProductInfo, currentAssetId, currentCurrencyType, currentCurrencyAmount, currentEquipOnPurchase, currentProductId, currentServerResponseTable
@@ -40,10 +43,10 @@ local purchaseDialog
 local tweenTime = 0.3
 local showPosition = UDim2.new(0.5, -330, 0.5, -200)
 local hidePosition = UDim2.new(0.5, -330, 1, 25)
-local isSmallScreen
+-- local isSmallScreen
 local spinning = false
 local spinnerIcons
-local smallScreenThreshold = 450
+-- local smallScreenThreshold = 450
 
 -- user facing images
 local function assetUrl(id: number)
@@ -92,13 +95,6 @@ local function getSecureApiBaseUrl()
 	return secureApiUrl
 end
 
-local function getRbxUtility()
-	if not RbxUtility then
-		RbxUtility = LoadLibrary "RbxUtility"
-	end
-	return RbxUtility
-end
-
 local function preloadAssets()
 	for _, url in ipairs {
 		errorImageUrl,
@@ -114,7 +110,7 @@ local function preloadAssets()
 		tixIcon,
 		robuxIcon,
 	} do
-		game:GetService("ContentProvider"):Preload(url)
+		ContentProvider:Preload(url)
 	end
 end
 
@@ -211,7 +207,7 @@ local function userPurchaseActionsEnded(isSuccess: boolean)
 end
 
 -- enums have no implicit conversion to numbers in lua, has to have a function to do this
-local function currencyEnumToInt(currencyEnum: Enum.CurrencyType)
+local function currencyEnumToInt(currencyEnum: EnumItem)
 	if currencyEnum == Enum.CurrencyType.Tix then
 		return 2
 	end
@@ -219,7 +215,7 @@ local function currencyEnumToInt(currencyEnum: Enum.CurrencyType)
 end
 
 -- oi, this is ugly
-local function assetTypeToString(assetType)
+local function assetTypeToString(assetType: number)
 	if assetType == 1 then
 		return "Image"
 	elseif assetType == 2 then
@@ -307,7 +303,7 @@ local function currencyTypeToString(currencyType)
 end
 
 -- make sure our gui displays the proper purchase data, and set the productid we will try and buy if use specifies a buy action
-local function updatePurchasePromptData(_)
+local function updatePurchasePromptData()
 	local newItemDescription = ""
 
 	-- id to use when we request a purchase
@@ -359,7 +355,7 @@ local function updatePurchasePromptData(_)
 end
 
 -- more enum to int fun!
-local function membershipTypeToNumber(membership)
+local function membershipTypeToNumber(membership: EnumItem) -- idk if there's a better type than EnumItem
 	if membership == Enum.MembershipType.None then
 		return 0
 	elseif membership == Enum.MembershipType.BuildersClub then
@@ -445,15 +441,11 @@ local function getPlayerBalance()
 	if not success then
 		print("Get player balance failed because", errorCode)
 		return
-	end
-
-	if playerBalance == "" then
+	elseif playerBalance == "" then
 		return
 	end
 
-	playerBalance = getRbxUtility().DecodeJSON(playerBalance)
-
-	return playerBalance
+	return HttpService:JSONDecode(playerBalance)
 end
 
 -- figure out what currency to use based on the currency you can actually sell the item in and what the script specified
@@ -504,8 +496,7 @@ local function canPurchaseItem()
 			)
 		end)
 		if success then
-			currentProductInfo =
-				getRbxUtility().DecodeJSON(currentProductInfoRaw)
+			currentProductInfo = HttpService:JSONDecode(currentProductInfoRaw)
 		end
 	else
 		success = ypcall(function()
@@ -515,9 +506,11 @@ local function canPurchaseItem()
 	end
 
 	if currentProductInfo == nil or not success then
-		descText =
+		return true,
+			nil,
+			nil,
+			true,
 			"In-game sales are temporarily disabled. Please try again later."
-		return true, nil, nil, true, descText
 	end
 
 	if not purchasingConsumable then
@@ -552,7 +545,7 @@ local function canPurchaseItem()
 	-- next we parse through product info and see if we can purchase
 
 	if type(currentProductInfo) ~= "table" then
-		currentProductInfo = getRbxUtility().DecodeJSON(currentProductInfo)
+		currentProductInfo = HttpService:JSONDecode(currentProductInfo)
 	end
 
 	if not currentProductInfo then
@@ -851,9 +844,7 @@ local function acceptPurchase()
 
 	local currencyData = `&currencyTypeId={currencyEnumToInt(
 		currentCurrencyType
-	)}&currencyTypeId={currencyEnumToInt(
-		currentCurrencyType
-	)}`
+	)}&currencyTypeId={currencyEnumToInt(currentCurrencyType)}`
 
 	-- consumables need to use a different url
 	if purchasingConsumable then
@@ -890,19 +881,17 @@ local function acceptPurchase()
 	end
 
 	-- parse our response, decide how to react
-	response = getRbxUtility().DecodeJSON(response)
+	response = HttpService:JSONDecode(response)
 
 	if response then
-		if response.success == false then
-			if response.status ~= "AlreadyOwned" then
-				print(
-					"web return response of fail on purchase of",
-					currentAssetId,
-					currentProductId
-				)
-				purchaseFailed((response.status == "EconomyDisabled"))
-				return
-			end
+		if response.success == false and response.status ~= "AlreadyOwned" then
+			print(
+				"web return response of fail on purchase of",
+				currentAssetId,
+				currentProductId
+			)
+			purchaseFailed((response.status == "EconomyDisabled"))
+			return
 		end
 	else
 		print(
@@ -989,7 +978,7 @@ local function userPurchaseProductActionsEnded(userIsClosingDialog)
 		if currentServerResponseTable then
 			local isPurchased = false
 			if
-				tostring(currentServerResponseTable.isValid):lower()
+				string.lower(tostring(currentServerResponseTable.isValid))
 				== "true"
 			then
 				isPurchased = true
@@ -1257,47 +1246,6 @@ local function createPurchasePromptGui()
 	)
 end
 
--- next two functions control the "Purchasing..." overlay
-
--- next 2 functions are convenienvce creation functions for guis
-
-local function cutSizeInHalfRecursive(_)
-	-- todo: change the gui size based on how much space we have
-	--[[changeSize(instance,0.5)
-
-	local children = instance:GetChildren()
-	for i = 1, #children do
-		cutSizeInHalfRecursive(children[i])
-	end]]
-end
-
-local function doubleSizeRecursive(_)
-	-- todo: change the gui size based on how much space we have
-	--[[changeSize(instance,2)
-
-	local children = instance:GetChildren()
-	for i = 1, #children do
-		doubleSizeRecursive(children[i])
-	end]]
-end
-
-local function modifyForSmallScreen()
-	cutSizeInHalfRecursive(purchaseDialog)
-end
-
-local function modifyForLargeScreen()
-	doubleSizeRecursive(purchaseDialog)
-end
-
--- depending on screen size, we need to change the gui
-local function changeGuiToScreenSize(smallScreen)
-	if smallScreen then
-		modifyForSmallScreen()
-	else
-		modifyForLargeScreen()
-	end
-end
-
 local function doPurchasePrompt(
 	player,
 	assetId,
@@ -1371,22 +1319,4 @@ if enableBrowserWindowClosedEvent then
 	GuiService.BrowserWindowClosed:connect(function()
 		doPlayerFundsCheck(false)
 	end)
-end
-
-Game.CoreGui.RobloxGui.Changed:connect(function()
-	local nowIsSmallScreen = (
-		game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold
-	)
-	if nowIsSmallScreen and not isSmallScreen then
-		changeGuiToScreenSize(true)
-	elseif not nowIsSmallScreen and isSmallScreen then
-		changeGuiToScreenSize(false)
-	end
-
-	isSmallScreen = nowIsSmallScreen
-end)
-
-isSmallScreen = (game.CoreGui.RobloxGui.AbsoluteSize.Y <= smallScreenThreshold)
-if isSmallScreen then
-	changeGuiToScreenSize(true)
 end

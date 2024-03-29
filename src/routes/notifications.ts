@@ -1,5 +1,5 @@
 import { query, squery, surql } from "$lib/server/surreal"
-import type { Session, User } from "lucia"
+import type { User } from "lucia"
 
 type Notification = {
 	id: string
@@ -18,8 +18,8 @@ type Notification = {
 	link?: string
 }
 
-export default async function (session: Session | null, user: User | null) {
-	if (!session || !user) return []
+export default async function (user: User | null) {
+	if (!user) return []
 	const notifications = await query<Notification>(
 		surql`
 			SELECT
@@ -33,7 +33,7 @@ export default async function (session: Session | null, user: User | null) {
 		{ user: `user:${user.id}` }
 	)
 
-	for (const i of notifications) {
+	for (const i of notifications)
 		switch (i.type) {
 			case "AssetApproved":
 			case "FriendRequest":
@@ -115,7 +115,6 @@ export default async function (session: Session | null, user: User | null) {
 			case "ItemPurchase":
 				i.link = `/avatarshop/${i.relativeId}`
 		}
-	}
 
 	return notifications.map(n => {
 		n.relativeId = undefined

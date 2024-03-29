@@ -3,7 +3,6 @@
 
 	export let data
 	const formData = superForm(data.form)
-	const { form } = formData
 
 	export const snapshot = formData
 

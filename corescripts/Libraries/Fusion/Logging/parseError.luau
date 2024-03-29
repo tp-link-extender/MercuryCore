@@ -16,7 +16,7 @@ local function parseError(err: string): Types.Error
 	return {
 		type = "Error",
 		raw = err,
-		message = err:gsub("^.+:%d+:%s*", ""),
+		message = string.gsub(err, "^.+:%d+:%s*", ""),
 		trace = trace or "Traceback not available",
 	}
 end

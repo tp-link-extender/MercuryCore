@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 	import PlaceCard from "./PlaceCard.svelte"
-	import PlacePage from "../place/[id]/[name]/+page.svelte"
+	import PlacePage from "../place/[id=integer]/[name]/+page.svelte"
 
 	export let data
 

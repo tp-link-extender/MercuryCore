@@ -17,9 +17,7 @@ export async function GET({ url }) {
 	if (!id || !/^\d+$/.test(id)) error(400, "Missing id parameter")
 
 	const getUser = await squery<User>(
-		surql`
-			SELECT bodyColours FROM user
-			WHERE number = $id`,
+		surql`SELECT bodyColours FROM user WHERE number = $id`,
 		{ id: +id }
 	)
 
@@ -50,6 +48,7 @@ export async function GET({ url }) {
 			headers: {
 				Pragma: "no-cache",
 				"Cache-Control": "no-cache",
+				"Content-Type": "text/plain",
 			},
 		}
 	)

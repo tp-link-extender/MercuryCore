@@ -1,3 +1,5 @@
+--!strict
+
 local Spawn = require "./Spawn"
 local typeof = require "../../../Modules/Polyfill/typeof"
 

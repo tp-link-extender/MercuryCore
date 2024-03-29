@@ -5,8 +5,8 @@ import { fail, error } from "@sveltejs/kit"
 import requestRender from "$lib/server/requestRender"
 import type { RequestEvent } from "./$types"
 
-// Heads, Faces, T-Shirts, Shirts, Pants, Gear
-const allowedTypes = [17, 18, 2, 11, 12, 19]
+// Heads, Faces, T-Shirts, Shirts, Pants, Gear, Hats
+const allowedTypes = [17, 18, 2, 11, 12, 19, 8]
 const brickColours = [
 	1, 5, 9, 11, 18, 21, 23, 24, 26, 28, 29, 37, 38, 101, 102, 104, 105, 106,
 	107, 119, 125, 135, 141, 151, 153, 192, 194, 199, 208, 217, 226, 1001, 1002,
@@ -20,9 +20,9 @@ const select = surql`
 		name,
 		price,
 		type,
-		($user ∈ <-wearing<-user) AS wearing
-	FROM asset WHERE $user ∈ <-owns<-user
-		AND type ∈ [${allowedTypes.join(", ")}]
+		($user INSIDE <-wearing<-user) AS wearing
+	FROM asset WHERE $user INSIDE <-owns<-user
+		AND type INSIDE [${allowedTypes.join(", ")}]
 		AND visibility = "Visible"`
 
 export const load = async ({ locals, url }) => {
@@ -39,7 +39,7 @@ export const load = async ({ locals, url }) => {
 		}>(
 			surql`${select} ${
 				searchQ
-					? surql`AND string::lowercase($query) ∈ string::lowercase(name)`
+					? surql`AND string::lowercase($query) INSIDE string::lowercase(name)`
 					: ""
 			}`,
 			{
@@ -67,7 +67,7 @@ async function getEquipData(e: RequestEvent) {
 	}>(
 		surql`
 			SELECT meta::id(id) AS id, type, visibility
-			FROM $asset WHERE $user ∈ <-owns<-user`,
+			FROM $asset WHERE $user INSIDE <-owns<-user`,
 		{
 			asset: `asset:${id}`,
 			user: `user:${user.id}`,
@@ -101,7 +101,7 @@ export const actions = {
 	search: async ({ request, locals }) => ({
 		assets: await query(
 			surql`${select}
-				AND string::lowercase($query) ∈ string::lowercase(name)`,
+				AND string::lowercase($query) INSIDE string::lowercase(name)`,
 			{
 				query: ((await request.formData()).get("q") as string).trim(),
 				user: `user:${(await authorise(locals)).user.id}`,
@@ -152,20 +152,30 @@ export const actions = {
 		const { user, id, asset, error } = await getEquipData(e)
 		if (error) return error
 
+		// Find if there's more than 3 hats equipped, throw an error if there is
+		if (
+			asset.type === 8 &&
+			(await squery<number>(
+				surql`[count(SELECT 1 FROM $user->wearing WHERE out.type = 8)]`,
+				{ user: `user:${user.id}` }
+			)) >= 3
+		)
+			return fail(400, { msg: "You can only wear 3 hats" })
+
 		await query(
 			surql`
+				# Unequip if there's already a T-Shirt/Shirt/Pants/Face equipped
 				IF $type = 2 {
-					# Unequip if there's already a T-Shirt equipped
 					DELETE $user->wearing WHERE out.type = 2;
-				};
-				IF $type = 18 {
-					# Unequip if there's already a Face equipped
+				} ELSE IF $type = 11 {
+					DELETE $user->wearing WHERE out.type = 11;
+				} ELSE IF $type = 12 {
+					DELETE $user->wearing WHERE out.type = 12;
+				} ELSE IF $type = 18 {
 					DELETE $user->wearing WHERE out.type = 18;
 				};
-				RELATE $user->wearing->$asset
-					SET time = time::now();
-				RELATE $user->recentlyWorn->$asset
-					SET time = time::now()`,
+				RELATE $user->wearing->$asset SET time = time::now();
+				RELATE $user->recentlyWorn->$asset SET time = time::now()`,
 			{
 				user: `user:${user.id}`,
 				asset: `asset:${id}`,

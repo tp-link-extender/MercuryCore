@@ -1,3 +1,4 @@
+--!strict
 -- A basic polyfill for the typeof function
 
 return function(value)
@@ -16,32 +17,26 @@ return function(value)
 	end
 
 	-- Will short-circuit
-	--[[
-		{
-			name of type to check,
-			{ list of required properties },
-		}
-	]]
 	local tests = {
 		{
-			"Instance",
-			{ "ClassName" },
+			Type = "Instance",
+			Props = { "ClassName" },
 		},
 		{
-			"EnumItem",
-			{ "EnumType", "Name", "Value" },
+			Type = "EnumItem",
+			Props = { "EnumType", "Name", "Value" },
 		},
 		{
-			"Enum",
-			{ "GetEnumItems" },
+			Type = "Enum",
+			Props = { "GetEnumItems" },
 		},
 		{
-			"Enums",
-			{ "MembershipType" }, -- lmao
+			Type = "Enums",
+			Props = { "MembershipType" }, -- lmao
 		},
 		{
-			"RBXScriptSignal",
-			{
+			Type = "RBXScriptSignal",
+			Props = {
 				"connect",
 				-- "connected",
 				-- "connectFirst",
@@ -50,15 +45,15 @@ return function(value)
 			},
 		},
 		{
-			"RBXScriptConnection",
-			{
+			Type = "RBXScriptConnection",
+			Props = {
 				"connected",
 				"disconnect",
 			},
 		},
 		{
-			"TweenInfo",
-			{
+			Type = "TweenInfo",
+			Props = {
 				"EasingDirection",
 				-- "Time",
 				-- "DelayTime",
@@ -68,8 +63,8 @@ return function(value)
 			},
 		},
 		{
-			"CFrame",
-			{
+			Type = "CFrame",
+			Props = {
 				"p",
 				"x",
 				"y",
@@ -78,8 +73,8 @@ return function(value)
 			},
 		},
 		{
-			"Vector3",
-			{
+			Type = "Vector3",
+			Props = {
 				"Lerp",
 				-- "Cross",
 				-- "Dot",
@@ -91,28 +86,28 @@ return function(value)
 			},
 		},
 		{
-			"Vector3int16",
-			{ "z", "x", "y" },
+			Type = "Vector3int16",
+			Props = { "z", "x", "y" },
 		},
 		{
-			"Vector2",
-			{ "unit", "magnitude", "x", "y" },
+			Type = "Vector2",
+			Props = { "unit", "magnitude", "x", "y" },
 		},
 		{
-			"Vector2int16",
-			{ "x", "y" },
+			Type = "Vector2int16",
+			Props = { "x", "y" },
 		},
 		{
-			"Region3",
-			{ "CFrame", "Size" },
+			Type = "Region3",
+			Props = { "CFrame", "Size" },
 		},
 		{
-			"Region3int16",
-			{ "Min", "Max" },
+			Type = "Region3int16",
+			Props = { "Min", "Max" },
 		},
 		{
-			"Ray",
-			{
+			Type = "Ray",
+			Props = {
 				"Origin",
 				"Direction",
 				"Unit",
@@ -121,20 +116,20 @@ return function(value)
 			},
 		},
 		{
-			"UDim",
-			{ "Scale", "Offset" },
+			Type = "UDim",
+			Props = { "Scale", "Offset" },
 		},
 		{
-			"Axes",
-			{ "Z", "X", "Y" },
+			Type = "Axes",
+			Props = { "Z", "X", "Y" },
 		},
 		{
-			"UDim2",
-			{ "X", "Y" },
+			Type = "UDim2",
+			Props = { "X", "Y" },
 		},
 		{
-			"BrickColor",
-			{
+			Type = "BrickColor",
+			Props = {
 				"Number",
 				"Name",
 				"Color",
@@ -144,12 +139,12 @@ return function(value)
 			},
 		},
 		{
-			"Color3",
-			{ "r", "g", "b" },
+			Type = "Color3",
+			Props = { "r", "g", "b" },
 		},
 		{
-			"Faces",
-			{
+			Type = "Faces",
+			Props = {
 				"Right",
 				"Top",
 				"Back",
@@ -161,7 +156,7 @@ return function(value)
 	}
 
 	for _, v in ipairs(tests) do
-		local t, test = v[1], v[2]
+		local t, test = v.Type, v.Props
 
 		local ok, result = pcall(function()
 			for _, prop in ipairs(test) do
@@ -178,5 +173,6 @@ return function(value)
 			return t
 		end
 	end
+
 	return basicType
 end

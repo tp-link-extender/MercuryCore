@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import { mquery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
@@ -32,14 +32,10 @@ const assets: { [k: number]: string } = {
 	13: "Decal",
 }
 
-export async function load({ request, locals }) {
-	await authorise(locals, 5)
-
-	return {
-		form: await superValidate(zod(schema)),
-		assettype: new URL(request.url).searchParams.get("asset"),
-	}
-}
+export const load = async ({ request }) => ({
+	form: await superValidate(zod(schema)),
+	assettype: new URL(request.url).searchParams.get("asset"),
+})
 
 export const actions = {
 	default: async ({ request, locals, getClientAddress }) => {
@@ -113,12 +109,7 @@ export const actions = {
 			return formError(form, ["asset"], ["Asset failed to upload"])
 		}
 
-		// lmao probably has huge concurrency issues that I am not going to test
-		const currentId = await squery<number>(surql`[stuff:increment.asset]`)
-		const imageAssetId = currentId + 1
-		const id = currentId + 2
-
-		await query(
+		const res = await mquery<number[]>(
 			surql`
 				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
 				LET $imageAsset = CREATE asset CONTENT {
@@ -150,7 +141,9 @@ export const actions = {
 				};
 				RELATE $user->owns->$asset;
 				RELATE $user->created->$asset;
-				RELATE $asset->imageAsset->$imageAsset`,
+				RELATE $asset->imageAsset->$imageAsset;
+				$id; # return the idz
+				$id2`,
 			{
 				name,
 				assetType,
@@ -159,6 +152,9 @@ export const actions = {
 				user: `user:${user.id}`,
 			}
 		)
+
+		const imageAssetId = res[9]
+		const id = res[10] // concurrency issues fixed hopefully
 
 		graphicAsset(assets[assetType], imageAssetId, id)
 

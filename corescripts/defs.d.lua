@@ -3787,7 +3787,7 @@ declare class BodyAngularVelocity extends BodyMover
 end
 
 declare class BodyForce extends BodyMover
-	Force: Vector3
+	force: Vector3
 end
 
 declare class BodyGyro extends BodyMover
@@ -4024,19 +4024,9 @@ declare class ClusterPacketCache extends Instance
 end
 
 declare class CollectionService extends Instance
-	TagAdded: RBXScriptSignal<string>
-	ItemAdded: RBXScriptSignal<string>
-	TagRemoved: RBXScriptSignal<string>
-	ItemRemoved: RBXScriptSignal<string>
-	function AddTag(self, instance: Instance, tag: string): nil
-	function GetAllTags(self): { string }
-	function GetInstanceAddedSignal(self, tag: string): RBXScriptSignal<Instance>
-	function GetInstanceRemovedSignal(self, tag: string): RBXScriptSignal<Instance>
+	ItemAdded: RBXScriptSignal<Instance>
+	ItemRemoved: RBXScriptSignal<Instance>
 	function GetCollection(self, tag: string): { Instance }
-	function GetTagged(self, tag: string): { Instance }
-	function GetTags(self, instance: Instance): { string }
-	function HasTag(self, instance: Instance, tag: string): boolean
-	function RemoveTag(self, instance: Instance, tag: string): nil
 end
 
 declare class CommandInstance extends Instance
@@ -4248,6 +4238,7 @@ declare class ContentProvider extends Instance
 	function RegisterEncryptedAsset(self, assetId: Content, encryptionKey: string): nil
 	function RegisterSessionEncryptedAsset(self, contentId: Content, sessionKey: string): nil
 	function SetBaseUrl(self, url: string): nil
+	function SetThreadPool(self, count: number): nil
 	function UnregisterDefaultEncryptionKey(self): nil
 	function UnregisterEncryptedAsset(self, assetId: Content): nil
 end
@@ -4793,6 +4784,7 @@ end
 
 
 declare class GamePassService extends Instance
+	function SetPlayerHasPassUrl(self, playerHasPassUrl: string): nil
 end
 
 declare class GameSettings extends Instance
@@ -5035,12 +5027,8 @@ end
 
 declare class TextBox extends GuiObject
 	ClearTextOnFocus: boolean
-	ContentText: string
-	CursorPosition: number
 	FocusLost: RBXScriptSignal<boolean, InputObject>
-	Focused: RBXScriptSignal<>
 	Font: EnumFont
-	FontFace: Font
 	LineHeight: number
 	ManualFocusRelease: boolean
 	MaxVisibleGraphemes: number
@@ -5550,8 +5538,10 @@ declare class InsertService extends Instance
 	function LoadPackageAsset(self, url: Content): { Instance }
 	function LoadPackageAssetAsync(self, url: Content): { Instance }
 
-	function SetAssetUrl(self, assetUrl: Content): nil
-	function SetAssetVersionUrl(self, assetVersionUrl: Content): nil
+	function SetAssetUrl(self, assetUrl: string): nil
+	function SetAssetVersionUrl(self, assetVersionUrl: string): nil
+	function SetBaseSetsUrl(self, baseSetsUrl: string): nil
+	function SetCollectionUrl(self, collectionUrl: string): nil
 end
 
 declare class JointInstance extends Instance
@@ -5815,6 +5805,9 @@ declare class MarketplaceService extends Instance
 	function SignalPromptPurchaseFinished(self, player: Instance, assetId: number, success: boolean): nil
 	function SignalServerLuaDialogClosed(self, value: boolean): nil
 	function UserOwnsGamePassAsync(self, userId: number, gamePassId: number): boolean
+
+	function SetProductInfoUrl(self, url: string): nil
+	function SetPlayerOwnsAssetUrl(self, url: string): nil
 end
 
 declare class MaterialGenerationService extends Instance
@@ -6551,6 +6544,7 @@ declare class Player extends Instance
 	CanLoadCharacterAppearance: boolean
 	Character: Model?
 	CharacterAdded: RBXScriptSignal<Model>
+	CharacterAppearance: string
 	CharacterAppearanceId: number
 	CharacterAppearanceLoaded: RBXScriptSignal<Model>
 	CharacterRemoving: RBXScriptSignal<Model>
@@ -6611,7 +6605,7 @@ declare class Player extends Instance
 	function IsInGroup(self, groupId: number): boolean
 	function IsVerified(self): boolean
 	function Kick(self, message: string?): nil
-	function LoadCharacter(self): nil
+	function LoadCharacter(self, inGame: boolean): nil
 	function LoadCharacterBlocking(self): nil
 	function Move(self, walkDirection: Vector3, relativeToCamera: boolean?): nil
 	function RemoveCharacter(self): nil
@@ -7042,7 +7036,8 @@ declare class ScriptContext extends Instance
 	function StartScriptProfiling(self, frequency: number?): nil
 	function StopScriptProfiling(self): string
 
-	function AddCoreScript(self, id: number, player: Player, name: string): nil
+	-- player or instance
+	function AddCoreScript(self, id: number, instance: Instance, name: string): nil
 	function RegisterLibrary(self, name: string, id: string): nil
 	function LibraryRegistrationComplete(self): nil
 end
@@ -7130,7 +7125,7 @@ declare class ServerStorage extends Instance
 end
 
 declare class ThumbnailGenerator extends Instance
-	function Click(self, format: string, x: number, y: number, hideSky: boolean): string
+	function Click(self, format: "PNG" | "OBJ", x: number, y: number, hideSky: boolean, crop: boolean?): string
 end
 
 declare class ServiceProvider extends Instance
@@ -7308,7 +7303,6 @@ declare class ServiceProvider extends Instance
 	LoadingGuiService: any
 	ScriptInformationProvider: ScriptInformationProvider
 	JointsService: JointsService
-	LogService: any
 	ThumbnailGenerator: ThumbnailGenerator
 
 	function FindService(self, className: string): Instance
@@ -7486,7 +7480,6 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "LoadingGuiService"): any
 	function GetService(self, service: "PersonalServerService"): PersonalServerService
 	function GetService(self, service: "Terrain"): Terrain
-	function GetService(self, service: "LogService"): any
 	function GetService(self, service: "ThumbnailGenerator"): ThumbnailGenerator
 end
 
@@ -7527,9 +7520,9 @@ declare class DataModel extends ServiceProvider
 	function GetObjectsList(self, urls: { any }): { any }
 	function GetPlaySessionId(self): string
 	function HttpGet(self, url: string, synchronous: boolean, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
-	function HttpGetAsync(self, url: string, synchronous: boolean, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpGetAsync(self, url: string, synchronous: boolean?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
 	function HttpPost(self, url: string, data: string, synchronous: boolean, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
-	function HttpPostAsync(self, url: string, data: string, synchronous: boolean, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
+	function HttpPostAsync(self, url: string, data: string?, synchronous: boolean?, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
 	function InsertObjectsAndJoinIfLegacyAsync(self, url: Content): { Instance }
 	function IsContentLoaded(self): boolean
 	function IsLoaded(self): boolean
@@ -7624,6 +7617,8 @@ declare class SocialService extends Instance
 	function SetBestFriendUrl(self, bestFriendUrl: string): nil
 	function SetStuffUrl(self, stuffUrl: string): nil
 	function SetPackageContentsUrl(self, stuffUrl: string): nil
+		
+	function SetGroupUrl(self, groupUrl: string): nil
 end
 
 declare class Sound extends Instance
@@ -8603,6 +8598,7 @@ declare TeleportService: TeleportService
 declare plugin: Plugin
 declare script: LuaSourceContainer
 declare function loadfile(file: string): any
+declare function dofile(file: string): any
 
 -- fusion
 
@@ -8897,9 +8893,239 @@ export type Red = {
 	Load: (self: Red, Script: LuaSourceContainer) -> RedCore,
 }
 
+-- just plain useful
+
+export type InstanceName =
+	"Accoutrement"
+	| "Hat"
+	| "AdvancedDragger"
+	| "Animation"
+	| "CurveAnimation"
+	| "KeyframeSequence"
+	| "AnimationController"
+	| "AnimationRigData"
+	| "Animator"
+	| "AudioDeviceInput"
+	| "AudioDeviceOutput"
+	| "AudioDistortion"
+	| "AudioEcho"
+	| "AudioEmitter"
+	| "AudioEqualizer"
+	| "AudioFader"
+	| "AudioFlanger"
+	| "AudioListener"
+	| "AudioPitchShifter"
+	| "AudioPlayer"
+	| "AudioReverb"
+	| "AudioSearchParams"
+	| "Backpack"
+	| "BindableEvent"
+	| "BindableFunction"
+	| "BodyAngularVelocity"
+	| "BodyForce"
+	| "BodyGyro"
+	| "BodyPosition"
+	| "BodyThrust"
+	| "BodyVelocity"
+	| "RocketPropulsion"
+	| "BubbleChatMessageProperties"
+	| "Camera"
+	| "BodyColors"
+	| "CharacterMesh"
+	| "Pants"
+	| "Shirt"
+	| "ShirtGraphic"
+	| "Skin"
+	| "ClickDetector"
+	| "DragDetector"
+	| "Configuration"
+	| "AngularVelocity"
+	| "AnimationConstraint"
+	| "BallSocketConstraint"
+	| "HingeConstraint"
+	| "LineForce"
+	| "LinearVelocity"
+	| "PlaneConstraint"
+	| "Plane"
+	| "RigidConstraint"
+	| "RodConstraint"
+	| "RopeConstraint"
+	| "CylindricalConstraint"
+	| "PrismaticConstraint"
+	| "SpringConstraint"
+	| "Torque"
+	| "TorsionSpringConstraint"
+	| "UniversalConstraint"
+	| "HumanoidController"
+	| "SkateboardController"
+	| "VehicleController"
+	| "AirController"
+	| "ClimbController"
+	| "GroundController"
+	| "SwimController"
+	| "ControllerManager"
+	| "CustomEvent"
+	| "CustomEventReceiver"
+	| "CylinderMesh"
+	| "DynamicMesh"
+	| "FileMesh"
+	| "SpecialMesh"
+	| "DataStoreIncrementOptions"
+	| "DataStoreOptions"
+	| "DataStoreSetOptions"
+	| "DebuggerWatch"
+	| "Dialog"
+	| "DialogChoice"
+	| "Dragger"
+	| "ExperienceInviteOptions"
+	| "Explosion"
+	| "Decal"
+	| "Texture"
+	| "Hole"
+	| "MotorFeature"
+	| "Fire"
+	| "CSGDictionaryService"
+	| "NonReplicatedCSGDictionaryService"
+	| "ForceField"
+	| "FunctionalTest"
+	| "GetTextBoundsParams"
+	| "Frame"
+	| "ImageButton"
+	| "TextButton"
+	| "ImageLabel"
+	| "TextLabel"
+	| "TextBox"
+	| "VideoFrame"
+	| "ViewportFrame"
+	| "BillboardGui"
+	| "ScreenGui"
+	| "GuiMain"
+	| "AdGui"
+	| "SurfaceGui"
+	| "FloorWire"
+	| "SelectionBox"
+	| "BoxHandleAdornment"
+	| "ConeHandleAdornment"
+	| "CylinderHandleAdornment"
+	| "ImageHandleAdornment"
+	| "LineHandleAdornment"
+	| "SphereHandleAdornment"
+	| "WireframeHandleAdornment"
+	| "ParabolaAdornment"
+	| "SelectionSphere"
+	| "ArcHandles"
+	| "Handles"
+	| "SurfaceSelection"
+	| "SelectionPartLasso"
+	| "SelectionPointLasso"
+	| "HeightmapImporterService"
+	| "HiddenSurfaceRemovalAsset"
+	| "Humanoid"
+	| "RotateP"
+	| "RotateV"
+	| "Glue"
+	| "ManualGlue"
+	| "ManualWeld"
+	| "Motor"
+	| "Motor6D"
+	| "Rotate"
+	| "Snap"
+	| "VelocityMotor"
+	| "Weld"
+	| "Keyframe"
+	| "KeyframeMarker"
+	| "PointLight"
+	| "SpotLight"
+	| "SurfaceLight"
+	| "Script"
+	| "LocalScript"
+	| "ModuleScript"
+	| "MarkerCurve"
+	| "MemoryStoreService"
+	| "Message"
+	| "Hint"
+	| "CornerWedgePart"
+	| "Part"
+	| "FlagStand"
+	| "Seat"
+	| "SkateboardPlatform"
+	| "SpawnLocation"
+	| "WedgePart"
+	| "PartOperation"
+	| "IntersectOperation"
+	| "NegateOperation"
+	| "UnionOperation"
+	| "TrussPart"
+	| "VehicleSeat"
+	| "Model"
+	| "HopperBin"
+	| "Tool"
+	| "Flag"
+	| "WorldModel"
+	| "PartOperationAsset"
+	| "PathfindingLink"
+	| "PathfindingModifier"
+	| "Player"
+	| "PluginAction"
+	| "PluginCapabilities"
+	| "NumberPose"
+	| "Pose"
+	| "ReflectionMetadata"
+	| "ReflectionMetadataCallbacks"
+	| "ReflectionMetadataClasses"
+	| "ReflectionMetadataEnums"
+	| "ReflectionMetadataEvents"
+	| "ReflectionMetadataFunctions"
+	| "ReflectionMetadataClass"
+	| "ReflectionMetadataEnum"
+	| "ReflectionMetadataEnumItem"
+	| "ReflectionMetadataMember"
+	| "ReflectionMetadataProperties"
+	| "ReflectionMetadataYieldFunctions"
+	| "RemoteEvent"
+	| "RemoteFunction"
+	| "RenderingTest"
+	| "BuoyancySensor"
+	| "ControllerPartSensor"
+	| "Sky"
+	| "Smoke"
+	| "Sound"
+	| "Sparkles"
+	| "StandalonePluginScripts"
+	| "StarterGear"
+	| "StudioCallout"
+	| "StudioObjectBase"
+	| "StudioWidget"
+	| "StyleDerive"
+	| "StyleLink"
+	| "SurfaceAppearance"
+	| "Team"
+	| "TeleportOptions"
+	| "TerrainDetail"
+	| "TerrainRegion"
+	| "TestService"
+	| "TextChannel"
+	| "TextChatCommand"
+	| "TextChatMessageProperties"
+	| "TrackerStreamAnimation"
+	| "BinaryStringValue"
+	| "BoolValue"
+	| "BrickColorValue"
+	| "CFrameValue"
+	| "Color3Value"
+	| "DoubleConstrainedValue"
+	| "IntConstrainedValue"
+	| "IntValue"
+	| "NumberValue"
+	| "ObjectValue"
+	| "RayValue"
+	| "StringValue"
+	| "Vector3Value"
+	| "Wire"
+
 declare LoadLibrary: ((libraryName: "RbxFusion") -> Fusion) & ((libraryName: "RbxRed") -> Red) & ((libraryName: string) -> any)
 
 declare function settings(): GlobalSettings
 declare function UserSettings(): UserSettings
 declare function PluginManager(): PluginManager
-declare function ypcall(f: () -> any, ...: any): (boolean, any)
+declare function ypcall(f: (() -> any) | (() -> ()) | ((...any) -> (), (...any) -> ()) -> (), ...: any): (boolean, any)

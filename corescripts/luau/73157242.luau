@@ -12,7 +12,7 @@ local RbxStamper = {}
 -- Return:
 -- cellPos - The terrain cell intersection point if there is one, vectorPos if there isn't.
 -- hit - Whether there was a plane intersection.  Value is true if there was, false if not.
-function PlaneIntersection(vectorPos)
+local function PlaneIntersection(vectorPos)
 	local hit = false
 	local currCamera = game.Workspace.CurrentCamera
 	local startPos = Vector3.new(
@@ -45,7 +45,7 @@ end
 --
 -- Return:
 -- cellPos - Cell position hit.  Nil if none.
-function GetTerrainForMouse(mouse)
+local function GetTerrainForMouse(mouse)
 	-- There was no target, so all it could be is a plane intersection.
 	-- Check for a plane intersection.  If there isn't one then nothing will get hit.
 	local cell = game.Workspace.Terrain:WorldToCellPreferSolid(
@@ -896,13 +896,9 @@ RbxStamper.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 
 	if totalTime >= maxWait then
 		return nil, "Load Time Fail"
-	end
-
-	if root == nil then
+	elseif root == nil then
 		return nil, "Load Asset Fail"
-	end
-
-	if not root:IsA "Model" then
+	elseif not root:IsA "Model" then
 		return nil, "Load Type Fail"
 	end
 
@@ -2997,6 +2993,7 @@ RbxStamper.Help = function(funcNameOrFunc)
 	then
 		return "Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4.  Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action."
 	end
+	return "No help available for this function"
 end
 
 return RbxStamper

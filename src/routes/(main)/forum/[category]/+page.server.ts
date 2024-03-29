@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import surreal, { squery, surql } from "$lib/server/surreal"
+import { squery, surql, find } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeActions } from "$lib/server/like"
@@ -41,8 +41,8 @@ export async function load({ locals, params }) {
 					(SELECT number, status, username
 					FROM <-posted<-user)[0] AS author,
 					count(<-likes<-user) - count(<-dislikes<-user) AS score,
-					($user ∈ <-likes<-user.id) AS likes,
-					($user ∈ <-dislikes<-user.id) AS dislikes
+					($user INSIDE <-likes<-user.id) AS likes,
+					($user INSIDE <-dislikes<-user.id) AS dislikes
 				FROM $parent<-in.in
 				ORDER BY pinned DESC, score DESC) AS posts
 			OMIT id
@@ -68,8 +68,8 @@ export const actions = {
 		const replyId = url.searchParams.get("rid")
 
 		if (
-			(id && !(await surreal.select(`forumPost:${id}`))[0]) ||
-			(replyId && !(await surreal.select(`forumReply:${replyId}`))[0])
+			(id && !(await find(`forumPost:${id}`))) ||
+			(replyId && !(await find(`forumReply:${replyId}`)))
 		)
 			error(404)
 

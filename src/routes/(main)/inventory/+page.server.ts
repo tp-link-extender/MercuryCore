@@ -8,8 +8,8 @@ const select = surql`
 		price,
 		type,
 		<-owns<-user AS owners
-	FROM asset WHERE $user ∈ <-owns<-user
-		AND type ∈ [17, 18, 2, 11, 12, 19] `
+	FROM asset WHERE $user INSIDE <-owns<-user
+		AND type INSIDE [17, 18, 2, 11, 12, 19, 8] `
 
 export const load = async ({ locals, url }) => {
 	const searchQ = url.searchParams.get("q")?.trim()
@@ -24,7 +24,7 @@ export const load = async ({ locals, url }) => {
 		}>(
 			surql`${select} ${
 				searchQ
-					? surql`AND string::lowercase($query) ∈ string::lowercase(name)`
+					? surql`AND string::lowercase($query) INSIDE string::lowercase(name)`
 					: ""
 			}`,
 			{
@@ -39,7 +39,7 @@ export const actions = {
 	default: async ({ request, locals }) => ({
 		assets: await query(
 			surql`${select}
-				AND string::lowercase($query) ∈ string::lowercase(name)`,
+				AND string::lowercase($query) INSIDE string::lowercase(name)`,
 			{
 				query: (await request.formData()).get("q") as string,
 				user: `user:${(await authorise(locals)).user.id}`,

@@ -1,4 +1,4 @@
---!nonstrict
+--!strict
 
 --[[
 	Constructs a new ForPairs object which maps pairs of a table using

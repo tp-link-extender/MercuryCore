@@ -1,4 +1,5 @@
--- local ReplicatedStorage = game:GetService "ReplicatedStorage"
+--!strict
+
 local RunService = game:GetService "RunService"
 
 local function MakeHeartbeatFunction(Clock: Clock)

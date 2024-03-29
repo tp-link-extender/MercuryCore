@@ -21,7 +21,7 @@ export const actions = {
 	default: async ({ request }) => ({
 		assets: await query(
 			surql`${select}
-				AND string::lowercase($query) ∈ string::lowercase(name)`,
+				AND string::lowercase($query) INSIDE string::lowercase(name)`,
 			{ query: (await request.formData()).get("q") as string }
 		),
 	}),

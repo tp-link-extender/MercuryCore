@@ -2,7 +2,7 @@
 	// If an error happens in any +page or +layout file, this page will be rendered instead.
 
 	import { page } from "$app/stores"
-	import "/src/routes/studio/studio.styl" // brih
+	// import "/src/routes/studio/studio.styl" // brih AHHHHHHH!!!!
 
 	const status = $page.status
 	const errors: { [k: number]: string } = {

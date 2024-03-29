@@ -1,15 +1,14 @@
 print "[Mercury]: Loaded Visit corescript"
+
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local InsertService = game:GetService "InsertService"
 local Players = game:GetService "Players"
 local RunService = game:GetService "RunService"
 local ScriptInformationProvider = game:GetService "ScriptInformationProvider"
 local SocialService = game:GetService "SocialService"
-local CoreGui = game:GetService "CoreGui"
 local ContentProvider = game:GetService "ContentProvider"
 local GamePassService = game:GetService "GamePassService"
 local Visit = game:GetService "Visit"
-local ScriptContext = game:GetService "ScriptContext"
 
 local player
 
@@ -38,7 +37,7 @@ settings().Diagnostics:LegacyScriptMode()
 InsertService:SetBaseSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=10&type=base"
 InsertService:SetUserSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
 InsertService:SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d"
-InsertService:SetAssetUrl "http://banland.xyz/Asset/?id=%d"
+InsertService:SetAssetUrl "http://banland.xyz/asset?id=%d"
 InsertService:SetAssetVersionUrl "http://banland.xyz/Asset/?assetversionid=%d"
 
 pcall(function()
@@ -85,10 +84,7 @@ end)
 
 workspace:SetPhysicsThrottleEnabled(true)
 
-local addedBuildTools = false
-local screenGui = CoreGui:FindFirstChild "RobloxGui"
-
-function doVisit()
+local function doVisit()
 	message.Text = "Loading Game"
 
 	pcall(function()
@@ -123,19 +119,6 @@ function doVisit()
 end
 
 local success, err = pcall(doVisit)
-
-if not addedBuildTools then
-	local playerName = Instance.new "StringValue"
-	playerName.Name = "PlayerName"
-	playerName.Value = player.Name
-	playerName.RobloxLocked = true
-	playerName.Parent = screenGui
-
-	pcall(function()
-		ScriptContext:AddCoreScript(59431535, screenGui, "BuildToolsScript")
-	end)
-	addedBuildTools = true
-end
 
 if success then
 	message.Parent = nil

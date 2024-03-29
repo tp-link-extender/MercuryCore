@@ -20,7 +20,7 @@ export async function GET({ url }) {
 
 	const port = placeData.serverPort
 	// const serverId = placeData.id.toString()
-	const serverPresenceUrl = `${process.env.RCC_ORIGIN}/game/serverpresence?ticket=${ticket}`
+	const serverPresenceUrl = `${process.env.SERVER_PRESENCE}/game/serverpresence?ticket=${ticket}`
 
 	if (mapLocation) {
 		mapLocation = Buffer.from(mapLocation, "base64").toString()

@@ -1,4 +1,6 @@
+--!strict
 print "[Mercury]: Loaded Join corescript"
+
 local InsertService = game:GetService "InsertService"
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local ContentProvider = game:GetService "ContentProvider"
@@ -194,7 +196,7 @@ local function onConnectionFailed(_, err)
 end
 
 -- called when the client connection is rejected
-function onConnectionRejected()
+local function onConnectionRejected()
 	connectionFailed:disconnect()
 	setMessage "This place is not available. Please try another"
 end
@@ -265,7 +267,7 @@ if not success then
 end
 
 -- TODO: Async get?
-loadfile ""("", -1, 0)
+-- loadfile ""("", -1, 0) -- wtf
 
 pcall(function()
 	game:SetScreenshotInfo ""

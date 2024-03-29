@@ -34,9 +34,9 @@
 	}
 
 	const tabTypes: { [k: string]: number } = {
+		Hats: 8,
 		"T-Shirts": 2,
 		Shirts: 11,
-		Hats: 8,
 		Pants: 12,
 		Decals: 13,
 		Faces: 18
@@ -53,12 +53,8 @@
 
 <h1 class="text-center pb-4">Inventory</h1>
 
-<div class="ctnr flex flex-wrap">
-	<TabNav
-		bind:tabData
-		vertical
-		class="w-full lg:w-1/6 md:(w-1/4 pr-4) pb-6" />
-	<div class="w-full lg:w-5/6 md:w-3/4">
+<div class="px-4 pt-6">
+	<SidebarShell bind:tabData space>
 		<form
 			on:submit|preventDefault
 			action="/inventory?tab={tabData.currentTab}"
@@ -78,8 +74,7 @@
 			</button>
 		</form>
 		<div
-			class="grid gap-4 grid-cols-2
-			xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
+			class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
 			{#each assets as asset, num}
 				<Asset {asset} {num} total={assets.length} />
 			{/each}
@@ -89,5 +84,5 @@
 				</h2>
 			{/if}
 		</div>
-	</div>
+	</SidebarShell>
 </div>

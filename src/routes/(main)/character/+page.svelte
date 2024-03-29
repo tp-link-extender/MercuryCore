@@ -55,6 +55,7 @@
 
 	const tabTypes: { [k: string]: number } = {
 		Recent: 0,
+		Hats: 8,
 		Heads: 17,
 		Faces: 18,
 		"T-Shirts": 2,

@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, transaction, surql } from "$lib/server/surreal"
+import { query, transaction, surql, findWhere } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -45,10 +45,9 @@ export const actions = {
 			)
 
 		if (
-			await squery(
-				surql`
-					SELECT 1 FROM group
-					WHERE string::lowercase(name) = string::lowercase($name)`,
+			await findWhere(
+				"group",
+				surql`string::lowercase(name) = string::lowercase($name)`,
 				{ name }
 			)
 		)

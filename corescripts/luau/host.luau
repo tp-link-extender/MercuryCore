@@ -93,7 +93,7 @@ end)
 
 if _MAP_LOCATION_EXISTS then
 	-- yield so that file load happens in the heartbeat thread
-	wait()
+	RunService.Heartbeat:wait()
 
 	-- load the game
 	game:Load(_MAP_LOCATION)

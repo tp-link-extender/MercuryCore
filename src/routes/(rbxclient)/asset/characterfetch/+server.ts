@@ -41,6 +41,7 @@ export async function GET({ url }) {
 		headers: {
 			Pragma: "no-cache",
 			"Cache-Control": "no-cache",
+			"Content-Type": "text/plain",
 		},
 	})
 }

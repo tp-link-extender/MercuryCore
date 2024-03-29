@@ -1,5 +1,5 @@
+import { query, surql, find } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import surreal from "$lib/server/surreal"
 
 export async function GET({ url, request }) {
 	const ticket = url.searchParams.get("ticket") as string
@@ -8,10 +8,10 @@ export async function GET({ url, request }) {
 	if (request.headers.get("user-agent") !== "Roblox/WinInet")
 		error(400, "Good one")
 
-	if (!(await surreal.select(`playing:${ticket}`))[0])
-		error(400, "Ticket not found")
+	if (!(await find(`playing:${ticket}`))) error(400, "Ticket not found")
 
-	surreal.merge(`playing:${ticket}`, {
+	await query(surql`UPDATE $ticket SET ping = $ping`, {
+		ticket: `playing:${ticket}`,
 		ping: Math.floor(Date.now() / 1000),
 	})
 

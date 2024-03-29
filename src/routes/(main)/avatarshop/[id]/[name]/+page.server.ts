@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import surreal, { query, squery, transaction, surql } from "$lib/server/surreal"
+import { query, squery, transaction, surql, find } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
@@ -62,7 +62,7 @@ export async function load({ locals, params }) {
 				(SELECT number, status, username
 				FROM <-created<-user)[0] AS creator,
 				count(<-owns<-user) AS sold,
-				$user ∈ <-owns<-user.id AS owned,
+				$user INSIDE <-owns<-user.id AS owned,
 
 				(SELECT text, updated FROM $parent.description
 				ORDER BY updated DESC)[0] AS description,
@@ -249,8 +249,8 @@ export const actions = {
 			error(400, "Invalid reply id")
 
 		if (
-			(id && !(await surreal.select(`asset:${id}`))[0]) ||
-			(replyId && !(await surreal.select(`assetComment:${replyId}`))[0])
+			(id && !(await find(`asset:${id}`))) ||
+			(replyId && !(await find(`assetComment:${replyId}`)))
 		)
 			error(404)
 
@@ -277,7 +277,7 @@ export const actions = {
 					*,
 					(SELECT meta::id(id) AS id, username
 					FROM <-created<-user)[0] AS creator,
-					$user ∈ <-owns<-user.id AS owned
+					$user INSIDE <-owns<-user.id AS owned
 				FROM $asset`,
 			{
 				asset: `asset:${id}`,
@@ -377,14 +377,17 @@ export const actions = {
 
 		if (!asset) error(404, "Not found")
 
-		if (![11, 12].includes(asset.type))
+		if (![11, 12, 8].includes(asset.type))
 			error(400, "Can't rerender this type of asset")
 
 		if (asset.visibility === "Moderated")
 			error(400, "Can't rerender a moderated asset")
 
 		try {
-			await requestRender("Clothing", +params.id)
+			await requestRender(
+				asset.type === 8 ? "Model" : "Clothing",
+				+params.id
+			)
 			return {
 				icon: `/avatarshop/${asset.id}/${
 					asset.name

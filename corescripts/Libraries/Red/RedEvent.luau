@@ -1,3 +1,5 @@
+--!strict
+
 return function(IsServer: boolean)
 	local ReplicatedStorage = game:GetService "ReplicatedStorage"
 	local Players = game:GetService "Players"

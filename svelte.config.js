@@ -2,7 +2,7 @@ import { preprocessMeltUI, sequence } from "@melt-ui/pp"
 import adapter from "@sveltejs/adapter-node"
 import preprocess from "svelte-preprocess"
 import autoImport from "sveltekit-autoimport"
-import { resolve } from "path"
+import { resolve } from "node:path"
 
 /** @type {import("@sveltejs/kit").Config}*/
 export default {
@@ -17,7 +17,7 @@ export default {
 			components: [
 				"./src/lib/components",
 				"./src/lib/components/forms",
-				{ name: "./src/lib/components/studio", prefix: "studio" }
+				{ name: "./src/lib/components/studio", prefix: "studio" },
 			],
 			module: {
 				svelte: ["onMount"],

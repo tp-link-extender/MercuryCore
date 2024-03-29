@@ -20,6 +20,8 @@ banland.xyz {
 	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
 	rewrite /UploadMedia/PostImage.aspx /game/uploadmedia/screenshot
 
+	redir /download https://setup.banland.xyz/MercuryPlayerLauncher.exe
+
 	reverse_proxy localhost:4443
 }
 

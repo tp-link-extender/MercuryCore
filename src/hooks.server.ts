@@ -6,12 +6,11 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
-import surreal from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
 import type { Cookie } from "lucia"
 
-const { magenta, red, yellow, green, blue, gray, cyan } = pc
+const { magenta, red, yellow, green, blue, gray: grey, cyan } = pc
 const methodColours: { [k: string]: string } = {
 	GET: green("GET"),
 	POST: yellow("POST"),
@@ -41,11 +40,11 @@ export async function handle({ event, resolve }) {
 
 	function finish() {
 		const { method } = event.request
-		const { user } = event.locals // is this needed?
+		const { user } = event.locals // is this needed here?
 
 		// Fancy logging: time, user, method, and path
 		console.log(
-			`${gray(new Date().toLocaleString())} `,
+			`${grey(new Date().toLocaleString())} `,
 			user
 				? blue(user.username) + " ".repeat(21 - user.username.length)
 				: yellow("Logged-out user      "),
@@ -117,12 +116,16 @@ export async function handle({ event, resolve }) {
 		user: `user:${user.id}`,
 	})
 
-	const economy = (await surreal.select("stuff:economy"))[0]
-	const dailyStipend = (economy?.dailyStipend as number) || 10
+	const economy = await squery<{
+		dailyStipend?: number
+		stipendTime?: number
+	}>(surql`SELECT * FROM stuff:economy`)
+	const dailyStipend = economy?.dailyStipend || 10
+	const stipendTime = economy?.stipendTime || 12
 
 	if (
 		new Date(user.currencyCollected).getTime() -
-			(new Date().getTime() - 3600e3 * dailyStipend) <
+			(new Date().getTime() - 3600e3 * stipendTime) <
 		0
 	)
 		await query(
@@ -145,7 +148,7 @@ export const handleError = async ({ event, error }) => {
 	if (dev) console.error(error)
 	else
 		console.error(
-			`${gray(new Date().toLocaleString())} `,
+			`${grey(new Date().toLocaleString())} `,
 			user
 				? blue(user.username) + " ".repeat(21 - user.username.length)
 				: yellow("Logged-out user      "),

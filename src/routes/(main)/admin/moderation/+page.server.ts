@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { query, squery, surql } from "$lib/server/surreal"
+import { findWhere, query, squery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
@@ -90,12 +90,11 @@ export const actions = {
 		if (intAction === 5) {
 			// Unban
 			if (
-				!(await squery(
-					surql`
-						SELECT 1 FROM moderation
-						WHERE in = $moderator
-							AND out = $moderatee
-							AND active = true`,
+				!(await findWhere(
+					"moderation",
+					surql`in = $moderator
+						AND out = $moderatee
+						AND active = true`,
 					qParams
 				))
 			)
@@ -106,13 +105,12 @@ export const actions = {
 				)
 
 			if (
-				await squery(
-					surql`
-						SELECT 1 FROM moderation
-						WHERE in = $moderator
-							AND out = $moderatee
-							AND active = true
-							AND type = "AccountDeleted"`,
+				await findWhere(
+					"moderation",
+					surql`in = $moderator
+						AND out = $moderatee
+						AND active = true
+						AND type = "AccountDeleted"`,
 					qParams
 				)
 			)
@@ -144,11 +142,10 @@ export const actions = {
 		const moderationAction = moderationActions[intAction - 1]
 
 		if (
-			await squery(
-				surql`
-					SELECT 1 FROM moderation
-					WHERE out = $moderatee
-						AND active = true`,
+			await findWhere(
+				"moderation",
+				surql`out = $moderatee
+					AND active = true`,
 				qParams
 			)
 		)

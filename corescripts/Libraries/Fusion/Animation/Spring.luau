@@ -1,4 +1,4 @@
---!nonstrict
+--!strict
 
 --[[
 	Constructs a new computed state object, which follows the value of another

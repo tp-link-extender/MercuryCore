@@ -2,6 +2,7 @@
 	import { applyAction } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
 	import { superForm } from "sveltekit-superforms/client"
+	import types from "$lib/assetTypes"
 
 	export let data
 	const { user } = data
@@ -27,15 +28,6 @@
 	let refreshComments = 0
 
 	let tabData = TabData(data.url, ["Recommended", "Comments"])
-
-	const types: { [k: number]: string } = {
-		1: "Image",
-		2: "T-Shirt",
-		11: "Shirt",
-		12: "Pants",
-		13: "Decal",
-		18: "Face"
-	}
 </script>
 
 <Head title={data.name} />
@@ -68,7 +60,7 @@
 									Edit asset
 								</a>
 							</li> -->
-							{#if data.user.permissionLevel >= 5 && [11, 12].includes(data.type)}
+							{#if data.user.permissionLevel >= 5 && [11, 12, 8].includes(data.type)}
 								<li class="rounded-2">
 									<form
 										use:enhance={enhanceRegen}

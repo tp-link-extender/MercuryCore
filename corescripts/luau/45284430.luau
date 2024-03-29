@@ -1,5 +1,14 @@
+--!strict
 -- RbxGui
 print "[Mercury]: Loaded corescript 45284430"
+
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
+
+local ContentProvider = game:GetService "ContentProvider"
+local InsertService = game:GetService "InsertService"
+local RunService = game:GetService "RunService"
 
 local RbxGui = {}
 
@@ -14,7 +23,7 @@ local function ScopedConnect(
 	local eventConnection
 
 	--Connection on parentInstance is scoped by parentInstance (when destroyed, it goes away)
-	local tryConnect = function()
+	local function tryConnect()
 		if game:IsAncestorOf(parentInstance) then
 			--Entering the world, make sure we are connected/synced
 			if not eventConnection then
@@ -51,26 +60,25 @@ local function getScreenGuiAncestor(instance)
 	return localInstance
 end
 
+local function Colour3(r: number, g: number, b: number)
+	return Color3.new(r / 255, g / 255, b / 255)
+end
+
 local function CreateButtons(frame, buttons, yPos, ySize)
 	local buttonNum = 1
 	local buttonObjs = {}
 	for _, obj in ipairs(buttons) do
-		local button = Instance.new "TextButton"
-		button.Name = "Button" .. buttonNum
-		button.Font = Enum.Font.Arial
-		button.FontSize = Enum.FontSize.Size18
-		button.AutoButtonColor = true
-		button.Modal = true
-		if obj.Style then
-			button.Style = obj.Style
-		else
-			button.Style = Enum.ButtonStyle.RobloxButton
-		end
-		button.Text = obj.Text
-		button.TextColor3 = Color3.new(1, 1, 1)
-		button.MouseButton1Click:connect(obj.Function)
-		button.Parent = frame
-		buttonObjs[buttonNum] = button
+		buttonObjs[buttonNum] = New "TextButton" {
+			Name = "Button" .. buttonNum,
+			Font = Enum.Font.Arial,
+			FontSize = Enum.FontSize.Size18,
+			AutoButtonColor = true,
+			Modal = true,
+			Style = obj.Style or Enum.ButtonStyle.RobloxButton,
+			Text = obj.Text,
+			TextColor3 = Color3.new(1, 1, 1),
+			Parent = frame,
+		}
 
 		buttonNum += 1
 	end
@@ -104,7 +112,13 @@ local function CreateButtons(frame, buttons, yPos, ySize)
 	end
 end
 
-local function setSliderPos(newAbsPosX, slider, sliderPosition, bar, steps)
+local function setSliderPos(
+	newAbsPosX: number,
+	slider: ImageButton,
+	sliderPosition: IntValue,
+	bar,
+	steps: number
+)
 	local newStep = steps - 1 --otherwise we really get one more step than we want
 	local relativePosX = math.min(
 		1,
@@ -137,18 +151,87 @@ local function cancelSlide(areaSoak)
 	end
 end
 
-RbxGui.CreateStyledMessageDialog = function(title, message, style, buttons)
-	local frame = Instance.new "Frame"
-	frame.Size = UDim2.new(0.5, 0, 0, 165)
-	frame.Position = UDim2.new(0.25, 0, 0.5, -72.5)
-	frame.Name = "MessageDialog"
-	frame.Active = true
-	frame.Style = Enum.FrameStyle.RobloxRound
+function RbxGui.CreateMessageDialog(title, message, buttons)
+	local frame = New "Frame" {
+		Size = UDim2.new(0.5, 0, 0.5, 0),
+		Position = UDim2.new(0.25, 0, 0.25, 0),
+		Name = "MessageDialog",
+		Active = true,
+		Style = Enum.FrameStyle.RobloxRound,
+		New "TextLabel" {
+			Name = "Title",
+			Text = title,
+			BackgroundTransparency = 1,
+			TextColor3 = Colour3(221, 221, 221),
+			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(1, 0, 0.15, 0),
+			Font = Enum.Font.ArialBold,
+			FontSize = Enum.FontSize.Size36,
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Center,
+		},
+		New "TextLabel" {
+			Name = "Message",
+			Text = message,
+			TextColor3 = Colour3(221, 221, 221),
+			Position = UDim2.new(0.025, 0, 0.175, 0),
+			Size = UDim2.new(0.95, 0, 0.55, 0),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.Arial,
+			FontSize = Enum.FontSize.Size18,
+			TextWrap = true,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top,
+		},
+	}
 
-	local styleImage = Instance.new "ImageLabel"
-	styleImage.Name = "StyleImage"
-	styleImage.BackgroundTransparency = 1
-	styleImage.Position = UDim2.new(0, 5, 0, 15)
+	CreateButtons(frame, buttons, UDim.new(0.8, 0), UDim.new(0.15, 0))
+
+	return frame
+end
+
+function RbxGui.CreateStyledMessageDialog(title, message, style, buttons)
+	local frame = New "Frame" {
+		Size = UDim2.new(0.5, 0, 0, 165),
+		Position = UDim2.new(0.25, 0, 0.5, -72.5),
+		Name = "MessageDialog",
+		Active = true,
+		Style = Enum.FrameStyle.RobloxRound,
+		New "TextLabel" {
+			Name = "Title",
+			Text = title,
+			TextStrokeTransparency = 0,
+			BackgroundTransparency = 1,
+			TextColor3 = Colour3(221, 221, 221),
+			Position = UDim2.new(0, 80, 0, 0),
+			Size = UDim2.new(1, -80, 0, 40),
+			Font = Enum.Font.ArialBold,
+			FontSize = Enum.FontSize.Size36,
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Center,
+		},
+		New "TextLabel" {
+			Name = "Message",
+			Text = message,
+			TextStrokeTransparency = 0,
+			TextColor3 = Colour3(221, 221, 221),
+			Position = UDim2.new(0.025, 80, 0, 45),
+			Size = UDim2.new(0.95, -80, 0, 55),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.Arial,
+			FontSize = Enum.FontSize.Size18,
+			TextWrap = true,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top,
+		},
+	}
+
+	local styleImage = New "ImageLabel" {
+		Name = "StyleImage",
+		BackgroundTransparency = 1,
+		Position = UDim2.new(0, 5, 0, 15),
+	}
+
 	if style == "error" or style == "Error" then
 		styleImage.Size = UDim2.new(0, 71, 0, 71)
 		styleImage.Image = "http://banland.xyz/asset?id=42565285"
@@ -163,115 +246,47 @@ RbxGui.CreateStyledMessageDialog = function(title, message, style, buttons)
 	end
 	styleImage.Parent = frame
 
-	local titleLabel = Instance.new "TextLabel"
-	titleLabel.Name = "Title"
-	titleLabel.Text = title
-	titleLabel.TextStrokeTransparency = 0
-	titleLabel.BackgroundTransparency = 1
-	titleLabel.TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255)
-	titleLabel.Position = UDim2.new(0, 80, 0, 0)
-	titleLabel.Size = UDim2.new(1, -80, 0, 40)
-	titleLabel.Font = Enum.Font.ArialBold
-	titleLabel.FontSize = Enum.FontSize.Size36
-	titleLabel.TextXAlignment = Enum.TextXAlignment.Center
-	titleLabel.TextYAlignment = Enum.TextYAlignment.Center
-	titleLabel.Parent = frame
-
-	local messageLabel = Instance.new "TextLabel"
-	messageLabel.Name = "Message"
-	messageLabel.Text = message
-	messageLabel.TextStrokeTransparency = 0
-	messageLabel.TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255)
-	messageLabel.Position = UDim2.new(0.025, 80, 0, 45)
-	messageLabel.Size = UDim2.new(0.95, -80, 0, 55)
-	messageLabel.BackgroundTransparency = 1
-	messageLabel.Font = Enum.Font.Arial
-	messageLabel.FontSize = Enum.FontSize.Size18
-	messageLabel.TextWrap = true
-	messageLabel.TextXAlignment = Enum.TextXAlignment.Left
-	messageLabel.TextYAlignment = Enum.TextYAlignment.Top
-	messageLabel.Parent = frame
-
 	CreateButtons(frame, buttons, UDim.new(0, 105), UDim.new(0, 40))
 
 	return frame
 end
 
-RbxGui.CreateMessageDialog = function(title, message, buttons)
-	local frame = Instance.new "Frame"
-	frame.Size = UDim2.new(0.5, 0, 0.5, 0)
-	frame.Position = UDim2.new(0.25, 0, 0.25, 0)
-	frame.Name = "MessageDialog"
-	frame.Active = true
-	frame.Style = Enum.FrameStyle.RobloxRound
-
-	local titleLabel = Instance.new "TextLabel"
-	titleLabel.Name = "Title"
-	titleLabel.Text = title
-	titleLabel.BackgroundTransparency = 1
-	titleLabel.TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255)
-	titleLabel.Position = UDim2.new(0, 0, 0, 0)
-	titleLabel.Size = UDim2.new(1, 0, 0.15, 0)
-	titleLabel.Font = Enum.Font.ArialBold
-	titleLabel.FontSize = Enum.FontSize.Size36
-	titleLabel.TextXAlignment = Enum.TextXAlignment.Center
-	titleLabel.TextYAlignment = Enum.TextYAlignment.Center
-	titleLabel.Parent = frame
-
-	local messageLabel = Instance.new "TextLabel"
-	messageLabel.Name = "Message"
-	messageLabel.Text = message
-	messageLabel.TextColor3 = Color3.new(221 / 255, 221 / 255, 221 / 255)
-	messageLabel.Position = UDim2.new(0.025, 0, 0.175, 0)
-	messageLabel.Size = UDim2.new(0.95, 0, 0.55, 0)
-	messageLabel.BackgroundTransparency = 1
-	messageLabel.Font = Enum.Font.Arial
-	messageLabel.FontSize = Enum.FontSize.Size18
-	messageLabel.TextWrap = true
-	messageLabel.TextXAlignment = Enum.TextXAlignment.Left
-	messageLabel.TextYAlignment = Enum.TextYAlignment.Top
-	messageLabel.Parent = frame
-
-	CreateButtons(frame, buttons, UDim.new(0.8, 0), UDim.new(0.15, 0))
-
-	return frame
-end
-
 local scrollMouseCount
-RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
+function RbxGui.CreateDropDownMenu(items, onSelect, forRoblox: boolean?)
 	local width = UDim.new(0, 100)
 	local height = UDim.new(0, 32)
 
-	local frame = Instance.new "Frame"
-	frame.Name = "DropDownMenu"
-	frame.BackgroundTransparency = 1
-	frame.Size = UDim2.new(width, height)
+	local frame = New "Frame" {
+		Name = "DropDownMenu",
+		BackgroundTransparency = 1,
+		Size = UDim2.new(width, height),
+	}
 
-	local dropDownMenu = Instance.new "TextButton"
-	dropDownMenu.Name = "DropDownMenuButton"
-	dropDownMenu.TextWrap = true
-	dropDownMenu.TextColor3 = Color3.new(1, 1, 1)
-	dropDownMenu.Text = "Choose One"
-	dropDownMenu.Font = Enum.Font.ArialBold
-	dropDownMenu.FontSize = Enum.FontSize.Size18
-	dropDownMenu.TextXAlignment = Enum.TextXAlignment.Left
-	dropDownMenu.TextYAlignment = Enum.TextYAlignment.Center
-	dropDownMenu.BackgroundTransparency = 1
-	dropDownMenu.AutoButtonColor = true
-	dropDownMenu.Style = Enum.ButtonStyle.RobloxButton
-	dropDownMenu.Size = UDim2.new(1, 0, 1, 0)
-	dropDownMenu.Parent = frame
-	dropDownMenu.ZIndex = 2
-
-	local dropDownIcon = Instance.new "ImageLabel"
-	dropDownIcon.Name = "Icon"
-	dropDownIcon.Active = false
-	dropDownIcon.Image = "http://banland.xyz/asset/?id=45732894"
-	dropDownIcon.BackgroundTransparency = 1
-	dropDownIcon.Size = UDim2.new(0, 11, 0, 6)
-	dropDownIcon.Position = UDim2.new(1, -11, 0.5, -2)
-	dropDownIcon.Parent = dropDownMenu
-	dropDownIcon.ZIndex = 2
+	local dropDownMenu = New "TextButton" {
+		Name = "DropDownMenuButton",
+		TextWrap = true,
+		TextColor3 = Color3.new(1, 1, 1),
+		Text = "Choose One",
+		Font = Enum.Font.ArialBold,
+		FontSize = Enum.FontSize.Size18,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Center,
+		BackgroundTransparency = 1,
+		AutoButtonColor = true,
+		Style = Enum.ButtonStyle.RobloxButton,
+		Size = UDim2.new(1, 0, 1, 0),
+		Parent = frame,
+		ZIndex = 2,
+		New "ImageLabel" {
+			Name = "Icon",
+			Active = false,
+			Image = "http://banland.xyz/asset?id=45732894",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(0, 11, 0, 6),
+			Position = UDim2.new(1, -11, 0.5, -2),
+			ZIndex = 2,
+		},
+	}
 
 	local itemCount = #items
 	local dropDownItemCount = #items
@@ -281,30 +296,35 @@ RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 		dropDownItemCount = 6
 	end
 
-	local droppedDownMenu = Instance.new "TextButton"
-	droppedDownMenu.Name = "List"
-	droppedDownMenu.Text = ""
-	droppedDownMenu.BackgroundTransparency = 1
-	--droppedDownMenu.AutoButtonColor = true
-	droppedDownMenu.Style = Enum.ButtonStyle.RobloxButton
-	droppedDownMenu.Visible = false
-	droppedDownMenu.Active = true --Blocks clicks
-	droppedDownMenu.Position = UDim2.new(0, 0, 0, 0)
-	droppedDownMenu.Size = UDim2.new(1, 0, (1 + dropDownItemCount) * 0.8, 0)
-	droppedDownMenu.Parent = frame
-	droppedDownMenu.ZIndex = 2
+	local droppedDownMenu = New "TextButton" {
+		Name = "List",
+		Text = "",
+		BackgroundTransparency = 1,
+		-- AutoButtonColor = true
+		Style = Enum.ButtonStyle.RobloxButton,
+		Visible = false,
+		Active = true, --Blocks clicks
+		Position = UDim2.new(0, 0, 0, 0),
+		Size = UDim2.new(1, 0, (1 + dropDownItemCount) * 0.8, 0),
+		Parent = frame,
+		ZIndex = 2,
+	}
 
-	local choiceButton = Instance.new "TextButton"
-	choiceButton.Name = "ChoiceButton"
-	choiceButton.BackgroundTransparency = 1
-	choiceButton.BorderSizePixel = 0
-	choiceButton.Text = "ReplaceMe"
-	choiceButton.TextColor3 = Color3.new(1, 1, 1)
-	choiceButton.TextXAlignment = Enum.TextXAlignment.Left
-	choiceButton.TextYAlignment = Enum.TextYAlignment.Center
-	choiceButton.BackgroundColor3 = Color3.new(1, 1, 1)
-	choiceButton.Font = Enum.Font.Arial
-	choiceButton.FontSize = Enum.FontSize.Size18
+	local choiceButton = New "TextButton" {
+		Name = "ChoiceButton",
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		Text = "ReplaceMe",
+		TextColor3 = Color3.new(1, 1, 1),
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Center,
+		BackgroundColor3 = Color3.new(1, 1, 1),
+		Font = Enum.Font.Arial,
+		FontSize = Enum.FontSize.Size18,
+		TextWrap = true,
+		ZIndex = 2,
+	}
+
 	if useScrollButtons then
 		choiceButton.Size =
 			UDim2.new(1, -13, 0.8 / ((dropDownItemCount + 1) * 0.8), 0)
@@ -312,17 +332,16 @@ RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 		choiceButton.Size =
 			UDim2.new(1, 0, 0.8 / ((dropDownItemCount + 1) * 0.8), 0)
 	end
-	choiceButton.TextWrap = true
-	choiceButton.ZIndex = 2
 
-	local areaSoak = Instance.new "TextButton"
-	areaSoak.Name = "AreaSoak"
-	areaSoak.Text = ""
-	areaSoak.BackgroundTransparency = 1
-	areaSoak.Active = true
-	areaSoak.Size = UDim2.new(1, 0, 1, 0)
-	areaSoak.Visible = false
-	areaSoak.ZIndex = 3
+	local areaSoak = New "TextButton" {
+		Name = "AreaSoak",
+		Text = "",
+		BackgroundTransparency = 1,
+		Active = true,
+		Size = UDim2.new(1, 0, 1, 0),
+		Visible = false,
+		ZIndex = 3,
+	}
 
 	local dropDownSelected = false
 
@@ -330,7 +349,7 @@ RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	local scrollDownButton
 	scrollMouseCount = 0
 
-	local setZIndex = function(baseZIndex)
+	local function setZIndex(baseZIndex: number)
 		droppedDownMenu.ZIndex = baseZIndex + 1
 		if scrollUpButton then
 			scrollUpButton.ZIndex = baseZIndex + 3
@@ -461,13 +480,18 @@ RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 
 	if useScrollButtons then
 		--Make some scroll buttons
-		scrollUpButton = Instance.new "ImageButton"
-		scrollUpButton.Name = "ScrollUpButton"
-		scrollUpButton.BackgroundTransparency = 1
-		scrollUpButton.Image = "rbxasset://textures/ui/scrollbuttonUp.png"
-		scrollUpButton.Size = UDim2.new(0, 17, 0, 17)
-		scrollUpButton.Position =
-			UDim2.new(1, -11, (1 * 0.8) / ((dropDownItemCount + 1) * 0.8), 0)
+		scrollUpButton = New "ImageButton" {
+			Name = "ScrollUpButton",
+			BackgroundTransparency = 1,
+			Image = "rbxasset://textures/ui/scrollbuttonUp.png",
+			Size = UDim2.new(0, 17, 0, 17),
+			Position = UDim2.new(
+				1,
+				-11,
+				(1 * 0.8) / ((dropDownItemCount + 1) * 0.8),
+				0
+			),
+		}
 		scrollUpButton.MouseButton1Click:connect(function()
 			scrollMouseCount += 1
 		end)
@@ -490,13 +514,14 @@ RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 
 		scrollUpButton.Parent = droppedDownMenu
 
-		scrollDownButton = Instance.new "ImageButton"
-		scrollDownButton.Name = "ScrollDownButton"
-		scrollDownButton.BackgroundTransparency = 1
-		scrollDownButton.Image = "rbxasset://textures/ui/scrollbuttonDown.png"
-		scrollDownButton.Size = UDim2.new(0, 17, 0, 17)
-		scrollDownButton.Position = UDim2.new(1, -11, 1, -11)
-		scrollDownButton.Parent = droppedDownMenu
+		scrollDownButton = New "ImageButton" {
+			Name = "ScrollDownButton",
+			BackgroundTransparency = 1,
+			Image = "rbxasset://textures/ui/scrollbuttonDown.png",
+			Size = UDim2.new(0, 17, 0, 17),
+			Position = UDim2.new(1, -11, 1, -11),
+			Parent = droppedDownMenu,
+		}
 		scrollDownButton.MouseButton1Click:connect(function()
 			scrollMouseCount += 1
 		end)
@@ -517,28 +542,29 @@ RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 			end
 		end)
 
-		local scrollbar = Instance.new "ImageLabel"
-		scrollbar.Name = "ScrollBar"
-		scrollbar.Image = "rbxasset://textures/ui/scrollbar.png"
-		scrollbar.BackgroundTransparency = 1
-		scrollbar.Size = UDim2.new(
-			0,
-			18,
-			(dropDownItemCount * 0.8) / ((dropDownItemCount + 1) * 0.8),
-			-17 - 11 - 4
-		)
-		scrollbar.Position = UDim2.new(
-			1,
-			-11,
-			(1 * 0.8) / ((dropDownItemCount + 1) * 0.8),
-			17 + 2
-		)
-		scrollbar.Parent = droppedDownMenu
+		New "ImageLabel" {
+			Name = "ScrollBar",
+			Image = "rbxasset://textures/ui/scrollbar.png",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(
+				0,
+				18,
+				(dropDownItemCount * 0.8) / ((dropDownItemCount + 1) * 0.8),
+				-17 - 11 - 4
+			),
+			Position = UDim2.new(
+				1,
+				-11,
+				(1 * 0.8) / ((dropDownItemCount + 1) * 0.8),
+				17 + 2
+			),
+			Parent = droppedDownMenu,
+		}
 	end
 
 	for _, item in ipairs(items) do
 		-- needed to maintain local scope for items in event listeners below
-		local button = choiceButton:clone()
+		local button = choiceButton:Clone()
 		if forRoblox then
 			button.RobloxLocked = true
 		end
@@ -583,7 +609,7 @@ RbxGui.CreateDropDownMenu = function(items, onSelect, forRoblox)
 	return frame, updateSelection
 end
 
-RbxGui.CreatePropertyDropDownMenu = function(instance, property, enum)
+function RbxGui.CreatePropertyDropDownMenu(instance, property, enum)
 	local items = enum:GetEnumItems()
 	local names = {}
 	local nameToItem = {}
@@ -609,7 +635,7 @@ RbxGui.CreatePropertyDropDownMenu = function(instance, property, enum)
 	return frame
 end
 
-RbxGui.GetFontHeight = function(font, fontSize)
+function RbxGui.GetFontHeight(font, fontSize)
 	if font == nil or fontSize == nil then
 		error "Font and FontSize must be non-nil"
 	end
@@ -667,11 +693,12 @@ RbxGui.GetFontHeight = function(font, fontSize)
 	end
 end
 
-local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
+local function layoutGuiObjectsHelper(frame: Frame, guiObjects, settingsTable)
 	local totalPixels = frame.AbsoluteSize.Y
 	local pixelsRemaining = frame.AbsoluteSize.Y
-	for _, child in ipairs(guiObjects) do
-		if child:IsA "TextLabel" or child:IsA "TextButton" then
+	for _, ch in ipairs(guiObjects) do
+		if ch:IsA "TextLabel" or ch:IsA "TextButton" then
+			local child = ch :: TextLabel & TextButton -- luau moment
 			local isLabel = child:IsA "TextLabel"
 			if isLabel then
 				pixelsRemaining = pixelsRemaining
@@ -693,7 +720,10 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 				pixelsRemaining
 			)
 
-			if child.TextFits and child.TextBounds.Y < pixelsRemaining then
+			if
+				child.TextFits
+				and (child.TextBounds.Y :: number) < pixelsRemaining
+			then
 				child.Visible = true
 				if isLabel then
 					child.Size = UDim2.new(
@@ -733,7 +763,8 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 				pixelsRemaining = -1
 			end
 		else
-			--GuiObject
+			local child = ch :: GuiObject
+			-- GuiObject
 			child.Position = UDim2.new(
 				child.Position.X.Scale,
 				child.Position.X.Offset,
@@ -746,7 +777,7 @@ local function layoutGuiObjectsHelper(frame, guiObjects, settingsTable)
 	end
 end
 
-RbxGui.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
+function RbxGui.LayoutGuiObjects(frame, guiObjects, settingsTable)
 	if not frame:IsA "GuiObject" then
 		error "Frame must be a GuiObject"
 	end
@@ -785,7 +816,7 @@ RbxGui.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
 	end
 
 	local recalculate = function()
-		wait()
+		RunService.Heartbeat:wait()
 		layoutGuiObjectsHelper(wrapperFrame, guiObjects, settingsTable)
 	end
 
@@ -800,25 +831,28 @@ RbxGui.LayoutGuiObjects = function(frame, guiObjects, settingsTable)
 	layoutGuiObjectsHelper(wrapperFrame, guiObjects, settingsTable)
 end
 
-RbxGui.CreateSlider = function(steps, width, position)
-	local sliderGui = Instance.new "Frame"
-	sliderGui.Size = UDim2.new(1, 0, 1, 0)
-	sliderGui.BackgroundTransparency = 1
-	sliderGui.Name = "SliderGui"
+function RbxGui.CreateSlider(steps: number, width: number, position)
+	local sliderGui = New "Frame" {
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		Name = "SliderGui",
+	}
 
-	local sliderSteps = Instance.new "IntValue"
-	sliderSteps.Name = "SliderSteps"
-	sliderSteps.Value = steps
-	sliderSteps.Parent = sliderGui
+	local sliderSteps = New "IntValue" {
+		Name = "SliderSteps",
+		Value = steps,
+		Parent = sliderGui,
+	}
 
-	local areaSoak = Instance.new "TextButton"
-	areaSoak.Name = "AreaSoak"
-	areaSoak.Text = ""
-	areaSoak.BackgroundTransparency = 1
-	areaSoak.Active = false
-	areaSoak.Size = UDim2.new(1, 0, 1, 0)
-	areaSoak.Visible = false
-	areaSoak.ZIndex = 4
+	local areaSoak = New "TextButton" {
+		Name = "AreaSoak",
+		Text = "",
+		BackgroundTransparency = 1,
+		Active = false,
+		Size = UDim2.new(1, 0, 1, 0),
+		Visible = false,
+		ZIndex = 4,
+	}
 
 	sliderGui.AncestryChanged:connect(function(_, parent)
 		if parent == nil then
@@ -828,24 +862,23 @@ RbxGui.CreateSlider = function(steps, width, position)
 		end
 	end)
 
-	local sliderPosition = Instance.new "IntValue"
-	sliderPosition.Name = "SliderPosition"
-	sliderPosition.Value = 0
-	sliderPosition.Parent = sliderGui
+	local sliderPosition = New "IntValue" {
+		Name = "SliderPosition",
+		Value = 1,
+		Parent = sliderGui,
+	}
 
-	local bar = Instance.new "TextButton"
-	bar.Text = ""
-	bar.AutoButtonColor = false
-	bar.Name = "Bar"
-	bar.BackgroundColor3 = Color3.new(0, 0, 0)
-	if type(width) == "number" then
-		bar.Size = UDim2.new(0, width, 0, 5)
-	else
-		bar.Size = UDim2.new(0, 200, 0, 5)
-	end
-	bar.BorderColor3 = Color3.new(95 / 255, 95 / 255, 95 / 255)
-	bar.ZIndex = 2
-	bar.Parent = sliderGui
+	local bar = New "TextButton" {
+		Text = "",
+		AutoButtonColor = false,
+		Name = "Bar",
+		BackgroundColor3 = Color3.new(0, 0, 0),
+		Size = type(width) == "number" and UDim2.new(0, width, 0, 5)
+			or UDim2.new(0, 200, 0, 5),
+		BorderColor3 = Colour3(95, 95, 95),
+		ZIndex = 2,
+		Parent = sliderGui,
+	}
 
 	if
 		position.X
@@ -858,14 +891,15 @@ RbxGui.CreateSlider = function(steps, width, position)
 		bar.Position = position
 	end
 
-	local slider = Instance.new "ImageButton"
-	slider.Name = "Slider"
-	slider.BackgroundTransparency = 1
-	slider.Image = "rbxasset://textures/ui/Slider.png"
-	slider.Position = UDim2.new(0, 0, 0.5, -10)
-	slider.Size = UDim2.new(0, 20, 0, 20)
-	slider.ZIndex = 3
-	slider.Parent = bar
+	local slider = New "ImageButton" {
+		Name = "Slider",
+		BackgroundTransparency = 1,
+		Image = "rbxasset://textures/ui/Slider.png",
+		Position = UDim2.new(0, 0, 0.5, -10),
+		Size = UDim2.new(0, 20, 0, 20),
+		ZIndex = 3,
+		Parent = bar,
+	}
 
 	areaSoak.MouseLeave:connect(function()
 		if areaSoak.Visible then
@@ -911,59 +945,65 @@ RbxGui.CreateSlider = function(steps, width, position)
 	return sliderGui, sliderPosition, sliderSteps
 end
 
-RbxGui.CreateTrueScrollingFrame = function()
+function RbxGui.CreateTrueScrollingFrame()
 	local lowY
 	local highY
 
-	local dragCon
-	local upCon
+	local dragCon: RBXScriptConnection?
+	local upCon: RBXScriptConnection?
 
 	local internalChange = false
 
 	local descendantsChangeConMap = {}
 
-	local scrollingFrame = Instance.new "Frame"
-	scrollingFrame.Name = "ScrollingFrame"
-	scrollingFrame.Active = true
-	scrollingFrame.Size = UDim2.new(1, 0, 1, 0)
-	scrollingFrame.ClipsDescendants = true
+	local scrollingFrame = New "Frame" {
+		Name = "ScrollingFrame",
+		Active = true,
+		Size = UDim2.new(1, 0, 1, 0),
+		ClipsDescendants = true,
+	}
 
-	local controlFrame = Instance.new "Frame"
-	controlFrame.Name = "ControlFrame"
-	controlFrame.BackgroundTransparency = 1
-	controlFrame.Size = UDim2.new(0, 18, 1, 0)
-	controlFrame.Position = UDim2.new(1, -20, 0, 0)
-	controlFrame.Parent = scrollingFrame
+	local controlFrame = New "Frame" {
+		Name = "ControlFrame",
+		BackgroundTransparency = 1,
+		Size = UDim2.new(0, 18, 1, 0),
+		Position = UDim2.new(1, -20, 0, 0),
+		Parent = scrollingFrame,
+	}
 
-	local scrollBottom = Instance.new "BoolValue"
-	scrollBottom.Value = false
-	scrollBottom.Name = "ScrollBottom"
-	scrollBottom.Parent = controlFrame
+	local scrollBottom = New "BoolValue" {
+		Value = false,
+		Name = "ScrollBottom",
+		Parent = controlFrame,
+	}
 
-	local scrollUp = Instance.new "BoolValue"
-	scrollUp.Value = false
-	scrollUp.Name = "scrollUp"
-	scrollUp.Parent = controlFrame
+	local scrollUpValue = New "BoolValue" {
+		Value = false,
+		Name = "scrollUp",
+		Parent = controlFrame,
+	}
 
-	local scrollUpButton = Instance.new "TextButton"
-	scrollUpButton.Name = "ScrollUpButton"
-	scrollUpButton.Text = ""
-	scrollUpButton.AutoButtonColor = false
-	scrollUpButton.BackgroundColor3 = Color3.new(0, 0, 0)
-	scrollUpButton.BorderColor3 = Color3.new(1, 1, 1)
-	scrollUpButton.BackgroundTransparency = 0.5
-	scrollUpButton.Size = UDim2.new(0, 18, 0, 18)
-	scrollUpButton.ZIndex = 2
-	scrollUpButton.Parent = controlFrame
+	local scrollUpButton = New "TextButton" {
+		Name = "ScrollUpButton",
+		Text = "",
+		AutoButtonColor = false,
+		BackgroundColor3 = Color3.new(0, 0, 0),
+		BorderColor3 = Color3.new(1, 1, 1),
+		BackgroundTransparency = 0.5,
+		Size = UDim2.new(0, 18, 0, 18),
+		ZIndex = 2,
+		Parent = controlFrame,
+	}
 	for i = 1, 6 do
-		local triFrame = Instance.new "Frame"
-		triFrame.BorderColor3 = Color3.new(1, 1, 1)
-		triFrame.Name = "tri" .. tostring(i)
-		triFrame.ZIndex = 3
-		triFrame.BackgroundTransparency = 0.5
-		triFrame.Size = UDim2.new(0, 12 - ((i - 1) * 2), 0, 0)
-		triFrame.Position = UDim2.new(0, 3 + (i - 1), 0.5, 2 - (i - 1))
-		triFrame.Parent = scrollUpButton
+		New "Frame" {
+			BorderColor3 = Color3.new(1, 1, 1),
+			Name = "tri" .. i,
+			ZIndex = 3,
+			BackgroundTransparency = 0.5,
+			Size = UDim2.new(0, 12 - ((i - 1) * 2), 0, 0),
+			Position = UDim2.new(0, 3 + (i - 1), 0.5, 2 - (i - 1)),
+			Parent = scrollUpButton,
+		}
 	end
 	scrollUpButton.MouseEnter:connect(function()
 		scrollUpButton.BackgroundTransparency = 0.1
@@ -980,7 +1020,7 @@ RbxGui.CreateTrueScrollingFrame = function()
 		end
 	end)
 
-	local scrollDownButton = scrollUpButton:clone()
+	local scrollDownButton = scrollUpButton:Clone()
 	scrollDownButton.Name = "ScrollDownButton"
 	scrollDownButton.Position = UDim2.new(0, 0, 1, -18)
 	local downChildren = scrollDownButton:GetChildren()
@@ -1003,43 +1043,50 @@ RbxGui.CreateTrueScrollingFrame = function()
 	end)
 	scrollDownButton.Parent = controlFrame
 
-	local scrollTrack = Instance.new "Frame"
-	scrollTrack.Name = "ScrollTrack"
-	scrollTrack.BackgroundTransparency = 1
-	scrollTrack.Size = UDim2.new(0, 18, 1, -38)
-	scrollTrack.Position = UDim2.new(0, 0, 0, 19)
-	scrollTrack.Parent = controlFrame
+	local scrollTrack = New "Frame" {
+		Name = "ScrollTrack",
+		BackgroundTransparency = 1,
+		Size = UDim2.new(0, 18, 1, -38),
+		Position = UDim2.new(0, 0, 0, 19),
+		Parent = controlFrame,
+	}
 
-	local scrollbar = Instance.new "TextButton"
-	scrollbar.BackgroundColor3 = Color3.new(0, 0, 0)
-	scrollbar.BorderColor3 = Color3.new(1, 1, 1)
-	scrollbar.BackgroundTransparency = 0.5
-	scrollbar.AutoButtonColor = false
-	scrollbar.Text = ""
-	scrollbar.Active = true
-	scrollbar.Name = "ScrollBar"
-	scrollbar.ZIndex = 2
-	scrollbar.BackgroundTransparency = 0.5
-	scrollbar.Size = UDim2.new(0, 18, 0.1, 0)
-	scrollbar.Position = UDim2.new(0, 0, 0, 0)
-	scrollbar.Parent = scrollTrack
+	local scrollbar = New "TextButton" {
+		BackgroundColor3 = Color3.new(0, 0, 0),
+		BorderColor3 = Color3.new(1, 1, 1),
+		BackgroundTransparency = 0.5,
+		AutoButtonColor = false,
+		Text = "",
+		Active = true,
+		Name = "ScrollBar",
+		ZIndex = 2,
+		Size = UDim2.new(0, 18, 0.1, 0),
+		Position = UDim2.new(0, 0, 0, 0),
+		Parent = scrollTrack,
+	}
 
-	local scrollNub = Instance.new "Frame"
-	scrollNub.Name = "ScrollNub"
-	scrollNub.BorderColor3 = Color3.new(1, 1, 1)
-	scrollNub.Size = UDim2.new(0, 10, 0, 0)
-	scrollNub.Position = UDim2.new(0.5, -5, 0.5, 0)
-	scrollNub.ZIndex = 2
-	scrollNub.BackgroundTransparency = 0.5
-	scrollNub.Parent = scrollbar
+	local function nub()
+		return New "Frame" {
+			Name = "ScrollNub",
+			BorderColor3 = Color3.new(1, 1, 1),
+			Size = UDim2.new(0, 10, 0, 0),
+			ZIndex = 2,
+			BackgroundTransparency = 0.5,
+		}
+	end
 
-	local newNub = scrollNub:clone()
-	newNub.Position = UDim2.new(0.5, -5, 0.5, -2)
-	newNub.Parent = scrollbar
-
-	local lastNub = scrollNub:clone()
-	lastNub.Position = UDim2.new(0.5, -5, 0.5, 2)
-	lastNub.Parent = scrollbar
+	local scrollNub = Hydrate(nub()) {
+		Position = UDim2.new(0.5, -5, 0.5, 0),
+		Parent = scrollbar,
+	}
+	local newNub = Hydrate(nub()) {
+		Position = UDim2.new(0.5, -5, 0.5, -2),
+		Parent = scrollbar,
+	}
+	local lastNub = Hydrate(nub()) {
+		Position = UDim2.new(0.5, -5, 0.5, 2),
+		Parent = scrollbar,
+	}
 
 	scrollbar.MouseEnter:connect(function()
 		scrollbar.BackgroundTransparency = 0.1
@@ -1054,14 +1101,15 @@ RbxGui.CreateTrueScrollingFrame = function()
 		lastNub.BackgroundTransparency = 0.5
 	end)
 
-	local mouseDrag = Instance.new "ImageButton"
-	mouseDrag.Active = false
-	mouseDrag.Size = UDim2.new(1.5, 0, 1.5, 0)
-	mouseDrag.AutoButtonColor = false
-	mouseDrag.BackgroundTransparency = 1
-	mouseDrag.Name = "mouseDrag"
-	mouseDrag.Position = UDim2.new(-0.25, 0, -0.25, 0)
-	mouseDrag.ZIndex = 10
+	local mouseDrag = New "ImageButton" {
+		Active = false,
+		Size = UDim2.new(1.5, 0, 1.5, 0),
+		AutoButtonColor = false,
+		BackgroundTransparency = 1,
+		Name = "mouseDrag",
+		Position = UDim2.new(-0.25, 0, -0.25, 0),
+		ZIndex = 10,
+	}
 
 	local function positionScrollBar(_, y, offset)
 		local oldPos = scrollbar.Position
@@ -1095,13 +1143,13 @@ RbxGui.CreateTrueScrollingFrame = function()
 		if newScaleYPos + relativeSize > 1 then
 			newScaleYPos = 1 - relativeSize
 			scrollBottom.Value = true
-			scrollUp.Value = false
+			scrollUpValue.Value = false
 		elseif newScaleYPos <= 0 then
 			newScaleYPos = 0
-			scrollUp.Value = true
+			scrollUpValue.Value = true
 			scrollBottom.Value = false
 		else
-			scrollUp.Value = false
+			scrollUpValue.Value = false
 			scrollBottom.Value = false
 		end
 		scrollbar.Position = UDim2.new(
@@ -1114,7 +1162,7 @@ RbxGui.CreateTrueScrollingFrame = function()
 		return (oldPos ~= scrollbar.Position)
 	end
 
-	local function drillDownSetHighLow(instance)
+	local function drillDownSetHighLow(instance: GuiObject)
 		if not instance or not instance:IsA "GuiObject" then
 			return
 		end
@@ -1142,7 +1190,7 @@ RbxGui.CreateTrueScrollingFrame = function()
 		end
 		local children = instance:GetChildren()
 		for i = 1, #children do
-			drillDownSetHighLow(children[i])
+			drillDownSetHighLow(children[i] :: GuiObject)
 		end
 	end
 
@@ -1150,7 +1198,7 @@ RbxGui.CreateTrueScrollingFrame = function()
 		local firstChildren = scrollingFrame:GetChildren()
 
 		for i = 1, #firstChildren do
-			drillDownSetHighLow(firstChildren[i])
+			drillDownSetHighLow(firstChildren[i]) -- y no type annotation here, luau?
 		end
 	end
 
@@ -1311,34 +1359,34 @@ RbxGui.CreateTrueScrollingFrame = function()
 
 	local scrollStamp
 
-	local function scrollUp(mouseYPos)
+	local function scrollUp()
 		if scrollUpButton.Active then
 			scrollStamp = tick()
 			local current = scrollStamp
 			upCon = mouseDrag.MouseButton1Up:connect(function()
 				scrollStamp = tick()
 				mouseDrag.Parent = nil
-				upCon:disconnect()
+				if upCon then
+					-- what's upcon
+					-- nothing much, you?
+					upCon:disconnect()
+				end
 			end)
 			mouseDrag.Parent = getScreenGuiAncestor(scrollbar)
 			doScrollUp()
 			wait(0.2)
 			local t = tick()
-			local w = 0.1
 			while scrollStamp == current do
 				doScrollUp()
-				if mouseYPos and mouseYPos > scrollbar.AbsolutePosition.y then
-					break
-				end
 				if not scrollUpButton.Active then
 					break
-				end
-				if tick() - t > 5 then
-					w = 0
+				elseif tick() - t > 5 then
+					wait()
 				elseif tick() - t > 2 then
-					w = 0.06
+					wait(0.06)
+				else
+					wait(0.1)
 				end
-				wait(w)
 			end
 		end
 	end
@@ -1431,7 +1479,13 @@ RbxGui.CreateTrueScrollingFrame = function()
 	scrollbar.MouseButton1Up:connect(scrollTick)
 
 	-- local function heightCheck(instance)
-	-- 	if (highY and (instance.AbsolutePosition.Y + instance.AbsoluteSize.Y) > highY) or not highY then
+	-- 	if
+	-- 		(
+	-- 			highY
+	-- 			and (instance.AbsolutePosition.Y + instance.AbsoluteSize.Y)
+	-- 				> highY
+	-- 		) or not highY
+	-- 	then
 	-- 		highY = instance.AbsolutePosition.Y + instance.AbsoluteSize.Y
 	-- 	end
 	-- 	setSliderSizeAndPosition()
@@ -1458,7 +1512,7 @@ RbxGui.CreateTrueScrollingFrame = function()
 		end
 
 		if prop == "Size" or prop == "Position" then
-			wait()
+			RunService.Heartbeat:wait()
 			highLowRecheck()
 		end
 	end
@@ -1469,7 +1523,7 @@ RbxGui.CreateTrueScrollingFrame = function()
 		end
 
 		if instance.Visible then
-			wait() -- wait a heartbeat for sizes to reconfig
+			RunService.Heartbeat:wait() -- wait a heartbeat for sizes to reconfig
 			highLowRecheck()
 		end
 
@@ -1488,7 +1542,7 @@ RbxGui.CreateTrueScrollingFrame = function()
 			descendantsChangeConMap[instance]:disconnect()
 			descendantsChangeConMap[instance] = nil
 		end
-		wait() -- wait a heartbeat for sizes to reconfig
+		RunService.Heartbeat:wait() -- wait a heartbeat for sizes to reconfig
 		highLowRecheck()
 	end)
 
@@ -1506,48 +1560,54 @@ RbxGui.CreateTrueScrollingFrame = function()
 	return scrollingFrame, controlFrame
 end
 
-RbxGui.CreateScrollingFrame = function(orderList, scrollStyle)
-	local frame = Instance.new "Frame"
-	frame.Name = "ScrollingFrame"
-	frame.BackgroundTransparency = 1
-	frame.Size = UDim2.new(1, 0, 1, 0)
+function RbxGui.CreateScrollingFrame(orderList, scrollStyle)
+	local frame = New "Frame" {
+		Name = "ScrollingFrame",
+		BackgroundTransparency = 1,
+		Size = UDim2.new(1, 0, 1, 0),
+	}
 
-	local scrollUpButton = Instance.new "ImageButton"
-	scrollUpButton.Name = "ScrollUpButton"
-	scrollUpButton.BackgroundTransparency = 1
-	scrollUpButton.Image = "rbxasset://textures/ui/scrollbuttonUp.png"
-	scrollUpButton.Size = UDim2.new(0, 17, 0, 17)
+	local scrollUpButton = New "ImageButton" {
+		Name = "ScrollUpButton",
+		BackgroundTransparency = 1,
+		Image = "rbxasset://textures/ui/scrollbuttonUp.png",
+		Size = UDim2.new(0, 17, 0, 17),
+	}
 
-	local scrollDownButton = Instance.new "ImageButton"
-	scrollDownButton.Name = "ScrollDownButton"
-	scrollDownButton.BackgroundTransparency = 1
-	scrollDownButton.Image = "rbxasset://textures/ui/scrollbuttonDown.png"
-	scrollDownButton.Size = UDim2.new(0, 17, 0, 17)
+	local scrollDownButton = New "ImageButton" {
+		Name = "ScrollDownButton",
+		BackgroundTransparency = 1,
+		Image = "rbxasset://textures/ui/scrollbuttonDown.png",
+		Size = UDim2.new(0, 17, 0, 17),
+	}
 
-	local scrollbar = Instance.new "ImageButton"
-	scrollbar.Name = "ScrollBar"
-	scrollbar.Image = "rbxasset://textures/ui/scrollbar.png"
-	scrollbar.BackgroundTransparency = 1
-	scrollbar.Size = UDim2.new(0, 18, 0, 150)
+	local scrollbar = New "ImageButton" {
+		Name = "ScrollBar",
+		Image = "rbxasset://textures/ui/scrollbar.png",
+		BackgroundTransparency = 1,
+		Size = UDim2.new(0, 18, 0, 150),
+	}
 
 	local scrollStamp = 0
 
-	local scrollDrag = Instance.new "ImageButton"
-	scrollDrag.Image = "http://banland.xyz/asset/?id=61367186"
-	scrollDrag.Size = UDim2.new(1, 0, 0, 16)
-	scrollDrag.BackgroundTransparency = 1
-	scrollDrag.Name = "ScrollDrag"
-	scrollDrag.Active = true
-	scrollDrag.Parent = scrollbar
+	local scrollDrag = New "ImageButton" {
+		Image = "http://banland.xyz/asset?id=61367186",
+		Size = UDim2.new(1, 0, 0, 16),
+		BackgroundTransparency = 1,
+		Name = "ScrollDrag",
+		Active = true,
+		Parent = scrollbar,
+	}
 
-	local mouseDrag = Instance.new "ImageButton"
-	mouseDrag.Active = false
-	mouseDrag.Size = UDim2.new(1.5, 0, 1.5, 0)
-	mouseDrag.AutoButtonColor = false
-	mouseDrag.BackgroundTransparency = 1
-	mouseDrag.Name = "mouseDrag"
-	mouseDrag.Position = UDim2.new(-0.25, 0, -0.25, 0)
-	mouseDrag.ZIndex = 10
+	local mouseDrag = New "ImageButton" {
+		Active = false,
+		Size = UDim2.new(1.5, 0, 1.5, 0),
+		AutoButtonColor = false,
+		BackgroundTransparency = 1,
+		Name = "mouseDrag",
+		Position = UDim2.new(-0.25, 0, -0.25, 0),
+		ZIndex = 10,
+	}
 
 	local style = "simple"
 	if scrollStyle and tostring(scrollStyle) then
@@ -1893,7 +1953,7 @@ RbxGui.CreateScrollingFrame = function(orderList, scrollStyle)
 			return
 		end
 		reentrancyGuard = true
-		wait()
+		RunService.Heartbeat:wait()
 		local success, err
 		if style == "grid" then
 			success, err = pcall(function()
@@ -1957,7 +2017,7 @@ RbxGui.CreateScrollingFrame = function(orderList, scrollStyle)
 		end
 	end
 
-	local scrollDown = function(mouseYPos)
+	local function scrollDown(mouseYPos)
 		if scrollDownButton.Active then
 			scrollStamp = tick()
 			local current = scrollStamp
@@ -2098,7 +2158,12 @@ RbxGui.CreateScrollingFrame = function(orderList, scrollStyle)
 
 	return frame, scrollUpButton, scrollDownButton, recalculate, scrollbar
 end
-local function binaryGrow(min, max, fits)
+
+local function binaryGrow(
+	min: number,
+	max: number,
+	fits: (number) -> boolean
+): number
 	if min > max then
 		return min
 	end
@@ -2109,17 +2174,21 @@ local function binaryGrow(min, max, fits)
 		if fits(mid) and (biggestLegal == nil or biggestLegal < mid) then
 			biggestLegal = mid
 
-			--Try growing
+			-- Try growing
 			min = mid + 1
 		else
-			--Doesn't fit, shrink
+			-- Doesn't fit, shrink
 			max = mid - 1
 		end
 	end
 	return biggestLegal
 end
 
-local function binaryShrink(min, max, fits)
+local function binaryShrink(
+	min: number,
+	max: number,
+	fits: (number) -> boolean
+): number
 	if min > max then
 		return min
 	end
@@ -2130,46 +2199,48 @@ local function binaryShrink(min, max, fits)
 		if fits(mid) and (smallestLegal == nil or smallestLegal > mid) then
 			smallestLegal = mid
 
-			--It fits, shrink
+			-- It fits, shrink
 			max = mid - 1
 		else
-			--Doesn't fit, grow
+			-- Doesn't fit, grow
 			min = mid + 1
 		end
 	end
 	return smallestLegal
 end
 
-local function getGuiOwner(instance)
-	while instance ~= nil do
-		if instance:IsA "ScreenGui" or instance:IsA "BillboardGui" then
-			return instance
+local function hasGuiOwner(instance: Instance)
+	local obj: Instance? = instance
+	while obj do
+		if obj:IsA "ScreenGui" or obj:IsA "BillboardGui" then
+			return true
 		end
-		instance = instance.Parent
+		obj = obj.Parent
 	end
-	return nil
+	return false
 end
 
-RbxGui.AutoTruncateTextObject = function(textLabel)
+function RbxGui.AutoTruncateTextObject(textLabel: TextLabel)
 	local text = textLabel.Text
 
-	local fullLabel = textLabel:Clone()
-	fullLabel.Name = "Full" .. textLabel.Name
-	fullLabel.BorderSizePixel = 0
-	fullLabel.BackgroundTransparency = 0
-	fullLabel.Text = text
-	fullLabel.TextXAlignment = Enum.TextXAlignment.Center
-	fullLabel.Position = UDim2.new(0, -3, 0, 0)
-	fullLabel.Size = UDim2.new(0, 100, 1, 0)
-	fullLabel.Visible = false
-	fullLabel.Parent = textLabel
+	local fullLabel = Hydrate(textLabel:Clone()) {
+		Name = "Full" .. textLabel.Name,
+		BorderSizePixel = 0,
+		BackgroundTransparency = 0,
+		Text = text,
+		TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.new(0, -3, 0, 0),
+		Size = UDim2.new(0, 100, 1, 0),
+		Visible = false,
+		Parent = textLabel,
+	}
 
 	local shortText
-	local mouseEnterConnection
-	local mouseLeaveConnection
+	local mouseEnterConnection: RBXScriptConnection?
+	local mouseLeaveConnection: RBXScriptConnection?
 
-	local checkForResize = function()
-		if getGuiOwner(textLabel) == nil then
+	local function checkForResize()
+		if not hasGuiOwner(textLabel) then
 			return
 		end
 		textLabel.Text = text
@@ -2189,11 +2260,8 @@ RbxGui.AutoTruncateTextObject = function(textLabel)
 
 			--Shrink the text
 			local textSize = binaryGrow(0, len, function(pos)
-				if pos == 0 then
-					textLabel.Text = "~"
-				else
-					textLabel.Text = `{string.sub(text, 1, pos)}~`
-				end
+				textLabel.Text = pos == 0 and "~"
+					or string.sub(text, 1, pos) .. "~"
 				return textLabel.TextFits
 			end)
 			shortText = `{string.sub(text, 1, textSize)}~`
@@ -2251,10 +2319,10 @@ RbxGui.AutoTruncateTextObject = function(textLabel)
 end
 
 local function TransitionTutorialPages(
-	fromPage,
-	toPage,
-	transitionFrame,
-	currentPageValue
+	fromPage: GuiObject?,
+	toPage: GuiObject?,
+	transitionFrame: Frame,
+	currentPageValue: ObjectValue
 )
 	if fromPage then
 		fromPage.Visible = false
@@ -2303,48 +2371,48 @@ local function TransitionTutorialPages(
 	)
 end
 
-RbxGui.CreateTutorial = function(name, tutorialKey, createButtons)
-	local frame = Instance.new "Frame"
-	frame.Name = "Tutorial-" .. name
-	frame.BackgroundTransparency = 1
-	frame.Size = UDim2.new(0.6, 0, 0.6, 0)
-	frame.Position = UDim2.new(0.2, 0, 0.2, 0)
+function RbxGui.CreateTutorial(name, tutorialKey, createButtons: boolean)
+	local frame = New "Frame" {
+		Name = "Tutorial-" .. name,
+		BackgroundTransparency = 1,
+		Size = UDim2.new(0.6, 0, 0.6, 0),
+		Position = UDim2.new(0.2, 0, 0.2, 0),
+		New "BoolValue" {
+			Name = "Buttons",
+			Value = createButtons,
+		},
+	}
 
-	local transitionFrame = Instance.new "Frame"
-	transitionFrame.Name = "TransitionFrame"
-	transitionFrame.Style = Enum.FrameStyle.RobloxRound
-	transitionFrame.Size = UDim2.new(0.6, 0, 0.6, 0)
-	transitionFrame.Position = UDim2.new(0.2, 0, 0.2, 0)
-	transitionFrame.Visible = false
-	transitionFrame.Parent = frame
+	local transitionFrame = New "Frame" {
+		Name = "TransitionFrame",
+		Style = Enum.FrameStyle.RobloxRound,
+		Size = UDim2.new(0.6, 0, 0.6, 0),
+		Position = UDim2.new(0.2, 0, 0.2, 0),
+		Visible = false,
+		Parent = frame,
+	}
 
-	local currentPageValue = Instance.new "ObjectValue"
-	currentPageValue.Name = "CurrentTutorialPage"
-	currentPageValue.Value = nil
-	currentPageValue.Parent = frame
+	local currentPageValue = New "ObjectValue" {
+		Name = "CurrentTutorialPage",
+		Value = nil,
+		Parent = frame,
+	}
 
-	local boolValue = Instance.new "BoolValue"
-	boolValue.Name = "Buttons"
-	boolValue.Value = createButtons
-	boolValue.Parent = frame
-
-	local pages = Instance.new "Frame"
-	pages.Name = "Pages"
-	pages.BackgroundTransparency = 1
-	pages.Size = UDim2.new(1, 0, 1, 0)
-	pages.Parent = frame
+	local pages = New "Frame" {
+		Name = "Pages",
+		BackgroundTransparency = 1,
+		Size = UDim2.new(1, 0, 1, 0),
+		Parent = frame,
+	}
 
 	local function getVisiblePageAndHideOthers()
 		local visiblePage
-		local children = pages:GetChildren()
-		if children then
-			for _, child in ipairs(children) do
-				if child.Visible then
-					if visiblePage then
-						child.Visible = false
-					else
-						visiblePage = child
-					end
+		for _, child in ipairs(pages:GetChildren() or {}) do
+			if child.Visible then
+				if visiblePage then
+					child.Visible = false
+				else
+					visiblePage = child
 				end
 			end
 		end
@@ -2406,34 +2474,62 @@ end
 local function CreateBasicTutorialPage(
 	name: string,
 	handleResize: (number, number) -> (),
-	skipTutorial,
-	giveDoneButton
+	skipTutorial: () -> (),
+	giveDoneButton: boolean? -- idk
 )
-	local frame = Instance.new "Frame"
-	frame.Name = "TutorialPage"
-	frame.Style = Enum.FrameStyle.RobloxRound
-	frame.Size = UDim2.new(0.6, 0, 0.6, 0)
-	frame.Position = UDim2.new(0.2, 0, 0.2, 0)
-	frame.Visible = false
+	local frame = New "Frame" {
+		Name = "TutorialPage",
+		Style = Enum.FrameStyle.RobloxRound,
+		Size = UDim2.new(0.6, 0, 0.6, 0),
+		Position = UDim2.new(0.2, 0, 0.2, 0),
+		Visible = false,
+		New "TextLabel" {
+			Name = "Header",
+			Text = name,
+			BackgroundTransparency = 1,
+			FontSize = Enum.FontSize.Size24,
+			Font = Enum.Font.ArialBold,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextWrap = true,
+			Size = UDim2.new(1, -55, 0, 22),
+			Position = UDim2.new(0, 0, 0, 0),
+		},
+		New "TextButton" {
+			Name = "NextButton",
+			Text = "Next",
+			TextColor3 = Color3.new(1, 1, 1),
+			Font = Enum.Font.Arial,
+			FontSize = Enum.FontSize.Size18,
+			Style = Enum.ButtonStyle.RobloxButtonDefault,
+			Size = UDim2.new(0, 80, 0, 32),
+			Position = UDim2.new(0.5, 5, 1, -32),
+			Active = false,
+			Visible = false,
+		},
+		New "TextButton" {
+			Name = "PrevButton",
+			Text = "Previous",
+			TextColor3 = Color3.new(1, 1, 1),
+			Font = Enum.Font.Arial,
+			FontSize = Enum.FontSize.Size18,
+			Style = Enum.ButtonStyle.RobloxButton,
+			Size = UDim2.new(0, 80, 0, 32),
+			Position = UDim2.new(0.5, -85, 1, -32),
+			Active = false,
+			Visible = false,
+		},
+	}
 
-	local frameHeader = Instance.new "TextLabel"
-	frameHeader.Name = "Header"
-	frameHeader.Text = name
-	frameHeader.BackgroundTransparency = 1
-	frameHeader.FontSize = Enum.FontSize.Size24
-	frameHeader.Font = Enum.Font.ArialBold
-	frameHeader.TextColor3 = Color3.new(1, 1, 1)
-	frameHeader.TextXAlignment = Enum.TextXAlignment.Center
-	frameHeader.TextWrap = true
-	frameHeader.Size = UDim2.new(1, -55, 0, 22)
-	frameHeader.Position = UDim2.new(0, 0, 0, 0)
-	frameHeader.Parent = frame
+	local skipButton = New "ImageButton" {
+		Name = "SkipButton",
+		AutoButtonColor = false,
+		BackgroundTransparency = 1,
+		Image = "rbxasset://textures/ui/closeButton.png",
+		Size = UDim2.new(0, 25, 0, 25),
+		Position = UDim2.new(1, -25, 0, 0),
+	}
 
-	local skipButton = Instance.new "ImageButton"
-	skipButton.Name = "SkipButton"
-	skipButton.AutoButtonColor = false
-	skipButton.BackgroundTransparency = 1
-	skipButton.Image = "rbxasset://textures/ui/closeButton.png"
 	skipButton.MouseButton1Click:connect(function()
 		skipTutorial()
 	end)
@@ -2443,20 +2539,19 @@ local function CreateBasicTutorialPage(
 	skipButton.MouseLeave:connect(function()
 		skipButton.Image = "rbxasset://textures/ui/closeButton.png"
 	end)
-	skipButton.Size = UDim2.new(0, 25, 0, 25)
-	skipButton.Position = UDim2.new(1, -25, 0, 0)
 	skipButton.Parent = frame
 
 	if giveDoneButton then
-		local doneButton = Instance.new "TextButton"
-		doneButton.Name = "DoneButton"
-		doneButton.Style = Enum.ButtonStyle.RobloxButtonDefault
-		doneButton.Text = "Done"
-		doneButton.TextColor3 = Color3.new(1, 1, 1)
-		doneButton.Font = Enum.Font.ArialBold
-		doneButton.FontSize = Enum.FontSize.Size18
-		doneButton.Size = UDim2.new(0, 100, 0, 50)
-		doneButton.Position = UDim2.new(0.5, -50, 1, -50)
+		local doneButton = New "TextButton" {
+			Name = "DoneButton",
+			Style = Enum.ButtonStyle.RobloxButtonDefault,
+			Text = "Done",
+			TextColor3 = Color3.new(1, 1, 1),
+			Font = Enum.Font.ArialBold,
+			FontSize = Enum.FontSize.Size18,
+			Size = UDim2.new(0, 100, 0, 50),
+			Position = UDim2.new(0.5, -50, 1, -50),
+		}
 
 		if skipTutorial then
 			doneButton.MouseButton1Click:connect(function()
@@ -2467,45 +2562,17 @@ local function CreateBasicTutorialPage(
 		doneButton.Parent = frame
 	end
 
-	local innerFrame = Instance.new "Frame"
-	innerFrame.Name = "ContentFrame"
-	innerFrame.BackgroundTransparency = 1
-	innerFrame.Position = UDim2.new(0, 0, 0, 25)
-	innerFrame.Parent = frame
+	local innerFrame = New "Frame" {
+		Name = "ContentFrame",
+		BackgroundTransparency = 1,
+		Position = UDim2.new(0, 0, 0, 25),
+		Parent = frame,
+	}
 
-	local nextButton = Instance.new "TextButton"
-	nextButton.Name = "NextButton"
-	nextButton.Text = "Next"
-	nextButton.TextColor3 = Color3.new(1, 1, 1)
-	nextButton.Font = Enum.Font.Arial
-	nextButton.FontSize = Enum.FontSize.Size18
-	nextButton.Style = Enum.ButtonStyle.RobloxButtonDefault
-	nextButton.Size = UDim2.new(0, 80, 0, 32)
-	nextButton.Position = UDim2.new(0.5, 5, 1, -32)
-	nextButton.Active = false
-	nextButton.Visible = false
-	nextButton.Parent = frame
+	innerFrame.Size = giveDoneButton and UDim2.new(1, 0, 1, -75)
+		or UDim2.new(1, 0, 1, -22)
 
-	local prevButton = Instance.new "TextButton"
-	prevButton.Name = "PrevButton"
-	prevButton.Text = "Previous"
-	prevButton.TextColor3 = Color3.new(1, 1, 1)
-	prevButton.Font = Enum.Font.Arial
-	prevButton.FontSize = Enum.FontSize.Size18
-	prevButton.Style = Enum.ButtonStyle.RobloxButton
-	prevButton.Size = UDim2.new(0, 80, 0, 32)
-	prevButton.Position = UDim2.new(0.5, -85, 1, -32)
-	prevButton.Active = false
-	prevButton.Visible = false
-	prevButton.Parent = frame
-
-	if giveDoneButton then
-		innerFrame.Size = UDim2.new(1, 0, 1, -75)
-	else
-		innerFrame.Size = UDim2.new(1, 0, 1, -22)
-	end
-
-	local parentConnection
+	local parentConnection: RBXScriptConnection?
 
 	local function basicHandleResize()
 		if frame.Visible and frame.Parent then
@@ -2519,7 +2586,7 @@ local function CreateBasicTutorialPage(
 
 	frame.Changed:connect(function(prop)
 		if prop == "Parent" then
-			if parentConnection ~= nil then
+			if parentConnection then
 				parentConnection:disconnect()
 				parentConnection = nil
 			end
@@ -2527,7 +2594,7 @@ local function CreateBasicTutorialPage(
 				parentConnection = frame.Parent.Changed:connect(
 					function(parentProp)
 						if parentProp == "AbsoluteSize" then
-							wait()
+							RunService.Heartbeat:wait()
 							basicHandleResize()
 						end
 					end
@@ -2544,20 +2611,21 @@ local function CreateBasicTutorialPage(
 	return frame, innerFrame
 end
 
-RbxGui.CreateTextTutorialPage = function(name, text, skipTutorialFunc)
+function RbxGui.CreateTextTutorialPage(name, text, skipTutorial)
 	local frame
 	local contentFrame
 
-	local textLabel = Instance.new "TextLabel"
-	textLabel.BackgroundTransparency = 1
-	textLabel.TextColor3 = Color3.new(1, 1, 1)
-	textLabel.Text = text
-	textLabel.TextWrap = true
-	textLabel.TextXAlignment = Enum.TextXAlignment.Left
-	textLabel.TextYAlignment = Enum.TextYAlignment.Center
-	textLabel.Font = Enum.Font.Arial
-	textLabel.FontSize = Enum.FontSize.Size14
-	textLabel.Size = UDim2.new(1, 0, 1, 0)
+	local textLabel = New "TextLabel" {
+		BackgroundTransparency = 1,
+		TextColor3 = Color3.new(1, 1, 1),
+		Text = text,
+		TextWrap = true,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Center,
+		Font = Enum.Font.Arial,
+		FontSize = Enum.FontSize.Size14,
+		Size = UDim2.new(1, 0, 1, 0),
+	}
 
 	local function handleResize(minSize, maxSize)
 		local size = binaryShrink(minSize, maxSize, function(newSize)
@@ -2569,7 +2637,7 @@ RbxGui.CreateTextTutorialPage = function(name, text, skipTutorialFunc)
 	end
 
 	frame, contentFrame =
-		CreateBasicTutorialPage(name, handleResize, skipTutorialFunc)
+		CreateBasicTutorialPage(name, handleResize, skipTutorial)
 	textLabel.Parent = contentFrame
 
 	return frame
@@ -2578,19 +2646,25 @@ end
 RbxGui.CreateImageTutorialPage = function(
 	name,
 	imageAsset,
-	x,
-	y,
-	skipTutorialFunc,
+	x: number,
+	y: number,
+	skipTutorial: () -> (),
 	giveDoneButton
 )
 	local frame
 	local contentFrame
 
-	local imageLabel = Instance.new "ImageLabel"
-	imageLabel.BackgroundTransparency = 1
-	imageLabel.Image = imageAsset
-	imageLabel.Size = UDim2.new(0, x, 0, y)
-	imageLabel.Position = UDim2.new(0.5, -x / 2, 0.5, -y / 2)
+	-- local imageLabel = Instance.new "ImageLabel"
+	-- imageLabel.BackgroundTransparency = 1
+	-- imageLabel.Image = imageAsset
+	-- imageLabel.Size = UDim2.new(0, x, 0, y)
+	-- imageLabel.Position = UDim2.new(0.5, -x / 2, 0.5, -y / 2)
+	local imageLabel = New "ImageLabel" {
+		BackgroundTransparency = 1,
+		Image = imageAsset,
+		Size = UDim2.new(0, x, 0, y),
+		Position = UDim2.new(0.5, -x / 2, 0.5, -y / 2),
+	}
 
 	local function handleResize(minSize, maxSize)
 		local size = binaryShrink(minSize, maxSize, function(newSize)
@@ -2618,7 +2692,7 @@ RbxGui.CreateImageTutorialPage = function(
 	frame, contentFrame = CreateBasicTutorialPage(
 		name,
 		handleResize,
-		skipTutorialFunc,
+		skipTutorial,
 		giveDoneButton
 	)
 	imageLabel.Parent = contentFrame
@@ -2626,7 +2700,12 @@ RbxGui.CreateImageTutorialPage = function(
 	return frame
 end
 
-RbxGui.AddTutorialPage = function(tutorial, tutorialPage)
+type TutorialPage = GuiObject & {
+	NextButton: TextButton,
+	PrevButton: TextButton,
+}
+
+RbxGui.AddTutorialPage = function(tutorial, tutorialPage: TutorialPage)
 	local transitionFrame = tutorial.TransitionFrame
 	local currentPageValue = tutorial.CurrentTutorialPage
 
@@ -2638,7 +2717,7 @@ RbxGui.AddTutorialPage = function(tutorial, tutorialPage)
 	local children = tutorial.Pages:GetChildren()
 	if children and #children > 0 then
 		tutorialPage.Name = "TutorialPage" .. (#children + 1)
-		local previousPage = children[#children]
+		local previousPage: TutorialPage = children[#children]
 		if not previousPage:IsA "GuiObject" then
 			error "All elements under Pages must be GuiObjects"
 		end
@@ -2748,7 +2827,7 @@ RbxGui.CreateSetPanel = function(
 
 	local SmallThumbnailUrl
 	local LargeThumbnailUrl
-	local BaseUrl = game:GetService("ContentProvider").BaseUrl:lower()
+	local BaseUrl = string.lower(ContentProvider.BaseUrl)
 	local ThumbUrl = `{BaseUrl}Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=`
 
 	if useAssetVersionId then
@@ -2789,38 +2868,42 @@ RbxGui.CreateSetPanel = function(
 		local waterForceDirections = { "NegX", "X", "NegY", "Y", "NegZ", "Z" }
 		local waterForces = { "None", "Small", "Medium", "Strong", "Max" }
 
-		local waterFrame = Instance.new "Frame"
-		waterFrame.Name = "WaterFrame"
-		waterFrame.Style = Enum.FrameStyle.RobloxSquare
-		waterFrame.Size = UDim2.new(0, 150, 0, 110)
-		waterFrame.Visible = false
+		local waterFrame = New "Frame" {
+			Name = "WaterFrame",
+			Style = Enum.FrameStyle.RobloxSquare,
+			Size = UDim2.new(0, 150, 0, 110),
+			Visible = false,
+		}
 
-		local waterForceLabel = Instance.new "TextLabel"
-		waterForceLabel.Name = "WaterForceLabel"
-		waterForceLabel.BackgroundTransparency = 1
-		waterForceLabel.Size = UDim2.new(1, 0, 0, 12)
-		waterForceLabel.Font = Enum.Font.ArialBold
-		waterForceLabel.FontSize = Enum.FontSize.Size12
-		waterForceLabel.TextColor3 = Color3.new(1, 1, 1)
-		waterForceLabel.TextXAlignment = Enum.TextXAlignment.Left
-		waterForceLabel.Text = "Water Force"
-		waterForceLabel.Parent = waterFrame
+		local waterForceLabel = New "TextLabel" {
+			Name = "WaterForceLabel",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(1, 0, 0, 12),
+			Font = Enum.Font.ArialBold,
+			FontSize = Enum.FontSize.Size12,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Text = "Water Force",
+			Parent = waterFrame,
+		}
 
-		local waterForceDirLabel = waterForceLabel:Clone()
-		waterForceDirLabel.Name = "WaterForceDirectionLabel"
-		waterForceDirLabel.Text = "Water Force Direction"
-		waterForceDirLabel.Position = UDim2.new(0, 0, 0, 50)
-		waterForceDirLabel.Parent = waterFrame
+		local waterForceDirLabel = Hydrate(waterForceLabel:Clone()) {
+			Name = "WaterForceDirectionLabel",
+			Text = "Water Force Direction",
+			Position = UDim2.new(0, 0, 0, 50),
+			Parent = waterFrame,
+		}
 
-		waterTypeChangedEvent = Instance.new "BindableEvent"
-		waterTypeChangedEvent.Name = "WaterTypeChangedEvent"
-		waterTypeChangedEvent.Parent = waterFrame
+		waterTypeChangedEvent = New "BindableEvent" {
+			Name = "WaterTypeChangedEvent",
+			Parent = waterFrame,
+		}
 
-		local waterForceDirectionSelectedFunc = function(newForceDirection)
+		local function waterForceDirectionSelected(newForceDirection)
 			waterForceDirection = newForceDirection
 			waterTypeChangedEvent:Fire { waterForce, waterForceDirection }
 		end
-		local waterForceSelectedFunc = function(newForce)
+		local function waterForceSelected(newForce)
 			waterForce = newForce
 			waterTypeChangedEvent:Fire { waterForce, waterForceDirection }
 		end
@@ -2828,7 +2911,7 @@ RbxGui.CreateSetPanel = function(
 		local waterForceDirectionDropDown, forceWaterDirectionSelection =
 			RbxGui.CreateDropDownMenu(
 				waterForceDirections,
-				waterForceDirectionSelectedFunc
+				waterForceDirectionSelected
 			)
 		waterForceDirectionDropDown.Size = UDim2.new(1, 0, 0, 25)
 		waterForceDirectionDropDown.Position = UDim2.new(0, 0, 1, 3)
@@ -2836,7 +2919,7 @@ RbxGui.CreateSetPanel = function(
 		waterForceDirectionDropDown.Parent = waterForceDirLabel
 
 		local waterForceDropDown, forceWaterForceSelection =
-			RbxGui.CreateDropDownMenu(waterForces, waterForceSelectedFunc)
+			RbxGui.CreateDropDownMenu(waterForces, waterForceSelected)
 		forceWaterForceSelection "None"
 		waterForceDropDown.Size = UDim2.new(1, 0, 0, 25)
 		waterForceDropDown.Position = UDim2.new(0, 0, 1, 3)
@@ -2847,13 +2930,108 @@ RbxGui.CreateSetPanel = function(
 
 	-- Helper Function that contructs gui elements
 	local function createSetGui()
-		setGui = Instance.new "ScreenGui"
-		setGui.Name = "SetGui"
+		setGui = New "ScreenGui" {
+			Name = "SetGui",
+		}
 
-		local setPanel = Instance.new "Frame"
-		setPanel.Name = "SetPanel"
-		setPanel.Active = true
-		setPanel.BackgroundTransparency = 1
+		local setsLists, controlFrame = RbxGui.CreateTrueScrollingFrame()
+
+		drillDownSetZIndex(controlFrame, 7)
+
+		local setPanel = New "Frame" {
+			Name = "SetPanel",
+			Active = true,
+			BackgroundTransparency = 1,
+			Style = Enum.FrameStyle.RobloxRound,
+			ZIndex = 6,
+			New "Frame" {
+				Name = "ItemPreview",
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0.8, 5, 0.085, 0),
+				Size = UDim2.new(0.21, 0, 0.9, 0),
+				ZIndex = 6,
+				New "Frame" {
+					Name = "TextPanel",
+					BackgroundTransparency = 1,
+					Position = UDim2.new(0, 0, 0.45, 0),
+					Size = UDim2.new(1, 0, 0.55, 0),
+					ZIndex = 6,
+					New "TextLabel" {
+						Name = "RolloverText",
+						BackgroundTransparency = 1,
+						Size = UDim2.new(1, 0, 0, 48),
+						ZIndex = 6,
+						Font = Enum.Font.ArialBold,
+						FontSize = Enum.FontSize.Size24,
+						Text = "",
+						TextColor3 = Color3.new(1, 1, 1),
+						TextWrap = true,
+						TextXAlignment = Enum.TextXAlignment.Left,
+						TextYAlignment = Enum.TextYAlignment.Top,
+					},
+				},
+				New "ImageLabel" {
+					Name = "LargePreview",
+					BackgroundTransparency = 1,
+					Image = "",
+					Size = UDim2.new(1, 0, 0, 170),
+					ZIndex = 6,
+				},
+			},
+			New "Frame" {
+				Name = "Sets",
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0, 0, 0, 5),
+				Size = UDim2.new(0.23, 0, 1, -5),
+				ZIndex = 6,
+				New "Frame" {
+					Name = "Line",
+					BackgroundColor3 = Color3.new(1, 1, 1),
+					BackgroundTransparency = 0.7,
+					BorderSizePixel = 0,
+					Position = UDim2.new(1, -3, 0.06, 0),
+					Size = UDim2.new(0, 3, 0.9, 0),
+					ZIndex = 6,
+				},
+				Hydrate(setsLists) {
+					Size = UDim2.new(1, -6, 0.94, 0),
+					Position = UDim2.new(0, 0, 0.06, 0),
+					BackgroundTransparency = 1,
+					Name = "SetsLists",
+					ZIndex = 6,
+				},
+				New "TextLabel" {
+					Name = "SetsHeader",
+					BackgroundTransparency = 1,
+					Size = UDim2.new(0, 47, 0, 24),
+					ZIndex = 6,
+					Font = Enum.Font.ArialBold,
+					FontSize = Enum.FontSize.Size24,
+					Text = "Sets",
+					TextColor3 = Color3.new(1, 1, 1),
+					TextXAlignment = Enum.TextXAlignment.Left,
+					TextYAlignment = Enum.TextYAlignment.Top,
+				},
+			},
+			New "TextButton" {
+				Name = "CancelButton",
+				Position = UDim2.new(1, -32, 0, -2),
+				Size = UDim2.new(0, 34, 0, 34),
+				Style = Enum.ButtonStyle.RobloxButtonDefault,
+				ZIndex = 6,
+				Text = "",
+				Modal = true,
+				New "ImageLabel" {
+					Name = "CancelImage",
+					BackgroundTransparency = 1,
+					Image = "http://banland.xyz/asset?id=54135717",
+					Position = UDim2.new(0, -2, 0, -2),
+					Size = UDim2.new(0, 16, 0, 16),
+					ZIndex = 6,
+				},
+			},
+		}
+
 		if position then
 			setPanel.Position = position
 		else
@@ -2864,156 +3042,42 @@ RbxGui.CreateSetPanel = function(
 		else
 			setPanel.Size = UDim2.new(0.6, -58, 0.64, 0)
 		end
-		setPanel.Style = Enum.FrameStyle.RobloxRound
-		setPanel.ZIndex = 6
 		setPanel.Parent = setGui
-
-		-- Children of SetPanel
-		local itemPreview = Instance.new "Frame"
-		itemPreview.Name = "ItemPreview"
-		itemPreview.BackgroundTransparency = 1
-		itemPreview.Position = UDim2.new(0.8, 5, 0.085, 0)
-		itemPreview.Size = UDim2.new(0.21, 0, 0.9, 0)
-		itemPreview.ZIndex = 6
-		itemPreview.Parent = setPanel
-
-		-- Children of ItemPreview
-		local textPanel = Instance.new "Frame"
-		textPanel.Name = "TextPanel"
-		textPanel.BackgroundTransparency = 1
-		textPanel.Position = UDim2.new(0, 0, 0.45, 0)
-		textPanel.Size = UDim2.new(1, 0, 0.55, 0)
-		textPanel.ZIndex = 6
-		textPanel.Parent = itemPreview
-
-		-- Children of TextPanel
-		local rolloverText = Instance.new "TextLabel"
-		rolloverText.Name = "RolloverText"
-		rolloverText.BackgroundTransparency = 1
-		rolloverText.Size = UDim2.new(1, 0, 0, 48)
-		rolloverText.ZIndex = 6
-		rolloverText.Font = Enum.Font.ArialBold
-		rolloverText.FontSize = Enum.FontSize.Size24
-		rolloverText.Text = ""
-		rolloverText.TextColor3 = Color3.new(1, 1, 1)
-		rolloverText.TextWrap = true
-		rolloverText.TextXAlignment = Enum.TextXAlignment.Left
-		rolloverText.TextYAlignment = Enum.TextYAlignment.Top
-		rolloverText.Parent = textPanel
-
-		local largePreview = Instance.new "ImageLabel"
-		largePreview.Name = "LargePreview"
-		largePreview.BackgroundTransparency = 1
-		largePreview.Image = ""
-		largePreview.Size = UDim2.new(1, 0, 0, 170)
-		largePreview.ZIndex = 6
-		largePreview.Parent = itemPreview
-
-		local sets = Instance.new "Frame"
-		sets.Name = "Sets"
-		sets.BackgroundTransparency = 1
-		sets.Position = UDim2.new(0, 0, 0, 5)
-		sets.Size = UDim2.new(0.23, 0, 1, -5)
-		sets.ZIndex = 6
-		sets.Parent = setPanel
-
-		-- Children of Sets
-		local line = Instance.new "Frame"
-		line.Name = "Line"
-		line.BackgroundColor3 = Color3.new(1, 1, 1)
-		line.BackgroundTransparency = 0.7
-		line.BorderSizePixel = 0
-		line.Position = UDim2.new(1, -3, 0.06, 0)
-		line.Size = UDim2.new(0, 3, 0.9, 0)
-		line.ZIndex = 6
-		line.Parent = sets
-
-		local setsLists, controlFrame = RbxGui.CreateTrueScrollingFrame()
-		setsLists.Size = UDim2.new(1, -6, 0.94, 0)
-		setsLists.Position = UDim2.new(0, 0, 0.06, 0)
-		setsLists.BackgroundTransparency = 1
-		setsLists.Name = "SetsLists"
-		setsLists.ZIndex = 6
-		setsLists.Parent = sets
-		drillDownSetZIndex(controlFrame, 7)
-
-		local setsHeader = Instance.new "TextLabel"
-		setsHeader.Name = "SetsHeader"
-		setsHeader.BackgroundTransparency = 1
-		setsHeader.Size = UDim2.new(0, 47, 0, 24)
-		setsHeader.ZIndex = 6
-		setsHeader.Font = Enum.Font.ArialBold
-		setsHeader.FontSize = Enum.FontSize.Size24
-		setsHeader.Text = "Sets"
-		setsHeader.TextColor3 = Color3.new(1, 1, 1)
-		setsHeader.TextXAlignment = Enum.TextXAlignment.Left
-		setsHeader.TextYAlignment = Enum.TextYAlignment.Top
-		setsHeader.Parent = sets
-
-		local cancelButton = Instance.new "TextButton"
-		cancelButton.Name = "CancelButton"
-		cancelButton.Position = UDim2.new(1, -32, 0, -2)
-		cancelButton.Size = UDim2.new(0, 34, 0, 34)
-		cancelButton.Style = Enum.ButtonStyle.RobloxButtonDefault
-		cancelButton.ZIndex = 6
-		cancelButton.Text = ""
-		cancelButton.Modal = true
-		cancelButton.Parent = setPanel
-
-		-- Children of Cancel Button
-		local cancelImage = Instance.new "ImageLabel"
-		cancelImage.Name = "CancelImage"
-		cancelImage.BackgroundTransparency = 1
-		cancelImage.Image = "http://banland.xyz/asset?id=54135717"
-		cancelImage.Position = UDim2.new(0, -2, 0, -2)
-		cancelImage.Size = UDim2.new(0, 16, 0, 16)
-		cancelImage.ZIndex = 6
-		cancelImage.Parent = cancelButton
 
 		return setGui
 	end
 
 	local function createSetButton(text)
-		local setButton = Instance.new "TextButton"
-
-		if text then
-			setButton.Text = text
-		else
-			setButton.Text = ""
-		end
-
-		setButton.AutoButtonColor = false
-		setButton.BackgroundTransparency = 1
-		setButton.BackgroundColor3 = Color3.new(1, 1, 1)
-		setButton.BorderSizePixel = 0
-		setButton.Size = UDim2.new(1, -5, 0, 18)
-		setButton.ZIndex = 6
-		setButton.Visible = false
-		setButton.Font = Enum.Font.Arial
-		setButton.FontSize = Enum.FontSize.Size18
-		setButton.TextColor3 = Color3.new(1, 1, 1)
-		setButton.TextXAlignment = Enum.TextXAlignment.Left
-
-		return setButton
+		return New "TextButton" {
+			AutoButtonColor = false,
+			BackgroundTransparency = 1,
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderSizePixel = 0,
+			Size = UDim2.new(1, -5, 0, 18),
+			ZIndex = 6,
+			Visible = false,
+			Font = Enum.Font.Arial,
+			FontSize = Enum.FontSize.Size18,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Text = text or "",
+		}
 	end
 
 	local function buildSetButton(name, setId, _, _, _)
-		local button = createSetButton(name)
-		button.Text = name
-		button.Name = "SetButton"
-		button.Visible = true
-
-		local setValue = Instance.new "IntValue"
-		setValue.Name = "SetId"
-		setValue.Value = setId
-		setValue.Parent = button
-
-		local setName = Instance.new "StringValue"
-		setName.Name = "SetName"
-		setName.Value = name
-		setName.Parent = button
-
-		return button
+		return Hydrate(createSetButton(name)) {
+			Text = name,
+			Name = "SetButton",
+			Visible = true,
+			New "IntValue" {
+				Name = "SetId",
+				Value = setId,
+			},
+			New "StringValue" {
+				Name = "SetName",
+				Value = name,
+			},
+		}
 	end
 
 	local function processCategory(sets)
@@ -3036,7 +3100,7 @@ RbxGui.CreateSetPanel = function(
 	end
 
 	local function handleResize()
-		wait() -- neccessary to insure heartbeat happened
+		RunService.Heartbeat:wait() -- neccessary to insure heartbeat happened
 
 		local itemPreview = setGui.SetPanel.ItemPreview
 
@@ -3054,59 +3118,57 @@ RbxGui.CreateSetPanel = function(
 		)
 	end
 
+	local function buttonImage()
+		return New "ImageLabel" {
+			Image = "",
+			BackgroundTransparency = 1,
+		}
+	end
+
 	local function makeInsertAssetButton()
-		local insertAssetButtonExample = Instance.new "Frame"
-		insertAssetButtonExample.Name = "InsertAssetButtonExample"
-		insertAssetButtonExample.Position = UDim2.new(0, 128, 0, 64)
-		insertAssetButtonExample.Size = UDim2.new(0, 64, 0, 64)
-		insertAssetButtonExample.BackgroundTransparency = 1
-		insertAssetButtonExample.ZIndex = 6
-		insertAssetButtonExample.Visible = false
-
-		local assetId = Instance.new "IntValue"
-		assetId.Name = "AssetId"
-		assetId.Value = 0
-		assetId.Parent = insertAssetButtonExample
-
-		local assetName = Instance.new "StringValue"
-		assetName.Name = "AssetName"
-		assetName.Value = ""
-		assetName.Parent = insertAssetButtonExample
-
-		local button = Instance.new "TextButton"
-		button.Name = "Button"
-		button.Text = ""
-		button.Style = Enum.ButtonStyle.RobloxButton
-		button.Position = UDim2.new(0.025, 0, 0.025, 0)
-		button.Size = UDim2.new(0.95, 0, 0.95, 0)
-		button.ZIndex = 6
-		button.Parent = insertAssetButtonExample
-
-		local buttonImage = Instance.new "ImageLabel"
-		buttonImage.Name = "ButtonImage"
-		buttonImage.Image = ""
-		buttonImage.Position = UDim2.new(0, -7, 0, -7)
-		buttonImage.Size = UDim2.new(1, 14, 1, 14)
-		buttonImage.BackgroundTransparency = 1
-		buttonImage.ZIndex = 7
-		buttonImage.Parent = button
-
-		local configIcon = buttonImage:clone()
-		configIcon.Name = "ConfigIcon"
-		configIcon.Visible = false
-		configIcon.Position = UDim2.new(1, -23, 1, -24)
-		configIcon.Size = UDim2.new(0, 16, 0, 16)
-		configIcon.Image = ""
-		configIcon.ZIndex = 6
-		configIcon.Parent = insertAssetButtonExample
-
-		return insertAssetButtonExample
+		return New "Frame" {
+			Name = "InsertAssetButtonExample",
+			Position = UDim2.new(0, 128, 0, 64),
+			Size = UDim2.new(0, 64, 0, 64),
+			BackgroundTransparency = 1,
+			ZIndex = 6,
+			Visible = false,
+			New "IntValue" {
+				Name = "AssetId",
+				Value = 0,
+			},
+			New "StringValue" {
+				Name = "AssetName",
+				Value = "",
+			},
+			New "TextButton" {
+				Name = "Button",
+				Text = "",
+				Style = Enum.ButtonStyle.RobloxButton,
+				Position = UDim2.new(0.025, 0, 0.025, 0),
+				Size = UDim2.new(0.95, 0, 0.95, 0),
+				ZIndex = 6,
+				Hydrate(buttonImage()) {
+					Name = "ButtonImage",
+					Position = UDim2.new(0, -7, 0, -7),
+					Size = UDim2.new(1, 14, 1, 14),
+					ZIndex = 7,
+				},
+			},
+			Hydrate(buttonImage()) {
+				Name = "ConfigIcon",
+				Visible = false,
+				Position = UDim2.new(1, -23, 1, -24),
+				Size = UDim2.new(0, 16, 0, 16),
+				ZIndex = 6,
+			},
+		}
 	end
 
 	local function showLargePreview(insertButton)
 		if insertButton:FindFirstChild "AssetId" then
 			delay(0, function()
-				game:GetService("ContentProvider"):Preload(
+				ContentProvider:Preload(
 					LargeThumbnailUrl .. tostring(insertButton.AssetId.Value)
 				)
 				setGui.SetPanel.ItemPreview.LargePreview.Image = LargeThumbnailUrl
@@ -3129,19 +3191,20 @@ RbxGui.CreateSetPanel = function(
 		end
 	end
 
-	local function createTerrainTypeButton(name, parent)
-		local dropDownTextButton = Instance.new "TextButton"
-		dropDownTextButton.Name = `{name}Button`
-		dropDownTextButton.Font = Enum.Font.ArialBold
-		dropDownTextButton.FontSize = Enum.FontSize.Size14
-		dropDownTextButton.BorderSizePixel = 0
-		dropDownTextButton.TextColor3 = Color3.new(1, 1, 1)
-		dropDownTextButton.Text = name
-		dropDownTextButton.TextXAlignment = Enum.TextXAlignment.Left
-		dropDownTextButton.BackgroundTransparency = 1
-		dropDownTextButton.ZIndex = parent.ZIndex + 1
-		dropDownTextButton.Size = UDim2.new(0, parent.Size.X.Offset - 2, 0, 16)
-		dropDownTextButton.Position = UDim2.new(0, 1, 0, 0)
+	local function createTerrainTypeButton(name: string, parent: Frame)
+		local dropDownTextButton = New "TextButton" {
+			Name = name .. "Button",
+			Font = Enum.Font.ArialBold,
+			FontSize = Enum.FontSize.Size14,
+			BorderSizePixel = 0,
+			TextColor3 = Color3.new(1, 1, 1),
+			Text = name,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			BackgroundTransparency = 1,
+			ZIndex = parent.ZIndex + 1,
+			Size = UDim2.new(0, parent.Size.X.Offset - 2, 0, 16),
+			Position = UDim2.new(0, 1, 0, 0),
+		}
 
 		dropDownTextButton.MouseEnter:connect(function()
 			dropDownTextButton.BackgroundTransparency = 0
@@ -3168,15 +3231,16 @@ RbxGui.CreateSetPanel = function(
 		return dropDownTextButton
 	end
 
-	local function createTerrainDropDownMenu(zIndex)
-		local dropDown = Instance.new "Frame"
-		dropDown.Name = "TerrainDropDown"
-		dropDown.BackgroundColor3 = Color3.new(0, 0, 0)
-		dropDown.BorderColor3 = Color3.new(1, 0, 0)
-		dropDown.Size = UDim2.new(0, 200, 0, 0)
-		dropDown.Visible = false
-		dropDown.ZIndex = zIndex
-		dropDown.Parent = setGui
+	local function createTerrainDropDownMenu(zIndex: number)
+		local dropDown = New "Frame" {
+			Name = "TerrainDropDown",
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BorderColor3 = Color3.new(1, 0, 0),
+			Size = UDim2.new(0, 200, 0, 0),
+			Visible = false,
+			ZIndex = zIndex,
+			Parent = setGui,
+		}
 
 		for i = 1, #terrainShapes do
 			local shapeButton =
@@ -3197,15 +3261,16 @@ RbxGui.CreateSetPanel = function(
 		end)
 	end
 
-	local function createDropDownMenuButton(parent)
-		local dropDownButton = Instance.new "ImageButton"
-		dropDownButton.Name = "DropDownButton"
-		dropDownButton.Image = "http://banland.xyz/asset/?id=67581509"
-		dropDownButton.BackgroundTransparency = 1
-		dropDownButton.Size = UDim2.new(0, 16, 0, 16)
-		dropDownButton.Position = UDim2.new(1, -24, 0, 6)
-		dropDownButton.ZIndex = parent.ZIndex + 2
-		dropDownButton.Parent = parent
+	local function createDropDownMenuButton(parent: Frame)
+		local dropDownButton = New "ImageButton" {
+			Name = "DropDownButton",
+			Image = "http://banland.xyz/asset?id=67581509",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(0, 16, 0, 16),
+			Position = UDim2.new(1, -24, 0, 6),
+			ZIndex = parent.ZIndex + 2,
+			Parent = parent,
+		}
 
 		if not setGui:FindFirstChild "TerrainDropDown" then
 			createTerrainDropDownMenu(8)
@@ -3272,8 +3337,7 @@ RbxGui.CreateSetPanel = function(
 			local newImageUrl = SmallThumbnailUrl .. assetId
 			if newImageUrl ~= insertFrame.Button.ButtonImage.Image then
 				delay(0, function()
-					game:GetService("ContentProvider")
-						:Preload(SmallThumbnailUrl .. assetId)
+					ContentProvider:Preload(SmallThumbnailUrl .. assetId)
 					insertFrame.Button.ButtonImage.Image = SmallThumbnailUrl
 						.. assetId
 				end)
@@ -3393,8 +3457,7 @@ RbxGui.CreateSetPanel = function(
 				Data.Category[Data.CurrentCategory].Button = button
 
 				if SetCache[setId] == nil then
-					SetCache[setId] = game:GetService("InsertService")
-						:GetCollection(setId)
+					SetCache[setId] = InsertService:GetCollection(setId)
 				end
 				Data.Category[Data.CurrentCategory].Contents = SetCache[setId]
 
@@ -3529,12 +3592,14 @@ RbxGui.CreateSetPanel = function(
 	)
 
 	local scrollFrame, controlFrame = RbxGui.CreateTrueScrollingFrame()
-	scrollFrame.Size = UDim2.new(0.54, 0, 0.85, 0)
-	scrollFrame.Position = UDim2.new(0.24, 0, 0.085, 0)
-	scrollFrame.Name = "ItemsFrame"
-	scrollFrame.ZIndex = 6
-	scrollFrame.Parent = setGui.SetPanel
-	scrollFrame.BackgroundTransparency = 1
+	Hydrate(scrollFrame) {
+		Size = UDim2.new(0.54, 0, 0.85, 0),
+		Position = UDim2.new(0.24, 0, 0.085, 0),
+		Name = "ItemsFrame",
+		ZIndex = 6,
+		Parent = setGui.SetPanel,
+		BackgroundTransparency = 1,
+	}
 
 	drillDownSetZIndex(controlFrame, 7)
 
@@ -3560,8 +3625,7 @@ RbxGui.CreateSetPanel = function(
 
 	local userData = {}
 	for id = 1, #userIdsForSets do
-		local newUserData = game:GetService("InsertService")
-			:GetUserSets(userIdsForSets[id])
+		local newUserData = InsertService:GetUserSets(userIdsForSets[id])
 		if newUserData and #newUserData > 2 then
 			-- start at #3 to skip over My Decals and My Models for each account
 			for category = 3, #newUserData do
@@ -3611,86 +3675,60 @@ RbxGui.CreateSetPanel = function(
 		waterTypeChangedEvent
 end
 
+local cm = Enum.CellMaterial
+local EnumMaterialNames = {
+	[cm.Grass] = "Grass",
+	[cm.Sand] = "Sand",
+	[cm.Empty] = "Erase",
+	[cm.Brick] = "Brick",
+	[cm.Granite] = "Granite",
+	[cm.Asphalt] = "Asphalt",
+	[cm.Iron] = "Iron",
+	[cm.Aluminum] = "Aluminum",
+	[cm.Gold] = "Gold",
+	[cm.WoodPlank] = "Plank",
+	[cm.WoodLog] = "Log",
+	[cm.Gravel] = "Gravel",
+	[cm.CinderBlock] = "Cinder Block",
+	[cm.MossyStone] = "Stone Wall",
+	[cm.Cement] = "Concrete",
+	[cm.RedPlastic] = "Plastic (red)",
+	[cm.BluePlastic] = "Plastic (blue)",
+	[cm.Water] = "Water",
+}
+
+local MaterialNames = {
+	"Grass",
+	"Sand",
+	"Erase",
+	"Brick",
+	"Granite",
+	"Asphalt",
+	"Iron",
+	"Aluminum",
+	"Gold",
+	"Plank",
+	"Log",
+	"Gravel",
+	"Cinder Block",
+	"Stone Wall",
+	"Concrete",
+	"Plastic (red)",
+	"Plastic (blue)",
+	"Water",
+}
+
+local StringChoices = {}
+for k, v in pairs(EnumMaterialNames) do
+	StringChoices[v] = k
+end
+
 local function getEnumFromName(choice)
-	if choice == "Grass" then
-		return 1
-	elseif choice == "Sand" then
-		return 2
-	elseif choice == "Erase" then
-		return 0
-	elseif choice == "Brick" then
-		return 3
-	elseif choice == "Granite" then
-		return 4
-	elseif choice == "Asphalt" then
-		return 5
-	elseif choice == "Iron" then
-		return 6
-	elseif choice == "Aluminum" then
-		return 7
-	elseif choice == "Gold" then
-		return 8
-	elseif choice == "Plank" then
-		return 9
-	elseif choice == "Log" then
-		return 10
-	elseif choice == "Gravel" then
-		return 11
-	elseif choice == "Cinder Block" then
-		return 12
-	elseif choice == "Stone Wall" then
-		return 13
-	elseif choice == "Concrete" then
-		return 14
-	elseif choice == "Plastic (red)" then
-		return 15
-	elseif choice == "Plastic (blue)" then
-		return 16
-	elseif choice == "Water" then
-		return 17
-	end
-	return
+	return StringChoices[choice]
 end
 
 local function getNameFromEnum(choice)
-	if choice == Enum.CellMaterial.Grass or choice == 1 then
-		return "Grass"
-	elseif choice == Enum.CellMaterial.Sand or choice == 2 then
-		return "Sand"
-	elseif choice == Enum.CellMaterial.Empty or choice == 0 then
-		return "Erase"
-	elseif choice == Enum.CellMaterial.Brick or choice == 3 then
-		return "Brick"
-	elseif choice == Enum.CellMaterial.Granite or choice == 4 then
-		return "Granite"
-	elseif choice == Enum.CellMaterial.Asphalt or choice == 5 then
-		return "Asphalt"
-	elseif choice == Enum.CellMaterial.Iron or choice == 6 then
-		return "Iron"
-	elseif choice == Enum.CellMaterial.Aluminum or choice == 7 then
-		return "Aluminum"
-	elseif choice == Enum.CellMaterial.Gold or choice == 8 then
-		return "Gold"
-	elseif choice == Enum.CellMaterial.WoodPlank or choice == 9 then
-		return "Plank"
-	elseif choice == Enum.CellMaterial.WoodLog or choice == 10 then
-		return "Log"
-	elseif choice == Enum.CellMaterial.Gravel or choice == 11 then
-		return "Gravel"
-	elseif choice == Enum.CellMaterial.CinderBlock or choice == 12 then
-		return "Cinder Block"
-	elseif choice == Enum.CellMaterial.MossyStone or choice == 13 then
-		return "Stone Wall"
-	elseif choice == Enum.CellMaterial.Cement or choice == 14 then
-		return "Concrete"
-	elseif choice == Enum.CellMaterial.RedPlastic or choice == 15 then
-		return "Plastic (red)"
-	elseif choice == Enum.CellMaterial.BluePlastic or choice == 16 then
-		return "Plastic (blue)"
-	elseif choice == Enum.CellMaterial.Water or choice == 17 then
-		return "Water"
-	end
-	return
+	return EnumMaterialNames[choice] or MaterialNames[choice]
 end
 
 RbxGui.CreateTerrainMaterialSelector = function(size, position)
@@ -3712,25 +3750,6 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 	terrainMaterialSelectionChanged.Parent = frame
 
 	local materialToImageMap = {}
-	local materialNames = {
-		"Grass",
-		"Sand",
-		"Brick",
-		"Granite",
-		"Asphalt",
-		"Iron",
-		"Aluminum",
-		"Gold",
-		"Plank",
-		"Log",
-		"Gravel",
-		"Cinder Block",
-		"Stone Wall",
-		"Concrete",
-		"Plastic (red)",
-		"Plastic (blue)",
-		"Water",
-	}
 
 	local currentMaterial = 1
 
@@ -3739,48 +3758,33 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 		terrainMaterialSelectionChanged:Fire(currentMaterial)
 	end
 
-	-- we so need a better way to do this
-	for _, v in pairs(materialNames) do
-		local toAdd
-		if v == "Grass" then
-			toAdd = 56563112
-		elseif v == "Sand" then
-			toAdd = 62356652
-		elseif v == "Brick" then
-			toAdd = 65961537
-		elseif v == "Granite" then
-			toAdd = 67532153
-		elseif v == "Asphalt" then
-			toAdd = 67532038
-		elseif v == "Iron" then
-			toAdd = 67532093
-		elseif v == "Aluminum" then
-			toAdd = 67531995
-		elseif v == "Gold" then
-			toAdd = 67532118
-		elseif v == "Plastic (red)" then
-			toAdd = 67531848
-		elseif v == "Plastic (blue)" then
-			toAdd = 67531924
-		elseif v == "Plank" then
-			toAdd = 67532015
-		elseif v == "Log" then
-			toAdd = 67532051
-		elseif v == "Gravel" then
-			toAdd = 67532206
-		elseif v == "Cinder Block" then
-			toAdd = 67532103
-		elseif v == "Stone Wall" then
-			toAdd = 67531804
-		elseif v == "Concrete" then
-			toAdd = 67532059
-		elseif v == "Water" then
-			toAdd = 81407474
-		else
-			toAdd = 66887593 -- fill in the rest here!!
+	for _, v in pairs(MaterialNames) do
+		local materials = {
+			Grass = 56563112,
+			Sand = 62356652,
+			Brick = 65961537,
+			Granite = 67532153,
+			Asphalt = 67532038,
+			Iron = 67532093,
+			Aluminum = 67531995,
+			Gold = 67532118,
+			["Plastic (red)"] = 67531848,
+			["Plastic (blue)"] = 67531924,
+			Plank = 67532015,
+			Log = 67532051,
+			Gravel = 67532206,
+			["Cinder Block"] = 67532103,
+			["Stone Wall"] = 67531804,
+			Concrete = 67532059,
+			Water = 81407474,
+		}
+		local toAdd = materials[v]
+		if not toAdd then
+			toAdd = 66887593
 		end
+
 		materialToImageMap[v] =
-			{ Regular = `http://banland.xyz/asset/?id={toAdd}` }
+			{ Regular = `http://banland.xyz/asset?id={toAdd}` }
 	end
 
 	local scrollFrame, scrollUp, scrollDown, recalculateScroll =
@@ -3805,28 +3809,29 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 	end
 
 	local function createMaterialButton(name)
-		local buttonWrap = Instance.new "TextButton"
-		buttonWrap.Text = ""
-		buttonWrap.Size = UDim2.new(0, 32, 0, 32)
-		buttonWrap.BackgroundColor3 = Color3.new(1, 1, 1)
-		buttonWrap.BorderSizePixel = 0
-		buttonWrap.BackgroundTransparency = 1
-		buttonWrap.AutoButtonColor = false
-		buttonWrap.Name = tostring(name)
+		local buttonWrap = New "TextButton" {
+			Text = "",
+			Size = UDim2.new(0, 32, 0, 32),
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderSizePixel = 0,
+			BackgroundTransparency = 1,
+			AutoButtonColor = false,
+			Name = tostring(name),
+			New "NumberValue" {
+				Name = "EnumType",
+				Value = 0,
+			},
+		}
 
-		local imageButton = Instance.new "ImageButton"
-		imageButton.AutoButtonColor = false
-		imageButton.BackgroundTransparency = 1
-		imageButton.Size = UDim2.new(0, 30, 0, 30)
-		imageButton.Position = UDim2.new(0, 1, 0, 1)
-		imageButton.Name = tostring(name)
-		imageButton.Parent = buttonWrap
-		imageButton.Image = materialToImageMap[name].Regular
-
-		local enumType = Instance.new "NumberValue"
-		enumType.Name = "EnumType"
-		enumType.Parent = buttonWrap
-		enumType.Value = 0
+		local imageButton = New "ImageButton" {
+			AutoButtonColor = false,
+			BackgroundTransparency = 1,
+			Size = UDim2.new(0, 30, 0, 30),
+			Position = UDim2.new(0, 1, 0, 1),
+			Name = tostring(name),
+			Parent = buttonWrap,
+			Image = materialToImageMap[name].Regular,
+		}
 
 		imageButton.MouseEnter:connect(function()
 			buttonWrap.BackgroundTransparency = 0
@@ -3845,10 +3850,10 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 		return buttonWrap
 	end
 
-	for i = 1, #materialNames do
-		local imageButton = createMaterialButton(materialNames[i])
+	for i = 1, #MaterialNames do
+		local imageButton = createMaterialButton(MaterialNames[i])
 
-		if materialNames[i] == "Grass" then -- always start with grass as the default
+		if MaterialNames[i] == "Grass" then -- always start with grass as the default
 			selectedButton = imageButton
 			imageButton.BackgroundTransparency = 0
 		end
@@ -3856,11 +3861,8 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 		imageButton.Parent = scrollFrame
 	end
 
-	local forceTerrainMaterialSelection = function(newMaterialType)
-		if not newMaterialType then
-			return
-		end
-		if currentMaterial == newMaterialType then
+	local function forceTerrainMaterialSelection(newMaterialType)
+		if not newMaterialType or currentMaterial == newMaterialType then
 			return
 		end
 
@@ -3868,20 +3870,13 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 		local buttons = scrollFrame:GetChildren()
 		for i = 1, #buttons do
 			if
-				buttons[i].Name == "Plastic (blue)"
-				and matName == "Plastic (blue)"
+				(
+					buttons[i].Name == "Plastic (blue)"
+					and matName == "Plastic (blue)"
+				)
+				or (buttons[i].Name == "Plastic (red)" and matName == "Plastic (red)")
+				or string.find(buttons[i].Name, matName)
 			then
-				goToNewMaterial(buttons[i], matName)
-				return
-			end
-			if
-				buttons[i].Name == "Plastic (red)"
-				and matName == "Plastic (red)"
-			then
-				goToNewMaterial(buttons[i], matName)
-				return
-			end
-			if string.find(buttons[i].Name, matName) then
 				goToNewMaterial(buttons[i], matName)
 				return
 			end
@@ -3899,83 +3894,80 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 end
 
 RbxGui.CreateLoadingFrame = function(name, size, position)
-	game:GetService("ContentProvider")
-		:Preload "http://banland.xyz/asset/?id=35238053"
+	ContentProvider:Preload "http://banland.xyz/asset?id=35238053"
 
-	local loadingFrame = Instance.new "Frame"
-	loadingFrame.Name = "LoadingFrame"
-	loadingFrame.Style = Enum.FrameStyle.RobloxRound
+	local loadingFrame = New "Frame" {
+		Name = "LoadingFrame",
+		Style = Enum.FrameStyle.RobloxRound,
+		New "TextLabel" {
+			Name = "loadingName",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(1, 0, 0, 18),
+			Position = UDim2.new(0, 0, 0, 2),
+			Font = Enum.Font.Arial,
+			Text = name,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextStrokeTransparency = 1,
+			FontSize = Enum.FontSize.Size18,
+		},
+	}
 
-	if size then
-		loadingFrame.Size = size
-	else
-		loadingFrame.Size = UDim2.new(0, 300, 0, 160)
-	end
-	if position then
-		loadingFrame.Position = position
-	else
-		loadingFrame.Position = UDim2.new(0.5, -150, 0.5, -80)
-	end
+	loadingFrame.Size = size or UDim2.new(0, 300, 0, 160)
+	loadingFrame.Position = position or UDim2.new(0.5, -150, 0.5, -80)
 
-	local loadingBar = Instance.new "Frame"
-	loadingBar.Name = "LoadingBar"
-	loadingBar.BackgroundColor3 = Color3.new(0, 0, 0)
-	loadingBar.BorderColor3 = Color3.new(79 / 255, 79 / 255, 79 / 255)
-	loadingBar.Position = UDim2.new(0, 0, 0, 41)
-	loadingBar.Size = UDim2.new(1, 0, 0, 30)
-	loadingBar.Parent = loadingFrame
+	local loadingBar = New "Frame" {
+		Name = "LoadingBar",
+		BackgroundColor3 = Color3.new(0, 0, 0),
+		BorderColor3 = Colour3(79, 79, 79),
+		Position = UDim2.new(0, 0, 0, 41),
+		Size = UDim2.new(1, 0, 0, 30),
+		Parent = loadingFrame,
+	}
 
-	local loadingGreenBar = Instance.new "ImageLabel"
-	loadingGreenBar.Name = "LoadingGreenBar"
-	loadingGreenBar.Image = "http://banland.xyz/asset/?id=35238053"
-	loadingGreenBar.Position = UDim2.new(0, 0, 0, 0)
-	loadingGreenBar.Size = UDim2.new(0, 0, 1, 0)
-	loadingGreenBar.Visible = false
-	loadingGreenBar.Parent = loadingBar
+	local loadingGreenBar = New "ImageLabel" {
+		Name = "LoadingGreenBar",
+		Image = "http://banland.xyz/asset?id=35238053",
+		Position = UDim2.new(0, 0, 0, 0),
+		Size = UDim2.new(0, 0, 1, 0),
+		Visible = false,
+		Parent = loadingBar,
+	}
 
-	local loadingPercent = Instance.new "TextLabel"
-	loadingPercent.Name = "LoadingPercent"
-	loadingPercent.BackgroundTransparency = 1
-	loadingPercent.Position = UDim2.new(0, 0, 1, 0)
-	loadingPercent.Size = UDim2.new(1, 0, 0, 14)
-	loadingPercent.Font = Enum.Font.Arial
-	loadingPercent.Text = "0%"
-	loadingPercent.FontSize = Enum.FontSize.Size14
-	loadingPercent.TextColor3 = Color3.new(1, 1, 1)
-	loadingPercent.Parent = loadingBar
+	local loadingPercent = New "TextLabel" {
+		Name = "LoadingPercent",
+		BackgroundTransparency = 1,
+		Position = UDim2.new(0, 0, 1, 0),
+		Size = UDim2.new(1, 0, 0, 14),
+		Font = Enum.Font.Arial,
+		Text = "0%",
+		FontSize = Enum.FontSize.Size14,
+		TextColor3 = Color3.new(1, 1, 1),
+		Parent = loadingBar,
+	}
 
-	local cancelButton = Instance.new "TextButton"
-	cancelButton.Name = "CancelButton"
-	cancelButton.Position = UDim2.new(0.5, -60, 1, -40)
-	cancelButton.Size = UDim2.new(0, 120, 0, 40)
-	cancelButton.Font = Enum.Font.Arial
-	cancelButton.FontSize = Enum.FontSize.Size18
-	cancelButton.TextColor3 = Color3.new(1, 1, 1)
-	cancelButton.Text = "Cancel"
-	cancelButton.Style = Enum.ButtonStyle.RobloxButton
-	cancelButton.Parent = loadingFrame
+	local cancelButton = New "TextButton" {
+		Name = "CancelButton",
+		Position = UDim2.new(0.5, -60, 1, -40),
+		Size = UDim2.new(0, 120, 0, 40),
+		Font = Enum.Font.Arial,
+		FontSize = Enum.FontSize.Size18,
+		TextColor3 = Color3.new(1, 1, 1),
+		Text = "Cancel",
+		Style = Enum.ButtonStyle.RobloxButton,
+		Parent = loadingFrame,
+	}
 
-	local loadingName = Instance.new "TextLabel"
-	loadingName.Name = "loadingName"
-	loadingName.BackgroundTransparency = 1
-	loadingName.Size = UDim2.new(1, 0, 0, 18)
-	loadingName.Position = UDim2.new(0, 0, 0, 2)
-	loadingName.Font = Enum.Font.Arial
-	loadingName.Text = name
-	loadingName.TextColor3 = Color3.new(1, 1, 1)
-	loadingName.TextStrokeTransparency = 1
-	loadingName.FontSize = Enum.FontSize.Size18
-	loadingName.Parent = loadingFrame
+	local cancelButtonClicked = New "BindableEvent" {
+		Name = "CancelButtonClicked",
+		Parent = cancelButton,
+	}
 
-	local cancelButtonClicked = Instance.new "BindableEvent"
-	cancelButtonClicked.Name = "CancelButtonClicked"
-	cancelButtonClicked.Parent = cancelButton
 	cancelButton.MouseButton1Click:connect(function()
 		cancelButtonClicked:Fire()
 	end)
 
-	local updateLoadingGuiPercent = function(
-		percent: number,
+	local function updateLoadingGuiPercent(
+		percent: number, -- thats not a percent bruh
 		tweenAction,
 		tweenLength
 	)
@@ -4040,7 +4032,7 @@ RbxGui.CreateLoadingFrame = function(name, size, position)
 	return loadingFrame, updateLoadingGuiPercent, cancelButtonClicked
 end
 
-RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
+function RbxGui.CreatePluginFrame(name: string, size, position, scrollable, parent)
 	local function createMenuButton(
 		size,
 		position,
@@ -4049,18 +4041,19 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 		name,
 		parent
 	)
-		local button = Instance.new "TextButton"
-		button.AutoButtonColor = false
-		button.Name = name
-		button.BackgroundTransparency = 1
-		button.Position = position
-		button.Size = size
-		button.Font = Enum.Font.ArialBold
-		button.FontSize = fontsize
-		button.Text = text
-		button.TextColor3 = Color3.new(1, 1, 1)
-		button.BorderSizePixel = 0
-		button.BackgroundColor3 = Color3.new(20 / 255, 20 / 255, 20 / 255)
+		local button = New "TextButton" {
+			AutoButtonColor = false,
+			Name = name,
+			BackgroundTransparency = 1,
+			Position = position,
+			Size = size,
+			Font = Enum.Font.ArialBold,
+			FontSize = fontsize,
+			Text = text,
+			TextColor3 = Color3.new(1, 1, 1),
+			BorderSizePixel = 0,
+			BackgroundColor3 = Colour3(20, 20, 20),
+		}
 
 		button.MouseEnter:connect(function()
 			if button.Selected then
@@ -4080,10 +4073,41 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 		return button
 	end
 
-	local dragBar = Instance.new "Frame"
-	dragBar.Name = `{name}DragBar`
-	dragBar.BackgroundColor3 = Color3.new(39 / 255, 39 / 255, 39 / 255)
-	dragBar.BorderColor3 = Color3.new(0, 0, 0)
+	local function separatingLineC()
+		return New "Frame" {
+			Name = "SeparatingLine",
+			BackgroundColor3 = Colour3(115, 115, 115),
+			BorderSizePixel = 0,
+			Size = UDim2.new(0, 1, 0, 14),
+		}
+	end
+
+	local dragBar = New "ImageButton" {
+		Name = `{name}DragBar`,
+		BackgroundColor3 = Colour3(39, 39, 39),
+		BorderColor3 = Color3.new(0, 0, 0),
+		Active = true,
+		Draggable = true,
+		-- plugin name label
+		New "TextLabel" {
+			Name = "BarNameLabel",
+			Text = ` {name}`,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextStrokeTransparency = 0,
+			Size = UDim2.new(1, 0, 1, 0),
+			Font = Enum.Font.ArialBold,
+			FontSize = Enum.FontSize.Size18,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			BackgroundTransparency = 1,
+		},
+		Hydrate(separatingLineC()) {
+			Position = UDim2.new(1, -18, 0.5, -7),
+		},
+		Hydrate(separatingLineC()) {
+			Position = UDim2.new(1, -35, 0.5, -7),
+		},
+	}
+
 	if size then
 		dragBar.Size = UDim2.new(size.X.Scale, size.X.Offset, 0, 20)
 			+ UDim2.new(0, 20, 0, 0)
@@ -4093,29 +4117,14 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	if position then
 		dragBar.Position = position
 	end
-	dragBar.Active = true
-	dragBar.Draggable = true
 	--dragBar.Visible = false
 	dragBar.MouseEnter:connect(function()
-		dragBar.BackgroundColor3 = Color3.new(49 / 255, 49 / 255, 49 / 255)
+		dragBar.BackgroundColor3 = Colour3(49, 49, 49)
 	end)
 	dragBar.MouseLeave:connect(function()
-		dragBar.BackgroundColor3 = Color3.new(39 / 255, 39 / 255, 39 / 255)
+		dragBar.BackgroundColor3 = Colour3(39, 39, 39)
 	end)
 	dragBar.Parent = parent
-
-	-- plugin name label
-	local pluginNameLabel = Instance.new "TextLabel"
-	pluginNameLabel.Name = "BarNameLabel"
-	pluginNameLabel.Text = ` {name}`
-	pluginNameLabel.TextColor3 = Color3.new(1, 1, 1)
-	pluginNameLabel.TextStrokeTransparency = 0
-	pluginNameLabel.Size = UDim2.new(1, 0, 1, 0)
-	pluginNameLabel.Font = Enum.Font.ArialBold
-	pluginNameLabel.FontSize = Enum.FontSize.Size18
-	pluginNameLabel.TextXAlignment = Enum.TextXAlignment.Left
-	pluginNameLabel.BackgroundTransparency = 1
-	pluginNameLabel.Parent = dragBar
 
 	-- close button
 	local closeButton = createMenuButton(
@@ -4126,9 +4135,10 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 		"CloseButton",
 		dragBar
 	)
-	local closeEvent = Instance.new "BindableEvent"
-	closeEvent.Name = "CloseEvent"
-	closeEvent.Parent = closeButton
+	local closeEvent = New "BindableEvent" {
+		Name = "CloseEvent",
+		Parent = closeButton,
+	}
 	closeButton.MouseButton1Click:connect(function()
 		closeEvent:Fire()
 		closeButton.BackgroundTransparency = 1
@@ -4143,15 +4153,17 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 		"HelpButton",
 		dragBar
 	)
-	local helpFrame = Instance.new "Frame"
-	helpFrame.Name = "HelpFrame"
-	helpFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-	helpFrame.Size = UDim2.new(0, 300, 0, 552)
-	helpFrame.Position = UDim2.new(1, 5, 0, 0)
-	helpFrame.Active = true
-	helpFrame.BorderSizePixel = 0
-	helpFrame.Visible = false
-	helpFrame.Parent = dragBar
+
+	local helpFrame = New "Frame" {
+		Name = "HelpFrame",
+		BackgroundColor3 = Color3.new(0, 0, 0),
+		Size = UDim2.new(0, 300, 0, 552),
+		Position = UDim2.new(1, 5, 0, 0),
+		Active = true,
+		BorderSizePixel = 0,
+		Visible = false,
+		Parent = dragBar,
+	}
 
 	helpButton.MouseButton1Click:connect(function()
 		helpFrame.Visible = not helpFrame.Visible
@@ -4188,73 +4200,51 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	)
 	minimizeButton.TextYAlignment = Enum.TextYAlignment.Top
 
-	local minimizeFrame = Instance.new "Frame"
-	minimizeFrame.Name = "MinimizeFrame"
-	minimizeFrame.BackgroundColor3 = Color3.new(73 / 255, 73 / 255, 73 / 255)
-	minimizeFrame.BorderColor3 = Color3.new(0, 0, 0)
-	minimizeFrame.Position = UDim2.new(0, 0, 1, 0)
+	local minimizeFrame = New "Frame" {
+		Name = "MinimizeFrame",
+		BackgroundColor3 = Colour3(73, 73, 73),
+		BorderColor3 = Color3.new(0, 0, 0),
+		Position = UDim2.new(0, 0, 1, 0),
+		Visible = false,
+		Parent = dragBar,
+	}
 	if size then
 		minimizeFrame.Size = UDim2.new(size.X.Scale, size.X.Offset, 0, 50)
 			+ UDim2.new(0, 20, 0, 0)
 	else
 		minimizeFrame.Size = UDim2.new(0, 183, 0, 50)
 	end
-	minimizeFrame.Visible = false
 	minimizeFrame.Parent = dragBar
 
-	local minimizeBigButton = Instance.new "TextButton"
-	minimizeBigButton.Position = UDim2.new(0.5, -50, 0.5, -20)
-	minimizeBigButton.Name = "MinimizeButton"
-	minimizeBigButton.Size = UDim2.new(0, 100, 0, 40)
-	minimizeBigButton.Style = Enum.ButtonStyle.RobloxButton
-	minimizeBigButton.Font = Enum.Font.ArialBold
-	minimizeBigButton.FontSize = Enum.FontSize.Size18
-	minimizeBigButton.TextColor3 = Color3.new(1, 1, 1)
-	minimizeBigButton.Text = "Show"
-	minimizeBigButton.Parent = minimizeFrame
+	local minimizeBigButton = New "TextButton" {
+		Position = UDim2.new(0.5, -50, 0.5, -20),
+		Size = UDim2.new(0, 100, 0, 40),
+		Style = Enum.ButtonStyle.RobloxButton,
+		Font = Enum.Font.ArialBold,
+		FontSize = Enum.FontSize.Size18,
+		TextColor3 = Color3.new(1, 1, 1),
+		Text = "Show",
+		Parent = minimizeFrame,
+	}
 
-	local separatingLine = Instance.new "Frame"
-	separatingLine.Name = "SeparatingLine"
-	separatingLine.BackgroundColor3 =
-		Color3.new(115 / 255, 115 / 255, 115 / 255)
-	separatingLine.BorderSizePixel = 0
-	separatingLine.Position = UDim2.new(1, -18, 0.5, -7)
-	separatingLine.Size = UDim2.new(0, 1, 0, 14)
-	separatingLine.Parent = dragBar
-
-	local otherSeparatingLine = separatingLine:clone()
-	otherSeparatingLine.Position = UDim2.new(1, -35, 0.5, -7)
-	otherSeparatingLine.Parent = dragBar
-
-	local widgetContainer = Instance.new "Frame"
-	widgetContainer.Name = "WidgetContainer"
-	widgetContainer.BackgroundTransparency = 1
-	widgetContainer.Position = UDim2.new(0, 0, 1, 0)
-	widgetContainer.BorderColor3 = Color3.new(0, 0, 0)
+	local widgetContainer = New "Frame" {
+		Name = "WidgetContainer",
+		BackgroundTransparency = 1,
+		Position = UDim2.new(0, 0, 1, 0),
+		BorderColor3 = Color3.new(0, 0, 0),
+	}
 	if not scrollable then
 		widgetContainer.BackgroundTransparency = 0
-		widgetContainer.BackgroundColor3 =
-			Color3.new(72 / 255, 72 / 255, 72 / 255)
+		widgetContainer.BackgroundColor3 = Colour3(72, 72, 72)
 	end
 	widgetContainer.Parent = dragBar
 
 	if size then
-		if scrollable then
-			widgetContainer.Size = size
-		else
-			widgetContainer.Size = UDim2.new(
-				0,
-				dragBar.AbsoluteSize.X,
-				size.Y.Scale,
-				size.Y.Offset
-			)
-		end
+		widgetContainer.Size = scrollable and size
+			or UDim2.new(0, dragBar.AbsoluteSize.X, size.Y.Scale, size.Y.Offset)
 	else
-		if scrollable then
-			widgetContainer.Size = UDim2.new(0, 163, 0, 400)
-		else
-			widgetContainer.Size = UDim2.new(0, dragBar.AbsoluteSize.X, 0, 400)
-		end
+		widgetContainer.Size = scrollable and UDim2.new(0, 163, 0, 400)
+			or UDim2.new(0, dragBar.AbsoluteSize.X, 0, 400)
 	end
 	if position then
 		widgetContainer.Position = position + UDim2.new(0, 0, 0, 20)
@@ -4264,16 +4254,26 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	if scrollable then
 		--frame for widgets
 		frame, control = RbxGui.CreateTrueScrollingFrame()
-		frame.Size = UDim2.new(1, 0, 1, 0)
-		frame.BackgroundColor3 = Color3.new(72 / 255, 72 / 255, 72 / 255)
-		frame.BorderColor3 = Color3.new(0, 0, 0)
-		frame.Active = true
-		frame.Parent = widgetContainer
-		control.Parent = dragBar
-		control.BackgroundColor3 = Color3.new(72 / 255, 72 / 255, 72 / 255)
-		control.BorderSizePixel = 0
-		control.BackgroundTransparency = 0
-		control.Position = UDim2.new(1, -21, 1, 1)
+		Hydrate(frame) {
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundColor3 = Colour3(72, 72, 72),
+			BorderColor3 = Color3.new(0, 0, 0),
+			Active = true,
+			Parent = widgetContainer,
+		}
+		Hydrate(control) {
+			BackgroundColor3 = Colour3(72, 72, 72),
+			BorderSizePixel = 0,
+			BackgroundTransparency = 0,
+			Position = UDim2.new(1, -21, 1, 1),
+			New "Frame" {
+				Name = "FakeLine",
+				BackgroundColor3 = Color3.new(0, 0, 0),
+				BorderSizePixel = 0,
+				Size = UDim2.new(0, 1, 1, 1),
+				Position = UDim2.new(1, 0, 0, 0),
+			},
+		}
 		if size then
 			control.Size = UDim2.new(0, 21, size.Y.Scale, size.Y.Offset)
 		else
@@ -4282,62 +4282,59 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 		control:FindFirstChild("ScrollDownButton").Position =
 			UDim2.new(0, 0, 1, -20)
 
-		local fakeLine = Instance.new "Frame"
-		fakeLine.Name = "FakeLine"
-		fakeLine.BorderSizePixel = 0
-		fakeLine.BackgroundColor3 = Color3.new(0, 0, 0)
-		fakeLine.Size = UDim2.new(0, 1, 1, 1)
-		fakeLine.Position = UDim2.new(1, 0, 0, 0)
-		fakeLine.Parent = control
+		control.Parent = dragBar
 
-		verticalDragger = Instance.new "TextButton"
-		verticalDragger.ZIndex = 2
-		verticalDragger.AutoButtonColor = false
-		verticalDragger.Name = "VerticalDragger"
-		verticalDragger.BackgroundColor3 =
-			Color3.new(50 / 255, 50 / 255, 50 / 255)
-		verticalDragger.BorderColor3 = Color3.new(0, 0, 0)
-		verticalDragger.Size = UDim2.new(1, 20, 0, 20)
-		verticalDragger.Position = UDim2.new(0, 0, 1, 0)
-		verticalDragger.Active = true
-		verticalDragger.Text = ""
-		verticalDragger.Parent = widgetContainer
+		local function scrubFrame()
+			return New "Frame" {
+				Name = "ScrubFrame",
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				BorderSizePixel = 0,
+				Size = UDim2.new(0, 10, 0, 1),
+				ZIndex = 5,
+			}
+		end
 
-		local scrubFrame = Instance.new "Frame"
-		scrubFrame.Name = "ScrubFrame"
-		scrubFrame.BackgroundColor3 = Color3.new(1, 1, 1)
-		scrubFrame.BorderSizePixel = 0
-		scrubFrame.Position = UDim2.new(0.5, -5, 0.5, 0)
-		scrubFrame.Size = UDim2.new(0, 10, 0, 1)
-		scrubFrame.ZIndex = 5
-		scrubFrame.Parent = verticalDragger
-		local scrubTwo = scrubFrame:clone()
-		scrubTwo.Position = UDim2.new(0.5, -5, 0.5, -2)
-		scrubTwo.Parent = verticalDragger
-		local scrubThree = scrubFrame:clone()
-		scrubThree.Position = UDim2.new(0.5, -5, 0.5, 2)
-		scrubThree.Parent = verticalDragger
+		verticalDragger = New "TextButton" {
+			ZIndex = 2,
+			AutoButtonColor = false,
+			Name = "VerticalDragger",
+			BackgroundColor3 = Colour3(50, 50, 50),
+			BorderColor3 = Color3.new(0, 0, 0),
+			Size = UDim2.new(1, 20, 0, 20),
+			Position = UDim2.new(0, 0, 1, 0),
+			Active = true,
+			Text = "",
+			Parent = widgetContainer,
+			Hydrate(scrubFrame()) {
+				Position = UDim2.new(0.5, -5, 0.5, -2),
+			},
+			Hydrate(scrubFrame()) {
+				Position = UDim2.new(0.5, -5, 0.5, 0),
+			},
+			Hydrate(scrubFrame()) {
+				Position = UDim2.new(0.5, -5, 0.5, 2),
+			},
+		}
 
-		local areaSoak = Instance.new "TextButton"
-		areaSoak.Name = "AreaSoak"
-		areaSoak.Size = UDim2.new(1, 0, 1, 0)
-		areaSoak.BackgroundTransparency = 1
-		areaSoak.BorderSizePixel = 0
-		areaSoak.Text = ""
-		areaSoak.ZIndex = 10
-		areaSoak.Visible = false
-		areaSoak.Active = true
-		areaSoak.Parent = getScreenGuiAncestor(parent)
+		local areaSoak = New "TextButton" {
+			Name = "AreaSoak",
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			Text = "",
+			ZIndex = 10,
+			Visible = false,
+			Active = true,
+			Parent = getScreenGuiAncestor(parent),
+		}
 
 		local draggingVertical = false
 		local startYPos
 		verticalDragger.MouseEnter:connect(function()
-			verticalDragger.BackgroundColor3 =
-				Color3.new(60 / 255, 60 / 255, 60 / 255)
+			verticalDragger.BackgroundColor3 = Colour3(60, 60, 60)
 		end)
 		verticalDragger.MouseLeave:connect(function()
-			verticalDragger.BackgroundColor3 =
-				Color3.new(50 / 255, 50 / 255, 50 / 255)
+			verticalDragger.BackgroundColor3 = Colour3(50, 50, 50)
 		end)
 		verticalDragger.MouseButton1Down:connect(function(_, y)
 			draggingVertical = true
@@ -4348,7 +4345,7 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 			draggingVertical = false
 			areaSoak.Visible = false
 		end)
-		areaSoak.MouseMoved:connect(function(_, y)
+		areaSoak.MouseMoved:connect(function(_, y: number)
 			if not draggingVertical then
 				return
 			end
@@ -4394,11 +4391,7 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 			widgetContainer.Visible = not widgetContainer.Visible
 		end
 
-		if minimizeFrame.Visible then
-			minimizeButton.Text = "+"
-		else
-			minimizeButton.Text = "-"
-		end
+		minimizeButton.Text = minimizeFrame.Visible and "+" or "-"
 	end
 
 	minimizeBigButton.MouseButton1Click:connect(function()
@@ -4415,85 +4408,85 @@ RbxGui.CreatePluginFrame = function(name, size, position, scrollable, parent)
 	return dragBar, widgetContainer, helpFrame, closeEvent
 end
 
-RbxGui.Help = function(funcNameOrFunc)
-	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
+function RbxGui.Help(funcNameOrFunc)
+	--input argument can be a string or a function. Should return a description (of arguments and expected side effects)
 	if
 		funcNameOrFunc == "CreatePropertyDropDownMenu"
 		or funcNameOrFunc == RbxGui.CreatePropertyDropDownMenu
 	then
-		return "Function CreatePropertyDropDownMenu.  "
-			.. "Arguments: (instance, propertyName, enumType).  "
+		return "Function CreatePropertyDropDownMenu. "
+			.. "Arguments: (instance, propertyName, enumType). "
 			.. "Side effect: returns a container with a drop-down-box that is linked to the 'property' field of 'instance' which is of type 'enumType'"
 	elseif
 		funcNameOrFunc == "CreateDropDownMenu"
 		or funcNameOrFunc == RbxGui.CreateDropDownMenu
 	then
-		return "Function CreateDropDownMenu.  "
-			.. "Arguments: (items, onItemSelected).  "
-			.. "Side effect: Returns 2 results, a container to the gui object and a 'updateSelection' function for external updating.  The container is a drop-down-box created around a list of items"
+		return "Function CreateDropDownMenu. "
+			.. "Arguments: (items, onItemSelected). "
+			.. "Side effect: Returns 2 results, a container to the gui object and a 'updateSelection' function for external updating. The container is a drop-down-box created around a list of items"
 	elseif
 		funcNameOrFunc == "CreateMessageDialog"
 		or funcNameOrFunc == RbxGui.CreateMessageDialog
 	then
-		return "Function CreateMessageDialog.  "
+		return "Function CreateMessageDialog. "
 			.. "Arguments: (title, message, buttons). "
-			.. "Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in.  'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button"
+			.. "Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in. 'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button"
 	elseif
 		funcNameOrFunc == "CreateStyledMessageDialog"
 		or funcNameOrFunc == RbxGui.CreateStyledMessageDialog
 	then
-		return "Function CreateStyledMessageDialog.  "
+		return "Function CreateStyledMessageDialog. "
 			.. "Arguments: (title, message, style, buttons). "
-			.. "Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in.  'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button, 'style' is a string, either Error, Notify or Confirm"
+			.. "Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in. 'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button, 'style' is a string, either Error, Notify or Confirm"
 	elseif
 		funcNameOrFunc == "GetFontHeight"
 		or funcNameOrFunc == RbxGui.GetFontHeight
 	then
-		return "Function GetFontHeight.  "
+		return "Function GetFontHeight. "
 			.. "Arguments: (font, fontSize). "
 			.. "Side effect: returns the size in pixels of the given font + fontSize"
 	elseif
 		funcNameOrFunc == "CreateScrollingFrame"
 		or funcNameOrFunc == RbxGui.CreateScrollingFrame
 	then
-		return "Function CreateScrollingFrame.  "
+		return "Function CreateScrollingFrame. "
 			.. "Arguments: (orderList, style) "
-			.. "Side effect: returns 4 objects, (scrollFrame, scrollUpButton, scrollDownButton, recalculateFunction).  'scrollFrame' can be filled with GuiObjects.  It will lay them out and allow scrollUpButton/scrollDownButton to interact with them.  Orderlist is optional (and specifies the order to layout the children.  Without orderlist, it uses the children order. style is also optional, and allows for a 'grid' styling if style is passed 'grid' as a string.  recalculateFunction can be called when a relayout is needed (when orderList changes)"
+			.. "Side effect: returns 4 objects, (scrollFrame, scrollUpButton, scrollDownButton, recalculateFunction). 'scrollFrame' can be filled with GuiObjects. It will lay them out and allow scrollUpButton/scrollDownButton to interact with them. Orderlist is optional (and specifies the order to layout the children. Without orderlist, it uses the children order. style is also optional, and allows for a 'grid' styling if style is passed 'grid' as a string. recalculateFunction can be called when a relayout is needed (when orderList changes)"
 	elseif
 		funcNameOrFunc == "CreateTrueScrollingFrame"
 		or funcNameOrFunc == RbxGui.CreateTrueScrollingFrame
 	then
-		return "Function CreateTrueScrollingFrame.  "
+		return "Function CreateTrueScrollingFrame. "
 			.. "Arguments: (nil) "
-			.. "Side effect: returns 2 objects, (scrollFrame, controlFrame).  'scrollFrame' can be filled with GuiObjects, and they will be clipped if not inside the frame's bounds. controlFrame has children scrollup and scrolldown, as well as a slider.  controlFrame can be parented to any guiobject and it will readjust itself to fit."
+			.. "Side effect: returns 2 objects, (scrollFrame, controlFrame). 'scrollFrame' can be filled with GuiObjects, and they will be clipped if not inside the frame's bounds. controlFrame has children scrollup and scrolldown, as well as a slider. controlFrame can be parented to any guiobject and it will readjust itself to fit."
 	elseif
 		funcNameOrFunc == "AutoTruncateTextObject"
 		or funcNameOrFunc == RbxGui.AutoTruncateTextObject
 	then
-		return "Function AutoTruncateTextObject.  "
+		return "Function AutoTruncateTextObject. "
 			.. "Arguments: (textLabel) "
-			.. "Side effect: returns 2 objects, (textLabel, changeText).  The 'textLabel' input is modified to automatically truncate text (with ellipsis), if it gets too small to fit.  'changeText' is a function that can be used to change the text, it takes 1 string as an argument"
+			.. "Side effect: returns 2 objects, (textLabel, changeText). The 'textLabel' input is modified to automatically truncate text (with ellipsis), if it gets too small to fit. 'changeText' is a function that can be used to change the text, it takes 1 string as an argument"
 	elseif
 		funcNameOrFunc == "CreateSlider"
 		or funcNameOrFunc == RbxGui.CreateSlider
 	then
-		return "Function CreateSlider.  "
+		return "Function CreateSlider. "
 			.. "Arguments: (steps, width, position) "
-			.. "Side effect: returns 2 objects, (sliderGui, sliderPosition).  The 'steps' argument specifies how many different positions the slider can hold along the bar.  'width' specifies in pixels how wide the bar should be (modifiable afterwards if desired). 'position' argument should be a UDim2 for slider positioning. 'sliderPosition' is an IntValue whose current .Value specifies the specific step the slider is currently on."
+			.. "Side effect: returns 2 objects, (sliderGui, sliderPosition). The 'steps' argument specifies how many different positions the slider can hold along the bar. 'width' specifies in pixels how wide the bar should be (modifiable afterwards if desired). 'position' argument should be a UDim2 for slider positioning. 'sliderPosition' is an IntValue whose current .Value specifies the specific step the slider is currently on."
 	elseif
 		funcNameOrFunc == "CreateLoadingFrame"
 		or funcNameOrFunc == RbxGui.CreateLoadingFrame
 	then
-		return "Function CreateLoadingFrame.  "
+		return "Function CreateLoadingFrame. "
 			.. "Arguments: (name, size, position) "
-			.. "Side effect: Creates a gui that can be manipulated to show progress for a particular action.  Name appears above the loading bar, and size and position are udim2 values (both size and position are optional arguments).  Returns 3 arguments, the first being the gui created. The second being updateLoadingGuiPercent, which is a bindable function.  This function takes one argument (two optionally), which should be a number between 0 and 1, representing the percentage the loading gui should be at.  The second argument to this function is a boolean value that if set to true will tween the current percentage value to the new percentage value, therefore our third argument is how long this tween should take. Our third returned argument is a BindableEvent, that when fired means that someone clicked the cancel button on the dialog."
+			.. "Side effect: Creates a gui that can be manipulated to show progress for a particular action. Name appears above the loading bar, and size and position are udim2 values (both size and position are optional arguments). Returns 3 arguments, the first being the gui created. The second being updateLoadingGuiPercent, which is a bindable function. This function takes one argument (two optionally), which should be a number between 0 and 1, representing the percentage the loading gui should be at. The second argument to this function is a boolean value that if set to true will tween the current percentage value to the new percentage value, therefore our third argument is how long this tween should take. Our third returned argument is a BindableEvent, that when fired means that someone clicked the cancel button on the dialog."
 	elseif
 		funcNameOrFunc == "CreateTerrainMaterialSelector"
 		or funcNameOrFunc == RbxGui.CreateTerrainMaterialSelector
 	then
-		return "Function CreateTerrainMaterialSelector.  "
+		return "Function CreateTerrainMaterialSelector. "
 			.. "Arguments: (size, position) "
-			.. "Side effect: Size and position are UDim2 values that specifies the selector's size and position.  Both size and position are optional arguments. This method returns 3 objects (terrainSelectorGui, terrainSelected, forceTerrainSelection).  terrainSelectorGui is just the gui object that we generate with this function, parent it as you like. TerrainSelected is a BindableEvent that is fired whenever a new terrain type is selected in the gui.  ForceTerrainSelection is a function that takes an argument of Enum.CellMaterial and will force the gui to show that material as currently selected."
+			.. "Side effect: Size and position are UDim2 values that specifies the selector's size and position. Both size and position are optional arguments. This method returns 3 objects (terrainSelectorGui, terrainSelected, forceTerrainSelection). terrainSelectorGui is just the gui object that we generate with this function, parent it as you like. TerrainSelected is a BindableEvent that is fired whenever a new terrain type is selected in the gui. ForceTerrainSelection is a function that takes an argument of Enum.CellMaterial and will force the gui to show that material as currently selected."
 	end
 	return "No help available for this function"
 end

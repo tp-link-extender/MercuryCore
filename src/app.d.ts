@@ -74,6 +74,7 @@ declare global {
 	declare const Place: typeof import("$lib/components/Place.svelte").default
 	declare const PostReply: typeof import("$lib/components/PostReply.svelte").default
 	declare const ReportButton: typeof import("$lib/components/ReportButton.svelte").default
+	declare const SidebarShell: typeof import("$lib/components/SidebarShell.svelte").default
 	declare const Tab: typeof import("$lib/components/Tab.svelte").default
 	declare const TabData: typeof import("$lib/components/TabData").default
 	declare const TabNav: typeof import("$lib/components/TabNav.svelte").default

@@ -1,4 +1,4 @@
-import surreal, { query, mquery, surql } from "./surreal"
+import { query, mquery, surql } from "./surreal"
 import type {
 	Adapter,
 	DatabaseSession,
@@ -8,13 +8,14 @@ import type {
 
 export class SurrealAdapter implements Adapter {
 	public async deleteSession(sessionId: string) {
-		await surreal.delete(`session:${sessionId}`)
+		await query(surql`DELETE $sess`, { sess: `session:${sessionId}` })
 	}
 
 	public async deleteUserSessions(userId: string) {
-		await query(surql`DELETE session WHERE $user ∈ <-hasSession<-user`, {
-			user: `user:${userId}`,
-		})
+		await query(
+			surql`DELETE session WHERE $user INSIDE <-hasSession<-user`,
+			{ user: `user:${userId}` }
+		)
 	}
 
 	public async getSessionAndUser(
@@ -47,7 +48,9 @@ export class SurrealAdapter implements Adapter {
 
 	public async getUserSessions(userId: string) {
 		return await query<DatabaseSession>(
-			surql`SELECT *, meta::id(id) AS id FROM session WHERE $user ∈ <-usingKey<-user`,
+			surql`
+				SELECT *, meta::id(id) AS id FROM session
+				WHERE $user INSIDE <-usingKey<-user`,
 			{ user: `user:${userId}` }
 		)
 	}

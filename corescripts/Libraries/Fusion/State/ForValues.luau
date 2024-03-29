@@ -1,4 +1,4 @@
---!nonstrict
+--!strict
 
 --[[
 	Constructs a new ForValues object which maps values of a table using
