@@ -395,7 +395,7 @@ export const actions = {
 			}
 		} catch (e) {
 			console.error(e)
-			return fail(500, { msg: "Failed to request render" })
+			fail(500, { msg: "Failed to request render" })
 		}
 	},
 }

@@ -109,7 +109,7 @@ export const actions = {
 			await requestRender("Clothing", +id)
 		} catch (e) {
 			console.error(e)
-			return fail(500, { msg: "Failed to request render" })
+			fail(500, { msg: "Failed to request render" })
 		}
 	},
 	purge: async e => {

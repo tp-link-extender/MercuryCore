@@ -93,7 +93,7 @@ async function rerender(user: import("lucia").User) {
 		}
 	} catch (e) {
 		console.error(e)
-		return fail(500, { msg: "Failed to request render" })
+		fail(500, { msg: "Failed to request render" })
 	}
 }
 
@@ -111,7 +111,7 @@ export const actions = {
 	paint: async ({ locals, url }) => {
 		const { user } = await authorise(locals)
 		const bodyPartQuery = url.searchParams.get("p")
-		const bodyColour = url.searchParams.get("c")
+		const bodyColour = url.searchParams.get("c") as string
 
 		if (
 			!bodyPartQuery ||
@@ -126,7 +126,7 @@ export const actions = {
 				"RightLeg",
 			].includes(bodyPartQuery)
 		)
-			return fail(400)
+			fail(400)
 
 		const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
 		const currentColours = user.bodyColours
@@ -160,7 +160,7 @@ export const actions = {
 				{ user: `user:${user.id}` }
 			)) >= 3
 		)
-			return fail(400, { msg: "You can only wear 3 hats" })
+			fail(400, { msg: "You can only wear 3 hats" })
 
 		await query(
 			surql`
