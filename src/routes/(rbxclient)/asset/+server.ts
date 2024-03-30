@@ -4,7 +4,7 @@ import { error, redirect } from "@sveltejs/kit"
 import { createHash } from "node:crypto"
 import fs from "node:fs"
 
-const response = (file: string) =>
+const response = (file: Buffer | string) =>
 	new Response(file, {
 		headers: {
 			"Content-Type": "binary/octet-stream",
@@ -43,7 +43,7 @@ export async function GET({ url }) {
 			// (allow pending assets to be shown through the api)
 			console.log(`served asset #${id}`)
 
-			return response(fs.readFileSync(`data/assets/${id}`, "utf-8"))
+			return response(fs.readFileSync(`data/assets/${id}`))
 		}
 
 		// Try loading as a corescript
