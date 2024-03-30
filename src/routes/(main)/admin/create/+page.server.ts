@@ -240,52 +240,31 @@ export async function load({ locals, url }) {
 	}
 }
 
-export const actions = {
-	autopilot: async ({ request, locals }) => {
-		await authorise(locals, 3)
-		const form = await superValidate(request, zod(schemaAuto))
-		if (!form.valid) return formError(form)
-		const { data } = form
+export const actions: import("./$types").Actions = {}
+actions.autopilot = async ({ request, locals }) => {
+	await authorise(locals, 3)
+	const form = await superValidate(request, zod(schemaAuto))
+	if (!form.valid) return formError(form)
+	const { data } = form
 
-		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
-		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
+	if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
+	if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
-		const res = await mquery<unknown[]>(
-			surql`
-				BEGIN TRANSACTION;
-				LET $user = (SELECT id FROM user WHERE number = 1)[0].id;
-				FOR $assetId IN $assets {
-					# All the assets are cached already
-					LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-					LET $cached = (SELECT * FROM assetCache:[$assetId, 1])[0]; # version 1 is usually the only version
-					LET $asset = CREATE asset CONTENT {
-						id: $id,
-						name: $cached.name,
-						type: $cached.type,
-						price: 0,
-						description: [{
-							text: $cached.description,
-							updated: time::now(),
-						}],
-						created: time::now(),
-						updated: time::now(),
-						visibility: "Visible",
-					};
-					RELATE $user->owns->$asset;
-					RELATE $user->created->$asset;
-					RELATE $cached->createdAsset->$asset;
-				};
-				# Now time for the big one
+	const res = await mquery<unknown[]>(
+		surql`
+			BEGIN TRANSACTION;
+			LET $user = (SELECT id FROM user WHERE number = 1)[0].id;
+			FOR $assetId IN $assets {
+				# All the assets are cached already
 				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-				LET $cached = (SELECT data, type
-				FROM assetCache:[$assetId, $version])[0];
+				LET $cached = (SELECT * FROM assetCache:[$assetId, 1])[0]; # version 1 is usually the only version
 				LET $asset = CREATE asset CONTENT {
 					id: $id,
-					name: $name,
+					name: $cached.name,
 					type: $cached.type,
-					price: $price,
+					price: 0,
 					description: [{
-						text: $description,
+						text: $cached.description,
 						updated: time::now(),
 					}],
 					created: time::now(),
@@ -294,80 +273,99 @@ export const actions = {
 				};
 				RELATE $user->owns->$asset;
 				RELATE $user->created->$asset;
-				{
-					id: $id,
-					type: $cached.type,
-				};
-				(SELECT
-					(SELECT meta::id(id) AS id
-					FROM ->createdAsset->asset)[0].id AS id,
-					type,
-					meta::id(id)[0] AS sharedId
-				FROM assetCache WHERE ->createdAsset->asset);
-				COMMIT TRANSACTION`,
-			{ assets: form.data.shared.split(",").map(s => +s), ...data }
+				RELATE $cached->createdAsset->$asset;
+			};
+			# Now time for the big one
+			LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
+			LET $cached = (SELECT data, type
+			FROM assetCache:[$assetId, $version])[0];
+			LET $asset = CREATE asset CONTENT {
+				id: $id,
+				name: $name,
+				type: $cached.type,
+				price: $price,
+				description: [{
+					text: $description,
+					updated: time::now(),
+				}],
+				created: time::now(),
+				updated: time::now(),
+				visibility: "Visible",
+			};
+			RELATE $user->owns->$asset;
+			RELATE $user->created->$asset;
+			{
+				id: $id,
+				type: $cached.type,
+			};
+			(SELECT
+				(SELECT meta::id(id) AS id
+				FROM ->createdAsset->asset)[0].id AS id,
+				type,
+				meta::id(id)[0] AS sharedId
+			FROM assetCache WHERE ->createdAsset->asset);
+			COMMIT TRANSACTION`,
+		{ assets: form.data.shared.split(",").map(s => +s), ...data }
+	)
+
+	const { id, type } = res[7] as {
+		id: number
+		type: number
+	}
+	const shared = res[8] as {
+		id: number
+		type: number
+		sharedId: number
+	}[]
+
+	let cachedXml = fs.readFileSync(
+		`data/assetCache/${data.assetId}_${data.version}`,
+		"utf-8"
+	)
+
+	// Replace the shared asset URLs with the new asset IDs
+	for (const exec of cachedXml.matchAll(/(<url>.+<\/url>)/g)) {
+		const url = exec[1]
+		const id = url.match(/\d+/)?.[0]
+		if (!id) continue // shouldn't happen, let's just ignore it
+
+		const newId = shared.find(s => s.sharedId === +id)?.id
+		if (!newId) continue // same as above
+		cachedXml = cachedXml.replace(
+			url,
+			`<url>${process.env.RCC_ORIGIN}/asset?id=${newId}</url>`
 		)
+	}
 
-		const { id, type } = res[7] as {
-			id: number
-			type: number
-		}
-		const shared = res[8] as {
-			id: number
-			type: number
-			sharedId: number
-		}[]
-
-		let cachedXml = fs.readFileSync(
-			`data/assetCache/${data.assetId}_${data.version}`,
-			"utf-8"
-		)
-
-		// Replace the shared asset URLs with the new asset IDs
-		for (const exec of cachedXml.matchAll(/(<url>.+<\/url>)/g)) {
-			const url = exec[1]
-			const id = url.match(/\d+/)?.[0]
-			if (!id) continue // shouldn't happen, let's just ignore it
-
-			const newId = shared.find(s => s.sharedId === +id)?.id
-			if (!newId) continue // same as above
-			cachedXml = cachedXml.replace(
-				url,
-				`<url>${process.env.RCC_ORIGIN}/asset?id=${newId}</url>`
+	await Promise.all([
+		fs.promises.writeFile(`data/assets/${id}`, cachedXml),
+		...shared.map(s =>
+			fs.promises.copyFile(
+				`data/assetCache/${s.sharedId}_1`,
+				`data/assets/${s.id}`
 			)
-		}
+		),
+	])
 
-		await Promise.all([
-			fs.promises.writeFile(`data/assets/${id}`, cachedXml),
-			...shared.map(s =>
+	const renders: Promise<void>[] = []
+
+	if (type === 18) {
+		const imageAsset = shared.find(s => s.type === 1)?.id
+		if (imageAsset)
+			// we want to move the imageasset from assets to thumbnails (don't render it)
+			renders.push(
 				fs.promises.copyFile(
-					`data/assetCache/${s.sharedId}_1`,
-					`data/assets/${s.id}`
+					`data/assets/${imageAsset}`,
+					`data/thumbnails/${id}`
 				)
-			),
-		])
+			)
+	} else {
+		renders.push(requestRender(RenderType.Model, id))
+		const renderMesh = shared.find(s => s.type === 4)?.id
+		if (renderMesh) renders.push(requestRender(RenderType.Mesh, renderMesh))
+	}
 
-		const renders: Promise<void>[] = []
+	await Promise.all(renders)
 
-		if (type === 18) {
-			const imageAsset = shared.find(s => s.type === 1)?.id
-			if (imageAsset)
-				// we want to move the imageasset from assets to thumbnails (don't render it)
-				renders.push(
-					fs.promises.copyFile(
-						`data/assets/${imageAsset}`,
-						`data/thumbnails/${id}`
-					)
-				)
-		} else {
-			renders.push(requestRender(RenderType.Model, id))
-			const renderMesh = shared.find(s => s.type === 4)?.id
-			if (renderMesh)
-				renders.push(requestRender(RenderType.Mesh, renderMesh))
-		}
-
-		await Promise.all(renders)
-
-		redirect(302, `/avatarshop/${id}`)
-	},
+	redirect(302, `/avatarshop/${id}`)
 }

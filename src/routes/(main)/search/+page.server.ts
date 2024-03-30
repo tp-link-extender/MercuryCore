@@ -99,14 +99,13 @@ export const load = async ({ url }) => {
 	}
 }
 
-export const actions = {
-	default: async ({ url, request }) => {
-		const data = await formData(request)
-		const { query } = data
-		const category = url.searchParams.get("c") || ""
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ url, request }) => {
+	const data = await formData(request)
+	const { query } = data
+	const category = url.searchParams.get("c") || ""
 
-		console.log(`searching for ${query} in ${category}`)
+	console.log(`searching for ${query} in ${category}`)
 
-		redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
-	},
+	redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
 }

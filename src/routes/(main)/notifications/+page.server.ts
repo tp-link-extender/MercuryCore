@@ -8,22 +8,21 @@ export const load = async ({ locals }) => {
 	})
 }
 
-export const actions = {
-	default: async ({ locals, url }) => {
-		const { user } = await authorise(locals)
-		const id = url.searchParams.get("s")
-		if (!id) error(400)
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ locals, url }) => {
+	const { user } = await authorise(locals)
+	const id = url.searchParams.get("s")
+	if (!id) error(400)
 
-		try {
-			await query(
-				surql`
-					IF $notification.* {
-						UPDATE $notification SET read = true
-					}`,
-				{ notification: `notification:${id}` }
-			)
-		} catch (e) {
-			error(400)
-		}
-	},
+	try {
+		await query(
+			surql`
+				IF $notification.* {
+					UPDATE $notification SET read = true
+				}`,
+			{ notification: `notification:${id}` }
+		)
+	} catch (e) {
+		error(400)
+	}
 }

@@ -69,90 +69,90 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 		active: action === "show",
 	})
 }
-export const actions = {
-	create: async e => {
-		const { user, form, error } = await getData(e)
-		if (error) return error
-		const { getClientAddress } = e
 
-		const limit = ratelimit(form, "createBanner", getClientAddress, 30)
-		if (limit) return limit
-		const { bannerText, bannerColour, bannerTextLight } = form.data
+export const actions: import("./$types").Actions = {}
+actions.create = async e => {
+	const { user, form, error } = await getData(e)
+	if (error) return error
+	const { getClientAddress } = e
 
-		if (!bannerText || !bannerColour)
-			return message(form, "Missing fields", { status: 400 })
+	const limit = ratelimit(form, "createBanner", getClientAddress, 30)
+	if (limit) return limit
+	const { bannerText, bannerColour, bannerTextLight } = form.data
 
-		if ((await bannerActiveCount()) >= 3)
-			return message(form, "Too many active banners", { status: 400 })
+	if (!bannerText || !bannerColour)
+		return message(form, "Missing fields", { status: 400 })
 
-		await Promise.all([
-			query(surql`CREATE banner CONTENT $data`, {
-				data: {
-					active: true,
-					deleted: false,
-					body: bannerText,
-					bgColour: bannerColour,
-					textLight: !!bannerTextLight,
-					creator: `user:${user.id}`,
-				},
-			}),
-			auditLog(
-				Action.Administration,
-				`Create banner "${bannerText}"`,
-				user.id
-			),
-		])
+	if ((await bannerActiveCount()) >= 3)
+		return message(form, "Too many active banners", { status: 400 })
 
-		return message(form, "Banner created successfully!")
-	},
-	delete: async e => {
-		const { user, form, error } = await getData(e)
-		if (error) return error
-		const id = e.url.searchParams.get("id")
-
-		if (!id) return message(form, "Missing fields", { status: 400 })
-
-		// const deletedBanner = await banner.merge(id, { deleted: true })
-		const deletedBanner = await squery<{
-			body: string
-			creator: string
-		}>(surql`UPDATE $id SET deleted = true`, { id: `banner:${id}` })
-
-		await auditLog(
+	await Promise.all([
+		query(surql`CREATE banner CONTENT $data`, {
+			data: {
+				active: true,
+				deleted: false,
+				body: bannerText,
+				bgColour: bannerColour,
+				textLight: !!bannerTextLight,
+				creator: `user:${user.id}`,
+			},
+		}),
+		auditLog(
 			Action.Administration,
-			`Delete banner "${deletedBanner.body}"`,
+			`Create banner "${bannerText}"`,
 			user.id
-		)
-	},
-	updateBody: async e => {
-		const { form, error } = await getData(e)
-		if (error) return error
-		const id = e.url.searchParams.get("id")
-		const { bannerBody } = form.data
+		),
+	])
 
-		if (!bannerBody || !id)
-			return message(form, "Missing fields", { status: 400 })
-
-		// await banner.merge(id, { body: bannerBody })
-		await query(surql`UPDATE $id SET body = $bannerBody`, {
-			id: `banner:${id}`,
-			bannerBody,
-		})
-	},
-	updateTextLight: async e => {
-		const { form, error } = await getData(e)
-		if (error) return error
-		const id = e.url.searchParams.get("id")
-		const { bannerTextLight } = form.data
-
-		if (!id) return message(form, "Missing fields", { status: 400 })
-
-		// await banner.merge(id, { textLight: !!bannerTextLight })
-		await query(surql`UPDATE $id SET textLight = $textLight`, {
-			id: `banner:${id}`,
-			textLight: !!bannerTextLight,
-		})
-	},
-	show: showHide("show"),
-	hide: showHide("hide"),
+	return message(form, "Banner created successfully!")
 }
+actions.delete = async e => {
+	const { user, form, error } = await getData(e)
+	if (error) return error
+	const id = e.url.searchParams.get("id")
+
+	if (!id) return message(form, "Missing fields", { status: 400 })
+
+	// const deletedBanner = await banner.merge(id, { deleted: true })
+	const deletedBanner = await squery<{
+		body: string
+		creator: string
+	}>(surql`UPDATE $id SET deleted = true`, { id: `banner:${id}` })
+
+	await auditLog(
+		Action.Administration,
+		`Delete banner "${deletedBanner.body}"`,
+		user.id
+	)
+}
+actions.updateBody = async e => {
+	const { form, error } = await getData(e)
+	if (error) return error
+	const id = e.url.searchParams.get("id")
+	const { bannerBody } = form.data
+
+	if (!bannerBody || !id)
+		return message(form, "Missing fields", { status: 400 })
+
+	// await banner.merge(id, { body: bannerBody })
+	await query(surql`UPDATE $id SET body = $bannerBody`, {
+		id: `banner:${id}`,
+		bannerBody,
+	})
+}
+actions.updateTextLight = async e => {
+	const { form, error } = await getData(e)
+	if (error) return error
+	const id = e.url.searchParams.get("id")
+	const { bannerTextLight } = form.data
+
+	if (!id) return message(form, "Missing fields", { status: 400 })
+
+	// await banner.merge(id, { textLight: !!bannerTextLight })
+	await query(surql`UPDATE $id SET textLight = $textLight`, {
+		id: `banner:${id}`,
+		textLight: !!bannerTextLight,
+	})
+}
+actions.show = showHide("show")
+actions.hide = showHide("hide")

@@ -27,12 +27,11 @@ export const load = async () => ({
 	places: await query<Place>(select),
 })
 
-export const actions = {
-	default: async ({ request }) => ({
-		places: await query<Place>(
-			surql`${select}
-				AND string::lowercase($query) INSIDE string::lowercase(name)`,
-			{ query: (await request.formData()).get("q") as string }
-		),
-	}),
-}
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request }) => ({
+	places: await query<Place>(
+		surql`${select}
+			AND string::lowercase($query) INSIDE string::lowercase(name)`,
+		{ query: (await request.formData()).get("q") as string }
+	),
+})

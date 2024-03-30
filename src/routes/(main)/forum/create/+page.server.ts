@@ -32,60 +32,58 @@ export async function load({ url }) {
 	}
 }
 
-export const actions = {
-	default: async ({ request, locals, url, getClientAddress }) => {
-		const { user } = await authorise(locals)
-		const form = await superValidate(request, zod(schema))
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, locals, url, getClientAddress }) => {
+	const { user } = await authorise(locals)
+	const form = await superValidate(request, zod(schema))
 
-		if (!form.valid) return formError(form)
+	if (!form.valid) return formError(form)
 
-		const limit = ratelimit(form, "forumPost", getClientAddress, 30)
-		if (limit) return limit
+	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
+	if (limit) return limit
 
-		const category = url.searchParams.get("category")
+	const category = url.searchParams.get("category")
 
-		const title = form.data.title.trim()
-		if (!title)
-			return formError(form, ["title"], ["Post must have a title"])
-		const content = form.data.content?.trim()
+	const title = form.data.title.trim()
+	if (!title) return formError(form, ["title"], ["Post must have a title"])
+	const content = form.data.content?.trim()
 
-		if (
-			!category ||
-			!(await findWhere(
-				"forumCategory",
-				surql`string::lowercase(name) = string::lowercase($category)`,
-				{ category }
-			))
-		)
-			error(400, "Invalid category")
+	if (
+		!category ||
+		!(await findWhere(
+			"forumCategory",
+			surql`string::lowercase(name) = string::lowercase($category)`,
+			{ category }
+		))
+	)
+		error(400, "Invalid category")
 
-		const postId = await squery<string>(surql`[fn::id()]`)
+	const postId = await squery<string>(surql`[fn::id()]`)
 
-		await query(
-			surql`
-				LET $post = CREATE $postId CONTENT {
-					title: $title,
-					posted: time::now(),
-					visibility: "Visible",
-					pinned: false, # otherwise the post sorting would sort by [true, false, null] and you'll get random ordering on posts that have been unpinned
-					content: [{
-						text: $content,
-						updated: time::now(),
-					}],
-				};
-				RELATE $post->in->$category;
-				RELATE $user->posted->$post`,
-			{
-				user: `user:${user.id}`,
-				postId: `forumPost:${postId}`,
-				category: `forumCategory:⟨${category}⟩`,
-				title,
-				content,
-			}
-		)
+	await query(
+		surql`
+			LET $post = CREATE $postId CONTENT {
+				title: $title,
+				posted: time::now(),
+				visibility: "Visible",
+				pinned: false, # otherwise the post sorting would sort by [true, false, null] and you'll get random ordering on posts that have been unpinned
+				content: [{
+					text: $content,
+					updated: time::now(),
+				}],
+			};
+			RELATE $post->in->$category;
+			RELATE $user->posted->$post`,
+		{
+			user: `user:${user.id}`,
+			postId: `forumPost:${postId}`,
+			category: `forumCategory:⟨${category}⟩`,
+			title,
+			content,
+		}
+	)
 
-		await like(user.id, `forumPost:${postId}`)
+	await like(user.id, `forumPost:${postId}`)
 
-		redirect(302, `/forum/${category}/${postId}`)
-	},
+	redirect(302, `/forum/${category}/${postId}`)
 }

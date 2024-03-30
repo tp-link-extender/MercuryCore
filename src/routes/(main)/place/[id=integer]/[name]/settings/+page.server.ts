@@ -97,127 +97,124 @@ async function getData(e: RequestEvent) {
 	return id
 }
 
-export const actions = {
-	view: async e => {
-		const id = await getData(e)
-		const { request } = e
+export const actions: import("./$types").Actions = {}
+actions.view = async e => {
+	const id = await getData(e)
+	const { request } = e
 
-		const formData = await request.formData()
-		const form = await superValidate(formData, zod(schemas.view))
-		if (!form.valid) return formError(form)
+	const formData = await request.formData()
+	const form = await superValidate(formData, zod(schemas.view))
+	if (!form.valid) return formError(form)
 
-		const icon = formData.get("icon") as File
+	const icon = formData.get("icon") as File
 
-		if (icon && icon.size > 0) {
-			if (icon.size > 1e6)
-				return formError(
-					form,
-					["icon"],
-					["Icon must be less than 1MB in size"]
-				)
+	if (icon && icon.size > 0) {
+		if (icon.size > 1e6)
+			return formError(
+				form,
+				["icon"],
+				["Icon must be less than 1MB in size"]
+			)
 
-			if (!fs.existsSync("data/icons")) fs.mkdirSync("data/icons")
-			sharp(await icon.arrayBuffer())
-				.resize(270, 270)
-				.toFile(`data/icons/${id}.webp`)
-				.catch(() =>
-					formError(form, ["icon"], ["Icon failed to upload"])
-				)
-		}
+		if (!fs.existsSync("data/icons")) fs.mkdirSync("data/icons")
+		sharp(await icon.arrayBuffer())
+			.resize(270, 270)
+			.toFile(`data/icons/${id}.webp`)
+			.catch(() => formError(form, ["icon"], ["Icon failed to upload"]))
+	}
 
-		const { title, description } = form.data
+	const { title, description } = form.data
 
-		await query(
-			surql`
-				LET $og = SELECT
-					title,
-					(SELECT text, updated FROM $parent.description
-					ORDER BY updated DESC)[0] AS description
-				FROM $place;
-
-				UPDATE $place SET name = $title;
-
-				IF $og.description.text != $description {
-					UPDATE $place SET description += {
-						text: $description,
-						updated: time::now(),
-					};
-				}`,
-			{
-				place: `place:${id}`,
+	await query(
+		surql`
+			LET $og = SELECT
 				title,
-				description: description || "",
-			}
-		)
+				(SELECT text, updated FROM $parent.description
+				ORDER BY updated DESC)[0] AS description
+			FROM $place;
 
-		return message(form, "View settings updated successfully!")
-	},
-	ticket: async e => {
-		const id = await getData(e)
-		const { request } = e
+			UPDATE $place SET name = $title;
 
-		await query(surql`UPDATE $place SET serverTicket = rand::guid()`, {
+			IF $og.description.text != $description {
+				UPDATE $place SET description += {
+					text: $description,
+					updated: time::now(),
+				};
+			}`,
+		{
 			place: `place:${id}`,
-		})
+			title,
+			description: description || "",
+		}
+	)
 
-		return message(
-			await superValidate(request, zod(schemas.ticket)),
-			"Regenerated!"
-		)
-	},
-	network: async e => {
-		const id = await getData(e)
-		const { request } = e
+	return message(form, "View settings updated successfully!")
+}
+actions.ticket = async e => {
+	const id = await getData(e)
+	const { request } = e
 
-		const form = await superValidate(request, zod(schemas.network))
-		if (!form.valid) return formError(form)
+	await query(surql`UPDATE $place SET serverTicket = rand::guid()`, {
+		place: `place:${id}`,
+	})
 
-		const { serverIP, serverPort, maxPlayers } = form.data
+	return message(
+		await superValidate(request, zod(schemas.ticket)),
+		"Regenerated!"
+	)
+}
+actions.network = async e => {
+	const id = await getData(e)
+	const { request } = e
 
-		await query(
-			surql`
-				UPDATE $place MERGE {
-					serverIP: $serverIP,
-					serverPort: $serverPort,
-					maxPlayers: $maxPlayers,
-				}`,
-			{
-				place: `place:${id}`,
-				serverIP,
-				serverPort,
-				maxPlayers,
-			}
-		)
+	const form = await superValidate(request, zod(schemas.network))
+	if (!form.valid) return formError(form)
 
-		return message(form, "Network settings updated successfully!")
-	},
-	privacy: async e => {
-		const id = await getData(e)
-		const { request } = e
+	const { serverIP, serverPort, maxPlayers } = form.data
 
-		const form = await superValidate(request, zod(schemas.privacy))
-		if (!form.valid) return formError(form)
-
-		const { privateServer } = form.data
-
-		await query(surql`UPDATE $place SET privateServer = $privateServer`, {
+	await query(
+		surql`
+			UPDATE $place MERGE {
+				serverIP: $serverIP,
+				serverPort: $serverPort,
+				maxPlayers: $maxPlayers,
+			}`,
+		{
 			place: `place:${id}`,
-			privateServer,
-		})
+			serverIP,
+			serverPort,
+			maxPlayers,
+		}
+	)
 
-		return message(form, "Privacy settings updated successfully!")
-	},
-	privatelink: async e => {
-		const id = await getData(e)
-		const { url, request } = e
+	return message(form, "Network settings updated successfully!")
+}
+actions.privacy = async e => {
+	const id = await getData(e)
+	const { request } = e
 
-		await query(surql`UPDATE $place SET privateTicket = rand::guid()`, {
-			place: `place:${id}`,
-		})
+	const form = await superValidate(request, zod(schemas.privacy))
+	if (!form.valid) return formError(form)
 
-		return message(
-			await superValidate(request, zod(schemas.privatelink)),
-			"Regenerated!"
-		)
-	},
+	const { privateServer } = form.data
+
+	await query(surql`UPDATE $place SET privateServer = $privateServer`, {
+		place: `place:${id}`,
+		privateServer,
+	})
+
+	return message(form, "Privacy settings updated successfully!")
+}
+actions.privatelink = async e => {
+	const id = await getData(e)
+	const { url, request } = e
+
+	await query(surql`UPDATE $place SET privateTicket = rand::guid()`, {
+		place: `place:${id}`,
+	})
+
+	return message(
+		await superValidate(request, zod(schemas.privatelink)),
+		"Regenerated!"
+	)
 }

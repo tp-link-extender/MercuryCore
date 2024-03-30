@@ -97,103 +97,102 @@ async function rerender(user: import("lucia").User) {
 	}
 }
 
-export const actions = {
-	search: async ({ request, locals }) => ({
-		assets: await query(
-			surql`${select}
-				AND string::lowercase($query) INSIDE string::lowercase(name)`,
-			{
-				query: ((await request.formData()).get("q") as string).trim(),
-				user: `user:${(await authorise(locals)).user.id}`,
-			}
-		),
-	}),
-	paint: async ({ locals, url }) => {
-		const { user } = await authorise(locals)
-		const bodyPartQuery = url.searchParams.get("p")
-		const bodyColour = url.searchParams.get("c") as string
+export const actions: import("./$types").Actions = {}
+actions.search = async ({ request, locals }) => ({
+	assets: await query(
+		surql`${select}
+			AND string::lowercase($query) INSIDE string::lowercase(name)`,
+		{
+			query: ((await request.formData()).get("q") as string).trim(),
+			user: `user:${(await authorise(locals)).user.id}`,
+		}
+	),
+})
+actions.paint = async ({ locals, url }) => {
+	const { user } = await authorise(locals)
+	const bodyPartQuery = url.searchParams.get("p")
+	const bodyColour = url.searchParams.get("c") as string
 
-		if (
-			!bodyPartQuery ||
-			!bodyColour ||
-			!brickColours.includes(+bodyColour) ||
-			![
-				"Head",
-				"Torso",
-				"LeftArm",
-				"RightArm",
-				"LeftLeg",
-				"RightLeg",
-			].includes(bodyPartQuery)
-		)
-			fail(400)
+	if (
+		!bodyPartQuery ||
+		!bodyColour ||
+		!brickColours.includes(+bodyColour) ||
+		![
+			"Head",
+			"Torso",
+			"LeftArm",
+			"RightArm",
+			"LeftLeg",
+			"RightLeg",
+		].includes(bodyPartQuery)
+	)
+		fail(400)
 
-		const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
-		const currentColours = user.bodyColours
+	const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
+	const currentColours = user.bodyColours
 
-		currentColours[bodyPart] = +bodyColour
+	currentColours[bodyPart] = +bodyColour
 
-		await query(surql`UPDATE $user SET bodyColours = $currentColours`, {
-			user: `user:${user.id}`,
-			currentColours,
-		})
+	await query(surql`UPDATE $user SET bodyColours = $currentColours`, {
+		user: `user:${user.id}`,
+		currentColours,
+	})
 
-		return await rerender(user)
-	},
-	regen: async ({ locals, getClientAddress }) => {
-		const { user } = await authorise(locals)
+	return await rerender(user)
+}
+actions.regen = async ({ locals, getClientAddress }) => {
+	const { user } = await authorise(locals)
 
-		const limit = ratelimit(null, "regen", getClientAddress, 2)
-		if (limit) return limit
+	const limit = ratelimit(null, "regen", getClientAddress, 2)
+	if (limit) return limit
 
-		return await rerender(user)
-	},
-	equip: async e => {
-		const { user, id, asset, error } = await getEquipData(e)
-		if (error) return error
+	return await rerender(user)
+}
+actions.equip = async e => {
+	const { user, id, asset, error } = await getEquipData(e)
+	if (error) return error
 
-		// Find if there's more than 3 hats equipped, throw an error if there is
-		if (
-			asset.type === 8 &&
-			(await squery<number>(
-				surql`[count(SELECT 1 FROM $user->wearing WHERE out.type = 8)]`,
-				{ user: `user:${user.id}` }
-			)) >= 3
-		)
-			fail(400, { msg: "You can only wear 3 hats" })
+	// Find if there's more than 3 hats equipped, throw an error if there is
+	if (
+		asset.type === 8 &&
+		(await squery<number>(
+			surql`[count(SELECT 1 FROM $user->wearing WHERE out.type = 8)]`,
+			{ user: `user:${user.id}` }
+		)) >= 3
+	)
+		fail(400, { msg: "You can only wear 3 hats" })
 
-		await query(
-			surql`
-				# Unequip if there's already a T-Shirt/Shirt/Pants/Face equipped
-				IF $type = 2 {
-					DELETE $user->wearing WHERE out.type = 2;
-				} ELSE IF $type = 11 {
-					DELETE $user->wearing WHERE out.type = 11;
-				} ELSE IF $type = 12 {
-					DELETE $user->wearing WHERE out.type = 12;
-				} ELSE IF $type = 18 {
-					DELETE $user->wearing WHERE out.type = 18;
-				};
-				RELATE $user->wearing->$asset SET time = time::now();
-				RELATE $user->recentlyWorn->$asset SET time = time::now()`,
-			{
-				user: `user:${user.id}`,
-				asset: `asset:${id}`,
-				type: asset.type,
-			}
-		)
-
-		return await rerender(user)
-	},
-	unequip: async e => {
-		const { user, id, error } = await getEquipData(e)
-		if (error) return error
-
-		await query(surql`DELETE $user->wearing WHERE out = $asset`, {
+	await query(
+		surql`
+			# Unequip if there's already a T-Shirt/Shirt/Pants/Face equipped
+			IF $type = 2 {
+				DELETE $user->wearing WHERE out.type = 2;
+			} ELSE IF $type = 11 {
+				DELETE $user->wearing WHERE out.type = 11;
+			} ELSE IF $type = 12 {
+				DELETE $user->wearing WHERE out.type = 12;
+			} ELSE IF $type = 18 {
+				DELETE $user->wearing WHERE out.type = 18;
+			};
+			RELATE $user->wearing->$asset SET time = time::now();
+			RELATE $user->recentlyWorn->$asset SET time = time::now()`,
+		{
 			user: `user:${user.id}`,
 			asset: `asset:${id}`,
-		})
+			type: asset.type,
+		}
+	)
 
-		return await rerender(user)
-	},
+	return await rerender(user)
+}
+actions.unequip = async e => {
+	const { user, id, error } = await getEquipData(e)
+	if (error) return error
+
+	await query(surql`DELETE $user->wearing WHERE out = $asset`, {
+		user: `user:${user.id}`,
+		asset: `asset:${id}`,
+	})
+
+	return await rerender(user)
 }

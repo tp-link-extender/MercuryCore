@@ -10,16 +10,15 @@ export function load() {
 	error(451, msg)
 }
 
-export const actions = {
-	logout: async ({ locals, cookies }) => {
-		const { session } = await authorise(locals)
+export const actions: import("./$types").Actions = {}
+actions.logout = async ({ locals, cookies }) => {
+	const { session } = await authorise(locals)
 
-		await auth.invalidateSession(session.id)
-		cookies.delete("auth_session", { path: "." })
-		redirect(302, "/login")
-	},
-	statusping: () => {
-		// does nothing
-		// hooks.server.ts will update the user's status when pinged
-	},
+	await auth.invalidateSession(session.id)
+	cookies.delete("auth_session", { path: "." })
+	redirect(302, "/login")
+}
+actions.statusping = () => {
+	// does nothing
+	// hooks.server.ts will update the user's status when pinged
 }

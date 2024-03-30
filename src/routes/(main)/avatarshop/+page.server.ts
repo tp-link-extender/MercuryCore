@@ -17,12 +17,11 @@ export const load = async () => ({
 	}>(select),
 })
 
-export const actions = {
-	default: async ({ request }) => ({
-		assets: await query(
-			surql`${select}
-				AND string::lowercase($query) INSIDE string::lowercase(name)`,
-			{ query: (await request.formData()).get("q") as string }
-		),
-	}),
-}
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request }) => ({
+	assets: await query(
+		surql`${select}
+			AND string::lowercase($query) INSIDE string::lowercase(name)`,
+		{ query: (await request.formData()).get("q") as string }
+	),
+})

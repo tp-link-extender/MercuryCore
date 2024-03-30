@@ -58,86 +58,84 @@ async function getData({ locals, url }: RequestEvent) {
 // the pull request, the git commit
 // the coder's late-night screams
 // of hallelujah
-export const actions = {
-	approve: async e => {
-		const { id, params, assetName } = await getData(e)
-		await squery(
-			surql`
-				UPDATE $asset SET visibility = "Visible";
-				UPDATE $asset->imageAsset->asset SET visibility = "Visible";
-				CREATE auditLog CONTENT {
-					action: "Moderation",
-					note: $note,
-					user: $user,
-					time: time::now()
-				}`,
-			{
-				...params,
-				note: `Approve asset ${assetName} (id ${id})`,
-			}
-		)
-	},
-	deny: async e => {
-		const { id, params, assetName } = await getData(e)
-		await squery(
-			surql`
-				UPDATE $asset SET visibility = "Moderated";
-				UPDATE $asset->imageAsset->asset
-					SET visibility = "Moderated";
-				CREATE auditLog CONTENT {
-					action: "Moderation",
-					note: $note,
-					user: $user,
-					time: time::now()
-				}`,
-			{
-				...params,
-				note: `Moderate asset ${assetName} (id ${id})`,
-			}
-		)
-	},
-	rerender: async e => {
-		const { id } = await getData(e)
-		const limit = ratelimit(null, "rerender", e.getClientAddress, 10)
-		if (limit) return limit
-
-		try {
-			await requestRender(RenderType.Clothing, +id)
-		} catch (e) {
-			console.error(e)
-			fail(500, { msg: "Failed to request render" })
+export const actions: import("./$types").Actions = {}
+actions.approve = async e => {
+	const { id, params, assetName } = await getData(e)
+	await squery(
+		surql`
+			UPDATE $asset SET visibility = "Visible";
+			UPDATE $asset->imageAsset->asset SET visibility = "Visible";
+			CREATE auditLog CONTENT {
+				action: "Moderation",
+				note: $note,
+				user: $user,
+				time: time::now()
+			}`,
+		{
+			...params,
+			note: `Approve asset ${assetName} (id ${id})`,
 		}
-	},
-	purge: async e => {
-		// Nuclear option
-		const { id, params, assetName } = await getData(e)
-		const { iaid } = await squery<{ iaid: number }>(
-			surql`
-				SELECT meta::id((->imageAsset->asset.id)[0]) AS iaid
-				FROM $asset`,
-			{ asset: `asset:${id}` }
-		)
+	)
+}
+actions.deny = async e => {
+	const { id, params, assetName } = await getData(e)
+	await squery(
+		surql`
+			UPDATE $asset SET visibility = "Moderated";
+			UPDATE $asset->imageAsset->asset SET visibility = "Moderated";
+			CREATE auditLog CONTENT {
+				action: "Moderation",
+				note: $note,
+				user: $user,
+				time: time::now()
+			}`,
+		{
+			...params,
+			note: `Moderate asset ${assetName} (id ${id})`,
+		}
+	)
+}
+actions.rerender = async e => {
+	const { id } = await getData(e)
+	const limit = ratelimit(null, "rerender", e.getClientAddress, 10)
+	if (limit) return limit
 
-		await Promise.all([
-			query(
-				surql`
-					DELETE $asset;
-					DELETE $imageAsset;
-					CREATE auditLog CONTENT {
-						action: "Moderation",
-						note: $note,
-						user: $user,
-						time: time::now()
-					}`,
-				{
-					...params,
-					imageAsset: `asset:${iaid}`,
-					note: `Purge asset ${assetName} (id ${id})`,
-				}
-			),
-			fs.rm(`data/assets/${id}`),
-			fs.rm(`data/assets/${iaid}`),
-			fs.rm(`data/thumbnails/${id}`),
-		])
-	},
+	try {
+		await requestRender(RenderType.Clothing, +id)
+	} catch (e) {
+		console.error(e)
+		fail(500, { msg: "Failed to request render" })
+	}
+}
+actions.purge = async e => {
+	// Nuclear option
+	const { id, params, assetName } = await getData(e)
+	const { iaid } = await squery<{ iaid: number }>(
+		surql`
+			SELECT meta::id((->imageAsset->asset.id)[0]) AS iaid
+			FROM $asset`,
+		{ asset: `asset:${id}` }
+	)
+
+	await Promise.all([
+		query(
+			surql`
+				DELETE $asset;
+				DELETE $imageAsset;
+				CREATE auditLog CONTENT {
+					action: "Moderation",
+					note: $note,
+					user: $user,
+					time: time::now()
+				}`,
+			{
+				...params,
+				imageAsset: `asset:${iaid}`,
+				note: `Purge asset ${assetName} (id ${id})`,
+			}
+		),
+		fs.rm(`data/assets/${id}`),
+		fs.rm(`data/assets/${iaid}`),
+		fs.rm(`data/thumbnails/${id}`),
+	])
 }

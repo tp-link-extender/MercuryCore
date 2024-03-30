@@ -55,23 +55,22 @@ export async function load({ locals, params }) {
 	return category
 }
 
-export const actions = {
-	like: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const action = data.action as keyof typeof likeActions
-		const id = url.searchParams.get("id")
-		const replyId = url.searchParams.get("rid")
+export const actions: import("./$types").Actions = {}
+actions.like = async ({ request, locals, url }) => {
+	const { user } = await authorise(locals)
+	const data = await formData(request)
+	const action = data.action as keyof typeof likeActions
+	const id = url.searchParams.get("id")
+	const replyId = url.searchParams.get("rid")
 
-		if (
-			(id && !(await find(`forumPost:${id}`))) ||
-			(replyId && !(await find(`forumReply:${replyId}`)))
-		)
-			error(404)
+	if (
+		(id && !(await find(`forumPost:${id}`))) ||
+		(replyId && !(await find(`forumReply:${replyId}`)))
+	)
+		error(404)
 
-		await likeActions[action](
-			user.id,
-			`forum${replyId ? "Reply" : "Post"}:${id || replyId}`
-		)
-	},
+	await likeActions[action](
+		user.id,
+		`forum${replyId ? "Reply" : "Post"}:${id || replyId}`
+	)
 }

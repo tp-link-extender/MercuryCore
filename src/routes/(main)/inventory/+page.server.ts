@@ -35,15 +35,14 @@ export const load = async ({ locals, url }) => {
 	}
 }
 
-export const actions = {
-	default: async ({ request, locals }) => ({
-		assets: await query(
-			surql`${select}
-				AND string::lowercase($query) INSIDE string::lowercase(name)`,
-			{
-				query: (await request.formData()).get("q") as string,
-				user: `user:${(await authorise(locals)).user.id}`,
-			}
-		),
-	}),
-}
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, locals }) => ({
+	assets: await query(
+		surql`${select}
+			AND string::lowercase($query) INSIDE string::lowercase(name)`,
+		{
+			query: (await request.formData()).get("q") as string,
+			user: `user:${(await authorise(locals)).user.id}`,
+		}
+	),
+})
