@@ -25,7 +25,7 @@
 <div class="ctnr max-w-220 light-text">
 	<div class="pb-4">
 		<h1>Configure {data.name}</h1>
-		<a href="/place/{data.id}/{data.name}" class="no-underline">
+		<a href="/place/{data.id}/{data.slug}" class="no-underline">
 			<fa fa-caret-left />
 			Back to place
 		</a>

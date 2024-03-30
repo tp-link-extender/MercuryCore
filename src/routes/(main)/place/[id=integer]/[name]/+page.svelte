@@ -63,7 +63,7 @@
 		formdata.append("serverId", data.id.toString())
 		formdata.append("privateTicket", data.privateTicket)
 
-		const response = await fetch(`/place/${data.id}/${data.name}?/join`, {
+		const response = await fetch(`/place/${data.id}/${data.slug}?/join`, {
 			method: "POST",
 			body: formdata
 		})
@@ -132,7 +132,7 @@
 						<div>
 							<a
 								aria-label="Place settings"
-								href="/place/{data.id}/{data.name}/settings"
+								href="/place/{data.id}/{data.slug}/settings"
 								class="btn btn-sm btn-secondary">
 								<fa fa-sliders />
 							</a>
@@ -162,7 +162,7 @@
 				<span class="float-right">
 					<ReportButton
 						user={data.ownerUser?.username || ""}
-						url="/place/{data.id}/{data.name}" />
+						url="/place/{data.id}/{data.slug}" />
 				</span>
 			</div>
 			<div id="buttons" class="flex flex-col">

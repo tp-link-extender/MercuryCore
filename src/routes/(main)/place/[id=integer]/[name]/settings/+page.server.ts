@@ -1,12 +1,13 @@
 import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
+import { encode } from "$lib/urlName"
 import { error } from "@sveltejs/kit"
-import fs from "node:fs"
-import sharp from "sharp"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
+import fs from "node:fs"
+import sharp from "sharp"
 import type { RequestEvent } from "./$types"
 
 const schemas = {
@@ -80,6 +81,7 @@ export async function load({ locals, params }) {
 
 	return {
 		...getPlace,
+		slug: encode(getPlace.name),
 		viewForm: await superValidate(zod(schemas.view)),
 		networkForm: await superValidate(zod(schemas.network)),
 		ticketForm: await superValidate(zod(schemas.ticket)),

@@ -1,5 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { squery, surql } from "$lib/server/surreal"
+import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 
 type Place = {
@@ -29,7 +30,7 @@ export async function load({ locals, params }) {
 		(!place.privateServer ||
 			(await authorise(locals)).user.id === place.owner.id)
 	)
-		redirect(302, `/place/${params.id}/${place.name}`)
+		redirect(302, `/place/${params.id}/${encode(place.name)}`)
 
 	error(404, "Place not found")
 }

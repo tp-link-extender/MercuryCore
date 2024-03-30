@@ -1,7 +1,8 @@
 import { authorise } from "$lib/server/lucia"
 import { query, squery, transaction, surql } from "$lib/server/surreal"
-import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
+	import { encode } from "$lib/urlName"
+import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
@@ -61,10 +62,12 @@ export const actions = {
 
 		const id = await squery<number>(surql`[stuff:increment.place]`)
 
+		const slug = encode(name)
+
 		try {
 			await transaction(user, { number: 1 }, 0, {
 				note: `Created place ${name}`,
-				link: `/place/${id + 1}`,
+				link: `/place/${id + 1}/${slug}`,
 			})
 		} catch (err) {
 			const e = err as Error
@@ -105,6 +108,6 @@ export const actions = {
 			}
 		)
 
-		redirect(302, `/place/${id + 1}/${name}`)
+		redirect(302, `/place/${id + 1}/${slug}`)
 	},
 }

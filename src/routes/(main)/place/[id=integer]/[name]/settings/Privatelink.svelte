@@ -6,7 +6,7 @@
 	const { message, enhance, delayed } = superForm(data.privatelinkForm)
 
 	$: value = encodeURI(
-		`https://banland.xyz/place/${data.id}/${data.name}?privateServer=${data.privateTicket}`
+		`https://banland.xyz/place/${data.id}/${data.slug}?privateServer=${data.privateTicket}`
 	)
 
 	let copiedSuccess = false

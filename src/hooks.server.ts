@@ -4,8 +4,8 @@
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import { query, squery, surql } from "$lib/server/surreal"
-import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
+import { dev } from "$app/environment"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
 import type { Cookie } from "lucia"

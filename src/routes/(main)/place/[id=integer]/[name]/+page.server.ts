@@ -2,7 +2,8 @@ import { authorise } from "$lib/server/lucia"
 import { mquery, squery, surql, find, findWhere } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { likeActions } from "$lib/server/like"
-import { error } from "@sveltejs/kit"
+import { encode, couldMatch } from "$lib/urlName"
+import { error, redirect } from "@sveltejs/kit"
 
 type Place = {
 	created: string
@@ -80,7 +81,12 @@ export async function load({ url, locals, params }) {
 	)
 		error(404, "Place not found")
 
-	return getPlace
+	const slug = encode(getPlace.name)
+
+	if (!couldMatch(getPlace.name, params.name))
+		redirect(302, `/place/${id}/${slug}`)
+
+	return { ...getPlace, slug }
 }
 
 export const actions = {

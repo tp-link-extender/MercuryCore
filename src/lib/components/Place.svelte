@@ -1,6 +1,8 @@
 <script lang="ts">
 	// Link to a place used on the homepage and the search page.
 
+	import { encode } from "$lib/urlName"
+
 	export let place: {
 		id: number
 		name: string
@@ -11,6 +13,7 @@
 	export let num: number
 	export let total: number
 
+	const slug = encode(place.name)
 	const ratio = Math.floor(
 		(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
 	)
@@ -19,10 +22,10 @@
 <a
 	in:fade|global={{ num, total }}
 	class="rounded-3 text-center light-text no-underline"
-	href="/place/{place.id}/{place.name}">
+	href="/place/{place.id}/{slug}">
 	<div id="shadow" class="rounded-1 mb-2 overflow-hidden bg-black">
 		<img
-			src="/place/{place.id}/{place.name}/icon"
+			src="/place/{place.id}/{slug}/icon"
 			alt={place.name}
 			class="w-full h-full" />
 	</div>

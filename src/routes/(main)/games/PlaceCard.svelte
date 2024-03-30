@@ -1,6 +1,7 @@
 <script lang="ts">
 	// Link to a place used on Games page.
 
+	import { encode } from "$lib/urlName"
 	import { preloadData, pushState, goto } from "$app/navigation"
 
 	export let place: {
@@ -14,6 +15,7 @@
 	export let num: number
 	export let total: number
 
+	const slug = encode(place.name)
 	const ratio = Math.floor(
 		(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
 	)
@@ -35,12 +37,12 @@
 	}}
 	in:fade|global={{ num, total }}
 	class="card text-center light-text bg-darker no-underline rounded-4"
-	href="/place/{place.id}/{place.name}">
+	href="/place/{place.id}/{slug}">
 	<div class="flex" class:opacity-50={!online}>
 		<div class="w-1/2">
 			<div class="shadow overflow-hidden bg-black relative rounded-l-4">
 				<img
-					src="/place/{place.id}/{place.name}/icon"
+					src="/place/{place.id}/{slug}/icon"
 					alt={place.name}
 					class="w-full" />
 			</div>
