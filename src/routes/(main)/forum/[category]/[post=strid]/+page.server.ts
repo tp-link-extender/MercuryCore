@@ -27,11 +27,7 @@ const SELECTREPLIES = recurse(
 )
 
 type ForumPost = {
-	author: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	author: BasicUser
 	categoryName: string
 	content: {
 		text: string

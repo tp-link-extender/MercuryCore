@@ -41,7 +41,7 @@ export class SurrealAdapter implements Adapter {
 				? {
 						id: user.id,
 						attributes: user,
-				  }
+					}
 				: null,
 		]
 	}

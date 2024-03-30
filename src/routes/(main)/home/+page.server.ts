@@ -77,17 +77,9 @@ export async function load({ locals }) {
 			likeCount: number
 			dislikeCount: number
 		}[],
-		friends: results[1] as {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}[],
+		friends: results[1] as BasicUser[],
 		feed: results[2] as {
-			authorUser: {
-				number: number
-				status: "Playing" | "Online" | "Offline"
-				username: string
-			}
+			authorUser: BasicUser
 			content: {
 				id: string
 				text: string

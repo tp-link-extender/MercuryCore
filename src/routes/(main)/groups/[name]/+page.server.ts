@@ -7,11 +7,7 @@ type Group = {
 	in: boolean
 	memberCount: number
 	name: string
-	owner: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	owner: BasicUser
 }
 
 export async function load({ locals, params }) {

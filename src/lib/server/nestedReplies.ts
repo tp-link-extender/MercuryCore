@@ -3,11 +3,7 @@
 import { surql } from "$lib/server/surreal"
 
 export type Replies = {
-	author: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	author: BasicUser
 	content: {
 		id: string
 		text: string

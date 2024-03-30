@@ -8,11 +8,7 @@ type Notification = {
 	out: string
 	read: boolean
 	relativeId?: string
-	sender: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	sender: BasicUser
 	time: string
 	type: string
 	link?: string

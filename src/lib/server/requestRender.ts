@@ -12,6 +12,13 @@ const selectRender = surql`
 		AND type = $renderType
 		AND relativeId = $relativeId)[0]`
 
+export declare enum RenderType {
+	Clothing,
+	Avatar,
+	Model,
+	Mesh,
+}
+
 /**
  * Requests a render from RCCService
  * @param renderType The type of render to request, "Clothing", "Avatar", "Model", or "Mesh".
@@ -19,7 +26,7 @@ const selectRender = surql`
  * @param wait Whether to wait for the render to be completed before resolving.
  */
 export default async function (
-	renderType: "Clothing" | "Avatar" | "Model" | "Mesh",
+	renderType: RenderType,
 	relativeId: number,
 	wait = false
 ) {
@@ -63,8 +70,8 @@ export default async function (
 	// Send the script to the RCCService proxy
 
 	const path = `data/${
-		renderType === "Avatar" ? "avatars" : "thumbnails"
-	}/${relativeId}${renderType === "Avatar" ? ".png" : ""}`
+		renderType === RenderType.Avatar ? "avatars" : "thumbnails"
+	}/${relativeId}${renderType === RenderType.Avatar ? ".png" : ""}`
 
 	// If the file doesn't exist, wait for it to be created
 	// if it does exist, wait for it to be modified

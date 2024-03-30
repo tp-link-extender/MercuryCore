@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { fail, error } from "@sveltejs/kit"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 import type { RequestEvent } from "./$types"
 
 type User = {
@@ -26,7 +26,6 @@ type User = {
 		name: string
 	}[]
 	incomingRequest: boolean
-	number: number
 	outgoingRequest: boolean
 	permissionLevel: number
 	places: {
@@ -46,9 +45,7 @@ type User = {
 		posted: string
 		visibility: string
 	}[]
-	status: "Playing" | "Online" | "Offline"
-	username: string
-}
+} & BasicUser
 
 export async function load({ locals, params }) {
 	const number = +params.number
@@ -288,7 +285,7 @@ export const actions = {
 		const { user2 } = await getData(e)
 
 		try {
-			await requestRender("Avatar", +params.number, true)
+			await requestRender(RenderType.Avatar, +params.number, true)
 			return {
 				avatarBody: `/api/avatar/${
 					user2.username

@@ -2,12 +2,6 @@ import { query, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
-type User = {
-	number: number
-	status: "Playing" | "Online" | "Offline"
-	username: string
-}
-
 type Place = {
 	id: number
 	name: string
@@ -54,7 +48,7 @@ export const load = async ({ url }) => {
 		category,
 		users:
 			category === "users" &&
-			(await query<User>(
+			(await query<BasicUser>(
 				surql`
 					SELECT number, status, username
 					FROM user

@@ -5,11 +5,7 @@ import { error } from "@sveltejs/kit"
 
 type Group = {
 	memberCount: number
-	members: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}[]
+	members: BasicUser[]
 	name: string
 }
 

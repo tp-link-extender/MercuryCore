@@ -8,11 +8,7 @@ type Render = {
 	created: string
 	completed: string | null
 	relativeId: number
-	user?: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	user?: BasicUser
 	asset?: {
 		id: number
 		name: string

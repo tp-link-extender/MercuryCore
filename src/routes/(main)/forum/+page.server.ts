@@ -5,11 +5,7 @@ type Category = {
 	name: string
 	postCount: number
 	latestPost: {
-		author: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
+		author: BasicUser
 		id: string
 		posted: string
 		title: string

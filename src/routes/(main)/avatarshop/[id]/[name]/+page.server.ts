@@ -9,7 +9,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { like, likeActions } from "$lib/server/like"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 import type { RequestEvent } from "./$types"
 
 const schema = z.object({
@@ -28,11 +28,7 @@ const SELECTCOMMENTS = recurse(
 )
 
 type Asset = {
-	creator: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	creator: BasicUser
 	description: {
 		text: string
 		updated: string
@@ -385,7 +381,7 @@ export const actions = {
 
 		try {
 			await requestRender(
-				asset.type === 8 ? "Model" : "Clothing",
+				asset.type === 8 ? RenderType.Model : RenderType.Clothing,
 				+params.id
 			)
 			return {

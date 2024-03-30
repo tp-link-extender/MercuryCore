@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 import { squery, query, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import fs from "node:fs/promises"
@@ -12,11 +12,7 @@ export const load = async ({ locals }) => ({
 		price: number
 		id: number
 		type: string
-		creator: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
+		creator: BasicUser
 		imageAsset?: {
 			id: number
 			name: string
@@ -106,7 +102,7 @@ export const actions = {
 		if (limit) return limit
 
 		try {
-			await requestRender("Clothing", +id)
+			await requestRender(RenderType.Clothing, +id)
 		} catch (e) {
 			console.error(e)
 			fail(500, { msg: "Failed to request render" })

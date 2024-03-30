@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { query, squery, surql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { fail, error } from "@sveltejs/kit"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 import type { RequestEvent } from "./$types"
 
 // Heads, Faces, T-Shirts, Shirts, Pants, Gear, Hats
@@ -87,7 +87,7 @@ async function getEquipData(e: RequestEvent) {
 
 async function rerender(user: import("lucia").User) {
 	try {
-		await requestRender("Avatar", user.number, true)
+		await requestRender(RenderType.Avatar, user.number, true)
 		return {
 			avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
 		}

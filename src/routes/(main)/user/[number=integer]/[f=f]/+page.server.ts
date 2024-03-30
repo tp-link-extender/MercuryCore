@@ -3,7 +3,6 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
-
 const usersQueries = {
 	friends: surql`
 		SELECT number, status, username
@@ -37,11 +36,7 @@ export async function load({ params }) {
 	return {
 		type,
 		username: user.username,
-		users: await query<{
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}>(usersQueries[type], {
+		users: await query<BasicUser>(usersQueries[type], {
 			user: user.id,
 		}),
 		number: await squery<number>(`[${numberQueries[type]}]`, {

@@ -7,16 +7,8 @@ type Transaction = {
 	link: string
 	note: string
 	out: string
-	receiver: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
-	sender: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	receiver: BasicUser
+	sender: BasicUser
 	taxRate: number
 	time: string
 }

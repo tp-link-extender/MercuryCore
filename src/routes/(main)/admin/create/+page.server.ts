@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { superValidate } from "sveltekit-superforms/server"
 import { query, squery, mquery, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { error, redirect } from "@sveltejs/kit"
@@ -250,8 +250,6 @@ export const actions = {
 		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
-		console.log({ assets: form.data.shared.split(",").map(s => +s), ...data })
-
 		const res = await mquery<unknown[]>(
 			surql`
 				BEGIN TRANSACTION;
@@ -362,9 +360,10 @@ export const actions = {
 					)
 				)
 		} else {
-			renders.push(requestRender("Model", id))
+			renders.push(requestRender(RenderType.Model, id))
 			const renderMesh = shared.find(s => s.type === 4)?.id
-			if (renderMesh) renders.push(requestRender("Mesh", renderMesh))
+			if (renderMesh)
+				renders.push(requestRender(RenderType.Mesh, renderMesh))
 		}
 
 		await Promise.all(renders)

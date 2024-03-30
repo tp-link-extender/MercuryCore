@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql, auditLog } from "$lib/server/surreal"
+import { query, squery, surql, auditLog, Action } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -24,11 +24,7 @@ export async function load({ locals }) {
 			active: boolean
 			bgColour: string
 			body: string
-			creator: {
-				number: number
-				status: "Playing" | "Online" | "Offline"
-				username: string
-			}
+			creator: BasicUser
 			textLight: boolean
 		}>(surql`
 			SELECT
@@ -100,7 +96,11 @@ export const actions = {
 					creator: `user:${user.id}`,
 				},
 			}),
-			auditLog("Administration", `Create banner "${bannerText}"`, user.id),
+			auditLog(
+				Action.Administration,
+				`Create banner "${bannerText}"`,
+				user.id
+			),
 		])
 
 		return message(form, "Banner created successfully!")
@@ -118,7 +118,11 @@ export const actions = {
 			creator: string
 		}>(surql`UPDATE $id SET deleted = true`, { id: `banner:${id}` })
 
-		await auditLog("Administration", `Delete banner "${deletedBanner.body}"`, user.id)
+		await auditLog(
+			Action.Administration,
+			`Delete banner "${deletedBanner.body}"`,
+			user.id
+		)
 	},
 	updateBody: async e => {
 		const { form, error } = await getData(e)

@@ -18,11 +18,7 @@ type Place = {
 	likes: boolean
 	maxPlayers: number
 	name: string
-	ownerUser: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	ownerUser: BasicUser
 	players: {
 		number: number
 		status: "Playing"

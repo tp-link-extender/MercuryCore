@@ -1,7 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import { query, squery, transaction, surql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
-	import { encode } from "$lib/urlName"
+import { encode } from "$lib/urlName"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"

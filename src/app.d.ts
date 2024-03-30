@@ -8,6 +8,7 @@ declare namespace svelteHTML {
 
 	type HTMLAttributes = AttributifyAttributes
 }
+
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof import("$lib/server/lucia").auth
@@ -31,16 +32,19 @@ declare module "lucia" {
 			email: string
 			hashedPassword: string
 			lastOnline: string
-			number: number
 			permissionLevel: number
 			// theme: "standard" | "darken" | "storm" | "solar"
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
+		} & BasicUser
 	}
 }
 
 declare global {
+	declare type BasicUser = {
+		number: number
+		status: "Playing" | "Online" | "Offline"
+		username: string
+	}
+
 	namespace App {
 		interface Locals {
 			user: import("lucia").User | null

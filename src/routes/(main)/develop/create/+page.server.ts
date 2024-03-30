@@ -15,7 +15,7 @@ import fs from "node:fs"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 
 const schema = z.object({
 	// Object.keys(assets) doesn't work
@@ -79,7 +79,7 @@ export const actions = {
 				case 12: // Pants
 					saveImages[0] = await clothingAsset(asset)
 					saveImages[1] = (id: number) =>
-						requestRender("Clothing", id)
+						requestRender(RenderType.Clothing, id)
 
 					break
 

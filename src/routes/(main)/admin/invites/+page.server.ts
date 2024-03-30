@@ -23,11 +23,7 @@ export async function load({ locals }) {
 		created: string
 		usesLeft: number
 		expiry: string
-		creator?: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
+		creator?: BasicUser
 	}>(
 		surql`
 			SELECT
@@ -120,7 +116,7 @@ export const actions = {
 			: message(
 					form,
 					"Invite created successfully! Check the Invites tab for your new key."
-			  )
+				)
 	},
 	disable: async e => {
 		const { user, form, error } = await getData(e)

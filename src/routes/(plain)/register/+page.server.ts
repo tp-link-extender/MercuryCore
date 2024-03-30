@@ -5,7 +5,7 @@ import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 import { Scrypt } from "oslo/password"
 
 const schemaInitial = z.object({
@@ -161,7 +161,7 @@ export const actions = {
 		)
 
 		try {
-			await requestRender("Avatar", user.number)
+			await requestRender(RenderType.Avatar, user.number)
 		} catch {}
 
 		const session = await auth.createSession(user.id, {})
@@ -209,7 +209,7 @@ export const actions = {
 		})
 
 		try {
-			await requestRender("Avatar", user.number)
+			await requestRender(RenderType.Avatar, user.number)
 		} catch {}
 
 		const session = await auth.createSession(user.id, {})

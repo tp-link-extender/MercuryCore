@@ -42,11 +42,7 @@ type Place = {
 	id: string
 	maxPlayers: number
 	name: string
-	owner: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	owner: BasicUser
 	privateServer: boolean
 	privateTicket: string
 	serverIP: string

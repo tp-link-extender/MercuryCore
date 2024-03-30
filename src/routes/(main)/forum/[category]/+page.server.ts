@@ -8,11 +8,7 @@ type Category = {
 	description: string
 	name: string
 	posts: {
-		author: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
+		author: BasicUser
 		content: {
 			text?: string
 		}[]
