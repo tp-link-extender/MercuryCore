@@ -1,15 +1,18 @@
 import { SignData } from "$lib/server/sign"
 import { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
-import md5 from "crypto-js/md5"
+import { createHash } from "node:crypto"
 import fs from "node:fs"
 
-const header = (file: string) => ({
-	headers: {
-		"Content-Type": "binary/octet-stream",
-		"Content-Disposition": `attachment; filename="${md5(file).toString()}"`,
-	},
-})
+const response = (file: string) =>
+	new Response(file, {
+		headers: {
+			"Content-Type": "binary/octet-stream",
+			"Content-Disposition": `attachment; filename="${createHash("md5")
+				.update(file)
+				.digest("hex")}"`,
+		},
+	})
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
@@ -38,15 +41,9 @@ export async function GET({ url }) {
 
 			// The asset is visible or pending
 			// (allow pending assets to be shown through the api)
-
-			const file = fs.readFileSync(`data/assets/${id}`, "utf-8")
-
 			console.log(`served asset #${id}`)
 
-			return new Response(
-				fs.readFileSync(`data/assets/${id}`),
-				header(file)
-			)
+			return response(fs.readFileSync(`data/assets/${id}`, "utf-8"))
 		}
 
 		// Try loading as a corescript
@@ -54,9 +51,7 @@ export async function GET({ url }) {
 		const file = fs.readFileSync(
 			id === "38037265"
 				? "corescripts/38037265.xml"
-				: id === "20573078"
-				  ? "corescripts/20573078.xml" // todo remove the shaggy l8r
-				  : `corescripts/processed/${id}.lua`,
+				: `corescripts/processed/${id}.lua`, // shaggy removed
 			"utf-8"
 		)
 
@@ -67,14 +62,7 @@ export async function GET({ url }) {
 
 		console.log("served corescript", id)
 
-		return new Response(file2, {
-			headers: {
-				"Content-Type": "binary/octet-stream",
-				"Content-Disposition": `attachment; filename="${md5(
-					file
-				).toString()}"`,
-			},
-		})
+		return response(file2)
 	} catch {
 		redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${id}`)
 	}

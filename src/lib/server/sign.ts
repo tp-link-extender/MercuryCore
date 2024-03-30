@@ -1,4 +1,4 @@
-import crypto from "node:crypto"
+import { createSign } from "node:crypto"
 import fs from "node:fs"
 
 /**
@@ -7,18 +7,12 @@ import fs from "node:fs"
  * @param assetId The asset ID of the script, if required.
  * @returns A signed version of the script.
  * @example
- * const signedScript = SignData(`
- * 	print "Hello, world!"
- * `)
+ * const signedScript = SignData(`print "Hello, world!"`)
  */
 export function SignData(data: string, assetId?: number) {
-	const signed = assetId ? `--rbxassetid%${assetId}%\n${data}` : `\n${data}`
+	const signed = `${assetId ? `--rbxassetid%${assetId}%` : ""}\n${data}`
 
-	const sign = crypto.createSign("SHA1")
-	const key = fs.readFileSync("./keys/PrivateKey.pem")
-
-	sign.write(signed)
-	sign.end()
-
-	return `--rbxsig%${sign.sign(key, "base64")}%${signed}`
+	return `--rbxsig%${createSign("sha1")
+		.update(signed)
+		.sign(fs.readFileSync("./keys/PrivateKey.pem"), "base64")}%${signed}`
 }
