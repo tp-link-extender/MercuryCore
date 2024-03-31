@@ -4,20 +4,19 @@ import { error, redirect } from "@sveltejs/kit"
 import { createHash } from "node:crypto"
 import fs from "node:fs"
 
-const response = (file: Buffer | string) =>
-	new Response(file, {
-		headers: {
-			"Content-Type": "binary/octet-stream",
-			"Content-Disposition": `attachment; filename="${createHash("md5")
-				.update(file)
-				.digest("hex")}"`,
-		},
-	})
+const header = (file: Buffer | string) => ({
+	headers: {
+		"Content-Type": "binary/octet-stream",
+		"Content-Disposition": `attachment; filename="${createHash("md5")
+			.update(file)
+			.digest("hex")}"`,
+	},
+})
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
-	console.log(`Serving ${id}`)
 	if (!id || !/^\d+$/.test(id)) error(400, "Invalid Request")
+	console.log(`Serving ${id}`)
 
 	try {
 		// Try loading as an asset
@@ -41,9 +40,14 @@ export async function GET({ url }) {
 
 			// The asset is visible or pending
 			// (allow pending assets to be shown through the api)
+			const file = fs.readFileSync(`data/assets/${id}`, "utf-8")
+
 			console.log(`served asset #${id}`)
 
-			return response(fs.readFileSync(`data/assets/${id}`))
+			return new Response(
+				fs.readFileSync(`data/assets/${id}`),
+				header(file)
+			)
 		}
 
 		// Try loading as a corescript
@@ -62,7 +66,7 @@ export async function GET({ url }) {
 
 		console.log("served corescript", id)
 
-		return response(file2)
+		new Response(file2, header(file))
 	} catch {
 		redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${id}`)
 	}
