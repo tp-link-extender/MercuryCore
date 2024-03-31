@@ -274,7 +274,7 @@ export async function transaction(
 	if (e) throw new Error(e)
 }
 
-export declare enum Action {
+export enum Action {
 	Account = "Account",
 	Administration = "Administration",
 	Moderation = "Moderation",

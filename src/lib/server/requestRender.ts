@@ -12,11 +12,11 @@ const selectRender = surql`
 		AND type = $renderType
 		AND relativeId = $relativeId)[0]`
 
-export declare enum RenderType {
-	Clothing,
-	Avatar,
-	Model,
-	Mesh,
+export enum RenderType {
+	Clothing = 1,
+	Avatar = 2,
+	Model = 3,
+	Mesh = 4,
 }
 
 /**
