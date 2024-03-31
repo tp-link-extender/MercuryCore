@@ -2,8 +2,22 @@ import { mquery, surql } from "./surreal"
 import fs from "node:fs"
 import "dotenv/config"
 
+export enum Status {
+	Pending = "Pending",
+	Rendering = "Rendering",
+	Completed = "Completed",
+	Error = "Error",
+}
+
+export enum RenderType {
+	Clothing = "Clothing",
+	Avatar = "Avatar",
+	Model = "Model",
+	Mesh = "Mesh",
+}
+
 type Render = {
-	status: "Pending" | "Rendering" | "Completed" | "Error"
+	status: Status
 }
 
 const selectRender = surql`
@@ -11,13 +25,6 @@ const selectRender = surql`
 	FROM render WHERE status INSIDE ["Pending", "Rendering"]
 		AND type = $renderType
 		AND relativeId = $relativeId)[0]`
-
-export enum RenderType {
-	Clothing = 1,
-	Avatar = 2,
-	Model = 3,
-	Mesh = 4,
-}
 
 /**
  * Requests a render from RCCService
