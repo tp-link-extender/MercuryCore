@@ -10,7 +10,7 @@
 <Head
 	title="Maintenance"
 	description="Graphictoria: Endless possibilities. New features. Same nostalgia."
-	ogImage="/mercury.gif" />
+	ogImage="/xdiscuss.gif" />
 
 <canvas id="gradient-canvas" class="w-full h-full fixed" />
 

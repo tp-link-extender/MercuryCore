@@ -21,7 +21,7 @@
 <Head
 	title="Graphictoria: Endless possibilities. New features. Same nostalgia."
 	description="Graphictoria: Endless possibilities. New features. Same nostalgia."
-	ogImage="/mercury.gif" />
+	ogImage="/xdiscuss.gif" />
 
 <div id="gradientbg" class="w-full h-full fixed" />
 
