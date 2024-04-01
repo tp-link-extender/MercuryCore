@@ -49,7 +49,7 @@
 
 			<p>
 				Our moderators have determined that your behaviour has violated
-				the Graphictoria Terms of Service.
+				the Mercury Terms of Service.
 			</p>
 
 			<p>
@@ -63,7 +63,7 @@
 			{#if moderationAction[data.type] == "Warning"}
 				<form method="POST" use:enhance>
 					<p class="mb-12">
-						Please make sure to follow the Graphictoria <a
+						Please make sure to follow the Mercury <a
 							href="/terms"
 							class="no-underline">
 							Terms of Service
@@ -91,7 +91,7 @@
 			{:else if moderationAction[data.type] == "Ban"}
 				<form method="POST" use:enhance>
 					<p class="mb-12">
-						Please make sure to follow the Graphictoria <a
+						Please make sure to follow the Mercury <a
 							href="/terms"
 							class="no-underline">
 							Terms of Service

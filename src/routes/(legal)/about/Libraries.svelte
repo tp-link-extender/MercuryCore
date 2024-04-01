@@ -4,14 +4,14 @@
 			id="l2"
 			class="absolute w-5/6 lg:w-full"
 			src="/about_assets/library2.png"
-			alt="Screenshot of Graphictoria library usage" />
+			alt="Screenshot of Mercury library usage" />
 	</div>
 	<div class="transform translate-y-15vh">
 		<img
 			id="l1"
 			class="absolute w-5/6 lg:w-full"
 			src="/about_assets/library1.png"
-			alt="Screenshot of Graphictoria library usage" />
+			alt="Screenshot of Mercury library usage" />
 	</div>
 </div>
 

@@ -105,7 +105,7 @@
 					type="radio"
 					name="sort"
 					id="mercury" />
-				<label for="mercury">By Graphictoria</label>
+				<label for="mercury">By Mercury</label>
 				<input
 					class="form-check-input"
 					type="radio"

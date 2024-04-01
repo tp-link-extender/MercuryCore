@@ -1,11 +1,11 @@
 <script lang="ts">
-	export let title = "Graphictoria"
+	export let title = "Mercury"
 	export let description = ""
 	export let ogImage = ""
 </script>
 
 <svelte:head>
-	<title>{title} - Graphictoria</title>
+	<title>{title} - Mercury</title>
 	{#if description}
 		<meta name="description" content={description} />
 	{/if}

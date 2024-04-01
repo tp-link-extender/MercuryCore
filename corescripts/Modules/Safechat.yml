@@ -67,7 +67,7 @@ Hello:
         Merry Christmas!: true
         Happy May Day!: true
         Happy Towel Day!: true
-        Happy Graphictoria Day!: true
+        Happy Mercury Day!: true
         Happy LOL Day!: true
 Goodbye:
     1: /sc 3
@@ -342,10 +342,10 @@ Answers:
         RPG: true
         Obstacle Course: true
         Tycoon: true
-        Graphictoria:
+        Mercury:
             BrickBattle: true
             Community Building: true
-            Graphictoria Minigames: true
+            Mercury Minigames: true
             Contest Place: true
         Board games:
             Chess: true

@@ -12,11 +12,11 @@ services:
             - 8000:8000
         restart: unless-stopped
         volumes:
-            - ./data/surreal:/database.db
+            - ./data/surreal:/database
         command:
             - start
             - --log=trace
             - --user=root
             - --pass=root
             - --allow-scripting
-            - file:database.db
+            - file:database

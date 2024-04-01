@@ -12,7 +12,7 @@
 			Home
 		</a>
 		<h1 class="sf font-bold pb-6 text-14">
-			Graphictoria 7 <span class="opacity-50">rc</span>
+			Mercury 2 <span class="opacity-50">rc</span>
 		</h1>
 
 		{#each descriptions as [title, description]}

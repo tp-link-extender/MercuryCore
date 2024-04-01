@@ -1,6 +1,6 @@
 --!strict
 -- RbxGui
-print "[Graphictoria]: Loaded corescript 45284430"
+print "[Mercury]: Loaded corescript 45284430"
 
 local News = require "../Modules/New"
 local New = News.New

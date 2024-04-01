@@ -9,37 +9,51 @@
 @import "./daisyui/tooltip.styl"
 
 @font-face
-	font-family "Abstract Groovy"
+	font-family "SF UI Display Regular"
 	font-style normal
 	font-weight 400
 	font-display swap
-	src url(/AbstractGroovy.otf) format("opentype")
+	src url(/SFregular.woff2) format("woff2"),
+		url(/SFregular.woff) format("woff"),
+		url(/SFregular.ttf) format("truetype")
 
 @font-face
-	font-family "Roblox"
+	font-family "SF UI Display Regular"
 	font-style normal
-	font-weight 400
+	font-weight 700
 	font-display swap
-	src url(/Roblox.ttf) format("truetype")
+	src url(/SFbold.woff2) format("woff2"),
+		url(/SFbold.woff) format("woff"),
+		url(/SFbold.ttf) format("truetype")
+
+@font-face
+	font-family Inter
+	font-style normal
+	font-weight 100 900
+	font-display swap
+	src url("/InterVariable.woff2") format("woff2")
+
+@font-face
+	font-family Inter
+	font-style italic
+	font-weight 100 900
+	font-display swap
+	src url("/InterVariable-Italic.woff2") format("woff2")
 
 :root
 html
 body
 main
-	background var(--background), black
-	--mainaccent hsl(230 100% 60%)
+	background var(--background)
+	--mainaccent hsl(260 100% 60%)
 
 *
-	font-family "Comic Sans MS"
+	font-family Inter, -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
 
 .sf
-	font-family "Abstract Groovy"
-
-span
-	font-family "Times New Roman"
-
-div
-	font-family "Roblox"
+	font-family "SF UI Display Regular", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 
 main
 	overflow hidden
@@ -135,13 +149,13 @@ input
 // .dark-text
 // 	color var(--dark-text) !important
 .accent-text
-	color hsl(230 100% 66%)
+	color hsl(260 100% 66%)
 a
-	color hsl(230 100% 66%)
+	color hsl(260 100% 66%)
 	transition 0.2s color
 	&:hover
 		&:not(.btn):not(.light-text)
-			color hsl(230 100% 60%)
+			color hsl(260 100% 60%)
 		&.light-text
 			color var(--grey-text)
 
@@ -184,7 +198,7 @@ img[src^="/api/avatar"]
 	&-thumb
 		border-radius 1rem
 		background var(--background)
-		border 0.15rem solid black
+		border 0.15rem solid var(--accent)
 		width 0.5rem
 
 		&:hover
@@ -236,42 +250,42 @@ span
 	background-position right 1rem center
 
 .btn-primary
-	background hsl(230 85% 54%)
-	--un-ring-color hsl(230 75% 55% 50%)
+	background hsl(260 85% 54%)
+	--un-ring-color hsl(260 75% 55% 50%)
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
-		background hsl(230 100% 60%)
+		background hsl(260 100% 60%)
 
 .btn-secondary
-	background hsl(230 65% 14%)
-	border-color hsl(230 100% 60% 80%)
-	--un-ring-color hsl(230 75% 55% 50%)
+	background hsl(260 65% 14%)
+	border-color hsl(260 100% 60% 80%)
+	--un-ring-color hsl(260 75% 55% 50%)
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
-		background hsl(230 65% 22%)
-		border-color hsl(230 100% 60%)
+		background hsl(260 65% 22%)
+		border-color hsl(260 100% 60%)
 
 .input-group > .btn-secondary
 	@apply border-l-0
 
 .btn-tertiary
-	background hsl(230 0% 12%)
-	color hsl(230 100% 66%)
-	--un-ring-color hsl(230 75% 55% 50%)
+	background hsl(260 0% 12%)
+	color hsl(260 100% 66%)
+	--un-ring-color hsl(260 75% 55% 50%)
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
-		background hsl(230 55% 18%)
+		background hsl(260 55% 18%)
 		color white
 
 .btn-quatenary
-	color hsl(230 100% 66%)
-	--un-ring-color hsl(230 55% 35% 50%)
+	color hsl(260 100% 66%)
+	--un-ring-color hsl(260 55% 35% 50%)
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
-		background hsl(230 0% 10%)
-		color hsl(230 100% 70%)
+		background hsl(260 0% 10%)
+		color hsl(260 100% 70%)
 	&:active:not(:disabled)
-		background hsl(230 65% 15%)
+		background hsl(260 65% 15%)
 
 .btn-red-secondary
 	@apply bg-red-950/60 border-red-7/80
@@ -281,7 +295,7 @@ span
 		@apply bg-red-950 border-red-6
 
 .btn-red-tertiary
-	background hsl(230 0% 12%)
+	background hsl(260 0% 12%)
 	@apply text-red-5
 	@apply ring-red-8/50
 	&:hover:not(:disabled)
@@ -427,7 +441,7 @@ textarea
 	outline none
 	border-radius 0.375rem
 	font-size 0.875rem
-	--un-ring-color:#5c29c27f
+	--un-ring-color:hsl(260, 65%, 46%)
 	@apply ring-offset-neutral-9
 	@media (prefers-reduced-motion no-preference)
 		transition box-shadow 0.15s ease-in-out
@@ -535,133 +549,5 @@ details[open] summary
 	@apply p-4 px-6 rounded-2 
 
 	&.alert-primary
-		background hsl(230 65% 22%)
-		border 1px solid hsl(230 100% 60%)
-
-
-// Happy April Fools Day! 🎉
-// LET'S RUIN THE STYLESHEET
-
-// make all images spin
-@keyframes spin
-	0%
-		transform rotate(10deg)
-		filter hue-rotate(0deg)
-	50%
-		transform rotate(-10deg)
-		filter hue-rotate(180deg)
-	100%
-		transform rotate(10deg)
-		filter hue-rotate(360deg)
-
-img
-	animation spin 2.5s ease-in-out infinite
-
-@keyframes rainbow
-	0%
-		color violet
-	14%
-		color indigo
-	28%
-		color blue
-	42%
-		color green
-	57%
-		color yellow
-	71%
-		color orange
-	85%
-		color red
-	100%
-		color violet
-
-p
-	// make all text rainbow
-
-	animation rainbow 20s linear infinite
-
-@keyframes  shadow
-	0%
-		box-shadow 0 0rem 0.5rem 0.75rem green
-		transform translate(0, 0)
-	33%
-		box-shadow 0 0.5rem 0.5rem 0.5rem yellow
-		transform translate(0.25rem, 0.25rem)
-	66%
-		box-shadow 0 -0.5rem 0.5rem 1.25rem red
-		transform translate(0.25rem, -0.25rem)
-	100%
-		box-shadow 0 0rem 0.25rem 0.75rem green
-		transform translate(0, 0)
-
-button
-	animation shadow 3s ease-in-out infinite
-
-input
-	animation shadow 4s ease-in-out infinite
-
-@keyframes bounce
-	0%
-		transform translateY(0)
-	15%
-		transform translateY(-0.25rem)
-	30%
-		transform translateY(-0.25rem) rotate(5deg)
-	50%
-		transform translateY(0)
-	70%
-		transform translateY(0.25rem)
-	85%
-		transform translateY(0.25rem) rotate(-5deg)
-	100%
-		transform translateY(0)
-
-h1
-	animation bounce 2s ease-in-out infinite
-
-@keyframes pop
-	0%
-		transform scale(1)
-	50%
-		transform scale(1.1)
-	100%
-		transform scale(1)
-
-@keyframes pop2
-	0%
-		transform scale(1)
-	50%
-		transform scale(1.05)
-	100%
-		transform scale(1)
-
-h2
-	animation pop2 1s ease-in-out infinite
-a
-	animation pop 0.8s ease-in-out infinite
-
-@keyframes marquee
-	0%
-		transform translateX(0)
-	33%
-		transform translateX(-5%)
-	66%
-		transform translateX(5%)
-	100%
-		transform translateX(0%)
-
-@keyframes marquee2
-	0%
-		transform translateY(0)
-	33%
-		transform translateY(-5%)
-	66%
-		transform translateY(5%)
-	100%
-		transform translateY(0%)
-
-nav
-	animation marquee 10s ease-in-out infinite
-
-.card
-	animation marquee2 10s ease-in-out infinite
+		background hsl(260 65% 22%)
+		border 1px solid hsl(260 100% 60%)

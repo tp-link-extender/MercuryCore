@@ -1,6 +1,6 @@
 --!strict
 -- CoreGui.RobloxGui.CoreScripts/MainBotChatScript
-print "[Graphictoria]: Loaded corescript 39250920"
+print "[Mercury]: Loaded corescript 39250920"
 
 local News = require "../Modules/New"
 local New = News.New
@@ -229,21 +229,21 @@ local function endDialog()
 end
 
 local function wanderDialog()
-	print "[Graphictoria]: Dialog wander"
+	print "[Mercury]: Dialog wander"
 	mainFrame.Visible = false
 	endDialog()
 	showMessage(characterWanderedOffMessage, characterWanderedOffSize)
 end
 
 local function timeoutDialog()
-	print "[Graphictoria]: Dialog timeout"
+	print "[Mercury]: Dialog timeout"
 	mainFrame.Visible = false
 	endDialog()
 	showMessage(conversationTimedOut, conversationTimedOutSize)
 end
 
 local function normalEndDialog()
-	print "[Graphictoria]: Dialog done"
+	print "[Mercury]: Dialog done"
 	endDialog()
 end
 

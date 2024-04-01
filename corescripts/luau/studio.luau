@@ -1,5 +1,5 @@
 --!strict
-print "[Graphictoria]: Loaded Studio corescript"
+print "[Mercury]: Loaded Studio corescript"
 
 -- local MarketplaceService = game:GetService "MarketplaceService"
 local InsertService = game:GetService "InsertService"

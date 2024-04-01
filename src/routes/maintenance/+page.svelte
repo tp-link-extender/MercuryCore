@@ -9,8 +9,8 @@
 
 <Head
 	title="Maintenance"
-	description="Graphictoria: Endless possibilities. New features. Same nostalgia."
-	ogImage="/xdiscuss.gif" />
+	description="Mercury: Endless possibilities. New features. Same nostalgia."
+	ogImage="/mercury.gif" />
 
 <canvas id="gradient-canvas" class="w-full h-full fixed" />
 
@@ -24,7 +24,7 @@
 				}} />
 		</Canvas>
 	</div>
-	<h1 id="title" class="font-black text-white opacity-75">Graphictoria 7</h1>
+	<h1 id="title" class="font-black text-white opacity-75">Mercury 2</h1>
 	<p class="text-base text-white opacity-75 text-center">
 		is currently undergoing maintenance. Check back later!
 	</p>

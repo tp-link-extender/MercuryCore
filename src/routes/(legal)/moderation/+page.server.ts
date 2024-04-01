@@ -21,7 +21,7 @@ const getModeration = async (id: string) => {
 
 	error(
 		454,
-		"Your ID has been sent to the Graphictoria Servers for moderation. Thank you!"
+		"Your ID has been sent to the Mercury Servers for moderation. Thank you!"
 	)
 }
 

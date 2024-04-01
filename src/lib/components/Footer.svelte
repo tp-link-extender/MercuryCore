@@ -7,11 +7,8 @@
 <footer class="relative flex justify-center bg-darker">
 	<div class="flex <sm:flex-col justify-between items-start w-200 p-4 pb-8">
 		<div>
-			<img
-				src="/icon-footer.svg"
-				alt="Graphictoria logo"
-				class="size-8" />
-			<a href="/" class="no-underline pl-2">Graphictoria</a>
+			<img src="/icon-footer.svg" alt="Mercury logo" class="size-8" />
+			<a href="/" class="no-underline pl-2">Mercury</a>
 			<span class="grey-text pl-1">
 				2021-{new Date().getFullYear()}
 			</span>
@@ -46,7 +43,7 @@
 	<div id="nojs" class="fixed bottom-0 block w-screen">
 		<p class="light-text text-center">
 			Javascript is disabled. You may have a diminished experience while
-			using Graphictoria.
+			using Mercury.
 		</p>
 	</div>
 </noscript>

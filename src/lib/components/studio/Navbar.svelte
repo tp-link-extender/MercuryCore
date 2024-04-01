@@ -45,11 +45,8 @@
 		<a
 			class="brand light-text float-left text-xl no-underline pt-2"
 			href="/">
-			<img
-				src="/icon.svg"
-				alt="Graphictoria logo"
-				class="sm:hidden size-8" />
-			<span class="sf <sm:hidden pr-3">Graphictoria</span>
+			<img src="/icon.svg" alt="Mercury logo" class="sm:hidden size-8" />
+			<span class="sf <sm:hidden pr-3">Mercury</span>
 		</a>
 		{#if user}
 			<span class="mr-auto <lg:hidden pl-6 pr-2 pl-3 pt-0.19rem">

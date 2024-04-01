@@ -28,7 +28,7 @@
 	]
 </script>
 
-<Head title="Log in" description="Log into your Graphictoria account." />
+<Head title="Log in" description="Log into your Mercury account." />
 
 <Waves reverse />
 
@@ -60,9 +60,9 @@
 	{:else}
 		<h2>There are no users registered in the database yet!</h2>
 		<p class="pt-4">
-			Perhaps you've just set up the Graphictoria 7 source code. Perhaps
-			you've already set it up, and something has gone terribly wrong with
-			your database.
+			Perhaps you've just set up the Mercury 2 source code. Perhaps you've
+			already set it up, and something has gone terribly wrong with your
+			database.
 		</p>
 		<p class="pt-2">
 			If it's the former, head to the

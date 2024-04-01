@@ -1,4 +1,4 @@
-<Head title="Privacy Policy" description="Graphictoria's Privacy Policy" />
+<Head title="Privacy Policy" description="Mercury's Privacy Policy" />
 
 <h1 class="text-center">Privacy Policy</h1>
 
@@ -7,11 +7,11 @@
 	<p>
 		Passwords are salted and hashed securely using SCrypt.
 		<br />
-		Due to the web frameworks and databases used for development, Graphictoria
-		is not vulnerable to SQL injections or XSS attacks.
+		Due to the web frameworks and databases used for development, Mercury is
+		not vulnerable to SQL injections or XSS attacks.
 		<br />
 		No personally identifying information such as location, device information,
-		network information, or IP addresses are collected by Graphictoria.
+		network information, or IP addresses are collected by Mercury.
 	</p>
 	<h2 class="text-center pt-2">Children under the age of 13</h2>
 	<p>
@@ -45,7 +45,7 @@
 	<p>
 		Please check this privacy policy regularly. We may update it at any time
 		without notice. You must agree to any changes if you continue to use
-		Graphictoria after the privacy policy has been updated.
+		Mercury after the privacy policy has been updated.
 	</p>
 	<p>
 		If you have any questions, suggestions, or if you want more information,

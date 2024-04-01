@@ -1,4 +1,4 @@
-// The service worker script, adding some offline functionality to Graphictoria.
+// The service worker script, adding some offline functionality to Mercury.
 // This is the same service worker script found at https://kit.svelte.dev/docs/service-workers.
 /// <reference types="@sveltejs/kit" />
 import { build, files, prerendered, version } from "$service-worker"

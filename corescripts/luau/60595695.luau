@@ -1,5 +1,5 @@
 -- Script Context./Libraries/LibraryRegistration/LibraryRegist
-print "[Graphictoria]: Loaded corescript 60595695"
+print "[Mercury]: Loaded corescript 60595695"
 
 local RunService = game:GetService "RunService"
 
@@ -30,5 +30,5 @@ if ScriptContext then
 	end
 	ScriptContext:LibraryRegistrationComplete()
 else
-	print "[Graphictoria]: Failed to find ScriptContext, libraries did not load"
+	print "[Mercury]: Failed to find ScriptContext, libraries did not load"
 end

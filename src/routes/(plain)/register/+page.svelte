@@ -19,7 +19,7 @@
 		],
 		[
 			"Valid email",
-			"Graphictoria requires a valid email so you can reset your password at any time."
+			"Mercury requires a valid email so you can reset your password at any time."
 		],
 		[
 			"Secure password",
@@ -28,7 +28,7 @@
 	]
 </script>
 
-<Head title="Register" description="Create a Graphictoria account." />
+<Head title="Register" description="Create a Mercury account." />
 
 <Waves />
 
@@ -55,7 +55,7 @@
 				name="email"
 				label="Email Address"
 				type="email"
-				placeholder="graphictoria@banland.xyz" />
+				placeholder="Mercury@banland.xyz" />
 			<Input
 				{formData}
 				column
@@ -90,7 +90,7 @@
 		<h2>Create the initial account</h2>
 
 		<p class="pt-2">
-			This will be the first user account on this Graphictoria instance!
+			This will be the first user account on this Mercury instance!
 		</p>
 		<p>
 			It will have all permissions, and will be the destination for all
@@ -105,7 +105,7 @@
 		</p>
 		<p>
 			Pick the username and password carefully, and good luck on your
-			journey with Graphictoria!
+			journey with Mercury!
 		</p>
 
 		<Form

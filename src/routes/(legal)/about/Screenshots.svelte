@@ -4,21 +4,21 @@
 			id="s1"
 			class="absolute w-5/6 lg:w-full"
 			src="/about_assets/screenshot1.png"
-			alt="Screenshot of Graphictoria games page" />
+			alt="Screenshot of Mercury games page" />
 	</div>
 	<div class="transform translate-x-7vw translate-y-16vh">
 		<img
 			id="s2"
 			class="absolute w-5/6 lg:w-full"
 			src="/about_assets/screenshot2.png"
-			alt="Screenshot of Graphictoria catalog page" />
+			alt="Screenshot of Mercury catalog page" />
 	</div>
 	<div class="transform translate-x-14vw translate-y--16vh">
 		<img
 			id="s3"
 			class="absolute w-5/6 lg:w-full"
 			src="/about_assets/screenshot3.png"
-			alt="Screenshot of Graphictoria profile page" />
+			alt="Screenshot of Mercury profile page" />
 	</div>
 </div>
 

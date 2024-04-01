@@ -10,7 +10,7 @@ const schema = z.object({
 	status: z.string().min(1).max(1000),
 })
 
-// for the "You are the 1st user to join Graphictoria!" fact
+// for the "You are the 1st user to join Mercury!" fact
 const suffixes: { [k: string]: string } = {
 	one: "st",
 	two: "nd",
@@ -26,11 +26,11 @@ export async function load({ locals }) {
 
 	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
 	const facts = [
-		`You joined Graphictoria on ${user?.accountCreated
+		`You joined Mercury on ${user?.accountCreated
 			.toLocaleString()
 			.substring(0, 10)}!`,
 		// Add "st", "nd", "rd", "th" to number
-		`You are the ${ordinal(user?.number)} user to join Graphictoria!`,
+		`You are the ${ordinal(user?.number)} user to join Mercury!`,
 	]
 
 	const results = await mquery<unknown[]>(

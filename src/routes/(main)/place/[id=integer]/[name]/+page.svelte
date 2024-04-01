@@ -275,7 +275,7 @@
 
 	<Tab {tabData}>
 		{#if user?.permissionLevel == 5 || data.ownerUser?.number == user?.number}
-			<h1 class="text-base">Hosting on Graphictoria</h1>
+			<h1 class="text-base">Hosting on Mercury</h1>
 			<p>
 				To begin hosting your map for everybody to play, you need to
 				make sure that you are forwarding the port you wish to run the
@@ -374,13 +374,13 @@
 				class="self-center size-32 -translate-x-1/2">
 				<img
 					src="/innerlogo.svg"
-					alt="Graphictoria logo inner part (M)"
+					alt="Mercury logo inner part (M)"
 					class="absolute"
 					width="128"
 					height="128" />
 				<img
 					src="/outerlogo.svg"
-					alt="Graphictoria logo outer part (circle around M)"
+					alt="Mercury logo outer part (circle around M)"
 					class="absolute animate-[spin_1.5s_linear_infinite]"
 					width="128"
 					height="128"
@@ -401,7 +401,7 @@
 			</span>
 		{:else}
 			<span class="text-xl pt-6">
-				Install the Graphictoria client and start playing now!
+				Install the Mercury client and start playing now!
 			</span>
 			<a
 				class="btn btn-primary"

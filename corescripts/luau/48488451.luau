@@ -1,5 +1,5 @@
 -- CoreGui.RobloxGui.CoreScripts/PopupScript
-print "[Graphictoria]: Loaded corescript 48488451"
+print "[Mercury]: Loaded corescript 48488451"
 
 local News = require "../Modules/New"
 local New = News.New

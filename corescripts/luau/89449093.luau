@@ -1,5 +1,5 @@
 -- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
-print "[Graphictoria]: Loaded corescript 89449093"
+print "[Mercury]: Loaded corescript 89449093"
 
 local News = require "../Modules/New"
 local New = News.New
