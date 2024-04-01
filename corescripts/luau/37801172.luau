@@ -1,6 +1,6 @@
 --!strict
 -- Script Context.StarterScript
-print "[Mercury]: Loaded corescript 37801172"
+print "[Graphictoria]: Loaded corescript 37801172"
 
 local CoreGui = game:GetService "CoreGui"
 local Players = game:GetService "Players"

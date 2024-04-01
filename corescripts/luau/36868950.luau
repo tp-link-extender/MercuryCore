@@ -1,6 +1,6 @@
 --!strict
 -- CoreGui.RobloxGui.CoreScripts/ToolTip
-print "[Mercury]: Loaded corescript 36868950"
+print "[Graphictoria]: Loaded corescript 36868950"
 
 local News = require "../Modules/New"
 local New = News.New

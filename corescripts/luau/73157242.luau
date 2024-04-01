@@ -1,5 +1,5 @@
 -- RbxStamper
-print "[Mercury]: Loaded corescript 73157242"
+print "[Graphictoria]: Loaded corescript 73157242"
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 

@@ -1,5 +1,5 @@
 -- Start Game
-print "[Mercury]: Loaded Host corescript"
+print "[Graphictoria]: Loaded Host corescript"
 
 local InsertService = game:GetService "InsertService"
 local BadgeService = game:GetService "BadgeService"

@@ -1,4 +1,4 @@
-print "[Mercury]: Loaded Visit corescript"
+print "[Graphictoria]: Loaded Visit corescript"
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local InsertService = game:GetService "InsertService"

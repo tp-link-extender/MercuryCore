@@ -1,5 +1,5 @@
 -- RbxUtility
-print "[Mercury]: Loaded corescript 60595411"
+print "[Graphictoria]: Loaded corescript 60595411"
 
 local News = require "../Modules/New"
 local New = News.New

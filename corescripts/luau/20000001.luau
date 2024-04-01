@@ -418,7 +418,7 @@ end)
 local welcome: { { any } } = {
 	{ "[Reading access...]", Color3.new(0.6, 0.6, 0.6) }, -- haxor text
 	{ "[Access granted.]", Color3.new(0.5, 1, 0.5) }, -- i'm in
-	{ "Welcome to the Mercury Debug Console!", Colour3(139, 82, 255) }, -- mercury light purple
+	{ "Welcome to the Graphictoria Debug Console!", Colour3(139, 82, 255) }, -- mercury light purple
 	{ "Run `help()` for a list of functions.", Color3.new(1, 1, 1) },
 	{ "" },
 }

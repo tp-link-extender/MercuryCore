@@ -1,6 +1,6 @@
 <Head title="Thank You" />
 
-<h1 class="text-center">Welcome to Mercury</h1>
+<h1 class="text-center">Welcome to Graphictoria</h1>
 
 <div class="ctnr pt-12 max-w-200">
 	<div class="light-text">

@@ -8,7 +8,9 @@
 
 <div id="main" class="absolute w-full top-36%">
 	<div class="flex flex-col justify-center items-center relative">
-		<h1 class="-f font-bold opacity-75 text-16 text-center">Mercury 2</h1>
+		<h1 class="-f font-bold opacity-75 text-16 text-center">
+			Graphictoria 7
+		</h1>
 		<p class="lead text-center">
 			Endless possibilities. New features. Same nostalgia.
 		</p>

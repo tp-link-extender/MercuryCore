@@ -35,7 +35,7 @@
 
 <Head
 	title="About"
-	description="About Mercury: Endless possibilities. New features. Same nostalgia." />
+	description="About Graphictoria: Endless possibilities. New features. Same nostalgia." />
 
 <svelte:window bind:scrollY />
 
@@ -51,12 +51,13 @@
 
 <div bind:this={top} id="top" class="absolute top-0" />
 
-<Pagepart class="cubes {cubePercentage < 20 ? 'pb-60' : 'pb-[calc(15rem+70vh)]'}">
+<Pagepart
+	class="cubes {cubePercentage < 20 ? 'pb-60' : 'pb-[calc(15rem+70vh)]'}">
 	{#if cubePercentage < 20}
 		<div
 			out:fade
 			class="pointer-events-none flex flex-col justify-center items-center relative h-70vh">
-			<h1 class="text-16 font-bold">Mercury 2</h1>
+			<h1 class="text-16 font-bold">Graphictoria 7</h1>
 			<p>Endless possibilities. New features. Same nostalgia.</p>
 			<h3
 				class="p-3 py-1 rounded-2 font-bold text-lg! bg-neutral-5 opacity-75">
@@ -129,15 +130,15 @@
 			<h2>A refurbished experience</h2>
 			<h3>New features.</h3>
 			<p>
-				Mercury aims to be the foremost platform of its kind, and the
-				Mercury website plays a prominent part in this. After years of
-				testing, tinkering, and tweaking, we've landed on a stack that
-				combines rock-solid stability with a flexible foundation for the
-				future.
+				Graphictoria aims to be the foremost platform of its kind, and
+				the Graphictoria website plays a prominent part in this. After
+				years of testing, tinkering, and tweaking, we've landed on a
+				stack that combines rock-solid stability with a flexible
+				foundation for the future.
 			</p>
 			<h3>Limitless possibilities.</h3>
 			<p>
-				Mercury provides everything you would expect from a modern
+				Graphictoria provides everything you would expect from a modern
 				revival platform and then some:
 			</p>
 			<ul>
@@ -146,12 +147,12 @@
 				<li>A vast variety of places and games to explore</li>
 				<li>
 					And communication features that help foster a sense of
-					connection and community within Mercury.
+					connection and community within Graphictoria.
 				</li>
 			</ul>
 			<h3>Same nostalgia.</h3>
 			<p>
-				Mercury still uses the exact same client as the previous
+				Graphictoria still uses the exact same client as the previous
 				iteration. Our philosophy when it comes to our client is to make
 				sure that it is accurately represented. The end-goal with our
 				client is to implement every feature that it originally had.
@@ -179,11 +180,12 @@
 			</p>
 			<h3>Vulnerability management</h3>
 			<p>
-				Careful technology choices ensure that Mercury isn't vulnerable
-				to the same attacks that plague similar platforms. We're
-				constantly monitoring and updating our systems to ensure that
-				users are safe &ndash; and a streamlined reporting system allows
-				us to respond to any security concerns quickly and effectively.
+				Careful technology choices ensure that Graphictoria isn't
+				vulnerable to the same attacks that plague similar platforms.
+				We're constantly monitoring and updating our systems to ensure
+				that users are safe &ndash; and a streamlined reporting system
+				allows us to respond to any security concerns quickly and
+				effectively.
 			</p>
 		</div>
 	</div>
@@ -197,10 +199,10 @@
 				<div>
 					<h3>Professional developers</h3>
 					<p>
-						A group of experienced developers are behind Mercury,
-						and we're committed to improving user experience and
-						security. We aim to remain transparent and open about
-						our development process and decisions.
+						A group of experienced developers are behind
+						Graphictoria, and we're committed to improving user
+						experience and security. We aim to remain transparent
+						and open about our development process and decisions.
 					</p>
 				</div>
 				<div>
@@ -226,16 +228,16 @@
 			<h3>Library usage</h3>
 			<p>
 				We put a strong emphasis on library usage to improve development
-				speed and maintainability. Mercury is the first revival platform
-				to utilise modern libraries and frameworks backported from
-				contemporary Lua, Luau, and JavaScript ecosystems.
+				speed and maintainability. Graphictoria is the first revival
+				platform to utilise modern libraries and frameworks backported
+				from contemporary Lua, Luau, and JavaScript ecosystems.
 			</p>
 			<h3>Optimisation and stability</h3>
 			<p>
-				Mercury makes use of techniques borrowed from modern game
+				Graphictoria makes use of techniques borrowed from modern game
 				development to boost performance and reduce latency. Our
 				optimisations have already been proven to improve user
-				experience &ndash; for example, place joining on Mercury is
+				experience &ndash; for example, place joining on Graphictoria is
 				30-40% faster than competing platforms.
 			</p>
 		</div>
@@ -244,7 +246,7 @@
 
 <Pagepart class="pb-60">
 	<div class="flex flex-col justify-center items-center relative">
-		<h1 class="text-16 sf font-bold">Mercury 2</h1>
+		<h1 class="text-16 sf font-bold">Graphictoria 7</h1>
 		<p>Endless possibilities. New features. Same nostalgia.</p>
 		<a
 			type="button"

@@ -19,8 +19,8 @@
 </script>
 
 <Head
-	title="Mercury: Endless possibilities. New features. Same nostalgia."
-	description="Mercury: Endless possibilities. New features. Same nostalgia."
+	title="Graphictoria: Endless possibilities. New features. Same nostalgia."
+	description="Graphictoria: Endless possibilities. New features. Same nostalgia."
 	ogImage="/mercury.gif" />
 
 <div id="gradientbg" class="w-full h-full fixed" />
@@ -48,7 +48,7 @@
 		id="infotext"
 		class="flex flex-col justify-center items-center relative"
 		style="padding-top: {infoTextMargin}vh">
-		<h1 class="sf font-bold opacity-75 text-16">Mercury 2</h1>
+		<h1 class="sf font-bold opacity-75 text-16">Graphictoria 7</h1>
 		<p class="lead text-center">
 			Endless possibilities. New features. Same nostalgia.
 		</p>

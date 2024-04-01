@@ -1,5 +1,5 @@
 -- CoreGui.RobloxGui.CoreScripts/PlayerListScript
-print "[Mercury]: Loaded corescript 48488235"
+print "[Graphictoria]: Loaded corescript 48488235"
 
 local RunService = game:GetService "RunService"
 

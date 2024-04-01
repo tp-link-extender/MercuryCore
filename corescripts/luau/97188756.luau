@@ -1,6 +1,6 @@
 --!strict
 -- CoreGui.RobloxGui.CoreScripts/ChatScript
-print "[Mercury]: Loaded corescript 97188756"
+print "[Graphictoria]: Loaded corescript 97188756"
 
 local RunService = game:GetService "RunService"
 

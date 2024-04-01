@@ -1,5 +1,5 @@
 -- CoreGui.RobloxGui.CurrentLoadout.CoreScripts/BackpackScript
-print "[Mercury]: Loaded corescript 53878057"
+print "[Graphictoria]: Loaded corescript 53878057"
 
 local CoreGui = game:GetService "CoreGui"
 local GuiService = game:GetService "GuiService"

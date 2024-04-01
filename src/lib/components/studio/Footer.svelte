@@ -6,8 +6,11 @@
 	<div
 		class="mx-auto flex <md:flex-col justify-between items-start w-200 p-4 pb-8">
 		<div>
-			<img src="/icon-footer.svg" alt="Mercury logo" class="size-8" />
-			<a href="/studio" class="no-underline pl-2">Mercury</a>
+			<img
+				src="/icon-footer.svg"
+				alt="Graphictoria logo"
+				class="size-8" />
+			<a href="/studio" class="no-underline pl-2">Graphictoria</a>
 			<span class="grey-text pl-1">
 				2021-{new Date().getFullYear()}
 			</span>

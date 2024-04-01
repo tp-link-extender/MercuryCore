@@ -1,6 +1,6 @@
 --!strict
 -- CoreGui.RobloxGui.CoreScripts/PurchasePromptScript
-print "[Mercury]: Loaded corescript 107893730"
+print "[Graphictoria]: Loaded corescript 107893730"
 
 -- this script creates the gui and sends the web requests for in game purchase prompts
 

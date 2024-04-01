@@ -16,7 +16,7 @@
 	map that's in the map folder, and start the server.
 </p>
 <p>
-	Place your maps in Mercury Studio's maps folder. For example, entering <code>
+	Place your maps in Graphictoria Studio's maps folder. For example, entering <code>
 		CoolMap.rbxl
 	</code>
 	will point to

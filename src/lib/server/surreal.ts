@@ -24,7 +24,7 @@ if (!building) {
 	await reconnect()
 }
 
-// Probably the most referenced function in Mercury
+// Probably the most referenced function in Graphictoria
 /**
  * Surreal template tag. No it's not injection-safe, we're not Next.js.
  * @param statement The statement to execute as a template literal.

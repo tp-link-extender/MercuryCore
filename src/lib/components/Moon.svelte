@@ -25,7 +25,7 @@
 			camPos: [100, 20, 100]
 		}
 		// {
-		// 	name: "planetMercury",
+		// 	name: "planetGraphictoria",
 		// 	camPos: [100, 40, 100],
 		// },
 	]

@@ -7,7 +7,7 @@
 		Warning: "Warning",
 		Ban: "Ban",
 		Termination: "Termination",
-		AccountDeleted: "Account Deleted",
+		AccountDeleted: "Account Deleted"
 	}
 
 	function formatDateDifference(date1: number, date2: number) {
@@ -49,7 +49,7 @@
 
 			<p>
 				Our moderators have determined that your behaviour has violated
-				the Mercury Terms of Service.
+				the Graphictoria Terms of Service.
 			</p>
 
 			<p>
@@ -63,7 +63,7 @@
 			{#if moderationAction[data.type] == "Warning"}
 				<form method="POST" use:enhance>
 					<p class="mb-12">
-						Please make sure to follow the Mercury <a
+						Please make sure to follow the Graphictoria <a
 							href="/terms"
 							class="no-underline">
 							Terms of Service
@@ -91,7 +91,7 @@
 			{:else if moderationAction[data.type] == "Ban"}
 				<form method="POST" use:enhance>
 					<p class="mb-12">
-						Please make sure to follow the Mercury <a
+						Please make sure to follow the Graphictoria <a
 							href="/terms"
 							class="no-underline">
 							Terms of Service

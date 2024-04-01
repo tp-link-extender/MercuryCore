@@ -49,7 +49,7 @@ actions.default = async ({ request, cookies }) => {
 		{ username }
 	)
 
-	// remove this statement and we'll end up like Mercury 1 💀
+	// remove this statement and we'll end up like Graphictoria 1 💀
 	if (!user || !(await new Scrypt().verify(user.hashedPassword, password)))
 		return formError(
 			form,

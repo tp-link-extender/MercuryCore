@@ -31,8 +31,8 @@
 				</button>
 			</div>
 			<small class="grey-text">
-				The server ticket is required to host servers on Mercury. You
-				can regenerate the ticket at any time.
+				The server ticket is required to host servers on Graphictoria.
+				You can regenerate the ticket at any time.
 			</small>
 		</div>
 	</fieldset>

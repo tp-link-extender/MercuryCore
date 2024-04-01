@@ -1,5 +1,5 @@
 -- CoreGui.RobloxGui.CoreScripts/Settings
-print "[Mercury]: Loaded corescript 46295863"
+print "[Graphictoria]: Loaded corescript 46295863"
 
 local News = require "../Modules/New"
 local New = News.New
@@ -2023,7 +2023,7 @@ local createSaveDialogs = function()
 
 	local saveDialogMessageBox = RbxGui.CreateStyledMessageDialog(
 		"Unsaved Changes",
-		"Save your changes to Mercury before leaving?",
+		"Save your changes to Graphictoria before leaving?",
 		"Confirm",
 		messageBoxButtons
 	)
@@ -2056,7 +2056,7 @@ local createSaveDialogs = function()
 
 	local errorDialogMessageBox = RbxGui.CreateStyledMessageDialog(
 		"Upload Failed",
-		"Sorry, we could not save your changes to Mercury.",
+		"Sorry, we could not save your changes to Graphictoria.",
 		"Error",
 		errorBoxButtons
 	)
@@ -2073,7 +2073,7 @@ local createSaveDialogs = function()
 		Parent = shield,
 		New "TextLabel" {
 			Name = "WaitingLabel",
-			Text = "Saving to Mercury...",
+			Text = "Saving to Graphictoria...",
 			Font = Enum.Font.ArialBold,
 			FontSize = Enum.FontSize.Size18,
 			Position = UDim2.new(0.5, 25, 0.5, 0),
