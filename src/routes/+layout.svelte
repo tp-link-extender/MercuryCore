@@ -63,7 +63,7 @@
 	<meta charset="utf-8" />
 	<meta name="theme-color" content="#1f1d1c" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="icon" href="/favicon.svg" />
+	<link rel="icon" href="/mercury.gif" />
 	<link rel="manifest" href="/manifest.json" />
 	<link rel="apple-touch-icon" href="/icon192.png" />
 
