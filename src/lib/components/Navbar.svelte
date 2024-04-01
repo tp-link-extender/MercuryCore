@@ -230,10 +230,7 @@
 				: 'text-black'}"
 			role="alert"
 			style="background: {banner.bgColour}">
-			<!-- random direction -->
-			<marquee direction={directions[Math.floor(Math.random() * 4)]}>
-				{banner.body}
-			</marquee>
+			{banner.body}
 		</div>
 	{/each}
 {/if}
