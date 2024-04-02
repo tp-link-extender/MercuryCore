@@ -78,10 +78,10 @@
 <style lang="stylus">
 	canvas
 	#gradientbg
-		--gradient-color-1 blue
-		--gradient-color-2 darkblue
-		--gradient-color-3 cornflowerblue
-		--gradient-color-4 #2255ff
+		--gradient-color-1 #161a92
+		--gradient-color-2 #2b0574
+		--gradient-color-3 #6c2fb9
+		--gradient-color-4 #060e25
 
 	canvas
 	#moon

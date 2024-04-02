@@ -81,9 +81,9 @@ async function fetchAssetVersion(id: number, version: number) {
 
 	// write the data to a file
 	// After all, they give the data in the response anyway. Why shouldn't I cache it?
-	fs.writeFileSync(
+	await Bun.write(
 		`data/assetCache/${id}_${version}`,
-		Buffer.from(await data.arrayBuffer())
+		Buffer.from(await data.arrayBuffer()) // todo: needed?
 	)
 
 	const type = meta.AssetTypeId
@@ -175,10 +175,7 @@ async function getSharedAssets(id: number, version: number) {
 
 	let cachedData: string
 	try {
-		cachedData = fs.readFileSync(
-			`data/assetCache/${id}_${version}`,
-			"utf-8"
-		)
+		cachedData = await Bun.file(`data/assetCache/${id}_${version}`).text()
 		console.log("cached data", cachedData.startsWith("<roblox "))
 		if (!cachedData.startsWith("<roblox ")) return []
 	} catch {
@@ -318,10 +315,9 @@ actions.autopilot = async ({ request, locals }) => {
 		sharedId: number
 	}[]
 
-	let cachedXml = fs.readFileSync(
-		`data/assetCache/${data.assetId}_${data.version}`,
-		"utf-8"
-	)
+	let cachedXml = await Bun.file(
+		`data/assetCache/${data.assetId}_${data.version}`
+	).text()
 
 	// Replace the shared asset URLs with the new asset IDs
 	for (const exec of cachedXml.matchAll(/(<url>.+<\/url>)/g)) {
@@ -338,24 +334,25 @@ actions.autopilot = async ({ request, locals }) => {
 	}
 
 	await Promise.all([
-		fs.promises.writeFile(`data/assets/${id}`, cachedXml),
+		Bun.write(`data/assets/${id}`, cachedXml),
 		...shared.map(s =>
-			fs.promises.copyFile(
-				`data/assetCache/${s.sharedId}_1`,
+			// idiomatic much
+			Bun.write(
+				Bun.file(`data/assetCache/${s.sharedId}_1`),
 				`data/assets/${s.id}`
 			)
 		),
 	])
 
-	const renders: Promise<void>[] = []
+	const renders: (Promise<void> | Promise<number>)[] = []
 
 	if (type === 18) {
 		const imageAsset = shared.find(s => s.type === 1)?.id
 		if (imageAsset)
 			// we want to move the imageasset from assets to thumbnails (don't render it)
 			renders.push(
-				fs.promises.copyFile(
-					`data/assets/${imageAsset}`,
+				Bun.write(
+					Bun.file(`data/assets/${imageAsset}`),
 					`data/thumbnails/${id}`
 				)
 			)

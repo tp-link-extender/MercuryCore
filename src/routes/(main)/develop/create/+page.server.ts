@@ -64,7 +64,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 	if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
-	let saveImages: ((id: number) => void | Promise<void>)[] = []
+	let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
 
 	try {
 		switch (assetType) {
@@ -156,7 +156,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const imageAssetId = res[9]
 	const id = res[10] // concurrency issues fixed hopefully
 
-	graphicAsset(assets[assetType], imageAssetId, id)
+	await graphicAsset(assets[assetType], imageAssetId, id)
 
 	try {
 		await saveImages[0](imageAssetId)

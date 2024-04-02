@@ -1,7 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
-import fs from "node:fs"
 
 export async function GET({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
@@ -32,15 +31,15 @@ export async function GET({ locals, params }) {
 		// If the asset is pending review
 		redirect(302, "/light/mQuestion.svg")
 
-	let file: Buffer | undefined
+	let file: ArrayBuffer | undefined
 
 	for (const f of [`data/thumbnails/${id}`, `data/assets/${id}`])
 		try {
-			file = fs.readFileSync(f)
+			file = await Bun.file(f).arrayBuffer()
 			break
 		} catch (e) {}
 
-	if (file) return new Response(file)
+	if (file) return new Response(Buffer.from(file))
 	// If the asset is visible, but the file doesn't exist (waiting for RCC?)
 	redirect(302, "/m....png")
 }

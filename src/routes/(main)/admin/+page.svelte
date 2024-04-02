@@ -19,32 +19,8 @@
 		],
 		Catalog: [["Create Asset", "/admin/create", "fa fa-file-circle-plus"]],
 		Economy: [
-			// ["Award Currency", "#", "far fa-gem"],
-			// ["Create New Asset", "#", "fa fa-file-circle-plus"],
 			["Transactions", "/admin/transactions", "fa fa-money-bill-transfer"]
 		]
-	}
-
-	let diskSpace: {
-		free: number
-		size: number
-	}
-	async function getDiskSpace() {
-		const jsonData = JSON.parse(
-			(
-				await (
-					await fetch("admin", {
-						body: "",
-						method: "POST"
-					})
-				).json()
-			).data
-		)
-		diskSpace = {
-			free: jsonData[1],
-			size: jsonData[2]
-		}
-		return diskSpace
 	}
 
 	export let data
@@ -126,34 +102,6 @@
 								data.totalmem) *
 								100}%;" />
 					</div>
-				</div>
-				<div class="card bg-a p-4">
-					{#await diskSpace || getDiskSpace()}
-						<h3>Loading...</h3>
-					{:then disk}
-						<h3>
-							<fa fa-hard-drive class="pr-2" />
-							{((disk.size - disk.free) / 1024 ** 3).toFixed(2)} /
-							{(disk.size / 1024 ** 3).toFixed(2)} GB
-						</h3>
-						<span class="pb-2">
-							{Math.round((disk.size - disk.free) / 1024 ** 2)} MB
-							is being used
-						</span>
-						<div
-							class="flex bg-darker rounded-2"
-							style="height: 1rem">
-							<div
-								class="progress-bar-striped bg-blue-6 rounded-2"
-								role="progressbar"
-								aria-valuenow={disk.size - disk.free}
-								aria-valuemin={0}
-								aria-valuemax={disk.size}
-								style="width: {((disk.size - disk.free) /
-									disk.size) *
-									100}%;" />
-						</div>
-					{/await}
 				</div>
 			</div>
 			<div class="flex flex-col gap-4">

@@ -1,4 +1,3 @@
-import fs from "node:fs"
 import "dotenv/config"
 
 const strings = {
@@ -29,19 +28,19 @@ const strings = {
  * @example
  * graphicAsset("T-Shirt", imageAssetId, id)
  */
-export function graphicAsset(
+export async function graphicAsset(
 	type: string,
 	imageAssetId: string | number,
 	graphicAssetId: string | number
 ) {
 	const stringType = strings[type as keyof typeof strings]
-	const asset = fs
-		.readFileSync(
+	const asset = (
+		await Bun.file(
 			`xml/graphicAsset${
 				type === "Face" || type === "Decal" ? "Image" : "Other"
-			}.xml`,
-			"utf-8"
-		)
+			}.xml`
+		).text()
+	)
 		.replaceAll("_CLASS", stringType.class)
 		.replaceAll("_CONTENT_NAME", stringType.contentName)
 		.replaceAll("_STRING_NAME", stringType.stringName)
@@ -50,5 +49,5 @@ export function graphicAsset(
 			`${process.env.RCC_ORIGIN}/asset?id=${imageAssetId.toString()}`
 		)
 
-	fs.writeFileSync(`data/assets/${graphicAssetId}`, asset)
+	await Bun.write(`data/assets/${graphicAssetId}`, asset)
 }

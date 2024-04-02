@@ -1,11 +1,10 @@
 import { SignData } from "$lib/server/sign"
-import fs from "node:fs"
 
-export const GET = () =>
+export const GET = async () =>
 	new Response(
-		SignData(
-			fs
-				.readFileSync("corescripts/processed/visit.lua", "utf-8")
-				.replaceAll("_PLACE_ID", "0")
+		await SignData(
+			(
+				await Bun.file("corescripts/processed/visit.lua").text()
+			).replaceAll("_PLACE_ID", "0")
 		)
 	)

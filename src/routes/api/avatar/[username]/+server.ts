@@ -39,10 +39,10 @@ export async function GET({ url, params }) {
 			})
 
 			console.log("waited")
-		} else if (!fs.existsSync(path)) throw new Error()
+		} else if (!await Bun.file(path).exists()) throw new Error()
 
-		return new Response(fs.readFileSync(path))
+		return new Response(Bun.file(path))
 	} catch {
-		return new Response(fs.readFileSync("static/m....png"))
+		return new Response(Bun.file("static/m....png"))
 	}
 }

@@ -2,7 +2,6 @@ import { SignData } from "$lib/server/sign"
 import { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { createHash } from "node:crypto"
-import fs from "node:fs"
 
 const response = (file: Buffer | string) =>
 	new Response(file, {
@@ -22,7 +21,7 @@ export async function GET({ url }) {
 	try {
 		// Try loading as an asset
 
-		if (fs.existsSync(`data/assets/${id}`)) {
+		if (await Bun.file(`data/assets/${id}`).exists()) {
 			const asset = await squery<{
 				id: number
 				name: string
@@ -43,22 +42,21 @@ export async function GET({ url }) {
 			// (allow pending assets to be shown through the api)
 			console.log(`served asset #${id}`)
 
-			return response(fs.readFileSync(`data/assets/${id}`))
+			return response(await Bun.file(`data/assets/${id}`).text())
 		}
 
 		// Try loading as a corescript
 
-		const file = fs.readFileSync(
+		const file = await Bun.file(
 			id === "38037265"
 				? "corescripts/38037265.xml"
-				: `corescripts/processed/${id}.lua`, // shaggy removed
-			"utf-8"
-		)
+				: `corescripts/processed/${id}.lua` // shaggy removed
+		).text()
 
 		let file2 = file.replaceAll("roblox.com/asset", "banland.xyz/asset")
 
 		// Health corescript lol
-		if (id !== "38037265") file2 = SignData(file2, +id)
+		if (id !== "38037265") file2 = await SignData(file2, +id)
 
 		console.log("served corescript", id)
 
