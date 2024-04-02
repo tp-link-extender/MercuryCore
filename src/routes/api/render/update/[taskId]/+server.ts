@@ -1,6 +1,5 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import fs from "node:fs/promises"
 import "dotenv/config"
 
 type Render = {
@@ -41,7 +40,7 @@ export async function POST({ request, url, params }) {
 	else if (status === "Completed") {
 		// Less repetitive and more readable
 		const write = (input: string, name = "") =>
-			fs.writeFile(
+			Bun.write(
 				`data/${typeAvatar ? "avatars" : "thumbnails"}/${
 					task.relativeId
 				}${name && "-"}${name}${typeAvatar ? ".png" : ""}`,

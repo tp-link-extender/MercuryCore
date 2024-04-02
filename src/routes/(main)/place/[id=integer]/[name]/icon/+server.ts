@@ -1,6 +1,5 @@
 import { find } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
-import fs from "node:fs"
 
 export async function GET({ params }) {
 	const id = +params.id
@@ -8,8 +7,8 @@ export async function GET({ params }) {
 
 	if (!(await find(`place:${id}`))) error(404, "Not found")
 
-	if (!fs.existsSync(filename))
+	if (!await Bun.file(filename).exists())
 		redirect(302, `/place/placeholderIcon${1 + (id % 3)}.webp`)
 
-	return new Response(fs.readFileSync(filename))
+	return new Response(Bun.file(filename))
 }

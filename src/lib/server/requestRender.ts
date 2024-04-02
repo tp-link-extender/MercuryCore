@@ -67,8 +67,9 @@ export default async function (
 	const renderId = newRender[1]
 	// Tap in rcc
 
-	const script = fs
-		.readFileSync(`corescripts/processed/render${renderType}.lua`, "utf-8")
+	const script = (
+		await Bun.file(`corescripts/processed/render${renderType}.lua`).text()
+	)
 		.replaceAll("_BASE_URL", `"${process.env.RCC_ORIGIN}"`)
 		.replaceAll("_THUMBNAIL_KEY", `"${process.env.RCC_KEY}"`)
 		.replaceAll("_RENDER_TYPE", `"${renderType}"`)

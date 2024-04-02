@@ -48,7 +48,6 @@
   "dependencies": {
     "@threlte/core": "7.2.1",
     "@threlte/extras": "8.11.1",
-    "check-disk-space": "^3.4.0",
     "custom-protocol-check": "^1.4.0",
     "d3-interpolate": "^3.0.1",
     "dotenv": "^16.4.5",

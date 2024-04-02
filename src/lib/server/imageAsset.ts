@@ -1,4 +1,3 @@
-import fs from "node:fs"
 import sharp from "sharp"
 
 /**
@@ -26,8 +25,7 @@ export async function imageAsset(
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: string | number) =>
-		fs.writeFileSync(`data/assets/${id}`, fileBuffer)
+	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer)
 }
 
 /**
@@ -55,8 +53,7 @@ export async function clothingAsset(
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: string | number) =>
-		fs.writeFileSync(`data/assets/${id}`, fileBuffer)
+	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer)
 }
 
 /**
@@ -84,8 +81,7 @@ export async function thumbnail(
 			throw new Error("Thumbnail failed to upload")
 		})
 
-	return (id: string | number) =>
-		fs.writeFileSync(`data/thumbnails/${id}`, fileBuffer)
+	return (id: number) => Bun.write(`data/thumbnails/${id}`, fileBuffer)
 }
 
 /**
@@ -110,8 +106,7 @@ export async function tShirt(file: File) {
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: string | number) =>
-		fs.writeFileSync(`data/assets/${id}`, fileBuffer)
+	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer)
 }
 
 /**
@@ -142,6 +137,5 @@ export async function tShirtThumbnail(file: File) {
 			throw new Error("Thumbnail failed to upload")
 		})
 
-	return (id: string | number) =>
-		fs.writeFileSync(`data/thumbnails/${id}`, fileBuffer)
+	return (id: number) => Bun.write(`data/thumbnails/${id}`, fileBuffer)
 }

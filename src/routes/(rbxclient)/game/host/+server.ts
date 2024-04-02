@@ -1,7 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 import { squery, surql } from "$lib/server/surreal"
-import fs from "node:fs"
 
 export async function GET({ url }) {
 	const ticket = url.searchParams.get("ticket")
@@ -30,9 +29,8 @@ export async function GET({ url }) {
 	}
 
 	return new Response(
-		SignData(
-			fs
-				.readFileSync("corescripts/processed/host.lua", "utf-8")
+		await SignData(
+			(await Bun.file("corescripts/processed/host.lua").text())
 				.replaceAll("_BASE_URL", `"${process.env.RCC_ORIGIN}"`)
 				.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())
 				.replaceAll("_MAP_LOCATION", `"${mapLocation || ""}"`)

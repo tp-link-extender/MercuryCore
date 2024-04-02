@@ -1,4 +1,3 @@
-import fs from "node:fs"
 import { query, surql } from "$lib/server/surreal"
 import getNotifications from "./notifications"
 
@@ -7,8 +6,7 @@ let lines = "0"
 // extract the line count from the stupid file that scc outputs
 try {
 	lines =
-		fs
-			.readFileSync("data/lines", "utf-8")
+		(await Bun.file("data/lines").text())
 			.split("\n")
 			.filter(l => l.startsWith("  n_lines"))[0]
 			.split(" ")

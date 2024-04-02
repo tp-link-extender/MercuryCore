@@ -1,7 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 import { query, squery, surql, findWhere } from "$lib/server/surreal"
-import fs from "node:fs"
 
 type Session = {
 	place: {
@@ -60,8 +59,7 @@ export async function GET({ url }) {
 	const charApp = `http://banland.xyz/asset/characterfetch?userID=${userNumber}`
 	const pingUrl = `http://banland.xyz/game/clientpresence?ticket=${clientTicket}`
 
-	const file = fs
-		.readFileSync("corescripts/processed/join.lua", "utf-8")
+	const file = (await Bun.file("corescripts/processed/join.lua").text())
 		.replaceAll("_PLACE_ID", placeId.toString())
 		.replaceAll("_SERVER_ADDRESS", gameSession.place.serverIP)
 		.replaceAll("_SERVER_PORT", gameSession.place.serverPort.toString())
@@ -75,5 +73,5 @@ export async function GET({ url }) {
 		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
 		.replaceAll("_PING_URL", `"${pingUrl}"`)
 
-	return new Response(SignData(file))
+	return new Response(await SignData(file))
 }
