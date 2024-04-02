@@ -147,8 +147,8 @@ async function getVersions(id: number, version?: number) {
 					# what on earth do I name this field?
 					# cache invalidation AND naming things in the same query?
 					assetModified: $version.assetModified,
-					name: $version.name,
-					description: $version.description,
+					name: $version.name OR "Unnamed asset",
+					description: $version.description OR "No description available.",
 					type: $version.type,
 				}
 			}`,
@@ -338,8 +338,8 @@ actions.autopilot = async ({ request, locals }) => {
 		...shared.map(s =>
 			// idiomatic much
 			Bun.write(
-				Bun.file(`data/assetCache/${s.sharedId}_1`),
-				`data/assets/${s.id}`
+				`data/assets/${s.id}`,
+				Bun.file(`data/assetCache/${s.sharedId}_1`)
 			)
 		),
 	])
@@ -352,8 +352,8 @@ actions.autopilot = async ({ request, locals }) => {
 			// we want to move the imageasset from assets to thumbnails (don't render it)
 			renders.push(
 				Bun.write(
-					Bun.file(`data/assets/${imageAsset}`),
-					`data/thumbnails/${id}`
+					`data/thumbnails/${id}`,
+					Bun.file(`data/assets/${imageAsset}`)
 				)
 			)
 	} else {

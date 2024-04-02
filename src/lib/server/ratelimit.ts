@@ -7,7 +7,7 @@ import { fail } from "@sveltejs/kit"
 
 const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()
-const existingTimeouts = new Map<string, NodeJS.Timeout>()
+const existingTimeouts = new Map<string, Timer>()
 
 /** Ratelimit a function by a category.
  * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.

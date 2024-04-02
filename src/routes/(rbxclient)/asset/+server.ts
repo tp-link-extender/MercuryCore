@@ -42,7 +42,9 @@ export async function GET({ url }) {
 			// (allow pending assets to be shown through the api)
 			console.log(`served asset #${id}`)
 
-			return response(await Bun.file(`data/assets/${id}`).text())
+			return response(
+				Buffer.from(await Bun.file(`data/assets/${id}`).arrayBuffer())
+			)
 		}
 
 		// Try loading as a corescript
